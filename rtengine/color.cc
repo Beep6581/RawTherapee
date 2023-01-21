@@ -1911,10 +1911,10 @@ void Color::Lch2Luv(float c, float h, float &u, float &v)
     v = c * sincosval.y;
 }
 
-void Color::primaries_to_xyz (double p[6], double Wx, double Wz, double *pxyz)
+void Color::primaries_to_xyz(double p[6], double Wx, double Wz, double *pxyz)
 {
-	//calculate Xr, Xg, Xb, Yr, Yb, Tg, Zr,Zg Zb
-	double Wy = 1.0;
+    //calculate Xr, Xg, Xb, Yr, Yb, Tg, Zr,Zg Zb
+    double Wy = 1.0;
     double Xr = p[0] / p[1];
     double Yr = 1.0;
     double Zr = (1.0 - p[0] - p[1]) / p[1];
@@ -1931,23 +1931,23 @@ void Color::primaries_to_xyz (double p[6], double Wx, double Wz, double *pxyz)
 
     Matrix input_prim;
     Matrix inv_input_prim = {};
-
-	input_prim[0][0] = Xr;
+    input_prim[0][0] = Xr;
     input_prim[0][1] = Yr;
     input_prim[0][2] = Zr;
     input_prim[1][0] = Xg;
     input_prim[1][1] = Yg;
-	input_prim[1][2] = Zg;
+    input_prim[1][2] = Zg;
     input_prim[2][0] = Xb;
     input_prim[2][1] = Yb;
     input_prim[2][2] = Zb;
-	//invert matrix
+
+    //invert matrix
     if (!rtengine::invertMatrix(input_prim, inv_input_prim)) {
         std::cout << "Matrix is not invertible, skipping" << std::endl;
     }
 
     //white point D50 used by LCMS
-	double Wdx = 0.96420;
+    double Wdx = 0.96420;
     double Wdy = 1.0;
     double Wdz = 0.82490;
 
@@ -1988,7 +1988,7 @@ void Color::primaries_to_xyz (double p[6], double Wx, double Wz, double *pxyz)
     Ma_oneBradford[1][2] = 0.0400428;
     Ma_oneBradford[2][0] = 0.1599627;
     Ma_oneBradford[2][1] = 0.0492912;
-	Ma_oneBradford[2][2] = 0.9684867;
+    Ma_oneBradford[2][2] = 0.9684867;
 
     //R G B source
     double Rs = Wx * MaBradford[0][0] + Wy * MaBradford[1][0] + Wz * MaBradford[2][0];
@@ -2009,11 +2009,12 @@ void Color::primaries_to_xyz (double p[6], double Wx, double Wz, double *pxyz)
     cone_dest_sourc [1][1] = Gd / Gs;
     cone_dest_sourc [1][2] = 0.;
     cone_dest_sourc [2][0] = 0.;
-	cone_dest_sourc [2][1] = 0.;
+    cone_dest_sourc [2][1] = 0.;
     cone_dest_sourc [2][2] = Bd / Bs;
 
-	//cone dest
+    //cone dest
     Matrix cone_ma_one = {};
+
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {
             cone_ma_one[i][j] = 0;
@@ -2022,9 +2023,11 @@ void Color::primaries_to_xyz (double p[6], double Wx, double Wz, double *pxyz)
                 cone_ma_one[i][j] += cone_dest_sourc [i][k] * Ma_oneBradford[k][j];
             }
         }
-	}
+    }
+
     //generate adaptation bradford matrix
     Matrix adapt_chroma = {};
+
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {
             adapt_chroma [i][j] = 0;
@@ -2034,6 +2037,7 @@ void Color::primaries_to_xyz (double p[6], double Wx, double Wz, double *pxyz)
             }
         }
     }
+
     Matrix mat_xyz_brad = {};
 
     for (int i = 0; i < 3; ++i) {
@@ -2045,12 +2049,13 @@ void Color::primaries_to_xyz (double p[6], double Wx, double Wz, double *pxyz)
             }
         }
     }
-	//push result in pxyz
+
+    //push result in pxyz
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {
             pxyz[i * 3 + j] =  mat_xyz_brad[i][j];
-		}
-	}	
+        }
+    }
 }
 
 /*

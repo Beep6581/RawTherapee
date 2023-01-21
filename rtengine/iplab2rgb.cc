@@ -416,8 +416,8 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
 {
     const TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 
-	double wprofprim[3][3];//store primaries to XYZ 
-	bool gamutcontrol = params->icm.gamut;
+    double wprofprim[3][3];//store primaries to XYZ
+    bool gamutcontrol = params->icm.gamut;
     const float toxyz[3][3] = {
         {
             static_cast<float>(wprof[0][0] / ((normalizeIn ? 65535.0 : 1.0))), //I have suppressed / Color::D50x
@@ -442,57 +442,64 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         if (settings->verbose) {
             printf("profile not accepted\n");
         }
+
         return;
     }
 
     if (mul == -5 &&  gampos == 2.4 && slpos == 12.92310) {//must be change if we change settings RT sRGB
         //only in this case we can shortcut..all process..no gamut control..because we reduce...leads to very small differences, but big speedup
 #ifdef _OPENMP
-    #pragma omp parallel for schedule(dynamic, 16) if (multiThread) 
+        #pragma omp parallel for schedule(dynamic, 16) if (multiThread)
 #endif
 
-            for (int i = 0; i < ch; ++i) 
-                for (int j = 0; j < cw; ++j) {
-                    float r = src->r(i, j);
-                    float g = src->g(i, j);
-                    float b = src->b(i, j);
-                    r = (Color::igammatab_srgb[r]) / 65535.f;
-                    g = (Color::igammatab_srgb[g]) / 65535.f;
-                    b = (Color::igammatab_srgb[b]) / 65535.f;
-                    dst->r(i, j) = r;
-                    dst->g(i, j) = g;
-                    dst->b(i, j) = b;
-                }
-       return;
+        for (int i = 0; i < ch; ++i)
+            for (int j = 0; j < cw; ++j) {
+                float r = src->r(i, j);
+                float g = src->g(i, j);
+                float b = src->b(i, j);
+                r = (Color::igammatab_srgb[r]) / 65535.f;
+                g = (Color::igammatab_srgb[g]) / 65535.f;
+                b = (Color::igammatab_srgb[b]) / 65535.f;
+                dst->r(i, j) = r;
+                dst->g(i, j) = g;
+                dst->b(i, j) = b;
+            }
+
+        return;
 
     }
- 
-    if (mul == 1 ||(params->icm.wprim == ColorManagementParams::Primaries::DEFAULT && params->icm.will == ColorManagementParams::Illuminant::DEFAULT)) {//shortcut and speedup when no call primaries and illuminant - no gamut control...in this case be careful
+
+    if (mul == 1 || (params->icm.wprim == ColorManagementParams::Primaries::DEFAULT && params->icm.will == ColorManagementParams::Illuminant::DEFAULT)) { //shortcut and speedup when no call primaries and illuminant - no gamut control...in this case be careful
         GammaValues g_a; //gamma parameters
         double pwr = 1.0 / static_cast<double>(gampos);
         Color::calcGamma(pwr, slpos, g_a); // call to calcGamma with selected gamma and slope
 
 #ifdef _OPENMP
-#   pragma omp parallel for schedule(dynamic,16) if (multiThread)
+        #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
         for (int y = 0; y < ch; ++y) {
             int x = 0;
 #ifdef __SSE2__
+
             for (; x < cw - 3; x += 4) {
-                STVFU(dst->r(y,x), F2V(65536.f) * gammalog(LVFU(src->r(y,x)), F2V(gampos), F2V(slpos), F2V(g_a[3]), F2V(g_a[4])));
-                STVFU(dst->g(y,x), F2V(65536.f) * gammalog(LVFU(src->g(y,x)), F2V(gampos), F2V(slpos), F2V(g_a[3]), F2V(g_a[4])));
-                STVFU(dst->b(y,x), F2V(65536.f) * gammalog(LVFU(src->b(y,x)), F2V(gampos), F2V(slpos), F2V(g_a[3]), F2V(g_a[4])));
-           }
+                STVFU(dst->r(y, x), F2V(65536.f) * gammalog(LVFU(src->r(y, x)), F2V(gampos), F2V(slpos), F2V(g_a[3]), F2V(g_a[4])));
+                STVFU(dst->g(y, x), F2V(65536.f) * gammalog(LVFU(src->g(y, x)), F2V(gampos), F2V(slpos), F2V(g_a[3]), F2V(g_a[4])));
+                STVFU(dst->b(y, x), F2V(65536.f) * gammalog(LVFU(src->b(y, x)), F2V(gampos), F2V(slpos), F2V(g_a[3]), F2V(g_a[4])));
+            }
+
 #endif
+
             for (; x < cw; ++x) {
-                dst->r(y,x) = 65536.f * gammalog(src->r(y,x), gampos, slpos, g_a[3], g_a[4]);
-                dst->g(y,x) = 65536.f * gammalog(src->g(y,x), gampos, slpos, g_a[3], g_a[4]);
-                dst->b(y,x) = 65536.f * gammalog(src->b(y,x), gampos, slpos, g_a[3], g_a[4]);
+                dst->r(y, x) = 65536.f * gammalog(src->r(y, x), gampos, slpos, g_a[3], g_a[4]);
+                dst->g(y, x) = 65536.f * gammalog(src->g(y, x), gampos, slpos, g_a[3], g_a[4]);
+                dst->b(y, x) = 65536.f * gammalog(src->b(y, x), gampos, slpos, g_a[3], g_a[4]);
             }
         }
+
         return;
     }
-        
+
 
     float redxx = params->icm.redx;
     float redyy = params->icm.redy;
@@ -500,7 +507,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
     float bluyy = params->icm.bluy;
     float grexx = params->icm.grex;
     float greyy = params->icm.grey;
-	float epsil = 0.0001f;
+    float epsil = 0.0001f;
 
     if (prim == 12) {//convert datas area to xy
         float redgraphx =  params->icm.labgridcieALow;
@@ -522,29 +529,34 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         greyy = 0.55f * (gregraphy + 1.f) - 0.1f;
         greyy = rtengine::LIM(greyy, 0.5f, 1.f);
     }
-    //fixed crash when there is no space or too small..just a line...Possible if bx, by aligned with Gx,Gy Rx,Ry
-	//fix crash if user select 0 for redyy, bluyy, greyy
-	if(redyy == 0.f) {
-		redyy = epsil;
-	}
-	if(bluyy == 0.f) {
-		bluyy = epsil;
-	}
-	if(greyy == 0.f) {
-		greyy = epsil;
-	}
 
-	//fix crash if	grexx - redxx = 0
-	float grered = 1.f;
-	grered = grexx - redxx;
-	if(grered == 0.f) {
-		grered = epsil;
-	}
-	
+    //fixed crash when there is no space or too small..just a line...Possible if bx, by aligned with Gx,Gy Rx,Ry
+    //fix crash if user select 0 for redyy, bluyy, greyy
+    if (redyy == 0.f) {
+        redyy = epsil;
+    }
+
+    if (bluyy == 0.f) {
+        bluyy = epsil;
+    }
+
+    if (greyy == 0.f) {
+        greyy = epsil;
+    }
+
+    //fix crash if  grexx - redxx = 0
+    float grered = 1.f;
+    grered = grexx - redxx;
+
+    if (grered == 0.f) {
+        grered = epsil;
+    }
+
     float ac = (greyy - redyy) / grered;
     float bc = greyy - ac * grexx;
     float yc = ac * bluxx + bc;
-    if ((bluyy < yc + 0.0004f) &&  (bluyy > yc - 0.0004f)) {//under 0.0004 in some case crash because space too small
+
+    if ((bluyy < yc + 0.0004f) && (bluyy > yc - 0.0004f)) { //under 0.0004 in some case crash because space too small
         return;
     }
 
@@ -613,11 +625,13 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             break;
         }
     }
-    
-        if (settings->verbose  && prim != 0) {
-            printf("prim=%i Profile Destination=%s\n", prim, profile.c_str());
-        }
+
+    if (settings->verbose  && prim != 0) {
+        printf("prim=%i Profile Destination=%s\n", prim, profile.c_str());
+    }
+
     cmsHTRANSFORM hTransform = nullptr;
+
     if (transform) {
         hTransform = transform;
     } else {
@@ -641,8 +655,8 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             D60 = 6005  // for ACES AP0 and AP1
 
         };
-		double tempv4 = 5003.;
-		double p[6]; //primaries
+        double tempv4 = 5003.;
+        double p[6]; //primaries
         double Wx = 1.0;
         double Wz = 1.0;
 
@@ -657,7 +671,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             illum = toUnderlying(ColorManagementParams::Illuminant::D50);
             Wx = 0.964295676;
             Wz = 0.825104603;
-			
+
         } else if (profile == "Adobe RGB") {
             p[0] = 0.6400;    //Adobe primaries
             p[1] = 0.3300;
@@ -669,7 +683,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             illum = toUnderlying(ColorManagementParams::Illuminant::D65);
             Wx = 0.95045471;
             Wz = 1.08905029;
-			
+
         } else if (profile == "sRGB") {
             p[0] = 0.6400;    // sRGB primaries
             p[1] = 0.3300;
@@ -681,7 +695,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             illum = toUnderlying(ColorManagementParams::Illuminant::D65);
             Wx = 0.95045471;
             Wz = 1.08905029;
-			
+
         } else if (profile == "BruceRGB") {
             p[0] = 0.6400;    // Bruce primaries
             p[1] = 0.3300;
@@ -694,7 +708,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             Wx = 0.95045471;
             Wz = 1.08905029;
 
-       } else if (profile == "Beta RGB") {
+        } else if (profile == "Beta RGB") {
             p[0] = 0.6888;    // Beta primaries
             p[1] = 0.3112;
             p[2] = 0.1986;
@@ -704,7 +718,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             illum = toUnderlying(ColorManagementParams::Illuminant::D50);
             Wx = 0.964295676;
             Wz = 0.825104603;
-			
+
         } else if (profile == "BestRGB") {
             p[0] = 0.7347;    // Best primaries
             p[1] = 0.2653;
@@ -715,7 +729,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             illum = toUnderlying(ColorManagementParams::Illuminant::D50);
             Wx = 0.964295676;
             Wz = 0.825104603;
-			
+
         } else if (profile == "Rec2020") {
             p[0] = 0.7080;    // Rec2020 primaries
             p[1] = 0.2920;
@@ -739,7 +753,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             illum = toUnderlying(ColorManagementParams::Illuminant::D60);
             Wx = 0.952646075;
             Wz = 1.008825184;
-			
+
         } else if (profile == "ACESp1") {
             p[0] = 0.713;    // ACES P1 primaries
             p[1] = 0.293;
@@ -751,7 +765,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             illum = toUnderlying(ColorManagementParams::Illuminant::D60);
             Wx = 0.952646075;
             Wz = 1.008825184;
-			
+
         } else if (profile == "ProPhoto") {
             p[0] = 0.7347;    //ProPhoto and default primaries
             p[1] = 0.2653;
@@ -762,9 +776,9 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             illum = toUnderlying(ColorManagementParams::Illuminant::D50);
             Wx = 0.964295676;
             Wz = 0.825104603;
-			
+
         } else if (profile == "Custom") {
-            p[0] = redxx;   
+            p[0] = redxx;
             p[1] = redyy;
             p[2] = grexx;
             p[3] = greyy;
@@ -795,12 +809,13 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         gammaParams[3] = 1. / slpos;
         gammaParams[5] = 0.0;
         gammaParams[6] = 0.0;
-       // printf("ga0=%f ga1=%f ga2=%f ga3=%f ga4=%f\n", ga0, ga1, ga2, ga3, ga4);
+        // printf("ga0=%f ga1=%f ga2=%f ga3=%f ga4=%f\n", ga0, ga1, ga2, ga3, ga4);
 
         // 7 parameters for smoother curves
         cmsCIExyY xyD;
-		
+
         Glib::ustring ills = "D50";
+
         switch (ColorManagementParams::Illuminant(illum)) {
             case ColorManagementParams::Illuminant::DEFAULT:
             case ColorManagementParams::Illuminant::STDA:
@@ -855,14 +870,16 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         cmsWhitePointFromTemp(&xyD, tempv4);
 
         switch (ColorManagementParams::Illuminant(illum)) {
-            case ColorManagementParams::Illuminant::DEFAULT:{
-				break;
-			}
-            case ColorManagementParams::Illuminant::D55:{
+            case ColorManagementParams::Illuminant::DEFAULT: {
+                break;
+            }
+
+            case ColorManagementParams::Illuminant::D55: {
                 Wx = 0.956565934;
                 Wz = 0.920253249;
-				break;
-			}
+                break;
+            }
+
             case ColorManagementParams::Illuminant::D80: {
                 Wx = 0.950095542;
                 Wz = 1.284213976;
@@ -885,7 +902,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             case ColorManagementParams::Illuminant::D60: {
                 Wx = 0.952646075;
                 Wz = 1.008825184;
-				xyD = {0.32168, 0.33767, 1.0};
+                xyD = {0.32168, 0.33767, 1.0};
                 break;
             }
 
@@ -897,8 +914,8 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             }
 
             case ColorManagementParams::Illuminant::D120: {
-				Wx = 0.979182;
-				Wz = 1.623623;
+                Wx = 0.979182;
+                Wz = 1.623623;
                 xyD = {0.269669, 0.28078, 1.0};
                 break;
             }
@@ -912,34 +929,36 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             }
 
             case ColorManagementParams::Illuminant::TUNGSTEN_2000K: {
-				Wx = 1.274335;
-				Wz = 0.145233;
+                Wx = 1.274335;
+                Wz = 0.145233;
                 xyD = {0.526591, 0.41331, 1.0};
                 ills = "Tungsten 2000K";
                 break;
             }
 
             case ColorManagementParams::Illuminant::TUNGSTEN_1500K: {
-				Wx = 1.489921;
-				Wz = 0.053826;
+                Wx = 1.489921;
+                Wz = 0.053826;
                 xyD = {0.585703, 0.393157, 1.0};
                 ills = "Tungsten 1500K";
                 break;
             }
         }
-		double wprofpri[9];
-		if(gamutcontrol) {
-		//xyz in functiuon primaries and illuminant
-			Color::primaries_to_xyz (p, Wx, Wz, wprofpri);
-		
-			for (int i = 0; i < 3; ++i) {
-				for (int j = 0; j < 3; ++j) {
-					wprofprim[i][j]= (double) wprofpri[j* 3 + i];
-					//xyz in TMatrix format				
-				}
-			}
-		}
-		
+
+        double wprofpri[9];
+
+        if (gamutcontrol) {
+            //xyz in functiuon primaries and illuminant
+            Color::primaries_to_xyz(p, Wx, Wz, wprofpri);
+
+            for (int i = 0; i < 3; ++i) {
+                for (int j = 0; j < 3; ++j) {
+                    wprofprim[i][j] = (double) wprofpri[j * 3 + i];
+                    //xyz in TMatrix format
+                }
+            }
+        }
+
         //D41  0.377984  0.381229
         //D55  0.332424  0.347426
         //D80  0.293755  0.309185
@@ -958,7 +977,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         cmsWriteTag(oprofdef, cmsSigGreenTRCTag, GammaTRC[1]);
         cmsWriteTag(oprofdef, cmsSigBlueTRCTag, GammaTRC[2]);
 
-      //to read XYZ values and illuminant
+        //to read XYZ values and illuminant
         if (rtengine::settings->verbose) {
             cmsCIEXYZ *redT = static_cast<cmsCIEXYZ*>(cmsReadTag(oprofdef, cmsSigRedMatrixColumnTag));
             cmsCIEXYZ *greenT  = static_cast<cmsCIEXYZ*>(cmsReadTag(oprofdef, cmsSigGreenMatrixColumnTag));
@@ -970,6 +989,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         }
 
         cmsFreeToneCurve(GammaTRC[0]);
+
         if (oprofdef) {
             constexpr cmsUInt32Number flags = cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE | cmsFLAGS_BLACKPOINTCOMPENSATION | cmsFLAGS_GAMUTCHECK;
             const cmsHPROFILE iprof = ICCStore::getInstance()->getXYZProfile();
@@ -978,9 +998,10 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             lcmsMutex->unlock();
         }
     }
+
     if (hTransform) {
-		
-		
+
+
 #ifdef _OPENMP
         #pragma omp parallel if (multiThread)
 #endif
@@ -992,24 +1013,30 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             #pragma omp for schedule(dynamic, 16) nowait
 #endif
 
-            for (int i = 0; i < ch; ++i) {
+            for (int i = 0; i < ch; ++i)
+            {
                 float *p = pBuf.data;
+
                 for (int j = 0; j < cw; ++j) {
                     const float r = src->r(i, j);
                     const float g = src->g(i, j);
                     const float b = src->b(i, j);
-					float X = toxyz[0][0] * r + toxyz[0][1] * g + toxyz[0][2] * b;
-					float Y = toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b;
-					float Z = toxyz[2][0] * r + toxyz[2][1] * g + toxyz[2][2] * b;
-					if(gamutcontrol) {
-						Color::gamutmap(X, Y, Z, wprofprim);//gamut control
-					}
-					*(p++) = X;
-					*(p++) = Y;
-					*(p++) = Z;
+                    float X = toxyz[0][0] * r + toxyz[0][1] * g + toxyz[0][2] * b;
+                    float Y = toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b;
+                    float Z = toxyz[2][0] * r + toxyz[2][1] * g + toxyz[2][2] * b;
+
+                    if (gamutcontrol) {
+                        Color::gamutmap(X, Y, Z, wprofprim);//gamut control
+                    }
+
+                    *(p++) = X;
+                    *(p++) = Y;
+                    *(p++) = Z;
                 }
+
                 p = pBuf.data;
                 cmsDoTransform(hTransform, p, p, cw);
+
                 for (int j = 0; j < cw; ++j) {
                     dst->r(i, j) = *(p++) * normalize;
                     dst->g(i, j) = *(p++) * normalize;
@@ -1017,10 +1044,12 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
                 }
             }
         }
+
         if (!keepTransForm) {
             cmsDeleteTransform(hTransform);
             hTransform = nullptr;
         }
+
         transform = hTransform;
     }
 }
