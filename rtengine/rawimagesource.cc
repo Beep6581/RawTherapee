@@ -4037,13 +4037,12 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end)
     }
 }
 
-
 static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const array2D<float> & yc, const array2D<float> & Yc, LUTf &xxx, LUTf &yyy, LUTf &YYY, LUTu &histxy, bool purp)
 {
     // calculate histogram x y in a range of 236 colors
     // this "choice" are guided by generally colors who are in nature skin, sky, etc. in those cases "steps" are small
     // of course we can change to be more precise
-	// purp enable or not purple color in xyY - approximation...
+    // purp enable or not purple color in xyY - approximation...
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
@@ -4056,13 +4055,16 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
         yyythr.clear();
         LUTf YYYthr(YYY.getSize());
         YYYthr.clear();
-	//	bool purp = false;
+        //  bool purp = false;
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic, 4) nowait
 #endif
-        for (int y = 0; y < bfhitc ; y++) {
+
+        for (int y = 0; y < bfhitc ; y++)
+        {
             for (int x = 0; x < bfwitc ; x++) {
                 int nh = -1;
+
                 if (xc[y][x] < 0.12f && xc[y][x] > 0.03f && yc[y][x] > 0.1f) { // near Prophoto
                     if (yc[y][x] < 0.2f) {
                         nh = 0;
@@ -4077,7 +4079,7 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
                     } else if (yc[y][x] < 0.4f) {
                         nh = 4;
                     } else if (yc[y][x] < 0.45f) {
-						nh = 5;
+                        nh = 5;
                     } else if (yc[y][x] < 0.5f) {
                         //blue green
                         nh = 6;
@@ -4099,7 +4101,7 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
                     } else if (yc[y][x] < 0.3f) {
                         nh = 13;
                     } else if (yc[y][x] < 0.35f) {
-                        nh = 14;	
+                        nh = 14;
                     } else if (yc[y][x] < 0.4f) {
                         nh = 15;
                     } else if (yc[y][x] < 0.45f) {
@@ -4119,7 +4121,7 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
                     if (yc[y][x] < 0.2f) {
                         nh = 22;
                     } else if (yc[y][x] < 0.23f) {
-                        nh = 23;	
+                        nh = 23;
                     } else if (yc[y][x] < 0.25f) {
                         nh = 24;
                     } else if (yc[y][x] < 0.27f) {
@@ -4564,7 +4566,7 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
                 } else if (xc[y][x] < 0.65f && yc[y][x] > 0.12f) {
                     if (yc[y][x] < 0.25f) {
                         nh = 232;
-					} else if (yc[y][x] < 0.3f) {
+                    } else if (yc[y][x] < 0.3f) {
                         nh = 233;
                     } else if (yc[y][x] < 0.35f) {
                         nh = 234;
@@ -4574,6 +4576,7 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
                 } else if (xc[y][x] < 0.75f && yc[y][x] > 0.1f) {
                     nh = 236; //191
                 }
+
                 if (nh >= 0) {
                     histxythr[nh]++;
                     xxxthr[nh] += xc[y][x];
@@ -4582,6 +4585,7 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
                 }
             }
         }
+
 #ifdef _OPENMP
         #pragma omp critical
 #endif
@@ -4606,24 +4610,28 @@ float static studentXY(const array2D<float> & YYcurr, const array2D<float> & ref
         somcurrY += YYcurr[i][tt];
         //sum observations first group
     }
+
     somcurrY *= 100.f;
 
     for (int i = 0; i < Nc; i++) {
         somreffY += reffYY[i][tt];
         //sum observations second group
     }
+
     somreffY *= 100.f;
 
     for (int i = 0; i < sizcurr; i++) {
         somcurr2Y += SQR(YYcurr[i][tt]);
         //sum sqr observations first group
     }
+
     somcurr2Y *= SQR(100.f);
 
     for (int i = 0; i < Nc; i++) {
         somreff2Y += SQR(reffYY[i][tt]);
         //sum sqr observations second group
     }
+
     somreff2Y *= SQR(100.f);
 
     const float somsqueccurrY = somcurr2Y - SQR(somcurrY) / sizcurr;
@@ -4640,6 +4648,9 @@ float static studentXY(const array2D<float> & YYcurr, const array2D<float> & ref
     //student coeeficient
 }
 
+
+
+
 void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double &tempitc, double &greenitc, float &studgood, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, const ColorManagementParams &cmp, const RAWParams &raw, const WBParams & wbpar, const ToneCurveParams &hrp)
 {
     /*
@@ -4652,7 +4663,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     Probably (sure) there are improvement to do...
 
     I have create a table temperature with temp and white point with 118 values between 2000K and 12000K we can obviously  change these values, more...with different steps
-    I have create a table for tint (green)with 134 values between 0.4 to 4. 
+    I have create a table for tint (green)with 134 values between 0.4 to 4.
     I have create or recuparate and transformed 201 spectral colors from Colorchecker24, others color and my 468 colors target, or from web flowers, etc. with a step of 5nm, I think it is large enough.
     I think this value of 201 is now complete: I tested correlation with 60, 90, 100, 120, 155...better student increase with number of color, but now it seems stabilized
     Of course we can increase this number :)
@@ -4705,8 +4716,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     itcwb_precis : 3 by default - can be set to 3 or 9 - 3 best sampling but more time...9 "old" settings - but low differences in times with 3 instead of 9 about twice time 160ms instead of 80ms for a big raw file
     itcwb_nopurple : true default - allow to bypass highlight recovery and inpait opposed when need flowers and not purple due to highlights...
     */
-//    BENCHFUN
- 
+    BENCHFUN
+
     TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix("sRGB");
     const float wp[3][3] = {
         {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
@@ -4755,7 +4766,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {0.680, 1.f},
         {0.690, 1.f},
         {0.700, 1.f},
-        {0.714, 1.f},//usual range 
+        {0.714, 1.f},//usual range
         {0.727, 1.f},
         {0.741, 1.f},
         {0.755, 1.f},
@@ -5050,7 +5061,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     //calculate R G B multiplier in function illuminant and temperature
     const bool isMono = (ri->getSensorType() == ST_FUJI_XTRANS && raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO))
-                     || (ri->getSensorType() == ST_BAYER && raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO));
+                        || (ri->getSensorType() == ST_BAYER && raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO));
+
     for (int tt = 0; tt < N_t; ++tt) {
         double r, g, b;
         float rm, gm, bm;
@@ -5100,19 +5112,27 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     } ;
 
     LUTu histxy(siza); //number of values for each pair xy
+
     histxy.clear();
 
     LUTf xxx(siza);//for color references calculated ==> max in images "like histogram"
+
     xxx.clear();
+
     LUTf yyy(siza);
+
     yyy.clear();
+
     LUTf YYY(siza);//not used directly, but necessary to keep good range
+
     YYY.clear();
 
     bool separated = true;
+
     int w = -1;
 
     array2D<float> reff_spect_yy_camera(N_t, 2 * Nc + 2);
+
     array2D<float> reff_spect_xx_camera(N_t, 2 * Nc + 2);
 
     //here we select the good spectral color inside the 113 values
@@ -5141,6 +5161,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
+
         for (int y = 0; y < bfh ; ++y) {
             for (int x = 0; x < bfw ; ++x) {
                 const float RR = rmm[rep] * redloc[y][x];
@@ -5149,6 +5170,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 Color::rgbxyY(RR, GG, BB, xc[y][x], yc[y][x], Yc[y][x], wp);
             }
         }
+
         //histogram xy depend of temp...but in most cases D45 ..D65..
         //calculate for this image the mean values for each family of color, near histogram x y (number)
         //xy vary from x 0..0.77  y 0..0.82
@@ -5157,11 +5179,12 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         //blue sky x=0.25 y=0.28  and x=0.29 y=0.32
         // step about 0.02   x 0.32 0.34  y= 0.34 0.36 skin    --  sky x 0.24 0.30 y 0.28 0.32
         //big step about 0.2
-		
-		bool purp = true;//if inpaint-opposed or something else enable purp 
-		if (hrp.hrenabled && hrp.method == "Coloropp" && settings->itcwb_nopurple == true) {//we disabled (user) with settings if image are naturally with purple (flowers...)
-			purp = false;
-		}
+
+        bool purp = true;//if inpaint-opposed or something else enable purp
+
+        if (hrp.hrenabled && hrp.method == "Coloropp" && settings->itcwb_nopurple == true) {//we disabled (user) with settings if image are naturally with purple (flowers...)
+            purp = false;
+        }
 
         histoxyY(bfhitc, bfwitc, xc, yc, Yc, xxx,  yyy, YYY, histxy, purp);//purp enable,  enable purple color in WB
         //return histogram x and y for each temp and in a range of 235 colors (siza)
@@ -5195,15 +5218,19 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     int n4 = 0;
     int n15 = 0;
     int n30 = 0;
+
     //part to improve
     //determined the number of colors who be used after
     for (int nh = 0; nh < siza; nh++) {
         if (Wbhis[nh].histnum < 30) {
             n30++;    //keep only existing color but avoid to small
+
             if (Wbhis[nh].histnum < 15) {
                 n15++;    //keep only existing color but avoid to small
+
                 if (Wbhis[nh].histnum < 4) {
                     n4++;    //keep only existing color but avoid to small
+
                     if (Wbhis[nh].histnum < 1) {
                         n1++;    //keep only existing color but avoid to small
                     }
@@ -5225,12 +5252,14 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     if (ntr > (siza - 20)) {
         ntr = n1;    //if to less elements 20 elements mini - normally never be used !
     }
+
     int sizcurr2ref = sizcurrref - ntr;
     const int sizcu30 = sizcurrref - n30;
     const int sizcu4 = rtengine::min(sizcu30, 55);//
-    if (settings->verbose) {   
-		printf("ntr=%i sizcurr2ref=%i sizcu30=%i sizcu4=%i\n", ntr, sizcurr2ref, sizcu30, sizcu4);
-	}
+
+    if (settings->verbose) {
+        printf("ntr=%i sizcurr2ref=%i sizcu30=%i sizcu4=%i\n", ntr, sizcurr2ref, sizcu30, sizcu4);
+    }
 
     chrom wbchro[sizcu4];
     const float swpr = Txyz[repref].XX + Txyz[repref].ZZ + 1.f;
@@ -5245,6 +5274,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     }
 
     float estimchrom = 0.f;
+
     //estimate chromaticity for references
     for (int nh = 0; nh < sizcu4; ++nh) {
         const float chxy = std::sqrt(SQR(xx_curref[nh][repref] - xwpr) + SQR(yy_curref[nh][repref] - ywpr));
@@ -5258,14 +5288,16 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     }
 
     estimchrom /= sizcu4;
-    if (settings->verbose) {   
+
+    if (settings->verbose) {
         printf("estimchrom=%f\n", estimchrom);
     }
+
     if (settings->itcwb_sorted) { //sort in ascending with chroma values
         std::sort(wbchro, wbchro + sizcu4, wbchro[0]);
     }
-	
-	const int maxval = rtengine::LIM(settings->itcwb_thres, 10, 55);//max values of color to find correlation
+
+    const int maxval = rtengine::LIM(settings->itcwb_thres, 10, 55);//max values of color to find correlation
 
     sizcurr2ref = rtengine::min(sizcurr2ref, maxval);    //keep about the biggest values,
 
@@ -5397,6 +5429,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         const int dgoodref = rtengine::min(settings->itcwb_greendeltatemp, 4);
         const int scantempbeg = rtengine::max(goodref - (dgoodref + 1), 1);
         const int scantempend = rtengine::min(goodref + dgoodref, N_t - 1);
+
         for (int gr = Rangegreenused.begin; gr < Rangegreenused.end; ++gr) {
             float minstudgr = 100000.f;
             int goodrefgr = 1;
@@ -5432,6 +5465,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                     const float BB = bmm[tt] * B_curref_reduc[i][repref];
                     Color::rgbxyY(RR, GG, BB, xxyycurr_reduc[2 * i][tt], xxyycurr_reduc[2 * i + 1][tt], unused, wp);
                 }
+
                 //recalculate xy spectral now with good range of temp and green
 
                 for (int j = 0; j < Nc ; ++j) {
@@ -5440,6 +5474,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 }
 
                 int kkg = -1;
+
                 for (int i = 0; i < Nc ; ++i) {
                     if (good_spectral[i]) {
                         kkg++;
@@ -5447,6 +5482,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                         reff_spect_xxyy[2 * kkg + 1][tt] = reff_spect_xxyy_prov[2 * i + 1][tt];
                     }
                 }
+
                 //now we have good spectral data
                 //calculate student correlation
                 const float abstudgr = std::fabs(studentXY(xxyycurr_reduc, reff_spect_xxyy, 2 * w, 2 * kkg, tt));
@@ -5455,6 +5491,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                     minstudgr = abstudgr;
                     goodrefgr = tt;
                 }
+
                 //found the values
                 Tgstud[gr].tempref = goodrefgr;
                 Tgstud[gr].greenref = gr;
@@ -5470,29 +5507,30 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         // I admit a symetrie in green coefiicient for rgb multiplier...probably not exactly true
         // perhaps we can used a Snedecor test ? but why...at least we have confidence interval > 90%
         int greengood = 55;
-		
-		int maxkgood = 5;//we can change ...to test 3, 4, 5. High values perhaps less good student, but it is a compromise...
-		int mingood = std::min(std::fabs(Tgstud[0].greenref - 55),std::fabs(Tgstud[1].greenref - 55));
-		
-		for (int k =2; k < maxkgood; ++k) {
-			mingood = std::min(std::fabs(mingood),std::fabs(Tgstud[k].greenref - 55));
-		}
 
-		for (int k = 0; k < maxkgood ; ++k) {
-			if(mingood == fabs(Tgstud[k].greenref - 55)) {
-				greengood = Tgstud[k].greenref ;
-				goodref = Tgstud[k].tempref;
-				studgood = Tgstud[k].student;;			
-			}			
-		}
+        int maxkgood = 5;//we can change ...to test 3, 4, 5. High values perhaps less good student, but it is a compromise...
+        int mingood = std::min(std::fabs(Tgstud[0].greenref - 55), std::fabs(Tgstud[1].greenref - 55));
 
-		if (settings->verbose) {
-			printf("Student_0=%f Student_k= %f\n", Tgstud[0].student, Tgstud[maxkgood-1].student);
-			printf("mingood=%i greeng=%i goodref=%i stud=%f\n", mingood, greengood, goodref, (double) studgood);
-		}
+        for (int k = 2; k < maxkgood; ++k) {
+            mingood = std::min(std::fabs(mingood), std::fabs(Tgstud[k].greenref - 55));
+        }
+
+        for (int k = 0; k < maxkgood ; ++k) {
+            if (mingood == fabs(Tgstud[k].greenref - 55)) {
+                greengood = Tgstud[k].greenref ;
+                goodref = Tgstud[k].tempref;
+                studgood = Tgstud[k].student;;
+            }
+        }
+
+        if (settings->verbose) {
+            printf("Student_0=%f Student_k= %f\n", Tgstud[0].student, Tgstud[maxkgood - 1].student);
+            printf("mingood=%i greeng=%i goodref=%i stud=%f\n", mingood, greengood, goodref, (double) studgood);
+        }
 
         tempitc = Txyz[goodref].Tem;
         greenitc = gree[greengood].green;
+
         if (estimchrom < 0.025f) {
             float ac = -2.40f * estimchrom + 0.06f;//small empirical  correction, maximum 0.06 if chroma=0 for all image, currently for very low chroma +0.02
             greenitc += ac;
@@ -5506,6 +5544,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     if (!extra) {
         tempitc = Txyz[goodref].Tem;
     }
+
     //now we have temp green and student
     if (settings->verbose) {
         printf("ITCWB tempitc=%f gritc=%f stud=%f \n", tempitc, greenitc, studgood);
@@ -5542,16 +5581,17 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
 {
 //    BENCHFUN
     //used by auto WB local to calculate red, green, blue in local region
-    
-	int precision = 5;
+
+    int precision = 5;
+
     if (settings->itcwb_precis == 5) {
         precision = 5;
     } else if (settings->itcwb_precis < 5) {
-        precision = 3; 
+        precision = 3;
     } else if (settings->itcwb_precis > 5) {
         precision = 9;
     }
-	
+
 
     const int bfw = W / precision + ((W % precision) > 0 ? 1 : 0);// 5 arbitrary value can be change to 3 or 9 ;
     const int bfh = H / precision + ((H % precision) > 0 ? 1 : 0);
@@ -5575,6 +5615,7 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
 #ifdef _OPENMP
     #pragma omp parallel for reduction(+:avgL, nn)
 #endif
+
     for (int i = 0; i < H; i ++) {
         for (int j = 0; j < W; j++) {
             const float LL = 0.299f * red[i][j] + 0.587f * green[i][j] + 0.114f * blue[i][j];
@@ -5582,6 +5623,7 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
             nn++;
         }
     }
+
     avgL /= nn;
 
     double vari = 0.f;
@@ -5590,6 +5632,7 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
 #ifdef _OPENMP
     #pragma omp parallel for reduction(+:vari, mm)
 #endif
+
     for (int i = 0; i < H; i++)
         for (int j = 0; j < W; j++) {
             const float LL = 0.299f * red[i][j] + 0.587f * green[i][j] + 0.114f * blue[i][j];
@@ -5603,8 +5646,10 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
 #ifdef _OPENMP
     #pragma omp parallel for
 #endif
+
     for (int i = 0; i < bfh; ++i) {
         const int ii = i * precision;
+
         if (ii < H) {
             for (int j = 0, jj = 0; j < bfw; ++j, jj += precision) {
                 redloc[i][j] = red[ii][jj] * multip;
@@ -5630,6 +5675,7 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
     double avg_b = 0;
     int rn = 0, gn = 0, bn = 0;
     double avg_rm, avg_gm, avg_bm;
+
     if (wbpar.method == "autold") {
         if (fuji) {
             for (int i = 32; i < H - 32; i++) {
@@ -5639,7 +5685,7 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
 
                 for (int j = start; j < end; j++) {
                     if (ri->getSensorType() != ST_BAYER) {
-                        double dr = CLIP(initialGain * (rawData[i][3 * j] ));
+                        double dr = CLIP(initialGain * (rawData[i][3 * j]));
                         double dg = CLIP(initialGain * (rawData[i][3 * j + 1]));
                         double db = CLIP(initialGain * (rawData[i][3 * j + 2]));
 
@@ -5678,18 +5724,18 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
                 if (ri->getSensorType() == ST_FUJI_XTRANS) {
                     const double compval = clipHigh / initialGain;
 #ifdef _OPENMP
-                #pragma omp parallel
+                    #pragma omp parallel
 #endif
                     {
                         double avg_c[3] = {0.0};
                         int cn[3] = {0};
 #ifdef _OPENMP
-                    #pragma omp for schedule(dynamic,16) nowait
+                        #pragma omp for schedule(dynamic,16) nowait
 #endif
 
                         for (int i = 32; i < H - 32; i++) {
                             for (int j = 32; j < W - 32; j++) {
-                            // each loop read 1 rgb triplet value
+                                // each loop read 1 rgb triplet value
                                 double d = rawData[i][j];
 
                                 if (d > compval) {
@@ -5703,7 +5749,7 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
                         }
 
 #ifdef _OPENMP
-                    #pragma omp critical
+                        #pragma omp critical
 #endif
                         {
                             avg_r += avg_c[0];
@@ -5720,9 +5766,9 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
                 } else {
                     for (int i = 32; i < H - 32; i++)
                         for (int j = 32; j < W - 32; j++) {
-                        // each loop read 1 rgb triplet value
+                            // each loop read 1 rgb triplet value
 
-                            double dr = CLIP(initialGain * (rawData[i][3 * j] ));
+                            double dr = CLIP(initialGain * (rawData[i][3 * j]));
                             double dg = CLIP(initialGain * (rawData[i][3 * j + 1]));
                             double db = CLIP(initialGain * (rawData[i][3 * j + 2]));
 
@@ -5740,7 +5786,7 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
                     bn = rn;
                 }
             } else {
-            //determine GRBG coset; (ey,ex) is the offset of the R subarray
+                //determine GRBG coset; (ey,ex) is the offset of the R subarray
                 int ey, ex;
 
                 if (ri->ISGREEN(0, 0)) { //first pixel is G
@@ -5763,12 +5809,12 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
 
                 const double compval = clipHigh / initialGain;
 #ifdef _OPENMP
-            #pragma omp parallel for reduction(+:avg_r,avg_g,avg_b,rn,gn,bn) schedule(dynamic,8)
+                #pragma omp parallel for reduction(+:avg_r,avg_g,avg_b,rn,gn,bn) schedule(dynamic,8)
 #endif
 
                 for (int i = 32; i < H - 32; i += 2)
                     for (int j = 32; j < W - 32; j += 2) {
-                    //average each Bayer quartet component individually if non-clipped
+                        //average each Bayer quartet component individually if non-clipped
                         double d[2][2];
                         d[0][0] = rawData[i][j];
                         d[0][1] = rawData[i][j + 1];
@@ -5807,14 +5853,15 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
     if (wbpar.method == "autitcgreen") {
         bool twotimes = false;
         int precision = 5;
+
         if (settings->itcwb_precis == 5) {
             precision = 5;
         } else if (settings->itcwb_precis < 5) {
-            precision = 3; 
+            precision = 3;
         } else if (settings->itcwb_precis > 5) {
             precision = 9;
         }
-        
+
         const int bfw = W / precision + ((W % precision) > 0 ? 1 : 0);// 5 arbitrary value can be change to 3 or 9 ;
         const int bfh = H / precision + ((H % precision) > 0 ? 1 : 0);
         WBauto(tempref, greenref, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, tempitc, greenitc, studgood, twotimes, wbpar, begx, begy, yEn,  xEn,  cx,  cy, cmp, raw, hrp);
@@ -5825,7 +5872,7 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
     blueloc(0, 0);
 
     if (settings->verbose) {
-        printf ("AVG: %g %g %g\n", avg_r / std::max(1, rn), avg_g / std::max(1, gn), avg_b / std::max(1, bn));
+        printf("AVG: %g %g %g\n", avg_r / std::max(1, rn), avg_g / std::max(1, gn), avg_b / std::max(1, bn));
     }
 
     if (wbpar.method == "autitcgreen") {
@@ -5844,7 +5891,7 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
 
 }
 
-void RawImageSource::getAutoWBMultipliers (double &rm, double &gm, double &bm)
+void RawImageSource::getAutoWBMultipliers(double &rm, double &gm, double &bm)
 {
 //    BENCHFUN
     constexpr double clipHigh = 64000.0;
@@ -5881,7 +5928,7 @@ void RawImageSource::getAutoWBMultipliers (double &rm, double &gm, double &bm)
 
             for (int j = start; j < end; j++) {
                 if (ri->getSensorType() != ST_BAYER) {
-                    double dr = CLIP(initialGain * (rawData[i][3 * j] ));
+                    double dr = CLIP(initialGain * (rawData[i][3 * j]));
                     double dg = CLIP(initialGain * (rawData[i][3 * j + 1]));
                     double db = CLIP(initialGain * (rawData[i][3 * j + 2]));
 
@@ -5964,7 +6011,7 @@ void RawImageSource::getAutoWBMultipliers (double &rm, double &gm, double &bm)
                     for (int j = 32; j < W - 32; j++) {
                         // each loop read 1 rgb triplet value
 
-                        double dr = CLIP(initialGain * (rawData[i][3 * j] ));
+                        double dr = CLIP(initialGain * (rawData[i][3 * j]));
                         double dg = CLIP(initialGain * (rawData[i][3 * j + 1]));
                         double db = CLIP(initialGain * (rawData[i][3 * j + 2]));
 
@@ -6046,7 +6093,7 @@ void RawImageSource::getAutoWBMultipliers (double &rm, double &gm, double &bm)
     }
 
     if (settings->verbose) {
-        printf ("AVG: %g %g %g\n", avg_r / std::max(1, rn), avg_g / std::max(1, gn), avg_b / std::max(1, bn));
+        printf("AVG: %g %g %g\n", avg_r / std::max(1, rn), avg_g / std::max(1, gn), avg_b / std::max(1, bn));
     }
 
     //    return ColorTemp (pow(avg_r/rn, 1.0/6.0)*img_r, pow(avg_g/gn, 1.0/6.0)*img_g, pow(avg_b/bn, 1.0/6.0)*img_b);
