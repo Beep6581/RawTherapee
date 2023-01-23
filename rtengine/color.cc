@@ -2114,8 +2114,8 @@ void Color::gamutmap(float &X, float Y, float &Z, const double p[3][3])
 
         }
 
-    u = u * lam_min + u0;
-    v = v * lam_min + v0;
+    u = u * (double) lam_min + u0;
+    v = v * (double) lam_min + v0;
 
     X = (9 * u * Y) / (4 * v);
 	float intermuv = 12 - 3 * u - 20 * v;
