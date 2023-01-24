@@ -452,6 +452,7 @@ void ParamsEdited::set(bool v)
     icm.bluy = v;
     icm.preser = v;
     icm.fbw = v;
+    icm.gamut = v;
     icm.labgridcieALow = v;
     icm.labgridcieBLow = v;
     icm.labgridcieAHigh = v;
@@ -1871,6 +1872,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         icm.labgridcieWy = icm.labgridcieWy && p.icm.labgridcieWy == other.icm.labgridcieWy;
         icm.preser = icm.preser && p.icm.preser == other.icm.preser;
         icm.fbw = icm.fbw && p.icm.fbw == other.icm.fbw;
+        icm.gamut = icm.gamut && p.icm.gamut == other.icm.gamut;
         icm.aRendIntent = icm.aRendIntent && p.icm.aRendIntent == other.icm.aRendIntent;
         icm.workingTRC = icm.workingTRC && p.icm.workingTRC == other.icm.workingTRC;
         icm.will = icm.will && p.icm.will == other.icm.will;
@@ -6375,6 +6377,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (icm.fbw) {
         toEdit.icm.fbw = mods.icm.fbw;
+    }
+
+    if (icm.gamut) {
+        toEdit.icm.gamut = mods.icm.gamut;
     }
 
     if (icm.labgridcieALow) {
