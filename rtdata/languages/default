@@ -1436,6 +1436,7 @@ HISTORY_MSG_ICM_AINTENT;Abstract profile intent
 HISTORY_MSG_ICM_BLUX;Primaries Blue X
 HISTORY_MSG_ICM_BLUY;Primaries Blue Y
 HISTORY_MSG_ICM_FBW;Black and White
+HISTORY_MSG_ICM_GAMUT;Gamut control
 HISTORY_MSG_ICM_GREX;Primaries Green X
 HISTORY_MSG_ICM_GREY;Primaries Green Y
 HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Output - Primaries
@@ -2544,6 +2545,7 @@ TP_ICM_DCPILLUMINANT;Illuminant
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
 TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is 'interpolated' which is a mix between the two based on white balance. The setting is only available if a dual-illuminant DCP with interpolation support is selected.
 TP_ICM_FBW;Black-and-White
+TP_ICM_GAMUT;Gamut control
 TP_ICM_ILLUMPRIM_TOOLTIP;Choose the illuminant closest to the shooting conditions.\nChanges can only be made when the 'Destination primaries' selection is set to 'Custom (sliders)'.
 TP_ICM_INPUTCAMERA;Camera standard
 TP_ICM_INPUTCAMERAICC;Auto-matched camera profile
