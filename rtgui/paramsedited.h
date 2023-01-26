@@ -402,6 +402,7 @@ public:
         bool structexclu;
         bool struc;
         bool shapeMethod;
+        bool avoidgamutMethod;
         bool loc;
         bool centerX;
         bool centerY;

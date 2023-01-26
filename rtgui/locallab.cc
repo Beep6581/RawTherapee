@@ -277,6 +277,16 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
         } else {
             r->shapeMethod = 3;
         }
+		
+        if (pp->locallab.spots.at(i).avoidgamutMethod == "NONE") {
+            r->avoidgamutMethod = 0;
+        } else if (pp->locallab.spots.at(i).avoidgamutMethod == "LAB") {
+            r->avoidgamutMethod = 1;
+        } else if (pp->locallab.spots.at(i).avoidgamutMethod == "XYZ") {
+            r->avoidgamutMethod= 2;
+        } else if (pp->locallab.spots.at(i).avoidgamutMethod == "MUNS") {
+            r->avoidgamutMethod= 3;
+        } 
 
         r->locX = pp->locallab.spots.at(i).loc.at(0);
         r->locXL = pp->locallab.spots.at(i).loc.at(1);
@@ -439,6 +449,16 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 r->shapeMethod = 2;
             } else {
                 r->shapeMethod = 3;
+            }
+
+            if (newSpot->avoidgamutMethod == "NONE") {
+                r->avoidgamutMethod = 0;
+            } else if (newSpot->avoidgamutMethod == "LAB") {
+                r->avoidgamutMethod = 1;
+            } else if (newSpot->avoidgamutMethod == "XYZ") {
+                r->avoidgamutMethod = 2;
+            } else if (newSpot->avoidgamutMethod == "MUNS") {
+                r->avoidgamutMethod = 3;
             }
 
             // Calculate spot size and center position according to preview area
@@ -742,6 +762,16 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 r->shapeMethod = 3;
             }
             //printf("n0=%f n1=%f n2=%f n3=%f\n", (double) newSpot->loc.at(0), (double) newSpot->loc.at(1), (double) newSpot->loc.at(2), (double) newSpot->loc.at(3));
+            if (newSpot->avoidgamutMethod == "NONE") {
+                r->avoidgamutMethod = 0;
+            } else if (newSpot->avoidgamutMethod == "LAB") {
+                r->avoidgamutMethod = 1;
+            } else if (newSpot->avoidgamutMethod== "XYZ") {
+                r->avoidgamutMethod = 2;
+             } else if (newSpot->avoidgamutMethod== "MUNS") {
+                r->avoidgamutMethod = 3;
+           } 
+            //printf("n0=%f n1=%f n2=%f n3=%f\n", (double) newSpot->loc.at(0), (double) newSpot->loc.at(1), (double) newSpot->loc.at(2), (double) newSpot->loc.at(3));
 
             // Calculate spot size and center position according to preview area
             if (provider && !batchMode) {
@@ -926,6 +956,16 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     } else {
                         pp->locallab.spots.at(pp->locallab.selspot).shapeMethod = "SYMSL";
                     }
+
+                    if (r->avoidgamutMethod == 0) {
+                        pp->locallab.spots.at(pp->locallab.selspot).avoidgamutMethod = "NONE";
+                    } else if (r->avoidgamutMethod == 1) {
+                        pp->locallab.spots.at(pp->locallab.selspot).avoidgamutMethod = "LAB";
+                    } else if (r->avoidgamutMethod == 2) {
+                        pp->locallab.spots.at(pp->locallab.selspot).avoidgamutMethod = "XYZ";
+                    } else if (r->avoidgamutMethod == 3) {
+                        pp->locallab.spots.at(pp->locallab.selspot).avoidgamutMethod = "MUNS";
+                    } 
 
                     pp->locallab.spots.at(pp->locallab.selspot).loc.at(0) = r->locX;
                     pp->locallab.spots.at(pp->locallab.selspot).loc.at(1) = r->locXL;

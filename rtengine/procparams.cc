@@ -2848,6 +2848,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     structexclu(0),
     struc(4.0),
     shapeMethod("IND"),
+    avoidgamutMethod("MUNS"),
     loc{150, 150, 150, 150},
     centerX(0),
     centerY(0),
@@ -2862,7 +2863,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     balanh(1.0),
     colorde(5.0),
     colorscope(30.0),
-    avoidrad(0.7),
+    avoidrad(0.),
     transitweak(1.0),
     transitgrad(0.0),
     hishow(false),
@@ -4560,6 +4561,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && structexclu == other.structexclu
         && struc == other.struc
         && shapeMethod == other.shapeMethod
+        && avoidgamutMethod == other.avoidgamutMethod
         && loc == other.loc
         && centerX == other.centerX
         && centerY == other.centerY
@@ -6347,6 +6349,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || spot_edited->structexclu, "Locallab", "StructExclu_" + index_str, spot.structexclu, keyFile);
                 saveToKeyfile(!pedited || spot_edited->struc, "Locallab", "Struc_" + index_str, spot.struc, keyFile);
                 saveToKeyfile(!pedited || spot_edited->shapeMethod, "Locallab", "ShapeMethod_" + index_str, spot.shapeMethod, keyFile);
+                saveToKeyfile(!pedited || spot_edited->avoidgamutMethod, "Locallab", "AvoidgamutMethod_" + index_str, spot.avoidgamutMethod, keyFile);
                 saveToKeyfile(!pedited || spot_edited->loc, "Locallab", "Loc_" + index_str, spot.loc, keyFile);
                 saveToKeyfile(!pedited || spot_edited->centerX, "Locallab", "CenterX_" + index_str, spot.centerX, keyFile);
                 saveToKeyfile(!pedited || spot_edited->centerY, "Locallab", "CenterY_" + index_str, spot.centerY, keyFile);
@@ -8423,6 +8426,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "StructExclu_" + index_str, pedited, spot.structexclu, spotEdited.structexclu);
                 assignFromKeyfile(keyFile, "Locallab", "Struc_" + index_str, pedited, spot.struc, spotEdited.struc);
                 assignFromKeyfile(keyFile, "Locallab", "ShapeMethod_" + index_str, pedited, spot.shapeMethod, spotEdited.shapeMethod);
+                assignFromKeyfile(keyFile, "Locallab", "AvoidgamutMethod_" + index_str, pedited, spot.avoidgamutMethod, spotEdited.avoidgamutMethod);
                 assignFromKeyfile(keyFile, "Locallab", "Loc_" + index_str, pedited, spot.loc, spotEdited.loc);
                 assignFromKeyfile(keyFile, "Locallab", "CenterX_" + index_str, pedited, spot.centerX, spotEdited.centerX);
                 assignFromKeyfile(keyFile, "Locallab", "CenterY_" + index_str, pedited, spot.centerY, spotEdited.centerY);

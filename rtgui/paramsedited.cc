@@ -1090,6 +1090,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).structexclu = locallab.spots.at(j).structexclu && pSpot.structexclu == otherSpot.structexclu;
                 locallab.spots.at(j).struc = locallab.spots.at(j).struc && pSpot.struc == otherSpot.struc;
                 locallab.spots.at(j).shapeMethod = locallab.spots.at(j).shapeMethod && pSpot.shapeMethod == otherSpot.shapeMethod;
+                locallab.spots.at(j).avoidgamutMethod = locallab.spots.at(j).avoidgamutMethod && pSpot.avoidgamutMethod == otherSpot.avoidgamutMethod;
                 locallab.spots.at(j).loc = locallab.spots.at(j).loc && pSpot.loc == otherSpot.loc;
                 locallab.spots.at(j).centerX = locallab.spots.at(j).centerX && pSpot.centerX == otherSpot.centerX;
                 locallab.spots.at(j).centerY = locallab.spots.at(j).centerY && pSpot.centerY == otherSpot.centerY;
@@ -3432,6 +3433,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).shapeMethod) {
             toEdit.locallab.spots.at(i).shapeMethod = mods.locallab.spots.at(i).shapeMethod;
+        }
+
+        if (locallab.spots.at(i).avoidgamutMethod) {
+            toEdit.locallab.spots.at(i).avoidgamutMethod = mods.locallab.spots.at(i).avoidgamutMethod;
         }
 
         if (locallab.spots.at(i).loc) {
@@ -7412,6 +7417,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     structexclu(v),
     struc(v),
     shapeMethod(v),
+    avoidgamutMethod(v),
     loc(v),
     centerX(v),
     centerY(v),
@@ -8104,6 +8110,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     structexclu = v;
     struc = v;
     shapeMethod = v;
+    avoidgamutMethod = v;
     loc = v;
     centerX = v;
     centerY = v;

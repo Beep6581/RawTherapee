@@ -57,6 +57,7 @@ public:
         int sensiexclu;
         int structexclu;
         int shapeMethod; // 0 = Independent (mouse), 1 = Symmetrical (mouse), 2 = Independent (mouse + sliders), 3 = Symmetrical (mouse + sliders)
+        int avoidgamutMethod; // 0 = Independent (mouse), 1 = Symmetrical (mouse), 2 = Independent (mouse + sliders), 3 = Symmetrical (mouse + sliders)
         int locX;
         int locXL;
         int locY;
@@ -243,7 +244,8 @@ private:
     void spotMethodChanged();
     void shapeMethodChanged();
     void qualityMethodChanged();
-    //void complexMethodChanged();
+    void avoidgamutMethodChanged();
+   //void complexMethodChanged();
     void wavMethodChanged();
 
     void updateParamVisibility();
@@ -293,6 +295,7 @@ private:
         Gtk::TreeModelColumn<int> sensiexclu;
         Gtk::TreeModelColumn<int> structexclu;
         Gtk::TreeModelColumn<int> shapeMethod; // 0 = Independent (mouse), 1 = Symmetrical (mouse), 2 = Independent (mouse + sliders), 3 = Symmetrical (mouse + sliders)
+        Gtk::TreeModelColumn<int> avoidgamutMethod; // 0 = Independent (mouse), 1 = Symmetrical (mouse), 2 = Independent (mouse + sliders), 3 = Symmetrical (mouse + sliders)
         Gtk::TreeModelColumn<int> locX;
         Gtk::TreeModelColumn<int> locXL;
         Gtk::TreeModelColumn<int> locY;
@@ -381,6 +384,8 @@ private:
     //sigc::connection complexMethodconn_;
     MyComboBoxText* const wavMethod_;
     sigc::connection wavMethodconn_;
+    MyComboBoxText* const avoidgamutMethod_;
+	sigc::connection avoidgamutconn_;
 
     Adjuster* const sensiexclu_;
     Adjuster* const structexclu_;
@@ -413,6 +418,7 @@ private:
     sigc::connection activConn_;
     Gtk::CheckButton* const avoid_;
     sigc::connection avoidConn_;
+
     Gtk::CheckButton* const avoidmun_;
     sigc::connection avoidmunConn_;
     Gtk::CheckButton* const blwh_;
@@ -438,6 +444,7 @@ private:
 
     Gtk::Box* const ctboxshape;
     Gtk::Box* const ctboxshapemethod;
+    Gtk::Box* const ctboxgamut;
 
     // Internal variables
     ControlPanelListener* controlPanelListener;

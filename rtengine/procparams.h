@@ -1019,6 +1019,8 @@ struct LocallabParams {
         int structexclu;
         double struc;
         Glib::ustring shapeMethod; // IND, SYM, INDSL, SYMSL
+        Glib::ustring avoidgamutMethod; // NONE, LAB, XYZ
+		
         std::vector<int> loc; // For ellipse/rectangle: {locX, locXL, locY, locYT}
         int centerX;
         int centerY;

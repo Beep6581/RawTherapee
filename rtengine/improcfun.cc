@@ -4714,12 +4714,32 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
                         lnew->a[i][j] = 327.68f * Chprov1 * sincosval.y;
                         lnew->b[i][j] = 327.68f * Chprov1 * sincosval.x;
                     } else {
+						
+						float xg, yg, zg;
+						Color::Lab2XYZ(lnew->L[i][j], atmp, btmp, xg, yg, zg);
+						Color::gamutmap(xg, yg, zg, wp);
+						float Lag ,aag2, bbg2;						
+						Color::XYZ2Lab(xg, yg, zg, Lag, aag2, bbg2);
+						Lprov1 = Lag / 327.68f;
+                        HH = xatan2f(bbg2, aag2);
+						Chprov1 = std::sqrt(SQR(aag2) + SQR(bbg2)) / 327.68f;
+						if (Chprov1 == 0.0f) {
+							sincosval.y = 1.f;
+							sincosval.x = 0.0f;
+						} else {
+							sincosval.y = aag2 / (Chprov1 * 327.68f);
+							sincosval.x = bbg2 / (Chprov1 * 327.68f);
+						}
+						lnew->L[i][j] = Lprov1 * 327.68f;
+						lnew->a[i][j] = 327.68f * Chprov1 * sincosval.y;
+						lnew->b[i][j] = 327.68f * Chprov1 * sincosval.x;
+						
                         //use gamutbdy
                         //Luv limiter
-                        float Y, u, v;
-                        Color::Lab2Yuv(lnew->L[i][j], atmp, btmp, Y, u, v);
+                       // float Y, u, v;
+                       /// Color::Lab2Yuv(lnew->L[i][j], atmp, btmp, Y, u, v);
                         //Yuv2Lab includes gamut restriction map
-                        Color::Yuv2Lab(Y, u, v, lnew->L[i][j], lnew->a[i][j], lnew->b[i][j], wp);
+                      //  Color::Yuv2Lab(Y, u, v, lnew->L[i][j], lnew->a[i][j], lnew->b[i][j], wp);
                     }
 
                     if (utili || autili || butili || ccut || clut || cclutili || chutili || lhutili || hhutili || clcutili || chromaticity) {

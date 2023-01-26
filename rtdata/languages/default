@@ -2904,6 +2904,12 @@ TP_LOCALLAB_GAMM;Gamma
 TP_LOCALLAB_GAMMASKCOL;Gamma
 TP_LOCALLAB_GAMMASK_TOOLTIP;Adjusting Gamma and Slope can provide a soft and artifact-free transformation of the mask by progressively modifying 'L' to avoid any discontinuities.
 TP_LOCALLAB_GAMSH;Gamma
+TP_LOCALLAB_GAMUT_TOOLTIP;Default : Munsell.\nMunsell: fixes Lab mode hue drifts due to non-linearity, when saturation is changed.\nLab: applies a gamut control, in relative colorimetry, Munsell is then applied.\nXYZ, applies gamut control, in absolute colorimetry, Munsell is then applied.
+TP_LOCALLAB_GAMUTTYPE;Avoir Color Shift
+TP_LOCALLAB_GAMUTNON;None
+TP_LOCALLAB_GAMUTLABRELA;Lab
+TP_LOCALLAB_GAMUTXYZABSO;XYZ
+TP_LOCALLAB_GAMUTMUNSELL;Munsell only
 TP_LOCALLAB_GAMW;Gamma (wavelet pyramids)
 TP_LOCALLAB_GRADANG;Gradient angle
 TP_LOCALLAB_GRADANG_TOOLTIP;Rotation angle in degrees: -180 0 +180.
