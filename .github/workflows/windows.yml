@@ -155,6 +155,7 @@ jobs:
             "libpixman-1-0.dll" \
             "libpng16-16.dll" \
             "librsvg-2-2.dll" \
+            "libsharpyuv-0.dll" \
             "libsigc-2.0-0.dll" \
             "libstdc++-6.dll" \
             "libsystre-0.dll" \
