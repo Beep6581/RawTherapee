@@ -33,7 +33,7 @@
 class BatchQueueEntry;
 class BatchQueuePanel;
 class EditorPanel;
-class ExternalEditor;
+struct ExternalEditor;
 class FilePanel;
 class PLDBridge;
 class RTWindow final :
