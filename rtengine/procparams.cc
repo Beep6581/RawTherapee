@@ -609,6 +609,7 @@ LCurveParams::LCurveParams() :
     contrast(0),
     chromaticity(0),
     avoidcolorshift(false),
+	gamutmunselmethod("MUN"),
     rstprotection(0),
     lcredsk(true)
 {
@@ -631,6 +632,7 @@ bool LCurveParams::operator ==(const LCurveParams& other) const
         && contrast == other.contrast
         && chromaticity == other.chromaticity
         && avoidcolorshift == other.avoidcolorshift
+        && gamutmunselmethod == other.gamutmunselmethod
         && rstprotection == other.rstprotection
         && lcredsk == other.lcredsk;
 }
@@ -6048,7 +6050,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->labCurve.contrast, "Luminance Curve", "Contrast", labCurve.contrast, keyFile);
         saveToKeyfile(!pedited || pedited->labCurve.chromaticity, "Luminance Curve", "Chromaticity", labCurve.chromaticity, keyFile);
         saveToKeyfile(!pedited || pedited->labCurve.avoidcolorshift, "Luminance Curve", "AvoidColorShift", labCurve.avoidcolorshift, keyFile);
-        saveToKeyfile(!pedited || pedited->labCurve.rstprotection, "Luminance Curve", "RedAndSkinTonesProtection", labCurve.rstprotection, keyFile);
+        saveToKeyfile(!pedited || pedited->labCurve.gamutmunselmethod, "Luminance Curve", "Gamutmunse", labCurve.gamutmunselmethod, keyFile);
+		saveToKeyfile(!pedited || pedited->labCurve.rstprotection, "Luminance Curve", "RedAndSkinTonesProtection", labCurve.rstprotection, keyFile);
         saveToKeyfile(!pedited || pedited->labCurve.lcredsk, "Luminance Curve", "LCredsk", labCurve.lcredsk, keyFile);
         saveToKeyfile(!pedited || pedited->labCurve.lcurve, "Luminance Curve", "LCurve", labCurve.lcurve, keyFile);
         saveToKeyfile(!pedited || pedited->labCurve.acurve, "Luminance Curve", "aCurve", labCurve.acurve, keyFile);
@@ -7917,6 +7920,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Luminance Curve", "hhCurve", pedited, labCurve.hhcurve, pedited->labCurve.hhcurve);
             assignFromKeyfile(keyFile, "Luminance Curve", "LcCurve", pedited, labCurve.lccurve, pedited->labCurve.lccurve);
             assignFromKeyfile(keyFile, "Luminance Curve", "ClCurve", pedited, labCurve.clcurve, pedited->labCurve.clcurve);
+            assignFromKeyfile(keyFile, "Luminance Curve", "Gamutmunse", pedited, labCurve.gamutmunselmethod, pedited->labCurve.gamutmunselmethod);
+			
         }
 
         if (keyFile.has_group("Sharpening")) {

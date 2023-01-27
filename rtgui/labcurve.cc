@@ -19,6 +19,7 @@
 #include <iomanip>
 
 #include "labcurve.h"
+#include "eventmapper.h"
 
 #include "curveeditor.h"
 #include "curveeditorgroup.h"
@@ -34,6 +35,9 @@ using namespace rtengine::procparams;
 
 LCurve::LCurve () : FoldableToolPanel(this, "labcurves", M("TP_LABCURVE_LABEL"), false, true)
 {
+    auto m = ProcEventMapper::getInstance();
+	Evgamutmunsell = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_GAMUTMUNSEL");
+	CurveListener::setMulti(true);	
     brightness = Gtk::manage (new Adjuster (M("TP_LABCURVE_BRIGHTNESS"), -100., 100., 1., 0.));
     contrast   = Gtk::manage (new Adjuster (M("TP_LABCURVE_CONTRAST"), -100., 100., 1., 0.));
     chromaticity   = Gtk::manage (new Adjuster (M("TP_LABCURVE_CHROMATICITY"), -100., 100., 1., 0.));
@@ -63,7 +67,26 @@ LCurve::LCurve () : FoldableToolPanel(this, "labcurves", M("TP_LABCURVE_LABEL"),
 
     avoidcolorshift = Gtk::manage (new Gtk::CheckButton (M("TP_LABCURVE_AVOIDCOLORSHIFT")));
     avoidcolorshift->set_tooltip_text (M("TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP"));
-    pack_start (*avoidcolorshift, Gtk::PACK_SHRINK, 4);
+//    pack_start (*avoidcolorshift, Gtk::PACK_SHRINK, 4);
+    
+
+
+    Gtk::Box* metHBox = Gtk::manage (new Gtk::Box ());
+    metHBox->set_spacing (2);
+    Gtk::Label* metLabel = Gtk::manage (new Gtk::Label (M("TP_LOCALLAB_GAMUTTYPE") + ":"));
+    metHBox->pack_start (*metLabel, Gtk::PACK_SHRINK);
+
+	gamutmunselmethod =  Gtk::manage(new MyComboBoxText());
+    gamutmunselmethod->append(M("TP_LOCALLAB_GAMUTNON"));
+    gamutmunselmethod->append(M("TP_LOCALLAB_GAMUTLABRELA"));
+    gamutmunselmethod->append(M("TP_LOCALLAB_GAMUTXYZABSO"));
+    gamutmunselmethod->append(M("TP_LOCALLAB_GAMUTMUNSELL"));
+    gamutmunselmethod->set_active(3);
+	
+	metHBox->pack_start(*gamutmunselmethod);
+    pack_start(*metHBox);
+    gamutmunselmethodconn = gamutmunselmethod->signal_changed().connect(sigc::mem_fun(*this, &LCurve::gamutmunselChanged));
+
 
     lcredsk = Gtk::manage (new Gtk::CheckButton (M("TP_LABCURVE_LCREDSK")));
     lcredsk->set_tooltip_markup (M("TP_LABCURVE_LCREDSK_TOOLTIP"));
@@ -220,6 +243,7 @@ LCurve::LCurve () : FoldableToolPanel(this, "labcurves", M("TP_LABCURVE_LABEL"),
     Gtk::Separator* hsepdh = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     hsepdh->show ();
     pack_start (*hsepdh, Gtk::PACK_EXPAND_WIDGET, 4);
+    show_all_children ();
 
 }
 
@@ -233,31 +257,8 @@ void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited)
 {
 
     disableListener ();
+	gamutmunselmethodconn.block(true);
 
-    if (pedited) {
-        brightness->setEditedState (pedited->labCurve.brightness ? Edited : UnEdited);
-        contrast->setEditedState (pedited->labCurve.contrast ? Edited : UnEdited);
-        chromaticity->setEditedState (pedited->labCurve.chromaticity ? Edited : UnEdited);
-
-        //%%%%%%%%%%%%%%%%%%%%%%
-        rstprotection->setEditedState (pedited->labCurve.rstprotection ? Edited : UnEdited);
-        avoidcolorshift->set_inconsistent (!pedited->labCurve.avoidcolorshift);
-        lcredsk->set_inconsistent (!pedited->labCurve.lcredsk);
-
-        //%%%%%%%%%%%%%%%%%%%%%%
-
-        lshape->setUnChanged   (!pedited->labCurve.lcurve);
-        ashape->setUnChanged   (!pedited->labCurve.acurve);
-        bshape->setUnChanged   (!pedited->labCurve.bcurve);
-        ccshape->setUnChanged  (!pedited->labCurve.cccurve);
-        chshape->setUnChanged  (!pedited->labCurve.chcurve);
-        lhshape->setUnChanged  (!pedited->labCurve.lhcurve);
-        hhshape->setUnChanged  (!pedited->labCurve.hhcurve);
-        lcshape->setUnChanged  (!pedited->labCurve.lccurve);
-        clshape->setUnChanged  (!pedited->labCurve.clcurve);
-
-        set_inconsistent(multiImage && !pedited->labCurve.enabled);
-    }
 
     brightness->setValue    (pp->labCurve.brightness);
     contrast->setValue      (pp->labCurve.contrast);
@@ -265,6 +266,7 @@ void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited)
     adjusterChanged(chromaticity, pp->labCurve.chromaticity); // To update the GUI sensitiveness
     //%%%%%%%%%%%%%%%%%%%%%%
     rstprotection->setValue (pp->labCurve.rstprotection);
+		
 
     bwtconn.block (true);
     acconn.block (true);
@@ -290,12 +292,57 @@ void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited)
     lcshape->setCurve  (pp->labCurve.lccurve);
     clshape->setCurve  (pp->labCurve.clcurve);
 
+    if (pedited && !pedited->labCurve.gamutmunselmethod) {
+		gamutmunselmethod->set_active (4);    // "Unchanged"
+    } else if (pp->labCurve.gamutmunselmethod == "NONE") {
+        gamutmunselmethod->set_active(0);
+    } else if (pp->labCurve.gamutmunselmethod == "LAB") {
+        gamutmunselmethod->set_active(1);
+    } else if (pp->labCurve.gamutmunselmethod == "XYZ") {
+        gamutmunselmethod->set_active(2);
+    } else if (pp->labCurve.gamutmunselmethod == "MUN") {
+        gamutmunselmethod->set_active(3);
+    }
+	gamutmunselChanged();
+	
+    if (pedited) {
+        brightness->setEditedState (pedited->labCurve.brightness ? Edited : UnEdited);
+        contrast->setEditedState (pedited->labCurve.contrast ? Edited : UnEdited);
+        chromaticity->setEditedState (pedited->labCurve.chromaticity ? Edited : UnEdited);
+
+        //%%%%%%%%%%%%%%%%%%%%%%
+        rstprotection->setEditedState (pedited->labCurve.rstprotection ? Edited : UnEdited);
+        avoidcolorshift->set_inconsistent (!pedited->labCurve.avoidcolorshift);
+        lcredsk->set_inconsistent (!pedited->labCurve.lcredsk);
+
+        //%%%%%%%%%%%%%%%%%%%%%%
+
+        lshape->setUnChanged   (!pedited->labCurve.lcurve);
+        ashape->setUnChanged   (!pedited->labCurve.acurve);
+        bshape->setUnChanged   (!pedited->labCurve.bcurve);
+        ccshape->setUnChanged  (!pedited->labCurve.cccurve);
+        chshape->setUnChanged  (!pedited->labCurve.chcurve);
+        lhshape->setUnChanged  (!pedited->labCurve.lhcurve);
+        hhshape->setUnChanged  (!pedited->labCurve.hhcurve);
+        lcshape->setUnChanged  (!pedited->labCurve.lccurve);
+        clshape->setUnChanged  (!pedited->labCurve.clcurve);
+        if (!pedited->labCurve.gamutmunselmethod) {
+            gamutmunselmethod->set_active_text(M("GENERAL_UNCHANGED"));
+        }
+
+        set_inconsistent(multiImage && !pedited->labCurve.enabled);
+    }
+	
+	gamutmunselmethodconn.block(false);
+
+
     setEnabled(pp->labCurve.enabled);
     
     queue_draw();
 
     enableListener ();
 }
+
 
 void LCurve::autoOpenCurve ()
 {
@@ -375,6 +422,8 @@ void LCurve::write (ProcParams* pp, ParamsEdited* pedited)
     pp->labCurve.lccurve = lcshape->getCurve ();
     pp->labCurve.clcurve = clshape->getCurve ();
 
+	
+
     if (pedited) {
         pedited->labCurve.brightness   = brightness->getEditedState ();
         pedited->labCurve.contrast     = contrast->getEditedState ();
@@ -385,6 +434,7 @@ void LCurve::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->labCurve.lcredsk         = !lcredsk->get_inconsistent();
 
         pedited->labCurve.rstprotection   = rstprotection->getEditedState ();
+        pedited->labCurve.gamutmunselmethod = gamutmunselmethod->get_active_text() != M("GENERAL_UNCHANGED");
 
         pedited->labCurve.lcurve    = !lshape->isUnChanged ();
         pedited->labCurve.acurve    = !ashape->isUnChanged ();
@@ -397,8 +447,21 @@ void LCurve::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->labCurve.clcurve   = !clshape->isUnChanged ();
 
         pedited->labCurve.enabled = !get_inconsistent();
+		
     }
 
+    if (gamutmunselmethod->get_active_row_number() == 0) {
+        pp->labCurve.gamutmunselmethod = "NONE";
+    } else if (gamutmunselmethod->get_active_row_number() == 1) {
+        pp->labCurve.gamutmunselmethod = "LAB";
+    } else if (gamutmunselmethod->get_active_row_number() == 2) {
+        pp->labCurve.gamutmunselmethod = "XYZ";
+    } else if (gamutmunselmethod->get_active_row_number() == 3) {
+        pp->labCurve.gamutmunselmethod = "MUN";
+	}
+	
+
+	
 }
 
 void LCurve::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)
@@ -448,6 +511,16 @@ void LCurve::avoidcolorshift_toggled ()
         }
     }
 }
+
+void LCurve::gamutmunselChanged()
+{
+	
+    if (listener && (multiImage || getEnabled())) {
+        listener->panelChanged(Evgamutmunsell, gamutmunselmethod->get_active_text());
+    }
+	
+}
+
 
 void LCurve::lcredsk_toggled ()
 {
@@ -645,6 +718,8 @@ void LCurve::setBatchMode (bool batchMode)
     curveEditorG->setBatchMode (batchMode);
     lcshape->setBottomBarColorProvider(nullptr, -1);
     lcshape->setLeftBarColorProvider(nullptr, -1);
+    gamutmunselmethod->append(M("GENERAL_UNCHANGED"));    
+	
 }
 
 

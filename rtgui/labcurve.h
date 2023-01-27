@@ -62,6 +62,10 @@ protected:
     Gtk::CheckButton* avoidcolorshift;
     Gtk::CheckButton* lcredsk;
 
+    MyComboBoxText* gamutmunselmethod;
+    sigc::connection   gamutmunselmethodconn;
+    rtengine::ProcEvent Evgamutmunsell;
+
     Adjuster* rstprotection;
     sigc::connection  bwtconn, acconn, lcconn;
     bool lastACVal, lastLCVal;
@@ -86,6 +90,7 @@ public:
     void adjusterChanged (Adjuster* a, double newval) override;
     void avoidcolorshift_toggled ();
     void lcredsk_toggled();
+    void gamutmunselChanged();
 
     void updateCurveBackgroundHistogram(
         const LUTu& histToneCurve,

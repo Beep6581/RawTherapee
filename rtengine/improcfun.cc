@@ -1456,6 +1456,12 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
 #else
                             float xx, yy, zz;
                             //process normal==> viewing
+							TMatrix wprofc = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
+							const double wpc[3][3] = {//improve precision with double
+								{wprofc[0][0], wprofc[0][1], wprofc[0][2]},
+								{wprofc[1][0], wprofc[1][1], wprofc[1][2]},
+								{wprofc[2][0], wprofc[2][1], wprofc[2][2]}
+							};
 
                             Ciecam02::jch2xyz_ciecam02float(xx, yy, zz,
                                                             J,  C, h,
@@ -1467,35 +1473,13 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                             z = zz * 655.35f;
                             float Ll, aa, bb;
                             //convert xyz=>lab
-                            Color::XYZ2Lab(x,  y,  z, Ll, aa, bb);
-
-                            // gamut control in Lab mode; I must study how to do with cIECAM only
                             if (gamu == 1) {
-                                float Lprov1, Chprov1;
-                                Lprov1 = Ll / 327.68f;
-                                Chprov1 = sqrtf(SQR(aa) + SQR(bb)) / 327.68f;
-                                float2  sincosval;
-
-                                if (Chprov1 == 0.0f) {
-                                    sincosval.y = 1.f;
-                                    sincosval.x = 0.0f;
-                                } else {
-                                    sincosval.y = aa / (Chprov1 * 327.68f);
-                                    sincosval.x = bb / (Chprov1 * 327.68f);
-                                }
-
-
-                                //gamut control : Lab values are in gamut
-                                Color::gamutLchonly(sincosval, Lprov1, Chprov1, wip, highlight, 0.15f, 0.96f);
-                                lab->L[i][j] = Lprov1 * 327.68f;
-                                lab->a[i][j] = 327.68f * Chprov1 * sincosval.y;
-                                lab->b[i][j] = 327.68f * Chprov1 * sincosval.x;
-
-                            } else {
+								Color::gamutmap(x, y, z, wpc);
+							}
+                            Color::XYZ2Lab(x,  y,  z, Ll, aa, bb);
                                 lab->L[i][j] = Ll;
                                 lab->a[i][j] = aa;
                                 lab->b[i][j] = bb;
-                            }
 
 #endif
                         }
@@ -4203,7 +4187,18 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
     const bool clut = clcutili;
     const double rstprotection = 100. - params->labCurve.rstprotection; // Red and Skin Tones Protection
     // avoid color shift is disabled when bwToning is activated and enabled if gamut is true in colorappearanace
-    const bool avoidColorShift = (params->labCurve.avoidcolorshift || (params->colorappearance.gamut && params->colorappearance.enabled)) && !bwToning ;
+   // const bool avoidColorShift = (params->labCurve.avoidcolorshift || (params->colorappearance.gamut && params->colorappearance.enabled)) && !bwToning ;
+	int gamutmuns = 0;
+	if (params->labCurve.gamutmunselmethod == "NONE") {
+        gamutmuns = 0;
+    } else if (params->labCurve.gamutmunselmethod == "LAB") {
+        gamutmuns = 1;
+    } else if (params->labCurve.gamutmunselmethod == "XYZ") {
+        gamutmuns = 2;
+    } else if (params->labCurve.gamutmunselmethod == "MUN") {
+        gamutmuns = 3;
+	}
+
     const float protectRed = (float)settings->protectred;
     const double protectRedH = settings->protectredh;
     const float protect_red = rtengine::LIM<float>(protectRed, 20.f, 180.f); //default=60  chroma: one can put more or less if necessary...in 'option'  40...160
@@ -4228,7 +4223,7 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
     const float scaleConst = 100.0f / 100.1f;
 
 
-    const bool gamutLch = settings->gamutLch;
+    //const bool gamutLch = settings->gamutLch;
     const float amountchroma = (float) settings->amchroma;
 
     TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (params->icm.workingProfile);
@@ -4258,12 +4253,12 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
 #endif
 
         for (int i = 0; i < H; i++) {
-            if (avoidColorShift)
+           // if (avoidColorShift)
 
                 // only if user activate Lab adjustments
-                if (autili || butili || ccutili ||  cclutili || chutili || lhutili || hhutili || clcutili || utili || chromaticity) {
-                    Color::LabGamutMunsell(lold->L[i], lold->a[i], lold->b[i], W, /*corMunsell*/true, /*lumaMuns*/false, params->toneCurve.hrenabled, /*gamut*/true, wip);
-                }
+             //   if (autili || butili || ccutili ||  cclutili || chutili || lhutili || hhutili || clcutili || utili || chromaticity) {
+             //       Color::LabGamutMunsell(lold->L[i], lold->a[i], lold->b[i], W, /*corMunsell*/true, /*lumaMuns*/false, params->toneCurve.hrenabled, /*gamut*/true, wip);
+             //   }
 
 #ifdef __SSE2__
 
@@ -4704,16 +4699,20 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
                     btmp -= lold->b[i][j];
                 }
 
-                if (avoidColorShift) {
+                    lnew->L[i][j] = Lprov1 * 327.68f;
+                    lnew->a[i][j] = 327.68f * Chprov1 * sincosval.y;
+                    lnew->b[i][j] = 327.68f * Chprov1 * sincosval.x;
+					
                     //gamutmap Lch ==> preserve Hue,but a little slower than gamutbdy for high values...and little faster for low values
-                    if (gamutLch) {
+                    if (gamutmuns == 1) {
                         float R, G, B;
                         //gamut control : Lab values are in gamut
                         Color::gamutLchonly(HH, sincosval, Lprov1, Chprov1, R, G, B, wip, highlight, 0.15f, 0.96f);
                         lnew->L[i][j] = Lprov1 * 327.68f;
                         lnew->a[i][j] = 327.68f * Chprov1 * sincosval.y;
                         lnew->b[i][j] = 327.68f * Chprov1 * sincosval.x;
-                    } else {
+					}
+                    if (gamutmuns == 2) {
 						
 						float xg, yg, zg;
 						Color::Lab2XYZ(lnew->L[i][j], atmp, btmp, xg, yg, zg);
@@ -4734,15 +4733,9 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
 						lnew->a[i][j] = 327.68f * Chprov1 * sincosval.y;
 						lnew->b[i][j] = 327.68f * Chprov1 * sincosval.x;
 						
-                        //use gamutbdy
-                        //Luv limiter
-                       // float Y, u, v;
-                       /// Color::Lab2Yuv(lnew->L[i][j], atmp, btmp, Y, u, v);
-                        //Yuv2Lab includes gamut restriction map
-                      //  Color::Yuv2Lab(Y, u, v, lnew->L[i][j], lnew->a[i][j], lnew->b[i][j], wp);
                     }
-
-                    if (utili || autili || butili || ccut || clut || cclutili || chutili || lhutili || hhutili || clcutili || chromaticity) {
+					if (gamutmuns > 0) {
+						if (utili || autili || butili || ccut || clut || cclutili || chutili || lhutili || hhutili || clcutili || chromaticity) {
                         float correctionHue = 0.f; // Munsell's correction
                         float correctlum = 0.f;
 
@@ -4766,8 +4759,10 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
 
                         lnew->a[i][j] = 327.68f * Chprov * sincosval.y; // apply Munsell
                         lnew->b[i][j] = 327.68f * Chprov * sincosval.x;
-                    }
-                } else {
+						}
+					}
+				if (gamutmuns == 0) {
+	
 //              if(Lprov1 > maxlp) maxlp=Lprov1;
 //              if(Lprov1 < minlp) minlp=Lprov1;
                     if (!bwToning) {
