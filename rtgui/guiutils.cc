@@ -1506,48 +1506,110 @@ TextOrIcon::TextOrIcon (const Glib::ustring &fname, const Glib::ustring &labelTx
 
 }
 
-MyImageMenuItem::MyImageMenuItem(Glib::ustring label, Glib::ustring imageFileName)
+class ImageAndLabel::Impl
 {
-    RTImage* itemImage = nullptr;
+public:
+    RTImage* image;
+    Gtk::Label* label;
 
-    if (!imageFileName.empty()) {
-        itemImage = Gtk::manage(new RTImage(imageFileName));
+    Impl(RTImage* image, Gtk::Label* label) : image(image), label(label) {}
+    static std::unique_ptr<RTImage> createImage(const Glib::ustring& fileName);
+};
+
+std::unique_ptr<RTImage> ImageAndLabel::Impl::createImage(const Glib::ustring& fileName)
+{
+    if (fileName.empty()) {
+        return nullptr;
     }
-
-    construct(label, itemImage);
+    return std::unique_ptr<RTImage>(new RTImage(fileName));
 }
 
-MyImageMenuItem::MyImageMenuItem(Glib::ustring label, RTImage* itemImage) {
-    construct(label, itemImage);
+ImageAndLabel::ImageAndLabel(const Glib::ustring& label, const Glib::ustring& imageFileName) :
+    ImageAndLabel(label, Gtk::manage(Impl::createImage(imageFileName).release()))
+{
 }
 
-void MyImageMenuItem::construct(Glib::ustring label, RTImage* itemImage)
+ImageAndLabel::ImageAndLabel(const Glib::ustring& label, RTImage *image) :
+    pimpl(new Impl(image, Gtk::manage(new Gtk::Label(label))))
 {
-    box = Gtk::manage (new Gtk::Grid());
-    this->label = Gtk::manage( new Gtk::Label(label));
-    box->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
+    Gtk::Grid* grid = Gtk::manage(new Gtk::Grid());
+    grid->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
 
-    if (itemImage) {
-        image = itemImage;
-        box->attach_next_to(*image, Gtk::POS_LEFT, 1, 1);
-    } else {
-        image = nullptr;
+    if (image) {
+        grid->attach_next_to(*image, Gtk::POS_LEFT, 1, 1);
     }
 
-    box->attach_next_to(*this->label, Gtk::POS_RIGHT, 1, 1);
-    box->set_column_spacing(4);
-    box->set_row_spacing(0);
-    add(*box);
+    grid->attach_next_to(*(pimpl->label), Gtk::POS_RIGHT, 1, 1);
+    grid->set_column_spacing(4);
+    grid->set_row_spacing(0);
+    pack_start(*grid, Gtk::PACK_SHRINK, 0);
+}
+
+const RTImage* ImageAndLabel::getImage() const
+{
+    return pimpl->image;
+}
+
+const Gtk::Label* ImageAndLabel::getLabel() const
+{
+    return pimpl->label;
+}
+
+class MyImageMenuItem::Impl
+{
+private:
+    std::unique_ptr<ImageAndLabel> widget;
+
+public:
+    Impl(const Glib::ustring &label, const Glib::ustring &imageFileName) :
+        widget(new ImageAndLabel(label, imageFileName)) {}
+    Impl(const Glib::ustring &label, RTImage *itemImage) :
+        widget(new ImageAndLabel(label, itemImage)) {}
+    ImageAndLabel* getWidget() const { return widget.get(); }
+};
+
+MyImageMenuItem::MyImageMenuItem(const Glib::ustring& label, const Glib::ustring& imageFileName) :
+    pimpl(new Impl(label, imageFileName))
+{
+    add(*(pimpl->getWidget()));
+}
+
+MyImageMenuItem::MyImageMenuItem(const Glib::ustring& label, RTImage* itemImage) :
+    pimpl(new Impl(label, itemImage))
+{
+    add(*(pimpl->getWidget()));
 }
 
 const RTImage *MyImageMenuItem::getImage () const
 {
-    return image;
+    return pimpl->getWidget()->getImage();
 }
 
 const Gtk::Label* MyImageMenuItem::getLabel () const
 {
-    return label;
+    return pimpl->getWidget()->getLabel();
+}
+
+class MyRadioImageMenuItem::Impl
+{
+    std::unique_ptr<ImageAndLabel> widget;
+
+public:
+    Impl(const Glib::ustring &label, RTImage *image) :
+        widget(new ImageAndLabel(label, image)) {}
+    ImageAndLabel* getWidget() const { return widget.get(); }
+};
+
+MyRadioImageMenuItem::MyRadioImageMenuItem(const Glib::ustring& label, RTImage *image, Gtk::RadioButton::Group& group) :
+    Gtk::RadioMenuItem(group),
+    pimpl(new Impl(label, image))
+{
+    add(*(pimpl->getWidget()));
+}
+
+const Gtk::Label* MyRadioImageMenuItem::getLabel() const
+{
+    return pimpl->getWidget()->getLabel();
 }
 
 MyProgressBar::MyProgressBar(int width) : w(rtengine::max(width, 10 * RTScalable::getScale())) {}
