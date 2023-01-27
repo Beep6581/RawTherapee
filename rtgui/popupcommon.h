@@ -40,6 +40,7 @@ class Grid;
 class Menu;
 class Button;
 class ImageMenuItem;
+class RadioButtonGroup;
 class Widget;
 
 }
@@ -60,9 +61,9 @@ public:
 
     explicit PopUpCommon (Gtk::Button* button, const Glib::ustring& label = "");
     virtual ~PopUpCommon ();
-    bool addEntry (const Glib::ustring& fileName, const Glib::ustring& label);
-    bool insertEntry(int position, const Glib::ustring& fileName, const Glib::ustring& label);
-    bool insertEntry(int position, const Glib::RefPtr<const Gio::Icon>& gIcon, const Glib::ustring& label);
+    bool addEntry (const Glib::ustring& fileName, const Glib::ustring& label, Gtk::RadioButtonGroup* radioGroup = nullptr);
+    bool insertEntry(int position, const Glib::ustring& fileName, const Glib::ustring& label, Gtk::RadioButtonGroup* radioGroup = nullptr);
+    bool insertEntry(int position, const Glib::RefPtr<const Gio::Icon>& gIcon, const Glib::ustring& label, Gtk::RadioButtonGroup* radioGroup = nullptr);
     int getEntryCount () const;
     bool setSelected (int entryNum);
     int  getSelected () const;
@@ -91,7 +92,7 @@ private:
     void changeImage(int position);
     void changeImage(const Glib::ustring& fileName, const Glib::RefPtr<const Gio::Icon>& gIcon);
     void entrySelected(Gtk::Widget* menuItem);
-    bool insertEntryImpl(int position, const Glib::ustring& fileName, const Glib::RefPtr<const Gio::Icon>& gIcon, RTImage* image, const Glib::ustring& label);
+    bool insertEntryImpl(int position, const Glib::ustring& fileName, const Glib::RefPtr<const Gio::Icon>& gIcon, RTImage* image, const Glib::ustring& label, Gtk::RadioButtonGroup* radioGroup);
     void showMenu(GdkEventButton* event);
 
 protected:
