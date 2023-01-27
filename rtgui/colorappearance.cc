@@ -681,14 +681,22 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     ybout->set_tooltip_markup (M ("TP_COLORAPP_YBOUT_TOOLTIP"));
 
     tempout->set_tooltip_markup (M ("TP_COLORAPP_TEMP2_TOOLTIP"));
- //   tempout->throwOnButtonRelease();
- //   tempout->addAutoButton (M ("TP_COLORAPP_TEMPOUT_TOOLTIP"));
-
+    tempout->throwOnButtonRelease();
+    tempout->addAutoButton (M ("TP_COLORAPP_TEMPOUT_TOOLTIP"));
+	// I renable tempout with addautobutton to work properly (and all code disabled). There are certainly some redundancies, but it doesn't matter
     tempout->show();
     greenout->show();
     ybout->show();
-    p3VBox->pack_start (*tempout);
-    p3VBox->pack_start (*greenout);
+    Gtk::Frame *tempgreenFrame;
+    tempgreenFrame = Gtk::manage(new Gtk::Frame());
+    tempgreenFrame->set_label_align (0.025, 0.5);
+    Gtk::Box* tempgreenVBox;
+    tempgreenVBox = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    tempgreenVBox->set_spacing (2);
+    tempgreenVBox->pack_start (*tempout);
+	tempgreenVBox->pack_start (*greenout);
+	tempgreenFrame->add(*tempgreenVBox);
+    p3VBox->pack_start(*tempgreenFrame);
     p3VBox->pack_start (*ybout);
 
     Gtk::Box* surrHBox = Gtk::manage (new Gtk::Box ());
@@ -822,7 +830,7 @@ void ColorAppearance::neutral_pressed ()
     qcontrast->resetValue (false);
     colorh->resetValue (false);
     tempout->resetValue (false);
-//   tempout->setAutoValue (true);
+	tempout->setAutoValue (true);
     greenout->resetValue (false);
     ybout->resetValue (false);
     tempsc->resetValue (false);
@@ -913,7 +921,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
         adapscen->setAutoInconsistent (multiImage && !pedited->colorappearance.autoadapscen);
         ybscen->setAutoInconsistent (multiImage && !pedited->colorappearance.autoybscen);
         set_inconsistent              (multiImage && !pedited->colorappearance.enabled);
-    //    tempout->setAutoInconsistent   (multiImage && !pedited->colorappearance.autotempout);
+        tempout->setAutoInconsistent   (multiImage && !pedited->colorappearance.autotempout);
 
         shape->setUnChanged (!pedited->colorappearance.curve);
         shape2->setUnChanged (!pedited->colorappearance.curve2);
@@ -1098,7 +1106,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     lastAutoAdapscen = pp->colorappearance.autoadapscen;
     lastAutoDegreeout = pp->colorappearance.autodegreeout;
     lastAutoybscen = pp->colorappearance.autoybscen;
-//    lastAutotempout = pp->colorappearance.autotempout;
+    lastAutotempout = pp->colorappearance.autotempout;
 
     degree->setValue (pp->colorappearance.degree);
     degree->setAutoValue (pp->colorappearance.autodegree);
@@ -1121,7 +1129,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     qcontrast->setValue (pp->colorappearance.qcontrast);
     colorh->setValue (pp->colorappearance.colorh);
     tempout->setValue (pp->colorappearance.tempout);
-//    tempout->setAutoValue (pp->colorappearance.autotempout);
+	tempout->setAutoValue (pp->colorappearance.autotempout);
     greenout->setValue (pp->colorappearance.greenout);
     ybout->setValue (pp->colorappearance.ybout);
     tempsc->setValue (pp->colorappearance.tempsc);
@@ -1185,7 +1193,7 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
     pp->colorappearance.curve2        = shape2->getCurve ();
     pp->colorappearance.curve3        = shape3->getCurve ();
     pp->colorappearance.tempout        = tempout->getValue ();
-//    pp->colorappearance.autotempout    = tempout->getAutoValue ();
+    pp->colorappearance.autotempout    = tempout->getAutoValue ();
     pp->colorappearance.greenout        = greenout->getValue ();
     pp->colorappearance.ybout        = ybout->getValue ();
     pp->colorappearance.tempsc        = tempsc->getValue ();
@@ -1263,7 +1271,7 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->colorappearance.ybout        = ybout->getEditedState ();
         pedited->colorappearance.tempsc        = tempsc->getEditedState ();
         pedited->colorappearance.greensc        = greensc->getEditedState ();
-//        pedited->colorappearance.autotempout    = !tempout->getAutoInconsistent();
+        pedited->colorappearance.autotempout    = !tempout->getAutoInconsistent();
 
     }
 
@@ -1355,7 +1363,9 @@ void ColorAppearance::updateGUIToMode(int mode)
         curveEditorG->hide();
         curveEditorG2->hide();
         curveEditorG3->hide();
-        greenout->hide();
+        //greenout->hide();
+        greenout->set_sensitive(false);
+		
         badpixsl->hide();
         datacie->hide();
     } else {
@@ -1364,7 +1374,8 @@ void ColorAppearance::updateGUIToMode(int mode)
         curveEditorG->show();
         curveEditorG2->show();
         curveEditorG3->show();
-        greenout->show();
+      //  greenout->show();
+        greenout->set_sensitive(true);
         badpixsl->show();
         datacie->show();
     }
@@ -1470,13 +1481,13 @@ void ColorAppearance::catmethodChanged()
         ybout->setValue(18);
         tempout->setValue (nexttemp);
     
-/*    if(tempout->getAutoValue()) {
-        tempout->resetValue (false);
-    } else {
-        tempout->setValue (nexttemp);
-        tempout->setAutoValue (true);
-    }
-*/
+		if(tempout->getAutoValue()) {
+			tempout->resetValue (false);
+		} else {
+			tempout->setValue (nexttemp);
+			tempout->setAutoValue (true);
+		}
+
         greenout->setValue (nextgreen);
         enableListener();
     
@@ -1525,7 +1536,7 @@ void ColorAppearance::catmethodChanged()
         adaplum->resetValue (false);
         degreeout->resetValue (false);
         ybout->resetValue (false);
-       // tempout->resetValue (false);
+        tempout->resetValue (false);
         tempout->setValue (nexttemp);
         greenout->resetValue (false);
         enableListener();
@@ -1863,14 +1874,14 @@ void ColorAppearance::adapCamChanged (double cadap)
 
 
 void ColorAppearance::wbCamChanged (double temp, double tin)
-{
+{//reactivate this function
     
     idle_register.add(
         [this, temp, tin]() -> bool
         {
             disableListener();
             tempout->setValue(temp);
-            greenout->setValue(tin);
+			greenout->setValue(tin);
             enableListener();
             return false;
         }
@@ -1999,7 +2010,7 @@ void ColorAppearance::adjusterAutoToggled(Adjuster* a)
             ybscen->setAutoInconsistent (true);
         }
 
-/*        lastAutotempout = tempout->getAutoValue();
+        lastAutotempout = tempout->getAutoValue();
 
         if (tempout->getAutoInconsistent()) {
             tempout->setAutoInconsistent (false);
@@ -2009,7 +2020,7 @@ void ColorAppearance::adjusterAutoToggled(Adjuster* a)
         }
 
         lastAutotempout = tempout->getAutoValue();
-*/
+
     }
     if (listener && (multiImage || getEnabled()) ) {
 
@@ -2053,7 +2064,7 @@ void ColorAppearance::adjusterAutoToggled(Adjuster* a)
                 listener->panelChanged (EvCATAutoyb, M ("GENERAL_DISABLED"));
             }
         }
-/*
+
         if (a == tempout) {
             if (tempout->getAutoInconsistent()) {
                 listener->panelChanged (EvCATAutotempout, M ("GENERAL_UNCHANGED"));
@@ -2063,7 +2074,7 @@ void ColorAppearance::adjusterAutoToggled(Adjuster* a)
                 listener->panelChanged (EvCATAutotempout, M ("GENERAL_DISABLED"));
             }
         }
-*/
+
     }
 }
 void ColorAppearance::enabledChanged ()
