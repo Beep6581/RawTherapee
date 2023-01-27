@@ -305,7 +305,6 @@ struct ColorAppearanceParamsEdited {
     bool ybout;
     bool tempsc;
     bool greensc;
-    bool presetcat02;
 };
 
 struct DirPyrDenoiseParamsEdited {
@@ -1231,6 +1230,7 @@ struct ColorManagementParamsEdited {
     bool bluy;
     bool preser;
     bool fbw;
+    bool gamut;
     bool labgridcieALow;
     bool labgridcieBLow;
     bool labgridcieAHigh;
@@ -1489,6 +1489,7 @@ struct RAWParamsEdited {
     bool df_autoselect;
     bool ff_file;
     bool ff_AutoSelect;
+    bool ff_FromMetaData;
     bool ff_BlurRadius;
     bool ff_BlurType;
     bool ff_AutoClipControl;

@@ -22,12 +22,40 @@
 
 #include <cassert>
 #include <iostream>
+#include <gtkmm/icontheme.h>
+#include <unordered_map>
 
 #include "../rtengine/settings.h"
 
 namespace
 {
 
+struct GIconKey {
+    Glib::RefPtr<const Gio::Icon> icon;
+    /**
+     * Icon size in pixels.
+     */
+    int icon_size;
+
+    GIconKey() {}
+    GIconKey(const Glib::RefPtr<const Gio::Icon> &icon, int icon_size): icon(icon), icon_size(icon_size) {}
+
+    bool operator==(const GIconKey &other) const
+    {
+        bool icons_match = (icon.get() == nullptr && other.icon.get() == nullptr) || (icon.get() != nullptr && icon->equal(Glib::RefPtr<Gio::Icon>::cast_const(other.icon)));
+        return icons_match && icon_size == other.icon_size;
+    }
+};
+
+struct GIconKeyHash {
+    size_t operator()(const GIconKey &key) const
+    {
+        const size_t icon_hash = key.icon ? key.icon->hash() : 0;
+        return icon_hash ^ std::hash<int>()(key.icon_size);
+    }
+};
+
+std::unordered_map<GIconKey, Glib::RefPtr<Gdk::Pixbuf>, GIconKeyHash> gIconPixbufCache;
 std::map<std::string, Glib::RefPtr<Gdk::Pixbuf> > pixbufCache;
 std::map<std::string, Cairo::RefPtr<Cairo::ImageSurface> > surfaceCache;
 
@@ -44,6 +72,8 @@ RTImage::RTImage (RTImage &other) : surface(other.surface), pixbuf(other.pixbuf)
         set(pixbuf);
     } else if (surface) {
         set(surface);
+    } else if (other.gIcon) {
+        changeImage(other.gIcon, other.gIconSize);
     }
 }
 
@@ -80,11 +110,25 @@ RTImage::RTImage (Glib::RefPtr<RTImage> &other)
         if (other->get_surface()) {
             surface = other->get_surface();
             set(surface);
-        } else {
+        } else if (other->pixbuf) {
             pixbuf = other->get_pixbuf();
             set(pixbuf);
+        } else if (other->gIcon) {
+            changeImage(other->gIcon, other->gIconSize);
         }
     }
+}
+
+RTImage::RTImage(const Glib::RefPtr<const Gio::Icon> &gIcon, Gtk::IconSize size)
+{
+    changeImage(gIcon, size);
+}
+
+int RTImage::iconSizeToPixels(Gtk::IconSize size) const
+{
+    int width, height;
+    Gtk::IconSize::lookup(size, width, height);
+    return std::round(getTweakedDPI() / baseDPI * std::max(width, height));
 }
 
 void RTImage::setImage (const Glib::ustring& fileName, const Glib::ustring& rtlFileName)
@@ -113,9 +157,40 @@ void RTImage::setDPInScale (const double newDPI, const int newScale)
     }
 }
 
+void RTImage::changeImage(const Glib::RefPtr<const Gio::Icon> &gIcon, int size)
+{
+    clear();
+
+    pixbuf.reset();
+    surface.clear();
+    this->gIcon = gIcon;
+
+    if (!gIcon) {
+        return;
+    }
+
+    gIconSize = size;
+    GIconKey key(gIcon, gIconSize);
+    auto iterator = gIconPixbufCache.find(key);
+
+    if (iterator == gIconPixbufCache.end()) {
+        auto icon_pixbuf = createPixbufFromGIcon(gIcon, gIconSize);
+        iterator = gIconPixbufCache.emplace(key, icon_pixbuf).first;
+    }
+
+    set(iterator->second);
+}
+
+void RTImage::changeImage(const Glib::RefPtr<const Gio::Icon> &gIcon, Gtk::IconSize size)
+{
+    changeImage(gIcon, iconSizeToPixels(size));
+}
+
 void RTImage::changeImage (const Glib::ustring& imageName)
 {
     clear ();
+
+    gIcon.reset();
 
     if (imageName.empty()) {
         return;
@@ -150,6 +225,11 @@ int RTImage::get_width()
     if (pixbuf) {
         return pixbuf->get_width();
     }
+
+    if (gIcon) {
+        return this->get_pixbuf()->get_width();
+    }
+
     return -1;
 }
 
@@ -161,6 +241,11 @@ int RTImage::get_height()
     if (pixbuf) {
         return pixbuf->get_height();
     }
+
+    if (gIcon) {
+        return this->get_pixbuf()->get_height();
+    }
+
     return -1;
 }
 
@@ -178,6 +263,11 @@ void RTImage::cleanup(bool all)
     for (auto& entry : surfaceCache) {
         entry.second.clear();
     }
+
+    for (auto& entry : gIconPixbufCache) {
+        entry.second.reset();
+    }
+
     RTScalable::cleanup(all);
 }
 
@@ -189,12 +279,27 @@ void RTImage::updateImages()
     for (auto& entry : surfaceCache) {
         entry.second = createImgSurfFromFile(entry.first);
     }
+
+    for (auto& entry : gIconPixbufCache) {
+        entry.second = createPixbufFromGIcon(entry.first.icon, entry.first.icon_size);
+    }
 }
 
 Glib::RefPtr<Gdk::Pixbuf> RTImage::createPixbufFromFile (const Glib::ustring& fileName)
 {
     Cairo::RefPtr<Cairo::ImageSurface> imgSurf = createImgSurfFromFile(fileName);
     return Gdk::Pixbuf::create(imgSurf, 0, 0, imgSurf->get_width(), imgSurf->get_height());
+}
+
+Glib::RefPtr<Gdk::Pixbuf> RTImage::createPixbufFromGIcon(const Glib::RefPtr<const Gio::Icon> &icon, int size)
+{
+    // TODO: Listen for theme changes and update icon, remove from cache.
+    Gtk::IconInfo iconInfo = Gtk::IconTheme::get_default()->lookup_icon(icon, size, Gtk::ICON_LOOKUP_FORCE_SIZE);
+    try {
+        return iconInfo.load_icon();
+    } catch (Glib::Exception &e) {
+        return Glib::RefPtr<Gdk::Pixbuf>();
+    }
 }
 
 Cairo::RefPtr<Cairo::ImageSurface> RTImage::createImgSurfFromFile (const Glib::ustring& fileName)

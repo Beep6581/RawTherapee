@@ -1,4 +1,4 @@
-![RawTherapee logo](https://raw.githubusercontent.com/Beep6581/RawTherapee/dev/rtdata/images/rt-logo-text-white.svg)
+![RawTherapee logo](https://raw.githubusercontent.com/Beep6581/RawTherapee/dev/rtdata/images/rt-logo-text-black.svg)
 
 ![RawTherapee screenshot](http://rawtherapee.com/images/carousel/100_rt59_provence_local_maskxxx.jpg)
 

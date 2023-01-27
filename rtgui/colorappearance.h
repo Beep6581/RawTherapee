@@ -68,7 +68,6 @@ public:
     bool adapCamComputed_ ();
     void ybCamChanged (int yb) override;
     bool ybCamComputed_ ();
-    void presetcat02pressed ();
     void curveChanged        (CurveEditor* ce) override;
     void curveMode1Changed   ();
     bool curveMode1Changed_  ();
@@ -106,7 +105,6 @@ public:
     void writeOptions (std::vector<int> &tpOpen);
 
 private:
-    rtengine::ProcEvent Evcatpreset;
     rtengine::ProcEvent EvCATAutotempout;
     rtengine::ProcEvent EvCATillum;
     rtengine::ProcEvent EvCATcomplex;
@@ -159,8 +157,6 @@ private:
     Gtk::CheckButton* tonecie;
     //  Gtk::CheckButton* sharpcie;
     Gtk::Button* neutral;
-    Gtk::CheckButton* presetcat02;
-    sigc::connection  presetcat02conn;
 
     MyComboBoxText* surrsrc;
     sigc::connection  surrsrcconn;
@@ -198,7 +194,6 @@ private:
     bool lastgamut;
     bool lastdatacie;
     bool lasttonecie;
-    bool lastpresetcat02;
     double nexttemp;
     double nextgreen;
 
