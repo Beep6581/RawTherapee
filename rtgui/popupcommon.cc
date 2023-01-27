@@ -73,44 +73,50 @@ PopUpCommon::~PopUpCommon ()
 {
 }
 
-bool PopUpCommon::addEntry (const Glib::ustring& fileName, const Glib::ustring& label)
+bool PopUpCommon::addEntry (const Glib::ustring& fileName, const Glib::ustring& label, Gtk::RadioButtonGroup* radioGroup)
 {
-    return insertEntry(getEntryCount(), fileName, label);
+    return insertEntry(getEntryCount(), fileName, label, radioGroup);
 }
 
-bool PopUpCommon::insertEntry(int position, const Glib::ustring& fileName, const Glib::ustring& label)
+bool PopUpCommon::insertEntry(int position, const Glib::ustring& fileName, const Glib::ustring& label, Gtk::RadioButtonGroup *radioGroup)
 {
     RTImage* image = nullptr;
     if (!fileName.empty()) {
         image = Gtk::manage(new RTImage(fileName));
     }
-    bool success = insertEntryImpl(position, fileName, Glib::RefPtr<const Gio::Icon>(), image, label);
+    bool success = insertEntryImpl(position, fileName, Glib::RefPtr<const Gio::Icon>(), image, label, radioGroup);
     if (!success && image) {
         delete image;
     }
     return success;
 }
 
-bool PopUpCommon::insertEntry(int position, const Glib::RefPtr<const Gio::Icon>& gIcon, const Glib::ustring& label)
+bool PopUpCommon::insertEntry(int position, const Glib::RefPtr<const Gio::Icon>& gIcon, const Glib::ustring& label, Gtk::RadioButtonGroup *radioGroup)
 {
     RTImage* image = Gtk::manage(new RTImage(gIcon, Gtk::ICON_SIZE_BUTTON));
-    bool success = insertEntryImpl(position, "", gIcon, image, label);
+    bool success = insertEntryImpl(position, "", gIcon, image, label, radioGroup);
     if (!success) {
         delete image;
     }
     return success;
 }
 
-bool PopUpCommon::insertEntryImpl(int position, const Glib::ustring& fileName, const Glib::RefPtr<const Gio::Icon>& gIcon, RTImage* image, const Glib::ustring& label)
+bool PopUpCommon::insertEntryImpl(int position, const Glib::ustring& fileName, const Glib::RefPtr<const Gio::Icon>& gIcon, RTImage* image, const Glib::ustring& label, Gtk::RadioButtonGroup* radioGroup)
 {
     if (label.empty() || position < 0 || position > getEntryCount())
         return false;
 
     // Create the menu item and image
-    MyImageMenuItem *newItem = Gtk::manage(new MyImageMenuItem(label, image));
+    Gtk::MenuItem *newItem;
+    if (radioGroup) {
+        newItem = Gtk::manage(new MyRadioImageMenuItem(label, image, *radioGroup));
+    }
+    else {
+        newItem = Gtk::manage(new MyImageMenuItem(label, image));
+    }
     imageIcons.insert(imageIcons.begin() + position, gIcon);
     imageFilenames.insert(imageFilenames.begin() + position, fileName);
-    images.insert(images.begin() + position, newItem->getImage());
+    images.insert(images.begin() + position, image);
 
     // When there is at least 1 choice, we add the arrow button
     if (images.size() == 1) {
@@ -154,9 +160,8 @@ void PopUpCommon::removeEntry(int position)
         setButtonHint();
     }
 
-    MyImageMenuItem *menuItem = dynamic_cast<MyImageMenuItem *>(menu->get_children()[position]);
+    std::unique_ptr<Gtk::Widget> menuItem(menu->get_children()[position]);
     menu->remove(*menuItem);
-    delete menuItem;
     imageIcons.erase(imageIcons.begin() + position);
     imageFilenames.erase(imageFilenames.begin() + position);
     images.erase(images.begin() + position);
@@ -222,6 +227,12 @@ bool PopUpCommon::setSelected (int entryNum)
         changeImage(entryNum);
         selected = entryNum;
         setButtonHint();
+
+        auto radioMenuItem = dynamic_cast<Gtk::RadioMenuItem*>(menu->get_children()[entryNum]);
+        if (radioMenuItem && menu->get_active() != radioMenuItem) {
+            radioMenuItem->set_active();
+        }
+
         return true;
     }
 }
@@ -248,7 +259,7 @@ void PopUpCommon::setButtonHint()
 
     if (selected > -1) {
         auto widget = menu->get_children ()[selected];
-        auto item = dynamic_cast<MyImageMenuItem*>(widget);
+        auto item = dynamic_cast<MyImageMenuItemInterface*>(widget);
 
         if (item) {
             hint += escapeHtmlChars(item->getLabel()->get_text());

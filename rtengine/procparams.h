@@ -1937,6 +1937,7 @@ struct ColorManagementParams {
     double bluy;
     double preser;
     bool fbw;
+    bool gamut;
     double labgridcieALow;
     double labgridcieBLow;
     double labgridcieAHigh;
