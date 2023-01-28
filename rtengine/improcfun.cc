@@ -1472,6 +1472,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                             y = yy * 655.35f;
                             z = zz * 655.35f;
                             float Ll, aa, bb;
+							
                             //convert xyz=>lab
                             if (gamu == 1) {
 								Color::gamutmap(x, y, z, wpc);
@@ -4188,6 +4189,7 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
     const double rstprotection = 100. - params->labCurve.rstprotection; // Red and Skin Tones Protection
     // avoid color shift is disabled when bwToning is activated and enabled if gamut is true in colorappearanace
    // const bool avoidColorShift = (params->labCurve.avoidcolorshift || (params->colorappearance.gamut && params->colorappearance.enabled)) && !bwToning ;
+	//const bool avoidColorS = params->labCurve.avoidcolorshift;
 	int gamutmuns = 0;
 	if (params->labCurve.gamutmunselmethod == "NONE") {
         gamutmuns = 0;
@@ -4195,8 +4197,10 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
         gamutmuns = 1;
     } else if (params->labCurve.gamutmunselmethod == "XYZ") {
         gamutmuns = 2;
-    } else if (params->labCurve.gamutmunselmethod == "MUN") {
+    } else if (params->labCurve.gamutmunselmethod == "XYZREL") {
         gamutmuns = 3;
+    } else if (params->labCurve.gamutmunselmethod == "MUN") {
+        gamutmuns = 4;
 	}
 
     const float protectRed = (float)settings->protectred;
@@ -4712,11 +4716,20 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
                         lnew->a[i][j] = 327.68f * Chprov1 * sincosval.y;
                         lnew->b[i][j] = 327.68f * Chprov1 * sincosval.x;
 					}
-                    if (gamutmuns == 2) {
+                    if (gamutmuns == 2 || gamutmuns == 3) {
 						
 						float xg, yg, zg;
 						Color::Lab2XYZ(lnew->L[i][j], atmp, btmp, xg, yg, zg);
+						float x0 = xg;
+						float y0 = yg;
+						float z0 = zg;
+
 						Color::gamutmap(xg, yg, zg, wp);
+						if (gamutmuns == 3) {//0.5f arbitrary coeff
+							xg = xg + 0.5f * (x0 - xg);
+							yg = yg + 0.5f * (y0 - yg);
+							zg = zg + 0.5f * (z0 - zg);
+						}
 						float Lag ,aag2, bbg2;						
 						Color::XYZ2Lab(xg, yg, zg, Lag, aag2, bbg2);
 						Lprov1 = Lag / 327.68f;

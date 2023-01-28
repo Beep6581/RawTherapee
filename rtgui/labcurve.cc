@@ -80,8 +80,10 @@ LCurve::LCurve () : FoldableToolPanel(this, "labcurves", M("TP_LABCURVE_LABEL"),
     gamutmunselmethod->append(M("TP_LOCALLAB_GAMUTNON"));
     gamutmunselmethod->append(M("TP_LOCALLAB_GAMUTLABRELA"));
     gamutmunselmethod->append(M("TP_LOCALLAB_GAMUTXYZABSO"));
+    gamutmunselmethod->append(M("TP_LOCALLAB_GAMUTXYZRELA"));
     gamutmunselmethod->append(M("TP_LOCALLAB_GAMUTMUNSELL"));
-    gamutmunselmethod->set_active(3);
+    gamutmunselmethod->set_active(4);
+    gamutmunselmethod->set_tooltip_text (M("TP_LOCALLAB_GAMUT_TOOLTIP"));
 	
 	metHBox->pack_start(*gamutmunselmethod);
     pack_start(*metHBox);
@@ -300,8 +302,10 @@ void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited)
         gamutmunselmethod->set_active(1);
     } else if (pp->labCurve.gamutmunselmethod == "XYZ") {
         gamutmunselmethod->set_active(2);
-    } else if (pp->labCurve.gamutmunselmethod == "MUN") {
+    } else if (pp->labCurve.gamutmunselmethod == "XYZREL") {
         gamutmunselmethod->set_active(3);
+    } else if (pp->labCurve.gamutmunselmethod == "MUN") {
+        gamutmunselmethod->set_active(4);
     }
 	gamutmunselChanged();
 	
@@ -457,6 +461,8 @@ void LCurve::write (ProcParams* pp, ParamsEdited* pedited)
     } else if (gamutmunselmethod->get_active_row_number() == 2) {
         pp->labCurve.gamutmunselmethod = "XYZ";
     } else if (gamutmunselmethod->get_active_row_number() == 3) {
+        pp->labCurve.gamutmunselmethod = "XYZREL";
+    } else if (gamutmunselmethod->get_active_row_number() == 4) {
         pp->labCurve.gamutmunselmethod = "MUN";
 	}
 	

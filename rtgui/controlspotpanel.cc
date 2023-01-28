@@ -409,8 +409,9 @@ ControlSpotPanel::ControlSpotPanel():
     avoidgamutMethod_->append(M("TP_LOCALLAB_GAMUTNON"));
     avoidgamutMethod_->append(M("TP_LOCALLAB_GAMUTLABRELA"));
     avoidgamutMethod_->append(M("TP_LOCALLAB_GAMUTXYZABSO"));
+    avoidgamutMethod_->append(M("TP_LOCALLAB_GAMUTXYZRELA"));
     avoidgamutMethod_->append(M("TP_LOCALLAB_GAMUTMUNSELL"));
-    avoidgamutMethod_->set_active(3);
+    avoidgamutMethod_->set_active(4);
     avoidgamutconn_ = avoidgamutMethod_->signal_changed().connect(
                      sigc::mem_fun(
                          *this, &ControlSpotPanel::avoidgamutMethodChanged));
@@ -1087,7 +1088,7 @@ void ControlSpotPanel::avoidgamutMethodChanged()
     const int meth = avoidgamutMethod_->get_active_row_number();
 	avoidrad_->show();
 
-	if(meth == 2 || meth == 3) {
+	if(meth == 2 || meth == 3 || meth == 4) {
 		avoidrad_->hide();
 	}
 

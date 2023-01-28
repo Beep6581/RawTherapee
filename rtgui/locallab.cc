@@ -284,8 +284,10 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
             r->avoidgamutMethod = 1;
         } else if (pp->locallab.spots.at(i).avoidgamutMethod == "XYZ") {
             r->avoidgamutMethod= 2;
-        } else if (pp->locallab.spots.at(i).avoidgamutMethod == "MUNS") {
+        } else if (pp->locallab.spots.at(i).avoidgamutMethod == "XYZREL") {
             r->avoidgamutMethod= 3;
+        } else if (pp->locallab.spots.at(i).avoidgamutMethod == "MUNS") {
+            r->avoidgamutMethod= 4;
         } 
 
         r->locX = pp->locallab.spots.at(i).loc.at(0);
@@ -457,8 +459,10 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 r->avoidgamutMethod = 1;
             } else if (newSpot->avoidgamutMethod == "XYZ") {
                 r->avoidgamutMethod = 2;
-            } else if (newSpot->avoidgamutMethod == "MUNS") {
+            } else if (newSpot->avoidgamutMethod == "XYZREL") {
                 r->avoidgamutMethod = 3;
+            } else if (newSpot->avoidgamutMethod == "MUNS") {
+                r->avoidgamutMethod = 4;
             }
 
             // Calculate spot size and center position according to preview area
@@ -768,8 +772,10 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 r->avoidgamutMethod = 1;
             } else if (newSpot->avoidgamutMethod== "XYZ") {
                 r->avoidgamutMethod = 2;
-             } else if (newSpot->avoidgamutMethod== "MUNS") {
+            } else if (newSpot->avoidgamutMethod== "XYZREL") {
                 r->avoidgamutMethod = 3;
+             } else if (newSpot->avoidgamutMethod== "MUNS") {
+                r->avoidgamutMethod = 4;
            } 
             //printf("n0=%f n1=%f n2=%f n3=%f\n", (double) newSpot->loc.at(0), (double) newSpot->loc.at(1), (double) newSpot->loc.at(2), (double) newSpot->loc.at(3));
 
@@ -964,6 +970,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     } else if (r->avoidgamutMethod == 2) {
                         pp->locallab.spots.at(pp->locallab.selspot).avoidgamutMethod = "XYZ";
                     } else if (r->avoidgamutMethod == 3) {
+                        pp->locallab.spots.at(pp->locallab.selspot).avoidgamutMethod = "XYZREL";
+                    } else if (r->avoidgamutMethod == 4) {
                         pp->locallab.spots.at(pp->locallab.selspot).avoidgamutMethod = "MUNS";
                     } 
 

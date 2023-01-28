@@ -12549,8 +12549,10 @@ void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImag
 		avoidgamut = 1;
 	} else if (params->locallab.spots.at(sp).avoidgamutMethod == "XYZ") {
 		avoidgamut = 2;
+    } else if (params->locallab.spots.at(sp).avoidgamutMethod == "XYZREL") {
+        avoidgamut = 3;	
 	} else if (params->locallab.spots.at(sp).avoidgamutMethod == "MUNS") {
-		avoidgamut = 3;
+		avoidgamut = 4;
 	}
 	if(avoidgamut == 0) {
 		return;
@@ -12717,14 +12719,24 @@ void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImag
                         transformed->a[y][x] = anew;
                         transformed->b[y][x] = bnew;
 
-					} else if (avoidgamut == 2){//XYZ correction
+					} else if (avoidgamut == 2  || avoidgamut == 3){//XYZ correction
 						float xg, yg, zg;
 						const float aag = transformed->a[y][x];//anew
 						const float bbg = transformed->b[y][x];//bnew
 						float Lag = transformed->L[y][x];
 						
 						Color::Lab2XYZ(Lag, aag, bbg, xg, yg, zg);
-						Color::gamutmap(xg, yg, zg, wp);//Put XYZ in gamut wp
+						float x0 = xg;
+						float y0 = yg;
+						float z0 = zg;
+
+						Color::gamutmap(xg, yg, zg, wp);
+						if (avoidgamut == 3) {//0.5f arbitrary coeff
+							xg = xg + 0.5f * (x0 - xg);
+							yg = yg + 0.5f * (y0 - yg);
+							zg = zg + 0.5f * (z0 - zg);
+						}
+						//Color::gamutmap(xg, yg, zg, wp);//Put XYZ in gamut wp
 						float aag2, bbg2;
 						Color::XYZ2Lab(xg, yg, zg, Lag, aag2, bbg2);
 						Lprov1 = Lag / 327.68f;
@@ -12745,7 +12757,7 @@ void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImag
 						
 					}
 
-                    if (needHH && avoidgamut <= 3) {//Munsell 
+                    if (needHH && avoidgamut <= 4) {//Munsell 
                         Lprov1 = lnew / 327.68f;
                         float Chprov = sqrt(SQR(anew) + SQR(bnew)) / 327.68f;
 						
