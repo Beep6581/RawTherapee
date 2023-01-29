@@ -2005,7 +2005,7 @@ inline float norm2(float r, float g, float b, TMatrix ws)
     constexpr float hi = std::numeric_limits<float>::max() / 100.f;
     return std::min(hi, power_norm(r, g, b) / 2.f + Color::rgbLuminance(r, g, b, ws) / 2.f);
 }
-	
+
 
 inline float norm(float r, float g, float b, TMatrix ws)
 {
@@ -2626,10 +2626,10 @@ void gamutjz(double &Jz, double &az, double &bz, double pl, const double wip[3][
     } while (!inGamut);
 }
 
-void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, LabImage* lab, int bfw, int bfh, int call, int sk, const LUTf& cielocalcurve, bool localcieutili, const LUTf& cielocalcurve2, bool localcieutili2, 
-			const LUTf& jzlocalcurve, bool localjzutili, const LUTf& czlocalcurve, bool localczutili, const LUTf& czjzlocalcurve, bool localczjzutili, const LocCHCurve& locchCurvejz, const LocHHCurve& lochhCurvejz, const LocLHCurve& loclhCurvejz, bool HHcurvejz, bool CHcurvejz, bool LHcurvejz, 
-			const LocwavCurve& locwavCurvejz, bool locwavutilijz, float &maxicam
-             )
+void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, LabImage* lab, int bfw, int bfh, int call, int sk, const LUTf& cielocalcurve, bool localcieutili, const LUTf& cielocalcurve2, bool localcieutili2,
+                                        const LUTf& jzlocalcurve, bool localjzutili, const LUTf& czlocalcurve, bool localczutili, const LUTf& czjzlocalcurve, bool localczjzutili, const LocCHCurve& locchCurvejz, const LocHHCurve& lochhCurvejz, const LocLHCurve& loclhCurvejz, bool HHcurvejz, bool CHcurvejz, bool LHcurvejz,
+                                        const LocwavCurve& locwavCurvejz, bool locwavutilijz, float &maxicam
+                                       )
 {
 //    BENCHFUN
 //possibility to reenable Zcam
@@ -2660,7 +2660,8 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     const float sigmoidth = params->locallab.spots.at(sp).sigmoidthcie;
     const float sigmoidbl = params->locallab.spots.at(sp).sigmoidblcie;
     const bool sigmoidnorm = params->locallab.spots.at(sp).normcie;
-	int mobwev = 0;
+    int mobwev = 0;
+
     if (params->locallab.spots.at(sp).bwevMethod == "none") {
         mobwev = 0;
     } else if (params->locallab.spots.at(sp).bwevMethod == "sig") {
@@ -3152,7 +3153,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     const float epsil = 0.0001f;
     const float coefQ = 32767.f / wh;
     const float coefq = 1.f / wh;
-	
+
     const float pow1n = pow_F(1.64f - pow_F(0.29f, nj), 0.73f);
     const float coe = pow_F(fl, 0.25f);
     const float QproFactor = (0.4f / c) * (aw + 4.0f) ;
@@ -3163,6 +3164,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     const double noise = pow(2., -16.6);//16.6 instead of 16 a little less than others, but we work in double
     const double log2 = xlog(2.);
     const float log2f = xlogf(2.f);
+
     if ((mocam == 0 || mocam == 2)  && call == 0) { //Jz az bz ==> Jz Cz Hz before Ciecam16
         double mini = 1000.;
         double maxi = -1000.;
@@ -3864,7 +3866,8 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             if (lp.logena && !(params->locallab.spots.at(sp).expcie && mocam == 1)) { //Log encoding only, but enable for log encoding if we use Cam16 module both with log encoding
                 plum = 100.f;
             }
-			//find main values Cam16
+
+            //find main values Cam16
 #ifdef _OPENMP
             #pragma omp parallel for reduction(min:minicam) reduction(max:maxicamj) reduction(min:minicamq) reduction(max:maxicamq) reduction(min:minisat) reduction(max:maxisat) reduction(min:miniM) reduction(max:maxiM) reduction(+:sumcam) reduction(+:sumcamq) reduction(+:sumsat) reduction(+:sumM)if(multiThread)
 #endif
@@ -3937,8 +3940,8 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
             printf("Cam16 Scene  Lighness_J Brightness_Q- HDR-PQ=%5.1f minJ=%3.1f maxJ=%3.1f meanJ=%3.1f minQ=%3.1f maxQ=%4.1f  meanQ=%4.1f\n", (double) plum, (double) minicam, (double) maxicamj, (double) sumcam, (double) minicamq, (double) maxicamq, (double) sumcamq);
             printf("Cam16 Scene  Saturati-s Colorfulln_M- minSat=%3.1f maxSat=%3.1f meanSat=%3.1f minM=%3.1f maxM=%3.1f meanM=%3.1f\n", (double) minisat, (double) maxisat, (double) sumsat, (double) miniM, (double) maxiM, (double) sumM);
-			maxicam = maxicamq;
-		}
+            maxicam = maxicamq;
+        }
 
         float base = 10.f;
         float linbase = 10.f;
@@ -3951,37 +3954,40 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         if (islogq  || mobwev != 0) {
             gray = 0.01f * (float) params->locallab.spots.at(sp).sourceGraycie;
             gray = pow_F(gray, 1.25f);//or 1.15 => modification to increase sensitivity gain, only on defaults, of course we can change this value manually...take into account suuround and Yb Cam16
-			const float targetgraycie = params->locallab.spots.at(sp).targetGraycie;
+            const float targetgraycie = params->locallab.spots.at(sp).targetGraycie;
             float targetgraycor = pow_F(0.01f * targetgraycie, 1.15f);
             base = targetgraycie > 1.f && targetgraycie < 100.f && (float) dynamic_range > 0.f ?  find_gray(std::abs((float) shadows_range) / (float) dynamic_range, (targetgraycor)) : 0.f;
             linbase = std::max(base, 2.f);//2. minimal base log to avoid very bad results
             float maxQgray = coefq * maxicam / gray;
-			
-			maxicam =  maxQgray;
-			float basecor = settings->basecorlog;//default 150
-			if(linbase > basecor) {
-				float corlin = (linbase - basecor)/ basecor;
-				maxicam /= (1.f + corlin);//adapt threshold 
-			}
-			
-			if (settings->verbose) {
+
+            maxicam =  maxQgray;
+            float basecor = settings->basecorlog;//default 150
+
+            if (linbase > basecor) {
+                float corlin = (linbase - basecor) / basecor;
+                maxicam /= (1.f + corlin);//adapt threshold
+            }
+
+            if (settings->verbose) {
                 printf("Gray=%1.3f MaxicamQ=%3.2f Base logarithm encoding Q=%5.1f\n", (double) gray, (double) maxicam, (double) linbase);
             }
-			
+
         }
 
-		if(mobwev == 2) {//sigmoid & log encode
-			//comprth *= 0.4f;//empirical
-		}
+        if (mobwev == 2) { //sigmoid & log encode
+            //comprth *= 0.4f;//empirical
+        }
+
         const auto applytoq =
         [ = ](float x) -> float {
 
             x = rtengine::max(x, (float) noise);
             x = rtengine::max(x / gray, (float) noise);//gray = gain - before log conversion
+
             if (compr && x >= comprth)
             {
-                x = intp(comprfactor, (std::tanh((x - comprth)/comprth) + 1.f) * comprth, x);//as sigmoid... but tanh (tg hyperbolic), inspired by the work of alberto Grigio	
-			}
+                x = intp(comprfactor, (std::tanh((x - comprth) / comprth) + 1.f) * comprth, x); //as sigmoid... but tanh (tg hyperbolic), inspired by the work of alberto Grigio
+            }
 
             x = rtengine::max((xlogf(x) / log2f - (float) shadows_range) / (float) dynamic_range, (float) noise);//x in range EV
             assert(x == x);
@@ -3994,33 +4000,36 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             return x;
         };
 
-		//prepare Normalize luminance
+        //prepare Normalize luminance
         float *datain = nullptr;
         float *data = nullptr;
         float *datanorm = nullptr;
-/*
-        float *datainC = nullptr;
-        float *dataC = nullptr;
-        float *datanormC = nullptr;
-*/		
-		if(sigmoidnorm  && issigq) {
-			datain = new float[width * height];
-			data = new float[width * height];
-			datanorm = new float[width * height];
-/*			datainC = new float[width * height];
-			dataC = new float[width * height];
-			datanormC = new float[width * height];
-*/			
-#ifdef _OPENMP 
+
+        /*
+                float *datainC = nullptr;
+                float *dataC = nullptr;
+                float *datanormC = nullptr;
+        */
+        if (sigmoidnorm  && issigq) {
+            datain = new float[width * height];
+            data = new float[width * height];
+            datanorm = new float[width * height];
+            /*          datainC = new float[width * height];
+                        dataC = new float[width * height];
+                        datanormC = new float[width * height];
+            */
+#ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic, 16)
 #endif
-			for (int y = 0; y < height; y++){
-				for (int x = 0; x < width; x++) {
-					datain[(y) * width + (x)] = lab->L[y][x];
-				//	datainC[(y) * width + (x)] = sqrt(SQR(lab->a[y][x]) + SQR(lab->b[y][x]));
-				}
-			}
-		}
+
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    datain[(y) * width + (x)] = lab->L[y][x];
+                    //  datainC[(y) * width + (x)] = sqrt(SQR(lab->a[y][x]) + SQR(lab->b[y][x]));
+                }
+            }
+        }
+
 #ifdef __SSE2__
         int bufferLength = ((width + 3) / 4) * 4; // bufferLength has to be a multiple of 4
 #endif
@@ -4133,7 +4142,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                     if (ciec) {
                         bool jp = false;
 
-						
+
                         if (islogq && issigq) {//log encoding Q
                             float val =  Qpro *  coefq;
 
@@ -4148,12 +4157,12 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                         if (issigq && iscie && !islogq && mobwev == 2) { //sigmoid Q and Log encode
                             float val = Qpro * coefq;
 
-                                if (val > (float) noise) {
-                                    float mm = applytoq(val);
-                                    float f = mm / val;
-                                    Qpro *=  f;
-                                    val = Qpro * coefq;
-                                }
+                            if (val > (float) noise) {
+                                float mm = applytoq(val);
+                                float f = mm / val;
+                                Qpro *=  f;
+                                val = Qpro * coefq;
+                            }
 
                             if (sigmoidth >= 1.f) {
                                 th = ath * val + bth;
@@ -4163,20 +4172,23 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
                             sigmoidla(val, th, sigm);
                             Qpro = std::max(Qpro + val / coefq, 0.f);
-							
+
                         }
 
-                        if(issigq && iscie && !islogq && mobwev != 2) {//sigmoid Q only and black & white Ev
+                        if (issigq && iscie && !islogq && mobwev != 2) { //sigmoid Q only and black & white Ev
                             float val = Qpro * coefq;
-                            if(mobwev == 1) {
+
+                            if (mobwev == 1) {
                                 val = std::max((xlog(val) / log2 - shadows_range) / (dynamic_range + 1.5), noise);//in range EV
                             }
-                            if(sigmoidth >= 1.f) {
+
+                            if (sigmoidth >= 1.f) {
                                 th = ath * val + bth;
                             } else {
                                 th = at * val + bt;
                             }
-                            sigmoidla (val, th, sigm);
+
+                            sigmoidla(val, th, sigm);
                             Qpro = std::max(Qpro + val / coefq, 0.f);
                         }
 
@@ -4357,51 +4369,58 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 #endif
             }
         }
-			if(sigmoidnorm && issigq) { //Normalize luminance
+
+        if (sigmoidnorm && issigq) { //Normalize luminance
 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic, 16)
-#endif		
-				for (int y = 0; y < height; y++){//data after ciecam
-					for (int x = 0; x < width; x++) {
-						data[(y) * width + (x)] = lab->L[y][x];				
-						datanorm[(y) * width + (x)] = lab->L[y][x];
-					//	dataC[(y) * width + (x)] = sqrt(SQR(lab->a[y][x]) + SQR(lab->b[y][x]));
-					//	datanormC[(y) * width + (x)] = sqrt(SQR(lab->a[y][x]) + SQR(lab->b[y][x]));
-				
-					}
-				}
-				double nbs = 1.;
-				if(bl > 0.5f) {
-					nbs = (double) (2.f * bl);
-				}
-				normalize_mean_dt(datanorm, datain, height * width, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f, nbs);
-//				normalize_mean_dt(datanormC, datainC, height * width, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f);
-		
+#endif
+
+            for (int y = 0; y < height; y++) { //data after ciecam
+                for (int x = 0; x < width; x++) {
+                    data[(y) * width + (x)] = lab->L[y][x];
+                    datanorm[(y) * width + (x)] = lab->L[y][x];
+                    //  dataC[(y) * width + (x)] = sqrt(SQR(lab->a[y][x]) + SQR(lab->b[y][x]));
+                    //  datanormC[(y) * width + (x)] = sqrt(SQR(lab->a[y][x]) + SQR(lab->b[y][x]));
+
+                }
+            }
+
+            double nbs = 1.;
+
+            if (bl > 0.5f) {
+                nbs = (double)(2.f * bl);
+            }
+
+            normalize_mean_dt(datanorm, datain, height * width, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f, nbs);
+//              normalize_mean_dt(datanormC, datainC, height * width, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f);
+
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic, 16)
-#endif		
-				for (int ir = 0; ir < height; ir++) {
-					for (int jr = 0; jr < width; jr++) {//blend
-						data[ir * width + jr] = intp(bl, data[ir * width + jr], datanorm[ir * width + jr]);
-						lab->L[ir][jr] = data[ir * width + jr];
-						
-					//	if(bl > 0.5f){
-					//		dataC[ir * width + jr] = intp(bl, dataC[ir * width + jr], datanormC[ir * width + jr]);
-					//		lab->a[ir][jr] = dataC[ir * width + jr] * cos(datainH[ir * width + jr]);
-					//		lab->b[ir][jr] = dataC[ir * width + jr] * sin(datainH[ir * width + jr]);
-					//	}
-						
-					}
-				}
-			}
+#endif
+
+            for (int ir = 0; ir < height; ir++) {
+                for (int jr = 0; jr < width; jr++) {//blend
+                    data[ir * width + jr] = intp(bl, data[ir * width + jr], datanorm[ir * width + jr]);
+                    lab->L[ir][jr] = data[ir * width + jr];
+
+                    //  if(bl > 0.5f){
+                    //      dataC[ir * width + jr] = intp(bl, dataC[ir * width + jr], datanormC[ir * width + jr]);
+                    //      lab->a[ir][jr] = dataC[ir * width + jr] * cos(datainH[ir * width + jr]);
+                    //      lab->b[ir][jr] = dataC[ir * width + jr] * sin(datainH[ir * width + jr]);
+                    //  }
+
+                }
+            }
+        }
+
         delete [] datain;
         delete [] data;
         delete [] datanorm;
-/*        delete [] datainC;
-        delete [] dataC;
-        delete [] datanormC;
-*/		
+        /*        delete [] datainC;
+                delete [] dataC;
+                delete [] datanormC;
+        */
     }
 
     if (mocam == 3) { //Zcam not use but keep in case off
@@ -17301,6 +17320,7 @@ void ImProcFunctions::Lab_Local(
                         if (params->locallab.spots.at(sp).modecam == "jz") {//some cam16 elementsfor Jz
                             ImProcFunctions::ciecamloc_02float(lp, sp, tmp1.get(), bfw, bfh, 10, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz, locwavCurvejz, locwavutilijz, maxicam);
                         }
+
                         ImProcFunctions::ciecamloc_02float(lp, sp, tmp1.get(), bfw, bfh, 0, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz, locwavCurvejz, locwavutilijz, maxicam);
 
                         float rad = params->locallab.spots.at(sp).detailcie;
@@ -18091,6 +18111,7 @@ void ImProcFunctions::Lab_Local(
                                 if (params->locallab.spots.at(sp).modecam == "jz") {//some cam16 elementsfor Jz
                                     ImProcFunctions::ciecamloc_02float(lp, sp, bufexpfin.get(), bfw, bfh, 10, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz, locwavCurvejz, locwavutilijz, maxicam);
                                 }
+
                                 ImProcFunctions::ciecamloc_02float(lp, sp, bufexpfin.get(), bfw, bfh, 0, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz, locwavCurvejz, locwavutilijz, maxicam);
 
                                 float rad = params->locallab.spots.at(sp).detailcie;
@@ -20038,7 +20059,7 @@ void ImProcFunctions::Lab_Local(
 
             maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufexporig.get(), bufmaskorigcie.get(), originalmaskcie.get(), original, reserved, inv, lp,
                         strumask, astool,
-						locccmascieCurve, lcmascieutili, locllmascieCurve, llmascieutili, lochhmascieCurve, lhmascieutili, llochhhmascieCurve, lhhmascieutili, multiThread,
+                        locccmascieCurve, lcmascieutili, locllmascieCurve, llmascieutili, lochhmascieCurve, lhmascieutili, llochhhmascieCurve, lhhmascieutili, multiThread,
                         enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, blendm, shado, highl, amountcd, anchorcd, lmaskcielocalcurve, localmaskcieutili, loclmasCurveciewav, lmasutiliciewav,
                         level_bl, level_hl, level_br, level_hr,
                         shortcu, delt, hueref, chromaref, lumaref,

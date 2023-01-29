@@ -1376,21 +1376,6 @@ HISTORY_MSG_1147;Local - Jz BlackEv WhiteEv
 HISTORY_MSG_1148;Local - Jz Sigmoid
 HISTORY_MSG_1149;Local - Q Sigmoid
 HISTORY_MSG_1150;Local - Log encoding Q instead Sigmoid Q
-HISTORY_MSG_1151;Local - Cie mask Structure
-HISTORY_MSG_1152;Local - Cie Tool mask Structure
-HISTORY_MSG_1153;Local - Cie Blur mask FFtw
-HISTORY_MSG_1154;Local - Cie Blur mask threshold
-HISTORY_MSG_1155;Local - Cie Blur mask radius
-HISTORY_MSG_1156;Local - Cie mask highlight
-HISTORY_MSG_1157;Local - Cie mask shadows
-HISTORY_MSG_1158;Local - CIECAM Sigmoid adaptability
-HISTORY_MSG_1159;Local - Cie mask wavelet
-HISTORY_MSG_1160;Local - Cie mask threshold
-HISTORY_MSG_1161;Local - Cie Q compression
-HISTORY_MSG_1162;Local - Cie Q comp. threshold
-HISTORY_MSG_1163;Local - Cie mask curve H(H)
-HISTORY_MSG_1164;Local - Cie BlackEv WhiteEv method
-HISTORY_MSG_1165;Local - Cie Normalize L
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -1451,6 +1436,21 @@ HISTORY_MSG_ICM_WORKING_PRIM_METHOD;Primaries method
 HISTORY_MSG_ICM_WORKING_SLOPE;TRC - Slope
 HISTORY_MSG_ICM_WORKING_TRC_METHOD;TRC method
 HISTORY_MSG_ILLUM;CAL - SC - Illuminant
+HISTORY_MSG_LOCAL_CIE_BRICOMP;Local CIECAM Brightness compression
+HISTORY_MSG_LOCAL_CIE_BRICOMPTH;Local CIECAM Brightness compression threshold
+HISTORY_MSG_LOCAL_CIE_NORM;Local CIECAM Normalize L
+HISTORY_MSG_LOCAL_CIE_SIGADAP;Local CIECAM Sigmoid adaptability
+HISTORY_MSG_LOCAL_CIE_SIGMET;Local CIECAM - Sigmoid method
+HISTORY_MSG_LOCAL_CIEMASK_BLURCONT;Local Cie mask blur contrast
+HISTORY_MSG_LOCAL_CIEMASK_BLURFFT;Local Cie mask blur fftw
+HISTORY_MSG_LOCAL_CIEMASK_BLURRAD;Local Cie mask blur radius
+HISTORY_MSG_LOCAL_CIEMASK_CHH;Local Cie mask curve hh
+HISTORY_MSG_LOCAL_CIEMASK_HIGH;Local Cie mask highlights
+HISTORY_MSG_LOCAL_CIEMASK_SHAD;Local Cie mask shadows
+HISTORY_MSG_LOCAL_CIEMASK_STRU;Local Cie mask structure
+HISTORY_MSG_LOCAL_CIEMASK_STRU_TOOL;Local Cie mask structure as tool
+HISTORY_MSG_LOCAL_CIEMASK_WLC;Local CIECAM mask wavelet Lc
+HISTORY_MSG_LOCAL_CIEMASK_WLEV;Local CIECAM mask wavelet levels
 HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
 HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
 HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast

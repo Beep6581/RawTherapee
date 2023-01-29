@@ -1177,21 +1177,6 @@ enum ProcEventCode {
     Evlocallabsigjz = 1147,
     Evlocallabsigq = 1148,
     Evlocallablogcie = 1149,
-	Evlocallabstrumaskcie = 1150,
-	EvLocallabtoolcie = 1151,
-	EvLocallabfftcieMask = 1152,
-	Evlocallabcontcie = 1153,
-	Evlocallabblurcie = 1154,
-	Evlocallabhighmaskcie = 1155,
-	Evlocallabshadmaskcie = 1156,
-	Evlocallabsigmoidsenscie = 1157,
-	EvlocallabLLmaskcieshapewav = 1158,
-	EvlocallabcsThresholdcie = 1159,
-	Evlocallabcomprcie = 1160,
-	Evlocallabcomprcieth = 1161,
-	EvlocallabHHhmaskcieshape = 1162,
-	EvlocallabbwevMethod = 1163,
-	Evlocallabnormcie = 1164,
 
     NUMOFEVENTS
 };

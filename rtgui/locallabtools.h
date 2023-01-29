@@ -55,7 +55,21 @@ protected:
         Normal = 1,
         Simple = 2
     };
-
+    rtengine::ProcEvent Evlocallabnormcie;
+    rtengine::ProcEvent Evlocallabstrumaskcie;
+    rtengine::ProcEvent EvLocallabtoolcie;
+    rtengine::ProcEvent EvLocallabfftcieMask;
+    rtengine::ProcEvent Evlocallabcontcie;
+    rtengine::ProcEvent Evlocallabblurcie;
+    rtengine::ProcEvent Evlocallabhighmaskcie;
+    rtengine::ProcEvent Evlocallabshadmaskcie;
+    rtengine::ProcEvent Evlocallabsigmoidsenscie;
+    rtengine::ProcEvent EvlocallabLLmaskcieshapewav;
+    rtengine::ProcEvent EvlocallabcsThresholdcie;
+    rtengine::ProcEvent Evlocallabcomprcie;
+    rtengine::ProcEvent Evlocallabcomprcieth;
+    rtengine::ProcEvent EvlocallabHHhmaskcieshape;
+    rtengine::ProcEvent EvlocallabbwevMethod;
     // LocallabTool parameters
     bool needMode;
     bool isLocActivated;
