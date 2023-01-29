@@ -617,7 +617,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     AUTOEXP,   // Evlocallabadjblur
     AUTOEXP,   // Evlocallabbilateral
     AUTOEXP,   // Evlocallabsensiden
-    AUTOEXP,   // Evlocallabavoid
+//    AUTOEXP,   // Evlocallabavoid
     AUTOEXP,   // Evlocallabsharcontrast
     AUTOEXP,   // EvLocenacontrast
     AUTOEXP,   // Evlocallablcradius
@@ -1067,7 +1067,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     AUTOEXP,   // Evlocallabnlgam
     AUTOEXP,   // Evlocallabdivgr
     AUTOEXP,   // EvLocallabSpotavoidrad
-    AUTOEXP,   // EvLocallabSpotavoidmun
+//    AUTOEXP,   // EvLocallabSpotavoidmun
     AUTOEXP,   // Evlocallabcontthres
     AUTOEXP,   // Evlocallabnorm
     AUTOEXP,   // Evlocallabreparw

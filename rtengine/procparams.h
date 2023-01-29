@@ -1042,8 +1042,6 @@ struct LocallabParams {
         double transitgrad;
         bool hishow;
         bool activ;
-        bool avoid;
-        bool avoidmun;
         bool blwh;
         bool recurs;
         bool laplac;
