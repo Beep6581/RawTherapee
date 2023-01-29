@@ -376,9 +376,7 @@ struct LCurveParams {
     int     brightness;
     int     contrast;
     int     chromaticity;
-    bool    avoidcolorshift;
     Glib::ustring gamutmunselmethod;
-	
     double  rstprotection;
     bool    lcredsk;
 

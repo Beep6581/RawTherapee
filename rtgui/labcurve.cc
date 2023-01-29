@@ -65,9 +65,6 @@ LCurve::LCurve() : FoldableToolPanel(this, "labcurves", M("TP_LABCURVE_LABEL"), 
     hsep2->show();
     pack_start(*hsep2, Gtk::PACK_EXPAND_WIDGET, 4);
 
-    avoidcolorshift = Gtk::manage(new Gtk::CheckButton(M("TP_LABCURVE_AVOIDCOLORSHIFT")));
-//   avoidcolorshift->set_tooltip_text (M("TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP"));
-//    pack_start (*avoidcolorshift, Gtk::PACK_SHRINK, 4);
 
 
 
@@ -100,7 +97,6 @@ LCurve::LCurve() : FoldableToolPanel(this, "labcurves", M("TP_LABCURVE_LABEL"), 
     rstprotection->setAdjusterListener(this);
     rstprotection->set_tooltip_text(M("TP_LABCURVE_RSTPRO_TOOLTIP"));
 
-    acconn = avoidcolorshift->signal_toggled().connect(sigc::mem_fun(*this, &LCurve::avoidcolorshift_toggled));
     lcconn = lcredsk->signal_toggled().connect(sigc::mem_fun(*this, &LCurve::lcredsk_toggled));
 
     //%%%%%%%%%%%%%%%%%%%
@@ -270,16 +266,12 @@ void LCurve::read(const ProcParams* pp, const ParamsEdited* pedited)
 
 
     bwtconn.block(true);
-    acconn.block(true);
     lcconn.block(true);
-    avoidcolorshift->set_active(pp->labCurve.avoidcolorshift);
     lcredsk->set_active(pp->labCurve.lcredsk);
 
     bwtconn.block(false);
-    acconn.block(false);
     lcconn.block(false);
 
-    lastACVal = pp->labCurve.avoidcolorshift;
     lastLCVal = pp->labCurve.lcredsk;
     //%%%%%%%%%%%%%%%%%%%%%%
 
@@ -316,7 +308,6 @@ void LCurve::read(const ProcParams* pp, const ParamsEdited* pedited)
 
         //%%%%%%%%%%%%%%%%%%%%%%
         rstprotection->setEditedState(pedited->labCurve.rstprotection ? Edited : UnEdited);
-        avoidcolorshift->set_inconsistent(!pedited->labCurve.avoidcolorshift);
         lcredsk->set_inconsistent(!pedited->labCurve.lcredsk);
 
         //%%%%%%%%%%%%%%%%%%%%%%
@@ -411,7 +402,6 @@ void LCurve::write(ProcParams* pp, ParamsEdited* pedited)
     pp->labCurve.contrast      = (int)contrast->getValue();
     pp->labCurve.chromaticity  = (int)chromaticity->getValue();
     //%%%%%%%%%%%%%%%%%%%%%%
-    pp->labCurve.avoidcolorshift = avoidcolorshift->get_active();
     pp->labCurve.lcredsk         = lcredsk->get_active();
 
     pp->labCurve.rstprotection   = rstprotection->getValue();
@@ -435,7 +425,6 @@ void LCurve::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->labCurve.chromaticity = chromaticity->getEditedState();
 
         //%%%%%%%%%%%%%%%%%%%%%%
-        pedited->labCurve.avoidcolorshift = !avoidcolorshift->get_inconsistent();
         pedited->labCurve.lcredsk         = !lcredsk->get_inconsistent();
 
         pedited->labCurve.rstprotection   = rstprotection->getEditedState();
@@ -493,31 +482,6 @@ void LCurve::setDefaults(const ProcParams* defParams, const ParamsEdited* pedite
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%
-//Color shift control changed
-void LCurve::avoidcolorshift_toggled()
-{
-
-    if (batchMode) {
-        if (avoidcolorshift->get_inconsistent()) {
-            avoidcolorshift->set_inconsistent(false);
-            acconn.block(true);
-            avoidcolorshift->set_active(false);
-            acconn.block(false);
-        } else if (lastACVal) {
-            avoidcolorshift->set_inconsistent(true);
-        }
-
-        lastACVal = avoidcolorshift->get_active();
-    }
-
-    if (listener && getEnabled()) {
-        if (avoidcolorshift->get_active()) {
-            listener->panelChanged(EvLAvoidColorShift, M("GENERAL_ENABLED"));
-        } else {
-            listener->panelChanged(EvLAvoidColorShift, M("GENERAL_DISABLED"));
-        }
-    }
-}
 
 void LCurve::gamutmunselChanged()
 {
@@ -636,12 +600,10 @@ void LCurve::adjusterChanged(Adjuster* a, double newval)
         if (multiImage) {
             //if chromaticity==-100 (lowest value), we enter the B&W mode and avoid color shift and rstprotection has no effect
             rstprotection->set_sensitive(true);
-            avoidcolorshift->set_sensitive(true);
             lcredsk->set_sensitive(true);
         } else {
             //if chromaticity==-100 (lowest value), we enter the B&W mode and avoid color shift and rstprotection has no effect
             rstprotection->set_sensitive(int(newval) > -100);   //no reason for grey rstprotection
-            avoidcolorshift->set_sensitive(int(newval) > -100);
             lcredsk->set_sensitive(int(newval) > -100);
         }
 

@@ -137,7 +137,7 @@ enum ProcEventCode {
     EvHLComprThreshold = 107,
     EvResizeBoundingBox = 108,
     EvResizeAppliesTo = 109,
-    EvLAvoidColorShift = 110,
+    //EvLAvoidColorShift = 110,
     obsolete_111 = 111,    // obsolete
     EvLRSTProtection = 112,
     EvDemosaicDCBIter = 113,

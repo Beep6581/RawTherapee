@@ -109,8 +109,7 @@ struct LCurveParamsEdited {
     bool brightness;
     bool contrast;
     bool chromaticity;
-    bool avoidcolorshift;
-	bool gamutmunselmethod;
+    bool gamutmunselmethod;
     bool rstprotection;
     bool lcurve;
     bool acurve;

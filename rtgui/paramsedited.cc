@@ -104,7 +104,6 @@ void ParamsEdited::set(bool v)
     labCurve.brightness  = v;
     labCurve.contrast    = v;
     labCurve.chromaticity    = v;
-    labCurve.avoidcolorshift = v;
     labCurve.gamutmunselmethod = v;
     labCurve.rstprotection   = v;
     labCurve.lcredsk         = v;
@@ -805,7 +804,6 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         labCurve.brightness = labCurve.brightness && p.labCurve.brightness == other.labCurve.brightness;
         labCurve.contrast = labCurve.contrast && p.labCurve.contrast == other.labCurve.contrast;
         labCurve.chromaticity = labCurve.chromaticity && p.labCurve.chromaticity == other.labCurve.chromaticity;
-        labCurve.avoidcolorshift = labCurve.avoidcolorshift && p.labCurve.avoidcolorshift == other.labCurve.avoidcolorshift;
         labCurve.gamutmunselmethod = labCurve.gamutmunselmethod && p.labCurve.gamutmunselmethod == other.labCurve.gamutmunselmethod;
         labCurve.rstprotection = labCurve.rstprotection && p.labCurve.rstprotection == other.labCurve.rstprotection;
         labCurve.lcredsk = labCurve.lcredsk && p.labCurve.lcredsk == other.labCurve.lcredsk;
@@ -910,7 +908,6 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         vibrance.avoidcolorshift = vibrance.avoidcolorshift && p.vibrance.avoidcolorshift == other.vibrance.avoidcolorshift;
         vibrance.pastsattog = vibrance.pastsattog && p.vibrance.pastsattog == other.vibrance.pastsattog;
         vibrance.skintonescurve = vibrance.skintonescurve && p.vibrance.skintonescurve == other.vibrance.skintonescurve;
-
         colorappearance.enabled = colorappearance.enabled && p.colorappearance.enabled == other.colorappearance.enabled;
         colorappearance.degree = colorappearance.degree && p.colorappearance.degree == other.colorappearance.degree;
         colorappearance.autodegree = colorappearance.autodegree && p.colorappearance.autodegree == other.colorappearance.autodegree;
@@ -2391,10 +2388,6 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (labCurve.chromaticity) {
         toEdit.labCurve.chromaticity = dontforceSet && options.baBehav[ADDSET_LC_CHROMATICITY] ? toEdit.labCurve.chromaticity + mods.labCurve.chromaticity : mods.labCurve.chromaticity;
-    }
-
-    if (labCurve.avoidcolorshift) {
-        toEdit.labCurve.avoidcolorshift = mods.labCurve.avoidcolorshift;
     }
 
     if (labCurve.gamutmunselmethod) {
