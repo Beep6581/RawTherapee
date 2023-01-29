@@ -12542,26 +12542,29 @@ void ImProcFunctions::clarimerge(const struct local_params& lp, float &mL, float
 
 void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImage *transformed, LabImage *reserved, int cy, int cx, int sk)
 {
-	int avoidgamut = 0;
- 	if (params->locallab.spots.at(sp).avoidgamutMethod == "NONE") {
-		avoidgamut = 0;
-	} else if (params->locallab.spots.at(sp).avoidgamutMethod == "LAB") {
-		avoidgamut = 1;
-	} else if (params->locallab.spots.at(sp).avoidgamutMethod == "XYZ") {
-		avoidgamut = 2;
+    int avoidgamut = 0;
+
+    if (params->locallab.spots.at(sp).avoidgamutMethod == "NONE") {
+        avoidgamut = 0;
+    } else if (params->locallab.spots.at(sp).avoidgamutMethod == "LAB") {
+        avoidgamut = 1;
+    } else if (params->locallab.spots.at(sp).avoidgamutMethod == "XYZ") {
+        avoidgamut = 2;
     } else if (params->locallab.spots.at(sp).avoidgamutMethod == "XYZREL") {
-        avoidgamut = 3;	
-	} else if (params->locallab.spots.at(sp).avoidgamutMethod == "MUNS") {
-		avoidgamut = 4;
-	}
-	if(avoidgamut == 0) {
-		return;
-	}
-	if (avoidgamut > 0  && lp.islocal) {
-		const float ach = lp.trans / 100.f;
-		bool execmunsell = true;
-    
-		if(params->locallab.spots.at(sp).expcie && (params->locallab.spots.at(sp).modecam == "all" || params->locallab.spots.at(sp).modecam == "jz" || params->locallab.spots.at(sp).modecam == "cam16")) {
+        avoidgamut = 3;
+    } else if (params->locallab.spots.at(sp).avoidgamutMethod == "MUNS") {
+        avoidgamut = 4;
+    }
+
+    if (avoidgamut == 0) {
+        return;
+    }
+
+    if (avoidgamut > 0  && lp.islocal) {
+        const float ach = lp.trans / 100.f;
+        bool execmunsell = true;
+
+        if (params->locallab.spots.at(sp).expcie && (params->locallab.spots.at(sp).modecam == "all" || params->locallab.spots.at(sp).modecam == "jz" || params->locallab.spots.at(sp).modecam == "cam16")) {
             execmunsell = false;
         }
 
@@ -12571,8 +12574,8 @@ void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImag
             {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
             {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
         };
-		
-		TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
+
+        TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
         const double wp[3][3] = {//improve precision with double
             {wprof[0][0], wprof[0][1], wprof[0][2]},
             {wprof[1][0], wprof[1][1], wprof[1][2]},
@@ -12580,10 +12583,10 @@ void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImag
         };
 
         const float softr = params->locallab.spots.at(sp).avoidrad;//max softr = 30
-     //   const bool muns = params->locallab.spots.at(sp).avoidmun;//Munsell control with 200 LUT
-		//improve precision with mint and maxt
+        //   const bool muns = params->locallab.spots.at(sp).avoidmun;//Munsell control with 200 LUT
+        //improve precision with mint and maxt
         const float tr = std::min(2.f, softr);
-        const float mint = 0.15f - 0.06f * tr;//between 0.15f and 0.03f 
+        const float mint = 0.15f - 0.06f * tr;//between 0.15f and 0.03f
         const float maxt = 0.98f + 0.008f * tr;//between 0.98f and 0.996f
 
         const bool highlight = params->toneCurve.hrenabled;
@@ -12604,6 +12607,7 @@ void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImag
 #ifdef _OPENMP
             #pragma omp for schedule(dynamic,16)
 #endif
+
             for (int y = 0; y < transformed->H; y++) {
                 const int loy = cy + y;
                 const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
@@ -12663,7 +12667,7 @@ void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImag
 
                     if (lp.shapmet == 0) {
                         calcTransition(lox, loy, ach, lp, zone, localFactor);
-                    } else /*if (lp.shapmet == 1)*/ {
+                    } else { /*if (lp.shapmet == 1)*/
                         calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                     }
 
@@ -12698,85 +12702,93 @@ void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImag
                         sincosval.y = aa / (Chprov1 * 327.68f);
                         sincosval.x = bb / (Chprov1 * 327.68f);
                     }
-#endif				
-					float lnew = transformed->L[y][x];
-					float anew = transformed->a[y][x];
-					float bnew = transformed->b[y][x];
-					Lprov1 = lnew / 327.68f;
-					//HH = xatan2f(bnew, anew);
-					
-					if (avoidgamut == 1){//Lab correction
 
-						Color::pregamutlab(Lprov1, HH, chr);
-						Chprov1 = rtengine::min(Chprov1, chr);
-						
+#endif
+                    float lnew = transformed->L[y][x];
+                    float anew = transformed->a[y][x];
+                    float bnew = transformed->b[y][x];
+                    Lprov1 = lnew / 327.68f;
+                    //HH = xatan2f(bnew, anew);
+
+                    if (avoidgamut == 1) { //Lab correction
+
+                        Color::pregamutlab(Lprov1, HH, chr);
+                        Chprov1 = rtengine::min(Chprov1, chr);
+
                         float R, G, B;
-                        Color::gamutLchonly(HH, sincosval, Lprov1, Chprov1, R, G, B, wip, highlight, mint, maxt);//replace for best results				
+                        Color::gamutLchonly(HH, sincosval, Lprov1, Chprov1, R, G, B, wip, highlight, mint, maxt);//replace for best results
                         lnew = Lprov1 * 327.68f;
                         anew = 327.68f * Chprov1 * sincosval.y;
                         bnew = 327.68f * Chprov1 * sincosval.x;
-						//HH = xatan2f(bnew, anew);
+                        //HH = xatan2f(bnew, anew);
                         transformed->a[y][x] = anew;
                         transformed->b[y][x] = bnew;
 
-					} else if (avoidgamut == 2  || avoidgamut == 3){//XYZ correction
-						float xg, yg, zg;
-						const float aag = transformed->a[y][x];//anew
-						const float bbg = transformed->b[y][x];//bnew
-						float Lag = transformed->L[y][x];
-						
-						Color::Lab2XYZ(Lag, aag, bbg, xg, yg, zg);
-						float x0 = xg;
-						float y0 = yg;
-						float z0 = zg;
+                    } else if (avoidgamut == 2  || avoidgamut == 3) { //XYZ correction
+                        float xg, yg, zg;
+                        const float aag = transformed->a[y][x];//anew
+                        const float bbg = transformed->b[y][x];//bnew
+                        float Lag = transformed->L[y][x];
 
-						Color::gamutmap(xg, yg, zg, wp);
-						if (avoidgamut == 3) {//0.5f arbitrary coeff
-							xg = xg + 0.5f * (x0 - xg);
-							yg = yg + 0.5f * (y0 - yg);
-							zg = zg + 0.5f * (z0 - zg);
-						}
-						//Color::gamutmap(xg, yg, zg, wp);//Put XYZ in gamut wp
-						float aag2, bbg2;
-						Color::XYZ2Lab(xg, yg, zg, Lag, aag2, bbg2);
-						Lprov1 = Lag / 327.68f;
+                        Color::Lab2XYZ(Lag, aag, bbg, xg, yg, zg);
+                        float x0 = xg;
+                        float y0 = yg;
+                        float z0 = zg;
+
+                        Color::gamutmap(xg, yg, zg, wp);
+
+                        if (avoidgamut == 3) {//0.5f arbitrary coeff
+                            xg = xg + 0.5f * (x0 - xg);
+                            yg = yg + 0.5f * (y0 - yg);
+                            zg = zg + 0.5f * (z0 - zg);
+                        }
+
+                        //Color::gamutmap(xg, yg, zg, wp);//Put XYZ in gamut wp
+                        float aag2, bbg2;
+                        Color::XYZ2Lab(xg, yg, zg, Lag, aag2, bbg2);
+                        Lprov1 = Lag / 327.68f;
                         HH = xatan2f(bbg2, aag2);//rebuild HH in case of...absolute colorimetry
-						Chprov1 = std::sqrt(SQR(aag2) + SQR(bbg2)) / 327.68f;
-						if (Chprov1 == 0.0f) {
-							sincosval.y = 1.f;
-							sincosval.x = 0.0f;
-						} else {
-							sincosval.y = aag2 / (Chprov1 * 327.68f);
-							sincosval.x = bbg2 / (Chprov1 * 327.68f);
-						}
+                        Chprov1 = std::sqrt(SQR(aag2) + SQR(bbg2)) / 327.68f;
+
+                        if (Chprov1 == 0.0f) {
+                            sincosval.y = 1.f;
+                            sincosval.x = 0.0f;
+                        } else {
+                            sincosval.y = aag2 / (Chprov1 * 327.68f);
+                            sincosval.x = bbg2 / (Chprov1 * 327.68f);
+                        }
+
                         lnew = Lprov1 * 327.68f;
                         anew = 327.68f * Chprov1 * sincosval.y;
                         bnew = 327.68f * Chprov1 * sincosval.x;
                         transformed->a[y][x] = anew;
                         transformed->b[y][x] = bnew;
-						
-					}
 
-                    if (needHH && avoidgamut <= 4) {//Munsell 
+                    }
+
+                    if (needHH && avoidgamut <= 4) {//Munsell
                         Lprov1 = lnew / 327.68f;
                         float Chprov = sqrt(SQR(anew) + SQR(bnew)) / 327.68f;
-						
+
                         const float Lprov2 = reserved->L[y][x] / 327.68f;
                         float correctionHue = 0.f; // Munsell's correction
                         float correctlum = 0.f;
                         const float memChprov = std::sqrt(SQR(reserved->a[y][x]) + SQR(reserved->b[y][x])) / 327.68f;
-                        if(execmunsell) {
+
+                        if (execmunsell) {
                             Color::AllMunsellLch(true, Lprov1, Lprov2, HH, Chprov, memChprov, correctionHue, correctlum);
                         }
+
                         if (correctionHue != 0.f || correctlum != 0.f) {
 
-							if (std::fabs(correctionHue) < 0.015f) {
-								HH += correctlum;    // correct only if correct Munsell chroma very small.
-							}
+                            if (std::fabs(correctionHue) < 0.015f) {
+                                HH += correctlum;    // correct only if correct Munsell chroma very small.
+                            }
 
-							sincosval = xsincosf(HH + correctionHue);
-						}
-						anew = 327.68f * Chprov * sincosval.y; // apply Munsell
+                            sincosval = xsincosf(HH + correctionHue);
+                        }
+
+                        anew = 327.68f * Chprov * sincosval.y; // apply Munsell
                         bnew = 327.68f * Chprov * sincosval.x;
                         transformed->a[y][x] = anew; // apply Munsell
                         transformed->b[y][x] = bnew;
@@ -12813,10 +12825,12 @@ void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImag
                     guid[y][x] = reserved->L[y][x] / 32768.f;
                 }
             }
+
             rtengine::guidedFilter(guid, ble, ble, r2, 0.2f * epsil, multiThread);
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
             for (int y = 0; y < bh; y++) {
                 for (int x = 0; x < bw; x++) {
                     transformed->L[y][x] = 32768.f * ble[y][x];
@@ -12833,11 +12847,13 @@ void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImag
                     blechro[y][x] = std::sqrt(SQR(transformed->b[y][x]) + SQR(transformed->a[y][x])) / 32768.f;
                 }
             }
+
             rtengine::guidedFilter(guid, blechro, blechro, r1, epsil, multiThread);
 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
             for (int y = 0; y < bh; y++) {
                 for (int x = 0; x < bw; x++) {
                     const float Chprov1 = std::sqrt(SQR(transformed->a[y][x]) + SQR(transformed->b[y][x]));

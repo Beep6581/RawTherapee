@@ -350,6 +350,7 @@ private:
     };
 
     ControlSpots spots_;
+    rtengine::ProcEvent EvLocallabavoidgamutMethod;
 
     // Child widgets
     Gtk::ScrolledWindow* const scrolledwindow_;

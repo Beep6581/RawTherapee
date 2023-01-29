@@ -24,6 +24,7 @@
 #include "options.h"
 #include "../rtengine/procparams.h"
 #include "rtimage.h"
+#include "eventmapper.h"
 
 using namespace rtengine;
 using namespace procparams;
@@ -113,6 +114,9 @@ ControlSpotPanel::ControlSpotPanel():
     excluFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_EXCLUF")))),
     maskPrevActive(false)
 {
+    auto m = ProcEventMapper::getInstance();
+	EvLocallabavoidgamutMethod = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GAMUTMUNSEL");
+	
     const bool showtooltip = options.showtooltip;
     pack_start(*hishow_);
 
@@ -404,7 +408,7 @@ ControlSpotPanel::ControlSpotPanel():
     avoidmunConn_  = avoidmun_->signal_toggled().connect(
                       sigc::mem_fun(*this, &ControlSpotPanel::avoidmunChanged));
     
-    Gtk::Label* const labelgamut = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_GAMUTTYPE") + ":"));
+    Gtk::Label* const labelgamut = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_AVOID") + ":"));
     ctboxgamut->pack_start(*labelgamut, Gtk::PACK_SHRINK, 4);
     avoidgamutMethod_->append(M("TP_LOCALLAB_GAMUTNON"));
     avoidgamutMethod_->append(M("TP_LOCALLAB_GAMUTLABRELA"));
@@ -417,7 +421,7 @@ ControlSpotPanel::ControlSpotPanel():
                          *this, &ControlSpotPanel::avoidgamutMethodChanged));
     ctboxgamut->pack_start(*avoidgamutMethod_);
     if (showtooltip) {
-        ctboxgamut->set_tooltip_text(M("TP_LOCALLAB_GAMUT_TOOLTIP"));
+        ctboxgamut->set_tooltip_text(M("TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP"));
     }
 
  Gtk::Frame* const avFrame = Gtk::manage(new Gtk::Frame());

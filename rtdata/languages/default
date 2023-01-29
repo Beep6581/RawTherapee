@@ -1376,7 +1376,6 @@ HISTORY_MSG_1147;Local - Jz BlackEv WhiteEv
 HISTORY_MSG_1148;Local - Jz Sigmoid
 HISTORY_MSG_1149;Local - Q Sigmoid
 HISTORY_MSG_1150;Local - Log encoding Q instead Sigmoid Q
-HISTORY_MSG_1151;Local - Gamut-Munsell
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -1443,6 +1442,7 @@ HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
 HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
 HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Local Contrast - Lightness
 HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
+HISTORY_MSG_LOCAL_GAMUTMUNSEL;Local - Gamut-Munsell
 HISTORY_MSG_METADATA_MODE;Metadata copy mode
 HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrast threshold
 HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST;CS - Auto threshold
@@ -2610,8 +2610,6 @@ TP_ICM_WORKING_TRC_SRGB;sRGB g=2.4 s=12.92
 TP_ICM_WORKING_TRC_TOOLTIP;Only for built-in profiles.
 TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 TP_IMPULSEDENOISE_THRESH;Threshold
-TP_LABCURVE_AVOIDCOLORSHIFT;Avoid color shift
-TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction (Uniform Perceptual Lab).
 TP_LABCURVE_BRIGHTNESS;Lightness
 TP_LABCURVE_CHROMATICITY;Chromaticity
 TP_LABCURVE_CHROMA_TOOLTIP;To apply B&amp;W toning, set Chromaticity to -100.
@@ -2676,7 +2674,7 @@ TP_LOCALLAB_ARTIF_TOOLTIP;ΔE scope threshold increases the range of ΔE scope. 
 TP_LOCALLAB_AUTOGRAY;Auto mean luminance (Yb%)
 TP_LOCALLAB_AUTOGRAYCIE;Auto
 TP_LOCALLAB_AVOID;Avoid color shift
-TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction (Uniform Perceptual Lab).\nMunsell correction always disabled when Jz or CAM16 is used.
+TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction (Uniform Perceptual Lab).\nMunsell correction always disabled when Jz or CAM16 or Color Appearance and Lighting is used.\n\nDefault: Munsell.\nMunsell correction: fixes Lab mode hue drifts due to non-linearity, when chromaticity is changed (Uniform Perceptual Lab).\nLab: applies a gamut control, in relative colorimetric, Munsell is then applied.\nXYZ Absolute, applies gamut control, in absolute colorimetric, Munsell is then applied.\nXYZ Relative, applies gamut control, in relative colorimetric, Munsell is then applied.
 TP_LOCALLAB_AVOIDMUN;Munsell correction only
 TP_LOCALLAB_AVOIDMUN_TOOLTIP;Munsell correction always disabled when Jz or CAM16 is used.
 TP_LOCALLAB_AVOIDRAD;Soft radius
@@ -2906,8 +2904,6 @@ TP_LOCALLAB_GAMM;Gamma
 TP_LOCALLAB_GAMMASKCOL;Gamma
 TP_LOCALLAB_GAMMASK_TOOLTIP;Adjusting Gamma and Slope can provide a soft and artifact-free transformation of the mask by progressively modifying 'L' to avoid any discontinuities.
 TP_LOCALLAB_GAMSH;Gamma
-TP_LOCALLAB_GAMUT_TOOLTIP;Default : Munsell.\nMunsell: fixes Lab mode hue drifts due to non-linearity, when chromaticity is changed.\nLab: applies a gamut control, in relative colorimetric, Munsell is then applied.\nXYZ Absolute, applies gamut control, in absolute colorimetric, Munsell is then applied.\nXYZ Relative, applies gamut control, in relative colorimetric, Munsell is then applied.
-TP_LOCALLAB_GAMUTTYPE;Avoir Color Shift
 TP_LOCALLAB_GAMUTNON;None
 TP_LOCALLAB_GAMUTLABRELA;Lab
 TP_LOCALLAB_GAMUTXYZABSO;XYZ Absolute
