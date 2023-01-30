@@ -7910,8 +7910,25 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Luminance Curve", "hhCurve", pedited, labCurve.hhcurve, pedited->labCurve.hhcurve);
             assignFromKeyfile(keyFile, "Luminance Curve", "LcCurve", pedited, labCurve.lccurve, pedited->labCurve.lccurve);
             assignFromKeyfile(keyFile, "Luminance Curve", "ClCurve", pedited, labCurve.clcurve, pedited->labCurve.clcurve);
-            assignFromKeyfile(keyFile, "Luminance Curve", "Gamutmunse", pedited, labCurve.gamutmunselmethod, pedited->labCurve.gamutmunselmethod);
-			
+            if (keyFile.has_key("Luminance Curve", "Gamutmunse")) {
+                assignFromKeyfile(keyFile, "Luminance Curve", "Gamutmunse", pedited, labCurve.gamutmunselmethod, pedited->labCurve.gamutmunselmethod);
+            } else {
+                if (ppVersion < 303) {
+                    if (keyFile.has_key("Luminance Curve", "AvoidColorClipping")) {
+                        labCurve.gamutmunselmethod =
+                            keyFile.get_boolean("Luminance Curve", "AvoidColorClipping") ? "LAB" : "NONE";
+                        if (pedited) {
+                           pedited->labCurve.gamutmunselmethod = true;
+                        }
+                    }
+                } else if (keyFile.has_key("Luminance Curve", "AvoidColorShift")) {
+                    labCurve.gamutmunselmethod =
+                        keyFile.get_boolean("Luminance Curve", "AvoidColorShift") ? "LAB" : "NONE";
+                   if (pedited) {
+                       pedited->labCurve.gamutmunselmethod = true;
+                   }
+                }
+           }
         }
 
         if (keyFile.has_group("Sharpening")) {
@@ -8421,7 +8438,16 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "StructExclu_" + index_str, pedited, spot.structexclu, spotEdited.structexclu);
                 assignFromKeyfile(keyFile, "Locallab", "Struc_" + index_str, pedited, spot.struc, spotEdited.struc);
                 assignFromKeyfile(keyFile, "Locallab", "ShapeMethod_" + index_str, pedited, spot.shapeMethod, spotEdited.shapeMethod);
-                assignFromKeyfile(keyFile, "Locallab", "AvoidgamutMethod_" + index_str, pedited, spot.avoidgamutMethod, spotEdited.avoidgamutMethod);
+                if (keyFile.has_key("Locallab", "AvoidgamutMethod_" + index_str)) {
+                    assignFromKeyfile(keyFile, "Locallab", "AvoidgamutMethod_" + index_str, pedited, spot.avoidgamutMethod, spotEdited.avoidgamutMethod);
+                } else if (keyFile.has_key("Locallab", "Avoid_" + index_str)) {
+                    const bool avoid = keyFile.get_boolean("Locallab", "Avoid_" + index_str);
+                    const bool munsell = keyFile.has_key("Locallab", "Avoidmun_" + index_str) && keyFile.get_boolean("Locallab", "Avoidmun_" + index_str);
+                    spot.avoidgamutMethod = avoid ? (munsell ? "MUNS" : "LAB") : "NONE";
+                    if (pedited) {
+                        spotEdited.avoidgamutMethod = true;
+                    }
+                }
                 assignFromKeyfile(keyFile, "Locallab", "Loc_" + index_str, pedited, spot.loc, spotEdited.loc);
                 assignFromKeyfile(keyFile, "Locallab", "CenterX_" + index_str, pedited, spot.centerX, spotEdited.centerX);
                 assignFromKeyfile(keyFile, "Locallab", "CenterY_" + index_str, pedited, spot.centerY, spotEdited.centerY);
