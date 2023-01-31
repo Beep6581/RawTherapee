@@ -4293,7 +4293,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     sursourcie("Average"),
     modecie("com"),
     modecam("cam16"),
-    bwevMethod("none"),
+    bwevMethod("sig"),
     saturlcie(0.),
     rstprotectcie(0.),
     chromlcie(0.),
