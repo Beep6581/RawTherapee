@@ -258,7 +258,7 @@ enum class BlurType {
                  int shortcu, bool delt, const float hueref, const float chromaref, const float lumaref,
                  float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, bool fftt, float blu_ma, float cont_ma, int indic, float &fab);
 
-    void avoidcolshi(const struct local_params& lp, int sp, LabImage * original, LabImage *transformed, int cy, int cx, int sk);
+    void avoidcolshi(const struct local_params& lp, int sp, LabImage *transformed, LabImage *reserved, int cy, int cx, int sk);
 
     void deltaEforMask(float **rdE, int bfw, int bfh, LabImage* bufcolorig, const float hueref, const float chromaref, const float lumaref,
                           float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, float balance, float balanceh);
