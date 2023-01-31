@@ -2118,27 +2118,20 @@ void Color::gamutmap(float &X, float Y, float &Z, const double p[3][3])
     float v = 9 * Y / (intermXYZ) - v0;
     float lam[3][2];
     float lam_min = 1.0f;
-    float L;
-    float yy = Y / 65535.f;
-    if(yy > 0.008856f) {
-        L = 65535.f * (1.16f * cbrt(yy) - 0.16f);
-    } else {
-        L = 65535.f * 9.03 * yy;
-    }
     for (int c = 0; c < 3; c++)
         for (int m = 0; m < 2; m++) {
 
             int c1 = (c + 1) % 3;
             int c2 = (c + 2) % 3;
 
-            lam[c][m] = (-(p[0][c1] * p[1][c] * ((-12 + 3 * u0 + 20 * v0) * L + 4 * m * 65535 * v0 * p[2][c2])) +
-                         p[0][c] * p[1][c1] * ((-12 + 3 * u0 + 20 * v0) * L + 4 * m * 65535 * v0 * p[2][c2]) -
-                         4 * v0 * p[0][c1] * (L - m * 65535 * p[1][c2]) * p[2][c] + 4 * v0 * p[0][c] * (L - m * 65535 * p[1][c2]) * p[2][c1] -
-                         (4 * m * 65535 * v0 * p[0][c2] - 9 * u0 * L) * (p[1][c1] * p[2][c] - p[1][c] * p[2][c1]));
+            lam[c][m] = (-(p[0][c1] * p[1][c] * ((-12 + 3 * u0 + 20 * v0) * Y + 4 * m * 65535 * v0 * p[2][c2])) +
+                         p[0][c] * p[1][c1] * ((-12 + 3 * u0 + 20 * v0) * Y + 4 * m * 65535 * v0 * p[2][c2]) -
+                         4 * v0 * p[0][c1] * (Y - m * 65535 * p[1][c2]) * p[2][c] + 4 * v0 * p[0][c] * (Y - m * 65535 * p[1][c2]) * p[2][c1] -
+                         (4 * m * 65535 * v0 * p[0][c2] - 9 * u0 * Y) * (p[1][c1] * p[2][c] - p[1][c] * p[2][c1]));
 
-            lam[c][m] /= (3 * u * L * (p[0][c1] * p[1][c] - p[1][c1] * (p[0][c] + 3 * p[2][c]) + 3 * p[1][c] * p[2][c1]) +
-                          4 * v * (p[0][c1] * (5 * L * p[1][c] + m * 65535 * p[1][c] * p[2][c2] + L * p[2][c] - m * 65535 * p[1][c2] * p[2][c]) -
-                                   p[0][c] * (5 * L * p[1][c1] + m * 65535 * p[1][c1] * p[2][c2] + L * p[2][c1] - m * 65535 * p[1][c2] * p[2][c1]) +
+            lam[c][m] /= (3 * u * Y * (p[0][c1] * p[1][c] - p[1][c1] * (p[0][c] + 3 * p[2][c]) + 3 * p[1][c] * p[2][c1]) +
+                          4 * v * (p[0][c1] * (5 * Y * p[1][c] + m * 65535 * p[1][c] * p[2][c2] + Y * p[2][c] - m * 65535 * p[1][c2] * p[2][c]) -
+                                   p[0][c] * (5 * Y * p[1][c1] + m * 65535 * p[1][c1] * p[2][c2] + Y * p[2][c1] - m * 65535 * p[1][c2] * p[2][c1]) +
                                    m * 65535 * p[0][c2] * (p[1][c1] * p[2][c] - p[1][c] * p[2][c1])));
 
             if (lam[c][m] < lam_min && lam[c][m] > 0.f) {
@@ -2151,14 +2144,11 @@ void Color::gamutmap(float &X, float Y, float &Z, const double p[3][3])
     v = v * (double) lam_min + v0;
 
     X = (9 * u * Y) / (4 * v);
-	float intermuv = 12 - 3 * u - 20 * v;
-	if(intermuv < 0.f) {
-		intermuv = 0.f;
-	}
+    float intermuv = 12 - 3 * u - 20 * v;
+    if(intermuv < 0.f) {
+        intermuv = 0.f;
+    }
     Z = (intermuv) * Y / (4 * v);
-
-
-	
 }
 
 void Color::skinredfloat ( float J, float h, float sres, float Sp, float dred, float protect_red, int sk, float rstprotection, float ko, float &s)
