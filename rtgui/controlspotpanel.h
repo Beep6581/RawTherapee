@@ -57,6 +57,7 @@ public:
         int sensiexclu;
         int structexclu;
         int shapeMethod; // 0 = Independent (mouse), 1 = Symmetrical (mouse), 2 = Independent (mouse + sliders), 3 = Symmetrical (mouse + sliders)
+        int avoidgamutMethod;
         int locX;
         int locXL;
         int locY;
@@ -79,8 +80,6 @@ public:
         double avoidrad;
         bool hishow;
         bool activ;
-        bool avoid;
-        bool avoidmun;
         bool blwh;
         bool recurs;
         bool laplac;
@@ -243,7 +242,8 @@ private:
     void spotMethodChanged();
     void shapeMethodChanged();
     void qualityMethodChanged();
-    //void complexMethodChanged();
+    void avoidgamutMethodChanged();
+   //void complexMethodChanged();
     void wavMethodChanged();
 
     void updateParamVisibility();
@@ -252,8 +252,6 @@ private:
 
     void hishowChanged();
     void activChanged();
-    void avoidChanged();
-    void avoidmunChanged();
     void blwhChanged();
     void recursChanged();
     void laplacChanged();
@@ -293,6 +291,7 @@ private:
         Gtk::TreeModelColumn<int> sensiexclu;
         Gtk::TreeModelColumn<int> structexclu;
         Gtk::TreeModelColumn<int> shapeMethod; // 0 = Independent (mouse), 1 = Symmetrical (mouse), 2 = Independent (mouse + sliders), 3 = Symmetrical (mouse + sliders)
+        Gtk::TreeModelColumn<int> avoidgamutMethod;
         Gtk::TreeModelColumn<int> locX;
         Gtk::TreeModelColumn<int> locXL;
         Gtk::TreeModelColumn<int> locY;
@@ -315,8 +314,6 @@ private:
         Gtk::TreeModelColumn<double> avoidrad;
         Gtk::TreeModelColumn<bool> hishow;
         Gtk::TreeModelColumn<bool> activ;
-        Gtk::TreeModelColumn<bool> avoid;
-        Gtk::TreeModelColumn<bool> avoidmun;
         Gtk::TreeModelColumn<bool> blwh;
         Gtk::TreeModelColumn<bool> recurs;
         Gtk::TreeModelColumn<bool> laplac;
@@ -347,6 +344,7 @@ private:
     };
 
     ControlSpots spots_;
+    rtengine::ProcEvent EvLocallabavoidgamutMethod;
 
     // Child widgets
     Gtk::ScrolledWindow* const scrolledwindow_;
@@ -381,6 +379,8 @@ private:
     //sigc::connection complexMethodconn_;
     MyComboBoxText* const wavMethod_;
     sigc::connection wavMethodconn_;
+    MyComboBoxText* const avoidgamutMethod_;
+	sigc::connection avoidgamutconn_;
 
     Adjuster* const sensiexclu_;
     Adjuster* const structexclu_;
@@ -411,10 +411,6 @@ private:
     sigc::connection hishowconn_;
     Gtk::CheckButton* const activ_;
     sigc::connection activConn_;
-    Gtk::CheckButton* const avoid_;
-    sigc::connection avoidConn_;
-    Gtk::CheckButton* const avoidmun_;
-    sigc::connection avoidmunConn_;
     Gtk::CheckButton* const blwh_;
     sigc::connection blwhConn_;
     Gtk::CheckButton* const recurs_;
@@ -438,6 +434,7 @@ private:
 
     Gtk::Box* const ctboxshape;
     Gtk::Box* const ctboxshapemethod;
+    Gtk::Box* const ctboxgamut;
 
     // Internal variables
     ControlPanelListener* controlPanelListener;

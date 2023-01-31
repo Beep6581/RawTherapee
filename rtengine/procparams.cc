@@ -608,7 +608,7 @@ LCurveParams::LCurveParams() :
     brightness(0),
     contrast(0),
     chromaticity(0),
-    avoidcolorshift(false),
+    gamutmunselmethod("MUN"),
     rstprotection(0),
     lcredsk(true)
 {
@@ -630,7 +630,7 @@ bool LCurveParams::operator ==(const LCurveParams& other) const
         && brightness == other.brightness
         && contrast == other.contrast
         && chromaticity == other.chromaticity
-        && avoidcolorshift == other.avoidcolorshift
+        && gamutmunselmethod == other.gamutmunselmethod
         && rstprotection == other.rstprotection
         && lcredsk == other.lcredsk;
 }
@@ -2848,6 +2848,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     structexclu(0),
     struc(4.0),
     shapeMethod("IND"),
+    avoidgamutMethod("MUNS"),
     loc{150, 150, 150, 150},
     centerX(0),
     centerY(0),
@@ -2862,13 +2863,11 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     balanh(1.0),
     colorde(5.0),
     colorscope(30.0),
-    avoidrad(0.7),
+    avoidrad(0.),
     transitweak(1.0),
     transitgrad(0.0),
     hishow(false),
     activ(true),
-    avoid(false),
-    avoidmun(false),
     blwh(false),
     recurs(false),
     laplac(true),
@@ -4560,6 +4559,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && structexclu == other.structexclu
         && struc == other.struc
         && shapeMethod == other.shapeMethod
+        && avoidgamutMethod == other.avoidgamutMethod
         && loc == other.loc
         && centerX == other.centerX
         && centerY == other.centerY
@@ -4579,8 +4579,6 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && transitgrad == other.transitgrad
         && hishow == other.hishow
         && activ == other.activ
-        && avoid == other.avoid
-        && avoidmun == other.avoidmun
         && blwh == other.blwh
         && recurs == other.recurs
         && laplac == other.laplac
@@ -6045,7 +6043,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->labCurve.brightness, "Luminance Curve", "Brightness", labCurve.brightness, keyFile);
         saveToKeyfile(!pedited || pedited->labCurve.contrast, "Luminance Curve", "Contrast", labCurve.contrast, keyFile);
         saveToKeyfile(!pedited || pedited->labCurve.chromaticity, "Luminance Curve", "Chromaticity", labCurve.chromaticity, keyFile);
-        saveToKeyfile(!pedited || pedited->labCurve.avoidcolorshift, "Luminance Curve", "AvoidColorShift", labCurve.avoidcolorshift, keyFile);
+        saveToKeyfile(!pedited || pedited->labCurve.gamutmunselmethod, "Luminance Curve", "Gamutmunse", labCurve.gamutmunselmethod, keyFile);
         saveToKeyfile(!pedited || pedited->labCurve.rstprotection, "Luminance Curve", "RedAndSkinTonesProtection", labCurve.rstprotection, keyFile);
         saveToKeyfile(!pedited || pedited->labCurve.lcredsk, "Luminance Curve", "LCredsk", labCurve.lcredsk, keyFile);
         saveToKeyfile(!pedited || pedited->labCurve.lcurve, "Luminance Curve", "LCurve", labCurve.lcurve, keyFile);
@@ -6347,6 +6345,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || spot_edited->structexclu, "Locallab", "StructExclu_" + index_str, spot.structexclu, keyFile);
                 saveToKeyfile(!pedited || spot_edited->struc, "Locallab", "Struc_" + index_str, spot.struc, keyFile);
                 saveToKeyfile(!pedited || spot_edited->shapeMethod, "Locallab", "ShapeMethod_" + index_str, spot.shapeMethod, keyFile);
+                saveToKeyfile(!pedited || spot_edited->avoidgamutMethod, "Locallab", "AvoidgamutMethod_" + index_str, spot.avoidgamutMethod, keyFile);
                 saveToKeyfile(!pedited || spot_edited->loc, "Locallab", "Loc_" + index_str, spot.loc, keyFile);
                 saveToKeyfile(!pedited || spot_edited->centerX, "Locallab", "CenterX_" + index_str, spot.centerX, keyFile);
                 saveToKeyfile(!pedited || spot_edited->centerY, "Locallab", "CenterY_" + index_str, spot.centerY, keyFile);
@@ -6366,8 +6365,6 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || spot_edited->transitgrad, "Locallab", "Transitgrad_" + index_str, spot.transitgrad, keyFile);
                 saveToKeyfile(!pedited || spot_edited->hishow, "Locallab", "Hishow_" + index_str, spot.hishow, keyFile);
                 saveToKeyfile(!pedited || spot_edited->activ, "Locallab", "Activ_" + index_str, spot.activ, keyFile);
-                saveToKeyfile(!pedited || spot_edited->avoid, "Locallab", "Avoid_" + index_str, spot.avoid, keyFile);
-                saveToKeyfile(!pedited || spot_edited->avoidmun, "Locallab", "Avoidmun_" + index_str, spot.avoidmun, keyFile);
                 saveToKeyfile(!pedited || spot_edited->blwh, "Locallab", "Blwh_" + index_str, spot.blwh, keyFile);
                 saveToKeyfile(!pedited || spot_edited->recurs, "Locallab", "Recurs_" + index_str, spot.recurs, keyFile);
                 saveToKeyfile(!pedited || spot_edited->laplac, "Locallab", "Laplac_" + index_str, spot.laplac, keyFile);
@@ -7871,7 +7868,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 // if Saturation == 0, should we set BWToning on?
                 assignFromKeyfile(keyFile, "Luminance Curve", "Saturation", pedited, labCurve.chromaticity, pedited->labCurve.chromaticity);
                 // transform AvoidColorClipping into AvoidColorShift
-                assignFromKeyfile(keyFile, "Luminance Curve", "AvoidColorClipping", pedited, labCurve.avoidcolorshift, pedited->labCurve.avoidcolorshift);
+//                assignFromKeyfile(keyFile, "Luminance Curve", "AvoidColorClipping", pedited, labCurve.avoidcolorshift, pedited->labCurve.avoidcolorshift);
             } else {
                 if (keyFile.has_key("Luminance Curve", "Chromaticity")) {
                     labCurve.chromaticity = keyFile.get_integer("Luminance Curve", "Chromaticity");
@@ -7885,7 +7882,6 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     }
                 }
 
-                assignFromKeyfile(keyFile, "Luminance Curve", "AvoidColorShift", pedited, labCurve.avoidcolorshift, pedited->labCurve.avoidcolorshift);
                 assignFromKeyfile(keyFile, "Luminance Curve", "RedAndSkinTonesProtection", pedited, labCurve.rstprotection, pedited->labCurve.rstprotection);
             }
 
@@ -7914,6 +7910,25 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Luminance Curve", "hhCurve", pedited, labCurve.hhcurve, pedited->labCurve.hhcurve);
             assignFromKeyfile(keyFile, "Luminance Curve", "LcCurve", pedited, labCurve.lccurve, pedited->labCurve.lccurve);
             assignFromKeyfile(keyFile, "Luminance Curve", "ClCurve", pedited, labCurve.clcurve, pedited->labCurve.clcurve);
+            if (keyFile.has_key("Luminance Curve", "Gamutmunse")) {
+                assignFromKeyfile(keyFile, "Luminance Curve", "Gamutmunse", pedited, labCurve.gamutmunselmethod, pedited->labCurve.gamutmunselmethod);
+            } else {
+                if (ppVersion < 303) {
+                    if (keyFile.has_key("Luminance Curve", "AvoidColorClipping")) {
+                        labCurve.gamutmunselmethod =
+                            keyFile.get_boolean("Luminance Curve", "AvoidColorClipping") ? "LAB" : "NONE";
+                        if (pedited) {
+                           pedited->labCurve.gamutmunselmethod = true;
+                        }
+                    }
+                } else if (keyFile.has_key("Luminance Curve", "AvoidColorShift")) {
+                    labCurve.gamutmunselmethod =
+                        keyFile.get_boolean("Luminance Curve", "AvoidColorShift") ? "LAB" : "NONE";
+                   if (pedited) {
+                       pedited->labCurve.gamutmunselmethod = true;
+                   }
+                }
+           }
         }
 
         if (keyFile.has_group("Sharpening")) {
@@ -8423,6 +8438,16 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "StructExclu_" + index_str, pedited, spot.structexclu, spotEdited.structexclu);
                 assignFromKeyfile(keyFile, "Locallab", "Struc_" + index_str, pedited, spot.struc, spotEdited.struc);
                 assignFromKeyfile(keyFile, "Locallab", "ShapeMethod_" + index_str, pedited, spot.shapeMethod, spotEdited.shapeMethod);
+                if (keyFile.has_key("Locallab", "AvoidgamutMethod_" + index_str)) {
+                    assignFromKeyfile(keyFile, "Locallab", "AvoidgamutMethod_" + index_str, pedited, spot.avoidgamutMethod, spotEdited.avoidgamutMethod);
+                } else if (keyFile.has_key("Locallab", "Avoid_" + index_str)) {
+                    const bool avoid = keyFile.get_boolean("Locallab", "Avoid_" + index_str);
+                    const bool munsell = keyFile.has_key("Locallab", "Avoidmun_" + index_str) && keyFile.get_boolean("Locallab", "Avoidmun_" + index_str);
+                    spot.avoidgamutMethod = avoid ? (munsell ? "MUNS" : "LAB") : "NONE";
+                    if (pedited) {
+                        spotEdited.avoidgamutMethod = true;
+                    }
+                }
                 assignFromKeyfile(keyFile, "Locallab", "Loc_" + index_str, pedited, spot.loc, spotEdited.loc);
                 assignFromKeyfile(keyFile, "Locallab", "CenterX_" + index_str, pedited, spot.centerX, spotEdited.centerX);
                 assignFromKeyfile(keyFile, "Locallab", "CenterY_" + index_str, pedited, spot.centerY, spotEdited.centerY);
@@ -8442,8 +8467,6 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Transitgrad_" + index_str, pedited, spot.transitgrad, spotEdited.transitgrad);
                 assignFromKeyfile(keyFile, "Locallab", "Hishow_" + index_str, pedited, spot.hishow, spotEdited.hishow);
                 assignFromKeyfile(keyFile, "Locallab", "Activ_" + index_str, pedited, spot.activ, spotEdited.activ);
-                assignFromKeyfile(keyFile, "Locallab", "Avoid_" + index_str, pedited, spot.avoid, spotEdited.avoid);
-                assignFromKeyfile(keyFile, "Locallab", "Avoidmun_" + index_str, pedited, spot.avoidmun, spotEdited.avoidmun);
                 assignFromKeyfile(keyFile, "Locallab", "Blwh_" + index_str, pedited, spot.blwh, spotEdited.blwh);
                 assignFromKeyfile(keyFile, "Locallab", "Recurs_" + index_str, pedited, spot.recurs, spotEdited.recurs);
                 assignFromKeyfile(keyFile, "Locallab", "Laplac_" + index_str, pedited, spot.laplac, spotEdited.laplac);
