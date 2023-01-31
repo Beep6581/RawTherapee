@@ -9260,6 +9260,7 @@ void Locallabcie::normcieChanged()
 void Locallabcie::logcieChanged()
 {
     const LocallabParams::LocallabSpot defSpot;
+    const int mode = complexity->get_active_row_number();
 
     if (logcie->get_active()) {
         sigmoidldacie->set_sensitive(false);
@@ -9272,6 +9273,11 @@ void Locallabcie::logcieChanged()
         comprcie->setValue(defSpot.comprcie);//to test
         comprcieauto->set_sensitive(true);
         comprcieauto->set_active(true);
+        if(mode == Simple) {
+            comprcie->set_sensitive(false);
+            comprcieth->set_sensitive(false);
+            comprcieauto->set_sensitive(false);
+        }
 
     } else {
         sigmoidldacie->set_sensitive(true);
@@ -9645,12 +9651,18 @@ void Locallabcie::sursourcieChanged()
 void Locallabcie::bwevMethodChanged()
 {
     const LocallabParams::LocallabSpot defSpot;
+    const int mode = complexity->get_active_row_number();
 
     if (bwevMethod->get_active_row_number() == 2) {
         comprcie->set_sensitive(true);
         comprcieth->set_sensitive(true);
         comprcieauto->set_sensitive(true);
         comprcieauto->set_active(true);
+        if( mode == Simple) {
+            comprcie->set_sensitive(false);
+            comprcieth->set_sensitive(false);
+            comprcieauto->set_sensitive(false);
+        }
 
     } else {
         comprcie->set_sensitive(false);
@@ -9730,6 +9742,9 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             decaycie->hide();
             expmaskcie->hide();
             expmaskcie->hide();
+            comprcie->hide();
+            comprcieth->hide();
+            comprcieauto->hide();
 
             if (modecam->get_active_row_number() == 2) {
                 PQFrame->hide();

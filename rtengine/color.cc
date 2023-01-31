@@ -1978,6 +1978,20 @@ void Color::primaries_to_xyz(double p[6], double Wx, double Wz, double *pxyz)
     MaBradford[2][0] = -0.1614;
     MaBradford[2][1] = 0.0367;
     MaBradford[2][2] = 1.0296;
+/*
+   //iCat16
+    Matrix MaBradford = {};
+    MaBradford[0][0] = 1.86206786;
+    MaBradford[0][1] = -1.01125463;
+    MaBradford[0][2] = 0.14918677;
+    MaBradford[1][0] = 0.38752654;
+    MaBradford[1][1] = 0.62144744;
+    MaBradford[1][2] = -0.00897398;
+    MaBradford[2][0] = -0.0158415;
+    MaBradford[2][1] = -0.03412294;
+    MaBradford[2][2] = 1.04996444;
+*/
+
 
     Matrix Ma_oneBradford = {};
     Ma_oneBradford[0][0] = 0.9869929;
@@ -1989,6 +2003,19 @@ void Color::primaries_to_xyz(double p[6], double Wx, double Wz, double *pxyz)
     Ma_oneBradford[2][0] = 0.1599627;
     Ma_oneBradford[2][1] = 0.0492912;
     Ma_oneBradford[2][2] = 0.9684867;
+/*
+    //cat16
+    Matrix Ma_oneBradford = {};
+    Ma_oneBradford[0][0] = 0.401288;
+    Ma_oneBradford[0][1] = 0.650173;
+    Ma_oneBradford[0][2] = -0.051461;
+    Ma_oneBradford[1][0] = -0.250268;
+    Ma_oneBradford[1][1] = 1.204414;
+    Ma_oneBradford[1][2] = 0.045854;
+    Ma_oneBradford[2][0] = -0.002079;
+    Ma_oneBradford[2][1] = 0.048952;
+    Ma_oneBradford[2][2] = 0.953127;
+*/
 
     //R G B source
     double Rs = Wx * MaBradford[0][0] + Wy * MaBradford[1][0] + Wz * MaBradford[2][0];
@@ -2081,31 +2108,37 @@ void Color::primaries_to_xyz(double p[6], double Wx, double Wz, double *pxyz)
  
 void Color::gamutmap(float &X, float Y, float &Z, const double p[3][3])
 {
-	float epsil = 0.0001f;
-	float intermXYZ = X + 15 * Y + 3 * Z;
-	if(intermXYZ <= 0.f) {
-		intermXYZ = epsil;
-	}
-		
-	float u = 4 * X / (intermXYZ) - u0;
+    float epsil = 0.0001f;
+    float intermXYZ = X + 15 * Y + 3 * Z;
+    if(intermXYZ <= 0.f) {
+        intermXYZ = epsil;
+    }
+
+    float u = 4 * X / (intermXYZ) - u0;
     float v = 9 * Y / (intermXYZ) - v0;
     float lam[3][2];
     float lam_min = 1.0f;
-
+    float L;
+    float yy = Y / 65535.f;
+    if(yy > 0.008856f) {
+        L = 65535.f * (1.16f * cbrt(yy) - 0.16f);
+    } else {
+        L = 65535.f * 9.03 * yy;
+    }
     for (int c = 0; c < 3; c++)
         for (int m = 0; m < 2; m++) {
 
             int c1 = (c + 1) % 3;
             int c2 = (c + 2) % 3;
 
-            lam[c][m] = (-(p[0][c1] * p[1][c] * ((-12 + 3 * u0 + 20 * v0) * Y + 4 * m * 65535 * v0 * p[2][c2])) +
-                         p[0][c] * p[1][c1] * ((-12 + 3 * u0 + 20 * v0) * Y + 4 * m * 65535 * v0 * p[2][c2]) -
-                         4 * v0 * p[0][c1] * (Y - m * 65535 * p[1][c2]) * p[2][c] + 4 * v0 * p[0][c] * (Y - m * 65535 * p[1][c2]) * p[2][c1] -
-                         (4 * m * 65535 * v0 * p[0][c2] - 9 * u0 * Y) * (p[1][c1] * p[2][c] - p[1][c] * p[2][c1]));
+            lam[c][m] = (-(p[0][c1] * p[1][c] * ((-12 + 3 * u0 + 20 * v0) * L + 4 * m * 65535 * v0 * p[2][c2])) +
+                         p[0][c] * p[1][c1] * ((-12 + 3 * u0 + 20 * v0) * L + 4 * m * 65535 * v0 * p[2][c2]) -
+                         4 * v0 * p[0][c1] * (L - m * 65535 * p[1][c2]) * p[2][c] + 4 * v0 * p[0][c] * (L - m * 65535 * p[1][c2]) * p[2][c1] -
+                         (4 * m * 65535 * v0 * p[0][c2] - 9 * u0 * L) * (p[1][c1] * p[2][c] - p[1][c] * p[2][c1]));
 
-            lam[c][m] /= (3 * u * Y * (p[0][c1] * p[1][c] - p[1][c1] * (p[0][c] + 3 * p[2][c]) + 3 * p[1][c] * p[2][c1]) +
-                          4 * v * (p[0][c1] * (5 * Y * p[1][c] + m * 65535 * p[1][c] * p[2][c2] + Y * p[2][c] - m * 65535 * p[1][c2] * p[2][c]) -
-                                   p[0][c] * (5 * Y * p[1][c1] + m * 65535 * p[1][c1] * p[2][c2] + Y * p[2][c1] - m * 65535 * p[1][c2] * p[2][c1]) +
+            lam[c][m] /= (3 * u * L * (p[0][c1] * p[1][c] - p[1][c1] * (p[0][c] + 3 * p[2][c]) + 3 * p[1][c] * p[2][c1]) +
+                          4 * v * (p[0][c1] * (5 * L * p[1][c] + m * 65535 * p[1][c] * p[2][c2] + L * p[2][c] - m * 65535 * p[1][c2] * p[2][c]) -
+                                   p[0][c] * (5 * L * p[1][c1] + m * 65535 * p[1][c1] * p[2][c2] + L * p[2][c1] - m * 65535 * p[1][c2] * p[2][c1]) +
                                    m * 65535 * p[0][c2] * (p[1][c1] * p[2][c] - p[1][c] * p[2][c1])));
 
             if (lam[c][m] < lam_min && lam[c][m] > 0.f) {
