@@ -1592,7 +1592,7 @@ private:
     Adjuster* const targetjz;
     Gtk::Frame* const bevwevFrame;
     Gtk::CheckButton* const forcebw;
-    
+    ToolParamBlock* const sigBox;
     Gtk::Frame* const sigmoidFrame;
     Gtk::Frame* const sigmoidnormFrame;
     Gtk::CheckButton* const sigq;

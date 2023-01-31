@@ -7461,7 +7461,7 @@ Locallabcie::Locallabcie():
     targetjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZTARGET_EV"), 4., 80.0, 0.1, 18.0))),
     bevwevFrame(Gtk::manage(new Gtk::Frame())),
     forcebw(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_BWFORCE")))),
-
+    sigBox(Gtk::manage(new ToolParamBlock())),
     sigmoidFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGFRA")))),
     sigmoidnormFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGNORM")))),
     sigq(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGFRA")))),
@@ -7677,7 +7677,7 @@ Locallabcie::Locallabcie():
     sigmoidnormFrame->set_label_align(0.025, 0.5);
     sigmoidnormFrame->set_label_widget(*normcie);
 
-    ToolParamBlock* const sigBox = Gtk::manage(new ToolParamBlock());
+//    ToolParamBlock* const sigBox = Gtk::manage(new ToolParamBlock());
     ToolParamBlock* const signormBox = Gtk::manage(new ToolParamBlock());
     Gtk::Separator* const separatorsig = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     Gtk::Separator* const separatorsig2 = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
@@ -8666,6 +8666,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         bwevMethodChanged();
         normcieChanged();
         comprcieautoChanged();
+        sigqChanged();
 
         if (spot.bwevMethod == "none") {
             bwevMethod->set_active(0);
@@ -9346,6 +9347,11 @@ void Locallabcie::sigjzChanged()
 
 void Locallabcie::sigqChanged()
 {
+    if (sigq->get_active()) {
+        sigBox->show();
+    } else {
+        sigBox->hide();
+    }
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (sigq->get_active()) {
