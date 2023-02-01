@@ -7468,7 +7468,7 @@ Locallabcie::Locallabcie():
     sigmoidldacie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0.0, 1., 0.01, 0.5))),
     sigmoidthcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDTH"), 0.1, 4., 0.01, 1., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     sigmoidsenscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDSENSI"), 0.1, 0.9, 0.01, 0.5))),
-    sigmoidblcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDBL"), 0., 1., 0.01, 0.6))),
+    sigmoidblcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDBL"), 0.05, 1., 0.01, 0.6))),
     autocomprHBox(Gtk::manage(new Gtk::Box())),
     comprcieauto(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_SIGMOIDLOGAUTO")))),
     normcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGMOIDNORMCIE")))),
@@ -7677,7 +7677,6 @@ Locallabcie::Locallabcie():
     sigmoidnormFrame->set_label_align(0.025, 0.5);
     sigmoidnormFrame->set_label_widget(*normcie);
 
-//    ToolParamBlock* const sigBox = Gtk::manage(new ToolParamBlock());
     ToolParamBlock* const signormBox = Gtk::manage(new ToolParamBlock());
     Gtk::Separator* const separatorsig = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     Gtk::Separator* const separatorsig2 = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
@@ -8667,6 +8666,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         normcieChanged();
         comprcieautoChanged();
         sigqChanged();
+        logcieChanged();
 
         if (spot.bwevMethod == "none") {
             bwevMethod->set_active(0);
@@ -9411,7 +9411,7 @@ void Locallabcie::modecamChanged()
         jz100->hide();
         pqremap->hide();
 
-        if (mode != Simple) {
+        if (mode == Expert) {
             pqremapcam16->show();
         } else {
             pqremapcam16->hide();
@@ -9508,9 +9508,10 @@ void Locallabcie::modecamChanged()
         }
 
         forcejz->hide();
-        pqremapcam16->show();
 
-        if (mode == Simple) {
+        if (mode == Expert) {
+            pqremapcam16->show();
+        } else {
             pqremapcam16->hide();
         }
 
@@ -9583,12 +9584,11 @@ void Locallabcie::modecamChanged()
         targabscie->show();
         surrHBoxcie->show();
         cie2Frame->show();
-        pqremapcam16->show();
-
-        if (mode == Simple) {
+        if (mode == Expert) {
+            pqremapcam16->show();
+        } else {
             pqremapcam16->hide();
         }
-
     }
 
 
@@ -9837,7 +9837,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             targetGraycie->show();
             targabscie->show();
             surrHBoxcie->show();
-            pqremapcam16->show();
+            pqremapcam16->hide();
             sourceGraycie->show();
             cieFrame->show();
             exprecovcie->show();
@@ -10264,6 +10264,8 @@ void Locallabcie::convertParamToNormal()
     strsoftjzcie->setValue(defSpot.strsoftjzcie);
     thrhjzcie->setValue(defSpot.thrhjzcie);
     modecie->set_active(0);
+    pqremapcam16->setValue(defSpot.pqremapcam16);
+    logcieChanged();
 
     if (modecam->get_active_row_number() == 1) {
         showmaskcieMethod->set_active(0);
