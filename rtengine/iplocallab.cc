@@ -2736,7 +2736,11 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     //for J light and contrast
     LUTf CAMBrightCurveJ(32768, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
     LUTf CAMBrightCurveQ(32768, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
+    float gamQ = params->locallab.spots.at(sp).gammaskcie;
+    float slopQ = params->locallab.spots.at(sp).slomaskcie;
 
+    LUTf lutToneQ(65536);
+    calcGammaLut(gamQ, slopQ, lutToneQ);
 
 #ifdef _OPENMP
     const int numThreads = min(max(width * height / 65536, 1), omp_get_max_threads());
@@ -4141,6 +4145,11 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
                     if (ciec) {
                         bool jp = false;
+                        if (issigq && iscie) {
+                            float valj =  Jpro / 32768.f;
+                            Jpro = 0.5f * lutToneQ[valj * 65536.f];
+                            Qpro = 0.1f * sqrt(Jpro) * wh;
+                        }
 
 
                         if (islogq && issigq) {//log encoding Q

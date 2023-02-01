@@ -3337,7 +3337,9 @@ TP_LOCALLAB_SHOWVI;Mask and modifications
 TP_LOCALLAB_SHRESFRA;Shadows/Highlights & TRC
 TP_LOCALLAB_SHTRC_TOOLTIP;Based on 'working profile' (only those provided), modifies the tones of the image by acting on a TRC (Tone Response Curve).\nGamma acts mainly on light tones.\nSlope acts mainly on dark tones.\nIt is recommended that the TRC of both devices (monitor and output profile) be sRGB (default).
 TP_LOCALLAB_SH_TOOLNAME;Shadows/Highlights & Tone Equalizer
-TP_LOCALLAB_SIGFRA;Sigmoid Q & Log encoding Q
+TP_LOCALLAB_SIGFRA;Sigmoid Q & Log encoding Q & TRC
+TP_LOCALLAB_SIG2FRA;Sigmoid
+TP_LOCALLAB_SIGGAMJCIE;Gamma
 TP_LOCALLAB_SIGJZFRA;Sigmoid Jz
 TP_LOCALLAB_SIGMAWAV;Attenuation response
 TP_LOCALLAB_SIGMOIDBL;Blend
@@ -3353,6 +3355,8 @@ TP_LOCALLAB_SIGMOIDNORMCIE;Normalize Luminance
 TP_LOCALLAB_SIGMOIDNORMCIE_TOOLTIP;Reconstruct luminance so that the mean and variance of the output image take into account those of the original.\nAll the adjustments acting on J or Q are taken into account, including those which are not relative to Sigmoid Q and Log encoding Q.
 TP_LOCALLAB_SIGMOIDNORMCIEBLEND_TOOLTIP;Blend acts on the final aspect of the image, contrast and luminance : ratio between original and output image.
 TP_LOCALLAB_SIGMOIDQJCOMPRCIE_TOOLTIP;When the comboxbox selection'Uses Black Ev and White Ev' is 'Sigmoid and Log encoding Q' or 'Log encoding instead of Sigmoid' checked. This algorithm compress the data above the threshold slider value. This last value stands for brightness (Q) should be a near the possible value 'Compression treshold' (calculate when 'Auto threshold" checked, often > 1).
+TP_LOCALLAB_SIGSLOPJCIE;Slope
+TP_LOCALLAB_SIGTRCCIE;TRC
 TP_LOCALLAB_SLOMASKCOL;Slope
 TP_LOCALLAB_SLOMASK_TOOLTIP;Adjusting Gamma and Slope can provide a soft and artifact-free transformation of the mask by progressively modifying 'L' to avoid any discontinuities.
 TP_LOCALLAB_SLOSH;Slope

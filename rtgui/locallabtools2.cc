@@ -7477,7 +7477,12 @@ Locallabcie::Locallabcie():
     logcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LOGCIE")))),
     comprcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIE"), 0., 1., 0.01, 0.6))),
     comprcieth(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIETH"), 0., 25., 0.01, 6.))),
+    trccie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGTRCCIE")))),
+    gamjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGGAMJCIE"), 0.8, 2., 0.01, 1.))),
+    slopjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGSLOPJCIE"), 0., 10., 0.01, 0.))),
     sigmoidjzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGJZFRA")))),
+    sigmoidgamFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGGAMFRA")))),
+    sigmoid2Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIG2FRA")))),
     sigjz(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGJZFRA")))),
     sigmoidldajzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0., 1.0, 0.01, 0.5))),
     sigmoidthjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDTH"), 0.1, 4., 0.01, 1., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
@@ -7592,6 +7597,10 @@ Locallabcie::Locallabcie():
     Evlocallabcomprcieth = m->newEvent(HDR, "HISTORY_MSG_LOCAL_CIE_BRICOMPTH");
     EvlocallabHHhmaskcieshape = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIEMASK_CHH");
     EvlocallabbwevMethod = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SIGMET");
+    Evlocallabgamjcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GAM");
+    Evlocallabslopjcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SLOP");
+    Evlocallabtrccie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_TRC");
+    
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     // Parameter Ciecam specific widgets
@@ -7676,8 +7685,13 @@ Locallabcie::Locallabcie():
     sigmoidFrame->set_label_widget(*sigq);
     sigmoidnormFrame->set_label_align(0.025, 0.5);
     sigmoidnormFrame->set_label_widget(*normcie);
-
+    sigmoidgamFrame->set_label_align(0.025, 0.5);
+    sigmoidgamFrame->set_label_widget(*trccie);
+    sigmoid2Frame->set_label_align(0.025, 0.5);
     ToolParamBlock* const signormBox = Gtk::manage(new ToolParamBlock());
+    ToolParamBlock* const gamcieBox = Gtk::manage(new ToolParamBlock());
+    ToolParamBlock* const sigfraBox = Gtk::manage(new ToolParamBlock());
+    
     Gtk::Separator* const separatorsig = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     Gtk::Separator* const separatorsig2 = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     modeHBoxbwev->set_spacing(2);
@@ -7691,10 +7705,16 @@ Locallabcie::Locallabcie():
     bwevMethod->set_active(0);
     bwevMethodConn = bwevMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::bwevMethodChanged));
     modeHBoxbwev->pack_start(*bwevMethod);
-    sigBox->pack_start(*sigmoidldacie);
-    sigBox->pack_start(*sigmoidthcie);
-    sigBox->pack_start(*sigmoidsenscie);
-    sigBox->pack_start(*modeHBoxbwev);
+    gamcieBox->pack_start(*gamjcie);
+    gamcieBox->pack_start(*slopjcie);
+    sigmoidgamFrame->add(*gamcieBox);
+    sigBox->pack_start(*sigmoidgamFrame);
+    sigfraBox->pack_start(*sigmoidldacie);
+    sigfraBox->pack_start(*sigmoidthcie);
+    sigfraBox->pack_start(*sigmoidsenscie);
+    sigfraBox->pack_start(*modeHBoxbwev);
+    sigmoid2Frame->add(*sigfraBox);
+    sigBox->pack_start(*sigmoid2Frame);
     sigBox->pack_start(*separatorsig);
     sigBox->pack_start(*logcie);
     sigBox->pack_start(*comprcie);
@@ -7706,6 +7726,7 @@ Locallabcie::Locallabcie():
     signormBox->pack_start(*sigmoidblcie);
     sigmoidnormFrame->add(*signormBox);
     sigBox->pack_start(*sigmoidnormFrame);
+
     sigmoidFrame->add(*sigBox);
     cieFBox->pack_start(*sigmoidFrame);
 

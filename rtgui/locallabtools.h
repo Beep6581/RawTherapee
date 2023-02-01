@@ -70,6 +70,10 @@ protected:
     rtengine::ProcEvent Evlocallabcomprcieth;
     rtengine::ProcEvent EvlocallabHHhmaskcieshape;
     rtengine::ProcEvent EvlocallabbwevMethod;
+    rtengine::ProcEvent Evlocallabgamjcie;
+    rtengine::ProcEvent Evlocallabslopjcie;
+    rtengine::ProcEvent Evlocallabtrccie;
+
     // LocallabTool parameters
     bool needMode;
     bool isLocActivated;
@@ -1604,11 +1608,16 @@ private:
     Gtk::ToggleButton* const comprcieauto;
     Gtk::CheckButton* const normcie;
     Gtk::Box* const modeHBoxbwev;
-    MyComboBoxText* const bwevMethod;	
+    MyComboBoxText* const bwevMethod;
     Gtk::CheckButton* const logcie;
     Adjuster* const comprcie;
     Adjuster* const comprcieth;
+    Gtk::CheckButton* const trccie;
+    Adjuster* const gamjcie;
+    Adjuster* const slopjcie;
     Gtk::Frame* const sigmoidjzFrame;
+    Gtk::Frame* const sigmoidgamFrame;
+    Gtk::Frame* const sigmoid2Frame;
     Gtk::CheckButton* const sigjz;
     Adjuster* const sigmoidldajzcie;
     Adjuster* const sigmoidthjzcie;
@@ -1689,7 +1698,7 @@ private:
     Gtk::CheckButton* const fftcieMask;
     Adjuster* const contcie;
     Adjuster* const blurcie;
-	
+
     Adjuster* const blendmaskcie;
     Adjuster* const radmaskcie;
     Adjuster* const lapmaskcie;
@@ -1700,7 +1709,7 @@ private:
     Adjuster* const shadmaskcie;
     CurveEditorGroup* const maskcieHCurveEditorG;
     FlatCurveEditor* const HHhmaskcieshape;
-	
+
     CurveEditorGroup* const mask2cieCurveEditorG;
     DiagonalCurveEditor* const Lmaskcieshape;
     Gtk::Frame* const wavFramecie;   
@@ -1710,7 +1719,7 @@ private:
     ThresholdAdjuster* const csThresholdcie;
     int nextcomprciecount = 0;
    
-    sigc::connection AutograycieConn,  forcejzConn, forcebwConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, comprcieautoconn, normcieconn, logcieconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethodConn, fftcieMaskConn;
+    sigc::connection AutograycieConn,  forcejzConn, forcebwConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, comprcieautoconn, normcieconn, logcieconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethodConn, fftcieMaskConn, trccieConn;
 public:
     Locallabcie();
     ~Locallabcie();
