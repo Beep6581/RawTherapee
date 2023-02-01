@@ -1605,6 +1605,7 @@ struct LocallabParams {
         bool jabcie;
         bool comprcieauto;
         bool normcie;
+        bool trccie;
         bool logcie;
         bool logjz;
         bool sigjz;
@@ -1666,6 +1667,8 @@ struct LocallabParams {
         double sigmoidblcie;
         double comprcie;
         double comprcieth;
+        double gamjcie;
+        double slopjcie;
         double sigmoidldajzcie;
         double sigmoidthjzcie;
         double sigmoidbljzcie;

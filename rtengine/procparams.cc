@@ -4283,6 +4283,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     jabcie(true),
     comprcieauto(false),
     normcie(true),
+    trccie(false),
     logcie(false),
     logjz(false),
     sigjz(false),
@@ -4462,6 +4463,8 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     sigmoidblcie(0.6),
     comprcie(0.6),
     comprcieth(6.),
+    gamjcie(1.),
+    slopjcie(0.),
     sigmoidldajzcie(0.5),
     sigmoidthjzcie(1.),
     sigmoidbljzcie(1.),
@@ -5200,6 +5203,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && jabcie == other.jabcie
         && comprcieauto == other.comprcieauto
         && normcie == other.normcie
+        && trccie == other.trccie
         && logcie == other.logcie
         && logjz == other.logjz
         && sigjz == other.sigjz
@@ -5261,6 +5265,8 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && sigmoidblcie == other.sigmoidblcie
         && comprcie == other.comprcie
         && comprcieth == other.comprcieth
+        && gamjcie == other.gamjcie
+        && slopjcie == other.slopjcie
         && sigmoidldajzcie == other.sigmoidldajzcie
         && sigmoidthjzcie == other.sigmoidthjzcie
         && sigmoidbljzcie == other.sigmoidbljzcie
@@ -7004,6 +7010,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->jabcie, "Locallab", "jabcie_" + index_str, spot.jabcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->comprcieauto, "Locallab", "comprcieauto_" + index_str, spot.comprcieauto, keyFile);
                     saveToKeyfile(!pedited || spot_edited->normcie, "Locallab", "normcie_" + index_str, spot.normcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->trccie, "Locallab", "trccie_" + index_str, spot.trccie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->logcie, "Locallab", "logcie_" + index_str, spot.logcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->logjz, "Locallab", "Logjz_" + index_str, spot.logjz, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sigjz, "Locallab", "Sigjz_" + index_str, spot.sigjz, keyFile);
@@ -7065,6 +7072,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->sigmoidblcie, "Locallab", "Sigmoidblcie_" + index_str, spot.sigmoidblcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->comprcie, "Locallab", "comprcie_" + index_str, spot.comprcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->comprcieth, "Locallab", "comprcieth_" + index_str, spot.comprcieth, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->gamjcie, "Locallab", "gamjcie_" + index_str, spot.gamjcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->slopjcie, "Locallab", "slopjcie_" + index_str, spot.slopjcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sigmoidldajzcie, "Locallab", "Sigmoidldajzcie_" + index_str, spot.sigmoidldajzcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sigmoidthjzcie, "Locallab", "Sigmoidthjzcie_" + index_str, spot.sigmoidthjzcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sigmoidbljzcie, "Locallab", "Sigmoidbljzcie_" + index_str, spot.sigmoidbljzcie, keyFile);
@@ -9213,6 +9222,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "jabcie_" + index_str, pedited, spot.jabcie, spotEdited.jabcie);
                 assignFromKeyfile(keyFile, "Locallab", "comprcieauto_" + index_str, pedited, spot.comprcieauto, spotEdited.comprcieauto);
                 assignFromKeyfile(keyFile, "Locallab", "normcie_" + index_str, pedited, spot.normcie, spotEdited.normcie);
+                assignFromKeyfile(keyFile, "Locallab", "trccie_" + index_str, pedited, spot.trccie, spotEdited.trccie);
                 assignFromKeyfile(keyFile, "Locallab", "logcie_" + index_str, pedited, spot.logcie, spotEdited.logcie);
                 assignFromKeyfile(keyFile, "Locallab", "Logjz_" + index_str, pedited, spot.logjz, spotEdited.logjz);
                 assignFromKeyfile(keyFile, "Locallab", "Sigjz_" + index_str, pedited, spot.sigjz, spotEdited.sigjz);
@@ -9283,6 +9293,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Sigmoidblcie_" + index_str, pedited, spot.sigmoidblcie, spotEdited.sigmoidblcie);
                 assignFromKeyfile(keyFile, "Locallab", "comprcie_" + index_str, pedited, spot.comprcie, spotEdited.comprcie);
                 assignFromKeyfile(keyFile, "Locallab", "comprcieth_" + index_str, pedited, spot.comprcieth, spotEdited.comprcieth);
+                assignFromKeyfile(keyFile, "Locallab", "gamjcie_" + index_str, pedited, spot.gamjcie, spotEdited.gamjcie);
+                assignFromKeyfile(keyFile, "Locallab", "slopjcie_" + index_str, pedited, spot.slopjcie, spotEdited.slopjcie);
                 assignFromKeyfile(keyFile, "Locallab", "Sigmoidldajzcie_" + index_str, pedited, spot.sigmoidldajzcie, spotEdited.sigmoidldajzcie);
                 assignFromKeyfile(keyFile, "Locallab", "Sigmoidthjzcie_" + index_str, pedited, spot.sigmoidthjzcie, spotEdited.sigmoidthjzcie);
                 assignFromKeyfile(keyFile, "Locallab", "Sigmoidbljzcie_" + index_str, pedited, spot.sigmoidbljzcie, spotEdited.sigmoidbljzcie);

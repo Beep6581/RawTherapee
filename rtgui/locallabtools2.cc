@@ -7936,6 +7936,7 @@ Locallabcie::Locallabcie():
     AutograycieConn = Autograycie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::AutograycieChanged));
     comprcieautoconn = comprcieauto->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::comprcieautoChanged));
     normcieconn = normcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::normcieChanged));
+    trccieconn = trccie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::trccieChanged));
     logcieconn = logcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::logcieChanged));
     logjzconn = logjz->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::logjzChanged));
     sigjzconn = sigjz->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::sigjzChanged));
@@ -8034,6 +8035,8 @@ Locallabcie::Locallabcie():
     sigmoidblcie->setAdjusterListener(this);
     comprcie->setAdjusterListener(this);
     comprcieth->setAdjusterListener(this);
+    gamjcie->setAdjusterListener(this);
+    slopjcie->setAdjusterListener(this);
     sigmoidldajzcie->setAdjusterListener(this);
     sigmoidthjzcie->setAdjusterListener(this);
     sigmoidbljzcie->setAdjusterListener(this);
@@ -8404,7 +8407,10 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         //  comprcieauto->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDCOMPRCIEAUTO_TOOLTIP"));
         comprcie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDQJCOMPRCIE_TOOLTIP"));
         comprcieth->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDQJCOMPRCIE_TOOLTIP"));
+        gamjcie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDGAMJCIE_TOOLTIP"));
+        slopjcie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDSLOPJCIE_TOOLTIP"));
         normcie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDNORMCIE_TOOLTIP"));
+        trccie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDTRCCIE_TOOLTIP"));
         sigmoidblcie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDNORMCIEBLEND_TOOLTIP"));
     } else {
         reparcie->set_tooltip_text("");
@@ -8470,8 +8476,11 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         //  comprcieauto->set_tooltip_text("");
         comprcie->set_tooltip_text("");
         comprcieth->set_tooltip_text("");
+        gamjcie->set_tooltip_text("");
+        slopjcie->set_tooltip_text("");
         modeHBoxbwev->set_tooltip_text("");
         normcie->set_tooltip_text("");
+        trccie->set_tooltip_text("");
         sigmoidblcie->set_tooltip_text("");
 
     }
@@ -8486,6 +8495,7 @@ void Locallabcie::disableListener()
     jabcieConn.block(true);
     comprcieautoconn.block(true);
     normcieconn.block(true);
+    trccieconn.block(true);
     logcieconn.block(true);
     logjzconn.block(true);
     sigjzconn.block(true);
@@ -8514,6 +8524,7 @@ void Locallabcie::enableListener()
     jabcieConn.block(false);
     comprcieautoconn.block(false);
     normcieconn.block(false);
+    trccieconn.block(false);
     logcieconn.block(false);
     logjzconn.block(false);
     sigjzconn.block(false);
@@ -8673,6 +8684,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         }
 
         normcie->set_active(spot.normcie);
+        trccie->set_active(spot.trccie);
         logcie->set_active(spot.logcie);
         logjz->set_active(spot.logjz);
         sigjz->set_active(spot.sigjz);
@@ -8685,6 +8697,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         modecamChanged();
         bwevMethodChanged();
         normcieChanged();
+        trccieChanged();
         comprcieautoChanged();
         sigqChanged();
         logcieChanged();
@@ -8796,6 +8809,8 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         sigmoidblcie->setValue(spot.sigmoidblcie);
         comprcie->setValue(spot.comprcie);
         comprcieth->setValue(spot.comprcieth);
+        gamjcie->setValue(spot.gamjcie);
+        slopjcie->setValue(spot.slopjcie);
         sigmoidldajzcie->setValue(spot.sigmoidldajzcie);
         sigmoidthjzcie->setValue(spot.sigmoidthjzcie);
         sigmoidbljzcie->setValue(spot.sigmoidbljzcie);
@@ -8910,6 +8925,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.sourceabscie = sourceabscie->getValue();
         spot.comprcieauto = comprcieauto->get_active();
         spot.normcie = normcie->get_active();
+        spot.trccie = trccie->get_active();
         spot.logcie = logcie->get_active();
         spot.logjz = logjz->get_active();
         spot.sigjz = sigjz->get_active();
@@ -8991,6 +9007,8 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.sigmoidblcie = sigmoidblcie->getValue();
         spot.comprcie = comprcie->getValue();
         spot.comprcieth = comprcieth->getValue();
+        spot.gamjcie = gamjcie->getValue();
+        spot.slopjcie = slopjcie->getValue();
         spot.sigmoidldajzcie = sigmoidldajzcie->getValue();
         spot.sigmoidthjzcie = sigmoidthjzcie->getValue();
         spot.sigmoidbljzcie = sigmoidbljzcie->getValue();
@@ -9272,6 +9290,29 @@ void Locallabcie::normcieChanged()
                                        M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabnormcie,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+
+}
+
+void Locallabcie::trccieChanged()
+{
+
+    if (trccie->get_active()) {
+    //    sigmoidblcie->set_sensitive(true);
+    } else {
+   //     sigmoidblcie->set_sensitive(false);
+    }
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (trccie->get_active()) {
+                listener->panelChanged(Evlocallabtrccie,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabtrccie,
                                        M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
@@ -10365,6 +10406,8 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         sigmoidblcie->setDefault(defSpot.sigmoidblcie);
         comprcie->setDefault(defSpot.comprcie);
         comprcieth->setDefault(defSpot.comprcieth);
+        gamjcie->setDefault(defSpot.gamjcie);
+        slopjcie->setDefault(defSpot.slopjcie);
         sigmoidldajzcie->setDefault(defSpot.sigmoidldajzcie);
         sigmoidthjzcie->setDefault(defSpot.sigmoidthjzcie);
         sigmoidbljzcie->setDefault(defSpot.sigmoidbljzcie);
@@ -10841,6 +10884,20 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabcomprcieth,
                                        comprcieth->getTextValue() + spName);
+            }
+        }
+
+        if (a == gamjcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabgamjcie,
+                                       gamjcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == slopjcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabslopjcie,
+                                       slopjcie->getTextValue() + spName);
             }
         }
 

@@ -1439,9 +1439,12 @@ HISTORY_MSG_ICM_WORKING_TRC_METHOD;TRC method
 HISTORY_MSG_ILLUM;CAL - SC - Illuminant
 HISTORY_MSG_LOCAL_CIE_BRICOMP;Local CIECAM Brightness compression
 HISTORY_MSG_LOCAL_CIE_BRICOMPTH;Local CIECAM Brightness compression threshold
+HISTORY_MSG_LOCAL_CIE_GAM;Local CIECAM Gamma
 HISTORY_MSG_LOCAL_CIE_NORM;Local CIECAM Normalize L
 HISTORY_MSG_LOCAL_CIE_SIGADAP;Local CIECAM Sigmoid adaptability
 HISTORY_MSG_LOCAL_CIE_SIGMET;Local CIECAM - Sigmoid method
+HISTORY_MSG_LOCAL_CIE_SLOP;Local CIECAM - Slope
+HISTORY_MSG_LOCAL_CIE_TRC;Local CIECAM - TRC
 HISTORY_MSG_LOCAL_CIEMASK_BLURCONT;Local Cie mask blur contrast
 HISTORY_MSG_LOCAL_CIEMASK_BLURFFT;Local Cie mask blur fftw
 HISTORY_MSG_LOCAL_CIEMASK_BLURRAD;Local Cie mask blur radius
@@ -3337,7 +3340,7 @@ TP_LOCALLAB_SHOWVI;Mask and modifications
 TP_LOCALLAB_SHRESFRA;Shadows/Highlights & TRC
 TP_LOCALLAB_SHTRC_TOOLTIP;Based on 'working profile' (only those provided), modifies the tones of the image by acting on a TRC (Tone Response Curve).\nGamma acts mainly on light tones.\nSlope acts mainly on dark tones.\nIt is recommended that the TRC of both devices (monitor and output profile) be sRGB (default).
 TP_LOCALLAB_SH_TOOLNAME;Shadows/Highlights & Tone Equalizer
-TP_LOCALLAB_SIGFRA;Sigmoid Q & Log encoding Q & TRC
+TP_LOCALLAB_SIGFRA;TRC J & Sigmoid Q & Log encoding Q
 TP_LOCALLAB_SIG2FRA;Sigmoid
 TP_LOCALLAB_SIGGAMJCIE;Gamma
 TP_LOCALLAB_SIGJZFRA;Sigmoid Jz

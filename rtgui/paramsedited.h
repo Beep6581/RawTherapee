@@ -986,6 +986,7 @@ public:
         bool jabcie;
         bool comprcieauto;
         bool normcie;
+        bool trccie;
         bool logcie;
         bool logjz;
         bool sigjz;
@@ -1041,6 +1042,8 @@ public:
         bool sigmoidblcie;
         bool comprcie;
         bool comprcieth;
+        bool gamjcie;
+        bool slopjcie;
         bool sigmoidldajzcie;
         bool sigmoidthjzcie;
         bool sigmoidbljzcie;
