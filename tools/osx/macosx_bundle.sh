@@ -191,12 +191,14 @@ lensfunversion=$(pkg-config --modversion lensfun | cut -f3 -d'.')
 if [ $lensfunversion = 95 ]
 then
     ditto ${LOCAL_PREFIX}/share/lensfun/version_2/* "${RESOURCES}/share/lensfun"
+    # Copy liblensfun to Frameworks
+    ditto ${LOCAL_PREFIX}/lib/liblensfun.2.dylib "${CONTENTS}/Frameworks/liblensfun.2.dylib"
+
 else
     ditto ${LOCAL_PREFIX}/share/lensfun/version_1/* "${RESOURCES}/share/lensfun"
+    # Copy liblensfun to Frameworks
+    ditto ${LOCAL_PREFIX}/lib/liblensfun.1.dylib "${CONTENTS}/Frameworks/liblensfun.1.dylib"
 fi
-
-# Copy liblensfun to Frameworks
-ditto ${LOCAL_PREFIX}/lib/liblensfun.2.dylib "${CONTENTS}/Frameworks/liblensfun.2.dylib"
 
 # Copy libomp to Frameworks
 ditto ${LOCAL_PREFIX}/lib/libomp.dylib "${CONTENTS}/Frameworks"
