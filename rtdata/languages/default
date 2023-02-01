@@ -1441,6 +1441,7 @@ HISTORY_MSG_LOCAL_CIE_BRICOMP;Local CIECAM Brightness compression
 HISTORY_MSG_LOCAL_CIE_BRICOMPTH;Local CIECAM Brightness compression threshold
 HISTORY_MSG_LOCAL_CIE_GAM;Local CIECAM Gamma
 HISTORY_MSG_LOCAL_CIE_NORM;Local CIECAM Normalize L
+HISTORY_MSG_LOCAL_CIE_SIG;Sigmoid
 HISTORY_MSG_LOCAL_CIE_SIGADAP;Local CIECAM Sigmoid adaptability
 HISTORY_MSG_LOCAL_CIE_SIGMET;Local CIECAM - Sigmoid method
 HISTORY_MSG_LOCAL_CIE_SLOP;Local CIECAM - Slope
@@ -3340,8 +3341,8 @@ TP_LOCALLAB_SHOWVI;Mask and modifications
 TP_LOCALLAB_SHRESFRA;Shadows/Highlights & TRC
 TP_LOCALLAB_SHTRC_TOOLTIP;Based on 'working profile' (only those provided), modifies the tones of the image by acting on a TRC (Tone Response Curve).\nGamma acts mainly on light tones.\nSlope acts mainly on dark tones.\nIt is recommended that the TRC of both devices (monitor and output profile) be sRGB (default).
 TP_LOCALLAB_SH_TOOLNAME;Shadows/Highlights & Tone Equalizer
+TP_LOCALLAB_SIGCIE;Sigmoid
 TP_LOCALLAB_SIGFRA;TRC J & Sigmoid Q & Log encoding Q
-TP_LOCALLAB_SIG2FRA;Sigmoid
 TP_LOCALLAB_SIGGAMJCIE;Gamma
 TP_LOCALLAB_SIGJZFRA;Sigmoid Jz
 TP_LOCALLAB_SIGMAWAV;Attenuation response
@@ -3352,7 +3353,8 @@ TP_LOCALLAB_SIGMOIDQJ;Uses Black Ev & White Ev
 TP_LOCALLAB_SIGMOIDSENSI;Adaptability
 TP_LOCALLAB_SIGMOIDTH;Threshold (Gray point)
 TP_LOCALLAB_SIGMOID_TOOLTIP;Allows you to simulate a Tone-mapping appearance using both the 'Jz' and 'Sigmoid' function.\nThree sliders: a) Contrast acts on the shape of the sigmoid curve and consequently on the strength; b) Threshold (Gray point) distributes the action according to the luminance; c)Blend acts on the final aspect of the image, contrast and luminance.
-TP_LOCALLAB_SIGMOID16_TOOLTIP;Allows you to simulate a Tone-mapping appearance using both the'Ciecam' and 'Sigmoid Q' or/and 'Log encoding Q' function.\nSigmoid Q: three sliders: a) Contrast acts on the shape of the sigmoid curve and consequently on the strength; b) Threshold (Gray point) distributes the action according to the luminance; c)Adaptability weights the action of the sigmoid by action on the internal exponential function.
+TP_LOCALLAB_SIGMOIDTRCCIE_TOOLTIP;This TRC modifies the tones of the image. The J (and Q) values are changed:\n-Gamma acts mainly on light tones -Slope acts mainly on dark tones.\nYou can choose any pair of 'gamma and slope' (values >1) and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.
+TP_LOCALLAB_SIGMOID16_TOOLTIP;Allows you to simulate a Tone-mapping appearance using both the'Ciecam' and 'Sigmoid Q' or/and 'Log encoding Q' or/and 'TRC J' function.\nSigmoid Q: three sliders: a) Contrast acts on the shape of the sigmoid curve and consequently on the strength; b) Threshold (Gray point) distributes the action according to the luminance; c)Adaptability weights the action of the sigmoid by action on the internal exponential function.
 TP_LOCALLAB_SIGMOIDLOGEV_TOOLTIP;If the comboxbox selection 'Uses Black Ev and White Ev' is 'Sigmoid and Log encoding Q' and 'Log encoding instead of Sigmoid' unchecked, the two algorithms Log encoding Q and Sigmoid Q are used together.
 TP_LOCALLAB_SIGMOIDNORMCIE;Normalize Luminance
 TP_LOCALLAB_SIGMOIDNORMCIE_TOOLTIP;Reconstruct luminance so that the mean and variance of the output image take into account those of the original.\nAll the adjustments acting on J or Q are taken into account, including those which are not relative to Sigmoid Q and Log encoding Q.

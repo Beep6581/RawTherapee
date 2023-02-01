@@ -987,6 +987,7 @@ public:
         bool comprcieauto;
         bool normcie;
         bool trccie;
+        bool sigcie;
         bool logcie;
         bool logjz;
         bool sigjz;

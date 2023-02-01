@@ -747,12 +747,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         }
 
         for (int sp = 0; sp < (int)params->locallab.spots.size(); sp++) {
-			if(params->locallab.spots.at(sp).expsharp  && params->dirpyrequalizer.cbdlMethod == "bef") {
-				if(params->locallab.spots.at(sp).shardamping < 1) {
-					params->locallab.spots.at(sp).shardamping = 1;
-				}				
-			}
-		}
+            if(params->locallab.spots.at(sp).expsharp  && params->dirpyrequalizer.cbdlMethod == "bef") {
+                if(params->locallab.spots.at(sp).shardamping < 1) {
+                    params->locallab.spots.at(sp).shardamping = 1;
+                }
+            }
+        }
 
         if ((todo & (M_TRANSFORM | M_RGBCURVE))  && params->dirpyrequalizer.cbdlMethod == "bef" && params->dirpyrequalizer.enabled && !params->colorappearance.enabled) {
             const int W = oprevi->getWidth();
@@ -998,8 +998,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 if (params->locallab.spots.at(sp).equilret  && params->locallab.spots.at(sp).expreti) {
                     savenormreti.reset(new LabImage(*oprevl, true));
                 }
-				
-				autocam[sp] = params->locallab.spots.at(sp).comprcieauto;
+                
+                autocam[sp] = params->locallab.spots.at(sp).comprcieauto;
                 // Set local curves of current spot to LUT
                 locRETgainCurve.Set(params->locallab.spots.at(sp).localTgaincurve);
                 locRETtransCurve.Set(params->locallab.spots.at(sp).localTtranscurve);
@@ -1108,7 +1108,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 meanretie = 0.f;
                 stdretie = 0.f;
                 float fab = 1.f;
-				float maxicam = -1000.f;
+                float maxicam = -1000.f;
                 bool istm = params->locallab.spots.at(sp).equiltm  && params->locallab.spots.at(sp).exptonemap;
                 bool isreti = params->locallab.spots.at(sp).equilret  && params->locallab.spots.at(sp).expreti;
                 //preparation for mean and sigma on current RT-spot
@@ -1185,7 +1185,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float Tmin;
                 float Tmax;
                 int lastsav;
-				
+
                 ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv.get(), savenormtm.get(), savenormreti.get(), lastorigimp.get(), fw, fh, 0, 0, pW, pH, scale, locRETgainCurve, locRETtransCurve,
                               lllocalcurve, locallutili,
                               cllocalcurve, localclutili,
@@ -1243,8 +1243,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               meantm, stdtm, meanreti, stdreti, fab, maxicam);
 
                 fabrefp[sp] = fab;
-				float maxth = std::min(maxicam, 20.f); //20.f arbitrary value to limit threshold
-                maxicamp[sp] = 0.2f * maxth;//0.25 arbitrary coef.
+                float maxth = std::min(maxicam, 20.f); //20.f arbitrary value to limit threshold
+                maxicamp[sp] = 0.4f * maxth;//0.25 arbitrary coef.
                 if (istm) { //calculate mean and sigma on full image for use by normalize_mean_dt
                     float meanf = 0.f;
                     float stdf = 0.f;
@@ -1296,11 +1296,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     fabrefp[sp] = fab;
                     
                 }
-				if (locallListener) {
-					locallListener->refChanged2(huerefp, chromarefp, lumarefp, fabrefp, params->locallab.selspot);
-					locallListener->minmaxChanged(locallretiminmax, params->locallab.selspot);
-					locallListener->maxcam(maxicamp, autocam, params->locallab.selspot);
-				}
+                if (locallListener) {
+                    locallListener->refChanged2(huerefp, chromarefp, lumarefp, fabrefp, params->locallab.selspot);
+                    locallListener->minmaxChanged(locallretiminmax, params->locallab.selspot);
+                    locallListener->maxcam(maxicamp, autocam, params->locallab.selspot);
+                }
             }
             delete [] huerefp;
             delete [] chromarefp;
@@ -1308,7 +1308,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             delete [] fabrefp;
             delete [] maxicamp;
             delete [] autocam;
-			
+
             ipf.lab2rgb(*nprevl, *oprevi, params->icm.workingProfile);
             //*************************************************************
             // end locallab

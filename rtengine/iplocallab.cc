@@ -2655,6 +2655,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     bool issigq = params->locallab.spots.at(sp).sigq;
     bool islogq = params->locallab.spots.at(sp).logcie;
     bool istrc = params->locallab.spots.at(sp).trccie;
+    bool issig = params->locallab.spots.at(sp).sigcie;
 
     //sigmoid J Q variables
     const float sigmoidlambda = params->locallab.spots.at(sp).sigmoidldacie;
@@ -4153,7 +4154,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                         }
 
 
-                        if (islogq && issigq) {//log encoding Q
+                        if (islogq && issigq && iscie) {//log encoding Q
                             float val =  Qpro *  coefq;
 
                             if (val > (float) noise) {
@@ -4164,7 +4165,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                         }
 
 
-                        if (issigq && iscie && !islogq && mobwev == 2) { //sigmoid Q and Log encode
+                        if (issig && issigq && iscie && !islogq && mobwev == 2) { //sigmoid Q and Log encode
                             float val = Qpro * coefq;
 
                             if (val > (float) noise) {
@@ -4185,7 +4186,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
                         }
 
-                        if (issigq && iscie && !islogq && mobwev != 2) { //sigmoid Q only and black & white Ev
+                        if (issig && issigq && iscie && !islogq && mobwev != 2) { //sigmoid Q only and black & white Ev
                             float val = Qpro * coefq;
 
                             if (mobwev == 1) {
