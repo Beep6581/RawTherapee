@@ -7474,6 +7474,7 @@ Locallabcie::Locallabcie():
     normcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGMOIDNORMCIE")))),
     modeHBoxbwev(Gtk::manage(new Gtk::Box())),
     bwevMethod(Gtk::manage(new MyComboBoxText())),
+    logcieFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGCIE")))),
     logcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LOGCIE")))),
     comprBox(Gtk::manage(new ToolParamBlock())),
     comprcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIE"), 0., 1., 0.01, 0.6))),
@@ -7692,11 +7693,14 @@ Locallabcie::Locallabcie():
     sigmoidgamFrame->set_label_widget(*trccie);
     sigmoid2Frame->set_label_align(0.025, 0.5);
     sigmoid2Frame->set_label_widget(*sigcie);
+    logcieFrame->set_label_align(0.025, 0.5);
+    logcieFrame->set_label_widget(*logcie);
+    
     ToolParamBlock* const signormBox = Gtk::manage(new ToolParamBlock());
     ToolParamBlock* const gamcieBox = Gtk::manage(new ToolParamBlock());
     ToolParamBlock* const sigfraBox = Gtk::manage(new ToolParamBlock());
     
-    Gtk::Separator* const separatorsig = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
+   // Gtk::Separator* const separatorsig = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     Gtk::Separator* const separatorsig2 = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     modeHBoxbwev->set_spacing(2);
     //modeHBoxcam->set_tooltip_markup (M ("TP_LOCALLAB_CAMMODE_TOOLTIP"));
@@ -7721,15 +7725,17 @@ Locallabcie::Locallabcie():
     sigBox->pack_start(*sigmoid2Frame);
     sigBox->pack_start(*sigmoidgamFrame);
 
-    sigBox->pack_start(*separatorsig);
+    //sigBox->pack_start(*separatorsig);
 
-    sigBox->pack_start(*logcie);
+  //  sigBox->pack_start(*logcie);
+  //  sigBox->pack_start(*separatorsig);
     comprBox->pack_start(*comprcie);
     comprBox->pack_start(*comprcieth);
     autocomprHBox->pack_start(*comprcieauto);
     autocomprHBox->pack_end(*Gtk::manage(new Gtk::Label("  ")));
     comprBox->pack_start(*autocomprHBox);
-    sigBox->pack_start(*comprBox);
+    logcieFrame->add(*comprBox);
+    sigBox->pack_start(*logcieFrame);
     sigBox->pack_start(*separatorsig2);
     signormBox->pack_start(*sigmoidblcie);
     sigmoidnormFrame->add(*signormBox);
