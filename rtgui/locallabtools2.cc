@@ -7475,6 +7475,7 @@ Locallabcie::Locallabcie():
     modeHBoxbwev(Gtk::manage(new Gtk::Box())),
     bwevMethod(Gtk::manage(new MyComboBoxText())),
     logcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LOGCIE")))),
+    comprBox(Gtk::manage(new ToolParamBlock())),
     comprcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIE"), 0., 1., 0.01, 0.6))),
     comprcieth(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIETH"), 0., 25., 0.01, 6.))),
     trccie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGTRCCIE")))),
@@ -7723,11 +7724,12 @@ Locallabcie::Locallabcie():
     sigBox->pack_start(*separatorsig);
 
     sigBox->pack_start(*logcie);
-    sigBox->pack_start(*comprcie);
-    sigBox->pack_start(*comprcieth);
+    comprBox->pack_start(*comprcie);
+    comprBox->pack_start(*comprcieth);
     autocomprHBox->pack_start(*comprcieauto);
     autocomprHBox->pack_end(*Gtk::manage(new Gtk::Label("  ")));
-    sigBox->pack_start(*autocomprHBox);
+    comprBox->pack_start(*autocomprHBox);
+    sigBox->pack_start(*comprBox);
     sigBox->pack_start(*separatorsig2);
     signormBox->pack_start(*sigmoidblcie);
     sigmoidnormFrame->add(*signormBox);
@@ -8727,6 +8729,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             sigmoidsenscie->set_sensitive(false);
             // sigmoidblcie->set_sensitive(false);
             modeHBoxbwev->set_sensitive(false);
+            comprBox->show();
             comprcie->set_sensitive(true);
             comprcieth->set_sensitive(true);
             comprcieauto->set_sensitive(true);
@@ -8740,6 +8743,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             modeHBoxbwev->set_sensitive(true);
 
             if (bwevMethod->get_active_row_number() == 2) {
+                comprBox->show();
                 comprcie->set_sensitive(true);
                 comprcieth->set_sensitive(true);
                 comprcieauto->set_sensitive(true);
@@ -9311,6 +9315,13 @@ void Locallabcie::normcieChanged()
 
 void Locallabcie::trccieChanged()
 {
+    if (trccie->get_active()) {
+        gamjcie->set_sensitive(true);
+        slopjcie->set_sensitive(true);
+    } else {
+        gamjcie->set_sensitive(false);
+        slopjcie->set_sensitive(false);
+    }
 
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
@@ -9837,6 +9848,15 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             comprcie->hide();
             comprcieth->hide();
             comprcieauto->hide();
+            comprBox->hide();
+
+            if (trccie->get_active()) {
+                gamjcie->set_sensitive(true);
+                slopjcie->set_sensitive(true);
+            } else {
+                gamjcie->set_sensitive(false);
+                slopjcie->set_sensitive(false);
+            }
 
             if (modecam->get_active_row_number() == 2) {
                 PQFrame->hide();
@@ -9914,6 +9934,15 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             comprcie->show();
             comprcieth->show();
             comprcieauto->show();
+            comprBox->show();
+
+            if (trccie->get_active()) {
+                gamjcie->set_sensitive(true);
+                slopjcie->set_sensitive(true);
+            } else {
+                gamjcie->set_sensitive(false);
+                slopjcie->set_sensitive(false);
+            }
 
             jzFrame->hide();
             adapjzcie->hide();
@@ -10047,6 +10076,15 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             struFramecie->show();
             blurFramecie->show();
             wavFramecie->show();
+            comprBox->show();
+
+            if (trccie->get_active()) {
+                gamjcie->set_sensitive(true);
+                slopjcie->set_sensitive(true);
+            } else {
+                gamjcie->set_sensitive(false);
+                slopjcie->set_sensitive(false);
+            }
 
             if (enacieMask->get_active()) {
                 maskusablecie->show();

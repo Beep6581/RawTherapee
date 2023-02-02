@@ -1244,8 +1244,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                 fabrefp[sp] = fab;
                 float maxth = std::min(maxicam, 20.f); //20.f arbitrary value to limit threshold
-                float basecor = settings->basecorlog;//12 arbitrary coef: probably must take into account Absolute luminance, etc.
-
+                float basecor = settings->basecorlog;//0.12 arbitrary coef: probably must take into account Absolute luminance, etc.
+                basecor = LIM(basecor, 0.05f, 0.50f);
                 maxicamp[sp] = basecor * maxth;//or 0.12 * maxth
                 if (istm) { //calculate mean and sigma on full image for use by normalize_mean_dt
                     float meanf = 0.f;

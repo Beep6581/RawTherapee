@@ -620,7 +620,7 @@ void Options::setDefaults()
     rtSettings.previewselection = 5;//between 1 to 40
     rtSettings.cbdlsensi = 1.0;//between 0.001 to 1
     rtSettings.fftwsigma = true; //choice between sigma^2 or empirical formula
-    rtSettings.basecorlog = 0.12;//reduction max Q in Cam16 sigmoid Log encoding 
+    rtSettings.basecorlog = 0.12;//reduction max Q in Cam16 sigmoid Log encoding between 0.05 and 0.5
 
     rtSettings.itcwb_thres = 34;//between 10 to 55
     rtSettings.itcwb_sort = false;

@@ -1611,6 +1611,7 @@ private:
     Gtk::Box* const modeHBoxbwev;
     MyComboBoxText* const bwevMethod;
     Gtk::CheckButton* const logcie;
+    ToolParamBlock* const comprBox;
     Adjuster* const comprcie;
     Adjuster* const comprcieth;
     Gtk::CheckButton* const trccie;
