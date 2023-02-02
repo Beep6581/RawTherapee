@@ -20144,28 +20144,37 @@ void ImProcFunctions::Lab_Local(
                     cmsHTRANSFORM dummy = nullptr;
                     int ill = 2;
                     int prim = 3;
-                    if (params->locallab.spots.at(sp).primMethod == "srgb") {
+                    int typ = 1;
+                    if (params->locallab.spots.at(sp).primMethod == "non") {
+                        typ = 1;
+                    } else if (params->locallab.spots.at(sp).primMethod == "srgb") {
                         prim = 1;
                         ill = 5;
+                        typ = 5;
                     } else if (params->locallab.spots.at(sp).primMethod == "ado") {
                         prim = 2;
                         ill = 5;
+                        typ = 5;
                     } else if (params->locallab.spots.at(sp).primMethod == "pro") {
                         prim = 3;
                         ill = 2;
+                        typ = 5;
                     } else if (params->locallab.spots.at(sp).primMethod == "rec") {
                         prim = 4;
                         ill = 5;
+                        typ = 5;
                     } else if (params->locallab.spots.at(sp).primMethod == "ac1") {
                         prim = 5;
                         ill = 4;
+                        typ = 5;
                     } else if (params->locallab.spots.at(sp).primMethod == "wid") {
                         prim =6;
                         ill = 3;
+                        typ = 5;
                     }
 
                     workingtrc(tmpImage, tmpImage, bfw, bfh, -5, prof, 2.4, 12.92310, ill, 0, dummy, true, false, false);
-                    workingtrc(tmpImage, tmpImage, bfw, bfh, 5, prof, gamtone, slotone, ill, prim, dummy, false, true, true);//be careful no gamut control
+                    workingtrc(tmpImage, tmpImage, bfw, bfh, typ, prof, gamtone, slotone, ill, prim, dummy, false, true, true);//be careful no gamut control
 
                     rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 

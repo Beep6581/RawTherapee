@@ -1441,6 +1441,7 @@ HISTORY_MSG_LOCAL_CIE_BRICOMP;Local CIECAM Brightness compression
 HISTORY_MSG_LOCAL_CIE_BRICOMPTH;Local CIECAM Brightness compression threshold
 HISTORY_MSG_LOCAL_CIE_GAM;Local CIECAM Gamma
 HISTORY_MSG_LOCAL_CIE_NORM;Local CIECAM Normalize L
+HISTORY_MSG_LOCAL_CIE_PRIM;Local CIECAM TRC Primaries
 HISTORY_MSG_LOCAL_CIE_SIG;Sigmoid
 HISTORY_MSG_LOCAL_CIE_SIGADAP;Local CIECAM Sigmoid adaptability
 HISTORY_MSG_LOCAL_CIE_SIGMET;Local CIECAM - Sigmoid method
@@ -2600,6 +2601,7 @@ TP_ICM_WORKING_ILLU_D80;D80
 TP_ICM_WORKING_ILLU_D120;D120
 TP_ICM_WORKING_ILLU_NONE;Default
 TP_ICM_WORKING_ILLU_STDA;stdA 2875K
+TP_ICM_WORKING_NON;None
 TP_ICM_WORKING_PRESER;Preserves Pastel tones
 TP_ICM_WORKING_PRIM;Destination primaries
 TP_ICM_WORKING_PRIMFRAME_TOOLTIP;When 'Custom CIE xy diagram' is selected in 'Destination- primaries'' combobox, you can modify the values of the 3 primaries directly on the graph.\nNote that in this case, the white point position on the graph will not be updated.
@@ -3353,7 +3355,7 @@ TP_LOCALLAB_SIGMOIDQJ;Uses Black Ev & White Ev
 TP_LOCALLAB_SIGMOIDSENSI;Adaptability
 TP_LOCALLAB_SIGMOIDTH;Threshold (Gray point)
 TP_LOCALLAB_SIGMOID_TOOLTIP;Allows you to simulate a Tone-mapping appearance using both the 'Jz' and 'Sigmoid' function.\nThree sliders: a) Contrast acts on the shape of the sigmoid curve and consequently on the strength; b) Threshold (Gray point) distributes the action according to the luminance; c)Blend acts on the final aspect of the image, contrast and luminance.
-TP_LOCALLAB_SIGMOIDTRCCIE_TOOLTIP;This TRC modifies the tones of the image. The values are changed:\n-Gamma acts mainly on light tones -Slope acts mainly on dark tones.\nYou can choose any pair of 'gamma and slope' (values >1) and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.
+TP_LOCALLAB_SIGMOIDTRCCIE_TOOLTIP;This TRC modifies the tones of the image. The values are changed:\n-Gamma acts mainly on light tones -Slope acts mainly on dark tones.\nYou can choose any pair of 'gamma and slope' (values >1) and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.\n\n-Destination primaries (Advanced): which allows you to change the destination primaries to restore or change image color (saturation), the color balance (hue) is respected, 'working profiles' are not modified.
 TP_LOCALLAB_SIGMOID16_TOOLTIP;Allows you to simulate a Tone-mapping appearance using both the'Ciecam' and 'Sigmoid Q' or/and 'Log encoding Q' or/and 'TRC' function.\nSigmoid Q: three sliders: a) Contrast acts on the shape of the sigmoid curve and consequently on the strength; b) Threshold (Gray point) distributes the action according to the luminance; c)Adaptability weights the action of the sigmoid by action on the internal exponential function.
 TP_LOCALLAB_SIGMOIDLOGEV_TOOLTIP;If the comboxbox selection 'Uses Black Ev and White Ev' is 'Sigmoid and Log encoding Q' instead of 'Sigmoid Q only', the two algorithms 'Log encoding Q' and 'Sigmoid Q' are used together.
 TP_LOCALLAB_SIGMOIDNORMCIE;Normalize Luminance

@@ -4466,7 +4466,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     comprcieth(6.),
     gamjcie(2.4),
     slopjcie(12.923),
-    primMethod("pro"),
+    primMethod("non"),
     sigmoidldajzcie(0.5),
     sigmoidthjzcie(1.),
     sigmoidbljzcie(1.),
