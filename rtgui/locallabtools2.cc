@@ -26,6 +26,7 @@
 #include "rtimage.h"
 #include "../rtengine/color.h"
 #include "eventmapper.h"
+#include "../rtengine/utils.h"
 
 #define MINNEIGH 0.1
 #define MAXNEIGH 1500
@@ -7482,6 +7483,16 @@ Locallabcie::Locallabcie():
     trccie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGTRCCIE")))),
     gamjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGGAMJCIE"), 0.7, 4., 0.01, 2.4))),
     slopjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGSLOPJCIE"), 0., 100., 0.01, 12.923))),
+    wprimBox(Gtk::manage(new Gtk::Box())),
+    primMethod(Gtk::manage(new MyComboBoxText())),
+/*
+    redx(Gtk::manage(new Adjuster(M("TC_PRIM_REDX"), 0.41, 1.0, 0.0001, 0.7347))),
+    redy(Gtk::manage(new Adjuster(M("TC_PRIM_REDY"), 0.0, 0.70, 0.0001, 0.2653))),
+    grex(Gtk::manage(new Adjuster(M("TC_PRIM_GREX"), -0.1, 0.4, 0.0001, 0.1596))),
+    grey(Gtk::manage(new Adjuster(M("TC_PRIM_GREY"), 0.50, 1.0, 0.0001, 0.8404))),
+    blux(Gtk::manage(new Adjuster(M("TC_PRIM_BLUX"), -0.1, 0.4, 0.0001, 0.0366))),
+    bluy(Gtk::manage(new Adjuster(M("TC_PRIM_BLUY"), -0.1, 0.49, 0.0001, 0.0001))),
+*/
     sigmoidjzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGJZFRA")))),
     sigmoidgamFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGGAMFRA")))),
     sigmoid2Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIG2FRA")))),
@@ -7604,7 +7615,7 @@ Locallabcie::Locallabcie():
     Evlocallabslopjcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SLOP");
     Evlocallabtrccie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_TRC");
     Evlocallabsigcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SIG");
-
+    Evlocallabprimcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_PRIM");
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     // Parameter Ciecam specific widgets
@@ -7695,6 +7706,17 @@ Locallabcie::Locallabcie():
     sigmoid2Frame->set_label_widget(*sigcie);
     logcieFrame->set_label_align(0.025, 0.5);
     logcieFrame->set_label_widget(*logcie);
+    Gtk::Label* primLabel = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_PRIM") + ":"));
+    wprimBox->pack_start(*primLabel, Gtk::PACK_SHRINK);
+    wprimBox->pack_start(*primMethod, Gtk::PACK_EXPAND_WIDGET);
+    primMethod->append(M("TP_ICM_WORKING_PRIM_SRGB"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_ADOB"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_PROP"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_REC"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_ACE"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_WID"));
+    primMethod->set_active(2);
+    primMethodconn = primMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::primMethodChanged));
     
     ToolParamBlock* const signormBox = Gtk::manage(new ToolParamBlock());
     ToolParamBlock* const gamcieBox = Gtk::manage(new ToolParamBlock());
@@ -7715,6 +7737,28 @@ Locallabcie::Locallabcie():
     modeHBoxbwev->pack_start(*bwevMethod);
     gamcieBox->pack_start(*gamjcie);
     gamcieBox->pack_start(*slopjcie);
+    gamcieBox->pack_start(*wprimBox);
+/*
+    gamcieBox->pack_start(*redx);
+    gamcieBox->pack_start(*redy);
+    gamcieBox->pack_start(*grex);
+    gamcieBox->pack_start(*grey);
+    gamcieBox->pack_start(*blux);
+    gamcieBox->pack_start(*bluy);
+    redx->hide();
+    redy->hide();
+    grex->hide();
+    grey->hide();
+    blux->hide();
+    bluy->hide();
+
+    redx->setAdjusterListener(this);
+    redy->setAdjusterListener(this);
+    grex->setAdjusterListener(this);
+    grey->setAdjusterListener(this);
+    blux->setAdjusterListener(this);
+    bluy->setAdjusterListener(this);
+*/
     sigmoidgamFrame->add(*gamcieBox);
 //    sigBox->pack_start(*sigmoidgamFrame);
     sigfraBox->pack_start(*sigmoidldacie);
@@ -8511,6 +8555,7 @@ void Locallabcie::disableListener()
     comprcieautoconn.block(true);
     normcieconn.block(true);
     trccieconn.block(true);
+    primMethodconn.block(true);
     sigcieconn.block(true);
     logcieconn.block(true);
     logjzconn.block(true);
@@ -8541,6 +8586,7 @@ void Locallabcie::enableListener()
     comprcieautoconn.block(false);
     normcieconn.block(false);
     trccieconn.block(false);
+    primMethodconn.block(false);
     sigcieconn.block(false);
     logcieconn.block(false);
     logjzconn.block(false);
@@ -8642,6 +8688,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
 
     // Update GUI to selected spot value
     const int index = pp->locallab.selspot;
+    Glib::ustring prof = pp->icm.workingProfile;
 
     if (index < (int)pp->locallab.spots.size()) {
         const LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
@@ -8698,6 +8745,20 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
 
         if (Autograycie->get_active()) {
             comprcieauto->set_active(true);
+        }
+
+        if (spot.primMethod == "srgb") {
+            primMethod->set_active(0);
+        } else if (spot.primMethod == "ado") {
+            primMethod->set_active(1);
+        } else if (spot.primMethod == "pro") {
+            primMethod->set_active(2);
+        } else if (spot.primMethod == "rec") {
+            primMethod->set_active(3);
+        } else if (spot.primMethod == "ac1") {
+            primMethod->set_active(4);
+        } else if (spot.primMethod == "wid") {
+            primMethod->set_active(5);
         }
 
         normcie->set_active(spot.normcie);
@@ -8969,6 +9030,22 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         } else if (bwevMethod->get_active_row_number() == 2) {
             spot.bwevMethod = "logsig";
         }
+
+
+        if (primMethod->get_active_row_number() == 0) {
+            spot.primMethod = "srgb";
+        } else if (primMethod->get_active_row_number() == 1) {
+            spot.primMethod = "ado";
+        } else if (primMethod->get_active_row_number() == 2) {
+            spot.primMethod = "pro";
+        } else if (primMethod->get_active_row_number() == 3) {
+            spot.primMethod = "rec";
+        } else if (primMethod->get_active_row_number() == 4) {
+            spot.primMethod = "ac1";
+        } else if (primMethod->get_active_row_number() == 5) {
+            spot.primMethod = "wid";
+        }
+
 
         if (surroundcie->get_active_row_number() == 0) {
             spot.surroundcie = "Average";
@@ -9324,9 +9401,11 @@ void Locallabcie::trccieChanged()
     if (trccie->get_active()) {
         gamjcie->set_sensitive(true);
         slopjcie->set_sensitive(true);
+        wprimBox->set_sensitive(true);
     } else {
         gamjcie->set_sensitive(false);
         slopjcie->set_sensitive(false);
+        wprimBox->set_sensitive(false);
     }
 
     if (isLocActivated && exp->getEnabled()) {
@@ -9758,6 +9837,72 @@ void Locallabcie::sursourcieChanged()
     }
 }
 
+void Locallabcie::primMethodChanged()
+{
+    const LocallabParams::LocallabSpot defSpot;
+//    const int mode = complexity->get_active_row_number();
+    
+    if (primMethod->get_active_row_number() == 0) {
+        /*
+            redx->setValue(0.64);
+            redy->setValue(0.33);
+            grex->setValue(0.30);
+            grey->setValue(0.60);
+            blux->setValue(0.15);
+            bluy->setValue(0.06);
+        */
+    } else if (primMethod->get_active_row_number() == 1) {
+        /*
+            redx->setValue(0.64);
+            redy->setValue(0.33);
+            grex->setValue(0.21);
+            grey->setValue(0.71);
+            blux->setValue(0.15);
+            bluy->setValue(0.06);
+        */
+    } else if (primMethod->get_active_row_number() == 2) {
+        /*
+            redx->setValue(0.7347);
+            redy->setValue(0.2653);
+            grex->setValue(0.1596);
+            grey->setValue(0.8404);
+            blux->setValue(0.0366);
+            bluy->setValue(0.0001);
+        */
+    } else if (primMethod->get_active_row_number() == 3) {
+        /*
+            redx->setValue(0.708);
+            redy->setValue(0.292);
+            grex->setValue(0.17);
+            grey->setValue(0.797);
+            blux->setValue(0.131);
+            bluy->setValue(0.046);
+        */
+    } else if (primMethod->get_active_row_number() == 4) {
+        /*
+            redx->setValue(0.713);
+            redy->setValue(0.293);
+            grex->setValue(0.165);
+            grey->setValue(0.830);
+            blux->setValue(0.128);
+            bluy->setValue(0.044);
+         */
+    } else if (primMethod->get_active_row_number() == 5) {
+        /*
+            redx->setValue(0.735);
+            redy->setValue(0.265);
+            grex->setValue(0.115);
+            grey->setValue(0.826);
+            blux->setValue(0.1570);
+            bluy->setValue(0.018);
+        */
+    }
+    if (listener) {
+        listener->panelChanged(Evlocallabprimcie, primMethod->get_active_text());
+    }
+
+}
+
 void Locallabcie::bwevMethodChanged()
 {
     const LocallabParams::LocallabSpot defSpot;
@@ -9860,9 +10005,12 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             if (trccie->get_active()) {
                 gamjcie->set_sensitive(true);
                 slopjcie->set_sensitive(true);
+                wprimBox->set_sensitive(true);
+
             } else {
                 gamjcie->set_sensitive(false);
                 slopjcie->set_sensitive(false);
+                wprimBox->set_sensitive(false);
             }
 
             if (modecam->get_active_row_number() == 2) {
@@ -9946,9 +10094,11 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             if (trccie->get_active()) {
                 gamjcie->set_sensitive(true);
                 slopjcie->set_sensitive(true);
+                wprimBox->set_sensitive(true);
             } else {
                 gamjcie->set_sensitive(false);
                 slopjcie->set_sensitive(false);
+                wprimBox->set_sensitive(false);
             }
 
             jzFrame->hide();
@@ -10088,9 +10238,11 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             if (trccie->get_active()) {
                 gamjcie->set_sensitive(true);
                 slopjcie->set_sensitive(true);
+                wprimBox->set_sensitive(true);
             } else {
                 gamjcie->set_sensitive(false);
                 slopjcie->set_sensitive(false);
+                wprimBox->set_sensitive(false);
             }
 
             if (enacieMask->get_active()) {

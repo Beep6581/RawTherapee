@@ -20142,9 +20142,30 @@ void ImProcFunctions::Lab_Local(
                     float gamtone = params->locallab.spots.at(sp).gamjcie;
                     float slotone = params->locallab.spots.at(sp).slopjcie;
                     cmsHTRANSFORM dummy = nullptr;
-                    int ill =0;
+                    int ill = 2;
+                    int prim = 3;
+                    if (params->locallab.spots.at(sp).primMethod == "srgb") {
+                        prim = 1;
+                        ill = 5;
+                    } else if (params->locallab.spots.at(sp).primMethod == "ado") {
+                        prim = 2;
+                        ill = 5;
+                    } else if (params->locallab.spots.at(sp).primMethod == "pro") {
+                        prim = 3;
+                        ill = 2;
+                    } else if (params->locallab.spots.at(sp).primMethod == "rec") {
+                        prim = 4;
+                        ill = 5;
+                    } else if (params->locallab.spots.at(sp).primMethod == "ac1") {
+                        prim = 5;
+                        ill = 4;
+                    } else if (params->locallab.spots.at(sp).primMethod == "wid") {
+                        prim =6;
+                        ill = 3;
+                    }
+
                     workingtrc(tmpImage, tmpImage, bfw, bfh, -5, prof, 2.4, 12.92310, ill, 0, dummy, true, false, false);
-                    workingtrc(tmpImage, tmpImage, bfw, bfh, 1, prof, gamtone, slotone, ill, 0, dummy, false, true, true);//be careful no gamut control
+                    workingtrc(tmpImage, tmpImage, bfw, bfh, 5, prof, gamtone, slotone, ill, prim, dummy, false, true, true);//be careful no gamut control
 
                     rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
