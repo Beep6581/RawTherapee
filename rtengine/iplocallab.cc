@@ -3950,6 +3950,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         }
 
         float base = 10.f;
+        float linbaseor = 10.f;
         float linbase = 10.f;
         float gray = 15.f;
 
@@ -3959,30 +3960,24 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
         if (islogq  || mobwev != 0) {
             gray = 0.01f * (float) params->locallab.spots.at(sp).sourceGraycie;
-            gray = pow_F(gray, 1.25f);//or 1.15 => modification to increase sensitivity gain, only on defaults, of course we can change this value manually...take into account suuround and Yb Cam16
             const float targetgraycie = params->locallab.spots.at(sp).targetGraycie;
-            float targetgraycor = pow_F(0.01f * targetgraycie, 1.15f);
+            float targetgraycor = 0.01f * targetgraycie;
             base = targetgraycie > 1.f && targetgraycie < 100.f && (float) dynamic_range > 0.f ?  find_gray(std::abs((float) shadows_range) / (float) dynamic_range, (targetgraycor)) : 0.f;
-            linbase = std::max(base, 2.f);//2. minimal base log to avoid very bad results
+            linbaseor = std::max(base, 2.f);//2. minimal base log to avoid very bad results
             float maxQgray = coefq * maxicam / gray;
+            maxicam =  maxQgray;//setting threshold comprcieth
+            const float log2 = xlogf(2.f);
+            float corlog = xlogf(maxicam)/log2;//correction base logarithme
+            linbase = linbaseor / corlog;
+            
 
-            maxicam =  maxQgray;
-            float basecor = settings->basecorlog;//default 150
-
-            if (linbase > basecor) {
-                float corlin = (linbase - basecor) / basecor;
-                maxicam /= (1.f + corlin);//adapt threshold
-            }
 
             if (settings->verbose) {
-                printf("Gray=%1.3f MaxicamQ=%3.2f Base logarithm encoding Q=%5.1f\n", (double) gray, (double) maxicam, (double) linbase);
-            }
+                printf("Gray=%1.3f MaxicamQ=%3.2f Base log encode corrected Q=%5.1f Base log encode origig Q=%5.1f\n", (double) gray, (double) maxicam, (double) linbase, (double) linbaseor);
+            } 
 
         }
 
-        if (mobwev == 2) { //sigmoid & log encode
-            //comprth *= 0.4f;//empirical
-        }
 
         const auto applytoq =
         [ = ](float x) -> float {
@@ -4011,19 +4006,10 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         float *data = nullptr;
         float *datanorm = nullptr;
 
-        /*
-                float *datainC = nullptr;
-                float *dataC = nullptr;
-                float *datanormC = nullptr;
-        */
         if (sigmoidnorm  && issigq) {
             datain = new float[width * height];
             data = new float[width * height];
             datanorm = new float[width * height];
-            /*          datainC = new float[width * height];
-                        dataC = new float[width * height];
-                        datanormC = new float[width * height];
-            */
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic, 16)
 #endif
@@ -4147,11 +4133,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
                     if (ciec) {
                         bool jp = false;
-                        if (istrc && iscie) {//gamma and slope
-                            float valj =  Jpro / 32768.f;
-                            Jpro = 0.5f * lutToneJ[valj * 65536.f];
-                            Qpro = 0.1f * sqrt(Jpro) * wh;
-                        }
 
 
                         if (islogq && issigq && iscie) {//log encoding Q
@@ -4201,6 +4182,13 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
                             sigmoidla(val, th, sigm);
                             Qpro = std::max(Qpro + val / coefq, 0.f);
+                        }
+                         
+                        if (istrc && iscie && gamJ != 1.f) {//gamma and slope
+                            float Jinter = SQR((10.f * Qpro) / wh);
+                            float valj =  Jinter / 32768.f;
+                            Jpro = 0.5f * lutToneJ[valj * 65536.f];
+                            Qpro = 0.1f * sqrt(Jpro) * wh;
                         }
 
                         if ((cielocalcurve && localcieutili) && mecamcurve == 1) {//curve Q

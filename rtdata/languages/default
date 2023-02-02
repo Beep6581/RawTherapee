@@ -3342,7 +3342,7 @@ TP_LOCALLAB_SHRESFRA;Shadows/Highlights & TRC
 TP_LOCALLAB_SHTRC_TOOLTIP;Based on 'working profile' (only those provided), modifies the tones of the image by acting on a TRC (Tone Response Curve).\nGamma acts mainly on light tones.\nSlope acts mainly on dark tones.\nIt is recommended that the TRC of both devices (monitor and output profile) be sRGB (default).
 TP_LOCALLAB_SH_TOOLNAME;Shadows/Highlights & Tone Equalizer
 TP_LOCALLAB_SIGCIE;Sigmoid
-TP_LOCALLAB_SIGFRA;TRC J & Sigmoid Q & Log encoding Q
+TP_LOCALLAB_SIGFRA;Sigmoid Q & Log encoding Q & TRC J 
 TP_LOCALLAB_SIGGAMJCIE;Gamma
 TP_LOCALLAB_SIGJZFRA;Sigmoid Jz
 TP_LOCALLAB_SIGMAWAV;Attenuation response

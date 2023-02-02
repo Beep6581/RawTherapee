@@ -7468,7 +7468,7 @@ Locallabcie::Locallabcie():
     sigmoidldacie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0.0, 1., 0.01, 0.5))),
     sigmoidthcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDTH"), 0.1, 4., 0.01, 1., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     sigmoidsenscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDSENSI"), 0.1, 0.9, 0.01, 0.5))),
-    sigmoidblcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDBL"), 0.05, 1., 0.01, 0.6))),
+    sigmoidblcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDBL"), 0.05, 1., 0.01, 0.7))),
     autocomprHBox(Gtk::manage(new Gtk::Box())),
     comprcieauto(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_SIGMOIDLOGAUTO")))),
     normcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGMOIDNORMCIE")))),
@@ -7478,8 +7478,8 @@ Locallabcie::Locallabcie():
     comprcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIE"), 0., 1., 0.01, 0.6))),
     comprcieth(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIETH"), 0., 25., 0.01, 6.))),
     trccie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGTRCCIE")))),
-    gamjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGGAMJCIE"), 0.8, 2., 0.01, 1.25))),
-    slopjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGSLOPJCIE"), 0., 10., 0.01, 4.))),
+    gamjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGGAMJCIE"), 0.7, 2., 0.01, 1.))),
+    slopjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGSLOPJCIE"), 0., 15., 0.01, 4.))),
     sigmoidjzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGJZFRA")))),
     sigmoidgamFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGGAMFRA")))),
     sigmoid2Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIG2FRA")))),
@@ -7711,14 +7711,17 @@ Locallabcie::Locallabcie():
     gamcieBox->pack_start(*gamjcie);
     gamcieBox->pack_start(*slopjcie);
     sigmoidgamFrame->add(*gamcieBox);
-    sigBox->pack_start(*sigmoidgamFrame);
+//    sigBox->pack_start(*sigmoidgamFrame);
     sigfraBox->pack_start(*sigmoidldacie);
     sigfraBox->pack_start(*sigmoidthcie);
     sigfraBox->pack_start(*sigmoidsenscie);
     sigfraBox->pack_start(*modeHBoxbwev);
     sigmoid2Frame->add(*sigfraBox);
     sigBox->pack_start(*sigmoid2Frame);
+    sigBox->pack_start(*sigmoidgamFrame);
+
     sigBox->pack_start(*separatorsig);
+
     sigBox->pack_start(*logcie);
     sigBox->pack_start(*comprcie);
     sigBox->pack_start(*comprcieth);
