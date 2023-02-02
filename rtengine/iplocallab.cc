@@ -2654,7 +2654,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     bool issigjz = params->locallab.spots.at(sp).sigjz;
     bool issigq = params->locallab.spots.at(sp).sigq;
     bool islogq = params->locallab.spots.at(sp).logcie;
-    bool istrc = params->locallab.spots.at(sp).trccie;
+   // bool istrc = params->locallab.spots.at(sp).trccie;
     bool issig = params->locallab.spots.at(sp).sigcie;
 
     //sigmoid J Q variables
@@ -2738,11 +2738,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     //for J light and contrast
     LUTf CAMBrightCurveJ(32768, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
     LUTf CAMBrightCurveQ(32768, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
-    float gamJ = params->locallab.spots.at(sp).gamjcie;
-    float slopJ = params->locallab.spots.at(sp).slopjcie;
-
-    LUTf lutToneJ(65536);
-    calcGammaLut(gamJ, slopJ, lutToneJ);
 
 #ifdef _OPENMP
     const int numThreads = min(max(width * height / 65536, 1), omp_get_max_threads());
@@ -4017,7 +4012,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
                     datain[(y) * width + (x)] = lab->L[y][x];
-                    //  datainC[(y) * width + (x)] = sqrt(SQR(lab->a[y][x]) + SQR(lab->b[y][x]));
                 }
             }
         }
@@ -4183,14 +4177,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                             sigmoidla(val, th, sigm);
                             Qpro = std::max(Qpro + val / coefq, 0.f);
                         }
-                         
-                        if (istrc && iscie && gamJ != 1.f) {//gamma and slope
-                            float Jinter = SQR((10.f * Qpro) / wh);
-                            float valj =  Jinter / 32768.f;
-                            Jpro = 0.5f * lutToneJ[valj * 65536.f];
-                            Qpro = 0.1f * sqrt(Jpro) * wh;
-                        }
-
                         if ((cielocalcurve && localcieutili) && mecamcurve == 1) {//curve Q
                             jp = true;
                             float Qq = Qpro * coefQ;
@@ -4379,8 +4365,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 for (int x = 0; x < width; x++) {
                     data[(y) * width + (x)] = lab->L[y][x];
                     datanorm[(y) * width + (x)] = lab->L[y][x];
-                    //  dataC[(y) * width + (x)] = sqrt(SQR(lab->a[y][x]) + SQR(lab->b[y][x]));
-                    //  datanormC[(y) * width + (x)] = sqrt(SQR(lab->a[y][x]) + SQR(lab->b[y][x]));
 
                 }
             }
@@ -4392,7 +4376,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             }
 
             normalize_mean_dt(datanorm, datain, height * width, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f, nbs);
-//              normalize_mean_dt(datanormC, datainC, height * width, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f);
 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic, 16)
@@ -4402,13 +4385,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 for (int jr = 0; jr < width; jr++) {//blend
                     data[ir * width + jr] = intp(bl, data[ir * width + jr], datanorm[ir * width + jr]);
                     lab->L[ir][jr] = data[ir * width + jr];
-
-                    //  if(bl > 0.5f){
-                    //      dataC[ir * width + jr] = intp(bl, dataC[ir * width + jr], datanormC[ir * width + jr]);
-                    //      lab->a[ir][jr] = dataC[ir * width + jr] * cos(datainH[ir * width + jr]);
-                    //      lab->b[ir][jr] = dataC[ir * width + jr] * sin(datainH[ir * width + jr]);
-                    //  }
-
                 }
             }
         }
@@ -4416,10 +4392,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         delete [] datain;
         delete [] data;
         delete [] datanorm;
-        /*        delete [] datainC;
-                delete [] dataC;
-                delete [] datanormC;
-        */
     }
 
     if (mocam == 3) { //Zcam not use but keep in case off
@@ -20160,6 +20132,24 @@ void ImProcFunctions::Lab_Local(
             if (lp.showmaskciemet == 0 || lp.showmaskciemet == 1  || lp.showmaskciemet == 2 || lp.showmaskciemet == 4 || lp.enacieMask) {
 
                 bufexpfin->CopyFrom(bufexporig.get(), multiThread);
+                if (params->locallab.spots.at(sp).trccie) {
+
+                    Imagefloat *tmpImage = nullptr;
+                    tmpImage = new Imagefloat(bfw, bfh);
+                    lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
+                    Glib::ustring prof = params->icm.workingProfile;
+
+                    float gamtone = params->locallab.spots.at(sp).gamjcie;
+                    float slotone = params->locallab.spots.at(sp).slopjcie;
+                    cmsHTRANSFORM dummy = nullptr;
+                    int ill =0;
+                    workingtrc(tmpImage, tmpImage, bfw, bfh, -5, prof, 2.4, 12.92310, ill, 0, dummy, true, false, false);
+                    workingtrc(tmpImage, tmpImage, bfw, bfh, 1, prof, gamtone, slotone, ill, 0, dummy, false, true, true);//be careful no gamut control
+
+                    rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
+
+                    delete tmpImage;
+                }
 
                 if (params->locallab.spots.at(sp).expcie) {
                     ImProcFunctions::ciecamloc_02float(lp, sp, bufexpfin.get(), bfw, bfh, 0, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz, locwavCurvejz, locwavutilijz, maxicam);

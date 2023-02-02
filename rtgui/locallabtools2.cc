@@ -7480,8 +7480,8 @@ Locallabcie::Locallabcie():
     comprcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIE"), 0., 1., 0.01, 0.6))),
     comprcieth(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIETH"), 0., 25., 0.01, 6.))),
     trccie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGTRCCIE")))),
-    gamjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGGAMJCIE"), 0.7, 2., 0.01, 1.))),
-    slopjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGSLOPJCIE"), 0., 15., 0.01, 4.))),
+    gamjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGGAMJCIE"), 0.7, 4., 0.01, 2.4))),
+    slopjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGSLOPJCIE"), 0., 100., 0.01, 12.923))),
     sigmoidjzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGJZFRA")))),
     sigmoidgamFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGGAMFRA")))),
     sigmoid2Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIG2FRA")))),
@@ -9372,6 +9372,7 @@ void Locallabcie::logcieChanged()
         sigmoidsenscie->set_sensitive(false);
         //    sigmoidblcie->set_sensitive(false);
         modeHBoxbwev->set_sensitive(false);
+
         comprcie->set_sensitive(true);
         comprcieth->set_sensitive(true);
         comprcie->setValue(defSpot.comprcie);//to test

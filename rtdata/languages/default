@@ -3052,7 +3052,7 @@ TP_LOCALLAB_LOGAUTO_TOOLTIP;Pressing this button will calculate the dynamic rang
 TP_LOCALLAB_LOGBASE_TOOLTIP;Default = 2.\nValues less than 2 reduce the action of the algorithm making the shadows darker and the highlights brighter.\nWith values greater than 2, the shadows are grayer and the highlights become more washed out.
 TP_LOCALLAB_LOGCATAD_TOOLTIP;Chromatic adaptation allows us to interpret a color according to its spatio-temporal environment.\nUseful when the white balance deviates significantly from the D50 reference.\nAdapts colors to the illuminant of the output device.
 TP_LOCALLAB_LOGCIE;Log encoding
-TP_LOCALLAB_LOGCIE_TOOLTIP;Allows you tu use Black Ev, White Ev, Scene Mean luminance(Yb%) and Viewing Mean luminance(Yb%) for tone-mapping using 'Log encoding Q' or 'Sigmoid and Log encoding Q'.
+TP_LOCALLAB_LOGCIE_TOOLTIP;Allows you tu use Black Ev, White Ev, Scene Mean luminance(Yb%) and Viewing Mean luminance(Yb%) for tone-mapping using 'Log encoding Q' or 'Sigmoid and Log encoding Q' in Standard and Advanced modes:\n Brightness compression\n Compression threshold\n Auto threshold.
 TP_LOCALLAB_LOGCOLORFL;Colorfulness (M)
 TP_LOCALLAB_LOGCOLORF_TOOLTIP;Perceived amount of hue in relation to gray.\nIndicator that a stimulus appears more or less colored.
 TP_LOCALLAB_LOGCONQL;Contrast (Q)
@@ -3342,7 +3342,7 @@ TP_LOCALLAB_SHRESFRA;Shadows/Highlights & TRC
 TP_LOCALLAB_SHTRC_TOOLTIP;Based on 'working profile' (only those provided), modifies the tones of the image by acting on a TRC (Tone Response Curve).\nGamma acts mainly on light tones.\nSlope acts mainly on dark tones.\nIt is recommended that the TRC of both devices (monitor and output profile) be sRGB (default).
 TP_LOCALLAB_SH_TOOLNAME;Shadows/Highlights & Tone Equalizer
 TP_LOCALLAB_SIGCIE;Sigmoid
-TP_LOCALLAB_SIGFRA;Sigmoid Q & Log encoding Q & TRC J 
+TP_LOCALLAB_SIGFRA;Sigmoid Q & Log encoding Q & TRC 
 TP_LOCALLAB_SIGGAMJCIE;Gamma
 TP_LOCALLAB_SIGJZFRA;Sigmoid Jz
 TP_LOCALLAB_SIGMAWAV;Attenuation response
@@ -3353,8 +3353,8 @@ TP_LOCALLAB_SIGMOIDQJ;Uses Black Ev & White Ev
 TP_LOCALLAB_SIGMOIDSENSI;Adaptability
 TP_LOCALLAB_SIGMOIDTH;Threshold (Gray point)
 TP_LOCALLAB_SIGMOID_TOOLTIP;Allows you to simulate a Tone-mapping appearance using both the 'Jz' and 'Sigmoid' function.\nThree sliders: a) Contrast acts on the shape of the sigmoid curve and consequently on the strength; b) Threshold (Gray point) distributes the action according to the luminance; c)Blend acts on the final aspect of the image, contrast and luminance.
-TP_LOCALLAB_SIGMOIDTRCCIE_TOOLTIP;This TRC modifies the tones of the image. The J (and Q) values are changed:\n-Gamma acts mainly on light tones -Slope acts mainly on dark tones.\nYou can choose any pair of 'gamma and slope' (values >1) and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.\nDoes not have the same behavior as other TRCs in Rawtherapee.
-TP_LOCALLAB_SIGMOID16_TOOLTIP;Allows you to simulate a Tone-mapping appearance using both the'Ciecam' and 'Sigmoid Q' or/and 'Log encoding Q' or/and 'TRC J' function.\nSigmoid Q: three sliders: a) Contrast acts on the shape of the sigmoid curve and consequently on the strength; b) Threshold (Gray point) distributes the action according to the luminance; c)Adaptability weights the action of the sigmoid by action on the internal exponential function.
+TP_LOCALLAB_SIGMOIDTRCCIE_TOOLTIP;This TRC modifies the tones of the image. The values are changed:\n-Gamma acts mainly on light tones -Slope acts mainly on dark tones.\nYou can choose any pair of 'gamma and slope' (values >1) and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.
+TP_LOCALLAB_SIGMOID16_TOOLTIP;Allows you to simulate a Tone-mapping appearance using both the'Ciecam' and 'Sigmoid Q' or/and 'Log encoding Q' or/and 'TRC' function.\nSigmoid Q: three sliders: a) Contrast acts on the shape of the sigmoid curve and consequently on the strength; b) Threshold (Gray point) distributes the action according to the luminance; c)Adaptability weights the action of the sigmoid by action on the internal exponential function.
 TP_LOCALLAB_SIGMOIDLOGEV_TOOLTIP;If the comboxbox selection 'Uses Black Ev and White Ev' is 'Sigmoid and Log encoding Q' instead of 'Sigmoid Q only', the two algorithms 'Log encoding Q' and 'Sigmoid Q' are used together.
 TP_LOCALLAB_SIGMOIDNORMCIE;Normalize Luminance
 TP_LOCALLAB_SIGMOIDNORMCIE_TOOLTIP;Reconstruct luminance so that the mean and variance of the output image take into account those of the original.\nAll the adjustments acting on J or Q are taken into account, including those which are not relative to Sigmoid Q and Log encoding Q.
