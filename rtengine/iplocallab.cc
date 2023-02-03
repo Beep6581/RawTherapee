@@ -8180,9 +8180,9 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
                 const float slotone = params->locallab.spots.at(sp).sloSH;
                 int ill = 0;
                 cmsHTRANSFORM dummy = nullptr;
-                workingtrc(tmpImage.get(), tmpImage.get(), GW, GH, -5, prof, 2.4, 12.92310, ill, 0, dummy, true, false, false);
+                workingtrc(tmpImage.get(), tmpImage.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0, dummy, true, false, false, false);
                 //  workingtrc(tmpImage.get(), tmpImage.get(), GW, GH, 5, prof, gamtone, slotone, illum, 0, dummy, false, true, true);//to keep if we want improve with illuminant and primaries
-                workingtrc(tmpImage.get(), tmpImage.get(), GW, GH, 1, prof, gamtone, slotone, ill, 0, dummy, false, true, true);//be careful no gamut control
+                workingtrc(tmpImage.get(), tmpImage.get(), GW, GH, 1, prof, gamtone, slotone, 0, ill, 0, dummy, false, true, true, false);//be careful no gamut control
 
             }
 
@@ -11070,8 +11070,8 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
         Glib::ustring prof = params->icm.workingProfile;
         cmsHTRANSFORM dummy = nullptr;
         int ill = 0;
-        workingtrc(tmpImage, tmpImage, W_Level, H_Level, -5, prof, 2.4, 12.92310, ill, 0, dummy, true, false, false);
-        workingtrc(tmpImage, tmpImage, W_Level, H_Level, 1, prof, lp.residgam, lp.residslop, ill, 0, dummy, false, true, true);//be careful no gamut control
+        workingtrc(tmpImage, tmpImage, W_Level, H_Level, -5, prof, 2.4, 12.92310, 0, ill, 0, dummy, true, false, false, false);
+        workingtrc(tmpImage, tmpImage, W_Level, H_Level, 1, prof, lp.residgam, lp.residslop, 0, ill, 0, dummy, false, true, true, false);//be careful no gamut control
         rgb2lab(*tmpImage, *labresid, params->icm.workingProfile);
         delete tmpImage;
 
@@ -16826,9 +16826,9 @@ void ImProcFunctions::Lab_Local(
                         float slotone = params->locallab.spots.at(sp).sloSH;
                         cmsHTRANSFORM dummy = nullptr;
                         int ill = 0;
-                        workingtrc(tmpImage, tmpImage, bfw, bfh, -5, prof, 2.4, 12.92310, ill, 0, dummy, true, false, false);
+                        workingtrc(tmpImage, tmpImage, bfw, bfh, -5, prof, 2.4, 12.92310, 0, ill, 0, dummy, true, false, false, false);
                         //   workingtrc(tmpImage, tmpImage, bfw, bfh, 5, prof, gamtone, slotone, 0, 0, dummy, false, true, true); //to keep if we want improve with illuminant and primaries
-                        workingtrc(tmpImage, tmpImage, bfw, bfh, 1, prof, gamtone, slotone, ill, 0, dummy, false, true, true);//be careful no gamut control
+                        workingtrc(tmpImage, tmpImage, bfw, bfh, 1, prof, gamtone, slotone, 0, ill, 0, dummy, false, true, true, false);//be careful no gamut control
                     }
 
                     if (tonequ) {
@@ -20173,8 +20173,8 @@ void ImProcFunctions::Lab_Local(
                         typ = 5;
                     }
 
-                    workingtrc(tmpImage, tmpImage, bfw, bfh, -5, prof, 2.4, 12.92310, ill, 0, dummy, true, false, false);
-                    workingtrc(tmpImage, tmpImage, bfw, bfh, typ, prof, gamtone, slotone, ill, prim, dummy, false, true, true);//be careful no gamut control
+                    workingtrc(tmpImage, tmpImage, bfw, bfh, -5, prof, 2.4, 12.92310, 0, ill, 0, dummy, true, false, false, false);
+                    workingtrc(tmpImage, tmpImage, bfw, bfh, typ, prof, gamtone, slotone, 0, ill, prim, dummy, false, true, true, true);//be careful no gamut control
 
                     rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 

@@ -412,12 +412,12 @@ void ImProcFunctions::preserv(LabImage *nprevl, LabImage *provis, int cw, int ch
         }
 }
 
-void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring &profile, double gampos, double slpos, int &illum, int prim, cmsHTRANSFORM &transform, bool normalizeIn, bool normalizeOut, bool keepTransForm) const
+void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring &profile, double gampos, double slpos, int cat, int &illum, int prim, cmsHTRANSFORM &transform, bool normalizeIn, bool normalizeOut, bool keepTransForm, bool gamutcontrol) const
 {
     const TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 
     double wprofprim[3][3];//store primaries to XYZ
-    bool gamutcontrol = params->icm.gamut;
+  //  bool gamutcontrol = params->icm.gamut;
     const float toxyz[3][3] = {
         {
             static_cast<float>(wprof[0][0] / ((normalizeIn ? 65535.0 : 1.0))), //I have suppressed / Color::D50x
@@ -949,7 +949,8 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
 
         if (gamutcontrol) {
             //xyz in functiuon primaries and illuminant
-            Color::primaries_to_xyz(p, Wx, Wz, wprofpri);
+           // int cat = 0;
+            Color::primaries_to_xyz(p, Wx, Wz, wprofpri, cat);
 
             for (int i = 0; i < 3; ++i) {
                 for (int j = 0; j < 3; ++j) {

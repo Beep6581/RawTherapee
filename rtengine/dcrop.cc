@@ -1600,8 +1600,9 @@ void Crop::update(int todo)
 
             cmsHTRANSFORM cmsDummy = nullptr;
             int ill = 0;
-            parent->ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, ill, 0, cmsDummy, true, false, false);
-            parent->ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, illum, prim, cmsDummy, false, true, true);
+            bool gamutcontrol = params.icm.gamut;
+            parent->ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0, cmsDummy, true, false, false, false);
+            parent->ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, 0,  illum, prim, cmsDummy, false, true, true, gamutcontrol);
 
             parent->ipf.rgb2lab(*tmpImage1, *labnCrop, params.icm.workingProfile);
             //labnCrop and provis

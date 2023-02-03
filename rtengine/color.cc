@@ -1911,7 +1911,7 @@ void Color::Lch2Luv(float c, float h, float &u, float &v)
     v = c * sincosval.y;
 }
 
-void Color::primaries_to_xyz(double p[6], double Wx, double Wz, double *pxyz)
+void Color::primaries_to_xyz(double p[6], double Wx, double Wz, double *pxyz, int cat)
 {
     //calculate Xr, Xg, Xb, Yr, Yb, Tg, Zr,Zg Zb
     double Wy = 1.0;
@@ -1969,53 +1969,51 @@ void Color::primaries_to_xyz(double p[6], double Wx, double Wz, double *pxyz)
 
     //chromatic adaptation Bradford
     Matrix MaBradford = {};
-    MaBradford[0][0] = 0.8951;
-    MaBradford[0][1] = -0.7502;
-    MaBradford[0][2] = 0.0389;
-    MaBradford[1][0] = 0.2664;
-    MaBradford[1][1] = 1.7135;
-    MaBradford[1][2] = -0.0685;
-    MaBradford[2][0] = -0.1614;
-    MaBradford[2][1] = 0.0367;
-    MaBradford[2][2] = 1.0296;
-/*
-   //iCat16
-    Matrix MaBradford = {};
-    MaBradford[0][0] = 1.86206786;
-    MaBradford[0][1] = -1.01125463;
-    MaBradford[0][2] = 0.14918677;
-    MaBradford[1][0] = 0.38752654;
-    MaBradford[1][1] = 0.62144744;
-    MaBradford[1][2] = -0.00897398;
-    MaBradford[2][0] = -0.0158415;
-    MaBradford[2][1] = -0.03412294;
-    MaBradford[2][2] = 1.04996444;
-*/
+    if( cat == 0) {//i bradford
+        MaBradford[0][0] = 0.8951;
+        MaBradford[0][1] = -0.7502;
+        MaBradford[0][2] = 0.0389;
+        MaBradford[1][0] = 0.2664;
+        MaBradford[1][1] = 1.7135;
+        MaBradford[1][2] = -0.0685;
+        MaBradford[2][0] = -0.1614;
+        MaBradford[2][1] = 0.0367;
+        MaBradford[2][2] = 1.0296;
+    } else if ( cat == 1) {// icat16
+        MaBradford[0][0] = 1.86206786;
+        MaBradford[0][1] = -1.01125463;
+        MaBradford[0][2] = 0.14918677;
+        MaBradford[1][0] = 0.38752654;
+        MaBradford[1][1] = 0.62144744;
+        MaBradford[1][2] = -0.00897398;
+        MaBradford[2][0] = -0.0158415;
+        MaBradford[2][1] = -0.03412294;
+        MaBradford[2][2] = 1.04996444;
+    }
 
 
     Matrix Ma_oneBradford = {};
-    Ma_oneBradford[0][0] = 0.9869929;
-    Ma_oneBradford[0][1] = 0.4323053;
-    Ma_oneBradford[0][2] = -0.0085287;
-    Ma_oneBradford[1][0] = -0.1470543;
-    Ma_oneBradford[1][1] = 0.5183603;
-    Ma_oneBradford[1][2] = 0.0400428;
-    Ma_oneBradford[2][0] = 0.1599627;
-    Ma_oneBradford[2][1] = 0.0492912;
-    Ma_oneBradford[2][2] = 0.9684867;
-/*
-    //cat16
-    Matrix Ma_oneBradford = {};
-    Ma_oneBradford[0][0] = 0.401288;
-    Ma_oneBradford[0][1] = 0.650173;
-    Ma_oneBradford[0][2] = -0.051461;
-    Ma_oneBradford[1][0] = -0.250268;
-    Ma_oneBradford[1][1] = 1.204414;
-    Ma_oneBradford[1][2] = 0.045854;
-    Ma_oneBradford[2][0] = -0.002079;
-    Ma_oneBradford[2][1] = 0.048952;
-    Ma_oneBradford[2][2] = 0.953127;
-*/
+    if( cat == 0) {//Bradford
+        Ma_oneBradford[0][0] = 0.9869929;
+        Ma_oneBradford[0][1] = 0.4323053;
+        Ma_oneBradford[0][2] = -0.0085287;
+        Ma_oneBradford[1][0] = -0.1470543;
+        Ma_oneBradford[1][1] = 0.5183603;
+        Ma_oneBradford[1][2] = 0.0400428;
+        Ma_oneBradford[2][0] = 0.1599627;
+        Ma_oneBradford[2][1] = 0.0492912;
+        Ma_oneBradford[2][2] = 0.9684867;
+    } else if ( cat == 1) { //cat16
+        Ma_oneBradford[0][0] = 0.401288;
+        Ma_oneBradford[0][1] = 0.650173;
+        Ma_oneBradford[0][2] = -0.051461;
+        Ma_oneBradford[1][0] = -0.250268;
+        Ma_oneBradford[1][1] = 1.204414;
+        Ma_oneBradford[1][2] = 0.045854;
+        Ma_oneBradford[2][0] = -0.002079;
+        Ma_oneBradford[2][1] = 0.048952;
+        Ma_oneBradford[2][2] = 0.953127;
+    }
 
     //R G B source
     double Rs = Wx * MaBradford[0][0] + Wy * MaBradford[1][0] + Wz * MaBradford[2][0];
