@@ -20173,8 +20173,22 @@ void ImProcFunctions::Lab_Local(
                         typ = 5;
                     }
 
+                    int catx = 0; 
+                     if (params->locallab.spots.at(sp).catMethod == "brad") {
+                        catx = 0;
+                    } else if (params->locallab.spots.at(sp).catMethod == "cat16") {
+                        catx = 1;
+                    } else if (params->locallab.spots.at(sp).catMethod == "cat02") {
+                        catx = 2;
+                    } else if (params->locallab.spots.at(sp).catMethod == "vky") {
+                        catx = 3;
+                    } else if (params->locallab.spots.at(sp).catMethod == "xyz") {
+                        catx = 4;
+                    }
+
+                    params->locallab.spots.at(sp).catMethod;
                     workingtrc(tmpImage, tmpImage, bfw, bfh, -5, prof, 2.4, 12.92310, 0, ill, 0, dummy, true, false, false, false);
-                    workingtrc(tmpImage, tmpImage, bfw, bfh, typ, prof, gamtone, slotone, 0, ill, prim, dummy, false, true, true, true);//be careful no gamut control
+                    workingtrc(tmpImage, tmpImage, bfw, bfh, typ, prof, gamtone, slotone, catx, ill, prim, dummy, false, true, true, true);//be careful no gamut control
 
                     rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 

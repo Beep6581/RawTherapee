@@ -1046,6 +1046,7 @@ public:
         bool gamjcie;
         bool slopjcie;
         bool primMethod;
+        bool catMethod;
         bool sigmoidldajzcie;
         bool sigmoidthjzcie;
         bool sigmoidbljzcie;

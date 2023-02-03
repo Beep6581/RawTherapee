@@ -7485,6 +7485,9 @@ Locallabcie::Locallabcie():
     slopjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGSLOPJCIE"), 0., 100., 0.01, 12.923))),
     wprimBox(Gtk::manage(new Gtk::Box())),
     primMethod(Gtk::manage(new MyComboBoxText())),
+    catBox(Gtk::manage(new Gtk::Box())),
+    catMethod(Gtk::manage(new MyComboBoxText())),
+
 /*
     redx(Gtk::manage(new Adjuster(M("TC_PRIM_REDX"), 0.41, 1.0, 0.0001, 0.7347))),
     redy(Gtk::manage(new Adjuster(M("TC_PRIM_REDY"), 0.0, 0.70, 0.0001, 0.2653))),
@@ -7616,6 +7619,7 @@ Locallabcie::Locallabcie():
     Evlocallabtrccie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_TRC");
     Evlocallabsigcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SIG");
     Evlocallabprimcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_PRIM");
+    Evlocallabcatcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_CAT");
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     // Parameter Ciecam specific widgets
@@ -7718,7 +7722,18 @@ Locallabcie::Locallabcie():
     primMethod->append(M("TP_ICM_WORKING_PRIM_WID"));
     primMethod->set_active(0);
     primMethodconn = primMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::primMethodChanged));
-    
+
+    Gtk::Label* catLabel = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_CAT") + ":"));
+    catBox->pack_start(*catLabel, Gtk::PACK_SHRINK);
+    catBox->pack_start(*catMethod, Gtk::PACK_EXPAND_WIDGET);
+    catMethod->append(M("TP_ICM_WORKING_CAT_BRAD"));
+    catMethod->append(M("TP_ICM_WORKING_CAT_CAT16"));
+    catMethod->append(M("TP_ICM_WORKING_CAT_CAT02"));
+    catMethod->append(M("TP_ICM_WORKING_CAT_VK"));
+    catMethod->append(M("TP_ICM_WORKING_CAT_XYZ"));
+    catMethod->set_active(0);
+    catMethodconn = catMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::catMethodChanged));
+
     ToolParamBlock* const signormBox = Gtk::manage(new ToolParamBlock());
     ToolParamBlock* const gamcieBox = Gtk::manage(new ToolParamBlock());
     ToolParamBlock* const sigfraBox = Gtk::manage(new ToolParamBlock());
@@ -7739,6 +7754,8 @@ Locallabcie::Locallabcie():
     gamcieBox->pack_start(*gamjcie);
     gamcieBox->pack_start(*slopjcie);
     gamcieBox->pack_start(*wprimBox);
+    gamcieBox->pack_start(*catBox);
+    
 /*
     gamcieBox->pack_start(*redx);
     gamcieBox->pack_start(*redy);
@@ -8472,6 +8489,8 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         normcie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDNORMCIE_TOOLTIP"));
         trccie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDTRCCIE_TOOLTIP"));
         sigmoidblcie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDNORMCIEBLEND_TOOLTIP"));
+        catBox->set_tooltip_text(M("TP_ICM_WORKING_CAT_TOOLTIP"));
+        wprimBox->set_tooltip_text(M("TP_ICM_WORKING_PRIM_TOOLTIP"));
     } else {
         reparcie->set_tooltip_text("");
         recothrescie->set_tooltip_text("");
@@ -8542,6 +8561,8 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         normcie->set_tooltip_text("");
         trccie->set_tooltip_text("");
         sigmoidblcie->set_tooltip_text("");
+        catBox->set_tooltip_text("");
+        wprimBox->set_tooltip_text("");
 
     }
 }
@@ -8557,6 +8578,7 @@ void Locallabcie::disableListener()
     normcieconn.block(true);
     trccieconn.block(true);
     primMethodconn.block(true);
+    catMethodconn.block(true);
     sigcieconn.block(true);
     logcieconn.block(true);
     logjzconn.block(true);
@@ -8588,6 +8610,7 @@ void Locallabcie::enableListener()
     normcieconn.block(false);
     trccieconn.block(false);
     primMethodconn.block(false);
+    catMethodconn.block(false);
     sigcieconn.block(false);
     logcieconn.block(false);
     logjzconn.block(false);
@@ -8761,6 +8784,18 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             primMethod->set_active(5);
         } else if (spot.primMethod == "wid") {
             primMethod->set_active(6);
+        }
+
+        if (spot.catMethod == "brad") {
+            catMethod->set_active(0);
+        } else if (spot.catMethod == "cat16") {
+            catMethod->set_active(1);
+        } else if (spot.catMethod == "cat02") {
+            catMethod->set_active(2);
+        } else if (spot.catMethod == "vky") {
+            catMethod->set_active(3);
+        } else if (spot.catMethod == "xyz") {
+            catMethod->set_active(4);
         }
 
         normcie->set_active(spot.normcie);
@@ -9050,6 +9085,17 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.primMethod = "wid";
         }
 
+        if (catMethod->get_active_row_number() == 0) {
+            spot.catMethod = "brad";
+        } else if (catMethod->get_active_row_number() == 1) {            
+            spot.catMethod = "cat16";
+        } else if (catMethod->get_active_row_number() == 2) {
+            spot.catMethod = "cat02";
+        } else if (catMethod->get_active_row_number() == 3) {
+            spot.catMethod = "vky";
+        } else if (catMethod->get_active_row_number() == 4) {
+            spot.catMethod = "xyz";
+        }
 
         if (surroundcie->get_active_row_number() == 0) {
             spot.surroundcie = "Average";
@@ -9408,13 +9454,16 @@ void Locallabcie::trccieChanged()
         gamjcie->set_sensitive(true);
         slopjcie->set_sensitive(true);
         wprimBox->set_sensitive(false);
+        catBox->set_sensitive(false);
         if (mode == Expert) {
             wprimBox->set_sensitive(true);
+            catBox->set_sensitive(true);
         }
     } else {
         gamjcie->set_sensitive(false);
         slopjcie->set_sensitive(false);
         wprimBox->set_sensitive(false);
+        catBox->set_sensitive(false);
     }
 
     if (isLocActivated && exp->getEnabled()) {
@@ -9846,6 +9895,15 @@ void Locallabcie::sursourcieChanged()
     }
 }
 
+void Locallabcie::catMethodChanged()
+{
+    
+    if (listener) {
+        listener->panelChanged(Evlocallabcatcie, catMethod->get_active_text());
+    }
+    
+}
+
 void Locallabcie::primMethodChanged()
 {
     const LocallabParams::LocallabSpot defSpot;
@@ -10015,11 +10073,13 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 gamjcie->set_sensitive(true);
                 slopjcie->set_sensitive(true);
                 wprimBox->set_sensitive(false);
+                catBox->set_sensitive(false);
 
             } else {
                 gamjcie->set_sensitive(false);
                 slopjcie->set_sensitive(false);
                 wprimBox->set_sensitive(false);
+                catBox->set_sensitive(false);
             }
 
             if (modecam->get_active_row_number() == 2) {
@@ -10104,10 +10164,12 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 gamjcie->set_sensitive(true);
                 slopjcie->set_sensitive(true);
                 wprimBox->set_sensitive(false);
+                catBox->set_sensitive(false);
             } else {
                 gamjcie->set_sensitive(false);
                 slopjcie->set_sensitive(false);
                 wprimBox->set_sensitive(false);
+                catBox->set_sensitive(false);
             }
 
             jzFrame->hide();
@@ -10248,10 +10310,12 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 gamjcie->set_sensitive(true);
                 slopjcie->set_sensitive(true);
                 wprimBox->set_sensitive(true);
+                catBox->set_sensitive(true);
             } else {
                 gamjcie->set_sensitive(false);
                 slopjcie->set_sensitive(false);
                 wprimBox->set_sensitive(false);
+                catBox->set_sensitive(true);
             }
 
             if (enacieMask->get_active()) {
@@ -10520,7 +10584,8 @@ void Locallabcie::convertParamToSimple()
     enacieMask->set_active(defSpot.enacieMask);
     modecie->set_active(0);
     primMethod->set_active(0);
-    
+    catMethod->set_active(0);
+
     // Enable all listeners
     enableListener();
 }
@@ -10559,6 +10624,7 @@ void Locallabcie::convertParamToNormal()
     thrhjzcie->setValue(defSpot.thrhjzcie);
     modecie->set_active(0);
     primMethod->set_active(0);
+    catMethod->set_active(0);
     pqremapcam16->setValue(defSpot.pqremapcam16);
     logcieChanged();
 

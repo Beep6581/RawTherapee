@@ -1431,6 +1431,7 @@ HISTORY_MSG_ICM_OUTPUT_TYPE;Output - Type
 HISTORY_MSG_ICM_PRESER;Preserve neutral
 HISTORY_MSG_ICM_REDX;Primaries Red X
 HISTORY_MSG_ICM_REDY;Primaries Red Y
+HISTORY_MSG_LOCAL_CIE_CAT;Matrix adaptation
 HISTORY_MSG_ICM_WORKING_GAMMA;TRC - Gamma
 HISTORY_MSG_ICM_WORKING_ILLUM_METHOD;Illuminant method
 HISTORY_MSG_ICM_WORKING_PRIM_METHOD;Primaries method
@@ -2588,6 +2589,13 @@ TP_ICM_TRCFRAME;Abstract Profile
 TP_ICM_TRCFRAME_TOOLTIP;Also known as 'synthetic' or 'virtual' profiles, which are applied at the end of the processing pipeline (prior to ciecam) allowing you to create custom image effects.\nYou can make changes to the:\n 'Tone response curve', which modifies the tones of the image.\n 'Illuminant' : which allows you to change the profile primaries to adapt them to the shooting conditions.\n 'Destination primaries': which allows you to change the destination primaries with three main uses - channel mixer, restore image color (saturation), calibration.\nNote: Abstract profiles take into account the built-in Working profiles without modifying them. They do not work with custom Working profiles.
 TP_ICM_TRC_TOOLTIP;Allows you to change the default sRGB 'Tone response curve' in RT (g=2.4 s=12.92).\nThis TRC modifies the tones of the image. The RGB and Lab values, histogram and output (screen, TIF, JPG) are changed:\n-Gamma acts mainly on light tones -Slope acts mainly on dark tones.\nYou can choose any pair of 'gamma and slope' (values >1) and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.\nA selection other than 'none' activates the 'Illuminant' and 'Destination primaries' menus.
 TP_ICM_WORKINGPROFILE;Working Profile
+TP_ICM_WORKING_CAT;Matrix adaptation
+TP_ICM_WORKING_CAT_BRAD;Bradford
+TP_ICM_WORKING_CAT_CAT16;Cat16
+TP_ICM_WORKING_CAT_CAT02;Cat02
+TP_ICM_WORKING_CAT_TOOLTIP;Performs the chromatic adaptation of the XYZ conversion matrix. Default Bradford
+TP_ICM_WORKING_CAT_VK;Von Kries
+TP_ICM_WORKING_CAT_XYZ;XYZ scale
 TP_ICM_WORKING_CIEDIAG;CIE xy diagram
 TP_ICM_WORKING_ILLU;Illuminant
 TP_ICM_WORKING_ILLU_1500;Tungsten 1500K
@@ -2604,6 +2612,7 @@ TP_ICM_WORKING_ILLU_STDA;stdA 2875K
 TP_ICM_WORKING_NON;None
 TP_ICM_WORKING_PRESER;Preserves Pastel tones
 TP_ICM_WORKING_PRIM;Destination primaries
+TP_ICM_WORKING_PRIM_TOOLTIP;Destination primaries (Advanced): which allows you to change the destination primaries to restore or change image color (saturation), the color balance (hue) is respected, 'working profiles' are not modified. Perform a gamut control.
 TP_ICM_WORKING_PRIMFRAME_TOOLTIP;When 'Custom CIE xy diagram' is selected in 'Destination- primaries'' combobox, you can modify the values of the 3 primaries directly on the graph.\nNote that in this case, the white point position on the graph will not be updated.
 TP_ICM_WORKING_PRIM_AC0;ACESp0
 TP_ICM_WORKING_PRIM_ACE;ACESp1
