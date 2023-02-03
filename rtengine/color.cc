@@ -1967,9 +1967,9 @@ void Color::primaries_to_xyz(double p[6], double Wx, double Wz, double *pxyz, in
     mat_xyz[2][1] = Sb * Yb;
     mat_xyz[2][2] = Sb * Zb;
 
-    //chromatic adaptation Bradford
+    //chromatic adaptation
     Matrix MaBradford = {};
-    if( cat == 0) {//i bradford
+    if( cat == 0 ) {//i bradford
         MaBradford[0][0] = 0.8951;
         MaBradford[0][1] = -0.7502;
         MaBradford[0][2] = 0.0389;
@@ -1979,7 +1979,7 @@ void Color::primaries_to_xyz(double p[6], double Wx, double Wz, double *pxyz, in
         MaBradford[2][0] = -0.1614;
         MaBradford[2][1] = 0.0367;
         MaBradford[2][2] = 1.0296;
-    } else if ( cat == 1) {// icat16
+    } else if ( cat == 1 ) {// icat16
         MaBradford[0][0] = 1.86206786;
         MaBradford[0][1] = -1.01125463;
         MaBradford[0][2] = 0.14918677;
@@ -1989,11 +1989,40 @@ void Color::primaries_to_xyz(double p[6], double Wx, double Wz, double *pxyz, in
         MaBradford[2][0] = -0.0158415;
         MaBradford[2][1] = -0.03412294;
         MaBradford[2][2] = 1.04996444;
+    } else if ( cat == 2 ) {// icat02
+        MaBradford[0][0] =  0.99015849;
+        MaBradford[0][1] = -0.00838772;
+        MaBradford[0][2] = 0.018229217;
+        MaBradford[1][0] = 0.239565979;
+        MaBradford[1][1] = 0.758664642;
+        MaBradford[1][2] = 0.001770137;
+        MaBradford[2][0] = 0.0;
+        MaBradford[2][1] = 0.0;
+        MaBradford[2][2] = 1.0;
+    } else if ( cat == 3 ) {//Von Kries
+        MaBradford[0][0] = 0.40024;
+        MaBradford[0][1] = -0.2263;
+        MaBradford[0][2] = 0.0;
+        MaBradford[1][0] = 0.7076;
+        MaBradford[1][1] = 1.16532;
+        MaBradford[1][2] = 0.0;
+        MaBradford[2][0] = -0.08081;
+        MaBradford[2][1] = 0.0457;
+        MaBradford[2][2] = 0.91822;
+    } else if ( cat == 4 ) {//None XYZ
+        MaBradford[0][0] = 1.0;
+        MaBradford[0][1] = 0.0;
+        MaBradford[0][2] = 0.0;
+        MaBradford[1][0] = 0.0;
+        MaBradford[1][1] = 1.0;
+        MaBradford[1][2] = 0.0;
+        MaBradford[2][0] = 0.0;
+        MaBradford[2][1] = 0.0;
+        MaBradford[2][2] = 1.0;
     }
 
-
     Matrix Ma_oneBradford = {};
-    if( cat == 0) {//Bradford
+    if( cat == 0 ) {//Bradford
         Ma_oneBradford[0][0] = 0.9869929;
         Ma_oneBradford[0][1] = 0.4323053;
         Ma_oneBradford[0][2] = -0.0085287;
@@ -2003,7 +2032,7 @@ void Color::primaries_to_xyz(double p[6], double Wx, double Wz, double *pxyz, in
         Ma_oneBradford[2][0] = 0.1599627;
         Ma_oneBradford[2][1] = 0.0492912;
         Ma_oneBradford[2][2] = 0.9684867;
-    } else if ( cat == 1) { //cat16
+    } else if ( cat == 1 ) { //cat16
         Ma_oneBradford[0][0] = 0.401288;
         Ma_oneBradford[0][1] = 0.650173;
         Ma_oneBradford[0][2] = -0.051461;
@@ -2013,8 +2042,37 @@ void Color::primaries_to_xyz(double p[6], double Wx, double Wz, double *pxyz, in
         Ma_oneBradford[2][0] = -0.002079;
         Ma_oneBradford[2][1] = 0.048952;
         Ma_oneBradford[2][2] = 0.953127;
+    } else if ( cat == 2 ) { //cat02
+        Ma_oneBradford[0][0] = 1.007245;
+        Ma_oneBradford[0][1] = 0.011136;
+        Ma_oneBradford[0][2] = -0.018381;
+        Ma_oneBradford[1][0] = -0.318061;
+        Ma_oneBradford[1][1] = 1.314589;
+        Ma_oneBradford[1][2] = 0.003471;
+        Ma_oneBradford[2][0] = 0.0;
+        Ma_oneBradford[2][1] = 0.0;
+        Ma_oneBradford[2][2] = 1.0;
+    } else if ( cat == 3 ) { //Von Kries
+        Ma_oneBradford[0][0] = 1.8599364;
+        Ma_oneBradford[0][1] = 0.3611914;
+        Ma_oneBradford[0][2] = 0.0;
+        Ma_oneBradford[1][0] = -1.1293816;
+        Ma_oneBradford[1][1] = 0.6388125;
+        Ma_oneBradford[1][2] = 0.0;
+        Ma_oneBradford[2][0] = 0.2198974;
+        Ma_oneBradford[2][1] = -0.0000064;
+        Ma_oneBradford[2][2] = 1.0890636;
+    } else if ( cat == 4 ) { //none XYZ
+        Ma_oneBradford[0][0] = 1.0;
+        Ma_oneBradford[0][1] = 0.0;
+        Ma_oneBradford[0][2] = 0.0;
+        Ma_oneBradford[1][0] = 0.0;
+        Ma_oneBradford[1][1] = 1.0;
+        Ma_oneBradford[1][2] = 0.0;
+        Ma_oneBradford[2][0] = 0.0;
+        Ma_oneBradford[2][1] = 0.0;
+        Ma_oneBradford[2][2] = 1.0;
     }
-
     //R G B source
     double Rs = Wx * MaBradford[0][0] + Wy * MaBradford[1][0] + Wz * MaBradford[2][0];
     double Gs = Wx * MaBradford[0][1] + Wy * MaBradford[1][1] + Wz * MaBradford[2][1];
