@@ -1625,13 +1625,6 @@ private:
     Gtk::Box* catBox;
     MyComboBoxText* const catMethod;
 
-/*    Adjuster* const redx;
-    Adjuster* const redy;
-    Adjuster* const grex;
-    Adjuster* const grey;
-    Adjuster* const blux;
-    Adjuster* const bluy;
-*/
     Gtk::Frame* const sigmoidjzFrame;
     Gtk::Frame* const sigmoidgamFrame;
     Gtk::Frame* const sigmoid2Frame;

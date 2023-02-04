@@ -4370,11 +4370,12 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             }
 
             double nbs = 1.;
-
-            if (bl > 0.5f) {
-                nbs = (double)(2.f * bl);
-            }
-
+            double drref = 8.5; //Dynamic Range standard
+            double drd = ((double) dynamic_range - drref) / drref;
+            drd = std::max(drd, 1.); 
+                if (bl > 0.5f) {
+                    nbs = (1.7 * (double) bl * drd);//take into account DR to increase variance in image source
+                }
             normalize_mean_dt(datanorm, datain, height * width, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f, nbs);
 
 #ifdef _OPENMP

@@ -7469,7 +7469,7 @@ Locallabcie::Locallabcie():
     sigmoidldacie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0.0, 1., 0.01, 0.5))),
     sigmoidthcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDTH"), 0.1, 4., 0.01, 1., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     sigmoidsenscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDSENSI"), 0.1, 0.9, 0.01, 0.5))),
-    sigmoidblcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDBL"), 0.05, 1., 0.01, 0.7))),
+    sigmoidblcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDBL"), 0.05, 1., 0.01, 0.75))),
     autocomprHBox(Gtk::manage(new Gtk::Box())),
     comprcieauto(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_SIGMOIDLOGAUTO")))),
     normcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGMOIDNORMCIE")))),
@@ -7488,14 +7488,6 @@ Locallabcie::Locallabcie():
     catBox(Gtk::manage(new Gtk::Box())),
     catMethod(Gtk::manage(new MyComboBoxText())),
 
-/*
-    redx(Gtk::manage(new Adjuster(M("TC_PRIM_REDX"), 0.41, 1.0, 0.0001, 0.7347))),
-    redy(Gtk::manage(new Adjuster(M("TC_PRIM_REDY"), 0.0, 0.70, 0.0001, 0.2653))),
-    grex(Gtk::manage(new Adjuster(M("TC_PRIM_GREX"), -0.1, 0.4, 0.0001, 0.1596))),
-    grey(Gtk::manage(new Adjuster(M("TC_PRIM_GREY"), 0.50, 1.0, 0.0001, 0.8404))),
-    blux(Gtk::manage(new Adjuster(M("TC_PRIM_BLUX"), -0.1, 0.4, 0.0001, 0.0366))),
-    bluy(Gtk::manage(new Adjuster(M("TC_PRIM_BLUY"), -0.1, 0.49, 0.0001, 0.0001))),
-*/
     sigmoidjzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGJZFRA")))),
     sigmoidgamFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGGAMFRA")))),
     sigmoid2Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIG2FRA")))),
@@ -7756,41 +7748,15 @@ Locallabcie::Locallabcie():
     gamcieBox->pack_start(*wprimBox);
     gamcieBox->pack_start(*catBox);
     
-/*
-    gamcieBox->pack_start(*redx);
-    gamcieBox->pack_start(*redy);
-    gamcieBox->pack_start(*grex);
-    gamcieBox->pack_start(*grey);
-    gamcieBox->pack_start(*blux);
-    gamcieBox->pack_start(*bluy);
-    redx->hide();
-    redy->hide();
-    grex->hide();
-    grey->hide();
-    blux->hide();
-    bluy->hide();
-
-    redx->setAdjusterListener(this);
-    redy->setAdjusterListener(this);
-    grex->setAdjusterListener(this);
-    grey->setAdjusterListener(this);
-    blux->setAdjusterListener(this);
-    bluy->setAdjusterListener(this);
-*/
     sigmoidgamFrame->add(*gamcieBox);
-//    sigBox->pack_start(*sigmoidgamFrame);
+    sigBox->pack_start(*sigmoidgamFrame);
     sigfraBox->pack_start(*sigmoidldacie);
     sigfraBox->pack_start(*sigmoidthcie);
     sigfraBox->pack_start(*sigmoidsenscie);
     sigfraBox->pack_start(*modeHBoxbwev);
     sigmoid2Frame->add(*sigfraBox);
     sigBox->pack_start(*sigmoid2Frame);
-    sigBox->pack_start(*sigmoidgamFrame);
 
-    //sigBox->pack_start(*separatorsig);
-
-  //  sigBox->pack_start(*logcie);
-  //  sigBox->pack_start(*separatorsig);
     comprBox->pack_start(*comprcie);
     comprBox->pack_start(*comprcieth);
     autocomprHBox->pack_start(*comprcieauto);
@@ -8846,7 +8812,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             comprcieauto->set_sensitive(true);
             modeHBoxbwev->set_sensitive(true);
 
-            if (bwevMethod->get_active_row_number() == 2) {
+            if (bwevMethod->get_active_row_number() == 2  && sigcie->get_active()) {
                 comprBox->show();
                 comprcie->set_sensitive(true);
                 comprcieth->set_sensitive(true);
@@ -9482,6 +9448,19 @@ void Locallabcie::trccieChanged()
 
 void Locallabcie::sigcieChanged()
 {
+    const int mode = complexity->get_active_row_number();
+    if (sigcie->get_active() && bwevMethod->get_active_row_number() == 2) {
+        if(mode == Expert) {
+            comprcie->set_sensitive(true);
+            comprcieth->set_sensitive(true);
+            comprcieauto->set_sensitive(true);
+        } else {
+            comprcie->set_sensitive(false);
+            comprcieth->set_sensitive(false);
+            comprcieauto->set_sensitive(false);
+        }
+
+    }
 
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
@@ -9528,7 +9507,7 @@ void Locallabcie::logcieChanged()
         //  sigmoidblcie->set_sensitive(true);
         modeHBoxbwev->set_sensitive(true);
 
-        if (bwevMethod->get_active_row_number() == 2) {
+        if (bwevMethod->get_active_row_number() == 2  && sigcie->get_active()) {
             comprcie->set_sensitive(true);
             comprcieth->set_sensitive(true);
             comprcieauto->set_sensitive(true);
@@ -9906,64 +9885,6 @@ void Locallabcie::catMethodChanged()
 
 void Locallabcie::primMethodChanged()
 {
-    const LocallabParams::LocallabSpot defSpot;
-//    const int mode = complexity->get_active_row_number();
-    
-    if (primMethod->get_active_row_number() == 0) {
-        /*
-            redx->setValue(0.64);
-            redy->setValue(0.33);
-            grex->setValue(0.30);
-            grey->setValue(0.60);
-            blux->setValue(0.15);
-            bluy->setValue(0.06);
-        */
-    } else if (primMethod->get_active_row_number() == 1) {
-        /*
-            redx->setValue(0.64);
-            redy->setValue(0.33);
-            grex->setValue(0.21);
-            grey->setValue(0.71);
-            blux->setValue(0.15);
-            bluy->setValue(0.06);
-        */
-    } else if (primMethod->get_active_row_number() == 2) {
-        /*
-            redx->setValue(0.7347);
-            redy->setValue(0.2653);
-            grex->setValue(0.1596);
-            grey->setValue(0.8404);
-            blux->setValue(0.0366);
-            bluy->setValue(0.0001);
-        */
-    } else if (primMethod->get_active_row_number() == 3) {
-        /*
-            redx->setValue(0.708);
-            redy->setValue(0.292);
-            grex->setValue(0.17);
-            grey->setValue(0.797);
-            blux->setValue(0.131);
-            bluy->setValue(0.046);
-        */
-    } else if (primMethod->get_active_row_number() == 4) {
-        /*
-            redx->setValue(0.713);
-            redy->setValue(0.293);
-            grex->setValue(0.165);
-            grey->setValue(0.830);
-            blux->setValue(0.128);
-            bluy->setValue(0.044);
-         */
-    } else if (primMethod->get_active_row_number() == 5) {
-        /*
-            redx->setValue(0.735);
-            redy->setValue(0.265);
-            grex->setValue(0.115);
-            grey->setValue(0.826);
-            blux->setValue(0.1570);
-            bluy->setValue(0.018);
-        */
-    }
     if (listener) {
         listener->panelChanged(Evlocallabprimcie, primMethod->get_active_text());
     }
@@ -9975,7 +9896,7 @@ void Locallabcie::bwevMethodChanged()
     const LocallabParams::LocallabSpot defSpot;
     const int mode = complexity->get_active_row_number();
 
-    if (bwevMethod->get_active_row_number() == 2) {
+    if (bwevMethod->get_active_row_number() == 2  && sigcie->get_active()) {
         comprcie->set_sensitive(true);
         comprcieth->set_sensitive(true);
         comprcieauto->set_sensitive(true);
@@ -10315,7 +10236,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 gamjcie->set_sensitive(false);
                 slopjcie->set_sensitive(false);
                 wprimBox->set_sensitive(false);
-                catBox->set_sensitive(true);
+                catBox->set_sensitive(false);
             }
 
             if (enacieMask->get_active()) {
