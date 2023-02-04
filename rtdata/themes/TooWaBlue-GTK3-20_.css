@@ -1281,6 +1281,11 @@ menuitem:hover > * {
     color: @text-hl-color;
 }
 
+menu menuitem > radio + * image:not(.dummy),
+#MyExpander menu menuitem > radio + * image:not(.dummy) {
+    margin-left: 1pt;
+}
+
 menu image:not(.dummy),
 #MyExpander menu image:not(.dummy) {
     min-height: 2em;

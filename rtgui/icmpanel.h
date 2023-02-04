@@ -81,6 +81,8 @@ protected:
     bool lastfbw;
     sigc::connection fbwconn;
     bool isBatchMode;
+    bool lastgamut;
+    sigc::connection gamutconn;
 
 private:
     rtengine::ProcEvent EvICMprimariMethod;
@@ -107,6 +109,7 @@ private:
     rtengine::ProcEvent EvICMpreser;
     rtengine::ProcEvent EvICMLabGridciexy;
     rtengine::ProcEvent EvICMfbw;
+    rtengine::ProcEvent EvICMgamut;
     LabGrid *labgridcie;
     IdleRegister idle_register;
 
@@ -121,6 +124,7 @@ private:
     Gtk::Box* iVBox;
     Gtk::Box* wTRCBox;
     Gtk::CheckButton* fbw;
+    Gtk::CheckButton* gamut;
 
     Gtk::CheckButton* obpc;
     Gtk::RadioButton* inone;
@@ -198,6 +202,7 @@ public:
     void aiChanged(int n);
     void oBPCChanged();
     void fbwChanged();
+    void gamutChanged();
     void ipChanged();
     void ipSelectionChanged();
     void dcpIlluminantChanged();

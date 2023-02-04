@@ -905,7 +905,6 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     send_to_external = Gtk::manage(new PopUpButton("", false));
     send_to_external->set_tooltip_text(M("MAIN_BUTTON_SENDTOEDITOR_TOOLTIP"));
     setExpandAlignProperties(send_to_external->buttonGroup, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
-    send_to_external->addEntry("palette-brush.png", M("GENERAL_OTHER"));
     updateExternalEditorWidget(
         options.externalEditorIndex >= 0 ? options.externalEditorIndex : options.externalEditors.size(),
         options.externalEditors
@@ -2748,10 +2747,14 @@ void EditorPanel::tbShowHideSidePanels_managestate()
 
 void EditorPanel::updateExternalEditorWidget(int selectedIndex, const std::vector<ExternalEditor> &editors)
 {
-    // Remove the editors and leave the "Other" entry.
-    while (send_to_external->getEntryCount() > 1) {
-        send_to_external->removeEntry(0);
+    // Remove the editors.
+    while (send_to_external->getEntryCount()) {
+        send_to_external->removeEntry(send_to_external->getEntryCount() - 1);
     }
+
+    // Create new radio button group because they cannot be reused: https://developer-old.gnome.org/gtkmm/3.16/classGtk_1_1RadioButtonGroup.html#details.
+    send_to_external_radio_group = Gtk::RadioButtonGroup();
+
     // Add the editors.
     for (unsigned i = 0; i < editors.size(); i++) {
         const auto & name = editors[i].name.empty() ? Glib::ustring(" ") : editors[i].name;
@@ -2771,11 +2774,12 @@ void EditorPanel::updateExternalEditorWidget(int selectedIndex, const std::vecto
                 gioIcon = Gio::Icon::deserialize(Glib::VariantBase(icon_variant));
             }
 
-            send_to_external->insertEntry(i, gioIcon, name);
+            send_to_external->insertEntry(i, gioIcon, name, &send_to_external_radio_group);
         } else {
-            send_to_external->insertEntry(i, "palette-brush.png", name);
+            send_to_external->insertEntry(i, "palette-brush.png", name, &send_to_external_radio_group);
         }
     }
+    send_to_external->addEntry("palette-brush.png", M("GENERAL_OTHER"), &send_to_external_radio_group);
     send_to_external->setSelected(selectedIndex);
     send_to_external->show();
 }

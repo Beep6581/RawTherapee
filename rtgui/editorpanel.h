@@ -248,6 +248,7 @@ private:
     Gtk::Button* queueimg;
     Gtk::Button* saveimgas;
     PopUpButton* send_to_external;
+    Gtk::RadioButtonGroup send_to_external_radio_group;
     Gtk::Button* navSync;
     Gtk::Button* navNext;
     Gtk::Button* navPrev;

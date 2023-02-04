@@ -109,7 +109,7 @@ struct LCurveParamsEdited {
     bool brightness;
     bool contrast;
     bool chromaticity;
-    bool avoidcolorshift;
+    bool gamutmunselmethod;
     bool rstprotection;
     bool lcurve;
     bool acurve;
@@ -305,7 +305,6 @@ struct ColorAppearanceParamsEdited {
     bool ybout;
     bool tempsc;
     bool greensc;
-    bool presetcat02;
 };
 
 struct DirPyrDenoiseParamsEdited {
@@ -403,6 +402,7 @@ public:
         bool structexclu;
         bool struc;
         bool shapeMethod;
+        bool avoidgamutMethod;
         bool loc;
         bool centerX;
         bool centerY;
@@ -422,8 +422,6 @@ public:
         bool transitgrad;
         bool hishow;
         bool activ;
-        bool avoid;
-        bool avoidmun;
         bool blwh;
         bool recurs;
         bool laplac;
@@ -1231,6 +1229,7 @@ struct ColorManagementParamsEdited {
     bool bluy;
     bool preser;
     bool fbw;
+    bool gamut;
     bool labgridcieALow;
     bool labgridcieBLow;
     bool labgridcieAHigh;

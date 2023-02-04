@@ -54,7 +54,8 @@
 #pragma GCC diagnostic warning "-Wextra"
 #pragma GCC diagnostic warning "-Wdouble-promotion"
 
-namespace {
+namespace
+{
 
 using namespace rtengine;
 
@@ -218,32 +219,37 @@ void proPhotoBlue(float *rtemp, float *gtemp, float *btemp, int istart, int tH, 
     }
 }
 
-void customToneCurve(const ToneCurve &customToneCurve, ToneCurveMode curveMode, float *rtemp, float *gtemp, float *btemp, int istart, int tH, int jstart, int tW, int tileSize, PerceptualToneCurveState ptcApplyState) {
+void customToneCurve(const ToneCurve &customToneCurve, ToneCurveMode curveMode, float *rtemp, float *gtemp, float *btemp, int istart, int tH, int jstart, int tW, int tileSize, PerceptualToneCurveState ptcApplyState)
+{
 
     if (curveMode == ToneCurveMode::STD) { // Standard
-        const StandardToneCurve& userToneCurve = static_cast<const StandardToneCurve&> (customToneCurve);
+        const StandardToneCurve& userToneCurve = static_cast<const StandardToneCurve&>(customToneCurve);
+
         for (int i = istart, ti = 0; i < tH; i++, ti++) {
             userToneCurve.BatchApply(0, tW - jstart, &rtemp[ti * tileSize], &gtemp[ti * tileSize], &btemp[ti * tileSize]);
         }
     } else if (curveMode == ToneCurveMode::FILMLIKE) { // Adobe like
-        const AdobeToneCurve& userToneCurve = static_cast<const AdobeToneCurve&> (customToneCurve);
+        const AdobeToneCurve& userToneCurve = static_cast<const AdobeToneCurve&>(customToneCurve);
+
         for (int i = istart, ti = 0; i < tH; i++, ti++) {
             userToneCurve.BatchApply(0, tW - jstart, &rtemp[ti * tileSize], &gtemp[ti * tileSize], &btemp[ti * tileSize]);
         }
     } else if (curveMode == ToneCurveMode::SATANDVALBLENDING) { // apply the curve on the saturation and value channels
-        const SatAndValueBlendingToneCurve& userToneCurve = static_cast<const SatAndValueBlendingToneCurve&> (customToneCurve);
+        const SatAndValueBlendingToneCurve& userToneCurve = static_cast<const SatAndValueBlendingToneCurve&>(customToneCurve);
+
         for (int i = istart, ti = 0; i < tH; i++, ti++) {
             for (int j = jstart, tj = 0; j < tW; j++, tj++) {
                 userToneCurve.Apply(rtemp[ti * tileSize + tj], gtemp[ti * tileSize + tj], btemp[ti * tileSize + tj]);
             }
         }
     } else if (curveMode == ToneCurveMode::WEIGHTEDSTD) { // apply the curve to the rgb channels, weighted
-        const WeightedStdToneCurve& userToneCurve = static_cast<const WeightedStdToneCurve&> (customToneCurve);
+        const WeightedStdToneCurve& userToneCurve = static_cast<const WeightedStdToneCurve&>(customToneCurve);
+
         for (int i = istart, ti = 0; i < tH; i++, ti++) {
             userToneCurve.BatchApply(0, tW - jstart, &rtemp[ti * tileSize], &gtemp[ti * tileSize], &btemp[ti * tileSize]);
         }
     } else if (curveMode == ToneCurveMode::LUMINANCE) { // apply the curve to the luminance channel
-        const LuminanceToneCurve& userToneCurve = static_cast<const LuminanceToneCurve&> (customToneCurve);
+        const LuminanceToneCurve& userToneCurve = static_cast<const LuminanceToneCurve&>(customToneCurve);
 
         for (int i = istart, ti = 0; i < tH; i++, ti++) {
             for (int j = jstart, tj = 0; j < tW; j++, tj++) {
@@ -251,7 +257,8 @@ void customToneCurve(const ToneCurve &customToneCurve, ToneCurveMode curveMode, 
             }
         }
     } else if (curveMode == ToneCurveMode::PERCEPTUAL) { // apply curve while keeping color appearance constant
-        const PerceptualToneCurve& userToneCurve = static_cast<const PerceptualToneCurve&> (customToneCurve);
+        const PerceptualToneCurve& userToneCurve = static_cast<const PerceptualToneCurve&>(customToneCurve);
+
         for (int i = istart, ti = 0; i < tH; i++, ti++) {
             userToneCurve.BatchApply(0, tW - jstart, &rtemp[ti * tileSize], &gtemp[ti * tileSize], &btemp[ti * tileSize], ptcApplyState);
         }
@@ -277,7 +284,7 @@ namespace rtengine
 
 using namespace procparams;
 
-ImProcFunctions::~ImProcFunctions ()
+ImProcFunctions::~ImProcFunctions()
 {
     if (monitorTransform) {
         cmsDeleteTransform(monitorTransform);
@@ -307,7 +314,7 @@ void ImProcFunctions::updateColorProfiles(const Glib::ustring& monitorProfile, R
 #if !defined(__APPLE__) // No support for monitor profiles on OS X, all data is sRGB
         monitor = ICCStore::getInstance()->getProfile(monitorProfile);
 #else
-        monitor = ICCStore::getInstance()->getProfile (settings->srgb);
+        monitor = ICCStore::getInstance()->getProfile(settings->srgb);
 #endif
     }
 
@@ -325,7 +332,7 @@ void ImProcFunctions::updateColorProfiles(const Glib::ustring& monitorProfile, R
         if (softProof) {
             cmsHPROFILE oprof = nullptr;
             RenderingIntent outIntent;
-            
+
             flags = cmsFLAGS_SOFTPROOFING | cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE;
 
             if (!settings->printerProfile.empty()) {
@@ -334,9 +341,11 @@ void ImProcFunctions::updateColorProfiles(const Glib::ustring& monitorProfile, R
                 if (settings->printerBPC) {
                     flags |= cmsFLAGS_BLACKPOINTCOMPENSATION;
                 }
+
                 outIntent = RenderingIntent(settings->printerIntent);
             } else {
                 oprof = ICCStore::getInstance()->getProfile(params->icm.outputProfile);
+
                 if (params->icm.outputBPC) {
                     flags |= cmsFLAGS_BLACKPOINTCOMPENSATION;
                 }
@@ -352,20 +361,23 @@ void ImProcFunctions::updateColorProfiles(const Glib::ustring& monitorProfile, R
                 // }
 
                 const auto make_gamma_table =
-                    [](cmsHPROFILE prof, cmsTagSignature tag) -> void
+                [](cmsHPROFILE prof, cmsTagSignature tag) -> void {
+                    cmsToneCurve *tc = static_cast<cmsToneCurve *>(cmsReadTag(prof, tag));
+
+                    if (tc)
                     {
-                        cmsToneCurve *tc = static_cast<cmsToneCurve *>(cmsReadTag(prof, tag));
-                        if (tc) {
-                            const cmsUInt16Number *table = cmsGetToneCurveEstimatedTable(tc);
-                            cmsToneCurve *tc16 = cmsBuildTabulatedToneCurve16(nullptr, cmsGetToneCurveEstimatedTableEntries(tc), table);
-                            if (tc16) {
-                                cmsWriteTag(prof, tag, tc16);
-                                cmsFreeToneCurve(tc16);
-                            }
+                        const cmsUInt16Number *table = cmsGetToneCurveEstimatedTable(tc);
+                        cmsToneCurve *tc16 = cmsBuildTabulatedToneCurve16(nullptr, cmsGetToneCurveEstimatedTableEntries(tc), table);
+
+                        if (tc16) {
+                            cmsWriteTag(prof, tag, tc16);
+                            cmsFreeToneCurve(tc16);
                         }
-                    };
+                    }
+                };
 
                 cmsHPROFILE softproof = ProfileContent(oprof).toProfile();
+
                 if (softproof) {
                     make_gamma_table(softproof, cmsSigRedTRCTag);
                     make_gamma_table(softproof, cmsSigGreenTRCTag);
@@ -439,7 +451,7 @@ void ImProcFunctions::updateColorProfiles(const Glib::ustring& monitorProfile, R
 void ImProcFunctions::firstAnalysis(const Imagefloat* const original, const ProcParams &params, LUTu & histogram)
 {
 
-    TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (params.icm.workingProfile);
+    TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params.icm.workingProfile);
 
     lumimul[0] = wprof[1][0];
     lumimul[1] = wprof[1][1];
@@ -956,18 +968,20 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
 
         float cz, wh, pfl;
         int c16 = 1;
+
         if (params->colorappearance.modelmethod == "02") {
             c16 = 1;
-        }else if (params->colorappearance.modelmethod == "16") {
+        } else if (params->colorappearance.modelmethod == "16") {
             c16 = 16;
-        } //I don't use PQ here...hence no 21 
+        } //I don't use PQ here...hence no 21
+
         float plum = 100.f;
-        Ciecam02::initcam1float (yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c, c16, plum);
+        Ciecam02::initcam1float(yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c, c16, plum);
         //printf ("wh=%f \n", wh);
 
         const float pow1 = pow_F(1.64f - pow_F(0.29f, n), 0.73f);
         float nj, nbbj, ncbj, czj, awj, flj;
-        Ciecam02::initcam2float (yb2, pilotout, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj, czj, awj, flj, c16, plum);
+        Ciecam02::initcam2float(yb2, pilotout, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj, czj, awj, flj, c16, plum);
 #ifdef __SSE2__
         const float reccmcz = 1.f / (c2 * czj);
 #endif
@@ -1011,7 +1025,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
 
 
         //matrix for current working space
-        TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (params->icm.workingProfile);
+        TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
         const float wip[3][3] = {
             { (float)wiprof[0][0], (float)wiprof[0][1], (float)wiprof[0][2]},
             { (float)wiprof[1][0], (float)wiprof[1][1], (float)wiprof[1][2]},
@@ -1084,7 +1098,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                                                        Q,  M,  s, aw, fl, wh,
                                                        x,  y,  z,
                                                        xw1, yw1,  zw1,
-                                                         c,  nc, pow1, nbb, ncb, pfl, cz, d, c16, plum);
+                                                       c,  nc, pow1, nbb, ncb, pfl, cz, d, c16, plum);
                     Jbuffer[k] = J;
                     Cbuffer[k] = C;
                     hbuffer[k] = h;
@@ -1122,7 +1136,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                                                        Q,  M,  s, aw, fl, wh,
                                                        x,  y,  z,
                                                        xw1, yw1,  zw1,
-                                                         c,  nc, pow1, nbb, ncb, pfl, cz, d, c16, plum);
+                                                       c,  nc, pow1, nbb, ncb, pfl, cz, d, c16, plum);
 #endif
                     float Jpro, Cpro, hpro, Qpro, Mpro, spro;
                     Jpro = J;
@@ -1132,6 +1146,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                     Mpro = M;
                     spro = s;
                     bool jp = false;
+
                     if ((hasColCurve1) && (curveMode == ColorAppearanceParams::TcMode::BRIGHT)) {
                         jp = true;
                         float Qq = Qpro * coefQ;
@@ -1141,6 +1156,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                         Qq = Qq / coefQ;
                         Qpro = 0.2f * (Qq - Qold) + Qold;
                     }
+
                     if ((hasColCurve2) && (curveMode2 == ColorAppearanceParams::TcMode::BRIGHT)) {
                         jp = true;
                         float Qq2 = Qpro * coefQ;
@@ -1149,10 +1165,12 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                         userColCurveB2.Apply(Qq2);
                         Qq2 = Qq2 / coefQ;
                         Qpro = 0.2f * (Qq2 - Qold2) + Qold2;
-                        }
-                    if(jp) {
+                    }
+
+                    if (jp) {
                         Jpro = SQR((10.f * Qpro) / wh);
                     }
+
                     // we cannot have all algorithms with all chroma curves
                     if (alg == 0) {
                         Jpro = CAMBrightCurveJ[Jpro * 327.68f]; //lightness CIECAM02 + contrast
@@ -1240,73 +1258,73 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                     }
 
                     if (hasColCurve1 && (curveMode == ColorAppearanceParams::TcMode::LIGHT)) {
-                            float Jj = (float) Jpro * 327.68f;
-                            float Jold = Jj;
-                            float Jold100 = (float) Jpro;
-                            float redu = 25.f;
-                            float reduc = 1.f;
-                            const Lightcurve& userColCurveJ1 = static_cast<const Lightcurve&>(customColCurve1);
-                            userColCurveJ1.Apply(Jj);
+                        float Jj = (float) Jpro * 327.68f;
+                        float Jold = Jj;
+                        float Jold100 = (float) Jpro;
+                        float redu = 25.f;
+                        float reduc = 1.f;
+                        const Lightcurve& userColCurveJ1 = static_cast<const Lightcurve&>(customColCurve1);
+                        userColCurveJ1.Apply(Jj);
 
-                            if (Jj > Jold) {
-                                if (Jj < 65535.f)  {
-                                    if (Jold < 327.68f * redu) {
-                                        Jj = 0.3f * (Jj - Jold) + Jold;    //divide sensibility
-                                    } else        {
-                                        reduc = LIM((100.f - Jold100) / (100.f - redu), 0.f, 1.f);
-                                        Jj = 0.3f * reduc * (Jj - Jold) + Jold; //reduct sensibility in highlights
-                                    }
+                        if (Jj > Jold) {
+                            if (Jj < 65535.f)  {
+                                if (Jold < 327.68f * redu) {
+                                    Jj = 0.3f * (Jj - Jold) + Jold;    //divide sensibility
+                                } else        {
+                                    reduc = LIM((100.f - Jold100) / (100.f - redu), 0.f, 1.f);
+                                    Jj = 0.3f * reduc * (Jj - Jold) + Jold; //reduct sensibility in highlights
                                 }
-                            } else if (Jj > 10.f) {
-                                Jj = 0.8f * (Jj - Jold) + Jold;
-                            } else if (Jj >= 0.f) {
-                                Jj = 0.90f * (Jj - Jold) + Jold;    // not zero ==>artifacts
                             }
+                        } else if (Jj > 10.f) {
+                            Jj = 0.8f * (Jj - Jold) + Jold;
+                        } else if (Jj >= 0.f) {
+                            Jj = 0.90f * (Jj - Jold) + Jold;    // not zero ==>artifacts
+                        }
 
-                            Jpro = (float)(Jj / 327.68f);
+                        Jpro = (float)(Jj / 327.68f);
 
-                            if (Jpro < 1.f) {
-                                Jpro = 1.f;
-                            }
+                        if (Jpro < 1.f) {
+                            Jpro = 1.f;
+                        }
                     }
 
-                    if (hasColCurve2 &&  (curveMode2 == ColorAppearanceParams::TcMode::LIGHT)) {
-                            float Jj = (float) Jpro * 327.68f;
-                            float Jold = Jj;
-                            float Jold100 = (float) Jpro;
-                            float redu = 25.f;
-                            float reduc = 1.f;
-                            const Lightcurve& userColCurveJ2 = static_cast<const Lightcurve&>(customColCurve2);
-                            userColCurveJ2.Apply(Jj);
+                    if (hasColCurve2 && (curveMode2 == ColorAppearanceParams::TcMode::LIGHT)) {
+                        float Jj = (float) Jpro * 327.68f;
+                        float Jold = Jj;
+                        float Jold100 = (float) Jpro;
+                        float redu = 25.f;
+                        float reduc = 1.f;
+                        const Lightcurve& userColCurveJ2 = static_cast<const Lightcurve&>(customColCurve2);
+                        userColCurveJ2.Apply(Jj);
 
-                            if (Jj > Jold) {
-                                if (Jj < 65535.f)  {
-                                    if (Jold < 327.68f * redu) {
-                                        Jj = 0.3f * (Jj - Jold) + Jold;    //divide sensibility
-                                    } else        {
-                                        reduc = LIM((100.f - Jold100) / (100.f - redu), 0.f, 1.f);
-                                        Jj = 0.3f * reduc * (Jj - Jold) + Jold; //reduct sensibility in highlights
-                                    }
-                                }
-                            } else if (Jj > 10.f) {
-                                if (!t1L) {
-                                    Jj = 0.8f * (Jj - Jold) + Jold;
-                                } else {
-                                    Jj = 0.4f * (Jj - Jold) + Jold;
-                                }
-                            } else if (Jj >= 0.f) {
-                                if (!t1L) {
-                                    Jj = 0.90f * (Jj - Jold) + Jold;    // not zero ==>artifacts
-                                } else {
-                                    Jj = 0.5f * (Jj - Jold) + Jold;
+                        if (Jj > Jold) {
+                            if (Jj < 65535.f)  {
+                                if (Jold < 327.68f * redu) {
+                                    Jj = 0.3f * (Jj - Jold) + Jold;    //divide sensibility
+                                } else        {
+                                    reduc = LIM((100.f - Jold100) / (100.f - redu), 0.f, 1.f);
+                                    Jj = 0.3f * reduc * (Jj - Jold) + Jold; //reduct sensibility in highlights
                                 }
                             }
-
-                            Jpro = (float)(Jj / 327.68f);
-
-                            if (Jpro < 1.f) {
-                                Jpro = 1.f;
+                        } else if (Jj > 10.f) {
+                            if (!t1L) {
+                                Jj = 0.8f * (Jj - Jold) + Jold;
+                            } else {
+                                Jj = 0.4f * (Jj - Jold) + Jold;
                             }
+                        } else if (Jj >= 0.f) {
+                            if (!t1L) {
+                                Jj = 0.90f * (Jj - Jold) + Jold;    // not zero ==>artifacts
+                            } else {
+                                Jj = 0.5f * (Jj - Jold) + Jold;
+                            }
+                        }
+
+                        Jpro = (float)(Jj / 327.68f);
+
+                        if (Jpro < 1.f) {
+                            Jpro = 1.f;
+                        }
                     }
 
                     if (hasColCurve3) {//curve 3 with chroma saturation colorfullness
@@ -1456,46 +1474,32 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
 #else
                             float xx, yy, zz;
                             //process normal==> viewing
+                            TMatrix wprofc = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
+                            const double wpc[3][3] = {//improve precision with double
+                                {wprofc[0][0], wprofc[0][1], wprofc[0][2]},
+                                {wprofc[1][0], wprofc[1][1], wprofc[1][2]},
+                                {wprofc[2][0], wprofc[2][1], wprofc[2][2]}
+                            };
 
                             Ciecam02::jch2xyz_ciecam02float(xx, yy, zz,
                                                             J,  C, h,
                                                             xw2, yw2,  zw2,
-                                                              c2, nc2, pow1n, nbbj, ncbj, flj, czj, dj, awj, c16, plum);
+                                                            c2, nc2, pow1n, nbbj, ncbj, flj, czj, dj, awj, c16, plum);
                             float x, y, z;
                             x = xx * 655.35f;
                             y = yy * 655.35f;
                             z = zz * 655.35f;
                             float Ll, aa, bb;
+
                             //convert xyz=>lab
-                            Color::XYZ2Lab(x,  y,  z, Ll, aa, bb);
-
-                            // gamut control in Lab mode; I must study how to do with cIECAM only
                             if (gamu == 1) {
-                                float Lprov1, Chprov1;
-                                Lprov1 = Ll / 327.68f;
-                                Chprov1 = sqrtf(SQR(aa) + SQR(bb)) / 327.68f;
-                                float2  sincosval;
-
-                                if (Chprov1 == 0.0f) {
-                                    sincosval.y = 1.f;
-                                    sincosval.x = 0.0f;
-                                } else {
-                                    sincosval.y = aa / (Chprov1 * 327.68f);
-                                    sincosval.x = bb / (Chprov1 * 327.68f);
-                                }
-
-
-                                //gamut control : Lab values are in gamut
-                                Color::gamutLchonly(sincosval, Lprov1, Chprov1, wip, highlight, 0.15f, 0.96f);
-                                lab->L[i][j] = Lprov1 * 327.68f;
-                                lab->a[i][j] = 327.68f * Chprov1 * sincosval.y;
-                                lab->b[i][j] = 327.68f * Chprov1 * sincosval.x;
-
-                            } else {
-                                lab->L[i][j] = Ll;
-                                lab->a[i][j] = aa;
-                                lab->b[i][j] = bb;
+                                Color::gamutmap(x, y, z, wpc);
                             }
+
+                            Color::XYZ2Lab(x,  y,  z, Ll, aa, bb);
+                            lab->L[i][j] = Ll;
+                            lab->a[i][j] = aa;
+                            lab->b[i][j] = bb;
 
 #endif
                         }
@@ -1592,7 +1596,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                 if (params->defringe.enabled)
                     if (execsharp) {
                         lab->deleteLab();
-                        defringecam (ncie);//defringe adapted to CIECAM
+                        defringecam(ncie); //defringe adapted to CIECAM
                         lab->reallocLab();
                     }
 
@@ -1603,7 +1607,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                     const bool hotbad = params->dirpyrequalizer.skinprotect != 0.0;
 
                     lab->deleteLab();
-                    badpixcam (ncie, artifact / scale, 5, 2, chrom, hotbad);  //enabled remove artifacts for cbDL
+                    badpixcam(ncie, artifact / scale, 5, 2, chrom, hotbad);   //enabled remove artifacts for cbDL
                     lab->reallocLab();
                 }
 
@@ -1611,7 +1615,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                 if (params->colorappearance.badpixsl > 0 && execsharp) {
                     int mode = params->colorappearance.badpixsl;
                     lab->deleteLab();
-                    badpixcam (ncie, 3.0, 10, mode, 0, true);//for bad pixels CIECAM
+                    badpixcam(ncie, 3.0, 10, mode, 0, true); //for bad pixels CIECAM
                     lab->reallocLab();
                 }
 
@@ -1620,17 +1624,17 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                         buffers[0] = lab->L;
                         buffers[1] = lab->a;
                         buffers[2] = lab->b;
-                        impulsedenoisecam (ncie, buffers); //impulse adapted to CIECAM
+                        impulsedenoisecam(ncie, buffers);  //impulse adapted to CIECAM
                     }
 
                 if (params->sharpenMicro.enabled)if (execsharp) {
-                        MLmicrocontrastcam (ncie);
+                        MLmicrocontrastcam(ncie);
                     }
 
                 if (params->sharpening.enabled)
                     if (execsharp) {
                         float **buffer = lab->L; // We can use the L-buffer from lab as buffer to save some memory
-                        sharpeningcam (ncie, buffer, showSharpMask); // sharpening adapted to CIECAM
+                        sharpeningcam(ncie, buffer, showSharpMask);  // sharpening adapted to CIECAM
                     }
 
 //if(params->dirpyrequalizer.enabled) if(execsharp) {
@@ -1643,7 +1647,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                         float t_l = static_cast<float>(params->dirpyrequalizer.hueskin.getTopLeft()) / 100.0f;
                         float t_r = static_cast<float>(params->dirpyrequalizer.hueskin.getTopRight()) / 100.0f;
                         lab->deleteLab();
-                        dirpyr_equalizercam (ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, ncie->h_p, ncie->C_p, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold, params->dirpyrequalizer.skinprotect, b_l, t_l, t_r, scale); //contrast by detail adapted to CIECAM
+                        dirpyr_equalizercam(ncie, ncie->sh_p, ncie->sh_p, ncie->W, ncie->H, ncie->h_p, ncie->C_p, params->dirpyrequalizer.mult, params->dirpyrequalizer.threshold, params->dirpyrequalizer.skinprotect, b_l, t_l, t_r, scale);  //contrast by detail adapted to CIECAM
                         lab->reallocLab();
                     }
 
@@ -1666,6 +1670,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
 #ifdef _OPENMP
                     #pragma omp for schedule(dynamic, 10)
 #endif
+
                     for (int i = 0; i < height; i++) // update CieImages with new values after sharpening, defringe, contrast by detail level
                         for (int j = 0; j < width; j++) {
                             float interm = fabsf(ncie->sh_p[i][j] / (32768.f));
@@ -1685,7 +1690,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
 
             if (epdEnabled  && params->colorappearance.tonecie && algepd) {
                 lab->deleteLab();
-                EPDToneMapCIE (ncie, a_w, c_, width, height, minQ, maxQ, Iterates, scale );
+                EPDToneMapCIE(ncie, a_w, c_, width, height, minQ, maxQ, Iterates, scale);
                 lab->reallocLab();
             }
 
@@ -1769,7 +1774,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                         Ciecam02::jch2xyz_ciecam02float(xx, yy, zz,
                                                         ncie->J_p[i][j],  ncie_C_p, ncie->h_p[i][j],
                                                         xw2, yw2,  zw2,
-                                                          c2, nc2, pow1n, nbbj, ncbj, flj, czj, dj, awj, c16, plum);
+                                                        c2, nc2, pow1n, nbbj, ncbj, flj, czj, dj, awj, c16, plum);
                         float x = (float)xx * 655.35f;
                         float y = (float)yy * 655.35f;
                         float z = (float)zz * 655.35f;
@@ -1894,7 +1899,7 @@ void ImProcFunctions::moyeqt(Imagefloat* working, float &moyS, float &eqty)
 
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
-            const double s = Color::rgb2s(CLIP(working->r (i, j)), CLIP(working->g (i, j)), CLIP(working->b (i, j)));
+            const double s = Color::rgb2s(CLIP(working->r(i, j)), CLIP(working->g(i, j)), CLIP(working->b(i, j)));
             moy += s;
             sqrs += SQR(s);
         }
@@ -1946,12 +1951,12 @@ filmlike_clip(float *r, float *g, float *b)
     }
 }
 
-void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer *pipetteBuffer, const LUTf& hltonecurve, const LUTf& shtonecurve, const LUTf& tonecurve,
-                               int sat, const LUTf& rCurve, const LUTf& gCurve, const LUTf& bCurve, float satLimit, float satLimitOpacity,
-                               const ColorGradientCurve& ctColorCurve, const OpacityCurve& ctOpacityCurve, bool opautili, const LUTf& clToningcurve, const LUTf& cl2Toningcurve,
-                               const ToneCurve& customToneCurve1, const ToneCurve& customToneCurve2, const ToneCurve& customToneCurvebw1, const ToneCurve& customToneCurvebw2,
-                               double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, DCPProfile *dcpProf, const DCPProfileApplyState& asIn,
-                               LUTu& histToneCurve, size_t chunkSize, bool measure)
+void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer *pipetteBuffer, const LUTf& hltonecurve, const LUTf& shtonecurve, const LUTf& tonecurve,
+                              int sat, const LUTf& rCurve, const LUTf& gCurve, const LUTf& bCurve, float satLimit, float satLimitOpacity,
+                              const ColorGradientCurve& ctColorCurve, const OpacityCurve& ctOpacityCurve, bool opautili, const LUTf& clToningcurve, const LUTf& cl2Toningcurve,
+                              const ToneCurve& customToneCurve1, const ToneCurve& customToneCurve2, const ToneCurve& customToneCurvebw1, const ToneCurve& customToneCurvebw2,
+                              double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, DCPProfile *dcpProf, const DCPProfileApplyState& asIn,
+                              LUTu& histToneCurve, size_t chunkSize, bool measure)
 {
     rgbProc(working, lab, pipetteBuffer, hltonecurve, shtonecurve, tonecurve, sat, rCurve, gCurve, bCurve, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili,
             clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2,  customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob,
@@ -1959,12 +1964,12 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 }
 
 // Process RGB image and convert to LAB space
-void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer *pipetteBuffer, const LUTf& hltonecurve, const LUTf& shtonecurve, const LUTf& tonecurve,
-                               int sat, const LUTf& rCurve, const LUTf& gCurve, const LUTf& bCurve, float satLimit, float satLimitOpacity, 
-                               const ColorGradientCurve& ctColorCurve, const OpacityCurve& ctOpacityCurve, bool opautili, const LUTf& clToningcurve, const LUTf& cl2Toningcurve,
-                               const ToneCurve& customToneCurve1, const ToneCurve& customToneCurve2, const ToneCurve& customToneCurvebw1, const ToneCurve& customToneCurvebw2,
-                               double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, double expcomp, int hlcompr, int hlcomprthresh,
-                               DCPProfile *dcpProf, const DCPProfileApplyState& asIn, LUTu& histToneCurve, size_t chunkSize, bool measure)
+void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer *pipetteBuffer, const LUTf& hltonecurve, const LUTf& shtonecurve, const LUTf& tonecurve,
+                              int sat, const LUTf& rCurve, const LUTf& gCurve, const LUTf& bCurve, float satLimit, float satLimitOpacity,
+                              const ColorGradientCurve& ctColorCurve, const OpacityCurve& ctOpacityCurve, bool opautili, const LUTf& clToningcurve, const LUTf& cl2Toningcurve,
+                              const ToneCurve& customToneCurve1, const ToneCurve& customToneCurve2, const ToneCurve& customToneCurvebw1, const ToneCurve& customToneCurvebw2,
+                              double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, double expcomp, int hlcompr, int hlcomprthresh,
+                              DCPProfile *dcpProf, const DCPProfileApplyState& asIn, LUTu& histToneCurve, size_t chunkSize, bool measure)
 {
 
     std::unique_ptr<StopWatch> stop;
@@ -1995,8 +2000,8 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
         }
     }
 
-    TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (params->icm.workingProfile);
-    TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (params->icm.workingProfile);
+    TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
+    TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
 
     float toxyz[3][3] = {
         {
@@ -2150,13 +2155,13 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     PerceptualToneCurveState ptc1ApplyState, ptc2ApplyState;
 
     if (hasToneCurve1 && curveMode == ToneCurveMode::PERCEPTUAL) {
-        const PerceptualToneCurve& userToneCurve = static_cast<const PerceptualToneCurve&> (customToneCurve1);
-        userToneCurve.initApplyState (ptc1ApplyState, params->icm.workingProfile);
+        const PerceptualToneCurve& userToneCurve = static_cast<const PerceptualToneCurve&>(customToneCurve1);
+        userToneCurve.initApplyState(ptc1ApplyState, params->icm.workingProfile);
     }
 
     if (hasToneCurve2 && curveMode2 == ToneCurveMode::PERCEPTUAL) {
-        const PerceptualToneCurve& userToneCurve = static_cast<const PerceptualToneCurve&> (customToneCurve2);
-        userToneCurve.initApplyState (ptc2ApplyState, params->icm.workingProfile);
+        const PerceptualToneCurve& userToneCurve = static_cast<const PerceptualToneCurve&>(customToneCurve2);
+        userToneCurve.initApplyState(ptc2ApplyState, params->icm.workingProfile);
     }
 
     bool hasColorToning = params->colorToning.enabled && bool (ctOpacityCurve) &&  bool (ctColorCurve) && params->colorToning.method != "LabGrid";
@@ -2351,6 +2356,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                 }
 
                 highlightToneCurve(hltonecurve, rtemp, gtemp, btemp, istart, tH, jstart, tW, TS, exp_scale, comp, hlrange);
+
                 if (params->toneCurve.black != 0.0) {
                     shadowToneCurve(shtonecurve, rtemp, gtemp, btemp, istart, tH, jstart, tW, TS);
                 }
@@ -2402,7 +2408,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                         float tmpg[4] ALIGNED16;
                         float tmpb[4] ALIGNED16;
 
-                        for (; j < tW - 3; j+=4, tj+=4) {
+                        for (; j < tW - 3; j += 4, tj += 4) {
                             //brightness/contrast
                             STVF(tmpr[0], tonecurve(LVF(rtemp[ti * TS + tj])));
                             STVF(tmpg[0], tonecurve(LVF(gtemp[ti * TS + tj])));
@@ -2683,6 +2689,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                     else if (params->colorToning.method == "Splitco") {
                         constexpr float reducac = 0.3f;
                         constexpr int mode = 0;
+
                         for (int i = istart, ti = 0; i < tH; i++, ti++) {
                             for (int j = jstart, tj = 0; j < tW; j++, tj++) {
                                 const float r = rtemp[ti * TS + tj];
@@ -3113,9 +3120,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                         Color::RGB2Lab(&rtemp[ti * TS], &gtemp[ti * TS], &btemp[ti * TS], &(lab->L[i][jstart]), &(lab->a[i][jstart]), &(lab->b[i][jstart]), toxyz, tW - jstart);
                     }
 
-                   // if (hasColorToningLabGrid) {
-                   //     colorToningLabGrid(lab, jstart, tW, istart, tH, false);
-                   // }
+                    // if (hasColorToningLabGrid) {
+                    //     colorToningLabGrid(lab, jstart, tW, istart, tH, false);
+                    // }
                 } else { // black & white
                     // Auto channel mixer needs whole image, so we now copy to tmpImage and close the tiled processing
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
@@ -3494,9 +3501,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
         for (int i = 0; i < tH; i++) {
             Color::RGB2Lab(tmpImage->r(i), tmpImage->g(i), tmpImage->b(i), lab->L[i], lab->a[i], lab->b[i], toxyz, tW);
 
-           // if (hasColorToningLabGrid) {
-               // colorToningLabGrid(lab, 0, tW, i, i + 1, false);
-           // }
+            // if (hasColorToningLabGrid) {
+            // colorToningLabGrid(lab, 0, tW, i, i + 1, false);
+            // }
         }
 
 
@@ -3511,7 +3518,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     }
 
     if (sCurveEnabled) {
-        delete sCurve; 
+        delete sCurve;
     }
 
     if (vCurveEnabled) {
@@ -3955,7 +3962,7 @@ void ImProcFunctions::toning2col(float r, float g, float b, float &ro, float &go
 * @param iplow iphigh [0..1] luminance
 * @param wp wip 3x3 matrix and inverse conversion rgb XYZ
 **/
-void ImProcFunctions::labtoning (float r, float g, float b, float &ro, float &go, float &bo, int algm, int metchrom, int twoc, float satLimit, float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, const LUTf & clToningcurve, const LUTf & cl2Toningcurve, float iplow, float iphigh, double wp[3][3], double wip[3][3]  )
+void ImProcFunctions::labtoning(float r, float g, float b, float &ro, float &go, float &bo, int algm, int metchrom, int twoc, float satLimit, float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, const LUTf & clToningcurve, const LUTf & cl2Toningcurve, float iplow, float iphigh, double wp[3][3], double wip[3][3])
 {
     ro = CLIP(r);
     go = CLIP(g);
@@ -4014,7 +4021,7 @@ void ImProcFunctions::labtoning (float r, float g, float b, float &ro, float &go
 }
 
 
-void ImProcFunctions::luminanceCurve (LabImage* lold, LabImage* lnew, const LUTf& curve)
+void ImProcFunctions::luminanceCurve(LabImage* lold, LabImage* lnew, const LUTf& curve)
 {
 
     int W = lold->W;
@@ -4034,7 +4041,7 @@ void ImProcFunctions::luminanceCurve (LabImage* lold, LabImage* lnew, const LUTf
 
 
 
-void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW, LabImage* lold, LabImage* lnew, const LUTf& acurve, const LUTf& bcurve, const LUTf& satcurve, const LUTf& lhskcurve, const LUTf& clcurve, LUTf & curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, bool clcutili, LUTu &histCCurve, LUTu &histLCurve)
+void ImProcFunctions::chromiLuminanceCurve(PipetteBuffer *pipetteBuffer, int pW, LabImage* lold, LabImage* lnew, const LUTf& acurve, const LUTf& bcurve, const LUTf& satcurve, const LUTf& lhskcurve, const LUTf& clcurve, LUTf & curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, bool clcutili, LUTu &histCCurve, LUTu &histLCurve)
 {
     int W = lold->W;
     int H = lold->H;
@@ -4069,7 +4076,8 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
     // !params->labCurve.enabled. It is ugly, but it's the smallest code
     // change that I could find
     //-------------------------------------------------------------------------
-    class TempParams {
+    class TempParams
+    {
         const ProcParams **p_;
         const ProcParams *old_;
         ProcParams tmp_;
@@ -4091,11 +4099,13 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
     bool pipette_for_colortoning_labregions =
         editPipette &&
         params->colorToning.enabled && params->colorToning.method == "LabRegions";
+
     if (!params->labCurve.enabled && pipette_for_colortoning_labregions) {
         utili = autili = butili = ccutili = cclutili = clcutili = false;
         tempparams.reset(new TempParams(&params));
         curve.makeIdentity();
     }
+
     //-------------------------------------------------------------------------
 
 
@@ -4104,6 +4114,7 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
             // fill pipette buffer with zeros to avoid crashes
             editWhatever->fill(0.f);
         }
+
         if (params->blackwhite.enabled && !params->colorToning.enabled) {
             for (int i = 0; i < lnew->H; ++i) {
                 for (int j = 0; j < lnew->W; ++j) {
@@ -4111,6 +4122,7 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
                 }
             }
         }
+
         return;
     }
 
@@ -4172,7 +4184,7 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
 //  if(params->labCurve.avoidclip ){
     // parameter to adapt curve C=f(C) to gamut
 
-    if      (params->icm.workingProfile == "ProPhoto")   {
+    if (params->icm.workingProfile == "ProPhoto")   {
         adjustr = 1.2f;   // 1.2 instead 1.0 because it's very rare to have C>170..
     } else if (params->icm.workingProfile == "Adobe RGB")  {
         adjustr = 1.8f;
@@ -4203,7 +4215,22 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
     const bool clut = clcutili;
     const double rstprotection = 100. - params->labCurve.rstprotection; // Red and Skin Tones Protection
     // avoid color shift is disabled when bwToning is activated and enabled if gamut is true in colorappearanace
-    const bool avoidColorShift = (params->labCurve.avoidcolorshift || (params->colorappearance.gamut && params->colorappearance.enabled)) && !bwToning ;
+    // const bool avoidColorShift = (params->labCurve.avoidcolorshift || (params->colorappearance.gamut && params->colorappearance.enabled)) && !bwToning ;
+    //const bool avoidColorS = params->labCurve.avoidcolorshift;
+    int gamutmuns = 0;
+
+    if (params->labCurve.gamutmunselmethod == "NONE") {
+        gamutmuns = 0;
+    } else if (params->labCurve.gamutmunselmethod == "LAB") {
+        gamutmuns = 1;
+    } else if (params->labCurve.gamutmunselmethod == "XYZ") {
+        gamutmuns = 2;
+    } else if (params->labCurve.gamutmunselmethod == "XYZREL") {
+        gamutmuns = 3;
+    } else if (params->labCurve.gamutmunselmethod == "MUN") {
+        gamutmuns = 4;
+    }
+
     const float protectRed = (float)settings->protectred;
     const double protectRedH = settings->protectredh;
     const float protect_red = rtengine::LIM<float>(protectRed, 20.f, 180.f); //default=60  chroma: one can put more or less if necessary...in 'option'  40...160
@@ -4228,17 +4255,17 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
     const float scaleConst = 100.0f / 100.1f;
 
 
-    const bool gamutLch = settings->gamutLch;
+    //const bool gamutLch = settings->gamutLch;
     const float amountchroma = (float) settings->amchroma;
 
-    TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (params->icm.workingProfile);
+    TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
     const double wip[3][3] = {
         {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
         {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
         {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
     };
 
-    TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (params->icm.workingProfile);
+    TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
     const double wp[3][3] = {
         {wprof[0][0], wprof[0][1], wprof[0][2]},
         {wprof[1][0], wprof[1][1], wprof[1][2]},
@@ -4258,12 +4285,12 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
 #endif
 
         for (int i = 0; i < H; i++) {
-            if (avoidColorShift)
+            // if (avoidColorShift)
 
-                // only if user activate Lab adjustments
-                if (autili || butili || ccutili ||  cclutili || chutili || lhutili || hhutili || clcutili || utili || chromaticity) {
-                    Color::LabGamutMunsell(lold->L[i], lold->a[i], lold->b[i], W, /*corMunsell*/true, /*lumaMuns*/false, params->toneCurve.hrenabled, /*gamut*/true, wip);
-                }
+            // only if user activate Lab adjustments
+            //   if (autili || butili || ccutili ||  cclutili || chutili || lhutili || hhutili || clcutili || utili || chromaticity) {
+            //       Color::LabGamutMunsell(lold->L[i], lold->a[i], lold->b[i], W, /*corMunsell*/true, /*lumaMuns*/false, params->toneCurve.hrenabled, /*gamut*/true, wip);
+            //   }
 
 #ifdef __SSE2__
 
@@ -4277,7 +4304,7 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
                     av = LVFU(lold->a[i][k]);
                     bv = LVFU(lold->b[i][k]);
                     STVF(HHBuffer[k], xatan2f(bv, av));
-                    STVF (CCBuffer[k], vsqrtf (SQRV (av) + SQRV (bv)) / c327d68v);
+                    STVF(CCBuffer[k], vsqrtf(SQRV(av) + SQRV(bv)) / c327d68v);
                 }
 
                 for (; k < W; k++) {
@@ -4431,8 +4458,8 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
                         float fx = (0.002f * aprov1) + fy;
                         float fz = fy - (0.005f * bprov1);
 
-                        float x_ = 65535.f * Color::f2xyz (fx) * Color::D50x;
-                        float z_ = 65535.f * Color::f2xyz (fz) * Color::D50z;
+                        float x_ = 65535.f * Color::f2xyz(fx) * Color::D50x;
+                        float z_ = 65535.f * Color::f2xyz(fz) * Color::D50z;
                         float y_ = Lprov1 > Color::epskapf ? 65535.f * fy * fy * fy : 65535.f * Lprov1 / Color::kappaf;
                         float R, G, B;
                         Color::xyz2rgb(x_, y_, z_, R, G, B, wip);
@@ -4704,24 +4731,57 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
                     btmp -= lold->b[i][j];
                 }
 
-                if (avoidColorShift) {
-                    //gamutmap Lch ==> preserve Hue,but a little slower than gamutbdy for high values...and little faster for low values
-                    if (gamutLch) {
-                        float R, G, B;
-                        //gamut control : Lab values are in gamut
-                        Color::gamutLchonly(HH, sincosval, Lprov1, Chprov1, R, G, B, wip, highlight, 0.15f, 0.96f);
-                        lnew->L[i][j] = Lprov1 * 327.68f;
-                        lnew->a[i][j] = 327.68f * Chprov1 * sincosval.y;
-                        lnew->b[i][j] = 327.68f * Chprov1 * sincosval.x;
-                    } else {
-                        //use gamutbdy
-                        //Luv limiter
-                        float Y, u, v;
-                        Color::Lab2Yuv(lnew->L[i][j], atmp, btmp, Y, u, v);
-                        //Yuv2Lab includes gamut restriction map
-                        Color::Yuv2Lab(Y, u, v, lnew->L[i][j], lnew->a[i][j], lnew->b[i][j], wp);
+                lnew->L[i][j] = Lprov1 * 327.68f;
+                lnew->a[i][j] = 327.68f * Chprov1 * sincosval.y;
+                lnew->b[i][j] = 327.68f * Chprov1 * sincosval.x;
+
+                //gamutmap Lch ==> preserve Hue,but a little slower than gamutbdy for high values...and little faster for low values
+                if (gamutmuns == 1) {
+                    float R, G, B;
+                    //gamut control : Lab values are in gamut
+                    Color::gamutLchonly(HH, sincosval, Lprov1, Chprov1, R, G, B, wip, highlight, 0.15f, 0.96f);
+                    lnew->L[i][j] = Lprov1 * 327.68f;
+                    lnew->a[i][j] = 327.68f * Chprov1 * sincosval.y;
+                    lnew->b[i][j] = 327.68f * Chprov1 * sincosval.x;
+                }
+
+                if (gamutmuns == 2 || gamutmuns == 3) {
+
+                    float xg, yg, zg;
+                    Color::Lab2XYZ(lnew->L[i][j], atmp, btmp, xg, yg, zg);
+                    float x0 = xg;
+                    float y0 = yg;
+                    float z0 = zg;
+
+                    Color::gamutmap(xg, yg, zg, wp);
+
+                    if (gamutmuns == 3) {//0.5f arbitrary coeff
+                        xg = xg + 0.5f * (x0 - xg);
+                        yg = yg + 0.5f * (y0 - yg);
+                        zg = zg + 0.5f * (z0 - zg);
                     }
 
+                    float Lag, aag2, bbg2;
+                    Color::XYZ2Lab(xg, yg, zg, Lag, aag2, bbg2);
+                    Lprov1 = Lag / 327.68f;
+                    HH = xatan2f(bbg2, aag2);
+                    Chprov1 = std::sqrt(SQR(aag2) + SQR(bbg2)) / 327.68f;
+
+                    if (Chprov1 == 0.0f) {
+                        sincosval.y = 1.f;
+                        sincosval.x = 0.0f;
+                    } else {
+                        sincosval.y = aag2 / (Chprov1 * 327.68f);
+                        sincosval.x = bbg2 / (Chprov1 * 327.68f);
+                    }
+
+                    lnew->L[i][j] = Lprov1 * 327.68f;
+                    lnew->a[i][j] = 327.68f * Chprov1 * sincosval.y;
+                    lnew->b[i][j] = 327.68f * Chprov1 * sincosval.x;
+
+                }
+
+                if (gamutmuns > 0) {
                     if (utili || autili || butili || ccut || clut || cclutili || chutili || lhutili || hhutili || clcutili || chromaticity) {
                         float correctionHue = 0.f; // Munsell's correction
                         float correctlum = 0.f;
@@ -4747,7 +4807,10 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
                         lnew->a[i][j] = 327.68f * Chprov * sincosval.y; // apply Munsell
                         lnew->b[i][j] = 327.68f * Chprov * sincosval.x;
                     }
-                } else {
+                }
+
+                if (gamutmuns == 0) {
+
 //              if(Lprov1 > maxlp) maxlp=Lprov1;
 //              if(Lprov1 < minlp) minlp=Lprov1;
                     if (!bwToning) {
@@ -4940,11 +5003,12 @@ void ImProcFunctions::EPDToneMapCIE(CieImage *ncie, float a_w, float c_, int Wid
     if (!params->epd.enabled) {
         return;
     }
-/*
-    if (params->wavelet.enabled  && params->wavelet.tmrs != 0) {
-        return;
-    }
-*/
+
+    /*
+        if (params->wavelet.enabled  && params->wavelet.tmrs != 0) {
+            return;
+        }
+    */
     float stren = params->epd.strength;
     const float edgest = std::min(params->epd.edgeStopping, params->localContrast.enabled ? 3.0 : 4.0);
     float sca = params->epd.scale;
@@ -4954,7 +5018,7 @@ void ImProcFunctions::EPDToneMapCIE(CieImage *ncie, float a_w, float c_, int Wid
     float *Qpr = ncie->Q_p[0];
 
     if (settings->verbose) {
-        printf ("minQ=%f maxQ=%f  Qpro=%f\n", static_cast<double>(minQ), static_cast<double>(maxQ), static_cast<double>(Qpro));
+        printf("minQ=%f maxQ=%f  Qpro=%f\n", static_cast<double>(minQ), static_cast<double>(maxQ), static_cast<double>(Qpro));
     }
 
     if (maxQ > Qpro) {
@@ -4993,6 +5057,7 @@ void ImProcFunctions::EPDToneMapCIE(CieImage *ncie, float a_w, float c_, int Wid
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,10)
 #endif
+
     for (int i = 0; i < Hei; i++)
         for (int j = 0; j < Wid; j++) {
             ncie->Q_p[i][j] = (ncie->Q_p[i][j] * Qpro) / gamm;
@@ -5043,7 +5108,7 @@ void ImProcFunctions::EPDToneMaplocal(int sp, LabImage *lab, LabImage *tmp1, uns
 
     float stren = ((float)params->locallab.spots.at(sp).stren);
     const float edgest = std::min(params->locallab.spots.at(sp).estop, params->localContrast.enabled ? 3.0 : 4.0);
-    
+
     float sca  = ((float)params->locallab.spots.at(sp).scaltm);
     float gamm = ((float)params->locallab.spots.at(sp).gamma);
     float satur = ((float)params->locallab.spots.at(sp).satur) / 100.f;
@@ -5064,6 +5129,7 @@ void ImProcFunctions::EPDToneMaplocal(int sp, LabImage *lab, LabImage *tmp1, uns
 #ifdef _OPENMP
     #pragma omp parallel for reduction(max:maxL) reduction(min:minL) schedule(dynamic,16)
 #endif
+
     for (std::size_t i = 0; i < N; i++) {
         minL = rtengine::min(minL, L[i]);
         maxL = rtengine::max(maxL, L[i]);
@@ -5081,8 +5147,8 @@ void ImProcFunctions::EPDToneMaplocal(int sp, LabImage *lab, LabImage *tmp1, uns
 #ifdef _OPENMP
     #pragma omp parallel for
 #endif
-    for (std::size_t i = 0; i < N; i++)
-    {
+
+    for (std::size_t i = 0; i < N; i++) {
         L[i] = (L[i] - minL) * mult;
     }
 
@@ -5111,8 +5177,12 @@ void ImProcFunctions::EPDToneMaplocal(int sp, LabImage *lab, LabImage *tmp1, uns
     //Restore past range, also desaturate a bit per Mantiuk's Color correction for tone mapping.
     float s = (1.0f + 38.7889f) * powf(Compression, 1.5856f) / (1.0f + 38.7889f * powf(Compression, 1.5856f));
     float sat = s + 0.3f * s * satur;
+
     //printf("s=%f  sat=%f \n", s, sat);
-    if(sat == 1.f) sat = 1.001f;
+    if (sat == 1.f) {
+        sat = 1.001f;
+    }
+
 #ifdef _OPENMP
     #pragma omp parallel for            // removed schedule(dynamic,10)
 #endif
@@ -5159,6 +5229,7 @@ void ImProcFunctions::EPDToneMap(LabImage *lab, unsigned int Iterates, int skip)
 #ifdef _OPENMP
     #pragma omp parallel for reduction(min:minL) reduction(max:maxL)
 #endif
+
     for (size_t i = 1; i < N; i++) {
         minL = std::min(minL, L[i]);
         maxL = std::max(maxL, L[i]);
@@ -5173,6 +5244,7 @@ void ImProcFunctions::EPDToneMap(LabImage *lab, unsigned int Iterates, int skip)
 #ifdef _OPENMP
     #pragma omp parallel for
 #endif
+
     for (size_t i = 0; i < N; ++i) {
         L[i] = (L[i] - minL) * (gamm / maxL);
     }
@@ -5186,7 +5258,7 @@ void ImProcFunctions::EPDToneMap(LabImage *lab, unsigned int Iterates, int skip)
         Iterates = edgest * 15.f;
     }
 
-    epd.CompressDynamicRange (L, sca / skip, edgest, Compression, DetailBoost, Iterates, rew);
+    epd.CompressDynamicRange(L, sca / skip, edgest, Compression, DetailBoost, Iterates, rew);
 
     //Restore past range, also desaturate a bit per Mantiuk's Color correction for tone mapping.
     const float s = (1.f + 38.7889f) * std::pow(Compression, 1.5856f) / (1.f + 38.7889f * std::pow(Compression, 1.5856f));
@@ -5195,6 +5267,7 @@ void ImProcFunctions::EPDToneMap(LabImage *lab, unsigned int Iterates, int skip)
 #ifdef _OPENMP
     #pragma omp parallel for
 #endif
+
     for (size_t ii = 0; ii < N; ++ii) {
         a[ii] *= s;
         b[ii] *= s;
@@ -5242,7 +5315,7 @@ void ImProcFunctions::getAutoExp(const LUTu &histogram, int histcompr, double cl
 
     int j = 0;
 
-    for (; j < min ((int)ave, imax); ++j) {
+    for (; j < min((int)ave, imax); ++j) {
         if (count < 8) {
             octile[count] += histogram[j];
 
@@ -5335,7 +5408,7 @@ void ImProcFunctions::getAutoExp(const LUTu &histogram, int histcompr, double cl
     }
 
     //compute clipped white point
-    unsigned int clippable = (int) (static_cast<double>(sum) * clip / 100.0 );
+    unsigned int clippable = (int)(static_cast<double>(sum) * clip / 100.0);
     clipped = 0;
     int whiteclip = (imax) - 1;
 
@@ -5414,7 +5487,7 @@ void ImProcFunctions::getAutoExp(const LUTu &histogram, int histcompr, double cl
     contr = (int) 50.0f * (1.1f - ospread);
     contr = max(0, min(100, contr));
     //take gamma into account
-    double whiteclipg = (int) (CurveFactory::gamma2(whiteclip * static_cast<double>(corr) / 65536.0) * 65536.0);
+    double whiteclipg = (int)(CurveFactory::gamma2(whiteclip * static_cast<double>(corr) / 65536.0) * 65536.0);
 
     float gavg = 0.;
 
@@ -5594,7 +5667,8 @@ void ImProcFunctions::rgb2lab(const Imagefloat &src, LabImage &dst, const Glib::
 }
 
 void ImProcFunctions::rgb2lab(const Image8 &src, int x, int y, int w, int h, float L[], float a[], float b[], const procparams::ColorManagementParams &icm, bool consider_histogram_settings) const
-{ // Adapted from ImProcFunctions::lab2rgb
+{
+    // Adapted from ImProcFunctions::lab2rgb
     const int src_width = src.getWidth();
     const int src_height = src.getHeight();
 
@@ -5626,6 +5700,7 @@ void ImProcFunctions::rgb2lab(const Image8 &src, int x, int y, int w, int h, flo
         if (icm.outputProfile.empty() || icm.outputProfile == ColorManagementParams::NoICMString) {
             profile = "sRGB";
         }
+
         oprof = ICCStore::getInstance()->getProfile(profile);
     }
 
@@ -5638,7 +5713,7 @@ void ImProcFunctions::rgb2lab(const Image8 &src, int x, int y, int w, int h, flo
 
         lcmsMutex->lock();
         cmsHPROFILE LabIProf  = cmsCreateLab4Profile(nullptr);
-        cmsHTRANSFORM hTransform = cmsCreateTransform (oprof, TYPE_RGB_8, LabIProf, TYPE_Lab_FLT, icm.outputIntent, flags);
+        cmsHTRANSFORM hTransform = cmsCreateTransform(oprof, TYPE_RGB_8, LabIProf, TYPE_Lab_FLT, icm.outputIntent, flags);
         cmsCloseProfile(LabIProf);
         lcmsMutex->unlock();
 
@@ -5662,7 +5737,7 @@ void ImProcFunctions::rgb2lab(const Image8 &src, int x, int y, int w, int h, flo
                 float* ra = a + (i - y) * w;
                 float* rb = b + (i - y) * w;
 
-                cmsDoTransform (hTransform, src.data + ix, outbuffer, w);
+                cmsDoTransform(hTransform, src.data + ix, outbuffer, w);
 
                 for (int j = 0; j < w; j++) {
                     rL[j] = outbuffer[iy++] * 327.68f;
@@ -5691,6 +5766,7 @@ void ImProcFunctions::rgb2lab(const Image8 &src, int x, int y, int w, int h, flo
 
         for (int i = y; i < y2; i++) {
             int offset = (i - y) * w;
+
             for (int j = x; j < x2; j++) {
                 float X, Y, Z;
                 // lab2rgb uses gamma2curve, which is gammatab_srgb.
@@ -5782,7 +5858,7 @@ void ImProcFunctions::colorToningLabGrid(LabImage *lab, int xstart, int xend, in
     float b_scale = (params->colorToning.labgridBHigh - params->colorToning.labgridBLow) / factor / scaling;
     float b_base = params->colorToning.labgridBLow / scaling;
 
-    #ifdef _OPENMP
+#ifdef _OPENMP
     #pragma omp parallel for if (MultiThread)
 #endif
 

@@ -104,7 +104,7 @@ void ParamsEdited::set(bool v)
     labCurve.brightness  = v;
     labCurve.contrast    = v;
     labCurve.chromaticity    = v;
-    labCurve.avoidcolorshift = v;
+    labCurve.gamutmunselmethod = v;
     labCurve.rstprotection   = v;
     labCurve.lcredsk         = v;
     localContrast.enabled = v;
@@ -254,7 +254,6 @@ void ParamsEdited::set(bool v)
     colorappearance.ybout     = v;
     colorappearance.tempsc     = v;
     colorappearance.greensc     = v;
-    colorappearance.presetcat02 = v;
 
     //colorBoost.amount         = v;
     //colorBoost.avoidclip      = v;
@@ -453,6 +452,7 @@ void ParamsEdited::set(bool v)
     icm.bluy = v;
     icm.preser = v;
     icm.fbw = v;
+    icm.gamut = v;
     icm.labgridcieALow = v;
     icm.labgridcieBLow = v;
     icm.labgridcieAHigh = v;
@@ -804,7 +804,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         labCurve.brightness = labCurve.brightness && p.labCurve.brightness == other.labCurve.brightness;
         labCurve.contrast = labCurve.contrast && p.labCurve.contrast == other.labCurve.contrast;
         labCurve.chromaticity = labCurve.chromaticity && p.labCurve.chromaticity == other.labCurve.chromaticity;
-        labCurve.avoidcolorshift = labCurve.avoidcolorshift && p.labCurve.avoidcolorshift == other.labCurve.avoidcolorshift;
+        labCurve.gamutmunselmethod = labCurve.gamutmunselmethod && p.labCurve.gamutmunselmethod == other.labCurve.gamutmunselmethod;
         labCurve.rstprotection = labCurve.rstprotection && p.labCurve.rstprotection == other.labCurve.rstprotection;
         labCurve.lcredsk = labCurve.lcredsk && p.labCurve.lcredsk == other.labCurve.lcredsk;
 
@@ -908,7 +908,6 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         vibrance.avoidcolorshift = vibrance.avoidcolorshift && p.vibrance.avoidcolorshift == other.vibrance.avoidcolorshift;
         vibrance.pastsattog = vibrance.pastsattog && p.vibrance.pastsattog == other.vibrance.pastsattog;
         vibrance.skintonescurve = vibrance.skintonescurve && p.vibrance.skintonescurve == other.vibrance.skintonescurve;
-
         colorappearance.enabled = colorappearance.enabled && p.colorappearance.enabled == other.colorappearance.enabled;
         colorappearance.degree = colorappearance.degree && p.colorappearance.degree == other.colorappearance.degree;
         colorappearance.autodegree = colorappearance.autodegree && p.colorappearance.autodegree == other.colorappearance.autodegree;
@@ -955,7 +954,6 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         colorappearance.ybout = colorappearance.ybout && p.colorappearance.ybout == other.colorappearance.ybout;
         colorappearance.tempsc = colorappearance.tempsc && p.colorappearance.tempsc == other.colorappearance.tempsc;
         colorappearance.greensc = colorappearance.greensc && p.colorappearance.greensc == other.colorappearance.greensc;
-        colorappearance.presetcat02 = colorappearance.presetcat02 && p.colorappearance.presetcat02 == other.colorappearance.presetcat02;
 
         //colorBoost.amount = colorBoost.amount && p.colorBoost.amount == other.colorBoost.amount;
         //colorBoost.avoidclip = colorBoost.avoidclip && p.colorBoost.avoidclip == other.colorBoost.avoidclip;
@@ -1091,6 +1089,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).structexclu = locallab.spots.at(j).structexclu && pSpot.structexclu == otherSpot.structexclu;
                 locallab.spots.at(j).struc = locallab.spots.at(j).struc && pSpot.struc == otherSpot.struc;
                 locallab.spots.at(j).shapeMethod = locallab.spots.at(j).shapeMethod && pSpot.shapeMethod == otherSpot.shapeMethod;
+                locallab.spots.at(j).avoidgamutMethod = locallab.spots.at(j).avoidgamutMethod && pSpot.avoidgamutMethod == otherSpot.avoidgamutMethod;
                 locallab.spots.at(j).loc = locallab.spots.at(j).loc && pSpot.loc == otherSpot.loc;
                 locallab.spots.at(j).centerX = locallab.spots.at(j).centerX && pSpot.centerX == otherSpot.centerX;
                 locallab.spots.at(j).centerY = locallab.spots.at(j).centerY && pSpot.centerY == otherSpot.centerY;
@@ -1110,8 +1109,6 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).transitgrad = locallab.spots.at(j).transitgrad && pSpot.transitgrad == otherSpot.transitgrad;
                 locallab.spots.at(j).hishow = locallab.spots.at(j).hishow && pSpot.hishow == otherSpot.hishow;
                 locallab.spots.at(j).activ = locallab.spots.at(j).activ && pSpot.activ == otherSpot.activ;
-                locallab.spots.at(j).avoid = locallab.spots.at(j).avoid && pSpot.avoid == otherSpot.avoid;
-                locallab.spots.at(j).avoidmun = locallab.spots.at(j).avoidmun && pSpot.avoidmun == otherSpot.avoidmun;
                 locallab.spots.at(j).blwh = locallab.spots.at(j).blwh && pSpot.blwh == otherSpot.blwh;
                 locallab.spots.at(j).recurs = locallab.spots.at(j).recurs && pSpot.recurs == otherSpot.recurs;
                 locallab.spots.at(j).laplac = locallab.spots.at(j).laplac && pSpot.laplac == otherSpot.laplac;
@@ -1873,6 +1870,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         icm.labgridcieWy = icm.labgridcieWy && p.icm.labgridcieWy == other.icm.labgridcieWy;
         icm.preser = icm.preser && p.icm.preser == other.icm.preser;
         icm.fbw = icm.fbw && p.icm.fbw == other.icm.fbw;
+        icm.gamut = icm.gamut && p.icm.gamut == other.icm.gamut;
         icm.aRendIntent = icm.aRendIntent && p.icm.aRendIntent == other.icm.aRendIntent;
         icm.workingTRC = icm.workingTRC && p.icm.workingTRC == other.icm.workingTRC;
         icm.will = icm.will && p.icm.will == other.icm.will;
@@ -2392,8 +2390,8 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.labCurve.chromaticity = dontforceSet && options.baBehav[ADDSET_LC_CHROMATICITY] ? toEdit.labCurve.chromaticity + mods.labCurve.chromaticity : mods.labCurve.chromaticity;
     }
 
-    if (labCurve.avoidcolorshift) {
-        toEdit.labCurve.avoidcolorshift = mods.labCurve.avoidcolorshift;
+    if (labCurve.gamutmunselmethod) {
+        toEdit.labCurve.gamutmunselmethod = mods.labCurve.gamutmunselmethod;
     }
 
     if (labCurve.rstprotection) {
@@ -3034,9 +3032,6 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.colorappearance.tonecie = mods.colorappearance.tonecie;
     }
 
-    if (colorappearance.presetcat02) {
-        toEdit.colorappearance.presetcat02 = mods.colorappearance.presetcat02;
-    }
 
 //  if (colorappearance.sharpcie)           toEdit.colorappearance.sharpcie = mods.colorappearance.sharpcie;
     if (impulseDenoise.enabled) {
@@ -3437,6 +3432,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).shapeMethod = mods.locallab.spots.at(i).shapeMethod;
         }
 
+        if (locallab.spots.at(i).avoidgamutMethod) {
+            toEdit.locallab.spots.at(i).avoidgamutMethod = mods.locallab.spots.at(i).avoidgamutMethod;
+        }
+
         if (locallab.spots.at(i).loc) {
             toEdit.locallab.spots.at(i).loc = mods.locallab.spots.at(i).loc;
         }
@@ -3511,14 +3510,6 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).activ) {
             toEdit.locallab.spots.at(i).activ = mods.locallab.spots.at(i).activ;
-        }
-
-        if (locallab.spots.at(i).avoid) {
-            toEdit.locallab.spots.at(i).avoid = mods.locallab.spots.at(i).avoid;
-        }
-
-        if (locallab.spots.at(i).avoidmun) {
-            toEdit.locallab.spots.at(i).avoidmun = mods.locallab.spots.at(i).avoidmun;
         }
 
         if (locallab.spots.at(i).blwh) {
@@ -6382,6 +6373,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.icm.fbw = mods.icm.fbw;
     }
 
+    if (icm.gamut) {
+        toEdit.icm.gamut = mods.icm.gamut;
+    }
+
     if (icm.labgridcieALow) {
         toEdit.icm.labgridcieALow = mods.icm.labgridcieALow;
     }
@@ -7411,6 +7406,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     structexclu(v),
     struc(v),
     shapeMethod(v),
+    avoidgamutMethod(v),
     loc(v),
     centerX(v),
     centerY(v),
@@ -7430,8 +7426,6 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     transitgrad(v),
     hishow(v),
     activ(v),
-    avoid(v),
-    avoidmun(v),
     blwh(v),
     recurs(v),
     laplac(v),
@@ -8103,6 +8097,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     structexclu = v;
     struc = v;
     shapeMethod = v;
+    avoidgamutMethod = v;
     loc = v;
     centerX = v;
     centerY = v;
@@ -8122,8 +8117,6 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     transitgrad = v;
     hishow = v;
     activ = v;
-    avoid = v;
-    avoidmun = v;
     blwh = v;
     recurs = v;
     laplac = v;
