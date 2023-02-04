@@ -3950,10 +3950,18 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         float gray = 15.f;
 
         const bool compr = params->locallab.spots.at(sp).comprcie > 0.;
-        const float comprfactor = params->locallab.spots.at(sp).comprcie;
+        float comprfactor = params->locallab.spots.at(sp).comprcie;
         float comprth = 0.1 +  params->locallab.spots.at(sp).comprcieth;
+        double drref = 8.5; //Dynamic Range standard
+        double drd = ((double) dynamic_range - drref) / drref;
+        double dratt = (double) dynamic_range / drref;
+        comprfactor = 0.4f * comprfactor * (float) dratt;
 
         if (islogq  || mobwev != 0) {
+            dynamic_range += 0.5;
+            if(mobwev == 2 && !islogq) {
+                dynamic_range += 0.3;
+            }
             gray = 0.01f * (float) params->locallab.spots.at(sp).sourceGraycie;
             const float targetgraycie = params->locallab.spots.at(sp).targetGraycie;
             float targetgraycor = 0.01f * targetgraycie;
@@ -3964,7 +3972,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             const float log2 = xlogf(2.f);
             float corlog = xlogf(maxicam)/log2;//correction base logarithme
             linbase = linbaseor / corlog;
-            
 
 
             if (settings->verbose) {
@@ -4370,8 +4377,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             }
 
             double nbs = 1.;
-            double drref = 8.5; //Dynamic Range standard
-            double drd = ((double) dynamic_range - drref) / drref;
             drd = std::max(drd, 1.); 
                 if (bl > 0.5f) {
                     nbs = (1.7 * (double) bl * drd);//take into account DR to increase variance in image source
