@@ -6236,7 +6236,7 @@ void ImProcFunctions::rex_poisson_dct(float * data, size_t nx, size_t ny, double
 
 }
 
-void ImProcFunctions::mean_dt(const float* data, size_t size, double& mean_p, double& dt_p, double nbstd)
+void ImProcFunctions::mean_dt(const float* data, int size, double& mean_p, double& dt_p, double nbstd)
 {
 
     double mean = 0.;
@@ -6246,7 +6246,7 @@ void ImProcFunctions::mean_dt(const float* data, size_t size, double& mean_p, do
     #pragma omp parallel for reduction(+:mean,dt) if(multiThread)
 #endif
 
-    for (size_t i = 0; i < size; i++) {
+    for (int i = 0; i < size; i++) {
         mean += static_cast<double>(data[i]);
         dt += static_cast<double>(SQR(data[i]));
     }
@@ -6258,7 +6258,7 @@ void ImProcFunctions::mean_dt(const float* data, size_t size, double& mean_p, do
     dt_p = nbstd * std::sqrt(dt);
 }
 
-void ImProcFunctions::normalize_mean_dt(float * data, const float * ref, size_t size, float mod, float sigm, float mdef, float sdef, float mdef2, float sdef2, double nbstd)
+void ImProcFunctions::normalize_mean_dt(float * data, const float * ref, int size, float mod, float sigm, float mdef, float sdef, float mdef2, float sdef2, double nbstd)
 {
     /*
      * Copyright 2009-2011 IPOL Image Processing On Line http://www.ipol.im/
@@ -6306,7 +6306,7 @@ void ImProcFunctions::normalize_mean_dt(float * data, const float * ref, size_t 
     #pragma omp parallel for if(multiThread)
 #endif
 
-    for (size_t i = 0; i < size; i++) {
+    for (int i = 0; i < size; i++) {
         data[i] = (modma * data[i] + sigmmmodmb) + onesmod * ref[i];//normalize mean and stdv and balance PDE
     }
 
