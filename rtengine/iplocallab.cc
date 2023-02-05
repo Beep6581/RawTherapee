@@ -2718,7 +2718,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     const float ath = sigmoidth - 1.f;
     const float bth = 1;
     float sila = pow_F(sigmoidlambda, senssig);
-    sila = std::max(0.f, sila);
+    sila = LIM01(sila);
     const float sigm = 3.3f + 7.1f * (1.f - sila); //e^10.4 = 32860 => sigm vary from 3.3 to 10.4
     const float bl = std::min(sigmoidbl, 1.f);//reused old slider
     //end sigmoid
@@ -3942,7 +3942,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
             printf("Cam16 Scene  Lighness_J Brightness_Q- HDR-PQ=%5.1f minJ=%3.1f maxJ=%3.1f meanJ=%3.1f minQ=%3.1f maxQ=%4.1f  meanQ=%4.1f\n", (double) plum, (double) minicam, (double) maxicamj, (double) sumcam, (double) minicamq, (double) maxicamq, (double) sumcamq);
             printf("Cam16 Scene  Saturati-s Colorfulln_M- minSat=%3.1f maxSat=%3.1f meanSat=%3.1f minM=%3.1f maxM=%3.1f meanM=%3.1f\n", (double) minisat, (double) maxisat, (double) sumsat, (double) miniM, (double) maxiM, (double) sumM);
-            maxicam = maxicamq;
+            maxicam = maxicamq;//maximum Brightness 
         }
 
         float base = 10.f;
@@ -3956,21 +3956,24 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         double drref = 8.5; //Dynamic Range standard
         double drd = ((double) dynamic_range - drref) / drref;
         double dratt = (double) dynamic_range / drref;
-        comprfactor = 0.4f * comprfactor * (float) dratt;
-
-        if (islogq  || mobwev != 0) {
+        comprfactor = 0.4f * comprfactor * (float) dratt;//adapt comprfactor to Dynamic Range
+        
+        if (islogq  || mobwev != 0) {//increase Dyn Range when log encod and sigmoid 
             dynamic_range += 0.5;
             if(mobwev == 2 && !islogq) {
-                dynamic_range += 0.3;
+                dynamic_range += 0.5;
             }
+
             gray = 0.01f * (float) params->locallab.spots.at(sp).sourceGraycie;
             const float targetgraycie = params->locallab.spots.at(sp).targetGraycie;
             float targetgraycor = 0.01f * targetgraycie;
             base = targetgraycie > 1.f && targetgraycie < 100.f && (float) dynamic_range > 0.f ?  find_gray(std::abs((float) shadows_range) / (float) dynamic_range, (targetgraycor)) : 0.f;
             linbaseor = std::max(base, 2.f);//2. minimal base log to avoid very bad results
+
             float maxQgray = coefq * maxicam / gray;
             maxicam =  maxQgray;//setting threshold comprcieth
             const float log2 = xlogf(2.f);
+
             float corlog = xlogf(maxicam)/log2;//correction base logarithme
             linbase = linbaseor / corlog;
 
@@ -4136,7 +4139,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                     if (ciec) {
                         bool jp = false;
 
-
                         if (islogq && issigq && iscie) {//log encoding Q
                             float val =  Qpro *  coefq;
 
@@ -4146,7 +4148,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                                 Qpro *=  f;
                             }
                         }
-
 
                         if (issig && issigq && iscie && !islogq && mobwev == 2) { //sigmoid Q and Log encode
                             float val = Qpro * coefq;
@@ -4166,7 +4167,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
                             sigmoidla(val, th, sigm);
                             Qpro = std::max(Qpro + val / coefq, 0.f);
-
                         }
 
                         if (issig && issigq && iscie && !islogq && mobwev != 2) { //sigmoid Q only and black & white Ev
@@ -4185,6 +4185,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                             sigmoidla(val, th, sigm);
                             Qpro = std::max(Qpro + val / coefq, 0.f);
                         }
+
                         if ((cielocalcurve && localcieutili) && mecamcurve == 1) {//curve Q
                             jp = true;
                             float Qq = Qpro * coefQ;
@@ -4248,7 +4249,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                             }
                         }
 
-                        if (cielocalcurve2 && localcieutili2) {
+                        if (cielocalcurve2 && localcieutili2) {//chroma saturation colorfullness
                             if (mecamcurve2 == 0) {//chroma
                                 float parsat = 0.8f; //0.68;
                                 float coef = 327.68f / parsat;
@@ -4290,7 +4291,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                                 Cpro = Mpro / coe;
                             }
                         }
-
                     }
 
                     //retrieve values C,J...s
@@ -4379,18 +4379,20 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
             double nbs = 1.;
             drd = std::max(drd, 1.); 
-                if (bl > 0.5f) {
-                    nbs = (1.7 * (double) bl * drd);//take into account DR to increase variance in image source
-                }
-            normalize_mean_dt(datanorm, datain, height * width, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f, nbs);
+
+            if (bl > 0.5f) {
+                nbs = (1.7 * (double) bl * drd);//take into account DR to increase variance in image source
+            }
+
+            normalize_mean_dt(datanorm, datain, height * width, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f, nbs);//normalize luminance
 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic, 16)
 #endif
 
             for (int ir = 0; ir < height; ir++) {
-                for (int jr = 0; jr < width; jr++) {//blend
-                    data[ir * width + jr] = intp(bl, data[ir * width + jr], datanorm[ir * width + jr]);
+                for (int jr = 0; jr < width; jr++) {
+                    data[ir * width + jr] = intp(bl, data[ir * width + jr], datanorm[ir * width + jr]);//blend with original
                     lab->L[ir][jr] = data[ir * width + jr];
                 }
             }
