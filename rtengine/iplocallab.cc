@@ -2718,6 +2718,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     const float ath = sigmoidth - 1.f;
     const float bth = 1;
     float sila = pow_F(sigmoidlambda, senssig);
+    sila = std::max(0.f, sila);
     const float sigm = 3.3f + 7.1f * (1.f - sila); //e^10.4 = 32860 => sigm vary from 3.3 to 10.4
     const float bl = std::min(sigmoidbl, 1.f);//reused old slider
     //end sigmoid

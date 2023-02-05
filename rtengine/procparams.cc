@@ -4460,7 +4460,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     targetjz(18.0),
     sigmoidldacie(0.5),
     sigmoidthcie(1.),
-    sigmoidsenscie(0.5),
+    sigmoidsenscie(0.9),
     sigmoidblcie(0.75),
     comprcie(0.6),
     comprcieth(6.),
