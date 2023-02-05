@@ -42,6 +42,7 @@ namespace rtengine
 using namespace procparams;
 
 class Crop;
+class TweakOperator;
 
 /** @brief Manages the image processing, espc. of the preview windows
   *
@@ -62,6 +63,7 @@ class ImProcCoordinator final : public StagedImageProcessor, public HistogramObs
 protected:
     Imagefloat *orig_prev;
     Imagefloat *oprevi;
+    Imagefloat *spotprev;
     LabImage *oprevl;
     LabImage *nprevl;
     Imagefloat *fattal_11_dcrop_cache; // global cache for ToneMapFattal02 used in 1:1 detail windows (except when denoise is active)
@@ -190,6 +192,7 @@ protected:
     ImageTypeListener *imageTypeListener;
     FilmNegListener *filmNegListener;
     AutoColorTonListener* actListener;
+    AutoprimListener* primListener;
     AutoChromaListener* adnListener;
     WaveletListener* awavListener;
     RetinexListener* dehaListener;
@@ -205,6 +208,9 @@ protected:
 
     MyMutex minit;  // to gain mutually exclusive access to ... to what exactly?
 
+    void backupParams();
+    void restoreParams();
+    void allocCache (Imagefloat* &imgfloat);
     void notifyHistogramChanged();
     void reallocAll();
     /// Updates L, R, G, and B histograms. Returns true unless not updated.
@@ -219,7 +225,9 @@ protected:
     void updatePreviewImage (int todo, bool panningRelatedChange);
 
     MyMutex mProcessing;
-    const std::unique_ptr<ProcParams> params;
+    const std::unique_ptr<ProcParams> params;  // used for the rendering, can be eventually tweaked
+    std::unique_ptr<ProcParams> paramsBackup;  // backup of the untweaked procparams
+    TweakOperator* tweakOperator;
 
     // for optimization purpose, the output profile, output rendering intent and
     // output BPC will trigger a regeneration of the profile on parameter change only
@@ -276,6 +284,12 @@ protected:
     LUTf lmasklclocalcurve;
     LUTf lmaskloglocalcurve;
     LUTf lmasklocal_curve;
+    LUTf lmaskcielocalcurve;
+    LUTf cielocalcurve;
+    LUTf cielocalcurve2;
+    LUTf jzlocalcurve;
+    LUTf czlocalcurve;
+    LUTf czjzlocalcurve;
     
     LocretigainCurve locRETgainCurve;
     LocretitransCurve locRETtransCurve;
@@ -283,6 +297,9 @@ protected:
     LocLHCurve loclhCurve;
     LocHHCurve lochhCurve;
     LocCHCurve locchCurve;
+    LocHHCurve lochhCurvejz;
+    LocCHCurve locchCurvejz;
+    LocLHCurve loclhCurvejz;
     LocCCmaskCurve locccmasCurve;
     LocLLmaskCurve locllmasCurve;
     LocHHmaskCurve lochhmasCurve;
@@ -318,6 +335,9 @@ protected:
     LocCCmaskCurve locccmaslogCurve;
     LocLLmaskCurve locllmaslogCurve;
     LocHHmaskCurve lochhmaslogCurve;
+    LocCCmaskCurve locccmascieCurve;
+    LocLLmaskCurve locllmascieCurve;
+    LocHHmaskCurve lochhmascieCurve;
     
     LocwavCurve locwavCurve;
     LocwavCurve loclmasCurveblwav;
@@ -330,6 +350,7 @@ protected:
     LocwavCurve locedgwavCurve;
     LocwavCurve loclmasCurve_wav;
     LocwavCurve locwavCurvehue;
+    LocwavCurve locwavCurvejz;
 
     std::vector<float> huerefs;
     std::vector<float> huerefblurs;
@@ -361,6 +382,7 @@ protected:
     int locallsharMask;
     int localllogMask;
     int locall_Mask;
+    int locallcieMask;
 
 public:
 
@@ -368,7 +390,7 @@ public:
     ~ImProcCoordinator () override;
     void assign     (ImageSource* imgsrc);
 
-    void        getParams (procparams::ProcParams* dst) override;
+    void        getParams (procparams::ProcParams* dst, bool tweaked=false) override;
 
     void        startProcessing (int changeCode) override;
     ProcParams* beginUpdateParams () override;
@@ -409,6 +431,8 @@ public:
 
     DetailedCrop* createCrop  (::EditDataProvider *editDataProvider, bool isDetailWindow) override;
 
+    void setTweakOperator (TweakOperator *tOperator) override;
+    void unsetTweakOperator (TweakOperator *tOperator) override;
     bool getAutoWB   (double& temp, double& green, double equal, double tempBias) override;
     void getCamWB    (double& temp, double& green) override;
     void getSpotWB   (int x, int y, int rectSize, double& temp, double& green) override;
@@ -430,7 +454,7 @@ public:
         updaterThreadStart.unlock();
     }
 
-    void setLocallabMaskVisibility(bool previewDeltaE, int locallColorMask, int locallColorMaskinv, int locallExpMask, int locallExpMaskinv, int locallSHMask, int locallSHMaskinv, int locallvibMask, int locallsoftMask, int locallblMask, int localltmMask, int locallretiMask, int locallsharMask, int localllcMask, int locallcbMask, int localllogMask, int locall_Mask) override
+    void setLocallabMaskVisibility(bool previewDeltaE, int locallColorMask, int locallColorMaskinv, int locallExpMask, int locallExpMaskinv, int locallSHMask, int locallSHMaskinv, int locallvibMask, int locallsoftMask, int locallblMask, int localltmMask, int locallretiMask, int locallsharMask, int localllcMask, int locallcbMask, int localllogMask, int locall_Mask, int locallcieMask) override
     {
         this->previewDeltaE = previewDeltaE;
         this->locallColorMask = locallColorMask;
@@ -449,6 +473,7 @@ public:
         this->locallcbMask = locallcbMask;
         this->localllogMask = localllogMask;
         this->locall_Mask = locall_Mask;
+        this->locallcieMask = locallcieMask;
     }
 
     void setProgressListener (ProgressListener* pl) override
@@ -500,6 +525,10 @@ public:
     void setAutoColorTonListener   (AutoColorTonListener* bwct) override
     {
         actListener = bwct;
+    }
+    void setAutoprimListener   (AutoprimListener* pri) override
+    {
+        primListener = pri;
     }
     void setAutoChromaListener  (AutoChromaListener* adn) override
     {

@@ -19,9 +19,13 @@
 
 #pragma once
 
+#include <cstdint>
+#include <iostream>
+
 #include "myfile.h"
 #include <csetjmp>
-
+#include "dnggainmap.h"
+#include "settings.h"
 
 class DCraw
 {
@@ -73,7 +77,7 @@ public:
 
 protected:
     int exif_base, ciff_base, ciff_len;
-    IMFILE *ifp;
+    rtengine::IMFILE *ifp;
     FILE *ofp;
     short order;
     const char *ifname;
@@ -125,7 +129,7 @@ protected:
         int         cur_buf_size;    // buffer size
         uchar       *cur_buf;        // currently read block
         int         fillbytes;          // Counter to add extra byte for block size N*16
-        IMFILE      *input;
+        rtengine::IMFILE      *input;
         struct int_pair grad_even[3][41];    // tables of gradients
         struct int_pair grad_odd[3][41];
         ushort		*linealloc;
@@ -165,6 +169,8 @@ protected:
         PanasonicRW2Info(): bpp(0), encoding(0) {}
     };
     PanasonicRW2Info RT_pana_info;
+    std::vector<GainMap> gainMaps;
+
 public:
     struct CanonCR3Data {
         // contents of tag CMP1 for relevant track in CR3 file
@@ -182,18 +188,41 @@ public:
             int32_t hasTileCols;
             int32_t hasTileRows;
             int32_t mdatHdrSize;
+            int32_t medianBits;
             // Not from header, but from datastream
             uint32_t MediaSize;
             int64_t MediaOffset;
             uint32_t MediaType; /* 1 -> /C/RAW, 2-> JPEG */
         };
-        static constexpr size_t CRXTRACKS_MAXCOUNT = 16;
+        static constexpr int CRXTRACKS_MAXCOUNT = 16;
         crx_data_header_t crx_header[CRXTRACKS_MAXCOUNT];
-        unsigned int crx_track_selected;
+        int crx_track_selected;
         short CR3_CTMDtag;
     };
+
+    bool isBayer() const
+    {
+        return (filters != 0 && filters != 9);
+    }
+
+    const std::vector<GainMap>& getGainMaps() const {
+        return gainMaps;
+    }
+
+    bool isGainMapSupported() const;
+
+    struct CanonLevelsData {
+        unsigned cblack[4];
+        unsigned white;
+        bool black_ok;
+        bool white_ok;
+        CanonLevelsData(): cblack{0}, white{0}, black_ok(false), white_ok(false) {}
+    };
+
 protected:
     CanonCR3Data RT_canon_CR3_data;
+    
+    CanonLevelsData RT_canon_levels_data;
 
     float cam_mul[4], pre_mul[4], cmatrix[3][4], rgb_cam[3][4];
 
@@ -209,7 +238,7 @@ protected:
     } first_decode[2048], *second_decode, *free_decode;
 
     struct tiff_ifd {
-      int width, height, bps, comp, phint, offset, flip, samples, bytes;
+      int new_sub_file_type, width, height, bps, comp, phint, offset, flip, samples, bytes;
       int tile_width, tile_length, sample_format, predictor;
       float shutter;
     } tiff_ifd[10];
@@ -278,7 +307,7 @@ void parse_redcine();
 class getbithuff_t
 {
 public:
-   getbithuff_t(DCraw *p,IMFILE *&i, unsigned &z):parent(p),bitbuf(0),vbits(0),reset(0),ifp(i),zero_after_ff(z){}
+   getbithuff_t(DCraw *p,rtengine::IMFILE *&i, unsigned &z):parent(p),bitbuf(0),vbits(0),reset(0),ifp(i),zero_after_ff(z){}
    unsigned operator()(int nbits, ushort *huff);
 
 private:
@@ -288,7 +317,7 @@ private:
    DCraw *parent;
    unsigned bitbuf;
    int vbits, reset;
-   IMFILE *&ifp;
+   rtengine::IMFILE *&ifp;
    unsigned &zero_after_ff;
 };
 getbithuff_t getbithuff;
@@ -296,7 +325,7 @@ getbithuff_t getbithuff;
 class nikbithuff_t
 {
 public:
-   explicit nikbithuff_t(IMFILE *&i):bitbuf(0),errors(0),vbits(0),ifp(i){}
+   explicit nikbithuff_t(rtengine::IMFILE *&i):bitbuf(0),errors(0),vbits(0),ifp(i){}
    void operator()() {bitbuf = vbits = 0;};
    unsigned operator()(int nbits, ushort *huff);
    unsigned errorCount() { return errors; }
@@ -309,7 +338,7 @@ private:
    }
    unsigned bitbuf, errors;
    int vbits;
-   IMFILE *&ifp;
+   rtengine::IMFILE *&ifp;
 };
 nikbithuff_t nikbithuff;
 
@@ -329,7 +358,6 @@ void ljpeg_idct (struct jhead *jh);
 void canon_sraw_load_raw();
 void adobe_copy_pixel (unsigned row, unsigned col, ushort **rp);
 void lossless_dng_load_raw();
-void lossless_dnglj92_load_raw();
 void packed_dng_load_raw();
 void deflate_dng_load_raw();
 void init_fuji_compr(struct fuji_compressed_params* info);
@@ -378,7 +406,7 @@ void parse_qt (int end);
 // ph1_bithuff(int nbits, ushort *huff);
 class ph1_bithuff_t {
 public:
-   ph1_bithuff_t(DCraw *p, IMFILE *i, short &o):order(o),ifp(i),bitbuf(0),vbits(0){}
+   ph1_bithuff_t(DCraw *p, rtengine::IMFILE *i, short &o):order(o),ifp(i),bitbuf(0),vbits(0){}
    unsigned operator()(int nbits, ushort *huff);
    unsigned operator()(int nbits);
    unsigned operator()();
@@ -412,7 +440,7 @@ private:
    }
 
    short &order;
-   IMFILE* const ifp;
+   rtengine::IMFILE* const ifp;
    UINT64 bitbuf;
    int vbits;
 };
@@ -423,6 +451,7 @@ void parse_hasselblad_gain();
 void hasselblad_load_raw();
 void leaf_hdr_load_raw();
 void unpacked_load_raw();
+void unpacked_load_raw_FujiDBP();
 void sinar_4shot_load_raw();
 void imacon_full_load_raw();
 void packed_load_raw();
@@ -430,11 +459,11 @@ void nokia_load_raw();
 
 class pana_bits_t{
 public:
-   pana_bits_t(IMFILE *i, unsigned &u, unsigned enc):
+   pana_bits_t(rtengine::IMFILE *i, unsigned &u, unsigned enc):
     ifp(i), load_flags(u), vbits(0), encoding(enc) {}
    unsigned operator()(int nbits, unsigned *bytes=nullptr);
 private:
-   IMFILE *ifp;
+   rtengine::IMFILE *ifp;
    unsigned &load_flags;
    uchar buf[0x4000];
    int vbits;
@@ -566,13 +595,13 @@ void parse_canon_cr3();
 void selectCRXTrack(unsigned short maxTrack);
 int parseCR3(unsigned long long oAtomList,
              unsigned long long szAtomList, short &nesting,
-             char *AtomNameStack, unsigned short &nTrack, short &TrackType);
+             char *AtomNameStack, short &nTrack, short &TrackType);
 bool crxDecodePlane(void *p, uint32_t planeNumber);
 void crxLoadDecodeLoop(void *img, int nPlanes);
 void crxConvertPlaneLineDf(void *p, int imageRow);
 void crxLoadFinalizeLoopE3(void *p, int planeHeight);
 void crxLoadRaw();
-bool crxParseImageHeader(uchar *cmp1TagData, unsigned int nTrack);
+bool crxParseImageHeader(uchar *cmp1TagData, int nTrack, int size);
 //-----------------------------------------------------------------------------
 
 };

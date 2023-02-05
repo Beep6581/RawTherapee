@@ -83,9 +83,12 @@ protected:
     Gtk::MenuItem* open;
     Gtk::MenuItem* inspect;
     Gtk::MenuItem* selall;
+    Gtk::RadioMenuItem* sortMethod[Options::SORT_METHOD_COUNT];
+    Gtk::RadioMenuItem* sortOrder[2];
     Gtk::MenuItem* copyTo;
     Gtk::MenuItem* moveTo;
 
+    Gtk::MenuItem* menuSort;
     Gtk::MenuItem* menuRank;
     Gtk::MenuItem* menuLabel;
     Gtk::MenuItem* menuFileOperations;
@@ -131,6 +134,8 @@ protected:
 
     void toTrashRequested   (std::vector<FileBrowserEntry*> tbe);
     void fromTrashRequested (std::vector<FileBrowserEntry*> tbe);
+    void sortMethodRequested (int method);
+    void sortOrderRequested (int order);
     void rankingRequested   (std::vector<FileBrowserEntry*> tbe, int rank);
     void colorlabelRequested   (std::vector<FileBrowserEntry*> tbe, int colorlabel);
     void requestRanking (int rank);
@@ -182,6 +187,8 @@ public:
     void saveThumbnailHeight (int height) override;
     int  getThumbnailHeight () override;
 
+
+    void enableTabMode(bool enable);
     bool isInTabMode() override
     {
         return tbl ? tbl->isInTabMode() : false;

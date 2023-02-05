@@ -1215,9 +1215,13 @@ void FileCatalog::developRequested(const std::vector<FileBrowserEntry*>& tbe, bo
                 if (params.resize.enabled) {
                     params.resize.width = rtengine::min(params.resize.width, options.fastexport_resize_width);
                     params.resize.height = rtengine::min(params.resize.height, options.fastexport_resize_height);
+                    params.resize.longedge = rtengine::min(params.resize.longedge, options.fastexport_resize_longedge);
+                    params.resize.shortedge = rtengine::min(params.resize.shortedge, options.fastexport_resize_shortedge);
                 } else {
                     params.resize.width = options.fastexport_resize_width;
                     params.resize.height = options.fastexport_resize_height;
+                    params.resize.longedge = options.fastexport_resize_longedge;
+                    params.resize.shortedge = options.fastexport_resize_shortedge;
                 }
 
                 params.resize.enabled = options.fastexport_resize_enabled;
@@ -1279,7 +1283,7 @@ void FileCatalog::renameRequested(const std::vector<FileBrowserEntry*>& tbe)
 
                 /* check if filename already exists*/
                 if (Glib::file_test (nfname, Glib::FILE_TEST_EXISTS)) {
-                    Glib::ustring msg_ = Glib::ustring("<b>") + nfname + ": " + M("MAIN_MSG_ALREADYEXISTS") + "</b>";
+                    Glib::ustring msg_ = Glib::ustring("<b>") + escapeHtmlChars(nfname) + ": " + M("MAIN_MSG_ALREADYEXISTS") + "</b>";
                     Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
                     msgd.run ();
                 } else {
@@ -2515,13 +2519,32 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
     if (!ctrl && !alt) {
         switch (event->keyval) {
         case GDK_KEY_f:
+            fileBrowser->getInspector()->showWindow(false, true);
+            return true;
         case GDK_KEY_F:
-            fileBrowser->getInspector()->showWindow(!shift);
+            fileBrowser->getInspector()->showWindow(false, false);
             return true;
         }
     }
 
     return fileBrowser->keyPressed(event);
+}
+
+bool FileCatalog::handleShortcutKeyRelease(GdkEventKey* event)
+{
+    bool ctrl = event->state & GDK_CONTROL_MASK;
+    bool alt = event->state & GDK_MOD1_MASK;
+
+    if (!ctrl && !alt) {
+        switch (event->keyval) {
+        case GDK_KEY_f:
+        case GDK_KEY_F:
+            fileBrowser->getInspector()->hideWindow();
+            return true;
+        }
+    }
+
+    return false;
 }
 
 void FileCatalog::showToolBar()

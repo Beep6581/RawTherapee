@@ -77,7 +77,7 @@ bool DynamicProfileRule::operator< (const DynamicProfileRule &other) const
 }
 
 
-bool DynamicProfileRule::matches (const rtengine::FramesMetaData *im) const
+bool DynamicProfileRule::matches (const rtengine::FramesMetaData *im,  const Glib::ustring& filename) const
 {
     return (iso (im->getISOSpeed())
             && fnumber (im->getFNumber())
@@ -86,6 +86,7 @@ bool DynamicProfileRule::matches (const rtengine::FramesMetaData *im) const
             && expcomp (im->getExpComp())
             && camera (im->getCamera())
             && lens (im->getLens())
+            && path (filename)
             && imagetype(im->getImageType()));
 }
 
@@ -214,6 +215,7 @@ bool DynamicProfileRules::loadRules()
         get_double_range (rule.expcomp, kf, group, "expcomp");
         get_optional (rule.camera, kf, group, "camera");
         get_optional (rule.lens, kf, group, "lens");
+        get_optional (rule.path, kf, group, "path");
         get_optional (rule.imagetype, kf, group, "imagetype");
 
         try {
@@ -247,6 +249,7 @@ bool DynamicProfileRules::storeRules()
         set_double_range (kf, group, "expcomp", rule.expcomp);
         set_optional (kf, group, "camera", rule.camera);
         set_optional (kf, group, "lens", rule.lens);
+        set_optional (kf, group, "path", rule.path);
         set_optional (kf, group, "imagetype", rule.imagetype);
         kf.set_string (group, "profilepath", rule.profilepath);
     }

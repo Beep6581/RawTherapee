@@ -24,10 +24,11 @@
 #include <glibmm/ustring.h>
 
 #include "editcoordsys.h"
+#include "rtsurface.h"
 #include "../rtengine/coord.h"
+#include "../rtengine/rt_math.h"
 
 class ObjectMOBuffer;
-class RTSurface;
 
 /** @file
  *
@@ -210,6 +211,8 @@ public:
         F_VISIBLE     = 1 << 0, /// true if the geometry have to be drawn on the visible layer
         F_HOVERABLE   = 1 << 1, /// true if the geometry have to be drawn on the "mouse over" layer
         F_AUTO_COLOR  = 1 << 2, /// true if the color depend on the state value, not the color field above
+        F_DASHED      = 1 << 3, /// true if the geometry have to be drawn as a dash line
+        // (TODO: add a F_LARGE_DASH to have two different dash size ?)
     };
 
     /// @brief Key point of the image's rectangle that is used to locate the icon copy to the target point:
@@ -226,6 +229,7 @@ public:
     };
 
 protected:
+    static const std::vector<double> dash;
     RGBColor innerLineColor;
     RGBColor outerLineColor;
     short flags;
@@ -252,6 +256,8 @@ public:
     void setVisible (bool visible);
     bool isHoverable ();
     void setHoverable (bool visible);
+    bool isDashed ();
+    void setDashed (bool dashed);
 
 
     // setActive will enable/disable the visible and hoverable flags in one shot!
@@ -449,7 +455,7 @@ inline void Geometry::setOuterLineColor (char r, char g, char b) {
 }
 
 inline double Geometry::getMouseOverLineWidth () {
-    return getOuterLineWidth () + 2.;
+    return rtengine::max(double(innerLineWidth), 1.) + 2.;
 }
 
 inline void Geometry::setAutoColor (bool aColor) {
@@ -481,6 +487,18 @@ inline void Geometry::setHoverable (bool hoverable) {
         flags |= F_HOVERABLE;
     } else {
         flags &= ~F_HOVERABLE;
+    }
+}
+
+inline bool Geometry::isDashed () {
+    return flags & F_DASHED;
+}
+
+inline void Geometry::setDashed (bool dashed) {
+    if (dashed) {
+        flags |= F_DASHED;
+    } else {
+        flags &= ~F_DASHED;
     }
 }
 

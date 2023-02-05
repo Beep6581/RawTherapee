@@ -667,7 +667,7 @@ BENCHFUN
 
         const float gain = std::pow(2.0, expcomp);
         const double params_Ldetail = std::min(dnparams.Ldetail, 99.9); // max out to avoid div by zero when using noisevar_Ldetail as divisor
-        const float noisevar_Ldetail = SQR(SQR(100. - params_Ldetail) + 50.0 * (100.0 - params_Ldetail) * TS * 0.5);
+        const float noisevar_Ldetail = SQR((SQR(100. - params_Ldetail) + 50.0 * (100.0 - params_Ldetail)) * TS * 0.5);
 
         array2D<float> tilemask_in(TS, TS);
         array2D<float> tilemask_out(TS, TS);

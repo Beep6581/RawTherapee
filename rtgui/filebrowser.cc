@@ -168,6 +168,41 @@ FileBrowser::FileBrowser () :
     p++;
 
     /***********************
+     * sort
+     ***********************/
+    const std::array<std::string, 2> cnameSortOrders = {
+        M("SORT_ASCENDING"),
+        M("SORT_DESCENDING"),
+    };
+
+    const std::array<std::string, Options::SORT_METHOD_COUNT> cnameSortMethods = {
+        M("SORT_BY_NAME"),
+        M("SORT_BY_DATE"),
+        M("SORT_BY_EXIF"),
+        M("SORT_BY_RANK"),
+        M("SORT_BY_LABEL"),
+    };
+
+    pmenu->attach (*Gtk::manage(menuSort = new Gtk::MenuItem (M("FILEBROWSER_POPUPSORTBY"))), 0, 1, p, p + 1);
+    p++;
+    Gtk::Menu* submenuSort = Gtk::manage (new Gtk::Menu ());
+    Gtk::RadioButtonGroup sortOrderGroup, sortMethodGroup;
+    for (size_t i = 0; i < cnameSortOrders.size(); i++) {
+        submenuSort->attach (*Gtk::manage(sortOrder[i] = new Gtk::RadioMenuItem (sortOrderGroup, cnameSortOrders[i])), 0, 1, p, p + 1);
+        p++;
+        sortOrder[i]->set_active (i == options.sortDescending);
+    }
+    submenuSort->attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p + 1);
+    p++;
+    for (size_t i = 0; i < cnameSortMethods.size(); i++) {
+        submenuSort->attach (*Gtk::manage(sortMethod[i] = new Gtk::RadioMenuItem (sortMethodGroup, cnameSortMethods[i])), 0, 1, p, p + 1);
+        p++;
+        sortMethod[i]->set_active (i == options.sortMethod);
+    }
+    submenuSort->show_all ();
+    menuSort->set_submenu (*submenuSort);
+
+    /***********************
      * rank
      ***********************/
     if (options.menuGroupRank) {
@@ -411,7 +446,7 @@ FileBrowser::FileBrowser () :
     untrash->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_Delete, Gdk::SHIFT_MASK, Gtk::ACCEL_VISIBLE);
     open->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_Return, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
     if (options.inspectorWindow)
-        inspect->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_F, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
+        inspect->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_f, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
     develop->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_B, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
     developfast->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_B, Gdk::CONTROL_MASK | Gdk::SHIFT_MASK, Gtk::ACCEL_VISIBLE);
     copyprof->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_C, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
@@ -425,6 +460,14 @@ FileBrowser::FileBrowser () :
 
     if (options.inspectorWindow) {
         inspect->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), inspect));
+    }
+
+    for (int i = 0; i < 2; i++) {
+        sortOrder[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), sortOrder[i]));
+    }
+
+    for (int i = 0; i < Options::SORT_METHOD_COUNT; i++) {
+        sortMethod[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), sortMethod[i]));
     }
 
     for (int i = 0; i < 6; i++) {
@@ -610,27 +653,7 @@ void FileBrowser::addEntry_ (FileBrowserEntry* entry)
     entry->getThumbButtonSet()->setButtonListener(this);
     entry->resize(getThumbnailHeight());
     entry->filtered = !checkFilter(entry);
-
-    // find place in abc order
-    {
-        MYWRITERLOCK(l, entryRW);
-
-        fd.insert(
-            std::lower_bound(
-                fd.begin(),
-                fd.end(),
-                entry,
-                [](const ThumbBrowserEntryBase* a, const ThumbBrowserEntryBase* b)
-                {
-                    return *a < *b;
-                }
-            ),
-            entry
-        );
-
-        initEntry(entry);
-    }
-    redraw(entry);
+    insertEntry(entry);
 }
 
 FileBrowserEntry* FileBrowser::delEntry (const Glib::ustring& fname)
@@ -723,6 +746,18 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
     if (!tbl || (m != selall && mselected.empty()) ) {
         return;
     }
+
+    for (int i = 0; i < 2; i++)
+        if (m == sortOrder[i]) {
+            sortOrderRequested (i);
+            return;
+        }
+
+    for (int i = 0; i < Options::SORT_METHOD_COUNT; i++)
+        if (m == sortMethod[i]) {
+            sortMethodRequested (i);
+            return;
+        }
 
     for (int i = 0; i < 6; i++)
         if (m == rank[i]) {
@@ -875,11 +910,11 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
                 }
 
                 // Reinit cache
-                rtengine::dfm.init( options.rtSettings.darkFramesPath );
+                rtengine::DFManager::getInstance().init( options.rtSettings.darkFramesPath );
             } else {
                 // Target directory creation failed, we clear the darkFramesPath setting
                 options.rtSettings.darkFramesPath.clear();
-                Glib::ustring msg_ = Glib::ustring::compose (M("MAIN_MSG_PATHDOESNTEXIST"), options.rtSettings.darkFramesPath)
+                Glib::ustring msg_ = Glib::ustring::compose (M("MAIN_MSG_PATHDOESNTEXIST"), escapeHtmlChars(options.rtSettings.darkFramesPath))
                                      + "\n\n" + M("MAIN_MSG_OPERATIONCANCELLED");
                 Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
                 msgd.set_title(M("TP_DARKFRAME_LABEL"));
@@ -955,7 +990,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
             } else {
                 // Target directory creation failed, we clear the flatFieldsPath setting
                 options.rtSettings.flatFieldsPath.clear();
-                Glib::ustring msg_ = Glib::ustring::compose (M("MAIN_MSG_PATHDOESNTEXIST"), options.rtSettings.flatFieldsPath)
+                Glib::ustring msg_ = Glib::ustring::compose (M("MAIN_MSG_PATHDOESNTEXIST"), escapeHtmlChars(options.rtSettings.flatFieldsPath))
                                      + "\n\n" + M("MAIN_MSG_OPERATIONCANCELLED");
                 Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
                 msgd.set_title(M("TP_FLATFIELD_LABEL"));
@@ -1374,6 +1409,19 @@ int FileBrowser::getThumbnailHeight ()
     }
 }
 
+void FileBrowser::enableTabMode(bool enable)
+{
+    ThumbBrowserBase::enableTabMode(enable);
+    if (options.inspectorWindow) {
+        if (enable) {
+            inspect->remove_accelerator(pmenu->get_accel_group(), GDK_KEY_f, (Gdk::ModifierType)0);
+        }
+        else {
+            inspect->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_f, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
+        }
+    }
+}
+
 void FileBrowser::applyMenuItemActivated (ProfileStoreLabel *label)
 {
     MYREADERLOCK(l, entryRW);
@@ -1431,7 +1479,7 @@ void FileBrowser::applyPartialMenuItemActivated (ProfileStoreLabel *label)
                 rtengine::procparams::PartialProfile dstProfile(true);
                 *dstProfile.pparams = (static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->getProcParams ();
                 dstProfile.set(true);
-                dstProfile.pedited->locallab.spots.resize(dstProfile.pparams->locallab.spots.size(), new LocallabParamsEdited::LocallabSpotEdited(true));
+                dstProfile.pedited->locallab.spots.resize(dstProfile.pparams->locallab.spots.size(), LocallabParamsEdited::LocallabSpotEdited(true));
                 partialPasteDlg.applyPaste (dstProfile.pparams, dstProfile.pedited, srcProfiles->pparams, srcProfiles->pedited);
                 (static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->setProcParams (*dstProfile.pparams, dstProfile.pedited, FILEBROWSER);
                 dstProfile.deleteInstance();
@@ -1617,6 +1665,18 @@ void FileBrowser::fromTrashRequested (std::vector<FileBrowserEntry*> tbe)
 
     trash_changed().emit();
     applyFilter (filter);
+}
+
+void FileBrowser::sortMethodRequested (int method)
+{
+    options.sortMethod = Options::SortMethod(method);
+    resort ();
+}
+
+void FileBrowser::sortOrderRequested (int order)
+{
+    options.sortDescending = !!order;
+    resort ();
 }
 
 void FileBrowser::rankingRequested (std::vector<FileBrowserEntry*> tbe, int rank)
@@ -2100,5 +2160,5 @@ void FileBrowser::openRequested( std::vector<FileBrowserEntry*> mselected)
 
 void FileBrowser::inspectRequested(std::vector<FileBrowserEntry*> mselected)
 {
-    getInspector()->showWindow(false, false);
+    getInspector()->showWindow(true);
 }

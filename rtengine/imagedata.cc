@@ -19,6 +19,7 @@
 #include <functional>
 
 #include <strings.h>
+#include <time.h>
 #include <tiff.h>
 #include <glib/gstdio.h>
 #include <glibmm/convert.h>
@@ -61,12 +62,22 @@ FramesMetaData* FramesMetaData::fromFile(const Glib::ustring& fname)
     return new FramesData(fname);
 }
 
-FramesData::FramesData(const Glib::ustring &fname) :
+static struct tm timeFromTS(const time_t ts)
+{
+#if !defined(WIN32)
+        struct tm tm;
+        return *gmtime_r(&ts, &tm);
+#else
+        return *gmtime(&ts);
+#endif
+}
+
+FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
     ok_(false),
     fname_(fname),
     dcrawFrameCount(0),
-    time{},
-    timeStamp{},
+    time{timeFromTS(ts)},
+    timeStamp{ts},
     iso_speed(0),
     aperture(0.),
     focal_len(0.),
@@ -85,6 +96,11 @@ FramesData::FramesData(const Glib::ustring &fname) :
     w_(-1),
     h_(-1)
 {
+    GStatBuf statbuf = {};
+    g_stat(fname.c_str(), &statbuf);
+    modTimeStamp = statbuf.st_mtime;
+    modTime = timeFromTS(modTimeStamp);
+
     make.clear();
     model.clear();
     serial.clear();

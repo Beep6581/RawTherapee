@@ -45,10 +45,8 @@ Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::hdr;
 Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::ps;
 
 FileBrowserEntry::FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname)
-    : ThumbBrowserEntryBase (fname), wasInside(false), iatlistener(nullptr), press_x(0), press_y(0), action_x(0), action_y(0), rot_deg(0.0), landscape(true), cropParams(new rtengine::procparams::CropParams), cropgl(nullptr), state(SNormal), crop_custom_ratio(0.f)
+    : ThumbBrowserEntryBase (fname, thm), wasInside(false), iatlistener(nullptr), press_x(0), press_y(0), action_x(0), action_y(0), rot_deg(0.0), landscape(true), cropParams(new rtengine::procparams::CropParams), cropgl(nullptr), state(SNormal), crop_custom_ratio(0.f)
 {
-    thumbnail = thm;
-
     feih = new FileBrowserEntryIdleHelper;
     feih->fbentry = this;
     feih->destroyed = false;
@@ -176,10 +174,10 @@ void FileBrowserEntry::customBackBufferUpdate (Cairo::RefPtr<Cairo::Context> c)
             rtengine::procparams::CropParams cparams = thumbnail->getProcParams().crop;
             switch (options.cropGuides) {
             case Options::CROP_GUIDE_NONE:
-                cparams.guide = "None";
+                cparams.guide = rtengine::procparams::CropParams::Guide::NONE;
                 break;
             case Options::CROP_GUIDE_FRAME:
-                cparams.guide = "Frame";
+                cparams.guide = rtengine::procparams::CropParams::Guide::FRAME;
                 break;
             default:
                 break;
@@ -294,7 +292,7 @@ bool FileBrowserEntry::motionNotify (int x, int y)
 
     Inspector* inspector = parent->getInspector();
 
-    if (inspector && inspector->isActive() && !parent->isInTabMode()) {
+    if (inspector && inspector->isActive() && (!parent->isInTabMode() || options.inspectorWindow)) {
         const rtengine::Coord2D coord(getPosInImgSpace(x, y));
 
         if (coord.x != -1.) {

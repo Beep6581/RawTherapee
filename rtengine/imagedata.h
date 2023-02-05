@@ -55,13 +55,15 @@ private:
     int rating;
     std::string lens;
     IIOSampleFormat sampleFormat;
+    struct tm modTime;
+    time_t modTimeStamp;
     bool isPixelShift;
     bool isHDR;
     int w_;
     int h_;
 
 public:
-    explicit FramesData(const Glib::ustring& fname);
+    explicit FramesData(const Glib::ustring& fname, time_t ts = 0);
 
     void setDCRawFrameCount(unsigned int frameCount);
     unsigned int getFrameCount() const override;

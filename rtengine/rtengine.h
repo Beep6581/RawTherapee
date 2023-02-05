@@ -75,6 +75,7 @@ class IImage8;
 class IImage16;
 class IImagefloat;
 class ImageSource;
+class TweakOperator;
 
 /**
   * This class provides functions to obtain exif and IPTC metadata information
@@ -398,6 +399,7 @@ public:
         double huer;
         double lumar;
         double chromar;
+        float fab;
     };
 
     struct locallabRetiMinMax {
@@ -412,9 +414,10 @@ public:
     };
 
     virtual ~LocallabListener() = default;
-    virtual void refChanged(const std::vector<locallabRef> &ref, int selspot) = 0;
+//    virtual void refChanged(const std::vector<locallabRef> &ref, int selspot) = 0;
     virtual void minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int selspot) = 0;
-    virtual void logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg) = 0;
+    virtual void logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const bool autocomput, const bool autocie, const float jz1) = 0;
+    virtual void refChanged2(float *huerefp, float *chromarefp, float *lumarefp, float *fabrefp, int selspot) = 0;
 };
 
 class AutoColorTonListener
@@ -423,6 +426,15 @@ public:
     virtual ~AutoColorTonListener() = default;
     virtual void autoColorTonChanged(int bwct, int satthres, int satprot) = 0;
 };
+
+class AutoprimListener
+{
+public:
+    virtual ~AutoprimListener() = default;
+    virtual void primChanged(float rx, float ry, float bx, float by, float gx, float gy) = 0;
+    virtual void iprimChanged(float r_x, float r_y, float b_x, float b_y, float g_x, float g_y, float w_x, float w_y) = 0;
+};
+
 
 class AutoBWListener
 {
@@ -456,7 +468,7 @@ class ImageTypeListener
 {
 public:
     virtual ~ImageTypeListener() = default;
-    virtual void imageTypeChanged(bool isRaw, bool isBayer, bool isXtrans, bool is_Mono = false) = 0;
+    virtual void imageTypeChanged(bool isRaw, bool isBayer, bool isXtrans, bool is_Mono = false, bool isGainMapSupported = false) = 0;
 };
 
 class AutoContrastListener
@@ -519,9 +531,20 @@ public:
     /** Returns the initial image corresponding to the image processor.
       * @return the initial image corresponding to the image processor */
     virtual InitialImage* getInitialImage () = 0;
+    /** Set the TweakOperator
+      * @param tOperator is a pointer to the object that will alter the ProcParams for the rendering */
+    virtual void        setTweakOperator (TweakOperator *tOperator) = 0;
+    /** Unset the TweakOperator
+      * @param tOperator is a pointer to the object that were altering the ProcParams for the rendering
+      *        It will only unset the tweak operator if tOperator is the same than the currently set operator.
+      *        If it doesn't match, the currently set TweakOperator will remain set. */
+    virtual void        unsetTweakOperator (TweakOperator *tOperator) = 0;
     /** Returns the current processing parameters.
-      * @param dst is the location where the image processing parameters are copied (it is assumed that the memory is allocated by the caller) */
-    virtual void        getParams (procparams::ProcParams* dst) = 0;
+      * Since the ProcParams can be tweaked by a GUI to operate on the image at a specific stage or with disabled tool,
+      * you'll have to specify if you want the tweaked version for the current special mode, or the untweaked one.
+      * @param dst is the location where the image processing parameters are copied (it is assumed that the memory is allocated by the caller)
+      * @param tweaked is used to choose between the tweaked ProcParams (if there is one) or the untweaked one */
+    virtual void        getParams (procparams::ProcParams* dst, bool tweaked=false) = 0;
     /** An essential member function. Call this when a setting has been changed. This function returns a pointer to the
       * processing parameters, that you have to update to reflect the changed situation. When ready, call the paramsUpdateReady
       * function to start the image update.
@@ -564,7 +587,7 @@ public:
 
     virtual void        updateUnLock() = 0;
 
-    virtual void        setLocallabMaskVisibility(bool previewDeltaE, int locallColorMask, int locallColorMaskinv, int locallExpMask, int locallExpMaskinv, int locallSHMask, int locallSHMaskinv, int locallvibMask, int locallsoftMask, int locallblMask, int localltmMask, int locallretiMask, int locallsharMask, int localllcMask, int locallcbMask, int localllogMask, int locall_Mask) = 0;
+    virtual void        setLocallabMaskVisibility(bool previewDeltaE, int locallColorMask, int locallColorMaskinv, int locallExpMask, int locallExpMaskinv, int locallSHMask, int locallSHMaskinv, int locallvibMask, int locallsoftMask, int locallblMask, int localltmMask, int locallretiMask, int locallsharMask, int localllcMask, int locallcbMask, int localllogMask, int locall_Mask, int locallcieMask) = 0;
 
     /** Creates and returns a Crop instance that acts as a window on the image
       * @param editDataProvider pointer to the EditDataProvider that communicates with the EditSubscriber
@@ -596,6 +619,8 @@ public:
     virtual void        setAutoBWListener       (AutoBWListener* l) = 0;
     virtual void        setAutoWBListener       (AutoWBListener* l) = 0;
     virtual void        setAutoColorTonListener (AutoColorTonListener* l) = 0;
+    virtual void        setAutoprimListener     (AutoprimListener* l) = 0;
+
     virtual void        setAutoChromaListener   (AutoChromaListener* l) = 0;
     virtual void        setRetinexListener      (RetinexListener* l) = 0;
     virtual void        setWaveletListener      (WaveletListener* l) = 0;

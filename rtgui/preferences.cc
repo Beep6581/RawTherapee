@@ -17,6 +17,7 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <sigc++/slot.h>
+#include "externaleditorpreferences.h"
 #include "preferences.h"
 #include "multilangmgr.h"
 #include "splash.h"
@@ -806,6 +807,7 @@ Gtk::Widget* Preferences::getColorManPanel ()
 
     vbColorMan->pack_start (*iccdgrid, Gtk::PACK_SHRINK);
 
+    
     //------------------------- MONITOR ----------------------
 
     Gtk::Frame* fmonitor = Gtk::manage(new Gtk::Frame(M("PREFERENCES_MONITOR")));
@@ -924,6 +926,19 @@ Gtk::Widget* Preferences::getColorManPanel ()
     fprinter->add(*gprinter);
 
     vbColorMan->pack_start (*fprinter, Gtk::PACK_SHRINK);
+    
+    //-------------CIECAM
+    Gtk::Frame* fcie = Gtk::manage(new Gtk::Frame(M("PREFERENCES_CIE")));
+    Gtk::Grid* gcie = Gtk::manage(new Gtk::Grid());
+    gcie->set_column_spacing(4);
+    mcie = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_CIEARTIF")));
+    setExpandAlignProperties(mcie, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    mcie->set_active(true);
+    int rowc = 0;
+    gcie->attach(*mcie, 0, rowc, 1, 1);
+    fcie->add(*gcie);
+
+    vbColorMan->pack_start (*fcie, Gtk::PACK_SHRINK);
     swColorMan->add(*vbColorMan);
     return swColorMan;
 }
@@ -1215,63 +1230,52 @@ Gtk::Widget* Preferences::getGeneralPanel()
 
     Gtk::Frame* fdg = Gtk::manage(new Gtk::Frame(M("PREFERENCES_EXTERNALEDITOR")));
     setExpandAlignProperties(fdg, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
-    Gtk::Grid* externaleditorGrid = Gtk::manage(new Gtk::Grid());
-    externaleditorGrid->set_column_spacing(4);
-    externaleditorGrid->set_row_spacing(4);
-    setExpandAlignProperties(externaleditorGrid, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
-    edOther = Gtk::manage(new Gtk::RadioButton(M("PREFERENCES_EDITORCMDLINE") + ":"));
-    setExpandAlignProperties(edOther, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    editorToSendTo = Gtk::manage(new Gtk::Entry());
-    setExpandAlignProperties(editorToSendTo, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
-    Gtk::RadioButton::Group ge = edOther->get_group();
+    externalEditors = Gtk::manage(new ExternalEditorPreferences());
+    externalEditors->set_size_request(-1, 200);
 
-#ifdef __APPLE__
-    edGimp = Gtk::manage(new Gtk::RadioButton("GIMP"));
-    setExpandAlignProperties(edGimp, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    edGimp->set_group(ge);
-    externaleditorGrid->attach_next_to(*edGimp, Gtk::POS_TOP, 2, 1);
+ //   fdg->add(*externaleditorGrid);
+    editor_dir_temp = Gtk::manage(new Gtk::RadioButton(M("PREFERENCES_EXTEDITOR_DIR_TEMP")));
+    editor_dir_current = Gtk::manage(new Gtk::RadioButton(M("PREFERENCES_EXTEDITOR_DIR_CURRENT")));
+    editor_dir_custom = Gtk::manage(new Gtk::RadioButton(M("PREFERENCES_EXTEDITOR_DIR_CUSTOM") + ": "));
+    editor_dir_custom_path = Gtk::manage(new MyFileChooserButton("", Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
+    Gtk::RadioButton::Group ge;
+    ge = editor_dir_temp->get_group();
+    editor_dir_current->set_group(ge);
+    editor_dir_custom->set_group(ge);
 
-    edPS = Gtk::manage(new Gtk::RadioButton(M("PREFERENCES_PSPATH") + ":"));
-    setExpandAlignProperties(edPS, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    psDir = Gtk::manage(new MyFileChooserButton(M("PREFERENCES_PSPATH"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
-    setExpandAlignProperties(psDir, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    externaleditorGrid->attach_next_to(*edPS, *edGimp, Gtk::POS_BOTTOM, 1, 1);
-    externaleditorGrid->attach_next_to(*psDir, *edPS, Gtk::POS_RIGHT, 1, 1);
-    edPS->set_group(ge);
+    editor_float32 = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_EXTEDITOR_FLOAT32")));
+    editor_bypass_output_profile = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_EXTEDITOR_BYPASS_OUTPUT_PROFILE")));
+    {
+        Gtk::Frame *f = Gtk::manage(new Gtk::Frame(M("PREFERENCES_EXTEDITOR_DIR")));
+        setExpandAlignProperties(f, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+        Gtk::Box *vb = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+        vb->pack_start(*editor_dir_temp);
+        vb->pack_start(*editor_dir_current);
+        Gtk::Box *hb = Gtk::manage(new Gtk::Box());
+        hb->pack_start(*editor_dir_custom, Gtk::PACK_SHRINK);
+        hb->pack_start(*editor_dir_custom_path, Gtk::PACK_EXPAND_WIDGET, 2);
+        vb->pack_start(*hb);
+        f->add(*vb);
+        
+        hb = Gtk::manage(new Gtk::Box());
+        hb->pack_start(*externalEditors);
+        hb->pack_start(*f, Gtk::PACK_EXPAND_WIDGET, 4);
 
-    externaleditorGrid->attach_next_to(*edOther, *edPS, Gtk::POS_BOTTOM, 1, 1);
-    externaleditorGrid->attach_next_to(*editorToSendTo, *edOther, Gtk::POS_RIGHT, 1, 1);
-#elif defined WIN32
-    edGimp = Gtk::manage(new Gtk::RadioButton(M("PREFERENCES_GIMPPATH") + ":"));
-    setExpandAlignProperties(edGimp, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    gimpDir = Gtk::manage(new MyFileChooserButton(M("PREFERENCES_GIMPPATH"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
-    setExpandAlignProperties(gimpDir, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    externaleditorGrid->attach_next_to(*edGimp, Gtk::POS_TOP, 1, 1);
-    externaleditorGrid->attach_next_to(*gimpDir, *edGimp, Gtk::POS_RIGHT, 1, 1);
-    edGimp->set_group(ge);
+        vb = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+        vb->pack_start(*hb);
+        hb = Gtk::manage(new Gtk::Box());
+        //I disabled these 2 functionalities...easy to enable
+//        hb->pack_start(*editor_float32, Gtk::PACK_SHRINK);
+//        hb->pack_start(*editor_bypass_output_profile, Gtk::PACK_SHRINK, 4);
+        vb->pack_start(*hb, Gtk::PACK_SHRINK, 4);
 
-    edPS = Gtk::manage(new Gtk::RadioButton(M("PREFERENCES_PSPATH") + ":"));
-    setExpandAlignProperties(edPS, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    psDir = Gtk::manage(new MyFileChooserButton(M("PREFERENCES_PSPATH"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
-    setExpandAlignProperties(psDir, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    externaleditorGrid->attach_next_to(*edPS, *edGimp, Gtk::POS_BOTTOM, 1, 1);
-    externaleditorGrid->attach_next_to(*psDir, *edPS, Gtk::POS_RIGHT, 1, 1);
-    edPS->set_group(ge);
-
-    externaleditorGrid->attach_next_to(*edOther, *edPS, Gtk::POS_BOTTOM, 1, 1);
-    externaleditorGrid->attach_next_to(*editorToSendTo, *edOther, Gtk::POS_RIGHT, 1, 1);
-#else
-    edGimp = Gtk::manage(new Gtk::RadioButton("GIMP"));
-    setExpandAlignProperties(edGimp, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    externaleditorGrid->attach_next_to(*edGimp, Gtk::POS_TOP, 2, 1);
-    edGimp->set_group(ge);
-
-    externaleditorGrid->attach_next_to(*edOther, *edGimp, Gtk::POS_BOTTOM, 1, 1);
-    externaleditorGrid->attach_next_to(*editorToSendTo, *edOther, Gtk::POS_RIGHT, 1, 1);
-#endif
-
-    fdg->add(*externaleditorGrid);
+        vb->show_all_children();
+        vb->show();
+        fdg->add(*vb);
+    }
+ 
+ 
     vbGeneral->attach_next_to (*fdg, *fclip, Gtk::POS_BOTTOM, 2, 1);
     langAutoDetectConn = ckbLangAutoDetect->signal_toggled().connect(sigc::mem_fun(*this, &Preferences::langAutoDetectToggled));
     tconn = themeCBT->signal_changed().connect ( sigc::mem_fun (*this, &Preferences::themeChanged) );
@@ -1727,32 +1731,29 @@ void Preferences::storePreferences()
 
     moptions.pseudoHiDPISupport = pseudoHiDPI->get_active();
 
-#ifdef WIN32
-    moptions.gimpDir = gimpDir->get_filename();
-    moptions.psDir = psDir->get_filename();
-#elif defined __APPLE__
-    moptions.psDir = psDir->get_filename();
-#endif
-    moptions.customEditorProg = editorToSendTo->get_text();
-
-    if (edGimp->get_active()) {
-        moptions.editorToSendTo = 1;
+    const std::vector<ExternalEditorPreferences::EditorInfo> &editors = externalEditors->getEditors();
+    moptions.externalEditors.resize(editors.size());
+    moptions.externalEditorIndex = -1;
+    for (unsigned i = 0; i < editors.size(); i++) {
+        moptions.externalEditors[i] = (ExternalEditor(
+            editors[i].name, editors[i].command, editors[i].icon_serialized));
+        if (editors[i].other_data) {
+            // The current editor was marked before the list was edited. We
+            // found the mark, so this is the editor that was active.
+            moptions.externalEditorIndex = i;
+        }
     }
 
-#ifdef WIN32
-    else if (edPS->get_active()) {
-        moptions.editorToSendTo = 2;
+    if (editor_dir_temp->get_active()) {
+        moptions.editor_out_dir = Options::EDITOR_OUT_DIR_TEMP;
+    } else if (editor_dir_current->get_active()) {
+        moptions.editor_out_dir = Options::EDITOR_OUT_DIR_CURRENT;
+    } else {
+        moptions.editor_out_dir = Options::EDITOR_OUT_DIR_CUSTOM;
     }
-
-#elif defined __APPLE__
-    else if (edPS->get_active()) {
-        moptions.editorToSendTo = 2;
-    }
-
-#endif
-    else if (edOther->get_active()) {
-        moptions.editorToSendTo = 3;
-    }
+    moptions.editor_custom_out_dir = editor_dir_custom_path->get_filename();
+    moptions.editor_float32 = editor_float32->get_active();
+    moptions.editor_bypass_output_profile = editor_bypass_output_profile->get_active();
 
     moptions.CPBPath = txtCustProfBuilderPath->get_text();
     moptions.CPBKeys = CPBKeyType(custProfBuilderLabelType->get_active_row_number());
@@ -1805,6 +1806,8 @@ void Preferences::storePreferences()
 
     moptions.rtSettings.monitorBPC = monBPC->get_active();
     moptions.rtSettings.autoMonitorProfile = cbAutoMonProfile->get_active();
+    moptions.rtSettings.autocielab = mcie->get_active();
+
 #endif
 
     moptions.rtSettings.iccDirectory = iccDir->get_filename();
@@ -1962,6 +1965,7 @@ void Preferences::fillPreferences()
     }
 
     monBPC->set_active(moptions.rtSettings.monitorBPC);
+    mcie->set_active(moptions.rtSettings.autocielab);
     cbAutoMonProfile->set_active(moptions.rtSettings.autoMonitorProfile);
 #endif
 
@@ -2011,34 +2015,27 @@ void Preferences::fillPreferences()
     hlThresh->set_value(moptions.highlightThreshold);
     shThresh->set_value(moptions.shadowThreshold);
 
-    edGimp->set_active(moptions.editorToSendTo == 1);
-    edOther->set_active(moptions.editorToSendTo == 3);
-#ifdef WIN32
-    edPS->set_active(moptions.editorToSendTo == 2);
-
-    if (Glib::file_test(moptions.gimpDir, Glib::FILE_TEST_IS_DIR)) {
-        gimpDir->set_current_folder(moptions.gimpDir);
-    } else {
-        gimpDir->set_current_folder(Glib::get_home_dir());
+    std::vector<ExternalEditorPreferences::EditorInfo> editorInfos;
+    for (const auto &editor : moptions.externalEditors) {
+        editorInfos.push_back(ExternalEditorPreferences::EditorInfo(
+                    editor.name, editor.command, editor.icon_serialized));
     }
-
-    if (Glib::file_test(moptions.psDir, Glib::FILE_TEST_IS_DIR)) {
-        psDir->set_current_folder(moptions.psDir);
-    } else {
-        psDir->set_current_folder(Glib::get_home_dir());
+    if (moptions.externalEditorIndex >= 0) {
+        // Mark the current editor so we can track it.
+        editorInfos[moptions.externalEditorIndex].other_data = (void *)1;
     }
+    externalEditors->setEditors(editorInfos);
 
-#elif defined __APPLE__
-    edPS->set_active(moptions.editorToSendTo == 2);
-
-    if (Glib::file_test(moptions.psDir, Glib::FILE_TEST_IS_DIR)) {
-        psDir->set_current_folder(moptions.psDir);
+    editor_dir_temp->set_active(moptions.editor_out_dir == Options::EDITOR_OUT_DIR_TEMP);
+    editor_dir_current->set_active(moptions.editor_out_dir == Options::EDITOR_OUT_DIR_CURRENT);
+    editor_dir_custom->set_active(moptions.editor_out_dir == Options::EDITOR_OUT_DIR_CUSTOM);
+    if (Glib::file_test(moptions.editor_custom_out_dir, Glib::FILE_TEST_IS_DIR)) {
+        editor_dir_custom_path->set_current_folder(moptions.editor_custom_out_dir);
     } else {
-        psDir->set_current_folder(Glib::get_home_dir());
+        editor_dir_custom_path->set_current_folder(Glib::get_tmp_dir());
     }
-
-#endif
-    editorToSendTo->set_text(moptions.customEditorProg);
+    editor_float32->set_active(moptions.editor_float32);
+    editor_bypass_output_profile->set_active(moptions.editor_bypass_output_profile);
 
     txtCustProfBuilderPath->set_text(moptions.CPBPath);
     custProfBuilderLabelType->set_active(moptions.CPBKeys);
@@ -2507,6 +2504,23 @@ void Preferences::workflowUpdate()
         parent->updateProfiles (moptions.rtSettings.printerProfile, rtengine::RenderingIntent(moptions.rtSettings.printerIntent), moptions.rtSettings.printerBPC);
     }
 
+    bool changed = moptions.externalEditorIndex != options.externalEditorIndex
+        || moptions.externalEditors.size() != options.externalEditors.size();
+    if (!changed) {
+        auto &editors = options.externalEditors;
+        auto &meditors = moptions.externalEditors;
+        for (unsigned i = 0; i < editors.size(); i++) {
+            if (editors[i] != meditors[i]) {
+                changed = true;
+                break;
+            }
+        }
+    }
+    if (changed) {
+        // Update the send to external editor widget.
+        parent->updateExternalEditorWidget(moptions.externalEditorIndex, moptions.externalEditors);
+    }
+
 }
 
 void Preferences::addExtPressed()
@@ -2594,8 +2608,8 @@ void Preferences::darkFrameChanged()
 {
     //Glib::ustring s(darkFrameDir->get_filename());
     Glib::ustring s(darkFrameDir->get_current_folder());
-    //if( s.compare( rtengine::dfm.getPathname()) !=0 ){
-    rtengine::dfm.init(s);
+    //if( s.compare( rtengine::DFManager::getInstance().getPathname()) !=0 ){
+    rtengine::DFManager::getInstance().init(s);
     updateDFinfos();
     //}
 }
@@ -2613,7 +2627,7 @@ void Preferences::flatFieldChanged()
 void Preferences::updateDFinfos()
 {
     int t1, t2;
-    rtengine::dfm.getStat(t1, t2);
+    rtengine::DFManager::getInstance().getStat(t1, t2);
     Glib::ustring s = Glib::ustring::compose("%1: %2 %3, %4 %5", M("PREFERENCES_DARKFRAMEFOUND"), t1, M("PREFERENCES_DARKFRAMESHOTS"), t2, M("PREFERENCES_DARKFRAMETEMPLATES"));
     dfLabel->set_text(s);
 }

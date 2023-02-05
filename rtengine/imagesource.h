@@ -137,6 +137,7 @@ public:
 
     virtual ImageMatrices* getImageMatrices () = 0;
     virtual bool           isRAW () const = 0;
+    virtual bool           isGainMapSupported () const = 0;
     virtual DCPProfile*    getDCP (const procparams::ColorManagementParams &cmp, DCPProfileApplyState &as)
     {
         return nullptr;
@@ -171,7 +172,7 @@ public:
         outCurve = { 0.0 };
     }
 
-    double getDirPyrDenoiseExpComp ( )
+    double getDirPyrDenoiseExpComp () const
     {
         return dirpyrdenoiseExpComp;
     }

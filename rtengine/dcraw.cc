@@ -21,7 +21,6 @@
 /*RT*/#define LOCALTIME
 /*RT*/#define DJGPP
 /*RT*/#include "jpeg.h"
-/*RT*/#include "lj92.h"
 /*RT*/#ifdef _OPENMP
 /*RT*/#include <omp.h>
 /*RT*/#endif
@@ -923,7 +922,7 @@ ushort * CLASS ljpeg_row (int jrow, struct jhead *jh)
     }
     getbits(-1);
   }
-  FORC3 row[c] = (jh->row + ((jrow & 1) + 1) * (jh->wide*jh->clrs*((jrow+c) & 1)));
+  FORC3 row[c] = jh->row + jh->wide*jh->clrs*((jrow+c) & 1);
   for (col=0; col < jh->wide; col++)
     FORC(jh->clrs) {
       diff = ljpeg_diff (jh->huff[c]);
@@ -1124,61 +1123,6 @@ void CLASS ljpeg_idct (struct jhead *jh)
       FORC(8) work[2][i][j] += work[1][c][j] * cs[(i*2+1)*c];
 
   FORC(64) jh->idct[c] = CLIP(((float *)work[2])[c]+0.5);
-}
-
-void CLASS lossless_dnglj92_load_raw()
-{
-    BENCHFUN
-
-    tiff_bps = 16;
-
-    int save = ifp->pos;
-    uint16_t *lincurve = !strncmp(make,"Blackmagic",10) ? curve : nullptr;
-    tile_width = tile_length < INT_MAX ? tile_width : raw_width;
-    size_t tileCount = raw_width / tile_width;
-
-    size_t dataOffset[tileCount];
-    if(tile_length < INT_MAX) {
-        for (size_t t = 0; t < tileCount; ++t) {
-            dataOffset[t] = get4();
-        }
-    } else {
-        dataOffset[0] = ifp->pos;
-    }
-    const int data_length = ifp->size;
-    const std::unique_ptr<uint8_t[]> data(new uint8_t[data_length]);
-    fseek(ifp, 0, SEEK_SET);
-    // read whole file
-    fread(data.get(), 1, data_length, ifp);
-    lj92 lj;
-    int newwidth, newheight, newbps;
-    lj92_open(&lj, &data[dataOffset[0]], data_length, &newwidth, &newheight, &newbps);
-    lj92_close(lj);
-    if (newwidth * newheight * tileCount != raw_width * raw_height) {
-        // not a lj92 file
-        fseek(ifp, save, SEEK_SET);
-        lossless_dng_load_raw();
-        return;
-    }
-
-#ifdef _OPENMP
-    #pragma omp parallel for num_threads(std::min<int>(tileCount, omp_get_max_threads()))
-#endif
-    for (size_t t = 0; t < tileCount; ++t) {
-        size_t tcol = t * tile_width;
-        lj92 lj;
-        int newwidth, newheight, newbps;
-        lj92_open(&lj, &data[dataOffset[t]], data_length, &newwidth, &newheight, &newbps);
-
-        const std::unique_ptr<uint16_t[]> target(new uint16_t[newwidth * newheight]);
-        lj92_decode(lj, target.get(), tile_width, 0, lincurve, 0x1000);
-        for (int y = 0; y < height; ++y) {
-            for(int x = 0; x < tile_width; ++x) {
-                RAW(y, x + tcol) = target[y * tile_width + x];
-            }
-        }
-        lj92_close(lj);
-    }
 }
 
 void CLASS lossless_dng_load_raw()
@@ -2019,7 +1963,7 @@ void CLASS phase_one_load_raw_c()
 #endif
 {
     int len[2], pred[2];
-    IMFILE ifpthr = *ifp;
+    rtengine::IMFILE ifpthr = *ifp;
     ifpthr.plistener = nullptr;
 
 #ifdef _OPENMP
@@ -2520,6 +2464,30 @@ void CLASS unpacked_load_raw()
   }
 }
 
+// RT - from LibRaw
+void CLASS unpacked_load_raw_FujiDBP()
+/*
+for Fuji DBP for GX680, aka DX-2000
+  DBP_tile_width = 688;
+  DBP_tile_height = 3856;
+  DBP_n_tiles = 8;
+*/
+{
+    int scan_line, tile_n;
+    int nTiles = 8;
+    tile_width = raw_width / nTiles;
+    ushort *tile;
+    tile = (ushort *) calloc(raw_height, tile_width * 2);
+    for (tile_n = 0; tile_n < nTiles; tile_n++) {
+        read_shorts(tile, tile_width * raw_height);
+        for (scan_line = 0; scan_line < raw_height; scan_line++) {
+            memcpy(&raw_image[scan_line * raw_width + tile_n * tile_width],
+                &tile[scan_line * tile_width], tile_width * 2);
+        }
+    }
+    free(tile);
+    fseek(ifp, -2, SEEK_CUR); // avoid EOF error
+}
 
 // RT
 void CLASS sony_arq_load_raw()
@@ -3373,7 +3341,7 @@ void CLASS sony_arw2_load_raw()
 {
     uchar *data = new (std::nothrow) uchar[raw_width + 1];
     merror(data, "sony_arw2_load_raw()");
-    IMFILE ifpthr = *ifp;
+    rtengine::IMFILE ifpthr = *ifp;
     int pos = ifpthr.pos;
     ushort pix[16];
 
@@ -4453,6 +4421,12 @@ void CLASS crop_masked_pixels()
       }
     }
   } else {
+    if (height + top_margin > raw_height) {
+      top_margin = raw_height - height;
+    }
+    if (width + left_margin > raw_width) {
+      left_margin = raw_width - width;
+    }
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
@@ -6111,13 +6085,56 @@ get2_256:
       offsetChannelBlackLevel2 = save1 + (0x0149 << 1);
       offsetWhiteLevels = save1 + (0x031c << 1);
       break;
+    case 2024: // 1D X Mark III, ColorDataSubVer 32
+      // imCanon.ColorDataVer = 10;
+      imCanon.ColorDataSubVer = get2();
+      fseek(ifp, save1 + (0x0055 << 1), SEEK_SET);
+      FORC4 cam_mul[c ^ (c >> 1)/*RGGB_2_RGBG(c)*/] = (float)get2();
+      // get2();
+      // FORC4 icWBC[LIBRAW_WBI_Auto][RGGB_2_RGBG(c)] = get2();
+      // get2();
+      // FORC4 icWBC[LIBRAW_WBI_Measured][RGGB_2_RGBG(c)] = get2();
+      // fseek(ifp, save1 + (0x0096 << 1), SEEK_SET);
+      // Canon_WBpresets(2, 12);
+      // fseek(ifp, save1 + (0x0118 << 1), SEEK_SET);
+      // Canon_WBCTpresets(0);
+      offsetChannelBlackLevel = save1 + (0x0326 << 1);
+      offsetChannelBlackLevel2 = save1 + (0x0157 << 1);
+      offsetWhiteLevels = save1 + (0x032a << 1);
+      break;
+     case 3656: // EOS R6, ColorDataSubVer 33
+      // imCanon.ColorDataVer = 10;
+      imCanon.ColorDataSubVer = get2();
+
+      // The constant 0x0055 was found in LibRaw; more specifically by
+      // spelunking in LibRaw:src/metadata/canon.cpp.
+      fseek(ifp, save1 + (0x0055 << 1), SEEK_SET);
+      FORC4 cam_mul[c ^ (c >> 1)] = (float)get2();
+
+      offsetChannelBlackLevel = save1 + (0x326 << 1);
+      offsetChannelBlackLevel2 = save1 + (0x157 << 1);
+      offsetWhiteLevels = save1 + (0x32a << 1);
+      break;
+    case 3973: // R3; ColorDataSubVer: 34
+    case 3778: // R7, R10; ColorDataSubVer: 48
+      // imCanon.ColorDataVer = 11;
+      imCanon.ColorDataSubVer = get2();
+
+      fseek(ifp, save1 + ((0x0069+0x0064) << 1), SEEK_SET);
+      FORC4 cam_mul[c ^ (c >> 1)] = (float)get2();
+
+      offsetChannelBlackLevel2 = save1 + ((0x0069+0x0102) << 1);
+      offsetChannelBlackLevel  = save1 + ((0x0069+0x0213) << 1);
+      offsetWhiteLevels        = save1 + ((0x0069+0x0217) << 1);
+      break;
     }
 
     if (offsetChannelBlackLevel)
     {
       fseek(ifp, offsetChannelBlackLevel, SEEK_SET);
       FORC4
-          bls += (cblack/*imCanon.ChannelBlackLevel*/[c ^ (c >> 1)] = get2());
+          bls += (RT_canon_levels_data.cblack/*imCanon.ChannelBlackLevel*/[c ^ (c >> 1)] = get2());
+      RT_canon_levels_data.black_ok = true;
       imCanon.AverageBlackLevel = bls / 4;
       // RT_blacklevel_from_constant = ThreeValBool::F;
     }
@@ -6129,7 +6146,8 @@ get2_256:
       imCanon.SpecularWhiteLevel = get2();
       // FORC4
       //   imgdata.color.linear_max[c] = imCanon.SpecularWhiteLevel;
-      maximum = imCanon.SpecularWhiteLevel;
+      RT_canon_levels_data.white = imCanon.SpecularWhiteLevel;
+      RT_canon_levels_data.white_ok = true;
       // RT_whitelevel_from_constant = ThreeValBool::F;
     }
 
@@ -6137,7 +6155,8 @@ get2_256:
     {
         fseek(ifp, offsetChannelBlackLevel2, SEEK_SET);
         FORC4
-            bls += (cblack/*imCanon.ChannelBlackLevel*/[c ^ (c >> 1)] = get2());
+            bls += (RT_canon_levels_data.cblack/*imCanon.ChannelBlackLevel*/[c ^ (c >> 1)] = get2());
+        RT_canon_levels_data.black_ok = true;
         imCanon.AverageBlackLevel = bls / 4;
         // RT_blacklevel_from_constant = ThreeValBool::F;
     }
@@ -6324,12 +6343,13 @@ void CLASS parse_mos (int offset)
 
 void CLASS linear_table (unsigned len)
 {
-  int i;
-  if (len > 0x1000) len = 0x1000;
-  read_shorts (curve, len);
-  for (i=len; i < 0x1000; i++)
-    curve[i] = curve[i-1];
-  maximum = curve[0xfff];
+  const unsigned maxLen = std::min(0x10000ull, 1ull << tiff_bps);
+  len = std::min(len, maxLen);
+  read_shorts(curve, len);
+  maximum = curve[len - 1];
+  for (std::size_t i = len; i < maxLen; ++i) {
+    curve[i] = maximum;
+  }
 }
 
 void CLASS parse_kodak_ifd (int base)
@@ -6387,7 +6407,7 @@ int CLASS parse_tiff_ifd (int base)
   unsigned sony_curve[] = { 0,0,0,0,0,4095 };
   unsigned *buf, sony_offset=0, sony_length=0, sony_key=0;
   struct jhead jh;
-/*RT*/  IMFILE *sfp;
+/*RT*/  rtengine::IMFILE *sfp;
 /*RT*/  int pana_raw = 0;
 
   if (tiff_nifds >= sizeof tiff_ifd / sizeof tiff_ifd[0])
@@ -6453,6 +6473,9 @@ int CLASS parse_tiff_ifd (int base)
 	break;
       case 3: case 257: case 61442:	/* ImageHeight */
 	tiff_ifd[ifd].height = getint(type);
+	break;
+      case 254:
+	tiff_ifd[ifd].new_sub_file_type = getint(type);
 	break;
       case 258:				/* BitsPerSample */
       case 61443:
@@ -6787,14 +6810,17 @@ guess_cfa_pc:
 	linear_table (len);
 	break;
       case 50713:			/* BlackLevelRepeatDim */
+	if (tiff_ifd[ifd].new_sub_file_type != 0) continue;
 	cblack[4] = get2();
 	cblack[5] = get2();
 	if (cblack[4] * cblack[5] > sizeof cblack / sizeof *cblack - 6)
 	    cblack[4] = cblack[5] = 1;
 	break;
       case 61450:
+	if (tiff_ifd[ifd].new_sub_file_type != 0) continue;
 	cblack[4] = cblack[5] = MIN(sqrt(len),64);
       case 50714:			/* BlackLevel */
+	if (tiff_ifd[ifd].new_sub_file_type != 0) continue;
                 RT_blacklevel_from_constant = ThreeValBool::F;
 //-----------------------------------------------------------------------------
 // taken from LibRaw.
@@ -6912,7 +6938,6 @@ it under the terms of the one of two licenses as you choose:
             unsigned oldOrder = order;
             order = 0x4d4d; // always big endian per definition in https://www.adobe.com/content/dam/acom/en/products/photoshop/pdfs/dng_spec_1.4.0.0.pdf chapter 7
             unsigned ntags = get4(); // read the number of opcodes
-
             if (ntags < ifp->size / 12) { // rough check for wrong value (happens for example with DNG files from DJI FC6310)
                 while (ntags-- && !ifp->eof) {
                   unsigned opcode = get4();
@@ -6931,8 +6956,48 @@ it under the terms of the one of two licenses as you choose:
           break;
         }
       case 51009:			/* OpcodeList2 */
-	meta_offset = ftell(ifp);
-	break;
+        {
+            meta_offset = ftell(ifp);
+            const unsigned oldOrder = order;
+            order = 0x4d4d; // always big endian per definition in https://www.adobe.com/content/dam/acom/en/products/photoshop/pdfs/dng_spec_1.4.0.0.pdf chapter 7
+            unsigned ntags = get4(); // read the number of opcodes
+            if (ntags < ifp->size / 12) { // rough check for wrong value (happens for example with DNG files from DJI FC6310)
+                while (ntags-- && !ifp->eof) {
+                    unsigned opcode = get4();
+                    if (opcode == 9 && gainMaps.size() < 4) {
+                        fseek(ifp, 4, SEEK_CUR); // skip 4 bytes as we know that the opcode 4 takes 4 byte
+                        fseek(ifp, 8, SEEK_CUR); // skip 8 bytes as they don't interest us currently
+                        GainMap gainMap;
+                        gainMap.Top = get4();
+                        gainMap.Left = get4();
+                        gainMap.Bottom = get4();
+                        gainMap.Right = get4();
+                        gainMap.Plane = get4();
+                        gainMap.Planes = get4();
+                        gainMap.RowPitch = get4();
+                        gainMap.ColPitch = get4();
+                        gainMap.MapPointsV = get4();
+                        gainMap.MapPointsH = get4();
+                        gainMap.MapSpacingV = getreal(12);
+                        gainMap.MapSpacingH = getreal(12);
+                        gainMap.MapOriginV = getreal(12);
+                        gainMap.MapOriginH = getreal(12);
+                        gainMap.MapPlanes = get4();
+                        const std::size_t n = static_cast<std::size_t>(gainMap.MapPointsV) * static_cast<std::size_t>(gainMap.MapPointsH) * static_cast<std::size_t>(gainMap.MapPlanes);
+                        gainMap.MapGain.reserve(n);
+                        for (std::size_t i = 0; i < n; ++i) {
+                            gainMap.MapGain.push_back(getreal(11));
+                        }
+                        gainMaps.push_back(std::move(gainMap));
+                    } else {
+                        fseek(ifp, 8, SEEK_CUR); // skip 8 bytes as they don't interest us currently
+                        fseek(ifp, get4(), SEEK_CUR);
+                    }
+                }
+            }
+            order = oldOrder;
+            break;
+        }
       case 64772:			/* Kodak P-series */
 	if (len < 13) break;
 	fseek (ifp, 16, SEEK_CUR);
@@ -6951,7 +7016,7 @@ it under the terms of the one of two licenses as you choose:
     fread (buf, sony_length, 1, ifp);
     sony_decrypt (buf, sony_length/4, 1, sony_key);
     sfp = ifp;
-/*RT*/ ifp = fopen (buf, sony_length);
+/*RT*/ ifp = rtengine::fopen (buf, sony_length);
 // if ((ifp = tmpfile())) {
 // fwrite (buf, sony_length, 1, ifp);
 // fseek (ifp, 0, SEEK_SET);
@@ -7259,7 +7324,7 @@ void CLASS parse_external_jpeg()
 {
   const char *file, *ext;
   char *jname, *jfile, *jext;
-/*RT*/  IMFILE *save=ifp;
+/*RT*/  rtengine::IMFILE *save=ifp;
 
   ext  = strrchr (ifname, '.');
   file = strrchr (ifname, '/');
@@ -7287,7 +7352,7 @@ void CLASS parse_external_jpeg()
       *jext = '0';
     }
   if (strcmp (jname, ifname)) {
-/*RT*/    if ((ifp = fopen (jname))) {
+/*RT*/    if ((ifp = rtengine::fopen (jname))) {
 //    if ((ifp = fopen (jname, "rb"))) {
       if (verbose)
 	fprintf (stderr,_("Reading metadata from %s ...\n"), jname);
@@ -9078,11 +9143,24 @@ void CLASS adobe_coeff (const char *make, const char *model)
     RT_matrix_from_constant = ThreeValBool::T;
   }
   // -- RT --------------------------------------------------------------------
-  
+
   for (i=0; i < sizeof table / sizeof *table; i++)
     if (!strncmp (name, table[i].prefix, strlen(table[i].prefix))) {
-      if (RT_blacklevel_from_constant == ThreeValBool::T && table[i].black)   black   = (ushort) table[i].black;
-      if (RT_whitelevel_from_constant == ThreeValBool::T && table[i].maximum) maximum = (ushort) table[i].maximum;
+      if (RT_blacklevel_from_constant == ThreeValBool::T && table[i].black) {
+        if (RT_canon_levels_data.black_ok) {
+          unsigned c;
+          FORC4 RT_canon_levels_data.cblack[c] = (ushort) table[i].black;
+        } else {
+          black = (ushort) table[i].black;
+        }
+      }
+      if (RT_whitelevel_from_constant == ThreeValBool::T && table[i].maximum) {
+        if (RT_canon_levels_data.white_ok) {
+          RT_canon_levels_data.white = (ushort) table[i].maximum;
+        } else {
+          maximum = (ushort) table[i].maximum;
+        }
+      }
       if (RT_matrix_from_constant == ThreeValBool::T && table[i].trans[0]) {
 	for (raw_color = j=0; j < 12; j++)
 	  ((double *)cam_xyz)[j] = table[i].trans[j] / 10000.0;
@@ -9231,6 +9309,7 @@ void CLASS identify()
     { 3944, 2622,  30, 18,  6,  2 },
     { 3948, 2622,  42, 18,  0,  2 },
     { 3984, 2622,  76, 20,  0,  2, 14 },
+    { 4032, 2656, 112, 44, 10,  0 },
     { 4104, 3048,  48, 12, 24, 12 },
     { 4116, 2178,   4,  2,  0,  0 },
     { 4152, 2772, 192, 12,  0,  0 },
@@ -9761,6 +9840,8 @@ void CLASS identify()
      if(!dng_version) {top_margin = 18; height -= top_margin; }
   if (height == 3014 && width == 4096)	/* Ricoh GX200 */
 			width  = 4014;
+  if (height == 3280 && width == 4992 && !strncmp(model, "D5100", 5))
+    { --height; } // Last row contains corrupt data. See issue #5654.
   if (dng_version) {
     if (filters == UINT_MAX) filters = 0;
     if (filters) is_raw *= tiff_samples;
@@ -9768,7 +9849,7 @@ void CLASS identify()
     switch (tiff_compress) {
       case 0:
       case 1:     load_raw = &CLASS   packed_dng_load_raw;  break;
-      case 7:     load_raw = (!strncmp(make,"Blackmagic",10) || !strncmp(make,"Canon",5)) ? &CLASS lossless_dnglj92_load_raw : &CLASS lossless_dng_load_raw;  break;
+      case 7:     load_raw = &CLASS lossless_dng_load_raw;  break;
       case 8:     load_raw = &CLASS  deflate_dng_load_raw;  break;
       case 34892: load_raw = &CLASS    lossy_dng_load_raw;  break;
       default:    load_raw = 0;
@@ -9865,7 +9946,8 @@ void CLASS identify()
     filters = 0;
     tiff_samples = colors = 3;
     load_raw = &CLASS canon_sraw_load_raw;
-    FORC4 cblack[c] = 0; // ALB
+    //FORC4 cblack[c] = 0; // ALB
+    RT_canon_levels_data.black_ok = RT_canon_levels_data.white_ok = false;
   } else if (!strcmp(model,"PowerShot 600")) {
     height = 613;
     width  = 854;
@@ -10048,6 +10130,9 @@ canon_a5:
     } else if (!strcmp(model, "X-Pro3") || !strcmp(model, "X-T3") || !strcmp(model, "X-T30") || !strcmp(model, "X-T4") || !strcmp(model, "X100V") || !strcmp(model, "X-S10")) {
         width = raw_width = 6384;
         height = raw_height = 4182;
+    } else if (!strcmp(model, "DBP for GX680")) { // Special case for #4204
+        width = raw_width = 5504;
+        height = raw_height = 3856;
     }
     top_margin = (raw_height - height) >> 2 << 1;
     left_margin = (raw_width - width ) >> 2 << 1;
@@ -10055,6 +10140,16 @@ canon_a5:
     if (width == 4032 || width == 4952 || width == 6032 || width == 8280) left_margin = 0;
     if (width == 3328 && (width -= 66)) left_margin = 34;
     if (width == 4936) left_margin = 4;
+    if (width == 5504) { // #4204, taken from LibRaw
+        left_margin = 32;
+        top_margin = 8;
+        width = raw_width - 2*left_margin;
+        height = raw_height - 2*top_margin;
+        load_raw = &CLASS unpacked_load_raw_FujiDBP;
+        filters = 0x16161616;
+        load_flags = 0;
+        flip = 6;
+    }
     if (!strcmp(model,"HS50EXR") ||
 	!strcmp(model,"F900EXR")) {
       width += 2;
@@ -10531,6 +10626,14 @@ bw:   colors = 1;
     }
   }
 dng_skip:
+  if (!dng_version && is_raw) {
+      if (RT_canon_levels_data.black_ok) {
+          FORC4 cblack[c] = RT_canon_levels_data.cblack[c];
+      }
+      if (RT_canon_levels_data.white_ok) {
+          maximum = RT_canon_levels_data.white;
+      }
+  }
   if ((use_camera_matrix & (use_camera_wb || dng_version))
         && cmatrix[0][0] > 0.125
         && strncmp(RT_software.c_str(), "Adobe DNG Converter", 19) != 0
@@ -11013,6 +11116,70 @@ void CLASS nikon_14bit_load_raw()
             unpack7bytesto4x16_nikon(buf + sp, dest + dp);
     }
     free(buf);
+}
+
+bool CLASS isGainMapSupported() const {
+    if (!(dng_version && isBayer())) {
+        return false;
+    }
+    const auto n = gainMaps.size();
+    if (n != 4) { // we need 4 gainmaps for bayer files
+        if (rtengine::settings->verbose) {
+            std::cout << "GainMap has " << n << " maps, but 4 are needed" << std::endl;
+        }
+        return false;
+    }
+    unsigned int check = 0;
+    bool noOp = true;
+    for (const auto &m : gainMaps) {
+        if (m.MapGain.size() < 1) {
+            if (rtengine::settings->verbose) {
+                std::cout << "GainMap has invalid size of " << m.MapGain.size() << std::endl;
+            }
+            return false;
+        }
+        if (m.MapGain.size() != static_cast<std::size_t>(m.MapPointsV) * static_cast<std::size_t>(m.MapPointsH) * static_cast<std::size_t>(m.MapPlanes)) {
+            if (rtengine::settings->verbose) {
+                std::cout << "GainMap has size of " << m.MapGain.size() << ", but needs " << m.MapPointsV * m.MapPointsH * m.MapPlanes << std::endl;
+            }
+            return false;
+        }
+        if (m.RowPitch != 2 || m.ColPitch != 2) {
+            if (rtengine::settings->verbose) {
+                std::cout << "GainMap needs Row/ColPitch of 2/2, but has " << m.RowPitch << "/" << m.ColPitch << std::endl;
+            }
+            return false;
+        }
+        if (m.Top == 0){
+            if (m.Left == 0) {
+                check += 1;
+            } else if (m.Left == 1) {
+                check += 2;
+            }
+        } else if (m.Top == 1) {
+            if (m.Left == 0) {
+                check += 4;
+            } else if (m.Left == 1) {
+                check += 8;
+            }
+        }
+        for (size_t i = 0; noOp && i < m.MapGain.size(); ++i) {
+            if (m.MapGain[i] != 1.f) { // we have at least one value != 1.f => map is not a nop
+                noOp = false;
+            }
+        }
+    }
+    if (noOp || check != 15) { // all maps are nops or the structure of the combination of 4 maps is not correct
+        if (rtengine::settings->verbose) {
+            if (noOp) {
+                std::cout << "GainMap is a nop" << std::endl;
+            } else {
+                std::cout << "GainMap has unsupported type : " << check << std::endl;
+            }
+        }
+        return false;
+    }
+    return true;
 }
 
 /* RT: Delete from here */
