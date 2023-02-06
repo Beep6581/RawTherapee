@@ -97,6 +97,8 @@ protected:
     void setHistmatching(bool enabled);
 
 public:
+    static const Glib::ustring TOOL_NAME;
+
     ToneCurve ();
     ~ToneCurve () override;
 

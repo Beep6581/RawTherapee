@@ -31,7 +31,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-FlatField::FlatField () : FoldableToolPanel(this, "flatfield", M("TP_FLATFIELD_LABEL"))
+const Glib::ustring FlatField::TOOL_NAME = "flatfield";
+
+FlatField::FlatField () : FoldableToolPanel(this, TOOL_NAME, M("TP_FLATFIELD_LABEL"))
 {
     auto m = ProcEventMapper::getInstance();
     EvFlatFieldFromMetaData = m->newEvent(DARKFRAME, "HISTORY_MSG_FF_FROMMETADATA");

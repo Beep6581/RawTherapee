@@ -45,6 +45,8 @@ class Wavelet final :
     public FoldableToolPanel
 {
 public:
+    static const Glib::ustring TOOL_NAME;
+
     Wavelet();
     ~Wavelet() override;
     bool wavComputed_();

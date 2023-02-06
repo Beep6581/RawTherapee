@@ -29,7 +29,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Dehaze::Dehaze(): FoldableToolPanel(this, "dehaze", M("TP_DEHAZE_LABEL"), false, true)
+const Glib::ustring Dehaze::TOOL_NAME = "dehaze";
+
+Dehaze::Dehaze(): FoldableToolPanel(this, TOOL_NAME, M("TP_DEHAZE_LABEL"), false, true)
 {
     auto m = ProcEventMapper::getInstance();
     EvDehazeEnabled = m->newEvent(HDR, "HISTORY_MSG_DEHAZE_ENABLED");

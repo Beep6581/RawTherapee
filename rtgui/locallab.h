@@ -132,6 +132,8 @@ private:
     Glib::ustring spotName;
 
 public:
+    static const Glib::ustring TOOL_NAME;
+
     Locallab();
 
     // FoldableToolPanel management functions

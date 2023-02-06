@@ -426,6 +426,7 @@ void Options::setDefaults()
     //crvOpen.clear ();
     parseExtensions.clear();
     favorites.clear();
+    cloneFavoriteTools = false;
     parseExtensionsEnabled.clear();
     parsedExtensions.clear();
     parsedExtensionsSet.clear();
@@ -1391,6 +1392,10 @@ void Options::readFromFile(Glib::ustring fname)
             if (keyFile.has_group("GUI")) {
                 if (keyFile.has_key("GUI", "Favorites")) {
                     favorites = keyFile.get_string_list("GUI", "Favorites");
+                }
+
+                if (keyFile.has_key("GUI", "FavoritesCloneTools")) {
+                    cloneFavoriteTools = keyFile.get_boolean("GUI", "FavoritesCloneTools");
                 }
 
                 if (keyFile.has_key("GUI", "WindowWidth")) {
@@ -2466,6 +2471,7 @@ void Options::saveToFile(Glib::ustring fname)
 
         Glib::ArrayHandle<Glib::ustring> ahfavorites = favorites;
         keyFile.set_string_list("GUI", "Favorites", ahfavorites);
+        keyFile.set_boolean("GUI", "FavoritesCloneTools", cloneFavoriteTools);
         keyFile.set_integer("GUI", "WindowWidth", windowWidth);
         keyFile.set_integer("GUI", "WindowHeight", windowHeight);
         keyFile.set_integer("GUI", "WindowX", windowX);

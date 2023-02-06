@@ -38,6 +38,7 @@ protected:
     void releaseEdit();
 
 public:
+    static const Glib::ustring TOOL_NAME;
 
     Gradient ();
     ~Gradient () override;

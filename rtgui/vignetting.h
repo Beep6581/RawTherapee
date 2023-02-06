@@ -37,6 +37,7 @@ protected:
     Adjuster* centerY;
 
 public:
+    static const Glib::ustring TOOL_NAME;
 
     Vignetting ();
 

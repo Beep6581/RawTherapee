@@ -56,6 +56,8 @@ private:
 class FilmSimulation : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel
 {
 public:
+    static const Glib::ustring TOOL_NAME;
+
     FilmSimulation();
 
     void adjusterChanged(Adjuster* a, double newval) override;
