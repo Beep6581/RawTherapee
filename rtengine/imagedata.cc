@@ -430,7 +430,6 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
         ) {
             if (find_exif_tag("Exif.Pentax.DriveMode")) {
                 std::string buf = pos->toString(3);
-                buf[3] = 0;
                 if (buf == "HDR") {
                     isHDR = true;
 #if PRINT_HDR_PS_DETECTION
