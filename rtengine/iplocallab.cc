@@ -617,6 +617,7 @@ struct local_params {
     float laplacexp;
     float balanexp;
     float linear;
+    int fullim;
     int expmet;
     int softmet;
     int blurmet;
@@ -896,7 +897,15 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.laplacexp = locallab.spots.at(sp).laplacexp;
     lp.balanexp = locallab.spots.at(sp).balanexp;
     lp.linear = locallab.spots.at(sp).linear;
-
+    if (locallab.spots.at(sp).spotMethod == "norm") {
+        lp.fullim = 0;
+    } else if(locallab.spots.at(sp).spotMethod == "exc"){
+        lp.fullim = 1;
+    } else if (locallab.spots.at(sp).spotMethod == "full"){
+        lp.fullim = 2;
+    }
+   // printf("Lpfullim=%i\n", lp.fullim);
+    
     lp.fftColorMask = locallab.spots.at(sp).fftColorMask;
     lp.prevdE = prevDeltaE;
     lp.showmaskcolmet = llColorMask;
@@ -918,22 +927,22 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.showmask_met = ll_Mask;
     lp.showmaskciemet = llcieMask;
 //printf("CIEmask=%i\n", lp.showmaskciemet);
-    lp.enaColorMask = locallab.spots.at(sp).enaColorMask && llsoftMask == 0 && llColorMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
-    lp.enaColorMaskinv = locallab.spots.at(sp).enaColorMask && llColorMaskinv == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
-    lp.enaExpMask = locallab.spots.at(sp).enaExpMask && llExpMask == 0 && llColorMask == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
-    lp.enaExpMaskinv = locallab.spots.at(sp).enaExpMask && llExpMaskinv == 0 && llColorMask == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
-    lp.enaSHMask = locallab.spots.at(sp).enaSHMask && llSHMask == 0 && llColorMask == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0  && ll_Mask == 0 && llcieMask == 0;
-    lp.enaSHMaskinv = locallab.spots.at(sp).enaSHMask && llSHMaskinv == 0 && lllcMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
-    lp.enacbMask = locallab.spots.at(sp).enacbMask && llcbMask == 0 && lllcMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
-    lp.enaretiMask = locallab.spots.at(sp).enaretiMask && lllcMask == 0 && llsharMask == 0 && llsoftMask == 0 && llretiMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
-    lp.enatmMask = locallab.spots.at(sp).enatmMask && lltmMask == 0 && lllcMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && llblMask == 0 && llvibMask == 0&& lllogMask == 0  && ll_Mask == 0 && llcieMask == 0;
-    lp.enablMask = locallab.spots.at(sp).enablMask && llblMask == 0 && lllcMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
-    lp.enavibMask = locallab.spots.at(sp).enavibMask && llvibMask == 0 && lllcMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llSHMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
-    lp.enalcMask = locallab.spots.at(sp).enalcMask && lllcMask == 0 && llcbMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
-    lp.enasharMask = lllcMask == 0 && llcbMask == 0 && llsharMask == 0 && llsoftMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
-    lp.ena_Mask = locallab.spots.at(sp).enamask && lllcMask == 0 && llcbMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && lllogMask == 0 && llvibMask == 0 && llcieMask == 0;
-    lp.enaLMask = locallab.spots.at(sp).enaLMask && lllogMask == 0 && llColorMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
-    lp.enacieMask = locallab.spots.at(sp).enacieMask && llcieMask == 0 && llColorMask == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0  && ll_Mask == 0;
+    lp.enaColorMask = locallab.spots.at(sp).enaColorMask && llsoftMask == 0 && llColorMaskinv == 0 && llSHMaskinv == 0 && llColorMask == 0 && llExpMaskinv == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
+    lp.enaColorMaskinv = locallab.spots.at(sp).enaColorMask && llColorMaskinv == 0 && llSHMaskinv == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
+    lp.enaExpMask = locallab.spots.at(sp).enaExpMask && llExpMask == 0 && llExpMaskinv == 0 && llSHMaskinv == 0 && llColorMask == 0 && llColorMaskinv == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
+    lp.enaExpMaskinv = locallab.spots.at(sp).enaExpMask && llExpMaskinv == 0 && llColorMask == 0 && llSHMaskinv == 0 && llColorMaskinv == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
+    lp.enaSHMask = locallab.spots.at(sp).enaSHMask && llSHMask == 0 && llColorMask == 0 && llColorMaskinv == 0 && llSHMaskinv == 0 && llExpMaskinv == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0  && ll_Mask == 0 && llcieMask == 0;
+    lp.enaSHMaskinv = locallab.spots.at(sp).enaSHMask && llColorMaskinv == 0 && llSHMaskinv == 0 && llExpMaskinv == 0 && llSHMaskinv == 0 && lllcMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
+    lp.enacbMask = locallab.spots.at(sp).enacbMask && llColorMaskinv == 0 && llcbMask == 0 && llExpMaskinv == 0 && llSHMaskinv == 0 && lllcMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
+    lp.enaretiMask = locallab.spots.at(sp).enaretiMask && llColorMaskinv == 0 && lllcMask == 0 && llExpMaskinv == 0 && llSHMaskinv == 0 && llsharMask == 0 && llsoftMask == 0 && llretiMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
+    lp.enatmMask = locallab.spots.at(sp).enatmMask && llColorMaskinv == 0 && lltmMask == 0 && llExpMaskinv == 0 && llSHMaskinv == 0 && lllcMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && llblMask == 0 && llvibMask == 0&& lllogMask == 0  && ll_Mask == 0 && llcieMask == 0;
+    lp.enablMask = locallab.spots.at(sp).enablMask && llColorMaskinv == 0 && llblMask == 0 && llExpMaskinv == 0 && llSHMaskinv == 0 && lllcMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
+    lp.enavibMask = locallab.spots.at(sp).enavibMask && llvibMask == 0 && llColorMaskinv == 0 && llExpMaskinv == 0 && llSHMaskinv == 0 && lllcMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llSHMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
+    lp.enalcMask = locallab.spots.at(sp).enalcMask && lllcMask == 0 && llColorMaskinv == 0 && llExpMaskinv == 0 && llSHMaskinv == 0 && llcbMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
+    lp.enasharMask = lllcMask == 0 && llcbMask == 0 && llsharMask == 0 && llColorMaskinv == 0 && llExpMaskinv == 0 && llSHMaskinv == 0 && llsoftMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
+    lp.ena_Mask = locallab.spots.at(sp).enamask && lllcMask == 0 && llColorMaskinv == 0 && llExpMaskinv == 0 && llSHMaskinv == 0 && llcbMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && lllogMask == 0 && llvibMask == 0 && ll_Mask == 0 && llcieMask == 0;
+    lp.enaLMask = locallab.spots.at(sp).enaLMask && lllogMask == 0 && llColorMaskinv == 0 && llExpMaskinv == 0 && llSHMaskinv == 0 && llColorMask == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
+    lp.enacieMask = locallab.spots.at(sp).enacieMask && llcieMask == 0 && llColorMaskinv == 0 && llExpMaskinv == 0 && llSHMaskinv == 0 && llColorMask == 0 && llSHMask == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0  && ll_Mask == 0;
 
 
     lp.thrlow = locallab.spots.at(sp).levelthrlow;
@@ -1696,20 +1705,21 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.threshol = thresho;
     lp.chromacb = chromcbdl;
     lp.expvib = locallab.spots.at(sp).expvibrance && lp.activspot ;
-    lp.colorena = locallab.spots.at(sp).expcolor && lp.activspot && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && lltmMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0; // Color & Light tool is deactivated if Exposure mask is visible or SHMask
-    lp.blurena = locallab.spots.at(sp).expblur && lp.activspot && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && llColorMask == 0 && lltmMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
-    lp.tonemapena = locallab.spots.at(sp).exptonemap && lp.activspot && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && llColorMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
-    lp.retiena = locallab.spots.at(sp).expreti && lp.activspot && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llColorMask == 0 && lltmMask == 0 && llvibMask == 0 && llSHMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
-    lp.lcena = locallab.spots.at(sp).expcontrast && lp.activspot && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llcbMask == 0 && llsharMask == 0 && llColorMask == 0 && lltmMask == 0 && llvibMask == 0 && llSHMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
-    lp.cbdlena = locallab.spots.at(sp).expcbdl && lp.activspot && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llretiMask == 0 && lllcMask == 0 && llsharMask == 0 && lllcMask == 0 && llColorMask == 0 && lltmMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
-    lp.exposena = locallab.spots.at(sp).expexpose && lp.activspot  && llColorMask == 0 && llsoftMask == 0 && llSHMask == 0 && lllcMask == 0 && llsharMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0; // Exposure tool is deactivated if Color & Light mask SHmask is visible
-    lp.hsena = locallab.spots.at(sp).expshadhigh && lp.activspot && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && lltmMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Shadow Highlight tool is deactivated if Color & Light mask or SHmask is visible
-    lp.vibena = locallab.spots.at(sp).expvibrance && lp.activspot && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && llSHMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// vibrance tool is deactivated if Color & Light mask or SHmask is visible
-    lp.sharpena = locallab.spots.at(sp).expsharp && lp.activspot && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && llSHMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
-    lp.sfena = locallab.spots.at(sp).expsoft && lp.activspot && llColorMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && llSHMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
-    lp.maskena = locallab.spots.at(sp).expmask && lp.activspot && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && lllogMask == 0 && llSHMask == 0 && llcieMask == 0;// vibrance tool is deactivated if Color & Light mask or SHmask is visible
-    lp.logena = locallab.spots.at(sp).explog && lp.activspot && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && llSHMask == 0 && ll_Mask == 0 && llcieMask == 0;// vibrance tool is deactivated if Color & Light mask or SHmask is visible
-    lp.cieena = locallab.spots.at(sp).expcie && lp.activspot && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && lltmMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;// Shadow Highlight tool is deactivated if Color & Light mask or SHmask is visible
+    lp.colorena = locallab.spots.at(sp).expcolor && lp.activspot && llExpMaskinv == 0 && llSHMaskinv == 0 && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && lltmMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0; // Color & Light tool is deactivated if Exposure mask is visible or SHMask
+    lp.blurena = locallab.spots.at(sp).expblur && lp.activspot && llColorMaskinv == 0 && llExpMaskinv == 0 && llSHMaskinv == 0 && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && llColorMask == 0 && lltmMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
+    lp.tonemapena = locallab.spots.at(sp).exptonemap && lp.activspot && llColorMaskinv == 0 && llExpMaskinv == 0 && llSHMaskinv == 0 && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && llColorMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
+    lp.retiena = locallab.spots.at(sp).expreti && lp.activspot && llColorMaskinv == 0 && llExpMaskinv == 0 && llSHMaskinv == 0 && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llColorMask == 0 && lltmMask == 0 && llvibMask == 0 && llSHMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
+    lp.lcena = locallab.spots.at(sp).expcontrast && lp.activspot && llColorMaskinv == 0 && llExpMaskinv == 0 && llSHMaskinv == 0 && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llcbMask == 0 && llsharMask == 0 && llColorMask == 0 && lltmMask == 0 && llvibMask == 0 && llSHMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
+    lp.cbdlena = locallab.spots.at(sp).expcbdl && lp.activspot && llColorMaskinv == 0 && llExpMaskinv == 0 && llSHMaskinv == 0 && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llretiMask == 0 && lllcMask == 0 && llsharMask == 0 && lllcMask == 0 && llColorMask == 0 && lltmMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
+    lp.exposena = locallab.spots.at(sp).expexpose  && lp.activspot  && llColorMaskinv == 0 && llSHMaskinv == 0 && llColorMask == 0 && llsoftMask == 0 && llSHMask == 0 && lllcMask == 0 && llsharMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0; // Exposure tool is deactivated if Color & Light mask SHmask is visible
+    lp.hsena = locallab.spots.at(sp).expshadhigh && lp.activspot && llColorMaskinv == 0 && llExpMaskinv == 0 && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && lltmMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Shadow Highlight tool is deactivated if Color & Light mask or SHmask is visible
+    lp.vibena = locallab.spots.at(sp).expvibrance && lp.activspot && llColorMaskinv == 0 && llExpMaskinv == 0 && llSHMaskinv == 0 && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && llSHMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// vibrance tool is deactivated if Color & Light mask or SHmask is visible
+    lp.sharpena = locallab.spots.at(sp).expsharp && lp.activspot && llColorMaskinv == 0 && llExpMaskinv == 0 && llSHMaskinv == 0 && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && llSHMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
+    lp.sfena = locallab.spots.at(sp).expsoft && lp.activspot && llColorMaskinv == 0 && llExpMaskinv == 0 && llSHMaskinv == 0 && llColorMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && llSHMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
+    lp.maskena = locallab.spots.at(sp).expmask && lp.activspot && llColorMaskinv == 0 && llExpMaskinv == 0 && llSHMaskinv == 0 && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && lllogMask == 0 && llSHMask == 0 && llcieMask == 0;// vibrance tool is deactivated if Color & Light mask or SHmask is visible
+    lp.logena = locallab.spots.at(sp).explog && lp.activspot && llColorMaskinv == 0 && llExpMaskinv == 0 && llSHMaskinv == 0 && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && llSHMask == 0 && ll_Mask == 0 && llcieMask == 0;// vibrance tool is deactivated if Color & Light mask or SHmask is visible
+    lp.cieena = locallab.spots.at(sp).expcie && lp.activspot && llColorMaskinv == 0 && llExpMaskinv == 0 && llSHMaskinv == 0 && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && lltmMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;// Shadow Highlight tool is deactivated if Color & Light mask or SHmask is visible
+
 
     lp.islocal = (lp.expvib || lp.colorena || lp.blurena || lp.tonemapena || lp.retiena || lp.lcena || lp.cbdlena || lp.exposena || lp.hsena || lp.vibena || lp.sharpena || lp.sfena || lp.maskena || lp.logena || lp.cieena);
 
@@ -2976,7 +2986,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             avgm + (1. - avgm) * (0.6 - contreal / 250.0), avgm + (1. - avgm) * (0.6 + contreal / 250.0),
             1, 1
         });
-        //all calculs in double to best results...but slow
+        //all calculations in double for best results...but slow
         double lightreal = 0.2 *  params->locallab.spots.at(sp).lightjzcie;
         double chromz =  params->locallab.spots.at(sp).chromjzcie;
         double saturz =  params->locallab.spots.at(sp).saturjzcie;
@@ -3100,7 +3110,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 }
             }
         }
-        //others "Lab" threatment...to adapt
+        //others "Lab" treatment...to adapt
         
         if(wavcurvejz  || mjjz != 0.f || lp.mCjz != 0.f) {//local contrast wavelet and clarity
 #ifdef _OPENMP
@@ -3464,7 +3474,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 if(mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) {//call=2 vibrance warm-cool - call = 10 take into account "mean luminance Yb for Jz 
 //begin ciecam
  if (settings->verbose && (mocam == 0 || mocam == 1  || call == 1)) {//display only if choice cam16
-     //informations on Cam16 scene conditions - allows user to see choices's incidences
+     //information on Cam16 scene conditions - allows user to see choices's incidences
     float maxicam = -1000.f;
     float maxicamq = -1000.f;
     float maxisat = -1000.f;
@@ -4019,7 +4029,7 @@ if(mocam == 3) {//Zcam not use but keep in case off
             1, 1
         });
 
-        //all calculs in double to best results...but slow
+        //all calculations in double for best results...but slow
         double lqz = 0.4 *  params->locallab.spots.at(sp).lightqzcam;
         if(params->locallab.spots.at(sp).lightqzcam < 0) {
             lqz = 0.2 * params->locallab.spots.at(sp).lightqzcam; //0.4 less effect, no need 1.
@@ -5627,7 +5637,7 @@ float *ImProcFunctions::cos_table(size_t size)
     const double pi_size = rtengine::RT_PI / size;
 
     for (size_t i = 0; i < size; i++) {
-        table[i] = std::cos(pi_size * i);
+        table[i] = 1.0 - std::cos(pi_size * i);
     }
 
     return table;
@@ -5673,7 +5683,7 @@ void ImProcFunctions::rex_poisson_dct(float * data, size_t nx, size_t ny, double
 #endif
     for (size_t i = 0; i < ny; ++i) {
         for (size_t j = 0; j < nx; ++j) {
-            data[i * nx + j] *= m2 / (2.f - cosx[j] - cosy[i]);
+            data[i * nx + j] *= m2 / (cosx[j] + cosy[i]);
         }
     }
     // handle the first value, data[0, 0] = 0
@@ -7868,7 +7878,8 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
 void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transformed, int cx, int cy, int oW, int oH, int sk, double & huerefblur, double & chromarefblur, double & lumarefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref, float & avg, const LocwavCurve & locwavCurveden, bool locwavdenutili)
 {
     if (params->locallab.enabled) {
-        //always calculate hueref, chromaref, lumaref  before others operations use in normal mode for all modules exceprt denoise
+        // always calculate hueref, chromaref, lumaref before others operations
+        // use in normal mode for all modules except denoise
         struct local_params lp;
         calcLocalParams(sp, oW, oH, params->locallab, lp, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, locwavCurveden, locwavdenutili);
         int begy = lp.yc - lp.lyT;
@@ -8096,10 +8107,20 @@ const int fftw_size[] = {18144, 18000, 17920, 17836, 17820, 17640, 17600, 17550,
 int N_fftwsize = sizeof(fftw_size) / sizeof(fftw_size[0]);
 
 
-void optfft(int N_fftwsize, int &bfh, int &bfw, int &bfhr, int &bfwr, struct local_params& lp, int H, int W, int &xstart, int &ystart, int &xend, int &yend, int cx, int cy)
+void optfft(int N_fftwsize, int &bfh, int &bfw, int &bfhr, int &bfwr, struct local_params& lp, int H, int W, int &xstart, int &ystart, int &xend, int &yend, int cx, int cy, int fulima)
 {
     int ftsizeH = 1;
     int ftsizeW = 1;
+    int deltaw = 150;
+    int deltah = 150;
+    
+    if(W < 4000) {
+        deltaw = 80;
+    }
+    if(H < 4000) {
+        deltah = 80;
+    }
+
 
     for (int ft = 0; ft < N_fftwsize; ft++) { //find best values
         if (fftw_size[ft] <= bfh) {
@@ -8114,6 +8135,31 @@ void optfft(int N_fftwsize, int &bfh, int &bfw, int &bfhr, int &bfwr, struct loc
             break;
         }
     }
+    
+    if(fulima == 2) {// if full image, the ftsizeH and ftsizeW is a bit larger (about 10 to 200 pixels) than the image dimensions so that it is fully processed (consumes a bit more resources)
+        for (int ftfu = 0; ftfu < N_fftwsize; ftfu++) { //find best values
+            if (fftw_size[ftfu] <= (H + deltah)) {
+                ftsizeH = fftw_size[ftfu];
+                break;
+            }
+        }
+        for (int ftfu = 0; ftfu < N_fftwsize; ftfu++) { //find best values
+            if (fftw_size[ftfu] <= (W + deltaw)) {
+                ftsizeW = fftw_size[ftfu];
+                break;
+            }
+        }
+    }
+
+    if (settings->verbose) {
+        if(fulima == 2) {
+            printf("Full image: ftsizeWF=%i ftsizeH=%i\n", ftsizeW, ftsizeH);
+
+        } else {
+            printf("ftsizeW=%i ftsizeH=%i\n", ftsizeW, ftsizeH);
+        }
+    }
+
 
     //optimize with size fftw
     bool reduW = false;
@@ -8152,7 +8198,6 @@ void optfft(int N_fftwsize, int &bfh, int &bfw, int &bfhr, int &bfwr, struct loc
         reduW = true;
         exec = false;
     }
-
     //new values optimized
     ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
     yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, H);
@@ -8331,7 +8376,7 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
     int bfhr = bfh;
     int bfwr = bfw;
     if (lp.blurcolmask >= 0.25f && lp.fftColorMask && call == 2) {
-        optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
+        optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy, lp.fullim);
     }
 
     bfh = bfhr;
@@ -10274,7 +10319,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
     }
     
     
-    //gamma and slope residual image - be carefull memory
+    //gamma and slope residual image - be careful memory
     bool tonecur = false;
     const Glib::ustring profile = params->icm.workingProfile;
     bool isworking = (profile == "sRGB" || profile == "Adobe RGB" || profile == "ProPhoto" || profile == "WideGamut" || profile == "BruceRGB" || profile == "Beta RGB" || profile == "BestRGB" || profile == "Rec2020" || profile == "ACESp0" || profile == "ACESp1");
@@ -10321,7 +10366,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
         cmsHTRANSFORM dummy = nullptr;
         int ill =0;
         workingtrc(tmpImage, tmpImage, W_Level, H_Level, -5, prof, 2.4, 12.92310, ill, 0, dummy, true, false, false);
-        workingtrc(tmpImage, tmpImage, W_Level, H_Level, 1, prof, lp.residgam, lp.residslop, ill, 0, dummy, false, true, true);//be carefull no gamut control
+        workingtrc(tmpImage, tmpImage, W_Level, H_Level, 1, prof, lp.residgam, lp.residslop, ill, 0, dummy, false, true, true);//be careful no gamut control
         rgb2lab(*tmpImage, *labresid, params->icm.workingProfile);
         delete tmpImage;
 
@@ -10704,7 +10749,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
             float gamma = lp.noisegam;
             rtengine::GammaValues g_a; //gamma parameters
             double pwr = 1.0 / (double) lp.noisegam;//default 3.0 - gamma Lab
-            double ts = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+            double ts = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab
             rtengine::Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
 
             if(gamma > 1.f) {
@@ -11419,7 +11464,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                 float gamma = lp.noisegam;
                 rtengine::GammaValues g_a; //gamma parameters
                 double pwr = 1.0 / (double) lp.noisegam;//default 3.0 - gamma Lab
-                double ts = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+                double ts = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab
                 rtengine::Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
                 if(gamma > 1.f) {
 #ifdef _OPENMP
@@ -12275,12 +12320,31 @@ void ImProcFunctions::clarimerge(const struct local_params& lp, float &mL, float
     }
 }
 
-void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImage * original, LabImage *transformed, int cy, int cx, int sk)
+void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImage *transformed, LabImage *reserved, int cy, int cx, int sk)
 {
-    if (params->locallab.spots.at(sp).avoid  && lp.islocal) {
+    int avoidgamut = 0;
+
+    if (params->locallab.spots.at(sp).avoidgamutMethod == "NONE") {
+        avoidgamut = 0;
+    } else if (params->locallab.spots.at(sp).avoidgamutMethod == "LAB") {
+        avoidgamut = 1;
+    } else if (params->locallab.spots.at(sp).avoidgamutMethod == "XYZ") {
+        avoidgamut = 2;
+    } else if (params->locallab.spots.at(sp).avoidgamutMethod == "XYZREL") {
+        avoidgamut = 3;
+    } else if (params->locallab.spots.at(sp).avoidgamutMethod == "MUNS") {
+        avoidgamut = 4;
+    }
+
+    if (avoidgamut == 0) {
+        return;
+    }
+
+    if (avoidgamut > 0  && lp.islocal) {
         const float ach = lp.trans / 100.f;
         bool execmunsell = true;
-        if(params->locallab.spots.at(sp).expcie && (params->locallab.spots.at(sp).modecam == "all" || params->locallab.spots.at(sp).modecam == "jz" || params->locallab.spots.at(sp).modecam == "cam16")) {
+
+        if (params->locallab.spots.at(sp).expcie && (params->locallab.spots.at(sp).modecam == "all" || params->locallab.spots.at(sp).modecam == "jz" || params->locallab.spots.at(sp).modecam == "cam16")) {
             execmunsell = false;
         }
 
@@ -12291,11 +12355,18 @@ void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImag
             {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
         };
 
+        TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
+        const double wp[3][3] = {//improve precision with double
+            {wprof[0][0], wprof[0][1], wprof[0][2]},
+            {wprof[1][0], wprof[1][1], wprof[1][2]},
+            {wprof[2][0], wprof[2][1], wprof[2][2]}
+        };
+
         const float softr = params->locallab.spots.at(sp).avoidrad;//max softr = 30
-        const bool muns = params->locallab.spots.at(sp).avoidmun;//Munsell control with 200 LUT
+        //   const bool muns = params->locallab.spots.at(sp).avoidmun;//Munsell control with 200 LUT
         //improve precision with mint and maxt
         const float tr = std::min(2.f, softr);
-        const float mint = 0.15f - 0.06f * tr;//between 0.15f and 0.03f 
+        const float mint = 0.15f - 0.06f * tr;//between 0.15f and 0.03f
         const float maxt = 0.98f + 0.008f * tr;//between 0.98f and 0.996f
 
         const bool highlight = params->toneCurve.hrenabled;
@@ -12316,6 +12387,7 @@ void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImag
 #ifdef _OPENMP
             #pragma omp for schedule(dynamic,16)
 #endif
+
             for (int y = 0; y < transformed->H; y++) {
                 const int loy = cy + y;
                 const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
@@ -12375,7 +12447,7 @@ void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImag
 
                     if (lp.shapmet == 0) {
                         calcTransition(lox, loy, ach, lp, zone, localFactor);
-                    } else /*if (lp.shapmet == 1)*/ {
+                    } else { /*if (lp.shapmet == 1)*/
                         calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                     }
 
@@ -12410,42 +12482,103 @@ void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImag
                         sincosval.y = aa / (Chprov1 * 327.68f);
                         sincosval.x = bb / (Chprov1 * 327.68f);
                     }
+
 #endif
+                    float lnew = transformed->L[y][x];
+                    float anew = transformed->a[y][x];
+                    float bnew = transformed->b[y][x];
+                    Lprov1 = lnew / 327.68f;
+                    //HH = xatan2f(bnew, anew);
 
-                    Color::pregamutlab(Lprov1, HH, chr);
-                    Chprov1 = rtengine::min(Chprov1, chr);
-                    if(!muns) {
-                       float R, G, B;
+                    if (avoidgamut == 1) { //Lab correction
+
+                        Color::pregamutlab(Lprov1, HH, chr);
+                        Chprov1 = rtengine::min(Chprov1, chr);
+
+                        float R, G, B;
                         Color::gamutLchonly(HH, sincosval, Lprov1, Chprov1, R, G, B, wip, highlight, mint, maxt);//replace for best results
-                    }
-                    transformed->L[y][x] = Lprov1 * 327.68f;
-                    transformed->a[y][x] = 327.68f * Chprov1 * sincosval.y;
-                    transformed->b[y][x] = 327.68f * Chprov1 * sincosval.x;
+                        lnew = Lprov1 * 327.68f;
+                        anew = 327.68f * Chprov1 * sincosval.y;
+                        bnew = 327.68f * Chprov1 * sincosval.x;
+                        //HH = xatan2f(bnew, anew);
+                        transformed->a[y][x] = anew;
+                        transformed->b[y][x] = bnew;
 
-                    if (needHH) {
-                        const float Lprov2 = original->L[y][x] / 327.68f;
+                    } else if (avoidgamut == 2  || avoidgamut == 3) { //XYZ correction
+                        float xg, yg, zg;
+                        const float aag = transformed->a[y][x];//anew
+                        const float bbg = transformed->b[y][x];//bnew
+                        float Lag = transformed->L[y][x];
+
+                        Color::Lab2XYZ(Lag, aag, bbg, xg, yg, zg);
+                        float x0 = xg;
+                        float y0 = yg;
+                        float z0 = zg;
+
+                        Color::gamutmap(xg, yg, zg, wp);
+
+                        if (avoidgamut == 3) {//0.5f arbitrary coeff
+                            xg = xg + 0.5f * (x0 - xg);
+                            yg = yg + 0.5f * (y0 - yg);
+                            zg = zg + 0.5f * (z0 - zg);
+                        }
+
+                        //Color::gamutmap(xg, yg, zg, wp);//Put XYZ in gamut wp
+                        float aag2, bbg2;
+                        Color::XYZ2Lab(xg, yg, zg, Lag, aag2, bbg2);
+                        Lprov1 = Lag / 327.68f;
+                        HH = xatan2f(bbg2, aag2);//rebuild HH in case of...absolute colorimetry
+                        Chprov1 = std::sqrt(SQR(aag2) + SQR(bbg2)) / 327.68f;
+
+                        if (Chprov1 == 0.0f) {
+                            sincosval.y = 1.f;
+                            sincosval.x = 0.0f;
+                        } else {
+                            sincosval.y = aag2 / (Chprov1 * 327.68f);
+                            sincosval.x = bbg2 / (Chprov1 * 327.68f);
+                        }
+
+                        lnew = Lprov1 * 327.68f;
+                        anew = 327.68f * Chprov1 * sincosval.y;
+                        bnew = 327.68f * Chprov1 * sincosval.x;
+                        transformed->a[y][x] = anew;
+                        transformed->b[y][x] = bnew;
+
+                    }
+
+                    if (needHH && avoidgamut <= 4) {//Munsell
+                        Lprov1 = lnew / 327.68f;
+                        float Chprov = sqrt(SQR(anew) + SQR(bnew)) / 327.68f;
+
+                        const float Lprov2 = reserved->L[y][x] / 327.68f;
                         float correctionHue = 0.f; // Munsell's correction
                         float correctlum = 0.f;
-                        const float memChprov = std::sqrt(SQR(original->a[y][x]) + SQR(original->b[y][x])) / 327.68f;
-                        float Chprov = std::sqrt(SQR(transformed->a[y][x]) + SQR(transformed->b[y][x])) / 327.68f;
-                        if(execmunsell) {
+                        const float memChprov = std::sqrt(SQR(reserved->a[y][x]) + SQR(reserved->b[y][x])) / 327.68f;
+
+                        if (execmunsell) {
                             Color::AllMunsellLch(true, Lprov1, Lprov2, HH, Chprov, memChprov, correctionHue, correctlum);
                         }
 
-                        if (std::fabs(correctionHue) < 0.015f) {
-                            HH += correctlum;    // correct only if correct Munsell chroma very small.
+                        if (correctionHue != 0.f || correctlum != 0.f) {
+
+                            if (std::fabs(correctionHue) < 0.015f) {
+                                HH += correctlum;    // correct only if correct Munsell chroma very small.
+                            }
+
+                            sincosval = xsincosf(HH + correctionHue);
                         }
 
-                        sincosval = xsincosf(HH + correctionHue);
-                        transformed->a[y][x] = 327.68f * Chprov * sincosval.y; // apply Munsell
-                        transformed->b[y][x] = 327.68f * Chprov * sincosval.x;
+                        anew = 327.68f * Chprov * sincosval.y; // apply Munsell
+                        bnew = 327.68f * Chprov * sincosval.x;
+                        transformed->a[y][x] = anew; // apply Munsell
+                        transformed->b[y][x] = bnew;
                     }
                 }
             }
         }
 
-        //Guidedfilter to reduce artifacts in transitions
-        if (softr != 0.f) {//soft for L a b because we change color...
+        //Guidedfilter to reduce artifacts in transitions : case Lab
+        if (softr != 0.f && avoidgamut == 1) {//soft for L a b because we change color...
             const float tmpblur = softr < 0.f ? -1.f / softr : 1.f + softr;
             const int r1 = rtengine::max<int>(6 / sk * tmpblur + 0.5f, 1);
             const int r2 = rtengine::max<int>(10 / sk * tmpblur + 0.5f, 1);
@@ -12469,13 +12602,15 @@ void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImag
             for (int y = 0; y < bh ; y++) {
                 for (int x = 0; x < bw; x++) {
                     ble[y][x] = transformed->L[y][x] / 32768.f;
-                    guid[y][x] = original->L[y][x] / 32768.f;
+                    guid[y][x] = reserved->L[y][x] / 32768.f;
                 }
             }
+
             rtengine::guidedFilter(guid, ble, ble, r2, 0.2f * epsil, multiThread);
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
             for (int y = 0; y < bh; y++) {
                 for (int x = 0; x < bw; x++) {
                     transformed->L[y][x] = 32768.f * ble[y][x];
@@ -12492,11 +12627,13 @@ void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImag
                     blechro[y][x] = std::sqrt(SQR(transformed->b[y][x]) + SQR(transformed->a[y][x])) / 32768.f;
                 }
             }
+
             rtengine::guidedFilter(guid, blechro, blechro, r1, epsil, multiThread);
 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
             for (int y = 0; y < bh; y++) {
                 for (int x = 0; x < bw; x++) {
                     const float Chprov1 = std::sqrt(SQR(transformed->a[y][x]) + SQR(transformed->b[y][x]));
@@ -13021,7 +13158,7 @@ void ImProcFunctions::Lab_Local(
     struct local_params lp;
     calcLocalParams(sp, oW, oH, params->locallab, lp, prevDeltaE, llColorMask, llColorMaskinv, llExpMask, llExpMaskinv, llSHMask, llSHMaskinv, llvibMask, lllcMask, llsharMask, llcbMask, llretiMask, llsoftMask, lltmMask, llblMask, lllogMask, ll_Mask, llcieMask, locwavCurveden, locwavdenutili);
 
-    avoidcolshi(lp, sp, original, transformed, cy, cx, sk);
+    //avoidcolshi(lp, sp, transformed, reserved,  cy, cx, sk);
 
     const float radius = lp.rad / (sk * 1.4); //0 to 70 ==> see skip
     int levred;
@@ -13107,7 +13244,7 @@ void ImProcFunctions::Lab_Local(
     }
 
 //encoding lab at the beginning
-    if (lp.logena && (lp.showmasklogmet == 2 || lp.enaLMask || lp.showmasklogmet == 3 || lp.showmasklogmet == 4)) {
+    if (lp.logena && (call <=3 || lp.prevdE || lp.showmasklogmet == 2 || lp.enaLMask || lp.showmasklogmet == 3 || lp.showmasklogmet == 4)) {
         
         const int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
         const int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
@@ -13439,7 +13576,7 @@ void ImProcFunctions::Lab_Local(
 
         if (bfw >= mSP && bfh >= mSP) {
             if (lp.blurmet == 0 && (fft || lp.rad > 30.0)) {
-                optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
+                optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy, lp.fullim);
             }
 
             const std::unique_ptr<LabImage> bufgbi(new LabImage(TW, TH));
@@ -14756,7 +14893,7 @@ void ImProcFunctions::Lab_Local(
 
         if (bfw >= mSP && bfh > mSP) {
             if (lp.ftwreti) {
-                optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
+                optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy, lp.fullim);
             }
 
             array2D<float> buflight(bfw, bfh);
@@ -15300,7 +15437,7 @@ void ImProcFunctions::Lab_Local(
 
 //vibrance
     float vibg = params->locallab.spots.at(sp).vibgam;
-    if (lp.expvib && (lp.past != 0.f  || lp.satur != 0.f || lp.strvib != 0.f || vibg != 1.f  || lp.war != 0 || lp.strvibab != 0.f  || lp.strvibh != 0.f || lp.showmaskvibmet == 2 || lp.enavibMask || lp.showmaskvibmet == 3 || lp.showmaskvibmet == 4 || lp.prevdE) && lp.vibena) { //interior ellipse renforced lightness and chroma  //locallutili
+    if (lp.expvib && (lp.past != 0.f  || lp.satur != 0.f || lp.strvib != 0.f || vibg != 1.f  || lp.war != 0 || lp.strvibab != 0.f  || lp.strvibh != 0.f || lp.showmaskvibmet == 2 || lp.enavibMask || lp.showmaskvibmet == 3 || lp.showmaskvibmet == 4 || lp.prevdE) && lp.vibena) { //interior ellipse reinforced lightness and chroma  //locallutili
         if (call <= 3) { //simpleprocess, dcrop, improccoordinator
             const int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
             const int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
@@ -15511,7 +15648,7 @@ void ImProcFunctions::Lab_Local(
                     float gamma1 = params->locallab.spots.at(sp).vibgam;
                     rtengine::GammaValues g_a; //gamma parameters
                     double pwr1 = 1.0 / (double) gamma1;//default 3.0 - gamma Lab
-                    double ts1 = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+                    double ts1 = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab
                     rtengine::Color::calcGamma(pwr1, ts1, g_a); // call to calcGamma with selected gamma and slope
                     if(gamma1 != 1.f) {
 #ifdef _OPENMP
@@ -15536,7 +15673,7 @@ void ImProcFunctions::Lab_Local(
                     // float gamma =  params->locallab.spots.at(sp).vibgam;
                     //  rtengine::GammaValues g_a; //gamma parameters
                     // double pwr = 1.0 / (double) gamma;//default 3.0 - gamma Lab
-                    // double ts = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+                    // double ts = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab
                    // rtengine::Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
 
                     if(gamma1 != 1.f) {
@@ -15915,7 +16052,7 @@ void ImProcFunctions::Lab_Local(
         if (bfw >= mSP && bfh >= mSP) {
 
             if (lp.softmet == 1) {
-                optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
+                optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy, lp.fullim);
             }
 
             const std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
@@ -16041,7 +16178,7 @@ void ImProcFunctions::Lab_Local(
 
         if (bfw >= mSPwav && bfh >= mSPwav) {//avoid too small spot for wavelet
             if (lp.ftwlc) {
-                optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
+                optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy, lp.fullim);
             }
 
             std::unique_ptr<LabImage> bufmaskblurlc;
@@ -16257,7 +16394,7 @@ void ImProcFunctions::Lab_Local(
                     float gamma = lp.gamlc;
                     rtengine::GammaValues g_a; //gamma parameters
                     double pwr = 1.0 / (double) lp.gamlc;//default 3.0 - gamma Lab
-                    double ts = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+                    double ts = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab
                     rtengine::Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
 
                     if(gamma != 1.f) {
@@ -16523,22 +16660,35 @@ void ImProcFunctions::Lab_Local(
     if (!lp.invshar && lp.shrad > 0.42 && call < 3 && lp.sharpena && sk == 1) { //interior ellipse for sharpening, call = 1 and 2 only with Dcrop and simpleprocess
         int bfh = call == 2 ? int (lp.ly + lp.lyT) + del : original->H; //bfw bfh real size of square zone
         int bfw = call == 2 ? int (lp.lx + lp.lxL) + del : original->W;
-        JaggedArray<float> loctemp(bfw, bfh);
 
         if (call == 2) { //call from simpleprocess
-          //  printf("bfw=%i bfh=%i\n", bfw, bfh);
 
             if (bfw < mSPsharp || bfh < mSPsharp) {
                 printf("too small RT-spot - minimum size 39 * 39\n");
                 return;
             }
 
-            JaggedArray<float> bufsh(bfw, bfh, true);
-            JaggedArray<float> hbuffer(bfw, bfh);
             int begy = lp.yc - lp.lyT;
             int begx = lp.xc - lp.lxL;
             int yEn = lp.yc + lp.ly;
             int xEn = lp.xc + lp.lx;
+
+			if(lp.fullim == 2) {//limit sharpening to image dimension...no more...to avoid a long treatment
+				begy = 0;
+				begx = 0;
+				yEn = original->H;
+				xEn = original->W;
+				lp.lxL = lp.xc;
+				lp.lyT = lp.yc;
+				lp.ly = yEn - lp.yc;
+				lp.lx = xEn - lp.xc;		
+				bfh= yEn;
+				bfw = xEn;
+			}
+            //printf("begy=%i begx=%i yen=%i xen=%i\n", begy, begx, yEn, xEn);
+			JaggedArray<float> bufsh(bfw, bfh, true);
+			JaggedArray<float> hbuffer(bfw, bfh);
+			JaggedArray<float> loctemp2(bfw, bfh);
 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -16556,7 +16706,7 @@ void ImProcFunctions::Lab_Local(
                     float gamma1 = params->locallab.spots.at(sp).shargam;
                     rtengine::GammaValues g_a; //gamma parameters
                     double pwr1 = 1.0 / (double) gamma1;//default 3.0 - gamma Lab
-                    double ts1 = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+                    double ts1 = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab
                     rtengine::Color::calcGamma(pwr1, ts1, g_a); // call to calcGamma with selected gamma and slope
                     if(gamma1 != 1.f) {
 #ifdef _OPENMP
@@ -16576,13 +16726,12 @@ void ImProcFunctions::Lab_Local(
                     }
 
 
-
-                    //sharpen only square area instead of all image
-                    ImProcFunctions::deconvsharpeningloc(bufsh, hbuffer, bfw, bfh, loctemp, params->locallab.spots.at(sp).shardamping, (double)params->locallab.spots.at(sp).sharradius, params->locallab.spots.at(sp).shariter, params->locallab.spots.at(sp).sharamount, params->locallab.spots.at(sp).sharcontrast, (double)params->locallab.spots.at(sp).sharblur, 1);
+                    //sharpen only square area instead of all image, but limited to image dimensions (full image)
+                    ImProcFunctions::deconvsharpeningloc(bufsh, hbuffer, bfw, bfh, loctemp2, params->locallab.spots.at(sp).shardamping, (double)params->locallab.spots.at(sp).sharradius, params->locallab.spots.at(sp).shariter, params->locallab.spots.at(sp).sharamount, params->locallab.spots.at(sp).sharcontrast, (double)params->locallab.spots.at(sp).sharblur, 1);
                     /*
                     float gamma =  params->locallab.spots.at(sp).shargam;
                     double pwr = 1.0 / (double) gamma;//default 3.0 - gamma Lab
-                    double ts = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+                    double ts = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab
                     rtengine::Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
                     */
                     if(gamma1 != 1.f) {
@@ -16594,24 +16743,24 @@ void ImProcFunctions::Lab_Local(
 #ifdef __SSE2__
                             for (; x < bfw - 3; x += 4) {
                                 STVFU(bufsh[y][x], F2V(32768.f) * gammalog(LVFU(bufsh[y][x]) / F2V(32768.f), F2V(gamma1), F2V(ts1), F2V(g_a[3]), F2V(g_a[4])));
-                                STVFU(loctemp[y][x], F2V(32768.f) * gammalog(LVFU(loctemp[y][x]) / F2V(32768.f), F2V(gamma1), F2V(ts1), F2V(g_a[3]), F2V(g_a[4])));
+                                STVFU(loctemp2[y][x], F2V(32768.f) * gammalog(LVFU(loctemp2[y][x]) / F2V(32768.f), F2V(gamma1), F2V(ts1), F2V(g_a[3]), F2V(g_a[4])));
                             }
 #endif
                             for (; x < bfw; ++x) {
                                 bufsh[y][x] = 32768.f * gammalog(bufsh[y][x] / 32768.f, gamma1, ts1, g_a[3], g_a[4]);
-                                loctemp[y][x] = 32768.f * gammalog(loctemp[y][x] / 32768.f, gamma1, ts1, g_a[3], g_a[4]);
+                                loctemp2[y][x] = 32768.f * gammalog(loctemp2[y][x] / 32768.f, gamma1, ts1, g_a[3], g_a[4]);
                             }
                         }
                     }
-
-
-
-
+			//sharpen simpleprocess
+			Sharp_Local(call, loctemp2, 0, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
         } else { //call from dcrop.cc
+					JaggedArray<float> loctemp(bfw, bfh);
+		
                     float gamma1 = params->locallab.spots.at(sp).shargam;
                     rtengine::GammaValues g_a; //gamma parameters
                     double pwr1 = 1.0 / (double) gamma1;//default 3.0 - gamma Lab
-                    double ts1 = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+                    double ts1 = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab
                     rtengine::Color::calcGamma(pwr1, ts1, g_a); // call to calcGamma with selected gamma and slope
                     if(gamma1 != 1.f) {
 #ifdef _OPENMP
@@ -16635,7 +16784,7 @@ void ImProcFunctions::Lab_Local(
                     /*
                     float gamma =  params->locallab.spots.at(sp).shargam;
                     double pwr = 1.0 / (double) gamma;//default 3.0 - gamma Lab
-                    double ts = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+                    double ts = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab
                     rtengine::Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
                     */
                     if(gamma1 != 1.f) {
@@ -16656,13 +16805,11 @@ void ImProcFunctions::Lab_Local(
                             }
                         }
                     }
-                        
-
+			//sharpen dcrop
+			Sharp_Local(call, loctemp, 0, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
         }
 
-        //sharpen ellipse and transition
-        Sharp_Local(call, loctemp, 0, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
-
+		
         if (lp.recur) {
             original->CopyFrom(transformed, multiThread);
             float avge;
@@ -16677,7 +16824,7 @@ void ImProcFunctions::Lab_Local(
         float gamma1 = params->locallab.spots.at(sp).shargam;
         rtengine::GammaValues g_a; //gamma parameters
         double pwr1 = 1.0 / (double) gamma1;//default 3.0 - gamma Lab
-        double ts1 = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+        double ts1 = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab
         rtengine::Color::calcGamma(pwr1, ts1, g_a); // call to calcGamma with selected gamma and slope
         if(gamma1 != 1.f) {
 #ifdef _OPENMP
@@ -16697,12 +16844,11 @@ void ImProcFunctions::Lab_Local(
         }
 
 
-
         ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, GW, GH, loctemp, params->locallab.spots.at(sp).shardamping, (double)params->locallab.spots.at(sp).sharradius, params->locallab.spots.at(sp).shariter, params->locallab.spots.at(sp).sharamount, params->locallab.spots.at(sp).sharcontrast, (double)params->locallab.spots.at(sp).sharblur, sk);
         /*
         float gamma =  params->locallab.spots.at(sp).shargam;
         double pwr = 1.0 / (double) gamma;//default 3.0 - gamma Lab
-        double ts = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+        double ts = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab
         rtengine::Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
         */
         if(gamma1 != 1.f) {
@@ -16757,7 +16903,7 @@ void ImProcFunctions::Lab_Local(
         if (bfw >= mSP && bfh >= mSP) {
 
             if (lp.expmet == 1  || lp.expmet == 0) {
-                optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
+                optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy, lp.fullim);
             }
 
             const std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
@@ -16788,7 +16934,7 @@ void ImProcFunctions::Lab_Local(
                 float gamma1 = lp.gamex;
                 rtengine::GammaValues g_a; //gamma parameters
                 double pwr1 = 1.0 / (double) lp.gamex;//default 3.0 - gamma Lab
-                double ts1 = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+                double ts1 = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab
                 rtengine::Color::calcGamma(pwr1, ts1, g_a); // call to calcGamma with selected gamma and slope
 
                 if(gamma1 != 1.f) {
@@ -17022,7 +17168,7 @@ void ImProcFunctions::Lab_Local(
                                         evnoise *= 0.4f;
                                     }
 
-                                    //soft denoise, user must use Local Denoise to best result
+                                    //soft denoise, user must use Local Denoise for best result
                                     Median med;
                                     if (evnoise < -18000.f) {
                                         med = Median::TYPE_5X5_STRONG;
@@ -17108,7 +17254,7 @@ void ImProcFunctions::Lab_Local(
                     float gamma = lp.gamex;
                     rtengine::GammaValues g_a; //gamma parameters
                     double pwr = 1.0 / (double) lp.gamex;//default 3.0 - gamma Lab
-                    double ts = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+                    double ts = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab
                     rtengine::Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
                     */
                     if(gamma1 != 1.f) {
@@ -17275,7 +17421,7 @@ void ImProcFunctions::Lab_Local(
     const float a_scalemerg = (lp.highAmerg - lp.lowAmerg) / factor / scaling;
     const float b_scalemerg = (lp.highBmerg - lp.lowBmerg) / factor / scaling;
 
-    if (!lp.inv && (lp.chro != 0 || lp.ligh != 0.f || lp.cont != 0 || ctoning || lp.mergemet > 0 ||  lp.strcol != 0.f ||  lp.strcolab != 0.f || lp.qualcurvemet != 0 || lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 3  || lp.showmaskcolmet == 4 || lp.showmaskcolmet == 5 || lp.prevdE) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
+    if (!lp.inv && (lp.chro != 0 || lp.ligh != 0.f || lp.cont != 0 || ctoning || lp.mergemet > 0 ||  lp.strcol != 0.f ||  lp.strcolab != 0.f || lp.qualcurvemet != 0 || lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 3  || lp.showmaskcolmet == 4 || lp.showmaskcolmet == 5 || lp.prevdE) && lp.colorena) { // || lllocalcurve)) { //interior ellipse reinforced lightness and chroma  //locallutili
         int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
         int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
         int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
@@ -17287,7 +17433,7 @@ void ImProcFunctions::Lab_Local(
         if (bfw >= mSP && bfh >= mSP) {
 
             if (lp.blurcolmask >= 0.25f && lp.fftColorMask && call == 2) {
-                optfft(N_fftwsize, bfh, bfw, bfh, bfw, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
+                optfft(N_fftwsize, bfh, bfw, bfh, bfw, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy, lp.fullim);
             }
 
             std::unique_ptr<LabImage> bufcolorig;
@@ -17347,7 +17493,7 @@ void ImProcFunctions::Lab_Local(
                     float gamma1 = lp.gamc;
                     rtengine::GammaValues g_a; //gamma parameters
                     double pwr1 = 1.0 / (double) lp.gamc;//default 3.0 - gamma Lab
-                    double ts1 = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+                    double ts1 = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab
                     rtengine::Color::calcGamma(pwr1, ts1, g_a); // call to calcGamma with selected gamma and slope
 
                     if(gamma1 != 1.f) {
@@ -18375,7 +18521,7 @@ void ImProcFunctions::Lab_Local(
                         float gamma = lp.gamc;
                         rtengine::GammaValues g_a; //gamma parameters
                         double pwr = 1.0 / (double) lp.gamc;//default 3.0 - gamma Lab
-                        double ts = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+                        double ts = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab
                         rtengine::Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
 */
                         if(gamma1 != 1.f) {
@@ -18557,7 +18703,7 @@ void ImProcFunctions::Lab_Local(
         if (bfw >= mSP && bfh >= mSP) {
 
             if (lp.blurma >= 0.25f && lp.fftma && call == 2) {
-                optfft(N_fftwsize, bfh, bfw, bfh, bfw, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
+                optfft(N_fftwsize, bfh, bfw, bfh, bfw, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy, lp.fullim);
             }
             array2D<float> blechro(bfw, bfh);
             array2D<float> ble(bfw, bfh);
@@ -18909,7 +19055,7 @@ void ImProcFunctions::Lab_Local(
 
 
 // Gamut and Munsell control - very important do not deactivated to avoid crash
-    avoidcolshi(lp, sp, original, transformed, cy, cx, sk);
+    avoidcolshi(lp, sp, transformed, reserved, cy, cx, sk);
 }
 
 }

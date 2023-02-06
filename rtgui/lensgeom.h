@@ -35,18 +35,13 @@ protected:
     Gtk::CheckButton*   fill;
     bool                lastFill;
     sigc::connection    fillConn;
-    ToolParamBlock*     packBox;
 
     rtengine::ProcEvent EvTransMethod;
 public:
+    static const Glib::ustring TOOL_NAME;
 
     LensGeometry ();
     ~LensGeometry () override;
-
-    Gtk::Box* getPackBox ()
-    {
-        return packBox;
-    }
 
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;

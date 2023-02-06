@@ -45,6 +45,8 @@ class Wavelet final :
     public FoldableToolPanel
 {
 public:
+    static const Glib::ustring TOOL_NAME;
+
     Wavelet();
     ~Wavelet() override;
     bool wavComputed_();
@@ -139,7 +141,7 @@ private:
     void MedgreinfChanged();
     void TMmethodChanged();
     void complexmethodChanged();
-    void denmethodChanged();
+    //void denmethodChanged();
     void mixmethodChanged();
     void quamethodChanged();
     void slimethodChanged();
@@ -190,8 +192,8 @@ private:
     void enableToggled(MyExpander* expander);
 
     CurveEditorGroup* const curveEditorG;
-    CurveEditorGroup* const curveEditorC;
-    FlatCurveEditor* opacityShapeSH;
+    //CurveEditorGroup* const curveEditorC;
+    //FlatCurveEditor* opacityShapeSH;
 
     CurveEditorGroup* const CCWcurveEditorG;
     CurveEditorGroup* const curveEditorbl;
@@ -349,8 +351,8 @@ private:
     sigc::connection  MedgreinfConn;
     MyComboBoxText* const ushamethod;
     sigc::connection  ushamethodconn;
-    MyComboBoxText* const denmethod;
-    sigc::connection  denmethodconn;
+    //MyComboBoxText* const denmethod;
+    //sigc::connection  denmethodconn;
     MyComboBoxText* const mixmethod;
     sigc::connection  mixmethodconn;
     MyComboBoxText* const quamethod;
@@ -392,7 +394,7 @@ private:
     Gtk::Box* const ctboxch;
     Gtk::Box* const quaHBox;
     Gtk::Box* const sliHBox;
-    Gtk::Box* const denHBox;
+    //Gtk::Box* const denHBox;
     Gtk::Box* const mixHBox;
     Gtk::Box* const ctboxBA;// = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 

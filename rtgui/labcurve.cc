@@ -19,6 +19,7 @@
 #include <iomanip>
 
 #include "labcurve.h"
+#include "eventmapper.h"
 
 #include "curveeditor.h"
 #include "curveeditorgroup.h"
@@ -32,61 +33,82 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-LCurve::LCurve () : FoldableToolPanel(this, "labcurves", M("TP_LABCURVE_LABEL"), false, true)
+const Glib::ustring LCurve::TOOL_NAME = "labcurves";
+
+LCurve::LCurve() : FoldableToolPanel(this, TOOL_NAME, M("TP_LABCURVE_LABEL"), false, true)
 {
-    brightness = Gtk::manage (new Adjuster (M("TP_LABCURVE_BRIGHTNESS"), -100., 100., 1., 0.));
-    contrast   = Gtk::manage (new Adjuster (M("TP_LABCURVE_CONTRAST"), -100., 100., 1., 0.));
-    chromaticity   = Gtk::manage (new Adjuster (M("TP_LABCURVE_CHROMATICITY"), -100., 100., 1., 0.));
+    auto m = ProcEventMapper::getInstance();
+    Evgamutmunsell = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_GAMUTMUNSEL");
+    CurveListener::setMulti(true);
+    brightness = Gtk::manage(new Adjuster(M("TP_LABCURVE_BRIGHTNESS"), -100., 100., 1., 0.));
+    contrast   = Gtk::manage(new Adjuster(M("TP_LABCURVE_CONTRAST"), -100., 100., 1., 0.));
+    chromaticity   = Gtk::manage(new Adjuster(M("TP_LABCURVE_CHROMATICITY"), -100., 100., 1., 0.));
     chromaticity->set_tooltip_markup(M("TP_LABCURVE_CHROMA_TOOLTIP"));
 
-    pack_start (*brightness);
-    brightness->show ();
+    pack_start(*brightness);
+    brightness->show();
 
-    pack_start (*contrast);
-    contrast->show ();
+    pack_start(*contrast);
+    contrast->show();
 
-    pack_start (*chromaticity);
-    chromaticity->show ();
+    pack_start(*chromaticity);
+    chromaticity->show();
 
-    brightness->setAdjusterListener (this);
-    contrast->setAdjusterListener (this);
-    chromaticity->setAdjusterListener (this);
+    brightness->setAdjusterListener(this);
+    contrast->setAdjusterListener(this);
+    chromaticity->setAdjusterListener(this);
 
     brightness->setLogScale(2, 0, true);
     contrast->setLogScale(2, 0, true);
     chromaticity->setLogScale(2, 0, true);
 
     //%%%%%%%%%%%%%%%%%%
-    Gtk::Separator* hsep2 = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
-    hsep2->show ();
-    pack_start (*hsep2, Gtk::PACK_EXPAND_WIDGET, 4);
+    Gtk::Separator* hsep2 = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
+    hsep2->show();
+    pack_start(*hsep2, Gtk::PACK_EXPAND_WIDGET, 4);
 
-    avoidcolorshift = Gtk::manage (new Gtk::CheckButton (M("TP_LABCURVE_AVOIDCOLORSHIFT")));
-    avoidcolorshift->set_tooltip_text (M("TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP"));
-    pack_start (*avoidcolorshift, Gtk::PACK_SHRINK, 4);
 
-    lcredsk = Gtk::manage (new Gtk::CheckButton (M("TP_LABCURVE_LCREDSK")));
-    lcredsk->set_tooltip_markup (M("TP_LABCURVE_LCREDSK_TIP"));
-    pack_start (*lcredsk);
 
-    rstprotection = Gtk::manage ( new Adjuster (M("TP_LABCURVE_RSTPROTECTION"), 0., 100., 0.1, 0.) );
-    pack_start (*rstprotection);
-    rstprotection->show ();
 
-    rstprotection->setAdjusterListener (this);
-    rstprotection->set_tooltip_text (M("TP_LABCURVE_RSTPRO_TOOLTIP"));
+    Gtk::Box* metHBox = Gtk::manage(new Gtk::Box());
+    metHBox->set_spacing(2);
+    Gtk::Label* metLabel = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_AVOID") + ":"));
+    metHBox->pack_start(*metLabel, Gtk::PACK_SHRINK);
 
-    acconn = avoidcolorshift->signal_toggled().connect( sigc::mem_fun(*this, &LCurve::avoidcolorshift_toggled) );
-    lcconn = lcredsk->signal_toggled().connect( sigc::mem_fun(*this, &LCurve::lcredsk_toggled) );
+    gamutmunselmethod =  Gtk::manage(new MyComboBoxText());
+    gamutmunselmethod->append(M("TP_LOCALLAB_GAMUTNON"));
+    gamutmunselmethod->append(M("TP_LOCALLAB_GAMUTLABRELA"));
+    gamutmunselmethod->append(M("TP_LOCALLAB_GAMUTXYZABSO"));
+    gamutmunselmethod->append(M("TP_LOCALLAB_GAMUTXYZRELA"));
+    gamutmunselmethod->append(M("TP_LOCALLAB_GAMUTMUNSELL"));
+    gamutmunselmethod->set_active(4);
+    gamutmunselmethod->set_tooltip_text(M("TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP"));
+    metHBox->pack_start(*gamutmunselmethod);
+    pack_start(*metHBox);
+    gamutmunselmethodconn = gamutmunselmethod->signal_changed().connect(sigc::mem_fun(*this, &LCurve::gamutmunselChanged));
+
+
+    lcredsk = Gtk::manage(new Gtk::CheckButton(M("TP_LABCURVE_LCREDSK")));
+    lcredsk->set_tooltip_markup(M("TP_LABCURVE_LCREDSK_TOOLTIP"));
+    pack_start(*lcredsk);
+
+    rstprotection = Gtk::manage(new Adjuster(M("TP_LABCURVE_RSTPROTECTION"), 0., 100., 0.1, 0.));
+    pack_start(*rstprotection);
+    rstprotection->show();
+
+    rstprotection->setAdjusterListener(this);
+    rstprotection->set_tooltip_text(M("TP_LABCURVE_RSTPRO_TOOLTIP"));
+
+    lcconn = lcredsk->signal_toggled().connect(sigc::mem_fun(*this, &LCurve::lcredsk_toggled));
 
     //%%%%%%%%%%%%%%%%%%%
 
-    Gtk::Separator* hsep3 = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
-    hsep3->show ();
-    pack_start (*hsep3, Gtk::PACK_EXPAND_WIDGET, 4);
+    Gtk::Separator* hsep3 = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
+    hsep3->show();
+    pack_start(*hsep3, Gtk::PACK_EXPAND_WIDGET, 4);
 
-    curveEditorG = new CurveEditorGroup (options.lastLabCurvesDir);
-    curveEditorG->setCurveListener (this);
+    curveEditorG = new CurveEditorGroup(options.lastLabCurvesDir);
+    curveEditorG->setCurveListener(this);
 
     lshape = static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, "L*"));
     lshape->setTooltip(M("TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP"));
@@ -216,88 +238,111 @@ LCurve::LCurve () : FoldableToolPanel(this, "labcurves", M("TP_LABCURVE_LABEL"),
     // This will add the reset button at the end of the curveType buttons
     curveEditorG->curveListComplete();
 
-    pack_start (*curveEditorG, Gtk::PACK_SHRINK, 4);
-    Gtk::Separator* hsepdh = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
-    hsepdh->show ();
-    pack_start (*hsepdh, Gtk::PACK_EXPAND_WIDGET, 4);
+    pack_start(*curveEditorG, Gtk::PACK_SHRINK, 4);
+    Gtk::Separator* hsepdh = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
+    hsepdh->show();
+    pack_start(*hsepdh, Gtk::PACK_EXPAND_WIDGET, 4);
+    show_all_children();
 
 }
 
-LCurve::~LCurve ()
+LCurve::~LCurve()
 {
     delete curveEditorG;
 
 }
 
-void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited)
+void LCurve::read(const ProcParams* pp, const ParamsEdited* pedited)
 {
 
-    disableListener ();
+    disableListener();
+    gamutmunselmethodconn.block(true);
+
+
+    brightness->setValue(pp->labCurve.brightness);
+    contrast->setValue(pp->labCurve.contrast);
+    chromaticity->setValue(pp->labCurve.chromaticity);
+    adjusterChanged(chromaticity, pp->labCurve.chromaticity); // To update the GUI sensitiveness
+    //%%%%%%%%%%%%%%%%%%%%%%
+    rstprotection->setValue(pp->labCurve.rstprotection);
+
+
+    bwtconn.block(true);
+    lcconn.block(true);
+    lcredsk->set_active(pp->labCurve.lcredsk);
+
+    bwtconn.block(false);
+    lcconn.block(false);
+
+    lastLCVal = pp->labCurve.lcredsk;
+    //%%%%%%%%%%%%%%%%%%%%%%
+
+    lshape->setCurve(pp->labCurve.lcurve);
+    ashape->setCurve(pp->labCurve.acurve);
+    bshape->setCurve(pp->labCurve.bcurve);
+    ccshape->setCurve(pp->labCurve.cccurve);
+    chshape->setCurve(pp->labCurve.chcurve);
+    lhshape->setCurve(pp->labCurve.lhcurve);
+    hhshape->setCurve(pp->labCurve.hhcurve);
+    lcshape->setCurve(pp->labCurve.lccurve);
+    clshape->setCurve(pp->labCurve.clcurve);
+
+    if (pedited && !pedited->labCurve.gamutmunselmethod) {
+        gamutmunselmethod->set_active(4);     // "Unchanged"
+    } else if (pp->labCurve.gamutmunselmethod == "NONE") {
+        gamutmunselmethod->set_active(0);
+    } else if (pp->labCurve.gamutmunselmethod == "LAB") {
+        gamutmunselmethod->set_active(1);
+    } else if (pp->labCurve.gamutmunselmethod == "XYZ") {
+        gamutmunselmethod->set_active(2);
+    } else if (pp->labCurve.gamutmunselmethod == "XYZREL") {
+        gamutmunselmethod->set_active(3);
+    } else if (pp->labCurve.gamutmunselmethod == "MUN") {
+        gamutmunselmethod->set_active(4);
+    }
+
+    gamutmunselChanged();
 
     if (pedited) {
-        brightness->setEditedState (pedited->labCurve.brightness ? Edited : UnEdited);
-        contrast->setEditedState (pedited->labCurve.contrast ? Edited : UnEdited);
-        chromaticity->setEditedState (pedited->labCurve.chromaticity ? Edited : UnEdited);
+        brightness->setEditedState(pedited->labCurve.brightness ? Edited : UnEdited);
+        contrast->setEditedState(pedited->labCurve.contrast ? Edited : UnEdited);
+        chromaticity->setEditedState(pedited->labCurve.chromaticity ? Edited : UnEdited);
 
         //%%%%%%%%%%%%%%%%%%%%%%
-        rstprotection->setEditedState (pedited->labCurve.rstprotection ? Edited : UnEdited);
-        avoidcolorshift->set_inconsistent (!pedited->labCurve.avoidcolorshift);
-        lcredsk->set_inconsistent (!pedited->labCurve.lcredsk);
+        rstprotection->setEditedState(pedited->labCurve.rstprotection ? Edited : UnEdited);
+        lcredsk->set_inconsistent(!pedited->labCurve.lcredsk);
 
         //%%%%%%%%%%%%%%%%%%%%%%
 
-        lshape->setUnChanged   (!pedited->labCurve.lcurve);
-        ashape->setUnChanged   (!pedited->labCurve.acurve);
-        bshape->setUnChanged   (!pedited->labCurve.bcurve);
-        ccshape->setUnChanged  (!pedited->labCurve.cccurve);
-        chshape->setUnChanged  (!pedited->labCurve.chcurve);
-        lhshape->setUnChanged  (!pedited->labCurve.lhcurve);
-        hhshape->setUnChanged  (!pedited->labCurve.hhcurve);
-        lcshape->setUnChanged  (!pedited->labCurve.lccurve);
-        clshape->setUnChanged  (!pedited->labCurve.clcurve);
+        lshape->setUnChanged(!pedited->labCurve.lcurve);
+        ashape->setUnChanged(!pedited->labCurve.acurve);
+        bshape->setUnChanged(!pedited->labCurve.bcurve);
+        ccshape->setUnChanged(!pedited->labCurve.cccurve);
+        chshape->setUnChanged(!pedited->labCurve.chcurve);
+        lhshape->setUnChanged(!pedited->labCurve.lhcurve);
+        hhshape->setUnChanged(!pedited->labCurve.hhcurve);
+        lcshape->setUnChanged(!pedited->labCurve.lccurve);
+        clshape->setUnChanged(!pedited->labCurve.clcurve);
+
+        if (!pedited->labCurve.gamutmunselmethod) {
+            gamutmunselmethod->set_active_text(M("GENERAL_UNCHANGED"));
+        }
 
         set_inconsistent(multiImage && !pedited->labCurve.enabled);
     }
 
-    brightness->setValue    (pp->labCurve.brightness);
-    contrast->setValue      (pp->labCurve.contrast);
-    chromaticity->setValue  (pp->labCurve.chromaticity);
-    adjusterChanged(chromaticity, pp->labCurve.chromaticity); // To update the GUI sensitiveness
-    //%%%%%%%%%%%%%%%%%%%%%%
-    rstprotection->setValue (pp->labCurve.rstprotection);
+    gamutmunselmethodconn.block(false);
 
-    bwtconn.block (true);
-    acconn.block (true);
-    lcconn.block (true);
-    avoidcolorshift->set_active (pp->labCurve.avoidcolorshift);
-    lcredsk->set_active (pp->labCurve.lcredsk);
-
-    bwtconn.block (false);
-    acconn.block (false);
-    lcconn.block (false);
-
-    lastACVal = pp->labCurve.avoidcolorshift;
-    lastLCVal = pp->labCurve.lcredsk;
-    //%%%%%%%%%%%%%%%%%%%%%%
-
-    lshape->setCurve   (pp->labCurve.lcurve);
-    ashape->setCurve   (pp->labCurve.acurve);
-    bshape->setCurve   (pp->labCurve.bcurve);
-    ccshape->setCurve  (pp->labCurve.cccurve);
-    chshape->setCurve  (pp->labCurve.chcurve);
-    lhshape->setCurve  (pp->labCurve.lhcurve);
-    hhshape->setCurve  (pp->labCurve.hhcurve);
-    lcshape->setCurve  (pp->labCurve.lccurve);
-    clshape->setCurve  (pp->labCurve.clcurve);
 
     setEnabled(pp->labCurve.enabled);
-    
+
     queue_draw();
 
-    enableListener ();
+    enableListener();
 }
 
-void LCurve::autoOpenCurve ()
+
+void LCurve::autoOpenCurve()
 {
     // Open up the first curve if selected
     bool active = lshape->openIfNonlinear();
@@ -336,7 +381,7 @@ void LCurve::autoOpenCurve ()
 
 }
 
-void LCurve::setEditProvider  (EditDataProvider *provider)
+void LCurve::setEditProvider(EditDataProvider *provider)
 {
     lshape->setEditProvider(provider);
     ccshape->setEditProvider(provider);
@@ -351,127 +396,128 @@ void LCurve::setEditProvider  (EditDataProvider *provider)
 }
 
 
-void LCurve::write (ProcParams* pp, ParamsEdited* pedited)
+void LCurve::write(ProcParams* pp, ParamsEdited* pedited)
 {
     pp->labCurve.enabled = getEnabled();
-    
-    pp->labCurve.brightness    = brightness->getValue ();
-    pp->labCurve.contrast      = (int)contrast->getValue ();
-    pp->labCurve.chromaticity  = (int)chromaticity->getValue ();
-    //%%%%%%%%%%%%%%%%%%%%%%
-    pp->labCurve.avoidcolorshift = avoidcolorshift->get_active ();
-    pp->labCurve.lcredsk         = lcredsk->get_active ();
 
-    pp->labCurve.rstprotection   = rstprotection->getValue ();
+    pp->labCurve.brightness    = brightness->getValue();
+    pp->labCurve.contrast      = (int)contrast->getValue();
+    pp->labCurve.chromaticity  = (int)chromaticity->getValue();
+    //%%%%%%%%%%%%%%%%%%%%%%
+    pp->labCurve.lcredsk         = lcredsk->get_active();
+
+    pp->labCurve.rstprotection   = rstprotection->getValue();
     //%%%%%%%%%%%%%%%%%%%%%%
 
-    pp->labCurve.lcurve  = lshape->getCurve ();
-    pp->labCurve.acurve  = ashape->getCurve ();
-    pp->labCurve.bcurve  = bshape->getCurve ();
-    pp->labCurve.cccurve = ccshape->getCurve ();
-    pp->labCurve.chcurve = chshape->getCurve ();
-    pp->labCurve.lhcurve = lhshape->getCurve ();
-    pp->labCurve.hhcurve = hhshape->getCurve ();
-    pp->labCurve.lccurve = lcshape->getCurve ();
-    pp->labCurve.clcurve = clshape->getCurve ();
+    pp->labCurve.lcurve  = lshape->getCurve();
+    pp->labCurve.acurve  = ashape->getCurve();
+    pp->labCurve.bcurve  = bshape->getCurve();
+    pp->labCurve.cccurve = ccshape->getCurve();
+    pp->labCurve.chcurve = chshape->getCurve();
+    pp->labCurve.lhcurve = lhshape->getCurve();
+    pp->labCurve.hhcurve = hhshape->getCurve();
+    pp->labCurve.lccurve = lcshape->getCurve();
+    pp->labCurve.clcurve = clshape->getCurve();
+
+
 
     if (pedited) {
-        pedited->labCurve.brightness   = brightness->getEditedState ();
-        pedited->labCurve.contrast     = contrast->getEditedState ();
-        pedited->labCurve.chromaticity = chromaticity->getEditedState ();
+        pedited->labCurve.brightness   = brightness->getEditedState();
+        pedited->labCurve.contrast     = contrast->getEditedState();
+        pedited->labCurve.chromaticity = chromaticity->getEditedState();
 
         //%%%%%%%%%%%%%%%%%%%%%%
-        pedited->labCurve.avoidcolorshift = !avoidcolorshift->get_inconsistent();
         pedited->labCurve.lcredsk         = !lcredsk->get_inconsistent();
 
-        pedited->labCurve.rstprotection   = rstprotection->getEditedState ();
+        pedited->labCurve.rstprotection   = rstprotection->getEditedState();
+        pedited->labCurve.gamutmunselmethod = gamutmunselmethod->get_active_text() != M("GENERAL_UNCHANGED");
 
-        pedited->labCurve.lcurve    = !lshape->isUnChanged ();
-        pedited->labCurve.acurve    = !ashape->isUnChanged ();
-        pedited->labCurve.bcurve    = !bshape->isUnChanged ();
-        pedited->labCurve.cccurve   = !ccshape->isUnChanged ();
-        pedited->labCurve.chcurve   = !chshape->isUnChanged ();
-        pedited->labCurve.lhcurve   = !lhshape->isUnChanged ();
-        pedited->labCurve.hhcurve   = !hhshape->isUnChanged ();
-        pedited->labCurve.lccurve   = !lcshape->isUnChanged ();
-        pedited->labCurve.clcurve   = !clshape->isUnChanged ();
+        pedited->labCurve.lcurve    = !lshape->isUnChanged();
+        pedited->labCurve.acurve    = !ashape->isUnChanged();
+        pedited->labCurve.bcurve    = !bshape->isUnChanged();
+        pedited->labCurve.cccurve   = !ccshape->isUnChanged();
+        pedited->labCurve.chcurve   = !chshape->isUnChanged();
+        pedited->labCurve.lhcurve   = !lhshape->isUnChanged();
+        pedited->labCurve.hhcurve   = !hhshape->isUnChanged();
+        pedited->labCurve.lccurve   = !lcshape->isUnChanged();
+        pedited->labCurve.clcurve   = !clshape->isUnChanged();
 
         pedited->labCurve.enabled = !get_inconsistent();
+
     }
+
+    if (gamutmunselmethod->get_active_row_number() == 0) {
+        pp->labCurve.gamutmunselmethod = "NONE";
+    } else if (gamutmunselmethod->get_active_row_number() == 1) {
+        pp->labCurve.gamutmunselmethod = "LAB";
+    } else if (gamutmunselmethod->get_active_row_number() == 2) {
+        pp->labCurve.gamutmunselmethod = "XYZ";
+    } else if (gamutmunselmethod->get_active_row_number() == 3) {
+        pp->labCurve.gamutmunselmethod = "XYZREL";
+    } else if (gamutmunselmethod->get_active_row_number() == 4) {
+        pp->labCurve.gamutmunselmethod = "MUN";
+    }
+
+
 
 }
 
-void LCurve::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)
+void LCurve::setDefaults(const ProcParams* defParams, const ParamsEdited* pedited)
 {
 
-    brightness->setDefault (defParams->labCurve.brightness);
-    contrast->setDefault (defParams->labCurve.contrast);
-    chromaticity->setDefault (defParams->labCurve.chromaticity);
-    rstprotection->setDefault (defParams->labCurve.rstprotection);
+    brightness->setDefault(defParams->labCurve.brightness);
+    contrast->setDefault(defParams->labCurve.contrast);
+    chromaticity->setDefault(defParams->labCurve.chromaticity);
+    rstprotection->setDefault(defParams->labCurve.rstprotection);
 
     if (pedited) {
-        brightness->setDefaultEditedState (pedited->labCurve.brightness ? Edited : UnEdited);
-        contrast->setDefaultEditedState (pedited->labCurve.contrast ? Edited : UnEdited);
-        chromaticity->setDefaultEditedState (pedited->labCurve.chromaticity ? Edited : UnEdited);
-        rstprotection->setDefaultEditedState (pedited->labCurve.rstprotection ? Edited : UnEdited);
+        brightness->setDefaultEditedState(pedited->labCurve.brightness ? Edited : UnEdited);
+        contrast->setDefaultEditedState(pedited->labCurve.contrast ? Edited : UnEdited);
+        chromaticity->setDefaultEditedState(pedited->labCurve.chromaticity ? Edited : UnEdited);
+        rstprotection->setDefaultEditedState(pedited->labCurve.rstprotection ? Edited : UnEdited);
     } else {
-        brightness->setDefaultEditedState (Irrelevant);
-        contrast->setDefaultEditedState (Irrelevant);
-        chromaticity->setDefaultEditedState (Irrelevant);
-        rstprotection->setDefaultEditedState (Irrelevant);
+        brightness->setDefaultEditedState(Irrelevant);
+        contrast->setDefaultEditedState(Irrelevant);
+        chromaticity->setDefaultEditedState(Irrelevant);
+        rstprotection->setDefaultEditedState(Irrelevant);
     }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%
-//Color shift control changed
-void LCurve::avoidcolorshift_toggled ()
+
+void LCurve::gamutmunselChanged()
 {
 
-    if (batchMode) {
-        if (avoidcolorshift->get_inconsistent()) {
-            avoidcolorshift->set_inconsistent (false);
-            acconn.block (true);
-            avoidcolorshift->set_active (false);
-            acconn.block (false);
-        } else if (lastACVal) {
-            avoidcolorshift->set_inconsistent (true);
-        }
-
-        lastACVal = avoidcolorshift->get_active ();
+    if (listener && (multiImage || getEnabled())) {
+        listener->panelChanged(Evgamutmunsell, gamutmunselmethod->get_active_text());
     }
 
-    if (listener && getEnabled()) {
-        if (avoidcolorshift->get_active ()) {
-            listener->panelChanged (EvLAvoidColorShift, M("GENERAL_ENABLED"));
-        } else {
-            listener->panelChanged (EvLAvoidColorShift, M("GENERAL_DISABLED"));
-        }
-    }
 }
 
-void LCurve::lcredsk_toggled ()
+
+void LCurve::lcredsk_toggled()
 {
 
     if (batchMode) {
         if (lcredsk->get_inconsistent()) {
-            lcredsk->set_inconsistent (false);
-            lcconn.block (true);
-            lcredsk->set_active (false);
-            lcconn.block (false);
+            lcredsk->set_inconsistent(false);
+            lcconn.block(true);
+            lcredsk->set_active(false);
+            lcconn.block(false);
         } else if (lastLCVal) {
-            lcredsk->set_inconsistent (true);
+            lcredsk->set_inconsistent(true);
         }
 
-        lastLCVal = lcredsk->get_active ();
+        lastLCVal = lcredsk->get_active();
     } else {
         lcshape->refresh();
     }
 
     if (listener && getEnabled()) {
-        if (lcredsk->get_active ()) {
-            listener->panelChanged (EvLLCredsk, M("GENERAL_ENABLED"));
+        if (lcredsk->get_active()) {
+            listener->panelChanged(EvLLCredsk, M("GENERAL_ENABLED"));
         } else {
-            listener->panelChanged (EvLLCredsk, M("GENERAL_DISABLED"));
+            listener->panelChanged(EvLLCredsk, M("GENERAL_DISABLED"));
         }
     }
 }
@@ -484,44 +530,44 @@ void LCurve::lcredsk_toggled ()
  * If more than one curve has been added, the curve listener is automatically
  * set to 'multi=true', and send a pointer of the modified curve in a parameter
  */
-void LCurve::curveChanged (CurveEditor* ce)
+void LCurve::curveChanged(CurveEditor* ce)
 {
 
     if (listener && getEnabled()) {
         if (ce == lshape) {
-            listener->panelChanged (EvLLCurve, M("HISTORY_CUSTOMCURVE"));
+            listener->panelChanged(EvLLCurve, M("HISTORY_CUSTOMCURVE"));
         }
 
         if (ce == ashape) {
-            listener->panelChanged (EvLaCurve, M("HISTORY_CUSTOMCURVE"));
+            listener->panelChanged(EvLaCurve, M("HISTORY_CUSTOMCURVE"));
         }
 
         if (ce == bshape) {
-            listener->panelChanged (EvLbCurve, M("HISTORY_CUSTOMCURVE"));
+            listener->panelChanged(EvLbCurve, M("HISTORY_CUSTOMCURVE"));
         }
 
         if (ce == ccshape) {
-            listener->panelChanged (EvLCCCurve, M("HISTORY_CUSTOMCURVE"));
+            listener->panelChanged(EvLCCCurve, M("HISTORY_CUSTOMCURVE"));
         }
 
         if (ce == chshape) {
-            listener->panelChanged (EvLCHCurve, M("HISTORY_CUSTOMCURVE"));
+            listener->panelChanged(EvLCHCurve, M("HISTORY_CUSTOMCURVE"));
         }
 
         if (ce == lhshape) {
-            listener->panelChanged (EvLLHCurve, M("HISTORY_CUSTOMCURVE"));
+            listener->panelChanged(EvLLHCurve, M("HISTORY_CUSTOMCURVE"));
         }
 
         if (ce == hhshape) {
-            listener->panelChanged (EvLHHCurve, M("HISTORY_CUSTOMCURVE"));
+            listener->panelChanged(EvLHHCurve, M("HISTORY_CUSTOMCURVE"));
         }
 
         if (ce == lcshape) {
-            listener->panelChanged (EvLLCCurve, M("HISTORY_CUSTOMCURVE"));
+            listener->panelChanged(EvLLCCurve, M("HISTORY_CUSTOMCURVE"));
         }
 
         if (ce == clshape) {
-            listener->panelChanged (EvLCLCurve, M("HISTORY_CUSTOMCURVE"));
+            listener->panelChanged(EvLCLCurve, M("HISTORY_CUSTOMCURVE"));
         }
 
 
@@ -533,45 +579,43 @@ void LCurve::adjusterChanged(Adjuster* a, double newval)
     Glib::ustring costr;
 
     if (a == brightness) {
-        costr = Glib::ustring::format (std::setw(3), std::fixed, std::setprecision(2), a->getValue());
+        costr = Glib::ustring::format(std::setw(3), std::fixed, std::setprecision(2), a->getValue());
     } else if (a == rstprotection) {
-        costr = Glib::ustring::format (std::setw(3), std::fixed, std::setprecision(1), a->getValue());
+        costr = Glib::ustring::format(std::setw(3), std::fixed, std::setprecision(1), a->getValue());
     } else {
-        costr = Glib::ustring::format ((int)a->getValue());
+        costr = Glib::ustring::format((int)a->getValue());
     }
 
     if (a == brightness) {
         if (listener && getEnabled()) {
-            listener->panelChanged (EvLBrightness, costr);
+            listener->panelChanged(EvLBrightness, costr);
         }
     } else if (a == contrast) {
         if (listener && getEnabled()) {
-            listener->panelChanged (EvLContrast, costr);
+            listener->panelChanged(EvLContrast, costr);
         }
     } else if (a == rstprotection) {
         if (listener && getEnabled()) {
-            listener->panelChanged (EvLRSTProtection, costr);
+            listener->panelChanged(EvLRSTProtection, costr);
         }
     } else if (a == chromaticity) {
         if (multiImage) {
             //if chromaticity==-100 (lowest value), we enter the B&W mode and avoid color shift and rstprotection has no effect
-            rstprotection->set_sensitive( true );
-            avoidcolorshift->set_sensitive( true );
-            lcredsk->set_sensitive( true );
+            rstprotection->set_sensitive(true);
+            lcredsk->set_sensitive(true);
         } else {
             //if chromaticity==-100 (lowest value), we enter the B&W mode and avoid color shift and rstprotection has no effect
-            rstprotection->set_sensitive( int(newval) > -100 ); //no reason for grey rstprotection
-            avoidcolorshift->set_sensitive( int(newval) > -100 );
-            lcredsk->set_sensitive( int(newval) > -100 );
+            rstprotection->set_sensitive(int(newval) > -100);   //no reason for grey rstprotection
+            lcredsk->set_sensitive(int(newval) > -100);
         }
 
         if (listener && getEnabled()) {
-            listener->panelChanged (EvLSaturation, costr);
+            listener->panelChanged(EvLSaturation, costr);
         }
     }
 }
 
-void LCurve::colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller)
+void LCurve::colorForValue(double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller *caller)
 {
 
     float R = 0.f, G = 0.f, B = 0.f;
@@ -586,47 +630,54 @@ void LCurve::colorForValue (double valX, double valY, enum ColorCaller::ElemType
         float value = (1.f - 0.7f) * float(valX) + 0.7f;
         // whole hue range
         // Y axis / from 0.15 up to 0.75 (arbitrary values; was 0.45 before)
-        Color::hsv2rgb01(float(valY*0.8), float(valX), value, R, G, B);
+        Color::hsv2rgb01(float(valY * 0.8), float(valX), value, R, G, B);
     } else if (callerId == 6) {  // cc - left bar
         float value = (1.f - 0.7f) * float(valX) + 0.7f;
         float hue = (1.14056f - 0.92f) * float(valY) + 0.92f;
+
         if (hue > 1.0f) {
             hue -= 1.0f;
         }
+
         // Y axis / from 0.15 up to 0.75 (arbitrary values; was 0.45 before)
         Color::hsv2rgb01(hue, float(valX), value, R, G, B);
     } else if (callerId == 3) {  // lc - bottom bar
         float value = (1.f - 0.7f) * float(valX) + 0.7f;
+
         if (lcredsk->get_active()) {
             // skin range
             // -0.1 rad < Hue < 1.6 rad
             // Y axis / from 0.92 up to 0.14056
             float hue = (1.14056f - 0.92f) * float(valY) + 0.92f;
+
             if (hue > 1.0f) {
                 hue -= 1.0f;
             }
+
             // Y axis / from 0.15 up to 0.75 (arbitrary values; was 0.45 before)
             Color::hsv2rgb01(hue, float(valX), value, R, G, B);
         } else {
             // whole hue range
             // Y axis / from 0.15 up to 0.75 (arbitrary values; was 0.45 before)
-            Color::hsv2rgb01(float(valY*0.8), float(valX), value, R, G, B);
+            Color::hsv2rgb01(float(valY * 0.8), float(valX), value, R, G, B);
         }
     } else if (callerId == 4) {  // LH - bottom bar
         Color::hsv2rgb01(float(valX), 0.5f, float(valY), R, G, B);
     } else if (callerId == 5) {  // HH - bottom bar
         float h = float((valY - 0.5) * 0.3 + valX);
+
         if (h > 1.0f) {
             h -= 1.0f;
         } else if (h < 0.0f) {
             h += 1.0f;
         }
+
         Color::hsv2rgb01(h, 0.5f, 0.5f, R, G, B);
     } else if (callerId == 7) {  // cc and cl - left bar
         float value = (1.f - 0.7f) * float(valX) + 0.7f;
         // whole hue range
         // Y axis / from 0.15 up to 0.75 (arbitrary values; was 0.45 before)
-        Color::hsv2rgb01(float(valY*0.8), 1.f - float(valX), value, R, G, B);
+        Color::hsv2rgb01(float(valY * 0.8), 1.f - float(valX), value, R, G, B);
     }
 
     caller->ccRed = double(R);
@@ -634,17 +685,19 @@ void LCurve::colorForValue (double valX, double valY, enum ColorCaller::ElemType
     caller->ccBlue = double(B);
 }
 
-void LCurve::setBatchMode (bool batchMode)
+void LCurve::setBatchMode(bool batchMode)
 {
 
-    ToolPanel::setBatchMode (batchMode);
-    brightness->showEditedCB ();
-    contrast->showEditedCB ();
-    chromaticity->showEditedCB ();
-    rstprotection->showEditedCB ();
-    curveEditorG->setBatchMode (batchMode);
+    ToolPanel::setBatchMode(batchMode);
+    brightness->showEditedCB();
+    contrast->showEditedCB();
+    chromaticity->showEditedCB();
+    rstprotection->showEditedCB();
+    curveEditorG->setBatchMode(batchMode);
     lcshape->setBottomBarColorProvider(nullptr, -1);
     lcshape->setLeftBarColorProvider(nullptr, -1);
+    gamutmunselmethod->append(M("GENERAL_UNCHANGED"));
+
 }
 
 
@@ -661,13 +714,13 @@ void LCurve::updateCurveBackgroundHistogram(
     const LUTu& histLRETI
 )
 {
-    lshape->updateBackgroundHistogram (histLCurve);
-    ccshape->updateBackgroundHistogram (histCCurve);
-    lcshape->updateBackgroundHistogram (histCCurve);
-    clshape->updateBackgroundHistogram (histLCurve);
+    lshape->updateBackgroundHistogram(histLCurve);
+    ccshape->updateBackgroundHistogram(histCCurve);
+    lcshape->updateBackgroundHistogram(histCCurve);
+    clshape->updateBackgroundHistogram(histLCurve);
 }
 
-void LCurve::setAdjusterBehavior (bool bradd, bool contradd, bool satadd)
+void LCurve::setAdjusterBehavior(bool bradd, bool contradd, bool satadd)
 {
 
     brightness->setAddMode(bradd);
@@ -675,7 +728,7 @@ void LCurve::setAdjusterBehavior (bool bradd, bool contradd, bool satadd)
     chromaticity->setAddMode(satadd);
 }
 
-void LCurve::trimValues (rtengine::procparams::ProcParams* pp)
+void LCurve::trimValues(rtengine::procparams::ProcParams* pp)
 {
 
     brightness->trimValue(pp->labCurve.brightness);
@@ -687,11 +740,11 @@ void LCurve::enabledChanged()
 {
     if (listener) {
         if (get_inconsistent()) {
-            listener->panelChanged (EvLEnabled, M("GENERAL_UNCHANGED"));
+            listener->panelChanged(EvLEnabled, M("GENERAL_UNCHANGED"));
         } else if (getEnabled()) {
-            listener->panelChanged (EvLEnabled, M("GENERAL_ENABLED"));
+            listener->panelChanged(EvLEnabled, M("GENERAL_ENABLED"));
         } else {
-            listener->panelChanged (EvLEnabled, M("GENERAL_DISABLED"));
+            listener->panelChanged(EvLEnabled, M("GENERAL_DISABLED"));
         }
     }
 }

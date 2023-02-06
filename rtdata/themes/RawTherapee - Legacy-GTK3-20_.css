@@ -760,6 +760,23 @@ button.radio#histButton:hover {
     margin-right: 0.25em;
 }
 
+/* ExpanderContents is just a logical container. Don't add additional spacing. */
+#ExpanderBox > .ExpanderContents > * {
+    margin: 0;
+    min-height: 0;
+    padding: 0;
+}
+
+/* For sub-tools containers that go below another widget, add some margin
+ * between them if the container has children. */
+#MyExpander .SubToolsContainer:not(:first-child) > :first-child {
+    margin-top: 0.1666666666666666em;
+}
+
+#MyExpander .SubToolsContainer {
+    min-height: 0;
+}
+
 /* Tool background */
 #ExpanderBox > box, #ExpanderBox > grid {
     background-color: #363636;
@@ -808,9 +825,11 @@ button.radio#histButton:hover {
 }
 
 #LocallabToolPanel  > box > checkbutton, #LocallabToolPanel  > box > box, #LocallabToolPanel  > grid > checkbutton, #LocallabToolPanel  > box > grid, #LocallabToolPanel  > grid > grid, #LocallabToolPanel  frame > box > grid, #LocallabToolPanel  frame > grid > grid, #LocallabToolPanel  frame > grid > box,
-#ExpanderBox  > box > checkbutton, #ExpanderBox  > box > box, #ExpanderBox  > grid > checkbutton, #ExpanderBox  > box > grid, #ExpanderBox  > grid > grid, #ExpanderBox  frame > box > grid, #ExpanderBox  frame > grid > grid, #ExpanderBox  frame > grid > box,
-#ExpanderBox2 > box > checkbutton, #ExpanderBox2 > box > box, #ExpanderBox2 > grid > checkbutton, #ExpanderBox2 > box > grid, #ExpanderBox2 > grid > grid, #ExpanderBox2 frame > box > grid, #ExpanderBox2 frame > grid > grid, #ExpanderBox2 frame > grid > box,
-#ExpanderBox3 > box > checkbutton, #ExpanderBox3 > box > box, #ExpanderBox3 > grid > checkbutton, #ExpanderBox3 > box > grid, #ExpanderBox3 > grid > grid, #ExpanderBox3 frame > box > grid, #ExpanderBox3 frame > grid > grid, #ExpanderBox3 frame > grid > box {
+#ExpanderBox  > .ExpanderContents > box:not(.SubToolsContainer) > checkbutton, #ExpanderBox  > .ExpanderContents > box:not(.SubToolsContainer) > box, #ExpanderBox  > .ExpanderContents > grid > checkbutton, #ExpanderBox  > .ExpanderContents > box:not(.SubToolsContainer) > grid, #ExpanderBox  > .ExpanderContents > grid > grid, #ExpanderBox  frame > box > grid, #ExpanderBox  frame > grid > grid, #ExpanderBox  frame > grid > box,
+#ExpanderBox2 > .ExpanderContents > box:not(.SubToolsContainer) > checkbutton, #ExpanderBox2 > .ExpanderContents > box:not(.SubToolsContainer) > box, #ExpanderBox2 > .ExpanderContents > grid > checkbutton, #ExpanderBox2 > .ExpanderContents > box:not(.SubToolsContainer) > grid, #ExpanderBox2 > .ExpanderContents > grid > grid, #ExpanderBox2 frame > box > grid, #ExpanderBox2 frame > grid > grid, #ExpanderBox2 frame > grid > box,
+#ExpanderBox2 > box:not(.ExpanderContents) > checkbutton, #ExpanderBox2 > box:not(.ExpanderContents) > box, #ExpanderBox2 > grid > checkbutton, #ExpanderBox2 > box:not(.ExpanderContents) > grid, #ExpanderBox2 > grid > grid, #ExpanderBox2 frame > box > grid, #ExpanderBox2 frame > grid > grid, #ExpanderBox2 frame > grid > box,
+#ExpanderBox3 > .ExpanderContents > box:not(.SubToolsContainer) > checkbutton, #ExpanderBox3 > .ExpanderContents > box:not(.SubToolsContainer) > box, #ExpanderBox3 > .ExpanderContents > grid > checkbutton, #ExpanderBox3 > .ExpanderContents > box:not(.SubToolsContainer) > grid, #ExpanderBox3 > .ExpanderContents > grid > grid, #ExpanderBox3 frame > box > grid, #ExpanderBox3 frame > grid > grid, #ExpanderBox3 frame > grid > box,
+#ExpanderBox3 > box:not(.ExpanderContents) > checkbutton, #ExpanderBox3 > box:not(.ExpanderContents) > box, #ExpanderBox3 > grid > checkbutton, #ExpanderBox3 > box:not(.ExpanderContents) > grid, #ExpanderBox3 > grid > grid, #ExpanderBox3 frame > box > grid, #ExpanderBox3 frame > grid > grid, #ExpanderBox3 frame > grid > box {
     margin-top: 0.1666666666666666em;
 }
 
@@ -1097,6 +1116,10 @@ dialog frame > label:not(.dummy) {
 
 #ToolPanelNotebook {
     min-width: 25em;
+}
+
+#ToolPanelNotebook .PanelEnding {
+    margin-top: 4px;
 }
 
 #ToolPanelNotebook header {

@@ -50,6 +50,7 @@ protected:
     IdleRegister idle_register;
 
 public:
+    static const Glib::ustring TOOL_NAME;
 
     PdSharpening ();
     ~PdSharpening () override;

@@ -1054,6 +1054,13 @@ void RTWindow::MoveFileBrowserToEditor()
     }
 }
 
+void RTWindow::updateExternalEditorWidget(int selectedIndex, const std::vector<ExternalEditor> & editors)
+{
+    if (epanel) {
+        epanel->updateExternalEditorWidget(selectedIndex, editors);
+    }
+}
+
 void RTWindow::updateProfiles (const Glib::ustring &printerProfile, rtengine::RenderingIntent printerIntent, bool printerBPC)
 {
     if (epanel) {
@@ -1107,6 +1114,27 @@ void RTWindow::updateHistogramPosition (int oldPosition, int newPosition)
 
     for (auto panel : epanels) {
         panel.second->updateHistogramPosition (oldPosition, newPosition);
+    }
+}
+
+void RTWindow::updateToolPanelToolLocations(
+    const std::vector<Glib::ustring> &favorites, bool cloneFavoriteTools)
+{
+    if (fpanel) {
+        fpanel->updateToolPanelToolLocations(favorites, cloneFavoriteTools);
+    }
+
+    if (epanel) {
+        epanel->updateToolPanelToolLocations(favorites, cloneFavoriteTools);
+    }
+
+    for (const auto &panel : epanels) {
+        panel.second->updateToolPanelToolLocations(favorites, cloneFavoriteTools);
+    }
+
+    if (options.multiDisplayMode > 0) {
+        EditWindow::getInstance(this)
+            ->updateToolPanelToolLocations(favorites, cloneFavoriteTools);
     }
 }
 

@@ -127,11 +127,13 @@ private:
     std::vector<locallabRef> maskBackRef;
 
     // Other widgets
-    Gtk::Button* const resetshowButton;
+    //Gtk::Button* const resetshowButton;
 
     Glib::ustring spotName;
 
 public:
+    static const Glib::ustring TOOL_NAME;
+
     Locallab();
 
     // FoldableToolPanel management functions
@@ -176,7 +178,7 @@ public:
     llMaskVisibility getMaskVisibility() const;
 
     // Other widgets event functions
-    void resetshowPressed();
+    //void resetshowPressed();
 
     // EditProvider management function
     void setEditProvider(EditDataProvider* provider) override;

@@ -31,6 +31,7 @@
 #include "../rtengine/procparams.h"
 #include "../rtengine/rtthumbnail.h"
 #include <glib/gstdio.h>
+#include <glibmm/timezone.h>
 
 #include "../rtengine/dynamicprofile.h"
 #include "../rtengine/profilestore.h"
@@ -266,7 +267,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
                 // Should we ask all frame's MetaData ?
                 imageMetaData = rtengine::FramesMetaData::fromFile (fname, nullptr, true);
             }
-            PartialProfile *pp = ProfileStore::getInstance()->loadDynamicProfile(imageMetaData);
+            PartialProfile *pp = ProfileStore::getInstance()->loadDynamicProfile(imageMetaData, fname);
             delete imageMetaData;
             int err = pp->pparams->save(outFName);
             pp->deleteInstance();
@@ -719,11 +720,44 @@ rtengine::IImage8* Thumbnail::upgradeThumbImage (const rtengine::procparams::Pro
 
 void Thumbnail::generateExifDateTimeStrings ()
 {
+    if (cfs.timeValid) {
+        std::string dateFormat = options.dateFormat;
+        std::ostringstream ostr;
+        bool spec = false;
 
-    exifString = "";
-    dateTimeString = "";
+        for (size_t i = 0; i < dateFormat.size(); i++)
+            if (spec && dateFormat[i] == 'y') {
+                ostr << cfs.year;
+                spec = false;
+            } else if (spec && dateFormat[i] == 'm') {
+                ostr << (int)cfs.month;
+                spec = false;
+            } else if (spec && dateFormat[i] == 'd') {
+                ostr << (int)cfs.day;
+                spec = false;
+            } else if (dateFormat[i] == '%') {
+                spec = true;
+            } else {
+                ostr << (char)dateFormat[i];
+                spec = false;
+            }
+
+        ostr << " " << (int)cfs.hour;
+        ostr << ":" << std::setw(2) << std::setfill('0') << (int)cfs.min;
+        ostr << ":" << std::setw(2) << std::setfill('0') << (int)cfs.sec;
+
+        dateTimeString = ostr.str ();
+        dateTime = Glib::DateTime::create_local(cfs.year, cfs.month, cfs.day,
+                                                cfs.hour, cfs.min, cfs.sec);
+    }
+
+    if (!dateTime.gobj() || !cfs.timeValid) {
+        dateTimeString = "";
+        dateTime = Glib::DateTime::create_now_utc(0);
+    }
 
     if (!cfs.exifValid) {
+        exifString = "";
         return;
     }
 
@@ -732,33 +766,6 @@ void Thumbnail::generateExifDateTimeStrings ()
     if (options.fbShowExpComp && cfs.expcomp != "0.00" && !cfs.expcomp.empty()) { // don't show exposure compensation if it is 0.00EV;old cache files do not have ExpComp, so value will not be displayed.
         exifString = Glib::ustring::compose ("%1 %2EV", exifString, cfs.expcomp);    // append exposure compensation to exifString
     }
-
-    std::string dateFormat = options.dateFormat;
-    std::ostringstream ostr;
-    bool spec = false;
-
-    for (size_t i = 0; i < dateFormat.size(); i++)
-        if (spec && dateFormat[i] == 'y') {
-            ostr << cfs.year;
-            spec = false;
-        } else if (spec && dateFormat[i] == 'm') {
-            ostr << (int)cfs.month;
-            spec = false;
-        } else if (spec && dateFormat[i] == 'd') {
-            ostr << (int)cfs.day;
-            spec = false;
-        } else if (dateFormat[i] == '%') {
-            spec = true;
-        } else {
-            ostr << (char)dateFormat[i];
-            spec = false;
-        }
-
-    ostr << " " << (int)cfs.hour;
-    ostr << ":" << std::setw(2) << std::setfill('0') << (int)cfs.min;
-    ostr << ":" << std::setw(2) << std::setfill('0') << (int)cfs.sec;
-
-    dateTimeString = ostr.str ();
 }
 
 const Glib::ustring& Thumbnail::getExifString () const
@@ -771,6 +778,12 @@ const Glib::ustring& Thumbnail::getDateTimeString () const
 {
 
     return dateTimeString;
+}
+
+const Glib::DateTime& Thumbnail::getDateTime () const
+{
+
+    return dateTime;
 }
 
 void Thumbnail::getAutoWB (double& temp, double& green, double equal, double tempBias)
@@ -803,6 +816,16 @@ int Thumbnail::infoFromImage (const Glib::ustring& fname, std::unique_ptr<rtengi
     cfs.timeValid = false;
     cfs.exifValid = false;
 
+    if (idata->getDateTimeAsTS() > 0) {
+        cfs.year         = 1900 + idata->getDateTime().tm_year;
+        cfs.month        = idata->getDateTime().tm_mon + 1;
+        cfs.day          = idata->getDateTime().tm_mday;
+        cfs.hour         = idata->getDateTime().tm_hour;
+        cfs.min          = idata->getDateTime().tm_min;
+        cfs.sec          = idata->getDateTime().tm_sec;
+        cfs.timeValid    = true;
+    }
+
     if (idata->hasExif()) {
         cfs.shutter      = idata->getShutterSpeed ();
         cfs.fnumber      = idata->getFNumber ();
@@ -815,18 +838,11 @@ int Thumbnail::infoFromImage (const Glib::ustring& fname, std::unique_ptr<rtengi
         cfs.isPixelShift = idata->getPixelShift ();
         cfs.frameCount   = idata->getFrameCount ();
         cfs.sampleFormat = idata->getSampleFormat ();
-        cfs.year         = 1900 + idata->getDateTime().tm_year;
-        cfs.month        = idata->getDateTime().tm_mon + 1;
-        cfs.day          = idata->getDateTime().tm_mday;
-        cfs.hour         = idata->getDateTime().tm_hour;
-        cfs.min          = idata->getDateTime().tm_min;
-        cfs.sec          = idata->getDateTime().tm_sec;
-        cfs.timeValid    = true;
-        cfs.exifValid    = true;
         cfs.lens         = idata->getLens();
         cfs.camMake      = idata->getMake();
         cfs.camModel     = idata->getModel();
         cfs.rating       = idata->getRating();
+        cfs.exifValid    = true;
 
         if (idata->getOrientation() == "Rotate 90 CW") {
             deg = 90;

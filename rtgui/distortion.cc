@@ -27,7 +27,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Distortion::Distortion (): FoldableToolPanel(this, "distortion", M("TP_DISTORTION_LABEL"))
+const Glib::ustring Distortion::TOOL_NAME = "distortion";
+
+Distortion::Distortion (): FoldableToolPanel(this, TOOL_NAME, M("TP_DISTORTION_LABEL"))
 {
 
     rlistener = nullptr;
@@ -35,7 +37,7 @@ Distortion::Distortion (): FoldableToolPanel(this, "distortion", M("TP_DISTORTIO
     autoDistor->set_image (*Gtk::manage (new RTImage ("distortion-auto-small.png")));
     autoDistor->get_style_context()->add_class("independent");
     autoDistor->set_alignment(0.5f, 0.5f);
-    autoDistor->set_tooltip_text (M("TP_DISTORTION_AUTO_TIP"));
+    autoDistor->set_tooltip_text (M("TP_DISTORTION_AUTO_TOOLTIP"));
     idConn = autoDistor->signal_pressed().connect( sigc::mem_fun(*this, &Distortion::idPressed) );
     autoDistor->show();
     pack_start (*autoDistor);

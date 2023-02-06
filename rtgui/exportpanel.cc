@@ -46,7 +46,7 @@ ExportPanel::ExportPanel () : listener (nullptr)
     use_normal_pipeline     = Gtk::manage ( new Gtk::RadioButton (pipeline_group, M ("EXPORT_USE_NORMAL_PIPELINE")));
     bypass_box = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     bypass_ALL              = Gtk::manage ( new Gtk::CheckButton (M ("EXPORT_BYPASS_ALL")));
-    use_fast_pipeline->set_tooltip_text (M ("EXPORT_USE_FAST_PIPELINE_TIP"));
+    use_fast_pipeline->set_tooltip_text (M ("EXPORT_USE_FAST_PIPELINE_TOOLTIP"));
     bypass_sharpening       = Gtk::manage ( new Gtk::CheckButton (M ("EXPORT_BYPASS_SHARPENING")));
     bypass_sharpenEdge      = Gtk::manage ( new Gtk::CheckButton (M ("EXPORT_BYPASS_SHARPENEDGE")));
     bypass_sharpenMicro     = Gtk::manage ( new Gtk::CheckButton (M ("EXPORT_BYPASS_SHARPENMICRO")));

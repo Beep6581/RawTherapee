@@ -2427,7 +2427,7 @@ LocallabContrast::LocallabContrast():
     deltad(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DELTAD"), -3., 3., 0.1, 0.))),//, Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     LocalcurveEditorwavcomp(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVCOMP"))),
     wavshapecomp(static_cast<FlatCurveEditor*>(LocalcurveEditorwavcomp->addCurve(CT_Flat, "", nullptr, false, false))),
-    fatres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATRES"), 0., 100., 1., 0.))),
+    //fatres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATRES"), 0., 100., 1., 0.))),
     fftwlc(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTW")))),
     exprecovw(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
     maskusablew(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
@@ -2684,7 +2684,7 @@ LocallabContrast::LocallabContrast():
 
     LocalcurveEditorwavcomp->curveListComplete();
 
-    fatres->setAdjusterListener(this);
+    //fatres->setAdjusterListener(this);
 
     fftwlcConn = fftwlc->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::fftwlcChanged));
 
@@ -2784,7 +2784,7 @@ LocallabContrast::LocallabContrast():
     clariFrame->add(*clariBox);
     pack_start(*clariFrame);
     ToolParamBlock* const blurcontBox = Gtk::manage(new ToolParamBlock());
-    Gtk::Frame* const gradwavFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADWAVFRA")));
+    Gtk::Frame* const gradwavFrame = Gtk::manage(new Gtk::Frame());
     gradwavFrame->set_label_align(0.025, 0.5);
     gradwavFrame->set_label_widget(*wavgradl);
     ToolParamBlock* const gradwavBox = Gtk::manage(new ToolParamBlock());
@@ -2793,7 +2793,7 @@ LocallabContrast::LocallabContrast():
     gradwavBox->pack_start(*angwav);
     gradwavFrame->add(*gradwavBox);
     blurcontBox->pack_start(*gradwavFrame);
-    Gtk::Frame* const edgFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_EDGSHARPFRA")));
+    Gtk::Frame* const edgFrame = Gtk::manage(new Gtk::Frame());
     edgFrame->set_label_align(0.025, 0.5);
     edgFrame->set_label_widget(*wavedg);
     ToolParamBlock* const edgsBox = Gtk::manage(new ToolParamBlock());
@@ -3237,7 +3237,7 @@ void LocallabContrast::read(const rtengine::procparams::ProcParams* pp, const Pa
         sigmadc->setValue(spot.sigmadc);
         deltad->setValue(spot.deltad);
         wavshapecomp->setCurve(spot.loccompwavcurve);
-        fatres->setValue(spot.fatres);
+        //fatres->setValue(spot.fatres);
         enalcMask->set_active(spot.enalcMask);
         CCmasklcshape->setCurve(spot.CCmasklccurve);
         LLmasklcshape->setCurve(spot.LLmasklccurve);
@@ -3362,7 +3362,7 @@ void LocallabContrast::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         spot.sigmadc = sigmadc->getValue();
         spot.deltad = deltad->getValue();
         spot.loccompwavcurve = wavshapecomp->getCurve();
-        spot.fatres = fatres->getValue();
+        //spot.fatres = fatres->getValue();
         spot.fftwlc = fftwlc->get_active();
         spot.enalcMask = enalcMask->get_active();
         spot.CCmasklccurve = CCmasklcshape->getCurve();
@@ -3434,7 +3434,7 @@ void LocallabContrast::setDefaults(const rtengine::procparams::ProcParams* defPa
         residcomp->setDefault(defSpot.residcomp);
         sigmadc->setDefault(defSpot.sigmadc);
         deltad->setDefault(defSpot.deltad);
-        fatres->setDefault(defSpot.fatres);
+        //fatres->setDefault(defSpot.fatres);
         blendmasklc->setDefault((double)defSpot.blendmasklc);
         radmasklc->setDefault(defSpot.radmasklc);
         chromasklc->setDefault(defSpot.chromasklc);
@@ -3759,12 +3759,12 @@ void LocallabContrast::adjusterChanged(Adjuster* a, double newval)
             }
         }
 
-        if (a == fatres) {
-            if (listener) {
-                listener->panelChanged(Evlocallabfatres,
-                                       fatres->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
-            }
-        }
+        //if (a == fatres) {
+        //    if (listener) {
+        //        listener->panelChanged(Evlocallabfatres,
+        //                               fatres->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+        //    }
+        //}
 
         if (a == recothresw) {
             
@@ -3983,7 +3983,7 @@ void LocallabContrast::convertParamToNormal()
     sigmadc->setValue(defSpot.sigmadc);
     deltad->setValue(defSpot.deltad);
     wavshapecomp->setCurve(defSpot.loccompwavcurve);
-    fatres->setValue(defSpot.fatres);
+    //fatres->setValue(defSpot.fatres);
     fftwlc->set_active(defSpot.fftwlc);
     decayw->setValue(defSpot.decayw);
 
@@ -5244,8 +5244,8 @@ LocallabLog::LocallabLog():
     saturl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATURV"), -100., 100., 0.5, 0.))),
     chroml(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROML"), -100., 100., 0.5, 0.))),
     expL(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_LOGEXP")))),
-    CurveEditorL(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_LOGCONTQ"))),
-    LshapeL(static_cast<DiagonalCurveEditor*>(CurveEditorL->addCurve(CT_Diagonal, "Q(Q)"))),
+    //CurveEditorL(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_LOGCONTQ"))),
+    //LshapeL(static_cast<DiagonalCurveEditor*>(CurveEditorL->addCurve(CT_Diagonal, "Q(Q)"))),
     targabs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_ABS"), 0.01, 16384.0, 0.01, 16.0))),
     surround(Gtk::manage (new MyComboBoxText ())),
     surrHBox(Gtk::manage(new Gtk::Box())),
@@ -5325,13 +5325,13 @@ LocallabLog::LocallabLog():
     contq->setAdjusterListener(this);
     colorfl->setAdjusterListener(this);
 
-    CurveEditorL->setCurveListener(this);
+    //CurveEditorL->setCurveListener(this);
 
-    LshapeL->setResetCurve(DiagonalCurveType(defSpot.LcurveL.at(0)), defSpot.LcurveL);
-    LshapeL->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
-    LshapeL->setLeftBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
+    //LshapeL->setResetCurve(DiagonalCurveType(defSpot.LcurveL.at(0)), defSpot.LcurveL);
+    //LshapeL->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
+    //LshapeL->setLeftBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
 
-    CurveEditorL->curveListComplete();
+    //CurveEditorL->curveListComplete();
 
 
     targabs->setLogScale(500, 0);
@@ -5509,7 +5509,7 @@ LocallabLog::~LocallabLog()
 {
     delete maskCurveEditorL;
     delete mask2CurveEditorL;
-    delete CurveEditorL;
+    //delete CurveEditorL;
     
 }
 
@@ -5730,7 +5730,7 @@ void LocallabLog::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         contthres->setValue(spot.contthres);
         contq->setValue(spot.contq);
         colorfl->setValue(spot.colorfl);
-        LshapeL->setCurve(spot.LcurveL);
+        //LshapeL->setCurve(spot.LcurveL);
         targabs->setValue(spot.targabs);
         targetGray->setValue(spot.targetGray);
         detail->setValue(spot.detail);
@@ -5794,7 +5794,7 @@ void LocallabLog::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.contthres = contthres->getValue();
         spot.contq = contq->getValue();
         spot.colorfl = colorfl->getValue();
-        spot.LcurveL = LshapeL->getCurve();
+        //spot.LcurveL = LshapeL->getCurve();
         spot.detail = detail->getValue();
         spot.baselog = baselog->getValue();
         spot.sensilog = sensilog->getIntValue();
@@ -6057,12 +6057,12 @@ void LocallabLog::curveChanged(CurveEditor* ce)
             }
         }
 
-        if (ce == LshapeL) {
-            if (listener) {
-                listener->panelChanged(EvlocallabLshapeL,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
-            }
-        }
+        //if (ce == LshapeL) {
+        //    if (listener) {
+        //        listener->panelChanged(EvlocallabLshapeL,
+        //                               M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
+        //    }
+        //}
 
     }
 }
@@ -7435,12 +7435,12 @@ Locallabcie::Locallabcie():
     contqcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONQL"), -100., 100., 0.5, 0.))),
     contthrescie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONTHRES"), -1., 1., 0.01, 0.))),
 
-    logjzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGJZFRA")))),
+    logjzFrame(Gtk::manage(new Gtk::Frame())),
     logjz(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_JZLOG")))),
     blackEvjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLACK_EV"), -16.0, 0.0, 0.1, -5.0))),
     whiteEvjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WHITE_EV"), 0., 32.0, 0.1, 10.0))),
     targetjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZTARGET_EV"), 4., 80.0, 0.1, 18.0))),
-    bevwevFrame(Gtk::manage(new Gtk::Frame(M("")))),
+    bevwevFrame(Gtk::manage(new Gtk::Frame())),
     forcebw(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_BWFORCE")))),
 
     sigmoidFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGFRA")))),
@@ -7713,7 +7713,7 @@ Locallabcie::Locallabcie():
     jz2CurveEditorG->setCurveListener(this);
     LHshapejz->setIdentityValue(0.);
     LHshapejz->setResetCurve(FlatCurveType(defSpot.LHcurvejz.at(0)), defSpot.LHcurvejz);
-    LHshapejz->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
+  //  LHshapejz->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
     LHshapejz->setCurveColorProvider(this, 3);
     LHshapejz->setBottomBarBgGradient(six_shape);
     jz2CurveEditorG->curveListComplete();
@@ -7722,13 +7722,13 @@ Locallabcie::Locallabcie():
 
     CHshapejz->setIdentityValue(0.);
     CHshapejz->setResetCurve(FlatCurveType(defSpot.CHcurvejz.at(0)), defSpot.CHcurvejz);
-    CHshapejz->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
+  //  CHshapejz->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
     CHshapejz->setCurveColorProvider(this, 3);
     CHshapejz->setBottomBarBgGradient(six_shape);
 
     HHshapejz->setIdentityValue(0.);
     HHshapejz->setResetCurve(FlatCurveType(defSpot.HHcurvejz.at(0)), defSpot.HHcurvejz);
-    HHshapejz->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
+  //  HHshapejz->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
     HHshapejz->setCurveColorProvider(this, 3);
     HHshapejz->setBottomBarBgGradient(six_shape);
 
@@ -8186,14 +8186,14 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         jz100->set_tooltip_text(M("TP_LOCALLAB_JZ100_TOOLTIP"));
         pqremap->set_tooltip_text(M("TP_LOCALLAB_JZPQREMAP_TOOLTIP"));
         pqremapcam16->set_tooltip_text(M("TP_LOCALLAB_CAM16PQREMAP_TOOLTIP"));
-        Autograycie->set_tooltip_text(M("TP_LOCALLAB_AUTOGRAYCIE_TOOLTIP"));
+        Autograycie->set_tooltip_text(M("TP_LOCALLAB_LOGAUTOGRAYJZ_TOOLTIP"));
         sigmalcjz->set_tooltip_text(M("TP_LOCALLAB_WAT_SIGMALC_TOOLTIP"));
         logjzFrame->set_tooltip_text(M("TP_LOCALLAB_JZLOGWB_TOOLTIP"));
         blackEvjz->set_tooltip_text(M("TP_LOCALLAB_JZLOGWBS_TOOLTIP"));
         whiteEvjz->set_tooltip_text(M("TP_LOCALLAB_JZLOGWBS_TOOLTIP"));
         clariFramejz->set_tooltip_markup(M("TP_LOCALLAB_CLARIJZ_TOOLTIP"));
-        clarilresjz->set_tooltip_text(M("TP_LOCALLAB_WAT_CLARILJZ_TOOLTIP"));
-        claricresjz->set_tooltip_text(M("TP_LOCALLAB_WAT_CLARICJZ_TOOLTIP"));
+        clarilresjz->set_tooltip_text(M("TP_LOCALLAB_WAT_CLARIL_TOOLTIP"));
+        claricresjz->set_tooltip_text(M("TP_LOCALLAB_WAT_CLARIC_TOOLTIP"));
         clarisoftjz->set_tooltip_markup(M("TP_LOCALLAB_CLARISOFTJZ_TOOLTIP"));
         wavshapejz->setTooltip(M("TP_LOCALLAB_WAT_WAVSHAPE_TOOLTIP"));
         LocalcurveEditorwavjz->set_tooltip_markup(M("TP_LOCALLAB_WAT_LEVELLOCCONTRAST_TOOLTIP"));

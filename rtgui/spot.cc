@@ -52,8 +52,10 @@ enum GeometryIndex {
 
 }
 
+const Glib::ustring Spot::TOOL_NAME = "spot";
+
 Spot::Spot() :
-    FoldableToolPanel(this, "spot", M ("TP_SPOT_LABEL"), true, true),
+    FoldableToolPanel(this, TOOL_NAME, M ("TP_SPOT_LABEL"), true, true),
     EditSubscriber(ET_OBJECTS),
     draggedSide(DraggedSide::NONE),
     lastObject(-1),
@@ -117,8 +119,8 @@ Spot::Spot() :
     link.setActive (false);
 
     auto m = ProcEventMapper::getInstance();
-    EvSpotEnabled = m->newEvent(ALLNORAW, "TP_SPOT_LABEL");
-    EvSpotEnabledOPA = m->newEvent(SPOTADJUST, "TP_SPOT_LABEL");
+    EvSpotEnabled = m->newEvent(ALLNORAW, "HISTORY_MSG_SPOT");
+    EvSpotEnabledOPA = m->newEvent(SPOTADJUST, "HISTORY_MSG_SPOT");
     EvSpotEntry = m->newEvent(SPOTADJUST, "HISTORY_MSG_SPOT_ENTRY");
     EvSpotEntryOPA = m->newEvent(SPOTADJUST, "HISTORY_MSG_SPOT_ENTRY");
 

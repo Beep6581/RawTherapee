@@ -2090,6 +2090,7 @@ void LocallabColor::updateGUIToMode(const modeType new_type)
         case Normal:
             // Expert mode widgets are hidden in Normal mode
             structcol->hide();
+            gamc->hide();
             blurcolde->hide();
             strcolab->hide();
             strcolh->hide();
@@ -2138,6 +2139,7 @@ void LocallabColor::updateGUIToMode(const modeType new_type)
             // Show widgets hidden in Normal and Simple mode
             structcol->show();
             blurcolde->show();
+            gamc->show();
 
             if (!invers->get_active()) { // Keep widget hidden when invers is toggled
                 softradiuscol->show();
@@ -2443,7 +2445,7 @@ void LocallabColor::updateColorGUI1()
         gamc->hide();
     } else {
         gridFrame->show();
-        gamc->show();
+        gamc->hide();
 
         if (mode == Expert) { // Keep widget hidden in Normal and Simple mode
             structcol->show();
@@ -2463,6 +2465,7 @@ void LocallabColor::updateColorGUI1()
             HCurveEditorG->show();
             H3CurveEditorG->show();
             expmaskcol1->show();
+            gamc->show();
         }
 
         showmaskcolMethod->show();
@@ -3612,6 +3615,7 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
         case Normal:
             // Expert mode widgets are hidden in Normal mode
             structexp->hide();
+            gamex->hide();
             blurexpde->hide();
             lapmaskexp->hide();
             gammaskexp->hide();
@@ -3659,7 +3663,7 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
             fatlevel->show();
             fatanchor->show();
             softradiusexp->hide();
-            blurexpde->hide();
+            gamex->show();
 
             if (!inversex->get_active()) { // Keep widget hidden when invers is toggled
                 expgradexp->show();
@@ -3915,7 +3919,7 @@ void LocallabExposure::updateExposureGUI3()
     } else {
         expMethod->show();
         expcomp->setLabel(M("TP_LOCALLAB_EXPCOMP"));
-        gamex->show();
+        gamex->hide();
         expfat->show();
         exppde->show();
 
@@ -3931,6 +3935,8 @@ void LocallabExposure::updateExposureGUI3()
             exprecove->show();
             structexp->show();
             blurexpde->show();
+            gamex->show();
+
         }
         
         reparexp->show();
@@ -6727,7 +6733,7 @@ LocallabBlur::LocallabBlur():
     RTImage *resetImg = Gtk::manage (new RTImage ("undo-small.png", "redo-small.png"));
     setExpandAlignProperties (resetImg, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     neutral->set_image (*resetImg);
-    neutral->set_tooltip_text (M ("TP_RETINEX_NEUTRAL_TIP"));
+    neutral->set_tooltip_text (M ("TP_RETINEX_NEUTRAL_TOOLTIP"));
     neutralconn = neutral->signal_pressed().connect ( sigc::mem_fun (*this, &LocallabBlur::neutral_pressed) );
     neutral->show();
 

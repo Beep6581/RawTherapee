@@ -26,7 +26,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-EdgePreservingDecompositionUI::EdgePreservingDecompositionUI () : FoldableToolPanel(this, "epd", M("TP_EPD_LABEL"), true, true)
+const Glib::ustring EdgePreservingDecompositionUI::TOOL_NAME = "epd";
+
+EdgePreservingDecompositionUI::EdgePreservingDecompositionUI () : FoldableToolPanel(this, TOOL_NAME, M("TP_EPD_LABEL"), true, true)
 {
 
     strength = Gtk::manage(new Adjuster (M("TP_EPD_STRENGTH"), -1.0, 2.0, 0.01, 0.5));

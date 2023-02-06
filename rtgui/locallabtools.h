@@ -1154,7 +1154,7 @@ private:
     Adjuster* const deltad;
     CurveEditorGroup* const LocalcurveEditorwavcomp;
     FlatCurveEditor* const wavshapecomp;
-    Adjuster* const fatres;
+    //Adjuster* const fatres;
     Gtk::CheckButton* const fftwlc;
     MyExpander* const exprecovw;
     Gtk::Label* const maskusablew;
@@ -1345,8 +1345,8 @@ private:
     Adjuster* const saturl;
     Adjuster* const chroml;
     MyExpander* const expL;
-    CurveEditorGroup* const CurveEditorL;
-    DiagonalCurveEditor* const LshapeL;
+    //CurveEditorGroup* const CurveEditorL;
+    //DiagonalCurveEditor* const LshapeL;
     Adjuster* const targabs;
     MyComboBoxText*  const surround;
     Gtk::Box* const surrHBox;

@@ -35,9 +35,9 @@ PartialSpotWidget::PartialSpotWidget():
     // Widget listener
     selListener(nullptr)
 {
-    
+
     set_orientation(Gtk::ORIENTATION_VERTICAL);
-    
+
     // Configure tree view
     treeview->set_model(treemodel);
     treeview->set_enable_search(false);
@@ -302,6 +302,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     //---
     ff_file             = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_FLATFIELDFILE")));
     ff_AutoSelect       = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_FLATFIELDAUTOSELECT")));
+    ff_FromMetaData     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_FLATFIELDFROMMETADATA")));
     ff_BlurType         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_FLATFIELDBLURTYPE")));
     ff_BlurRadius       = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_FLATFIELDBLURRADIUS")));
     ff_ClipControl      = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_FLATFIELDCLIPCONTROL")));
@@ -344,7 +345,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     vboxes[1]->pack_start (*hseps[1], Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*spot, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*sharpen, Gtk::PACK_SHRINK, 2);
-    vboxes[1]->pack_start (*localcontrast, Gtk::PACK_SHRINK, 2);    
+    vboxes[1]->pack_start (*localcontrast, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*sharpenedge, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*sharpenmicro, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*impden, Gtk::PACK_SHRINK, 2);
@@ -425,6 +426,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     vboxes[8]->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_SHRINK, 0);
     vboxes[8]->pack_start (*ff_file, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*ff_AutoSelect, Gtk::PACK_SHRINK, 2);
+    vboxes[8]->pack_start (*ff_FromMetaData, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*ff_BlurType, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*ff_BlurRadius, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*ff_ClipControl, Gtk::PACK_SHRINK, 2);
@@ -577,6 +579,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     //---
     ff_fileConn             = ff_file->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     ff_AutoSelectConn       = ff_AutoSelect->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
+    ff_FromMetaDataConn     = ff_FromMetaData->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     ff_BlurTypeConn         = ff_BlurType->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     ff_BlurRadiusConn       = ff_BlurRadius->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     ff_ClipControlConn      = ff_ClipControl->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
@@ -658,6 +661,7 @@ void PartialPasteDlg::rawToggled ()
     ConnectionBlocker df_AutoSelectBlocker(df_AutoSelectConn);
     ConnectionBlocker ff_fileBlocker(ff_fileConn);
     ConnectionBlocker ff_AutoSelectBlocker(ff_AutoSelectConn);
+    ConnectionBlocker ff_FromMetaDataBlocker(ff_FromMetaDataConn);
     ConnectionBlocker ff_BlurTypeBlocker(ff_BlurTypeConn);
     ConnectionBlocker ff_BlurRadiusBlocker(ff_BlurRadiusConn);
     ConnectionBlocker ff_ClipControlBlocker(ff_ClipControlConn);
@@ -688,6 +692,7 @@ void PartialPasteDlg::rawToggled ()
     df_AutoSelect->set_active (raw->get_active ());
     ff_file->set_active (raw->get_active ());
     ff_AutoSelect->set_active (raw->get_active ());
+    ff_FromMetaData->set_active (raw->get_active ());
     ff_BlurType->set_active (raw->get_active ());
     ff_BlurRadius->set_active (raw->get_active ());
     ff_ClipControl->set_active (raw->get_active ());
@@ -993,7 +998,7 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
     if (!dehaze->get_active ()) {
         filterPE.dehaze = falsePE.dehaze;
     }
-    
+
     if (!rgbcurves->get_active ()) {
         filterPE.rgbCurves    = falsePE.rgbCurves;
     }
@@ -1182,6 +1187,10 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
         filterPE.raw.ff_AutoSelect      = falsePE.raw.ff_AutoSelect;
     }
 
+    if (!ff_FromMetaData->get_active ()) {
+        filterPE.raw.ff_FromMetaData    = falsePE.raw.ff_FromMetaData;
+    }
+
     if (!ff_BlurRadius->get_active ()) {
         filterPE.raw.ff_BlurRadius      = falsePE.raw.ff_BlurRadius;
     }
@@ -1243,6 +1252,9 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
             if (!chosenSpots.at(i)) {
                 tmpPP.locallab.spots.erase(tmpPP.locallab.spots.begin() + i);
                 tmpPE.locallab.spots.erase(tmpPE.locallab.spots.begin() + i);
+
+                // Locallab Selspot param shall be kept in vector size limit
+                tmpPP.locallab.selspot = std::max(0, std::min(tmpPP.locallab.selspot, (int)tmpPP.locallab.spots.size() - 1));
             }
         }
 
@@ -1269,16 +1281,23 @@ void PartialPasteDlg::updateSpotWidget(const rtengine::procparams::ProcParams* p
 
 void PartialPasteDlg::partialSpotUpdated(const UpdateStatus status)
 {
+    locallabConn.block(true);
+
     switch (status) {
         case (AllSelection):
             locallab->set_active(true);
+            locallab->set_inconsistent(false);
             break;
 
         case (NoSelection):
             locallab->set_active(false);
+            locallab->set_inconsistent(false);
             break;
 
         case (PartialSelection):
+            locallab->set_active(false);
             locallab->set_inconsistent(true);
     }
+
+    locallabConn.block(false);
 }

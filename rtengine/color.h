@@ -1847,6 +1847,13 @@ static inline void Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, v
     */
     static void gamutmap(float &X, float Y, float &Z, const double p[3][3]);
 
+	/**
+	* @brief Convert primaries in XYZ values in function of illuminant
+	* @param p primaries red, gree, blue
+	* @param Wx Wy white for illuminant 
+	* @param pxyz return matrix XYZ 
+	*/
+	static void primaries_to_xyz (double p[6], double Wx, double Wz, double *pxyz);
 
     /**
     * @brief Get HSV's hue from the Lab's hue

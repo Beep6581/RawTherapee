@@ -305,7 +305,7 @@ bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::Initial
 #ifdef WIN32
                     int winGdiHandles = GetGuiResources( GetCurrentProcess(), GR_GDIOBJECTS);
                     if(winGdiHandles > 0 && winGdiHandles <= 6500) //(old settings 8500) 0 means we don't have the rights to access the function, 8500 because the limit is 10000 and we need about 1500 free handles
-                    //J.Desmis october 2021 I change 8500 to 6500..Why ? because whitout while increasing size GUI system crash in multieditor
+                    //J.Desmis october 2021 I change 8500 to 6500..Why ? because without while increasing size GUI system crash in multieditor
 #endif
                     {
                     GThreadLock lock; // Acquiring the GUI... not sure that it's necessary, but it shouldn't harm
@@ -436,4 +436,12 @@ void FilePanel::loadingThumbs(Glib::ustring str, double rate)
 void FilePanel::updateTPVScrollbar (bool hide)
 {
     tpc->updateTPVScrollbar (hide);
+}
+
+void FilePanel::updateToolPanelToolLocations(
+        const std::vector<Glib::ustring> &favorites, bool cloneFavoriteTools)
+{
+    if (tpc) {
+        tpc->updateToolLocations(favorites, cloneFavoriteTools);
+    }
 }

@@ -104,7 +104,7 @@ void ParamsEdited::set(bool v)
     labCurve.brightness  = v;
     labCurve.contrast    = v;
     labCurve.chromaticity    = v;
-    labCurve.avoidcolorshift = v;
+    labCurve.gamutmunselmethod = v;
     labCurve.rstprotection   = v;
     labCurve.lcredsk         = v;
     localContrast.enabled = v;
@@ -254,7 +254,6 @@ void ParamsEdited::set(bool v)
     colorappearance.ybout     = v;
     colorappearance.tempsc     = v;
     colorappearance.greensc     = v;
-    colorappearance.presetcat02 = v;
 
     //colorBoost.amount         = v;
     //colorBoost.avoidclip      = v;
@@ -458,6 +457,7 @@ void ParamsEdited::set(bool v)
     icm.bluy = v;
     icm.preser = v;
     icm.fbw = v;
+    icm.gamut = v;
     icm.labgridcieALow = v;
     icm.labgridcieBLow = v;
     icm.labgridcieAHigh = v;
@@ -524,6 +524,7 @@ void ParamsEdited::set(bool v)
     raw.df_autoselect = v;
     raw.ff_file = v;
     raw.ff_AutoSelect = v;
+    raw.ff_FromMetaData = v;
     raw.ff_BlurRadius = v;
     raw.ff_BlurType = v;
     raw.ff_AutoClipControl = v;
@@ -576,7 +577,7 @@ void ParamsEdited::set(bool v)
     wavelet.Backmethod = v;
     wavelet.Tilesmethod = v;
     wavelet.complexmethod = v;
-    wavelet.denmethod = v;
+    //wavelet.denmethod = v;
     wavelet.mixmethod = v;
     wavelet.slimethod = v;
     wavelet.quamethod = v;
@@ -637,7 +638,7 @@ void ParamsEdited::set(bool v)
     wavelet.levelsigm = v;
     wavelet.ccwcurve = v;
     wavelet.blcurve = v;
-    wavelet.opacityCurveSH   = v;
+    //wavelet.opacityCurveSH   = v;
     wavelet.opacityCurveRG   = v;
     wavelet.opacityCurveBY   = v;
     wavelet.wavdenoise   = v;
@@ -808,7 +809,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         labCurve.brightness = labCurve.brightness && p.labCurve.brightness == other.labCurve.brightness;
         labCurve.contrast = labCurve.contrast && p.labCurve.contrast == other.labCurve.contrast;
         labCurve.chromaticity = labCurve.chromaticity && p.labCurve.chromaticity == other.labCurve.chromaticity;
-        labCurve.avoidcolorshift = labCurve.avoidcolorshift && p.labCurve.avoidcolorshift == other.labCurve.avoidcolorshift;
+        labCurve.gamutmunselmethod = labCurve.gamutmunselmethod && p.labCurve.gamutmunselmethod == other.labCurve.gamutmunselmethod;
         labCurve.rstprotection = labCurve.rstprotection && p.labCurve.rstprotection == other.labCurve.rstprotection;
         labCurve.lcredsk = labCurve.lcredsk && p.labCurve.lcredsk == other.labCurve.lcredsk;
 
@@ -912,7 +913,6 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         vibrance.avoidcolorshift = vibrance.avoidcolorshift && p.vibrance.avoidcolorshift == other.vibrance.avoidcolorshift;
         vibrance.pastsattog = vibrance.pastsattog && p.vibrance.pastsattog == other.vibrance.pastsattog;
         vibrance.skintonescurve = vibrance.skintonescurve && p.vibrance.skintonescurve == other.vibrance.skintonescurve;
-
         colorappearance.enabled = colorappearance.enabled && p.colorappearance.enabled == other.colorappearance.enabled;
         colorappearance.degree = colorappearance.degree && p.colorappearance.degree == other.colorappearance.degree;
         colorappearance.autodegree = colorappearance.autodegree && p.colorappearance.autodegree == other.colorappearance.autodegree;
@@ -959,7 +959,6 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         colorappearance.ybout = colorappearance.ybout && p.colorappearance.ybout == other.colorappearance.ybout;
         colorappearance.tempsc = colorappearance.tempsc && p.colorappearance.tempsc == other.colorappearance.tempsc;
         colorappearance.greensc = colorappearance.greensc && p.colorappearance.greensc == other.colorappearance.greensc;
-        colorappearance.presetcat02 = colorappearance.presetcat02 && p.colorappearance.presetcat02 == other.colorappearance.presetcat02;
 
         //colorBoost.amount = colorBoost.amount && p.colorBoost.amount == other.colorBoost.amount;
         //colorBoost.avoidclip = colorBoost.avoidclip && p.colorBoost.avoidclip == other.colorBoost.avoidclip;
@@ -1102,6 +1101,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).structexclu = locallab.spots.at(j).structexclu && pSpot.structexclu == otherSpot.structexclu;
                 locallab.spots.at(j).struc = locallab.spots.at(j).struc && pSpot.struc == otherSpot.struc;
                 locallab.spots.at(j).shapeMethod = locallab.spots.at(j).shapeMethod && pSpot.shapeMethod == otherSpot.shapeMethod;
+                locallab.spots.at(j).avoidgamutMethod = locallab.spots.at(j).avoidgamutMethod && pSpot.avoidgamutMethod == otherSpot.avoidgamutMethod;
                 locallab.spots.at(j).loc = locallab.spots.at(j).loc && pSpot.loc == otherSpot.loc;
                 locallab.spots.at(j).centerX = locallab.spots.at(j).centerX && pSpot.centerX == otherSpot.centerX;
                 locallab.spots.at(j).centerY = locallab.spots.at(j).centerY && pSpot.centerY == otherSpot.centerY;
@@ -1121,8 +1121,6 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).transitgrad = locallab.spots.at(j).transitgrad && pSpot.transitgrad == otherSpot.transitgrad;
                 locallab.spots.at(j).hishow = locallab.spots.at(j).hishow && pSpot.hishow == otherSpot.hishow;
                 locallab.spots.at(j).activ = locallab.spots.at(j).activ && pSpot.activ == otherSpot.activ;
-                locallab.spots.at(j).avoid = locallab.spots.at(j).avoid && pSpot.avoid == otherSpot.avoid;
-                locallab.spots.at(j).avoidmun = locallab.spots.at(j).avoidmun && pSpot.avoidmun == otherSpot.avoidmun;
                 locallab.spots.at(j).blwh = locallab.spots.at(j).blwh && pSpot.blwh == otherSpot.blwh;
                 locallab.spots.at(j).recurs = locallab.spots.at(j).recurs && pSpot.recurs == otherSpot.recurs;
                 locallab.spots.at(j).laplac = locallab.spots.at(j).laplac && pSpot.laplac == otherSpot.laplac;
@@ -1885,6 +1883,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         icm.labgridcieWy = icm.labgridcieWy && p.icm.labgridcieWy == other.icm.labgridcieWy;
         icm.preser = icm.preser && p.icm.preser == other.icm.preser;
         icm.fbw = icm.fbw && p.icm.fbw == other.icm.fbw;
+        icm.gamut = icm.gamut && p.icm.gamut == other.icm.gamut;
         icm.aRendIntent = icm.aRendIntent && p.icm.aRendIntent == other.icm.aRendIntent;
         icm.workingTRC = icm.workingTRC && p.icm.workingTRC == other.icm.workingTRC;
         icm.will = icm.will && p.icm.will == other.icm.will;
@@ -1943,6 +1942,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         raw.df_autoselect = raw.df_autoselect && p.raw.df_autoselect == other.raw.df_autoselect;
         raw.ff_file = raw.ff_file && p.raw.ff_file == other.raw.ff_file;
         raw.ff_AutoSelect = raw.ff_AutoSelect && p.raw.ff_AutoSelect == other.raw.ff_AutoSelect;
+        raw.ff_FromMetaData = raw.ff_FromMetaData && p.raw.ff_FromMetaData == other.raw.ff_FromMetaData;
         raw.ff_BlurRadius = raw.ff_BlurRadius && p.raw.ff_BlurRadius == other.raw.ff_BlurRadius;
         raw.ff_BlurType = raw.ff_BlurType && p.raw.ff_BlurType == other.raw.ff_BlurType;
         raw.ff_AutoClipControl = raw.ff_AutoClipControl && p.raw.ff_AutoClipControl == other.raw.ff_AutoClipControl;
@@ -1995,7 +1995,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wavelet.Backmethod = wavelet.Backmethod && p.wavelet.Backmethod == other.wavelet.Backmethod;
         wavelet.Tilesmethod = wavelet.Tilesmethod && p.wavelet.Tilesmethod == other.wavelet.Tilesmethod;
         wavelet.complexmethod = wavelet.complexmethod && p.wavelet.complexmethod == other.wavelet.complexmethod;
-        wavelet.denmethod = wavelet.denmethod && p.wavelet.denmethod == other.wavelet.denmethod;
+        //wavelet.denmethod = wavelet.denmethod && p.wavelet.denmethod == other.wavelet.denmethod;
         wavelet.mixmethod = wavelet.mixmethod && p.wavelet.mixmethod == other.wavelet.mixmethod;
         wavelet.slimethod = wavelet.slimethod && p.wavelet.slimethod == other.wavelet.slimethod;
         wavelet.quamethod = wavelet.quamethod && p.wavelet.quamethod == other.wavelet.quamethod;
@@ -2057,7 +2057,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wavelet.satlev = wavelet.satlev && p.wavelet.satlev == other.wavelet.satlev;
         wavelet.ccwcurve = wavelet.ccwcurve && p.wavelet.ccwcurve == other.wavelet.ccwcurve;
         wavelet.blcurve = wavelet.blcurve && p.wavelet.blcurve == other.wavelet.blcurve;
-        wavelet.opacityCurveSH = wavelet.opacityCurveSH && p.wavelet.opacityCurveSH == other.wavelet.opacityCurveSH;
+        //wavelet.opacityCurveSH = wavelet.opacityCurveSH && p.wavelet.opacityCurveSH == other.wavelet.opacityCurveSH;
         wavelet.opacityCurveRG = wavelet.opacityCurveRG && p.wavelet.opacityCurveRG == other.wavelet.opacityCurveRG;
         wavelet.opacityCurveBY = wavelet.opacityCurveBY && p.wavelet.opacityCurveBY == other.wavelet.opacityCurveBY;
         wavelet.wavdenoise = wavelet.wavdenoise && p.wavelet.wavdenoise == other.wavelet.wavdenoise;
@@ -2403,8 +2403,8 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.labCurve.chromaticity = dontforceSet && options.baBehav[ADDSET_LC_CHROMATICITY] ? toEdit.labCurve.chromaticity + mods.labCurve.chromaticity : mods.labCurve.chromaticity;
     }
 
-    if (labCurve.avoidcolorshift) {
-        toEdit.labCurve.avoidcolorshift = mods.labCurve.avoidcolorshift;
+    if (labCurve.gamutmunselmethod) {
+        toEdit.labCurve.gamutmunselmethod = mods.labCurve.gamutmunselmethod;
     }
 
     if (labCurve.rstprotection) {
@@ -3045,9 +3045,6 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.colorappearance.tonecie = mods.colorappearance.tonecie;
     }
 
-    if (colorappearance.presetcat02) {
-        toEdit.colorappearance.presetcat02 = mods.colorappearance.presetcat02;
-    }
 
 //  if (colorappearance.sharpcie)           toEdit.colorappearance.sharpcie = mods.colorappearance.sharpcie;
     if (impulseDenoise.enabled) {
@@ -3426,14 +3423,15 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (locallab.enabled) {
         toEdit.locallab.enabled   = mods.locallab.enabled;
+
+        // In that case, locallab is impacted by the combine:
+        // Resizing locallab spots vector according to pedited
+        toEdit.locallab.spots.resize(locallab.spots.size());
     }
 
     if (locallab.selspot) {
         toEdit.locallab.selspot   = mods.locallab.selspot;
     }
-
-    // Resizing locallab spots vector according to pedited
-    toEdit.locallab.spots.resize(locallab.spots.size());
 
     // Updating each locallab spot according to pedited
     for (size_t i = 0; i < toEdit.locallab.spots.size() && i < mods.locallab.spots.size() && i < locallab.spots.size(); i++) {
@@ -3476,6 +3474,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).shapeMethod) {
             toEdit.locallab.spots.at(i).shapeMethod = mods.locallab.spots.at(i).shapeMethod;
+        }
+
+        if (locallab.spots.at(i).avoidgamutMethod) {
+            toEdit.locallab.spots.at(i).avoidgamutMethod = mods.locallab.spots.at(i).avoidgamutMethod;
         }
 
         if (locallab.spots.at(i).loc) {
@@ -3552,14 +3554,6 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).activ) {
             toEdit.locallab.spots.at(i).activ = mods.locallab.spots.at(i).activ;
-        }
-
-        if (locallab.spots.at(i).avoid) {
-            toEdit.locallab.spots.at(i).avoid = mods.locallab.spots.at(i).avoid;
-        }
-
-        if (locallab.spots.at(i).avoidmun) {
-            toEdit.locallab.spots.at(i).avoidmun = mods.locallab.spots.at(i).avoidmun;
         }
 
         if (locallab.spots.at(i).blwh) {
@@ -6427,6 +6421,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.icm.fbw = mods.icm.fbw;
     }
 
+    if (icm.gamut) {
+        toEdit.icm.gamut = mods.icm.gamut;
+    }
+
     if (icm.labgridcieALow) {
         toEdit.icm.labgridcieALow = mods.icm.labgridcieALow;
     }
@@ -6691,6 +6689,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.raw.ff_AutoSelect = mods.raw.ff_AutoSelect;
     }
 
+    if (raw.ff_FromMetaData) {
+        toEdit.raw.ff_FromMetaData = mods.raw.ff_FromMetaData;
+    }
+
     if (raw.ff_BlurRadius) {
         toEdit.raw.ff_BlurRadius = mods.raw.ff_BlurRadius;
     }
@@ -6911,9 +6913,9 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.wavelet.complexmethod = mods.wavelet.complexmethod;
     }
 
-    if (wavelet.denmethod) {
-        toEdit.wavelet.denmethod = mods.wavelet.denmethod;
-    }
+    //if (wavelet.denmethod) {
+    //    toEdit.wavelet.denmethod = mods.wavelet.denmethod;
+    //}
 
     if (wavelet.mixmethod) {
         toEdit.wavelet.mixmethod = mods.wavelet.mixmethod;
@@ -7047,9 +7049,9 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.wavelet.blcurve = mods.wavelet.blcurve;
     }
 
-    if (wavelet.opacityCurveSH) {
-        toEdit.wavelet.opacityCurveSH = mods.wavelet.opacityCurveSH;
-    }
+    //if (wavelet.opacityCurveSH) {
+    //    toEdit.wavelet.opacityCurveSH = mods.wavelet.opacityCurveSH;
+    //}
 
     if (wavelet.opacityCurveRG) {
         toEdit.wavelet.opacityCurveRG = mods.wavelet.opacityCurveRG;
@@ -7422,7 +7424,7 @@ bool RAWParamsEdited::XTransSensor::isUnchanged() const
 bool RAWParamsEdited::isUnchanged() const
 {
     return  bayersensor.isUnchanged() && xtranssensor.isUnchanged() && ca_autocorrect && ca_avoidcolourshift && caautoiterations && cared && cablue && hotPixelFilter && deadPixelFilter && hotdeadpix_thresh && darkFrame
-            && df_autoselect && ff_file && ff_AutoSelect && ff_BlurRadius && ff_BlurType && exPos && ff_AutoClipControl && ff_clipControl;
+            && df_autoselect && ff_file && ff_AutoSelect && ff_FromMetaData && ff_BlurRadius && ff_BlurType && exPos && ff_AutoClipControl && ff_clipControl;
 }
 
 bool LensProfParamsEdited::isUnchanged() const
@@ -7452,6 +7454,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     structexclu(v),
     struc(v),
     shapeMethod(v),
+    avoidgamutMethod(v),
     loc(v),
     centerX(v),
     centerY(v),
@@ -7471,8 +7474,6 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     transitgrad(v),
     hishow(v),
     activ(v),
-    avoid(v),
-    avoidmun(v),
     blwh(v),
     recurs(v),
     laplac(v),
@@ -8097,7 +8098,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     lightlzcam(v),
     lightqzcam(v),
     contlzcam(v),
-    contqzcam(v), 
+    contqzcam(v),
     contthreszcam(v),
     colorflzcam(v),
     saturzcam(v),
@@ -8145,6 +8146,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     structexclu = v;
     struc = v;
     shapeMethod = v;
+    avoidgamutMethod = v;
     loc = v;
     centerX = v;
     centerY = v;
@@ -8164,8 +8166,6 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     transitgrad = v;
     hishow = v;
     activ = v;
-    avoid = v;
-    avoidmun = v;
     blwh = v;
     recurs = v;
     laplac = v;
@@ -8797,7 +8797,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     lightlzcam = v;
     lightqzcam = v;
     contlzcam = v;
-    contqzcam = v; 
+    contqzcam = v;
     contthreszcam = v;
     colorflzcam = v;
     saturzcam = v;

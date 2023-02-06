@@ -148,12 +148,14 @@ int main (int argc, char **argv)
     }
 
     options.rtSettings.lensfunDbDirectory = LENSFUN_DB_PATH;
+    options.rtSettings.lensfunDbBundleDirectory = LENSFUN_DB_PATH;
 
 #else
     argv0 = DATA_SEARCH_PATH;
     creditsPath = CREDITS_SEARCH_PATH;
     licensePath = LICENCE_SEARCH_PATH;
     options.rtSettings.lensfunDbDirectory = LENSFUN_DB_PATH;
+    options.rtSettings.lensfunDbBundleDirectory = LENSFUN_DB_PATH;
 #endif
 
     bool quickstart = dontLoadCache (argc, argv);
@@ -741,7 +743,7 @@ int processLineParams ( int argc, char **argv )
                 if (options.defProfRaw == DEFPROFILE_DYNAMIC) {
                     rawParams->deleteInstance();
                     delete rawParams;
-                    rawParams = ProfileStore::getInstance()->loadDynamicProfile (ii->getMetaData());
+                    rawParams = ProfileStore::getInstance()->loadDynamicProfile (ii->getMetaData(), inputFile);
                 }
 
                 std::cout << "  Merging default raw processing profile." << std::endl;
@@ -750,7 +752,7 @@ int processLineParams ( int argc, char **argv )
                 if (options.defProfImg == DEFPROFILE_DYNAMIC) {
                     imgParams->deleteInstance();
                     delete imgParams;
-                    imgParams = ProfileStore::getInstance()->loadDynamicProfile (ii->getMetaData());
+                    imgParams = ProfileStore::getInstance()->loadDynamicProfile (ii->getMetaData(), inputFile);
                 }
 
                 std::cout << "  Merging default non-raw processing profile." << std::endl;

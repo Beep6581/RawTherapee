@@ -29,8 +29,10 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
+const Glib::ustring PreprocessWB::TOOL_NAME = "preprocesswb";
+
 PreprocessWB::PreprocessWB() :
-    FoldableToolPanel(this, "preprocesswb", M("TP_PREPROCWB_LABEL")),
+    FoldableToolPanel(this, TOOL_NAME, M("TP_PREPROCWB_LABEL")),
     evPreprocessWBMode(ProcEventMapper::getInstance()->newEvent(FIRST, "HISTORY_MSG_PREPROCWB_MODE")),
     mode(Gtk::manage(new MyComboBoxText()))
 {

@@ -318,24 +318,58 @@ bool ExtProgStore::openInPhotoshop (const Glib::ustring& fileName)
     return spawnCommandAsync (cmdLine);
 }
 
-bool ExtProgStore::openInCustomEditor (const Glib::ustring& fileName)
+bool ExtProgStore::openInCustomEditor (const Glib::ustring& fileName, const Glib::ustring* command)
 {
+    if (!command) {
+        command = &(options.customEditorProg);
+    }
+
 #if defined WIN32
 
-    const auto cmdLine = Glib::ustring("\"") + options.customEditorProg + Glib::ustring("\"");
+    const auto cmdLine = Glib::ustring("\"") + *command + Glib::ustring("\"");
     auto success = ShellExecute( NULL, "open", cmdLine.c_str(), ('"' + fileName + '"').c_str(), NULL, SW_SHOWNORMAL );
     return (uintptr_t)success > 32;
 
 #elif defined __APPLE__
 
-    const auto cmdLine = options.customEditorProg + Glib::ustring(" \"") + fileName + Glib::ustring("\"");
+    const auto cmdLine = *command + Glib::ustring(" \"") + fileName + Glib::ustring("\"");
     return spawnCommandAsync (cmdLine);
 
 #else
 
-    const auto cmdLine = options.customEditorProg + Glib::ustring(" ") + Glib::shell_quote(fileName);
+    const auto cmdLine = *command + Glib::ustring(" ") + Glib::shell_quote(fileName);
     return spawnCommandAsync (cmdLine);
 
 #endif
 
+}
+
+bool ExtProgStore::openInExternalEditor(const Glib::ustring &fileName, const Glib::RefPtr<Gio::AppInfo> &editorInfo)
+{
+    bool success = false;
+
+    try {
+        success = editorInfo->launch(Gio::File::create_for_path(fileName));
+    } catch (const Glib::Error &e) {
+        std::cerr
+            << "Error launching external editor.\n"
+            << "Error code #" << e.code() << ": " << e.what()
+            << std::endl;
+        success = false;
+    }
+
+    if (success) {
+        return true;
+    }
+
+    if (rtengine::settings->verbose) {
+        std::cout << "Unable to launch external editor with Gio. Trying custom launcher." << std::endl;
+    }
+    Glib::ustring command = editorInfo->get_commandline();
+#if defined WIN32
+    if (command.length() > 2 && command[0] == '"' && command[command.length() - 1] == '"') {
+        command = command.substr(1, command.length() - 2);
+    }
+#endif
+    return openInCustomEditor(fileName, &command);
 }

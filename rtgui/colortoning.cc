@@ -14,6 +14,7 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
+const Glib::ustring ColorToning::TOOL_NAME = "colortoning";
 
 namespace {
 
@@ -33,7 +34,7 @@ inline float round_ab(float v)
 } // namespace
 
 
-ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLORTONING_LABEL"), false, true)
+ColorToning::ColorToning () : FoldableToolPanel(this, TOOL_NAME, M("TP_COLORTONING_LABEL"), false, true)
 {
     nextbw = 0;
     CurveListener::setMulti(true);
@@ -315,7 +316,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     neutrHBox = Gtk::manage (new Gtk::Box());
 
     neutral = Gtk::manage (new Gtk::Button (M("TP_COLORTONING_NEUTRAL")));
-    neutral->set_tooltip_text (M("TP_COLORTONING_NEUTRAL_TIP"));
+    neutral->set_tooltip_text (M("TP_COLORTONING_NEUTRAL_TOOLTIP"));
     neutralconn = neutral->signal_pressed().connect( sigc::mem_fun(*this, &ColorToning::neutral_pressed) );
     neutral->show();
     neutrHBox->pack_start (*neutral);

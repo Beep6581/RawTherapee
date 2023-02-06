@@ -62,6 +62,7 @@ set(NONCLISOURCEFILES
     exiffiltersettings.cc
     exifpanel.cc
     exportpanel.cc
+    externaleditorpreferences.cc
     extprog.cc
     fattaltonemap.cc
     filebrowser.cc
@@ -134,6 +135,7 @@ set(NONCLISOURCEFILES
     retinex.cc
     rgbcurves.cc
     rotate.cc
+    rtappchooserdialog.cc
     rtimage.cc
     rtscalable.cc
     rtsurface.cc
@@ -161,6 +163,7 @@ set(NONCLISOURCEFILES
     tonecurve.cc
     toneequalizer.cc
     toolbar.cc
+    toollocationpref.cc
     toolpanel.cc
     toolpanelcoord.cc
     vibrance.cc

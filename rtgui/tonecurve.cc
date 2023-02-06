@@ -33,7 +33,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-ToneCurve::ToneCurve() : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LABEL"))
+const Glib::ustring ToneCurve::TOOL_NAME = "tonecurve";
+
+ToneCurve::ToneCurve() : FoldableToolPanel(this, TOOL_NAME, M("TP_EXPOSURE_LABEL"))
 {
     auto m = ProcEventMapper::getInstance();
     EvHistMatching = m->newEvent(AUTOEXP, "HISTORY_MSG_HISTMATCHING");
@@ -58,11 +60,11 @@ ToneCurve::ToneCurve() : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LAB
     abox->set_spacing (4);
 
     autolevels = Gtk::manage(new Gtk::ToggleButton(M("TP_EXPOSURE_AUTOLEVELS")));
-    autolevels->set_tooltip_markup(M("TP_EXPOSURE_AUTOLEVELS_TIP"));
+    autolevels->set_tooltip_markup(M("TP_EXPOSURE_AUTOLEVELS_TOOLTIP"));
     autoconn = autolevels->signal_toggled().connect(sigc::mem_fun(*this, &ToneCurve::autolevels_toggled));
 
     lclip = Gtk::manage(new Gtk::Label(M("TP_EXPOSURE_CLIP")));
-    lclip->set_tooltip_text(M("TP_EXPOSURE_CLIP_TIP"));
+    lclip->set_tooltip_text(M("TP_EXPOSURE_CLIP_TOOLTIP"));
 
     sclip = Gtk::manage(new MySpinButton());
     sclip->set_range(0.0, 0.99);
@@ -74,7 +76,7 @@ ToneCurve::ToneCurve() : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LAB
     sclip->signal_value_changed().connect(sigc::mem_fun(*this, &ToneCurve::clip_changed));
 
     neutral = Gtk::manage(new Gtk::Button(M("TP_NEUTRAL")));
-    neutral->set_tooltip_text(M("TP_NEUTRAL_TIP"));
+    neutral->set_tooltip_text(M("TP_NEUTRAL_TOOLTIP"));
     neutralconn = neutral->signal_pressed().connect(sigc::mem_fun(*this, &ToneCurve::neutral_pressed));
     neutral->show();
 
@@ -872,7 +874,7 @@ void ToneCurve::setBatchMode(bool batchMode)
 
     removeIfThere(abox, autolevels, false);
     autolevels = Gtk::manage(new Gtk::CheckButton(M("TP_EXPOSURE_AUTOLEVELS")));
-    autolevels->set_tooltip_markup(M("TP_EXPOSURE_AUTOLEVELS_TIP"));
+    autolevels->set_tooltip_markup(M("TP_EXPOSURE_AUTOLEVELS_TOOLTIP"));
     autoconn = autolevels->signal_toggled().connect(sigc::mem_fun(*this, &ToneCurve::autolevels_toggled));
     abox->pack_start(*autolevels);
 

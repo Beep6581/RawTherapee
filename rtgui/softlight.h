@@ -32,6 +32,7 @@ private:
     rtengine::ProcEvent EvSoftLightStrength;
     
 public:
+    static const Glib::ustring TOOL_NAME;
 
     SoftLight();
 
