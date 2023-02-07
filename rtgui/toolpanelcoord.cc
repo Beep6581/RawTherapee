@@ -45,6 +45,9 @@ const std::vector<ToolTree> EXPOSURE_PANEL_TOOLS = {
         .id = Tool::SHADOWS_HIGHLIGHTS,
     },
     {
+        .id = Tool::TONE_EQUALIZER,
+    },
+    {
         .id = Tool::EPD,
     },
     {
@@ -562,6 +565,8 @@ std::string ToolPanelCoordinator::getToolName(Tool tool)
             return ToneCurve::TOOL_NAME;
         case Tool::SHADOWS_HIGHLIGHTS:
             return ShadowsHighlights::TOOL_NAME;
+        case Tool::TONE_EQUALIZER:
+            return ToneEqualizer::TOOL_NAME;
         case Tool::IMPULSE_DENOISE:
             return ImpulseDenoise::TOOL_NAME;
         case Tool::DEFRINGE_TOOL:
@@ -1908,6 +1913,8 @@ FoldableToolPanel *ToolPanelCoordinator::getFoldableToolPanel(Tool tool) const
             return toneCurve;
         case Tool::SHADOWS_HIGHLIGHTS:
             return shadowshighlights;
+        case Tool::TONE_EQUALIZER:
+            return toneEqualizer;
         case Tool::IMPULSE_DENOISE:
             return impulsedenoise;
         case Tool::DEFRINGE_TOOL:

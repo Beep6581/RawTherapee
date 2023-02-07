@@ -25,8 +25,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
+const Glib::ustring ToneEqualizer::TOOL_NAME = "toneequalizer";
 
-ToneEqualizer::ToneEqualizer(): FoldableToolPanel(this, "toneequalizer", M("TP_TONE_EQUALIZER_LABEL"), false, true)
+ToneEqualizer::ToneEqualizer(): FoldableToolPanel(this, TOOL_NAME, M("TP_TONE_EQUALIZER_LABEL"), false, true)
 {
     auto m = ProcEventMapper::getInstance();
     EvEnabled = m->newEvent(AUTOEXP, "HISTORY_MSG_TONE_EQUALIZER_ENABLED");

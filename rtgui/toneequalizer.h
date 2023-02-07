@@ -28,6 +28,8 @@
 
 class ToneEqualizer: public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public CheckBoxListener {
 public:
+    static const Glib::ustring TOOL_NAME;
+
     ToneEqualizer();
 
     void read(const rtengine::procparams::ProcParams *pp, const ParamsEdited* pedited = nullptr) override;

@@ -247,6 +247,7 @@ public:
     enum class Tool {
         TONE_CURVE,
         SHADOWS_HIGHLIGHTS,
+        TONE_EQUALIZER,
         IMPULSE_DENOISE,
         DEFRINGE_TOOL,
         SPOT,
