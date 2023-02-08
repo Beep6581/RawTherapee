@@ -5572,7 +5572,6 @@ void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> 
         }
 
         tempitc = 5000.;
-printf("AZAZAZA\n");
         ItcWB(extra, tempref, greenref, tempitc, greenitc, studgood, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, cmp, raw, wbpar, hrp);
     }
 }
