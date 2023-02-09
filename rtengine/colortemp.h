@@ -26,6 +26,8 @@
 namespace rtengine
 {
 
+using color_match_type = double [97][3];
+
 constexpr double MINTEMP = 1500.0;
 constexpr double MAXTEMP = 60000.0;
 constexpr double MINGREEN = 0.02;
@@ -375,13 +377,13 @@ public:
     static const double JDC468_greym13_325_spect[97];
     static const double JDC468_greyf26_156_spect[97];
     */
-    static void spectrum_to_xyz_daylight  (double _m1, double _m2, double &x, double &y, double &z);
-    static void spectrum_to_xyz_blackbody (double _temp, double &x, double &y, double &z);
-    static void spectrum_to_xyz_preset    (const double* spec_intens, double &x, double &y, double &z);
+    static void spectrum_to_xyz_daylight  (double _m1, double _m2, double &x, double &y, double &z, const color_match_type &color_match);
+    static void spectrum_to_xyz_blackbody (double _temp, double &x, double &y, double &z, const color_match_type &color_match);
+    static void spectrum_to_xyz_preset    (const double* spec_intens, double &x, double &y, double &z, const color_match_type &color_match);
 
-    static void spectrum_to_color_xyz_daylight  (const double* spec_color, double _m1, double _m2, double &xx, double &yy, double &zz);
-    static void spectrum_to_color_xyz_blackbody (const double* spec_color, double _temp, double &xx, double &yy, double &zz);
-    static void spectrum_to_color_xyz_preset    (const double* spec_color, const double* spec_intens, double &xx, double &yy, double &zz);
+    static void spectrum_to_color_xyz_daylight  (const double* spec_color, double _m1, double _m2, double &xx, double &yy, double &zz, const color_match_type &color_match);
+    static void spectrum_to_color_xyz_blackbody (const double* spec_color, double _temp, double &xx, double &yy, double &zz, const color_match_type &color_match);
+    static void spectrum_to_color_xyz_preset    (const double* spec_color, const double* spec_intens, double &xx, double &yy, double &zz, const color_match_type &color_match);
 
 };
 }

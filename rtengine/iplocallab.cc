@@ -2169,7 +2169,7 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
     Imagefloat img(int(fw / SCALE + 0.5), int(fh / SCALE + 0.5));
     const ProcParams neutral;
 
-    imgsrc->getImage(imgsrc->getWB(), TR_NONE, &img, pp, params->toneCurve, neutral.raw);
+    imgsrc->getImage(imgsrc->getWB(), TR_NONE, &img, pp, params->toneCurve, neutral.raw, 0);
     imgsrc->convertColorSpace(&img, params->icm, imgsrc->getWB());
     float minVal = RT_INFINITY;
     float maxVal = -RT_INFINITY;

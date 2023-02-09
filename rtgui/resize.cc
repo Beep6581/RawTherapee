@@ -29,7 +29,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), false, true), maxw(100000), maxh(100000)
+const Glib::ustring Resize::TOOL_NAME = "resize";
+
+Resize::Resize () : FoldableToolPanel(this, TOOL_NAME, M("TP_RESIZE_LABEL"), false, true), maxw(100000), maxh(100000)
 {
     auto m = ProcEventMapper::getInstance();
     EvResizeAllowUpscaling = m->newEvent(RESIZE, "HISTORY_MSG_RESIZE_ALLOWUPSCALING");
@@ -170,10 +172,8 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
     method->signal_changed().connect ( sigc::mem_fun(*this, &Resize::methodChanged) );
     sconn = spec->signal_changed().connect ( sigc::mem_fun(*this, &Resize::specChanged) );
 
-    packBox = Gtk::manage (new ToolParamBlock ());
-    pack_end (*packBox);
-    packBox->hide();
-    packBox->set_tooltip_markup (M("TP_PRSHARPENING_TOOLTIP"));
+    getSubToolsContainer()->hide();
+    getSubToolsContainer()->set_tooltip_markup (M("TP_PRSHARPENING_TOOLTIP"));
 
     show_all();
 }
@@ -396,9 +396,9 @@ void Resize::methodChanged ()
 
     // Post-resize Sharpening assumes the image is in Lab space, and currently Lanczos is the only method which uses that space, and Lanczos is on row 0.
     if (method->get_active_row_number() == 0) {
-        packBox->set_sensitive(true);
+        getSubToolsContainer()->set_sensitive(true);
     } else {
-        packBox->set_sensitive(false);
+        getSubToolsContainer()->set_sensitive(false);
     }
 }
 

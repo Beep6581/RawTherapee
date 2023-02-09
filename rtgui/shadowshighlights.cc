@@ -25,7 +25,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-ShadowsHighlights::ShadowsHighlights () : FoldableToolPanel(this, "shadowshighlights", M("TP_SHADOWSHLIGHTS_LABEL"), false, true)
+const Glib::ustring ShadowsHighlights::TOOL_NAME = "shadowshighlights";
+
+ShadowsHighlights::ShadowsHighlights () : FoldableToolPanel(this, TOOL_NAME, M("TP_SHADOWSHLIGHTS_LABEL"), false, true)
 {
     auto m = ProcEventMapper::getInstance();
     EvSHColorspace = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_SH_COLORSPACE");

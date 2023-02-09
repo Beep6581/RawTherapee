@@ -37,6 +37,7 @@ protected:
     rtengine::ProcEvent EvPDAFLinesFilter;
     
 public:
+    static const Glib::ustring TOOL_NAME;
 
     BayerPreProcess ();
 

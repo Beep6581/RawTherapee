@@ -25,7 +25,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-ChMixer::ChMixer (): FoldableToolPanel(this, "chmixer", M("TP_CHMIXER_LABEL"), false, true)
+const Glib::ustring ChMixer::TOOL_NAME = "chmixer";
+
+ChMixer::ChMixer (): FoldableToolPanel(this, TOOL_NAME, M("TP_CHMIXER_LABEL"), false, true)
 {
 
     imgIcon[0] = Gtk::manage (new RTImage ("circle-red-small.png"));

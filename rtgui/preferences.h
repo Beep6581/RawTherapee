@@ -29,6 +29,7 @@
 class ExternalEditorPreferences;
 class RTWindow;
 class Splash;
+class ToolLocationPreference;
 
 class Preferences final :
     public Gtk::Dialog,
@@ -246,6 +247,8 @@ class Preferences final :
     bool newFont;
     bool newCPFont;
 
+    ToolLocationPreference *toolLocationPreference;
+
     void fillPreferences ();
     void storePreferences ();
     void parseDir       (Glib::ustring dirname, std::vector<Glib::ustring>& items, Glib::ustring ext);
@@ -271,6 +274,7 @@ class Preferences final :
 
     Gtk::ScrolledWindow *swGeneral;
     Gtk::ScrolledWindow *swImageProcessing;
+    Gtk::ScrolledWindow *swFavorites;
     Gtk::ScrolledWindow *swDynamicProfile;
     Gtk::ScrolledWindow *swFileBrowser;
     Gtk::ScrolledWindow *swColorMan;
@@ -280,6 +284,7 @@ class Preferences final :
 
     Gtk::Widget *getGeneralPanel();
     Gtk::Widget *getImageProcessingPanel();
+    Gtk::Widget *getFavoritesPanel();
     Gtk::Widget *getDynamicProfilePanel();
     Gtk::Widget *getFileBrowserPanel();
     Gtk::Widget *getColorManPanel();

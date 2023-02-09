@@ -36,8 +36,10 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
+const Glib::ustring LensProfilePanel::TOOL_NAME = "lensprof";
+
 LensProfilePanel::LensProfilePanel() :
-    FoldableToolPanel(this, "lensprof", M("TP_LENSPROFILE_LABEL")),
+    FoldableToolPanel(this, TOOL_NAME, M("TP_LENSPROFILE_LABEL")),
     lcModeChanged(false),
     lcpFileChanged(false),
     useDistChanged(false),

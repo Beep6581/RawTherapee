@@ -56,6 +56,7 @@ protected:
     bool lastgamutlab;
 
 public:
+    static const Glib::ustring TOOL_NAME;
 
     DirPyrEqualizer ();
     ~DirPyrEqualizer () override;

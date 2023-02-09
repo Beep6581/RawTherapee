@@ -441,6 +441,7 @@ public:
     bool fastexport_use_fast_pipeline;
 
     std::vector<Glib::ustring> favorites;
+    bool cloneFavoriteTools;
     // Dialog settings
     Glib::ustring lastIccDir;
     Glib::ustring lastDarkframeDir;

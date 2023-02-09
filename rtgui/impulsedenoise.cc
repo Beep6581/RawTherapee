@@ -28,7 +28,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-ImpulseDenoise::ImpulseDenoise () : FoldableToolPanel(this, "impulsedenoise", M("TP_IMPULSEDENOISE_LABEL"), true, true)
+const Glib::ustring ImpulseDenoise::TOOL_NAME = "impulsedenoise";
+
+ImpulseDenoise::ImpulseDenoise () : FoldableToolPanel(this, TOOL_NAME, M("TP_IMPULSEDENOISE_LABEL"), true, true)
 {
 
     thresh = Gtk::manage (new Adjuster (M("TP_IMPULSEDENOISE_THRESH"), 0, 100, 1, 50));

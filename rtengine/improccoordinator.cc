@@ -1,6 +1,6 @@
 /*
  *  This file is part of RawTherapee.
- *
+ * 
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
@@ -409,11 +409,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         if (imageTypeListener) {
             imageTypeListener->imageTypeChanged(imgsrc->isRAW(), imgsrc->getSensorType() == ST_BAYER, imgsrc->getSensorType() == ST_FUJI_XTRANS, imgsrc->isMono(), imgsrc->isGainMapSupported());
         }
-
+		bool iscolor = (params->toneCurve.method == "Color");// || params->toneCurve.method == "Coloropp");
         if ((todo & M_RAW)
                 || (!highDetailRawComputed && highDetailNeeded)
-                || (params->toneCurve.hrenabled && params->toneCurve.method != "Color" && imgsrc->isRGBSourceModified())
-                || (!params->toneCurve.hrenabled && params->toneCurve.method == "Color" && imgsrc->isRGBSourceModified())) {
+               // || (params->toneCurve.hrenabled && params->toneCurve.method != "Color" && imgsrc->isRGBSourceModified())
+               // || (!params->toneCurve.hrenabled && params->toneCurve.method == "Color" && imgsrc->isRGBSourceModified())) {
+                || (params->toneCurve.hrenabled && !iscolor && imgsrc->isRGBSourceModified())
+                || (!params->toneCurve.hrenabled && iscolor && imgsrc->isRGBSourceModified())) {
 
             if (settings->verbose) {
                 if (imgsrc->getSensorType() == ST_BAYER) {
@@ -466,8 +468,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
         if ((todo & M_RAW)
                 || (!highDetailRawComputed && highDetailNeeded)
-                || (params->toneCurve.hrenabled && params->toneCurve.method != "Color" && imgsrc->isRGBSourceModified())
-                || (!params->toneCurve.hrenabled && params->toneCurve.method == "Color" && imgsrc->isRGBSourceModified())) {
+              //  || (params->toneCurve.hrenabled && params->toneCurve.method != "Color" && imgsrc->isRGBSourceModified())
+              //  || (!params->toneCurve.hrenabled && params->toneCurve.method == "Color" && imgsrc->isRGBSourceModified())) {
+                || (params->toneCurve.hrenabled && !iscolor && imgsrc->isRGBSourceModified())
+                || (!params->toneCurve.hrenabled && iscolor && imgsrc->isRGBSourceModified())) {
             if (highDetailNeeded) {
                 highDetailRawComputed = true;
             } else {
@@ -510,8 +514,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         }
         if (todo & (M_INIT | M_LINDENOISE | M_HDR)) {
             MyMutex::MyLock initLock(minit);  // Also used in crop window
-
-            imgsrc->HLRecovery_Global(params->toneCurve);   // this handles Color HLRecovery
+			//	imgsrc->HLRecovery_Global(params->toneCurve);   // this handles Color HLRecovery
 
 
             if (settings->verbose) {
@@ -538,7 +541,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         printf("tempref=%f greref=%f\n", tempref, greenref);
                     }
 
-                    imgsrc->getAutoWBMultipliersitc(tempref, greenref, tempitc, greenitc, studgood, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw);
+                    imgsrc->getAutoWBMultipliersitc(tempref, greenref, tempitc, greenitc, studgood, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
 
                     if (params->wb.method ==  "autitcgreen") {
                         params->wb.temperature = tempitc;
@@ -617,8 +620,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             PreviewProps pp(0, 0, fw, fh, scale);
             // Tells to the ImProcFunctions' tools what is the preview scale, which may lead to some simplifications
             ipf.setScale(scale);
-
-            imgsrc->getImage(currWB, tr, orig_prev, pp, params->toneCurve, params->raw);
+			int inpaintopposed = 1;//force getimage to use inpaint-opposed if enable, only once
+            imgsrc->getImage(currWB, tr, orig_prev, pp, params->toneCurve, params->raw, inpaintopposed);
 
             if ((todo & M_SPOT) && params->spot.enabled && !params->spot.entries.empty()) {
                 spotsDone = true;
@@ -2447,7 +2450,7 @@ bool ImProcCoordinator::getAutoWB(double& temp, double& green, double equal, dou
             double greenitc = 1.;
             float studgood = 1000.f;
             double tempref, greenref;
-            imgsrc->getAutoWBMultipliersitc(tempref, greenref, tempitc, greenitc, studgood,  0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw);
+            imgsrc->getAutoWBMultipliersitc(tempref, greenref, tempitc, greenitc, studgood,  0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
 
             if (rm != -1) {
                 autoWB.update(rm, gm, bm, equal, tempBias);
@@ -2634,7 +2637,7 @@ void ImProcCoordinator::saveInputICCReference(const Glib::ustring& fname, bool a
         currWB = ColorTemp(); // = no white balance
     }
 
-    imgsrc->getImage(currWB, tr, im, pp, ppar.toneCurve, ppar.raw);
+    imgsrc->getImage(currWB, tr, im, pp, ppar.toneCurve, ppar.raw, 0);
     ImProcFunctions ipf(&ppar, true);
 
     if (ipf.needsTransform(fW, fH, imgsrc->getRotateDegree(), imgsrc->getMetaData())) {

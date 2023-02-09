@@ -45,6 +45,7 @@ protected:
     sigc::connection lumamodeConn;
 
 public:
+    static const Glib::ustring TOOL_NAME;
 
     RGBCurves ();
     ~RGBCurves () override;

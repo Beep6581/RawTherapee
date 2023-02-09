@@ -29,6 +29,8 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
+const Glib::ustring Crop::TOOL_NAME = "crop";
+
 namespace
 {
 
@@ -124,7 +126,7 @@ private:
 };
 
 Crop::Crop():
-    FoldableToolPanel(this, "crop", M("TP_CROP_LABEL"), false, true),
+    FoldableToolPanel(this, TOOL_NAME, M("TP_CROP_LABEL"), false, true),
     crop_ratios(new CropRatios),
     opt(0),
     wDirty(true),

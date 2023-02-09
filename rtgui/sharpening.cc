@@ -23,7 +23,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Sharpening::Sharpening () : FoldableToolPanel(this, "sharpening", M("TP_SHARPENING_LABEL"), true, true)
+const Glib::ustring Sharpening::TOOL_NAME = "sharpening";
+
+Sharpening::Sharpening () : FoldableToolPanel(this, TOOL_NAME, M("TP_SHARPENING_LABEL"), true, true)
 {
     auto m = ProcEventMapper::getInstance();
     EvSharpenContrast = m->newEvent(SHARPENING, "HISTORY_MSG_SHARPENING_CONTRAST");
