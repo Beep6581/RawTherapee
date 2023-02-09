@@ -1834,6 +1834,7 @@ PREFERENCES_CIEARTIF;Avoid artifacts
 PREFERENCES_WBA;White Balance
 PREFERENCES_WBACORR;White Balance - Automatic temperature correlation
 PREFERENCES_WBACORR_TOOLTIP;These 8 settings allow, depending on the images (type of raw, colorimetry, etc.), an adaptation of the 'Temperature correlation' algorithm. There is no absolute rule linking these parameters to the results obtained.\n Access to these parameters must allow:a) a development of the algorithm b) an adaptation of the algorithm to particular cases.\n See Rawpedia for explanations of these parameters.
+PREFERENCES_WBAENA;Show White Balance auto Temperature correlation Settings 
 PREFERENCES_WBAOBS;Observer 10° instead of Observer 2°
 PREFERENCES_WBAPATCH;Number maximum of colors used in picture
 PREFERENCES_WBAFORC;Forces Extra algoritm
@@ -4082,6 +4083,10 @@ TP_WBALANCE_FLUO_HEADER;Fluorescent
 TP_WBALANCE_GREEN;Tint
 TP_WBALANCE_GTI;GTI
 TP_WBALANCE_HMI;HMI
+TP_WBALANCE_ITCWB_FRA;Auto Temperature correlation Settings
+TP_WBALANCE_ITCWB_FRA_TOOLTIP;These settings allow, depending on the images (type of raw, colorimetry, etc.), an adaptation of the 'Temperature correlation' algorithm. There is no absolute rule linking these parameters to the results obtained.
+TP_WBALANCE_ITCWB_NOPURPLE;No purple color used
+TP_WBALANCE_ITCWB_THRES;Maximum of colors used in picture
 TP_WBALANCE_JUDGEIII;JudgeIII
 TP_WBALANCE_LABEL;White Balance
 TP_WBALANCE_LAMP_HEADER;Lamp

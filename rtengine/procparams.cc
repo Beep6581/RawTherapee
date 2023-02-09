@@ -1331,7 +1331,10 @@ WBParams::WBParams() :
     temperature(6504),
     green(1.0),
     equal(1.0),
-    tempBias(0.0)
+    tempBias(0.0),
+    itcwb_thres(34),
+    itcwb_nopurple(true)
+
 {
 }
 
@@ -1364,7 +1367,10 @@ bool WBParams::operator ==(const WBParams& other) const
         && temperature == other.temperature
         && green == other.green
         && equal == other.equal
-        && tempBias == other.tempBias;
+        && tempBias == other.tempBias
+        && itcwb_thres == other.itcwb_thres
+        && itcwb_nopurple == other.itcwb_nopurple;
+
 }
 
 bool WBParams::operator !=(const WBParams& other) const
@@ -6108,6 +6114,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->wb.green, "White Balance", "Green", wb.green, keyFile);
         saveToKeyfile(!pedited || pedited->wb.equal, "White Balance", "Equal", wb.equal, keyFile);
         saveToKeyfile(!pedited || pedited->wb.tempBias, "White Balance", "TemperatureBias", wb.tempBias, keyFile);
+        saveToKeyfile(!pedited || pedited->wb.itcwb_thres, "White Balance", "Itcwb_thres", wb.itcwb_thres, keyFile);
+        saveToKeyfile(!pedited || pedited->wb.itcwb_nopurple, "White Balance", "Itcwb_nopurple", wb.itcwb_nopurple, keyFile);
 
 // Colorappearance
         saveToKeyfile(!pedited || pedited->colorappearance.enabled, "Color appearance", "Enabled", colorappearance.enabled, keyFile);
@@ -8049,6 +8057,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "White Balance", "Green", pedited, wb.green, pedited->wb.green);
             assignFromKeyfile(keyFile, "White Balance", "Equal", pedited, wb.equal, pedited->wb.equal);
             assignFromKeyfile(keyFile, "White Balance", "TemperatureBias", pedited, wb.tempBias, pedited->wb.tempBias);
+            assignFromKeyfile(keyFile, "White Balance", "Itcwb_thres", pedited, wb.itcwb_thres, pedited->wb.itcwb_thres);
+            assignFromKeyfile(keyFile, "White Balance", "Itcwb_nopurple", pedited, wb.itcwb_nopurple, pedited->wb.itcwb_nopurple);
         }
 
         if (keyFile.has_group("Defringing")) {

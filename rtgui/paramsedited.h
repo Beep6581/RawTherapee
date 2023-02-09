@@ -247,6 +247,8 @@ struct WBParamsEdited {
     bool green;
     bool equal;
     bool tempBias;
+    bool itcwb_thres;
+    bool itcwb_nopurple;
 };
 
 struct DefringeParamsEdited {

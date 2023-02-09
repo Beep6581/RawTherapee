@@ -639,6 +639,8 @@ struct WBParams {
     double          green;
     double          equal;
     double          tempBias;
+    int             itcwb_thres;
+    bool            itcwb_nopurple;
 
     WBParams();
 

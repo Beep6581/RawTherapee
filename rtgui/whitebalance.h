@@ -60,6 +60,9 @@ protected:
             add(colId);
         }
     };
+    
+    rtengine::ProcEvent EvWBitcwbthres;
+    rtengine::ProcEvent EvWBitcwbnopurple;
 
     static Glib::RefPtr<Gdk::Pixbuf> wbPixbufs[rtengine::toUnderlying(rtengine::procparams::WBEntry::Type::CUSTOM) + 1];
     Glib::RefPtr<Gtk::TreeStore> refTreeModel;
@@ -71,6 +74,10 @@ protected:
     Adjuster* green;
     Adjuster* equal;
     Adjuster* tempBias;
+    Gtk::Frame* itcwbFrame;
+    Adjuster* itcwb_thres;
+    Gtk::CheckButton* itcwb_nopurple;
+    bool lastitcwb_nopurple;
 
     Gtk::Button* spotbutton;
     int opt;
@@ -78,7 +85,7 @@ protected:
     double nextGreen;
     WBProvider *wbp;  // pointer to a ToolPanelCoordinator object, or its subclass BatchToolPanelCoordinator
     SpotWBListener* wblistener;
-    sigc::connection methconn;
+    sigc::connection methconn, itcwb_nopurpleconn;
     int custom_temp;
     double custom_green;
     double custom_equal;
@@ -126,6 +133,7 @@ public:
     void setWB (int temp, double green);
     void resetWB ();
     void WBChanged           (double temp, double green, float studgood) override;
+    void itcwb_nopurple_toggled ();
 
     void setAdjusterBehavior (bool tempadd, bool greenadd, bool equaladd, bool tempbiasadd);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;

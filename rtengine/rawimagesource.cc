@@ -4043,6 +4043,10 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
     // this "choice" are guided by generally colors who are in nature skin, sky, etc. in those cases "steps" are small
     // of course we can change to be more precise
     // purp enable or not purple color in xyY - approximation...
+    if(purp) {printf("OK purple\n");
+    } else {
+       printf("OK PAS purple\n");
+    }
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
@@ -5182,10 +5186,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         bool purp = true;//if inpaint-opposed or something else enable purp
 
-        if (hrp.hrenabled && hrp.method == "Coloropp" && settings->itcwb_nopurple == true) {//we disabled (user) with settings if image are naturally with purple (flowers...)
+ //       if (hrp.hrenabled && hrp.method == "Coloropp" && settings->itcwb_nopurple == true) {//we disabled (user) with settings if image are naturally with purple (flowers...)
+        if (hrp.hrenabled && hrp.method == "Coloropp" && wbpar.itcwb_nopurple == true) {//we disabled (user) with settings if image are naturally with purple (flowers...)
             purp = false;
         }
-
         histoxyY(bfhitc, bfwitc, xc, yc, Yc, xxx,  yyy, YYY, histxy, purp);//purp enable,  enable purple color in WB
         //return histogram x and y for each temp and in a range of 235 colors (siza)
     }
@@ -5297,7 +5301,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         std::sort(wbchro, wbchro + sizcu4, wbchro[0]);
     }
 
-    const int maxval = rtengine::LIM(settings->itcwb_thres, 10, 55);//max values of color to find correlation
+ //   const int maxval = rtengine::LIM(settings->itcwb_thres, 10, 55);//max values of color to find correlation
+    const int maxval = rtengine::LIM(wbpar.itcwb_thres, 10, 55);//max values of color to find correlation
 
     sizcurr2ref = rtengine::min(sizcurr2ref, maxval);    //keep about the biggest values,
 
@@ -5314,8 +5319,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     //calculate deltaE xx to find best values of spectrals data - limited to chroma values
     int maxnb = rtengine::LIM(settings->itcwb_sizereference, 1, 5);
 
-    if (settings->itcwb_thres > 55) {
-        maxnb = 201 / settings->itcwb_thres;
+//    if (settings->itcwb_thres > 55) {
+//        maxnb = 201 / settings->itcwb_thres;
+//    }
+    if (wbpar.itcwb_thres > 55) {
+        maxnb = 201 / wbpar.itcwb_thres;
     }
 
     for (int nb = 1; nb <= maxnb; ++nb) { //max 5 iterations for Itcwb_thres=33, after trial 3 is good in most cases but in some cases 5

@@ -266,6 +266,8 @@ void ParamsEdited::set(bool v)
     wb.temperature             = v;
     wb.equal                   = v;
     wb.tempBias                = v;
+    wb.itcwb_thres                = v;
+    wb.itcwb_nopurple             = v;
     //colorShift.a               = v;
     //colorShift.b               = v;
     //lumaDenoise.enabled        = v;
@@ -967,6 +969,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wb.equal = wb.equal && p.wb.equal == other.wb.equal;
         wb.temperature = wb.temperature && p.wb.temperature == other.wb.temperature;
         wb.tempBias = wb.tempBias && p.wb.tempBias == other.wb.tempBias;
+        wb.itcwb_thres = wb.itcwb_thres && p.wb.itcwb_thres == other.wb.itcwb_thres;
+        wb.itcwb_nopurple = wb.itcwb_nopurple && p.wb.itcwb_nopurple == other.wb.itcwb_nopurple;
         //colorShift.a = colorShift.a && p.colorShift.a == other.colorShift.a;
         //colorShift.b = colorShift.b && p.colorShift.b == other.colorShift.b;
         //lumaDenoise.enabled = lumaDenoise.enabled && p.lumaDenoise.enabled == other.lumaDenoise.enabled;
@@ -2827,6 +2831,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (wb.tempBias) {
         toEdit.wb.tempBias = dontforceSet && options.baBehav[ADDSET_WB_TEMPBIAS] ? toEdit.wb.tempBias + mods.wb.tempBias : mods.wb.tempBias;
+    }
+
+    if (wb.itcwb_thres) {
+        toEdit.wb.itcwb_thres = mods.wb.itcwb_thres;
+    }
+
+    if (wb.itcwb_nopurple) {
+        toEdit.wb.itcwb_nopurple = mods.wb.itcwb_nopurple;
     }
 
     if (wb.green) {

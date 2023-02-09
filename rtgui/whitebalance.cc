@@ -22,6 +22,7 @@
 
 #include "rtimage.h"
 #include "options.h"
+#include "eventmapper.h"
 
 #define MINTEMP 1500   //1200
 #define MAXTEMP 60000  //12000
@@ -242,6 +243,9 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
         custom_equal = 1.0;
     }
 
+    auto m = ProcEventMapper::getInstance();
+    EvWBitcwbthres = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_THRES");
+    EvWBitcwbnopurple = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_NOPURPLE");
     //Add the model columns to the Combo (which is a kind of view),
     //rendering them in the default way:
     method->pack_start(methodColumns.colIcon, false);
@@ -349,6 +353,19 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     green->show ();
     equal->show ();
     tempBias->show ();
+    itcwbFrame = Gtk::manage(new Gtk::Frame(M("TP_WBALANCE_ITCWB_FRA")));
+    
+    itcwbFrame->set_label_align(0.025, 0.5);
+    itcwbFrame->set_tooltip_markup (M("TP_WBALANCE_ITCWB_FRA_TOOLTIP"));
+
+    ToolParamBlock* const itcwbBox = Gtk::manage(new ToolParamBlock());
+
+    itcwb_thres = Gtk::manage (new Adjuster(M("TP_WBALANCE_ITCWB_THRES"), 10, 55, 1, 34));
+    itcwb_thres->set_tooltip_markup (M("TP_WBALANCE_ITCWBTHRES_TOOLTIP"));
+
+    itcwb_nopurple = Gtk::manage (new Gtk::CheckButton (M("TP_WBALANCE_ITCWB_NOPURPLE")));
+    itcwb_nopurple->set_tooltip_markup (M("TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP"));
+    itcwb_nopurple ->set_active (true);
 
     /*  Gtk::Box* boxgreen = Gtk::manage (new Gtk::Box ());
     boxgreen->show ();
@@ -363,14 +380,29 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     pack_start (*green);
     pack_start (*equal);
     pack_start (*tempBias);
-
+    itcwbBox->pack_start (*itcwb_thres);
+    itcwbBox->pack_start (*itcwb_nopurple);
+    itcwbFrame->add(*itcwbBox);
+    pack_start(*itcwbFrame);
+    
+    if(options.rtSettings.itcwb_enable) {
+        itcwb_thres->show();
+        itcwb_nopurple->show();
+        itcwbFrame->show();
+    } else {
+        itcwb_thres->hide();
+        itcwb_nopurple->hide();
+        itcwbFrame->hide();
+    }
     temp->setAdjusterListener (this);
     green->setAdjusterListener (this);
     equal->setAdjusterListener (this);
     tempBias->setAdjusterListener (this);
+    itcwb_thres->setAdjusterListener (this);
 
     spotbutton->signal_pressed().connect( sigc::mem_fun(*this, &WhiteBalance::spotPressed) );
     methconn = method->signal_changed().connect( sigc::mem_fun(*this, &WhiteBalance::optChanged) );
+    itcwb_nopurpleconn = itcwb_nopurple->signal_toggled().connect( sigc::mem_fun(*this, &WhiteBalance::itcwb_nopurple_toggled) );
     resetButton->signal_pressed().connect( sigc::mem_fun(*this, &WhiteBalance::resetWB) );
     spotsize->signal_changed().connect( sigc::mem_fun(*this, &WhiteBalance::spotSizeChanged) );
 }
@@ -393,6 +425,29 @@ void WhiteBalance::enabledChanged()
     }
 }
 
+void WhiteBalance::itcwb_nopurple_toggled ()
+{
+    if (batchMode) {
+        if (itcwb_nopurple->get_inconsistent()) {
+            itcwb_nopurple->set_inconsistent (false);
+            itcwb_nopurpleconn.block (true);
+            itcwb_nopurple->set_active (false);
+            itcwb_nopurpleconn.block (false);
+        } else if (lastitcwb_nopurple) {
+            itcwb_nopurple->set_inconsistent (true);
+        }
+
+        lastitcwb_nopurple = itcwb_nopurple->get_active ();
+    }
+
+    if (listener && getEnabled()) {
+        if (itcwb_nopurple->get_active ()) {
+            listener->panelChanged (EvWBitcwbnopurple, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged (EvWBitcwbnopurple, M("GENERAL_DISABLED"));
+        }
+    }
+}
 
 void WhiteBalance::adjusterChanged(Adjuster* a, double newval)
 {
@@ -452,6 +507,8 @@ void WhiteBalance::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged (EvWBequal, Glib::ustring::format (std::setw(4), std::fixed, std::setprecision(3), a->getValue()));
         } else if (a == tempBias) {
             listener->panelChanged (EvWBtempBias, Glib::ustring::format (std::setw(4), std::fixed, std::setprecision(2), a->getValue()));
+        } else if (a == itcwb_thres) {
+            listener->panelChanged (EvWBitcwbthres, Glib::ustring::format ((int) a->getValue()));
         }
     }
 }
@@ -599,8 +656,24 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     methconn.block (true);
     equal->setValue (pp->wb.equal);
+    itcwb_thres->setValue (pp->wb.itcwb_thres);
     tempBias->setValue (pp->wb.tempBias);
     tempBias->set_sensitive(true);
+    itcwb_nopurpleconn.block (true);
+    itcwb_nopurple->set_active (pp->wb.itcwb_nopurple);
+    itcwb_nopurpleconn.block (false);
+    lastitcwb_nopurple = pp->wb.itcwb_nopurple;
+
+    if(options.rtSettings.itcwb_enable) {
+        itcwb_thres->show();
+        itcwb_nopurple->show();
+        itcwbFrame->show();
+        
+    } else {
+        itcwb_thres->hide();
+        itcwb_nopurple->hide();
+        itcwbFrame->hide();
+    }
 
     if (pedited) {
         // By default, temperature and green are said "UnEdited", but it may change later
@@ -608,6 +681,8 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         green->setEditedState (UnEdited);
         equal->setEditedState (pedited->wb.equal ? Edited : UnEdited);
         tempBias->setEditedState (pedited->wb.tempBias ? Edited : UnEdited);
+        itcwb_thres->setEditedState (pedited->wb.itcwb_thres ? Edited : UnEdited);
+        itcwb_nopurple->set_inconsistent (!pedited->wb.itcwb_nopurple);
     }
 
     if (pedited && !pedited->wb.method) {
@@ -744,6 +819,8 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->wb.green = green->getEditedState ();
         pedited->wb.equal = equal->getEditedState ();
         pedited->wb.tempBias = tempBias->getEditedState ();
+        pedited->wb.itcwb_thres = itcwb_thres->getEditedState ();
+        pedited->wb.itcwb_nopurple = !itcwb_nopurple->get_inconsistent();
         pedited->wb.method = row[methodColumns.colLabel] != M("GENERAL_UNCHANGED");
         pedited->wb.enabled = !get_inconsistent();
     }
@@ -759,6 +836,9 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
     pp->wb.temperature = temp->getIntValue ();
     pp->wb.green = green->getValue ();
     pp->wb.equal = equal->getValue ();
+    pp->wb.itcwb_thres = itcwb_thres->getValue ();
+    pp->wb.itcwb_nopurple = itcwb_nopurple->get_active ();
+    
     pp->wb.tempBias = tempBias->getValue ();
 }
 
@@ -767,6 +847,7 @@ void WhiteBalance::setDefaults (const ProcParams* defParams, const ParamsEdited*
 
     equal->setDefault (defParams->wb.equal);
     tempBias->setDefault (defParams->wb.tempBias);
+    itcwb_thres->setDefault (defParams->wb.itcwb_thres);
 
     if (wbp && defParams->wb.method == "Camera") {
         double ctemp;
@@ -789,11 +870,13 @@ void WhiteBalance::setDefaults (const ProcParams* defParams, const ParamsEdited*
         green->setDefaultEditedState (pedited->wb.green ? Edited : UnEdited);
         equal->setDefaultEditedState (pedited->wb.equal ? Edited : UnEdited);
         tempBias->setDefaultEditedState (pedited->wb.tempBias ? Edited : UnEdited);
+        tempBias->setDefaultEditedState (pedited->wb.itcwb_thres ? Edited : UnEdited);
     } else {
         temp->setDefaultEditedState (Irrelevant);
         green->setDefaultEditedState (Irrelevant);
         equal->setDefaultEditedState (Irrelevant);
         tempBias->setDefaultEditedState (Irrelevant);
+        itcwb_thres->setDefaultEditedState (Irrelevant);
     }
 }
 

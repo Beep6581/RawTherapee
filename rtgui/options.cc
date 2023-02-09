@@ -623,6 +623,7 @@ void Options::setDefaults()
     rtSettings.cbdlsensi = 1.0;//between 0.001 to 1
     rtSettings.fftwsigma = true; //choice between sigma^2 or empirical formula
 // end locallab
+    rtSettings.itcwb_enable = true;
     rtSettings.itcwb_thres = 34;//between 10 to 55
     rtSettings.itcwb_sorted = true;
     rtSettings.itcwb_greenrange = 0;//between 0 to 2
@@ -1796,6 +1797,10 @@ void Options::readFromFile(Glib::ustring fname)
                     rtSettings.level123_cbdl = keyFile.get_double("Color Management", "CBDLlevel123");
                 }
 
+                if (keyFile.has_key("Color Management", "Itcwb_enable")) {
+                    rtSettings.itcwb_enable = keyFile.get_boolean("Color Management", "Itcwb_enable");
+                }
+
                 if (keyFile.has_key("Color Management", "Itcwb_thres")) {
                     rtSettings.itcwb_thres = keyFile.get_integer("Color Management", "Itcwb_thres");
                 }
@@ -2605,6 +2610,7 @@ void Options::saveToFile(Glib::ustring fname)
         //keyFile.set_boolean ("Color Management", "Ciebadpixgauss", rtSettings.ciebadpixgauss);
         keyFile.set_double("Color Management", "CBDLlevel0", rtSettings.level0_cbdl);
         keyFile.set_double("Color Management", "CBDLlevel123", rtSettings.level123_cbdl);
+        keyFile.set_boolean("Color Management", "Itcwb_enable", rtSettings.itcwb_enable);
         keyFile.set_integer("Color Management", "Itcwb_thres", rtSettings.itcwb_thres);
         keyFile.set_boolean("Color Management", "Itcwb_sorted", rtSettings.itcwb_sorted);
         keyFile.set_integer("Color Management", "Itcwb_greenrange", rtSettings.itcwb_greenrange);
