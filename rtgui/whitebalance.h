@@ -63,6 +63,9 @@ protected:
     
     rtengine::ProcEvent EvWBitcwbthres;
     rtengine::ProcEvent EvWBitcwbnopurple;
+    rtengine::ProcEvent EvWBitcwbsorted;
+    rtengine::ProcEvent EvWBitcwbforceextra;
+    rtengine::ProcEvent EvWBitcwbprecis;
 
     static Glib::RefPtr<Gdk::Pixbuf> wbPixbufs[rtengine::toUnderlying(rtengine::procparams::WBEntry::Type::CUSTOM) + 1];
     Glib::RefPtr<Gtk::TreeStore> refTreeModel;
@@ -76,8 +79,13 @@ protected:
     Adjuster* tempBias;
     Gtk::Frame* itcwbFrame;
     Adjuster* itcwb_thres;
+    Adjuster* itcwb_precis;
     Gtk::CheckButton* itcwb_nopurple;
+    Gtk::CheckButton* itcwb_sorted;
+    Gtk::CheckButton* itcwb_forceextra;
     bool lastitcwb_nopurple;
+    bool lastitcwb_sorted;
+    bool lastitcwb_forceextra;
 
     Gtk::Button* spotbutton;
     int opt;
@@ -85,7 +93,7 @@ protected:
     double nextGreen;
     WBProvider *wbp;  // pointer to a ToolPanelCoordinator object, or its subclass BatchToolPanelCoordinator
     SpotWBListener* wblistener;
-    sigc::connection methconn, itcwb_nopurpleconn;
+    sigc::connection methconn, itcwb_nopurpleconn, itcwb_sortedconn,  itcwb_forceextraconn;
     int custom_temp;
     double custom_green;
     double custom_equal;
@@ -134,6 +142,8 @@ public:
     void resetWB ();
     void WBChanged           (double temp, double green, float studgood) override;
     void itcwb_nopurple_toggled ();
+    void itcwb_sorted_toggled ();
+    void itcwb_forceextra_toggled ();
 
     void setAdjusterBehavior (bool tempadd, bool greenadd, bool equaladd, bool tempbiasadd);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;

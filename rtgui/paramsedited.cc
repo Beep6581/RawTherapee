@@ -267,7 +267,10 @@ void ParamsEdited::set(bool v)
     wb.equal                   = v;
     wb.tempBias                = v;
     wb.itcwb_thres                = v;
+    wb.itcwb_precis                = v;
     wb.itcwb_nopurple             = v;
+    wb.itcwb_sorted             = v;
+    wb.itcwb_forceextra         = v;
     //colorShift.a               = v;
     //colorShift.b               = v;
     //lumaDenoise.enabled        = v;
@@ -970,7 +973,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wb.temperature = wb.temperature && p.wb.temperature == other.wb.temperature;
         wb.tempBias = wb.tempBias && p.wb.tempBias == other.wb.tempBias;
         wb.itcwb_thres = wb.itcwb_thres && p.wb.itcwb_thres == other.wb.itcwb_thres;
+        wb.itcwb_precis = wb.itcwb_precis && p.wb.itcwb_precis == other.wb.itcwb_precis;
         wb.itcwb_nopurple = wb.itcwb_nopurple && p.wb.itcwb_nopurple == other.wb.itcwb_nopurple;
+        wb.itcwb_sorted = wb.itcwb_sorted && p.wb.itcwb_sorted == other.wb.itcwb_sorted;
+        wb.itcwb_forceextra = wb.itcwb_forceextra && p.wb.itcwb_forceextra == other.wb.itcwb_forceextra;
         //colorShift.a = colorShift.a && p.colorShift.a == other.colorShift.a;
         //colorShift.b = colorShift.b && p.colorShift.b == other.colorShift.b;
         //lumaDenoise.enabled = lumaDenoise.enabled && p.lumaDenoise.enabled == other.lumaDenoise.enabled;
@@ -2837,8 +2843,20 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.wb.itcwb_thres = mods.wb.itcwb_thres;
     }
 
+    if (wb.itcwb_precis) {
+        toEdit.wb.itcwb_precis = mods.wb.itcwb_precis;
+    }
+
     if (wb.itcwb_nopurple) {
         toEdit.wb.itcwb_nopurple = mods.wb.itcwb_nopurple;
+    }
+
+    if (wb.itcwb_sorted) {
+        toEdit.wb.itcwb_sorted = mods.wb.itcwb_sorted;
+    }
+
+    if (wb.itcwb_forceextra) {
+        toEdit.wb.itcwb_forceextra = mods.wb.itcwb_forceextra;
     }
 
     if (wb.green) {

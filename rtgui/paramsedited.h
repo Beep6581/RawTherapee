@@ -248,7 +248,10 @@ struct WBParamsEdited {
     bool equal;
     bool tempBias;
     bool itcwb_thres;
+    bool itcwb_precis;
     bool itcwb_nopurple;
+    bool itcwb_sorted;
+    bool itcwb_forceextra;
 };
 
 struct DefringeParamsEdited {

@@ -640,7 +640,10 @@ struct WBParams {
     double          equal;
     double          tempBias;
     int             itcwb_thres;
+    int             itcwb_precis;
     bool            itcwb_nopurple;
+    bool            itcwb_sorted;
+    bool            itcwb_forceextra;
 
     WBParams();
 

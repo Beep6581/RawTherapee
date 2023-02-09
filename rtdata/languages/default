@@ -4083,9 +4083,12 @@ TP_WBALANCE_FLUO_HEADER;Fluorescent
 TP_WBALANCE_GREEN;Tint
 TP_WBALANCE_GTI;GTI
 TP_WBALANCE_HMI;HMI
+TP_WBALANCE_ITCWB_FORCED;Forces Extra algorithm
 TP_WBALANCE_ITCWB_FRA;Auto Temperature correlation Settings
 TP_WBALANCE_ITCWB_FRA_TOOLTIP;These settings allow, depending on the images (type of raw, colorimetry, etc.), an adaptation of the 'Temperature correlation' algorithm. There is no absolute rule linking these parameters to the results obtained.
 TP_WBALANCE_ITCWB_NOPURPLE;No purple color used
+TP_WBALANCE_ITCWB_PRECIS;Precision algorithm - scale used
+TP_WBALANCE_ITCWB_SORTED;Sort in chroma order instead of histogram
 TP_WBALANCE_ITCWB_THRES;Maximum of colors used in picture
 TP_WBALANCE_JUDGEIII;JudgeIII
 TP_WBALANCE_LABEL;White Balance

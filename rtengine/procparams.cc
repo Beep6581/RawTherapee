@@ -1333,7 +1333,10 @@ WBParams::WBParams() :
     equal(1.0),
     tempBias(0.0),
     itcwb_thres(34),
-    itcwb_nopurple(true)
+    itcwb_precis(3),
+    itcwb_nopurple(true),
+    itcwb_sorted(true),
+    itcwb_forceextra(true)
 
 {
 }
@@ -1369,7 +1372,10 @@ bool WBParams::operator ==(const WBParams& other) const
         && equal == other.equal
         && tempBias == other.tempBias
         && itcwb_thres == other.itcwb_thres
-        && itcwb_nopurple == other.itcwb_nopurple;
+        && itcwb_precis == other.itcwb_precis
+        && itcwb_nopurple == other.itcwb_nopurple
+        && itcwb_sorted == other.itcwb_sorted
+        && itcwb_forceextra == other.itcwb_forceextra;
 
 }
 
@@ -6115,7 +6121,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->wb.equal, "White Balance", "Equal", wb.equal, keyFile);
         saveToKeyfile(!pedited || pedited->wb.tempBias, "White Balance", "TemperatureBias", wb.tempBias, keyFile);
         saveToKeyfile(!pedited || pedited->wb.itcwb_thres, "White Balance", "Itcwb_thres", wb.itcwb_thres, keyFile);
+        saveToKeyfile(!pedited || pedited->wb.itcwb_precis, "White Balance", "Itcwb_precis", wb.itcwb_precis, keyFile);
         saveToKeyfile(!pedited || pedited->wb.itcwb_nopurple, "White Balance", "Itcwb_nopurple", wb.itcwb_nopurple, keyFile);
+        saveToKeyfile(!pedited || pedited->wb.itcwb_sorted, "White Balance", "Itcwb_sorted", wb.itcwb_sorted, keyFile);
+        saveToKeyfile(!pedited || pedited->wb.itcwb_forceextra, "White Balance", "Itcwb_forceextra", wb.itcwb_forceextra, keyFile);
 
 // Colorappearance
         saveToKeyfile(!pedited || pedited->colorappearance.enabled, "Color appearance", "Enabled", colorappearance.enabled, keyFile);
@@ -8058,7 +8067,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "White Balance", "Equal", pedited, wb.equal, pedited->wb.equal);
             assignFromKeyfile(keyFile, "White Balance", "TemperatureBias", pedited, wb.tempBias, pedited->wb.tempBias);
             assignFromKeyfile(keyFile, "White Balance", "Itcwb_thres", pedited, wb.itcwb_thres, pedited->wb.itcwb_thres);
+            assignFromKeyfile(keyFile, "White Balance", "Itcwb_precis", pedited, wb.itcwb_precis, pedited->wb.itcwb_precis);
             assignFromKeyfile(keyFile, "White Balance", "Itcwb_nopurple", pedited, wb.itcwb_nopurple, pedited->wb.itcwb_nopurple);
+            assignFromKeyfile(keyFile, "White Balance", "Itcwb_sorted", pedited, wb.itcwb_sorted, pedited->wb.itcwb_sorted);
+            assignFromKeyfile(keyFile, "White Balance", "Itcwb_forceextra", pedited, wb.itcwb_forceextra, pedited->wb.itcwb_forceextra);
         }
 
         if (keyFile.has_group("Defringing")) {

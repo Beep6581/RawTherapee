@@ -843,28 +843,27 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
 
     int maxx = this->W, maxy = this->H, skip = pp.getSkip();
 
-	bool iscolor = (hrp.method == "Color" || hrp.method == "Coloropp");
-	const bool doClip = (chmax[0] >= clmax[0] || chmax[1] >= clmax[1] || chmax[2] >= clmax[2]) && !hrp.hrenabled && hrp.clampOOG;
+    bool iscolor = (hrp.method == "Color" || hrp.method == "Coloropp");
+    const bool doClip = (chmax[0] >= clmax[0] || chmax[1] >= clmax[1] || chmax[2] >= clmax[2]) && !hrp.hrenabled && hrp.clampOOG;
     bool doHr = (hrp.hrenabled && !iscolor);
-	if (hrp.hrenabled && iscolor) {
-		
-		if(hrp.method == "Coloropp" && opposed == 1) {//force Inpaint opposed if WB change, and opposed limited tne number to 1
-			rgbSourceModified  = false;
-		}
+    if (hrp.hrenabled && iscolor) {
+        if(hrp.method == "Coloropp" && opposed == 1) {//force Inpaint opposed if WB change, and opposed limited tne number to 1
+            rgbSourceModified  = false;
+        }
         if (!rgbSourceModified) {
-			if(hrp.method == "Color") {
-				if (settings->verbose) {
-					printf ("Applying Highlight Recovery: Color propagation.\n");
-				}				
-				HLRecovery_inpaint (red, green, blue, hrp.hlbl);			
-			} else if(hrp.method == "Coloropp"  && ctemp.getTemp() >= 0) {
-				float s[3] = { rm, gm, bm };
-				highlight_recovery_opposed(s, ctemp, hrp.hlth);
-			}			
+            if(hrp.method == "Color") {
+                if (settings->verbose) {
+                    printf ("Applying Highlight Recovery: Color propagation.\n");
+                }
+                HLRecovery_inpaint (red, green, blue, hrp.hlbl);
+            } else if(hrp.method == "Coloropp"  && ctemp.getTemp() >= 0) {
+                float s[3] = { rm, gm, bm };
+                highlight_recovery_opposed(s, ctemp, hrp.hlth);
+            }
             rgbSourceModified = true;
         }
     }
-	
+
     // now apply the wb coefficients
     if (ctemp.getTemp() >= 0) {
         double r, g, b;
@@ -5297,7 +5296,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         printf("estimchrom=%f\n", estimchrom);
     }
 
-    if (settings->itcwb_sorted) { //sort in ascending with chroma values
+//    if (settings->itcwb_sorted) { //sort in ascending with chroma values
+//        std::sort(wbchro, wbchro + sizcu4, wbchro[0]);
+//    }
+    if (wbpar.itcwb_sorted) { //sort in ascending with chroma values
         std::sort(wbchro, wbchro + sizcu4, wbchro[0]);
     }
 
@@ -5571,9 +5573,13 @@ void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> 
         if (greenref > 0.5 && greenref < 1.3) {// 0.5 and 1.3 arbitraties values
             greenitc = greenref;
 
-            if (settings->itcwb_forceextra) {
+        //    if (settings->itcwb_forceextra) {
+        //        extra = true;
+        //    }
+            if (wbpar.itcwb_forceextra) {
                 extra = true;
             }
+            
         } else {
             greenitc = 1.;
             extra = true;
@@ -5584,13 +5590,13 @@ void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> 
     }
 }
 
-void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w)
+void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, const WBParams & wbpar)
 {
 //    BENCHFUN
     //used by auto WB local to calculate red, green, blue in local region
 
     int precision = 5;
-
+/*
     if (settings->itcwb_precis == 5) {
         precision = 5;
     } else if (settings->itcwb_precis < 5) {
@@ -5598,7 +5604,14 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
     } else if (settings->itcwb_precis > 5) {
         precision = 9;
     }
-
+*/
+    if (wbpar.itcwb_precis == 5) {
+        precision = 5;
+    } else if (wbpar.itcwb_precis < 5) {
+        precision = 3;
+    } else if (wbpar.itcwb_precis > 5) {
+        precision = 9;
+    }
 
     const int bfw = W / precision + ((W % precision) > 0 ? 1 : 0);// 5 arbitrary value can be change to 3 or 9 ;
     const int bfh = H / precision + ((H % precision) > 0 ? 1 : 0);
@@ -5860,12 +5873,20 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
     if (wbpar.method == "autitcgreen") {
         bool twotimes = false;
         int precision = 5;
-
+        /*
         if (settings->itcwb_precis == 5) {
             precision = 5;
         } else if (settings->itcwb_precis < 5) {
             precision = 3;
         } else if (settings->itcwb_precis > 5) {
+            precision = 9;
+        }
+        */
+        if (wbpar.itcwb_precis == 5) {
+            precision = 5;
+        } else if (wbpar.itcwb_precis < 5) {
+            precision = 3;
+        } else if (wbpar.itcwb_precis > 5) {
             precision = 9;
         }
 

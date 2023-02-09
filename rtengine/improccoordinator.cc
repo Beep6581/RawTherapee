@@ -488,7 +488,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
         if (todo & (M_INIT | M_LINDENOISE | M_HDR)) {
             if (params->wb.method == "autitcgreen") {
-                imgsrc->getrgbloc(0, 0, fh, fw, 0, 0, fh, fw);
+                imgsrc->getrgbloc(0, 0, fh, fw, 0, 0, fh, fw, params->wb);
             }
         }
 
