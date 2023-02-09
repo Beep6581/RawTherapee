@@ -349,7 +349,7 @@ Image8 *load_inspector_mode(const Glib::ustring &fname, RawMetaDataLocation &rml
     PreviewProps pp(0, 0, w, h, 1);
 
     Imagefloat tmp(w, h);
-    src.getImage(src.getWB(), TR_NONE, &tmp, pp, neutral.toneCurve, neutral.raw);
+    src.getImage(src.getWB(), TR_NONE, &tmp, pp, neutral.toneCurve, neutral.raw, 0);
     src.convertColorSpace(&tmp, neutral.icm, src.getWB());
 
     Image8 *img = new Image8(w, h);

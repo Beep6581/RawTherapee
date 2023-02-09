@@ -1417,6 +1417,7 @@ HISTORY_MSG_FILMNEGATIVE_VALUES;Film negative values
 HISTORY_MSG_GAMUTMUNSEL;Gamut-Munsell
 HISTORY_MSG_HISTMATCHING;Auto-matched tone curve
 HISTORY_MSG_HLBL;Color propagation - blur
+HISTORY_MSG_HLTH;Inpaint opposed - gain threshold
 HISTORY_MSG_ICL_LABGRIDCIEXY;Cie xy
 HISTORY_MSG_ICM_AINTENT;Abstract profile intent
 HISTORY_MSG_ICM_BLUX;Primaries Blue X
@@ -2518,8 +2519,10 @@ TP_GRADIENT_STRENGTH_TOOLTIP;Filter strength in stops.
 TP_HLREC_BLEND;Blend
 TP_HLREC_CIELAB;CIELab Blending
 TP_HLREC_COLOR;Color Propagation
+TP_HLREC_COLOROPP;Inpaint Opposed
 TP_HLREC_ENA_TOOLTIP;Could be activated by Auto Levels.
 TP_HLREC_HLBLUR;Blur
+TP_HLREC_HLTH;Gain threshold
 TP_HLREC_LABEL;Highlight reconstruction
 TP_HLREC_LUMINANCE;Luminance Recovery
 TP_HLREC_METHOD;Method:

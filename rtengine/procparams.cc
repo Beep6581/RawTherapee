@@ -373,7 +373,7 @@ ToneCurveParams::ToneCurveParams() :
     autoexp(false),
     clip(0.02),
     hrenabled(false),
-    method("Blend"),
+    method("Coloropp"),
     expcomp(0),
     curve{
         DCT_Linear
@@ -390,6 +390,7 @@ ToneCurveParams::ToneCurveParams() :
     shcompr(50),
     hlcompr(0),
     hlbl(0),
+    hlth(1.0),
     hlcomprthresh(0),
     histmatching(false),
     fromHistMatching(false),
@@ -416,6 +417,7 @@ bool ToneCurveParams::isPanningRelatedChange(const ToneCurveParams& other) const
         && shcompr == other.shcompr
         && hlcompr == other.hlcompr
         && hlbl == other.hlbl
+        && hlth == other.hlth
         && hlcomprthresh == other.hlcomprthresh
         && histmatching == other.histmatching
         && clampOOG == other.clampOOG);
@@ -440,6 +442,7 @@ bool ToneCurveParams::operator ==(const ToneCurveParams& other) const
         && shcompr == other.shcompr
         && hlcompr == other.hlcompr
         && hlbl == other.hlbl
+        && hlth == other.hlth
         && hlcomprthresh == other.hlcomprthresh
         && histmatching == other.histmatching
         && fromHistMatching == other.fromHistMatching
@@ -5912,6 +5915,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->toneCurve.hrenabled, "HLRecovery", "Enabled", toneCurve.hrenabled, keyFile);
         saveToKeyfile(!pedited || pedited->toneCurve.method, "HLRecovery", "Method", toneCurve.method, keyFile);
         saveToKeyfile(!pedited || pedited->toneCurve.hlbl, "HLRecovery", "Hlbl", toneCurve.hlbl, keyFile);
+        saveToKeyfile(!pedited || pedited->toneCurve.hlth, "HLRecovery", "Hlth", toneCurve.hlth, keyFile);
 
         const std::map<ToneCurveMode, const char*> tc_mapping = {
             {ToneCurveMode::STD, "Standard"},
@@ -7697,6 +7701,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "HLRecovery", "Enabled", pedited, toneCurve.hrenabled, pedited->toneCurve.hrenabled);
             assignFromKeyfile(keyFile, "HLRecovery", "Method", pedited, toneCurve.method, pedited->toneCurve.method);
             assignFromKeyfile(keyFile, "HLRecovery", "Hlbl", pedited, toneCurve.hlbl, pedited->toneCurve.hlbl);
+            assignFromKeyfile(keyFile, "HLRecovery", "Hlth", pedited, toneCurve.hlth, pedited->toneCurve.hlth);
         }
 
         if (keyFile.has_group("Channel Mixer")) {
