@@ -24,7 +24,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-DirPyrEqualizer::DirPyrEqualizer () : FoldableToolPanel(this, "dirpyrequalizer", M("TP_DIRPYREQUALIZER_LABEL"), true, true)
+const Glib::ustring DirPyrEqualizer::TOOL_NAME = "dirpyrequalizer";
+
+DirPyrEqualizer::DirPyrEqualizer () : FoldableToolPanel(this, TOOL_NAME, M("TP_DIRPYREQUALIZER_LABEL"), true, true)
 {
 
     std::vector<GradientMilestone> milestones;

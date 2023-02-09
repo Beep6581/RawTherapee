@@ -1414,8 +1414,10 @@ HISTORY_MSG_FILMNEGATIVE_COLORSPACE;Film negative color space
 HISTORY_MSG_FILMNEGATIVE_ENABLED;Film Negative
 HISTORY_MSG_FILMNEGATIVE_REF_SPOT;FN - Reference input
 HISTORY_MSG_FILMNEGATIVE_VALUES;Film negative values
+HISTORY_MSG_GAMUTMUNSEL;Gamut-Munsell
 HISTORY_MSG_HISTMATCHING;Auto-matched tone curve
 HISTORY_MSG_HLBL;Color propagation - blur
+HISTORY_MSG_HLTH;Inpaint opposed - gain threshold
 HISTORY_MSG_ICL_LABGRIDCIEXY;Cie xy
 HISTORY_MSG_ICM_AINTENT;Abstract profile intent
 HISTORY_MSG_ICM_BLUX;Primaries Blue X
@@ -1441,6 +1443,7 @@ HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
 HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
 HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Local Contrast - Lightness
 HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
+HISTORY_MSG_LOCAL_GAMUTMUNSEL;Local - Gamut-Munsell
 HISTORY_MSG_METADATA_MODE;Metadata copy mode
 HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrast threshold
 HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST;CS - Auto threshold
@@ -1987,6 +1990,7 @@ PREFERENCES_STARTUPIMDIR;Image Directory at Startup
 PREFERENCES_TAB_BROWSER;File Browser
 PREFERENCES_TAB_COLORMGR;Color Management
 PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
+PREFERENCES_TAB_FAVORITES;Favorites
 PREFERENCES_TAB_GENERAL;General
 PREFERENCES_TAB_IMPROC;Image Processing
 PREFERENCES_TAB_PERFORMANCE;Performance
@@ -1995,6 +1999,12 @@ PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview
 PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw rendering
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Embedded JPEG if fullsize, neutral raw otherwise
+PREFERENCES_TOOLPANEL_AVAILABLETOOLS;Available Tools
+PREFERENCES_TOOLPANEL_CLONE_FAVORITES;Keep favorite tools in original locations
+PREFERENCES_TOOLPANEL_CLONE_FAVORITES_TOOLTIP;If set, favorite tools will appear in both the favorites tab and their original tabs.\n\nNote: Enabling this option may result in a slight delay when switching tabs.
+PREFERENCES_TOOLPANEL_FAVORITE;Favorite
+PREFERENCES_TOOLPANEL_FAVORITESPANEL;Favorites Panel
+PREFERENCES_TOOLPANEL_TOOL;Tool
 PREFERENCES_TP_LABEL;Tool panel:
 PREFERENCES_TP_VSCROLLBAR;Hide vertical scrollbar
 PREFERENCES_USEBUNDLEDPROFILES;Use bundled profiles
@@ -2520,8 +2530,10 @@ TP_GRADIENT_STRENGTH_TOOLTIP;Filter strength in stops.
 TP_HLREC_BLEND;Blend
 TP_HLREC_CIELAB;CIELab Blending
 TP_HLREC_COLOR;Color Propagation
+TP_HLREC_COLOROPP;Inpaint Opposed
 TP_HLREC_ENA_TOOLTIP;Could be activated by Auto Levels.
 TP_HLREC_HLBLUR;Blur
+TP_HLREC_HLTH;Gain threshold
 TP_HLREC_LABEL;Highlight reconstruction
 TP_HLREC_LUMINANCE;Luminance Recovery
 TP_HLREC_METHOD;Method:
@@ -2619,8 +2631,6 @@ TP_ICM_WORKING_TRC_SRGB;sRGB g=2.4 s=12.92
 TP_ICM_WORKING_TRC_TOOLTIP;Only for built-in profiles.
 TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 TP_IMPULSEDENOISE_THRESH;Threshold
-TP_LABCURVE_AVOIDCOLORSHIFT;Avoid color shift
-TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction (Uniform Perceptual Lab).
 TP_LABCURVE_BRIGHTNESS;Lightness
 TP_LABCURVE_CHROMATICITY;Chromaticity
 TP_LABCURVE_CHROMA_TOOLTIP;To apply B&amp;W toning, set Chromaticity to -100.
@@ -2685,7 +2695,7 @@ TP_LOCALLAB_ARTIF_TOOLTIP;ΔE scope threshold increases the range of ΔE scope. 
 TP_LOCALLAB_AUTOGRAY;Auto mean luminance (Yb%)
 TP_LOCALLAB_AUTOGRAYCIE;Auto
 TP_LOCALLAB_AVOID;Avoid color shift
-TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction (Uniform Perceptual Lab).\nMunsell correction always disabled when Jz or CAM16 is used.
+TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction (Uniform Perceptual Lab).\nMunsell correction always disabled when Jz or CAM16 or Color Appearance and Lighting is used.\n\nDefault: Munsell.\nMunsell correction: fixes Lab mode hue drifts due to non-linearity, when chromaticity is changed (Uniform Perceptual Lab).\nLab: applies a gamut control, in relative colorimetric, Munsell is then applied.\nXYZ Absolute, applies gamut control, in absolute colorimetric, Munsell is then applied.\nXYZ Relative, applies gamut control, in relative colorimetric, Munsell is then applied.
 TP_LOCALLAB_AVOIDMUN;Munsell correction only
 TP_LOCALLAB_AVOIDMUN_TOOLTIP;Munsell correction always disabled when Jz or CAM16 is used.
 TP_LOCALLAB_AVOIDRAD;Soft radius
@@ -2915,6 +2925,11 @@ TP_LOCALLAB_GAMM;Gamma
 TP_LOCALLAB_GAMMASKCOL;Gamma
 TP_LOCALLAB_GAMMASK_TOOLTIP;Adjusting Gamma and Slope can provide a soft and artifact-free transformation of the mask by progressively modifying 'L' to avoid any discontinuities.
 TP_LOCALLAB_GAMSH;Gamma
+TP_LOCALLAB_GAMUTNON;None
+TP_LOCALLAB_GAMUTLABRELA;Lab
+TP_LOCALLAB_GAMUTXYZABSO;XYZ Absolute
+TP_LOCALLAB_GAMUTXYZRELA;XYZ Relative
+TP_LOCALLAB_GAMUTMUNSELL;Munsell only
 TP_LOCALLAB_GAMW;Gamma (wavelet pyramids)
 TP_LOCALLAB_GRADANG;Gradient angle
 TP_LOCALLAB_GRADANG_TOOLTIP;Rotation angle in degrees: -180 0 +180.

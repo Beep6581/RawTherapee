@@ -31,7 +31,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-FattalToneMapping::FattalToneMapping(): FoldableToolPanel(this, "fattal", M("TP_TM_FATTAL_LABEL"), true, true)
+const Glib::ustring FattalToneMapping::TOOL_NAME = "fattal";
+
+FattalToneMapping::FattalToneMapping(): FoldableToolPanel(this, TOOL_NAME, M("TP_TM_FATTAL_LABEL"), true, true)
 {
     auto m = ProcEventMapper::getInstance();
     EvTMFattalAnchor = m->newEvent(HDR, "HISTORY_MSG_TM_FATTAL_ANCHOR");

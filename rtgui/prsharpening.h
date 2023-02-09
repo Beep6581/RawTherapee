@@ -59,6 +59,7 @@ protected:
     sigc::connection hcConn;
     rtengine::ProcEvent EvPrShrContrast;
 public:
+    static const Glib::ustring TOOL_NAME;
 
     PrSharpening ();
     ~PrSharpening () override;

@@ -43,6 +43,7 @@ protected:
     rtengine::ProcEvent EvPreProcessCAColourshiftHistory;
 
 public:
+    static const Glib::ustring TOOL_NAME;
 
     RAWCACorr ();
 

@@ -104,6 +104,7 @@ public:
     static constexpr std::size_t MIN_HORIZ_LINES = 2;
     /** Minimum number of vertical lines for vertical/full correction. */
     static constexpr std::size_t MIN_VERT_LINES = 2;
+    static const Glib::ustring TOOL_NAME;
 
     PerspCorrection ();
 

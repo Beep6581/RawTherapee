@@ -1,7 +1,7 @@
 /*
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+ *  Copyright (c) 2021 Lawrence Lee
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,17 +18,28 @@
  */
 #pragma once
 
-#include <gtkmm.h>
+#include <gtkmm/box.h>
 
-#include "toolpanel.h"
+class Options;
 
-class SensorXTrans final:
-    public ToolParamBlock,
-    public FoldableToolPanel
+/**
+ * Widget for configuring the location of tools in the tool panel tabs.
+ */
+class ToolLocationPreference : public Gtk::Box
 {
+private:
+    struct Impl;
+    std::unique_ptr<Impl> impl;
 
 public:
-    static const Glib::ustring TOOL_NAME;
-
-    SensorXTrans ();
+    /**
+     * Constructs a tool location preference widget that gets values from and
+     * updates the provided options object.
+     */
+    explicit ToolLocationPreference(Options &options);
+    /**
+     * Updates the options object associated with this object with the current
+     * favorites preferences.
+     */
+    void updateOptions();
 };

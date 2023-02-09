@@ -76,6 +76,7 @@ protected:
     rtengine::ProcEvent EvDemosaicPixelshiftDemosaicMethod;
     rtengine::ProcEvent EvPixelshiftAverage;
 public:
+    static const Glib::ustring TOOL_NAME;
 
     BayerProcess ();
     ~BayerProcess () override;

@@ -99,6 +99,7 @@ protected:
     Geometry* getVisibleGeometryFromMO (int MOID);
 
 public:
+    static const Glib::ustring TOOL_NAME;
 
     Spot ();
     ~Spot ();

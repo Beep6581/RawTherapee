@@ -963,6 +963,9 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 #ToolPanelNotebook {
     background-color: @bg-dark-grey;
 }
+#ToolPanelNotebook .PanelEnding {
+    margin-top: 4px;
+}
 #ToolPanelNotebook > header {
     border-bottom: 0.083333333333333333em solid @view-grid-border;
     margin-left: 0.083333333333333333em;

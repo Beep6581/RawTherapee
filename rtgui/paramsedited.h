@@ -52,6 +52,7 @@ struct ToneCurveParamsEdited {
     bool shcompr;
     bool hlcompr;
     bool hlbl;
+    bool hlth;
     bool hlcomprthresh;
     bool autoexp;
     bool clip;
@@ -109,7 +110,7 @@ struct LCurveParamsEdited {
     bool brightness;
     bool contrast;
     bool chromaticity;
-    bool avoidcolorshift;
+    bool gamutmunselmethod;
     bool rstprotection;
     bool lcurve;
     bool acurve;
@@ -402,6 +403,7 @@ public:
         bool structexclu;
         bool struc;
         bool shapeMethod;
+        bool avoidgamutMethod;
         bool loc;
         bool centerX;
         bool centerY;
@@ -421,8 +423,6 @@ public:
         bool transitgrad;
         bool hishow;
         bool activ;
-        bool avoid;
-        bool avoidmun;
         bool blwh;
         bool recurs;
         bool laplac;

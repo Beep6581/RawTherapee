@@ -299,6 +299,7 @@ struct ToneCurveParams {
     int shcompr;
     int hlcompr; // Highlight Recovery's compression
     int hlbl; // Highlight Recovery's compression
+    double hlth; // Highlight Recovery's threshold
     int hlcomprthresh; // Highlight Recovery's threshold
     bool histmatching; // histogram matching
     bool fromHistMatching;
@@ -376,7 +377,7 @@ struct LCurveParams {
     int     brightness;
     int     contrast;
     int     chromaticity;
-    bool    avoidcolorshift;
+    Glib::ustring gamutmunselmethod;
     double  rstprotection;
     bool    lcredsk;
 
@@ -1019,6 +1020,8 @@ struct LocallabParams {
         int structexclu;
         double struc;
         Glib::ustring shapeMethod; // IND, SYM, INDSL, SYMSL
+        Glib::ustring avoidgamutMethod; // NONE, LAB, XYZ
+		
         std::vector<int> loc; // For ellipse/rectangle: {locX, locXL, locY, locYT}
         int centerX;
         int centerY;
@@ -1038,8 +1041,6 @@ struct LocallabParams {
         double transitgrad;
         bool hishow;
         bool activ;
-        bool avoid;
-        bool avoidmun;
         bool blwh;
         bool recurs;
         bool laplac;

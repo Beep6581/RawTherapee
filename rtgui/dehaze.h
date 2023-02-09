@@ -39,6 +39,7 @@ private:
     rtengine::ProcEvent EvDehazeSaturation;
     
 public:
+    static const Glib::ustring TOOL_NAME;
 
     Dehaze();
 

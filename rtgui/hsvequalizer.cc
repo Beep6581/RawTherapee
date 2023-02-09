@@ -28,9 +28,11 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
+const Glib::ustring HSVEqualizer::TOOL_NAME = "hsvequalizer";
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-HSVEqualizer::HSVEqualizer () : FoldableToolPanel(this, "hsvequalizer", M("TP_HSVEQUALIZER_LABEL"), false, true)
+HSVEqualizer::HSVEqualizer () : FoldableToolPanel(this, TOOL_NAME, M("TP_HSVEQUALIZER_LABEL"), false, true)
 {
 
     std::vector<GradientMilestone> bottomMilestones;

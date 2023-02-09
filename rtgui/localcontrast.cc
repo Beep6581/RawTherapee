@@ -29,7 +29,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-LocalContrast::LocalContrast(): FoldableToolPanel(this, "localcontrast", M("TP_LOCALCONTRAST_LABEL"), false, true)
+const Glib::ustring LocalContrast::TOOL_NAME = "localcontrast";
+
+LocalContrast::LocalContrast(): FoldableToolPanel(this, TOOL_NAME, M("TP_LOCALCONTRAST_LABEL"), false, true)
 {
     auto m = ProcEventMapper::getInstance();
 /*    EvLocalContrastEnabled = m->newEvent(RGBCURVE, "HISTORY_MSG_LOCALCONTRAST_ENABLED");

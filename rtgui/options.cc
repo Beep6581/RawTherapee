@@ -426,6 +426,7 @@ void Options::setDefaults()
     //crvOpen.clear ();
     parseExtensions.clear();
     favorites.clear();
+    cloneFavoriteTools = false;
     parseExtensionsEnabled.clear();
     parsedExtensions.clear();
     parsedExtensionsSet.clear();
@@ -594,7 +595,6 @@ void Options::setDefaults()
     rtSettings.monitorBPC = true;
     rtSettings.autocielab = false;
     rtSettings.observer10 = false;
-
     rtSettings.autoMonitorProfile = false;
     rtSettings.adobe = "RTv2_Medium"; // put the name of yours profiles (here windows)
     rtSettings.prophoto = "RTv2_Large"; // these names appear in the menu "output profile"
@@ -633,8 +633,6 @@ void Options::setDefaults()
     rtSettings.itcwb_stdobserver10 = true;
     rtSettings.itcwb_precis = 3;//3  or 5 or 9
     rtSettings.itcwb_nopurple = true;
-
-
 
 //wavelet
     rtSettings.edghi = 3.0;//1.1 and 5.
@@ -1395,6 +1393,10 @@ void Options::readFromFile(Glib::ustring fname)
             if (keyFile.has_group("GUI")) {
                 if (keyFile.has_key("GUI", "Favorites")) {
                     favorites = keyFile.get_string_list("GUI", "Favorites");
+                }
+
+                if (keyFile.has_key("GUI", "FavoritesCloneTools")) {
+                    cloneFavoriteTools = keyFile.get_boolean("GUI", "FavoritesCloneTools");
                 }
 
                 if (keyFile.has_key("GUI", "WindowWidth")) {
@@ -2478,6 +2480,7 @@ void Options::saveToFile(Glib::ustring fname)
 
         Glib::ArrayHandle<Glib::ustring> ahfavorites = favorites;
         keyFile.set_string_list("GUI", "Favorites", ahfavorites);
+        keyFile.set_boolean("GUI", "FavoritesCloneTools", cloneFavoriteTools);
         keyFile.set_integer("GUI", "WindowWidth", windowWidth);
         keyFile.set_integer("GUI", "WindowHeight", windowHeight);
         keyFile.set_integer("GUI", "WindowX", windowX);
