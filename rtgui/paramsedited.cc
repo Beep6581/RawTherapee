@@ -271,6 +271,7 @@ void ParamsEdited::set(bool v)
     wb.itcwb_size                = v;
     wb.itcwb_delta                = v;
     wb.itcwb_fgreen                = v;
+    wb.itcwb_rgreen                = v;
     wb.itcwb_nopurple             = v;
     wb.itcwb_sorted             = v;
     wb.itcwb_forceextra         = v;
@@ -980,6 +981,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wb.itcwb_size = wb.itcwb_size && p.wb.itcwb_size == other.wb.itcwb_size;
         wb.itcwb_delta = wb.itcwb_delta && p.wb.itcwb_delta == other.wb.itcwb_delta;
         wb.itcwb_fgreen = wb.itcwb_fgreen && p.wb.itcwb_fgreen == other.wb.itcwb_fgreen;
+        wb.itcwb_rgreen = wb.itcwb_rgreen && p.wb.itcwb_rgreen == other.wb.itcwb_rgreen;
         wb.itcwb_nopurple = wb.itcwb_nopurple && p.wb.itcwb_nopurple == other.wb.itcwb_nopurple;
         wb.itcwb_sorted = wb.itcwb_sorted && p.wb.itcwb_sorted == other.wb.itcwb_sorted;
         wb.itcwb_forceextra = wb.itcwb_forceextra && p.wb.itcwb_forceextra == other.wb.itcwb_forceextra;
@@ -2863,6 +2865,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (wb.itcwb_fgreen) {
         toEdit.wb.itcwb_fgreen = mods.wb.itcwb_fgreen;
+    }
+
+    if (wb.itcwb_rgreen) {
+        toEdit.wb.itcwb_rgreen = mods.wb.itcwb_rgreen;
     }
 
     if (wb.itcwb_nopurple) {

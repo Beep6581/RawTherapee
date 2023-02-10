@@ -252,6 +252,7 @@ struct WBParamsEdited {
     bool itcwb_size;
     bool itcwb_delta;
     bool itcwb_fgreen;
+    bool itcwb_rgreen;
     bool itcwb_nopurple;
     bool itcwb_sorted;
     bool itcwb_forceextra;

@@ -1528,6 +1528,15 @@ HISTORY_MSG_WAVSTREND;Strength soft
 HISTORY_MSG_WAVTHRDEN;Threshold local contrast
 HISTORY_MSG_WAVTHREND;Threshold local contrast
 HISTORY_MSG_WAVUSHAMET;Clarity method
+HISTORY_MSG_WBITC_THRES;Itcwb Theshold
+HISTORY_MSG_WBITC_NOPURPLE;Itcwb Nopurple
+HISTORY_MSG_WBITC_SORTED;Itcwb Sorted
+HISTORY_MSG_WBITC_FORCE;Itcwb Force
+HISTORY_MSG_WBITC_SIZE;Itcwb Size
+HISTORY_MSG_WBITC_PRECIS;Itcwb Precision
+HISTORY_MSG_WBITC_DELTA;Itcwb Delta green
+HISTORY_MSG_WBITC_FGREEN;Itcwb Green - student
+HISTORY_MSG_WBITC_RGREEN;Itcwb Green range
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -4090,6 +4099,7 @@ TP_WBALANCE_ITCWB_FRA;Auto Temperature correlation Settings
 TP_WBALANCE_ITCWB_FRA_TOOLTIP;These settings allow, depending on the images (type of raw, colorimetry, etc.), an adaptation of the 'Temperature correlation' algorithm. There is no absolute rule linking these parameters to the results obtained.
 TP_WBALANCE_ITCWB_NOPURPLE;No purple color used
 TP_WBALANCE_ITCWB_PRECIS;Precision algorithm - scale used
+TP_WBALANCE_ITCWB_RGREEN;Green range
 TP_WBALANCE_ITCWB_SIZE;Size of ref. color compare to histogram 
 TP_WBALANCE_ITCWB_SORTED;Sort in chroma order instead of histogram
 TP_WBALANCE_ITCWB_THRES;Maximum of colors used in picture

@@ -4766,7 +4766,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {0.680, 1.f},
         {0.690, 1.f},
         {0.700, 1.f},
-        {0.714, 1.f},//usual range
+        {0.714, 1.f},//usual 2 range
         {0.727, 1.f},
         {0.741, 1.f},
         {0.755, 1.f},
@@ -4775,7 +4775,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {0.800, 1.f},
         {0.806, 1.f},
         {0.813, 1.f},
-        {0.820, 1.f},
+        {0.820, 1.f},//usual range
         {0.826, 1.f},
         {0.833, 1.f},
         {0.840, 1.f},
@@ -4822,13 +4822,13 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {1.220, 1.f},
         {1.230, 1.f},
         {1.240, 1.f},
-        {1.250, 1.f},
+        {1.250, 1.f},// usual range
         {1.275, 1.f},
         {1.300, 1.f},
         {1.325, 1.f},
         {1.350, 1.f},
         {1.375, 1.f},
-        {1.400, 1.f},//usual range
+        {1.400, 1.f},//usual 2 range
         {1.425, 1.f},
         {1.450, 1.f},
         {1.475, 1.f},
@@ -4884,15 +4884,26 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         int end;
     } RangeGreen;
 
-    constexpr RangeGreen Rangestandard = {24, 86};//usual green range
+    constexpr RangeGreen Rangestandard = {33, 80};//usual green range
+    constexpr RangeGreen Rangestandard2 = {24, 86};//usual 2 green range
     constexpr RangeGreen Rangeextended = {15, 93};
     const RangeGreen Rangemax = {0, N_g};
 
     RangeGreen Rangegreenused;
-
+    /*
     if (settings->itcwb_greenrange == 0) {
         Rangegreenused = Rangestandard;
     } else if (settings->itcwb_greenrange == 1) {
+        Rangegreenused = Rangeextended;
+    } else {
+        Rangegreenused = Rangemax;
+    }
+    */
+    if (wbpar.itcwb_rgreen == 0) {
+        Rangegreenused = Rangestandard;
+    } else if (wbpar.itcwb_rgreen == 1) {
+        Rangegreenused = Rangestandard2;
+    } else if (wbpar.itcwb_rgreen == 2) {
         Rangegreenused = Rangeextended;
     } else {
         Rangegreenused = Rangemax;

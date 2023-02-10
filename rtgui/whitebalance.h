@@ -69,6 +69,7 @@ protected:
     rtengine::ProcEvent EvWBitcwbsize;
     rtengine::ProcEvent EvWBitcwbdelta;
     rtengine::ProcEvent EvWBitcwbfgreen;
+    rtengine::ProcEvent EvWBitcwbrgreen;
 
     static Glib::RefPtr<Gdk::Pixbuf> wbPixbufs[rtengine::toUnderlying(rtengine::procparams::WBEntry::Type::CUSTOM) + 1];
     Glib::RefPtr<Gtk::TreeStore> refTreeModel;
@@ -86,6 +87,7 @@ protected:
     Adjuster* itcwb_size;
     Adjuster* itcwb_delta;
     Adjuster* itcwb_fgreen;
+    Adjuster* itcwb_rgreen;
     
     Gtk::CheckButton* itcwb_nopurple;
     Gtk::CheckButton* itcwb_sorted;
