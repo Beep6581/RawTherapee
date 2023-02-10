@@ -251,6 +251,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     EvWBitcwbsize = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_SIZE");
     EvWBitcwbprecis = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_PRECIS");
     EvWBitcwbdelta = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_DELTA");
+    EvWBitcwbfgreen = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_FGREEN");
 
 
     //Add the model columns to the Combo (which is a kind of view),
@@ -379,6 +380,9 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     itcwb_delta = Gtk::manage (new Adjuster(M("TP_WBALANCE_ITCWB_DELTA"), 1, 4, 1, 2));
     itcwb_delta->set_tooltip_markup (M("TP_WBALANCE_ITCWBDELTA_TOOLTIP"));
 
+    itcwb_fgreen = Gtk::manage (new Adjuster(M("TP_WBALANCE_ITCWB_FGREEN"), 3, 6, 1, 5));
+    itcwb_fgreen->set_tooltip_markup (M("TP_WBALANCE_ITCWBFGREEN_TOOLTIP"));
+    
     itcwb_nopurple = Gtk::manage (new Gtk::CheckButton (M("TP_WBALANCE_ITCWB_NOPURPLE")));
     itcwb_nopurple->set_tooltip_markup (M("TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP"));
     itcwb_nopurple ->set_active (true);
@@ -408,6 +412,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     itcwbBox->pack_start (*itcwb_precis);
     itcwbBox->pack_start (*itcwb_size);
     itcwbBox->pack_start (*itcwb_delta);
+    itcwbBox->pack_start (*itcwb_fgreen);
     itcwbBox->pack_start (*itcwb_nopurple);
     itcwbBox->pack_start (*itcwb_sorted);
     itcwbBox->pack_start (*itcwb_forceextra);
@@ -419,6 +424,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
         itcwb_precis->show();
         itcwb_size->show();
         itcwb_delta->show();
+        itcwb_fgreen->show();
         itcwb_nopurple->show();
         itcwb_sorted->show();
         itcwb_forceextra->show();
@@ -428,6 +434,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
         itcwb_precis->hide();
         itcwb_size->hide();
         itcwb_delta->hide();
+        itcwb_fgreen->hide();
         itcwb_nopurple->hide();
         itcwb_sorted->hide();
         itcwb_forceextra->hide();
@@ -441,6 +448,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     itcwb_precis->setAdjusterListener (this);
     itcwb_size->setAdjusterListener (this);
     itcwb_delta->setAdjusterListener (this);
+    itcwb_fgreen->setAdjusterListener (this);
 
     spotbutton->signal_pressed().connect( sigc::mem_fun(*this, &WhiteBalance::spotPressed) );
     methconn = method->signal_changed().connect( sigc::mem_fun(*this, &WhiteBalance::optChanged) );
@@ -567,6 +575,7 @@ void WhiteBalance::adjusterChanged(Adjuster* a, double newval)
                     || a == itcwb_precis
                     || a == itcwb_size
                     || a == itcwb_delta
+                    || a == itcwb_fgreen
                 )
                 && ppMethod.second.type == WBEntry::Type::AUTO
             )
@@ -611,6 +620,8 @@ void WhiteBalance::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged (EvWBitcwbsize, Glib::ustring::format ((int) a->getValue()));
         } else if (a == itcwb_delta) {
             listener->panelChanged (EvWBitcwbdelta, Glib::ustring::format ((int) a->getValue()));
+        } else if (a == itcwb_fgreen) {
+            listener->panelChanged (EvWBitcwbfgreen, Glib::ustring::format ((int) a->getValue()));
         }
     }
 }
@@ -762,6 +773,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
     itcwb_precis->setValue (pp->wb.itcwb_precis);
     itcwb_size->setValue (pp->wb.itcwb_size);
     itcwb_delta->setValue (pp->wb.itcwb_delta);
+    itcwb_fgreen->setValue (pp->wb.itcwb_fgreen);
     tempBias->setValue (pp->wb.tempBias);
     tempBias->set_sensitive(true);
     itcwb_nopurpleconn.block (true);
@@ -784,6 +796,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         itcwb_precis->show();
         itcwb_size->show();
         itcwb_delta->show();
+        itcwb_fgreen->show();
         itcwb_nopurple->show();
         itcwb_sorted->show();
         itcwb_forceextra->show();
@@ -793,7 +806,8 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         itcwb_thres->hide();
         itcwb_precis->hide();
         itcwb_size->hide();
-        itcwb_size->hide();
+        itcwb_delta->hide();
+        itcwb_fgreen->hide();
         itcwb_nopurple->hide();
         itcwb_sorted->hide();
         itcwb_forceextra->hide();
@@ -810,6 +824,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         itcwb_precis->setEditedState (pedited->wb.itcwb_precis ? Edited : UnEdited);
         itcwb_size->setEditedState (pedited->wb.itcwb_size ? Edited : UnEdited);
         itcwb_delta->setEditedState (pedited->wb.itcwb_delta ? Edited : UnEdited);
+        itcwb_fgreen->setEditedState (pedited->wb.itcwb_fgreen ? Edited : UnEdited);
         itcwb_nopurple->set_inconsistent (!pedited->wb.itcwb_nopurple);
         itcwb_sorted->set_inconsistent (!pedited->wb.itcwb_sorted);
         itcwb_forceextra->set_inconsistent (!pedited->wb.itcwb_forceextra);
@@ -953,6 +968,7 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->wb.itcwb_precis = itcwb_precis->getEditedState ();
         pedited->wb.itcwb_size = itcwb_size->getEditedState ();
         pedited->wb.itcwb_delta = itcwb_delta->getEditedState ();
+        pedited->wb.itcwb_fgreen = itcwb_fgreen->getEditedState ();
         pedited->wb.itcwb_nopurple = !itcwb_nopurple->get_inconsistent();
         pedited->wb.itcwb_sorted = !itcwb_sorted->get_inconsistent();
         pedited->wb.itcwb_forceextra = !itcwb_forceextra->get_inconsistent();
@@ -975,6 +991,7 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
     pp->wb.itcwb_precis = itcwb_precis->getValue ();
     pp->wb.itcwb_size = itcwb_size->getValue ();
     pp->wb.itcwb_delta = itcwb_delta->getValue ();
+    pp->wb.itcwb_fgreen = itcwb_fgreen->getValue ();
     pp->wb.itcwb_nopurple = itcwb_nopurple->get_active ();
     pp->wb.itcwb_sorted = itcwb_sorted->get_active ();
     pp->wb.itcwb_forceextra = itcwb_forceextra->get_active ();
@@ -990,6 +1007,7 @@ void WhiteBalance::setDefaults (const ProcParams* defParams, const ParamsEdited*
     itcwb_precis->setDefault (defParams->wb.itcwb_precis);
     itcwb_size->setDefault (defParams->wb.itcwb_size);
     itcwb_delta->setDefault (defParams->wb.itcwb_delta);
+    itcwb_fgreen->setDefault (defParams->wb.itcwb_fgreen);
 
     if (wbp && defParams->wb.method == "Camera") {
         double ctemp;
@@ -1016,6 +1034,7 @@ void WhiteBalance::setDefaults (const ProcParams* defParams, const ParamsEdited*
         itcwb_precis->setDefaultEditedState (pedited->wb.itcwb_precis ? Edited : UnEdited);
         itcwb_size->setDefaultEditedState (pedited->wb.itcwb_size ? Edited : UnEdited);
         itcwb_delta->setDefaultEditedState (pedited->wb.itcwb_delta ? Edited : UnEdited);
+        itcwb_fgreen->setDefaultEditedState (pedited->wb.itcwb_fgreen ? Edited : UnEdited);
     } else {
         temp->setDefaultEditedState (Irrelevant);
         green->setDefaultEditedState (Irrelevant);
@@ -1025,6 +1044,7 @@ void WhiteBalance::setDefaults (const ProcParams* defParams, const ParamsEdited*
         itcwb_precis->setDefaultEditedState (Irrelevant);
         itcwb_size->setDefaultEditedState (Irrelevant);
         itcwb_delta->setDefaultEditedState (Irrelevant);
+        itcwb_fgreen->setDefaultEditedState (Irrelevant);
     }
 }
 

@@ -4714,6 +4714,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     itcwb_stdobserver10 : true by default - use standard observer 10°, false = standard observer 2°
     itcwb_precis : 3 by default - can be set to 3 or 9 - 3 best sampling but more time...9 "old" settings - but low differences in times with 3 instead of 9 about twice time 160ms instead of 80ms for a big raw file
     itcwb_nopurple : true default - allow to bypass highlight recovery and inpait opposed when need flowers and not purple due to highlights...
+    itcwb_fgreen : 5 by default - between 3 to 6 - find the compromise student / green to reach green near of 1 
     */
     BENCHFUN
 
@@ -5516,7 +5517,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         // perhaps we can used a Snedecor test ? but why...at least we have confidence interval > 90%
         int greengood = 55;
 
-        int maxkgood = 5;//we can change ...to test 3, 4, 5. High values perhaps less good student, but it is a compromise...
+       // int maxkgood = 5;//we can change ...to test 3, 4, 5. High values perhaps less good student, but it is a compromise...
+        int maxkgood = wbpar.itcwb_fgreen;//we can change ...to test 3, 4, 5. High values perhaps less good student, but it is a compromise...
         int mingood = std::min(std::fabs(Tgstud[0].greenref - 55), std::fabs(Tgstud[1].greenref - 55));
 
         for (int k = 2; k < maxkgood; ++k) {

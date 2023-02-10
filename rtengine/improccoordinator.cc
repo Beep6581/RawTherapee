@@ -547,6 +547,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         params->wb.temperature = tempitc;
                         params->wb.green = greenitc;
                         currWB = ColorTemp(params->wb.temperature, params->wb.green, 1., params->wb.method);
+                        printf("tempitc=%f greitc=%f\n", tempitc, greenitc);
+
                         currWB.getMultipliers(rm, gm, bm);
                     }
 

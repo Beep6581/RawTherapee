@@ -643,6 +643,7 @@ struct WBParams {
     int             itcwb_precis;
     int             itcwb_size;
     int             itcwb_delta;
+    int             itcwb_fgreen;
     bool            itcwb_nopurple;
     bool            itcwb_sorted;
     bool            itcwb_forceextra;
