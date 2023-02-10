@@ -4093,17 +4093,25 @@ TP_WBALANCE_GREEN;Tint
 TP_WBALANCE_GTI;GTI
 TP_WBALANCE_HMI;HMI
 TP_WBALANCE_ITCWB_DELTA;Delta temperature in green loop
+TP_WBALANCE_ITCWBDELTA_TOOLTIP;Delta temp in green iterate loop for "extra" - Extra must be enable.
 TP_WBALANCE_ITCWB_FORCED;Forces Extra algorithm
+TP_WBALANCE_ITCWFORCED_TOOLTIP;Extra is used when camera wbsettings are probably wrong.
 TP_WBALANCE_ITCWB_FGREEN;Find green student
+TP_WBALANCE_ITCWBFGREEN_TOOLTIP;Find the best compromise between Student and green - green near to 1 is searched.
 TP_WBALANCE_ITCWB_FRA;Auto Temperature correlation Settings
 TP_WBALANCE_ITCWB_FRA_TOOLTIP;These settings allow, depending on the images (type of raw, colorimetry, etc.), an adaptation of the 'Temperature correlation' algorithm. There is no absolute rule linking these parameters to the results obtained.
 TP_WBALANCE_ITCWB_NOPURPLE;No purple color used
+TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP;Used to optimize 'Inpaint opposed': false take into account purple.
 TP_WBALANCE_ITCWB_PRECIS;Precision algorithm - scale used
+TP_WBALANCE_ITCWBPRECIS_TOOLTIP;3 best sampling but more time.
 TP_WBALANCE_ITCWB_RGREEN;Green range
-TP_WBALANCE_ITCWB_SIZE;Size of ref. color compare to histogram 
+TP_WBALANCE_ITCWBRGREEN_TOOLTIP;Green range: amplitude of green variation while temp is search. 
+TP_WBALANCE_ITCWB_SIZE;Size of ref. color compare to histogram
+TP_WBALANCE_ITCWBSIZE_TOOLTIP;Size of reference Spectral color compare to size of histogram real color
 TP_WBALANCE_ITCWB_SORTED;Sort in chroma order instead of histogram
+TP_WBALANCE_ITCWBSORTED_TOOLTIP;Sort xy datas in chroma order instead of histogram xy color datas.
 TP_WBALANCE_ITCWB_THRES;Maximum of colors used in picture
-Delta temperature in green iterate loop
+TP_WBALANCE_ITCWBTHRES_TOOLTIP;Number of color used in final algorithm - between 10 and max 55.
 TP_WBALANCE_JUDGEIII;JudgeIII
 TP_WBALANCE_LABEL;White Balance
 TP_WBALANCE_LAMP_HEADER;Lamp
