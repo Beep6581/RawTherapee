@@ -641,6 +641,8 @@ struct WBParams {
     double          tempBias;
     int             itcwb_thres;
     int             itcwb_precis;
+    int             itcwb_size;
+    int             itcwb_delta;
     bool            itcwb_nopurple;
     bool            itcwb_sorted;
     bool            itcwb_forceextra;

@@ -144,8 +144,8 @@ class Preferences final :
 //    Gtk::CheckButton* mwbasort;
 //    Gtk::SpinButton*  wbacorrnb;
 //    Gtk::SpinButton*  wbaprecis;
-    Gtk::SpinButton*  wbasizeref;
-    Gtk::SpinButton*  wbagreendelta;
+//    Gtk::SpinButton*  wbasizeref;
+//    Gtk::SpinButton*  wbagreendelta;
 
     Gtk::SpinButton*  panFactor;
     Gtk::CheckButton* rememberZoomPanCheckbutton;

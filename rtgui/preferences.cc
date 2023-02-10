@@ -979,8 +979,8 @@ Gtk::Widget* Preferences::getColorManPanel ()
     wbaVB->add(*wbah);
 //    placeSpinBox(wbaVB, wbacorrnb, "PREFERENCES_WBAPATCH", 0, 1, 5, 2, 10, 55);
 //   placeSpinBox(wbaVB, wbaprecis, "PREFERENCES_WBAPRECIS", 0, 2, 5, 2, 3, 7);
-    placeSpinBox(wbaVB, wbasizeref, "PREFERENCES_WBASIZEREF", 0, 1, 5, 2, 1, 5);
-    placeSpinBox(wbaVB, wbagreendelta, "PREFERENCES_WBAGREENDELTA", 0, 1, 5, 2, 1, 4);
+//   placeSpinBox(wbaVB, wbasizeref, "PREFERENCES_WBASIZEREF", 0, 1, 5, 2, 1, 5);
+//    placeSpinBox(wbaVB, wbagreendelta, "PREFERENCES_WBAGREENDELTA", 0, 1, 5, 2, 1, 4);
 
     fwbacorr->add (*wbaVB);
     vbColorMan->pack_start (*fwbacorr, Gtk::PACK_SHRINK);
@@ -1863,8 +1863,8 @@ void Preferences::storePreferences()
 
 //    moptions.rtSettings.itcwb_thres = wbacorrnb->get_value_as_int();
 //    moptions.rtSettings.itcwb_precis = wbaprecis->get_value_as_int();
-    moptions.rtSettings.itcwb_sizereference = wbasizeref->get_value_as_int();
-    moptions.rtSettings.itcwb_greendeltatemp = wbagreendelta->get_value_as_int();
+//    moptions.rtSettings.itcwb_sizereference = wbasizeref->get_value_as_int();
+//    moptions.rtSettings.itcwb_greendeltatemp = wbagreendelta->get_value_as_int();
 
 #endif
 
@@ -2031,8 +2031,8 @@ void Preferences::fillPreferences()
 //    mwbanopurp->set_active(moptions.rtSettings.itcwb_nopurple);
 //    wbacorrnb->set_value (moptions.rtSettings.itcwb_thres);
 //    wbaprecis->set_value (moptions.rtSettings.itcwb_precis);
-    wbasizeref->set_value (moptions.rtSettings.itcwb_sizereference);
-    wbagreendelta->set_value (moptions.rtSettings.itcwb_greendeltatemp);
+//    wbasizeref->set_value (moptions.rtSettings.itcwb_sizereference);
+//    wbagreendelta->set_value (moptions.rtSettings.itcwb_greendeltatemp);
 
     cbAutoMonProfile->set_active(moptions.rtSettings.autoMonitorProfile);
 #endif

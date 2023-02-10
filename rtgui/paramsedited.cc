@@ -268,6 +268,8 @@ void ParamsEdited::set(bool v)
     wb.tempBias                = v;
     wb.itcwb_thres                = v;
     wb.itcwb_precis                = v;
+    wb.itcwb_size                = v;
+    wb.itcwb_delta                = v;
     wb.itcwb_nopurple             = v;
     wb.itcwb_sorted             = v;
     wb.itcwb_forceextra         = v;
@@ -974,6 +976,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wb.tempBias = wb.tempBias && p.wb.tempBias == other.wb.tempBias;
         wb.itcwb_thres = wb.itcwb_thres && p.wb.itcwb_thres == other.wb.itcwb_thres;
         wb.itcwb_precis = wb.itcwb_precis && p.wb.itcwb_precis == other.wb.itcwb_precis;
+        wb.itcwb_size = wb.itcwb_size && p.wb.itcwb_size == other.wb.itcwb_size;
+        wb.itcwb_delta = wb.itcwb_delta && p.wb.itcwb_delta == other.wb.itcwb_delta;
         wb.itcwb_nopurple = wb.itcwb_nopurple && p.wb.itcwb_nopurple == other.wb.itcwb_nopurple;
         wb.itcwb_sorted = wb.itcwb_sorted && p.wb.itcwb_sorted == other.wb.itcwb_sorted;
         wb.itcwb_forceextra = wb.itcwb_forceextra && p.wb.itcwb_forceextra == other.wb.itcwb_forceextra;
@@ -2845,6 +2849,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (wb.itcwb_precis) {
         toEdit.wb.itcwb_precis = mods.wb.itcwb_precis;
+    }
+
+    if (wb.itcwb_size) {
+        toEdit.wb.itcwb_size = mods.wb.itcwb_size;
+    }
+
+    if (wb.itcwb_delta) {
+        toEdit.wb.itcwb_delta = mods.wb.itcwb_delta;
     }
 
     if (wb.itcwb_nopurple) {

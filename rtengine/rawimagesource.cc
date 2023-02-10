@@ -4042,10 +4042,6 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
     // this "choice" are guided by generally colors who are in nature skin, sky, etc. in those cases "steps" are small
     // of course we can change to be more precise
     // purp enable or not purple color in xyY - approximation...
-    if(purp) {printf("OK purple\n");
-    } else {
-       printf("OK PAS purple\n");
-    }
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
@@ -5319,7 +5315,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     }
 
     //calculate deltaE xx to find best values of spectrals data - limited to chroma values
-    int maxnb = rtengine::LIM(settings->itcwb_sizereference, 1, 5);
+   // int maxnb = rtengine::LIM(settings->itcwb_sizereference, 1, 5);
+    int maxnb = rtengine::LIM(wbpar.itcwb_size, 1, 5);
 
 //    if (settings->itcwb_thres > 55) {
 //        maxnb = 201 / settings->itcwb_thres;
@@ -5436,7 +5433,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         }
 
-        const int dgoodref = rtengine::min(settings->itcwb_greendeltatemp, 4);
+      //  const int dgoodref = rtengine::min(settings->itcwb_greendeltatemp, 4);
+        const int dgoodref = rtengine::min(wbpar.itcwb_delta, 4);
         const int scantempbeg = rtengine::max(goodref - (dgoodref + 1), 1);
         const int scantempend = rtengine::min(goodref + dgoodref, N_t - 1);
 
