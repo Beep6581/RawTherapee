@@ -671,8 +671,10 @@ void WhiteBalance::optChanged ()
             bool autit = (currMethod.ppLabel == "autitcgreen");
             if (autit) {
                 StudLabel->show();
+                itcwbFrame->set_sensitive(true);
             } else {
                 StudLabel->hide();
+                itcwbFrame->set_sensitive(false);
             }
 
             switch (currMethod.type) {
@@ -953,8 +955,11 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         bool autit = (wbValues.ppLabel == "autitcgreen");
         if (autit) {
             StudLabel->show();
+            itcwbFrame->set_sensitive(true);
+
         } else {
             StudLabel->hide();
+            itcwbFrame->set_sensitive(false);
         }
         
     }
