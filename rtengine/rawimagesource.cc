@@ -5073,12 +5073,12 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     //calculate R G B multiplier in function illuminant and temperature
     const bool isMono = (ri->getSensorType() == ST_FUJI_XTRANS && raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO))
                         || (ri->getSensorType() == ST_BAYER && raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO));
-
     for (int tt = 0; tt < N_t; ++tt) {
         double r, g, b;
         float rm, gm, bm;
         ColorTemp WBiter = ColorTemp(Txyz[tt].Tem, greenitc, 1.f, "Custom");
         WBiter.getMultipliers(r, g, b);
+        
         rm = imatrices.cam_rgb[0][0] * r + imatrices.cam_rgb[0][1] * g + imatrices.cam_rgb[0][2] * b;
         gm = imatrices.cam_rgb[1][0] * r + imatrices.cam_rgb[1][1] * g + imatrices.cam_rgb[1][2] * b;
         bm = imatrices.cam_rgb[2][0] * r + imatrices.cam_rgb[2][1] * g + imatrices.cam_rgb[2][2] * b;
@@ -5579,7 +5579,8 @@ void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> 
     //put green (tint) in reasonable limits for an Daylight illuminant
     // avoid too bi or too low values
     if (wbpar.method == "autitcgreen") {
-        bool extra = false;
+//        bool extra = false;
+        bool extra = true;
 
         if (greenref > 0.5 && greenref < 1.3) {// 0.5 and 1.3 arbitraties values
             greenitc = greenref;
@@ -5587,9 +5588,9 @@ void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> 
         //    if (settings->itcwb_forceextra) {
         //        extra = true;
         //    }
-            if (wbpar.itcwb_forceextra) {
-                extra = true;
-            }
+       //     if (wbpar.itcwb_forceextra) {
+       //         extra = true;
+       //     }
             
         } else {
             greenitc = 1.;
