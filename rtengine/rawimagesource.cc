@@ -4718,14 +4718,20 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     */
     BENCHFUN
 
-    TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix("sRGB");
+    Glib::ustring profuse;
+    profuse = "sRGB";
+    if( wbpar.itcwb_forceextra) {
+       profuse = "ACESp0";
+    }
+    
+    TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(profuse); //ACESp0 or sRGB
     const float wp[3][3] = {
         {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
         {static_cast<float>(wprof[1][0]), static_cast<float>(wprof[1][1]), static_cast<float>(wprof[1][2])},
         {static_cast<float>(wprof[2][0]), static_cast<float>(wprof[2][1]), static_cast<float>(wprof[2][2])}
     };
 
-    TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix("sRGB");
+    TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(profuse);//ACESp0 or sRGB
     //inverse matrix user select
     const float wip[3][3] = {
         {static_cast<float>(wiprof[0][0]), static_cast<float>(wiprof[0][1]), static_cast<float>(wiprof[0][2])},

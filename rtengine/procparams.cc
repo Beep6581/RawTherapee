@@ -1340,7 +1340,7 @@ WBParams::WBParams() :
     itcwb_rgreen(1),
     itcwb_nopurple(true),
     itcwb_sorted(true),
-    itcwb_forceextra(true)
+    itcwb_forceextra(false)
 
 {
 }

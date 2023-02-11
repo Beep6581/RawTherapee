@@ -4094,8 +4094,8 @@ TP_WBALANCE_GTI;GTI
 TP_WBALANCE_HMI;HMI
 TP_WBALANCE_ITCWB_DELTA;Delta temperature in green loop
 TP_WBALANCE_ITCWBDELTA_TOOLTIP;Delta temp in green iterate loop for "extra" - Extra must be enable.
-TP_WBALANCE_ITCWB_FORCED;Forces Extra algorithm
-TP_WBALANCE_ITCWFORCED_TOOLTIP;Extra is used when camera wbsettings are probably wrong.
+TP_WBALANCE_ITCWB_FORCED;Forces use of the entire CIE diagram
+TP_WBALANCE_ITCWFORCED_TOOLTIP;Change range data xy.
 TP_WBALANCE_ITCWB_FGREEN;Find green student
 TP_WBALANCE_ITCWBFGREEN_TOOLTIP;Find the best compromise between Student and green - green near to 1 is searched.
 TP_WBALANCE_ITCWB_FRA;Auto Temperature correlation Settings
