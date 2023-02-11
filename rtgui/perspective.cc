@@ -346,6 +346,7 @@ void PerspCorrection::read (const ProcParams* pp, const ParamsEdited* pedited)
     vert->setValue (pp->perspective.vertical);
     setFocalLengthValue (pp, metadata);
     camera_pitch->setValue (pp->perspective.camera_pitch);
+    camera_defish->set_active(pp->perspective.camera_defish);
     camera_scale->setValue (pp->perspective.camera_scale);
     camera_roll->setValue (pp->perspective.camera_roll);
     camera_shift_horiz->setValue (pp->perspective.camera_shift_horiz);
@@ -399,6 +400,7 @@ void PerspCorrection::write (ProcParams* pp, ParamsEdited* pedited)
         pp->perspective.camera_focal_length = camera_focal_length->getValue ();
     }
     pp->perspective.camera_pitch = camera_pitch->getValue ();
+    pp->perspective.camera_defish = camera_defish->get_active ();
     pp->perspective.camera_scale = camera_scale->getValue ();
     pp->perspective.camera_roll = camera_roll->getValue ();
     pp->perspective.camera_shift_horiz = camera_shift_horiz->getValue ();
@@ -422,6 +424,7 @@ void PerspCorrection::write (ProcParams* pp, ParamsEdited* pedited)
     }
 
     if (pedited) {
+        pedited->perspective.camera_defish = true;
         pedited->perspective.method =  method->get_active_row_number() != 2;
         pedited->perspective.horizontal = horiz->getEditedState ();
         pedited->perspective.vertical = vert->getEditedState ();
