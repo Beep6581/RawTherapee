@@ -152,7 +152,7 @@ void BatchToolPanelCoordinator::initSession ()
             rotate->setAdjusterBehavior (false);
             resize->setAdjusterBehavior (false);
             distortion->setAdjusterBehavior (false);
-            perspective->setAdjusterBehavior (false, false, false, false, false, false, false);
+            perspective->setAdjusterBehavior (false, false, false, false, false, false, false, false);
             gradient->setAdjusterBehavior (false, false, false, false);
             pcvignette->setAdjusterBehavior (false, false, false);
             cacorrection->setAdjusterBehavior (false);
@@ -197,7 +197,7 @@ void BatchToolPanelCoordinator::initSession ()
             rotate->setAdjusterBehavior (options.baBehav[ADDSET_ROTATE_DEGREE]);
             resize->setAdjusterBehavior (options.baBehav[ADDSET_RESIZE_SCALE]);
             distortion->setAdjusterBehavior (options.baBehav[ADDSET_DIST_AMOUNT]);
-            perspective->setAdjusterBehavior (options.baBehav[ADDSET_PERSPECTIVE], options.baBehav[ADDSET_PERSP_CAM_FOCAL_LENGTH], options.baBehav[ADDSET_PERSP_CAM_SHIFT], options.baBehav[ADDSET_PERSP_CAM_ANGLE], options.baBehav[ADDSET_PERSP_PROJ_ANGLE], options.baBehav[ADDSET_PERSP_PROJ_SHIFT], options.baBehav[ADDSET_PERSP_PROJ_ROTATE]);
+            perspective->setAdjusterBehavior (options.baBehav[ADDSET_PERSPECTIVE], options.baBehav[ADDSET_PERSP_CAM_FOCAL_LENGTH], options.baBehav[ADDSET_PERSP_CAM_SHIFT], options.baBehav[ADDSET_PERSP_CAM_ANGLE], options.baBehav[ADDSET_PERSP_PROJ_ANGLE], options.baBehav[ADDSET_PERSP_PROJ_SHIFT], options.baBehav[ADDSET_PERSP_PROJ_ROTATE], options.baBehav[ADDSET_PERSP_CAM_SCALE]);
             gradient->setAdjusterBehavior (options.baBehav[ADDSET_GRADIENT_DEGREE], options.baBehav[ADDSET_GRADIENT_FEATHER], options.baBehav[ADDSET_GRADIENT_STRENGTH], options.baBehav[ADDSET_GRADIENT_CENTER]);
             pcvignette->setAdjusterBehavior (options.baBehav[ADDSET_PCVIGNETTE_STRENGTH], options.baBehav[ADDSET_PCVIGNETTE_FEATHER], options.baBehav[ADDSET_PCVIGNETTE_ROUNDNESS]);
             cacorrection->setAdjusterBehavior (options.baBehav[ADDSET_CA]);

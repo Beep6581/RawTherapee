@@ -89,20 +89,24 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
 
     auto mapper = ProcEventMapper::getInstance();
     // Normal events.
+    EvPerspCamDefish = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_CAM_DEFISH");
     EvPerspCamAngle = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_CAM_ANGLE");
     EvPerspCamFocalLength = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_CAM_FL");
     EvPerspCamShift = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_CAM_SHIFT");
     EvPerspMethod = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_METHOD");
     EvPerspProjAngle = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_PROJ_ANGLE");
     EvPerspProjRotate = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_PROJ_ROTATE");
+    EvPerspCamScale = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_PROJ_SCALE");
     EvPerspProjShift = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_PROJ_SHIFT");
     EvPerspRender = mapper->newEvent(TRANSFORM, "GENERAL_NA");
     // Void events.
+    EvPerspCamDefishVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_CAM_DEFISH");
     EvPerspCamAngleVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_CAM_ANGLE");
     EvPerspCamFocalLengthVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_CAM_FL");
     EvPerspCamShiftVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_CAM_SHIFT");
     EvPerspProjAngleVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_PROJ_ANGLE");
     EvPerspProjRotateVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_PROJ_ROTATE");
+    EvPerspCamScaleVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_PROJ_SCALE");
     EvPerspProjShiftVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_PROJ_SHIFT");
     setCamBasedEventsActive();
     EvPerspControlLines = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_CTRL_LINE");
@@ -247,6 +251,13 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     projection_rotate = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_PROJECTION_ROTATE"), -45, 45, 0.01, 0, ipers_rotate_left, ipers_rotate_right));
     projection_rotate->setAdjusterListener (this);
 
+    camera_scale= Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_CAMERA_SCALE"), .1, 10, 0.01, 0, ipers_rotate_left, ipers_rotate_right));
+    camera_scale->setAdjusterListener (this);
+
+    camera_defish = Gtk::manage(new Gtk::CheckButton(M("TP_PERSPECTIVE_CAMERA_DEFISH")));
+    camera_defish->signal_toggled().connect(sigc::mem_fun(*this, &PerspCorrection::defishChanged));
+
+
     Gtk::Frame* recovery_frame = Gtk::manage (new Gtk::Frame
             (M("TP_PERSPECTIVE_RECOVERY_FRAME")));
     recovery_frame->set_label_align(0.025, 0.5);
@@ -266,10 +277,12 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     auto_hbox->pack_start (*auto_yaw);
     auto_hbox->pack_start (*auto_pitch_yaw);
 
+    camera_vbox->pack_start (*camera_defish);
     camera_vbox->pack_start (*camera_focal_length);
     camera_vbox->pack_start (*camera_crop_factor);
     camera_vbox->pack_start (*camera_shift_horiz);
     camera_vbox->pack_start (*camera_shift_vert);
+    camera_vbox->pack_start (*camera_scale);
     camera_vbox->pack_start (*camera_roll);
     camera_vbox->pack_start (*camera_pitch);
     camera_vbox->pack_start (*camera_yaw);
@@ -298,6 +311,7 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     vert->setLogScale(2, 0);
     camera_focal_length->setLogScale(4000, 0.5);
     camera_crop_factor->setLogScale(300, 0.1);
+    camera_scale->setLogScale(300, 0.1);
 
     method->signal_changed().connect(sigc::mem_fun(*this, &PerspCorrection::methodChanged));
 
@@ -315,6 +329,7 @@ void PerspCorrection::read (const ProcParams* pp, const ParamsEdited* pedited)
         camera_crop_factor->setEditedState (pedited->perspective.camera_crop_factor ? Edited : UnEdited);
         camera_focal_length->setEditedState (pedited->perspective.camera_focal_length ? Edited : UnEdited);
         camera_pitch->setEditedState (pedited->perspective.camera_pitch ? Edited : UnEdited);
+        camera_scale->setEditedState (pedited->perspective.camera_scale ? Edited : UnEdited);
         camera_roll->setEditedState (pedited->perspective.camera_roll ? Edited : UnEdited);
         camera_shift_horiz->setEditedState (pedited->perspective.camera_shift_horiz ? Edited : UnEdited);
         camera_shift_vert->setEditedState (pedited->perspective.camera_shift_vert ? Edited : UnEdited);
@@ -331,6 +346,7 @@ void PerspCorrection::read (const ProcParams* pp, const ParamsEdited* pedited)
     vert->setValue (pp->perspective.vertical);
     setFocalLengthValue (pp, metadata);
     camera_pitch->setValue (pp->perspective.camera_pitch);
+    camera_scale->setValue (pp->perspective.camera_scale);
     camera_roll->setValue (pp->perspective.camera_roll);
     camera_shift_horiz->setValue (pp->perspective.camera_shift_horiz);
     camera_shift_vert->setValue (pp->perspective.camera_shift_vert);
@@ -383,6 +399,7 @@ void PerspCorrection::write (ProcParams* pp, ParamsEdited* pedited)
         pp->perspective.camera_focal_length = camera_focal_length->getValue ();
     }
     pp->perspective.camera_pitch = camera_pitch->getValue ();
+    pp->perspective.camera_scale = camera_scale->getValue ();
     pp->perspective.camera_roll = camera_roll->getValue ();
     pp->perspective.camera_shift_horiz = camera_shift_horiz->getValue ();
     pp->perspective.camera_shift_vert = camera_shift_vert->getValue ();
@@ -411,6 +428,7 @@ void PerspCorrection::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->perspective.camera_crop_factor= camera_crop_factor->getEditedState ();
         pedited->perspective.camera_focal_length = camera_focal_length->getEditedState ();
         pedited->perspective.camera_pitch = camera_pitch->getEditedState();
+        pedited->perspective.camera_scale = camera_scale->getEditedState();
         pedited->perspective.camera_roll = camera_roll->getEditedState();
         pedited->perspective.camera_shift_horiz = camera_shift_horiz->getEditedState();
         pedited->perspective.camera_shift_vert = camera_shift_vert->getEditedState();
@@ -436,6 +454,7 @@ void PerspCorrection::setDefaults (const ProcParams* defParams, const ParamsEdit
                                         ? defParams->perspective.camera_focal_length
                                         : PerspectiveParams::DEFAULT_CAMERA_FOCAL_LENGTH);
     camera_pitch->setDefault (defParams->perspective.camera_pitch);
+    camera_scale->setDefault (defParams->perspective.camera_scale);
     camera_roll->setDefault (defParams->perspective.camera_roll);
     camera_shift_horiz->setDefault (defParams->perspective.camera_shift_horiz);
     camera_shift_vert->setDefault (defParams->perspective.camera_shift_vert);
@@ -452,6 +471,7 @@ void PerspCorrection::setDefaults (const ProcParams* defParams, const ParamsEdit
         camera_crop_factor->setDefaultEditedState (pedited->perspective.camera_crop_factor ? Edited : UnEdited);
         camera_focal_length->setDefaultEditedState (pedited->perspective.camera_focal_length ? Edited : UnEdited);
         camera_pitch->setDefaultEditedState (pedited->perspective.camera_pitch ? Edited : UnEdited);
+        camera_scale->setDefaultEditedState (pedited->perspective.camera_scale? Edited : UnEdited);
         camera_roll->setDefaultEditedState (pedited->perspective.camera_roll ? Edited : UnEdited);
         camera_shift_horiz->setDefaultEditedState (pedited->perspective.camera_shift_horiz ? Edited : UnEdited);
         camera_shift_vert->setDefaultEditedState (pedited->perspective.camera_shift_vert ? Edited : UnEdited);
@@ -467,6 +487,7 @@ void PerspCorrection::setDefaults (const ProcParams* defParams, const ParamsEdit
         camera_crop_factor->setDefaultEditedState (Irrelevant);
         camera_focal_length->setDefaultEditedState (Irrelevant);
         camera_pitch->setDefaultEditedState (Irrelevant);
+        camera_scale->setDefaultEditedState (Irrelevant);
         camera_roll->setDefaultEditedState (Irrelevant);
         camera_shift_horiz->setDefaultEditedState (Irrelevant);
         camera_shift_vert->setDefaultEditedState (Irrelevant);
@@ -503,6 +524,9 @@ void PerspCorrection::adjusterChanged(Adjuster* a, double newval)
                         camera_shift_horiz->getValue(),
                         M("TP_PERSPECTIVE_CAMERA_SHIFT_VERTICAL"),
                         camera_shift_vert->getValue()));
+        } else if (a == camera_scale) {
+            listener->panelChanged (*event_persp_cam_scale,
+                    Glib::ustring::format(camera_scale->getValue()));
         } else if (a == camera_pitch || a == camera_roll|| a == camera_yaw) {
             listener->panelChanged (*event_persp_cam_angle,
                     Glib::ustring::compose("%1=%2\n%3=%4\n%5=%6",
@@ -617,7 +641,14 @@ void PerspCorrection::methodChanged (void)
 
 }
 
-void PerspCorrection::setAdjusterBehavior (bool badd, bool camera_focal_length_add, bool camera_shift_add, bool camera_angle_add, bool projection_angle_add, bool projection_shift_add, bool projection_rotate_add)
+void PerspCorrection::defishChanged()
+{
+    if (listener) {
+        listener->panelChanged(EvPerspCamDefish, camera_defish->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+    }
+}
+
+void PerspCorrection::setAdjusterBehavior (bool badd, bool camera_focal_length_add, bool camera_shift_add, bool camera_angle_add, bool projection_angle_add, bool projection_shift_add, bool projection_rotate_add, bool projection_scale_add)
 {
 
     horiz->setAddMode(badd);
@@ -625,6 +656,7 @@ void PerspCorrection::setAdjusterBehavior (bool badd, bool camera_focal_length_a
     camera_crop_factor->setAddMode(camera_focal_length_add);
     camera_focal_length->setAddMode(camera_focal_length_add);
     camera_pitch->setAddMode(camera_angle_add);
+    camera_scale->setAddMode(projection_scale_add);
     camera_roll->setAddMode(camera_angle_add);
     camera_shift_horiz->setAddMode(camera_shift_add);
     camera_shift_vert->setAddMode(camera_shift_add);
@@ -665,6 +697,7 @@ void PerspCorrection::trimValues (rtengine::procparams::ProcParams* pp)
         camera_focal_length->trimValue(pp->perspective.camera_focal_length);
     }
     camera_pitch->trimValue(pp->perspective.camera_pitch);
+    camera_scale->trimValue(pp->perspective.camera_scale);
     camera_roll->trimValue(pp->perspective.camera_roll);
     camera_shift_horiz->trimValue(pp->perspective.camera_shift_horiz);
     camera_shift_vert->trimValue(pp->perspective.camera_shift_vert);
@@ -685,6 +718,7 @@ void PerspCorrection::setBatchMode (bool batchMode)
     camera_crop_factor->showEditedCB ();
     camera_focal_length->showEditedCB ();
     camera_pitch->showEditedCB ();
+    camera_scale->showEditedCB ();
     camera_roll->showEditedCB ();
     camera_shift_horiz->showEditedCB ();
     camera_shift_vert->showEditedCB ();
@@ -860,16 +894,20 @@ void PerspCorrection::requestApplyControlLines(void)
 void PerspCorrection::setCamBasedEventsActive(bool active)
 {
     if (active) {
+        event_persp_cam_defish = &EvPerspCamDefish;
         event_persp_cam_focal_length = &EvPerspCamFocalLength;
         event_persp_cam_shift = &EvPerspCamShift;
         event_persp_cam_angle = &EvPerspCamAngle;
+        event_persp_cam_scale = &EvPerspCamScale;
         event_persp_proj_shift = &EvPerspProjShift;
         event_persp_proj_rotate = &EvPerspProjRotate;
         event_persp_proj_angle = &EvPerspProjAngle;
     } else {
+        event_persp_cam_defish = &EvPerspCamDefishVoid;
         event_persp_cam_focal_length = &EvPerspCamFocalLengthVoid;
         event_persp_cam_shift = &EvPerspCamShiftVoid;
         event_persp_cam_angle = &EvPerspCamAngleVoid;
+        event_persp_cam_scale = &EvPerspCamScaleVoid;
         event_persp_proj_shift = &EvPerspProjShiftVoid;
         event_persp_proj_rotate = &EvPerspProjRotateVoid;
         event_persp_proj_angle = &EvPerspProjAngleVoid;

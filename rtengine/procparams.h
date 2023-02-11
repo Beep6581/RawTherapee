@@ -960,6 +960,7 @@ struct PerspectiveParams {
      * be interpreted with {@link #DEFAULT_CAMERA_CROP_FACTOR}.
      */
     double  camera_crop_factor;
+    bool    camera_defish;
     /**
      * Negative and zero values indicate an unspecified focal length and should
      * be interpreted with {@link #DEFAULT_CAMERA_FOCAL_LENGTH}.
@@ -972,6 +973,7 @@ struct PerspectiveParams {
     double  camera_yaw;
     double  projection_pitch;
     double  projection_rotate;
+    double  camera_scale;
     double  projection_shift_horiz;
     double  projection_shift_vert;
     double  projection_yaw;

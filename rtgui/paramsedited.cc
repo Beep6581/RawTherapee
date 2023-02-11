@@ -346,8 +346,10 @@ void ParamsEdited::set(bool v)
     perspective.horizontal = v;
     perspective.vertical = v;
     perspective.camera_crop_factor = v;
+    perspective.camera_defish = v;
     perspective.camera_focal_length = v;
     perspective.camera_pitch = v;
+    perspective.camera_scale = v;
     perspective.camera_roll = v;
     perspective.camera_shift_horiz = v;
     perspective.camera_shift_vert = v;
@@ -1051,8 +1053,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         perspective.horizontal = perspective.horizontal && p.perspective.horizontal == other.perspective.horizontal;
         perspective.vertical = perspective.vertical && p.perspective.vertical == other.perspective.vertical;
         perspective.camera_crop_factor = perspective.camera_crop_factor && p.perspective.camera_crop_factor == other.perspective.camera_crop_factor;
+        perspective.camera_defish = perspective.camera_defish && p.perspective.camera_defish == other.perspective.camera_defish;
         perspective.camera_focal_length = perspective.camera_focal_length && p.perspective.camera_focal_length == other.perspective.camera_focal_length;
         perspective.camera_pitch = perspective.camera_pitch && p.perspective.camera_pitch == other.perspective.camera_pitch;
+        perspective.camera_scale = perspective.camera_scale && p.perspective.camera_scale == other.perspective.camera_scale;
         perspective.camera_roll = perspective.camera_roll && p.perspective.camera_roll == other.perspective.camera_roll;
         perspective.camera_shift_horiz = perspective.camera_shift_horiz && p.perspective.camera_shift_horiz == other.perspective.camera_shift_horiz;
         perspective.camera_shift_vert = perspective.camera_shift_vert && p.perspective.camera_shift_vert == other.perspective.camera_shift_vert;
@@ -3301,6 +3305,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (perspective.camera_crop_factor) {
         toEdit.perspective.camera_crop_factor = dontforceSet && options.baBehav[ADDSET_PERSP_CAM_FOCAL_LENGTH] ? toEdit.perspective.camera_crop_factor + mods.perspective.camera_crop_factor : mods.perspective.camera_crop_factor;
+    }
+
+    if (perspective.camera_defish) {
+        toEdit.perspective.camera_defish = dontforceSet && mods.perspective.camera_defish;
+    }
+
+    if (perspective.camera_scale) {
+        toEdit.perspective.camera_scale = dontforceSet && options.baBehav[ADDSET_PERSP_CAM_FOCAL_LENGTH] ? toEdit.perspective.camera_scale + mods.perspective.camera_scale : mods.perspective.camera_scale;
     }
 
     if (perspective.camera_focal_length) {

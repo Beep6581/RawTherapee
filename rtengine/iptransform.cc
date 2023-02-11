@@ -1244,15 +1244,11 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
                 pLCPMap->correctDistortion(x_d, y_d, w2, h2);
             }
 
-            // Hard-coded fisheye undistortion for testing purposes.
-            bool enableFish = true;
-            // Hard-coded focal length so it matches the image used for testing
-            double focal_source = maxRadius*1351.0/5206.416;
-            // A different destination focal length allows the user to shrink the image so more of the original FoV fits into the undistorted image.
-            // fish_scale = 0.5 means the source image is downscaled by a factor of two in the center.
-            double fish_scale = 0.5;
-            double focal_dst = focal_source*fish_scale;
-            if (enableFish) {
+            x_d /= params->perspective.camera_scale;
+            y_d /= params->perspective.camera_scale;
+            if (true || params->perspective.camera_defish) {
+                double const focal_source = params->perspective.camera_focal_length * maxRadius*1351.0/5206.416/6.5;
+                double focal_dst = focal_source;
                 x_d /= focal_dst;
                 y_d /= focal_dst;
 
