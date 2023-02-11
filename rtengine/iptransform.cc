@@ -519,6 +519,21 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
             pLCPMap->correctDistortion(x_d, y_d, w2, h2);
         }
 
+        x_d /= params->perspective.camera_scale;
+        y_d /= params->perspective.camera_scale;
+        if (true || params->perspective.camera_defish) {
+            double const focal_source = params->perspective.camera_focal_length * maxRadius*1351.0/5206.416/6.5;
+            double focal_dst = focal_source;
+            x_d /= focal_dst;
+            y_d /= focal_dst;
+
+            double const r = std::sqrt(x_d*x_d + y_d*y_d);
+            double const factor = focal_source * std::atan(r)/r;
+
+            x_d *= factor;
+            y_d *= factor;
+        }
+
         // rotate
         double Dx = x_d * cost - y_d * sint;
         double Dy = x_d * sint + y_d * cost;
@@ -1497,7 +1512,8 @@ bool ImProcFunctions::needsPerspective () const
                     params->perspective.projection_rotate ||
                     params->perspective.projection_shift_horiz ||
                     params->perspective.projection_shift_vert ||
-                    params->perspective.projection_yaw) );
+                    params->perspective.projection_yaw ||
+                    params->perspective.camera_defish) );
 }
 
 bool ImProcFunctions::needsGradient () const
