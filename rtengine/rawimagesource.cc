@@ -4719,9 +4719,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     BENCHFUN
 
     Glib::ustring profuse;
-    profuse = "sRGB";
-    if( wbpar.itcwb_forceextra) {
-       profuse = "ACESp0";
+    profuse = "sRGB";//or "Adobe RGB"
+    if( wbpar.itcwb_forceextra) {//Adobe RGB
+       profuse = "ACESp0";//cover all CIE xy diagram
     }
     
     TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(profuse); //ACESp0 or sRGB
@@ -5184,7 +5184,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 const float RR = rmm[rep] * redloc[y][x];
                 const float GG = gmm[rep] * greenloc[y][x];
                 const float BB = bmm[rep] * blueloc[y][x];
-                Color::rgbxyY(RR, GG, BB, xc[y][x], yc[y][x], Yc[y][x], wp);
+                Color::rgbxyY(RR, GG, BB, xc[y][x], yc[y][x], Yc[y][x], wp);//use sRGB or ACESp0
             }
         }
 
@@ -5272,7 +5272,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     int sizcurr2ref = sizcurrref - ntr;
     const int sizcu30 = sizcurrref - n30;
-    const int sizcu4 = rtengine::min(sizcu30, 55);//
+    int nbm = 77;//number max of color used = 1.4 * 55
+    if(profuse == "sRGB") {
+        nbm = 55;
+    }
+    const int sizcu4 = rtengine::min(sizcu30, nbm);//size of chroma values
 
     if (settings->verbose) {
         printf("ntr=%i sizcurr2ref=%i sizcu30=%i sizcu4=%i\n", ntr, sizcurr2ref, sizcu30, sizcu4);
