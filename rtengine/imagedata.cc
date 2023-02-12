@@ -160,11 +160,11 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
         // List of tag names taken from exiv2's printSummary() in actions.cpp
 
         if (find_tag(Exiv2::make)) {
-            make = validateUft8(pos->print(&exif)); // validateUft8 (#5923) still needed?
+            make = validateUft8(pos->print(&exif));
         }
 
         if (find_tag(Exiv2::model)) {
-            model = validateUft8(pos->print(&exif)); // validateUft8 (#5923) still needed?
+            model = validateUft8(pos->print(&exif));
         }
 
         if (make.size() > 0) {
@@ -303,15 +303,15 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
         }
 
         if (find_tag(Exiv2::lensName)) {
-            lens = validateUft8(pos->print(&exif)); // validateUft8 (#5923) still needed?
+            lens = validateUft8(pos->print(&exif));
             auto p = pos;
             if (find_exif_tag("Exif.CanonFi.RFLensType") && find_exif_tag("Exif.Canon.LensModel")) {
-                lens = validateUft8(pos->print(&exif)); // validateUft8 (#5923) still needed?
+                lens = validateUft8(pos->print(&exif));
             } else if (p->count() == 1 && lens == std::to_string(p->toLong())) {
                 if (find_exif_tag("Exif.Canon.LensModel")) {
-                    lens = validateUft8(pos->print(&exif)); // validateUft8 (#5923) still needed?
+                    lens = validateUft8(pos->print(&exif));
                 } else if (find_exif_tag("Exif.Photo.LensModel")) {
-                    lens = validateUft8(p->print(&exif)); // validateUft8 (#5923) still needed?
+                    lens = validateUft8(p->print(&exif));
                 }
             }
         } else if (find_exif_tag("Exif.Photo.LensSpecification") && pos->count() == 4) {
@@ -333,7 +333,7 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
             if (fn_lo < fn_hi) {
                 buf << "-" << fn_hi;
             }
-            lens = buf.str();
+            lens = validateUft8(buf.str());
         }
         if (lens.empty() || lens.find_first_not_of('-') == std::string::npos) {
             lens = "Unknown";
