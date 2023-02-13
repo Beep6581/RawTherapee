@@ -264,6 +264,44 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
             }
         }
 
+        if (find_tag(Exiv2::serialNumber)) {
+            serial = validateUft8(pos->toString());
+        } else {
+            const std::vector<std::string> serial_number_tags{
+                "Exif.Photo.BodySerialNumber",
+                "Exif.Canon.SerialNumber",
+                "Exif.Fujifilm.SerialNumber",
+                "Exif.Nikon3.SerialNumber",
+                "Exif.Nikon3.SerialNO",
+                "Exif.Olympus.SerialNumber2",
+                "Exif.OlympusEq.SerialNumber",
+                "Exif.Pentax.SerialNumber",
+                "Exif.PentaxDng.SerialNumber",
+                "Exif.Sigma.SerialNumber",
+                "Exif.Canon.InternalSerialNumber",
+                "Exif.OlympusEq.InternalSerialNumber",
+                "Exif.Panasonic.InternalSerialNumber",
+            };
+            if (serial_number_tags.cend() != std::find_if(serial_number_tags.cbegin(), serial_number_tags.cend(), find_exif_tag)) {
+                serial = validateUft8(pos->toString());
+            } else if (find_exif_tag("Exif.Minolta.WBInfoA100") || find_exif_tag("Exif.SonyMinolta.WBInfoA100")) {
+                const long index = 18908;
+                const int length = 12;
+                if (pos->count() >= index + length) {
+                    for (int i = 0; i < length; ++i) {
+                        serial += static_cast<char>(pos->toLong(index + i));
+                    }
+                    serial = validateUft8(serial);
+                }
+            } else if (find_exif_tag("Exif.Pentax.CameraInfo") || find_exif_tag("Exif.PentaxDng.CameraInfo")) {
+                const long index = 4;
+                if (pos->count() >= index) {
+                    serial = validateUft8(pos->toString(index));
+                }
+            }
+            // TODO: Serial number from tags not supported by Exiv2.
+        }
+
         if (find_tag(Exiv2::focalLength)) {
             // This works around a bug in exiv2 the developers refuse to fix
             // For details see http://dev.exiv2.org/issues/1083
