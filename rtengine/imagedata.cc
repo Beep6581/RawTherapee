@@ -88,7 +88,7 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
     make("Unknown"),
     model("Unknown"),
     orientation("Unknown"),
-    rating(0), // FIXME: Implement
+    rating(0),
     lens("Unknown"),
     sampleFormat(IIOSF_UNKNOWN),
     isPixelShift(false),
@@ -195,27 +195,6 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
                 }
             }
         }
-
-    /*
-    TODO: Implement ratings in exiv2 situations. See PR #5325
-
-    // Look for Rating metadata in the following order:
-    // 1. EXIF
-    // 2. XMP
-    // 3. pp3 sidecar file
-    tag = newFrameRootDir->findTagUpward("Rating");
-    if (tag && tag->toInt() != 0) {
-        rating = tag->toInt();
-    }
-    char sXMPRating[64];
-    if (newFrameRootDir->getXMPTagValue("xmp:Rating", sXMPRating)) {
-        // Guard against out-of-range values (<0, >5)
-        rating = rtengine::max(0, rtengine::min(5, atoi(sXMPRating)));
-        // Currently, Rating=-1 is not supported. A value of -1 should mean
-        // "Rejected" according to the specification. Maybe in the future, Rating=-1
-        // sets InTrash=true?
-    }
-    */
 
         std::string::size_type nonspace_pos = make.find_last_not_of(' ');
         if (nonspace_pos != std::string::npos && nonspace_pos + 1 < make.size()) {
