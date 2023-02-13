@@ -194,13 +194,10 @@ void ExifPanel::setImageData (const FramesMetaData* id)
     idata = id;
 }
 
-void ExifPanel::addTag(const std::string &key, const std::pair<Glib::ustring, Glib::ustring> &label, const Glib::ustring &value, bool editable, bool edited)
+void ExifPanel::addTag(const std::string &key, const std::pair<Glib::ustring, Glib::ustring> &label, const Glib::ustring &exifValue, bool editable, bool edited)
 {
 
-    // TODO Re-fix #5923 if necessary
-    //if (!value.validate()) {
-    //    value = "???";
-    //}
+    const Glib::ustring& value = exifValue.validate() ? exifValue : "???";
 
 //    auto root = exifTreeModel->children();
 
