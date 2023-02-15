@@ -208,12 +208,13 @@ public:
         return fd;
     }
     void on_style_updated () override;
+    void resort (); // re-apply sort method
     void redraw (ThumbBrowserEntryBase* entry = nullptr);   // arrange files and draw area
     void refreshThumbImages (); // refresh thumbnail sizes, re-generate thumbnail images, arrange and draw
     void refreshQuickThumbImages (); // refresh thumbnail sizes, re-generate thumbnail images, arrange and draw
     void refreshEditedState (const std::set<Glib::ustring>& efiles);
 
-    void initEntry (ThumbBrowserEntryBase* entry);
+    void insertEntry (ThumbBrowserEntryBase* entry);
 
     void getScrollPosition (double& h, double& v);
     void setScrollPosition (double h, double v);

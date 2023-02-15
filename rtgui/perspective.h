@@ -24,6 +24,7 @@
 #include "controllines.h"
 #include "lensgeomlistener.h"
 #include "toolpanel.h"
+#include "../rtengine/tweakoperator.h"
 
 class PerspCorrectionPanelListener
 {
@@ -34,6 +35,7 @@ public:
 };
 
 class PerspCorrection final :
+    public rtengine::TweakOperator,
     public ToolParamBlock,
     public AdjusterListener,
     public FoldableToolPanel
@@ -91,10 +93,17 @@ protected:
     const rtengine::FramesMetaData* metadata;
 
     void applyControlLines (void);
+    void tweakParams(rtengine::procparams::ProcParams &pparams) override;
     void setCamBasedEventsActive (bool active = true);
     void setFocalLengthValue (const rtengine::procparams::ProcParams* pparams, const rtengine::FramesMetaData* metadata);
+    void updateApplyDeleteButtons();
 
 public:
+
+    /** Minimum number of horizontal lines for horizontal/full correction. */
+    static constexpr std::size_t MIN_HORIZ_LINES = 2;
+    /** Minimum number of vertical lines for vertical/full correction. */
+    static constexpr std::size_t MIN_VERT_LINES = 2;
 
     PerspCorrection ();
 

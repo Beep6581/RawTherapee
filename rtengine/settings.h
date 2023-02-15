@@ -1,4 +1,5 @@
-/*
+/* -*- C++ -*-
+ *  
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
@@ -59,12 +60,14 @@ public:
     Glib::ustring   rec2020;                // filename of Rec2020      profile (default to the bundled one)
     Glib::ustring   ACESp0;                 // filename of ACES P0      profile (default to the bundled one)
     Glib::ustring   ACESp1;                 // filename of ACES P1      profile (default to the bundled one)
+    Glib::ustring   DCIP3;                 // filename of DCIP3         profile (default to the bundled one)
 
     bool            gamutICC; // no longer used
     bool            gamutLch;
     bool            HistogramWorking;       // true: histogram is display the value of the image computed in the Working profile
     // false: histogram is display the value of the image computed in the Output profile
     int             amchroma;
+    int             amchromajz;
     int             protectred;
     double          protectredh;
     double          nrauto;
@@ -81,6 +84,7 @@ public:
     double          level0_cbdl;
     double          level123_cbdl;
     Glib::ustring   lensfunDbDirectory; // The directory containing the lensfun database. If empty, the system defaults will be used, as described in https://lensfun.github.io/manual/latest/dbsearch.html
+    Glib::ustring   lensfunDbBundleDirectory;
     int             cropsleep;
     double          reduchigh;
     double          reduclow;
@@ -111,6 +115,19 @@ public:
         RAW_IF_NOT_JPEG_FULLSIZE
     };
     ThumbnailInspectorMode thumbnail_inspector_mode;
+
+    enum class XmpSidecarStyle {
+        STD, // FILENAME.xmp for FILENAME.ext
+        EXT  // FILENAME.ext.xmp for FILENAME.ext
+    };
+    XmpSidecarStyle xmp_sidecar_style;
+
+    enum class MetadataXmpSync {
+        NONE,
+        READ,
+        READ_WRITE
+    };
+    MetadataXmpSync metadata_xmp_sync;
 
     /** Creates a new instance of Settings.
       * @return a pointer to the new Settings instance. */

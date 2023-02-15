@@ -69,6 +69,7 @@ dos2unix default 2>/dev/null
 #   -Irl -m1
 # Dynamically built keys like HISTORY_MSG_1 can't be grepped in the code,
 # so it renames KEY_1-KEY_9 to KEY_ so that they can be grepped and therefore ignored.
+# See RAWParams::BayerSensor::getMethodStrings
 t1="$(date +%s)"
 printf '%s\n' 'Matching keys in "default" against .cc and .h files' 'Unmatched keys follow:'
 unset delLines
@@ -84,11 +85,25 @@ done < <( \
         -e "^(#|$)|TP_RAW_2PASS" \
         -e "^(#|$)|TP_RAW_3PASSBEST" \
         -e "^(#|$)|TP_RAW_4PASS" \
+        -e "^(#|$)|TP_RAW_AMAZE" \
+        -e "^(#|$)|TP_RAW_AMAZEBILINEAR" \
         -e "^(#|$)|TP_RAW_AMAZEVNG4" \
-        -e "^(#|$)|TP_RAW_DCBVNG4" \
-        -e "^(#|$)|TP_RAW_MONO" \
-        -e "^(#|$)|TP_RAW_NONE" \
+        -e "^(#|$)|TP_RAW_RCD" \
+        -e "^(#|$)|TP_RAW_RCDBILINEAR" \
         -e "^(#|$)|TP_RAW_RCDVNG4" \
+        -e "^(#|$)|TP_RAW_DCB" \
+        -e "^(#|$)|TP_RAW_DCBBILINEAR" \
+        -e "^(#|$)|TP_RAW_DCBVNG4" \
+        -e "^(#|$)|TP_RAW_LMMSE" \
+        -e "^(#|$)|TP_RAW_IGV" \
+        -e "^(#|$)|TP_RAW_AHD" \
+        -e "^(#|$)|TP_RAW_EAHD" \
+        -e "^(#|$)|TP_RAW_HPHD" \
+        -e "^(#|$)|TP_RAW_VNG4" \
+        -e "^(#|$)|TP_RAW_FAST" \
+        -e "^(#|$)|TP_RAW_MONO" \
+        -e "^(#|$)|TP_RAW_PIXELSHIFT" \
+        -e "^(#|$)|TP_RAW_NONE" \
         "default" | \
     sed -e "s/EXTPROGTARGET_[0-9]*/EXTPROGTARGET_/" \
     -e "s/FILEBROWSER_POPUPCOLORLABEL[0-9]*/FILEBROWSER_POPUPCOLORLABEL/" \

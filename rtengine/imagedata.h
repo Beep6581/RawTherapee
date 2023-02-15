@@ -21,18 +21,21 @@
 #include <cstdio>
 #include <memory>
 #include <string>
-#include <glibmm.h>
-#include <exiv2/exiv2.hpp>
 
-#include "rawimage.h"
-#include "rtengine.h"
+#include "imageio.h"
+#include "metadata.h"
+
+namespace Glib
+{
+
+class ustring;
+
+}
 
 namespace rtengine
 {
 
-Exiv2::Image::AutoPtr open_exiv2(const Glib::ustring &fname); // TODO: Global function?
-
-class FramesData :
+class FramesData final :
     public FramesMetaData
 {
 private:
@@ -52,11 +55,15 @@ private:
     int rating;
     std::string lens;
     IIOSampleFormat sampleFormat;
+    struct tm modTime;
+    time_t modTimeStamp;
     bool isPixelShift;
     bool isHDR;
+    int w_;
+    int h_;
 
 public:
-    FramesData(const Glib::ustring& fname);
+    explicit FramesData(const Glib::ustring& fname, time_t ts = 0);
 
     void setDCRawFrameCount(unsigned int frameCount);
     unsigned int getFrameCount() const override;
@@ -79,8 +86,13 @@ public:
     std::string getLens() const override;
     std::string getSerialNumber() const;
     std::string getOrientation() const override;
-    int getRating() const override;
     Glib::ustring getFileName() const override;
+    int getRating() const override;
+    void getDimensions(int &w, int &h) const override;
+
+    void fillBasicTags(Exiv2::ExifData &exif) const;
+
+    void setDimensions(int w, int h);
 };
 
 }

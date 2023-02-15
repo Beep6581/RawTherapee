@@ -24,7 +24,6 @@
 #include <cstdio>
 #include <cstring>
 #include <fcntl.h>
-#include <libiptcdata/iptc-jpeg.h>
 #include <memory>
 #include "rt_math.h"
 #include "procparams.h"
@@ -42,12 +41,15 @@
 #include "iccjpeg.h"
 #include "color.h"
 #include "imagedata.h"
+#include "settings.h"
 
 #include "jpeg.h"
 
 using namespace std;
 using namespace rtengine;
 using namespace rtengine::procparams;
+
+namespace rtengine { extern const Settings *settings; }
 
 namespace
 {
@@ -80,39 +82,7 @@ FILE* g_fopen_withBinaryAndLock(const Glib::ustring& fname)
 
 }
 
-MetadataInfo::MetadataInfo(const Glib::ustring& src) :
-    src_(src),
-    exif_(new rtengine::procparams::ExifPairs),
-    iptc_(new rtengine::procparams::IPTCPairs)
-{
-}
-
-const Glib::ustring& MetadataInfo::filename() const
-{
-    return src_;
-}
-
-const rtengine::procparams::ExifPairs& MetadataInfo::exif() const
-{
-    return *exif_;
-}
-
-const rtengine::procparams::IPTCPairs& MetadataInfo::iptc() const
-{
-    return *iptc_;
-}
-
-void MetadataInfo::setExif(const rtengine::procparams::ExifPairs &exif)
-{
-    *exif_ = exif;
-}
-
-void MetadataInfo::setIptc(const rtengine::procparams::IPTCPairs &iptc)
-{
-    *iptc_ = iptc;
-}
-
-void ImageIO::setMetadata(MetadataInfo info)
+void ImageIO::setMetadata(Exiv2Metadata info)
 {
     metadataInfo = std::move(info);
 }
@@ -1128,6 +1098,7 @@ int ImageIO::saveJPEG (const Glib::ustring &fname, int quality, int subSamp) con
     return IMIO_SUCCESS;
 }
 
+
 int ImageIO::saveTIFF (const Glib::ustring &fname, int bps, bool isFloat, bool uncompressed) const
 {
     if (getWidth() < 1 || getHeight() < 1) {
@@ -1181,22 +1152,30 @@ int ImageIO::saveTIFF (const Glib::ustring &fname, int bps, bool isFloat, bool u
     TIFFSetField (out, TIFFTAG_COMPRESSION, uncompressed ? COMPRESSION_NONE : COMPRESSION_ADOBE_DEFLATE);
     TIFFSetField (out, TIFFTAG_SAMPLEFORMAT, (bps == 16 || bps == 32) && isFloat ? SAMPLEFORMAT_IEEEFP : SAMPLEFORMAT_UINT);
 
-    /*
-    
-    TODO: Re-apply fix from #5787
-    
-    [out]()
-    {
-        const std::vector<rtexif::Tag*> default_tags = rtexif::ExifManager::getDefaultTIFFTags(nullptr);
-
-        TIFFSetField (out, TIFFTAG_XRESOLUTION, default_tags[2]->toDouble());
-        TIFFSetField (out, TIFFTAG_YRESOLUTION, default_tags[3]->toDouble());
-        TIFFSetField (out, TIFFTAG_RESOLUTIONUNIT, default_tags[4]->toInt());
-
-        for (auto default_tag : default_tags) {
-            delete default_tag;
+    // somehow Exiv2 (tested with 0.27.3) doesn't seem to be able to update
+    // XResolution and YResolution, so we do it ourselves here....
+    constexpr float default_resolution = 300.f;
+    float x_res = default_resolution;
+    float y_res = default_resolution;
+    int res_unit = RESUNIT_INCH;
+    if (!metadataInfo.filename().empty()) {
+        auto exif = metadataInfo.getOutputExifData();
+        auto it = exif.findKey(Exiv2::ExifKey("Exif.Image.XResolution"));
+        if (it != exif.end()) {
+            x_res = it->toFloat();
         }
-    }();*/
+        it = exif.findKey(Exiv2::ExifKey("Exif.Image.YResolution"));
+        if (it != exif.end()) {
+            y_res = it->toFloat();
+        }
+        it = exif.findKey(Exiv2::ExifKey("Exif.Image.ResolutionUnit"));
+        if (it != exif.end()) {
+            res_unit = it->toLong();
+        }
+    }
+    TIFFSetField(out, TIFFTAG_XRESOLUTION, x_res);
+    TIFFSetField(out, TIFFTAG_YRESOLUTION, y_res);
+    TIFFSetField(out, TIFFTAG_RESOLUTIONUNIT, res_unit);
 
     if (!uncompressed) {
         TIFFSetField (out, TIFFTAG_PREDICTOR, (bps == 16 || bps == 32) && isFloat ? PREDICTOR_FLOATINGPOINT : PREDICTOR_HORIZONTAL);
@@ -1388,36 +1367,50 @@ bool ImageIO::saveMetadata(const Glib::ustring &fname) const
         return true;
     }
 
+    bool has_meta = true;
     try {
-        auto src = open_exiv2(metadataInfo.filename());
-        auto dst = open_exiv2(fname);
-        src->readMetadata();
-        dst->setMetadata(*src);
-        dst->exifData()["Exif.Image.Software"] = "RawTherapee " RTVERSION;
-        for (const auto& p : metadataInfo.exif()) {
-            try {
-                dst->exifData()[p.first] = p.second;
-            } catch (const Exiv2::AnyError& exc) {
-            }
+        metadataInfo.load();
+    } catch (const std::exception& exc) {
+        if (settings->verbose) {
+            std::cout << "EXIF LOAD ERROR: " << exc.what() << std::endl;
         }
-        for (const auto& p : metadataInfo.iptc()) {
-            try {
-                auto& v = p.second;
-                if (!v.empty()) {
-                    dst->iptcData()[p.first] = v[0];
-                    for (size_t j = 1; j < v.size(); ++j) {
-                        Exiv2::Iptcdatum d(Exiv2::IptcKey(p.first));
-                        d.setValue(v[j]);
-                        dst->iptcData().add(d);
-                    }
-                }
-            } catch (const Exiv2::AnyError& exc) {
-            }
-        }
-        dst->writeMetadata();
-        return true;
-    } catch (const Exiv2::AnyError& exc) {
-        std::cout << "EXIF ERROR: " << exc.what() << std::endl;
-        return false;
+        has_meta = false;
     }
+
+    if (has_meta) {
+        try {
+            metadataInfo.saveToImage(fname, false);
+            // auto src = open_exiv2(metadataInfo.filename());
+            // auto dst = open_exiv2(fname);
+            // src->readMetadata();
+            // dst->setMetadata(*src);
+            // dst->exifData()["Exif.Image.Software"] = "RawTherapee " RTVERSION;
+            // for (const auto& p : metadataInfo.exif()) {
+            //     try {
+            //         dst->exifData()[p.first] = p.second;
+            //     } catch (const Exiv2::AnyError& exc) {
+            //     }
+            // }
+            // for (const auto& p : metadataInfo.iptc()) {
+            //     try {
+            //         auto& v = p.second;
+            //         if (!v.empty()) {
+            //             dst->iptcData()[p.first] = v[0];
+            //             for (size_t j = 1; j < v.size(); ++j) {
+            //                 Exiv2::Iptcdatum d(Exiv2::IptcKey(p.first));
+            //                 d.setValue(v[j]);
+            //                 dst->iptcData().add(d);
+            //             }
+            //         }
+            //     } catch (const Exiv2::AnyError& exc) {
+            //     }
+            // }
+            // dst->writeMetadata();
+        } catch (const std::exception& exc) {
+            std::cout << "EXIF ERROR: " << exc.what() << std::endl;
+            //return false;
+        }
+    }
+
+    return true;
 }

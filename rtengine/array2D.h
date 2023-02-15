@@ -248,6 +248,14 @@ public:
         return *this;
     }
 
+    // import from flat data
+    void operator()(std::size_t w, std::size_t h, const T* const copy)
+    {
+        ar_realloc(w, h);
+        for (std::size_t y = 0; y < h; ++y) {
+            std::copy(copy + y * w, copy + y * w + w, rows.data()[y]);
+        }
+    }
 
     int getWidth() const
     {

@@ -81,6 +81,7 @@ public:
     bool imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::InitialImage*> * );
 
     bool handleShortcutKey (GdkEventKey* event);
+    bool handleShortcutKeyRelease(GdkEventKey *event);
     void updateTPVScrollbar (bool hide);
 
 private:

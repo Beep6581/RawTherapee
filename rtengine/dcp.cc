@@ -21,6 +21,9 @@
 #include <cstdio>
 #include <cstring>
 #include <functional>
+#include <glib/gstdio.h>
+#include <glibmm/fileutils.h>
+#include <glibmm/miscutils.h>
 #include <unordered_map>
 
 #include "dcp.h"
@@ -35,13 +38,6 @@
 #include "utils.h"
 #include "../rtgui/options.h"
 
-namespace rtengine
-{
-
-extern const Settings* settings;
-
-}
-
 using namespace rtengine;
 
 namespace
@@ -52,7 +48,7 @@ namespace
 DCPProfile::Matrix invert3x3(const DCPProfile::Matrix& a)
 {
     DCPProfile::Matrix res = a;
-    if (!invertMatrix(a, res) && settings->verbose) {
+    if (!invertMatrix(a, res)) {
         std::cerr << "DCP matrix cannot be inverted! Expect weird output." << std::endl;
     }
     return res;
@@ -337,8 +333,6 @@ double xyCoordToTemperature(const std::array<double, 2>& white_xy)
 
     // Search for line pair coordinate is between.
     double last_dt = 0.0;
-    double last_dv = 0.0;
-    double last_du = 0.0;              
 
     for (uint32_t index = 1; index <= 30; ++index) {
         // Convert slope to delta-u and delta-v, with length 1.
@@ -374,23 +368,11 @@ double xyCoordToTemperature(const std::array<double, 2>& white_xy)
 
             // Interpolate the temperature.
             res = 1.0e6 / (temp_table[index - 1].r * f + temp_table[index].r * (1.0 - f));
-
-            // Find delta from black body point to test coordinate.
-            uu = u - (temp_table [index - 1].u * f + temp_table [index].u * (1.0 - f));
-            vv = v - (temp_table [index - 1].v * f + temp_table [index].v * (1.0 - f));
-            // Interpolate vectors along slope.
-            du = du * (1.0 - f) + last_du * f;
-            dv = dv * (1.0 - f) + last_dv * f;
-            len = sqrt (du * du + dv * dv);
-            du /= len;
-            dv /= len;
             break;
         }
 
         // Try next line pair.
         last_dt = dt;
-        last_du = du;
-        last_dv = dv;
     }
 
     return res;
@@ -483,9 +465,7 @@ public:
     {
         if (!file_) {
 #ifndef NDEBUG
-            if (settings->verbose) {
-                std::cerr << "ERROR: No file opened." << std::endl;
-            } 
+            std::cerr << "ERROR: No file opened." << std::endl;
 #endif
             return false;
         }
@@ -497,7 +477,7 @@ public:
         std::uint16_t bo;
         std::fread(&bo, 1, 2, file_);
         order_ = ByteOrder(bo);
-        
+
         get2(); // Skip
 
         // Seek to IFD
@@ -525,7 +505,7 @@ public:
     {
         return tags_.find(id) != tags_.end();
     }
-    
+
     std::string toString(int id) const
     {
         const Tags::const_iterator tag = tags_.find(id);
@@ -555,24 +535,28 @@ public:
                 }
                 return 0;
             }
+
             case BYTE: {
                 if (offset < tag->second.value.size()) {
                     return tag->second.value[offset];
                 }
                 return 0;
             }
+
             case SSHORT: {
                 if (offset + 1 < tag->second.value.size()) {
                     return static_cast<std::int16_t>(sget2(tag->second.value.data() + offset));
                 }
                 return 0;
             }
+
             case SHORT: {
                 if (offset + 1 < tag->second.value.size()) {
                     return sget2(tag->second.value.data() + offset);
                 }
                 return 0;
             }
+
             case SLONG:
             case LONG: {
                 if (offset + 3 < tag->second.value.size()) {
@@ -580,6 +564,7 @@ public:
                 }
                 return 0;
             }
+
             case SRATIONAL:
             case RATIONAL: {
                 if (offset + 7 < tag->second.value.size()) {
@@ -591,27 +576,29 @@ public:
                 }
                 return 0;
             }
+
             case FLOAT: {
                 return toDouble(id, offset);
             }
+
             default: {
                 return 0;
             }
         }
     }
-    
+
     int toShort(int id, std::size_t offset = 0) const
     {
         return toInt(id, offset, SHORT);
     }
-    
+
     double toDouble(int id, std::size_t offset = 0) const
     {
         const Tags::const_iterator tag = tags_.find(id);
         if (tag == tags_.end()) {
             return 0.0;
         }
-        
+
         switch (tag->second.type) {
             case SBYTE: {
                 if (offset < tag->second.value.size()) {
@@ -619,24 +606,28 @@ public:
                 }
                 return 0.0;
             }
+
             case BYTE: {
                 if (offset < tag->second.value.size()) {
                     return tag->second.value[offset];
                 }
                 return 0.0;
             }
+
             case SSHORT: {
                 if (offset + 1 < tag->second.value.size()) {
                     return static_cast<std::int16_t>(sget2(tag->second.value.data() + offset));
                 }
                 return 0.0;
             }
+
             case SHORT: {
                 if (offset + 1 < tag->second.value.size()) {
                     return sget2(tag->second.value.data() + offset);
                 }
                 return 0.0;
             }
+
             case SLONG:
             case LONG: {
                 if (offset + 3 < tag->second.value.size()) {
@@ -644,6 +635,7 @@ public:
                 }
                 return 0.0;
             }
+
             case SRATIONAL:
             case RATIONAL: {
                 if (offset + 7 < tag->second.value.size()) {
@@ -656,14 +648,17 @@ public:
                 }
                 return 0.0;
             }
+
             case FLOAT: {
                 union IntFloat {
                     std::uint32_t i;
                     float f;
                 } conv;
+
                 conv.i = sget4(tag->second.value.data() + offset);
-                return conv.f; // IEEE FLOATs are already C format, they just need a recast
+                return conv.f;  // IEEE FLOATs are already C format, they just need a recast
             }
+
             default: {
                 return 0.0;
             }
@@ -686,9 +681,9 @@ private:
         TagType type;
         unsigned int count;
     };
-    
+
     using Tags = std::unordered_map<int, Tag>;
-    
+
     std::uint16_t sget2(const std::uint8_t* s) const
     {
         if (order_ == INTEL) {
@@ -697,7 +692,7 @@ private:
             return s[0] << 8 | s[1];
         }
     }
-    
+
     std::uint32_t sget4(const std::uint8_t* s) const
     {
         if (order_ == INTEL) {
@@ -706,16 +701,16 @@ private:
             return s[0] << 24 | s[1] << 16 | s[2] << 8 | s[3];
         }
     }
-    
+
     std::uint16_t get2()
-    { 
+    {
         std::uint16_t res = std::numeric_limits<std::uint16_t>::max();
         std::fread(&res, 1, 2, file_);
         return sget2(reinterpret_cast<const std::uint8_t*>(&res));
     }
-    
+
     std::uint32_t get4()
-    { 
+    {
         std::uint32_t res = std::numeric_limits<std::uint32_t>::max();
         std::fread(&res, 1, 4, file_);
         return sget4(reinterpret_cast<const std::uint8_t*>(&res));
@@ -731,32 +726,32 @@ private:
             case UNDEFINED: {
                 return 1;
             }
-            
+
             case SHORT:
             case SSHORT: {
                 return 2;
             }
-            
+
             case LONG:
             case SLONG:
             case FLOAT: {
                 return 4;
             }
-            
+
             case RATIONAL:
             case SRATIONAL:
             case DOUBLE: {
                 return 8;
             }
         }
-        
+
         return 1;
     }
 
     bool parseTag(Tag& tag)
     {
         tag.id = get2();
-        tag.type = TagType(get2());
+        tag.type  = TagType(get2());
         tag.count = std::max(1U, get4());
 
         // Filter out invalid tags
@@ -764,7 +759,7 @@ private:
         // (only a small part of it will actually be parsed though)
         if (
             tag.type == INVALID
-            || tag.type > DOUBLE 
+            || tag.type > DOUBLE
             || tag.count > 10 * 1024 * 1024
         ) {
             tag.type = INVALID;
@@ -795,19 +790,19 @@ private:
 
         // Seek back to the saved position
         std::fseek(file_, saved_position, SEEK_SET);
-        
+
         return true;
     }
-    
+
     FILE* const file_;
-    
+
     Tags tags_;
     ByteOrder order_;
 };
 
 } // namespace
 
-struct DCPProfile::ApplyState::Data {
+struct DCPProfileApplyState::Data {
     float pro_photo[3][3];
     float work[3][3];
     bool already_pro_photo;
@@ -816,14 +811,12 @@ struct DCPProfile::ApplyState::Data {
     float bl_scale;
 };
 
-DCPProfile::ApplyState::ApplyState() :
+DCPProfileApplyState::DCPProfileApplyState() :
     data(new Data{})
 {
 }
 
-DCPProfile::ApplyState::~ApplyState()
-{
-}
+DCPProfileApplyState::~DCPProfileApplyState() = default;
 
 DCPProfile::DCPProfile(const Glib::ustring& filename) :
     has_color_matrix_1(false),
@@ -1121,7 +1114,7 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
     FILE* const file = g_fopen(filename.c_str(), "rb");
 
     if (file == nullptr) {
-        //printf ("Unable to load DCP profile '%s' !", filename.c_str());
+        printf ("Unable to load DCP profile '%s' !", filename.c_str());
         return;
     }
 
@@ -1167,9 +1160,7 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
 
     // Color Matrix (one is always there)
     if (!md.find(TAG_KEY_COLOR_MATRIX_1)) {
-        if (settings->verbose) {
-            std::cerr << "DCP '" << filename << "' is missing 'ColorMatrix1'. Skipped." << std::endl;
-        }
+        std::cerr << "DCP '" << filename << "' is missing 'ColorMatrix1'. Skipped." << std::endl;
         fclose(file);
         return;
     }
@@ -1405,25 +1396,25 @@ void DCPProfile::apply(
 
     const TMatrix work_matrix = ICCStore::getInstance()->workingSpaceInverseMatrix(working_space);
 
+    const Matrix xyz_cam = makeXyzCam(white_balance, pre_mul, cam_wb_matrix, preferred_illuminant); // Camera RGB to XYZ D50 matrix
+
     const std::vector<HsbModify> delta_base = makeHueSatMap(white_balance, preferred_illuminant);
 
     if (delta_base.empty()) {
         apply_hue_sat_map = false;
     }
 
-    const Matrix xyz_cam = makeXyzCam(white_balance, pre_mul, cam_wb_matrix, preferred_illuminant); // Camera RGB to XYZ D50 matrix
-    
     if (!apply_hue_sat_map) {
         // The fast path: No LUT --> Calculate matrix for direct conversion raw -> working space
         float mat[3][3] = {};
 
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
-                                  
+                double temp = 0.0;
                 for (int k = 0; k < 3; ++k) {
-                    mat[i][j] += work_matrix[i][k] * xyz_cam[k][j];
+                    temp += work_matrix[i][k] * xyz_cam[k][j];
                 }
-                                 
+                mat[i][j] = temp;
             }
         }
 
@@ -1449,11 +1440,11 @@ void DCPProfile::apply(
 
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
-                                  
+                double temp = 0.0;
                 for (int k = 0; k < 3; ++k) {
-                    pro_photo[i][j] += prophoto_xyz[i][k] * xyz_cam[k][j];
+                    temp += prophoto_xyz[i][k] * xyz_cam[k][j];
                 }
-                                       
+                pro_photo[i][j] = temp;
             }
         }
 
@@ -1461,11 +1452,11 @@ void DCPProfile::apply(
 
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
-                                  
+                double temp = 0.0;
                 for (int k = 0; k < 3; ++k) {
-                    work[i][j] += work_matrix[i][k] * xyz_prophoto[k][j];
+                    temp += work_matrix[i][k] * xyz_prophoto[k][j];
                 }
-                                  
+                work[i][j] = temp;
             }
         }
 
@@ -1507,7 +1498,7 @@ void DCPProfile::apply(
     }
 }
 
-void DCPProfile::setStep2ApplyState(const Glib::ustring& working_space, bool use_tone_curve, bool apply_look_table, bool apply_baseline_exposure, ApplyState& as_out)
+void DCPProfile::setStep2ApplyState(const Glib::ustring& working_space, bool use_tone_curve, bool apply_look_table, bool apply_baseline_exposure, DCPProfileApplyState& as_out)
 {
     as_out.data->use_tone_curve = use_tone_curve;
     as_out.data->apply_look_table = apply_look_table;
@@ -1536,9 +1527,11 @@ void DCPProfile::setStep2ApplyState(const Glib::ustring& working_space, bool use
 
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
+                double temp = 0.0;
                 for (int k = 0; k < 3; k++) {
-                    as_out.data->pro_photo[i][j] += prophoto_xyz[i][k] * mWork[k][j];
+                    temp += prophoto_xyz[i][k] * mWork[k][j];
                 }
+                as_out.data->pro_photo[i][j] = temp;
             }
         }
 
@@ -1547,18 +1540,20 @@ void DCPProfile::setStep2ApplyState(const Glib::ustring& working_space, bool use
 
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
+                double temp = 0.0;
                 for (int k = 0; k < 3; k++) {
-                    as_out.data->work[i][j] += mWork[i][k] * xyz_prophoto[k][j];
+                    temp += mWork[i][k] * xyz_prophoto[k][j];
                 }
+                as_out.data->work[i][j] = temp;
             }
         }
     }
 }
 
-void DCPProfile::step2ApplyTile(float* rc, float* gc, float* bc, int width, int height, int tile_width, const ApplyState& as_in) const
+void DCPProfile::step2ApplyTile(float* rc, float* gc, float* bc, int width, int height, int tile_width, const DCPProfileApplyState& as_in) const
 {
 
-#define FCLIP(a) ((a)>0.0?((a)<65535.5?(a):65535.5):0.0)
+#define FCLIP(a) ((a)>0.f?((a)<65535.5f?(a):65535.5f):0.f)
 #define CLIP01(a) ((a)>0?((a)<1?(a):1):0)
 
     float exp_scale = as_in.data->bl_scale;
@@ -1997,7 +1992,7 @@ std::vector<DCPProfile::HsbModify> DCPProfile::makeHueSatMap(const ColorTemp& wh
     return res;
 }
 
-void DCPProfile::hsdApply(const HsdTableInfo& table_info, const std::vector<HsbModify>& table_base, float& h, float& s, float& v) const
+inline void DCPProfile::hsdApply(const HsdTableInfo& table_info, const std::vector<HsbModify>& table_base, float& h, float& s, float& v) const
 {
     // Apply the HueSatMap. Ported from Adobes reference implementation.
     float hue_shift;
@@ -2119,7 +2114,7 @@ void DCPProfile::hsdApply(const HsdTableInfo& table_info, const std::vector<HsbM
     }
 }
 
-bool DCPProfile::isValid()
+bool DCPProfile::isValid() const
 {
     return valid;
 }
@@ -2182,8 +2177,7 @@ void DCPStore::init(const Glib::ustring& rt_profile_dir, bool loadAll)
                     && lastdot <= sname.size() - 4
                     && !sname.casefold().compare(lastdot, 4, ".dcp")
                     ) {
-                    const Glib::ustring cam_short_name = sname.substr(0, lastdot).uppercase();
-                    file_std_profiles[cam_short_name] = fname; // They will be loaded and cached on demand
+                    file_std_profiles[sname.substr(0, lastdot).casefold_collate_key()] = fname; // They will be loaded and cached on demand
                 }
             } else {
                 // Directory
@@ -2194,16 +2188,15 @@ void DCPStore::init(const Glib::ustring& rt_profile_dir, bool loadAll)
 
         for (const auto& alias : getAliases(rt_profile_dir)) {
             const Glib::ustring alias_name = Glib::ustring(alias.first).uppercase();
-            const Glib::ustring real_name = Glib::ustring(alias.second).uppercase();
-            const std::map<Glib::ustring, Glib::ustring>::const_iterator real = file_std_profiles.find(real_name);
+            const std::map<std::string, Glib::ustring>::const_iterator real = file_std_profiles.find(Glib::ustring(alias.second).casefold_collate_key());
 
             if (real != file_std_profiles.end()) {
-                file_std_profiles[alias_name] = real->second;
+                file_std_profiles[alias_name.casefold_collate_key()] = real->second;
         }
     }
 }
 
-bool DCPStore::isValidDCPFileName(const Glib::ustring& filename) const
+bool DCPStore::isValidDCPFileName(const Glib::ustring& filename)
 {
     if (!Glib::file_test(filename, Glib::FILE_TEST_EXISTS) || Glib::file_test(filename, Glib::FILE_TEST_IS_DIR)) {
         return false;
@@ -2220,20 +2213,20 @@ bool DCPStore::isValidDCPFileName(const Glib::ustring& filename) const
 
 DCPProfile* DCPStore::getProfile(const Glib::ustring& filename) const
 {
+    const auto key = filename.casefold_collate_key();
     MyMutex::MyLock lock(mutex);
+    const std::map<std::string, DCPProfile*>::const_iterator iter = profile_cache.find(key);
 
-    const std::map<Glib::ustring, DCPProfile*>::iterator r = profile_cache.find(filename);
-
-    if (r != profile_cache.end()) {
-        return r->second;
+    if (iter != profile_cache.end()) {
+        return iter->second;
     }
 
     DCPProfile* const res = new DCPProfile(filename);
 
     if (res->isValid()) {
         // Add profile
-        profile_cache[filename] = res;
-        if (options.rtSettings.verbose) {
+        profile_cache[key] = res;
+        if (settings->verbose) {
             printf("DCP profile '%s' loaded from disk\n", filename.c_str());
         }
         return res;
@@ -2245,13 +2238,9 @@ DCPProfile* DCPStore::getProfile(const Glib::ustring& filename) const
 
 DCPProfile* DCPStore::getStdProfile(const Glib::ustring& requested_cam_short_name) const
 {
-    const Glib::ustring name = requested_cam_short_name.uppercase();
-
-    // Warning: do NOT use map.find(), since it does not seem to work reliably here
-    for (const auto& file_std_profile : file_std_profiles) {
-        if (file_std_profile.first == name) {
-            return getProfile(file_std_profile.second);
-        }
+    const std::map<std::string, Glib::ustring>::const_iterator iter = file_std_profiles.find(requested_cam_short_name.casefold_collate_key());
+    if (iter != file_std_profiles.end()) {
+        return getProfile(iter->second);
     }
 
     // profile not found, looking if we're in loadAll=false mode

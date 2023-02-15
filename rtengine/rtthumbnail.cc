@@ -968,6 +968,9 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, eSensorType &sens
         }
 
     tpp->init();
+
+    RawImageSource::computeFullSize(ri, TR_NONE, tpp->full_width, tpp->full_height);
+
     delete ri;
     return tpp;
 }
@@ -1025,7 +1028,9 @@ Thumbnail::Thumbnail () :
     gammaCorrected (false),
     colorMatrix{},
     scaleGain (1.0),
-    isRaw (true)
+    isRaw (true),
+    full_width(-1),
+    full_height(-1)
 {
 }
 
@@ -1236,7 +1241,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
     ipf.dehaze(baseImg, params.dehaze);
     ipf.ToneMapFattal02(baseImg, params.fattal, 3, 0, nullptr, 0, 0, 0);
-    
+
     // perform transform
     int origFW;
     int origFH;
@@ -1355,7 +1360,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
     LabImage* labView = new LabImage (fw, fh);
     DCPProfile *dcpProf = nullptr;
-    DCPProfile::ApplyState as;
+    DCPProfileApplyState as;
 
     if (isRaw) {
         cmsHPROFILE dummy;
@@ -1418,11 +1423,14 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     ipf.labColorCorrectionRegions(labView);
 
 
+
+
     if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || !params.colorappearance.enabled) {
         ipf.EPDToneMap (labView, 5, 6);
     }
 
     ipf.softLight(labView, params.softlight);
+
 
     if (params.colorappearance.enabled) {
         CurveFactory::curveLightBrightColor (
@@ -1449,10 +1457,11 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
             adap = 2000.f;
         } else {
             float E_V = fcomp + log2 ((fnum * fnum) / fspeed / (fiso / 100.f));
-            float expo2 = params.toneCurve.expcomp; // exposure compensation in tonecurve ==> direct EV
+            double kexp = 0.;
+            float expo2 = kexp * params.toneCurve.expcomp; // exposure compensation in tonecurve ==> direct EV
             E_V += expo2;
             float expo1;//exposure raw white point
-            expo1 = log2 (params.raw.expos); //log2 ==>linear to EV
+            expo1 = 0.5 * log2 (params.raw.expos); //log2 ==>linear to EV
             E_V += expo1;
             adap = powf (2.f, E_V - 3.f); //cd / m2
             //end calculation adaptation scene luminosity
@@ -1471,6 +1480,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         ipf.ciecam_02float (cieView, adap, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, sk, execsharp, d, dj, yb, rtt);
         delete cieView;
     }
+
 
     // color processing
     //ipf.colorCurve (labView, labView);
@@ -1924,7 +1934,7 @@ bool Thumbnail::writeImage (const Glib::ustring& fname)
 
     Glib::ustring fullFName = fname + ".rtti";
 
-    FILE* f = g_fopen (fullFName.c_str (), "wb");
+    FILE* f = ::g_fopen (fullFName.c_str (), "wb");
 
     if (!f) {
         return false;
@@ -1967,7 +1977,7 @@ bool Thumbnail::readImage (const Glib::ustring& fname)
         return false;
     }
 
-    FILE* f = g_fopen(fullFName.c_str (), "rb");
+    FILE* f = ::g_fopen(fullFName.c_str (), "rb");
 
     if (!f) {
         return false;
@@ -2125,7 +2135,7 @@ bool Thumbnail::readData  (const Glib::ustring& fname)
                         colorMatrix[i][j] = cm[ix++];
                     }
             }
-            
+
             if (keyFile.has_key ("LiveThumbData", "ScaleGain")) {
                 scaleGain           = keyFile.get_double ("LiveThumbData", "ScaleGain");
             }
@@ -2198,7 +2208,7 @@ bool Thumbnail::writeData  (const Glib::ustring& fname)
         return false;
     }
 
-    FILE *f = g_fopen (fname.c_str (), "wt");
+    FILE *f = ::g_fopen (fname.c_str (), "wt");
 
     if (!f) {
         if (settings->verbose) {
@@ -2221,7 +2231,7 @@ bool Thumbnail::readEmbProfile  (const Glib::ustring& fname)
     embProfile = nullptr;
     embProfileLength = 0;
 
-    FILE* f = g_fopen (fname.c_str (), "rb");
+    FILE* f = ::g_fopen (fname.c_str (), "rb");
 
     if (f) {
         if (!fseek (f, 0, SEEK_END)) {
@@ -2249,7 +2259,7 @@ bool Thumbnail::writeEmbProfile (const Glib::ustring& fname)
 {
 
     if (embProfileData) {
-        FILE* f = g_fopen (fname.c_str (), "wb");
+        FILE* f = ::g_fopen (fname.c_str (), "wb");
 
         if (f) {
             fwrite (embProfileData, 1, embProfileLength, f);

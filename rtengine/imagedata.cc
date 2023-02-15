@@ -19,15 +19,17 @@
 #include <functional>
 
 #include <strings.h>
+#include <time.h>
 #include <tiff.h>
 #include <glib/gstdio.h>
 #include <glibmm/convert.h>
-#include <exiv2/exiv2.hpp>
+#include <regex>
+#include <sstream>
 
 #include "imagedata.h"
 #include "imagesource.h"
-#include "procparams.h"
 #include "rt_math.h"
+#include "metadata.h"
 #include "utils.h"
 
 #pragma GCC diagnostic warning "-Wextra"
@@ -35,29 +37,8 @@
 
 using namespace rtengine;
 
-namespace rtengine {
-
-extern const Settings *settings;
-
-Exiv2::Image::AutoPtr open_exiv2(const Glib::ustring& fname)
+namespace
 {
-#ifdef EXV_UNICODE_PATH
-    glong ws_size = 0;
-    gunichar2* const ws = g_utf8_to_utf16(fname.c_str(), -1, nullptr, &ws_size, nullptr);
-    std::wstring wfname;
-    wfname.reserve(ws_size);
-    for (glong i = 0; i < ws_size; ++i) {
-        wfname.push_back(ws[i]);
-    }
-    g_free(ws);
-    auto image = Exiv2::ImageFactory::open(wfname);
-#else
-    auto image = Exiv2::ImageFactory::open(fname);
-#endif
-    return image;
-}
-
-} // namespace rtengine
 
 const std::string& validateUft8(const std::string& str, const std::string& on_error = "???")
 {
@@ -68,17 +49,35 @@ const std::string& validateUft8(const std::string& str, const std::string& on_er
     return on_error;
 }
 
+}
+
+namespace rtengine {
+
+extern const Settings *settings;
+
+} // namespace rtengine
+
 FramesMetaData* FramesMetaData::fromFile(const Glib::ustring& fname)
 {
     return new FramesData(fname);
 }
 
-FramesData::FramesData(const Glib::ustring &fname) :
+static struct tm timeFromTS(const time_t ts)
+{
+#if !defined(WIN32)
+        struct tm tm;
+        return *gmtime_r(&ts, &tm);
+#else
+        return *gmtime(&ts);
+#endif
+}
+
+FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
     ok_(false),
     fname_(fname),
     dcrawFrameCount(0),
-    time{},
-    timeStamp{},
+    time{timeFromTS(ts)},
+    timeStamp{ts},
     iso_speed(0),
     aperture(0.),
     focal_len(0.),
@@ -89,12 +88,19 @@ FramesData::FramesData(const Glib::ustring &fname) :
     make("Unknown"),
     model("Unknown"),
     orientation("Unknown"),
-    rating(0), // FIXME: Implement
+    rating(0),
     lens("Unknown"),
     sampleFormat(IIOSF_UNKNOWN),
     isPixelShift(false),
-    isHDR(false)
+    isHDR(false),
+    w_(-1),
+    h_(-1)
 {
+    GStatBuf statbuf = {};
+    g_stat(fname.c_str(), &statbuf);
+    modTimeStamp = statbuf.st_mtime;
+    modTime = timeFromTS(modTimeStamp);
+
     make.clear();
     model.clear();
     serial.clear();
@@ -102,9 +108,9 @@ FramesData::FramesData(const Glib::ustring &fname) :
     lens.clear();
 
     try {
-        auto image = open_exiv2(fname);
-        image->readMetadata();
-        const auto& exif = image->exifData();
+        Exiv2Metadata meta(fname);
+        meta.load();
+        const auto& exif = meta.exifData();
         ok_ = true;
 
         // taken and adapted from darktable (src/common/exif.cc)
@@ -133,8 +139,15 @@ FramesData::FramesData(const Glib::ustring &fname) :
         const auto find_exif_tag =
             [&exif, &pos](const std::string &name) -> bool
             {
-                pos = exif.findKey(Exiv2::ExifKey(name));
-                return pos != exif.end() && pos->size();
+                try {
+                    pos = exif.findKey(Exiv2::ExifKey(name));
+                    return pos != exif.end() && pos->size();
+                } catch (std::exception &e) {
+                    if (settings->verbose) {
+                        std::cerr << "Exiv2 WARNING -- error finding tag " << name << ": " << e.what() << std::endl;
+                    }
+                    return false;
+                }
             };
 
         const auto find_tag =
@@ -147,11 +160,11 @@ FramesData::FramesData(const Glib::ustring &fname) :
         // List of tag names taken from exiv2's printSummary() in actions.cpp
 
         if (find_tag(Exiv2::make)) {
-            make = validateUft8(pos->print(&exif)); // validateUft8 (#5923) still needed?
+            make = validateUft8(pos->print(&exif));
         }
 
         if (find_tag(Exiv2::model)) {
-            model = validateUft8(pos->print(&exif)); // validateUft8 (#5923) still needed?
+            model = validateUft8(pos->print(&exif));
         }
 
         if (make.size() > 0) {
@@ -182,27 +195,6 @@ FramesData::FramesData(const Glib::ustring &fname) :
                 }
             }
         }
-
-    /*
-    TODO: Implement ratings in exiv2 situations. See PR #5325
-        
-    // Look for Rating metadata in the following order:
-    // 1. EXIF
-    // 2. XMP
-    // 3. pp3 sidecar file
-    tag = newFrameRootDir->findTagUpward("Rating");
-    if (tag && tag->toInt() != 0) {
-        rating = tag->toInt();
-    }
-    char sXMPRating[64];
-    if (newFrameRootDir->getXMPTagValue("xmp:Rating", sXMPRating)) {
-        // Guard against out-of-range values (<0, >5)
-        rating = rtengine::max(0, rtengine::min(5, atoi(sXMPRating)));
-        // Currently, Rating=-1 is not supported. A value of -1 should mean
-        // "Rejected" according to the specification. Maybe in the future, Rating=-1
-        // sets InTrash=true?
-    }
-    */
 
         std::string::size_type nonspace_pos = make.find_last_not_of(' ');
         if (nonspace_pos != std::string::npos && nonspace_pos + 1 < make.size()) {
@@ -251,6 +243,44 @@ FramesData::FramesData(const Glib::ustring &fname) :
             }
         }
 
+        if (find_tag(Exiv2::serialNumber)) {
+            serial = validateUft8(pos->toString());
+        } else {
+            const std::vector<std::string> serial_number_tags{
+                "Exif.Photo.BodySerialNumber",
+                "Exif.Canon.SerialNumber",
+                "Exif.Fujifilm.SerialNumber",
+                "Exif.Nikon3.SerialNumber",
+                "Exif.Nikon3.SerialNO",
+                "Exif.Olympus.SerialNumber2",
+                "Exif.OlympusEq.SerialNumber",
+                "Exif.Pentax.SerialNumber",
+                "Exif.PentaxDng.SerialNumber",
+                "Exif.Sigma.SerialNumber",
+                "Exif.Canon.InternalSerialNumber",
+                "Exif.OlympusEq.InternalSerialNumber",
+                "Exif.Panasonic.InternalSerialNumber",
+            };
+            if (serial_number_tags.cend() != std::find_if(serial_number_tags.cbegin(), serial_number_tags.cend(), find_exif_tag)) {
+                serial = validateUft8(pos->toString());
+            } else if (find_exif_tag("Exif.Minolta.WBInfoA100") || find_exif_tag("Exif.SonyMinolta.WBInfoA100")) {
+                const long index = 18908;
+                const int length = 12;
+                if (pos->count() >= index + length) {
+                    for (int i = 0; i < length; ++i) {
+                        serial += static_cast<char>(pos->toLong(index + i));
+                    }
+                    serial = validateUft8(serial);
+                }
+            } else if (find_exif_tag("Exif.Pentax.CameraInfo") || find_exif_tag("Exif.PentaxDng.CameraInfo")) {
+                const long index = 4;
+                if (pos->count() >= index) {
+                    serial = validateUft8(pos->toString(index));
+                }
+            }
+            // TODO: Serial number from tags not supported by Exiv2.
+        }
+
         if (find_tag(Exiv2::focalLength)) {
             // This works around a bug in exiv2 the developers refuse to fix
             // For details see http://dev.exiv2.org/issues/1083
@@ -270,13 +300,59 @@ FramesData::FramesData(const Glib::ustring &fname) :
         }
 
         if (find_tag(Exiv2::orientation)) {
-            orientation = validateUft8(pos->print(&exif)); // validateUft8 (#5923) still needed?
+            static const std::vector<std::string> ormap = {
+                "Unknown",
+                "Horizontal (normal)",
+                "Mirror horizontal",
+                "Rotate 180",
+                "Mirror vertical",
+                "Mirror horizontal and rotate 270 CW",
+                "Rotate 90 CW",
+                "Mirror horizontal and rotate 90 CW",
+                "Rotate 270 CW",
+                "Unknown"
+            };
+            auto idx = pos->toLong();
+            if (idx >= 0 && idx < long(ormap.size())) {
+                orientation = ormap[idx];
+            }
+            //orientation = pos->print(&exif);
         }
 
         if (find_tag(Exiv2::lensName)) {
-            lens = validateUft8(pos->print(&exif)); // validateUft8 (#5923) still needed?
+            lens = validateUft8(pos->print(&exif));
+            auto p = pos;
+            if (find_exif_tag("Exif.CanonFi.RFLensType") && find_exif_tag("Exif.Canon.LensModel")) {
+                lens = validateUft8(pos->print(&exif));
+            } else if (p->count() == 1 && lens == std::to_string(p->toLong())) {
+                if (find_exif_tag("Exif.Canon.LensModel")) {
+                    lens = validateUft8(pos->print(&exif));
+                } else if (find_exif_tag("Exif.Photo.LensModel")) {
+                    lens = validateUft8(p->print(&exif));
+                }
+            }
+        } else if (find_exif_tag("Exif.Photo.LensSpecification") && pos->count() == 4) {
+            const auto round =
+                [](float f) -> float
+                {
+                    return int(f * 10.f + 0.5f) / 10.f;
+                };
+            float fl_lo = round(pos->toFloat(0));
+            float fl_hi = round(pos->toFloat(1));
+            float fn_lo = round(pos->toFloat(2));
+            float fn_hi = round(pos->toFloat(3));
+            std::ostringstream buf;
+            buf << fl_lo;
+            if (fl_lo < fl_hi) {
+                buf << "-" << fl_hi;
+            }
+            buf << "mm F" << fn_lo;
+            if (fn_lo < fn_hi) {
+                buf << "-" << fn_hi;
+            }
+            lens = validateUft8(buf.str());
         }
-        if (lens.empty()) {
+        if (lens.empty() || lens.find_first_not_of('-') == std::string::npos) {
             lens = "Unknown";
         }
 
@@ -287,6 +363,11 @@ FramesData::FramesData(const Glib::ustring &fname) :
         else if (find_exif_tag("Exif.Photo.DateTimeOriginal")) {
             datetime_taken = pos->print(&exif);
         }
+        else if (find_exif_tag("Exif.Photo.DateTimeDigitized")) {
+            datetime_taken = pos->print(&exif);
+        } else if (find_exif_tag("Exif.Image.DateTime")) {
+            datetime_taken = validateUft8(pos->print(&exif));
+        }
         if (sscanf(datetime_taken.c_str(), "%d:%d:%d %d:%d:%d", &time.tm_year, &time.tm_mon, &time.tm_mday, &time.tm_hour, &time.tm_min, &time.tm_sec) == 6) {
             time.tm_year -= 1900;
             time.tm_mon -= 1;
@@ -296,7 +377,56 @@ FramesData::FramesData(const Glib::ustring &fname) :
 
         if (find_exif_tag("Exif.Image.ExposureBiasValue")) {
             expcomp = pos->toFloat();
+        } else if (find_exif_tag("Exif.Photo.ExposureBiasValue")) {
+            expcomp = pos->toFloat();
         }
+
+        if (find_exif_tag("Exif.Image.Rating")) {
+            rating = pos->toLong();
+        } else {
+            auto it = meta.xmpData().findKey(Exiv2::XmpKey("Xmp.xmp.Rating"));
+            if (it != meta.xmpData().end() && it->size()) {
+                rating = it->toLong();
+            }
+        }
+
+        // try getting some metadata from ImageDescription
+        if (!make.compare(0, 5, "KODAK") && !getISOSpeed() && !getFNumber() && !getFocalLen() && !getShutterSpeed() &&
+            find_exif_tag("Exif.Image.ImageDescription")) {
+            std::string s = pos->toString();
+            std::string line;
+            std::smatch m;
+            const auto d =
+                [&m]() -> double {
+                    std::string s = m[1];
+                    return atof(s.c_str());
+                };
+            while (true) {
+                auto p = s.find('\r');
+                if (p == std::string::npos) {
+                    break;
+                }
+                auto line = s.substr(0, p);
+                s = s.substr(p+1);
+
+                if (std::regex_match(line, m, std::regex("ISO: +([0-9]+) *"))) {
+                    iso_speed = d();
+                } else if (std::regex_match(line, m, std::regex("Aperture: +F([0-9.]+) *"))) {
+                    aperture = d();
+                } else if (std::regex_match(line, m, std::regex("Shutter: +([0-9.]+) *"))) {
+                    shutter = d();
+                    if (shutter) {
+                        shutter = 1.0/shutter;
+                    }
+                } else if (std::regex_match(line, m, std::regex("Lens \\(mm\\): +([0-9.]+) *"))) {
+                    focal_len = d();
+                } else if (std::regex_match(line, m, std::regex("Exp Comp: +([0-9.]+) *"))) {
+                    expcomp = d();
+                }
+            }
+        }
+
+        meta.getDimensions(w_, h_);
 
         // -----------------------
         // Special file type detection (HDR, PixelShift)
@@ -317,7 +447,6 @@ FramesData::FramesData(const Glib::ustring &fname) :
         ) {
             if (find_exif_tag("Exif.Pentax.DriveMode")) {
                 std::string buf = pos->toString(3);
-                buf[3] = 0;
                 if (buf == "HDR") {
                     isHDR = true;
 #if PRINT_HDR_PS_DETECTION
@@ -328,7 +457,10 @@ FramesData::FramesData(const Glib::ustring &fname) :
 
             if (
                 !isHDR
-                && find_exif_tag("Exif.Pentax.Quality")
+                && (
+                    find_exif_tag("Exif.Pentax.Quality")
+                    || find_exif_tag("Exif.PentaxDng.Quality")
+                )
                 && (
                     pos->toLong() == 7
                     || pos->toLong() == 8
@@ -338,6 +470,30 @@ FramesData::FramesData(const Glib::ustring &fname) :
 #if PRINT_HDR_PS_DETECTION
                 printf("PixelShift detected ! -> \"Quality\" = 7\n");
 #endif
+            }
+        }
+
+        if (make == "SONY") {
+            if (find_exif_tag("Exif.SubImage1.BitsPerSample") && pos->toLong() == 14) {
+                if (find_exif_tag("Exif.SubImage1.SamplesPerPixel") && pos->toLong() == 4 &&
+                    find_exif_tag("Exif.SubImage1.PhotometricInterpretation") && pos->toLong() == 32892 &&
+                    find_exif_tag("Exif.SubImage1.Compression") && pos->toLong() == 1) {
+                    isPixelShift = true;
+                }
+            } else if (bps != exif.end() && bps->toLong() == 14 &&
+                       spp != exif.end() && spp->toLong() == 4 &&
+                       c != exif.end() && c->toLong() == 1 &&
+                       find_exif_tag("Exif.Image.Software") &&
+                       pos->toString() == "make_arq") {
+                isPixelShift = true;
+            }
+        } else if (make == "FUJIFILM") {
+            if (bps != exif.end() && bps->toLong() == 16 &&
+                spp != exif.end() && spp->toLong() == 4 &&
+                c != exif.end() && c->toLong() == 1 &&
+                find_exif_tag("Exif.Image.Software") &&
+                pos->toString() == "make_arq") {
+                isPixelShift = true;
             }
         }
 
@@ -467,7 +623,7 @@ FramesData::FramesData(const Glib::ustring &fname) :
 #endif
             }
         }
-    } catch (const Exiv2::AnyError& e) {
+    } catch (const std::exception& e) {
         if (settings->verbose) {
             std::cerr << "EXIV2 ERROR: " << e.what() << std::endl;
         }
@@ -578,12 +734,6 @@ std::string FramesData::getOrientation() const
 }
 
 
-int FramesData::getRating() const
-{
-    return rating;
-}
-
-
 void FramesData::setDCRawFrameCount(unsigned int frameCount)
 {
     dcrawFrameCount = frameCount;
@@ -600,6 +750,12 @@ Glib::ustring FramesData::getFileName() const
     return fname_;
 }
 
+
+int FramesData::getRating() const
+{
+    return rating;
+}
+
 //------inherited functions--------------//
 
 std::string FramesMetaData::apertureToString(double aperture)
@@ -612,11 +768,12 @@ std::string FramesMetaData::apertureToString(double aperture)
 
 std::string FramesMetaData::shutterToString(double shutter)
 {
-
     char buffer[256];
 
     if (shutter > 0.0 && shutter <= 0.5) {
         snprintf(buffer, sizeof(buffer), "1/%0.0f", 1.0 / shutter);
+    } else if (int(shutter) == shutter) {
+        snprintf(buffer, sizeof(buffer), "%d", int(shutter));
     } else {
         snprintf(buffer, sizeof(buffer), "%0.1f", shutter);
     }
@@ -644,7 +801,7 @@ std::string FramesMetaData::expcompToString(double expcomp, bool maskZeroexpcomp
 
 double FramesMetaData::shutterFromString(std::string s)
 {
-    const std::string::size_type i = s.find_first_of ('/');
+    const std::string::size_type i = s.find_first_of('/');
 
     if (i == std::string::npos) {
         return std::atof(s.c_str());
@@ -661,4 +818,62 @@ double FramesMetaData::apertureFromString(std::string s)
 {
 
     return std::atof(s.c_str());
+}
+
+
+namespace {
+
+template<class T>
+void set_exif(Exiv2::ExifData &exif, const std::string &key, T val)
+{
+    try {
+        exif[key] = val;
+    } catch (std::exception &exc) {
+        if (settings->verbose) {
+            std::cout << "Exif -- error setting " << key << " to " << val << ": " << exc.what() << std::endl;
+        }
+    }
+}
+
+} // namespace
+
+void FramesData::fillBasicTags(Exiv2::ExifData &exif) const
+{
+    if (!hasExif()) {
+        return;
+    }
+    set_exif(exif, "Exif.Photo.ISOSpeedRatings", getISOSpeed());
+    set_exif(exif, "Exif.Photo.FNumber", Exiv2::URationalValue(Exiv2::URational(round(getFNumber() * 10), 10)));
+    auto s = shutterToString(getShutterSpeed());
+    auto p = s.find('.');
+    if (p != std::string::npos) {
+        assert(p == s.length()-2);
+        s = s.substr(0, p) + s.substr(p+1) + "/10";
+    } else if (s.find('/') == std::string::npos) {
+        s += "/1";
+    }
+    set_exif(exif, "Exif.Photo.ExposureTime", s);
+    set_exif(exif, "Exif.Photo.FocalLength", Exiv2::URationalValue(Exiv2::URational(getFocalLen() * 10, 10)));
+    set_exif(exif, "Exif.Photo.ExposureBiasValue", Exiv2::RationalValue(Exiv2::Rational(round(getExpComp() * 100), 100)));
+    set_exif(exif, "Exif.Image.Make", getMake());
+    set_exif(exif, "Exif.Image.Model", getModel());
+    set_exif(exif, "Exif.Photo.LensModel", getLens());
+    char buf[256];
+    auto t = getDateTime();
+    strftime(buf, 256, "%Y:%m:%d %H:%M:%S", &t);
+    set_exif(exif, "Exif.Photo.DateTimeOriginal", buf);
+}
+
+
+void FramesData::getDimensions(int &w, int &h) const
+{
+    w = w_;
+    h = h_;
+}
+
+
+void FramesData::setDimensions(int w, int h)
+{
+    w_ = w;
+    h_ = h;
 }

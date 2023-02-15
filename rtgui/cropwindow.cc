@@ -510,7 +510,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                         cropgl->cropInit (cropHandler.cropParams->x, cropHandler.cropParams->y, cropHandler.cropParams->w, cropHandler.cropParams->h);
                     } else if (iarea->getToolMode () == TMHand) {
                         if (editSubscriber) {
-                            if ((cropgl && cropgl->inImageArea(iarea->posImage.x, iarea->posImage.y) && editSubscriber->getEditingType() == ET_PIPETTE && (bstate & GDK_CONTROL_MASK))) {
+                            if ((cropgl && cropgl->inImageArea(iarea->posImage.x, iarea->posImage.y) && (editSubscriber->getEditingType() == ET_PIPETTE && (bstate & GDK_CONTROL_MASK))) || editSubscriber->getEditingType() == ET_OBJECTS) {
                                 needRedraw = editSubscriber->button1Pressed(bstate);
                                 if (editSubscriber->isDragging()) {
                                     state = SEditDrag1;
@@ -540,7 +540,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                         action_y = 0;
                     }
 
-                } else if (iarea->getToolMode () == TMHand) {  // events outside of the image domain
+                } else if (iarea->getToolMode () == TMHand || iarea->getToolMode() == TMPerspective) {  // events outside of the image domain
                     EditSubscriber *editSubscriber = iarea->getCurrSubscriber();
 
                     if (editSubscriber && editSubscriber->getEditingType() == ET_OBJECTS) {
@@ -705,15 +705,15 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y)
         state = SNormal;
         needRedraw = true;
     } else if (state == SEditDrag1 || state == SEditDrag2 || state == SEditDrag3) {
-        if        (state == SEditDrag1) {
-            needRedraw = editSubscriber->button1Released();
-        } else if (state == SEditDrag2) {
-            needRedraw = editSubscriber->button2Released();
-        } else if (state == SEditDrag3) {
-            needRedraw = editSubscriber->button3Released();
-        }
-
         if (editSubscriber) {
+            if (state == SEditDrag1) {
+                needRedraw = editSubscriber->button1Released();
+            } else if (state == SEditDrag2) {
+                needRedraw = editSubscriber->button2Released();
+            } else if (state == SEditDrag3) {
+                needRedraw = editSubscriber->button3Released();
+            }
+
             rtengine::Crop* crop = static_cast<rtengine::Crop*>(cropHandler.getCrop());
             Coord imgPos;
             action_x = x;
@@ -792,6 +792,13 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y)
         needRedraw = true;
     } else if (state == SNormal && iarea->getToolMode() == TMColorPicker && !hoveredPicker && button == 3) {
         iarea->setToolHand ();
+    }
+
+    if (state != SEditDrag1 && state != SEditDrag2 && state != SEditDrag3) {
+        iarea->deltaImage.set(0, 0);
+        iarea->deltaScreen.set(0, 0);
+        iarea->deltaPrevImage.set(0, 0);
+        iarea->deltaPrevScreen.set(0, 0);
     }
 
     if (cropgl && (state == SCropSelecting || state == SResizeH1 || state == SResizeH2 || state == SResizeW1 || state == SResizeW2 || state == SResizeTL || state == SResizeTR || state == SResizeBL || state == SResizeBR || state == SCropMove)) {
@@ -1128,7 +1135,7 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
                 rtengine::StagedImageProcessor* ipc = iarea->getImProcCoordinator();
                 if(ipc) {
                     procparams::ProcParams params;
-                    ipc->getParams(&params);
+                    ipc->getParams(&params, true);
                     isRaw = params.raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::NONE) || params.raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::NONE);
                     if(isRaw) {
                         ImageSource *isrc = static_cast<ImageSource*>(ipc->getInitialImage());
@@ -1293,7 +1300,10 @@ void CropWindow::updateCursor (int x, int y)
         } else if (onArea (CropToolBar, x, y)) {
             newType = CSMove;
         } else if (iarea->getObject() > -1 && editSubscriber && editSubscriber->getEditingType() == ET_OBJECTS) {
-            newType = editSubscriber->getCursor(iarea->getObject());
+            int cursorX;
+            int cursorY;
+            screenCoordToImage (x, y, cursorX, cursorY);
+            newType = editSubscriber->getCursor(iarea->getObject(), cursorX, cursorY);
         } else if (onArea (CropResize, x, y)) {
             newType = CSResizeDiagonal;
         } else if (tm == TMColorPicker && hoveredPicker) {
@@ -1320,7 +1330,10 @@ void CropWindow::updateCursor (int x, int y)
             }
 
             if (objectID > -1) {
-                newType = editSubscriber->getCursor(objectID);
+                int cursorX;
+                int cursorY;
+                screenCoordToImage (x, y, cursorX, cursorY);
+                newType = editSubscriber->getCursor(objectID, cursorX, cursorY);
             } else if (tm == TMHand) {
                 if (onArea (CropObserved, x, y)) {
                     newType = CSMove;
@@ -1346,7 +1359,10 @@ void CropWindow::updateCursor (int x, int y)
             }
 
             if (objectID > -1) {
-                newType = editSubscriber->getCursor(objectID);
+                int cursorX;
+                int cursorY;
+                screenCoordToImage (x, y, cursorX, cursorY);
+                newType = editSubscriber->getCursor(objectID, cursorX, cursorY);
             } else {
                 newType = CSArrow;
             }
@@ -1375,6 +1391,16 @@ void CropWindow::updateCursor (int x, int y)
         newType = CSResizeDiagonal;
     } else if (state == SDragPicker) {
         newType = CSMove2D;
+    } else if (editSubscriber && editSubscriber->getEditingType() == ET_OBJECTS) {
+        int objectID = iarea->getObject();
+        if (objectID > -1) {
+            int cursorX;
+            int cursorY;
+            screenCoordToImage (x, y, cursorX, cursorY);
+            newType = editSubscriber->getCursor(objectID, cursorX, cursorY);
+        } else {
+            newType = CSArrow;
+        }
     }
 
     if (newType != cursor_type) {
@@ -1444,10 +1470,10 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
         if (state == SNormal) {
             switch (options.cropGuides) {
             case Options::CROP_GUIDE_NONE:
-                cropParams.guide = "None";
+                cropParams.guide = procparams::CropParams::Guide::NONE;
                 break;
             case Options::CROP_GUIDE_FRAME:
-                cropParams.guide = "Frame";
+                cropParams.guide = procparams::CropParams::Guide::FRAME;
                 break;
             default:
                 break;

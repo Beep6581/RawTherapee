@@ -97,7 +97,7 @@ public:
     int *StartRows;
     bool CreateDiagonal(int index, int StartRow);
     int n, m;   //The matrix is n x n, with m diagonals on the lower triangle. Don't change these. They should be private but aren't for convenience.
-    inline int DiagonalLength(int StartRow)     //Gives number of elements in a diagonal.
+    inline int DiagonalLength(int StartRow) const     //Gives number of elements in a diagonal.
     {
         return n - StartRow;
     };
@@ -109,7 +109,7 @@ public:
     void VectorProduct(float *Product, float *x);
 
     //Given the start row, attempts to find the corresponding index, or -1 if the StartRow doesn't exist.
-    inline int FindIndex(int StartRow) __attribute__((always_inline));
+    inline int FindIndex(int StartRow) const __attribute__((always_inline));
 
     //This is the same as above, but designed to take this class as a pass through variable. By this way you can feed
     //the meat of this class into an independent function, such as SparseConjugateGradient.

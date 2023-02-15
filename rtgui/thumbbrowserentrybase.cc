@@ -119,7 +119,7 @@ Glib::ustring getPaddedName(const Glib::ustring& name)
 
 }
 
-ThumbBrowserEntryBase::ThumbBrowserEntryBase (const Glib::ustring& fname) :
+ThumbBrowserEntryBase::ThumbBrowserEntryBase (const Glib::ustring& fname, Thumbnail *thm) :
     fnlabw(0),
     fnlabh(0),
     dtlabw(0),
@@ -153,7 +153,8 @@ ThumbBrowserEntryBase::ThumbBrowserEntryBase (const Glib::ustring& fname) :
     bbPreview(nullptr),
     cursor_type(CSUndefined),
     collate_name(getPaddedName(dispname).casefold_collate_key()),
-    thumbnail(nullptr),
+    collate_exif(getPaddedName(thm->getExifString()).casefold_collate_key()),
+    thumbnail(thm),
     filename(fname),
     selected(false),
     drawable(false),
@@ -446,7 +447,7 @@ void ThumbBrowserEntryBase::getTextSizes (int& infow, int& infoh)
     Glib::RefPtr<Pango::Layout> fn = w->create_pango_layout(dispname);
     fn->get_pixel_size (fnlabw, fnlabh);
 
-    // calculate cummulated height of all info fields
+    // calculate cumulated height of all info fields
     infoh = fnlabh;
     infow = 0;
 

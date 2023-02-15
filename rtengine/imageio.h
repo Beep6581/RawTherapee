@@ -24,6 +24,7 @@
 #include "iimage.h"
 #include "imagedimensions.h"
 #include "imageformat.h"
+#include "metadata.h"
 #include "rtengine.h"
 
 enum {
@@ -52,25 +53,6 @@ class ColorTemp;
 class ProgressListener;
 class Imagefloat;
 
-class MetadataInfo final
-{
-public:
-    explicit MetadataInfo(const Glib::ustring& src = {});
-
-    const Glib::ustring& filename() const;
-
-    const rtengine::procparams::ExifPairs& exif() const;
-    const rtengine::procparams::IPTCPairs& iptc() const;
-
-    void setExif(const rtengine::procparams::ExifPairs &exif);
-    void setIptc(const rtengine::procparams::IPTCPairs &iptc);
-
-private:
-    Glib::ustring src_;
-    std::unique_ptr<rtengine::procparams::ExifPairs> exif_;
-    std::unique_ptr<rtengine::procparams::IPTCPairs> iptc_;
-};
-
 class ImageIO : virtual public ImageDatas
 {
 
@@ -84,7 +66,7 @@ protected:
     MyMutex imutex;
     IIOSampleFormat sampleFormat;
     IIOSampleArrangement sampleArrangement;
-    MetadataInfo metadataInfo;
+    Exiv2Metadata metadataInfo;
 
 private:
     void deleteLoadedProfileData( );
@@ -99,7 +81,7 @@ public:
     void setSampleArrangement(IIOSampleArrangement sArrangement);
     IIOSampleArrangement getSampleArrangement() const;
 
-    virtual void getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* image, PreviewProps pp) const = 0;
+    virtual void getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp) const = 0;
     virtual int getBPS () const = 0;
     virtual void getScanline (int row, unsigned char* buffer, int bps, bool isFloat = false) const = 0;
     virtual void setScanline (int row, const unsigned char* buffer, int bps, unsigned int numSamples = 3) = 0;
@@ -124,7 +106,7 @@ public:
     cmsHPROFILE getEmbeddedProfile () const;
     void getEmbeddedProfileData (int& length, unsigned char*& pdata) const;
 
-    void setMetadata(MetadataInfo info);
+    void setMetadata(Exiv2Metadata info);
     void setOutputProfile(const std::string& pdata);
 
     bool saveMetadata(const Glib::ustring &fname) const;

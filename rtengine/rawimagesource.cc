@@ -34,13 +34,16 @@
 #include "median.h"
 #include "mytime.h"
 #include "pdaflinesfilter.h"
+#include "pixelsmap.h"
 #include "procparams.h"
 #include "rawimage.h"
 #include "rawimagesource_i.h"
 #include "rawimagesource.h"
+#include "rescale.h"
 #include "rt_math.h"
 #include "rtengine.h"
 #include "rtlensfun.h"
+
 #include "../rtgui/options.h"
 
 #define BENCHMARK
@@ -690,7 +693,7 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
 {
     MyMutex::MyLock lock(getImageMutex);
 
-    tran = defTransform (tran);
+    tran = defTransform(ri, tran);
 
     // compute channel multipliers
     double r, g, b;
@@ -821,7 +824,7 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
             int i = sy1 + skip * ix;
             i = std::min(i, maxy - skip); // avoid trouble
 
-            if (ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS || ri->get_colors() == 1) {
+            if (ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS || ri->get_colors() == 1 || ri->get_colors() == 3) {
                 for (int j = 0, jx = sx1; j < imwidth; j++, jx += skip) {
                     jx = std::min(jx, maxx - skip); // avoid trouble
 
@@ -980,7 +983,7 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
     }
 }
 
-DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, DCPProfile::ApplyState &as)
+DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, DCPProfileApplyState &as)
 {
     if (cmp.inputProfile == "(camera)" || cmp.inputProfile == "(none)") {
         return nullptr;
@@ -1007,10 +1010,24 @@ void RawImageSource::convertColorSpace(Imagefloat* image, const ColorManagementP
     colorSpaceConversion (image, cmp, wb, pre_mul, embProfile, camProfile, imatrices.xyz_cam, (static_cast<const FramesData*>(getMetaData()))->getCamera());
 }
 
-void RawImageSource::getFullSize (int& w, int& h, int tr)
+void RawImageSource::getFullSize(int& w, int& h, int tr)
 {
+    computeFullSize(ri, tr, w, h, border);
+}
 
-    tr = defTransform (tr);
+
+void RawImageSource::computeFullSize(const RawImage *ri, int tr, int &w, int &h, int border)
+{
+    tr = defTransform(ri, tr);
+
+    const int W = ri->get_width();
+    const int H = ri->get_height();
+    const bool fuji = ri->get_FujiWidth() != 0;
+    const bool d1x = !ri->get_model().compare("D1X");
+    const int b =
+        border >= 0 ? border :
+        (ri->getSensorType() == ST_BAYER ? 4 :
+         (ri->getSensorType() == ST_FUJI_XTRANS ? 7 : 0));
 
     if (fuji) {
         w = ri->get_FujiWidth() * 2 + 1;
@@ -1029,8 +1046,8 @@ void RawImageSource::getFullSize (int& w, int& h, int tr)
         h = tmp;
     }
 
-    w -= 2 * border;
-    h -= 2 * border;
+    w -= 2 * b;
+    h -= 2 * b;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1175,9 +1192,11 @@ int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
 
     d1x = ! ri->get_model().compare("D1X");
 
-    if (ri->getSensorType() == ST_FUJI_XTRANS) {
+    if (ri->getSensorType() == ST_BAYER) {
+        border = 4;
+    } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
         border = 7;
-    } else if (ri->getSensorType() == ST_FOVEON) {
+    } else {
         border = 0;
     }
 
@@ -1253,6 +1272,11 @@ int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
     // Load complete Exif information
     idata = new FramesData(fname); // TODO: std::unique_ptr<>
     idata->setDCRawFrameCount (numFrames);
+    {
+        int ww, hh;
+        getFullSize(ww, hh);
+        idata->setDimensions(ww, hh);
+    }
 
     green(W, H);
     red(W, H);
@@ -1304,14 +1328,14 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 
 
     Glib::ustring newDF = raw.dark_frame;
-    RawImage *rid = nullptr;
+    const RawImage* rid = nullptr;
 
     if (!raw.df_autoselect) {
         if (!raw.dark_frame.empty()) {
-            rid = dfm.searchDarkFrame(raw.dark_frame);
+            rid = DFManager::getInstance().searchDarkFrame(raw.dark_frame);
         }
     } else {
-        rid = dfm.searchDarkFrame(idata->getMake(), idata->getModel(), idata->getISOSpeed(), idata->getShutterSpeed(), idata->getDateTimeAsTS());
+        rid = DFManager::getInstance().searchDarkFrame(idata->getMake(), idata->getModel(), idata->getISOSpeed(), idata->getShutterSpeed(), idata->getDateTimeAsTS());
     }
 
     if (rid && settings->verbose) {
@@ -1324,7 +1348,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 
     if (ri->zeroIsBad()) { // mark all pixels with value zero as bad, has to be called before FF and DF. dcraw sets this flag only for some cameras (mainly Panasonic and Leica)
         bitmapBads.reset(new PixelsMap(W, H));
-        totBP = findZeroPixels(*(bitmapBads.get()));
+        totBP = findZeroPixels(*bitmapBads);
 
         if (settings->verbose) {
             printf("%d pixels with value zero marked as bad pixels\n", totBP);
@@ -1341,7 +1365,6 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     } else {
         rif = ffm.searchFlatField(idata->getMake(), idata->getModel(), idata->getLens(), idata->getFocalLen(), idata->getFNumber(), idata->getDateTimeAsTS());
     }
-
 
     bool hasFlatField = (rif != nullptr);
 
@@ -1382,9 +1405,12 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     }
     //FLATFIELD end
 
+    if (raw.ff_FromMetaData && isGainMapSupported()) {
+        applyDngGainMap(c_black, ri->getGainMaps());
+    }
 
     // Always correct camera badpixels from .badpixels file
-    std::vector<badPix> *bp = dfm.getBadPixels(ri->get_maker(), ri->get_model(), idata->getSerialNumber());
+    const std::vector<badPix> *bp = DFManager::getInstance().getBadPixels(ri->get_maker(), ri->get_model(), idata->getSerialNumber());
 
     if (bp) {
         if (!bitmapBads) {
@@ -1402,9 +1428,9 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     bp = nullptr;
 
     if (raw.df_autoselect) {
-        bp = dfm.getHotPixels(idata->getMake(), idata->getModel(), idata->getISOSpeed(), idata->getShutterSpeed(), idata->getDateTimeAsTS());
+        bp = DFManager::getInstance().getHotPixels(idata->getMake(), idata->getModel(), idata->getISOSpeed(), idata->getShutterSpeed(), idata->getDateTimeAsTS());
     } else if (!raw.dark_frame.empty()) {
-        bp = dfm.getHotPixels(raw.dark_frame);
+        bp = DFManager::getInstance().getHotPixels(raw.dark_frame);
     }
 
     if (bp) {
@@ -1468,7 +1494,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
             bitmapBads.reset(new PixelsMap(W, H));
         }
 
-        int nFound = findHotDeadPixels(*(bitmapBads.get()), raw.hotdeadpix_thresh, raw.hotPixelFilter, raw.deadPixelFilter);
+        int nFound = findHotDeadPixels(*bitmapBads, raw.hotdeadpix_thresh, raw.hotPixelFilter, raw.deadPixelFilter);
         totBP += nFound;
 
         if (settings->verbose && nFound > 0) {
@@ -1483,7 +1509,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
             bitmapBads.reset(new PixelsMap(W, H));
         }
         
-        int n = f.mark(rawData, *(bitmapBads.get()));
+        int n = f.mark(rawData, *bitmapBads);
         totBP += n;
 
         if (n > 0) {
@@ -1547,15 +1573,15 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         if (ri->getSensorType() == ST_BAYER) {
             if (numFrames == 4) {
                 for (int i = 0; i < 4; ++i) {
-                    interpolateBadPixelsBayer(*(bitmapBads.get()), *rawDataFrames[i]);
+                    interpolateBadPixelsBayer(*bitmapBads, *rawDataFrames[i]);
                 }
             } else {
-                interpolateBadPixelsBayer(*(bitmapBads.get()), rawData);
+                interpolateBadPixelsBayer(*bitmapBads, rawData);
             }
         } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
-            interpolateBadPixelsXtrans(*(bitmapBads.get()));
+            interpolateBadPixelsXtrans(*bitmapBads);
         } else {
-            interpolateBadPixelsNColours(*(bitmapBads.get()), ri->get_colors());
+            interpolateBadPixelsNColours(*bitmapBads, ri->get_colors());
         }
     }
 
@@ -1680,6 +1706,9 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
     } else if (ri->get_colors() == 1) {
         // Monochrome
         nodemosaic(true);
+    } else {
+        // RGB
+        nodemosaic(false);
     }
 
     t2.set();
@@ -2447,7 +2476,7 @@ void RawImageSource::HLRecovery_Global(const ToneCurveParams &hrp)
 /* Copy original pixel data and
  * subtract dark frame (if present) from current image and apply flat field correction (if present)
  */
-void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, RawImage *riDark, RawImage *riFlatFile, array2D<float> &rawData)
+void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, const RawImage *riDark, RawImage *riFlatFile, array2D<float> &rawData)
 {
     const auto tmpfilters = ri->get_filters();
     ri->set_filters(ri->prefilters); // we need 4 blacks for bayer processing
@@ -2718,7 +2747,7 @@ void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const R
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-int RawImageSource::defTransform (int tran)
+int RawImageSource::defTransform(const RawImage *ri, int tran)
 {
 
     int deg = ri->get_rotateDegree();
@@ -4466,7 +4495,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     Probably (sure) there are improvement to do...
 
     I have create a table temperature with temp and white point with 118 values between 2000K and 12000K we can obviously  change these values, more...with different steps
-    I have create a table for tint (green)with 134 values between 0.4 to 4. 
+    I have create a table for tint (green)with 134 values between 0.4 to 4.
     I have create or recuparate and transformed 201 spectral colors from Colorchecker24, others color and my 468 colors target, or from web flowers, etc. with a step of 5nm, I think it is large enough.
     I think this value of 201 is now complete: I tested correlation with 60, 90, 100, 120, 155...better student increase with number of color, but now it seems stabilized
     Of course we can increase this number :)
@@ -4519,7 +4548,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     itcwb_precis : 5 by default - can be set to 3 or 9 - 3 best sampling but more time...9 "old" settings - but low differences in times with 3 instead of 9 about twice time 160ms instead of 80ms for a big raw file
     */
 //    BENCHFUN
- 
+
     TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix("sRGB");
     const float wp[3][3] = {
         {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
@@ -5064,7 +5093,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     }
 
     estimchrom /= sizcu4;
-    if (settings->verbose) {   
+    if (settings->verbose) {
         printf("estimchrom=%f\n", estimchrom);
     }
     if (settings->itcwb_sort) { //sort in ascending with chroma values
@@ -5366,7 +5395,7 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
     if (settings->itcwb_precis == 5) {
         precision = 5;
     } else if (settings->itcwb_precis < 5) {
-        precision = 3; 
+        precision = 3;
     } else if (settings->itcwb_precis > 5) {
         precision = 9;
     }
@@ -5628,11 +5657,11 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
         if (settings->itcwb_precis == 5) {
             precision = 5;
         } else if (settings->itcwb_precis < 5) {
-            precision = 3; 
+            precision = 3;
         } else if (settings->itcwb_precis > 5) {
             precision = 9;
         }
-        
+
         const int bfw = W / precision + ((W % precision) > 0 ? 1 : 0);// 5 arbitrary value can be change to 3 or 9 ;
         const int bfh = H / precision + ((H % precision) > 0 ? 1 : 0);
         WBauto(tempref, greenref, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, tempitc, greenitc, studgood, twotimes, wbpar, begx, begy, yEn,  xEn,  cx,  cy, cmp, raw);
@@ -6093,7 +6122,7 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
 void RawImageSource::transformPosition (int x, int y, int tran, int& ttx, int& tty)
 {
 
-    tran = defTransform (tran);
+    tran = defTransform(ri, tran);
 
     x += border;
     y += border;
@@ -6248,6 +6277,36 @@ void RawImageSource::getRawValues(int x, int y, int rotate, int &R, int &G, int 
         R = 0; G = 0; B = val;
     } else {
         R = 0; G = val; B = 0;
+    }
+}
+
+bool RawImageSource::isGainMapSupported() const {
+    return ri->isGainMapSupported();
+}
+
+void RawImageSource::applyDngGainMap(const float black[4], const std::vector<GainMap> &gainMaps) {
+    // now we can apply each gain map to raw_data
+    array2D<float> mvals[2][2];
+    for (auto &m : gainMaps) {
+        mvals[m.Top & 1][m.Left & 1](m.MapPointsH, m.MapPointsV, m.MapGain.data());
+    }
+
+    // now we assume, col_scale and row scale is the same for all maps
+    const float col_scale = float(gainMaps[0].MapPointsH-1) / float(W);
+    const float row_scale = float(gainMaps[0].MapPointsV-1) / float(H);
+
+#ifdef _OPENMP
+    #pragma omp parallel for schedule(dynamic, 16)
+#endif
+    for (std::size_t y = 0; y < static_cast<size_t>(H); ++y) {
+        const float rowBlack[2] = {black[FC(y,0)], black[FC(y,1)]};
+        const float ys = y * row_scale;
+        float xs = 0.f;
+        for (std::size_t x = 0; x < static_cast<std::size_t>(W); ++x, xs += col_scale) {
+            const float f = getBilinearValue(mvals[y & 1][x & 1], xs, ys);
+            const float b = rowBlack[x & 1];
+            rawData[y][x] = rtengine::max((rawData[y][x] - b) * f + b, 0.f);
+        }
     }
 }
 

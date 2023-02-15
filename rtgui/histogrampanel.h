@@ -169,6 +169,7 @@ protected:
     bool vect_hc_buffer_dirty, vect_hs_buffer_dirty;
     int waveform_scale;
     array2D<int> rwave, gwave, bwave, lwave;
+    MyRWMutex wave_mutex;
     std::vector<unsigned char> parade_buffer_r;
     std::vector<unsigned char> parade_buffer_g;
     std::vector<unsigned char> parade_buffer_b;

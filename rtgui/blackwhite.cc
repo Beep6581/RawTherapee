@@ -49,7 +49,8 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
     metHBox->set_spacing (2);
     Gtk::Label* metLabel = Gtk::manage (new Gtk::Label (M("TP_BWMIX_MET") + ":"));
     metHBox->pack_start (*metLabel, Gtk::PACK_SHRINK);
-    method = Gtk::manage (new MyComboBoxText ());
+   
+	method = Gtk::manage (new MyComboBoxText ());
     method->append (M("TP_BWMIX_MET_DESAT"));
     method->append (M("TP_BWMIX_MET_LUMEQUAL"));
     method->append (M("TP_BWMIX_MET_CHANMIX"));
@@ -811,7 +812,6 @@ void BlackWhite::filterChanged ()
 
     if (listener && (multiImage || getEnabled())) {
         listener->panelChanged (EvBWfilter, filter->get_active_text ());
-        listener->panelChanged (EvAutoch, M("GENERAL_ENABLED"));
     }
 }
 
@@ -1206,7 +1206,6 @@ void BlackWhite::setBatchMode (bool batchMode)
 {
     removeIfThere (autoHBox, autoch, false);
     autoch = Gtk::manage (new Gtk::CheckButton (M("TP_BWMIX_AUTOCH")));
-    autoch->set_tooltip_markup (M("TP_BWMIX_AUTOCH_TIP"));
     autoconn = autoch->signal_toggled().connect( sigc::mem_fun(*this, &BlackWhite::autoch_toggled) );
     autoHBox->pack_start (*autoch);
 

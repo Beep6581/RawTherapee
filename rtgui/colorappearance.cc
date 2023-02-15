@@ -220,7 +220,6 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     milestones.push_back ( GradientMilestone (1., 1., 1., 1.) );
 
     auto m = ProcEventMapper::getInstance();
-    Evcatpreset = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_CAT02PRESET");
     EvCATAutotempout = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_TEMPOUT");
     EvCATillum = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ILLUM");
     EvCATcomplex = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_CATCOMPLEX");
@@ -269,10 +268,6 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     catHBox->pack_start(*catmethod);
     genVBox->pack_start (*catHBox, Gtk::PACK_SHRINK);
     
-    presetcat02 = Gtk::manage (new Gtk::CheckButton  (M ("TP_COLORAPP_PRESETCAT02")));
-    presetcat02->set_tooltip_markup (M("TP_COLORAPP_PRESETCAT02_TIP"));
-    presetcat02conn = presetcat02->signal_toggled().connect( sigc::mem_fun(*this, &ColorAppearance::presetcat02pressed));
-//    genVBox->pack_start (*presetcat02, Gtk::PACK_SHRINK);
 
     genFrame->add (*genVBox);
     pack_start (*genFrame, Gtk::PACK_EXPAND_WIDGET, 4);
@@ -534,6 +529,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     curveEditorG->setTooltip (M ("TP_COLORAPP_CURVEEDITOR1_TOOLTIP"));
 
     shape = static_cast<DiagonalCurveEditor*> (curveEditorG->addCurve (CT_Diagonal, "", toneCurveMode));
+ //   shape = static_cast<DiagonalCurveEditor*> (curveEditorG->addCurve (CT_Diagonal, "J(J)"));
 
 
 
@@ -549,6 +545,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     curveEditorG2->setCurveListener (this);
 
     shape2 = static_cast<DiagonalCurveEditor*> (curveEditorG2->addCurve (CT_Diagonal, "", toneCurveMode2));
+//    shape2 = static_cast<DiagonalCurveEditor*> (curveEditorG2->addCurve (CT_Diagonal, "J(J)"));
 
     tcmode2conn = toneCurveMode2->signal_changed().connect ( sigc::mem_fun (*this, &ColorAppearance::curveMode2Changed), true );
 
@@ -684,14 +681,22 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     ybout->set_tooltip_markup (M ("TP_COLORAPP_YBOUT_TOOLTIP"));
 
     tempout->set_tooltip_markup (M ("TP_COLORAPP_TEMP2_TOOLTIP"));
- //   tempout->throwOnButtonRelease();
- //   tempout->addAutoButton (M ("TP_COLORAPP_TEMPOUT_TOOLTIP"));
-
+    tempout->throwOnButtonRelease();
+    tempout->addAutoButton (M ("TP_COLORAPP_TEMPOUT_TOOLTIP"));
+	// I renable tempout with addautobutton to work properly (and all code disabled). There are certainly some redundancies, but it doesn't matter
     tempout->show();
     greenout->show();
     ybout->show();
-    p3VBox->pack_start (*tempout);
-    p3VBox->pack_start (*greenout);
+    Gtk::Frame *tempgreenFrame;
+    tempgreenFrame = Gtk::manage(new Gtk::Frame());
+    tempgreenFrame->set_label_align (0.025, 0.5);
+    Gtk::Box* tempgreenVBox;
+    tempgreenVBox = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    tempgreenVBox->set_spacing (2);
+    tempgreenVBox->pack_start (*tempout);
+	tempgreenVBox->pack_start (*greenout);
+	tempgreenFrame->add(*tempgreenVBox);
+    p3VBox->pack_start(*tempgreenFrame);
     p3VBox->pack_start (*ybout);
 
     Gtk::Box* surrHBox = Gtk::manage (new Gtk::Box ());
@@ -716,7 +721,6 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
 
 
     gamut = Gtk::manage (new Gtk::CheckButton (M ("TP_COLORAPP_GAMUT")));
-    gamut->set_tooltip_markup (M ("TP_COLORAPP_GAMUT_TOOLTIP"));
     gamutconn = gamut->signal_toggled().connect ( sigc::mem_fun (*this, &ColorAppearance::gamut_toggled) );
     pack_start (*gamut, Gtk::PACK_SHRINK);
 
@@ -743,7 +747,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     RTImage *resetImg = Gtk::manage (new RTImage ("undo-small.png", "redo-small.png"));
     setExpandAlignProperties (resetImg, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     neutral->set_image (*resetImg);
-    neutral->set_tooltip_text (M ("TP_COLORAPP_NEUTRAL_TIP"));
+    neutral->set_tooltip_text (M ("TP_COLORAPP_NEUTRAL_TOOLTIP"));
     neutralconn = neutral->signal_pressed().connect ( sigc::mem_fun (*this, &ColorAppearance::neutral_pressed) );
     neutral->show();
 
@@ -826,7 +830,7 @@ void ColorAppearance::neutral_pressed ()
     qcontrast->resetValue (false);
     colorh->resetValue (false);
     tempout->resetValue (false);
-//   tempout->setAutoValue (true);
+	tempout->setAutoValue (true);
     greenout->resetValue (false);
     ybout->resetValue (false);
     tempsc->resetValue (false);
@@ -835,7 +839,7 @@ void ColorAppearance::neutral_pressed ()
     wbmodel->set_active (0);
     illum->set_active (2);
     toneCurveMode->set_active (0);
-    toneCurveMode2->set_active (0);
+    toneCurveMode2->set_active (1);
     toneCurveMode3->set_active (0);
     shape->reset();
     shape2->reset();
@@ -873,7 +877,6 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     tcmodeconn.block (true);
     tcmode2conn.block (true);
     tcmode3conn.block (true);
-    presetcat02conn.block (true);
     shape->setCurve (pp->colorappearance.curve);
     shape2->setCurve (pp->colorappearance.curve2);
     shape3->setCurve (pp->colorappearance.curve3);
@@ -881,7 +884,6 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     toneCurveMode2->set_active (toUnderlying(pp->colorappearance.curveMode2));
     toneCurveMode3->set_active (toUnderlying(pp->colorappearance.curveMode3));
     curveMode3Changed(); // This will set the correct sensitive state of depending Adjusters
-    presetcat02->set_active(pp->colorappearance.presetcat02);
 
     nexttemp = pp->wb.temperature;
     nextgreen = 1.; //pp->wb.green;
@@ -919,7 +921,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
         adapscen->setAutoInconsistent (multiImage && !pedited->colorappearance.autoadapscen);
         ybscen->setAutoInconsistent (multiImage && !pedited->colorappearance.autoybscen);
         set_inconsistent              (multiImage && !pedited->colorappearance.enabled);
-    //    tempout->setAutoInconsistent   (multiImage && !pedited->colorappearance.autotempout);
+        tempout->setAutoInconsistent   (multiImage && !pedited->colorappearance.autotempout);
 
         shape->setUnChanged (!pedited->colorappearance.curve);
         shape2->setUnChanged (!pedited->colorappearance.curve2);
@@ -945,7 +947,6 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
         if (!pedited->colorappearance.curveMode3) {
             toneCurveMode3->set_active (3);
         }
-        presetcat02->set_inconsistent(!pedited->colorappearance.presetcat02);
 
 
     }
@@ -1105,7 +1106,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     lastAutoAdapscen = pp->colorappearance.autoadapscen;
     lastAutoDegreeout = pp->colorappearance.autodegreeout;
     lastAutoybscen = pp->colorappearance.autoybscen;
-//    lastAutotempout = pp->colorappearance.autotempout;
+    lastAutotempout = pp->colorappearance.autotempout;
 
     degree->setValue (pp->colorappearance.degree);
     degree->setAutoValue (pp->colorappearance.autodegree);
@@ -1128,15 +1129,11 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     qcontrast->setValue (pp->colorappearance.qcontrast);
     colorh->setValue (pp->colorappearance.colorh);
     tempout->setValue (pp->colorappearance.tempout);
-//    tempout->setAutoValue (pp->colorappearance.autotempout);
+	tempout->setAutoValue (pp->colorappearance.autotempout);
     greenout->setValue (pp->colorappearance.greenout);
     ybout->setValue (pp->colorappearance.ybout);
     tempsc->setValue (pp->colorappearance.tempsc);
     greensc->setValue (pp->colorappearance.greensc);
-    presetcat02conn.block (true);
-    presetcat02->set_active (pp->colorappearance.presetcat02);
-    presetcat02conn.block (false);
-    lastpresetcat02 = pp->colorappearance.presetcat02;
 
     if (complexmethod->get_active_row_number() == 0) {
         updateGUIToMode(0);
@@ -1196,12 +1193,11 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
     pp->colorappearance.curve2        = shape2->getCurve ();
     pp->colorappearance.curve3        = shape3->getCurve ();
     pp->colorappearance.tempout        = tempout->getValue ();
-//    pp->colorappearance.autotempout    = tempout->getAutoValue ();
+    pp->colorappearance.autotempout    = tempout->getAutoValue ();
     pp->colorappearance.greenout        = greenout->getValue ();
     pp->colorappearance.ybout        = ybout->getValue ();
     pp->colorappearance.tempsc        = tempsc->getValue ();
     pp->colorappearance.greensc        = greensc->getValue ();
-    pp->colorappearance.presetcat02        = presetcat02->get_active();
 
     int tcMode = toneCurveMode->get_active_row_number();
 
@@ -1275,8 +1271,7 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->colorappearance.ybout        = ybout->getEditedState ();
         pedited->colorappearance.tempsc        = tempsc->getEditedState ();
         pedited->colorappearance.greensc        = greensc->getEditedState ();
-        pedited->colorappearance.presetcat02        = presetcat02->get_inconsistent ();
-//        pedited->colorappearance.autotempout    = !tempout->getAutoInconsistent();
+        pedited->colorappearance.autotempout    = !tempout->getAutoInconsistent();
 
     }
 
@@ -1368,7 +1363,9 @@ void ColorAppearance::updateGUIToMode(int mode)
         curveEditorG->hide();
         curveEditorG2->hide();
         curveEditorG3->hide();
-        greenout->hide();
+        //greenout->hide();
+        greenout->set_sensitive(false);
+		
         badpixsl->hide();
         datacie->hide();
     } else {
@@ -1377,7 +1374,8 @@ void ColorAppearance::updateGUIToMode(int mode)
         curveEditorG->show();
         curveEditorG2->show();
         curveEditorG3->show();
-        greenout->show();
+      //  greenout->show();
+        greenout->set_sensitive(true);
         badpixsl->show();
         datacie->show();
     }
@@ -1396,11 +1394,9 @@ void ColorAppearance::convertParamToNormal()
     shape2->reset();
     shape3->reset();
     wbmodel->set_active (0);
-    if (presetcat02->get_active ()) {
-        wbmodel->set_active (2);
-    }
     if (catmethod->get_active_row_number() == 1  || catmethod->get_active_row_number() == 2) {
             wbmodel->set_active (2);
+        illumChanged();
     }
 
     greenout->setValue(def_params.greenout);
@@ -1456,7 +1452,7 @@ void ColorAppearance::catmethodChanged()
         badpixsl->resetValue (false);
         illum->set_active (2);
         toneCurveMode->set_active (0);
-        toneCurveMode2->set_active (0);
+        toneCurveMode2->set_active (1);
         toneCurveMode3->set_active (0);
         shape->reset();
         shape2->reset();
@@ -1485,13 +1481,13 @@ void ColorAppearance::catmethodChanged()
         ybout->setValue(18);
         tempout->setValue (nexttemp);
     
-/*    if(tempout->getAutoValue()) {
-        tempout->resetValue (false);
-    } else {
-        tempout->setValue (nexttemp);
-        tempout->setAutoValue (true);
-    }
-*/
+		if(tempout->getAutoValue()) {
+			tempout->resetValue (false);
+		} else {
+			tempout->setValue (nexttemp);
+			tempout->setAutoValue (true);
+		}
+
         greenout->setValue (nextgreen);
         enableListener();
     
@@ -1540,7 +1536,7 @@ void ColorAppearance::catmethodChanged()
         adaplum->resetValue (false);
         degreeout->resetValue (false);
         ybout->resetValue (false);
-       // tempout->resetValue (false);
+        tempout->resetValue (false);
         tempout->setValue (nexttemp);
         greenout->resetValue (false);
         enableListener();
@@ -1702,140 +1698,6 @@ void ColorAppearance::badpix_toggled () {
 
 }
 */
-void ColorAppearance::presetcat02pressed () //keep in case of...
-{
- if (presetcat02->get_active ()) {
-    disableListener();
-    jlight->resetValue (false);
-    qbright->resetValue (false);
-    chroma->resetValue (false);
-    schroma->resetValue (false);
-    mchroma->resetValue (false);
-    rstprotection->resetValue (false);
-    contrast->resetValue (false);
-    qcontrast->resetValue (false);
-    colorh->resetValue (false);
-    tempout->resetValue (false);
-    greenout->resetValue (false);
-    ybout->resetValue (false);
-    tempsc->resetValue (false);
-    greensc->resetValue (false);
-    badpixsl->resetValue (false);
-    wbmodel->set_active (0);
-    illum->set_active (2);
-    toneCurveMode->set_active (0);
-    toneCurveMode2->set_active (0);
-    toneCurveMode3->set_active (0);
-    shape->reset();
-    shape2->reset();
-    shape3->reset();
-    gamutconn.block (true);
-    gamut->set_active (true);
-    gamutconn.block (false);
-    degree->setAutoValue (true);
-    degree->resetValue (false);
-    degree->setValue(90);
-    adapscen->resetValue (false);
-    adapscen->setAutoValue (true);
-    degreeout->resetValue (false);
-    degreeout->setAutoValue (true);
-    ybscen->resetValue (false);
-    ybscen->setAutoValue (true);
-    surrsrc->set_active (0);
-    wbmodel->set_active (2);
-    tempsc->resetValue (false);
-    greensc->resetValue (false);
-    adapscen->setValue(400.);
-    ybscen->setValue(18);
-    surround->set_active (0);
-    adaplum->setValue(400.);
-    degreeout->setValue(90);
-    ybout->setValue(18);
-    tempout->setValue (nexttemp);
-    
-/*    if(tempout->getAutoValue()) {
-        tempout->resetValue (false);
-    } else {
-        tempout->setValue (nexttemp);
-        tempout->setAutoValue (true);
-    }
-*/
-    greenout->setValue (nextgreen);
-    enableListener();
- } else {
-    disableListener();
-/*    jlight->resetValue (false);
-    qbright->resetValue (false);
-    chroma->resetValue (false);
-    schroma->resetValue (false);
-    mchroma->resetValue (false);
-    rstprotection->resetValue (false);
-    contrast->resetValue (false);
-    qcontrast->resetValue (false);
-    colorh->resetValue (false);
-    tempout->resetValue (false);
-    greenout->resetValue (false);
-    ybout->resetValue (false);
-    tempsc->resetValue (false);
-    greensc->resetValue (false);
-    badpixsl->resetValue (false);
-    wbmodel->set_active (0);
-    toneCurveMode->set_active (0);
-    toneCurveMode2->set_active (0);
-    toneCurveMode3->set_active (0);
-    shape->reset();
-    shape2->reset();
-    shape3->reset();
-    gamutconn.block (true);
-    gamut->set_active (true);
-    gamutconn.block (false);
-*/
-    degree->setAutoValue (true);
-    degree->resetValue (false);
-    adapscen->resetValue (false);
-    adapscen->setAutoValue (true);
-    degreeout->resetValue (false);
-    degreeout->setAutoValue (true);
-    ybscen->resetValue (false);
-    ybscen->setAutoValue (true);
-    surrsrc->set_active (0);
-    wbmodel->set_active (0);
-    illum->set_active (2);
-    tempsc->resetValue (false);
-    greensc->resetValue (false);
-    adapscen->resetValue (false);
-    ybscen->resetValue (false);
-    surround->set_active (0);
-    adaplum->resetValue (false);
-    degreeout->resetValue (false);
-    ybout->resetValue (false);
-    tempout->resetValue (false);
-    greenout->resetValue (false);
-    enableListener();
-     
- }
-    if (batchMode) {
-        if (presetcat02->get_inconsistent()) {
-            presetcat02->set_inconsistent (false);
-            presetcat02conn.block (true);
-            presetcat02->set_active (false);
-            presetcat02conn.block (false);
-        } else if (lastpresetcat02) {
-            presetcat02->set_inconsistent (true);
-        }
-
-        lastpresetcat02 = presetcat02->get_active ();
-    }
-
-    if (listener) {
-        if (presetcat02->get_active ()) {
-            listener->panelChanged (Evcatpreset, M ("GENERAL_ENABLED"));
-        } else {
-            listener->panelChanged (Evcatpreset, M ("GENERAL_DISABLED"));
-        }
-    }
-
-}
 
 void ColorAppearance::datacie_toggled ()
 {
@@ -1998,9 +1860,6 @@ void ColorAppearance::autoCamChanged (double ccam, double ccamout)
 
 void ColorAppearance::adapCamChanged (double cadap)
 {
-    if(presetcat02->get_active()){
-        return;
-    }
     
     idle_register.add(
         [this, cadap]() -> bool
@@ -2015,14 +1874,14 @@ void ColorAppearance::adapCamChanged (double cadap)
 
 
 void ColorAppearance::wbCamChanged (double temp, double tin)
-{
+{//reactivate this function
     
     idle_register.add(
         [this, temp, tin]() -> bool
         {
             disableListener();
             tempout->setValue(temp);
-            greenout->setValue(tin);
+			greenout->setValue(tin);
             enableListener();
             return false;
         }
@@ -2031,9 +1890,6 @@ void ColorAppearance::wbCamChanged (double temp, double tin)
 
 void ColorAppearance::ybCamChanged (int ybsc)
 {
-    if(presetcat02->get_active()){
-        return;
-    }
 
     idle_register.add(
         [this, ybsc]() -> bool
@@ -2119,16 +1975,6 @@ void ColorAppearance::adjusterChanged(Adjuster* a, double newval)
 
 void ColorAppearance::adjusterAutoToggled(Adjuster* a)
 {
-    /*
-    if(presetcat02->get_active ()){
-        if(tempout->getAutoValue()) {
-            tempout->resetValue (false);
-        } else {
-            tempout->setValue (nexttemp);
-            tempout->setAutoValue (true);
-        }
-    }
-*/    
     if (multiImage) {
         if (degree->getAutoInconsistent()) {
             degree->setAutoInconsistent (false);
@@ -2164,7 +2010,7 @@ void ColorAppearance::adjusterAutoToggled(Adjuster* a)
             ybscen->setAutoInconsistent (true);
         }
 
-/*        lastAutotempout = tempout->getAutoValue();
+        lastAutotempout = tempout->getAutoValue();
 
         if (tempout->getAutoInconsistent()) {
             tempout->setAutoInconsistent (false);
@@ -2174,7 +2020,7 @@ void ColorAppearance::adjusterAutoToggled(Adjuster* a)
         }
 
         lastAutotempout = tempout->getAutoValue();
-*/
+
     }
     if (listener && (multiImage || getEnabled()) ) {
 
@@ -2218,7 +2064,7 @@ void ColorAppearance::adjusterAutoToggled(Adjuster* a)
                 listener->panelChanged (EvCATAutoyb, M ("GENERAL_DISABLED"));
             }
         }
-/*
+
         if (a == tempout) {
             if (tempout->getAutoInconsistent()) {
                 listener->panelChanged (EvCATAutotempout, M ("GENERAL_UNCHANGED"));
@@ -2228,7 +2074,7 @@ void ColorAppearance::adjusterAutoToggled(Adjuster* a)
                 listener->panelChanged (EvCATAutotempout, M ("GENERAL_DISABLED"));
             }
         }
-*/
+
     }
 }
 void ColorAppearance::enabledChanged ()

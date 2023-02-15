@@ -80,6 +80,9 @@ public:
         QUICK_THUMBNAIL = 1  // was the thumbnail generated from embedded jpeg
     };
 
+    int width;
+    int height;
+
     CacheImageData ();
 
     int load (const Glib::ustring& fname);
@@ -110,4 +113,9 @@ public:
     bool getHDR() const override { return isHDR; }
     std::string getImageType() const override { return isPixelShift ? "PS" : isHDR ? "HDR" : "STD"; }
     rtengine::IIOSampleFormat getSampleFormat() const override { return sampleFormat; }
+    void getDimensions(int &w, int &h) const override
+    {
+        w = width;
+        h = height;
+    }
 };

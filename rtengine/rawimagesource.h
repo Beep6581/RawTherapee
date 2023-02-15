@@ -24,6 +24,7 @@
 
 #include "array2D.h"
 #include "colortemp.h"
+#include "dnggainmap.h"
 #include "iimage.h"
 #include "imagesource.h"
 #include "procparams.h"
@@ -46,7 +47,7 @@ private:
     static LUTf invGrad;  // for fast_demosaic
     static LUTf initInvGrad ();
     static void colorSpaceConversion_ (Imagefloat* im, const procparams::ColorManagementParams& cmp, const ColorTemp &wb, double pre_mul[3], cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], const std::string &camName);
-    int  defTransform (int tran);
+    static int  defTransform (const RawImage *ri, int tran);
 
 protected:
     MyMutex getImageMutex;  // locks getImage
@@ -138,7 +139,7 @@ public:
     }
 
     void        processFlatField(const procparams::RAWParams &raw, const RawImage *riFlatFile, array2D<float> &rawData, const float black[4]);
-    void        copyOriginalPixels(const procparams::RAWParams &raw, RawImage *ri, RawImage *riDark, RawImage *riFlatFile, array2D<float> &rawData  );
+    void        copyOriginalPixels(const procparams::RAWParams &raw, RawImage *ri, const RawImage *riDark, RawImage *riFlatFile, array2D<float> &rawData  );
     void        scaleColors (int winx, int winy, int winw, int winh, const procparams::RAWParams &raw, array2D<float> &rawData); // raw for cblack
     void        WBauto(double &tempref, double &greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, double &tempitc, double &greenitc, float &studgood, bool &twotimes, const procparams::WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const procparams::ColorManagementParams &cmp, const procparams::RAWParams &raw) override;
     void        getAutoWBMultipliersitc(double &tempref, double &greenref, double &tempitc, double &greenitc, float &studgood, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double &rm, double &gm, double &bm, const procparams::WBParams & wbpar, const procparams::ColorManagementParams &cmp, const procparams::RAWParams &raw) override;
@@ -177,6 +178,8 @@ public:
         return true;
     }
 
+    bool        isGainMapSupported() const override;
+
     void        setProgressListener (ProgressListener* pl) override
     {
         plistener = pl;
@@ -184,7 +187,7 @@ public:
     void        getAutoExpHistogram (LUTu & histogram, int& histcompr) override;
     void        getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw) override;
     void getAutoMatchedToneCurve(const procparams::ColorManagementParams &cp, std::vector<double> &outCurve) override;
-    DCPProfile *getDCP(const procparams::ColorManagementParams &cmp, DCPProfile::ApplyState &as) override;
+    DCPProfile *getDCP(const procparams::ColorManagementParams &cmp, DCPProfileApplyState &as) override;
 
     void convertColorSpace(Imagefloat* image, const procparams::ColorManagementParams &cmp, const ColorTemp &wb) override;
     static bool findInputProfile(Glib::ustring inProfile, cmsHPROFILE embedded, std::string camName, DCPProfile **dcpProf, cmsHPROFILE& in);
@@ -228,6 +231,8 @@ public:
         virtual float operator()(int row) const { return 1.f; }
     };
     
+    static void computeFullSize(const RawImage *ri, int tr, int &w, int &h, int border=-1);
+
 protected:
     typedef unsigned short ushort;
     void processFalseColorCorrection(Imagefloat* i, const int steps);
@@ -304,6 +309,7 @@ protected:
     void    vflip       (Imagefloat* im);
     void getRawValues(int x, int y, int rotate, int &R, int &G, int &B) override;
     void captureSharpening(const procparams::CaptureSharpeningParams &sharpeningParams, bool showMask, double &conrastThreshold, double &radius) override;
+    void applyDngGainMap(const float black[4], const std::vector<GainMap> &gainMaps);
 };
 
 }

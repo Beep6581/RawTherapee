@@ -71,7 +71,7 @@ public:
     void setEditProvider(EditDataProvider* provider) override;
 
     // EditSubscriber interface
-    CursorShape getCursor(int objectID) const override;
+    CursorShape getCursor(int objectID, int xPos, int yPos) const override;
     bool mouseOver(int modifierKey) override;
     bool button1Pressed(int modifierKey) override;
     bool button1Released() override;
@@ -98,6 +98,17 @@ private:
 
     RGB refInputValues;
     bool paramsUpgraded;
+
+    /**
+     * Luminance reference: these input RGB values must produce this output luminance.
+     * This allows keeping constant luminance when picking several white balance  spot
+     * samples in sequence; values are set on the initial white balance spot sampling,
+     * and reset every time params are read, or the output sliders are changed.
+     */
+    struct {
+        RGB input;
+        float lum;
+    } refLuminance;
 
     FilmNegProvider* fnp;
 

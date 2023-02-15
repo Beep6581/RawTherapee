@@ -298,7 +298,6 @@ void Options::setDefaults()
     windowMaximized = true;
     windowMonitor = 0;
     meowMonitor = -1;
-    meowFullScreen = false;
     meowMaximized = true;
     meowWidth = 1200;
     meowHeight = 680;
@@ -413,8 +412,14 @@ void Options::setDefaults()
     gimpDir = "";
     psDir = "";
     customEditorProg = "";
+    externalEditors.clear();
+    externalEditorIndex = -1;
     CPBKeys = CPBKT_TID;
     editorToSendTo = 1;
+    editor_out_dir = EDITOR_OUT_DIR_TEMP;
+    editor_custom_out_dir = "";
+    editor_float32 = false;
+    editor_bypass_output_profile = false;
     favoriteDirs.clear();
     tpOpen.clear();
     autoSaveTpOpen = true;
@@ -484,7 +489,7 @@ void Options::setDefaults()
     menuGroupFileOperations = true;
     menuGroupProfileOperations = true;
     menuGroupExtProg = true;
-    showtooltip = true;
+    showtooltip = false;
 
     ICCPC_primariesPreset = "sRGB",
     ICCPC_redPrimaryX = 0.6400;
@@ -535,6 +540,8 @@ void Options::setDefaults()
     fastexport_resize_dataspec           = 3;
     fastexport_resize_width              = 900;
     fastexport_resize_height             = 900;
+    fastexport_resize_longedge           = 900;
+    fastexport_resize_shortedge          = 900;
     fastexport_use_fast_pipeline         = true;
 
     clutsDir = "./cluts";
@@ -585,10 +592,12 @@ void Options::setDefaults()
     rtSettings.monitorProfile = Glib::ustring();
     rtSettings.monitorIntent = rtengine::RI_RELATIVE;
     rtSettings.monitorBPC = true;
+    rtSettings.autocielab = false;
     rtSettings.autoMonitorProfile = false;
     rtSettings.adobe = "RTv2_Medium"; // put the name of yours profiles (here windows)
     rtSettings.prophoto = "RTv2_Large"; // these names appear in the menu "output profile"
     rtSettings.widegamut = "RTv2_Wide";
+    rtSettings.DCIP3 = "RTv2_DCIP3";
     rtSettings.srgb = "RTv4_sRGB";
     rtSettings.bruce = "RTv2_Bruce";
     rtSettings.beta = "RTv2_Beta";
@@ -600,6 +609,7 @@ void Options::setDefaults()
     rtSettings.gamutICC = true;
     rtSettings.gamutLch = true;
     rtSettings.amchroma = 40;//between 20 and 140   low values increase effect..and also artifacts, high values reduces
+    rtSettings.amchromajz = 40;//between 5 and 100  low values increase effect..and also artifacts, high values reduces
     rtSettings.level0_cbdl = 0;
     rtSettings.level123_cbdl = 30;
 //locallab
@@ -626,12 +636,12 @@ void Options::setDefaults()
     rtSettings.edghi = 3.0;//1.1 and 5.
     rtSettings.edglo = 0.5;//0.1 and 0.95
     rtSettings.limrad = 20.;//1 and 60
-    
+
 
     rtSettings.protectred = 60;
     rtSettings.protectredh = 0.3;
     rtSettings.CRI_color = 0;
-    rtSettings.autocielab = true;
+ //   rtSettings.autocielab = true;
     rtSettings.denoiselabgamma = 2;
     rtSettings.HistogramWorking = false;
 
@@ -677,11 +687,16 @@ void Options::setDefaults()
     lastICCProfCreatorDir = "";
     gimpPluginShowInfoDialog = true;
     maxRecentFolders = 15;
+    sortMethod = SORT_BY_NAME;
+    sortDescending = false;
     rtSettings.lensfunDbDirectory = ""; // set also in main.cc and main-cli.cc
     cropGuides = CROP_GUIDE_FULL;
     cropAutoFit = false;
 
     rtSettings.thumbnail_inspector_mode = rtengine::Settings::ThumbnailInspectorMode::JPEG;
+
+    rtSettings.xmp_sidecar_style = rtengine::Settings::XmpSidecarStyle::STD;
+    rtSettings.metadata_xmp_sync = rtengine::Settings::MetadataXmpSync::NONE;
 }
 
 Options* Options::copyFrom(Options* other)
@@ -765,6 +780,9 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("General", "Language")) {
                     language = keyFile.get_string("General", "Language");
+                    if (!language.compare("Espanol")) {
+                        language = "Espanol (Latin America)";
+                    }
                 }
 
                 if (keyFile.has_key("General", "LanguageAutoDetect")) {
@@ -808,6 +826,7 @@ void Options::readFromFile(Glib::ustring fname)
                 }
             }
 
+            // TODO: Remove.
             if (keyFile.has_group("External Editor")) {
                 if (keyFile.has_key("External Editor", "EditorKind")) {
                     editorToSendTo = keyFile.get_integer("External Editor", "EditorKind");
@@ -823,6 +842,178 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("External Editor", "CustomEditor")) {
                     customEditorProg = keyFile.get_string("External Editor", "CustomEditor");
+                }
+                
+                if (keyFile.has_key("External Editor", "OutputDir")) {
+                    int v = keyFile.get_integer("External Editor", "OutputDir");
+                    if (v < int(EDITOR_OUT_DIR_TEMP) || v > int(EDITOR_OUT_DIR_CUSTOM)) {
+                        editor_out_dir = EDITOR_OUT_DIR_TEMP;
+                    } else {
+                        editor_out_dir = EditorOutDir(v);
+                    }
+                }
+
+                if (keyFile.has_key("External Editor", "CustomOutputDir")) {
+                    editor_custom_out_dir = keyFile.get_string("External Editor", "CustomOutputDir");
+                }
+
+                if (keyFile.has_key("External Editor", "Float32")) {
+                    editor_float32 = keyFile.get_boolean("External Editor", "Float32");
+                }
+
+                if (keyFile.has_key("External Editor", "BypassOutputProfile")) {
+                    editor_bypass_output_profile = keyFile.get_boolean("External Editor", "BypassOutputProfile");
+                }
+                
+            }
+
+            if (keyFile.has_group("External Editor")) {
+                if (keyFile.has_key("External Editor", "Names")
+                        || keyFile.has_key("External Editor", "Commands")
+                        || keyFile.has_key("External Editor", "IconsSerialized")) {
+                    // Multiple external editors.
+
+                    const auto & names =
+                        !keyFile.has_key("External Editor", "Names") ?
+                            std::vector<Glib::ustring>() :
+                            static_cast<std::vector<Glib::ustring>>(
+                                keyFile.get_string_list("External Editor", "Names"));
+                    const auto & commands =
+                        !keyFile.has_key("External Editor", "Commands") ?
+                            std::vector<Glib::ustring>() :
+                            static_cast<std::vector<Glib::ustring>>(
+                                keyFile.get_string_list("External Editor", "Commands"));
+                    const auto & icons_serialized =
+                        !keyFile.has_key("External Editor", "IconsSerialized") ?
+                            std::vector<Glib::ustring>() :
+                            static_cast<std::vector<Glib::ustring>>(
+                                keyFile.get_string_list("External Editor", "IconsSerialized"));
+                    externalEditors = std::vector<ExternalEditor>(std::max(std::max(
+                        names.size(), commands.size()), icons_serialized.size()));
+                    for (unsigned i = 0; i < names.size(); i++) {
+                        externalEditors[i].name = names[i];
+                    }
+                    for (unsigned i = 0; i < commands.size(); i++) {
+                        externalEditors[i].command = commands[i];
+                    }
+                    for (unsigned i = 0; i < icons_serialized.size(); i++) {
+                        externalEditors[i].icon_serialized = icons_serialized[i];
+                    }
+
+                    if (keyFile.has_key("External Editor", "EditorIndex")) {
+                        int index = keyFile.get_integer("External Editor", "EditorIndex");
+                        externalEditorIndex = std::min(
+                            std::max(-1, index),
+                            static_cast<int>(externalEditors.size())
+                        );
+                    }
+                } else if (keyFile.has_key("External Editor", "EditorKind")) {
+                    // Legacy fixed external editors. Convert to flexible.
+
+                    // GIMP == 1, Photoshop == 2, Custom == 3.
+                    editorToSendTo = keyFile.get_integer("External Editor", "EditorKind");
+
+#ifdef WIN32
+                    auto getIconSerialized = [](const Glib::ustring &executable) {
+                        // Backslashes and quotes must be escaped in the text representation of GVariant strings.
+                        // See https://www.freedesktop.org/software/gstreamer-sdk/data/docs/2012.5/glib/gvariant-text.html#gvariant-text-strings
+                        Glib::ustring exec_escaped = "";
+                        for (const auto character : executable) {
+                            if (character == '\\' || character == '\'') {
+                                exec_escaped += '\\';
+                            }
+                            exec_escaped += character;
+                        }
+                        return Glib::ustring::compose("('themed', <['%1,0', '%1,0-symbolic']>)", exec_escaped);
+                    };
+                    Glib::ustring gimpDir = "";
+                    if (keyFile.has_key("External Editor", "GimpDir")) {
+                        gimpDir = keyFile.get_string("External Editor", "GimpDir");
+                    }
+                    auto executable = Glib::build_filename(options.gimpDir, "bin", "gimp-win-remote");
+                    if (Glib::file_test(executable, Glib::FILE_TEST_IS_EXECUTABLE)) {
+                        if (editorToSendTo == 1) {
+                            externalEditorIndex = externalEditors.size();
+                        }
+                        externalEditors.push_back(ExternalEditor("GIMP", "\"" + executable + "\"", getIconSerialized(executable)));
+                    } else {
+                        for (auto ver = 12; ver >= 0; --ver) {
+                            executable = Glib::build_filename(gimpDir, "bin", Glib::ustring::compose(Glib::ustring("gimp-2.%1.exe"), ver));
+                            if (Glib::file_test(executable, Glib::FILE_TEST_IS_EXECUTABLE)) {
+                                if (editorToSendTo == 1) {
+                                    externalEditorIndex = externalEditors.size();
+                                }
+                                externalEditors.push_back(ExternalEditor("GIMP", "\"" + executable + "\"", getIconSerialized(executable)));
+                                break;
+                            }
+                        }
+                    }
+
+                    Glib::ustring psDir = "";
+                    if (keyFile.has_key("External Editor", "PhotoshopDir")) {
+                        psDir = keyFile.get_string("External Editor", "PhotoshopDir");
+                    }
+                    executable = Glib::build_filename(psDir, "Photoshop.exe");
+                    if (Glib::file_test(executable, Glib::FILE_TEST_IS_EXECUTABLE)) {
+                        if (editorToSendTo == 2) {
+                            externalEditorIndex = externalEditors.size();
+                        }
+                        externalEditors.push_back(ExternalEditor("Photoshop", "\"" + executable + "\"", getIconSerialized(executable)));
+                    }
+
+                    if (keyFile.has_key("External Editor", "CustomEditor")) {
+                        executable = keyFile.get_string("External Editor", "CustomEditor");
+                        if (!executable.empty()) {
+                            if (editorToSendTo == 3) {
+                                externalEditorIndex = externalEditors.size();
+                            }
+                            externalEditors.push_back(ExternalEditor("-", "\"" + executable + "\"", ""));
+                        }
+                    }
+#elif defined __APPLE__
+                    if (editorToSendTo == 1) {
+                        externalEditorIndex = externalEditors.size();
+                    }
+                    externalEditors.push_back(ExternalEditor("GIMP", "open -a GIMP", "gimp"));
+                    externalEditors.push_back(ExternalEditor("GIMP-dev", "open -a GIMP-dev", "gimp"));
+
+                    if (editorToSendTo == 2) {
+                        externalEditorIndex = externalEditors.size();
+                    }
+                    externalEditors.push_back(ExternalEditor("Photoshop", "open -a Photoshop", ""));
+
+                    if (keyFile.has_key("External Editor", "CustomEditor")) {
+                        auto executable = keyFile.get_string("External Editor", "CustomEditor");
+                        if (!executable.empty()) {
+                            if (editorToSendTo == 3) {
+                                externalEditorIndex = externalEditors.size();
+                            }
+                            externalEditors.push_back(ExternalEditor("-", executable, ""));
+                        }
+                    }
+#else
+                    if (Glib::find_program_in_path("gimp").compare("")) {
+                        if (editorToSendTo == 1) {
+                            externalEditorIndex = externalEditors.size();
+                        }
+                        externalEditors.push_back(ExternalEditor("GIMP", "gimp", "gimp"));
+                    } else if (Glib::find_program_in_path("gimp-remote").compare("")) {
+                        if (editorToSendTo == 1) {
+                            externalEditorIndex = externalEditors.size();
+                        }
+                        externalEditors.push_back(ExternalEditor("GIMP", "gimp-remote", "gimp"));
+                    }
+
+                    if (keyFile.has_key("External Editor", "CustomEditor")) {
+                        auto executable = keyFile.get_string("External Editor", "CustomEditor");
+                        if (!executable.empty()) {
+                            if (editorToSendTo == 3) {
+                                externalEditorIndex = externalEditors.size();
+                            }
+                            externalEditors.push_back(ExternalEditor("-", executable, ""));
+                        }
+                    }
+#endif
                 }
             }
 
@@ -1117,6 +1308,19 @@ void Options::readFromFile(Glib::ustring fname)
                 if (keyFile.has_key("File Browser", "RecentFolders")) {
                     recentFolders = keyFile.get_string_list("File Browser", "RecentFolders");
                 }
+
+                if (keyFile.has_key("File Browser", "SortMethod")) {
+                    int v = keyFile.get_integer("File Browser", "SortMethod");
+                    if (v < int(0) || v >= int(SORT_METHOD_COUNT)) {
+                        sortMethod = SORT_BY_NAME;
+                    } else {
+                        sortMethod = SortMethod(v);
+                    }
+                }
+
+                if (keyFile.has_key("File Browser", "SortDescending")) {
+                    sortDescending = keyFile.get_boolean("File Browser", "SortDescending");
+                }
             }
 
             if (keyFile.has_group("Clipping Indication")) {
@@ -1214,10 +1418,6 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("GUI", "MeowMonitor")) {
                     meowMonitor = keyFile.get_integer("GUI", "MeowMonitor");
-                }
-
-                if (keyFile.has_key("GUI", "MeowFullScreen")) {
-                    meowFullScreen = keyFile.get_boolean("GUI", "MeowFullScreen");
                 }
 
                 if (keyFile.has_key("GUI", "MeowMaximized")) {
@@ -1488,11 +1688,11 @@ void Options::readFromFile(Glib::ustring fname)
                 if (keyFile.has_key("GUI", "CurveBBoxPosition")) {
                     curvebboxpos = keyFile.get_integer("GUI", "CurveBBoxPosition");
                 }
-                
+
                 if (keyFile.has_key("GUI", "Complexity")) {
                     complexity = keyFile.get_integer("GUI", "Complexity");
                 }
-                
+
                 if (keyFile.has_key("GUI", "InspectorWindow")) {
                     inspectorWindow = keyFile.get_boolean("GUI", "InspectorWindow");
                 }
@@ -1541,9 +1741,6 @@ void Options::readFromFile(Glib::ustring fname)
                     rtSettings.autoMonitorProfile = keyFile.get_boolean("Color Management", "AutoMonitorProfile");
                 }
 
-                if (keyFile.has_key("Color Management", "Autocielab")) {
-                    rtSettings.autocielab = keyFile.get_boolean("Color Management", "Autocielab");
-                }
 
                 if (keyFile.has_key("Color Management", "RGBcurvesLumamode_Gamut")) {
                     rtSettings.rgbcurveslumamode_gamut = keyFile.get_boolean("Color Management", "RGBcurvesLumamode_Gamut");
@@ -1555,6 +1752,10 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("Color Management", "MonitorBPC")) {
                     rtSettings.monitorBPC = keyFile.get_boolean("Color Management", "MonitorBPC");
+                }
+
+                if (keyFile.has_key("Color Management", "Autocielab")) {
+                    rtSettings.autocielab = keyFile.get_boolean("Color Management", "Autocielab");
                 }
 
                 if (keyFile.has_key("Color Management", "CRI")) {
@@ -1656,6 +1857,13 @@ void Options::readFromFile(Glib::ustring fname)
                     }
                 }
 
+                if (keyFile.has_key("Color Management", "DCIP3")) {
+                    rtSettings.DCIP3 = keyFile.get_string("Color Management", "DCIP3");
+                    if (rtSettings.DCIP3 == "RTv4_DCIP3") {
+                        rtSettings.DCIP3 = "RTv2_DCIP3";
+                    }
+                }
+
                 if (keyFile.has_key("Color Management", "sRGB")) {
                     rtSettings.srgb = keyFile.get_string("Color Management", "sRGB");
                     if (rtSettings.srgb == "RT_sRGB"  || rtSettings.srgb == "RTv2_sRGB") {
@@ -1723,6 +1931,10 @@ void Options::readFromFile(Glib::ustring fname)
                     rtSettings.amchroma = keyFile.get_integer("Color Management", "Amountchroma");
                 }
 
+                if (keyFile.has_key("Color Management", "JzAmountchroma")) {
+                    rtSettings.amchromajz = keyFile.get_integer("Color Management", "JzAmountchroma");
+                }
+
                 if (keyFile.has_key("Color Management", "ClutsDirectory")) {
                     clutsDir = keyFile.get_string("Color Management", "ClutsDirectory");
                 }
@@ -1755,8 +1967,8 @@ void Options::readFromFile(Glib::ustring fname)
                 }
 
             }
-            
-            
+
+
             if (keyFile.has_group("ICC Profile Creator")) {
                 if (keyFile.has_key("ICC Profile Creator", "PimariesPreset")) {
                     ICCPC_primariesPreset = keyFile.get_string("ICC Profile Creator", "PimariesPreset");
@@ -1992,6 +2204,14 @@ void Options::readFromFile(Glib::ustring fname)
                     fastexport_resize_height = keyFile.get_integer("Fast Export", "fastexport_resize_height");
                 }
 
+                if (keyFile.has_key("Fast Export", "fastexport_resize_longedge")) {
+                    fastexport_resize_longedge = keyFile.get_integer("Fast Export", "fastexport_resize_longedge");
+                }
+
+                if (keyFile.has_key("Fast Export", "fastexport_resize_shortedge")) {
+                    fastexport_resize_shortedge = keyFile.get_integer("Fast Export", "fastexport_resize_shortedge");
+                }
+
                 if (keyFile.has_key("Fast Export", "fastexport_use_fast_pipeline")) {
                     fastexport_use_fast_pipeline = keyFile.get_integer("Fast Export", "fastexport_use_fast_pipeline");
                 }
@@ -2027,6 +2247,27 @@ void Options::readFromFile(Glib::ustring fname)
             if (keyFile.has_group("Lensfun")) {
                 if (keyFile.has_key("Lensfun", "DBDirectory")) {
                     rtSettings.lensfunDbDirectory = keyFile.get_string("Lensfun", "DBDirectory");
+                }
+            }
+
+            if (keyFile.has_group("Metadata")) {
+                if (keyFile.has_key("Metadata", "XMPSidecarStyle")) {
+                    std::string val = keyFile.get_string("Metadata", "XMPSidecarStyle");
+                    if (val == "ext") {
+                        rtSettings.xmp_sidecar_style = rtengine::Settings::XmpSidecarStyle::EXT;
+                    } else {
+                        rtSettings.xmp_sidecar_style = rtengine::Settings::XmpSidecarStyle::STD;
+                    }
+                }
+                if (keyFile.has_key("Metadata", "XMPSynchronization")) {
+                    std::string val = keyFile.get_string("Metadata", "XMPSynchronization");
+                    if (val == "read") {
+                        rtSettings.metadata_xmp_sync = rtengine::Settings::MetadataXmpSync::READ;
+                    } else if (val == "readwrite") {
+                        rtSettings.metadata_xmp_sync = rtengine::Settings::MetadataXmpSync::READ_WRITE;
+                    } else {
+                        rtSettings.metadata_xmp_sync = rtengine::Settings::MetadataXmpSync::NONE;
+                    }
                 }
             }
 
@@ -2111,10 +2352,33 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_boolean("General", "Detectshape", rtSettings.detectshape);
         keyFile.set_boolean("General", "Fftwsigma", rtSettings.fftwsigma);
 
+        // TODO: Remove.
         keyFile.set_integer("External Editor", "EditorKind", editorToSendTo);
         keyFile.set_string("External Editor", "GimpDir", gimpDir);
         keyFile.set_string("External Editor", "PhotoshopDir", psDir);
         keyFile.set_string("External Editor", "CustomEditor", customEditorProg);
+        keyFile.set_integer("External Editor", "OutputDir", int(editor_out_dir));
+        keyFile.set_string("External Editor", "CustomOutputDir", editor_custom_out_dir);
+        keyFile.set_boolean("External Editor", "Float32", editor_float32);
+        keyFile.set_boolean("External Editor", "BypassOutputProfile", editor_bypass_output_profile);
+
+        {
+        std::vector<Glib::ustring> names;
+        std::vector<Glib::ustring> commands;
+        std::vector<Glib::ustring> icons_serialized;
+
+        for (const auto & editor : externalEditors) {
+            names.push_back(editor.name);
+            commands.push_back(editor.command);
+            icons_serialized.push_back(editor.icon_serialized);
+        }
+
+        keyFile.set_string_list("External Editor", "Names", names);
+        keyFile.set_string_list("External Editor", "Commands", commands);
+        keyFile.set_string_list("External Editor", "IconsSerialized", icons_serialized);
+
+        keyFile.set_integer("External Editor", "EditorIndex", externalEditorIndex);
+        }
 
         keyFile.set_boolean("File Browser", "BrowseOnlyRaw", fbOnlyRaw);
         keyFile.set_boolean("File Browser", "BrowserShowsDate", fbShowDateTime);
@@ -2164,6 +2428,8 @@ void Options::saveToFile(Glib::ustring fname)
 
             keyFile.set_string_list("File Browser", "RecentFolders", temp);
         }
+        keyFile.set_integer("File Browser", "SortMethod", sortMethod);
+        keyFile.set_boolean("File Browser", "SortDescending", sortDescending);
         keyFile.set_integer("Clipping Indication", "HighlightThreshold", highlightThreshold);
         keyFile.set_integer("Clipping Indication", "ShadowThreshold", shadowThreshold);
         keyFile.set_boolean("Clipping Indication", "BlinkClipped", blinkClipped);
@@ -2230,7 +2496,6 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("GUI", "WindowY", windowY);
         keyFile.set_integer("GUI", "WindowMonitor", windowMonitor);
         keyFile.set_integer("GUI", "MeowMonitor", meowMonitor);
-        keyFile.set_boolean("GUI", "MeowFullScreen", meowFullScreen);
         keyFile.set_boolean("GUI", "MeowMaximized", meowMaximized);
         keyFile.set_integer("GUI", "MeowWidth", meowWidth);
         keyFile.set_integer("GUI", "MeowHeight", meowHeight);
@@ -2319,6 +2584,8 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_boolean("Color Management", "RGBcurvesLumamode_Gamut", rtSettings.rgbcurveslumamode_gamut);
         keyFile.set_integer("Color Management", "Intent", rtSettings.monitorIntent);
         keyFile.set_boolean("Color Management", "MonitorBPC", rtSettings.monitorBPC);
+
+
         //keyFile.set_integer ("Color Management", "view", rtSettings.viewingdevice);
         //keyFile.set_integer ("Color Management", "grey", rtSettings.viewingdevicegrey);
 //        keyFile.set_integer ("Color Management", "greySc", rtSettings.viewinggreySc);
@@ -2326,6 +2593,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_string("Color Management", "AdobeRGB", rtSettings.adobe);
         keyFile.set_string("Color Management", "ProPhoto", rtSettings.prophoto);
         keyFile.set_string("Color Management", "WideGamut", rtSettings.widegamut);
+        keyFile.set_string("Color Management", "DCIP3", rtSettings.DCIP3);
         keyFile.set_string("Color Management", "sRGB", rtSettings.srgb);
         keyFile.set_string("Color Management", "Beta", rtSettings.beta);
         keyFile.set_string("Color Management", "Best", rtSettings.best);
@@ -2338,6 +2606,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_boolean("Color Management", "GamutLch", rtSettings.gamutLch);
         keyFile.set_integer("Color Management", "ProtectRed", rtSettings.protectred);
         keyFile.set_integer("Color Management", "Amountchroma", rtSettings.amchroma);
+        keyFile.set_integer("Color Management", "JzAmountchroma", rtSettings.amchromajz);
         keyFile.set_double("Color Management", "ProtectRedH", rtSettings.protectredh);
         keyFile.set_integer("Color Management", "CRI", rtSettings.CRI_color);
         keyFile.set_integer("Color Management", "DenoiseLabgamma", rtSettings.denoiselabgamma);
@@ -2424,6 +2693,8 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("Fast Export", "fastexport_resize_dataspec", fastexport_resize_dataspec);
         keyFile.set_integer("Fast Export", "fastexport_resize_width", fastexport_resize_width);
         keyFile.set_integer("Fast Export", "fastexport_resize_height", fastexport_resize_height);
+        keyFile.set_integer("Fast Export", "fastexport_resize_longedge", fastexport_resize_longedge);
+        keyFile.set_integer("Fast Export", "fastexport_resize_shortedge", fastexport_resize_shortedge);
         keyFile.set_integer("Fast Export", "fastexport_use_fast_pipeline", fastexport_use_fast_pipeline);
 
         keyFile.set_string("Dialogs", "LastIccDir", lastIccDir);
@@ -2447,6 +2718,25 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_boolean("Dialogs", "GimpPluginShowInfoDialog", gimpPluginShowInfoDialog);
 
         keyFile.set_string("Lensfun", "DBDirectory", rtSettings.lensfunDbDirectory);
+
+        switch (rtSettings.xmp_sidecar_style) {
+        case rtengine::Settings::XmpSidecarStyle::EXT:
+            keyFile.set_string("Metadata", "XMPSidecarStyle", "ext");
+            break;
+        default:
+            keyFile.set_string("Metadata", "XMPSidecarStyle", "std");
+        }
+
+        switch (rtSettings.metadata_xmp_sync) {
+        case rtengine::Settings::MetadataXmpSync::READ:
+            keyFile.set_string("Metadata", "XMPSynchronization", "read");
+            break;
+        case rtengine::Settings::MetadataXmpSync::READ_WRITE:
+            keyFile.set_string("Metadata", "XMPSynchronization", "readwrite");
+            break;
+        default:
+            keyFile.set_string("Metadata", "XMPSynchronization", "none");
+        }
 
         keyData = keyFile.to_data();
 
@@ -2777,4 +3067,20 @@ Glib::ustring Options::getICCProfileCopyright()
     Glib::Date now;
     now.set_time_current();
     return Glib::ustring::compose("Copyright RawTherapee %1, CC0", now.get_year());
+}
+
+ExternalEditor::ExternalEditor() {}
+
+ExternalEditor::ExternalEditor(
+    const Glib::ustring &name, const Glib::ustring &command, const Glib::ustring &icon_serialized
+): name(name), command(command), icon_serialized(icon_serialized) {}
+
+bool ExternalEditor::operator==(const ExternalEditor &other) const
+{
+    return this->name == other.name && this->command == other.command && this->icon_serialized == other.icon_serialized;
+}
+
+bool ExternalEditor::operator!=(const ExternalEditor &other) const
+{
+    return !(*this == other);
 }

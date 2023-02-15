@@ -34,7 +34,7 @@ if(UNIX)
     install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/images/png/rawtherapee-logo-64.png" DESTINATION "${ICONSDIR}/hicolor/64x64/apps" RENAME rawtherapee.png)
     install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/images/png/rawtherapee-logo-128.png" DESTINATION "${ICONSDIR}/hicolor/128x128/apps" RENAME rawtherapee.png)
     install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/images/png/rawtherapee-logo-256.png" DESTINATION "${ICONSDIR}/hicolor/256x256/apps" RENAME rawtherapee.png)
-    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/images/svg/rt-logo.svg" DESTINATION "${ICONSDIR}/hicolor/scalable/apps" RENAME rawtherapee.svg)
+    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/images/rt-logo.svg" DESTINATION "${ICONSDIR}/hicolor/scalable/apps" RENAME rawtherapee.svg)
 endif()
 
 install(FILES ${LANGUAGEFILES} DESTINATION "${DATADIR}/languages")

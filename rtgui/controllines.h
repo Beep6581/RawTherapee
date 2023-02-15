@@ -31,7 +31,14 @@ class RTSurface;
 
 
 struct ControlLine {
-    static constexpr int OBJ_COUNT = 4;
+    enum ObjectIndex {
+        LINE,
+        ICON,
+        BEGIN,
+        END,
+        OBJECT_COUNT
+    };
+
     std::unique_ptr<Line> line;
     std::shared_ptr<OPIcon> icon;
     std::shared_ptr<OPIcon> icon_h, icon_v;
@@ -53,6 +60,7 @@ protected:
     bool draw_mode;
     bool drawing_line;
     bool edited;
+    std::size_t horizontalCount, verticalCount;
     Cairo::RefPtr<RTSurface> line_icon_h, line_icon_v;
     Cairo::RefPtr<RTSurface> line_icon_h_prelight, line_icon_v_prelight;
     int prev_obj;
@@ -68,7 +76,7 @@ protected:
      * line, inclusive, the line type is set to vertical. Otherwise, horizontal.
      */
     void autoSetLineType(int object_id);
-    void removeLine(size_t line_id);
+    void removeLine(std::size_t line_id);
 
 public:
     class Callbacks
@@ -88,6 +96,12 @@ public:
     ~ControlLineManager();
 
     bool getEdited(void) const;
+    /** Returns the number of horizontal control lines. */
+    std::size_t getHorizontalCount() const;
+    /** Returns the number of vertical control lines. */
+    std::size_t getVerticalCount() const;
+    /** Release anything that is currently being dragged. */
+    void releaseEdit(void);
     void removeAll(void);
     /** Sets whether or not the lines are visible and interact-able. */
     void setActive(bool active);
@@ -97,7 +111,7 @@ public:
     void setEditProvider(EditDataProvider* provider);
     void setLines(const std::vector<rtengine::ControlLine>& lines);
     /** Returns the number of lines. */
-    size_t size(void) const;
+    std::size_t size() const;
     /**
      * Allocates a new array and populates it with copies of the control lines.
      */
@@ -110,7 +124,7 @@ public:
     bool pick1(bool picked) override;
     bool pick3(bool picked) override;
     bool drag1(int modifierKey) override;
-    CursorShape getCursor(int objectID) const override;
+    CursorShape getCursor(int objectID, int xPos, int yPos) const override;
     bool mouseOver(int modifierKey) override;
     void switchOffEditMode(void) override;
 };

@@ -282,9 +282,12 @@ RTWindow::RTWindow ()
 
     on_delete_has_run = false;
     is_fullscreen = false;
+    is_minimized = false;
     property_destroy_with_parent().set_value (false);
     signal_window_state_event().connect ( sigc::mem_fun (*this, &RTWindow::on_window_state_event) );
+    onConfEventConn = signal_configure_event().connect ( sigc::mem_fun (*this, &RTWindow::on_configure_event) );
     signal_key_press_event().connect ( sigc::mem_fun (*this, &RTWindow::keyPressed) );
+    signal_key_release_event().connect(sigc::mem_fun(*this, &RTWindow::keyReleased));
 
     if (simpleEditor) {
         epanel = Gtk::manage ( new EditorPanel (nullptr) );
@@ -498,22 +501,22 @@ void RTWindow::showErrors()
     // alerting users if the default raw and image profiles are missing
     if (options.is_defProfRawMissing()) {
         options.defProfRaw = DEFPROFILE_RAW;
-        Gtk::MessageDialog msgd (*this, Glib::ustring::compose (M ("OPTIONS_DEFRAW_MISSING"), options.defProfRaw), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+        Gtk::MessageDialog msgd (*this, Glib::ustring::compose (M ("OPTIONS_DEFRAW_MISSING"), escapeHtmlChars(options.defProfRaw)), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
         msgd.run ();
     }
     if (options.is_bundledDefProfRawMissing()) {
-        Gtk::MessageDialog msgd (*this, Glib::ustring::compose (M ("OPTIONS_BUNDLED_MISSING"), options.defProfRaw), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+        Gtk::MessageDialog msgd (*this, Glib::ustring::compose (M ("OPTIONS_BUNDLED_MISSING"), escapeHtmlChars(options.defProfRaw)), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
         msgd.run ();
         options.defProfRaw = DEFPROFILE_INTERNAL;
     }
 
     if (options.is_defProfImgMissing()) {
         options.defProfImg = DEFPROFILE_IMG;
-        Gtk::MessageDialog msgd (*this, Glib::ustring::compose (M ("OPTIONS_DEFIMG_MISSING"), options.defProfImg), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+        Gtk::MessageDialog msgd (*this, Glib::ustring::compose (M ("OPTIONS_DEFIMG_MISSING"), escapeHtmlChars(options.defProfImg)), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
         msgd.run ();
     }
     if (options.is_bundledDefProfImgMissing()) {
-        Gtk::MessageDialog msgd (*this, Glib::ustring::compose (M ("OPTIONS_BUNDLED_MISSING"), options.defProfImg), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+        Gtk::MessageDialog msgd (*this, Glib::ustring::compose (M ("OPTIONS_BUNDLED_MISSING"), escapeHtmlChars(options.defProfImg)), true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
         msgd.run ();
         options.defProfImg = DEFPROFILE_INTERNAL;
     }
@@ -521,7 +524,7 @@ void RTWindow::showErrors()
 
 bool RTWindow::on_configure_event (GdkEventConfigure* event)
 {
-    if (!is_maximized() && is_visible()) {
+    if (!options.windowMaximized && !is_fullscreen && !is_minimized) {
         get_size (options.windowWidth, options.windowHeight);
         get_position (options.windowX, options.windowY);
     }
@@ -534,10 +537,11 @@ bool RTWindow::on_configure_event (GdkEventConfigure* event)
 
 bool RTWindow::on_window_state_event (GdkEventWindowState* event)
 {
-    if (event->changed_mask & GDK_WINDOW_STATE_MAXIMIZED) {
-        options.windowMaximized = event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED;
-    }
-
+    // Retrieve RT window states
+    options.windowMaximized = event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED;
+    is_minimized = event->new_window_state & GDK_WINDOW_STATE_ICONIFIED;
+    is_fullscreen = event->new_window_state & GDK_WINDOW_STATE_FULLSCREEN;
+    
     return Gtk::Widget::on_window_state_event (event);
 }
 
@@ -576,8 +580,10 @@ void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name)
 {
     if (options.multiDisplayMode > 0) {
         EditWindow * wndEdit = EditWindow::getInstance (this);
-        wndEdit->show();
         wndEdit->addEditorPanel (ep, name);
+        wndEdit->show_all();
+        wndEdit->restoreWindow(); // Need to be called after RTWindow creation to work with all OS Windows Manager
+        ep->setAspect();
         wndEdit->toFront();
     } else {
         ep->setParent (this);
@@ -756,6 +762,14 @@ bool RTWindow::keyPressed (GdkEventKey* event)
     return false;
 }
 
+bool RTWindow::keyReleased(GdkEventKey *event)
+{
+    if (fpanel && mainNB->get_current_page() == mainNB->page_num(*fpanel)) {
+        return fpanel->handleShortcutKeyRelease(event);
+    }
+    return false;
+}
+
 void RTWindow::addBatchQueueJob (BatchQueueEntry* bqe, bool head)
 {
 
@@ -786,7 +800,7 @@ bool RTWindow::on_delete_event (GdkEventAny* event)
     if (isSingleTabMode() || simpleEditor) {
         isProcessing = epanel->getIsProcessing();
     } else if (options.multiDisplayMode > 0) {
-        editWindow = EditWindow::getInstance (this, false);
+        editWindow = EditWindow::getInstance (this);
         isProcessing = editWindow->isProcessing();
     } else {
         int pageCount = mainNB->get_n_pages();
@@ -854,12 +868,22 @@ bool RTWindow::on_delete_event (GdkEventAny* event)
     FileBrowserEntry::hdr.reset();
     FileBrowserEntry::ps.reset();
 
-    if (!options.windowMaximized) {
+    if (!options.windowMaximized && !is_fullscreen && !is_minimized) {
         get_size (options.windowWidth, options.windowHeight);
         get_position (options.windowX, options.windowY);
     }
 
-    options.windowMonitor = get_screen()->get_monitor_at_window (get_window());
+    // Retrieve window monitor ID
+    options.windowMonitor = 0;
+    const auto display = get_screen()->get_display();
+    const int monitor_nb = display->get_n_monitors();
+
+    for (int id = 0; id < monitor_nb; id++) {
+        if (display->get_monitor_at_window(get_window()) == display->get_monitor(id)) {
+            options.windowMonitor = id;
+            break;
+        }
+    }
 
     try {
         Options::save ();
@@ -972,25 +996,25 @@ void RTWindow::error(const Glib::ustring& descr)
 
 void RTWindow::toggle_fullscreen ()
 {
+    onConfEventConn.block(true); // Avoid getting size and position while window is getting fullscreen
+    
     if (is_fullscreen) {
         unfullscreen();
-        is_fullscreen = false;
 
         if (btn_fullscreen) {
-            //btn_fullscreen->set_label(M("MAIN_BUTTON_FULLSCREEN"));
             btn_fullscreen->set_tooltip_markup (M ("MAIN_BUTTON_FULLSCREEN"));
             btn_fullscreen->set_image (*iFullscreen);
         }
     } else {
         fullscreen();
-        is_fullscreen = true;
 
         if (btn_fullscreen) {
-            //btn_fullscreen->set_label(M("MAIN_BUTTON_UNFULLSCREEN"));
             btn_fullscreen->set_tooltip_markup (M ("MAIN_BUTTON_UNFULLSCREEN"));
             btn_fullscreen->set_image (*iFullscreen_exit);
         }
     }
+    
+    onConfEventConn.block(false);
 }
 
 void RTWindow::SetEditorCurrent()
@@ -1027,6 +1051,13 @@ void RTWindow::MoveFileBrowserToEditor()
         fCatalog->refreshHeight();
         fCatalog->tbLeftPanel_1_visible (false);
         fCatalog->tbRightPanel_1_visible (false);
+    }
+}
+
+void RTWindow::updateExternalEditorWidget(int selectedIndex, const std::vector<ExternalEditor> & editors)
+{
+    if (epanel) {
+        epanel->updateExternalEditorWidget(selectedIndex, editors);
     }
 }
 
@@ -1096,40 +1127,70 @@ bool RTWindow::splashClosed (GdkEventAny* event)
 
 void RTWindow::setWindowSize ()
 {
+    onConfEventConn.block(true); // Avoid getting size and position while window is being moved, maximized, ...
+    
     Gdk::Rectangle lMonitorRect;
-    get_screen()->get_monitor_geometry (std::min (options.windowMonitor, Gdk::Screen::get_default()->get_n_monitors() - 1), lMonitorRect);
+    const auto display = get_screen()->get_display();
+    display->get_monitor (std::min (options.windowMonitor, display->get_n_monitors() - 1))->get_geometry(lMonitorRect);
 
 #ifdef __APPLE__
     // Get macOS menu bar height
-    const Gdk::Rectangle lWorkAreaRect = get_screen()->get_monitor_workarea (std::min (options.windowMonitor, Gdk::Screen::get_default()->get_n_monitors() - 1));
+    Gdk::Rectangle lWorkAreaRect;
+    display->get_monitor (std::min (options.windowMonitor, display->get_n_monitors() - 1))->get_workarea(lWorkAreaRect);
     const int macMenuBarHeight = lWorkAreaRect.get_y();
+
+    // Place RT window to saved one in options file
+    if (options.windowX <= lMonitorRect.get_x() + lMonitorRect.get_width()
+            && options.windowX >= 0
+            && options.windowY <= lMonitorRect.get_y() + lMonitorRect.get_height() - macMenuBarHeight
+            && options.windowY >= 0) {
+        move (options.windowX, options.windowY + macMenuBarHeight);
+    } else {
+        move (lMonitorRect.get_x(), lMonitorRect.get_y() + macMenuBarHeight);
+    }
+#else
+    // Place RT window to saved one in options file
+    if (options.windowX <= lMonitorRect.get_x() + lMonitorRect.get_width()
+            && options.windowX >= 0
+            && options.windowY <= lMonitorRect.get_y() + lMonitorRect.get_height()
+            && options.windowY >= 0) {
+        move (options.windowX, options.windowY);
+    } else {
+        move (lMonitorRect.get_x(), lMonitorRect.get_y());
+    }
 #endif
 
+    // Maximize RT window according to options file
     if (options.windowMaximized) {
-#ifdef __APPLE__
-        move (lMonitorRect.get_x(), lMonitorRect.get_y() + macMenuBarHeight);
-#else
-        move (lMonitorRect.get_x(), lMonitorRect.get_y());
-#endif
         maximize();
     } else {
         unmaximize();
         resize (options.windowWidth, options.windowHeight);
-
-#ifdef __APPLE__
-        if (options.windowX <= lMonitorRect.get_x() + lMonitorRect.get_width() && options.windowY <= lMonitorRect.get_y() + lMonitorRect.get_height() - macMenuBarHeight) {
-            move (options.windowX, options.windowY + macMenuBarHeight);
-        } else {
-            move (lMonitorRect.get_x(), lMonitorRect.get_y() + macMenuBarHeight);
-        }
-#else
-        if (options.windowX <= lMonitorRect.get_x() + lMonitorRect.get_width() && options.windowY <= lMonitorRect.get_y() + lMonitorRect.get_height()) {
-            move (options.windowX, options.windowY);
-        } else {
-            move (lMonitorRect.get_x(), lMonitorRect.get_y());
-        }
-#endif
     }
+    
+    onConfEventConn.block(false);
+}
+
+void RTWindow::get_position(int& x, int& y) const
+{
+    // Call native function
+    Gtk::Window::get_position (x, y);
+    
+    // Retrieve display (concatenation of all monitors) size
+    int width = 0, height = 0;
+    const auto display = get_screen()->get_display();
+    const int nbMonitors = display->get_n_monitors();
+
+    for (int i = 0; i < nbMonitors; i++) {
+        Gdk::Rectangle lMonitorRect;
+        display->get_monitor(i)->get_geometry(lMonitorRect);
+        width = std::max(width, lMonitorRect.get_x() + lMonitorRect.get_width());
+        height = std::max(height, lMonitorRect.get_y() + lMonitorRect.get_height());
+    }
+
+    // Saturate position at monitor limits to avoid unexpected behavior (fixes #6233)
+    x = std::min(width, std::max(0, x));
+    y = std::min(height, std::max(0, y));
 }
 
 void RTWindow::set_title_decorated (Glib::ustring fname)

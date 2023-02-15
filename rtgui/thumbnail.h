@@ -22,11 +22,11 @@
 #include <string>
 
 #include <glibmm/ustring.h>
+#include <glibmm/datetime.h>
 
 #include "cacheimagedata.h"
 #include "threadutils.h"
 #include "thumbnaillistener.h"
-#include "../rtengine/procparams.h"
 
 namespace rtengine
 {
@@ -74,6 +74,7 @@ class Thumbnail
     // exif & date/time strings
     Glib::ustring   exifString;
     Glib::ustring   dateTimeString;
+    Glib::DateTime  dateTime;
 
     bool            initial_;
 
@@ -84,10 +85,11 @@ class Thumbnail
     void            _saveThumbnail ();
     void            _generateThumbnailImage ();
     int             infoFromImage (const Glib::ustring& fname);
-    void            loadThumbnail (bool firstTrial = true);
     void            generateExifDateTimeStrings ();
 
     Glib::ustring    getCacheFileName (const Glib::ustring& subdir, const Glib::ustring& fext) const;
+
+    void saveMetadata();
 
 public:
     Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf);
@@ -122,25 +124,26 @@ public:
     rtengine::IImage8* upgradeThumbImage    (const rtengine::procparams::ProcParams& pparams, int h, double& scale);
     void            getThumbnailSize        (int &w, int &h, const rtengine::procparams::ProcParams *pparams = nullptr);
     void            getFinalSize            (const rtengine::procparams::ProcParams& pparams, int& w, int& h);
-    void            getOriginalSize         (int& w, int& h);
+    void            getOriginalSize         (int& w, int& h) const;
 
     const Glib::ustring&  getExifString () const;
     const Glib::ustring&  getDateTimeString () const;
+    const Glib::DateTime& getDateTime () const;
     void                  getCamWB  (double& temp, double& green) const;
     void                  getAutoWB (double& temp, double& green, double equal, double tempBias);
     void                  getSpotWB (int x, int y, int rect, double& temp, double& green);
     void                  applyAutoExp (rtengine::procparams::ProcParams& pparams);
 
-    ThFileType      getType ();
+    ThFileType      getType () const;
     Glib::ustring   getFileName () const
     {
         return fname;
     }
     void            setFileName (const Glib::ustring &fn);
 
-    bool            isSupported ();
+    bool            isSupported () const;
 
-    const CacheImageData* getCacheImageData();
+    const CacheImageData* getCacheImageData() const;
     std::string     getMD5   () const;
 
     int             getRank  () const;

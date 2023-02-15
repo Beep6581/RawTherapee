@@ -34,7 +34,7 @@ bool BatchQueueEntry::iconsLoaded(false);
 Glib::RefPtr<Gdk::Pixbuf> BatchQueueEntry::savedAsIcon;
 
 BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, int prevw, int prevh, Thumbnail* thm, bool overwrite) :
-    ThumbBrowserEntryBase(fname),
+    ThumbBrowserEntryBase(fname, thm),
     opreview(nullptr),
     origpw(prevw),
     origph(prevh),

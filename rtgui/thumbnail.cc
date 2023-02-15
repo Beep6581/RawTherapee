@@ -31,8 +31,10 @@
 #include "../rtengine/procparams.h"
 #include "../rtengine/rtthumbnail.h"
 #include <glib/gstdio.h>
+#include <glibmm/timezone.h>
 
 #include "../rtengine/dynamicprofile.h"
+#include "../rtengine/metadata.h"
 #include "../rtengine/profilestore.h"
 #include "../rtengine/settings.h"
 #include "guiutils.h"
@@ -43,7 +45,6 @@
 #include "paramsedited.h"
 #include "ppversion.h"
 #include "procparamchangers.h"
-#include "profilestorecombobox.h"
 #include "version.h"
 
 
@@ -241,6 +242,10 @@ void Thumbnail::_generateThumbnailImage ()
             cfs.format = FT_Raw;
             cfs.thumbImgType = quick ? CacheImageData::QUICK_THUMBNAIL : CacheImageData::FULL_THUMBNAIL;
             infoFromImage (fname);
+            if (!quick) {
+                cfs.width = tpp->full_width;
+                cfs.height = tpp->full_height;
+            }
         }
     }
 
@@ -255,7 +260,7 @@ void Thumbnail::_generateThumbnailImage ()
     }
 }
 
-bool Thumbnail::isSupported ()
+bool Thumbnail::isSupported () const
 {
     return cfs.supported;
 }
@@ -327,7 +332,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
             const std::unique_ptr<const rtengine::FramesMetaData> imageMetaData(rtengine::FramesMetaData::fromFile(fname));
             const std::unique_ptr<PartialProfile, decltype(pp_deleter)> pp(
                 imageMetaData
-                    ? ProfileStore::getInstance()->loadDynamicProfile(imageMetaData.get())
+                    ? ProfileStore::getInstance()->loadDynamicProfile(imageMetaData.get(), fname)
                     : nullptr,
                 pp_deleter
             );
@@ -387,7 +392,7 @@ void Thumbnail::notifylisterners_procParamsChanged(int whoChangedIt)
  * The result is a complete ProcParams with default values merged with the values
  * from the loaded ProcParams (sidecar or cache file).
 */
-void Thumbnail::loadProcParams ()
+void Thumbnail::loadProcParams()
 {
     MyMutex::MyLock lock(mutex);
 
@@ -698,7 +703,7 @@ void Thumbnail::getFinalSize (const rtengine::procparams::ProcParams& pparams, i
     }
 }
 
-void Thumbnail::getOriginalSize (int& w, int& h)
+void Thumbnail::getOriginalSize (int& w, int& h) const
 {
     w = tw;
     h = th;
@@ -761,11 +766,44 @@ rtengine::IImage8* Thumbnail::upgradeThumbImage (const rtengine::procparams::Pro
 
 void Thumbnail::generateExifDateTimeStrings ()
 {
+    if (cfs.timeValid) {
+        std::string dateFormat = options.dateFormat;
+        std::ostringstream ostr;
+        bool spec = false;
 
-    exifString = "";
-    dateTimeString = "";
+        for (size_t i = 0; i < dateFormat.size(); i++)
+            if (spec && dateFormat[i] == 'y') {
+                ostr << cfs.year;
+                spec = false;
+            } else if (spec && dateFormat[i] == 'm') {
+                ostr << (int)cfs.month;
+                spec = false;
+            } else if (spec && dateFormat[i] == 'd') {
+                ostr << (int)cfs.day;
+                spec = false;
+            } else if (dateFormat[i] == '%') {
+                spec = true;
+            } else {
+                ostr << (char)dateFormat[i];
+                spec = false;
+            }
+
+        ostr << " " << (int)cfs.hour;
+        ostr << ":" << std::setw(2) << std::setfill('0') << (int)cfs.min;
+        ostr << ":" << std::setw(2) << std::setfill('0') << (int)cfs.sec;
+
+        dateTimeString = ostr.str ();
+        dateTime = Glib::DateTime::create_local(cfs.year, cfs.month, cfs.day,
+                                                cfs.hour, cfs.min, cfs.sec);
+    }
+
+    if (!dateTime.gobj() || !cfs.timeValid) {
+        dateTimeString = "";
+        dateTime = Glib::DateTime::create_now_utc(0);
+    }
 
     if (!cfs.exifValid) {
+        exifString = "";
         return;
     }
 
@@ -774,33 +812,6 @@ void Thumbnail::generateExifDateTimeStrings ()
     if (options.fbShowExpComp && cfs.expcomp != "0.00" && !cfs.expcomp.empty()) { // don't show exposure compensation if it is 0.00EV;old cache files do not have ExpComp, so value will not be displayed.
         exifString = Glib::ustring::compose ("%1 %2EV", exifString, cfs.expcomp);    // append exposure compensation to exifString
     }
-
-    std::string dateFormat = options.dateFormat;
-    std::ostringstream ostr;
-    bool spec = false;
-
-    for (size_t i = 0; i < dateFormat.size(); i++)
-        if (spec && dateFormat[i] == 'y') {
-            ostr << cfs.year;
-            spec = false;
-        } else if (spec && dateFormat[i] == 'm') {
-            ostr << (int)cfs.month;
-            spec = false;
-        } else if (spec && dateFormat[i] == 'd') {
-            ostr << (int)cfs.day;
-            spec = false;
-        } else if (dateFormat[i] == '%') {
-            spec = true;
-        } else {
-            ostr << (char)dateFormat[i];
-            spec = false;
-        }
-
-    ostr << " " << (int)cfs.hour;
-    ostr << ":" << std::setw(2) << std::setfill('0') << (int)cfs.min;
-    ostr << ":" << std::setw(2) << std::setfill('0') << (int)cfs.sec;
-
-    dateTimeString = ostr.str ();
 }
 
 const Glib::ustring& Thumbnail::getExifString () const
@@ -815,6 +826,12 @@ const Glib::ustring& Thumbnail::getDateTimeString () const
     return dateTimeString;
 }
 
+const Glib::DateTime& Thumbnail::getDateTime () const
+{
+
+    return dateTime;
+}
+
 void Thumbnail::getAutoWB (double& temp, double& green, double equal, double tempBias)
 {
     if (cfs.redAWBMul != -1.0) {
@@ -827,7 +844,7 @@ void Thumbnail::getAutoWB (double& temp, double& green, double equal, double tem
 }
 
 
-ThFileType Thumbnail::getType ()
+ThFileType Thumbnail::getType () const
 {
 
     return (ThFileType) cfs.format;
@@ -845,6 +862,16 @@ int Thumbnail::infoFromImage (const Glib::ustring& fname)
     cfs.timeValid = false;
     cfs.exifValid = false;
 
+    if (idata->getDateTimeAsTS() > 0) {
+        cfs.year         = 1900 + idata->getDateTime().tm_year;
+        cfs.month        = idata->getDateTime().tm_mon + 1;
+        cfs.day          = idata->getDateTime().tm_mday;
+        cfs.hour         = idata->getDateTime().tm_hour;
+        cfs.min          = idata->getDateTime().tm_min;
+        cfs.sec          = idata->getDateTime().tm_sec;
+        cfs.timeValid    = true;
+    }
+
     if (idata->hasExif()) {
         cfs.shutter      = idata->getShutterSpeed ();
         cfs.fnumber      = idata->getFNumber ();
@@ -857,18 +884,11 @@ int Thumbnail::infoFromImage (const Glib::ustring& fname)
         cfs.isPixelShift = idata->getPixelShift ();
         cfs.frameCount   = idata->getFrameCount ();
         cfs.sampleFormat = idata->getSampleFormat ();
-        cfs.year         = 1900 + idata->getDateTime().tm_year;
-        cfs.month        = idata->getDateTime().tm_mon + 1;
-        cfs.day          = idata->getDateTime().tm_mday;
-        cfs.hour         = idata->getDateTime().tm_hour;
-        cfs.min          = idata->getDateTime().tm_min;
-        cfs.sec          = idata->getDateTime().tm_sec;
-        cfs.timeValid    = true;
-        cfs.exifValid    = true;
         cfs.lens         = idata->getLens();
         cfs.camMake      = idata->getMake();
         cfs.camModel     = idata->getModel();
         cfs.rating       = idata->getRating();
+        cfs.exifValid    = true;
 
         if (idata->getOrientation() == "Rotate 90 CW") {
             deg = 90;
@@ -892,6 +912,8 @@ int Thumbnail::infoFromImage (const Glib::ustring& fname)
     } else {
         cfs.filetype = "";
     }
+
+    idata->getDimensions(cfs.width, cfs.height);
 
     delete idata;
     return deg;
@@ -950,20 +972,6 @@ void Thumbnail::_loadThumbnail(bool firstTrial)
     if (!initial_) {
         tw = tpp->getImageWidth (getProcParamsU(), th, imgRatio);    // this might return 0 if image was just building
     }
-}
-
-/*
- * Read all thumbnail's data from the cache; build and save them if doesn't exist - MUTEX PROTECTED
- * This includes:
- *  - image's bitmap (*.rtti)
- *  - auto exposure's histogram (full thumbnail only)
- *  - embedded profile (full thumbnail only)
- *  - LiveThumbData section of the data file
- */
-void Thumbnail::loadThumbnail (bool firstTrial)
-{
-    MyMutex::MyLock lock(mutex);
-    _loadThumbnail(firstTrial);
 }
 
 /*
@@ -1026,6 +1034,10 @@ void Thumbnail::updateCache (bool updatePParams, bool updateCacheImageData)
 
     if (updateCacheImageData) {
         cfs.save (getCacheFileName ("data", ".txt"));
+    }
+
+    if (updatePParams && pparamsValid) {
+        saveMetadata();
     }
 }
 
@@ -1205,6 +1217,33 @@ void Thumbnail::getCamWB(double& temp, double& green) const
     }
 }
 
+void Thumbnail::saveMetadata()
+{
+    if (options.rtSettings.metadata_xmp_sync != rtengine::Settings::MetadataXmpSync::READ_WRITE) {
+        return;
+    }
+
+    if (pparams->metadata.exif.empty() && pparams->metadata.iptc.empty()) {
+        return;
+    }
+
+    auto fn = rtengine::Exiv2Metadata::xmpSidecarPath(fname);
+    try {
+        auto xmp = rtengine::Exiv2Metadata::getXmpSidecar(fname);
+        rtengine::Exiv2Metadata meta;
+        meta.xmpData() = std::move(xmp);
+        meta.setExif(pparams->metadata.exif);
+        meta.setIptc(pparams->metadata.iptc);
+        meta.saveToXmp(fn);
+        if (options.rtSettings.verbose) {
+            std::cout << "saved edited metadata for " << fname << " to "
+                      << fn << std::endl;
+        }
+    } catch (std::exception &exc) {
+        std::cerr << "ERROR saving metadata for " << fname << " to " << fn
+                  << ": " << exc.what() << std::endl;
+    }
+}
 void Thumbnail::getSpotWB(int x, int y, int rect, double& temp, double& green)
 {
     if (tpp) {
@@ -1221,7 +1260,7 @@ void Thumbnail::applyAutoExp (rtengine::procparams::ProcParams& pparams)
     }
 }
 
-const CacheImageData* Thumbnail::getCacheImageData()
+const CacheImageData* Thumbnail::getCacheImageData() const
 {
     return &cfs;
 }
