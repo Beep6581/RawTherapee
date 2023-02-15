@@ -5170,7 +5170,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     array2D<float> yc(bfwitc, bfhitc);
     array2D<float> Yc(bfwitc, bfhitc);
 
-    const int deltarepref = settings->itcwb_delta;
+    const int deltarepref = 1; //settings->itcwb_delta;
 
     for (int nn = 0, drep = -deltarepref; nn <= 2; ++nn, drep += deltarepref) {
         //three loop to refine color if temp camera is probably not very good
