@@ -4653,7 +4653,7 @@ float static studentXY(const array2D<float> & YYcurr, const array2D<float> & ref
 void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double &tempitc, double &greenitc, float &studgood, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, const ColorManagementParams &cmp, const RAWParams &raw, const WBParams & wbpar, const ToneCurveParams &hrp)
 {
     /*
-    Copyright (c) Jacques Desmis 6 - 2018 jdesmis@gmail.com, update 1 - 2023
+    Copyright (c) Jacques Desmis 6 - 2018 jdesmis@gmail.com, update 2 - 2023
     Copyright (c) Ingo Weyrich 3 - 2020 (heckflosse67@gmx.de)
 
     This algorithm try to find temperature correlation between 20 to 80 colors between 201 spectral color and about 20 to 55 color found in the image between 236, I just found the idea in the web "correlate with chroma" instead of RGB grey point,but I don't use any algo found on the web.
@@ -4703,18 +4703,20 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     You can used it in images :flowers, landscape, portrait, skin, where illuminants are "normal" (daylight, blackbody)
     You must avoid when illuminant is non standard (fluorescent, LED...) and also, when the subject is lost in the image (some target to generate profiles).
 
-    You can change  parameters in option.cc
+    You can change  parameters in White Balance - Frame adapted to Itcwb
     Itcwb_thres : 34 by default ==> number of color used in final algorithm - between 10 and max 55
     Itcwb_sorted : true by default, can improve algorithm if true, ==> sort value in something near chroma order, instead of histogram number
     Itcwb_greenrange : 0 amplitude of green variation - between 0 to 2
-    Itcwb_greendeltatemp : 1 - delta temp in green iterate loop for "extra" - between 0 to 4
-    Itcwb_forceextra : true by default - if true force algorithm "extra" ("extra" is used when camera wbsettings are wrong) to all images
+    Itcwb_greendelta : 1 - delta temp in green iterate loop for "extra" - between 0 to 4
+    Itcwb_forceextra : false by default - Use all Ciexy diagram instead of sRGB
     Itcwb_sizereference : 3 by default, can be set to 5 ==> size of reference color compare to size of histogram real color
     itcwb_delta : 1 by default can be set between 0 to 5 ==> delta temp to build histogram xy - if camera temp is not probably good
-    itcwb_stdobserver10 : true by default - use standard observer 10°, false = standard observer 2°
     itcwb_precis : 3 by default - can be set to 3 or 9 - 3 best sampling but more time...9 "old" settings - but low differences in times with 3 instead of 9 about twice time 160ms instead of 80ms for a big raw file
     itcwb_nopurple : true default - allow to bypass highlight recovery and inpait opposed when need flowers and not purple due to highlights...
     itcwb_fgreen : 5 by default - between 3 to 6 - find the compromise student / green to reach green near of 1 
+    
+    In file options.
+    itcwb_stdobserver10 : true by default - use standard observer 10°, false = standard observer 2°
     */
     BENCHFUN
 
@@ -5272,7 +5274,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     int sizcurr2ref = sizcurrref - ntr;
     const int sizcu30 = sizcurrref - n30;
-    int nbm = 77;//number max of color used = 1.4 * 55
+    int nbm = 77;//number max of color used = 1.4 * 55 in case all CIExy diagram
     if(profuse == "sRGB") {
         nbm = 55;
     }
@@ -5339,11 +5341,12 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     //calculate deltaE xx to find best values of spectrals data - limited to chroma values
    // int maxnb = rtengine::LIM(settings->itcwb_sizereference, 1, 5);
     int maxnb = rtengine::LIM(wbpar.itcwb_size, 1, 5);
-
+    //wbpar.itcwb_size to verify if this setting is usefull...diificulties with High gamut and limited patch spectral colors.
+    
 //    if (settings->itcwb_thres > 55) {
 //        maxnb = 201 / settings->itcwb_thres;
 //    }
-    if (wbpar.itcwb_thres > 55) {
+    if (wbpar.itcwb_thres > 55) {//normally never used
         maxnb = 201 / wbpar.itcwb_thres;
     }
 
