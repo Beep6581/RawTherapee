@@ -179,6 +179,8 @@ private:
     float nextwy;
 
 public:
+    static const Glib::ustring TOOL_NAME;
+
     ICMPanel();
     ~ICMPanel() override;
 

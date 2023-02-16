@@ -48,6 +48,7 @@ protected:
     sigc::connection    enaconn;
     bool                lasthrEnabled;
     Adjuster* hlbl;
+    Adjuster* hlth;
 
     Gtk::Box* abox;
     Gtk::Box* hlrbox;
@@ -82,6 +83,7 @@ protected:
     rtengine::ProcEvent EvHistMatchingBatch;
     rtengine::ProcEvent EvClampOOG;
     rtengine::ProcEvent EvHLbl;
+    rtengine::ProcEvent EvHLth;
 
     // used temporarily in eventing
     double nextExpcomp;
@@ -97,6 +99,8 @@ protected:
     void setHistmatching(bool enabled);
 
 public:
+    static const Glib::ustring TOOL_NAME;
+
     ToneCurve ();
     ~ToneCurve () override;
 

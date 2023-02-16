@@ -426,6 +426,7 @@ void Options::setDefaults()
     //crvOpen.clear ();
     parseExtensions.clear();
     favorites.clear();
+    cloneFavoriteTools = false;
     parseExtensionsEnabled.clear();
     parsedExtensions.clear();
     parsedExtensionsSet.clear();
@@ -593,6 +594,7 @@ void Options::setDefaults()
     rtSettings.monitorIntent = rtengine::RI_RELATIVE;
     rtSettings.monitorBPC = true;
     rtSettings.autocielab = false;
+    rtSettings.observer10 = false;
     rtSettings.autoMonitorProfile = false;
     rtSettings.adobe = "RTv2_Medium"; // put the name of yours profiles (here windows)
     rtSettings.prophoto = "RTv2_Large"; // these names appear in the menu "output profile"
@@ -622,14 +624,15 @@ void Options::setDefaults()
     rtSettings.fftwsigma = true; //choice between sigma^2 or empirical formula
 
     rtSettings.itcwb_thres = 34;//between 10 to 55
-    rtSettings.itcwb_sort = false;
+    rtSettings.itcwb_sorted = true;
     rtSettings.itcwb_greenrange = 0;//between 0 to 2
     rtSettings.itcwb_greendeltatemp = 2;//between 0 and 4
     rtSettings.itcwb_forceextra = true;
     rtSettings.itcwb_sizereference = 3;//between 1 and 5
     rtSettings.itcwb_delta = 1;//between 0 and 5
     rtSettings.itcwb_stdobserver10 = true;
-    rtSettings.itcwb_precis = 5;//3  or 5 or 9
+    rtSettings.itcwb_precis = 3;//3  or 5 or 9
+    rtSettings.itcwb_nopurple = true;
 // end locallab
 
 //wavelet
@@ -1396,6 +1399,10 @@ void Options::readFromFile(Glib::ustring fname)
                     favorites = keyFile.get_string_list("GUI", "Favorites");
                 }
 
+                if (keyFile.has_key("GUI", "FavoritesCloneTools")) {
+                    cloneFavoriteTools = keyFile.get_boolean("GUI", "FavoritesCloneTools");
+                }
+
                 if (keyFile.has_key("GUI", "WindowWidth")) {
                     windowWidth = keyFile.get_integer("GUI", "WindowWidth");
                 }
@@ -1758,6 +1765,10 @@ void Options::readFromFile(Glib::ustring fname)
                     rtSettings.autocielab = keyFile.get_boolean("Color Management", "Autocielab");
                 }
 
+                if (keyFile.has_key("Color Management", "Observer10")) {
+                    rtSettings.observer10 = keyFile.get_boolean("Color Management", "Observer10");
+                }
+
                 if (keyFile.has_key("Color Management", "CRI")) {
                     rtSettings.CRI_color = keyFile.get_integer("Color Management", "CRI");
                 }
@@ -1793,12 +1804,16 @@ void Options::readFromFile(Glib::ustring fname)
                     rtSettings.itcwb_thres = keyFile.get_integer("Color Management", "Itcwb_thres");
                 }
 
-                if (keyFile.has_key("Color Management", "Itcwb_sort")) {
-                    rtSettings.itcwb_sort = keyFile.get_boolean("Color Management", "Itcwb_sort");
+                if (keyFile.has_key("Color Management", "Itcwb_sorted")) {
+                    rtSettings.itcwb_sorted = keyFile.get_boolean("Color Management", "Itcwb_sorted");
                 }
 
                 if (keyFile.has_key("Color Management", "Itcwb_forceextra")) {
                     rtSettings.itcwb_forceextra = keyFile.get_boolean("Color Management", "Itcwb_forceextra");
+                }
+
+                if (keyFile.has_key("Color Management", "Itcwb_nopurple")) {
+                    rtSettings.itcwb_nopurple = keyFile.get_boolean("Color Management", "Itcwb_nopurple");
                 }
 
                 if (keyFile.has_key("Color Management", "Itcwb_stdobserver10")) {
@@ -2490,6 +2505,7 @@ void Options::saveToFile(Glib::ustring fname)
 
         Glib::ArrayHandle<Glib::ustring> ahfavorites = favorites;
         keyFile.set_string_list("GUI", "Favorites", ahfavorites);
+        keyFile.set_boolean("GUI", "FavoritesCloneTools", cloneFavoriteTools);
         keyFile.set_integer("GUI", "WindowWidth", windowWidth);
         keyFile.set_integer("GUI", "WindowHeight", windowHeight);
         keyFile.set_integer("GUI", "WindowX", windowX);
@@ -2581,6 +2597,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_string("Color Management", "MonitorProfile", rtSettings.monitorProfile);
         keyFile.set_boolean("Color Management", "AutoMonitorProfile", rtSettings.autoMonitorProfile);
         keyFile.set_boolean("Color Management", "Autocielab", rtSettings.autocielab);
+        keyFile.set_boolean("Color Management", "Observer10", rtSettings.observer10);
         keyFile.set_boolean("Color Management", "RGBcurvesLumamode_Gamut", rtSettings.rgbcurveslumamode_gamut);
         keyFile.set_integer("Color Management", "Intent", rtSettings.monitorIntent);
         keyFile.set_boolean("Color Management", "MonitorBPC", rtSettings.monitorBPC);
@@ -2614,10 +2631,11 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_double("Color Management", "CBDLlevel0", rtSettings.level0_cbdl);
         keyFile.set_double("Color Management", "CBDLlevel123", rtSettings.level123_cbdl);
         keyFile.set_integer("Color Management", "Itcwb_thres", rtSettings.itcwb_thres);
-        keyFile.set_boolean("Color Management", "Itcwb_sort", rtSettings.itcwb_sort);
+        keyFile.set_boolean("Color Management", "Itcwb_sorted", rtSettings.itcwb_sorted);
         keyFile.set_integer("Color Management", "Itcwb_greenrange", rtSettings.itcwb_greenrange);
         keyFile.set_integer("Color Management", "Itcwb_greendeltatemp", rtSettings.itcwb_greendeltatemp);
         keyFile.set_boolean("Color Management", "Itcwb_forceextra", rtSettings.itcwb_forceextra);
+        keyFile.set_boolean("Color Management", "Itcwb_nopurple", rtSettings.itcwb_nopurple);
         keyFile.set_integer("Color Management", "Itcwb_sizereference", rtSettings.itcwb_sizereference);
         keyFile.set_integer("Color Management", "Itcwb_delta", rtSettings.itcwb_delta);
         keyFile.set_boolean("Color Management", "Itcwb_stdobserver10", rtSettings.itcwb_stdobserver10);

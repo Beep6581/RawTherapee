@@ -62,6 +62,7 @@ protected:
     bool israw;
 
 public:
+    static const Glib::ustring TOOL_NAME;
 
     DarkFrame ();
 

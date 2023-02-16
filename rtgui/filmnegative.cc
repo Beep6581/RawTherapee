@@ -28,6 +28,8 @@
 #include "../rtengine/procparams.h"
 #include "../rtengine/color.h"
 
+const Glib::ustring FilmNegative::TOOL_NAME = "filmnegative";
+
 namespace
 {
 
@@ -184,7 +186,7 @@ void rgb2temp(const RGB &refOut, double &outLev, double &temp, double &green)
 }
 
 FilmNegative::FilmNegative() :
-    FoldableToolPanel(this, "filmnegative", M("TP_FILMNEGATIVE_LABEL"), false, true),
+    FoldableToolPanel(this, TOOL_NAME, M("TP_FILMNEGATIVE_LABEL"), false, true),
     EditSubscriber(ET_OBJECTS),
     NEUTRAL_TEMP(rtengine::ColorTemp(1., 1., 1., 1.)),
     evFilmNegativeExponents(ProcEventMapper::getInstance()->newEvent(ALLNORAW, "HISTORY_MSG_FILMNEGATIVE_VALUES")),

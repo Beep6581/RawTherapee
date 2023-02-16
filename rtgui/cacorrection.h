@@ -34,6 +34,7 @@ protected:
     Adjuster* blue;
 
 public:
+    static const Glib::ustring TOOL_NAME;
 
     CACorrection ();
 

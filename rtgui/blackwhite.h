@@ -40,6 +40,7 @@ class BlackWhite final :
     public ColorProvider
 {
 public:
+    static const Glib::ustring TOOL_NAME;
 
     BlackWhite ();
     ~BlackWhite () override;

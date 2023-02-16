@@ -94,7 +94,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     HDR,        // EvCACorr,
     ALLNORAW,         // EvHREnabled,
     0,         // EvHRAmount : obsolete,
-    ALLNORAW,         // EvHRMethod,
+    ALLNORAW|M_RAW,   // EvHRMethod,
     DEMOSAIC,         // EvWProfile,
     OUTPUTPROFILE,    // EvOProfile,
     ALLNORAW,         // EvIProfile,

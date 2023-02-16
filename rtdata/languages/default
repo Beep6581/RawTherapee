@@ -1420,6 +1420,7 @@ HISTORY_MSG_FILMNEGATIVE_VALUES;Film negative values
 HISTORY_MSG_GAMUTMUNSEL;Gamut-Munsell
 HISTORY_MSG_HISTMATCHING;Auto-matched tone curve
 HISTORY_MSG_HLBL;Color propagation - blur
+HISTORY_MSG_HLTH;Inpaint opposed - gain threshold
 HISTORY_MSG_ICL_LABGRIDCIEXY;Cie xy
 HISTORY_MSG_ICM_AINTENT;Abstract profile intent
 HISTORY_MSG_ICM_BLUX;Primaries Blue X
@@ -1986,6 +1987,7 @@ PREFERENCES_STARTUPIMDIR;Image Directory at Startup
 PREFERENCES_TAB_BROWSER;File Browser
 PREFERENCES_TAB_COLORMGR;Color Management
 PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
+PREFERENCES_TAB_FAVORITES;Favorites
 PREFERENCES_TAB_GENERAL;General
 PREFERENCES_TAB_IMPROC;Image Processing
 PREFERENCES_TAB_PERFORMANCE;Performance
@@ -1994,6 +1996,12 @@ PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview
 PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw rendering
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Embedded JPEG if fullsize, neutral raw otherwise
+PREFERENCES_TOOLPANEL_AVAILABLETOOLS;Available Tools
+PREFERENCES_TOOLPANEL_CLONE_FAVORITES;Keep favorite tools in original locations
+PREFERENCES_TOOLPANEL_CLONE_FAVORITES_TOOLTIP;If set, favorite tools will appear in both the favorites tab and their original tabs.\n\nNote: Enabling this option may result in a slight delay when switching tabs.
+PREFERENCES_TOOLPANEL_FAVORITE;Favorite
+PREFERENCES_TOOLPANEL_FAVORITESPANEL;Favorites Panel
+PREFERENCES_TOOLPANEL_TOOL;Tool
 PREFERENCES_TP_LABEL;Tool panel:
 PREFERENCES_TP_VSCROLLBAR;Hide vertical scrollbar
 PREFERENCES_USEBUNDLEDPROFILES;Use bundled profiles
@@ -2522,8 +2530,10 @@ TP_GRADIENT_STRENGTH_TOOLTIP;Filter strength in stops.
 TP_HLREC_BLEND;Blend
 TP_HLREC_CIELAB;CIELab Blending
 TP_HLREC_COLOR;Color Propagation
+TP_HLREC_COLOROPP;Inpaint Opposed
 TP_HLREC_ENA_TOOLTIP;Could be activated by Auto Levels.
 TP_HLREC_HLBLUR;Blur
+TP_HLREC_HLTH;Gain threshold
 TP_HLREC_LABEL;Highlight reconstruction
 TP_HLREC_LUMINANCE;Luminance Recovery
 TP_HLREC_METHOD;Method:

@@ -20,6 +20,7 @@ protected:
     Adjuster* roundness;
 
 public:
+    static const Glib::ustring TOOL_NAME;
 
     PCVignette ();
 

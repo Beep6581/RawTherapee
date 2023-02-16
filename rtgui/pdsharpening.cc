@@ -31,8 +31,10 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
+const Glib::ustring PdSharpening::TOOL_NAME = "capturesharpening";
+
 PdSharpening::PdSharpening() :
-    FoldableToolPanel(this, "capturesharpening", M("TP_PDSHARPENING_LABEL"), false, true),
+    FoldableToolPanel(this, TOOL_NAME, M("TP_PDSHARPENING_LABEL"), false, true),
     lastAutoContrast(true),
     lastAutoRadius(true)
 {

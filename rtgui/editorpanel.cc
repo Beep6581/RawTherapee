@@ -2864,6 +2864,13 @@ void EditorPanel::updateHistogramPosition (int oldPosition, int newPosition)
 
 }
 
+void EditorPanel::updateToolPanelToolLocations(
+    const std::vector<Glib::ustring> &favorites, bool cloneFavoriteTools)
+{
+    if (tpc) {
+        tpc->updateToolLocations(favorites, cloneFavoriteTools);
+    }
+}
 
 void EditorPanel::defaultMonitorProfileChanged (const Glib::ustring &profile_name, bool auto_monitor_profile)
 {

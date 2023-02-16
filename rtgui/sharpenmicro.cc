@@ -29,8 +29,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
+const Glib::ustring SharpenMicro::TOOL_NAME = "sharpenmicro";
 
-SharpenMicro::SharpenMicro () : FoldableToolPanel(this, "sharpenmicro", M("TP_SHARPENMICRO_LABEL"), true, true)
+SharpenMicro::SharpenMicro () : FoldableToolPanel(this, TOOL_NAME, M("TP_SHARPENMICRO_LABEL"), true, true)
 {
 
     auto m = ProcEventMapper::getInstance();

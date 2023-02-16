@@ -23,7 +23,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-PrSharpening::PrSharpening () : FoldableToolPanel(this, "prsharpening", M("TP_PRSHARPENING_LABEL"), false, true)
+const Glib::ustring PrSharpening::TOOL_NAME = "prsharpening";
+
+PrSharpening::PrSharpening () : FoldableToolPanel(this, TOOL_NAME, M("TP_PRSHARPENING_LABEL"), false, true)
 {
 
     auto m = ProcEventMapper::getInstance();

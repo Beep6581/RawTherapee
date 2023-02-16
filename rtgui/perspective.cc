@@ -27,6 +27,8 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
+const Glib::ustring PerspCorrection::TOOL_NAME = "perspective";
+
 namespace
 {
 
@@ -84,7 +86,7 @@ std::vector<rtengine::ControlLine> valuesToControlLines(
 
 }
 
-PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("TP_PERSPECTIVE_LABEL"))
+PerspCorrection::PerspCorrection () : FoldableToolPanel(this, TOOL_NAME, M("TP_PERSPECTIVE_LABEL"))
 {
 
     auto mapper = ProcEventMapper::getInstance();

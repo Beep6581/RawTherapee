@@ -437,3 +437,11 @@ void FilePanel::updateTPVScrollbar (bool hide)
 {
     tpc->updateTPVScrollbar (hide);
 }
+
+void FilePanel::updateToolPanelToolLocations(
+        const std::vector<Glib::ustring> &favorites, bool cloneFavoriteTools)
+{
+    if (tpc) {
+        tpc->updateToolLocations(favorites, cloneFavoriteTools);
+    }
+}

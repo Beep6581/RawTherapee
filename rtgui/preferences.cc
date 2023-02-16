@@ -30,6 +30,7 @@
 #include <sstream>
 #include "rtimage.h"
 #include "rtwindow.h"
+#include "toollocationpref.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -66,6 +67,8 @@ Preferences::Preferences(RTWindow *rtwindow)
     , parent(rtwindow)
     , newFont(false)
     , newCPFont(false)
+    , toolLocationPreference(nullptr)
+    , swFavorites(nullptr)
 {
 
     moptions.copyFrom(&options);
@@ -103,6 +106,7 @@ Preferences::Preferences(RTWindow *rtwindow)
 
     nb->append_page(*getGeneralPanel(), M("PREFERENCES_TAB_GENERAL"));
     nb->append_page(*getImageProcessingPanel(), M("PREFERENCES_TAB_IMPROC"));
+    nb->append_page(*getFavoritesPanel(), M("PREFERENCES_TAB_FAVORITES"));
     nb->append_page(*getDynamicProfilePanel(), M("PREFERENCES_TAB_DYNAMICPROFILE"));
     nb->append_page(*getFileBrowserPanel(), M("PREFERENCES_TAB_BROWSER"));
     nb->append_page(*getColorManPanel(), M("PREFERENCES_TAB_COLORMGR"));
@@ -493,6 +497,18 @@ void Preferences::behSetRadioToggled(const Glib::ustring& path)
     behAddSetRadioToggled(path, false);
 }
 
+Gtk::Widget *Preferences::getFavoritesPanel()
+{
+    if (!toolLocationPreference) {
+        toolLocationPreference = Gtk::manage(new ToolLocationPreference(moptions));
+    }
+    if (!swFavorites) {
+        swFavorites = Gtk::manage(new Gtk::ScrolledWindow());
+        swFavorites->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_NEVER);
+        swFavorites->add(*toolLocationPreference);
+    }
+    return swFavorites;
+}
 
 Gtk::Widget *Preferences::getDynamicProfilePanel()
 {
@@ -1901,6 +1917,8 @@ void Preferences::storePreferences()
     moptions.cropGuides = Options::CropGuidesMode(cropGuidesCombo->get_active_row_number());
     moptions.cropAutoFit = cropAutoFitCB->get_active();
 
+    toolLocationPreference->updateOptions();
+
     moptions.rtSettings.metadata_xmp_sync = rtengine::Settings::MetadataXmpSync(metadataSyncCombo->get_active_row_number());
     moptions.rtSettings.xmp_sidecar_style = rtengine::Settings::XmpSidecarStyle(xmpSidecarCombo->get_active_row_number());
 }
@@ -2521,6 +2539,11 @@ void Preferences::workflowUpdate()
         parent->updateExternalEditorWidget(moptions.externalEditorIndex, moptions.externalEditors);
     }
 
+    if (moptions.cloneFavoriteTools != options.cloneFavoriteTools ||
+        moptions.favorites != options.favorites) {
+        parent->updateToolPanelToolLocations(
+            moptions.favorites, moptions.cloneFavoriteTools);
+    }
 }
 
 void Preferences::addExtPressed()
