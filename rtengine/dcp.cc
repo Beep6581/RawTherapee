@@ -650,13 +650,16 @@ public:
             }
 
             case FLOAT: {
-                union IntFloat {
-                    std::uint32_t i;
-                    float f;
-                } conv;
+                if (offset + 3 < tag->second.value.size()) {
+                    union IntFloat {
+                        std::uint32_t i;
+                        float f;
+                    } conv;
 
-                conv.i = sget4(tag->second.value.data() + offset);
-                return conv.f;  // IEEE FLOATs are already C format, they just need a recast
+                    conv.i = sget4(tag->second.value.data() + offset);
+                    return conv.f;  // IEEE FLOATs are already C format, they just need a recast
+                }
+                return 0.0;
             }
 
             default: {
