@@ -955,10 +955,10 @@ Gtk::Widget* Preferences::getColorManPanel ()
     mwbaena->set_active(true);
     wbah->pack_start(*mwbaena, Gtk::PACK_SHRINK, 0);
     
-    mwbacorr = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_WBAOBS")));
-    setExpandAlignProperties(mwbacorr, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    mwbacorr->set_active(true);
-    wbah->pack_start(*mwbacorr, Gtk::PACK_SHRINK, 0);
+//    mwbacorr = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_WBAOBS")));
+//    setExpandAlignProperties(mwbacorr, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+//    mwbacorr->set_active(true);
+//    wbah->pack_start(*mwbacorr, Gtk::PACK_SHRINK, 0);
 /*
     mwbasort = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_WBASORT")));
     setExpandAlignProperties(mwbasort, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
@@ -1856,7 +1856,7 @@ void Preferences::storePreferences()
     moptions.rtSettings.autocielab = mcie->get_active();
     moptions.rtSettings.observer10 = mwba->get_active();
     moptions.rtSettings.itcwb_enable = mwbaena->get_active();
-    moptions.rtSettings.itcwb_stdobserver10 = mwbacorr->get_active();
+//    moptions.rtSettings.itcwb_stdobserver10 = mwbacorr->get_active();
 //    moptions.rtSettings.itcwb_sorted = mwbasort->get_active();
 //    moptions.rtSettings.itcwb_forceextra = mwbaforc->get_active();
 //    moptions.rtSettings.itcwb_nopurple = mwbanopurp->get_active();
@@ -2025,7 +2025,7 @@ void Preferences::fillPreferences()
     mcie->set_active(moptions.rtSettings.autocielab);
     mwba->set_active(moptions.rtSettings.observer10);
     mwbaena->set_active(moptions.rtSettings.itcwb_enable);
-    mwbacorr->set_active(moptions.rtSettings.itcwb_stdobserver10);
+//    mwbacorr->set_active(moptions.rtSettings.itcwb_stdobserver10);
 //    mwbasort->set_active(moptions.rtSettings.itcwb_sorted);
 //    mwbaforc->set_active(moptions.rtSettings.itcwb_forceextra);
 //    mwbanopurp->set_active(moptions.rtSettings.itcwb_nopurple);

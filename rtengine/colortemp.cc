@@ -2964,7 +2964,12 @@ void ColorTemp::temp2mulxyz (double temp, const std::string &method, double &Xxy
     // We first test for specially handled methods
     const auto iterator = spectMap.find(method);
     const auto &color_match = (settings->observer10 == true) ? cie_colour_match_jd : cie_colour_match_jd2;
-
+/*    if(settings->observer10 == true){
+        printf("General Observer 10°\n");
+    } else {
+        printf("General Observer 2°\n");
+    }
+*/
     if (iterator != spectMap.end()) {
         spectrum_to_xyz_preset(iterator->second, x, y, z, color_match);
     } else {
@@ -3171,6 +3176,12 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
             float CRI_RTs = 0.0, CRIs[8];
 
             const auto &color_match = (settings->observer10 == true) ? cie_colour_match_jd : cie_colour_match_jd2;
+            //exceptional must be used by advice people
+            if(settings->observer10 == true){
+                printf("CRI Observer 10°\n");
+            } else {
+                printf("CRI Observer 2°\n");
+            }
 
             for(int i = 0; i < N_c; i++) {
                 spectrum_to_color_xyz_preset(spec_color[i], spect_illum[illum + 3], XchkLamp[i], YchkLamp[i], ZchkLamp[i], color_match);
@@ -3763,16 +3774,17 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
         Refxyz[i].Yref = 0.f;
         Refxyz[i].Zref = 0.f;
     }
-
+/*
     if (settings->verbose) {
         if (settings->itcwb_stdobserver10 == false) {//I will try to change settings by main
-            printf("Use standard observer 2°\n");
+            printf("ITCWB Use standard observer 2°\n");
         } else {
-            printf("Use standard observer 10°\n");
+            printf("ITCWB Use standard observer 10°\n");
         }
     }
-
-    const color_match_type &color_match = (settings->itcwb_stdobserver10 == true) ? cie_colour_match_jd : cie_colour_match_jd2;
+*/
+  //  const color_match_type &color_match = (settings->itcwb_stdobserver10 == true) ? cie_colour_match_jd : cie_colour_match_jd2;
+    const color_match_type &color_match = (settings->observer10 == true) ? cie_colour_match_jd : cie_colour_match_jd2;
 
     if (separated) {
         const double tempw = Txyz[repref].Tem;
