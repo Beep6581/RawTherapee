@@ -3774,17 +3774,18 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
         Refxyz[i].Yref = 0.f;
         Refxyz[i].Zref = 0.f;
     }
-/*
-    if (settings->verbose) {
+
+/*    if (settings->verbose) {
+       
         if (settings->itcwb_stdobserver10 == false) {//I will try to change settings by main
-            printf("ITCWB Use standard observer 2°\n");
+            printf("Use standard observer 2°\n");
         } else {
-            printf("ITCWB Use standard observer 10°\n");
+            printf("Use standard observer 10°\n");
         }
-    }
+        }
 */
-  //  const color_match_type &color_match = (settings->itcwb_stdobserver10 == true) ? cie_colour_match_jd : cie_colour_match_jd2;
     const color_match_type &color_match = (settings->observer10 == true) ? cie_colour_match_jd : cie_colour_match_jd2;
+ //   const color_match_type &color_match = (settings->itcwb_stdobserver10 == true) ? cie_colour_match_jd : cie_colour_match_jd2;
 
     if (separated) {
         const double tempw = Txyz[repref].Tem;
