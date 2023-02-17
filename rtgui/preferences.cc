@@ -351,6 +351,7 @@ Gtk::Widget* Preferences::getBatchProcPanel()
     appendBehavList(mi, M("TP_PERSPECTIVE_POST_CORRECTION_ADJUSTMENT_FRAME") + " - " + M("TP_PERSPECTIVE_PROJECTION_SHIFT_HORIZONTAL") + ", " + M("TP_PERSPECTIVE_PROJECTION_SHIFT_VERTICAL"), ADDSET_PERSP_PROJ_SHIFT, false);
     appendBehavList(mi, M("TP_PERSPECTIVE_PROJECTION_ROTATE"), ADDSET_PERSP_PROJ_ROTATE, false);
     appendBehavList(mi, M("TP_PERSPECTIVE_RECOVERY_FRAME") + " - " + M("TP_PERSPECTIVE_PROJECTION_YAW") + ", " + M("TP_PERSPECTIVE_PROJECTION_PITCH"), ADDSET_PERSP_PROJ_ANGLE, false);
+    appendBehavList(mi, M("TP_PERSPECTIVE_CAMERA_DEFISH"), ADDSET_PERSP_CAM_DEFISH, false);
 
     mi = behModel->append();
     mi->set_value(behavColumns.label, M("TP_GRADIENT_LABEL"));
