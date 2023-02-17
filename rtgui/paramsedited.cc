@@ -3308,7 +3308,7 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
     }
 
     if (perspective.camera_defish) {
-        toEdit.perspective.camera_defish = dontforceSet && mods.perspective.camera_defish;
+        toEdit.perspective.camera_defish = mods.perspective.camera_defish;
     }
 
     if (perspective.camera_scale) {
