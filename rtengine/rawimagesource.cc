@@ -5340,7 +5340,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     //calculate deltaE xx to find best values of spectrals data - limited to chroma values
    // int maxnb = rtengine::LIM(settings->itcwb_sizereference, 1, 5);
-    int maxnb = rtengine::LIM(wbpar.itcwb_size, 1, 5);
+   // int maxnb = rtengine::LIM(wbpar.itcwb_size, 1, 5);
+    int maxnb = 3;
     //wbpar.itcwb_size to verify if this setting is usefull...diificulties with High gamut and limited patch spectral colors.
     
 //    if (settings->itcwb_thres > 55) {
@@ -5620,7 +5621,7 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
 //    BENCHFUN
     //used by auto WB local to calculate red, green, blue in local region
 
-    int precision = 5;
+    int precision = 3;
 /*
     if (settings->itcwb_precis == 5) {
         precision = 5;
@@ -5630,6 +5631,7 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
         precision = 9;
     }
 */
+/*
     if (wbpar.itcwb_precis == 5) {
         precision = 5;
     } else if (wbpar.itcwb_precis < 5) {
@@ -5637,7 +5639,7 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
     } else if (wbpar.itcwb_precis > 5) {
         precision = 9;
     }
-
+*/
     const int bfw = W / precision + ((W % precision) > 0 ? 1 : 0);// 5 arbitrary value can be change to 3 or 9 ;
     const int bfh = H / precision + ((H % precision) > 0 ? 1 : 0);
 
@@ -5897,7 +5899,7 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
 
     if (wbpar.method == "autitcgreen") {
         bool twotimes = false;
-        int precision = 5;
+        int precision = 3;
         /*
         if (settings->itcwb_precis == 5) {
             precision = 5;
@@ -5907,6 +5909,7 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
             precision = 9;
         }
         */
+        /*
         if (wbpar.itcwb_precis == 5) {
             precision = 5;
         } else if (wbpar.itcwb_precis < 5) {
@@ -5914,7 +5917,7 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
         } else if (wbpar.itcwb_precis > 5) {
             precision = 9;
         }
-
+        */
         const int bfw = W / precision + ((W % precision) > 0 ? 1 : 0);// 5 arbitrary value can be change to 3 or 9 ;
         const int bfh = H / precision + ((H % precision) > 0 ? 1 : 0);
         WBauto(tempref, greenref, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, tempitc, greenitc, studgood, twotimes, wbpar, begx, begy, yEn,  xEn,  cx,  cy, cmp, raw, hrp);

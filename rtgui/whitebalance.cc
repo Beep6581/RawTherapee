@@ -365,7 +365,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     itcwbFrame = Gtk::manage(new Gtk::Frame(M("TP_WBALANCE_ITCWB_FRA")));
     
     itcwbFrame->set_label_align(0.025, 0.5);
-    itcwbFrame->set_tooltip_markup (M("TP_WBALANCE_ITCWB_FRA_TOOLTIP"));
+    itcwbFrame->set_tooltip_markup (M("PREFERENCES_WBACORR_TOOLTIP"));
 
     ToolParamBlock* const itcwbBox = Gtk::manage(new ToolParamBlock());
 
@@ -413,17 +413,17 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     pack_start (*equal);
     pack_start (*tempBias);
     itcwbBox->pack_start (*itcwb_thres);
-    itcwbBox->pack_start (*itcwb_precis);
-    itcwbBox->pack_start (*itcwb_size);
-    itcwbBox->pack_start (*itcwb_delta);
-    itcwbBox->pack_start (*itcwb_fgreen);
-    itcwbBox->pack_start (*itcwb_rgreen);
+//    itcwbBox->pack_start (*itcwb_precis);
+//    itcwbBox->pack_start (*itcwb_size);
+//    itcwbBox->pack_start (*itcwb_delta);//possible use in pp3
+//    itcwbBox->pack_start (*itcwb_fgreen);//possible use in pp3
+//    itcwbBox->pack_start (*itcwb_rgreen);//possible use in pp3
     itcwbBox->pack_start (*itcwb_nopurple);
     itcwbBox->pack_start (*itcwb_sorted);
     itcwbBox->pack_start (*itcwb_forceextra);
     itcwbFrame->add(*itcwbBox);
     pack_start(*itcwbFrame);
-    
+
     if(options.rtSettings.itcwb_enable) {
         itcwb_thres->show();
         itcwb_precis->show();
@@ -535,6 +535,17 @@ void WhiteBalance::itcwb_sorted_toggled ()
 
 void WhiteBalance::itcwb_forceextra_toggled ()
 {
+    
+    if (itcwb_forceextra->get_active ()) {
+            itcwb_sortedconn.block (true);
+            itcwb_sorted->set_active (false);
+            itcwb_sortedconn.block (false);
+    } else {
+            itcwb_sortedconn.block (true);
+            itcwb_sorted->set_active (true);
+            itcwb_sortedconn.block (false);
+    }
+
     if (batchMode) {
         if (itcwb_forceextra->get_inconsistent()) {
             itcwb_forceextra->set_inconsistent (false);
@@ -549,7 +560,7 @@ void WhiteBalance::itcwb_forceextra_toggled ()
     }
 
     if (listener && getEnabled()) {
-        if (itcwb_sorted->get_active ()) {
+        if (itcwb_forceextra->get_active ()) {
             listener->panelChanged (EvWBitcwbforceextra, M("GENERAL_ENABLED"));
         } else {
             listener->panelChanged (EvWBitcwbforceextra, M("GENERAL_DISABLED"));
@@ -956,7 +967,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         if (autit) {
             StudLabel->show();
             itcwbFrame->set_sensitive(true);
-
+            itcwb_forceextra_toggled ();
         } else {
             StudLabel->hide();
             itcwbFrame->set_sensitive(false);

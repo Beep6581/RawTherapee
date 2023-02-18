@@ -934,6 +934,8 @@ Gtk::Widget* Preferences::getColorManPanel ()
     Gtk::Grid* gwba = Gtk::manage(new Gtk::Grid());
     gwba->set_column_spacing(4);
     mwba = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_WBAOBS")));
+    mwba->set_tooltip_text(M("PREFERENCES_WBAOBS_TOOLTIP"));
+    
     setExpandAlignProperties(mwba, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     mwba->set_active(false);
     int roww = 0;
