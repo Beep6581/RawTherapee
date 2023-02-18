@@ -45,6 +45,7 @@ jobs:
             mingw-w64-x86_64-fftw
             mingw-w64-x86_64-lensfun
             mingw-w64-x86_64-libiptcdata
+            mingw-w64-x86_64-exiv2
 
       - name: Configure build
         run: |
