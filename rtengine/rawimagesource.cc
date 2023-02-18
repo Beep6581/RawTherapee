@@ -5460,7 +5460,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
 
       //  const int dgoodref = rtengine::min(settings->itcwb_greendeltatemp, 4);
-        const int dgoodref = rtengine::min(wbpar.itcwb_delta, 4);
+        const int dgoodref = rtengine::LIM(wbpar.itcwb_delta,1, 4);
         const int scantempbeg = rtengine::max(goodref - (dgoodref + 1), 1);
         const int scantempend = rtengine::min(goodref + dgoodref, N_t - 1);
 
@@ -5544,6 +5544,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
        // int maxkgood = 5;//we can change ...to test 3, 4, 5. High values perhaps less good student, but it is a compromise...
         int maxkgood = wbpar.itcwb_fgreen;//we can change ...to test 3, 4, 5. High values perhaps less good student, but it is a compromise...
+        maxkgood = rtengine::LIM(maxkgood, 3, 6);
         int mingood = std::min(std::fabs(Tgstud[0].greenref - 55), std::fabs(Tgstud[1].greenref - 55));
 
         for (int k = 2; k < maxkgood; ++k) {
