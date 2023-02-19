@@ -96,7 +96,7 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     EvPerspMethod = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_METHOD");
     EvPerspProjAngle = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_PROJ_ANGLE");
     EvPerspProjRotate = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_PROJ_ROTATE");
-    EvPerspCamScale = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_PROJ_SCALE");
+    EvPerspCamScale = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_CAM_SCALE");
     EvPerspProjShift = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_PROJ_SHIFT");
     EvPerspRender = mapper->newEvent(TRANSFORM, "GENERAL_NA");
     // Void events.
@@ -106,7 +106,7 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     EvPerspCamShiftVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_CAM_SHIFT");
     EvPerspProjAngleVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_PROJ_ANGLE");
     EvPerspProjRotateVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_PROJ_ROTATE");
-    EvPerspCamScaleVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_PROJ_SCALE");
+    EvPerspCamScaleVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_CAM_SCALE");
     EvPerspProjShiftVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_PROJ_SHIFT");
     setCamBasedEventsActive();
     EvPerspControlLines = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_CTRL_LINE");

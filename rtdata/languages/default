@@ -1455,6 +1455,7 @@ HISTORY_MSG_PDSHARPEN_RADIUS_BOOST;CS - Corner radius boost
 HISTORY_MSG_PERSP_CAM_ANGLE;Perspective - Camera
 HISTORY_MSG_PERSP_CAM_FL;Perspective - Camera
 HISTORY_MSG_PERSP_CAM_DEFISH;Perspective - De-fish
+HISTORY_MSG_PERSP_CAM_SCALE;Perspective - Scale
 HISTORY_MSG_PERSP_CAM_SHIFT;Perspective - Camera
 HISTORY_MSG_PERSP_CTRL_LINE;Perspective - Control lines
 HISTORY_MSG_PERSP_METHOD;Perspective - Method
