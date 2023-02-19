@@ -416,7 +416,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
 //    itcwbBox->pack_start (*itcwb_precis);
 //    itcwbBox->pack_start (*itcwb_size);
 //    itcwbBox->pack_start (*itcwb_delta);//possible use in pp3
-//    itcwbBox->pack_start (*itcwb_fgreen);//possible use in pp3
+    itcwbBox->pack_start (*itcwb_fgreen);//possible use in pp3
 //    itcwbBox->pack_start (*itcwb_rgreen);//possible use in pp3
     itcwbBox->pack_start (*itcwb_nopurple);
     itcwbBox->pack_start (*itcwb_sorted);
