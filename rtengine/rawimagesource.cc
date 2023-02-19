@@ -4718,7 +4718,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     In file options.
     use standard observer 10°, false = standard observer 2°
     */
-    BENCHFUN
+   // BENCHFUN
 
     Glib::ustring profuse;
     profuse = "sRGB";//or "Adobe RGB"
