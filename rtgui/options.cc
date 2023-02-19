@@ -624,16 +624,6 @@ void Options::setDefaults()
     rtSettings.fftwsigma = true; //choice between sigma^2 or empirical formula
 // end locallab
     rtSettings.itcwb_enable = true;
-    rtSettings.itcwb_thres = 34;//between 10 to 55
-    rtSettings.itcwb_sorted = true;
-    rtSettings.itcwb_greenrange = 0;//between 0 to 2
-    rtSettings.itcwb_greendeltatemp = 2;//between 0 and 4
-    rtSettings.itcwb_forceextra = true;
-    rtSettings.itcwb_sizereference = 3;//between 1 and 5
-    rtSettings.itcwb_delta = 1;//between 0 and 5
-    rtSettings.itcwb_stdobserver10 = true;
-    rtSettings.itcwb_precis = 3;//3  or 5 or 9
-    rtSettings.itcwb_nopurple = true;
 
 //wavelet
     rtSettings.edghi = 3.0;//1.1 and 5.
@@ -1801,45 +1791,6 @@ void Options::readFromFile(Glib::ustring fname)
                     rtSettings.itcwb_enable = keyFile.get_boolean("Color Management", "Itcwb_enable");
                 }
 
-                if (keyFile.has_key("Color Management", "Itcwb_thres")) {
-                    rtSettings.itcwb_thres = keyFile.get_integer("Color Management", "Itcwb_thres");
-                }
-
-                if (keyFile.has_key("Color Management", "Itcwb_sorted")) {
-                    rtSettings.itcwb_sorted = keyFile.get_boolean("Color Management", "Itcwb_sorted");
-                }
-
-                if (keyFile.has_key("Color Management", "Itcwb_forceextra")) {
-                    rtSettings.itcwb_forceextra = keyFile.get_boolean("Color Management", "Itcwb_forceextra");
-                }
-
-                if (keyFile.has_key("Color Management", "Itcwb_nopurple")) {
-                    rtSettings.itcwb_nopurple = keyFile.get_boolean("Color Management", "Itcwb_nopurple");
-                }
-
-                if (keyFile.has_key("Color Management", "Itcwb_stdobserver10")) {
-                    rtSettings.itcwb_stdobserver10 = keyFile.get_boolean("Color Management", "Itcwb_stdobserver10");
-                }
-
-                if (keyFile.has_key("Color Management", "Itcwb_greenrange")) {
-                    rtSettings.itcwb_greenrange = keyFile.get_integer("Color Management", "Itcwb_greenrange");
-                }
-
-                if (keyFile.has_key("Color Management", "Itcwb_greendeltatemp")) {
-                    rtSettings.itcwb_greendeltatemp = keyFile.get_integer("Color Management", "Itcwb_greendeltatemp");
-                }
-
-                if (keyFile.has_key("Color Management", "Itcwb_sizereference")) {
-                    rtSettings.itcwb_sizereference = keyFile.get_integer("Color Management", "Itcwb_sizereference");
-                }
-
-                if (keyFile.has_key("Color Management", "Itcwb_delta")) {
-                    rtSettings.itcwb_delta = keyFile.get_integer("Color Management", "Itcwb_delta");
-                }
-
-                if (keyFile.has_key("Color Management", "Itcwb_precis")) {
-                    rtSettings.itcwb_precis = keyFile.get_integer("Color Management", "Itcwb_precis");
-                }
 
                 //if (keyFile.has_key ("Color Management", "Colortoningab")) rtSettings.colortoningab = keyFile.get_double("Color Management", "Colortoningab");
                 //if (keyFile.has_key ("Color Management", "Decaction")) rtSettings.decaction = keyFile.get_double("Color Management", "Decaction");
@@ -2611,16 +2562,6 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_double("Color Management", "CBDLlevel0", rtSettings.level0_cbdl);
         keyFile.set_double("Color Management", "CBDLlevel123", rtSettings.level123_cbdl);
         keyFile.set_boolean("Color Management", "Itcwb_enable", rtSettings.itcwb_enable);
-        keyFile.set_integer("Color Management", "Itcwb_thres", rtSettings.itcwb_thres);
-        keyFile.set_boolean("Color Management", "Itcwb_sorted", rtSettings.itcwb_sorted);
-        keyFile.set_integer("Color Management", "Itcwb_greenrange", rtSettings.itcwb_greenrange);
-        keyFile.set_integer("Color Management", "Itcwb_greendeltatemp", rtSettings.itcwb_greendeltatemp);
-        keyFile.set_boolean("Color Management", "Itcwb_forceextra", rtSettings.itcwb_forceextra);
-        keyFile.set_boolean("Color Management", "Itcwb_nopurple", rtSettings.itcwb_nopurple);
-        keyFile.set_integer("Color Management", "Itcwb_sizereference", rtSettings.itcwb_sizereference);
-        keyFile.set_integer("Color Management", "Itcwb_delta", rtSettings.itcwb_delta);
-        keyFile.set_boolean("Color Management", "Itcwb_stdobserver10", rtSettings.itcwb_stdobserver10);
-        keyFile.set_integer("Color Management", "Itcwb_precis", rtSettings.itcwb_precis);
 
         //keyFile.set_double  ("Color Management", "Colortoningab", rtSettings.colortoningab);
         //keyFile.set_double  ("Color Management", "Decaction", rtSettings.decaction);

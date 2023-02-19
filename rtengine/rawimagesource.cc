@@ -4709,14 +4709,14 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     Itcwb_greenrange : 0 amplitude of green variation - between 0 to 2
     Itcwb_greendelta : 1 - delta temp in green iterate loop for "extra" - between 0 to 4
     Itcwb_forceextra : false by default - Use all Ciexy diagram instead of sRGB
-    Itcwb_sizereference : 3 by default, can be set to 5 ==> size of reference color compare to size of histogram real color
+    //Itcwb_sizereference : repalce by int maxnb 3 by default, can be set to 5 ==> size of reference color compare to size of histogram real color
     itcwb_delta : 1 by default can be set between 0 to 5 ==> delta temp to build histogram xy - if camera temp is not probably good
-    itcwb_precis : 3 by default - can be set to 3 or 9 - 3 best sampling but more time...9 "old" settings - but low differences in times with 3 instead of 9 about twice time 160ms instead of 80ms for a big raw file
+    //itcwb_precis : replace by int precision = 3 by default - can be set to 3 or 9 - 3 best sampling but more time...9 "old" settings - but low differences in times with 3 instead of 9 about twice time 160ms instead of 80ms for a big raw file
     itcwb_nopurple : true default - allow to bypass highlight recovery and inpait opposed when need flowers and not purple due to highlights...
     itcwb_fgreen : 5 by default - between 3 to 6 - find the compromise student / green to reach green near of 1 
     
     In file options.
-    itcwb_stdobserver10 : true by default - use standard observer 10°, false = standard observer 2°
+    use standard observer 10°, false = standard observer 2°
     */
     BENCHFUN
 
@@ -4898,15 +4898,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     const RangeGreen Rangemax = {0, N_g};
 
     RangeGreen Rangegreenused;
-    /*
-    if (settings->itcwb_greenrange == 0) {
-        Rangegreenused = Rangestandard;
-    } else if (settings->itcwb_greenrange == 1) {
-        Rangegreenused = Rangeextended;
-    } else {
-        Rangegreenused = Rangemax;
-    }
-    */
+
     if (wbpar.itcwb_rgreen == 0) {
         Rangegreenused = Rangestandard;
     } else if (wbpar.itcwb_rgreen == 1) {
@@ -5316,14 +5308,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         printf("estimchrom=%f\n", estimchrom);
     }
 
-//    if (settings->itcwb_sorted) { //sort in ascending with chroma values
-//        std::sort(wbchro, wbchro + sizcu4, wbchro[0]);
-//    }
     if (wbpar.itcwb_sorted) { //sort in ascending with chroma values
         std::sort(wbchro, wbchro + sizcu4, wbchro[0]);
     }
 
- //   const int maxval = rtengine::LIM(settings->itcwb_thres, 10, 55);//max values of color to find correlation
     const int maxval = rtengine::LIM(wbpar.itcwb_thres, 10, 55);//max values of color to find correlation
 
     sizcurr2ref = rtengine::min(sizcurr2ref, maxval);    //keep about the biggest values,
@@ -5343,10 +5331,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
    // int maxnb = rtengine::LIM(wbpar.itcwb_size, 1, 5);
     int maxnb = 3;
     //wbpar.itcwb_size to verify if this setting is usefull...diificulties with High gamut and limited patch spectral colors.
-    
-//    if (settings->itcwb_thres > 55) {
-//        maxnb = 201 / settings->itcwb_thres;
-//    }
+
     if (wbpar.itcwb_thres > 55) {//normally never used
         maxnb = 201 / wbpar.itcwb_thres;
     }
@@ -5456,10 +5441,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             Tgstud[i].student = 1000.f;//max value to initialize
             Tgstud[i].tempref = 57;//5002K position in the list
             Tgstud[i].greenref = 55;// 1.f position in the list
-
         }
 
-      //  const int dgoodref = rtengine::min(settings->itcwb_greendeltatemp, 4);
         const int dgoodref = rtengine::LIM(wbpar.itcwb_delta,1, 4);
         const int scantempbeg = rtengine::max(goodref - (dgoodref + 1), 1);
         const int scantempend = rtengine::min(goodref + dgoodref, N_t - 1);
@@ -5542,7 +5525,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         // perhaps we can used a Snedecor test ? but why...at least we have confidence interval > 90%
         int greengood = 55;
 
-       // int maxkgood = 5;//we can change ...to test 3, 4, 5. High values perhaps less good student, but it is a compromise...
         int maxkgood = wbpar.itcwb_fgreen;//we can change ...to test 3, 4, 5. High values perhaps less good student, but it is a compromise...
         maxkgood = rtengine::LIM(maxkgood, 3, 6);
         int mingood = std::min(std::fabs(Tgstud[0].greenref - 55), std::fabs(Tgstud[1].greenref - 55));
@@ -5594,19 +5576,11 @@ void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> 
     //put green (tint) in reasonable limits for an Daylight illuminant
     // avoid too bi or too low values
     if (wbpar.method == "autitcgreen") {
-//        bool extra = false;
         bool extra = true;
 
         if (greenref > 0.5 && greenref < 1.3) {// 0.5 and 1.3 arbitraties values
             greenitc = greenref;
 
-        //    if (settings->itcwb_forceextra) {
-        //        extra = true;
-        //    }
-       //     if (wbpar.itcwb_forceextra) {
-       //         extra = true;
-       //     }
-            
         } else {
             greenitc = 1.;
             extra = true;
@@ -5622,25 +5596,8 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
 //    BENCHFUN
     //used by auto WB local to calculate red, green, blue in local region
 
-    int precision = 3;
-/*
-    if (settings->itcwb_precis == 5) {
-        precision = 5;
-    } else if (settings->itcwb_precis < 5) {
-        precision = 3;
-    } else if (settings->itcwb_precis > 5) {
-        precision = 9;
-    }
-*/
-/*
-    if (wbpar.itcwb_precis == 5) {
-        precision = 5;
-    } else if (wbpar.itcwb_precis < 5) {
-        precision = 3;
-    } else if (wbpar.itcwb_precis > 5) {
-        precision = 9;
-    }
-*/
+    int precision = 3;//must be 3 5 or 9
+
     const int bfw = W / precision + ((W % precision) > 0 ? 1 : 0);// 5 arbitrary value can be change to 3 or 9 ;
     const int bfh = H / precision + ((H % precision) > 0 ? 1 : 0);
 
@@ -5900,25 +5857,7 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
 
     if (wbpar.method == "autitcgreen") {
         bool twotimes = false;
-        int precision = 3;
-        /*
-        if (settings->itcwb_precis == 5) {
-            precision = 5;
-        } else if (settings->itcwb_precis < 5) {
-            precision = 3;
-        } else if (settings->itcwb_precis > 5) {
-            precision = 9;
-        }
-        */
-        /*
-        if (wbpar.itcwb_precis == 5) {
-            precision = 5;
-        } else if (wbpar.itcwb_precis < 5) {
-            precision = 3;
-        } else if (wbpar.itcwb_precis > 5) {
-            precision = 9;
-        }
-        */
+        int precision = 3;//must be 3 5 or 9
         const int bfw = W / precision + ((W % precision) > 0 ? 1 : 0);// 5 arbitrary value can be change to 3 or 9 ;
         const int bfh = H / precision + ((H % precision) > 0 ? 1 : 0);
         WBauto(tempref, greenref, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, tempitc, greenitc, studgood, twotimes, wbpar, begx, begy, yEn,  xEn,  cx,  cy, cmp, raw, hrp);

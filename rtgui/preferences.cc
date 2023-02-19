@@ -956,33 +956,7 @@ Gtk::Widget* Preferences::getColorManPanel ()
     setExpandAlignProperties(mwbaena, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     mwbaena->set_active(true);
     wbah->pack_start(*mwbaena, Gtk::PACK_SHRINK, 0);
-    
-//    mwbacorr = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_WBAOBS")));
-//    setExpandAlignProperties(mwbacorr, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-//    mwbacorr->set_active(true);
-//    wbah->pack_start(*mwbacorr, Gtk::PACK_SHRINK, 0);
-/*
-    mwbasort = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_WBASORT")));
-    setExpandAlignProperties(mwbasort, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    mwbasort->set_active(true);
-    wbah->pack_start(*mwbasort, Gtk::PACK_SHRINK, 0);
-
-    mwbaforc = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_WBAFORC")));
-    setExpandAlignProperties(mwbaforc, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    mwbaforc->set_active(true);
-    wbah->pack_start(*mwbaforc, Gtk::PACK_SHRINK, 0);
-*/
-/*
-    mwbanopurp = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_WBANOPURP")));
-    setExpandAlignProperties(mwbanopurp, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    mwbanopurp->set_active(true);
-    wbah->pack_start(*mwbanopurp, Gtk::PACK_SHRINK, 0);
-*/
     wbaVB->add(*wbah);
-//    placeSpinBox(wbaVB, wbacorrnb, "PREFERENCES_WBAPATCH", 0, 1, 5, 2, 10, 55);
-//   placeSpinBox(wbaVB, wbaprecis, "PREFERENCES_WBAPRECIS", 0, 2, 5, 2, 3, 7);
-//   placeSpinBox(wbaVB, wbasizeref, "PREFERENCES_WBASIZEREF", 0, 1, 5, 2, 1, 5);
-//    placeSpinBox(wbaVB, wbagreendelta, "PREFERENCES_WBAGREENDELTA", 0, 1, 5, 2, 1, 4);
 
     fwbacorr->add (*wbaVB);
     vbColorMan->pack_start (*fwbacorr, Gtk::PACK_SHRINK);
@@ -1858,15 +1832,6 @@ void Preferences::storePreferences()
     moptions.rtSettings.autocielab = mcie->get_active();
     moptions.rtSettings.observer10 = mwba->get_active();
     moptions.rtSettings.itcwb_enable = mwbaena->get_active();
-//    moptions.rtSettings.itcwb_stdobserver10 = mwbacorr->get_active();
-//    moptions.rtSettings.itcwb_sorted = mwbasort->get_active();
-//    moptions.rtSettings.itcwb_forceextra = mwbaforc->get_active();
-//    moptions.rtSettings.itcwb_nopurple = mwbanopurp->get_active();
-
-//    moptions.rtSettings.itcwb_thres = wbacorrnb->get_value_as_int();
-//    moptions.rtSettings.itcwb_precis = wbaprecis->get_value_as_int();
-//    moptions.rtSettings.itcwb_sizereference = wbasizeref->get_value_as_int();
-//    moptions.rtSettings.itcwb_greendeltatemp = wbagreendelta->get_value_as_int();
 
 #endif
 
@@ -2027,14 +1992,6 @@ void Preferences::fillPreferences()
     mcie->set_active(moptions.rtSettings.autocielab);
     mwba->set_active(moptions.rtSettings.observer10);
     mwbaena->set_active(moptions.rtSettings.itcwb_enable);
-//    mwbacorr->set_active(moptions.rtSettings.itcwb_stdobserver10);
-//    mwbasort->set_active(moptions.rtSettings.itcwb_sorted);
-//    mwbaforc->set_active(moptions.rtSettings.itcwb_forceextra);
-//    mwbanopurp->set_active(moptions.rtSettings.itcwb_nopurple);
-//    wbacorrnb->set_value (moptions.rtSettings.itcwb_thres);
-//    wbaprecis->set_value (moptions.rtSettings.itcwb_precis);
-//    wbasizeref->set_value (moptions.rtSettings.itcwb_sizereference);
-//    wbagreendelta->set_value (moptions.rtSettings.itcwb_greendeltatemp);
 
     cbAutoMonProfile->set_active(moptions.rtSettings.autoMonitorProfile);
 #endif
