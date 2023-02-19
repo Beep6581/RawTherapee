@@ -522,7 +522,7 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
         x_d /= params->perspective.camera_scale;
         y_d /= params->perspective.camera_scale;
         if (params->perspective.camera_defish) {
-            double const focal_source = params->perspective.camera_focal_length * maxRadius*1351.0/5206.416/6.5;
+            double const focal_source = params->perspective.camera_focal_length * maxRadius * 0.0462;
             double focal_dst = focal_source;
             x_d /= focal_dst;
             y_d /= focal_dst;
@@ -1262,7 +1262,7 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
             x_d /= params->perspective.camera_scale;
             y_d /= params->perspective.camera_scale;
             if (params->perspective.camera_defish) {
-                double const focal_source = params->perspective.camera_focal_length * maxRadius*1351.0/5206.416/6.5;
+                double const focal_source = params->perspective.camera_focal_length * maxRadius * 0.0462;
                 double focal_dst = focal_source;
                 x_d /= focal_dst;
                 y_d /= focal_dst;
