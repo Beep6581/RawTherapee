@@ -773,7 +773,7 @@ private:
         const std::size_t saved_position = std::ftell(file_) + 4;
 
         // Load value field (possibly seek before)
-        const std::size_t value_size = tag.count * getTypeSize(tag.type);
+        const std::size_t value_size = static_cast<std::size_t>(tag.count) * getTypeSize(tag.type);
 
         if (value_size > 4) {
             if (std::fseek(file_, get4(), SEEK_SET) == -1) {
