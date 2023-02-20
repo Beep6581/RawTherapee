@@ -1340,7 +1340,8 @@ WBParams::WBParams() :
     itcwb_rgreen(1),
     itcwb_nopurple(true),
     itcwb_sorted(true),
-    itcwb_forceextra(false)
+    itcwb_forceextra(false),
+    itcwb_sampling(false)
 
 {
 }
@@ -1383,7 +1384,8 @@ bool WBParams::operator ==(const WBParams& other) const
         && itcwb_rgreen == other.itcwb_rgreen
         && itcwb_nopurple == other.itcwb_nopurple
         && itcwb_sorted == other.itcwb_sorted
-        && itcwb_forceextra == other.itcwb_forceextra;
+        && itcwb_forceextra == other.itcwb_forceextra
+        && itcwb_sampling == other.itcwb_sampling;
 
 }
 
@@ -6137,6 +6139,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->wb.itcwb_nopurple, "White Balance", "Itcwb_nopurple", wb.itcwb_nopurple, keyFile);
         saveToKeyfile(!pedited || pedited->wb.itcwb_sorted, "White Balance", "Itcwb_sorted", wb.itcwb_sorted, keyFile);
         saveToKeyfile(!pedited || pedited->wb.itcwb_forceextra, "White Balance", "Itcwb_forceextra", wb.itcwb_forceextra, keyFile);
+        saveToKeyfile(!pedited || pedited->wb.itcwb_sampling, "White Balance", "Itcwb_sampling", wb.itcwb_sampling, keyFile);
 
 // Colorappearance
         saveToKeyfile(!pedited || pedited->colorappearance.enabled, "Color appearance", "Enabled", colorappearance.enabled, keyFile);
@@ -8087,6 +8090,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "White Balance", "Itcwb_nopurple", pedited, wb.itcwb_nopurple, pedited->wb.itcwb_nopurple);
             assignFromKeyfile(keyFile, "White Balance", "Itcwb_sorted", pedited, wb.itcwb_sorted, pedited->wb.itcwb_sorted);
             assignFromKeyfile(keyFile, "White Balance", "Itcwb_forceextra", pedited, wb.itcwb_forceextra, pedited->wb.itcwb_forceextra);
+            assignFromKeyfile(keyFile, "White Balance", "Itcwb_sampling", pedited, wb.itcwb_sampling, pedited->wb.itcwb_sampling);
         }
 
         if (keyFile.has_group("Defringing")) {

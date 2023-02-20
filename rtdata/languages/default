@@ -1528,6 +1528,7 @@ HISTORY_MSG_WAVSTREND;Strength soft
 HISTORY_MSG_WAVTHRDEN;Threshold local contrast
 HISTORY_MSG_WAVTHREND;Threshold local contrast
 HISTORY_MSG_WAVUSHAMET;Clarity method
+HISTORY_MSG_WBITC_SAMPLING;Low sampling
 HISTORY_MSG_WBITC_THRES;Itcwb Theshold
 HISTORY_MSG_WBITC_NOPURPLE;Itcwb Nopurple
 HISTORY_MSG_WBITC_SORTED;Itcwb Sorted
@@ -1842,7 +1843,7 @@ PREFERENCES_CIE;Ciecam
 PREFERENCES_CIEARTIF;Avoid artifacts
 PREFERENCES_WBA;White Balance
 PREFERENCES_WBACORR;White Balance - Automatic temperature correlation
-PREFERENCES_WBACORR_TOOLTIP;These settings allow, depending on the images (type of raw file, colorimetry, etc.), an adaptation of the " Temperature correlation " algorithm in order to obtain the best overall results. There is no absolute rule, linking these parameters to the results obtained.\nOnly an experimentation with many users should allow to find global settings which will be a compromise and in the end to limit to the strict minimum the parameters accessible to the user.\n\nThe settings are of 3 types: \n* those accessible to the user from the GUI.\n* those accessible only in reading from each pp3 file : Itcwb_rangegreen=1, Itcwb_delta=2.\n* those accessible only by changing the C++ code.\n\nSee Rawpedia (in French) for explanations on these parameters.
+PREFERENCES_WBACORR_TOOLTIP;These settings allow, depending on the images (type of raw file, colorimetry, etc.), an adaptation of the " Temperature correlation " algorithm in order to obtain the best overall results. There is no absolute rule, linking these parameters to the results obtained.\nOnly an experimentation with many users should allow to find global settings which will be a compromise and in the end to limit to the strict minimum the parameters accessible to the user.\n\nThe settings are of 3 types: \n* those accessible to the user from the GUI.\n* those accessible only in reading from each pp3 file : Itcwb_rangegreen=1, Itcwb_delta=2.\n* those accessible only by changing the C++ code.\n'Low sampling' forces the algorithm to use default sampling and settings of 5.9 you must Enabled Observer 10° in Preferences.\n\nSee Rawpedia (in French) for explanations on these parameters.
 PREFERENCES_WBAENA;Show White Balance auto Temperature correlation Settings 
 PREFERENCES_WBAOBS;Observer 10° instead of Observer 2°
 PREFERENCES_WBAOBS_TOOLTIP;The color management in Rawtherapee (White balance, channel multipliers, highlight recovery,...) uses the spectral data of the illuminants and colors. Observer is an important parameter of this management which takes into account the angle of perception of the eye. In 1931 it was fixed at 2° (privileges the use of the cones). In 1964 it was fixed at 10° (privileges the use of the cones, but partially takes into account the rods).\nTo avoid a (rare) drift of the colors due to the choice Observer 10° - probably due to the conversion matrix - Observer 2° is selected by default.\nIn a majority of cases Observer 10° will be a more relevant choice.
@@ -4107,6 +4108,8 @@ TP_WBALANCE_ITCWB_PRECIS;Precision algorithm - scale used
 TP_WBALANCE_ITCWBPRECIS_TOOLTIP;The lower the value, the more relevant the data, but increases the processing time. Since the processing time is low, this parameter should generally be able to remain at the default value
 TP_WBALANCE_ITCWB_RGREEN;Green range
 TP_WBALANCE_ITCWBRGREEN_TOOLTIP;Sets the green value review amplitude in iterations, from low amplitude 0.82 to 1.25 to maximum amplitude 0.4 to 4.
+TP_WBALANCE_ITCWB_SAMPLING;Low sampling
+TP_WBALANCE_ITCWSAMPLING_TOOLTIP;Allows you to use the old sampling algorithm to ensure better compatibility with 5.9.
 TP_WBALANCE_ITCWB_SIZE;Size of ref. color compare to histogram
 TP_WBALANCE_ITCWBSIZE_TOOLTIP;This setting is especially important when 'Force use of entire CIE diagram' (or to a lesser degree when 'Sort in chroma order instead of histogram') is activated.\n It sets the number of iterations to find the best correspondence between the reference spectral colors and those in xyY value of the image. A value of 3 is a good compromise.
 TP_WBALANCE_ITCWB_SORTED;Sort in chroma order instead of histogram

@@ -4036,6 +4036,475 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end)
     }
 }
 
+
+static void histoxyY_low(int bfhitc, int bfwitc, const array2D<float> & xc, const array2D<float> & yc, const array2D<float> & Yc, LUTf &xxx, LUTf &yyy, LUTf &YYY, LUTu &histxy)
+{
+    //calculate histogram x y in a range of 190 colors
+    //this "choice" are guided by generally colors who are in nature skin, sky, etc. in those cases "steps" are small
+    // of course we can change to be more precise
+#ifdef _OPENMP
+    #pragma omp parallel
+#endif
+    {
+        LUTu histxythr(histxy.getSize());
+        histxythr.clear();
+        LUTf xxxthr(xxx.getSize());
+        xxxthr.clear();
+        LUTf yyythr(yyy.getSize());
+        yyythr.clear();
+        LUTf YYYthr(YYY.getSize());
+        YYYthr.clear();
+#ifdef _OPENMP
+        #pragma omp for schedule(dynamic, 4) nowait
+#endif
+        for (int y = 0; y < bfhitc ; y++) {
+            for (int x = 0; x < bfwitc ; x++) {
+                int nh = -1;
+                if (xc[y][x] < 0.12f && xc[y][x] > 0.03f && yc[y][x] > 0.1f) { // near Prophoto
+                    if (yc[y][x] < 0.2f) {
+                        nh = 0;
+                        //blue hard
+                    } else if (yc[y][x] < 0.3f) {
+                        nh = 1;
+                        //blue
+                    } else if (yc[y][x] < 0.4f) {
+                        nh = 2;
+
+                    } else if (yc[y][x] < 0.5f) {
+                        //blue green
+                        nh = 3;
+                    } else if (yc[y][x] < 0.6f) {
+                        nh = 4;
+                    } else if (yc[y][x] < 0.82f) {
+                        //green
+                        nh = 5;
+                    }
+                } else if (xc[y][x] < 0.24f && yc[y][x] > 0.05f) {
+                    if (yc[y][x] < 0.2f) {
+                        nh = 6;
+                    } else if (yc[y][x] < 0.3f) {
+                        nh = 7;
+                    } else if (yc[y][x] < 0.4f) {
+                        nh = 8;
+                    } else if (yc[y][x] < 0.5f) {
+                        nh = 9;
+                    } else if (yc[y][x] < 0.6f) {
+                        nh = 10;
+                    } else if (yc[y][x] < 0.75f) {
+                        nh = 11;
+                    }
+                } else if (xc[y][x] < 0.28f && yc[y][x] > 0.1f) {//blue sky and other
+                    if (yc[y][x] < 0.2f) {
+                        nh = 12;
+                    } else if (yc[y][x] < 0.25f) {
+                        nh = 13;
+                    } else if (yc[y][x] < 0.29f) {
+                        nh = 14;
+                    } else if (yc[y][x] < 0.33f) {
+                        nh = 15;
+                    } else if (yc[y][x] < 0.37f) {
+                        nh = 16;
+                    } else if (yc[y][x] < 0.4f) {
+                        nh = 17;
+                    } else if (yc[y][x] < 0.45f) {
+                        nh = 18;
+                    } else if (yc[y][x] < 0.5f) {
+                        nh = 19;
+                    } else if (yc[y][x] < 0.6f) {
+                        nh = 20;
+                    } else if (yc[y][x] < 0.75f) {
+                        nh = 21;
+                    }
+                } else if (xc[y][x] < 0.31f && yc[y][x] > 0.1f) {//near neutral others
+                    if (yc[y][x] < 0.2f) {
+                        nh = 22;
+                    } else if (yc[y][x] < 0.24f) {
+                        nh = 23;
+                    } else if (yc[y][x] < 0.29f) {
+                        nh = 24;
+                    } else if (yc[y][x] < 0.32f) {
+                        nh = 25;
+                    } else if (yc[y][x] < 0.36f) {
+                        nh = 26;
+                    } else if (yc[y][x] < 0.4f) {
+                        nh = 27;
+                    } else if (yc[y][x] < 0.5f) {
+                        nh = 28;
+                    } else if (yc[y][x] < 0.7f) {
+                        nh = 29;
+                    }
+                } else if (xc[y][x] < 0.325f && yc[y][x] > 0.1f) {//neutral  34
+                    if (yc[y][x] < 0.2f) {
+                        nh = 30;
+                    } else if (yc[y][x] < 0.24f) {
+                        nh = 31;
+                    } else if (yc[y][x] < 0.29f) {
+                        nh = 32;
+                    } else if (yc[y][x] < 0.32f) {
+                        nh = 33;
+                    } else if (yc[y][x] < 0.33f) {
+                        nh = 34;
+                    } else if (yc[y][x] < 0.335f) {
+                        nh = 35;
+                    } else if (yc[y][x] < 0.34f) {
+                        nh = 36;
+                    } else if (yc[y][x] < 0.35f) {
+                        nh = 37;
+                    } else if (yc[y][x] < 0.37f) {
+                        nh = 38;
+                    } else if (yc[y][x] < 0.4f) {
+                        nh = 39;
+                    } else if (yc[y][x] < 0.45f) {
+                        nh = 40;
+                    } else if (yc[y][x] < 0.5f) {
+                        nh = 41;
+                    } else if (yc[y][x] < 0.55f) {
+                        nh = 42;
+                    } else if (yc[y][x] < 0.7f) {
+                        nh = 43;
+                    }
+                } else if (xc[y][x] < 0.335f && yc[y][x] > 0.1f) {//neutral
+                    if (yc[y][x] < 0.2f) {
+                        nh = 44;
+                    } else if (yc[y][x] < 0.24f) {
+                        nh = 45;
+                    } else if (yc[y][x] < 0.29f) {
+                        nh = 46;
+                    } else if (yc[y][x] < 0.32f) {
+                        nh = 47;
+                    } else if (yc[y][x] < 0.33f) {
+                        nh = 48;
+                    } else if (yc[y][x] < 0.335f) {
+                        nh = 49;
+                    } else if (yc[y][x] < 0.34f) {
+                        nh = 50;
+                    } else if (yc[y][x] < 0.345f) {
+                        nh = 51;
+                    } else if (yc[y][x] < 0.35f) {
+                        nh = 52;
+                    } else if (yc[y][x] < 0.355f) {
+                        nh = 53;
+                    } else if (yc[y][x] < 0.36f) {
+                        nh = 54;
+                    } else if (yc[y][x] < 0.37f) {
+                        nh = 55;
+                    } else if (yc[y][x] < 0.38f) {
+                        nh = 56;
+                    } else if (yc[y][x] < 0.4f) {
+                        nh = 57;
+                    } else if (yc[y][x] < 0.45f) {
+                        nh = 58;
+                    } else if (yc[y][x] < 0.5f) {
+                        nh = 59;
+                    } else if (yc[y][x] < 0.55f) {
+                        nh = 60;
+                    } else if (yc[y][x] < 0.7f) {
+                        nh = 61;
+                    }
+                } else if (xc[y][x] < 0.340f && yc[y][x] > 0.1f) {//neutral
+                    if (yc[y][x] < 0.2f) {
+                        nh = 62;
+                    } else if (yc[y][x] < 0.24f) {
+                        nh = 63;
+                    } else if (yc[y][x] < 0.29f) {
+                        nh = 64;
+                    } else if (yc[y][x] < 0.32f) {
+                        nh = 65;
+                    } else if (yc[y][x] < 0.325f) {
+                        nh = 66;
+                    } else if (yc[y][x] < 0.33f) {
+                        nh = 67;
+                    } else if (yc[y][x] < 0.335f) {
+                        nh = 68;
+                    } else if (yc[y][x] < 0.34f) {
+                        nh = 69;
+                    } else if (yc[y][x] < 0.345f) {
+                        nh = 70;
+                    } else if (yc[y][x] < 0.35f) {
+                        nh = 71;
+                    } else if (yc[y][x] < 0.355f) {
+                        nh = 72;
+                    } else if (yc[y][x] < 0.36f) {
+                        nh = 73;
+                    } else if (yc[y][x] < 0.37f) {
+                        nh = 74;
+                    } else if (yc[y][x] < 0.38f) {
+                        nh = 75;
+                    } else if (yc[y][x] < 0.4f) {
+                        nh = 76;
+                    } else if (yc[y][x] < 0.45f) {
+                        nh = 77;
+                    } else if (yc[y][x] < 0.5f) {
+                        nh = 78;
+                    } else if (yc[y][x] < 0.55f) {
+                        nh = 79;
+                    } else if (yc[y][x] < 0.7f) {
+                        nh = 80;
+                    }
+                } else if (xc[y][x] < 0.345f && yc[y][x] > 0.1f) {//neutral  37
+                    if (yc[y][x] < 0.2f) {
+                        nh = 81;
+                    } else if (yc[y][x] < 0.24f) {
+                        nh = 82;
+                    } else if (yc[y][x] < 0.29f) {
+                        nh = 83;
+                    } else if (yc[y][x] < 0.32f) {
+                        nh = 84;
+                    } else if (yc[y][x] < 0.33f) {
+                        nh = 85;
+                    } else if (yc[y][x] < 0.335f) {
+                        nh = 86;
+                    } else if (yc[y][x] < 0.34f) {
+                        nh = 87;
+                    } else if (yc[y][x] < 0.345f) {
+                        nh = 88;
+                    } else if (yc[y][x] < 0.35f) {
+                        nh = 89;
+                    } else if (yc[y][x] < 0.355f) {
+                        nh = 90;
+                    } else if (yc[y][x] < 0.36f) {
+                        nh = 91;
+                    } else if (yc[y][x] < 0.37f) {
+                        nh = 92;
+                    } else if (yc[y][x] < 0.38f) {
+                        nh = 93;
+                    } else if (yc[y][x] < 0.39f) {
+                        nh = 94;
+                    } else if (yc[y][x] < 0.4f) {
+                        nh = 95;
+                    } else if (yc[y][x] < 0.42f) {
+                        nh = 96;
+                    } else if (yc[y][x] < 0.45f) {
+                        nh = 97;
+                    } else if (yc[y][x] < 0.48f) {
+                        nh = 98;
+                    } else if (yc[y][x] < 0.5f) {
+                        nh = 99;
+                    } else if (yc[y][x] < 0.55f) {
+                        nh = 100;
+                    } else if (yc[y][x] < 0.65f) {
+                        nh = 101;
+                    }
+                } else if (xc[y][x] < 0.355f && yc[y][x] > 0.1f) {//neutral  37
+                    if (yc[y][x] < 0.2f) {
+                        nh = 102;
+                    } else if (yc[y][x] < 0.24f) {
+                        nh = 103;
+                    } else if (yc[y][x] < 0.29f) {
+                        nh = 104;
+                    } else if (yc[y][x] < 0.32f) {
+                        nh = 105;
+                    } else if (yc[y][x] < 0.33f) {
+                        nh = 106;
+                    } else if (yc[y][x] < 0.335f) {
+                        nh = 107;
+                    } else if (yc[y][x] < 0.34f) {
+                        nh = 108;
+                    } else if (yc[y][x] < 0.345f) {
+                        nh = 109;
+                    } else if (yc[y][x] < 0.35f) {
+                        nh = 110;
+                    } else if (yc[y][x] < 0.355f) {
+                        nh = 111;
+                    } else if (yc[y][x] < 0.36f) {
+                        nh = 112;
+                    } else if (yc[y][x] < 0.37f) {
+                        nh = 113;
+                    } else if (yc[y][x] < 0.38f) {
+                        nh = 114;
+                    } else if (yc[y][x] < 0.39f) {
+                        nh = 115;
+                    } else if (yc[y][x] < 0.4f) {
+                        nh = 116;
+                    } else if (yc[y][x] < 0.42f) {
+                        nh = 117;
+                    } else if (yc[y][x] < 0.45f) {
+                        nh = 118;
+                    } else if (yc[y][x] < 0.48f) {
+                        nh = 119;
+                    } else if (yc[y][x] < 0.5f) {
+                        nh = 120;
+                    } else if (yc[y][x] < 0.55f) {
+                        nh = 121;
+                    } else if (yc[y][x] < 0.65f) {
+                        nh = 122;
+                    }
+                } else if (xc[y][x] < 0.365f && yc[y][x] > 0.15f) {  //0.4
+                    if (yc[y][x] < 0.2f) {
+                        nh = 123;
+                    } else if (yc[y][x] < 0.24f) {
+                        nh = 124;
+                    } else if (yc[y][x] < 0.29f) {
+                        nh = 125;
+                    } else if (yc[y][x] < 0.32f) {
+                        nh = 126;
+                    } else if (yc[y][x] < 0.33f) {
+                        nh = 127;
+                    } else if (yc[y][x] < 0.34f) {
+                        nh = 128;
+                    } else if (yc[y][x] < 0.35f) {
+                        nh = 129;
+                    } else if (yc[y][x] < 0.36f) {
+                        nh = 130;
+                    } else if (yc[y][x] < 0.37f) {
+                        nh = 131;
+                    } else if (yc[y][x] < 0.38f) {
+                        nh = 132;
+                    } else if (yc[y][x] < 0.39f) {
+                        nh = 133;
+                    } else if (yc[y][x] < 0.4f) {
+                        nh = 134;
+                    } else if (yc[y][x] < 0.42f) {
+                        nh = 135;
+                    } else if (yc[y][x] < 0.45f) {
+                        nh = 136;
+                    } else if (yc[y][x] < 0.5f) {
+                        nh = 137;
+                    } else if (yc[y][x] < 0.55f) {
+                        nh = 138;
+                    } else if (yc[y][x] < 0.63f) {
+                        nh = 139;
+                    }
+                } else if (xc[y][x] < 0.405f && yc[y][x] > 0.15f) {//45
+                    if (yc[y][x] < 0.2f) {
+                        nh = 140;
+                    } else if (yc[y][x] < 0.24f) {
+                        nh = 141;
+                    } else if (yc[y][x] < 0.29f) {
+                        nh = 142;
+                    } else if (yc[y][x] < 0.32f) {
+                        nh = 143;
+                    } else if (yc[y][x] < 0.34f) {
+                        nh = 144;
+                    } else if (yc[y][x] < 0.37f) {
+                        nh = 145;
+                    } else if (yc[y][x] < 0.4f) {
+                        nh = 146;
+                    } else if (yc[y][x] < 0.45f) {
+                        nh = 147;
+                    } else if (yc[y][x] < 0.5f) {
+                        nh = 148;
+                    } else if (yc[y][x] < 0.55f) {
+                        nh = 149;
+                    } else if (yc[y][x] < 0.6f) {
+                        nh = 150;
+                    }
+                } else if (xc[y][x] < 0.445f && yc[y][x] > 0.15f) {//45
+                    if (yc[y][x] < 0.2f) {
+                        nh = 151;
+                    } else if (yc[y][x] < 0.24f) {
+                        nh = 152;
+                    } else if (yc[y][x] < 0.29f) {
+                        nh = 153;
+                    } else if (yc[y][x] < 0.32f) {
+                        nh = 154;
+                    } else if (yc[y][x] < 0.34f) {
+                        nh = 155;
+                    } else if (yc[y][x] < 0.37f) {
+                        nh = 156;
+                    } else if (yc[y][x] < 0.4f) {
+                        nh = 157;
+                    } else if (yc[y][x] < 0.45f) {
+                        nh = 158;
+                    } else if (yc[y][x] < 0.5f) {
+                        nh = 159;
+                    } else if (yc[y][x] < 0.55f) {
+                        nh = 160;
+                    } else if (yc[y][x] < 0.58f) {
+                        nh = 161;
+                    }
+                } else if (xc[y][x] < 0.495f && yc[y][x] > 0.15f) {
+                    if (yc[y][x] < 0.2f) {
+                        nh = 162;
+                    } else if (yc[y][x] < 0.24f) {
+                        nh = 163;
+                    } else if (yc[y][x] < 0.29f) {
+                        nh = 164;
+                    } else if (yc[y][x] < 0.32f) {
+                        nh = 165;
+                    } else if (yc[y][x] < 0.34f) {
+                        nh = 166;
+                    } else if (yc[y][x] < 0.37f) {
+                        nh = 167;
+                    } else if (yc[y][x] < 0.4f) {
+                        nh = 168;
+                    } else if (yc[y][x] < 0.45f) {
+                        nh = 169;
+                    } else if (yc[y][x] < 0.5f) {
+                        nh = 170;
+                    } else if (yc[y][x] < 0.55f) {
+                        nh = 171;
+                    }
+                } else if (xc[y][x] < 0.545f && yc[y][x] > 0.15f) {
+                    if (yc[y][x] < 0.2f) {
+                        nh = 172;
+                    } else if (yc[y][x] < 0.24f) {
+                        nh = 173;
+                    } else if (yc[y][x] < 0.29f) {
+                        nh = 174;
+                    } else if (yc[y][x] < 0.32f) {
+                        nh = 175;
+                    } else if (yc[y][x] < 0.34f) {
+                        nh = 176;
+                    } else if (yc[y][x] < 0.37f) {
+                        nh = 177;
+                    } else if (yc[y][x] < 0.4f) {
+                        nh = 178;
+                    } else if (yc[y][x] < 0.45f) {
+                        nh = 179;
+                    } else if (yc[y][x] < 0.5f) {
+                        nh = 180;
+                    }
+                } else if (xc[y][x] < 0.595f && yc[y][x] > 0.15f) {
+                    if (yc[y][x] < 0.22f) {
+                        nh = 181;
+                    } else if (yc[y][x] < 0.25f) {
+                        nh = 182;
+                    } else if (yc[y][x] < 0.3f) {
+                        nh = 183;
+                    } else if (yc[y][x] < 0.35f) {
+                        nh = 184;
+                    } else if (yc[y][x] < 0.4f) {
+                        nh = 185;
+                    } else if (yc[y][x] < 0.45f) {
+                        nh = 186;
+                    }
+                } else if (xc[y][x] < 0.65f && yc[y][x] > 0.12f) {
+                    if (yc[y][x] < 0.25f) {
+                        nh = 187;
+                    } else if (yc[y][x] < 0.3f) {
+                        nh = 188;
+                    } else if (yc[y][x] < 0.35f) {
+                        nh = 189;
+                    } else if (yc[y][x] < 0.45f) {
+                        nh = 190;
+                    }
+                } else if (xc[y][x] < 0.75f && yc[y][x] > 0.1f) {
+                    nh = 191;
+                }
+                if (nh >= 0) {
+                    histxythr[nh]++;
+                    xxxthr[nh] += xc[y][x];
+                    yyythr[nh] += yc[y][x];
+                    YYYthr[nh] += Yc[y][x];
+                }
+            }
+        }
+#ifdef _OPENMP
+        #pragma omp critical
+#endif
+        {
+            histxy += histxythr;
+            xxx += xxxthr;
+            yyy += yyythr;
+            YYY += YYYthr;
+        }
+    }
+}
+
+
+
+
 static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const array2D<float> & yc, const array2D<float> & Yc, LUTf &xxx, LUTf &yyy, LUTf &YYY, LUTu &histxy, bool purp)
 {
     // calculate histogram x y in a range of 236 colors
@@ -4908,7 +5377,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     } else {
         Rangegreenused = Rangemax;
     }
-
+    if(wbpar.itcwb_sampling == true) {
+        Rangegreenused = Rangestandard2;
+    }
     typedef struct WbTxyz {
         double Tem;
         double XX;
@@ -5055,8 +5526,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     float gmm[N_t];
     float bmm[N_t];
 
-    constexpr int siza = 237; //192 untill 01/2023 size of histogram
-
+    int siza = 237; //192 untill 01/2023 size of histogram
+    if(wbpar.itcwb_sampling == true) {
+        siza = 192;//old sampling 5.9 and before...
+    }
     // tempref and greenref are camera wb values.
     // I used them by default to select good spectral values !! but they are changed after
     tempref = rtengine::min(tempref, 12000.0);
@@ -5197,8 +5670,14 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         if (hrp.hrenabled && hrp.method == "Coloropp" && wbpar.itcwb_nopurple == true) {//we disabled (user) with settings if image are naturally with purple (flowers...)
             purp = false;
         }
-        histoxyY(bfhitc, bfwitc, xc, yc, Yc, xxx,  yyy, YYY, histxy, purp);//purp enable,  enable purple color in WB
-        //return histogram x and y for each temp and in a range of 235 colors (siza)
+        if(wbpar.itcwb_sampling == false) {
+            printf("Use high smapling\n");
+            histoxyY(bfhitc, bfwitc, xc, yc, Yc, xxx,  yyy, YYY, histxy, purp);//purp enable,  enable purple color in WB
+            //return histogram x and y for each temp and in a range of 235 colors (siza)
+        } else {
+            printf("Use low smapling - 5.9\n");
+            histoxyY_low(bfhitc, bfwitc, xc, yc, Yc, xxx,  yyy, YYY, histxy);//low scaling 
+        }
     }
 
     // free some memory
@@ -5267,7 +5746,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     int sizcurr2ref = sizcurrref - ntr;
     const int sizcu30 = sizcurrref - n30;
     int nbm = 77;//number max of color used = 1.4 * 55 in case all CIExy diagram
-    if(profuse == "sRGB") {
+    if(profuse == "sRGB" || wbpar.itcwb_sampling == true) {
         nbm = 55;
     }
     const int sizcu4 = rtengine::min(sizcu30, nbm);//size of chroma values
@@ -5307,12 +5786,21 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     if (settings->verbose) {
         printf("estimchrom=%f\n", estimchrom);
     }
+    bool issorted = wbpar.itcwb_sorted;
 
-    if (wbpar.itcwb_sorted) { //sort in ascending with chroma values
+    if(wbpar.itcwb_sampling == true) {
+        issorted = false;
+    }
+
+
+    if (issorted) { //sort in ascending with chroma values
         std::sort(wbchro, wbchro + sizcu4, wbchro[0]);
     }
 
-    const int maxval = rtengine::LIM(wbpar.itcwb_thres, 10, 55);//max values of color to find correlation
+    int maxval = rtengine::LIM(wbpar.itcwb_thres, 10, 55);//max values of color to find correlation
+    if(wbpar.itcwb_sampling == true) {
+        maxval = 34;
+    }
 
     sizcurr2ref = rtengine::min(sizcurr2ref, maxval);    //keep about the biggest values,
 
@@ -5443,7 +5931,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             Tgstud[i].greenref = 55;// 1.f position in the list
         }
 
-        const int dgoodref = rtengine::LIM(wbpar.itcwb_delta,1, 4);
+        int dgoodref = rtengine::LIM(wbpar.itcwb_delta,1, 4);
+        if(wbpar.itcwb_sampling == true) {
+            dgoodref = 2;
+        }
         const int scantempbeg = rtengine::max(goodref - (dgoodref + 1), 1);
         const int scantempend = rtengine::min(goodref + dgoodref, N_t - 1);
 
@@ -5527,6 +6018,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         int maxkgood = wbpar.itcwb_fgreen;//we can change ...to test 3, 4, 5. High values perhaps less good student, but it is a compromise...
         maxkgood = rtengine::LIM(maxkgood, 3, 6);
+        if(wbpar.itcwb_sampling == true) {
+            maxkgood = 3; // force to 3 with old low sampling
+        }
+
         int mingood = std::min(std::fabs(Tgstud[0].greenref - 55), std::fabs(Tgstud[1].greenref - 55));
 
         for (int k = 2; k < maxkgood; ++k) {
@@ -5597,6 +6092,9 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
     //used by auto WB local to calculate red, green, blue in local region
 
     int precision = 3;//must be 3 5 or 9
+    if(wbpar.itcwb_sampling == true) {
+        precision = 5;
+    }
 
     const int bfw = W / precision + ((W % precision) > 0 ? 1 : 0);// 5 arbitrary value can be change to 3 or 9 ;
     const int bfh = H / precision + ((H % precision) > 0 ? 1 : 0);
@@ -5858,6 +6356,10 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
     if (wbpar.method == "autitcgreen") {
         bool twotimes = false;
         int precision = 3;//must be 3 5 or 9
+        if(wbpar.itcwb_sampling == true) {
+            precision = 5;
+        }
+
         const int bfw = W / precision + ((W % precision) > 0 ? 1 : 0);// 5 arbitrary value can be change to 3 or 9 ;
         const int bfh = H / precision + ((H % precision) > 0 ? 1 : 0);
         WBauto(tempref, greenref, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, tempitc, greenitc, studgood, twotimes, wbpar, begx, begy, yEn,  xEn,  cx,  cy, cmp, raw, hrp);

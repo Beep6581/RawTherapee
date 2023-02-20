@@ -256,6 +256,7 @@ struct WBParamsEdited {
     bool itcwb_nopurple;
     bool itcwb_sorted;
     bool itcwb_forceextra;
+    bool itcwb_sampling;
 
 };
 
