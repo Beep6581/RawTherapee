@@ -937,7 +937,7 @@ Gtk::Widget* Preferences::getColorManPanel ()
     mwba->set_tooltip_text(M("PREFERENCES_WBAOBS_TOOLTIP"));
     
     setExpandAlignProperties(mwba, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    mwba->set_active(false);
+    mwba->set_active(true);
     int roww = 0;
     gwba->attach(*mwba, 0, roww, 1, 1);
     fwba->add(*gwba);

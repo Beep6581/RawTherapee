@@ -594,7 +594,7 @@ void Options::setDefaults()
     rtSettings.monitorIntent = rtengine::RI_RELATIVE;
     rtSettings.monitorBPC = true;
     rtSettings.autocielab = false;
-    rtSettings.observer10 = false;
+    rtSettings.observer10 = true;
     rtSettings.autoMonitorProfile = false;
     rtSettings.adobe = "RTv2_Medium"; // put the name of yours profiles (here windows)
     rtSettings.prophoto = "RTv2_Large"; // these names appear in the menu "output profile"
