@@ -5191,7 +5191,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     Glib::ustring profuse;
     profuse = "sRGB";//or "Adobe RGB"
-    if( wbpar.itcwb_forceextra) {//Adobe RGB
+    if( wbpar.itcwb_forceextra && wbpar.itcwb_sampling == false) {//Adobe RGB
        profuse = "ACESp0";//cover all CIE xy diagram
     }
     
@@ -5671,11 +5671,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             purp = false;
         }
         if(wbpar.itcwb_sampling == false) {
-            printf("Use high smapling\n");
+            //printf("Use high smapling\n");
             histoxyY(bfhitc, bfwitc, xc, yc, Yc, xxx,  yyy, YYY, histxy, purp);//purp enable,  enable purple color in WB
             //return histogram x and y for each temp and in a range of 235 colors (siza)
         } else {
-            printf("Use low smapling - 5.9\n");
+            //printf("Use low smapling - 5.9\n");
             histoxyY_low(bfhitc, bfwitc, xc, yc, Yc, xxx,  yyy, YYY, histxy);//low scaling 
         }
     }
