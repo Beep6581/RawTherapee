@@ -474,7 +474,7 @@ void PerspCorrection::setDefaults (const ProcParams* defParams, const ParamsEdit
         camera_crop_factor->setDefaultEditedState (pedited->perspective.camera_crop_factor ? Edited : UnEdited);
         camera_focal_length->setDefaultEditedState (pedited->perspective.camera_focal_length ? Edited : UnEdited);
         camera_pitch->setDefaultEditedState (pedited->perspective.camera_pitch ? Edited : UnEdited);
-        camera_scale->setDefaultEditedState (std::abs(pedited->perspective.camera_scale-1) > 1e-6 ? Edited : UnEdited);
+        camera_scale->setDefaultEditedState (std::abs(pedited->perspective.camera_scale - 1.0) > 1e-6 ? Edited : UnEdited);
         camera_roll->setDefaultEditedState (pedited->perspective.camera_roll ? Edited : UnEdited);
         camera_shift_horiz->setDefaultEditedState (pedited->perspective.camera_shift_horiz ? Edited : UnEdited);
         camera_shift_vert->setDefaultEditedState (pedited->perspective.camera_shift_vert ? Edited : UnEdited);
@@ -651,7 +651,16 @@ void PerspCorrection::defishChanged()
     }
 }
 
-void PerspCorrection::setAdjusterBehavior (bool badd, bool camera_focal_length_add, bool camera_shift_add, bool camera_angle_add, bool projection_angle_add, bool projection_shift_add, bool projection_rotate_add, bool projection_scale_add)
+void PerspCorrection::setAdjusterBehavior (
+    bool badd,
+    bool camera_focal_length_add,
+    bool camera_shift_add,
+    bool camera_angle_add,
+    bool projection_angle_add,
+    bool projection_shift_add,
+    bool projection_rotate_add,
+    bool projection_scale_add
+)
 {
 
     horiz->setAddMode(badd);

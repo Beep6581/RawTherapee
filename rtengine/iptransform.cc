@@ -33,6 +33,8 @@ using namespace std;
 namespace
 {
 
+constexpr double focal_length_in_px_factor = 0.0462;
+
 float pow3 (float x)
 {
     return x * x * x;
@@ -522,13 +524,13 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
         x_d /= params->perspective.camera_scale;
         y_d /= params->perspective.camera_scale;
         if (params->perspective.camera_defish) {
-            double const focal_source = params->perspective.camera_focal_length * maxRadius * 0.0462;
+            const double focal_source = params->perspective.camera_focal_length * maxRadius * focal_length_in_px_factor;
             double focal_dst = focal_source;
             x_d /= focal_dst;
             y_d /= focal_dst;
 
-            double const r = std::sqrt(x_d*x_d + y_d*y_d);
-            double const factor = focal_source * std::atan(r)/r;
+            const double r = std::sqrt(x_d * x_d + y_d * y_d);
+            const double factor = focal_source * std::atan(r) / r;
 
             x_d *= factor;
             y_d *= factor;
@@ -1262,13 +1264,13 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
             x_d /= params->perspective.camera_scale;
             y_d /= params->perspective.camera_scale;
             if (params->perspective.camera_defish) {
-                double const focal_source = params->perspective.camera_focal_length * maxRadius * 0.0462;
+                const double focal_source = params->perspective.camera_focal_length * maxRadius * focal_length_in_px_factor;
                 double focal_dst = focal_source;
                 x_d /= focal_dst;
                 y_d /= focal_dst;
 
-                double const r = std::sqrt(x_d*x_d + y_d*y_d);
-                double const factor = focal_source * std::atan(r)/r;
+                const double r = std::sqrt(x_d * x_d + y_d * y_d);
+                const double factor = focal_source * std::atan(r)/r;
 
                 x_d *= factor;
                 y_d *= factor;

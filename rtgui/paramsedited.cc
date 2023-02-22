@@ -3312,7 +3312,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
     }
 
     if (perspective.camera_scale) {
-        toEdit.perspective.camera_scale = dontforceSet && options.baBehav[ADDSET_PERSP_CAM_FOCAL_LENGTH] ? toEdit.perspective.camera_scale + mods.perspective.camera_scale : mods.perspective.camera_scale;
+        toEdit.perspective.camera_scale =
+            dontforceSet && options.baBehav[ADDSET_PERSP_CAM_FOCAL_LENGTH]
+                ? toEdit.perspective.camera_scale + mods.perspective.camera_scale
+                : mods.perspective.camera_scale;
     }
 
     if (perspective.camera_focal_length) {

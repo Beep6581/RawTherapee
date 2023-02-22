@@ -65,7 +65,7 @@ protected:
     Adjuster* projection_pitch;
     Adjuster* projection_rotate;
     Adjuster* camera_scale;
-    Gtk::CheckButton *camera_defish;
+    Gtk::CheckButton* camera_defish;
     Adjuster* projection_shift_horiz;
     Adjuster* projection_shift_vert;
     Adjuster* projection_yaw;
@@ -129,7 +129,16 @@ public:
     void methodChanged (void);
     void defishChanged (void);
     void requestApplyControlLines(void);
-    void setAdjusterBehavior (bool badd, bool camera_focal_length_add, bool camera_shift_add, bool camera_angle_add, bool projection_angle_add, bool projection_shift_add, bool projection_rotate_add, bool projection_scale_add);
+    void setAdjusterBehavior (
+        bool badd,
+        bool camera_focal_length_add,
+        bool camera_shift_add,
+        bool camera_angle_add,
+        bool projection_angle_add,
+        bool projection_shift_add,
+        bool projection_rotate_add,
+        bool projection_scale_add
+    );
     void setControlLineEditMode(bool active);
     void setEditProvider (EditDataProvider* provider) override;
     void setLensGeomListener (LensGeomListener* listener)
