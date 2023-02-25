@@ -515,10 +515,6 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
                 break;
         }
 
-        if (pLCPMap && params->lensProf.useDist) {
-            pLCPMap->correctDistortion(x_d, y_d, w2, h2);
-        }
-
         x_d /= params->perspective.camera_scale;
         y_d /= params->perspective.camera_scale;
         if (params->perspective.camera_defish) {
@@ -530,6 +526,10 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
 
             x_d *= factor;
             y_d *= factor;
+        }
+
+        if (pLCPMap && params->lensProf.useDist) {
+            pLCPMap->correctDistortion(x_d, y_d, w2, h2);
         }
 
         // rotate
@@ -1253,10 +1253,6 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
                     break;
             }
 
-            if (enableLCPDist) {
-                pLCPMap->correctDistortion(x_d, y_d, w2, h2);
-            }
-
             x_d /= params->perspective.camera_scale;
             y_d /= params->perspective.camera_scale;
             if (params->perspective.camera_defish) {
@@ -1264,10 +1260,14 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
                 y_d /= f;
 
                 const double r = std::sqrt(x_d * x_d + y_d * y_d);
-                const double factor = f * std::atan(r)/r;
+                const double factor = f * std::atan(r) / r;
 
                 x_d *= factor;
                 y_d *= factor;
+            }
+
+            if (enableLCPDist) {
+                pLCPMap->correctDistortion(x_d, y_d, w2, h2);
             }
 
             // rotate
