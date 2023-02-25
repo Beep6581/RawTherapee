@@ -251,7 +251,7 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     projection_rotate = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_PROJECTION_ROTATE"), -45, 45, 0.01, 0, ipers_rotate_left, ipers_rotate_right));
     projection_rotate->setAdjusterListener (this);
 
-    camera_scale= Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_CAMERA_SCALE"), 0.1, 10, 0.01, 0, ipers_rotate_left, ipers_rotate_right));
+    camera_scale= Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_CAMERA_SCALE"), 0.1, 10, 0.01, 0));
     camera_scale->setAdjusterListener (this);
 
     camera_defish = Gtk::manage(new Gtk::CheckButton(M("TP_PERSPECTIVE_CAMERA_DEFISH")));
