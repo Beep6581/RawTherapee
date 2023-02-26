@@ -350,6 +350,10 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     StudLabel = Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER));
     StudLabel->set_tooltip_text(M("TP_WBALANCE_STUDLABEL_TOOLTIP"));
 
+    mulLabel = Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER));
+    mulLabel->set_tooltip_text(M("TP_WBALANCE_MULLABEL_TOOLTIP"));
+    mulLabel->show();
+
     temp = Gtk::manage (new Adjuster (M("TP_WBALANCE_TEMPERATURE"), MINTEMP, MAXTEMP, 5, CENTERTEMP, itempL, itempR, &wbSlider2Temp, &wbTemp2Slider));
     green = Gtk::manage (new Adjuster (M("TP_WBALANCE_GREEN"), MINGREEN, MAXGREEN, 0.001, 1.0, igreenL, igreenR));
     equal = Gtk::manage (new Adjuster (M("TP_WBALANCE_EQBLUERED"), MINEQUAL, MAXEQUAL, 0.001, 1.0, iblueredL, iblueredR));
@@ -410,6 +414,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     boxgreen->pack_start(*igreenL);
     boxgreen->pack_start(*green);
     boxgreen->pack_start(*igreenR);*/
+    pack_start(*mulLabel);
     pack_start(*StudLabel);
 
     pack_start (*temp);
@@ -417,6 +422,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     pack_start (*green);
     pack_start (*equal);
     pack_start (*tempBias);
+
     itcwbBox->pack_start (*itcwb_thres);
 //    itcwbBox->pack_start (*itcwb_precis);
 //    itcwbBox->pack_start (*itcwb_size);
@@ -713,6 +719,7 @@ void WhiteBalance::optChanged ()
         return;
     }
     StudLabel->hide();
+    mulLabel->show();
 
     if (opt != row[methodColumns.colId]) {
 
@@ -821,6 +828,7 @@ void WhiteBalance::optChanged ()
 void WhiteBalance::spotPressed ()
 {
     StudLabel->hide();
+    mulLabel->show();
 
     if (wblistener) {
         wblistener->spotWBRequested (getSize());
@@ -869,6 +877,8 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
     itcwb_sampling->set_active (pp->wb.itcwb_sampling);
     itcwb_samplingconn.block (false);
     lastitcwb_sampling = pp->wb.itcwb_sampling;
+
+    itcwb_sampling_toggled();
 
     if(options.rtSettings.itcwb_enable) {
         itcwb_thres->show();
@@ -1028,6 +1038,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
             itcwb_sampling_toggled ();
         } else {
             StudLabel->hide();
+            mulLabel->show();
             itcwbFrame->set_sensitive(false);
         }
         
@@ -1292,14 +1303,20 @@ inline Gtk::TreeRow WhiteBalance::getActiveMethod ()
     return *(method->get_active());
 }
 
-void WhiteBalance::WBChanged(double temperature, double greenVal, float studgood)
+void WhiteBalance::WBChanged(double temperature, double greenVal, double rw, double gw, double bw, float studgood)
 {
     idle_register.add(
-        [this, temperature, greenVal, studgood]() -> bool
+        [this, temperature, greenVal, rw, gw, bw, studgood]() -> bool
         {
             disableListener();
             temp->setValue(temperature);
             green->setValue(greenVal);
+            mulLabel->set_text(
+            Glib::ustring::compose(M("TP_WBALANCE_MULLABEL"),
+                                   Glib::ustring::format(std::fixed, std::setprecision(4), rw),
+                                   Glib::ustring::format(std::fixed, std::setprecision(2), gw),
+                                   Glib::ustring::format(std::fixed, std::setprecision(4), bw))
+            );
             StudLabel->set_text(
                 Glib::ustring::compose(M("TP_WBALANCE_STUDLABEL"),
                                    Glib::ustring::format(std::fixed, std::setprecision(4), studgood))

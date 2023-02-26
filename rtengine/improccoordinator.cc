@@ -576,17 +576,23 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                 currWB = autoWB;
             }
+            double rw = 1.;
+            double gw = 1.;
+            double bw = 1.;
 
             if (params->wb.enabled) {
                 params->wb.temperature = currWB.getTemp();
                 params->wb.green = currWB.getGreen();
+                currWB.getMultipliers(rw, gw, bw);
+                imgsrc->wbMul2Camera(rw, gw, bw);
+              //  printf("ra=%f ga=%f ba=%f\n", rw, gw, bw); 
             }
 
-            if (autowb && awbListener) {
+            if (awbListener) {
                 if (params->wb.method ==  "autitcgreen") {
-                    awbListener->WBChanged(params->wb.temperature, params->wb.green, studgood);
-                } else if (params->wb.method ==  "autold") {
-                    awbListener->WBChanged(params->wb.temperature, params->wb.green, -1.f);
+                    awbListener->WBChanged(params->wb.temperature, params->wb.green, rw, gw, bw, studgood);
+                } else {
+                    awbListener->WBChanged(params->wb.temperature, params->wb.green, rw, gw, bw, -1.f);
                 }
             }
 
@@ -623,7 +629,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             PreviewProps pp(0, 0, fw, fh, scale);
             // Tells to the ImProcFunctions' tools what is the preview scale, which may lead to some simplifications
             ipf.setScale(scale);
-			int inpaintopposed = 1;//force getimage to use inpaint-opposed if enable, only once
+            int inpaintopposed = 1;//force getimage to use inpaint-opposed if enable, only once
             imgsrc->getImage(currWB, tr, orig_prev, pp, params->toneCurve, params->raw, inpaintopposed);
 
             if ((todo & M_SPOT) && params->spot.enabled && !params->spot.entries.empty()) {
