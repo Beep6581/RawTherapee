@@ -1027,7 +1027,7 @@ int ImageIO::savePNG  (const Glib::ustring &fname, int bps) const
 #if defined(PNG_SKIP_sRGB_CHECK_PROFILE) && defined(PNG_SET_OPTION_SUPPORTED)
     png_set_option(png, PNG_SKIP_sRGB_CHECK_PROFILE, PNG_OPTION_ON);
 #endif
-    
+
     png_infop info = png_create_info_struct(png);
 
     if (!info) {
@@ -1227,12 +1227,12 @@ int ImageIO::saveJPEG (const Glib::ustring &fname, int quality, int subSamp) con
     jpeg_start_compress(&cinfo, TRUE);
 
     // buffer for exif and iptc markers
-    unsigned char* buffer = new unsigned char[165535]; //FIXME: no buffer size check so it can be overflowed in createJPEGMarker() for large tags, and then software will crash
+    unsigned char* buffer;
     unsigned int size;
 
     // assemble and write exif marker
     if (exifRoot) {
-        int size = rtexif::ExifManager::createJPEGMarker (exifRoot, *exifChange, cinfo.image_width, cinfo.image_height, buffer);
+        rtexif::ExifManager::createJPEGMarker (exifRoot, *exifChange, cinfo.image_width, cinfo.image_height, buffer, size);
 
         if (size > 0 && size < 65530) {
             jpeg_write_marker(&cinfo, JPEG_APP0 + 1, buffer, size);
