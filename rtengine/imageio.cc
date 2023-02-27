@@ -1250,9 +1250,10 @@ int ImageIO::saveJPEG (const Glib::ustring &fname, int quality, int subSamp) con
     // assemble and write iptc marker
     if (iptc) {
         unsigned char* iptcdata;
+        unsigned int iptcSize;
         bool error = false;
 
-        if (iptc_data_save (iptc, &iptcdata, &size)) {
+        if (iptc_data_save (iptc, &iptcdata, &iptcSize)) {
             if (iptcdata) {
                 iptc_data_free_buf (iptc, iptcdata);
             }
@@ -1262,7 +1263,7 @@ int ImageIO::saveJPEG (const Glib::ustring &fname, int quality, int subSamp) con
 
         int bytes = 0;
 
-        if (!error && (bytes = iptc_jpeg_ps3_save_iptc (nullptr, 0, iptcdata, size, iptcBuffer, 65532)) < 0) {
+        if (!error && (bytes = iptc_jpeg_ps3_save_iptc (nullptr, 0, iptcdata, iptcSize, iptcBuffer, 65532)) < 0) {
             error = true;
         }
 
