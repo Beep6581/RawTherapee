@@ -48,6 +48,7 @@ jobs:
             -DCACHE_NAME_SUFFIX="${RAW_THERAPEE_MAJOR}.${RAW_THERAPEE_MINOR}-${REF}" \
             -DPROC_TARGET_NUMBER="1" \
             -DPROC_LABEL="generic processor" \
+            -DCMAKE_OSX_ARCHITECTURES=$(uname -m) \
             -DWITH_LTO="OFF" \
             -DLENSFUNDBDIR="/Applications/RawTherapee.app/Contents/Resources/share/lensfun" \
             -DCMAKE_C_COMPILER=clang \
