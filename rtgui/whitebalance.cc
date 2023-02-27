@@ -398,7 +398,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
 
     itcwb_sorted = Gtk::manage (new Gtk::CheckButton (M("TP_WBALANCE_ITCWB_SORTED")));
     itcwb_sorted->set_tooltip_markup (M("TP_WBALANCE_ITCWBSORTED_TOOLTIP"));
-    itcwb_sorted ->set_active (true);
+    itcwb_sorted ->set_active (false);
 
     itcwb_forceextra = Gtk::manage (new Gtk::CheckButton (M("TP_WBALANCE_ITCWB_FORCED")));
     itcwb_forceextra->set_tooltip_markup (M("TP_WBALANCE_ITCWFORCED_TOOLTIP"));
@@ -551,7 +551,7 @@ void WhiteBalance::itcwb_sorted_toggled ()
 
 void WhiteBalance::itcwb_forceextra_toggled ()
 {
-    
+/*
     if (itcwb_forceextra->get_active ()) {
             itcwb_sortedconn.block (true);
             itcwb_sorted->set_active (false);
@@ -561,7 +561,7 @@ void WhiteBalance::itcwb_forceextra_toggled ()
             itcwb_sorted->set_active (true);
             itcwb_sortedconn.block (false);
     }
-
+*/
     if (batchMode) {
         if (itcwb_forceextra->get_inconsistent()) {
             itcwb_forceextra->set_inconsistent (false);
