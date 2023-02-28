@@ -201,7 +201,7 @@ else
 fi
 
 # Copy libomp to Frameworks
-ditto ${LOCAL_PREFIX}/lib/libomp.dylib "${CONTENTS}/Frameworks"
+cp ${LOCAL_PREFIX}/lib/libomp.dylib "${CONTENTS}/Frameworks"
 
 msg "Copying dependencies from ${GTK_PREFIX}."
 CheckLink "${EXECUTABLE}" 2>&1
@@ -209,24 +209,20 @@ CheckLink "${EXECUTABLE}" 2>&1
 # dylib install names
 ModifyInstallNames 2>&1
 
-# Copy libjpeg-turbo ("62") into the app bundle
-ditto ${LOCAL_PREFIX}/lib/libjpeg.62.dylib "${CONTENTS}/Frameworks/libjpeg.62.dylib"
+## Copy libexpat into the app bundle (which is keg-only)
+## if [[ -d /usr/local/Cellar/expat ]]; then ditto /usr/local/Cellar/expat/*/lib/libexpat.1.dylib "${CONTENTS}/Frameworks"; else cp "${EXPATLIB}" "${CONTENTS}/Frameworks/libexpat.1.dylib"; fi
 
-# Copy libexpat into the app bundle (which is keg-only)
-if [[ -d /usr/local/Cellar/expat ]]; then ditto /usr/local/Cellar/expat/*/lib/libexpat.1.dylib "${CONTENTS}/Frameworks"; else ditto "${EXPATLIB}" "${CONTENTS}/Frameworks/libexpat.1.dylib"; fi
+## Copy libz into the app bundle
+## cp ${LOCAL_PREFIX}/lib/libz.1.dylib "${CONTENTS}/Frameworks"
 
-# Copy libz into the app bundle
-ditto ${LOCAL_PREFIX}/lib/libz.1.dylib "${CONTENTS}/Frameworks"
-
-# Copy libpng12 & 16 to the app bundle
-ditto ${LOCAL_PREFIX}/lib/libpng16.16.dylib "${CONTENTS}/Frameworks/libpng16.16.dylib"
-ditto ${LOCAL_PREFIX}/lib/libpng12.0.dylib "${CONTENTS}/Frameworks/libpng12.0.dylib"
+# Copy libpng16 to the app bundle
+cp ${LOCAL_PREFIX}/lib/libpng16.16.dylib "${CONTENTS}/Frameworks/libpng16.16.dylib"
 
 # Copy libtiff 5 into the app bundle
-ditto ${LOCAL_PREFIX}/lib/libtiff.5.dylib "${CONTENTS}/Frameworks/libtiff.5.dylib"
+cp ${LOCAL_PREFIX}/lib/libtiff.5.dylib "${CONTENTS}/Frameworks/libtiff.5.dylib"
 
 # Copy libomp to Frameworks
-ditto ${LOCAL_PREFIX}/lib/libomp.dylib "${CONTENTS}/Frameworks"
+cp ${LOCAL_PREFIX}/lib/libomp.dylib "${CONTENTS}/Frameworks"
 
 # Prepare GTK+3 installation
 msg "Copying configuration files from ${GTK_PREFIX}:"
@@ -240,7 +236,7 @@ find -E "${LIB}" -type f -regex '.*\.(a|la|cache)$' | while read -r; do rm "${RE
 # Make Frameworks folder flat
 msg "Flattening the Frameworks folder"
 cp -RL "${LIB}"/gdk-pixbuf-2.0/2*/loaders/* "${LIB}"
-cp "${LIB}"/gtk-3.0/3*/immodules/*.{dylib,so} "${LIB}"
+cp "${LIB}"/gtk-3.0/3*/immodules/*.{dylib,so} "${LIB}" >/dev/null 2>&1
 rm -r "${LIB}"/gtk-3.0
 rm -r "${LIB}"/gdk-pixbuf-2.0
 
