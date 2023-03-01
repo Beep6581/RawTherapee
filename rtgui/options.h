@@ -72,6 +72,7 @@ struct SaveFormat {
         int _tiff_bits,
         bool _tiff_float,
         bool _tiff_uncompressed,
+        bool _big_tiff,
         bool _save_params
     ) :
         format(_format),
@@ -81,6 +82,7 @@ struct SaveFormat {
         tiffBits(_tiff_bits),
         tiffFloat(_tiff_float),
         tiffUncompressed(_tiff_uncompressed),
+        bigTiff(_big_tiff),
         saveParams(_save_params)
     {
     }
@@ -98,6 +100,7 @@ struct SaveFormat {
             _tiff_bits,
             _tiff_float,
             true,
+            false,
             true
         )
     {
@@ -114,6 +117,7 @@ struct SaveFormat {
     int tiffBits;
     bool tiffFloat;
     bool tiffUncompressed;
+    bool bigTiff;
     bool saveParams;
 };
 

@@ -100,6 +100,11 @@ SaveFormatPanel::SaveFormatPanel () : listener (nullptr)
     tiffUncompressed->signal_toggled().connect( sigc::mem_fun(*this, &SaveFormatPanel::formatChanged));
     tiffUncompressed->show_all();
 
+    bigTiff = new Gtk::CheckButton (M("SAVEDLG_BIGTIFF"));
+    setExpandAlignProperties(bigTiff, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    bigTiff->signal_toggled().connect( sigc::mem_fun(*this, &SaveFormatPanel::formatChanged));
+    bigTiff->show_all();
+
 
     // ---------------------  MAIN BOX
 
@@ -114,12 +119,14 @@ SaveFormatPanel::SaveFormatPanel () : listener (nullptr)
     attach (*hb1, 0, 0, 1, 1);
     attach (*jpegOpts, 0, 1, 1, 1);
     attach (*tiffUncompressed, 0, 2, 1, 1);
+    attach (*bigTiff, 0, 3, 1, 1);
     attach (*savesPP, 0, 4, 1, 2);
 }
 SaveFormatPanel::~SaveFormatPanel ()
 {
     delete jpegQual;
     delete tiffUncompressed;
+    delete bigTiff;
 }
 
 void SaveFormatPanel::init (SaveFormat &sf)
@@ -158,6 +165,7 @@ void SaveFormatPanel::init (SaveFormat &sf)
     jpegQual->setValue(sf.jpegQuality);
     savesPP->set_active(sf.saveParams);
     tiffUncompressed->set_active(sf.tiffUncompressed);
+    bigTiff->set_active(sf.bigTiff);
 
     listener = tmp;
 }
@@ -175,6 +183,7 @@ SaveFormat SaveFormatPanel::getFormat ()
     sf.jpegQuality = jpegQual->getValue();
     sf.jpegSubSamp = jpegSubSamp->get_active_row_number() + 1;
     sf.tiffUncompressed = tiffUncompressed->get_active();
+    sf.bigTiff = bigTiff->get_active();
     sf.saveParams = savesPP->get_active();
 
     return sf;
@@ -193,12 +202,15 @@ void SaveFormatPanel::formatChanged ()
     if (fr == "jpg") {
         jpegOpts->show_all();
         tiffUncompressed->hide();
+        bigTiff->hide();
     } else if (fr == "png") {
         jpegOpts->hide();
         tiffUncompressed->hide();
+        bigTiff->hide();
     } else if (fr == "tif") {
         jpegOpts->hide();
         tiffUncompressed->show_all();
+        bigTiff->show_all();
     }
 
     if (listener) {
