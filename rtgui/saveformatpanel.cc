@@ -71,7 +71,7 @@ SaveFormatPanel::SaveFormatPanel () : listener (nullptr)
     jpegOpts->set_row_spacing(5);
     setExpandAlignProperties(jpegOpts, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
-    jpegQual = new Adjuster (M("SAVEDLG_JPEGQUAL"), 0, 100, 1, 100);
+    jpegQual = Gtk::manage (new Adjuster (M("SAVEDLG_JPEGQUAL"), 0, 100, 1, 100) );
     setExpandAlignProperties(jpegQual, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     jpegQual->setAdjusterListener (this);
 
@@ -95,12 +95,12 @@ SaveFormatPanel::SaveFormatPanel () : listener (nullptr)
     // ---------------------  TIFF OPTIONS
 
 
-    tiffUncompressed = new Gtk::CheckButton (M("SAVEDLG_TIFFUNCOMPRESSED"));
+    tiffUncompressed = Gtk::manage (new Gtk::CheckButton (M("SAVEDLG_TIFFUNCOMPRESSED")) );
     setExpandAlignProperties(tiffUncompressed, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     tiffUncompressed->signal_toggled().connect( sigc::mem_fun(*this, &SaveFormatPanel::formatChanged));
     tiffUncompressed->show_all();
 
-    bigTiff = new Gtk::CheckButton (M("SAVEDLG_BIGTIFF"));
+    bigTiff = Gtk::manage (new Gtk::CheckButton (M("SAVEDLG_BIGTIFF")) );
     setExpandAlignProperties(bigTiff, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     bigTiff->signal_toggled().connect( sigc::mem_fun(*this, &SaveFormatPanel::formatChanged));
     bigTiff->show_all();
@@ -122,12 +122,8 @@ SaveFormatPanel::SaveFormatPanel () : listener (nullptr)
     attach (*bigTiff, 0, 3, 1, 1);
     attach (*savesPP, 0, 4, 1, 2);
 }
-SaveFormatPanel::~SaveFormatPanel ()
-{
-    delete jpegQual;
-    delete tiffUncompressed;
-    delete bigTiff;
-}
+
+SaveFormatPanel::~SaveFormatPanel () = default;
 
 void SaveFormatPanel::init (SaveFormat &sf)
 {
