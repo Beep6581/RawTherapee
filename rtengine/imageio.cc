@@ -1392,7 +1392,7 @@ int ImageIO::saveTIFF (
 
     bool applyExifPatch = false;
 
-    if (exifRoot) {
+    if (exifRoot && !big) {
         rtexif::TagDirectory* cl = (const_cast<rtexif::TagDirectory*> (exifRoot))->clone (nullptr);
 
         // ------------------ remove some unknown top level tags which produce warnings when opening a tiff (might be useless) -----------------
@@ -1475,10 +1475,11 @@ int ImageIO::saveTIFF (
     }
 
 #if __BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__
-        bool needsReverse = exifRoot && exifRoot->getOrder() == rtexif::MOTOROLA;
+    bool needsReverse = exifRoot && exifRoot->getOrder() == rtexif::MOTOROLA;
 #else
-        bool needsReverse = exifRoot && exifRoot->getOrder() == rtexif::INTEL;
+    bool needsReverse = exifRoot && exifRoot->getOrder() == rtexif::INTEL;
 #endif
+
     if (iptcdata) {
         rtexif::Tag iptcTag(nullptr, rtexif::lookupAttrib (rtexif::ifdAttribs, "IPTCData"));
         iptcTag.initLongArray((char*)iptcdata, iptclen);

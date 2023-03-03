@@ -2061,7 +2061,7 @@ SAMPLEFORMAT_16;16-bit floating-point
 SAMPLEFORMAT_32;24-bit floating-point
 SAMPLEFORMAT_64;32-bit floating-point
 SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
-SAVEDLG_BIGTIFF;BigTIFF
+SAVEDLG_BIGTIFF;BigTIFF (no metadata support)
 SAVEDLG_FILEFORMAT;File format
 SAVEDLG_FILEFORMAT_FLOAT; floating-point
 SAVEDLG_FORCEFORMATOPTS;Force saving options
