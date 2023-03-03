@@ -21,6 +21,8 @@
 #include <cstring>
 #include <memory>
 #include <string>
+#include <utility>
+#include <vector>
 
 #include <fcntl.h>
 #include <glib/gstdio.h>
@@ -1352,8 +1354,8 @@ int ImageIO::saveTIFF (
         bps = getBPS ();
     }
 
-    int lineWidth = width * 3 * bps / 8;
-    unsigned char* linebuffer = new unsigned char[lineWidth];
+    int lineWidth = width * 3 * (bps / 8);
+    std::vector<unsigned char> linebuffer(lineWidth);
 
     std::string mode = "w";
 
@@ -1381,7 +1383,6 @@ int ImageIO::saveTIFF (
 #endif
 
     if (!out) {
-        delete [] linebuffer;
         return IMIO_CANNOTWRITEFILE;
     }
 
@@ -1485,15 +1486,9 @@ int ImageIO::saveTIFF (
         iptcTag.initLongArray((char*)iptcdata, iptclen);
         if (needsReverse) {
             unsigned char *ptr = iptcTag.getValue();
-            for (int a = 0; a < iptcTag.getCount(); ++a) {
-                unsigned char cc;
-                cc = ptr[3];
-                ptr[3] = ptr[0];
-                ptr[0] = cc;
-                cc = ptr[2];
-                ptr[2] = ptr[1];
-                ptr[1] = cc;
-                ptr += 4;
+            for (int a = 0; a < iptcTag.getCount(); ++a, ptr += 4) {
+                std::swap(ptr[0], ptr[3]);
+                std::swap(ptr[1], ptr[2]);
             }
         }
         TIFFSetField (out, TIFFTAG_RICHTIFFIPTC, iptcTag.getCount(), (long*)iptcTag.getValue());
@@ -1533,32 +1528,25 @@ int ImageIO::saveTIFF (
     }
 
     for (int row = 0; row < height; row++) {
-        getScanline (row, linebuffer, bps, isFloat);
+        getScanline (row, linebuffer.data(), bps, isFloat);
 
         if (bps == 16) {
             if(needsReverse && !uncompressed && isFloat) {
                 for(int i = 0; i < lineWidth; i += 2) {
-                    char temp = linebuffer[i];
-                    linebuffer[i] = linebuffer[i + 1];
-                    linebuffer[i + 1] = temp;
+                    std::swap(linebuffer[i], linebuffer[i + 1]);
                 }
             }
         } else if (bps == 32) {
             if(needsReverse && !uncompressed) {
                 for(int i = 0; i < lineWidth; i += 4) {
-                    char temp = linebuffer[i];
-                    linebuffer[i] = linebuffer[i + 3];
-                    linebuffer[i + 3] = temp;
-                    temp = linebuffer[i + 1];
-                    linebuffer[i + 1] = linebuffer[i + 2];
-                    linebuffer[i + 2] = temp;
+                    std::swap(linebuffer[i], linebuffer[i + 3]);
+                    std::swap(linebuffer[i + 1], linebuffer[i + 2]);
                 }
             }
         }
 
-        if (TIFFWriteScanline (out, linebuffer, row, 0) < 0) {
+        if (TIFFWriteScanline (out, linebuffer.data(), row, 0) < 0) {
             TIFFClose (out);
-            delete [] linebuffer;
             return IMIO_CANNOTWRITEFILE;
         }
 
@@ -1607,8 +1595,6 @@ int ImageIO::saveTIFF (
 #ifdef WIN32
     fclose (file);
 #endif
-
-    delete [] linebuffer;
 
     if (pl) {
         pl->setProgressStr ("PROGRESSBAR_READY");
