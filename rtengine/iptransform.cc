@@ -1546,7 +1546,15 @@ bool ImProcFunctions::needsTransform (int oW, int oH, int rawRotationDeg, const 
         std::unique_ptr<const LensCorrection> pLCPMap = LFDatabase::getInstance()->findModifier(params->lensProf, metadata, oW, oH, params->coarse, rawRotationDeg);
         needsLf = pLCPMap.get();
     }
-    return needsCA () || needsDistortion () || needsRotation () || needsPerspective () || needsGradient () || needsPCVignetting () || needsVignetting () || needsLCP() || needsLf;
+    return needsCA () ||
+            needsDistortion () ||
+            needsRotation () ||
+            needsPerspective () ||
+            needsGradient () ||
+            needsPCVignetting () ||
+            needsVignetting () ||
+            needsLCP() ||
+            needsLf;
 }
 
 
