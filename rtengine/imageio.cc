@@ -17,21 +17,19 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include <png.h>
-#include <glib/gstdio.h>
-#include <tiff.h>
-#include <tiffio.h>
 #include <cstdio>
 #include <cstring>
-#include <fcntl.h>
-#include <libiptcdata/iptc-jpeg.h>
 #include <memory>
-#include "rt_math.h"
-#include "procparams.h"
-#include "utils.h"
-#include "../rtgui/options.h"
-#include "../rtgui/version.h"
-#include "../rtexif/rtexif.h"
+#include <string>
+#include <utility>
+#include <vector>
+
+#include <fcntl.h>
+#include <glib/gstdio.h>
+#include <libiptcdata/iptc-jpeg.h>
+#include <png.h>
+#include <tiff.h>
+#include <tiffio.h>
 
 #ifdef WIN32
 #include <winsock2.h>
@@ -39,12 +37,20 @@
 #include <netinet/in.h>
 #endif
 
+#include "color.h"
+#include "iccjpeg.h"
 #include "imageio.h"
 #include "iptcpairs.h"
-#include "iccjpeg.h"
-#include "color.h"
-
 #include "jpeg.h"
+#include "procparams.h"
+#include "rt_math.h"
+#include "utils.h"
+
+#include "../rtgui/options.h"
+#include "../rtgui/version.h"
+
+#include "../rtexif/rtexif.h"
+
 
 using namespace std;
 using namespace rtengine;
@@ -1328,7 +1334,13 @@ int ImageIO::saveJPEG (const Glib::ustring &fname, int quality, int subSamp) con
     return IMIO_SUCCESS;
 }
 
-int ImageIO::saveTIFF (const Glib::ustring &fname, int bps, bool isFloat, bool uncompressed) const
+int ImageIO::saveTIFF (
+    const Glib::ustring &fname,
+    int bps,
+    bool isFloat,
+    bool uncompressed,
+    bool big
+) const
 {
     if (getWidth() < 1 || getHeight() < 1) {
         return IMIO_HEADERERROR;
@@ -1342,23 +1354,35 @@ int ImageIO::saveTIFF (const Glib::ustring &fname, int bps, bool isFloat, bool u
         bps = getBPS ();
     }
 
-    int lineWidth = width * 3 * bps / 8;
-    unsigned char* linebuffer = new unsigned char[lineWidth];
+    int lineWidth = width * 3 * (bps / 8);
+    std::vector<unsigned char> linebuffer(lineWidth);
+
+    std::string mode = "w";
 
     // little hack to get libTiff to use proper byte order (see TIFFClienOpen()):
-    const char *mode = !exifRoot ? "w" : (exifRoot->getOrder() == rtexif::INTEL ? "wl" : "wb");
+    if (exifRoot) {
+        if (exifRoot->getOrder() == rtexif::INTEL) {
+            mode += 'l';
+        } else {
+            mode += 'b';
+        }
+    }
+
+    if (big) {
+        mode += '8';
+    }
+
 #ifdef WIN32
     FILE *file = g_fopen_withBinaryAndLock (fname);
     int fileno = _fileno(file);
     int osfileno = _get_osfhandle(fileno);
-    TIFF* out = TIFFFdOpen (osfileno, fname.c_str(), mode);
+    TIFF* out = TIFFFdOpen (osfileno, fname.c_str(), mode.c_str());
 #else
-    TIFF* out = TIFFOpen(fname.c_str(), mode);
+    TIFF* out = TIFFOpen(fname.c_str(), mode.c_str());
     int fileno = TIFFFileno (out);
 #endif
 
     if (!out) {
-        delete [] linebuffer;
         return IMIO_CANNOTWRITEFILE;
     }
 
@@ -1369,7 +1393,7 @@ int ImageIO::saveTIFF (const Glib::ustring &fname, int bps, bool isFloat, bool u
 
     bool applyExifPatch = false;
 
-    if (exifRoot) {
+    if (exifRoot && !big) {
         rtexif::TagDirectory* cl = (const_cast<rtexif::TagDirectory*> (exifRoot))->clone (nullptr);
 
         // ------------------ remove some unknown top level tags which produce warnings when opening a tiff (might be useless) -----------------
@@ -1452,24 +1476,19 @@ int ImageIO::saveTIFF (const Glib::ustring &fname, int bps, bool isFloat, bool u
     }
 
 #if __BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__
-        bool needsReverse = exifRoot && exifRoot->getOrder() == rtexif::MOTOROLA;
+    bool needsReverse = exifRoot && exifRoot->getOrder() == rtexif::MOTOROLA;
 #else
-        bool needsReverse = exifRoot && exifRoot->getOrder() == rtexif::INTEL;
+    bool needsReverse = exifRoot && exifRoot->getOrder() == rtexif::INTEL;
 #endif
+
     if (iptcdata) {
         rtexif::Tag iptcTag(nullptr, rtexif::lookupAttrib (rtexif::ifdAttribs, "IPTCData"));
         iptcTag.initLongArray((char*)iptcdata, iptclen);
         if (needsReverse) {
             unsigned char *ptr = iptcTag.getValue();
-            for (int a = 0; a < iptcTag.getCount(); ++a) {
-                unsigned char cc;
-                cc = ptr[3];
-                ptr[3] = ptr[0];
-                ptr[0] = cc;
-                cc = ptr[2];
-                ptr[2] = ptr[1];
-                ptr[1] = cc;
-                ptr += 4;
+            for (int a = 0; a < iptcTag.getCount(); ++a, ptr += 4) {
+                std::swap(ptr[0], ptr[3]);
+                std::swap(ptr[1], ptr[2]);
             }
         }
         TIFFSetField (out, TIFFTAG_RICHTIFFIPTC, iptcTag.getCount(), (long*)iptcTag.getValue());
@@ -1509,32 +1528,25 @@ int ImageIO::saveTIFF (const Glib::ustring &fname, int bps, bool isFloat, bool u
     }
 
     for (int row = 0; row < height; row++) {
-        getScanline (row, linebuffer, bps, isFloat);
+        getScanline (row, linebuffer.data(), bps, isFloat);
 
         if (bps == 16) {
             if(needsReverse && !uncompressed && isFloat) {
                 for(int i = 0; i < lineWidth; i += 2) {
-                    char temp = linebuffer[i];
-                    linebuffer[i] = linebuffer[i + 1];
-                    linebuffer[i + 1] = temp;
+                    std::swap(linebuffer[i], linebuffer[i + 1]);
                 }
             }
         } else if (bps == 32) {
             if(needsReverse && !uncompressed) {
                 for(int i = 0; i < lineWidth; i += 4) {
-                    char temp = linebuffer[i];
-                    linebuffer[i] = linebuffer[i + 3];
-                    linebuffer[i + 3] = temp;
-                    temp = linebuffer[i + 1];
-                    linebuffer[i + 1] = linebuffer[i + 2];
-                    linebuffer[i + 2] = temp;
+                    std::swap(linebuffer[i], linebuffer[i + 3]);
+                    std::swap(linebuffer[i + 1], linebuffer[i + 2]);
                 }
             }
         }
 
-        if (TIFFWriteScanline (out, linebuffer, row, 0) < 0) {
+        if (TIFFWriteScanline (out, linebuffer.data(), row, 0) < 0) {
             TIFFClose (out);
-            delete [] linebuffer;
             return IMIO_CANNOTWRITEFILE;
         }
 
@@ -1583,8 +1595,6 @@ int ImageIO::saveTIFF (const Glib::ustring &fname, int bps, bool isFloat, bool u
 #ifdef WIN32
     fclose (file);
 #endif
-
-    delete [] linebuffer;
 
     if (pl) {
         pl->setProgressStr ("PROGRESSBAR_READY");

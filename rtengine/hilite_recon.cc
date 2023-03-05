@@ -302,7 +302,7 @@ using namespace procparams;
 
 void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue, int blur)
 {  
-    BENCHFUN
+    //BENCHFUN
     double progress = 0.0;
 
     if (plistener) {
@@ -1347,7 +1347,7 @@ void dilating(const int *img, int *o, int w1, int height)
 
 void RawImageSource::highlight_recovery_opposed(float scale_mul[3], const ColorTemp &wb, float gainth)
 {
-	 BENCHFUN
+    //BENCHFUN
 
     if (settings->verbose) {
         std::cout << "Applying Highlight Recovery: Inpaint opposed" << std::endl;
