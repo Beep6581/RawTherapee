@@ -69,7 +69,7 @@ public:
     ) override;
 
     // wbprovider interface
-    void getAutoWB (double& temp, double& green, double equal, double tempBias) override;
+    void getAutoWB (double& temp, double& green, double equal, rtengine::StandardObserver observer, double tempBias) override;
     void getCamWB (double& temp, double& green) override;
 
     // thumbnaillistener interface

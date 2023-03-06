@@ -24,6 +24,8 @@
 #include "options.h"
 #include "eventmapper.h"
 
+#include "../rtengine/colortemp.h"
+
 #define MINTEMP 1500   //1200
 #define MAXTEMP 60000  //12000
 #define CENTERTEMP 4750
@@ -244,6 +246,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     }
 
     auto m = ProcEventMapper::getInstance();
+    EvWBObserver10 = m->newEvent(ALLNORAW, "HISTORY_MSG_WBALANCE_OBSERVER10");
     EvWBitcwbthres = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_THRES");
     EvWBitcwbnopurple = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_NOPURPLE");
     EvWBitcwbsorted = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_SORTED");
@@ -358,15 +361,20 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     green = Gtk::manage (new Adjuster (M("TP_WBALANCE_GREEN"), MINGREEN, MAXGREEN, 0.001, 1.0, igreenL, igreenR));
     equal = Gtk::manage (new Adjuster (M("TP_WBALANCE_EQBLUERED"), MINEQUAL, MAXEQUAL, 0.001, 1.0, iblueredL, iblueredR));
     tempBias = Gtk::manage (new Adjuster(M("TP_WBALANCE_TEMPBIAS"), -0.5, 0.5, 0.01, 0.0, itempbiasL, itempbiasR));
+    observer10 = Gtk::manage(new CheckBox(M("TP_WBALANCE_OBSERVER10"), multiImage));
+
     cache_customTemp (0);
     cache_customGreen (0);
     cache_customEqual (0);
+    cache_customObserver10(CheckValue::unchanged);
     equal->set_tooltip_markup (M("TP_WBALANCE_EQBLUERED_TOOLTIP"));
     tempBias->set_tooltip_markup (M("TP_WBALANCE_TEMPBIAS_TOOLTIP"));
+    observer10->set_tooltip_text(M("TP_WBALANCE_OBSERVER10_TOOLTIP"));
     temp->show ();
     green->show ();
     equal->show ();
     tempBias->show ();
+    observer10->show();
     itcwbFrame = Gtk::manage(new Gtk::Frame(M("TP_WBALANCE_ITCWB_FRA")));
     
     itcwbFrame->set_label_align(0.025, 0.5);
@@ -422,6 +430,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     pack_start (*green);
     pack_start (*equal);
     pack_start (*tempBias);
+    pack_start(*observer10);
 
     itcwbBox->pack_start (*itcwb_thres);
 //    itcwbBox->pack_start (*itcwb_precis);
@@ -465,6 +474,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     green->setAdjusterListener (this);
     equal->setAdjusterListener (this);
     tempBias->setAdjusterListener (this);
+    observer10->setCheckBoxListener(this);
     itcwb_thres->setAdjusterListener (this);
     itcwb_precis->setAdjusterListener (this);
     itcwb_size->setAdjusterListener (this);
@@ -659,6 +669,8 @@ void WhiteBalance::adjusterChanged(Adjuster* a, double newval)
         methconn.block(true);
         opt = setActiveMethod(wbCustom.second.GUILabel);
         tempBias->set_sensitive(false);
+        cache_customObserver10(observer10->getValue());
+        observer10->set_sensitive();
 
         cache_customWB (tVal, gVal);
         if (a != equal) {
@@ -703,6 +715,23 @@ void WhiteBalance::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
+void WhiteBalance::checkBoxToggled(CheckBox* c, CheckValue newval)
+{
+    if (!(getEnabled() && listener)) {
+        return;
+    }
+
+    if (c == observer10) {
+        cache_customObserver10(observer10->getValue());
+        listener->panelChanged(
+            EvWBObserver10,
+            c->getValue() == CheckValue::on ? M("GENERAL_ENABLED")
+            : c->getValue() == CheckValue::off
+                ? M("GENERAL_DISABLED")
+                : M("GENERAL_UNCHANGED"));
+    }
+}
+
 void WhiteBalance::optChanged ()
 {
     Gtk::TreeModel::Row row = getActiveMethod();
@@ -730,6 +759,7 @@ void WhiteBalance::optChanged ()
             green->setEditedState (UnEdited);
             equal->setEditedState (UnEdited);
             tempBias->setEditedState (UnEdited);
+            observer10->setEdited(false);
         } else {
             unsigned int methodId = findWBEntryId (row[methodColumns.colLabel], WBLT_GUI);
             const WBEntry& currMethod = WBParams::getWbEntries()[methodId];
@@ -752,11 +782,15 @@ void WhiteBalance::optChanged ()
                     temp->setValue (temp->getAddMode() ? 0.0 : (int)ctemp);
                     green->setValue (green->getAddMode() ? 0.0 : cgreen);
                     equal->setValue (equal->getAddMode() ? 0.0 : 1.0);
+                    cache_customObserver10(observer10->getValue());
+                    observer10->setValue(rtengine::StandardObserver::TEN_DEGREES == ColorTemp::DEFAULT_OBSERVER);
+                    observer10->set_sensitive(false);
 
                     if (batchMode) {
                         temp->setEditedState (UnEdited);
                         green->setEditedState (UnEdited);
                         equal->setEditedState (UnEdited);
+                        observer10->setEdited(false);
                     }
                 }
 
@@ -767,11 +801,14 @@ void WhiteBalance::optChanged ()
                     if (batchMode) {
                         temp->setEditedState (UnEdited);
                         green->setEditedState (UnEdited);
-                        // equal remain as is
+                        // equal and observer remain as is
                     }
 
                     // Recomputing AutoWB will happen in improccoordinator.cc
                 }
+
+                observer10->setValue(custom_observer10);
+                observer10->set_sensitive();
 
                 break;
 
@@ -785,11 +822,14 @@ void WhiteBalance::optChanged ()
                     cache_customGreen (green->getValue());
                     cache_customEqual (equal->getValue());
                 }
+                observer10->setValue(custom_observer10);
+                observer10->set_sensitive();
 
                 if (batchMode) {
                     temp->setEditedState (Edited);
                     green->setEditedState (Edited);
                     equal->setEditedState (Edited);
+                    observer10->setEdited(true);
                 }
 
                 break;
@@ -808,11 +848,14 @@ void WhiteBalance::optChanged ()
                 temp->setValue  ( temp->getAddMode() ? 0.0 : (double)(currMethod.temperature));
                 green->setValue (green->getAddMode() ? 0.0 : (double)(currMethod.green));
                 equal->setValue (equal->getAddMode() ? 0.0 : (double)(currMethod.equal));
+                observer10->setValue(custom_observer10);
+                observer10->set_sensitive();
 
                 if (batchMode) {
                     temp->setEditedState (Edited);
                     green->setEditedState (Edited);
                     equal->setEditedState (Edited);
+                    observer10->setEdited(true);
                 }
 
                 break;
@@ -913,6 +956,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         green->setEditedState (UnEdited);
         equal->setEditedState (pedited->wb.equal ? Edited : UnEdited);
         tempBias->setEditedState (pedited->wb.tempBias ? Edited : UnEdited);
+        observer10->setEdited(pedited->wb.observer);
         itcwb_thres->setEditedState (pedited->wb.itcwb_thres ? Edited : UnEdited);
         itcwb_precis->setEditedState (pedited->wb.itcwb_precis ? Edited : UnEdited);
         itcwb_size->setEditedState (pedited->wb.itcwb_size ? Edited : UnEdited);
@@ -940,6 +984,8 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
 
         opt = setActiveMethod(wbValues.GUILabel);
 
+        cache_customObserver10(rtengine::StandardObserver::TEN_DEGREES == pp->wb.observer ? CheckValue::on : CheckValue::off);
+
         // temperature is reset to the associated temperature, or 0.0 if addMode is set.
         switch (wbValues.type) {
         case WBEntry::Type::CUSTOM:
@@ -947,6 +993,8 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
             green->setValue (green->getAddMode() ? 0.0 : pp->wb.green);
             equal->setValue (equal->getAddMode() ? 0.0 : pp->wb.equal);
             tempBias->setValue (tempBias->getAddMode() ? 0.0 : pp->wb.tempBias);
+            observer10->setValue(rtengine::StandardObserver::TEN_DEGREES == pp->wb.observer);
+            observer10->set_sensitive();
             cache_customTemp (pp->wb.temperature);
             cache_customGreen (pp->wb.green);
             cache_customEqual (pp->wb.equal);
@@ -976,6 +1024,8 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
                     green->setValue (green->getAddMode() ? 0.0 : pp->wb.green);
                     equal->setValue (equal->getAddMode() ? 0.0 : pp->wb.equal);
                 }
+                observer10->setValue(rtengine::StandardObserver::TEN_DEGREES == ColorTemp::DEFAULT_OBSERVER);
+                observer10->set_sensitive(false);
                 tempBias->setValue (equal->getAddMode() ? 0.0 : pp->wb.tempBias);
             }
 
@@ -985,6 +1035,8 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
             // the equalizer's value is restored for the AutoWB
             equal->setValue (equal->getAddMode() ? 0.0 : pp->wb.equal);
             tempBias->setValue (tempBias->getAddMode() ? 0.0 : pp->wb.tempBias);
+            observer10->setValue(rtengine::StandardObserver::TEN_DEGREES == pp->wb.observer);
+            observer10->set_sensitive();
 
             // set default values first if in ADD mode, otherwise keep the current ones
             if (temp->getAddMode() ) {
@@ -1017,12 +1069,15 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
             green->setValue(green->getAddMode() ? 0.0 : pp->wb.green);
             equal->setValue(equal->getAddMode() ? 0.0 : pp->wb.equal);
             tempBias->setValue(equal->getAddMode() ? 0.0 : pp->wb.tempBias);
+            observer10->setValue(rtengine::StandardObserver::TEN_DEGREES == pp->wb.observer);
+            observer10->set_sensitive();
 
             // The user may have changed the green value even for predefined WB values
             if (pedited) {
                 green->setEditedState (pedited->wb.green ? Edited : UnEdited);
                 equal->setEditedState (pedited->wb.equal ? Edited : UnEdited);
                 tempBias->setEditedState (pedited->wb.tempBias ? Edited : UnEdited);
+                observer10->setEdited(pedited->wb.observer);
             }
 
             //cache_customGreen (pp->wb.green);
@@ -1064,6 +1119,7 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->wb.green = green->getEditedState ();
         pedited->wb.equal = equal->getEditedState ();
         pedited->wb.tempBias = tempBias->getEditedState ();
+        pedited->wb.observer = observer10->getEdited();
         pedited->wb.itcwb_thres = itcwb_thres->getEditedState ();
         pedited->wb.itcwb_precis = itcwb_precis->getEditedState ();
         pedited->wb.itcwb_size = itcwb_size->getEditedState ();
@@ -1089,6 +1145,9 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
     pp->wb.temperature = temp->getIntValue ();
     pp->wb.green = green->getValue ();
     pp->wb.equal = equal->getValue ();
+    pp->wb.observer = custom_observer10 == CheckValue::on    ? rtengine::StandardObserver::TEN_DEGREES
+                      : custom_observer10 == CheckValue::off ? rtengine::StandardObserver::TWO_DEGREES
+                                                             : pp->wb.observer;
     pp->wb.itcwb_thres = itcwb_thres->getValue ();
     pp->wb.itcwb_precis = itcwb_precis->getValue ();
     pp->wb.itcwb_size = itcwb_size->getValue ();
@@ -1186,6 +1245,7 @@ void WhiteBalance::setWB (int vtemp, double vgreen)
     opt = setActiveMethod(wbValues.second.GUILabel);
     cache_customWB (vtemp, vgreen); // sequence in which this call is made is important; must be before "method->set_active (2);"
     cache_customEqual(equal->getValue());
+    cache_customObserver10(observer10->getValue());
     temp->setEditedState (Edited);
     green->setEditedState (Edited);
     methconn.block(false);
@@ -1237,6 +1297,11 @@ void WhiteBalance::cache_customWB(int temp, double green)
 {
     cache_customTemp (temp);
     cache_customGreen (green);
+}
+
+void WhiteBalance::cache_customObserver10(CheckValue observer10)
+{
+    custom_observer10 = observer10;
 }
 
 unsigned int WhiteBalance::findWBEntryId (const Glib::ustring& label, enum WB_LabelType lblType)

@@ -33,6 +33,12 @@ const Glib::ustring FilmNegative::TOOL_NAME = "filmnegative";
 namespace
 {
 
+/**
+ * Observer to use for displaying the temperature and tint equivalent of the
+ * multipliers.
+ */
+constexpr rtengine::StandardObserver standard_observer = rtengine::ColorTemp::DEFAULT_OBSERVER;
+
 double toAdjuster(double v)
 {
     return CLAMP(std::log2(v), 6, 16) - 6;
@@ -154,7 +160,7 @@ RGB getFilmNegativeExponents(const RGB &ref1, const RGB &ref2) // , const RGB &c
 
 void temp2rgb(double outLev, double temp, double green, RGB &refOut)
 {
-    rtengine::ColorTemp ct = rtengine::ColorTemp(temp, green, 1., "Custom");
+    rtengine::ColorTemp ct = rtengine::ColorTemp(temp, green, 1., "Custom", standard_observer);
 
     double rm, gm, bm;
     ct.getMultipliers(rm, gm, bm);
@@ -175,7 +181,8 @@ void rgb2temp(const RGB &refOut, double &outLev, double &temp, double &green)
                                  refOut.r / maxVal,
                                  refOut.g / maxVal,
                                  refOut.b / maxVal,
-                                 1.);
+                                 1.,
+                                 standard_observer);
 
     outLev = maxVal;
     temp = ct.getTemp();
@@ -188,7 +195,7 @@ void rgb2temp(const RGB &refOut, double &outLev, double &temp, double &green)
 FilmNegative::FilmNegative() :
     FoldableToolPanel(this, TOOL_NAME, M("TP_FILMNEGATIVE_LABEL"), false, true),
     EditSubscriber(ET_OBJECTS),
-    NEUTRAL_TEMP(rtengine::ColorTemp(1., 1., 1., 1.)),
+    NEUTRAL_TEMP(rtengine::ColorTemp(1., 1., 1., 1., rtengine::StandardObserver::TEN_DEGREES)),
     evFilmNegativeExponents(ProcEventMapper::getInstance()->newEvent(ALLNORAW, "HISTORY_MSG_FILMNEGATIVE_VALUES")),
     evFilmNegativeEnabled(ProcEventMapper::getInstance()->newEvent(ALLNORAW, "HISTORY_MSG_FILMNEGATIVE_ENABLED")),
     evFilmNegativeRefSpot(ProcEventMapper::getInstance()->newEvent(ALLNORAW, "HISTORY_MSG_FILMNEGATIVE_REF_SPOT")),

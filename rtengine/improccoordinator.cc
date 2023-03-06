@@ -522,7 +522,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 printf("Applying white balance, color correction & sRBG conversion...\n");
             }
 
-            currWB = ColorTemp(params->wb.temperature, params->wb.green, params->wb.equal, params->wb.method);
+            currWB = ColorTemp(params->wb.temperature, params->wb.green, params->wb.equal, params->wb.method, params->wb.observer);
             float studgood = 1000.f;
 
             if (!params->wb.enabled) {
@@ -547,7 +547,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     if (params->wb.method ==  "autitcgreen") {
                         params->wb.temperature = tempitc;
                         params->wb.green = greenitc;
-                        currWB = ColorTemp(params->wb.temperature, params->wb.green, 1., params->wb.method);
+                        currWB = ColorTemp(params->wb.temperature, params->wb.green, 1., params->wb.method, params->wb.observer);
                         //printf("tempitc=%f greitc=%f\n", tempitc, greenitc);
 
                         currWB.getMultipliers(rm, gm, bm);
@@ -560,7 +560,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                             bias = 0.;
                         }
 
-                        autoWB.update(rm, gm, bm, params->wb.equal, bias);
+                        autoWB.update(rm, gm, bm, params->wb.equal, params->wb.observer, bias);
                         lastAwbEqual = params->wb.equal;
                         lastAwbTempBias = params->wb.tempBias;
                         lastAwbauto = params->wb.method;
@@ -568,7 +568,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         lastAwbEqual = -1.;
                         lastAwbTempBias = 0.0;
                         lastAwbauto = "";
-                        autoWB.useDefaults(params->wb.equal);
+                        autoWB.useDefaults(params->wb.equal, params->wb.observer);
                     }
                     
                     
@@ -790,7 +790,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
             if (params->toneCurve.histmatching) {
                 if (!params->toneCurve.fromHistMatching) {
-                    imgsrc->getAutoMatchedToneCurve(params->icm, params->toneCurve.curve);
+                    imgsrc->getAutoMatchedToneCurve(params->icm, params->wb.observer, params->toneCurve.curve);
                 }
 
                 if (params->toneCurve.autoexp) {
@@ -2460,7 +2460,7 @@ bool ImProcCoordinator::updateWaveforms()
     return true;
 }
 
-bool ImProcCoordinator::getAutoWB(double& temp, double& green, double equal, double tempBias)
+bool ImProcCoordinator::getAutoWB(double& temp, double& green, double equal, StandardObserver observer, double tempBias)
 {
 
     if (imgsrc) {
@@ -2477,13 +2477,13 @@ bool ImProcCoordinator::getAutoWB(double& temp, double& green, double equal, dou
             imgsrc->getAutoWBMultipliersitc(tempref, greenref, tempitc, greenitc, studgood,  0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
 
             if (rm != -1) {
-                autoWB.update(rm, gm, bm, equal, tempBias);
+                autoWB.update(rm, gm, bm, equal, observer, tempBias);
                 lastAwbEqual = equal;
                 lastAwbTempBias = tempBias;
                 lastAwbauto = params->wb.method;
             } else {
                 lastAwbEqual = -1.;
-                autoWB.useDefaults(equal);
+                autoWB.useDefaults(equal, observer);
                 lastAwbauto = "";
                 lastAwbTempBias = 0.0;
             }
@@ -2527,8 +2527,8 @@ void ImProcCoordinator::getSpotWB(int x, int y, int rect, double& temp, double& 
 
         int tr = getCoarseBitMask(params->coarse);
 
-        ret = imgsrc->getSpotWB(red, green, blue, tr, params->wb.equal);
-        currWB = ColorTemp(params->wb.temperature, params->wb.green, params->wb.equal, params->wb.method);
+        ret = imgsrc->getSpotWB(red, green, blue, tr, params->wb.equal, params->wb.observer);
+        currWB = ColorTemp(params->wb.temperature, params->wb.green, params->wb.equal, params->wb.method, params->wb.observer);
         //double rr,gg,bb;
         //currWB.getMultipliers(rr,gg,bb);
 
@@ -2634,7 +2634,7 @@ void ImProcCoordinator::saveInputICCReference(const Glib::ustring& fname, bool a
     imgsrc->preprocess(ppar.raw, ppar.lensProf, ppar.coarse);
     double dummy = 0.0;
     imgsrc->demosaic(ppar.raw, false, dummy);
-    ColorTemp currWB = ColorTemp(validParams->wb.temperature, validParams->wb.green, validParams->wb.equal, validParams->wb.method);
+    ColorTemp currWB = ColorTemp(validParams->wb.temperature, validParams->wb.green, validParams->wb.equal, validParams->wb.method, validParams->wb.observer);
 
     if (validParams->wb.method == "Camera") {
         currWB = imgsrc->getWB();
@@ -2644,13 +2644,13 @@ void ImProcCoordinator::saveInputICCReference(const Glib::ustring& fname, bool a
             imgsrc->getAutoWBMultipliers(rm, gm, bm);
 
             if (rm != -1.) {
-                autoWB.update(rm, gm, bm, validParams->wb.equal, validParams->wb.tempBias);
+                autoWB.update(rm, gm, bm, validParams->wb.equal, validParams->wb.observer, validParams->wb.tempBias);
                 lastAwbEqual = validParams->wb.equal;
                 lastAwbTempBias = validParams->wb.tempBias;
             } else {
                 lastAwbEqual = -1.;
                 lastAwbTempBias = 0.0;
-                autoWB.useDefaults(validParams->wb.equal);
+                autoWB.useDefaults(validParams->wb.equal, validParams->wb.observer);
             }
         }
 

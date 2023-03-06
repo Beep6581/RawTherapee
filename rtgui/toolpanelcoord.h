@@ -398,10 +398,10 @@ public:
     void updateShowtooltipVisibility (bool showtooltip);
 
     // wbprovider interface
-    void getAutoWB (double& temp, double& green, double equal, double tempBias) override
+    void getAutoWB (double& temp, double& green, double equal, rtengine::StandardObserver observer, double tempBias) override
     {
         if (ipc) {
-            ipc->getAutoWB(temp, green, equal, tempBias);
+            ipc->getAutoWB(temp, green, equal, observer, tempBias);
         }
     }
     void getCamWB (double& temp, double& green) override

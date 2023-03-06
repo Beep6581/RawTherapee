@@ -154,7 +154,7 @@ public:
         return camera_wb;
     }
     void        getAutoWBMultipliers (double &rm, double &gm, double &bm) override;
-    ColorTemp   getSpotWB   (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran, double equal) override;
+    ColorTemp   getSpotWB   (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran, double equal, StandardObserver observer) override;
     bool        isWBProviderReady () override
     {
         return rawData;
@@ -186,7 +186,7 @@ public:
     }
     void        getAutoExpHistogram (LUTu & histogram, int& histcompr) override;
     void        getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw) override;
-    void getAutoMatchedToneCurve(const procparams::ColorManagementParams &cp, std::vector<double> &outCurve) override;
+    void getAutoMatchedToneCurve(const procparams::ColorManagementParams &cp, StandardObserver observer, std::vector<double> &outCurve) override;
     DCPProfile *getDCP(const procparams::ColorManagementParams &cmp, DCPProfileApplyState &as) override;
 
     void convertColorSpace(Imagefloat* image, const procparams::ColorManagementParams &cmp, const ColorTemp &wb) override;

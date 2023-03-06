@@ -1296,7 +1296,7 @@ int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
     double cam_r = imatrices.rgb_cam[0][0] * camwb_red + imatrices.rgb_cam[0][1] * camwb_green + imatrices.rgb_cam[0][2] * camwb_blue;
     double cam_g = imatrices.rgb_cam[1][0] * camwb_red + imatrices.rgb_cam[1][1] * camwb_green + imatrices.rgb_cam[1][2] * camwb_blue;
     double cam_b = imatrices.rgb_cam[2][0] * camwb_red + imatrices.rgb_cam[2][1] * camwb_green + imatrices.rgb_cam[2][2] * camwb_blue;
-    camera_wb = ColorTemp (cam_r, cam_g, cam_b, 1.); // as shot WB
+    camera_wb = ColorTemp (cam_r, cam_g, cam_b, 1., ColorTemp::DEFAULT_OBSERVER); // as shot WB
 
     if (settings->verbose) {
         printf("Raw As Shot White balance: temp %f, tint %f\n", camera_wb.getTemp(), camera_wb.getGreen());
@@ -1383,7 +1383,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         const double ref_r = imatrices.rgb_cam[0][0] * refwb_red + imatrices.rgb_cam[0][1] * refwb_green + imatrices.rgb_cam[0][2] * refwb_blue;
         const double ref_g = imatrices.rgb_cam[1][0] * refwb_red + imatrices.rgb_cam[1][1] * refwb_green + imatrices.rgb_cam[1][2] * refwb_blue;
         const double ref_b = imatrices.rgb_cam[2][0] * refwb_red + imatrices.rgb_cam[2][1] * refwb_green + imatrices.rgb_cam[2][2] * refwb_blue;
-        const ColorTemp ReferenceWB = ColorTemp (ref_r, ref_g, ref_b, 1.);
+        const ColorTemp ReferenceWB = ColorTemp (ref_r, ref_g, ref_b, 1., ColorTemp::DEFAULT_OBSERVER);
 
         if (settings->verbose) {
             printf("Raw Reference white balance: temp %f, tint %f, multipliers [%f %f %f | %f %f %f]\n", ReferenceWB.getTemp(), ReferenceWB.getGreen(), ref_r, ref_g, ref_b, refwb_red, refwb_blue, refwb_green);
@@ -5549,7 +5549,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     for (int tt = 0; tt < N_t; ++tt) {
         double r, g, b;
         float rm, gm, bm;
-        ColorTemp WBiter = ColorTemp(Txyz[tt].Tem, greenitc, 1.f, "Custom");
+        ColorTemp WBiter = ColorTemp(Txyz[tt].Tem, greenitc, 1.f, "Custom", wbpar.observer);
         WBiter.getMultipliers(r, g, b);
         
         rm = imatrices.cam_rgb[0][0] * r + imatrices.cam_rgb[0][1] * g + imatrices.cam_rgb[0][2] * b;
@@ -5944,7 +5944,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
             for (int tt = scantempbeg; tt < scantempend; ++tt) {
                 double r, g, b;
-                ColorTemp WBiter(Txyz[tt].Tem, gree[gr].green, 1.f, "Custom");
+                ColorTemp WBiter(Txyz[tt].Tem, gree[gr].green, 1.f, "Custom", wbpar.observer);
                 WBiter.getMultipliers(r, g, b);
                 float rm = imatrices.cam_rgb[0][0] * r + imatrices.cam_rgb[0][1] * g + imatrices.cam_rgb[0][2] * b;
                 float gm = imatrices.cam_rgb[1][0] * r + imatrices.cam_rgb[1][1] * g + imatrices.cam_rgb[1][2] * b;
@@ -6605,7 +6605,7 @@ void RawImageSource::getAutoWBMultipliers(double &rm, double &gm, double &bm)
     blueAWBMul = bm = imatrices.rgb_cam[2][0] * reds + imatrices.rgb_cam[2][1] * greens + imatrices.rgb_cam[2][2] * blues;
 }
 
-ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran, double equal)
+ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran, double equal, StandardObserver observer)
 {
 
     int x;
@@ -6813,7 +6813,7 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
         double gm = imatrices.rgb_cam[1][0] * reds + imatrices.rgb_cam[1][1] * greens + imatrices.rgb_cam[1][2] * blues;
         double bm = imatrices.rgb_cam[2][0] * reds + imatrices.rgb_cam[2][1] * greens + imatrices.rgb_cam[2][2] * blues;
 
-        return ColorTemp (rm, gm, bm, equal);
+        return ColorTemp (rm, gm, bm, equal, observer);
     }
 }
 

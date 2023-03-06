@@ -36,6 +36,10 @@ constexpr double MINEQUAL = 0.8;
 constexpr double MAXEQUAL = 1.5;
 constexpr double INITIALBLACKBODY = 4000.0;
 
+enum class StandardObserver {
+    TWO_DEGREES,
+    TEN_DEGREES,
+};
 
 class ColorTemp
 {
@@ -45,32 +49,35 @@ private:
     double green;
     double equal;
     std::string method;
+    StandardObserver observer{StandardObserver::TEN_DEGREES};
     static void clip (double &temp, double &green);
     static void clip (double &temp, double &green, double &equal);
     int XYZtoCorColorTemp(double x0, double y0 , double z0, double &temp) const;
-    void temp2mul (double temp, double green, double equal, double& rmul, double& gmul, double& bmul) const;
+    void temp2mul (double temp, double green, double equal, StandardObserver observer, double& rmul, double& gmul, double& bmul) const;
     const static std::map<std::string,const double *> spectMap;
 public:
+    static constexpr StandardObserver DEFAULT_OBSERVER = StandardObserver::TEN_DEGREES;
 
     ColorTemp () : temp(-1.), green(-1.), equal (1.), method("Custom") {}
     explicit ColorTemp (double e) : temp(-1.), green(-1.), equal (e), method("Custom") {}
-    ColorTemp (double t, double g, double e, const std::string &m);
-    ColorTemp (double mulr, double mulg, double mulb, double e);
+    ColorTemp (double t, double g, double e, const std::string &m, StandardObserver o);
+    ColorTemp (double mulr, double mulg, double mulb, double e, StandardObserver observer);
     static void tempxy(bool separated, int repref, float **Tx, float **Ty, float **Tz, float **Ta, float **Tb, float **TL, double *TX, double *TY, double *TZ, const procparams::WBParams & wbpar);
 
-    void update (const double rmul, const double gmul, const double bmul, const double equal, const double tempBias=0.0)
+    void update (const double rmul, const double gmul, const double bmul, const double equal, StandardObserver observer, const double tempBias=0.0)
     {
         this->equal = equal;
-        mul2temp (rmul, gmul, bmul, this->equal, temp, green);
+        mul2temp (rmul, gmul, bmul, this->equal, observer, temp, green);
         if (tempBias != 0.0 && tempBias >= -1.0 && tempBias <= 1.0) {
             temp += temp * tempBias;
         }
     }
-    void useDefaults (const double equal)
+    void useDefaults (const double equal, StandardObserver observer)
     {
         temp = 6504;    // Values copied from procparams.cc
         green = 1.0;
         this->equal = equal;
+        this->observer = observer;
     }
 
     inline std::string getMethod() const
@@ -89,14 +96,18 @@ public:
     {
         return equal;
     }
+    inline StandardObserver getObserver() const
+    {
+        return observer;
+    }
 
     void  getMultipliers (double &mulr, double &mulg, double &mulb) const
     {
-        temp2mul (temp, green, equal, mulr, mulg, mulb);
+        temp2mul (temp, green, equal, observer, mulr, mulg, mulb);
     }
 
-    void mul2temp (const double rmul, const double gmul, const double bmul, const double equal, double& temp, double& green) const;
-    static void temp2mulxyz (double tem, const std::string &method, double &Xxyz, double &Zxyz);
+    void mul2temp (const double rmul, const double gmul, const double bmul, const double equal, StandardObserver observer, double& temp, double& green) const;
+    static void temp2mulxyz (double tem, const std::string &method, StandardObserver observer, double &Xxyz, double &Zxyz);
 
     static void cieCAT02(double Xw, double Yw, double Zw, double &CAM02BB00, double &CAM02BB01, double &CAM02BB02, double &CAM02BB10, double &CAM02BB11, double &CAM02BB12, double &CAM02BB20, double &CAM02BB21, double &CAM02BB22, double adap );
     static void cieCAT02float(float Xw, float Yw, float Zw, float &CAM02BB00, float &CAM02BB01, float &CAM02BB02, float &CAM02BB10, float &CAM02BB11, float &CAM02BB12, float &CAM02BB20, float &CAM02BB21, float &CAM02BB22, float adap);
@@ -104,7 +115,7 @@ public:
 
     bool operator== (const ColorTemp& other) const
     {
-        return fabs(temp - other.temp) < 1e-10 && fabs(green - other.green) < 1e-10;
+        return fabs(temp - other.temp) < 1e-10 && fabs(green - other.green) < 1e-10 && observer != other.observer;
     }
     bool operator!= (const ColorTemp& other) const
     {

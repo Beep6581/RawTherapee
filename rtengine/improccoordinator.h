@@ -433,7 +433,7 @@ public:
 
     void setTweakOperator (TweakOperator *tOperator) override;
     void unsetTweakOperator (TweakOperator *tOperator) override;
-    bool getAutoWB   (double& temp, double& green, double equal, double tempBias) override;
+    bool getAutoWB   (double& temp, double& green, double equal, StandardObserver observer, double tempBias) override;
     void getCamWB    (double& temp, double& green) override;
     void getSpotWB   (int x, int y, int rectSize, double& temp, double& green) override;
     bool getFilmNegativeSpot(int x, int y, int spotSize, FilmNegativeParams::RGB &refInput, FilmNegativeParams::RGB &refOutput) override;

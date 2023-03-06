@@ -246,6 +246,7 @@ struct WBParamsEdited {
     bool temperature;
     bool green;
     bool equal;
+    bool observer;
     bool tempBias;
     bool itcwb_thres;
     bool itcwb_precis;

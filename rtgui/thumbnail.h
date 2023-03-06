@@ -128,7 +128,7 @@ public:
     const Glib::ustring&  getDateTimeString () const;
     const Glib::DateTime& getDateTime () const;
     void                  getCamWB  (double& temp, double& green) const;
-    void                  getAutoWB (double& temp, double& green, double equal, double tempBias);
+    void                  getAutoWB (double& temp, double& green, double equal, rtengine::StandardObserver observer, double tempBias);
     void                  getSpotWB (int x, int y, int rect, double& temp, double& green);
     void                  applyAutoExp (rtengine::procparams::ProcParams& pparams);
 

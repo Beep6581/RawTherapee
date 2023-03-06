@@ -21,6 +21,7 @@
 #include <gtkmm.h>
 
 #include "adjuster.h"
+#include "checkbox.h"
 #include "guiutils.h"
 #include "toolpanel.h"
 #include "wbprovider.h"
@@ -35,7 +36,7 @@ public:
     virtual void spotWBRequested(int size) = 0;
 };
 
-class WhiteBalance final : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoWBListener
+class WhiteBalance final : public ToolParamBlock, public AdjusterListener, public CheckBoxListener, public FoldableToolPanel, public rtengine::AutoWBListener
 {
 
     enum WB_LabelType {
@@ -62,6 +63,7 @@ protected:
         }
     };
     
+    rtengine::ProcEvent EvWBObserver10;
     rtengine::ProcEvent EvWBitcwbthres;
     rtengine::ProcEvent EvWBitcwbnopurple;
     rtengine::ProcEvent EvWBitcwbsorted;
@@ -83,6 +85,7 @@ protected:
     Adjuster* green;
     Adjuster* equal;
     Adjuster* tempBias;
+    CheckBox* observer10;
     Gtk::Frame* itcwbFrame;
     Adjuster* itcwb_thres;
     Adjuster* itcwb_precis;
@@ -110,6 +113,7 @@ protected:
     int custom_temp;
     double custom_green;
     double custom_equal;
+    CheckValue custom_observer10;
 
     IdleRegister idle_register;
 
@@ -117,6 +121,7 @@ protected:
     void cache_customTemp  (int temp);               //cache Temperature only to allow its recall
     void cache_customGreen (double green);           //cache Green only to allow its recall
     void cache_customEqual (double equal);           //cache Equal only to allow its recall
+    void cache_customObserver10(CheckValue observer10); //cache observer10 only to allow its recall
 
     int  setActiveMethod   (Glib::ustring label);
     int _setActiveMethod   (Glib::ustring &label, Gtk::TreeModel::Children &children);
@@ -142,6 +147,7 @@ public:
     void spotPressed ();
     void spotSizeChanged ();
     void adjusterChanged(Adjuster* a, double newval) override;
+    void checkBoxToggled(CheckBox* c, CheckValue newval) override;
     int  getSize ();
     void setWBProvider (WBProvider* p)
     {
