@@ -206,7 +206,7 @@ jobs:
 
           echo "Creating GTK settings.ini."
           mkdir -p "$BUILD_DIR/share/gtk-3.0/"
-          echo '[Settings] gtk-button-images=1' > "$BUILD_DIR/share/gtk-3.0/settings.ini"
+          echo -e '[Settings]\ngtk-button-images=1' > "$BUILD_DIR/share/gtk-3.0/settings.ini"
 
       - name: Create installer
         if: ${{matrix.build_type == 'release' && (github.ref_type == 'tag' || github.ref_name == 'dev')}}
