@@ -788,6 +788,8 @@ private:
 public:
     LocallabBlur();
     ~LocallabBlur();
+    void updatedenlc(const double highres, const double nres, const double highres46, const double nres46, const double Lhighres, const double Lnres, const double Lhighres46, const double Lnres46);
+
 
     bool isMaskViewActive() override;
     void resetMaskView() override;

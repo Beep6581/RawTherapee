@@ -7138,7 +7138,9 @@ void LocallabBlur::neutral_pressed ()
     
 
 }
-
+void LocallabBlur::updatedenlc(const double highres, const double nres, const double highres46, const double nres46, const double Lhighres, const double Lnres, const double Lhighres46, const double Lnres46)
+{
+}
 void LocallabBlur::setDefaultExpanderVisibility()
 {
     expblnoise->set_expanded(false);

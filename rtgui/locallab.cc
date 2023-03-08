@@ -1094,6 +1094,28 @@ void Locallab::minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int 
     }
 }
 
+void Locallab::denChanged(const std::vector<locallabDenoiseLC> &denlc, int selspot)
+{
+    // Saving transmitted min/max data
+    denoiselc = denlc;
+    /*
+    // Update Locallab Retinex tool min/max
+    if (selspot < (int)retiMinMax.size()) {
+        const double cdma = retiMinMax.at(selspot).cdma;
+        const double cdmin = retiMinMax.at(selspot).cdmin;
+        const double mini = retiMinMax.at(selspot).mini;
+        const double maxi = retiMinMax.at(selspot).maxi;
+        const  double Tmean = retiMinMax.at(selspot).Tmean;
+        const double Tsigma = retiMinMax.at(selspot).Tsigma;
+        const double Tmin = retiMinMax.at(selspot).Tmin;
+        const double Tmax = retiMinMax.at(selspot).Tmax;
+
+        expreti.updateMinMax(cdma, cdmin, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
+    }
+    */
+}
+
+
 void Locallab::logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const bool autocomput, const bool autocie, const float jz1)
 {
     // Update Locallab Log Encoding and Ciecam accordingly

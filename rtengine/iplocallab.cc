@@ -10872,7 +10872,8 @@ void ImProcFunctions::fftw_denoise(int sk, int GW, int GH, int max_numblox_W, in
 
 }
 
-void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * slidb, int aut,  bool noiscfactiv, const struct local_params & lp, LabImage * originalmaskbl, LabImage *  bufmaskblurbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage * original, LabImage * transformed, int cx, int cy, int sk, const LocwavCurve& locwavCurvehue, bool locwavhueutili)
+void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * slidb, int aut,  bool noiscfactiv, const struct local_params & lp, LabImage * originalmaskbl, LabImage *  bufmaskblurbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage * original, LabImage * transformed,
+    int cx, int cy, int sk, const LocwavCurve& locwavCurvehue, bool locwavhueutili, float &highresi, float &nresi, float &highresi46, float &nresi46, float &Lhighresi, float &Lnresi, float &Lhighresi46, float &Lnresi46)
 {
     BENCHFUN
 //local denoise
@@ -10965,6 +10966,9 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                     tmp1.a[ir][jr] = original->a[ir][jr];
                     tmp1.b[ir][jr] = original->b[ir][jr];
                 }
+            if(lp.nlstr > 0) {
+                NLMeans(tmp1.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, GW, GH, float (sk), multiThread);
+            }
 
             float gamma = lp.noisegam;
             rtengine::GammaValues g_a; //gamma parameters
@@ -11003,7 +11007,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
             if (!Ldecomp.memory_allocation_failed()) {
 #ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic) collapse(2) if (multiThread)
+            //    #pragma omp parallel for schedule(dynamic) collapse(2) if (multiThread)
 #endif
                 for (int lvl = 0; lvl < levred; lvl++) {
                     for (int dir = 1; dir < 4; dir++) {
@@ -11012,6 +11016,8 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                         const float* const* WavCoeffs_L = Ldecomp.level_coeffs(lvl);
 
                         madL[lvl][dir - 1] = SQR(Mad(WavCoeffs_L[dir], Wlvl_L * Hlvl_L));
+                   //     printf("madl=%f lvl=%i dir=%i\n", (double) madL[lvl][dir-1], lvl, dir-1);
+                        
                     }
                 }
 
@@ -11534,7 +11540,6 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                 }
 
             }
-
             if(gamma > 1.f) {
 #ifdef _OPENMP
 #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -11551,11 +11556,11 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                     }
                 }
             }
-
+/*
             if(lp.nlstr > 0) {
                 NLMeans(tmp1.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, GW, GH, float (sk), multiThread);
             }
-
+*/
             if(lp.smasktyp != 0) {
                 if(lp.enablMask && lp.recothrd != 1.f) {
                     LabImage tmp3(GW, GH);
@@ -11634,6 +11639,72 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                     masklum.free();
                     masklumch.free();
                 }
+                
+// re read wavelet decomposition to calaculate noise resisd
+//            int levwavL = levred;
+//            int skip = 1;
+            float chresid = 0.f;
+            float chresidtemp = 0.f;
+            float chmaxresid = 0.f;
+            float chmaxresidtemp = 0.f;
+            float chresid46 = 0.f;
+            float chresidtemp46 = 0.f;
+            float chmaxresid46 = 0.f;
+            float chmaxresidtemp46 = 0.f;
+        //    float highresi, nresi;
+        //    float highresi46, nresi46;
+            float Lresid = 0.f;
+            float Lmaxresid = 0.f;
+            float Lresid46 = 0.f;
+            float Lmaxresid46 = 0.f;
+        //    float Lhighresi, Lnresi;
+        //    float Lhighresi46, Lnresi46;
+            
+            
+            
+//levwavL = 5;
+            wavelet_decomposition Ldecompinf(tmp1.L[0], tmp1.W, tmp1.H, levwavL, 1, skip, numThreads, lp.daubLen);
+            wavelet_decomposition adecompinf(tmp1.a[0], tmp1.W, tmp1.H, levwavL, 1, skip, numThreads, lp.daubLen);
+            wavelet_decomposition bdecompinf(tmp1.b[0], tmp1.W, tmp1.H, levwavL, 1, skip, numThreads, lp.daubLen);
+
+            Noise_residualAB(adecompinf, chresid, chmaxresid, false, 0, 3);
+            chresidtemp = chresid;
+            chmaxresidtemp = chmaxresid;
+            Noise_residualAB(bdecompinf, chresid, chmaxresid, false, 0, 3);
+            chresid += chresidtemp;
+            chmaxresid += chmaxresidtemp;
+            chresid = sqrt(chresid / (6 * (levwavL)));
+            highresi = chresid + 0.66f * (sqrt(chmaxresid) - chresid); //evaluate sigma
+            nresi = chresid;
+            printf("nresi03=%f highresi=%f \n", (double) nresi, (double) highresi);
+
+
+            Noise_residualAB(adecompinf, chresid46, chmaxresid46, false, 4, 6);
+            chresidtemp46 = chresid46;
+            chmaxresidtemp46 = chmaxresid46;
+            Noise_residualAB(bdecompinf, chresid46, chmaxresid46, false, 4, 6);
+            chresid46 += chresidtemp46;
+            chmaxresid46 += chmaxresidtemp46;
+            chresid46 = sqrt(chresid46 / (6 * (levwavL)));
+            highresi46 = chresid46 + 0.66f * (sqrt(chmaxresid46) - chresid46); //evaluate sigma
+            nresi46 = chresid46;
+            printf("nresi46=%f highresi=%f \n", (double) nresi46, (double) highresi46);
+
+
+            Noise_residualAB(Ldecompinf, Lresid, Lmaxresid, false, 0, 3);
+            Lresid = sqrt(Lresid / (6 * (levwavL)));
+            Lhighresi = Lresid + 0.66f * (sqrt(Lmaxresid) - Lresid); //evaluate sigma
+            Lnresi = Lresid;
+            printf("Lresi03=%f Lhighresi=%f levwavL=%i\n", (double) Lnresi, (double) Lhighresi, levwavL);
+
+            Noise_residualAB(Ldecompinf, Lresid46, Lmaxresid46, false, 4, 6);
+            Lresid46 = sqrt(Lresid46 / (6 * (levwavL)));
+            Lhighresi46 = Lresid46 + 0.66f * (sqrt(Lmaxresid46) - Lresid46); //evaluate sigma
+            Lnresi46 = Lresid46;
+            printf("Lresi46=%f Lhighresi=%f levwavL=%i\n", (double) Lnresi46, (double) Lhighresi46, levwavL);
+
+// end calculate
+                
                 DeNoise_Local(call, lp,  originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);
             } else {
                 DeNoise_Local(call, lp,  original, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);
@@ -13363,7 +13434,9 @@ void ImProcFunctions::Lab_Local(
     double& huerefblur, double& chromarefblur, double& lumarefblur, double& hueref, double& chromaref, double& lumaref, double& sobelref, int &lastsav,
     bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, int llcieMask, 
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax,
-    float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab
+    float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,
+    float &highresi, float &nresi, float &highresi46, float &nresi46, float &Lhighresi, float &Lnresi, float &Lhighresi46, float &Lnresi46
+
     )
 {
     //general call of others functions : important return hueref, chromaref, lumaref
@@ -14414,7 +14487,8 @@ void ImProcFunctions::Lab_Local(
         float slida[8] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
         float slidb[8] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
         constexpr int aut = 0;
-        DeNoise(call, slidL, slida, slidb, aut, noiscfactiv, lp, originalmaskbl.get(), bufmaskblurbl.get(), levred, huerefblur, lumarefblur, chromarefblur, original, transformed, cx, cy, sk, locwavCurvehue, locwavhueutili);
+        DeNoise(call, slidL, slida, slidb, aut, noiscfactiv, lp, originalmaskbl.get(), bufmaskblurbl.get(), levred, huerefblur, lumarefblur, chromarefblur, original, transformed, cx, cy, sk, locwavCurvehue, locwavhueutili,
+                highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46);
 
         if (lp.recur) {
             original->CopyFrom(transformed, multiThread);
