@@ -120,8 +120,8 @@ minimum_macos_version=${MINIMUM_SYSTEM_VERSION}
 #Out: /opt
 LOCAL_PREFIX="$(cmake .. -L -N | grep LOCAL_PREFIX)"; LOCAL_PREFIX="${LOCAL_PREFIX#*=}"
 
-#In: OSX_UNIVERSAL_URL=https:// etc.
-#Out: https:// etc.
+#In: OSX_UNIVERSAL_URL=file:/// etc.
+#Out: file:/// etc.
 UNIVERSAL_URL="$(cmake .. -L -N | grep OSX_UNIVERSAL_URL)"; UNIVERSAL_URL="${UNIVERSAL_URL#*=}"
 if [[ -n $UNIVERSAL_URL ]]; then
     echo "Universal app is ON. The URL is ${UNIVERSAL_URL}"
@@ -151,6 +151,13 @@ fi
 OSX_NIGHTLY="$(cmake .. -L -N | grep OSX_NIGHTLY)"; NIGHTLY="${OSX_NIGHTLY#*=}"
 if [[ -n $NIGHTLY ]]; then
     echo "Nightly/generically-named zip is ON."
+fi
+
+# In: OSX_CONTINUOUS:BOOL=ON
+# Out: ON
+OSX_CONTINUOUS="$(cmake .. -L -N | grep OSX_CONTINUOUS)"; NIGHTLY="${OSX_CONTINUOUS#*=}" && CONTINUOUS="${OSX_CONTINUOUS#*=}"
+if [[ -n $CONTINUOUS ]]; then
+    echo "Continuous/generically-named zip is ON."
 fi
 
 APP="${PROJECT_NAME}.app"
@@ -434,12 +441,16 @@ function CreateDmg {
     # Zip disk image for redistribution
     msg "Zipping disk image for redistribution:"
     mkdir "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}_folder"
-        ditto {"${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}.dmg","rawtherapee-cli","${PROJECT_SOURCE_DATA_DIR}/INSTALL.txt"} "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}_folder"
+        cp {"${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}.dmg","${PROJECT_NAME}.app/Contents/Frameworks/rawtherapee-cli","${PROJECT_SOURCE_DATA_DIR}/INSTALL.readme.rtf"} "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}_folder"
     zip -r "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}.zip" "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}_folder/"
     if [[ -n $NIGHTLY ]]; then
         cp "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}.zip" "${PROJECT_NAME}_macOS_${arch}_latest.zip"
     fi
+    if [[ -n $CONTINUOUS ]]; then
+         mv "${PROJECT_NAME}_macOS_${arch}_latest.zip" "${PROJECT_NAME}_$(git status|head -1|awk -v N=$3 '{print $3}')_macOS_${arch}_${CMAKE_BUILD_TYPE}.zip"
+    fi
 }
+
 CreateDmg
 msg "Finishing build:"
 echo "Script complete."
