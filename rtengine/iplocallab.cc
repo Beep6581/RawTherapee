@@ -4169,7 +4169,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                             Qpro = std::max(Qpro + val / coefq, 0.f);
                         }
 
-                        if (issig && issigq && iscie && !islogq && mobwev != 2) { //sigmoid Q only and black & white Ev
+                        if (issig && issigq && iscie && !islogq && mobwev != 2) { //sigmoid Q only and black Ev & white Ev
                             float val = Qpro * coefq;
 
                             if (mobwev == 1) {
