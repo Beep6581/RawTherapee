@@ -709,6 +709,9 @@ private:
     MyComboBoxText* const quamethod;
     CurveEditorGroup* const LocalcurveEditorwavden;
     FlatCurveEditor* const wavshapeden;
+    Gtk::Label* const lumLabels;
+    Gtk::Label* const chroLabels;
+    
     MyExpander* const expdenoise1;
     Gtk::Label* const maskusable;
     Gtk::Label* const maskunusable;

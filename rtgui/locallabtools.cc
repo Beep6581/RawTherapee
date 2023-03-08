@@ -6479,6 +6479,8 @@ LocallabBlur::LocallabBlur():
     quamethod(Gtk::manage(new MyComboBoxText())),
     LocalcurveEditorwavden(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVDEN"))),
     wavshapeden(static_cast<FlatCurveEditor*>(LocalcurveEditorwavden->addCurve(CT_Flat, "", nullptr, false, false))),
+    lumLabels(Gtk::manage(new Gtk::Label("---"))),
+    chroLabels(Gtk::manage(new Gtk::Label("---"))),
     expdenoise1(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI1_EXP")))),
     maskusable(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
     maskunusable(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUNUSABLE")))),
@@ -6645,6 +6647,11 @@ LocallabBlur::LocallabBlur():
 
     wavshapeden->setIdentityValue(0.);
     wavshapeden->setResetCurve(FlatCurveType(defSpot.locwavcurveden.at(0)), defSpot.locwavcurveden);
+
+    setExpandAlignProperties(lumLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+
+    setExpandAlignProperties(chroLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+
 
     LocalcurveEditorwavden->curveListComplete();
     setExpandAlignProperties(expdenoise1, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
@@ -6843,6 +6850,8 @@ LocallabBlur::LocallabBlur():
     // wavBox->pack_start(*noiselumf);
     // wavBox->pack_start(*noiselumf2);
     // wavBox->pack_start(*noiselumc);//unused here, but used for normalize_mean_dt 
+    wavBox->pack_start(*lumLabels);
+    wavBox->pack_start(*chroLabels);
     wavBox->pack_start(*noiselumdetail);
     wavBox->pack_start(*noiselequal);
     wavBox->pack_start(*noisegam);
@@ -7140,6 +7149,28 @@ void LocallabBlur::neutral_pressed ()
 }
 void LocallabBlur::updatedenlc(const double highres, const double nres, const double highres46, const double nres46, const double Lhighres, const double Lnres, const double Lhighres46, const double Lnres46)
 {
+    idle_register.add(
+    [this, highres, nres, highres46, nres46, Lhighres, Lnres, Lhighres46, Lnres46]() -> bool {
+        GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+        lumLabels->set_text(
+            Glib::ustring::compose(M("TP_LOCALLAB_LUMLABEL"),
+                                   Glib::ustring::format(std::fixed, std::setprecision(0), Lnres),
+                                   Glib::ustring::format(std::fixed, std::setprecision(0), Lhighres),
+                                   Glib::ustring::format(std::fixed, std::setprecision(0), Lnres46 ),
+                                   Glib::ustring::format(std::fixed, std::setprecision(0), Lhighres46))
+        );
+        chroLabels->set_text(
+            Glib::ustring::compose(M("TP_LOCALLAB_CHROLABEL"),
+                                   Glib::ustring::format(std::fixed, std::setprecision(0), nres),
+                                   Glib::ustring::format(std::fixed, std::setprecision(0), highres),
+                                   Glib::ustring::format(std::fixed, std::setprecision(0), nres46),
+                                   Glib::ustring::format(std::fixed, std::setprecision(0), highres46))
+        );
+
+        return false;
+    }
+    );
 }
 void LocallabBlur::setDefaultExpanderVisibility()
 {

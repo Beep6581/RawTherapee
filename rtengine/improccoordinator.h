@@ -364,6 +364,7 @@ protected:
     std::vector<float> stdtms;
     std::vector<float> meanretis;
     std::vector<float> stdretis;
+    
     bool lastspotdup;
     bool previewDeltaE;
     int locallColorMask;

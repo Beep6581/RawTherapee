@@ -1045,6 +1045,7 @@ void Crop::update(int todo)
             if (black < 0. && params.locallab.spots.at(sp).expMethod == "pde" ) {
                 black *= 1.5;
             }
+            std::vector<LocallabListener::locallabDenoiseLC> localldenoiselc;
 
             double cont = params.locallab.spots.at(sp).contrast;
             double huere, chromare, lumare, huerefblu, chromarefblu, lumarefblu, sobelre;
@@ -1060,6 +1061,7 @@ void Crop::update(int todo)
             float stdtme = parent->stdtms[sp];
             float meanretie = parent->meanretis[sp];
             float stdretie = parent->stdretis[sp];
+
             float fab = 1.f;
             float minCD;
             float maxCD;
@@ -1142,7 +1144,18 @@ void Crop::update(int todo)
                         meantme, stdtme, meanretie, stdretie, fab, 
                         highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46);
                     //    fabrefp[sp] = fab;
-
+                        
+                        LocallabListener::locallabDenoiseLC denoiselc;
+                        denoiselc.highres = highresi;
+                        denoiselc.nres = nresi; 
+                        denoiselc.highres46 = highresi46;
+                        denoiselc.nres46 = nresi46;
+                        denoiselc.Lhighres =  Lhighresi;
+                        denoiselc.Lnres = Lnresi;
+                        denoiselc.Lhighres46 = Lhighresi46;
+                        denoiselc.Lnres46 = Lnresi46;
+                        localldenoiselc.push_back(denoiselc);
+                        
                         if (parent->previewDeltaE || parent->locallColorMask == 5 || parent->locallvibMask == 4 || parent->locallExpMask == 5 || parent->locallSHMask == 4 || parent->localllcMask == 4 || parent->localltmMask == 4 || parent->localllogMask == 4 || parent->locallsoftMask == 6 || parent->localllcMask == 4 || parent->locallcieMask == 4) {
                             params.blackwhite.enabled = false;
                             params.colorToning.enabled = false;
@@ -1172,6 +1185,9 @@ void Crop::update(int todo)
 
                         }
                         */
+                        if (parent->locallListener) {
+                            parent->locallListener->denChanged(localldenoiselc, params.locallab.selspot);
+                        }
 
             } else {
                 parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop.get(), savenormtmCrop.get(), savenormretiCrop.get(), lastorigCrop.get(), fw, fh, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, locRETtransCurve,

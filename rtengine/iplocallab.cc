@@ -10873,7 +10873,7 @@ void ImProcFunctions::fftw_denoise(int sk, int GW, int GH, int max_numblox_W, in
 }
 
 void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * slidb, int aut,  bool noiscfactiv, const struct local_params & lp, LabImage * originalmaskbl, LabImage *  bufmaskblurbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage * original, LabImage * transformed,
-    int cx, int cy, int sk, const LocwavCurve& locwavCurvehue, bool locwavhueutili, float &highresi, float &nresi, float &highresi46, float &nresi46, float &Lhighresi, float &Lnresi, float &Lhighresi46, float &Lnresi46)
+    int cx, int cy, int sk, const LocwavCurve& locwavCurvehue, bool locwavhueutili, float& highresi, float& nresi, float& highresi46, float& nresi46, float& Lhighresi, float& Lnresi, float& Lhighresi46, float& Lnresi46)
 {
     BENCHFUN
 //local denoise
@@ -11651,14 +11651,10 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
             float chresidtemp46 = 0.f;
             float chmaxresid46 = 0.f;
             float chmaxresidtemp46 = 0.f;
-        //    float highresi, nresi;
-        //    float highresi46, nresi46;
             float Lresid = 0.f;
             float Lmaxresid = 0.f;
             float Lresid46 = 0.f;
             float Lmaxresid46 = 0.f;
-        //    float Lhighresi, Lnresi;
-        //    float Lhighresi46, Lnresi46;
             
             
             
@@ -11706,6 +11702,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 // end calculate
                 
                 DeNoise_Local(call, lp,  originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);
+
             } else {
                 DeNoise_Local(call, lp,  original, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);
             }
@@ -12448,6 +12445,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                 }
             }
         }
+ 
     }
 
 }
@@ -13435,7 +13433,7 @@ void ImProcFunctions::Lab_Local(
     bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, int llcieMask, 
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax,
     float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,
-    float &highresi, float &nresi, float &highresi46, float &nresi46, float &Lhighresi, float &Lnresi, float &Lhighresi46, float &Lnresi46
+    float& highresi, float& nresi, float& highresi46, float& nresi46, float& Lhighresi, float& Lnresi, float& Lhighresi46, float& Lnresi46
 
     )
 {
@@ -14489,7 +14487,6 @@ void ImProcFunctions::Lab_Local(
         constexpr int aut = 0;
         DeNoise(call, slidL, slida, slidb, aut, noiscfactiv, lp, originalmaskbl.get(), bufmaskblurbl.get(), levred, huerefblur, lumarefblur, chromarefblur, original, transformed, cx, cy, sk, locwavCurvehue, locwavhueutili,
                 highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46);
-
         if (lp.recur) {
             original->CopyFrom(transformed, multiThread);
             float avge;
@@ -19349,6 +19346,7 @@ void ImProcFunctions::Lab_Local(
                     calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
                 }
             }
+
         }
 
 

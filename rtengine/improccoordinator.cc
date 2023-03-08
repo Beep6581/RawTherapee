@@ -1159,7 +1159,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float stdtm = stdtms[sp] = stdtme;
                 float meanreti = meanretis[sp] = meanretie;
                 float stdreti = stdretis[sp] = stdretie;
-
                 huerefp[sp] = huer;
                 chromarefp[sp] = chromar;
                 lumarefp[sp] = lumar;
@@ -1193,7 +1192,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float Tmax;
                 int lastsav;
 
-                float highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46;
+                float highresi = 0.f;
+                float nresi = 0.f;
+                float highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46;
 
                 ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv.get(), savenormtm.get(), savenormreti.get(), lastorigimp.get(), fw, fh, 0, 0, pW, pH, scale, locRETgainCurve, locRETtransCurve,
                               lllocalcurve, locallutili,
@@ -1289,8 +1290,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 retiMinMax.Tmin = Tmin;
                 retiMinMax.Tmax = Tmax;
                 locallretiminmax.push_back(retiMinMax);
-
-
+                /*
+             //   printf("Improc Hresi=%f\n", (double) highresi);
                 LocallabListener::locallabDenoiseLC denoiselc;
                 denoiselc.highres = highresi;
                 denoiselc.nres = nresi; 
@@ -1301,6 +1302,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 denoiselc.Lhighres46 = Lhighresi46;
                 denoiselc.Lnres46 = Lnresi46;
                 localldenoiselc.push_back(denoiselc);
+                */
                 // Recalculate references after
                 if (params->locallab.spots.at(sp).spotMethod == "exc") {
                     ipf.calc_ref(sp, reserv.get(), reserv.get(), 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huer, chromar, lumar, sobeler, avg, locwavCurveden, locwavdenutili);
@@ -1333,6 +1335,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
               //  locallListener->refChanged(locallref, params->locallab.selspot);
                 locallListener->refChanged2(huerefp, chromarefp, lumarefp, fabrefp, params->locallab.selspot);
                 locallListener->minmaxChanged(locallretiminmax, params->locallab.selspot);
+             //   locallListener->denChanged(localldenoiselc, params->locallab.selspot);
             }
 
             }
