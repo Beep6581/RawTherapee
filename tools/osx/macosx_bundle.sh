@@ -447,7 +447,7 @@ function CreateDmg {
         cp "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}.zip" "${PROJECT_NAME}_macOS_${arch}_latest.zip"
     fi
     if [[ -n $CONTINUOUS ]]; then
-         mv "${PROJECT_NAME}_macOS_${arch}_latest.zip" "${PROJECT_NAME}_$(git status|head -1|awk -v N=$3 '{print $3}')_macOS_${arch}_${CMAKE_BUILD_TYPE}.zip"
+         mv "${PROJECT_NAME}_macOS_${arch}_latest.zip" "${PROJECT_NAME}_$(git status|head -1|awk -v N=$3 '{print $3}')_macOS_${CMAKE_BUILD_TYPE}.zip"
     fi
 }
 
