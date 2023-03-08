@@ -63,7 +63,7 @@ jobs:
             -DCMAKE_AR=/usr/bin/ar \
             -DCMAKE_RANLIB=/usr/bin/ranlib \
             -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \
-            -DOSX_NIGHTLY=ON \
+            -DOSX_CONTINUOUS=ON \
             ..
             curl -L https://github.com/Homebrew/homebrew-core/raw/679923b4eb48a8dc7ecc1f05d06063cd79b3fc00/Formula/libomp.rb -o libomp.rb && brew install --formula libomp.rb
             zsh -c 'echo "Configured in $(printf "%0.2f" $(($[$(date +%s)-$(cat configstamp)]/$((60.))))) minutes"'
@@ -79,7 +79,7 @@ jobs:
           zsh
           date +%s > build/bundlestamp && date -u && cd build
           export REF=${GITHUB_REF##*/} && export LOCAL_PREFIX=/usr && sudo make macosx_bundle
-          export ARTIFACT=(RawTherapee*latest.zip)
+          export ARTIFACT=(RawTherapee*${CMAKE_BUILD_TYPE}.zip)
           echo "=== artifact: ${ARTIFACT}"
           # defining environment variables for next step as per
           # https://github.com/actions/starter-workflows/issues/68
