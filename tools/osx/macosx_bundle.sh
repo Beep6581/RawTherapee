@@ -448,7 +448,7 @@ function CreateDmg {
     fi
     if [[ -n $CONTINUOUS ]]; then
         BRANCH=$(git branch --show-current)
-        if test -z "${BRANCH}"
+        if test -z "${BRANCH}"; then
             BRANCH=$(git rev-parse --short HEAD)
         fi
         mv "${PROJECT_NAME}_macOS_${arch}_latest.zip" "${PROJECT_NAME}_${BRANCH}_macOS_${CMAKE_BUILD_TYPE}.zip"
