@@ -10872,7 +10872,7 @@ void ImProcFunctions::fftw_denoise(int sk, int GW, int GH, int max_numblox_W, in
 
 }
 
-void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * slidb, int aut,  bool noiscfactiv, const struct local_params & lp, LabImage * originalmaskbl, LabImage *  bufmaskblurbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage * original, LabImage * transformed,
+void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct local_params & lp, LabImage * originalmaskbl, LabImage *  bufmaskblurbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage * original, LabImage * transformed,
     int cx, int cy, int sk, const LocwavCurve& locwavCurvehue, bool locwavhueutili, float& highresi, float& nresi, float& highresi46, float& nresi46, float& Lhighresi, float& Lnresi, float& Lhighresi46, float& Lnresi46)
 {
     BENCHFUN
@@ -11025,8 +11025,6 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                 float mxsl = 0.f;
                 //      float mxsfl = 0.f;
 
-                if (aut == 0) {
-                    if (levred == 7) {
                         edge = 2;
                         vari[0] = 0.8f * SQR((lp.noiself0 / 125.f) * (1.f + lp.noiself0 / 25.f));
                         vari[1] = 0.8f * SQR((lp.noiself / 125.f) * (1.f + lp.noiself / 25.f));
@@ -11036,45 +11034,21 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                         vari[4] = 0.8f * SQR((lp.noiselc4 / 125.f) * (1.f + lp.noiselc4 / 25.f));
                         vari[5] = 0.8f * SQR((lp.noiselc5 / 125.f) * (1.f + lp.noiselc5 / 25.f));
                         vari[6] = 0.8f * SQR((lp.noiselc6 / 125.f) * (1.f + lp.noiselc6 / 25.f));
-                    } else if (levred == 4) {
-                        edge = 3;
-                        vari[0] = 0.8f * SQR((lp.noiself0 / 125.f) * (1.f + lp.noiself0 / 25.f));
-                        vari[1] = 0.8f * SQR((lp.noiself / 125.f) * (1.f + lp.noiself / 25.f));
-                        vari[2] = 0.8f * SQR((lp.noiselc / 125.f) * (1.f + lp.noiselc / 25.f));
-                        vari[3] = 0.8f * SQR((lp.noiselc / 125.f) * (1.f + lp.noiselc / 25.f));
-
-                    }
-                } else if (aut == 1  || aut == 2) {
-                    edge = 2;
-                    vari[0] = SQR(slidL[0]);
-                    vari[1] = SQR(slidL[1]);
-                    vari[2] = SQR(slidL[2]);
-                    vari[3] = SQR(slidL[3]);
-                    vari[4] = SQR(slidL[4]);
-                    vari[5] = SQR(slidL[5]);
-                    vari[6] = SQR(slidL[6]);
-                    float mxslid34 = rtengine::max(slidL[3], slidL[4]);
-                    float mxslid56 = rtengine::max(slidL[5], slidL[6]);
-                    mxsl = rtengine::max(mxslid34, mxslid56);
-
-                }
 
                 {
                     float kr3 = 0.f;
 
-                    if (aut == 0 || aut == 1) {
-                        if ((lp.noiselc < 30.f && aut == 0) || (mxsl < 30.f && aut == 1)) {
+                    if (aut == 0) {
+                        if (lp.noiselc < 30.f) {
                             kr3 = 0.f;
-                        } else if ((lp.noiselc < 50.f && aut == 0) || (mxsl < 50.f && aut == 1)) {
+                        } else if (lp.noiselc < 50.f) {
                             kr3 = 0.5f;
-                        } else if ((lp.noiselc < 70.f && aut == 0) || (mxsl < 70.f && aut == 1)) {
+                        } else if (lp.noiselc < 70.f) {
                             kr3 = 0.7f;
                         } else {
                             kr3 = 1.f;
                         }
-                    } else if (aut == 2) {
-                        kr3 = 1.f;
-                    }
+                    } 
 
                     vari[0] = rtengine::max(0.000001f, vari[0]);
                     vari[1] = rtengine::max(0.000001f, vari[1]);
@@ -11224,11 +11198,8 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
             }
 
             if (!adecomp.memory_allocation_failed() && !bdecomp.memory_allocation_failed()) {
-                float maxcfine = 0.f;
                 float maxccoarse = 0.f;
 
-                if (aut == 0) {
-                    if (levred == 7) {
                         edge = 2;
                         variC[0] = SQR(noisecfr);
                         variC[1] = SQR(noisecfr);
@@ -11248,51 +11219,6 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                         variCb[5] = SQR(noiseccb);
                         variCb[6] = SQR(noiseccb);
 
-                    } else if (levred == 4) {
-                        edge = 3;
-                        variC[0] = SQR(lp.noisecf / 10.f);
-                        variC[1] = SQR(lp.noisecf / 10.f);
-                        variC[2] = SQR(lp.noisecf / 10.f);
-                        variC[3] = SQR(lp.noisecf / 10.f);
-
-                        variCb[0] = SQR(lp.noisecf / 10.f);
-                        variCb[1] = SQR(lp.noisecf / 10.f);
-                        variCb[2] = SQR(lp.noisecf / 10.f);
-                        variCb[3] = SQR(lp.noisecf / 10.f);
-
-                    }
-                } else if (aut == 1  || aut == 2) {
-                    edge = 2;
-                    variC[0] = SQR(slida[0]);
-                    variC[1] = SQR(slida[1]);
-                    variC[2] = SQR(slida[2]);
-                    variC[3] = SQR(slida[3]);
-                    variC[4] = SQR(slida[4]);
-                    variC[5] = SQR(slida[5]);
-                    variC[6] = SQR(slida[6]);
-                    float maxc01 = rtengine::max(slida[0], slida[1]);
-                    float maxc23 = rtengine::max(slida[2], slida[3]);
-                    float max03 = rtengine::max(maxc01, maxc23);
-                    float maxrf = rtengine::max(max03, slida[4]);
-                    float maxrc = rtengine::max(slida[5], slida[6]);
-
-                    variCb[0] = SQR(slidb[0]);
-                    variCb[1] = SQR(slidb[1]);
-                    variCb[2] = SQR(slidb[2]);
-                    variCb[3] = SQR(slidb[3]);
-                    variCb[4] = SQR(slidb[4]);
-                    variCb[5] = SQR(slidb[5]);
-                    variCb[6] = SQR(slidb[6]);
-                    float maxb01 = rtengine::max(slidb[0], slidb[1]);
-                    float maxb23 = rtengine::max(slidb[2], slidb[3]);
-                    float maxb03 = rtengine::max(maxb01, maxb23);
-                    float maxbf = rtengine::max(maxb03, slidb[4]);
-                    maxcfine = rtengine::max(maxrf, maxbf);
-
-                    float maxbc = rtengine::max(slidb[5], slidb[6]);
-                    maxccoarse = rtengine::max(maxrc, maxbc);
-
-                }
 
                 {
                     float minic = 0.000001f;
@@ -11305,52 +11231,51 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                     float k2 = 0.f;
                     float k3 = 0.f;
 
-                    if (aut == 0 || aut == 1) {
-                        if ((lp.noisecf < 0.2f && aut == 0) || (maxcfine < 0.2f && aut == 1)) {
+                        if (lp.noisecf < 0.2f) {
                             k1 = 0.05f;
                             k2 = 0.f;
                             k3 = 0.f;
-                        } else if ((lp.noisecf < 0.3f && aut == 0) || (maxcfine < 0.3f && aut == 1)) {
+                        } else if (lp.noisecf < 0.3f) {
                             k1 = 0.1f;
                             k2 = 0.0f;
                             k3 = 0.f;
-                        } else if ((lp.noisecf < 0.5f && aut == 0) || (maxcfine < 0.5f && aut == 1)) {
+                        } else if (lp.noisecf < 0.5f) {
                             k1 = 0.2f;
                             k2 = 0.1f;
                             k3 = 0.f;
-                        } else if ((lp.noisecf < 0.8f && aut == 0) || (maxcfine < 0.8f && aut == 1)) {
+                        } else if (lp.noisecf < 0.8f) {
                             k1 = 0.3f;
                             k2 = 0.25f;
                             k3 = 0.f;
-                        } else if ((lp.noisecf < 1.f && aut == 0) || (maxcfine < 1.f && aut == 1)) {
+                        } else if (lp.noisecf < 1.f) {
                             k1 = 0.4f;
                             k2 = 0.25f;
                             k3 = 0.1f;
-                        } else if ((lp.noisecf < 2.f && aut == 0) || (maxcfine < 2.f && aut == 1)) {
+                        } else if (lp.noisecf < 2.f) {
                             k1 = 0.5f;
                             k2 = 0.3f;
                             k3 = 0.15f;
-                        } else if ((lp.noisecf < 3.f && aut == 0) || (maxcfine < 3.f && aut == 1)) {
+                        } else if (lp.noisecf < 3.f) {
                             k1 = 0.6f;
                             k2 = 0.45f;
                             k3 = 0.3f;
-                        } else if ((lp.noisecf < 4.f && aut == 0) || (maxcfine < 4.f && aut == 1)) {
+                        } else if (lp.noisecf < 4.f) {
                             k1 = 0.7f;
                             k2 = 0.5f;
                             k3 = 0.4f;
-                        } else if ((lp.noisecf < 5.f && aut == 0) || (maxcfine < 5.f && aut == 1)) {
+                        } else if (lp.noisecf < 5.f) {
                             k1 = 0.8f;
                             k2 = 0.6f;
                             k3 = 0.5f;
-                        } else if ((lp.noisecf < 6.f && aut == 0) || (maxcfine < 10.f && aut == 1)) {
+                        } else if (lp.noisecf < 6.f) {
                             k1 = 0.85f;
                             k2 = 0.7f;
                             k3 = 0.6f;
-                        } else if ((lp.noisecf < 8.f && aut == 0) || (maxcfine < 20.f && aut == 1)) {
+                        } else if (lp.noisecf < 8.f) {
                             k1 = 0.9f;
                             k2 = 0.8f;
                             k3 = 0.7f;
-                        } else if ((lp.noisecf < 10.f && aut == 0) || (maxcfine < 50.f && aut == 1)) {
+                        } else if (lp.noisecf < 10.f) {
                             k1 = 1.f;
                             k2 = 1.f;
                             k3 = 0.9f;
@@ -11360,12 +11285,6 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                             k2 = 1.f;
                             k3 = 1.f;
                         }
-                    } else if (aut == 2) {
-                        k1 = 1.f;
-                        k2 = 1.f;
-                        k3 = 1.f;
-                    }
-
 
                     variC[0] = rtengine::max(minic, variC[0]);
                     variC[1] = rtengine::max(minic, k1 * variC[1]);
@@ -11382,22 +11301,22 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                         float k5 = 0.f;
                         float k6 = 0.f;
 
-                        if ((lp.noisecc < 0.2f && aut == 0) || (maxccoarse < 0.2f && aut == 1)) {
+                        if (lp.noisecc < 0.2f) {
                             k4 = 0.1f;
                             k5 = 0.02f;
-                        } else if ((lp.noisecc < 0.5f && aut == 0) || (maxccoarse < 0.5f && aut == 1)) {
+                        } else if (lp.noisecc < 0.5f) {
                             k4 = 0.15f;
                             k5 = 0.05f;
-                        } else if ((lp.noisecc < 1.f && aut == 0) || (maxccoarse < 1.f && aut == 1)) {
+                        } else if (lp.noisecc < 1.f) {
                             k4 = 0.15f;
                             k5 = 0.1f;
-                        } else if ((lp.noisecc < 3.f && aut == 0) || (maxccoarse < 3.f && aut == 1)) {
+                        } else if (lp.noisecc < 3.f) {
                             k4 = 0.3f;
                             k5 = 0.15f;
-                        } else if ((lp.noisecc < 4.f && aut == 0) || (maxccoarse < 5.f && aut == 1)) {
+                        } else if (lp.noisecc < 4.f) {
                             k4 = 0.6f;
                             k5 = 0.4f;
-                        } else if ((lp.noisecc < 6.f && aut == 0) || (maxccoarse < 6.f && aut == 1)) {
+                        } else if (lp.noisecc < 6.f) {
                             k4 = 0.8f;
                             k5 = 0.6f;
                         } else {
@@ -11410,11 +11329,11 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                         variCb[4] = rtengine::max(0.000001f, k4 * variCb[4]);
                         variCb[5] = rtengine::max(0.000001f, k5 * variCb[5]);
 
-                        if ((lp.noisecc < 4.f && aut == 0) || (maxccoarse < 4.f && aut == 1)) {
+                        if (lp.noisecc < 4.f) {
                             k6 = 0.f;
-                        } else if ((lp.noisecc < 5.f && aut == 0) || (maxccoarse < 5.f && aut == 1)) {
+                        } else if (lp.noisecc < 5.f) {
                             k6 = 0.4f;
-                        } else if ((lp.noisecc < 6.f && aut == 0) || (maxccoarse < 6.f && aut == 1)) {
+                        } else if (lp.noisecc < 6.f) {
                             k6 = 0.7f;
                         } else {
                             k6 = 1.f;
@@ -11431,7 +11350,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                     float nvch = 0.6f;//high value
                     float nvcl = 0.1f;//low value
 
-                    if ((lp.noisecf > 100.f && aut == 0) || (maxcfine > 100.f && (aut == 1 || aut == 2))) {
+                    if (lp.noisecf > 100.f) {
                         nvch = 0.8f;
                         nvcl = 0.4f;
                     }
@@ -11801,7 +11720,6 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                     float mxsl = 0.f;
                     //     float mxsfl = 0.f;
 
-                    if (aut == 0) {
                         if (levred == 7) {
                             edge = 2;
                             vari[0] = 0.8f * SQR((lp.noiself0 / 125.f) * (1.f + lp.noiself0 / 25.f));
@@ -11812,28 +11730,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                             vari[4] = 0.8f * SQR((lp.noiselc4 / 125.f) * (1.f + lp.noiselc4 / 25.f));
                             vari[5] = 0.8f * SQR((lp.noiselc5 / 125.f) * (1.f + lp.noiselc5 / 25.f));
                             vari[6] = 0.8f * SQR((lp.noiselc6 / 125.f) * (1.f + lp.noiselc6 / 25.f));
-                        } else if (levred == 4) {
-                            edge = 3;
-                            vari[0] = 0.8f * SQR((lp.noiself0 / 125.f) * (1.f + lp.noiself0 / 25.f));
-                            vari[1] = 0.8f * SQR((lp.noiself / 125.f) * (1.f + lp.noiself / 25.f));
-                            vari[2] = 0.8f * SQR((lp.noiselc / 125.f) * (1.f + lp.noiselc / 25.f));
-                            vari[3] = 0.8f * SQR((lp.noiselc / 125.f) * (1.f + lp.noiselc / 25.f));
-
-                        }
-                    } else if (aut == 1 || aut == 2) {
-                        edge = 2;
-                        vari[0] = SQR(slidL[0]);
-                        vari[1] = SQR(slidL[1]);
-                        vari[2] = SQR(slidL[2]);
-                        vari[3] = SQR(slidL[3]);
-                        vari[4] = SQR(slidL[4]);
-                        vari[5] = SQR(slidL[5]);
-                        vari[6] = SQR(slidL[6]);
-                        float mxslid34 = rtengine::max(slidL[3], slidL[4]);
-                        float mxslid56 = rtengine::max(slidL[5], slidL[6]);
-                        mxsl = rtengine::max(mxslid34, mxslid56);
-
-                    }
+                        } 
 
                     {
                         float kr3 = 0.f;
@@ -11998,7 +11895,6 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
 
                 if (!adecomp.memory_allocation_failed() && !bdecomp.memory_allocation_failed()) {
-                    float maxcfine = 0.f;
                     float maxccoarse = 0.f;
 
                     if (aut == 0) {
@@ -12023,52 +11919,8 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                             variCb[5] = SQR(noiseccb);
                             variCb[6] = SQR(noiseccb);
 
-                        } else if (levred == 4) {
-                            edge = 3;
-                            variC[0] = SQR(lp.noisecf / 10.f);
-                            variC[1] = SQR(lp.noisecf / 10.f);
-                            variC[2] = SQR(lp.noisecf / 10.f);
-                            variC[3] = SQR(lp.noisecf / 10.f);
-
-                            variCb[0] = SQR(lp.noisecf / 10.f);
-                            variCb[1] = SQR(lp.noisecf / 10.f);
-                            variCb[2] = SQR(lp.noisecf / 10.f);
-                            variCb[3] = SQR(lp.noisecf / 10.f);
-
-
-                        }
-                    } else if (aut == 1 || aut == 2) {
-                        edge = 2;
-                        variC[0] = SQR(slida[0]);
-                        variC[1] = SQR(slida[1]);
-                        variC[2] = SQR(slida[2]);
-                        variC[3] = SQR(slida[3]);
-                        variC[4] = SQR(slida[4]);
-                        variC[5] = SQR(slida[5]);
-                        variC[6] = SQR(slida[6]);
-                        float maxc01 = rtengine::max(slida[0], slida[1]);
-                        float maxc23 = rtengine::max(slida[2], slida[3]);
-                        float max03 = rtengine::max(maxc01, maxc23);
-                        float maxrf = rtengine::max(max03, slida[4]);
-                        float maxrc = rtengine::max(slida[5], slida[6]);
-
-                        variCb[0] = SQR(slidb[0]);
-                        variCb[1] = SQR(slidb[1]);
-                        variCb[2] = SQR(slidb[2]);
-                        variCb[3] = SQR(slidb[3]);
-                        variCb[4] = SQR(slidb[4]);
-                        variCb[5] = SQR(slidb[5]);
-                        variCb[6] = SQR(slidb[6]);
-                        float maxb01 = rtengine::max(slidb[0], slidb[1]);
-                        float maxb23 = rtengine::max(slidb[2], slidb[3]);
-                        float maxb03 = rtengine::max(maxb01, maxb23);
-                        float maxbf = rtengine::max(maxb03, slidb[4]);
-                        maxcfine = rtengine::max(maxrf, maxbf);
-
-                        float maxbc = rtengine::max(slidb[5], slidb[6]);
-                        maxccoarse = rtengine::max(maxrc, maxbc);
-
-                    }
+                        } 
+                    } 
 
                     {
                         float minic = 0.000001f;
@@ -12081,52 +11933,52 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                         float k2 = 0.f;
                         float k3 = 0.f;
 
-                        if (aut == 0 || aut == 1) {
-                            if ((lp.noisecf < 0.2f && aut == 0) || (maxcfine < 0.2f && aut == 1)) {
+                        if (aut == 0) {
+                            if (lp.noisecf < 0.2f) {
                                 k1 = 0.05f;
                                 k2 = 0.f;
                                 k3 = 0.f;
-                            } else if ((lp.noisecf < 0.3f && aut == 0) || (maxcfine < 0.3f && aut == 1)) {
+                            } else if (lp.noisecf < 0.3f) {
                                 k1 = 0.1f;
                                 k2 = 0.0f;
                                 k3 = 0.f;
-                            } else if ((lp.noisecf < 0.5f && aut == 0) || (maxcfine < 0.5f && aut == 1)) {
+                            } else if (lp.noisecf < 0.5f) {
                                 k1 = 0.2f;
                                 k2 = 0.1f;
                                 k3 = 0.f;
-                            } else if ((lp.noisecf < 0.8f && aut == 0) || (maxcfine < 0.8f && aut == 1)) {
+                            } else if (lp.noisecf < 0.8f) {
                                 k1 = 0.3f;
                                 k2 = 0.25f;
                                 k3 = 0.f;
-                            } else if ((lp.noisecf < 1.f && aut == 0) || (maxcfine < 1.f && aut == 1)) {
+                            } else if (lp.noisecf < 1.f) {
                                 k1 = 0.4f;
                                 k2 = 0.25f;
                                 k3 = 0.1f;
-                            } else if ((lp.noisecf < 2.f && aut == 0) || (maxcfine < 2.f && aut == 1)) {
+                            } else if (lp.noisecf < 2.f) {
                                 k1 = 0.5f;
                                 k2 = 0.3f;
                                 k3 = 0.15f;
-                            } else if ((lp.noisecf < 3.f && aut == 0) || (maxcfine < 3.f && aut == 1)) {
+                            } else if (lp.noisecf < 3.f) {
                                 k1 = 0.6f;
                                 k2 = 0.45f;
                                 k3 = 0.3f;
-                            } else if ((lp.noisecf < 4.f && aut == 0) || (maxcfine < 4.f && aut == 1)) {
+                            } else if (lp.noisecf < 4.f) {
                                 k1 = 0.7f;
                                 k2 = 0.5f;
                                 k3 = 0.4f;
-                            } else if ((lp.noisecf < 5.f && aut == 0) || (maxcfine < 5.f && aut == 1)) {
+                            } else if (lp.noisecf < 5.f) {
                                 k1 = 0.8f;
                                 k2 = 0.6f;
                                 k3 = 0.5f;
-                            } else if ((lp.noisecf < 6.f && aut == 0) || (maxcfine < 10.f && aut == 1)) {
+                            } else if (lp.noisecf < 6.f) {
                                 k1 = 0.85f;
                                 k2 = 0.7f;
                                 k3 = 0.6f;
-                            } else if ((lp.noisecf < 8.f && aut == 0) || (maxcfine < 20.f && aut == 1)) {
+                            } else if (lp.noisecf < 8.f) {
                                 k1 = 0.9f;
                                 k2 = 0.8f;
                                 k3 = 0.7f;
-                            } else if ((lp.noisecf < 10.f && aut == 0) || (maxcfine < 50.f && aut == 1)) {
+                            } else if (lp.noisecf < 10.f) {
                                 k1 = 1.f;
                                 k2 = 1.f;
                                 k3 = 0.9f;
@@ -12136,11 +11988,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                                 k2 = 1.f;
                                 k3 = 1.f;
                             }
-                        } else if (aut == 2) {
-                            k1 = 1.f;
-                            k2 = 1.f;
-                            k3 = 1.f;
-                        }
+                        } 
 
                         variC[0] = rtengine::max(minic, variC[0]);
                         variC[1] = rtengine::max(minic, k1 * variC[1]);
@@ -12157,22 +12005,22 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                             float k5 = 0.f;
                             float k6 = 0.f;
 
-                            if ((lp.noisecc < 0.2f && aut == 0) || (maxccoarse < 0.2f && aut == 1)) {
+                            if (lp.noisecc < 0.2f) {
                                 k4 = 0.1f;
                                 k5 = 0.02f;
-                            } else if ((lp.noisecc < 0.5f && aut == 0) || (maxccoarse < 0.5f && aut == 1)) {
+                            } else if (lp.noisecc < 0.5f) {
                                 k4 = 0.15f;
                                 k5 = 0.05f;
-                            } else if ((lp.noisecc < 1.f && aut == 0) || (maxccoarse < 1.f && aut == 1)) {
+                            } else if (lp.noisecc < 1.f) {
                                 k4 = 0.15f;
                                 k5 = 0.1f;
-                            } else if ((lp.noisecc < 3.f && aut == 0) || (maxccoarse < 3.f && aut == 1)) {
+                            } else if (lp.noisecc < 3.f) {
                                 k4 = 0.3f;
                                 k5 = 0.15f;
-                            } else if ((lp.noisecc < 4.f && aut == 0) || (maxccoarse < 5.f && aut == 1)) {
+                            } else if (lp.noisecc < 4.f) {
                                 k4 = 0.6f;
                                 k5 = 0.4f;
-                            } else if ((lp.noisecc < 6.f && aut == 0) || (maxccoarse < 6.f && aut == 1)) {
+                            } else if (lp.noisecc < 6.f) {
                                 k4 = 0.8f;
                                 k5 = 0.6f;
                             } else {
@@ -12186,11 +12034,11 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                             variCb[4] = rtengine::max(0.000001f, k4 * variCb[4]);
                             variCb[5] = rtengine::max(0.000001f, k5 * variCb[5]);
 
-                            if ((lp.noisecc < 4.f && aut == 0) || (maxccoarse < 4.f && aut == 1)) {
+                            if (lp.noisecc < 4.f) {
                                 k6 = 0.f;
-                            } else if ((lp.noisecc < 5.f && aut == 0) || (maxccoarse < 5.f && aut == 1)) {
+                            } else if (lp.noisecc < 5.f) {
                                 k6 = 0.4f;
-                            } else if ((lp.noisecc < 6.f && aut == 0) || (maxccoarse < 6.f && aut == 1)) {
+                            } else if (lp.noisecc < 6.f) {
                                 k6 = 0.7f;
                             } else {
                                 k6 = 1.f;
@@ -12205,7 +12053,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                         float nvch = 0.6f;//high value
                         float nvcl = 0.1f;//low value
 
-                        if ((lp.noisecf > 30.f && aut == 0) || (maxcfine > 100.f && (aut == 1 || aut == 2))) {
+                        if (lp.noisecf > 30.f) {
                             nvch = 0.8f;
                             nvcl = 0.4f;
                         }
@@ -14481,11 +14329,8 @@ void ImProcFunctions::Lab_Local(
 
 //local denoise
     if (lp.activspot && lp.denoiena && (lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.wavcurvedenoi ||lp.nlstr > 0 || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f )) {//disable denoise if not used
-        float slidL[8] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f}; 
-        float slida[8] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
-        float slidb[8] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
         constexpr int aut = 0;
-        DeNoise(call, slidL, slida, slidb, aut, noiscfactiv, lp, originalmaskbl.get(), bufmaskblurbl.get(), levred, huerefblur, lumarefblur, chromarefblur, original, transformed, cx, cy, sk, locwavCurvehue, locwavhueutili,
+        DeNoise(call, aut, noiscfactiv, lp, originalmaskbl.get(), bufmaskblurbl.get(), levred, huerefblur, lumarefblur, chromarefblur, original, transformed, cx, cy, sk, locwavCurvehue, locwavhueutili,
                 highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46);
         if (lp.recur) {
             original->CopyFrom(transformed, multiThread);
