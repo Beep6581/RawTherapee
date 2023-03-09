@@ -1072,7 +1072,14 @@ void Crop::update(int todo)
             float Tmin;
             float Tmax;
             int lastsav;
-            float highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46;
+            float highresi = 0.f;
+            float nresi = 0.f;
+            float highresi46 =0.f;
+            float nresi46 = 0.f;
+            float Lhighresi = 0.f;
+            float Lnresi = 0.f;
+            float Lhighresi46 = 0.f;
+            float Lnresi46 = 0.f;
 /*            huerefp[sp] = huere;
             chromarefp[sp] = chromare;
             lumarefp[sp] = lumare;

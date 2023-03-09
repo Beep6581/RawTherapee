@@ -1193,7 +1193,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                 float highresi = 0.f;
                 float nresi = 0.f;
-                float highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46;
+                float highresi46 =0.f;
+                float nresi46 = 0.f;
+                float Lhighresi = 0.f;
+                float Lnresi = 0.f;
+                float Lhighresi46 = 0.f;
+                float Lnresi46 = 0.f;
 
                 ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv.get(), savenormtm.get(), savenormreti.get(), lastorigimp.get(), fw, fh, 0, 0, pW, pH, scale, locRETgainCurve, locRETtransCurve,
                               lllocalcurve, locallutili,

@@ -6891,16 +6891,7 @@ LocallabBlur::LocallabBlur():
     wavBox->pack_start(*detailFrame);
     denoisebox->pack_start(*sensiden);
     denoisebox->pack_start(*reparden);
-/*   
-    ToolParamBlock* const nlbox = Gtk::manage(new ToolParamBlock());
-    nlbox->pack_start(*nlstr);
-    nlbox->pack_start(*nldet);
-    nlbox->pack_start(*nlgam);
-    nlbox->pack_start(*nlpat);
-    nlbox->pack_start(*nlrad);
-    nlFrame->add(*nlbox);
-    wavBox->pack_start(*nlFrame);
-*/    
+
     wavBox->pack_start(*noisechrof);
     wavBox->pack_start(*noisechroc);
     wavBox->pack_start(*noisechrodetail);
@@ -7185,7 +7176,6 @@ void LocallabBlur::updatedenlc(const double highres, const double nres, const do
                                    Glib::ustring::format(std::fixed, std::setprecision(0), Lnres46 ),
                                    Glib::ustring::format(std::fixed, std::setprecision(0), Lhighres46))
         );
-
         chroLabels->set_text(
             Glib::ustring::compose(M("TP_LOCALLAB_CHROLABEL"),
                                    Glib::ustring::format(std::fixed, std::setprecision(0), nres),
@@ -7196,7 +7186,6 @@ void LocallabBlur::updatedenlc(const double highres, const double nres, const do
                                    Glib::ustring::format(std::fixed, std::setprecision(0), nres46),
                                    Glib::ustring::format(std::fixed, std::setprecision(0), highres46))
         );
-
         return false;
     }
     );

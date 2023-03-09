@@ -11048,7 +11048,6 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                     vari[1] = rtengine::max(0.000001f, vari[1]);
                     vari[2] = rtengine::max(0.000001f, vari[2]);
                     vari[3] = rtengine::max(0.000001f, kr3 * vari[3]);
-
                     vari[4] = rtengine::max(0.000001f, vari[4]);
                     vari[5] = rtengine::max(0.000001f, vari[5]);
                     vari[6] = rtengine::max(0.000001f, vari[6]);
@@ -11192,24 +11191,22 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
             if (!adecomp.memory_allocation_failed() && !bdecomp.memory_allocation_failed()) {
                 float maxccoarse = 0.f;
 
-                edge = 2;
-                variC[0] = SQR(noisecfr);
-                variC[1] = SQR(noisecfr);
-                variC[2] = SQR(noisecfr);
+            edge = 2;
+            variC[0] = SQR(noisecfr);
+            variC[1] = SQR(noisecfr);
+            variC[2] = SQR(noisecfr);
+            variC[3] = SQR(1.2f * noisecfr);
+            variC[4] = SQR(noisecfr);
+            variC[5] = SQR(1.2f * noiseccr);
+            variC[6] = SQR(1.5f * noiseccr);
 
-                variC[3] = SQR(1.2f * noisecfr);
-                variC[4] = SQR(noisecfr);
-                variC[5] = SQR(1.2f * noiseccr);
-                variC[6] = SQR(1.5f * noiseccr);
-
-                variCb[0] = SQR(noisecfb);
-                variCb[1] = SQR(noisecfb);
-                variCb[2] = SQR(noisecfb);
-
-                variCb[3] = SQR(noisecfb);
-                variCb[4] = SQR(noisecfb);
-                variCb[5] = SQR(1.2f * noiseccb);
-                variCb[6] = SQR(1.5f * noiseccb);
+            variCb[0] = SQR(noisecfb);
+            variCb[1] = SQR(noisecfb);
+            variCb[2] = SQR(noisecfb);
+            variCb[3] = SQR(noisecfb);
+            variCb[4] = SQR(noisecfb);
+            variCb[5] = SQR(1.2f * noiseccb);
+            variCb[6] = SQR(1.5f * noiseccb);
 
 
                 {
@@ -11575,7 +11572,7 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
             chresid = sqrt(chresid / ( 3 * nbmaddir * 2));
             highresi = chresid + 0.33f * (sqrt(chmaxresid) - chresid); //evaluate sigma
             nresi = chresid;
-            printf("nresi03=%f highresi=%f \n", (double) nresi, (double) highresi);
+    //        printf("nresi03=%f highresi=%f \n", (double) nresi, (double) highresi);
 
 
             Noise_residualAB(adecompinf, chresid46, chmaxresid46, false, 4, 6);
@@ -11588,7 +11585,7 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
             chresid46 = sqrt(chresid46 / ( 3 * nbmaddir * 2));
             highresi46 = chresid46 + 0.33f * (sqrt(chmaxresid46) - chresid46); //evaluate sigma
             nresi46 = chresid46;
-            printf("nresi46=%f highresi=%f \n", (double) nresi46, (double) highresi46);
+    //        printf("nresi46=%f highresi=%f \n", (double) nresi46, (double) highresi46);
 
 
             Noise_residualAB(Ldecompinf, Lresid, Lmaxresid, false, 0, 3);
@@ -11596,14 +11593,14 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
             Lresid = sqrt(Lresid / (3 * nbmaddir));
             Lhighresi = Lresid + 0.33f * (sqrt(Lmaxresid) - Lresid); //evaluate sigma
             Lnresi = Lresid;
-            printf("Lresi03=%f Lhighresi=%f levwavL=%i\n", (double) Lnresi, (double) Lhighresi, levwavL);
+    //        printf("Lresi03=%f Lhighresi=%f levwavL=%i\n", (double) Lnresi, (double) Lhighresi, levwavL);
 
             Noise_residualAB(Ldecompinf, Lresid46, Lmaxresid46, false, 4, 6);
             nbmaddir = 3;
             Lresid46 = sqrt(Lresid46 / (3 * nbmaddir));
             Lhighresi46 = Lresid46 + 0.36f * (sqrt(Lmaxresid46) - Lresid46); //evaluate sigma
             Lnresi46 = Lresid46;
-            printf("Lresi46=%f Lhighresi=%f levwavL=%i\n", (double) Lnresi46, (double) Lhighresi46, levwavL);
+    //        printf("Lresi46=%f Lhighresi=%f levwavL=%i\n", (double) Lnresi46, (double) Lhighresi46, levwavL);
 
 // end calculate
                 
@@ -11705,14 +11702,12 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
 
                     float vari[levred];
                     float mxsl = 0.f;
-                    //     float mxsfl = 0.f;
 
                         {
                             edge = 2;
                             vari[0] = 0.8f * SQR((lp.noiself0 / 125.f) * (1.f + lp.noiself0 / 25.f));
                             vari[1] = 0.8f * SQR((lp.noiself / 125.f) * (1.f + lp.noiself / 25.f));
                             vari[2] = 0.8f * SQR((lp.noiself2 / 125.f) * (1.f + lp.noiself2 / 25.f));
-
                             vari[3] = 0.8f * SQR((lp.noiselc / 125.f) * (1.f + lp.noiselc / 25.f));
                             vari[4] = 1.f * SQR((lp.noiselc4 / 125.f) * (1.f + lp.noiselc4 / 25.f));
                             vari[5] = 1.5f * SQR((lp.noiselc5 / 125.f) * (1.f + lp.noiselc5 / 25.f));
@@ -11738,7 +11733,6 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                         vari[1] = rtengine::max(0.000001f, vari[1]);
                         vari[2] = rtengine::max(0.000001f, vari[2]);
                         vari[3] = rtengine::max(0.000001f, kr3 * vari[3]);
-
                         vari[4] = rtengine::max(0.000001f, vari[4]);
                         vari[5] = rtengine::max(0.000001f, vari[5]);
                         vari[6] = rtengine::max(0.000001f, vari[6]);
@@ -11886,7 +11880,6 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                             variC[0] = SQR(noisecfr);
                             variC[1] = SQR(noisecfr);
                             variC[2] = SQR(noisecfr);
-
                             variC[3] = SQR(1.2f * noisecfr);
                             variC[4] = SQR(noisecfr);
                             variC[5] = SQR(1.2f * noiseccr);
@@ -11895,7 +11888,6 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                             variCb[0] = SQR(noisecfb);
                             variCb[1] = SQR(noisecfb);
                             variCb[2] = SQR(noisecfb);
-
                             variCb[3] = SQR(noisecfb);
                             variCb[4] = SQR(noisecfb);
                             variCb[5] = SQR(1.2f * noiseccb);
