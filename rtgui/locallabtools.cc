@@ -6481,7 +6481,9 @@ LocallabBlur::LocallabBlur():
     wavshapeden(static_cast<FlatCurveEditor*>(LocalcurveEditorwavden->addCurve(CT_Flat, "", nullptr, false, false))),
     lCLabels(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_LCLABELS")))),
     lumLabels(Gtk::manage(new Gtk::Label("---"))),
+    lum46Labels(Gtk::manage(new Gtk::Label("---"))),
     chroLabels(Gtk::manage(new Gtk::Label("---"))),
+    chro46Labels(Gtk::manage(new Gtk::Label("---"))),
     expdenoise1(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI1_EXP")))),
     maskusable(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
     maskunusable(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUNUSABLE")))),
@@ -6651,8 +6653,10 @@ LocallabBlur::LocallabBlur():
 
     setExpandAlignProperties(lCLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
     setExpandAlignProperties(lumLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+    setExpandAlignProperties(lum46Labels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
 
     setExpandAlignProperties(chroLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+    setExpandAlignProperties(chro46Labels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
 
 
     LocalcurveEditorwavden->curveListComplete();
@@ -6865,7 +6869,9 @@ LocallabBlur::LocallabBlur():
     // wavBox->pack_start(*noiselumc);//unused here, but used for normalize_mean_dt 
     wavBox->pack_start(*lCLabels);
     wavBox->pack_start(*lumLabels);
+    wavBox->pack_start(*lum46Labels);
     wavBox->pack_start(*chroLabels);
+    wavBox->pack_start(*chro46Labels);
     wavBox->pack_start(*noiselumdetail);
     wavBox->pack_start(*noiselequal);
     wavBox->pack_start(*noisegam);
@@ -7048,6 +7054,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         higthresd->set_tooltip_text(M("TP_LOCALLAB_MASKHIGTHRESD_TOOLTIP"));
         higthres->set_tooltip_text(M("TP_LOCALLAB_MASKHIGTHRES_TOOLTIP"));
         decayd->set_tooltip_text(M("TP_LOCALLAB_MASKDECAY_TOOLTIP"));
+        lCLabels->set_tooltip_text(M("TP_LOCALLAB_LCLABELS_TOOLTIP"));
     } else {
         
         expblnoise->set_tooltip_markup("");
@@ -7117,6 +7124,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         higthres->set_tooltip_text("");
 //       midthresd->set_tooltip_text("");
         decayd->set_tooltip_text("");
+        lCLabels->set_tooltip_text("");
 
     }
 }
@@ -7170,14 +7178,21 @@ void LocallabBlur::updatedenlc(const double highres, const double nres, const do
         lumLabels->set_text(
             Glib::ustring::compose(M("TP_LOCALLAB_LUMLABEL"),
                                    Glib::ustring::format(std::fixed, std::setprecision(0), Lnres),
-                                   Glib::ustring::format(std::fixed, std::setprecision(0), Lhighres),
+                                   Glib::ustring::format(std::fixed, std::setprecision(0), Lhighres))
+        );
+        lum46Labels->set_text(
+            Glib::ustring::compose(M("TP_LOCALLAB_LUM46LABEL"),
                                    Glib::ustring::format(std::fixed, std::setprecision(0), Lnres46 ),
                                    Glib::ustring::format(std::fixed, std::setprecision(0), Lhighres46))
         );
+
         chroLabels->set_text(
             Glib::ustring::compose(M("TP_LOCALLAB_CHROLABEL"),
                                    Glib::ustring::format(std::fixed, std::setprecision(0), nres),
-                                   Glib::ustring::format(std::fixed, std::setprecision(0), highres),
+                                   Glib::ustring::format(std::fixed, std::setprecision(0), highres))
+        );
+        chro46Labels->set_text(
+            Glib::ustring::compose(M("TP_LOCALLAB_CHRO46LABEL"),
                                    Glib::ustring::format(std::fixed, std::setprecision(0), nres46),
                                    Glib::ustring::format(std::fixed, std::setprecision(0), highres46))
         );

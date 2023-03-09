@@ -1143,7 +1143,6 @@ void Crop::update(int todo)
                         parent->localllogMask, parent->locall_Mask, parent->locallcieMask, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                         meantme, stdtme, meanretie, stdretie, fab, 
                         highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46);
-                    //    fabrefp[sp] = fab;
                         
                         LocallabListener::locallabDenoiseLC denoiselc;
                         denoiselc.highres = highresi;
@@ -1185,6 +1184,17 @@ void Crop::update(int todo)
 
                         }
                         */
+                        denoiselc.highres = highresi;
+                        denoiselc.nres = nresi; 
+                        denoiselc.highres46 = highresi46;
+                        denoiselc.nres46 = nresi46;
+                        denoiselc.Lhighres =  Lhighresi;
+                        denoiselc.Lnres = Lnresi;
+                        denoiselc.Lhighres46 = Lhighresi46;
+                        denoiselc.Lnres46 = Lnresi46;
+                        localldenoiselc.push_back(denoiselc);
+                        
+                       
                         if (parent->locallListener) {
                             parent->locallListener->denChanged(localldenoiselc, params.locallab.selspot);
                         }
@@ -1246,6 +1256,8 @@ void Crop::update(int todo)
                         meantme, stdtme, meanretie, stdretie, fab,
                         highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46);
             }
+            
+            
             if (sp + 1u < params.locallab.spots.size()) {
                 // do not copy for last spot as it is not needed anymore
                 lastorigCrop->CopyFrom(labnCrop);

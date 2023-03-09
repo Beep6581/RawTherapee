@@ -967,7 +967,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             float avge, meantme, stdtme, meanretie, stdretie;
             //std::vector<LocallabListener::locallabRef> locallref;
             std::vector<LocallabListener::locallabRetiMinMax> locallretiminmax;
-            std::vector<LocallabListener::locallabDenoiseLC> localldenoiselc;
             huerefs.resize(params->locallab.spots.size());
             huerefblurs.resize(params->locallab.spots.size());
             chromarefblurs.resize(params->locallab.spots.size());
@@ -1290,19 +1289,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 retiMinMax.Tmin = Tmin;
                 retiMinMax.Tmax = Tmax;
                 locallretiminmax.push_back(retiMinMax);
-                /*
-             //   printf("Improc Hresi=%f\n", (double) highresi);
-                LocallabListener::locallabDenoiseLC denoiselc;
-                denoiselc.highres = highresi;
-                denoiselc.nres = nresi; 
-                denoiselc.highres46 = highresi46;
-                denoiselc.nres46 = nresi46;
-                denoiselc.Lhighres =  Lhighresi;
-                denoiselc.Lnres = Lnresi;
-                denoiselc.Lhighres46 = Lhighresi46;
-                denoiselc.Lnres46 = Lnresi46;
-                localldenoiselc.push_back(denoiselc);
-                */
                 // Recalculate references after
                 if (params->locallab.spots.at(sp).spotMethod == "exc") {
                     ipf.calc_ref(sp, reserv.get(), reserv.get(), 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huer, chromar, lumar, sobeler, avg, locwavCurveden, locwavdenutili);
@@ -1335,7 +1321,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
               //  locallListener->refChanged(locallref, params->locallab.selspot);
                 locallListener->refChanged2(huerefp, chromarefp, lumarefp, fabrefp, params->locallab.selspot);
                 locallListener->minmaxChanged(locallretiminmax, params->locallab.selspot);
-             //   locallListener->denChanged(localldenoiselc, params->locallab.selspot);
             }
 
             }

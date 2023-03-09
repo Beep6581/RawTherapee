@@ -10944,7 +10944,6 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                 }
             }
 
-     //   if (call == 1 && GW >= mDEN && GH >= mDEN) {
         if (call == 1 && ((GW >= mDEN && GH >= mDEN  && isnois) || lp.quamet == 2)) {
 
 
@@ -11014,10 +11013,7 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                         int Wlvl_L = Ldecomp.level_W(lvl);
                         int Hlvl_L = Ldecomp.level_H(lvl);
                         const float* const* WavCoeffs_L = Ldecomp.level_coeffs(lvl);
-
                         madL[lvl][dir - 1] = SQR(Mad(WavCoeffs_L[dir], Wlvl_L * Hlvl_L));
-                   //     printf("madl=%f lvl=%i dir=%i\n", (double) madL[lvl][dir-1], lvl, dir-1);
-                        
                     }
                 }
 
@@ -11201,7 +11197,7 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                 variC[1] = SQR(noisecfr);
                 variC[2] = SQR(noisecfr);
 
-                variC[3] = SQR(noisecfr);
+                variC[3] = SQR(1.2f * noisecfr);
                 variC[4] = SQR(noisecfr);
                 variC[5] = SQR(1.2f * noiseccr);
                 variC[6] = SQR(1.5f * noiseccr);
@@ -11279,7 +11275,7 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                         } else {
                             k1 = 1.f;
                             k2 = 1.f;
-                            k3 = 1.f;
+                            k3 = 1.5f;
                         }
 
                     variC[0] = rtengine::max(minic, variC[0]);
@@ -11469,11 +11465,7 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                     }
                 }
             }
-/*
-            if(lp.nlstr > 0) {
-                NLMeans(tmp1.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, GW, GH, float (sk), multiThread);
-            }
-*/
+
             if(lp.smasktyp != 0) {
                 if(lp.enablMask && lp.recothrd != 1.f) {
                     LabImage tmp3(GW, GH);
@@ -11554,8 +11546,6 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                 }
                 
 // re read wavelet decomposition to calaculate noise resisd
-//            int levwavL = levred;
-//            int skip = 1;
             float chresid = 0.f;
             float chresidtemp = 0.f;
             float chmaxresid = 0.f;
@@ -11570,8 +11560,7 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
             float Lmaxresid46 = 0.f;
             
             
-            
-//levwavL = 5;
+//calculate and display residual noise luma and chroma
             wavelet_decomposition Ldecompinf(tmp1.L[0], tmp1.W, tmp1.H, levwavL, 1, skip, numThreads, lp.daubLen);
             wavelet_decomposition adecompinf(tmp1.a[0], tmp1.W, tmp1.H, levwavL, 1, skip, numThreads, lp.daubLen);
             wavelet_decomposition bdecompinf(tmp1.b[0], tmp1.W, tmp1.H, levwavL, 1, skip, numThreads, lp.daubLen);
@@ -11898,7 +11887,7 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                             variC[1] = SQR(noisecfr);
                             variC[2] = SQR(noisecfr);
 
-                            variC[3] = SQR(noisecfr);
+                            variC[3] = SQR(1.2f * noisecfr);
                             variC[4] = SQR(noisecfr);
                             variC[5] = SQR(1.2f * noiseccr);
                             variC[6] = SQR(1.5f * noiseccr);
@@ -11977,7 +11966,7 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                             } else {
                                 k1 = 1.f;
                                 k2 = 1.f;
-                                k3 = 1.f;
+                                k3 = 1.5f;
                             }
 
                         variC[0] = rtengine::max(minic, variC[0]);

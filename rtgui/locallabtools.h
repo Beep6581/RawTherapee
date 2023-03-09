@@ -711,7 +711,9 @@ private:
     FlatCurveEditor* const wavshapeden;
     Gtk::Label* const lCLabels;
     Gtk::Label* const lumLabels;
+    Gtk::Label* const lum46Labels;
     Gtk::Label* const chroLabels;
+    Gtk::Label* const chro46Labels;
     
     MyExpander* const expdenoise1;
     Gtk::Label* const maskusable;
