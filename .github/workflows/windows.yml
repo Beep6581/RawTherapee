@@ -94,8 +94,6 @@ jobs:
 
       - name: Bundle dependencies
         run: |
-          echo "Listing shared library dependencies."
-          ldd "./build/${{matrix.build_type}}/rawtherapee.exe"
           echo "Getting workspace path."
           export BUILD_DIR="$(pwd)/build/${{matrix.build_type}}"
           echo "Build directory is '$BUILD_DIR'."
@@ -122,7 +120,6 @@ jobs:
             "libexpat-1.dll" \
             libffi-*.dll \
             "libfftw3f-3.dll" \
-            "libfftw3f_omp-3.dll" \
             "libfontconfig-1.dll" \
             "libfreetype-6.dll" \
             "libfribidi-0.dll" \
