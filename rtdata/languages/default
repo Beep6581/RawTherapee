@@ -3163,6 +3163,7 @@ TP_LOCALLAB_MERTHR;Difference
 TP_LOCALLAB_MERTWE;Exclusion
 TP_LOCALLAB_MERTWO;Subtract
 TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts.
+TP_LOCALLAB_LCLABELS;Preview remaining noise
 TP_LOCALLAB_LUMLABEL;Luma M03=%1 H03=%2 M46=%3 H46=%4
 TP_LOCALLAB_CHROLABEL;Chroma M03=%1 H03=%2 M46=%3 H46=%4
 TP_LOCALLAB_MLABEL;Restored data Min=%1 Max=%2

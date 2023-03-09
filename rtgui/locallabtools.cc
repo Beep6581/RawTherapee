@@ -6479,6 +6479,7 @@ LocallabBlur::LocallabBlur():
     quamethod(Gtk::manage(new MyComboBoxText())),
     LocalcurveEditorwavden(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVDEN"))),
     wavshapeden(static_cast<FlatCurveEditor*>(LocalcurveEditorwavden->addCurve(CT_Flat, "", nullptr, false, false))),
+    lCLabels(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_LCLABELS")))),
     lumLabels(Gtk::manage(new Gtk::Label("---"))),
     chroLabels(Gtk::manage(new Gtk::Label("---"))),
     expdenoise1(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI1_EXP")))),
@@ -6648,6 +6649,7 @@ LocallabBlur::LocallabBlur():
     wavshapeden->setIdentityValue(0.);
     wavshapeden->setResetCurve(FlatCurveType(defSpot.locwavcurveden.at(0)), defSpot.locwavcurveden);
 
+    setExpandAlignProperties(lCLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
     setExpandAlignProperties(lumLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
 
     setExpandAlignProperties(chroLabels, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
@@ -6845,11 +6847,23 @@ LocallabBlur::LocallabBlur():
     Gtk::Frame* const wavFrame = Gtk::manage(new Gtk::Frame());
     ToolParamBlock* const wavBox = Gtk::manage(new ToolParamBlock());
     wavBox->pack_start(*quaHBox);
+    
+    ToolParamBlock* const nlbox = Gtk::manage(new ToolParamBlock());
+    nlbox->pack_start(*nlstr);
+    nlbox->pack_start(*nldet);
+    nlbox->pack_start(*nlgam);
+    nlbox->pack_start(*nlpat);
+    nlbox->pack_start(*nlrad);
+    nlFrame->add(*nlbox);
+    wavBox->pack_start(*nlFrame);
+    
+    
     wavBox->pack_start(*LocalcurveEditorwavden, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     // wavBox->pack_start(*noiselumf0);
     // wavBox->pack_start(*noiselumf);
     // wavBox->pack_start(*noiselumf2);
     // wavBox->pack_start(*noiselumc);//unused here, but used for normalize_mean_dt 
+    wavBox->pack_start(*lCLabels);
     wavBox->pack_start(*lumLabels);
     wavBox->pack_start(*chroLabels);
     wavBox->pack_start(*noiselumdetail);
@@ -6871,7 +6885,7 @@ LocallabBlur::LocallabBlur():
     wavBox->pack_start(*detailFrame);
     denoisebox->pack_start(*sensiden);
     denoisebox->pack_start(*reparden);
-   
+/*   
     ToolParamBlock* const nlbox = Gtk::manage(new ToolParamBlock());
     nlbox->pack_start(*nlstr);
     nlbox->pack_start(*nldet);
@@ -6880,7 +6894,7 @@ LocallabBlur::LocallabBlur():
     nlbox->pack_start(*nlrad);
     nlFrame->add(*nlbox);
     wavBox->pack_start(*nlFrame);
-    
+*/    
     wavBox->pack_start(*noisechrof);
     wavBox->pack_start(*noisechroc);
     wavBox->pack_start(*noisechrodetail);
