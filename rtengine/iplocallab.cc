@@ -11572,6 +11572,11 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
             chresid = sqrt(chresid / ( 3 * nbmaddir * 2));
             highresi = chresid + 0.33f * (sqrt(chmaxresid) - chresid); //evaluate sigma
             nresi = chresid;
+            nresi /= 4.f;
+            highresi /= 4.f;
+            nresi = min(nresi, 100.f);
+            highresi = min(highresi, 100.f);
+            
     //        printf("nresi03=%f highresi=%f \n", (double) nresi, (double) highresi);
 
 
@@ -11585,6 +11590,11 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
             chresid46 = sqrt(chresid46 / ( 3 * nbmaddir * 2));
             highresi46 = chresid46 + 0.33f * (sqrt(chmaxresid46) - chresid46); //evaluate sigma
             nresi46 = chresid46;
+            nresi46 /= 8.f;
+            highresi46 /= 8.f;
+            nresi46 = min(nresi46, 100.f);
+            highresi46 = min(highresi46, 100.f);
+            
     //        printf("nresi46=%f highresi=%f \n", (double) nresi46, (double) highresi46);
 
 
@@ -11593,14 +11603,24 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
             Lresid = sqrt(Lresid / (3 * nbmaddir));
             Lhighresi = Lresid + 0.33f * (sqrt(Lmaxresid) - Lresid); //evaluate sigma
             Lnresi = Lresid;
-    //        printf("Lresi03=%f Lhighresi=%f levwavL=%i\n", (double) Lnresi, (double) Lhighresi, levwavL);
+            Lhighresi /= 8.f;
+            Lnresi /= 8.f;
+            Lnresi= min(Lnresi, 100.f);
+            Lhighresi = min(Lhighresi, 100.f);
+
+            printf("Lresi03=%f Lhighresi=%f levwavL=%i\n", (double) Lnresi, (double) Lhighresi, levwavL);
 
             Noise_residualAB(Ldecompinf, Lresid46, Lmaxresid46, false, 4, 6);
             nbmaddir = 3;
             Lresid46 = sqrt(Lresid46 / (3 * nbmaddir));
             Lhighresi46 = Lresid46 + 0.36f * (sqrt(Lmaxresid46) - Lresid46); //evaluate sigma
             Lnresi46 = Lresid46;
-    //        printf("Lresi46=%f Lhighresi=%f levwavL=%i\n", (double) Lnresi46, (double) Lhighresi46, levwavL);
+            Lnresi46 /= 15.f;
+            Lnresi46 = min(Lnresi46, 100.f);
+            Lhighresi46/= 15.f;
+            Lhighresi46 = min(Lhighresi46, 100.f);
+            
+            printf("Lresi46=%f Lhighresi=%f levwavL=%i\n", (double) Lnresi46, (double) Lhighresi46, levwavL);
 
 // end calculate
                 
