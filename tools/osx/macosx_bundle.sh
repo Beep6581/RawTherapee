@@ -9,11 +9,11 @@
 # - GTK_PREFIX
 
 # Formatting
-fNormal="$(tput sgr0)"
-fBold="$(tput bold)"
+fNormal="$(tput sgr0)" >/dev/null 2>&1
+fBold="$(tput bold)" >/dev/null 2>&1
 # Colors depend upon the user's terminal emulator color scheme - what is readable for you may be not readable for someone else.
-fMagenta="$(tput setaf 5)"
-fRed="$(tput setaf 1)"
+fMagenta="$(tput setaf 5)" >/dev/null 2>&1
+fRed="$(tput setaf 1)" >/dev/null 2>&1
 
 function msg {
     printf "\\n${fBold}-- %s${fNormal}\\n" "${@}"
@@ -120,8 +120,8 @@ minimum_macos_version=${MINIMUM_SYSTEM_VERSION}
 #Out: /opt
 LOCAL_PREFIX="$(cmake .. -L -N | grep LOCAL_PREFIX)"; LOCAL_PREFIX="${LOCAL_PREFIX#*=}"
 
-#In: OSX_UNIVERSAL_URL=https:// etc.
-#Out: https:// etc.
+#In: OSX_UNIVERSAL_URL=file:/// etc.
+#Out: file:/// etc.
 UNIVERSAL_URL="$(cmake .. -L -N | grep OSX_UNIVERSAL_URL)"; UNIVERSAL_URL="${UNIVERSAL_URL#*=}"
 if [[ -n $UNIVERSAL_URL ]]; then
     echo "Universal app is ON. The URL is ${UNIVERSAL_URL}"
@@ -135,8 +135,8 @@ EXPATLIB="$(cmake .. -LA -N | grep pkgcfg_lib_EXPAT_expat)"; pkgcfg_lib_EXPAT_ex
 #Out: Developer ID Application: Doctor Who (1234567890)
 CODESIGNID="$(cmake .. -L -N | grep CODESIGNID)"; CODESIGNID="${CODESIGNID#*=}"
 
-#In: NOTARY:STRING=--username drwho@bbc.com --password abcd-efgh-hijk-lmno
-#Out: --username drwho@bbc.com --password abcd-efgh-hijk-lmno
+#In: NOTARY:STRING="--apple-id drwho@bbc.com --password abcd-efgh-hijk-lmno --team-id ABCDE12345"
+#Out: --apple-id drwho@bbc.com --password abcd-efgh-hijk-lmno --team-id ABCDE12345
 NOTARY="$(cmake .. -L -N | grep NOTARY)"; NOTARY="${NOTARY#*=}"
 
 # In: FANCY_DMG:BOOL=ON
@@ -151,6 +151,13 @@ fi
 OSX_NIGHTLY="$(cmake .. -L -N | grep OSX_NIGHTLY)"; NIGHTLY="${OSX_NIGHTLY#*=}"
 if [[ -n $NIGHTLY ]]; then
     echo "Nightly/generically-named zip is ON."
+fi
+
+# In: OSX_CONTINUOUS:BOOL=ON
+# Out: ON
+OSX_CONTINUOUS="$(cmake .. -L -N | grep OSX_CONTINUOUS)"; NIGHTLY="${OSX_CONTINUOUS#*=}" && CONTINUOUS="${OSX_CONTINUOUS#*=}"
+if [[ -n $CONTINUOUS ]]; then
+    echo "Continuous/generically-named zip is ON."
 fi
 
 APP="${PROJECT_NAME}.app"
@@ -191,15 +198,17 @@ lensfunversion=$(pkg-config --modversion lensfun | cut -f3 -d'.')
 if [ $lensfunversion = 95 ]
 then
     ditto ${LOCAL_PREFIX}/share/lensfun/version_2/* "${RESOURCES}/share/lensfun"
+    # Copy liblensfun to Frameworks
+    ditto ${LOCAL_PREFIX}/lib/liblensfun.2.dylib "${CONTENTS}/Frameworks/liblensfun.2.dylib"
+
 else
     ditto ${LOCAL_PREFIX}/share/lensfun/version_1/* "${RESOURCES}/share/lensfun"
+    # Copy liblensfun to Frameworks
+    ditto ${LOCAL_PREFIX}/lib/liblensfun.1.dylib "${CONTENTS}/Frameworks/liblensfun.1.dylib"
 fi
 
-# Copy liblensfun to Frameworks
-ditto ${LOCAL_PREFIX}/lib/liblensfun.2.dylib "${CONTENTS}/Frameworks/liblensfun.2.dylib"
-
 # Copy libomp to Frameworks
-ditto ${LOCAL_PREFIX}/lib/libomp.dylib "${CONTENTS}/Frameworks"
+cp ${LOCAL_PREFIX}/lib/libomp.dylib "${CONTENTS}/Frameworks"
 
 msg "Copying dependencies from ${GTK_PREFIX}."
 CheckLink "${EXECUTABLE}" 2>&1
@@ -207,24 +216,20 @@ CheckLink "${EXECUTABLE}" 2>&1
 # dylib install names
 ModifyInstallNames 2>&1
 
-# Copy libjpeg-turbo ("62") into the app bundle
-ditto ${LOCAL_PREFIX}/lib/libjpeg.62.dylib "${CONTENTS}/Frameworks/libjpeg.62.dylib"
+## Copy libexpat into the app bundle (which is keg-only)
+## if [[ -d /usr/local/Cellar/expat ]]; then ditto /usr/local/Cellar/expat/*/lib/libexpat.1.dylib "${CONTENTS}/Frameworks"; else cp "${EXPATLIB}" "${CONTENTS}/Frameworks/libexpat.1.dylib"; fi
 
-# Copy libexpat into the app bundle (which is keg-only)
-if [[ -d /usr/local/Cellar/expat ]]; then ditto /usr/local/Cellar/expat/*/lib/libexpat.1.dylib "${CONTENTS}/Frameworks"; else ditto "${EXPATLIB}" "${CONTENTS}/Frameworks/libexpat.1.dylib"; fi
+## Copy libz into the app bundle
+## cp ${LOCAL_PREFIX}/lib/libz.1.dylib "${CONTENTS}/Frameworks"
 
-# Copy libz into the app bundle
-ditto ${LOCAL_PREFIX}/lib/libz.1.dylib "${CONTENTS}/Frameworks"
-
-# Copy libpng12 & 16 to the app bundle
-ditto ${LOCAL_PREFIX}/lib/libpng16.16.dylib "${CONTENTS}/Frameworks/libpng16.16.dylib"
-ditto ${LOCAL_PREFIX}/lib/libpng12.0.dylib "${CONTENTS}/Frameworks/libpng12.0.dylib"
+# Copy libpng16 to the app bundle
+cp ${LOCAL_PREFIX}/lib/libpng16.16.dylib "${CONTENTS}/Frameworks/libpng16.16.dylib"
 
 # Copy libtiff 5 into the app bundle
-ditto ${LOCAL_PREFIX}/lib/libtiff.5.dylib "${CONTENTS}/Frameworks/libtiff.5.dylib"
+cp ${LOCAL_PREFIX}/lib/libtiff.5.dylib "${CONTENTS}/Frameworks/libtiff.5.dylib"
 
 # Copy libomp to Frameworks
-ditto ${LOCAL_PREFIX}/lib/libomp.dylib "${CONTENTS}/Frameworks"
+cp ${LOCAL_PREFIX}/lib/libomp.dylib "${CONTENTS}/Frameworks"
 
 # Prepare GTK+3 installation
 msg "Copying configuration files from ${GTK_PREFIX}:"
@@ -238,7 +243,7 @@ find -E "${LIB}" -type f -regex '.*\.(a|la|cache)$' | while read -r; do rm "${RE
 # Make Frameworks folder flat
 msg "Flattening the Frameworks folder"
 cp -RL "${LIB}"/gdk-pixbuf-2.0/2*/loaders/* "${LIB}"
-cp "${LIB}"/gtk-3.0/3*/immodules/*.{dylib,so} "${LIB}"
+cp "${LIB}"/gtk-3.0/3*/immodules/*.{dylib,so} "${LIB}" >/dev/null 2>&1
 rm -r "${LIB}"/gtk-3.0
 rm -r "${LIB}"/gdk-pixbuf-2.0
 
@@ -368,27 +373,7 @@ if [[ -n $NOTARY ]]; then
     msg "Notarizing the application:"
     ditto -c -k --sequesterRsrc --keepParent "${APP}" "${APP}.zip"
     echo "Uploading..."
-    uuid=`xcrun altool --notarize-app --primary-bundle-id "com.rawtherapee.RawTherapee" ${NOTARY} --file "${APP}.zip" 2>&1 | grep 'RequestUUID' | awk '{ print $3 }'`
-    echo "Result= $uuid" # Display identifier string
-    sleep 15
-    while :
-    do
-        fullstatus=`xcrun altool --notarization-info "$uuid" ${NOTARY}  2>&1`  # get the status
-        status1=`echo "$fullstatus" | grep 'Status\:' | awk '{ print $2 }'`
-        if [[ $status1 = "success" ]]; then
-            xcrun stapler staple *app   #  staple the ticket
-            xcrun stapler validate -v *app
-            echo "Notarization success"
-            break
-            elif [[ $status1 = "in" ]]; then
-            echo "Notarization still in progress, sleeping for 15 seconds and trying again"
-            sleep 15
-        else
-            echo "Notarization failed fullstatus below"
-            echo "$fullstatus"
-            exit 1
-        fi
-    done
+    sudo xcrun notarytool submit "${APP}.zip" ${NOTARY} --wait
 fi
 
 function CreateDmg {
@@ -450,39 +435,26 @@ function CreateDmg {
         msg "Notarizing the dmg:"
         zip "${dmg_name}.dmg.zip" "${dmg_name}.dmg"
         echo "Uploading..."
-        uuid=$(xcrun altool --notarize-app --primary-bundle-id "com.rawtherapee" ${NOTARY} --file "${dmg_name}.dmg.zip" 2>&1 | grep 'RequestUUID' | awk '{ print $3 }')
-        echo "dmg Result= ${uuid}" # Display identifier string
-        sleep 15
-        while :
-        do
-            fullstatus=`xcrun altool --notarization-info "$uuid" ${NOTARY} 2>&1`  # get the status
-            status1=`echo "$fullstatus" | grep 'Status\:' | awk '{ print $2 }'`
-            if [[ $status1 = "success" ]]; then
-                xcrun stapler staple "${dmg_name}.dmg"   #  staple the ticket
-                xcrun stapler validate -v "${dmg_name}.dmg"
-                echo "dmg Notarization success"
-                rm *dmg.zip
-                break
-                elif [[ $status1 = "in" ]]; then
-                echo "dmg Notarization still in progress, sleeping for 15 seconds and trying again"
-                sleep 15
-            else
-                echo "dmg Notarization failed fullstatus below"
-                echo "$fullstatus"
-                exit 1
-            fi
-        done
+        sudo xcrun notarytool submit "${dmg_name}.dmg.zip" ${NOTARY} --wait
     fi
     
     # Zip disk image for redistribution
     msg "Zipping disk image for redistribution:"
     mkdir "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}_folder"
-        ditto {"${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}.dmg","rawtherapee-cli","${PROJECT_SOURCE_DATA_DIR}/INSTALL.txt"} "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}_folder"
+        cp {"${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}.dmg","${PROJECT_NAME}.app/Contents/Frameworks/rawtherapee-cli","${PROJECT_SOURCE_DATA_DIR}/INSTALL.readme.rtf"} "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}_folder"
     zip -r "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}.zip" "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}_folder/"
     if [[ -n $NIGHTLY ]]; then
         cp "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}.zip" "${PROJECT_NAME}_macOS_${arch}_latest.zip"
     fi
+    if [[ -n $CONTINUOUS ]]; then
+        BRANCH=$(git branch --show-current)
+        if test -z "${BRANCH}"; then
+            BRANCH=$(git rev-parse --short HEAD)
+        fi
+        mv "${PROJECT_NAME}_macOS_${arch}_latest.zip" "${PROJECT_NAME}_${BRANCH}_macOS_${CMAKE_BUILD_TYPE}.zip"
+    fi
 }
+
 CreateDmg
 msg "Finishing build:"
 echo "Script complete."
