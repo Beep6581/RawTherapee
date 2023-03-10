@@ -2833,8 +2833,8 @@ TP_LOCALLAB_DENOIMASK;Denoise chroma mask
 TP_LOCALLAB_DENOIMASK_TOOLTIP;For all tools, allows you to control the chromatic noise level of the mask.\nUseful for better control of chrominance and to avoid artifacts when using the LC(h) curve.
 TP_LOCALLAB_DENOIQUA_TOOLTIP;Conservative mode preserves low frequency detail. Aggressive mode removes low frequency detail.\nConservative and Aggressive modes use wavelets and DCT and can be used in conjunction with 'Non-local Means – Luminance'.
 TP_LOCALLAB_DENOITHR_TOOLTIP;Adjusts edge detection to help reduce noise in uniform, low-contrast areas.
-TP_LOCALLAB_DENOIWAVCH;Wavelet chrominance
-TP_LOCALLAB_DENOIWAVLUM;Wavelet luminance
+TP_LOCALLAB_DENOIWAVCH;Wavelet: Chrominance
+TP_LOCALLAB_DENOIWAVLUM;Wavelet: Luminance
 TP_LOCALLAB_DENOI_EXP;Denoise
 TP_LOCALLAB_DENOI_TOOLTIP;This module can be used for noise reduction either on its own (at the end of the processing pipeline) or in addition to the Noise Reduction module in the Detail tab (which works at the beginning of the pipeline).\n Scope allows you to differentiate the action based on color (ΔE).\nMinimum RT-spot size: 128x128.
 TP_LOCALLAB_DEPTH;Depth
@@ -3187,7 +3187,7 @@ TP_LOCALLAB_NLDENOISENLPAT_TOOLTIP;Use this slider to adapt the amount of denois
 TP_LOCALLAB_NLDENOISENLRAD_TOOLTIP;Higher values increase denoise at the expense of processing time.
 TP_LOCALLAB_NLDENOISE_TOOLTIP;'Detail recovery' acts on a Laplacian transform to target uniform areas rather than areas with detail.
 TP_LOCALLAB_NLDET;Detail recovery
-TP_LOCALLAB_NLFRA;Non-local Means - Luminance
+TP_LOCALLAB_NLFRA;Non-local Means: Luminance
 TP_LOCALLAB_NLFRAME_TOOLTIP;Non-local means denoising takes a mean of all pixels in the image, weighted by how similar they are to the target pixel.\nReduces loss of detail compared with local mean algorithms.\nOnly luminance noise is taken into account. Chrominance noise is best processed using wavelets and Fourier transforms (DCT).\nCan be used in conjunction with 'Luminance denoise by level' or on its own.
 TP_LOCALLAB_NLGAM;Gamma
 TP_LOCALLAB_NLLUM;Strength
