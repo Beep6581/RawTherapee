@@ -2833,15 +2833,15 @@ TP_LOCALLAB_DENOIMASK;Denoise chroma mask
 TP_LOCALLAB_DENOIMASK_TOOLTIP;For all tools, allows you to control the chromatic noise level of the mask.\nUseful for better control of chrominance and to avoid artifacts when using the LC(h) curve.
 TP_LOCALLAB_DENOIQUA_TOOLTIP;Conservative mode preserves low frequency detail. Aggressive mode removes low frequency detail.\nConservative and Aggressive modes use wavelets and DCT and can be used in conjunction with 'Non-local Means – Luminance'.
 TP_LOCALLAB_DENOITHR_TOOLTIP;Adjusts edge detection to help reduce noise in uniform, low-contrast areas.
-TP_LOCALLAB_DENOIWAVCH;Wavelet: Chrominance
-TP_LOCALLAB_DENOIWAVLUM;Wavelet: Luminance
+TP_LOCALLAB_DENOIWAVCH;Wavelets: Chrominance
+TP_LOCALLAB_DENOIWAVLUM;Wavelets: Luminance
 TP_LOCALLAB_DENOI_EXP;Denoise
 TP_LOCALLAB_DENOI_TOOLTIP;This module can be used for noise reduction either on its own (at the end of the processing pipeline) or in addition to the Noise Reduction module in the Detail tab (which works at the beginning of the pipeline).\n Scope allows you to differentiate the action based on color (ΔE).\nMinimum RT-spot size: 128x128.
 TP_LOCALLAB_DEPTH;Depth
 TP_LOCALLAB_DETAIL;Local contrast
 TP_LOCALLAB_DETAILFRA;Edge detection - DCT
 TP_LOCALLAB_DETAILSH;Details
-TP_LOCALLAB_DETAILTHR;Luma-chro detail threshold
+TP_LOCALLAB_DETAILTHR;Lum/chrom detail threshold
 TP_LOCALLAB_DIVGR;Gamma
 TP_LOCALLAB_DUPLSPOTNAME;Copy
 TP_LOCALLAB_EDGFRA;Edge sharpness
@@ -3166,7 +3166,7 @@ TP_LOCALLAB_MERTWE;Exclusion
 TP_LOCALLAB_MERTWO;Subtract
 TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts.
 TP_LOCALLAB_LCLABELS;Preview remaining noise
-TP_LOCALLAB_LCLABELS_TOOLTIP;Displays the remaining noise levels in percentage 'Mean' and 'High' of the part of the image visible in the preview 1:1 for levels 0,1,2,3 and levels 4,5,6.\n\n>= 90 - display limited to 100 - Very noisy\n40-90 Noisy\n20-40 A little noisy\n<20 Very low noise\n\nCan be used to guide the action by showing:\n* the potential impact of Denoise "main".\n* the influence on the luminance noise of NLmeans, Wavelet, DCT.\n* the influence on the chroma noise of Wavelet, DCT.\n* the influence of Capture Sharpening, demoisaicing, etc.
+TP_LOCALLAB_LCLABELS_TOOLTIP;Displays the remaining noise levels in percentage 'Mean' and 'High' of the part of the image visible in the preview 1:1 for levels 0,1,2,3 and levels 4,5,6.\n\n>= 90 - display limited to 100 - Very noisy\n40-90 Noisy\n20-40 A little noisy\n<20 Very low noise\n\nCan be used to show how adjustments affect the noise by showing:\n* The potential impact of Noise reduction in the main-menu Detail tab.\n* The influence on the luminance noise of NLmeans, Wavelet, DCT.\n* The influence on the chroma noise of Wavelet, DCT.\n* The influence of Capture Sharpening, demoisaicing, etc.
 TP_LOCALLAB_LUMLABEL;Luma levels 0123: Mean=%1 High=%2 
 TP_LOCALLAB_LUM46LABEL;Luma levels 456: Mean=%1 High=%2
 TP_LOCALLAB_CHROLABEL;Chroma levels 0123: Mean=%1 High=%2
