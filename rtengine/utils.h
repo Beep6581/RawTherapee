@@ -52,6 +52,9 @@ bool hasTiffExtension(const Glib::ustring& filename);
 // Return true if file has .png extension (ignoring case)
 bool hasPngExtension(const Glib::ustring& filename);
 
+// Return true if file has .jxl extension (ignoring case)
+bool hasJxlExtension(const Glib::ustring& filename);
+
 void swab(const void* from, void* to, ssize_t n);
 
 }

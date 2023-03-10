@@ -239,6 +239,7 @@ target_link_libraries(rtengine rtexif
     ${LENSFUN_LIBRARIES}
     ${RSVG_LIBRARIES}
     ${KLT_LIBRARIES}
+    jxl jxl_threads
 )
 
 if(OpenMP_FOUND)

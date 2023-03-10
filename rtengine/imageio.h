@@ -102,6 +102,8 @@ public:
     int load (const Glib::ustring &fname);
     int save (const Glib::ustring &fname) const;
 
+    int loadJxl (const Glib::ustring &fname);
+
     int loadPNG (const Glib::ustring &fname);
     int loadJPEG (const Glib::ustring &fname);
     int loadTIFF (const Glib::ustring &fname);

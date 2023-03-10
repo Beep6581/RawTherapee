@@ -237,6 +237,12 @@ bool hasJpegExtension(const Glib::ustring& filename)
    return extension == "jpg" || extension == "jpeg";
 }
 
+bool hasJxlExtension(const Glib::ustring& filename)
+{
+   const Glib::ustring extension = getFileExtension(filename);
+   return extension == "jxl";
+}
+
 bool hasTiffExtension(const Glib::ustring& filename)
 {
    const Glib::ustring extension = getFileExtension(filename);
