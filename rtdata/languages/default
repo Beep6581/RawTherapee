@@ -3166,7 +3166,7 @@ TP_LOCALLAB_MERTWE;Exclusion
 TP_LOCALLAB_MERTWO;Subtract
 TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts.
 TP_LOCALLAB_LCLABELS;Preview remaining noise
-TP_LOCALLAB_LCLABELS_TOOLTIP;Displays the remaining noise levels in percentage 'Mean' and 'High' of the part of the image visible in the preview 1:1 for levels 0,1,2,3 and levels 4,5,6.\n\n>= 90 - display limited to 100 - Very noisy\n40-90 Noisy\n20-40 A little noisy\n<20 Very low noise\n\nCan be used to show how adjustments affect the noise by showing:\n* The potential impact of Noise reduction in the main-menu Detail tab.\n* The influence on the luminance noise of NLmeans, Wavelet, DCT.\n* The influence on the chroma noise of Wavelet, DCT.\n* The influence of Capture Sharpening, demoisaicing, etc.
+TP_LOCALLAB_LCLABELS_TOOLTIP;Displays the remaining noise levels 'Mean' and 'High' of the part of the image visible in the preview 1:1 for levels 0,1,2,3 and levels 4,5,6.\n\n >300 Very noisy\n 100-300 Noisy\n 50-100 A little noisy\n < 50 Very low noise\n\nCan be used to show how adjustments affect the noise by showing:\n* The potential impact of Noise reduction in the main-menu Detail tab.\n* The influence on the luminance noise of NLmeans, Wavelet, DCT.\n* The influence on the chroma noise of Wavelet, DCT.\n* The influence of Capture Sharpening, demoisaicing, etc.
 TP_LOCALLAB_LUMLABEL;Luma levels 0123: Mean=%1 High=%2 
 TP_LOCALLAB_LUM46LABEL;Luma levels 456: Mean=%1 High=%2
 TP_LOCALLAB_CHROLABEL;Chroma levels 0123: Mean=%1 High=%2
