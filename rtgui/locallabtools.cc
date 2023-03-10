@@ -6477,9 +6477,13 @@ LocallabBlur::LocallabBlur():
     activlum(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ACTIV")))),
     expdenoise(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI_EXP")))),
     quamethod(Gtk::manage(new MyComboBoxText())),
+    expdenoisenl(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_NLFRA")))),
+    expdenoiselum(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOIWAVLUM")))),
+    expdenoisech(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOIWAVCH")))),
     LocalcurveEditorwavden(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVDEN"))),
     wavshapeden(static_cast<FlatCurveEditor*>(LocalcurveEditorwavden->addCurve(CT_Flat, "", nullptr, false, false))),
-    lCLabels(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_LCLABELS")))),
+  //  lCLabels(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_LCLABELS")))),
+    lCLabels(Gtk::manage(new Gtk::Label("-----------------"))),
     lumLabels(Gtk::manage(new Gtk::Label("---"))),
     lum46Labels(Gtk::manage(new Gtk::Label("---"))),
     chroLabels(Gtk::manage(new Gtk::Label("---"))),
@@ -6519,7 +6523,7 @@ LocallabBlur::LocallabBlur():
     decayd(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKDDECAY"), 0.5, 4., 0.1, 2.))),
     invmaskd(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVMASK")))),
     invmask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVMASK")))),
-    nlFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_NLFRA")))),
+    prevFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LCLABELS")))),
     nlstr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NLLUM"), 0, 100, 1, 0))),
     nldet(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NLDET"), 0, 100, 1, 50))),
     nlpat(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NLPAT"), 1, 5, 1, 2))),
@@ -6645,6 +6649,9 @@ LocallabBlur::LocallabBlur():
     Gtk::Label* const quaLabel = Gtk::manage(new Gtk::Label(M("TP_WAVELET_DENQUA") + ":"));
     quaHBox->pack_start(*quaLabel, Gtk::PACK_SHRINK, 4);
     quaHBox->pack_start(*quamethod);
+    setExpandAlignProperties(expdenoisenl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    setExpandAlignProperties(expdenoiselum, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    setExpandAlignProperties(expdenoisech, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     LocalcurveEditorwavden->setCurveListener(this);
 
@@ -6714,7 +6721,7 @@ LocallabBlur::LocallabBlur():
     decayd->setAdjusterListener(this);
 
     bilateral->setAdjusterListener(this);
-    nlFrame->set_label_align(0.025, 0.5);
+    prevFrame->set_label_align(0.025, 0.5);
 
     nlstr->setAdjusterListener(this);
     nldet->setAdjusterListener(this);
@@ -6851,6 +6858,16 @@ LocallabBlur::LocallabBlur():
     Gtk::Frame* const wavFrame = Gtk::manage(new Gtk::Frame());
     ToolParamBlock* const wavBox = Gtk::manage(new ToolParamBlock());
     wavBox->pack_start(*quaHBox);
+    wavBox->pack_start(*sensiden);
+    wavBox->pack_start(*reparden);
+    ToolParamBlock* const prevBox = Gtk::manage(new ToolParamBlock());
+    prevBox->pack_start(*lumLabels);
+    prevBox->pack_start(*lum46Labels);
+    prevBox->pack_start(*lCLabels);
+    prevBox->pack_start(*chroLabels);
+    prevBox->pack_start(*chro46Labels);
+    prevFrame->add(*prevBox);
+    wavBox->pack_start(*prevFrame);
     
     ToolParamBlock* const nlbox = Gtk::manage(new ToolParamBlock());
     nlbox->pack_start(*nlstr);
@@ -6858,24 +6875,22 @@ LocallabBlur::LocallabBlur():
     nlbox->pack_start(*nlgam);
     nlbox->pack_start(*nlpat);
     nlbox->pack_start(*nlrad);
-    nlFrame->add(*nlbox);
-    wavBox->pack_start(*nlFrame);
+    expdenoisenl->add(*nlbox);
+
+    wavBox->pack_start(*expdenoisenl);
     
     
-    wavBox->pack_start(*LocalcurveEditorwavden, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     // wavBox->pack_start(*noiselumf0);
     // wavBox->pack_start(*noiselumf);
     // wavBox->pack_start(*noiselumf2);
     // wavBox->pack_start(*noiselumc);//unused here, but used for normalize_mean_dt 
-    wavBox->pack_start(*lCLabels);
-    wavBox->pack_start(*lumLabels);
-    wavBox->pack_start(*lum46Labels);
-    wavBox->pack_start(*chroLabels);
-    wavBox->pack_start(*chro46Labels);
-    wavBox->pack_start(*noiselumdetail);
-    wavBox->pack_start(*noiselequal);
-    wavBox->pack_start(*noisegam);
-    wavBox->pack_start(*LocalcurveEditorwavhue, Gtk::PACK_SHRINK, 4);
+    ToolParamBlock* const wchBox = Gtk::manage(new ToolParamBlock());
+    
+    wchBox->pack_start(*LocalcurveEditorwavden, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    wchBox->pack_start(*noiselumdetail);
+    wchBox->pack_start(*noiselequal);
+    wchBox->pack_start(*noisegam);
+    wchBox->pack_start(*LocalcurveEditorwavhue, Gtk::PACK_SHRINK, 4);
     ToolParamBlock* const wavBox1 = Gtk::manage(new ToolParamBlock());
     wavBox1->pack_start(*maskusable, Gtk::PACK_SHRINK, 0);
     wavBox1->pack_start(*maskunusable, Gtk::PACK_SHRINK, 0);
@@ -6883,19 +6898,24 @@ LocallabBlur::LocallabBlur():
     wavBox1->pack_start(*levelthrlow, Gtk::PACK_SHRINK, 0);
     wavBox1->pack_start(*levelthr, Gtk::PACK_SHRINK, 0);
     expdenoise1->add(*wavBox1, false);
-    wavBox->pack_start(*expdenoise1);
+    wchBox->pack_start(*expdenoise1);
+    expdenoiselum->add(*wchBox);
+    wavBox->pack_start(*expdenoiselum);
+    ToolParamBlock* const chBox = Gtk::manage(new ToolParamBlock());
+
+    chBox->pack_start(*noisechrof);
+    chBox->pack_start(*noisechroc);
+    chBox->pack_start(*noisechrodetail);
+    chBox->pack_start(*adjblur);
+    expdenoisech->add(*chBox);
+    wavBox->pack_start(*expdenoisech);
+    
     ToolParamBlock* const detailBox = Gtk::manage(new ToolParamBlock());
     detailBox->pack_start(*detailthr);
     detailBox->pack_start(*usemask, Gtk::PACK_SHRINK, 0);
     detailFrame->add(*detailBox);
     wavBox->pack_start(*detailFrame);
-    denoisebox->pack_start(*sensiden);
-    denoisebox->pack_start(*reparden);
 
-    wavBox->pack_start(*noisechrof);
-    wavBox->pack_start(*noisechroc);
-    wavBox->pack_start(*noisechrodetail);
-    wavBox->pack_start(*adjblur);
     wavFrame->add(*wavBox);
     denoisebox->pack_start(*wavFrame);
 
@@ -6998,6 +7018,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         expdenoise1->set_tooltip_markup(M("TP_LOCALLAB_MASKLC_TOOLTIP"));
         expdenoise2->set_tooltip_markup(M("TP_LOCALLAB_MASKGF_TOOLTIP"));
         expdenoise3->set_tooltip_markup(M("TP_LOCALLAB_MASKDE_TOOLTIP"));
+        expdenoisenl->set_tooltip_markup(M("TP_LOCALLAB_NLFRAME_TOOLTIP"));
         invmask->set_tooltip_text(M("TP_LOCALLAB_MASKDEINV_TOOLTIP"));
         invmaskd->set_tooltip_text(M("TP_LOCALLAB_MASKDEINV_TOOLTIP"));
         LocalcurveEditorwavden->setTooltip(M("TP_LOCALLAB_WASDEN_TOOLTIP"));
@@ -7010,7 +7031,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         detailthr->set_tooltip_text(M("TP_LOCALLAB_DENOITHR_TOOLTIP"));
         adjblur->set_tooltip_text(M("TP_LOCALLAB_DENOIEQUALCHRO_TOOLTIP"));
         bilateral->set_tooltip_text(M("TP_LOCALLAB_DENOIBILAT_TOOLTIP"));
-        nlFrame->set_tooltip_text(M("TP_LOCALLAB_NLFRAME_TOOLTIP"));
+        prevFrame->set_tooltip_text(M("TP_LOCALLAB_LCLABELS_TOOLTIP"));
         nlstr->set_tooltip_text(M("TP_LOCALLAB_NLDENOISE_TOOLTIP"));
         nldet->set_tooltip_text(M("TP_LOCALLAB_NLDENOISE_TOOLTIP"));
         nlpat->set_tooltip_text(M("TP_LOCALLAB_NLDENOISENLPAT_TOOLTIP"));
@@ -7078,7 +7099,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         detailthr->set_tooltip_text("");
         adjblur->set_tooltip_text("");
         bilateral->set_tooltip_text("");
-        nlFrame->set_tooltip_text("");
+        prevFrame->set_tooltip_text("");
         nlstr->set_tooltip_text("");
         nldet->set_tooltip_text("");
         nlpat->set_tooltip_text("");
@@ -7116,6 +7137,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
 //       midthresd->set_tooltip_text("");
         decayd->set_tooltip_text("");
         lCLabels->set_tooltip_text("");
+        expdenoisenl->set_tooltip_markup("");
 
     }
 }
@@ -7198,6 +7220,9 @@ void LocallabBlur::setDefaultExpanderVisibility()
     expdenoise2->set_expanded(false);
     expdenoise3->set_expanded(false);
     expmaskbl->set_expanded(false);
+    expdenoisenl->set_expanded(false);
+    expdenoiselum->set_expanded(false);
+    expdenoisech->set_expanded(false);
 }
 
 void LocallabBlur::disableListener()

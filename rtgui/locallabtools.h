@@ -707,6 +707,9 @@ private:
     Gtk::CheckButton* const activlum;
     MyExpander* const expdenoise;
     MyComboBoxText* const quamethod;
+    MyExpander* const expdenoisenl;
+    MyExpander* const expdenoiselum;
+    MyExpander* const expdenoisech;
     CurveEditorGroup* const LocalcurveEditorwavden;
     FlatCurveEditor* const wavshapeden;
     Gtk::Label* const lCLabels;
@@ -752,7 +755,7 @@ private:
     
     Gtk::CheckButton* const invmaskd;
     Gtk::CheckButton* const invmask;
-    Gtk::Frame* const nlFrame;
+    Gtk::Frame* const prevFrame;
     Adjuster* const nlstr;
     Adjuster* const nldet;
     Adjuster* const nlpat;
