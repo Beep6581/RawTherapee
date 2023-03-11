@@ -11542,7 +11542,7 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
                     masklumch.free();
                 }
                 
-// re read wavelet decomposition to calaculate noise resisd
+// re read wavelet decomposition to calaculate noise residual
             float chresid = 0.f;
             float chresidtemp = 0.f;
             float chmaxresid = 0.f;
@@ -11558,6 +11558,7 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
             
             
 //calculate and display residual noise luma and chroma
+// various coefficient from  1 to 5 - tries to take into account the difference between calculate Noise and percepted noise
             wavelet_decomposition Ldecompinf(tmp1.L[0], tmp1.W, tmp1.H, levwavL, 1, skip, numThreads, lp.daubLen);
             wavelet_decomposition adecompinf(tmp1.a[0], tmp1.W, tmp1.H, levwavL, 1, skip, numThreads, lp.daubLen);
             wavelet_decomposition bdecompinf(tmp1.b[0], tmp1.W, tmp1.H, levwavL, 1, skip, numThreads, lp.daubLen);
@@ -11572,7 +11573,7 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
             chresid = sqrt(chresid / ( 3 * nbmaddir * 2));
             highresi = chresid + 0.5f * (sqrt(chmaxresid) - chresid); //evaluate sigma
             nresi = chresid;
-            highresi /= 1.4f;
+            highresi /= 1.4f;//arbitrary coefficient
             nresi /= 1.4f;
 
     //        printf("nresi03=%f highresi=%f \n", (double) nresi, (double) highresi);
@@ -11588,7 +11589,7 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
             chresid46 = sqrt(chresid46 / ( 3 * nbmaddir * 2));
             highresi46 = chresid46 + 0.5f * (sqrt(chmaxresid46) - chresid46); //evaluate sigma
             nresi46 = chresid46;
-            highresi46 /= 2.f;
+            highresi46 /= 2.f;//arbitrary coefficient
             nresi46 /= 2.f;
             
     //        printf("nresi46=%f highresi=%f \n", (double) nresi46, (double) highresi46);
@@ -11599,7 +11600,7 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
             Lresid = sqrt(Lresid / (3 * nbmaddir));
             Lhighresi = Lresid + 0.5f * (sqrt(Lmaxresid) - Lresid); //evaluate sigma
             Lnresi = Lresid;
-            Lnresi /= 2.f;
+            Lnresi /= 2.f;//arbitrary coefficient
             Lhighresi /= 2.f;
            // printf("Lresi03=%f Lhighresi=%f levwavL=%i\n", (double) Lnresi, (double) Lhighresi, levwavL);
 
@@ -11608,13 +11609,13 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
             Lresid46 = sqrt(Lresid46 / (3 * nbmaddir));
             Lhighresi46 = Lresid46 + 0.5f * (sqrt(Lmaxresid46) - Lresid46); //evaluate sigma
             Lnresi46 = Lresid46;
-            Lhighresi46 /= 5.f;
+            Lhighresi46 /= 5.f;//arbitrary coefficient
             Lnresi46 /= 5.f;
            // printf("Lresi46=%f Lhighresi=%f levwavL=%i\n", (double) Lnresi46, (double) Lhighresi46, levwavL);
 
 // end calculate
                 
-                DeNoise_Local(call, lp,  originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);
+            DeNoise_Local(call, lp,  originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);
 
             } else {
                 DeNoise_Local(call, lp,  original, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);
