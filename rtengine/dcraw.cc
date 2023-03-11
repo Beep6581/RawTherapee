@@ -2464,6 +2464,30 @@ void CLASS unpacked_load_raw()
   }
 }
 
+// RT - from LibRaw
+void CLASS unpacked_load_raw_FujiDBP()
+/*
+for Fuji DBP for GX680, aka DX-2000
+  DBP_tile_width = 688;
+  DBP_tile_height = 3856;
+  DBP_n_tiles = 8;
+*/
+{
+    int scan_line, tile_n;
+    int nTiles = 8;
+    tile_width = raw_width / nTiles;
+    ushort *tile;
+    tile = (ushort *) calloc(raw_height, tile_width * 2);
+    for (tile_n = 0; tile_n < nTiles; tile_n++) {
+        read_shorts(tile, tile_width * raw_height);
+        for (scan_line = 0; scan_line < raw_height; scan_line++) {
+            memcpy(&raw_image[scan_line * raw_width + tile_n * tile_width],
+                &tile[scan_line * tile_width], tile_width * 2);
+        }
+    }
+    free(tile);
+    fseek(ifp, -2, SEEK_CUR); // avoid EOF error
+}
 
 // RT
 void CLASS sony_arq_load_raw()
@@ -5522,9 +5546,11 @@ void CLASS parse_makernote (int base, int uptag)
     offset = get4();
     fseek (ifp, offset-8, SEEK_CUR);
   } else if (!strcmp (buf,"OLYMPUS") ||
-             !strcmp (buf,"PENTAX ")) {
+             !strcmp (buf,"PENTAX ") ||
+             !strncmp(buf,"OM SYS",6)) { // From LibRaw
     base = ftell(ifp)-10;
     fseek (ifp, -2, SEEK_CUR);
+    if (buf[1] == 'M') get4(); // From LibRaw
     order = get2();
     if (buf[0] == 'O') get2();
   } else if (!strncmp (buf,"SONY",4) ||
@@ -6319,12 +6345,13 @@ void CLASS parse_mos (int offset)
 
 void CLASS linear_table (unsigned len)
 {
-  int i;
-  if (len > 0x1000) len = 0x1000;
-  read_shorts (curve, len);
-  for (i=len; i < 0x1000; i++)
-    curve[i] = curve[i-1];
-  maximum = curve[0xfff];
+  const unsigned maxLen = std::min(0x10000ull, 1ull << tiff_bps);
+  len = std::min(len, maxLen);
+  read_shorts(curve, len);
+  maximum = curve[len - 1];
+  for (std::size_t i = len; i < maxLen; ++i) {
+    curve[i] = maximum;
+  }
 }
 
 void CLASS parse_kodak_ifd (int base)
@@ -6913,7 +6940,6 @@ it under the terms of the one of two licenses as you choose:
             unsigned oldOrder = order;
             order = 0x4d4d; // always big endian per definition in https://www.adobe.com/content/dam/acom/en/products/photoshop/pdfs/dng_spec_1.4.0.0.pdf chapter 7
             unsigned ntags = get4(); // read the number of opcodes
-
             if (ntags < ifp->size / 12) { // rough check for wrong value (happens for example with DNG files from DJI FC6310)
                 while (ntags-- && !ifp->eof) {
                   unsigned opcode = get4();
@@ -6932,8 +6958,48 @@ it under the terms of the one of two licenses as you choose:
           break;
         }
       case 51009:			/* OpcodeList2 */
-	meta_offset = ftell(ifp);
-	break;
+        {
+            meta_offset = ftell(ifp);
+            const unsigned oldOrder = order;
+            order = 0x4d4d; // always big endian per definition in https://www.adobe.com/content/dam/acom/en/products/photoshop/pdfs/dng_spec_1.4.0.0.pdf chapter 7
+            unsigned ntags = get4(); // read the number of opcodes
+            if (ntags < ifp->size / 12) { // rough check for wrong value (happens for example with DNG files from DJI FC6310)
+                while (ntags-- && !ifp->eof) {
+                    unsigned opcode = get4();
+                    if (opcode == 9 && gainMaps.size() < 4) {
+                        fseek(ifp, 4, SEEK_CUR); // skip 4 bytes as we know that the opcode 4 takes 4 byte
+                        fseek(ifp, 8, SEEK_CUR); // skip 8 bytes as they don't interest us currently
+                        GainMap gainMap;
+                        gainMap.Top = get4();
+                        gainMap.Left = get4();
+                        gainMap.Bottom = get4();
+                        gainMap.Right = get4();
+                        gainMap.Plane = get4();
+                        gainMap.Planes = get4();
+                        gainMap.RowPitch = get4();
+                        gainMap.ColPitch = get4();
+                        gainMap.MapPointsV = get4();
+                        gainMap.MapPointsH = get4();
+                        gainMap.MapSpacingV = getreal(12);
+                        gainMap.MapSpacingH = getreal(12);
+                        gainMap.MapOriginV = getreal(12);
+                        gainMap.MapOriginH = getreal(12);
+                        gainMap.MapPlanes = get4();
+                        const std::size_t n = static_cast<std::size_t>(gainMap.MapPointsV) * static_cast<std::size_t>(gainMap.MapPointsH) * static_cast<std::size_t>(gainMap.MapPlanes);
+                        gainMap.MapGain.reserve(n);
+                        for (std::size_t i = 0; i < n; ++i) {
+                            gainMap.MapGain.push_back(getreal(11));
+                        }
+                        gainMaps.push_back(std::move(gainMap));
+                    } else {
+                        fseek(ifp, 8, SEEK_CUR); // skip 8 bytes as they don't interest us currently
+                        fseek(ifp, get4(), SEEK_CUR);
+                    }
+                }
+            }
+            order = oldOrder;
+            break;
+        }
       case 64772:			/* Kodak P-series */
 	if (len < 13) break;
 	fseek (ifp, 16, SEEK_CUR);
@@ -7108,7 +7174,7 @@ void CLASS apply_tiff()
 		   if (tiff_ifd[raw].bytes*4 == raw_width*raw_height*7) break;
 		   load_flags = 0;
 	  case 16: load_raw = &CLASS unpacked_load_raw;
-		   if (!strncmp(make,"OLYMPUS",7) &&
+		   if ((!strncmp(make,"OLYMPUS",7) || !strncmp(make, "OM Digi", 7)) && // OM Digi from LibRaw
 			tiff_ifd[raw].bytes*7 > raw_width*raw_height)
 		     load_raw = &CLASS olympus_load_raw;
                    // ------- RT -------
@@ -8640,6 +8706,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 10901,-4095,-1074,-1141,9208,2293,-62,1417,5158 } },
     { "Olympus XZ-2", 0, 0,
 	{ 9777,-3483,-925,-2886,11297,1800,-602,1663,5134 } },
+    { "OM Digital Solutions OM-1", 0, 0,
+        { 9488, -3984, -714, -2887, 10945, 2229, -137, 960, 5786 } }, // From LibRaw
     { "OmniVision", 0, 0,		/* DJC */
 	{ 12782,-4059,-379,-478,9066,1413,1340,1513,5176 } },
     { "Pentax *ist DL2", 0, 0,
@@ -10066,6 +10134,9 @@ canon_a5:
     } else if (!strcmp(model, "X-Pro3") || !strcmp(model, "X-T3") || !strcmp(model, "X-T30") || !strcmp(model, "X-T4") || !strcmp(model, "X100V") || !strcmp(model, "X-S10")) {
         width = raw_width = 6384;
         height = raw_height = 4182;
+    } else if (!strcmp(model, "DBP for GX680")) { // Special case for #4204
+        width = raw_width = 5504;
+        height = raw_height = 3856;
     }
     top_margin = (raw_height - height) >> 2 << 1;
     left_margin = (raw_width - width ) >> 2 << 1;
@@ -10073,6 +10144,16 @@ canon_a5:
     if (width == 4032 || width == 4952 || width == 6032 || width == 8280) left_margin = 0;
     if (width == 3328 && (width -= 66)) left_margin = 34;
     if (width == 4936) left_margin = 4;
+    if (width == 5504) { // #4204, taken from LibRaw
+        left_margin = 32;
+        top_margin = 8;
+        width = raw_width - 2*left_margin;
+        height = raw_height - 2*top_margin;
+        load_raw = &CLASS unpacked_load_raw_FujiDBP;
+        filters = 0x16161616;
+        load_flags = 0;
+        flip = 6;
+    }
     if (!strcmp(model,"HS50EXR") ||
 	!strcmp(model,"F900EXR")) {
       width += 2;
@@ -11039,6 +11120,70 @@ void CLASS nikon_14bit_load_raw()
             unpack7bytesto4x16_nikon(buf + sp, dest + dp);
     }
     free(buf);
+}
+
+bool CLASS isGainMapSupported() const {
+    if (!(dng_version && isBayer())) {
+        return false;
+    }
+    const auto n = gainMaps.size();
+    if (n != 4) { // we need 4 gainmaps for bayer files
+        if (rtengine::settings->verbose) {
+            std::cout << "GainMap has " << n << " maps, but 4 are needed" << std::endl;
+        }
+        return false;
+    }
+    unsigned int check = 0;
+    bool noOp = true;
+    for (const auto &m : gainMaps) {
+        if (m.MapGain.size() < 1) {
+            if (rtengine::settings->verbose) {
+                std::cout << "GainMap has invalid size of " << m.MapGain.size() << std::endl;
+            }
+            return false;
+        }
+        if (m.MapGain.size() != static_cast<std::size_t>(m.MapPointsV) * static_cast<std::size_t>(m.MapPointsH) * static_cast<std::size_t>(m.MapPlanes)) {
+            if (rtengine::settings->verbose) {
+                std::cout << "GainMap has size of " << m.MapGain.size() << ", but needs " << m.MapPointsV * m.MapPointsH * m.MapPlanes << std::endl;
+            }
+            return false;
+        }
+        if (m.RowPitch != 2 || m.ColPitch != 2) {
+            if (rtengine::settings->verbose) {
+                std::cout << "GainMap needs Row/ColPitch of 2/2, but has " << m.RowPitch << "/" << m.ColPitch << std::endl;
+            }
+            return false;
+        }
+        if (m.Top == 0){
+            if (m.Left == 0) {
+                check += 1;
+            } else if (m.Left == 1) {
+                check += 2;
+            }
+        } else if (m.Top == 1) {
+            if (m.Left == 0) {
+                check += 4;
+            } else if (m.Left == 1) {
+                check += 8;
+            }
+        }
+        for (size_t i = 0; noOp && i < m.MapGain.size(); ++i) {
+            if (m.MapGain[i] != 1.f) { // we have at least one value != 1.f => map is not a nop
+                noOp = false;
+            }
+        }
+    }
+    if (noOp || check != 15) { // all maps are nops or the structure of the combination of 4 maps is not correct
+        if (rtengine::settings->verbose) {
+            if (noOp) {
+                std::cout << "GainMap is a nop" << std::endl;
+            } else {
+                std::cout << "GainMap has unsupported type : " << check << std::endl;
+            }
+        }
+        return false;
+    }
+    return true;
 }
 
 /* RT: Delete from here */

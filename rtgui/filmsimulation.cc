@@ -12,6 +12,8 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
+const Glib::ustring FilmSimulation::TOOL_NAME = "filmsimulation";
+
 namespace
 {
 
@@ -61,7 +63,7 @@ bool notifySlowParseDir (const std::chrono::system_clock::time_point& startedAt)
 }
 
 FilmSimulation::FilmSimulation()
-    :   FoldableToolPanel( this, "filmsimulation", M("TP_FILMSIMULATION_LABEL"), false, true )
+    :   FoldableToolPanel( this, TOOL_NAME, M("TP_FILMSIMULATION_LABEL"), false, true )
 {
     m_clutComboBox = Gtk::manage( new ClutComboBox(options.clutsDir) );
 

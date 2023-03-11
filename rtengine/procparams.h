@@ -299,6 +299,7 @@ struct ToneCurveParams {
     int shcompr;
     int hlcompr; // Highlight Recovery's compression
     int hlbl; // Highlight Recovery's compression
+    double hlth; // Highlight Recovery's threshold
     int hlcomprthresh; // Highlight Recovery's threshold
     bool histmatching; // histogram matching
     bool fromHistMatching;
@@ -376,7 +377,7 @@ struct LCurveParams {
     int     brightness;
     int     contrast;
     int     chromaticity;
-    bool    avoidcolorshift;
+    Glib::ustring gamutmunselmethod;
     double  rstprotection;
     bool    lcredsk;
 
@@ -709,7 +710,6 @@ struct ColorAppearanceParams {
     double greenout;
     int tempsc;
     double greensc;
-    bool presetcat02;
 
     ColorAppearanceParams();
 
@@ -1020,6 +1020,8 @@ struct LocallabParams {
         int structexclu;
         double struc;
         Glib::ustring shapeMethod; // IND, SYM, INDSL, SYMSL
+        Glib::ustring avoidgamutMethod; // NONE, LAB, XYZ
+		
         std::vector<int> loc; // For ellipse/rectangle: {locX, locXL, locY, locYT}
         int centerX;
         int centerY;
@@ -1039,8 +1041,6 @@ struct LocallabParams {
         double transitgrad;
         bool hishow;
         bool activ;
-        bool avoid;
-        bool avoidmun;
         bool blwh;
         bool recurs;
         bool laplac;
@@ -1937,6 +1937,7 @@ struct ColorManagementParams {
     double bluy;
     double preser;
     bool fbw;
+    bool gamut;
     double labgridcieALow;
     double labgridcieBLow;
     double labgridcieAHigh;
@@ -2440,6 +2441,7 @@ struct RAWParams {
 
     Glib::ustring ff_file;
     bool ff_AutoSelect;
+    bool ff_FromMetaData;
     int ff_BlurRadius;
     Glib::ustring ff_BlurType;
     bool ff_AutoClipControl;

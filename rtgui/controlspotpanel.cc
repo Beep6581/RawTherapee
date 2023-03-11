@@ -24,6 +24,7 @@
 #include "options.h"
 #include "../rtengine/procparams.h"
 #include "rtimage.h"
+#include "eventmapper.h"
 
 using namespace rtengine;
 using namespace procparams;
@@ -55,6 +56,7 @@ ControlSpotPanel::ControlSpotPanel():
     qualityMethod_(Gtk::manage(new MyComboBoxText())),
     //complexMethod_(Gtk::manage(new MyComboBoxText())),
     wavMethod_(Gtk::manage(new MyComboBoxText())),
+    avoidgamutMethod_(Gtk::manage(new MyComboBoxText())),
 
     sensiexclu_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIEXCLU"), 0, 100, 1, 12))),
     structexclu_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL"), 0, 100, 1, 0))),
@@ -76,15 +78,13 @@ ControlSpotPanel::ControlSpotPanel():
     balanh_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALANH"), 0.2, 2.5, 0.1, 1.0, Gtk::manage(new RTImage("rawtherapee")), Gtk::manage(new RTImage("circle-red-green-small"))))),
     colorde_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COLORDE"), -15, 15, 2, 5, Gtk::manage(new RTImage("circle-blue-yellow-small")), Gtk::manage(new RTImage("circle-gray-green-small"))))),
     colorscope_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COLORSCOPE"), 0., 100.0, 1., 30.))),
-    avoidrad_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_AVOIDRAD"), 0., 30.0, 0.1, 0.7))),
+    avoidrad_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_AVOIDRAD"), 0., 30.0, 0.1, 0.))),
     scopemask_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCOPEMASK"), 0, 100, 1, 60))),
     denoichmask_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DENOIMASK"), 0., 100., 0.5, 0))),
     lumask_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LUMASK"), -50, 30, 1, 10, Gtk::manage(new RTImage("circle-yellow-small")), Gtk::manage(new RTImage("circle-gray-small")) ))),
 
     hishow_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_PREVSHOW")))),
     activ_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ACTIVSPOT")))),
-    avoid_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AVOID")))),
-    avoidmun_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AVOIDMUN")))),
     blwh_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_BLWH")))),
     recurs_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_RECURS")))),
     laplac_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LAPLACC")))),
@@ -100,6 +100,7 @@ ControlSpotPanel::ControlSpotPanel():
     preview_(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
     ctboxshape(Gtk::manage(new Gtk::Box())),
     ctboxshapemethod(Gtk::manage(new Gtk::Box())),
+    ctboxgamut(Gtk::manage(new Gtk::Box())),
 
     controlPanelListener(nullptr),
     lastObject_(-1),
@@ -111,6 +112,8 @@ ControlSpotPanel::ControlSpotPanel():
     excluFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_EXCLUF")))),
     maskPrevActive(false)
 {
+    auto m = ProcEventMapper::getInstance();
+    EvLocallabavoidgamutMethod = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GAMUTMUNSEL");
     const bool showtooltip = options.showtooltip;
     pack_start(*hishow_);
 
@@ -397,23 +400,30 @@ ControlSpotPanel::ControlSpotPanel():
     activConn_  = activ_->signal_toggled().connect(
                      sigc::mem_fun(*this, &ControlSpotPanel::activChanged));
 
-    avoidConn_  = avoid_->signal_toggled().connect(
-                      sigc::mem_fun(*this, &ControlSpotPanel::avoidChanged));
-    avoidmunConn_  = avoidmun_->signal_toggled().connect(
-                      sigc::mem_fun(*this, &ControlSpotPanel::avoidmunChanged));
+    Gtk::Label* const labelgamut = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_AVOID") + ":"));
+    ctboxgamut->pack_start(*labelgamut, Gtk::PACK_SHRINK, 4);
+    avoidgamutMethod_->append(M("TP_LOCALLAB_GAMUTNON"));
+    avoidgamutMethod_->append(M("TP_LOCALLAB_GAMUTLABRELA"));
+    avoidgamutMethod_->append(M("TP_LOCALLAB_GAMUTXYZABSO"));
+    avoidgamutMethod_->append(M("TP_LOCALLAB_GAMUTXYZRELA"));
+    avoidgamutMethod_->append(M("TP_LOCALLAB_GAMUTMUNSELL"));
+    avoidgamutMethod_->set_active(4);
+    avoidgamutconn_ = avoidgamutMethod_->signal_changed().connect(
+                     sigc::mem_fun(
+                         *this, &ControlSpotPanel::avoidgamutMethodChanged));
+    ctboxgamut->pack_start(*avoidgamutMethod_);
+    if (showtooltip) {
+        ctboxgamut->set_tooltip_text(M("TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP"));
+    }
 
-    Gtk::Frame* const avFrame = Gtk::manage(new Gtk::Frame());
+ Gtk::Frame* const avFrame = Gtk::manage(new Gtk::Frame());
     ToolParamBlock* const avbox = Gtk::manage(new ToolParamBlock());
     avFrame->set_label_align(0.025, 0.5);
-    avFrame->set_label_widget(*avoid_);
+    avbox->pack_start(*ctboxgamut);
     avbox->pack_start(*avoidrad_);
-    avbox->pack_start(*avoidmun_);
     avFrame->add(*avbox);
     specCaseBox->pack_start(*avFrame);
 
-    if (showtooltip) {
-        avoidmun_->set_tooltip_text(M("TP_LOCALLAB_AVOIDMUN_TOOLTIP"));
-    }
 
     blwhConn_  = blwh_->signal_toggled().connect(
                      sigc::mem_fun(*this, &ControlSpotPanel::blwhChanged));
@@ -429,7 +439,6 @@ ControlSpotPanel::ControlSpotPanel():
 
     if (showtooltip) {
         recurs_->set_tooltip_text(M("TP_LOCALLAB_RECURS_TOOLTIP"));
-        avoid_->set_tooltip_text(M("TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP"));
     }
 
     specCaseBox->pack_start(*recurs_);
@@ -854,8 +863,6 @@ void ControlSpotPanel::load_ControlSpot_param()
     avoidrad_->setValue((double)row[spots_.avoidrad]);
     hishow_->set_active(row[spots_.hishow]);
     activ_->set_active(row[spots_.activ]);
-    avoid_->set_active(row[spots_.avoid]);
-    avoidmun_->set_active(row[spots_.avoidmun]);
     blwh_->set_active(row[spots_.blwh]);
     recurs_->set_active(row[spots_.recurs]);
    // laplac_->set_active(row[spots_.laplac]);
@@ -868,6 +875,8 @@ void ControlSpotPanel::load_ControlSpot_param()
     //savrest_->set_active(row[spots_.savrest]);
     //complexMethod_->set_active(row[spots_.complexMethod]);
     wavMethod_->set_active(row[spots_.wavMethod]);
+	avoidgamutMethod_->set_active(row[spots_.avoidgamutMethod]);
+
 }
 
 void ControlSpotPanel::controlspotChanged()
@@ -1055,6 +1064,34 @@ void ControlSpotPanel::spotMethodChanged()
     }
 }
 
+void ControlSpotPanel::avoidgamutMethodChanged()
+{
+
+    // Get selected control spot
+    const auto s = treeview_->get_selection();
+
+    if (!s->count_selected_rows()) {
+        return;
+    }
+    const int meth = avoidgamutMethod_->get_active_row_number();
+    avoidrad_->show();
+
+    if(meth == 2 || meth == 3 || meth == 4) {
+        avoidrad_->hide();
+    }
+
+    const auto iter = s->get_selected();
+    Gtk::TreeModel::Row row = *iter;
+
+    row[spots_.avoidgamutMethod] = avoidgamutMethod_->get_active_row_number();
+
+    // Raise event
+    if (listener) {
+        listener->panelChanged(EvLocallabavoidgamutMethod, avoidgamutMethod_->get_active_text());
+    }
+
+}
+
 void ControlSpotPanel::shapeMethodChanged()
 {
     // printf("shapeMethodChanged\n");
@@ -1217,6 +1254,7 @@ void ControlSpotPanel::updateParamVisibility()
 
     // Update Control Spot GUI according to shapeMethod_ combobox state (to be compliant with shapeMethodChanged function)
     const int method = shapeMethod_->get_active_row_number();
+    const int meth = avoidgamutMethod_->get_active_row_number();
 
     if (!batchMode) {
         if (method == 1 || method == 3) { // Symmetrical cases
@@ -1259,6 +1297,12 @@ void ControlSpotPanel::updateParamVisibility()
         centerX_->show();
         centerY_->show();
     }
+
+    if(meth == 1) {
+        avoidrad_->show();
+    } else {
+        avoidrad_->hide();
+}
 
     // Update Control Spot GUI according to spotMethod_ combobox state (to be compliant with spotMethodChanged function)
     if (multiImage && spotMethod_->get_active_text() == M("GENERAL_UNCHANGED")) {
@@ -1588,57 +1632,6 @@ void ControlSpotPanel::hishowChanged()
 }
 
 
-
-void ControlSpotPanel::avoidChanged()
-{
-    // printf("avoidChanged\n");
-
-    // Get selected control spot
-    const auto s = treeview_->get_selection();
-
-    if (!s->count_selected_rows()) {
-        return;
-    }
-
-    const auto iter = s->get_selected();
-    Gtk::TreeModel::Row row = *iter;
-    row[spots_.avoid] = avoid_->get_active();
-
-    // Raise event
-    if (listener) {
-        if (avoid_->get_active()) {
-            listener->panelChanged(Evlocallabavoid, M("GENERAL_ENABLED"));
-        } else {
-            listener->panelChanged(Evlocallabavoid, M("GENERAL_DISABLED"));
-        }
-    }
-}
-
-void ControlSpotPanel::avoidmunChanged()
-{
-    // printf("avoidmunChanged\n");
-
-    // Get selected control spot
-    const auto s = treeview_->get_selection();
-
-    if (!s->count_selected_rows()) {
-        return;
-    }
-
-    const auto iter = s->get_selected();
-    Gtk::TreeModel::Row row = *iter;
-    row[spots_.avoidmun] = avoidmun_->get_active();
-
-    // Raise event
-    if (listener) {
-        if (avoidmun_->get_active()) {
-            listener->panelChanged(EvLocallabSpotavoidmun, M("GENERAL_ENABLED"));
-        } else {
-            listener->panelChanged(EvLocallabSpotavoidmun, M("GENERAL_DISABLED"));
-        }
-    }
-}
-
 void ControlSpotPanel::activChanged()
 {
     // printf("activChanged\n");
@@ -1859,8 +1852,6 @@ void ControlSpotPanel::disableParamlistener(bool cond)
     avoidrad_->block(cond);
     hishowconn_.block(cond);
     activConn_.block(cond);
-    avoidConn_.block(cond);
-    avoidmunConn_.block(cond);
     blwhConn_.block(cond);
     recursConn_.block(cond);
     laplacConn_.block(cond);
@@ -1872,6 +1863,8 @@ void ControlSpotPanel::disableParamlistener(bool cond)
     //savrestConn_.block(cond);
     //complexMethodconn_.block(cond);
     wavMethodconn_.block(cond);
+	avoidgamutconn_.block(cond);
+
 }
 
 void ControlSpotPanel::setParamEditable(bool cond)
@@ -1906,8 +1899,6 @@ void ControlSpotPanel::setParamEditable(bool cond)
     avoidrad_->set_sensitive(cond);
     hishow_->set_sensitive(cond);
     activ_->set_sensitive(cond);
-    avoid_->set_sensitive(cond);
-    avoidmun_->set_sensitive(cond);
     blwh_->set_sensitive(cond);
     recurs_->set_sensitive(cond);
     laplac_->set_sensitive(cond);
@@ -1920,6 +1911,7 @@ void ControlSpotPanel::setParamEditable(bool cond)
     //complexMethod_->set_sensitive(cond);
     wavMethod_->set_sensitive(cond);
     preview_->set_sensitive(cond);
+    avoidgamutMethod_->set_sensitive(cond);
 
     if (!cond) {
         // Reset complex parameters visibility to default state
@@ -2592,8 +2584,6 @@ ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(const int index)
             r->lumask = row[spots_.lumask];
             r->hishow = row[spots_.hishow];
             r->activ = row[spots_.activ];
-            r->avoid = row[spots_.avoid];
-            r->avoidmun = row[spots_.avoidmun];
             r->blwh = row[spots_.blwh];
             r->recurs = row[spots_.recurs];
             r->laplac = row[spots_.laplac];
@@ -2601,6 +2591,7 @@ ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(const int index)
             r->shortc = row[spots_.shortc];
             //r->savrest = row[spots_.savrest];
             r->wavMethod = row[spots_.wavMethod];
+            r->avoidgamutMethod = row[spots_.avoidgamutMethod];
 
             return r;
         }
@@ -2725,8 +2716,6 @@ void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
     row[spots_.avoidrad] = newSpot->avoidrad;
     row[spots_.hishow] = newSpot->hishow;
     row[spots_.activ] = newSpot->activ;
-    row[spots_.avoid] = newSpot->avoid;
-    row[spots_.avoidmun] = newSpot->avoidmun;
     row[spots_.blwh] = newSpot->blwh;
     row[spots_.recurs] = newSpot->recurs;
     row[spots_.laplac] = newSpot->laplac;
@@ -2738,6 +2727,7 @@ void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
     //row[spots_.savrest] = newSpot->savrest;
     row[spots_.complexMethod] = newSpot->complexMethod;
     row[spots_.wavMethod] = newSpot->wavMethod;
+    row[spots_.avoidgamutMethod] = newSpot->avoidgamutMethod;
     updateParamVisibility();
     disableParamlistener(false);
 
@@ -2845,8 +2835,6 @@ ControlSpotPanel::ControlSpots::ControlSpots()
     add(avoidrad);
     add(hishow);
     add(activ);
-    add(avoid);
-    add(avoidmun);
     add(blwh);
     add(recurs);
     add(laplac);
@@ -2858,6 +2846,7 @@ ControlSpotPanel::ControlSpots::ControlSpots()
     //add(savrest);
     add(complexMethod);
     add(wavMethod);
+	add(avoidgamutMethod);
 }
 
 //-----------------------------------------------------------------------------

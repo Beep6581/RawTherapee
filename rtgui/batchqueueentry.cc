@@ -35,7 +35,7 @@ bool BatchQueueEntry::iconsLoaded(false);
 std::shared_ptr<RTSurface> BatchQueueEntry::savedAsIcon(std::shared_ptr<RTSurface>(nullptr));
 
 BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, int prevw, int prevh, Thumbnail* thm, bool overwrite) :
-    ThumbBrowserEntryBase(fname),
+    ThumbBrowserEntryBase(fname, thm),
     opreview(nullptr),
     origpw(prevw),
     origph(prevh),
@@ -201,6 +201,9 @@ std::tuple<Glib::ustring, bool> BatchQueueEntry::getToolTip (int x, int y) const
             } else if (saveFormat.format == "tif") {
                 if (saveFormat.tiffUncompressed) {
                     tooltip += Glib::ustring::compose("\n%1", M("SAVEDLG_TIFFUNCOMPRESSED"));
+                }
+                if (saveFormat.bigTiff) {
+                    tooltip += Glib::ustring::compose("\n%1", M("SAVEDLG_BIGTIFF"));
                 }
             }
         }

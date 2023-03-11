@@ -351,6 +351,11 @@ menu arrow {
     margin: 0 -0.25em 0 0;
 }
 
+menu menuitem > radio + * image:not(.dummy),
+#MyExpander menu menuitem > radio + * image:not(.dummy) {
+    margin-left: 1pt;
+}
+
 menu image:not(.dummy),
 #MyExpander menu image:not(.dummy) {
     min-height: 2em;

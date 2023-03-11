@@ -264,6 +264,7 @@ bool BatchQueue::saveBatchQueue ()
                  << saveFormat.tiffBits << '|'  << (saveFormat.tiffFloat ? 1 : 0) << '|'  << saveFormat.tiffUncompressed << '|'
                  << saveFormat.saveParams << '|' << entry->forceFormatOpts << '|'
                  << entry->fast_pipeline << '|'
+                 << saveFormat.bigTiff << '|'
                  << std::endl;
         }
     }
@@ -331,6 +332,7 @@ bool BatchQueue::loadBatchQueue ()
             const auto saveParams = nextIntOr (options.saveFormat.saveParams);
             const auto forceFormatOpts = nextIntOr (options.forceFormatOpts);
             const auto fast = nextIntOr(false);
+            const auto bigTiff = nextIntOr (options.saveFormat.bigTiff);
 
             rtengine::procparams::ProcParams pparams;
 
@@ -370,6 +372,7 @@ bool BatchQueue::loadBatchQueue ()
                 saveFormat.tiffBits = tiffBits;
                 saveFormat.tiffFloat = tiffFloat == 1;
                 saveFormat.tiffUncompressed = tiffUncompressed != 0;
+                saveFormat.bigTiff = bigTiff != 0;
                 saveFormat.saveParams = saveParams != 0;
                 entry->forceFormatOpts = forceFormatOpts != 0;
             } else {
@@ -693,7 +696,13 @@ rtengine::ProcessingJob* BatchQueue::imageReady(rtengine::IImagefloat* img)
         int err = 0;
 
         if (saveFormat.format == "tif") {
-            err = img->saveAsTIFF (fname, saveFormat.tiffBits, saveFormat.tiffFloat, saveFormat.tiffUncompressed);
+            err = img->saveAsTIFF (
+                fname,
+                saveFormat.tiffBits,
+                saveFormat.tiffFloat,
+                saveFormat.tiffUncompressed,
+                saveFormat.bigTiff
+            );
         } else if (saveFormat.format == "png") {
             err = img->saveAsPNG (fname, saveFormat.pngBits);
         } else if (saveFormat.format == "jpg") {

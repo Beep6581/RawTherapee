@@ -98,6 +98,7 @@ protected:
     std::pair<bool, const rtengine::procparams::WBEntry&> findWBEntry    (const Glib::ustring& label, enum WB_LabelType lblType = WBLT_GUI);
 
 public:
+    static const Glib::ustring TOOL_NAME;
 
     WhiteBalance ();
     ~WhiteBalance () override;

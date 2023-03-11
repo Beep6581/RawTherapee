@@ -963,6 +963,9 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
 #ToolPanelNotebook {
     background-color: @bg-dark-grey;
 }
+#ToolPanelNotebook .PanelEnding {
+    margin-top: 4px;
+}
 #ToolPanelNotebook > header {
     border-bottom: 0.083333333333333333em solid @view-grid-border;
     margin-left: 0.083333333333333333em;
@@ -1276,6 +1279,11 @@ menuitem:hover {
 menuitem:hover > * > *,
 menuitem:hover > * {
     color: @text-hl-color;
+}
+
+menu menuitem > radio + * image:not(.dummy),
+#MyExpander menu menuitem > radio + * image:not(.dummy) {
+    margin-left: 1pt;
 }
 
 menu image:not(.dummy),

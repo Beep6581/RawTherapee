@@ -70,6 +70,14 @@ Examples:
         // cropped so the "negative number" way is not totally safe.
         "raw_crop": [ 10, 20, 4000, 3000 ],
 
+        // multi-aspect support (added 2020-12-03)
+        // "frame" defines the full dimensions the crop applies to
+        // (with [0, 0] being the fallback crop if none of the other applies)
+        "raw_crop" : [
+           { "frame" : [4100, 3050], "crop": [10, 20, 4050, 3020] },
+           { "frame" : [0, 0], "crop": [10, 20, 4000, 3000] }
+        ]
+
         // Almost same as MaskedAreas DNG tag, used for black level measuring. Here up to two areas can be defined
         // by tetrads of numbers:
         "masked_areas": [ 51, 2, 3804, 156, 51, 5794, 3804, 5792 ],
@@ -83,6 +91,14 @@ Examples:
         // It is useful after detecting the masked areas, to not fully use these areas but leave a border of 2-4 pixels
         // instead, to take care of possible light leaks from the light sensing area to the optically black (masked)
         // area or sensor imperfections at the outer borders.
+
+        // multi-aspect support (added 2020-12-03)
+        // "frame" defines the full dimensions the masked areas apply to
+        // (with [0, 0] being the fallback crop if none of the other applies)
+        "masked_areas" : [
+           { "frame" : [4100, 3050], "areas": [10, 20, 4050, 3020] },
+           { "frame" : [0, 0], "areas": [10, 20, 4000, 3000] }
+        ]
 
         // list of indices of the rows with on-sensor PDAF pixels, for cameras that have such features. The indices here form a pattern that is repeated for the whole height of the sensor. The values are relative to the "pdaf_offset" value (see below)
         "pdaf_pattern" : [ 0,12,36,54,72,90,114,126,144,162,180,204,216,240,252,270,294,306,324,342,366,384,396,414,432,450,474,492,504,522,540,564,576,594,606,630 ],
@@ -1210,33 +1226,50 @@ Camera constants:
 
     { // Quality C
         "make_model": "Canon EOS R3",
-        "dcraw_matrix" : [9423,-2839,-1195,-4532,12377,2415,-483,1374,5276]
+        "dcraw_matrix" : [ 9423, -2839, -1195, -4532, 12377, 2415, -483, 1374, 5276 ],
+        "raw_crop": [ 160, 120, 6024, 4024 ]
     },
 
     { // Quality C
         "make_model": "Canon EOS R5",
         "dcraw_matrix" : [9766, -2953, -1254, -4276, 12116, 2433, -437, 1336, 5131],
-        "raw_crop" : [ 128, 96, 8224, 5490 ],
-        "masked_areas" : [ 94, 20, 5578, 122 ],
+        "raw_crop" : [
+            { "frame" : [ 8352, 5586 ], "crop" : [ 128, 96, 8224, 5490 ] },
+            { "frame" : [ 5248, 3510 ], "crop" : [ 128, 96, 5120, 3382 ] }
+        ],
+        "masked_areas" : [
+            { "frame" : [ 8352, 5586 ], "areas": [ 94, 20, 5578, 122 ] },
+            { "frame" : [ 5248, 3510 ], "areas": [ 94, 20, 3510, 122 ] }
+        ],
         "ranges" : { "white" : 16382 }
     },
 
     { // Quality C
         "make_model": "Canon EOS R6",
         "dcraw_matrix" : [8293, -1611, -1132, -4759, 12710, 2275, -1013, 2415, 5508],
-        "raw_crop": [ 72, 38, 5496, 3670 ],
-        "masked_areas" : [ 40, 10, 5534, 70 ],
+        "raw_crop": [
+            { "frame": [5568, 3708], "crop" : [ 72, 38, 5496, 3670 ] },
+            { "frame": [3584, 2386], "crop" : [ 156, 108, 3404, 2270 ] }
+            ],
+        "masked_areas" : [
+            { "frame": [5568, 3708], "areas": [ 40, 10, 5534, 70 ] },
+            { "frame": [3584, 2386], "areas": [ 40, 10, 2374, 110 ] }
+        ],
         "ranges" : { "white" : 16382 }
     },
 
     { // Quality C
         "make_model": "Canon EOS R7",
-        "dcraw_matrix" : [10424, -3138, -1300, -4221, 11938,  2584,  -547,  1658,  6183]
+        "dcraw_matrix" : [10424, -3138, -1300, -4221, 11938,  2584,  -547,  1658,  6183],
+        "raw_crop": [ 144, 72, 6984, 4660 ],
+        "masked_areas" : [ 70, 20, 4724, 138 ]
     },
 
     { // Quality C
         "make_model": "Canon EOS R10",
-        "dcraw_matrix" : [9269, -2012, -1107, -3990, 11762,  2527,  -569,  2093,  4913]
+        "dcraw_matrix" : [9269, -2012, -1107, -3990, 11762,  2527,  -569,  2093,  4913],
+        "raw_crop": [ 144, 40, 6048, 4020 ],
+        "masked_areas" : [ 38, 20, 4052, 138 ]
     },
 
     { // Quality C, CHDK DNGs, raw frame correction
@@ -1377,7 +1410,11 @@ Camera constants:
     { // Quality C
         "make_model": [ "FUJIFILM GFX 100", "FUJIFILM GFX100S" ],
         "dcraw_matrix" : [ 16212, -8423, -1583, -4336, 12583, 1937, -195, 726, 6199 ], // taken from ART
-        "raw_crop": [ 0, 2, 11664, 8734 ]
+        "raw_crop": [
+            // multi-aspect crop to account for 16-shot pixel shift images
+            { "frame" : [11808, 8754], "crop" : [ 0, 2, 11664, 8734 ] },
+            { "frame" : [23616, 17508], "crop" : [ 0, 4, 23328, 17468 ] }
+        ]
     },
 
     { // Quality B
@@ -1541,6 +1578,18 @@ Camera constants:
         "make_model": "FUJIFILM XQ2",
         "dcraw_matrix": [ 9252,-2704,-1064,-5893,14265,1717,-1101,2341,4349 ], // DNG_v8.8 D65
         "ranges": { "white": 4040 }
+    },
+
+    { // Quality B
+        "make_model": [ "FUJIFILM X-T5", "FUJIFILM X-H2" ],
+        "dcraw_matrix": [ 11809, -5358, -1141, -4248, 12164, 2343, -514, 1097, 5848 ], // RawSpeed / DNG
+        "raw_crop": [ 0, 5, 7752, 5184 ]
+    },
+
+    { // Quality C
+        "make_model": "FUJIFILM DBP for GX680",
+        "dcraw_matrix": [ 12741, -4916, -1420, -8510, 16791, 1715, -1767, 2302, 7771 ], // same as S2Pro as per LibRaw
+        "ranges": { "white": 4096, "black": 132 }
     },
 
     { // Quality C, Leica C-Lux names can differ?
@@ -1924,6 +1973,11 @@ Camera constants:
         "dcraw_matrix" : [13705, -6004, -1401, -5464, 13568, 2062, -940, 1706, 7618] // DNG
     },
 
+    { // Quality C
+        "make_model" : "NIKON Z 9",
+        "dcraw_matrix" : [13389, -6049, -1441, -4544, 12757, 1969, 229, 498, 7390] //DNG
+    },
+
     { // Quality C, only color matrix and PDAF lines info
         "make_model" : "Nikon Z 6",
         "dcraw_matrix" : [8210, -2534, -683, -5355, 13338, 2212, -1143, 1928, 6464], // DNG v13.2
@@ -2121,6 +2175,16 @@ Camera constants:
         "dcraw_matrix" : [8360, -2420, -880, -3928, 12353, 1739, -1381, 2416, 5173] // DNG
     },
 
+    { // Quality C
+        "make_model": ["OM Digital Solutions OM-1"],
+        "ranges": { "white": 4095 },
+        "raw_crop" : [
+           { "frame" : [10400, 7792], "crop": [0, 0, 10390, 7792] },
+           { "frame" : [8180, 6132], "crop": [0, 0, 8172, 6132] },
+           { "frame" : [5220, 3912], "crop": [0, 0, 5220, 3912] }
+        ]
+    },
+
     { // Quality B
         "make_model": [ "Panasonic DC-LX100M2" ],
         "dcraw_matrix": [ 11577, -4230, -1106, -3967, 12211, 1957, -759, 1762, 5610 ], // DNG v13.2
@@ -2144,7 +2208,8 @@ Camera constants:
 
     { // Quality C
         "make_model": [ "Panasonic DC-G90", "Panasonic DC-G95", "Panasonic DC-G99" ],
-        "dcraw_matrix": [ 9657, -3963, -748, -3361, 11378, 2258, -568, 1414, 5158 ] // DNG
+        "dcraw_matrix": [ 9657, -3963, -748, -3361, 11378, 2258, -568, 1414, 5158 ], // DNG
+        "ranges": { "black": 15 } // see above: RT already reads a value from exif
     },
 
     { // Quality C
@@ -2981,7 +3046,10 @@ Camera constants:
     { // Quality B, correction for frame width
         "make_model": [ "Sony ILCE-7S", "Sony ILCE-7SM2" ],
         "dcraw_matrix": [ 5838,-1430,-246,-3497,11477,2297,-748,1885,5778 ], // DNG_v9.2 D65
-        "raw_crop": [ 0, 0, 4254, 2848 ],
+        "raw_crop" : [
+            { "frame" : [ 2816, 1872 ], "crop" : [ 0, 0, 2792, 1872 ] },
+            { "frame" : [ 4254, 2848 ], "crop" : [ 0, 0, 4254, 2848 ] }
+        ],
         "ranges": { "black": 512, "white": 16300 }
     },
 

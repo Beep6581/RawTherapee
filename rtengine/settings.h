@@ -44,6 +44,7 @@ public:
     bool            monitorBPC;             ///< Black Point Compensation for the Labimage->Monitor transform (directly, i.e. not soft-proofing and no WCS in between)
     bool            autoMonitorProfile;     ///< Try to auto-determine the correct monitor color profile
     bool            autocielab;
+    bool            observer10;
     bool            rgbcurveslumamode_gamut;// controls gamut enforcement for RGB curves in lumamode
     bool            verbose;
     Glib::ustring   darkFramesPath;         ///< The default directory for dark frames
@@ -83,6 +84,7 @@ public:
     double          level0_cbdl;
     double          level123_cbdl;
     Glib::ustring   lensfunDbDirectory; // The directory containing the lensfun database. If empty, the system defaults will be used, as described in https://lensfun.github.io/manual/latest/dbsearch.html
+    Glib::ustring   lensfunDbBundleDirectory;
     int             cropsleep;
     double          reduchigh;
     double          reduclow;
@@ -93,7 +95,7 @@ public:
 //    bool            showtooltip;
 
     int             itcwb_thres;
-    bool            itcwb_sort;
+    bool            itcwb_sorted;
     int             itcwb_greenrange;
     int             itcwb_greendeltatemp;
     bool            itcwb_forceextra;
@@ -101,6 +103,7 @@ public:
     int             itcwb_delta;
     bool            itcwb_stdobserver10;
     int             itcwb_precis;
+    bool            itcwb_nopurple;
 //wavelet levels
     double          edghi;
     double          edglo;

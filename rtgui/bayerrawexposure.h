@@ -31,6 +31,8 @@ class BayerRAWExposure final :
     public FoldableToolPanel
 {
 public:
+    static const Glib::ustring TOOL_NAME;
+
     BayerRAWExposure ();
 
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;

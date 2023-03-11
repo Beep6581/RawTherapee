@@ -25,7 +25,9 @@ enum GeometryIndex {
 
 }
 
-Gradient::Gradient () : FoldableToolPanel(this, "gradient", M("TP_GRADIENT_LABEL"), false, true), EditSubscriber(ET_OBJECTS), lastObject(-1), draggedPointOldAngle(-1000.)
+const Glib::ustring Gradient::TOOL_NAME = "gradient";
+
+Gradient::Gradient () : FoldableToolPanel(this, TOOL_NAME, M("TP_GRADIENT_LABEL"), false, true), EditSubscriber(ET_OBJECTS), lastObject(-1), draggedPointOldAngle(-1000.)
 {
 
     editHBox = Gtk::manage (new Gtk::Box());

@@ -373,7 +373,7 @@ ToneCurveParams::ToneCurveParams() :
     autoexp(false),
     clip(0.02),
     hrenabled(false),
-    method("Blend"),
+    method("Coloropp"),
     expcomp(0),
     curve{
         DCT_Linear
@@ -390,6 +390,7 @@ ToneCurveParams::ToneCurveParams() :
     shcompr(50),
     hlcompr(0),
     hlbl(0),
+    hlth(1.0),
     hlcomprthresh(0),
     histmatching(false),
     fromHistMatching(false),
@@ -416,6 +417,7 @@ bool ToneCurveParams::isPanningRelatedChange(const ToneCurveParams& other) const
         && shcompr == other.shcompr
         && hlcompr == other.hlcompr
         && hlbl == other.hlbl
+        && hlth == other.hlth
         && hlcomprthresh == other.hlcomprthresh
         && histmatching == other.histmatching
         && clampOOG == other.clampOOG);
@@ -440,6 +442,7 @@ bool ToneCurveParams::operator ==(const ToneCurveParams& other) const
         && shcompr == other.shcompr
         && hlcompr == other.hlcompr
         && hlbl == other.hlbl
+        && hlth == other.hlth
         && hlcomprthresh == other.hlcomprthresh
         && histmatching == other.histmatching
         && fromHistMatching == other.fromHistMatching
@@ -608,7 +611,7 @@ LCurveParams::LCurveParams() :
     brightness(0),
     contrast(0),
     chromaticity(0),
-    avoidcolorshift(false),
+    gamutmunselmethod("MUN"),
     rstprotection(0),
     lcredsk(true)
 {
@@ -630,7 +633,7 @@ bool LCurveParams::operator ==(const LCurveParams& other) const
         && brightness == other.brightness
         && contrast == other.contrast
         && chromaticity == other.chromaticity
-        && avoidcolorshift == other.avoidcolorshift
+        && gamutmunselmethod == other.gamutmunselmethod
         && rstprotection == other.rstprotection
         && lcredsk == other.lcredsk;
 }
@@ -1461,8 +1464,7 @@ ColorAppearanceParams::ColorAppearanceParams() :
     ybout(18),
     greenout(1.0),
     tempsc(5003),
-    greensc(1.0),
-    presetcat02(false)
+    greensc(1.0)
 {
 }
 
@@ -1512,8 +1514,7 @@ bool ColorAppearanceParams::operator ==(const ColorAppearanceParams& other) cons
         && ybout == other.ybout
         && greenout == other.greenout
         && tempsc == other.tempsc
-        && greensc == other.greensc
-        && presetcat02 == other.presetcat02;
+        && greensc == other.greensc;
 }
 
 bool ColorAppearanceParams::operator !=(const ColorAppearanceParams& other) const
@@ -2278,6 +2279,7 @@ ColorManagementParams::ColorManagementParams() :
     bluy(0.0001),
     preser(0.),
     fbw(false),
+    gamut(false),
     labgridcieALow(0.51763),//Prophoto red = (0.7347+0.1) * 1.81818 - 1
     labgridcieBLow(-0.33582),
     labgridcieAHigh(-0.75163),//Prophoto blue
@@ -2324,6 +2326,7 @@ bool ColorManagementParams::operator ==(const ColorManagementParams& other) cons
         && labgridcieWy == other.labgridcieWy
         && preser == other.preser
         && fbw == other.fbw
+        && gamut == other.gamut
         && aRendIntent == other.aRendIntent
         && outputProfile == other.outputProfile
         && outputIntent == other.outputIntent
@@ -2848,6 +2851,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     structexclu(0),
     struc(4.0),
     shapeMethod("IND"),
+    avoidgamutMethod("MUNS"),
     loc{150, 150, 150, 150},
     centerX(0),
     centerY(0),
@@ -2862,13 +2866,11 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     balanh(1.0),
     colorde(5.0),
     colorscope(30.0),
-    avoidrad(0.7),
+    avoidrad(0.),
     transitweak(1.0),
     transitgrad(0.0),
     hishow(false),
     activ(true),
-    avoid(false),
-    avoidmun(false),
     blwh(false),
     recurs(false),
     laplac(true),
@@ -4560,6 +4562,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && structexclu == other.structexclu
         && struc == other.struc
         && shapeMethod == other.shapeMethod
+        && avoidgamutMethod == other.avoidgamutMethod
         && loc == other.loc
         && centerX == other.centerX
         && centerY == other.centerY
@@ -4579,8 +4582,6 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && transitgrad == other.transitgrad
         && hishow == other.hishow
         && activ == other.activ
-        && avoid == other.avoid
-        && avoidmun == other.avoidmun
         && blwh == other.blwh
         && recurs == other.recurs
         && laplac == other.laplac
@@ -5633,6 +5634,7 @@ bool RAWParams::PreprocessWB::operator !=(const PreprocessWB& other) const
 RAWParams::RAWParams() :
     df_autoselect(false),
     ff_AutoSelect(false),
+    ff_FromMetaData(false),
     ff_BlurRadius(32),
     ff_BlurType(getFlatFieldBlurTypeString(FlatFieldBlurType::AREA)),
     ff_AutoClipControl(false),
@@ -5658,6 +5660,7 @@ bool RAWParams::operator ==(const RAWParams& other) const
         && df_autoselect == other.df_autoselect
         && ff_file == other.ff_file
         && ff_AutoSelect == other.ff_AutoSelect
+        && ff_FromMetaData == other.ff_FromMetaData
         && ff_BlurRadius == other.ff_BlurRadius
         && ff_BlurType == other.ff_BlurType
         && ff_AutoClipControl == other.ff_AutoClipControl
@@ -5912,6 +5915,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->toneCurve.hrenabled, "HLRecovery", "Enabled", toneCurve.hrenabled, keyFile);
         saveToKeyfile(!pedited || pedited->toneCurve.method, "HLRecovery", "Method", toneCurve.method, keyFile);
         saveToKeyfile(!pedited || pedited->toneCurve.hlbl, "HLRecovery", "Hlbl", toneCurve.hlbl, keyFile);
+        saveToKeyfile(!pedited || pedited->toneCurve.hlth, "HLRecovery", "Hlth", toneCurve.hlth, keyFile);
 
         const std::map<ToneCurveMode, const char*> tc_mapping = {
             {ToneCurveMode::STD, "Standard"},
@@ -6043,7 +6047,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->labCurve.brightness, "Luminance Curve", "Brightness", labCurve.brightness, keyFile);
         saveToKeyfile(!pedited || pedited->labCurve.contrast, "Luminance Curve", "Contrast", labCurve.contrast, keyFile);
         saveToKeyfile(!pedited || pedited->labCurve.chromaticity, "Luminance Curve", "Chromaticity", labCurve.chromaticity, keyFile);
-        saveToKeyfile(!pedited || pedited->labCurve.avoidcolorshift, "Luminance Curve", "AvoidColorShift", labCurve.avoidcolorshift, keyFile);
+        saveToKeyfile(!pedited || pedited->labCurve.gamutmunselmethod, "Luminance Curve", "Gamutmunse", labCurve.gamutmunselmethod, keyFile);
         saveToKeyfile(!pedited || pedited->labCurve.rstprotection, "Luminance Curve", "RedAndSkinTonesProtection", labCurve.rstprotection, keyFile);
         saveToKeyfile(!pedited || pedited->labCurve.lcredsk, "Luminance Curve", "LCredsk", labCurve.lcredsk, keyFile);
         saveToKeyfile(!pedited || pedited->labCurve.lcurve, "Luminance Curve", "LCurve", labCurve.lcurve, keyFile);
@@ -6144,7 +6148,6 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->colorappearance.ybout, "Color appearance", "Ybout", colorappearance.ybout, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.datacie, "Color appearance", "Datacie", colorappearance.datacie, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.tonecie, "Color appearance", "Tonecie", colorappearance.tonecie, keyFile);
-        saveToKeyfile(!pedited || pedited->colorappearance.presetcat02, "Color appearance", "Presetcat02", colorappearance.presetcat02, keyFile);
 
         const std::map<ColorAppearanceParams::TcMode, const char*> ca_mapping = {
             {ColorAppearanceParams::TcMode::LIGHT, "Lightness"},
@@ -6346,6 +6349,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || spot_edited->structexclu, "Locallab", "StructExclu_" + index_str, spot.structexclu, keyFile);
                 saveToKeyfile(!pedited || spot_edited->struc, "Locallab", "Struc_" + index_str, spot.struc, keyFile);
                 saveToKeyfile(!pedited || spot_edited->shapeMethod, "Locallab", "ShapeMethod_" + index_str, spot.shapeMethod, keyFile);
+                saveToKeyfile(!pedited || spot_edited->avoidgamutMethod, "Locallab", "AvoidgamutMethod_" + index_str, spot.avoidgamutMethod, keyFile);
                 saveToKeyfile(!pedited || spot_edited->loc, "Locallab", "Loc_" + index_str, spot.loc, keyFile);
                 saveToKeyfile(!pedited || spot_edited->centerX, "Locallab", "CenterX_" + index_str, spot.centerX, keyFile);
                 saveToKeyfile(!pedited || spot_edited->centerY, "Locallab", "CenterY_" + index_str, spot.centerY, keyFile);
@@ -6365,8 +6369,6 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || spot_edited->transitgrad, "Locallab", "Transitgrad_" + index_str, spot.transitgrad, keyFile);
                 saveToKeyfile(!pedited || spot_edited->hishow, "Locallab", "Hishow_" + index_str, spot.hishow, keyFile);
                 saveToKeyfile(!pedited || spot_edited->activ, "Locallab", "Activ_" + index_str, spot.activ, keyFile);
-                saveToKeyfile(!pedited || spot_edited->avoid, "Locallab", "Avoid_" + index_str, spot.avoid, keyFile);
-                saveToKeyfile(!pedited || spot_edited->avoidmun, "Locallab", "Avoidmun_" + index_str, spot.avoidmun, keyFile);
                 saveToKeyfile(!pedited || spot_edited->blwh, "Locallab", "Blwh_" + index_str, spot.blwh, keyFile);
                 saveToKeyfile(!pedited || spot_edited->recurs, "Locallab", "Recurs_" + index_str, spot.recurs, keyFile);
                 saveToKeyfile(!pedited || spot_edited->laplac, "Locallab", "Laplac_" + index_str, spot.laplac, keyFile);
@@ -7191,6 +7193,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->icm.labgridcieWy, "Color Management", "LabGridcieWy", icm.labgridcieWy, keyFile);
         saveToKeyfile(!pedited || pedited->icm.preser, "Color Management", "Preser", icm.preser, keyFile);
         saveToKeyfile(!pedited || pedited->icm.fbw, "Color Management", "Fbw", icm.fbw, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.gamut, "Color Management", "Gamut", icm.gamut, keyFile);
         saveToKeyfile(!pedited || pedited->icm.outputProfile, "Color Management", "OutputProfile", icm.outputProfile, keyFile);
         saveToKeyfile(
             !pedited || pedited->icm.aRendIntent,
@@ -7484,6 +7487,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->raw.df_autoselect, "RAW", "DarkFrameAuto", raw.df_autoselect, keyFile);
         saveToKeyfile(!pedited || pedited->raw.ff_file, "RAW", "FlatFieldFile", relativePathIfInside(fname, fnameAbsolute, raw.ff_file), keyFile);
         saveToKeyfile(!pedited || pedited->raw.ff_AutoSelect, "RAW", "FlatFieldAutoSelect", raw.ff_AutoSelect, keyFile);
+        saveToKeyfile(!pedited || pedited->raw.ff_FromMetaData, "RAW", "FlatFieldFromMetaData", raw.ff_FromMetaData, keyFile);
         saveToKeyfile(!pedited || pedited->raw.ff_BlurRadius, "RAW", "FlatFieldBlurRadius", raw.ff_BlurRadius, keyFile);
         saveToKeyfile(!pedited || pedited->raw.ff_BlurType, "RAW", "FlatFieldBlurType", raw.ff_BlurType, keyFile);
         saveToKeyfile(!pedited || pedited->raw.ff_AutoClipControl, "RAW", "FlatFieldAutoClipControl", raw.ff_AutoClipControl, keyFile);
@@ -7697,6 +7701,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "HLRecovery", "Enabled", pedited, toneCurve.hrenabled, pedited->toneCurve.hrenabled);
             assignFromKeyfile(keyFile, "HLRecovery", "Method", pedited, toneCurve.method, pedited->toneCurve.method);
             assignFromKeyfile(keyFile, "HLRecovery", "Hlbl", pedited, toneCurve.hlbl, pedited->toneCurve.hlbl);
+            assignFromKeyfile(keyFile, "HLRecovery", "Hlth", pedited, toneCurve.hlth, pedited->toneCurve.hlth);
         }
 
         if (keyFile.has_group("Channel Mixer")) {
@@ -7868,7 +7873,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 // if Saturation == 0, should we set BWToning on?
                 assignFromKeyfile(keyFile, "Luminance Curve", "Saturation", pedited, labCurve.chromaticity, pedited->labCurve.chromaticity);
                 // transform AvoidColorClipping into AvoidColorShift
-                assignFromKeyfile(keyFile, "Luminance Curve", "AvoidColorClipping", pedited, labCurve.avoidcolorshift, pedited->labCurve.avoidcolorshift);
+//                assignFromKeyfile(keyFile, "Luminance Curve", "AvoidColorClipping", pedited, labCurve.avoidcolorshift, pedited->labCurve.avoidcolorshift);
             } else {
                 if (keyFile.has_key("Luminance Curve", "Chromaticity")) {
                     labCurve.chromaticity = keyFile.get_integer("Luminance Curve", "Chromaticity");
@@ -7882,7 +7887,6 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     }
                 }
 
-                assignFromKeyfile(keyFile, "Luminance Curve", "AvoidColorShift", pedited, labCurve.avoidcolorshift, pedited->labCurve.avoidcolorshift);
                 assignFromKeyfile(keyFile, "Luminance Curve", "RedAndSkinTonesProtection", pedited, labCurve.rstprotection, pedited->labCurve.rstprotection);
             }
 
@@ -7911,6 +7915,25 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Luminance Curve", "hhCurve", pedited, labCurve.hhcurve, pedited->labCurve.hhcurve);
             assignFromKeyfile(keyFile, "Luminance Curve", "LcCurve", pedited, labCurve.lccurve, pedited->labCurve.lccurve);
             assignFromKeyfile(keyFile, "Luminance Curve", "ClCurve", pedited, labCurve.clcurve, pedited->labCurve.clcurve);
+            if (keyFile.has_key("Luminance Curve", "Gamutmunse")) {
+                assignFromKeyfile(keyFile, "Luminance Curve", "Gamutmunse", pedited, labCurve.gamutmunselmethod, pedited->labCurve.gamutmunselmethod);
+            } else {
+                if (ppVersion < 303) {
+                    if (keyFile.has_key("Luminance Curve", "AvoidColorClipping")) {
+                        labCurve.gamutmunselmethod =
+                            keyFile.get_boolean("Luminance Curve", "AvoidColorClipping") ? "LAB" : "NONE";
+                        if (pedited) {
+                           pedited->labCurve.gamutmunselmethod = true;
+                        }
+                    }
+                } else if (keyFile.has_key("Luminance Curve", "AvoidColorShift")) {
+                    labCurve.gamutmunselmethod =
+                        keyFile.get_boolean("Luminance Curve", "AvoidColorShift") ? "LAB" : "NONE";
+                   if (pedited) {
+                       pedited->labCurve.gamutmunselmethod = true;
+                   }
+                }
+           }
         }
 
         if (keyFile.has_group("Sharpening")) {
@@ -8104,7 +8127,6 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color appearance", "Ybout", pedited, colorappearance.ybout, pedited->colorappearance.ybout);
             assignFromKeyfile(keyFile, "Color appearance", "Datacie", pedited, colorappearance.datacie, pedited->colorappearance.datacie);
             assignFromKeyfile(keyFile, "Color appearance", "Tonecie", pedited, colorappearance.tonecie, pedited->colorappearance.tonecie);
-            assignFromKeyfile(keyFile, "Color appearance", "Presetcat02", pedited, colorappearance.presetcat02, pedited->colorappearance.presetcat02);
 
             const std::map<std::string, ColorAppearanceParams::TcMode> tc_mapping = {
                 {"Lightness", ColorAppearanceParams::TcMode::LIGHT},
@@ -8421,6 +8443,16 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "StructExclu_" + index_str, pedited, spot.structexclu, spotEdited.structexclu);
                 assignFromKeyfile(keyFile, "Locallab", "Struc_" + index_str, pedited, spot.struc, spotEdited.struc);
                 assignFromKeyfile(keyFile, "Locallab", "ShapeMethod_" + index_str, pedited, spot.shapeMethod, spotEdited.shapeMethod);
+                if (keyFile.has_key("Locallab", "AvoidgamutMethod_" + index_str)) {
+                    assignFromKeyfile(keyFile, "Locallab", "AvoidgamutMethod_" + index_str, pedited, spot.avoidgamutMethod, spotEdited.avoidgamutMethod);
+                } else if (keyFile.has_key("Locallab", "Avoid_" + index_str)) {
+                    const bool avoid = keyFile.get_boolean("Locallab", "Avoid_" + index_str);
+                    const bool munsell = keyFile.has_key("Locallab", "Avoidmun_" + index_str) && keyFile.get_boolean("Locallab", "Avoidmun_" + index_str);
+                    spot.avoidgamutMethod = avoid ? (munsell ? "MUNS" : "LAB") : "NONE";
+                    if (pedited) {
+                        spotEdited.avoidgamutMethod = true;
+                    }
+                }
                 assignFromKeyfile(keyFile, "Locallab", "Loc_" + index_str, pedited, spot.loc, spotEdited.loc);
                 assignFromKeyfile(keyFile, "Locallab", "CenterX_" + index_str, pedited, spot.centerX, spotEdited.centerX);
                 assignFromKeyfile(keyFile, "Locallab", "CenterY_" + index_str, pedited, spot.centerY, spotEdited.centerY);
@@ -8440,8 +8472,6 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Transitgrad_" + index_str, pedited, spot.transitgrad, spotEdited.transitgrad);
                 assignFromKeyfile(keyFile, "Locallab", "Hishow_" + index_str, pedited, spot.hishow, spotEdited.hishow);
                 assignFromKeyfile(keyFile, "Locallab", "Activ_" + index_str, pedited, spot.activ, spotEdited.activ);
-                assignFromKeyfile(keyFile, "Locallab", "Avoid_" + index_str, pedited, spot.avoid, spotEdited.avoid);
-                assignFromKeyfile(keyFile, "Locallab", "Avoidmun_" + index_str, pedited, spot.avoidmun, spotEdited.avoidmun);
                 assignFromKeyfile(keyFile, "Locallab", "Blwh_" + index_str, pedited, spot.blwh, spotEdited.blwh);
                 assignFromKeyfile(keyFile, "Locallab", "Recurs_" + index_str, pedited, spot.recurs, spotEdited.recurs);
                 assignFromKeyfile(keyFile, "Locallab", "Laplac_" + index_str, pedited, spot.laplac, spotEdited.laplac);
@@ -9456,6 +9486,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color Management", "Bluy", pedited, icm.bluy, pedited->icm.bluy);
             assignFromKeyfile(keyFile, "Color Management", "Preser", pedited, icm.preser, pedited->icm.preser);
             assignFromKeyfile(keyFile, "Color Management", "Fbw", pedited, icm.fbw, pedited->icm.fbw);
+            assignFromKeyfile(keyFile, "Color Management", "Gamut", pedited, icm.gamut, pedited->icm.gamut);
             assignFromKeyfile(keyFile, "Color Management", "LabGridcieALow", pedited, icm.labgridcieALow, pedited->icm.labgridcieALow);
             assignFromKeyfile(keyFile, "Color Management", "LabGridcieBLow", pedited, icm.labgridcieBLow, pedited->icm.labgridcieBLow);
             assignFromKeyfile(keyFile, "Color Management", "LabGridcieAHigh", pedited, icm.labgridcieAHigh, pedited->icm.labgridcieAHigh);
@@ -10130,6 +10161,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             }
 
             assignFromKeyfile(keyFile, "RAW", "FlatFieldAutoSelect", pedited, raw.ff_AutoSelect, pedited->raw.ff_AutoSelect);
+            assignFromKeyfile(keyFile, "RAW", "FlatFieldFromMetaData", pedited, raw.ff_FromMetaData, pedited->raw.ff_FromMetaData);
             assignFromKeyfile(keyFile, "RAW", "FlatFieldBlurRadius", pedited, raw.ff_BlurRadius, pedited->raw.ff_BlurRadius);
             assignFromKeyfile(keyFile, "RAW", "FlatFieldBlurType", pedited, raw.ff_BlurType, pedited->raw.ff_BlurType);
             assignFromKeyfile(keyFile, "RAW", "FlatFieldAutoClipControl", pedited, raw.ff_AutoClipControl, pedited->raw.ff_AutoClipControl);

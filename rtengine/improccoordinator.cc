@@ -1,6 +1,6 @@
 /*
  *  This file is part of RawTherapee.
- *
+ * 
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
@@ -163,6 +163,7 @@ ImProcCoordinator::ImProcCoordinator() :
     imageTypeListener(nullptr),
     filmNegListener(nullptr),
     actListener(nullptr),
+    primListener(nullptr),
     adnListener(nullptr),
     awavListener(nullptr),
     dehaListener(nullptr),
@@ -407,13 +408,15 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         // If high detail (=100%) is newly selected, do a demosaic update, since the last was just with FAST
 
         if (imageTypeListener) {
-            imageTypeListener->imageTypeChanged(imgsrc->isRAW(), imgsrc->getSensorType() == ST_BAYER, imgsrc->getSensorType() == ST_FUJI_XTRANS, imgsrc->isMono());
+            imageTypeListener->imageTypeChanged(imgsrc->isRAW(), imgsrc->getSensorType() == ST_BAYER, imgsrc->getSensorType() == ST_FUJI_XTRANS, imgsrc->isMono(), imgsrc->isGainMapSupported());
         }
-
+		bool iscolor = (params->toneCurve.method == "Color");// || params->toneCurve.method == "Coloropp");
         if ((todo & M_RAW)
                 || (!highDetailRawComputed && highDetailNeeded)
-                || (params->toneCurve.hrenabled && params->toneCurve.method != "Color" && imgsrc->isRGBSourceModified())
-                || (!params->toneCurve.hrenabled && params->toneCurve.method == "Color" && imgsrc->isRGBSourceModified())) {
+               // || (params->toneCurve.hrenabled && params->toneCurve.method != "Color" && imgsrc->isRGBSourceModified())
+               // || (!params->toneCurve.hrenabled && params->toneCurve.method == "Color" && imgsrc->isRGBSourceModified())) {
+                || (params->toneCurve.hrenabled && !iscolor && imgsrc->isRGBSourceModified())
+                || (!params->toneCurve.hrenabled && iscolor && imgsrc->isRGBSourceModified())) {
 
             if (settings->verbose) {
                 if (imgsrc->getSensorType() == ST_BAYER) {
@@ -466,8 +469,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
         if ((todo & M_RAW)
                 || (!highDetailRawComputed && highDetailNeeded)
-                || (params->toneCurve.hrenabled && params->toneCurve.method != "Color" && imgsrc->isRGBSourceModified())
-                || (!params->toneCurve.hrenabled && params->toneCurve.method == "Color" && imgsrc->isRGBSourceModified())) {
+              //  || (params->toneCurve.hrenabled && params->toneCurve.method != "Color" && imgsrc->isRGBSourceModified())
+              //  || (!params->toneCurve.hrenabled && params->toneCurve.method == "Color" && imgsrc->isRGBSourceModified())) {
+                || (params->toneCurve.hrenabled && !iscolor && imgsrc->isRGBSourceModified())
+                || (!params->toneCurve.hrenabled && iscolor && imgsrc->isRGBSourceModified())) {
             if (highDetailNeeded) {
                 highDetailRawComputed = true;
             } else {
@@ -510,8 +515,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         }
         if (todo & (M_INIT | M_LINDENOISE | M_HDR)) {
             MyMutex::MyLock initLock(minit);  // Also used in crop window
-
-            imgsrc->HLRecovery_Global(params->toneCurve);   // this handles Color HLRecovery
+			//	imgsrc->HLRecovery_Global(params->toneCurve);   // this handles Color HLRecovery
 
 
             if (settings->verbose) {
@@ -538,7 +542,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         printf("tempref=%f greref=%f\n", tempref, greenref);
                     }
 
-                    imgsrc->getAutoWBMultipliersitc(tempref, greenref, tempitc, greenitc, studgood, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw);
+                    imgsrc->getAutoWBMultipliersitc(tempref, greenref, tempitc, greenitc, studgood, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
 
                     if (params->wb.method ==  "autitcgreen") {
                         params->wb.temperature = tempitc;
@@ -617,8 +621,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             PreviewProps pp(0, 0, fw, fh, scale);
             // Tells to the ImProcFunctions' tools what is the preview scale, which may lead to some simplifications
             ipf.setScale(scale);
-
-            imgsrc->getImage(currWB, tr, orig_prev, pp, params->toneCurve, params->raw);
+			int inpaintopposed = 1;//force getimage to use inpaint-opposed if enable, only once
+            imgsrc->getImage(currWB, tr, orig_prev, pp, params->toneCurve, params->raw, inpaintopposed);
 
             if ((todo & M_SPOT) && params->spot.enabled && !params->spot.entries.empty()) {
                 spotsDone = true;
@@ -731,6 +735,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         // Remove transformation if unneeded
         bool needstransform = ipf.needsTransform(fw, fh, imgsrc->getRotateDegree(), imgsrc->getMetaData());
 
+
         if ((needstransform || ((todo & (M_TRANSFORM | M_RGBCURVE))  && params->dirpyrequalizer.cbdlMethod == "bef" && params->dirpyrequalizer.enabled && !params->colorappearance.enabled))) {
             // Forking the image
             assert(oprevi);
@@ -744,6 +749,14 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 op->copyData(oprevi);
             }
         }
+
+        for (int sp = 0; sp < (int)params->locallab.spots.size(); sp++) {
+			if(params->locallab.spots.at(sp).expsharp  && params->dirpyrequalizer.cbdlMethod == "bef") {
+				if(params->locallab.spots.at(sp).shardamping < 1) {
+					params->locallab.spots.at(sp).shardamping = 1;
+				}				
+			}
+		}
 
         if ((todo & (M_TRANSFORM | M_RGBCURVE))  && params->dirpyrequalizer.cbdlMethod == "bef" && params->dirpyrequalizer.enabled && !params->colorappearance.enabled) {
             const int W = oprevi->getWidth();
@@ -1904,7 +1917,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     adap = pow(2.0, E_V - 3.0);  // cd / m2
                     // end calculation adaptation scene luminosity
                 }
-
+				if(params->colorappearance.catmethod == "symg") {//force abolute luminance scenescene to 400 in symmetric
+					adap = 400.;
+				}
                 float d, dj, yb;
                 bool execsharp = false;
 
@@ -1926,24 +1941,60 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 CAMBrightCurveQ.dirty = true;
 
                 ipf.ciecam_02float(ncie, float (adap), pW, 2, nprevl, params.get(), customColCurve1, customColCurve2, customColCurve3, histLCAM, histCCAM, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 0, scale, execsharp, d, dj, yb, 1);
-
-                if ((params->colorappearance.autodegree || params->colorappearance.autodegreeout) && acListener && params->colorappearance.enabled && !params->colorappearance.presetcat02) {
-                    acListener->autoCamChanged(100.* (double)d, 100.* (double)dj);
+				//call listener
+                if ((params->colorappearance.autodegree || params->colorappearance.autodegreeout) && acListener && params->colorappearance.enabled) {
+					if(params->colorappearance.catmethod == "symg") {//force chromatic adaptation to 90 in symmetric
+						d = 0.9;
+						dj = 0.9;
+					}
+					acListener->autoCamChanged(100.* (double)d, 100.* (double)dj);
                 }
 
-                if (params->colorappearance.autoadapscen && acListener && params->colorappearance.enabled && !params->colorappearance.presetcat02) {
-                    acListener->adapCamChanged(adap);    //real value of adapt scene
+                if (params->colorappearance.autoadapscen && acListener && params->colorappearance.enabled) {
+                    acListener->adapCamChanged(adap);    //real value of adapt scene, force to 400 in symmetric
                 }
 
-                if (params->colorappearance.autoybscen && acListener && params->colorappearance.enabled && !params->colorappearance.presetcat02) {
+                if (params->colorappearance.autoybscen && acListener && params->colorappearance.enabled) {
+					if(params->colorappearance.catmethod == "symg") {//force yb scene to 18 in symmetric
+						yb = 18;
+					}
+
                     acListener->ybCamChanged((int) yb);    //real value Yb scene
                 }
-
-             //   if (params->colorappearance.enabled && params->colorappearance.presetcat02  && params->colorappearance.autotempout) {
-              //  if (params->colorappearance.enabled && params->colorappearance.presetcat02) {
-              //      acListener->wbCamChanged(params->wb.temperature, params->wb.green);    //real temp and tint
-               //     acListener->wbCamChanged(params->wb.temperature, 1.f);    //real temp and tint = 1.
-               // }
+				double tempsym = 5003.;
+				int wmodel = 0;//wmodel allows - arbitrary - choice of illuminant and temp with choice
+				if (params->colorappearance.wbmodel == "RawT") {
+					wmodel = 0;
+				} else if (params->colorappearance.wbmodel == "RawTCAT02") {
+					wmodel = 1;
+				} else if (params->colorappearance.wbmodel == "free") {
+					wmodel = 2;//force white balance in symmetric
+				}
+				
+				if(params->colorappearance.catmethod == "symg" && wmodel == 2) {
+					tempsym = params->wb.temperature;//force white balance in symmetric
+				} else {
+					if (params->colorappearance.illum == "iA") {//otherwise force illuminant source
+						tempsym = 2856.;
+					} else if (params->colorappearance.illum == "i41") {
+						tempsym = 4100.;
+					} else if (params->colorappearance.illum == "i50") {
+						tempsym = 5003.;
+					} else if (params->colorappearance.illum == "i55") {
+						tempsym = 5503.;
+					} else if (params->colorappearance.illum == "i60") {
+						tempsym = 6000. ;
+					} else if (params->colorappearance.illum == "i65") {
+						tempsym = 6504.;
+					} else if (params->colorappearance.illum == "i75") {
+						tempsym = 7504.;
+					} else if (params->colorappearance.illum == "ifree") {
+						tempsym = params->wb.temperature;//force white balance in symmetric		
+					}
+				}
+                if (params->colorappearance.enabled  && params->colorappearance.autotempout) {
+						acListener->wbCamChanged(tempsym, 1.f);    //real temp and tint = 1.
+                }
                 
             } else {
                 // CIECAM is disabled, we free up its image buffer to save some space
@@ -2415,7 +2466,7 @@ bool ImProcCoordinator::getAutoWB(double& temp, double& green, double equal, dou
             double greenitc = 1.;
             float studgood = 1000.f;
             double tempref, greenref;
-            imgsrc->getAutoWBMultipliersitc(tempref, greenref, tempitc, greenitc, studgood,  0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw);
+            imgsrc->getAutoWBMultipliersitc(tempref, greenref, tempitc, greenitc, studgood,  0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
 
             if (rm != -1) {
                 autoWB.update(rm, gm, bm, equal, tempBias);
@@ -2602,7 +2653,7 @@ void ImProcCoordinator::saveInputICCReference(const Glib::ustring& fname, bool a
         currWB = ColorTemp(); // = no white balance
     }
 
-    imgsrc->getImage(currWB, tr, im, pp, ppar.toneCurve, ppar.raw);
+    imgsrc->getImage(currWB, tr, im, pp, ppar.toneCurve, ppar.raw, 0);
     ImProcFunctions ipf(&ppar, true);
 
     if (ipf.needsTransform(fW, fH, imgsrc->getRotateDegree(), imgsrc->getMetaData())) {

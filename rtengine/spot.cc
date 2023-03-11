@@ -459,7 +459,7 @@ void ImProcFunctions::removeSpots (Imagefloat* img, ImageSource* imgsrc, const s
             }
         }
 
-        imgsrc->getImage(currWB, tr, srcSpotBox->getImage(), spp, params->toneCurve, params->raw);
+        imgsrc->getImage(currWB, tr, srcSpotBox->getImage(), spp, params->toneCurve, params->raw, 0);
         if (cmp) {
             imgsrc->convertColorSpace(srcImage, *cmp, currWB);
         }
@@ -479,7 +479,7 @@ void ImProcFunctions::removeSpots (Imagefloat* img, ImageSource* imgsrc, const s
                 dstImage->b(y, x) = 60000.f;
             }
         }
-        imgsrc->getImage(currWB, tr, dstSpotBox->getImage(), spp, params->toneCurve, params->raw);
+        imgsrc->getImage(currWB, tr, dstSpotBox->getImage(), spp, params->toneCurve, params->raw, 0);
         if (cmp) {
             imgsrc->convertColorSpace(dstImage, *cmp, currWB);
         }

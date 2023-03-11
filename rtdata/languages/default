@@ -61,6 +61,7 @@ EXIFFILTER_IMAGETYPE;Image type
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Lens
 EXIFFILTER_METADATAFILTER;Enable metadata filters
+EXIFFILTER_PATH;File path
 EXIFFILTER_SHUTTER;Shutter
 EXIFPANEL_ADDEDIT;Add/Edit
 EXIFPANEL_ADDEDITHINT;Add new tag or edit tag.
@@ -165,6 +166,7 @@ FILEBROWSER_POPUPREMOVE;Delete permanently
 FILEBROWSER_POPUPREMOVEINCLPROC;Delete permanently, including queue-processed version
 FILEBROWSER_POPUPRENAME;Rename
 FILEBROWSER_POPUPSELECTALL;Select all
+FILEBROWSER_POPUPSORTBY;Sort Files
 FILEBROWSER_POPUPTRASH;Move to trash
 FILEBROWSER_POPUPUNRANK;Unrank
 FILEBROWSER_POPUPUNTRASH;Remove from trash
@@ -208,6 +210,7 @@ FILEBROWSER_ZOOMOUTHINT;Decrease thumbnail size.\n\nShortcuts:\n<b>-</b> - Multi
 FILECHOOSER_FILTER_ANY;All files
 FILECHOOSER_FILTER_COLPROF;Color profiles (*.icc)
 FILECHOOSER_FILTER_CURVE;Curve files
+FILECHOOSER_FILTER_EXECUTABLE;Executable files
 FILECHOOSER_FILTER_LCP;Lens correction profiles
 FILECHOOSER_FILTER_PP;Processing profiles
 FILECHOOSER_FILTER_SAME;Same format as current photo
@@ -235,6 +238,7 @@ GENERAL_NO;No
 GENERAL_NONE;None
 GENERAL_OK;OK
 GENERAL_OPEN;Open
+GENERAL_OTHER;Other
 GENERAL_PORTRAIT;Portrait
 GENERAL_RESET;Reset
 GENERAL_SAVE;Save
@@ -1404,18 +1408,22 @@ HISTORY_MSG_DEHAZE_STRENGTH;Dehaze - Strength
 HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;Dual demosaic - Auto threshold
 HISTORY_MSG_DUALDEMOSAIC_CONTRAST;Dual demosaic - Contrast threshold
 HISTORY_MSG_EDGEFFECT;Edge Attenuation response
+HISTORY_MSG_FF_FROMMETADATA;Flat-Field - From Metadata
 HISTORY_MSG_FILMNEGATIVE_BALANCE;FN - Reference output
 HISTORY_MSG_FILMNEGATIVE_COLORSPACE;Film negative color space
 HISTORY_MSG_FILMNEGATIVE_ENABLED;Film Negative
 HISTORY_MSG_FILMNEGATIVE_REF_SPOT;FN - Reference input
 HISTORY_MSG_FILMNEGATIVE_VALUES;Film negative values
+HISTORY_MSG_GAMUTMUNSEL;Gamut-Munsell
 HISTORY_MSG_HISTMATCHING;Auto-matched tone curve
 HISTORY_MSG_HLBL;Color propagation - blur
+HISTORY_MSG_HLTH;Inpaint opposed - gain threshold
 HISTORY_MSG_ICL_LABGRIDCIEXY;Cie xy
 HISTORY_MSG_ICM_AINTENT;Abstract profile intent
 HISTORY_MSG_ICM_BLUX;Primaries Blue X
 HISTORY_MSG_ICM_BLUY;Primaries Blue Y
 HISTORY_MSG_ICM_FBW;Black and White
+HISTORY_MSG_ICM_GAMUT;Gamut control
 HISTORY_MSG_ICM_GREX;Primaries Green X
 HISTORY_MSG_ICM_GREY;Primaries Green Y
 HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Output - Primaries
@@ -1435,6 +1443,7 @@ HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
 HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
 HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Local Contrast - Lightness
 HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
+HISTORY_MSG_LOCAL_GAMUTMUNSEL;Local - Gamut-Munsell
 HISTORY_MSG_METADATA_MODE;Metadata copy mode
 HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrast threshold
 HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST;CS - Auto threshold
@@ -1618,7 +1627,7 @@ MAIN_BUTTON_PREFERENCES;Preferences
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Put current image to processing queue.\nShortcut: <b>Ctrl+b</b>
 MAIN_BUTTON_SAVE_TOOLTIP;Save current image.\nShortcut: <b>Ctrl+s</b>\nSave current profile (.pp3).\nShortcut: <b>Ctrl+Shift+s</b>
 MAIN_BUTTON_SENDTOEDITOR;Edit image in external editor
-MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor.\nShortcut: <b>Ctrl+e</b>
+MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor.\nShortcut: <b>Ctrl+e</b>\nCurrent editor:
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels.\nShortcut: <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;Exit fullscreen
 MAIN_FRAME_EDITOR;Editor
@@ -1734,6 +1743,7 @@ PARTIALPASTE_EXPOSURE;Exposure
 PARTIALPASTE_FILMNEGATIVE;Film negative
 PARTIALPASTE_FILMSIMULATION;Film simulation
 PARTIALPASTE_FLATFIELDAUTOSELECT;Flat-field auto-selection
+PARTIALPASTE_FLATFIELDFROMMETADATA;Flat-field from Metadata
 PARTIALPASTE_FLATFIELDBLURRADIUS;Flat-field blur radius
 PARTIALPASTE_FLATFIELDBLURTYPE;Flat-field blur type
 PARTIALPASTE_FLATFIELDCLIPCONTROL;Flat-field clip control
@@ -1868,6 +1878,10 @@ PREFERENCES_EXTEDITOR_DIR_CUSTOM;Custom
 PREFERENCES_EXTEDITOR_DIR_TEMP;OS temp dir
 PREFERENCES_EXTEDITOR_FLOAT32;32-bit float TIFF output
 PREFERENCES_EXTERNALEDITOR;External Editor
+PREFERENCES_EXTERNALEDITOR_CHANGE;Change Application
+PREFERENCES_EXTERNALEDITOR_CHANGE_FILE;Change Executable
+PREFERENCES_EXTERNALEDITOR_COLUMN_NAME;Name
+PREFERENCES_EXTERNALEDITOR_COLUMN_COMMAND;Command
 PREFERENCES_FBROWSEROPTS;File Browser / Thumbnail Options
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Compact toolbars in File Browser
 PREFERENCES_FLATFIELDFOUND;Found
@@ -1965,6 +1979,7 @@ PREFERENCES_STARTUPIMDIR;Image Directory at Startup
 PREFERENCES_TAB_BROWSER;File Browser
 PREFERENCES_TAB_COLORMGR;Color Management
 PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
+PREFERENCES_TAB_FAVORITES;Favorites
 PREFERENCES_TAB_GENERAL;General
 PREFERENCES_TAB_IMPROC;Image Processing
 PREFERENCES_TAB_PERFORMANCE;Performance
@@ -1973,6 +1988,12 @@ PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview
 PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw rendering
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Embedded JPEG if fullsize, neutral raw otherwise
+PREFERENCES_TOOLPANEL_AVAILABLETOOLS;Available Tools
+PREFERENCES_TOOLPANEL_CLONE_FAVORITES;Keep favorite tools in original locations
+PREFERENCES_TOOLPANEL_CLONE_FAVORITES_TOOLTIP;If set, favorite tools will appear in both the favorites tab and their original tabs.\n\nNote: Enabling this option may result in a slight delay when switching tabs.
+PREFERENCES_TOOLPANEL_FAVORITE;Favorite
+PREFERENCES_TOOLPANEL_FAVORITESPANEL;Favorites Panel
+PREFERENCES_TOOLPANEL_TOOL;Tool
 PREFERENCES_TP_LABEL;Tool panel:
 PREFERENCES_TP_VSCROLLBAR;Hide vertical scrollbar
 PREFERENCES_USEBUNDLEDPROFILES;Use bundled profiles
@@ -2040,6 +2061,7 @@ SAMPLEFORMAT_16;16-bit floating-point
 SAMPLEFORMAT_32;24-bit floating-point
 SAMPLEFORMAT_64;32-bit floating-point
 SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
+SAVEDLG_BIGTIFF;BigTIFF (no metadata support)
 SAVEDLG_FILEFORMAT;File format
 SAVEDLG_FILEFORMAT_FLOAT; floating-point
 SAVEDLG_FORCEFORMATOPTS;Force saving options
@@ -2059,6 +2081,13 @@ SAVEDLG_WARNFILENAME;File will be named
 SHCSELECTOR_TOOLTIP;Click right mouse button to reset the position of those 3 sliders.
 SOFTPROOF_GAMUTCHECK_TOOLTIP;Highlight pixels with out-of-gamut colors with respect to:\n- the printer profile, if one is set and soft-proofing is enabled,\n- the output profile, if a printer profile is not set and soft-proofing is enabled,\n- the monitor profile, if soft-proofing is disabled.
 SOFTPROOF_TOOLTIP;Soft-proofing simulates the appearance of the image:\n- when printed, if a printer profile is set in Preferences > Color Management,\n- when viewed on a display that uses the current output profile, if a printer profile is not set.
+SORT_ASCENDING;Ascending
+SORT_BY_NAME;By Name
+SORT_BY_DATE;By Date
+SORT_BY_EXIF;By EXIF
+SORT_BY_RANK;By Rank
+SORT_BY_LABEL;By Color Label
+SORT_DESCENDING;Descending
 TC_PRIM_BLUX;Bx
 TC_PRIM_BLUY;By
 TC_PRIM_GREX;Gx
@@ -2242,6 +2271,7 @@ TP_COLORAPP_TCMODE_LIGHTNESS;Lightness
 TP_COLORAPP_TCMODE_SATUR;Saturation
 TP_COLORAPP_TEMP2_TOOLTIP;Either symmetrical mode temp = White balance.\nEither select illuminant always set Tint=1.\n\nA temp=2856\nD41 temp=4100\nD50 temp=5003\nD55 temp=5503\nD60 temp=6000\nD65 temp=6504\nD75 temp=7504
 TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant, always set Tint=1.\n\nA temp=2856\nD41 temp=4100\nD50 temp=5003\nD55 temp=5503\nD60 temp=6000\nD65 temp=6504\nD75 temp=7504
+TP_COLORAPP_TEMPOUT_TOOLTIP;Temperature and Tint.\nDepending on the choices made previously, the selected temperature is:\nWhite balance\nA temp=2856\nD41 temp=4100\nD50 temp=5003\nD55 temp=5503\nD60 temp=6000\nD65 temp=6504\nD75 temp=7504\nFree.
 TP_COLORAPP_TONECIE;Use CIECAM for tone mapping
 TP_COLORAPP_TONECIE_TOOLTIP;If this option is disabled, tone mapping is done in L*a*b* space.\nIf this option is enabled, tone mapping is done using CIECAM02.\nThe Tone Mapping tool must be enabled for this setting to take effect.
 TP_COLORAPP_VIEWINGF_TOOLTIP;Takes into account the support on which the final image will be viewed (monitor, TV, projector, printer, etc.), as well as its environment. This process will take the data coming from process 'Image Adjustments' and 'bring' it to the support in such a way that the viewing conditions and its environment are taken into account.
@@ -2472,6 +2502,7 @@ TP_FLATFIELD_BT_VERTHORIZ;Vertical + Horizontal
 TP_FLATFIELD_BT_VERTICAL;Vertical
 TP_FLATFIELD_CLIPCONTROL;Clip control
 TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Clip control avoids clipped highlights caused by applying the flat field. If there are already clipped highlights before applying the flat field, value 0 is used.
+TP_FLATFIELD_FROMMETADATA;From Metadata
 TP_FLATFIELD_LABEL;Flat-Field
 TP_GENERAL_11SCALE_TOOLTIP;The effects of this tool are only visible or only accurate at a preview scale of 1:1.
 TP_GRADIENT_CENTER;Center
@@ -2489,8 +2520,10 @@ TP_GRADIENT_STRENGTH_TOOLTIP;Filter strength in stops.
 TP_HLREC_BLEND;Blend
 TP_HLREC_CIELAB;CIELab Blending
 TP_HLREC_COLOR;Color Propagation
+TP_HLREC_COLOROPP;Inpaint Opposed
 TP_HLREC_ENA_TOOLTIP;Could be activated by Auto Levels.
 TP_HLREC_HLBLUR;Blur
+TP_HLREC_HLTH;Gain threshold
 TP_HLREC_LABEL;Highlight reconstruction
 TP_HLREC_LUMINANCE;Luminance Recovery
 TP_HLREC_METHOD;Method:
@@ -2510,6 +2543,7 @@ TP_ICM_DCPILLUMINANT;Illuminant
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
 TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is 'interpolated' which is a mix between the two based on white balance. The setting is only available if a dual-illuminant DCP with interpolation support is selected.
 TP_ICM_FBW;Black-and-White
+TP_ICM_GAMUT;Gamut control
 TP_ICM_ILLUMPRIM_TOOLTIP;Choose the illuminant closest to the shooting conditions.\nChanges can only be made when the 'Destination primaries' selection is set to 'Custom (sliders)'.
 TP_ICM_INPUTCAMERA;Camera standard
 TP_ICM_INPUTCAMERAICC;Auto-matched camera profile
@@ -2587,8 +2621,6 @@ TP_ICM_WORKING_TRC_SRGB;sRGB g=2.4 s=12.92
 TP_ICM_WORKING_TRC_TOOLTIP;Only for built-in profiles.
 TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 TP_IMPULSEDENOISE_THRESH;Threshold
-TP_LABCURVE_AVOIDCOLORSHIFT;Avoid color shift
-TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction (Uniform Perceptual Lab).
 TP_LABCURVE_BRIGHTNESS;Lightness
 TP_LABCURVE_CHROMATICITY;Chromaticity
 TP_LABCURVE_CHROMA_TOOLTIP;To apply B&amp;W toning, set Chromaticity to -100.
@@ -2653,7 +2685,7 @@ TP_LOCALLAB_ARTIF_TOOLTIP;ΔE scope threshold increases the range of ΔE scope. 
 TP_LOCALLAB_AUTOGRAY;Auto mean luminance (Yb%)
 TP_LOCALLAB_AUTOGRAYCIE;Auto
 TP_LOCALLAB_AVOID;Avoid color shift
-TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction (Uniform Perceptual Lab).\nMunsell correction always disabled when Jz or CAM16 is used.
+TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction (Uniform Perceptual Lab).\nMunsell correction always disabled when Jz or CAM16 or Color Appearance and Lighting is used.\n\nDefault: Munsell.\nMunsell correction: fixes Lab mode hue drifts due to non-linearity, when chromaticity is changed (Uniform Perceptual Lab).\nLab: applies a gamut control, in relative colorimetric, Munsell is then applied.\nXYZ Absolute, applies gamut control, in absolute colorimetric, Munsell is then applied.\nXYZ Relative, applies gamut control, in relative colorimetric, Munsell is then applied.
 TP_LOCALLAB_AVOIDMUN;Munsell correction only
 TP_LOCALLAB_AVOIDMUN_TOOLTIP;Munsell correction always disabled when Jz or CAM16 is used.
 TP_LOCALLAB_AVOIDRAD;Soft radius
@@ -2883,6 +2915,11 @@ TP_LOCALLAB_GAMM;Gamma
 TP_LOCALLAB_GAMMASKCOL;Gamma
 TP_LOCALLAB_GAMMASK_TOOLTIP;Adjusting Gamma and Slope can provide a soft and artifact-free transformation of the mask by progressively modifying 'L' to avoid any discontinuities.
 TP_LOCALLAB_GAMSH;Gamma
+TP_LOCALLAB_GAMUTNON;None
+TP_LOCALLAB_GAMUTLABRELA;Lab
+TP_LOCALLAB_GAMUTXYZABSO;XYZ Absolute
+TP_LOCALLAB_GAMUTXYZRELA;XYZ Relative
+TP_LOCALLAB_GAMUTMUNSELL;Munsell only
 TP_LOCALLAB_GAMW;Gamma (wavelet pyramids)
 TP_LOCALLAB_GRADANG;Gradient angle
 TP_LOCALLAB_GRADANG_TOOLTIP;Rotation angle in degrees: -180 0 +180.

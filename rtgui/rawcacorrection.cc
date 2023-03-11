@@ -28,7 +28,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-RAWCACorr::RAWCACorr () : FoldableToolPanel(this, "rawcacorrection", M("TP_RAWCACORR_LABEL"))
+const Glib::ustring RAWCACorr::TOOL_NAME = "rawcacorrection";
+
+RAWCACorr::RAWCACorr () : FoldableToolPanel(this, TOOL_NAME, M("TP_RAWCACORR_LABEL"))
 {
     auto m = ProcEventMapper::getInstance();
     EvPreProcessCAAutoiterations = m->newEvent(DARKFRAME, "HISTORY_MSG_RAWCACORR_AUTOIT");

@@ -42,6 +42,7 @@ DynamicProfilePanel::EditDialog::EditDialog (const Glib::ustring &title, Gtk::Wi
 
     add_optional (M ("EXIFFILTER_CAMERA"), has_camera_, camera_);
     add_optional (M ("EXIFFILTER_LENS"), has_lens_, lens_);
+    add_optional (M ("EXIFFILTER_PATH"), has_path_, path_);
     
     imagetype_ = Gtk::manage (new MyComboBoxText());
     imagetype_->append(Glib::ustring("(") + M("DYNPROFILEEDITOR_IMGTYPE_ANY") + ")");
@@ -93,6 +94,9 @@ void DynamicProfilePanel::EditDialog::set_rule (
     has_lens_->set_active (rule.lens.enabled);
     lens_->set_text (rule.lens.value);
 
+    has_path_->set_active (rule.path.enabled);
+    path_->set_text (rule.path.value);
+
     if (!rule.imagetype.enabled) {
         imagetype_->set_active(0);
     } else if (rule.imagetype.value == "STD") {
@@ -135,6 +139,9 @@ DynamicProfileRule DynamicProfilePanel::EditDialog::get_rule()
 
     ret.lens.enabled = has_lens_->get_active();
     ret.lens.value = lens_->get_text();
+
+    ret.path.enabled = has_path_->get_active();
+    ret.path.value = path_->get_text();
 
     ret.imagetype.enabled = imagetype_->get_active_row_number() > 0;
     switch (imagetype_->get_active_row_number()) {
@@ -297,6 +304,16 @@ DynamicProfilePanel::DynamicProfilePanel():
     }
 
     cell = Gtk::manage (new Gtk::CellRendererText());
+    cols_count = treeview_.append_column (M ("EXIFFILTER_PATH"), *cell);
+    col = treeview_.get_column (cols_count - 1);
+
+    if (col) {
+        col->set_cell_data_func (
+            *cell, sigc::mem_fun (
+                *this, &DynamicProfilePanel::render_path));
+    }
+
+    cell = Gtk::manage (new Gtk::CellRendererText());
     cols_count = treeview_.append_column (M ("EXIFFILTER_IMAGETYPE"), *cell);
     col = treeview_.get_column (cols_count - 1);
 
@@ -375,6 +392,7 @@ void DynamicProfilePanel::update_rule (Gtk::TreeModel::Row row,
     row[columns_.expcomp] = rule.expcomp;
     row[columns_.camera] = rule.camera;
     row[columns_.lens] = rule.lens;
+    row[columns_.path] = rule.path;
     row[columns_.imagetype] = rule.imagetype;
     row[columns_.profilepath] = rule.profilepath;
 }
@@ -398,6 +416,7 @@ DynamicProfileRule DynamicProfilePanel::to_rule (Gtk::TreeModel::Row row,
     ret.expcomp = row[columns_.expcomp];
     ret.camera = row[columns_.camera];
     ret.lens = row[columns_.lens];
+    ret.path = row[columns_.path];
     ret.profilepath = row[columns_.profilepath];
     ret.imagetype = row[columns_.imagetype];
     return ret;
@@ -508,6 +527,12 @@ void DynamicProfilePanel::render_lens (
     Gtk::CellRenderer *cell, const Gtk::TreeModel::iterator &iter)
 {
     RENDER_OPTIONAL_ (lens);
+}
+
+void DynamicProfilePanel::render_path (
+    Gtk::CellRenderer *cell, const Gtk::TreeModel::iterator &iter)
+{
+    RENDER_OPTIONAL_ (path);
 }
 
 void DynamicProfilePanel::render_imagetype (

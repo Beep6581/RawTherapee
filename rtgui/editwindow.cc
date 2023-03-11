@@ -201,6 +201,7 @@ void EditWindow::addEditorPanel (EditorPanel* ep, const std::string &name)
 {
     ep->setParent (parent);
     ep->setParentWindow(this);
+    ep->setExternalEditorChangedSignal(&externalEditorChangedSignal);
 
     // construct closeable tab for the image
     Gtk::Box* hb = Gtk::manage (new Gtk::Box ());
@@ -239,6 +240,7 @@ void EditWindow::remEditorPanel (EditorPanel* ep)
         return;    // Will crash if destroyed while loading
     }
 
+    ep->setExternalEditorChangedSignal(nullptr);
     epanels.erase (ep->getFileName());
     filesEdited.erase (ep->getFileName ());
     parent->fpanel->refreshEditedState (filesEdited);
@@ -435,4 +437,12 @@ void EditWindow::set_title_decorated(Glib::ustring fname)
     }
 
     set_title("RawTherapee " + M("EDITWINDOW_TITLE") + subtitle);
+}
+
+void EditWindow::updateToolPanelToolLocations(
+        const std::vector<Glib::ustring> &favorites, bool cloneFavoriteTools)
+{
+    for (const auto& panel : epanels) {
+        panel.second->updateToolPanelToolLocations(favorites, cloneFavoriteTools);
+    }
 }

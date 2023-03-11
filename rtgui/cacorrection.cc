@@ -27,7 +27,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-CACorrection::CACorrection () : FoldableToolPanel(this, "cacorrection", M("TP_CACORRECTION_LABEL"))
+const Glib::ustring CACorrection::TOOL_NAME = "cacorrection";
+
+CACorrection::CACorrection () : FoldableToolPanel(this, TOOL_NAME, M("TP_CACORRECTION_LABEL"))
 {
 
     Gtk::Image* icaredL =   Gtk::manage (new RTImage ("circle-red-cyan-small"));

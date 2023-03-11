@@ -29,7 +29,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Rotate::Rotate () : FoldableToolPanel(this, "rotate", M("TP_ROTATE_LABEL"))
+const Glib::ustring Rotate::TOOL_NAME = "rotate";
+
+Rotate::Rotate () : FoldableToolPanel(this, TOOL_NAME, M("TP_ROTATE_LABEL"))
 {
 
     rlistener = nullptr;

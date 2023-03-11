@@ -1,29 +1,27 @@
-name: macOS build
+name: macOS Build
 on:
   push:
     branches:
       - dev
-      - patch**
-      - newlocallab
+      - releases
+    tags:
+      - '[0-9]+.*'
   pull_request:
     branches:
       - dev
-      - newlocallab
-  release:
-    types:
-      - created
+  workflow_dispatch:
 jobs:
   build:
-    runs-on: macos-10.15
+    runs-on: macos-11
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install dependencies
         run: |
            date -u
            mkdir build
            date +%s > build/stamp
            brew uninstall --ignore-dependencies libtiff
-           brew install libtiff gtk+3 gtkmm3 gtk-mac-integration adwaita-icon-theme libsigc++@2 little-cms2 libiptcdata fftw lensfun expat pkgconfig libomp shared-mime-info | tee -a depslog
+           brew install libtiff gtk+3 gtkmm3 gtk-mac-integration adwaita-icon-theme libsigc++@2 little-cms2 libiptcdata fftw lensfun expat pkgconfig llvm shared-mime-info | tee -a depslog
            date -u
            echo "----====Pourage====----"
            cat depslog | grep Pouring
@@ -50,6 +48,7 @@ jobs:
             -DCACHE_NAME_SUFFIX="${RAW_THERAPEE_MAJOR}.${RAW_THERAPEE_MINOR}-${REF}" \
             -DPROC_TARGET_NUMBER="1" \
             -DPROC_LABEL="generic processor" \
+            -DCMAKE_OSX_ARCHITECTURES=$(uname -m) \
             -DWITH_LTO="OFF" \
             -DLENSFUNDBDIR="/Applications/RawTherapee.app/Contents/Resources/share/lensfun" \
             -DCMAKE_C_COMPILER=clang \
@@ -63,8 +62,10 @@ jobs:
             -DOpenMP_libomp_LIBRARY=/usr/local/lib/libomp.dylib \
             -DCMAKE_AR=/usr/bin/ar \
             -DCMAKE_RANLIB=/usr/bin/ranlib \
-            -DCMAKE_OSX_DEPLOYMENT_TARGET=10.15 \
+            -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \
+            -DOSX_CONTINUOUS=ON \
             ..
+            curl -L https://github.com/Homebrew/homebrew-core/raw/679923b4eb48a8dc7ecc1f05d06063cd79b3fc00/Formula/libomp.rb -o libomp.rb && brew install --formula libomp.rb
             zsh -c 'echo "Configured in $(printf "%0.2f" $(($[$(date +%s)-$(cat configstamp)]/$((60.))))) minutes"'
       - name: Compile RawTherapee
         run: |
@@ -78,15 +79,21 @@ jobs:
           zsh
           date +%s > build/bundlestamp && date -u && cd build
           export REF=${GITHUB_REF##*/} && export LOCAL_PREFIX=/usr && sudo make macosx_bundle
-          export ARTIFACT=(RawTherapee*.zip)
+          export ARTIFACT=(RawTherapee*${CMAKE_BUILD_TYPE}.zip)
           echo "=== artifact: ${ARTIFACT}"
           # defining environment variables for next step as per
           # https://github.com/actions/starter-workflows/issues/68
           echo "ARTIFACT_PATH=${GITHUB_WORKSPACE}/build/${ARTIFACT}" >> $GITHUB_ENV
           echo "ARTIFACT_FILE=${ARTIFACT}" >> $GITHUB_ENV
           zsh -c 'echo "Bundled in $(printf "%0.2f" $(($[$(date +%s)-$(cat bundlestamp)]/$((60.))))) minutes"'
+          printf '%s\n' \
+            "REF: ${REF}" \
+            "ARTIFACT: ${ARTIFACT}" \
+            "ARTIFACT_PATH: ${ARTIFACT_PATH}" \
+            "ARTIFACT_FILE: ${ARTIFACT_FILE}" \
+            "PUBLISH_NAME: ${PUBLISH_NAME}"
           exit
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: ${{env.ARTIFACT_FILE}}
           path: ${{env.ARTIFACT_PATH}}
@@ -94,3 +101,11 @@ jobs:
         run: |
           date -u
           zsh -c 'echo "Build completed in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"'
+
+      - name: Publish artifacts
+        uses: softprops/action-gh-release@v1
+        if: ${{github.ref_type == 'tag' || github.ref_name == 'dev'}}
+        with:
+          tag_name: nightly-github-actions
+          files: |
+            ${{env.ARTIFACT_PATH}}

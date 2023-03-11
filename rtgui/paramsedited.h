@@ -52,6 +52,7 @@ struct ToneCurveParamsEdited {
     bool shcompr;
     bool hlcompr;
     bool hlbl;
+    bool hlth;
     bool hlcomprthresh;
     bool autoexp;
     bool clip;
@@ -109,7 +110,7 @@ struct LCurveParamsEdited {
     bool brightness;
     bool contrast;
     bool chromaticity;
-    bool avoidcolorshift;
+    bool gamutmunselmethod;
     bool rstprotection;
     bool lcurve;
     bool acurve;
@@ -305,7 +306,6 @@ struct ColorAppearanceParamsEdited {
     bool ybout;
     bool tempsc;
     bool greensc;
-    bool presetcat02;
 };
 
 struct DirPyrDenoiseParamsEdited {
@@ -403,6 +403,7 @@ public:
         bool structexclu;
         bool struc;
         bool shapeMethod;
+        bool avoidgamutMethod;
         bool loc;
         bool centerX;
         bool centerY;
@@ -422,8 +423,6 @@ public:
         bool transitgrad;
         bool hishow;
         bool activ;
-        bool avoid;
-        bool avoidmun;
         bool blwh;
         bool recurs;
         bool laplac;
@@ -1231,6 +1230,7 @@ struct ColorManagementParamsEdited {
     bool bluy;
     bool preser;
     bool fbw;
+    bool gamut;
     bool labgridcieALow;
     bool labgridcieBLow;
     bool labgridcieAHigh;
@@ -1489,6 +1489,7 @@ struct RAWParamsEdited {
     bool df_autoselect;
     bool ff_file;
     bool ff_AutoSelect;
+    bool ff_FromMetaData;
     bool ff_BlurRadius;
     bool ff_BlurType;
     bool ff_AutoClipControl;

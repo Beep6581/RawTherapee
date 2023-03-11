@@ -7,7 +7,7 @@
    viewBox="0 0 160 99.999999"
    version="1.1"
    id="svg783"
-   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14, custom)"
    sodipodi:docname="splash_template.svg"
    inkscape:export-filename="/tmp/splash.png"
    inkscape:export-xdpi="96"
@@ -151,10 +151,10 @@
          style="stop-color:#feab27;stop-opacity:1;" />
     </linearGradient>
     <filter
-       width="1.481184"
+       width="1.4802108"
        height="4.2913185"
        y="-1.6456592"
-       x="-0.24059201"
+       x="-0.24010539"
        inkscape:label="RawTherapee white"
        id="filter4749"
        style="color-interpolation-filters:sRGB"
@@ -236,10 +236,10 @@
          operator="in" />
     </filter>
     <filter
-       width="1.3101092"
+       width="1.3101085"
        height="3.1717951"
        y="-1.0858975"
-       x="-0.15505461"
+       x="-0.15505423"
        inkscape:label="RawTherapee white"
        id="filter4749-3"
        style="color-interpolation-filters:sRGB"
@@ -882,9 +882,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.8015102"
-     inkscape:cx="575.62815"
-     inkscape:cy="212.32186"
+     inkscape:zoom="2.6083441"
+     inkscape:cx="546.32363"
+     inkscape:cy="219.8713"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -908,10 +908,10 @@
      inkscape:object-nodes="false"
      inkscape:snap-nodes="true"
      inkscape:snap-global="false"
-     inkscape:window-width="3440"
-     inkscape:window-height="1387"
-     inkscape:window-x="3832"
-     inkscape:window-y="-8"
+     inkscape:window-width="3840"
+     inkscape:window-height="2075"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:measure-start="416.334,192.525"
      inkscape:measure-end="422.317,192.368"
@@ -920,14 +920,48 @@
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
-     width="157.40977mm" />
+     width="157.40977mm"
+     inkscape:showpageshadow="2"
+     inkscape:deskcolor="#d1d1d1">
+    <sodipodi:guide
+       position="13.081061,8.9833331"
+       orientation="0,1"
+       id="guide6595"
+       inkscape:locked="false"
+       inkscape:label=""
+       inkscape:color="rgb(0,134,229)" />
+    <sodipodi:guide
+       position="153.15072,8.9833384"
+       orientation="-1,0"
+       id="guide15125"
+       inkscape:locked="false"
+       inkscape:label=""
+       inkscape:color="rgb(0,134,229)" />
+  </sodipodi:namedview>
   <metadata
      id="metadata780">
     <rdf:RDF>
       <cc:Work
          rdf:about="">
         <dc:title>RawTherapee splash screen</dc:title>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
       </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
+      </cc:License>
     </rdf:RDF>
   </metadata>
   <g
@@ -1120,7 +1154,7 @@
            id="tspan40748"
            style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.9944px;font-family:'ITC Eras Std';-inkscape-font-specification:'ITC Eras Std Bold';fill:#ffffff;fill-opacity:1;stroke-width:0.537916"
            x="64.642754"
-           y="252.72681">8</tspan></text>
+           y="252.72681">9</tspan></text>
       <text
          xml:space="preserve"
          style="font-size:11.9944px;line-height:1.25;font-family:'Eras BQ';-inkscape-font-specification:'Eras BQ';opacity:1;fill:#ffffff;fill-opacity:1;stroke-width:0.537916"
@@ -1138,160 +1172,162 @@
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;line-height:1.25;font-family:'Eras BQ';-inkscape-font-specification:'Eras BQ';letter-spacing:0px;word-spacing:-0.132292px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.0495763px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;filter:url(#filter4749);enable-background:new"
        x="5.3633847"
-       y="277.27142"
+       y="277.12344"
        id="text45159"><tspan
          sodipodi:role="line"
          id="tspan45157"
          style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:4.23333px;font-family:'ITC Eras Std';-inkscape-font-specification:'ITC Eras Std Medium';fill:#ffffff;fill-opacity:1;stroke-width:0.0495763px"
          x="5.3633847"
-         y="277.27142">GNU GPLv3</tspan></text>
+         y="277.12344">GNU GPLv3</tspan></text>
     <text
        xml:space="preserve"
        transform="matrix(0.26458333,0,0,0.26458333,-4.6433668,186.15341)"
        id="text181036"
-       style="font-size:21.3333px;line-height:1.25;font-family:'Eras BQ';-inkscape-font-specification:'Eras BQ';white-space:pre;shape-inside:url(#rect181038)" />
+       style="font-size:21.3333px;line-height:1.25;font-family:'Eras BQ';-inkscape-font-specification:'Eras BQ';white-space:pre;shape-inside:url(#rect181038);display:inline" />
     <text
        xml:space="preserve"
        transform="matrix(0.26458333,0,0,0.26458333,280.11612,189.68435)"
        id="text183258"
-       style="font-size:16px;line-height:1.25;font-family:'Eras BQ';-inkscape-font-specification:'Eras BQ';white-space:pre;shape-inside:url(#rect183260)"><tspan
+       style="font-size:16px;line-height:1.25;font-family:'Eras BQ';-inkscape-font-specification:'Eras BQ';white-space:pre;shape-inside:url(#rect183260);display:inline"><tspan
          x="-430.18945"
-         y="2.3808594"
-         id="tspan1665"><tspan
+         y="2.7826123"
+         id="tspan17773"><tspan
            style="font-weight:bold;font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan1661">Prerequisites</tspan><tspan
+           id="tspan17769">Prerequisites</tspan><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan1663">
+           id="tspan17771">
 </tspan></tspan><tspan
          x="-430.18945"
-         y="22.380859"
-         id="tspan1669"><tspan
+         y="22.782612"
+         id="tspan17777"><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan1667">Obtain and install the font family ITC Eras Std.
+           id="tspan17775">Obtain and install the font family ITC Eras Std.
 </tspan></tspan><tspan
          x="-430.18945"
-         y="42.380859"
-         id="tspan1673"><tspan
+         y="42.782612"
+         id="tspan17781"><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan1671">
+           id="tspan17779">
 </tspan></tspan><tspan
          x="-430.18945"
-         y="62.380859"
-         id="tspan1679"><tspan
+         y="62.782612"
+         id="tspan17787"><tspan
            style="font-weight:bold"
-           id="tspan1675">Details</tspan><tspan
+           id="tspan17783">Details</tspan><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan1677">
+           id="tspan17785">
 </tspan></tspan><tspan
          x="-430.18945"
-         y="82.380859"
-         id="tspan1683"><tspan
+         y="82.782612"
+         id="tspan17791"><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan1681">The color wheel is copied from rt-logo.svg and a glow filter is added
+           id="tspan17789">The color wheel is copied from rt-logo.svg and a glow filter is added
 </tspan></tspan><tspan
          x="-430.18945"
-         y="102.38086"
-         id="tspan1687"><tspan
+         y="102.78261"
+         id="tspan17795"><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan1685">to each segment and the wheel as a whole.
+           id="tspan17793">to each segment and the wheel as a whole.
 </tspan></tspan><tspan
          x="-430.18945"
-         y="122.38086"
-         id="tspan1691"><tspan
+         y="122.78261"
+         id="tspan17799"><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan1689">&quot;Raw&quot;: font ITC Eras Ultra-Bold, 60 pt, -3 px letter spacing
+           id="tspan17797">&quot;Raw&quot;: font ITC Eras Ultra-Bold, 60 pt, -3 px letter spacing
 </tspan></tspan><tspan
          x="-430.18945"
-         y="142.38086"
-         id="tspan1695"><tspan
+         y="142.78261"
+         id="tspan17803"><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan1693">&quot;Therapee&quot;: font ITC Eras Medium, 60 pt, +1,5 pt letter spacing
+           id="tspan17801">&quot;Therapee&quot;: font ITC Eras Medium, 60 pt, +1,5 pt letter spacing
 </tspan></tspan><tspan
          x="-430.18945"
-         y="162.38086"
-         id="tspan1699"><tspan
+         y="162.78261"
+         id="tspan17807"><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan1697">Version (big number): ITC Eras Bold, 58 pt, skewed -3°
+           id="tspan17805">Version (big number): ITC Eras Bold, 58 pt, skewed -3°
 </tspan></tspan><tspan
          x="-430.18945"
-         y="182.38086"
-         id="tspan1703"><tspan
+         y="182.78261"
+         id="tspan17811"><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan1701">Version (period + small number): ITC Eras Bold, 34 pt, skewed -3°
+           id="tspan17809">Version (period + small number): ITC Eras Bold, 34 pt, skewed -3°
 </tspan></tspan><tspan
          x="-430.18945"
-         y="202.38086"
-         id="tspan1707"><tspan
+         y="202.78261"
+         id="tspan17815"><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan1705">Release-type: ITC Eras Bold, 16 pt, skewed -3°
+           id="tspan17813">Release-type: ITC Eras Bold, 16 pt, skewed -3°
 </tspan></tspan><tspan
          x="-430.18945"
-         y="222.38086"
-         id="tspan1711"><tspan
+         y="222.78261"
+         id="tspan17819"><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan1709">
+           id="tspan17817">
 </tspan></tspan><tspan
          x="-430.18945"
-         y="242.38086"
-         id="tspan1717"><tspan
+         y="242.78261"
+         id="tspan17825"><tspan
            style="font-weight:bold"
-           id="tspan1713">Publishing</tspan><tspan
+           id="tspan17821">Publishing</tspan><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan1715">
+           id="tspan17823">
 </tspan></tspan><tspan
          x="-430.18945"
-         y="262.38086"
-         id="tspan1721"><tspan
+         y="262.78261"
+         id="tspan17831"><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan1719">1. To prepare a splash screen for deployment, select all text and </tspan></tspan><tspan
+           id="tspan17827">1. To prepare a splash screen for deployment, select all text and </tspan><tspan
+           style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
+           id="tspan17829">choose </tspan></tspan><tspan
          x="-430.18945"
-         y="282.38086"
-         id="tspan1725"><tspan
+         y="282.78261"
+         id="tspan17835"><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan1723">choose Path &gt; Object to Path. 
+           id="tspan17833">Path &gt; Object to Path. 
 </tspan></tspan><tspan
          x="-430.18945"
-         y="302.38086"
-         id="tspan1729"><tspan
+         y="302.78261"
+         id="tspan17839"><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan1727">2. Change release type text to whatever is required, or hide the layer </tspan></tspan><tspan
+           id="tspan17837">2. Change release type text to whatever is required, or hide the layer </tspan></tspan><tspan
          x="-430.18945"
-         y="322.38086"
-         id="tspan1733"><tspan
+         y="322.78261"
+         id="tspan17843"><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan1731">&quot;Release type&quot; entirely.
+           id="tspan17841">&quot;Release type&quot; entirely.
 </tspan></tspan><tspan
          x="-430.18945"
-         y="342.38086"
-         id="tspan1737"><tspan
+         y="342.78261"
+         id="tspan17847"><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan1735">3. Remove this text field.
+           id="tspan17845">3. Remove this text field.
 </tspan></tspan><tspan
          x="-430.18945"
-         y="362.38086"
-         id="tspan1743"><tspan
+         y="362.78261"
+         id="tspan17853"><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan1739">4</tspan><tspan
+           id="tspan17849">4</tspan><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan1741">. Save as &quot;splash.svg&quot; into &quot;./rtdata/images/svg&quot;.
+           id="tspan17851">. Save as &quot;splash.svg&quot; into &quot;./rtdata/images/svg&quot;.
 </tspan></tspan><tspan
          x="-430.18945"
-         y="382.38086"
-         id="tspan1747"><tspan
+         y="382.78261"
+         id="tspan17857"><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan1745">
+           id="tspan17855">
 </tspan></tspan><tspan
          x="-430.18945"
-         y="402.38086"
-         id="tspan1751"><tspan
+         y="402.78261"
+         id="tspan17861"><tspan
            style="font-style:italic"
-           id="tspan1749">RawTherapee splash screen design 1.5 (March 2022)
+           id="tspan17859">RawTherapee splash screen design 1.5 (March 2022)
 </tspan></tspan><tspan
          x="-430.18945"
-         y="422.38086"
-         id="tspan1755"><tspan
+         y="422.78261"
+         id="tspan17865"><tspan
            style="font-style:italic"
-           id="tspan1753">www.rawtherapee.com</tspan></tspan></text>
+           id="tspan17863">www.rawtherapee.com</tspan></tspan></text>
   </g>
   <g
      inkscape:groupmode="layer"
@@ -1304,7 +1340,7 @@
        x="99.720383"
        y="268.50891"
        id="text119139"
-       transform="matrix(1,0,0.05240778,1,4.4229627,-187.87494)"><tspan
+       transform="matrix(1,0,0.05240778,1,8.1272209,-177.55141)"><tspan
          sodipodi:role="line"
          id="tspan119137"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.93889px;font-family:'ITC Eras Std';-inkscape-font-specification:'ITC Eras Std Bold';fill:#ffffff;fill-opacity:1;stroke-width:0.211231"

@@ -27,7 +27,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Distortion::Distortion (): FoldableToolPanel(this, "distortion", M("TP_DISTORTION_LABEL"))
+const Glib::ustring Distortion::TOOL_NAME = "distortion";
+
+Distortion::Distortion (): FoldableToolPanel(this, TOOL_NAME, M("TP_DISTORTION_LABEL"))
 {
 
     rlistener = nullptr;
