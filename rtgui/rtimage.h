@@ -42,13 +42,17 @@ private:
     Gtk::IconSize size;
     Glib::ustring icon_name;
     std::shared_ptr<RTSurface> surface;
+    Glib::RefPtr<const Gio::Icon> g_icon;
 
 public:
     RTImage ();
     explicit RTImage (const Glib::ustring& iconName, const Gtk::IconSize iconSize = Gtk::ICON_SIZE_SMALL_TOOLBAR);
+    explicit RTImage (const Glib::RefPtr<const Gio::Icon>& gIcon, const Gtk::IconSize iconSize = Gtk::ICON_SIZE_SMALL_TOOLBAR);
 
     void set_from_icon_name(const Glib::ustring& iconName);
     void set_from_icon_name(const Glib::ustring& iconName, const Gtk::IconSize iconSize);
+    void set_from_gicon(const Glib::RefPtr<const Gio::Icon>& gIcon);
+    void set_from_gicon(const Glib::RefPtr<const Gio::Icon>& gIcon, const Gtk::IconSize iconSize);
 
     int get_width();
     int get_height();

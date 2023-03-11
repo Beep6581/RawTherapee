@@ -21,7 +21,6 @@
 
 #include "guiutils.h"
 #include "options.h"
-#include "rtimage.h"
 #include "rtscalable.h"
 #include "toollocationpref.h"
 #include "toolpanelcoord.h"
@@ -277,12 +276,9 @@ ListEditButtons::ListEditButtons(Gtk::TreeView &list, Glib::RefPtr<Gtk::ListStor
     assert(list.get_model() == listStore);
 
     // Set button images.
-    RTImage *image_button_up = Gtk::manage(new RTImage("arrow-up-small.png"));
-    RTImage *image_button_down = Gtk::manage(new RTImage("arrow-down-small.png"));
-    RTImage *image_button_remove = Gtk::manage(new RTImage("remove-small.png"));
-    buttonUp.set_image(*image_button_up);
-    buttonDown.set_image(*image_button_down);
-    buttonRemove.set_image(*image_button_remove);
+    buttonUp.set_image_from_icon_name("arrow-up-small");
+    buttonDown.set_image_from_icon_name("arrow-down-small");
+    buttonRemove.set_image_from_icon_name("remove-small");
 
     // Connect signals for changing button sensitivity.
     const auto on_list_sel_changed_fun = sigc::mem_fun(
@@ -725,8 +721,7 @@ ToolLocationPreference::ToolLocationPreference(Options &options) :
         M("PREFERENCES_TOOLPANEL_AVAILABLETOOLS")));
     Gtk::ScrolledWindow *tool_list_scrolled_window =
         Gtk::manage(new Gtk::ScrolledWindow());
-    tool_list_scrolled_window->set_min_content_width(
-        400 * (RTScalable::getTweakedDPI() / RTScalable::baseDPI));
+    tool_list_scrolled_window->set_min_content_width(RTScalable::scalePixelSize(400));
     layout_grid->attach_next_to(*tool_list_frame, Gtk::PositionType::POS_RIGHT, 1, 1);
     tool_list_frame->add(*tool_list_scrolled_window);
     tool_list_scrolled_window->add(*impl->toolListViewPtr);
@@ -739,8 +734,7 @@ ToolLocationPreference::ToolLocationPreference(Options &options) :
     Gtk::Box *favorites_box = Gtk::manage(new Gtk::Box());
     Gtk::ScrolledWindow *favorites_list_scrolled_window =
         Gtk::manage(new Gtk::ScrolledWindow());
-    favorites_list_scrolled_window->set_min_content_width(
-        300 * (RTScalable::getTweakedDPI() / RTScalable::baseDPI));
+    favorites_list_scrolled_window->set_min_content_width(RTScalable::scalePixelSize(300));
     layout_grid->attach_next_to(*favorites_frame, Gtk::PositionType::POS_RIGHT, 1, 1);
     favorites_box->pack_start(impl->favoritesListEditButtons, false, false);
     favorites_box->pack_start(*favorites_list_scrolled_window, false, false);

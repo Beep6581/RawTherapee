@@ -25,7 +25,6 @@
 
 #include "externaleditorpreferences.h"
 #include "multilangmgr.h"
-#include "rtimage.h"
 
 
 ExternalEditorPreferences::ExternalEditorPreferences():
@@ -52,12 +51,10 @@ ExternalEditorPreferences::ExternalEditorPreferences():
     list_scroll_area.add(*list_view);
 
     // Toolbar buttons.
-    auto add_image = Gtk::manage(new RTImage("add-small.png"));
-    auto remove_image = Gtk::manage(new RTImage("remove-small.png"));
     button_add = Gtk::manage(new Gtk::Button());
     button_remove = Gtk::manage(new Gtk::Button());
-    button_add->set_image(*add_image);
-    button_remove->set_image(*remove_image);
+    button_add->set_image_from_icon_name("add-small");
+    button_remove->set_image_from_icon_name("remove-small");
     button_app_chooser = Gtk::manage(new Gtk::Button(M("PREFERENCES_EXTERNALEDITOR_CHANGE")));
     button_file_chooser = Gtk::manage(new Gtk::Button(M("PREFERENCES_EXTERNALEDITOR_CHANGE_FILE")));
 
