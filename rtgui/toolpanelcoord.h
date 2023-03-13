@@ -404,10 +404,10 @@ public:
             ipc->getAutoWB(temp, green, equal, observer, tempBias);
         }
     }
-    void getCamWB (double& temp, double& green) override
+    void getCamWB (double& temp, double& green, rtengine::StandardObserver observer) override
     {
         if (ipc) {
-            ipc->getCamWB(temp, green);
+            ipc->getCamWB(temp, green, observer);
         }
     }
 

@@ -102,7 +102,7 @@ public:
     static Thumbnail* loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh, double wbEq, StandardObserver wbObserver, bool inspectorMode = false);
     static RawMetaDataLocation loadMetaDataFromRaw (const Glib::ustring& fname);
 
-    void getCamWB     (double& temp, double& green);
+    void getCamWB     (double& temp, double& green, StandardObserver observer);
     void getAutoWB    (double& temp, double& green, double equal, double tempBias, StandardObserver observer);
     void getAutoWBMultipliers (double& rm, double& gm, double& bm);
     void getSpotWB    (const procparams::ProcParams& params, int x, int y, int rect, double& temp, double& green);

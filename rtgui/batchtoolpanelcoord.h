@@ -70,7 +70,7 @@ public:
 
     // wbprovider interface
     void getAutoWB (double& temp, double& green, double equal, rtengine::StandardObserver observer, double tempBias) override;
-    void getCamWB (double& temp, double& green) override;
+    void getCamWB (double& temp, double& green, rtengine::StandardObserver observer) override;
 
     // thumbnaillistener interface
     void procParamsChanged (Thumbnail* thm, int whoChangedIt) override;

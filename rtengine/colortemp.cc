@@ -194,6 +194,18 @@ ColorTemp::ColorTemp (double mulr, double mulg, double mulb, double e, StandardO
     mul2temp (mulr, mulg, mulb, equal, observer, temp, green);
 }
 
+ColorTemp ColorTemp::convertObserver(StandardObserver observer) const
+{
+    if (observer == this->observer) {
+        return *this;
+    }
+    double r;
+    double g;
+    double b;
+    getMultipliers(r, g, b);
+    return ColorTemp(r, g, b, equal, observer);
+}
+
 void ColorTemp::mul2temp (const double rmul, const double gmul, const double bmul, const double equal, StandardObserver observer, double& temp, double& green) const
 {
 

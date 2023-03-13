@@ -594,11 +594,11 @@ void BatchToolPanelCoordinator::getAutoWB (double& temp, double& green, double e
     }
 }
 
-void BatchToolPanelCoordinator::getCamWB (double& temp, double& green)
+void BatchToolPanelCoordinator::getCamWB (double& temp, double& green, rtengine::StandardObserver observer)
 {
 
     if (!selected.empty()) {
-        selected[0]->getCamWB (temp, green);
+        selected[0]->getCamWB (temp, green, observer);
     }
 }
 

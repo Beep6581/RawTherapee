@@ -195,7 +195,7 @@ void rgb2temp(const RGB &refOut, double &outLev, double &temp, double &green)
 FilmNegative::FilmNegative() :
     FoldableToolPanel(this, TOOL_NAME, M("TP_FILMNEGATIVE_LABEL"), false, true),
     EditSubscriber(ET_OBJECTS),
-    NEUTRAL_TEMP(rtengine::ColorTemp(1., 1., 1., 1., rtengine::StandardObserver::TEN_DEGREES)),
+    NEUTRAL_TEMP(rtengine::ColorTemp(1., 1., 1., 1., rtengine::ColorTemp::DEFAULT_OBSERVER)),
     evFilmNegativeExponents(ProcEventMapper::getInstance()->newEvent(ALLNORAW, "HISTORY_MSG_FILMNEGATIVE_VALUES")),
     evFilmNegativeEnabled(ProcEventMapper::getInstance()->newEvent(ALLNORAW, "HISTORY_MSG_FILMNEGATIVE_ENABLED")),
     evFilmNegativeRefSpot(ProcEventMapper::getInstance()->newEvent(ALLNORAW, "HISTORY_MSG_FILMNEGATIVE_REF_SPOT")),

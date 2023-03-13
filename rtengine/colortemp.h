@@ -67,6 +67,7 @@ public:
     void update (const double rmul, const double gmul, const double bmul, const double equal, StandardObserver observer, const double tempBias=0.0)
     {
         this->equal = equal;
+        this->observer = observer;
         mul2temp (rmul, gmul, bmul, this->equal, observer, temp, green);
         if (tempBias != 0.0 && tempBias >= -1.0 && tempBias <= 1.0) {
             temp += temp * tempBias;
@@ -100,6 +101,8 @@ public:
     {
         return observer;
     }
+
+    ColorTemp convertObserver(StandardObserver observer) const;
 
     void  getMultipliers (double &mulr, double &mulg, double &mulb) const
     {

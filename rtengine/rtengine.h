@@ -472,7 +472,7 @@ class AutoWBListener
 {
 public:
     virtual ~AutoWBListener() = default;
-    virtual void WBChanged(double temp, double green, double rw, double gw, double bw, float studgood) = 0;
+    virtual void WBChanged(double temp, double green, StandardObserver observer, double rw, double gw, double bw, float studgood) = 0;
 };
 
 class FrameCountListener
@@ -620,7 +620,7 @@ public:
     virtual DetailedCrop* createCrop  (::EditDataProvider *editDataProvider, bool isDetailWindow) = 0;
 
     virtual bool        getAutoWB   (double& temp, double& green, double equal, StandardObserver observer, double tempBias) = 0;
-    virtual void        getCamWB    (double& temp, double& green) = 0;
+    virtual void        getCamWB    (double& temp, double& green, StandardObserver observer) = 0;
     virtual void        getSpotWB  (int x, int y, int rectSize, double& temp, double& green) = 0;
     virtual bool        getFilmNegativeSpot(int x, int y, int spotSize, procparams::FilmNegativeParams::RGB &refInput, procparams::FilmNegativeParams::RGB &refOutput) = 0;
     

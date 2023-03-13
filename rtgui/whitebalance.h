@@ -113,7 +113,6 @@ protected:
     int custom_temp;
     double custom_green;
     double custom_equal;
-    CheckValue custom_observer10;
 
     IdleRegister idle_register;
 
@@ -121,7 +120,6 @@ protected:
     void cache_customTemp  (int temp);               //cache Temperature only to allow its recall
     void cache_customGreen (double green);           //cache Green only to allow its recall
     void cache_customEqual (double equal);           //cache Equal only to allow its recall
-    void cache_customObserver10(CheckValue observer10); //cache observer10 only to allow its recall
 
     int  setActiveMethod   (Glib::ustring label);
     int _setActiveMethod   (Glib::ustring &label, Gtk::TreeModel::Children &children);
@@ -159,7 +157,7 @@ public:
     }
     void setWB (int temp, double green);
     void resetWB ();
-    void WBChanged           (double temp, double green, double rw, double gw, double bw, float studgood) override;
+    void WBChanged           (double temp, double green, rtengine::StandardObserver observer, double rw, double gw, double bw, float studgood) override;
     void itcwb_nopurple_toggled ();
     void itcwb_sorted_toggled ();
     void itcwb_forceextra_toggled ();

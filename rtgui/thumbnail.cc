@@ -216,7 +216,7 @@ const ProcParams& Thumbnail::getProcParamsU ()
 
         if (pparams->wb.method == "Camera") {
             double ct;
-            getCamWB (ct, pparams->wb.green);
+            getCamWB (ct, pparams->wb.green, pparams->wb.observer);
             pparams->wb.temperature = ct;
         } else if (pparams->wb.method == "autold") {
             double ct;
@@ -1155,10 +1155,10 @@ bool Thumbnail::imageLoad(bool loading)
     return false;
 }
 
-void Thumbnail::getCamWB(double& temp, double& green) const
+void Thumbnail::getCamWB(double& temp, double& green, rtengine::StandardObserver observer) const
 {
     if (tpp) {
-        tpp->getCamWB  (temp, green);
+        tpp->getCamWB  (temp, green, observer);
     } else {
         temp = green = -1.0;
     }

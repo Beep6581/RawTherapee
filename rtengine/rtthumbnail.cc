@@ -1591,13 +1591,13 @@ void Thumbnail::getDimensions (int& w, int& h, double& scaleFac)
     }
 }
 
-void Thumbnail::getCamWB (double& temp, double& green)
+void Thumbnail::getCamWB (double& temp, double& green, StandardObserver observer)
 {
 
     double cam_r = colorMatrix[0][0] * camwbRed + colorMatrix[0][1] * camwbGreen + colorMatrix[0][2] * camwbBlue;
     double cam_g = colorMatrix[1][0] * camwbRed + colorMatrix[1][1] * camwbGreen + colorMatrix[1][2] * camwbBlue;
     double cam_b = colorMatrix[2][0] * camwbRed + colorMatrix[2][1] * camwbGreen + colorMatrix[2][2] * camwbBlue;
-    ColorTemp currWB = ColorTemp (cam_r, cam_g, cam_b, 1.0, ColorTemp::DEFAULT_OBSERVER);  // we do not take the equalizer into account here, because we want camera's WB
+    ColorTemp currWB = ColorTemp (cam_r, cam_g, cam_b, 1.0, observer);  // we do not take the equalizer into account here, because we want camera's WB
     temp = currWB.getTemp ();
     green = currWB.getGreen ();
 }
