@@ -9807,9 +9807,9 @@ void CLASS identify()
   if (!strncasecmp (model, make, i) && model[i++] == ' ')
     memmove (model, model+i, 64-i);
   if (!strncmp (model,"FinePix ",8))
-    strcpy (model, model+8);
+/* RT */    memmove (model, model+8, 64-8);
   if (!strncmp (model,"Digital Camera ",15))
-    strcpy (model, model+15);
+/* RT */    memmove (model, model+15, 64-15);
   desc[511] = artist[63] = make[63] = model[63] = model2[63] = 0;
   if (!is_raw) goto notraw;
 
