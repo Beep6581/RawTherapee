@@ -929,13 +929,6 @@ Gtk::Widget* Preferences::getColorManPanel ()
 
     vbColorMan->pack_start (*fcie, Gtk::PACK_SHRINK);
 
-	//------------White-Balance
-    Gtk::Frame* fwba = Gtk::manage(new Gtk::Frame(M("PREFERENCES_WBA")));
-    Gtk::Grid* gwba = Gtk::manage(new Gtk::Grid());
-    gwba->set_column_spacing(4);
-    
-    fwba->add(*gwba);
-    vbColorMan->pack_start (*fwba, Gtk::PACK_SHRINK);
 
     //------------White-Balance auto temperature correlation
     
