@@ -8113,6 +8113,12 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "White Balance", "Itcwb_nopurple", pedited, wb.itcwb_nopurple, pedited->wb.itcwb_nopurple);
             assignFromKeyfile(keyFile, "White Balance", "Itcwb_sorted", pedited, wb.itcwb_sorted, pedited->wb.itcwb_sorted);
             assignFromKeyfile(keyFile, "White Balance", "Itcwb_forceextra", pedited, wb.itcwb_forceextra, pedited->wb.itcwb_forceextra);
+            if (ppVersion <= 349) { // 5.9 and earlier.
+                wb.itcwb_sampling = true;
+                if (pedited) {
+                    pedited->wb.itcwb_sampling = true;
+                }
+            }
             assignFromKeyfile(keyFile, "White Balance", "Itcwb_sampling", pedited, wb.itcwb_sampling, pedited->wb.itcwb_sampling);
         }
 
