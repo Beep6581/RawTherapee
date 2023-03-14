@@ -157,7 +157,7 @@ public:
     }
     void setWB (int temp, double green);
     void resetWB ();
-    void WBChanged           (double temp, double green, rtengine::StandardObserver observer, double rw, double gw, double bw, float studgood) override;
+    void WBChanged           (double temp, double green, double rw, double gw, double bw, float studgood) override;
     void itcwb_nopurple_toggled ();
     void itcwb_sorted_toggled ();
     void itcwb_forceextra_toggled ();

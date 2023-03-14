@@ -1358,18 +1358,14 @@ inline Gtk::TreeRow WhiteBalance::getActiveMethod ()
     return *(method->get_active());
 }
 
-void WhiteBalance::WBChanged(double temperature, double greenVal, rtengine::StandardObserver observer, double rw, double gw, double bw, float studgood)
+void WhiteBalance::WBChanged(double temperature, double greenVal, double rw, double gw, double bw, float studgood)
 {
     idle_register.add(
-        [this, temperature, greenVal, observer, rw, gw, bw, studgood]() -> bool
+        [this, temperature, greenVal, rw, gw, bw, studgood]() -> bool
         {
             disableListener();
-            ColorTemp colorTemp = ColorTemp(temperature, greenVal, 1., "Custom", observer)
-                                      .convertObserver(observer10->getValue() == CheckValue::off
-                                                           ? StandardObserver::TWO_DEGREES
-                                                           : StandardObserver::TEN_DEGREES);
-            temp->setValue(colorTemp.getTemp());
-            green->setValue(colorTemp.getGreen());
+            temp->setValue(temperature);
+            green->setValue(greenVal);
             mulLabel->set_text(
             Glib::ustring::compose(M("TP_WBALANCE_MULLABEL"),
                                    Glib::ustring::format(std::fixed, std::setprecision(4), rw),
@@ -1380,8 +1376,8 @@ void WhiteBalance::WBChanged(double temperature, double greenVal, rtengine::Stan
                 Glib::ustring::compose(M("TP_WBALANCE_STUDLABEL"),
                                    Glib::ustring::format(std::fixed, std::setprecision(4), studgood))
             );            
-            temp->setDefault(colorTemp.getTemp());
-            green->setDefault(colorTemp.getGreen());
+            temp->setDefault(temperature);
+            green->setDefault(greenVal);
             enableListener();
 
             return false;

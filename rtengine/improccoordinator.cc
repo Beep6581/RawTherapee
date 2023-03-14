@@ -583,9 +583,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             double bw = 1.;
 
             if (params->wb.enabled) {
+                currWB = currWB.convertObserver(params->wb.observer);
                 params->wb.temperature = static_cast<int>(currWB.getTemp());
                 params->wb.green = currWB.getGreen();
-                params->wb.observer = currWB.getObserver();
                 currWB.getMultipliers(rw, gw, bw);
                 imgsrc->wbMul2Camera(rw, gw, bw);
               //  printf("ra=%f ga=%f ba=%f\n", rw, gw, bw); 
@@ -593,9 +593,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
             if (awbListener) {
                 if (params->wb.method ==  "autitcgreen") {
-                    awbListener->WBChanged(params->wb.temperature, params->wb.green, params->wb.observer, rw, gw, bw, studgood);
+                    awbListener->WBChanged(params->wb.temperature, params->wb.green, rw, gw, bw, studgood);
                 } else {
-                    awbListener->WBChanged(params->wb.temperature, params->wb.green, params->wb.observer, rw, gw, bw, -1.f);
+                    awbListener->WBChanged(params->wb.temperature, params->wb.green, rw, gw, bw, -1.f);
                 }
             }
 
