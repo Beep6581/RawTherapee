@@ -135,10 +135,9 @@ class Preferences final :
     Gtk::CheckButton* cbdaubech;
     Gtk::SpinButton*  hlThresh;
     Gtk::SpinButton*  shThresh;
-    Gtk::CheckButton* mwbacorr;
+//    Gtk::CheckButton* mwbacorr;
  //   Gtk::CheckButton* mwbaforc;
  //   Gtk::CheckButton* mwbanopurp;
-    Gtk::CheckButton* mwbaena;
 
 //    Gtk::CheckButton* mwbasort;
 //    Gtk::SpinButton*  wbacorrnb;
