@@ -1882,7 +1882,13 @@ public:
       * @param bps can be 8 or 16 depending on the bits per pixels the output file will have
       * @param isFloat is true for saving float images. Will be ignored by file format not supporting float data
         @return the error code, 0 if none */
-    virtual int saveAsTIFF (const Glib::ustring &fname, int bps = -1, bool isFloat = false, bool uncompressed = false) const = 0;
+    virtual int saveAsTIFF (
+        const Glib::ustring &fname,
+        int bps = -1,
+        bool isFloat = false,
+        bool uncompressed = false,
+        bool big = false
+    ) const = 0;
     /** @brief Sets the progress listener if you want to follow the progress of the image saving operations (optional).
       * @param pl is the pointer to the class implementing the ProgressListener interface */
     virtual void setSaveProgressListener (ProgressListener* pl) = 0;
