@@ -930,23 +930,6 @@ Gtk::Widget* Preferences::getColorManPanel ()
     vbColorMan->pack_start (*fcie, Gtk::PACK_SHRINK);
 
 
-    //------------White-Balance auto temperature correlation
-    
-    Gtk::Frame* fwbacorr = Gtk::manage(new Gtk::Frame(M("PREFERENCES_WBACORR")));
-    fwbacorr->set_tooltip_text(M("PREFERENCES_WBACORR_TOOLTIP"));
-    fwbacorr->set_label_align(0.025, 0.5);
-    Gtk::Box* wbaVB = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL) );
-    Gtk::Box* wbah = Gtk::manage ( new Gtk::Box () );
-    wbah->set_spacing (4);
-    
-    mwbaena = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_WBAENA")));
-    setExpandAlignProperties(mwbaena, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    mwbaena->set_active(true);
-    wbah->pack_start(*mwbaena, Gtk::PACK_SHRINK, 0);
-    wbaVB->add(*wbah);
-
-    fwbacorr->add (*wbaVB);
-///    vbColorMan->pack_start (*fwbacorr, Gtk::PACK_SHRINK);
     //-------------
 
     swColorMan->add(*vbColorMan);

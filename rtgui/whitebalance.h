@@ -64,16 +64,6 @@ protected:
     };
     
     rtengine::ProcEvent EvWBObserver10;
-    rtengine::ProcEvent EvWBitcwbthres;
-    rtengine::ProcEvent EvWBitcwbnopurple;
-    rtengine::ProcEvent EvWBitcwbsorted;
-    rtengine::ProcEvent EvWBitcwbforceextra;
-    rtengine::ProcEvent EvWBitcwbprecis;
-    rtengine::ProcEvent EvWBitcwbsize;
-    rtengine::ProcEvent EvWBitcwbdelta;
-    rtengine::ProcEvent EvWBitcwbfgreen;
-    rtengine::ProcEvent EvWBitcwbrgreen;
-    rtengine::ProcEvent EvWBitcwbsampling;
 
     static Glib::RefPtr<Gdk::Pixbuf> wbPixbufs[rtengine::toUnderlying(rtengine::procparams::WBEntry::Type::CUSTOM) + 1];
     Glib::RefPtr<Gtk::TreeStore> refTreeModel;
@@ -86,22 +76,6 @@ protected:
     Adjuster* equal;
     Adjuster* tempBias;
     CheckBox* observer10;
-    Gtk::Frame* itcwbFrame;
-    Adjuster* itcwb_thres;
-    Adjuster* itcwb_precis;
-    Adjuster* itcwb_size;
-    Adjuster* itcwb_delta;
-    Adjuster* itcwb_fgreen;
-    Adjuster* itcwb_rgreen;
-    
-    Gtk::CheckButton* itcwb_nopurple;
-    Gtk::CheckButton* itcwb_sorted;
-    Gtk::CheckButton* itcwb_forceextra;
-    Gtk::CheckButton* itcwb_sampling;
-    bool lastitcwb_nopurple;
-    bool lastitcwb_sorted;
-    bool lastitcwb_forceextra;
-    bool lastitcwb_sampling;
 
     Gtk::Button* spotbutton;
     int opt;
@@ -109,7 +83,7 @@ protected:
     double nextGreen;
     WBProvider *wbp;  // pointer to a ToolPanelCoordinator object, or its subclass BatchToolPanelCoordinator
     SpotWBListener* wblistener;
-    sigc::connection methconn, itcwb_nopurpleconn, itcwb_sortedconn,  itcwb_forceextraconn, itcwb_samplingconn;
+    sigc::connection methconn;
     int custom_temp;
     double custom_green;
     double custom_equal;
@@ -158,10 +132,6 @@ public:
     void setWB (int temp, double green);
     void resetWB ();
     void WBChanged           (double temp, double green, double rw, double gw, double bw, float studgood) override;
-    void itcwb_nopurple_toggled ();
-    void itcwb_sorted_toggled ();
-    void itcwb_forceextra_toggled ();
-    void itcwb_sampling_toggled ();
 
     void setAdjusterBehavior (bool tempadd, bool greenadd, bool equaladd, bool tempbiasadd);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
