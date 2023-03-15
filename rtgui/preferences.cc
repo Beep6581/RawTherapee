@@ -946,7 +946,7 @@ Gtk::Widget* Preferences::getColorManPanel ()
     wbaVB->add(*wbah);
 
     fwbacorr->add (*wbaVB);
-    vbColorMan->pack_start (*fwbacorr, Gtk::PACK_SHRINK);
+///    vbColorMan->pack_start (*fwbacorr, Gtk::PACK_SHRINK);
     //-------------
 
     swColorMan->add(*vbColorMan);

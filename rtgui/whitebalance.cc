@@ -379,7 +379,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     itcwbFrame->set_label_align(0.025, 0.5);
     itcwbFrame->set_tooltip_markup (M("PREFERENCES_WBACORR_TOOLTIP"));
 
-    ToolParamBlock* const itcwbBox = Gtk::manage(new ToolParamBlock());
+///    ToolParamBlock* const itcwbBox = Gtk::manage(new ToolParamBlock());
 
     itcwb_thres = Gtk::manage (new Adjuster(M("TP_WBALANCE_ITCWB_THRES"), 10, 55, 1, 34));
     itcwb_thres->set_tooltip_markup (M("TP_WBALANCE_ITCWBTHRES_TOOLTIP"));
@@ -431,20 +431,22 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     pack_start (*tempBias);
     pack_start(*observer10);
 
-    itcwbBox->pack_start (*itcwb_thres);
-//    itcwbBox->pack_start (*itcwb_precis);
-//    itcwbBox->pack_start (*itcwb_size);
-//    itcwbBox->pack_start (*itcwb_delta);//possible use in pp3
-    itcwbBox->pack_start (*itcwb_fgreen);//possible use in pp3
-//    itcwbBox->pack_start (*itcwb_rgreen);//possible use in pp3
-    itcwbBox->pack_start (*itcwb_nopurple);
-    itcwbBox->pack_start (*itcwb_sorted);
-    itcwbBox->pack_start (*itcwb_forceextra);
-    itcwbBox->pack_start (*itcwb_sampling);
-    itcwbFrame->add(*itcwbBox);
-    pack_start(*itcwbFrame);
+///    itcwbBox->pack_start (*itcwb_thres);
+        //    itcwbBox->pack_start (*itcwb_precis);//not to recover possible use in pp3
+        //    itcwbBox->pack_start (*itcwb_size);//not to recover possible use in pp3
+        //    itcwbBox->pack_start (*itcwb_delta);////not to recover possible use in pp3
+///    itcwbBox->pack_start (*itcwb_fgreen);
+        //    itcwbBox->pack_start (*itcwb_rgreen);////not to recover possible use in pp3
+///    itcwbBox->pack_start (*itcwb_nopurple);
+///    itcwbBox->pack_start (*itcwb_sorted);
+///    itcwbBox->pack_start (*itcwb_forceextra);
+///    itcwbBox->pack_start (*itcwb_sampling);
+///    itcwbFrame->add(*itcwbBox);
+///    pack_start(*itcwbFrame);
 
-    if(options.rtSettings.itcwb_enable) {
+///    if(options.rtSettings.itcwb_enable) {
+    bool itcwbdisp = false;
+    if(itcwbdisp) {
         itcwb_thres->show();
         itcwb_precis->show();
         itcwb_size->show();
@@ -926,8 +928,11 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
     lastitcwb_sampling = pp->wb.itcwb_sampling;
 
     itcwb_sampling_toggled();
-
-    if(options.rtSettings.itcwb_enable) {
+    bool itcwbdisp = false;
+    
+    
+///    if(options.rtSettings.itcwb_enable) {
+    if(itcwbdisp) {
         itcwb_thres->show();
         itcwb_precis->show();
         itcwb_size->show();
