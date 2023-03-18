@@ -164,6 +164,7 @@ ImProcCoordinator::ImProcCoordinator() :
     imageTypeListener(nullptr),
     filmNegListener(nullptr),
     actListener(nullptr),
+    primListener(nullptr),
     adnListener(nullptr),
     awavListener(nullptr),
     dehaListener(nullptr),

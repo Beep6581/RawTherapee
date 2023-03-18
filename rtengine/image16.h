@@ -81,7 +81,7 @@ public:
         return saveJPEG(fname, quality, subSamp);
     }
 
-    int saveAsTIFF(const Glib::ustring &fname, int bps = -1, bool isFloat = false, bool uncompressed = false) const override
+    int saveAsTIFF(const Glib::ustring &fname, int bps = -1, bool isFloat = false, bool uncompressed = false, bool big = false) const override
     {
         return saveTIFF(fname, bps, isFloat, uncompressed);
     }
