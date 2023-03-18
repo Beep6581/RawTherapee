@@ -2910,7 +2910,7 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
     }
 
     if (colorappearance.degreeout) {
-        toEdit.colorappearance.degreeout = mods.colorappearance.degreeout;
+        toEdit.colorappearance.degreeout = dontforceSet && options.baBehav[ADDSET_CAT_DEGREEOUT] ? toEdit.colorappearance.degreeout + mods.colorappearance.degreeout : mods.colorappearance.degreeout;
     }
 
     if (colorappearance.autodegreeout) {
@@ -2962,7 +2962,7 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
     }
 
     if (colorappearance.tempout) {
-        toEdit.colorappearance.tempout = mods.colorappearance.tempout;
+        toEdit.colorappearance.tempout = dontforceSet && options.baBehav[ADDSET_CAT_TEMPOUT] ? toEdit.colorappearance.tempout + mods.colorappearance.tempout : mods.colorappearance.tempout;
     }
 
     if (colorappearance.autotempout) {
