@@ -2315,7 +2315,7 @@ void ColorAppearance::updateCurveBackgroundHistogram(
 
 
 
-void ColorAppearance::setAdjusterBehavior (bool degreeadd, bool adapscenadd, bool adaplumadd, bool badpixsladd, bool jlightadd, bool chromaadd, bool contrastadd, bool rstprotectionadd, bool qbrightadd, bool qcontrastadd, bool schromaadd, bool mchromaadd, bool colorhadd, bool degreeoutadd)
+void ColorAppearance::setAdjusterBehavior (bool degreeadd, bool adapscenadd, bool adaplumadd, bool badpixsladd, bool jlightadd, bool chromaadd, bool contrastadd, bool rstprotectionadd, bool qbrightadd, bool qcontrastadd, bool schromaadd, bool mchromaadd, bool colorhadd, bool degreeoutadd, bool tempoutadd)
 {
 
     degree->setAddMode (degreeadd);
@@ -2332,6 +2332,7 @@ void ColorAppearance::setAdjusterBehavior (bool degreeadd, bool adapscenadd, boo
     qcontrast->setAddMode (qcontrastadd);
     colorh->setAddMode (colorhadd);
     degreeout->setAddMode (degreeoutadd);
+    tempout->setAddMode (tempoutadd);
 
 }
 
