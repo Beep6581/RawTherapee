@@ -586,19 +586,19 @@ void BatchToolPanelCoordinator::unsetTweakOperator (rtengine::TweakOperator *tOp
 {
 }
 
-void BatchToolPanelCoordinator::getAutoWB (double& temp, double& green, double equal, double tempBias)
+void BatchToolPanelCoordinator::getAutoWB (double& temp, double& green, double equal, rtengine::StandardObserver observer, double tempBias)
 {
 
     if (!selected.empty()) {
-        selected[0]->getAutoWB (temp, green, equal, tempBias);
+        selected[0]->getAutoWB (temp, green, equal, observer, tempBias);
     }
 }
 
-void BatchToolPanelCoordinator::getCamWB (double& temp, double& green)
+void BatchToolPanelCoordinator::getCamWB (double& temp, double& green, rtengine::StandardObserver observer)
 {
 
     if (!selected.empty()) {
-        selected[0]->getCamWB (temp, green);
+        selected[0]->getCamWB (temp, green, observer);
     }
 }
 

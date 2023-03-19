@@ -928,6 +928,10 @@ Gtk::Widget* Preferences::getColorManPanel ()
     fcie->add(*gcie);
 
     vbColorMan->pack_start (*fcie, Gtk::PACK_SHRINK);
+
+
+    //-------------
+
     swColorMan->add(*vbColorMan);
     return swColorMan;
 }
@@ -1954,6 +1958,7 @@ void Preferences::fillPreferences()
 
     monBPC->set_active(moptions.rtSettings.monitorBPC);
     mcie->set_active(moptions.rtSettings.autocielab);
+
     cbAutoMonProfile->set_active(moptions.rtSettings.autoMonitorProfile);
 #endif
 

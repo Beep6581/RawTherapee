@@ -139,20 +139,20 @@ void Thumbnail::_generateThumbnailImage ()
 
     if (ext == "jpg" || ext == "jpeg") {
         infoFromImage (fname);
-        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, -1, pparams->wb.equal);
+        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, -1, pparams->wb.equal, pparams->wb.observer);
 
         if (tpp) {
             cfs.format = FT_Jpeg;
         }
     } else if (ext == "png") {
-        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, -1, pparams->wb.equal);
+        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, -1, pparams->wb.equal, pparams->wb.observer);
 
         if (tpp) {
             cfs.format = FT_Png;
         }
     } else if (ext == "tif" || ext == "tiff") {
         infoFromImage (fname);
-        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, -1, pparams->wb.equal);
+        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, -1, pparams->wb.equal, pparams->wb.observer);
 
         if (tpp) {
             cfs.format = FT_Tiff;
@@ -173,7 +173,7 @@ void Thumbnail::_generateThumbnailImage ()
 
         if ( tpp == nullptr ) {
             quick = false;
-            tpp = rtengine::Thumbnail::loadFromRaw (fname, ri, sensorType, tw, th, 1, pparams->wb.equal, TRUE);
+            tpp = rtengine::Thumbnail::loadFromRaw (fname, ri, sensorType, tw, th, 1, pparams->wb.equal, pparams->wb.observer, TRUE);
         }
 
         cfs.sensortype = sensorType;
@@ -216,11 +216,11 @@ const ProcParams& Thumbnail::getProcParamsU ()
 
         if (pparams->wb.method == "Camera") {
             double ct;
-            getCamWB (ct, pparams->wb.green);
+            getCamWB (ct, pparams->wb.green, pparams->wb.observer);
             pparams->wb.temperature = ct;
         } else if (pparams->wb.method == "autold") {
             double ct;
-            getAutoWB (ct, pparams->wb.green, pparams->wb.equal, pparams->wb.tempBias);
+            getAutoWB (ct, pparams->wb.green, pparams->wb.equal, pparams->wb.observer, pparams->wb.tempBias);
             pparams->wb.temperature = ct;
         }
     }
@@ -785,10 +785,10 @@ const Glib::DateTime& Thumbnail::getDateTime () const
     return dateTime;
 }
 
-void Thumbnail::getAutoWB (double& temp, double& green, double equal, double tempBias)
+void Thumbnail::getAutoWB (double& temp, double& green, double equal, rtengine::StandardObserver observer, double tempBias)
 {
     if (cfs.redAWBMul != -1.0) {
-        rtengine::ColorTemp ct(cfs.redAWBMul, cfs.greenAWBMul, cfs.blueAWBMul, equal);
+        rtengine::ColorTemp ct(cfs.redAWBMul, cfs.greenAWBMul, cfs.blueAWBMul, equal, observer);
         temp = ct.getTemp();
         green = ct.getGreen();
     } else {
@@ -1155,10 +1155,10 @@ bool Thumbnail::imageLoad(bool loading)
     return false;
 }
 
-void Thumbnail::getCamWB(double& temp, double& green) const
+void Thumbnail::getCamWB(double& temp, double& green, rtengine::StandardObserver observer) const
 {
     if (tpp) {
-        tpp->getCamWB  (temp, green);
+        tpp->getCamWB  (temp, green, observer);
     } else {
         temp = green = -1.0;
     }

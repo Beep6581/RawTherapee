@@ -44,7 +44,6 @@ public:
     bool            monitorBPC;             ///< Black Point Compensation for the Labimage->Monitor transform (directly, i.e. not soft-proofing and no WCS in between)
     bool            autoMonitorProfile;     ///< Try to auto-determine the correct monitor color profile
     bool            autocielab;
-    bool            observer10;
     bool            rgbcurveslumamode_gamut;// controls gamut enforcement for RGB curves in lumamode
     bool            verbose;
     Glib::ustring   darkFramesPath;         ///< The default directory for dark frames
@@ -93,17 +92,7 @@ public:
     int             previewselection;
     double          cbdlsensi;
 //    bool            showtooltip;
-
-    int             itcwb_thres;
-    bool            itcwb_sorted;
-    int             itcwb_greenrange;
-    int             itcwb_greendeltatemp;
-    bool            itcwb_forceextra;
-    int             itcwb_sizereference;
-    int             itcwb_delta;
-    bool            itcwb_stdobserver10;
-    int             itcwb_precis;
-    bool            itcwb_nopurple;
+    bool            itcwb_enable;
 //wavelet levels
     double          edghi;
     double          edglo;

@@ -266,6 +266,17 @@ void ParamsEdited::set(bool v)
     wb.temperature             = v;
     wb.equal                   = v;
     wb.tempBias                = v;
+    wb.observer                = v;
+    wb.itcwb_thres                = v;
+    wb.itcwb_precis                = v;
+    wb.itcwb_size                = v;
+    wb.itcwb_delta                = v;
+    wb.itcwb_fgreen                = v;
+    wb.itcwb_rgreen                = v;
+    wb.itcwb_nopurple             = v;
+    wb.itcwb_sorted             = v;
+    wb.itcwb_forceextra         = v;
+    wb.itcwb_sampling         = v;
     //colorShift.a               = v;
     //colorShift.b               = v;
     //lumaDenoise.enabled        = v;
@@ -967,6 +978,17 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wb.equal = wb.equal && p.wb.equal == other.wb.equal;
         wb.temperature = wb.temperature && p.wb.temperature == other.wb.temperature;
         wb.tempBias = wb.tempBias && p.wb.tempBias == other.wb.tempBias;
+        wb.observer = wb.observer && p.wb.observer == other.wb.observer;
+        wb.itcwb_thres = wb.itcwb_thres && p.wb.itcwb_thres == other.wb.itcwb_thres;
+        wb.itcwb_precis = wb.itcwb_precis && p.wb.itcwb_precis == other.wb.itcwb_precis;
+        wb.itcwb_size = wb.itcwb_size && p.wb.itcwb_size == other.wb.itcwb_size;
+        wb.itcwb_delta = wb.itcwb_delta && p.wb.itcwb_delta == other.wb.itcwb_delta;
+        wb.itcwb_fgreen = wb.itcwb_fgreen && p.wb.itcwb_fgreen == other.wb.itcwb_fgreen;
+        wb.itcwb_rgreen = wb.itcwb_rgreen && p.wb.itcwb_rgreen == other.wb.itcwb_rgreen;
+        wb.itcwb_nopurple = wb.itcwb_nopurple && p.wb.itcwb_nopurple == other.wb.itcwb_nopurple;
+        wb.itcwb_sorted = wb.itcwb_sorted && p.wb.itcwb_sorted == other.wb.itcwb_sorted;
+        wb.itcwb_forceextra = wb.itcwb_forceextra && p.wb.itcwb_forceextra == other.wb.itcwb_forceextra;
+        wb.itcwb_sampling = wb.itcwb_sampling && p.wb.itcwb_sampling == other.wb.itcwb_sampling;
         //colorShift.a = colorShift.a && p.colorShift.a == other.colorShift.a;
         //colorShift.b = colorShift.b && p.colorShift.b == other.colorShift.b;
         //lumaDenoise.enabled = lumaDenoise.enabled && p.lumaDenoise.enabled == other.lumaDenoise.enabled;
@@ -2827,6 +2849,50 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (wb.tempBias) {
         toEdit.wb.tempBias = dontforceSet && options.baBehav[ADDSET_WB_TEMPBIAS] ? toEdit.wb.tempBias + mods.wb.tempBias : mods.wb.tempBias;
+    }
+
+    if (wb.observer) {
+        toEdit.wb.observer = mods.wb.observer;
+    }
+
+    if (wb.itcwb_thres) {
+        toEdit.wb.itcwb_thres = mods.wb.itcwb_thres;
+    }
+
+    if (wb.itcwb_precis) {
+        toEdit.wb.itcwb_precis = mods.wb.itcwb_precis;
+    }
+
+    if (wb.itcwb_size) {
+        toEdit.wb.itcwb_size = mods.wb.itcwb_size;
+    }
+
+    if (wb.itcwb_delta) {
+        toEdit.wb.itcwb_delta = mods.wb.itcwb_delta;
+    }
+
+    if (wb.itcwb_fgreen) {
+        toEdit.wb.itcwb_fgreen = mods.wb.itcwb_fgreen;
+    }
+
+    if (wb.itcwb_rgreen) {
+        toEdit.wb.itcwb_rgreen = mods.wb.itcwb_rgreen;
+    }
+
+    if (wb.itcwb_nopurple) {
+        toEdit.wb.itcwb_nopurple = mods.wb.itcwb_nopurple;
+    }
+
+    if (wb.itcwb_sorted) {
+        toEdit.wb.itcwb_sorted = mods.wb.itcwb_sorted;
+    }
+
+    if (wb.itcwb_forceextra) {
+        toEdit.wb.itcwb_forceextra = mods.wb.itcwb_forceextra;
+    }
+
+    if (wb.itcwb_sampling) {
+        toEdit.wb.itcwb_sampling = mods.wb.itcwb_sampling;
     }
 
     if (wb.green) {
