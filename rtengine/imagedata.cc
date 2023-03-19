@@ -17,19 +17,20 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <functional>
+#include <iostream>
+#include <regex>
+#include <sstream>
 
 #include <strings.h>
 #include <time.h>
 #include <tiff.h>
 #include <glib/gstdio.h>
 #include <glibmm/convert.h>
-#include <regex>
-#include <sstream>
 
 #include "imagedata.h"
 #include "imagesource.h"
-#include "rt_math.h"
 #include "metadata.h"
+#include "rt_math.h"
 #include "utils.h"
 
 #pragma GCC diagnostic warning "-Wextra"
