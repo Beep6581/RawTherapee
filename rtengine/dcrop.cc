@@ -1735,6 +1735,11 @@ void Crop::freeAll()
             shbuffer = nullptr;
         }
 
+        if (shbuf_real) {
+            delete [] shbuf_real;
+            shbuf_real = nullptr;
+        }
+
         PipetteBuffer::flush();
     }
 
