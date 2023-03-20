@@ -414,7 +414,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     itcwb_sampling = Gtk::manage (new Gtk::CheckButton (M("TP_WBALANCE_ITCWB_SAMPLING")));
     itcwb_sampling->set_tooltip_markup (M("TP_WBALANCE_ITCWSAMPLING_TOOLTIP"));
     itcwb_sampling ->set_active (false);
-
+    
     /*  Gtk::Box* boxgreen = Gtk::manage (new Gtk::Box ());
     boxgreen->show ();
 
@@ -430,6 +430,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     pack_start (*equal);
     pack_start (*tempBias);
     pack_start(*observer10);
+
 
     itcwbBox->pack_start (*itcwb_thres);
 //    itcwbBox->pack_start (*itcwb_precis);
@@ -632,6 +633,8 @@ void WhiteBalance::itcwb_sampling_toggled ()
 }
 
 
+
+
 void WhiteBalance::adjusterChanged(Adjuster* a, double newval)
 {
     int tVal = (int)temp->getValue();
@@ -741,6 +744,7 @@ void WhiteBalance::checkBoxToggled(CheckBox* c, CheckValue newval)
                 : M("GENERAL_UNCHANGED"));
     }
 }
+
 
 void WhiteBalance::optChanged ()
 {

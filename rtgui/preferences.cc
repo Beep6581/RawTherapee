@@ -291,15 +291,18 @@ Gtk::Widget* Preferences::getBatchProcPanel()
     mi->set_value(behavColumns.label, M("TP_COLORAPP_LABEL"));
     appendBehavList (mi, M("TP_COLORAPP_LABEL_SCENE") + " - " + M("TP_COLORAPP_ABSOLUTELUMINANCE"), ADDSET_CAT_ADAPTSCENE, true);
     appendBehavList (mi, M("TP_COLORAPP_LABEL_VIEWING") + " - " + M("TP_COLORAPP_ABSOLUTELUMINANCE"), ADDSET_CAT_ADAPTVIEWING, true);
+    appendBehavList(mi, M("TP_COLORAPP_CIECAT_DEGREE"), ADDSET_CAT_DEGREE, true);
     appendBehavList(mi, M("TP_COLORAPP_LIGHT"), ADDSET_CAT_LIGHT, true);
     appendBehavList(mi, M("TP_COLORAPP_BRIGHT"), ADDSET_CAT_BRIGHT, true);
     appendBehavList(mi, M("TP_COLORAPP_CHROMA"), ADDSET_CAT_CHROMA, true);
-    appendBehavList (mi, M ("TP_COLORAPP_CHROMA_S"), ADDSET_CAT_CHROMA_S, true);
-    appendBehavList (mi, M ("TP_COLORAPP_CHROMA_M"), ADDSET_CAT_CHROMA_M, true);
+    appendBehavList(mi, M ("TP_COLORAPP_CHROMA_S"), ADDSET_CAT_CHROMA_S, true);
+    appendBehavList(mi, M ("TP_COLORAPP_CHROMA_M"), ADDSET_CAT_CHROMA_M, true);
     appendBehavList(mi, M("TP_COLORAPP_RSTPRO"), ADDSET_CAT_RSTPRO, true);
     appendBehavList(mi, M("TP_COLORAPP_CONTRAST"), ADDSET_CAT_CONTRAST, true);
     appendBehavList(mi, M("TP_COLORAPP_CONTRAST_Q"), ADDSET_CAT_CONTRAST_Q, true);
     appendBehavList(mi, M("TP_COLORAPP_HUE"), ADDSET_CAT_HUE, true);
+    appendBehavList(mi, M("TP_COLORAPP_CIECAT_DEGREEOUT"), ADDSET_CAT_DEGREEOUT, true);
+    appendBehavList(mi, M("TP_WBALANCE_TEMPERATURE"), ADDSET_CAT_TEMPOUT, true);
     appendBehavList(mi, M("TP_COLORAPP_BADPIXSL"), ADDSET_CAT_BADPIX, true);
 
     mi = behModel->append();

@@ -201,6 +201,9 @@ std::tuple<Glib::ustring, bool> BatchQueueEntry::getToolTip (int x, int y) const
                 if (saveFormat.tiffUncompressed) {
                     tooltip += Glib::ustring::compose("\n%1", M("SAVEDLG_TIFFUNCOMPRESSED"));
                 }
+                if (saveFormat.bigTiff) {
+                    tooltip += Glib::ustring::compose("\n%1", M("SAVEDLG_BIGTIFF"));
+                }
             }
         }
     }

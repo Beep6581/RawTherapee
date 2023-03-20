@@ -313,6 +313,7 @@ void Options::setDefaults()
     saveFormat.tiffBits = 16;
     saveFormat.tiffFloat = false;
     saveFormat.tiffUncompressed = true;
+    saveFormat.bigTiff = false;
     saveFormat.saveParams = true;
 
     saveFormatBatch.format = "jpg";
@@ -1033,6 +1034,10 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("Output", "TiffUncompressed")) {
                     saveFormat.tiffUncompressed = keyFile.get_boolean("Output", "TiffUncompressed");
+                }
+
+                if (keyFile.has_key("Output", "BigTiff")) {
+                    saveFormat.bigTiff = keyFile.get_boolean("Output", "BigTiff");
                 }
 
                 if (keyFile.has_key("Output", "SaveProcParams")) {
@@ -2397,6 +2402,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("Output", "TiffBps", saveFormat.tiffBits);
         keyFile.set_boolean("Output", "TiffFloat", saveFormat.tiffFloat);
         keyFile.set_boolean("Output", "TiffUncompressed", saveFormat.tiffUncompressed);
+        keyFile.set_boolean("Output", "BigTiff", saveFormat.bigTiff);
         keyFile.set_boolean("Output", "SaveProcParams", saveFormat.saveParams);
 
         keyFile.set_string("Output", "FormatBatch", saveFormatBatch.format);

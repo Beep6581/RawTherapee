@@ -662,7 +662,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
 //   Gtk::Image* iblueredL = Gtk::manage (new RTImage ("circle-blue-small.png"));
 //   Gtk::Image* iblueredR = Gtk::manage (new RTImage ("circle-red-small.png"));
 
-    degreeout  = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CIECAT_DEGREE"),    0.,  100.,  1.,   90.));
+    degreeout  = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CIECAT_DEGREEOUT"),    0.,  100.,  1.,   90.));
 
  //   degreeout->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
@@ -683,9 +683,9 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
     ybout->set_tooltip_markup (M ("TP_COLORAPP_YBOUT_TOOLTIP"));
 
     tempout->set_tooltip_markup (M ("TP_COLORAPP_TEMP2_TOOLTIP"));
-    tempout->throwOnButtonRelease();
+//    tempout->throwOnButtonRelease();
     tempout->addAutoButton (M ("TP_COLORAPP_TEMPOUT_TOOLTIP"));
-	// I renable tempout with addautobutton to work properly (and all code disabled). There are certainly some redundancies, but it doesn't matter
+    // I renable tempout with addautobutton to work properly (and all code disabled). There are certainly some redundancies, but it doesn't matter
     tempout->show();
     greenout->show();
     ybout->show();
@@ -696,8 +696,8 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
     tempgreenVBox = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     tempgreenVBox->set_spacing (2);
     tempgreenVBox->pack_start (*tempout);
-	tempgreenVBox->pack_start (*greenout);
-	tempgreenFrame->add(*tempgreenVBox);
+    tempgreenVBox->pack_start (*greenout);
+    tempgreenFrame->add(*tempgreenVBox);
     p3VBox->pack_start(*tempgreenFrame);
     p3VBox->pack_start (*ybout);
 
@@ -832,7 +832,7 @@ void ColorAppearance::neutral_pressed ()
     qcontrast->resetValue (false);
     colorh->resetValue (false);
     tempout->resetValue (false);
-	tempout->setAutoValue (true);
+    tempout->setAutoValue (true);
     greenout->resetValue (false);
     ybout->resetValue (false);
     tempsc->resetValue (false);
@@ -893,6 +893,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     if (pedited) {
         degree->setEditedState        (pedited->colorappearance.degree ? Edited : UnEdited);
         degreeout->setEditedState        (pedited->colorappearance.degreeout ? Edited : UnEdited);
+        tempout->setEditedState        (pedited->colorappearance.tempout ? Edited : UnEdited);
         adapscen->setEditedState      (pedited->colorappearance.adapscen ? Edited : UnEdited);
         ybscen->setEditedState      (pedited->colorappearance.ybscen ? Edited : UnEdited);
         adaplum->setEditedState       (pedited->colorappearance.adaplum ? Edited : UnEdited);
@@ -1131,7 +1132,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     qcontrast->setValue (pp->colorappearance.qcontrast);
     colorh->setValue (pp->colorappearance.colorh);
     tempout->setValue (pp->colorappearance.tempout);
-	tempout->setAutoValue (pp->colorappearance.autotempout);
+    tempout->setAutoValue (pp->colorappearance.autotempout);
     greenout->setValue (pp->colorappearance.greenout);
     ybout->setValue (pp->colorappearance.ybout);
     tempsc->setValue (pp->colorappearance.tempsc);
@@ -1483,12 +1484,14 @@ void ColorAppearance::catmethodChanged()
         ybout->setValue(18);
         tempout->setValue (nexttemp);
     
-		if(tempout->getAutoValue()) {
-			tempout->resetValue (false);
-		} else {
-			tempout->setValue (nexttemp);
-			tempout->setAutoValue (true);
-		}
+        if(tempout->getAutoValue()) {
+            tempout->resetValue (false);
+            tempout->setAutoValue (true);
+        } else {
+            tempout->resetValue (false);
+            tempout->setValue (nexttemp);
+            tempout->setAutoValue (true);
+        }
 
         greenout->setValue (nextgreen);
         enableListener();
@@ -1515,6 +1518,7 @@ void ColorAppearance::catmethodChanged()
         degreeout->resetValue (false);
         ybout->resetValue (false);
         tempout->resetValue (false);
+        tempout->setAutoValue (true);
         greenout->resetValue (false);
         enableListener();
     }  else if (catmethod->get_active_row_number() == 2) {
@@ -2311,7 +2315,7 @@ void ColorAppearance::updateCurveBackgroundHistogram(
 
 
 
-void ColorAppearance::setAdjusterBehavior (bool degreeadd, bool adapscenadd, bool adaplumadd, bool badpixsladd, bool jlightadd, bool chromaadd, bool contrastadd, bool rstprotectionadd, bool qbrightadd, bool qcontrastadd, bool schromaadd, bool mchromaadd, bool colorhadd)
+void ColorAppearance::setAdjusterBehavior (bool degreeadd, bool adapscenadd, bool adaplumadd, bool badpixsladd, bool jlightadd, bool chromaadd, bool contrastadd, bool rstprotectionadd, bool qbrightadd, bool qcontrastadd, bool schromaadd, bool mchromaadd, bool colorhadd, bool degreeoutadd, bool tempoutadd)
 {
 
     degree->setAddMode (degreeadd);
@@ -2327,6 +2331,9 @@ void ColorAppearance::setAdjusterBehavior (bool degreeadd, bool adapscenadd, boo
     contrast->setAddMode (contrastadd);
     qcontrast->setAddMode (qcontrastadd);
     colorh->setAddMode (colorhadd);
+    degreeout->setAddMode (degreeoutadd);
+    tempout->setAddMode (tempoutadd);
+
 }
 
 void ColorAppearance::trimValues (rtengine::procparams::ProcParams* pp)
