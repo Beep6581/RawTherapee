@@ -2206,7 +2206,8 @@ TP_COLORAPP_CHROMA_M_TOOLTIP;Colorfulness in CIECAM is the perceived amount of h
 TP_COLORAPP_CHROMA_S;Saturation (S)
 TP_COLORAPP_CHROMA_S_TOOLTIP;Saturation in CIECAM corresponds to the color of a stimulus in relation to its own brightness. It differs from L*a*b* and RGB saturation.
 TP_COLORAPP_CHROMA_TOOLTIP;Chroma in CIECAM corresponds to the color of a stimulus relative to the clarity of a stimulus that appears white under identical conditions. It differs from L*a*b* and RGB chroma.
-TP_COLORAPP_CIECAT_DEGREE;Adaptation
+TP_COLORAPP_CIECAT_DEGREE;Chromatic Adaptation Scene
+TP_COLORAPP_CIECAT_DEGREEOUT;Chromatic Adaptation Viewing
 TP_COLORAPP_CONTRAST;Contrast (J)
 TP_COLORAPP_CONTRAST_Q;Contrast (Q)
 TP_COLORAPP_CONTRAST_Q_TOOLTIP;Contrast (Q) in CIECAM is based on brightness. It differs from L*a*b* and RGB contrast.
