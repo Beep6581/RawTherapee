@@ -386,6 +386,8 @@ struct RotateParamsEdited {
 
 struct DistortionParamsEdited {
     bool amount;
+    bool defish;
+    bool focal_length;
 };
 class LocallabParamsEdited
 {
@@ -1110,7 +1112,6 @@ struct PerspectiveParamsEdited {
     bool horizontal;
     bool vertical;
     bool camera_crop_factor;
-    bool camera_defish;
     bool camera_focal_length;
     bool camera_pitch;
     bool camera_scale;

@@ -332,6 +332,8 @@ void ParamsEdited::set(bool v)
     commonTrans.autofill = v;
     rotate.degree = v;
     distortion.amount = v;
+    distortion.defish = v;
+    distortion.focal_length = v;
     lensProf.lcMode = v;
     lensProf.lcpFile = v;
     lensProf.useDist = v;
@@ -346,7 +348,6 @@ void ParamsEdited::set(bool v)
     perspective.horizontal = v;
     perspective.vertical = v;
     perspective.camera_crop_factor = v;
-    perspective.camera_defish = v;
     perspective.camera_focal_length = v;
     perspective.camera_pitch = v;
     perspective.camera_scale = v;
@@ -1039,6 +1040,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         commonTrans.autofill = commonTrans.autofill && p.commonTrans.autofill == other.commonTrans.autofill;
         rotate.degree = rotate.degree && p.rotate.degree == other.rotate.degree;
         distortion.amount = distortion.amount && p.distortion.amount == other.distortion.amount;
+        distortion.defish = distortion.defish && p.distortion.defish == other.distortion.defish;
+        distortion.focal_length = distortion.focal_length && p.distortion.focal_length == other.distortion.focal_length;
         lensProf.lcMode = lensProf.lcMode && p.lensProf.lcMode == other.lensProf.lcMode;
         lensProf.lcpFile = lensProf.lcpFile && p.lensProf.lcpFile == other.lensProf.lcpFile;
         lensProf.useDist = lensProf.useDist && p.lensProf.useDist == other.lensProf.useDist;
@@ -1053,7 +1056,6 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         perspective.horizontal = perspective.horizontal && p.perspective.horizontal == other.perspective.horizontal;
         perspective.vertical = perspective.vertical && p.perspective.vertical == other.perspective.vertical;
         perspective.camera_crop_factor = perspective.camera_crop_factor && p.perspective.camera_crop_factor == other.perspective.camera_crop_factor;
-        perspective.camera_defish = perspective.camera_defish && p.perspective.camera_defish == other.perspective.camera_defish;
         perspective.camera_focal_length = perspective.camera_focal_length && p.perspective.camera_focal_length == other.perspective.camera_focal_length;
         perspective.camera_pitch = perspective.camera_pitch && p.perspective.camera_pitch == other.perspective.camera_pitch;
         perspective.camera_scale = perspective.camera_scale && p.perspective.camera_scale == other.perspective.camera_scale;
@@ -3259,6 +3261,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.distortion.amount = dontforceSet && options.baBehav[ADDSET_DIST_AMOUNT] ? toEdit.distortion.amount + mods.distortion.amount : mods.distortion.amount;
     }
 
+    if (distortion.defish) {
+        toEdit.distortion.defish = mods.distortion.defish;
+    }
+
+    if (distortion.focal_length != DistortionParams::DEFAULT_FOCAL_LENGTH) {
+        toEdit.distortion.focal_length = dontforceSet && options.baBehav[ADDSET_DIST_FOCAL_LENGTH] ? toEdit.distortion.focal_length + mods.distortion.focal_length : mods.distortion.focal_length;
+    }
+
     if (lensProf.lcMode) {
         toEdit.lensProf.lcMode = mods.lensProf.lcMode;
     }
@@ -3305,10 +3315,6 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (perspective.camera_crop_factor) {
         toEdit.perspective.camera_crop_factor = dontforceSet && options.baBehav[ADDSET_PERSP_CAM_FOCAL_LENGTH] ? toEdit.perspective.camera_crop_factor + mods.perspective.camera_crop_factor : mods.perspective.camera_crop_factor;
-    }
-
-    if (perspective.camera_defish) {
-        toEdit.perspective.camera_defish = mods.perspective.camera_defish;
     }
 
     if (perspective.camera_scale) {

@@ -65,11 +65,9 @@ protected:
     Adjuster* projection_pitch;
     Adjuster* projection_rotate;
     Adjuster* camera_scale;
-    Gtk::CheckButton* camera_defish;
     Adjuster* projection_shift_horiz;
     Adjuster* projection_shift_vert;
     Adjuster* projection_yaw;
-    rtengine::ProcEvent EvPerspCamDefish;
     rtengine::ProcEvent EvPerspCamFocalLength;
     rtengine::ProcEvent EvPerspCamShift;
     rtengine::ProcEvent EvPerspCamAngle;
@@ -80,7 +78,6 @@ protected:
     rtengine::ProcEvent EvPerspCamScale;
     rtengine::ProcEvent EvPerspProjAngle;
     rtengine::ProcEvent EvPerspRender;
-    rtengine::ProcEvent EvPerspCamDefishVoid;
     rtengine::ProcEvent EvPerspCamFocalLengthVoid;
     rtengine::ProcEvent EvPerspCamShiftVoid;
     rtengine::ProcEvent EvPerspCamAngleVoid;
@@ -88,7 +85,6 @@ protected:
     rtengine::ProcEvent EvPerspProjRotateVoid;
     rtengine::ProcEvent EvPerspCamScaleVoid;
     rtengine::ProcEvent EvPerspProjAngleVoid;
-    rtengine::ProcEvent* event_persp_cam_defish;
     rtengine::ProcEvent* event_persp_cam_focal_length;
     rtengine::ProcEvent* event_persp_cam_shift;
     rtengine::ProcEvent* event_persp_cam_angle;
@@ -127,7 +123,6 @@ public:
     void linesEditButtonPressed (void);
     void linesEraseButtonPressed (void);
     void methodChanged (void);
-    void defishChanged (void);
     void requestApplyControlLines(void);
     void setAdjusterBehavior (
         bool badd,

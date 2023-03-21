@@ -1879,14 +1879,11 @@ bool RotateParams::operator !=(const RotateParams& other) const
     return !(*this == other);
 }
 
-DistortionParams::DistortionParams() :
-    amount(0.0)
-{
-}
+DistortionParams::DistortionParams() {}
 
 bool DistortionParams::operator ==(const DistortionParams& other) const
 {
-    return amount == other.amount;
+    return amount == other.amount && defish == other.defish && focal_length == other.focal_length;
 }
 
 bool DistortionParams::operator !=(const DistortionParams& other) const
@@ -1973,7 +1970,6 @@ PerspectiveParams::PerspectiveParams() :
     horizontal(0.0),
     vertical(0.0),
     camera_crop_factor(0.0),
-    camera_defish(false),
     camera_focal_length(0.0),
     camera_pitch(0.0),
     camera_roll(0.0),
@@ -1996,7 +1992,6 @@ bool PerspectiveParams::operator ==(const PerspectiveParams& other) const
         && render == other.render
         && horizontal == other.horizontal
         && vertical == other.vertical
-        && camera_defish == other.camera_defish
         && camera_focal_length == other.camera_focal_length
         && camera_crop_factor == other.camera_crop_factor
         && camera_pitch == other.camera_pitch
@@ -6287,6 +6282,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // Distortion
         saveToKeyfile(!pedited || pedited->distortion.amount, "Distortion", "Amount", distortion.amount, keyFile);
+        saveToKeyfile(!pedited || pedited->distortion.focal_length, "Distortion", "FocalLength", distortion.focal_length, keyFile);
+        saveToKeyfile(!pedited || pedited->distortion.defish, "Distortion", "Defish", distortion.defish, keyFile);
 
 // Lens profile
         saveToKeyfile(!pedited || pedited->lensProf.lcMode, "LensProfile", "LcMode", lensProf.getMethodString(lensProf.lcMode), keyFile);
@@ -6306,7 +6303,6 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->perspective.camera_focal_length, "Perspective", "CameraFocalLength", perspective.camera_focal_length, keyFile);
         saveToKeyfile(!pedited || pedited->perspective.camera_pitch, "Perspective", "CameraPitch", perspective.camera_pitch, keyFile);
         saveToKeyfile(!pedited || pedited->perspective.camera_scale, "Perspective", "CameraScale", perspective.camera_scale, keyFile);
-        saveToKeyfile(!pedited || pedited->perspective.camera_defish, "Perspective", "CameraDefish", perspective.camera_defish, keyFile);
         saveToKeyfile(!pedited || pedited->perspective.camera_roll, "Perspective", "CameraRoll", perspective.camera_roll, keyFile);
         saveToKeyfile(!pedited || pedited->perspective.camera_shift_horiz, "Perspective", "CameraShiftHorizontal", perspective.camera_shift_horiz, keyFile);
         saveToKeyfile(!pedited || pedited->perspective.camera_shift_vert, "Perspective", "CameraShiftVertical", perspective.camera_shift_vert, keyFile);
@@ -8331,6 +8327,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
         if (keyFile.has_group("Distortion")) {
             assignFromKeyfile(keyFile, "Distortion", "Amount", pedited, distortion.amount, pedited->distortion.amount);
+            assignFromKeyfile(keyFile, "Distortion", "Defish", pedited, distortion.defish, pedited->distortion.defish);
+            assignFromKeyfile(keyFile, "Distortion", "FocalLength", pedited, distortion.focal_length, pedited->distortion.focal_length);
         }
 
         if (keyFile.has_group("LensProfile")) {
@@ -8391,7 +8389,6 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Perspective", "CameraShiftVertical", pedited, perspective.camera_shift_vert, pedited->perspective.camera_shift_vert);
             assignFromKeyfile(keyFile, "Perspective", "CameraPitch", pedited, perspective.camera_pitch, pedited->perspective.camera_pitch);
             assignFromKeyfile(keyFile, "Perspective", "CameraScale", pedited, perspective.camera_scale, pedited->perspective.camera_scale);
-            assignFromKeyfile(keyFile, "Perspective", "CameraDefish", pedited, perspective.camera_defish, pedited->perspective.camera_defish);
             assignFromKeyfile(keyFile, "Perspective", "CameraRoll", pedited, perspective.camera_roll, pedited->perspective.camera_roll);
             assignFromKeyfile(keyFile, "Perspective", "CameraCropFactor", pedited, perspective.camera_crop_factor, pedited->perspective.camera_crop_factor);
             assignFromKeyfile(keyFile, "Perspective", "CameraFocalLength", pedited, perspective.camera_focal_length, pedited->perspective.camera_focal_length);

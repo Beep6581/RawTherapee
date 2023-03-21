@@ -33,10 +33,19 @@ class Distortion final :
 protected:
     Gtk::Button*   autoDistor;
     Adjuster* distor;
+    Adjuster* focal_length;
     sigc::connection    idConn;
     LensGeomListener * rlistener;
+    Gtk::CheckButton* defish;
 
 public:
+    rtengine::ProcEvent EvDistortionDefish;
+    rtengine::ProcEvent EvDistortionDefishVoid;
+    rtengine::ProcEvent* event_distortion_defish;
+
+    rtengine::ProcEvent EvDistortionFocalLength;
+    rtengine::ProcEvent EvDistortionFocalLengthVoid;
+    rtengine::ProcEvent* event_distortion_focal_length;
 
     Distortion ();
 
@@ -53,4 +62,6 @@ public:
     {
         rlistener = l;
     }
+    void defishChanged (void);
+    void focalLengthChanged(Adjuster* a, double const newval);
 };

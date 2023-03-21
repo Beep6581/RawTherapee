@@ -89,7 +89,6 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
 
     auto mapper = ProcEventMapper::getInstance();
     // Normal events.
-    EvPerspCamDefish = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_CAM_DEFISH");
     EvPerspCamAngle = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_CAM_ANGLE");
     EvPerspCamFocalLength = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_CAM_FL");
     EvPerspCamShift = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_CAM_SHIFT");
@@ -100,7 +99,6 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     EvPerspProjShift = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_PROJ_SHIFT");
     EvPerspRender = mapper->newEvent(TRANSFORM, "GENERAL_NA");
     // Void events.
-    EvPerspCamDefishVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_CAM_DEFISH");
     EvPerspCamAngleVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_CAM_ANGLE");
     EvPerspCamFocalLengthVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_CAM_FL");
     EvPerspCamShiftVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_CAM_SHIFT");
@@ -254,10 +252,6 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     camera_scale= Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_CAMERA_SCALE"), 0.1, 10, 0.01, 0));
     camera_scale->setAdjusterListener (this);
 
-    camera_defish = Gtk::manage(new Gtk::CheckButton(M("TP_PERSPECTIVE_CAMERA_DEFISH")));
-    camera_defish->signal_toggled().connect(sigc::mem_fun(*this, &PerspCorrection::defishChanged));
-
-
     Gtk::Frame* recovery_frame = Gtk::manage (new Gtk::Frame
             (M("TP_PERSPECTIVE_RECOVERY_FRAME")));
     recovery_frame->set_label_align(0.025, 0.5);
@@ -277,7 +271,6 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     auto_hbox->pack_start (*auto_yaw);
     auto_hbox->pack_start (*auto_pitch_yaw);
 
-    camera_vbox->pack_start (*camera_defish);
     camera_vbox->pack_start (*camera_focal_length);
     camera_vbox->pack_start (*camera_crop_factor);
     camera_vbox->pack_start (*camera_shift_horiz);
@@ -346,7 +339,6 @@ void PerspCorrection::read (const ProcParams* pp, const ParamsEdited* pedited)
     vert->setValue (pp->perspective.vertical);
     setFocalLengthValue (pp, metadata);
     camera_pitch->setValue (pp->perspective.camera_pitch);
-    camera_defish->set_active(pp->perspective.camera_defish);
     camera_scale->setValue (pp->perspective.camera_scale);
     camera_roll->setValue (pp->perspective.camera_roll);
     camera_shift_horiz->setValue (pp->perspective.camera_shift_horiz);
@@ -400,7 +392,6 @@ void PerspCorrection::write (ProcParams* pp, ParamsEdited* pedited)
         pp->perspective.camera_focal_length = camera_focal_length->getValue ();
     }
     pp->perspective.camera_pitch = camera_pitch->getValue ();
-    pp->perspective.camera_defish = camera_defish->get_active ();
     pp->perspective.camera_scale = camera_scale->getValue ();
     pp->perspective.camera_roll = camera_roll->getValue ();
     pp->perspective.camera_shift_horiz = camera_shift_horiz->getValue ();
@@ -424,7 +415,6 @@ void PerspCorrection::write (ProcParams* pp, ParamsEdited* pedited)
     }
 
     if (pedited) {
-        pedited->perspective.camera_defish = true;
         pedited->perspective.method =  method->get_active_row_number() != 2;
         pedited->perspective.horizontal = horiz->getEditedState ();
         pedited->perspective.vertical = vert->getEditedState ();
@@ -642,13 +632,6 @@ void PerspCorrection::methodChanged (void)
         listener->panelChanged (EvPerspMethod, method->get_active_text ());
     }
 
-}
-
-void PerspCorrection::defishChanged()
-{
-    if (listener) {
-        listener->panelChanged(EvPerspCamDefish, camera_defish->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
-    }
 }
 
 void PerspCorrection::setAdjusterBehavior (
@@ -906,7 +889,6 @@ void PerspCorrection::requestApplyControlLines(void)
 void PerspCorrection::setCamBasedEventsActive(bool active)
 {
     if (active) {
-        event_persp_cam_defish = &EvPerspCamDefish;
         event_persp_cam_focal_length = &EvPerspCamFocalLength;
         event_persp_cam_shift = &EvPerspCamShift;
         event_persp_cam_angle = &EvPerspCamAngle;
@@ -915,7 +897,6 @@ void PerspCorrection::setCamBasedEventsActive(bool active)
         event_persp_proj_rotate = &EvPerspProjRotate;
         event_persp_proj_angle = &EvPerspProjAngle;
     } else {
-        event_persp_cam_defish = &EvPerspCamDefishVoid;
         event_persp_cam_focal_length = &EvPerspCamFocalLengthVoid;
         event_persp_cam_shift = &EvPerspCamShiftVoid;
         event_persp_cam_angle = &EvPerspCamAngleVoid;
