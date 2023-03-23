@@ -693,8 +693,10 @@ void WhiteBalance::adjusterChanged(Adjuster* a, double newval)
     if (listener && getEnabled()) {
         if (a == temp) {
             listener->panelChanged (EvWBTemp, Glib::ustring::format ((int)a->getValue()));
+            itcwbFrame->set_sensitive(false);
         } else if (a == green) {
             listener->panelChanged (EvWBGreen, Glib::ustring::format (std::setw(4), std::fixed, std::setprecision(3), a->getValue()));
+            itcwbFrame->set_sensitive(false);
         } else if (a == equal) {
             listener->panelChanged (EvWBequal, Glib::ustring::format (std::setw(4), std::fixed, std::setprecision(3), a->getValue()));
         } else if (a == tempBias) {
@@ -957,6 +959,20 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         itcwb_sampling->hide();
         itcwbFrame->hide();
     }
+    
+        const Gtk::TreeModel::Row row = getActiveMethod();
+        unsigned int methodId = findWBEntryId(row[methodColumns.colLabel], WBLT_GUI);
+    
+        const WBEntry& currMethod = WBParams::getWbEntries()[methodId];
+
+        bool autit = (currMethod.ppLabel == "autitcgreen");
+        if (autit) {
+            StudLabel->show();
+            itcwbFrame->set_sensitive(true);
+        } else {
+            StudLabel->hide();
+            itcwbFrame->set_sensitive(false);
+        }
 
     if (pedited) {
         // By default, temperature and green are said "UnEdited", but it may change later
