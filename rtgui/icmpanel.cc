@@ -204,10 +204,12 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wFrame->add(*wProfVBox);
 
     //-----------------gamma TRC working
-    Gtk::Frame *trcFrame = Gtk::manage(new Gtk::Frame(M("TP_ICM_TRCFRAME")));
-    trcFrame->set_label_align(0.025, 0.5);
+//    Gtk::Frame *trcFrame = Gtk::manage(new Gtk::Frame(M("TP_ICM_TRCFRAME")));
+    trcExp = Gtk::manage(new MyExpander(false, M("TP_ICM_TRCFRAME")));
+    setExpandAlignProperties(trcExp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+//    trcFrame->set_label_align(0.025, 0.5);
     Gtk::Box *trcProfVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
-    trcFrame->set_tooltip_text(M("TP_ICM_TRCFRAME_TOOLTIP"));
+    trcExp->set_tooltip_text(M("TP_ICM_TRCFRAME_TOOLTIP"));
 
     wTRCBox = Gtk::manage(new Gtk::Box());
 
@@ -381,11 +383,14 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     aRendIntent->show();
     riaHBox->pack_start(*aRendIntent->buttonGroup, Gtk::PACK_EXPAND_PADDING);
 
-    trcFrame->add(*trcProfVBox);
+  //  trcFrame->add(*trcProfVBox);
+    trcExp->add(*trcProfVBox);
 
     pack_start(*wFrame, Gtk::PACK_EXPAND_WIDGET);
-    pack_start(*trcFrame, Gtk::PACK_EXPAND_WIDGET);
+ //   pack_start(*trcFrame, Gtk::PACK_EXPAND_WIDGET);
+    pack_start(*trcExp, Gtk::PACK_EXPAND_WIDGET);
     pack_start(*redFrame, Gtk::PACK_EXPAND_WIDGET);
+    trcExp->set_expanded(false);
 
 
     // ---------------------------- Output profile
@@ -788,6 +793,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     ConnectionBlocker wtrcconn_(wtrcconn);
     ConnectionBlocker willconn_(willconn);
     ConnectionBlocker wprimconn_(wprimconn);
+    trcExp->set_expanded(false);
 
     if (pp->icm.inputProfile.substr(0, 5) != "file:") {
         ipDialog->set_filename(" ");
