@@ -5194,7 +5194,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     if( wbpar.itcwb_forceextra && wbpar.itcwb_sampling == false) {//Adobe RGB
        profuse = "ACESp0";//cover all CIE xy diagram
     }
-    
+    if(wbpar.itcwb_sampling) {
+        profuse = "sRGB";
+    }
     TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(profuse); //ACESp0 or sRGB
     const float wp[3][3] = {
         {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
@@ -5746,7 +5748,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     int sizcurr2ref = sizcurrref - ntr;
     const int sizcu30 = sizcurrref - n30;
     int nbm = 77;//number max of color used = 1.4 * 55 in case all CIExy diagram
-    if(profuse == "sRGB" || wbpar.itcwb_sampling == true) {
+    if(profuse == "Adobe RGB" || wbpar.itcwb_sampling == true) {
         nbm = 55;
     }
     const int sizcu4 = rtengine::min(sizcu30, nbm);//size of chroma values
