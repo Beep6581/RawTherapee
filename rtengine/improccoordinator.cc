@@ -524,7 +524,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
             currWB = ColorTemp(params->wb.temperature, params->wb.green, params->wb.equal, params->wb.method, params->wb.observer);
             float studgood = 1000.f;
-printf("OK WB\n");
+//printf("OK WB\n");
             if (!params->wb.enabled) {
                 currWB = ColorTemp();
             } else if (params->wb.method == "Camera") {
@@ -548,7 +548,7 @@ printf("OK WB\n");
                         params->wb.temperature = tempitc;
                         params->wb.green = greenitc;
                         currWB = ColorTemp(params->wb.temperature, params->wb.green, 1., params->wb.method, params->wb.observer);
-                        printf("tempitc=%f greitc=%f\n", tempitc, greenitc);
+                     //   printf("tempitc=%f greitc=%f\n", tempitc, greenitc);
 
                         currWB.getMultipliers(rm, gm, bm);
                     }
