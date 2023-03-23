@@ -187,7 +187,7 @@ int StdImageSource::load (const Glib::ustring &fname)
         plistener->setProgress (1.0);
     }
 
-    wb = ColorTemp (1.0, 1.0, 1.0, 1.0);
+    wb = ColorTemp (1.0, 1.0, 1.0, 1.0, ColorTemp::DEFAULT_OBSERVER);
     //this is probably a mistake if embedded profile is not D65
 
     return 0;
@@ -348,7 +348,7 @@ void StdImageSource::getAutoWBMultipliers (double &rm, double &gm, double &bm)
     blueAWBMul  = bm;
 }
 
-ColorTemp StdImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D>& blue, int tran, double equal)
+ColorTemp StdImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D>& blue, int tran, double equal, StandardObserver observer)
 {
     int rn, gn, bn;
     double reds, greens, blues;
@@ -360,7 +360,7 @@ ColorTemp StdImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
         printf ("AVG: %g %g %g\n", reds / rn, greens / gn, blues / bn);
     }
 
-    return ColorTemp (reds / rn * img_r, greens / gn * img_g, blues / bn * img_b, equal);
+    return ColorTemp (reds / rn * img_r, greens / gn * img_g, blues / bn * img_b, equal, observer);
 }
 
 void StdImageSource::flush() {

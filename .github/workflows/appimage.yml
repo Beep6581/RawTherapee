@@ -10,6 +10,8 @@ on:
     branches:
       - dev
   workflow_dispatch:
+env:
+  publish_pre_dev_labels: '[]'
 jobs:
   build:
     runs-on: ubuntu-18.04
@@ -167,3 +169,33 @@ jobs:
           files: |
             ${{env.PUBLISH_NAME}}.AppImage
             ${{env.PUBLISH_NAME}}-AboutThisBuild.txt
+
+      - name: Prepare for publishing pre-dev
+        id: prepare-publish-pre-dev
+        if: ${{github.event_name == 'pull_request' && contains(fromJSON(env.publish_pre_dev_labels), github.event.pull_request.head.label)}}
+        run: |
+          echo "Making ref name."
+          REF_NAME_FILTERED="$(echo '${{github.event.pull_request.head.label}}' | tr ':' '_' | sed 's/[^A-z0-9_.-]//g')"
+          echo "Ref name is '$REF_NAME_FILTERED'."
+
+          echo "Setting publish name."
+          PUBLISH_NAME="RawTherapee_${REF_NAME_FILTERED}_${{matrix.build_type}}"
+          echo "Publish name is '$PUBLISH_NAME'."
+
+          echo "Renaming AppImage."
+          cp "build/$ARTIFACT_NAME.AppImage" "$PUBLISH_NAME.AppImage"
+
+          echo "Creating version file."
+          cp "build/AboutThisBuild.txt" "$PUBLISH_NAME-AppImage-AboutThisBuild.txt"
+
+          echo "Recording publish name."
+          echo "PUBLISH_NAME=$PUBLISH_NAME" >> $GITHUB_ENV
+
+      - name: Publish pre-dev artifacts
+        uses: softprops/action-gh-release@v1
+        if: ${{steps.prepare-publish-pre-dev.outcome == 'success'}}
+        with:
+          tag_name: pre-dev-github-actions
+          files: |
+            ${{env.PUBLISH_NAME}}.AppImage
+            ${{env.PUBLISH_NAME}}-AppImage-AboutThisBuild.txt
