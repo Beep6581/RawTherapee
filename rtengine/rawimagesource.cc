@@ -5190,7 +5190,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
    // BENCHFUN
 
     Glib::ustring profuse;
-    profuse = "sRGB";//or "Adobe RGB"
+    profuse = "Adobe RGB";//or //sRGB
     if( wbpar.itcwb_forceextra && wbpar.itcwb_sampling == false) {//Adobe RGB
        profuse = "ACESp0";//cover all CIE xy diagram
     }
