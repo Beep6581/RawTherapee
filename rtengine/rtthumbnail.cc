@@ -194,7 +194,7 @@ namespace rtengine
 
 using namespace procparams;
 
-Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh, double wbEq, bool inspectorMode)
+Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh, double wbEq, StandardObserver wbObserver, bool inspectorMode)
 {
 
     StdImageSource imgSrc;
@@ -310,8 +310,9 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
             tpp->blueAWBMul  = avg_b / double (n);
             tpp->wbEqual = wbEq;
             tpp->wbTempBias = 0.0;
+            tpp->wbObserver = wbObserver;
 
-            cTemp.mul2temp (tpp->redAWBMul, tpp->greenAWBMul, tpp->blueAWBMul, tpp->wbEqual, tpp->autoWBTemp, tpp->autoWBGreen);
+            cTemp.mul2temp (tpp->redAWBMul, tpp->greenAWBMul, tpp->blueAWBMul, tpp->wbEqual, tpp->wbObserver, tpp->autoWBTemp, tpp->autoWBGreen);
         }
 
         tpp->init ();
@@ -518,7 +519,7 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, eSensorType 
 #define FISGREEN(filter,row,col) \
     ((filter >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==1 || !filter)
 
-Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, eSensorType &sensorType, int &w, int &h, int fixwh, double wbEq, bool rotate, bool forHistogramMatching)
+Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, eSensorType &sensorType, int &w, int &h, int fixwh, double wbEq, StandardObserver wbObserver, bool rotate, bool forHistogramMatching)
 {
     RawImage *ri = new RawImage (fname);
     unsigned int tempImageNum = 0;
@@ -953,9 +954,10 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, eSensorType &sens
         tpp->blueAWBMul  = ri->get_rgb_cam (2, 0) * reds + ri->get_rgb_cam (2, 1) * greens + ri->get_rgb_cam (2, 2) * blues;
         tpp->wbEqual = wbEq;
         tpp->wbTempBias = 0.0;
+        tpp->wbObserver = wbObserver;
 
         ColorTemp cTemp;
-        cTemp.mul2temp (tpp->redAWBMul, tpp->greenAWBMul, tpp->blueAWBMul, tpp->wbEqual, tpp->autoWBTemp, tpp->autoWBGreen);
+        cTemp.mul2temp (tpp->redAWBMul, tpp->greenAWBMul, tpp->blueAWBMul, tpp->wbEqual, tpp->wbObserver, tpp->autoWBTemp, tpp->autoWBGreen);
     }
 
     if (rotate && ri->get_rotateDegree() > 0) {
@@ -1089,18 +1091,19 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     const float iso = metadata->getISOSpeed();
     const float fcomp = metadata->getExpComp();
 
-    // check if the WB's equalizer value has changed
-    if (wbEqual < (params.wb.equal - 5e-4) || wbEqual > (params.wb.equal + 5e-4) || wbTempBias < (params.wb.tempBias - 5e-4) || wbTempBias > (params.wb.tempBias + 5e-4)) {
+    // check if the WB's equalizer, temperature bias, or observer value has changed
+    if (wbEqual < (params.wb.equal - 5e-4) || wbEqual > (params.wb.equal + 5e-4) || wbTempBias < (params.wb.tempBias - 5e-4) || wbTempBias > (params.wb.tempBias + 5e-4) || wbObserver != params.wb.observer) {
         wbEqual = params.wb.equal;
         wbTempBias = params.wb.tempBias;
+        wbObserver = params.wb.observer;
         // recompute the autoWB
         ColorTemp cTemp;
-        cTemp.mul2temp (redAWBMul, greenAWBMul, blueAWBMul, wbEqual, autoWBTemp, autoWBGreen);
+        cTemp.mul2temp (redAWBMul, greenAWBMul, blueAWBMul, wbEqual, wbObserver, autoWBTemp, autoWBGreen);
         autoWBTemp += autoWBTemp * wbTempBias;
     }
 
     // compute WB multipliers
-    ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.equal, params.wb.method);
+    ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.equal, params.wb.method, params.wb.observer);
 
     if (!params.wb.enabled) {
         currWB = ColorTemp();
@@ -1109,9 +1112,9 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         double cam_r = colorMatrix[0][0] * camwbRed + colorMatrix[0][1] * camwbGreen + colorMatrix[0][2] * camwbBlue;
         double cam_g = colorMatrix[1][0] * camwbRed + colorMatrix[1][1] * camwbGreen + colorMatrix[1][2] * camwbBlue;
         double cam_b = colorMatrix[2][0] * camwbRed + colorMatrix[2][1] * camwbGreen + colorMatrix[2][2] * camwbBlue;
-        currWB = ColorTemp (cam_r, cam_g, cam_b, params.wb.equal);
+        currWB = ColorTemp (cam_r, cam_g, cam_b, params.wb.equal, params.wb.observer);
     } else if (params.wb.method == "autold") {
-        currWB = ColorTemp (autoWBTemp, autoWBGreen, wbEqual, "Custom");
+        currWB = ColorTemp (autoWBTemp, autoWBGreen, wbEqual, "Custom", wbObserver);
     }
 
     double rm, gm, bm;
@@ -1556,27 +1559,28 @@ void Thumbnail::getDimensions (int& w, int& h, double& scaleFac)
     }
 }
 
-void Thumbnail::getCamWB (double& temp, double& green)
+void Thumbnail::getCamWB (double& temp, double& green, StandardObserver observer)
 {
 
     double cam_r = colorMatrix[0][0] * camwbRed + colorMatrix[0][1] * camwbGreen + colorMatrix[0][2] * camwbBlue;
     double cam_g = colorMatrix[1][0] * camwbRed + colorMatrix[1][1] * camwbGreen + colorMatrix[1][2] * camwbBlue;
     double cam_b = colorMatrix[2][0] * camwbRed + colorMatrix[2][1] * camwbGreen + colorMatrix[2][2] * camwbBlue;
-    ColorTemp currWB = ColorTemp (cam_r, cam_g, cam_b, 1.0);  // we do not take the equalizer into account here, because we want camera's WB
+    ColorTemp currWB = ColorTemp (cam_r, cam_g, cam_b, 1.0, observer);  // we do not take the equalizer into account here, because we want camera's WB
     temp = currWB.getTemp ();
     green = currWB.getGreen ();
 }
 
-void Thumbnail::getAutoWB (double& temp, double& green, double equal, double tempBias)
+void Thumbnail::getAutoWB (double& temp, double& green, double equal, double tempBias, StandardObserver observer)
 {
 
-    if (equal != wbEqual || tempBias != wbTempBias) {
+    if (equal != wbEqual || tempBias != wbTempBias || observer != wbObserver) {
         // compute the values depending on equal
         ColorTemp cTemp;
         wbEqual = equal;
         wbTempBias = tempBias;
+        wbObserver = observer;
         // compute autoWBTemp and autoWBGreen
-        cTemp.mul2temp (redAWBMul, greenAWBMul, blueAWBMul, wbEqual, autoWBTemp, autoWBGreen);
+        cTemp.mul2temp (redAWBMul, greenAWBMul, blueAWBMul, wbEqual, wbObserver, autoWBTemp, autoWBGreen);
         autoWBTemp += autoWBTemp * tempBias;
     }
 
@@ -1633,7 +1637,7 @@ void Thumbnail::getSpotWB (const procparams::ProcParams& params, int xp, int yp,
     double gm = colorMatrix[1][0] * reds + colorMatrix[1][1] * greens + colorMatrix[1][2] * blues;
     double bm = colorMatrix[2][0] * reds + colorMatrix[2][1] * greens + colorMatrix[2][2] * blues;
 
-    ColorTemp ct (rm, gm, bm, params.wb.equal);
+    ColorTemp ct (rm, gm, bm, params.wb.equal, params.wb.observer);
     rtemp = ct.getTemp ();
     rgreen = ct.getGreen ();
 }

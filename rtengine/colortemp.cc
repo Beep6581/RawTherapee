@@ -171,7 +171,7 @@ static const color_match_type cie_colour_match_jd = {//350nm to 830nm   5 nm J.D
 
 
 
-ColorTemp::ColorTemp (double t, double g, double e, const std::string &m) : temp(t), green(g), equal(e), method(m)
+ColorTemp::ColorTemp (double t, double g, double e, const std::string &m, StandardObserver o) : temp(t), green(g), equal(e), method(m), observer(o)
 {
     clip (temp, green, equal);
 }
@@ -189,12 +189,24 @@ void ColorTemp::clip (double &temp, double &green, double &equal)
     equal = rtengine::LIM(equal, MINEQUAL, MAXEQUAL);
 }
 
-ColorTemp::ColorTemp (double mulr, double mulg, double mulb, double e) : equal(e), method("Custom")
+ColorTemp::ColorTemp (double mulr, double mulg, double mulb, double e, StandardObserver observer) : equal(e), method("Custom"), observer(observer)
 {
-    mul2temp (mulr, mulg, mulb, equal, temp, green);
+    mul2temp (mulr, mulg, mulb, equal, observer, temp, green);
 }
 
-void ColorTemp::mul2temp (const double rmul, const double gmul, const double bmul, const double equal, double& temp, double& green) const
+ColorTemp ColorTemp::convertObserver(StandardObserver observer) const
+{
+    if (observer == this->observer) {
+        return *this;
+    }
+    double r;
+    double g;
+    double b;
+    getMultipliers(r, g, b);
+    return ColorTemp(r, g, b, equal, observer);
+}
+
+void ColorTemp::mul2temp (const double rmul, const double gmul, const double bmul, const double equal, StandardObserver observer, double& temp, double& green) const
 {
 
     double maxtemp = MAXTEMP, mintemp = MINTEMP;
@@ -202,7 +214,7 @@ void ColorTemp::mul2temp (const double rmul, const double gmul, const double bmu
     temp = (maxtemp + mintemp) / 2;
 
     while (maxtemp - mintemp > 1) {
-        temp2mul (temp, 1.0, equal, tmpr, tmpg, tmpb);
+        temp2mul (temp, 1.0, equal, observer, tmpr, tmpg, tmpb);
 
         if (tmpb / tmpr > bmul / rmul) {
             maxtemp = temp;
@@ -2957,14 +2969,19 @@ void ColorTemp::icieCAT02float(float Xw, float Yw, float Zw, float &iCAM02BB00, 
 }
 
 
-void ColorTemp::temp2mulxyz (double temp, const std::string &method, double &Xxyz, double &Zxyz)
+void ColorTemp::temp2mulxyz (double temp, const std::string &method, StandardObserver observer, double &Xxyz, double &Zxyz)
 {
     double x, y, z;
 
     // We first test for specially handled methods
     const auto iterator = spectMap.find(method);
-    const auto &color_match = (settings->observer10 == true) ? cie_colour_match_jd : cie_colour_match_jd2;
-
+    const auto &color_match = (observer == StandardObserver::TEN_DEGREES) ? cie_colour_match_jd : cie_colour_match_jd2;
+/*    if(observer == StandardObserver::TEN_DEGREES){
+        printf("General Observer 10°\n");
+    } else {
+        printf("General Observer 2°\n");
+    }
+*/
     if (iterator != spectMap.end()) {
         spectrum_to_xyz_preset(iterator->second, x, y, z, color_match);
     } else {
@@ -2999,11 +3016,11 @@ void ColorTemp::temp2mulxyz (double temp, const std::string &method, double &Xxy
     Zxyz = (1.0 - x - y) / y;
 }
 
-void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul, double& gmul, double& bmul) const
+void ColorTemp::temp2mul (double temp, double green, double equal, StandardObserver observer, double& rmul, double& gmul, double& bmul) const
 {
     clip(temp, green, equal);
     double Xwb, Zwb;
-    temp2mulxyz(temp, method, Xwb, Zwb);
+    temp2mulxyz(temp, method, observer, Xwb, Zwb);
 
     double adj = 1.0;
 
@@ -3170,7 +3187,13 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
             float CRI_RT = 0.0, CRI[50];
             float CRI_RTs = 0.0, CRIs[8];
 
-            const auto &color_match = (settings->observer10 == true) ? cie_colour_match_jd : cie_colour_match_jd2;
+            const auto &color_match = (observer == StandardObserver::TEN_DEGREES) ? cie_colour_match_jd : cie_colour_match_jd2;
+            //exceptional must be used by advice people
+            if(observer == StandardObserver::TEN_DEGREES){
+                printf("CRI Observer 10°\n");
+            } else {
+                printf("CRI Observer 2°\n");
+            }
 
             for(int i = 0; i < N_c; i++) {
                 spectrum_to_color_xyz_preset(spec_color[i], spect_illum[illum + 3], XchkLamp[i], YchkLamp[i], ZchkLamp[i], color_match);
@@ -3764,17 +3787,9 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
         Refxyz[i].Zref = 0.f;
     }
 
-/*    if (settings->verbose) {
+    const color_match_type &color_match = (wbpar.observer == StandardObserver::TEN_DEGREES) ? cie_colour_match_jd : cie_colour_match_jd2;
        
-        if (settings->itcwb_stdobserver10 == false) {//I will try to change settings by main
-            printf("Use standard observer 2°\n");
-        } else {
-            printf("Use standard observer 10°\n");
-        }
-        }
-*/
-    const color_match_type &color_match = (settings->observer10 == true) ? cie_colour_match_jd : cie_colour_match_jd2;
- //   const color_match_type &color_match = (settings->itcwb_stdobserver10 == true) ? cie_colour_match_jd : cie_colour_match_jd2;
+ //   const color_match_type &color_match = (wbpar.observer == StandardObserver::TEN_DEGREES) ? cie_colour_match_jd : cie_colour_match_jd2;
 
     if (separated) {
         const double tempw = Txyz[repref].Tem;

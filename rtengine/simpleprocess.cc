@@ -270,7 +270,7 @@ private:
         }
 
         // set the color temperature
-        currWB = ColorTemp(params.wb.temperature, params.wb.green, params.wb.equal, params.wb.method);
+        currWB = ColorTemp(params.wb.temperature, params.wb.green, params.wb.equal, params.wb.method, params.wb.observer);
 
         if (!params.wb.enabled) {
             currWB = ColorTemp();
@@ -279,7 +279,7 @@ private:
         } else if (params.wb.method == "autold") {
             double rm, gm, bm;
             imgsrc->getAutoWBMultipliers(rm, gm, bm);
-            currWB.update(rm, gm, bm, params.wb.equal, params.wb.tempBias);
+            currWB.update(rm, gm, bm, params.wb.equal, params.wb.observer, params.wb.tempBias);
         }
 
         calclum = nullptr ;
@@ -782,7 +782,7 @@ private:
 
         if (params.toneCurve.histmatching) {
             if (!params.toneCurve.fromHistMatching) {
-                imgsrc->getAutoMatchedToneCurve(params.icm, params.toneCurve.curve);
+                imgsrc->getAutoMatchedToneCurve(params.icm, params.wb.observer, params.toneCurve.curve);
             }
 
             if (params.toneCurve.autoexp) {
