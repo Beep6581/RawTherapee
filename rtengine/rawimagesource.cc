@@ -5757,7 +5757,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     int sizcurr2ref = sizcurrref - ntr;
     const int sizcu30 = sizcurrref - n30;
     int nbm = 77;//number max of color used = 1.4 * 55 in case all CIExy diagram
-    if(profuse == "Adobe RGB" || wbpar.itcwb_sampling == true) {
+    if(profuse == "Adobe RGB" || profuse == "sRGB" || wbpar.itcwb_sampling == true) {
         nbm = 55;
     }
     const int sizcu4 = rtengine::min(sizcu30, nbm);//size of chroma values
