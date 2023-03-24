@@ -210,6 +210,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
 //    trcFrame->set_label_align(0.025, 0.5);
     Gtk::Box *trcProfVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     trcExp->set_tooltip_text(M("TP_ICM_TRCFRAME_TOOLTIP"));
+    trcExp->signal_button_release_event().connect_notify ( sigc::bind ( sigc::mem_fun (this, &ICMPanel::foldAllButMe), trcExp) );
 
     wTRCBox = Gtk::manage(new Gtk::Box());
 
@@ -384,7 +385,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     riaHBox->pack_start(*aRendIntent->buttonGroup, Gtk::PACK_EXPAND_PADDING);
 
   //  trcFrame->add(*trcProfVBox);
-    trcExp->add(*trcProfVBox);
+    trcExp->add(*trcProfVBox, false);
+    trcExp->setLevel (2);
 
     pack_start(*wFrame, Gtk::PACK_EXPAND_WIDGET);
  //   pack_start(*trcFrame, Gtk::PACK_EXPAND_WIDGET);
@@ -497,6 +499,14 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
 
     show_all();
 }
+
+void ICMPanel::foldAllButMe (GdkEventButton* event, MyExpander *expander)
+{
+    if (event->button == 3) {
+        trcExp->set_expanded (trcExp == expander);
+    }
+}
+
 
 void ICMPanel::neutral_pressed ()
 {   //find working profile and set the same destination proile

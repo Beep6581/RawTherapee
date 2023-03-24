@@ -251,6 +251,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     EvWBitcwbnopurple = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_NOPURPLE");
     EvWBitcwbsorted = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_SORTED");
     EvWBitcwbforceextra = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_FORCE");
+    EvWBitcwbprim = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_PRIM");
     EvWBitcwbsampling = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_SAMPLING");
     EvWBitcwbsize = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_SIZE");
     EvWBitcwbprecis = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_PRECIS");
@@ -411,6 +412,15 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     itcwb_forceextra->set_tooltip_markup (M("TP_WBALANCE_ITCWFORCED_TOOLTIP"));
     itcwb_forceextra ->set_active (false);
 
+    itcwb_prim = Gtk::manage (new MyComboBoxText ());
+    itcwb_prim->append(M("TP_WBALANCE_ITCWB_PRIM_SRGB"));
+    itcwb_prim->append(M("TP_WBALANCE_ITCWB_PRIM_ADOB"));
+    itcwb_prim->append(M("TP_WBALANCE_ITCWB_PRIM_REC"));
+    itcwb_prim->append(M("TP_WBALANCE_ITCWB_PRIM_ACE"));
+    itcwb_prim->set_active(0);
+    itcwb_primconn = itcwb_prim->signal_changed().connect(sigc::mem_fun(*this, &WhiteBalance::itcwb_prim_changed));
+    itcwb_prim ->set_active (false);
+    
     itcwb_sampling = Gtk::manage (new Gtk::CheckButton (M("TP_WBALANCE_ITCWB_SAMPLING")));
     itcwb_sampling->set_tooltip_markup (M("TP_WBALANCE_ITCWSAMPLING_TOOLTIP"));
     itcwb_sampling ->set_active (false);
@@ -440,7 +450,9 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
 //    itcwbBox->pack_start (*itcwb_rgreen);//possible use in pp3
     itcwbBox->pack_start (*itcwb_nopurple);
     itcwbBox->pack_start (*itcwb_sorted);
-    itcwbBox->pack_start (*itcwb_forceextra);
+//    itcwbBox->pack_start (*itcwb_forceextra);
+    itcwbBox->pack_start (*itcwb_prim);
+    
     itcwbBox->pack_start (*itcwb_sampling);
     itcwbFrame->add(*itcwbBox);
     pack_start(*itcwbFrame);
@@ -455,6 +467,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
         itcwb_nopurple->show();
         itcwb_sorted->show();
         itcwb_forceextra->show();
+        itcwb_prim->show();
         itcwb_sampling->show();
         itcwbFrame->show();
     } else {
@@ -467,6 +480,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
         itcwb_nopurple->hide();
         itcwb_sorted->hide();
         itcwb_forceextra->hide();
+        itcwb_prim->hide();
         itcwb_sampling->hide();
         itcwbFrame->hide();
     }
@@ -508,6 +522,12 @@ void WhiteBalance::enabledChanged()
         } else {
             listener->panelChanged(EvWBEnabled, M("GENERAL_DISABLED"));
         }
+    }
+}
+void WhiteBalance::itcwb_prim_changed ()
+{
+    if (listener && getEnabled()) {
+        listener->panelChanged(EvWBitcwbprim, M("GENERAL_ENABLED"));
     }
 }
 
@@ -598,12 +618,14 @@ void WhiteBalance::itcwb_sampling_toggled ()
 {
     if (itcwb_sampling->get_active ()) {    
         itcwb_forceextra->set_sensitive(false);
+        itcwb_prim->set_sensitive(false);
         itcwb_thres->set_sensitive(false);
         itcwb_fgreen->set_sensitive(false);
         itcwb_nopurple->set_sensitive(false);
         itcwb_sorted->set_sensitive(false);
     } else {
         itcwb_forceextra->set_sensitive(true);
+        itcwb_prim->set_sensitive(true);
         itcwb_thres->set_sensitive(true);
         itcwb_fgreen->set_sensitive(true);
         itcwb_nopurple->set_sensitive(true);
@@ -926,6 +948,20 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
     itcwb_forceextraconn.block (false);
     lastitcwb_forceextra = pp->wb.itcwb_forceextra;
 
+    itcwb_primconn.block (true);
+
+    if (pp->wb.itcwb_prim == "srgb") {
+        itcwb_prim->set_active(0);
+    } else if (pp->wb.itcwb_prim == "adob") {
+        itcwb_prim->set_active(1);
+     } else if (pp->wb.itcwb_prim == "rec") {
+        itcwb_prim->set_active(2);
+    } else if (pp->wb.itcwb_prim == "ace") {
+        itcwb_prim->set_active(3);
+    }
+    itcwb_primconn.block (false);
+
+
     itcwb_samplingconn.block (true);
     itcwb_sampling->set_active (pp->wb.itcwb_sampling);
     itcwb_samplingconn.block (false);
@@ -943,6 +979,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         itcwb_nopurple->show();
         itcwb_sorted->show();
         itcwb_forceextra->show();
+        itcwb_prim->show();
         itcwb_sampling->show();
         itcwbFrame->show();
         
@@ -956,6 +993,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         itcwb_nopurple->hide();
         itcwb_sorted->hide();
         itcwb_forceextra->hide();
+        itcwb_prim->hide();
         itcwb_sampling->hide();
         itcwbFrame->hide();
     }
@@ -1103,6 +1141,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
             StudLabel->show();
             itcwbFrame->set_sensitive(true);
             itcwb_forceextra_toggled ();
+            itcwb_prim_changed ();
             itcwb_sampling_toggled ();
         } else {
             StudLabel->hide();
@@ -1145,9 +1184,19 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->wb.itcwb_sampling = !itcwb_sampling->get_inconsistent();
         pedited->wb.method = row[methodColumns.colLabel] != M("GENERAL_UNCHANGED");
         pedited->wb.enabled = !get_inconsistent();
+        pedited->wb.itcwb_prim  = itcwb_prim->get_active_text() != M("GENERAL_UNCHANGED");
     }
 
     pp->wb.enabled = getEnabled();
+    if (itcwb_prim->get_active_row_number() == 0) {
+        pp->wb.itcwb_prim = "srgb";
+    } else if (itcwb_prim->get_active_row_number() == 1){
+        pp->wb.itcwb_prim = "adob";
+    } else if (itcwb_prim->get_active_row_number() == 2){
+        pp->wb.itcwb_prim = "rec";
+    } else if (itcwb_prim->get_active_row_number() == 3){
+        pp->wb.itcwb_prim = "ace";
+    }
 
     const std::pair<bool, const WBEntry&> ppMethod = findWBEntry (row[methodColumns.colLabel], WBLT_GUI);
 

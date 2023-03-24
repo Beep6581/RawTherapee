@@ -1532,6 +1532,7 @@ HISTORY_MSG_WBALANCE_OBSERVER10;Observer 10°
 HISTORY_MSG_WBITC_SAMPLING;Low sampling
 HISTORY_MSG_WBITC_THRES;Itcwb Theshold
 HISTORY_MSG_WBITC_NOPURPLE;Itcwb Nopurple
+HISTORY_MSG_WBITC_PRIM;Primaries
 HISTORY_MSG_WBITC_SORTED;Itcwb Sorted
 HISTORY_MSG_WBITC_FORCE;Itcwb Force
 HISTORY_MSG_WBITC_SIZE;Itcwb Size
@@ -4107,6 +4108,10 @@ TP_WBALANCE_ITCWB_NOPURPLE;No purple color used
 TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP;By default when "Inpaint opposed" is activated, purple colors are not taken into account. However, if the image does not need highlight reconstruction, or if this image naturally contains purple tints (flowers, etc.), it may be necessary to deactivate, to take into account all the colors.
 TP_WBALANCE_ITCWB_PRECIS;Precision algorithm - scale used
 TP_WBALANCE_ITCWBPRECIS_TOOLTIP;The lower the value, the more relevant the data, but increases the processing time. Since the processing time is low, this parameter should generally be able to remain at the default value
+TP_WBALANCE_ITCWB_PRIM_SRGB;sRGB
+TP_WBALANCE_ITCWB_PRIM_ADOB;Adobe RGB
+TP_WBALANCE_ITCWB_PRIM_REC;Rec 2020
+TP_WBALANCE_ITCWB_PRIM_ACE;Forces use of the entire CIE diagram
 TP_WBALANCE_ITCWB_RGREEN;Green range
 TP_WBALANCE_ITCWBRGREEN_TOOLTIP;Sets the green value review amplitude in iterations, from low amplitude 0.82 to 1.25 to maximum amplitude 0.4 to 4.
 TP_WBALANCE_ITCWB_SAMPLING;Low sampling

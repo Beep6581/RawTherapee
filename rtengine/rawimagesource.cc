@@ -5190,10 +5190,19 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
    // BENCHFUN
 
     Glib::ustring profuse;
-    profuse = "Adobe RGB";//or //sRGB
-    if( wbpar.itcwb_forceextra && wbpar.itcwb_sampling == false) {//Adobe RGB
-       profuse = "ACESp0";//cover all CIE xy diagram
+    profuse = "Adobe RGB";
+    if(wbpar.itcwb_prim == "srgb") {
+        profuse = "sRGB";
+    } else if(wbpar.itcwb_prim == "adob") {
+        profuse = "Adobe RGB";
+    } else if(wbpar.itcwb_prim == "rec") {
+        profuse = "Rec2020";
+    } else if(wbpar.itcwb_prim == "ace") {
+        profuse = "ACESp0";
     }
+//    if( wbpar.itcwb_forceextra && wbpar.itcwb_sampling == false) {//Adobe RGB
+//       profuse = "ACESp0";//cover all CIE xy diagram
+//    }
     if(wbpar.itcwb_sampling) {
         profuse = "sRGB";
     }

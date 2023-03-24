@@ -651,6 +651,7 @@ struct WBParams {
     bool             itcwb_nopurple;
     bool             itcwb_sorted;
     bool             itcwb_forceextra;
+    Glib::ustring    itcwb_prim;
     bool             itcwb_sampling;
 
     WBParams();

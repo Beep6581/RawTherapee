@@ -169,6 +169,7 @@ private:
     Glib::ustring camName;
     void updateDCP(int dcpIlluminant, Glib::ustring dcp_name);
     void updateRenderingIntent(const Glib::ustring &profile);
+    void foldAllButMe (GdkEventButton* event, MyExpander *expander);
     
     float nextrx;
     float nextry;

@@ -68,6 +68,7 @@ protected:
     rtengine::ProcEvent EvWBitcwbnopurple;
     rtengine::ProcEvent EvWBitcwbsorted;
     rtengine::ProcEvent EvWBitcwbforceextra;
+    rtengine::ProcEvent EvWBitcwbprim;
     rtengine::ProcEvent EvWBitcwbprecis;
     rtengine::ProcEvent EvWBitcwbsize;
     rtengine::ProcEvent EvWBitcwbdelta;
@@ -97,6 +98,8 @@ protected:
     Gtk::CheckButton* itcwb_nopurple;
     Gtk::CheckButton* itcwb_sorted;
     Gtk::CheckButton* itcwb_forceextra;
+    MyComboBoxText* itcwb_prim;
+    
     Gtk::CheckButton* itcwb_sampling;
     bool lastitcwb_nopurple;
     bool lastitcwb_sorted;
@@ -109,7 +112,7 @@ protected:
     double nextGreen;
     WBProvider *wbp;  // pointer to a ToolPanelCoordinator object, or its subclass BatchToolPanelCoordinator
     SpotWBListener* wblistener;
-    sigc::connection methconn, itcwb_nopurpleconn, itcwb_sortedconn,  itcwb_forceextraconn, itcwb_samplingconn;
+    sigc::connection methconn, itcwb_nopurpleconn, itcwb_sortedconn,  itcwb_forceextraconn, itcwb_samplingconn, itcwb_primconn;
     int custom_temp;
     double custom_green;
     double custom_equal;
@@ -161,6 +164,7 @@ public:
     void itcwb_nopurple_toggled ();
     void itcwb_sorted_toggled ();
     void itcwb_forceextra_toggled ();
+    void itcwb_prim_changed ();
     void itcwb_sampling_toggled ();
 
     void setAdjusterBehavior (bool tempadd, bool greenadd, bool equaladd, bool tempbiasadd);
