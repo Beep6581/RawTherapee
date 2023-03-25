@@ -5521,7 +5521,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {12001., 0.960440, 1.601019}
     };
     const int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
-    constexpr int Nc = 201 + 1;//201 number of reference spectral colors, I think it is enough to retrieve good values
+    constexpr int Nc = 209 + 1;//209 number of reference spectral colors, I think it is enough to retrieve good values
     array2D<float> Tx(N_t, Nc);
     array2D<float> Ty(N_t, Nc);
     array2D<float> Tz(N_t, Nc);
@@ -5631,7 +5631,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     array2D<float> reff_spect_xx_camera(N_t, 2 * Nc + 2);
 
     //here we select the good spectral color inside the 113 values
-    //call tempxy to calculate for 201 color references Temp and XYZ with cat02
+    //call tempxy to calculate for 209 color references Temp and XYZ with cat02
 
     ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar); //calculate chroma xy (xyY) for Z known colors on under 200 illuminants
 
@@ -5832,7 +5832,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     //wbpar.itcwb_size to verify if this setting is usefull...diificulties with High gamut and limited patch spectral colors.
 
     if (wbpar.itcwb_thres > 65) {//normally never used
-        maxnb = 201 / wbpar.itcwb_thres;
+        maxnb = 209 / wbpar.itcwb_thres;//201
     }
 
     for (int nb = 1; nb <= maxnb; ++nb) { //max 5 iterations for Itcwb_thres=33, after trial 3 is good in most cases but in some cases 5

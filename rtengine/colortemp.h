@@ -384,13 +384,15 @@ public:
     static const double Colorlab_n80_10_spect[97];
     static const double Colorlab_n80_26_spect[97];
     static const double Colorlab_n80_5_9_5_9spect[97];
-//    static const double Colorlab_n57_5_6_9spect[97];
-    
-    /*
     static const double JDC468_greyc14_66_spect[97];
     static const double JDC468_greym13_325_spect[97];
     static const double JDC468_greyf26_156_spect[97];
-    */
+    static const double Colorlab_n57_5_6_9spect[97];
+    static const double Colorlab_L61_110_110Rec2020spect[97];
+    static const double Colorlab_L63_120_m56Rec2020spect[97];
+    static const double Colorlab_L63_m50_m60Rec2020spect[97];
+    static const double Colorlab_L63_m120_80Rec2020spect[97];
+    
     static void spectrum_to_xyz_daylight  (double _m1, double _m2, double &x, double &y, double &z, const color_match_type &color_match);
     static void spectrum_to_xyz_blackbody (double _temp, double &x, double &y, double &z, const color_match_type &color_match);
     static void spectrum_to_xyz_preset    (const double* spec_intens, double &x, double &y, double &z, const color_match_type &color_match);
