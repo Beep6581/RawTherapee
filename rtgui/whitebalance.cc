@@ -382,7 +382,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
 
     ToolParamBlock* const itcwbBox = Gtk::manage(new ToolParamBlock());
 
-    itcwb_thres = Gtk::manage (new Adjuster(M("TP_WBALANCE_ITCWB_THRES"), 10, 55, 1, 34));
+    itcwb_thres = Gtk::manage (new Adjuster(M("TP_WBALANCE_ITCWB_THRES"), 10, 65, 1, 34));
     itcwb_thres->set_tooltip_markup (M("TP_WBALANCE_ITCWBTHRES_TOOLTIP"));
 
     itcwb_precis = Gtk::manage (new Adjuster(M("TP_WBALANCE_ITCWB_PRECIS"), 3, 9, 2, 3));
@@ -394,7 +394,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     itcwb_delta = Gtk::manage (new Adjuster(M("TP_WBALANCE_ITCWB_DELTA"), 1, 4, 1, 2));
     itcwb_delta->set_tooltip_markup (M("TP_WBALANCE_ITCWBDELTA_TOOLTIP"));
 
-    itcwb_fgreen = Gtk::manage (new Adjuster(M("TP_WBALANCE_ITCWB_FGREEN"), 3, 6, 1, 5));
+    itcwb_fgreen = Gtk::manage (new Adjuster(M("TP_WBALANCE_ITCWB_FGREEN"), 2, 6, 1, 5));
     itcwb_fgreen->set_tooltip_markup (M("TP_WBALANCE_ITCWBFGREEN_TOOLTIP"));
 
     itcwb_rgreen = Gtk::manage (new Adjuster(M("TP_WBALANCE_ITCWB_RGREEN"), 0, 3, 1, 1));

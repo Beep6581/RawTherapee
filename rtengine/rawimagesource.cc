@@ -5808,7 +5808,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         std::sort(wbchro, wbchro + sizcu4, wbchro[0]);
     }
 
-    int maxval = rtengine::LIM(wbpar.itcwb_thres, 10, 55);//max values of color to find correlation
+    int maxval = rtengine::LIM(wbpar.itcwb_thres, 10, 65);//max values of color to find correlation
     if(wbpar.itcwb_sampling == true) {
         maxval = 34;
     }
@@ -5831,7 +5831,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     int maxnb = 3;
     //wbpar.itcwb_size to verify if this setting is usefull...diificulties with High gamut and limited patch spectral colors.
 
-    if (wbpar.itcwb_thres > 55) {//normally never used
+    if (wbpar.itcwb_thres > 65) {//normally never used
         maxnb = 201 / wbpar.itcwb_thres;
     }
 
@@ -6028,14 +6028,14 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         int greengood = 55;
 
         int maxkgood = wbpar.itcwb_fgreen;//we can change ...to test 3, 4, 5. High values perhaps less good student, but it is a compromise...
-        maxkgood = rtengine::LIM(maxkgood, 3, 6);
+        maxkgood = rtengine::LIM(maxkgood, 2, 6);
         if(wbpar.itcwb_sampling == true) {
             maxkgood = 3; // force to 3 with old low sampling
         }
 
         int mingood = std::min(std::fabs(Tgstud[0].greenref - 55), std::fabs(Tgstud[1].greenref - 55));
 
-        for (int k = 2; k < maxkgood; ++k) {
+        for (int k = 1; k < maxkgood; ++k) {
             mingood = std::min(std::fabs(mingood), std::fabs(Tgstud[k].greenref - 55));
         }
 
