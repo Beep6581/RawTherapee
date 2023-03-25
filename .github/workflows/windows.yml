@@ -122,6 +122,7 @@ jobs:
             "libexpat-1.dll" \
             libffi-*.dll \
             "libfftw3f-3.dll" \
+            "libfftw3f_omp-3.dll" \
             "libfontconfig-1.dll" \
             "libfreetype-6.dll" \
             "libfribidi-0.dll" \
