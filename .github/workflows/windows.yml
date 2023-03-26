@@ -95,7 +95,7 @@ jobs:
           cp -R "/C/msys2/msys64/mingw64/var/lib/lensfun-updates/version_1" 'build/${{matrix.build_type}}/share/lensfun'
 
       - name: Bundle dependencies
-        run: 
+        run: |
           echo "Listing shared library dependencies."
           ldd "./build/${{matrix.build_type}}/rawtherapee.exe"
           echo "Getting workspace path."

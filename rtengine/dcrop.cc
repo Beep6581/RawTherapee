@@ -944,16 +944,7 @@ void Crop::update(int todo)
         auto& locwavCurveden = parent->locwavCurveden;
         auto& lmasklocal_curve2 = parent->lmasklocal_curve;
         auto& loclmasCurve_wav = parent->loclmasCurve_wav;
-//        const int sizespot = (int)params.locallab.spots.size();
-/*        float *huerefp = nullptr;
-        huerefp = new float[sizespot];
-        float *chromarefp = nullptr;
-        chromarefp = new float[sizespot];
-        float *lumarefp = nullptr;
-        lumarefp = new float[sizespot];
-        float *fabrefp = nullptr;
-        fabrefp = new float[sizespot];
-*/
+
         for (int sp = 0; sp < (int)params.locallab.spots.size(); sp++) {
             locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
             locRETtransCurve.Set(params.locallab.spots.at(sp).localTtranscurve);
