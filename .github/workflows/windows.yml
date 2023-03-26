@@ -178,15 +178,15 @@ jobs:
           echo "Copying Adwaita theme."
           mkdir -p "$BUILD_DIR/share/icons/Adwaita"
           cd 'share/icons/Adwaita/'
-          mkdir -p "$BUILD_DIR/share/icons/Adwaita/scalable"
+          mkdir -p "$BUILD_DIR/share/icons/Adwaita/symbolic"
           cp -r \
-            "scalable/actions" \
-            "scalable/devices" \
-            "scalable/mimetypes" \
-            "scalable/places" \
-            "scalable/status" \
-            "scalable/ui" \
-            "$BUILD_DIR/share/icons/Adwaita/scalable"
+            "symbolic/actions" \
+            "symbolic/devices" \
+            "symbolic/mimetypes" \
+            "symbolic/places" \
+            "symbolic/status" \
+            "symbolic/ui" \
+            "$BUILD_DIR/share/icons/Adwaita/symbolic"
           cp 'index.theme' "$BUILD_DIR/share/icons/Adwaita"
           mkdir -p "$BUILD_DIR/share/icons/Adwaita/cursors"
           cp -r \
