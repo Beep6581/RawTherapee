@@ -96,6 +96,8 @@ jobs:
 
       - name: Bundle dependencies
         run: |
+          echo "Listing shared library dependencies."
+          ldd "./build/${{matrix.build_type}}/rawtherapee.exe"
           echo "Getting workspace path."
           export BUILD_DIR="$(pwd)/build/${{matrix.build_type}}"
           echo "Build directory is '$BUILD_DIR'."
