@@ -5173,19 +5173,17 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     You must avoid when illuminant is non standard (fluorescent, LED...) and also, when the subject is lost in the image (some target to generate profiles).
 
     You can change  parameters in White Balance - Frame adapted to Itcwb
-    Itcwb_thres : 34 by default ==> number of color used in final algorithm - between 10 and max 55
+    Itcwb_thres : 34 by default ==> number of color used in final algorithm - between 10 and max 65
     Itcwb_sorted : true by default, can improve algorithm if true, ==> sort value in something near chroma order, instead of histogram number
     Itcwb_greenrange : 0 amplitude of green variation - between 0 to 2
     Itcwb_greendelta : 1 - delta temp in green iterate loop for "extra" - between 0 to 4
-    Itcwb_forceextra : false by default - Use all Ciexy diagram instead of sRGB
+    Itcwb_prim : sRGB, Adobe, Rec2020, AcesP0 = Use all Ciexy diagram instead of sRGB  
     //Itcwb_sizereference : repalce by int maxnb 3 by default, can be set to 5 ==> size of reference color compare to size of histogram real color
     itcwb_delta : 1 by default can be set between 0 to 5 ==> delta temp to build histogram xy - if camera temp is not probably good
     //itcwb_precis : replace by int precision = 3 by default - can be set to 3 or 9 - 3 best sampling but more time...9 "old" settings - but low differences in times with 3 instead of 9 about twice time 160ms instead of 80ms for a big raw file
     itcwb_nopurple : true default - allow to bypass highlight recovery and inpait opposed when need flowers and not purple due to highlights...
-    itcwb_fgreen : 5 by default - between 3 to 6 - find the compromise student / green to reach green near of 1 
+    itcwb_fgreen : 5 by default - between 2 to 6 - find the compromise student / green to reach green near of 1 
     
-    In file options.
-    use standard observer 10°, false = standard observer 2°
     */
    // BENCHFUN
 
@@ -5200,9 +5198,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     } else if(wbpar.itcwb_prim == "ace") {
         profuse = "ACESp0";
     }
-//    if( wbpar.itcwb_forceextra && wbpar.itcwb_sampling == false) {//Adobe RGB
-//       profuse = "ACESp0";//cover all CIE xy diagram
-//    }
+
     if(wbpar.itcwb_sampling) {
         profuse = "sRGB";
     }
@@ -5521,7 +5517,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {12001., 0.960440, 1.601019}
     };
     const int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
-    constexpr int Nc = 212 + 1;//212 number of reference spectral colors, I think it is enough to retrieve good values
+    constexpr int Nc = 215 + 1;//215 number of reference spectral colors, I think it is enough to retrieve good values
     array2D<float> Tx(N_t, Nc);
     array2D<float> Ty(N_t, Nc);
     array2D<float> Tz(N_t, Nc);
@@ -5631,7 +5627,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     array2D<float> reff_spect_xx_camera(N_t, 2 * Nc + 2);
 
     //here we select the good spectral color inside the 113 values
-    //call tempxy to calculate for 212 color references Temp and XYZ with cat02
+    //call tempxy to calculate for 215 color references Temp and XYZ with cat02
 
     ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar); //calculate chroma xy (xyY) for Z known colors on under 200 illuminants
 
@@ -5662,7 +5658,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 const float RR = rmm[rep] * redloc[y][x];
                 const float GG = gmm[rep] * greenloc[y][x];
                 const float BB = bmm[rep] * blueloc[y][x];
-                Color::rgbxyY(RR, GG, BB, xc[y][x], yc[y][x], Yc[y][x], wp);//use sRGB or ACESp0
+                Color::rgbxyY(RR, GG, BB, xc[y][x], yc[y][x], Yc[y][x], wp);//use sRGB Adobe Rec2020 ACESp0
             }
         }
 
@@ -5832,7 +5828,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     //wbpar.itcwb_size to verify if this setting is usefull...diificulties with High gamut and limited patch spectral colors.
 
     if (wbpar.itcwb_thres > 65) {//normally never used
-        maxnb = 212 / wbpar.itcwb_thres;//201
+        maxnb = 215 / wbpar.itcwb_thres;//201
     }
 
     for (int nb = 1; nb <= maxnb; ++nb) { //max 5 iterations for Itcwb_thres=33, after trial 3 is good in most cases but in some cases 5

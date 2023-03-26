@@ -402,7 +402,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
 
     itcwb_nopurple = Gtk::manage (new Gtk::CheckButton (M("TP_WBALANCE_ITCWB_NOPURPLE")));
     itcwb_nopurple->set_tooltip_markup (M("TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP"));
-    itcwb_nopurple ->set_active (true);
+    itcwb_nopurple ->set_active (false);
 
     itcwb_sorted = Gtk::manage (new Gtk::CheckButton (M("TP_WBALANCE_ITCWB_SORTED")));
     itcwb_sorted->set_tooltip_markup (M("TP_WBALANCE_ITCWBSORTED_TOOLTIP"));

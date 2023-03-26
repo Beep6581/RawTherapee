@@ -395,7 +395,10 @@ public:
     static const double Colorlab_L42_110_m100Prospect[97];
     static const double Colorlab_L42_m70_m100Prospect[97];
     static const double Colorlab_L56_m120_90Prospect[97];
-
+    static const double Colorlab_L25_60_m120Prospect[97];
+    static const double Colorlab_L75_50_120Prospect[97];
+    static const double Colorlab_L75_m120_0Prospect[97];
+    
     static void spectrum_to_xyz_daylight  (double _m1, double _m2, double &x, double &y, double &z, const color_match_type &color_match);
     static void spectrum_to_xyz_blackbody (double _temp, double &x, double &y, double &z, const color_match_type &color_match);
     static void spectrum_to_xyz_preset    (const double* spec_intens, double &x, double &y, double &z, const color_match_type &color_match);
