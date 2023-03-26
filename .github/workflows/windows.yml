@@ -119,9 +119,12 @@ jobs:
             "libcairo-2.dll" \
             "libcairo-gobject-2.dll" \
             "libcairomm-1.0-1.dll" \
+            "libcrypto-3-x64.dll" \
+            "libcurl-4.dll" \
             "libdatrie-1.dll" \
             "libdeflate.dll" \
             "libepoxy-0.dll" \
+            "libexiv2.dll" \
             "libexpat-1.dll" \
             libffi-*.dll \
             "libfftw3f-3.dll" \
@@ -145,6 +148,7 @@ jobs:
             "libgtkmm-3.0-1.dll" \
             "libharfbuzz-0.dll" \
             "libiconv-2.dll" \
+            "libidn2-0.dll" \
             "libintl-8.dll" \
             "libjbig-0.dll" \
             "libjpeg-8.dll" \
@@ -152,6 +156,7 @@ jobs:
             "liblensfun.dll" \
             "libLerc.dll" \
             "liblzma-5.dll" \
+            "libnghttp2-14.dll" \
             "libpango-1.0-0.dll" \
             "libpangocairo-1.0-0.dll" \
             "libpangoft2-1.0-0.dll" \
@@ -160,14 +165,18 @@ jobs:
             "libpcre2-8-0.dll" \
             "libpixman-1-0.dll" \
             "libpng16-16.dll" \
+            "libpsl-5.dll" \
             "librsvg-2-2.dll" \
             "libsharpyuv-0.dll" \
             "libsigc-2.0-0.dll" \
+            "libssh2-1.dll" \
+            "libssl-3-x64.dll" \
             "libstdc++-6.dll" \
             "libsystre-0.dll" \
             "libthai-0.dll" \
             "libtiff-6.dll" \
             "libtre-5.dll" \
+            "libunistring-5.dll" \
             "libwebp-7.dll" \
             "libwinpthread-1.dll" \
             "libxml2-2.dll" \
