@@ -93,6 +93,8 @@ public:
     double          cbdlsensi;
 //    bool            showtooltip;
     bool            itcwb_enable;
+    double          basecorlog;
+
 //wavelet levels
     double          edghi;
     double          edglo;
