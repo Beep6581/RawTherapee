@@ -4108,13 +4108,13 @@ TP_WBALANCE_ITCWB_NOPURPLE;No purple color used
 TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP;By default when "Inpaint opposed" is activated, purple colors are not taken into account. However, if the image does not need highlight reconstruction, or if this image naturally contains purple tints (flowers, etc.), it may be necessary to deactivate, to take into account all the colors.
 TP_WBALANCE_ITCWB_PRECIS;Precision algorithm - scale used
 TP_WBALANCE_ITCWBPRECIS_TOOLTIP;The lower the value, the more relevant the data, but increases the processing time. Since the processing time is low, this parameter should generally be able to remain at the default value
-TP_WBALANCE_ITCWB_PRIM_SRGB;sRGB
-TP_WBALANCE_ITCWB_PRIM_ADOB;Adobe RGB
-TP_WBALANCE_ITCWB_PRIM_REC;Rec 2020
+TP_WBALANCE_ITCWB_PRIM_SRGB;Low sampling
+TP_WBALANCE_ITCWB_PRIM_ADOB;Medium sampling
+TP_WBALANCE_ITCWB_PRIM_REC;High sampling
 TP_WBALANCE_ITCWB_PRIM_ACE;Forces use of the entire CIE diagram
 TP_WBALANCE_ITCWB_RGREEN;Green range
 TP_WBALANCE_ITCWBRGREEN_TOOLTIP;Sets the green value review amplitude in iterations, from low amplitude 0.82 to 1.25 to maximum amplitude 0.4 to 4.
-TP_WBALANCE_ITCWB_SAMPLING;Low sampling
+TP_WBALANCE_ITCWB_SAMPLING;Low sampling 5.9
 TP_WBALANCE_ITCWSAMPLING_TOOLTIP;Allows you to use the old sampling algorithm to ensure better compatibility with 5.9. You must enable Observer 10° (default).
 TP_WBALANCE_ITCWB_SIZE;Size of ref. color compare to histogram
 TP_WBALANCE_ITCWBSIZE_TOOLTIP;This setting is especially important when 'Force use of entire CIE diagram' (or to a lesser degree when 'Sort in chroma order instead of histogram') is activated.\n It sets the number of iterations to find the best correspondence between the reference spectral colors and those in xyY value of the image. A value of 3 is a good compromise.
