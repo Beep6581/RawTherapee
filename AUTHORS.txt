@@ -5,6 +5,7 @@ Project initiator:
 
 Development contributors, in last name alphabetical order:
 
+  Harald Aust
   Roel Baars
   Martin Burri
   Pierre Cabrera
