@@ -541,7 +541,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     AUTOEXP,   // EvLocallabSpotIter
     AUTOEXP,   // EvLocallabSpotSensiexclu
     AUTOEXP,   // EvLocallabSpotStruc
-    HDR,   // EvlocallabEnabled
+    AUTOEXP,   // EvlocallabEnabled
     AUTOEXP,   // EvLocenacolor
     AUTOEXP,   // Evlocallabcurvactiv
     AUTOEXP,   // Evlocallablightness
@@ -572,7 +572,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     AUTOEXP,   // EvlocallabPastSatTog
     AUTOEXP,   // Evlocallabsensiv
     AUTOEXP,   // EvlocallabSkinTonesCurve
-    HDR,   // EvLocenablur
+    AUTOEXP,   // EvLocenablur
     AUTOEXP,   // Evlocallabradius
     AUTOEXP,   // Evlocallabstrength
     AUTOEXP,   // Evlocallabsensibn
@@ -983,7 +983,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     AUTOEXP,   // EvLocallabSpotprevMethod
     AUTOEXP,   // Evlocallabactiv
     AUTOEXP,   // EvlocallabCHshape
-    HDR,   //EvlocallabquaMethod
+    AUTOEXP,   //EvlocallabquaMethod
     AUTOEXP,   //Evlocallabhishow
     AUTOEXP,   // Evlocallabinvbl
     AUTOEXP,   // Evlocallabcatad

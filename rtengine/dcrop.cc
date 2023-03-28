@@ -180,7 +180,6 @@ void Crop::update(int todo)
     int widIm = parent->fw;//full image
     int heiIm = parent->fh;
 
-//    if (todo & (M_INIT | M_LINDENOISE | M_HDR | M_AUTOEXP | M_RGBCURVE )) {
     if (todo & (M_INIT | M_LINDENOISE | M_HDR)) {
         MyMutex::MyLock lock(parent->minit);  // Also used in improccoord
 
@@ -598,20 +597,6 @@ void Crop::update(int todo)
             params.dirpyrDenoise.redchro = maxr;
             params.dirpyrDenoise.bluechro = maxb;
             parent->denoiseInfoStore.valid = true;
-            /*
-            if(params.locallab.enabled && !params.locallab.spots.empty()) {
-                for (int sp = 0; sp < (int)params.locallab.spots.size(); sp++) {
-                    if(params.locallab.spots.at(sp).expblur) {
-                        if(params.locallab.spots.at(sp).quamethod != "none") {
-                            params.dirpyrDenoise.chroma *= 0.5f;
-                            params.dirpyrDenoise.redchro *= 0.5f;
-                            params.dirpyrDenoise.bluechro *= 0.5f;
-                        }
-                    }
-                
-                }
-            }
-            */
             if (parent->adnListener) {
                 parent->adnListener->chromaChanged(params.dirpyrDenoise.chroma, params.dirpyrDenoise.redchro, params.dirpyrDenoise.bluechro);
             }
