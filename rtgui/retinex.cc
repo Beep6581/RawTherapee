@@ -14,7 +14,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Retinex::Retinex () : FoldableToolPanel (this, "retinex", M ("TP_RETINEX_LABEL"), false, true), lastmedianmap (false)
+const Glib::ustring Retinex::TOOL_NAME = "retinex";
+
+Retinex::Retinex () : FoldableToolPanel (this, TOOL_NAME, M ("TP_RETINEX_LABEL"), false, true), lastmedianmap (false)
 {
     CurveListener::setMulti (true);
     std::vector<GradientMilestone> milestones;

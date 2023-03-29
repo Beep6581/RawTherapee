@@ -30,6 +30,7 @@
 #include <sstream>
 #include "rtimage.h"
 #include "rtwindow.h"
+#include "toollocationpref.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -66,6 +67,8 @@ Preferences::Preferences(RTWindow *rtwindow)
     , parent(rtwindow)
     , newFont(false)
     , newCPFont(false)
+    , toolLocationPreference(nullptr)
+    , swFavorites(nullptr)
 {
 
     moptions.copyFrom(&options);
@@ -103,6 +106,7 @@ Preferences::Preferences(RTWindow *rtwindow)
 
     nb->append_page(*getGeneralPanel(), M("PREFERENCES_TAB_GENERAL"));
     nb->append_page(*getImageProcessingPanel(), M("PREFERENCES_TAB_IMPROC"));
+    nb->append_page(*getFavoritesPanel(), M("PREFERENCES_TAB_FAVORITES"));
     nb->append_page(*getDynamicProfilePanel(), M("PREFERENCES_TAB_DYNAMICPROFILE"));
     nb->append_page(*getFileBrowserPanel(), M("PREFERENCES_TAB_BROWSER"));
     nb->append_page(*getColorManPanel(), M("PREFERENCES_TAB_COLORMGR"));
@@ -287,15 +291,18 @@ Gtk::Widget* Preferences::getBatchProcPanel()
     mi->set_value(behavColumns.label, M("TP_COLORAPP_LABEL"));
     appendBehavList (mi, M("TP_COLORAPP_LABEL_SCENE") + " - " + M("TP_COLORAPP_ABSOLUTELUMINANCE"), ADDSET_CAT_ADAPTSCENE, true);
     appendBehavList (mi, M("TP_COLORAPP_LABEL_VIEWING") + " - " + M("TP_COLORAPP_ABSOLUTELUMINANCE"), ADDSET_CAT_ADAPTVIEWING, true);
+    appendBehavList(mi, M("TP_COLORAPP_CIECAT_DEGREE"), ADDSET_CAT_DEGREE, true);
     appendBehavList(mi, M("TP_COLORAPP_LIGHT"), ADDSET_CAT_LIGHT, true);
     appendBehavList(mi, M("TP_COLORAPP_BRIGHT"), ADDSET_CAT_BRIGHT, true);
     appendBehavList(mi, M("TP_COLORAPP_CHROMA"), ADDSET_CAT_CHROMA, true);
-    appendBehavList (mi, M ("TP_COLORAPP_CHROMA_S"), ADDSET_CAT_CHROMA_S, true);
-    appendBehavList (mi, M ("TP_COLORAPP_CHROMA_M"), ADDSET_CAT_CHROMA_M, true);
+    appendBehavList(mi, M ("TP_COLORAPP_CHROMA_S"), ADDSET_CAT_CHROMA_S, true);
+    appendBehavList(mi, M ("TP_COLORAPP_CHROMA_M"), ADDSET_CAT_CHROMA_M, true);
     appendBehavList(mi, M("TP_COLORAPP_RSTPRO"), ADDSET_CAT_RSTPRO, true);
     appendBehavList(mi, M("TP_COLORAPP_CONTRAST"), ADDSET_CAT_CONTRAST, true);
     appendBehavList(mi, M("TP_COLORAPP_CONTRAST_Q"), ADDSET_CAT_CONTRAST_Q, true);
     appendBehavList(mi, M("TP_COLORAPP_HUE"), ADDSET_CAT_HUE, true);
+    appendBehavList(mi, M("TP_COLORAPP_CIECAT_DEGREEOUT"), ADDSET_CAT_DEGREEOUT, true);
+    appendBehavList(mi, M("TP_WBALANCE_TEMPERATURE"), ADDSET_CAT_TEMPOUT, true);
     appendBehavList(mi, M("TP_COLORAPP_BADPIXSL"), ADDSET_CAT_BADPIX, true);
 
     mi = behModel->append();
@@ -494,6 +501,18 @@ void Preferences::behSetRadioToggled(const Glib::ustring& path)
     behAddSetRadioToggled(path, false);
 }
 
+Gtk::Widget *Preferences::getFavoritesPanel()
+{
+    if (!toolLocationPreference) {
+        toolLocationPreference = Gtk::manage(new ToolLocationPreference(moptions));
+    }
+    if (!swFavorites) {
+        swFavorites = Gtk::manage(new Gtk::ScrolledWindow());
+        swFavorites->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_NEVER);
+        swFavorites->add(*toolLocationPreference);
+    }
+    return swFavorites;
+}
 
 Gtk::Widget *Preferences::getDynamicProfilePanel()
 {
@@ -913,6 +932,10 @@ Gtk::Widget* Preferences::getColorManPanel ()
     fcie->add(*gcie);
 
     vbColorMan->pack_start (*fcie, Gtk::PACK_SHRINK);
+
+
+    //-------------
+
     swColorMan->add(*vbColorMan);
     return swColorMan;
 }
@@ -1874,6 +1897,8 @@ void Preferences::storePreferences()
 
     moptions.cropGuides = Options::CropGuidesMode(cropGuidesCombo->get_active_row_number());
     moptions.cropAutoFit = cropAutoFitCB->get_active();
+
+    toolLocationPreference->updateOptions();
 }
 
 void Preferences::fillPreferences()
@@ -1937,6 +1962,7 @@ void Preferences::fillPreferences()
 
     monBPC->set_active(moptions.rtSettings.monitorBPC);
     mcie->set_active(moptions.rtSettings.autocielab);
+
     cbAutoMonProfile->set_active(moptions.rtSettings.autoMonitorProfile);
 #endif
 
@@ -2489,6 +2515,11 @@ void Preferences::workflowUpdate()
         parent->updateExternalEditorWidget(moptions.externalEditorIndex, moptions.externalEditors);
     }
 
+    if (moptions.cloneFavoriteTools != options.cloneFavoriteTools ||
+        moptions.favorites != options.favorites) {
+        parent->updateToolPanelToolLocations(
+            moptions.favorites, moptions.cloneFavoriteTools);
+    }
 }
 
 void Preferences::addExtPressed()

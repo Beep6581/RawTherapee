@@ -92,16 +92,7 @@ public:
     int             previewselection;
     double          cbdlsensi;
 //    bool            showtooltip;
-
-    int             itcwb_thres;
-    bool            itcwb_sort;
-    int             itcwb_greenrange;
-    int             itcwb_greendeltatemp;
-    bool            itcwb_forceextra;
-    int             itcwb_sizereference;
-    int             itcwb_delta;
-    bool            itcwb_stdobserver10;
-    int             itcwb_precis;
+    bool            itcwb_enable;
 //wavelet levels
     double          edghi;
     double          edglo;

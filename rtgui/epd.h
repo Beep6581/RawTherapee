@@ -36,6 +36,7 @@ protected:
     Adjuster *reweightingIterates;
 
 public:
+    static const Glib::ustring TOOL_NAME;
 
     EdgePreservingDecompositionUI();
 

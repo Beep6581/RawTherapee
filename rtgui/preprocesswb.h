@@ -34,6 +34,7 @@ private:
     MyComboBoxText* mode;
 
 public:
+    static const Glib::ustring TOOL_NAME;
 
     PreprocessWB();
 

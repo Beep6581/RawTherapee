@@ -52,6 +52,8 @@ class FilmNegative final :
     public rtengine::FilmNegListener
 {
 public:
+    static const Glib::ustring TOOL_NAME;
+
     FilmNegative();
     ~FilmNegative() override;
 

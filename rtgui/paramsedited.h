@@ -52,6 +52,7 @@ struct ToneCurveParamsEdited {
     bool shcompr;
     bool hlcompr;
     bool hlbl;
+    bool hlth;
     bool hlcomprthresh;
     bool autoexp;
     bool clip;
@@ -245,7 +246,19 @@ struct WBParamsEdited {
     bool temperature;
     bool green;
     bool equal;
+    bool observer;
     bool tempBias;
+    bool itcwb_thres;
+    bool itcwb_precis;
+    bool itcwb_size;
+    bool itcwb_delta;
+    bool itcwb_fgreen;
+    bool itcwb_rgreen;
+    bool itcwb_nopurple;
+    bool itcwb_sorted;
+    bool itcwb_forceextra;
+    bool itcwb_sampling;
+
 };
 
 struct DefringeParamsEdited {

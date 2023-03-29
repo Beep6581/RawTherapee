@@ -33,7 +33,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-LCurve::LCurve() : FoldableToolPanel(this, "labcurves", M("TP_LABCURVE_LABEL"), false, true)
+const Glib::ustring LCurve::TOOL_NAME = "labcurves";
+
+LCurve::LCurve() : FoldableToolPanel(this, TOOL_NAME, M("TP_LABCURVE_LABEL"), false, true)
 {
     auto m = ProcEventMapper::getInstance();
     Evgamutmunsell = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_GAMUTMUNSEL");

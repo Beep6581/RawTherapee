@@ -30,7 +30,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Defringe::Defringe () : FoldableToolPanel(this, "defringe", M("TP_DEFRINGE_LABEL"), true, true)
+const Glib::ustring Defringe::TOOL_NAME = "defringe";
+
+Defringe::Defringe () : FoldableToolPanel(this, TOOL_NAME, M("TP_DEFRINGE_LABEL"), true, true)
 {
 
     std::vector<GradientMilestone> bottomMilestones;

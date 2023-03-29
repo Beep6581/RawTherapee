@@ -83,6 +83,8 @@ public:
     bool handleShortcutKey (GdkEventKey* event);
     bool handleShortcutKeyRelease(GdkEventKey *event);
     void updateTPVScrollbar (bool hide);
+    void updateToolPanelToolLocations(
+        const std::vector<Glib::ustring> &favorites, bool cloneFavoriteTools);
 
 private:
     void on_NB_switch_page(Gtk::Widget* page, guint page_num);

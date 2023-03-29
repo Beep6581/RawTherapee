@@ -32,13 +32,10 @@ class Resize final :
     public rtengine::SizeListener
 {
 public:
+    static const Glib::ustring TOOL_NAME;
+
     Resize ();
     ~Resize () override;
-
-    Gtk::Box* getPackBox ()
-    {
-        return packBox;
-    }
 
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
@@ -87,7 +84,6 @@ private:
     int                cropw, croph;
     sigc::connection   sconn, aconn, wconn, hconn, leconn, seconn;
     bool               wDirty, hDirty, leDirty, seDirty;
-    ToolParamBlock*    packBox;
     IdleRegister       idle_register;
 
     static constexpr int MAX_SCALE = 16; // 16 to match the main preview max scale of 1600%

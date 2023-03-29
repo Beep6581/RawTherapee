@@ -5546,9 +5546,11 @@ void CLASS parse_makernote (int base, int uptag)
     offset = get4();
     fseek (ifp, offset-8, SEEK_CUR);
   } else if (!strcmp (buf,"OLYMPUS") ||
-             !strcmp (buf,"PENTAX ")) {
+             !strcmp (buf,"PENTAX ") ||
+             !strncmp(buf,"OM SYS",6)) { // From LibRaw
     base = ftell(ifp)-10;
     fseek (ifp, -2, SEEK_CUR);
+    if (buf[1] == 'M') get4(); // From LibRaw
     order = get2();
     if (buf[0] == 'O') get2();
   } else if (!strncmp (buf,"SONY",4) ||
@@ -7172,7 +7174,7 @@ void CLASS apply_tiff()
 		   if (tiff_ifd[raw].bytes*4 == raw_width*raw_height*7) break;
 		   load_flags = 0;
 	  case 16: load_raw = &CLASS unpacked_load_raw;
-		   if (!strncmp(make,"OLYMPUS",7) &&
+		   if ((!strncmp(make,"OLYMPUS",7) || !strncmp(make, "OM Digi", 7)) && // OM Digi from LibRaw
 			tiff_ifd[raw].bytes*7 > raw_width*raw_height)
 		     load_raw = &CLASS olympus_load_raw;
                    // ------- RT -------
@@ -8704,6 +8706,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
 	{ 10901,-4095,-1074,-1141,9208,2293,-62,1417,5158 } },
     { "Olympus XZ-2", 0, 0,
 	{ 9777,-3483,-925,-2886,11297,1800,-602,1663,5134 } },
+    { "OM Digital Solutions OM-1", 0, 0,
+        { 9488, -3984, -714, -2887, 10945, 2229, -137, 960, 5786 } }, // From LibRaw
     { "OmniVision", 0, 0,		/* DJC */
 	{ 12782,-4059,-379,-478,9066,1413,1340,1513,5176 } },
     { "Pentax *ist DL2", 0, 0,

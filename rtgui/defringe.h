@@ -46,6 +46,7 @@ protected:
     bool edges;
 
 public:
+    static const Glib::ustring TOOL_NAME;
 
     Defringe ();
     ~Defringe () override;

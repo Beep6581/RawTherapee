@@ -44,6 +44,7 @@ protected:
     FlatCurveEditor*   vshape;
 
 public:
+    static const Glib::ustring TOOL_NAME;
 
     HSVEqualizer ();
     ~HSVEqualizer () override;

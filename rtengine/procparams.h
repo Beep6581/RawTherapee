@@ -59,6 +59,8 @@ class LocLLmaskexpCurve;
 class LocCCmaskexpCurve;
 class LocHHmaskexpCurve;
 
+enum class StandardObserver;
+
 enum RenderingIntent : int {
     RI_PERCEPTUAL = INTENT_PERCEPTUAL,
     RI_RELATIVE = INTENT_RELATIVE_COLORIMETRIC,
@@ -299,6 +301,7 @@ struct ToneCurveParams {
     int shcompr;
     int hlcompr; // Highlight Recovery's compression
     int hlbl; // Highlight Recovery's compression
+    double hlth; // Highlight Recovery's threshold
     int hlcomprthresh; // Highlight Recovery's threshold
     bool histmatching; // histogram matching
     bool fromHistMatching;
@@ -633,11 +636,22 @@ struct WBEntry {
 
 struct WBParams {
     bool enabled;
-    Glib::ustring   method;
-    int             temperature;
-    double          green;
-    double          equal;
-    double          tempBias;
+    Glib::ustring    method;
+    int              temperature;
+    double           green;
+    double           equal;
+    double           tempBias;
+    StandardObserver observer;
+    int              itcwb_thres;
+    int              itcwb_precis;
+    int              itcwb_size;
+    int              itcwb_delta;
+    int              itcwb_fgreen;
+    int              itcwb_rgreen;
+    bool             itcwb_nopurple;
+    bool             itcwb_sorted;
+    bool             itcwb_forceextra;
+    bool             itcwb_sampling;
 
     WBParams();
 

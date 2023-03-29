@@ -28,9 +28,10 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
+const Glib::ustring BayerProcess::TOOL_NAME = "bayerprocess";
 
 BayerProcess::BayerProcess () :
-    FoldableToolPanel(this, "bayerprocess", M("TP_RAW_LABEL"), options.prevdemo != PD_Sidecar),
+    FoldableToolPanel(this, TOOL_NAME, M("TP_RAW_LABEL"), options.prevdemo != PD_Sidecar),
     oldMethod(-1)
 {
 

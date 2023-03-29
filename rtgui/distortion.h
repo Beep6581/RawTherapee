@@ -47,6 +47,8 @@ public:
     rtengine::ProcEvent EvDistortionFocalLengthVoid;
     rtengine::ProcEvent* event_distortion_focal_length;
 
+    static const Glib::ustring TOOL_NAME;
+
     Distortion ();
 
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;

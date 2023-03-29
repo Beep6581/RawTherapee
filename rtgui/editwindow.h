@@ -66,6 +66,8 @@ public:
     bool selectEditorPanel(const std::string &name);
     bool closeOpenEditors();
     bool isProcessing();
+    void updateToolPanelToolLocations(
+        const std::vector<Glib::ustring> &favorites, bool cloneFavoriteTools);
 
     void toFront();
     bool keyPressed (GdkEventKey* event);

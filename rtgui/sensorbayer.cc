@@ -20,11 +20,10 @@
 #include "guiutils.h"
 #include "rtimage.h"
 
-SensorBayer::SensorBayer () : FoldableToolPanel(this, "sensorbayer", M("TP_RAW_SENSOR_BAYER_LABEL"))
-{
+const Glib::ustring SensorBayer::TOOL_NAME = "sensorbayer";
 
-    packBox = Gtk::manage (new ToolParamBlock ());
-    pack_start (*packBox);
+SensorBayer::SensorBayer () : FoldableToolPanel(this, TOOL_NAME, M("TP_RAW_SENSOR_BAYER_LABEL"))
+{
 
     show_all ();
 }
