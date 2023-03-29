@@ -5179,7 +5179,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     Itcwb_greendelta : 1 - delta temp in green iterate loop for "extra" - between 0 to 4
     Itcwb_prim : sRGB, Adobe, Rec2020, AcesP0 = Use all Ciexy diagram instead of sRGB  
     //Itcwb_sizereference : repalce by int maxnb 3 by default, can be set to 5 ==> size of reference color compare to size of histogram real color
-    itcwb_delta : 1 by default can be set between 0 to 5 ==> delta temp to build histogram xy - if camera temp is not probably good
+    itcwb_delta : 2 by default can be set between 0 to 5 ==> delta temp to build histogram xy - if camera temp is not probably good
     //itcwb_precis : replace by int precision = 3 by default - can be set to 3 or 9 - 3 best sampling but more time...9 "old" settings - but low differences in times with 3 instead of 9 about twice time 160ms instead of 80ms for a big raw file
     itcwb_nopurple : true default - allow to bypass highlight recovery and inpait opposed when need flowers and not purple due to highlights...
     itcwb_fgreen : 5 by default - between 2 to 6 - find the compromise student / green to reach green near of 1 
@@ -5652,7 +5652,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     array2D<float> yc(bfwitc, bfhitc);
     array2D<float> Yc(bfwitc, bfhitc);
 
-    const int deltarepref = 1; //settings->itcwb_delta;
+    const int deltarepref = 1; //we can increase a bit... 2.
 
     for (int nn = 0, drep = -deltarepref; nn <= 2; ++nn, drep += deltarepref) {
         //three loop to refine color if temp camera is probably not very good
@@ -5824,13 +5824,12 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     for (int i = 0; i < sizcurr2ref; ++i) {
         //is condition chroxy necessary ?
         if (wbchro[sizcu4 - (i + 1)].chrox > 0.1f && wbchro[sizcu4 - (i + 1)].chroy > 0.1f && wbchro[sizcu4 - (i + 1)].chroxy > 0.0f) { //suppress value too far from reference spectral
-            w++;
+            w++;// w number of real tests - often limited by slider "maximum of colors used
             xx_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chrox;
             yy_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chroy;
             YY_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].Y;
         }
     }
-
     //calculate deltaE xx to find best values of spectrals data - limited to chroma values
    // int maxnb = rtengine::LIM(settings->itcwb_sizereference, 1, 5);
    // int maxnb = rtengine::LIM(wbpar.itcwb_size, 1, 5);
@@ -6027,7 +6026,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         std::sort(Tgstud, Tgstud + N_g, Tgstud[0]);
 
         // now search the value of green the nearest of 1 with a good student value, I think it is a good choice, perhaps no...
-        // I take the 5 first values
+        // I take the 6 first values
         // I admit a symetrie in green coefiicient for rgb multiplier...probably not exactly true
         // perhaps we can used a Snedecor test ? but why...at least we have confidence interval > 90%
         int greengood = 55;
@@ -6053,6 +6052,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
 
         if (settings->verbose) {
+            printf("Rangegreen begin=%i  Rangegreen end=%i\n", Rangegreenused.begin, Rangegreenused.end);
+            printf("scantemp begin=%i scantemp end=%i\n", scantempbeg, scantempend);
             printf("Student_0=%f Student_k= %f\n", Tgstud[0].student, Tgstud[maxkgood - 1].student);
             printf("mingood=%i greeng=%i goodref=%i stud=%f\n", mingood, greengood, goodref, (double) studgood);
         }
@@ -6385,8 +6386,8 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
     greenloc(0, 0);
     blueloc(0, 0);
 
-    if (settings->verbose) {
-        printf("AVG: %g %g %g\n", avg_r / std::max(1, rn), avg_g / std::max(1, gn), avg_b / std::max(1, bn));
+    if (settings->verbose  && wbpar.method != "autitcgreen") {
+        printf("RGB grey AVG: %g %g %g\n", avg_r / std::max(1, rn), avg_g / std::max(1, gn), avg_b / std::max(1, bn));
     }
 
     if (wbpar.method == "autitcgreen") {
