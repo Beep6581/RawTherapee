@@ -3703,10 +3703,10 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
         J570_NeuV10_spect, J570_NeuW18_spect, J570_NeuZ14_spect, //189
         J570_NeuC18_spect, J570_NeuD17_spect, J570_NeuJ11_spect, J570_NeuL4_spect, Colorlab_n72_n2_spect,
         Colorlab_10_n70_spect, Colorlab_n33_n70_spect, Colorlab_n8_n74_spect, Colorlab_19_n69_spect, Colorlab_n80_10_spect, Colorlab_n80_26_spect,
-        Colorlab_n80_5_9_5_9spect /* JDC468_greyc14_66_spect, JDC468_greym13_325_spect, JDC468_greyf26_156_spect, Colorlab_n57_5_6_9spect, Colorlab_L61_110_110Rec2020spect,
+        Colorlab_n80_5_9_5_9spect, /* JDC468_greyc14_66_spect, JDC468_greym13_325_spect, JDC468_greyf26_156_spect, Colorlab_n57_5_6_9spect,*/ Colorlab_L61_110_110Rec2020spect,
         Colorlab_L63_120_m56Rec2020spect, Colorlab_L63_m50_m60Rec2020spect, Colorlab_L63_m120_80Rec2020spect, Colorlab_L42_110_m100Prospect, Colorlab_L42_m70_m100Prospect,
-        Colorlab_L56_m120_90Prospect, Colorlab_L25_60_m120Prospect, Colorlab_L75_50_120Prospect, Colorlab_L75_m120_0Prospect*/
-    };
+        Colorlab_L56_m120_90Prospect, Colorlab_L25_60_m120Prospect, Colorlab_L75_50_120Prospect, Colorlab_L75_m120_0Prospect
+    };// color spectral disabled, leads to green cast :JDC468_greyc14_66_spect, JDC468_greym13_325_spect, JDC468_greyf26_156_spect, Colorlab_n57_5_6_9spect
 
 
     typedef struct WbTxyz {

@@ -5122,7 +5122,7 @@ float static studentXY(const array2D<float> & YYcurr, const array2D<float> & ref
 void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double &tempitc, double &greenitc, float &studgood, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, const ColorManagementParams &cmp, const RAWParams &raw, const WBParams & wbpar, const ToneCurveParams &hrp)
 {
     /*
-    Copyright (c) Jacques Desmis 6 - 2018 jdesmis@gmail.com, update 2 - 2023
+    Copyright (c) Jacques Desmis 6 - 2018 jdesmis@gmail.com, update 3 - 2023
     Copyright (c) Ingo Weyrich 3 - 2020 (heckflosse67@gmx.de)
 
     This algorithm try to find temperature correlation between 20 to 80 colors between 201 spectral color and about 20 to 55 color found in the image between 236, I just found the idea in the web "correlate with chroma" instead of RGB grey point,but I don't use any algo found on the web.
@@ -5517,7 +5517,18 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {12001., 0.960440, 1.601019}
     };
     const int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
-    constexpr int Nc = 201 + 1; //215 + 1;//215 number of reference spectral colors, I think it is enough to retrieve good values
+    constexpr int Nc = 211 + 1; //211 + 1;//211 number of reference spectral colors, I think it is enough to retrieve good values
+    int Ncr = 212;
+    if(wbpar.itcwb_prim == "srgb") {
+        Ncr = 201 + 1;
+    } else if(wbpar.itcwb_prim == "adob") {
+        Ncr = 201 + 1;
+    } else if(wbpar.itcwb_prim == "rec") {
+        Ncr = 211 + 1;
+    } else if(wbpar.itcwb_prim == "ace") {
+        Ncr = 211 + 1;
+    }
+    
     array2D<float> Tx(N_t, Nc);
     array2D<float> Ty(N_t, Nc);
     array2D<float> Tz(N_t, Nc);
@@ -5549,7 +5560,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             break;
         }
     }
-
     //calculate R G B multiplier in function illuminant and temperature
     const bool isMono = (ri->getSensorType() == ST_FUJI_XTRANS && raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO))
                         || (ri->getSensorType() == ST_BAYER && raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO));
@@ -5627,13 +5637,13 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     array2D<float> reff_spect_xx_camera(N_t, 2 * Nc + 2);
 
     //here we select the good spectral color inside the 113 values
-    //call tempxy to calculate for 215 201color references Temp and XYZ with cat02
+    //call tempxy to calculate for 211 or 201color references Temp and XYZ with cat02
 
     ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar); //calculate chroma xy (xyY) for Z known colors on under 200 illuminants
 
     //find the good spectral values
     //calculate xy reference spectral for tempref
-    for (int j = 0; j < Nc ; j++) {
+    for (int j = 0; j < Ncr ; j++) {
         reff_spect_xx_camera[j][repref] = TX[j] / (TX[j] + TY[j] +  TZ[j]); // x from xyY
         reff_spect_yy_camera[j][repref] = TY[j] / (TX[j] + TY[j] +  TZ[j]); // y from xyY
     }
@@ -5828,15 +5838,14 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     //wbpar.itcwb_size to verify if this setting is usefull...diificulties with High gamut and limited patch spectral colors.
 
     if (wbpar.itcwb_thres > 65) {//normally never used
-        maxnb = 201 / wbpar.itcwb_thres;//215
+        maxnb = (Nc-1) / wbpar.itcwb_thres;//201 to 211
     }
-
     for (int nb = 1; nb <= maxnb; ++nb) { //max 5 iterations for Itcwb_thres=33, after trial 3 is good in most cases but in some cases 5
         for (int i = 0; i < w; ++i) {
             float mindeltaE = 100000.f;//we can change this value...
             int kN = 0;
 
-            for (int j = 0; j < Nc ; j++) {
+            for (int j = 0; j < Ncr ; j++) {
                 if (!good_spectral[j]) {
                     const float deltaE = SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[j][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[j][repref]);
 
@@ -5896,14 +5905,14 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             Color::rgbxyY(RR, GG, BB, xxyycurr_reduc[2 * i][tt], xxyycurr_reduc[2 * i + 1][tt], unused, wp);
         }
 
-        for (int j = 0; j < Nc ; ++j) {
+        for (int j = 0; j < Ncr ; ++j) {
             reff_spect_xxyy_prov[2 * j][tt] = Tx[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]); // x from xyY
             reff_spect_xxyy_prov[2 * j + 1][tt] = Ty[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]); // y from xyY
         }
 
         int kk = -1;
 
-        for (int i = 0; i < Nc ; ++i) {
+        for (int i = 0; i < Ncr ; ++i) {
             if (good_spectral[i]) {
                 kk++;
                 //we calculate now absolute chroma for each spectral color
@@ -5983,14 +5992,14 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
                 //recalculate xy spectral now with good range of temp and green
 
-                for (int j = 0; j < Nc ; ++j) {
+                for (int j = 0; j < Ncr ; ++j) {
                     reff_spect_xxyy_prov[2 * j][tt] = Tx[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]); // x from xyY
                     reff_spect_xxyy_prov[2 * j + 1][tt] = Ty[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]); // y from xyY
                 }
 
                 int kkg = -1;
 
-                for (int i = 0; i < Nc ; ++i) {
+                for (int i = 0; i < Ncr ; ++i) {
                     if (good_spectral[i]) {
                         kkg++;
                         reff_spect_xxyy[2 * kkg][tt] = reff_spect_xxyy_prov[2 * i][tt];
