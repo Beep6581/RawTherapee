@@ -3852,8 +3852,7 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
     }
 
     const color_match_type &color_match = (wbpar.observer == StandardObserver::TEN_DEGREES) ? cie_colour_match_jd : cie_colour_match_jd2;
-       
- //   const color_match_type &color_match = (wbpar.observer == StandardObserver::TEN_DEGREES) ? cie_colour_match_jd : cie_colour_match_jd2;
+   // const color_match_type &color_match = (wbpar.itcwb_nopurple) ? cie_colour_match_jd : cie_colour_match_jd2;
 
     if (separated) {
         const double tempw = Txyz[repref].Tem;

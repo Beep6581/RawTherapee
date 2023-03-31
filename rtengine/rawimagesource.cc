@@ -5832,14 +5832,14 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     }
     //calculate deltaE xx to find best values of spectrals data - limited to chroma values
    // int maxnb = rtengine::LIM(settings->itcwb_sizereference, 1, 5);
-   // int maxnb = rtengine::LIM(wbpar.itcwb_size, 1, 5);
-    int maxnb = 3;
+    int maxnb = rtengine::LIM(wbpar.itcwb_size, 1, 6);
+  //  int maxnb = 3;
     //wbpar.itcwb_size to verify if this setting is usefull...diificulties with High gamut and limited patch spectral colors.
 
     if (wbpar.itcwb_thres > 65) {//normally never used
         maxnb = (Nc-1) / wbpar.itcwb_thres;//201 to 211
     }
-    for (int nb = 1; nb <= maxnb; ++nb) { //max 5 iterations for Itcwb_thres=33, after trial 3 is good in most cases but in some cases 5
+    for (int nb = 1; nb <= maxnb; ++nb) { //max 5 iterations for Itcwb_thres=33, after trial 3 is good in most cases but in some cases 5 or more
         for (int i = 0; i < w; ++i) {
             float mindeltaE = 100000.f;//we can change this value...
             int kN = 0;
@@ -6032,14 +6032,14 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         int greengood = 55;
 
         int maxkgood = wbpar.itcwb_fgreen;//we can change ...to test 3, 4, 5. High values perhaps less good student, but it is a compromise...
-        maxkgood = rtengine::LIM(maxkgood, 2, 6);
+        maxkgood = rtengine::LIM(maxkgood, 1, 6);// 2 6
         if(wbpar.itcwb_sampling == true) {
             maxkgood = 3; // force to 3 with old low sampling
         }
 
         int mingood = std::min(std::fabs(Tgstud[0].greenref - 55), std::fabs(Tgstud[1].greenref - 55));
 
-        for (int k = 1; k < maxkgood; ++k) {
+        for (int k = 0; k < maxkgood; ++k) {
             mingood = std::min(std::fabs(mingood), std::fabs(Tgstud[k].greenref - 55));
         }
 
@@ -6047,7 +6047,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             if (mingood == fabs(Tgstud[k].greenref - 55)) {
                 greengood = Tgstud[k].greenref ;
                 goodref = Tgstud[k].tempref;
-                studgood = Tgstud[k].student;;
+                studgood = Tgstud[k].student;
             }
         }
 
