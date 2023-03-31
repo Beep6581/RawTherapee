@@ -5628,24 +5628,32 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     YYY.clear();
 
-    bool separated = true;
+    bool separated = true;//true
 
     int w = -1;
 
     array2D<float> reff_spect_yy_camera(N_t, 2 * Nc + 2);
 
     array2D<float> reff_spect_xx_camera(N_t, 2 * Nc + 2);
+    array2D<float> reff_spect_Y_camera(N_t, 2 * Nc + 2);
 
     //here we select the good spectral color inside the 113 values
     //call tempxy to calculate for 211 or 201color references Temp and XYZ with cat02
-
+    //repref = 57;
     ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar); //calculate chroma xy (xyY) for Z known colors on under 200 illuminants
 
     //find the good spectral values
     //calculate xy reference spectral for tempref
     for (int j = 0; j < Ncr ; j++) {
-        reff_spect_xx_camera[j][repref] = TX[j] / (TX[j] + TY[j] +  TZ[j]); // x from xyY
-        reff_spect_yy_camera[j][repref] = TY[j] / (TX[j] + TY[j] +  TZ[j]); // y from xyY
+        float xxx = TX[j] / (TX[j] + TY[j] +  TZ[j]); // x from xyY
+        float yyy = TY[j] / (TX[j] + TY[j] +  TZ[j]); // y from xyY
+        float YY = TY[j]; //TZ[j] / (TX[j] + TY[j] +  TZ[j]); // y from xyY
+        reff_spect_xx_camera[j][repref] = xxx;
+        reff_spect_yy_camera[j][repref] = yyy;
+        reff_spect_Y_camera[j][repref] =  YY;
+//        if(j < 50) {
+//            printf("j=%i x=%f y=%f, Y=%f\n", j, (double) reff_spect_xx_camera[j][repref], (double) reff_spect_yy_camera[j][repref], (double)reff_spect_Y_camera[j][repref]);
+//        }
     }
 
     array2D<float> xc(bfwitc, bfhitc);

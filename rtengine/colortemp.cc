@@ -3590,19 +3590,24 @@ void ColorTemp::spectrum_to_color_xyz_preset(const double* spec_color, const dou
 void ColorTemp::spectrum_to_color_xyz_daylight(const double* spec_color, double _m1, double _m2, double &xx, double &yy, double &zz, const color_match_type &color_match)
 {
     int i;
-    double lambda, X = 0, Y = 0, Z = 0;
+    double lambda, X = 0, Y = 0, Z = 0, Yo = 0;
 
     for (i = 0, lambda = 350; lambda < 830.1; i++, lambda += 5) {
         const double Me = spec_color[i];
         const double Mc = daylight_spect(lambda, _m1, _m2);
-        X += Mc * color_match[i][0] * Me;
-        Y += Mc * color_match[i][1] * Me;
-        Z += Mc * color_match[i][2] * Me;
+        X += Me * color_match[i][0] * Mc;
+        Y += Me * color_match[i][1] * Mc;
+        Z += Me * color_match[i][2] * Mc;
+    }
+    for (i = 0, lambda = 350; lambda < 830.1; i++, lambda += 5) {
+
+        const double Mc1 = daylight_spect(lambda, _m1, _m2);      
+        Yo += color_match[i][1] * Mc1;
     }
 
-    xx = X / Y;
-    yy = 1.0;
-    zz = Z / Y;
+    xx = X / Yo;
+    yy = Y / Yo;
+    zz = Z / Yo;
 }
 
 //calculate XYZ from spectrum data (color) and illuminant : J.Desmis december 2011
