@@ -1739,7 +1739,7 @@ Camera constants:
     { // Quality B, lacks aperture and ISO scaling, known to exist, but little to gain as the levels are so close to white_max
         "make_model": "Nikon D7000",
         "dcraw_matrix": [ 7530,-1942,-255,-4318,11390,3362,-926,1694,7649 ], // matrix provided by Tanveer(tsk1979)
-        //"dcraw_matrix": [ 8198, -2239, -725, -4871, 12388, 2798, -1043, 2050, 7181 ], // DNG v13.2
+       // "dcraw_matrix": [ 8198, -2239, -725, -4871, 12388, 2798, -1043, 2050, 7181 ], // DNG v13.2
         "ranges": {
             // measured at ISO 100. ISO differences not measured, but known to exist
             "white": [ 16300, 15700, 16300 ], // typical R 16383, G 15778, B 16383

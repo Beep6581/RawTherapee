@@ -376,6 +376,27 @@ public:
     static const double J570_NeuD17_spect[97];//neutral
     static const double J570_NeuJ11_spect[97];//neutral
     static const double J570_NeuL4_spect[97];//neutral
+
+    static const double J570_NeuN8_spect2[97];//neutral
+    static const double J570_NeuN9_spect2[97];//neutral
+    static const double J570_NeuO8_spect2[97];//neutral
+    static const double J570_NeuO11_spect2[97];//neutral
+    static const double J570_NeuD5_spect2[97];//neutral
+    static const double J570_NeuE11_spect2[97];//neutral
+    static const double J570_NeuK16_spect2[97];//neutral
+    static const double J570_NeuM3_spect2[97];//neutral
+    static const double J570_NeuN18_spect2[97];//neutral
+    static const double J570_NeuQ1_spect2[97];//neutral
+    static const double J570_NeuS7_spect2[97];//neutral
+    static const double J570_NeuV10_spect2[97];//neutral
+
+    static const double J570_NeuW18_spect2[97];//neutral
+    static const double J570_NeuZ14_spect2[97];//neutral
+    static const double J570_NeuC18_spect2[97];//neutral
+    static const double J570_NeuD17_spect2[97];//neutral
+    static const double J570_NeuJ11_spect2[97];//neutral
+    static const double J570_NeuL4_spect2[97];//neutral 
+    
     static const double Colorlab_n72_n2_spect[97];
     static const double Colorlab_10_n70_spect[97];
     static const double Colorlab_n33_n70_spect[97];
@@ -384,10 +405,10 @@ public:
     static const double Colorlab_n80_10_spect[97];
     static const double Colorlab_n80_26_spect[97];
     static const double Colorlab_n80_5_9_5_9spect[97];
-    static const double JDC468_greyc14_66_spect[97];
-    static const double JDC468_greym13_325_spect[97];
-    static const double JDC468_greyf26_156_spect[97];
-    static const double Colorlab_n57_5_6_9spect[97];
+//    static const double JDC468_greyc14_66_spect[97];
+//    static const double JDC468_greym13_325_spect[97];
+//    static const double JDC468_greyf26_156_spect[97];
+//    static const double Colorlab_n57_5_6_9spect[97];
     static const double Colorlab_L61_110_110Rec2020spect[97];
     static const double Colorlab_L63_120_m56Rec2020spect[97];
     static const double Colorlab_L63_m50_m60Rec2020spect[97];
@@ -398,6 +419,22 @@ public:
     static const double Colorlab_L25_60_m120Prospect[97];
     static const double Colorlab_L75_50_120Prospect[97];
     static const double Colorlab_L75_m120_0Prospect[97];
+    static const double Colorlab_L22_2_1_3Prospect[97];
+    static const double Colorlab_L44_2_8_3_9Prospect[97];
+    static const double Colorlab_L44_2_8_3_9Prospect2[97];
+    static const double Colorlab_L95_2_3_15_6Prospect[97];
+    static const double Colorlab_L95_2_3_15_6Prospect2[97];
+    static const double Colorlab_L40_3_5_10_7Prospect[97];
+    static const double Colorlab_L40_3_5_10_7Prospect2[97];
+    static const double Colorlab_L40_3_5_10_7Prospect3[97];
+    static const double Colorlab_L34_1_8_1_9Prospect[97];
+    static const double Colorlab_L34_1_8_1_9Prospect2[97];
+    static const double Colorlab_L64_1_8_m1_9Prospect[97];
+    static const double Colorlab_L84_0_8_m1Prospect[97];
+    static const double Colorlab_L63_1_3_m2Prospect[97];
+    static const double Colorlab_L44_2_3_m3Prospect[97];
+
+
     
     static void spectrum_to_xyz_daylight  (double _m1, double _m2, double &x, double &y, double &z, const color_match_type &color_match);
     static void spectrum_to_xyz_blackbody (double _temp, double &x, double &y, double &z, const color_match_type &color_match);

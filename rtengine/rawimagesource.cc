@@ -5517,16 +5517,16 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {12001., 0.960440, 1.601019}
     };
     const int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
-    constexpr int Nc = 211 + 1; //211 + 1;//211 number of reference spectral colors, I think it is enough to retrieve good values
-    int Ncr = 212;
+    constexpr int Nc = 228 + 1; //211 + 1;//211 number of reference spectral colors, I think it is enough to retrieve good values
+    int Ncr = 229;
     if(wbpar.itcwb_prim == "srgb") {
-        Ncr = 201 + 1;
+        Ncr = 228 + 1;
     } else if(wbpar.itcwb_prim == "adob") {
-        Ncr = 201 + 1;
+        Ncr = 228 + 1;
     } else if(wbpar.itcwb_prim == "rec") {
-        Ncr = 211 + 1;
+        Ncr = 228 + 1;//211
     } else if(wbpar.itcwb_prim == "ace") {
-        Ncr = 211 + 1;
+        Ncr = 228 + 1;
     }
     
     array2D<float> Tx(N_t, Nc);
@@ -5639,7 +5639,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     //here we select the good spectral color inside the 113 values
     //call tempxy to calculate for 211 or 201color references Temp and XYZ with cat02
-    //repref = 57;
+ //   repref = 57;
     ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar); //calculate chroma xy (xyY) for Z known colors on under 200 illuminants
 
     //find the good spectral values
@@ -5651,7 +5651,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         reff_spect_xx_camera[j][repref] = xxx;
         reff_spect_yy_camera[j][repref] = yyy;
         reff_spect_Y_camera[j][repref] =  YY;
-//        if(j < 50) {
+//        if(j > 175) {
 //            printf("j=%i x=%f y=%f, Y=%f\n", j, (double) reff_spect_xx_camera[j][repref], (double) reff_spect_yy_camera[j][repref], (double)reff_spect_Y_camera[j][repref]);
 //        }
     }
