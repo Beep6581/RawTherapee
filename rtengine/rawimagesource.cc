@@ -5517,16 +5517,16 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {12001., 0.960440, 1.601019}
     };
     const int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
-    constexpr int Nc = 228 + 1; //211 + 1;//211 number of reference spectral colors, I think it is enough to retrieve good values
-    int Ncr = 229;
+    constexpr int Nc = 234 + 1; //211 + 1;//211 number of reference spectral colors, I think it is enough to retrieve good values
+    int Ncr = 235;
     if(wbpar.itcwb_prim == "srgb") {
-        Ncr = 228 + 1;
+        Ncr = 234 + 1;
     } else if(wbpar.itcwb_prim == "adob") {
-        Ncr = 228 + 1;
+        Ncr = 234 + 1;
     } else if(wbpar.itcwb_prim == "rec") {
-        Ncr = 228 + 1;//211
+        Ncr = 234 + 1;//211
     } else if(wbpar.itcwb_prim == "ace") {
-        Ncr = 228 + 1;
+        Ncr = 234 + 1;
     }
     
     array2D<float> Tx(N_t, Nc);
@@ -5862,7 +5862,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                     }
                 }
             }
-
+           // printf("kn=%i xx=%f yy=%f YY=%f\n", kN, (double) xx_curref_reduc[i][repref], (double) yy_curref_reduc[i][repref], (double) YY_curref_reduc[i][repref]);
             good_spectral[kN] = true;//good spectral are spectral color that match color histogram xy
         }
     }

@@ -420,20 +420,25 @@ public:
     static const double Colorlab_L75_50_120Prospect[97];
     static const double Colorlab_L75_m120_0Prospect[97];
     static const double Colorlab_L22_2_1_3Prospect[97];
-    static const double Colorlab_L44_2_8_3_9Prospect[97];
-    static const double Colorlab_L44_2_8_3_9Prospect2[97];
-    static const double Colorlab_L95_2_3_15_6Prospect[97];
-    static const double Colorlab_L95_2_3_15_6Prospect2[97];
-    static const double Colorlab_L40_3_5_10_7Prospect[97];
-    static const double Colorlab_L40_3_5_10_7Prospect2[97];
-    static const double Colorlab_L40_3_5_10_7Prospect3[97];
-    static const double Colorlab_L34_1_8_1_9Prospect[97];
-    static const double Colorlab_L34_1_8_1_9Prospect2[97];
-    static const double Colorlab_L64_1_8_m1_9Prospect[97];
-    static const double Colorlab_L84_0_8_m1Prospect[97];
-    static const double Colorlab_L63_1_3_m2Prospect[97];
-    static const double Colorlab_L44_2_3_m3Prospect[97];
-
+    static const double Colorlab_L44_2_8_3_9spect[97];
+    static const double Colorlab_L44_2_8_3_9spect2[97];
+    static const double Colorlab_L95_2_3_15_6spect[97];
+    static const double Colorlab_L95_2_3_15_6spect2[97];
+    static const double Colorlab_L40_3_5_10_7spect[97];
+    static const double Colorlab_L40_3_5_10_7spect2[97];
+    static const double Colorlab_L40_3_5_10_7spect3[97];
+    static const double Colorlab_L34_1_8_1_9spect[97];
+    static const double Colorlab_L34_1_8_1_9spect2[97];
+    static const double Colorlab_L64_1_8_m1_9spect[97];
+    static const double Colorlab_L84_0_8_m1spect[97];
+    static const double Colorlab_L63_1_3_m2spect[97];
+    static const double Colorlab_L44_2_3_m3spect[97];
+    static const double Colorlab_L65_96_45spect[97];
+    static const double Colorlab_L52_47_57spect[97];
+    static const double Colorlab_L31_62_27spect[97];
+    static const double Colorlab_L79_m9_m28spect[97];
+    static const double Colorlab_L58_50_31spect[97];
+    static const double Colorlab_L31_m52_27spect[97];
 
     
     static void spectrum_to_xyz_daylight  (double _m1, double _m2, double &x, double &y, double &z, const color_match_type &color_match);
