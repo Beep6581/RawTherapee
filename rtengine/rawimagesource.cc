@@ -5518,16 +5518,16 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {12001., 0.960440, 1.601019}
     };
     const int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
-    constexpr int Nc = 239 + 1; //211 + 1;//211 number of reference spectral colors, I think it is enough to retrieve good values
-    int Ncr = 240;
+    constexpr int Nc = 246 + 1; //211 + 1;//211 number of reference spectral colors, I think it is enough to retrieve good values
+    int Ncr = 247;
     if(wbpar.itcwb_prim == "srgb") {
-        Ncr = 239 + 1;
+        Ncr = 246 + 1;
     } else if(wbpar.itcwb_prim == "adob") {
-        Ncr = 239 + 1;
+        Ncr = 246 + 1;
     } else if(wbpar.itcwb_prim == "rec") {
-        Ncr = 239 + 1;//211
+        Ncr = 246 + 1;//211
     } else if(wbpar.itcwb_prim == "ace") {
-        Ncr = 239 + 1;
+        Ncr = 246 + 1;
     }
     
     array2D<float> Tx(N_t, Nc);
