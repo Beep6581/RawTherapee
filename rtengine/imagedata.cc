@@ -320,7 +320,9 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
             //orientation = pos->print(&exif);
         }
 
-        if (find_tag(Exiv2::lensName)) {
+        if (find_exif_tag("Exif.NikonLd4.LensIDNumber")) {
+            lens = validateUft8(pos->print(&exif));
+        } else if (find_tag(Exiv2::lensName)) {
             lens = validateUft8(pos->print(&exif));
             auto p = pos;
             if (find_exif_tag("Exif.CanonFi.RFLensType") && find_exif_tag("Exif.Canon.LensModel")) {
