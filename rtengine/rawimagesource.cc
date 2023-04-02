@@ -5518,16 +5518,16 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {12001., 0.960440, 1.601019}
     };
     const int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
-    constexpr int Nc = 246 + 1; //211 + 1;//211 number of reference spectral colors, I think it is enough to retrieve good values
-    int Ncr = 247;
+    constexpr int Nc = 251 + 1; //211 + 1;//211 number of reference spectral colors, I think it is enough to retrieve good values
+    int Ncr = 252;
     if(wbpar.itcwb_prim == "srgb") {
-        Ncr = 246 + 1;
+        Ncr = 252 + 1;
     } else if(wbpar.itcwb_prim == "adob") {
-        Ncr = 246 + 1;
+        Ncr = 252 + 1;
     } else if(wbpar.itcwb_prim == "rec") {
-        Ncr = 246 + 1;//211
+        Ncr = 252 + 1;//211
     } else if(wbpar.itcwb_prim == "ace") {
-        Ncr = 246 + 1;
+        Ncr = 252 + 1;
     }
     
     array2D<float> Tx(N_t, Nc);
@@ -5771,7 +5771,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     int sizcurr2ref = sizcurrref - ntr;
     const int sizcu30 = sizcurrref - n30;
-    int nbm = 77;//number max of color used = 1.4 * 55 in case all CIExy diagram
+    int nbm = 70;//number max of color used = 1.4 * 55 in case all CIExy diagram
     if(profuse == "Adobe RGB" || profuse == "sRGB" || wbpar.itcwb_sampling == true) {
         nbm = 55;
     }
@@ -5863,6 +5863,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                     }
                 }
             }
+            /*
             float xxxx = xx_curref_reduc[i][repref];
             float yyyy = yy_curref_reduc[i][repref];
             float YYYY = YY_curref_reduc[i][repref];
@@ -5887,6 +5888,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
              printf("....  \n");
           //  printf("kn=%i L=%3.2f a=%3.2f b=%3.2f \n", kN, (double) (L / 327.68f), (double) (a / 327.68f), (double) (b / 327.68f));
            // printf("kn=%i xx=%f yy=%f YY=%f\n", kN, (double) xx_curref_reduc[i][repref], (double) yy_curref_reduc[i][repref], (double) YY_curref_reduc[i][repref]);
+           */
             good_spectral[kN] = true;//good spectral are spectral color that match color histogram xy
         }
     }

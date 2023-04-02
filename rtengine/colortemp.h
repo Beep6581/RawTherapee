@@ -450,8 +450,18 @@ public:
     static const double Colorlab_L32_3_4_m3_8spect[97];
     static const double Colorlab_L50_m5_3_6_5spect[97];
     static const double Colorlab_L44_3_96_m8_8spect[97];
+    static const double Colorlab_L34_3_6_m5_4spect[97];
+    static const double Colorlab_L31_5_9_m4spect[97];
+    static const double Colorlab_L35_3_4_m11spect[97];
+    static const double Colorlab_L31_4_5_m4_7spect[97];
+    static const double Colorlab_L35_4_8_m6_4spect[97];
 
-//11	A11	13,73 	13,60	    14,34 	43,65	3,96	-8,75
+
+
+
+
+
+
 
     
     static void spectrum_to_xyz_daylight  (double _m1, double _m2, double &x, double &y, double &z, const color_match_type &color_match);
