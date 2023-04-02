@@ -1338,7 +1338,7 @@ WBParams::WBParams() :
     itcwb_precis(3),
     itcwb_size(3),
     itcwb_delta(2),
-    itcwb_fgreen(2),
+    itcwb_fgreen(3),
     itcwb_rgreen(1),
     itcwb_nopurple(false),
     itcwb_sorted(false),
