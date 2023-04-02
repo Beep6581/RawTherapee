@@ -5047,6 +5047,7 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
 
                 if (nh >= 0) {
                     histxythr[nh]++;
+                  //  printf("nh%i YC=%f ", nh,  (double) Yc[y][x]);
                     xxxthr[nh] += xc[y][x];
                     yyythr[nh] += yc[y][x];
                     YYYthr[nh] += Yc[y][x];
@@ -5517,16 +5518,16 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {12001., 0.960440, 1.601019}
     };
     const int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
-    constexpr int Nc = 234 + 1; //211 + 1;//211 number of reference spectral colors, I think it is enough to retrieve good values
-    int Ncr = 235;
+    constexpr int Nc = 239 + 1; //211 + 1;//211 number of reference spectral colors, I think it is enough to retrieve good values
+    int Ncr = 240;
     if(wbpar.itcwb_prim == "srgb") {
-        Ncr = 234 + 1;
+        Ncr = 239 + 1;
     } else if(wbpar.itcwb_prim == "adob") {
-        Ncr = 234 + 1;
+        Ncr = 239 + 1;
     } else if(wbpar.itcwb_prim == "rec") {
-        Ncr = 234 + 1;//211
+        Ncr = 239 + 1;//211
     } else if(wbpar.itcwb_prim == "ace") {
-        Ncr = 234 + 1;
+        Ncr = 239 + 1;
     }
     
     array2D<float> Tx(N_t, Nc);
@@ -5862,6 +5863,29 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                     }
                 }
             }
+            float xxxx = xx_curref_reduc[i][repref];
+            float yyyy = yy_curref_reduc[i][repref];
+            float YYYY = YY_curref_reduc[i][repref];
+            float X = (65535.f * (xxxx * YYYY)) / yyyy;
+            float Z = (65535.f * (1.f - xxx - yyyy) * YYYY) / yyyy;
+            float Y = 65535.f * YYYY;
+            float L, a, b;
+            Color::XYZ2Lab(X, Y, Z, L, a, b);
+            float xr = reff_spect_xx_camera[kN][repref];
+            float yr = reff_spect_yy_camera[kN][repref];
+            float Yr = reff_spect_Y_camera[kN][repref];
+            float X_r = (65535.f * (xr * Yr)) / yr;
+            float Z_r = (65535.f * (1.f - xr - yr) * Yr) / yr;
+            float Y_r = 65535.f * Yr;
+            
+            float Lr, ar, br;
+            Color::XYZ2Lab(X_r, Y_r, Z_r, Lr, ar, br);
+             printf("kn=%i REFLAB Lr=%3.2f ar=%3.2f br=%3.2f \n", kN, (double) (Lr / 327.68f), (double) (ar / 327.68f), (double) (br / 327.68f));
+             printf("kn=%i IMAGE  xx=%f yy=%f YY=%f\n", kN, (double) xx_curref_reduc[i][repref], (double) yy_curref_reduc[i][repref], (double) YY_curref_reduc[i][repref]);
+             printf("kn=%i REfxy xxr=%f yyr=%f YYr=%f\n", kN, (double) reff_spect_xx_camera[i][repref], (double) reff_spect_yy_camera[i][repref], (double) reff_spect_Y_camera[i][repref]);
+             printf("kn=%i DELTA delt=%f\n", kN, sqrt(SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[kN][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[kN][repref])));
+             printf("....  \n");
+          //  printf("kn=%i L=%3.2f a=%3.2f b=%3.2f \n", kN, (double) (L / 327.68f), (double) (a / 327.68f), (double) (b / 327.68f));
            // printf("kn=%i xx=%f yy=%f YY=%f\n", kN, (double) xx_curref_reduc[i][repref], (double) yy_curref_reduc[i][repref], (double) YY_curref_reduc[i][repref]);
             good_spectral[kN] = true;//good spectral are spectral color that match color histogram xy
         }
