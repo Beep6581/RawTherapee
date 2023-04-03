@@ -5798,8 +5798,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     float estimhue = 0.f;
     float xh = 0.f;
     float yh = 0.f;
-    
-               // double hz = xatan2f(bz, az);
 
     //estimate chromaticity for references
     for (int nh = 0; nh < sizcu4; ++nh) {
