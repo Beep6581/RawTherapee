@@ -461,8 +461,11 @@ public:
     static const double Colorlab_L69_14_m9spect[97];
     static const double Colorlab_L92_13_m16spect[97];
     static const double Colorlab_L49_21_m12spect[97];
+    static const double Colorlab_L56_20_m115spect[97];
+    static const double Colorlab_L68_21_m19spect[97];
 
-//6	A6	20,68 	17,33	    19,47 	48,67	20,53	-12,07
+
+
 
 
 
