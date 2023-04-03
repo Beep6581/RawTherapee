@@ -5795,10 +5795,18 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     }
 
     float estimchrom = 0.f;
+    float estimhue = 0.f;
+    float xh = 0.f;
+    float yh = 0.f;
+    
+               // double hz = xatan2f(bz, az);
 
     //estimate chromaticity for references
     for (int nh = 0; nh < sizcu4; ++nh) {
         const float chxy = std::sqrt(SQR(xx_curref[nh][repref] - xwpr) + SQR(yy_curref[nh][repref] - ywpr));
+        xh += xx_curref[nh][repref] - xwpr;
+        yh += yy_curref[nh][repref] - ywpr;
+        
         wbchro[nh].chroxy_number = chxy * std::sqrt(histcurrref[nh][repref]);
         wbchro[nh].chroxy = std::sqrt(chxy);
         wbchro[nh].chrox = xx_curref[nh][repref];
@@ -5807,11 +5815,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         wbchro[nh].index = nh;
         estimchrom += chxy;
     }
-
+    estimhue = xatan2f(yh, xh);
     estimchrom /= sizcu4;
 
     if (settings->verbose) {
-        printf("estimchrom=%f\n", estimchrom);
+        printf("estimchrom=%f estimhue=%f\n", (double) estimchrom, (double) estimhue);
     }
     bool issorted = wbpar.itcwb_sorted;
 
@@ -5864,7 +5872,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                     }
                 }
             }
-            
+            /*
             float xxxx = xx_curref_reduc[i][repref];
             float yyyy = yy_curref_reduc[i][repref];
             float YYYY = YY_curref_reduc[i][repref];
@@ -5888,7 +5896,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
              printf("kn=%i REfxy xxr=%f yyr=%f YYr=%f\n", kN, (double) reff_spect_xx_camera[i][repref], (double) reff_spect_yy_camera[i][repref], (double) reff_spect_Y_camera[i][repref]);
              printf("kn=%i DELTA delt=%f\n", kN, sqrt(SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[kN][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[kN][repref])));
              printf("....  \n");
-           
+           */
             good_spectral[kN] = true;//good spectral are spectral color that match color histogram xy
         }
     }
