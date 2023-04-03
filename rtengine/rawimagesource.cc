@@ -5870,31 +5870,31 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                     }
                 }
             }
-            /*
-            float xxxx = xx_curref_reduc[i][repref];
-            float yyyy = yy_curref_reduc[i][repref];
-            float YYYY = YY_curref_reduc[i][repref];
-            float X = (65535.f * (xxxx * YYYY)) / yyyy;
-            float Z = (65535.f * (1.f - xxx - yyyy) * YYYY) / yyyy;
-            float Y = 65535.f * YYYY;
-            //convert xyY XYZ
-            float L, a, b;
-            Color::XYZ2Lab(X, Y, Z, L, a, b);//xyz Lab
-            float xr = reff_spect_xx_camera[kN][repref];
-            float yr = reff_spect_yy_camera[kN][repref];
-            float Yr = reff_spect_Y_camera[kN][repref];
-            float X_r = (65535.f * (xr * Yr)) / yr;
-            float Z_r = (65535.f * (1.f - xr - yr) * Yr) / yr;
-            float Y_r = 65535.f * Yr;
+            if (settings->verbose) {
+                //convert xyY XYZ
+                float xxxx = xx_curref_reduc[i][repref];
+                float yyyy = yy_curref_reduc[i][repref];
+                float YYYY = YY_curref_reduc[i][repref];
+                float X = (65535.f * (xxxx * YYYY)) / yyyy;
+                float Z = (65535.f * (1.f - xxx - yyyy) * YYYY) / yyyy;
+                float Y = 65535.f * YYYY;
+                float L, a, b;
+                Color::XYZ2Lab(X, Y, Z, L, a, b);//xyz Lab
+                float xr = reff_spect_xx_camera[kN][repref];
+                float yr = reff_spect_yy_camera[kN][repref];
+                float Yr = reff_spect_Y_camera[kN][repref];
+                float X_r = (65535.f * (xr * Yr)) / yr;
+                float Z_r = (65535.f * (1.f - xr - yr) * Yr) / yr;
+                float Y_r = 65535.f * Yr;
             
-            float Lr, ar, br;
-            Color::XYZ2Lab(X_r, Y_r, Z_r, Lr, ar, br);
-             printf("kn=%i REFLAB Lr=%3.2f ar=%3.2f br=%3.2f \n", kN, (double) (Lr / 327.68f), (double) (ar / 327.68f), (double) (br / 327.68f));
-             printf("kn=%i IMAGE  xx=%f yy=%f YY=%f\n", kN, (double) xx_curref_reduc[i][repref], (double) yy_curref_reduc[i][repref], (double) YY_curref_reduc[i][repref]);
-             printf("kn=%i REfxy xxr=%f yyr=%f YYr=%f\n", kN, (double) reff_spect_xx_camera[i][repref], (double) reff_spect_yy_camera[i][repref], (double) reff_spect_Y_camera[i][repref]);
-             printf("kn=%i DELTA delt=%f\n", kN, sqrt(SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[kN][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[kN][repref])));
-             printf("....  \n");
-           */
+                float Lr, ar, br;
+                Color::XYZ2Lab(X_r, Y_r, Z_r, Lr, ar, br);
+                printf("kn=%i REFLAB Lr=%3.2f ar=%3.2f br=%3.2f \n", kN, (double) (Lr / 327.68f), (double) (ar / 327.68f), (double) (br / 327.68f));
+                printf("kn=%i IMAGE  xx=%f yy=%f YY=%f\n", kN, (double) xx_curref_reduc[i][repref], (double) yy_curref_reduc[i][repref], (double) YY_curref_reduc[i][repref]);
+                printf("kn=%i REfxy xxr=%f yyr=%f YYr=%f\n", kN, (double) reff_spect_xx_camera[i][repref], (double) reff_spect_yy_camera[i][repref], (double) reff_spect_Y_camera[i][repref]);
+                printf("kn=%i DELTA delt=%f\n", kN, sqrt(SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[kN][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[kN][repref])));
+                printf("....  \n");
+            }       
             good_spectral[kN] = true;//good spectral are spectral color that match color histogram xy
         }
     }
@@ -6092,6 +6092,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
 
         if (settings->verbose) {
+            printf("Green camera=%f\n", keepgreen); 
             printf("Rangegreen begin=%i  Rangegreen end=%i\n", Rangegreenused.begin, Rangegreenused.end);
             printf("scantemp begin=%i scantemp end=%i\n", scantempbeg, scantempend);
             printf("Student_0=%f Student_k= %f\n", Tgstud[0].student, Tgstud[maxkgood - 1].student);
@@ -6104,12 +6105,15 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         if (estimchrom < 0.025f) {
             float ac = -2.40f * estimchrom + 0.06f;//small empirical  correction, maximum 0.06 if chroma=0 for all image, currently for very low chroma +0.02
             greenitc += ac;
-        } else {
-            if(keepgreen < 0.97) {
-                double ag = 0.5 * keepgreen - 0.485;//empirical  correction if doubt on color matrix and green low
-                greenitc += ag;
+        } 
+        if(keepgreen < 1. && greengood > 50) {
+            double ag = 0.9 * (1. - keepgreen);//empirical  correction when green low
+            if (settings->verbose) {
+                printf("green correction=%f \n", ag);
             }
+            greenitc = 1. - ag;
         }
+        
     }
 
     avg_rm = 10000.f * rmm[goodref];
