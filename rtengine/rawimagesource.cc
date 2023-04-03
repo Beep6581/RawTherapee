@@ -5518,16 +5518,16 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {12001., 0.960440, 1.601019}
     };
     const int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
-    constexpr int Nc = 251 + 1; //211 + 1;//211 number of reference spectral colors, I think it is enough to retrieve good values
-    int Ncr = 252;
+    constexpr int Nc = 254 + 1; //211 + 1;//211 number of reference spectral colors, I think it is enough to retrieve good values
+    int Ncr = 255;
     if(wbpar.itcwb_prim == "srgb") {
-        Ncr = 252 + 1;
+        Ncr = 254 + 1;
     } else if(wbpar.itcwb_prim == "adob") {
-        Ncr = 252 + 1;
+        Ncr = 254 + 1;
     } else if(wbpar.itcwb_prim == "rec") {
-        Ncr = 252 + 1;//211
+        Ncr = 254 + 1;//211
     } else if(wbpar.itcwb_prim == "ace") {
-        Ncr = 252 + 1;
+        Ncr = 254 + 1;
     }
     
     array2D<float> Tx(N_t, Nc);
@@ -5564,6 +5564,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     //calculate R G B multiplier in function illuminant and temperature
     const bool isMono = (ri->getSensorType() == ST_FUJI_XTRANS && raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO))
                         || (ri->getSensorType() == ST_BAYER && raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO));
+    double keepgreen = greenitc;
     for (int tt = 0; tt < N_t; ++tt) {
         double r, g, b;
         float rm, gm, bm;
@@ -5863,15 +5864,16 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                     }
                 }
             }
-            /*
+            
             float xxxx = xx_curref_reduc[i][repref];
             float yyyy = yy_curref_reduc[i][repref];
             float YYYY = YY_curref_reduc[i][repref];
             float X = (65535.f * (xxxx * YYYY)) / yyyy;
             float Z = (65535.f * (1.f - xxx - yyyy) * YYYY) / yyyy;
             float Y = 65535.f * YYYY;
+            //convert xyY XYZ
             float L, a, b;
-            Color::XYZ2Lab(X, Y, Z, L, a, b);
+            Color::XYZ2Lab(X, Y, Z, L, a, b);//xyz Lab
             float xr = reff_spect_xx_camera[kN][repref];
             float yr = reff_spect_yy_camera[kN][repref];
             float Yr = reff_spect_Y_camera[kN][repref];
@@ -5886,9 +5888,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
              printf("kn=%i REfxy xxr=%f yyr=%f YYr=%f\n", kN, (double) reff_spect_xx_camera[i][repref], (double) reff_spect_yy_camera[i][repref], (double) reff_spect_Y_camera[i][repref]);
              printf("kn=%i DELTA delt=%f\n", kN, sqrt(SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[kN][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[kN][repref])));
              printf("....  \n");
-          //  printf("kn=%i L=%3.2f a=%3.2f b=%3.2f \n", kN, (double) (L / 327.68f), (double) (a / 327.68f), (double) (b / 327.68f));
-           // printf("kn=%i xx=%f yy=%f YY=%f\n", kN, (double) xx_curref_reduc[i][repref], (double) yy_curref_reduc[i][repref], (double) YY_curref_reduc[i][repref]);
-           */
+           
             good_spectral[kN] = true;//good spectral are spectral color that match color histogram xy
         }
     }
@@ -6098,6 +6098,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         if (estimchrom < 0.025f) {
             float ac = -2.40f * estimchrom + 0.06f;//small empirical  correction, maximum 0.06 if chroma=0 for all image, currently for very low chroma +0.02
             greenitc += ac;
+        } else {
+            if(keepgreen < 0.97) {
+                double ag = 0.4 * keepgreen - 0.388;//empirical  correction if doubt on color matrix and green low
+                greenitc += ag;
+            }
         }
     }
 

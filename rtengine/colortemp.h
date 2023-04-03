@@ -455,6 +455,10 @@ public:
     static const double Colorlab_L35_3_4_m11spect[97];
     static const double Colorlab_L31_4_5_m4_7spect[97];
     static const double Colorlab_L35_4_8_m6_4spect[97];
+    static const double Colorlab_L95_10_7_m14_3spect[97];
+    static const double Colorlab_L36_34_m7_5spect[97];
+
+//2	A2	13,09 	8,98	    9,44 	35,95	33,11	-7,54
 
 
 
