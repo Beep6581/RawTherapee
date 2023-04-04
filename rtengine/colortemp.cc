@@ -3170,7 +3170,7 @@ const double ColorTemp::Colorlab_L49_21_m12spect[97]= {
     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
 };
 
-const double ColorTemp::Colorlab_L56_20_m115spect[97]= {
+const double ColorTemp::Colorlab_L56_20_m15spect[97]= {
     0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
     0.0778, 0.08, 0.0988, 0.11, 0.1312, 0.19, 0.2241, 0.25, 0.2800, 0.3, 0.3163, 0.34, 0.3559, 0.36, 0.3744, 0.37, 0.3683, 0.36, 0.3553, 0.34, 0.3356, 0.32, 0.3184, 0.31, 0.3083, 0.305, 0.3014, 0.3, 0.2817, 0.26, 0.2492, 0.23,
     0.2150, 0.2, 0.1787, 0.15, 0.1448, 0.13, 0.1264, 0.125, 0.1244, 0.15, 0.1690, 0.22, 0.2816, 0.32, 0.3810, 0.4, 0.4353, 0.44, 0.4580, 0.46, 0.4682, 0.47, 0.4754, 0.48,
@@ -4288,33 +4288,29 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
         J570_BlueF1_spect, J570_BlueF2_spect, J570_BlueF10_spect, J570_BlueF13_spect, J570_BlueG9_spect, J570_BlueG19_spect, J570_BlueI5_spect,//165
         J570_BlueI3_spect, J570_BlueI19_spect, J570_BlueJ4_spect, J570_BlueJ6_spect, J570_BlueJ11_spect, J570_BlueK5_spect, //171
         J570_BlueN1_spect, J570_BlueN4_spect, J570_BlueO19_spect, J570_BlueU8_spect, J570_NeuN8_spect,//176
-        //J570_NeuN9_spect, J570_NeuO8_spect, J570_NeuO11_spect, J570_NeuD5_spect,//180
-        J570_NeuE11_spect, J570_NeuK16_spect, J570_NeuM3_spect, 
-        J570_NeuN18_spect,
-        J570_NeuQ1_spect, J570_NeuS7_spect,
-        J570_NeuV10_spect, J570_NeuW18_spect, J570_NeuZ14_spect, //185
-        J570_NeuC18_spect, J570_NeuD17_spect, J570_NeuJ11_spect, J570_NeuL4_spect, //189
-        Colorlab_n72_n2_spect,
-        Colorlab_10_n70_spect, Colorlab_n33_n70_spect, Colorlab_n8_n74_spect, Colorlab_19_n69_spect, Colorlab_n80_10_spect, Colorlab_n80_26_spect,//196
-        Colorlab_n80_5_9_5_9spect, /* JDC468_greyc14_66_spect, JDC468_greym13_325_spect, JDC468_greyf26_156_spect, Colorlab_n57_5_6_9spect,*/ Colorlab_L61_110_110Rec2020spect,//198
-        Colorlab_L63_120_m56Rec2020spect, Colorlab_L63_m50_m60Rec2020spect, Colorlab_L63_m120_80Rec2020spect, Colorlab_L42_110_m100Prospect, Colorlab_L42_m70_m100Prospect,//203
-        Colorlab_L56_m120_90Prospect, Colorlab_L25_60_m120Prospect, Colorlab_L75_50_120Prospect, Colorlab_L75_m120_0Prospect, J570_NeuN8_spect2 , J570_NeuN9_spect2,//209
-        J570_NeuO8_spect2, J570_NeuO11_spect2, J570_NeuD5_spect2, J570_NeuE11_spect2, J570_NeuK16_spect2, J570_NeuM3_spect2, Colorlab_L22_2_1_3Prospect,//217
-        Colorlab_L44_2_8_3_9spect, Colorlab_L44_2_8_3_9spect2, Colorlab_L95_2_3_15_6spect, Colorlab_L95_2_3_15_6spect2, Colorlab_L40_3_5_10_7spect,//222
-        Colorlab_L40_3_5_10_7spect2, /*Colorlab_L40_3_5_10_7Prospect3,*/ Colorlab_L34_1_8_1_9spect, Colorlab_L34_1_8_1_9spect2, Colorlab_L64_1_8_m1_9spect,//226
-        Colorlab_L84_0_8_m1spect, Colorlab_L63_1_3_m2spect, Colorlab_L44_2_3_m3spect, Colorlab_L65_96_45spect, Colorlab_L52_47_57spect, Colorlab_L31_62_27spect,  //232
-        Colorlab_L79_m9_m28spect, Colorlab_L58_50_31spect, Colorlab_L31_m52_27spect, Colorlab_L44_2_2_m7_35spect, Colorlab_L47_m10_8_0_41spect, Colorlab_L32_4_8_m3_2spect,
-        Colorlab_L57_m6_9_2_9spect, Colorlab_L33_2_4_m4_5spect, Colorlab_L35_11_65_m1_1spect, Colorlab_L52_m2_7_8_9spect, Colorlab_L32_7_m2_5spect, Colorlab_L32_3_4_m3_8spect,
-        Colorlab_L50_m5_3_6_5spect, Colorlab_L44_3_96_m8_8spect, Colorlab_L34_3_6_m5_4spect, Colorlab_L31_5_9_m4spect,Colorlab_L35_3_4_m11spect, Colorlab_L31_4_5_m4_7spect,
-        Colorlab_L35_4_8_m6_4spect, Colorlab_L95_10_7_m14_3spect, Colorlab_L36_34_m7_5spect, Colorlab_L37_59_2spect, Colorlab_L69_14_m9spect, Colorlab_L92_13_m16spect,
-        Colorlab_L49_21_m12spect, Colorlab_L56_20_m115spect, Colorlab_L68_21_m19spect
+        J570_NeuN9_spect, J570_NeuO8_spect, J570_NeuO11_spect, J570_NeuD5_spect,//180
+        J570_NeuE11_spect, J570_NeuK16_spect, J570_NeuM3_spect, J570_NeuN18_spect, J570_NeuQ1_spect, J570_NeuS7_spect, J570_NeuV10_spect, J570_NeuW18_spect, J570_NeuZ14_spect, //189
+        J570_NeuC18_spect, J570_NeuD17_spect, J570_NeuJ11_spect, J570_NeuL4_spect, Colorlab_n72_n2_spect,//194
+        Colorlab_10_n70_spect, Colorlab_n33_n70_spect, Colorlab_n8_n74_spect, Colorlab_19_n69_spect, Colorlab_n80_10_spect, Colorlab_n80_26_spect,//200
+        Colorlab_n80_5_9_5_9spect, /* JDC468_greyc14_66_spect, JDC468_greym13_325_spect, JDC468_greyf26_156_spect, Colorlab_n57_5_6_9spect,*/ Colorlab_L61_110_110Rec2020spect,//202
+        Colorlab_L63_120_m56Rec2020spect, Colorlab_L63_m50_m60Rec2020spect, Colorlab_L63_m120_80Rec2020spect, Colorlab_L42_110_m100Prospect, Colorlab_L42_m70_m100Prospect,//207
+        Colorlab_L56_m120_90Prospect, Colorlab_L25_60_m120Prospect, Colorlab_L75_50_120Prospect, Colorlab_L75_m120_0Prospect, J570_NeuN8_spect2 , J570_NeuN9_spect2,//213
+        J570_NeuO8_spect2, J570_NeuO11_spect2, J570_NeuD5_spect2, J570_NeuE11_spect2, J570_NeuK16_spect2, J570_NeuM3_spect2, Colorlab_L22_2_1_3Prospect,//220
+        Colorlab_L44_2_8_3_9spect, Colorlab_L44_2_8_3_9spect2, Colorlab_L95_2_3_15_6spect, Colorlab_L95_2_3_15_6spect2, Colorlab_L40_3_5_10_7spect,//225
+        Colorlab_L40_3_5_10_7spect2, /*Colorlab_L40_3_5_10_7Prospect3,*/ Colorlab_L34_1_8_1_9spect, Colorlab_L34_1_8_1_9spect2, Colorlab_L64_1_8_m1_9spect,//229
+        Colorlab_L84_0_8_m1spect, Colorlab_L63_1_3_m2spect, Colorlab_L44_2_3_m3spect, Colorlab_L65_96_45spect, Colorlab_L52_47_57spect, Colorlab_L31_62_27spect,  //235
+        Colorlab_L79_m9_m28spect, Colorlab_L58_50_31spect, Colorlab_L31_m52_27spect, Colorlab_L44_2_2_m7_35spect, Colorlab_L47_m10_8_0_41spect, Colorlab_L32_4_8_m3_2spect,//241
+        Colorlab_L57_m6_9_2_9spect, Colorlab_L33_2_4_m4_5spect, Colorlab_L35_11_65_m1_1spect, Colorlab_L52_m2_7_8_9spect, Colorlab_L32_7_m2_5spect, Colorlab_L32_3_4_m3_8spect,//247
+        Colorlab_L50_m5_3_6_5spect, Colorlab_L44_3_96_m8_8spect, Colorlab_L34_3_6_m5_4spect, Colorlab_L31_5_9_m4spect,Colorlab_L35_3_4_m11spect, Colorlab_L31_4_5_m4_7spect,//253
+        Colorlab_L35_4_8_m6_4spect, Colorlab_L95_10_7_m14_3spect, Colorlab_L36_34_m7_5spect, Colorlab_L37_59_2spect, Colorlab_L69_14_m9spect, Colorlab_L92_13_m16spect,//259
+        Colorlab_L49_21_m12spect, Colorlab_L56_20_m15spect, Colorlab_L68_21_m19spect //262
         //J570_NeuN18_spect2, J570_NeuQ1_spect2 //J570_NeuS7_spect2, J570_NeuV10_spect2, J570_NeuW18_spect2, 
         //J570_NeuZ14_spect2,
         //J570_NeuC18_spect2, 
         //J570_NeuD17_spect2, 
         //J570_NeuJ11_spect2, 
         //J570_NeuL4_spect2
-    };// color sp ectral disabled, leads to green cast :JDC468_greyc14_66_spect, JDC468_greym13_325_spect, JDC468_greyf26_156_spect, Colorlab_n57_5_6_9spect
+    };// 
 
     typedef struct WbTxyz {
         double Tem;

@@ -5276,7 +5276,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {0.917, 1.f},
         {0.926, 1.f},
         {0.935, 1.f},
-        {0.943, 1.f},
+        {0.943, 1.f},//49 limit low normal
         {0.952, 1.f},
         {0.962, 1.f},
         {0.971, 1.f},
@@ -5518,16 +5518,19 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {12001., 0.960440, 1.601019}
     };
     const int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
-    constexpr int Nc = 260 + 1; //211 + 1;//211 number of reference spectral colors, I think it is enough to retrieve good values
-    int Ncr = 261;
+    constexpr int Nc = 264 + 1; //264 number of reference spectral colors, I think it is enough to retrieve good values
+    int Ncr = 265;//265
     if(wbpar.itcwb_prim == "srgb") {
-        Ncr = 260 + 1;
+        Ncr = 264 + 1;
     } else if(wbpar.itcwb_prim == "adob") {
-        Ncr = 260 + 1;
+        Ncr = 264 + 1;
     } else if(wbpar.itcwb_prim == "rec") {
-        Ncr = 260 + 1;//211
+        Ncr = 264 + 1;//211
     } else if(wbpar.itcwb_prim == "ace") {
-        Ncr = 260 + 1;
+        Ncr = 264 + 1;
+    }
+    if(wbpar.itcwb_sampling) {//low samplin 5.9 with less spectral datas 201
+        Ncr = 202;
     }
     
     array2D<float> Tx(N_t, Nc);
@@ -6106,7 +6109,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             float ac = -2.40f * estimchrom + 0.06f;//small empirical  correction, maximum 0.06 if chroma=0 for all image, currently for very low chroma +0.02
             greenitc += ac;
         } 
-        if(keepgreen < 1. && greengood > 50) {
+        if(keepgreen < 1. && greengood > 50) {// green 0.95
             double ag = 0.9 * (1. - keepgreen);//empirical  correction when green low
             if (settings->verbose) {
                 printf("green correction=%f \n", ag);
