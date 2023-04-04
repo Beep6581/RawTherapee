@@ -570,6 +570,9 @@ void Options::setDefaults()
 
     rtSettings.darkFramesPath = "";
     rtSettings.flatFieldsPath = "";
+	rtSettings.cameraProfilesPath = "";
+	rtSettings.lensProfilesPath = "";
+	
 #ifdef WIN32
     const gchar* sysRoot = g_getenv("SystemRoot");  // Returns e.g. "c:\Windows"
 
@@ -651,13 +654,15 @@ void Options::setDefaults()
     rtSettings.leveldnliss = 0;
     rtSettings.leveldnautsimpl = 0;
 
-//   rtSettings.colortoningab =0.7;
-//rtSettings.decaction =0.3;
+//  rtSettings.colortoningab =0.7;
+//  rtSettings.decaction =0.3;
 //  rtSettings.ciebadpixgauss=false;
     rtSettings.rgbcurveslumamode_gamut = true;
     lastIccDir = rtSettings.iccDirectory;
     lastDarkframeDir = rtSettings.darkFramesPath;
     lastFlatfieldDir = rtSettings.flatFieldsPath;
+	lastCameraProfilesDir = rtSettings.cameraProfilesPath;
+	lastLensProfilesDir = rtSettings.lensProfilesPath;
 //  rtSettings.bw_complementary = true;
     // There is no reasonable default for curves. We can still suppose that they will take place
     // in a subdirectory of the user's own ProcParams presets, i.e. in a subdirectory
@@ -789,6 +794,14 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("General", "FlatFieldsPath")) {
                     rtSettings.flatFieldsPath = keyFile.get_string("General", "FlatFieldsPath");
+                }
+
+                if (keyFile.has_key("General", "CameraProfilesPath")) {
+                    rtSettings.cameraProfilesPath = keyFile.get_string("General", "CameraProfilesPath");
+                }
+
+				if (keyFile.has_key("General", "LensProfilesPath")) {
+                    rtSettings.lensProfilesPath = keyFile.get_string("General", "LensProfilesPath");
                 }
 
                 if (keyFile.has_key("General", "Verbose")) {
@@ -2188,6 +2201,8 @@ void Options::readFromFile(Glib::ustring fname)
                 safeDirGet(keyFile, "Dialogs", "LastIccDir", lastIccDir);
                 safeDirGet(keyFile, "Dialogs", "LastDarkframeDir", lastDarkframeDir);
                 safeDirGet(keyFile, "Dialogs", "LastFlatfieldDir", lastFlatfieldDir);
+                safeDirGet(keyFile, "Dialogs", "LastCameraProfilesDir", lastCameraProfilesDir);
+                safeDirGet(keyFile, "Dialogs", "LastLensProfilesDir", lastLensProfilesDir);
                 safeDirGet(keyFile, "Dialogs", "LastRgbCurvesDir", lastRgbCurvesDir);
                 safeDirGet(keyFile, "Dialogs", "LastLabCurvesDir", lastLabCurvesDir);
                 safeDirGet(keyFile, "Dialogs", "LastRetinexDir", lastRetinexDir);
@@ -2291,6 +2306,8 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_string("General", "Version", RTVERSION);
         keyFile.set_string("General", "DarkFramesPath", rtSettings.darkFramesPath);
         keyFile.set_string("General", "FlatFieldsPath", rtSettings.flatFieldsPath);
+		keyFile.set_string("General", "CameraProfilesPath", rtSettings.cameraProfilesPath);
+		keyFile.set_string("General", "LensProfilesPath", rtSettings.lensProfilesPath);
         keyFile.set_boolean("General", "Verbose", rtSettings.verbose);
         keyFile.set_integer("General", "Cropsleep", rtSettings.cropsleep);
         keyFile.set_double("General", "Reduchigh", rtSettings.reduchigh);
@@ -2640,6 +2657,8 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_string("Dialogs", "LastIccDir", lastIccDir);
         keyFile.set_string("Dialogs", "LastDarkframeDir", lastDarkframeDir);
         keyFile.set_string("Dialogs", "LastFlatfieldDir", lastFlatfieldDir);
+        keyFile.set_string("Dialogs", "LastCameraProfilesDir", lastCameraProfilesDir);
+        keyFile.set_string("Dialogs", "LastLensProfilesDir", lastLensProfilesDir);
         keyFile.set_string("Dialogs", "LastRgbCurvesDir", lastRgbCurvesDir);
         keyFile.set_string("Dialogs", "LastLabCurvesDir", lastLabCurvesDir);
         keyFile.set_string("Dialogs", "LastRetinexDir", lastRetinexDir);
