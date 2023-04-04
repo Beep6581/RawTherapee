@@ -5123,7 +5123,7 @@ float static studentXY(const array2D<float> & YYcurr, const array2D<float> & ref
 void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double &tempitc, double &greenitc, float &studgood, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, const ColorManagementParams &cmp, const RAWParams &raw, const WBParams & wbpar, const ToneCurveParams &hrp)
 {
     /*
-    Copyright (c) Jacques Desmis 6 - 2018 jdesmis@gmail.com, update 3 - 2023
+    Copyright (c) Jacques Desmis 6 - 2018 jdesmis@gmail.com, update 4 - 2023
     Copyright (c) Ingo Weyrich 3 - 2020 (heckflosse67@gmx.de)
 
     This algorithm try to find temperature correlation between 20 to 80 colors between 201 spectral color and about 20 to 55 color found in the image between 236, I just found the idea in the web "correlate with chroma" instead of RGB grey point,but I don't use any algo found on the web.
@@ -5134,14 +5134,14 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     I have create a table temperature with temp and white point with 118 values between 2000K and 12000K we can obviously  change these values, more...with different steps
     I have create a table for tint (green)with 134 values between 0.4 to 4.
     I have create or recuparate and transformed 201 spectral colors from Colorchecker24, others color and my 468 colors target, or from web flowers, etc. with a step of 5nm, I think it is large enough.
-    I think this value of 201 is now complete: I tested correlation with 60, 90, 100, 120, 155...better student increase with number of color, but now it seems stabilized
+    I think this value of 265 is now complete: I tested correlation with 60, 90, 100, 120, 155...better student increase with number of color, but now it seems stabilized
     Of course we can increase this number :)
 
     1) for the current raw file we create a table for each temp of RGB multipliers
     2) then, I choose the "camera temp" to initialize calculation (why not)
     3) for this temp, I calculated XYZ values for the 201 spectral data
     4) then I create for the image an "histogram", but for xyY (CIE 1931 color space or CIE 1964 (default))
-    5) for each pixel (in fact to accelerate only 1/5 for and 1/5 for y), I determine for each couple xy, the number of occurrences, can be change by Itcwb_precis to 3 or 9
+    5) for each pixel (in fact to accelerate only 1/3 for and 1/3 for y), I determine for each couple xy, the number of occurrences, can be change by Itcwb_precis to 3 or 9
     6) I sort this result in ascending order
     7) in option we can sort in another manner to take into account chroma : chromax = x - white point x, chromay = y - white point y
     8) then I compare this result, with spectral data found above in 3) with deltaE (limited to chroma)
@@ -5174,7 +5174,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     You must avoid when illuminant is non standard (fluorescent, LED...) and also, when the subject is lost in the image (some target to generate profiles).
 
     You can change  parameters in White Balance - Frame adapted to Itcwb
-    Itcwb_thres : 34 by default ==> number of color used in final algorithm - between 10 and max 65
+    Itcwb_thres : 34 by default ==> number of color used in final algorithm - between 10 and max 50
     Itcwb_sorted : true by default, can improve algorithm if true, ==> sort value in something near chroma order, instead of histogram number
     Itcwb_greenrange : 0 amplitude of green variation - between 0 to 2
     Itcwb_greendelta : 1 - delta temp in green iterate loop for "extra" - between 0 to 4
@@ -6109,8 +6109,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             float ac = -2.40f * estimchrom + 0.06f;//small empirical  correction, maximum 0.06 if chroma=0 for all image, currently for very low chroma +0.02
             greenitc += ac;
         } 
-        if(keepgreen < 1. && greengood > 50) {// green 0.95
-            double ag = 0.9 * (1. - keepgreen);//empirical  correction when green low
+        if(keepgreen < 1. && greengood > 50  && wbpar.itcwb_sampling == false) {// green 0.95
+            double ag = 0.9 * (1. - keepgreen);//empirical  correction when green low - to improve 
             if (settings->verbose) {
                 printf("green correction=%f \n", ag);
             }
