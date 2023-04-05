@@ -5995,10 +5995,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
         const int scantempbeg = rtengine::max(goodref - (dgoodref + 1), 1);
         const int scantempend = rtengine::min(goodref + dgoodref, N_t - 1);
+        int goodrefgr = 1;
 
         for (int gr = Rangegreenused.begin; gr < Rangegreenused.end; ++gr) {
             float minstudgr = 100000.f;
-            int goodrefgr = 1;
+            goodrefgr = 1;
 
             for (int tt = scantempbeg; tt < scantempend; ++tt) {
                 double r, g, b;
@@ -6065,6 +6066,28 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
             }
         }
+        float estimchromf = 0.f;
+        float estimhuef = 0.f;
+        float xhf = 0.f;
+        float yhf = 0.f;
+        
+        const float swprf = Txyz[goodrefgr].XX + Txyz[goodrefgr].ZZ + 1.f;
+        const float xwprf = Txyz[goodrefgr].XX / swpr;//white point for tt in xy coordinates
+        const float ywprf = 1.f / swprf;
+        printf("xwprf=%f ywprf=%f\n", (double) xwprf, (double) ywprf);
+    
+        for (int nh = 0; nh < w; ++nh) {
+        const float chxy = std::sqrt(SQR(xxyycurr_reduc[2 * nh][goodrefgr] - xwprf) + SQR(xxyycurr_reduc[2 * nh + 1][goodrefgr] - ywprf));
+        xhf += xxyycurr_reduc[2 * nh][goodrefgr] - xwprf;
+        yhf += xxyycurr_reduc[2 * nh + 1][goodrefgr] - ywprf;
+        estimchromf += chxy;
+        }
+        estimhuef = xatan2f(yhf, xhf);
+        estimchromf /= w;
+        if (settings->verbose) {
+            printf("estimchromgood=%f estimhuegood=%f\n", (double) estimchromf, (double) estimhuef);
+        }
+
 
         std::sort(Tgstud, Tgstud + N_g, Tgstud[0]);
 
@@ -6104,11 +6127,12 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         tempitc = Txyz[goodref].Tem;
         greenitc = gree[greengood].green;
-
+        /*
         if (estimchrom < 0.025f) {
             float ac = -2.40f * estimchrom + 0.06f;//small empirical  correction, maximum 0.06 if chroma=0 for all image, currently for very low chroma +0.02
             greenitc += ac;
         } 
+        */
         if(keepgreen < 1. && greengood > 50  && wbpar.itcwb_sampling == false) {// green 0.95
             double ag = 0.9 * (1. - keepgreen);//empirical  correction when green low - to improve 
             if (settings->verbose) {
