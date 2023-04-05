@@ -6080,10 +6080,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         printf("xwprf=%f ywprf=%f\n", (double) xwprf, (double) ywprf);
     
         for (int nh = 0; nh < w; ++nh) {
-        const float chxy = std::sqrt(SQR(xxyycurr_reduc[2 * nh][goodrefgr] - xwprf) + SQR(xxyycurr_reduc[2 * nh + 1][goodrefgr] - ywprf));
-        xhf += xxyycurr_reduc[2 * nh][goodrefgr] - xwprf;
-        yhf += xxyycurr_reduc[2 * nh + 1][goodrefgr] - ywprf;
-        estimchromf += chxy;
+            const float chxy = std::sqrt(SQR(xxyycurr_reduc[2 * nh][goodrefgr] - xwprf) + SQR(xxyycurr_reduc[2 * nh + 1][goodrefgr] - ywprf));
+            xhf += xxyycurr_reduc[2 * nh][goodrefgr] - xwprf;
+            yhf += xxyycurr_reduc[2 * nh + 1][goodrefgr] - ywprf;
+            estimchromf += chxy;
         }
         estimhuef = xatan2f(yhf, xhf);
         estimchromf /= w;
@@ -6136,12 +6136,15 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             greenitc += ac;
         } 
         */
-        if(keepgreen < 1. && greengood > 50  && wbpar.itcwb_sampling == false) {// green 0.95
-            double ag = 0.9 * (1. - keepgreen);//empirical  correction when green low - to improve 
+      
+        if(greengood > 47 &&  keepgreen < 0.952 && wbpar.itcwb_sampling == false ) {
+            double ag = 0.;
+            double gcal = gree[greengood].green;
+            ag = 0.95 * (gcal - keepgreen);//empirical  correction when green low - to improve 
             if (settings->verbose) {
                 printf("green correction=%f \n", ag);
             }
-            greenitc = 1. - ag;
+            greenitc = gcal - ag;
         }
         
     }
