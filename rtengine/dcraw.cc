@@ -6812,17 +6812,17 @@ guess_cfa_pc:
 	linear_table (len);
 	break;
       case 50713:			/* BlackLevelRepeatDim */
-	if (tiff_ifd[ifd].new_sub_file_type != 0) continue;
+	if (tiff_ifd[ifd].new_sub_file_type != 0) break;
 	cblack[4] = get2();
 	cblack[5] = get2();
 	if (cblack[4] * cblack[5] > sizeof cblack / sizeof *cblack - 6)
 	    cblack[4] = cblack[5] = 1;
 	break;
       case 61450:
-	if (tiff_ifd[ifd].new_sub_file_type != 0) continue;
+	if (tiff_ifd[ifd].new_sub_file_type != 0) break;
 	cblack[4] = cblack[5] = MIN(sqrt(len),64);
       case 50714:			/* BlackLevel */
-	if (tiff_ifd[ifd].new_sub_file_type != 0) continue;
+	if (tiff_ifd[ifd].new_sub_file_type != 0) break;
                 RT_blacklevel_from_constant = ThreeValBool::F;
 //-----------------------------------------------------------------------------
 // taken from LibRaw.
