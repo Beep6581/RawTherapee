@@ -4453,10 +4453,15 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
         Refxyz[i].Yref = 0.f;
         Refxyz[i].Zref = 0.f;
     }
-
-    const color_match_type &color_match = (wbpar.observer == StandardObserver::TEN_DEGREES) ? cie_colour_match_jd : cie_colour_match_jd2;
-   // const color_match_type &color_match = (wbpar.itcwb_nopurple) ? cie_colour_match_jd : cie_colour_match_jd2;
-
+    //const color_match_type &color_match = (wbpar.observer == StandardObserver::TEN_DEGREES) ? cie_colour_match_jd : cie_colour_match_jd2;
+    bool observerchoice = false;
+    if(wbpar.itcwb_sampling) {
+        observerchoice = (wbpar.observer == StandardObserver::TEN_DEGREES);
+    } else {
+        observerchoice = wbpar.itcwb_obs;
+    }
+   // const color_match_type &color_match = (wbpar.itcwb_obs) ? cie_colour_match_jd : cie_colour_match_jd2;
+    const color_match_type &color_match = observerchoice ? cie_colour_match_jd : cie_colour_match_jd2;
     if (separated) {
         const double tempw = Txyz[repref].Tem;
 

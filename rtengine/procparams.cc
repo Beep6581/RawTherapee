@@ -1341,6 +1341,7 @@ WBParams::WBParams() :
     itcwb_fgreen(3),
     itcwb_rgreen(1),
     itcwb_nopurple(false),
+    itcwb_obs(false),
     itcwb_sorted(false),
     itcwb_forceextra(false),
     itcwb_prim("srgb"),
@@ -1388,6 +1389,7 @@ bool WBParams::operator ==(const WBParams& other) const
         && itcwb_fgreen == other.itcwb_fgreen
         && itcwb_rgreen == other.itcwb_rgreen
         && itcwb_nopurple == other.itcwb_nopurple
+        && itcwb_obs == other.itcwb_obs
         && itcwb_sorted == other.itcwb_sorted
         && itcwb_forceextra == other.itcwb_forceextra
         && itcwb_prim == other.itcwb_prim
@@ -6144,6 +6146,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->wb.itcwb_fgreen, "White Balance", "Itcwb_findgreen", wb.itcwb_fgreen, keyFile);
         saveToKeyfile(!pedited || pedited->wb.itcwb_rgreen, "White Balance", "Itcwb_rangegreen", wb.itcwb_rgreen, keyFile);
         saveToKeyfile(!pedited || pedited->wb.itcwb_nopurple, "White Balance", "Itcwb_nopurple", wb.itcwb_nopurple, keyFile);
+        saveToKeyfile(!pedited || pedited->wb.itcwb_obs, "White Balance", "Itcwb_obs", wb.itcwb_obs, keyFile);
         saveToKeyfile(!pedited || pedited->wb.itcwb_sorted, "White Balance", "Itcwb_sorted", wb.itcwb_sorted, keyFile);
         saveToKeyfile(!pedited || pedited->wb.itcwb_forceextra, "White Balance", "Itcwb_forceextra", wb.itcwb_forceextra, keyFile);
         saveToKeyfile(!pedited || pedited->wb.itcwb_prim, "White Balance", "Itcwb_prim", wb.itcwb_prim, keyFile);
@@ -8114,6 +8117,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "White Balance", "Itcwb_findgreen", pedited, wb.itcwb_fgreen, pedited->wb.itcwb_fgreen);
             assignFromKeyfile(keyFile, "White Balance", "Itcwb_rangegreen", pedited, wb.itcwb_rgreen, pedited->wb.itcwb_rgreen);
             assignFromKeyfile(keyFile, "White Balance", "Itcwb_nopurple", pedited, wb.itcwb_nopurple, pedited->wb.itcwb_nopurple);
+            assignFromKeyfile(keyFile, "White Balance", "Itcwb_obs", pedited, wb.itcwb_obs, pedited->wb.itcwb_obs);
             assignFromKeyfile(keyFile, "White Balance", "Itcwb_sorted", pedited, wb.itcwb_sorted, pedited->wb.itcwb_sorted);
             assignFromKeyfile(keyFile, "White Balance", "Itcwb_forceextra", pedited, wb.itcwb_forceextra, pedited->wb.itcwb_forceextra);
             assignFromKeyfile(keyFile, "White Balance", "Itcwb_prim", pedited, wb.itcwb_prim, pedited->wb.itcwb_prim);
