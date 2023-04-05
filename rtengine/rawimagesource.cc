@@ -5518,16 +5518,16 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {12001., 0.960440, 1.601019}
     };
     const int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
-    constexpr int Nc = 264 + 1; //264 number of reference spectral colors, I think it is enough to retrieve good values
-    int Ncr = 265;//265
+    constexpr int Nc = 272 + 1; //264 number of reference spectral colors, I think it is enough to retrieve good values
+    int Ncr = 273;//265
     if(wbpar.itcwb_prim == "srgb") {
-        Ncr = 264 + 1;
+        Ncr = 272 + 1;
     } else if(wbpar.itcwb_prim == "adob") {
-        Ncr = 264 + 1;
+        Ncr = 272 + 1;
     } else if(wbpar.itcwb_prim == "rec") {
-        Ncr = 264 + 1;//211
+        Ncr = 272 + 1;//211
     } else if(wbpar.itcwb_prim == "ace") {
-        Ncr = 264 + 1;
+        Ncr = 272 + 1;
     }
     if(wbpar.itcwb_sampling) {//low samplin 5.9 with less spectral datas 201
         Ncr = 202;
@@ -5892,11 +5892,14 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             
                 float Lr, ar, br;
                 Color::XYZ2Lab(X_r, Y_r, Z_r, Lr, ar, br);
+                if(sqrt(SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[kN][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[kN][repref])) > 0.035f) {
+
                 printf("kn=%i REFLAB Lr=%3.2f ar=%3.2f br=%3.2f \n", kN, (double) (Lr / 327.68f), (double) (ar / 327.68f), (double) (br / 327.68f));
                 printf("kn=%i IMAGE  xx=%f yy=%f YY=%f\n", kN, (double) xx_curref_reduc[i][repref], (double) yy_curref_reduc[i][repref], (double) YY_curref_reduc[i][repref]);
                 printf("kn=%i REfxy xxr=%f yyr=%f YYr=%f\n", kN, (double) reff_spect_xx_camera[i][repref], (double) reff_spect_yy_camera[i][repref], (double) reff_spect_Y_camera[i][repref]);
                 printf("kn=%i DELTA delt=%f\n", kN, sqrt(SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[kN][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[kN][repref])));
                 printf("....  \n");
+                }
             }       
             good_spectral[kN] = true;//good spectral are spectral color that match color histogram xy
         }
