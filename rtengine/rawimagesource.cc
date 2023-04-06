@@ -5518,16 +5518,16 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {12001., 0.960440, 1.601019}
     };
     const int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
-    constexpr int Nc = 286 + 1; //287 number of reference spectral colors
-    int Ncr = 287;//287
+    constexpr int Nc = 290 + 1; //287 number of reference spectral colors
+    int Ncr = 291;//287
     if(wbpar.itcwb_prim == "srgb") {
-        Ncr = 286 + 1;
+        Ncr = 290 + 1;
     } else if(wbpar.itcwb_prim == "adob") {
-        Ncr = 286 + 1;
+        Ncr = 290 + 1;
     } else if(wbpar.itcwb_prim == "rec") {
-        Ncr = 286 + 1;
+        Ncr = 290 + 1;
     } else if(wbpar.itcwb_prim == "ace") {
-        Ncr = 286 + 1;
+        Ncr = 290 + 1;
     }
     if(wbpar.itcwb_sampling) {//low samplin 5.9 with less spectral datas 201
         Ncr = 202;
@@ -5830,7 +5830,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     estimchrom /= sizcu4;
 
     if (settings->verbose) {
-        printf("estimchrom=%f estimhue=%f\n", (double) estimchrom, (double) estimhue);
+        printf("Info - patch estimation of white-point displacement (before): chrom=%f hue=%f\n", (double) estimchrom, (double) estimhue);
     }
     bool issorted = wbpar.itcwb_sorted;
 
@@ -6088,7 +6088,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         const float swprf = Txyz[goodrefgr].XX + Txyz[goodrefgr].ZZ + 1.f;
         const float xwprf = Txyz[goodrefgr].XX / swpr;//white point for tt in xy coordinates
         const float ywprf = 1.f / swprf;
-        printf("xwprf=%f ywprf=%f\n", (double) xwprf, (double) ywprf);
     
         for (int nh = 0; nh < w; ++nh) {
             const float chxy = std::sqrt(SQR(xxyycurr_reduc[2 * nh][goodrefgr] - xwprf) + SQR(xxyycurr_reduc[2 * nh + 1][goodrefgr] - ywprf));
@@ -6099,7 +6098,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         estimhuef = xatan2f(yhf, xhf);
         estimchromf /= w;
         if (settings->verbose) {
-            printf("estimchromgood=%f estimhuegood=%f\n", (double) estimchromf, (double) estimhuef);
+            printf("New white point calculated : xwprf=%f ywprf=%f\n", (double) xwprf, (double) ywprf);
+            printf("Info - patch estimation of white-point displacement: chrom=%f hue=%f\n", (double) estimchromf, (double) estimhuef);
         }
 
 
