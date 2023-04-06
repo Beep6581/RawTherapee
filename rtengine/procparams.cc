@@ -1336,7 +1336,7 @@ WBParams::WBParams() :
     observer(ColorTemp::DEFAULT_OBSERVER),
     itcwb_thres(34),
     itcwb_precis(3),
-    itcwb_size(3),
+    itcwb_size(2),
     itcwb_delta(2),
     itcwb_fgreen(3),
     itcwb_rgreen(1),

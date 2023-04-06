@@ -524,7 +524,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
             currWB = ColorTemp(params->wb.temperature, params->wb.green, params->wb.equal, params->wb.method, params->wb.observer);
             float studgood = 1000.f;
-//printf("OK WB\n");
             if (!params->wb.enabled) {
                 currWB = ColorTemp();
             } else if (params->wb.method == "Camera") {
@@ -538,6 +537,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     currWBitc = imgsrc->getWB();
                     double tempref = currWBitc.getTemp() * (1. + params->wb.tempBias);
                     double greenref = currWBitc.getGreen();
+                    if(greenref > 2.f || greenref < 0.6f) {
+                        tempref = 0.66f * 5000.f + 0.34f * tempref;
+                        greenref = 1.f;
+                    }
                     if (settings->verbose && params->wb.method ==  "autitcgreen") {
                         printf("tempref=%f greref=%f\n", tempref, greenref);
                     }
