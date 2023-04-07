@@ -5518,16 +5518,16 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {12001., 0.960440, 1.601019}
     };
     const int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
-    constexpr int Nc = 293 + 1; //287 number of reference spectral colors
-    int Ncr = 294;//287
+    constexpr int Nc = 296 + 1; //287 number of reference spectral colors
+    int Ncr = 297;//287
     if(wbpar.itcwb_prim == "srgb") {
-        Ncr = 293 + 1;
+        Ncr = 296 + 1;
     } else if(wbpar.itcwb_prim == "adob") {
-        Ncr = 293 + 1;
+        Ncr = 296 + 1;
     } else if(wbpar.itcwb_prim == "rec") {
-        Ncr = 293 + 1;
+        Ncr = 296 + 1;
     } else if(wbpar.itcwb_prim == "ace") {
-        Ncr = 293 + 1;
+        Ncr = 296 + 1;
     }
     if(wbpar.itcwb_sampling) {//low samplin 5.9 with less spectral datas 201
         Ncr = 202;
@@ -5655,7 +5655,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         reff_spect_xx_camera[j][repref] = xxx;
         reff_spect_yy_camera[j][repref] = yyy;
         reff_spect_Y_camera[j][repref] =  YY;
-
+/*
                 float xr = reff_spect_xx_camera[j][repref];
                 float yr = reff_spect_yy_camera[j][repref];
                 float Yr = reff_spect_Y_camera[j][repref];
@@ -5668,7 +5668,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         
             printf("kn=%i REFLAB Lr=%3.2f ar=%3.2f br=%3.2f \n", j , (double) (Lr / 327.68f), (double) (ar / 327.68f), (double) (br / 327.68f));
             printf("kn=%i REfxy xxr=%f yyr=%f YYr=%f\n", j, (double) reff_spect_xx_camera[j][repref], (double) reff_spect_yy_camera[j][repref], (double) reff_spect_Y_camera[j][repref]);
-
+*/
     }
 
     array2D<float> xc(bfwitc, bfhitc);
