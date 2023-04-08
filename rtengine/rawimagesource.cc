@@ -5864,9 +5864,13 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             YY_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].Y;
         }
     }
+    if (settings->verbose) {
+        printf("Number of real tests=%i\n", w);
+    }
+    
     //calculate deltaE xx to find best values of spectrals data - limited to chroma values
    // int maxnb = rtengine::LIM(settings->itcwb_sizereference, 1, 5);
-    int maxnb = 2; //since 8 april 2023 - // old rtengine::LIM(wbpar.itcwb_size, 1, 6);
+    int maxnb = 1; //since 8 april 2023 - // old rtengine::LIM(wbpar.itcwb_size, 1, 6);
   //  int maxnb = 3;
     //wbpar.itcwb_size to verify if this setting is usefull...diificulties with High gamut and limited patch spectral colors.
 
@@ -5909,7 +5913,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 Color::XYZ2Lab(X_r, Y_r, Z_r, Lr, ar, br);
                 float spectlimit = settings->itcwb_deltaspec;
                 if(sqrt(SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[kN][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[kN][repref])) > spectlimit) {
-                    printf("kn=%i REFLAB Lr=%3.2f ar=%3.2f br=%3.2f \n", kN, (double) (Lr / 327.68f), (double) (ar / 327.68f), (double) (br / 327.68f));
+                    printf("i=%i kn=%i REFLAB Lr=%3.2f ar=%3.2f br=%3.2f \n",i,  kN, (double) (Lr / 327.68f), (double) (ar / 327.68f), (double) (br / 327.68f));
                     printf("kn=%i IMAGE  xx=%f yy=%f YY=%f\n", kN, (double) xx_curref_reduc[i][repref], (double) yy_curref_reduc[i][repref], (double) YY_curref_reduc[i][repref]);
                     printf("kn=%i REfxy xxr=%f yyr=%f YYr=%f\n", kN, (double) reff_spect_xx_camera[kN][repref], (double) reff_spect_yy_camera[kN][repref], (double) reff_spect_Y_camera[kN][repref]);
                     printf("kn=%i DELTA delt=%f\n", kN, sqrt(SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[kN][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[kN][repref])));
