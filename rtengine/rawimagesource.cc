@@ -5786,13 +5786,18 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     int sizcurr2ref = sizcurrref - ntr;
     const int sizcu30 = sizcurrref - n30;
     int nbm = 70;//number max of color used = 1.4 * 55 in case all CIExy diagram
-    if(profuse == "Adobe RGB" || profuse == "sRGB" || wbpar.itcwb_sampling == true) {
+    // since 8 april 2023
+    nbm = rtengine::LIM(wbpar.itcwb_size, 40, 70);
+  //  if(profuse == "Adobe RGB" || profuse == "sRGB" || wbpar.itcwb_sampling == true) {
+    if(wbpar.itcwb_sampling == true) {
         nbm = 55;
     }
     const int sizcu4 = rtengine::min(sizcu30, nbm);//size of chroma values
 
     if (settings->verbose) {
         printf("ntr=%i sizcurr2ref=%i sizcu30=%i sizcu4=%i\n", ntr, sizcurr2ref, sizcu30, sizcu4);
+        printf("Number max of data samples in last patch=%i\n", Wbhis[siza - 1].histnum);
+        printf("Number of data samples in beginning patch =%i\n", Wbhis[siza - nbm].histnum);
     }
 
     chrom wbchro[sizcu4];
@@ -5861,14 +5866,14 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     }
     //calculate deltaE xx to find best values of spectrals data - limited to chroma values
    // int maxnb = rtengine::LIM(settings->itcwb_sizereference, 1, 5);
-    int maxnb = rtengine::LIM(wbpar.itcwb_size, 1, 6);
+    int maxnb = 2; //since 8 april 2023 - // old rtengine::LIM(wbpar.itcwb_size, 1, 6);
   //  int maxnb = 3;
     //wbpar.itcwb_size to verify if this setting is usefull...diificulties with High gamut and limited patch spectral colors.
 
     if (wbpar.itcwb_thres > 65) {//normally never used
         maxnb = (Nc-1) / wbpar.itcwb_thres;//201 to 211
     }
-    for (int nb = 1; nb <= maxnb; ++nb) { //max 5 iterations for Itcwb_thres=33, after trial 3 is good in most cases but in some cases 5 or more
+    for (int nb = 1; nb <= maxnb; ++nb) { //max 5 iterations for Itcwb_thres=33, after trial 2 is good in most cases but in some cases 5 or more
         for (int i = 0; i < w; ++i) {
             float mindeltaE = 100000.f;//we can change this value...
             int kN = 0;
