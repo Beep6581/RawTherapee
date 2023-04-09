@@ -5751,6 +5751,13 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     //part to improve
     //determined the number of colors who be used after
+    int ntot = 0;
+    for (int nh = 0; nh < siza; nh++) {
+        if (Wbhis[nh].histnum > 0) {
+            ntot++;
+        }
+    }
+
     for (int nh = 0; nh < siza; nh++) {
         if (Wbhis[nh].histnum < 30) {
             n30++;    //keep only existing color but avoid to small
@@ -5768,7 +5775,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             }
         }
     }
-
     int ntr = n30;
 
     if (ntr > (siza - 25)) {
@@ -5795,7 +5801,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     const int sizcu4 = rtengine::min(sizcu30, nbm);//size of chroma values
 
     if (settings->verbose) {
-        printf("ntr=%i sizcurr2ref=%i sizcu30=%i sizcu4=%i\n", ntr, sizcurr2ref, sizcu30, sizcu4);
+        printf("number total datas read=%i  number of data usable=%i\n", ntot, sizcu30);
+        printf("Others datas - ntr=%i sizcurr2ref=%i sizcu4=%i\n", ntr, sizcurr2ref, sizcu4);
         printf("Number max of data samples in last patch=%i\n", Wbhis[siza - 1].histnum);
         printf("Number of data samples in beginning patch =%i\n", Wbhis[siza - nbm].histnum);
     }
@@ -5872,12 +5879,12 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
    // int maxnb = rtengine::LIM(settings->itcwb_sizereference, 1, 5);
     int maxnb = 1; //since 8 april 2023 - // old rtengine::LIM(wbpar.itcwb_size, 1, 6);
   //  int maxnb = 3;
-    //wbpar.itcwb_size to verify if this setting is usefull...diificulties with High gamut and limited patch spectral colors.
+
 
     if (wbpar.itcwb_thres > 65) {//normally never used
         maxnb = (Nc-1) / wbpar.itcwb_thres;//201 to 211
     }
-    for (int nb = 1; nb <= maxnb; ++nb) { //max 5 iterations for Itcwb_thres=33, after trial 2 is good in most cases but in some cases 5 or more
+    for (int nb = 1; nb <= maxnb; ++nb) { //1 or 2 is good, but 3 or 4 help to find more spectral values
         for (int i = 0; i < w; ++i) {
             float mindeltaE = 100000.f;//we can change this value...
             int kN = 0;
