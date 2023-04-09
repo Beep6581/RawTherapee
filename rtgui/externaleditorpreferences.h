@@ -42,16 +42,22 @@ class FileChooserDialog;
 class ExternalEditorPreferences : public Gtk::Box
 {
 public:
+    struct EditorTag {
+        bool selected;
+        EditorTag(): selected(false) {}
+        explicit EditorTag(bool selected): selected(selected) {}
+    };
+
     /**
      * Data struct containing information about an external editor.
      */
     struct EditorInfo {
         explicit EditorInfo(
-            Glib::ustring name = Glib::ustring(),
-            Glib::ustring command = Glib::ustring(),
-            Glib::ustring icon_serialized = Glib::ustring(),
+            const Glib::ustring &name = Glib::ustring(),
+            const Glib::ustring &command = Glib::ustring(),
+            const Glib::ustring &icon_serialized = Glib::ustring(),
             bool native_command = false,
-            void *other_data = nullptr
+            EditorTag other_data = EditorTag()
         );
         /**
          * Name of the external editor.
@@ -74,7 +80,7 @@ public:
          * Holds any other data associated with the editor. For example, it can
          * be used as a tag to uniquely identify the editor.
          */
-        void *other_data;
+        EditorTag other_data;
     };
 
     ExternalEditorPreferences();
@@ -102,7 +108,7 @@ private:
         Gtk::TreeModelColumn<Glib::RefPtr<Gio::Icon>> icon;
         Gtk::TreeModelColumn<Glib::ustring> command;
         Gtk::TreeModelColumn<bool> native_command;
-        Gtk::TreeModelColumn<void *> other_data;
+        Gtk::TreeModelColumn<EditorTag> other_data;
     };
 
     ModelColumns model_columns;

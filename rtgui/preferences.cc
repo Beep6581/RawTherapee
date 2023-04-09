@@ -1753,7 +1753,7 @@ void Preferences::storePreferences()
     for (unsigned i = 0; i < editors.size(); i++) {
         moptions.externalEditors[i] = (ExternalEditor(
             editors[i].name, editors[i].command, editors[i].native_command, editors[i].icon_serialized));
-        if (editors[i].other_data) {
+        if (editors[i].other_data.selected) {
             // The current editor was marked before the list was edited. We
             // found the mark, so this is the editor that was active.
             moptions.externalEditorIndex = i;
@@ -2038,7 +2038,7 @@ void Preferences::fillPreferences()
     }
     if (moptions.externalEditorIndex >= 0) {
         // Mark the current editor so we can track it.
-        editorInfos[moptions.externalEditorIndex].other_data = (void *)1;
+        editorInfos[moptions.externalEditorIndex].other_data.selected = true;
     }
     externalEditors->setEditors(editorInfos);
 

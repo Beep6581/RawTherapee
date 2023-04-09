@@ -91,7 +91,7 @@ ExternalEditorPreferences::ExternalEditorPreferences():
 std::vector<ExternalEditorPreferences::EditorInfo>
 ExternalEditorPreferences::getEditors() const
 {
-    std::vector<ExternalEditorPreferences::EditorInfo> editors;
+    std::vector<EditorInfo> editors;
 
     auto children = list_model->children();
 
@@ -114,7 +114,7 @@ void ExternalEditorPreferences::setEditors(
 {
     list_model->clear();
 
-    for (const ExternalEditorPreferences::EditorInfo & editor : editors) {
+    for (const EditorInfo & editor : editors) {
         auto row = *list_model->append();
         Glib::RefPtr<Gio::Icon> icon;
 
@@ -169,8 +169,8 @@ Gtk::TreeViewColumn *ExternalEditorPreferences::makeAppColumn()
     col->set_resizable();
     col->pack_start(*icon_renderer, false);
     col->pack_start(*name_renderer);
-    col->add_attribute(*icon_renderer, "gicon", model_columns.icon);
-    col->add_attribute(*name_renderer, "text", model_columns.name);
+    col->add_attribute(icon_renderer->property_gicon(), model_columns.icon);
+    col->add_attribute(name_renderer->property_text(), model_columns.name);
     col->set_min_width(20);
 
     name_renderer->property_editable() = true;
@@ -187,7 +187,7 @@ Gtk::TreeViewColumn *ExternalEditorPreferences::makeCommandColumn()
 
     col->set_title(M("PREFERENCES_EXTERNALEDITOR_COLUMN_COMMAND"));
     col->pack_start(*command_renderer);
-    col->add_attribute(*command_renderer, "text", model_columns.command);
+    col->add_attribute(command_renderer->property_text(), model_columns.command);
 
     command_renderer->property_editable() = true;
     command_renderer->signal_edited().connect(
@@ -366,8 +366,16 @@ void ExternalEditorPreferences::updateToolbarSensitivity()
 }
 
 ExternalEditorPreferences::EditorInfo::EditorInfo(
-    Glib::ustring name, Glib::ustring command, Glib::ustring icon_serialized, bool native_command, void *other_data
-) : name(name), icon_serialized(icon_serialized), command(command), native_command(native_command), other_data(other_data)
+    const Glib::ustring &name,
+    const Glib::ustring &command,
+    const Glib::ustring &icon_serialized,
+    bool native_command,
+    EditorTag other_data) :
+    name(name),
+    icon_serialized(icon_serialized),
+    command(command),
+    native_command(native_command),
+    other_data(other_data)
 {
 }
 
