@@ -450,6 +450,8 @@ public:
     Glib::ustring lastIccDir;
     Glib::ustring lastDarkframeDir;
     Glib::ustring lastFlatfieldDir;
+	Glib::ustring lastCameraProfilesDir;
+	Glib::ustring lastLensProfilesDir;
     Glib::ustring lastRgbCurvesDir;
     Glib::ustring lastLabCurvesDir;
     Glib::ustring lastRetinexDir;
