@@ -344,8 +344,20 @@ bool ExtProgStore::openInCustomEditor (const Glib::ustring& fileName, const Glib
 
 }
 
-bool ExtProgStore::openInExternalEditor(const Glib::ustring &fileName, const Glib::RefPtr<Gio::AppInfo> &editorInfo)
+bool ExtProgStore::openInExternalEditor(const Glib::ustring &fileName, const Glib::RefPtr<Gio::AppInfo> &editorInfo, bool nativeCommand)
 {
+    if (nativeCommand) {
+        if (rtengine::settings->verbose) {
+            std::cout << "Launching external editor as native command." << std::endl;
+        }
+        const Glib::ustring command = editorInfo->get_commandline();
+        return openInCustomEditor(fileName, &command);
+    }
+
+    if (rtengine::settings->verbose) {
+        std::cout << "Launching external editor with Gio." << std::endl;
+    }
+
     bool success = false;
 
     try {

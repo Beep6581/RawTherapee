@@ -1752,7 +1752,7 @@ void Preferences::storePreferences()
     moptions.externalEditorIndex = -1;
     for (unsigned i = 0; i < editors.size(); i++) {
         moptions.externalEditors[i] = (ExternalEditor(
-            editors[i].name, editors[i].command, editors[i].icon_serialized));
+            editors[i].name, editors[i].command, editors[i].native_command, editors[i].icon_serialized));
         if (editors[i].other_data) {
             // The current editor was marked before the list was edited. We
             // found the mark, so this is the editor that was active.
@@ -2034,8 +2034,7 @@ void Preferences::fillPreferences()
 
     std::vector<ExternalEditorPreferences::EditorInfo> editorInfos;
     for (const auto &editor : moptions.externalEditors) {
-        editorInfos.push_back(ExternalEditorPreferences::EditorInfo(
-                    editor.name, editor.command, editor.icon_serialized));
+        editorInfos.emplace_back(editor.name, editor.command, editor.icon_serialized, editor.native_command);
     }
     if (moptions.externalEditorIndex >= 0) {
         // Mark the current editor so we can track it.
@@ -2536,7 +2535,10 @@ void Preferences::workflowUpdate()
     }
     if (changed) {
         // Update the send to external editor widget.
-        parent->updateExternalEditorWidget(moptions.externalEditorIndex, moptions.externalEditors);
+        int selected_index = moptions.externalEditorIndex >= 0
+                                  ? moptions.externalEditorIndex
+                                  : static_cast<int>(moptions.externalEditors.size());
+        parent->updateExternalEditorWidget(selected_index, moptions.externalEditors);
     }
 
     if (moptions.cloneFavoriteTools != options.cloneFavoriteTools ||
