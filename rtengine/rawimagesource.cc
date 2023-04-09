@@ -5047,7 +5047,7 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
 
                 if (nh >= 0) {
                     histxythr[nh]++;
-                  //  printf("nh%i YC=%f ", nh,  (double) Yc[y][x]);
+                    //printf("nh%i YC=%f ", nh,  (double) Yc[y][x]);
                     xxxthr[nh] += xc[y][x];
                     yyythr[nh] += yc[y][x];
                     YYYthr[nh] += Yc[y][x];
@@ -5814,6 +5814,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     for (int i = 0; i < sizcu4; ++i) { //take the max values
         histcurrref[i][repref] = Wbhis[siza - (i + 1)].histnum;
+       // printf("i=%i hist=%f \n", i, (double) histcurrref[i][repref]);
         xx_curref[i][repref] = xxx[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
         yy_curref[i][repref] = yyy[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
         YY_curref[i][repref] = YYY[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
@@ -5900,30 +5901,32 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 }
             }
             if (settings->verbose) {
+                /*
                 //convert xyY XYZ
-                float xxxx = xx_curref_reduc[i][repref];
-                float yyyy = yy_curref_reduc[i][repref];
-                float YYYY = YY_curref_reduc[i][repref];
-                float X = (65535.f * (xxxx * YYYY)) / yyyy;
-                float Z = (65535.f * (1.f - xxx - yyyy) * YYYY) / yyyy;
-                float Y = 65535.f * YYYY;
+                float x = xx_curref_reduc[i][repref];
+                float y = yy_curref_reduc[i][repref];
+                float YY = YY_curref_reduc[i][repref];
+                float X = (65535.f * (x * YY)) / y;
+                float Z = (65535.f * (1.f - x - y) * YY) / y;
+                float Y = 65535.f * YY;
                 float L, a, b;
-                Color::XYZ2Lab(X, Y, Z, L, a, b);//xyz Lab
+                Color::XYZ2Lab(X, Y, Z, L, a, b);//xyz Lab -it doesn't make much sense, we only keep a and b...not good, ooly xy from xyY
+                */
                 float xr = reff_spect_xx_camera[kN][repref];
                 float yr = reff_spect_yy_camera[kN][repref];
                 float Yr = reff_spect_Y_camera[kN][repref];
                 float X_r = (65535.f * (xr * Yr)) / yr;
                 float Z_r = (65535.f * (1.f - xr - yr) * Yr) / yr;
                 float Y_r = 65535.f * Yr;
-            
                 float Lr, ar, br;
-                Color::XYZ2Lab(X_r, Y_r, Z_r, Lr, ar, br);
+                Color::XYZ2Lab(X_r, Y_r, Z_r, Lr, ar, br);//it make sense, because known spectral color
                 float spectlimit = settings->itcwb_deltaspec;
                 if(sqrt(SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[kN][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[kN][repref])) > spectlimit) {
                     printf("i=%i kn=%i REFLAB Lr=%3.2f ar=%3.2f br=%3.2f \n",i,  kN, (double) (Lr / 327.68f), (double) (ar / 327.68f), (double) (br / 327.68f));
                     printf("kn=%i IMAGE  xx=%f yy=%f YY=%f\n", kN, (double) xx_curref_reduc[i][repref], (double) yy_curref_reduc[i][repref], (double) YY_curref_reduc[i][repref]);
                     printf("kn=%i REfxy xxr=%f yyr=%f YYr=%f\n", kN, (double) reff_spect_xx_camera[kN][repref], (double) reff_spect_yy_camera[kN][repref], (double) reff_spect_Y_camera[kN][repref]);
                     printf("kn=%i DELTA delt=%f\n", kN, sqrt(SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[kN][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[kN][repref])));
+//                    printf("kn=%i IMA_LAB_estim L=%3.2f a=%3.2f b=%3.2f \n", kN, (double) (L / 327.68f), (double) (a / 327.68f), (double) (b / 327.68f));// doesn't make much sense
                     printf("....  \n");
                 }
                 
@@ -6114,7 +6117,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         estimhuef = xatan2f(yhf, xhf);
         estimchromf /= w;
         if (settings->verbose) {
-            printf("New white point calculated : xwprf=%f ywprf=%f\n", (double) xwprf, (double) ywprf);
+            printf("New white point calculated patch: xwprf=%f ywprf=%f\n", (double) xwprf, (double) ywprf);
             printf("Info - patch estimation of white-point displacement: chrom=%f hue=%f\n", (double) estimchromf, (double) estimhuef);
         }
 
