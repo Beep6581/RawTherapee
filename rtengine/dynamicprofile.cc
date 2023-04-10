@@ -21,6 +21,7 @@
 
 #include <stdlib.h>
 #include <glibmm/regex.h>
+#include <glibmm/fileutils.h>
 #include <glibmm/miscutils.h>
 #include <glibmm/keyfile.h>
 
@@ -220,6 +221,22 @@ bool DynamicProfileRules::loadRules()
 
         try {
             rule.profilepath = kf.get_string (group, "profilepath");
+			#if defined (WIN32)
+			// if this is Windows, replace any "/" in the path with "\\"
+			size_t pos = rule.profilepath.find("/");
+			while (pos != Glib::ustring::npos) {
+				rule.profilepath.replace(pos, 1, "\\");
+				pos = rule.profilepath.find("/", pos);
+			}
+			#endif
+			#if !defined (WIN32)
+			// if this is not Windows, replace any "\\" in the path with "/"
+			size_t pos = rule.profilepath.find("\\");
+			while (pos != Glib::ustring::npos) {
+				rule.profilepath.replace(pos, 1, "/");
+				pos = rule.profilepath.find("\\", pos);
+			}
+			#endif
         } catch (Glib::KeyFileError &) {
             dynamicRules.pop_back();
         }
@@ -254,7 +271,14 @@ bool DynamicProfileRules::storeRules()
         kf.set_string (group, "profilepath", rule.profilepath);
     }
 
-    return kf.save_to_file (Glib::build_filename (Options::rtdir, "dynamicprofile.cfg"));
+	std::string fn = Glib::build_filename (Options::rtdir, "dynamicprofile.cfg");
+	if (Glib::file_test(fn, Glib::FILE_TEST_IS_SYMLINK)) {
+		// file is symlink; use target instead
+		// symlinks apparently are not recognízed on Windows
+		return kf.save_to_file (g_file_read_link (fn.c_str(), NULL));
+	} else {
+		return kf.save_to_file (fn);
+	}
 }
 
 const std::vector<DynamicProfileRule> &DynamicProfileRules::getRules()
