@@ -1397,7 +1397,7 @@ WBParams::WBParams() :
     itcwb_obs(false),
     itcwb_sorted(false),
     itcwb_forceextra(false),
-    itcwb_prim("srgb"),
+    itcwb_prim("ace"),
     itcwb_sampling(false)
 
 {

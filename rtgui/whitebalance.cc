@@ -422,7 +422,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     itcwb_prim->append(M("TP_WBALANCE_ITCWB_PRIM_ADOB"));
     itcwb_prim->append(M("TP_WBALANCE_ITCWB_PRIM_REC"));
     itcwb_prim->append(M("TP_WBALANCE_ITCWB_PRIM_ACE"));
-    itcwb_prim->set_active(0);
+    itcwb_prim->set_active(3);
     itcwb_primconn = itcwb_prim->signal_changed().connect(sigc::mem_fun(*this, &WhiteBalance::itcwb_prim_changed));
     itcwb_prim ->set_active (false);
     

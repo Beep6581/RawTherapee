@@ -525,7 +525,15 @@ public:
     static const double Colorlab_L27_4_m90spect[97];
     static const double Colorlab_L19_1_m29spect[97];
     static const double Colorlab_L27_4_m90spect2[97];
-    
+    static const double Colorlab_L16_0_m44spect[97];
+    static const double Colorlab_L16_0_m44spect2[97];
+    static const double Colorlab_L13_m3_m36spect[97];
+    static const double Colorlab_L13_m3_m36spect2[97];
+    static const double Colorlab_L31_m23_m60spect[97];
+    static const double Colorlab_L31_m23_m60spect2[97];
+    static const double Colorlab_L17_3_m40spect[97];
+    static const double Colorlab_L17_3_m40spect2[97];
+   
 /*
 1	A1	64,34 	65,0	    21,13 	84,48	3,80	46,26
 2	A2	26,52 	47,90	    26,67 	74,76	-66,02	19,23
@@ -539,6 +547,8 @@ public:
 10	A10	2,30 	2,10	    4,35 	16,00	-0,12	-44,06
 11	A11	1,52 	1,50	    2,75 	12,61	-3,32	-35,90
 12	A12	5,17 	6,70	    12,45 	31,11	-22,56	-59,70
+13	A13	2,58 	2,20	    3,98 	16,50	3,13	-40,31
+
 */
 /*
 3	A3	5,94 	9,0	    2,39 	35,98	-26,6	28,25
