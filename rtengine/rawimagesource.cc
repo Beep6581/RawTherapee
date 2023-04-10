@@ -5518,16 +5518,16 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {12001., 0.960440, 1.601019}
     };
     const int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
-    constexpr int Nc = 331 + 1; //287 number of reference spectral colors
-    int Ncr = 332;//287
+    constexpr int Nc = 334 + 1; //287 number of reference spectral colors
+    int Ncr = 335;//287
     if(wbpar.itcwb_prim == "srgb") {
-        Ncr = 331 + 1;
+        Ncr = 334 + 1;
     } else if(wbpar.itcwb_prim == "adob") {
-        Ncr = 331 + 1;
+        Ncr = 334 + 1;
     } else if(wbpar.itcwb_prim == "rec") {
-        Ncr = 331 + 1;
+        Ncr = 334 + 1;
     } else if(wbpar.itcwb_prim == "ace") {
-        Ncr = 331 + 1;
+        Ncr = 334 + 1;
     }
     if(wbpar.itcwb_sampling) {//low samplin 5.9 with less spectral datas 201
         Ncr = 202;
