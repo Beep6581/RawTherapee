@@ -320,10 +320,33 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
             //orientation = pos->print(&exif);
         }
 
-        if ((find_exif_tag("Exif.NikonLd4.LensID") && pos->toLong()) ||
-            (find_exif_tag("Exif.NikonLd4.LensIDNumber") && pos->toLong()) ||
-            (find_exif_tag("Exif.Sony2.LensID") && pos->toLong())) {
-            lens = validateUft8(pos->print(&exif));
+        if (!make.compare(0, 5, "NIKON")) {
+            if (find_exif_tag("Exif.NikonLd4.LensID")) {
+                if (!pos->toLong()) { // No data, look in LensIDNumber.
+                    const auto p = pos;
+                    if (!find_exif_tag("Exif.NikonLd4.LensIDNumber")) {
+                        pos = p; // Tag not found, so reset pos.
+                    }
+                }
+                lens = pos->print(&exif);
+                if (lens == std::to_string(pos->toLong())) { // Not known to Exiv2.
+                    lens.clear();
+                } else {
+                    lens = validateUft8(lens);
+                }
+            }
+        } else if (!make.compare(0, 4, "SONY")) {
+            if (find_exif_tag("Exif.Sony2.LensID") && pos->toLong()) {
+                lens = pos->print(&exif);
+                if (lens == std::to_string(pos->toLong())) { // Not know to Exiv2.
+                    lens.clear();
+                } else {
+                    lens = validateUft8(lens);
+                }
+            }
+        }
+        if (!lens.empty()) {
+            // Already found the lens name.
         } else if (find_tag(Exiv2::lensName)) {
             lens = validateUft8(pos->print(&exif));
             auto p = pos;
