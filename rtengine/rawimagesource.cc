@@ -5518,16 +5518,16 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {12001., 0.960440, 1.601019}
     };
     const int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
-    constexpr int Nc = 334 + 1; //287 number of reference spectral colors
-    int Ncr = 335;//287
+    constexpr int Nc = 340 + 1; //287 number of reference spectral colors
+    int Ncr = 341;//287
     if(wbpar.itcwb_prim == "srgb") {
-        Ncr = 334 + 1;
+        Ncr = 340 + 1;
     } else if(wbpar.itcwb_prim == "adob") {
-        Ncr = 334 + 1;
+        Ncr = 340 + 1;
     } else if(wbpar.itcwb_prim == "rec") {
-        Ncr = 334 + 1;
+        Ncr = 340 + 1;
     } else if(wbpar.itcwb_prim == "ace") {
-        Ncr = 334 + 1;
+        Ncr = 340 + 1;
     }
     if(wbpar.itcwb_sampling) {//low samplin 5.9 with less spectral datas 201
         Ncr = 202;
@@ -5655,7 +5655,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         reff_spect_xx_camera[j][repref] = xxx;
         reff_spect_yy_camera[j][repref] = yyy;
         reff_spect_Y_camera[j][repref] =  YY;
-/*
+
                 float xr = reff_spect_xx_camera[j][repref];
                 float yr = reff_spect_yy_camera[j][repref];
                 float Yr = reff_spect_Y_camera[j][repref];
@@ -5668,7 +5668,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         
             printf("kn=%i REFLAB Lr=%3.2f ar=%3.2f br=%3.2f \n", j , (double) (Lr / 327.68f), (double) (ar / 327.68f), (double) (br / 327.68f));
             printf("kn=%i REfxy xxr=%f yyr=%f YYr=%f\n", j, (double) reff_spect_xx_camera[j][repref], (double) reff_spect_yy_camera[j][repref], (double) reff_spect_Y_camera[j][repref]);
-*/
+
     }
 
     array2D<float> xc(bfwitc, bfhitc);
@@ -5922,7 +5922,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 Color::XYZ2Lab(X_r, Y_r, Z_r, Lr, ar, br);//it make sense, because known spectral color
                 float spectlimit = settings->itcwb_deltaspec;
                 if(sqrt(SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[kN][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[kN][repref])) > spectlimit) {
-                    printf("i=%i kn=%i REFLAB Lr=%3.2f ar=%3.2f br=%3.2f \n",i,  kN, (double) (Lr / 327.68f), (double) (ar / 327.68f), (double) (br / 327.68f));
+                    printf("i=%i kn=%i REFLAB for info not used - not relevant Lr=%3.2f ar=%3.2f br=%3.2f \n",i,  kN, (double) (Lr / 327.68f), (double) (ar / 327.68f), (double) (br / 327.68f));
                     printf("kn=%i IMAGE  xx=%f yy=%f YY=%f\n", kN, (double) xx_curref_reduc[i][repref], (double) yy_curref_reduc[i][repref], (double) YY_curref_reduc[i][repref]);
                     printf("kn=%i REfxy xxr=%f yyr=%f YYr=%f\n", kN, (double) reff_spect_xx_camera[kN][repref], (double) reff_spect_yy_camera[kN][repref], (double) reff_spect_Y_camera[kN][repref]);
                     printf("kn=%i DELTA delt=%f\n", kN, sqrt(SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[kN][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[kN][repref])));
