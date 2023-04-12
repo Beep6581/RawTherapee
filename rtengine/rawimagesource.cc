@@ -5791,9 +5791,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     int sizcurr2ref = sizcurrref - ntr;
     const int sizcu30 = sizcurrref - n30;
-    int nbm = 70;//number max of color used = 1.4 * 55 in case all CIExy diagram
+    int nbm = 60;//number max of color used = 1.4 * 55 in case all CIExy diagram
     // since 8 april 2023
-    nbm = rtengine::LIM(wbpar.itcwb_size, 40, 70);
+    //rtengine::LIM(wbpar.itcwb_size, 40, 70);
   //  if(profuse == "Adobe RGB" || profuse == "sRGB" || wbpar.itcwb_sampling == true) {
     if(wbpar.itcwb_sampling == true) {
         nbm = 55;
@@ -5814,7 +5814,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     for (int i = 0; i < sizcu4; ++i) { //take the max values
         histcurrref[i][repref] = Wbhis[siza - (i + 1)].histnum;
-       // printf("i=%i hist=%f \n", i, (double) histcurrref[i][repref]);
+        
+      //  printf("i=%i hist=%f \n", i, (double) histcurrref[i][repref]);
         xx_curref[i][repref] = xxx[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
         yy_curref[i][repref] = yyy[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
         YY_curref[i][repref] = YYY[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
@@ -5824,23 +5825,24 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     float estimhue = 0.f;
     float xh = 0.f;
     float yh = 0.f;
-
     //estimate chromaticity for references
     for (int nh = 0; nh < sizcu4; ++nh) {
         const float chxy = std::sqrt(SQR(xx_curref[nh][repref] - xwpr) + SQR(yy_curref[nh][repref] - ywpr));
         xh += xx_curref[nh][repref] - xwpr;
         yh += yy_curref[nh][repref] - ywpr;
-        
+       // printf("nh=%i hist=%f \n", nh, (double) histcurrref[nh][repref]);
         wbchro[nh].chroxy_number = chxy * std::sqrt(histcurrref[nh][repref]);
         wbchro[nh].chroxy = std::sqrt(chxy);
         wbchro[nh].chrox = xx_curref[nh][repref];
         wbchro[nh].chroy = yy_curref[nh][repref];
         wbchro[nh].Y = YY_curref[nh][repref];
         wbchro[nh].index = nh;
+//        printf("nh=%i hist=%f index=%i\n", nh, (double) histcurrref[nh][repref], wbchro[nh].index);
         estimchrom += chxy;
     }
     estimhue = xatan2f(yh, xh);
     estimchrom /= sizcu4;
+
 
     if (settings->verbose) {
         printf("Info - patch estimation of white-point displacement (before): chrom=%f hue=%f\n", (double) estimchrom, (double) estimhue);
@@ -5856,17 +5858,22 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         std::sort(wbchro, wbchro + sizcu4, wbchro[0]);
     }
 
+
     int maxval = rtengine::LIM(wbpar.itcwb_thres, 10, 65);//max values of color to find correlation
     if(wbpar.itcwb_sampling == true) {
         maxval = 34;
     }
 
     sizcurr2ref = rtengine::min(sizcurr2ref, maxval);    //keep about the biggest values,
-
-    for (int i = 0; i < sizcurr2ref; ++i) {
+    int difmax = 0.7f * (sizcu4 - sizcurr2ref);//repartition max around patch values 
+    int difmin= 0.3f * (sizcu4 - sizcurr2ref);//repartition min around patch values 
+   // printf("sizcurr2ref=%i sizcu4=%i difmax=%i difmin=%i\n", sizcurr2ref, sizcu4, difmax, difmin);
+    for (int i = difmin; i < sizcurr2ref + difmax; ++i) {
         //is condition chroxy necessary ?
-        if (wbchro[sizcu4 - (i + 1)].chrox > 0.1f && wbchro[sizcu4 - (i + 1)].chroy > 0.1f && wbchro[sizcu4 - (i + 1)].chroxy > 0.0f) { //suppress value too far from reference spectral
+        //improvment to limit high Y values wbchro[sizcu4 - (i + 1)].Y < 0.96  0.96 arbitrary high value
+        if (wbchro[sizcu4 - (i + 1)].chrox > 0.1f && wbchro[sizcu4 - (i + 1)].chroy > 0.1f && wbchro[sizcu4 - (i + 1)].chroxy > 0.0f  && wbchro[sizcu4 - (i + 1)].Y < 0.96) { //suppress value too far from reference spectral
             w++;// w number of real tests - often limited by slider "maximum of colors used
+           // printf("i w=%i hist=%f \n", w, (double) histcurrref[wbchro[sizcu4 - (i + 1)].index][repref]);
             xx_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chrox;
             yy_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chroy;
             YY_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].Y;
@@ -6022,7 +6029,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             Tgstud[i].greenref = 55;// 1.f position in the list
         }
 
-        int dgoodref = rtengine::LIM(wbpar.itcwb_delta,1, 4);
+        int dgoodref = rtengine::LIM(wbpar.itcwb_delta,1, 6);// increase delta temp scan
         if(wbpar.itcwb_sampling == true) {
             dgoodref = 2;
         }
