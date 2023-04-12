@@ -5866,7 +5866,12 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     sizcurr2ref = rtengine::min(sizcurr2ref, maxval);    //keep about the biggest values,
     int difmax = 0.7f * (sizcu4 - sizcurr2ref);//repartition max around patch values 
-    int difmin= 0.3f * (sizcu4 - sizcurr2ref);//repartition min around patch values 
+    int difmin= 0.5f * (sizcu4 - sizcurr2ref);//repartition min around patch values 
+    if(wbpar.itcwb_sampling == true) {
+        difmax = 0;
+        difmin = 0;
+    }
+    
    // printf("sizcurr2ref=%i sizcu4=%i difmax=%i difmin=%i\n", sizcurr2ref, sizcu4, difmax, difmin);
     for (int i = difmin; i < sizcurr2ref + difmax; ++i) {
         //is condition chroxy necessary ?
