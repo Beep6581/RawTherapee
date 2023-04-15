@@ -5605,6 +5605,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     struct chrom {
         float chroxy_number;
         float number;
+        float hue;
         float chroxy;
         float chrox;
         float chroy;
@@ -5736,6 +5737,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     array2D<float> YY_curref_reduc(N_t, sizcurrref);
     array2D<float> nn_curref_reduc(N_t, sizcurrref);
     array2D<float> chronum_curref_reduc(N_t, sizcurrref);
+    array2D<float> hue_curref_reduc(N_t, sizcurrref);
+    array2D<float> chro_curref_reduc(N_t, sizcurrref);
 
     hiss Wbhis[siza];
 
@@ -5833,7 +5836,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         const float chxy = std::sqrt(SQR(xx_curref[nh][repref] - xwpr) + SQR(yy_curref[nh][repref] - ywpr));
         xh += xx_curref[nh][repref] - xwpr;
         yh += yy_curref[nh][repref] - ywpr;
-       // printf("nh=%i hist=%f \n", nh, (double) histcurrref[nh][repref]);
+        wbchro[nh].hue =  fmodf(xatan2f(yy_curref[nh][repref] - ywpr, xx_curref[nh][repref] - xwpr), 2.f * RT_PI_F);
         wbchro[nh].chroxy_number = chxy * std::sqrt(histcurrref[nh][repref]);
         wbchro[nh].number = histcurrref[nh][repref];
         wbchro[nh].chroxy = std::sqrt(chxy);
@@ -5897,7 +5900,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             YY_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].Y;
             chronum_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chroxy_number;
             nn_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].number;
-         //   printf("i w=%i hist=%f chroxy=%f  \n", w, (double) histcurrref[wbchro[sizcu4 - (i + 1)].index][repref], (double) chronum_curref_reduc[w][repref]);
+            hue_curref_reduc[w][repref]= wbchro[sizcu4 - (i + 1)].hue;
+            chro_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chroxy;
+          //  printf("i w=%i hist=%f chroxy=%f hue=%f \n", w, (double) histcurrref[wbchro[sizcu4 - (i + 1)].index][repref], (double) chronum_curref_reduc[w][repref], (double) hue_curref_reduc[w][repref]);
 
         }
     }
@@ -5941,7 +5946,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 float spectlimit = settings->itcwb_deltaspec;
                 if(sqrt(SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[kN][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[kN][repref])) > spectlimit) {
                     printf("i=%i kn=%i REFLAB for info not used - not relevant Lr=%3.2f ar=%3.2f br=%3.2f \n",i,  kN, (double) (Lr / 327.68f), (double) (ar / 327.68f), (double) (br / 327.68f));
-                    printf("kn=%i hist=%7.0f chro_num=%5.1f IMAGE  xx=%f yy=%f YY=%f\n", kN, (double) nn_curref_reduc[i][repref], (double) chronum_curref_reduc[i][repref], (double) xx_curref_reduc[i][repref], (double) yy_curref_reduc[i][repref], (double) YY_curref_reduc[i][repref]);
+                    printf("IMAGE: kn=%i hist=%7.0f chro_num=%5.1f hue=%2.2f chro=%2.3f xx=%f yy=%f YY=%f\n", kN, (double) nn_curref_reduc[i][repref], (double) chronum_curref_reduc[i][repref], (double) hue_curref_reduc[i][repref], (double) chro_curref_reduc[i][repref], (double) xx_curref_reduc[i][repref], (double) yy_curref_reduc[i][repref], (double) YY_curref_reduc[i][repref]);
                     printf("kn=%i REfxy xxr=%f yyr=%f YYr=%f\n", kN, (double) reff_spect_xx_camera[kN][repref], (double) reff_spect_yy_camera[kN][repref], (double) reff_spect_Y_camera[kN][repref]);
                     printf("kn=%i DELTA delt=%f\n", kN, sqrt(SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[kN][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[kN][repref])));
 //                    printf("kn=%i IMA_LAB_estim L=%3.2f a=%3.2f b=%3.2f \n", kN, (double) (L / 327.68f), (double) (a / 327.68f), (double) (b / 327.68f));// doesn't make much sense
