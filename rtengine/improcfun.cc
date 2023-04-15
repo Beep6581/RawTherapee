@@ -552,9 +552,9 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                        || (params->dirpyrequalizer.enabled && settings->autocielab) || (params->defringe.enabled && settings->autocielab)  || (params->sharpenMicro.enabled && settings->autocielab)
                        || (params->impulseDenoise.enabled && settings->autocielab) || (params->colorappearance.badpixsl > 0 && settings->autocielab));
 
-        ColorTemp::temp2mulxyz(params->wb.temperature, params->wb.method, Xw, Zw);  //compute white Xw Yw Zw  : white current WB
-        ColorTemp::temp2mulxyz(params->colorappearance.tempout, "Custom", Xwout, Zwout);
-        ColorTemp::temp2mulxyz(params->colorappearance.tempsc, "Custom", Xwsc, Zwsc);
+        ColorTemp::temp2mulxyz(params->wb.temperature, params->wb.method, params->wb.observer, Xw, Zw);  //compute white Xw Yw Zw  : white current WB
+        ColorTemp::temp2mulxyz(params->colorappearance.tempout, "Custom", params->wb.observer, Xwout, Zwout);
+        ColorTemp::temp2mulxyz(params->colorappearance.tempsc, "Custom", params->wb.observer, Xwsc, Zwsc);
 
         //viewing condition for surrsrc
         if (params->colorappearance.surrsrc == "Average") {
@@ -5645,7 +5645,7 @@ double ImProcFunctions::getAutoDistor(const Glib::ustring &fname, int thumb_size
             return 0.0;
         }
 
-        Thumbnail* raw =   rtengine::Thumbnail::loadFromRaw(fname, ri, sensorType, w_raw, h_raw, 1, 1.0, FALSE);
+        Thumbnail* raw =   rtengine::Thumbnail::loadFromRaw(fname, ri, sensorType, w_raw, h_raw, 1, 1.0, ColorTemp::DEFAULT_OBSERVER, FALSE);
 
         if (!raw) {
             delete thumb;

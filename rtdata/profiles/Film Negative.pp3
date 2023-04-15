@@ -11,7 +11,7 @@ Curve2=1;0;0;0.0397505754145333;0.020171771436200074;0.54669745433149319;0.69419
 
 [HLRecovery]
 Enabled=false
-Method=Blend
+Method=Coloropp
 
 [Crop]
 FixedRatio=false

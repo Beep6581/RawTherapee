@@ -48,6 +48,8 @@ public:
     bool            verbose;
     Glib::ustring   darkFramesPath;         ///< The default directory for dark frames
     Glib::ustring   flatFieldsPath;         ///< The default directory for flat fields
+    Glib::ustring   cameraProfilesPath;     ///< The default directory for camera profiles
+    Glib::ustring   lensProfilesPath;       ///< The default directory for lens profiles
 
     Glib::ustring   adobe;                  // filename of AdobeRGB1998 profile (default to the bundled one)
     Glib::ustring   prophoto;               // filename of Prophoto     profile (default to the bundled one)
@@ -92,16 +94,7 @@ public:
     int             previewselection;
     double          cbdlsensi;
 //    bool            showtooltip;
-
-    int             itcwb_thres;
-    bool            itcwb_sort;
-    int             itcwb_greenrange;
-    int             itcwb_greendeltatemp;
-    bool            itcwb_forceextra;
-    int             itcwb_sizereference;
-    int             itcwb_delta;
-    bool            itcwb_stdobserver10;
-    int             itcwb_precis;
+    bool            itcwb_enable;
 //wavelet levels
     double          edghi;
     double          edglo;

@@ -80,7 +80,7 @@ void CheckBox::setValue (CheckValue newValue)
         break;
     case CheckValue::off:
         set_inconsistent (false);
-        set_active(true);
+        set_active(false);
         lastActive = false;
         break;
     case CheckValue::unchanged:

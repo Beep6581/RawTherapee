@@ -27,6 +27,7 @@
 #include <glibmm/keyfile.h>
 
 #include "color.h"
+#include "colortemp.h"
 #include "curves.h"
 #include "procparams.h"
 #include "utils.h"
@@ -64,6 +65,40 @@ Glib::ustring expandRelativePath(const Glib::ustring &procparams_fname, const Gl
     return absPath;
 }
 
+Glib::ustring expandRelativePath2(const Glib::ustring &procparams_fname, const Glib::ustring &procparams_fname2, const Glib::ustring &prefix, Glib::ustring embedded_fname)
+{
+	#if defined (WIN32)
+	// if this is Windows, replace any "/" in the filename with "\\"
+	size_t pos = embedded_fname.find("/");
+	while (pos != string::npos) {
+		embedded_fname.replace(pos, 1, "\\");
+		pos = embedded_fname.find("/", pos);
+	}
+	#endif
+	#if !defined (WIN32)
+	// if this is not Windows, replace any "\\" in the filename with "/"
+	size_t pos = embedded_fname.find("\\");
+	while (pos != string::npos) {
+		embedded_fname.replace(pos, 1, "/");
+		pos = embedded_fname.find("\\", pos);
+	}
+	#endif
+
+	// if embedded_fname is not already an absolute path,
+	// try to convert it using procparams_fname (the directory of the raw file) as prefix
+	Glib::ustring rPath = expandRelativePath(procparams_fname, prefix, embedded_fname);
+	if (rPath.length() >= prefix.length()
+		&& !Glib::file_test(rPath.substr(prefix.length()), Glib::FILE_TEST_IS_REGULAR)
+		&& !procparams_fname2.empty()
+		&& Glib::path_is_absolute(procparams_fname2)) {
+		// embedded_fname is not a valid path;
+		// try with procparams_fname2 (the path defined in Preferences) as a prefix 
+		rPath = expandRelativePath(procparams_fname2 + G_DIR_SEPARATOR_S, prefix, embedded_fname);
+	}
+	return(rPath);
+}
+
+
 Glib::ustring relativePathIfInside(const Glib::ustring &procparams_fname, bool fnameAbsolute, Glib::ustring embedded_fname)
 {
     if (fnameAbsolute || embedded_fname.empty() || !Glib::path_is_absolute(procparams_fname)) {
@@ -91,6 +126,25 @@ Glib::ustring relativePathIfInside(const Glib::ustring &procparams_fname, bool f
 
     return prefix + embedded_fname.substr(dir1.length());
 }
+
+Glib::ustring relativePathIfInside2(const Glib::ustring &procparams_fname, const Glib::ustring &procparams_fname2, bool fnameAbsolute, Glib::ustring embedded_fname)
+{
+	// try to convert embedded_fname to a path relative to procparams_fname
+	// (the directory of the raw file)
+	// (note: fnameAbsolute seems to be always true, so this will never return a relative path)
+	Glib::ustring rPath = relativePathIfInside(procparams_fname, fnameAbsolute, embedded_fname);
+	if ((Glib::path_is_absolute(rPath)
+		 ||	(rPath.length() >= 5 && rPath.substr(0, 5) == "file:" && Glib::path_is_absolute(rPath.substr(5))))
+		&& !procparams_fname2.empty()
+		&& Glib::path_is_absolute(procparams_fname2)) {
+		// if path is not relative to the directory of the raw file,
+		// try to convert embedded_fname to a path relative to procparams_fname2
+		// (the path defined in Preferences)
+		rPath = relativePathIfInside(procparams_fname2 + G_DIR_SEPARATOR_S, false, embedded_fname);
+	}
+	return(rPath);		
+}
+
 
 void getFromKeyfile(
     const Glib::KeyFile& keyfile,
@@ -373,7 +427,7 @@ ToneCurveParams::ToneCurveParams() :
     autoexp(false),
     clip(0.02),
     hrenabled(false),
-    method("Blend"),
+    method("Coloropp"),
     expcomp(0),
     curve{
         DCT_Linear
@@ -390,6 +444,7 @@ ToneCurveParams::ToneCurveParams() :
     shcompr(50),
     hlcompr(0),
     hlbl(0),
+    hlth(1.0),
     hlcomprthresh(0),
     histmatching(false),
     fromHistMatching(false),
@@ -416,6 +471,7 @@ bool ToneCurveParams::isPanningRelatedChange(const ToneCurveParams& other) const
         && shcompr == other.shcompr
         && hlcompr == other.hlcompr
         && hlbl == other.hlbl
+        && hlth == other.hlth
         && hlcomprthresh == other.hlcomprthresh
         && histmatching == other.histmatching
         && clampOOG == other.clampOOG);
@@ -440,6 +496,7 @@ bool ToneCurveParams::operator ==(const ToneCurveParams& other) const
         && shcompr == other.shcompr
         && hlcompr == other.hlcompr
         && hlbl == other.hlbl
+        && hlth == other.hlth
         && hlcomprthresh == other.hlcomprthresh
         && histmatching == other.histmatching
         && fromHistMatching == other.fromHistMatching
@@ -1328,7 +1385,19 @@ WBParams::WBParams() :
     temperature(6504),
     green(1.0),
     equal(1.0),
-    tempBias(0.0)
+    tempBias(0.0),
+    observer(ColorTemp::DEFAULT_OBSERVER),
+    itcwb_thres(34),
+    itcwb_precis(3),
+    itcwb_size(3),
+    itcwb_delta(2),
+    itcwb_fgreen(5),
+    itcwb_rgreen(1),
+    itcwb_nopurple(true),
+    itcwb_sorted(false),
+    itcwb_forceextra(false),
+    itcwb_sampling(false)
+
 {
 }
 
@@ -1348,6 +1417,7 @@ bool WBParams::isPanningRelatedChange(const WBParams& other) const
                 && green == other.green
                 && equal == other.equal
                 && tempBias == other.tempBias
+                && observer == other.observer
             )
         )
     );
@@ -1361,7 +1431,19 @@ bool WBParams::operator ==(const WBParams& other) const
         && temperature == other.temperature
         && green == other.green
         && equal == other.equal
-        && tempBias == other.tempBias;
+        && tempBias == other.tempBias
+        && observer == other.observer
+        && itcwb_thres == other.itcwb_thres
+        && itcwb_precis == other.itcwb_precis
+        && itcwb_size == other.itcwb_size
+        && itcwb_delta == other.itcwb_delta
+        && itcwb_fgreen == other.itcwb_fgreen
+        && itcwb_rgreen == other.itcwb_rgreen
+        && itcwb_nopurple == other.itcwb_nopurple
+        && itcwb_sorted == other.itcwb_sorted
+        && itcwb_forceextra == other.itcwb_forceextra
+        && itcwb_sampling == other.itcwb_sampling;
+
 }
 
 bool WBParams::operator !=(const WBParams& other) const
@@ -5940,6 +6022,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->toneCurve.hrenabled, "HLRecovery", "Enabled", toneCurve.hrenabled, keyFile);
         saveToKeyfile(!pedited || pedited->toneCurve.method, "HLRecovery", "Method", toneCurve.method, keyFile);
         saveToKeyfile(!pedited || pedited->toneCurve.hlbl, "HLRecovery", "Hlbl", toneCurve.hlbl, keyFile);
+        saveToKeyfile(!pedited || pedited->toneCurve.hlth, "HLRecovery", "Hlth", toneCurve.hlth, keyFile);
 
         const std::map<ToneCurveMode, const char*> tc_mapping = {
             {ToneCurveMode::STD, "Standard"},
@@ -6132,6 +6215,17 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->wb.green, "White Balance", "Green", wb.green, keyFile);
         saveToKeyfile(!pedited || pedited->wb.equal, "White Balance", "Equal", wb.equal, keyFile);
         saveToKeyfile(!pedited || pedited->wb.tempBias, "White Balance", "TemperatureBias", wb.tempBias, keyFile);
+        saveToKeyfile(!pedited || pedited->wb.observer, "White Balance", "StandardObserver", Glib::ustring(wb.observer == StandardObserver::TWO_DEGREES ? "TWO_DEGREES" : "TEN_DEGREES"), keyFile);
+        saveToKeyfile(!pedited || pedited->wb.itcwb_thres, "White Balance", "Itcwb_thres", wb.itcwb_thres, keyFile);
+        saveToKeyfile(!pedited || pedited->wb.itcwb_precis, "White Balance", "Itcwb_precis", wb.itcwb_precis, keyFile);
+        saveToKeyfile(!pedited || pedited->wb.itcwb_size, "White Balance", "Itcwb_size", wb.itcwb_size, keyFile);
+        saveToKeyfile(!pedited || pedited->wb.itcwb_delta, "White Balance", "Itcwb_delta", wb.itcwb_delta, keyFile);
+        saveToKeyfile(!pedited || pedited->wb.itcwb_fgreen, "White Balance", "Itcwb_findgreen", wb.itcwb_fgreen, keyFile);
+        saveToKeyfile(!pedited || pedited->wb.itcwb_rgreen, "White Balance", "Itcwb_rangegreen", wb.itcwb_rgreen, keyFile);
+        saveToKeyfile(!pedited || pedited->wb.itcwb_nopurple, "White Balance", "Itcwb_nopurple", wb.itcwb_nopurple, keyFile);
+        saveToKeyfile(!pedited || pedited->wb.itcwb_sorted, "White Balance", "Itcwb_sorted", wb.itcwb_sorted, keyFile);
+        saveToKeyfile(!pedited || pedited->wb.itcwb_forceextra, "White Balance", "Itcwb_forceextra", wb.itcwb_forceextra, keyFile);
+        saveToKeyfile(!pedited || pedited->wb.itcwb_sampling, "White Balance", "Itcwb_sampling", wb.itcwb_sampling, keyFile);
 
 // Colorappearance
         saveToKeyfile(!pedited || pedited->colorappearance.enabled, "Color appearance", "Enabled", colorappearance.enabled, keyFile);
@@ -6322,7 +6416,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // Lens profile
         saveToKeyfile(!pedited || pedited->lensProf.lcMode, "LensProfile", "LcMode", lensProf.getMethodString(lensProf.lcMode), keyFile);
-        saveToKeyfile(!pedited || pedited->lensProf.lcpFile, "LensProfile", "LCPFile", relativePathIfInside(fname, fnameAbsolute, lensProf.lcpFile), keyFile);
+		saveToKeyfile(!pedited || pedited->lensProf.lcpFile, "LensProfile", "LCPFile", relativePathIfInside2(fname, options.rtSettings.lensProfilesPath, fnameAbsolute, lensProf.lcpFile), keyFile);
         saveToKeyfile(!pedited || pedited->lensProf.useDist, "LensProfile", "UseDistortion", lensProf.useDist, keyFile);
         saveToKeyfile(!pedited || pedited->lensProf.useVign, "LensProfile", "UseVignette", lensProf.useVign, keyFile);
         saveToKeyfile(!pedited || pedited->lensProf.useCA, "LensProfile", "UseCA", lensProf.useCA, keyFile);
@@ -7143,7 +7237,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->prsharpening.deconviter, "PostResizeSharpening", "DeconvIterations", prsharpening.deconviter, keyFile);
 
 // Color management
-        saveToKeyfile(!pedited || pedited->icm.inputProfile, "Color Management", "InputProfile", relativePathIfInside(fname, fnameAbsolute, icm.inputProfile), keyFile);
+		saveToKeyfile(!pedited || pedited->icm.inputProfile, "Color Management", "InputProfile", relativePathIfInside2(fname, options.rtSettings.cameraProfilesPath, fnameAbsolute, icm.inputProfile), keyFile);
         saveToKeyfile(!pedited || pedited->icm.toneCurve, "Color Management", "ToneCurve", icm.toneCurve, keyFile);
         saveToKeyfile(!pedited || pedited->icm.applyLookTable, "Color Management", "ApplyLookTable", icm.applyLookTable, keyFile);
         saveToKeyfile(!pedited || pedited->icm.applyBaselineExposureOffset, "Color Management", "ApplyBaselineExposureOffset", icm.applyBaselineExposureOffset, keyFile);
@@ -7516,9 +7610,9 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->colorToning.labregionsShowMask, "ColorToning", "LabRegionsShowMask", colorToning.labregionsShowMask, keyFile);
 
 // Raw
-        saveToKeyfile(!pedited || pedited->raw.darkFrame, "RAW", "DarkFrame", relativePathIfInside(fname, fnameAbsolute, raw.dark_frame), keyFile);
+        saveToKeyfile(!pedited || pedited->raw.darkFrame, "RAW", "DarkFrame", relativePathIfInside2(fname, options.rtSettings.darkFramesPath, fnameAbsolute, raw.dark_frame), keyFile);
         saveToKeyfile(!pedited || pedited->raw.df_autoselect, "RAW", "DarkFrameAuto", raw.df_autoselect, keyFile);
-        saveToKeyfile(!pedited || pedited->raw.ff_file, "RAW", "FlatFieldFile", relativePathIfInside(fname, fnameAbsolute, raw.ff_file), keyFile);
+        saveToKeyfile(!pedited || pedited->raw.ff_file, "RAW", "FlatFieldFile", relativePathIfInside2(fname, options.rtSettings.flatFieldsPath, fnameAbsolute, raw.ff_file), keyFile);       
         saveToKeyfile(!pedited || pedited->raw.ff_AutoSelect, "RAW", "FlatFieldAutoSelect", raw.ff_AutoSelect, keyFile);
         saveToKeyfile(!pedited || pedited->raw.ff_FromMetaData, "RAW", "FlatFieldFromMetaData", raw.ff_FromMetaData, keyFile);
         saveToKeyfile(!pedited || pedited->raw.ff_BlurRadius, "RAW", "FlatFieldBlurRadius", raw.ff_BlurRadius, keyFile);
@@ -7734,6 +7828,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "HLRecovery", "Enabled", pedited, toneCurve.hrenabled, pedited->toneCurve.hrenabled);
             assignFromKeyfile(keyFile, "HLRecovery", "Method", pedited, toneCurve.method, pedited->toneCurve.method);
             assignFromKeyfile(keyFile, "HLRecovery", "Hlbl", pedited, toneCurve.hlbl, pedited->toneCurve.hlbl);
+            assignFromKeyfile(keyFile, "HLRecovery", "Hlth", pedited, toneCurve.hlth, pedited->toneCurve.hlth);
         }
 
         if (keyFile.has_group("Channel Mixer")) {
@@ -8071,6 +8166,17 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Vibrance", "PastSatTog", pedited, vibrance.pastsattog, pedited->vibrance.pastsattog);
             assignFromKeyfile(keyFile, "Vibrance", "SkinTonesCurve", pedited, vibrance.skintonescurve, pedited->vibrance.skintonescurve);
         }
+        if (ppVersion <= 346) { // 5.8 and earlier.
+            wb.observer = StandardObserver::TWO_DEGREES;
+            if (pedited) {
+                pedited->wb.observer = true;
+            }
+        } else if (ppVersion <= 349) { // 5.9
+            wb.observer = StandardObserver::TEN_DEGREES;
+            if (pedited) {
+                pedited->wb.observer = true;
+            }
+        }
         if (keyFile.has_group("White Balance")) {
             assignFromKeyfile(keyFile, "White Balance", "Enabled", pedited, wb.enabled, pedited->wb.enabled);
             assignFromKeyfile(keyFile, "White Balance", "Setting", pedited, wb.method, pedited->wb.method);
@@ -8081,6 +8187,29 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "White Balance", "Green", pedited, wb.green, pedited->wb.green);
             assignFromKeyfile(keyFile, "White Balance", "Equal", pedited, wb.equal, pedited->wb.equal);
             assignFromKeyfile(keyFile, "White Balance", "TemperatureBias", pedited, wb.tempBias, pedited->wb.tempBias);
+            Glib::ustring standard_observer;
+            assignFromKeyfile(keyFile, "White Balance", "StandardObserver", pedited, standard_observer, pedited->wb.observer);
+            if (standard_observer == "TEN_DEGREES") {
+                wb.observer = StandardObserver::TEN_DEGREES;
+            } else if (standard_observer == "TWO_DEGREES") {
+                wb.observer = StandardObserver::TWO_DEGREES;
+            }
+            assignFromKeyfile(keyFile, "White Balance", "Itcwb_thres", pedited, wb.itcwb_thres, pedited->wb.itcwb_thres);
+            assignFromKeyfile(keyFile, "White Balance", "Itcwb_precis", pedited, wb.itcwb_precis, pedited->wb.itcwb_precis);
+            assignFromKeyfile(keyFile, "White Balance", "Itcwb_size", pedited, wb.itcwb_size, pedited->wb.itcwb_size);
+            assignFromKeyfile(keyFile, "White Balance", "Itcwb_delta", pedited, wb.itcwb_delta, pedited->wb.itcwb_delta);
+            assignFromKeyfile(keyFile, "White Balance", "Itcwb_findgreen", pedited, wb.itcwb_fgreen, pedited->wb.itcwb_fgreen);
+            assignFromKeyfile(keyFile, "White Balance", "Itcwb_rangegreen", pedited, wb.itcwb_rgreen, pedited->wb.itcwb_rgreen);
+            assignFromKeyfile(keyFile, "White Balance", "Itcwb_nopurple", pedited, wb.itcwb_nopurple, pedited->wb.itcwb_nopurple);
+            assignFromKeyfile(keyFile, "White Balance", "Itcwb_sorted", pedited, wb.itcwb_sorted, pedited->wb.itcwb_sorted);
+            assignFromKeyfile(keyFile, "White Balance", "Itcwb_forceextra", pedited, wb.itcwb_forceextra, pedited->wb.itcwb_forceextra);
+            if (ppVersion <= 349) { // 5.9 and earlier.
+                wb.itcwb_sampling = true;
+                if (pedited) {
+                    pedited->wb.itcwb_sampling = true;
+                }
+            }
+            assignFromKeyfile(keyFile, "White Balance", "Itcwb_sampling", pedited, wb.itcwb_sampling, pedited->wb.itcwb_sampling);
         }
 
         if (keyFile.has_group("Defringing")) {
@@ -8383,7 +8512,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key("LensProfile", "LCPFile")) {
-                lensProf.lcpFile = expandRelativePath(fname, "", keyFile.get_string("LensProfile", "LCPFile"));
+				lensProf.lcpFile = expandRelativePath2(fname, options.rtSettings.lensProfilesPath, "", keyFile.get_string("LensProfile", "LCPFile"));
 
                 if (pedited) {
                     pedited->lensProf.lcpFile = true;
@@ -9422,13 +9551,12 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
         if (keyFile.has_group("Color Management")) {
             if (keyFile.has_key("Color Management", "InputProfile")) {
-                icm.inputProfile = expandRelativePath(fname, "file:", keyFile.get_string("Color Management", "InputProfile"));
+				icm.inputProfile = expandRelativePath2(fname, options.rtSettings.cameraProfilesPath, "file:", keyFile.get_string("Color Management", "InputProfile"));
 
                 if (pedited) {
                     pedited->icm.inputProfile = true;
                 }
-            }
-
+			}
             assignFromKeyfile(keyFile, "Color Management", "ToneCurve", pedited, icm.toneCurve, pedited->icm.toneCurve);
             assignFromKeyfile(keyFile, "Color Management", "ApplyLookTable", pedited, icm.applyLookTable, pedited->icm.applyLookTable);
             assignFromKeyfile(keyFile, "Color Management", "ApplyBaselineExposureOffset", pedited, icm.applyBaselineExposureOffset, pedited->icm.applyBaselineExposureOffset);
@@ -10010,7 +10138,23 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
         
         if (keyFile.has_group("Film Simulation")) {
             assignFromKeyfile(keyFile, "Film Simulation", "Enabled", pedited, filmSimulation.enabled, pedited->filmSimulation.enabled);
-            assignFromKeyfile(keyFile, "Film Simulation", "ClutFilename", pedited, filmSimulation.clutFilename, pedited->filmSimulation.clutFilename);
+			assignFromKeyfile(keyFile, "Film Simulation", "ClutFilename", pedited, filmSimulation.clutFilename, pedited->filmSimulation.clutFilename);
+			#if defined (WIN32)
+			// if this is Windows, replace any "/" in the filename with "\\"
+			size_t pos = filmSimulation.clutFilename.find("/");
+			while (pos != string::npos) {
+				filmSimulation.clutFilename.replace(pos, 1, "\\");
+				pos = filmSimulation.clutFilename.find("/", pos);
+			}
+			#endif
+			#if !defined (WIN32)
+			// if this is not Windows, replace any "\\" in the filename with "/"
+			size_t pos = filmSimulation.clutFilename.find("\\");
+			while (pos != string::npos) {
+				filmSimulation.clutFilename.replace(pos, 1, "/");
+				pos = filmSimulation.clutFilename.find("\\", pos);
+			}
+			#endif
 
             if (keyFile.has_key("Film Simulation", "Strength")) {
                 if (ppVersion < 321) {
@@ -10185,23 +10329,20 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
         if (keyFile.has_group("RAW")) {
             if (keyFile.has_key("RAW", "DarkFrame")) {
-                raw.dark_frame = expandRelativePath(fname, "", keyFile.get_string("RAW", "DarkFrame"));
+                raw.dark_frame = expandRelativePath2(fname, options.rtSettings.darkFramesPath, "", keyFile.get_string("RAW", "DarkFrame"));
 
                 if (pedited) {
                     pedited->raw.darkFrame = true;
                 }
             }
-
             assignFromKeyfile(keyFile, "RAW", "DarkFrameAuto", pedited, raw.df_autoselect, pedited->raw.df_autoselect);
-
             if (keyFile.has_key("RAW", "FlatFieldFile")) {
-                raw.ff_file = expandRelativePath(fname, "", keyFile.get_string("RAW", "FlatFieldFile"));
+                raw.ff_file = expandRelativePath2(fname, options.rtSettings.flatFieldsPath, "", keyFile.get_string("RAW", "FlatFieldFile"));
 
                 if (pedited) {
                     pedited->raw.ff_file = true;
                 }
             }
-
             assignFromKeyfile(keyFile, "RAW", "FlatFieldAutoSelect", pedited, raw.ff_AutoSelect, pedited->raw.ff_AutoSelect);
             assignFromKeyfile(keyFile, "RAW", "FlatFieldFromMetaData", pedited, raw.ff_FromMetaData, pedited->raw.ff_FromMetaData);
             assignFromKeyfile(keyFile, "RAW", "FlatFieldBlurRadius", pedited, raw.ff_BlurRadius, pedited->raw.ff_BlurRadius);

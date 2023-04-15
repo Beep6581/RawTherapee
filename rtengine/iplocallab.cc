@@ -2130,7 +2130,7 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
     Imagefloat img(int(fw / SCALE + 0.5), int(fh / SCALE + 0.5));
     const ProcParams neutral;
 
-    imgsrc->getImage(imgsrc->getWB(), TR_NONE, &img, pp, params->toneCurve, neutral.raw);
+    imgsrc->getImage(imgsrc->getWB(), TR_NONE, &img, pp, params->toneCurve, neutral.raw, 0);
     imgsrc->convertColorSpace(&img, params->icm, imgsrc->getWB());
     float minVal = RT_INFINITY;
     float maxVal = -RT_INFINITY;
@@ -2589,9 +2589,9 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         }
     }
 
-    ColorTemp::temp2mulxyz(params->wb.temperature, params->wb.method, Xw, Zw);  //compute white Xw Yw Zw  : white current WB
-    ColorTemp::temp2mulxyz(tempo, "Custom", Xwout, Zwout);
-    ColorTemp::temp2mulxyz(5000, "Custom", Xwsc, Zwsc);
+    ColorTemp::temp2mulxyz(params->wb.temperature, params->wb.method, params->wb.observer, Xw, Zw);  //compute white Xw Yw Zw  : white current WB
+    ColorTemp::temp2mulxyz(tempo, "Custom", params->wb.observer, Xwout, Zwout);
+    ColorTemp::temp2mulxyz(5000, "Custom", params->wb.observer, Xwsc, Zwsc);
 
     //viewing condition for surrsrc
     f  = 1.00f;
@@ -7945,7 +7945,7 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
         deltasobelL = new LabImage(spotSi, spotSi);
         bool isdenoise = false;
 
-        if ((lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.wavcurvedenoi || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f) && lp.denoiena) {
+        if ((lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.wavcurvedenoi || lp.nlstr > 0 || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f) && lp.denoiena) {
             isdenoise = true;
         }
 
@@ -10671,7 +10671,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 //    const int hspot = ye - ys;
 //    const int wspot = xe - xs;
 
-    if (((lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.nlstr > 0 || lp.wavcurvedenoi || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f
+   if (((lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.nlstr > 0 || lp.wavcurvedenoi || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f
             || execmaskden || aut == 1 || aut == 2) && lp.denoiena && lp.quamet != 3) || execdenoi) {  // sk == 1 ??
 
         StopWatch Stop1("locallab Denoise called");
@@ -12805,7 +12805,6 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
     if(scale > 5.f) {//avoid to small values - leads to crash - but enough to evaluate noise 
         return;
     }
-
     BENCHFUN
     const int W = bfw;
     const int H = bfh;
@@ -13446,7 +13445,7 @@ void ImProcFunctions::Lab_Local(
 //Prepare mask for Blur and noise and Denoise
     bool denoiz = false;
 
-    if ((lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.noiselc > 0.f || lp.wavcurvedenoi || lp.noisecf > 0.f || lp.noisecc > 0.f  || lp.bilat > 0.f) && lp.denoiena) {
+    if ((lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.noiselc > 0.f || lp.wavcurvedenoi || lp.nlstr > 0 || lp.noisecf > 0.f || lp.noisecc > 0.f  || lp.bilat > 0.f) && lp.denoiena) {
         denoiz = true;
     }
 
@@ -14190,7 +14189,7 @@ void ImProcFunctions::Lab_Local(
     }
 
 //local denoise
-    if (lp.activspot && lp.denoiena && (lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.wavcurvedenoi || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f )) {//disable denoise if not used
+    if (lp.activspot && lp.denoiena && (lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.wavcurvedenoi ||lp.nlstr > 0 || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f )) {//disable denoise if not used
         float slidL[8] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f}; 
         float slida[8] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
         float slidb[8] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};

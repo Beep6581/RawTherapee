@@ -261,7 +261,7 @@ private:
             pl->setProgress(0.40);
         }
 
-        imgsrc->HLRecovery_Global(params.toneCurve);
+        // imgsrc->HLRecovery_Global(params.toneCurve);
 
 
         if (pl) {
@@ -269,7 +269,7 @@ private:
         }
 
         // set the color temperature
-        currWB = ColorTemp(params.wb.temperature, params.wb.green, params.wb.equal, params.wb.method);
+        currWB = ColorTemp(params.wb.temperature, params.wb.green, params.wb.equal, params.wb.method, params.wb.observer);
 
         if (!params.wb.enabled) {
             currWB = ColorTemp();
@@ -278,7 +278,7 @@ private:
         } else if (params.wb.method == "autold") {
             double rm, gm, bm;
             imgsrc->getAutoWBMultipliers(rm, gm, bm);
-            currWB.update(rm, gm, bm, params.wb.equal, params.wb.tempBias);
+            currWB.update(rm, gm, bm, params.wb.equal, params.wb.observer, params.wb.tempBias);
         }
 
         calclum = nullptr ;
@@ -372,7 +372,7 @@ private:
                             int beg_tileW = wcr * tileWskip + tileWskip / 2.f - crW / 2.f;
                             int beg_tileH = hcr * tileHskip + tileHskip / 2.f - crH / 2.f;
                             PreviewProps ppP(beg_tileW, beg_tileH, crW, crH, skipP);
-                            imgsrc->getImage(currWB, tr, origCropPart, ppP, params.toneCurve, params.raw);
+                            imgsrc->getImage(currWB, tr, origCropPart, ppP, params.toneCurve, params.raw, 0);
                             //baseImg->getStdImage(currWB, tr, origCropPart, ppP, true, params.toneCurve);
 
                             // we only need image reduced to 1/4 here
@@ -596,7 +596,7 @@ private:
                     for (int wcr = 0; wcr <= 2; wcr++) {
                         for (int hcr = 0; hcr <= 2; hcr++) {
                             PreviewProps ppP(coordW[wcr], coordH[hcr], crW, crH, 1);
-                            imgsrc->getImage(currWB, tr, origCropPart, ppP, params.toneCurve, params.raw);
+                            imgsrc->getImage(currWB, tr, origCropPart, ppP, params.toneCurve, params.raw, 0);
                             //baseImg->getStdImage(currWB, tr, origCropPart, ppP, true, params.toneCurve);
 
 
@@ -756,7 +756,7 @@ private:
         }
 
         baseImg = new Imagefloat(fw, fh);
-        imgsrc->getImage(currWB, tr, baseImg, pp, params.toneCurve, params.raw);
+        imgsrc->getImage(currWB, tr, baseImg, pp, params.toneCurve, params.raw, 1);
 
         if (pl) {
             pl->setProgress(0.50);
@@ -781,7 +781,7 @@ private:
 
         if (params.toneCurve.histmatching) {
             if (!params.toneCurve.fromHistMatching) {
-                imgsrc->getAutoMatchedToneCurve(params.icm, params.toneCurve.curve);
+                imgsrc->getAutoMatchedToneCurve(params.icm, params.wb.observer, params.toneCurve.curve);
             }
 
             if (params.toneCurve.autoexp) {

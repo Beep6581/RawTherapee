@@ -313,6 +313,7 @@ void Options::setDefaults()
     saveFormat.tiffBits = 16;
     saveFormat.tiffFloat = false;
     saveFormat.tiffUncompressed = true;
+    saveFormat.bigTiff = false;
     saveFormat.saveParams = true;
 
     saveFormatBatch.format = "jpg";
@@ -569,6 +570,9 @@ void Options::setDefaults()
 
     rtSettings.darkFramesPath = "";
     rtSettings.flatFieldsPath = "";
+	rtSettings.cameraProfilesPath = "";
+	rtSettings.lensProfilesPath = "";
+	
 #ifdef WIN32
     const gchar* sysRoot = g_getenv("SystemRoot");  // Returns e.g. "c:\Windows"
 
@@ -621,17 +625,8 @@ void Options::setDefaults()
     rtSettings.previewselection = 5;//between 1 to 40
     rtSettings.cbdlsensi = 1.0;//between 0.001 to 1
     rtSettings.fftwsigma = true; //choice between sigma^2 or empirical formula
-
-    rtSettings.itcwb_thres = 34;//between 10 to 55
-    rtSettings.itcwb_sort = false;
-    rtSettings.itcwb_greenrange = 0;//between 0 to 2
-    rtSettings.itcwb_greendeltatemp = 2;//between 0 and 4
-    rtSettings.itcwb_forceextra = true;
-    rtSettings.itcwb_sizereference = 3;//between 1 and 5
-    rtSettings.itcwb_delta = 1;//between 0 and 5
-    rtSettings.itcwb_stdobserver10 = true;
-    rtSettings.itcwb_precis = 5;//3  or 5 or 9
 // end locallab
+    rtSettings.itcwb_enable = true;
 
 //wavelet
     rtSettings.edghi = 3.0;//1.1 and 5.
@@ -659,13 +654,15 @@ void Options::setDefaults()
     rtSettings.leveldnliss = 0;
     rtSettings.leveldnautsimpl = 0;
 
-//   rtSettings.colortoningab =0.7;
-//rtSettings.decaction =0.3;
+//  rtSettings.colortoningab =0.7;
+//  rtSettings.decaction =0.3;
 //  rtSettings.ciebadpixgauss=false;
     rtSettings.rgbcurveslumamode_gamut = true;
     lastIccDir = rtSettings.iccDirectory;
     lastDarkframeDir = rtSettings.darkFramesPath;
     lastFlatfieldDir = rtSettings.flatFieldsPath;
+	lastCameraProfilesDir = rtSettings.cameraProfilesPath;
+	lastLensProfilesDir = rtSettings.lensProfilesPath;
 //  rtSettings.bw_complementary = true;
     // There is no reasonable default for curves. We can still suppose that they will take place
     // in a subdirectory of the user's own ProcParams presets, i.e. in a subdirectory
@@ -797,6 +794,14 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("General", "FlatFieldsPath")) {
                     rtSettings.flatFieldsPath = keyFile.get_string("General", "FlatFieldsPath");
+                }
+
+                if (keyFile.has_key("General", "CameraProfilesPath")) {
+                    rtSettings.cameraProfilesPath = keyFile.get_string("General", "CameraProfilesPath");
+                }
+
+				if (keyFile.has_key("General", "LensProfilesPath")) {
+                    rtSettings.lensProfilesPath = keyFile.get_string("General", "LensProfilesPath");
                 }
 
                 if (keyFile.has_key("General", "Verbose")) {
@@ -1042,6 +1047,10 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("Output", "TiffUncompressed")) {
                     saveFormat.tiffUncompressed = keyFile.get_boolean("Output", "TiffUncompressed");
+                }
+
+                if (keyFile.has_key("Output", "BigTiff")) {
+                    saveFormat.bigTiff = keyFile.get_boolean("Output", "BigTiff");
                 }
 
                 if (keyFile.has_key("Output", "SaveProcParams")) {
@@ -1791,41 +1800,10 @@ void Options::readFromFile(Glib::ustring fname)
                     rtSettings.level123_cbdl = keyFile.get_double("Color Management", "CBDLlevel123");
                 }
 
-                if (keyFile.has_key("Color Management", "Itcwb_thres")) {
-                    rtSettings.itcwb_thres = keyFile.get_integer("Color Management", "Itcwb_thres");
+                if (keyFile.has_key("Color Management", "Itcwb_enable")) {
+                    rtSettings.itcwb_enable = keyFile.get_boolean("Color Management", "Itcwb_enable");
                 }
 
-                if (keyFile.has_key("Color Management", "Itcwb_sort")) {
-                    rtSettings.itcwb_sort = keyFile.get_boolean("Color Management", "Itcwb_sort");
-                }
-
-                if (keyFile.has_key("Color Management", "Itcwb_forceextra")) {
-                    rtSettings.itcwb_forceextra = keyFile.get_boolean("Color Management", "Itcwb_forceextra");
-                }
-
-                if (keyFile.has_key("Color Management", "Itcwb_stdobserver10")) {
-                    rtSettings.itcwb_stdobserver10 = keyFile.get_boolean("Color Management", "Itcwb_stdobserver10");
-                }
-
-                if (keyFile.has_key("Color Management", "Itcwb_greenrange")) {
-                    rtSettings.itcwb_greenrange = keyFile.get_integer("Color Management", "Itcwb_greenrange");
-                }
-
-                if (keyFile.has_key("Color Management", "Itcwb_greendeltatemp")) {
-                    rtSettings.itcwb_greendeltatemp = keyFile.get_integer("Color Management", "Itcwb_greendeltatemp");
-                }
-
-                if (keyFile.has_key("Color Management", "Itcwb_sizereference")) {
-                    rtSettings.itcwb_sizereference = keyFile.get_integer("Color Management", "Itcwb_sizereference");
-                }
-
-                if (keyFile.has_key("Color Management", "Itcwb_delta")) {
-                    rtSettings.itcwb_delta = keyFile.get_integer("Color Management", "Itcwb_delta");
-                }
-
-                if (keyFile.has_key("Color Management", "Itcwb_precis")) {
-                    rtSettings.itcwb_precis = keyFile.get_integer("Color Management", "Itcwb_precis");
-                }
 
                 //if (keyFile.has_key ("Color Management", "Colortoningab")) rtSettings.colortoningab = keyFile.get_double("Color Management", "Colortoningab");
                 //if (keyFile.has_key ("Color Management", "Decaction")) rtSettings.decaction = keyFile.get_double("Color Management", "Decaction");
@@ -2223,6 +2201,8 @@ void Options::readFromFile(Glib::ustring fname)
                 safeDirGet(keyFile, "Dialogs", "LastIccDir", lastIccDir);
                 safeDirGet(keyFile, "Dialogs", "LastDarkframeDir", lastDarkframeDir);
                 safeDirGet(keyFile, "Dialogs", "LastFlatfieldDir", lastFlatfieldDir);
+                safeDirGet(keyFile, "Dialogs", "LastCameraProfilesDir", lastCameraProfilesDir);
+                safeDirGet(keyFile, "Dialogs", "LastLensProfilesDir", lastLensProfilesDir);
                 safeDirGet(keyFile, "Dialogs", "LastRgbCurvesDir", lastRgbCurvesDir);
                 safeDirGet(keyFile, "Dialogs", "LastLabCurvesDir", lastLabCurvesDir);
                 safeDirGet(keyFile, "Dialogs", "LastRetinexDir", lastRetinexDir);
@@ -2326,6 +2306,8 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_string("General", "Version", RTVERSION);
         keyFile.set_string("General", "DarkFramesPath", rtSettings.darkFramesPath);
         keyFile.set_string("General", "FlatFieldsPath", rtSettings.flatFieldsPath);
+		keyFile.set_string("General", "CameraProfilesPath", rtSettings.cameraProfilesPath);
+		keyFile.set_string("General", "LensProfilesPath", rtSettings.lensProfilesPath);
         keyFile.set_boolean("General", "Verbose", rtSettings.verbose);
         keyFile.set_integer("General", "Cropsleep", rtSettings.cropsleep);
         keyFile.set_double("General", "Reduchigh", rtSettings.reduchigh);
@@ -2437,6 +2419,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("Output", "TiffBps", saveFormat.tiffBits);
         keyFile.set_boolean("Output", "TiffFloat", saveFormat.tiffFloat);
         keyFile.set_boolean("Output", "TiffUncompressed", saveFormat.tiffUncompressed);
+        keyFile.set_boolean("Output", "BigTiff", saveFormat.bigTiff);
         keyFile.set_boolean("Output", "SaveProcParams", saveFormat.saveParams);
 
         keyFile.set_string("Output", "FormatBatch", saveFormatBatch.format);
@@ -2595,15 +2578,7 @@ void Options::saveToFile(Glib::ustring fname)
         //keyFile.set_boolean ("Color Management", "Ciebadpixgauss", rtSettings.ciebadpixgauss);
         keyFile.set_double("Color Management", "CBDLlevel0", rtSettings.level0_cbdl);
         keyFile.set_double("Color Management", "CBDLlevel123", rtSettings.level123_cbdl);
-        keyFile.set_integer("Color Management", "Itcwb_thres", rtSettings.itcwb_thres);
-        keyFile.set_boolean("Color Management", "Itcwb_sort", rtSettings.itcwb_sort);
-        keyFile.set_integer("Color Management", "Itcwb_greenrange", rtSettings.itcwb_greenrange);
-        keyFile.set_integer("Color Management", "Itcwb_greendeltatemp", rtSettings.itcwb_greendeltatemp);
-        keyFile.set_boolean("Color Management", "Itcwb_forceextra", rtSettings.itcwb_forceextra);
-        keyFile.set_integer("Color Management", "Itcwb_sizereference", rtSettings.itcwb_sizereference);
-        keyFile.set_integer("Color Management", "Itcwb_delta", rtSettings.itcwb_delta);
-        keyFile.set_boolean("Color Management", "Itcwb_stdobserver10", rtSettings.itcwb_stdobserver10);
-        keyFile.set_integer("Color Management", "Itcwb_precis", rtSettings.itcwb_precis);
+        keyFile.set_boolean("Color Management", "Itcwb_enable", rtSettings.itcwb_enable);
 
         //keyFile.set_double  ("Color Management", "Colortoningab", rtSettings.colortoningab);
         //keyFile.set_double  ("Color Management", "Decaction", rtSettings.decaction);
@@ -2682,6 +2657,8 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_string("Dialogs", "LastIccDir", lastIccDir);
         keyFile.set_string("Dialogs", "LastDarkframeDir", lastDarkframeDir);
         keyFile.set_string("Dialogs", "LastFlatfieldDir", lastFlatfieldDir);
+        keyFile.set_string("Dialogs", "LastCameraProfilesDir", lastCameraProfilesDir);
+        keyFile.set_string("Dialogs", "LastLensProfilesDir", lastLensProfilesDir);
         keyFile.set_string("Dialogs", "LastRgbCurvesDir", lastRgbCurvesDir);
         keyFile.set_string("Dialogs", "LastLabCurvesDir", lastLabCurvesDir);
         keyFile.set_string("Dialogs", "LastRetinexDir", lastRetinexDir);
