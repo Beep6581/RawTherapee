@@ -5838,7 +5838,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
    // float esthue = 0.f;
 
     int kmin = 0;
-    for (int j = 25; j < wbpar.itcwb_size; ++j) {
+    for (int j = 23; j < wbpar.itcwb_size; ++j) {//23 empirical minimal value to ensure a correlation 
         if (!good_size[j]) {
             float estimchrom = 0.f;
 //            float estimhue = 0.f;
@@ -5891,7 +5891,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     
     sizcu4 = kmin;
 
-    bool issorted = wbpar.itcwb_sorted;
+    bool issorted = false; //wbpar.itcwb_sorted;
 
     if(wbpar.itcwb_sampling == true) {
         issorted = false;
