@@ -5740,7 +5740,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     array2D<float> chronum_curref_reduc(N_t, sizcurrref);
     array2D<float> hue_curref_reduc(N_t, sizcurrref);
     array2D<float> chro_curref_reduc(N_t, sizcurrref);
-//    array2D<float> estim_hue(N_t, sizcurrref);
+    array2D<float> estim_hue(N_t, sizcurrref);
 
     hiss Wbhis[siza];
 
@@ -5838,10 +5838,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
    // float esthue = 0.f;
 
     int kmin = 0;
-    for (int j = 25; j < 60; ++j) {
+    for (int j = 25; j < wbpar.itcwb_size; ++j) {
         if (!good_size[j]) {
             float estimchrom = 0.f;
-            float estimhue = 0.f;
+//            float estimhue = 0.f;
             float xh = 0.f;
             float yh = 0.f;
             wbchro[j].hue =  0.f; 
@@ -5868,7 +5868,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     //        printf("nh=%i hist=%f index=%i\n", nh, (double) histcurrref[nh][repref], wbchro[nh].index);
                 estimchrom += chxy;
             }
-            estimhue = xatan2f(yh, xh);
+            //estimhue = xatan2f(yh, xh);
+            estim_hue[j][repref] = xatan2f(yh, xh);
             estimchrom /= j;
             if (estimchrom < minchrom) {
                 minchrom = estimchrom;
@@ -5876,15 +5877,15 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             }
 
 
-            if (settings->verbose) {
-                printf("Info - patch estimation of white-point displacement (before):j=%i chrom=%f hue=%f\n",j,  (double) estimchrom, (double) estimhue);
-            }
+//            if (settings->verbose) {
+//                printf("Info - patch estimation of white-point displacement (before):j=%i chrom=%f hue=%f\n",j,  (double) estimchrom, (double) estim_hue[j][repref]);
+//            }
         }
         good_size[kmin] = true;
     }
-            printf("kmin=%i \n", kmin);
+//            printf("kmin=%i \n", kmin);
             if (settings->verbose) {
-        //        printf("Info - patch estimation of white-point displacement (before):j=%i chrom=%f\n",kmin,  (double) minchrom);//, (double) estim_hue[kmin][repref]);
+                printf("Info - patch estimation of white-point displacement (before):j=%i chrom=%f hue=%f\n",kmin,  (double) minchrom, (double) estim_hue[kmin][repref]);
             };
  //           }
     
@@ -5902,18 +5903,20 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     }
 
 
-    int maxval = 55; //rtengine::LIM(wbpar.itcwb_thres, 10, 55);//max values of color to find correlation
+    int maxval = wbpar.itcwb_size; //55; //rtengine::LIM(wbpar.itcwb_thres, 10, 55);//max values of color to find correlation
     if(wbpar.itcwb_sampling == true) {
         maxval = 34;
     }
 
     sizcurr2ref = rtengine::min(sizcurr2ref, maxval);    //keep about the biggest values,
+    /*
     int difmax = 1.f * (sizcu4 - maxval);//repartition max around patch values 
     int difmin= 0.9f * (sizcu4 - maxval);//repartition min around patch values 
     if(wbpar.itcwb_sampling == true) {
         difmax = 0;
         difmin = 0;
     }
+    */
   //  int index1 = difmin;
   //  int index2 = sizcurr2ref + difmax;
     int index1 = 0;
