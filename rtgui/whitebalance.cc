@@ -653,6 +653,7 @@ void WhiteBalance::itcwb_sampling_toggled ()
         itcwb_forceextra->set_sensitive(false);
         itcwb_prim->set_sensitive(false);
         itcwb_thres->set_sensitive(false);
+        itcwb_size->set_sensitive(false);
         itcwb_fgreen->set_sensitive(false);
         itcwb_nopurple->set_sensitive(false);
         itcwb_obs->set_sensitive(false);
@@ -661,6 +662,7 @@ void WhiteBalance::itcwb_sampling_toggled ()
         itcwb_forceextra->set_sensitive(true);
         itcwb_prim->set_sensitive(true);
         itcwb_thres->set_sensitive(true);
+        itcwb_size->set_sensitive(true);
         itcwb_fgreen->set_sensitive(true);
         itcwb_nopurple->set_sensitive(true);
         itcwb_obs->set_sensitive(true);

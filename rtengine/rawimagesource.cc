@@ -5803,10 +5803,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     // since 8 april 2023
    // nbm = rtengine::LIM(wbpar.itcwb_size, 40, 70);
   //  if(profuse == "Adobe RGB" || profuse == "sRGB" || wbpar.itcwb_sampling == true) {
+    int sizcu4 = 60; //wbpar.itcwb_thres; //rtengine::min(sizcu30, nbm);//size of chroma values
     if(wbpar.itcwb_sampling == true) {
         nbm = 55;
+        sizcu4 = rtengine::min(sizcu30, nbm);//size of chroma values
     }
-    int sizcu4 = 60; //wbpar.itcwb_thres; //rtengine::min(sizcu30, nbm);//size of chroma values
 
     if (settings->verbose) {
         printf("number total datas read=%i  number of data usable=%i\n", ntot, sizcu30);
@@ -5829,10 +5830,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         YY_curref[i][repref] = YYY[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
     }
 
-//    float estimchrom = 0.f;
-//    float estimhue = 0.f;
-//    float xh = 0.f;
- //   float yh = 0.f;
     //estimate chromaticity for references
     float minchrom = 100000.f;//we can change this value...
    // float esthue = 0.f;
@@ -5888,9 +5885,40 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 printf("Info - patch estimation of white-point displacement (before):j=%i chrom=%f hue=%f\n",kmin,  (double) minchrom, (double) estim_hue[kmin][repref]);
             };
  //           }
-    
-    sizcu4 = kmin;
+    if(wbpar.itcwb_sampling == false) {
+        sizcu4 = kmin;
+    }
 
+    if(wbpar.itcwb_sampling == true) {
+        float estimchrom = 0.f;
+        float estimhue = 0.f;
+        float xh = 0.f;
+        float yh = 0.f;
+        //estimate chromaticity for references
+        for (int nh = 0; nh < sizcu4; ++nh) {
+            const float chxy = std::sqrt(SQR(xx_curref[nh][repref] - xwpr) + SQR(yy_curref[nh][repref] - ywpr));
+            xh += xx_curref[nh][repref] - xwpr;
+            yh += yy_curref[nh][repref] - ywpr;
+        // printf("nh=%i hist=%f \n", nh, (double) histcurrref[nh][repref]);
+            wbchro[nh].chroxy_number = chxy * std::sqrt(histcurrref[nh][repref]);
+            wbchro[nh].chroxy = std::sqrt(chxy);
+            wbchro[nh].chrox = xx_curref[nh][repref];
+            wbchro[nh].chroy = yy_curref[nh][repref];
+            wbchro[nh].Y = YY_curref[nh][repref];
+            wbchro[nh].index = nh;
+//        printf("nh=%i hist=%f index=%i\n", nh, (double) histcurrref[nh][repref], wbchro[nh].index);
+            estimchrom += chxy;
+        }
+        estimhue = xatan2f(yh, xh);
+        estimchrom /= sizcu4;
+
+
+        if (settings->verbose) {
+            printf("Info - patch estimation of white-point displacement (before): chrom=%f hue=%f\n", (double) estimchrom, (double) estimhue);
+        }
+        
+        
+    }
     bool issorted = false; //wbpar.itcwb_sorted;
 
     if(wbpar.itcwb_sampling == true) {
@@ -5926,6 +5954,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         index1 = 0;
         index2 = sizcurr2ref + 1;
     }
+    if(wbpar.itcwb_sampling == true) {
+        index1 = 0;
+        index2 = sizcurr2ref;
+    }
+    
   //  printf("sizcurr2ref=%i sizcu4=%i difmax=%i difmin=%i\n", sizcurr2ref, sizcu4, difmax, difmin);
   //  for (int i = difmin; i < sizcurr2ref + difmax; ++i) {
   //  for (int i = 0; i < sizcurr2ref; ++i) {
