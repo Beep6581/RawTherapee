@@ -5544,6 +5544,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     double TY[Nc];
     double TZ[Nc];
     std::vector<bool> good_spectral(Nc, false);
+    std::vector<bool> good_size(Nc, false);
 
     float rmm[N_t];
     float gmm[N_t];
@@ -5739,6 +5740,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     array2D<float> chronum_curref_reduc(N_t, sizcurrref);
     array2D<float> hue_curref_reduc(N_t, sizcurrref);
     array2D<float> chro_curref_reduc(N_t, sizcurrref);
+//    array2D<float> estim_hue(N_t, sizcurrref);
 
     hiss Wbhis[siza];
 
@@ -5797,14 +5799,14 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     int sizcurr2ref = sizcurrref - ntr;
     const int sizcu30 = sizcurrref - n30;
-    int nbm = 55; //60;//number max of color used = 1.4 * 55 in case all CIExy diagram
+    int nbm = 60; //60;//number max of color used = 1.4 * 55 in case all CIExy diagram
     // since 8 april 2023
    // nbm = rtengine::LIM(wbpar.itcwb_size, 40, 70);
   //  if(profuse == "Adobe RGB" || profuse == "sRGB" || wbpar.itcwb_sampling == true) {
     if(wbpar.itcwb_sampling == true) {
         nbm = 55;
     }
-    const int sizcu4 = 55; //rtengine::min(sizcu30, nbm);//size of chroma values
+    int sizcu4 = 60; //wbpar.itcwb_thres; //rtengine::min(sizcu30, nbm);//size of chroma values
 
     if (settings->verbose) {
         printf("number total datas read=%i  number of data usable=%i\n", ntot, sizcu30);
@@ -5827,33 +5829,67 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         YY_curref[i][repref] = YYY[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
     }
 
-    float estimchrom = 0.f;
-    float estimhue = 0.f;
-    float xh = 0.f;
-    float yh = 0.f;
+//    float estimchrom = 0.f;
+//    float estimhue = 0.f;
+//    float xh = 0.f;
+ //   float yh = 0.f;
     //estimate chromaticity for references
-    for (int nh = 0; nh < sizcu4; ++nh) {
-        const float chxy = std::sqrt(SQR(xx_curref[nh][repref] - xwpr) + SQR(yy_curref[nh][repref] - ywpr));
-        xh += xx_curref[nh][repref] - xwpr;
-        yh += yy_curref[nh][repref] - ywpr;
-        wbchro[nh].hue =  fmodf(xatan2f(yy_curref[nh][repref] - ywpr, xx_curref[nh][repref] - xwpr), 2.f * RT_PI_F);
-        wbchro[nh].chroxy_number = chxy * std::sqrt(histcurrref[nh][repref]);
-        wbchro[nh].number = histcurrref[nh][repref];
-        wbchro[nh].chroxy = std::sqrt(chxy);
-        wbchro[nh].chrox = xx_curref[nh][repref];
-        wbchro[nh].chroy = yy_curref[nh][repref];
-        wbchro[nh].Y = YY_curref[nh][repref];
-        wbchro[nh].index = nh;
-//        printf("nh=%i hist=%f index=%i\n", nh, (double) histcurrref[nh][repref], wbchro[nh].index);
-        estimchrom += chxy;
-    }
-    estimhue = xatan2f(yh, xh);
-    estimchrom /= sizcu4;
+    float minchrom = 100000.f;//we can change this value...
+   // float esthue = 0.f;
+
+    int kmin = 0;
+    for (int j = 25; j < 60; ++j) {
+        if (!good_size[j]) {
+            float estimchrom = 0.f;
+            float estimhue = 0.f;
+            float xh = 0.f;
+            float yh = 0.f;
+            wbchro[j].hue =  0.f; 
+            wbchro[j].chroxy_number = 0.f; 
+            wbchro[j].number = 0.f;
+            wbchro[j].chroxy = 0.f;
+            wbchro[j].chrox = 0.f;
+            wbchro[j].chroy = 0.f;
+            wbchro[j].Y = 0.f;
+            wbchro[j].index = 0;
+          //  esthue = 0.f;
+            for (int nh = 0; nh < j; ++nh) {
+                const float chxy = std::sqrt(SQR(xx_curref[nh][repref] - xwpr) + SQR(yy_curref[nh][repref] - ywpr));
+                xh += xx_curref[nh][repref] - xwpr;
+                yh += yy_curref[nh][repref] - ywpr;
+                wbchro[nh].hue =  fmodf(xatan2f(yy_curref[nh][repref] - ywpr, xx_curref[nh][repref] - xwpr), 2.f * RT_PI_F);
+                wbchro[nh].chroxy_number = chxy * std::sqrt(histcurrref[nh][repref]);
+                wbchro[nh].number = histcurrref[nh][repref];
+                wbchro[nh].chroxy = std::sqrt(chxy);
+                wbchro[nh].chrox = xx_curref[nh][repref];
+                wbchro[nh].chroy = yy_curref[nh][repref];
+                wbchro[nh].Y = YY_curref[nh][repref];
+                wbchro[nh].index = nh;
+    //        printf("nh=%i hist=%f index=%i\n", nh, (double) histcurrref[nh][repref], wbchro[nh].index);
+                estimchrom += chxy;
+            }
+            estimhue = xatan2f(yh, xh);
+            estimchrom /= j;
+            if (estimchrom < minchrom) {
+                minchrom = estimchrom;
+                kmin = j;
+            }
 
 
-    if (settings->verbose) {
-        printf("Info - patch estimation of white-point displacement (before): chrom=%f hue=%f\n", (double) estimchrom, (double) estimhue);
+            if (settings->verbose) {
+                printf("Info - patch estimation of white-point displacement (before):j=%i chrom=%f hue=%f\n",j,  (double) estimchrom, (double) estimhue);
+            }
+        }
+        good_size[kmin] = true;
     }
+            printf("kmin=%i \n", kmin);
+            if (settings->verbose) {
+        //        printf("Info - patch estimation of white-point displacement (before):j=%i chrom=%f\n",kmin,  (double) minchrom);//, (double) estim_hue[kmin][repref]);
+            };
+ //           }
+    
+    sizcu4 = kmin;
+
     bool issorted = wbpar.itcwb_sorted;
 
     if(wbpar.itcwb_sampling == true) {
@@ -5866,7 +5902,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     }
 
 
-    int maxval = rtengine::LIM(wbpar.itcwb_thres, 10, 55);//max values of color to find correlation
+    int maxval = 55; //rtengine::LIM(wbpar.itcwb_thres, 10, 55);//max values of color to find correlation
     if(wbpar.itcwb_sampling == true) {
         maxval = 34;
     }
@@ -5878,8 +5914,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         difmax = 0;
         difmin = 0;
     }
-    int index1 = difmin;
-    int index2 = sizcurr2ref + difmax;
+  //  int index1 = difmin;
+  //  int index2 = sizcurr2ref + difmax;
+    int index1 = 0;
+    int index2 = sizcu4;
     
     if (issorted) {
         index1 = 0;
@@ -5888,6 +5926,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
   //  printf("sizcurr2ref=%i sizcu4=%i difmax=%i difmin=%i\n", sizcurr2ref, sizcu4, difmax, difmin);
   //  for (int i = difmin; i < sizcurr2ref + difmax; ++i) {
   //  for (int i = 0; i < sizcurr2ref; ++i) {
+      printf("Index1=%i in2=%i \n", index1, index2);
       for (int i = index1; i < index2; ++i) {
   
         //is condition chroxy necessary ?
