@@ -5751,7 +5751,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     //sort in ascending order
     std::sort(Wbhis, Wbhis + siza, Wbhis[0]);
-  //  std::greater<int>()
     int n1 = 0;
     int n4 = 0;
     int n15 = 0;
@@ -5799,11 +5798,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     int sizcurr2ref = sizcurrref - ntr;
     const int sizcu30 = sizcurrref - n30;
-    int nbm = 60; //60;//number max of color used = 1.4 * 55 in case all CIExy diagram
-    // since 8 april 2023
-   // nbm = rtengine::LIM(wbpar.itcwb_size, 40, 70);
-  //  if(profuse == "Adobe RGB" || profuse == "sRGB" || wbpar.itcwb_sampling == true) {
-    int sizcu4 = 60; //wbpar.itcwb_thres; //rtengine::min(sizcu30, nbm);//size of chroma values
+    int nbm = 60;
+    nbm = wbpar.itcwb_size;
+    int sizcu4 = 60;
+    sizcu4 = wbpar.itcwb_size;
     if(wbpar.itcwb_sampling == true) {
         nbm = 55;
         sizcu4 = rtengine::min(sizcu30, nbm);//size of chroma values
@@ -5872,19 +5870,13 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 minchrom = estimchrom;
                 kmin = j;
             }
-
-
-//            if (settings->verbose) {
-//                printf("Info - patch estimation of white-point displacement (before):j=%i chrom=%f hue=%f\n",j,  (double) estimchrom, (double) estim_hue[j][repref]);
-//            }
         }
         good_size[kmin] = true;
     }
-//            printf("kmin=%i \n", kmin);
             if (settings->verbose) {
                 printf("Info - patch estimation of white-point displacement (before):j=%i chrom=%f hue=%f\n",kmin,  (double) minchrom, (double) estim_hue[kmin][repref]);
             };
- //           }
+
     if(wbpar.itcwb_sampling == false) {
         sizcu4 = kmin;
     }
@@ -5937,20 +5929,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     }
 
     sizcurr2ref = rtengine::min(sizcurr2ref, maxval);    //keep about the biggest values,
-    /*
-    int difmax = 1.f * (sizcu4 - maxval);//repartition max around patch values 
-    int difmin= 0.9f * (sizcu4 - maxval);//repartition min around patch values 
-    if(wbpar.itcwb_sampling == true) {
-        difmax = 0;
-        difmin = 0;
-    }
-    */
-  //  int index1 = difmin;
-  //  int index2 = sizcurr2ref + difmax;
     int index1 = 0;
     int index2 = sizcu4;
     
-    if (issorted) {
+    if (issorted) {//not used now since 15 04 2023
         index1 = 0;
         index2 = sizcurr2ref + 1;
     }
@@ -5958,13 +5940,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         index1 = 0;
         index2 = sizcurr2ref;
     }
+    if (settings->verbose) {
+        printf("Index1=%i in2=%i \n", index1, index2);
+    }
     
-  //  printf("sizcurr2ref=%i sizcu4=%i difmax=%i difmin=%i\n", sizcurr2ref, sizcu4, difmax, difmin);
-  //  for (int i = difmin; i < sizcurr2ref + difmax; ++i) {
-  //  for (int i = 0; i < sizcurr2ref; ++i) {
-      printf("Index1=%i in2=%i \n", index1, index2);
-      for (int i = index1; i < index2; ++i) {
-  
+    for (int i = index1; i < index2; ++i) {
         //is condition chroxy necessary ?
         //improvment to limit high Y values wbchro[sizcu4 - (i + 1)].Y < 0.96  0.96 arbitrary high value
         if (wbchro[sizcu4 - (i + 1)].chrox > 0.1f && wbchro[sizcu4 - (i + 1)].chroy > 0.1f && wbchro[sizcu4 - (i + 1)].chroxy > 0.0f  && wbchro[sizcu4 - (i + 1)].Y < 0.96) { //suppress value too far from reference spectral
@@ -5985,10 +5965,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         printf("Number of real tests=%i\n", w);
     }
     
-    //calculate deltaE xx to find best values of spectrals data - limited to chroma values
-   // int maxnb = rtengine::LIM(settings->itcwb_sizereference, 1, 5);
     int maxnb = 1; //since 8 april 2023 - // old rtengine::LIM(wbpar.itcwb_size, 1, 6);
-  //  int maxnb = 3;
 
 
     if (wbpar.itcwb_thres > 65) {//normally never used
