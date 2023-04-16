@@ -5836,7 +5836,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     for (int j = 23; j < wbpar.itcwb_size; ++j) {//23 empirical minimal value to ensure a correlation 
         if (!good_size[j]) {
             float estimchrom = 0.f;
-//            float estimhue = 0.f;
             float xh = 0.f;
             float yh = 0.f;
             wbchro[j].hue =  0.f; 
@@ -5847,7 +5846,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             wbchro[j].chroy = 0.f;
             wbchro[j].Y = 0.f;
             wbchro[j].index = 0;
-          //  esthue = 0.f;
             for (int nh = 0; nh < j; ++nh) {
                 const float chxy = std::sqrt(SQR(xx_curref[nh][repref] - xwpr) + SQR(yy_curref[nh][repref] - ywpr));
                 xh += xx_curref[nh][repref] - xwpr;
@@ -5860,10 +5858,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 wbchro[nh].chroy = yy_curref[nh][repref];
                 wbchro[nh].Y = YY_curref[nh][repref];
                 wbchro[nh].index = nh;
-    //        printf("nh=%i hist=%f index=%i\n", nh, (double) histcurrref[nh][repref], wbchro[nh].index);
                 estimchrom += chxy;
             }
-            //estimhue = xatan2f(yh, xh);
             estim_hue[j][repref] = xatan2f(yh, xh);
             estimchrom /= j;
             if (estimchrom < minchrom) {
@@ -5873,9 +5869,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
         good_size[kmin] = true;
     }
-            if (settings->verbose) {
-                printf("Info - patch estimation of white-point displacement (before):j=%i chrom=%f hue=%f\n",kmin,  (double) minchrom, (double) estim_hue[kmin][repref]);
-            };
+    if (settings->verbose) {
+        printf("Info - patch estimation of white-point displacement (before):j=%i chrom=%f hue=%f\n",kmin,  (double) minchrom, (double) estim_hue[kmin][repref]);
+    };
 
     if(wbpar.itcwb_sampling == false) {
         sizcu4 = kmin;
@@ -5891,14 +5887,12 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             const float chxy = std::sqrt(SQR(xx_curref[nh][repref] - xwpr) + SQR(yy_curref[nh][repref] - ywpr));
             xh += xx_curref[nh][repref] - xwpr;
             yh += yy_curref[nh][repref] - ywpr;
-        // printf("nh=%i hist=%f \n", nh, (double) histcurrref[nh][repref]);
             wbchro[nh].chroxy_number = chxy * std::sqrt(histcurrref[nh][repref]);
             wbchro[nh].chroxy = std::sqrt(chxy);
             wbchro[nh].chrox = xx_curref[nh][repref];
             wbchro[nh].chroy = yy_curref[nh][repref];
             wbchro[nh].Y = YY_curref[nh][repref];
             wbchro[nh].index = nh;
-//        printf("nh=%i hist=%f index=%i\n", nh, (double) histcurrref[nh][repref], wbchro[nh].index);
             estimchrom += chxy;
         }
         estimhue = xatan2f(yh, xh);
@@ -5941,7 +5935,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         index2 = sizcurr2ref;
     }
     if (settings->verbose) {
-        printf("Index1=%i in2=%i \n", index1, index2);
+        printf("Index1=%i index2=%i \n", index1, index2);
     }
     
     for (int i = index1; i < index2; ++i) {
@@ -5971,6 +5965,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     if (wbpar.itcwb_thres > 65) {//normally never used
         maxnb = (Nc-1) / wbpar.itcwb_thres;//201 to 211
     }
+    float dEmean = 0.f;
+    int ndEmean = 0;
     for (int nb = 1; nb <= maxnb; ++nb) { //1 or 2 is good, but 3 or 4 help to find more spectral values
         for (int i = 0; i < w; ++i) {
             float mindeltaE = 100000.f;//we can change this value...
@@ -5996,18 +5992,25 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 float Lr, ar, br;
                 Color::XYZ2Lab(X_r, Y_r, Z_r, Lr, ar, br);//it make sense, because known spectral color
                 float spectlimit = settings->itcwb_deltaspec;
-                if(sqrt(SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[kN][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[kN][repref])) > spectlimit) {
+                float dE = sqrt(SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[kN][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[kN][repref]));
+                dEmean += dE;
+                ndEmean++;
+                if(dE > spectlimit) {
                     printf("i=%i kn=%i REFLAB for info not used - not relevant Lr=%3.2f ar=%3.2f br=%3.2f \n",i,  kN, (double) (Lr / 327.68f), (double) (ar / 327.68f), (double) (br / 327.68f));
                     printf("IMAGE: kn=%i hist=%7.0f chro_num=%5.1f hue=%2.2f chro=%2.3f xx=%f yy=%f YY=%f\n", kN, (double) nn_curref_reduc[i][repref], (double) chronum_curref_reduc[i][repref], (double) hue_curref_reduc[i][repref], (double) chro_curref_reduc[i][repref], (double) xx_curref_reduc[i][repref], (double) yy_curref_reduc[i][repref], (double) YY_curref_reduc[i][repref]);
                     printf("kn=%i REfxy xxr=%f yyr=%f YYr=%f\n", kN, (double) reff_spect_xx_camera[kN][repref], (double) reff_spect_yy_camera[kN][repref], (double) reff_spect_Y_camera[kN][repref]);
-                    printf("kn=%i DELTA delt=%f\n", kN, sqrt(SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[kN][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[kN][repref])));
-//                    printf("kn=%i IMA_LAB_estim L=%3.2f a=%3.2f b=%3.2f \n", kN, (double) (L / 327.68f), (double) (a / 327.68f), (double) (b / 327.68f));// doesn't make much sense
+                    printf("kn=%i DELTA delt=%f\n", kN, dE);
                     printf("....  \n");
                 }
                 
-            }       
+            }
             good_spectral[kN] = true;//good spectral are spectral color that match color histogram xy
         }
+        if (settings->verbose) {
+            printf("Patch Mean deltaE=%f \n", (double) dEmean / ndEmean);
+        }
+
+        
     }
 
     // reuse some buffers

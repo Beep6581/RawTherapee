@@ -389,7 +389,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     itcwb_precis = Gtk::manage (new Adjuster(M("TP_WBALANCE_ITCWB_PRECIS"), 3, 9, 2, 3));
     itcwb_precis->set_tooltip_markup (M("TP_WBALANCE_ITCWBPRECIS_TOOLTIP"));
 
-    itcwb_size = Gtk::manage (new Adjuster(M("TP_WBALANCE_ITCWB_SIZEPATCH"), 50, 70, 1, 60));
+    itcwb_size = Gtk::manage (new Adjuster(M("TP_WBALANCE_ITCWB_SIZEPATCH"), 50, 80, 1, 60));
     itcwb_size->set_tooltip_markup (M("TP_WBALANCE_ITCWBSIZEPATCH_TOOLTIP"));
 
     itcwb_delta = Gtk::manage (new Adjuster(M("TP_WBALANCE_ITCWB_DELTA"), 1, 6, 1, 4));
