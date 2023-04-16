@@ -628,6 +628,7 @@ void Options::setDefaults()
 // end locallab
     rtSettings.itcwb_enable = true;
     rtSettings.itcwb_deltaspec = 0.05;
+    rtSettings.itcwb_minsize = 23;//between 20 to 30
 
 //wavelet
     rtSettings.edghi = 3.0;//1.1 and 5.
@@ -1809,6 +1810,9 @@ void Options::readFromFile(Glib::ustring fname)
                     rtSettings.itcwb_deltaspec = keyFile.get_double("Color Management", "Itcwb_deltaspec");
                 }
 
+                if (keyFile.has_key("Color Management", "Itcwb_minsize")) {
+                    rtSettings.itcwb_minsize = keyFile.get_integer("Color Management", "Itcwb_minsize");
+                }
 
                 //if (keyFile.has_key ("Color Management", "Colortoningab")) rtSettings.colortoningab = keyFile.get_double("Color Management", "Colortoningab");
                 //if (keyFile.has_key ("Color Management", "Decaction")) rtSettings.decaction = keyFile.get_double("Color Management", "Decaction");
@@ -2585,6 +2589,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_double("Color Management", "CBDLlevel123", rtSettings.level123_cbdl);
         keyFile.set_boolean("Color Management", "Itcwb_enable", rtSettings.itcwb_enable);
         keyFile.set_double("Color Management", "Itcwb_deltaspec", rtSettings.itcwb_deltaspec);
+        keyFile.set_integer("Color Management", "Itcwb_minsize", rtSettings.itcwb_minsize);
 
         //keyFile.set_double  ("Color Management", "Colortoningab", rtSettings.colortoningab);
         //keyFile.set_double  ("Color Management", "Decaction", rtSettings.decaction);

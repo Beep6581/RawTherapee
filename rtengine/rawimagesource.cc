@@ -5641,12 +5641,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     int w = -1;
 
     array2D<float> reff_spect_yy_camera(N_t, 2 * Nc + 2);
-
     array2D<float> reff_spect_xx_camera(N_t, 2 * Nc + 2);
     array2D<float> reff_spect_Y_camera(N_t, 2 * Nc + 2);
 
     //here we select the good spectral color inside the 113 values
-    //call tempxy to calculate for 211 or 201color references Temp and XYZ with cat02
+    //call tempxy to calculate for 348 or 201color references Temp and XYZ with cat02
  //   repref = 57;
     ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar); //calculate chroma xy (xyY) for Z known colors on under 200 illuminants
 
@@ -5659,20 +5658,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         reff_spect_xx_camera[j][repref] = xxx;
         reff_spect_yy_camera[j][repref] = yyy;
         reff_spect_Y_camera[j][repref] =  YY;
-/*
-                float xr = reff_spect_xx_camera[j][repref];
-                float yr = reff_spect_yy_camera[j][repref];
-                float Yr = reff_spect_Y_camera[j][repref];
-                float X_r = (65535.f * (xr * Yr)) / yr;
-                float Z_r = (65535.f * (1.f - xr - yr) * Yr) / yr;
-                float Y_r = 65535.f * Yr;
-            
-                float Lr, ar, br;
-                Color::XYZ2Lab(X_r, Y_r, Z_r, Lr, ar, br);
-        
-            printf("kn=%i REFLAB Lr=%3.2f ar=%3.2f br=%3.2f \n", j , (double) (Lr / 327.68f), (double) (ar / 327.68f), (double) (br / 327.68f));
-            printf("kn=%i REfxy xxr=%f yyr=%f YYr=%f\n", j, (double) reff_spect_xx_camera[j][repref], (double) reff_spect_yy_camera[j][repref], (double) reff_spect_Y_camera[j][repref]);
-*/
     }
 
     array2D<float> xc(bfwitc, bfhitc);
@@ -5833,7 +5818,13 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
    // float esthue = 0.f;
 
     int kmin = 0;
-    for (int j = 23; j < wbpar.itcwb_size; ++j) {//23 empirical minimal value to ensure a correlation 
+    int minsize = settings->itcwb_minsize;
+    minsize = LIM(minsize, 20, 30);
+    if (settings->verbose) {
+        printf("Minsize=%i\n", minsize);
+    }
+
+    for (int j = minsize; j < wbpar.itcwb_size; ++j) {//23 empirical minimal value default to ensure a correlation 
         if (!good_size[j]) {
             float estimchrom = 0.f;
             float xh = 0.f;
@@ -5902,8 +5893,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         if (settings->verbose) {
             printf("Info - patch estimation of white-point displacement (before): chrom=%f hue=%f\n", (double) estimchrom, (double) estimhue);
         }
-        
-        
+
     }
     bool issorted = false; //wbpar.itcwb_sorted;
 
@@ -5941,9 +5931,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     for (int i = index1; i < index2; ++i) {
         //is condition chroxy necessary ?
         //improvment to limit high Y values wbchro[sizcu4 - (i + 1)].Y < 0.96  0.96 arbitrary high value
-        if (wbchro[sizcu4 - (i + 1)].chrox > 0.1f && wbchro[sizcu4 - (i + 1)].chroy > 0.1f && wbchro[sizcu4 - (i + 1)].chroxy > 0.0f  && wbchro[sizcu4 - (i + 1)].Y < 0.96) { //suppress value too far from reference spectral
-            w++;// w number of real tests - often limited by slider "maximum of colors used
-         //  printf("i w=%i hist=%f \n", w, (double) histcurrref[wbchro[sizcu4 - (i + 1)].index][repref]);
+        if (wbchro[sizcu4 - (i + 1)].chrox > 0.1f && wbchro[sizcu4 - (i + 1)].chroy > 0.1f && wbchro[sizcu4 - (i + 1)].chroxy > 0.0f  && wbchro[sizcu4 - (i + 1)].Y < 0.96) { //remove value too far from reference spectral
+            w++;// w number of real tests
             xx_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chrox;
             yy_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chroy;
             YY_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].Y;
@@ -5951,7 +5940,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             nn_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].number;
             hue_curref_reduc[w][repref]= wbchro[sizcu4 - (i + 1)].hue;
             chro_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chroxy;
-          //  printf("i w=%i hist=%f chroxy=%f hue=%f \n", w, (double) histcurrref[wbchro[sizcu4 - (i + 1)].index][repref], (double) chronum_curref_reduc[w][repref], (double) hue_curref_reduc[w][repref]);
 
         }
     }
@@ -5967,6 +5955,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     }
     float dEmean = 0.f;
     int ndEmean = 0;
+    float minhist = 10000000.f;
+    float maxhist = -1000.f;
     for (int nb = 1; nb <= maxnb; ++nb) { //1 or 2 is good, but 3 or 4 help to find more spectral values
         for (int i = 0; i < w; ++i) {
             float mindeltaE = 100000.f;//we can change this value...
@@ -5995,6 +5985,12 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 float dE = sqrt(SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[kN][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[kN][repref]));
                 dEmean += dE;
                 ndEmean++;
+                if(nn_curref_reduc[i][repref] < minhist){
+                    minhist = nn_curref_reduc[i][repref];
+                }
+                if(nn_curref_reduc[i][repref] > maxhist){
+                    maxhist = nn_curref_reduc[i][repref];
+                }
                 if(dE > spectlimit) {
                     printf("i=%i kn=%i REFLAB for info not used - not relevant Lr=%3.2f ar=%3.2f br=%3.2f \n",i,  kN, (double) (Lr / 327.68f), (double) (ar / 327.68f), (double) (br / 327.68f));
                     printf("IMAGE: kn=%i hist=%7.0f chro_num=%5.1f hue=%2.2f chro=%2.3f xx=%f yy=%f YY=%f\n", kN, (double) nn_curref_reduc[i][repref], (double) chronum_curref_reduc[i][repref], (double) hue_curref_reduc[i][repref], (double) chro_curref_reduc[i][repref], (double) xx_curref_reduc[i][repref], (double) yy_curref_reduc[i][repref], (double) YY_curref_reduc[i][repref]);
@@ -6002,15 +5998,12 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                     printf("kn=%i DELTA delt=%f\n", kN, dE);
                     printf("....  \n");
                 }
-                
             }
             good_spectral[kN] = true;//good spectral are spectral color that match color histogram xy
         }
         if (settings->verbose) {
-            printf("Patch Mean deltaE=%f \n", (double) dEmean / ndEmean);
+            printf("Patch Mean deltaE=%f minhisto=%6.0f maxhisto=%7.0f \n", (double) dEmean / ndEmean, (double) minhist, (double) maxhist);
         }
-
-        
     }
 
     // reuse some buffers
@@ -6028,7 +6021,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         R_curref_reduc[i][repref] = r / rmm[repref];
         G_curref_reduc[i][repref] = g / gmm[repref];
         B_curref_reduc[i][repref] = b / bmm[repref];
-
     }
 
 //end first part
@@ -6238,12 +6230,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         tempitc = Txyz[goodref].Tem;
         greenitc = gree[greengood].green;
-        /*
-        if (estimchrom < 0.025f) {
-            float ac = -2.40f * estimchrom + 0.06f;//small empirical  correction, maximum 0.06 if chroma=0 for all image, currently for very low chroma +0.02
-            greenitc += ac;
-        } 
-        */
       
         if(greengood > 47 &&  keepgreen < 0.952 && wbpar.itcwb_sampling == false ) {
             double ag = 0.;
@@ -6257,7 +6243,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             }
             greenitc = gcal - ag;
         }
-        
     }
 
     avg_rm = 10000.f * rmm[goodref];
