@@ -311,11 +311,11 @@ void StdImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr)
     }
 }
 
-void StdImageSource::WBauto(double &tempref, double &greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, double &tempitc, double &greenitc, float &studgood, bool &twotimes, const WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const ColorManagementParams &cmp, const RAWParams &raw, const ToneCurveParams &hrp)
+void StdImageSource::WBauto(double &tempref, double &greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, double &tempitc, double &greenitc, float &studgood, float &minchrom, bool &twotimes, const WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const ColorManagementParams &cmp, const RAWParams &raw, const ToneCurveParams &hrp)
 {
 }
 
-void StdImageSource::getAutoWBMultipliersitc(double &tempref, double &greenref, double &tempitc, double &greenitc, float &studgood, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double &rm, double &gm, double &bm, const WBParams & wbpar, const ColorManagementParams &cmp, const RAWParams &raw, const ToneCurveParams &hrp)
+void StdImageSource::getAutoWBMultipliersitc(double &tempref, double &greenref, double &tempitc, double &greenitc, float &studgood, float &minchrom, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double &rm, double &gm, double &bm, const WBParams & wbpar, const ColorManagementParams &cmp, const RAWParams &raw, const ToneCurveParams &hrp)
 {
     if (redAWBMul != -1.) {
         rm = redAWBMul;
@@ -324,7 +324,7 @@ void StdImageSource::getAutoWBMultipliersitc(double &tempref, double &greenref, 
         return;
     }
 
-    img->getAutoWBMultipliersitc(tempref, greenref, tempitc, greenitc,studgood, begx, begy, yEn, xEn, cx, cy, bf_h, bf_w, rm, gm, bm, params->wb, params->icm, params->raw, params->toneCurve);
+    img->getAutoWBMultipliersitc(tempref, greenref, tempitc, greenitc,studgood, minchrom, begx, begy, yEn, xEn, cx, cy, bf_h, bf_w, rm, gm, bm, params->wb, params->icm, params->raw, params->toneCurve);
 
     redAWBMul   = rm;
     greenAWBMul = gm;

@@ -5119,7 +5119,7 @@ float static studentXY(const array2D<float> & YYcurr, const array2D<float> & ref
 
 
 
-void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double &tempitc, double &greenitc, float &studgood, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, const ColorManagementParams &cmp, const RAWParams &raw, const WBParams & wbpar, const ToneCurveParams &hrp)
+void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double &tempitc, double &greenitc, float &studgood, float &minchrom, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, const ColorManagementParams &cmp, const RAWParams &raw, const WBParams & wbpar, const ToneCurveParams &hrp)
 {
     /*
     Copyright (c) Jacques Desmis 6 - 2018 jdesmis@gmail.com, update 4 - 2023
@@ -5814,7 +5814,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     }
 
     //estimate chromaticity for references
-    float minchrom = 100000.f;//we can change this value...
+   // float minchrom = 100000.f;//we can change this value...
    // float esthue = 0.f;
 
     int kmin = 0;
@@ -6259,7 +6259,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     }
 }
 
-void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double & avg_rm, double & avg_gm, double & avg_bm, double & tempitc, double & greenitc, float & studgood, bool & twotimes, const WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const ColorManagementParams & cmp, const RAWParams & raw, const ToneCurveParams &hrp)
+void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double & avg_rm, double & avg_gm, double & avg_bm, double & tempitc, double & greenitc, float & studgood, float &minchrom, bool & twotimes, const WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const ColorManagementParams & cmp, const RAWParams & raw, const ToneCurveParams &hrp)
 {
 //    BENCHFUN
     //auto white balance
@@ -6277,7 +6277,7 @@ void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> 
         }
 
         tempitc = 5000.;
-        ItcWB(extra, tempref, greenref, tempitc, greenitc, studgood, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, cmp, raw, wbpar, hrp);
+        ItcWB(extra, tempref, greenref, tempitc, greenitc, studgood, minchrom, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, cmp, raw, wbpar, hrp);
     }
 }
 
@@ -6358,7 +6358,7 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
     }
 }
 
-void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref, double & tempitc, double & greenitc, float &studgood,  int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double & rm, double & gm, double & bm, const WBParams & wbpar, const ColorManagementParams & cmp, const RAWParams & raw, const ToneCurveParams &hrp)
+void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref, double & tempitc, double & greenitc, float &studgood, float &minchrom,  int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double & rm, double & gm, double & bm, const WBParams & wbpar, const ColorManagementParams & cmp, const RAWParams & raw, const ToneCurveParams &hrp)
 {
 //    BENCHFUN
     constexpr double clipHigh = 64000.0;
@@ -6557,7 +6557,7 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
 
         const int bfw = W / precision + ((W % precision) > 0 ? 1 : 0);// 5 arbitrary value can be change to 3 or 9 ;
         const int bfh = H / precision + ((H % precision) > 0 ? 1 : 0);
-        WBauto(tempref, greenref, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, tempitc, greenitc, studgood, twotimes, wbpar, begx, begy, yEn,  xEn,  cx,  cy, cmp, raw, hrp);
+        WBauto(tempref, greenref, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, tempitc, greenitc, studgood, minchrom, twotimes, wbpar, begx, begy, yEn,  xEn,  cx,  cy, cmp, raw, hrp);
     }
 
     redloc(0, 0);
