@@ -47,6 +47,7 @@ class WhiteBalance final : public ToolParamBlock, public AdjusterListener, publi
 private:
     Gtk::Label*  StudLabel;
     Gtk::Label*  PatchLabel;
+    Gtk::Label*  PatchlevelLabel;
     Gtk::Label*  mulLabel;
 
 protected:
@@ -166,7 +167,7 @@ public:
     }
     void setWB (int temp, double green);
     void resetWB ();
-    void WBChanged           (double temp, double green, double rw, double gw, double bw, float studgood, float minchrom, int kmin) override;
+    void WBChanged           (double temp, double green, double rw, double gw, double bw, float studgood, float minchrom, int kmin, float histmin, float histmax) override;
     void itcwb_nopurple_toggled ();
     void itcwb_obs_toggled ();
     void itcwb_sorted_toggled ();

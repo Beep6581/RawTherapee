@@ -96,7 +96,7 @@ public:
 //    bool            showtooltip;
     bool            itcwb_enable;
     double          itcwb_deltaspec;
-    int             itcwb_minsize;
+    int             itcwb_maxsize;
 
 //wavelet levels
     double          edghi;

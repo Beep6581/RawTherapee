@@ -357,6 +357,8 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     StudLabel->set_tooltip_text(M("TP_WBALANCE_STUDLABEL_TOOLTIP"));
     PatchLabel = Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER));
     PatchLabel->set_tooltip_text(M("TP_WBALANCE_PATCHLABEL_TOOLTIP"));
+    PatchlevelLabel = Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER));
+    PatchlevelLabel->set_tooltip_text(M("TP_WBALANCE_PATCHLEVELLABEL_TOOLTIP"));
 
     mulLabel = Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER));
     mulLabel->set_tooltip_text(M("TP_WBALANCE_MULLABEL_TOOLTIP"));
@@ -445,6 +447,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     pack_start(*mulLabel);
     pack_start(*StudLabel);
     pack_start(*PatchLabel);
+    pack_start(*PatchlevelLabel);
 
     pack_start (*temp);
     //pack_start (*boxgreen);
@@ -841,6 +844,7 @@ void WhiteBalance::optChanged ()
     StudLabel->hide();
     mulLabel->show();
     PatchLabel->hide();
+    PatchlevelLabel->hide();
 
     if (opt != row[methodColumns.colId]) {
 
@@ -861,10 +865,12 @@ void WhiteBalance::optChanged ()
             if (autit) {
                 StudLabel->show();
                 PatchLabel->show();
+                PatchlevelLabel->show();
                 itcwbFrame->set_sensitive(true);
             } else {
                 StudLabel->hide();
                 PatchLabel->hide();
+                PatchlevelLabel->hide();
                 itcwbFrame->set_sensitive(false);
             }
 
@@ -960,6 +966,7 @@ void WhiteBalance::spotPressed ()
     StudLabel->hide();
     mulLabel->show();
     PatchLabel->hide();
+    PatchlevelLabel->hide();
 
     if (wblistener) {
         wblistener->spotWBRequested (getSize());
@@ -1074,10 +1081,12 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         if (autit) {
             StudLabel->show();
             PatchLabel->show();
+            PatchlevelLabel->show();
             itcwbFrame->set_sensitive(true);
         } else {
             StudLabel->hide();
             PatchLabel->hide();
+            PatchlevelLabel->hide();
             itcwbFrame->set_sensitive(false);
         }
 
@@ -1211,6 +1220,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         if (autit) {
             StudLabel->show();
             PatchLabel->show();
+            PatchlevelLabel->show();
             itcwbFrame->set_sensitive(true);
             itcwb_forceextra_toggled ();
             itcwb_prim_changed ();
@@ -1218,6 +1228,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         } else {
             StudLabel->hide();
             PatchLabel->hide();
+            PatchlevelLabel->hide();
             mulLabel->show();
             itcwbFrame->set_sensitive(false);
         }
@@ -1507,10 +1518,10 @@ inline Gtk::TreeRow WhiteBalance::getActiveMethod ()
     return *(method->get_active());
 }
 
-void WhiteBalance::WBChanged(double temperature, double greenVal, double rw, double gw, double bw, float studgood, float minchrom, int kmin)
+void WhiteBalance::WBChanged(double temperature, double greenVal, double rw, double gw, double bw, float studgood, float minchrom, int kmin, float histmin, float histmax)
 {
     idle_register.add(
-        [this, temperature, greenVal, rw, gw, bw, studgood, minchrom, kmin]() -> bool
+        [this, temperature, greenVal, rw, gw, bw, studgood, minchrom, kmin, histmin, histmax]() -> bool
         {
             disableListener();
             temp->setValue(temperature);
@@ -1529,6 +1540,11 @@ void WhiteBalance::WBChanged(double temperature, double greenVal, double rw, dou
                 Glib::ustring::compose(M("TP_WBALANCE_PATCHLABEL"),
                                    Glib::ustring::format(std::fixed, std::setprecision(4), minchrom),
                                    Glib::ustring::format(std::fixed, std::setprecision(0), kmin))
+            );            
+            PatchlevelLabel->set_text(
+                Glib::ustring::compose(M("TP_WBALANCE_PATCHLEVELLABEL"),
+                                   Glib::ustring::format(std::fixed, std::setprecision(0), histmin),
+                                   Glib::ustring::format(std::fixed, std::setprecision(0), histmax))
             );            
             temp->setDefault(temperature);
             green->setDefault(greenVal);

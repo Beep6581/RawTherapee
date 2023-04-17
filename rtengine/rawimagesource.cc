@@ -5119,7 +5119,7 @@ float static studentXY(const array2D<float> & YYcurr, const array2D<float> & ref
 
 
 
-void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double &tempitc, double &greenitc, float &studgood, float &minchrom, int &kmin, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, const ColorManagementParams &cmp, const RAWParams &raw, const WBParams & wbpar, const ToneCurveParams &hrp)
+void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double &tempitc, double &greenitc, float &studgood, float &minchrom, int &kmin, float &minhist, float &maxhist,  array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, const ColorManagementParams &cmp, const RAWParams &raw, const WBParams & wbpar, const ToneCurveParams &hrp)
 {
     /*
     Copyright (c) Jacques Desmis 6 - 2018 jdesmis@gmail.com, update 4 - 2023
@@ -5783,9 +5783,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     int sizcurr2ref = sizcurrref - ntr;
     const int sizcu30 = sizcurrref - n30;
-    int nbm = 80;
+    int maxsiz = settings->itcwb_maxsize; // between 60 to 90
+    maxsiz = LIM(maxsiz, 60, 90);
+    int nbm = maxsiz;
    // nbm = wbpar.itcwb_size;
-    int sizcu4 = 80;
+    int sizcu4 = maxsiz;
    // sizcu4 = wbpar.itcwb_size;
     if(wbpar.itcwb_sampling == true) {
         nbm = 55;
@@ -5819,7 +5821,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     //int kmin = 0;
     int minsize = wbpar.itcwb_minsize;//LIM(minsize, 20, 30);
-    int maxsize = 80; // wbpar.itcwb_size;//LIM(minsize, 20, 30);
+    int maxsize = maxsiz; // wbpar.itcwb_size;//LIM(minsize, 20, 30);
     
     if (settings->verbose) {
         printf("Minsize=%i\n", minsize);
@@ -5931,7 +5933,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     }
 
 
-    int maxval = 80; //wbpar.itcwb_size; //55; //rtengine::LIM(wbpar.itcwb_thres, 10, 55);//max values of color to find correlation
+    int maxval = maxsiz; //wbpar.itcwb_size; //55; //rtengine::LIM(wbpar.itcwb_thres, 10, 55);//max values of color to find correlation
     if(wbpar.itcwb_sampling == true) {
         maxval = 34;
     }
@@ -5979,8 +5981,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     }
     float dEmean = 0.f;
     int ndEmean = 0;
-    float minhist = 10000000.f;
-    float maxhist = -1000.f;
+//    float minhist = 10000000.f;
+//    float maxhist = -1000.f;
     for (int nb = 1; nb <= maxnb; ++nb) { //1 or 2 is good, but 3 or 4 help to find more spectral values
         for (int i = 0; i < w; ++i) {
             float mindeltaE = 100000.f;//we can change this value...
@@ -6283,7 +6285,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     }
 }
 
-void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double & avg_rm, double & avg_gm, double & avg_bm, double & tempitc, double & greenitc, float & studgood, float &minchrom, int &kmin, bool & twotimes, const WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const ColorManagementParams & cmp, const RAWParams & raw, const ToneCurveParams &hrp)
+void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double & avg_rm, double & avg_gm, double & avg_bm, double & tempitc, double & greenitc, float & studgood, float &minchrom, int &kmin, float &minhist, float &maxhist, bool & twotimes, const WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const ColorManagementParams & cmp, const RAWParams & raw, const ToneCurveParams &hrp)
 {
 //    BENCHFUN
     //auto white balance
@@ -6301,7 +6303,7 @@ void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> 
         }
 
         tempitc = 5000.;
-        ItcWB(extra, tempref, greenref, tempitc, greenitc, studgood, minchrom, kmin, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, cmp, raw, wbpar, hrp);
+        ItcWB(extra, tempref, greenref, tempitc, greenitc, studgood, minchrom, kmin, minhist, maxhist, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, cmp, raw, wbpar, hrp);
     }
 }
 
@@ -6382,7 +6384,7 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
     }
 }
 
-void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref, double & tempitc, double & greenitc, float &studgood, float &minchrom, int &kmin,  int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double & rm, double & gm, double & bm, const WBParams & wbpar, const ColorManagementParams & cmp, const RAWParams & raw, const ToneCurveParams &hrp)
+void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref, double & tempitc, double & greenitc, float &studgood, float &minchrom, int &kmin,  float &minhist, float &maxhist, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double & rm, double & gm, double & bm, const WBParams & wbpar, const ColorManagementParams & cmp, const RAWParams & raw, const ToneCurveParams &hrp)
 {
 //    BENCHFUN
     constexpr double clipHigh = 64000.0;
@@ -6581,7 +6583,7 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
 
         const int bfw = W / precision + ((W % precision) > 0 ? 1 : 0);// 5 arbitrary value can be change to 3 or 9 ;
         const int bfh = H / precision + ((H % precision) > 0 ? 1 : 0);
-        WBauto(tempref, greenref, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, tempitc, greenitc, studgood, minchrom, kmin, twotimes, wbpar, begx, begy, yEn,  xEn,  cx,  cy, cmp, raw, hrp);
+        WBauto(tempref, greenref, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, tempitc, greenitc, studgood, minchrom, kmin, minhist, maxhist, twotimes, wbpar, begx, begy, yEn,  xEn,  cx,  cy, cmp, raw, hrp);
     }
 
     redloc(0, 0);

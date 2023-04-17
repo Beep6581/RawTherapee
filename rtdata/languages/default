@@ -4110,7 +4110,6 @@ TP_WBALANCE_ITCWB_FRA;Auto Temperature correlation Settings
 TP_WBALANCE_ITCWB_FRA_TOOLTIP;These settings allow, depending on the images (type of raw, colorimetry, etc.), an adaptation of the 'Temperature correlation' algorithm. There is no absolute rule linking these parameters to the results obtained.
 TP_WBALANCE_ITCWB_MINSIZEPATCH;Patch minimum size
 TP_WBALANCE_ITCWBMINSIZEPATCH_TOOLTIP;Allows you to set the minimum patch value. values that are too low can lead to a lack of correlation.
-TP_WBALANCE_PATCHLABEL_TOOLTIP;Display calculated Patch Chroma.\nAWB temperature bias, lets try to reduce this value, a minimum may seem to optimize the algo.\n\nPatch size matching chroma optimization.
 TP_WBALANCE_ITCWB_NOPURPLE;No purple color used
 TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP;By default when "Inpaint opposed" is activated, purple colors are not taken into account. However, if the image does not need highlight reconstruction, or if this image naturally contains purple tints (flowers, etc.), it may be necessary to deactivate, to take into account all the colors.
 TP_WBALANCE_ITCWB_OBS;Itcwb Observer 10° instead of Observer 2°
@@ -4146,6 +4145,9 @@ TP_WBALANCE_MULLABEL_TOOLTIP;Values given for information purposes. You cannot c
 TP_WBALANCE_OBSERVER10;Observer 10° instead of Observer 2°
 TP_WBALANCE_OBSERVER10_TOOLTIP;The color management in Rawtherapee (White balance, channel multipliers, highlight recovery,...) uses the spectral data of the illuminants and colors. Observer is an important parameter of this management which takes into account the angle of perception of the eye. In 1931 it was fixed at 2° (privileges the use of the cones). In 1964 it was fixed at 10° (privileges the use of the cones, but partially takes into account the rods).\nTo avoid a (rare) drift of the colors due to the choice Observer 10° - probably due to the conversion matrix - Observer 2° must be selected.\nIn a majority of cases Observer 10° (default) will be a more relevant choice.
 TP_WBALANCE_PATCHLABEL;Patch: Chroma:%1 Size=%2
+TP_WBALANCE_PATCHLABEL_TOOLTIP;Display calculated Patch Chroma.\nAWB temperature bias, lets try to reduce this value, a minimum may seem to optimize the algo.\n\nPatch size matching chroma optimization.
+TP_WBALANCE_PATCHLEVELLABEL;Patch datas x 9: Min:%1 Max=%2
+TP_WBALANCE_PATCHLEVELLABEL_TOOLTIP;Display read datas found. The 2 values correspond to the minimum and maximum data values taken into account. The coefficient x9 must be taken into account to obtain the number of pixels concerned in the image.\nYou can adjust the minimum value by modifying in 'options' the value of Itcwb_maxsize (maximum patch size : between 60 to 90).
 TP_WBALANCE_PICKER;Pick
 TP_WBALANCE_SHADE;Shade
 TP_WBALANCE_SIZE;Size:
