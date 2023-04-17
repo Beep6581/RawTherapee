@@ -541,7 +541,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     currWBitc = imgsrc->getWB();
                     double tempref = currWBitc.getTemp() * (1. + params->wb.tempBias);
                     double greenref = currWBitc.getGreen();
-                    if(greenref > 2.f || greenref < 0.6f) {
+                    if(greenref > 2.f || greenref < 0.4f) {
                         tempref = 0.66f * 5000.f + 0.34f * tempref;
                         greenref = 1.f;
                     }

@@ -6256,8 +6256,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         tempitc = Txyz[goodref].Tem;
         greenitc = gree[greengood].green;
+
       
-        if(greengood > 47 &&  keepgreen < 0.952 && wbpar.itcwb_sampling == false ) {
+        if(((greengood > 41 &&  keepgreen < 0.7)  || (greengood > 47 &&  keepgreen < 0.952)) && wbpar.itcwb_sampling == false ) {
             double ag = 0.;
             double gcal = gree[greengood].green;
             ag = 0.95 * (gcal - keepgreen);//empirical  correction when green low - to improve 
