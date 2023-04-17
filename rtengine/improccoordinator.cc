@@ -525,6 +525,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             currWB = ColorTemp(params->wb.temperature, params->wb.green, params->wb.equal, params->wb.method, params->wb.observer);
             float studgood = 1000.f;
             float minchrom = 1000.f;
+            int kmin  = 20;
             if (!params->wb.enabled) {
                 currWB = ColorTemp();
             } else if (params->wb.method == "Camera") {
@@ -546,7 +547,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         printf("tempref=%f greref=%f\n", tempref, greenref);
                     }
 
-                    imgsrc->getAutoWBMultipliersitc(tempref, greenref, tempitc, greenitc, studgood, minchrom, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
+                    imgsrc->getAutoWBMultipliersitc(tempref, greenref, tempitc, greenitc, studgood, minchrom, kmin, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
 
                     if (params->wb.method ==  "autitcgreen") {
                         params->wb.temperature = tempitc;
@@ -597,9 +598,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
             if (awbListener) {
                 if (params->wb.method ==  "autitcgreen") {
-                    awbListener->WBChanged(params->wb.temperature, params->wb.green, rw, gw, bw, studgood, minchrom);
+                    awbListener->WBChanged(params->wb.temperature, params->wb.green, rw, gw, bw, studgood, minchrom, kmin);
                 } else {
-                    awbListener->WBChanged(params->wb.temperature, params->wb.green, rw, gw, bw, -1.f, -1.f);
+                    awbListener->WBChanged(params->wb.temperature, params->wb.green, rw, gw, bw, -1.f, -1.f, 1);
                 }
             }
 
@@ -2481,8 +2482,9 @@ bool ImProcCoordinator::getAutoWB(double& temp, double& green, double equal, Sta
             double greenitc = 1.;
             float studgood = 1000.f;
             float minchrom = 1000.f;
+            int kmin = 20;
             double tempref, greenref;
-            imgsrc->getAutoWBMultipliersitc(tempref, greenref, tempitc, greenitc, studgood, minchrom, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
+            imgsrc->getAutoWBMultipliersitc(tempref, greenref, tempitc, greenitc, studgood, minchrom, kmin, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
 
             if (rm != -1) {
                 autoWB.update(rm, gm, bm, equal, observer, tempBias);
