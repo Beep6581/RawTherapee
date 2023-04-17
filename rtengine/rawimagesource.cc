@@ -5789,6 +5789,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
    // nbm = wbpar.itcwb_size;
     int sizcu4 = maxsiz;
    // sizcu4 = wbpar.itcwb_size;
+   //printf("siz30=%i \n", sizcu30);
     if(wbpar.itcwb_sampling == true) {
         nbm = 55;
         sizcu4 = rtengine::min(sizcu30, nbm);//size of chroma values
@@ -5950,11 +5951,18 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         index1 = 0;
         index2 = sizcurr2ref;
     }
+    int indn = index1;
+    for (int i = index1; i < index2; ++i) {
+        if(wbchro[sizcu4 - (i + 1)].number < 100.f) {//remove too low numbers datas
+            indn++;
+         //   printf("wb=%i siz=%f \n", i, wbchro[sizcu4 - (i + 1)].number);
+        }
+    }
     if (settings->verbose) {
-        printf("Index1=%i index2=%i \n", index1, index2);
+        printf("Index1=%i index2=%i \n", indn, index2);
     }
     
-    for (int i = index1; i < index2; ++i) {
+    for (int i = indn; i < index2; ++i) {
         //is condition chroxy necessary ?
         //improvment to limit high Y values wbchro[sizcu4 - (i + 1)].Y < 0.96  0.96 arbitrary high value
         if (wbchro[sizcu4 - (i + 1)].chrox > 0.1f && wbchro[sizcu4 - (i + 1)].chroy > 0.1f && wbchro[sizcu4 - (i + 1)].chroxy > 0.0f  && wbchro[sizcu4 - (i + 1)].Y < 0.96) { //remove value too far from reference spectral
@@ -5966,6 +5974,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             nn_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].number;
             hue_curref_reduc[w][repref]= wbchro[sizcu4 - (i + 1)].hue;
             chro_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chroxy;
+        //    printf("nc=%f\n", (double) nn_curref_reduc[w][repref]); 
 
         }
     }
