@@ -5783,10 +5783,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     int sizcurr2ref = sizcurrref - ntr;
     const int sizcu30 = sizcurrref - n30;
-    int nbm = 60;
-    nbm = wbpar.itcwb_size;
-    int sizcu4 = 60;
-    sizcu4 = wbpar.itcwb_size;
+    int nbm = 80;
+   // nbm = wbpar.itcwb_size;
+    int sizcu4 = 80;
+   // sizcu4 = wbpar.itcwb_size;
     if(wbpar.itcwb_sampling == true) {
         nbm = 55;
         sizcu4 = rtengine::min(sizcu30, nbm);//size of chroma values
@@ -5818,13 +5818,14 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
    // float esthue = 0.f;
 
     int kmin = 0;
-    int minsize = settings->itcwb_minsize;
-    minsize = LIM(minsize, 20, 30);
+    int minsize = wbpar.itcwb_minsize;//LIM(minsize, 20, 30);
+    int maxsize = 80; // wbpar.itcwb_size;//LIM(minsize, 20, 30);
+    
     if (settings->verbose) {
         printf("Minsize=%i\n", minsize);
     }
 
-    for (int j = minsize; j < wbpar.itcwb_size; ++j) {//23 empirical minimal value default to ensure a correlation 
+    for (int j = minsize; j < maxsize; ++j) {//23 empirical minimal value default to ensure a correlation 
         if (!good_size[j]) {
             float estimchrom = 0.f;
             float xh = 0.f;
@@ -5907,7 +5908,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     }
 
 
-    int maxval = wbpar.itcwb_size; //55; //rtengine::LIM(wbpar.itcwb_thres, 10, 55);//max values of color to find correlation
+    int maxval = 80; //wbpar.itcwb_size; //55; //rtengine::LIM(wbpar.itcwb_thres, 10, 55);//max values of color to find correlation
     if(wbpar.itcwb_sampling == true) {
         maxval = 34;
     }

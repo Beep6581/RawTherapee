@@ -270,6 +270,7 @@ void ParamsEdited::set(bool v)
     wb.itcwb_thres                = v;
     wb.itcwb_precis                = v;
     wb.itcwb_size                = v;
+    wb.itcwb_minsize                = v;
     wb.itcwb_delta                = v;
     wb.itcwb_fgreen                = v;
     wb.itcwb_rgreen                = v;
@@ -984,6 +985,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wb.itcwb_thres = wb.itcwb_thres && p.wb.itcwb_thres == other.wb.itcwb_thres;
         wb.itcwb_precis = wb.itcwb_precis && p.wb.itcwb_precis == other.wb.itcwb_precis;
         wb.itcwb_size = wb.itcwb_size && p.wb.itcwb_size == other.wb.itcwb_size;
+        wb.itcwb_minsize = wb.itcwb_minsize && p.wb.itcwb_minsize == other.wb.itcwb_minsize;
         wb.itcwb_delta = wb.itcwb_delta && p.wb.itcwb_delta == other.wb.itcwb_delta;
         wb.itcwb_fgreen = wb.itcwb_fgreen && p.wb.itcwb_fgreen == other.wb.itcwb_fgreen;
         wb.itcwb_rgreen = wb.itcwb_rgreen && p.wb.itcwb_rgreen == other.wb.itcwb_rgreen;
@@ -2869,6 +2871,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (wb.itcwb_size) {
         toEdit.wb.itcwb_size = mods.wb.itcwb_size;
+    }
+
+    if (wb.itcwb_minsize) {
+        toEdit.wb.itcwb_minsize = mods.wb.itcwb_minsize;
     }
 
     if (wb.itcwb_delta) {

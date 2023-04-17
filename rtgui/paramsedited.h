@@ -251,6 +251,7 @@ struct WBParamsEdited {
     bool itcwb_thres;
     bool itcwb_precis;
     bool itcwb_size;
+    bool itcwb_minsize;
     bool itcwb_delta;
     bool itcwb_fgreen;
     bool itcwb_rgreen;

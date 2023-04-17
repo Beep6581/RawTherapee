@@ -254,6 +254,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     EvWBitcwbprim = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_PRIM");
     EvWBitcwbsampling = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_SAMPLING");
     EvWBitcwbsize = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_SIZE");
+    EvWBitcwbminsize = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_MINSIZE");
     EvWBitcwbprecis = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_PRECIS");
     EvWBitcwbdelta = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_DELTA");
     EvWBitcwbfgreen = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_FGREEN");
@@ -354,6 +355,8 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
 
     StudLabel = Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER));
     StudLabel->set_tooltip_text(M("TP_WBALANCE_STUDLABEL_TOOLTIP"));
+    PatchLabel = Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER));
+    PatchLabel->set_tooltip_text(M("TP_WBALANCE_PATCHLABEL_TOOLTIP"));
 
     mulLabel = Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER));
     mulLabel->set_tooltip_text(M("TP_WBALANCE_MULLABEL_TOOLTIP"));
@@ -362,7 +365,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     temp = Gtk::manage (new Adjuster (M("TP_WBALANCE_TEMPERATURE"), MINTEMP, MAXTEMP, 5, CENTERTEMP, itempL, itempR, &wbSlider2Temp, &wbTemp2Slider));
     green = Gtk::manage (new Adjuster (M("TP_WBALANCE_GREEN"), MINGREEN, MAXGREEN, 0.001, 1.0, igreenL, igreenR));
     equal = Gtk::manage (new Adjuster (M("TP_WBALANCE_EQBLUERED"), MINEQUAL, MAXEQUAL, 0.001, 1.0, iblueredL, iblueredR));
-    tempBias = Gtk::manage (new Adjuster(M("TP_WBALANCE_TEMPBIAS"), -0.5, 0.5, 0.01, 0.0, itempbiasL, itempbiasR));
+    tempBias = Gtk::manage (new Adjuster(M("TP_WBALANCE_TEMPBIAS"), -0.5, 0.5, 0.005, 0.0, itempbiasL, itempbiasR));
     observer10 = Gtk::manage(new CheckBox(M("TP_WBALANCE_OBSERVER10"), multiImage));
 
     cache_customTemp (0);
@@ -391,6 +394,9 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
 
     itcwb_size = Gtk::manage (new Adjuster(M("TP_WBALANCE_ITCWB_SIZEPATCH"), 60, 80, 1, 70));
     itcwb_size->set_tooltip_markup (M("TP_WBALANCE_ITCWBSIZEPATCH_TOOLTIP"));
+
+    itcwb_minsize = Gtk::manage (new Adjuster(M("TP_WBALANCE_ITCWB_MINSIZEPATCH"), 16, 24, 1, 20));
+    itcwb_minsize->set_tooltip_markup (M("TP_WBALANCE_ITCWBMINSIZEPATCH_TOOLTIP"));
 
     itcwb_delta = Gtk::manage (new Adjuster(M("TP_WBALANCE_ITCWB_DELTA"), 1, 6, 1, 4));
     itcwb_delta->set_tooltip_markup (M("TP_WBALANCE_ITCWBDELTA_TOOLTIP"));
@@ -438,6 +444,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     boxgreen->pack_start(*igreenR);*/
     pack_start(*mulLabel);
     pack_start(*StudLabel);
+    pack_start(*PatchLabel);
 
     pack_start (*temp);
     //pack_start (*boxgreen);
@@ -449,7 +456,8 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
 
 //    itcwbBox->pack_start (*itcwb_thres);
 //    itcwbBox->pack_start (*itcwb_precis);
-    itcwbBox->pack_start (*itcwb_size);
+//    itcwbBox->pack_start (*itcwb_size);
+    itcwbBox->pack_start (*itcwb_minsize);
 //    itcwbBox->pack_start (*itcwb_delta);//possible use in pp3
     itcwbBox->pack_start (*itcwb_fgreen);//possible use in pp3
 //    itcwbBox->pack_start (*itcwb_rgreen);//possible use in pp3
@@ -467,6 +475,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
         itcwb_thres->show();
         itcwb_precis->show();
         itcwb_size->show();
+        itcwb_minsize->show();
         itcwb_delta->show();
         itcwb_fgreen->show();
         itcwb_rgreen->show();
@@ -481,6 +490,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
         itcwb_thres->hide();
         itcwb_precis->hide();
         itcwb_size->hide();
+        itcwb_minsize->hide();
         itcwb_delta->hide();
         itcwb_fgreen->hide();
         itcwb_rgreen->hide();
@@ -500,6 +510,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     itcwb_thres->setAdjusterListener (this);
     itcwb_precis->setAdjusterListener (this);
     itcwb_size->setAdjusterListener (this);
+    itcwb_minsize->setAdjusterListener (this);
     itcwb_delta->setAdjusterListener (this);
     itcwb_fgreen->setAdjusterListener (this);
     itcwb_rgreen->setAdjusterListener (this);
@@ -654,6 +665,7 @@ void WhiteBalance::itcwb_sampling_toggled ()
         itcwb_prim->set_sensitive(false);
         itcwb_thres->set_sensitive(false);
         itcwb_size->set_sensitive(false);
+        itcwb_minsize->set_sensitive(false);
         itcwb_fgreen->set_sensitive(false);
         itcwb_nopurple->set_sensitive(false);
         itcwb_obs->set_sensitive(false);
@@ -663,6 +675,7 @@ void WhiteBalance::itcwb_sampling_toggled ()
         itcwb_prim->set_sensitive(true);
         itcwb_thres->set_sensitive(true);
         itcwb_size->set_sensitive(true);
+        itcwb_minsize->set_sensitive(true);
         itcwb_fgreen->set_sensitive(true);
         itcwb_nopurple->set_sensitive(true);
         itcwb_obs->set_sensitive(true);
@@ -719,6 +732,7 @@ void WhiteBalance::adjusterChanged(Adjuster* a, double newval)
                     || a == itcwb_thres
                     || a == itcwb_precis
                     || a == itcwb_size
+                    || a == itcwb_minsize
                     || a == itcwb_delta
                     || a == itcwb_fgreen
                     || a == itcwb_rgreen
@@ -766,6 +780,8 @@ void WhiteBalance::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged (EvWBitcwbprecis, Glib::ustring::format ((int) a->getValue()));
         } else if (a == itcwb_size) {
             listener->panelChanged (EvWBitcwbsize, Glib::ustring::format ((int) a->getValue()));
+        } else if (a == itcwb_minsize) {
+            listener->panelChanged (EvWBitcwbminsize, Glib::ustring::format ((int) a->getValue()));
         } else if (a == itcwb_delta) {
             listener->panelChanged (EvWBitcwbdelta, Glib::ustring::format ((int) a->getValue()));
         } else if (a == itcwb_fgreen) {
@@ -824,6 +840,7 @@ void WhiteBalance::optChanged ()
     }
     StudLabel->hide();
     mulLabel->show();
+    PatchLabel->hide();
 
     if (opt != row[methodColumns.colId]) {
 
@@ -843,9 +860,11 @@ void WhiteBalance::optChanged ()
             bool autit = (currMethod.ppLabel == "autitcgreen");
             if (autit) {
                 StudLabel->show();
+                PatchLabel->show();
                 itcwbFrame->set_sensitive(true);
             } else {
                 StudLabel->hide();
+                PatchLabel->hide();
                 itcwbFrame->set_sensitive(false);
             }
 
@@ -940,6 +959,7 @@ void WhiteBalance::spotPressed ()
 {
     StudLabel->hide();
     mulLabel->show();
+    PatchLabel->hide();
 
     if (wblistener) {
         wblistener->spotWBRequested (getSize());
@@ -965,6 +985,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
     itcwb_thres->setValue (pp->wb.itcwb_thres);
     itcwb_precis->setValue (pp->wb.itcwb_precis);
     itcwb_size->setValue (pp->wb.itcwb_size);
+    itcwb_minsize->setValue (pp->wb.itcwb_minsize);
     itcwb_delta->setValue (pp->wb.itcwb_delta);
     itcwb_fgreen->setValue (pp->wb.itcwb_fgreen);
     itcwb_rgreen->setValue (pp->wb.itcwb_rgreen);
@@ -1015,6 +1036,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         itcwb_thres->show();
         itcwb_precis->show();
         itcwb_size->show();
+        itcwb_minsize->show();
         itcwb_delta->show();
         itcwb_fgreen->show();
         itcwb_rgreen->show();
@@ -1030,6 +1052,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         itcwb_thres->hide();
         itcwb_precis->hide();
         itcwb_size->hide();
+        itcwb_minsize->hide();
         itcwb_delta->hide();
         itcwb_fgreen->hide();
         itcwb_rgreen->hide();
@@ -1050,9 +1073,11 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         bool autit = (currMethod.ppLabel == "autitcgreen");
         if (autit) {
             StudLabel->show();
+            PatchLabel->show();
             itcwbFrame->set_sensitive(true);
         } else {
             StudLabel->hide();
+            PatchLabel->hide();
             itcwbFrame->set_sensitive(false);
         }
 
@@ -1066,6 +1091,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         itcwb_thres->setEditedState (pedited->wb.itcwb_thres ? Edited : UnEdited);
         itcwb_precis->setEditedState (pedited->wb.itcwb_precis ? Edited : UnEdited);
         itcwb_size->setEditedState (pedited->wb.itcwb_size ? Edited : UnEdited);
+        itcwb_minsize->setEditedState (pedited->wb.itcwb_minsize ? Edited : UnEdited);
         itcwb_delta->setEditedState (pedited->wb.itcwb_delta ? Edited : UnEdited);
         itcwb_fgreen->setEditedState (pedited->wb.itcwb_fgreen ? Edited : UnEdited);
         itcwb_rgreen->setEditedState (pedited->wb.itcwb_rgreen ? Edited : UnEdited);
@@ -1184,12 +1210,14 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         bool autit = (wbValues.ppLabel == "autitcgreen");
         if (autit) {
             StudLabel->show();
+            PatchLabel->show();
             itcwbFrame->set_sensitive(true);
             itcwb_forceextra_toggled ();
             itcwb_prim_changed ();
             itcwb_sampling_toggled ();
         } else {
             StudLabel->hide();
+            PatchLabel->hide();
             mulLabel->show();
             itcwbFrame->set_sensitive(false);
         }
@@ -1220,6 +1248,7 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->wb.itcwb_thres = itcwb_thres->getEditedState ();
         pedited->wb.itcwb_precis = itcwb_precis->getEditedState ();
         pedited->wb.itcwb_size = itcwb_size->getEditedState ();
+        pedited->wb.itcwb_minsize = itcwb_minsize->getEditedState ();
         pedited->wb.itcwb_delta = itcwb_delta->getEditedState ();
         pedited->wb.itcwb_fgreen = itcwb_fgreen->getEditedState ();
         pedited->wb.itcwb_rgreen = itcwb_rgreen->getEditedState ();
@@ -1262,6 +1291,7 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
     pp->wb.itcwb_thres = itcwb_thres->getValue ();
     pp->wb.itcwb_precis = itcwb_precis->getValue ();
     pp->wb.itcwb_size = itcwb_size->getValue ();
+    pp->wb.itcwb_minsize = itcwb_minsize->getValue ();
     pp->wb.itcwb_delta = itcwb_delta->getValue ();
     pp->wb.itcwb_fgreen = itcwb_fgreen->getValue ();
     pp->wb.itcwb_rgreen = itcwb_rgreen->getValue ();
@@ -1281,6 +1311,7 @@ void WhiteBalance::setDefaults (const ProcParams* defParams, const ParamsEdited*
     itcwb_thres->setDefault (defParams->wb.itcwb_thres);
     itcwb_precis->setDefault (defParams->wb.itcwb_precis);
     itcwb_size->setDefault (defParams->wb.itcwb_size);
+    itcwb_minsize->setDefault (defParams->wb.itcwb_minsize);
     itcwb_delta->setDefault (defParams->wb.itcwb_delta);
     itcwb_fgreen->setDefault (defParams->wb.itcwb_fgreen);
     itcwb_rgreen->setDefault (defParams->wb.itcwb_rgreen);
@@ -1309,6 +1340,7 @@ void WhiteBalance::setDefaults (const ProcParams* defParams, const ParamsEdited*
         itcwb_thres->setDefaultEditedState (pedited->wb.itcwb_thres ? Edited : UnEdited);
         itcwb_precis->setDefaultEditedState (pedited->wb.itcwb_precis ? Edited : UnEdited);
         itcwb_size->setDefaultEditedState (pedited->wb.itcwb_size ? Edited : UnEdited);
+        itcwb_minsize->setDefaultEditedState (pedited->wb.itcwb_minsize ? Edited : UnEdited);
         itcwb_delta->setDefaultEditedState (pedited->wb.itcwb_delta ? Edited : UnEdited);
         itcwb_fgreen->setDefaultEditedState (pedited->wb.itcwb_fgreen ? Edited : UnEdited);
         itcwb_rgreen->setDefaultEditedState (pedited->wb.itcwb_rgreen ? Edited : UnEdited);
@@ -1320,6 +1352,7 @@ void WhiteBalance::setDefaults (const ProcParams* defParams, const ParamsEdited*
         itcwb_thres->setDefaultEditedState (Irrelevant);
         itcwb_precis->setDefaultEditedState (Irrelevant);
         itcwb_size->setDefaultEditedState (Irrelevant);
+        itcwb_minsize->setDefaultEditedState (Irrelevant);
         itcwb_delta->setDefaultEditedState (Irrelevant);
         itcwb_fgreen->setDefaultEditedState (Irrelevant);
         itcwb_rgreen->setDefaultEditedState (Irrelevant);
@@ -1490,7 +1523,10 @@ void WhiteBalance::WBChanged(double temperature, double greenVal, double rw, dou
             );
             StudLabel->set_text(
                 Glib::ustring::compose(M("TP_WBALANCE_STUDLABEL"),
-                                   Glib::ustring::format(std::fixed, std::setprecision(4), studgood),
+                                   Glib::ustring::format(std::fixed, std::setprecision(4), studgood))
+            );            
+            PatchLabel->set_text(
+                Glib::ustring::compose(M("TP_WBALANCE_PATCHLABEL"),
                                    Glib::ustring::format(std::fixed, std::setprecision(4), minchrom))
             );            
             temp->setDefault(temperature);

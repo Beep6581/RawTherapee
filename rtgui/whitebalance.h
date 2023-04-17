@@ -46,6 +46,7 @@ class WhiteBalance final : public ToolParamBlock, public AdjusterListener, publi
 
 private:
     Gtk::Label*  StudLabel;
+    Gtk::Label*  PatchLabel;
     Gtk::Label*  mulLabel;
 
 protected:
@@ -71,6 +72,7 @@ protected:
     rtengine::ProcEvent EvWBitcwbprim;
     rtengine::ProcEvent EvWBitcwbprecis;
     rtengine::ProcEvent EvWBitcwbsize;
+    rtengine::ProcEvent EvWBitcwbminsize;
     rtengine::ProcEvent EvWBitcwbdelta;
     rtengine::ProcEvent EvWBitcwbfgreen;
     rtengine::ProcEvent EvWBitcwbrgreen;
@@ -92,6 +94,7 @@ protected:
     Adjuster* itcwb_thres;
     Adjuster* itcwb_precis;
     Adjuster* itcwb_size;
+    Adjuster* itcwb_minsize;
     Adjuster* itcwb_delta;
     Adjuster* itcwb_fgreen;
     Adjuster* itcwb_rgreen;
