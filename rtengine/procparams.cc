@@ -1396,7 +1396,7 @@ WBParams::WBParams() :
     itcwb_rgreen(1),
     itcwb_nopurple(false),
     itcwb_obs(false),
-    itcwb_sorted(false),
+    itcwb_sorted(true),
     itcwb_forceextra(false),
     itcwb_prim("ace"),
     itcwb_sampling(false)

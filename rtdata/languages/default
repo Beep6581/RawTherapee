@@ -1534,7 +1534,7 @@ HISTORY_MSG_WBITC_SAMPLING;Low sampling
 HISTORY_MSG_WBITC_THRES;Itcwb Theshold
 HISTORY_MSG_WBITC_NOPURPLE;Itcwb Nopurple
 HISTORY_MSG_WBITC_PRIM;Primaries
-HISTORY_MSG_WBITC_SORTED;Itcwb Sorted
+HISTORY_MSG_WBITC_SORTED;Itcwb ponderated
 HISTORY_MSG_WBITC_FORCE;Itcwb Force
 HISTORY_MSG_WBITC_SIZE;Itcwb Size
 HISTORY_MSG_WBITC_PRECIS;Itcwb Precision
@@ -4105,11 +4105,12 @@ TP_WBALANCE_ITCWBDELTA_TOOLTIP;Fixed for each "green" iteration tried, the tempe
 TP_WBALANCE_ITCWB_FORCED;Forces use of the entire CIE diagram
 TP_WBALANCE_ITCWFORCED_TOOLTIP;By default (box not checked) the data scanned during sampling is brought back to the sRGB profile, which is the most widespread, both for calibrating DCP or ICC profiles with the Colorchecker24, or used on the web.\n If you have very high gamut images (some flowers, artificial colors), then it may be necessary to use the entire CIExy diagram, the profile used will be ACESP0. In this second case, the number of colors that can be used in internal to the algorithm will be more important.
 TP_WBALANCE_ITCWB_FGREEN;Find green student
-TP_WBALANCE_ITCWBFGREEN_TOOLTIP;Find the best compromise between Student and green - green near to 1 is searched.
+TP_WBALANCE_ITCWBFGREEN_TOOLTIP;Find the best compromise between Student and green.
 TP_WBALANCE_ITCWB_FRA;Auto Temperature correlation Settings
 TP_WBALANCE_ITCWB_FRA_TOOLTIP;These settings allow, depending on the images (type of raw, colorimetry, etc.), an adaptation of the 'Temperature correlation' algorithm. There is no absolute rule linking these parameters to the results obtained.
 TP_WBALANCE_ITCWB_MINSIZEPATCH;Patch minimum size
-TP_WBALANCE_PATCHLABEL_TOOLTIP;Display calculated Patch Chroma.\nAWB temperature bias, lets try to reduce this value, a minimum generally seems to optimize the algorithm.\n\nPatch size matching chroma optimization.
+TP_WBALANCE_ITCWBMINSIZEPATCH_TOOLTIP;Allows you to set the minimum patch value. values that are too low can lead to a lack of correlation.
+TP_WBALANCE_PATCHLABEL_TOOLTIP;Display calculated Patch Chroma.\nAWB temperature bias, lets try to reduce this value, a minimum may seem to optimize the algo.\n\nPatch size matching chroma optimization.
 TP_WBALANCE_ITCWB_NOPURPLE;No purple color used
 TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP;By default when "Inpaint opposed" is activated, purple colors are not taken into account. However, if the image does not need highlight reconstruction, or if this image naturally contains purple tints (flowers, etc.), it may be necessary to deactivate, to take into account all the colors.
 TP_WBALANCE_ITCWB_OBS;Itcwb Observer 10° instead of Observer 2°
@@ -4128,8 +4129,9 @@ TP_WBALANCE_ITCWB_SIZEPATCH;Size of color patch
 TP_WBALANCE_ITCWBSIZEPATCH_TOOLTIP;This setting sets the size of color datas used by algorithm.
 //TP_WBALANCE_ITCWBSIZE_TOOLTIP;This setting is especially important when 'Force use of entire CIE diagram' (or to a lesser degree when 'Sort in chroma order instead of histogram') is activated.\n It sets the number of iterations to find the best correspondence between the reference spectral colors and those in xyY value of the image. A value of 3 is a good compromise.
 TP_WBALANCE_ITCWBSIZE_TOOLTIP;This setting sets the number of iterations to find the best correspondence between the reference spectral colors and those in xyY value of the image. A value of 3 seams a good compromise.
-TP_WBALANCE_ITCWB_SORTED;Sort in chroma order instead of histogram
-TP_WBALANCE_ITCWBSORTED_TOOLTIP;If the box is not checked the algorithm will use the data in the order of the frequency of the presence of each color. If the box is checked the order will be from highest saturation to lowest.
+TP_WBALANCE_ITCWB_SORTED;Ponderate patch chroma
+//TP_WBALANCE_ITCWBSORTED_TOOLTIP;If the box is not checked the algorithm will use the data in the order of the frequency of the presence of each color. If the box is checked the order will be from highest saturation to lowest.
+TP_WBALANCE_ITCWBSORTED_TOOLTIP;If the box is checked, the patch chroma is weighted, probably more relevant.
 TP_WBALANCE_ITCWB_THRES;Colors used in picture (preset)
 TP_WBALANCE_ITCWBTHRES_TOOLTIP;Limits comparison sampling between spectral data and image data.
 TP_WBALANCE_JUDGEIII;JudgeIII

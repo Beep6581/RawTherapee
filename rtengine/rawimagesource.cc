@@ -5824,7 +5824,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     if (settings->verbose) {
         printf("Minsize=%i\n", minsize);
     }
-
+    bool isponder = wbpar.itcwb_sorted;
     for (int j = minsize; j < maxsize; ++j) {//23 empirical minimal value default to ensure a correlation 
         if (!good_size[j]) {
             float estimchrom = 0.f;
@@ -5838,7 +5838,20 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             wbchro[j].chroy = 0.f;
             wbchro[j].Y = 0.f;
             wbchro[j].index = 0;
+            int ind1 = 1;
+            int ind2 = -1;
+            float chxy1 = 0.f;
+            float chxy2 = 0.f;
             for (int nh = 0; nh < j; ++nh) {
+                ind1++;
+                ind2++;
+                if(ind1 < j) {
+                    chxy1 = std::sqrt(SQR(xx_curref[ind1][repref] - xwpr) + SQR(yy_curref[ind1][repref] - ywpr));
+                }
+                if(ind2 <= 0) {
+                    chxy2 = std::sqrt(SQR(xx_curref[ind2][repref] - xwpr) + SQR(yy_curref[ind2][repref] - ywpr));
+                }
+                
                 const float chxy = std::sqrt(SQR(xx_curref[nh][repref] - xwpr) + SQR(yy_curref[nh][repref] - ywpr));
                 xh += xx_curref[nh][repref] - xwpr;
                 yh += yy_curref[nh][repref] - ywpr;
@@ -5851,9 +5864,19 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 wbchro[nh].Y = YY_curref[nh][repref];
                 wbchro[nh].index = nh;
                 estimchrom += chxy;
+                if(isponder) {
+                    estimchrom += chxy1;
+                    estimchrom += chxy2;
+                    
+                }
+                
             }
             estim_hue[j][repref] = xatan2f(yh, xh);
-            estimchrom /= j;
+            if(isponder) {
+                estimchrom /= (j + 2 * (j-1));
+            } else {
+                estimchrom /= j;
+            }
             if (estimchrom < minchrom) {
                 minchrom = estimchrom;
                 kmin = j;
