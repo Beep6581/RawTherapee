@@ -595,7 +595,15 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 params->wb.green = currWB.getGreen();
                 currWB.getMultipliers(rw, gw, bw);
                 imgsrc->wbMul2Camera(rw, gw, bw);
-              //  printf("ra=%f ga=%f ba=%f\n", rw, gw, bw); 
+                /*
+                printf("ra=%f ga=%f ba=%f\n", rw, gw, bw);
+                //recalculate temp and green with wb multipliers.
+                imgsrc->wbCamera2Mul(rw, gw, bw);
+                ColorTemp ct(rw, gw, bw, 1.0, currWB.getObserver());
+                float tem = ct.getTemp();
+                float gre  = ct.getGreen();
+                printf("tem=%f gre=%f \n", (double) tem, (double) gre);
+                */
             }
 
             if (awbListener) {
