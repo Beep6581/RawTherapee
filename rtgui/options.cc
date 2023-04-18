@@ -628,7 +628,7 @@ void Options::setDefaults()
 // end locallab
     rtSettings.itcwb_enable = true;
     rtSettings.itcwb_deltaspec = 0.05;
-    rtSettings.itcwb_maxsize = 70;//between 60 to 90
+    rtSettings.itcwb_maxsize = 70;//between 50 to 80
 
 //wavelet
     rtSettings.edghi = 3.0;//1.1 and 5.

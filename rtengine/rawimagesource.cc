@@ -5173,16 +5173,16 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     You must avoid when illuminant is non standard (fluorescent, LED...) and also, when the subject is lost in the image (some target to generate profiles).
 
     You can change  parameters in White Balance - Frame adapted to Itcwb
-    Itcwb_thres : 34 by default ==> number of color used in final algorithm - between 10 and max 50
-    Itcwb_sorted : true by default, can improve algorithm if true, ==> sort value in something near chroma order, instead of histogram number
+    Itcwb_thres : Not used - 34 by default ==> number of color used in final algorithm - between 10 and max 50
+    Itcwb_sorted : true by default, can improve algorithm if true
     Itcwb_greenrange : 0 amplitude of green variation - between 0 to 2
     Itcwb_greendelta : 1 - delta temp in green iterate loop for "extra" - between 0 to 4
     Itcwb_prim : sRGB, Adobe, Rec2020, AcesP0 = Use all Ciexy diagram instead of sRGB  
     //Itcwb_sizereference : repalce by int maxnb 3 by default, can be set to 5 ==> size of reference color compare to size of histogram real color
     itcwb_delta : 2 by default can be set between 0 to 5 ==> delta temp to build histogram xy - if camera temp is not probably good
     //itcwb_precis : replace by int precision = 3 by default - can be set to 3 or 9 - 3 best sampling but more time...9 "old" settings - but low differences in times with 3 instead of 9 about twice time 160ms instead of 80ms for a big raw file
-    itcwb_nopurple : true default - allow to bypass highlight recovery and inpait opposed when need flowers and not purple due to highlights...
-    itcwb_fgreen : 5 by default - between 2 to 6 - find the compromise student / green to reach green near of 1 
+    itcwb_nopurple : false default - allow to bypass highlight recovery and inpait opposed when need flowers and not purple due to highlights...
+    itcwb_fgreen : 3 by default - between 2 to 6 - find the compromise student / green to reach green near of 1 
     
     */
    // BENCHFUN
@@ -5519,8 +5519,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     bool purp = true;//if inpaint-opposed or something else enable purp
     
     const int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
-    constexpr int Nc = 347 + 1; //287 number of reference spectral colors
-    int Ncr = 348;//287
+    constexpr int Nc = 347 + 1; //348 number of reference spectral colors
+    int Ncr = 348;
     if(wbpar.itcwb_prim == "srgb") {
         Ncr = 347 + 1;
     } else if(wbpar.itcwb_prim == "adob") {
@@ -5644,9 +5644,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     array2D<float> reff_spect_xx_camera(N_t, 2 * Nc + 2);
     array2D<float> reff_spect_Y_camera(N_t, 2 * Nc + 2);
 
-    //here we select the good spectral color inside the 113 values
     //call tempxy to calculate for 348 or 201color references Temp and XYZ with cat02
- //   repref = 57;
     ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar); //calculate chroma xy (xyY) for Z known colors on under 200 illuminants
 
     //find the good spectral values
@@ -5654,7 +5652,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     for (int j = 0; j < Ncr ; j++) {
         float xxx = TX[j] / (TX[j] + TY[j] +  TZ[j]); // x from xyY
         float yyy = TY[j] / (TX[j] + TY[j] +  TZ[j]); // y from xyY
-        float YY = TY[j]; //TZ[j] / (TX[j] + TY[j] +  TZ[j]); // y from xyY
+        float YY = TY[j];
         reff_spect_xx_camera[j][repref] = xxx;
         reff_spect_yy_camera[j][repref] = yyy;
         reff_spect_Y_camera[j][repref] =  YY;
@@ -5694,7 +5692,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         //big step about 0.2
 
 
- //       if (hrp.hrenabled && hrp.method == "Coloropp" && settings->itcwb_nopurple == true) {//we disabled (user) with settings if image are naturally with purple (flowers...)
         if (hrp.hrenabled && hrp.method == "Coloropp" && wbpar.itcwb_nopurple == true) {//we disabled (user) with settings if image are naturally with purple (flowers...)
             purp = false;
         }
@@ -5784,7 +5781,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     int sizcurr2ref = sizcurrref - ntr;
     const int sizcu30 = sizcurrref - n30;
     int maxsiz = settings->itcwb_maxsize; // between 60 to 90
-    maxsiz = LIM(maxsiz, 60, 90);
+    maxsiz = LIM(maxsiz, 50, 80);
     int nbm = maxsiz;
    // nbm = wbpar.itcwb_size;
     int sizcu4 = maxsiz;
@@ -5809,28 +5806,24 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     for (int i = 0; i < sizcu4; ++i) { //take the max values
         histcurrref[i][repref] = Wbhis[siza - (i + 1)].histnum;
-        
-       // printf("i=%i hist=%f \n", i, (double) histcurrref[i][repref]);
         xx_curref[i][repref] = xxx[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
         yy_curref[i][repref] = yyy[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
         YY_curref[i][repref] = YYY[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
     }
 
-    //estimate chromaticity for references
-   // float minchrom = 100000.f;//we can change this value...
-   // float esthue = 0.f;
-
-    //int kmin = 0;
     int minsize = wbpar.itcwb_minsize;//LIM(minsize, 20, 30);
     int maxsize = maxsiz; // wbpar.itcwb_size;//LIM(minsize, 20, 30);
+    bool issorted = wbpar.itcwb_sorted;
     
     if (settings->verbose) {
         printf("Minsize=%i\n", minsize);
     }
-    bool isponder = wbpar.itcwb_sorted;
-    for (int j = minsize; j < maxsize; ++j) {//23 empirical minimal value default to ensure a correlation 
+    bool isponder = true;
+    for (int j = minsize; j < maxsize; ++j) {//20 empirical minimal value default to ensure a correlation 
         if (!good_size[j]) {
             float estimchrom = 0.f;
+            float countchxynum = 0.f;
+
             float xh = 0.f;
             float yh = 0.f;
             wbchro[j].hue =  0.f; 
@@ -5845,13 +5838,15 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             int ind2 = -1;
             float chxy1 = 0.f;
             float chxy2 = 0.f;
+            float chxynum1 = 0.f;
+            float chxynum2 = 0.f;
             for (int nh = 0; nh < j; ++nh) {
                 ind1++;
                 ind2++;
-                if(ind1 < j) {
+                if(ind1 < j && !issorted) {
                     chxy1 = std::sqrt(SQR(xx_curref[ind1][repref] - xwpr) + SQR(yy_curref[ind1][repref] - ywpr));
                 }
-                if(ind2 <= 0) {
+                if(ind2 <= 0 && !issorted) {
                     chxy2 = std::sqrt(SQR(xx_curref[ind2][repref] - xwpr) + SQR(yy_curref[ind2][repref] - ywpr));
                 }
                 
@@ -5859,27 +5854,47 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 xh += xx_curref[nh][repref] - xwpr;
                 yh += yy_curref[nh][repref] - ywpr;
                 wbchro[nh].hue =  fmodf(xatan2f(yy_curref[nh][repref] - ywpr, xx_curref[nh][repref] - xwpr), 2.f * RT_PI_F);
-                wbchro[nh].chroxy_number = chxy * std::sqrt(histcurrref[nh][repref]);
+                const float chxynum = wbchro[nh].chroxy_number = chxy * pow((double) histcurrref[nh][repref], 0.05);
+                if(ind1 < j && issorted) {
+                    chxynum1 = chxy1 * pow((double) histcurrref[ind1][repref], 0.05);
+                }
+                if(ind2 < 0 && issorted) {
+                    chxynum2 = chxy2 * pow((double) histcurrref[ind2][repref], 0.05);
+                }
                 wbchro[nh].number = histcurrref[nh][repref];
                 wbchro[nh].chroxy = std::sqrt(chxy);
                 wbchro[nh].chrox = xx_curref[nh][repref];
                 wbchro[nh].chroy = yy_curref[nh][repref];
                 wbchro[nh].Y = YY_curref[nh][repref];
                 wbchro[nh].index = nh;
-                estimchrom += chxy;
-                if(isponder) {
-                    estimchrom += chxy1;
-                    estimchrom += chxy2;
-                    
+                if(!issorted){
+                    estimchrom += chxy;
+                    if(isponder && !issorted) {
+                        estimchrom += chxy1;
+                        estimchrom += chxy2;
+                    }
                 }
-                
+                if(issorted) {
+                    estimchrom += chxynum;
+                    if(isponder) {
+                        estimchrom += chxynum1;
+                        estimchrom += chxynum2;
+                    }
+                    countchxynum += pow((double)histcurrref[nh][repref], 0.05);//no error, to take into account mean value
+                }
             }
             estim_hue[j][repref] = xatan2f(yh, xh);
-            if(isponder) {
-                estimchrom /= (j + 2 * (j-1));
+            if(!issorted) {
+                if(isponder) {
+                    estimchrom /= (j + 2 * (j-1));
+                } else {
+                    estimchrom /= j;
+                }
+
             } else {
-                estimchrom /= j;
+                    estimchrom /= (j + 2 * (j-1));
             }
+
             if (estimchrom < minchrom) {
                 minchrom = estimchrom;
                 kmin = j;
@@ -5887,9 +5902,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
         good_size[kmin] = true;
     }
-    if (settings->verbose) {
-        printf("Info - patch estimation of white-point displacement (before):j=%i chrom=%f hue=%f\n",kmin,  (double) minchrom, (double) estim_hue[kmin][repref]);
-    };
 
     if(wbpar.itcwb_sampling == false) {
         sizcu4 = kmin;
@@ -5918,11 +5930,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
 
         if (settings->verbose) {
-            printf("Info - patch estimation of white-point displacement (before): chrom=%f hue=%f\n", (double) estimchrom, (double) estimhue);
+            printf("Info - patch estimation of wp displacement (before): chrom=%f hue=%f\n", (double) estimchrom, (double) estimhue);
         }
 
     }
-    bool issorted = false; //wbpar.itcwb_sorted;
 
     if(wbpar.itcwb_sampling == true) {
         issorted = false;
@@ -5930,7 +5941,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
 
     if (issorted) { //sort in descending with chroma values * number 
-        std::sort(wbchro, wbchro + sizcu4, wbchro[0]);
+   //     std::sort(wbchro, wbchro + sizcu4, wbchro[0]);
     }
 
 
@@ -5942,28 +5953,25 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     sizcurr2ref = rtengine::min(sizcurr2ref, maxval);    //keep about the biggest values,
     int index1 = 0;
     int index2 = sizcu4;
-    
-    if (issorted) {//not used now since 15 04 2023
-        index1 = 0;
-        index2 = sizcurr2ref + 1;
-    }
+
     if(wbpar.itcwb_sampling == true) {
         index1 = 0;
         index2 = sizcurr2ref;
     }
     int indn = index1;
     for (int i = index1; i < index2; ++i) {
-        if(wbchro[sizcu4 - (i + 1)].number < 100.f) {//remove too low numbers datas
+        if(wbchro[sizcu4 - (i + 1)].number < 400.f) {//remove too low numbers datas about an area 60*60 pixels or reparted
             indn++;
-         //   printf("wb=%i siz=%f \n", i, wbchro[sizcu4 - (i + 1)].number);
         }
     }
     if (settings->verbose) {
         printf("Index1=%i index2=%i \n", indn, index2);
     }
+    if (settings->verbose) {
+        printf("Info2 - patch estimation of wp displacement (before):j=%i real=%i chrom=%f hue=%f\n",kmin, index2-indn, (double) minchrom, (double) estim_hue[kmin][repref]);
+    };
     
     for (int i = indn; i < index2; ++i) {
-        //is condition chroxy necessary ?
         //improvment to limit high Y values wbchro[sizcu4 - (i + 1)].Y < 0.96  0.96 arbitrary high value
         if (wbchro[sizcu4 - (i + 1)].chrox > 0.1f && wbchro[sizcu4 - (i + 1)].chroy > 0.1f && wbchro[sizcu4 - (i + 1)].chroxy > 0.0f  && wbchro[sizcu4 - (i + 1)].Y < 0.96) { //remove value too far from reference spectral
             w++;// w number of real tests
@@ -5974,8 +5982,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             nn_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].number;
             hue_curref_reduc[w][repref]= wbchro[sizcu4 - (i + 1)].hue;
             chro_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chroxy;
-        //    printf("nc=%f\n", (double) nn_curref_reduc[w][repref]); 
-
         }
     }
     if (settings->verbose) {
@@ -5990,11 +5996,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     }
     float dEmean = 0.f;
     int ndEmean = 0;
-//    float minhist = 10000000.f;
-//    float maxhist = -1000.f;
-    for (int nb = 1; nb <= maxnb; ++nb) { //1 or 2 is good, but 3 or 4 help to find more spectral values
+    for (int nb = 1; nb <= maxnb; ++nb) { //1 is good, but 2 3 or 4 help to find more spectral values
         for (int i = 0; i < w; ++i) {
-            float mindeltaE = 100000.f;//we can change this value...
+            float mindeltaE = 100000.f;
             int kN = 0;
 
             for (int j = 0; j < Ncr ; j++) {
