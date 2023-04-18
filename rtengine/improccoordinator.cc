@@ -546,7 +546,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         greenref = 1.f;
                     }
                     if (settings->verbose && params->wb.method ==  "autitcgreen") {
-                        printf("tempref=%f greref=%f\n", tempref, greenref);
+              tempref=%f greref=%f\n", tempref, greenref);
                     }
 
                     imgsrc->getAutoWBMultipliersitc(tempref, greenref, tempitc, greenitc, studgood, minchrom, kmin, minhist, maxhist, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
@@ -600,6 +600,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 //recalculate temp and green with wb multipliers.
                 imgsrc->wbCamera2Mul(rw, gw, bw);
                 ColorTemp ct(rw, gw, bw, 1.0, currWB.getObserver());
+                //allows to calculate temp and green with multipliers in case of we want in GUI
                 float tem = ct.getTemp();
                 float gre  = ct.getGreen();
                 printf("tem=%f gre=%f \n", (double) tem, (double) gre);

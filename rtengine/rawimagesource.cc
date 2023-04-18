@@ -6270,7 +6270,13 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         tempitc = Txyz[goodref].Tem;
         greenitc = gree[greengood].green;
 
-      
+        if((keepgreen > 0.952 && greengood > 55)  && wbpar.itcwb_sampling == false ) {
+            double ag = 0.;
+            double gcal = gree[greengood].green;
+            ag = 0.95 * (gcal - keepgreen);
+            greenitc = gcal - ag;
+        }
+
         if(((greengood > 41 &&  keepgreen < 0.7)  || (greengood > 47 &&  keepgreen < 0.952)) && wbpar.itcwb_sampling == false ) {
             double ag = 0.;
             double gcal = gree[greengood].green;
