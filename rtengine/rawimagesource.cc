@@ -5718,11 +5718,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     array2D<float> xx_curref_reduc(N_t, sizcurrref);
     array2D<float> yy_curref_reduc(N_t, sizcurrref);
     array2D<float> YY_curref_reduc(N_t, sizcurrref);
-    array2D<float> nn_curref_reduc(N_t, sizcurrref);
-    array2D<float> chronum_curref_reduc(N_t, sizcurrref);
-    array2D<float> hue_curref_reduc(N_t, sizcurrref);
-    array2D<float> chro_curref_reduc(N_t, sizcurrref);
-    array2D<float> estim_hue(N_t, sizcurrref);
+    array2D<float> nn_curref_reduc(N_t, sizcurrref);//new array to improve patch
+    array2D<float> chronum_curref_reduc(N_t, sizcurrref);//new array to improve patch
+    array2D<float> hue_curref_reduc(N_t, sizcurrref);//new array to improve patch
+    array2D<float> chro_curref_reduc(N_t, sizcurrref);//new array to improve patch
+    array2D<float> estim_hue(N_t, sizcurrref);//new array to improve patch
 
     hiss Wbhis[siza];
 
@@ -5783,10 +5783,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     int maxsiz = settings->itcwb_maxsize; // between 60 to 90
     maxsiz = LIM(maxsiz, 50, 80);
     int nbm = maxsiz;
-   // nbm = wbpar.itcwb_size;
     int sizcu4 = maxsiz;
-   // sizcu4 = wbpar.itcwb_size;
-   //printf("siz30=%i \n", sizcu30);
     if(wbpar.itcwb_sampling == true) {
         nbm = 55;
         sizcu4 = rtengine::min(sizcu30, nbm);//size of chroma values
@@ -5811,14 +5808,14 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         YY_curref[i][repref] = YYY[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
     }
 
-    int minsize = wbpar.itcwb_minsize;//LIM(minsize, 20, 30);
-    int maxsize = maxsiz; // wbpar.itcwb_size;//LIM(minsize, 20, 30);
-    bool issorted = wbpar.itcwb_sorted;
+    int minsize = wbpar.itcwb_minsize;
+    int maxsize = maxsiz;
+    bool issorted = wbpar.itcwb_sorted;//reused to build patch ponderate
     
     if (settings->verbose) {
         printf("Minsize=%i\n", minsize);
     }
-    bool isponder = true;
+    bool isponder = true;//with true moving average
     for (int j = minsize; j < maxsize; ++j) {//20 empirical minimal value default to ensure a correlation 
         if (!good_size[j]) {
             float estimchrom = 0.f;
@@ -5849,14 +5846,13 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 if(ind2 <= 0 && !issorted) {
                     chxy2 = std::sqrt(SQR(xx_curref[ind2][repref] - xwpr) + SQR(yy_curref[ind2][repref] - ywpr));
                 }
-                
                 const float chxy = std::sqrt(SQR(xx_curref[nh][repref] - xwpr) + SQR(yy_curref[nh][repref] - ywpr));
                 xh += xx_curref[nh][repref] - xwpr;
                 yh += yy_curref[nh][repref] - ywpr;
                 wbchro[nh].hue =  fmodf(xatan2f(yy_curref[nh][repref] - ywpr, xx_curref[nh][repref] - xwpr), 2.f * RT_PI_F);
-                const float chxynum = wbchro[nh].chroxy_number = chxy * pow((double) histcurrref[nh][repref], 0.05);
-                if(ind1 < j && issorted) {
-                    chxynum1 = chxy1 * pow((double) histcurrref[ind1][repref], 0.05);
+                const float chxynum = wbchro[nh].chroxy_number = chxy * pow((double) histcurrref[nh][repref], 0.05);//sqrt was too big no convergence
+                if(ind1 < j && issorted) {//with issorted ponderate chroma
+                    chxynum1 = chxy1 * pow((double) histcurrref[ind1][repref], 0.05);//0.05 to 0.1 allows convergence, near 1.5 betwween max and min value
                 }
                 if(ind2 < 0 && issorted) {
                     chxynum2 = chxy2 * pow((double) histcurrref[ind2][repref], 0.05);
@@ -5886,13 +5882,13 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             estim_hue[j][repref] = xatan2f(yh, xh);
             if(!issorted) {
                 if(isponder) {
-                    estimchrom /= (j + 2 * (j-1));
+                    estimchrom /= (j + 2 * (j-1));//extrem not taken 
                 } else {
                     estimchrom /= j;
                 }
 
             } else {
-                    estimchrom /= (j + 2 * (j-1));
+                    estimchrom /= (j + 2 * (j-1));//extrem not taken 
             }
 
             if (estimchrom < minchrom) {
@@ -5941,11 +5937,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
 
     if (issorted) { //sort in descending with chroma values * number 
-   //     std::sort(wbchro, wbchro + sizcu4, wbchro[0]);
+   //     std::sort(wbchro, wbchro + sizcu4, wbchro[0]);//not used in this goal since 15 april
     }
 
 
-    int maxval = maxsiz; //wbpar.itcwb_size; //55; //rtengine::LIM(wbpar.itcwb_thres, 10, 55);//max values of color to find correlation
+    int maxval = maxsiz;
     if(wbpar.itcwb_sampling == true) {
         maxval = 34;
     }
@@ -5972,7 +5968,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     };
     
     for (int i = indn; i < index2; ++i) {
-        //improvment to limit high Y values wbchro[sizcu4 - (i + 1)].Y < 0.96  0.96 arbitrary high value
+        //improvment to limit high Y values wbchro[sizcu4 - (i + 1)].Y < 0.96  0.96 arbitrary high value, maybe 0.9 àr 0.98...
         if (wbchro[sizcu4 - (i + 1)].chrox > 0.1f && wbchro[sizcu4 - (i + 1)].chroy > 0.1f && wbchro[sizcu4 - (i + 1)].chroxy > 0.0f  && wbchro[sizcu4 - (i + 1)].Y < 0.96) { //remove value too far from reference spectral
             w++;// w number of real tests
             xx_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chrox;
@@ -6239,7 +6235,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         // perhaps we can used a Snedecor test ? but why...at least we have confidence interval > 90%
         int greengood = 55;
 
-        int maxkgood = wbpar.itcwb_fgreen;//we can change ...to test 3, 4, 5. High values perhaps less good student, but it is a compromise...
+        int maxkgood = wbpar.itcwb_fgreen;//default 3 - we can change ...to test 2, 4, 5, 6. High values perhaps less good student, but it is a compromise...
         maxkgood = rtengine::LIM(maxkgood, 1, 6);// 2 6
         if(wbpar.itcwb_sampling == true) {
             maxkgood = 3; // force to 3 with old low sampling
@@ -6270,10 +6266,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         tempitc = Txyz[goodref].Tem;
         greenitc = gree[greengood].green;
 
-        if((keepgreen > 0.952 && greengood > 55)  && wbpar.itcwb_sampling == false ) {
+        if(((keepgreen >= 0.952 && keepgreen < 1.25) && greengood > 55)  && wbpar.itcwb_sampling == false ) {
             double ag = 0.;
-            double gcal = gree[greengood].green;
-            ag = 0.95 * (gcal - keepgreen);
+            double gcal = gree[greengood].green;//empirical  correction when green suspicious
+            ag = 0.96 * (gcal - keepgreen);
             greenitc = gcal - ag;
         }
 
