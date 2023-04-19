@@ -528,6 +528,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             int kmin  = 20;
             float minhist = 1000000000.f;
             float maxhist = -1000.f;
+            double tempitc = 5000.f;
+            double greenitc = 1.;
+            
             if (!params->wb.enabled) {
                 currWB = ColorTemp();
             } else if (params->wb.method == "Camera") {
@@ -536,8 +539,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             } else if (autowb) {
                 if (params->wb.method == "autitcgreen" || lastAwbEqual != params->wb.equal || lastAwbObserver != params->wb.observer || lastAwbTempBias != params->wb.tempBias || lastAwbauto != params->wb.method) {
                     double rm, gm, bm;
-                    double tempitc = 5000.f;
-                    double greenitc = 1.;
+                    tempitc = 5000.f;
+                    greenitc = 1.;
                     currWBitc = imgsrc->getWB();
                     double tempref = currWBitc.getTemp() * (1. + params->wb.tempBias);
                     double greenref = currWBitc.getGreen();
@@ -555,8 +558,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         params->wb.temperature = tempitc;
                         params->wb.green = greenitc;
                         currWB = ColorTemp(params->wb.temperature, params->wb.green, 1., params->wb.method, params->wb.observer);
-                     //   printf("tempitc=%f greitc=%f\n", tempitc, greenitc);
-
+                        //printf("Improc tempitc=%f greitc=%f\n", tempitc, greenitc);
                         currWB.getMultipliers(rm, gm, bm);
                     }
 
@@ -593,6 +595,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 currWB = currWB.convertObserver(params->wb.observer);
                 params->wb.temperature = static_cast<int>(currWB.getTemp());
                 params->wb.green = currWB.getGreen();
+                if(params->wb.method ==  "autitcgreen") {
+                    params->wb.temperature = tempitc;
+                    params->wb.green = greenitc;
+                }
                 currWB.getMultipliers(rw, gw, bw);
                 imgsrc->wbMul2Camera(rw, gw, bw);
                 /*

@@ -1387,7 +1387,7 @@ WBParams::WBParams() :
     equal(1.0),
     tempBias(0.0),
     observer(ColorTemp::DEFAULT_OBSERVER),
-    itcwb_thres(0),
+    itcwb_thres(34),
     itcwb_precis(3),
     itcwb_size(70),
     itcwb_minsize(20),

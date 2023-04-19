@@ -5565,7 +5565,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             break;
         }
     }
-    //repref += wbpar.itcwb_thres;
+//    repref += wbpar.itcwb_thres;
+//    printf("repref=%i \n", repref);
     //calculate R G B multiplier in function illuminant and temperature
     const bool isMono = (ri->getSensorType() == ST_FUJI_XTRANS && raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO))
                         || (ri->getSensorType() == ST_BAYER && raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO));
@@ -6266,15 +6267,42 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         tempitc = Txyz[goodref].Tem;
         greenitc = gree[greengood].green;
+        
+        int greencam = 55;
+        for (int gg = 0; gg < N_g; gg++) {
+            if (gree[gg].green > keepgreen) {
+                greencam = gg;//show the green
+                break;
+            }
+        }
+        printf("greencam=%i keepgreen=%f\n", greencam, keepgreen);
+        bool greenex = false;
 
-        if(((keepgreen >= 0.952 && keepgreen < 1.25) && greengood > 55)  && wbpar.itcwb_sampling == false ) {
+        if((keepgreen > 0.93 && keepgreen < 1.09) && wbpar.itcwb_sampling == false ) {
+            if(abs(greengood - greencam) > 5){
+                double ag = 0.;
+                double gcal = gree[greengood].green;//empirical  correction when green suspicious
+                ag = 0.96 * (gcal - keepgreen);
+                greenitc = gcal - ag;
+                greenex = true;
+                if (settings->verbose) {
+                    printf("green correction1=%f \n", ag);
+                }
+            }
+        }
+
+        if(((keepgreen >= 0.952 && keepgreen < 1.25) && greengood > 55)  && wbpar.itcwb_sampling == false && !greenex) {
             double ag = 0.;
             double gcal = gree[greengood].green;//empirical  correction when green suspicious
             ag = 0.96 * (gcal - keepgreen);
             greenitc = gcal - ag;
+            greenex = true;
+            if (settings->verbose) {
+                printf("green correction2=%f \n", ag);
+            }
         }
 
-        if(((greengood > 41 &&  keepgreen < 0.7)  || (greengood > 47 &&  keepgreen < 0.952)) && wbpar.itcwb_sampling == false ) {
+        if(((greengood > 41 &&  keepgreen < 0.7)  || (greengood > 47 &&  keepgreen < 0.952)) && wbpar.itcwb_sampling == false && !greenex) {
             double ag = 0.;
             double gcal = gree[greengood].green;
             ag = 0.95 * (gcal - keepgreen);//empirical  correction when green low - to improve 
@@ -6282,7 +6310,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 ag -= 0.09;
             }
             if (settings->verbose) {
-                printf("green correction=%f \n", ag);
+                printf("green correction3=%f \n", ag);
             }
             greenitc = gcal - ag;
         }
