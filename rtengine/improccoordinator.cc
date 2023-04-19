@@ -581,8 +581,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         lastAwbauto = "";
                         autoWB.useDefaults(params->wb.equal, params->wb.observer);
                     }
-                    
-                    
                 }
 
                 currWB = autoWB;

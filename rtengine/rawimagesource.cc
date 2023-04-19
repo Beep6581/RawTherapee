@@ -5565,8 +5565,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             break;
         }
     }
-//    repref += wbpar.itcwb_thres;
-//    printf("repref=%i \n", repref);
     //calculate R G B multiplier in function illuminant and temperature
     const bool isMono = (ri->getSensorType() == ST_FUJI_XTRANS && raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO))
                         || (ri->getSensorType() == ST_BAYER && raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO));
@@ -6275,18 +6273,17 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 break;
             }
         }
-        printf("greencam=%i keepgreen=%f\n", greencam, keepgreen);
         bool greenex = false;
 
-        if((keepgreen > 0.93 && keepgreen < 1.09) && wbpar.itcwb_sampling == false ) {
+        if((keepgreen > 0.92 && keepgreen < 1.16) && wbpar.itcwb_sampling == false ) {
             if(abs(greengood - greencam) > 5){
                 double ag = 0.;
-                double gcal = gree[greengood].green;//empirical  correction when green suspicious
+                double gcal = gree[greengood].green;
                 ag = 0.96 * (gcal - keepgreen);
                 greenitc = gcal - ag;
                 greenex = true;
                 if (settings->verbose) {
-                    printf("green correction1=%f \n", ag);
+                    printf("green correction_1=%f \n", ag);
                 }
             }
         }
@@ -6298,7 +6295,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             greenitc = gcal - ag;
             greenex = true;
             if (settings->verbose) {
-                printf("green correction2=%f \n", ag);
+                printf("green correction_2=%f \n", ag);
             }
         }
 
@@ -6307,10 +6304,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             double gcal = gree[greengood].green;
             ag = 0.95 * (gcal - keepgreen);//empirical  correction when green low - to improve 
             if(purp == false) {
-                ag -= 0.09;
+                ag -= 0.12;
             }
             if (settings->verbose) {
-                printf("green correction3=%f \n", ag);
+                printf("green correction_3=%f \n", ag);
             }
             greenitc = gcal - ag;
         }
