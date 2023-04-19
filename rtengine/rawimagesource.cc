@@ -5565,6 +5565,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             break;
         }
     }
+    //repref += wbpar.itcwb_thres;
     //calculate R G B multiplier in function illuminant and temperature
     const bool isMono = (ri->getSensorType() == ST_FUJI_XTRANS && raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO))
                         || (ri->getSensorType() == ST_BAYER && raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO));

@@ -546,7 +546,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         greenref = 1.f;
                     }
                     if (settings->verbose && params->wb.method ==  "autitcgreen") {
-              tempref=%f greref=%f\n", tempref, greenref);
+                        printf("tempref=%f greref=%f\n", tempref, greenref);
                     }
 
                     imgsrc->getAutoWBMultipliersitc(tempref, greenref, tempitc, greenitc, studgood, minchrom, kmin, minhist, maxhist, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
