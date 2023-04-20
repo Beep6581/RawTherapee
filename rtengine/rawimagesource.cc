@@ -5812,9 +5812,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     int maxsize = maxsiz;
     bool issorted = wbpar.itcwb_sorted;//reused to build patch ponderate
     
-    if (settings->verbose) {
-        printf("Minsize=%i\n", minsize);
-    }
+//    if (settings->verbose) {
+//        printf("Minsize=%i\n", minsize);
+//    }
     bool isponder = true;//with true moving average
     for (int j = minsize; j < maxsize; ++j) {//20 empirical minimal value default to ensure a correlation 
         if (!good_size[j]) {
@@ -5880,15 +5880,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 }
             }
             estim_hue[j][repref] = xatan2f(yh, xh);
-            if(!issorted) {
-                if(isponder) {
-                    estimchrom /= (j + 2 * (j-1));//extrem not taken 
-                } else {
-                    estimchrom /= j;
-                }
-
+            if(isponder) {
+                estimchrom /= (j + 2 * (j-1));//extrem not taken 
             } else {
-                    estimchrom /= (j + 2 * (j-1));//extrem not taken 
+                estimchrom /= j;
             }
 
             if (estimchrom < minchrom) {
@@ -6285,6 +6280,16 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 if (settings->verbose) {
                     printf("green correction_1=%f \n", ag);
                 }
+            } else {
+                double ag = 0.;
+                double gcal = gree[greengood].green;
+                ag = 0.18 * (gcal - keepgreen) * abs(greengood - greencam);
+                greenitc = gcal - ag;
+                greenex = true;
+                if (settings->verbose) {
+                    printf("green correction_0=%f \n", ag);
+                }
+
             }
         }
 
