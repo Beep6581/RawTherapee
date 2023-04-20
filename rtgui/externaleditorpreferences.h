@@ -42,15 +42,22 @@ class FileChooserDialog;
 class ExternalEditorPreferences : public Gtk::Box
 {
 public:
+    struct EditorTag {
+        bool selected;
+        EditorTag(): selected(false) {}
+        explicit EditorTag(bool selected): selected(selected) {}
+    };
+
     /**
      * Data struct containing information about an external editor.
      */
     struct EditorInfo {
         explicit EditorInfo(
-            Glib::ustring name = Glib::ustring(),
-            Glib::ustring command = Glib::ustring(),
-            Glib::ustring icon_serialized = Glib::ustring(),
-            void *other_data = nullptr
+            const Glib::ustring &name = Glib::ustring(),
+            const Glib::ustring &command = Glib::ustring(),
+            const Glib::ustring &icon_serialized = Glib::ustring(),
+            bool native_command = false,
+            EditorTag other_data = EditorTag()
         );
         /**
          * Name of the external editor.
@@ -66,10 +73,14 @@ public:
          */
         Glib::ustring command;
         /**
+         * Use the OS native launcher instead of Gio.
+         */
+        bool native_command;
+        /**
          * Holds any other data associated with the editor. For example, it can
          * be used as a tag to uniquely identify the editor.
          */
-        void *other_data;
+        EditorTag other_data;
     };
 
     ExternalEditorPreferences();
@@ -96,7 +107,8 @@ private:
         Gtk::TreeModelColumn<Glib::ustring> name;
         Gtk::TreeModelColumn<Glib::RefPtr<Gio::Icon>> icon;
         Gtk::TreeModelColumn<Glib::ustring> command;
-        Gtk::TreeModelColumn<void *> other_data;
+        Gtk::TreeModelColumn<bool> native_command;
+        Gtk::TreeModelColumn<EditorTag> other_data;
     };
 
     ModelColumns model_columns;
@@ -124,6 +136,10 @@ private:
      * Constructs the column for displaying an editable commandline.
      */
     Gtk::TreeViewColumn *makeCommandColumn();
+    /**
+     * Constructs the column for displaying the native command toggle.
+     */
+    Gtk::TreeViewColumn *makeNativeCommandColumn();
     /**
      * Called when the user is done interacting with the app chooser dialog.
      * Closes the dialog and updates the selected entry if an app was chosen.
