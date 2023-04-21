@@ -1518,10 +1518,10 @@ inline Gtk::TreeRow WhiteBalance::getActiveMethod ()
     return *(method->get_active());
 }
 
-void WhiteBalance::WBChanged(double temperature, double greenVal, double rw, double gw, double bw, float studgood, float minchrom, int kmin, float histmin, float histmax)
+void WhiteBalance::WBChanged(double temperature, double greenVal, double rw, double gw, double bw, int dread, float studgood, float minchrom, int kmin, float histmin, float histmax)
 {
     idle_register.add(
-        [this, temperature, greenVal, rw, gw, bw, studgood, minchrom, kmin, histmin, histmax]() -> bool
+        [this, temperature, greenVal, rw, gw, bw, dread, studgood, minchrom, kmin, histmin, histmax]() -> bool
         {
             disableListener();
             temp->setValue(temperature);
@@ -1538,6 +1538,7 @@ void WhiteBalance::WBChanged(double temperature, double greenVal, double rw, dou
             );            
             PatchLabel->set_text(
                 Glib::ustring::compose(M("TP_WBALANCE_PATCHLABEL"),
+                                   Glib::ustring::format(std::fixed, std::setprecision(0), dread),
                                    Glib::ustring::format(std::fixed, std::setprecision(4), minchrom),
                                    Glib::ustring::format(std::fixed, std::setprecision(0), kmin))
             );            

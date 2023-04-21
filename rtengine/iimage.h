@@ -111,7 +111,7 @@ public:
     {
         rm = gm = bm = 1.0;
     }
-    virtual void getAutoWBMultipliersitc(double &tempref, double &greenref, double &tempitc, double &greenitc, float &studgood,  float &minchrom, int &kmin, float &minhist, float &maxhist, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double &rm, double &gm, double &bm, const procparams::WBParams & wbpar, const procparams::ColorManagementParams &cmp, const procparams::RAWParams &raw, const procparams::ToneCurveParams &hrp)
+    virtual void getAutoWBMultipliersitc(double &tempref, double &greenref, double &tempitc, double &greenitc, int &dread, float &studgood,  float &minchrom, int &kmin, float &minhist, float &maxhist, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double &rm, double &gm, double &bm, const procparams::WBParams & wbpar, const procparams::ColorManagementParams &cmp, const procparams::RAWParams &raw, const procparams::ToneCurveParams &hrp)
     {
         rm = gm = bm = 1.0;
     }
