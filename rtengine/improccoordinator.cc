@@ -410,7 +410,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         if (imageTypeListener) {
             imageTypeListener->imageTypeChanged(imgsrc->isRAW(), imgsrc->getSensorType() == ST_BAYER, imgsrc->getSensorType() == ST_FUJI_XTRANS, imgsrc->isMono(), imgsrc->isGainMapSupported());
         }
-		bool iscolor = (params->toneCurve.method == "Color");// || params->toneCurve.method == "Coloropp");
+        bool iscolor = (params->toneCurve.method == "Color");// || params->toneCurve.method == "Coloropp");
         if ((todo & M_RAW)
                 || (!highDetailRawComputed && highDetailNeeded)
                // || (params->toneCurve.hrenabled && params->toneCurve.method != "Color" && imgsrc->isRGBSourceModified())
@@ -513,9 +513,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         if (settings->verbose) {
             printf("automethod=%s \n", params->wb.method.c_str());
         }
-        if (todo & (M_INIT | M_LINDENOISE | M_HDR)) {
+        if (todo & (M_INIT |M_LINDENOISE | M_HDR)) {
             MyMutex::MyLock initLock(minit);  // Also used in crop window
-			//	imgsrc->HLRecovery_Global(params->toneCurve);   // this handles Color HLRecovery
+            //imgsrc->HLRecovery_Global(params->toneCurve);   // this handles Color HLRecovery
 
 
             if (settings->verbose) {
@@ -560,6 +560,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         currWB = ColorTemp(params->wb.temperature, params->wb.green, 1., params->wb.method, params->wb.observer);
                         //printf("Improc tempitc=%f greitc=%f\n", tempitc, greenitc);
                         currWB.getMultipliers(rm, gm, bm);
+                        autoWB.update(rm, gm, bm, params->wb.equal, params->wb.observer, params->wb.tempBias);
                     }
 
                     if (rm != -1.) {

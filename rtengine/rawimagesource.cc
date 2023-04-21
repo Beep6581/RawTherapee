@@ -4522,8 +4522,16 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
         yyythr.clear();
         LUTf YYYthr(YYY.getSize());
         YYYthr.clear();
-        bool purp = false;
+        bool purp = true;
         float Ypurp = settings->itcwb_Ypurple;
+        float Ypurpmax = 1.f;
+        /*
+        if(!purpe) {
+            printf("Filter purple activated=%f\n", (double) Ypurp);
+        } else {
+            printf("No Filter purple =%f\n", (double) Ypurpmax);
+        }
+        */
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic, 4) nowait
 #endif
@@ -4534,6 +4542,8 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
                 int nh = -1;
                 if(!purpe) {
                     purp = (Yc[y][x] < Ypurp);//cut values with Y > Ypurp
+                } else {
+                    purp = (Yc[y][x] < Ypurpmax);//
                 }
 
                 if (xc[y][x] < 0.12f && xc[y][x] > 0.03f && yc[y][x] > 0.1f) { // near Prophoto
@@ -5696,7 +5706,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         //big step about 0.2
 
 
-        if (hrp.hrenabled && hrp.method == "Coloropp" && wbpar.itcwb_nopurple == true) {//we disabled (user) with settings if image are naturally with purple (flowers...)
+       // if (hrp.hrenabled && hrp.method == "Coloropp" && wbpar.itcwb_nopurple == true) {//we disabled (user) with settings if image are naturally with purple (flowers...)
+        if (wbpar.itcwb_nopurple == true) {//we disabled (user) with settings if image are naturally with purple (flowers...)
             purp = false;
         }
         if(wbpar.itcwb_sampling == false) {
