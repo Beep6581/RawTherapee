@@ -4525,6 +4525,7 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
         bool purp = true;
         float Ypurp = settings->itcwb_Ypurple;
         float Ypurpmax = 1.f;
+
         /*
         if(!purpe) {
             printf("Filter purple activated=%f\n", (double) Ypurp);
@@ -4545,7 +4546,6 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
                 } else {
                     purp = (Yc[y][x] < Ypurpmax);//
                 }
-
                 if (xc[y][x] < 0.12f && xc[y][x] > 0.03f && yc[y][x] > 0.1f) { // near Prophoto
                     if (yc[y][x] < 0.2f) {
                         nh = 0;
@@ -5199,7 +5199,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     itcwb_fgreen : 3 by default - between 2 to 6 - find the compromise student / green to reach green near of 1 
     
     */
-   // BENCHFUN
+    BENCHFUN
 
     Glib::ustring profuse;
     profuse = "Adobe RGB";
@@ -5678,7 +5678,29 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     const int rep = rtengine::LIM(repref + 1, 0, N_t);
 
-        //initialize calculation of xy current for tempref
+    //initialize calculation of xy current for tempref
+    //small denoise with median 3x3 strong
+    float** tmL;
+    int wid = bfw;
+    int hei = bfh;
+    tmL = new float*[hei];
+
+    for (int i = 0; i < hei; ++i) {
+       tmL[i] = new float[wid];
+    }
+
+    typedef ImProcFunctions::Median Median;
+    Median medianTypeL = Median::TYPE_5X5_STRONG;
+    ImProcFunctions::Median_Denoise(redloc, redloc, bfw, bfh, medianTypeL, 1, false, tmL);
+    ImProcFunctions::Median_Denoise(greenloc, greenloc, bfw, bfh, medianTypeL, 1, false, tmL);
+    ImProcFunctions::Median_Denoise(blueloc, blueloc, bfw, bfh, medianTypeL, 1, false, tmL);
+
+    for (int i = 0; i < hei; ++i) {
+        delete[] tmL[i];
+    }
+
+    delete[] tmL;
+
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
@@ -5688,6 +5710,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             const float RR = rmm[rep] * redloc[y][x];
             const float GG = gmm[rep] * greenloc[y][x];
             const float BB = bmm[rep] * blueloc[y][x];
+            
             Color::rgbxyY(RR, GG, BB, xc[y][x], yc[y][x], Yc[y][x], wp);//use sRGB Adobe Rec2020 ACESp0
         }
     }
