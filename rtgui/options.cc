@@ -629,7 +629,8 @@ void Options::setDefaults()
     rtSettings.itcwb_enable = true;
     rtSettings.itcwb_deltaspec = 0.05;
     rtSettings.itcwb_maxsize = 70;//between 50 to 80
-
+    rtSettings.itcwb_Ypurple = 0.4;//max 1.
+    rtSettings.itcwb_powponder = 0.05;//max 0.2
 //wavelet
     rtSettings.edghi = 3.0;//1.1 and 5.
     rtSettings.edglo = 0.5;//0.1 and 0.95
@@ -1810,6 +1811,14 @@ void Options::readFromFile(Glib::ustring fname)
                     rtSettings.itcwb_deltaspec = keyFile.get_double("Color Management", "Itcwb_deltaspec");
                 }
 
+                if (keyFile.has_key("Color Management", "Itcwb_Ypurple")) {
+                    rtSettings.itcwb_Ypurple = keyFile.get_double("Color Management", "Itcwb_Ypurple");
+                }
+
+                if (keyFile.has_key("Color Management", "Itcwb_powponder")) {
+                    rtSettings.itcwb_powponder = keyFile.get_double("Color Management", "Itcwb_powponder");
+                }
+
                 if (keyFile.has_key("Color Management", "Itcwb_maxsize")) {
                     rtSettings.itcwb_maxsize = keyFile.get_integer("Color Management", "Itcwb_maxsize");
                 }
@@ -2590,6 +2599,8 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_boolean("Color Management", "Itcwb_enable", rtSettings.itcwb_enable);
         keyFile.set_double("Color Management", "Itcwb_deltaspec", rtSettings.itcwb_deltaspec);
         keyFile.set_integer("Color Management", "Itcwb_maxsize", rtSettings.itcwb_maxsize);
+        keyFile.set_double("Color Management", "Itcwb_Ypurple", rtSettings.itcwb_Ypurple);
+        keyFile.set_double("Color Management", "Itcwb_powponder", rtSettings.itcwb_powponder);
 
         //keyFile.set_double  ("Color Management", "Colortoningab", rtSettings.colortoningab);
         //keyFile.set_double  ("Color Management", "Decaction", rtSettings.decaction);

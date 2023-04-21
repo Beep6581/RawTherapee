@@ -4504,7 +4504,7 @@ static void histoxyY_low(int bfhitc, int bfwitc, const array2D<float> & xc, cons
 
 
 
-static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const array2D<float> & yc, const array2D<float> & Yc, LUTf &xxx, LUTf &yyy, LUTf &YYY, LUTu &histxy, bool purp)
+static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const array2D<float> & yc, const array2D<float> & Yc, LUTf &xxx, LUTf &yyy, LUTf &YYY, LUTu &histxy, bool purpe)
 {
     // calculate histogram x y in a range of 236 colors
     // this "choice" are guided by generally colors who are in nature skin, sky, etc. in those cases "steps" are small
@@ -4522,7 +4522,8 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
         yyythr.clear();
         LUTf YYYthr(YYY.getSize());
         YYYthr.clear();
-        //  bool purp = false;
+        bool purp = false;
+        float Ypurp = settings->itcwb_Ypurple;
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic, 4) nowait
 #endif
@@ -4531,6 +4532,9 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
         {
             for (int x = 0; x < bfwitc ; x++) {
                 int nh = -1;
+                if(!purpe) {
+                    purp = (Yc[y][x] < Ypurp);//cut values with Y > Ypurp
+                }
 
                 if (xc[y][x] < 0.12f && xc[y][x] > 0.03f && yc[y][x] > 0.1f) { // near Prophoto
                     if (yc[y][x] < 0.2f) {
@@ -5812,10 +5816,13 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     int maxsize = maxsiz;
     bool issorted = wbpar.itcwb_sorted;//reused to build patch ponderate
     
-//    if (settings->verbose) {
-//        printf("Minsize=%i\n", minsize);
-//    }
+    if (settings->verbose) {
+        printf("Minsize=%i\n", minsize);
+    }
     bool isponder = true;//with true moving average
+    float powponder = settings->itcwb_powponder;
+    powponder = LIM(powponder, 0.01f, 0.2f);
+
     for (int j = minsize; j < maxsize; ++j) {//20 empirical minimal value default to ensure a correlation 
         if (!good_size[j]) {
             float estimchrom = 0.f;
