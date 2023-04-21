@@ -260,6 +260,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     EvWBitcwbfgreen = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_FGREEN");
     EvWBitcwbrgreen = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_RGREEN");
     EvWBitcwbobs = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_OBS");
+    EvWBitcwbponder = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_PONDER");
 
 
     //Add the model columns to the Combo (which is a kind of view),
@@ -417,9 +418,13 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     //itcwb_obs->set_tooltip_markup (M("TP_WBALANCE_ITCWBOBS_TOOLTIP"));
     itcwb_obs ->set_active (false);
 
-    itcwb_sorted = Gtk::manage (new Gtk::CheckButton (M("TP_WBALANCE_ITCWB_SORTED")));
-    itcwb_sorted->set_tooltip_markup (M("TP_WBALANCE_ITCWBSORTED_TOOLTIP"));
+    itcwb_sorted = Gtk::manage (new Gtk::CheckButton (M("TP_WBALANCE_ITCWB_SORTEDANC")));
+    itcwb_sorted->set_tooltip_markup (M("TP_WBALANCE_ITCWBSORTEDANC_TOOLTIP"));
     itcwb_sorted ->set_active (true);
+
+    itcwb_ponder = Gtk::manage (new Gtk::CheckButton (M("TP_WBALANCE_ITCWB_SORTED")));
+    itcwb_ponder->set_tooltip_markup (M("TP_WBALANCE_ITCWBSORTED_TOOLTIP"));
+    itcwb_ponder ->set_active (true);
 
     itcwb_forceextra = Gtk::manage (new Gtk::CheckButton (M("TP_WBALANCE_ITCWB_FORCED")));
     itcwb_forceextra->set_tooltip_markup (M("TP_WBALANCE_ITCWFORCED_TOOLTIP"));
@@ -466,7 +471,8 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
 //    itcwbBox->pack_start (*itcwb_rgreen);//possible use in pp3
     itcwbBox->pack_start (*itcwb_nopurple);
     itcwbBox->pack_start (*itcwb_obs);
-    itcwbBox->pack_start (*itcwb_sorted);
+//    itcwbBox->pack_start (*itcwb_sorted);
+    itcwbBox->pack_start (*itcwb_ponder);
 //    itcwbBox->pack_start (*itcwb_forceextra);
     itcwbBox->pack_start (*itcwb_prim);
     
@@ -485,6 +491,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
         itcwb_nopurple->show();
         itcwb_obs->show();
         itcwb_sorted->show();
+        itcwb_ponder->show();
         itcwb_forceextra->show();
         itcwb_prim->show();
         itcwb_sampling->show();
@@ -500,6 +507,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
         itcwb_nopurple->hide();
         itcwb_obs->hide();
         itcwb_sorted->hide();
+        itcwb_ponder->hide();
         itcwb_forceextra->hide();
         itcwb_prim->hide();
         itcwb_sampling->hide();
@@ -521,6 +529,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     spotbutton->signal_pressed().connect( sigc::mem_fun(*this, &WhiteBalance::spotPressed) );
     methconn = method->signal_changed().connect( sigc::mem_fun(*this, &WhiteBalance::optChanged) );
     itcwb_nopurpleconn = itcwb_nopurple->signal_toggled().connect( sigc::mem_fun(*this, &WhiteBalance::itcwb_nopurple_toggled) );
+    itcwb_ponderconn = itcwb_ponder->signal_toggled().connect( sigc::mem_fun(*this, &WhiteBalance::itcwb_ponder_toggled) );
     itcwb_sortedconn = itcwb_sorted->signal_toggled().connect( sigc::mem_fun(*this, &WhiteBalance::itcwb_sorted_toggled) );
     itcwb_forceextraconn = itcwb_forceextra->signal_toggled().connect( sigc::mem_fun(*this, &WhiteBalance::itcwb_forceextra_toggled) );
     itcwb_samplingconn = itcwb_sampling->signal_toggled().connect( sigc::mem_fun(*this, &WhiteBalance::itcwb_sampling_toggled) );
@@ -602,6 +611,30 @@ void WhiteBalance::itcwb_obs_toggled ()
     }
 }
 
+void WhiteBalance::itcwb_ponder_toggled ()
+{/*
+    if (batchMode) {
+        if (itcwb_obs->get_inconsistent()) {
+            itcwb_obs->set_inconsistent (false);
+            itcwb_obsconn.block (true);
+            itcwb_obs->set_active (false);
+            itcwb_obsconn.block (false);
+        } else if (lastitcwb_obs) {
+            itcwb_obs->set_inconsistent (true);
+        }
+
+        lastitcwb_obs = itcwb_obs->get_active ();
+    }
+*/
+    if (listener && getEnabled()) {
+        if (itcwb_ponder->get_active ()) {
+            listener->panelChanged (EvWBitcwbponder, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged (EvWBitcwbponder, M("GENERAL_DISABLED"));
+        }
+    }
+}
+
 void WhiteBalance::itcwb_sorted_toggled ()
 {
     if (batchMode) {
@@ -673,6 +706,7 @@ void WhiteBalance::itcwb_sampling_toggled ()
         itcwb_nopurple->set_sensitive(false);
         itcwb_obs->set_sensitive(false);
         itcwb_sorted->set_sensitive(false);
+        itcwb_ponder->set_sensitive(false);
     } else {
         itcwb_forceextra->set_sensitive(true);
         itcwb_prim->set_sensitive(true);
@@ -683,6 +717,7 @@ void WhiteBalance::itcwb_sampling_toggled ()
         itcwb_nopurple->set_sensitive(true);
         itcwb_obs->set_sensitive(true);
         itcwb_sorted->set_sensitive(true);
+        itcwb_ponder->set_sensitive(true);
     }
 
     if (batchMode) {
@@ -1008,6 +1043,11 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
     itcwb_obsconn.block (false);
     lastitcwb_obs = pp->wb.itcwb_obs;
 
+    itcwb_ponderconn.block (true);
+    itcwb_ponder->set_active (pp->wb.itcwb_ponder);
+    itcwb_ponderconn.block (false);
+    lastitcwb_ponder = pp->wb.itcwb_ponder;
+
     itcwb_sortedconn.block (true);
     itcwb_sorted->set_active (pp->wb.itcwb_sorted);
     itcwb_sortedconn.block (false);
@@ -1049,6 +1089,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         itcwb_rgreen->show();
         itcwb_nopurple->show();
         itcwb_obs->show();
+        itcwb_ponder->show();
         itcwb_sorted->show();
         itcwb_forceextra->show();
         itcwb_prim->show();
@@ -1065,6 +1106,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         itcwb_rgreen->hide();
         itcwb_nopurple->hide();
         itcwb_obs->hide();
+        itcwb_ponder->hide();
         itcwb_sorted->hide();
         itcwb_forceextra->hide();
         itcwb_prim->hide();
@@ -1106,6 +1148,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         itcwb_rgreen->setEditedState (pedited->wb.itcwb_rgreen ? Edited : UnEdited);
         itcwb_nopurple->set_inconsistent (!pedited->wb.itcwb_nopurple);
         itcwb_obs->set_inconsistent (!pedited->wb.itcwb_obs);
+        itcwb_ponder->set_inconsistent (!pedited->wb.itcwb_ponder);
         itcwb_sorted->set_inconsistent (!pedited->wb.itcwb_sorted);
         itcwb_forceextra->set_inconsistent (!pedited->wb.itcwb_forceextra);
         itcwb_sampling->set_inconsistent (!pedited->wb.itcwb_sampling);
@@ -1265,6 +1308,7 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->wb.itcwb_rgreen = itcwb_rgreen->getEditedState ();
         pedited->wb.itcwb_nopurple = !itcwb_nopurple->get_inconsistent();
         pedited->wb.itcwb_obs = !itcwb_obs->get_inconsistent();
+        pedited->wb.itcwb_ponder = !itcwb_ponder->get_inconsistent();
         pedited->wb.itcwb_sorted = !itcwb_sorted->get_inconsistent();
         pedited->wb.itcwb_forceextra = !itcwb_forceextra->get_inconsistent();
         pedited->wb.itcwb_sampling = !itcwb_sampling->get_inconsistent();
@@ -1308,6 +1352,7 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
     pp->wb.itcwb_rgreen = itcwb_rgreen->getValue ();
     pp->wb.itcwb_nopurple = itcwb_nopurple->get_active ();
     pp->wb.itcwb_obs = itcwb_obs->get_active ();
+    pp->wb.itcwb_ponder = itcwb_ponder->get_active ();
     pp->wb.itcwb_sorted = itcwb_sorted->get_active ();
     pp->wb.itcwb_forceextra = itcwb_forceextra->get_active ();
     pp->wb.itcwb_sampling = itcwb_sampling->get_active ();

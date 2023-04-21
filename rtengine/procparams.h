@@ -651,6 +651,7 @@ struct WBParams {
     int              itcwb_rgreen;
     bool             itcwb_nopurple;
     bool             itcwb_obs;
+    bool             itcwb_ponder;
     bool             itcwb_sorted;
     bool             itcwb_forceextra;
     Glib::ustring    itcwb_prim;

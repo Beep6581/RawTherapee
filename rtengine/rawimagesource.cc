@@ -5841,7 +5841,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     int minsize = wbpar.itcwb_minsize;
     int maxsize = maxsiz;
-    bool issorted = wbpar.itcwb_sorted;//reused to build patch ponderate
+    bool isponderate = wbpar.itcwb_ponder;//reused to build patch ponderate
     
 //    if (settings->verbose) {
 //        printf("Minsize=%i\n", minsize);
@@ -5874,10 +5874,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             for (int nh = 0; nh < j; ++nh) {
                 ind1++;
                 ind2++;
-                if(ind1 < j && !issorted) {
+                if(ind1 < j && !isponderate) {
                     chxy1 = std::sqrt(SQR(xx_curref[ind1][repref] - xwpr) + SQR(yy_curref[ind1][repref] - ywpr));
                 }
-                if(ind2 <= 0 && !issorted) {
+                if(ind2 <= 0 && !isponderate) {
                     chxy2 = std::sqrt(SQR(xx_curref[ind2][repref] - xwpr) + SQR(yy_curref[ind2][repref] - ywpr));
                 }
                 const float chxy = std::sqrt(SQR(xx_curref[nh][repref] - xwpr) + SQR(yy_curref[nh][repref] - ywpr));
@@ -5885,10 +5885,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 yh += yy_curref[nh][repref] - ywpr;
                 wbchro[nh].hue =  fmodf(xatan2f(yy_curref[nh][repref] - ywpr, xx_curref[nh][repref] - xwpr), 2.f * RT_PI_F);
                 const float chxynum = wbchro[nh].chroxy_number = chxy * pow((double) histcurrref[nh][repref], 0.05);//sqrt was too big no convergence
-                if(ind1 < j && issorted) {//with issorted ponderate chroma
+                if(ind1 < j && isponderate) {//with issorted ponderate chroma
                     chxynum1 = chxy1 * pow((double) histcurrref[ind1][repref], 0.05);//0.05 to 0.1 allows convergence, near 1.5 betwween max and min value
                 }
-                if(ind2 < 0 && issorted) {
+                if(ind2 < 0 && isponderate) {
                     chxynum2 = chxy2 * pow((double) histcurrref[ind2][repref], 0.05);
                 }
                 wbchro[nh].number = histcurrref[nh][repref];
@@ -5897,14 +5897,14 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 wbchro[nh].chroy = yy_curref[nh][repref];
                 wbchro[nh].Y = YY_curref[nh][repref];
                 wbchro[nh].index = nh;
-                if(!issorted){
+                if(!isponderate){
                     estimchrom += chxy;
-                    if(isponder && !issorted) {
+                    if(isponder && !isponderate) {
                         estimchrom += chxy1;
                         estimchrom += chxy2;
                     }
                 }
-                if(issorted) {
+                if(isponderate) {
                     estimchrom += chxynum;
                     if(isponder) {
                         estimchrom += chxynum1;
@@ -5961,7 +5961,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     }
 
     if(wbpar.itcwb_sampling == true) {
-        issorted = false;
+        isponderate = false;
     }
 
 
