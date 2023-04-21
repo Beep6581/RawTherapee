@@ -5676,25 +5676,21 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     array2D<float> yc(bfwitc, bfhitc);
     array2D<float> Yc(bfwitc, bfhitc);
 
-    const int deltarepref = 1; //we can increase a bit... 2.
-
-    for (int nn = 0, drep = -deltarepref; nn <= 2; ++nn, drep += deltarepref) {
-        //three loop to refine color if temp camera is probably not very good
-        const int rep = rtengine::LIM(repref + drep, 0, N_t);
+    const int rep = rtengine::LIM(repref + 1, 0, N_t);
 
         //initialize calculation of xy current for tempref
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
 
-        for (int y = 0; y < bfh ; ++y) {
-            for (int x = 0; x < bfw ; ++x) {
-                const float RR = rmm[rep] * redloc[y][x];
-                const float GG = gmm[rep] * greenloc[y][x];
-                const float BB = bmm[rep] * blueloc[y][x];
-                Color::rgbxyY(RR, GG, BB, xc[y][x], yc[y][x], Yc[y][x], wp);//use sRGB Adobe Rec2020 ACESp0
-            }
+    for (int y = 0; y < bfh ; ++y) {
+        for (int x = 0; x < bfw ; ++x) {
+            const float RR = rmm[rep] * redloc[y][x];
+            const float GG = gmm[rep] * greenloc[y][x];
+            const float BB = bmm[rep] * blueloc[y][x];
+            Color::rgbxyY(RR, GG, BB, xc[y][x], yc[y][x], Yc[y][x], wp);//use sRGB Adobe Rec2020 ACESp0
         }
+    }
 
         //histogram xy depend of temp...but in most cases D45 ..D65..
         //calculate for this image the mean values for each family of color, near histogram x y (number)
@@ -5703,21 +5699,18 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         //skin are about x 0.45  0.49 y 0.4 0.47
         //blue sky x=0.25 y=0.28  and x=0.29 y=0.32
         // step about 0.02   x 0.32 0.34  y= 0.34 0.36 skin    --  sky x 0.24 0.30 y 0.28 0.32
-        //big step about 0.2
 
 
-       // if (hrp.hrenabled && hrp.method == "Coloropp" && wbpar.itcwb_nopurple == true) {//we disabled (user) with settings if image are naturally with purple (flowers...)
-        if (wbpar.itcwb_nopurple == true) {//we disabled (user) with settings if image are naturally with purple (flowers...)
-            purp = false;
-        }
-        if(wbpar.itcwb_sampling == false) {
-            //printf("Use high smapling\n");
-            histoxyY(bfhitc, bfwitc, xc, yc, Yc, xxx,  yyy, YYY, histxy, purp);//purp enable,  enable purple color in WB
-            //return histogram x and y for each temp and in a range of 235 colors (siza)
-        } else {
-            //printf("Use low smapling - 5.9\n");
-            histoxyY_low(bfhitc, bfwitc, xc, yc, Yc, xxx,  yyy, YYY, histxy);//low scaling 
-        }
+    if (wbpar.itcwb_nopurple == true) {//since 21 april - change to filter magenta
+        purp = false;
+    }
+    if(wbpar.itcwb_sampling == false) {
+       //printf("Use high smapling\n");
+        histoxyY(bfhitc, bfwitc, xc, yc, Yc, xxx,  yyy, YYY, histxy, purp);//purp enable,  enable purple color in WB
+       //return histogram x and y for each temp and in a range of 235 colors (siza)
+    } else {
+       //printf("Use low smapling - 5.9\n");
+        histoxyY_low(bfhitc, bfwitc, xc, yc, Yc, xxx,  yyy, YYY, histxy);//low scaling 
     }
 
     // free some memory
@@ -5827,9 +5820,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     int maxsize = maxsiz;
     bool issorted = wbpar.itcwb_sorted;//reused to build patch ponderate
     
-    if (settings->verbose) {
-        printf("Minsize=%i\n", minsize);
-    }
+//    if (settings->verbose) {
+//        printf("Minsize=%i\n", minsize);
+//    }
     bool isponder = true;//with true moving average
     float powponder = settings->itcwb_powponder;
     powponder = LIM(powponder, 0.01f, 0.2f);
@@ -5949,9 +5942,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     }
 
 
-    if (issorted) { //sort in descending with chroma values * number 
+//    if (issorted) { //sort in descending with chroma values * number 
    //     std::sort(wbchro, wbchro + sizcu4, wbchro[0]);//not used in this goal since 15 april
-    }
+//    }
 
 
     int maxval = maxsiz;
