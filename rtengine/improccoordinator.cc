@@ -564,7 +564,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     }
 
                     if (rm != -1.) {
-                        /*
+                        
                         double bias = params->wb.tempBias;
 
                         if (params->wb.method ==  "autitcgreen") {
@@ -576,7 +576,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         lastAwbObserver = params->wb.observer;
                         lastAwbTempBias = params->wb.tempBias;
                         lastAwbauto = params->wb.method;
-                        */
                     } else {
                         lastAwbEqual = -1.;
                         lastAwbObserver = ColorTemp::DEFAULT_OBSERVER;

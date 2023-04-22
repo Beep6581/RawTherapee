@@ -5212,8 +5212,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     } else if(wbpar.itcwb_prim == "ace") {
         profuse = "ACESp0";
     }
-
-    if(wbpar.itcwb_sampling) {
+    bool oldsampling = wbpar.itcwb_sampling;
+    oldsampling = false; 
+    if(oldsampling) {
         profuse = "sRGB";
     }
     TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(profuse); //ACESp0 or sRGB
@@ -5398,7 +5399,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     } else {
         Rangegreenused = Rangemax;
     }
-    if(wbpar.itcwb_sampling == true) {
+    if(oldsampling == true) {
         Rangegreenused = Rangestandard2;
     }
     typedef struct WbTxyz {
@@ -5544,7 +5545,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     } else if(wbpar.itcwb_prim == "ace") {
         Ncr = 347 + 1;
     }
-    if(wbpar.itcwb_sampling) {//low samplin 5.9 with less spectral datas 201
+    if(oldsampling) {//low samplin 5.9 with less spectral datas 201
         Ncr = 202;
     }
     
@@ -5565,7 +5566,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     float bmm[N_t];
 
     int siza = 237; //192 untill 01/2023 size of histogram
-    if(wbpar.itcwb_sampling == true) {
+    if(oldsampling == true) {
         siza = 192;//old sampling 5.9 and before...
     }
     // tempref and greenref are camera wb values.
@@ -5727,7 +5728,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     if (wbpar.itcwb_nopurple == true) {//since 21 april - change to filter magenta
         purp = false;
     }
-    if(wbpar.itcwb_sampling == false) {
+    if(oldsampling == false) {
        //printf("Use high smapling\n");
         histoxyY(bfhitc, bfwitc, xc, yc, Yc, xxx,  yyy, YYY, histxy, purp);//purp enable,  enable purple color in WB
        //return histogram x and y for each temp and in a range of 235 colors (siza)
@@ -5815,14 +5816,14 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     maxsiz = LIM(maxsiz, 50, 80);
     int nbm = maxsiz;
     int sizcu4 = maxsiz;
-    if(wbpar.itcwb_sampling == true) {
+    if(oldsampling == true) {
         nbm = 55;
         sizcu4 = rtengine::min(sizcu30, nbm);//size of chroma values
     }
 
     if (settings->verbose) {
         printf("number total datas read=%i\n", ntot);
-        printf("Others datas - ntr=%i sizcurr2ref=%i sizcu4=%i\n", ntr, sizcurr2ref, sizcu4);
+        printf("Others datas - ntr=%i sizcurr2ref=%i sizcu4=%i sizcu30=%i\n", ntr, sizcurr2ref, sizcu4, sizcu30);
         printf("Number max of data samples in last patch=%i\n", Wbhis[siza - 1].histnum);
         printf("Number of data samples in beginning patch =%i\n", Wbhis[siza - nbm].histnum);
     }
@@ -5838,7 +5839,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         yy_curref[i][repref] = yyy[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
         YY_curref[i][repref] = YYY[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
     }
-
     int minsize = wbpar.itcwb_minsize;
     int maxsize = maxsiz;
     bool isponderate = wbpar.itcwb_ponder;//reused to build patch ponderate
@@ -5849,7 +5849,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     bool isponder = true;//with true moving average
     float powponder = settings->itcwb_powponder;
     powponder = LIM(powponder, 0.01f, 0.2f);
-
+    if(oldsampling == false) {
     for (int j = minsize; j < maxsize; ++j) {//20 empirical minimal value default to ensure a correlation 
         if (!good_size[j]) {
             float estimchrom = 0.f;
@@ -5927,12 +5927,12 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
         good_size[kmin] = true;
     }
-
-    if(wbpar.itcwb_sampling == false) {
+    }
+    if(oldsampling == false) {
         sizcu4 = kmin;
     }
 
-    if(wbpar.itcwb_sampling == true) {
+    if(oldsampling == true) {
         float estimchrom = 0.f;
         float estimhue = 0.f;
         float xh = 0.f;
@@ -5960,7 +5960,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     }
 
-    if(wbpar.itcwb_sampling == true) {
+    if(oldsampling == true) {
         isponderate = false;
     }
 
@@ -5971,7 +5971,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
 
     int maxval = maxsiz;
-    if(wbpar.itcwb_sampling == true) {
+    if(oldsampling == true) {
         maxval = 34;
     }
 
@@ -5979,7 +5979,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     int index1 = 0;
     int index2 = sizcu4;
 
-    if(wbpar.itcwb_sampling == true) {
+    if(oldsampling == true) {
         index1 = 0;
         index2 = sizcurr2ref;
     }
@@ -6157,7 +6157,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
 
         int dgoodref = rtengine::LIM(wbpar.itcwb_delta,1, 6);// increase delta temp scan
-        if(wbpar.itcwb_sampling == true) {
+        if(oldsampling == true) {
             dgoodref = 2;
         }
         const int scantempbeg = rtengine::max(goodref - (dgoodref + 1), 1);
@@ -6266,7 +6266,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         int maxkgood = wbpar.itcwb_fgreen;//default 3 - we can change ...to test 2, 4, 5, 6. High values perhaps less good student, but it is a compromise...
         maxkgood = rtengine::LIM(maxkgood, 1, 6);// 2 6
-        if(wbpar.itcwb_sampling == true) {
+        if(oldsampling == true) {
             maxkgood = 3; // force to 3 with old low sampling
         }
 
@@ -6304,7 +6304,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
         bool greenex = false;
 
-        if((keepgreen > 0.92 && keepgreen < 1.16) && wbpar.itcwb_sampling == false ) {
+        if((keepgreen > 0.92 && keepgreen < 1.16) && oldsampling == false ) {
             if(abs(greengood - greencam) > 5){
                 double ag = 0.;
                 double gcal = gree[greengood].green;
@@ -6327,7 +6327,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             }
         }
 
-        if(((keepgreen >= 0.952 && keepgreen < 1.25) && greengood > 55)  && wbpar.itcwb_sampling == false && !greenex) {
+        if(((keepgreen >= 0.952 && keepgreen < 1.25) && greengood > 55)  && oldsampling == false && !greenex) {
             double ag = 0.;
             double gcal = gree[greengood].green;//empirical  correction when green suspicious
             ag = 0.96 * (gcal - keepgreen);
@@ -6338,7 +6338,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             }
         }
 
-        if(((greengood > 41 &&  keepgreen < 0.7)  || (greengood > 47 &&  keepgreen < 0.952)) && wbpar.itcwb_sampling == false && !greenex) {
+        if(((greengood > 41 &&  keepgreen < 0.7)  || (greengood > 47 &&  keepgreen < 0.952)) && oldsampling == false && !greenex) {
             double ag = 0.;
             double gcal = gree[greengood].green;
             ag = 0.95 * (gcal - keepgreen);//empirical  correction when green low - to improve 
@@ -6394,7 +6394,9 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
     //used by auto WB local to calculate red, green, blue in local region
 
     int precision = 3;//must be 3 5 or 9
-    if(wbpar.itcwb_sampling == true) {
+    bool oldsampling = wbpar.itcwb_sampling;
+    oldsampling = false;
+    if(oldsampling == true) {
         precision = 5;
     }
 
@@ -6658,7 +6660,9 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
     if (wbpar.method == "autitcgreen") {
         bool twotimes = false;
         int precision = 3;//must be 3 5 or 9
-        if(wbpar.itcwb_sampling == true) {
+        bool oldsampling = wbpar.itcwb_sampling;
+        oldsampling = false;
+        if(oldsampling == true) {
             precision = 5;
         }
 
