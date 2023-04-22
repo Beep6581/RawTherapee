@@ -5690,10 +5690,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     }
 
     typedef ImProcFunctions::Median Median;
-    Median medianTypeL = Median::TYPE_5X5_STRONG;
-    ImProcFunctions::Median_Denoise(redloc, redloc, bfw, bfh, medianTypeL, 1, false, tmL);
-    ImProcFunctions::Median_Denoise(greenloc, greenloc, bfw, bfh, medianTypeL, 1, false, tmL);
-    ImProcFunctions::Median_Denoise(blueloc, blueloc, bfw, bfh, medianTypeL, 1, false, tmL);
+    Median medianTypeL = Median::TYPE_3X3_STRONG;//x2
+    ImProcFunctions::Median_Denoise(redloc, redloc, bfw, bfh, medianTypeL, 2, false, tmL);
+    ImProcFunctions::Median_Denoise(greenloc, greenloc, bfw, bfh, medianTypeL, 2, false, tmL);
+    ImProcFunctions::Median_Denoise(blueloc, blueloc, bfw, bfh, medianTypeL, 2, false, tmL);
 
     for (int i = 0; i < hei; ++i) {
         delete[] tmL[i];
