@@ -542,12 +542,13 @@ void WhiteBalance::enabledChanged()
 }
 void WhiteBalance::itcwb_prim_changed ()
 {
+    /*
    //work around to re-calculate wb auto
     tempBias->setValue (tempBias->getValue() + 0.005);
     adjusterChanged(tempBias, tempBias->getValue());
     tempBias->setValue (tempBias->getValue() - 0.005);
     adjusterChanged(tempBias, tempBias->getValue());
-    
+*/    
     if (listener && getEnabled()) {
         listener->panelChanged(EvWBitcwbprim, M("GENERAL_ENABLED"));
     }
@@ -567,12 +568,13 @@ void WhiteBalance::itcwb_nopurple_toggled ()
 
         lastitcwb_nopurple = itcwb_nopurple->get_active ();
     }
+    /*
      //work around to re-calculate wb auto
     tempBias->setValue (tempBias->getValue() + 0.005);
     adjusterChanged(tempBias, tempBias->getValue());
     tempBias->setValue (tempBias->getValue() - 0.005);
     adjusterChanged(tempBias, tempBias->getValue());
-
+*/
     if (listener && getEnabled()) {
         if (itcwb_nopurple->get_active ()) {
             listener->panelChanged (EvWBitcwbnopurple, M("GENERAL_ENABLED"));
@@ -596,12 +598,13 @@ void WhiteBalance::itcwb_obs_toggled ()
 
         lastitcwb_obs = itcwb_obs->get_active ();
     }
+    /*
             //work around to re-calculate wb auto
     tempBias->setValue (tempBias->getValue() + 0.005);
     adjusterChanged(tempBias, tempBias->getValue());
     tempBias->setValue (tempBias->getValue() - 0.005);
     adjusterChanged(tempBias, tempBias->getValue());
-
+*/
     if (listener && getEnabled()) {
         if (itcwb_obs->get_active ()) {
             listener->panelChanged (EvWBitcwbobs, M("GENERAL_ENABLED"));
@@ -625,12 +628,13 @@ void WhiteBalance::itcwb_ponder_toggled ()
 
         lastitcwb_obs = itcwb_obs->get_active ();
     }
+    /*
              //work around to re-calculate wb auto
     tempBias->setValue (tempBias->getValue() + 0.05);
     adjusterChanged(tempBias, tempBias->getValue());
     tempBias->setValue (tempBias->getValue() - 0.05);
     adjusterChanged(tempBias, tempBias->getValue());
-
+*/
     if (listener && getEnabled()) {
         if (itcwb_ponder->get_active ()) {
             listener->panelChanged (EvWBitcwbponder, M("GENERAL_ENABLED"));
@@ -675,11 +679,12 @@ void WhiteBalance::itcwb_sampling_toggled ()
         lastitcwb_sampling = itcwb_sampling->get_active ();
     }
     //work around to re-calculate wb auto
+    /*
     tempBias->setValue (tempBias->getValue() + 0.005);
     adjusterChanged(tempBias, tempBias->getValue());
     tempBias->setValue (tempBias->getValue() - 0.005);
     adjusterChanged(tempBias, tempBias->getValue());
-
+    */
     if (listener && getEnabled()) {
         if (itcwb_sampling->get_active ()) {
             listener->panelChanged (EvWBitcwbsampling, M("GENERAL_ENABLED"));
@@ -766,20 +771,24 @@ void WhiteBalance::adjusterChanged(Adjuster* a, double newval)
         } else if (a == itcwb_size) {
             listener->panelChanged (EvWBitcwbsize, Glib::ustring::format ((int) a->getValue()));
         } else if (a == itcwb_minsize) {
+            /*
             //work around to re-calculate wb auto
             tempBias->setValue (tempBias->getValue() + 0.005);
             adjusterChanged(tempBias, tempBias->getValue());
             tempBias->setValue (tempBias->getValue() - 0.005);
             adjusterChanged(tempBias, tempBias->getValue());
+            */
             listener->panelChanged (EvWBitcwbminsize, Glib::ustring::format ((int) a->getValue()));
         } else if (a == itcwb_delta) {
             listener->panelChanged (EvWBitcwbdelta, Glib::ustring::format ((int) a->getValue()));
         } else if (a == itcwb_fgreen) {
+            /*
             //work around to re-calculate wb auto
             tempBias->setValue (tempBias->getValue() + 0.005);
             adjusterChanged(tempBias, tempBias->getValue());
             tempBias->setValue (tempBias->getValue() - 0.005);
             adjusterChanged(tempBias, tempBias->getValue());
+            */
             listener->panelChanged (EvWBitcwbfgreen, Glib::ustring::format ((int) a->getValue()));
         } else if (a == itcwb_rgreen) {
             listener->panelChanged (EvWBitcwbrgreen, Glib::ustring::format ((int) a->getValue()));

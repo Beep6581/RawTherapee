@@ -330,7 +330,6 @@ DetailedCrop* ImProcCoordinator::createCrop(::EditDataProvider *editDataProvider
 void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 {
     // TODO Locallab printf
-
     MyMutex::MyLock processingLock(mProcessing);
 
     bool highDetailNeeded = options.prevdemo == PD_Sidecar ? true : (todo & M_HIGHQUAL);
@@ -565,6 +564,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     }
 
                     if (rm != -1.) {
+                        /*
                         double bias = params->wb.tempBias;
 
                         if (params->wb.method ==  "autitcgreen") {
@@ -576,6 +576,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         lastAwbObserver = params->wb.observer;
                         lastAwbTempBias = params->wb.tempBias;
                         lastAwbauto = params->wb.method;
+                        */
                     } else {
                         lastAwbEqual = -1.;
                         lastAwbObserver = ColorTemp::DEFAULT_OBSERVER;
@@ -1974,9 +1975,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 CAMBrightCurveQ.dirty = true;
 
                 ipf.ciecam_02float(ncie, float (adap), pW, 2, nprevl, params.get(), customColCurve1, customColCurve2, customColCurve3, histLCAM, histCCAM, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 0, scale, execsharp, d, dj, yb, 1);
-				//call listener
+                //call listener
                 if ((params->colorappearance.autodegree || params->colorappearance.autodegreeout) && acListener && params->colorappearance.enabled) {
-					if(params->colorappearance.catmethod == "symg") {//force chromatic adaptation to 90 in symmetric
+                    if(params->colorappearance.catmethod == "symg") {//force chromatic adaptation to 90 in symmetric
 						d = 0.9;
 						dj = 0.9;
 					}
@@ -2823,7 +2824,7 @@ void ImProcCoordinator::process()
             || params->rgbCurves != nextParams->rgbCurves
             || params->colorToning != nextParams->colorToning
             || params->vibrance != nextParams->vibrance
-            || params->wb.isPanningRelatedChange(nextParams->wb)
+            || params->wb != nextParams->wb //isPanningRelatedChange(nextParams->wb)
             || params->colorappearance != nextParams->colorappearance
             || params->epd != nextParams->epd
             || params->fattal != nextParams->fattal
