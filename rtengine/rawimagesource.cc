@@ -5213,7 +5213,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         profuse = "ACESp0";
     }
     bool oldsampling = wbpar.itcwb_sampling;
-    oldsampling = false; 
+//    oldsampling = false; 
     if(oldsampling) {
         profuse = "sRGB";
     }
@@ -5680,6 +5680,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     const int rep = rtengine::LIM(repref + 1, 0, N_t);
 
     //initialize calculation of xy current for tempref
+    if(oldsampling == false) {
+    
     //small denoise with median 3x3 strong
     float** tmL;
     int wid = bfw;
@@ -5701,7 +5703,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     }
 
     delete[] tmL;
-
+    }
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
@@ -5850,8 +5852,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     float powponder = settings->itcwb_powponder;
     powponder = LIM(powponder, 0.01f, 0.2f);
     if(oldsampling == false) {
-    for (int j = minsize; j < maxsize; ++j) {//20 empirical minimal value default to ensure a correlation 
-        if (!good_size[j]) {
+        for (int j = minsize; j < maxsize; ++j) {//20 empirical minimal value default to ensure a correlation 
+            if (!good_size[j]) {
             float estimchrom = 0.f;
             float countchxynum = 0.f;
 
@@ -5926,7 +5928,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             }
         }
         good_size[kmin] = true;
-    }
+        }
     }
     if(oldsampling == false) {
         sizcu4 = kmin;
@@ -5982,12 +5984,18 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     if(oldsampling == true) {
         index1 = 0;
         index2 = sizcurr2ref;
+        printf("INDEX1=%i INDEX2=%i\n", index1, index2);
     }
     int indn = index1;
+    printf("Indn=%i \n", indn);
+    if(oldsampling == false) {
+
     for (int i = index1; i < index2; ++i) {
-        if(wbchro[sizcu4 - (i + 1)].number < 400.f) {//remove too low numbers datas about an area 60*60 pixels or reparted
+   // for (int i = 0; i < sizcurr2ref; ++i) {
+        if(wbchro[sizcu4 - (i + 1)].number < 1.f) {//remove too low numbers datas about an area 60*60 pixels or reparted
             indn++;
         }
+    }
     }
     if (settings->verbose) {
         printf("Index1=%i index2=%i \n", indn, index2);
@@ -5997,6 +6005,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     };
     
     for (int i = indn; i < index2; ++i) {
+   // for (int i = 0; i < sizcurr2ref; ++i) {
         //improvment to limit high Y values wbchro[sizcu4 - (i + 1)].Y < 0.96  0.96 arbitrary high value, maybe 0.9 àr 0.98...
         if (wbchro[sizcu4 - (i + 1)].chrox > 0.1f && wbchro[sizcu4 - (i + 1)].chroy > 0.1f && wbchro[sizcu4 - (i + 1)].chroxy > 0.0f  && wbchro[sizcu4 - (i + 1)].Y < 0.96) { //remove value too far from reference spectral
             w++;// w number of real tests
@@ -6395,7 +6404,7 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
 
     int precision = 3;//must be 3 5 or 9
     bool oldsampling = wbpar.itcwb_sampling;
-    oldsampling = false;
+ //   oldsampling = false;
     if(oldsampling == true) {
         precision = 5;
     }
@@ -6661,7 +6670,7 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
         bool twotimes = false;
         int precision = 3;//must be 3 5 or 9
         bool oldsampling = wbpar.itcwb_sampling;
-        oldsampling = false;
+//        oldsampling = false;
         if(oldsampling == true) {
             precision = 5;
         }

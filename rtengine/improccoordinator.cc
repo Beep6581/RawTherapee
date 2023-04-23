@@ -615,7 +615,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
             if (awbListener) {
                 if (params->wb.method ==  "autitcgreen") {
+                    if(params->wb.itcwb_sampling) {
+                    awbListener->WBChanged(params->wb.temperature, params->wb.green, rw, gw, bw, dread, studgood, 0, 0, 0, 0);
+
+                    } else {
                     awbListener->WBChanged(params->wb.temperature, params->wb.green, rw, gw, bw, dread, studgood, minchrom, kmin, minhist, maxhist);
+                    }
                 } else {
                     awbListener->WBChanged(params->wb.temperature, params->wb.green, rw, gw, bw,1, -1.f, -1.f, 1, -1.f, -1.f);
                 }
