@@ -6431,7 +6431,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             } else {
                 double ag = 0.;
                 double gcal = gree[greengood].green;
-                ag = 0.10 * (gcal - keepgreen) * abs(greengood - greencam);
+                if(keepgreen > 1.09) {
+                    ag = 0.10 * (gcal - keepgreen) * abs(greengood - greencam);
+                } else {
+                    ag = 0.16 * (gcal - keepgreen) * abs(greengood - greencam);
+                }
                 greenitc = gcal - ag;
                 greenex = true;
 
