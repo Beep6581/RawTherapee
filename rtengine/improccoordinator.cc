@@ -550,7 +550,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     currWBitc = imgsrc->getWB();
                     double tempref = currWBitc.getTemp() * (1. + params->wb.tempBias);
                     double greenref = currWBitc.getGreen();
-                    if(greenref > 1.5f || tempref < 3500.f || tempref > 9000.f) {//probably camera out to adjust...
+                    if(greenref > 1.5f || tempref < 3000.f || tempref > 9000.f) {//probably camera out to adjust...
                         imgsrc->getAutoWBMultipliersitc(tempref, greenref, tempitc, greenitc, dread, studgood, minchrom, kmin, minhist, maxhist, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
                         //printf("OLD AFT rm=%f gm=%f bm=%f\n", rm, gm, bm);
                         imgsrc->wbMul2Camera(rm, gm, bm);
@@ -572,7 +572,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     currWBitc = imgsrc->getWB();
                     double tempref = currWBitc.getTemp() * (1. + params->wb.tempBias);
                     double greenref = currWBitc.getGreen();
-                    if(greenref > 1.5f || tempref < 3500.f || tempref > 9000.f) {//probably camera out to adjust...
+                    if(greenref > 1.5f || tempref < 3000.f || tempref > 9000.f) {//probably camera out to adjust...
                         //tempref = 0.66f * 5000.f + 0.34f * tempref;
                        //greenref = 1.f;
                        tempref = tem;
@@ -583,18 +583,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     }
 
                     imgsrc->getAutoWBMultipliersitc(tempref, greenref, tempitc, greenitc, dread, studgood, minchrom, kmin, minhist, maxhist, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
-                    /*
-                    if(params->wb.method == "autold") {
-                    printf("AFT rm=%f gm=%f bm=%f\n", rm, gm, bm);
-                                    imgsrc->wbMul2Camera(rm, gm, bm);
-                                    imgsrc->wbCamera2Mul(rm, gm, bm);
-                                    ColorTemp ct(rm, gm, bm, 1.0, currWB.getObserver());
-                //allows to calculate temp and green with multipliers in case of we want in GUI
-                                float tem = ct.getTemp();
-                                float gre  = ct.getGreen();
-                                printf("temAFT=%f greAFT=%f \n", (double) tem, (double) gre);
-                    }
-                    */
+
                     if (params->wb.method ==  "autitcgreen") {
                         params->wb.temperature = tempitc;
                         params->wb.green = greenitc;
