@@ -537,6 +537,34 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 currWB = imgsrc->getWB();
                 lastAwbauto = ""; //reinitialize auto
             } else if (autowb) {
+                    float tem = 5000.f;
+                    float gre  = 1.f;
+                
+                if(params->wb.method == "autitcgreen") {
+
+                    //alternative to camera if camera settings out, using autowb grey to find new ref
+                    params->wb.method = "autold";
+                    double rm, gm, bm;
+                    tempitc = 5000.f;
+                    greenitc = 1.; 
+                    currWBitc = imgsrc->getWB();
+                    double tempref = currWBitc.getTemp() * (1. + params->wb.tempBias);
+                    double greenref = currWBitc.getGreen();
+                    if(greenref > 1.5f || tempref < 3500.f || tempref > 9000.f) {//probably camera out to adjust...
+                        imgsrc->getAutoWBMultipliersitc(tempref, greenref, tempitc, greenitc, dread, studgood, minchrom, kmin, minhist, maxhist, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
+                        //printf("OLD AFT rm=%f gm=%f bm=%f\n", rm, gm, bm);
+                        imgsrc->wbMul2Camera(rm, gm, bm);
+                        imgsrc->wbCamera2Mul(rm, gm, bm);
+                        ColorTemp ct(rm, gm, bm, 1.0, currWB.getObserver());
+                        tem = ct.getTemp();
+                        gre  = ct.getGreen();
+                        if (settings->verbose) {
+                            printf("Using new references AWB grey - temgrey=%f gregrey=%f \n", (double) tem, (double) gre);
+                        }
+                    }
+                    params->wb.method = "autitcgreen";
+                }
+               
                 if (params->wb.method == "autitcgreen" || lastAwbEqual != params->wb.equal || lastAwbObserver != params->wb.observer || lastAwbTempBias != params->wb.tempBias || lastAwbauto != params->wb.method) {
                     double rm, gm, bm;
                     tempitc = 5000.f;
@@ -544,16 +572,29 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     currWBitc = imgsrc->getWB();
                     double tempref = currWBitc.getTemp() * (1. + params->wb.tempBias);
                     double greenref = currWBitc.getGreen();
-                    if(greenref > 2.f || greenref < 0.4f) {
-                        tempref = 0.66f * 5000.f + 0.34f * tempref;
-                        greenref = 1.f;
+                    if(greenref > 1.5f || tempref < 3500.f || tempref > 9000.f) {//probably camera out to adjust...
+                        //tempref = 0.66f * 5000.f + 0.34f * tempref;
+                       //greenref = 1.f;
+                       tempref = tem;
+                       greenref = gre;
                     }
                     if (settings->verbose && params->wb.method ==  "autitcgreen") {
                         printf("tempref=%f greref=%f\n", tempref, greenref);
                     }
 
                     imgsrc->getAutoWBMultipliersitc(tempref, greenref, tempitc, greenitc, dread, studgood, minchrom, kmin, minhist, maxhist, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
-
+                    /*
+                    if(params->wb.method == "autold") {
+                    printf("AFT rm=%f gm=%f bm=%f\n", rm, gm, bm);
+                                    imgsrc->wbMul2Camera(rm, gm, bm);
+                                    imgsrc->wbCamera2Mul(rm, gm, bm);
+                                    ColorTemp ct(rm, gm, bm, 1.0, currWB.getObserver());
+                //allows to calculate temp and green with multipliers in case of we want in GUI
+                                float tem = ct.getTemp();
+                                float gre  = ct.getGreen();
+                                printf("temAFT=%f greAFT=%f \n", (double) tem, (double) gre);
+                    }
+                    */
                     if (params->wb.method ==  "autitcgreen") {
                         params->wb.temperature = tempitc;
                         params->wb.green = greenitc;
