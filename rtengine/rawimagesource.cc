@@ -5246,1246 +5246,1285 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     */
     BENCHFUN
+    bool itciterate = true;
 
-    Glib::ustring profuse;
-    profuse = "Adobe RGB";
+    typedef struct Wboptim {
+        float stud;
+        float minc;
+    } Wboptim;
+    
+    Wboptim opti[5] = {
+        {0.f, 0.f},
+        {0.f, 0.f},
+        {0.f, 0.f},
+        {0.f, 0.f},
+        {0.f, 0.f}
+    };
 
-    if (wbpar.itcwb_prim == "srgb") {
-        profuse = "sRGB";
-    } else if (wbpar.itcwb_prim == "adob") {
+    while (itciterate) {//loop to find best mix minchrom and studgood
+
+        Glib::ustring profuse;
         profuse = "Adobe RGB";
-    } else if (wbpar.itcwb_prim == "rec") {
-        profuse = "Rec2020";
-    } else if (wbpar.itcwb_prim == "ace") {
-        profuse = "ACESp0";
-    }
 
-    bool oldsampling = wbpar.itcwb_sampling;
+        if (wbpar.itcwb_prim == "srgb") {
+            profuse = "sRGB";
+        } else if (wbpar.itcwb_prim == "adob") {
+            profuse = "Adobe RGB";
+        } else if (wbpar.itcwb_prim == "rec") {
+            profuse = "Rec2020";
+        } else if (wbpar.itcwb_prim == "ace") {
+            profuse = "ACESp0";
+        }
+
+        bool oldsampling = wbpar.itcwb_sampling;
 
 //    oldsampling = false;
-    if (oldsampling) {
-        profuse = "sRGB";
-    }
-
-    TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(profuse); //ACESp0 or sRGB
-    const float wp[3][3] = {
-        {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
-        {static_cast<float>(wprof[1][0]), static_cast<float>(wprof[1][1]), static_cast<float>(wprof[1][2])},
-        {static_cast<float>(wprof[2][0]), static_cast<float>(wprof[2][1]), static_cast<float>(wprof[2][2])}
-    };
-
-    TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(profuse);//ACESp0 or sRGB
-    //inverse matrix user select
-    const float wip[3][3] = {
-        {static_cast<float>(wiprof[0][0]), static_cast<float>(wiprof[0][1]), static_cast<float>(wiprof[0][2])},
-        {static_cast<float>(wiprof[1][0]), static_cast<float>(wiprof[1][1]), static_cast<float>(wiprof[1][2])},
-        {static_cast<float>(wiprof[2][0]), static_cast<float>(wiprof[2][1]), static_cast<float>(wiprof[2][2])}
-    };
-
-    const int bfwitc = bfw;
-    const int bfhitc = bfh;
-
-    typedef struct WbGreen {
-        double green;
-        float snedecor;//1. actually but put in case of confiance interval
-    } WbGreen;
-    //green (tint) values between 0.4 to 4.0
-    constexpr WbGreen gree[134] = {//symmetric coefficient between 0.717 and 1.40
-        {0.400, 1.f},
-        {0.420, 1.f},
-        {0.440, 1.f},
-        {0.460, 1.f},
-        {0.480, 1.f},
-        {0.500, 1.f},
-        {0.520, 1.f},
-        {0.540, 1.f},
-        {0.550, 1.f},
-        {0.560, 1.f},
-        {0.570, 1.f},
-        {0.580, 1.f},
-        {0.590, 1.f},
-        {0.600, 1.f},
-        {0.610, 1.f},
-        {0.620, 1.f},//extended range
-        {0.630, 1.f},
-        {0.640, 1.f},
-        {0.650, 1.f},
-        {0.660, 1.f},
-        {0.670, 1.f},
-        {0.680, 1.f},
-        {0.690, 1.f},
-        {0.700, 1.f},
-        {0.714, 1.f},//usual 2 range
-        {0.727, 1.f},
-        {0.741, 1.f},
-        {0.755, 1.f},
-        {0.769, 1.f},
-        {0.784, 1.f},
-        {0.800, 1.f},
-        {0.806, 1.f},
-        {0.813, 1.f},
-        {0.820, 1.f},//usual range
-        {0.826, 1.f},
-        {0.833, 1.f},
-        {0.840, 1.f},
-        {0.847, 1.f},
-        {0.855, 1.f},
-        {0.862, 1.f},
-        {0.870, 1.f},
-        {0.877, 1.f},
-        {0.885, 1.f},
-        {0.893, 1.f},
-        {0.901, 1.f},
-        {0.909, 1.f},
-        {0.917, 1.f},
-        {0.926, 1.f},
-        {0.935, 1.f},
-        {0.943, 1.f},//49 limit low normal
-        {0.952, 1.f},
-        {0.962, 1.f},
-        {0.971, 1.f},
-        {0.980, 1.f},
-        {0.990, 1.f},
-        {1.000, 1.f},//55 reference
-        {1.010, 1.f},
-        {1.020, 1.f},
-        {1.030, 1.f},
-        {1.040, 1.f},
-        {1.050, 1.f},
-        {1.060, 1.f},
-        {1.070, 1.f},
-        {1.080, 1.f},
-        {1.090, 1.f},
-        {1.100, 1.f},
-        {1.110, 1.f},
-        {1.120, 1.f},
-        {1.130, 1.f},
-        {1.140, 1.f},
-        {1.150, 1.f},
-        {1.160, 1.f},
-        {1.170, 1.f},
-        {1.180, 1.f},
-        {1.190, 1.f},
-        {1.200, 1.f},
-        {1.210, 1.f},
-        {1.220, 1.f},
-        {1.230, 1.f},
-        {1.240, 1.f},
-        {1.250, 1.f},// usual range
-        {1.275, 1.f},
-        {1.300, 1.f},
-        {1.325, 1.f},
-        {1.350, 1.f},
-        {1.375, 1.f},
-        {1.400, 1.f},//usual 2 range
-        {1.425, 1.f},
-        {1.450, 1.f},
-        {1.475, 1.f},
-        {1.500, 1.f},
-        {1.525, 1.f},
-        {1.550, 1.f},
-        {1.575, 1.f},//extended range
-        {1.600, 1.f},
-        {1.633, 1.f},
-        {1.666, 1.f},
-        {1.700, 1.f},
-        {1.733, 1.f},
-        {1.766, 1.f},
-        {1.800, 1.f},
-        {1.833, 1.f},
-        {1.866, 1.f},
-        {1.900, 1.f},
-        {1.933, 1.f},
-        {1.966, 1.f},
-        {2.000, 1.f},
-        {2.033, 1.f},
-        {2.066, 1.f},
-        {2.100, 1.f},
-        {2.133, 1.f},
-        {2.166, 1.f},
-        {2.200, 1.f},
-        {2.250, 1.f},
-        {2.300, 1.f},
-        {2.350, 1.f},
-        {2.400, 1.f},
-        {2.450, 1.f},
-        {2.500, 1.f},
-        {2.550, 1.f},
-        {2.600, 1.f},
-        {2.650, 1.f},
-        {2.700, 1.f},
-        {2.750, 1.f},
-        {2.800, 1.f},
-        {2.850, 1.f},
-        {2.900, 1.f},
-        {2.950, 1.f},
-        {3.000, 1.f},
-        {3.200, 1.f},
-        {3.400, 1.f},
-        {3.600, 1.f},
-        {3.800, 1.f},
-        {4.000, 1.f}
-    };
-    const int N_g = sizeof(gree) / sizeof(gree[0]);   //number of green
-
-    typedef struct RangeGreen {
-        int begin;
-        int end;
-    } RangeGreen;
-
-    constexpr RangeGreen Rangestandard = {33, 80};//usual green range
-    constexpr RangeGreen Rangestandard2 = {24, 86};//usual 2 green range
-    constexpr RangeGreen Rangeextended = {15, 93};
-    const RangeGreen Rangemax = {0, N_g};
-
-    RangeGreen Rangegreenused;
-
-    if (wbpar.itcwb_rgreen == 0) {
-        Rangegreenused = Rangestandard;
-    } else if (wbpar.itcwb_rgreen == 1) {
-        Rangegreenused = Rangestandard2;
-    } else if (wbpar.itcwb_rgreen == 2) {
-        Rangegreenused = Rangeextended;
-    } else {
-        Rangegreenused = Rangemax;
-    }
-
-    if (oldsampling == true) {
-        Rangegreenused = Rangestandard2;
-    }
-
-    typedef struct WbTxyz {
-        double Tem;
-        double XX;
-        double ZZ;
-    } WbTxyz;
-    //we can change step to increase precision if need  - also in Colortemp.cc with same changes
-    //I don't know how to pass this structure to Colortemp !
-    // X and Z values calculate for each temp between 2000K to  12000K, so no result after 12000K !
-    //of course we can change the step between each temp if need
-    constexpr WbTxyz Txyz[118] = {//temperature Xwb Zwb 118 values  x wb and y wb are calculated after,  Xwb and Ywb calculated with a spreadsheet
-        {2001., 1.273842, 0.145295},
-        {2101., 1.244008, 0.167533},
-        {2201., 1.217338, 0.190697},
-        {2301., 1.193444, 0.214632},
-        {2401., 1.171996, 0.239195},
-        {2501., 1.152883, 0.264539},
-        {2605., 1.134667, 0.290722},
-        {2655., 1.126659, 0.303556},
-        {2705., 1.119049, 0.316446},
-        {2755., 1.111814, 0.329381},
-        {2803., 1.105381, 0.342193},
-        {2856., 1.098258, 0.355599},
-        {2910., 1.091550, 0.369645},
-        {2960., 1.085649, 0.382655},
-        {3003., 1.080982, 0.394258},
-        {3050., 1.075727, 0.406057},
-        {3103., 1.070277, 0.419815},
-        {3153., 1.065384, 0.432769},
-        {3203., 1.060906, 0.446161},
-        {3250., 1.056535, 0.457806},
-        {3303., 1.052034, 0.471422},
-        {3353., 1.047990, 0.484218},
-        {3400., 1.044547, 0.496719},
-        {3450., 1.040667, 0.508891},
-        {3500., 1.037145, 0.521523},
-        {3550., 1.033783, 0.534090},
-        {3600., 1.030574, 0.546590},
-        {3650., 1.027510, 0.559020},
-        {3699., 1.024834, 0.571722},
-        {3801., 1.019072, 0.596102},
-        {3851., 1.016527, 0.608221},
-        {3902., 1.014244, 0.621136},
-        {3952., 1.011729, 0.632447},
-        {4002., 0.996153, 0.609518},
-        {4052., 0.993720, 0.620805},
-        {4102., 0.993908, 0.631520},
-        {4152., 0.989179, 0.643262},
-        {4202., 0.989283, 0.653999},
-        {4252., 0.985039, 0.665536},
-        {4302., 0.985067, 0.676288},
-        {4352., 0.981271, 0.687599},
-        {4402., 0.981228, 0.698349},
-        {4452., 0.977843, 0.709425},
-        {4502., 0.977736, 0.720159},
-        {4552., 0.974728, 0.730993},
-        {4602., 0.974562, 0.741698},
-        {4652., 0.971899, 0.752284},
-        {4702., 0.971681, 0.762949},
-        {4752., 0.969335, 0.773285},
-        {4802., 0.969069, 0.783899},
-        {4827., 0.967570, 0.788836},
-        {4852., 0.967011, 0.793982},
-        {4877., 0.966465, 0.799108},
-        {4902., 0.965933, 0.804214},
-        {4927., 0.965414, 0.809229},
-        {4952., 0.964908, 0.814366},
-        {4977., 0.964415, 0.819412},
-        {5002., 0.963934, 0.824438},//57 reference
-        {5027., 0.963465, 0.829444},
-        {5052., 0.963008, 0.834429},
-        {5077., 0.962563, 0.839395},
-        {5102., 0.962129, 0.844339},
-        {5127., 0.961706, 0.849263},
-        {5152., 0.961294, 0.854166},
-        {5177., 0.960893, 0.859049},
-        {5202., 0.960501, 0.863911},
-        {5252., 0.959749, 0.873572},
-        {5302., 0.959313, 0.883815},
-        {5352., 0.958361, 0.892644},
-        {5402., 0.957903, 0.902793},
-        {5452., 0.957116, 0.911379},
-        {5502., 0.956639, 0.921431},
-        {5552., 0.956002, 0.929779},
-        {5602., 0.955509, 0.939728},
-        {5652., 0.955008, 0.947842},
-        {5702., 0.954502, 0.957685},
-        {5752., 0.954124, 0.965569},
-        {5802., 0.953608, 0.975303},
-        {5852., 0.953342, 0.982963},
-        {5902., 0.952818, 0.992584},
-        {5952., 0.952652, 1.000025},
-        {6002., 0.952122, 1.009532},
-        {6052., 0.952047, 1.016759},
-        {6102., 0.951514, 1.026149},
-        {6152., 0.951520, 1.033168},
-        {6202., 0.950985, 1.042439},
-        {6252., 0.951064, 1.049256},
-        {6302., 0.950530, 1.058406},
-        {6352., 0.950674, 1.065027},
-        {6402., 0.950143, 1.074055},
-        {6452., 0.950345, 1.080484},
-        {6502., 0.950201, 1.088097},
-        {6552., 0.950070, 1.095633},
-        {6602., 0.949952, 1.103094},
-        {6652., 0.949846, 1.110479},
-        {6702., 0.949752, 1.119138},
-        {6752., 0.949668, 1.125027},
-        {6802., 0.949596, 1.132190},
-        {6902., 0.949033, 1.147691},
-        {7002., 0.949402, 1.160129},
-        {7152., 0.949348, 1.180429},
-        {7301., 0.948896, 1.201432},
-        {7451., 0.949434, 1.219076},
-        {7601., 0.949099, 1.239061},
-        {7751., 0.949729, 1.255559},
-        {7901., 0.949498, 1.274460},
-        {8151., 0.950361, 1.300912},
-        {8301., 0.950253, 1.318464},
-        {8451., 0.950966, 1.332651},
-        {8601., 0.950941, 1.349261},
-        {8801., 0.951772, 1.367421},
-        {9001., 0.951969, 1.387639},
-        {9201., 0.952784, 1.404422},
-        {9401., 0.953081, 1.423213},
-        {9901., 0.954537, 1.464134},
-        {10501., 0.956321, 1.508623},
-        {11001., 0.957747, 1.541281},
-        {12001., 0.960440, 1.601019}
-    };
-    bool purp = true;//if inpaint-opposed or something else enable purp
-
-    const int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
-    constexpr int Nc = 347 + 1; //348 number of reference spectral colors
-    int Ncr = 348;
-
-    if (wbpar.itcwb_prim == "srgb") {
-        Ncr = 347 + 1;
-    } else if (wbpar.itcwb_prim == "adob") {
-        Ncr = 347 + 1;
-    } else if (wbpar.itcwb_prim == "rec") {
-        Ncr = 347 + 1;
-    } else if (wbpar.itcwb_prim == "ace") {
-        Ncr = 347 + 1;
-    }
-
-    if (oldsampling) { //low samplin 5.9 with less spectral datas 201
-        Ncr = 202;
-    }
-
-    array2D<float> Tx(N_t, Nc);
-    array2D<float> Ty(N_t, Nc);
-    array2D<float> Tz(N_t, Nc);
-    array2D<float> Ta(N_t, Nc);
-    array2D<float> Tb(N_t, Nc);
-    array2D<float> TL(N_t, Nc);
-    double TX[Nc];
-    double TY[Nc];
-    double TZ[Nc];
-    std::vector<bool> good_spectral(Nc, false);
-    std::vector<bool> good_size(Nc, false);
-
-    float rmm[N_t];
-    float gmm[N_t];
-    float bmm[N_t];
-
-    int siza = 237; //192 untill 01/2023 size of histogram
-
-    if (oldsampling == true) {
-        siza = 192;//old sampling 5.9 and before...
-    }
-
-    // tempref and greenref are camera wb values.
-    // I used them by default to select good spectral values !! but they are changed after
-    tempref = rtengine::min(tempref, 12000.0);
-    int repref = 0;
-
-    for (int tt = 0; tt < N_t; tt++) {
-        if (Txyz[tt].Tem > tempref) {
-            repref = tt;//show the select temp
-            break;
-        }
-    }
-
-    //calculate R G B multiplier in function illuminant and temperature
-    const bool isMono = (ri->getSensorType() == ST_FUJI_XTRANS && raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO))
-                        || (ri->getSensorType() == ST_BAYER && raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO));
-    double keepgreen = greenitc;
-
-    for (int tt = 0; tt < N_t; ++tt) {
-        double r, g, b;
-        float rm, gm, bm;
-        ColorTemp WBiter = ColorTemp(Txyz[tt].Tem, greenitc, 1.f, "Custom", wbpar.observer);
-        WBiter.getMultipliers(r, g, b);
-
-        rm = imatrices.cam_rgb[0][0] * r + imatrices.cam_rgb[0][1] * g + imatrices.cam_rgb[0][2] * b;
-        gm = imatrices.cam_rgb[1][0] * r + imatrices.cam_rgb[1][1] * g + imatrices.cam_rgb[1][2] * b;
-        bm = imatrices.cam_rgb[2][0] * r + imatrices.cam_rgb[2][1] * g + imatrices.cam_rgb[2][2] * b;
-
-        const float new_pre_mul[4] = { ri->get_pre_mul(0) / rm, ri->get_pre_mul(1) / gm, ri->get_pre_mul(2) / bm, ri->get_pre_mul(3) / gm };
-        float new_scale_mul[4];
-        const float gain = calculate_scale_mul(new_scale_mul, new_pre_mul, c_white, cblacksom, isMono, ri->get_colors());
-
-        rm = new_scale_mul[0] / scale_mul[0] * gain;
-        gm = new_scale_mul[1] / scale_mul[1] * gain;
-        bm = new_scale_mul[2] / scale_mul[2] * gain;
-        rmm[tt] = rm / gm;
-        gmm[tt] = 1.f;
-        bmm[tt] = bm / gm;
-        //return rmm, gmm, bmm in function of temp
-    }
-
-    struct hiss {
-        int histnum;
-        int index;
-        bool operator()(const hiss& lhis, const hiss& rhis)
-        {
-            return lhis.histnum < rhis.histnum;
+        if (oldsampling) {
+            profuse = "sRGB";
         }
 
-    } ;
-
-    //intermediate structure
-    struct chrom {
-        float chroxy_number;
-        float number;
-        float hue;
-        float chroxy;
-        float chrox;
-        float chroy;
-        float Y;
-        int index;
-        int interest;
-        bool operator()(const chrom& lchro, const chrom& rchro)
-        {
-            return lchro.chroxy_number < rchro.chroxy_number;
-        }
-
-    } ;
-
-    LUTu histxy(siza); //number of values for each pair xy
-
-    histxy.clear();
-
-    LUTf xxx(siza);//for color references calculated ==> max in images "like histogram"
-
-    xxx.clear();
-
-    LUTf yyy(siza);
-
-    yyy.clear();
-
-    LUTf YYY(siza);//not used directly, but necessary to keep good range
-
-    YYY.clear();
-
-    bool separated = true;//true
-
-    int w = -1;
-
-    array2D<float> reff_spect_yy_camera(N_t, 2 * Nc + 2);
-
-    array2D<float> reff_spect_xx_camera(N_t, 2 * Nc + 2);
-
-    array2D<float> reff_spect_Y_camera(N_t, 2 * Nc + 2);
-
-    //call tempxy to calculate for 348 or 201color references Temp and XYZ with cat02
-    ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar); //calculate chroma xy (xyY) for Z known colors on under 200 illuminants
-
-    //find the good spectral values
-    //calculate xy reference spectral for tempref
-    for (int j = 0; j < Ncr ; j++) {
-        float xxx = TX[j] / (TX[j] + TY[j] +  TZ[j]); // x from xyY
-        float yyy = TY[j] / (TX[j] + TY[j] +  TZ[j]); // y from xyY
-        float YY = TY[j];
-        reff_spect_xx_camera[j][repref] = xxx;
-        reff_spect_yy_camera[j][repref] = yyy;
-        reff_spect_Y_camera[j][repref] =  YY;
-    }
-
-    array2D<float> xc(bfwitc, bfhitc);
-    array2D<float> yc(bfwitc, bfhitc);
-    array2D<float> Yc(bfwitc, bfhitc);
-
-    const int rep = rtengine::LIM(repref + 1, 0, N_t);
-
-    //initialize calculation of xy current for tempref
-    if (oldsampling == false) {
-
-        //small denoise with median 3x3 strong
-        float** tmL;
-        int wid = bfw;
-        int hei = bfh;
-        tmL = new float*[hei];
-
-        for (int i = 0; i < hei; ++i) {
-            tmL[i] = new float[wid];
-        }
-
-        typedef ImProcFunctions::Median Median;
-        Median medianTypeL = Median::TYPE_3X3_STRONG;//x2
-        ImProcFunctions::Median_Denoise(redloc, redloc, bfw, bfh, medianTypeL, 2, false, tmL);
-        ImProcFunctions::Median_Denoise(greenloc, greenloc, bfw, bfh, medianTypeL, 2, false, tmL);
-        ImProcFunctions::Median_Denoise(blueloc, blueloc, bfw, bfh, medianTypeL, 2, false, tmL);
-
-        for (int i = 0; i < hei; ++i) {
-            delete[] tmL[i];
-        }
-
-        delete[] tmL;
-    }
-
-#ifdef _OPENMP
-    #pragma omp parallel for
-#endif
-
-    for (int y = 0; y < bfh ; ++y) {
-        for (int x = 0; x < bfw ; ++x) {
-            const float RR = rmm[rep] * redloc[y][x];
-            const float GG = gmm[rep] * greenloc[y][x];
-            const float BB = bmm[rep] * blueloc[y][x];
-
-            Color::rgbxyY(RR, GG, BB, xc[y][x], yc[y][x], Yc[y][x], wp);//use sRGB Adobe Rec2020 ACESp0
-        }
-    }
-
-    //histogram xy depend of temp...but in most cases D45 ..D65..
-    //calculate for this image the mean values for each family of color, near histogram x y (number)
-    //xy vary from x 0..0.77  y 0..0.82
-    //neutral values are near x=0.34 0.33 0.315 0.37 y =0.35 0.36 0.34
-    //skin are about x 0.45  0.49 y 0.4 0.47
-    //blue sky x=0.25 y=0.28  and x=0.29 y=0.32
-    // step about 0.02   x 0.32 0.34  y= 0.34 0.36 skin    --  sky x 0.24 0.30 y 0.28 0.32
-
-
-    if (wbpar.itcwb_nopurple == true) {//since 21 april - change to filter magenta
-        purp = false;
-    }
-
-    if (oldsampling == false) {
-        //printf("Use high smapling\n");
-        histoxyY(bfhitc, bfwitc, xc, yc, Yc, xxx,  yyy, YYY, histxy, purp);//purp enable,  enable purple color in WB
-        //return histogram x and y for each temp and in a range of 235 colors (siza)
-    } else {
-        //printf("Use low smapling - 5.9\n");
-        histoxyY_low(bfhitc, bfwitc, xc, yc, Yc, xxx,  yyy, YYY, histxy);//low scaling
-    }
-
-    // free some memory
-    xc.free();
-    yc.free();
-    Yc.free();
-    //calculate x y Y
-    const int sizcurrref = siza;//choice of number of correlate colors in image
-    array2D<float> histcurrref(N_t, sizcurrref);
-    array2D<float> xx_curref(N_t, sizcurrref);
-    array2D<float> yy_curref(N_t, sizcurrref);
-    array2D<float> YY_curref(N_t, sizcurrref);
-    array2D<float> xx_curref_reduc(N_t, sizcurrref);
-    array2D<float> yy_curref_reduc(N_t, sizcurrref);
-    array2D<float> YY_curref_reduc(N_t, sizcurrref);
-    array2D<float> nn_curref_reduc(N_t, sizcurrref);//new array to improve patch
-    array2D<float> chronum_curref_reduc(N_t, sizcurrref);//new array to improve patch
-    array2D<float> hue_curref_reduc(N_t, sizcurrref);//new array to improve patch
-    array2D<float> chro_curref_reduc(N_t, sizcurrref);//new array to improve patch
-    array2D<float> estim_hue(N_t, sizcurrref);//new array to improve patch
-
-    hiss Wbhis[siza];
-
-    for (int nh = 0; nh < siza; nh++) {
-        Wbhis[nh].histnum = histxy[nh];
-        Wbhis[nh].index = nh;
-    }
-
-    //sort in ascending order
-    std::sort(Wbhis, Wbhis + siza, Wbhis[0]);
-    int n1 = 0;
-    int n4 = 0;
-    int n15 = 0;
-    int n30 = 0;
-
-    //part to improve
-    //determined the number of colors who be used after
-    int ntot = 0;
-
-    for (int nh = 0; nh < siza; nh++) {
-        if (Wbhis[nh].histnum > 0) {
-            ntot++;
-        }
-    }
-
-    dread = ntot;//read colors
-
-    for (int nh = 0; nh < siza; nh++) {
-        if (Wbhis[nh].histnum < 30) {
-            n30++;    //keep only existing color but avoid to small
-
-            if (Wbhis[nh].histnum < 15) {
-                n15++;    //keep only existing color but avoid to small
-
-                if (Wbhis[nh].histnum < 4) {
-                    n4++;    //keep only existing color but avoid to small
-
-                    if (Wbhis[nh].histnum < 1) {
-                        n1++;    //keep only existing color but avoid to small
-                    }
-                }
-            }
-        }
-    }
-
-    int ntr = n30;
-
-    if (ntr > (siza - 25)) {
-        ntr = n15;    //if to less elements 25 elements mini
-    }
-
-    if (ntr > (siza - 23)) {
-        ntr = n4;    //if to less elements 25 elements mini
-    }
-
-    if (ntr > (siza - 20)) {
-        ntr = n1;    //if to less elements 20 elements mini - normally never be used !
-    }
-
-    int sizcurr2ref = sizcurrref - ntr;
-    const int sizcu30 = sizcurrref - n30;
-    int maxsiz = settings->itcwb_maxsize; // between 60 to 90
-    maxsiz = LIM(maxsiz, 50, 80);
-    int nbm = maxsiz;
-    int sizcu4 = maxsiz;
-
-    if (oldsampling == true) {
-        nbm = 55;
-        sizcu4 = rtengine::min(sizcu30, nbm);//size of chroma values
-    }
-
-    if (settings->verbose) {
-        printf("number total datas read=%i\n", ntot);
-        printf("Others datas - ntr=%i sizcurr2ref=%i sizcu4=%i sizcu30=%i\n", ntr, sizcurr2ref, sizcu4, sizcu30);
-        printf("Number max of data samples in last patch=%i\n", Wbhis[siza - 1].histnum);
-        printf("Number of data samples in beginning patch =%i\n", Wbhis[siza - nbm].histnum);
-    }
-
-    chrom wbchro[sizcu4];
-    const float swpr = Txyz[repref].XX + Txyz[repref].ZZ + 1.f;
-    const float xwpr = Txyz[repref].XX / swpr;//white point for tt in xy coordinates
-    const float ywpr = 1.f / swpr;
-
-    for (int i = 0; i < sizcu4; ++i) { //take the max values
-        histcurrref[i][repref] = Wbhis[siza - (i + 1)].histnum;
-        xx_curref[i][repref] = xxx[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
-        yy_curref[i][repref] = yyy[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
-        YY_curref[i][repref] = YYY[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
-    }
-
-    int minsize = wbpar.itcwb_minsize;
-    int maxsize = maxsiz;
-    bool isponderate = wbpar.itcwb_ponder;//reused to build patch ponderate
-
-    bool isponder = true;//with true moving average
-    float powponder = settings->itcwb_powponder;
-    powponder = LIM(powponder, 0.01f, 0.2f);
-
-    if (oldsampling == false) {
-        for (int j = minsize; j < maxsize; ++j) {//20 empirical minimal value default to ensure a correlation
-            if (!good_size[j]) {
-                float estimchrom = 0.f;
-                float countchxynum = 0.f;
-
-                float xh = 0.f;
-                float yh = 0.f;
-                wbchro[j].hue =  0.f;
-                wbchro[j].chroxy_number = 0.f;
-                wbchro[j].number = 0.f;
-                wbchro[j].chroxy = 0.f;
-                wbchro[j].chrox = 0.f;
-                wbchro[j].chroy = 0.f;
-                wbchro[j].Y = 0.f;
-                wbchro[j].index = 0;
-                int ind1 = 1;
-                int ind2 = -1;
-                float chxy1 = 0.f;
-                float chxy2 = 0.f;
-                float chxynum1 = 0.f;
-                float chxynum2 = 0.f;
-
-                for (int nh = 0; nh < j; ++nh) {
-                    ind1++;
-                    ind2++;
-
-                    if (ind1 < j && !isponderate) {
-                        chxy1 = std::sqrt(SQR(xx_curref[ind1][repref] - xwpr) + SQR(yy_curref[ind1][repref] - ywpr));
-                    }
-
-                    if (ind2 <= 0 && !isponderate) {
-                        chxy2 = std::sqrt(SQR(xx_curref[ind2][repref] - xwpr) + SQR(yy_curref[ind2][repref] - ywpr));
-                    }
-
-                    const float chxy = std::sqrt(SQR(xx_curref[nh][repref] - xwpr) + SQR(yy_curref[nh][repref] - ywpr));
-                    xh += xx_curref[nh][repref] - xwpr;
-                    yh += yy_curref[nh][repref] - ywpr;
-                    wbchro[nh].hue =  fmodf(xatan2f(yy_curref[nh][repref] - ywpr, xx_curref[nh][repref] - xwpr), 2.f * RT_PI_F);
-                    const float chxynum = wbchro[nh].chroxy_number = chxy * pow((double) histcurrref[nh][repref], 0.05);//sqrt was too big no convergence
-
-                    if (ind1 < j && isponderate) { //with issorted ponderate chroma
-                        chxynum1 = chxy1 * pow((double) histcurrref[ind1][repref], 0.05);//0.05 to 0.1 allows convergence, near 1.5 betwween max and min value
-                    }
-
-                    if (ind2 < 0 && isponderate) {
-                        chxynum2 = chxy2 * pow((double) histcurrref[ind2][repref], 0.05);
-                    }
-
-                    wbchro[nh].number = histcurrref[nh][repref];
-                    wbchro[nh].chroxy = std::sqrt(chxy);
-                    wbchro[nh].chrox = xx_curref[nh][repref];
-                    wbchro[nh].chroy = yy_curref[nh][repref];
-                    wbchro[nh].Y = YY_curref[nh][repref];
-                    wbchro[nh].index = nh;
-
-                    if (!isponderate) {
-                        estimchrom += chxy;
-
-                        if (isponder && !isponderate) {
-                            estimchrom += chxy1;
-                            estimchrom += chxy2;
-                        }
-                    }
-
-                    if (isponderate) {
-                        estimchrom += chxynum;
-
-                        if (isponder) {
-                            estimchrom += chxynum1;
-                            estimchrom += chxynum2;
-                        }
-
-                        countchxynum += pow((double)histcurrref[nh][repref], 0.05);//no error, to take into account mean value
-                    }
-                }
-
-                estim_hue[j][repref] = xatan2f(yh, xh);
-
-                if (isponder) {
-                    estimchrom /= (j + 2 * (j - 1)); //extrem not taken
-                } else {
-                    estimchrom /= j;
-                }
-
-                if (estimchrom < minchrom) {
-                    minchrom = estimchrom;
-                    kmin = j;
-                }
-            }
-
-            good_size[kmin] = true;
-        }
-    }
-
-    if (oldsampling == false) {
-        sizcu4 = kmin;
-    }
-
-    if (oldsampling == true) {
-        float estimchrom = 0.f;
-        float estimhue = 0.f;
-        float xh = 0.f;
-        float yh = 0.f;
-
-        //estimate chromaticity for references
-        for (int nh = 0; nh < sizcu4; ++nh) {
-            const float chxy = std::sqrt(SQR(xx_curref[nh][repref] - xwpr) + SQR(yy_curref[nh][repref] - ywpr));
-            xh += xx_curref[nh][repref] - xwpr;
-            yh += yy_curref[nh][repref] - ywpr;
-            wbchro[nh].chroxy_number = chxy * std::sqrt(histcurrref[nh][repref]);
-            wbchro[nh].chroxy = std::sqrt(chxy);
-            wbchro[nh].chrox = xx_curref[nh][repref];
-            wbchro[nh].chroy = yy_curref[nh][repref];
-            wbchro[nh].Y = YY_curref[nh][repref];
-            wbchro[nh].index = nh;
-            estimchrom += chxy;
-        }
-
-        estimhue = xatan2f(yh, xh);
-        estimchrom /= sizcu4;
-
-
-        if (settings->verbose) {
-            printf("Info - patch estimation of wp displacement (before): chrom=%f hue=%f\n", (double) estimchrom, (double) estimhue);
-        }
-
-    }
-
-    if (oldsampling == true) {
-        isponderate = false;
-    }
-
-
-//    if (issorted) { //sort in descending with chroma values * number
-    //     std::sort(wbchro, wbchro + sizcu4, wbchro[0]);//not used in this goal since 15 april
-//    }
-
-
-    int maxval = maxsiz;
-
-    if (oldsampling == true) {
-        maxval = 34;
-    }
-
-    sizcurr2ref = rtengine::min(sizcurr2ref, maxval);    //keep about the biggest values,
-    int index1 = 0;
-    int index2 = sizcu4;
-
-    if (oldsampling == true) {
-        index1 = 0;
-        index2 = sizcurr2ref;
-     //   printf("INDEX1=%i INDEX2=%i\n", index1, index2);
-    }
-
-    int indn = index1;
-  //  printf("Indn=%i \n", indn);
-
-    if (oldsampling == false) {
-
-        for (int i = index1; i < index2; ++i) {
-            if (wbchro[sizcu4 - (i + 1)].number < 1.f) { //remove too low numbers datas about an area 60*60 pixels or reparted
-                indn++;
-            }
-        }
-    }
-
-    if (settings->verbose) {
-        printf("Index1=%i index2=%i \n", indn, index2);
-    }
-
-    if (settings->verbose) {
-        printf("Info2 - patch estimation of wp displacement (before):j=%i real=%i chrom=%f hue=%f\n", kmin, index2 - indn, (double) minchrom, (double) estim_hue[kmin][repref]);
-    };
-
-    for (int i = indn; i < index2; ++i) {
-        //improvment to limit high Y values wbchro[sizcu4 - (i + 1)].Y < 0.96  0.96 arbitrary high value, maybe 0.9 àr 0.98...
-        if (wbchro[sizcu4 - (i + 1)].chrox > 0.1f && wbchro[sizcu4 - (i + 1)].chroy > 0.1f && wbchro[sizcu4 - (i + 1)].chroxy > 0.0f  && wbchro[sizcu4 - (i + 1)].Y < 0.96) { //remove value too far from reference spectral
-            w++;// w number of real tests
-            xx_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chrox;
-            yy_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chroy;
-            YY_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].Y;
-            chronum_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chroxy_number;
-            nn_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].number;
-            hue_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].hue;
-            chro_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chroxy;
-        }
-    }
-
-    if (settings->verbose) {
-        printf("Number of real tests=%i\n", w);
-    }
-
-    int maxnb = 1; //since 8 april 2023 - // old rtengine::LIM(wbpar.itcwb_size, 1, 6);
-
-
-    if (wbpar.itcwb_thres > 65) {//normally never used
-        maxnb = (Nc - 1) / wbpar.itcwb_thres; //201 to 211
-    }
-
-    float dEmean = 0.f;
-    int ndEmean = 0;
-
-    for (int nb = 1; nb <= maxnb; ++nb) { //1 is good, but 2 3 or 4 help to find more spectral values
-        for (int i = 0; i < w; ++i) {
-            float mindeltaE = 100000.f;
-            int kN = 0;
-
-            for (int j = 0; j < Ncr ; j++) {
-                if (!good_spectral[j]) {
-                    const float deltaE = SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[j][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[j][repref]);
-
-                    if (deltaE < mindeltaE) {
-                        mindeltaE = deltaE;
-                        kN = j;
-                    }
-                }
-            }
-
-            if (settings->verbose) {
-                float xr = reff_spect_xx_camera[kN][repref];
-                float yr = reff_spect_yy_camera[kN][repref];
-                float Yr = reff_spect_Y_camera[kN][repref];
-                float X_r = (65535.f * (xr * Yr)) / yr;
-                float Z_r = (65535.f * (1.f - xr - yr) * Yr) / yr;
-                float Y_r = 65535.f * Yr;
-                float Lr, ar, br;
-                Color::XYZ2Lab(X_r, Y_r, Z_r, Lr, ar, br);//it make sense, because known spectral color
-                float spectlimit = settings->itcwb_deltaspec;
-                float dE = sqrt(SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[kN][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[kN][repref]));
-                dEmean += dE;
-                ndEmean++;
-
-                if (nn_curref_reduc[i][repref] < minhist) {
-                    minhist = nn_curref_reduc[i][repref];
-                }
-
-                if (nn_curref_reduc[i][repref] > maxhist) {
-                    maxhist = nn_curref_reduc[i][repref];
-                }
-
-                if (dE > spectlimit) {
-                    printf("i=%i kn=%i REFLAB for info not used - not relevant Lr=%3.2f ar=%3.2f br=%3.2f \n", i,  kN, (double)(Lr / 327.68f), (double)(ar / 327.68f), (double)(br / 327.68f));
-                    printf("IMAGE: kn=%i hist=%7.0f chro_num=%5.1f hue=%2.2f chro=%2.3f xx=%f yy=%f YY=%f\n", kN, (double) nn_curref_reduc[i][repref], (double) chronum_curref_reduc[i][repref], (double) hue_curref_reduc[i][repref], (double) chro_curref_reduc[i][repref], (double) xx_curref_reduc[i][repref], (double) yy_curref_reduc[i][repref], (double) YY_curref_reduc[i][repref]);
-                    printf("kn=%i REfxy xxr=%f yyr=%f YYr=%f\n", kN, (double) reff_spect_xx_camera[kN][repref], (double) reff_spect_yy_camera[kN][repref], (double) reff_spect_Y_camera[kN][repref]);
-                    printf("kn=%i DELTA delt=%f\n", kN, dE);
-                    printf("....  \n");
-                }
-            }
-
-            good_spectral[kN] = true;//good spectral are spectral color that match color histogram xy
-        }
-
-        if (settings->verbose) {
-            printf("Patch Mean deltaE=%f minhisto=%6.0f maxhisto=%7.0f \n", (double) dEmean / ndEmean, (double) minhist, (double) maxhist);
-        }
-    }
-
-    // reuse some buffers
-    array2D<float>& R_curref_reduc = xx_curref_reduc;
-    array2D<float>& G_curref_reduc = yy_curref_reduc;
-    array2D<float>& B_curref_reduc = YY_curref_reduc;
-
-    //reconvert to RGB for "reduction"
-    for (int i = 0; i < w; i++) {
-        const float X = 65535.f * xx_curref_reduc[i][repref] * YY_curref_reduc[i][repref] / yy_curref_reduc[i][repref];
-        const float Y = 65535.f * YY_curref_reduc[i][repref];
-        const float Z = 65535.f * (1.f - xx_curref_reduc[i][repref] - yy_curref_reduc[i][repref]) * YY_curref_reduc[i][repref] / yy_curref_reduc[i][repref];
-        float r, g, b;
-        Color::xyz2rgb(X, Y, Z, r, g, b, wip);
-        R_curref_reduc[i][repref] = r / rmm[repref];
-        G_curref_reduc[i][repref] = g / gmm[repref];
-        B_curref_reduc[i][repref] = b / bmm[repref];
-    }
-
-//end first part
-
-    //Now begin real calculations
-    separated = false;
-    //recalculate histogram with good values and not estimated
-    ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar); //calculate chroma xy (xyY) for Z known colors on under 90 illuminants
-    //calculate x y Y
-    int sizcurr = siza;//choice of number of correlate colors in image
-    array2D<float> xxyycurr_reduc(N_t, 2 * sizcurr);
-    array2D<float> reff_spect_xxyy(N_t, 2 * Nc + 2);
-    array2D<float> reff_spect_xxyy_prov(N_t, 2 * Nc + 2);
-
-    float minstud = 100000.f;
-    int goodref = 1;
-
-//calculate  x y z for each pixel with multiplier rmm gmm bmm
-
-    for (int tt = 0; tt < N_t; ++tt) {//N_t
-        for (int i = 0; i < w; ++i) {
-            float unused;
-
-            const float RR = rmm[tt] * R_curref_reduc[i][repref];
-            const float GG = gmm[tt] * G_curref_reduc[i][repref];
-            const float BB = bmm[tt] * B_curref_reduc[i][repref];
-            Color::rgbxyY(RR, GG, BB, xxyycurr_reduc[2 * i][tt], xxyycurr_reduc[2 * i + 1][tt], unused, wp);
-        }
-
-        for (int j = 0; j < Ncr ; ++j) {
-            reff_spect_xxyy_prov[2 * j][tt] = Tx[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]); // x from xyY
-            reff_spect_xxyy_prov[2 * j + 1][tt] = Ty[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]); // y from xyY
-        }
-
-        int kk = -1;
-
-        for (int i = 0; i < Ncr ; ++i) {
-            if (good_spectral[i]) {
-                kk++;
-                //we calculate now absolute chroma for each spectral color
-                reff_spect_xxyy[2 * kk][tt] = reff_spect_xxyy_prov[2 * i][tt];
-                reff_spect_xxyy[2 * kk + 1][tt] = reff_spect_xxyy_prov[2 * i + 1][tt];
-            }
-        }
-
-        const float abstud = std::fabs(studentXY(xxyycurr_reduc, reff_spect_xxyy, 2 * w, 2 * kk, tt));
-
-        if (abstud < minstud) {  // find the minimum Student
-            minstud = abstud;
-            goodref = tt;
-        }
-    }
-
-    if (extra) {//always used if extra = true because I made this choice, brings better results
-        struct Tempgreen {
-            float student;
-            int tempref;
-            int greenref;
-            bool operator()(const Tempgreen& ltg, const Tempgreen& rtg)
-            {
-                return ltg.student < rtg.student;
-            }
+        TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(profuse); //ACESp0 or sRGB
+        const float wp[3][3] = {
+            {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
+            {static_cast<float>(wprof[1][0]), static_cast<float>(wprof[1][1]), static_cast<float>(wprof[1][2])},
+            {static_cast<float>(wprof[2][0]), static_cast<float>(wprof[2][1]), static_cast<float>(wprof[2][2])}
         };
-        Tempgreen  Tgstud[N_g];
 
-        for (int i = 0; i < N_g; ++i) {//init variables with
-            Tgstud[i].student = 1000.f;//max value to initialize
-            Tgstud[i].tempref = 57;//5002K position in the list
-            Tgstud[i].greenref = 55;// 1.f position in the list
+        TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(profuse);//ACESp0 or sRGB
+        //inverse matrix user select
+        const float wip[3][3] = {
+            {static_cast<float>(wiprof[0][0]), static_cast<float>(wiprof[0][1]), static_cast<float>(wiprof[0][2])},
+            {static_cast<float>(wiprof[1][0]), static_cast<float>(wiprof[1][1]), static_cast<float>(wiprof[1][2])},
+            {static_cast<float>(wiprof[2][0]), static_cast<float>(wiprof[2][1]), static_cast<float>(wiprof[2][2])}
+        };
+
+        const int bfwitc = bfw;
+        const int bfhitc = bfh;
+
+        typedef struct WbGreen {
+            double green;
+            float snedecor;//1. actually but put in case of confiance interval
+        } WbGreen;
+        //green (tint) values between 0.4 to 4.0
+        constexpr WbGreen gree[134] = {//symmetric coefficient between 0.717 and 1.40
+            {0.400, 1.f},
+            {0.420, 1.f},
+            {0.440, 1.f},
+            {0.460, 1.f},
+            {0.480, 1.f},
+            {0.500, 1.f},
+            {0.520, 1.f},
+            {0.540, 1.f},
+            {0.550, 1.f},
+            {0.560, 1.f},
+            {0.570, 1.f},
+            {0.580, 1.f},
+            {0.590, 1.f},
+            {0.600, 1.f},
+            {0.610, 1.f},
+            {0.620, 1.f},//extended range
+            {0.630, 1.f},
+            {0.640, 1.f},
+            {0.650, 1.f},
+            {0.660, 1.f},
+            {0.670, 1.f},
+            {0.680, 1.f},
+            {0.690, 1.f},
+            {0.700, 1.f},
+            {0.714, 1.f},//usual 2 range
+            {0.727, 1.f},
+            {0.741, 1.f},
+            {0.755, 1.f},
+            {0.769, 1.f},
+            {0.784, 1.f},
+            {0.800, 1.f},
+            {0.806, 1.f},
+            {0.813, 1.f},
+            {0.820, 1.f},//usual range
+            {0.826, 1.f},
+            {0.833, 1.f},
+            {0.840, 1.f},
+            {0.847, 1.f},
+            {0.855, 1.f},
+            {0.862, 1.f},
+            {0.870, 1.f},
+            {0.877, 1.f},
+            {0.885, 1.f},
+            {0.893, 1.f},
+            {0.901, 1.f},
+            {0.909, 1.f},
+            {0.917, 1.f},
+            {0.926, 1.f},
+            {0.935, 1.f},
+            {0.943, 1.f},//49 limit low normal
+            {0.952, 1.f},
+            {0.962, 1.f},
+            {0.971, 1.f},
+            {0.980, 1.f},
+            {0.990, 1.f},
+            {1.000, 1.f},//55 reference
+            {1.010, 1.f},
+            {1.020, 1.f},
+            {1.030, 1.f},
+            {1.040, 1.f},
+            {1.050, 1.f},
+            {1.060, 1.f},
+            {1.070, 1.f},
+            {1.080, 1.f},
+            {1.090, 1.f},
+            {1.100, 1.f},
+            {1.110, 1.f},
+            {1.120, 1.f},
+            {1.130, 1.f},
+            {1.140, 1.f},
+            {1.150, 1.f},
+            {1.160, 1.f},
+            {1.170, 1.f},
+            {1.180, 1.f},
+            {1.190, 1.f},
+            {1.200, 1.f},
+            {1.210, 1.f},
+            {1.220, 1.f},
+            {1.230, 1.f},
+            {1.240, 1.f},
+            {1.250, 1.f},// usual range
+            {1.275, 1.f},
+            {1.300, 1.f},
+            {1.325, 1.f},
+            {1.350, 1.f},
+            {1.375, 1.f},
+            {1.400, 1.f},//usual 2 range
+            {1.425, 1.f},
+            {1.450, 1.f},
+            {1.475, 1.f},
+            {1.500, 1.f},
+            {1.525, 1.f},
+            {1.550, 1.f},
+            {1.575, 1.f},//extended range
+            {1.600, 1.f},
+            {1.633, 1.f},
+            {1.666, 1.f},
+            {1.700, 1.f},
+            {1.733, 1.f},
+            {1.766, 1.f},
+            {1.800, 1.f},
+            {1.833, 1.f},
+            {1.866, 1.f},
+            {1.900, 1.f},
+            {1.933, 1.f},
+            {1.966, 1.f},
+            {2.000, 1.f},
+            {2.033, 1.f},
+            {2.066, 1.f},
+            {2.100, 1.f},
+            {2.133, 1.f},
+            {2.166, 1.f},
+            {2.200, 1.f},
+            {2.250, 1.f},
+            {2.300, 1.f},
+            {2.350, 1.f},
+            {2.400, 1.f},
+            {2.450, 1.f},
+            {2.500, 1.f},
+            {2.550, 1.f},
+            {2.600, 1.f},
+            {2.650, 1.f},
+            {2.700, 1.f},
+            {2.750, 1.f},
+            {2.800, 1.f},
+            {2.850, 1.f},
+            {2.900, 1.f},
+            {2.950, 1.f},
+            {3.000, 1.f},
+            {3.200, 1.f},
+            {3.400, 1.f},
+            {3.600, 1.f},
+            {3.800, 1.f},
+            {4.000, 1.f}
+        };
+        const int N_g = sizeof(gree) / sizeof(gree[0]);   //number of green
+
+        typedef struct RangeGreen {
+            int begin;
+            int end;
+        } RangeGreen;
+
+        constexpr RangeGreen Rangestandard = {33, 80};//usual green range
+        constexpr RangeGreen Rangestandard2 = {24, 86};//usual 2 green range
+        constexpr RangeGreen Rangeextended = {15, 93};
+        const RangeGreen Rangemax = {0, N_g};
+
+        RangeGreen Rangegreenused;
+
+        if (wbpar.itcwb_rgreen == 0) {
+            Rangegreenused = Rangestandard;
+        } else if (wbpar.itcwb_rgreen == 1) {
+            Rangegreenused = Rangestandard2;
+        } else if (wbpar.itcwb_rgreen == 2) {
+            Rangegreenused = Rangeextended;
+        } else {
+            Rangegreenused = Rangemax;
         }
-        int newdelta = 1.5f * wbpar.itcwb_delta;
-        int dgoodref = rtengine::LIM(newdelta, 1, 8); // 1.5 increase delta temp scan
 
         if (oldsampling == true) {
-            dgoodref = 2;
+            Rangegreenused = Rangestandard2;
         }
 
-        const int scantempbeg = rtengine::max(goodref - (dgoodref + 1), 1);
-        const int scantempend = rtengine::min(goodref + dgoodref, N_t - 1);
-        int goodrefgr = 1;
+        typedef struct WbTxyz {
+            double Tem;
+            double XX;
+            double ZZ;
+        } WbTxyz;
+        //we can change step to increase precision if need  - also in Colortemp.cc with same changes
+        //I don't know how to pass this structure to Colortemp !
+        // X and Z values calculate for each temp between 2000K to  12000K, so no result after 12000K !
+        //of course we can change the step between each temp if need
+        constexpr WbTxyz Txyz[118] = {//temperature Xwb Zwb 118 values  x wb and y wb are calculated after,  Xwb and Ywb calculated with a spreadsheet
+            {2001., 1.273842, 0.145295},
+            {2101., 1.244008, 0.167533},
+            {2201., 1.217338, 0.190697},
+            {2301., 1.193444, 0.214632},
+            {2401., 1.171996, 0.239195},
+            {2501., 1.152883, 0.264539},
+            {2605., 1.134667, 0.290722},
+            {2655., 1.126659, 0.303556},
+            {2705., 1.119049, 0.316446},
+            {2755., 1.111814, 0.329381},
+            {2803., 1.105381, 0.342193},
+            {2856., 1.098258, 0.355599},
+            {2910., 1.091550, 0.369645},
+            {2960., 1.085649, 0.382655},
+            {3003., 1.080982, 0.394258},
+            {3050., 1.075727, 0.406057},
+            {3103., 1.070277, 0.419815},
+            {3153., 1.065384, 0.432769},
+            {3203., 1.060906, 0.446161},
+            {3250., 1.056535, 0.457806},
+            {3303., 1.052034, 0.471422},
+            {3353., 1.047990, 0.484218},
+            {3400., 1.044547, 0.496719},
+            {3450., 1.040667, 0.508891},
+            {3500., 1.037145, 0.521523},
+            {3550., 1.033783, 0.534090},
+            {3600., 1.030574, 0.546590},
+            {3650., 1.027510, 0.559020},
+            {3699., 1.024834, 0.571722},
+            {3801., 1.019072, 0.596102},
+            {3851., 1.016527, 0.608221},
+            {3902., 1.014244, 0.621136},
+            {3952., 1.011729, 0.632447},
+            {4002., 0.996153, 0.609518},
+            {4052., 0.993720, 0.620805},
+            {4102., 0.993908, 0.631520},
+            {4152., 0.989179, 0.643262},
+            {4202., 0.989283, 0.653999},
+            {4252., 0.985039, 0.665536},
+            {4302., 0.985067, 0.676288},
+            {4352., 0.981271, 0.687599},
+            {4402., 0.981228, 0.698349},
+            {4452., 0.977843, 0.709425},
+            {4502., 0.977736, 0.720159},
+            {4552., 0.974728, 0.730993},
+            {4602., 0.974562, 0.741698},
+            {4652., 0.971899, 0.752284},
+            {4702., 0.971681, 0.762949},
+            {4752., 0.969335, 0.773285},
+            {4802., 0.969069, 0.783899},
+            {4827., 0.967570, 0.788836},
+            {4852., 0.967011, 0.793982},
+            {4877., 0.966465, 0.799108},
+            {4902., 0.965933, 0.804214},
+            {4927., 0.965414, 0.809229},
+            {4952., 0.964908, 0.814366},
+            {4977., 0.964415, 0.819412},
+            {5002., 0.963934, 0.824438},//57 reference
+            {5027., 0.963465, 0.829444},
+            {5052., 0.963008, 0.834429},
+            {5077., 0.962563, 0.839395},
+            {5102., 0.962129, 0.844339},
+            {5127., 0.961706, 0.849263},
+            {5152., 0.961294, 0.854166},
+            {5177., 0.960893, 0.859049},
+            {5202., 0.960501, 0.863911},
+            {5252., 0.959749, 0.873572},
+            {5302., 0.959313, 0.883815},
+            {5352., 0.958361, 0.892644},
+            {5402., 0.957903, 0.902793},
+            {5452., 0.957116, 0.911379},
+            {5502., 0.956639, 0.921431},
+            {5552., 0.956002, 0.929779},
+            {5602., 0.955509, 0.939728},
+            {5652., 0.955008, 0.947842},
+            {5702., 0.954502, 0.957685},
+            {5752., 0.954124, 0.965569},
+            {5802., 0.953608, 0.975303},
+            {5852., 0.953342, 0.982963},
+            {5902., 0.952818, 0.992584},
+            {5952., 0.952652, 1.000025},
+            {6002., 0.952122, 1.009532},
+            {6052., 0.952047, 1.016759},
+            {6102., 0.951514, 1.026149},
+            {6152., 0.951520, 1.033168},
+            {6202., 0.950985, 1.042439},
+            {6252., 0.951064, 1.049256},
+            {6302., 0.950530, 1.058406},
+            {6352., 0.950674, 1.065027},
+            {6402., 0.950143, 1.074055},
+            {6452., 0.950345, 1.080484},
+            {6502., 0.950201, 1.088097},
+            {6552., 0.950070, 1.095633},
+            {6602., 0.949952, 1.103094},
+            {6652., 0.949846, 1.110479},
+            {6702., 0.949752, 1.119138},
+            {6752., 0.949668, 1.125027},
+            {6802., 0.949596, 1.132190},
+            {6902., 0.949033, 1.147691},
+            {7002., 0.949402, 1.160129},
+            {7152., 0.949348, 1.180429},
+            {7301., 0.948896, 1.201432},
+            {7451., 0.949434, 1.219076},
+            {7601., 0.949099, 1.239061},
+            {7751., 0.949729, 1.255559},
+            {7901., 0.949498, 1.274460},
+            {8151., 0.950361, 1.300912},
+            {8301., 0.950253, 1.318464},
+            {8451., 0.950966, 1.332651},
+            {8601., 0.950941, 1.349261},
+            {8801., 0.951772, 1.367421},
+            {9001., 0.951969, 1.387639},
+            {9201., 0.952784, 1.404422},
+            {9401., 0.953081, 1.423213},
+            {9901., 0.954537, 1.464134},
+            {10501., 0.956321, 1.508623},
+            {11001., 0.957747, 1.541281},
+            {12001., 0.960440, 1.601019}
+        };
+        bool purp = true;//if inpaint-opposed or something else enable purp
 
-        for (int gr = Rangegreenused.begin; gr < Rangegreenused.end; ++gr) {
-            float minstudgr = 100000.f;
-            goodrefgr = 1;
+        const int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
+        constexpr int Nc = 347 + 1; //348 number of reference spectral colors
+        int Ncr = 348;
 
-            for (int tt = scantempbeg; tt < scantempend; ++tt) {
-                double r, g, b;
-                ColorTemp WBiter(Txyz[tt].Tem, gree[gr].green, 1.f, "Custom", wbpar.observer);
-                WBiter.getMultipliers(r, g, b);
-                float rm = imatrices.cam_rgb[0][0] * r + imatrices.cam_rgb[0][1] * g + imatrices.cam_rgb[0][2] * b;
-                float gm = imatrices.cam_rgb[1][0] * r + imatrices.cam_rgb[1][1] * g + imatrices.cam_rgb[1][2] * b;
-                float bm = imatrices.cam_rgb[2][0] * r + imatrices.cam_rgb[2][1] * g + imatrices.cam_rgb[2][2] * b;
-                //recalculate Multipliers now with good range of temp and green
-
-                const float new_pre_mul[4] = { ri->get_pre_mul(0) / rm, ri->get_pre_mul(1) / gm, ri->get_pre_mul(2) / bm, ri->get_pre_mul(3) / gm };
-                float new_scale_mul[4];
-                const float gain = calculate_scale_mul(new_scale_mul, new_pre_mul, c_white, cblacksom, isMono, ri->get_colors());
-
-                rm = new_scale_mul[0] / scale_mul[0] * gain;
-                gm = new_scale_mul[1] / scale_mul[1] * gain;
-                bm = new_scale_mul[2] / scale_mul[2] * gain;
-                rmm[tt] = rm / gm;
-                gmm[tt] = 1.f;
-                bmm[tt] = bm / gm;
-            }
-
-
-            for (int tt = scantempbeg; tt < scantempend; ++tt) {//N_t
-                for (int i = 0; i < w; ++i) {
-                    float unused;
-
-                    const float RR = rmm[tt] * R_curref_reduc[i][repref];
-                    const float GG = gmm[tt] * G_curref_reduc[i][repref];
-                    const float BB = bmm[tt] * B_curref_reduc[i][repref];
-                    Color::rgbxyY(RR, GG, BB, xxyycurr_reduc[2 * i][tt], xxyycurr_reduc[2 * i + 1][tt], unused, wp);
-                }
-
-                //recalculate xy spectral now with good range of temp and green
-
-                for (int j = 0; j < Ncr ; ++j) {
-                    reff_spect_xxyy_prov[2 * j][tt] = Tx[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]); // x from xyY
-                    reff_spect_xxyy_prov[2 * j + 1][tt] = Ty[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]); // y from xyY
-                }
-
-                int kkg = -1;
-
-                for (int i = 0; i < Ncr ; ++i) {
-                    if (good_spectral[i]) {
-                        kkg++;
-                        reff_spect_xxyy[2 * kkg][tt] = reff_spect_xxyy_prov[2 * i][tt];
-                        reff_spect_xxyy[2 * kkg + 1][tt] = reff_spect_xxyy_prov[2 * i + 1][tt];
-                    }
-                }
-
-                //now we have good spectral data
-                //calculate student correlation
-                const float abstudgr = std::fabs(studentXY(xxyycurr_reduc, reff_spect_xxyy, 2 * w, 2 * kkg, tt));
-
-                if (abstudgr < minstudgr) {  // find the minimum Student
-                    minstudgr = abstudgr;
-                    goodrefgr = tt;
-                }
-
-                //found the values
-                Tgstud[gr].tempref = goodrefgr;
-                Tgstud[gr].greenref = gr;
-                Tgstud[gr].student = minstudgr;
-
-            }
+        if (wbpar.itcwb_prim == "srgb") {
+            Ncr = 347 + 1;
+        } else if (wbpar.itcwb_prim == "adob") {
+            Ncr = 347 + 1;
+        } else if (wbpar.itcwb_prim == "rec") {
+            Ncr = 347 + 1;
+        } else if (wbpar.itcwb_prim == "ace") {
+            Ncr = 347 + 1;
         }
 
-        float estimchromf = 0.f;
-        float estimhuef = 0.f;
-        float xhf = 0.f;
-        float yhf = 0.f;
-
-        const float swprf = Txyz[goodrefgr].XX + Txyz[goodrefgr].ZZ + 1.f;
-        const float xwprf = Txyz[goodrefgr].XX / swpr;//white point for tt in xy coordinates
-        const float ywprf = 1.f / swprf;
-
-        for (int nh = 0; nh < w; ++nh) {
-            const float chxy = std::sqrt(SQR(xxyycurr_reduc[2 * nh][goodrefgr] - xwprf) + SQR(xxyycurr_reduc[2 * nh + 1][goodrefgr] - ywprf));
-            xhf += xxyycurr_reduc[2 * nh][goodrefgr] - xwprf;
-            yhf += xxyycurr_reduc[2 * nh + 1][goodrefgr] - ywprf;
-            estimchromf += chxy;
+        if (oldsampling) { //low samplin 5.9 with less spectral datas 201
+            Ncr = 202;
         }
 
-        estimhuef = xatan2f(yhf, xhf);
-        estimchromf /= w;
+        array2D<float> Tx(N_t, Nc);
+        array2D<float> Ty(N_t, Nc);
+        array2D<float> Tz(N_t, Nc);
+        array2D<float> Ta(N_t, Nc);
+        array2D<float> Tb(N_t, Nc);
+        array2D<float> TL(N_t, Nc);
+        double TX[Nc];
+        double TY[Nc];
+        double TZ[Nc];
+        std::vector<bool> good_spectral(Nc, false);
+        std::vector<bool> good_size(Nc, false);
 
-        if (settings->verbose) {
-            printf("New white point calculated patch: xwprf=%f ywprf=%f\n", (double) xwprf, (double) ywprf);
-            printf("Info - patch estimation of white-point displacement: chrom=%f hue=%f\n", (double) estimchromf, (double) estimhuef);
-        }
+        float rmm[N_t];
+        float gmm[N_t];
+        float bmm[N_t];
 
-
-        std::sort(Tgstud, Tgstud + N_g, Tgstud[0]);
-
-        // now search the value of green the nearest of 1 with a good student value, I think it is a good choice, perhaps no...
-        // I take the 6 first values
-        // I admit a symetrie in green coefiicient for rgb multiplier...probably not exactly true
-        // perhaps we can used a Snedecor test ? but why...at least we have confidence interval > 90%
-        int greengood = 55;
-
-        int maxkgood = wbpar.itcwb_fgreen;//default 3 - we can change ...to test 2, 4, 5, 6. High values perhaps less good student, but it is a compromise...
-        maxkgood = rtengine::LIM(maxkgood, 1, 6);// 2 6
+        int siza = 237; //192 untill 01/2023 size of histogram
 
         if (oldsampling == true) {
-            maxkgood = 3; // force to 3 with old low sampling
+            siza = 192;//old sampling 5.9 and before...
         }
 
-        int mingood = std::min(std::fabs(Tgstud[0].greenref - 55), std::fabs(Tgstud[1].greenref - 55));
+        // tempref and greenref are camera wb values.
+        // I used them by default to select good spectral values !! but they are changed after
+        tempref = rtengine::min(tempref, 12000.0);
+        int repref = 0;
 
-        for (int k = 0; k < maxkgood; ++k) {
-            mingood = std::min(std::fabs(mingood), std::fabs(Tgstud[k].greenref - 55));
-        }
-
-        for (int k = 0; k < maxkgood ; ++k) {
-            if (mingood == fabs(Tgstud[k].greenref - 55)) {
-                greengood = Tgstud[k].greenref ;
-                goodref = Tgstud[k].tempref;
-                studgood = Tgstud[k].student;
-            }
-        }
-
-        if (settings->verbose) {
-            printf("Green camera=%f\n", keepgreen);
-            printf("Rangegreen begin=%i  Rangegreen end=%i\n", Rangegreenused.begin, Rangegreenused.end);
-            printf("scantemp begin=%i scantemp end=%i\n", scantempbeg, scantempend);
-            printf("Student_0=%f Student_k= %f\n", Tgstud[0].student, Tgstud[maxkgood - 1].student);
-            printf("mingood=%i greeng=%i goodref=%i stud=%f\n", mingood, greengood, goodref, (double) studgood);
-        }
-
-        tempitc = Txyz[goodref].Tem;
-        greenitc = gree[greengood].green;
-
-        int greencam = 55;
-
-        for (int gg = 0; gg < N_g; gg++) {
-            if (gree[gg].green > keepgreen) {
-                greencam = gg;//show the green
+        for (int tt = 0; tt < N_t; tt++) {
+            if (Txyz[tt].Tem > tempref) {
+                repref = tt;//show the select temp
                 break;
             }
         }
 
-        bool greenex = false;
+        //calculate R G B multiplier in function illuminant and temperature
+        const bool isMono = (ri->getSensorType() == ST_FUJI_XTRANS && raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO))
+                            || (ri->getSensorType() == ST_BAYER && raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO));
+        double keepgreen = greenitc;
 
-        if ((keepgreen > 0.92 && keepgreen < 1.16) && oldsampling == false) {
-            if (abs(greengood - greencam) > 5) {
+        for (int tt = 0; tt < N_t; ++tt) {
+            double r, g, b;
+            float rm, gm, bm;
+            ColorTemp WBiter = ColorTemp(Txyz[tt].Tem, greenitc, 1.f, "Custom", wbpar.observer);
+            WBiter.getMultipliers(r, g, b);
+
+            rm = imatrices.cam_rgb[0][0] * r + imatrices.cam_rgb[0][1] * g + imatrices.cam_rgb[0][2] * b;
+            gm = imatrices.cam_rgb[1][0] * r + imatrices.cam_rgb[1][1] * g + imatrices.cam_rgb[1][2] * b;
+            bm = imatrices.cam_rgb[2][0] * r + imatrices.cam_rgb[2][1] * g + imatrices.cam_rgb[2][2] * b;
+
+            const float new_pre_mul[4] = { ri->get_pre_mul(0) / rm, ri->get_pre_mul(1) / gm, ri->get_pre_mul(2) / bm, ri->get_pre_mul(3) / gm };
+            float new_scale_mul[4];
+            const float gain = calculate_scale_mul(new_scale_mul, new_pre_mul, c_white, cblacksom, isMono, ri->get_colors());
+
+            rm = new_scale_mul[0] / scale_mul[0] * gain;
+            gm = new_scale_mul[1] / scale_mul[1] * gain;
+            bm = new_scale_mul[2] / scale_mul[2] * gain;
+            rmm[tt] = rm / gm;
+            gmm[tt] = 1.f;
+            bmm[tt] = bm / gm;
+            //return rmm, gmm, bmm in function of temp
+        }
+
+        struct hiss {
+            int histnum;
+            int index;
+            bool operator()(const hiss& lhis, const hiss& rhis)
+            {
+                return lhis.histnum < rhis.histnum;
+            }
+
+        } ;
+
+        //intermediate structure
+        struct chrom {
+            float chroxy_number;
+            float number;
+            float hue;
+            float chroxy;
+            float chrox;
+            float chroy;
+            float Y;
+            int index;
+            int interest;
+            bool operator()(const chrom& lchro, const chrom& rchro)
+            {
+                return lchro.chroxy_number < rchro.chroxy_number;
+            }
+
+        } ;
+
+        LUTu histxy(siza); //number of values for each pair xy
+
+        histxy.clear();
+
+        LUTf xxx(siza);//for color references calculated ==> max in images "like histogram"
+
+        xxx.clear();
+
+        LUTf yyy(siza);
+
+        yyy.clear();
+
+        LUTf YYY(siza);//not used directly, but necessary to keep good range
+
+        YYY.clear();
+
+        bool separated = true;//true
+
+        int w = -1;
+
+        array2D<float> reff_spect_yy_camera(N_t, 2 * Nc + 2);
+
+        array2D<float> reff_spect_xx_camera(N_t, 2 * Nc + 2);
+
+        array2D<float> reff_spect_Y_camera(N_t, 2 * Nc + 2);
+
+        //call tempxy to calculate for 348 or 201color references Temp and XYZ with cat02
+        ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar); //calculate chroma xy (xyY) for Z known colors on under 200 illuminants
+
+        //find the good spectral values
+        //calculate xy reference spectral for tempref
+        for (int j = 0; j < Ncr ; j++) {
+            float xxx = TX[j] / (TX[j] + TY[j] +  TZ[j]); // x from xyY
+            float yyy = TY[j] / (TX[j] + TY[j] +  TZ[j]); // y from xyY
+            float YY = TY[j];
+            reff_spect_xx_camera[j][repref] = xxx;
+            reff_spect_yy_camera[j][repref] = yyy;
+            reff_spect_Y_camera[j][repref] =  YY;
+        }
+
+        array2D<float> xc(bfwitc, bfhitc);
+        array2D<float> yc(bfwitc, bfhitc);
+        array2D<float> Yc(bfwitc, bfhitc);
+
+        const int rep = rtengine::LIM(repref + 1, 0, N_t);
+
+        //initialize calculation of xy current for tempref
+        if (oldsampling == false) {
+
+            //small denoise with median 3x3 strong
+            float** tmL;
+            int wid = bfw;
+            int hei = bfh;
+            tmL = new float*[hei];
+
+            for (int i = 0; i < hei; ++i) {
+                tmL[i] = new float[wid];
+            }
+
+            typedef ImProcFunctions::Median Median;
+            Median medianTypeL = Median::TYPE_3X3_STRONG;//x2
+            ImProcFunctions::Median_Denoise(redloc, redloc, bfw, bfh, medianTypeL, 2, false, tmL);
+            ImProcFunctions::Median_Denoise(greenloc, greenloc, bfw, bfh, medianTypeL, 2, false, tmL);
+            ImProcFunctions::Median_Denoise(blueloc, blueloc, bfw, bfh, medianTypeL, 2, false, tmL);
+
+            for (int i = 0; i < hei; ++i) {
+                delete[] tmL[i];
+            }
+
+            delete[] tmL;
+        }
+
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+
+        for (int y = 0; y < bfh ; ++y) {
+            for (int x = 0; x < bfw ; ++x) {
+                const float RR = rmm[rep] * redloc[y][x];
+                const float GG = gmm[rep] * greenloc[y][x];
+                const float BB = bmm[rep] * blueloc[y][x];
+
+                Color::rgbxyY(RR, GG, BB, xc[y][x], yc[y][x], Yc[y][x], wp);//use sRGB Adobe Rec2020 ACESp0
+            }
+        }
+
+        //histogram xy depend of temp...but in most cases D45 ..D65..
+        //calculate for this image the mean values for each family of color, near histogram x y (number)
+        //xy vary from x 0..0.77  y 0..0.82
+        //neutral values are near x=0.34 0.33 0.315 0.37 y =0.35 0.36 0.34
+        //skin are about x 0.45  0.49 y 0.4 0.47
+        //blue sky x=0.25 y=0.28  and x=0.29 y=0.32
+        // step about 0.02   x 0.32 0.34  y= 0.34 0.36 skin    --  sky x 0.24 0.30 y 0.28 0.32
+
+
+        if (wbpar.itcwb_nopurple == true) {//since 21 april - change to filter magenta
+            purp = false;
+        }
+
+        if (oldsampling == false) {
+            //printf("Use high smapling\n");
+            histoxyY(bfhitc, bfwitc, xc, yc, Yc, xxx,  yyy, YYY, histxy, purp);//purp enable,  enable purple color in WB
+            //return histogram x and y for each temp and in a range of 235 colors (siza)
+        } else {
+            //printf("Use low smapling - 5.9\n");
+            histoxyY_low(bfhitc, bfwitc, xc, yc, Yc, xxx,  yyy, YYY, histxy);//low scaling
+        }
+
+        // free some memory
+        xc.free();
+        yc.free();
+        Yc.free();
+        //calculate x y Y
+        const int sizcurrref = siza;//choice of number of correlate colors in image
+        array2D<float> histcurrref(N_t, sizcurrref);
+        array2D<float> xx_curref(N_t, sizcurrref);
+        array2D<float> yy_curref(N_t, sizcurrref);
+        array2D<float> YY_curref(N_t, sizcurrref);
+        array2D<float> xx_curref_reduc(N_t, sizcurrref);
+        array2D<float> yy_curref_reduc(N_t, sizcurrref);
+        array2D<float> YY_curref_reduc(N_t, sizcurrref);
+        array2D<float> nn_curref_reduc(N_t, sizcurrref);//new array to improve patch
+        array2D<float> chronum_curref_reduc(N_t, sizcurrref);//new array to improve patch
+        array2D<float> hue_curref_reduc(N_t, sizcurrref);//new array to improve patch
+        array2D<float> chro_curref_reduc(N_t, sizcurrref);//new array to improve patch
+        array2D<float> estim_hue(N_t, sizcurrref);//new array to improve patch
+
+        hiss Wbhis[siza];
+
+        for (int nh = 0; nh < siza; nh++) {
+            Wbhis[nh].histnum = histxy[nh];
+            Wbhis[nh].index = nh;
+        }
+
+        //sort in ascending order
+        std::sort(Wbhis, Wbhis + siza, Wbhis[0]);
+        int n1 = 0;
+        int n4 = 0;
+        int n15 = 0;
+        int n30 = 0;
+
+        //part to improve
+        //determined the number of colors who be used after
+        int ntot = 0;
+
+        for (int nh = 0; nh < siza; nh++) {
+            if (Wbhis[nh].histnum > 0) {
+                ntot++;
+            }
+        }
+
+        dread = ntot;//read colors
+
+        for (int nh = 0; nh < siza; nh++) {
+            if (Wbhis[nh].histnum < 30) {
+                n30++;    //keep only existing color but avoid to small
+
+                if (Wbhis[nh].histnum < 15) {
+                    n15++;    //keep only existing color but avoid to small
+
+                    if (Wbhis[nh].histnum < 4) {
+                        n4++;    //keep only existing color but avoid to small
+
+                        if (Wbhis[nh].histnum < 1) {
+                            n1++;    //keep only existing color but avoid to small
+                        }
+                    }
+                }
+            }
+        }
+
+        int ntr = n30;
+
+        if (ntr > (siza - 25)) {
+            ntr = n15;    //if to less elements 25 elements mini
+        }
+
+        if (ntr > (siza - 23)) {
+            ntr = n4;    //if to less elements 25 elements mini
+        }
+
+        if (ntr > (siza - 20)) {
+            ntr = n1;    //if to less elements 20 elements mini - normally never be used !
+        }
+
+        int sizcurr2ref = sizcurrref - ntr;
+        const int sizcu30 = sizcurrref - n30;
+        int maxsiz = settings->itcwb_maxsize; // between 60 to 90
+        maxsiz = LIM(maxsiz, 50, 80);
+        int nbm = maxsiz;
+        int sizcu4 = maxsiz;
+
+        if (oldsampling == true) {
+            nbm = 55;
+            sizcu4 = rtengine::min(sizcu30, nbm);//size of chroma values
+        }
+
+        if (settings->verbose) {
+            printf("number total datas read=%i\n", ntot);
+            printf("Others datas - ntr=%i sizcurr2ref=%i sizcu4=%i sizcu30=%i\n", ntr, sizcurr2ref, sizcu4, sizcu30);
+            printf("Number max of data samples in last patch=%i\n", Wbhis[siza - 1].histnum);
+            printf("Number of data samples in beginning patch =%i\n", Wbhis[siza - nbm].histnum);
+        }
+
+        chrom wbchro[sizcu4];
+        const float swpr = Txyz[repref].XX + Txyz[repref].ZZ + 1.f;
+        const float xwpr = Txyz[repref].XX / swpr;//white point for tt in xy coordinates
+        const float ywpr = 1.f / swpr;
+
+        for (int i = 0; i < sizcu4; ++i) { //take the max values
+            histcurrref[i][repref] = Wbhis[siza - (i + 1)].histnum;
+            xx_curref[i][repref] = xxx[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
+            yy_curref[i][repref] = yyy[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
+            YY_curref[i][repref] = YYY[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
+        }
+
+        int minsize = wbpar.itcwb_minsize;
+        int maxsize = maxsiz;
+        bool isponderate = wbpar.itcwb_ponder;//reused to build patch ponderate
+
+        bool isponder = true;//with true moving average
+        float powponder = settings->itcwb_powponder;
+        powponder = LIM(powponder, 0.01f, 0.2f);
+
+        if (oldsampling == false) {
+            for (int j = minsize; j < maxsize; ++j) {//20 empirical minimal value default to ensure a correlation
+                if (!good_size[j]) {
+                    float estimchrom = 0.f;
+                    float countchxynum = 0.f;
+
+                    float xh = 0.f;
+                    float yh = 0.f;
+                    wbchro[j].hue =  0.f;
+                    wbchro[j].chroxy_number = 0.f;
+                    wbchro[j].number = 0.f;
+                    wbchro[j].chroxy = 0.f;
+                    wbchro[j].chrox = 0.f;
+                    wbchro[j].chroy = 0.f;
+                    wbchro[j].Y = 0.f;
+                    wbchro[j].index = 0;
+                    int ind1 = 1;
+                    int ind2 = -1;
+                    float chxy1 = 0.f;
+                    float chxy2 = 0.f;
+                    float chxynum1 = 0.f;
+                    float chxynum2 = 0.f;
+
+                    for (int nh = 0; nh < j; ++nh) {
+                        ind1++;
+                        ind2++;
+
+                        if (ind1 < j && !isponderate) {
+                            chxy1 = std::sqrt(SQR(xx_curref[ind1][repref] - xwpr) + SQR(yy_curref[ind1][repref] - ywpr));
+                        }
+
+                        if (ind2 <= 0 && !isponderate) {
+                            chxy2 = std::sqrt(SQR(xx_curref[ind2][repref] - xwpr) + SQR(yy_curref[ind2][repref] - ywpr));
+                        }
+
+                        const float chxy = std::sqrt(SQR(xx_curref[nh][repref] - xwpr) + SQR(yy_curref[nh][repref] - ywpr));
+                        xh += xx_curref[nh][repref] - xwpr;
+                        yh += yy_curref[nh][repref] - ywpr;
+                        wbchro[nh].hue =  fmodf(xatan2f(yy_curref[nh][repref] - ywpr, xx_curref[nh][repref] - xwpr), 2.f * RT_PI_F);
+                        const float chxynum = wbchro[nh].chroxy_number = chxy * pow((double) histcurrref[nh][repref], 0.05);//sqrt was too big no convergence
+
+                        if (ind1 < j && isponderate) { //with issorted ponderate chroma
+                            chxynum1 = chxy1 * pow((double) histcurrref[ind1][repref], 0.05);//0.05 to 0.1 allows convergence, near 1.5 betwween max and min value
+                        }
+
+                        if (ind2 < 0 && isponderate) {
+                            chxynum2 = chxy2 * pow((double) histcurrref[ind2][repref], 0.05);
+                        }
+
+                        wbchro[nh].number = histcurrref[nh][repref];
+                        wbchro[nh].chroxy = std::sqrt(chxy);
+                        wbchro[nh].chrox = xx_curref[nh][repref];
+                        wbchro[nh].chroy = yy_curref[nh][repref];
+                        wbchro[nh].Y = YY_curref[nh][repref];
+                        wbchro[nh].index = nh;
+
+                        if (!isponderate) {
+                            estimchrom += chxy;
+
+                            if (isponder && !isponderate) {
+                                estimchrom += chxy1;
+                                estimchrom += chxy2;
+                            }
+                        }
+
+                        if (isponderate) {
+                            estimchrom += chxynum;
+
+                            if (isponder) {
+                                estimchrom += chxynum1;
+                                estimchrom += chxynum2;
+                            }
+
+                            countchxynum += pow((double)histcurrref[nh][repref], 0.05);//no error, to take into account mean value
+                        }
+                    }
+
+                    estim_hue[j][repref] = xatan2f(yh, xh);
+
+                    if (isponder) {
+                        estimchrom /= (j + 2 * (j - 1)); //extrem not taken
+                    } else {
+                        estimchrom /= j;
+                    }
+
+                    if (estimchrom < minchrom) {
+                        minchrom = estimchrom;
+                        kmin = j;
+                    }
+                }
+
+                good_size[kmin] = true;
+            }
+        }
+
+        if (oldsampling == false) {
+            sizcu4 = kmin;
+        }
+
+        if (oldsampling == true) {
+            float estimchrom = 0.f;
+            float estimhue = 0.f;
+            float xh = 0.f;
+            float yh = 0.f;
+
+            //estimate chromaticity for references
+            for (int nh = 0; nh < sizcu4; ++nh) {
+                const float chxy = std::sqrt(SQR(xx_curref[nh][repref] - xwpr) + SQR(yy_curref[nh][repref] - ywpr));
+                xh += xx_curref[nh][repref] - xwpr;
+                yh += yy_curref[nh][repref] - ywpr;
+                wbchro[nh].chroxy_number = chxy * std::sqrt(histcurrref[nh][repref]);
+                wbchro[nh].chroxy = std::sqrt(chxy);
+                wbchro[nh].chrox = xx_curref[nh][repref];
+                wbchro[nh].chroy = yy_curref[nh][repref];
+                wbchro[nh].Y = YY_curref[nh][repref];
+                wbchro[nh].index = nh;
+                estimchrom += chxy;
+            }
+
+            estimhue = xatan2f(yh, xh);
+            estimchrom /= sizcu4;
+
+
+            if (settings->verbose) {
+                printf("Info - patch estimation of wp displacement (before): chrom=%f hue=%f\n", (double) estimchrom, (double) estimhue);
+            }
+
+        }
+
+        if (oldsampling == true) {
+            isponderate = false;
+        }
+
+
+//    if (issorted) { //sort in descending with chroma values * number
+        //     std::sort(wbchro, wbchro + sizcu4, wbchro[0]);//not used in this goal since 15 april
+//    }
+
+
+        int maxval = maxsiz;
+
+        if (oldsampling == true) {
+            maxval = 34;
+        }
+
+        sizcurr2ref = rtengine::min(sizcurr2ref, maxval);    //keep about the biggest values,
+        int index1 = 0;
+        int index2 = sizcu4;
+
+        if (oldsampling == true) {
+            index1 = 0;
+            index2 = sizcurr2ref;
+            //   printf("INDEX1=%i INDEX2=%i\n", index1, index2);
+        }
+
+        int indn = index1;
+        //  printf("Indn=%i \n", indn);
+
+        if (oldsampling == false) {
+
+            for (int i = index1; i < index2; ++i) {
+                if (wbchro[sizcu4 - (i + 1)].number < 1.f) { //remove too low numbers datas about an area 60*60 pixels or reparted
+                    indn++;
+                }
+            }
+        }
+
+        if (settings->verbose) {
+            printf("Index1=%i index2=%i \n", indn, index2);
+        }
+
+        if (settings->verbose) {
+            printf("Info2 - patch estimation of wp displacement (before):j=%i real=%i chrom=%f hue=%f\n", kmin, index2 - indn, (double) minchrom, (double) estim_hue[kmin][repref]);
+        };
+
+        for (int i = indn; i < index2; ++i) {
+            //improvment to limit high Y values wbchro[sizcu4 - (i + 1)].Y < 0.96  0.96 arbitrary high value, maybe 0.9 àr 0.98...
+            if (wbchro[sizcu4 - (i + 1)].chrox > 0.1f && wbchro[sizcu4 - (i + 1)].chroy > 0.1f && wbchro[sizcu4 - (i + 1)].chroxy > 0.0f  && wbchro[sizcu4 - (i + 1)].Y < 0.96) { //remove value too far from reference spectral
+                w++;// w number of real tests
+                xx_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chrox;
+                yy_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chroy;
+                YY_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].Y;
+                chronum_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chroxy_number;
+                nn_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].number;
+                hue_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].hue;
+                chro_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chroxy;
+            }
+        }
+
+        if (settings->verbose) {
+            printf("Number of real tests=%i\n", w);
+        }
+
+        int maxnb = 1; //since 8 april 2023 - // old rtengine::LIM(wbpar.itcwb_size, 1, 6);
+
+
+        if (wbpar.itcwb_thres > 65) {//normally never used
+            maxnb = (Nc - 1) / wbpar.itcwb_thres; //201 to 211
+        }
+
+        float dEmean = 0.f;
+        int ndEmean = 0;
+
+        for (int nb = 1; nb <= maxnb; ++nb) { //1 is good, but 2 3 or 4 help to find more spectral values
+            for (int i = 0; i < w; ++i) {
+                float mindeltaE = 100000.f;
+                int kN = 0;
+
+                for (int j = 0; j < Ncr ; j++) {
+                    if (!good_spectral[j]) {
+                        const float deltaE = SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[j][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[j][repref]);
+
+                        if (deltaE < mindeltaE) {
+                            mindeltaE = deltaE;
+                            kN = j;
+                        }
+                    }
+                }
+
+                if (settings->verbose) {
+                    float xr = reff_spect_xx_camera[kN][repref];
+                    float yr = reff_spect_yy_camera[kN][repref];
+                    float Yr = reff_spect_Y_camera[kN][repref];
+                    float X_r = (65535.f * (xr * Yr)) / yr;
+                    float Z_r = (65535.f * (1.f - xr - yr) * Yr) / yr;
+                    float Y_r = 65535.f * Yr;
+                    float Lr, ar, br;
+                    Color::XYZ2Lab(X_r, Y_r, Z_r, Lr, ar, br);//it make sense, because known spectral color
+                    float spectlimit = settings->itcwb_deltaspec;
+                    float dE = sqrt(SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[kN][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[kN][repref]));
+                    dEmean += dE;
+                    ndEmean++;
+
+                    if (nn_curref_reduc[i][repref] < minhist) {
+                        minhist = nn_curref_reduc[i][repref];
+                    }
+
+                    if (nn_curref_reduc[i][repref] > maxhist) {
+                        maxhist = nn_curref_reduc[i][repref];
+                    }
+
+                    if (dE > spectlimit) {
+                        printf("i=%i kn=%i REFLAB for info not used - not relevant Lr=%3.2f ar=%3.2f br=%3.2f \n", i,  kN, (double)(Lr / 327.68f), (double)(ar / 327.68f), (double)(br / 327.68f));
+                        printf("IMAGE: kn=%i hist=%7.0f chro_num=%5.1f hue=%2.2f chro=%2.3f xx=%f yy=%f YY=%f\n", kN, (double) nn_curref_reduc[i][repref], (double) chronum_curref_reduc[i][repref], (double) hue_curref_reduc[i][repref], (double) chro_curref_reduc[i][repref], (double) xx_curref_reduc[i][repref], (double) yy_curref_reduc[i][repref], (double) YY_curref_reduc[i][repref]);
+                        printf("kn=%i REfxy xxr=%f yyr=%f YYr=%f\n", kN, (double) reff_spect_xx_camera[kN][repref], (double) reff_spect_yy_camera[kN][repref], (double) reff_spect_Y_camera[kN][repref]);
+                        printf("kn=%i DELTA delt=%f\n", kN, dE);
+                        printf("....  \n");
+                    }
+                }
+
+                good_spectral[kN] = true;//good spectral are spectral color that match color histogram xy
+            }
+
+            if (settings->verbose) {
+                printf("Patch Mean deltaE=%f minhisto=%6.0f maxhisto=%7.0f \n", (double) dEmean / ndEmean, (double) minhist, (double) maxhist);
+            }
+        }
+
+        // reuse some buffers
+        array2D<float>& R_curref_reduc = xx_curref_reduc;
+        array2D<float>& G_curref_reduc = yy_curref_reduc;
+        array2D<float>& B_curref_reduc = YY_curref_reduc;
+
+        //reconvert to RGB for "reduction"
+        for (int i = 0; i < w; i++) {
+            const float X = 65535.f * xx_curref_reduc[i][repref] * YY_curref_reduc[i][repref] / yy_curref_reduc[i][repref];
+            const float Y = 65535.f * YY_curref_reduc[i][repref];
+            const float Z = 65535.f * (1.f - xx_curref_reduc[i][repref] - yy_curref_reduc[i][repref]) * YY_curref_reduc[i][repref] / yy_curref_reduc[i][repref];
+            float r, g, b;
+            Color::xyz2rgb(X, Y, Z, r, g, b, wip);
+            R_curref_reduc[i][repref] = r / rmm[repref];
+            G_curref_reduc[i][repref] = g / gmm[repref];
+            B_curref_reduc[i][repref] = b / bmm[repref];
+        }
+
+//end first part
+
+        //Now begin real calculations
+        separated = false;
+        //recalculate histogram with good values and not estimated
+        ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar); //calculate chroma xy (xyY) for Z known colors on under 90 illuminants
+        //calculate x y Y
+        int sizcurr = siza;//choice of number of correlate colors in image
+        array2D<float> xxyycurr_reduc(N_t, 2 * sizcurr);
+        array2D<float> reff_spect_xxyy(N_t, 2 * Nc + 2);
+        array2D<float> reff_spect_xxyy_prov(N_t, 2 * Nc + 2);
+
+        float minstud = 100000.f;
+        int goodref = 1;
+
+//calculate  x y z for each pixel with multiplier rmm gmm bmm
+
+        for (int tt = 0; tt < N_t; ++tt) {//N_t
+            for (int i = 0; i < w; ++i) {
+                float unused;
+
+                const float RR = rmm[tt] * R_curref_reduc[i][repref];
+                const float GG = gmm[tt] * G_curref_reduc[i][repref];
+                const float BB = bmm[tt] * B_curref_reduc[i][repref];
+                Color::rgbxyY(RR, GG, BB, xxyycurr_reduc[2 * i][tt], xxyycurr_reduc[2 * i + 1][tt], unused, wp);
+            }
+
+            for (int j = 0; j < Ncr ; ++j) {
+                reff_spect_xxyy_prov[2 * j][tt] = Tx[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]); // x from xyY
+                reff_spect_xxyy_prov[2 * j + 1][tt] = Ty[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]); // y from xyY
+            }
+
+            int kk = -1;
+
+            for (int i = 0; i < Ncr ; ++i) {
+                if (good_spectral[i]) {
+                    kk++;
+                    //we calculate now absolute chroma for each spectral color
+                    reff_spect_xxyy[2 * kk][tt] = reff_spect_xxyy_prov[2 * i][tt];
+                    reff_spect_xxyy[2 * kk + 1][tt] = reff_spect_xxyy_prov[2 * i + 1][tt];
+                }
+            }
+
+            const float abstud = std::fabs(studentXY(xxyycurr_reduc, reff_spect_xxyy, 2 * w, 2 * kk, tt));
+
+            if (abstud < minstud) {  // find the minimum Student
+                minstud = abstud;
+                goodref = tt;
+            }
+        }
+
+        if (extra) {//always used if extra = true because I made this choice, brings better results
+            struct Tempgreen {
+                float student;
+                int tempref;
+                int greenref;
+                bool operator()(const Tempgreen& ltg, const Tempgreen& rtg)
+                {
+                    return ltg.student < rtg.student;
+                }
+            };
+            Tempgreen  Tgstud[N_g];
+
+            for (int i = 0; i < N_g; ++i) {//init variables with
+                Tgstud[i].student = 1000.f;//max value to initialize
+                Tgstud[i].tempref = 57;//5002K position in the list
+                Tgstud[i].greenref = 55;// 1.f position in the list
+            }
+
+            int newdelta = 1.5f * wbpar.itcwb_delta;
+            int dgoodref = rtengine::LIM(newdelta, 1, 8); // 1.5 increase delta temp scan
+
+            if (oldsampling == true) {
+                dgoodref = 2;
+            }
+
+            const int scantempbeg = rtengine::max(goodref - (dgoodref + 1), 1);
+            const int scantempend = rtengine::min(goodref + dgoodref, N_t - 1);
+            int goodrefgr = 1;
+
+            for (int gr = Rangegreenused.begin; gr < Rangegreenused.end; ++gr) {
+                float minstudgr = 100000.f;
+                goodrefgr = 1;
+
+                for (int tt = scantempbeg; tt < scantempend; ++tt) {
+                    double r, g, b;
+                    ColorTemp WBiter(Txyz[tt].Tem, gree[gr].green, 1.f, "Custom", wbpar.observer);
+                    WBiter.getMultipliers(r, g, b);
+                    float rm = imatrices.cam_rgb[0][0] * r + imatrices.cam_rgb[0][1] * g + imatrices.cam_rgb[0][2] * b;
+                    float gm = imatrices.cam_rgb[1][0] * r + imatrices.cam_rgb[1][1] * g + imatrices.cam_rgb[1][2] * b;
+                    float bm = imatrices.cam_rgb[2][0] * r + imatrices.cam_rgb[2][1] * g + imatrices.cam_rgb[2][2] * b;
+                    //recalculate Multipliers now with good range of temp and green
+
+                    const float new_pre_mul[4] = { ri->get_pre_mul(0) / rm, ri->get_pre_mul(1) / gm, ri->get_pre_mul(2) / bm, ri->get_pre_mul(3) / gm };
+                    float new_scale_mul[4];
+                    const float gain = calculate_scale_mul(new_scale_mul, new_pre_mul, c_white, cblacksom, isMono, ri->get_colors());
+
+                    rm = new_scale_mul[0] / scale_mul[0] * gain;
+                    gm = new_scale_mul[1] / scale_mul[1] * gain;
+                    bm = new_scale_mul[2] / scale_mul[2] * gain;
+                    rmm[tt] = rm / gm;
+                    gmm[tt] = 1.f;
+                    bmm[tt] = bm / gm;
+                }
+
+
+                for (int tt = scantempbeg; tt < scantempend; ++tt) {//N_t
+                    for (int i = 0; i < w; ++i) {
+                        float unused;
+
+                        const float RR = rmm[tt] * R_curref_reduc[i][repref];
+                        const float GG = gmm[tt] * G_curref_reduc[i][repref];
+                        const float BB = bmm[tt] * B_curref_reduc[i][repref];
+                        Color::rgbxyY(RR, GG, BB, xxyycurr_reduc[2 * i][tt], xxyycurr_reduc[2 * i + 1][tt], unused, wp);
+                    }
+
+                    //recalculate xy spectral now with good range of temp and green
+
+                    for (int j = 0; j < Ncr ; ++j) {
+                        reff_spect_xxyy_prov[2 * j][tt] = Tx[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]); // x from xyY
+                        reff_spect_xxyy_prov[2 * j + 1][tt] = Ty[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]); // y from xyY
+                    }
+
+                    int kkg = -1;
+
+                    for (int i = 0; i < Ncr ; ++i) {
+                        if (good_spectral[i]) {
+                            kkg++;
+                            reff_spect_xxyy[2 * kkg][tt] = reff_spect_xxyy_prov[2 * i][tt];
+                            reff_spect_xxyy[2 * kkg + 1][tt] = reff_spect_xxyy_prov[2 * i + 1][tt];
+                        }
+                    }
+
+                    //now we have good spectral data
+                    //calculate student correlation
+                    const float abstudgr = std::fabs(studentXY(xxyycurr_reduc, reff_spect_xxyy, 2 * w, 2 * kkg, tt));
+
+                    if (abstudgr < minstudgr) {  // find the minimum Student
+                        minstudgr = abstudgr;
+                        goodrefgr = tt;
+                    }
+
+                    //found the values
+                    Tgstud[gr].tempref = goodrefgr;
+                    Tgstud[gr].greenref = gr;
+                    Tgstud[gr].student = minstudgr;
+
+                }
+            }
+
+            float estimchromf = 0.f;
+            float estimhuef = 0.f;
+            float xhf = 0.f;
+            float yhf = 0.f;
+
+            const float swprf = Txyz[goodrefgr].XX + Txyz[goodrefgr].ZZ + 1.f;
+            const float xwprf = Txyz[goodrefgr].XX / swpr;//white point for tt in xy coordinates
+            const float ywprf = 1.f / swprf;
+
+            for (int nh = 0; nh < w; ++nh) {
+                const float chxy = std::sqrt(SQR(xxyycurr_reduc[2 * nh][goodrefgr] - xwprf) + SQR(xxyycurr_reduc[2 * nh + 1][goodrefgr] - ywprf));
+                xhf += xxyycurr_reduc[2 * nh][goodrefgr] - xwprf;
+                yhf += xxyycurr_reduc[2 * nh + 1][goodrefgr] - ywprf;
+                estimchromf += chxy;
+            }
+
+            estimhuef = xatan2f(yhf, xhf);
+            estimchromf /= w;
+
+            if (settings->verbose) {
+                printf("New white point calculated patch: xwprf=%f ywprf=%f\n", (double) xwprf, (double) ywprf);
+                printf("Info - patch estimation of white-point displacement: chrom=%f hue=%f\n", (double) estimchromf, (double) estimhuef);
+            }
+
+
+            std::sort(Tgstud, Tgstud + N_g, Tgstud[0]);
+
+            // now search the value of green the nearest of 1 with a good student value, I think it is a good choice, perhaps no...
+            // I take the 6 first values
+            // I admit a symetrie in green coefiicient for rgb multiplier...probably not exactly true
+            // perhaps we can used a Snedecor test ? but why...at least we have confidence interval > 90%
+            int greengood = 55;
+
+            int maxkgood = wbpar.itcwb_fgreen;//default 3 - we can change ...to test 2, 4, 5, 6. High values perhaps less good student, but it is a compromise...
+            maxkgood = rtengine::LIM(maxkgood, 1, 6);// 2 6
+
+            if (oldsampling == true) {
+                maxkgood = 3; // force to 3 with old low sampling
+            }
+
+            int mingood = std::min(std::fabs(Tgstud[0].greenref - 55), std::fabs(Tgstud[1].greenref - 55));
+
+            for (int k = 0; k < maxkgood; ++k) {
+                mingood = std::min(std::fabs(mingood), std::fabs(Tgstud[k].greenref - 55));
+            }
+
+            for (int k = 0; k < maxkgood ; ++k) {
+                if (mingood == fabs(Tgstud[k].greenref - 55)) {
+                    greengood = Tgstud[k].greenref ;
+                    goodref = Tgstud[k].tempref;
+                    studgood = Tgstud[k].student;
+                }
+            }
+
+            if (settings->verbose) {
+                printf("Green camera=%f\n", keepgreen);
+                printf("Rangegreen begin=%i  Rangegreen end=%i\n", Rangegreenused.begin, Rangegreenused.end);
+                printf("scantemp begin=%i scantemp end=%i\n", scantempbeg, scantempend);
+                printf("Student_0=%f Student_k= %f\n", Tgstud[0].student, Tgstud[maxkgood - 1].student);
+                printf("mingood=%i greeng=%i goodref=%i stud=%f\n", mingood, greengood, goodref, (double) studgood);
+            }
+
+            tempitc = Txyz[goodref].Tem;
+            greenitc = gree[greengood].green;
+
+            int greencam = 55;
+
+            for (int gg = 0; gg < N_g; gg++) {
+                if (gree[gg].green > keepgreen) {
+                    greencam = gg;//show the green
+                    break;
+                }
+            }
+
+            bool greenex = false;
+
+            if ((keepgreen > 0.92 && keepgreen < 1.16) && oldsampling == false) {
+                if (abs(greengood - greencam) > 5) {
+                    double ag = 0.;
+                    double gcal = gree[greengood].green;
+                    ag = 0.96 * (gcal - keepgreen);
+                    greenitc = gcal - ag;
+                    greenex = true;
+
+                    if (settings->verbose) {
+                        printf("green correction_1=%f \n", ag);
+                    }
+                } else {
+                    double ag = 0.;
+                    double gcal = gree[greengood].green;
+
+                    if (keepgreen > 1.09) {
+                        ag = 0.10 * (gcal - keepgreen) * abs(greengood - greencam);
+                    } else {
+                        ag = 0.16 * (gcal - keepgreen) * abs(greengood - greencam);
+                    }
+
+                    greenitc = gcal - ag;
+                    greenex = true;
+
+                    if (settings->verbose) {
+                        printf("green correction_0=%f \n", ag);
+                    }
+
+                }
+            }
+
+            if (((keepgreen >= 0.952 && keepgreen < 1.25) && greengood > 55)  && oldsampling == false && !greenex) {
                 double ag = 0.;
-                double gcal = gree[greengood].green;
+                double gcal = gree[greengood].green;//empirical  correction when green suspicious
                 ag = 0.96 * (gcal - keepgreen);
                 greenitc = gcal - ag;
                 greenex = true;
 
                 if (settings->verbose) {
-                    printf("green correction_1=%f \n", ag);
+                    printf("green correction_2=%f \n", ag);
                 }
-            } else {
+            }
+
+            if (((greengood > 41 &&  keepgreen < 0.7)  || (greengood > 47 &&  keepgreen < 0.952)) && oldsampling == false && !greenex) {
                 double ag = 0.;
                 double gcal = gree[greengood].green;
-                if(keepgreen > 1.09) {
-                    ag = 0.10 * (gcal - keepgreen) * abs(greengood - greencam);
-                } else {
-                    ag = 0.16 * (gcal - keepgreen) * abs(greengood - greencam);
+                ag = 0.95 * (gcal - keepgreen);//empirical  correction when green low - to improve
+
+                if (purp == false) {
+                    ag -= 0.12;
                 }
-                greenitc = gcal - ag;
-                greenex = true;
 
                 if (settings->verbose) {
-                    printf("green correction_0=%f \n", ag);
+                    printf("green correction_3=%f \n", ag);
                 }
 
+                greenitc = gcal - ag;
             }
         }
 
-        if (((keepgreen >= 0.952 && keepgreen < 1.25) && greengood > 55)  && oldsampling == false && !greenex) {
-            double ag = 0.;
-            double gcal = gree[greengood].green;//empirical  correction when green suspicious
-            ag = 0.96 * (gcal - keepgreen);
-            greenitc = gcal - ag;
-            greenex = true;
+        avg_rm = 10000.f * rmm[goodref];
+        avg_gm = 10000.f * gmm[goodref];
+        avg_bm = 10000.f * bmm[goodref];
 
-            if (settings->verbose) {
-                printf("green correction_2=%f \n", ag);
-            }
+        if (!extra) {
+            tempitc = Txyz[goodref].Tem;
         }
 
-        if (((greengood > 41 &&  keepgreen < 0.7)  || (greengood > 47 &&  keepgreen < 0.952)) && oldsampling == false && !greenex) {
-            double ag = 0.;
-            double gcal = gree[greengood].green;
-            ag = 0.95 * (gcal - keepgreen);//empirical  correction when green low - to improve
+        //now we have temp green and student
+        if (settings->verbose) {
+            //  printf("ITCWB tempitc=%f gritc=%f stud=%f \n", tempitc, greenitc, studgood);
+            opti[0].stud = studgood;
+            opti[0].minc = minchrom;
 
-            if (purp == false) {
-                ag -= 0.12;
-            }
+            printf("ITCWB tempitc=%f gritc=%f stud=%f minchrom=%f\n", tempitc, greenitc, opti[0].stud, opti[0].minc);
 
-            if (settings->verbose) {
-                printf("green correction_3=%f \n", ag);
-            }
-
-            greenitc = gcal - ag;
         }
-    }
 
-    avg_rm = 10000.f * rmm[goodref];
-    avg_gm = 10000.f * gmm[goodref];
-    avg_bm = 10000.f * bmm[goodref];
+        if (tempitc < 4000.f || tempitc > 6000.f) {
+            opti[0].stud = studgood;
+            opti[0].minc = minchrom;
 
-    if (!extra) {
-        tempitc = Txyz[goodref].Tem;
-    }
+            tempref = 5000.f;
+            opti[1].stud = studgood;
+            opti[1].minc = minchrom;
 
-    //now we have temp green and student
-    if (settings->verbose) {
-        printf("ITCWB tempitc=%f gritc=%f stud=%f \n", tempitc, greenitc, studgood);
+        } else {
+            
+            itciterate = false;
+        }
+
     }
 }
 
