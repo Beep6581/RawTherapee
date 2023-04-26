@@ -629,8 +629,8 @@ void Options::setDefaults()
     rtSettings.itcwb_enable = true;
     rtSettings.itcwb_deltaspec = 0.05;
     rtSettings.itcwb_maxsize = 70;//between 50 to 80
-    rtSettings.itcwb_Ypurple = 0.4;//max 1.
-    rtSettings.itcwb_powponder = 0.05;//max 0.2
+    rtSettings.itcwb_Ypurple = 0.5;//max 1.
+    rtSettings.itcwb_powponder = 0.15;//max 0.2
 //wavelet
     rtSettings.edghi = 3.0;//1.1 and 5.
     rtSettings.edglo = 0.5;//0.1 and 0.95
