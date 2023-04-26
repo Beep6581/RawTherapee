@@ -5179,7 +5179,7 @@ float static studentXY(const array2D<float> & YYcurr, const array2D<float> & ref
 
 
 
-void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double &tempitc, double &greenitc, int &dread, float &studgood, float &minchrom, int &kmin, float &minhist, float &maxhist,  array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, const ColorManagementParams &cmp, const RAWParams &raw, const WBParams & wbpar, const ToneCurveParams &hrp)
+void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double &tempitc, double &greenitc, int &bia, int &dread, float &studgood, float &minchrom, int &kmin, float &minhist, float &maxhist,  array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, const ColorManagementParams &cmp, const RAWParams &raw, const WBParams & wbpar, const ToneCurveParams &hrp)
 {
     /*
     Copyright (c) Jacques Desmis 6 - 2018 jdesmis@gmail.com, update 4 - 2023
@@ -5248,8 +5248,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     BENCHFUN
     bool itciterate = true;
     bool lastitc = true;
-   // float tempitcprov = tempitc;
-   // float 
+
     typedef struct Wboptim {
         float stud;
         float minc;
@@ -5266,8 +5265,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         double avg_b;
         
     } Wboptim;
-//double &tempref, double &greenref, double &tempitc, double &greenitc, int &dread, float &studgood, float &minchrom, int &kmin, float &minhist, float &maxhist,  array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, const ColorManagementParams &cmp, const RAWParams &raw, const WBParams & wbpar, const ToneCurveParams &hrp)
-    
+
     Wboptim optitc[2] = {
         {0.f, 0.f, 5000., 1., 5000., 1., 1, 1, 10.f, 100.f, 1., 1., 1.},
         {0.f, 0.f, 5000., 1., 5000., 1., 1, 1, 10.f, 100.f, 1., 1., 1.}
@@ -6515,20 +6513,12 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
 
         //now we have temp green and student
-//        if (settings->verbose) {
-            //  printf("ITCWB tempitc=%f gritc=%f stud=%f \n", tempitc, greenitc, studgood);
-          //  optitc[0].stud = studgood;
-          //  optitc[0].minc = minchrom;
-          //  optitc[0].titc = tempitc;
 
-           // printf("ITCWB tempitc=%f gritc=%f stud=%f minchrom=%f\n", tempitc, greenitc, optitc[0].stud, optitc[0].minc);
-
-//        }
-        bool exectwo = false;
+//        bool exectwo = false;
         int choiceitc = 0;
         if ((tempitc < 4000.f || tempitc > 6300.f) && lastitc) {//try to find if another tempref value near 5000K is better
           //  printf("tempitcalg=%f\n", tempitc);
-            exectwo = true;
+//            exectwo = true;
             optitc[nbitc].stud = studgood;
             optitc[nbitc].minc = minchrom;
             optitc[nbitc].titc = tempitc;
@@ -6565,7 +6555,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             optitc[nbitc].avg_b = avg_bm;
             lastitc = false;
         } else {
-            exectwo = false;
+//            exectwo = false;
             optitc[nbitc].stud = studgood;
             optitc[nbitc].minc = minchrom;
             optitc[nbitc].titc = tempitc;
@@ -6582,7 +6572,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             lastitc = false;
             itciterate = false;
         }
-           
+
             if((optitc[1].minc * sqrt(optitc[1].stud) < optitc[0].minc * sqrt(optitc[0].stud)) && optitc[1].minc > 0.f ) {
                 choiceitc = 1;
             } else {
@@ -6594,6 +6584,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 }
             }
             if(nbitc == 1  && choiceitc == 1) {
+                bia = 1;
                 studgood = optitc[choiceitc].stud;
                 minchrom = optitc[choiceitc].minc;
                 tempitc = optitc[choiceitc].titc;
@@ -6611,7 +6602,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     }
 }
 
-void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double & avg_rm, double & avg_gm, double & avg_bm, double & tempitc, double & greenitc, int &dread, float & studgood, float &minchrom, int &kmin, float &minhist, float &maxhist, bool & twotimes, const WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const ColorManagementParams & cmp, const RAWParams & raw, const ToneCurveParams &hrp)
+void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double & avg_rm, double & avg_gm, double & avg_bm, double & tempitc, double & greenitc, int &bia,  int &dread, float & studgood, float &minchrom, int &kmin, float &minhist, float &maxhist, bool & twotimes, const WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const ColorManagementParams & cmp, const RAWParams & raw, const ToneCurveParams &hrp)
 {
 //    BENCHFUN
     //auto white balance
@@ -6629,7 +6620,7 @@ void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> 
         }
 
         tempitc = 5000.;
-        ItcWB(extra, tempref, greenref, tempitc, greenitc, dread, studgood, minchrom, kmin, minhist, maxhist, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, cmp, raw, wbpar, hrp);
+        ItcWB(extra, tempref, greenref, tempitc, greenitc, bia, dread, studgood, minchrom, kmin, minhist, maxhist, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, cmp, raw, wbpar, hrp);
     }
 }
 
@@ -6713,7 +6704,7 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
     }
 }
 
-void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref, double & tempitc, double & greenitc, int &dread, float &studgood, float &minchrom, int &kmin,  float &minhist, float &maxhist, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double & rm, double & gm, double & bm, const WBParams & wbpar, const ColorManagementParams & cmp, const RAWParams & raw, const ToneCurveParams &hrp)
+void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref, double & tempitc, double & greenitc, int &bia, int &dread, float &studgood, float &minchrom, int &kmin,  float &minhist, float &maxhist, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double & rm, double & gm, double & bm, const WBParams & wbpar, const ColorManagementParams & cmp, const RAWParams & raw, const ToneCurveParams &hrp)
 {
 //    BENCHFUN
     constexpr double clipHigh = 64000.0;
@@ -6915,7 +6906,7 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
 
         const int bfw = W / precision + ((W % precision) > 0 ? 1 : 0);// 5 arbitrary value can be change to 3 or 9 ;
         const int bfh = H / precision + ((H % precision) > 0 ? 1 : 0);
-        WBauto(tempref, greenref, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, tempitc, greenitc, dread, studgood, minchrom, kmin, minhist, maxhist, twotimes, wbpar, begx, begy, yEn,  xEn,  cx,  cy, cmp, raw, hrp);
+        WBauto(tempref, greenref, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, tempitc, greenitc, bia, dread, studgood, minchrom, kmin, minhist, maxhist, twotimes, wbpar, begx, begy, yEn,  xEn,  cx,  cy, cmp, raw, hrp);
     }
 
     redloc(0, 0);
