@@ -5247,22 +5247,34 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     */
     BENCHFUN
     bool itciterate = true;
-
+    bool lastitc = true;
+   // float tempitcprov = tempitc;
+   // float 
     typedef struct Wboptim {
         float stud;
         float minc;
+        double titc;
+        double gritc;
+        double tempre;
+        double greenre;
+        int drea;
+        int kmi;
+        float minhis;
+        float maxhis;
+        double avg_r;
+        double avg_g;
+        double avg_b;
+        
     } Wboptim;
+//double &tempref, double &greenref, double &tempitc, double &greenitc, int &dread, float &studgood, float &minchrom, int &kmin, float &minhist, float &maxhist,  array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, const ColorManagementParams &cmp, const RAWParams &raw, const WBParams & wbpar, const ToneCurveParams &hrp)
     
-    Wboptim opti[5] = {
-        {0.f, 0.f},
-        {0.f, 0.f},
-        {0.f, 0.f},
-        {0.f, 0.f},
-        {0.f, 0.f}
+    Wboptim optitc[2] = {
+        {0.f, 0.f, 5000., 1., 5000., 1., 1, 1, 10.f, 100.f, 1., 1., 1.},
+        {0.f, 0.f, 5000., 1., 5000., 1., 1, 1, 10.f, 100.f, 1., 1., 1.}
     };
-
+    int nbitc = 0;
     while (itciterate) {//loop to find best mix minchrom and studgood
-
+//        lastitc = true;
         Glib::ustring profuse;
         profuse = "Adobe RGB";
 
@@ -6503,28 +6515,99 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
 
         //now we have temp green and student
-        if (settings->verbose) {
+//        if (settings->verbose) {
             //  printf("ITCWB tempitc=%f gritc=%f stud=%f \n", tempitc, greenitc, studgood);
-            opti[0].stud = studgood;
-            opti[0].minc = minchrom;
+          //  optitc[0].stud = studgood;
+          //  optitc[0].minc = minchrom;
+          //  optitc[0].titc = tempitc;
 
-            printf("ITCWB tempitc=%f gritc=%f stud=%f minchrom=%f\n", tempitc, greenitc, opti[0].stud, opti[0].minc);
+           // printf("ITCWB tempitc=%f gritc=%f stud=%f minchrom=%f\n", tempitc, greenitc, optitc[0].stud, optitc[0].minc);
 
-        }
+//        }
+        bool exectwo = false;
+        int choiceitc = 0;
+        if ((tempitc < 4000.f || tempitc > 6300.f) && lastitc) {//try to find if another tempref value near 5000K is better
+          //  printf("tempitcalg=%f\n", tempitc);
+            exectwo = true;
+            optitc[nbitc].stud = studgood;
+            optitc[nbitc].minc = minchrom;
+            optitc[nbitc].titc = tempitc;
+            optitc[nbitc].gritc = greenitc;
+            optitc[nbitc].tempre = tempref;
+            optitc[nbitc].greenre = greenref;
+            optitc[nbitc].drea = dread;
+            optitc[nbitc].kmi = kmin;
+            optitc[nbitc].minhis = minhist;
+            optitc[nbitc].maxhis = maxhist;
+            optitc[nbitc].avg_r = avg_rm;
+            optitc[nbitc].avg_g = avg_gm;
+            optitc[nbitc].avg_b = avg_bm;
 
-        if (tempitc < 4000.f || tempitc > 6000.f) {
-            opti[0].stud = studgood;
-            opti[0].minc = minchrom;
-
-            tempref = 5000.f;
-            opti[1].stud = studgood;
-            opti[1].minc = minchrom;
-
+            nbitc++;
+        
+            if(tempitc < 4000.f) {
+                tempref = 4600.f;
+            } else {
+                tempref = 5400.f;
+            }
+            optitc[nbitc].stud = studgood;
+            optitc[nbitc].minc = minchrom;
+            optitc[nbitc].titc = tempitc;
+            optitc[nbitc].gritc = greenitc;
+            optitc[nbitc].tempre = tempref;
+            optitc[nbitc].greenre = greenref;
+            optitc[nbitc].drea = dread;
+            optitc[nbitc].kmi = kmin;
+            optitc[nbitc].minhis = minhist;
+            optitc[nbitc].maxhis = maxhist;
+            optitc[nbitc].avg_r = avg_rm;
+            optitc[nbitc].avg_g = avg_gm;
+            optitc[nbitc].avg_b = avg_bm;
+            lastitc = false;
         } else {
-            
+            exectwo = false;
+            optitc[nbitc].stud = studgood;
+            optitc[nbitc].minc = minchrom;
+            optitc[nbitc].titc = tempitc;
+            optitc[nbitc].gritc = greenitc;
+            optitc[nbitc].tempre = tempref;
+            optitc[nbitc].greenre = greenref;
+            optitc[nbitc].drea = dread;
+            optitc[nbitc].kmi = kmin;
+            optitc[nbitc].minhis = minhist;
+            optitc[nbitc].maxhis = maxhist;
+            optitc[nbitc].avg_r = avg_rm;
+            optitc[nbitc].avg_g = avg_gm;
+            optitc[nbitc].avg_b = avg_bm;
+            lastitc = false;
             itciterate = false;
         }
-
+           
+            if((optitc[1].minc * sqrt(optitc[1].stud) < optitc[0].minc * sqrt(optitc[0].stud)) && optitc[1].minc > 0.f ) {
+                choiceitc = 1;
+            } else {
+                choiceitc = 0;
+           }
+            if (settings->verbose) {
+                for(int d=0; d < 2; d++) {
+                    printf("n=%i nbitc=%i stu=%f minc=%f tempitc=%f choiceitc=%i\n", d, nbitc,  (double) optitc[d].stud, (double) optitc[d].minc, (double) optitc[d].titc, choiceitc);
+                }
+            }
+            if(nbitc == 1  && choiceitc == 1) {
+                studgood = optitc[choiceitc].stud;
+                minchrom = optitc[choiceitc].minc;
+                tempitc = optitc[choiceitc].titc;
+                greenitc = optitc[choiceitc].gritc;
+                tempref = optitc[choiceitc].tempre;
+                greenref = optitc[choiceitc].greenre;
+                dread = optitc[choiceitc].drea;
+                kmin = optitc[choiceitc].kmi;
+                minhist = optitc[choiceitc].minhis;
+                maxhist = optitc[choiceitc].maxhis;
+                avg_rm = optitc[choiceitc].avg_r;
+                avg_gm = optitc[choiceitc].avg_g;
+                avg_bm = optitc[choiceitc].avg_b;
+            }
     }
 }
 
