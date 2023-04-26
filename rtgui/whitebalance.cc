@@ -1489,9 +1489,9 @@ void WhiteBalance::WBChanged(double temperature, double greenVal, double rw, dou
                                    Glib::ustring::format(std::fixed, std::setprecision(0), histmax))
             );
             if(bia == 1) {
-                tempBias->set_sensitive(false);
+             //   tempBias->set_sensitive(false);
             } else {
-                tempBias->set_sensitive(true);
+             //   tempBias->set_sensitive(true);
             }
             temp->setDefault(temperature);
             green->setDefault(greenVal);

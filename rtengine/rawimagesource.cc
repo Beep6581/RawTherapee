@@ -6536,9 +6536,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             nbitc++;
         
             if(tempitc < 4000.f) {
-                tempref = 4600.f;
+                tempref = 4600.f * (1. + wbpar.tempBias);
             } else {
-                tempref = 5400.f;
+                tempref = 5400.f* (1. + wbpar.tempBias);
             }
             optitc[nbitc].stud = studgood;
             optitc[nbitc].minc = minchrom;
