@@ -6444,11 +6444,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
             bool greenex = false;
 
-            if ((keepgreen > 0.92 && keepgreen < 1.16) && oldsampling == false) {
+            if ((keepgreen > 0.92 && keepgreen < 1.23) && oldsampling == false) {
                 if (abs(greengood - greencam) > 5) {
                     double ag = 0.;
                     double gcal = gree[greengood].green;
-                    ag = 0.96 * (gcal - keepgreen);
+                    ag = 0.92 * (gcal - keepgreen);
                     greenitc = gcal - ag;
                     greenex = true;
 
@@ -6487,7 +6487,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 }
             }
 
-            if (((greengood > 41 &&  keepgreen < 0.7)  || (greengood > 47 &&  keepgreen < 0.952)) && oldsampling == false && !greenex) {
+            if (((greengood > 41 &&  keepgreen < 0.7)  || (greengood > 46 &&  keepgreen < 0.952)) && oldsampling == false && !greenex) {
                 double ag = 0.;
                 double gcal = gree[greengood].green;
                 ag = 0.95 * (gcal - keepgreen);//empirical  correction when green low - to improve
@@ -6517,7 +6517,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 //        bool exectwo = false;
         int choiceitc = 0;
         if ((tempitc < 4000.f || tempitc > 6300.f) && lastitc) {//try to find if another tempref value near 5000K is better
-          //  printf("tempitcalg=%f\n", tempitc);
+            printf("tempitcalg=%f\n", tempitc);
 //            exectwo = true;
             optitc[nbitc].stud = studgood;
             optitc[nbitc].minc = minchrom;
@@ -6537,8 +6537,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         
             if(tempitc < 4000.f) {
                 tempref = 4600.f * (1. + wbpar.tempBias);
+                tempref = LIM(tempref, 4000., 6300.);
             } else {
                 tempref = 5400.f* (1. + wbpar.tempBias);
+                tempref = LIM(tempref, 4000., 6300.);
+
             }
             optitc[nbitc].stud = studgood;
             optitc[nbitc].minc = minchrom;
