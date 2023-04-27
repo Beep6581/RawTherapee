@@ -556,6 +556,10 @@ public:
     static const double Colorlab_L14_m10_m7spect2[97];
     static const double Colorlab_L20_m16_m13spect2[97];
     static const double Colorlab_L6_m9_1spect[97];
+    static const double Colorlab_L20_m9_m10spect[97];
+    static const double Colorlab_L85_10_45spect[97];
+    static const double Colorlab_L90_m7_82spect[97];
+    static const double Colorlab_L95_2_18spect[97];
 
 /*
 1	A1	0,61 	0,90	0,82 	8,13	-10,46	-1,45
