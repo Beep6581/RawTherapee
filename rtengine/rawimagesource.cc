@@ -5612,17 +5612,17 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         bool purp = true;//if inpaint-opposed or something else enable purp
 
         const int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
-        constexpr int Nc = 363 + 1; //348 number of reference spectral colors
-        int Ncr = 364;
+        constexpr int Nc = 368 + 1; //348 number of reference spectral colors
+        int Ncr = 369;
 
         if (wbpar.itcwb_prim == "srgb") {
-            Ncr = 363 + 1;
+            Ncr = 368 + 1;
         } else if (wbpar.itcwb_prim == "adob") {
-            Ncr = 363 + 1;
+            Ncr = 368 + 1;
         } else if (wbpar.itcwb_prim == "rec") {
-            Ncr = 363 + 1;
+            Ncr = 368 + 1;
         } else if (wbpar.itcwb_prim == "ace") {
-            Ncr = 363 + 1;
+            Ncr = 368 + 1;
         }
 
         if (oldsampling) { //low samplin 5.9 with less spectral datas 201
@@ -6586,7 +6586,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                     printf("n=%i nbitc=%i stu=%f minc=%f tempitc=%f choiceitc=%i\n", d, nbitc,  (double) optitc[d].stud, (double) optitc[d].minc, (double) optitc[d].titc, choiceitc);
                 }
             }
-            if(nbitc == 1  && choiceitc == 1) {
+            if(nbitc == 1 && choiceitc == 1) {
                 bia = 1;
                 studgood = optitc[choiceitc].stud;
                 minchrom = optitc[choiceitc].minc;
@@ -6601,7 +6601,21 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 avg_rm = optitc[choiceitc].avg_r;
                 avg_gm = optitc[choiceitc].avg_g;
                 avg_bm = optitc[choiceitc].avg_b;
-            }
+            }/* else {
+                studgood = optitc[0].stud;
+                minchrom = optitc[0].minc;
+                tempitc = optitc[0].titc;
+                greenitc = optitc[0].gritc;
+                tempref = optitc[0].tempre;
+                greenref = optitc[0].greenre;
+                dread = optitc[0].drea;
+                kmin = optitc[0].kmi;
+                minhist = optitc[0].minhis;
+                maxhist = optitc[0].maxhis;
+                avg_rm = optitc[0].avg_r;
+                avg_gm = optitc[0].avg_g;
+                avg_bm = optitc[0].avg_b;
+            } */
     }
 }
 

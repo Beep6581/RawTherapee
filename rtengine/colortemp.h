@@ -560,33 +560,16 @@ public:
     static const double Colorlab_L85_10_45spect[97];
     static const double Colorlab_L90_m7_82spect[97];
     static const double Colorlab_L95_2_18spect[97];
-
     static const double Colorlab_L39_7_4spect[97];
     static const double Colorlab_L39_4_1spect[97];
     static const double Colorlab_L39_3_m1spect[97];
     static const double Colorlab_L40_3_m2spect[97];
     static const double Colorlab_L36_2_2spect[97];
-
-/*
-1	A1	11,20 	10,70	7,67 	39,07	6,65	4,37
-2	A2	10,92 	10,80	8,70 	39,24	3,81	0,76
-3	A3	10,66 	10,70	9,04 	39,07	2,58	-0,75
-4	A4	11,36 	11,30	9,90 	40,08	3,42	-1,95
-5	A5	8,75 	8,80	6,69 	35,60	2,30	2,40
-*/
-/*
-1	A1	0,61 	0,90	0,82 	8,13	-10,46	-1,45
-2	A2	1,36 	1,80	2,13 	14,40	-10,21	-6,72
-3	A3	2,05 	3,00	4,50 	20,04	-16,75	-13,70
-4	A4	0,44 	0,70	0,54 	6,32	-9,54	0,79
-5	A5	2,41 	3,00	3,97 	20,04	-9,18	-10,57
-6	A6	0,52 	0,70	0,43 	6,32	-6,07	2,78
-7	A7	68,51 	66,00	22,26 	85,00	10,83	44,90
-8	A8	71,43 	78,00	10,73 	90,78	-7,83	82,78
-9	A9	55,65 	49,90	14,39 	76,01	19,72	46,87
-10	A10	85,33 	87,60	54,01 	95,00	1,62	17,72
-11	A11	79,13 	80,70	36,52 	92,00	2,61	33,79
-*/
+    static const double Colorlab_L39_7_4spect2[97];
+    static const double Colorlab_L39_4_1spect2[97];
+    static const double Colorlab_L39_3_m1spect2[97];
+    static const double Colorlab_L40_3_m2spect2[97];
+    static const double Colorlab_L36_2_2spect2[97];
 
 
     static void spectrum_to_xyz_daylight  (double _m1, double _m2, double &x, double &y, double &z, const color_match_type &color_match);

@@ -627,7 +627,7 @@ void Options::setDefaults()
     rtSettings.fftwsigma = true; //choice between sigma^2 or empirical formula
 // end locallab
     rtSettings.itcwb_enable = true;
-    rtSettings.itcwb_deltaspec = 0.05;
+    rtSettings.itcwb_deltaspec = 0.065;
     rtSettings.itcwb_maxsize = 70;//between 50 to 80
     rtSettings.itcwb_Ypurple = 0.5;//max 1.
     rtSettings.itcwb_powponder = 0.15;//max 0.2
