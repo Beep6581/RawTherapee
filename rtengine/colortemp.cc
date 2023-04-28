@@ -4521,12 +4521,11 @@ void ColorTemp::temp2mul (double temp, double green, double equal, StandardObser
 */
 //calculate spectral data for blackbody at temp!
 double ColorTemp::blackbody_spect(double wavelength, double temperature)
-{       
+{// I found an error in this formula, now it works 4/2023
     const double wlm = wavelength;   /* Wavelength in meters */
-    return  (100. * 3.7417715247e-16) / (1e-45* wlm * wlm * wlm * wlm * wlm * (pow(2.7182818, 1.438786e-2 / (wlm * temperature * 0.000000001)) - 1.0)* 2.21e12); //1.4387..= c2 = h*c/k  where k=Boltzmann constant
+    return  (3.7417715247e-14) / (1e-45* rtengine::pow5(wlm) * (pow(2.718281828459, 1.438786e-2 / (wlm * temperature * 0.000000001)) - 1.0)* 2.21e12); //1.4387..= c2 = h*c/k  where k=Boltzmann constant
 }
 
-//float a =(100*$S$12)/(1E-045*B6*B6*B6*B6*B6*(PUISSANCE($S$11;$S$13/(Blackbody_Temperature*B6*0,000000001))-1)*$S$14)
 /*
 The next 3 methods are inspired from:
 
@@ -4674,23 +4673,27 @@ void ColorTemp::spectrum_to_color_xyz_daylight(const double* spec_color, double 
 
 //calculate XYZ from spectrum data (color) and illuminant : J.Desmis december 2011
 void ColorTemp::spectrum_to_color_xyz_blackbody(const double* spec_color, double _temp, double &xx, double &yy, double &zz, const color_match_type &color_match)
-{
+{// error found with correction 4 / 2023 
     int i;
-    double lambda, X = 0, Y = 0, Z = 0;
+    double lambda, X = 0, Y = 0, Z = 0, Yo = 0;
 
     for (i = 0, lambda = 350; lambda < 830.1; i++, lambda += 5) {
         const double Me = spec_color[i];
-        const double Mc = 100. * blackbody_spect(lambda, _temp);
-         //printf("BLA Me=%f ", Me);
+        const double Mc = blackbody_spect(lambda, _temp);
 
         X += Mc * color_match[i][0] * Me;
         Y += Mc * color_match[i][1] * Me;
         Z += Mc * color_match[i][2] * Me;
     }
+    for (i = 0, lambda = 350; lambda < 830.1; i++, lambda += 5) {
 
-    xx = X / Y;
-    yy = 1.0;
-    zz = Z / Y;
+        const double Mc1 = blackbody_spect(lambda, _temp);
+        Yo += color_match[i][1] * Mc1;
+    }
+
+    xx = X / Yo;
+    yy = Y / Yo;
+    zz = Z / Yo;
 }
 
 
@@ -4970,11 +4973,11 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
     if (separated) {
         const double tempw = Txyz[repref].Tem;
 
-     /*   if (tempw <= INITIALBLACKBODY) {
+        if (tempw <= INITIALBLACKBODY) {
             for (int i = 0; i < N_c; i++) {
                 spectrum_to_color_xyz_blackbody(spec_colorforxcyc[i], tempw, TX[i], TY[i], TZ[i], color_match);
             }
-        } else {  */
+        } else {  
             double m11, m22, x_DD, y_DD, interm2;
 
             if (tempw <= 7000) {
@@ -4993,16 +4996,16 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
             for (int i = 0; i < N_c; i++) {
                 spectrum_to_color_xyz_daylight(spec_colorforxcyc[i], m11, m22, TX[i], TY[i], TZ[i], color_match);
             }
-      //  }
+        }
     } else {
         for (int tt = 0; tt < N_t; tt++) {
             const double tempw = Txyz[tt].Tem;
 
-        /*    if (tempw <= INITIALBLACKBODY) {
+            if (tempw <= INITIALBLACKBODY) {
                 for (int i = 0; i < N_c; i++) {
                     spectrum_to_color_xyz_blackbody(spec_colorforxcyc[i], tempw, Refxyz[i].Xref, Refxyz[i].Yref, Refxyz[i].Zref, color_match);
                 }
-            } else { */
+            } else { 
                 double x_DD;
 
                 if (tempw <= 7000) {
@@ -5021,7 +5024,7 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
                 for (int i = 0; i < N_c; i++) {
                     spectrum_to_color_xyz_daylight(spec_colorforxcyc[i], m11, m22, Refxyz[i].Xref, Refxyz[i].Yref, Refxyz[i].Zref, color_match);
                 }
-           // }
+            }
 
             for (int i = 0; i < N_c; i++) {
                 Tx[i][tt] = Refxyz[i].Xref;
