@@ -5271,6 +5271,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {0.f, 0.f, 5000., 1., 5000., 1., 1, 1, 10.f, 100.f, 1., 1., 1.}
     };
     int nbitc = 0;
+    int choiceitc = 0;
+
     while (itciterate) {//loop to find best mix minchrom and studgood
 //        lastitc = true;
         Glib::ustring profuse;
@@ -6526,9 +6528,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         //now we have temp green and student
 
-//        bool exectwo = false;
-        int choiceitc = 0;
-        if ((tempitc < 4000.f || tempitc > 7100.f) && lastitc  && oldsampling == false && wbpar.itcwb_obs == false) {//try to find if another tempref value near 5000K is better
+        if ((tempitc < 4000.f || tempitc > 7000.f) && lastitc  && oldsampling == false && wbpar.itcwb_alg == false) {//try to find if another tempref value near 5000K is better
  //           printf("tempitcalg=%f\n", tempitc);
 //            exectwo = true;
             optitc[nbitc].stud = studgood;
@@ -6593,6 +6593,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             } else {
                 choiceitc = 0;
            }
+    }
             if (settings->verbose) {
                 for(int d=0; d < 2; d++) {
                     printf("n=%i nbitc=%i stu=%f minc=%f tempitc=%f choiceitc=%i\n", d, nbitc,  (double) optitc[d].stud, (double) optitc[d].minc, (double) optitc[d].titc, choiceitc);
@@ -6613,7 +6614,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 avg_rm = optitc[choiceitc].avg_r;
                 avg_gm = optitc[choiceitc].avg_g;
                 avg_bm = optitc[choiceitc].avg_b;
-            }/* else {
+            } else {
                 studgood = optitc[0].stud;
                 minchrom = optitc[0].minc;
                 tempitc = optitc[0].titc;
@@ -6627,8 +6628,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 avg_rm = optitc[0].avg_r;
                 avg_gm = optitc[0].avg_g;
                 avg_bm = optitc[0].avg_b;
-            } */
-    }
+            } 
+  //  }
 }
 
 void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double & avg_rm, double & avg_gm, double & avg_bm, double & tempitc, double & greenitc, int &bia,  int &dread, float & studgood, float &minchrom, int &kmin, float &minhist, float &maxhist, bool & twotimes, const WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const ColorManagementParams & cmp, const RAWParams & raw, const ToneCurveParams &hrp)

@@ -76,7 +76,7 @@ protected:
     rtengine::ProcEvent EvWBitcwbfgreen;
     rtengine::ProcEvent EvWBitcwbrgreen;
     rtengine::ProcEvent EvWBitcwbsampling;
-    rtengine::ProcEvent EvWBitcwbobs;
+    rtengine::ProcEvent EvWBitcwbalg;
     rtengine::ProcEvent EvWBitcwbponder;
 
     static Glib::RefPtr<Gdk::Pixbuf> wbPixbufs[rtengine::toUnderlying(rtengine::procparams::WBEntry::Type::CUSTOM) + 1];
@@ -100,14 +100,14 @@ protected:
     Adjuster* itcwb_rgreen;
     
     Gtk::CheckButton* itcwb_nopurple;
-    Gtk::CheckButton* itcwb_obs;
+    Gtk::CheckButton* itcwb_alg;
     Gtk::CheckButton* itcwb_ponder;
     
     MyComboBoxText* itcwb_prim;
     
     Gtk::CheckButton* itcwb_sampling;
     bool lastitcwb_nopurple;
-    bool lastitcwb_obs;
+    bool lastitcwb_alg;
     bool lastitcwb_sampling;
     bool lastitcwb_ponder;
 
@@ -117,7 +117,7 @@ protected:
     double nextGreen;
     WBProvider *wbp;  // pointer to a ToolPanelCoordinator object, or its subclass BatchToolPanelCoordinator
     SpotWBListener* wblistener;
-    sigc::connection methconn, itcwb_nopurpleconn, itcwb_obsconn,  itcwb_ponderconn, itcwb_samplingconn, itcwb_primconn;
+    sigc::connection methconn, itcwb_nopurpleconn, itcwb_algconn,  itcwb_ponderconn, itcwb_samplingconn, itcwb_primconn;
     int custom_temp;
     double custom_green;
     double custom_equal;
@@ -167,7 +167,7 @@ public:
     void resetWB ();
     void WBChanged           (double temp, double green, double rw, double gw, double bw, int bia, int dread, float studgood, float minchrom, int kmin, float histmin, float histmax) override;
     void itcwb_nopurple_toggled ();
-    void itcwb_obs_toggled ();
+    void itcwb_alg_toggled ();
     void itcwb_ponder_toggled ();
     void itcwb_prim_changed ();
     void itcwb_sampling_toggled ();

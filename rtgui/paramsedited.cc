@@ -275,7 +275,7 @@ void ParamsEdited::set(bool v)
     wb.itcwb_fgreen                = v;
     wb.itcwb_rgreen                = v;
     wb.itcwb_nopurple             = v;
-    wb.itcwb_obs             = v;
+    wb.itcwb_alg             = v;
     wb.itcwb_ponder             = v;
     wb.itcwb_sorted             = v;
     wb.itcwb_forceextra         = v;
@@ -991,7 +991,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wb.itcwb_fgreen = wb.itcwb_fgreen && p.wb.itcwb_fgreen == other.wb.itcwb_fgreen;
         wb.itcwb_rgreen = wb.itcwb_rgreen && p.wb.itcwb_rgreen == other.wb.itcwb_rgreen;
         wb.itcwb_nopurple = wb.itcwb_nopurple && p.wb.itcwb_nopurple == other.wb.itcwb_nopurple;
-        wb.itcwb_obs = wb.itcwb_obs && p.wb.itcwb_obs == other.wb.itcwb_obs;
+        wb.itcwb_alg = wb.itcwb_alg && p.wb.itcwb_alg == other.wb.itcwb_alg;
         wb.itcwb_ponder = wb.itcwb_ponder && p.wb.itcwb_ponder == other.wb.itcwb_ponder;
         wb.itcwb_sorted = wb.itcwb_sorted && p.wb.itcwb_sorted == other.wb.itcwb_sorted;
         wb.itcwb_forceextra = wb.itcwb_forceextra && p.wb.itcwb_forceextra == other.wb.itcwb_forceextra;
@@ -2895,8 +2895,8 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.wb.itcwb_nopurple = mods.wb.itcwb_nopurple;
     }
 
-    if (wb.itcwb_obs) {
-        toEdit.wb.itcwb_obs = mods.wb.itcwb_obs;
+    if (wb.itcwb_alg) {
+        toEdit.wb.itcwb_alg = mods.wb.itcwb_alg;
     }
 
     if (wb.itcwb_ponder) {
