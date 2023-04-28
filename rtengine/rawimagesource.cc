@@ -5757,6 +5757,18 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             reff_spect_xx_camera[j][repref] = xxx;
             reff_spect_yy_camera[j][repref] = yyy;
             reff_spect_Y_camera[j][repref] =  YY;
+/*                    float xr = reff_spect_xx_camera[j][repref];
+                    float yr = reff_spect_yy_camera[j][repref];
+                    float Yr = reff_spect_Y_camera[j][repref];
+                    float X_r = (65535.f * (xr * Yr)) / yr;
+                    float Z_r = (65535.f * (1.f - xr - yr) * Yr) / yr;
+                    float Y_r = 65535.f * Yr;
+                    float Lr, ar, br;
+                    Color::XYZ2Lab(X_r, Y_r, Z_r, Lr, ar, br);//it make sense, because known spectral color
+            
+            
+            printf("Nc=%i repref=%i xxx=%f yyy=%f YY=%f Lr=%f a=%f b=%f\n", j, repref, (double) xxx, (double) yyy, (double) YY, (double) Lr/327.68f, (double) ar/327.68f, (double) br/327.68f);
+*/
         }
 
         array2D<float> xc(bfwitc, bfhitc);

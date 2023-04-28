@@ -4115,7 +4115,7 @@ void ColorTemp::temp2mulxyz (double temp, const std::string &method, StandardObs
             // if temperature is between 2000K and 4000K we use blackbody, because there will be no Daylight reference below 4000K...
             // of course, the previous version of RT used the "magical" but wrong formula of U.Fuchs (Ufraw).
             spectrum_to_xyz_blackbody(temp, x, y, z, color_match);
-        } else {
+        } else { 
             // from 4000K up to 25000K: using the D illuminant (daylight) which is standard
             double x_D, y_D;
 
@@ -4521,12 +4521,12 @@ void ColorTemp::temp2mul (double temp, double green, double equal, StandardObser
 */
 //calculate spectral data for blackbody at temp!
 double ColorTemp::blackbody_spect(double wavelength, double temperature)
-{
-    const double wlm = wavelength * 1e-9;   /* Wavelength in meters */
-    return (3.7417715247e-16 / rtengine::pow5(wlm)) /              //3.7417..= c1 = 2*Pi*h*c2  where h=Planck constant, c=velocity of light
-           (xexp(1.438786e-2 / (wlm * temperature)) - 1.0); //1.4387..= c2 = h*c/k  where k=Boltzmann constant
+{       
+    const double wlm = wavelength;   /* Wavelength in meters */
+    return  (100. * 3.7417715247e-16) / (1e-45* wlm * wlm * wlm * wlm * wlm * (pow(2.7182818, 1.438786e-2 / (wlm * temperature * 0.000000001)) - 1.0)* 2.21e12); //1.4387..= c2 = h*c/k  where k=Boltzmann constant
 }
 
+//float a =(100*$S$12)/(1E-045*B6*B6*B6*B6*B6*(PUISSANCE($S$11;$S$13/(Blackbody_Temperature*B6*0,000000001))-1)*$S$14)
 /*
 The next 3 methods are inspired from:
 
@@ -4552,6 +4552,7 @@ void ColorTemp::spectrum_to_xyz_daylight(double _m1, double _m2, double &x, doub
 
     for (i = 0, lambda = 350.; lambda < 830.1; i++, lambda += 5.) {
         double Me = daylight_spect(lambda, _m1, _m2);
+      //  printf("Day Me=%f \n", Me);
         X += Me * color_match[i][0];
         Y += Me * color_match[i][1];
         Z += Me * color_match[i][2];
@@ -4679,7 +4680,9 @@ void ColorTemp::spectrum_to_color_xyz_blackbody(const double* spec_color, double
 
     for (i = 0, lambda = 350; lambda < 830.1; i++, lambda += 5) {
         const double Me = spec_color[i];
-        const double Mc = blackbody_spect(lambda, _temp);
+        const double Mc = 100. * blackbody_spect(lambda, _temp);
+         //printf("BLA Me=%f ", Me);
+
         X += Mc * color_match[i][0] * Me;
         Y += Mc * color_match[i][1] * Me;
         Z += Mc * color_match[i][2] * Me;
@@ -4689,6 +4692,9 @@ void ColorTemp::spectrum_to_color_xyz_blackbody(const double* spec_color, double
     yy = 1.0;
     zz = Z / Y;
 }
+
+
+
 
 double ColorTemp::daylight_spect(double wavelength, double m1, double m2)
 {
@@ -4964,11 +4970,11 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
     if (separated) {
         const double tempw = Txyz[repref].Tem;
 
-        if (tempw <= INITIALBLACKBODY) {
+     /*   if (tempw <= INITIALBLACKBODY) {
             for (int i = 0; i < N_c; i++) {
                 spectrum_to_color_xyz_blackbody(spec_colorforxcyc[i], tempw, TX[i], TY[i], TZ[i], color_match);
             }
-        } else {
+        } else {  */
             double m11, m22, x_DD, y_DD, interm2;
 
             if (tempw <= 7000) {
@@ -4987,16 +4993,16 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
             for (int i = 0; i < N_c; i++) {
                 spectrum_to_color_xyz_daylight(spec_colorforxcyc[i], m11, m22, TX[i], TY[i], TZ[i], color_match);
             }
-        }
+      //  }
     } else {
         for (int tt = 0; tt < N_t; tt++) {
             const double tempw = Txyz[tt].Tem;
 
-            if (tempw <= INITIALBLACKBODY) {
+        /*    if (tempw <= INITIALBLACKBODY) {
                 for (int i = 0; i < N_c; i++) {
                     spectrum_to_color_xyz_blackbody(spec_colorforxcyc[i], tempw, Refxyz[i].Xref, Refxyz[i].Yref, Refxyz[i].Zref, color_match);
                 }
-            } else {
+            } else { */
                 double x_DD;
 
                 if (tempw <= 7000) {
@@ -5015,7 +5021,7 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
                 for (int i = 0; i < N_c; i++) {
                     spectrum_to_color_xyz_daylight(spec_colorforxcyc[i], m11, m22, Refxyz[i].Xref, Refxyz[i].Yref, Refxyz[i].Zref, color_match);
                 }
-            }
+           // }
 
             for (int i = 0; i < N_c; i++) {
                 Tx[i][tt] = Refxyz[i].Xref;
