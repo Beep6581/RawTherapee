@@ -570,7 +570,24 @@ public:
     static const double Colorlab_L39_3_m1spect2[97];
     static const double Colorlab_L40_3_m2spect2[97];
     static const double Colorlab_L36_2_2spect2[97];
+    static const double Colorlab_L40_4_m2spect[97];
+    static const double Colorlab_L41_1_m6spect[97];
+    static const double Colorlab_L40_4_m2spect2[97];
+    static const double Colorlab_L41_1_m6spect2[97];
+    static const double Colorlab_L41_12_14spect[97];
+    static const double Colorlab_L41_12_14spect2[97];
 
+/*
+1	A1	11,60 	11,50	10,03 	40,41	3,75	-1,81
+2	A2	11,75 	12,00	11,21 	41,41	1,38	-5,88
+3	A3	11,67 	11,84	11,07 	40,96	1,83	-4,16
+4	A4	12,14 	11,76	10,87 	40,83	5,60	-3,76
+5	A5	11,40 	11,40	10,48 	40,25	2,99	-3,56
+6	A6	11,33 	11,10	9,97 	39,75	4,63	-2,74
+7	A7	11,72 	11,30	9,59 	40,08	6,00	-0,92
+8	A8	13,33 	11,98	6,25 	41,19	12,00	14,00
+
+*/
 
     static void spectrum_to_xyz_daylight  (double _m1, double _m2, double &x, double &y, double &z, const color_match_type &color_match);
     static void spectrum_to_xyz_blackbody (double _temp, double &x, double &y, double &z, const color_match_type &color_match);

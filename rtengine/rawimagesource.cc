@@ -5612,17 +5612,17 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         bool purp = true;//if inpaint-opposed or something else enable purp
 
         const int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
-        constexpr int Nc = 368 + 1; //348 number of reference spectral colors
-        int Ncr = 369;
+        constexpr int Nc = 374 + 1; //348 number of reference spectral colors
+        int Ncr = 375;
 
         if (wbpar.itcwb_prim == "srgb") {
-            Ncr = 368 + 1;
+            Ncr = 374 + 1;
         } else if (wbpar.itcwb_prim == "adob") {
-            Ncr = 368 + 1;
+            Ncr = 374 + 1;
         } else if (wbpar.itcwb_prim == "rec") {
-            Ncr = 368 + 1;
+            Ncr = 374 + 1;
         } else if (wbpar.itcwb_prim == "ace") {
-            Ncr = 368 + 1;
+            Ncr = 374 + 1;
         }
 
         if (oldsampling) { //low samplin 5.9 with less spectral datas 201
@@ -6528,7 +6528,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
 //        bool exectwo = false;
         int choiceitc = 0;
-        if ((tempitc < 4000.f || tempitc > 7100.f) && lastitc  && oldsampling == false) {//try to find if another tempref value near 5000K is better
+        if ((tempitc < 4000.f || tempitc > 7100.f) && lastitc  && oldsampling == false && wbpar.itcwb_obs == false) {//try to find if another tempref value near 5000K is better
  //           printf("tempitcalg=%f\n", tempitc);
 //            exectwo = true;
             optitc[nbitc].stud = studgood;
