@@ -5263,7 +5263,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         double avg_r;
         double avg_g;
         double avg_b;
-        
+
     } Wboptim;
 
     Wboptim optitc[2] = {
@@ -5759,18 +5759,18 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             reff_spect_xx_camera[j][repref] = xxx;
             reff_spect_yy_camera[j][repref] = yyy;
             reff_spect_Y_camera[j][repref] =  YY;
-/*                    float xr = reff_spect_xx_camera[j][repref];
-                    float yr = reff_spect_yy_camera[j][repref];
-                    float Yr = reff_spect_Y_camera[j][repref];
-                    float X_r = (65535.f * (xr * Yr)) / yr;
-                    float Z_r = (65535.f * (1.f - xr - yr) * Yr) / yr;
-                    float Y_r = 65535.f * Yr;
-                    float Lr, ar, br;
-                    Color::XYZ2Lab(X_r, Y_r, Z_r, Lr, ar, br);//it make sense, because known spectral color
-            
-            
-            printf("Nc=%i repref=%i xxx=%f yyy=%f YY=%f Lr=%f a=%f b=%f\n", j, repref, (double) xxx, (double) yyy, (double) YY, (double) Lr/327.68f, (double) ar/327.68f, (double) br/327.68f);
-*/
+            /*                    float xr = reff_spect_xx_camera[j][repref];
+                                float yr = reff_spect_yy_camera[j][repref];
+                                float Yr = reff_spect_Y_camera[j][repref];
+                                float X_r = (65535.f * (xr * Yr)) / yr;
+                                float Z_r = (65535.f * (1.f - xr - yr) * Yr) / yr;
+                                float Y_r = 65535.f * Yr;
+                                float Lr, ar, br;
+                                Color::XYZ2Lab(X_r, Y_r, Z_r, Lr, ar, br);//it make sense, because known spectral color
+
+
+                        printf("Nc=%i repref=%i xxx=%f yyy=%f YY=%f Lr=%f a=%f b=%f\n", j, repref, (double) xxx, (double) yyy, (double) YY, (double) Lr/327.68f, (double) ar/327.68f, (double) br/327.68f);
+            */
         }
 
         array2D<float> xc(bfwitc, bfhitc);
@@ -6529,7 +6529,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         //now we have temp green and student
 
         if ((tempitc < 4000.f || tempitc > 7000.f) && lastitc  && oldsampling == false && wbpar.itcwb_alg == false) {//try to find if another tempref value near 5000K is better
- //           printf("tempitcalg=%f\n", tempitc);
+//           printf("tempitcalg=%f\n", tempitc);
 //            exectwo = true;
             optitc[nbitc].stud = studgood;
             optitc[nbitc].minc = minchrom;
@@ -6546,15 +6546,16 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             optitc[nbitc].avg_b = avg_bm;
 
             nbitc++;
-        
-            if(tempitc < 4000.f) {
+
+            if (tempitc < 4000.f) {
                 tempref = 4600.f * (1. + wbpar.tempBias);
                 tempref = LIM(tempref, 4000., 7000.);
             } else {
-                tempref = 5400.f* (1. + wbpar.tempBias);
+                tempref = 5400.f * (1. + wbpar.tempBias);
                 tempref = LIM(tempref, 4000., 7000.);
 
             }
+
             optitc[nbitc].stud = studgood;
             optitc[nbitc].minc = minchrom;
             optitc[nbitc].titc = tempitc;
@@ -6588,48 +6589,51 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             itciterate = false;
         }
 
-            if((optitc[1].minc * sqrt(optitc[1].stud) < optitc[0].minc * sqrt(optitc[0].stud)) && optitc[1].minc > 0.f ) {
-                choiceitc = 1;
-            } else {
-                choiceitc = 0;
-           }
+        if ((optitc[1].minc * sqrt(optitc[1].stud) < optitc[0].minc * sqrt(optitc[0].stud)) && optitc[1].minc > 0.f) {
+            choiceitc = 1;
+        } else {
+            choiceitc = 0;
+        }
+    }//end loop
+
+    if (settings->verbose) {
+        for (int d = 0; d < 2; d++) {
+            printf("n=%i nbitc=%i stu=%f minc=%f tempitc=%f choiceitc=%i\n", d, nbitc, (double) optitc[d].stud, (double) optitc[d].minc, (double) optitc[d].titc, choiceitc);
+        }
     }
-            if (settings->verbose) {
-                for(int d=0; d < 2; d++) {
-                    printf("n=%i nbitc=%i stu=%f minc=%f tempitc=%f choiceitc=%i\n", d, nbitc,  (double) optitc[d].stud, (double) optitc[d].minc, (double) optitc[d].titc, choiceitc);
-                }
-            }
-            if(nbitc == 1 && choiceitc == 1) {
-                bia = 1;
-                studgood = optitc[choiceitc].stud;
-                minchrom = optitc[choiceitc].minc;
-                tempitc = optitc[choiceitc].titc;
-                greenitc = optitc[choiceitc].gritc;
-                tempref = optitc[choiceitc].tempre;
-                greenref = optitc[choiceitc].greenre;
-                dread = optitc[choiceitc].drea;
-                kmin = optitc[choiceitc].kmi;
-                minhist = optitc[choiceitc].minhis;
-                maxhist = optitc[choiceitc].maxhis;
-                avg_rm = optitc[choiceitc].avg_r;
-                avg_gm = optitc[choiceitc].avg_g;
-                avg_bm = optitc[choiceitc].avg_b;
-            } else {
-                studgood = optitc[0].stud;
-                minchrom = optitc[0].minc;
-                tempitc = optitc[0].titc;
-                greenitc = optitc[0].gritc;
-                tempref = optitc[0].tempre;
-                greenref = optitc[0].greenre;
-                dread = optitc[0].drea;
-                kmin = optitc[0].kmi;
-                minhist = optitc[0].minhis;
-                maxhist = optitc[0].maxhis;
-                avg_rm = optitc[0].avg_r;
-                avg_gm = optitc[0].avg_g;
-                avg_bm = optitc[0].avg_b;
-            } 
-  //  }
+
+    if (nbitc == 1 && choiceitc == 1) {
+        bia = 1;
+        studgood = optitc[choiceitc].stud;
+        minchrom = optitc[choiceitc].minc;
+        tempitc = optitc[choiceitc].titc;
+        greenitc = optitc[choiceitc].gritc;
+        tempref = optitc[choiceitc].tempre;
+        greenref = optitc[choiceitc].greenre;
+        dread = optitc[choiceitc].drea;
+        kmin = optitc[choiceitc].kmi;
+        minhist = optitc[choiceitc].minhis;
+        maxhist = optitc[choiceitc].maxhis;
+        avg_rm = optitc[choiceitc].avg_r;
+        avg_gm = optitc[choiceitc].avg_g;
+        avg_bm = optitc[choiceitc].avg_b;
+    } else {
+        studgood = optitc[0].stud;
+        minchrom = optitc[0].minc;
+        tempitc = optitc[0].titc;
+        greenitc = optitc[0].gritc;
+        tempref = optitc[0].tempre;
+        greenref = optitc[0].greenre;
+        dread = optitc[0].drea;
+        kmin = optitc[0].kmi;
+        minhist = optitc[0].minhis;
+        maxhist = optitc[0].maxhis;
+        avg_rm = optitc[0].avg_r;
+        avg_gm = optitc[0].avg_g;
+        avg_bm = optitc[0].avg_b;
+    }
+
+    //  }
 }
 
 void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double & avg_rm, double & avg_gm, double & avg_bm, double & tempitc, double & greenitc, int &bia,  int &dread, float & studgood, float &minchrom, int &kmin, float &minhist, float &maxhist, bool & twotimes, const WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const ColorManagementParams & cmp, const RAWParams & raw, const ToneCurveParams &hrp)
