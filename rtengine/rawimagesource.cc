@@ -6516,8 +6516,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
 //        bool exectwo = false;
         int choiceitc = 0;
-        if ((tempitc < 4000.f || tempitc > 7100.f) && lastitc) {//try to find if another tempref value near 5000K is better
-            printf("tempitcalg=%f\n", tempitc);
+        if ((tempitc < 4000.f || tempitc > 7100.f) && lastitc  && oldsampling == false) {//try to find if another tempref value near 5000K is better
+ //           printf("tempitcalg=%f\n", tempitc);
 //            exectwo = true;
             optitc[nbitc].stud = studgood;
             optitc[nbitc].minc = minchrom;

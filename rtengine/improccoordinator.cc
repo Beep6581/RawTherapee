@@ -562,7 +562,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     //printf("Bias=%f tempref=%f temprefbias=%f \n", params->wb.tempBias, (double) tempref, (double) tempref0bias);
                     double greenref = currWBitc.getGreen();
 
-                    if (greenref > 1.5f || tempref0bias < 2800.f || tempref0bias > 9000.f) { //probably camera out to adjust...
+                    if ((greenref > 1.5f || tempref0bias < 2800.f || tempref0bias > 9000.f) && !params->wb.itcwb_sampling) { //probably camera out to adjust...
 
                         imgsrc->getAutoWBMultipliersitc(tempref0bias, greenref, tempitc, greenitc, bia, dread, studgood, minchrom, kmin, minhist, maxhist, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
                         imgsrc->wbMul2Camera(rm, gm, bm);
