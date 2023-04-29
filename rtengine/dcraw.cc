@@ -4422,10 +4422,10 @@ void CLASS crop_masked_pixels()
     }
   } else {
     if (height + top_margin > raw_height) {
-      top_margin = raw_height - height;
+      top_margin = raw_height - MIN(height, raw_height);
     }
     if (width + left_margin > raw_width) {
-      left_margin = raw_width - width;
+      left_margin = raw_width - MIN(width, raw_width);
     }
 #ifdef _OPENMP
 #pragma omp parallel for
@@ -10138,8 +10138,8 @@ canon_a5:
         width = raw_width = 5504;
         height = raw_height = 3856;
     }
-    top_margin = (raw_height - height) >> 2 << 1;
-    left_margin = (raw_width - width ) >> 2 << 1;
+    top_margin = (raw_height - MIN(height, raw_height)) >> 2 << 1;
+    left_margin = (raw_width - MIN(width, raw_width) ) >> 2 << 1;
     if (width == 2848 || width == 3664) filters = 0x16161616;
     if (width == 4032 || width == 4952 || width == 6032 || width == 8280) left_margin = 0;
     if (width == 3328 && (width -= 66)) left_margin = 34;
