@@ -6621,7 +6621,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             itciterate = false;
         }
 
-        if ((optitc[1].minc * sqrt(optitc[1].stud) < optitc[0].minc * sqrt(optitc[0].stud)) && optitc[1].minc > 0.f) {
+        if ((optitc[1].delt * sqrt(optitc[1].stud) < optitc[0].delt * sqrt(optitc[0].stud)) && optitc[1].minc > 0.f) {
             choiceitc = 1;
         } else {
             choiceitc = 0;
