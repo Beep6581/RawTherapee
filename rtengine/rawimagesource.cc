@@ -5263,12 +5263,13 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         double avg_r;
         double avg_g;
         double avg_b;
+        float delt;
 
     } Wboptim;
 
     Wboptim optitc[2] = {
-        {0.f, 0.f, 5000., 1., 5000., 1., 1, 1, 10.f, 100.f, 1., 1., 1.},
-        {0.f, 0.f, 5000., 1., 5000., 1., 1, 1, 10.f, 100.f, 1., 1., 1.}
+        {0.f, 0.f, 5000., 1., 5000., 1., 1, 1, 10.f, 100.f, 1., 1., 1., 0.f},
+        {0.f, 0.f, 5000., 1., 5000., 1., 1, 1, 10.f, 100.f, 1., 1., 1., 0.f}
     };
     int nbitc = 0;
     int choiceitc = 0;
@@ -5721,6 +5722,17 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         } ;
 
+        struct Temppatch {
+            float minchroma;
+            float delt_E;
+            bool operator()(const Temppatch& ltp, const Temppatch& rtp)
+            {
+                return ltp.minchroma < rtp.minchroma;
+            }
+        };
+
+        Temppatch  Tppat[N_t];
+
         LUTu histxy(siza); //number of values for each pair xy
 
         histxy.clear();
@@ -5859,6 +5871,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         array2D<float> hue_curref_reduc(N_t, sizcurrref);//new array to improve patch
         array2D<float> chro_curref_reduc(N_t, sizcurrref);//new array to improve patch
         array2D<float> estim_hue(N_t, sizcurrref);//new array to improve patch
+        array2D<float> estim_chro(N_t, sizcurrref);//new array to improve patch
 
         hiss Wbhis[siza];
 
@@ -6015,19 +6028,26 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
                         if (!isponderate) {
                             estimchrom += chxy;
+                            estim_chro[j][repref] += chxy;
 
                             if (isponder && !isponderate) {
                                 estimchrom += chxy1;
                                 estimchrom += chxy2;
+                                estim_chro[j][repref] += chxy1;
+                                estim_chro[j][repref] += chxy2;
                             }
                         }
 
                         if (isponderate) {
                             estimchrom += chxynum;
+                            estim_chro[j][repref] += chxynum;
 
                             if (isponder) {
                                 estimchrom += chxynum1;
                                 estimchrom += chxynum2;
+                                estim_chro[j][repref] += chxynum1;
+                                estim_chro[j][repref] += chxynum2;
+
                             }
 
                             countchxynum += pow((double)histcurrref[nh][repref], 0.05);//no error, to take into account mean value
@@ -6038,12 +6058,16 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
                     if (isponder) {
                         estimchrom /= (j + 2 * (j - 1)); //extrem not taken
+                        estim_chro[j][repref] /= (j + 2 * (j - 1));
                     } else {
                         estimchrom /= j;
+                        estim_chro[j][repref] /= j;
                     }
 
                     if (estimchrom < minchrom) {
                         minchrom = estimchrom;
+                        minchrom = estim_chro[j][repref];
+                        Tppat[repref].minchroma = minchrom;
                         kmin = j;
                     }
                 }
@@ -6129,7 +6153,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
 
         if (settings->verbose) {
-            printf("Info2 - patch estimation of wp displacement (before):j=%i real=%i chrom=%f hue=%f\n", kmin, index2 - indn, (double) minchrom, (double) estim_hue[kmin][repref]);
+            printf("Info2 - patch estimation of wp displacement (before):j=%i repref=%i real=%i Tppat=%f chrom=%f hue=%f\n", kmin, repref, index2 - indn, (double) Tppat[repref].minchroma, (double) minchrom, (double) estim_hue[kmin][repref]);
         };
 
         for (int i = indn; i < index2; ++i) {
@@ -6209,6 +6233,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
                 good_spectral[kN] = true;//good spectral are spectral color that match color histogram xy
             }
+
+            Tppat[repref].delt_E = dEmean / ndEmean;
 
             if (settings->verbose) {
                 printf("Patch Mean deltaE=%f minhisto=%6.0f maxhisto=%7.0f \n", (double) dEmean / ndEmean, (double) minhist, (double) maxhist);
@@ -6532,7 +6558,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 //           printf("tempitcalg=%f\n", tempitc);
 //            exectwo = true;
             optitc[nbitc].stud = studgood;
-            optitc[nbitc].minc = minchrom;
+            optitc[nbitc].minc = Tppat[repref].minchroma;//minchrom;
             optitc[nbitc].titc = tempitc;
             optitc[nbitc].gritc = greenitc;
             optitc[nbitc].tempre = tempref;
@@ -6544,6 +6570,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             optitc[nbitc].avg_r = avg_rm;
             optitc[nbitc].avg_g = avg_gm;
             optitc[nbitc].avg_b = avg_bm;
+            optitc[nbitc].delt = Tppat[repref].delt_E;
 
             nbitc++;
 
@@ -6556,8 +6583,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
             }
 
+//Tppat[repref].delt_E
             optitc[nbitc].stud = studgood;
-            optitc[nbitc].minc = minchrom;
+            optitc[nbitc].minc =  Tppat[repref].minchroma; //minchrom;
             optitc[nbitc].titc = tempitc;
             optitc[nbitc].gritc = greenitc;
             optitc[nbitc].tempre = tempref;
@@ -6569,11 +6597,13 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             optitc[nbitc].avg_r = avg_rm;
             optitc[nbitc].avg_g = avg_gm;
             optitc[nbitc].avg_b = avg_bm;
+            optitc[nbitc].delt = Tppat[repref].delt_E;
+
             lastitc = false;
         } else {
 //            exectwo = false;
             optitc[nbitc].stud = studgood;
-            optitc[nbitc].minc = minchrom;
+            optitc[nbitc].minc =  Tppat[repref].minchroma; // minchrom;
             optitc[nbitc].titc = tempitc;
             optitc[nbitc].gritc = greenitc;
             optitc[nbitc].tempre = tempref;
@@ -6585,6 +6615,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             optitc[nbitc].avg_r = avg_rm;
             optitc[nbitc].avg_g = avg_gm;
             optitc[nbitc].avg_b = avg_bm;
+            optitc[nbitc].delt = Tppat[repref].delt_E;
+
             lastitc = false;
             itciterate = false;
         }
@@ -6598,7 +6630,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     if (settings->verbose) {
         for (int d = 0; d < 2; d++) {
-            printf("n=%i nbitc=%i stu=%f minc=%f tempitc=%f choiceitc=%i\n", d, nbitc, (double) optitc[d].stud, (double) optitc[d].minc, (double) optitc[d].titc, choiceitc);
+            printf("n=%i nbitc=%i stu=%f minc=%f tempitc=%f deltaE=%f choiceitc=%i\n", d, nbitc, (double) optitc[d].stud, (double) optitc[d].minc, (double) optitc[d].titc, (double) optitc[d].delt, choiceitc);
         }
     }
 

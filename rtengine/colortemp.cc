@@ -4581,8 +4581,8 @@ void ColorTemp::temp2mul (double temp, double green, double equal, StandardObser
 //calculate spectral data for blackbody at temp!
 double ColorTemp::blackbody_spect(double wavelength, double temperature)
 {// I found an error in this formula, now it works 4/2023
-    const double wlm = wavelength;   /* Wavelength in meters */
-    return  (3.7417715247e-14) / (1e-45* rtengine::pow5(wlm) * (pow(2.718281828459, 1.438786e-2 / (wlm * temperature * 0.000000001)) - 1.0)* 2.21e12); //1.4387..= c2 = h*c/k  where k=Boltzmann constant
+    const double wlm = wavelength;   /* Wavelength in nano meters */
+    return  (3.7417715247e-14) / (1e-45* rtengine::pow5(wlm) * (pow(2.718281828459, 1.438786e-2 / (wlm * temperature * 1e-9)) - 1.0)* 2.21e12); //1.4387..= c2 = h*c/k  where k=Boltzmann constant
 }
 
 /*
