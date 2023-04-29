@@ -23,6 +23,7 @@
 #include <glibmm/regex.h>
 #include <glibmm/miscutils.h>
 #include <glibmm/keyfile.h>
+#include <glibmm/fileutils.h>
 
 #include "rtengine.h"
 #include "../rtgui/options.h"
@@ -173,9 +174,12 @@ bool DynamicProfileRules::loadRules()
 {
     dynamicRules.clear();
     Glib::KeyFile kf;
+    const Glib::ustring fileName = Glib::build_filename (Options::rtdir, "dynamicprofile.cfg");
 
     try {
-        if (!kf.load_from_file (Glib::build_filename (Options::rtdir, "dynamicprofile.cfg"))) {
+        if (Glib::file_test(fileName, Glib::FILE_TEST_EXISTS)) {
+            kf.load_from_file (fileName);
+        } else {
             return false;
         }
     } catch (Glib::Error &e) {

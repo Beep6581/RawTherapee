@@ -734,7 +734,7 @@ ToolLocationPreference::ToolLocationPreference(Options &options) :
     Gtk::Box *favorites_box = Gtk::manage(new Gtk::Box());
     Gtk::ScrolledWindow *favorites_list_scrolled_window =
         Gtk::manage(new Gtk::ScrolledWindow());
-    favorites_list_scrolled_window->set_min_content_width(RTScalable::scalePixelSize(300));
+    favorites_list_scrolled_window->set_min_content_width(RTScalable::scalePixelSize(400));
     layout_grid->attach_next_to(*favorites_frame, Gtk::PositionType::POS_RIGHT, 1, 1);
     favorites_box->pack_start(impl->favoritesListEditButtons, false, false);
     favorites_box->pack_start(*favorites_list_scrolled_window, false, false);

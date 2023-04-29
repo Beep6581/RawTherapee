@@ -92,8 +92,8 @@ ExternalEditorPreferences::getEditors() const
     auto children = list_model->children();
 
     for (auto rowIter = children.begin(); rowIter != children.end(); rowIter++) {
-        const Gio::Icon *const icon = rowIter->get_value(model_columns.icon).get();
-        const auto &icon_serialized = icon == nullptr ? "" : icon->serialize().print();
+        const auto icon = rowIter->get_value(model_columns.icon);
+        const auto &icon_serialized = !icon ? "" : icon->serialize().print();
         editors.push_back(ExternalEditorPreferences::EditorInfo(
                               rowIter->get_value(model_columns.name),
                               rowIter->get_value(model_columns.command),

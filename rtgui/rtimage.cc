@@ -74,7 +74,7 @@ RTImage::RTImage (const Glib::RefPtr<const Gio::Icon>& gIcon, const Gtk::IconSiz
     Gtk::Image(),
     size(iconSize),
     icon_name(""),
-    g_icon(Glib::RefPtr<const Gio::Icon>())
+    g_icon(gIcon)
 {
     // Configure RTImage based on g_icon
     set(this->g_icon, this->size);
