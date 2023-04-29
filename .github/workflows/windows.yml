@@ -10,6 +10,8 @@ on:
     branches:
       - dev
   workflow_dispatch:
+env:
+  publish_pre_dev_labels: '[]'
 jobs:
   build:
     runs-on: windows-2022
@@ -176,15 +178,15 @@ jobs:
           echo "Copying Adwaita theme."
           mkdir -p "$BUILD_DIR/share/icons/Adwaita"
           cd 'share/icons/Adwaita/'
-          mkdir -p "$BUILD_DIR/share/icons/Adwaita/scalable"
+          mkdir -p "$BUILD_DIR/share/icons/Adwaita/symbolic"
           cp -r \
-            "scalable/actions" \
-            "scalable/devices" \
-            "scalable/mimetypes" \
-            "scalable/places" \
-            "scalable/status" \
-            "scalable/ui" \
-            "$BUILD_DIR/share/icons/Adwaita/scalable"
+            "symbolic/actions" \
+            "symbolic/devices" \
+            "symbolic/mimetypes" \
+            "symbolic/places" \
+            "symbolic/status" \
+            "symbolic/ui" \
+            "$BUILD_DIR/share/icons/Adwaita/symbolic"
           cp 'index.theme' "$BUILD_DIR/share/icons/Adwaita"
           mkdir -p "$BUILD_DIR/share/icons/Adwaita/cursors"
           cp -r \
@@ -299,4 +301,45 @@ jobs:
         if: ${{matrix.build_type == 'release' && (github.ref_type == 'tag' || github.ref_name == 'dev')}}
         with:
           tag_name: nightly-github-actions
+          files: build/${{env.PUBLISH_NAME}}.exe
+
+      - name: Prepare for publishing pre-dev
+        id: prepare-publish-pre-dev
+        if: ${{github.event_name == 'pull_request' && contains(fromJSON(env.publish_pre_dev_labels), github.event.pull_request.head.label)}}
+        run: |
+          echo "Making ref name."
+          REF_NAME_FILTERED="$(echo '${{github.event.pull_request.head.label}}' | tr ':' '_' | sed 's/[^A-z0-9_.-]//g')"
+          echo "Ref name is '$REF_NAME_FILTERED'."
+
+          echo "Setting publish name."
+          PUBLISH_NAME="RawTherapee_${REF_NAME_FILTERED}_win64_${{matrix.build_type}}"
+          echo "Publish name is '$PUBLISH_NAME'."
+          if [ "$ARTIFACT_NAME" != "$PUBLISH_NAME" ]; then
+            echo "Renaming ZIP file."
+            cp "build/$ARTIFACT_NAME.zip" "build/$PUBLISH_NAME.zip"
+            if [ -e "./build/$ARTIFACT_NAME.exe" ]; then
+              echo "Renaming installer."
+              mv "./build/$ARTIFACT_NAME.exe" "./build/$PUBLISH_NAME.exe"
+            fi
+          fi
+          echo "Creating version file."
+          cp "build/$ARTIFACT_NAME/AboutThisBuild.txt" "build/$PUBLISH_NAME-AboutThisBuild.txt"
+
+          echo "Recording publish name."
+          echo "PUBLISH_NAME=$PUBLISH_NAME" >> "$(cygpath -u $GITHUB_ENV)"
+
+      - name: Publish pre-dev artifacts
+        uses: softprops/action-gh-release@v1
+        if: ${{steps.prepare-publish-pre-dev.outcome == 'success'}}
+        with:
+          tag_name: pre-dev-github-actions
+          files: |
+            build/${{env.PUBLISH_NAME}}.zip
+            build/${{env.PUBLISH_NAME}}-AboutThisBuild.txt
+
+      - name: Publish pre-dev installer
+        uses: softprops/action-gh-release@v1
+        if: ${{steps.prepare-publish-pre-dev.outcome == 'success' && matrix.build_type == 'release'}}
+        with:
+          tag_name: pre-dev-github-actions
           files: build/${{env.PUBLISH_NAME}}.exe

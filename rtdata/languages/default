@@ -1528,6 +1528,7 @@ HISTORY_MSG_WAVSTREND;Strength soft
 HISTORY_MSG_WAVTHRDEN;Threshold local contrast
 HISTORY_MSG_WAVTHREND;Threshold local contrast
 HISTORY_MSG_WAVUSHAMET;Clarity method
+HISTORY_MSG_WBALANCE_OBSERVER10;Observer 10°
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -1823,6 +1824,7 @@ PREFERENCES_CACHECLEAR_SAFETY;Only files in the cache are cleared. Processing pr
 PREFERENCES_CACHEMAXENTRIES;Maximum number of cache entries
 PREFERENCES_CACHEOPTS;Cache Options
 PREFERENCES_CACHETHUMBHEIGHT;Maximum thumbnail height
+PREFERENCES_CAMERAPROFILESDIR;Camera profiles directory
 PREFERENCES_CHUNKSIZES;Tiles per thread
 PREFERENCES_CHUNKSIZE_RAW_AMAZE;AMaZE demosaic
 PREFERENCES_CHUNKSIZE_RAW_CA;Raw CA correction
@@ -1831,6 +1833,7 @@ PREFERENCES_CHUNKSIZE_RAW_XT;Xtrans demosaic
 PREFERENCES_CHUNKSIZE_RGB;RGB processing
 PREFERENCES_CIE;Ciecam
 PREFERENCES_CIEARTIF;Avoid artifacts
+PREFERENCES_WBA;White Balance
 PREFERENCES_CLIPPINGIND;Clipping Indication
 PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
@@ -1880,8 +1883,9 @@ PREFERENCES_EXTEDITOR_FLOAT32;32-bit float TIFF output
 PREFERENCES_EXTERNALEDITOR;External Editor
 PREFERENCES_EXTERNALEDITOR_CHANGE;Change Application
 PREFERENCES_EXTERNALEDITOR_CHANGE_FILE;Change Executable
-PREFERENCES_EXTERNALEDITOR_COLUMN_NAME;Name
 PREFERENCES_EXTERNALEDITOR_COLUMN_COMMAND;Command
+PREFERENCES_EXTERNALEDITOR_COLUMN_NAME;Name
+PREFERENCES_EXTERNALEDITOR_COLUMN_NATIVE_COMMAND;Native command
 PREFERENCES_FBROWSEROPTS;File Browser / Thumbnail Options
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Compact toolbars in File Browser
 PREFERENCES_FLATFIELDFOUND;Found
@@ -1909,6 +1913,7 @@ PREFERENCES_INTENT_SATURATION;Saturation
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show embedded JPEG thumbnail if raw is unedited
 PREFERENCES_LANG;Language
 PREFERENCES_LANGAUTODETECT;Use system language
+PREFERENCES_LENSPROFILESDIR;Lens profiles directory
 PREFERENCES_MAXRECENTFOLDERS;Maximum number of recent folders
 PREFERENCES_MENUGROUPEXTPROGS;Group 'Open with'
 PREFERENCES_MENUGROUPFILEOPERATIONS;Group 'File operations'
@@ -2204,7 +2209,8 @@ TP_COLORAPP_CHROMA_M_TOOLTIP;Colorfulness in CIECAM is the perceived amount of h
 TP_COLORAPP_CHROMA_S;Saturation (S)
 TP_COLORAPP_CHROMA_S_TOOLTIP;Saturation in CIECAM corresponds to the color of a stimulus in relation to its own brightness. It differs from L*a*b* and RGB saturation.
 TP_COLORAPP_CHROMA_TOOLTIP;Chroma in CIECAM corresponds to the color of a stimulus relative to the clarity of a stimulus that appears white under identical conditions. It differs from L*a*b* and RGB chroma.
-TP_COLORAPP_CIECAT_DEGREE;Adaptation
+TP_COLORAPP_CIECAT_DEGREE;Chromatic Adaptation Scene
+TP_COLORAPP_CIECAT_DEGREEOUT;Chromatic Adaptation Viewing
 TP_COLORAPP_CONTRAST;Contrast (J)
 TP_COLORAPP_CONTRAST_Q;Contrast (Q)
 TP_COLORAPP_CONTRAST_Q_TOOLTIP;Contrast (Q) in CIECAM is based on brightness. It differs from L*a*b* and RGB contrast.
@@ -4079,6 +4085,10 @@ TP_WBALANCE_LED_CRS;CRS SP12 WWMR16
 TP_WBALANCE_LED_HEADER;LED
 TP_WBALANCE_LED_LSI;LSI Lumelex 2040
 TP_WBALANCE_METHOD;Method
+TP_WBALANCE_MULLABEL;Multipliers: r=%1 g=%2 b=%3
+TP_WBALANCE_MULLABEL_TOOLTIP;Values given for information purposes. You cannot change them.
+TP_WBALANCE_OBSERVER10;Observer 10° instead of Observer 2°
+TP_WBALANCE_OBSERVER10_TOOLTIP;The color management in Rawtherapee (White balance, channel multipliers, highlight recovery,...) uses the spectral data of the illuminants and colors. Observer is an important parameter of this management which takes into account the angle of perception of the eye. In 1931 it was fixed at 2° (privileges the use of the cones). In 1964 it was fixed at 10° (privileges the use of the cones, but partially takes into account the rods).\nTo avoid a (rare) drift of the colors due to the choice Observer 10° - probably due to the conversion matrix - Observer 2° must be selected.\nIn a majority of cases Observer 10° (default) will be a more relevant choice.
 TP_WBALANCE_PICKER;Pick
 TP_WBALANCE_SHADE;Shade
 TP_WBALANCE_SIZE;Size:

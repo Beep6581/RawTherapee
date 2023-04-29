@@ -54,9 +54,10 @@
 
 struct ExternalEditor {
     ExternalEditor();
-    ExternalEditor(const Glib::ustring &name, const Glib::ustring &command, const Glib::ustring &icon_serialized);
+    ExternalEditor(const Glib::ustring &name, const Glib::ustring &command, bool native_command, const Glib::ustring &icon_serialized);
     Glib::ustring name;
     Glib::ustring command;
+    bool native_command;
     Glib::ustring icon_serialized;
 
     bool operator==(const ExternalEditor & other) const;
@@ -450,6 +451,8 @@ public:
     Glib::ustring lastIccDir;
     Glib::ustring lastDarkframeDir;
     Glib::ustring lastFlatfieldDir;
+	Glib::ustring lastCameraProfilesDir;
+	Glib::ustring lastLensProfilesDir;
     Glib::ustring lastRgbCurvesDir;
     Glib::ustring lastLabCurvesDir;
     Glib::ustring lastRetinexDir;

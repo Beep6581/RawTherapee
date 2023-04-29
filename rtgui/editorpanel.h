@@ -253,6 +253,7 @@ private:
     Gtk::Button* navNext;
     Gtk::Button* navPrev;
     Glib::RefPtr<Gio::AppInfo> external_editor_info;
+    bool external_editor_native_command;
     std::unique_ptr<RTAppChooserDialog> app_chooser_dialog;
     ExternalEditorChangedSignal *externalEditorChangedSignal;
     sigc::connection externalEditorChangedSignalConnection;

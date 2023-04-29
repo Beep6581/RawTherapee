@@ -148,7 +148,7 @@ void BatchToolPanelCoordinator::initSession ()
             whitebalance->setAdjusterBehavior (false, false, false, false);
             vibrance->setAdjusterBehavior (false, false);
             vignetting->setAdjusterBehavior (false, false, false, false);
-            colorappearance->setAdjusterBehavior (false, false, false, false, false, false, false, false, false, false, false, false, false);
+            colorappearance->setAdjusterBehavior (false, false, false, false, false, false, false, false, false, false, false, false, false, false, false);
             rotate->setAdjusterBehavior (false);
             resize->setAdjusterBehavior (false);
             distortion->setAdjusterBehavior (false);
@@ -193,7 +193,7 @@ void BatchToolPanelCoordinator::initSession ()
             whitebalance->setAdjusterBehavior (options.baBehav[ADDSET_WB_TEMPERATURE], options.baBehav[ADDSET_WB_GREEN], options.baBehav[ADDSET_WB_EQUAL], options.baBehav[ADDSET_WB_TEMPBIAS]);
             vibrance->setAdjusterBehavior (options.baBehav[ADDSET_VIBRANCE_PASTELS], options.baBehav[ADDSET_VIBRANCE_SATURATED]);
             vignetting->setAdjusterBehavior (options.baBehav[ADDSET_VIGN_AMOUNT], options.baBehav[ADDSET_VIGN_RADIUS], options.baBehav[ADDSET_VIGN_STRENGTH], options.baBehav[ADDSET_VIGN_CENTER]);
-            colorappearance->setAdjusterBehavior (options.baBehav[ADDSET_CAT_DEGREE], options.baBehav[ADDSET_CAT_ADAPTSCENE], options.baBehav[ADDSET_CAT_ADAPTVIEWING], options.baBehav[ADDSET_CAT_BADPIX], options.baBehav[ADDSET_CAT_LIGHT], options.baBehav[ADDSET_CAT_CHROMA], options.baBehav[ADDSET_CAT_CONTRAST], options.baBehav[ADDSET_CAT_RSTPRO], options.baBehav[ADDSET_CAT_BRIGHT], options.baBehav[ADDSET_CAT_CONTRAST_Q], options.baBehav[ADDSET_CAT_CHROMA_S], options.baBehav[ADDSET_CAT_CHROMA_M], options.baBehav[ADDSET_CAT_HUE]);
+            colorappearance->setAdjusterBehavior (options.baBehav[ADDSET_CAT_DEGREE], options.baBehav[ADDSET_CAT_ADAPTSCENE], options.baBehav[ADDSET_CAT_ADAPTVIEWING], options.baBehav[ADDSET_CAT_BADPIX], options.baBehav[ADDSET_CAT_LIGHT], options.baBehav[ADDSET_CAT_CHROMA], options.baBehav[ADDSET_CAT_CONTRAST], options.baBehav[ADDSET_CAT_RSTPRO], options.baBehav[ADDSET_CAT_BRIGHT], options.baBehav[ADDSET_CAT_CONTRAST_Q], options.baBehav[ADDSET_CAT_CHROMA_S], options.baBehav[ADDSET_CAT_CHROMA_M], options.baBehav[ADDSET_CAT_HUE],options.baBehav[ADDSET_CAT_DEGREEOUT], options.baBehav[ADDSET_CAT_TEMPOUT] );
             rotate->setAdjusterBehavior (options.baBehav[ADDSET_ROTATE_DEGREE]);
             resize->setAdjusterBehavior (options.baBehav[ADDSET_RESIZE_SCALE]);
             distortion->setAdjusterBehavior (options.baBehav[ADDSET_DIST_AMOUNT]);
@@ -289,6 +289,8 @@ void BatchToolPanelCoordinator::initSession ()
             if (options.baBehav[ADDSET_CAT_CONTRAST]) { pparams.colorappearance.contrast = 0; }
             if (options.baBehav[ADDSET_CAT_CONTRAST_Q]) { pparams.colorappearance.qcontrast = 0; }
             if (options.baBehav[ADDSET_CAT_HUE]) { pparams.colorappearance.colorh = 0; }
+            if (options.baBehav[ADDSET_CAT_DEGREEOUT]) { pparams.colorappearance.degreeout = 0; }
+            if (options.baBehav[ADDSET_CAT_TEMPOUT]) { pparams.colorappearance.tempout = 0; }
             //if (options.baBehav[ADDSET_CBOOST_AMOUNT])  pparams.colorBoost.amount = 0;
             //if (options.baBehav[ADDSET_CS_BLUEYELLOW])  pparams.colorShift.a = 0;
             //if (options.baBehav[ADDSET_CS_GREENMAGENTA])  pparams.colorShift.b = 0;
@@ -586,19 +588,19 @@ void BatchToolPanelCoordinator::unsetTweakOperator (rtengine::TweakOperator *tOp
 {
 }
 
-void BatchToolPanelCoordinator::getAutoWB (double& temp, double& green, double equal, double tempBias)
+void BatchToolPanelCoordinator::getAutoWB (double& temp, double& green, double equal, rtengine::StandardObserver observer, double tempBias)
 {
 
     if (!selected.empty()) {
-        selected[0]->getAutoWB (temp, green, equal, tempBias);
+        selected[0]->getAutoWB (temp, green, equal, observer, tempBias);
     }
 }
 
-void BatchToolPanelCoordinator::getCamWB (double& temp, double& green)
+void BatchToolPanelCoordinator::getCamWB (double& temp, double& green, rtengine::StandardObserver observer)
 {
 
     if (!selected.empty()) {
-        selected[0]->getCamWB (temp, green);
+        selected[0]->getCamWB (temp, green, observer);
     }
 }
 

@@ -36,6 +36,7 @@ ExternalEditorPreferences::ExternalEditorPreferences():
     list_view = Gtk::manage(new Gtk::TreeView());
     list_view->set_model(list_model);
     list_view->append_column(*Gtk::manage(makeAppColumn()));
+    list_view->append_column(*Gtk::manage(makeNativeCommandColumn()));
     list_view->append_column(*Gtk::manage(makeCommandColumn()));
 
     for (auto &&column : list_view->get_columns()) {
@@ -87,19 +88,19 @@ ExternalEditorPreferences::ExternalEditorPreferences():
 std::vector<ExternalEditorPreferences::EditorInfo>
 ExternalEditorPreferences::getEditors() const
 {
-    std::vector<ExternalEditorPreferences::EditorInfo> editors;
+    std::vector<EditorInfo> editors;
 
     auto children = list_model->children();
 
     for (auto rowIter = children.begin(); rowIter != children.end(); rowIter++) {
         const auto icon = rowIter->get_value(model_columns.icon);
         const auto &icon_serialized = !icon ? "" : icon->serialize().print();
-        editors.push_back(ExternalEditorPreferences::EditorInfo(
-                              rowIter->get_value(model_columns.name),
-                              rowIter->get_value(model_columns.command),
-                              icon_serialized,
-                              rowIter->get_value(model_columns.other_data)
-                          ));
+        editors.emplace_back(
+            rowIter->get_value(model_columns.name),
+            rowIter->get_value(model_columns.command),
+            icon_serialized,
+            rowIter->get_value(model_columns.native_command),
+            rowIter->get_value(model_columns.other_data));
     }
 
     return editors;
@@ -110,7 +111,7 @@ void ExternalEditorPreferences::setEditors(
 {
     list_model->clear();
 
-    for (const ExternalEditorPreferences::EditorInfo & editor : editors) {
+    for (const EditorInfo & editor : editors) {
         auto row = *list_model->append();
         Glib::RefPtr<Gio::Icon> icon;
 
@@ -135,6 +136,7 @@ void ExternalEditorPreferences::setEditors(
         row[model_columns.name] = editor.name;
         row[model_columns.icon] = icon;
         row[model_columns.command] = editor.command;
+        row[model_columns.native_command] = editor.native_command;
         row[model_columns.other_data] = editor.other_data;
     }
 }
@@ -164,8 +166,8 @@ Gtk::TreeViewColumn *ExternalEditorPreferences::makeAppColumn()
     col->set_resizable();
     col->pack_start(*icon_renderer, false);
     col->pack_start(*name_renderer);
-    col->add_attribute(*icon_renderer, "gicon", model_columns.icon);
-    col->add_attribute(*name_renderer, "text", model_columns.name);
+    col->add_attribute(icon_renderer->property_gicon(), model_columns.icon);
+    col->add_attribute(name_renderer->property_text(), model_columns.name);
     col->set_min_width(20);
 
     name_renderer->property_editable() = true;
@@ -182,11 +184,29 @@ Gtk::TreeViewColumn *ExternalEditorPreferences::makeCommandColumn()
 
     col->set_title(M("PREFERENCES_EXTERNALEDITOR_COLUMN_COMMAND"));
     col->pack_start(*command_renderer);
-    col->add_attribute(*command_renderer, "text", model_columns.command);
+    col->add_attribute(command_renderer->property_text(), model_columns.command);
 
     command_renderer->property_editable() = true;
     command_renderer->signal_edited().connect(
         sigc::mem_fun(*this, &ExternalEditorPreferences::setAppCommand));
+
+    return col;
+}
+
+Gtk::TreeViewColumn *ExternalEditorPreferences::makeNativeCommandColumn()
+{
+    auto toggle_renderer = Gtk::manage(new Gtk::CellRendererToggle());
+    auto col = Gtk::manage(new Gtk::TreeViewColumn());
+
+    col->set_title(M("PREFERENCES_EXTERNALEDITOR_COLUMN_NATIVE_COMMAND"));
+    col->pack_start(*toggle_renderer);
+    col->add_attribute(toggle_renderer->property_active(), model_columns.native_command);
+
+    toggle_renderer->signal_toggled().connect([this](const Glib::ustring &path) {
+        const auto row_iter = list_model->get_iter(path);
+        bool new_value = !row_iter->get_value(model_columns.native_command);
+        row_iter->set_value(model_columns.native_command, new_value);
+    });
 
     return col;
 }
@@ -221,6 +241,7 @@ void ExternalEditorPreferences::onFileChooserDialogResponse(
             for (const auto &selected : selection) {
                 auto row = *list_model->get_iter(selected);
                 row[model_columns.icon] = Glib::RefPtr<Gio::Icon>(nullptr);
+                row[model_columns.native_command] = false;
                 row[model_columns.command] =
 #ifdef WIN32
                     '"' + dialog->get_filename() + '"';
@@ -310,6 +331,7 @@ void ExternalEditorPreferences::setApp(const Glib::RefPtr<Gio::AppInfo> app_info
         row[model_columns.icon] = app_info->get_icon();
         row[model_columns.name] = app_info->get_name();
         row[model_columns.command] = app_info->get_commandline();
+        row[model_columns.native_command] = false;
     }
 }
 
@@ -341,8 +363,16 @@ void ExternalEditorPreferences::updateToolbarSensitivity()
 }
 
 ExternalEditorPreferences::EditorInfo::EditorInfo(
-    Glib::ustring name, Glib::ustring command, Glib::ustring icon_serialized, void *other_data
-) : name(name), icon_serialized(icon_serialized), command(command), other_data(other_data)
+    const Glib::ustring &name,
+    const Glib::ustring &command,
+    const Glib::ustring &icon_serialized,
+    bool native_command,
+    EditorTag other_data) :
+    name(name),
+    icon_serialized(icon_serialized),
+    command(command),
+    native_command(native_command),
+    other_data(other_data)
 {
 }
 
@@ -351,5 +381,6 @@ ExternalEditorPreferences::ModelColumns::ModelColumns()
     add(name);
     add(icon);
     add(command);
+    add(native_command);
     add(other_data);
 }

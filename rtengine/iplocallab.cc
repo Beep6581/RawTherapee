@@ -2804,9 +2804,9 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         }
     }
 
-    ColorTemp::temp2mulxyz(params->wb.temperature, params->wb.method, Xw, Zw);  //compute white Xw Yw Zw  : white current WB
-    ColorTemp::temp2mulxyz(tempo, "Custom", Xwout, Zwout);
-    ColorTemp::temp2mulxyz(5000, "Custom", Xwsc, Zwsc);
+    ColorTemp::temp2mulxyz(params->wb.temperature, params->wb.method, params->wb.observer, Xw, Zw);  //compute white Xw Yw Zw  : white current WB
+    ColorTemp::temp2mulxyz(tempo, "Custom", params->wb.observer, Xwout, Zwout);
+    ColorTemp::temp2mulxyz(5000, "Custom", params->wb.observer, Xwsc, Zwsc);
 
     //viewing condition for surrsrc
     f  = 1.00f;
