@@ -165,7 +165,7 @@ public:
     }
     void setWB (int temp, double green);
     void resetWB ();
-    void WBChanged           (double temp, double green, double rw, double gw, double bw, int bia, int dread, float studgood, float minchrom, int kmin, float histmin, float histmax) override;
+    void WBChanged           (double temp, double green, double rw, double gw, double bw, float delta, int bia, int dread, float studgood, float minchrom, int kmin, float histmin, float histmax) override;
     void itcwb_nopurple_toggled ();
     void itcwb_alg_toggled ();
     void itcwb_ponder_toggled ();

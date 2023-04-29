@@ -5179,7 +5179,7 @@ float static studentXY(const array2D<float> & YYcurr, const array2D<float> & ref
 
 
 
-void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double &tempitc, double &greenitc, int &bia, int &dread, float &studgood, float &minchrom, int &kmin, float &minhist, float &maxhist,  array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, const ColorManagementParams &cmp, const RAWParams &raw, const WBParams & wbpar, const ToneCurveParams &hrp)
+void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double &tempitc, double &greenitc, float &delta, int &bia, int &dread, float &studgood, float &minchrom, int &kmin, float &minhist, float &maxhist,  array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, const ColorManagementParams &cmp, const RAWParams &raw, const WBParams & wbpar, const ToneCurveParams &hrp)
 {
     /*
     Copyright (c) Jacques Desmis 6 - 2018 jdesmis@gmail.com, update 4 - 2023
@@ -5249,7 +5249,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     bool itciterate = true;
     bool lastitc = true;
 
-    typedef struct Wboptim {
+    typedef struct Wboptim {//store config Itcwb
         float stud;
         float minc;
         double titc;
@@ -5274,7 +5274,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     int nbitc = 0;
     int choiceitc = 0;
 
-    while (itciterate) {//loop to find best mix minchrom and studgood
+    while (itciterate) {//loop to find best mix minchrom and studgood and deltaE patch
 //        lastitc = true;
         Glib::ustring profuse;
         profuse = "Adobe RGB";
@@ -5694,7 +5694,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             //return rmm, gmm, bmm in function of temp
         }
 
-        struct hiss {
+        struct hiss {//histogram
             int histnum;
             int index;
             bool operator()(const hiss& lhis, const hiss& rhis)
@@ -5705,7 +5705,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         } ;
 
         //intermediate structure
-        struct chrom {
+        struct chrom {//chroma image
             float chroxy_number;
             float number;
             float hue;
@@ -5722,7 +5722,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         } ;
 
-        struct Temppatch {
+        struct Temppatch {//patch characterictics
             float minchroma;
             float delt_E;
             bool operator()(const Temppatch& ltp, const Temppatch& rtp)
@@ -6235,7 +6235,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             }
 
             Tppat[repref].delt_E = dEmean / ndEmean;
-
+            delta = Tppat[repref].delt_E;
             if (settings->verbose) {
                 printf("Patch Mean deltaE=%f minhisto=%6.0f maxhisto=%7.0f \n", (double) dEmean / ndEmean, (double) minhist, (double) maxhist);
             }
@@ -6668,7 +6668,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     //  }
 }
 
-void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double & avg_rm, double & avg_gm, double & avg_bm, double & tempitc, double & greenitc, int &bia,  int &dread, float & studgood, float &minchrom, int &kmin, float &minhist, float &maxhist, bool & twotimes, const WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const ColorManagementParams & cmp, const RAWParams & raw, const ToneCurveParams &hrp)
+void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double & avg_rm, double & avg_gm, double & avg_bm, double & tempitc, double & greenitc, float &delta, int &bia,  int &dread, float & studgood, float &minchrom, int &kmin, float &minhist, float &maxhist, bool & twotimes, const WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const ColorManagementParams & cmp, const RAWParams & raw, const ToneCurveParams &hrp)
 {
 //    BENCHFUN
     //auto white balance
@@ -6686,7 +6686,7 @@ void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> 
         }
 
         tempitc = 5000.;
-        ItcWB(extra, tempref, greenref, tempitc, greenitc, bia, dread, studgood, minchrom, kmin, minhist, maxhist, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, cmp, raw, wbpar, hrp);
+        ItcWB(extra, tempref, greenref, tempitc, greenitc, delta, bia, dread, studgood, minchrom, kmin, minhist, maxhist, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, cmp, raw, wbpar, hrp);
     }
 }
 
@@ -6770,7 +6770,7 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
     }
 }
 
-void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref, double & tempitc, double & greenitc, int &bia, int &dread, float &studgood, float &minchrom, int &kmin,  float &minhist, float &maxhist, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double & rm, double & gm, double & bm, const WBParams & wbpar, const ColorManagementParams & cmp, const RAWParams & raw, const ToneCurveParams &hrp)
+void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref, double & tempitc, double & greenitc, float &delta,  int &bia, int &dread, float &studgood, float &minchrom, int &kmin,  float &minhist, float &maxhist, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double & rm, double & gm, double & bm, const WBParams & wbpar, const ColorManagementParams & cmp, const RAWParams & raw, const ToneCurveParams &hrp)
 {
 //    BENCHFUN
     constexpr double clipHigh = 64000.0;
@@ -6972,7 +6972,7 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
 
         const int bfw = W / precision + ((W % precision) > 0 ? 1 : 0);// 5 arbitrary value can be change to 3 or 9 ;
         const int bfh = H / precision + ((H % precision) > 0 ? 1 : 0);
-        WBauto(tempref, greenref, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, tempitc, greenitc, bia, dread, studgood, minchrom, kmin, minhist, maxhist, twotimes, wbpar, begx, begy, yEn,  xEn,  cx,  cy, cmp, raw, hrp);
+        WBauto(tempref, greenref, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, tempitc, greenitc, delta,  bia, dread, studgood, minchrom, kmin, minhist, maxhist, twotimes, wbpar, begx, begy, yEn,  xEn,  cx,  cy, cmp, raw, hrp);
     }
 
     redloc(0, 0);
