@@ -6553,10 +6553,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
 
         //now we have temp green and student
-
+        // 4000 & 7000K arbitrary limits... to improve
         if ((tempitc < 4000.f || tempitc > 7000.f) && lastitc  && oldsampling == false && wbpar.itcwb_alg == false) {//try to find if another tempref value near 5000K is better
 //           printf("tempitcalg=%f\n", tempitc);
-//            exectwo = true;
             optitc[nbitc].stud = studgood;
             optitc[nbitc].minc = Tppat[repref].minchroma;//minchrom;
             optitc[nbitc].titc = tempitc;
@@ -6582,8 +6581,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 tempref = LIM(tempref, 4000., 7000.);
 
             }
-
-//Tppat[repref].delt_E
             optitc[nbitc].stud = studgood;
             optitc[nbitc].minc =  Tppat[repref].minchroma; //minchrom;
             optitc[nbitc].titc = tempitc;
@@ -6601,7 +6598,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
             lastitc = false;
         } else {
-//            exectwo = false;
             optitc[nbitc].stud = studgood;
             optitc[nbitc].minc =  Tppat[repref].minchroma; // minchrom;
             optitc[nbitc].titc = tempitc;
@@ -6634,7 +6630,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
     }
 
-    if (nbitc == 1 && choiceitc == 1) {
+    if ((nbitc == 1 && choiceitc == 1) && wbpar.itcwb_alg == false) {
         bia = 1;
         studgood = optitc[choiceitc].stud;
         minchrom = optitc[choiceitc].minc;
@@ -6664,8 +6660,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         avg_gm = optitc[0].avg_g;
         avg_bm = optitc[0].avg_b;
     }
-
-    //  }
 }
 
 void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double & avg_rm, double & avg_gm, double & avg_bm, double & tempitc, double & greenitc, float &delta, int &bia,  int &dread, float & studgood, float &minchrom, int &kmin, float &minhist, float &maxhist, bool & twotimes, const WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const ColorManagementParams & cmp, const RAWParams & raw, const ToneCurveParams &hrp)

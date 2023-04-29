@@ -4150,7 +4150,7 @@ TP_WBALANCE_OBSERVER10_TOOLTIP;The color management in Rawtherapee (White balanc
 TP_WBALANCE_PATCHLABEL;Read colors:%1 Patch: Chroma:%2 Size=%3
 TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colors (max=237).\nDisplay calculated Patch Chroma.\nAWB temperature bias, lets try to reduce this value, a minimum may seem to optimize the algo. Comparing values with or without "Ponderate patch chroma" doesn't make sense.\n\nPatch size matching chroma optimization.
 TP_WBALANCE_PATCHLEVELLABEL;Patch: ΔE=%1 - datas x 9 Min:%2 Max=%3
-TP_WBALANCE_PATCHLEVELLABEL_TOOLTIP;Display read datas found. The 2 values correspond to the minimum and maximum data values taken into account. The coefficient x9 must be taken into account to obtain the number of pixels concerned in the image.\nYou can adjust the minimum value by modifying in 'options' the value of Itcwb_maxsize (maximum patch size : between 50 to 80).
+TP_WBALANCE_PATCHLEVELLABEL_TOOLTIP;Display ΔE patch (this assumes there is enough spectral data), between image and spectral datas.\n Display read datas found. The 2 values correspond to the minimum and maximum data values taken into account. The coefficient x9 must be taken into account to obtain the number of pixels concerned in the image.\nYou can adjust the minimum value by modifying in 'options' the value of Itcwb_maxsize (maximum patch size : between 50 to 80).
 TP_WBALANCE_PICKER;Pick
 TP_WBALANCE_SHADE;Shade
 TP_WBALANCE_SIZE;Size:
