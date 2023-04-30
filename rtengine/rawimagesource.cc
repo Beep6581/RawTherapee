@@ -5273,6 +5273,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     };
     int nbitc = 0;
     int choiceitc = 0;
+    bool oldsampling = wbpar.itcwb_sampling;
 
     while (itciterate) {//loop to find best mix minchrom and studgood and deltaE patch
 //        lastitc = true;
@@ -5289,7 +5290,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             profuse = "ACESp0";
         }
 
-        bool oldsampling = wbpar.itcwb_sampling;
 
 //    oldsampling = false;
         if (oldsampling) {
@@ -5725,6 +5725,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         struct Temppatch {//patch characterictics
             float minchroma;
             float delt_E;
+            float minhi;
+            float maxhi;
             bool operator()(const Temppatch& ltp, const Temppatch& rtp)
             {
                 return ltp.minchroma < rtp.minchroma;
@@ -5871,7 +5873,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         array2D<float> hue_curref_reduc(N_t, sizcurrref);//new array to improve patch
         array2D<float> chro_curref_reduc(N_t, sizcurrref);//new array to improve patch
         array2D<float> estim_hue(N_t, sizcurrref);//new array to improve patch
-        array2D<float> estim_chro(N_t, sizcurrref);//new array to improve patch
+//        array2D<float> estim_chro(N_t, sizcurrref);//new array to improve patch
 
         hiss Wbhis[siza];
 
@@ -5935,6 +5937,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         const int sizcu30 = sizcurrref - n30;
         int maxsiz = settings->itcwb_maxsize; // between 60 to 90
         maxsiz = LIM(maxsiz, 50, 80);
+      //  maxsiz -= n30;
         int nbm = maxsiz;
         int sizcu4 = maxsiz;
 
@@ -5942,12 +5945,14 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             nbm = 55;
             sizcu4 = rtengine::min(sizcu30, nbm);//size of chroma values
         }
-
+        Tppat[repref].maxhi = Wbhis[siza - 1].histnum;
+        Tppat[repref].minhi = Wbhis[siza - nbm].histnum;
+        
         if (settings->verbose) {
             printf("number total datas read=%i\n", ntot);
             printf("Others datas - ntr=%i sizcurr2ref=%i sizcu4=%i sizcu30=%i\n", ntr, sizcurr2ref, sizcu4, sizcu30);
-            printf("Number max of data samples in last patch=%i\n", Wbhis[siza - 1].histnum);
-            printf("Number of data samples in beginning patch =%i\n", Wbhis[siza - nbm].histnum);
+            printf("Number max of data samples in last patch=%i\n", (int) Tppat[repref].maxhi);
+            printf("Number of data samples in beginning patch =%i\n", (int) Tppat[repref].minhi);
         }
 
         chrom wbchro[sizcu4];
@@ -6028,25 +6033,25 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
                         if (!isponderate) {
                             estimchrom += chxy;
-                            estim_chro[j][repref] += chxy;
+                          //  estim_chro[j][repref] += chxy;
 
                             if (isponder && !isponderate) {
                                 estimchrom += chxy1;
                                 estimchrom += chxy2;
-                                estim_chro[j][repref] += chxy1;
-                                estim_chro[j][repref] += chxy2;
+                              //  estim_chro[j][repref] += chxy1;
+                              //  estim_chro[j][repref] += chxy2;
                             }
                         }
 
                         if (isponderate) {
                             estimchrom += chxynum;
-                            estim_chro[j][repref] += chxynum;
+                           // estim_chro[j][repref] += chxynum;
 
                             if (isponder) {
                                 estimchrom += chxynum1;
                                 estimchrom += chxynum2;
-                                estim_chro[j][repref] += chxynum1;
-                                estim_chro[j][repref] += chxynum2;
+                            //    estim_chro[j][repref] += chxynum1;
+                            //    estim_chro[j][repref] += chxynum2;
 
                             }
 
@@ -6058,15 +6063,15 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
                     if (isponder) {
                         estimchrom /= (j + 2 * (j - 1)); //extrem not taken
-                        estim_chro[j][repref] /= (j + 2 * (j - 1));
+                       // estim_chro[j][repref] /= (j + 2 * (j - 1));
                     } else {
                         estimchrom /= j;
-                        estim_chro[j][repref] /= j;
+                      //  estim_chro[j][repref] /= j;
                     }
 
                     if (estimchrom < minchrom) {
                         minchrom = estimchrom;
-                        minchrom = estim_chro[j][repref];
+                      //  minchrom = estim_chro[j][repref];
                         Tppat[repref].minchroma = minchrom;
                         kmin = j;
                     }
@@ -6142,11 +6147,12 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         if (oldsampling == false) {
 
             for (int i = index1; i < index2; ++i) {
-                if (wbchro[sizcu4 - (i + 1)].number < 1.f) { //remove too low numbers datas about an area 60*60 pixels or reparted
+                if (wbchro[sizcu4 - (i + 1)].number < 400.f) { //remove too low numbers datas about an area 60*60 pixels or reparted
                     indn++;
                 }
             }
         }
+        Tppat[repref].minhi = (float) rtengine::max((int) wbchro[sizcu4 - (indn + 1)].number , (int) Tppat[repref].minhi);
 
         if (settings->verbose) {
             printf("Index1=%i index2=%i \n", indn, index2);
@@ -6564,8 +6570,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             optitc[nbitc].greenre = greenref;
             optitc[nbitc].drea = dread;
             optitc[nbitc].kmi = kmin;
-            optitc[nbitc].minhis = minhist;
-            optitc[nbitc].maxhis = maxhist;
+            optitc[nbitc].minhis = Tppat[repref].minhi;
+            optitc[nbitc].maxhis = Tppat[repref].maxhi;
             optitc[nbitc].avg_r = avg_rm;
             optitc[nbitc].avg_g = avg_gm;
             optitc[nbitc].avg_b = avg_bm;
@@ -6589,13 +6595,12 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             optitc[nbitc].greenre = greenref;
             optitc[nbitc].drea = dread;
             optitc[nbitc].kmi = kmin;
-            optitc[nbitc].minhis = minhist;
-            optitc[nbitc].maxhis = maxhist;
+            optitc[nbitc].minhis = Tppat[repref].minhi;
+            optitc[nbitc].maxhis = Tppat[repref].maxhi;
             optitc[nbitc].avg_r = avg_rm;
             optitc[nbitc].avg_g = avg_gm;
             optitc[nbitc].avg_b = avg_bm;
             optitc[nbitc].delt = Tppat[repref].delt_E;
-
             lastitc = false;
         } else {
             optitc[nbitc].stud = studgood;
@@ -6606,8 +6611,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             optitc[nbitc].greenre = greenref;
             optitc[nbitc].drea = dread;
             optitc[nbitc].kmi = kmin;
-            optitc[nbitc].minhis = minhist;
-            optitc[nbitc].maxhis = maxhist;
+            optitc[nbitc].minhis = Tppat[repref].minhi;
+            optitc[nbitc].maxhis = Tppat[repref].maxhi;
             optitc[nbitc].avg_r = avg_rm;
             optitc[nbitc].avg_g = avg_gm;
             optitc[nbitc].avg_b = avg_bm;
@@ -6630,7 +6635,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
     }
 
-    if ((nbitc == 1 && choiceitc == 1) && wbpar.itcwb_alg == false) {
+    if ((nbitc == 1 && choiceitc == 1) && wbpar.itcwb_alg == false && oldsampling == false ) {
         bia = 1;
         studgood = optitc[choiceitc].stud;
         minchrom = optitc[choiceitc].minc;

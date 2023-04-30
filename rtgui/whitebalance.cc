@@ -457,13 +457,13 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
  //   itcwbBox->pack_start (*itcwb_thres);
 //    itcwbBox->pack_start (*itcwb_precis);
 //    itcwbBox->pack_start (*itcwb_size);
-    itcwbBox->pack_start (*itcwb_minsize);
+//    itcwbBox->pack_start (*itcwb_minsize);
 //    itcwbBox->pack_start (*itcwb_delta);//possible use in pp3
     itcwbBox->pack_start (*itcwb_fgreen);//possible use in pp3
 //    itcwbBox->pack_start (*itcwb_rgreen);//possible use in pp3
     itcwbBox->pack_start (*itcwb_nopurple);
     itcwbBox->pack_start (*itcwb_alg);
-    itcwbBox->pack_start (*itcwb_ponder);
+//    itcwbBox->pack_start (*itcwb_ponder);
     itcwbBox->pack_start (*itcwb_prim);
     
     itcwbBox->pack_start (*itcwb_sampling);
@@ -943,7 +943,8 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
     itcwb_thres->setValue (pp->wb.itcwb_thres);
     itcwb_precis->setValue (pp->wb.itcwb_precis);
     itcwb_size->setValue (pp->wb.itcwb_size);
-    itcwb_minsize->setValue (pp->wb.itcwb_minsize);
+ //   itcwb_minsize->setValue (pp->wb.itcwb_minsize);
+    itcwb_minsize->setValue (20);
     itcwb_delta->setValue (pp->wb.itcwb_delta);
     itcwb_fgreen->setValue (pp->wb.itcwb_fgreen);
     itcwb_rgreen->setValue (pp->wb.itcwb_rgreen);
@@ -960,7 +961,8 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
     lastitcwb_alg = pp->wb.itcwb_alg;
 
     itcwb_ponderconn.block (true);
-    itcwb_ponder->set_active (pp->wb.itcwb_ponder);
+//    itcwb_ponder->set_active (pp->wb.itcwb_ponder);
+    itcwb_ponder->set_active (true);
     itcwb_ponderconn.block (false);
     lastitcwb_ponder = pp->wb.itcwb_ponder;
 
