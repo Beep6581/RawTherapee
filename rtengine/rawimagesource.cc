@@ -5615,17 +5615,17 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         bool purp = true;//if inpaint-opposed or something else enable purp
 
         const int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
-        constexpr int Nc = 374 + 1; //348 number of reference spectral colors
-        int Ncr = 375;
+        constexpr int Nc = 378 + 1; //348 number of reference spectral colors
+        int Ncr = 379;
 
         if (wbpar.itcwb_prim == "srgb") {
-            Ncr = 374 + 1;
+            Ncr = 378 + 1;
         } else if (wbpar.itcwb_prim == "adob") {
-            Ncr = 374 + 1;
+            Ncr = 378 + 1;
         } else if (wbpar.itcwb_prim == "rec") {
-            Ncr = 374 + 1;
+            Ncr = 378 + 1;
         } else if (wbpar.itcwb_prim == "ace") {
-            Ncr = 374 + 1;
+            Ncr = 378 + 1;
         }
 
         if (oldsampling) { //low samplin 5.9 with less spectral datas 201
@@ -6494,7 +6494,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 if (abs(greengood - greencam) > 5) {
                     double ag = 0.;
                     double gcal = gree[greengood].green;
-                    ag = 0.92 * (gcal - keepgreen);
+                    ag = 0.89 * (gcal - keepgreen);
                     greenitc = gcal - ag;
                     greenex = true;
 
@@ -6580,10 +6580,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             nbitc++;
 
             if (tempitc < 4000.f) {
-                tempref = 4600.f * (1. + wbpar.tempBias);
+                tempref = 4500.f * (1. + wbpar.tempBias);
                 tempref = LIM(tempref, 4000., 7000.);
             } else {
-                tempref = 5400.f * (1. + wbpar.tempBias);
+                tempref = 5300.f * (1. + wbpar.tempBias);
                 tempref = LIM(tempref, 4000., 7000.);
 
             }
