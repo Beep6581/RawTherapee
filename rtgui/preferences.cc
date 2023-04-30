@@ -667,7 +667,19 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     dirgrid->attach_next_to(*lensProfilesDirLabel, *cameraProfilesDirLabel, Gtk::POS_BOTTOM, 1, 1);
     dirgrid->attach_next_to(*lensProfilesDir, *lensProfilesDirLabel, Gtk::POS_RIGHT, 1, 1);
 
-	//Pack directories to Image Processing panel
+    // Lensfun DB dir
+    Gtk::Label *lensfunDbDirLabel = Gtk::manage(new Gtk::Label(M("PREFERENCES_LENSFUNDBDIR") + ":"));
+    setExpandAlignProperties(lensfunDbDirLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    lensfunDbDir = Gtk::manage(new MyFileChooserEntry(M("PREFERENCES_LENSFUNDBDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
+    setExpandAlignProperties(lensfunDbDir, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    Gtk::Label* lensfunDbDirRestartNeededLabel = Gtk::manage(new Gtk::Label(Glib::ustring(" (") + M("PREFERENCES_APPLNEXTSTARTUP") + ")"));
+    setExpandAlignProperties(lensfunDbDirRestartNeededLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+
+    dirgrid->attach_next_to(*lensfunDbDirLabel, *lensProfilesDirLabel, Gtk::POS_BOTTOM, 1, 1);
+    dirgrid->attach_next_to(*lensfunDbDir, *lensfunDbDirLabel, Gtk::POS_RIGHT, 1, 1);
+    dirgrid->attach_next_to(*lensfunDbDirRestartNeededLabel, *lensfunDbDir, Gtk::POS_RIGHT, 1, 1);
+
+    //Pack directories to Image Processing panel
     cdf->add(*dirgrid);
     vbImageProcessing->pack_start (*cdf, Gtk::PACK_SHRINK, 4 );
 
@@ -1315,10 +1327,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
     sdlast     = Gtk::manage(new Gtk::RadioButton(M("PREFERENCES_DIRLAST")));
     sdhome     = Gtk::manage(new Gtk::RadioButton(M("PREFERENCES_DIRHOME")));
     sdother    = Gtk::manage(new Gtk::RadioButton(M("PREFERENCES_DIROTHER") + ": "));
-    startupdir = Gtk::manage(new Gtk::Entry());
-
-    Gtk::Button* sdselect = Gtk::manage(new Gtk::Button());
-    sdselect->set_image (*Gtk::manage (new RTImage ("folder-open-small.png")));
+    startupdir = Gtk::manage(new MyFileChooserEntry(M("PREFERENCES_DIRSELECTDLG"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
 
     Gtk::RadioButton::Group opts = sdcurrent->get_group();
     sdlast->set_group(opts);
@@ -1332,13 +1341,10 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
     Gtk::Box* otherbox = Gtk::manage(new Gtk::Box());
     otherbox->pack_start(*sdother, Gtk::PACK_SHRINK);
     otherbox->pack_start(*startupdir);
-    otherbox->pack_end(*sdselect, Gtk::PACK_SHRINK, 4);
     vbsd->pack_start(*otherbox, Gtk::PACK_SHRINK, 0);
 
     fsd->add(*vbsd);
     vbFileBrowser->pack_start (*fsd, Gtk::PACK_SHRINK, 4);
-
-    sdselect->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::selectStartupDir));
 
 //---
 
@@ -1839,7 +1845,7 @@ void Preferences::storePreferences()
         moptions.startupDir = STARTUPDIR_LAST;
     } else if (sdother->get_active()) {
         moptions.startupDir = STARTUPDIR_CUSTOM;
-        moptions.startupPath = startupdir->get_text();
+        moptions.startupPath = startupdir->get_filename();
     }
 
     moptions.parseExtensions.clear();
@@ -1868,8 +1874,9 @@ void Preferences::storePreferences()
     moptions.rtSettings.darkFramesPath = darkFrameDir->get_filename();
     moptions.rtSettings.flatFieldsPath = flatFieldDir->get_filename();
     moptions.clutsDir = clutsDir->get_filename();
-	moptions.rtSettings.cameraProfilesPath = cameraProfilesDir->get_filename();
-	moptions.rtSettings.lensProfilesPath = lensProfilesDir->get_filename();
+    moptions.rtSettings.cameraProfilesPath = cameraProfilesDir->get_filename();
+    moptions.rtSettings.lensProfilesPath = lensProfilesDir->get_filename();
+    moptions.rtSettings.lensfunDbDirectory = lensfunDbDir->get_filename();
 
     moptions.baBehav.resize(ADDSET_PARAM_NUM);
 
@@ -2065,7 +2072,7 @@ void Preferences::fillPreferences()
         sdhome->set_active();
     } else if (moptions.startupDir == STARTUPDIR_CUSTOM) {
         sdother->set_active();
-        startupdir->set_text(moptions.startupPath);
+        startupdir->set_current_folder(moptions.startupPath);
     }
 
     extensionModel->clear();
@@ -2125,10 +2132,12 @@ void Preferences::fillPreferences()
     flatFieldChanged();
 
     clutsDir->set_current_folder(moptions.clutsDir);
-	
-	cameraProfilesDir->set_current_folder(moptions.rtSettings.cameraProfilesPath);
-	
-	lensProfilesDir->set_current_folder(moptions.rtSettings.lensProfilesPath);
+
+    cameraProfilesDir->set_current_folder(moptions.rtSettings.cameraProfilesPath);
+
+    lensProfilesDir->set_current_folder(moptions.rtSettings.lensProfilesPath);
+
+    lensfunDbDir->set_current_folder(moptions.rtSettings.lensfunDbDirectory);
 
     addc.block(true);
     setc.block(true);
@@ -2255,23 +2264,6 @@ void Preferences::cancelPressed()
     }
 
     hide();
-}
-
-void Preferences::selectStartupDir()
-{
-
-    Gtk::FileChooserDialog dialog(getToplevelWindow(this), M("PREFERENCES_DIRSELECTDLG"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER);
-    //dialog.set_transient_for(*this);
-
-    //Add response buttons to the dialog:
-    dialog.add_button(M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
-    dialog.add_button(M("GENERAL_OPEN"), Gtk::RESPONSE_OK);
-
-    int result = dialog.run();
-
-    if (result == Gtk::RESPONSE_OK) {
-        startupdir->set_text(dialog.get_filename());
-    }
 }
 
 void Preferences::aboutPressed()

@@ -396,34 +396,10 @@ protected:
 
 };
 
-/**
- * @brief subclass of Gtk::FileChooserButton in order to handle the scrollwheel
- */
-class MyFileChooserButton final : public Gtk::Button {
-private:
-    void show_chooser();
-
-    Glib::ustring title_;
-    Gtk::FileChooserAction action_;
-    Gtk::Box box_;
-    Gtk::Label lbl_;
-    std::string filename_;
-    std::string current_folder_;
-    std::vector<Glib::RefPtr<Gtk::FileFilter>> file_filters_;
-    Glib::RefPtr<Gtk::FileFilter> cur_filter_;
-    std::vector<std::string> shortcut_folders_;
-    bool show_hidden_;
-    sigc::signal<void> selection_changed_;
-
-protected:
-    bool on_scroll_event (GdkEventScroll* event) override;
-    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
-    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const override;
-
-    void set_none();
-
+class MyFileChooserWidget
+{
 public:
-    explicit MyFileChooserButton(const Glib::ustring &title, Gtk::FileChooserAction action=Gtk::FILE_CHOOSER_ACTION_OPEN);
+    virtual ~MyFileChooserWidget() = default;
 
     sigc::signal<void> &signal_selection_changed();
     sigc::signal<void> &signal_file_set();
@@ -434,7 +410,7 @@ public:
     void add_filter(const Glib::RefPtr<Gtk::FileFilter> &filter);
     void remove_filter(const Glib::RefPtr<Gtk::FileFilter> &filter);
     void set_filter(const Glib::RefPtr<Gtk::FileFilter> &filter);
-    std::vector<Glib::RefPtr<Gtk::FileFilter>> list_filters();
+    std::vector<Glib::RefPtr<Gtk::FileFilter>> list_filters() const;
 
     bool set_current_folder(const std::string &filename);
     std::string get_current_folder() const;
@@ -446,6 +422,54 @@ public:
     void unselect_filename(const std::string &filename);
 
     void set_show_hidden(bool yes);
+
+protected:
+    explicit MyFileChooserWidget(const Glib::ustring &title, Gtk::FileChooserAction action=Gtk::FILE_CHOOSER_ACTION_OPEN);
+
+    static std::unique_ptr<Gtk::Image> make_folder_image();
+
+    void show_chooser(Gtk::Widget *parent);
+    virtual void on_filename_set();
+
+private:
+    class Impl;
+
+    std::unique_ptr<Impl> pimpl;
+};
+
+/**
+ * @brief subclass of Gtk::FileChooserButton in order to handle the scrollwheel
+ */
+class MyFileChooserButton final : public Gtk::Button, public MyFileChooserWidget
+{
+private:
+    class Impl;
+
+    std::unique_ptr<Impl> pimpl;
+
+protected:
+    bool on_scroll_event (GdkEventScroll* event) override;
+    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const override;
+
+    void on_filename_set() override;
+
+public:
+    explicit MyFileChooserButton(const Glib::ustring &title, Gtk::FileChooserAction action=Gtk::FILE_CHOOSER_ACTION_OPEN);
+};
+
+class MyFileChooserEntry : public Gtk::Box, public MyFileChooserWidget
+{
+public:
+    explicit MyFileChooserEntry(const Glib::ustring &title, Gtk::FileChooserAction action = Gtk::FILE_CHOOSER_ACTION_OPEN);
+
+protected:
+    void on_filename_set() override;
+
+private:
+    class Impl;
+
+    std::unique_ptr<Impl> pimpl;
 };
 
 /**
