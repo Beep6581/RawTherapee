@@ -1548,18 +1548,35 @@ MyFileChooserEntry::MyFileChooserEntry(const Glib::ustring &title, Gtk::FileChoo
     MyFileChooserWidget(title, action),
     pimpl(new Impl())
 {
+    const auto on_text_changed = [this]() {
+        set_filename(pimpl->entry.get_text());
+    };
+    pimpl->entry.get_buffer()->signal_deleted_text().connect([on_text_changed](guint, guint) { on_text_changed(); });
+    pimpl->entry.get_buffer()->signal_inserted_text().connect([on_text_changed](guint, const gchar *, guint) { on_text_changed(); });
+
     pimpl->file_chooser_button.set_image(*Gtk::manage(make_folder_image().release()));
     pimpl->file_chooser_button.signal_clicked().connect([this]() {
-        const auto &filename = pimpl->entry.get_text();
+        const auto &filename = get_filename();
         if (Glib::file_test(filename, Glib::FILE_TEST_IS_DIR)) {
             set_current_folder(filename);
         }
-        set_filename(filename);
         show_chooser(this);
     });
 
     pack_start(pimpl->entry, true, true);
     pack_start(pimpl->file_chooser_button, false, false);
+}
+
+
+Glib::ustring MyFileChooserEntry::get_placeholder_text() const
+{
+    return pimpl->entry.get_placeholder_text();
+}
+
+
+void MyFileChooserEntry::set_placeholder_text(const Glib::ustring &text)
+{
+    pimpl->entry.set_placeholder_text(text);
 }
 
 

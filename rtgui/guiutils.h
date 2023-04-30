@@ -463,6 +463,9 @@ class MyFileChooserEntry : public Gtk::Box, public MyFileChooserWidget
 public:
     explicit MyFileChooserEntry(const Glib::ustring &title, Gtk::FileChooserAction action = Gtk::FILE_CHOOSER_ACTION_OPEN);
 
+    Glib::ustring get_placeholder_text() const;
+    void set_placeholder_text(const Glib::ustring &text);
+
 protected:
     void on_filename_set() override;
 
