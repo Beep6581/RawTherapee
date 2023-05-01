@@ -34,15 +34,21 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWindow)
 
 #endif
 
-    auto createCursor = [this] (const Glib::ustring &name, const Gdk::CursorType &fb_cursor) -> Glib::RefPtr<Gdk::Cursor>
+    auto createCursor = [this] (const Glib::ustring &name, const Gdk::CursorType &fb_cursor,
+        const double offX = 0., const double offY = 0.) -> Glib::RefPtr<Gdk::Cursor>
     {
-        // Gdk Cursor Theme is not supported on some OS (ex : MacOS)
+        // Notes:
+        // - Gdk Cursor Theme is not supported on some OS (ex : MacOS).
         // Cursor is retrieved from theme thanks to an RTSurface
+        // - By default, cursor hotspot is located at middle of surface.
+        // Use (offX, offY) between -1 and 0.99 to move cursor hotspot
         auto cursor_surf = RTSurface(name, Gtk::ICON_SIZE_MENU);
+        double offXb = std::min(std::max(-1., offX), 0.99); // offX should belong to (-1; 0.99)
+        double offYb = std::min(std::max(-1., offY), 0.99); // offY should belong to (-1; 0.99)
         auto cursor = Gdk::Cursor::create(this->display,
             cursor_surf.get(),
-            cursor_surf.getWidth(),
-            cursor_surf.getHeight());
+            cursor_surf.getWidth() / 2 * (1. + offXb),
+            cursor_surf.getHeight() / 2 * (1. + offYb));
 
         if (!cursor) {
             cursor = Gdk::Cursor::create(this->display, fb_cursor);
@@ -52,7 +58,7 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWindow)
     };
 
     cAdd        = createCursor("crosshair-small", Gdk::PLUS);
-    cAddPicker  = createCursor("color-picker-add-hicontrast", Gdk::PLUS);
+    cAddPicker  = createCursor("color-picker-add-hicontrast", Gdk::PLUS, -0.333, 0.75);
     cCropDraw   = createCursor("crop-point-hicontrast", Gdk::DIAMOND_CROSS);
     cCrosshair  = createCursor("crosshair-hicontrast", Gdk::CROSSHAIR);
     cEmpty      = createCursor("empty", Gdk::BLANK_CURSOR);
@@ -68,7 +74,7 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWindow)
     cMoveXY     = createCursor("node-move-xy-hicontrast", Gdk::FLEUR);
     cMoveY      = createCursor("node-move-y-hicontrast", Gdk::SB_V_DOUBLE_ARROW);
     cRotate     = createCursor("rotate-aroundnode-hicontrast", Gdk::EXCHANGE);
-    cWB         = createCursor("color-picker-hicontrast", Gdk::TARGET);
+    cWB         = createCursor("color-picker-hicontrast", Gdk::TARGET, -0.333, 0.75);
     cWait       = createCursor("gears", Gdk::CLOCK);
 
     window = mainWindow;
