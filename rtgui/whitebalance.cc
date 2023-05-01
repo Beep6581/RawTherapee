@@ -381,7 +381,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     tempBias->show ();
     observer10->show();
     itcwbFrame = Gtk::manage(new Gtk::Frame(M("TP_WBALANCE_ITCWB_FRA")));
-    
+
     itcwbFrame->set_label_align(0.025, 0.5);
     itcwbFrame->set_tooltip_markup (M("PREFERENCES_WBACORR_TOOLTIP"));
 
@@ -1462,10 +1462,10 @@ inline Gtk::TreeRow WhiteBalance::getActiveMethod ()
     return *(method->get_active());
 }
 
-void WhiteBalance::WBChanged(double temperature, double greenVal, double rw, double gw, double bw, float delta, int bia, int dread, float studgood, float minchrom, int kmin, float histmin, float histmax)
+void WhiteBalance::WBChanged(double temperature, double greenVal, double rw, double gw, double bw, float temp0, float delta, int bia, int dread, float studgood, float minchrom, int kmin, float histmin, float histmax)
 {
     idle_register.add(
-        [this, temperature, greenVal, rw, gw, bw, delta,  bia, dread, studgood, minchrom, kmin, histmin, histmax]() -> bool
+        [this, temperature, greenVal, rw, gw, bw, temp0, delta,  bia, dread, studgood, minchrom, kmin, histmin, histmax]() -> bool
         {
             disableListener();
             temp->setValue(temperature);
@@ -1478,7 +1478,10 @@ void WhiteBalance::WBChanged(double temperature, double greenVal, double rw, dou
             );
             StudLabel->set_text(
                 Glib::ustring::compose(M("TP_WBALANCE_STUDLABEL"),
-                                   Glib::ustring::format(std::fixed, std::setprecision(4), studgood))
+                                   Glib::ustring::format(std::fixed, std::setprecision(4), studgood),
+                                   Glib::ustring::format(std::fixed, std::setprecision(0), bia), 
+                                   Glib::ustring::format(std::fixed, std::setprecision(0), temp0)) 
+                                   
             );            
             PatchLabel->set_text(
                 Glib::ustring::compose(M("TP_WBALANCE_PATCHLABEL"),
@@ -1492,11 +1495,17 @@ void WhiteBalance::WBChanged(double temperature, double greenVal, double rw, dou
                                    Glib::ustring::format(std::fixed, std::setprecision(0), histmin),
                                    Glib::ustring::format(std::fixed, std::setprecision(0), histmax))
             );
-            if(bia == 1) {
-             //   tempBias->set_sensitive(false);
+            if(bia == 2) {
+            //    itcwb_alg->set_sensitive(true);
             } else {
-             //   tempBias->set_sensitive(true);
+            //    itcwb_alg->set_sensitive(false);
             }
+            if(temp0 < 3300.f) {
+              //  itcwb_alg->set_active(true);
+            } else {
+              //  itcwb_alg->set_active(false);
+            }
+                
             temp->setDefault(temperature);
             green->setDefault(greenVal);
             enableListener();
