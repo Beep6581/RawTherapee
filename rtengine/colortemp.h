@@ -586,6 +586,19 @@ public:
     static const double Colorlab_L48_19_m25spect2[97];
     static const double Colorlab_L30_21_m25spect2[97];
     static const double Colorlab_L15_10_m15spect2[97];
+    static const double Colorlab_L60_26_m25spect[97];
+    static const double Colorlab_L40_26_m45spect[97];
+    static const double Colorlab_L20_10_m45spect[97];
+    static const double ColorBlueSkyK3_spect2[97];
+    static const double ColorBlueSkyK9_spect2[97];
+    static const double ColorBlueSkyC4_spect2[97];
+    static const double ColorBlueSkyC14_spect2[97];
+    static const double ColorBlueSkyE4_spect2[97];
+    static const double ColorBlueSkyM1_spect2[97];
+    static const double ColorBlueSky2B1_spect2[97];
+    static const double ColorBlueSkyT7_spect2[97]; 
+    static const double ColorBlueSkyU19_spect2[97];
+    static const double ColorBlueSkyU2_spect2[97];
 
 /*
 1	A1	19,95 	17,00	26,00 	48,26	18,79	-25,30

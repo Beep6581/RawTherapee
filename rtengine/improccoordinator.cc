@@ -571,6 +571,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         ColorTemp ct(rm, gm, bm, 1.0, currWB.getObserver());
                         tem = ct.getTemp();
                         gre  = ct.getGreen();
+                        gre = LIM(gre, 0.6f, 1.3f);
 
                         if (settings->verbose) {
                             printf("Using new references AWB grey - temgrey=%f gregrey=%f \n", (double) tem, (double) gre);
