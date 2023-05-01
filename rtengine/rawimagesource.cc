@@ -5615,17 +5615,17 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         bool purp = true;//if inpaint-opposed or something else enable purp
 
         const int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
-        constexpr int Nc = 378 + 1; //348 number of reference spectral colors
-        int Ncr = 379;
+        constexpr int Nc = 384 + 1; //348 number of reference spectral colors
+        int Ncr = 385;
 
         if (wbpar.itcwb_prim == "srgb") {
-            Ncr = 378 + 1;
+            Ncr = 384 + 1;
         } else if (wbpar.itcwb_prim == "adob") {
-            Ncr = 378 + 1;
+            Ncr = 384 + 1;
         } else if (wbpar.itcwb_prim == "rec") {
-            Ncr = 378 + 1;
+            Ncr = 384 + 1;
         } else if (wbpar.itcwb_prim == "ace") {
-            Ncr = 378 + 1;
+            Ncr = 384 + 1;
         }
 
         if (oldsampling) { //low samplin 5.9 with less spectral datas 201
@@ -5773,7 +5773,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             reff_spect_xx_camera[j][repref] = xxx;
             reff_spect_yy_camera[j][repref] = yyy;
             reff_spect_Y_camera[j][repref] =  YY;
-            /*                    float xr = reff_spect_xx_camera[j][repref];
+                                float xr = reff_spect_xx_camera[j][repref];
                                 float yr = reff_spect_yy_camera[j][repref];
                                 float Yr = reff_spect_Y_camera[j][repref];
                                 float X_r = (65535.f * (xr * Yr)) / yr;
@@ -5784,7 +5784,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
 
                         printf("Nc=%i repref=%i xxx=%f yyy=%f YY=%f Lr=%f a=%f b=%f\n", j, repref, (double) xxx, (double) yyy, (double) YY, (double) Lr/327.68f, (double) ar/327.68f, (double) br/327.68f);
-            */
+            
         }
 
         array2D<float> xc(bfwitc, bfhitc);
