@@ -599,6 +599,13 @@ public:
     static const double ColorBlueSkyT7_spect2[97]; 
     static const double ColorBlueSkyU19_spect2[97];
     static const double ColorBlueSkyU2_spect2[97];
+    static const double Colorlab_L40_1_m40spect[97];
+    static const double Colorlab_L30_4_m30spect[97];
+    
+/*
+7	A7	11,40 	11,68	26,97 	40,70	1,00	-40,00
+8	A8	6,55 	6,40	13,73 	30,40	4,00	-30,00
+*/
 
 /*
 1	A1	19,95 	17,00	26,00 	48,26	18,79	-25,30
