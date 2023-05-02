@@ -6561,7 +6561,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         //now we have temp green and student
         // 4000 & 7000K arbitrary limits... to improve
-        if ((tempitc < 4000.f || tempitc > 7000.f) && lastitc  && oldsampling == false && wbpar.itcwb_alg == false) {//try to find if another tempref value near 5000K is better
+        if ((tempitc < 4000.f || tempitc > 7000.f) && (tempitc > 3400.f) && lastitc  && oldsampling == false && wbpar.itcwb_alg == false) {//try to find if another tempref value near 5000K is better
 //           printf("tempitcalg=%f\n", tempitc);
             optitc[nbitc].stud = studgood;
             optitc[nbitc].minc = Tppat[repref].minchroma;//minchrom;
@@ -6623,7 +6623,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             itciterate = false;
         }
 
-        if ((optitc[1].delt * (optitc[1].stud) < optitc[0].delt * (optitc[0].stud)) && optitc[1].minc > 0.f) {//not 2 passes if tempitc too low
+        if ((optitc[1].delt * (optitc[1].stud) < optitc[0].delt * (optitc[0].stud)) && optitc[1].minc > 0.f  && optitc[0].titc > 3400.f ) {//not 2 passes if tempitc too low
             choiceitc = 1;
             temp0 = optitc[0].titc;
         } else {
