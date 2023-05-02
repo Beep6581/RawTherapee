@@ -96,6 +96,7 @@ public:
 //    bool            showtooltip;
     bool            itcwb_enable;
     double          itcwb_deltaspec;
+    double          itcwb_tempstdA;
     int             itcwb_maxsize;
     double          itcwb_Ypurple;
     double          itcwb_powponder;

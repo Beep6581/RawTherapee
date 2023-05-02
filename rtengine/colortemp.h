@@ -601,20 +601,13 @@ public:
     static const double ColorBlueSkyU2_spect2[97];
     static const double Colorlab_L40_1_m40spect[97];
     static const double Colorlab_L30_4_m30spect[97];
+    static const double Colorlab_L8_11_m25spect[97];
+    static const double Colorlab_L40_1_m40spect2[97];
+    static const double Colorlab_L30_4_m30spect2[97];
+    static const double Colorlab_L8_11_m25spect2[97];
+    static const double Colorlab_L26_m8_m25spect[97];
+    static const double Colorlab_L26_m8_m25spect2[97];
     
-/*
-7	A7	11,40 	11,68	26,97 	40,70	1,00	-40,00
-8	A8	6,55 	6,40	13,73 	30,40	4,00	-30,00
-*/
-
-/*
-1	A1	19,95 	17,00	26,00 	48,26	18,79	-25,30
-2	A2	8,23 	6,34	11,96 	30,26	20,80	-25,30
-3	A3	2,37 	1,96	3,42 	15,26	10,79	-15,31
-4	A4	34,36 	28,41	39,76 	60,26	25,79	-25,31
-5	A5	14,90 	11,41	29,73 	40,26	25,79	-45,31
-5	A6	3,53 	2,99	12,77 	20,00	10,79	-45,30
-*/
     static void spectrum_to_xyz_daylight  (double _m1, double _m2, double &x, double &y, double &z, const color_match_type &color_match);
     static void spectrum_to_xyz_blackbody (double _temp, double &x, double &y, double &z, const color_match_type &color_match);
     static void spectrum_to_xyz_preset    (const double* spec_intens, double &x, double &y, double &z, const color_match_type &color_match);
