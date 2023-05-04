@@ -4570,13 +4570,6 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
         float Ypurp = settings->itcwb_Ypurple;
         float Ypurpmax = 1.f;
 
-        /*
-        if(!purpe) {
-            printf("Filter purple activated=%f\n", (double) Ypurp);
-        } else {
-            printf("No Filter purple =%f\n", (double) Ypurpmax);
-        }
-        */
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic, 4) nowait
 #endif
@@ -5106,7 +5099,6 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
 
                 if (nh >= 0) {
                     histxythr[nh]++;
-                    //printf("nh%i YC=%f ", nh,  (double) Yc[y][x]);
                     xxxthr[nh] += xc[y][x];
                     yyythr[nh] += yc[y][x];
                     YYYthr[nh] += Yc[y][x];
@@ -5182,7 +5174,7 @@ float static studentXY(const array2D<float> & YYcurr, const array2D<float> & ref
 void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double &tempitc, double &greenitc, float &temp0, float &delta, int &bia, int &dread, float &studgood, float &minchrom, int &kmin, float &minhist, float &maxhist,  array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, const ColorManagementParams &cmp, const RAWParams &raw, const WBParams & wbpar, const ToneCurveParams &hrp)
 {
     /*
-    Copyright (c) Jacques Desmis 6 - 2018 jdesmis@gmail.com, update 4 - 2023
+    Copyright (c) Jacques Desmis 6 - 2018 jdesmis@gmail.com, update 5 - 2023
     Copyright (c) Ingo Weyrich 3 - 2020 (heckflosse67@gmx.de)
 
     This algorithm try to find temperature correlation between 20 to 80 colors between 201 spectral color and about 20 to 55 color found in the image between 236, I just found the idea in the web "correlate with chroma" instead of RGB grey point,but I don't use any algo found on the web.
@@ -5234,13 +5226,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     You can change  parameters in White Balance - Frame adapted to Itcwb
     Itcwb_thres : Not used - 34 by default ==> number of color used in final algorithm - between 10 and max 50
-    Itcwb_sorted : true by default, can improve algorithm if true
     Itcwb_greenrange : 0 amplitude of green variation - between 0 to 2
     Itcwb_greendelta : 1 - delta temp in green iterate loop for "extra" - between 0 to 4
     Itcwb_prim : sRGB, Adobe, Rec2020, AcesP0 = Use all Ciexy diagram instead of sRGB
     //Itcwb_sizereference : repalce by int maxnb 3 by default, can be set to 5 ==> size of reference color compare to size of histogram real color
     itcwb_delta : 2 by default can be set between 0 to 5 ==> delta temp to build histogram xy - if camera temp is not probably good
-    //itcwb_precis : replace by int precision = 3 by default - can be set to 3 or 9 - 3 best sampling but more time...9 "old" settings - but low differences in times with 3 instead of 9 about twice time 160ms instead of 80ms for a big raw file
     itcwb_nopurple : false default - allow to bypass highlight recovery and inpait opposed when need flowers and not purple due to highlights...
     itcwb_fgreen : 3 by default - between 2 to 6 - find the compromise student / green to reach green near of 1
 
@@ -5620,7 +5610,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         bool purp = true;//if inpaint-opposed or something else enable purp
 
         const int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
-        constexpr int Nc = 405 + 1; //348 number of reference spectral colors
+        constexpr int Nc = 405 + 1; //406 number of reference spectral colors
         int Ncr = 406;
 
         if (wbpar.itcwb_prim == "srgb") {
@@ -5766,7 +5756,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         array2D<float> reff_spect_Y_camera(N_t, 2 * Nc + 2);
 
-        //call tempxy to calculate for 348 or 201color references Temp and XYZ with cat02
+        //call tempxy to calculate for 406 or 201color references Temp and XYZ with cat02
         ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar); //calculate chroma xy (xyY) for Z known colors on under 200 illuminants
 
         //find the good spectral values
@@ -5779,6 +5769,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             reff_spect_yy_camera[j][repref] = yyy;
             reff_spect_Y_camera[j][repref] =  YY;
             /*
+            //display spectral datas
                                 float xr = reff_spect_xx_camera[j][repref];
                                 float yr = reff_spect_yy_camera[j][repref];
                                 float Yr = reff_spect_Y_camera[j][repref];
@@ -5816,10 +5807,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             typedef ImProcFunctions::Median Median;
             Median medianTypeL = Median::TYPE_3X3_STRONG;//x2
             int pas = 2;
-          //  if(repref < 24) {
-          //    medianTypeL = Median::TYPE_5X5_STRONG;//x2
-          //    pas = 4;
-          //  }
             ImProcFunctions::Median_Denoise(redloc, redloc, bfw, bfh, medianTypeL, pas, false, tmL);
             ImProcFunctions::Median_Denoise(greenloc, greenloc, bfw, bfh, medianTypeL, pas, false, tmL);
             ImProcFunctions::Median_Denoise(blueloc, blueloc, bfw, bfh, medianTypeL, pas, false, tmL);
@@ -5867,11 +5854,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
 
         if (oldsampling == false) {
-            //printf("Use high smapling\n");
             histoxyY(bfhitc, bfwitc, xc, yc, Yc, xxx,  yyy, YYY, histxy, purp);//purp enable,  enable purple color in WB
             //return histogram x and y for each temp and in a range of 235 colors (siza)
         } else {
-            //printf("Use low smapling - 5.9\n");
             histoxyY_low(bfhitc, bfwitc, xc, yc, Yc, xxx,  yyy, YYY, histxy);//low scaling
         }
 
@@ -5893,7 +5878,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         array2D<float> hue_curref_reduc(N_t, sizcurrref);//new array to improve patch
         array2D<float> chro_curref_reduc(N_t, sizcurrref);//new array to improve patch
         array2D<float> estim_hue(N_t, sizcurrref);//new array to improve patch
-//        array2D<float> estim_chro(N_t, sizcurrref);//new array to improve patch
 
         hiss Wbhis[siza];
 
@@ -5957,7 +5941,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         const int sizcu30 = sizcurrref - n30;
         int maxsiz = settings->itcwb_maxsize; // between 60 to 90
         maxsiz = LIM(maxsiz, 50, 80);
-      //  maxsiz -= n30;
         int nbm = maxsiz;
         int sizcu4 = maxsiz;
 
@@ -5965,9 +5948,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             nbm = 55;
             sizcu4 = rtengine::min(sizcu30, nbm);//size of chroma values
         }
+
         Tppat[repref].maxhi = Wbhis[siza - 1].histnum;
         Tppat[repref].minhi = Wbhis[siza - nbm].histnum;
-        
+
         if (settings->verbose) {
             printf("number total datas read=%i\n", ntot);
             printf("Others datas - ntr=%i sizcurr2ref=%i sizcu4=%i sizcu30=%i\n", ntr, sizcurr2ref, sizcu4, sizcu30);
@@ -6053,26 +6037,19 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
                         if (!isponderate) {
                             estimchrom += chxy;
-                          //  estim_chro[j][repref] += chxy;
 
                             if (isponder && !isponderate) {
                                 estimchrom += chxy1;
                                 estimchrom += chxy2;
-                              //  estim_chro[j][repref] += chxy1;
-                              //  estim_chro[j][repref] += chxy2;
                             }
                         }
 
                         if (isponderate) {
                             estimchrom += chxynum;
-                           // estim_chro[j][repref] += chxynum;
 
                             if (isponder) {
                                 estimchrom += chxynum1;
                                 estimchrom += chxynum2;
-                            //    estim_chro[j][repref] += chxynum1;
-                            //    estim_chro[j][repref] += chxynum2;
-
                             }
 
                             countchxynum += pow((double)histcurrref[nh][repref], 0.05);//no error, to take into account mean value
@@ -6083,15 +6060,12 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
                     if (isponder) {
                         estimchrom /= (j + 2 * (j - 1)); //extrem not taken
-                       // estim_chro[j][repref] /= (j + 2 * (j - 1));
                     } else {
                         estimchrom /= j;
-                      //  estim_chro[j][repref] /= j;
                     }
 
                     if (estimchrom < minchrom) {
                         minchrom = estimchrom;
-                      //  minchrom = estim_chro[j][repref];
                         Tppat[repref].minchroma = minchrom;
                         kmin = j;
                     }
@@ -6140,11 +6114,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
 
 
-//    if (issorted) { //sort in descending with chroma values * number
-        //     std::sort(wbchro, wbchro + sizcu4, wbchro[0]);//not used in this goal since 15 april
-//    }
-
-
         int maxval = maxsiz;
 
         if (oldsampling == true) {
@@ -6158,11 +6127,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         if (oldsampling == true) {
             index1 = 0;
             index2 = sizcurr2ref;
-            //   printf("INDEX1=%i INDEX2=%i\n", index1, index2);
         }
 
         int indn = index1;
-        //  printf("Indn=%i \n", indn);
 
         if (oldsampling == false) {
 
@@ -6172,7 +6139,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 }
             }
         }
-        Tppat[repref].minhi = (float) rtengine::max((int) wbchro[sizcu4 - (indn + 1)].number , (int) Tppat[repref].minhi);
+
+        Tppat[repref].minhi = (float) rtengine::max((int) wbchro[sizcu4 - (indn + 1)].number, (int) Tppat[repref].minhi);
 
         if (settings->verbose) {
             printf("Index1=%i index2=%i \n", indn, index2);
@@ -6200,7 +6168,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             printf("Number of real tests=%i\n", w);
         }
 
-        int maxnb = 1; //since 8 april 2023 - // old rtengine::LIM(wbpar.itcwb_size, 1, 6);
+        int maxnb = 1; //since 8 april 2023
 
 
         if (wbpar.itcwb_thres > 65) {//normally never used
@@ -6262,6 +6230,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
             Tppat[repref].delt_E = dEmean / ndEmean;
             delta = Tppat[repref].delt_E;
+
             if (settings->verbose) {
                 printf("Patch Mean deltaE=%f minhisto=%6.0f maxhisto=%7.0f \n", (double) dEmean / ndEmean, (double) minhist, (double) maxhist);
             }
@@ -6581,12 +6550,12 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         //now we have temp green and student
         // 4000 & 7000K arbitrary limits... to improve
         float templimit = settings->itcwb_tempstdA;
-        templimit=LIM(templimit, 2400.f, 4000.f);
+        templimit = LIM(templimit, 2400.f, 4000.f);
 
         if ((tempitc < 4000.f || tempitc > 7000.f) && (tempitc > templimit) && lastitc  && oldsampling == false && wbpar.itcwb_alg == false) {//try to find if another tempref value near 5000K is better
 //           printf("tempitcalg=%f\n", tempitc);
             optitc[nbitc].stud = std::max(studgood, 0.004f);//max to avoid choice between 2 very good results and falsifies the result
-            optitc[nbitc].minc = Tppat[repref].minchroma;//minchrom;
+            optitc[nbitc].minc = Tppat[repref].minchroma;
             optitc[nbitc].titc = tempitc;
             optitc[nbitc].gritc = greenitc;
             optitc[nbitc].tempre = tempref;
@@ -6610,8 +6579,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 tempref = LIM(tempref, 4000., 7000.);
 
             }
+
             optitc[nbitc].stud = std::max(studgood, 0.004f);
-            optitc[nbitc].minc =  Tppat[repref].minchroma; //minchrom;
+            optitc[nbitc].minc =  Tppat[repref].minchroma;
             optitc[nbitc].titc = tempitc;
             optitc[nbitc].gritc = greenitc;
             optitc[nbitc].tempre = tempref;
@@ -6627,7 +6597,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             lastitc = false;
         } else {
             optitc[nbitc].stud = std::max(studgood, 0.004f);
-            optitc[nbitc].minc =  Tppat[repref].minchroma; // minchrom;
+            optitc[nbitc].minc =  Tppat[repref].minchroma;
             optitc[nbitc].titc = tempitc;
             optitc[nbitc].gritc = greenitc;
             optitc[nbitc].tempre = tempref;
@@ -6645,7 +6615,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             itciterate = false;
         }
 
-        if ((optitc[1].delt * (optitc[1].stud) < optitc[0].delt * (optitc[0].stud)) && optitc[1].minc > 0.f  && optitc[0].titc > templimit ) {//not 2 passes if tempitc too low
+        if ((optitc[1].delt * (optitc[1].stud) < optitc[0].delt * (optitc[0].stud)) && optitc[1].minc > 0.f  && optitc[0].titc > templimit) { //not 2 passes if tempitc too low
             choiceitc = 1;
             temp0 = optitc[0].titc;
         } else {
@@ -6660,7 +6630,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
     }
 
-    if ((nbitc == 1 && choiceitc == 1) && wbpar.itcwb_alg == false && oldsampling == false ) {
+    if ((nbitc == 1 && choiceitc == 1) && wbpar.itcwb_alg == false && oldsampling == false) {
         bia = 2;
         studgood = optitc[choiceitc].stud;
         minchrom = optitc[choiceitc].minc;
@@ -6722,7 +6692,6 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
     int precision = 3;//must be 3 5 or 9
     bool oldsampling = wbpar.itcwb_sampling;
 
-//   oldsampling = false;
     if (oldsampling == true) {
         precision = 5;
     }
@@ -6989,7 +6958,6 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
         int precision = 3;//must be 3 5 or 9
         bool oldsampling = wbpar.itcwb_sampling;
 
-//        oldsampling = false;
         if (oldsampling == true) {
             precision = 5;
         }
