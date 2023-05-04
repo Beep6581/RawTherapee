@@ -5302,6 +5302,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             {static_cast<float>(wprof[1][0]), static_cast<float>(wprof[1][1]), static_cast<float>(wprof[1][2])},
             {static_cast<float>(wprof[2][0]), static_cast<float>(wprof[2][1]), static_cast<float>(wprof[2][2])}
         };
+        const double wp2[3][3] = {
+            {static_cast<double>(wprof[0][0]), static_cast<double>(wprof[0][1]), static_cast<double>(wprof[0][2])},
+            {static_cast<double>(wprof[1][0]), static_cast<double>(wprof[1][1]), static_cast<double>(wprof[1][2])},
+            {static_cast<double>(wprof[2][0]), static_cast<double>(wprof[2][1]), static_cast<double>(wprof[2][2])}
+        };
 
         TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(profuse);//ACESp0 or sRGB
         //inverse matrix user select
@@ -5790,6 +5795,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         array2D<float> xc(bfwitc, bfhitc);
         array2D<float> yc(bfwitc, bfhitc);
+        array2D<float> zc(bfwitc, bfhitc);
         array2D<float> Yc(bfwitc, bfhitc);
 
         const int rep = rtengine::LIM(repref + 1, 0, N_t);
@@ -5809,12 +5815,14 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
             typedef ImProcFunctions::Median Median;
             Median medianTypeL = Median::TYPE_3X3_STRONG;//x2
-         //   if(repref < 24) {
-         //     medianTypeL = Median::TYPE_5X5_STRONG;//x2
-         //   }
-            ImProcFunctions::Median_Denoise(redloc, redloc, bfw, bfh, medianTypeL, 2, false, tmL);
-            ImProcFunctions::Median_Denoise(greenloc, greenloc, bfw, bfh, medianTypeL, 2, false, tmL);
-            ImProcFunctions::Median_Denoise(blueloc, blueloc, bfw, bfh, medianTypeL, 2, false, tmL);
+            int pas = 2;
+          //  if(repref < 24) {
+          //    medianTypeL = Median::TYPE_5X5_STRONG;//x2
+          //    pas = 4;
+          //  }
+            ImProcFunctions::Median_Denoise(redloc, redloc, bfw, bfh, medianTypeL, pas, false, tmL);
+            ImProcFunctions::Median_Denoise(greenloc, greenloc, bfw, bfh, medianTypeL, pas, false, tmL);
+            ImProcFunctions::Median_Denoise(blueloc, blueloc, bfw, bfh, medianTypeL, pas, false, tmL);
 
             for (int i = 0; i < hei; ++i) {
                 delete[] tmL[i];
@@ -5833,7 +5841,15 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 const float GG = gmm[rep] * greenloc[y][x];
                 const float BB = bmm[rep] * blueloc[y][x];
 
-                Color::rgbxyY(RR, GG, BB, xc[y][x], yc[y][x], Yc[y][x], wp);//use sRGB Adobe Rec2020 ACESp0
+                Color::rgbxyz(RR, GG, BB, xc[y][x], yc[y][x], zc[y][x], wp2);//use sRGB Adobe Rec2020 ACESp0
+                float X_r = xc[y][x];
+                float Y_r = yc[y][x];
+                float Z_r = zc[y][x];
+                Color::gamutmap(X_r, Y_r, Z_r, wp2);//gamut control
+                const float som = X_r + Y_r + Z_r;
+                xc[y][x] = X_r / som;
+                yc[y][x] = Y_r / som;
+                Yc[y][x] = yc[y][x] / 65535.f;
             }
         }
 
@@ -6569,7 +6585,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         if ((tempitc < 4000.f || tempitc > 7000.f) && (tempitc > templimit) && lastitc  && oldsampling == false && wbpar.itcwb_alg == false) {//try to find if another tempref value near 5000K is better
 //           printf("tempitcalg=%f\n", tempitc);
-            optitc[nbitc].stud = studgood;
+            optitc[nbitc].stud = std::max(studgood, 0.004f);//max to avoid choice between 2 very good results and falsifies the result
             optitc[nbitc].minc = Tppat[repref].minchroma;//minchrom;
             optitc[nbitc].titc = tempitc;
             optitc[nbitc].gritc = greenitc;
@@ -6594,7 +6610,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 tempref = LIM(tempref, 4000., 7000.);
 
             }
-            optitc[nbitc].stud = studgood;
+            optitc[nbitc].stud = std::max(studgood, 0.004f);
             optitc[nbitc].minc =  Tppat[repref].minchroma; //minchrom;
             optitc[nbitc].titc = tempitc;
             optitc[nbitc].gritc = greenitc;
@@ -6610,7 +6626,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             optitc[nbitc].delt = Tppat[repref].delt_E;
             lastitc = false;
         } else {
-            optitc[nbitc].stud = studgood;
+            optitc[nbitc].stud = std::max(studgood, 0.004f);
             optitc[nbitc].minc =  Tppat[repref].minchroma; // minchrom;
             optitc[nbitc].titc = tempitc;
             optitc[nbitc].gritc = greenitc;
