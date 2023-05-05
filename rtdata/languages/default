@@ -1849,7 +1849,7 @@ PREFERENCES_CIE;Ciecam
 PREFERENCES_CIEARTIF;Avoid artifacts
 PREFERENCES_WBA;White Balance
 PREFERENCES_WBACORR;White Balance - Automatic temperature correlation
-PREFERENCES_WBACORR_TOOLTIP;These settings allow, depending on the images (type of raw file, colorimetry, etc.), an adaptation of the " Temperature correlation " algorithm in order to obtain the best overall results. There is no absolute rule, linking these parameters to the results obtained.\n\n\nThe settings are of 3 types: \n* those accessible to the user from the GUI.\n* those accessible only in reading from each pp3 file : Itcwb_minsize=20, Itcwb_delta=4 Itcwb_rgreen=1 Itcwb_nopurple=false Itcwb_ponder=true (See Rawpedia)\n* those accessible to the user in 'options' (see Rawpedia)\n You can use "Awb temperature bias" to adjust the results. Each movement of this command brings a new calculation of temperature, tint and correlation.
+PREFERENCES_WBACORR_TOOLTIP;These settings allow, depending on the images (type of raw file, colorimetry, etc.), an adaptation of the " Temperature correlation " algorithm in order to obtain the best overall results. There is no absolute rule, linking these parameters to the results obtained.\n\nThe settings are of 3 types: \n* those accessible to the user from the GUI.\n* those accessible only in reading from each pp3 file : Itcwb_minsize=20, Itcwb_delta=4 Itcwb_rgreen=1 Itcwb_nopurple=false Itcwb_ponder=true (See Rawpedia)\n* those accessible to the user in 'options' (see Rawpedia)\n You can use "Awb temperature bias" to adjust the results. Each movement of this command brings a new calculation of temperature, tint and correlation.\n\nPlease note that the 3 indicators 'Correlation factor', 'Patch chroma' and ΔE are given for information only. It is not because one of these indicators is better that the result will necessarily be better.
 PREFERENCES_WBAENA;Show White Balance auto Temperature correlation Settings 
 PREFERENCES_WBAPATCH;Number maximum of colors used in picture
 PREFERENCES_WBAFORC;Forces Extra algoritm
@@ -4115,13 +4115,15 @@ TP_WBALANCE_ITCWBMINSIZEPATCH_TOOLTIP;Allows you to set the minimum patch value.
 TP_WBALANCE_ITCWB_NOPURPLE;Filter on purple color
 //TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP;By default when "Inpaint opposed" is activated, purple colors are not taken into account. However, if the image does not need highlight reconstruction, or if this image naturally contains purple tints (flowers, etc.), it may be necessary to deactivate, to take into account all the colors.
 TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP;Allows you to filter magenta/purple data from the image. If the box is checked a filter limiting the value of Y is applied. By default this value is 0.4. You can change it in 'options' Itcwb_Ypurple (Maximum 1)
-TP_WBALANCE_ITCWB_OBS;Remove 2 pass algorithm
+TP_WBALANCE_ITCWB_ALG;Remove 2 pass algorithm
+TP_WBALANCE_ITCWALG_TOOLTIP;Allows you to switch to the other Alternative temperature (Alt_temp), when possible.\nInactive in the "single choice" case.
 TP_WBALANCE_ITCWB_PRECIS;Precision algorithm - scale used
 TP_WBALANCE_ITCWBPRECIS_TOOLTIP;The lower the value, the more relevant the data, but increases the processing time. Since the processing time is low, this parameter should generally be able to remain at the default value
 TP_WBALANCE_ITCWB_PRIM_SRGB;Low sampling
 TP_WBALANCE_ITCWB_PRIM_ADOB;Medium sampling
 TP_WBALANCE_ITCWB_PRIM_REC;High sampling
 TP_WBALANCE_ITCWB_PRIM_ACE;Forces use of the entire CIE diagram
+TP_WBALANCE_ITCWPRIM_TOOLTIP;Allows you to select the image sampling. In a majority of cases it is recommended (default) to choose 'Forces use of the entire CIE diagram'.\nThe other choices allow you to isolate high gamut parts of the image. This will obviously have an impact on the result.
 TP_WBALANCE_ITCWB_RGREEN;Green range
 TP_WBALANCE_ITCWBRGREEN_TOOLTIP;Sets the green value review amplitude in iterations, from low amplitude 0.82 to 1.25 to maximum amplitude 0.4 to 4.
 TP_WBALANCE_ITCWB_SAMPLING;Low sampling 5.9
@@ -4129,11 +4131,7 @@ TP_WBALANCE_ITCWSAMPLING_TOOLTIP;Allows you to use the old sampling algorithm to
 TP_WBALANCE_ITCWB_SIZE;Size of ref. color compare to histogram
 TP_WBALANCE_ITCWB_SIZEPATCH;Size of color patch
 TP_WBALANCE_ITCWBSIZEPATCH_TOOLTIP;This setting sets the size of color datas used by algorithm.
-//TP_WBALANCE_ITCWBSIZE_TOOLTIP;This setting is especially important when 'Force use of entire CIE diagram' (or to a lesser degree when 'Sort in chroma order instead of histogram') is activated.\n It sets the number of iterations to find the best correspondence between the reference spectral colors and those in xyY value of the image. A value of 3 is a good compromise.
 TP_WBALANCE_ITCWBSIZE_TOOLTIP;This setting sets the number of iterations to find the best correspondence between the reference spectral colors and those in xyY value of the image. A value of 3 seams a good compromise.
-TP_WBALANCE_ITCWB_SORTED;Ponderate patch chroma
-//TP_WBALANCE_ITCWBSORTED_TOOLTIP;If the box is not checked the algorithm will use the data in the order of the frequency of the presence of each color. If the box is checked the order will be from highest saturation to lowest.
-TP_WBALANCE_ITCWBSORTED_TOOLTIP;If the box is checked, the patch chroma is weighted with data number, probably more relevant.
 TP_WBALANCE_ITCWB_THRES;Colors used in picture (preset)
 TP_WBALANCE_ITCWBTHRES_TOOLTIP;Limits comparison sampling between spectral data and image data.
 TP_WBALANCE_JUDGEIII;JudgeIII
@@ -4150,7 +4148,7 @@ TP_WBALANCE_OBSERVER10_TOOLTIP;The color management in Rawtherapee (White balanc
 TP_WBALANCE_PATCHLABEL;Read colors:%1 Patch: Chroma:%2 Size=%3
 TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colors (max=237).\nDisplay calculated Patch Chroma.\nAWB temperature bias, lets try to reduce this value, a minimum may seem to optimize the algo. Comparing values with or without "Ponderate patch chroma" doesn't make sense.\n\nPatch size matching chroma optimization.
 TP_WBALANCE_PATCHLEVELLABEL;Patch: ΔE=%1 - datas x 9 Min:%2 Max=%3
-TP_WBALANCE_PATCHLEVELLABEL_TOOLTIP;Display ΔE patch (this assumes there is enough spectral data), between image and spectral datas.\n Display read datas found. The 2 values correspond to the minimum and maximum data values taken into account. The coefficient x9 must be taken into account to obtain the number of pixels concerned in the image.\nYou can adjust the minimum value by modifying in 'options' the value of Itcwb_maxsize (maximum patch size : between 50 to 80).
+TP_WBALANCE_PATCHLEVELLABEL_TOOLTIP;Display ΔE patch (this assumes there is enough spectral data), between image and spectral datas.\n Display read datas found. The 2 values correspond to the minimum and maximum data values taken into account. The coefficient x9 must be taken into account to obtain the number of pixels concerned in the image.
 TP_WBALANCE_PICKER;Pick
 TP_WBALANCE_SHADE;Shade
 TP_WBALANCE_SIZE;Size:

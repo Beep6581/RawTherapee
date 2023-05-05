@@ -6596,7 +6596,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             optitc[nbitc].delt = Tppat[repref].delt_E;
             lastitc = false;
         } else {
-            optitc[nbitc].stud = std::max(studgood, 0.004f);
+            optitc[nbitc].stud = studgood; //std::max(studgood, 0.004f);
             optitc[nbitc].minc =  Tppat[repref].minchroma;
             optitc[nbitc].titc = tempitc;
             optitc[nbitc].gritc = greenitc;

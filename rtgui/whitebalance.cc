@@ -378,18 +378,12 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
 
     ToolParamBlock* const itcwbBox = Gtk::manage(new ToolParamBlock());
 
-
-
-    itcwb_fgreen = Gtk::manage (new Adjuster(M("TP_WBALANCE_ITCWB_FGREEN"), 1, 6, 1, 3));
+    itcwb_fgreen = Gtk::manage (new Adjuster(M("TP_WBALANCE_ITCWB_FGREEN"), 2, 5, 1, 3));
     itcwb_fgreen->set_tooltip_markup (M("TP_WBALANCE_ITCWBFGREEN_TOOLTIP"));
 
-
-    itcwb_alg = Gtk::manage (new Gtk::CheckButton (M("TP_WBALANCE_ITCWB_OBS")));
-    //itcwb_obs->set_tooltip_markup (M("TP_WBALANCE_ITCWBOBS_TOOLTIP"));
+    itcwb_alg = Gtk::manage (new Gtk::CheckButton (M("TP_WBALANCE_ITCWB_ALG")));
+    itcwb_alg ->set_tooltip_markup (M("TP_WBALANCE_ITCWALG_TOOLTIP"));
     itcwb_alg ->set_active (false);
-
-
-
 
     itcwb_prim = Gtk::manage (new MyComboBoxText ());
     itcwb_prim->append(M("TP_WBALANCE_ITCWB_PRIM_SRGB"));
@@ -399,6 +393,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     itcwb_prim->set_active(3);
     itcwb_primconn = itcwb_prim->signal_changed().connect(sigc::mem_fun(*this, &WhiteBalance::itcwb_prim_changed));
     itcwb_prim ->set_active (false);
+    itcwb_prim ->set_tooltip_markup (M("TP_WBALANCE_ITCWPRIM_TOOLTIP"));
     
     
     /*  Gtk::Box* boxgreen = Gtk::manage (new Gtk::Box ());
