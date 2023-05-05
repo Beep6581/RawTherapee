@@ -5225,15 +5225,12 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     You must avoid when illuminant is non standard (fluorescent, LED...) and also, when the subject is lost in the image (some target to generate profiles).
 
     You can change  parameters in White Balance - Frame adapted to Itcwb
-    Itcwb_thres : Not used - 34 by default ==> number of color used in final algorithm - between 10 and max 50
-    Itcwb_greenrange : 0 amplitude of green variation - between 0 to 2
-    Itcwb_greendelta : 1 - delta temp in green iterate loop for "extra" - between 0 to 4
+    Itcwb_rgreen : 1 amplitude of green variation - between 0 to 2
     Itcwb_prim : sRGB, Adobe, Rec2020, AcesP0 = Use all Ciexy diagram instead of sRGB
-    //Itcwb_sizereference : repalce by int maxnb 3 by default, can be set to 5 ==> size of reference color compare to size of histogram real color
-    itcwb_delta : 2 by default can be set between 0 to 5 ==> delta temp to build histogram xy - if camera temp is not probably good
+    itcwb_delta : 4 by default can be set between 0 to 5 ==> delta temp to build histogram xy - if camera temp is not probably good
     itcwb_nopurple : false default - allow to bypass highlight recovery and inpait opposed when need flowers and not purple due to highlights...
     itcwb_fgreen : 3 by default - between 2 to 6 - find the compromise student / green to reach green near of 1
-
+    Itcwb_minsize: minimal size of the patch
     */
     BENCHFUN
     bool itciterate = true;
