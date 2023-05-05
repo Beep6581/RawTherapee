@@ -1392,14 +1392,14 @@ WBParams::WBParams() :
     itcwb_size(70),
     itcwb_minsize(20),
     itcwb_delta(4),
-    itcwb_fgreen(3),
+    itcwb_fgreen(3),//slider
     itcwb_rgreen(1),
     itcwb_nopurple(false),
-    itcwb_alg(false),
+    itcwb_alg(false),//checkbox
     itcwb_ponder(true),
     itcwb_sorted(true),
     itcwb_forceextra(false),
-    itcwb_prim("ace"),
+    itcwb_prim("ace"),//combobox
     itcwb_sampling(false)
 
 {
