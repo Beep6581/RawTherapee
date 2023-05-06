@@ -6301,7 +6301,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             }
         }
 
-        if (extra) {//always used if extra = true because I made this choice, brings better results
+        {//always used if extra = true because I made this choice, brings better results
             struct Tempgreen {
                 float student;
                 int tempref;
@@ -6545,12 +6545,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
 
         //now we have temp green and student
-        // 4000 & 7000K arbitrary limits... to improve
-        float templimit = settings->itcwb_tempstdA;
-        templimit = LIM(templimit, 2400.f, 4000.f);
-
-        if ((tempitc < 4000.f || tempitc > 7000.f) && (tempitc > templimit) && lastitc  && oldsampling == false && wbpar.itcwb_alg == false) {//try to find if another tempref value near 5000K is better
-//           printf("tempitcalg=%f\n", tempitc);
+        if (((tempitc < 4000.f || tempitc > 7000.f) || extra == true) && lastitc  && oldsampling == false && wbpar.itcwb_alg == false) {//try to find if another tempref value near 5000K is better
+            //bia = 1;
+           //printf("tempitcalg=%f\n", tempitc);
             optitc[nbitc].stud = std::max(studgood, 0.004f);//max to avoid choice between 2 very good results and falsifies the result
             optitc[nbitc].minc = Tppat[repref].minchroma;
             optitc[nbitc].titc = tempitc;
@@ -6611,8 +6608,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             lastitc = false;
             itciterate = false;
         }
-
-        if ((optitc[1].delt * (optitc[1].stud) < optitc[0].delt * (optitc[0].stud)) && optitc[1].minc > 0.f  && optitc[0].titc > templimit) { //not 2 passes if tempitc too low
+ 
+        if ((optitc[1].delt * (optitc[1].stud) < optitc[0].delt * (optitc[0].stud)) && optitc[1].minc > 0.f) {//  && optitc[0].titc > templimit) { //not 2 passes if tempitc too low
             choiceitc = 1;
             temp0 = optitc[0].titc;
         } else {
@@ -6659,21 +6656,21 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     }
 }
 
-void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double & avg_rm, double & avg_gm, double & avg_bm, double & tempitc, double & greenitc, float &temp0, float &delta, int &bia,  int &dread, float & studgood, float &minchrom, int &kmin, float &minhist, float &maxhist, bool & twotimes, const WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const ColorManagementParams & cmp, const RAWParams & raw, const ToneCurveParams &hrp)
+void RawImageSource::WBauto(bool extra, double & tempref, double & greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double & avg_rm, double & avg_gm, double & avg_bm, double & tempitc, double & greenitc, float &temp0, float &delta, int &bia,  int &dread, float & studgood, float &minchrom, int &kmin, float &minhist, float &maxhist, bool & twotimes, const WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const ColorManagementParams & cmp, const RAWParams & raw, const ToneCurveParams &hrp)
 {
 //    BENCHFUN
     //auto white balance
     //put green (tint) in reasonable limits for an Daylight illuminant
     // avoid too bi or too low values
     if (wbpar.method == "autitcgreen") {
-        bool extra = true;
+       // bool extra = true;
 
         if (greenref > 0.5 && greenref < 1.3) {// 0.5 and 1.3 arbitraties values
             greenitc = greenref;
 
         } else {
             greenitc = 1.;
-            extra = true;
+       //     extra = true;
         }
 
         tempitc = 5000.;
@@ -6760,7 +6757,7 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
     }
 }
 
-void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref, double & tempitc, double & greenitc, float &temp0, float &delta,  int &bia, int &dread, float &studgood, float &minchrom, int &kmin,  float &minhist, float &maxhist, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double & rm, double & gm, double & bm, const WBParams & wbpar, const ColorManagementParams & cmp, const RAWParams & raw, const ToneCurveParams &hrp)
+void RawImageSource::getAutoWBMultipliersitc(bool extra, double & tempref, double & greenref, double & tempitc, double & greenitc, float &temp0, float &delta,  int &bia, int &dread, float &studgood, float &minchrom, int &kmin,  float &minhist, float &maxhist, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double & rm, double & gm, double & bm, const WBParams & wbpar, const ColorManagementParams & cmp, const RAWParams & raw, const ToneCurveParams &hrp)
 {
 //    BENCHFUN
     constexpr double clipHigh = 64000.0;
@@ -6958,10 +6955,10 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
         if (oldsampling == true) {
             precision = 5;
         }
-
+       // bool extra = true;
         const int bfw = W / precision + ((W % precision) > 0 ? 1 : 0);// 5 arbitrary value can be change to 3 or 9 ;
         const int bfh = H / precision + ((H % precision) > 0 ? 1 : 0);
-        WBauto(tempref, greenref, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, tempitc, greenitc, temp0, delta,  bia, dread, studgood, minchrom, kmin, minhist, maxhist, twotimes, wbpar, begx, begy, yEn,  xEn,  cx,  cy, cmp, raw, hrp);
+        WBauto(extra, tempref, greenref, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, tempitc, greenitc, temp0, delta,  bia, dread, studgood, minchrom, kmin, minhist, maxhist, twotimes, wbpar, begx, begy, yEn,  xEn,  cx,  cy, cmp, raw, hrp);
     }
 
     redloc(0, 0);
