@@ -564,19 +564,25 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     //double tempref = currWBitc.getTemp() * (1. + params->wb.tempBias);
                     //printf("Bias=%f temprefbias=%f \n", params->wb.tempBias, (double) tempref0bias);
                     double greenref = currWBitc.getGreen();
-                    if ((greenref > 1.5f || tempref0bias < 3100.f || tempref0bias > 8000.f) && !params->wb.itcwb_sampling) { //probably camera out to adjust...
+                    if ((greenref > 1.5f || tempref0bias < 3300.f || tempref0bias > 7700.f) && !params->wb.itcwb_sampling) { //probably camera out to adjust...
                                                         // 3100 and 8000 to adjust
                         imgsrc->getAutoWBMultipliersitc(extra, tempref0bias, greenref, tempitc, greenitc, temp0, delta, bia, dread, studgood, minchrom, kmin, minhist, maxhist, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
                         imgsrc->wbMul2Camera(rm, gm, bm);
                         imgsrc->wbCamera2Mul(rm, gm, bm);
                         ColorTemp ct(rm, gm, bm, 1.0, currWB.getObserver());
                         tem = ct.getTemp();
-                        tempitc = tem;
                         gre  = ct.getGreen();
-                        gre = LIM(gre, 0.6f, 1.3f);
+                        if(gre > 1.8f){//probable wrong value
+                            tem = 0.3 * tem + 0.7 * tempref0bias;//find a mixed value
+                            gre = LIM(gre, 0.9f, 1.1f);
+                        } else {
+                            gre = LIM(gre, 0.6f, 1.3f);
+                        }
+                        tempitc = tem ;
+
                         extra = true;
                         if (settings->verbose) {
-                            printf("Using new references AWB grey  Enable Extra- temgrey=%f gregrey=%f tempitc=%f\n", (double) tem, (double) gre, (double) tempitc);
+                            printf("Using new references AWB grey or mixed  Enable Extra- temgrey=%f gregrey=%f tempitc=%f\n", (double) tem, (double) gre, (double) tempitc);
                         }
                     }
 
@@ -591,7 +597,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     double tempref = currWBitc.getTemp() * (1. + params->wb.tempBias);
                     double greenref = currWBitc.getGreen();
 
-                    if ((greenref > 1.5f || tempref0bias < 3100.f || tempref0bias > 8000.f) && !isgrey) { //probably camera out to adjust = greenref ? tempref0bias ?
+                    if ((greenref > 1.5f || tempref0bias < 3300.f || tempref0bias > 7700.f) && !isgrey) { //probably camera out to adjust = greenref ? tempref0bias ?
                     // 3100 and 8000 to adjust
                         //tempref = 0.66f * 5000.f + 0.34f * tempref;
                         //greenref = 1.f;
