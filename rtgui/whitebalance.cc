@@ -248,7 +248,6 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     auto m = ProcEventMapper::getInstance();
     EvWBObserver10 = m->newEvent(ALLNORAW, "HISTORY_MSG_WBALANCE_OBSERVER10");
     EvWBitcwbprim = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_PRIM");
-    EvWBitcwbfgreen = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_FGREEN");
     EvWBitcwbalg = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_OBS");
 
 
@@ -378,8 +377,6 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
 
     ToolParamBlock* const itcwbBox = Gtk::manage(new ToolParamBlock());
 
-    itcwb_fgreen = Gtk::manage (new Adjuster(M("TP_WBALANCE_ITCWB_FGREEN"), 2, 5, 1, 3));
-    itcwb_fgreen->set_tooltip_markup (M("TP_WBALANCE_ITCWBFGREEN_TOOLTIP"));
 
     itcwb_alg = Gtk::manage (new Gtk::CheckButton (M("TP_WBALANCE_ITCWB_ALG")));
     itcwb_alg ->set_tooltip_markup (M("TP_WBALANCE_ITCWALG_TOOLTIP"));
@@ -415,7 +412,6 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     pack_start(*observer10);
 
 
-    itcwbBox->pack_start (*itcwb_fgreen);//possible use in pp3
     itcwbBox->pack_start (*itcwb_alg);
     itcwbBox->pack_start (*itcwb_prim);
     
@@ -423,12 +419,10 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     pack_start(*itcwbFrame);
 
     if(options.rtSettings.itcwb_enable) {
-        itcwb_fgreen->show();
         itcwb_alg->show();
         itcwb_prim->show();
         itcwbFrame->show();
     } else {
-        itcwb_fgreen->hide();
         itcwb_alg->hide();
         itcwb_prim->hide();
     }
@@ -437,7 +431,6 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     equal->setAdjusterListener (this);
     tempBias->setAdjusterListener (this);
     observer10->setCheckBoxListener(this);
-    itcwb_fgreen->setAdjusterListener (this);
 
     spotbutton->signal_pressed().connect( sigc::mem_fun(*this, &WhiteBalance::spotPressed) );
     methconn = method->signal_changed().connect( sigc::mem_fun(*this, &WhiteBalance::optChanged) );
@@ -520,7 +513,6 @@ void WhiteBalance::adjusterChanged(Adjuster* a, double newval)
                 (
                     a == equal
                     || a == tempBias
-                    || a == itcwb_fgreen
                 )
                 && ppMethod.second.type == WBEntry::Type::AUTO
             )
@@ -559,8 +551,6 @@ void WhiteBalance::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged (EvWBequal, Glib::ustring::format (std::setw(4), std::fixed, std::setprecision(3), a->getValue()));
         } else if (a == tempBias) {
             listener->panelChanged (EvWBtempBias, Glib::ustring::format (std::setw(4), std::fixed, std::setprecision(2), a->getValue()));
-        } else if (a == itcwb_fgreen) {
-            listener->panelChanged (EvWBitcwbfgreen, Glib::ustring::format ((int) a->getValue()));
         }
     }
 }
@@ -759,7 +749,6 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
     methconn.block (true);
     equal->setValue (pp->wb.equal);
     observer10->setValue(rtengine::StandardObserver::TEN_DEGREES == pp->wb.observer);
-    itcwb_fgreen->setValue (pp->wb.itcwb_fgreen);
     tempBias->setValue (pp->wb.tempBias);
     tempBias->set_sensitive(true);
 
@@ -787,13 +776,11 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
 
 
     if(options.rtSettings.itcwb_enable) {
-        itcwb_fgreen->show();
         itcwb_alg->show();
         itcwb_prim->show();
         itcwbFrame->show();
         
     } else {
-        itcwb_fgreen->hide();
         itcwb_alg->hide();
         itcwb_prim->hide();
         itcwbFrame->hide();
@@ -824,7 +811,6 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         equal->setEditedState (pedited->wb.equal ? Edited : UnEdited);
         tempBias->setEditedState (pedited->wb.tempBias ? Edited : UnEdited);
         observer10->setEdited(pedited->wb.observer);
-        itcwb_fgreen->setEditedState (pedited->wb.itcwb_fgreen ? Edited : UnEdited);
         itcwb_alg->set_inconsistent (!pedited->wb.itcwb_alg);
     }
 
@@ -971,7 +957,6 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->wb.equal = equal->getEditedState ();
         pedited->wb.tempBias = tempBias->getEditedState ();
         pedited->wb.observer = observer10->getEdited();
-        pedited->wb.itcwb_fgreen = itcwb_fgreen->getEditedState ();
         pedited->wb.itcwb_alg = !itcwb_alg->get_inconsistent();
         pedited->wb.method = row[methodColumns.colLabel] != M("GENERAL_UNCHANGED");
         pedited->wb.enabled = !get_inconsistent();
@@ -1004,7 +989,6 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
         : observer10->getValue() == CheckValue::off
             ? rtengine::StandardObserver::TWO_DEGREES
             : pp->wb.observer;
-    pp->wb.itcwb_fgreen = itcwb_fgreen->getValue ();
     pp->wb.itcwb_alg = itcwb_alg->get_active ();
     pp->wb.tempBias = tempBias->getValue ();
 }
@@ -1014,7 +998,6 @@ void WhiteBalance::setDefaults (const ProcParams* defParams, const ParamsEdited*
 
     equal->setDefault (defParams->wb.equal);
     tempBias->setDefault (defParams->wb.tempBias);
-    itcwb_fgreen->setDefault (defParams->wb.itcwb_fgreen);
 
     if (wbp && defParams->wb.method == "Camera") {
         double ctemp;
@@ -1037,13 +1020,11 @@ void WhiteBalance::setDefaults (const ProcParams* defParams, const ParamsEdited*
         green->setDefaultEditedState (pedited->wb.green ? Edited : UnEdited);
         equal->setDefaultEditedState (pedited->wb.equal ? Edited : UnEdited);
         tempBias->setDefaultEditedState (pedited->wb.tempBias ? Edited : UnEdited);
-        itcwb_fgreen->setDefaultEditedState (pedited->wb.itcwb_fgreen ? Edited : UnEdited);
     } else {
         temp->setDefaultEditedState (Irrelevant);
         green->setDefaultEditedState (Irrelevant);
         equal->setDefaultEditedState (Irrelevant);
         tempBias->setDefaultEditedState (Irrelevant);
-        itcwb_fgreen->setDefaultEditedState (Irrelevant);
     }
 }
 

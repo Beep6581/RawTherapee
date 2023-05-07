@@ -67,7 +67,6 @@ protected:
     
     rtengine::ProcEvent EvWBObserver10;
     rtengine::ProcEvent EvWBitcwbprim;
-    rtengine::ProcEvent EvWBitcwbfgreen;
     rtengine::ProcEvent EvWBitcwbalg;
 
     static Glib::RefPtr<Gdk::Pixbuf> wbPixbufs[rtengine::toUnderlying(rtengine::procparams::WBEntry::Type::CUSTOM) + 1];
@@ -82,7 +81,6 @@ protected:
     Adjuster* tempBias;
     CheckBox* observer10;
     Gtk::Frame* itcwbFrame;
-    Adjuster* itcwb_fgreen;
     Gtk::CheckButton* itcwb_alg;
     MyComboBoxText* itcwb_prim;
     
