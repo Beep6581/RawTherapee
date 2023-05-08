@@ -6455,7 +6455,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             }
 
             if (settings->verbose) {
-                printf("Green camera=%f\n", keepgreen);
+                printf("Green comparison=%f\n", keepgreen);
                 printf("Rangegreen begin=%i  Rangegreen end=%i\n", Rangegreenused.begin, Rangegreenused.end);
                 printf("scantemp begin=%i scantemp end=%i\n", scantempbeg, scantempend);
                 printf("Student_0=%f Student_k= %f\n", Tgstud[0].student, Tgstud[maxkgood - 1].student);
@@ -6545,10 +6545,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
 
         //now we have temp green and student
-        if (((tempitc < 4000.f || tempitc > 7000.f) || extra == true) && lastitc  && oldsampling == false && wbpar.itcwb_alg == false) {//try to find if another tempref value near 5000K is better
+        if (((tempitc < 4000.f || tempitc > 7000.f) || extra == true) && lastitc  && oldsampling == false && wbpar.itcwb_alg == false  && wbpar.itcwb_custom == false) {//try to find if another tempref value near 5000K is better
             //bia = 1;
            //printf("tempitcalg=%f\n", tempitc);
-            optitc[nbitc].stud = std::max(studgood, 0.004f);//max to avoid choice between 2 very good results and falsifies the result
+            optitc[nbitc].stud = studgood;//std::max(studgood, 0.004f);//max to avoid choice between 2 very good results and falsifies the result
             optitc[nbitc].minc = Tppat[repref].minchroma;
             optitc[nbitc].titc = tempitc;
             optitc[nbitc].gritc = greenitc;
@@ -6574,7 +6574,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
             }
 
-            optitc[nbitc].stud = std::max(studgood, 0.004f);
+            optitc[nbitc].stud = studgood;//std::max(studgood, 0.004f);
             optitc[nbitc].minc =  Tppat[repref].minchroma;
             optitc[nbitc].titc = tempitc;
             optitc[nbitc].gritc = greenitc;
@@ -6590,7 +6590,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             optitc[nbitc].delt = Tppat[repref].delt_E;
             lastitc = false;
         } else {
-            optitc[nbitc].stud = std::max(studgood, 0.004f);
+            optitc[nbitc].stud = studgood;//std::max(studgood, 0.004f);
             optitc[nbitc].minc =  Tppat[repref].minchroma;
             optitc[nbitc].titc = tempitc;
             optitc[nbitc].gritc = greenitc;
@@ -6609,7 +6609,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             itciterate = false;
         }
  
-        if ((optitc[1].delt * (optitc[1].stud) < optitc[0].delt * (optitc[0].stud)) && optitc[1].minc > 0.f) {//  && optitc[0].titc > templimit) { //not 2 passes if tempitc too low
+        if (optitc[1].delt * std::max(optitc[1].stud, 0.04f) < optitc[0].delt * std::max(optitc[0].stud, 0.04f) && optitc[1].minc > 0.f) {
             choiceitc = 1;
             temp0 = optitc[0].titc;
         } else {
@@ -6624,7 +6624,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
     }
 
-    if ((nbitc == 1 && choiceitc == 1) && wbpar.itcwb_alg == false && oldsampling == false) {
+    if ((nbitc == 1 && choiceitc == 1) && wbpar.itcwb_alg == false && oldsampling == false && wbpar.itcwb_custom == false ) {
         bia = 2;
         studgood = optitc[choiceitc].stud;
         minchrom = optitc[choiceitc].minc;

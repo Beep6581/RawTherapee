@@ -1530,6 +1530,7 @@ HISTORY_MSG_WAVTHREND;Threshold local contrast
 HISTORY_MSG_WAVUSHAMET;Clarity method
 HISTORY_MSG_WBALANCE_OBSERVER10;Observer 10°
 HISTORY_MSG_WBITC_OBS;Remove algo 2 passes
+HISTORY_MSG_WBITC_CUSTOM;Itcwb Custom
 HISTORY_MSG_WBITC_SAMPLING;Low sampling
 HISTORY_MSG_WBITC_THRES;Itcwb Theshold
 HISTORY_MSG_WBITC_NOPURPLE;Itcwb Nopurple
@@ -4116,6 +4117,9 @@ TP_WBALANCE_ITCWB_NOPURPLE;Filter on purple color
 //TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP;By default when "Inpaint opposed" is activated, purple colors are not taken into account. However, if the image does not need highlight reconstruction, or if this image naturally contains purple tints (flowers, etc.), it may be necessary to deactivate, to take into account all the colors.
 TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP;Allows you to filter magenta/purple data from the image. If the box is checked a filter limiting the value of Y is applied. By default this value is 0.4. You can change it in 'options' Itcwb_Ypurple (Maximum 1)
 TP_WBALANCE_ITCWB_ALG;Remove 2 pass algorithm
+TP_WBALANCE_ITCWB_CUSTOM;Use Custom temperature & green
+TP_WBALANCE_ITCWCUSTOM_TOOLTIP;Allows you to use Custom settings Temperature and Green. Settings must be made before using Itcwb.\nYou cannot use 2 passes.
+
 TP_WBALANCE_ITCWALG_TOOLTIP;Allows you to switch to the other Alternative temperature (Alt_temp), when possible.\nInactive in the "single choice" case.\n\nWhen one of the proposed choices is with a temperature close or lower than 3000K, the choice is suspicious (due to the inappropriate color matrix)
 TP_WBALANCE_ITCWB_PRECIS;Precision algorithm - scale used
 TP_WBALANCE_ITCWBPRECIS_TOOLTIP;The lower the value, the more relevant the data, but increases the processing time. Since the processing time is low, this parameter should generally be able to remain at the default value

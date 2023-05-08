@@ -74,6 +74,7 @@ protected:
     ImageSource* imgsrc;
 
     ColorTemp currWB;
+    ColorTemp currWBcust;
     ColorTemp autoWB;
     ColorTemp currWBloc;
     ColorTemp autoWBloc;
