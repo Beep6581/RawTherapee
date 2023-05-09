@@ -576,7 +576,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     //double tempref = currWBitc.getTemp() * (1. + params->wb.tempBias);
                     //printf("Bias=%f temprefbias=%f \n", params->wb.tempBias, (double) tempref0bias);
                     double greenref = currWBitc.getGreen();
-                    if ((greenref > 1.5f || tempref0bias < 3300.f || tempref0bias > 7700.f) && !params->wb.itcwb_sampling  && !params->wb.itcwb_custom) { //probably camera out to adjust...
+                    if ((greenref > 1.5f || tempref0bias < 3300.f || tempref0bias > 7700.f) && !params->wb.itcwb_sampling  && !params->wb.itcwb_custom /* && params->wb.itcwb_green == 0.f*/) { //probably camera out to adjust...
                                                         // 3100 and 8000 to adjust
                         imgsrc->getAutoWBMultipliersitc(extra, tempref0bias, greenref, tempitc, greenitc, temp0, delta, bia, dread, studgood, minchrom, kmin, minhist, maxhist, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
                         imgsrc->wbMul2Camera(rm, gm, bm);
@@ -615,7 +615,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         tempitc = tempref;
                     }
 
-                    if ((greenref > 1.5f || tempref0bias < 3300.f || tempref0bias > 7700.f) && !isgrey && !params->wb.itcwb_custom) { //probably camera out to adjust = greenref ? tempref0bias ?
+                    if ((greenref > 1.5f || tempref0bias < 3300.f || tempref0bias > 7700.f) && !isgrey && !params->wb.itcwb_custom  /* && params->wb.itcwb_green == 0.f */) { //probably camera out to adjust = greenref ? tempref0bias ?
                     // 3100 and 8000 to adjust
                         //tempref = 0.66f * 5000.f + 0.34f * tempref;
                         //greenref = 1.f;

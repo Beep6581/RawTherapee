@@ -250,6 +250,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     EvWBitcwbprim = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_PRIM");
     EvWBitcwbalg = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_OBS");
     EvWBitcwcustom = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_CUSTOM");
+    EvWBitcwgreen = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_GREEN");
 
 
     //Add the model columns to the Combo (which is a kind of view),
@@ -379,6 +380,9 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     ToolParamBlock* const itcwbBox = Gtk::manage(new ToolParamBlock());
 
 
+    itcwb_green = Gtk::manage (new Adjuster (M("TP_WBALANCE_ITCWGREEN"), -0.3, 0.3, 0.005, 0.));
+    itcwb_green ->set_tooltip_markup (M("TP_WBALANCE_ITCWGREEN_TOOLTIP"));
+
     itcwb_alg = Gtk::manage (new Gtk::CheckButton (M("TP_WBALANCE_ITCWB_ALG")));
     itcwb_alg ->set_tooltip_markup (M("TP_WBALANCE_ITCWALG_TOOLTIP"));
     itcwb_alg ->set_active (false);
@@ -417,6 +421,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     pack_start(*observer10);
 
 
+    itcwbBox->pack_start (*itcwb_green);
     itcwbBox->pack_start (*itcwb_alg);
     itcwbBox->pack_start (*itcwb_prim);
 //    itcwbBox->pack_start (*itcwb_custom);
@@ -425,11 +430,13 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     pack_start(*itcwbFrame);
 
     if(options.rtSettings.itcwb_enable) {
+        itcwb_green->show();
         itcwb_alg->show();
         itcwb_custom->show();
         itcwb_prim->show();
         itcwbFrame->show();
     } else {
+        itcwb_green->show();
         itcwb_alg->hide();
         itcwb_custom->hide();
         itcwb_prim->hide();
@@ -439,6 +446,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     equal->setAdjusterListener (this);
     tempBias->setAdjusterListener (this);
     observer10->setCheckBoxListener(this);
+    itcwb_green->setAdjusterListener (this);
 
     spotbutton->signal_pressed().connect( sigc::mem_fun(*this, &WhiteBalance::spotPressed) );
     methconn = method->signal_changed().connect( sigc::mem_fun(*this, &WhiteBalance::optChanged) );
@@ -544,6 +552,7 @@ void WhiteBalance::adjusterChanged(Adjuster* a, double newval)
                 (
                     a == equal
                     || a == tempBias
+                    || a == itcwb_green
                 )
                 && ppMethod.second.type == WBEntry::Type::AUTO
             )
@@ -582,6 +591,8 @@ void WhiteBalance::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged (EvWBequal, Glib::ustring::format (std::setw(4), std::fixed, std::setprecision(3), a->getValue()));
         } else if (a == tempBias) {
             listener->panelChanged (EvWBtempBias, Glib::ustring::format (std::setw(4), std::fixed, std::setprecision(2), a->getValue()));
+        } else if (a == itcwb_green) {
+            listener->panelChanged (EvWBitcwgreen, Glib::ustring::format (std::setw(4), std::fixed, std::setprecision(2), a->getValue()));
         }
     }
 }
@@ -795,6 +806,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
     itcwb_customconn.block (false);
     lastitcwb_custom = pp->wb.itcwb_custom;
 
+    itcwb_green->setValue (pp->wb.itcwb_green);
 
 
     itcwb_primconn.block (true);
@@ -813,12 +825,14 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
 
 
     if(options.rtSettings.itcwb_enable) {
+        itcwb_green->show();
         itcwb_alg->show();
         itcwb_custom->show();
         itcwb_prim->show();
         itcwbFrame->show();
         
     } else {
+        itcwb_green->hide();
         itcwb_alg->hide();
         itcwb_custom->hide();
         itcwb_prim->hide();
@@ -854,6 +868,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         observer10->setEdited(pedited->wb.observer);
         itcwb_alg->set_inconsistent (!pedited->wb.itcwb_alg);
         itcwb_custom->set_inconsistent (!pedited->wb.itcwb_custom);
+        itcwb_green->setEditedState (pedited->wb.itcwb_green ? Edited : UnEdited);
     }
 
     if (pedited && !pedited->wb.method) {
@@ -1007,6 +1022,7 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->wb.method = row[methodColumns.colLabel] != M("GENERAL_UNCHANGED");
         pedited->wb.enabled = !get_inconsistent();
         pedited->wb.itcwb_prim  = itcwb_prim->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->wb.itcwb_green = itcwb_green->getEditedState ();
     }
 
     pp->wb.enabled = getEnabled();
@@ -1038,6 +1054,7 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
     pp->wb.itcwb_alg = itcwb_alg->get_active ();
     pp->wb.itcwb_custom = itcwb_custom->get_active ();
     pp->wb.tempBias = tempBias->getValue ();
+    pp->wb.itcwb_green = itcwb_green->getValue ();
 }
 
 void WhiteBalance::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)
@@ -1045,6 +1062,7 @@ void WhiteBalance::setDefaults (const ProcParams* defParams, const ParamsEdited*
 
     equal->setDefault (defParams->wb.equal);
     tempBias->setDefault (defParams->wb.tempBias);
+    itcwb_green->setDefault (defParams->wb.itcwb_green);
 
     if (wbp && defParams->wb.method == "Camera") {
         double ctemp;
@@ -1067,11 +1085,13 @@ void WhiteBalance::setDefaults (const ProcParams* defParams, const ParamsEdited*
         green->setDefaultEditedState (pedited->wb.green ? Edited : UnEdited);
         equal->setDefaultEditedState (pedited->wb.equal ? Edited : UnEdited);
         tempBias->setDefaultEditedState (pedited->wb.tempBias ? Edited : UnEdited);
+        itcwb_green->setDefaultEditedState (pedited->wb.itcwb_green ? Edited : UnEdited);
     } else {
         temp->setDefaultEditedState (Irrelevant);
         green->setDefaultEditedState (Irrelevant);
         equal->setDefaultEditedState (Irrelevant);
         tempBias->setDefaultEditedState (Irrelevant);
+        itcwb_green->setDefaultEditedState (Irrelevant);
     }
 }
 

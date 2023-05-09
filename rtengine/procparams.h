@@ -648,6 +648,7 @@ struct WBParams {
     int              itcwb_minsize;
     int              itcwb_delta;
     int              itcwb_fgreen;
+    double           itcwb_green;
     int              itcwb_rgreen;
     bool             itcwb_nopurple;
     bool             itcwb_alg;

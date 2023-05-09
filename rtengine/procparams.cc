@@ -1393,6 +1393,7 @@ WBParams::WBParams() :
     itcwb_minsize(20),
     itcwb_delta(4),
     itcwb_fgreen(3),//slider
+    itcwb_green(0.),//slider
     itcwb_rgreen(1),
     itcwb_nopurple(false),
     itcwb_alg(false),//checkbox
@@ -6204,6 +6205,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->wb.itcwb_minsize, "White Balance", "Itcwb_minsize", wb.itcwb_minsize, keyFile);
         saveToKeyfile(!pedited || pedited->wb.itcwb_delta, "White Balance", "Itcwb_delta", wb.itcwb_delta, keyFile);
         saveToKeyfile(!pedited || pedited->wb.itcwb_fgreen, "White Balance", "Itcwb_findgreen", wb.itcwb_fgreen, keyFile);
+        saveToKeyfile(!pedited || pedited->wb.itcwb_green, "White Balance", "Itcwb_green", wb.itcwb_green, keyFile);
         saveToKeyfile(!pedited || pedited->wb.itcwb_rgreen, "White Balance", "Itcwb_rangegreen", wb.itcwb_rgreen, keyFile);
         saveToKeyfile(!pedited || pedited->wb.itcwb_nopurple, "White Balance", "Itcwb_nopurple", wb.itcwb_nopurple, keyFile);
         saveToKeyfile(!pedited || pedited->wb.itcwb_alg, "White Balance", "Itcwb_alg", wb.itcwb_alg, keyFile);
@@ -8178,6 +8180,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "White Balance", "Itcwb_minsize", pedited, wb.itcwb_minsize, pedited->wb.itcwb_minsize);
             assignFromKeyfile(keyFile, "White Balance", "Itcwb_delta", pedited, wb.itcwb_delta, pedited->wb.itcwb_delta);
             assignFromKeyfile(keyFile, "White Balance", "Itcwb_findgreen", pedited, wb.itcwb_fgreen, pedited->wb.itcwb_fgreen);
+            assignFromKeyfile(keyFile, "White Balance", "Itcwb_green", pedited, wb.itcwb_green, pedited->wb.itcwb_green);
             assignFromKeyfile(keyFile, "White Balance", "Itcwb_rangegreen", pedited, wb.itcwb_rgreen, pedited->wb.itcwb_rgreen);
             assignFromKeyfile(keyFile, "White Balance", "Itcwb_nopurple", pedited, wb.itcwb_nopurple, pedited->wb.itcwb_nopurple);
             assignFromKeyfile(keyFile, "White Balance", "Itcwb_alg", pedited, wb.itcwb_alg, pedited->wb.itcwb_alg);

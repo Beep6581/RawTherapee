@@ -5661,6 +5661,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         //calculate R G B multiplier in function illuminant and temperature
         const bool isMono = (ri->getSensorType() == ST_FUJI_XTRANS && raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO))
                             || (ri->getSensorType() == ST_BAYER && raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO));
+        greenitc += wbpar.itcwb_green;
         double keepgreen = greenitc;
 
         for (int tt = 0; tt < N_t; ++tt) {
@@ -6545,7 +6546,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
 
         //now we have temp green and student
-        if (((tempitc < 4000.f || tempitc > 7000.f) || extra == true) && lastitc  && oldsampling == false && wbpar.itcwb_alg == false  && wbpar.itcwb_custom == false) {//try to find if another tempref value near 5000K is better
+        if (((tempitc < 4000.f || tempitc > 7000.f) || extra == true) && lastitc /* && wbpar.itcwb_green == 0.f */&& oldsampling == false && wbpar.itcwb_alg == false  && wbpar.itcwb_custom == false) {//try to find if another tempref value near 5000K is better
             //bia = 1;
            //printf("tempitcalg=%f\n", tempitc);
             optitc[nbitc].stud = studgood;//std::max(studgood, 0.004f);//max to avoid choice between 2 very good results and falsifies the result
@@ -6624,7 +6625,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
     }
 
-    if ((nbitc == 1 && choiceitc == 1) && wbpar.itcwb_alg == false && oldsampling == false && wbpar.itcwb_custom == false ) {
+    if ((nbitc == 1 && choiceitc == 1) && wbpar.itcwb_alg == false && oldsampling == false && wbpar.itcwb_custom == false /* && wbpar.itcwb_green == 0.f */) {
         bia = 2;
         studgood = optitc[choiceitc].stud;
         minchrom = optitc[choiceitc].minc;

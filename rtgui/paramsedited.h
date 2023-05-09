@@ -263,6 +263,7 @@ struct WBParamsEdited {
     bool itcwb_forceextra;
     bool itcwb_prim;
     bool itcwb_sampling;
+    bool itcwb_green;
 
 };
 
