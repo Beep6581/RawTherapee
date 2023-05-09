@@ -1544,6 +1544,7 @@ HISTORY_MSG_WBITC_FGREEN;Itcwb Green - student
 HISTORY_MSG_WBITC_RGREEN;Itcwb Green range
 HISTORY_MSG_WBITC_MINSIZE;Patch min size
 HISTORY_MSG_WBITC_PONDER;Itcwb ponderated
+HISTORY_MSG_WBITC_GREEN;Grren refinement
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -4108,6 +4109,8 @@ TP_WBALANCE_ITCWBDELTA_TOOLTIP;Fixed for each "green" iteration tried, the tempe
 TP_WBALANCE_ITCWB_FORCED;Forces use of the entire CIE diagram
 TP_WBALANCE_ITCWFORCED_TOOLTIP;By default (box not checked) the data scanned during sampling is brought back to the sRGB profile, which is the most widespread, both for calibrating DCP or ICC profiles with the Colorchecker24, or used on the web.\n If you have very high gamut images (some flowers, artificial colors), then it may be necessary to use the entire CIExy diagram, the profile used will be ACESP0. In this second case, the number of colors that can be used in internal to the algorithm will be more important.
 TP_WBALANCE_ITCWB_FGREEN;Find green student
+TP_WBALANCE_ITCWGREEN;Green refinement
+TP_WBALANCE_ITCWGREEN_TOOLTIP;Allows you to change the "tint" (green) which will serve as a reference when starting the algorithm. It has substantially the same role for greens as "AWB temperature bias" for temperature.\nThe whole algorithm is recalculated.\nDepending on the case, in order to guide the algorithm, the action on "Remove 2 pass algorith" may be necessary.
 TP_WBALANCE_ITCWBFGREEN_TOOLTIP;Find the best compromise between Student and green.
 TP_WBALANCE_ITCWB_FRA;Auto Temperature correlation Settings
 TP_WBALANCE_ITCWB_FRA_TOOLTIP;These settings allow, depending on the images (type of raw, colorimetry, etc.), an adaptation of the 'Temperature correlation' algorithm. There is no absolute rule linking these parameters to the results obtained.

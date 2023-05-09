@@ -69,6 +69,7 @@ protected:
     rtengine::ProcEvent EvWBitcwbprim;
     rtengine::ProcEvent EvWBitcwbalg;
     rtengine::ProcEvent EvWBitcwcustom;
+    rtengine::ProcEvent EvWBitcwgreen;
 
     static Glib::RefPtr<Gdk::Pixbuf> wbPixbufs[rtengine::toUnderlying(rtengine::procparams::WBEntry::Type::CUSTOM) + 1];
     Glib::RefPtr<Gtk::TreeStore> refTreeModel;
@@ -85,6 +86,7 @@ protected:
     Gtk::CheckButton* itcwb_alg;
     Gtk::CheckButton* itcwb_custom;
     MyComboBoxText* itcwb_prim;
+    Adjuster* itcwb_green;
     
     bool lastitcwb_alg;
     bool lastitcwb_custom;
