@@ -6565,11 +6565,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
             nbitc++;
 
-            if (tempitc < 4000.f) {
-                tempref = 4500.f * (1. + wbpar.tempBias);
-                tempref = LIM(tempref, 4000., 7000.);
+            if (tempitc < 4000.f) {//change the second temp to be near of the first one
+                tempitc += 200.f;
+                tempref = tempitc * (1. + wbpar.tempBias);
             } else {
-                tempref = 5300.f * (1. + wbpar.tempBias);
+                tempref = 5150.f * (1. + wbpar.tempBias);
                 tempref = LIM(tempref, 4000., 7000.);
 
             }
