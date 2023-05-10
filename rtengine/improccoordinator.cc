@@ -541,8 +541,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             double greenitc = 1.;
             float temp0 = 5000.f;
             bool extra = false;
-            int tcu = 5000;
-            float tg = 1.f;
             if (!params->wb.enabled) {
                 currWB = ColorTemp();
             } else if (params->wb.method == "Camera") {
@@ -573,11 +571,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     greenitc = 1.;
                     currWBitc = imgsrc->getWB();
                     tempref0bias = currWBitc.getTemp();
-                    //double tempref = currWBitc.getTemp() * (1. + params->wb.tempBias);
-                    //printf("Bias=%f temprefbias=%f \n", params->wb.tempBias, (double) tempref0bias);
                     double greenref = currWBitc.getGreen();
                     if ((greenref > 1.5f || tempref0bias < 3300.f || tempref0bias > 7700.f) && !params->wb.itcwb_sampling  && !params->wb.itcwb_custom /* && params->wb.itcwb_green == 0.f*/) { //probably camera out to adjust...
-                                                        // 3100 and 8000 to adjust
                         imgsrc->getAutoWBMultipliersitc(extra, tempref0bias, greenref, tempitc, greenitc, temp0, delta, bia, dread, studgood, minchrom, kmin, minhist, maxhist, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
                         imgsrc->wbMul2Camera(rm, gm, bm);
                         imgsrc->wbCamera2Mul(rm, gm, bm);
@@ -602,7 +597,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                 if (params->wb.method == "autitcgreen" || lastAwbEqual != params->wb.equal || lastAwbObserver != params->wb.observer || lastAwbTempBias != params->wb.tempBias || lastAwbauto != params->wb.method) {
                     double rm, gm, bm;
-                  //  tempitc = 5000.f;
                     greenitc = 1.;
                     currWBitc = imgsrc->getWB();
                     double tempref = currWBitc.getTemp() * (1. + params->wb.tempBias);
@@ -616,9 +610,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     }
 
                     if ((greenref > 1.5f || tempref0bias < 3300.f || tempref0bias > 7700.f) && !isgrey && !params->wb.itcwb_custom  /* && params->wb.itcwb_green == 0.f */) { //probably camera out to adjust = greenref ? tempref0bias ?
-                    // 3100 and 8000 to adjust
-                        //tempref = 0.66f * 5000.f + 0.34f * tempref;
-                        //greenref = 1.f;
                         tempref = tem * (1. + params->wb.tempBias);
                         greenref = gre;
                     } else if (isgrey) {
@@ -636,18 +627,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         params->wb.temperature = tempitc;
                         params->wb.green = greenitc;
                         currWB = ColorTemp(params->wb.temperature, params->wb.green, 1., params->wb.method, params->wb.observer);
-                        //printf("Improc tempitc=%f greitc=%f\n", tempitc, greenitc);
                         currWB.getMultipliers(rm, gm, bm);
                         autoWB.update(rm, gm, bm, params->wb.equal, params->wb.observer, params->wb.tempBias);
-/*                        if(params->wb.itcwb_custom) {
-                            currWBcust = ColorTemp(params->wb.temperature, params->wb.green, 1., "Custom", params->wb.observer);
-                            currWBcust = currWBcust.convertObserver(params->wb.observer);
-                            tcu = static_cast<int>(currWBcust.getTemp());
-                            tg = currWBcust.getGreen();
-                            printf("Tcu=%i tg=%f\n", tcu, tg);
-                            
-                        }
-*/
                     }
 
                     if (rm != -1.) {
