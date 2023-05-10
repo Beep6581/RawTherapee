@@ -1251,8 +1251,6 @@ void WhiteBalance::WBChanged(int met, double temperature, double greenVal, doubl
             disableListener();
             temp->setValue(temperature);
             green->setValue(greenVal);
-           // adjusterChanged(temp, 0.);
-           // adjusterChanged(green, 0.);
             mulLabel->set_text(
             Glib::ustring::compose(M("TP_WBALANCE_MULLABEL"),
                                    Glib::ustring::format(std::fixed, std::setprecision(4), rw),

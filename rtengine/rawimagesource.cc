@@ -6017,13 +6017,13 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                         yh += yy_curref[nh][repref] - ywpr;
                         wbchro[nh].hue =  fmodf(xatan2f(yy_curref[nh][repref] - ywpr, xx_curref[nh][repref] - xwpr), 2.f * RT_PI_F);
                         const float chxynum = wbchro[nh].chroxy_number = chxy * pow((double) histcurrref[nh][repref], 0.05);//sqrt was too big no convergence
-
+                        //We can replace 0.05 by powponder
                         if (ind1 < j && isponderate) { //with issorted ponderate chroma
                             chxynum1 = chxy1 * pow((double) histcurrref[ind1][repref], 0.05);//0.05 to 0.1 allows convergence, near 1.5 betwween max and min value
-                        }
+                        }//We can replace 0.05 by powponder
 
                         if (ind2 < 0 && isponderate) {
-                            chxynum2 = chxy2 * pow((double) histcurrref[ind2][repref], 0.05);
+                            chxynum2 = chxy2 * pow((double) histcurrref[ind2][repref], 0.05);//We can replace 0.05 by powponder
                         }
 
                         wbchro[nh].number = histcurrref[nh][repref];
@@ -6050,7 +6050,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                                 estimchrom += chxynum2;
                             }
 
-                            countchxynum += pow((double)histcurrref[nh][repref], 0.05);//no error, to take into account mean value
+                            countchxynum += pow((double)histcurrref[nh][repref], 0.05);//no error, to take into account mean value //We can replace 0.05 by powponder
                         }
                     }
 
@@ -6225,7 +6225,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
                 good_spectral[kN] = true;//good spectral are spectral color that match color histogram xy
             }
-
+            if(ndEmean == 0) {
+                ndEmean = 2;
+            }
             Tppat[repref].delt_E = dEmean / ndEmean;
             delta = Tppat[repref].delt_E;
 

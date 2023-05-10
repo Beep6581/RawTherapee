@@ -639,7 +639,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         //printf("Improc tempitc=%f greitc=%f\n", tempitc, greenitc);
                         currWB.getMultipliers(rm, gm, bm);
                         autoWB.update(rm, gm, bm, params->wb.equal, params->wb.observer, params->wb.tempBias);
-                        if(params->wb.itcwb_custom) {
+/*                        if(params->wb.itcwb_custom) {
                             currWBcust = ColorTemp(params->wb.temperature, params->wb.green, 1., "Custom", params->wb.observer);
                             currWBcust = currWBcust.convertObserver(params->wb.observer);
                             tcu = static_cast<int>(currWBcust.getTemp());
@@ -647,7 +647,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                             printf("Tcu=%i tg=%f\n", tcu, tg);
                             
                         }
-
+*/
                     }
 
                     if (rm != -1.) {
