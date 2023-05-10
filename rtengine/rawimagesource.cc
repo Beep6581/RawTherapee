@@ -6017,13 +6017,13 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                         yh += yy_curref[nh][repref] - ywpr;
                         wbchro[nh].hue =  fmodf(xatan2f(yy_curref[nh][repref] - ywpr, xx_curref[nh][repref] - xwpr), 2.f * RT_PI_F);
                         const float chxynum = wbchro[nh].chroxy_number = chxy * pow((double) histcurrref[nh][repref], 0.05);//sqrt was too big no convergence
-
+                        //We can replace 0.05 by powponder
                         if (ind1 < j && isponderate) { //with issorted ponderate chroma
                             chxynum1 = chxy1 * pow((double) histcurrref[ind1][repref], 0.05);//0.05 to 0.1 allows convergence, near 1.5 betwween max and min value
-                        }
+                        }//We can replace 0.05 by powponder
 
                         if (ind2 < 0 && isponderate) {
-                            chxynum2 = chxy2 * pow((double) histcurrref[ind2][repref], 0.05);
+                            chxynum2 = chxy2 * pow((double) histcurrref[ind2][repref], 0.05);//We can replace 0.05 by powponder
                         }
 
                         wbchro[nh].number = histcurrref[nh][repref];
@@ -6050,7 +6050,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                                 estimchrom += chxynum2;
                             }
 
-                            countchxynum += pow((double)histcurrref[nh][repref], 0.05);//no error, to take into account mean value
+                            countchxynum += pow((double)histcurrref[nh][repref], 0.05);//no error, to take into account mean value //We can replace 0.05 by powponder
                         }
                     }
 
@@ -6192,7 +6192,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                     }
                 }
 
-                if (settings->verbose) {
+                {
                     float xr = reff_spect_xx_camera[kN][repref];
                     float yr = reff_spect_yy_camera[kN][repref];
                     float Yr = reff_spect_Y_camera[kN][repref];
@@ -6213,19 +6213,24 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                     if (nn_curref_reduc[i][repref] > maxhist) {
                         maxhist = nn_curref_reduc[i][repref];
                     }
+                    if (settings->verbose) {
 
-                    if (dE > spectlimit) {
-                        printf("i=%i kn=%i REFLAB for info not used - not relevant Lr=%3.2f ar=%3.2f br=%3.2f \n", i,  kN, (double)(Lr / 327.68f), (double)(ar / 327.68f), (double)(br / 327.68f));
-                        printf("IMAGE: kn=%i hist=%7.0f chro_num=%5.1f hue=%2.2f chro=%2.3f xx=%f yy=%f YY=%f\n", kN, (double) nn_curref_reduc[i][repref], (double) chronum_curref_reduc[i][repref], (double) hue_curref_reduc[i][repref], (double) chro_curref_reduc[i][repref], (double) xx_curref_reduc[i][repref], (double) yy_curref_reduc[i][repref], (double) YY_curref_reduc[i][repref]);
-                        printf("kn=%i REfxy xxr=%f yyr=%f YYr=%f\n", kN, (double) reff_spect_xx_camera[kN][repref], (double) reff_spect_yy_camera[kN][repref], (double) reff_spect_Y_camera[kN][repref]);
-                        printf("kn=%i DELTA delt=%f\n", kN, dE);
-                        printf("....  \n");
+                        if (dE > spectlimit) {
+                            printf("i=%i kn=%i REFLAB for info not used - not relevant Lr=%3.2f ar=%3.2f br=%3.2f \n", i,  kN, (double)(Lr / 327.68f), (double)(ar / 327.68f), (double)(br / 327.68f));
+                            printf("IMAGE: kn=%i hist=%7.0f chro_num=%5.1f hue=%2.2f chro=%2.3f xx=%f yy=%f YY=%f\n", kN, (double) nn_curref_reduc[i][repref], (double) chronum_curref_reduc[i][repref], (double) hue_curref_reduc[i][repref], (double) chro_curref_reduc[i][repref], (double) xx_curref_reduc[i][repref], (double) yy_curref_reduc[i][repref], (double) YY_curref_reduc[i][repref]);
+                            printf("kn=%i REfxy xxr=%f yyr=%f YYr=%f\n", kN, (double) reff_spect_xx_camera[kN][repref], (double) reff_spect_yy_camera[kN][repref], (double) reff_spect_Y_camera[kN][repref]);
+                            printf("kn=%i DELTA delt=%f\n", kN, dE);
+                            printf("....  \n");
+                        }
                     }
+                  
                 }
 
                 good_spectral[kN] = true;//good spectral are spectral color that match color histogram xy
             }
-
+            if(ndEmean == 0) {
+                ndEmean = 2;
+            }
             Tppat[repref].delt_E = dEmean / ndEmean;
             delta = Tppat[repref].delt_E;
 

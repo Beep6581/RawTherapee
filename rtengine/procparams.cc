@@ -1424,6 +1424,10 @@ bool WBParams::isPanningRelatedChange(const WBParams& other) const
                 && equal == other.equal
                 && tempBias == other.tempBias
                 && observer == other.observer
+                && itcwb_green == other.itcwb_green
+                && itcwb_prim == other.itcwb_prim
+                && itcwb_alg == other.itcwb_alg
+
             )
         )
     );
@@ -1445,6 +1449,7 @@ bool WBParams::operator ==(const WBParams& other) const
         && itcwb_minsize == other.itcwb_minsize
         && itcwb_delta == other.itcwb_delta
         && itcwb_fgreen == other.itcwb_fgreen
+        && itcwb_green == other.itcwb_green
         && itcwb_rgreen == other.itcwb_rgreen
         && itcwb_nopurple == other.itcwb_nopurple
         && itcwb_alg == other.itcwb_alg
