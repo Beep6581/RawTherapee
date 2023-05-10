@@ -2952,6 +2952,7 @@ void ImProcCoordinator::process()
             || params->colorToning != nextParams->colorToning
             || params->vibrance != nextParams->vibrance
             || params->wb != nextParams->wb //isPanningRelatedChange(nextParams->wb)
+//            || params->wb.isPanningRelatedChange(nextParams->wb)
             || params->colorappearance != nextParams->colorappearance
             || params->epd != nextParams->epd
             || params->fattal != nextParams->fattal

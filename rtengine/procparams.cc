@@ -1425,6 +1425,9 @@ bool WBParams::isPanningRelatedChange(const WBParams& other) const
                 && tempBias == other.tempBias
                 && observer == other.observer
                 && itcwb_green == other.itcwb_green
+                && itcwb_prim == other.itcwb_prim
+                && itcwb_alg == other.itcwb_alg
+
             )
         )
     );
