@@ -5483,6 +5483,15 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         if (oldsampling == true) {
             Rangegreenused = Rangestandard2;
         }
+        if (wbpar.itcwb_rgreen == 0) {//new way to set green
+            Rangegreenused.begin = std::max(greenrefo - 13, 0);
+            Rangegreenused.end = std::min(greenrefo + 13, N_g);
+        }
+        if (wbpar.itcwb_rgreen == 1) {//new way to set green
+            Rangegreenused.begin = std::max(greenrefo - 17, 0);
+            Rangegreenused.end = std::min(greenrefo + 17, N_g);
+        }
+        
         if(wbpar.itcwb_custom) {//limit range to +5 g when custom
             Rangegreenused.begin = std::max(greenrefo - 5, 0);
             Rangegreenused.end = std::min(greenrefo + 5, N_g);
