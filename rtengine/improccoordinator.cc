@@ -532,6 +532,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             int dread = 0;
             int bia = 1;
             float studgood = 1000.f;
+            int kcam = 0;
             float minchrom = 1000.f;
             float delta = 0.f; 
             int kmin  = 20;
@@ -574,9 +575,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                             printf("Keep camera settings temp=%f green=%f\n", tempref0bias0, greenref);
                         }
                         autowb1 = false;
+                        kcam = 1;
                      }
                     if(autowb1) {
                         //alternative to camera if camera settings out, using autowb grey to find new ref
+                        kcam = 0;
                         params->wb.method = "autold";
                         double rm, gm, bm;
                         tempitc = 5000.f;
@@ -585,7 +588,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         tempref0bias = currWBitc.getTemp();
                         double greenref = currWBitc.getGreen();
                         if ((greenref > 1.5f || tempref0bias < 3300.f || tempref0bias > 7700.f) && !params->wb.itcwb_sampling  && !params->wb.itcwb_custom /* && params->wb.itcwb_green == 0.f*/) { //probably camera out to adjust...
-                            imgsrc->getAutoWBMultipliersitc(extra, tempref0bias, greenref, tempitc, greenitc, temp0, delta, bia, dread, studgood, minchrom, kmin, minhist, maxhist, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
+                            imgsrc->getAutoWBMultipliersitc(extra, tempref0bias, greenref, tempitc, greenitc, temp0, delta, bia, dread, kcam, studgood, minchrom, kmin, minhist, maxhist, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
                             imgsrc->wbMul2Camera(rm, gm, bm);
                             imgsrc->wbCamera2Mul(rm, gm, bm);
                             ColorTemp ct(rm, gm, bm, 1.0, currWB.getObserver());
@@ -637,7 +640,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     if (settings->verbose && params->wb.method ==  "autitcgreen") {
                         printf("tempref=%f greref=%f tempitc=%f greenitc=%f\n", tempref, greenref, tempitc, greenitc);
                     }
-                    imgsrc->getAutoWBMultipliersitc(extra, tempref, greenref, tempitc, greenitc, temp0, delta,  bia, dread, studgood, minchrom, kmin, minhist, maxhist, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
+                    imgsrc->getAutoWBMultipliersitc(extra, tempref, greenref, tempitc, greenitc, temp0, delta,  bia, dread, kcam, studgood, minchrom, kmin, minhist, maxhist, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
 
                     if (params->wb.method ==  "autitcgreen") {
                         params->wb.temperature = tempitc;
@@ -2641,6 +2644,7 @@ bool ImProcCoordinator::getAutoWB(double& temp, double& green, double equal, Sta
             int bia = 0;
             float temp0 = 5000.f;
             float studgood = 1000.f;
+            int kcam = 0;
             float minchrom = 1000.f;
             float delta = 0.f;
             int kmin = 20;
@@ -2648,7 +2652,7 @@ bool ImProcCoordinator::getAutoWB(double& temp, double& green, double equal, Sta
             float maxhist = -1000.f;
             double tempref, greenref;
             bool extra = false; 
-            imgsrc->getAutoWBMultipliersitc(extra, tempref, greenref, tempitc, greenitc, temp0, delta, bia, dread, studgood, minchrom, kmin, minhist, maxhist, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
+            imgsrc->getAutoWBMultipliersitc(extra, tempref, greenref, tempitc, greenitc, temp0, delta, bia, dread, kcam, studgood, minchrom, kmin, minhist, maxhist, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
 
             if (rm != -1) {
                 autoWB.update(rm, gm, bm, equal, observer, tempBias);
