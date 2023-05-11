@@ -5454,6 +5454,15 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             int end;
         } RangeGreen;
 
+        int greenrefo = 55;
+        double origgreen = greenitc;
+
+        for (int gg = 0; gg < N_g; gg++) {
+            if (gree[gg].green > origgreen) {
+                greenrefo = gg;//show the green
+                break;
+            }
+        }
         constexpr RangeGreen Rangestandard = {33, 80};//usual green range
         constexpr RangeGreen Rangestandard2 = {24, 86};//usual 2 green range
         constexpr RangeGreen Rangeextended = {15, 93};
@@ -5474,6 +5483,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         if (oldsampling == true) {
             Rangegreenused = Rangestandard2;
         }
+        if(wbpar.itcwb_custom) {//limit range to +5 g when custom
+            Rangegreenused.begin = std::max(greenrefo - 5, 0);
+            Rangegreenused.end = std::min(greenrefo + 5, N_g);
+        }
 
         typedef struct WbTxyz {
             double Tem;
@@ -5484,7 +5497,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         //I don't know how to pass this structure to Colortemp !
         // X and Z values calculate for each temp between 2000K to  12000K, so no result after 12000K !
         //of course we can change the step between each temp if need
-        constexpr WbTxyz Txyz[118] = {//temperature Xwb Zwb 118 values  x wb and y wb are calculated after,  Xwb and Ywb calculated with a spreadsheet
+        constexpr WbTxyz Txyz[123] = {//temperature Xwb Zwb 118 values  x wb and y wb are calculated after,  Xwb and Ywb calculated with a spreadsheet
             {2001., 1.273842, 0.145295},
             {2101., 1.244008, 0.167533},
             {2201., 1.217338, 0.190697},
@@ -5601,8 +5614,13 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             {9401., 0.953081, 1.423213},
             {9901., 0.954537, 1.464134},
             {10501., 0.956321, 1.508623},
-            {11001., 0.957747, 1.541281},
-            {12001., 0.960440, 1.601019}
+            {11001., 0.957747, 1.541281},//since 5 2023 I increased the number of temp refrences above 11000K
+            {11501., 0.959112, 1.572366},
+            {12001., 0.960440, 1.601019},
+            {12501., 0.963963, 1.627492},
+            {13001., 0.963963, 1.652008},
+            {13501., 0.964147, 1.674804},
+            {14001., 0.965279, 1.695919}
         };
         bool purp = true;//if inpaint-opposed or something else enable purp
 
@@ -5648,7 +5666,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         // tempref and greenref are camera wb values.
         // I used them by default to select good spectral values !! but they are changed after
-        tempref = rtengine::min(tempref, 12000.0);
+        tempref = rtengine::min(tempref, 14001.0);
         int repref = 0;
 
         for (int tt = 0; tt < N_t; tt++) {
@@ -5657,7 +5675,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 break;
             }
         }
-
+        if(repref == 122) {
+            repref = 120;
+        }
         //calculate R G B multiplier in function illuminant and temperature
         const bool isMono = (ri->getSensorType() == ST_FUJI_XTRANS && raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO))
                             || (ri->getSensorType() == ST_BAYER && raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO));
@@ -6193,14 +6213,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 }
 
                 {
-                    float xr = reff_spect_xx_camera[kN][repref];
-                    float yr = reff_spect_yy_camera[kN][repref];
-                    float Yr = reff_spect_Y_camera[kN][repref];
-                    float X_r = (65535.f * (xr * Yr)) / yr;
-                    float Z_r = (65535.f * (1.f - xr - yr) * Yr) / yr;
-                    float Y_r = 65535.f * Yr;
-                    float Lr, ar, br;
-                    Color::XYZ2Lab(X_r, Y_r, Z_r, Lr, ar, br);//it make sense, because known spectral color
                     float spectlimit = settings->itcwb_deltaspec;
                     float dE = sqrt(SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[kN][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[kN][repref]));
                     dEmean += dE;
@@ -6214,6 +6226,14 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                         maxhist = nn_curref_reduc[i][repref];
                     }
                     if (settings->verbose) {
+                        float xr = reff_spect_xx_camera[kN][repref];
+                        float yr = reff_spect_yy_camera[kN][repref];
+                        float Yr = reff_spect_Y_camera[kN][repref];
+                        float X_r = (65535.f * (xr * Yr)) / yr;
+                        float Z_r = (65535.f * (1.f - xr - yr) * Yr) / yr;
+                        float Y_r = 65535.f * Yr;
+                        float Lr, ar, br;
+                        Color::XYZ2Lab(X_r, Y_r, Z_r, Lr, ar, br);//it make sense, because known spectral color
 
                         if (dE > spectlimit) {
                             printf("i=%i kn=%i REFLAB for info not used - not relevant Lr=%3.2f ar=%3.2f br=%3.2f \n", i,  kN, (double)(Lr / 327.68f), (double)(ar / 327.68f), (double)(br / 327.68f));
@@ -6235,7 +6255,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             delta = Tppat[repref].delt_E;
 
             if (settings->verbose) {
-                printf("Patch Mean deltaE=%f minhisto=%6.0f maxhisto=%7.0f \n", (double) dEmean / ndEmean, (double) minhist, (double) maxhist);
+                printf("Patch Mean - Repref=%i deltaE=%f minhisto=%6.0f maxhisto=%7.0f \n", repref, (double) dEmean / ndEmean, (double) minhist, (double) maxhist);
             }
         }
 
@@ -6272,8 +6292,14 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         int goodref = 1;
 
 //calculate  x y z for each pixel with multiplier rmm gmm bmm
+        int ttbeg = 0;
+        int ttend = N_t;
+        if(wbpar.itcwb_custom) {
+            ttbeg = repref - 5;
+            ttend = std::min(repref + 5, N_t);
+        }
 
-        for (int tt = 0; tt < N_t; ++tt) {//N_t
+        for (int tt = ttbeg; tt < ttend; ++tt) {//N_t
             for (int i = 0; i < w; ++i) {
                 float unused;
 
@@ -6330,6 +6356,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
             if (oldsampling == true) {
                 dgoodref = 2;
+            }
+            if (wbpar.itcwb_custom) {
+                dgoodref = 3;//limit range dT when custom
             }
 
             const int scantempbeg = rtengine::max(goodref - (dgoodref + 1), 1);
@@ -6549,7 +6578,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         if (!extra) {
             tempitc = Txyz[goodref].Tem;
         }
-
+        printf("Goodref=%i\n", goodref);
         //now we have temp green and student
         if (((tempitc < 4000.f || tempitc > 7000.f) || extra == true) && lastitc /* && wbpar.itcwb_green == 0.f */&& oldsampling == false && wbpar.itcwb_alg == false  && wbpar.itcwb_custom == false) {//try to find if another tempref value near 5000K is better
             //bia = 1;
@@ -6614,7 +6643,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             lastitc = false;
             itciterate = false;
         }
- 
+ printf(" optitc[0].titc=%f optitc[1].titc=%f \n", (double) optitc[0].titc, (double) optitc[1].titc);
         if (optitc[1].delt * std::max(optitc[1].stud, 0.04f) < optitc[0].delt * std::max(optitc[0].stud, 0.04f) && optitc[1].minc > 0.f) {
             choiceitc = 1;
             temp0 = optitc[0].titc;
