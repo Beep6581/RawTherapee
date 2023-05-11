@@ -5138,7 +5138,7 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
         double ZZ;
     } WbTxyz;
     //probably can be "passed" with rawimagesource.cc but I don't know how to do this.
-    constexpr WbTxyz Txyz[118] = {//temperature Xwb Zwb 118 values - same table as in Rawimagesource.cc  x wb and y wb are calculated after
+    constexpr WbTxyz Txyz[123] = {//temperature Xwb Zwb 118 values - same table as in Rawimagesource.cc  x wb and y wb are calculated after
         {2001., 1.273842, 0.145295},
         {2101., 1.244008, 0.167533},
         {2201., 1.217338, 0.190697},
@@ -5256,7 +5256,12 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
         {9901., 0.954537, 1.464134},
         {10501., 0.956321, 1.508623},
         {11001., 0.957747, 1.541281},
-        {12001., 0.960440, 1.601019}
+        {11501., 0.959112, 1.572366},
+        {12001., 0.960440, 1.601019},
+        {12501., 0.963963, 1.627492},
+        {13001., 0.963963, 1.652008},
+        {13501., 0.964147, 1.674804},
+        {14001., 0.965279, 1.695919}
     };
 
     int N_c = sizeof(spec_colorforxcyc) / sizeof(spec_colorforxcyc[0]);   //number of color

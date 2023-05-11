@@ -358,7 +358,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     temp = Gtk::manage (new Adjuster (M("TP_WBALANCE_TEMPERATURE"), MINTEMP, MAXTEMP, 5, CENTERTEMP, itempL, itempR, &wbSlider2Temp, &wbTemp2Slider));
     green = Gtk::manage (new Adjuster (M("TP_WBALANCE_GREEN"), MINGREEN, MAXGREEN, 0.001, 1.0, igreenL, igreenR));
     equal = Gtk::manage (new Adjuster (M("TP_WBALANCE_EQBLUERED"), MINEQUAL, MAXEQUAL, 0.001, 1.0, iblueredL, iblueredR));
-    tempBias = Gtk::manage (new Adjuster(M("TP_WBALANCE_TEMPBIAS"), -0.7, 0.7, 0.005, 0.0, itempbiasL, itempbiasR));
+    tempBias = Gtk::manage (new Adjuster(M("TP_WBALANCE_TEMPBIAS"), -0.9, 0.9, 0.005, 0.0, itempbiasL, itempbiasR));
     observer10 = Gtk::manage(new CheckBox(M("TP_WBALANCE_OBSERVER10"), multiImage));
 
     cache_customTemp (0);
@@ -424,7 +424,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     itcwbBox->pack_start (*itcwb_green);
     itcwbBox->pack_start (*itcwb_alg);
     itcwbBox->pack_start (*itcwb_prim);
-//    itcwbBox->pack_start (*itcwb_custom);
+    itcwbBox->pack_start (*itcwb_custom);
     
     itcwbFrame->add(*itcwbBox);
     pack_start(*itcwbFrame);
