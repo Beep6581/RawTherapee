@@ -519,6 +519,14 @@ void WhiteBalance::itcwb_custom_toggled ()
 
         lastitcwb_custom = itcwb_custom->get_active ();
     }
+    
+    if (itcwb_custom->get_active ()) {
+        itcwb_alg->set_sensitive(false);
+        itcwb_alg->set_active(false);
+    } else {
+        itcwb_alg->set_sensitive(true);
+    }
+
     if (listener && getEnabled()) {
         if (itcwb_custom->get_active ()) {
             listener->panelChanged (EvWBitcwcustom, M("GENERAL_ENABLED"));
@@ -803,6 +811,12 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     itcwb_customconn.block (true);
     itcwb_custom->set_active (pp->wb.itcwb_custom);
+    if(itcwb_custom->get_active()){
+        itcwb_alg->set_sensitive(false);
+        itcwb_alg->set_active(false);
+    } else {
+        itcwb_alg->set_sensitive(true);
+    }
     itcwb_customconn.block (false);
     lastitcwb_custom = pp->wb.itcwb_custom;
 
