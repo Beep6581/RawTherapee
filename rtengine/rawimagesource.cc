@@ -6587,7 +6587,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 //        if (!extra) {
 //            tempitc = Txyz[goodref].Tem;
 //        }
-        printf("Goodref=%i\n", goodref);
+       // printf("Goodref=%i\n", goodref);
         //now we have temp green and student
         if (((tempitc < 4000.f || tempitc > 7000.f) || extra == true) && lastitc  && kcam == 0 /* && wbpar.itcwb_green == 0.f */&& oldsampling == false && wbpar.itcwb_alg == false  && wbpar.itcwb_custom == false) {//try to find if another tempref value near 5000K is better
             //bia = 1;
@@ -6652,7 +6652,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             lastitc = false;
             itciterate = false;
         }
- printf(" optitc[0].titc=%f optitc[1].titc=%f \n", (double) optitc[0].titc, (double) optitc[1].titc);
+        //printf(" optitc[0].titc=%f optitc[1].titc=%f \n", (double) optitc[0].titc, (double) optitc[1].titc);
         if (optitc[1].delt * std::max(optitc[1].stud, 0.04f) < optitc[0].delt * std::max(optitc[0].stud, 0.04f) && optitc[1].minc > 0.f) {
             choiceitc = 1;
             temp0 = optitc[0].titc;
