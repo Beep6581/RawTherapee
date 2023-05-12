@@ -634,6 +634,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         tempitc = tempref;
                         greenitc = greenref;
                         temp0 = tempitc;
+                        params->wb.itcwb_alg = true;
                     }
 
 

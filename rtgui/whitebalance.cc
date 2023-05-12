@@ -522,7 +522,7 @@ void WhiteBalance::itcwb_custom_toggled ()
     
     if (itcwb_custom->get_active ()) {
         itcwb_alg->set_sensitive(false);
-        itcwb_alg->set_active(false);
+        //itcwb_alg->set_active(false);
     } else {
         itcwb_alg->set_sensitive(true);
     }
@@ -813,7 +813,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
     itcwb_custom->set_active (pp->wb.itcwb_custom);
     if(itcwb_custom->get_active()){
         itcwb_alg->set_sensitive(false);
-        itcwb_alg->set_active(false);
+        //itcwb_alg->set_active(false);
     } else {
         itcwb_alg->set_sensitive(true);
     }

@@ -6667,7 +6667,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
     }
 
-    if ((nbitc == 1 && choiceitc == 1) && wbpar.itcwb_alg == false && oldsampling == false && wbpar.itcwb_custom == false /* && wbpar.itcwb_green == 0.f */) {
+    if ((nbitc == 1 && choiceitc == 1) && wbpar.itcwb_alg == false && oldsampling == false && wbpar.itcwb_custom == false  && kcam == 0/* && wbpar.itcwb_green == 0.f */) {
         bia = 2;
         studgood = optitc[choiceitc].stud;
         minchrom = optitc[choiceitc].minc;
