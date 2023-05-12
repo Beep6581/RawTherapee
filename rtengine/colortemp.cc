@@ -5138,7 +5138,7 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
         double ZZ;
     } WbTxyz;
     //probably can be "passed" with rawimagesource.cc but I don't know how to do this.
-    constexpr WbTxyz Txyz[123] = {//temperature Xwb Zwb 118 values - same table as in Rawimagesource.cc  x wb and y wb are calculated after
+    constexpr WbTxyz Txyz[132] = {//temperature Xwb Zwb 132 values - same table as in Rawimagesource.cc  x wb and y wb are calculated after
         {2001., 1.273842, 0.145295},
         {2101., 1.244008, 0.167533},
         {2201., 1.217338, 0.190697},
@@ -5252,15 +5252,24 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
         {8801., 0.951772, 1.367421},
         {9001., 0.951969, 1.387639},
         {9201., 0.952784, 1.404422},
-        {9401., 0.953081, 1.423213},
+        {9401., 0.953081, 1.423213},//since 5 2023 I increased the number of temp references above 9401K
+        {9651., 0.953993, 1.442883},
         {9901., 0.954537, 1.464134},
+        {10201., 0.955520, 1.485825},
         {10501., 0.956321, 1.508623},
+        {10751., 0.957057, 1.524806},
         {11001., 0.957747, 1.541281},
+        {11251., 0.958436, 1.557207},
         {11501., 0.959112, 1.572366},
-        {12001., 0.960440, 1.601019},
+        {11751., 0.959784, 1.587037},
+        {12001., 0.960440, 1.601019},//since 5 2023 I increased the number of temp references above 12000K
+        {12251., 0.961090, 1.614566},
         {12501., 0.963963, 1.627492},
-        {13001., 0.963963, 1.652008},
+        {12751., 0.962350, 1.640031},
+        {13001., 0.962962, 1.652055},
+        {13251., 0.963561, 1.663638},
         {13501., 0.964147, 1.674804},
+        {13751., 0.964720, 1.685571},
         {14001., 0.965279, 1.695919}
     };
 

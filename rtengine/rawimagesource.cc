@@ -5506,7 +5506,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         //I don't know how to pass this structure to Colortemp !
         // X and Z values calculate for each temp between 2000K to  12000K, so no result after 12000K !
         //of course we can change the step between each temp if need
-        constexpr WbTxyz Txyz[123] = {//temperature Xwb Zwb 118 values  x wb and y wb are calculated after,  Xwb and Ywb calculated with a spreadsheet
+        constexpr WbTxyz Txyz[132] = {//temperature Xwb Zwb 123 values  x wb and y wb are calculated after,  Xwb and Ywb calculated with a spreadsheet
             {2001., 1.273842, 0.145295},
             {2101., 1.244008, 0.167533},
             {2201., 1.217338, 0.190697},
@@ -5620,15 +5620,24 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             {8801., 0.951772, 1.367421},
             {9001., 0.951969, 1.387639},
             {9201., 0.952784, 1.404422},
-            {9401., 0.953081, 1.423213},
+            {9401., 0.953081, 1.423213},//since 5 2023 I increased the number of temp references above 12000K
+            {9651., 0.953993, 1.442883},
             {9901., 0.954537, 1.464134},
+            {10201., 0.955520, 1.485825},
             {10501., 0.956321, 1.508623},
-            {11001., 0.957747, 1.541281},//since 5 2023 I increased the number of temp refrences above 11000K
+            {10751., 0.957057, 1.524806},
+            {11001., 0.957747, 1.541281},
+            {11251., 0.958436, 1.557207},
             {11501., 0.959112, 1.572366},
-            {12001., 0.960440, 1.601019},
+            {11751., 0.959784, 1.587037},
+            {12001., 0.960440, 1.601019},//since 5 2023 I increased the number of temp refrences above 12000K
+            {12251., 0.961090, 1.614566},
             {12501., 0.963963, 1.627492},
-            {13001., 0.963963, 1.652008},
+            {12751., 0.962350, 1.640031},
+            {13001., 0.962962, 1.652055},
+            {13251., 0.963561, 1.663638},
             {13501., 0.964147, 1.674804},
+            {13751., 0.964720, 1.685571},
             {14001., 0.965279, 1.695919}
         };
         bool purp = true;//if inpaint-opposed or something else enable purp
@@ -5684,8 +5693,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 break;
             }
         }
-        if(repref == 122) {
-            repref = 120;
+        if(repref == 131) {
+            repref = 130;
         }
         //calculate R G B multiplier in function illuminant and temperature
         const bool isMono = (ri->getSensorType() == ST_FUJI_XTRANS && raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO))
