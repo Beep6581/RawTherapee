@@ -4962,11 +4962,11 @@ void ColorTemp::spectrum_to_color_xyz_daylight(const double* spec_color, double 
     for (i = 0, lambda = 350; lambda < 830.1; i++, lambda += 5) {
         const double Me = spec_color[i];
         const double Mc = daylight_spect(lambda, _m1, _m2);
-        X += Me * color_match[i][0] * Mc;
-        Y += Me * color_match[i][1] * Mc;
-        Z += Me * color_match[i][2] * Mc;
+        X += Mc * color_match[i][0] * Me;
+        Y += Mc * color_match[i][1] * Me;
+        Z += Mc * color_match[i][2] * Me;
     }
-
+    
     for (i = 0, lambda = 350; lambda < 830.1; i++, lambda += 5) {
 
         const double Mc1 = daylight_spect(lambda, _m1, _m2);
@@ -5037,7 +5037,7 @@ double ColorTemp::daylight_spect(double wavelength, double m1, double m2)
 // we can change step for temperature and increase number  for T > 7500K if necessary
 //these values Temp, x, y are references for all calculations and very precise.
 //copyright J.Desmis august  2017 and june 2018 - 05/2023
-void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float **Tz, float **Ta, float **Tb, float **TL, double *TX, double *TY, double *TZ, const procparams::WBParams & wbpar)
+void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float **Tz, float **Ta, float **Tb, float **TL, double *TX, double *TY, double *TZ, const procparams::WBParams & wbpar, int ttbeg, int ttend)
 {
     const double* spec_colorforxcyc[] = {//color references
         JDC468_BluH10_spect, JDC468_BluD6_spect, ColorchechCyaF3_spect, JDC468_BluM5_spect, // 0 3
@@ -5279,7 +5279,7 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
         printf("Number max spectral colors=%i\n", N_c);
     }
 
-    int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
+  //  int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
     typedef struct XYZref {
         double Xref;
         double Yref;
@@ -5333,7 +5333,7 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
             }
         }
     } else {
-        for (int tt = 0; tt < N_t; tt++) {
+        for (int tt = ttbeg; tt < ttend; tt++) {
             const double tempw = Txyz[tt].Tem;
 
             if (tempw <= INITIALBLACKBODY) {

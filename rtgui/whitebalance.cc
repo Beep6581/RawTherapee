@@ -527,7 +527,6 @@ void WhiteBalance::itcwb_custom_toggled ()
         itcwb_green->setValue(0.);
     } else {
         itcwb_alg->set_sensitive(true);
-        itcwb_alg->set_sensitive(false);
         tempBias->set_sensitive(true);
     }
 

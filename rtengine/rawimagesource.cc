@@ -5799,9 +5799,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         array2D<float> reff_spect_xx_camera(N_t, 2 * Nc + 2);
 
         array2D<float> reff_spect_Y_camera(N_t, 2 * Nc + 2);
-
+        int ttbeg = 0;
+        int ttend = N_t;
         //call tempxy to calculate for 406 or 201color references Temp and XYZ with cat02
-        ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar); //calculate chroma xy (xyY) for Z known colors on under 200 illuminants
+        ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar, ttbeg, ttend); //calculate chroma xy (xyY) for Z known colors on under 200 illuminants
 
         //find the good spectral values
         //calculate xy reference spectral for tempref
@@ -6317,8 +6318,19 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         //Now begin real calculations
         separated = false;
+        ttbeg = 0;
+        ttend = N_t;
+        //limit range temperature...gain time.
+        if(wbpar.itcwb_custom) {
+            ttbeg = std::max(repref - 5, 0);//enough > dgoodref = 3
+            ttend = std::min(repref + 5, N_t);
+        }  else {
+            ttbeg = std::max(repref - 10, 0);//enough in all cases > dgoodref
+            ttend = std::min(repref + 10, N_t);
+        } 
+        
         //recalculate histogram with good values and not estimated
-        ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar); //calculate chroma xy (xyY) for Z known colors on under 90 illuminants
+        ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar, ttbeg, ttend); //calculate chroma xy (xyY) for Z known colors on under 90 illuminants
         //calculate x y Y
         int sizcurr = siza;//choice of number of correlate colors in image
         array2D<float> xxyycurr_reduc(N_t, 2 * sizcurr);
@@ -6334,16 +6346,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         int goodref = 1;
 
 //calculate  x y z for each pixel with multiplier rmm gmm bmm
-        int ttbeg = 0;
-        int ttend = N_t;
-        //limit range temperature...gain time.
-        if(wbpar.itcwb_custom) {
-            ttbeg = std::max(repref - 5, 0);
-            ttend = std::min(repref + 5, N_t);
-        }  else {
-            ttbeg = std::max(repref - 10, 0);
-            ttend = std::min(repref + 10, N_t);
-        } 
 
         for (int tt = ttbeg; tt < ttend; ++tt) {//N_t
             for (int i = 0; i < w; ++i) {
