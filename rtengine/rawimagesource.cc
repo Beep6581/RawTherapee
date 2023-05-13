@@ -5233,6 +5233,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     Itcwb_minsize: minimal size of the patch
     */
     BENCHFUN
+    MyTime t1, t2, t3, t4, t5, t6, t7, t8;
+    t1.set();
+
     bool itciterate = true;
     bool lastitc = true;
 
@@ -5506,7 +5509,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         //I don't know how to pass this structure to Colortemp !
         // X and Z values calculate for each temp between 2000K to  12000K, so no result after 12000K !
         //of course we can change the step between each temp if need
-        constexpr WbTxyz Txyz[123] = {//temperature Xwb Zwb 118 values  x wb and y wb are calculated after,  Xwb and Ywb calculated with a spreadsheet
+        constexpr WbTxyz Txyz[132] = {//temperature Xwb Zwb 123 values  x wb and y wb are calculated after,  Xwb and Ywb calculated with a spreadsheet
             {2001., 1.273842, 0.145295},
             {2101., 1.244008, 0.167533},
             {2201., 1.217338, 0.190697},
@@ -5620,15 +5623,24 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             {8801., 0.951772, 1.367421},
             {9001., 0.951969, 1.387639},
             {9201., 0.952784, 1.404422},
-            {9401., 0.953081, 1.423213},
+            {9401., 0.953081, 1.423213},//since 5 2023 I increased the number of temp references above 12000K
+            {9651., 0.953993, 1.442883},
             {9901., 0.954537, 1.464134},
+            {10201., 0.955520, 1.485825},
             {10501., 0.956321, 1.508623},
-            {11001., 0.957747, 1.541281},//since 5 2023 I increased the number of temp refrences above 11000K
+            {10751., 0.957057, 1.524806},
+            {11001., 0.957747, 1.541281},
+            {11251., 0.958436, 1.557207},
             {11501., 0.959112, 1.572366},
-            {12001., 0.960440, 1.601019},
+            {11751., 0.959784, 1.587037},
+            {12001., 0.960440, 1.601019},//since 5 2023 I increased the number of temp refrences above 12000K
+            {12251., 0.961090, 1.614566},
             {12501., 0.963963, 1.627492},
-            {13001., 0.963963, 1.652008},
+            {12751., 0.962350, 1.640031},
+            {13001., 0.962962, 1.652055},
+            {13251., 0.963561, 1.663638},
             {13501., 0.964147, 1.674804},
+            {13751., 0.964720, 1.685571},
             {14001., 0.965279, 1.695919}
         };
         bool purp = true;//if inpaint-opposed or something else enable purp
@@ -5684,8 +5696,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 break;
             }
         }
-        if(repref == 122) {
-            repref = 120;
+        if(repref == 131) {
+            repref = 130;
         }
         //calculate R G B multiplier in function illuminant and temperature
         const bool isMono = (ri->getSensorType() == ST_FUJI_XTRANS && raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO))
@@ -5715,6 +5727,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             bmm[tt] = bm / gm;
             //return rmm, gmm, bmm in function of temp
         }
+    t2.set();
+
+    if (settings->verbose) {
+        printf("First: up calculate multipliers: %d nsec\n",  t2.etime(t1));
+    }
 
         struct hiss {//histogram
             int histnum;
@@ -5782,9 +5799,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         array2D<float> reff_spect_xx_camera(N_t, 2 * Nc + 2);
 
         array2D<float> reff_spect_Y_camera(N_t, 2 * Nc + 2);
-
+        int ttbeg = 0;
+        int ttend = N_t;
         //call tempxy to calculate for 406 or 201color references Temp and XYZ with cat02
-        ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar); //calculate chroma xy (xyY) for Z known colors on under 200 illuminants
+        ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar, ttbeg, ttend); //calculate chroma xy (xyY) for Z known colors on under 200 illuminants
 
         //find the good spectral values
         //calculate xy reference spectral for tempref
@@ -5843,6 +5861,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             }
 
             delete[] tmL;
+        }
+        t3.set();
+
+        if (settings->verbose) {
+            printf("Second: from first to up median 3x3: %d nsec\n", t3.etime(t2));
         }
 
 #ifdef _OPENMP
@@ -6284,33 +6307,45 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             G_curref_reduc[i][repref] = g / gmm[repref];
             B_curref_reduc[i][repref] = b / bmm[repref];
         }
+        t4.set();
+
+        if (settings->verbose) {
+            printf("Third: from second to find patch: %d msec\n", t4.etime(t3));
+        }
+
 
 //end first part
 
         //Now begin real calculations
         separated = false;
+        ttbeg = 0;
+        ttend = N_t;
+        //limit range temperature...gain time.
+        if(wbpar.itcwb_custom) {
+            ttbeg = std::max(repref - 5, 0);//enough > dgoodref = 3
+            ttend = std::min(repref + 5, N_t);
+        }  else {
+            ttbeg = std::max(repref - 10, 0);//enough in all cases > dgoodref
+            ttend = std::min(repref + 10, N_t);
+        } 
+        
         //recalculate histogram with good values and not estimated
-        ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar); //calculate chroma xy (xyY) for Z known colors on under 90 illuminants
+        ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar, ttbeg, ttend); //calculate chroma xy (xyY) for Z known colors on under 90 illuminants
         //calculate x y Y
         int sizcurr = siza;//choice of number of correlate colors in image
         array2D<float> xxyycurr_reduc(N_t, 2 * sizcurr);
         array2D<float> reff_spect_xxyy(N_t, 2 * Nc + 2);
         array2D<float> reff_spect_xxyy_prov(N_t, 2 * Nc + 2);
+        t5.set();
+
+        if (settings->verbose) {
+            printf("Fourth: from third recalculate spectral: %d msec\n",  t5.etime(t4));
+        }
 
         float minstud = 100000.f;
         int goodref = 1;
 
 //calculate  x y z for each pixel with multiplier rmm gmm bmm
-        int ttbeg = 0;
-        int ttend = N_t;
-        //limit range temperature...gain time.
-        if(wbpar.itcwb_custom) {
-            ttbeg = std::max(repref - 5, 0);
-            ttend = std::min(repref + 5, N_t);
-        } /* else {
-            ttbeg = std::max(repref - 10, 0);
-            ttend = std::min(repref + 10, N_t);
-        } */
 
         for (int tt = ttbeg; tt < ttend; ++tt) {//N_t
             for (int i = 0; i < w; ++i) {
@@ -6344,6 +6379,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 minstud = abstud;
                 goodref = tt;
             }
+        }
+        t6.set();
+
+        if (settings->verbose) {
+            printf("Fifth: from fourth to find first correlation: %d msec\n",  t6.etime(t5));
         }
 
         {//always used if extra = true because I made this choice, brings better results
@@ -6446,6 +6486,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                     Tgstud[gr].student = minstudgr;
 
                 }
+            }
+            t7.set();
+
+            if (settings->verbose) {
+                printf("Sixth: from fifth to find patch in extra mode: %d nsec\n", t7.etime(t6));
             }
 
             float estimchromf = 0.f;
@@ -6667,7 +6712,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
     }
 
-    if ((nbitc == 1 && choiceitc == 1) && wbpar.itcwb_alg == false && oldsampling == false && wbpar.itcwb_custom == false /* && wbpar.itcwb_green == 0.f */) {
+    if ((nbitc == 1 && choiceitc == 1) && wbpar.itcwb_alg == false && oldsampling == false && wbpar.itcwb_custom == false  && kcam == 0/* && wbpar.itcwb_green == 0.f */) {
         bia = 2;
         studgood = optitc[choiceitc].stud;
         minchrom = optitc[choiceitc].minc;
@@ -6697,6 +6742,12 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         avg_gm = optitc[0].avg_g;
         avg_bm = optitc[0].avg_b;
     }
+        t8.set();
+
+        if (settings->verbose) {
+            printf("Seventh: from sixth to end: %d msec\n",  t8.etime(t7));
+        }
+    
 }
 
 void RawImageSource::WBauto(bool extra, double & tempref, double & greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double & avg_rm, double & avg_gm, double & avg_bm, double & tempitc, double & greenitc, float &temp0, float &delta, int &bia,  int &dread, int &kcam, float & studgood, float &minchrom, int &kmin, float &minhist, float &maxhist, bool & twotimes, const WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const ColorManagementParams & cmp, const RAWParams & raw, const ToneCurveParams &hrp)

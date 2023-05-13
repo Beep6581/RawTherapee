@@ -519,6 +519,17 @@ void WhiteBalance::itcwb_custom_toggled ()
 
         lastitcwb_custom = itcwb_custom->get_active ();
     }
+    
+    if (itcwb_custom->get_active ()) {
+        itcwb_alg->set_sensitive(false);
+        tempBias->set_sensitive(false);
+        itcwb_green->set_sensitive(false);
+        itcwb_green->setValue(0.);
+    } else {
+        itcwb_alg->set_sensitive(true);
+        tempBias->set_sensitive(true);
+    }
+
     if (listener && getEnabled()) {
         if (itcwb_custom->get_active ()) {
             listener->panelChanged (EvWBitcwcustom, M("GENERAL_ENABLED"));
@@ -670,6 +681,7 @@ void WhiteBalance::optChanged ()
                 PatchlevelLabel->show();
                 equal->hide();
                 itcwbFrame->set_sensitive(true);
+                itcwb_custom_toggled ();
             } else {
                 StudLabel->hide();
                 PatchLabel->hide();
@@ -851,6 +863,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
             PatchlevelLabel->show();
             equal->hide();
             itcwbFrame->set_sensitive(true);
+            itcwb_custom_toggled ();
         } else {
             StudLabel->hide();
             PatchLabel->hide();
@@ -984,6 +997,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
             equal->hide();
             itcwbFrame->set_sensitive(true);
             itcwb_prim_changed ();
+            itcwb_custom_toggled ();
         } else {
             StudLabel->hide();
             PatchLabel->hide();

@@ -4962,11 +4962,11 @@ void ColorTemp::spectrum_to_color_xyz_daylight(const double* spec_color, double 
     for (i = 0, lambda = 350; lambda < 830.1; i++, lambda += 5) {
         const double Me = spec_color[i];
         const double Mc = daylight_spect(lambda, _m1, _m2);
-        X += Me * color_match[i][0] * Mc;
-        Y += Me * color_match[i][1] * Mc;
-        Z += Me * color_match[i][2] * Mc;
+        X += Mc * color_match[i][0] * Me;
+        Y += Mc * color_match[i][1] * Me;
+        Z += Mc * color_match[i][2] * Me;
     }
-
+    
     for (i = 0, lambda = 350; lambda < 830.1; i++, lambda += 5) {
 
         const double Mc1 = daylight_spect(lambda, _m1, _m2);
@@ -5037,7 +5037,7 @@ double ColorTemp::daylight_spect(double wavelength, double m1, double m2)
 // we can change step for temperature and increase number  for T > 7500K if necessary
 //these values Temp, x, y are references for all calculations and very precise.
 //copyright J.Desmis august  2017 and june 2018 - 05/2023
-void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float **Tz, float **Ta, float **Tb, float **TL, double *TX, double *TY, double *TZ, const procparams::WBParams & wbpar)
+void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float **Tz, float **Ta, float **Tb, float **TL, double *TX, double *TY, double *TZ, const procparams::WBParams & wbpar, int ttbeg, int ttend)
 {
     const double* spec_colorforxcyc[] = {//color references
         JDC468_BluH10_spect, JDC468_BluD6_spect, ColorchechCyaF3_spect, JDC468_BluM5_spect, // 0 3
@@ -5138,7 +5138,7 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
         double ZZ;
     } WbTxyz;
     //probably can be "passed" with rawimagesource.cc but I don't know how to do this.
-    constexpr WbTxyz Txyz[123] = {//temperature Xwb Zwb 118 values - same table as in Rawimagesource.cc  x wb and y wb are calculated after
+    constexpr WbTxyz Txyz[132] = {//temperature Xwb Zwb 132 values - same table as in Rawimagesource.cc  x wb and y wb are calculated after
         {2001., 1.273842, 0.145295},
         {2101., 1.244008, 0.167533},
         {2201., 1.217338, 0.190697},
@@ -5252,15 +5252,24 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
         {8801., 0.951772, 1.367421},
         {9001., 0.951969, 1.387639},
         {9201., 0.952784, 1.404422},
-        {9401., 0.953081, 1.423213},
+        {9401., 0.953081, 1.423213},//since 5 2023 I increased the number of temp references above 9401K
+        {9651., 0.953993, 1.442883},
         {9901., 0.954537, 1.464134},
+        {10201., 0.955520, 1.485825},
         {10501., 0.956321, 1.508623},
+        {10751., 0.957057, 1.524806},
         {11001., 0.957747, 1.541281},
+        {11251., 0.958436, 1.557207},
         {11501., 0.959112, 1.572366},
-        {12001., 0.960440, 1.601019},
+        {11751., 0.959784, 1.587037},
+        {12001., 0.960440, 1.601019},//since 5 2023 I increased the number of temp references above 12000K
+        {12251., 0.961090, 1.614566},
         {12501., 0.963963, 1.627492},
-        {13001., 0.963963, 1.652008},
+        {12751., 0.962350, 1.640031},
+        {13001., 0.962962, 1.652055},
+        {13251., 0.963561, 1.663638},
         {13501., 0.964147, 1.674804},
+        {13751., 0.964720, 1.685571},
         {14001., 0.965279, 1.695919}
     };
 
@@ -5270,7 +5279,7 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
         printf("Number max spectral colors=%i\n", N_c);
     }
 
-    int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
+  //  int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
     typedef struct XYZref {
         double Xref;
         double Yref;
@@ -5324,7 +5333,7 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
             }
         }
     } else {
-        for (int tt = 0; tt < N_t; tt++) {
+        for (int tt = ttbeg; tt < ttend; tt++) {
             const double tempw = Txyz[tt].Tem;
 
             if (tempw <= INITIALBLACKBODY) {
