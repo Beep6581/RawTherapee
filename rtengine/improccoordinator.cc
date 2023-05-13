@@ -629,7 +629,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         
                     }
                     if(params->wb.itcwb_custom) {//settings Custom
-                        tempref = temprefcust * (1. + params->wb.tempBias);
+                        //tempref = temprefcust * (1. + params->wb.tempBias);
+                        tempref = temprefcust;
                         greenref = greenrefcust;
                         tempitc = tempref;
                         greenitc = greenref;
