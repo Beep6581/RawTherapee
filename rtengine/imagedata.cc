@@ -336,9 +336,20 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
                 }
             }
         } else if (!make.compare(0, 4, "SONY")) {
-            if (find_exif_tag("Exif.Sony2.LensID") && pos->toLong()) {
+            // ExifTool prefers LensType2 over LensType (called
+            // Exif.Sony2.LensID by Exiv2). Exiv2 doesn't support LensType2 yet,
+            // so we let Exiv2 try it's best. For non ILCE/NEX cameras which
+            // likely don't have LensType2, we use Exif.Sony2.LensID because
+            // Exif.Photo.LensModel may be incorrect (see
+            // https://discuss.pixls.us/t/call-for-testing-rawtherapee-metadata-handling-with-exiv2-includes-cr3-support/36240/36).
+            if (
+                // Camera model is neither a ILCE nor NEX.
+                (!find_exif_tag("Exif.Image.Model") ||
+                    (pos->toString().compare(0, 4, "ILCE") && pos->toString().compare(0, 3, "NEX"))) &&
+                // LensID exists.
+                find_exif_tag("Exif.Sony2.LensID") && pos->toLong()) {
                 lens = pos->print(&exif);
-                if (lens == std::to_string(pos->toLong())) { // Not know to Exiv2.
+                if (lens == std::to_string(pos->toLong())) { // Not known to Exiv2.
                     lens.clear();
                 } else {
                     lens = validateUft8(lens);
