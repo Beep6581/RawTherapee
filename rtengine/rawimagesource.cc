@@ -6310,7 +6310,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         t4.set();
 
         if (settings->verbose) {
-            printf("Third: from second to find patch: %d msec\n", t4.etime(t3));
+            printf("Third: from second to find patch: %d nsec\n", t4.etime(t3));
         }
 
 
@@ -6339,7 +6339,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         t5.set();
 
         if (settings->verbose) {
-            printf("Fourth: from third recalculate spectral: %d msec\n",  t5.etime(t4));
+            printf("Fourth: from third recalculate spectral: %d nsec\n",  t5.etime(t4));
         }
 
         float minstud = 100000.f;
@@ -6383,7 +6383,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         t6.set();
 
         if (settings->verbose) {
-            printf("Fifth: from fourth to find first correlation: %d msec\n",  t6.etime(t5));
+            printf("Fifth: from fourth to find first correlation: %d nsec\n",  t6.etime(t5));
         }
 
         {//always used if extra = true because I made this choice, brings better results
@@ -6745,7 +6745,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         t8.set();
 
         if (settings->verbose) {
-            printf("Seventh: from sixth to end: %d msec\n",  t8.etime(t7));
+            printf("Seventh: from sixth to end: %d nsec\n",  t8.etime(t7));
         }
     
 }
