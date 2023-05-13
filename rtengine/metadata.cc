@@ -31,6 +31,13 @@
 #include "../rtgui/pathutils.h"
 
 
+#if EXIV2_TEST_VERSION(0,28,0)
+using Exiv2Error = Exiv2::Error;
+#else
+using Exiv2Error = Exiv2::AnyError;
+#endif
+
+
 namespace rtengine {
 
 extern const Settings *settings;
@@ -39,9 +46,13 @@ std::unique_ptr<Exiv2Metadata::ImageCache> Exiv2Metadata::cache_(nullptr);
 
 namespace {
 
-class Error: public Exiv2::AnyError {
+class Error: public Exiv2Error {
 public:
-    Error(const std::string &msg): msg_(msg) {}
+    Error(const std::string &msg):
+#if EXIV2_TEST_VERSION(0,28,0)
+        Exiv2Error(Exiv2::ErrorCode::kerGeneralError),
+#endif
+        msg_(msg) {}
     const char *what() const throw() { return msg_.c_str(); }
     int code() const throw() { return 0; }
 
@@ -71,7 +82,7 @@ std::unique_ptr<Exiv2::Image> open_exiv2(const Glib::ustring& fname,
     image->readMetadata();
     if (!image->good() || (check_exif && image->exifData().empty())) {
 #if EXIV2_TEST_VERSION(0,27,0)
-        auto error_code = Exiv2::kerErrorMessage;
+        auto error_code = Exiv2::ErrorCode::kerErrorMessage;
 #else
         auto error_code = 1;
 #endif
@@ -93,6 +104,19 @@ void clear_metadata_key(Data &data, const Key &key)
             data.erase(it);
         }
     }
+}
+
+template <typename Iterator, typename Integer = std::size_t>
+auto to_long(const Iterator &iter, Integer n = Integer{0}) -> decltype(
+#if EXIV2_TEST_VERSION(0,28,0)
+    iter->toInt64()
+) {
+    return iter->toInt64(n);
+#else
+    iter->toLong()
+) {
+    return iter->toLong(n);
+#endif
 }
 
 } // namespace
@@ -297,7 +321,7 @@ void Exiv2Metadata::saveToImage(const Glib::ustring &path, bool preserve_all_tag
             dst->writeMetadata();
             return;
         } catch (Exiv2::Error &exc) {
-            if (exc.code() == 37) {
+            if (exc.code() == Exiv2::ErrorCode::kerTooLargeJpegSegment) {
                 std::string msg = exc.what();
                 if (msg.find("XMP") != std::string::npos &&
                     !dst->xmpData().empty()) {
@@ -519,8 +543,8 @@ void Exiv2Metadata::getDimensions(int &w, int &h) const
             auto itw = exif.findKey(Exiv2::ExifKey("Exif.Image.ImageWidth"));
             auto ith = exif.findKey(Exiv2::ExifKey("Exif.Image.ImageLength"));
             if (itw != exif.end() && ith != exif.end()) {
-                w = itw->toLong();
-                h = ith->toLong();
+                w = to_long(itw);
+                h = to_long(ith);
             } else {
                 w = h = -1;
             }

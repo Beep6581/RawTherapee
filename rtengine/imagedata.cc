@@ -50,6 +50,19 @@ const std::string& validateUft8(const std::string& str, const std::string& on_er
     return on_error;
 }
 
+template <typename Iterator, typename Integer = std::size_t>
+auto to_long(const Iterator &iter, Integer n = Integer{0}) -> decltype(
+#if EXIV2_TEST_VERSION(0,28,0)
+    iter->toInt64()
+) {
+    return iter->toInt64(n);
+#else
+    iter->toLong()
+) {
+    return iter->toLong(n);
+#endif
+}
+
 }
 
 namespace rtengine {
@@ -269,7 +282,7 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
                 const int length = 12;
                 if (pos->count() >= index + length) {
                     for (int i = 0; i < length; ++i) {
-                        serial += static_cast<char>(pos->toLong(index + i));
+                        serial += static_cast<char>(to_long(pos, index + i));
                     }
                     serial = validateUft8(serial);
                 }
@@ -313,7 +326,7 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
                 "Rotate 270 CW",
                 "Unknown"
             };
-            auto idx = pos->toLong();
+            auto idx = to_long(pos);
             if (idx >= 0 && idx < long(ormap.size())) {
                 orientation = ormap[idx];
             }
@@ -322,14 +335,14 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
 
         if (!make.compare(0, 5, "NIKON")) {
             if (find_exif_tag("Exif.NikonLd4.LensID")) {
-                if (!pos->toLong()) { // No data, look in LensIDNumber.
+                if (!to_long(pos)) { // No data, look in LensIDNumber.
                     const auto p = pos;
                     if (!find_exif_tag("Exif.NikonLd4.LensIDNumber")) {
                         pos = p; // Tag not found, so reset pos.
                     }
                 }
                 lens = pos->print(&exif);
-                if (lens == std::to_string(pos->toLong())) { // Not known to Exiv2.
+                if (lens == std::to_string(to_long(pos))) { // Not known to Exiv2.
                     lens.clear();
                 } else {
                     lens = validateUft8(lens);
@@ -347,9 +360,9 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
                 (!find_exif_tag("Exif.Image.Model") ||
                     (pos->toString().compare(0, 4, "ILCE") && pos->toString().compare(0, 3, "NEX"))) &&
                 // LensID exists.
-                find_exif_tag("Exif.Sony2.LensID") && pos->toLong()) {
+                find_exif_tag("Exif.Sony2.LensID") && to_long(pos)) {
                 lens = pos->print(&exif);
-                if (lens == std::to_string(pos->toLong())) { // Not known to Exiv2.
+                if (lens == std::to_string(to_long(pos))) { // Not known to Exiv2.
                     lens.clear();
                 } else {
                     lens = validateUft8(lens);
@@ -363,7 +376,7 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
             auto p = pos;
             if (find_exif_tag("Exif.CanonFi.RFLensType") && find_exif_tag("Exif.Canon.LensModel")) {
                 lens = validateUft8(pos->print(&exif));
-            } else if (p->count() == 1 && lens == std::to_string(p->toLong())) {
+            } else if (p->count() == 1 && lens == std::to_string(to_long(p))) {
                 if (find_exif_tag("Exif.Canon.LensModel")) {
                     lens = validateUft8(pos->print(&exif));
                 } else if (find_exif_tag("Exif.Photo.LensModel")) {
@@ -421,11 +434,11 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
         }
 
         if (find_exif_tag("Exif.Image.Rating")) {
-            rating = pos->toLong();
+            rating = to_long(pos);
         } else {
             auto it = meta.xmpData().findKey(Exiv2::XmpKey("Xmp.xmp.Rating"));
             if (it != meta.xmpData().end() && it->size()) {
-                rating = it->toLong();
+                rating = to_long(it);
             }
         }
 
@@ -501,8 +514,8 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
                     || find_exif_tag("Exif.PentaxDng.Quality")
                 )
                 && (
-                    pos->toLong() == 7
-                    || pos->toLong() == 8
+                    to_long(pos) == 7
+                    || to_long(pos) == 8
                 )
             ) {
                 isPixelShift = true;
@@ -513,23 +526,23 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
         }
 
         if (make == "SONY") {
-            if (find_exif_tag("Exif.SubImage1.BitsPerSample") && pos->toLong() == 14) {
-                if (find_exif_tag("Exif.SubImage1.SamplesPerPixel") && pos->toLong() == 4 &&
-                    find_exif_tag("Exif.SubImage1.PhotometricInterpretation") && pos->toLong() == 32892 &&
-                    find_exif_tag("Exif.SubImage1.Compression") && pos->toLong() == 1) {
+            if (find_exif_tag("Exif.SubImage1.BitsPerSample") && to_long(pos) == 14) {
+                if (find_exif_tag("Exif.SubImage1.SamplesPerPixel") && to_long(pos) == 4 &&
+                    find_exif_tag("Exif.SubImage1.PhotometricInterpretation") && to_long(pos) == 32892 &&
+                    find_exif_tag("Exif.SubImage1.Compression") && to_long(pos) == 1) {
                     isPixelShift = true;
                 }
-            } else if (bps != exif.end() && bps->toLong() == 14 &&
-                       spp != exif.end() && spp->toLong() == 4 &&
-                       c != exif.end() && c->toLong() == 1 &&
+            } else if (bps != exif.end() && to_long(bps) == 14 &&
+                       spp != exif.end() && to_long(spp) == 4 &&
+                       c != exif.end() && to_long(c) == 1 &&
                        find_exif_tag("Exif.Image.Software") &&
                        pos->toString() == "make_arq") {
                 isPixelShift = true;
             }
         } else if (make == "FUJIFILM") {
-            if (bps != exif.end() && bps->toLong() == 16 &&
-                spp != exif.end() && spp->toLong() == 4 &&
-                c != exif.end() && c->toLong() == 1 &&
+            if (bps != exif.end() && to_long(bps) == 16 &&
+                spp != exif.end() && to_long(spp) == 4 &&
+                c != exif.end() && to_long(c) == 1 &&
                 find_exif_tag("Exif.Image.Software") &&
                 pos->toString() == "make_arq") {
                 isPixelShift = true;
@@ -548,22 +561,22 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
         {
             sampleformat = SAMPLEFORMAT_UINT;
         } else {
-            sampleformat = sf->toLong();
+            sampleformat = to_long(sf);
         }
 
         if (bps == exif.end() || spp == exif.end() || pi == exif.end()) {
             return;
         }
 
-        bitspersample = bps->toLong();
-        samplesperpixel = spp->toLong();
+        bitspersample = to_long(bps);
+        samplesperpixel = to_long(spp);
 
-        photometric = pi->toLong();
+        photometric = to_long(pi);
         if (photometric == PHOTOMETRIC_LOGLUV) {
             if (c == exif.end()) {
                 compression = COMPRESSION_NONE;
             } else {
-                compression = c->toLong();
+                compression = to_long(c);
             }
         }
 

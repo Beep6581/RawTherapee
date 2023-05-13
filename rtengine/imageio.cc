@@ -86,6 +86,19 @@ FILE* g_fopen_withBinaryAndLock(const Glib::ustring& fname)
     return f;
 }
 
+template <typename Iterator, typename Integer = std::size_t>
+auto to_long(const Iterator &iter, Integer n = Integer{0}) -> decltype(
+#if EXIV2_TEST_VERSION(0,28,0)
+    iter->toInt64()
+) {
+    return iter->toInt64(n);
+#else
+    iter->toLong()
+) {
+    return iter->toLong(n);
+#endif
+}
+
 }
 
 void ImageIO::setMetadata(Exiv2Metadata info)
@@ -1185,7 +1198,7 @@ int ImageIO::saveTIFF (
         }
         it = exif.findKey(Exiv2::ExifKey("Exif.Image.ResolutionUnit"));
         if (it != exif.end()) {
-            res_unit = it->toLong();
+            res_unit = to_long(it);
         }
     }
     TIFFSetField(out, TIFFTAG_XRESOLUTION, x_res);
