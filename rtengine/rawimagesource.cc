@@ -5509,7 +5509,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         //I don't know how to pass this structure to Colortemp !
         // X and Z values calculate for each temp between 2000K to  12000K, so no result after 12000K !
         //of course we can change the step between each temp if need
-        constexpr WbTxyz Txyz[134] = {//temperature Xwb Zwb 123 values  x wb and y wb are calculated after,  Xwb and Ywb calculated with a spreadsheet
+        constexpr WbTxyz Txyz[136] = {//temperature Xwb Zwb 136 values  x wb and y wb are calculated after,  Xwb and Ywb calculated with a spreadsheet
             {2001., 1.273842, 0.145295},
             {2101., 1.244008, 0.167533},
             {2201., 1.217338, 0.190697},
@@ -5642,7 +5642,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             {13501., 0.964147, 1.674804},
             {13751., 0.964720, 1.685571},
             {14001., 0.965279, 1.695919},
+            {14251., 0.965827, 1.705950},
             {14501., 0.966363, 1.715637},
+            {14751., 0.966886, 1.724998},
             {15001., 0.967397, 1.734047}
         };
         bool purp = true;//if inpaint-opposed or something else enable purp
@@ -5698,8 +5700,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 break;
             }
         }
-        if(repref == 133) {
-            repref = 131;
+        if(repref >= N_t - 1) {
+            repref = N_t - 2;
         }
         //calculate R G B multiplier in function illuminant and temperature
         const bool isMono = (ri->getSensorType() == ST_FUJI_XTRANS && raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO))
