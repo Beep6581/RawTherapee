@@ -3139,6 +3139,12 @@ Camera constants:
         "dcraw_matrix": [ 6344, -1612, -462, -4863, 12477, 2681, -865, 1786, 6899 ] // DNG
     },
 
+    { // Quality C
+        "make_model": "Sony ZV-1",
+        "dcraw_matrix": [ 8280, -2987, -703, -3531, 11645, 2133, -550, 1542, 5312 ], // DNG v15.2
+        "ranges": { "black": 800 }
+    },
+
     { // Quality C, No proper color data, beta samples, frame set to official jpeg,
         "make_model": [ "XIAOYI M1", "YI TECHNOLOGY M1" ],
         "dcraw_matrix": [ 7158,-1911,-606,-3603,10669,2530,-659,1236,5530 ], // XIAO YI DNG D65
