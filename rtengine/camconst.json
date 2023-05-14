@@ -3139,10 +3139,13 @@ Camera constants:
         "dcraw_matrix": [ 6344, -1612, -462, -4863, 12477, 2681, -865, 1786, 6899 ] // DNG
     },
 
-    { // Quality C
+    { // Quality A
         "make_model": "Sony ZV-1",
         "dcraw_matrix": [ 8280, -2987, -703, -3531, 11645, 2133, -550, 1542, 5312 ], // DNG v15.2
-        "ranges": { "black": 800 }
+        "ranges": { "black": 800 }, // White level from EXIF.
+        "raw_crop": [ 0, 0, 5496, 3672 ],
+        "pdaf_pattern": [0, 24, 48, 72, 88, 120],
+        "pdaf_offset": 17
     },
 
     { // Quality C, No proper color data, beta samples, frame set to official jpeg,
