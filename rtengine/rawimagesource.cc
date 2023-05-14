@@ -6328,7 +6328,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             ttbeg = std::max(repref - 10, 0);//enough in all cases > dgoodref
             ttend = std::min(repref + 10, N_t);
         } 
-        
+        if(oldsampling == true) {
+            ttbeg = 0;
+            ttend = N_t;
+        }
+
         //recalculate histogram with good values and not estimated
         ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar, ttbeg, ttend); //calculate chroma xy (xyY) for Z known colors on under 90 illuminants
         //calculate x y Y
