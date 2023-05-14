@@ -356,11 +356,11 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
             // Exif.Photo.LensModel may be incorrect (see
             // https://discuss.pixls.us/t/call-for-testing-rawtherapee-metadata-handling-with-exiv2-includes-cr3-support/36240/36).
             if (
-                // Camera model is neither a ILCE nor NEX.
+                // Camera model is neither a ILCE, ILME, nor NEX.
                 (!find_exif_tag("Exif.Image.Model") ||
-                    (pos->toString().compare(0, 4, "ILCE") && pos->toString().compare(0, 3, "NEX"))) &&
-                // LensID exists.
-                find_exif_tag("Exif.Sony2.LensID") && to_long(pos)) {
+                    (pos->toString().compare(0, 4, "ILCE") && pos->toString().compare(0, 4, "ILME") && pos->toString().compare(0, 3, "NEX"))) &&
+                // LensID exists. 0xFFFF could be one of many lenses.
+                find_exif_tag("Exif.Sony2.LensID") && to_long(pos) && to_long(pos) != 0xFFFF) {
                 lens = pos->print(&exif);
                 if (lens == std::to_string(to_long(pos))) { // Not known to Exiv2.
                     lens.clear();
