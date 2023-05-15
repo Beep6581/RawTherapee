@@ -93,8 +93,11 @@ class Thumbnail
 
 public:
     Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf);
-    Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5);
+    Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5, const std::string &xmpSidecarMd5);
     ~Thumbnail ();
+
+    static int infoFromImage(const Glib::ustring &fname, CacheImageData &cfs);
+    static Glib::ustring xmpSidecarPath(const Glib::ustring &imagePath);
 
     bool              hasProcParams () const;
     const rtengine::procparams::ProcParams& getProcParams ();

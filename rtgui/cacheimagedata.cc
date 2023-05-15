@@ -26,6 +26,15 @@
 #include "../rtengine/procparams.h"
 #include "../rtengine/settings.h"
 
+
+namespace
+{
+
+const Glib::ustring INI_GROUP_XMP_SIDECAR = "XmpSidecar";
+const Glib::ustring INI_XMP_SIDECAR_MD5 = "MD5";
+
+}
+
 CacheImageData::CacheImageData() :
     supported(false),
     format(FT_Invalid),
@@ -105,6 +114,12 @@ int CacheImageData::load (const Glib::ustring& fname)
 
                 if (keyFile.has_key ("General", "RecentlySaved")) {
                     recentlySaved = keyFile.get_boolean ("General", "RecentlySaved");
+                }
+            }
+
+            if (keyFile.has_group(INI_GROUP_XMP_SIDECAR)) {
+                if (keyFile.has_key(INI_GROUP_XMP_SIDECAR, INI_XMP_SIDECAR_MD5)) {
+                    xmpSidecarMd5 = keyFile.get_string(INI_GROUP_XMP_SIDECAR, INI_XMP_SIDECAR_MD5);
                 }
             }
 
@@ -267,6 +282,8 @@ int CacheImageData::save (const Glib::ustring& fname)
     keyFile.set_integer ("General", "Format", format);
     keyFile.set_boolean ("General", "RecentlySaved", recentlySaved);
     keyFile.set_integer ("General", "Rating", rating);
+
+    keyFile.set_string(INI_GROUP_XMP_SIDECAR, INI_XMP_SIDECAR_MD5, xmpSidecarMd5);
 
     // remove the old implementation of Rank and InTrash from cache
     if (keyFile.has_key ("General", "Rank")) {

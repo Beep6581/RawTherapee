@@ -148,7 +148,7 @@ Thumbnail::Thumbnail(CacheManager* cm, const Glib::ustring& fname, CacheImageDat
     tpp = nullptr;
 }
 
-Thumbnail::Thumbnail(CacheManager* cm, const Glib::ustring& fname, const std::string& md5) :
+Thumbnail::Thumbnail(CacheManager* cm, const Glib::ustring& fname, const std::string& md5, const std::string &xmpSidecarMd5) :
     fname(fname),
     cachemgr(cm),
     ref(1),
@@ -166,6 +166,7 @@ Thumbnail::Thumbnail(CacheManager* cm, const Glib::ustring& fname, const std::st
 
 
     cfs.md5 = md5;
+    cfs.xmpSidecarMd5 = xmpSidecarMd5;
     loadProcParams ();
     _generateThumbnailImage ();
     cfs.recentlySaved = false;
@@ -174,6 +175,11 @@ Thumbnail::Thumbnail(CacheManager* cm, const Glib::ustring& fname, const std::st
 
     delete tpp;
     tpp = nullptr;
+}
+
+Glib::ustring Thumbnail::xmpSidecarPath(const Glib::ustring &imagePath)
+{
+    return rtengine::Exiv2Metadata::xmpSidecarPath(imagePath);
 }
 
 void Thumbnail::_generateThumbnailImage ()
@@ -852,7 +858,12 @@ ThFileType Thumbnail::getType () const
 
 int Thumbnail::infoFromImage (const Glib::ustring& fname)
 {
-    rtengine::FramesMetaData* idata = rtengine::FramesMetaData::fromFile (fname);
+    return infoFromImage(fname, cfs);
+}
+
+int Thumbnail::infoFromImage(const Glib::ustring &fname, CacheImageData &cfs)
+{
+    std::unique_ptr<rtengine::FramesMetaData> idata(rtengine::FramesMetaData::fromFile (fname));
 
     if (!idata) {
         return 0;
@@ -915,7 +926,6 @@ int Thumbnail::infoFromImage (const Glib::ustring& fname)
 
     idata->getDimensions(cfs.width, cfs.height);
 
-    delete idata;
     return deg;
 }
 

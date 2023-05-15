@@ -39,6 +39,9 @@ public:
     bool  inTrashOld; // old implementation of inTrash
     bool  recentlySaved;
 
+    // XMP sidecar info.
+    Glib::ustring xmpSidecarMd5;
+
     // time/date info
     bool  timeValid;
     short year;
