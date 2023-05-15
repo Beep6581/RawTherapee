@@ -5138,7 +5138,7 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
         double ZZ;
     } WbTxyz;
     //probably can be "passed" with rawimagesource.cc but I don't know how to do this.
-    constexpr WbTxyz Txyz[167] = {//temperature Xwb Zwb 167 values - same table as in Rawimagesource.cc  x wb and y wb are calculated after
+    constexpr WbTxyz Txyz[175] = {//temperature Xwb Zwb 167 values - same table as in Rawimagesource.cc  x wb and y wb are calculated after
         {2001., 1.273842, 0.145295},
         {2051., 1.258802, 0.156066},
         {2101., 1.244008, 0.167533},
@@ -5226,7 +5226,9 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
         {5077., 0.962563, 0.839395},
         {5090., 0.962336, 0.841968},
         {5102., 0.962129, 0.844339},
+        {5115., 0.961907, 0.846902},
         {5127., 0.961706, 0.849263},
+        {5140., 0.961490, 0.851815},
         {5152., 0.961294, 0.854166},
         {5177., 0.960893, 0.859049},
         {5202., 0.960501, 0.863911},
@@ -5265,7 +5267,9 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
         {6602., 0.949952, 1.103094},
         {6625., 0.949902, 1.106501},
         {6652., 0.949846, 1.110479},
+        {6675., 0.949801, 1.113852},
         {6702., 0.949752, 1.119138},
+        {6725., 0.949712, 1.121128},
         {6752., 0.949668, 1.125027},
         {6802., 0.949596, 1.132190},
         {6902., 0.949033, 1.147691},
@@ -5275,9 +5279,13 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
         {7451., 0.949434, 1.219076},
         {7601., 0.949099, 1.239061},
         {7751., 0.949729, 1.255559},
+        {7825., 0.949828, 1.264225},
         {7901., 0.949498, 1.274460},
+        {8025., 0.950137, 1.287013},
         {8151., 0.950361, 1.300912},
+        {8225., 0.950501, 1.308915},
         {8301., 0.950253, 1.318464},
+        {8375., 0.950804, 1.324786},
         {8451., 0.950966, 1.332651},
         {8601., 0.950941, 1.349261},
         {8801., 0.951772, 1.367421},
@@ -5311,11 +5319,12 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
 
     int N_c = sizeof(spec_colorforxcyc) / sizeof(spec_colorforxcyc[0]);   //number of color
 
+
+    int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
     if (settings->verbose) {
-        printf("Number max spectral colors=%i\n", N_c);
+        printf("Number max spectral colors=%i Number sampling temp=%i\n", N_c, N_t);
     }
 
-  //  int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
     typedef struct XYZref {
         double Xref;
         double Yref;
