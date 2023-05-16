@@ -5281,7 +5281,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
 
 
-//    oldsampling = false;
         if (oldsampling) {
             profuse = "sRGB";
         }
@@ -5466,6 +5465,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 break;
             }
         }
+
         constexpr RangeGreen Rangestandard = {33, 80};//usual green range
         constexpr RangeGreen Rangestandard2 = {24, 86};//usual 2 green range
         constexpr RangeGreen Rangeextended = {15, 93};
@@ -5486,16 +5486,18 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         if (oldsampling == true) {
             Rangegreenused = Rangestandard2;
         }
+
         if (wbpar.itcwb_rgreen == 0) {//new way to set green
             Rangegreenused.begin = std::max(greenrefo - 13, 0);
             Rangegreenused.end = std::min(greenrefo + 13, N_g);
         }
+
         if (wbpar.itcwb_rgreen == 1) {//new way to set green
             Rangegreenused.begin = std::max(greenrefo - 17, 0);
             Rangegreenused.end = std::min(greenrefo + 17, N_g);
         }
-        
-        if(wbpar.itcwb_custom) {//limit range to +5 g when custom
+
+        if (wbpar.itcwb_custom) { //limit range to +5 g when custom
             Rangegreenused.begin = std::max(greenrefo - 5, 0);
             Rangegreenused.end = std::min(greenrefo + 5, N_g);
         }
@@ -5712,11 +5714,14 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         array2D<float> Ta(N_t, Nc);
         array2D<float> Tb(N_t, Nc);
         array2D<float> TL(N_t, Nc);
+
         double TX[Nc];
         double TY[Nc];
         double TZ[Nc];
+
         std::vector<bool> good_spectral(Nc, false);
         std::vector<bool> good_size(Nc, false);
+
         double WPX[N_t];
         double WPZ[N_t];
 
@@ -5741,9 +5746,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 break;
             }
         }
-        if(repref >= N_t - 1) {
+
+        if (repref >= N_t - 1) {
             repref = N_t - 2;
         }
+
         //calculate R G B multiplier in function illuminant and temperature
         const bool isMono = (ri->getSensorType() == ST_FUJI_XTRANS && raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO))
                             || (ri->getSensorType() == ST_BAYER && raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO));
@@ -5772,11 +5779,12 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             bmm[tt] = bm / gm;
             //return rmm, gmm, bmm in function of temp
         }
-    t2.set();
 
-    if (settings->verbose) {
-        printf("First: up calculate multipliers: %d nsec\n",  t2.etime(t1));
-    }
+        t2.set();
+
+        if (settings->verbose) {
+            printf("First: up calculate multipliers: %d nsec\n",  t2.etime(t1));
+        }
 
         struct hiss {//histogram
             int histnum;
@@ -5844,11 +5852,16 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         array2D<float> reff_spect_xx_camera(N_t, 2 * Nc + 2);
 
         array2D<float> reff_spect_Y_camera(N_t, 2 * Nc + 2);
+
         int ttbeg = 0;
+
         int ttend = N_t;
+
         //call tempxy to calculate for 406 or 201color references Temp and XYZ with cat02
         double wpx = 0.;
+
         double wpz = 0.;
+
         ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar, ttbeg, ttend, wpx, wpz, WPX, WPZ); //calculate chroma xy (xyY) for Z known colors on under 200 illuminants
 
         //find the good spectral values
@@ -5909,6 +5922,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
             delete[] tmL;
         }
+
         t3.set();
 
         if (settings->verbose) {
@@ -6060,6 +6074,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         const float swpr = wpx + wpz + 1.f;
         const float xwpr = wpx / swpr;//white point for tt in xy coordinates
         const float ywpr = 1.f / swpr;
+
         if (settings->verbose) {
             printf("White Point XYZ x=%f y=%f z=%f\n", wpx, 1., wpz);
             printf("White Point xyY x=%f y=%f\n", xwpr, ywpr);
@@ -6120,6 +6135,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                         yh += yy_curref[nh][repref] - ywpr;
                         wbchro[nh].hue =  fmodf(xatan2f(yy_curref[nh][repref] - ywpr, xx_curref[nh][repref] - xwpr), 2.f * RT_PI_F);
                         const float chxynum = wbchro[nh].chroxy_number = chxy * pow((double) histcurrref[nh][repref], 0.05);//sqrt was too big no convergence
+
                         //We can replace 0.05 by powponder
                         if (ind1 < j && isponderate) { //with issorted ponderate chroma
                             chxynum1 = chxy1 * pow((double) histcurrref[ind1][repref], 0.05);//0.05 to 0.1 allows convergence, near 1.5 betwween max and min value
@@ -6308,6 +6324,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                     if (nn_curref_reduc[i][repref] > maxhist) {
                         maxhist = nn_curref_reduc[i][repref];
                     }
+
                     if (settings->verbose) {
                         float xr = reff_spect_xx_camera[kN][repref];
                         float yr = reff_spect_yy_camera[kN][repref];
@@ -6326,14 +6343,16 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                             printf("....  \n");
                         }
                     }
-                  
+
                 }
 
                 good_spectral[kN] = true;//good spectral are spectral color that match color histogram xy
             }
-            if(ndEmean == 0) {
+
+            if (ndEmean == 0) {
                 ndEmean = 2;
             }
+
             Tppat[repref].delt_E = dEmean / ndEmean;
             delta = Tppat[repref].delt_E;
 
@@ -6358,6 +6377,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             G_curref_reduc[i][repref] = g / gmm[repref];
             B_curref_reduc[i][repref] = b / bmm[repref];
         }
+
         t4.set();
 
         if (settings->verbose) {
@@ -6371,15 +6391,17 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         separated = false;
         ttbeg = 0;
         ttend = N_t;
+
         //limit range temperature...gain time.
-        if(wbpar.itcwb_custom) {
+        if (wbpar.itcwb_custom) {
             ttbeg = std::max(repref - 6, 0);//enough > dgoodref = 3
             ttend = std::min(repref + 6, N_t);
         }  else {
             ttbeg = std::max(repref - 11, 0);//enough in all cases > dgoodref
             ttend = std::min(repref + 11, N_t);
-        } 
-        if(oldsampling == true) {
+        }
+
+        if (oldsampling == true) {
             ttbeg = 0;
             ttend = N_t;
         }
@@ -6438,13 +6460,15 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 goodref = tt;
             }
         }
+
         t6.set();
 
         if (settings->verbose) {
             printf("Fifth: from fourth to find first correlation: %d nsec\n",  t6.etime(t5));
         }
 
-        {//always used if extra = true because I made this choice, brings better results
+        {
+            //always used if extra = true because I made this choice, brings better results
             struct Tempgreen {
                 float student;
                 int tempref;
@@ -6468,6 +6492,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             if (oldsampling == true) {
                 dgoodref = 2;
             }
+
             if (wbpar.itcwb_custom) {
                 dgoodref = 3;//limit range dT when custom
             }
@@ -6545,6 +6570,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
                 }
             }
+
             t7.set();
 
             if (settings->verbose) {
@@ -6693,9 +6719,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         avg_bm = 10000.f * bmm[goodref];
 
         //now we have temp green and student
-        if (((tempitc < 4000.f || tempitc > 7000.f) || extra == true) && lastitc  && kcam == 0 /* && wbpar.itcwb_green == 0.f */&& oldsampling == false && wbpar.itcwb_alg == false  && wbpar.itcwb_custom == false) {//try to find if another tempref value near 5000K is better
+        if (((tempitc < 4000.f || tempitc > 7000.f) || extra == true) && lastitc  && kcam == 0 /* && wbpar.itcwb_green == 0.f */ && oldsampling == false && wbpar.itcwb_alg == false  && wbpar.itcwb_custom == false) { //try to find if another tempref value near 5000K is better
             //bia = 1;
-           //printf("tempitcalg=%f\n", tempitc);
+            //printf("tempitcalg=%f\n", tempitc);
             optitc[nbitc].stud = studgood;//std::max(studgood, 0.004f);//max to avoid choice between 2 very good results and falsifies the result
             optitc[nbitc].minc = Tppat[repref].minchroma;
             optitc[nbitc].titc = tempitc;
@@ -6756,6 +6782,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             lastitc = false;
             itciterate = false;
         }
+
         if (optitc[1].delt * std::max(optitc[1].stud, 0.04f) < optitc[0].delt * std::max(optitc[0].stud, 0.04f) && optitc[1].minc > 0.f) {
             choiceitc = 1;
             temp0 = optitc[0].titc;
@@ -6801,12 +6828,13 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         avg_gm = optitc[0].avg_g;
         avg_bm = optitc[0].avg_b;
     }
-        t8.set();
 
-        if (settings->verbose) {
-            printf("Seventh: from sixth to end: %d nsec\n",  t8.etime(t7));
-        }
-    
+    t8.set();
+
+    if (settings->verbose) {
+        printf("Seventh: from sixth to end: %d nsec\n",  t8.etime(t7));
+    }
+
 }
 
 void RawImageSource::WBauto(bool extra, double & tempref, double & greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double & avg_rm, double & avg_gm, double & avg_bm, double & tempitc, double & greenitc, float &temp0, float &delta, int &bia,  int &dread, int &kcam, float & studgood, float &minchrom, int &kmin, float &minhist, float &maxhist, bool & twotimes, const WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const ColorManagementParams & cmp, const RAWParams & raw, const ToneCurveParams &hrp)
@@ -6816,14 +6844,14 @@ void RawImageSource::WBauto(bool extra, double & tempref, double & greenref, arr
     //put green (tint) in reasonable limits for an Daylight illuminant
     // avoid too bi or too low values
     if (wbpar.method == "autitcgreen") {
-       // bool extra = true;
+        // bool extra = true;
 
         if (greenref > 0.5 && greenref < 1.3) {// 0.5 and 1.3 arbitraties values
             greenitc = greenref;
 
         } else {
             greenitc = 1.;
-       //     extra = true;
+            //     extra = true;
         }
 
         tempitc = 5000.;
@@ -7108,7 +7136,8 @@ void RawImageSource::getAutoWBMultipliersitc(bool extra, double & tempref, doubl
         if (oldsampling == true) {
             precision = 5;
         }
-       // bool extra = true;
+
+        // bool extra = true;
         const int bfw = W / precision + ((W % precision) > 0 ? 1 : 0);// 5 arbitrary value can be change to 3 or 9 ;
         const int bfh = H / precision + ((H % precision) > 0 ? 1 : 0);
         WBauto(extra, tempref, greenref, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, tempitc, greenitc, temp0, delta,  bia, dread, kcam, studgood, minchrom, kmin, minhist, maxhist, twotimes, wbpar, begx, begy, yEn,  xEn,  cx,  cy, cmp, raw, hrp);
