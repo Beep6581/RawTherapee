@@ -5717,6 +5717,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         double TZ[Nc];
         std::vector<bool> good_spectral(Nc, false);
         std::vector<bool> good_size(Nc, false);
+        double WPX[N_t];
+        double WPZ[N_t];
 
         float rmm[N_t];
         float gmm[N_t];
@@ -5847,7 +5849,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         //call tempxy to calculate for 406 or 201color references Temp and XYZ with cat02
         double wpx = 0.;
         double wpz = 0.;
-        ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar, ttbeg, ttend, wpx, wpz); //calculate chroma xy (xyY) for Z known colors on under 200 illuminants
+        ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar, ttbeg, ttend, wpx, wpz, WPX, WPZ); //calculate chroma xy (xyY) for Z known colors on under 200 illuminants
 
         //find the good spectral values
         //calculate xy reference spectral for tempref
@@ -6055,13 +6057,13 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
 
         chrom wbchro[sizcu4];
-        if (settings->verbose) {
-            printf("White Point XYZ x=%f y=%f z=%f\n", wpx, 1., wpz);
-        }
         const float swpr = wpx + wpz + 1.f;
         const float xwpr = wpx / swpr;//white point for tt in xy coordinates
-
         const float ywpr = 1.f / swpr;
+        if (settings->verbose) {
+            printf("White Point XYZ x=%f y=%f z=%f\n", wpx, 1., wpz);
+            printf("White Point xyY x=%f y=%f\n", xwpr, ywpr);
+        }
 
         for (int i = 0; i < sizcu4; ++i) { //take the max values
             histcurrref[i][repref] = Wbhis[siza - (i + 1)].histnum;
@@ -6386,7 +6388,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         double wpx1 = 0.;
         double wpz1 = 0.;
 
-        ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar, ttbeg, ttend, wpx1, wpz1); //calculate chroma xy (xyY) for Z known colors on under 90 illuminants
+        ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar, ttbeg, ttend, wpx1, wpz1, WPX, WPZ); //calculate chroma xy (xyY) for Z known colors on under 90 illuminants
         //calculate x y Y
         int sizcurr = siza;//choice of number of correlate colors in image
         array2D<float> xxyycurr_reduc(N_t, 2 * sizcurr);
@@ -6554,8 +6556,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             float xhf = 0.f;
             float yhf = 0.f;
 
-            const float swprf = Txyz[goodrefgr].XX + Txyz[goodrefgr].ZZ + 1.f;
-            const float xwprf = Txyz[goodrefgr].XX / swpr;//white point for tt in xy coordinates
+            const float swprf = WPX[goodrefgr] + WPZ[goodrefgr] + 1.f;
+            const float xwprf = WPX[goodrefgr] / swpr;//white point for tt in xy coordinates
+
             const float ywprf = 1.f / swprf;
 
             for (int nh = 0; nh < w; ++nh) {
@@ -6569,7 +6572,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             estimchromf /= w;
 
             if (settings->verbose) {
-                printf("New white point calculated patch: xwprf=%f ywprf=%f\n", (double) xwprf, (double) ywprf);
+                printf("New white point calculated patch for information : xwprf=%f ywprf=%f\n", (double) xwprf, (double) ywprf);
                 printf("Info - patch estimation of white-point displacement: chrom=%f hue=%f\n", (double) estimchromf, (double) estimhuef);
             }
 
