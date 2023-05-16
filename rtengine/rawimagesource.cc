@@ -5845,7 +5845,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         int ttbeg = 0;
         int ttend = N_t;
         //call tempxy to calculate for 406 or 201color references Temp and XYZ with cat02
-        ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar, ttbeg, ttend); //calculate chroma xy (xyY) for Z known colors on under 200 illuminants
+        double wpx = 0.;
+        double wpz = 0.;
+        ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar, ttbeg, ttend, wpx, wpz); //calculate chroma xy (xyY) for Z known colors on under 200 illuminants
 
         //find the good spectral values
         //calculate xy reference spectral for tempref
@@ -6053,8 +6055,12 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
 
         chrom wbchro[sizcu4];
-        const float swpr = Txyz[repref].XX + Txyz[repref].ZZ + 1.f;
-        const float xwpr = Txyz[repref].XX / swpr;//white point for tt in xy coordinates
+        if (settings->verbose) {
+            printf("White Point XYZ x=%f y=%f z=%f\n", wpx, 1., wpz);
+        }
+        const float swpr = wpx + wpz + 1.f;
+        const float xwpr = wpx / swpr;//white point for tt in xy coordinates
+
         const float ywpr = 1.f / swpr;
 
         for (int i = 0; i < sizcu4; ++i) { //take the max values
@@ -6377,7 +6383,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
 
         //recalculate histogram with good values and not estimated
-        ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar, ttbeg, ttend); //calculate chroma xy (xyY) for Z known colors on under 90 illuminants
+        double wpx1 = 0.;
+        double wpz1 = 0.;
+
+        ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar, ttbeg, ttend, wpx1, wpz1); //calculate chroma xy (xyY) for Z known colors on under 90 illuminants
         //calculate x y Y
         int sizcurr = siza;//choice of number of correlate colors in image
         array2D<float> xxyycurr_reduc(N_t, 2 * sizcurr);

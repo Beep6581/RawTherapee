@@ -62,7 +62,7 @@ public:
     explicit ColorTemp (double e) : temp(-1.), green(-1.), equal (e), method("Custom") {}
     ColorTemp (double t, double g, double e, const std::string &m, StandardObserver o);
     ColorTemp (double mulr, double mulg, double mulb, double e, StandardObserver observer);
-    static void tempxy(bool separated, int repref, float **Tx, float **Ty, float **Tz, float **Ta, float **Tb, float **TL, double *TX, double *TY, double *TZ, const procparams::WBParams & wbpar, int ttbeg, int ttend);
+    static void tempxy(bool separated, int repref, float **Tx, float **Ty, float **Tz, float **Ta, float **Tb, float **TL, double *TX, double *TY, double *TZ, const procparams::WBParams & wbpar, int ttbeg, int ttend, double &wpx, double &wpz);
 
     void update (const double rmul, const double gmul, const double bmul, const double equal, StandardObserver observer, const double tempBias=0.0)
     {
@@ -615,6 +615,9 @@ public:
     static void spectrum_to_color_xyz_daylight  (const double* spec_color, double _m1, double _m2, double &xx, double &yy, double &zz, const color_match_type &color_match);
     static void spectrum_to_color_xyz_blackbody (const double* spec_color, double _temp, double &xx, double &yy, double &zz, const color_match_type &color_match);
     static void spectrum_to_color_xyz_preset    (const double* spec_color, const double* spec_intens, double &xx, double &yy, double &zz, const color_match_type &color_match);
+    static void spectrum_to_whitepoint_xyz_daylight  (double _m1, double _m2, double &xx, double &yy, double &zz, const color_match_type &color_match);
+    static void spectrum_to_whitepoint_xyz_blackbody (double _temp, double &xx, double &yy, double &zz, const color_match_type &color_match);
+    static void whitepoint (double tempw, double &xx, double &yy, double &zz,const color_match_type &color_match);
 
 };
 }
