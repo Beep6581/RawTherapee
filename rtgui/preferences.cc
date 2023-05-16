@@ -966,6 +966,12 @@ Gtk::Widget* Preferences::getColorManPanel ()
     setExpandAlignProperties(mwbaena, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     mwbaena->set_active(true);
     wbah->pack_start(*mwbaena, Gtk::PACK_SHRINK, 0);
+    
+    mwbaenacustom = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_WBAENACUSTOM")));
+    setExpandAlignProperties(mwbaenacustom, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    mwbaenacustom->set_active(false);
+    wbah->pack_start(*mwbaenacustom, Gtk::PACK_SHRINK, 0);
+    
     wbaVB->add(*wbah);
 
     fwbacorr->add (*wbaVB);
@@ -1841,6 +1847,7 @@ void Preferences::storePreferences()
     moptions.rtSettings.autoMonitorProfile = cbAutoMonProfile->get_active();
     moptions.rtSettings.autocielab = mcie->get_active();
     moptions.rtSettings.itcwb_enable = mwbaena->get_active();
+    moptions.rtSettings.itcwb_custom_enable = mwbaenacustom->get_active();
 
 #endif
 
@@ -2001,6 +2008,7 @@ void Preferences::fillPreferences()
     monBPC->set_active(moptions.rtSettings.monitorBPC);
     mcie->set_active(moptions.rtSettings.autocielab);
     mwbaena->set_active(moptions.rtSettings.itcwb_enable);
+    mwbaenacustom->set_active(moptions.rtSettings.itcwb_custom_enable);
 
     cbAutoMonProfile->set_active(moptions.rtSettings.autoMonitorProfile);
 #endif

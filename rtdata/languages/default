@@ -1852,7 +1852,8 @@ PREFERENCES_CIEARTIF;Avoid artifacts
 PREFERENCES_WBA;White Balance
 PREFERENCES_WBACORR;White Balance - Automatic temperature correlation
 PREFERENCES_WBACORR_TOOLTIP;These settings allow, depending on the images (type of raw file, colorimetry, etc.), an adaptation of the " Temperature correlation " algorithm in order to obtain the best overall results. There is no absolute rule, linking these parameters to the results obtained.\n\nThe settings are of 3 types: \n* those accessible to the user from the GUI.\n* those accessible only in reading from each pp3 file : Itcwb_minsize=20, Itcwb_delta=4 Itcwb_rgreen=1 Itcwb_nopurple=false Itcwb_ponder=true (See Rawpedia)\n* those accessible to the user in 'options' (see Rawpedia)\n You can use "Awb temperature bias" to adjust the results. Each movement of this command brings a new calculation of temperature, tint and correlation.\n\nPlease note that the 3 indicators 'Correlation factor', 'Patch chroma' and ΔE are given for information only. It is not because one of these indicators is better that the result will necessarily be better.
-PREFERENCES_WBAENA;Show White Balance auto Temperature correlation Settings 
+PREFERENCES_WBAENA;Show White Balance auto Temperature correlation Settings
+PREFERENCES_WBAENACUSTOM;Use Custom temperature & tint
 PREFERENCES_WBAPATCH;Number maximum of colors used in picture
 PREFERENCES_WBAFORC;Forces Extra algoritm
 PREFERENCES_WBAGREENDELTA;Delta temperature in green iterate loop (if Force Extra enabled)
@@ -4120,8 +4121,8 @@ TP_WBALANCE_ITCWB_NOPURPLE;Filter on purple color
 //TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP;By default when "Inpaint opposed" is activated, purple colors are not taken into account. However, if the image does not need highlight reconstruction, or if this image naturally contains purple tints (flowers, etc.), it may be necessary to deactivate, to take into account all the colors.
 TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP;Allows you to filter magenta/purple data from the image. If the box is checked a filter limiting the value of Y is applied. By default this value is 0.4. You can change it in 'options' Itcwb_Ypurple (Maximum 1)
 TP_WBALANCE_ITCWB_ALG;Remove 2 pass algorithm
-TP_WBALANCE_ITCWB_CUSTOM;Use Custom temperature & green
-TP_WBALANCE_ITCWCUSTOM_TOOLTIP;Allows you to use Custom settings Temperature and Green.\n\nUsage tips:\n1) start Itcwb , enable 'Use Custom temperature and green'.\n2) Go to 'Custom' and set 'Temperature and tint' to your liking (free, Pick,...)\n3) go back to 'Temperature correlation'.\n\nYou cannot use : 2 passes, AWB temperature bias, Green refinement.
+TP_WBALANCE_ITCWB_CUSTOM;Use Custom temperature & tint
+TP_WBALANCE_ITCWCUSTOM_TOOLTIP;Allows you to use Custom settings Temperature and Green (tint).\n\nUsage tips:\n1) start Itcwb , enable 'Use Custom temperature and tint'.\n2) Go to 'Custom' and set 'Temperature and tint' to your liking (free, Pick,...)\n3) go back to 'Temperature correlation'.\n\nYou cannot use : 2 passes, AWB temperature bias, Green refinement.
 TP_WBALANCE_ITCWALG_TOOLTIP;Allows you to switch to the other Alternative temperature (Alt_temp), when possible.\nInactive in the "single choice" case.\n\nWhen one of the proposed choices is with a temperature close or lower than 3000K, the choice is suspicious (due to the inappropriate color matrix)
 TP_WBALANCE_ITCWB_PRECIS;Precision algorithm - scale used
 TP_WBALANCE_ITCWBPRECIS_TOOLTIP;The lower the value, the more relevant the data, but increases the processing time. Since the processing time is low, this parameter should generally be able to remain at the default value

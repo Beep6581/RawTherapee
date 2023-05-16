@@ -424,8 +424,9 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     itcwbBox->pack_start (*itcwb_green);
     itcwbBox->pack_start (*itcwb_alg);
     itcwbBox->pack_start (*itcwb_prim);
-    itcwbBox->pack_start (*itcwb_custom);
-    
+    if(options.rtSettings.itcwb_custom_enable) {
+        itcwbBox->pack_start (*itcwb_custom);
+    }
     itcwbFrame->add(*itcwbBox);
     pack_start(*itcwbFrame);
 
@@ -528,6 +529,7 @@ void WhiteBalance::itcwb_custom_toggled ()
     } else {
         itcwb_alg->set_sensitive(true);
         tempBias->set_sensitive(true);
+        itcwb_green->set_sensitive(true);
     }
 
     if (listener && getEnabled()) {
