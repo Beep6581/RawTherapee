@@ -627,6 +627,7 @@ void Options::setDefaults()
     rtSettings.fftwsigma = true; //choice between sigma^2 or empirical formula
 // end locallab
     rtSettings.itcwb_enable = true;
+    rtSettings.itcwb_custom_enable = false;
     rtSettings.itcwb_deltaspec = 0.075;
     rtSettings.itcwb_tempstdA = 3500.;
     rtSettings.itcwb_maxsize = 70;//between 50 to 80
@@ -1818,6 +1819,10 @@ void Options::readFromFile(Glib::ustring fname)
                     rtSettings.itcwb_enable = keyFile.get_boolean("Color Management", "Itcwb_enable");
                 }
 
+                if (keyFile.has_key("Color Management", "Itcwb_custom_enable")) {
+                    rtSettings.itcwb_custom_enable = keyFile.get_boolean("Color Management", "Itcwb_custom_enable");
+                }
+
                 if (keyFile.has_key("Color Management", "Itcwb_deltaspec")) {
                     rtSettings.itcwb_deltaspec = keyFile.get_double("Color Management", "Itcwb_deltaspec");
                 }
@@ -2615,6 +2620,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_double("Color Management", "CBDLlevel0", rtSettings.level0_cbdl);
         keyFile.set_double("Color Management", "CBDLlevel123", rtSettings.level123_cbdl);
         keyFile.set_boolean("Color Management", "Itcwb_enable", rtSettings.itcwb_enable);
+        keyFile.set_boolean("Color Management", "Itcwb_custom_enable", rtSettings.itcwb_custom_enable);
         keyFile.set_double("Color Management", "Itcwb_deltaspec", rtSettings.itcwb_deltaspec);
         keyFile.set_double("Color Management", "Itcwb_tempstdA", rtSettings.itcwb_tempstdA);
         keyFile.set_integer("Color Management", "Itcwb_maxsize", rtSettings.itcwb_maxsize);

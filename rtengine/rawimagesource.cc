@@ -5507,29 +5507,46 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         } WbTxyz;
         //we can change step to increase precision if need  - also in Colortemp.cc with same changes
         //I don't know how to pass this structure to Colortemp !
-        // X and Z values calculate for each temp between 2000K to  12000K, so no result after 12000K !
+        // X and Z values calculate for each temp between 2000K to  15000K, so no result after 12000K !
         //of course we can change the step between each temp if need
-        constexpr WbTxyz Txyz[132] = {//temperature Xwb Zwb 123 values  x wb and y wb are calculated after,  Xwb and Ywb calculated with a spreadsheet
+        constexpr WbTxyz Txyz[175] = {//temperature Xwb Zwb 175 values  x wb and y wb are calculated after,  Xwb and Ywb calculated with a spreadsheet
             {2001., 1.273842, 0.145295},
+            {2051., 1.258802, 0.156066},
             {2101., 1.244008, 0.167533},
+            {2151., 1.230570, 0.178778},
             {2201., 1.217338, 0.190697},
+            {2251., 1.205305, 0.202338},
             {2301., 1.193444, 0.214632},
+            {2351., 1.182648, 0.226598},
             {2401., 1.171996, 0.239195},
+            {2451., 1.162290, 0.251421},
             {2501., 1.152883, 0.264539},
+            {2551., 1.143965, 0.276682},
             {2605., 1.134667, 0.290722},
             {2655., 1.126659, 0.303556},
             {2705., 1.119049, 0.316446},
             {2755., 1.111814, 0.329381},
+            {2790., 1.106961, 0.338455},
             {2803., 1.105381, 0.342193},
+            {2825., 1.102275, 0.347542},
             {2856., 1.098258, 0.355599},
+            {2880., 1.095233, 0.361840},
             {2910., 1.091550, 0.369645},
+            {2930., 1.089155, 0.374849},
             {2960., 1.085649, 0.382655},
+            {2980., 1.083369, 0.387858},
             {3003., 1.080982, 0.394258},
+            {3025., 1.078397, 0.399561},
             {3050., 1.075727, 0.406057},
+            {3075., 1.073122, 0.412550},
             {3103., 1.070277, 0.419815},
+            {3128., 1.067801, 0.426296},
             {3153., 1.065384, 0.432769},
+            {3175., 1.063305, 0.438459},
             {3203., 1.060906, 0.446161},
+            {3225., 1.058738, 0.451367},
             {3250., 1.056535, 0.457806},
+            {3280., 1.053960, 0.465519},
             {3303., 1.052034, 0.471422},
             {3353., 1.047990, 0.484218},
             {3400., 1.044547, 0.496719},
@@ -5564,15 +5581,25 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             {4852., 0.967011, 0.793982},
             {4877., 0.966465, 0.799108},
             {4902., 0.965933, 0.804214},
+            {4914., 0.965682, 0.806658},
             {4927., 0.965414, 0.809229},
+            {4940., 0.965149, 0.811937},
             {4952., 0.964908, 0.814366},
+            {4965., 0.964650, 0.816993},
             {4977., 0.964415, 0.819412},
-            {5002., 0.963934, 0.824438},//57 reference
+            {4990., 0.964163, 0.822028},
+            {5002., 0.963934, 0.824438},//80
+            {5015., 0.963689, 0.827044},
             {5027., 0.963465, 0.829444},
+            {5040., 0.963226, 0.832039},
             {5052., 0.963008, 0.834429},
+            {5065., 0.963226, 0.832039},
             {5077., 0.962563, 0.839395},
+            {5090., 0.962336, 0.841968},
             {5102., 0.962129, 0.844339},
+            {5115., 0.961907, 0.846902},
             {5127., 0.961706, 0.849263},
+            {5140., 0.961490, 0.851815},
             {5152., 0.961294, 0.854166},
             {5177., 0.960893, 0.859049},
             {5202., 0.960501, 0.863911},
@@ -5599,13 +5626,21 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             {6252., 0.951064, 1.049256},
             {6302., 0.950530, 1.058406},
             {6352., 0.950674, 1.065027},
+            {6380., 0.950576, 1.069386},
             {6402., 0.950143, 1.074055},
+            {6425., 0.950428, 1.076341},
             {6452., 0.950345, 1.080484},
+            {6475., 0.950277, 1.083996},
             {6502., 0.950201, 1.088097},
+            {6525., 0.950139, 1.091573},
             {6552., 0.950070, 1.095633},
+            {6575., 0.950014, 1.099075},
             {6602., 0.949952, 1.103094},
+            {6625., 0.949902, 1.106501},
             {6652., 0.949846, 1.110479},
+            {6675., 0.949801, 1.113852},
             {6702., 0.949752, 1.119138},
+            {6725., 0.949712, 1.121128},
             {6752., 0.949668, 1.125027},
             {6802., 0.949596, 1.132190},
             {6902., 0.949033, 1.147691},
@@ -5615,9 +5650,13 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             {7451., 0.949434, 1.219076},
             {7601., 0.949099, 1.239061},
             {7751., 0.949729, 1.255559},
+            {7825., 0.949828, 1.264225},
             {7901., 0.949498, 1.274460},
+            {8025., 0.950137, 1.287013},
             {8151., 0.950361, 1.300912},
+            {8225., 0.950501, 1.308915},
             {8301., 0.950253, 1.318464},
+            {8375., 0.950804, 1.324786},
             {8451., 0.950966, 1.332651},
             {8601., 0.950941, 1.349261},
             {8801., 0.951772, 1.367421},
@@ -5641,7 +5680,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             {13251., 0.963561, 1.663638},
             {13501., 0.964147, 1.674804},
             {13751., 0.964720, 1.685571},
-            {14001., 0.965279, 1.695919}
+            {14001., 0.965279, 1.695919},
+            {14251., 0.965827, 1.705950},
+            {14501., 0.966363, 1.715637},
+            {14751., 0.966886, 1.724998},
+            {15001., 0.967397, 1.734047}
         };
         bool purp = true;//if inpaint-opposed or something else enable purp
 
@@ -5687,7 +5730,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         // tempref and greenref are camera wb values.
         // I used them by default to select good spectral values !! but they are changed after
-        tempref = rtengine::min(tempref, 14001.0);
+        tempref = rtengine::min(tempref, 15000.0);
         int repref = 0;
 
         for (int tt = 0; tt < N_t; tt++) {
@@ -5696,8 +5739,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 break;
             }
         }
-        if(repref == 131) {
-            repref = 130;
+        if(repref >= N_t - 1) {
+            repref = N_t - 2;
         }
         //calculate R G B multiplier in function illuminant and temperature
         const bool isMono = (ri->getSensorType() == ST_FUJI_XTRANS && raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO))
@@ -5802,7 +5845,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         int ttbeg = 0;
         int ttend = N_t;
         //call tempxy to calculate for 406 or 201color references Temp and XYZ with cat02
-        ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar, ttbeg, ttend); //calculate chroma xy (xyY) for Z known colors on under 200 illuminants
+        double wpx = 0.;
+        double wpz = 0.;
+        ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar, ttbeg, ttend, wpx, wpz); //calculate chroma xy (xyY) for Z known colors on under 200 illuminants
 
         //find the good spectral values
         //calculate xy reference spectral for tempref
@@ -6010,8 +6055,12 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
 
         chrom wbchro[sizcu4];
-        const float swpr = Txyz[repref].XX + Txyz[repref].ZZ + 1.f;
-        const float xwpr = Txyz[repref].XX / swpr;//white point for tt in xy coordinates
+        if (settings->verbose) {
+            printf("White Point XYZ x=%f y=%f z=%f\n", wpx, 1., wpz);
+        }
+        const float swpr = wpx + wpz + 1.f;
+        const float xwpr = wpx / swpr;//white point for tt in xy coordinates
+
         const float ywpr = 1.f / swpr;
 
         for (int i = 0; i < sizcu4; ++i) { //take the max values
@@ -6310,7 +6359,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         t4.set();
 
         if (settings->verbose) {
-            printf("Third: from second to find patch: %d msec\n", t4.etime(t3));
+            printf("Third: from second to find patch: %d nsec\n", t4.etime(t3));
         }
 
 
@@ -6322,15 +6371,22 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         ttend = N_t;
         //limit range temperature...gain time.
         if(wbpar.itcwb_custom) {
-            ttbeg = std::max(repref - 5, 0);//enough > dgoodref = 3
-            ttend = std::min(repref + 5, N_t);
+            ttbeg = std::max(repref - 6, 0);//enough > dgoodref = 3
+            ttend = std::min(repref + 6, N_t);
         }  else {
-            ttbeg = std::max(repref - 10, 0);//enough in all cases > dgoodref
-            ttend = std::min(repref + 10, N_t);
+            ttbeg = std::max(repref - 11, 0);//enough in all cases > dgoodref
+            ttend = std::min(repref + 11, N_t);
         } 
-        
+        if(oldsampling == true) {
+            ttbeg = 0;
+            ttend = N_t;
+        }
+
         //recalculate histogram with good values and not estimated
-        ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar, ttbeg, ttend); //calculate chroma xy (xyY) for Z known colors on under 90 illuminants
+        double wpx1 = 0.;
+        double wpz1 = 0.;
+
+        ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar, ttbeg, ttend, wpx1, wpz1); //calculate chroma xy (xyY) for Z known colors on under 90 illuminants
         //calculate x y Y
         int sizcurr = siza;//choice of number of correlate colors in image
         array2D<float> xxyycurr_reduc(N_t, 2 * sizcurr);
@@ -6339,7 +6395,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         t5.set();
 
         if (settings->verbose) {
-            printf("Fourth: from third recalculate spectral: %d msec\n",  t5.etime(t4));
+            printf("Fourth: from third recalculate spectral: %d nsec\n",  t5.etime(t4));
         }
 
         float minstud = 100000.f;
@@ -6383,7 +6439,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         t6.set();
 
         if (settings->verbose) {
-            printf("Fifth: from fourth to find first correlation: %d msec\n",  t6.etime(t5));
+            printf("Fifth: from fourth to find first correlation: %d nsec\n",  t6.etime(t5));
         }
 
         {//always used if extra = true because I made this choice, brings better results
@@ -6404,8 +6460,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 Tgstud[i].greenref = 55;// 1.f position in the list
             }
 
-            int newdelta = 1.5f * wbpar.itcwb_delta;
-            int dgoodref = rtengine::LIM(newdelta, 1, 8); // 1.5 increase delta temp scan
+            int newdelta = 1.8f * wbpar.itcwb_delta;
+            int dgoodref = rtengine::LIM(newdelta, 1, 10); // 1.8 increase delta temp scan
 
             if (oldsampling == true) {
                 dgoodref = 2;
@@ -6745,7 +6801,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         t8.set();
 
         if (settings->verbose) {
-            printf("Seventh: from sixth to end: %d msec\n",  t8.etime(t7));
+            printf("Seventh: from sixth to end: %d nsec\n",  t8.etime(t7));
         }
     
 }
