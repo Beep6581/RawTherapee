@@ -62,7 +62,7 @@ public:
     explicit ColorTemp (double e) : temp(-1.), green(-1.), equal (e), method("Custom") {}
     ColorTemp (double t, double g, double e, const std::string &m, StandardObserver o);
     ColorTemp (double mulr, double mulg, double mulb, double e, StandardObserver observer);
-    static void tempxy(bool separated, int repref, float **Tx, float **Ty, float **Tz, float **Ta, float **Tb, float **TL, double *TX, double *TY, double *TZ, const procparams::WBParams & wbpar, int ttbeg, int ttend, double &wpx, double &wpz);
+    static void tempxy(bool separated, int repref, float **Tx, float **Ty, float **Tz, float **Ta, float **Tb, float **TL, double *TX, double *TY, double *TZ, const procparams::WBParams & wbpar, int ttbeg, int ttend, double &wpx, double &wpz, double *WPX, double *WPZ);
 
     void update (const double rmul, const double gmul, const double bmul, const double equal, StandardObserver observer, const double tempBias=0.0)
     {

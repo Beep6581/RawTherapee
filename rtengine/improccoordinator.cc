@@ -534,7 +534,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             float studgood = 1000.f;
             int kcam = 0;
             float minchrom = 1000.f;
-            float delta = 0.f; 
+            float delta = 0.f;
             int kmin  = 20;
             float minhist = 1000000000.f;
             float maxhist = -1000.f;
@@ -542,6 +542,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             double greenitc = 1.;
             float temp0 = 5000.f;
             bool extra = false;
+
             if (!params->wb.enabled) {
                 currWB = ColorTemp();
             } else if (params->wb.method == "Camera") {
@@ -556,28 +557,34 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 double greenrefcust = 1.;
                 bool isgrey = false;
                 bool autowb1 = true;
+
                 if (params->wb.method == "autitcgreen") {
                     //find custom settings
                     params->wb.method = "Custom";
                     currWBcust = ColorTemp(params->wb.temperature, params->wb.green, params->wb.equal, "Custom", params->wb.observer);
                     temprefcust = params->wb.temperature;
                     greenrefcust = params->wb.green;
+
                     if (settings->verbose) {
                         printf("tcustom=%f gcustom=%f\n", temprefcust, greenrefcust);
                     }
+
                     currWBitc = imgsrc->getWB();
                     double greenref = currWBitc.getGreen();
                     double tempref0bias0 = currWBitc.getTemp();
-                   // double greeng0 = greenref;
-                   // greeng0 = LIM(greeng0, 0.88, 1.13);
-                    if((tempref0bias0 < 3300.f)  && (greenref < 1.13f && greenref > 0.88f)){//seems good with temp and green...To fixe...limits 1.13 and 0.88
+
+                    // double greeng0 = greenref;
+                    // greeng0 = LIM(greeng0, 0.88, 1.13);
+                    if ((tempref0bias0 < 3300.f)  && (greenref < 1.13f && greenref > 0.88f)) { //seems good with temp and green...To fixe...limits 1.13 and 0.88
                         if (settings->verbose) {
                             printf("Keep camera settings temp=%f green=%f\n", tempref0bias0, greenref);
                         }
+
                         autowb1 = false;
                         kcam = 1;
-                     }
-                    if(autowb1) {
+                    }
+
+                    if (autowb1) {
                         //alternative to camera if camera settings out, using autowb grey to find new ref
                         kcam = 0;
                         params->wb.method = "autold";
@@ -587,6 +594,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         currWBitc = imgsrc->getWB();
                         tempref0bias = currWBitc.getTemp();
                         double greenref = currWBitc.getGreen();
+
                         if ((greenref > 1.5f || tempref0bias < 3300.f || tempref0bias > 7700.f) && !params->wb.itcwb_sampling  && !params->wb.itcwb_custom /* && params->wb.itcwb_green == 0.f*/) { //probably camera out to adjust...
                             imgsrc->getAutoWBMultipliersitc(extra, tempref0bias, greenref, tempitc, greenitc, temp0, delta, bia, dread, kcam, studgood, minchrom, kmin, minhist, maxhist, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
                             imgsrc->wbMul2Camera(rm, gm, bm);
@@ -594,22 +602,26 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                             ColorTemp ct(rm, gm, bm, 1.0, currWB.getObserver());
                             tem = ct.getTemp();
                             gre  = ct.getGreen();
-                            if(gre > 1.5f){//probable wrong value
+
+                            if (gre > 1.5f) { //probable wrong value
                                 tem = 0.3 * tem + 0.7 * tempref0bias;//find a mixed value
                                 gre = 0.5f + 0.5f * LIM(gre, 0.9f, 1.1f);//empirical formula in case  system out
                             } else {
                                 gre = 0.2f + 0.8f * LIM(gre, 0.85f, 1.15f);
                             }
+
                             tempitc = tem ;
 
                             extra = true;
+
                             if (settings->verbose) {
                                 printf("Using new references AWB grey or mixed  Enable Extra- temgrey=%f gregrey=%f tempitc=%f\n", (double) tem, (double) gre, (double) tempitc);
                             }
                         }
                     }
+
                     params->wb.method = "autitcgreen";
-                    
+
                 }
 
                 if (params->wb.method == "autitcgreen" || lastAwbEqual != params->wb.equal || lastAwbObserver != params->wb.observer || lastAwbTempBias != params->wb.tempBias || lastAwbauto != params->wb.method) {
@@ -626,9 +638,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     } else if (isgrey) {
                         tempref = tempitc;
                     } else {
-                        
+
                     }
-                    if(params->wb.itcwb_custom) {//settings Custom
+
+                    if (params->wb.itcwb_custom) { //settings Custom
                         //tempref = temprefcust * (1. + params->wb.tempBias);
                         tempref = temprefcust;
                         greenref = greenrefcust;
@@ -642,6 +655,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     if (settings->verbose && params->wb.method ==  "autitcgreen") {
                         printf("tempref=%f greref=%f tempitc=%f greenitc=%f\n", tempref, greenref, tempitc, greenitc);
                     }
+
                     imgsrc->getAutoWBMultipliersitc(extra, tempref, greenref, tempitc, greenitc, temp0, delta,  bia, dread, kcam, studgood, minchrom, kmin, minhist, maxhist, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
 
                     if (params->wb.method ==  "autitcgreen") {
@@ -704,17 +718,19 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 printf("tem=%f gre=%f \n", (double) tem, (double) gre);
                 */
             }
+
             int met = 0;
+
             if (awbListener) {
                 if (params->wb.method ==  "autitcgreen") {
                     if (params->wb.itcwb_sampling) {
-                        awbListener->WBChanged(met, params->wb.temperature, params->wb.green, rw, gw, bw, 0, 1, 0 , dread, studgood, 0, 0, 0, 0);
+                        awbListener->WBChanged(met, params->wb.temperature, params->wb.green, rw, gw, bw, 0, 1, 0, dread, studgood, 0, 0, 0, 0);
 
                     } else {
                         awbListener->WBChanged(met, params->wb.temperature, params->wb.green, rw, gw, bw, temp0, delta, bia, dread, studgood, minchrom, kmin, minhist, maxhist);
                     }
                 } else {
-                    awbListener->WBChanged(met, params->wb.temperature, params->wb.green, rw, gw, bw,-1.f,  -1.f, 1, 1, -1.f, -1.f, 1, -1.f, -1.f);
+                    awbListener->WBChanged(met, params->wb.temperature, params->wb.green, rw, gw, bw, -1.f,  -1.f, 1, 1, -1.f, -1.f, 1, -1.f, -1.f);
                 }
             }
 
@@ -2653,7 +2669,7 @@ bool ImProcCoordinator::getAutoWB(double& temp, double& green, double equal, Sta
             float minhist = 10000000.f;
             float maxhist = -1000.f;
             double tempref, greenref;
-            bool extra = false; 
+            bool extra = false;
             imgsrc->getAutoWBMultipliersitc(extra, tempref, greenref, tempitc, greenitc, temp0, delta, bia, dread, kcam, studgood, minchrom, kmin, minhist, maxhist, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
 
             if (rm != -1) {

@@ -4966,7 +4966,7 @@ void ColorTemp::spectrum_to_color_xyz_daylight(const double* spec_color, double 
         Y += Mc * color_match[i][1] * Me;
         Z += Mc * color_match[i][2] * Me;
     }
-    
+
     for (i = 0, lambda = 350; lambda < 830.1; i++, lambda += 5) {
 
         const double Mc1 = daylight_spect(lambda, _m1, _m2);
@@ -4977,30 +4977,29 @@ void ColorTemp::spectrum_to_color_xyz_daylight(const double* spec_color, double 
     yy = Y / Yo;
     zz = Z / Yo;
 }
-void ColorTemp::whitepoint (double tempw, double &xx, double &yy, double &zz,const color_match_type &color_match)
+
+void ColorTemp::whitepoint(double tempw, double &xx, double &yy, double &zz, const color_match_type &color_match)
 {
-        if (tempw <= INITIALBLACKBODY) {
-                spectrum_to_whitepoint_xyz_blackbody(tempw, xx, yy, zz, color_match);
+    if (tempw <= INITIALBLACKBODY) {
+        spectrum_to_whitepoint_xyz_blackbody(tempw, xx, yy, zz, color_match);
+    } else {
+        double m11, m22, x_DD, y_DD, interm2;
+
+        if (tempw <= 7000) {
+            x_DD = -4.6070e9 / (tempw * tempw * tempw) + 2.9678e6 / (tempw * tempw) + 0.09911e3 / tempw + 0.244063;
         } else {
-            double m11, m22, x_DD, y_DD, interm2;
-
-            if (tempw <= 7000) {
-                x_DD = -4.6070e9 / (tempw * tempw * tempw) + 2.9678e6 / (tempw * tempw) + 0.09911e3 / tempw + 0.244063;
-            } else {
-                x_DD = -2.0064e9 / (tempw * tempw * tempw) + 1.9018e6 / (tempw * tempw) + 0.24748e3 / tempw + 0.237040;
-            }
-
-            y_DD = -3.0 * x_DD * x_DD + 2.87 * x_DD - 0.275;
-            //calculate D -daylight in function of s0, s1, s2 and temp ==> x_D y_D
-            //S(lamda)=So(lambda)+m1*s1(lambda)+m2*s2(lambda)
-            interm2 = (0.0241 + 0.2562 * x_DD - 0.734 * y_DD);
-            m11 = (-1.3515 - 1.7703 * x_DD + 5.9114 * y_DD) / interm2;
-            m22 = (0.03 - 31.4424 * x_DD + 30.0717 * y_DD) / interm2;
-
-                spectrum_to_whitepoint_xyz_daylight(m11, m22, xx, yy, zz, color_match);
+            x_DD = -2.0064e9 / (tempw * tempw * tempw) + 1.9018e6 / (tempw * tempw) + 0.24748e3 / tempw + 0.237040;
         }
-    
-    
+
+        y_DD = -3.0 * x_DD * x_DD + 2.87 * x_DD - 0.275;
+        //calculate D -daylight in function of s0, s1, s2 and temp ==> x_D y_D
+        //S(lamda)=So(lambda)+m1*s1(lambda)+m2*s2(lambda)
+        interm2 = (0.0241 + 0.2562 * x_DD - 0.734 * y_DD);
+        m11 = (-1.3515 - 1.7703 * x_DD + 5.9114 * y_DD) / interm2;
+        m22 = (0.03 - 31.4424 * x_DD + 30.0717 * y_DD) / interm2;
+
+        spectrum_to_whitepoint_xyz_daylight(m11, m22, xx, yy, zz, color_match);
+    }
 }
 
 void ColorTemp::spectrum_to_whitepoint_xyz_daylight(double _m1, double _m2, double &xx, double &yy, double &zz, const color_match_type &color_match)
@@ -5013,36 +5012,32 @@ void ColorTemp::spectrum_to_whitepoint_xyz_daylight(double _m1, double _m2, doub
         X += Mc * color_match[i][0];
         Z += Mc * color_match[i][2];
     }
-    
-    for (i = 0, lambda = 350; lambda < 830.1; i++, lambda += 5) {
 
+    for (i = 0, lambda = 350; lambda < 830.1; i++, lambda += 5) {
         const double Mc1 = daylight_spect(lambda, _m1, _m2);
         Yo += color_match[i][1] * Mc1;
     }
 
     xx = X / Yo;
-    yy = 1.; //Y / Yo;
+    yy = 1.;
     zz = Z / Yo;
 }
 
 //calculate XYZ from spectrum data (color) and illuminant : J.Desmis december 2011 bug found 4/2023
 void ColorTemp::spectrum_to_color_xyz_blackbody(const double* spec_color, double _temp, double &xx, double &yy, double &zz, const color_match_type &color_match)
 {
-    // error found with correction 4 / 2023
     int i;
-    double lambda, X = 0, Y= 0, Z = 0, Yo = 0;
+    double lambda, X = 0, Y = 0, Z = 0, Yo = 0;
 
     for (i = 0, lambda = 350; lambda < 830.1; i++, lambda += 5) {
         const double Me = spec_color[i];
         const double Mc = blackbody_spect(lambda, _temp);
-
         X += Mc * color_match[i][0] * Me;
         Y += Mc * color_match[i][1] * Me;
         Z += Mc * color_match[i][2] * Me;
     }
 
     for (i = 0, lambda = 350; lambda < 830.1; i++, lambda += 5) {
-
         const double Mc1 = blackbody_spect(lambda, _temp);
         Yo += color_match[i][1] * Mc1;
     }
@@ -5054,25 +5049,22 @@ void ColorTemp::spectrum_to_color_xyz_blackbody(const double* spec_color, double
 
 void ColorTemp::spectrum_to_whitepoint_xyz_blackbody(double _temp, double &xx, double &yy, double &zz, const color_match_type &color_match)
 {
-    // error found with correction 4 / 2023
     int i;
     double lambda, X = 0, Z = 0, Yo = 0;
 
     for (i = 0, lambda = 350; lambda < 830.1; i++, lambda += 5) {
         const double Mc = blackbody_spect(lambda, _temp);
-
         X += Mc * color_match[i][0];
         Z += Mc * color_match[i][2];
     }
 
     for (i = 0, lambda = 350; lambda < 830.1; i++, lambda += 5) {
-
         const double Mc1 = blackbody_spect(lambda, _temp);
         Yo += color_match[i][1] * Mc1;
     }
 
     xx = X / Yo;
-    yy = 1.; //Y / Yo;
+    yy = 1.;
     zz = Z / Yo;
 }
 
@@ -5109,7 +5101,7 @@ double ColorTemp::daylight_spect(double wavelength, double m1, double m2)
 // we can change step for temperature and increase number  for T > 7500K if necessary
 //these values Temp, x, y are references for all calculations and very precise.
 //copyright J.Desmis august  2017 and june 2018 - 05/2023
-void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float **Tz, float **Ta, float **Tb, float **TL, double *TX, double *TY, double *TZ, const procparams::WBParams & wbpar, int ttbeg, int ttend, double &wpx, double &wpz)
+void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float **Tz, float **Ta, float **Tb, float **TL, double *TX, double *TY, double *TZ, const procparams::WBParams & wbpar, int ttbeg, int ttend, double &wpx, double &wpz, double *WPX, double *WPZ)
 {
     const double* spec_colorforxcyc[] = {//color references
         JDC468_BluH10_spect, JDC468_BluD6_spect, ColorchechCyaF3_spect, JDC468_BluM5_spect, // 0 3
@@ -5210,7 +5202,7 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
         double ZZ;
     } WbTxyz;
     //probably can be "passed" with rawimagesource.cc but I don't know how to do this.
-    constexpr WbTxyz Txyz[175] = {//temperature Xwb Zwb 167 values - same table as in Rawimagesource.cc  x wb and y wb are calculated after
+    constexpr WbTxyz Txyz[175] = {//temperature Xwb Zwb 175 values - same table as in Rawimagesource.cc  x wb and y wb are calculated after
         {2001., 1.273842, 0.145295},
         {2051., 1.258802, 0.156066},
         {2101., 1.244008, 0.167533},
@@ -5386,13 +5378,13 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
         {14501., 0.966363, 1.715637},
         {14751., 0.966886, 1.724998},
         {15001., 0.967397, 1.734047}
-
     };
 
     int N_c = sizeof(spec_colorforxcyc) / sizeof(spec_colorforxcyc[0]);   //number of color
 
 
     int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
+
     if (settings->verbose) {
         printf("Number max spectral colors=%i Number sampling temp=%i\n", N_c, N_t);
     }
@@ -5421,12 +5413,12 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
 
     // const color_match_type &color_match = (wbpar.itcwb_obs) ? cie_colour_match_jd : cie_colour_match_jd2;
     const color_match_type &color_match = observerchoice ? cie_colour_match_jd : cie_colour_match_jd2;
+
     if (separated) {
         const double tempw = Txyz[repref].Tem;
         double yy = 0.;
-        whitepoint (tempw, wpx, yy, wpz, color_match);
-  //      printf("WPx=%f Wpz=%f\n", wpx, wpz);
-        
+        whitepoint(tempw, wpx, yy, wpz, color_match);
+
         if (tempw <= INITIALBLACKBODY) {
             for (int i = 0; i < N_c; i++) {
                 spectrum_to_color_xyz_blackbody(spec_colorforxcyc[i], tempw, TX[i], TY[i], TZ[i], color_match);
@@ -5454,6 +5446,10 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
     } else {
         for (int tt = ttbeg; tt < ttend; tt++) {
             const double tempw = Txyz[tt].Tem;
+            double yy = 0.;
+            whitepoint(tempw, wpx, yy, wpz, color_match);
+            WPX[tt] = wpx;
+            WPZ[tt] = wpz;
 
             if (tempw <= INITIALBLACKBODY) {
                 for (int i = 0; i < N_c; i++) {
