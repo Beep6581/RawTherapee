@@ -70,6 +70,7 @@ ImProcCoordinator::ImProcCoordinator() :
     lastAwbEqual(0.),
     lastAwbTempBias(0.0),
     lastAwbauto(""),
+    lastautocustom(false),
     monitorIntent(RI_RELATIVE),
     softProof(false),
     gamutCheck(false),
@@ -624,7 +625,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                 }
 
-                if (params->wb.method == "autitcgreen" || lastAwbEqual != params->wb.equal || lastAwbObserver != params->wb.observer || lastAwbTempBias != params->wb.tempBias || lastAwbauto != params->wb.method) {
+                if (params->wb.method == "autitcgreen" ||  lastautocustom != params->wb.itcwb_custom || lastAwbEqual != params->wb.equal || lastAwbObserver != params->wb.observer || lastAwbTempBias != params->wb.tempBias || lastAwbauto != params->wb.method) {
                     double rm, gm, bm;
                     greenitc = 1.;
                     currWBitc = imgsrc->getWB();
@@ -648,7 +649,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         tempitc = tempref;
                         greenitc = greenref;
                         temp0 = tempitc;
-                        params->wb.itcwb_alg = true;
+                       // params->wb.itcwb_alg = true;
                     }
 
 
@@ -679,11 +680,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         lastAwbObserver = params->wb.observer;
                         lastAwbTempBias = params->wb.tempBias;
                         lastAwbauto = params->wb.method;
+                        lastautocustom = params->wb.itcwb_custom;
                     } else {
                         lastAwbEqual = -1.;
                         lastAwbObserver = ColorTemp::DEFAULT_OBSERVER;
                         lastAwbTempBias = 0.0;
                         lastAwbauto = "";
+                        lastautocustom = false;
                         autoWB.useDefaults(params->wb.equal, params->wb.observer);
                     }
                 }
@@ -2989,8 +2992,8 @@ void ImProcCoordinator::process()
             || params->rgbCurves != nextParams->rgbCurves
             || params->colorToning != nextParams->colorToning
             || params->vibrance != nextParams->vibrance
-            || params->wb != nextParams->wb //isPanningRelatedChange(nextParams->wb)
-//            || params->wb.isPanningRelatedChange(nextParams->wb)
+       //     || params->wb != nextParams->wb //isPanningRelatedChange(nextParams->wb)
+            || params->wb.isPanningRelatedChange(nextParams->wb)
             || params->colorappearance != nextParams->colorappearance
             || params->epd != nextParams->epd
             || params->fattal != nextParams->fattal

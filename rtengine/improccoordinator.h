@@ -84,6 +84,7 @@ protected:
     StandardObserver lastAwbObserver{ColorTemp::DEFAULT_OBSERVER};
     double lastAwbTempBias;
     Glib::ustring lastAwbauto;
+    bool lastautocustom;
 
     Glib::ustring monitorProfile;
     RenderingIntent monitorIntent;
