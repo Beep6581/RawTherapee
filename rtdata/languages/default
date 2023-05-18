@@ -4130,7 +4130,7 @@ TP_WBALANCE_ITCWB_PRIM_SRGB;Low sampling
 TP_WBALANCE_ITCWB_PRIM_ADOB;Medium sampling
 TP_WBALANCE_ITCWB_PRIM_REC;High sampling
 TP_WBALANCE_ITCWB_PRIM_ACE;Forces use of the entire CIE diagram
-TP_WBALANCE_ITCWPRIM_TOOLTIP;Allows you to select the image sampling. In a majority of cases it is recommended (default) to choose 'Forces use of the entire CIE diagram'.\nThe other choices allow you to isolate high gamut parts of the image. This will obviously have an impact on the result.
+TP_WBALANCE_ITCWPRIM_TOOLTIP;Allows you to select the image sampling. In a majority of cases it is recommended (default) to choose 'Forces use of the entire CIE diagram'.\nThe other choice allow you to isolate high gamut parts of the image. This will obviously have an impact on the result.
 TP_WBALANCE_ITCWB_RGREEN;Green range
 TP_WBALANCE_ITCWBRGREEN_TOOLTIP;Sets the green value review amplitude in iterations, from low amplitude 0.82 to 1.25 to maximum amplitude 0.4 to 4.
 TP_WBALANCE_ITCWB_SAMPLING;Low sampling 5.9

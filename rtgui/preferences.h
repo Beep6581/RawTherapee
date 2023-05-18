@@ -141,7 +141,7 @@ class Preferences final :
  //   Gtk::CheckButton* mwbaforc;
  //   Gtk::CheckButton* mwbanopurp;
     Gtk::CheckButton* mwbaena;
-    Gtk::CheckButton* mwbaenacustom;
+//    Gtk::CheckButton* mwbaenacustom;
 
 //    Gtk::CheckButton* mwbasort;
 //    Gtk::SpinButton*  wbacorrnb;

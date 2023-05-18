@@ -5266,9 +5266,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     bool oldsampling = wbpar.itcwb_sampling;
 
     while (itciterate) {//loop to find best mix minchrom and studgood and deltaE patch
-//        lastitc = true;
         Glib::ustring profuse;
-        profuse = "Adobe RGB";
+        profuse = "ACESp0";
 
         if (wbpar.itcwb_prim == "srgb") {
             profuse = "sRGB";

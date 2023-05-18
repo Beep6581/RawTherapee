@@ -1,5 +1,4 @@
 /*
-/*
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
@@ -250,7 +249,6 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     EvWBObserver10 = m->newEvent(ALLNORAW, "HISTORY_MSG_WBALANCE_OBSERVER10");
     EvWBitcwbprim = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_PRIM");
     EvWBitcwbalg = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_OBS");
-    EvWBitcwcustom = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_CUSTOM");
     EvWBitcwgreen = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_GREEN");
 
 
@@ -388,16 +386,13 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     itcwb_alg ->set_tooltip_markup (M("TP_WBALANCE_ITCWALG_TOOLTIP"));
     itcwb_alg ->set_active (false);
 
-    itcwb_custom = Gtk::manage (new Gtk::CheckButton (M("TP_WBALANCE_ITCWB_CUSTOM")));
-    itcwb_custom ->set_tooltip_markup (M("TP_WBALANCE_ITCWCUSTOM_TOOLTIP"));
-    itcwb_custom ->set_active (false);
 
     itcwb_prim = Gtk::manage (new MyComboBoxText ());
     itcwb_prim->append(M("TP_WBALANCE_ITCWB_PRIM_SRGB"));
-    itcwb_prim->append(M("TP_WBALANCE_ITCWB_PRIM_ADOB"));
-    itcwb_prim->append(M("TP_WBALANCE_ITCWB_PRIM_REC"));
+//    itcwb_prim->append(M("TP_WBALANCE_ITCWB_PRIM_ADOB"));
+//    itcwb_prim->append(M("TP_WBALANCE_ITCWB_PRIM_REC"));
     itcwb_prim->append(M("TP_WBALANCE_ITCWB_PRIM_ACE"));
-    itcwb_prim->set_active(3);
+    itcwb_prim->set_active(1);
     itcwb_primconn = itcwb_prim->signal_changed().connect(sigc::mem_fun(*this, &WhiteBalance::itcwb_prim_changed));
     itcwb_prim ->set_active (false);
     itcwb_prim ->set_tooltip_markup (M("TP_WBALANCE_ITCWPRIM_TOOLTIP"));
@@ -425,22 +420,17 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     itcwbBox->pack_start (*itcwb_green);
     itcwbBox->pack_start (*itcwb_alg);
     itcwbBox->pack_start (*itcwb_prim);
-    if(options.rtSettings.itcwb_custom_enable) {
-        itcwbBox->pack_start (*itcwb_custom);
-    }
     itcwbFrame->add(*itcwbBox);
     pack_start(*itcwbFrame);
 
     if(options.rtSettings.itcwb_enable) {
         itcwb_green->show();
         itcwb_alg->show();
-        itcwb_custom->show();
         itcwb_prim->show();
         itcwbFrame->show();
     } else {
         itcwb_green->show();
         itcwb_alg->hide();
-        itcwb_custom->hide();
         itcwb_prim->hide();
     }
     temp->setAdjusterListener (this);
@@ -453,7 +443,6 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     spotbutton->signal_pressed().connect( sigc::mem_fun(*this, &WhiteBalance::spotPressed) );
     methconn = method->signal_changed().connect( sigc::mem_fun(*this, &WhiteBalance::optChanged) );
     itcwb_algconn = itcwb_alg->signal_toggled().connect( sigc::mem_fun(*this, &WhiteBalance::itcwb_alg_toggled) );
-    itcwb_customconn = itcwb_custom->signal_toggled().connect( sigc::mem_fun(*this, &WhiteBalance::itcwb_custom_toggled) );
     
     resetButton->signal_pressed().connect( sigc::mem_fun(*this, &WhiteBalance::resetWB) );
     spotsize->signal_changed().connect( sigc::mem_fun(*this, &WhiteBalance::spotSizeChanged) );
@@ -506,42 +495,6 @@ void WhiteBalance::itcwb_alg_toggled ()
         }
     }
 }
-
-void WhiteBalance::itcwb_custom_toggled ()
-{
-    if (batchMode) {
-        if (itcwb_custom->get_inconsistent()) {
-            itcwb_custom->set_inconsistent (false);
-            itcwb_customconn.block (true);
-            itcwb_custom->set_active (false);
-            itcwb_customconn.block (false);
-        } else if (lastitcwb_custom) {
-            itcwb_custom->set_inconsistent (true);
-        }
-
-        lastitcwb_custom = itcwb_custom->get_active ();
-    }
-    
-    if (itcwb_custom->get_active ()) {
-        itcwb_alg->set_sensitive(false);
-        tempBias->set_sensitive(false);
-        itcwb_green->set_sensitive(false);
-        itcwb_green->setValue(0.);
-    } else {
-        itcwb_alg->set_sensitive(true);
-        tempBias->set_sensitive(true);
-        itcwb_green->set_sensitive(true);
-    }
-
-    if (listener && getEnabled()) {
-        if (itcwb_custom->get_active ()) {
-            listener->panelChanged (EvWBitcwcustom, M("GENERAL_ENABLED"));
-        } else {
-            listener->panelChanged (EvWBitcwcustom, M("GENERAL_DISABLED"));
-        }
-    }
-}
-
 
 
 void WhiteBalance::adjusterChanged(Adjuster* a, double newval)
@@ -684,7 +637,6 @@ void WhiteBalance::optChanged ()
                 PatchlevelLabel->show();
                 equal->hide();
                 itcwbFrame->set_sensitive(true);
-                itcwb_custom_toggled ();
             } else {
                 StudLabel->hide();
                 PatchLabel->hide();
@@ -816,10 +768,6 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
     itcwb_algconn.block (false);
     lastitcwb_alg = pp->wb.itcwb_alg;
 
-    itcwb_customconn.block (true);
-    itcwb_custom->set_active (pp->wb.itcwb_custom);
-    itcwb_customconn.block (false);
-    lastitcwb_custom = pp->wb.itcwb_custom;
 
     itcwb_green->setValue (pp->wb.itcwb_green);
 
@@ -828,12 +776,12 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     if (pp->wb.itcwb_prim == "srgb") {
         itcwb_prim->set_active(0);
-    } else if (pp->wb.itcwb_prim == "adob") {
-        itcwb_prim->set_active(1);
-     } else if (pp->wb.itcwb_prim == "rec") {
-        itcwb_prim->set_active(2);
+//    } else if (pp->wb.itcwb_prim == "adob") {
+//        itcwb_prim->set_active(1);
+//     } else if (pp->wb.itcwb_prim == "rec") {
+//        itcwb_prim->set_active(2);
     } else if (pp->wb.itcwb_prim == "ace") {
-        itcwb_prim->set_active(3);
+        itcwb_prim->set_active(1);
     }
     itcwb_primconn.block (false);
 
@@ -842,14 +790,12 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
     if(options.rtSettings.itcwb_enable) {
         itcwb_green->show();
         itcwb_alg->show();
-        itcwb_custom->show();
         itcwb_prim->show();
         itcwbFrame->show();
         
     } else {
         itcwb_green->hide();
         itcwb_alg->hide();
-        itcwb_custom->hide();
         itcwb_prim->hide();
         itcwbFrame->hide();
     }
@@ -866,7 +812,6 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
             PatchlevelLabel->show();
             equal->hide();
             itcwbFrame->set_sensitive(true);
-            itcwb_custom_toggled ();
         } else {
             StudLabel->hide();
             PatchLabel->hide();
@@ -883,7 +828,6 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         tempBias->setEditedState (pedited->wb.tempBias ? Edited : UnEdited);
         observer10->setEdited(pedited->wb.observer);
         itcwb_alg->set_inconsistent (!pedited->wb.itcwb_alg);
-        itcwb_custom->set_inconsistent (!pedited->wb.itcwb_custom);
         itcwb_green->setEditedState (pedited->wb.itcwb_green ? Edited : UnEdited);
     }
 
@@ -1000,7 +944,6 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
             equal->hide();
             itcwbFrame->set_sensitive(true);
             itcwb_prim_changed ();
-            itcwb_custom_toggled ();
         } else {
             StudLabel->hide();
             PatchLabel->hide();
@@ -1035,7 +978,6 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->wb.tempBias = tempBias->getEditedState ();
         pedited->wb.observer = observer10->getEdited();
         pedited->wb.itcwb_alg = !itcwb_alg->get_inconsistent();
-        pedited->wb.itcwb_custom = !itcwb_custom->get_inconsistent();
         pedited->wb.method = row[methodColumns.colLabel] != M("GENERAL_UNCHANGED");
         pedited->wb.enabled = !get_inconsistent();
         pedited->wb.itcwb_prim  = itcwb_prim->get_active_text() != M("GENERAL_UNCHANGED");
@@ -1045,11 +987,11 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
     pp->wb.enabled = getEnabled();
     if (itcwb_prim->get_active_row_number() == 0) {
         pp->wb.itcwb_prim = "srgb";
+//    } else if (itcwb_prim->get_active_row_number() == 1){
+//        pp->wb.itcwb_prim = "adob";
+//    } else if (itcwb_prim->get_active_row_number() == 2){
+//        pp->wb.itcwb_prim = "rec";
     } else if (itcwb_prim->get_active_row_number() == 1){
-        pp->wb.itcwb_prim = "adob";
-    } else if (itcwb_prim->get_active_row_number() == 2){
-        pp->wb.itcwb_prim = "rec";
-    } else if (itcwb_prim->get_active_row_number() == 3){
         pp->wb.itcwb_prim = "ace";
     }
 
@@ -1069,7 +1011,6 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
             ? rtengine::StandardObserver::TWO_DEGREES
             : pp->wb.observer;
     pp->wb.itcwb_alg = itcwb_alg->get_active ();
-    pp->wb.itcwb_custom = itcwb_custom->get_active ();
     pp->wb.tempBias = tempBias->getValue ();
     pp->wb.itcwb_green = itcwb_green->getValue ();
 }
