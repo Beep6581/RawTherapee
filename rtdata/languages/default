@@ -1851,7 +1851,7 @@ PREFERENCES_CIE;Ciecam
 PREFERENCES_CIEARTIF;Avoid artifacts
 PREFERENCES_WBA;White Balance
 PREFERENCES_WBACORR;White Balance - Automatic temperature correlation
-PREFERENCES_WBACORR_TOOLTIP;These settings allow, depending on the images (type of raw file, colorimetry, etc.), an adaptation of the " Temperature correlation " algorithm in order to obtain the best overall results. There is no absolute rule, linking these parameters to the results obtained.\n\nThe settings are of 3 types: \n* those accessible to the user from the GUI.\n* those accessible only in reading from each pp3 file : Itcwb_minsize=20, Itcwb_delta=4 Itcwb_rgreen=1 Itcwb_nopurple=false Itcwb_ponder=true (See Rawpedia)\n* those accessible to the user in 'options' (see Rawpedia)\n You can use "Awb temperature bias" to adjust the results. Each movement of this command brings a new calculation of temperature, tint and correlation.\n\nPlease note that the 3 indicators 'Correlation factor', 'Patch chroma' and ΔE are given for information only. It is not because one of these indicators is better that the result will necessarily be better.
+PREFERENCES_WBACORR_TOOLTIP;These settings allow, depending on the images (type of raw file, colorimetry, etc.), an adaptation of the " Temperature correlation " algorithm in order to obtain the best overall results. There is no absolute rule, linking these parameters to the results obtained.\n\nThe settings are of 3 types: \n* those accessible to the user from the GUI.\n* those accessible only in reading from each pp3 file : Itcwb_minsize=20, Itcwb_delta=4 Itcwb_rgreen=1 Itcwb_nopurple=false (See Rawpedia)\n* those accessible to the user in 'options' (see Rawpedia)\n You can use "Awb temperature bias" and "Green refinement" to adjust the results. Each movement of these commands brings a new calculation of temperature, tint and correlation.\n\nPlease note that the 3 indicators 'Correlation factor', 'Patch chroma' and ΔE are given for information only. It is not because one of these indicators is better that the result will necessarily be better.
 PREFERENCES_WBAENA;Show White Balance auto Temperature correlation Settings
 PREFERENCES_WBAENACUSTOM;Use Custom temperature & tint
 PREFERENCES_WBAPATCH;Number maximum of colors used in picture
@@ -4126,11 +4126,11 @@ TP_WBALANCE_ITCWCUSTOM_TOOLTIP;Allows you to use Custom settings Temperature and
 TP_WBALANCE_ITCWALG_TOOLTIP;Allows you to switch to the other Alternative temperature (Alt_temp), when possible.\nInactive in the "single choice" case.\n\nWhen one of the proposed choices is with a temperature close or lower than 3000K, the choice is suspicious (due to the inappropriate color matrix)
 TP_WBALANCE_ITCWB_PRECIS;Precision algorithm - scale used
 TP_WBALANCE_ITCWBPRECIS_TOOLTIP;The lower the value, the more relevant the data, but increases the processing time. Since the processing time is low, this parameter should generally be able to remain at the default value
-TP_WBALANCE_ITCWB_PRIM_SRGB;Low sampling
+TP_WBALANCE_ITCWB_PRIM_SRGB;Low sampling & do not use Camera settings
 TP_WBALANCE_ITCWB_PRIM_ADOB;Medium sampling
 TP_WBALANCE_ITCWB_PRIM_REC;High sampling
 TP_WBALANCE_ITCWB_PRIM_ACE;Forces use of the entire CIE diagram
-TP_WBALANCE_ITCWPRIM_TOOLTIP;Allows you to select the image sampling. In a majority of cases it is recommended (default) to choose 'Forces use of the entire CIE diagram'.\nThe other choice allow you to isolate high gamut parts of the image. This will obviously have an impact on the result.
+TP_WBALANCE_ITCWPRIM_TOOLTIP;Allows you to select the image sampling. In a majority of cases it is recommended (default) to choose 'Forces use of the entire CIE diagram'.\nThe other choice allow you to isolate high gamut parts of the image and forces the algorithm in some cases not to use camera settings. This will obviously have an impact on the result.
 TP_WBALANCE_ITCWB_RGREEN;Green range
 TP_WBALANCE_ITCWBRGREEN_TOOLTIP;Sets the green value review amplitude in iterations, from low amplitude 0.82 to 1.25 to maximum amplitude 0.4 to 4.
 TP_WBALANCE_ITCWB_SAMPLING;Low sampling 5.9
