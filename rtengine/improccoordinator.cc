@@ -600,7 +600,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                 if(!forcewbgrey) {
                                     gre = 0.2f + 0.8f * LIM(gre, 0.85f, 1.15f);
                                 } else {
-                                    gre = 0.7f + 0.3f * LIM(gre, 0.9f, 1.1f);
+                                    double grepro = LIM(greenref, 1.02, 1.1);
+                                    gre = 0.5f * grepro + 0.5f * LIM(gre, 0.9f, 1.1f);//empirical green between green camera and autowb grey
                                 }
                             }
 
