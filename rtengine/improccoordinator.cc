@@ -564,6 +564,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     double tempref0bias0 = currWBitc.getTemp();
                     if(greenref > green_thres && params->wb.itcwb_prim == "srgb") {
                         forcewbgrey = true;
+                        kcam = -1;
                     }
 
                     if (!forcewbgrey && (tempref0bias0 < 3300.f)  && (greenref < 1.13f && greenref > 0.88f)) { //seems good with temp and green...To fixe...limits 1.13 and 0.88
@@ -593,6 +594,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                             tem = ct.getTemp();
                             gre  = ct.getGreen();
                             double deltemp = tem - tempref0bias;
+                           // printf("deltemp=%f \n", deltemp);
                             if (gre > 1.5f) { //probable wrong value
                                 tem = 0.3 * tem + 0.7 * tempref0bias;//find a mixed value
                                 gre = 0.5f + 0.5f * LIM(gre, 0.9f, 1.1f);//empirical formula in case  system out
@@ -604,10 +606,14 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                     gre = 0.5f * grepro + 0.5f * LIM(gre, 0.9f, 1.1f);//empirical green between green camera and autowb grey
                                     if(abs(deltemp) < 700.) {//arbitrary threshold
                                         tem = 0.4 * tem + 0.6 * tempref0bias;//find a mixed value between camera and auto grey
-                                    } else if(abs(deltemp) < 1500.) {
+                                    } else if(abs(deltemp) < 1500. && tempref0bias >= 4500.f) {
+                                        tem = 0.4 * tem + 0.6 * tempref0bias;//find a mixed value between camera and auto grey
+                                    } else if(abs(deltemp) < 1500. && tempref0bias < 4500.f) {
                                         tem = 0.7 * tem + 0.3 * tempref0bias;//find a mixed value between camera and auto grey
-                                    } else {
+                                    } else if (abs(deltemp) >= 1500. && tem > 6000.f) {
                                         tem = 0.96 * tem + 0.04 * tempref0bias;//find a mixed value between camera and auto grey
+                                    } else {
+                                         tem = 0.4 * tem + 0.6 * tempref0bias;
                                     }
                                 }
                             }

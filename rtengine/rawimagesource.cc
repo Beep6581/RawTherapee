@@ -6718,9 +6718,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         avg_bm = 10000.f * bmm[goodref];
 
         //now we have temp green and student
-        if (((tempitc < 4000.f || tempitc > 7000.f) || extra == true) && lastitc  && kcam == 0 /* && wbpar.itcwb_green == 0.f */ && oldsampling == false && wbpar.itcwb_alg == false  && wbpar.itcwb_custom == false) { //try to find if another tempref value near 5000K is better
-            //bia = 1;
-            //printf("tempitcalg=%f\n", tempitc);
+        if (((tempitc < 4000.f || tempitc > 7000.f || kcam == -1) || extra == true) && lastitc  && kcam <= 0 /* && wbpar.itcwb_green == 0.f */ && oldsampling == false && wbpar.itcwb_alg == false  && wbpar.itcwb_custom == false) { //try to find if another tempref value near 5000K is better
             optitc[nbitc].stud = studgood;//std::max(studgood, 0.004f);//max to avoid choice between 2 very good results and falsifies the result
             optitc[nbitc].minc = Tppat[repref].minchroma;
             optitc[nbitc].titc = tempitc;
@@ -6741,8 +6739,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             if (tempitc < 4000.f) {//change the second temp to be near of the first one
                 tempitc += 200.f;
                 tempref = tempitc * (1. + wbpar.tempBias);
+            } else if (tempitc < 4500.f &&  kcam == -1) {
+                tempitc += 150.f;
+                tempref = tempitc * (1. + wbpar.tempBias);
             } else {
-                tempref = 5150.f * (1. + wbpar.tempBias);
+                tempref = (5000.f + 0.15f * (tempitc - 7000.f)) * (1. + wbpar.tempBias);
                 tempref = LIM(tempref, 4000., 7000.);
 
             }
