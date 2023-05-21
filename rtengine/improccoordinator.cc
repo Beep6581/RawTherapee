@@ -554,7 +554,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float gre  = 1.f;
                 double tempref0bias = 5000.;
                 tempitc = 5000.f;
-                bool isgrey = false;
                 bool autowb1 = true;
                 double green_thres = 0.8;
                 if (params->wb.method == "autitcgreen") {
@@ -577,7 +576,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     }
 
                     if (autowb1) {
-                        //alternative to camera if camera settings out, using autowb grey to find new ref
+                        //alternative to camera if camera settings out, using autowb grey to find new ref, then mixed with camera
                         kcam = 0;
                         params->wb.method = "autold";
                         double rm, gm, bm;
@@ -586,7 +585,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         currWBitc = imgsrc->getWB();
                         tempref0bias = currWBitc.getTemp();
                         double greenref = currWBitc.getGreen();
-                        if ((greenref > 1.5f || tempref0bias < 3300.f || tempref0bias > 7700.f || forcewbgrey) && !params->wb.itcwb_sampling  /* && params->wb.itcwb_green == 0.f*/) { //probably camera out to adjust...
+                        if ((greenref > 1.5f || tempref0bias < 3300.f || tempref0bias > 7700.f || forcewbgrey) && !params->wb.itcwb_sampling) { //probably camera out to adjust...
                             imgsrc->getAutoWBMultipliersitc(extra, tempref0bias, greenref, tempitc, greenitc, temp0, delta, bia, dread, kcam, studgood, minchrom, kmin, minhist, maxhist, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
                             imgsrc->wbMul2Camera(rm, gm, bm);
                             imgsrc->wbCamera2Mul(rm, gm, bm);
@@ -594,7 +593,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                             tem = ct.getTemp();
                             gre  = ct.getGreen();
                             double deltemp = tem - tempref0bias;
-                           // printf("deltemp=%f \n", deltemp);
                             if (gre > 1.5f) { //probable wrong value
                                 tem = 0.3 * tem + 0.7 * tempref0bias;//find a mixed value
                                 gre = 0.5f + 0.5f * LIM(gre, 0.9f, 1.1f);//empirical formula in case  system out
@@ -602,16 +600,24 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                 if(!forcewbgrey) {
                                     gre = 0.2f + 0.8f * LIM(gre, 0.85f, 1.15f);
                                 } else {//set temp and green to init itcwb algorithm
-                                    double grepro = LIM(greenref, green_thres, 1.12);
+                                    double grepro = LIM(greenref, green_thres, 1.15);
                                     gre = 0.5f * grepro + 0.5f * LIM(gre, 0.9f, 1.1f);//empirical green between green camera and autowb grey
-                                    if(abs(deltemp) < 700.) {//arbitrary threshold
-                                        tem = 0.4 * tem + 0.6 * tempref0bias;//find a mixed value between camera and auto grey
-                                    } else if(abs(deltemp) < 1500. && tempref0bias >= 4500.f) {
+                                    if(abs(deltemp) < 400.) {//arbitrary threshold
+                                        tem = 0.3 * tem + 0.7 * tempref0bias;//find a mixed value between camera and auto grey
+                                    } else if(abs(deltemp) < 700.) {//other arbitrary threshold
                                         tem = 0.4 * tem + 0.6 * tempref0bias;//find a mixed value between camera and auto grey
                                     } else if(abs(deltemp) < 1500. && tempref0bias < 4500.f) {
-                                        tem = 0.7 * tem + 0.3 * tempref0bias;//find a mixed value between camera and auto grey
-                                    } else if (abs(deltemp) >= 1500. && tem > 6000.f) {
-                                        tem = 0.96 * tem + 0.04 * tempref0bias;//find a mixed value between camera and auto grey
+                                        tem = 0.45 * tem + 0.55 * tempref0bias;//find a mixed value between camera and auto grey
+                                    } else if(abs(deltemp) < 1500. && tempref0bias >= 4500.f) {
+                                        tem = 0.3 * tem + 0.7 * tempref0bias;//find a mixed value between camera and auto grey
+                                    } else if (abs(deltemp) >= 1500. && tempref0bias < 5500.f) {
+                                        tem = 0.5 * tem + 0.5 * tempref0bias;//find a mixed value between camera and auto grey
+                                    } else if (abs(deltemp) >= 1500. && tempref0bias >= 5500.f) {
+                                        if( tem >= 10000.f) {
+                                            tem = 0.99 * tem + 0.01 * tempref0bias;//find a mixed value between camera and auto grey
+                                        } else {
+                                            tem = 0.5 * tem + 0.5 * tempref0bias;//find a mixed value between camera and auto grey
+                                        }
                                     } else {
                                          tem = 0.4 * tem + 0.6 * tempref0bias;
                                     }
@@ -640,11 +646,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     double greenref = currWBitc.getGreen();
                     greenitc = greenref;
 
-                    if ((greenref > 1.5f || tempref0bias < 3300.f || tempref0bias > 7700.f || forcewbgrey) && autowb1 && !isgrey /* && params->wb.itcwb_green == 0.f */) { //probably camera out to adjust = greenref ? tempref0bias ?
+                    if ((greenref > 1.5f || tempref0bias < 3300.f || tempref0bias > 7700.f || forcewbgrey) && autowb1  && !params->wb.itcwb_sampling) { //probably camera out to adjust = greenref ? tempref0bias ?
                         tempref = tem * (1. + params->wb.tempBias);
                         greenref = gre;
-                    } else if (isgrey) {
-                        tempref = tempitc;
                     } else {
 
                     }
