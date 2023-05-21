@@ -556,7 +556,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 tempitc = 5000.f;
                 bool isgrey = false;
                 bool autowb1 = true;
-                double green_thres = 1.;
+                double green_thres = 0.8;
                 if (params->wb.method == "autitcgreen") {
 
                     currWBitc = imgsrc->getWB();
@@ -726,6 +726,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         awbListener->WBChanged(met, params->wb.temperature, params->wb.green, rw, gw, bw, 0, 1, 0, dread, studgood, 0, 0, 0, 0);
 
                     } else {
+                        minchrom = LIM(minchrom,0.f, 0.9f);
+                        delta = LIM(delta, 0.f, 0.9f);
+                        minhist = std::max(minhist, 100.f);
+                        maxhist = std::max(maxhist, 1000.f);
+                        kmin = std::max(kmin, 18);
+                        dread = LIM(dread, 10, 239);
                         awbListener->WBChanged(met, params->wb.temperature, params->wb.green, rw, gw, bw, temp0, delta, bia, dread, studgood, minchrom, kmin, minhist, maxhist);
                     }
                 } else {
