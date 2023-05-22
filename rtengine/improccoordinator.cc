@@ -611,7 +611,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                     } else if(abs(deltemp) < 1500. && tempref0bias >= 4500.f) {
                                         tem = 0.3 * tem + 0.7 * tempref0bias;//find a mixed value between camera and auto grey
                                     } else if (abs(deltemp) >= 1500. && tempref0bias < 5500.f) {
-                                        tem = 0.5 * tem + 0.5 * tempref0bias;//find a mixed value between camera and auto grey
+                                        if( tem >= 4500.f) {
+                                            tem = 0.95 * tem + 0.05 * tempref0bias;//find a mixed value between camera and auto grey
+                                        } else {
+                                            tem = 0.5 * tem + 0.5 * tempref0bias;//find a mixed value between camera and auto grey
+                                        }
                                     } else if (abs(deltemp) >= 1500. && tempref0bias >= 5500.f) {
                                         if( tem >= 10000.f) {
                                             tem = 0.99 * tem + 0.01 * tempref0bias;//find a mixed value between camera and auto grey
