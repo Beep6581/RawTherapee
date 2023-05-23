@@ -6718,7 +6718,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         avg_bm = 10000.f * bmm[goodref];
 
         //now we have temp green and student
-        if (((tempitc < 4000.f || tempitc > 7000.f || kcam == -1) || extra == true) && lastitc  && kcam <= 0 /* && wbpar.itcwb_green == 0.f */ && oldsampling == false && wbpar.itcwb_alg == false  && wbpar.itcwb_custom == false) { //try to find if another tempref value near 5000K is better
+        if (((tempitc < 4000.f || tempitc > 7000.f || kcam == -1) || extra == true) && lastitc  && kcam <= 0  && nocam == 0/* && wbpar.itcwb_green == 0.f */ && oldsampling == false && wbpar.itcwb_alg == false) { //try to find if another tempref value near 5000K is better
             optitc[nbitc].stud = studgood;//std::max(studgood, 0.004f);//max to avoid choice between 2 very good results and falsifies the result
             optitc[nbitc].minc = Tppat[repref].minchroma;
             optitc[nbitc].titc = tempitc;
@@ -6747,6 +6747,62 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 tempref = LIM(tempref, 4000., 7000.);
 
             }
+
+            optitc[nbitc].stud = studgood;//std::max(studgood, 0.004f);
+            optitc[nbitc].minc =  Tppat[repref].minchroma;
+            optitc[nbitc].titc = tempitc;
+            optitc[nbitc].gritc = greenitc;
+            optitc[nbitc].tempre = tempref;
+            optitc[nbitc].greenre = greenref;
+            optitc[nbitc].drea = dread;
+            optitc[nbitc].kmi = kmin;
+            optitc[nbitc].minhis = Tppat[repref].minhi;
+            optitc[nbitc].maxhis = Tppat[repref].maxhi;
+            optitc[nbitc].avg_r = avg_rm;
+            optitc[nbitc].avg_g = avg_gm;
+            optitc[nbitc].avg_b = avg_bm;
+            optitc[nbitc].delt = Tppat[repref].delt_E;
+            lastitc = false;
+        } else if (nocam > 0 && oldsampling == false && wbpar.itcwb_alg == false ) {
+            optitc[nbitc].stud = studgood;//std::max(studgood, 0.004f);//max to avoid choice between 2 very good results and falsifies the result
+            optitc[nbitc].minc = Tppat[repref].minchroma;
+            optitc[nbitc].titc = tempitc;
+            optitc[nbitc].gritc = greenitc;
+            optitc[nbitc].tempre = tempref;
+            optitc[nbitc].greenre = greenref;
+            optitc[nbitc].drea = dread;
+            optitc[nbitc].kmi = kmin;
+            optitc[nbitc].minhis = Tppat[repref].minhi;
+            optitc[nbitc].maxhis = Tppat[repref].maxhi;
+            optitc[nbitc].avg_r = avg_rm;
+            optitc[nbitc].avg_g = avg_gm;
+            optitc[nbitc].avg_b = avg_bm;
+            optitc[nbitc].delt = Tppat[repref].delt_E;
+
+            nbitc++;
+            if(nocam == 1) {//new tempitc empirical values to refine
+                tempitc -= 200.f;
+            } else if (nocam == 2) {
+                tempitc += 200.f;
+            } else if (nocam == 3) {
+                tempitc -= 200.f;
+            } else if (nocam == 4) {
+                tempitc += 200.f;
+            } else if (nocam == 5) {
+                tempitc += 300.f;
+            } else if (nocam == 6) {
+                tempitc += 200.f;
+            } else if (nocam == 7) {
+                tempitc += 300.f;
+            } else if (nocam == 8) {
+                tempitc += 500.f;
+            } else if (nocam == 9) {
+                tempitc += 200.f;
+            } else if (nocam == 10) {
+                tempitc += 200.f;
+            }
+            nocam = 0;
+            tempref = tempitc * (1. + wbpar.tempBias);
 
             optitc[nbitc].stud = studgood;//std::max(studgood, 0.004f);
             optitc[nbitc].minc =  Tppat[repref].minchroma;
