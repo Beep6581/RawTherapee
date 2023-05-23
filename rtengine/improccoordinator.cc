@@ -532,6 +532,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             int dread = 0;
             int bia = 1;
             float studgood = 1000.f;
+            int nocam = 0;
             int kcam = 0;
             float minchrom = 1000.f;
             float delta = 0.f;
@@ -586,7 +587,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         tempref0bias = currWBitc.getTemp();
                         double greenref = currWBitc.getGreen();
                         if ((greenref > 1.5f || tempref0bias < 3300.f || tempref0bias > 7700.f || forcewbgrey) && !params->wb.itcwb_sampling) { //probably camera out to adjust...
-                            imgsrc->getAutoWBMultipliersitc(extra, tempref0bias, greenref, tempitc, greenitc, temp0, delta, bia, dread, kcam, studgood, minchrom, kmin, minhist, maxhist, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
+                            imgsrc->getAutoWBMultipliersitc(extra, tempref0bias, greenref, tempitc, greenitc, temp0, delta, bia, dread, kcam, nocam, studgood, minchrom, kmin, minhist, maxhist, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
                             imgsrc->wbMul2Camera(rm, gm, bm);
                             imgsrc->wbCamera2Mul(rm, gm, bm);
                             ColorTemp ct(rm, gm, bm, 1.0, currWB.getObserver());
@@ -599,31 +600,40 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                             } else {
                                 if(!forcewbgrey) {
                                     gre = 0.2f + 0.8f * LIM(gre, 0.85f, 1.15f);
+                                    nocam = 0;
                                 } else {//set temp and green to init itcwb algorithm
                                     double grepro = LIM(greenref, green_thres, 1.15);
                                     gre = 0.5f * grepro + 0.5f * LIM(gre, 0.9f, 1.1f);//empirical green between green camera and autowb grey
                                     if(abs(deltemp) < 400.) {//arbitrary threshold
                                         tem = 0.3 * tem + 0.7 * tempref0bias;//find a mixed value between camera and auto grey
+                                        nocam = 1;
                                     } else if(abs(deltemp) < 700.) {//other arbitrary threshold
                                         tem = 0.4 * tem + 0.6 * tempref0bias;//find a mixed value between camera and auto grey
+                                        nocam = 2;
                                     } else if(abs(deltemp) < 1500. && tempref0bias < 4500.f) {
                                         tem = 0.45 * tem + 0.55 * tempref0bias;//find a mixed value between camera and auto grey
+                                        nocam = 3;
                                     } else if(abs(deltemp) < 1500. && tempref0bias >= 4500.f) {
                                         tem = 0.3 * tem + 0.7 * tempref0bias;//find a mixed value between camera and auto grey
                                     } else if (abs(deltemp) >= 1500. && tempref0bias < 5500.f) {
                                         if( tem >= 4500.f) {
                                             tem = 0.95 * tem + 0.05 * tempref0bias;//find a mixed value between camera and auto grey
+                                            nocam = 4;
                                         } else {
                                             tem = 0.5 * tem + 0.5 * tempref0bias;//find a mixed value between camera and auto grey
+                                            nocam = 5;
                                         }
                                     } else if (abs(deltemp) >= 1500. && tempref0bias >= 5500.f) {
                                         if( tem >= 10000.f) {
                                             tem = 0.99 * tem + 0.01 * tempref0bias;//find a mixed value between camera and auto grey
+                                            nocam = 6;
                                         } else {
                                             tem = 0.5 * tem + 0.5 * tempref0bias;//find a mixed value between camera and auto grey
+                                            nocam = 7;
                                         }
                                     } else {
                                          tem = 0.4 * tem + 0.6 * tempref0bias;
+                                         nocam = 10;
                                     }
                                 }
                             }
@@ -663,7 +673,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         printf("tempref=%f greref=%f tempitc=%f greenitc=%f\n", tempref, greenref, tempitc, greenitc);
                     }
 
-                    imgsrc->getAutoWBMultipliersitc(extra, tempref, greenref, tempitc, greenitc, temp0, delta,  bia, dread, kcam, studgood, minchrom, kmin, minhist, maxhist, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
+                    imgsrc->getAutoWBMultipliersitc(extra, tempref, greenref, tempitc, greenitc, temp0, delta,  bia, dread, kcam, nocam, studgood, minchrom, kmin, minhist, maxhist, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
 
                     if (params->wb.method ==  "autitcgreen") {
                         params->wb.temperature = tempitc;
@@ -2675,6 +2685,7 @@ bool ImProcCoordinator::getAutoWB(double& temp, double& green, double equal, Sta
             int bia = 0;
             float temp0 = 5000.f;
             float studgood = 1000.f;
+            int nocam = 0;
             int kcam = 0;
             float minchrom = 1000.f;
             float delta = 0.f;
@@ -2683,7 +2694,7 @@ bool ImProcCoordinator::getAutoWB(double& temp, double& green, double equal, Sta
             float maxhist = -1000.f;
             double tempref, greenref;
             bool extra = false;
-            imgsrc->getAutoWBMultipliersitc(extra, tempref, greenref, tempitc, greenitc, temp0, delta, bia, dread, kcam, studgood, minchrom, kmin, minhist, maxhist, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
+            imgsrc->getAutoWBMultipliersitc(extra, tempref, greenref, tempitc, greenitc, temp0, delta, bia, dread, kcam, nocam, studgood, minchrom, kmin, minhist, maxhist, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
 
             if (rm != -1) {
                 autoWB.update(rm, gm, bm, equal, observer, tempBias);
