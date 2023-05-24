@@ -3243,7 +3243,7 @@ std::vector<Tag*> ExifManager::getDefaultTIFFTags (TagDirectory* forthis)
 
 
 
-int ExifManager::createJPEGMarker (const TagDirectory* root, const rtengine::procparams::ExifPairs& changeList, int W, int H, unsigned char *&buffer, unsigned &bufferSize)
+void ExifManager::createJPEGMarker (const TagDirectory* root, const rtengine::procparams::ExifPairs& changeList, int W, int H, unsigned char *&buffer, unsigned &bufferSize)
 {
 
     // write tiff header
@@ -3324,11 +3324,9 @@ int ExifManager::createJPEGMarker (const TagDirectory* root, const rtengine::pro
     offs += 2;
     sset4 (8, buffer + offs, order);
 
-    int endOffs = cl->write (8, buffer + 6);
+    cl->write (8, buffer + 6);
 
     delete cl;
-
-    return endOffs;
 }
 
 int ExifManager::createPNGMarker(const TagDirectory* root, const rtengine::procparams::ExifPairs &changeList, int W, int H, int bps, const char* iptcdata, int iptclen, unsigned char *&buffer, unsigned &bufferSize)
