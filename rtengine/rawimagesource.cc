@@ -5482,9 +5482,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             Rangegreenused = Rangemax;
         }
 
-        if (oldsampling == true) {
-            Rangegreenused = Rangestandard2;
-        }
 
         if (wbpar.itcwb_rgreen == 0) {//new way to set green
             Rangegreenused.begin = std::max(greenrefo - 13, 0);
@@ -5501,6 +5498,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             Rangegreenused.end = std::min(greenrefo + 5, N_g);
         }
 
+        if (oldsampling == true) {
+            Rangegreenused = Rangestandard2;
+        }
+
         typedef struct WbTxyz {
             double Tem;
             double XX;
@@ -5510,6 +5511,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         //I don't know how to pass this structure to Colortemp !
         // X and Z values calculate for each temp between 2000K to  15000K, so no result after 12000K !
         //of course we can change the step between each temp if need
+
         constexpr WbTxyz Txyz[175] = {//temperature Xwb Zwb 175 values  x wb and y wb are calculated after,  Xwb and Ywb calculated with a spreadsheet
             {2001., 1.273842, 0.145295},
             {2051., 1.258802, 0.156066},
@@ -5687,9 +5689,135 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             {14751., 0.966886, 1.724998},
             {15001., 0.967397, 1.734047}
         };
+        //compatibility 5.9
+        constexpr WbTxyz Txyzs[118] = {//temperature Xwb Zwb 118 values - same table as in Rawimagesource.cc  x wb and y wb are calculated after
+            {2001., 1.273842, 0.145295},
+            {2101., 1.244008, 0.167533},
+            {2201., 1.217338, 0.190697},
+            {2301., 1.193444, 0.214632},
+            {2401., 1.171996, 0.239195},
+            {2501., 1.152883, 0.264539},
+            {2605., 1.134667, 0.290722},
+            {2655., 1.126659, 0.303556},
+            {2705., 1.119049, 0.316446},
+            {2755., 1.111814, 0.329381},
+            {2803., 1.105381, 0.342193},
+            {2856., 1.098258, 0.355599},
+            {2910., 1.091550, 0.369645},
+            {2960., 1.085649, 0.382655},
+            {3003., 1.080982, 0.394258},
+            {3050., 1.075727, 0.406057},
+            {3103., 1.070277, 0.419815},
+            {3153., 1.065384, 0.432769},
+            {3203., 1.060906, 0.446161},
+            {3250., 1.056535, 0.457806},
+            {3303., 1.052034, 0.471422},
+            {3353., 1.047990, 0.484218},
+            {3400., 1.044547, 0.496719},
+            {3450., 1.040667, 0.508891},
+            {3500., 1.037145, 0.521523},
+            {3550., 1.033783, 0.534090},
+            {3600., 1.030574, 0.546590},
+            {3650., 1.027510, 0.559020},
+            {3699., 1.024834, 0.571722},
+            {3801., 1.019072, 0.596102},
+            {3851., 1.016527, 0.608221},
+            {3902., 1.014244, 0.621136},
+            {3952., 1.011729, 0.632447},
+            {4002., 0.996153, 0.609518},
+            {4052., 0.993720, 0.620805},
+            {4102., 0.993908, 0.631520},
+            {4152., 0.989179, 0.643262},
+            {4202., 0.989283, 0.653999},
+            {4252., 0.985039, 0.665536},
+            {4302., 0.985067, 0.676288},
+            {4352., 0.981271, 0.687599},
+            {4402., 0.981228, 0.698349},
+            {4452., 0.977843, 0.709425},
+            {4502., 0.977736, 0.720159},
+            {4552., 0.974728, 0.730993},
+            {4602., 0.974562, 0.741698},
+            {4652., 0.971899, 0.752284},
+            {4702., 0.971681, 0.762949},
+            {4752., 0.969335, 0.773285},
+            {4802., 0.969069, 0.783899},
+            {4827., 0.967570, 0.788836},
+            {4852., 0.967011, 0.793982},
+            {4877., 0.966465, 0.799108},
+            {4902., 0.965933, 0.804214},
+            {4927., 0.965414, 0.809229},
+            {4952., 0.964908, 0.814366},
+            {4977., 0.964415, 0.819412},
+            {5002., 0.963934, 0.824438},
+            {5027., 0.963465, 0.829444},
+            {5052., 0.963008, 0.834429},
+            {5077., 0.962563, 0.839395},
+            {5102., 0.962129, 0.844339},
+            {5127., 0.961706, 0.849263},
+            {5152., 0.961294, 0.854166},
+            {5177., 0.960893, 0.859049},
+            {5202., 0.960501, 0.863911},
+            {5252., 0.959749, 0.873572},
+            {5302., 0.959313, 0.883815},
+            {5352., 0.958361, 0.892644},
+            {5402., 0.957903, 0.902793},
+            {5452., 0.957116, 0.911379},
+            {5502., 0.956639, 0.921431},
+            {5552., 0.956002, 0.929779},
+            {5602., 0.955509, 0.939728},
+            {5652., 0.955008, 0.947842},
+            {5702., 0.954502, 0.957685},
+            {5752., 0.954124, 0.965569},
+            {5802., 0.953608, 0.975303},
+            {5852., 0.953342, 0.982963},
+            {5902., 0.952818, 0.992584},
+            {5952., 0.952652, 1.000025},
+            {6002., 0.952122, 1.009532},
+            {6052., 0.952047, 1.016759},
+            {6102., 0.951514, 1.026149},
+            {6152., 0.951520, 1.033168},
+            {6202., 0.950985, 1.042439},
+            {6252., 0.951064, 1.049256},
+            {6302., 0.950530, 1.058406},
+            {6352., 0.950674, 1.065027},
+            {6402., 0.950143, 1.074055},
+            {6452., 0.950345, 1.080484},
+            {6502., 0.950201, 1.088097},
+            {6552., 0.950070, 1.095633},
+            {6602., 0.949952, 1.103094},
+            {6652., 0.949846, 1.110479},
+            {6702., 0.949752, 1.119138},
+            {6752., 0.949668, 1.125027},
+            {6802., 0.949596, 1.132190},
+            {6902., 0.949033, 1.147691},
+            {7002., 0.949402, 1.160129},
+            {7152., 0.949348, 1.180429},
+            {7301., 0.948896, 1.201432},
+            {7451., 0.949434, 1.219076},
+            {7601., 0.949099, 1.239061},
+            {7751., 0.949729, 1.255559},
+            {7901., 0.949498, 1.274460},
+            {8151., 0.950361, 1.300912},
+            {8301., 0.950253, 1.318464},
+            {8451., 0.950966, 1.332651},
+            {8601., 0.950941, 1.349261},
+            {8801., 0.951772, 1.367421},
+            {9001., 0.951969, 1.387639},
+            {9201., 0.952784, 1.404422},
+            {9401., 0.953081, 1.423213},
+            {9901., 0.954537, 1.464134},
+            {10501., 0.956321, 1.508623},
+            {11001., 0.957747, 1.541281},
+            {12001., 0.960440, 1.601019}
+        };
         bool purp = true;//if inpaint-opposed or something else enable purp
 
-        const int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
+        int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
+
+        if (oldsampling) {
+            N_t = sizeof(Txyzs) / sizeof(Txyzs[0]);   //number of temperature White point
+        }
+
         constexpr int Nc = 405 + 1; //406 number of reference spectral colors
         int Ncr = 406;
 
@@ -5746,6 +5874,15 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             }
         }
 
+        if (oldsampling) {
+            for (int tt = 0; tt < N_t; tt++) {
+                if (Txyzs[tt].Tem > tempref) {
+                    repref = tt;//show the select temp
+                    break;
+                }
+            }
+        }
+
         if (repref >= N_t - 1) {
             repref = N_t - 2;
         }
@@ -5760,6 +5897,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             double r, g, b;
             float rm, gm, bm;
             ColorTemp WBiter = ColorTemp(Txyz[tt].Tem, greenitc, 1.f, "Custom", wbpar.observer);
+
+            if (oldsampling) {
+                ColorTemp WBiter = ColorTemp(Txyzs[tt].Tem, greenitc, 1.f, "Custom", wbpar.observer);
+            }
+
             WBiter.getMultipliers(r, g, b);
 
             rm = imatrices.cam_rgb[0][0] * r + imatrices.cam_rgb[0][1] * g + imatrices.cam_rgb[0][2] * b;
@@ -6507,6 +6649,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 for (int tt = scantempbeg; tt < scantempend; ++tt) {
                     double r, g, b;
                     ColorTemp WBiter(Txyz[tt].Tem, gree[gr].green, 1.f, "Custom", wbpar.observer);
+
+                    if (oldsampling) {
+                        ColorTemp WBiter(Txyzs[tt].Tem, gree[gr].green, 1.f, "Custom", wbpar.observer);
+                    }
+
                     WBiter.getMultipliers(r, g, b);
                     float rm = imatrices.cam_rgb[0][0] * r + imatrices.cam_rgb[0][1] * g + imatrices.cam_rgb[0][2] * b;
                     float gm = imatrices.cam_rgb[1][0] * r + imatrices.cam_rgb[1][1] * g + imatrices.cam_rgb[1][2] * b;
@@ -6640,6 +6787,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             }
 
             tempitc = Txyz[goodref].Tem;
+
+            if (oldsampling) {
+                tempitc = Txyzs[goodref].Tem;
+            }
+
             greenitc = gree[greengood].green;
 
             int greencam = 55;
@@ -6763,7 +6915,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             optitc[nbitc].avg_b = avg_bm;
             optitc[nbitc].delt = Tppat[repref].delt_E;
             lastitc = false;
-        } else if (nocam > 0 && oldsampling == false && wbpar.itcwb_alg == false ) {
+        } else if (nocam > 0 && oldsampling == false && wbpar.itcwb_alg == false) {
             optitc[nbitc].stud = studgood;//std::max(studgood, 0.004f);//max to avoid choice between 2 very good results and falsifies the result
             optitc[nbitc].minc = Tppat[repref].minchroma;
             optitc[nbitc].titc = tempitc;
@@ -6780,7 +6932,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             optitc[nbitc].delt = Tppat[repref].delt_E;
 
             nbitc++;
-            if(nocam == 1) {//new tempitc empirical values to refine
+
+            if (nocam == 1) { //new tempitc empirical values to refine
                 tempitc -= 200.f;
             } else if (nocam == 2) {
                 tempitc += 200.f;
@@ -6801,6 +6954,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             } else if (nocam == 10) {
                 tempitc += 200.f;
             }
+
             nocam = 0;
             tempref = tempitc * (1. + wbpar.tempBias);
 
