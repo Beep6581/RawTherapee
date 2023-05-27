@@ -5492,12 +5492,13 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             Rangegreenused.begin = std::max(greenrefo - 17, 0);
             Rangegreenused.end = std::min(greenrefo + 17, N_g);
         }
-/*
-        if (wbpar.itcwb_custom) { //limit range to +5 g when custom
-            Rangegreenused.begin = std::max(greenrefo - 5, 0);
-            Rangegreenused.end = std::min(greenrefo + 5, N_g);
-        }
-*/
+
+        /*
+                if (wbpar.itcwb_custom) { //limit range to +5 g when custom
+                    Rangegreenused.begin = std::max(greenrefo - 5, 0);
+                    Rangegreenused.end = std::min(greenrefo + 5, N_g);
+                }
+        */
         if (oldsampling == true) {
             Rangegreenused = Rangestandard2;
         }
@@ -6051,7 +6052,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         array2D<float> zc(bfwitc, bfhitc);
         array2D<float> Yc(bfwitc, bfhitc);
 
-        const int rep = rtengine::LIM(repref + 1, 0, N_t);
+        int rep = rtengine::LIM(repref + 1, 0, N_t);
 
         //initialize calculation of xy current for tempref
         if (oldsampling == false) {
@@ -6100,7 +6101,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 float X_r = xc[y][x];
                 float Y_r = yc[y][x];
                 float Z_r = zc[y][x];
-                Color::gamutmap(X_r, Y_r, Z_r, wp2);//gamut control
+
+                if (oldsampling == false) {
+                    Color::gamutmap(X_r, Y_r, Z_r, wp2);//gamut control
+                }
+
                 const float som = X_r + Y_r + Z_r;
                 xc[y][x] = X_r / som;
                 yc[y][x] = Y_r / som;
@@ -6228,9 +6233,15 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
 
         chrom wbchro[sizcu4];
-        const float swpr = wpx + wpz + 1.f;
-        const float xwpr = wpx / swpr;//white point for tt in xy coordinates
-        const float ywpr = 1.f / swpr;
+        float swpr = wpx + wpz + 1.f;
+        float xwpr = wpx / swpr;//white point for tt in xy coordinates
+        float ywpr = 1.f / swpr;
+
+        if (oldsampling == true) {
+            swpr = Txyz[repref].XX + Txyz[repref].ZZ + 1.f;
+            xwpr = Txyz[repref].XX / swpr;//white point for tt in xy coordinates
+            ywpr = 1.f / swpr;
+        }
 
         if (settings->verbose) {
             printf("White Point XYZ x=%f y=%f z=%f\n", wpx, 1., wpz);
@@ -6424,9 +6435,15 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             printf("Info2 - patch estimation of wp displacement (before):j=%i repref=%i real=%i Tppat=%f chrom=%f hue=%f\n", kmin, repref, index2 - indn, (double) Tppat[repref].minchroma, (double) minchrom, (double) estim_hue[kmin][repref]);
         };
 
+        double limexclu = 0.96;
+
+        if (oldsampling) {
+            limexclu = 1.5;
+        }
+
         for (int i = indn; i < index2; ++i) {
             //improvment to limit high Y values wbchro[sizcu4 - (i + 1)].Y < 0.96  0.96 arbitrary high value, maybe 0.9 àr 0.98...
-            if (wbchro[sizcu4 - (i + 1)].chrox > 0.1f && wbchro[sizcu4 - (i + 1)].chroy > 0.1f && wbchro[sizcu4 - (i + 1)].chroxy > 0.0f  && wbchro[sizcu4 - (i + 1)].Y < 0.96) { //remove value too far from reference spectral
+            if (wbchro[sizcu4 - (i + 1)].chrox > 0.1f && wbchro[sizcu4 - (i + 1)].chroy > 0.1f && wbchro[sizcu4 - (i + 1)].chroxy > 0.0f  && wbchro[sizcu4 - (i + 1)].Y < limexclu) { //remove value too far from reference spectral
                 w++;// w number of real tests
                 xx_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chrox;
                 yy_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chroy;
@@ -6443,6 +6460,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
 
         int maxnb = 1; //since 8 april 2023
+
         if (oldsampling == true) {
             maxnb = 3;
         }
@@ -6553,13 +6571,13 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         ttend = N_t;
 
         //limit range temperature...gain time.
-    //    if (wbpar.itcwb_custom) {
-    //        ttbeg = std::max(repref - 6, 0);//enough > dgoodref = 3
-    //        ttend = std::min(repref + 6, N_t);
-    //    }  else {
-            ttbeg = std::max(repref - 11, 0);//enough in all cases > dgoodref
-            ttend = std::min(repref + 11, N_t);
-     //   }
+        //    if (wbpar.itcwb_custom) {
+        //        ttbeg = std::max(repref - 6, 0);//enough > dgoodref = 3
+        //        ttend = std::min(repref + 6, N_t);
+        //    }  else {
+        ttbeg = std::max(repref - 11, 0);//enough in all cases > dgoodref
+        ttend = std::min(repref + 11, N_t);
+        //   }
 
         if (oldsampling == true) {
             ttbeg = 0;
@@ -6653,9 +6671,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 dgoodref = 2;
             }
 
-        //    if (wbpar.itcwb_custom) {
-        //        dgoodref = 3;//limit range dT when custom
-        //    }
+            //    if (wbpar.itcwb_custom) {
+            //        dgoodref = 3;//limit range dT when custom
+            //    }
 
             const int scantempbeg = rtengine::max(goodref - (dgoodref + 1), 1);
             const int scantempend = rtengine::min(goodref + dgoodref, N_t - 1);
@@ -6812,6 +6830,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             }
 
             greenitc = gree[greengood].green;
+
             if (estimchrom < 0.025f  && oldsampling) {
                 float ac = -2.40f * estimchrom + 0.06f;//small empirical  correction, maximum 0.06 if chroma=0 for all image, currently for very low chroma +0.02
                 greenitc += ac;
@@ -6828,63 +6847,65 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
             bool greenex = false;
 
-            if ((keepgreen > 0.92 && keepgreen < 1.23) && oldsampling == false) {
-                if (abs(greengood - greencam) > 5) {
-                    double ag = 0.;
-                    double gcal = gree[greengood].green;
-                    ag = 0.89 * (gcal - keepgreen);
-                    greenitc = gcal - ag;
-                    greenex = true;
+            if (oldsampling == false) {
+                if ((keepgreen > 0.92 && keepgreen < 1.23)) {
+                    if (abs(greengood - greencam) > 5) {
+                        double ag = 0.;
+                        double gcal = gree[greengood].green;
+                        ag = 0.89 * (gcal - keepgreen);
+                        greenitc = gcal - ag;
+                        greenex = true;
 
-                    if (settings->verbose) {
-                        printf("green correction_1=%f \n", ag);
-                    }
-                } else {
-                    double ag = 0.;
-                    double gcal = gree[greengood].green;
-
-                    if (keepgreen > 1.09) {
-                        ag = 0.10 * (gcal - keepgreen) * abs(greengood - greencam);
+                        if (settings->verbose) {
+                            printf("green correction_1=%f \n", ag);
+                        }
                     } else {
-                        ag = 0.16 * (gcal - keepgreen) * abs(greengood - greencam);
-                    }
+                        double ag = 0.;
+                        double gcal = gree[greengood].green;
 
+                        if (keepgreen > 1.09) {
+                            ag = 0.10 * (gcal - keepgreen) * abs(greengood - greencam);
+                        } else {
+                            ag = 0.16 * (gcal - keepgreen) * abs(greengood - greencam);
+                        }
+
+                        greenitc = gcal - ag;
+                        greenex = true;
+
+                        if (settings->verbose) {
+                            printf("green correction_0=%f \n", ag);
+                        }
+
+                    }
+                }
+
+                if (((keepgreen >= 0.952 && keepgreen < 1.25) && greengood > 55) && !greenex) {
+                    double ag = 0.;
+                    double gcal = gree[greengood].green;//empirical  correction when green suspicious
+                    ag = 0.96 * (gcal - keepgreen);
                     greenitc = gcal - ag;
                     greenex = true;
 
                     if (settings->verbose) {
-                        printf("green correction_0=%f \n", ag);
+                        printf("green correction_2=%f \n", ag);
+                    }
+                }
+
+                if (((greengood > 41 &&  keepgreen < 0.7)  || (greengood > 46 &&  keepgreen < 0.952)) && !greenex) {
+                    double ag = 0.;
+                    double gcal = gree[greengood].green;
+                    ag = 0.95 * (gcal - keepgreen);//empirical  correction when green low - to improve
+
+                    if (purp == false) {
+                        ag -= 0.12;
                     }
 
+                    if (settings->verbose) {
+                        printf("green correction_3=%f \n", ag);
+                    }
+
+                    greenitc = gcal - ag;
                 }
-            }
-
-            if (((keepgreen >= 0.952 && keepgreen < 1.25) && greengood > 55)  && oldsampling == false && !greenex) {
-                double ag = 0.;
-                double gcal = gree[greengood].green;//empirical  correction when green suspicious
-                ag = 0.96 * (gcal - keepgreen);
-                greenitc = gcal - ag;
-                greenex = true;
-
-                if (settings->verbose) {
-                    printf("green correction_2=%f \n", ag);
-                }
-            }
-
-            if (((greengood > 41 &&  keepgreen < 0.7)  || (greengood > 46 &&  keepgreen < 0.952)) && oldsampling == false && !greenex) {
-                double ag = 0.;
-                double gcal = gree[greengood].green;
-                ag = 0.95 * (gcal - keepgreen);//empirical  correction when green low - to improve
-
-                if (purp == false) {
-                    ag -= 0.12;
-                }
-
-                if (settings->verbose) {
-                    printf("green correction_3=%f \n", ag);
-                }
-
-                greenitc = gcal - ag;
             }
         }
 
@@ -6893,7 +6914,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         avg_bm = 10000.f * bmm[goodref];
 
         //now we have temp green and student
-        if (((tempitc < 4000.f || tempitc > 7000.f || kcam == -1) || extra == true) && lastitc  && kcam <= 0  && nocam == 0/* && wbpar.itcwb_green == 0.f */ && oldsampling == false && wbpar.itcwb_alg == false) { //try to find if another tempref value near 5000K is better
+        if (((tempitc < 4000.f || tempitc > 6900.f || kcam == -1) || extra == true) && lastitc  && kcam <= 0  && nocam == 0/* && wbpar.itcwb_green == 0.f */ && oldsampling == false && wbpar.itcwb_alg == false) { //try to find if another tempref value near 5000K is better
             optitc[nbitc].stud = studgood;//std::max(studgood, 0.004f);//max to avoid choice between 2 very good results and falsifies the result
             optitc[nbitc].minc = Tppat[repref].minchroma;
             optitc[nbitc].titc = tempitc;
@@ -7016,7 +7037,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             itciterate = false;
         }
 
-        if (optitc[1].delt * std::max(optitc[1].stud, 0.04f) < optitc[0].delt * std::max(optitc[0].stud, 0.04f) && optitc[1].minc > 0.f) {
+        if (optitc[1].delt * std::max(optitc[1].stud, 0.04f) < optitc[0].delt * std::max(optitc[0].stud, 0.04f) && optitc[1].minc > 0.f  && !oldsampling) {
             choiceitc = 1;
             temp0 = optitc[0].titc;
         } else {
@@ -7027,7 +7048,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     if (settings->verbose) {
         for (int d = 0; d < 2; d++) {
-            printf("n=%i nbitc=%i stu=%f minc=%f tempitc=%f deltaE=%f choiceitc=%i\n", d, nbitc, (double) optitc[d].stud, (double) optitc[d].minc, (double) optitc[d].titc, (double) optitc[d].delt, choiceitc);
+            printf("n=%i nbitc=%i stu=%f minc=%f tempitc=%f greenitc=%f deltaE=%f choiceitc=%i\n", d, nbitc, (double) optitc[d].stud, (double) optitc[d].minc, (double) optitc[d].titc, (double) optitc[d].gritc, (double) optitc[d].delt, choiceitc);
         }
     }
 
