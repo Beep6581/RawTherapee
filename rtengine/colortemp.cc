@@ -5547,7 +5547,7 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
     bool observerchoice = false;
 
     if (wbpar.itcwb_sampling) {
-        observerchoice = (wbpar.observer == StandardObserver::TEN_DEGREES);
+        observerchoice = true; //(wbpar.observer == StandardObserver::TEN_DEGREES);
     } else {
         observerchoice = (wbpar.observer == StandardObserver::TEN_DEGREES);
         //observerchoice = wbpar.itcwb_obs;

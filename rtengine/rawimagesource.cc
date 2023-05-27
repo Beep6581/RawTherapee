@@ -5492,12 +5492,12 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             Rangegreenused.begin = std::max(greenrefo - 17, 0);
             Rangegreenused.end = std::min(greenrefo + 17, N_g);
         }
-
+/*
         if (wbpar.itcwb_custom) { //limit range to +5 g when custom
             Rangegreenused.begin = std::max(greenrefo - 5, 0);
             Rangegreenused.end = std::min(greenrefo + 5, N_g);
         }
-
+*/
         if (oldsampling == true) {
             Rangegreenused = Rangestandard2;
         }
@@ -6251,11 +6251,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         bool isponder = true;//with true moving average
         float powponder = settings->itcwb_powponder;
         powponder = LIM(powponder, 0.01f, 0.2f);
+        float estimchrom = 0.f;
 
         if (oldsampling == false) {
             for (int j = minsize; j < maxsize; ++j) {//20 empirical minimal value default to ensure a correlation
                 if (!good_size[j]) {
-                    float estimchrom = 0.f;
                     float countchxynum = 0.f;
 
                     float xh = 0.f;
@@ -6443,6 +6443,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
 
         int maxnb = 1; //since 8 april 2023
+        if (oldsampling == true) {
+            maxnb = 3;
+        }
 
 
         if (wbpar.itcwb_thres > 65) {//normally never used
@@ -6513,7 +6516,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             Tppat[repref].delt_E = dEmean / ndEmean;
             delta = Tppat[repref].delt_E;
 
-            if (settings->verbose) {
+            if (settings->verbose  && !oldsampling) {
                 printf("Patch Mean - Repref=%i deltaE=%f minhisto=%6.0f maxhisto=%7.0f \n", repref, (double) dEmean / ndEmean, (double) minhist, (double) maxhist);
             }
         }
@@ -6550,13 +6553,13 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         ttend = N_t;
 
         //limit range temperature...gain time.
-        if (wbpar.itcwb_custom) {
-            ttbeg = std::max(repref - 6, 0);//enough > dgoodref = 3
-            ttend = std::min(repref + 6, N_t);
-        }  else {
+    //    if (wbpar.itcwb_custom) {
+    //        ttbeg = std::max(repref - 6, 0);//enough > dgoodref = 3
+    //        ttend = std::min(repref + 6, N_t);
+    //    }  else {
             ttbeg = std::max(repref - 11, 0);//enough in all cases > dgoodref
             ttend = std::min(repref + 11, N_t);
-        }
+     //   }
 
         if (oldsampling == true) {
             ttbeg = 0;
@@ -6650,9 +6653,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 dgoodref = 2;
             }
 
-            if (wbpar.itcwb_custom) {
-                dgoodref = 3;//limit range dT when custom
-            }
+        //    if (wbpar.itcwb_custom) {
+        //        dgoodref = 3;//limit range dT when custom
+        //    }
 
             const int scantempbeg = rtengine::max(goodref - (dgoodref + 1), 1);
             const int scantempend = rtengine::min(goodref + dgoodref, N_t - 1);
@@ -6809,6 +6812,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             }
 
             greenitc = gree[greengood].green;
+            if (estimchrom < 0.025f  && oldsampling) {
+                float ac = -2.40f * estimchrom + 0.06f;//small empirical  correction, maximum 0.06 if chroma=0 for all image, currently for very low chroma +0.02
+                greenitc += ac;
+            }
 
             int greencam = 55;
 
@@ -7024,7 +7031,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
     }
 
-    if ((nbitc == 1 && choiceitc == 1) && wbpar.itcwb_alg == false && oldsampling == false && wbpar.itcwb_custom == false  && kcam == 0/* && wbpar.itcwb_green == 0.f */) {
+    if ((nbitc == 1 && choiceitc == 1) && wbpar.itcwb_alg == false && oldsampling == false  && kcam == 0/* && wbpar.itcwb_green == 0.f */) {
         bia = 2;
         studgood = optitc[choiceitc].stud;
         minchrom = optitc[choiceitc].minc;
