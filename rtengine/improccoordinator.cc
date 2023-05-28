@@ -571,13 +571,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                             printf("Keep camera settings temp=%f green=%f\n", tempref0bias0, greenref);
                         }
 
-                        autowb1 = false;
+                        autowb1 = true;
                         kcam = 1;
                     }
 
                     if (autowb1) {
                         //alternative to camera if camera settings out, using autowb grey to find new ref, then mixed with camera
-                        kcam = 0;
+                       // kcam = 0;
                         params->wb.method = "autold";
                         double rm, gm, bm;
                         tempitc = 5000.f;
@@ -587,7 +587,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         double greenref = currWBitc.getGreen();
                         bool pargref = true;
                         bool pargre = true;
-                        if ((greenref > 1.5f || tempref0bias < 3300.f || tempref0bias > 7700.f || forcewbgrey) && !params->wb.itcwb_sampling) { //probably camera out to adjust...
+                        if ((greenref > 1.5f || tempref0bias < 3300.f || tempref0bias > 7700.f || forcewbgrey) && kcam != 1 && !params->wb.itcwb_sampling) { //probably camera out to adjust...
                             imgsrc->getAutoWBMultipliersitc(extra, tempref0bias, greenref, tempitc, greenitc, temp0, delta, bia, dread, kcam, nocam, studgood, minchrom, kmin, minhist, maxhist, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
                             imgsrc->wbMul2Camera(rm, gm, bm);
                             imgsrc->wbCamera2Mul(rm, gm, bm);
@@ -707,7 +707,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     double greenref = currWBitc.getGreen();
                     greenitc = greenref;
 
-                    if ((greenref > 1.5f || tempref0bias < 3300.f || tempref0bias > 7700.f || forcewbgrey) && autowb1  && !params->wb.itcwb_sampling) { //probably camera out to adjust = greenref ? tempref0bias ?
+                    if ((greenref > 1.5f || tempref0bias < 3300.f || tempref0bias > 7700.f || forcewbgrey) && autowb1 && kcam != 1 && !params->wb.itcwb_sampling) { //probably camera out to adjust = greenref ? tempref0bias ?
                         tempref = tem * (1. + params->wb.tempBias);
                         greenref = gre;
                     } else {
