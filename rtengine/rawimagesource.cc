@@ -6268,7 +6268,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             for (int j = minsize; j < maxsize; ++j) {//20 empirical minimal value default to ensure a correlation
                 if (!good_size[j]) {
                     float countchxynum = 0.f;
-
+                    //Tppat[repref].minchroma = 0.f;
+                    estimchrom = 0.f;
                     float xh = 0.f;
                     float yh = 0.f;
                     wbchro[j].hue =  0.f;
@@ -6354,6 +6355,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                         Tppat[repref].minchroma = minchrom;
                         kmin = j;
                     }
+                    Tppat[repref].minchroma = minchrom;
                 }
 
                 good_size[kmin] = true;
