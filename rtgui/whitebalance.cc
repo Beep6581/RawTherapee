@@ -393,7 +393,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
 
     itcwb_prim = Gtk::manage (new MyComboBoxText ());
     itcwb_prim->append(M("TP_WBALANCE_ITCWB_PRIM_SRGB"));
-//    itcwb_prim->append(M("TP_WBALANCE_ITCWB_PRIM_ADOB"));
+    itcwb_prim->append(M("TP_WBALANCE_ITCWB_PRIM_BETA"));
 //    itcwb_prim->append(M("TP_WBALANCE_ITCWB_PRIM_REC"));
     itcwb_prim->append(M("TP_WBALANCE_ITCWB_PRIM_ACE"));
     itcwb_prim->set_active(1);
@@ -809,12 +809,12 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     if (pp->wb.itcwb_prim == "srgb") {
         itcwb_prim->set_active(0);
-//    } else if (pp->wb.itcwb_prim == "adob") {
-//        itcwb_prim->set_active(1);
+    } else if (pp->wb.itcwb_prim == "beta") {
+        itcwb_prim->set_active(1);
 //     } else if (pp->wb.itcwb_prim == "rec") {
 //        itcwb_prim->set_active(2);
     } else if (pp->wb.itcwb_prim == "ace") {
-        itcwb_prim->set_active(1);
+        itcwb_prim->set_active(2);
     }
     itcwb_primconn.block (false);
 
@@ -1022,11 +1022,11 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
     pp->wb.enabled = getEnabled();
     if (itcwb_prim->get_active_row_number() == 0) {
         pp->wb.itcwb_prim = "srgb";
-//    } else if (itcwb_prim->get_active_row_number() == 1){
-//        pp->wb.itcwb_prim = "adob";
+    } else if (itcwb_prim->get_active_row_number() == 1){
+        pp->wb.itcwb_prim = "beta";
 //    } else if (itcwb_prim->get_active_row_number() == 2){
 //        pp->wb.itcwb_prim = "rec";
-    } else if (itcwb_prim->get_active_row_number() == 1){
+    } else if (itcwb_prim->get_active_row_number() == 2){
         pp->wb.itcwb_prim = "ace";
     }
 
