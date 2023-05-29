@@ -34,7 +34,7 @@ class Navigator final :
     typedef const double (*TMatrix)[3];
 
 private:
-    DelayedCall<bool, Glib::ustring, Glib::ustring, int, int, int, int, int, bool> pointer_moved_delayed_call;
+    DelayedCall<bool, const rtengine::procparams::ColorManagementParams *, int, int, int, int, int, bool> pointer_moved_delayed_call;
 
     Options::NavigatorUnit currentRGBUnit;
     Options::NavigatorUnit currentHSVUnit;
@@ -61,7 +61,7 @@ public:
 
     // pointermotionlistener interface
     //  void pointerMoved (bool validPos, int x, int y, int r, int g, int b);
-    void pointerMoved (bool validPos, const Glib::ustring &profile, const Glib::ustring &profileW, int x, int y, int r, int g, int b, bool raw = false) override;
+    void pointerMoved(bool validPos, const rtengine::procparams::ColorManagementParams &cmp, int x, int y, int r, int g, int b, bool raw = false) override;
     void setInvalid (int fullWidth = -1, int fullHeight = -1);
 
     void getRGBText (int r, int g, int b, Glib::ustring &sR, Glib::ustring &sG, Glib::ustring &sB, bool isRaw = false) override;
