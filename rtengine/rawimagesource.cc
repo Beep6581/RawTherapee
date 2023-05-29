@@ -5271,8 +5271,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         if (wbpar.itcwb_prim == "srgb") {
             profuse = "sRGB";
-        } else if (wbpar.itcwb_prim == "adob") {
-            profuse = "Adobe RGB";
+        } else if (wbpar.itcwb_prim == "beta") {
+            profuse = "Beta RGB";
         } else if (wbpar.itcwb_prim == "rec") {
             profuse = "Rec2020";
         } else if (wbpar.itcwb_prim == "ace") {
