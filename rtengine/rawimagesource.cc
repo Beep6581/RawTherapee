@@ -5284,24 +5284,24 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             profuse = "sRGB";
         }
 
-        TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(profuse); //ACESp0 or sRGB
-        const float wp[3][3] = {
-            {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
-            {static_cast<float>(wprof[1][0]), static_cast<float>(wprof[1][1]), static_cast<float>(wprof[1][2])},
-            {static_cast<float>(wprof[2][0]), static_cast<float>(wprof[2][1]), static_cast<float>(wprof[2][2])}
+        TMatrix whbaprof = ICCStore::getInstance()->workingSpaceMatrix(profuse); //ACESp0, sRGB, Beta RGB, Rec2020
+        const float wb[3][3] = {
+            {static_cast<float>(whbaprof[0][0]), static_cast<float>(whbaprof[0][1]), static_cast<float>(whbaprof[0][2])},
+            {static_cast<float>(whbaprof[1][0]), static_cast<float>(whbaprof[1][1]), static_cast<float>(whbaprof[1][2])},
+            {static_cast<float>(whbaprof[2][0]), static_cast<float>(whbaprof[2][1]), static_cast<float>(whbaprof[2][2])}
         };
-        const double wp2[3][3] = {
-            {static_cast<double>(wprof[0][0]), static_cast<double>(wprof[0][1]), static_cast<double>(wprof[0][2])},
-            {static_cast<double>(wprof[1][0]), static_cast<double>(wprof[1][1]), static_cast<double>(wprof[1][2])},
-            {static_cast<double>(wprof[2][0]), static_cast<double>(wprof[2][1]), static_cast<double>(wprof[2][2])}
+        const double wb2[3][3] = {
+            {static_cast<double>(whbaprof[0][0]), static_cast<double>(whbaprof[0][1]), static_cast<double>(whbaprof[0][2])},
+            {static_cast<double>(whbaprof[1][0]), static_cast<double>(whbaprof[1][1]), static_cast<double>(whbaprof[1][2])},
+            {static_cast<double>(whbaprof[2][0]), static_cast<double>(whbaprof[2][1]), static_cast<double>(whbaprof[2][2])}
         };
 
-        TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(profuse);//ACESp0 or sRGB
+        TMatrix iwbprof = ICCStore::getInstance()->workingSpaceInverseMatrix(profuse);
         //inverse matrix user select
-        const float wip[3][3] = {
-            {static_cast<float>(wiprof[0][0]), static_cast<float>(wiprof[0][1]), static_cast<float>(wiprof[0][2])},
-            {static_cast<float>(wiprof[1][0]), static_cast<float>(wiprof[1][1]), static_cast<float>(wiprof[1][2])},
-            {static_cast<float>(wiprof[2][0]), static_cast<float>(wiprof[2][1]), static_cast<float>(wiprof[2][2])}
+        const float iwb[3][3] = {
+            {static_cast<float>(iwbprof[0][0]), static_cast<float>(iwbprof[0][1]), static_cast<float>(iwbprof[0][2])},
+            {static_cast<float>(iwbprof[1][0]), static_cast<float>(iwbprof[1][1]), static_cast<float>(iwbprof[1][2])},
+            {static_cast<float>(iwbprof[2][0]), static_cast<float>(iwbprof[2][1]), static_cast<float>(iwbprof[2][2])}
         };
 
         const int bfwitc = bfw;
@@ -6097,13 +6097,13 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 const float GG = gmm[rep] * greenloc[y][x];
                 const float BB = bmm[rep] * blueloc[y][x];
 
-                Color::rgbxyz(RR, GG, BB, xc[y][x], yc[y][x], zc[y][x], wp2);//use sRGB Adobe Rec2020 ACESp0
+                Color::rgbxyz(RR, GG, BB, xc[y][x], yc[y][x], zc[y][x], wb2);//use sRGB Adobe Rec2020 ACESp0
                 float X_r = xc[y][x];
                 float Y_r = yc[y][x];
                 float Z_r = zc[y][x];
 
                 if (oldsampling == false) {
-                    Color::gamutmap(X_r, Y_r, Z_r, wp2);//gamut control
+                    Color::gamutmap(X_r, Y_r, Z_r, wb2);//gamut control
                 }
 
                 const float som = X_r + Y_r + Z_r;
@@ -6552,7 +6552,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             const float Y = 65535.f * YY_curref_reduc[i][repref];
             const float Z = 65535.f * (1.f - xx_curref_reduc[i][repref] - yy_curref_reduc[i][repref]) * YY_curref_reduc[i][repref] / yy_curref_reduc[i][repref];
             float r, g, b;
-            Color::xyz2rgb(X, Y, Z, r, g, b, wip);
+            Color::xyz2rgb(X, Y, Z, r, g, b, iwb);
             R_curref_reduc[i][repref] = r / rmm[repref];
             G_curref_reduc[i][repref] = g / gmm[repref];
             B_curref_reduc[i][repref] = b / bmm[repref];
@@ -6614,7 +6614,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 const float RR = rmm[tt] * R_curref_reduc[i][repref];
                 const float GG = gmm[tt] * G_curref_reduc[i][repref];
                 const float BB = bmm[tt] * B_curref_reduc[i][repref];
-                Color::rgbxyY(RR, GG, BB, xxyycurr_reduc[2 * i][tt], xxyycurr_reduc[2 * i + 1][tt], unused, wp);
+                Color::rgbxyY(RR, GG, BB, xxyycurr_reduc[2 * i][tt], xxyycurr_reduc[2 * i + 1][tt], unused, wb);
             }
 
             for (int j = 0; j < Ncr ; ++j) {
@@ -6719,7 +6719,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                         const float RR = rmm[tt] * R_curref_reduc[i][repref];
                         const float GG = gmm[tt] * G_curref_reduc[i][repref];
                         const float BB = bmm[tt] * B_curref_reduc[i][repref];
-                        Color::rgbxyY(RR, GG, BB, xxyycurr_reduc[2 * i][tt], xxyycurr_reduc[2 * i + 1][tt], unused, wp);
+                        Color::rgbxyY(RR, GG, BB, xxyycurr_reduc[2 * i][tt], xxyycurr_reduc[2 * i + 1][tt], unused, wb);
                     }
 
                     //recalculate xy spectral now with good range of temp and green
