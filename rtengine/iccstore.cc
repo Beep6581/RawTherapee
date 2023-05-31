@@ -17,6 +17,7 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <cstring>
+#include <map>
 
 #include <glibmm/ustring.h>
 #include <glibmm/fileutils.h>
