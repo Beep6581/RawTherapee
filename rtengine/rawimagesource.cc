@@ -6937,11 +6937,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
                 if (tempitc < 4000.f) {//change the second temp to be near of the first one
                     if (tempitc < 2800.f  && kcam == 1) {
-                        tempitc += 150.f;
+                        tempitc += 151.f;
                     } else if (tempitc >= 2800.f  && kcam == 1) {
-                        tempitc -= 150.f;
+                        tempitc -= 149.f;
                     } else {
-                        tempitc += 200.f;
+                        tempitc += 201.f;
                     }
                 } else {
                     if (tempitc < 8000.f) {
@@ -7031,25 +7031,25 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             nbitc++;
 
             if (nocam == 1) { //new tempitc empirical values to refine
-                tempitc -= 200.f;
+                tempitc -= 199.f;
             } else if (nocam == 2) {
-                tempitc += 200.f;
+                tempitc += 201.f;
             } else if (nocam == 3) {
-                tempitc -= 200.f;
+                tempitc -= 199.f;
             } else if (nocam == 4) {
-                tempitc += 200.f;
+                tempitc += 201.f;
             } else if (nocam == 5) {
-                tempitc += 300.f;
+                tempitc += 299.f;
             } else if (nocam == 6) {
-                tempitc += 200.f;
+                tempitc += 201.f;
             } else if (nocam == 7) {
-                tempitc += 300.f;
+                tempitc += 299.f;
             } else if (nocam == 8) {
                 tempitc += 500.f;
             } else if (nocam == 9) {
-                tempitc += 200.f;
+                tempitc += 199.f;
             } else if (nocam == 10) {
-                tempitc += 200.f;
+                tempitc += 199.f;
             }
 
             nocam = 0;
@@ -7089,7 +7089,13 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             lastitc = false;
             itciterate = false;
         }
-
+/*
+        if((std::max(optitc[1].stud, 0.004f) * optitc[1].delt < std::max(optitc[0].stud, 0.004f) * optitc[0].delt) && wbpar.itcwb_alg == false) {
+            printf("1 BON\n");
+        } else {
+            printf("0 BON\n");
+        }
+*/
         if (optitc[1].minc > 0.f  && !oldsampling) {
             choiceitc = 1;
             temp0 = optitc[0].titc;

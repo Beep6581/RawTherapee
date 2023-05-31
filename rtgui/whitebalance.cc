@@ -1245,6 +1245,11 @@ void WhiteBalance::WBChanged(int met, double temperature, double greenVal, doubl
             disableListener();
             temp->setValue(temperature);
             green->setValue(greenVal);
+            double stud;
+            stud = studgood;
+            if(studgood < 0.0001) {
+                stud = 0.0001;
+            }
             mulLabel->set_text(
             Glib::ustring::compose(M("TP_WBALANCE_MULLABEL"),
                                    Glib::ustring::format(std::fixed, std::setprecision(4), rw),
@@ -1253,7 +1258,7 @@ void WhiteBalance::WBChanged(int met, double temperature, double greenVal, doubl
             );
             StudLabel->set_text(
                 Glib::ustring::compose(M("TP_WBALANCE_STUDLABEL"),
-                                   Glib::ustring::format(std::fixed, std::setprecision(4), studgood),
+                                   Glib::ustring::format(std::fixed, std::setprecision(4), stud),
                                    Glib::ustring::format(std::fixed, std::setprecision(0), bia), 
                                    Glib::ustring::format(std::fixed, std::setprecision(0), temp0)) 
                                    
