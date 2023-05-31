@@ -6995,7 +6995,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
                 tempref = tempitc * (1. + wbpar.tempBias);
 
-                optitc[nbitc].stud = studgood;//std::max(studgood, 0.004f);
+                optitc[nbitc].stud = studgood;
                 optitc[nbitc].minc =  Tppat[repref].minchroma;
                 optitc[nbitc].titc = tempitc;
                 optitc[nbitc].gritc = greenitc;
@@ -7055,7 +7055,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             nocam = 0;
             tempref = tempitc * (1. + wbpar.tempBias);
 
-            optitc[nbitc].stud = studgood;//std::max(studgood, 0.004f);
+            optitc[nbitc].stud = studgood;
             optitc[nbitc].minc =  Tppat[repref].minchroma;
             optitc[nbitc].titc = tempitc;
             optitc[nbitc].gritc = greenitc;
@@ -7071,7 +7071,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             optitc[nbitc].delt = Tppat[repref].delt_E;
             lastitc = false;
         } else {
-            optitc[nbitc].stud = studgood;//std::max(studgood, 0.004f);
+            optitc[nbitc].stud = studgood;
             optitc[nbitc].minc =  Tppat[repref].minchroma;
             optitc[nbitc].titc = tempitc;
             optitc[nbitc].gritc = greenitc;
@@ -7089,13 +7089,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             lastitc = false;
             itciterate = false;
         }
-/*
-        if((std::max(optitc[1].stud, 0.004f) * optitc[1].delt < std::max(optitc[0].stud, 0.004f) * optitc[0].delt) && wbpar.itcwb_alg == false) {
-            printf("1 BON\n");
-        } else {
-            printf("0 BON\n");
-        }
-*/
+
+
         if (optitc[1].minc > 0.f  && !oldsampling) {
             choiceitc = 1;
             temp0 = optitc[0].titc;
@@ -7113,6 +7108,12 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     if ((nbitc == 1 && choiceitc == 1) && wbpar.itcwb_alg == false && oldsampling == false) {
         bia = 2;
+        if((std::max(optitc[1].stud, 0.0004f) * optitc[1].delt < std::max(optitc[0].stud, 0.0004f) * optitc[0].delt) && wbpar.itcwb_alg == false) {
+            bia = 3;
+        } else {
+            bia = 2;
+        }
+        
         studgood = optitc[choiceitc].stud;
         minchrom = optitc[choiceitc].minc;
         tempitc = optitc[choiceitc].titc;
