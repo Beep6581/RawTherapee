@@ -18,6 +18,9 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <glibmm/ustring.h>
+#include <glibmm/timer.h>
+
 #include "cieimage.h"
 #include "color.h"
 #include "curves.h"

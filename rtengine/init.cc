@@ -17,7 +17,8 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <fftw3.h>
-#include "../rtgui/profilestorecombobox.h"
+#include <glibmm/miscutils.h>
+#include <glibmm/ustring.h>
 #include "color.h"
 #include "rtengine.h"
 #include "iccstore.h"

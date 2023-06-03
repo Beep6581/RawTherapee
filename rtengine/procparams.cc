@@ -1401,7 +1401,7 @@ WBParams::WBParams() :
     itcwb_ponder(true),
     itcwb_sorted(true),
     itcwb_forceextra(false),
-    itcwb_prim("ace"),//combobox
+    itcwb_prim("beta"),//combobox
     itcwb_sampling(false)
 
 {

@@ -1245,25 +1245,47 @@ void WhiteBalance::WBChanged(int met, double temperature, double greenVal, doubl
             disableListener();
             temp->setValue(temperature);
             green->setValue(greenVal);
+            double stud;
+            stud = studgood;
+            if(studgood < 0.0001) {
+                stud = 0.0001;
+            }
+            int bia2 = bia;
             mulLabel->set_text(
             Glib::ustring::compose(M("TP_WBALANCE_MULLABEL"),
                                    Glib::ustring::format(std::fixed, std::setprecision(4), rw),
                                    Glib::ustring::format(std::fixed, std::setprecision(2), gw),
                                    Glib::ustring::format(std::fixed, std::setprecision(4), bw))
             );
-            StudLabel->set_text(
-                Glib::ustring::compose(M("TP_WBALANCE_STUDLABEL"),
-                                   Glib::ustring::format(std::fixed, std::setprecision(4), studgood),
+            if(bia == 3) {
+                bia2 = bia - 1;
+                StudLabel->set_text(
+                    Glib::ustring::compose(M("TP_WBALANCE_STUDLABEL"),
+                                   Glib::ustring::format(std::fixed, std::setprecision(4), stud),
+                                   Glib::ustring::format(std::fixed, std::setprecision(0), bia2), 
+                                   Glib::ustring::format(std::fixed, std::setprecision(0), temp0)) 
+                );
+            } else if(bia == 2) {
+                StudLabel->set_text(
+                    Glib::ustring::compose(M("TP_WBALANCE_STUDLABEL1"),
+                                   Glib::ustring::format(std::fixed, std::setprecision(4), stud),
                                    Glib::ustring::format(std::fixed, std::setprecision(0), bia), 
                                    Glib::ustring::format(std::fixed, std::setprecision(0), temp0)) 
-                                   
-            );            
+                );
+            } else {
+                StudLabel->set_text(
+                    Glib::ustring::compose(M("TP_WBALANCE_STUDLABEL0"),
+                                   Glib::ustring::format(std::fixed, std::setprecision(4), stud),
+                                   Glib::ustring::format(std::fixed, std::setprecision(0), bia), 
+                                   Glib::ustring::format(std::fixed, std::setprecision(0), temp0)) 
+                );
+            }
             PatchLabel->set_text(
                 Glib::ustring::compose(M("TP_WBALANCE_PATCHLABEL"),
                                    Glib::ustring::format(std::fixed, std::setprecision(0), dread),
                                    Glib::ustring::format(std::fixed, std::setprecision(4), minchrom),
                                    Glib::ustring::format(std::fixed, std::setprecision(0), kmin))
-            );            
+            );
             PatchlevelLabel->set_text(
                 Glib::ustring::compose(M("TP_WBALANCE_PATCHLEVELLABEL"),
                                    Glib::ustring::format(std::fixed, std::setprecision(4), delta),

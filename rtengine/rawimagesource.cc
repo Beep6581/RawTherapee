@@ -6937,11 +6937,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
                 if (tempitc < 4000.f) {//change the second temp to be near of the first one
                     if (tempitc < 2800.f  && kcam == 1) {
-                        tempitc += 150.f;
+                        tempitc += 151.f;
                     } else if (tempitc >= 2800.f  && kcam == 1) {
-                        tempitc -= 150.f;
+                        tempitc -= 149.f;
                     } else {
-                        tempitc += 200.f;
+                        tempitc += 201.f;
                     }
                 } else {
                     if (tempitc < 8000.f) {
@@ -6995,7 +6995,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
                 tempref = tempitc * (1. + wbpar.tempBias);
 
-                optitc[nbitc].stud = studgood;//std::max(studgood, 0.004f);
+                optitc[nbitc].stud = studgood;
                 optitc[nbitc].minc =  Tppat[repref].minchroma;
                 optitc[nbitc].titc = tempitc;
                 optitc[nbitc].gritc = greenitc;
@@ -7031,31 +7031,31 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             nbitc++;
 
             if (nocam == 1) { //new tempitc empirical values to refine
-                tempitc -= 200.f;
+                tempitc -= 199.f;
             } else if (nocam == 2) {
-                tempitc += 200.f;
+                tempitc += 201.f;
             } else if (nocam == 3) {
-                tempitc -= 200.f;
+                tempitc -= 199.f;
             } else if (nocam == 4) {
-                tempitc += 200.f;
+                tempitc += 201.f;
             } else if (nocam == 5) {
-                tempitc += 300.f;
+                tempitc += 299.f;
             } else if (nocam == 6) {
-                tempitc += 200.f;
+                tempitc += 201.f;
             } else if (nocam == 7) {
-                tempitc += 300.f;
+                tempitc += 299.f;
             } else if (nocam == 8) {
                 tempitc += 500.f;
             } else if (nocam == 9) {
-                tempitc += 200.f;
+                tempitc += 199.f;
             } else if (nocam == 10) {
-                tempitc += 200.f;
+                tempitc += 199.f;
             }
 
             nocam = 0;
             tempref = tempitc * (1. + wbpar.tempBias);
 
-            optitc[nbitc].stud = studgood;//std::max(studgood, 0.004f);
+            optitc[nbitc].stud = studgood;
             optitc[nbitc].minc =  Tppat[repref].minchroma;
             optitc[nbitc].titc = tempitc;
             optitc[nbitc].gritc = greenitc;
@@ -7071,7 +7071,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             optitc[nbitc].delt = Tppat[repref].delt_E;
             lastitc = false;
         } else {
-            optitc[nbitc].stud = studgood;//std::max(studgood, 0.004f);
+            optitc[nbitc].stud = studgood;
             optitc[nbitc].minc =  Tppat[repref].minchroma;
             optitc[nbitc].titc = tempitc;
             optitc[nbitc].gritc = greenitc;
@@ -7090,6 +7090,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             itciterate = false;
         }
 
+
         if (optitc[1].minc > 0.f  && !oldsampling) {
             choiceitc = 1;
             temp0 = optitc[0].titc;
@@ -7107,6 +7108,12 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     if ((nbitc == 1 && choiceitc == 1) && wbpar.itcwb_alg == false && oldsampling == false) {
         bia = 2;
+        if((std::max(optitc[1].stud, 0.0004f) * optitc[1].delt < std::max(optitc[0].stud, 0.0004f) * optitc[0].delt) && wbpar.itcwb_alg == false) {
+            bia = 3;
+        } else {
+            bia = 2;
+        }
+        
         studgood = optitc[choiceitc].stud;
         minchrom = optitc[choiceitc].minc;
         tempitc = optitc[choiceitc].titc;
