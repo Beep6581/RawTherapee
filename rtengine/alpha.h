@@ -19,7 +19,7 @@
 #ifndef _ALPHA_H_
 #define _ALPHA_H_
 
-#include <gtkmm.h>
+#include <cairomm/cairomm.h>
 #include <assert.h>
 
 #define CHECK_BOUNDS 0

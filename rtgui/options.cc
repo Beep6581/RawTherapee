@@ -19,7 +19,11 @@
 #include "options.h"
 #include <cstdio>
 #include <glib/gstdio.h>
+#include <glibmm/date.h>
+#include <glibmm/fileutils.h>
 #include <glibmm/keyfile.h>
+#include <glibmm/miscutils.h>
+#include <glibmm/regex.h>
 #include <iostream>
 #include <sstream>
 #include "multilangmgr.h"
