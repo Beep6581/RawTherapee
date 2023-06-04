@@ -5267,7 +5267,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     while (itciterate) {//loop to find best mix minchrom and studgood and deltaE patch
         Glib::ustring profuse;
-        profuse = "ACESp0";
+        profuse = "JDCmax";
 
         if (wbpar.itcwb_prim == "srgb") {
             profuse = "sRGB";
@@ -5275,8 +5275,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             profuse = "Beta RGB";
         } else if (wbpar.itcwb_prim == "rec") {
             profuse = "Rec2020";
-        } else if (wbpar.itcwb_prim == "ace") {
-            profuse = "ACESp0";
+        } else if (wbpar.itcwb_prim == "jdcmax") {
+            profuse = "JDCmax";
         }
 
 
@@ -5285,7 +5285,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
 
         TMatrix whbaprof = ICCStore::getInstance()->workingSpaceMatrix(profuse); //ACESp0, sRGB, Beta RGB, Rec2020
-        const float wb[3][3] = {
+        float wb[3][3] = {
             {static_cast<float>(whbaprof[0][0]), static_cast<float>(whbaprof[0][1]), static_cast<float>(whbaprof[0][2])},
             {static_cast<float>(whbaprof[1][0]), static_cast<float>(whbaprof[1][1]), static_cast<float>(whbaprof[1][2])},
             {static_cast<float>(whbaprof[2][0]), static_cast<float>(whbaprof[2][1]), static_cast<float>(whbaprof[2][2])}
@@ -5303,7 +5303,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             {static_cast<float>(iwbprof[1][0]), static_cast<float>(iwbprof[1][1]), static_cast<float>(iwbprof[1][2])},
             {static_cast<float>(iwbprof[2][0]), static_cast<float>(iwbprof[2][1]), static_cast<float>(iwbprof[2][2])}
         };
-
         const int bfwitc = bfw;
         const int bfhitc = bfh;
 

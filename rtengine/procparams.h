@@ -1928,6 +1928,7 @@ struct ColorManagementParams {
         ACES_P1,
         WIDE_GAMUT,
         ACES_P0,
+        JDC_MAX,
         BRUCE_RGB,
         BETA_RGB,
         BEST_RGB,
