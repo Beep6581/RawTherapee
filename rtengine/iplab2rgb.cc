@@ -434,7 +434,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         }
     };
 
-    if (profile == "sRGB" || profile == "Adobe RGB" || profile == "ProPhoto" || profile == "WideGamut" || profile == "BruceRGB" || profile == "Beta RGB" || profile == "BestRGB" || profile == "Rec2020" || profile == "ACESp0" || profile == "ACESp1") {
+    if (profile == "sRGB" || profile == "Adobe RGB" || profile == "ProPhoto" || profile == "WideGamut" || profile == "BruceRGB" || profile == "Beta RGB" || profile == "BestRGB" || profile == "Rec2020" || profile == "ACESp0" || profile == "ACESp1" || profile == "JDCmax") {
         if (settings->verbose) {
             printf("Profile=%s\n", profile.c_str());
         }
@@ -600,6 +600,11 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             break;
         }
 
+        case ColorManagementParams::Primaries::JDC_MAX: {
+            profile = "JDCmax";
+            break;
+        }
+
         case ColorManagementParams::Primaries::BRUCE_RGB: {
             profile = "BruceRGB";
             break;
@@ -753,6 +758,17 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             illum = toUnderlying(ColorManagementParams::Illuminant::D60);
             Wx = 0.952646075;
             Wz = 1.008825184;
+
+        } else if (profile == "JDCmax") {
+            p[0] = 0.734702;    // JDC max primaries
+            p[1] = 0.265302;
+            p[2] = 0.021908;
+            p[3] = 0.930288;
+            p[4] = 0.120593;
+            p[5] = 0.001583;
+            illum = toUnderlying(ColorManagementParams::Illuminant::D50);
+            Wx = 0.964295676;
+            Wz = 0.825104603;
 
         } else if (profile == "ACESp1") {
             p[0] = 0.713;    // ACES P1 primaries

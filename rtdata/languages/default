@@ -2636,6 +2636,7 @@ TP_ICM_WORKING_PRIM_BRU;BruceRGB
 TP_ICM_WORKING_PRIM_BST;BestRGB
 TP_ICM_WORKING_PRIM_CUS;Custom (sliders)
 TP_ICM_WORKING_PRIM_CUSGR;Custom (CIE xy Diagram)
+TP_ICM_WORKING_PRIM_JDCMAX;JDC Max
 TP_ICM_WORKING_PRIM_NONE;Default
 TP_ICM_WORKING_PRIM_PROP;ProPhoto
 TP_ICM_WORKING_PRIM_REC;Rec2020
@@ -4107,7 +4108,8 @@ TP_WBALANCE_GTI;GTI
 TP_WBALANCE_HMI;HMI
 TP_WBALANCE_ITCWB_DELTA;Delta temperature in green loop
 TP_WBALANCE_ITCWBDELTA_TOOLTIP;Fixed for each "green" iteration tried, the temperature difference to be taken into account.
-TP_WBALANCE_ITCWB_FORCED;Forces use of the entire CIE diagram
+//TP_WBALANCE_ITCWB_FORCED;Forces use of the entire CIE diagram
+TP_WBALANCE_ITCWB_FORCED;Close to full CIE diagram
 TP_WBALANCE_ITCWFORCED_TOOLTIP;By default (box not checked) the data scanned during sampling is brought back to the sRGB profile, which is the most widespread, both for calibrating DCP or ICC profiles with the Colorchecker24, or used on the web.\n If you have very high gamut images (some flowers, artificial colors), then it may be necessary to use the entire CIExy diagram, the profile used will be ACESP0. In this second case, the number of colors that can be used in internal to the algorithm will be more important.
 TP_WBALANCE_ITCWB_FGREEN;Find green student
 TP_WBALANCE_ITCWGREEN;Green refinement
@@ -4131,7 +4133,8 @@ TP_WBALANCE_ITCWB_PRIM_ADOB;Medium sampling
 TP_WBALANCE_ITCWB_PRIM_BETA;Medium sampling - near Pointer's gamut
 TP_WBALANCE_ITCWB_PRIM_REC;High sampling
 TP_WBALANCE_ITCWB_PRIM_ACE;Forces use of the entire CIE diagram
-TP_WBALANCE_ITCWPRIM_TOOLTIP;Allows you to select the image sampling.\n'Forces use of the entire CIE diagram' (default) uses all the data present on the sensor, possibly including the imaginary colors.\nMedium sampling - near Pointer's gamut: corresponds substantially to the most common cases of human vision.\nThe other choice 'Low sampling and No use camera settings' allow you to isolate high gamut parts of the image and forces the algorithm in some cases (tint > 0.8,...) not to use camera settings. This will obviously have an impact on the result.\n\nThis sampling only has an influence on the channel multipliers, it has nothing to do with the "working profile" and does not modify the gamut of the image.
+TP_WBALANCE_ITCWB_PRIM_JDCMAX;Close to full CIE diagram
+TP_WBALANCE_ITCWPRIM_TOOLTIP;Allows you to select the image sampling.\n'Close to full CIE diagram' almost uses the data present on the sensor, possibly including the imaginary colors.\nMedium sampling (default) - near Pointer's gamut: corresponds substantially to the most common cases of human vision.\nThe other choice 'Low sampling and No use camera settings' allow you to isolate high gamut parts of the image and forces the algorithm in some cases (tint > 0.8,...) not to use camera settings. This will obviously have an impact on the result.\n\nThis sampling only has an influence on the channel multipliers, it has nothing to do with the "working profile" and does not modify the gamut of the image.
 TP_WBALANCE_ITCWB_RGREEN;Green range
 TP_WBALANCE_ITCWBRGREEN_TOOLTIP;Sets the green value review amplitude in iterations, from low amplitude 0.82 to 1.25 to maximum amplitude 0.4 to 4.
 TP_WBALANCE_ITCWB_SAMPLING;Low sampling 5.9
