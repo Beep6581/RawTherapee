@@ -707,8 +707,17 @@ private:
     Gtk::CheckButton* const activlum;
     MyExpander* const expdenoise;
     MyComboBoxText* const quamethod;
+    MyExpander* const expdenoisenl;
+    MyExpander* const expdenoiselum;
+    MyExpander* const expdenoisech;
     CurveEditorGroup* const LocalcurveEditorwavden;
     FlatCurveEditor* const wavshapeden;
+    Gtk::Label* const lCLabels;
+    Gtk::Label* const lumLabels;
+    Gtk::Label* const lum46Labels;
+    Gtk::Label* const chroLabels;
+    Gtk::Label* const chro46Labels;
+    
     MyExpander* const expdenoise1;
     Gtk::Label* const maskusable;
     Gtk::Label* const maskunusable;
@@ -746,7 +755,7 @@ private:
     
     Gtk::CheckButton* const invmaskd;
     Gtk::CheckButton* const invmask;
-    Gtk::Frame* const nlFrame;
+    Gtk::Frame* const prevFrame;
     Adjuster* const nlstr;
     Adjuster* const nldet;
     Adjuster* const nlpat;
@@ -788,6 +797,8 @@ private:
 public:
     LocallabBlur();
     ~LocallabBlur();
+    void updatedenlc(const double highres, const double nres, const double highres46, const double nres46, const double Lhighres, const double Lnres, const double Lhighres46, const double Lnres46);
+
 
     bool isMaskViewActive() override;
     void resetMaskView() override;

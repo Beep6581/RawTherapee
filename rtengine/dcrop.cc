@@ -600,7 +600,6 @@ void Crop::update(int todo)
             params.dirpyrDenoise.redchro = maxr;
             params.dirpyrDenoise.bluechro = maxb;
             parent->denoiseInfoStore.valid = true;
-
             if (parent->adnListener) {
                 parent->adnListener->chromaChanged(params.dirpyrDenoise.chroma, params.dirpyrDenoise.redchro, params.dirpyrDenoise.bluechro);
             }
@@ -848,7 +847,7 @@ void Crop::update(int todo)
 
 
     if ((todo & (M_AUTOEXP | M_RGBCURVE)) && params.locallab.enabled && !params.locallab.spots.empty()) {
-    
+
         //I made a little change here. Rather than have luminanceCurve (and others) use in/out lab images, we can do more if we copy right here.
         parent->ipf.rgb2lab(*baseCrop, *laboCrop, params.icm.workingProfile);
  
@@ -945,16 +944,7 @@ void Crop::update(int todo)
         auto& locwavCurveden = parent->locwavCurveden;
         auto& lmasklocal_curve2 = parent->lmasklocal_curve;
         auto& loclmasCurve_wav = parent->loclmasCurve_wav;
-//        const int sizespot = (int)params.locallab.spots.size();
-/*        float *huerefp = nullptr;
-        huerefp = new float[sizespot];
-        float *chromarefp = nullptr;
-        chromarefp = new float[sizespot];
-        float *lumarefp = nullptr;
-        lumarefp = new float[sizespot];
-        float *fabrefp = nullptr;
-        fabrefp = new float[sizespot];
-*/
+
         for (int sp = 0; sp < (int)params.locallab.spots.size(); sp++) {
             locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
             locRETtransCurve.Set(params.locallab.spots.at(sp).localTtranscurve);
@@ -1048,6 +1038,7 @@ void Crop::update(int todo)
             if (black < 0. && params.locallab.spots.at(sp).expMethod == "pde" ) {
                 black *= 1.5;
             }
+            std::vector<LocallabListener::locallabDenoiseLC> localldenoiselc;
 
             double cont = params.locallab.spots.at(sp).contrast;
             double huere, chromare, lumare, huerefblu, chromarefblu, lumarefblu, sobelre;
@@ -1063,6 +1054,7 @@ void Crop::update(int todo)
             float stdtme = parent->stdtms[sp];
             float meanretie = parent->meanretis[sp];
             float stdretie = parent->stdretis[sp];
+
             float fab = 1.f;
             float minCD;
             float maxCD;
@@ -1073,7 +1065,14 @@ void Crop::update(int todo)
             float Tmin;
             float Tmax;
             int lastsav;
-
+            float highresi = 0.f;
+            float nresi = 0.f;
+            float highresi46 =0.f;
+            float nresi46 = 0.f;
+            float Lhighresi = 0.f;
+            float Lnresi = 0.f;
+            float Lhighresi46 = 0.f;
+            float Lnresi46 = 0.f;
 /*            huerefp[sp] = huere;
             chromarefp[sp] = chromare;
             lumarefp[sp] = lumare;
@@ -1142,9 +1141,20 @@ void Crop::update(int todo)
                         huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, 
                         parent->previewDeltaE, parent->locallColorMask, parent->locallColorMaskinv, parent->locallExpMask, parent->locallExpMaskinv, parent->locallSHMask, parent->locallSHMaskinv, parent->locallvibMask,  parent->localllcMask, parent->locallsharMask, parent->locallcbMask, parent->locallretiMask, parent->locallsoftMask, parent->localltmMask, parent->locallblMask,
                         parent->localllogMask, parent->locall_Mask, parent->locallcieMask, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
-                        meantme, stdtme, meanretie, stdretie, fab);
-                    //    fabrefp[sp] = fab;
-
+                        meantme, stdtme, meanretie, stdretie, fab, 
+                        highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46);
+                        
+                        LocallabListener::locallabDenoiseLC denoiselc;
+                        denoiselc.highres = highresi;
+                        denoiselc.nres = nresi; 
+                        denoiselc.highres46 = highresi46;
+                        denoiselc.nres46 = nresi46;
+                        denoiselc.Lhighres =  Lhighresi;
+                        denoiselc.Lnres = Lnresi;
+                        denoiselc.Lhighres46 = Lhighresi46;
+                        denoiselc.Lnres46 = Lnresi46;
+                        localldenoiselc.push_back(denoiselc);
+                        
                         if (parent->previewDeltaE || parent->locallColorMask == 5 || parent->locallvibMask == 4 || parent->locallExpMask == 5 || parent->locallSHMask == 4 || parent->localllcMask == 4 || parent->localltmMask == 4 || parent->localllogMask == 4 || parent->locallsoftMask == 6 || parent->localllcMask == 4 || parent->locallcieMask == 4) {
                             params.blackwhite.enabled = false;
                             params.colorToning.enabled = false;
@@ -1174,6 +1184,20 @@ void Crop::update(int todo)
 
                         }
                         */
+                        denoiselc.highres = highresi;
+                        denoiselc.nres = nresi; 
+                        denoiselc.highres46 = highresi46;
+                        denoiselc.nres46 = nresi46;
+                        denoiselc.Lhighres =  Lhighresi;
+                        denoiselc.Lnres = Lnresi;
+                        denoiselc.Lhighres46 = Lhighresi46;
+                        denoiselc.Lnres46 = Lnresi46;
+                        localldenoiselc.push_back(denoiselc);
+                        
+                       
+                        if (parent->locallListener) {
+                            parent->locallListener->denChanged(localldenoiselc, params.locallab.selspot);
+                        }
 
             } else {
                 parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop.get(), savenormtmCrop.get(), savenormretiCrop.get(), lastorigCrop.get(), fw, fh, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, locRETtransCurve,
@@ -1229,8 +1253,11 @@ void Crop::update(int todo)
                         LHutili, HHutili, CHutili, HHutilijz, CHutilijz, LHutilijz, cclocalcurve2, localcutili, rgblocalcurve2, localrgbutili, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2,
                         huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                         minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
-                        meantme, stdtme, meanretie, stdretie, fab);
+                        meantme, stdtme, meanretie, stdretie, fab,
+                        highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46);
             }
+            
+            
             if (sp + 1u < params.locallab.spots.size()) {
                 // do not copy for last spot as it is not needed anymore
                 lastorigCrop->CopyFrom(labnCrop);
