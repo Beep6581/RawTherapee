@@ -434,7 +434,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         }
     };
 
-    if (profile == "sRGB" || profile == "Adobe RGB" || profile == "ProPhoto" || profile == "WideGamut" || profile == "BruceRGB" || profile == "Beta RGB" || profile == "BestRGB" || profile == "Rec2020" || profile == "ACESp0" || profile == "ACESp1" || profile == "JDCmax") {
+    if (profile == "sRGB" || profile == "Adobe RGB" || profile == "ProPhoto" || profile == "WideGamut"  /*|| profile == "BruceRGB" */|| profile == "Beta RGB" || profile == "BestRGB" || profile == "Rec2020" || profile == "ACESp0" || profile == "ACESp1" || profile == "JDCmax") {
         if (settings->verbose) {
             printf("Profile=%s\n", profile.c_str());
         }
@@ -604,12 +604,12 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             profile = "JDCmax";
             break;
         }
-
+/*
         case ColorManagementParams::Primaries::BRUCE_RGB: {
             profile = "BruceRGB";
             break;
         }
-
+*/
         case ColorManagementParams::Primaries::BETA_RGB: {
             profile = "Beta RGB";
             break;
@@ -700,7 +700,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             illum = toUnderlying(ColorManagementParams::Illuminant::D65);
             Wx = 0.95045471;
             Wz = 1.08905029;
-
+/*
         } else if (profile == "BruceRGB") {
             p[0] = 0.6400;    // Bruce primaries
             p[1] = 0.3300;
@@ -712,7 +712,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             illum = toUnderlying(ColorManagementParams::Illuminant::D65);
             Wx = 0.95045471;
             Wz = 1.08905029;
-
+*/
         } else if (profile == "Beta RGB") {
             p[0] = 0.6888;    // Beta primaries
             p[1] = 0.3112;
