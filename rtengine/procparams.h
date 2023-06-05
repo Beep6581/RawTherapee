@@ -1929,7 +1929,7 @@ struct ColorManagementParams {
         WIDE_GAMUT,
         ACES_P0,
         JDC_MAX,
-    //    BRUCE_RGB,
+        BRUCE_RGB,
         BETA_RGB,
         BEST_RGB,
         CUSTOM,

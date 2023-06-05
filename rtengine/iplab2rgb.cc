@@ -434,7 +434,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         }
     };
 
-    if (profile == "sRGB" || profile == "Adobe RGB" || profile == "ProPhoto" || profile == "WideGamut"  /*|| profile == "BruceRGB" */|| profile == "Beta RGB" || profile == "BestRGB" || profile == "Rec2020" || profile == "ACESp0" || profile == "ACESp1" || profile == "JDCmax") {
+    if (profile == "sRGB" || profile == "Adobe RGB" || profile == "ProPhoto" || profile == "WideGamut"  || profile == "BruceRGB" || profile == "Beta RGB" || profile == "BestRGB" || profile == "Rec2020" || profile == "ACESp0" || profile == "ACESp1" || profile == "JDCmax") {
         if (settings->verbose) {
             printf("Profile=%s\n", profile.c_str());
         }
@@ -509,7 +509,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
     float greyy = params->icm.grey;
     float epsil = 0.0001f;
 
-    if (prim == 12) {//convert datas area to xy
+    if (prim == 14) {//convert datas area to xy
         float redgraphx =  params->icm.labgridcieALow;
         float redgraphy =  params->icm.labgridcieBLow;
         float blugraphx =  params->icm.labgridcieAHigh;
@@ -597,6 +597,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         }
 
         case ColorManagementParams::Primaries::ACES_P0: {
+            profile = "ACESp0";
             break;
         }
 
@@ -604,12 +605,12 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             profile = "JDCmax";
             break;
         }
-/*
+
         case ColorManagementParams::Primaries::BRUCE_RGB: {
             profile = "BruceRGB";
             break;
         }
-*/
+
         case ColorManagementParams::Primaries::BETA_RGB: {
             profile = "Beta RGB";
             break;

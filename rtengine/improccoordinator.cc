@@ -2026,7 +2026,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                 tmpImage1.reset();
 
-                if (prim == 12) {//pass red gre blue xy in function of area dats Ciexy
+                if (prim == 14) {//pass red gre blue xy in function of area dats Ciexy
                     float redgraphx =  params->icm.labgridcieALow;
                     float redgraphy =  params->icm.labgridcieBLow;
                     float blugraphx =  params->icm.labgridcieAHigh;
