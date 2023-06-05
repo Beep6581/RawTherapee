@@ -509,7 +509,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
     float greyy = params->icm.grey;
     float epsil = 0.0001f;
 
-    if (prim == 14) {//convert datas area to xy
+    if (prim == 13) {//convert datas area to xy
         float redgraphx =  params->icm.labgridcieALow;
         float redgraphy =  params->icm.labgridcieBLow;
         float blugraphx =  params->icm.labgridcieAHigh;
