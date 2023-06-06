@@ -6571,6 +6571,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
             Tppat[repref].delt_E = dEmean / ndEmean;
             delta = Tppat[repref].delt_E;
+            Tppat[repref].maxhi = maxhist;
+            Tppat[repref].minhi = minhist;
 
             if (settings->verbose  && !oldsampling) {
                 printf("Patch Mean - Repref=%i deltaE=%f minhisto=%6.0f maxhisto=%7.0f \n", repref, (double) dEmean / ndEmean, (double) minhist, (double) maxhist);
