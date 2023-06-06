@@ -4548,7 +4548,7 @@ static void histoxyY_low(int bfhitc, int bfwitc, const array2D<float> & xc, cons
 
 //enable display cells
 
-int cellxy[80][90] ;
+//int cellxy[80][90] ;
 
 static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const array2D<float> & yc, const array2D<float> & Yc, LUTf &xxx, LUTf &yyy, LUTf &YYY, LUTu &histxy, bool purpe)
 {
@@ -4557,10 +4557,10 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
     // of course we can change to be more precise
     // purp enable or not purple color in xyY - approximation...
 //enable display cells
-    int totalpixels = 0;
+//    int totalpixels = 0;
 
 #ifdef _OPENMP
- //   #pragma omp parallel  // disabled if enable display cells
+    #pragma omp parallel  // disabled if enable display cells
 #endif
     {
         LUTu histxythr(histxy.getSize());
@@ -4575,16 +4575,16 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
         float Ypurp = settings->itcwb_Ypurple;
         float Ypurpmax = 1.f;
         //enable display cells
-
+/*
         // clear
         for (int i = 0; i < 80; ++i) {
             for (int j = 0 ; j < 90; ++j) {
                 cellxy[i][j] = 0;
             }
         }
-
+*/
 #ifdef _OPENMP
-  //      #pragma omp for schedule(dynamic, 4) nowait //disable if enable display cells
+       #pragma omp for schedule(dynamic, 4) nowait //disable if enable display cells
 
 #endif
 
@@ -5118,7 +5118,7 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
                     YYYthr[nh] += Yc[y][x];
                 }
 //enable display cells
-                   
+/*                   
                     // update
                     int x1 = (int)(100.0 * (xc[y][x]));
                     int y1 = (int)(100.0 * (yc[y][x]));
@@ -5127,12 +5127,12 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
                         cellxy[x1][y1]++;
                         totalpixels++;
                     }
-
+*/
             }
         }
 
 #ifdef _OPENMP
-  //      #pragma omp critical    //disable if enable display cells
+        #pragma omp critical    //disable if enable display cells
 #endif
         {
             histxy += histxythr;
@@ -6133,7 +6133,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 const float som = X_r + Y_r + Z_r;
                 xc[y][x] = X_r / som;
                 yc[y][x] = Y_r / som;
-                Yc[y][x] = yc[y][x] / 65535.f;
+                Yc[y][x] = Y_r / 65535.f;
             }
         }
 
@@ -6157,7 +6157,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             histoxyY_low(bfhitc, bfwitc, xc, yc, Yc, xxx,  yyy, YYY, histxy);//low scaling
         }
 //enable display cells
-        
+/*        
         printf ("xc\tyc\tcount\n") ;
         printf ("--\t--\t-----\n") ;
         for (int x1 = 0 ; x1 < 80; ++x1) {
@@ -6167,7 +6167,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 }
             }
         }
-
+*/
 
         // free some memory
         xc.free();
@@ -6473,14 +6473,14 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             printf("Info2 - patch estimation of wp displacement (before):j=%i repref=%i real=%i Tppat=%f chrom=%f hue=%f\n", kmin, repref, index2 - indn, (double) Tppat[repref].minchroma, (double) minchrom, (double) estim_hue[kmin][repref]);
         };
 
-        double limexclu = 0.96;
+        double limexclu = 0.96;//to avoid highlight in some cases (sky...)
 
         if (oldsampling) {
             limexclu = 1.5;
         }
 
         for (int i = indn; i < index2; ++i) {
-            //improvment to limit high Y values wbchro[sizcu4 - (i + 1)].Y < 0.96  0.96 arbitrary high value, maybe 0.9 àr 0.98...
+            //improvment to limit high Y values wbchro[sizcu4 - (i + 1)].Y < 0.96  0.96 arbitrary high value, maybe 0.9 or 0.98...or 1.0
             if (wbchro[sizcu4 - (i + 1)].chrox > 0.1f && wbchro[sizcu4 - (i + 1)].chroy > 0.1f && wbchro[sizcu4 - (i + 1)].chroxy > 0.0f  && wbchro[sizcu4 - (i + 1)].Y < limexclu) { //remove value too far from reference spectral
                 w++;// w number of real tests
                 xx_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chrox;
