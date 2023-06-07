@@ -6540,7 +6540,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 }
 
                 {
-                    float spectlimit = 0.f; //settings->itcwb_deltaspec;
+                    float spectlimit = settings->itcwb_deltaspec;
                     float dE = sqrt(SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[kN][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[kN][repref]));
                     dEmean += dE;
                     ndEmean++;
