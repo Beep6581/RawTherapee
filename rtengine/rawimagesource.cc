@@ -5294,14 +5294,25 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         Glib::ustring profuse;
         profuse = "JDCmax";
 
+        int limx = 0.05f;
+        int limy = 0.04f;
+
         if (wbpar.itcwb_prim == "srgb") {
             profuse = "sRGB";
+            limx = 0.12f;
+            limy = 0.06f;
         } else if (wbpar.itcwb_prim == "beta") {
             profuse = "Beta RGB";
+            limx = 0.1f;
+            limy = 0.05f;
         } else if (wbpar.itcwb_prim == "rec") {
             profuse = "Rec2020";
+            limx = 0.1f;
+            limy = 0.05f;
         } else if (wbpar.itcwb_prim == "jdcmax") {
             profuse = "JDCmax";
+            limx = 0.05f;
+            limy = 0.04f;
         }
 
 
@@ -6481,7 +6492,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         for (int i = indn; i < index2; ++i) {
             //improvment to limit high Y values wbchro[sizcu4 - (i + 1)].Y < 0.96  0.96 arbitrary high value, maybe 0.9 or 0.98...or 1.0
-            if (wbchro[sizcu4 - (i + 1)].chrox > 0.1f && wbchro[sizcu4 - (i + 1)].chroy > 0.1f && wbchro[sizcu4 - (i + 1)].chroxy > 0.0f  && wbchro[sizcu4 - (i + 1)].Y < limexclu) { //remove value too far from reference spectral
+            if (wbchro[sizcu4 - (i + 1)].chrox > limx && wbchro[sizcu4 - (i + 1)].chroy > limy && wbchro[sizcu4 - (i + 1)].chroxy > 0.0f  && wbchro[sizcu4 - (i + 1)].Y < limexclu) { //remove value too far from reference spectral
                 w++;// w number of real tests
                 xx_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chrox;
                 yy_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chroy;
@@ -6510,7 +6521,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         float dEmean = 0.f;
         int ndEmean = 0;
-
+        maxhist = -1000.f;
+        minhist = 100000000.f;
         for (int nb = 1; nb <= maxnb; ++nb) { //1 is good, but 2 3 or 4 help to find more spectral values
             for (int i = 0; i < w; ++i) {
                 float mindeltaE = 100000.f;
@@ -6528,7 +6540,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 }
 
                 {
-                    float spectlimit = settings->itcwb_deltaspec;
+                    float spectlimit = 0.f; //settings->itcwb_deltaspec;
                     float dE = sqrt(SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[kN][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[kN][repref]));
                     dEmean += dE;
                     ndEmean++;
