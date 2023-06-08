@@ -6995,7 +6995,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                     }
                 } else {
                     if (tempitc < 8000.f) {
-                        tempitc = 0.79f * tempitc + 1060.f;
+                      //  tempitc = 0.79f * tempitc + 1060.f;
+                        tempitc = 4197.f + 0.1255f * tempitc;
                     } else {
                         tempitc = 5200.f * (1.f * (tempitc / 8000.f));
                     }
