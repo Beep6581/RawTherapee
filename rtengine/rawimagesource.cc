@@ -6484,15 +6484,17 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             printf("Info2 - patch estimation of wp displacement (before):j=%i repref=%i real=%i Tppat=%f chrom=%f hue=%f\n", kmin, repref, index2 - indn, (double) Tppat[repref].minchroma, (double) minchrom, (double) estim_hue[kmin][repref]);
         };
 
-        double limexclu = 0.96;//to avoid highlight in some cases (sky...)
+        float limexclu = 0.96f;//to avoid highlight in some cases (sky...)
 
         if (oldsampling) {
-            limexclu = 1.5;
+            limexclu = 1.5f;
+            limx = 0.1f;
+            limy = 0.1f;
         }
 
         for (int i = indn; i < index2; ++i) {
             //improvment to limit high Y values wbchro[sizcu4 - (i + 1)].Y < 0.96  0.96 arbitrary high value, maybe 0.9 or 0.98...or 1.0
-            if (wbchro[sizcu4 - (i + 1)].chrox > limx && wbchro[sizcu4 - (i + 1)].chroy > limy && wbchro[sizcu4 - (i + 1)].chroxy > 0.0f  && wbchro[sizcu4 - (i + 1)].Y < limexclu) { //remove value too far from reference spectral
+            if (wbchro[sizcu4 - (i + 1)].chrox > limx && wbchro[sizcu4 - (i + 1)].chroy > limy  && wbchro[sizcu4 - (i + 1)].Y < limexclu) { //remove value too far from reference spectral
                 w++;// w number of real tests
                 xx_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chrox;
                 yy_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chroy;
@@ -6995,7 +6997,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                     }
                 } else {
                     if (tempitc < 8000.f) {
-                      //  tempitc = 0.79f * tempitc + 1060.f;
                         tempitc = 4197.f + 0.1255f * tempitc;
                     } else {
                         tempitc = 5200.f * (1.f * (tempitc / 8000.f));
