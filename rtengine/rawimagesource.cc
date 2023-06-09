@@ -5342,7 +5342,12 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                     }
                 }
         }
-
+        if (settings->verbose) {
+            printf("Sampling=%s \n", profuse.c_str());
+            printf ("wp = %f %f %f\n", wb[0][0], wb[0][1], wb[0][2]);
+            printf ("     %f %f %f\n", wb[1][0], wb[1][1], wb[1][2]);
+            printf ("     %f %f %f\n", wb[2][0], wb[2][1], wb[2][2]);
+        }
         const int bfwitc = bfw;
         const int bfhitc = bfh;
 
