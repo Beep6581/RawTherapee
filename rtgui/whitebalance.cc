@@ -394,11 +394,10 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     itcwb_prim = Gtk::manage (new MyComboBoxText ());
     itcwb_prim->append(M("TP_WBALANCE_ITCWB_PRIM_SRGB"));
     itcwb_prim->append(M("TP_WBALANCE_ITCWB_PRIM_BETA"));
-//    itcwb_prim->append(M("TP_WBALANCE_ITCWB_PRIM_REC"));
+    itcwb_prim->append(M("TP_WBALANCE_ITCWB_PRIM_XYZCAM"));
     itcwb_prim->append(M("TP_WBALANCE_ITCWB_PRIM_JDCMAX"));
     itcwb_prim->set_active(1);
     itcwb_primconn = itcwb_prim->signal_changed().connect(sigc::mem_fun(*this, &WhiteBalance::itcwb_prim_changed));
-    itcwb_prim ->set_active (false);
     itcwb_prim ->set_tooltip_markup (M("TP_WBALANCE_ITCWPRIM_TOOLTIP"));
     
     
@@ -811,10 +810,10 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         itcwb_prim->set_active(0);
     } else if (pp->wb.itcwb_prim == "beta") {
         itcwb_prim->set_active(1);
-//     } else if (pp->wb.itcwb_prim == "rec") {
-//        itcwb_prim->set_active(2);
-    } else if (pp->wb.itcwb_prim == "jdcmax") {
+     } else if (pp->wb.itcwb_prim == "XYZcam") {
         itcwb_prim->set_active(2);
+    } else if (pp->wb.itcwb_prim == "jdcmax") {
+        itcwb_prim->set_active(3);
     }
     itcwb_primconn.block (false);
 
@@ -1024,9 +1023,9 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
         pp->wb.itcwb_prim = "srgb";
     } else if (itcwb_prim->get_active_row_number() == 1){
         pp->wb.itcwb_prim = "beta";
-//    } else if (itcwb_prim->get_active_row_number() == 2){
-//        pp->wb.itcwb_prim = "rec";
     } else if (itcwb_prim->get_active_row_number() == 2){
+        pp->wb.itcwb_prim = "XYZcam";
+    } else if (itcwb_prim->get_active_row_number() == 3){
         pp->wb.itcwb_prim = "jdcmax";
     }
 

@@ -5305,10 +5305,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             profuse = "Beta RGB";
             limx = 0.1f;
             limy = 0.05f;
-        } else if (wbpar.itcwb_prim == "rec") {
-            profuse = "Rec2020";
-            limx = 0.1f;
-            limy = 0.05f;
+        } else if (wbpar.itcwb_prim == "XYZcam") {
+            profuse = "XYZcam";
+            limx = 0.05f;
+            limy = 0.04f;
         } else if (wbpar.itcwb_prim == "jdcmax") {
             profuse = "JDCmax";
             limx = 0.05f;
@@ -5320,25 +5320,29 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             profuse = "sRGB";
         }
 
-        TMatrix whbaprof = ICCStore::getInstance()->workingSpaceMatrix(profuse); //ACESp0, sRGB, Beta RGB, Rec2020
-        float wb[3][3] = {
-            {static_cast<float>(whbaprof[0][0]), static_cast<float>(whbaprof[0][1]), static_cast<float>(whbaprof[0][2])},
-            {static_cast<float>(whbaprof[1][0]), static_cast<float>(whbaprof[1][1]), static_cast<float>(whbaprof[1][2])},
-            {static_cast<float>(whbaprof[2][0]), static_cast<float>(whbaprof[2][1]), static_cast<float>(whbaprof[2][2])}
-        };
-        const double wb2[3][3] = {
-            {static_cast<double>(whbaprof[0][0]), static_cast<double>(whbaprof[0][1]), static_cast<double>(whbaprof[0][2])},
-            {static_cast<double>(whbaprof[1][0]), static_cast<double>(whbaprof[1][1]), static_cast<double>(whbaprof[1][2])},
-            {static_cast<double>(whbaprof[2][0]), static_cast<double>(whbaprof[2][1]), static_cast<double>(whbaprof[2][2])}
-        };
+        float wb[3][3], iwb[3][3];
+        double wb2[3][3];
+        if (profuse == "XYZcam") {//thanks to Reffort
+            // get a copy of the camera matrices
+            for (int r = 0; r < 3; ++r) {
+                for (int c = 0; c < 3; ++c) {
+                    wb[r][c] = imatrices.xyz_cam[r][c];
+                    wb2[r][c] = imatrices.xyz_cam[r][c];
+                    iwb[r][c] = imatrices.cam_xyz[r][c];
+                }
+            }
+        } else {
+            TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(profuse);
+            TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(profuse);
+                for (int r = 0; r < 3; ++r) {
+                    for (int c = 0; c < 3; ++c) {
+                        wb[r][c] = wprof[r][c];
+                        wb2[r][c] = wprof[r][c];
+                        iwb[r][c] = wiprof[r][c];
+                    }
+                }
+        }
 
-        TMatrix iwbprof = ICCStore::getInstance()->workingSpaceInverseMatrix(profuse);
-        //inverse matrix user select
-        const float iwb[3][3] = {
-            {static_cast<float>(iwbprof[0][0]), static_cast<float>(iwbprof[0][1]), static_cast<float>(iwbprof[0][2])},
-            {static_cast<float>(iwbprof[1][0]), static_cast<float>(iwbprof[1][1]), static_cast<float>(iwbprof[1][2])},
-            {static_cast<float>(iwbprof[2][0]), static_cast<float>(iwbprof[2][1]), static_cast<float>(iwbprof[2][2])}
-        };
         const int bfwitc = bfw;
         const int bfhitc = bfh;
 
@@ -5877,9 +5881,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             Ncr = 405 + 1;
         } else if (wbpar.itcwb_prim == "adob") {
             Ncr = 405 + 1;
-        } else if (wbpar.itcwb_prim == "rec") {
+        } else if (wbpar.itcwb_prim == "XYZcam") {
             Ncr = 405 + 1;
-        } else if (wbpar.itcwb_prim == "ace") {
+        } else if (wbpar.itcwb_prim == "jdcmax") {
             Ncr = 405 + 1;
         }
 
