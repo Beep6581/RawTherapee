@@ -1883,6 +1883,30 @@ bool SHParams::operator !=(const SHParams& other) const
     return !(*this == other);
 }
 
+ToneEqualizerParams::ToneEqualizerParams() :
+    enabled(false),
+    bands{0, 0, 0, 0, 0},
+    regularization(0),
+    show_colormap(false),
+    pivot(0)
+{
+}
+
+bool ToneEqualizerParams::operator ==(const ToneEqualizerParams &other) const
+{
+    return
+        enabled == other.enabled
+        && bands == other.bands
+        && regularization == other.regularization
+        && show_colormap == other.show_colormap
+        && pivot == other.pivot;
+}
+
+bool ToneEqualizerParams::operator !=(const ToneEqualizerParams &other) const
+{
+    return !(*this == other);
+}
+
 CropParams::CropParams() :
     enabled(false),
     x(-1),
@@ -3398,6 +3422,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     slomaskSH(0.0),
     lapmaskSH(0.0),
     detailSH(0),
+    tePivot(0.),
     reparsh(100.),
     LmaskSHcurve{
         static_cast<double>(DCT_NURBS),
@@ -4842,6 +4867,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && slomaskSH == other.slomaskSH
         && lapmaskSH == other.lapmaskSH
         && detailSH == other.detailSH
+        && tePivot == other.tePivot
         && reparsh == other.reparsh
         && LmaskSHcurve == other.LmaskSHcurve
         && fatamountSH == other.fatamountSH
@@ -5913,6 +5939,8 @@ void ProcParams::setDefaults()
 
     sh = {};
 
+    toneEqualizer = {};
+
     crop = {};
 
     coarse = {};
@@ -6357,6 +6385,14 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->sh.radius, "Shadows & Highlights", "Radius", sh.radius, keyFile);
         saveToKeyfile(!pedited || pedited->sh.lab, "Shadows & Highlights", "Lab", sh.lab, keyFile);
 
+// Tone equalizer
+        saveToKeyfile(!pedited || pedited->toneEqualizer.enabled, "ToneEqualizer", "Enabled", toneEqualizer.enabled, keyFile);
+        for (size_t i = 0; i < toneEqualizer.bands.size(); ++i) {
+            saveToKeyfile(!pedited || pedited->toneEqualizer.bands[i], "ToneEqualizer", "Band" + std::to_string(i), toneEqualizer.bands[i], keyFile);
+        }
+        saveToKeyfile(!pedited || pedited->toneEqualizer.regularization, "ToneEqualizer", "Regularization", toneEqualizer.regularization, keyFile);
+        saveToKeyfile(!pedited || pedited->toneEqualizer.pivot, "ToneEqualizer", "Pivot", toneEqualizer.pivot, keyFile);
+
 // Crop
         saveToKeyfile(!pedited || pedited->crop.enabled, "Crop", "Enabled", crop.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->crop.x, "Crop", "X", crop.x, keyFile);
@@ -6643,6 +6679,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->gammaskSH, "Locallab", "GammaskSH_" + index_str, spot.gammaskSH, keyFile);
                     saveToKeyfile(!pedited || spot_edited->slomaskSH, "Locallab", "SlomaskSH_" + index_str, spot.slomaskSH, keyFile);
                     saveToKeyfile(!pedited || spot_edited->detailSH, "Locallab", "DetailSH_" + index_str, spot.detailSH, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->tePivot, "Locallab", "TePivot_" + index_str, spot.tePivot, keyFile);
                     saveToKeyfile(!pedited || spot_edited->reparsh, "Locallab", "Reparsh_" + index_str, spot.reparsh, keyFile);
                     saveToKeyfile(!pedited || spot_edited->LmaskSHcurve, "Locallab", "LmaskSHCurve_" + index_str, spot.LmaskSHcurve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->fatamountSH, "Locallab", "FatamountSH_" + index_str, spot.fatamountSH, keyFile);
@@ -8402,6 +8439,15 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             }
         }
 
+        if (keyFile.has_group("ToneEqualizer")) {
+            assignFromKeyfile(keyFile, "ToneEqualizer", "Enabled", pedited, toneEqualizer.enabled, pedited->toneEqualizer.enabled);
+            for (size_t i = 0; i < toneEqualizer.bands.size(); ++i) {
+                assignFromKeyfile(keyFile, "ToneEqualizer", "Band" + std::to_string(i), pedited, toneEqualizer.bands[i], pedited->toneEqualizer.bands[i]);
+            }
+            assignFromKeyfile(keyFile, "ToneEqualizer", "Regularization", pedited, toneEqualizer.regularization, pedited->toneEqualizer.regularization);
+            assignFromKeyfile(keyFile, "ToneEqualizer", "Pivot", pedited, toneEqualizer.pivot, pedited->toneEqualizer.pivot);
+        }
+
         if (keyFile.has_group("Crop")) {
             assignFromKeyfile(keyFile, "Crop", "Enabled", pedited, crop.enabled, pedited->crop.enabled);
             assignFromKeyfile(keyFile, "Crop", "X", pedited, crop.x, pedited->crop.x);
@@ -8809,6 +8855,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "SlomaskSH_" + index_str, pedited, spot.slomaskSH, spotEdited.slomaskSH);
                 assignFromKeyfile(keyFile, "Locallab", "LapmaskSH_" + index_str, pedited, spot.lapmaskSH, spotEdited.lapmaskSH);
                 assignFromKeyfile(keyFile, "Locallab", "DetailSH_" + index_str, pedited, spot.detailSH, spotEdited.detailSH);
+                assignFromKeyfile(keyFile, "Locallab", "TePivot_" + index_str, pedited, spot.tePivot, spotEdited.tePivot);
                 assignFromKeyfile(keyFile, "Locallab", "Reparsh_" + index_str, pedited, spot.reparsh, spotEdited.reparsh);
                 assignFromKeyfile(keyFile, "Locallab", "LmaskSHCurve_" + index_str, pedited, spot.LmaskSHcurve, spotEdited.LmaskSHcurve);
                 assignFromKeyfile(keyFile, "Locallab", "FatamountSH_" + index_str, pedited, spot.fatamountSH, spotEdited.fatamountSH);
@@ -10646,6 +10693,7 @@ bool ProcParams::operator ==(const ProcParams& other) const
         && fattal == other.fattal
         && defringe == other.defringe
         && sh == other.sh
+        && toneEqualizer == other.toneEqualizer
         && crop == other.crop
         && coarse == other.coarse
         && rotate == other.rotate
