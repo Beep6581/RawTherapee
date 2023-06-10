@@ -219,6 +219,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     wb          = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_WHITEBALANCE")));
     exposure    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EXPOSURE")));
     sh          = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_SHADOWSHIGHLIGHTS")));
+    toneEqualizer = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_TONE_EQUALIZER")));
     epd         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EPD")));
     fattal      = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_TM_FATTAL")));
     pcvignette  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PCVIGNETTE")));
@@ -332,6 +333,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     vboxes[0]->pack_start (*wb, Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*exposure, Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*sh, Gtk::PACK_SHRINK, 2);
+    vboxes[0]->pack_start (*toneEqualizer, Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*epd, Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*fattal, Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*pcvignette, Gtk::PACK_SHRINK, 2);
@@ -498,6 +500,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     wbConn          = wb->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
     exposureConn    = exposure->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
     shConn          = sh->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
+    toneEqualizerConn = toneEqualizer->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
     epdConn         = epd->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
     fattalConn      = fattal->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
     pcvignetteConn  = pcvignette->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
@@ -706,6 +709,7 @@ void PartialPasteDlg::basicToggled ()
     ConnectionBlocker wbBlocker(wbConn);
     ConnectionBlocker exposureBlocker(exposureConn);
     ConnectionBlocker shBlocker(shConn);
+    ConnectionBlocker toneEqualizerBlocker(toneEqualizerConn);
     ConnectionBlocker epdBlocker(epdConn);
     ConnectionBlocker fattalBlocker(fattalConn);
     ConnectionBlocker pcvignetteBlocker(pcvignetteConn);
@@ -717,6 +721,7 @@ void PartialPasteDlg::basicToggled ()
     wb->set_active (basic->get_active ());
     exposure->set_active (basic->get_active ());
     sh->set_active (basic->get_active ());
+    toneEqualizer->set_active (basic->get_active ());
     epd->set_active (basic->get_active ());
     fattal->set_active (basic->get_active ());
     pcvignette->set_active (basic->get_active ());
@@ -892,6 +897,10 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
 
     if (!sh->get_active ()) {
         filterPE.sh         = falsePE.sh;
+    }
+
+    if (!toneEqualizer->get_active ()) {
+        filterPE.toneEqualizer = falsePE.toneEqualizer;
     }
 
     if (!epd->get_active ()) {

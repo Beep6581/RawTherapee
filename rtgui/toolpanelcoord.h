@@ -79,6 +79,7 @@
 #include "softlight.h"
 #include "spot.h"
 #include "tonecurve.h"
+#include "toneequalizer.h"
 #include "toolbar.h"
 #include "toolpanel.h"
 #include "vibrance.h"
@@ -134,6 +135,7 @@ protected:
     Crop* crop;
     ToneCurve* toneCurve;
     ShadowsHighlights* shadowshighlights;
+    ToneEqualizer* toneEqualizer;
     LocalContrast *localContrast;
     Spot* spot;
     Defringe* defringe;
@@ -245,6 +247,7 @@ public:
     enum class Tool {
         TONE_CURVE,
         SHADOWS_HIGHLIGHTS,
+        TONE_EQUALIZER,
         IMPULSE_DENOISE,
         DEFRINGE_TOOL,
         SPOT,

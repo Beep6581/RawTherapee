@@ -1444,6 +1444,7 @@ HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
 HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Local Contrast - Lightness
 HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
 HISTORY_MSG_LOCAL_GAMUTMUNSEL;Local - Gamut-Munsell
+HISTORY_MSG_LOCALLAB_TE_PIVOT;Local - Equalizer pivot
 HISTORY_MSG_METADATA_MODE;Metadata copy mode
 HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrast threshold
 HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST;CS - Auto threshold
@@ -1490,6 +1491,11 @@ HISTORY_MSG_SPOT_ENTRY;Spot removal - Point modif.
 HISTORY_MSG_TEMPOUT;CAM02 automatic temperature
 HISTORY_MSG_THRESWAV;Balance threshold
 HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
+HISTORY_MSG_TONE_EQUALIZER_BANDS;Tone equalizer - Bands
+HISTORY_MSG_TONE_EQUALIZER_ENABLED;Tone equalizer
+HISTORY_MSG_TONE_EQUALIZER_PIVOT;Tone equalizer - Pivot
+HISTORY_MSG_TONE_EQUALIZER_REGULARIZATION;Tone equalizer - Regularization
+HISTORY_MSG_TONE_EQUALIZER_SHOW_COLOR_MAP;Tone equalizer - Tonal map
 HISTORY_MSG_TRANS_METHOD;Geometry - Method
 HISTORY_MSG_WAVBALCHROM;Equalizer chrominance
 HISTORY_MSG_WAVBALLUM;Equalizer luminance
@@ -1797,6 +1803,7 @@ PARTIALPASTE_SHARPENMICRO;Microcontrast
 PARTIALPASTE_SOFTLIGHT;Soft light
 PARTIALPASTE_SPOT;Spot removal
 PARTIALPASTE_TM_FATTAL;Dynamic range compression
+PARTIALPASTE_TONE_EQUALIZER;Tone equalizer
 PARTIALPASTE_VIBRANCE;Vibrance
 PARTIALPASTE_VIGNETTING;Vignetting correction
 PARTIALPASTE_WHITEBALANCE;White balance
@@ -2842,13 +2849,15 @@ TP_LOCALLAB_DENOIMASK;Denoise chroma mask
 TP_LOCALLAB_DENOIMASK_TOOLTIP;For all tools, allows you to control the chromatic noise level of the mask.\nUseful for better control of chrominance and to avoid artifacts when using the LC(h) curve.
 TP_LOCALLAB_DENOIQUA_TOOLTIP;Conservative mode preserves low frequency detail. Aggressive mode removes low frequency detail.\nConservative and Aggressive modes use wavelets and DCT and can be used in conjunction with 'Non-local Means – Luminance'.
 TP_LOCALLAB_DENOITHR_TOOLTIP;Adjusts edge detection to help reduce noise in uniform, low-contrast areas.
+TP_LOCALLAB_DENOIWAVCH;Wavelets: Chrominance
+TP_LOCALLAB_DENOIWAVLUM;Wavelets: Luminance
 TP_LOCALLAB_DENOI_EXP;Denoise
 TP_LOCALLAB_DENOI_TOOLTIP;This module can be used for noise reduction either on its own (at the end of the processing pipeline) or in addition to the Noise Reduction module in the Detail tab (which works at the beginning of the pipeline).\n Scope allows you to differentiate the action based on color (ΔE).\nMinimum RT-spot size: 128x128.
 TP_LOCALLAB_DEPTH;Depth
 TP_LOCALLAB_DETAIL;Local contrast
 TP_LOCALLAB_DETAILFRA;Edge detection - DCT
 TP_LOCALLAB_DETAILSH;Details
-TP_LOCALLAB_DETAILTHR;Luma-chro detail threshold
+TP_LOCALLAB_DETAILTHR;Lum/chrom detail threshold
 TP_LOCALLAB_DIVGR;Gamma
 TP_LOCALLAB_DUPLSPOTNAME;Copy
 TP_LOCALLAB_EDGFRA;Edge sharpness
@@ -3113,7 +3122,7 @@ TP_LOCALLAB_MASKLCTHRLOW;Dark area luminance threshold
 TP_LOCALLAB_MASKLCTHRLOW2;Dark area luma threshold
 TP_LOCALLAB_MASKLCTHRMID;Gray area luma denoise
 TP_LOCALLAB_MASKLCTHRMIDCH;Gray area chroma denoise
-TP_LOCALLAB_MASKLC_TOOLTIP;This allows you to target the denoise based on the image luminance information contained in the L(L) or LC(H) mask (Mask and Modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n 'Dark area luminance threshold'. If 'Reinforce denoise in dark and light areas' > 1 the denoise is progressively increased from 0% at the threshold setting to 100% at the maximum black value (determined by mask).\n 'Light area luminance threshold'. The denoise is progressively decreased from 100% at the threshold setting to 0% at the maximum white value (determined by mask).\n In the area between the two thresholds, the denoise settings are not affected by the mask.
+TP_LOCALLAB_MASKLC_TOOLTIP;Used by wavelet luminance.\nThis allows you to target the denoise based on the image luminance information contained in the L(L) or LC(H) mask (Mask and Modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n 'Dark area luminance threshold'. If 'Reinforce denoise in dark and light areas' > 1 the denoise is progressively increased from 0% at the threshold setting to 100% at the maximum black value (determined by mask).\n 'Light area luminance threshold'. The denoise is progressively decreased from 100% at the threshold setting to 0% at the maximum white value (determined by mask).\n In the area between the two thresholds, the denoise settings are not affected by the mask.
 TP_LOCALLAB_MASKLNOISELOW;Reinforce dark/light areas
 TP_LOCALLAB_MASKLOWTHRESCB_TOOLTIP;Dark-tone limit below which the CBDL parameters (Luminance only) will be restored progressively to their original values prior to being modified by the CBDL settings.\n You can use certain tools in 'Mask and modifications' to change the gray levels: 'Smooth radius', Gamma and Slope, 'Contrast curve'.\n Use a 'lockable color picker' on the mask to see which areas will be affected. Make sure you set 'Background color mask' = 0 in Settings.
 TP_LOCALLAB_MASKLOWTHRESC_TOOLTIP;Dark-tone limit below which the parameters will be restored progressively to their original values prior to being modified by the Color and Light settings.\n You can use certain tools in 'Mask and modifications' to change the gray levels: 'Structure mask', 'blur mask', 'Smooth radius', Gamma and Slope, 'Contrast curve', 'Local contrast' (wavelets).\n Use a 'lockable color picker' on the mask to see which areas will be affected. Make sure you set 'Background color mask' = 0 in Settings.
@@ -3172,6 +3181,12 @@ TP_LOCALLAB_MERTHR;Difference
 TP_LOCALLAB_MERTWE;Exclusion
 TP_LOCALLAB_MERTWO;Subtract
 TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts.
+TP_LOCALLAB_LCLABELS;Residual noise levels
+TP_LOCALLAB_LCLABELS_TOOLTIP;Displays the mean and high-end noise values for the area shown in the Preview Panel (at 100% zoom). The noise values are grouped by wavelet levels 0,1,2,3 and 4,5,6.\nThe displayed values are indicative only and are designed to assist with denoise adjustments. They should not be interpreted as absolute noise levels.\n\n 300: Very noisy\n 100-300: Noisy\n 50-100: Moderatly noisy\n < 50: Low noise\n\nThey allow you to see:\n*The impact of Noise Reduction in the main-menu Detail tab.\n*The influence of Non-local Means, Wavelets and DCT on the luminance noise.\n*The influence of Wavelets and DCT on the chroma noise.\n*The influence of Capture Sharpening and Demosaicing.
+TP_LOCALLAB_LUMLABEL;Luma levels 0123: Mean=%1 High=%2 
+TP_LOCALLAB_LUM46LABEL;Luma levels 456: Mean=%1 High=%2
+TP_LOCALLAB_CHROLABEL;Chroma levels 0123: Mean=%1 High=%2
+TP_LOCALLAB_CHRO46LABEL;Chroma levels 456: Mean=%1 High=%2
 TP_LOCALLAB_MLABEL;Restored data Min=%1 Max=%2
 TP_LOCALLAB_MLABEL_TOOLTIP;The values should be close to Min=0 Max=32768 (log mode) but other values are possible.You can adjust 'Clip restored data (gain)' and 'Offset' to normalize.\nRecovers image data without blending.
 TP_LOCALLAB_MODE_EXPERT;Advanced
@@ -3188,7 +3203,7 @@ TP_LOCALLAB_NLDENOISENLPAT_TOOLTIP;Use this slider to adapt the amount of denois
 TP_LOCALLAB_NLDENOISENLRAD_TOOLTIP;Higher values increase denoise at the expense of processing time.
 TP_LOCALLAB_NLDENOISE_TOOLTIP;'Detail recovery' acts on a Laplacian transform to target uniform areas rather than areas with detail.
 TP_LOCALLAB_NLDET;Detail recovery
-TP_LOCALLAB_NLFRA;Non-local Means - Luminance
+TP_LOCALLAB_NLFRA;Non-local Means: Luminance
 TP_LOCALLAB_NLFRAME_TOOLTIP;Non-local means denoising takes a mean of all pixels in the image, weighted by how similar they are to the target pixel.\nReduces loss of detail compared with local mean algorithms.\nOnly luminance noise is taken into account. Chrominance noise is best processed using wavelets and Fourier transforms (DCT).\nCan be used in conjunction with 'Luminance denoise by level' or on its own.
 TP_LOCALLAB_NLGAM;Gamma
 TP_LOCALLAB_NLLUM;Strength
@@ -3382,6 +3397,7 @@ TP_LOCALLAB_STYPE_TOOLTIP;You can choose between:\nSymmetrical - left handle lin
 TP_LOCALLAB_SYM;Symmetrical (mouse)
 TP_LOCALLAB_SYMSL;Symmetrical (mouse + sliders)
 TP_LOCALLAB_TARGET_GRAY;Mean luminance (Yb%)
+TP_LOCALLAB_TE_PIVOT;Pivot (Ev)
 TP_LOCALLAB_THRES;Threshold structure
 TP_LOCALLAB_THRESDELTAE;ΔE scope threshold
 TP_LOCALLAB_THRESRETI;Threshold
@@ -3780,6 +3796,16 @@ TP_TM_FATTAL_AMOUNT;Amount
 TP_TM_FATTAL_ANCHOR;Anchor
 TP_TM_FATTAL_LABEL;Dynamic Range Compression
 TP_TM_FATTAL_THRESHOLD;Detail
+TP_TONE_EQUALIZER_BAND_0;Blacks
+TP_TONE_EQUALIZER_BAND_1;Shadows
+TP_TONE_EQUALIZER_BAND_2;Midtones
+TP_TONE_EQUALIZER_BAND_3;Highlights
+TP_TONE_EQUALIZER_BAND_4;Whites
+TP_TONE_EQUALIZER_BANDS;Bands
+TP_TONE_EQUALIZER_DETAIL;Regularization
+TP_TONE_EQUALIZER_LABEL;Tone Equalizer
+TP_TONE_EQUALIZER_PIVOT;Pivot (Ev)
+TP_TONE_EQUALIZER_SHOW_COLOR_MAP;Show tonal map
 TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid color shift
 TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Skin-tones

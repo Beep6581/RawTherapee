@@ -1203,7 +1203,7 @@ BENCHFUN
 
                             if (!memoryAllocationFailed) {
                                 if (kall == 0) {
-                                    Noise_residualAB(*adecomp, chresid, chmaxresid, denoiseMethodRgb);
+                                    Noise_residualAB(*adecomp, chresid, chmaxresid, denoiseMethodRgb, 0, levwav);
                                     chresidtemp = chresid;
                                     chmaxresidtemp = chmaxresid;
                                 }
@@ -1240,12 +1240,13 @@ BENCHFUN
 
                                 if (!memoryAllocationFailed) {
                                     if (kall == 0) {
-                                        Noise_residualAB(*bdecomp, chresid, chmaxresid, denoiseMethodRgb);
+                                        Noise_residualAB(*bdecomp, chresid, chmaxresid, denoiseMethodRgb, 0, levwav);
                                         chresid += chresidtemp;
                                         chmaxresid += chmaxresidtemp;
                                         chresid = sqrt(chresid / (6 * (levwav)));
                                         highresi = chresid + 0.66f * (sqrt(chmaxresid) - chresid); //evaluate sigma
                                         nresi = chresid;
+             printf("Nresi=%f Highresi=%f lev=%i\n", (double) nresi, (double) highresi, levwav);
                                     }
 
                                     bdecomp->reconstruct(labdn->b[0]);
@@ -2158,16 +2159,18 @@ float ImProcFunctions::MadRgb(const float * DataList, const int datalen)
 
 
 
-void ImProcFunctions::Noise_residualAB(const wavelet_decomposition &WaveletCoeffs_ab, float &chresid, float &chmaxresid, bool denoiseMethodRgb)
+void ImProcFunctions::Noise_residualAB(const wavelet_decomposition &WaveletCoeffs_ab, float &chresid, float &chmaxresid, bool denoiseMethodRgb, int beg, int end)
 {
 
     float resid = 0.f;
     float maxresid = 0.f;
-
+//    int maxlev = WaveletCoeffs_ab.maxlevel();
+   // end = maxlev;
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic) collapse(2) reduction(+:resid) reduction(max:maxresid) num_threads(denoiseNestedLevels) if (denoiseNestedLevels>1)
 #endif
-    for (int lvl = 0; lvl < WaveletCoeffs_ab.maxlevel(); ++lvl) {
+ //   for (int lvl = 0; lvl < WaveletCoeffs_ab.maxlevel(); ++lvl) {
+    for (int lvl = beg; lvl < end; ++lvl) {
         // compute median absolute deviation (MAD) of detail coefficients as robust noise estimator
         for (int dir = 1; dir < 4; ++dir) {
             const int Wlvl_ab = WaveletCoeffs_ab.level_W(lvl);

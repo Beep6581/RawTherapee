@@ -18,6 +18,7 @@
  */
 #pragma once
 
+#include <array>
 #include <vector>
 
 namespace rtengine
@@ -370,6 +371,14 @@ struct SHParamsEdited {
     bool lab;
 };
 
+struct ToneEqualizerParamsEdited {
+    bool enabled;
+    std::array<bool, 5> bands;
+    bool regularization;
+    bool show_colormap;
+    bool pivot;
+};
+
 struct CropParamsEdited {
     bool enabled;
     bool x;
@@ -593,6 +602,7 @@ public:
         bool slomaskSH;
         bool lapmaskSH;
         bool detailSH;
+        bool tePivot;
         bool reparsh;
         bool LmaskSHcurve;
         bool fatamountSH;
@@ -1561,6 +1571,7 @@ struct ParamsEdited {
     FattalToneMappingParamsEdited fattal;
     ImpulseDenoiseParamsEdited impulseDenoise;
     SHParamsEdited sh;
+    ToneEqualizerParamsEdited toneEqualizer;
     CropParamsEdited crop;
     CoarseTransformParamsEdited coarse;
     CommonTransformParamsEdited commonTrans;
