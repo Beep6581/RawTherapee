@@ -1979,7 +1979,9 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
         stop.reset(new StopWatch("rgb processing"));
     }
 
-    Imagefloat *tmpImage = nullptr;
+    const bool split_tiled_parts_1_2 = params->toneEqualizer.enabled;
+
+    std::unique_ptr<Imagefloat> tmpImage;
 
     Imagefloat* editImgFloat = nullptr;
     PlanarWhateverData<float>* editWhatever = nullptr;
@@ -2139,6 +2141,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
     const float comp = (max(0.0, expcomp) + 1.0) * hlcompr / 100.0;
     const float shoulder = ((65536.f / max(1.0f, exp_scale)) * (hlcomprthresh / 200.f)) + 0.1f;
     const float hlrange = 65536.f - shoulder;
+    const int tone_curve_black = params->toneCurve.black;
     const bool isProPhoto = (params->icm.workingProfile == "ProPhoto");
     // extracting data from 'params' to avoid cache flush (to be confirmed)
     ToneCurveMode curveMode = params->toneCurve.curveMode;
@@ -2247,8 +2250,8 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
     }
     bool hasgammabw = gammabwr != 1.f || gammabwg != 1.f || gammabwb != 1.f;
 
-    if (hasColorToning || blackwhite || (params->dirpyrequalizer.cbdlMethod == "bef" && params->dirpyrequalizer.enabled)) {
-        tmpImage = new Imagefloat(working->getWidth(), working->getHeight());
+    if (hasColorToning || blackwhite || (params->dirpyrequalizer.cbdlMethod == "bef" && params->dirpyrequalizer.enabled) || split_tiled_parts_1_2) {
+        tmpImage.reset(new Imagefloat(working->getWidth(), working->getHeight()));
     }
 
     // For tonecurve histogram
@@ -2263,8 +2266,52 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
     // For tonecurve histogram
     const float lumimulf[3] = {static_cast<float>(lumimul[0]), static_cast<float>(lumimul[1]), static_cast<float>(lumimul[2])};
 
-
 #define TS 112
+
+    const auto tiled_part_1 =
+        [working,
+            mixchannels,
+            &hltonecurve, &shtonecurve,
+            chMixRR, chMixRG, chMixRB,
+            chMixGR, chMixGG, chMixGB,
+            chMixBR, chMixBG, chMixBB,
+            exp_scale, comp, hlrange, tone_curve_black](
+            int istart, int jstart, int tH, int tW,
+            float *rtemp, float *gtemp, float *btemp) {
+
+            for (int i = istart, ti = 0; i < tH; i++, ti++) {
+                for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+                    rtemp[ti * TS + tj] = working->r(i, j);
+                    gtemp[ti * TS + tj] = working->g(i, j);
+                    btemp[ti * TS + tj] = working->b(i, j);
+                }
+            }
+
+            if (mixchannels) {
+                for (int i = istart, ti = 0; i < tH; i++, ti++) {
+                    for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+                        float r = rtemp[ti * TS + tj];
+                        float g = gtemp[ti * TS + tj];
+                        float b = btemp[ti * TS + tj];
+
+                        // if (i==100 & j==100) printf("rgbProc input R= %f  G= %f  B= %f  \n",r,g,b);
+                        float rmix = (r * chMixRR + g * chMixRG + b * chMixRB) / 100.f;
+                        float gmix = (r * chMixGR + g * chMixGG + b * chMixGB) / 100.f;
+                        float bmix = (r * chMixBR + g * chMixBG + b * chMixBB) / 100.f;
+
+                        rtemp[ti * TS + tj] = rmix;
+                        gtemp[ti * TS + tj] = gmix;
+                        btemp[ti * TS + tj] = bmix;
+                    }
+                }
+            }
+
+            highlightToneCurve(hltonecurve, rtemp, gtemp, btemp, istart, tH, jstart, tW, TS, exp_scale, comp, hlrange);
+
+            if (tone_curve_black != 0) {
+                shadowToneCurve(shtonecurve, rtemp, gtemp, btemp, istart, tH, jstart, tW, TS);
+            }
+        };
 
 #ifdef _OPENMP
     #pragma omp parallel if (multiThread)
@@ -2316,6 +2363,41 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
             histToneCurveThr.clear();
         }
 
+        if (split_tiled_parts_1_2) {
+
+#ifdef _OPENMP
+        #pragma omp for schedule(dynamic, chunkSize) collapse(2)
+#endif
+
+            for (int ii = 0; ii < working->getHeight(); ii += TS) {
+                for (int jj = 0; jj < working->getWidth(); jj += TS) {
+                    istart = ii;
+                    jstart = jj;
+                    tH = min(ii + TS, working->getHeight());
+                    tW = min(jj + TS, working->getWidth());
+
+
+                    tiled_part_1(istart, jstart, tH, tW, rtemp, gtemp, btemp);
+
+                    // Copy tile to image.
+                    for (int i = istart, ti = 0; i < tH; i++, ti++) {
+                        for (int j = jstart, tj = 0; j < tW; j++, tj++) {
+                            tmpImage->r(i, j) = rtemp[ti * TS + tj];
+                            tmpImage->g(i, j) = gtemp[ti * TS + tj];
+                            tmpImage->b(i, j) = btemp[ti * TS + tj];
+                        }
+                    }
+                }
+            }
+        }
+
+#ifdef _OPENMP
+        #pragma omp single
+#endif
+        if (params->toneEqualizer.enabled) {
+            toneEqualizer(tmpImage.get());
+        }
+
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic, chunkSize) collapse(2)
 #endif
@@ -2327,38 +2409,16 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                 tH = min(ii + TS, working->getHeight());
                 tW = min(jj + TS, working->getWidth());
 
-
-                for (int i = istart, ti = 0; i < tH; i++, ti++) {
-                    for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                        rtemp[ti * TS + tj] = working->r(i, j);
-                        gtemp[ti * TS + tj] = working->g(i, j);
-                        btemp[ti * TS + tj] = working->b(i, j);
-                    }
-                }
-
-                if (mixchannels) {
+                if (split_tiled_parts_1_2) {
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
                         for (int j = jstart, tj = 0; j < tW; j++, tj++) {
-                            float r = rtemp[ti * TS + tj];
-                            float g = gtemp[ti * TS + tj];
-                            float b = btemp[ti * TS + tj];
-
-                            //if (i==100 & j==100) printf("rgbProc input R= %f  G= %f  B= %f  \n",r,g,b);
-                            float rmix = (r * chMixRR + g * chMixRG + b * chMixRB) / 100.f;
-                            float gmix = (r * chMixGR + g * chMixGG + b * chMixGB) / 100.f;
-                            float bmix = (r * chMixBR + g * chMixBG + b * chMixBB) / 100.f;
-
-                            rtemp[ti * TS + tj] = rmix;
-                            gtemp[ti * TS + tj] = gmix;
-                            btemp[ti * TS + tj] = bmix;
+                            rtemp[ti * TS + tj] = tmpImage->r(i, j);
+                            gtemp[ti * TS + tj] = tmpImage->g(i, j);
+                            btemp[ti * TS + tj] = tmpImage->b(i, j);
                         }
                     }
-                }
-
-                highlightToneCurve(hltonecurve, rtemp, gtemp, btemp, istart, tH, jstart, tW, TS, exp_scale, comp, hlrange);
-
-                if (params->toneCurve.black != 0.0) {
-                    shadowToneCurve(shtonecurve, rtemp, gtemp, btemp, istart, tH, jstart, tW, TS);
+                } else {
+                    tiled_part_1(istart, jstart, tH, tW, rtemp, gtemp, btemp);
                 }
 
                 if (dcpProf) {
@@ -3507,10 +3567,6 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
         }
 
 
-    }
-
-    if (tmpImage) {
-        delete tmpImage;
     }
 
     if (hCurveEnabled) {

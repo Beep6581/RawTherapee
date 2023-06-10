@@ -328,6 +328,11 @@ void ParamsEdited::set(bool v)
     sh.stonalwidth   = v;
     sh.radius        = v;
     sh.lab           = v;
+    toneEqualizer.enabled        = v;
+    toneEqualizer.bands.fill(v);
+    toneEqualizer.regularization = v;
+    toneEqualizer.show_colormap  = v;
+    toneEqualizer.pivot  = v;
     crop.enabled = v;
     crop.x       = v;
     crop.y       = v;
@@ -1054,6 +1059,13 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         crop.ratio = crop.ratio && p.crop.ratio == other.crop.ratio;
         crop.orientation = crop.orientation && p.crop.orientation == other.crop.orientation;
         crop.guide = crop.guide && p.crop.guide == other.crop.guide;
+        toneEqualizer.enabled = toneEqualizer.enabled && p.toneEqualizer.enabled == other.toneEqualizer.enabled;
+        for (size_t i = 0; i < toneEqualizer.bands.size(); ++i) {
+            toneEqualizer.bands[i] = toneEqualizer.bands[i] && p.toneEqualizer.bands[i] == other.toneEqualizer.bands[i];
+        }
+        toneEqualizer.regularization = toneEqualizer.regularization && p.toneEqualizer.regularization == other.toneEqualizer.regularization;
+        toneEqualizer.show_colormap = toneEqualizer.show_colormap && p.toneEqualizer.show_colormap == other.toneEqualizer.show_colormap;
+        toneEqualizer.pivot = toneEqualizer.pivot && p.toneEqualizer.pivot == other.toneEqualizer.pivot;
         coarse.rotate = coarse.rotate && p.coarse.rotate == other.coarse.rotate;
         coarse.hflip = coarse.hflip && p.coarse.hflip == other.coarse.hflip;
         coarse.vflip = coarse.vflip && p.coarse.vflip == other.coarse.vflip;
@@ -1293,6 +1305,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).slomaskSH = locallab.spots.at(j).slomaskSH && pSpot.slomaskSH == otherSpot.slomaskSH;
                 locallab.spots.at(j).lapmaskSH = locallab.spots.at(j).lapmaskSH && pSpot.lapmaskSH == otherSpot.lapmaskSH;
                 locallab.spots.at(j).detailSH = locallab.spots.at(j).detailSH && pSpot.detailSH == otherSpot.detailSH;
+                locallab.spots.at(j).tePivot = locallab.spots.at(j).tePivot && pSpot.tePivot == otherSpot.tePivot;
                 locallab.spots.at(j).reparsh = locallab.spots.at(j).reparsh && pSpot.reparsh == otherSpot.reparsh;
                 locallab.spots.at(j).LmaskSHcurve = locallab.spots.at(j).LmaskSHcurve && pSpot.LmaskSHcurve == otherSpot.LmaskSHcurve;
                 locallab.spots.at(j).fatamountSH = locallab.spots.at(j).fatamountSH && pSpot.fatamountSH == otherSpot.fatamountSH;
@@ -3263,6 +3276,37 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.sh.lab = mods.sh.lab;
     }
 
+    if (toneEqualizer.enabled) {
+        toEdit.toneEqualizer.enabled = mods.toneEqualizer.enabled;
+    }
+
+    for (size_t i = 0; i < toneEqualizer.bands.size(); ++i) {
+        if (toneEqualizer.bands[i]) {
+            toEdit.toneEqualizer.bands[i] =
+                dontforceSet && options.baBehav[ADDSET_TONE_EQUALIZER_BANDS]
+                    ? toEdit.toneEqualizer.bands[i] + mods.toneEqualizer.bands[i]
+                    : mods.toneEqualizer.bands[i];
+        }
+    }
+
+    if (toneEqualizer.regularization) {
+        toEdit.toneEqualizer.regularization =
+            dontforceSet && options.baBehav[ADDSET_TONE_EQUALIZER_REGULARIZATION]
+                ? toEdit.toneEqualizer.regularization + mods.toneEqualizer.regularization
+                : mods.toneEqualizer.regularization;
+    }
+
+    if (toneEqualizer.show_colormap) {
+        toEdit.toneEqualizer.show_colormap = mods.toneEqualizer.show_colormap;
+    }
+
+    if (toneEqualizer.pivot) {
+        toEdit.toneEqualizer.pivot =
+            dontforceSet && options.baBehav[ADDSET_TONE_EQUALIZER_PIVOT]
+                ? toEdit.toneEqualizer.pivot + mods.toneEqualizer.pivot
+                : mods.toneEqualizer.pivot;
+    }
+
     if (crop.enabled) {
         toEdit.crop.enabled = mods.crop.enabled;
     }
@@ -4203,6 +4247,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).detailSH) {
             toEdit.locallab.spots.at(i).detailSH = mods.locallab.spots.at(i).detailSH;
+        }
+
+        if (locallab.spots.at(i).tePivot) {
+            toEdit.locallab.spots.at(i).tePivot = mods.locallab.spots.at(i).tePivot;
         }
 
         if (locallab.spots.at(i).reparsh) {
@@ -7654,6 +7702,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     slomaskSH(v),
     lapmaskSH(v),
     detailSH(v),
+    tePivot(v),
     reparsh(v),
     LmaskSHcurve(v),
     fatamountSH(v),
@@ -8349,6 +8398,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     slomaskSH = v;
     lapmaskSH = v;
     detailSH = v;
+    tePivot = v;
     reparsh = v;
     LmaskSHcurve = v;
     fatamountSH = v;

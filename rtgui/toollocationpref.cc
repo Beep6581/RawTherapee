@@ -70,6 +70,8 @@ Glib::ustring getToolTitleKey(Tool tool)
             return "TP_EXPOSURE_LABEL";
         case Tool::SHADOWS_HIGHLIGHTS:
             return "TP_SHADOWSHLIGHTS_LABEL";
+        case Tool::TONE_EQUALIZER:
+            return "TP_TONE_EQUALIZER_LABEL";
         case Tool::IMPULSE_DENOISE:
             return "TP_IMPULSEDENOISE_LABEL";
         case Tool::DEFRINGE_TOOL:

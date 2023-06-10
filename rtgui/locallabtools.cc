@@ -3977,6 +3977,7 @@ LocallabShadow::LocallabShadow():
     }
     ()),
     detailSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAILSH"), -5, 5, 1, 0))),
+    tePivot(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TE_PIVOT"), -12, 12, 0.05, 0))),
     highlights(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_HIGHLIGHTS"), 0, 100, 1, 0))),
     h_tonalwidth(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_HLTONALW"), 10, 100, 1, 70))),
     shadows(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_SHADOWS"), 0, 100, 1, 0))),
@@ -4017,7 +4018,8 @@ LocallabShadow::LocallabShadow():
     LmaskSHshape(static_cast<DiagonalCurveEditor*>(mask2SHCurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
     fatSHFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_FATSHFRA")))),
     fatamountSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATAMOUNT"), 1., 100., 1., 1.))),
-    fatanchorSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHOR"), 1., 100., 1., 50., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png")))))
+    fatanchorSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHOR"), 1., 100., 1., 50., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
+    EvlocallabTePivot(ProcEventMapper::getInstance()->newEvent(AUTOEXP, "HISTORY_MSG_LOCALLAB_TE_PIVOT"))
 {
     set_orientation(Gtk::ORIENTATION_VERTICAL);
     
@@ -4034,6 +4036,7 @@ LocallabShadow::LocallabShadow():
     }
 
     detailSH->setAdjusterListener(this);
+    tePivot->setAdjusterListener(this);
     reparsh->setAdjusterListener(this);
 
     highlights->setAdjusterListener(this);
@@ -4144,6 +4147,7 @@ LocallabShadow::LocallabShadow():
     }
 
     pack_start(*detailSH);
+    pack_start(*tePivot);
     pack_start(*highlights);
     pack_start(*h_tonalwidth);
     pack_start(*shadows);
@@ -4364,6 +4368,7 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         decays->setValue((double)spot.decays);
 
         detailSH->setValue((double)spot.detailSH);
+        tePivot->setValue(spot.tePivot);
         reparsh->setValue(spot.reparsh);
         highlights->setValue((double)spot.highlights);
         h_tonalwidth->setValue((double)spot.h_tonalwidth);
@@ -4429,6 +4434,7 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
         }
 
         spot.detailSH = detailSH->getIntValue();
+        spot.tePivot = tePivot->getValue();
         spot.reparsh = reparsh->getValue();
         spot.highlights = highlights->getIntValue();
         spot.h_tonalwidth = h_tonalwidth->getIntValue();
@@ -4477,6 +4483,7 @@ void LocallabShadow::setDefaults(const rtengine::procparams::ProcParams* defPara
         }
 
         detailSH->setDefault((double)defSpot.detailSH);
+        tePivot->setDefault(defSpot.tePivot);
         reparsh->setDefault(defSpot.reparsh);
         highlights->setDefault((double)defSpot.highlights);
         h_tonalwidth->setDefault((double)defSpot.h_tonalwidth);
@@ -4525,6 +4532,13 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(EvlocallabdetailSH,
                                        detailSH->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == tePivot) {
+            if (listener) {
+                listener->panelChanged(EvlocallabTePivot,
+                                       tePivot->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
@@ -5044,6 +5058,7 @@ void LocallabShadow::updateShadowGUI2()
 
         gamFrame->hide();
         detailSH->hide();
+        tePivot->hide();
         highlights->show();
         h_tonalwidth->show();
         shadows->show();
@@ -5059,6 +5074,7 @@ void LocallabShadow::updateShadowGUI2()
         }
 
         detailSH->show();
+        tePivot->show();
         highlights->hide();
         h_tonalwidth->hide();
         shadows->hide();
