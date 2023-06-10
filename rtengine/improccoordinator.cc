@@ -607,6 +607,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                             } else {
                                 if(!forcewbgrey) {
                                     gre = 0.2f + 0.8f * LIM(gre, 0.85f, 1.15f);
+                                    tem = 0.3 * tem + 0.7 * tempref0bias;//find a mixed value
                                     nocam = 0;
                                 } else {//set temp and green to init itcwb algorithm
                                     double grepro = LIM(greenref, green_thres, 1.15);
