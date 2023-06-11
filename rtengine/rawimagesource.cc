@@ -3149,7 +3149,6 @@ void RawImageSource::colorSpaceConversion_(Imagefloat* im, const ColorManagement
     if (!findInputProfile(cmp.inputProfile, embedded, camName, &dcpProf, in)) {
         return;
     }
-
     if (dcpProf != nullptr) {
         // DCP processing
         const DCPProfile::Triple pre_mul_row = {
@@ -3168,6 +3167,7 @@ void RawImageSource::colorSpaceConversion_(Imagefloat* im, const ColorManagement
     }
 
     if (in == nullptr) {
+        printf("Null PTR\n");
         // use default camprofile, supplied by dcraw
         // in this case we avoid using the slllllooooooowwww lcms
 
@@ -5323,6 +5323,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         float wb[3][3], iwb[3][3];
         double wb2[3][3];
         if (profuse == "XYZcam") {//thanks to Reffort
+        
             // get a copy of the camera matrices
             for (int r = 0; r < 3; ++r) {
                 for (int c = 0; c < 3; ++c) {
@@ -5331,7 +5332,46 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                     iwb[r][c] = imatrices.cam_xyz[r][c];
                 }
             }
+        } else if ((cmp.inputProfile == "(camera)")) {//when no input profile found or if user select Camera standard
+            if (settings->verbose) {
+                printf("Use Camera Dcraw-Matrix and modify rgbloc\n");
+            }
+            //improvment with new values for redloc, greenloc, blueloc when Camera Dcraw is used
+            TMatrix iwork = ICCStore::getInstance()->workingSpaceInverseMatrix(profuse);
+            TMatrix workn = ICCStore::getInstance()->workingSpaceMatrix(profuse);
+            double mat[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+
+            for (int i = 0; i < 3; i++)
+                for (int j = 0; j < 3; j++)
+                    for (int k = 0; k < 3; k++) {
+                        mat[i][j] += iwork[i][k] * imatrices.xyz_cam[k][j];    // rgb_xyz * imatrices.xyz_cam
+                    }
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+            for (int y = 0; y < bfh; y++)
+                for (int x = 0; x < bfw; x++) {
+
+                    float newred = mat[0][0] *  redloc[y][x] + mat[0][1] *  greenloc[y][x] + mat[0][2] * blueloc[y][x];
+                    float newgreen = mat[1][0] *  redloc[y][x] + mat[1][1] *  greenloc[y][x]+ mat[1][2] * blueloc[y][x];
+                    float newblue = mat[2][0] *  redloc[y][x] + mat[2][1] *  greenloc[y][x] + mat[2][2] * blueloc[y][x];
+
+                    redloc[y][x] = newred;//new values for redloc
+                    greenloc[y][x] = newgreen;
+                    blueloc[y][x] = newblue;
+
+                }
+            
+            for (int r = 0; r < 3; ++r) {
+                for (int c = 0; c < 3; ++c) {
+                    wb[r][c] = workn[r][c];
+                    wb2[r][c] = workn[r][c];
+                    iwb[r][c] = iwork[r][c];
+                }
+            }
+                
         } else {
+
             TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(profuse);
             TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(profuse);
                 for (int r = 0; r < 3; ++r) {
