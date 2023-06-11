@@ -1824,6 +1824,8 @@ PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustment
 PREFERENCES_BEHAVIOR;Behavior
 PREFERENCES_BEHSETALL;All to 'Set'
 PREFERENCES_BEHSETALLHINT;Set all parameters to the <b>Set</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>absolute</b>, the actual values will be displayed.
+PREFERENCES_BROWSERECURSIVEDEPTH;Browse sub-folders depth
+PREFERENCES_BROWSERECURSIVEMAXDIRS;Maximum sub-folders
 PREFERENCES_CACHECLEAR;Clear
 PREFERENCES_CACHECLEAR_ALL;Clear all cached files:
 PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Clear all cached files except for cached processing profiles:
