@@ -435,6 +435,9 @@ void Options::setDefaults()
     parseExtensionsEnabled.clear();
     parsedExtensions.clear();
     parsedExtensionsSet.clear();
+    browseRecursive = false;
+    browseRecursiveDepth = 10;
+    browseRecursiveMaxDirs = 100;
     renameUseTemplates = false;
     renameTemplates.clear();
     thumbnailZoomRatios.clear();
@@ -1341,6 +1344,18 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("File Browser", "SortDescending")) {
                     sortDescending = keyFile.get_boolean("File Browser", "SortDescending");
+                }
+
+                if (keyFile.has_key("File Browser", "BrowseRecursive")) {
+                    browseRecursive = keyFile.get_boolean("File Browser", "BrowseRecursive");
+                }
+
+                if (keyFile.has_key("File Browser", "BrowseRecursiveDepth")) {
+                    browseRecursiveDepth = keyFile.get_integer("File Browser", "BrowseRecursiveDepth");
+                }
+
+                if (keyFile.has_key("File Browser", "BrowseRecursiveMaxDirs")) {
+                    browseRecursiveMaxDirs = keyFile.get_integer("File Browser", "BrowseRecursiveMaxDirs");
                 }
             }
 
@@ -2410,6 +2425,9 @@ void Options::saveToFile(Glib::ustring fname)
         }
         keyFile.set_integer("File Browser", "SortMethod", sortMethod);
         keyFile.set_boolean("File Browser", "SortDescending", sortDescending);
+        keyFile.set_boolean("File Browser", "BrowseRecursive", browseRecursive);
+        keyFile.set_integer("File Browser", "BrowseRecursiveDepth", browseRecursiveDepth);
+        keyFile.set_integer("File Browser", "BrowseRecursiveMaxDirs", browseRecursiveMaxDirs);
         keyFile.set_integer("Clipping Indication", "HighlightThreshold", highlightThreshold);
         keyFile.set_integer("Clipping Indication", "ShadowThreshold", shadowThreshold);
         keyFile.set_boolean("Clipping Indication", "BlinkClipped", blinkClipped);

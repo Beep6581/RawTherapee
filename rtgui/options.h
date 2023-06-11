@@ -315,6 +315,9 @@ public:
     std::vector<int> parseExtensionsEnabled;      // List of bool to retain extension or not
     std::vector<Glib::ustring> parsedExtensions;  // List containing all retained extensions (lowercase)
     std::set<std::string> parsedExtensionsSet;  // Set containing all retained extensions (lowercase)
+    bool browseRecursive;
+    int browseRecursiveDepth;
+    int browseRecursiveMaxDirs;
     std::vector<int> tpOpen;
     bool autoSaveTpOpen;
     //std::vector<int> crvOpen;
