@@ -1405,7 +1405,9 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
     hbBrowseRecursive->pack_start(*browseRecursiveDepth, Gtk::PACK_SHRINK, 4);
     hbBrowseRecursive->pack_start(*labBrowseRecursiveMaxDirs, Gtk::PACK_SHRINK, 4);
     hbBrowseRecursive->pack_start(*browseRecursiveMaxDirs, Gtk::PACK_SHRINK, 4);
+    browseRecursiveFollowLinks = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_BROWSERECURSIVEFOLLOWLINKS")));
     vbro->pack_start(*hbBrowseRecursive, Gtk::PACK_SHRINK, 0);
+    vbro->pack_start(*browseRecursiveFollowLinks, Gtk::PACK_SHRINK, 0);
 
     fro->add(*vbro);
 
@@ -1884,6 +1886,7 @@ void Preferences::storePreferences()
     moptions.internalThumbIfUntouched = ckbInternalThumbIfUntouched->get_active();
     moptions.browseRecursiveDepth = static_cast<int>(browseRecursiveDepth->get_value());
     moptions.browseRecursiveMaxDirs = static_cast<int>(browseRecursiveMaxDirs->get_value());
+    moptions.browseRecursiveFollowLinks = browseRecursiveFollowLinks->get_active();
 
     auto save_where = saveParamsPreference->get_active_row_number();
     moptions.saveParamsFile = save_where == 0 || save_where == 2;
@@ -2111,6 +2114,7 @@ void Preferences::fillPreferences()
     ckbInternalThumbIfUntouched->set_active(moptions.internalThumbIfUntouched);
     browseRecursiveDepth->set_value(moptions.browseRecursiveDepth);
     browseRecursiveMaxDirs->set_value(moptions.browseRecursiveMaxDirs);
+    browseRecursiveFollowLinks->set_active(moptions.browseRecursiveFollowLinks);
 
     saveParamsPreference->set_active(moptions.saveParamsFile ? (moptions.saveParamsCache ? 2 : 0) : 1);
 

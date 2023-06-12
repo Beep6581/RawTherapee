@@ -590,7 +590,16 @@ std::vector<Glib::ustring> FileCatalog::getFileList(std::vector<Glib::RefPtr<Gio
 
             const auto dir = Gio::File::create_for_path(dir_path);
 
-            auto enumerator = dir->enumerate_children("standard::name,standard::type,standard::is-hidden");
+            static const auto enumerate_attrs =
+                std::string(G_FILE_ATTRIBUTE_STANDARD_NAME) + "," +
+                G_FILE_ATTRIBUTE_STANDARD_TYPE + "," +
+                G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN + "," +
+                G_FILE_ATTRIBUTE_STANDARD_SYMLINK_TARGET;
+            auto enumerator = dir->enumerate_children(
+                enumerate_attrs,
+                options.browseRecursiveFollowLinks
+                    ? Gio::FileQueryInfoFlags::FILE_QUERY_INFO_NONE
+                    : Gio::FileQueryInfoFlags::FILE_QUERY_INFO_NOFOLLOW_SYMLINKS);
 
             if (directories_explored) {
                 directories_explored->push_back(dir);

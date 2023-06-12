@@ -438,6 +438,7 @@ void Options::setDefaults()
     browseRecursive = false;
     browseRecursiveDepth = 10;
     browseRecursiveMaxDirs = 100;
+    browseRecursiveFollowLinks = true;
     renameUseTemplates = false;
     renameTemplates.clear();
     thumbnailZoomRatios.clear();
@@ -1356,6 +1357,10 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("File Browser", "BrowseRecursiveMaxDirs")) {
                     browseRecursiveMaxDirs = keyFile.get_integer("File Browser", "BrowseRecursiveMaxDirs");
+                }
+
+                if (keyFile.has_key("File Browser", "BrowseRecursiveFollowLinks")) {
+                    browseRecursiveFollowLinks = keyFile.get_integer("File Browser", "BrowseRecursiveFollowLinks");
                 }
             }
 
@@ -2428,6 +2433,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_boolean("File Browser", "BrowseRecursive", browseRecursive);
         keyFile.set_integer("File Browser", "BrowseRecursiveDepth", browseRecursiveDepth);
         keyFile.set_integer("File Browser", "BrowseRecursiveMaxDirs", browseRecursiveMaxDirs);
+        keyFile.set_boolean("File Browser", "BrowseRecursiveFollowLinks", browseRecursiveFollowLinks);
         keyFile.set_integer("Clipping Indication", "HighlightThreshold", highlightThreshold);
         keyFile.set_integer("Clipping Indication", "ShadowThreshold", shadowThreshold);
         keyFile.set_boolean("Clipping Indication", "BlinkClipped", blinkClipped);

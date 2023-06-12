@@ -318,6 +318,7 @@ public:
     bool browseRecursive;
     int browseRecursiveDepth;
     int browseRecursiveMaxDirs;
+    bool browseRecursiveFollowLinks;
     std::vector<int> tpOpen;
     bool autoSaveTpOpen;
     //std::vector<int> crvOpen;
