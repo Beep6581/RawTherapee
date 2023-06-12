@@ -3167,7 +3167,6 @@ void RawImageSource::colorSpaceConversion_(Imagefloat* im, const ColorManagement
     }
 
     if (in == nullptr) {
-        printf("Null PTR\n");
         // use default camprofile, supplied by dcraw
         // in this case we avoid using the slllllooooooowwww lcms
 
