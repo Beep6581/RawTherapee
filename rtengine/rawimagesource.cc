@@ -6136,7 +6136,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         array2D<float> zc(bfwitc, bfhitc);
         array2D<float> Yc(bfwitc, bfhitc);
 
-        int rep = rtengine::LIM(repref + 1, 0, N_t);
+       // int rep = rtengine::LIM(repref + 1, 0, N_t);
 
         //initialize calculation of xy current for tempref
         if (oldsampling == false) {
@@ -6177,9 +6177,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         for (int y = 0; y < bfh ; ++y) {
             for (int x = 0; x < bfw ; ++x) {
-                const float RR = rmm[rep] * redloc[y][x];
-                const float GG = gmm[rep] * greenloc[y][x];
-                const float BB = bmm[rep] * blueloc[y][x];
+                const float RR = rmm[repref] * redloc[y][x];
+                const float GG = gmm[repref] * greenloc[y][x];
+                const float BB = bmm[repref] * blueloc[y][x];
 
                 Color::rgbxyz(RR, GG, BB, xc[y][x], yc[y][x], zc[y][x], wb2);//use sRGB Adobe Rec2020 ACESp0
                 float X_r = xc[y][x];
