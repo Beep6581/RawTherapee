@@ -5519,6 +5519,9 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
     };
 
     int N_c = sizeof(spec_colorforxcyc) / sizeof(spec_colorforxcyc[0]);   //number of color
+    if (wbpar.itcwb_sampling) {
+        N_c = 201;
+    }
 
 
     int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
