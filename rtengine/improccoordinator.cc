@@ -529,6 +529,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             }
 
             currWB = ColorTemp(params->wb.temperature, params->wb.green, params->wb.equal, params->wb.method, params->wb.observer);
+
             int dread = 0;
             int bia = 1;
             float studgood = 1000.f;
@@ -560,6 +561,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 if (params->wb.method == "autitcgreen") {
 
                     currWBitc = imgsrc->getWB();
+                    
                     double greenref = currWBitc.getGreen();
                     double tempref0bias0 = currWBitc.getTemp();
                     if(greenref > green_thres && params->wb.itcwb_prim == "srgb") {
@@ -704,6 +706,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     double rm, gm, bm;
                     greenitc = 1.;
                     currWBitc = imgsrc->getWB();
+                    currWBitc = currWBitc.convertObserver(params->wb.observer);
+                    
                     double tempref = currWBitc.getTemp() * (1. + params->wb.tempBias);
                     double greenref = currWBitc.getGreen();
                     greenitc = greenref;
@@ -764,12 +768,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 currWB = currWB.convertObserver(params->wb.observer);
                 params->wb.temperature = static_cast<int>(currWB.getTemp());
                 params->wb.green = currWB.getGreen();
-
+/*
                 if (params->wb.method ==  "autitcgreen") {
                     params->wb.temperature = tempitc;
                     params->wb.green = greenitc;
                 }
-
+*/
                 currWB.getMultipliers(rw, gw, bw);
                 imgsrc->wbMul2Camera(rw, gw, bw);
                 /*

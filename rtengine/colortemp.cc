@@ -5549,16 +5549,9 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
 
     bool observerchoice = false;
 
-    if (wbpar.itcwb_sampling) {
-        observerchoice = true; //(wbpar.observer == StandardObserver::TEN_DEGREES);
-    } else {
-        observerchoice = (wbpar.observer == StandardObserver::TEN_DEGREES);
-        //observerchoice = wbpar.itcwb_obs;
-    }
+    observerchoice = (wbpar.observer == StandardObserver::TEN_DEGREES);
 
-    // const color_match_type &color_match = (wbpar.itcwb_obs) ? cie_colour_match_jd : cie_colour_match_jd2;
     const color_match_type &color_match = observerchoice ? cie_colour_match_jd : cie_colour_match_jd2;
-
     if (separated) {
         double tempw = Txyz[repref].Tem;
 
