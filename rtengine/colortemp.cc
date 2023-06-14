@@ -4403,13 +4403,13 @@ void ColorTemp::temp2mulxyz(double temp, const std::string &method, StandardObse
     // We first test for specially handled methods
     const auto iterator = spectMap.find(method);
     const auto &color_match = (observer == StandardObserver::TEN_DEGREES) ? cie_colour_match_jd : cie_colour_match_jd2;
-
-    /*    if(observer == StandardObserver::TEN_DEGREES){
+/*
+        if(observer == StandardObserver::TEN_DEGREES){
             printf("General Observer 10°\n");
         } else {
             printf("General Observer 2°\n");
         }
-    */
+*/    
     if (iterator != spectMap.end()) {
         spectrum_to_xyz_preset(iterator->second, x, y, z, color_match);
     } else {

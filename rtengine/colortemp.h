@@ -56,7 +56,7 @@ private:
     void temp2mul (double temp, double green, double equal, StandardObserver observer, double& rmul, double& gmul, double& bmul) const;
     const static std::map<std::string,const double *> spectMap;
 public:
-  //  static constexpr StandardObserver DEFAULT_OBSERVER = StandardObserver::TEN_DEGREES;
+   // static constexpr StandardObserver DEFAULT_OBSERVER = StandardObserver::TEN_DEGREES;
     static constexpr StandardObserver DEFAULT_OBSERVER = StandardObserver::TWO_DEGREES;
     ColorTemp () : temp(-1.), green(-1.), equal (1.), method("Custom") {}
     explicit ColorTemp (double e) : temp(-1.), green(-1.), equal (e), method("Custom") {}

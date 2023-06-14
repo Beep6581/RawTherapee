@@ -742,7 +742,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                     }
 
-
+                    if(params->wb.itcwb_sampling) {
+                        printf("OK 5.9\n");
+                        greenitc = 1.;
+                    }
 
                     if (settings->verbose && params->wb.method ==  "autitcgreen") {
                         printf("tempref=%f greref=%f tempitc=%f greenitc=%f\n", tempref, greenref, tempitc, greenitc);
