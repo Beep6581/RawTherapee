@@ -2664,6 +2664,13 @@ bool EditorPanel::updateWaveform(void) const
         || histogram_scope_type == ScopeType::NONE;
 }
 
+void EditorPanel::setBitDepth(unsigned int bitdepth)
+{
+    if (histogramPanel) {
+        histogramPanel->setBitDepth(bitdepth);
+    }
+}
+
 void EditorPanel::scopeTypeChanged(ScopeType new_type)
 {
     histogram_scope_type = new_type;

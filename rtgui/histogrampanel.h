@@ -34,6 +34,8 @@
 #include "../rtengine/array2D.h"
 #include "../rtengine/LUT.h"
 #include "../rtengine/noncopyable.h"
+#include "../rtengine/opthelper.h"
+#include "../rtengine/sleef.h"
 
 class HistogramArea;
 
@@ -53,9 +55,25 @@ struct HistogramRGBAreaIdleHelper {
 class HistogramScaling
 {
 public:
-    double factor;
-    HistogramScaling() : factor(10.0) {}
-    double log (double vsize, double val);
+    float factor;
+    HistogramScaling() : factor(10.f) {} // factor(10.f) can be tuned if necessary - higher is flatter curve
+
+    float log(float scale, float val) const
+    {
+        return xlogf(factor / (factor + val)) / xlogf(factor / (factor + scale));
+    }
+
+    float logMult(float val, float mult) const
+    {
+        return xlogf(factor / (factor + val)) * mult;
+    }
+
+#ifdef __SSE2__
+    vfloat logMult(vfloat val, vfloat mult) const
+    {
+        return xlogf(F2V(factor) / (F2V(factor) + val)) * mult;
+    }
+#endif
 };
 
 class HistogramRGBArea : public Gtk::DrawingArea, public BackBuffer, protected HistogramScaling, public rtengine::NonCopyable
@@ -82,8 +100,6 @@ protected:
     bool barDisplayed;
 
     Gtk::Grid* parent;
-    
-    double padding = 5.0;
 
     HistogramRGBAreaIdleHelper* harih;
 
@@ -162,7 +178,7 @@ private:
 
 protected:
     LUTu rhist, ghist, bhist, lhist, chist;
-    LUTu rhistRaw, ghistRaw, bhistRaw, lhistRaw; //lhistRaw is unused?
+    LUTu rhistRaw, ghistRaw, bhistRaw; 
     int vectorscope_scale;
     array2D<int> vect_hc, vect_hs;
     std::vector<unsigned char> vect_hc_buffer, vect_hs_buffer;
@@ -190,8 +206,8 @@ protected:
     bool isPressed;
     double movingPosition;
     bool needPointer;
-    
-    double padding = 5.0;
+
+    unsigned int bitdepth;
 
     HistogramAreaIdleHelper* haih;
 
@@ -227,6 +243,7 @@ public:
     );
     void updateOptions (bool r, bool g, bool b, bool l, bool c, int mode, Options::ScopeType type, bool pointer);
     bool updatePending();
+    void setBitDepth(unsigned int bitdepth);
     void on_realize() override;
     bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
     bool on_button_press_event (GdkEventButton* event) override;
@@ -239,7 +256,7 @@ public:
     type_signal_factor_changed signal_factor_changed();
 
 private:
-    void drawCurve(Cairo::RefPtr<Cairo::Context> &cr, const LUTu & data, double scale, int hsize, int vsize);
+    void drawCurve(Cairo::RefPtr<Cairo::Context> &cr, const LUTu & data, float scale);
     void drawMarks(Cairo::RefPtr<Cairo::Context> &cr, const LUTu & data, double scale, int hsize, int & ui, int & oi);
     void drawParade(Cairo::RefPtr<Cairo::Context> &cr, int hsize, int vsize);
     void drawVectorscope(Cairo::RefPtr<Cairo::Context> &cr, int hsize, int vsize);
@@ -341,6 +358,10 @@ public:
     )
     {
         histogramArea->update(histRed, histGreen, histBlue, histLuma, histChroma, histRedRaw, histGreenRaw, histBlueRaw, vectorscopeScale, vectorscopeHC, vectorscopeHS, waveformScale, waveformRed, waveformGreen, waveformBlue, waveformLuma);
+    }
+    void setBitDepth(unsigned int bitdepth)
+    {
+        histogramArea->setBitDepth(bitdepth);
     }
     // pointermotionlistener interface
     void pointerMoved (bool validPos, const Glib::ustring &profile, const Glib::ustring &profileW, int x, int y, int r, int g, int b, bool isRaw = false) override;

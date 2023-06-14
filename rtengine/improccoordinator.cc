@@ -103,10 +103,13 @@ ImProcCoordinator::ImProcCoordinator() :
     lhist16CCAM(65536),
     lhist16RETI(),
     lhist16LClad(65536),
-    histRed(256), histRedRaw(256),
-    histGreen(256), histGreenRaw(256),
-    histBlue(256), histBlueRaw(256),
-    histLuma(256),
+    
+    // Main histogram
+    histRed(65536), histRedRaw(65536),
+    histGreen(65536), histGreenRaw(65536),
+    histBlue(65536), histBlueRaw(65536),
+    histLuma(65536),
+    
     histToneCurve(256),
     histToneCurveBW(256),
     histLCurve(256),
@@ -117,7 +120,7 @@ ImProcCoordinator::ImProcCoordinator() :
     histCCAM(256),
     histClad(256),
     bcabhist(256),
-    histChroma(256),
+    histChroma(65536),
 
     histLRETI(256),
 
@@ -343,6 +346,14 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 highDetailNeeded = true;
                 break;
             }
+        }
+    }
+
+    // Forward bit depth of image to the histogram
+    if (hListener) {
+        hListener->setBitDepth(imgsrc->getBitDepth());
+        if (settings->verbose) {
+            printf("Image has a bit depth of %u bits\n",imgsrc->getBitDepth());
         }
     }
 
@@ -2276,7 +2287,7 @@ bool ImProcCoordinator::updateLRGBHistograms()
             for (int i = y1; i < y2; i++)
                 for (int j = x1; j < x2; j++)
                 {
-                    histChroma[(int)(sqrtf(SQR(nprevl->a[i][j]) + SQR(nprevl->b[i][j])) / 188.f)]++;      //188 = 48000/256
+                    histChroma[(int)(sqrtf(SQR(nprevl->a[i][j]) + SQR(nprevl->b[i][j])) * 255.0/48000.0)]++;
                 }
         }
 #ifdef _OPENMP
@@ -2285,10 +2296,11 @@ bool ImProcCoordinator::updateLRGBHistograms()
         {
             histLuma.clear();
 
+            double s = 0.0078125; // map L = [0..32768] to [0..255]
             for (int i = y1; i < y2; i++)
                 for (int j = x1; j < x2; j++)
                 {
-                    histLuma[(int)(nprevl->L[i][j] / 128.f)]++;
+                    histLuma[(int)(nprevl->L[i][j] * s)]++;
                 }
         }
 #ifdef _OPENMP
