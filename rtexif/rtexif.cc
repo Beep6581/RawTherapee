@@ -1209,6 +1209,10 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
             goto defsubdirs;
         }
     } else {
+        // In some circumstances, `value` may have been allocated, so
+        // delete it to prevent a leak.  See issue
+        // https://github.com/Beep6581/RawTherapee/issues/6735
+        delete [] value;
         // read value
         value = new unsigned char [valuesize + 1];
         auto readSize = fread (value, 1, valuesize, f);
