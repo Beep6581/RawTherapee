@@ -3247,23 +3247,16 @@ std::vector<Tag*> ExifManager::getDefaultTIFFTags (TagDirectory* forthis)
 
 
 
-int ExifManager::createJPEGMarker (const TagDirectory* root, const rtengine::procparams::ExifPairs& changeList, int W, int H, unsigned char* buffer)
+void ExifManager::createJPEGMarker (const TagDirectory* root, const rtengine::procparams::ExifPairs& changeList, int W, int H, unsigned char *&buffer, unsigned &bufferSize)
 {
 
     // write tiff header
-    int offs = 6;
-    memcpy (buffer, "Exif\0\0", 6);
+    int offs = 6; // "Exif\0\0"
     ByteOrder order = INTEL;
 
     if (root) {
         order = root->getOrder ();
     }
-
-    sset2 ((unsigned short)order, buffer + offs, order);
-    offs += 2;
-    sset2 (42, buffer + offs, order);
-    offs += 2;
-    sset4 (8, buffer + offs, order);
 
     TagDirectory* cl;
 
@@ -3326,11 +3319,18 @@ int ExifManager::createJPEGMarker (const TagDirectory* root, const rtengine::pro
     }
 
     cl->sort ();
-    int size = cl->write (8, buffer + 6);
+    bufferSize = cl->calculateSize() + 8 + 6;
+    buffer = new unsigned char[bufferSize]; // this has to be deleted in caller
+    memcpy (buffer, "Exif\0\0", 6);
+    sset2 ((unsigned short)order, buffer + offs, order);
+    offs += 2;
+    sset2 (42, buffer + offs, order);
+    offs += 2;
+    sset4 (8, buffer + offs, order);
+
+    cl->write (8, buffer + 6);
 
     delete cl;
-
-    return size + 6;
 }
 
 int ExifManager::createPNGMarker(const TagDirectory* root, const rtengine::procparams::ExifPairs &changeList, int W, int H, int bps, const char* iptcdata, int iptclen, unsigned char *&buffer, unsigned &bufferSize)
