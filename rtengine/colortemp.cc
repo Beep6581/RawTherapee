@@ -5574,6 +5574,7 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
     };
 
     int N_c = sizeof(spec_colorforxcyc) / sizeof(spec_colorforxcyc[0]);   //number of color
+
     if (wbpar.itcwb_sampling) {
         N_c = sizeof(spec_colorforxcyc_old) / sizeof(spec_colorforxcyc_old[0]);   //number of color 5.9
     }
@@ -5611,6 +5612,7 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
     }
 
     const color_match_type &color_match = observerchoice ? cie_colour_match_jd : cie_colour_match_jd2;
+
     if (separated) {
         double tempw = Txyz[repref].Tem;
 

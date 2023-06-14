@@ -558,13 +558,15 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 tempitc = 5000.f;
                 bool autowb1 = true;
                 double green_thres = 0.8;
+
                 if (params->wb.method == "autitcgreen") {
 
                     currWBitc = imgsrc->getWB();
-                    
+
                     double greenref = currWBitc.getGreen();
                     double tempref0bias0 = currWBitc.getTemp();
-                    if(greenref > green_thres && params->wb.itcwb_prim == "srgb") {
+
+                    if (greenref > green_thres && params->wb.itcwb_prim == "srgb") {
                         forcewbgrey = true;
                     }
 
@@ -579,7 +581,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                     if (autowb1) {
                         //alternative to camera if camera settings out, using autowb grey to find new ref, then mixed with camera
-                       // kcam = 0;
+                        // kcam = 0;
                         params->wb.method = "autold";
                         double rm, gm, bm;
                         tempitc = 5000.f;
@@ -589,6 +591,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         double greenref = currWBitc.getGreen();
                         bool pargref = true;
                         bool pargre = true;
+
                         if ((greenref > 1.5f || tempref0bias < 3300.f || tempref0bias > 7700.f || forcewbgrey) && kcam != 1 && !params->wb.itcwb_sampling) { //probably camera out to adjust...
                             imgsrc->getAutoWBMultipliersitc(extra, tempref0bias, greenref, tempitc, greenitc, temp0, delta, bia, dread, kcam, nocam, studgood, minchrom, kmin, minhist, maxhist, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
                             imgsrc->wbMul2Camera(rm, gm, bm);
@@ -596,95 +599,114 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                             ColorTemp ct(rm, gm, bm, 1.0, currWB.getObserver());
                             tem = ct.getTemp();
                             gre  = ct.getGreen();
-                            if(gre > 1.3f) {
+
+                            if (gre > 1.3f) {
                                 pargre = false;
                             }
-                            if(greenref > 1.3f) {
+
+                            if (greenref > 1.3f) {
                                 pargref = false;
                             }
+
                             double deltemp = tem - tempref0bias;
+
                             if (gre > 1.5f && !forcewbgrey) { //probable wrong value
                                 tem = 0.3 * tem + 0.7 * tempref0bias;//find a mixed value
                                 gre = 0.5f + 0.5f * LIM(gre, 0.9f, 1.1f);//empirical formula in case  system out
                             } else {
-                                if(!forcewbgrey) {
+                                if (!forcewbgrey) {
                                     gre = 0.2f + 0.8f * LIM(gre, 0.85f, 1.15f);
                                     tem = 0.3 * tem + 0.7 * tempref0bias;//find a mixed value
                                     nocam = 0;
                                 } else {//set temp and green to init itcwb algorithm
                                     double grepro = LIM(greenref, green_thres, 1.15);
                                     gre = 0.5f * grepro + 0.5f * LIM(gre, 0.9f, 1.1f);//empirical green between green camera and autowb grey
-                                    if(abs(deltemp) < 400.) {//arbitraries thresholds to refine
+
+                                    if (abs(deltemp) < 400.) { //arbitraries thresholds to refine
                                         tem = 0.3 * tem + 0.7 * tempref0bias;//find a mixed value between camera and auto grey
-                                        if(deltemp > 0.) {
+
+                                        if (deltemp > 0.) {
                                             nocam = 1;
                                         } else {
                                             nocam = 2;
                                         }
-                                    } else if(abs(deltemp) < 900.) {//other arbitrary threshold
+                                    } else if (abs(deltemp) < 900.) { //other arbitrary threshold
                                         tem = 0.4 * tem + 0.6 * tempref0bias;//find a mixed value between camera and auto grey
-                                        if(deltemp > 0.) {
+
+                                        if (deltemp > 0.) {
                                             nocam = 3;
                                         } else {
                                             nocam = 4;
                                         }
-                                    } else if(abs(deltemp) < 1500. && tempref0bias < 4500.f) {
-                                        if((pargre && pargref) || (!pargre && !pargref)) {
+                                    } else if (abs(deltemp) < 1500. && tempref0bias < 4500.f) {
+                                        if ((pargre && pargref) || (!pargre && !pargref)) {
                                             tem = 0.45 * tem + 0.55 * tempref0bias;//find a mixed value between camera and auto grey
                                         }
-                                        if(pargre && !pargref) {
+
+                                        if (pargre && !pargref) {
                                             tem = 0.7 * tem + 0.3 * tempref0bias;//find a mixed value between camera and auto grey
                                         }
-                                        if(!pargre && pargref) {
+
+                                        if (!pargre && pargref) {
                                             tem = 0.3 * tem + 0.7 * tempref0bias;//find a mixed value between camera and auto grey
                                         }
+
                                         nocam = 5;
-                                    } else if(abs(deltemp) < 1500. && tempref0bias >= 4500.f) {
-                                        if((pargre && pargref)|| (!pargre && !pargref)) {
+                                    } else if (abs(deltemp) < 1500. && tempref0bias >= 4500.f) {
+                                        if ((pargre && pargref) || (!pargre && !pargref)) {
                                             tem = 0.45 * tem + 0.55 * tempref0bias;//find a mixed value between camera and auto grey
                                         }
-                                        if(pargre && !pargref) {
+
+                                        if (pargre && !pargref) {
                                             tem = 0.7 * tem + 0.3 * tempref0bias;//find a mixed value between camera and auto grey
                                         }
-                                        if(!pargre && pargref) {
+
+                                        if (!pargre && pargref) {
                                             tem = 0.3 * tem + 0.7 * tempref0bias;//find a mixed value between camera and auto grey
                                         }
+
                                         nocam = 6;
                                     } else if (abs(deltemp) >= 1500. && tempref0bias < 5500.f) {
-                                        if( tem >= 4500.f) {
-                                            if((pargre && pargref)|| (!pargre && !pargref)) {
+                                        if (tem >= 4500.f) {
+                                            if ((pargre && pargref) || (!pargre && !pargref)) {
                                                 tem = 0.7 * tem + 0.3 * tempref0bias;//find a mixed value between camera and auto grey
                                             }
-                                            if(pargre && !pargref) {
+
+                                            if (pargre && !pargref) {
                                                 tem = 0.8 * tem + 0.2 * tempref0bias;//find a mixed value between camera and auto grey
                                             }
-                                            if(!pargre && pargref) {
+
+                                            if (!pargre && pargref) {
                                                 tem = 0.3 * tem + 0.7 * tempref0bias;//find a mixed value between camera and auto grey
                                             }
+
                                             nocam = 7;
                                         } else {
                                             tem = 0.3 * tem + 0.7 * tempref0bias;//find a mixed value between camera and auto grey
                                             nocam = 8;
                                         }
                                     } else if (abs(deltemp) >= 1500. && tempref0bias >= 5500.f) {
-                                        if( tem >= 10000.f) {
+                                        if (tem >= 10000.f) {
                                             tem = 0.99 * tem + 0.01 * tempref0bias;//find a mixed value between camera and auto grey
                                             nocam = 9;
                                         } else {
-                                            if((pargre && pargref)|| (!pargre && !pargref)) {
+                                            if ((pargre && pargref) || (!pargre && !pargref)) {
                                                 tem = 0.45 * tem + 0.55 * tempref0bias;//find a mixed value between camera and auto grey
                                             }
-                                            if(pargre && !pargref) {
+
+                                            if (pargre && !pargref) {
                                                 tem = 0.7 * tem + 0.3 * tempref0bias;//find a mixed value between camera and auto grey
                                             }
-                                            if(!pargre && pargref) {
+
+                                            if (!pargre && pargref) {
                                                 tem = 0.3 * tem + 0.7 * tempref0bias;//find a mixed value between camera and auto grey
                                             }
+
                                             nocam = 10;
                                         }
                                     } else {
-                                         tem = 0.4 * tem + 0.6 * tempref0bias;
-                                         nocam = 11;
+                                        tem = 0.4 * tem + 0.6 * tempref0bias;
+                                        nocam = 11;
                                     }
                                 }
                             }
@@ -692,6 +714,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                             tempitc = tem ;
 
                             extra = true;
+
                             if (settings->verbose) {
                                 printf("Using new references AWB grey or mixed  Enable Extra - temgrey=%f gregrey=%f tempitc=%f nocam=%i\n", (double) tem, (double) gre, (double) tempitc, nocam);
                             }
@@ -707,7 +730,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     greenitc = 1.;
                     currWBitc = imgsrc->getWB();
                     currWBitc = currWBitc.convertObserver(params->wb.observer);
-                    
+
                     double tempref = currWBitc.getTemp() * (1. + params->wb.tempBias);
                     double greenref = currWBitc.getGreen();
                     greenitc = greenref;
@@ -768,12 +791,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 currWB = currWB.convertObserver(params->wb.observer);
                 params->wb.temperature = static_cast<int>(currWB.getTemp());
                 params->wb.green = currWB.getGreen();
-/*
-                if (params->wb.method ==  "autitcgreen") {
-                    params->wb.temperature = tempitc;
-                    params->wb.green = greenitc;
-                }
-*/
+                /*
+                                if (params->wb.method ==  "autitcgreen") {
+                                    params->wb.temperature = tempitc;
+                                    params->wb.green = greenitc;
+                                }
+                */
                 currWB.getMultipliers(rw, gw, bw);
                 imgsrc->wbMul2Camera(rw, gw, bw);
                 /*
@@ -796,7 +819,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         awbListener->WBChanged(met, params->wb.temperature, params->wb.green, rw, gw, bw, 0, 1, 0, dread, studgood, 0, 0, 0, 0);
 
                     } else {
-                        minchrom = LIM(minchrom,0.f, 0.9f);
+                        minchrom = LIM(minchrom, 0.f, 0.9f);
                         delta = LIM(delta, 0.f, 0.9f);
                         minhist = std::max(minhist, 100.f);
                         maxhist = std::max(maxhist, 1000.f);
@@ -1420,7 +1443,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                 float highresi = 0.f;
                 float nresi = 0.f;
-                float highresi46 =0.f;
+                float highresi46 = 0.f;
                 float nresi46 = 0.f;
                 float Lhighresi = 0.f;
                 float Lnresi = 0.f;
@@ -1522,6 +1545,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 retiMinMax.Tmin = Tmin;
                 retiMinMax.Tmax = Tmax;
                 locallretiminmax.push_back(retiMinMax);
+
                 // Recalculate references after
                 if (params->locallab.spots.at(sp).spotMethod == "exc") {
                     ipf.calc_ref(sp, reserv.get(), reserv.get(), 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huer, chromar, lumar, sobeler, avg, locwavCurveden, locwavdenutili);
@@ -3073,7 +3097,7 @@ void ImProcCoordinator::process()
             || params->rgbCurves != nextParams->rgbCurves
             || params->colorToning != nextParams->colorToning
             || params->vibrance != nextParams->vibrance
-       //     || params->wb != nextParams->wb //isPanningRelatedChange(nextParams->wb)
+            //     || params->wb != nextParams->wb //isPanningRelatedChange(nextParams->wb)
             || params->wb.isPanningRelatedChange(nextParams->wb)
             || params->colorappearance != nextParams->colorappearance
             || params->epd != nextParams->epd
