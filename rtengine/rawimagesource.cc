@@ -6386,23 +6386,134 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             printf("White Point xyY x=%f y=%f\n", xwpr, ywpr);
         }
 
-        for (int i = 0; i < sizcu4; ++i) { //take the max values
-            histcurrref[i][repref] = Wbhis[siza - (i + 1)].histnum;
-            xx_curref[i][repref] = xxx[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
-            yy_curref[i][repref] = yyy[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
-            YY_curref[i][repref] = YYY[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
-        }
-
-        int minsize = wbpar.itcwb_minsize;
-        int maxsize = maxsiz;
-        bool isponderate = wbpar.itcwb_ponder;//reused to build patch ponderate
-
-        bool isponder = true;//with true moving average
-        float powponder = settings->itcwb_powponder;
-        powponder = LIM(powponder, 0.01f, 0.2f);
         float estimchrom = 0.f;
 
-        if (oldsampling == false) {
+        if (oldsampling == true) {
+            for (int i = 0; i < sizcu4; ++i) { //take the max values
+                histcurrref[i][repref] = Wbhis[siza - (i + 1)].histnum;
+                xx_curref[i][repref] = xxx[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
+                yy_curref[i][repref] = yyy[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
+                YY_curref[i][repref] = YYY[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
+            }
+
+            printf("Sizcu4=%i\n", sizcu4);
+
+            //estimate chromaticity for references
+            for (int nh = 0; nh < sizcu4; ++nh) {
+                const float chxy = std::sqrt(SQR(xx_curref[nh][repref] - xwpr) + SQR(yy_curref[nh][repref] - ywpr));
+                wbchro[nh].chroxy_number = chxy * std::sqrt(histcurrref[nh][repref]);
+                wbchro[nh].chroxy = std::sqrt(chxy);
+                wbchro[nh].chrox = xx_curref[nh][repref];
+                wbchro[nh].chroy = yy_curref[nh][repref];
+                wbchro[nh].Y = YY_curref[nh][repref];
+                wbchro[nh].index = nh;
+                estimchrom += chxy;
+            }
+
+            estimchrom /= sizcu4;
+
+            if (settings->verbose) {
+                printf("estimchrom=%f\n", estimchrom);
+            }
+
+            const int maxval = 34;
+
+            sizcurr2ref = rtengine::min(sizcurr2ref, maxval);    //keep about the biggest values,
+
+            for (int i = 0; i < sizcurr2ref; ++i) {
+                //is condition chroxy necessary ?
+                if (wbchro[sizcu4 - (i + 1)].chrox > 0.1f && wbchro[sizcu4 - (i + 1)].chroy > 0.1f && wbchro[sizcu4 - (i + 1)].chroxy > 0.0f) { //suppress value too far from reference spectral
+                    w++;
+                    xx_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chrox;
+                    yy_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chroy;
+                    YY_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].Y;
+                    nn_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].number;
+                }
+            }
+
+            //calculate deltaE xx to find best values of spectrals data - limited to chroma values
+            int maxnb = 3;
+
+
+            float dEmean = 0.f;
+            int ndEmean = 0;
+            float maxhist = -1000.f;
+            float minhist = 100000000.f;
+
+            for (int nb = 1; nb <= maxnb; ++nb) { //max 5 iterations for Itcwb_thres=33, after trial 3 is good in most cases but in some cases 5
+                for (int i = 0; i < w; ++i) {
+                    float mindeltaE = 100000.f;
+                    int kN = 0;
+
+                    for (int j = 0; j < Nc ; j++) {
+                        if (!good_spectral[j]) {
+                            const float deltaE = SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[j][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[j][repref]);
+
+                            if (deltaE < mindeltaE) {
+                                mindeltaE = deltaE;
+                                kN = j;
+                            }
+                        }
+                    }
+
+                    {
+                        float spectlimit = 0.f;
+                        float dE = sqrt(SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[kN][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[kN][repref]));
+                        dEmean += dE;
+                        ndEmean++;
+
+                        if (nn_curref_reduc[i][repref] < minhist) {
+                            minhist = nn_curref_reduc[i][repref];
+                        }
+
+                        if (nn_curref_reduc[i][repref] > maxhist) {
+                            maxhist = nn_curref_reduc[i][repref];
+                        }
+
+                        if (settings->verbose) {
+                            float xr = reff_spect_xx_camera[kN][repref];
+                            float yr = reff_spect_yy_camera[kN][repref];
+                            float Yr = reff_spect_Y_camera[kN][repref];
+                            float X_r = (65535.f * (xr * Yr)) / yr;
+                            float Z_r = (65535.f * (1.f - xr - yr) * Yr) / yr;
+                            float Y_r = 65535.f * Yr;
+                            float Lr, ar, br;
+                            Color::XYZ2Lab(X_r, Y_r, Z_r, Lr, ar, br);//it make sense, because known spectral color
+
+                            if (dE > spectlimit) {
+                                printf("i=%i kn=%i REFLAB for info not used - not relevant Lr=%3.2f ar=%3.2f br=%3.2f \n", i,  kN, (double)(Lr / 327.68f), (double)(ar / 327.68f), (double)(br / 327.68f));
+                                printf("IMAGE: kn=%i hist=%7.0f chro_num=%5.1f hue=%2.2f chro=%2.3f xx=%f yy=%f YY=%f\n", kN, (double) nn_curref_reduc[i][repref], (double) chronum_curref_reduc[i][repref], (double) hue_curref_reduc[i][repref], (double) chro_curref_reduc[i][repref], (double) xx_curref_reduc[i][repref], (double) yy_curref_reduc[i][repref], (double) YY_curref_reduc[i][repref]);
+                                printf("kn=%i REfxy xxr=%f yyr=%f YYr=%f\n", kN, (double) reff_spect_xx_camera[kN][repref], (double) reff_spect_yy_camera[kN][repref], (double) reff_spect_Y_camera[kN][repref]);
+                                printf("kn=%i DELTA delt=%f\n", kN, dE);
+                                printf("....  \n");
+                            }
+                        }
+
+                    }
+
+                    good_spectral[kN] = true;//good spectral are spectral color that match color histogram xy
+                }
+            }
+
+
+        } else {
+
+            for (int i = 0; i < sizcu4; ++i) { //take the max values
+                histcurrref[i][repref] = Wbhis[siza - (i + 1)].histnum;
+                xx_curref[i][repref] = xxx[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
+                yy_curref[i][repref] = yyy[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
+                YY_curref[i][repref] = YYY[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
+            }
+
+            int minsize = wbpar.itcwb_minsize;
+            int maxsize = maxsiz;
+            bool isponderate = wbpar.itcwb_ponder;//reused to build patch ponderate
+
+            bool isponder = true;//with true moving average
+            float powponder = settings->itcwb_powponder;
+            powponder = LIM(powponder, 0.01f, 0.2f);
+            float estimchrom = 0.f;
+
             for (int j = minsize; j < maxsize; ++j) {//20 empirical minimal value default to ensure a correlation
                 if (!good_size[j]) {
                     float countchxynum = 0.f;
@@ -6499,143 +6610,80 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
                 good_size[kmin] = true;
             }
-        }
 
-        if (oldsampling == false) {
             sizcu4 = kmin;
-        }
 
-        if (oldsampling == true) {
-            float estimchrom = 0.f;
-            float estimhue = 0.f;
-            float xh = 0.f;
-            float yh = 0.f;
+            int maxval = maxsiz;
+            sizcurr2ref = rtengine::min(sizcurr2ref, maxval);    //keep about the biggest values,
+            int index1 = 0;
+            int index2 = sizcu4;
+            int indn = index1;
 
-            //estimate chromaticity for references
-            for (int nh = 0; nh < sizcu4; ++nh) {
-                const float chxy = std::sqrt(SQR(xx_curref[nh][repref] - xwpr) + SQR(yy_curref[nh][repref] - ywpr));
-                xh += xx_curref[nh][repref] - xwpr;
-                yh += yy_curref[nh][repref] - ywpr;
-                wbchro[nh].chroxy_number = chxy * std::sqrt(histcurrref[nh][repref]);
-                wbchro[nh].chroxy = std::sqrt(chxy);
-                wbchro[nh].chrox = xx_curref[nh][repref];
-                wbchro[nh].chroy = yy_curref[nh][repref];
-                wbchro[nh].Y = YY_curref[nh][repref];
-                wbchro[nh].index = nh;
-                estimchrom += chxy;
-            }
-
-            estimhue = xatan2f(yh, xh);
-            estimchrom /= sizcu4;
-
-
-            if (settings->verbose) {
-                printf("Info - patch estimation of wp displacement (before): chrom=%f hue=%f\n", (double) estimchrom, (double) estimhue);
-            }
-
-        }
-
-        if (oldsampling == true) {
-            isponderate = false;
-        }
-
-
-        int maxval = maxsiz;
-
-        if (oldsampling == true) {
-            maxval = 34;
-        }
-
-        sizcurr2ref = rtengine::min(sizcurr2ref, maxval);    //keep about the biggest values,
-        int index1 = 0;
-        int index2 = sizcu4;
-
-        if (oldsampling == true) {
-            index1 = 0;
-            index2 = sizcurr2ref;
-        }
-
-        int indn = index1;
-
-        if (oldsampling == false) {
 
             for (int i = index1; i < index2; ++i) {
                 if (wbchro[sizcu4 - (i + 1)].number < 400.f) { //remove too low numbers datas about an area 60*60 pixels or reparted
                     indn++;
                 }
             }
-        }
 
-        Tppat[repref].minhi = (float) rtengine::max((int) wbchro[sizcu4 - (indn + 1)].number, (int) Tppat[repref].minhi);
+            Tppat[repref].minhi = (float) rtengine::max((int) wbchro[sizcu4 - (indn + 1)].number, (int) Tppat[repref].minhi);
 
-        if (settings->verbose) {
-            printf("Index1=%i index2=%i \n", indn, index2);
-        }
-
-        if (settings->verbose) {
-            printf("Info2 - patch estimation of wp displacement (before):j=%i repref=%i real=%i Tppat=%f chrom=%f hue=%f\n", kmin, repref, index2 - indn, (double) Tppat[repref].minchroma, (double) minchrom, (double) estim_hue[kmin][repref]);
-        };
-
-        float limexclu = 0.96f;//to avoid highlight in some cases (sky...)
-
-        if (oldsampling) {
-            limexclu = 1.5f;
-            limx = 0.1f;
-            limy = 0.1f;
-        }
-
-        for (int i = indn; i < index2; ++i) {
-            //improvment to limit high Y values wbchro[sizcu4 - (i + 1)].Y < 0.96  0.96 arbitrary high value, maybe 0.9 or 0.98...or 1.0
-            if (wbchro[sizcu4 - (i + 1)].chrox > limx && wbchro[sizcu4 - (i + 1)].chroy > limy  && wbchro[sizcu4 - (i + 1)].Y < limexclu) { //remove value too far from reference spectral
-                w++;// w number of real tests
-                xx_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chrox;
-                yy_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chroy;
-                YY_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].Y;
-                chronum_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chroxy_number;
-                nn_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].number;
-                hue_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].hue;
-                chro_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chroxy;
+            if (settings->verbose) {
+                printf("Index1=%i index2=%i \n", indn, index2);
             }
-        }
 
-        if (settings->verbose) {
-            printf("Number of real tests=%i\n", w);
-        }
+            if (settings->verbose) {
+                printf("Info2 - patch estimation of wp displacement (before):j=%i repref=%i real=%i Tppat=%f chrom=%f hue=%f\n", kmin, repref, index2 - indn, (double) Tppat[repref].minchroma, (double) minchrom, (double) estim_hue[kmin][repref]);
+            };
 
-        int maxnb = 1; //since 8 april 2023
-
-        if (oldsampling == true) {
-            maxnb = 3;
-        }
+            float limexclu = 0.96f;//to avoid highlight in some cases (sky...)
 
 
-        if (wbpar.itcwb_thres > 65) {//normally never used
-            maxnb = (Ncr - 1) / wbpar.itcwb_thres; //201 to 211
-        }
+            for (int i = indn; i < index2; ++i) {
+                //improvment to limit high Y values wbchro[sizcu4 - (i + 1)].Y < 0.96  0.96 arbitrary high value, maybe 0.9 or 0.98...or 1.0
+                if (wbchro[sizcu4 - (i + 1)].chrox > limx && wbchro[sizcu4 - (i + 1)].chroy > limy  && wbchro[sizcu4 - (i + 1)].Y < limexclu) { //remove value too far from reference spectral
+                    w++;// w number of real tests
+                    xx_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chrox;
+                    yy_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chroy;
+                    YY_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].Y;
+                    chronum_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chroxy_number;
+                    nn_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].number;
+                    hue_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].hue;
+                    chro_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chroxy;
+                }
+            }
 
-        float dEmean = 0.f;
-        int ndEmean = 0;
-        maxhist = -1000.f;
-        minhist = 100000000.f;
+            if (settings->verbose) {
+                printf("Number of real tests=%i\n", w);
+            }
 
-        for (int nb = 1; nb <= maxnb; ++nb) { //1 is good, but 2 3 or 4 help to find more spectral values
-            for (int i = 0; i < w; ++i) {
-                float mindeltaE = 100000.f;
-                int kN = 0;
+            int maxnb = 1; //since 8 april 2023
 
-                for (int j = 0; j < Ncr ; j++) {
-                    if (!good_spectral[j]) {
-                        const float deltaE = SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[j][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[j][repref]);
+            if (wbpar.itcwb_thres > 65) {//normally never used
+                maxnb = (Ncr - 1) / wbpar.itcwb_thres; //201 to 211
+            }
 
-                        if (deltaE < mindeltaE) {
-                            mindeltaE = deltaE;
-                            kN = j;
+            float dEmean = 0.f;
+            int ndEmean = 0;
+            maxhist = -1000.f;
+            minhist = 100000000.f;
+
+            for (int nb = 1; nb <= maxnb; ++nb) { //1 is good, but 2 3 or 4 help to find more spectral values
+                for (int i = 0; i < w; ++i) {
+                    float mindeltaE = 100000.f;
+                    int kN = 0;
+
+                    for (int j = 0; j < Ncr ; j++) {
+                        if (!good_spectral[j]) {
+                            const float deltaE = SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[j][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[j][repref]);
+
+                            if (deltaE < mindeltaE) {
+                                mindeltaE = deltaE;
+                                kN = j;
+                            }
                         }
                     }
-                }
 
-                // if (oldsampling == false)
-                {
                     float spectlimit = settings->itcwb_deltaspec;
                     float dE = sqrt(SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[kN][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[kN][repref]));
                     dEmean += dE;
@@ -6668,22 +6716,22 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                         }
                     }
 
+
+                    good_spectral[kN] = true;//good spectral are spectral color that match color histogram xy
                 }
 
-                good_spectral[kN] = true;//good spectral are spectral color that match color histogram xy
-            }
+                if (ndEmean == 0) {
+                    ndEmean = 2;
+                }
 
-            if (ndEmean == 0) {
-                ndEmean = 2;
-            }
+                Tppat[repref].delt_E = dEmean / ndEmean;
+                delta = Tppat[repref].delt_E;
+                Tppat[repref].maxhi = maxhist;
+                Tppat[repref].minhi = minhist;
 
-            Tppat[repref].delt_E = dEmean / ndEmean;
-            delta = Tppat[repref].delt_E;
-            Tppat[repref].maxhi = maxhist;
-            Tppat[repref].minhi = minhist;
-
-            if (settings->verbose  && !oldsampling) {
-                printf("Patch Mean - Repref=%i deltaE=%f minhisto=%6.0f maxhisto=%7.0f \n", repref, (double) dEmean / ndEmean, (double) minhist, (double) maxhist);
+                if (settings->verbose  && !oldsampling) {
+                    printf("Patch Mean - Repref=%i deltaE=%f minhisto=%6.0f maxhisto=%7.0f \n", repref, (double) dEmean / ndEmean, (double) minhist, (double) maxhist);
+                }
             }
         }
 
