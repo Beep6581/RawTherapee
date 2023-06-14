@@ -5196,6 +5196,61 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
         //J570_NeuL4_spect2
     };//
 
+    const double* spec_colorforxcyc_old[] = {//color references
+        JDC468_BluH10_spect, JDC468_BluD6_spect, ColorchechCyaF3_spect, JDC468_BluM5_spect, // 0 3
+        ColorGreenM25_spect,   JDC468_GreK7_spect, ColabSky42_0_m24_spect, ColabSky60_0_m31_spect,  ColorchechBluC150_m5_m22_spect,//8
+        JDC468_GreQ7_spect, ColorchechDCBluN881_m7_m14_spect, ColorchechGreB3_spect, ColorchechPurD2_spect,  //12
+        ColorchechSGBlaN3_6_spect, ColorchechGraC4_67_spect, JDC468_K15_87greyspect,//15
+        JDC468_GraK14_44_spect, ColorGreenalsi_spect, Fictif_61greyspect, ColorchechGreD1_spect,//19
+        ColorchechWhiA496_spect, JDC468_GreA10_spect, JDC468_GreI8_spect,//22
+        ColabSkin91_4_14_spect, JDC468_PurE24_spect, //24
+        ColorchechSGSkiK285_11_17_spect,  ColorchechGreE2_spect, ColorchechMagE3_spect, //27
+        ColorchechSkiB166_18_18_spect, ColabSkin70_7_32_spect, ColorchechSGSkiF763_14_26_spect,//30
+        ColorchechSkiA138_13_14_spect, ColabSkin57_22_18_spect, JDC468_YelN10_spect,//33
+        ColabSkin35_15_17_spect, ColabSkin40_17_17_spect, ColorRedkurttu_spect, ColorYellowkeltano_spect,  ColorchechYelD3_spect, JDC468_OraO18_spect,//39
+        JDC468_GreN7_spect, JDC468_RedG21va_spect, JDC468_OraD17_spect,//42
+        ColorchechredC3_spect, JDC468_RedI9_spect, ColorRedpetunia_spect, ColorchechOraA2_spect,//46
+        ColabSkin87_8_8_spect, ColabSkin89_8_21_spect, ColabSkin75_8_4_spect, ColabSkin75_10_33_spect,//50
+        ColabSkin65_33_11_spect, ColabSkin65_7_24_spect, ColabSkin57_19_6_spect, ColabSkin57_4_19_spect, ColabSkin57_10_28_spect, ColabSkin40_17_6_spect,//56
+        ColabSkin26_18_18_spect, ColabSkin90_m1_20_spect, ColorRedlupiini_spect, ColorRedhevosminttu_spect, //60
+        ColorRedneilikka_spect, ColorRedpelagornia_spect, ColorRedtalvio_spect, ColorBrownpoimulehti_spect, ColorOrangetuntematon_spect,//65
+        ColorOrangetlehmus_spect, ColorOrangvaahtera_spect, ColorBrownlehmus_spect, ColorBrownuotiosammal_spect,//69
+        ColorBlacksoil_spect, ColorGraynahjajaekaelae_spect, //71
+        ColorGreennuotisammal_spect, ColorGreenleskenlehti_spect, ColorGreenlinnunkaali_spect, //74
+        ColorGreenpelto_spect, ColorGreenrodvoikukka, ColorGreenlehmus, ColorGreenlinden, ColorYellowlehmus, ColorYellowsuikeroalpi, //80
+        ColorYellowpensashanhikki1, ColorYellowpensashanhikki2,  ColorBluehiidenvirna,  ColorBluekurkkuyrtti, //84
+        ColorPinksiankaersaemoe, ColorVioletharakankello, ColorVioletalsikeapila, ColorVioletakilleija, ColorOrangekehaekukka,//89
+        ColorRedpihlaja, ColorVioletpetunia, ColorVioletorvokki, ColorBluesinisievikki, ColorBlueiisoppi,  ColorBluelobelia, //95
+        ColorWhiteojaka, ColorWhitepetunia, ColorWhitepelargonia, ColorWhitepaeivaen, JDC468_B14_75Redspect,//100
+        ColorGreenkoriste, ColorGreenpoimulehti, ColorGreenhopeapaju, //103
+        ColorReduuden, ColorRedpajuan, ColorRedjaloan, ColorBlueukon, ColorBlueorvokki, ColorBluemalvikki, //109
+        ColorBlackmaito, ColorOrangpihlaja, ColorBlackpihlaja, //112
+        ColorViolA1_spect, ColorViolA4_spect, ColorViolA6_spect, ColorBlueSkyK3_spect, ColorBlueSkyK9_spect, //117
+        ColorBlueSkyC4_spect, ColorBlueSkyC14_spect, ColorBlueSkyE4_spect, //120
+        ColorBlueSkyM1_spect, ColorBlueSky2B1_spect, ColorBlueSkyT7_spect, //123
+        ColorBlueSkyU19_spect, ColorBlueSkyU2_spect, ColorBlueSkyT17_spect, //126
+        ColorBlackM8_spect, ColorBlackM12_spect, ColorBlackM13_spect, ColorWhite2B12_spect, ColorWhite2B14_spect, //131
+        JDC468_Blackred97_spect, JDC468_Blackredbl443_spect, JDC468_Blackbl27_spect, JDC468_Blackbl28_spect, //135
+        JDC468_Blackgr214_spect, JDC468_Blackbl436_spect, JDC468_Whitebl455_spect, JDC468_Blackvio101_spect, JDC468_Whitebl92_spect, JDC468_Greyredbl94_spect, //141
+        JDC468_Blue32_spect, JDC468_Blue236_spect, JDC468_Gre300_spect, //144
+        JDC468_Blue340_spect, JDC468_Gree110_spect, JDC468_Gree457_spect, JDC468_Yel241_spect, JDC468_Ora321_spect, JDC468_Yellow353_spect, JDC468_Mag465_spect, //151
+        JDC468_Mag333_spect, JDC468_Mag203_spect, J570_BlueB6_spect, J570_BlueB15_spect, J570_BlueC2_spect, J570_BlueC14_spect, J570_BlueC16_spect,//158
+        J570_BlueF1_spect, J570_BlueF2_spect, J570_BlueF10_spect, J570_BlueF13_spect, J570_BlueG9_spect, J570_BlueG19_spect, J570_BlueI5_spect,//165
+        J570_BlueI3_spect, J570_BlueI19_spect, J570_BlueJ4_spect, J570_BlueJ6_spect, J570_BlueJ11_spect, J570_BlueK5_spect, //171
+        J570_BlueN1_spect, J570_BlueN4_spect, J570_BlueO19_spect, J570_BlueU8_spect, J570_NeuN8_spect,//176
+        J570_NeuN9_spect, J570_NeuO8_spect, J570_NeuO11_spect, J570_NeuD5_spect,//180
+        J570_NeuE11_spect, J570_NeuK16_spect, J570_NeuM3_spect, J570_NeuN18_spect,
+        J570_NeuQ1_spect, J570_NeuS7_spect,
+        J570_NeuV10_spect, J570_NeuW18_spect, J570_NeuZ14_spect, //189
+        J570_NeuC18_spect, J570_NeuD17_spect, J570_NeuJ11_spect, J570_NeuL4_spect, Colorlab_n72_n2_spect,
+        Colorlab_10_n70_spect, Colorlab_n33_n70_spect, Colorlab_n8_n74_spect, Colorlab_19_n69_spect, Colorlab_n80_10_spect, Colorlab_n80_26_spect,
+        Colorlab_n80_5_9_5_9spect //, Colorlab_n57_5_6_9spect
+
+        /*JDC468_greyc14_66_spect, JDC468_greym13_325_spect, JDC468_greyf26_156_spect*/
+    };
+
+
+
     typedef struct WbTxyz {
         double Tem;
         double XX;
@@ -5520,7 +5575,7 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
 
     int N_c = sizeof(spec_colorforxcyc) / sizeof(spec_colorforxcyc[0]);   //number of color
     if (wbpar.itcwb_sampling) {
-        N_c = 201;
+        N_c = sizeof(spec_colorforxcyc_old) / sizeof(spec_colorforxcyc_old[0]);   //number of color 5.9
     }
 
 
@@ -5551,6 +5606,10 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
 
     observerchoice = (wbpar.observer == StandardObserver::TEN_DEGREES);
 
+    if (wbpar.itcwb_sampling) {
+        observerchoice = false;
+    }
+
     const color_match_type &color_match = observerchoice ? cie_colour_match_jd : cie_colour_match_jd2;
     if (separated) {
         double tempw = Txyz[repref].Tem;
@@ -5564,7 +5623,11 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
 
         if (tempw <= INITIALBLACKBODY) {
             for (int i = 0; i < N_c; i++) {
-                spectrum_to_color_xyz_blackbody(spec_colorforxcyc[i], tempw, TX[i], TY[i], TZ[i], color_match);
+                if (! wbpar.itcwb_sampling) {
+                    spectrum_to_color_xyz_blackbody(spec_colorforxcyc[i], tempw, TX[i], TY[i], TZ[i], color_match);
+                } else {
+                    spectrum_to_color_xyz_blackbody(spec_colorforxcyc_old[i], tempw, TX[i], TY[i], TZ[i], color_match);
+                }
             }
         } else {
             double m11, m22, x_DD, y_DD, interm2;
@@ -5583,7 +5646,11 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
             m22 = (0.03 - 31.4424 * x_DD + 30.0717 * y_DD) / interm2;
 
             for (int i = 0; i < N_c; i++) {
-                spectrum_to_color_xyz_daylight(spec_colorforxcyc[i], m11, m22, TX[i], TY[i], TZ[i], color_match);
+                if (! wbpar.itcwb_sampling) {
+                    spectrum_to_color_xyz_daylight(spec_colorforxcyc[i], m11, m22, TX[i], TY[i], TZ[i], color_match);
+                } else {
+                    spectrum_to_color_xyz_daylight(spec_colorforxcyc_old[i], m11, m22, TX[i], TY[i], TZ[i], color_match);
+                }
             }
         }
     } else {
@@ -5601,7 +5668,11 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
 
             if (tempw <= INITIALBLACKBODY) {
                 for (int i = 0; i < N_c; i++) {
-                    spectrum_to_color_xyz_blackbody(spec_colorforxcyc[i], tempw, Refxyz[i].Xref, Refxyz[i].Yref, Refxyz[i].Zref, color_match);
+                    if (! wbpar.itcwb_sampling) {
+                        spectrum_to_color_xyz_blackbody(spec_colorforxcyc[i], tempw, Refxyz[i].Xref, Refxyz[i].Yref, Refxyz[i].Zref, color_match);
+                    } else {
+                        spectrum_to_color_xyz_blackbody(spec_colorforxcyc_old[i], tempw, Refxyz[i].Xref, Refxyz[i].Yref, Refxyz[i].Zref, color_match);
+                    }
                 }
             } else {
                 double x_DD;
@@ -5620,7 +5691,11 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
                 const double m22 = (0.03 - 31.4424 * x_DD + 30.0717 * y_DD) / interm2;
 
                 for (int i = 0; i < N_c; i++) {
-                    spectrum_to_color_xyz_daylight(spec_colorforxcyc[i], m11, m22, Refxyz[i].Xref, Refxyz[i].Yref, Refxyz[i].Zref, color_match);
+                    if (! wbpar.itcwb_sampling) {
+                        spectrum_to_color_xyz_daylight(spec_colorforxcyc[i], m11, m22, Refxyz[i].Xref, Refxyz[i].Yref, Refxyz[i].Zref, color_match);
+                    } else {
+                        spectrum_to_color_xyz_daylight(spec_colorforxcyc_old[i], m11, m22, Refxyz[i].Xref, Refxyz[i].Yref, Refxyz[i].Zref, color_match);
+                    }
                 }
             }
 
