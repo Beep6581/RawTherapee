@@ -6009,7 +6009,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             if (!oldsampling) {
                 ColorTemp(Txyz[tt].Tem, greenitc, 1., "Custom", wbpar.observer).getMultipliers(r, g, b);
             } else {
-                ColorTemp(Txyzs[tt].Tem, greenitc, 1., "Custom", wbpar.observer).getMultipliers(r, g, b);
+                ColorTemp(Txyzs[tt].Tem, greenitc, 1., "Custom", wbpar.observer).getMultipliers(r, g, b);//brings differences with old version 5.9, maybe Observer in 5.9, I did not find a solution
             }
 
             rm = imatrices.cam_rgb[0][0] * r + imatrices.cam_rgb[0][1] * g + imatrices.cam_rgb[0][2] * b;
@@ -6493,8 +6493,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                     good_spectral[kN] = true;//good spectral are spectral color that match color histogram xy
                 }
             }
-
-
         } else {
 
             for (int i = 0; i < sizcu4; ++i) { //take the max values
@@ -7028,10 +7026,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
                 tempitc = Txyz[goodref].Tem;
 
-                if (oldsampling) {
-                    tempitc = Txyzs[goodref].Tem;
-                }
-
                 greenitc = gree[greengood].green;
 
                 if (estimchrom < 0.025f  && oldsampling) {
@@ -7050,65 +7044,63 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
                 bool greenex = false;
 
-                if (oldsampling == false) {
-                    if ((keepgreen > 0.92 && keepgreen < 1.23)) {
-                        if (abs(greengood - greencam) > 5) {
-                            double ag = 0.;
-                            double gcal = gree[greengood].green;
-                            ag = 0.89 * (gcal - keepgreen);
-                            greenitc = gcal - ag;
-                            greenex = true;
-
-                            if (settings->verbose) {
-                                printf("green correction_1=%f \n", ag);
-                            }
-                        } else {
-                            double ag = 0.;
-                            double gcal = gree[greengood].green;
-
-                            if (keepgreen > 1.09) {
-                                ag = 0.10 * (gcal - keepgreen) * abs(greengood - greencam);
-                            } else {
-                                ag = 0.16 * (gcal - keepgreen) * abs(greengood - greencam);
-                            }
-
-                            greenitc = gcal - ag;
-                            greenex = true;
-
-                            if (settings->verbose) {
-                                printf("green correction_0=%f \n", ag);
-                            }
-
-                        }
-                    }
-
-                    if (((keepgreen >= 0.952 && keepgreen < 1.25) && greengood > 55) && !greenex) {
+                if ((keepgreen > 0.92 && keepgreen < 1.23)) {
+                    if (abs(greengood - greencam) > 5) {
                         double ag = 0.;
-                        double gcal = gree[greengood].green;//empirical  correction when green suspicious
-                        ag = 0.96 * (gcal - keepgreen);
+                        double gcal = gree[greengood].green;
+                        ag = 0.89 * (gcal - keepgreen);
                         greenitc = gcal - ag;
                         greenex = true;
 
                         if (settings->verbose) {
-                            printf("green correction_2=%f \n", ag);
+                            printf("green correction_1=%f \n", ag);
                         }
-                    }
-
-                    if (((greengood > 41 &&  keepgreen < 0.7)  || (greengood > 46 &&  keepgreen < 0.952)) && !greenex) {
+                    } else {
                         double ag = 0.;
                         double gcal = gree[greengood].green;
-                        ag = 0.95 * (gcal - keepgreen);//empirical  correction when green low - to improve
 
-                        if (purp == false) {
-                            ag -= 0.12;
-                        }
-
-                        if (settings->verbose) {
-                            printf("green correction_3=%f \n", ag);
+                        if (keepgreen > 1.09) {
+                            ag = 0.10 * (gcal - keepgreen) * abs(greengood - greencam);
+                        } else {
+                            ag = 0.16 * (gcal - keepgreen) * abs(greengood - greencam);
                         }
 
                         greenitc = gcal - ag;
+                        greenex = true;
+
+                        if (settings->verbose) {
+                            printf("green correction_0=%f \n", ag);
+                        }
+
                     }
+                }
+
+                if (((keepgreen >= 0.952 && keepgreen < 1.25) && greengood > 55) && !greenex) {
+                    double ag = 0.;
+                    double gcal = gree[greengood].green;//empirical  correction when green suspicious
+                    ag = 0.96 * (gcal - keepgreen);
+                    greenitc = gcal - ag;
+                    greenex = true;
+
+                    if (settings->verbose) {
+                        printf("green correction_2=%f \n", ag);
+                    }
+                }
+
+                if (((greengood > 41 &&  keepgreen < 0.7)  || (greengood > 46 &&  keepgreen < 0.952)) && !greenex) {
+                    double ag = 0.;
+                    double gcal = gree[greengood].green;
+                    ag = 0.95 * (gcal - keepgreen);//empirical  correction when green low - to improve
+
+                    if (purp == false) {
+                        ag -= 0.12;
+                    }
+
+                    if (settings->verbose) {
+                        printf("green correction_3=%f \n", ag);
+                    }
+
+                    greenitc = gcal - ag;
                 }
             } else {
                 int greengood;
