@@ -729,7 +729,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     double rm, gm, bm;
                     greenitc = 1.;
                     currWBitc = imgsrc->getWB();
-                    currWBitc = currWBitc.convertObserver(params->wb.observer);
+                    currWBitc = currWBitc.convertObserver(params->wb.observer);//change the temp/green couple with the same multipliers
 
                     double tempref = currWBitc.getTemp() * (1. + params->wb.tempBias);
                     double greenref = currWBitc.getGreen();
@@ -743,7 +743,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     }
 
                     if(params->wb.itcwb_sampling) {
-                        printf("OK 5.9\n");
                         greenitc = 1.;
                     }
 

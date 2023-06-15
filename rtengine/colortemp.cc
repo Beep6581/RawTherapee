@@ -5196,7 +5196,7 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
         //J570_NeuL4_spect2
     };//
 
-    const double* spec_colorforxcyc_old[] = {//color references
+    const double* spec_colorforxcyc_old[] = {//color references for 5.9
         JDC468_BluH10_spect, JDC468_BluD6_spect, ColorchechCyaF3_spect, JDC468_BluM5_spect, // 0 3
         ColorGreenM25_spect,   JDC468_GreK7_spect, ColabSky42_0_m24_spect, ColabSky60_0_m31_spect,  ColorchechBluC150_m5_m22_spect,//8
         JDC468_GreQ7_spect, ColorchechDCBluN881_m7_m14_spect, ColorchechGreB3_spect, ColorchechPurD2_spect,  //12
@@ -5246,7 +5246,6 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
         Colorlab_10_n70_spect, Colorlab_n33_n70_spect, Colorlab_n8_n74_spect, Colorlab_19_n69_spect, Colorlab_n80_10_spect, Colorlab_n80_26_spect,
         Colorlab_n80_5_9_5_9spect //, Colorlab_n57_5_6_9spect
 
-        /*JDC468_greyc14_66_spect, JDC468_greym13_325_spect, JDC468_greyf26_156_spect*/
     };
 
 
@@ -5257,7 +5256,7 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
         double ZZ;
     } WbTxyz;
     //probably can be "passed" with rawimagesource.cc but I don't know how to do this.
-    constexpr WbTxyz Txyz[191] = {//temperature Xwb Zwb 175 values - same table as in Rawimagesource.cc  x wb and y wb are calculated after
+    constexpr WbTxyz Txyz[191] = {//temperature Xwb Zwb 191 values - same table as in Rawimagesource.cc  x wb and y wb are calculated after
         {2001., 1.273842, 0.145295},
         {2051., 1.258802, 0.156066},
         {2101., 1.244008, 0.167533},
@@ -5452,7 +5451,7 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
     };
 
     //compatibility 5.9
-    constexpr WbTxyz Txyzs[118] = {//temperature Xwb Zwb 118 values - same table as in Rawimagesource.cc  x wb and y wb are calculated after
+    constexpr WbTxyz Txyzs[118] = {//temperature Xwb Zwb 118 values - same table as in Rawimagesource.cc  x wb and y wb are calculated after for 5.9
         {2001., 1.273842, 0.145295},
         {2101., 1.244008, 0.167533},
         {2201., 1.217338, 0.190697},
@@ -5583,7 +5582,7 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
     int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
 
     if (wbpar.itcwb_sampling) {
-        N_t = sizeof(Txyzs) / sizeof(Txyzs[0]);   //number of temperature White point
+        N_t = sizeof(Txyzs) / sizeof(Txyzs[0]);   //number of temperature White point 5.9
     }
 
     if (settings->verbose) {
@@ -5595,6 +5594,7 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
         double Yref;
         double Zref;
     } XYZref;
+    
     XYZref Refxyz[N_c + 1];
 
     for (int i = 0; i < N_c; i++) {

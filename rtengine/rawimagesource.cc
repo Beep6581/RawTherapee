@@ -5605,7 +5605,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         // X and Z values calculate for each temp between 2000K to  15000K, so no result after 12000K !
         //of course we can change the step between each temp if need
 
-        constexpr WbTxyz Txyz[191] = {//temperature Xwb Zwb 175 values  x wb and y wb are calculated after,  Xwb and Ywb calculated with a spreadsheet
+        constexpr WbTxyz Txyz[191] = {//temperature Xwb Zwb 191 values  x wb and y wb are calculated after,  Xwb and Ywb calculated with a spreadsheet
             {2001., 1.273842, 0.145295},
             {2051., 1.258802, 0.156066},
             {2101., 1.244008, 0.167533},
@@ -6241,15 +6241,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                     }
                 }
 
-                printf("rep=%f \n", rmm[rep]);
-                //histogram xy depend of temp...but in most cases D45 ..D65..
-                //calculate for this image the mean values for each family of color, near histogram x y (number)
-                //xy vary from x 0..0.77  y 0..0.82
-                //neutral values are near x=0.34 0.33 0.315 0.37 y =0.35 0.36 0.34
-                //skin are about x 0.45  0.49 y 0.4 0.47
-                //blue sky x=0.25 y=0.28  and x=0.29 y=0.32
-                // step about 0.02   x 0.32 0.34  y= 0.34 0.36 skin    --  sky x 0.24 0.30 y 0.28 0.32
-                //big step about 0.2
 
                 histoxyY_low(bfhitc, bfwitc, xc, yc, Yc, xxx,  yyy, YYY, histxy);
                 //return histogram x and y for each temp and in a range of 158 colors (siza)
@@ -6455,8 +6446,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                         }
                     }
 
-                    {
-                        float spectlimit = 0.f;
+                    {//display in console for 5.9
+                        float spectlimit = settings->itcwb_deltaspec;
                         float dE = sqrt(SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[kN][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[kN][repref]));
                         dEmean += dE;
                         ndEmean++;
@@ -6514,7 +6505,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             for (int j = minsize; j < maxsize; ++j) {//20 empirical minimal value default to ensure a correlation
                 if (!good_size[j]) {
                     float countchxynum = 0.f;
-                    //Tppat[repref].minchroma = 0.f;
                     estimchrom = 0.f;
                     float xh = 0.f;
                     float yh = 0.f;
@@ -6680,7 +6670,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                             }
                         }
                     }
-
+                    //display in console
                     float spectlimit = settings->itcwb_deltaspec;
                     float dE = sqrt(SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[kN][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[kN][repref]));
                     dEmean += dE;
@@ -6763,14 +6753,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         ttbeg = 0;
         ttend = N_t;
 
-        //limit range temperature...gain time.
-        //    if (wbpar.itcwb_custom) {
-        //        ttbeg = std::max(repref - 6, 0);//enough > dgoodref = 3
-        //        ttend = std::min(repref + 6, N_t);
-        //    }  else {
         ttbeg = std::max(repref - 11, 0);//enough in all cases > dgoodref
         ttend = std::min(repref + 11, N_t);
-        //   }
 
         if (oldsampling == true) {
             ttbeg = 0;
