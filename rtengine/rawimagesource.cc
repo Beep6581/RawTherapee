@@ -5200,7 +5200,7 @@ float static studentXY(const array2D<float> & YYcurr, const array2D<float> & ref
 void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double &tempitc, double &greenitc, float &temp0, float &delta, int &bia, int &dread, int &kcam, int &nocam, float &studgood, float &minchrom, int &kmin, float &minhist, float &maxhist,  array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, const ColorManagementParams &cmp, const RAWParams &raw, const WBParams & wbpar, const ToneCurveParams &hrp)
 {
     /*
-    Copyright (c) Jacques Desmis 6 - 2018 jdesmis@gmail.com, update 5 - 2023
+    Copyright (c) Jacques Desmis 6 - 2018 jdesmis@gmail.com, update 6 - 2023
     Copyright (c) Ingo Weyrich 3 - 2020 (heckflosse67@gmx.de)
 
     This algorithm try to find temperature correlation between 20 to 80 colors between 201 spectral color and about 20 to 55 color found in the image between 236, I just found the idea in the web "correlate with chroma" instead of RGB grey point,but I don't use any algo found on the web.
@@ -5208,16 +5208,16 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     I have test many many algorithms to find the first one that work :)
     Probably (sure) there are improvement to do...
 
-    I have create a table temperature with temp and white point with 118 values between 2000K and 12000K we can obviously  change these values, more...with different steps
+    I have create a table temperature with temp and white point with 191 values between 2000K and 15000K we can obviously  change these values, more...with different steps
     I have create a table for tint (green)with 134 values between 0.4 to 4.
-    I have create or recuparate and transformed 201 spectral colors from Colorchecker24, others color and my 468 colors target, or from web flowers, etc. with a step of 5nm, I think it is large enough.
+    I have create or recuparate and transformed 406 spectral colors from Colorchecker24, others color and my 468 colors target, or from web flowers, etc. with a step of 5nm, I think it is large enough.
     I think this value of 265 is now complete: I tested correlation with 60, 90, 100, 120, 155...better student increase with number of color, but now it seems stabilized
     Of course we can increase this number :)
 
     1) for the current raw file we create a table for each temp of RGB multipliers
     2) then, I choose the "camera temp" to initialize calculation (why not)
-    3) for this temp, I calculated XYZ values for the 201 spectral data
-    4) then I create for the image an "histogram", but for xyY (CIE 1931 color space or CIE 1964 (default))
+    3) for this temp, I calculated XYZ values for the 406 spectral data
+    4) then I create for the image an "histogram", but for xyY (CIE 1931 color space or CIE 1964)
     5) for each pixel (in fact to accelerate only 1/3 for and 1/3 for y), I determine for each couple xy, the number of occurrences, can be change by Itcwb_precis to 3 or 9
     6) I sort this result in ascending order
     7) in option we can sort in another manner to take into account chroma : chromax = x - white point x, chromay = y - white point y
@@ -5233,13 +5233,13 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     17) after we pass this value to improccoordinator
 
     18) in a second part if camera green is out, I used an "extra" algorithm
-    19) we make vary green between 2 limits (settings in option)
-    20) between these green limits, we make slightly vary temp (settings in options) and recalculated RGB multipliers
+    19) we make vary green between 2 limits
+    20) between these green limits, we make slightly vary temp and recalculated RGB multipliers
     21) with this multipliers for the RGB color find in histogram we recalculate xyY
     22) we re-adjust references color for these xyY from 20)
     23) then find all Student correlation for each couple green / temp
     24) sort these Student values, and choose the minimum
-    25) then for the 5 better couple "temp / green" choose the one where green is nearest from 1.
+    25) then for the 3 better couple "temp / green" choose the one where green is nearest from 1.
 
     Some variables or function are not used, keep in case of
     I have test with cat02 but result are not stable enough ! why ??, therefore cat02 neutralized
@@ -5252,11 +5252,12 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     You can change  parameters in White Balance - Frame adapted to Itcwb
     Itcwb_rgreen : 1 amplitude of green variation - between 0 to 2
-    Itcwb_prim : sRGB, Adobe, Rec2020, AcesP0 = Use all Ciexy diagram instead of sRGB
+    Itcwb_prim : sRGB, Beta rgb (default), XYZcam, JDCmax = Use near Ciexy diagram instead of sRGB
     itcwb_delta : 4 by default can be set between 0 to 5 ==> delta temp to build histogram xy - if camera temp is not probably good
     itcwb_nopurple : false default - allow to bypass highlight recovery and inpait opposed when need flowers and not purple due to highlights...
     itcwb_fgreen : 3 by default - between 2 to 6 - find the compromise student / green to reach green near of 1
     Itcwb_minsize: minimal size of the patch
+    itcwb_green - adjust green refinement
     */
     BENCHFUN
     MyTime t1, t2, t3, t4, t5, t6, t7, t8;
@@ -5585,12 +5586,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             Rangegreenused.end = std::min(greenrefo + 17, N_g);
         }
 
-        /*
-                if (wbpar.itcwb_custom) { //limit range to +5 g when custom
-                    Rangegreenused.begin = std::max(greenrefo - 5, 0);
-                    Rangegreenused.end = std::min(greenrefo + 5, N_g);
-                }
-        */
         if (oldsampling == true) {
             Rangegreenused = Rangestandard2;
         }
@@ -5602,7 +5597,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         } WbTxyz;
         //we can change step to increase precision if need  - also in Colortemp.cc with same changes
         //I don't know how to pass this structure to Colortemp !
-        // X and Z values calculate for each temp between 2000K to  15000K, so no result after 12000K !
+        // X and Z values calculate for each temp between 2000K to  15000K, so no result after 15000K !
         //of course we can change the step between each temp if need
 
         constexpr WbTxyz Txyz[191] = {//temperature Xwb Zwb 191 values  x wb and y wb are calculated after,  Xwb and Ywb calculated with a spreadsheet
@@ -5940,7 +5935,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             Ncr = 405 + 1;
         }
 
-        if (oldsampling) { //low samplin 5.9 with less spectral datas 201
+        if (oldsampling) { //low sampling 5.9 with less spectral datas 201
             Ncr = 202;
         }
 
@@ -6105,7 +6100,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         int ttend = N_t;
 
-        //call tempxy to calculate for 406 or 201color references Temp and XYZ with cat02
+        //call tempxy to calculate for 406 or 201 color references Temp and XYZ with cat02
         double wpx = 0.;
 
         double wpz = 0.;
@@ -6205,6 +6200,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             }
 
             //histogram xy depend of temp...but in most cases D45 ..D65..
+            // these values change with temp
             //calculate for this image the mean values for each family of color, near histogram x y (number)
             //xy vary from x 0..0.77  y 0..0.82
             //neutral values are near x=0.34 0.33 0.315 0.37 y =0.35 0.36 0.34
@@ -6385,8 +6381,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 yy_curref[i][repref] = yyy[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
                 YY_curref[i][repref] = YYY[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
             }
-
-            printf("Sizcu4=%i\n", sizcu4);
+            if (settings->verbose) {
+                printf("Sizcu4=%i\n", sizcu4);
+            }
 
             //estimate chromaticity for references
             for (int nh = 0; nh < sizcu4; ++nh) {
@@ -6498,7 +6495,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             bool isponderate = wbpar.itcwb_ponder;//reused to build patch ponderate
 
             bool isponder = true;//with true moving average
-            float powponder = settings->itcwb_powponder;
+            float powponder = settings->itcwb_powponder;//not used today...
             powponder = LIM(powponder, 0.01f, 0.2f);
             float estimchrom = 0.f;
 
@@ -6623,7 +6620,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 printf("Info2 - patch estimation of wp displacement (before):j=%i repref=%i real=%i Tppat=%f chrom=%f hue=%f\n", kmin, repref, index2 - indn, (double) Tppat[repref].minchroma, (double) minchrom, (double) estim_hue[kmin][repref]);
             };
 
-            float limexclu = 0.96f;//to avoid highlight in some cases (sky...)
+            float limexclu = 0.96f;//to avoid highlight in some rare cases (sky...)
 
 
             for (int i = indn; i < index2; ++i) {
@@ -6854,10 +6851,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 dgoodref = 2;
             }
 
-            //    if (wbpar.itcwb_custom) {
-            //        dgoodref = 3;//limit range dT when custom
-            //    }
-
             const int scantempbeg = rtengine::max(goodref - (dgoodref + 1), 1);
             const int scantempend = rtengine::min(goodref + dgoodref, N_t - 1);
             int goodrefgr = 1;
@@ -6974,7 +6967,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             if (!oldsampling) {
 
                 // now search the value of green the nearest of 1 with a good student value, I think it is a good choice, perhaps no...
-                // I take the 6 first values
+                // I take the first values
                 // I admit a symetrie in green coefiicient for rgb multiplier...probably not exactly true
                 // perhaps we can used a Snedecor test ? but why...at least we have confidence interval > 90%
                 int greengood = 55;
@@ -7011,11 +7004,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 tempitc = Txyz[goodref].Tem;
 
                 greenitc = gree[greengood].green;
-
-                if (estimchrom < 0.025f  && oldsampling) {
-                    float ac = -2.40f * estimchrom + 0.06f;//small empirical  correction, maximum 0.06 if chroma=0 for all image, currently for very low chroma +0.02
-                    greenitc += ac;
-                }
 
                 int greencam = 55;
 
@@ -7086,7 +7074,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
                     greenitc = gcal - ag;
                 }
-            } else {
+            } else {//oldsampling
                 int greengood;
                 int greengoodprov;
                 int goodrefprov;

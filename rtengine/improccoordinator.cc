@@ -793,12 +793,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 currWB = currWB.convertObserver(params->wb.observer);
                 params->wb.temperature = static_cast<int>(currWB.getTemp());
                 params->wb.green = currWB.getGreen();
-                /*
-                                if (params->wb.method ==  "autitcgreen") {
-                                    params->wb.temperature = tempitc;
-                                    params->wb.green = greenitc;
-                                }
-                */
+
                 currWB.getMultipliers(rw, gw, bw);
                 imgsrc->wbMul2Camera(rw, gw, bw);
                 /*
