@@ -455,6 +455,8 @@ public:
         if (loadAll) {
             loadProfiles(profilesDir, &fileProfiles, &fileProfileContents, nullptr, false);
             loadProfiles(userICCDir, &fileProfiles, &fileProfileContents, nullptr, false);
+            Glib::ustring user_output_icc_dir = Glib::build_filename(options.rtdir, "iccprofiles", "output");
+            loadProfiles(user_output_icc_dir, &fileProfiles, &fileProfileContents, nullptr, false);
         }
 
         // Input profiles
