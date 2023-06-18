@@ -619,7 +619,12 @@ public:
     static const double Colorlab_L22_1_m42spect2[97];
     static const double Colorlab_L27_m1_m47spect[97];
     static const double Colorlab_L27_m1_m47spect2[97];
+    static const double Colorlab_L40_30_m30spect[97];
+    static const double Colorlab_L40_20_m35spect[97];
 
+
+//3	A3	15,42 	11,25	20,90	40,00	30,00	-30,00
+//4	A4	13,77 	11,25	23,48	40,00	20,00	-35,00
 
 //1	A1	4,16 	3,50	5,45 	21,94	0,27	-41,6
 //2	A2	5,38 	5,00	7,80	26,70	-1,25	-46,9
