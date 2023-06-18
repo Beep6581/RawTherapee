@@ -169,6 +169,8 @@ public:
     static const double ColorchechGreE2_spect[97];
     static const double ColorchechGreB3_spect[97];
     static const double ColorchechCyaF3_spect[97];
+    static const double ColorchechCyaF3_spect2[97];
+    static const double ColorchechCyaF3_spect3[97];
     static const double ColorchechPurD2_spect[97];
     static const double ColorchechMagE3_spect[97];
     static const double ColorchechSkiA138_13_14_spect[97];
@@ -612,7 +614,16 @@ public:
     static const double Colorlab_L8_11_m25spect2[97];
     static const double Colorlab_L26_m8_m25spect[97];
     static const double Colorlab_L26_m8_m25spect2[97];
-    
+    static const double Colorlab_L26_m8_m25spect3[97];
+    static const double Colorlab_L22_1_m42spect[97];
+    static const double Colorlab_L22_1_m42spect2[97];
+    static const double Colorlab_L27_m1_m47spect[97];
+    static const double Colorlab_L27_m1_m47spect2[97];
+
+
+//1	A1	4,16 	3,50	5,45 	21,94	0,27	-41,6
+//2	A2	5,38 	5,00	7,80	26,70	-1,25	-46,9
+ 
     static void spectrum_to_xyz_daylight  (double _m1, double _m2, double &x, double &y, double &z, const color_match_type &color_match);
     static void spectrum_to_xyz_blackbody (double _temp, double &x, double &y, double &z, const color_match_type &color_match);
     static void spectrum_to_xyz_preset    (const double* spec_intens, double &x, double &y, double &z, const color_match_type &color_match);
