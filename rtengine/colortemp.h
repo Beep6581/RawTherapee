@@ -533,6 +533,10 @@ public:
     static const double Colorlab_L31_m23_m60spect2[97];
     static const double Colorlab_L17_3_m40spect[97];
     static const double Colorlab_L17_3_m40spect2[97];
+    static const double Colorlab_L17_3_m40spect3[97];
+    static const double Colorlab_L17_3_m40spect4[97];
+    static const double Colorlab_L17_3_m40spect5[97];
+    static const double Colorlab_L17_3_m40spect6[97];
     static const double Colorlab_L21_9_m7spect[97];
     static const double Colorlab_L78_4_m74spect[97];
     static const double Colorlab_L31_m58_m66spect[97];
@@ -588,6 +592,7 @@ public:
     static const double Colorlab_L15_10_m15spect2[97];
     static const double Colorlab_L60_26_m25spect[97];
     static const double Colorlab_L40_26_m45spect[97];
+    static const double Colorlab_L40_26_m45spect2[97];
     static const double Colorlab_L20_10_m45spect[97];
     static const double ColorBlueSkyK3_spect2[97];
     static const double ColorBlueSkyK9_spect2[97];
