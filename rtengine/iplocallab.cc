@@ -163,7 +163,8 @@ float overlay(float a, float b, float minc, float maxc)
 
 constexpr float screen(float a, float b, float maxc)
 {
-    return 1.f - (1.f - a) * (maxc - b);
+  //  return 1.f - (1.f - a) * (maxc - b);
+    return 1.f - (1.f - a) * (1.f - b);
 }
 
 constexpr float exclusion(float a, float b)
