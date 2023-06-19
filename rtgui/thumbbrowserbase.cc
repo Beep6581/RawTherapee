@@ -781,6 +781,7 @@ void ThumbBrowserBase::arrangeFiles(ThumbBrowserEntryBase* entry)
 
             for (int i = 0; ct < fd.size() && i < numOfCols; ++i, ++ct) {
                 for (; ct < fd.size() && fd[ct]->filtered; ++ct) {
+                    fd[ct]->setPosition(0, 0, colWidths[i], rowHeight);
                     fd[ct]->drawable = false;
                 }
 
