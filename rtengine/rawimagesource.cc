@@ -6110,13 +6110,13 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         //find the good spectral values
         //calculate xy reference spectral for tempref
         for (int j = 0; j < Ncr ; j++) {
-            float xxx = TX[j] / (TX[j] + TY[j] +  TZ[j]); // x from xyY
-            float yyy = TY[j] / (TX[j] + TY[j] +  TZ[j]); // y from xyY
+            float xxx = std::max(TX[j] / (TX[j] + TY[j] +  TZ[j]), 0.01); // x from xyY
+            float yyy = std::max(TY[j] / (TX[j] + TY[j] +  TZ[j]), 0.01); // y from xyY
             float YY = TY[j];
             reff_spect_xx_camera[j][repref] = xxx;
             reff_spect_yy_camera[j][repref] = yyy;
             reff_spect_Y_camera[j][repref] =  YY;
- /*           
+   /*         
             //display spectral datas
                                 float xr = reff_spect_xx_camera[j][repref];
                                 float yr = reff_spect_yy_camera[j][repref];
@@ -6790,8 +6790,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             }
 
             for (int j = 0; j < Ncr ; ++j) {
-                reff_spect_xxyy_prov[2 * j][tt] = Tx[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]); // x from xyY
-                reff_spect_xxyy_prov[2 * j + 1][tt] = Ty[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]); // y from xyY
+                reff_spect_xxyy_prov[2 * j][tt] = std::max(Tx[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]), 0.01f); // x from xyY
+                reff_spect_xxyy_prov[2 * j + 1][tt] = std::max(Ty[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]), 0.01f); // y from xyY
             }
 
             int kk = -1;

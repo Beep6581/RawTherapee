@@ -4945,7 +4945,8 @@ double ColorTemp::blackbody_spect(double wavelength, double temperature)
 {
     // I found an error in this formula, now it works 4/2023
     const double wlm = wavelength;   /* Wavelength in nano meters */
-    return (3.7417715247e-14) / (1e-45 * rtengine::pow5(wlm) * (pow(2.718281828459, 1.438786e-2 / (wlm * temperature * 1e-9)) - 1.0) * 2.21e12); //1.4387..= c2 = h*c/k  where k=Boltzmann constant
+    return (3.7417715247e-14) / (1e-45 * rtengine::pow5(wlm) * (xexp(1.438786e-2 / (wlm * temperature * 1e-9)) - 1.0) * 2.21e12); //1.4387..= c2 = h*c/k  where k=Boltzmann constant
+
 }
 
 /*
@@ -5743,7 +5744,7 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
         whitepoint(tempw, wpx, yy, wpz, color_match);
 
         if (tempw <= INITIALBLACKBODY) {
-            for (int i = 0; i < N_c; i++) {
+           for (int i = 0; i < N_c; i++) {
                 if (! wbpar.itcwb_sampling) {
                     spectrum_to_color_xyz_blackbody(spec_colorforxcyc[i], tempw, TX[i], TY[i], TZ[i], color_match);
                 } else {
