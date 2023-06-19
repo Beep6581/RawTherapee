@@ -339,6 +339,8 @@ void ProfilePanel::save_clicked (GdkEventButton* event)
     bool done = true;
 
     do {
+        done = true;
+
         if (dialog.run() == Gtk::RESPONSE_OK) {
 
             std::string fname = dialog.get_filename();
