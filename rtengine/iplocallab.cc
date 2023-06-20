@@ -163,8 +163,7 @@ float overlay(float a, float b, float minc, float maxc)
 
 constexpr float screen(float a, float b, float maxc)
 {
-  //  return 1.f - (1.f - a) * (maxc - b);
-    return 1.f - (1.f - a) * (1.f - b);
+    return 1.f - (1.f - a) * (maxc - b);
 }
 
 constexpr float exclusion(float a, float b)
@@ -18246,9 +18245,9 @@ void ImProcFunctions::Lab_Local(
 #endif
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
-                                        tmpImageorig->r(y, x) = intp(lp.opacol, screen(tmpImageorig->r(y, x), tmpImagereserv->r(y, x), maxR), tmpImageorig->r(y, x));
-                                        tmpImageorig->g(y, x) = intp(lp.opacol, screen(tmpImageorig->g(y, x), tmpImagereserv->g(y, x), maxG), tmpImageorig->g(y, x));
-                                        tmpImageorig->b(y, x) = intp(lp.opacol, screen(tmpImageorig->b(y, x), tmpImagereserv->b(y, x), maxB), tmpImageorig->b(y, x));
+                                        tmpImageorig->r(y, x) = intp(lp.opacol, screen(tmpImageorig->r(y, x), tmpImagereserv->r(y, x), 1.f), tmpImageorig->r(y, x));
+                                        tmpImageorig->g(y, x) = intp(lp.opacol, screen(tmpImageorig->g(y, x), tmpImagereserv->g(y, x), 1.f), tmpImageorig->g(y, x));
+                                        tmpImageorig->b(y, x) = intp(lp.opacol, screen(tmpImageorig->b(y, x), tmpImagereserv->b(y, x), 1.f), tmpImageorig->b(y, x));
                                     }
                                 }
                             } else if (lp.mergecolMethod == 12) { //darken only
