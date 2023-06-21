@@ -647,6 +647,7 @@ Camera constants:
         "make_model": "Canon EOS 7D Mark II",
         "dcraw_matrix": [ 7268,-1082,-969,-4186,11839,2663,-825,2029,5839 ], // dng_v8.7 d65
         //"dcraw_matrix": [ 6285,-147,-821,-4080,11695,2714,-1045,2459,5497 ], // DXO D50
+        "raw_crop": [ 72, 38, 5496, 3669 ],
         "ranges": {
             "white": [
                 { "iso": [ 100, 125 ], "levels": 13500 }, // typical 13583 - LENR 13550
