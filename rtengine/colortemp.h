@@ -401,6 +401,7 @@ public:
     
     static const double Colorlab_n72_n2_spect[97];
     static const double Colorlab_10_n70_spect[97];
+    static const double Colorlab_10_n70_spect2[97];
     static const double Colorlab_n33_n70_spect[97];
     static const double Colorlab_n8_n74_spect[97];
     static const double Colorlab_19_n69_spect[97];
@@ -596,6 +597,8 @@ public:
     static const double Colorlab_L40_26_m45spect[97];
     static const double Colorlab_L40_26_m45spect2[97];
     static const double Colorlab_L20_10_m45spect[97];
+    static const double Colorlab_L20_10_m45spect2[97];
+    static const double Colorlab_L20_10_m45spect3[97];
     static const double ColorBlueSkyK3_spect2[97];
     static const double ColorBlueSkyK9_spect2[97];
     static const double ColorBlueSkyC4_spect2[97];
@@ -620,7 +623,9 @@ public:
     static const double Colorlab_L27_m1_m47spect[97];
     static const double Colorlab_L27_m1_m47spect2[97];
     static const double Colorlab_L40_30_m30spect[97];
+    static const double Colorlab_L40_30_m30spect2[97];
     static const double Colorlab_L40_20_m35spect[97];
+    static const double Colorlab_L40_20_m35spect2[97];
 
 
 //3	A3	15,42 	11,25	20,90	40,00	30,00	-30,00
