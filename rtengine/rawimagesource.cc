@@ -5922,17 +5922,17 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             N_t = sizeof(Txyzs) / sizeof(Txyzs[0]);   //number of temperature White point
         }
 
-        constexpr int Nc = 424 + 1; //406 number of reference spectral colors
-        int Ncr = 425;
+        constexpr int Nc = 428 + 1; //429 number of reference spectral colors
+        int Ncr = 429;
 
         if (wbpar.itcwb_prim == "srgb") {
-            Ncr = 425;
+            Ncr = 429;
         } else if (wbpar.itcwb_prim == "adob") {
-            Ncr = 425;
+            Ncr = 429;
         } else if (wbpar.itcwb_prim == "XYZcam") {
-            Ncr = 425;
+            Ncr = 429;
         } else if (wbpar.itcwb_prim == "jdcmax") {
-            Ncr = 425;
+            Ncr = 429;
         }
 
         if (oldsampling) { //low sampling 5.9 with less spectral datas 201
@@ -6116,7 +6116,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             reff_spect_xx_camera[j][repref] = xxx;
             reff_spect_yy_camera[j][repref] = yyy;
             reff_spect_Y_camera[j][repref] =  YY;
-            
+ /*           
             //display spectral datas
                                 float xr = reff_spect_xx_camera[j][repref];
                                 float yr = reff_spect_yy_camera[j][repref];
@@ -6129,7 +6129,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
 
                         printf("Nc=%i repref=%i xxx=%f yyy=%f YY=%f Lr=%f a=%f b=%f\n", j, repref, (double) xxx, (double) yyy, (double) YY, (double) Lr/327.68f, (double) ar/327.68f, (double) br/327.68f);
-           
+ */          
         }
 
         array2D<float> xc(bfwitc, bfhitc);
