@@ -781,7 +781,11 @@ void ThumbBrowserBase::arrangeFiles(ThumbBrowserEntryBase* entry)
 
             for (int i = 0; ct < fd.size() && i < numOfCols; ++i, ++ct) {
                 for (; ct < fd.size() && fd[ct]->filtered; ++ct) {
+                    // Thumbs that are not going be drawn should also have a minimum height and width. Cause
+                    // the properties might be used in other parts of the code. The position is just set to be
+                    // zero as a default.
                     fd[ct]->setPosition(0, 0, colWidths[i], rowHeight);
+
                     fd[ct]->drawable = false;
                 }
 
