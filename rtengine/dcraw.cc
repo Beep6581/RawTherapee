@@ -6440,7 +6440,7 @@ int CLASS parse_tiff_ifd (int base)
       case 258:				/* BitsPerSample */
       case 61443:
 	if (tiff_ifd[ifd].samples != 4)
-	    tiff_ifd[ifd].samples = len & 7; // possible bug? should this be .bps instead of .samples ?
+	    tiff_ifd[ifd].samples = len & 7;
 	if ((tiff_ifd[ifd].bps = getint(type)) > 32)
         tiff_ifd[ifd].bps = 8;
 	if (tiff_bps < tiff_ifd[ifd].bps)
