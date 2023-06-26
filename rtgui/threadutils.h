@@ -24,20 +24,36 @@
 //#undef STRICT_MUTEX
 //#define STRICT_MUTEX 1
 
-#include <glibmm/threads.h>
+#include <mutex>
+#include <condition_variable>
+#include <thread>
 
 #include "../rtengine/noncopyable.h"
 
 #if STRICT_MUTEX && NDEBUG
-using MyMutexBase = Glib::Threads::Mutex;
+using MyMutexBase = std::mutex;
 #else
-using MyMutexBase = Glib::Threads::RecMutex;
+using MyMutexBase = std::recursive_mutex;
 #endif
 
+enum NotLock {
+    NOT_LOCK
+};
+
+enum TryLock {
+    TRY_LOCK
+};
+
 /**
- * @brief Custom implementation to replace Glib::Threads::Mutex.
+ * @brief Custom implementation to replace std::mutex.
  *
- * Glib::Threads::Mutex shows different behaviour on Windows (recursive) and Linux (non-recursive).
+ * The first implementation has been created to extend the possibilities of Glib::Threads::Mutex because
+ * Glib::Threads::Mutex showed different behaviour on Windows (recursive) and Linux (non-recursive). After
+ * that the custom implementation has been maintained, while Glib::Threads has been marked as obsolet. Now
+ * this implementation has been used in several parts of the code, so while switching from Glib::Threads to
+ * std versions, the own custom implementation will be preserved.
+ * 
+ * Documentation from the old implemention with Glib::Threads:
  * We therefore use a custom implementation that is optionally recursive and instrumented.
  * It will behave like Glib::Threads::RecMutex (STRICT_MUTEX=0) or Glib::Threads::Mutex (STRICT_MUTEX=1).
  * Debug builds with strict mutexes, will emit a message and crash immediately upon recursive locking.
@@ -66,8 +82,8 @@ class MyMutex::MyLock :
 {
 public:
     explicit MyLock (MyMutex& mutex);
-    MyLock (MyMutex& mutex, Glib::Threads::NotLock);
-    MyLock (MyMutex& mutex, Glib::Threads::TryLock);
+    MyLock (MyMutex& mutex, NotLock);
+    MyLock (MyMutex& mutex, TryLock);
 
     ~MyLock ();
 
@@ -91,14 +107,14 @@ public:
     friend class MyWriterLock;
 
 private:
-    Glib::Threads::Mutex mutex;
-    Glib::Threads::Cond cond;
+    std::mutex mutex;
+    std::condition_variable cond;
 
     std::size_t writerCount = 0;
     std::size_t readerCount = 0;
 
 #if TRACE_MYRWMUTEX
-    Glib::Threads::Thread* ownerThread = nullptr;
+    std::thread::id *ownerThreadId = nullptr;
     const char* lastWriterFile = "";
     int lastWriterLine = 0;
 #endif
@@ -167,7 +183,7 @@ inline void MyMutex::lock ()
 
 inline bool MyMutex::trylock ()
 {
-    if (MyMutexBase::trylock ()) {
+    if (MyMutexBase::try_lock ()) {
 #if STRICT_MUTEX && !NDEBUG
         checkLock ();
 #endif
@@ -194,15 +210,15 @@ inline MyMutex::MyLock::MyLock (MyMutex& mutex)
     mutex.lock();
 }
 
-inline MyMutex::MyLock::MyLock (MyMutex& mutex, Glib::Threads::NotLock)
+inline MyMutex::MyLock::MyLock (MyMutex& mutex, NotLock)
     : mutex (mutex)
     , locked (false)
 {
 }
 
-inline MyMutex::MyLock::MyLock (MyMutex& mutex, Glib::Threads::TryLock)
+inline MyMutex::MyLock::MyLock (MyMutex& mutex, TryLock)
     : mutex (mutex)
-    , locked (mutex.trylock ())
+    , locked (mutex.try_lock ())
 {
 }
 
