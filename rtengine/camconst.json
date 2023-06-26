@@ -2188,10 +2188,11 @@ Camera constants:
     { // Quality X
         "make_model": ["OM Digital Solutions OM-5"],
         "dcraw_matrix": [ 11896, -5110, -1076, -3181, 11378, 2048, -519, 1224, 5166 ], // ColorMatrix2 using illuminant D65 from Adobe DNG Converter 15.0
+        "ranges": { "white": 3825 },
         "raw_crop" : [
            { "frame" : [8200, 6132], "crop": [0, 0, 8172, 6132] },
            { "frame" : [5240, 3912], "crop": [0, 0, 5240, 3912] },
-           { "frame" : [10400, 7792], "crop": [0, 0, 10392, 7792] }
+           { "frame" : [10400, 7792], "crop": [0, 0, 10390, 7792] }
         ]
     },
 
