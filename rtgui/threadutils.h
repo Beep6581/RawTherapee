@@ -218,7 +218,7 @@ inline MyMutex::MyLock::MyLock (MyMutex& mutex, NotLock)
 
 inline MyMutex::MyLock::MyLock (MyMutex& mutex, TryLock)
     : mutex (mutex)
-    , locked (mutex.try_lock ())
+    , locked (mutex.trylock ())
 {
 }
 
