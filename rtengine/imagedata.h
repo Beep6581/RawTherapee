@@ -23,11 +23,17 @@
 #include <string>
 #include <vector>
 
-#include <glibmm/ustring.h>
 
 #include <libiptcdata/iptc-data.h>
 
 #include "imageio.h"
+
+namespace Glib
+{
+
+class ustring;
+
+}
 
 namespace rtexif
 {
@@ -38,7 +44,7 @@ class TagDirectory;
 namespace rtengine
 {
 
-class FrameData
+class FrameData final
 {
 
 protected:
@@ -66,7 +72,7 @@ protected:
 
 public:
 
-    FrameData (rtexif::TagDirectory* frameRootDir, rtexif::TagDirectory* rootDir, rtexif::TagDirectory* firstRootDir);
+    FrameData (rtexif::TagDirectory* frameRootDir, rtexif::TagDirectory* rootDir, rtexif::TagDirectory* firstRootDir, time_t ts = 0);
     virtual ~FrameData ();
 
     bool getPixelShift () const;
@@ -95,7 +101,7 @@ public:
     int getRating () const;
 };
 
-class FramesData : public FramesMetaData {
+class FramesData final : public FramesMetaData {
 private:
     // frame's root IFD, can be a file root IFD or a SUB-IFD
     std::vector<std::unique_ptr<FrameData>> frames;
@@ -103,6 +109,8 @@ private:
     std::vector<rtexif::TagDirectory*> roots;
     IptcData* iptc;
     unsigned int dcrawFrameCount;
+    struct tm modTime;
+    time_t modTimeStamp;
 
 public:
     explicit FramesData (const Glib::ustring& fname, std::unique_ptr<RawMetaDataLocation> rml = nullptr, bool firstFrameOnly = false);

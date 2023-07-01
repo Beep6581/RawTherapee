@@ -24,7 +24,7 @@ mark_as_advanced(MACINTEGRATION_LIBRARY)
 # handle the QUIETLY and REQUIRED arguments and set MACINTEGRATION_FOUND to TRUE if
 # all listed variables are TRUE
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(MACINTEGRATION DEFAULT_MSG MACINTEGRATION_LIBRARY MACINTEGRATION_INCLUDE_DIR)
+find_package_handle_standard_args(MacIntegration DEFAULT_MSG MACINTEGRATION_LIBRARY MACINTEGRATION_INCLUDE_DIR)
 
 if(MACINTEGRATION_FOUND)
     set(MacIntegration_LIBRARIES ${MACINTEGRATION_LIBRARY})

@@ -18,27 +18,24 @@
 //  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 ////////////////////////////////////////////////////////////////
+#pragma once
 
-#ifndef OPTHELPER_H
-    #define OPTHELPER_H
+#define pow_F(a,b) (xexpf((b)*xlogf(a)))
 
-    #define pow_F(a,b) (xexpf(b*xlogf(a)))
+#ifdef __SSE2__
+    #include "sleefsseavx.h"
+#endif
 
-    #ifdef __SSE2__
-        #include "sleefsseavx.c"
-    #endif
-
-    #ifdef __GNUC__
-        #define RESTRICT    __restrict__
-        #define LIKELY(x)   __builtin_expect (!!(x), 1)
-        #define UNLIKELY(x) __builtin_expect (!!(x), 0)
-        #define ALIGNED64 __attribute__ ((aligned (64)))
-        #define ALIGNED16 __attribute__ ((aligned (16)))
-    #else
-        #define RESTRICT
-        #define LIKELY(x)    (x)
-        #define UNLIKELY(x)  (x)
-        #define ALIGNED64
-        #define ALIGNED16
-    #endif
+#ifdef __GNUC__
+    #define RESTRICT    __restrict__
+    #define LIKELY(x)   __builtin_expect (!!(x), 1)
+    #define UNLIKELY(x) __builtin_expect (!!(x), 0)
+    #define ALIGNED64 __attribute__ ((aligned (64)))
+    #define ALIGNED16 __attribute__ ((aligned (16)))
+#else
+    #define RESTRICT
+    #define LIKELY(x)    (x)
+    #define UNLIKELY(x)  (x)
+    #define ALIGNED64
+    #define ALIGNED16
 #endif

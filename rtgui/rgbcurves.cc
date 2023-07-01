@@ -27,7 +27,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-RGBCurves::RGBCurves () : FoldableToolPanel(this, "rgbcurves", M("TP_RGBCURVES_LABEL"), false, true), lastLumamode(false)
+const Glib::ustring RGBCurves::TOOL_NAME = "rgbcurves";
+
+RGBCurves::RGBCurves () : FoldableToolPanel(this, TOOL_NAME, M("TP_RGBCURVES_LABEL"), false, true), lastLumamode(false)
 {
 
     lumamode = Gtk::manage (new Gtk::CheckButton (M("TP_RGBCURVES_LUMAMODE")));
@@ -36,7 +38,7 @@ RGBCurves::RGBCurves () : FoldableToolPanel(this, "rgbcurves", M("TP_RGBCURVES_L
     lumamode->show ();
     pack_start (*lumamode);
 
-    Gtk::HSeparator *hsep1 = Gtk::manage (new  Gtk::HSeparator());
+    Gtk::Separator *hsep1 = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     hsep1->show ();
     pack_start (*hsep1);
 

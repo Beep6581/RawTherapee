@@ -183,7 +183,7 @@ float MyCurve::getVal(LUTf &curve, int x)
     if (size_t(graphW) == curve.getSize()) {
         return curve[x];
     } else {
-        return curve.getVal01(float(x) / graphW);
+        return curve.getVal01(x / graphW);
     }
 }
 

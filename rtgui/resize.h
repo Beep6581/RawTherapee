@@ -32,13 +32,10 @@ class Resize final :
     public rtengine::SizeListener
 {
 public:
+    static const Glib::ustring TOOL_NAME;
+
     Resize ();
     ~Resize () override;
-
-    Gtk::Box* getPackBox ()
-    {
-        return packBox;
-    }
 
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
@@ -48,6 +45,8 @@ public:
     void adjusterChanged  (Adjuster* a, double newval) override;
     void entryWChanged    ();
     void entryHChanged    ();
+    void entryLEChanged   ();
+    void entrySEChanged   ();
     void appliesToChanged ();
     void methodChanged    ();
     void specChanged      ();
@@ -62,26 +61,29 @@ public:
 
 private:
     void fitBoxScale ();
-    int getComputedWidth ();
-    int getComputedHeight ();
+    int getComputedWidth (double height);
+    int getComputedHeight (double width);
     void notifyBBox ();
     void updateGUI ();
     void allowUpscalingChanged();
 
     rtengine::ProcEvent EvResizeAllowUpscaling;
+    rtengine::ProcEvent EvResizeLongedge;
+    rtengine::ProcEvent EvResizeShortedge;
     Adjuster*          scale;
-    Gtk::VBox*         sizeBox;
+    Gtk::Box*          sizeBox;
     MyComboBoxText*    appliesTo;
     MyComboBoxText*    method;
     MyComboBoxText*    spec;
     MySpinButton*      w;
     MySpinButton*      h;
+    MySpinButton*      le;
+    MySpinButton*      se;
     Gtk::CheckButton *allowUpscaling;
     int                maxw, maxh;
     int                cropw, croph;
-    sigc::connection   sconn, aconn, wconn, hconn;
-    bool               wDirty, hDirty;
-    ToolParamBlock*    packBox;
+    sigc::connection   sconn, aconn, wconn, hconn, leconn, seconn;
+    bool               wDirty, hDirty, leDirty, seDirty;
     IdleRegister       idle_register;
 
     static constexpr int MAX_SCALE = 16; // 16 to match the main preview max scale of 1600%

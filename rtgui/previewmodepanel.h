@@ -22,7 +22,7 @@
 class ImageArea;
 
 class PreviewModePanel :
-    public Gtk::HBox
+    public Gtk::Box
 {
 
 protected:

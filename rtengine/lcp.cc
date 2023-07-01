@@ -42,7 +42,6 @@ class rtengine::LCPProfile::LCPPersModel
 public:
     LCPPersModel();
     bool hasModeData(LCPCorrectionMode mode) const;
-    void print() const;
 
     float focLen;
     float focDist;
@@ -82,27 +81,18 @@ bool rtengine::LCPModelCommon::empty() const
         && param[2] == 0.0f;
 }
 
-void rtengine::LCPModelCommon::print() const
-{
-    std::printf("focLen %g/%g; imgCenter %g/%g; scale %g; err %g\n", foc_len_x, foc_len_y, img_center_x, img_center_y, scale_factor, mean_error);
-    std::printf("xy0 %g/%g  fxy %g/%g\n", x0, y0, fx, fy);
-    std::printf("param: %g/%g/%g/%g/%g\n", param[0], param[1], param[2], param[3], param[4]);
-}
-
 // weighted merge two parameters
 void rtengine::LCPModelCommon::merge(const LCPModelCommon& a, const LCPModelCommon& b, float facA)
 {
-    const float facB = 1.0f - facA;
-
-    foc_len_x    = facA * a.foc_len_x    + facB * b.foc_len_x;
-    foc_len_y    = facA * a.foc_len_y    + facB * b.foc_len_y;
-    img_center_x = facA * a.img_center_x + facB * b.img_center_x;
-    img_center_y = facA * a.img_center_y + facB * b.img_center_y;
-    scale_factor = facA * a.scale_factor + facB * b.scale_factor;
-    mean_error   = facA * a.mean_error   + facB * b.mean_error;
+    foc_len_x    = rtengine::intp<float>(facA, a.foc_len_x, b.foc_len_x);
+    foc_len_y    = rtengine::intp<float>(facA, a.foc_len_y, b.foc_len_y);
+    img_center_x = rtengine::intp<float>(facA, a.img_center_x, b.img_center_x);
+    img_center_y = rtengine::intp<float>(facA, a.img_center_y, b.img_center_y);
+    scale_factor = rtengine::intp<float>(facA, a.scale_factor, b.scale_factor);
+    mean_error   = rtengine::intp<float>(facA, a.mean_error, b.mean_error);
 
     for (int i = 0; i < 5; ++i) {
-        param[i] = facA * a.param[i] + facB * b.param[i];
+        param[i] = rtengine::intp<float>(facA, a.param[i], b.param[i]);
     }
 
     const float param0Sqr = param[0] * param[0];
@@ -152,7 +142,6 @@ void rtengine::LCPModelCommon::prepareParams(
     rfx = 1.0f / fx;
     rfy = 1.0f / fy;
 
-    //std::printf("FW %i /X0 %g   FH %i /Y0 %g  %g\n",fullWidth,x0,fullHeight,y0, imgYCenter);
 }
 
 rtengine::LCPProfile::LCPPersModel::LCPPersModel() :
@@ -188,35 +177,6 @@ bool rtengine::LCPProfile::LCPPersModel::hasModeData(LCPCorrectionMode mode) con
     return false;
 }
 
-void rtengine::LCPProfile::LCPPersModel::print() const
-{
-    std::printf("--- PersModel focLen %g; focDist %g; aperture %g\n", focLen, focDist, aperture);
-    std::printf("Base:\n");
-    base.print();
-
-    if (!chromRG.empty()) {
-        std::printf("ChromRG:\n");
-        chromRG.print();
-    }
-
-    if (!chromG.empty()) {
-        std::printf("ChromG:\n");
-        chromG.print();
-    }
-
-    if (!chromBG.empty()) {
-        std::printf("ChromBG:\n");
-        chromBG.print();
-    }
-
-    if (!vignette.empty()) {
-        std::printf("Vignette:\n");
-        vignette.print();
-    }
-
-    std::printf("\n");
-}
-
 rtengine::LCPProfile::LCPProfile(const Glib::ustring& fname) :
     isFisheye(false),
     sensorFormatFactor(1.f),
@@ -236,7 +196,7 @@ rtengine::LCPProfile::LCPProfile(const Glib::ustring& fname) :
     XML_Parser parser = XML_ParserCreate(nullptr);
 
     if (!parser) {
-        throw "Couldn't allocate memory for XML parser";
+        throw std::runtime_error("Couldn't allocate memory for XML parser");
     }
 
     XML_SetElementHandler(parser, XmlStartHandler, XmlEndHandler);
@@ -256,7 +216,7 @@ rtengine::LCPProfile::LCPProfile(const Glib::ustring& fname) :
 
             if (XML_Parse(parser, buf, bytesRead, done) == XML_STATUS_ERROR) {
                 XML_ParserFree(parser);
-                throw "Invalid XML in LCP file";
+                throw std::runtime_error("Invalid XML in LCP file");
             }
         } while (!done);
 
@@ -522,7 +482,7 @@ void rtengine::LCPProfile::calcParams(
         ) {
             // Mix in aperture
             const float facAperLow = (pHigh->aperture - aperture) / (pHigh->aperture - pLow->aperture);
-            facLow = focLenOnSpot ? facAperLow : (0.5 * facLow + 0.5 * facAperLow);
+            facLow = focLenOnSpot ? facAperLow : (0.5f * (facLow + facAperLow));
         }
         else if (
             mode != LCPCorrectionMode::VIGNETTE
@@ -532,7 +492,7 @@ void rtengine::LCPProfile::calcParams(
         ) {
             // focus distance for all else (if focus distance is given)
             const float facDistLow = (std::log(pHigh->focDist) + euler - focusDistLog) / (std::log(pHigh->focDist) - std::log(pLow->focDist));
-            facLow = focLenOnSpot ? facDistLow : (0.8 * facLow + 0.2 * facDistLow);
+            facLow = focLenOnSpot ? facDistLow : (0.8f * facLow + 0.2f * facDistLow);
         }
 
         switch (mode) {
@@ -555,7 +515,16 @@ void rtengine::LCPProfile::calcParams(
         }
 
         if (settings->verbose) {
-            std::printf("LCP mode=%i, dist: %g found frames: Fno %g-%g; FocLen %g-%g; Dist %g-%g with weight %g\n", toUnderlying(mode), focusDist, pLow->aperture, pHigh->aperture, pLow->focLen, pHigh->focLen, pLow->focDist, pHigh->focDist, facLow);
+            std::printf("LCP mode=%i, dist: %g found frames: Fno %g-%g; FocLen %g-%g; Dist %g-%g with weight %g\n",
+                        toUnderlying(mode),
+                        static_cast<double>(focusDist),
+                        static_cast<double>(pLow->aperture),
+                        static_cast<double>(pHigh->aperture),
+                        static_cast<double>(pLow->focLen),
+                        static_cast<double>(pHigh->focLen),
+                        static_cast<double>(pLow->focDist),
+                        static_cast<double>(pHigh->focDist),
+                        static_cast<double>(facLow));
         }
     } else {
         if (settings->verbose) {
@@ -564,15 +533,6 @@ void rtengine::LCPProfile::calcParams(
     }
 }
 
-void rtengine::LCPProfile::print() const
-{
-    std::printf("=== Profile %s\n", profileName.c_str());
-    std::printf("Frames: %i, RAW: %i; Fisheye: %i; Sensorformat: %f\n", persModelCount, isRaw, isFisheye, sensorFormatFactor);
-
-    for (int pm = 0; pm < persModelCount; ++pm) {
-        aPersModel[pm]->print();
-    }
-}
 
 // from all frames not marked as bad already, take average and filter out frames with higher deviation than this if there are enough values
 int rtengine::LCPProfile::filterBadFrames(LCPCorrectionMode mode, double maxAvgDevFac, int minFramesLeft)
@@ -649,7 +609,7 @@ int rtengine::LCPProfile::filterBadFrames(LCPCorrectionMode mode, double maxAvgD
         }
 
         if (settings->verbose && count) {
-            std::printf("Filtered %.1f%% frames for maxAvgDevFac %g leaving %i\n", filtered * 100.f / count, maxAvgDevFac, count - filtered);
+            std::printf("Filtered %.1f%% frames for maxAvgDevFac %g leaving %i\n", filtered * 100.0 / count, maxAvgDevFac, count - filtered);
         }
     }
 
@@ -1007,7 +967,7 @@ rtengine::LCPMapper::LCPMapper(
     const bool mirrorX = (rot == 90  || rot == 180);
     const bool mirrorY = (rot == 180 || rot == 270);
     if (settings->verbose) {
-        std::printf("Vign: %i, fullWidth: %i/%i, focLen %g SwapXY: %i / MirX/Y %i / %i on rot:%i from %i\n",vignette, fullWidth, fullHeight, focalLength, swapXY, mirrorX, mirrorY, rot, rawRotationDeg);
+        std::printf("Vign: %i, fullWidth: %i/%i, focLen %g SwapXY: %i / MirX/Y %i / %i on rot:%i from %i\n",vignette, fullWidth, fullHeight, static_cast<double>(focalLength), swapXY, mirrorX, mirrorY, rot, rawRotationDeg);
     }
 
     pProf->calcParams(vignette ? LCPCorrectionMode::VIGNETTE : LCPCorrectionMode::DISTORTION, focalLength, focusDist, aperture, &mc, nullptr, nullptr);
@@ -1030,16 +990,16 @@ bool rtengine::LCPMapper::isCACorrectionAvailable() const
     return enableCA;
 }
 
-void rtengine::LCPMapper::correctDistortion(double &x, double &y, int cx, int cy, double scale) const
+void rtengine::LCPMapper::correctDistortion(double &x, double &y, int cx, int cy) const
 {
     x += cx;
     y += cy;
 
     if (isFisheye) {
-        const double u = x * scale;
-        const double v = y * scale;
-        const double u0 = mc.x0 * scale;
-        const double v0 = mc.y0 * scale;
+        const double u = x;
+        const double v = y;
+        const double u0 = static_cast<double>(mc.x0);
+        const double v0 = static_cast<double>(mc.y0);
         const double du = (u - u0);
         const double dv = (v - v0);
         const double fx = mc.fx;
@@ -1047,7 +1007,7 @@ void rtengine::LCPMapper::correctDistortion(double &x, double &y, int cx, int cy
         const double k1 = mc.param[0];
         const double k2 = mc.param[1];
         const double r = sqrt(du * du + dv * dv);
-        const double f = sqrt(fx*fy / (scale * scale));
+        const double f = sqrt(fx*fy);
         const double th = atan2(r, f);
         const double th2 = th * th;
         const double cfact = (((k2 * th2 + k1) * th2 + 1) * th) / r;
@@ -1057,28 +1017,26 @@ void rtengine::LCPMapper::correctDistortion(double &x, double &y, int cx, int cy
         x = ud;
         y = vd;
     } else {
-        x *= scale;
-        y *= scale;
-        const double x0 = mc.x0 * scale;
-        const double y0 = mc.y0 * scale;
-        const double xd = (x - x0) / mc.fx, yd = (y - y0) / mc.fy;
+        const double x0 = static_cast<double>(mc.x0);
+        const double y0 = static_cast<double>(mc.y0);
+        const double xd = (x - x0) / static_cast<double>(mc.fx), yd = (y - y0) / static_cast<double>(mc.fy);
 
-        const LCPModelCommon::Param aDist = mc.param;
+        const auto& aDist = mc.param;
         const double rsqr      = xd * xd + yd * yd;
-        const double xfac = aDist[swapXY ? 3 : 4], yfac = aDist[swapXY ? 4 : 3];
+        const double xfac = static_cast<double>(aDist[swapXY ? 3 : 4]), yfac = static_cast<double>(aDist[swapXY ? 4 : 3]);
 
-        const double commonFac = (((aDist[2] * rsqr + aDist[1]) * rsqr + aDist[0]) * rsqr + 1.)
+        const double commonFac = (((static_cast<double>(aDist[2]) * rsqr + static_cast<double>(aDist[1])) * rsqr + static_cast<double>(aDist[0])) * rsqr + 1.)
             + 2. * (yfac * yd + xfac * xd);
 
         const double xnew = xd * commonFac + xfac * rsqr;
         const double ynew = yd * commonFac + yfac * rsqr;
 
-        x = xnew * mc.fx + x0;
-        y = ynew * mc.fy + y0;
+        x = xnew * static_cast<double>(mc.fx) + x0;
+        y = ynew * static_cast<double>(mc.fy) + y0;
     }
 
-    x -= cx * scale;
-    y -= cy * scale;
+    x -= cx;
+    y -= cy;
 }
 
 void rtengine::LCPMapper::correctCA(double& x, double& y, int cx, int cy, int channel) const
@@ -1094,20 +1052,20 @@ void rtengine::LCPMapper::correctCA(double& x, double& y, int cx, int cy, int ch
 
     // First calc the green channel like normal distortion
     // the other are just deviations from it
-    double xd = (x - chrom[1].x0) / chrom[1].fx;
-    double yd = (y - chrom[1].y0) / chrom[1].fy;
+    double xd = (x - static_cast<double>(chrom[1].x0)) / static_cast<double>(chrom[1].fx);
+    double yd = (y - static_cast<double>(chrom[1].y0)) / static_cast<double>(chrom[1].fy);
 
     // Green contains main distortion, just like base
     if (useCADist) {
-        const LCPModelCommon::Param aDist = chrom[1].param;
-        double rsqr      = xd * xd + yd * yd;
-        double xfac = aDist[swapXY ? 3 : 4], yfac = aDist[swapXY ? 4 : 3];
+        const auto& aDist = chrom[1].param;
+        double rsqr = xd * xd + yd * yd;
+        double xfac = static_cast<double>(aDist[swapXY ? 3 : 4]), yfac = static_cast<double>(aDist[swapXY ? 4 : 3]);
 
-        double commonFac = (((aDist[2] * rsqr + aDist[1]) * rsqr + aDist[0]) * rsqr + 1.)
+        double commonFac = (((static_cast<double>(aDist[2]) * rsqr + static_cast<double>(aDist[1])) * rsqr + static_cast<double>(aDist[0])) * rsqr + 1.)
                            + 2. * (yfac * yd + xfac * xd);
 
-        xgreen = xd * commonFac + aDist[4] * rsqr;
-        ygreen = yd * commonFac + aDist[3] * rsqr;
+        xgreen = xd * commonFac + static_cast<double>(aDist[4]) * rsqr;
+        ygreen = yd * commonFac + static_cast<double>(aDist[3]) * rsqr;
     } else {
         xgreen = xd;
         ygreen = yd;
@@ -1115,20 +1073,20 @@ void rtengine::LCPMapper::correctCA(double& x, double& y, int cx, int cy, int ch
 
     if (channel == 1) {
         // green goes directly
-        x = xgreen * chrom[1].fx + chrom[1].x0;
-        y = ygreen * chrom[1].fy + chrom[1].y0;
+        x = xgreen * static_cast<double>(chrom[1].fx) + static_cast<double>(chrom[1].x0);
+        y = ygreen * static_cast<double>(chrom[1].fy) + static_cast<double>(chrom[1].y0);
     } else {
         // others are diffs from green
         xd = xgreen;
         yd = ygreen;
         const double rsqr = xd * xd + yd * yd;
 
-        const LCPModelCommon::Param aCA = chrom[channel].param;
-        const double xfac = aCA[swapXY ? 3 : 4], yfac = aCA[swapXY ? 4 : 3];
-        const double commonSum = 1. + rsqr * (aCA[0] + rsqr * (aCA[1] + aCA[2] * rsqr)) + 2. * (yfac * yd + xfac * xd);
+        const auto& aCA = chrom[channel].param;
+        const double xfac = static_cast<double>(aCA[swapXY ? 3 : 4]), yfac = static_cast<double>(aCA[swapXY ? 4 : 3]);
+        const double commonSum = 1. + rsqr * (static_cast<double>(aCA[0]) + rsqr * (static_cast<double>(aCA[1]) + static_cast<double>(aCA[2] )* rsqr)) + 2. * (yfac * yd + xfac * xd);
 
-        x = (chrom[channel].scale_factor * ( xd * commonSum + xfac * rsqr )) * chrom[channel].fx + chrom[channel].x0;
-        y = (chrom[channel].scale_factor * ( yd * commonSum + yfac * rsqr )) * chrom[channel].fy + chrom[channel].y0;
+        x = (static_cast<double>(chrom[channel].scale_factor) * ( xd * commonSum + xfac * rsqr )) * static_cast<double>(chrom[channel].fx) + static_cast<double>(chrom[channel].x0);
+        y = (static_cast<double>(chrom[channel].scale_factor) * ( yd * commonSum + yfac * rsqr )) * static_cast<double>(chrom[channel].fy) + static_cast<double>(chrom[channel].y0);
     }
 
     x -= cx;

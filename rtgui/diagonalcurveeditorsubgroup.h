@@ -27,7 +27,7 @@
 class DiagonalCurveEditor;
 class MyDiagonalCurve;
 
-class DiagonalCurveEditorSubGroup :
+class DiagonalCurveEditorSubGroup final :
     public CurveEditorSubGroup,
     public SHCListener,
     public AdjusterListener,
@@ -95,6 +95,7 @@ public:
     void pipetteDrag(EditDataProvider *provider, int modifierKey) override;
     void showCoordinateAdjuster(CoordinateProvider *provider) override;
     void stopNumericalAdjustment() override;
+    void updateLocallabBackground(CurveEditor* ce) override;    
 
     bool curveReset (CurveEditor *ce) override;
 
@@ -102,6 +103,7 @@ protected:
     void storeCurveValues (CurveEditor* ce, const std::vector<double>& p) override;
     void storeDisplayedCurve () override;
     void restoreDisplayedHistogram () override;
+    void restoreLocallabBackground() override;
     void savePressed ();
     void loadPressed ();
     void copyPressed ();

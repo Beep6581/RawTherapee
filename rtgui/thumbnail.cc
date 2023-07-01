@@ -31,6 +31,7 @@
 #include "../rtengine/procparams.h"
 #include "../rtengine/rtthumbnail.h"
 #include <glib/gstdio.h>
+#include <glibmm/timezone.h>
 
 #include "../rtengine/dynamicprofile.h"
 #include "../rtengine/profilestore.h"
@@ -39,6 +40,7 @@
 #include "guiutils.h"
 #include "batchqueue.h"
 #include "extprog.h"
+#include "md5helper.h"
 #include "pathutils.h"
 #include "paramsedited.h"
 #include "procparamchangers.h"
@@ -120,7 +122,7 @@ void Thumbnail::_generateThumbnailImage ()
     tpp = nullptr;
     delete [] lastImg;
     lastImg = nullptr;
-    tw = -1;
+    tw = options.maxThumbnailWidth;
     th = options.maxThumbnailHeight;
     imgRatio = -1.;
 
@@ -137,20 +139,20 @@ void Thumbnail::_generateThumbnailImage ()
 
     if (ext == "jpg" || ext == "jpeg") {
         infoFromImage (fname);
-        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, pparams->wb.equal);
+        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, -1, pparams->wb.equal, pparams->wb.observer);
 
         if (tpp) {
             cfs.format = FT_Jpeg;
         }
     } else if (ext == "png") {
-        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, pparams->wb.equal);
+        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, -1, pparams->wb.equal, pparams->wb.observer);
 
         if (tpp) {
             cfs.format = FT_Png;
         }
     } else if (ext == "tif" || ext == "tiff") {
         infoFromImage (fname);
-        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, pparams->wb.equal);
+        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, -1, pparams->wb.equal, pparams->wb.observer);
 
         if (tpp) {
             cfs.format = FT_Tiff;
@@ -171,7 +173,7 @@ void Thumbnail::_generateThumbnailImage ()
 
         if ( tpp == nullptr ) {
             quick = false;
-            tpp = rtengine::Thumbnail::loadFromRaw (fname, ri, sensorType, tw, th, 1, pparams->wb.equal, TRUE);
+            tpp = rtengine::Thumbnail::loadFromRaw (fname, ri, sensorType, tw, th, 1, pparams->wb.equal, pparams->wb.observer, TRUE);
         }
 
         cfs.sensortype = sensorType;
@@ -193,7 +195,7 @@ void Thumbnail::_generateThumbnailImage ()
     }
 }
 
-bool Thumbnail::isSupported ()
+bool Thumbnail::isSupported () const
 {
     return cfs.supported;
 }
@@ -214,11 +216,11 @@ const ProcParams& Thumbnail::getProcParamsU ()
 
         if (pparams->wb.method == "Camera") {
             double ct;
-            getCamWB (ct, pparams->wb.green);
+            getCamWB (ct, pparams->wb.green, pparams->wb.observer);
             pparams->wb.temperature = ct;
-        } else if (pparams->wb.method == "Auto") {
+        } else if (pparams->wb.method == "autold") {
             double ct;
-            getAutoWB (ct, pparams->wb.green, pparams->wb.equal, pparams->wb.tempBias);
+            getAutoWB (ct, pparams->wb.green, pparams->wb.equal, pparams->wb.observer, pparams->wb.tempBias);
             pparams->wb.temperature = ct;
         }
     }
@@ -265,7 +267,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
                 // Should we ask all frame's MetaData ?
                 imageMetaData = rtengine::FramesMetaData::fromFile (fname, nullptr, true);
             }
-            PartialProfile *pp = ProfileStore::getInstance()->loadDynamicProfile(imageMetaData);
+            PartialProfile *pp = ProfileStore::getInstance()->loadDynamicProfile(imageMetaData, fname);
             delete imageMetaData;
             int err = pp->pparams->save(outFName);
             pp->deleteInstance();
@@ -450,6 +452,7 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
     const bool needsReprocessing =
            resetToDefault
         || pparams->toneCurve != pp.toneCurve
+        || pparams->locallab != pp.locallab
         || pparams->labCurve != pp.labCurve
         || pparams->localContrast != pp.localContrast
         || pparams->rgbCurves != pp.rgbCurves
@@ -460,6 +463,7 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
         || pparams->epd != pp.epd
         || pparams->fattal != pp.fattal
         || pparams->sh != pp.sh
+        || pparams->toneEqualizer != pp.toneEqualizer
         || pparams->crop != pp.crop
         || pparams->coarse != pp.coarse
         || pparams->commonTrans != pp.commonTrans
@@ -587,10 +591,13 @@ void Thumbnail::decreaseRef ()
     cachemgr->closeThumbnail (this);
 }
 
-int Thumbnail::getThumbnailWidth (const int h, const rtengine::procparams::ProcParams *pparams) const
+void Thumbnail::getThumbnailSize(int &w, int &h, const rtengine::procparams::ProcParams *pparams)
 {
+    MyMutex::MyLock lock(mutex);
+
     int tw_ = tw;
     int th_ = th;
+
     float imgRatio_ = imgRatio;
 
     if (pparams) {
@@ -615,10 +622,16 @@ int Thumbnail::getThumbnailWidth (const int h, const rtengine::procparams::ProcP
         }
     }
 
-    if (imgRatio_ > 0.f) {
-        return imgRatio_ * h;
+    if (imgRatio_ > 0.) {
+        w = imgRatio_ * static_cast<float>(h);
     } else {
-        return tw_ * h / th_;
+        w = tw_ * h / th_;
+    }
+
+    if (w > options.maxThumbnailWidth) {
+        const float s = static_cast<float>(options.maxThumbnailWidth) / w;
+        w = options.maxThumbnailWidth;
+        h = std::max<int>(h * s, 1);
     }
 }
 
@@ -644,7 +657,7 @@ void Thumbnail::getFinalSize (const rtengine::procparams::ProcParams& pparams, i
     }
 }
 
-void Thumbnail::getOriginalSize (int& w, int& h)
+void Thumbnail::getOriginalSize (int& w, int& h) const
 {
     w = tw;
     h = th;
@@ -707,11 +720,44 @@ rtengine::IImage8* Thumbnail::upgradeThumbImage (const rtengine::procparams::Pro
 
 void Thumbnail::generateExifDateTimeStrings ()
 {
+    if (cfs.timeValid) {
+        std::string dateFormat = options.dateFormat;
+        std::ostringstream ostr;
+        bool spec = false;
 
-    exifString = "";
-    dateTimeString = "";
+        for (size_t i = 0; i < dateFormat.size(); i++)
+            if (spec && dateFormat[i] == 'y') {
+                ostr << cfs.year;
+                spec = false;
+            } else if (spec && dateFormat[i] == 'm') {
+                ostr << (int)cfs.month;
+                spec = false;
+            } else if (spec && dateFormat[i] == 'd') {
+                ostr << (int)cfs.day;
+                spec = false;
+            } else if (dateFormat[i] == '%') {
+                spec = true;
+            } else {
+                ostr << (char)dateFormat[i];
+                spec = false;
+            }
+
+        ostr << " " << (int)cfs.hour;
+        ostr << ":" << std::setw(2) << std::setfill('0') << (int)cfs.min;
+        ostr << ":" << std::setw(2) << std::setfill('0') << (int)cfs.sec;
+
+        dateTimeString = ostr.str ();
+        dateTime = Glib::DateTime::create_local(cfs.year, cfs.month, cfs.day,
+                                                cfs.hour, cfs.min, cfs.sec);
+    }
+
+    if (!dateTime.gobj() || !cfs.timeValid) {
+        dateTimeString = "";
+        dateTime = Glib::DateTime::create_now_utc(0);
+    }
 
     if (!cfs.exifValid) {
+        exifString = "";
         return;
     }
 
@@ -720,33 +766,6 @@ void Thumbnail::generateExifDateTimeStrings ()
     if (options.fbShowExpComp && cfs.expcomp != "0.00" && !cfs.expcomp.empty()) { // don't show exposure compensation if it is 0.00EV;old cache files do not have ExpComp, so value will not be displayed.
         exifString = Glib::ustring::compose ("%1 %2EV", exifString, cfs.expcomp);    // append exposure compensation to exifString
     }
-
-    std::string dateFormat = options.dateFormat;
-    std::ostringstream ostr;
-    bool spec = false;
-
-    for (size_t i = 0; i < dateFormat.size(); i++)
-        if (spec && dateFormat[i] == 'y') {
-            ostr << cfs.year;
-            spec = false;
-        } else if (spec && dateFormat[i] == 'm') {
-            ostr << (int)cfs.month;
-            spec = false;
-        } else if (spec && dateFormat[i] == 'd') {
-            ostr << (int)cfs.day;
-            spec = false;
-        } else if (dateFormat[i] == '%') {
-            spec = true;
-        } else {
-            ostr << (char)dateFormat[i];
-            spec = false;
-        }
-
-    ostr << " " << (int)cfs.hour;
-    ostr << ":" << std::setw(2) << std::setfill('0') << (int)cfs.min;
-    ostr << ":" << std::setw(2) << std::setfill('0') << (int)cfs.sec;
-
-    dateTimeString = ostr.str ();
 }
 
 const Glib::ustring& Thumbnail::getExifString () const
@@ -761,10 +780,16 @@ const Glib::ustring& Thumbnail::getDateTimeString () const
     return dateTimeString;
 }
 
-void Thumbnail::getAutoWB (double& temp, double& green, double equal, double tempBias)
+const Glib::DateTime& Thumbnail::getDateTime () const
+{
+
+    return dateTime;
+}
+
+void Thumbnail::getAutoWB (double& temp, double& green, double equal, rtengine::StandardObserver observer, double tempBias)
 {
     if (cfs.redAWBMul != -1.0) {
-        rtengine::ColorTemp ct(cfs.redAWBMul, cfs.greenAWBMul, cfs.blueAWBMul, equal);
+        rtengine::ColorTemp ct(cfs.redAWBMul, cfs.greenAWBMul, cfs.blueAWBMul, equal, observer);
         temp = ct.getTemp();
         green = ct.getGreen();
     } else {
@@ -773,7 +798,7 @@ void Thumbnail::getAutoWB (double& temp, double& green, double equal, double tem
 }
 
 
-ThFileType Thumbnail::getType ()
+ThFileType Thumbnail::getType () const
 {
 
     return (ThFileType) cfs.format;
@@ -791,6 +816,16 @@ int Thumbnail::infoFromImage (const Glib::ustring& fname, std::unique_ptr<rtengi
     cfs.timeValid = false;
     cfs.exifValid = false;
 
+    if (idata->getDateTimeAsTS() > 0) {
+        cfs.year         = 1900 + idata->getDateTime().tm_year;
+        cfs.month        = idata->getDateTime().tm_mon + 1;
+        cfs.day          = idata->getDateTime().tm_mday;
+        cfs.hour         = idata->getDateTime().tm_hour;
+        cfs.min          = idata->getDateTime().tm_min;
+        cfs.sec          = idata->getDateTime().tm_sec;
+        cfs.timeValid    = true;
+    }
+
     if (idata->hasExif()) {
         cfs.shutter      = idata->getShutterSpeed ();
         cfs.fnumber      = idata->getFNumber ();
@@ -803,18 +838,11 @@ int Thumbnail::infoFromImage (const Glib::ustring& fname, std::unique_ptr<rtengi
         cfs.isPixelShift = idata->getPixelShift ();
         cfs.frameCount   = idata->getFrameCount ();
         cfs.sampleFormat = idata->getSampleFormat ();
-        cfs.year         = 1900 + idata->getDateTime().tm_year;
-        cfs.month        = idata->getDateTime().tm_mon + 1;
-        cfs.day          = idata->getDateTime().tm_mday;
-        cfs.hour         = idata->getDateTime().tm_hour;
-        cfs.min          = idata->getDateTime().tm_min;
-        cfs.sec          = idata->getDateTime().tm_sec;
-        cfs.timeValid    = true;
-        cfs.exifValid    = true;
         cfs.lens         = idata->getLens();
         cfs.camMake      = idata->getMake();
         cfs.camModel     = idata->getModel();
         cfs.rating       = idata->getRating();
+        cfs.exifValid    = true;
 
         if (idata->getOrientation() == "Rotate 90 CW") {
             deg = 90;
@@ -873,7 +901,7 @@ void Thumbnail::_loadThumbnail(bool firstTrial)
     if (!succ && firstTrial) {
         _generateThumbnailImage ();
 
-        if (cfs.supported && firstTrial) {
+        if (cfs.supported) {
             _loadThumbnail (false);
         }
 
@@ -887,11 +915,6 @@ void Thumbnail::_loadThumbnail(bool firstTrial)
     }
 
     if ( cfs.thumbImgType == CacheImageData::FULL_THUMBNAIL ) {
-        if(!tpp->isAeValid()) {
-            // load aehistogram
-            tpp->readAEHistogram (getCacheFileName ("aehistograms", ""));
-        }
-
         // load embedded profile
         tpp->readEmbProfile (getCacheFileName ("embprofiles", ".icc"));
 
@@ -901,20 +924,6 @@ void Thumbnail::_loadThumbnail(bool firstTrial)
     if (!initial_) {
         tw = tpp->getImageWidth (getProcParamsU(), th, imgRatio);    // this might return 0 if image was just building
     }
-}
-
-/*
- * Read all thumbnail's data from the cache; build and save them if doesn't exist - MUTEX PROTECTED
- * This includes:
- *  - image's bitmap (*.rtti)
- *  - auto exposure's histogram (full thumbnail only)
- *  - embedded profile (full thumbnail only)
- *  - LiveThumbData section of the data file
- */
-void Thumbnail::loadThumbnail (bool firstTrial)
-{
-    MyMutex::MyLock lock(mutex);
-    _loadThumbnail(firstTrial);
 }
 
 /*
@@ -937,10 +946,6 @@ void Thumbnail::_saveThumbnail ()
     // save thumbnail image
     tpp->writeImage (getCacheFileName ("images", ""));
 
-    if(!tpp->isAeValid()) {
-        // save aehistogram
-        tpp->writeAEHistogram (getCacheFileName ("aehistograms", ""));
-    }
     // save embedded profile
     tpp->writeEmbProfile (getCacheFileName ("embprofiles", ".icc"));
 
@@ -1002,7 +1007,7 @@ void Thumbnail::setFileName (const Glib::ustring &fn)
 {
 
     fname = fn;
-    cfs.md5 = cachemgr->getMD5 (fname);
+    cfs.md5 = ::getMD5 (fname);
 }
 
 int Thumbnail::getRank  () const
@@ -1151,10 +1156,10 @@ bool Thumbnail::imageLoad(bool loading)
     return false;
 }
 
-void Thumbnail::getCamWB(double& temp, double& green) const
+void Thumbnail::getCamWB(double& temp, double& green, rtengine::StandardObserver observer) const
 {
     if (tpp) {
-        tpp->getCamWB  (temp, green);
+        tpp->getCamWB  (temp, green, observer);
     } else {
         temp = green = -1.0;
     }
@@ -1176,7 +1181,7 @@ void Thumbnail::applyAutoExp (rtengine::procparams::ProcParams& pparams)
     }
 }
 
-const CacheImageData* Thumbnail::getCacheImageData()
+const CacheImageData* Thumbnail::getCacheImageData() const
 {
     return &cfs;
 }

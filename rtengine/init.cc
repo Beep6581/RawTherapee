@@ -17,7 +17,8 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <fftw3.h>
-#include "../rtgui/profilestorecombobox.h"
+#include <glibmm/miscutils.h>
+#include <glibmm/ustring.h>
 #include "color.h"
 #include "rtengine.h"
 #include "iccstore.h"
@@ -58,10 +59,20 @@ int init (const Settings* s, const Glib::ustring& baseDir, const Glib::ustring& 
 #pragma omp section
 #endif
 {
+    bool ok;
+
     if (s->lensfunDbDirectory.empty() || Glib::path_is_absolute(s->lensfunDbDirectory)) {
-        LFDatabase::init(s->lensfunDbDirectory);
+        ok = LFDatabase::init(s->lensfunDbDirectory);
     } else {
-        LFDatabase::init(Glib::build_filename(baseDir, s->lensfunDbDirectory));
+        ok = LFDatabase::init(Glib::build_filename(baseDir, s->lensfunDbDirectory));
+    }
+
+    if (!ok && !s->lensfunDbBundleDirectory.empty() && s->lensfunDbBundleDirectory != s->lensfunDbDirectory) {
+        if (Glib::path_is_absolute(s->lensfunDbBundleDirectory)) {
+            LFDatabase::init(s->lensfunDbBundleDirectory);
+        } else {
+            LFDatabase::init(Glib::build_filename(baseDir, s->lensfunDbBundleDirectory));
+        }
     }
 }
 #ifdef _OPENMP
@@ -92,7 +103,7 @@ int init (const Settings* s, const Glib::ustring& baseDir, const Glib::ustring& 
 #pragma omp section
 #endif
 {
-    dfm.init(s->darkFramesPath);
+    DFManager::getInstance().init(s->darkFramesPath);
 }
 #ifdef _OPENMP
 #pragma omp section

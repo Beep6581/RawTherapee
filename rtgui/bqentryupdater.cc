@@ -146,7 +146,7 @@ void BatchQueueEntryUpdater::processThread ()
                 }
 
                 memcpy(current.oimg, img->getData(), prevw * prevh * 3);
-                img->free();
+                delete img;
             }
         }
 

@@ -177,7 +177,7 @@ PDAFLinesFilter::PDAFLinesFilter(RawImage *ri):
     gthresh_ = new PDAFGreenEqulibrateThreshold(W_, H_);
 
     CameraConstantsStore* ccs = CameraConstantsStore::getInstance();
-    CameraConst *cc = ccs->get(ri_->get_maker().c_str(), ri_->get_model().c_str());
+    const CameraConst *cc = ccs->get(ri_->get_maker().c_str(), ri_->get_model().c_str());
 
     if (cc) {
         pattern_ = cc->get_pdafPattern();
@@ -275,7 +275,11 @@ int PDAFLinesFilter::mark(const array2D<float> &rawData, PixelsMap &bpMap)
     for (int y = 1; y < H_-1; ++y) {
         int yy = pattern_[idx] + off;
         if (y == yy) {
-            int n = markLine(rawData, bpMap, y) + markLine(rawData, bpMap, y-1) + markLine(rawData, bpMap, y+1);
+            int n = 0;
+            n += markLine(rawData, bpMap, y);
+            n += (y-1 <= 0   ) ? 0 : markLine(rawData, bpMap, y-1);
+            n += (y+1 >= H_-1) ? 0 : markLine(rawData, bpMap, y+1);
+            
             if (n) {
                 found += n;
                 if (settings->verbose) {

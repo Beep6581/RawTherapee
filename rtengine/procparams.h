@@ -18,6 +18,7 @@
  */
 #pragma once
 
+#include <array>
 #include <cmath>
 #include <cstdio>
 #include <map>
@@ -27,6 +28,7 @@
 #include <glibmm/ustring.h>
 #include <lcms2.h>
 
+#include "coord.h"
 #include "noncopyable.h"
 
 struct ParamsEdited;
@@ -40,10 +42,25 @@ class OpacityCurve;
 class RetinexgaintransmissionCurve;
 class RetinextransmissionCurve;
 class WavCurve;
+class Wavblcurve;
 class WavOpacityCurveBY;
+class WavOpacityCurveSH;
 class WavOpacityCurveRG;
 class WavOpacityCurveW;
 class WavOpacityCurveWL;
+class LocretigainCurve;
+class LocretigainCurverab;
+class LocLHCurve;
+class LocHHCurve;
+class LocCHCurve;
+class LocLLmaskCurve;
+class LocCCmaskCurve;
+class LocHHmaskCurve;
+class LocLLmaskexpCurve;
+class LocCCmaskexpCurve;
+class LocHHmaskexpCurve;
+
+enum class StandardObserver;
 
 enum RenderingIntent : int {
     RI_PERCEPTUAL = INTENT_PERCEPTUAL,
@@ -100,6 +117,12 @@ public:
                 bottom_left == rhs.bottom_left
                 && top_left == rhs.top_left;
         }
+    }
+
+    template<typename U = T>
+    typename std::enable_if<std::is_integral<U>::value, bool>::type operator !=(const Threshold<U>& rhs) const
+    {
+        return !(*this == rhs);
     }
 
     T getBottom() const
@@ -278,6 +301,8 @@ struct ToneCurveParams {
     int saturation;
     int shcompr;
     int hlcompr; // Highlight Recovery's compression
+    int hlbl; // Highlight Recovery's compression
+    double hlth; // Highlight Recovery's threshold
     int hlcomprthresh; // Highlight Recovery's threshold
     bool histmatching; // histogram matching
     bool fromHistMatching;
@@ -317,6 +342,7 @@ struct RetinexParams {
     int     stonalwidth;
     int     radius;
 
+    Glib::ustring complexmethod;
     Glib::ustring retinexMethod;
     Glib::ustring retinexcolorspace;
     Glib::ustring gammaretinex;
@@ -354,7 +380,7 @@ struct LCurveParams {
     int     brightness;
     int     contrast;
     int     chromaticity;
-    bool    avoidcolorshift;
+    Glib::ustring gamutmunselmethod;
     double  rstprotection;
     bool    lcredsk;
 
@@ -401,7 +427,6 @@ struct RGBCurvesParams {
 /**
   * Parameters of the Color Toning
   */
-
 struct ColorToningParams {
     bool enabled;
     bool autosat;
@@ -489,6 +514,7 @@ struct ColorToningParams {
     void getCurves(ColorGradientCurve& colorCurveLUT, OpacityCurve& opacityCurveLUT, const double xyz_rgb[3][3], bool& opautili) const;
 };
 
+
 /**
   * Parameters of the sharpening
   */
@@ -528,7 +554,9 @@ struct SharpenEdgeParams {
 
     bool operator ==(const SharpenEdgeParams& other) const;
     bool operator !=(const SharpenEdgeParams& other) const;
+
 };
+
 
 struct SharpenMicroParams {
     bool    enabled;
@@ -609,11 +637,22 @@ struct WBEntry {
 
 struct WBParams {
     bool enabled;
-    Glib::ustring   method;
-    int             temperature;
-    double          green;
-    double          equal;
-    double          tempBias;
+    Glib::ustring    method;
+    int              temperature;
+    double           green;
+    double           equal;
+    double           tempBias;
+    StandardObserver observer;
+    int              itcwb_thres;
+    int              itcwb_precis;
+    int              itcwb_size;
+    int              itcwb_delta;
+    int              itcwb_fgreen;
+    int              itcwb_rgreen;
+    bool             itcwb_nopurple;
+    bool             itcwb_sorted;
+    bool             itcwb_forceextra;
+    bool             itcwb_sampling;
 
     WBParams();
 
@@ -650,6 +689,9 @@ struct ColorAppearanceParams {
     TcMode     curveMode;
     TcMode     curveMode2;
     CtcMode    curveMode3;
+    Glib::ustring complexmethod;
+    Glib::ustring modelmethod;
+    Glib::ustring catmethod;
 
     Glib::ustring surround;
     Glib::ustring surrsrc;
@@ -661,6 +703,7 @@ struct ColorAppearanceParams {
     double        adaplum;
     int           badpixsl;
     Glib::ustring wbmodel;
+    Glib::ustring illum;
     Glib::ustring algo;
     double        contrast;
     double        qcontrast;
@@ -676,6 +719,7 @@ struct ColorAppearanceParams {
     bool          datacie;
     bool          tonecie;
     int tempout;
+    bool          autotempout;
     int ybout;
     double greenout;
     int tempsc;
@@ -798,18 +842,47 @@ struct SHParams {
 };
 
 /**
+ * Tone equalizer parameters.
+ */
+struct ToneEqualizerParams {
+    bool enabled;
+    std::array<int, 5> bands;
+    int regularization;
+    bool show_colormap;
+    double pivot;
+
+    ToneEqualizerParams();
+
+    bool operator ==(const ToneEqualizerParams &other) const;
+    bool operator !=(const ToneEqualizerParams &other) const;
+};
+
+/**
   * Parameters of the cropping
   */
 struct CropParams {
-    bool    enabled;
-    int     x;
-    int     y;
-    int     w;
-    int     h;
-    bool    fixratio;
-    Glib::ustring   ratio;
-    Glib::ustring   orientation;
-    Glib::ustring   guide;
+    enum class Guide {
+        NONE,
+        FRAME,
+        RULE_OF_THIRDS,
+        RULE_OF_DIAGONALS,
+        HARMONIC_MEANS,
+        GRID,
+        GOLDEN_TRIANGLE_1,
+        GOLDEN_TRIANGLE_2,
+        EPASSPORT,
+        CENTERED_SQUARE
+    };
+
+    bool enabled;
+    int x;
+    int y;
+    int w;
+    int h;
+    bool fixratio;
+    Glib::ustring ratio;
+    Glib::ustring orientation;
+    Guide guide;
 
     CropParams();
 
@@ -837,6 +910,7 @@ struct CoarseTransformParams {
   * Common transformation parameters
   */
 struct CommonTransformParams {
+    Glib::ustring method;
     bool autofill;
 
     CommonTransformParams();
@@ -905,8 +979,37 @@ struct LensProfParams {
   * Parameters of the perspective correction
   */
 struct PerspectiveParams {
+    static constexpr double DEFAULT_CAMERA_CROP_FACTOR = 1;
+    static constexpr double DEFAULT_CAMERA_FOCAL_LENGTH = 24;
+
+    Glib::ustring method;
+    bool    render;
     double  horizontal;
     double  vertical;
+    /**
+     * Negative and zero values indicate an unspecified crop factor and should
+     * be interpreted with {@link #DEFAULT_CAMERA_CROP_FACTOR}.
+     */
+    double  camera_crop_factor;
+    /**
+     * Negative and zero values indicate an unspecified focal length and should
+     * be interpreted with {@link #DEFAULT_CAMERA_FOCAL_LENGTH}.
+     */
+    double  camera_focal_length;
+    double  camera_pitch;
+    double  camera_roll;
+    double  camera_shift_horiz;
+    double  camera_shift_vert;
+    double  camera_yaw;
+    double  projection_pitch;
+    double  projection_rotate;
+    double  projection_shift_horiz;
+    double  projection_shift_vert;
+    double  projection_yaw;
+    /** A line is stored as 4 integers in this order: x1, y1, x2, y2 */
+    std::vector<int> control_line_values;
+    /** 0 is vertical, 1 is horizontal, undefined otherwise. */
+    std::vector<int> control_line_types;
 
     PerspectiveParams();
 
@@ -929,6 +1032,721 @@ struct GradientParams {
 
     bool operator ==(const GradientParams& other) const;
     bool operator !=(const GradientParams& other) const;
+};
+
+/**
+  * Parameters of the Local Lab
+  */
+struct LocallabParams {
+    struct LocallabSpot {
+        // Control spot settings
+        Glib::ustring name;
+        bool isvisible;
+        Glib::ustring prevMethod; // show, hide
+        Glib::ustring shape; // ELI, RECT
+        Glib::ustring spotMethod; // norm, exc
+        Glib::ustring wavMethod; // D2, D4, D6, D10, D14
+        int sensiexclu;
+        int structexclu;
+        double struc;
+        Glib::ustring shapeMethod; // IND, SYM, INDSL, SYMSL
+        Glib::ustring avoidgamutMethod; // NONE, LAB, XYZ
+		
+        std::vector<int> loc; // For ellipse/rectangle: {locX, locXL, locY, locYT}
+        int centerX;
+        int centerY;
+        int circrad;
+        Glib::ustring qualityMethod; // none, std, enh, enhsup, contr, sob2
+        Glib::ustring complexMethod; // sim, mod, all
+        double transit;
+        double feather;
+        double thresh;
+        double iter;
+        double balan;
+        double balanh;
+        double colorde;
+        double colorscope;
+        double avoidrad;
+        double transitweak;
+        double transitgrad;
+        bool hishow;
+        bool activ;
+        bool blwh;
+        bool recurs;
+        bool laplac;
+        bool deltae;
+        bool shortc;
+        bool savrest;
+        int scopemask;
+        double denoichmask;
+        int lumask;
+        // Color & Light
+        bool visicolor;
+        bool expcolor;
+        int complexcolor;
+        bool curvactiv;
+        int lightness;
+        double reparcol;
+        double gamc;
+        int contrast;
+        int chroma;
+        double labgridALow;
+        double labgridBLow;
+        double labgridAHigh;
+        double labgridBHigh;
+        double labgridALowmerg;
+        double labgridBLowmerg;
+        double labgridAHighmerg;
+        double labgridBHighmerg;
+        int strengthgrid;
+        int sensi;
+        int structcol;
+        double strcol;
+        double strcolab;
+        double strcolh;
+        double angcol;
+        int blurcolde;
+        double blurcol;
+        double contcol;
+        int blendmaskcol;
+        double radmaskcol;
+        double chromaskcol;
+        double gammaskcol;
+        double slomaskcol;
+        int shadmaskcol;
+        double strumaskcol;
+        double lapmaskcol;
+        Glib::ustring qualitycurveMethod; // none, std
+        Glib::ustring gridMethod; // one, two
+        Glib::ustring merMethod; // mone, mtwo, mthr, mfou, mfiv
+        Glib::ustring toneMethod; // one, two, thr, fou
+        Glib::ustring mergecolMethod; // one, two, thr, fou, fiv, six, sev, sev0, sev1, sev2, hei, nin, ten, ele, twe, thi, for, hue, sat, col, lum
+        std::vector<double> llcurve;
+        std::vector<double> lccurve;
+        std::vector<double> cccurve;
+        std::vector<double> clcurve;
+        std::vector<double> rgbcurve;
+        std::vector<double> LHcurve;
+        std::vector<double> HHcurve;
+        std::vector<double> CHcurve;
+        bool invers;
+        bool special;
+        bool toolcol;
+        bool enaColorMask;
+        bool fftColorMask;
+        std::vector<double> CCmaskcurve;
+        std::vector<double> LLmaskcurve;
+        std::vector<double> HHmaskcurve;
+        std::vector<double> HHhmaskcurve;
+        double softradiuscol;
+        double opacol;
+        double mercol;
+        double merlucol;
+        double conthrcol;
+        std::vector<double> Lmaskcurve;
+        std::vector<double> LLmaskcolcurvewav;
+        Threshold<int> csthresholdcol;
+        double recothresc;
+        double lowthresc;
+        double higthresc;
+        double decayc;
+        // Exposure
+        bool visiexpose;
+        bool expexpose;
+        int complexexpose;
+        double expcomp;
+        int hlcompr;
+        int hlcomprthresh;
+        int black;
+        int shadex;
+        int shcompr;
+        int expchroma;
+        int sensiex;
+        int structexp;
+        int blurexpde;
+        double gamex;
+        double strexp;
+        double angexp;
+        std::vector<double> excurve;
+        bool norm;
+        bool inversex;
+        bool enaExpMask;
+        bool enaExpMaskaft;
+        std::vector<double> CCmaskexpcurve;
+        std::vector<double> LLmaskexpcurve;
+        std::vector<double> HHmaskexpcurve;
+        int blendmaskexp;
+        double radmaskexp;
+        double chromaskexp;
+        double gammaskexp;
+        double slomaskexp;
+        double lapmaskexp;
+        double strmaskexp;
+        double angmaskexp;
+        double softradiusexp;
+        std::vector<double> Lmaskexpcurve;
+        Glib::ustring expMethod; // std, pde
+        Glib::ustring exnoiseMethod; // none, med, medhi
+        double laplacexp;
+        double reparexp;
+        double balanexp;
+        double linear;
+        double gamm;
+        double fatamount;
+        double fatdetail;
+        double fatanchor;
+        double fatlevel;
+        double recothrese;
+        double lowthrese;
+        double higthrese;
+        double decaye;
+        // Shadow highlight
+        bool visishadhigh;
+        bool expshadhigh;
+        int complexshadhigh;
+        Glib::ustring shMethod; // std, tone
+        int multsh[5];
+        int highlights;
+        int h_tonalwidth;
+        int shadows;
+        int s_tonalwidth;
+        int sh_radius;
+        int sensihs;
+        bool enaSHMask;
+        std::vector<double> CCmaskSHcurve;
+        std::vector<double> LLmaskSHcurve;
+        std::vector<double> HHmaskSHcurve;
+        int blendmaskSH;
+        double radmaskSH;
+        int blurSHde;
+        double strSH;
+        double angSH;
+        bool inverssh;
+        double chromaskSH;
+        double gammaskSH;
+        double slomaskSH;
+        double lapmaskSH;
+        int detailSH;
+        double tePivot;
+        double reparsh;
+        std::vector<double> LmaskSHcurve;
+        double fatamountSH;
+        double fatanchorSH;
+        double gamSH;
+        double sloSH;
+        double recothress;
+        double lowthress;
+        double higthress;
+        double decays;
+        // Vibrance
+        bool visivibrance;
+        bool expvibrance;
+        int complexvibrance;
+        int saturated;
+        int pastels;
+        double vibgam;
+        int warm;
+        Threshold<int> psthreshold;
+        bool protectskins;
+        bool avoidcolorshift;
+        bool pastsattog;
+        int sensiv;
+        std::vector<double> skintonescurve;
+        std::vector<double> CCmaskvibcurve;
+        std::vector<double> LLmaskvibcurve;
+        std::vector<double> HHmaskvibcurve;
+        bool enavibMask;
+        int blendmaskvib;
+        double radmaskvib;
+        double chromaskvib;
+        double gammaskvib;
+        double slomaskvib;
+        double lapmaskvib;
+        double strvib;
+        double strvibab;
+        double strvibh;
+        double angvib;
+        std::vector<double> Lmaskvibcurve;
+        double recothresv;
+        double lowthresv;
+        double higthresv;
+        double decayv;
+        // Soft Light
+        bool visisoft;
+        bool expsoft;
+        int complexsoft;
+        int streng;
+        int sensisf;
+        double laplace;
+        Glib::ustring softMethod; // soft, reti
+        // Blur & Noise
+        bool visiblur;
+        bool expblur;
+        int complexblur;
+        double radius;
+        int strength;
+        int sensibn;
+        int itera;
+        int guidbl;
+        int strbl;
+        double recothres;
+        double lowthres;
+        double higthres;
+        double recothresd;
+        double lowthresd;
+        double midthresd;
+        double midthresdch;
+        double higthresd;
+        double decayd;
+        int isogr;
+        int strengr;
+        int scalegr;
+        double divgr;
+        int epsbl;
+        Glib::ustring blMethod; // blur, med, guid
+        Glib::ustring chroMethod; // lum, chr, all
+        Glib::ustring quamethod; // cons agre
+        Glib::ustring blurMethod; // norm, inv
+        Glib::ustring medMethod; // none, 33, 55, 77, 99
+        bool usemask;
+        bool invmaskd;
+        bool invmask;
+        double levelthr;
+        double lnoiselow;
+        double levelthrlow;
+        bool activlum;
+        double noiselumf;
+        double noiselumf0;
+        double noiselumf2;
+        double noiselumc;
+        double noiselumdetail;
+        int noiselequal;
+        double noisegam;
+        double noisechrof;
+        double noisechroc;
+        double noisechrodetail;
+        int adjblur;
+        int bilateral;
+        int nlstr;
+        int nldet;
+        int nlpat;
+        int nlrad;
+        double nlgam;
+        int sensiden;
+        double reparden;
+        int detailthr;
+        std::vector<double> locwavcurveden;
+        std::vector<double> locwavcurvehue;
+        Glib::ustring showmaskblMethodtyp;
+        std::vector<double> CCmaskblcurve;
+        std::vector<double> LLmaskblcurve;
+        std::vector<double> HHmaskblcurve;
+        bool enablMask;
+        bool fftwbl;
+        bool invbl;
+        bool toolbl;
+        int blendmaskbl;
+        double radmaskbl;
+        double chromaskbl;
+        double gammaskbl;
+        double slomaskbl;
+        double lapmaskbl;
+        int shadmaskbl;
+        int shadmaskblsha;
+        double strumaskbl;
+        std::vector<double> Lmaskblcurve;
+        std::vector<double> LLmaskblcurvewav;
+        Threshold<int> csthresholdblur;
+        // Tone Mapping
+        bool visitonemap;
+        bool exptonemap;
+        int complextonemap;
+        double stren;
+        double gamma;
+        double estop;
+        double scaltm;
+        double repartm;
+        int rewei;
+        double satur;
+        int sensitm;
+        double softradiustm;
+        double amount;
+        bool equiltm;
+        std::vector<double> CCmasktmcurve;
+        std::vector<double> LLmasktmcurve;
+        std::vector<double> HHmasktmcurve;
+        bool enatmMask;
+        bool enatmMaskaft;
+        int blendmasktm;
+        double radmasktm;
+        double chromasktm;
+        double gammasktm;
+        double slomasktm;
+        double lapmasktm;
+        std::vector<double> Lmasktmcurve;
+        double recothrest;
+        double lowthrest;
+        double higthrest;
+        double decayt;
+        // Retinex
+        bool visireti;
+        bool expreti;
+        int complexreti;
+        Glib::ustring retinexMethod; // low, uni, high
+        double str;
+        double chrrt;
+        double neigh;
+        double vart;
+        double offs;
+        int dehaz;
+        int depth;
+        int sensih;
+        std::vector<double> localTgaincurve;
+        std::vector<double> localTtranscurve;
+        bool inversret;
+        bool equilret;
+        bool loglin;
+        double dehazeSaturation;
+        double softradiusret;
+        std::vector<double> CCmaskreticurve;
+        std::vector<double> LLmaskreticurve;
+        std::vector<double> HHmaskreticurve;
+        bool enaretiMask;
+        bool enaretiMasktmap;
+        int blendmaskreti;
+        double radmaskreti;
+        double chromaskreti;
+        double gammaskreti;
+        double slomaskreti;
+        double lapmaskreti;
+        double scalereti;
+        double darkness;
+        double lightnessreti;
+        double limd;
+        double cliptm;
+        bool fftwreti;
+        std::vector<double> Lmaskreticurve;
+        double recothresr;
+        double lowthresr;
+        double higthresr;
+        double decayr;
+        // Sharpening
+        bool visisharp;
+        bool expsharp;
+        int complexsharp;
+        int sharcontrast;
+        double sharradius;
+        int sharamount;
+        int shardamping;
+        int shariter;
+        double sharblur;
+        double shargam;
+        int sensisha;
+        bool inverssha;
+        // Local Contrast
+        bool visicontrast;
+        bool expcontrast;
+        int complexcontrast;
+        int lcradius;
+        double lcamount;
+        double lcdarkness;
+        double lclightness;
+        double sigmalc;
+        int levelwav;
+        double residcont;
+        double residsha;
+        double residshathr;
+        double residhi;
+        double residhithr;
+        double gamlc;
+        double residgam;
+        double residslop;
+        double residblur;
+        double levelblur;
+        double sigmabl;
+        double residchro;
+        double residcomp;
+        double sigma;
+        double offset;
+        double sigmadr;
+        double threswav;
+        double chromalev;
+        double chromablu;
+        double sigmadc;
+        double deltad;
+        double fatres;
+        double clarilres;
+        double claricres;
+        double clarisoft;
+        double sigmalc2;
+        double strwav;
+        double angwav;
+        double strengthw;
+        double sigmaed;
+        double radiusw;
+        double detailw;
+        double gradw;
+        double tloww;
+        double thigw;
+        double edgw;
+        double basew;
+        int sensilc;
+        double reparw;
+        bool fftwlc;
+        bool blurlc;
+        bool wavblur;
+        bool wavedg;
+        bool waveshow;
+        bool wavcont;
+        bool wavcomp;
+        bool wavgradl;
+        bool wavcompre;
+        bool origlc;
+        Glib::ustring localcontMethod; // loc, wav
+        Glib::ustring localedgMethod; // fir, sec, thr
+        Glib::ustring localneiMethod; // none, low, high
+        std::vector<double> locwavcurve;
+        Threshold<int> csthreshold;
+        std::vector<double> loclevwavcurve;
+        std::vector<double> locconwavcurve;
+        std::vector<double> loccompwavcurve;
+        std::vector<double> loccomprewavcurve;
+        std::vector<double> locedgwavcurve;
+        std::vector<double> CCmasklccurve;
+        std::vector<double> LLmasklccurve;
+        std::vector<double> HHmasklccurve;
+        bool enalcMask;
+        int blendmasklc;
+        double radmasklc;
+        double chromasklc;
+        std::vector<double> Lmasklccurve;
+        double recothresw;
+        double lowthresw;
+        double higthresw;
+        double decayw;
+        // Contrast by detail levels
+        bool visicbdl;
+        bool expcbdl;
+        int complexcbdl;
+        double mult[6];
+        double chromacbdl;
+        double threshold;
+        int sensicb;
+        double clarityml;
+        int contresid;
+        double softradiuscb;
+        bool enacbMask;
+        std::vector<double> CCmaskcbcurve;
+        std::vector<double> LLmaskcbcurve;
+        std::vector<double> HHmaskcbcurve;
+        int blendmaskcb;
+        double radmaskcb;
+        double chromaskcb;
+        double gammaskcb;
+        double slomaskcb;
+        double lapmaskcb;
+        std::vector<double> Lmaskcbcurve;
+        double recothrescb;
+        double lowthrescb;
+        double higthrescb;
+        double decaycb;
+        // Log encoding
+        bool visilog;
+        bool explog;
+        int complexlog;
+        bool autocompute;
+        double sourceGray;
+        double sourceabs;
+        double targabs;
+        double targetGray;
+        double catad;
+        double saturl;
+        double chroml;
+        double lightl;
+        double lightq;
+        double contl;
+        double contthres;
+        double contq;
+        double colorfl;
+        std::vector<double> LcurveL;
+        bool Autogray;
+        bool fullimage;
+        double repar;
+        bool ciecam;
+        double blackEv;
+        double whiteEv;
+        double detail;
+        int sensilog;
+        Glib::ustring sursour;
+        Glib::ustring surround;
+        double baselog;
+        double strlog;
+        double anglog;
+        std::vector<double> CCmaskcurveL;
+        std::vector<double> LLmaskcurveL;
+        std::vector<double> HHmaskcurveL;
+        bool enaLMask;
+        double blendmaskL;
+        double radmaskL;
+        double chromaskL;
+        std::vector<double> LmaskcurveL;
+        double recothresl;
+        double lowthresl;
+        double higthresl;
+        double decayl;
+
+        // mask
+        bool visimask;
+        int complexmask;
+        bool expmask;
+        int sensimask;
+        double blendmask;
+        double blendmaskab;
+        double softradiusmask;
+        bool enamask;
+        bool fftmask;
+        double blurmask;
+        double contmask;
+        std::vector<double> CCmask_curve;
+        std::vector<double> LLmask_curve;
+        std::vector<double> HHmask_curve;
+        double strumaskmask;
+        bool toolmask;
+        double radmask;
+        double lapmask;
+        double chromask;
+        double gammask;
+        double slopmask;
+        double shadmask;
+        int str_mask;
+        int ang_mask;
+        std::vector<double> HHhmask_curve;
+        std::vector<double> Lmask_curve;
+        std::vector<double> LLmask_curvewav;
+        Threshold<int> csthresholdmask;
+        //ciecam
+        bool visicie;
+        bool expcie;
+        int complexcie;
+        double reparcie;
+        int sensicie;
+        bool Autograycie;
+        bool forcejz;
+        bool forcebw;
+        bool qtoj;
+        bool jabcie;
+        bool sigmoidqjcie;
+        bool logcie;
+        bool logjz;
+        bool sigjz;
+        bool sigq;
+        bool chjzcie;
+        double sourceGraycie;
+        double sourceabscie;
+        Glib::ustring sursourcie;
+        Glib::ustring modecie;
+        Glib::ustring modecam;
+        double saturlcie;
+        double rstprotectcie;
+        double chromlcie;
+        double huecie;
+        Glib::ustring toneMethodcie;
+        std::vector<double> ciecurve;
+        Glib::ustring toneMethodcie2;
+        std::vector<double> ciecurve2;
+        double chromjzcie;
+        double saturjzcie;
+        double huejzcie;
+        double softjzcie;
+        double strsoftjzcie;
+        double thrhjzcie;
+        std::vector<double> jzcurve;
+        std::vector<double> czcurve;
+        std::vector<double> czjzcurve;
+        std::vector<double> HHcurvejz;
+        std::vector<double> CHcurvejz;
+        std::vector<double> LHcurvejz;
+        double lightlcie;
+        double lightjzcie;
+        double lightqcie;
+        double contlcie;
+        double contjzcie;
+        double adapjzcie;
+        double jz100;
+        double pqremap;
+        double pqremapcam16;
+        double hljzcie;
+        double hlthjzcie;
+        double shjzcie;
+        double shthjzcie;
+        double radjzcie;
+        double sigmalcjz;
+        double clarilresjz;
+        double claricresjz;
+        double clarisoftjz;
+        std::vector<double> locwavcurvejz;
+        Threshold<int> csthresholdjz;
+        double contthrescie;
+        double blackEvjz;
+        double whiteEvjz;
+        double targetjz;
+        double sigmoidldacie;
+        double sigmoidthcie;
+        double sigmoidblcie;
+        double sigmoidldajzcie;
+        double sigmoidthjzcie;
+        double sigmoidbljzcie;
+        double contqcie;
+        double colorflcie;
+/*
+        double lightlzcam;
+        double lightqzcam;
+        double contlzcam;
+        double contqzcam; 
+        double contthreszcam;
+        double colorflzcam;
+        double saturzcam;
+        double chromzcam;
+*/
+        double targabscie;
+        double targetGraycie;
+        double catadcie;
+        double detailcie;
+        Glib::ustring surroundcie;
+        bool enacieMask;
+        std::vector<double> CCmaskciecurve;
+        std::vector<double> LLmaskciecurve;
+        std::vector<double> HHmaskciecurve;
+        int blendmaskcie;
+        double radmaskcie;
+        double chromaskcie;
+        double lapmaskcie;
+        double gammaskcie;
+        double slomaskcie;
+        std::vector<double> Lmaskciecurve;
+        double recothrescie;
+        double lowthrescie;
+        double higthrescie;
+        double decaycie;
+
+        LocallabSpot();
+
+        bool operator ==(const LocallabSpot& other) const;
+        bool operator !=(const LocallabSpot& other) const;
+    };
+
+    static const double LABGRIDL_CORR_MAX;
+    static const double LABGRIDL_CORR_SCALE;
+    static const double LABGRIDL_DIRECT_SCALE;
+
+    bool enabled;
+    int selspot;
+    std::vector<LocallabSpot> spots;
+
+    LocallabParams();
+
+    bool operator ==(const LocallabParams& other) const;
+    bool operator !=(const LocallabParams& other) const;
 };
 
 /**
@@ -1040,6 +1858,8 @@ struct ResizeParams {
     int dataspec;
     int width;
     int height;
+    int longedge;
+    int shortedge;
     bool allowUpscaling;
 
     ResizeParams();
@@ -1049,9 +1869,84 @@ struct ResizeParams {
 };
 
 /**
+  * Parameters entry
+  */
+struct SpotEntry {
+    Coord sourcePos;
+    Coord targetPos;
+    int radius;
+    float feather;
+    float opacity;
+
+    SpotEntry();
+    float getFeatherRadius() const;
+
+    bool operator ==(const SpotEntry& other) const;
+    bool operator !=(const SpotEntry& other) const;
+};
+
+/**
+  * Parameters of the dust removal tool
+  */
+struct SpotParams {
+    bool enabled;
+    std::vector<SpotEntry> entries;
+
+    // the following constant can be used for experimentation before the final merge
+    static const short minRadius;
+    static const short maxRadius;
+
+    SpotParams();
+
+    bool operator ==(const SpotParams& other) const;
+    bool operator !=(const SpotParams& other) const;
+};
+
+
+/**
   * Parameters of the color spaces used during the processing
   */
 struct ColorManagementParams {
+    enum class WorkingTrc {
+        NONE,
+        CUSTOM,
+        BT709,
+        SRGB,
+        GAMMA_2_2,
+        GAMMA_1_8,
+        LINEAR
+    };
+
+    enum class Illuminant {
+        DEFAULT,
+        D41,
+        D50,
+        D55,
+        D60,
+        D65,
+        D80,
+        D120,
+        STDA,
+        TUNGSTEN_2000K,
+        TUNGSTEN_1500K
+    };
+
+    enum class Primaries {
+        DEFAULT,
+        SRGB,
+        ADOBE_RGB,
+        PRO_PHOTO,
+        REC2020,
+        ACES_P1,
+        WIDE_GAMUT,
+        ACES_P0,
+        BRUCE_RGB,
+        BETA_RGB,
+        BEST_RGB,
+        CUSTOM,
+        CUSTOM_GRID
+    };
+
     Glib::ustring inputProfile;
     bool toneCurve;
     bool applyLookTable;
@@ -1060,15 +1955,36 @@ struct ColorManagementParams {
     int dcpIlluminant;
 
     Glib::ustring workingProfile;
-    Glib::ustring workingTRC;
+    WorkingTrc workingTRC;
+    Illuminant will;
+    Primaries wprim;
     double workingTRCGamma;
     double workingTRCSlope;
+    double redx;
+    double redy;
+    double grex;
+    double grey;
+    double blux;
+    double bluy;
+    double preser;
+    bool fbw;
+    bool gamut;
+    double labgridcieALow;
+    double labgridcieBLow;
+    double labgridcieAHigh;
+    double labgridcieBHigh;
+    double labgridcieGx;
+    double labgridcieGy;
+    double labgridcieWx;
+    double labgridcieWy;
+    RenderingIntent aRendIntent;
 
     Glib::ustring outputProfile;
     RenderingIntent outputIntent;
     bool outputBPC;
 
     static const Glib::ustring NoICMString;
+    static const Glib::ustring NoProfileString;
 
     ColorManagementParams();
 
@@ -1181,11 +2097,18 @@ private:
 
 struct WaveletParams {
     std::vector<double> ccwcurve;
+    std::vector<double> wavdenoise;
+    std::vector<double> wavdenoiseh;
+    std::vector<double> blcurve;
+    std::vector<double> levelshc;
     std::vector<double> opacityCurveRG;
+    //std::vector<double> opacityCurveSH;
     std::vector<double> opacityCurveBY;
     std::vector<double> opacityCurveW;
     std::vector<double> opacityCurveWL;
     std::vector<double> hhcurve;
+    std::vector<double> wavguidcurve;
+    std::vector<double> wavhuecurve;
     std::vector<double> Chcurve;
     std::vector<double> wavclCurve;
     bool enabled;
@@ -1199,30 +2122,67 @@ struct WaveletParams {
     int bluemed;
     int greenhigh;
     int bluehigh;
+    double ballum;
+    double sigm;
+    double levden;
+    double thrden;
+    double limden;
+    double balchrom;
+    double chromfi;
+    double chromco;
+    double mergeL;
+    double mergeC;
+    double softrad;
+    double softradend;
+    double strend;
+    int detend;
+    double thrend;
 
     bool lipst;
     bool avoid;
+    bool showmask;
+    bool oldsh;
     bool tmr;
     int strength;
     int balance;
+    double sigmafin;
+    double sigmaton;
+    double sigmacol;
+    double sigmadir;
+    double rangeab;
+    double protab;
     int iter;
     bool expcontrast;
     bool expchroma;
     int c[9];
     int ch[9];
     bool expedge;
+    bool expbl;
     bool expresid;
     bool expfinal;
     bool exptoning;
     bool expnoise;
-
+    bool expclari;
+    double labgridALow;
+    double labgridBLow;
+    double labgridAHigh;
+    double labgridBHigh;
+    static const double LABGRID_CORR_MAX;
+    static const double LABGRID_CORR_SCALE;
+    static const double LABGRIDL_DIRECT_SCALE;
     int Lmethod;
     Glib::ustring CLmethod;
     Glib::ustring Backmethod;
     Glib::ustring Tilesmethod;
+    Glib::ustring complexmethod;
+    //Glib::ustring denmethod;
+    Glib::ustring mixmethod;
+    Glib::ustring slimethod;
+    Glib::ustring quamethod;
     Glib::ustring daubcoeffmethod;
     Glib::ustring CHmethod;
     Glib::ustring Medgreinf;
+    Glib::ustring ushamethod;
     Glib::ustring CHSLmethod;
     Glib::ustring EDmethod;
     Glib::ustring NPmethod;
@@ -1230,10 +2190,17 @@ struct WaveletParams {
     Glib::ustring TMmethod;
     Glib::ustring Dirmethod;
     Glib::ustring HSmethod;
+    double sigma;
+    double offset;
+    double lowthr;
     int rescon;
     int resconH;
     int reschro;
+    int resblur;
+    int resblurc;
     double tmrs;
+    double edgs;
+    double scale;
     double gamma;
     int sup;
     double sky;
@@ -1249,11 +2216,15 @@ struct WaveletParams {
     int edgeampli;
     int contrast;
     int edgrad;
+    double edgeffect;
     int edgval;
     int edgthresh;
     int thr;
     int thrH;
+    int radius;
     double skinprotect;
+    double chrwav;
+    double bluwav;
     Threshold<int> hueskin;
     Threshold<int> hueskin2;
     Threshold<int> hllev;
@@ -1265,6 +2236,8 @@ struct WaveletParams {
     Threshold<double> level1noise;
     Threshold<double> level2noise;
     Threshold<double> level3noise;
+    Threshold<double> leveldenoise;
+    Threshold<double> levelsigm;
 
     WaveletParams();
 
@@ -1273,8 +2246,11 @@ struct WaveletParams {
 
     void getCurves(
         WavCurve& cCurve,
-        WavOpacityCurveRG&
-        opacityCurveLUTRG,
+        WavCurve& wavdenoise,
+        WavCurve& wavdenoiseh,
+        Wavblcurve& tCurve,
+        WavOpacityCurveRG& opacityCurveLUTRG,
+        WavOpacityCurveSH& opacityCurveLUTSH,
         WavOpacityCurveBY& opacityCurveLUTBY,
         WavOpacityCurveW& opacityCurveLUTW,
         WavOpacityCurveWL& opacityCurveLUTWL
@@ -1315,7 +2291,7 @@ struct HSVEqualizerParams {
 };
 
 /**
- *  Film simualtion params
+ *  Film simulation params
  */
 struct FilmSimulationParams {
     bool enabled;
@@ -1342,9 +2318,9 @@ struct SoftLightParams {
 struct DehazeParams {
     bool enabled;
     int strength;
+    int saturation;
     bool showDepthMap;
     int depth;
-    bool luminance;
 
     DehazeParams();
 
@@ -1362,10 +2338,13 @@ struct RAWParams {
     struct BayerSensor {
         enum class Method {
             AMAZE,
+            AMAZEBILINEAR,
             AMAZEVNG4,
             RCD,
+            RCDBILINEAR,
             RCDVNG4,
             DCB,
+            DCBBILINEAR,
             DCBVNG4,
             LMMSE,
             IGV,
@@ -1421,6 +2400,7 @@ struct RAWParams {
         bool pixelShiftShowMotionMaskOnly;
         bool pixelShiftHoleFill;
         bool pixelShiftMedian;
+        bool pixelShiftAverage;
         bool pixelShiftGreen;
         bool pixelShiftBlur;
         double pixelShiftSmoothFactor;
@@ -1492,6 +2472,7 @@ struct RAWParams {
 
     Glib::ustring ff_file;
     bool ff_AutoSelect;
+    bool ff_FromMetaData;
     int ff_BlurRadius;
     Glib::ustring ff_BlurType;
     bool ff_AutoClipControl;
@@ -1505,6 +2486,22 @@ struct RAWParams {
 
     // exposure before interpolation
     double expos;
+
+    struct PreprocessWB {
+        enum class Mode {
+            CAMERA = 0,
+            AUTO
+        };
+
+        Mode mode;
+
+        PreprocessWB();
+
+        bool operator ==(const PreprocessWB& other) const;
+        bool operator !=(const PreprocessWB& other) const;
+    };
+
+    PreprocessWB preprocessWB;
 
     bool hotPixelFilter;
     bool deadPixelFilter;
@@ -1527,6 +2524,28 @@ struct FilmNegativeParams {
     double redRatio;
     double greenExp;
     double blueRatio;
+
+    struct RGB {
+        float r, g, b;
+
+        bool operator ==(const RGB& other) const;
+        bool operator !=(const RGB& other) const;
+        RGB operator *(const RGB& other) const;
+    };
+
+    RGB refInput;
+    RGB refOutput;
+
+    enum class ColorSpace {
+        INPUT = 0,
+        WORKING
+        // TODO : add support for custom color profile
+    };
+
+    ColorSpace colorSpace;
+
+    enum class BackCompat { CURRENT = 0, V1, V2 };
+    BackCompat backCompat;
 
     FilmNegativeParams();
 
@@ -1561,6 +2580,7 @@ public:
     EPDParams               epd;             ///< Edge Preserving Decomposition parameters
     FattalToneMappingParams fattal;          ///< Fattal02 tone mapping
     SHParams                sh;              ///< Shadow/highlight enhancement parameters
+    ToneEqualizerParams     toneEqualizer;   ///< Tone equalizer parameters
     CropParams              crop;            ///< Crop parameters
     CoarseTransformParams   coarse;          ///< Coarse transformation (90, 180, 270 deg rotation, h/v flipping) parameters
     CommonTransformParams   commonTrans;     ///< Common transformation parameters (autofill)
@@ -1569,12 +2589,14 @@ public:
     LensProfParams          lensProf;        ///< Lens correction profile parameters
     PerspectiveParams       perspective;     ///< Perspective correction parameters
     GradientParams          gradient;        ///< Gradient filter parameters
+    LocallabParams          locallab;        ///< Local lab parameters
     PCVignetteParams        pcvignette;      ///< Post-crop vignette filter parameters
     CACorrParams            cacorrection;    ///< Lens c/a correction parameters
     VignettingParams        vignetting;      ///< Lens vignetting correction parameters
     ChannelMixerParams      chmixer;         ///< Channel mixer parameters
     BlackWhiteParams        blackwhite;      ///< Black&  White parameters
     ResizeParams            resize;          ///< Resize parameters
+    SpotParams              spot;            ///< Spot removal tool
     ColorManagementParams   icm;             ///< profiles/color spaces used during the image processing
     RAWParams               raw;             ///< RAW parameters before demosaicing
     WaveletParams           wavelet;         ///< Wavelet parameters

@@ -26,6 +26,8 @@
 #include "guiutils.h"
 #include "lwbuttonset.h"
 #include "threadutils.h"
+#include "options.h"
+#include "thumbnail.h"
 
 #include "../rtengine/coord2d.h"
 
@@ -59,7 +61,7 @@ protected:
 
     MyRWMutex lockRW;  // Locks access to all image thumb changing actions
 
-    guint8* preview;  // holds the preview image. used in updateBackBuffer. TODO Olli: Make a cache to reduce mem significantly
+    std::vector<guint8> preview;  // holds the preview image. used in updateBackBuffer.
 
     Glib::ustring dispname;
 
@@ -95,6 +97,7 @@ protected:
 
 private:
     const std::string collate_name;
+    const std::string collate_exif;
 
 public:
 
@@ -117,7 +120,7 @@ public:
     bool updatepriority;
     eWithFilename withFilename;
 
-    explicit ThumbBrowserEntryBase (const Glib::ustring& fname);
+    explicit ThumbBrowserEntryBase (const Glib::ustring& fname, Thumbnail *thm);
     virtual ~ThumbBrowserEntryBase ();
 
     void setParent (ThumbBrowserBase* l)
@@ -174,9 +177,32 @@ public:
     void setPosition (int x, int y, int w, int h);
     void setOffset (int x, int y);
 
-    bool operator <(const ThumbBrowserEntryBase& other) const
+    bool compare (const ThumbBrowserEntryBase& other, Options::SortMethod method) const
     {
-        return collate_name < other.collate_name;
+        int cmp = 0;
+        switch (method){
+        case Options::SORT_BY_NAME:
+            return collate_name < other.collate_name;
+        case Options::SORT_BY_DATE:
+            cmp = thumbnail->getDateTime().compare(other.thumbnail->getDateTime());
+            break;
+        case Options::SORT_BY_EXIF:
+            cmp = collate_exif.compare(other.collate_exif);
+            break;
+        case Options::SORT_BY_RANK:
+            cmp = thumbnail->getRank() - other.thumbnail->getRank();
+            break;
+        case Options::SORT_BY_LABEL:
+            cmp = thumbnail->getColorLabel() - other.thumbnail->getColorLabel();
+            break;
+        case Options::SORT_METHOD_COUNT: abort();
+        }
+
+        // Always fall back to sorting by name
+        if (!cmp)
+            cmp = collate_name.compare(other.collate_name);
+
+        return cmp < 0;
     }
 
     virtual void refreshThumbnailImage () = 0;

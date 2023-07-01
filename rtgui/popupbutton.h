@@ -24,7 +24,7 @@
 
 #include "popupcommon.h"
 
-class PopUpButton :
+class PopUpButton final :
     public Gtk::Button,
     public PopUpCommon
 {

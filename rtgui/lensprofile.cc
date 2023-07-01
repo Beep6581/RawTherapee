@@ -36,8 +36,10 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
+const Glib::ustring LensProfilePanel::TOOL_NAME = "lensprof";
+
 LensProfilePanel::LensProfilePanel() :
-    FoldableToolPanel(this, "lensprof", M("TP_LENSPROFILE_LABEL")),
+    FoldableToolPanel(this, TOOL_NAME, M("TP_LENSPROFILE_LABEL")),
     lcModeChanged(false),
     lcpFileChanged(false),
     useDistChanged(false),
@@ -74,11 +76,13 @@ LensProfilePanel::LensProfilePanel() :
     // Main containers:
 
     Gtk::Frame *nodesFrame = Gtk::manage(new Gtk::Frame(M("TP_LENSPROFILE_MODE_HEADER")));
+    nodesFrame->set_label_align (0.025, 0.5);
 
     modesGrid->get_style_context()->add_class("grid-spacing");
     setExpandAlignProperties(modesGrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
     Gtk::Frame *distFrame = Gtk::manage(new Gtk::Frame(M("TP_LENSPROFILE_USE_HEADER")));
+    distFrame->set_label_align (0.025, 0.5);
 
     distGrid->get_style_context()->add_class("grid-spacing");
     setExpandAlignProperties(distGrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
@@ -586,6 +590,9 @@ void LensProfilePanel::onCorrModeChanged(const Gtk::RadioButton* rbChanged)
 
 LensProfilePanel::LFDbHelper::LFDbHelper()
 {
+    lensfunCameraModel = Gtk::TreeStore::create(lensfunModelCam);
+    lensfunLensModel = Gtk::TreeStore::create(lensfunModelLens);
+
 #ifdef _OPENMP
 #pragma omp parallel sections if (!settings->verbose)
 #endif
@@ -594,14 +601,12 @@ LensProfilePanel::LFDbHelper::LFDbHelper()
 #pragma omp section
 #endif
         {
-            lensfunCameraModel = Gtk::TreeStore::create(lensfunModelCam);
             fillLensfunCameras();
         }
 #ifdef _OPENMP
 #pragma omp section
 #endif
         {
-            lensfunLensModel = Gtk::TreeStore::create(lensfunModelLens);
             fillLensfunLenses();
         }
     }

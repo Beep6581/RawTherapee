@@ -28,7 +28,7 @@
 
 class FilePanel;
 class Thumbnail;
-class BatchToolPanelCoordinator :
+class BatchToolPanelCoordinator final :
     public ToolPanelCoordinator,
     public FileSelectionChangeListener,
     public BatchPParamsChangeListener,
@@ -56,6 +56,8 @@ public:
 
     // toolpanellistener interface
     void panelChanged(const rtengine::ProcEvent& event, const Glib::ustring& descr) override;
+    void setTweakOperator (rtengine::TweakOperator *tOperator) override;
+    void unsetTweakOperator (rtengine::TweakOperator *tOperator) override;
 
     // profilechangelistener interface
     void profileChange(
@@ -67,8 +69,8 @@ public:
     ) override;
 
     // wbprovider interface
-    void getAutoWB (double& temp, double& green, double equal, double tempBias) override;
-    void getCamWB (double& temp, double& green) override;
+    void getAutoWB (double& temp, double& green, double equal, rtengine::StandardObserver observer, double tempBias) override;
+    void getCamWB (double& temp, double& green, rtengine::StandardObserver observer) override;
 
     // thumbnaillistener interface
     void procParamsChanged (Thumbnail* thm, int whoChangedIt) override;

@@ -43,7 +43,7 @@ struct FileBrowserEntryIdleHelper {
 };
 
 class FileThumbnailButtonSet;
-class FileBrowserEntry : public ThumbBrowserEntryBase,
+class FileBrowserEntry final : public ThumbBrowserEntryBase,
     public ThumbnailListener,
     public ThumbImageUpdateListener,
     public rtengine::NonCopyable

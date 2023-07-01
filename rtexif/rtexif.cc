@@ -139,7 +139,7 @@ TagDirectory*  TagDirectory::getRoot()
     }
 }
 
-const TagAttrib* TagDirectory::getAttrib (int id)
+const TagAttrib* TagDirectory::getAttrib (int id) const
 {
 
     if (attribs)
@@ -1017,13 +1017,13 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
         Tag* tmake = parent->getRoot()->getTag ("Make");
 
         if (tmake) {
-            tmake->toString (make);
+            tmake->toString (make, sizeof(make));
         }
 
         Tag* tmodel = parent->getRoot()->getTag ("Model");
 
         if (tmodel) {
-            tmodel->toString (model);
+            tmodel->toString (model, sizeof(model));
         }
 
         if (!strncmp (make, "SONY", 4)) {
@@ -1209,6 +1209,10 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
             goto defsubdirs;
         }
     } else {
+        // In some circumstances, `value` may have been allocated, so
+        // delete it to prevent a leak.  See issue
+        // https://github.com/Beep6581/RawTherapee/issues/6735
+        delete [] value;
         // read value
         value = new unsigned char [valuesize + 1];
         auto readSize = fread (value, 1, valuesize, f);
@@ -1510,8 +1514,6 @@ int Tag::toInt (int ofs, TagType astype) const
         return attrib->interpreter->toInt (this, ofs, astype);
     }
 
-    int a;
-
     if (astype == INVALID) {
         astype = type;
     }
@@ -1537,10 +1539,15 @@ int Tag::toInt (int ofs, TagType astype) const
         case LONG:
             return (int)sget4 (value + ofs, getOrder());
 
-        case SRATIONAL:
-        case RATIONAL:
-            a = (int)sget4 (value + ofs + 4, getOrder());
+        case SRATIONAL: {
+            int a = (int)sget4 (value + ofs + 4, getOrder());
             return a == 0 ? 0 : (int)sget4 (value + ofs, getOrder()) / a;
+        }
+
+        case RATIONAL: {
+            uint32_t a = (uint32_t)sget4 (value + ofs + 4, getOrder());
+            return a == 0 ? 0 : (uint32_t)sget4 (value + ofs, getOrder()) / a;
+        }
 
         case FLOAT:
             return (int)toDouble (ofs);
@@ -1589,10 +1596,14 @@ double Tag::toDouble (int ofs) const
             return (double) ((int)sget4 (value + ofs, getOrder()));
 
         case SRATIONAL:
-        case RATIONAL:
             ud = (int)sget4 (value + ofs, getOrder());
             dd = (int)sget4 (value + ofs + 4, getOrder());
-            return dd == 0. ? 0. : (double)ud / (double)dd;
+            return dd == 0. ? 0. : ud / dd;
+
+        case RATIONAL:
+            ud = (uint32_t)sget4 (value + ofs, getOrder());
+            dd = (uint32_t)sget4 (value + ofs + 4, getOrder());
+            return dd == 0. ? 0. : ud / dd;
 
         case FLOAT:
             conv.i = sget4 (value + ofs, getOrder());
@@ -1670,8 +1681,11 @@ void Tag::toRational (int& num, int& denom, int ofs) const
     }
 }
 
-void Tag::toString (char* buffer, int ofs) const
+void Tag::toString (char* buffer, std::size_t size, int ofs) const
 {
+    if (!buffer || !size) {
+        return;
+    }
 
     if (type == UNDEFINED && !directory) {
         bool isstring = true;
@@ -1683,64 +1697,80 @@ void Tag::toString (char* buffer, int ofs) const
             }
 
         if (isstring) {
-            int j = 0;
+            if (size < 3) {
+                return;
+            }
+
+            std::size_t j = 0;
 
             for (i = 0; i + ofs < count && i < 64 && value[i + ofs]; i++) {
                 if (value[i + ofs] == '<' || value[i + ofs] == '>') {
                     buffer[j++] = '\\';
+                    if (j > size - 2) {
+                        break;
+                    }
                 }
 
                 buffer[j++] = value[i + ofs];
+                if (j > size - 2) {
+                    break;
+                }
             }
 
             buffer[j++] = 0;
             return;
         }
     } else if (type == ASCII) {
-        sprintf (buffer, "%.64s", value + ofs);
+        snprintf(buffer, size, "%.64s", value + ofs);
         return;
     }
 
     size_t maxcount = rtengine::min<size_t>(count, 10);
 
-    strcpy (buffer, "");
+    buffer[0] = 0;
 
     for (ssize_t i = 0; i < rtengine::min<int>(maxcount, valuesize - ofs); i++) {
-        if (i > 0) {
+        std::size_t len = strlen(buffer);
+
+        if (i > 0 && size - len > 2) {
             strcat (buffer, ", ");
+            len += 2;
         }
 
-        char* b = buffer + strlen (buffer);
+        char* b = buffer + len;
 
         switch (type) {
             case UNDEFINED:
             case BYTE:
-                sprintf (b, "%d", value[i + ofs]);
+                snprintf(b, size - len, "%d", value[i + ofs]);
                 break;
 
             case SSHORT:
-                sprintf (b, "%d", toInt (2 * i + ofs));
+                snprintf(b, size - len, "%d", toInt (2 * i + ofs));
                 break;
 
             case SHORT:
-                sprintf (b, "%u", toInt (2 * i + ofs));
+                snprintf(b, size - len, "%u", toInt (2 * i + ofs));
                 break;
 
             case SLONG:
-                sprintf (b, "%d", toInt (4 * i + ofs));
+                snprintf(b, size - len, "%d", toInt (4 * i + ofs));
                 break;
 
             case LONG:
-                sprintf (b, "%u", toInt (4 * i + ofs));
+                snprintf(b, size - len, "%u", toInt (4 * i + ofs));
                 break;
 
             case SRATIONAL:
+                snprintf(b, size - len, "%d/%d", (int)sget4 (value + 8 * i + ofs, getOrder()), (int)sget4 (value + 8 * i + ofs + 4, getOrder()));
+                break;
+
             case RATIONAL:
-                sprintf (b, "%d/%d", (int)sget4 (value + 8 * i + ofs, getOrder()), (int)sget4 (value + 8 * i + ofs + 4, getOrder()));
+                snprintf(b, size - len, "%u/%u", (uint32_t)sget4 (value + 8 * i + ofs, getOrder()), (uint32_t)sget4 (value + 8 * i + ofs + 4, getOrder()));
                 break;
 
             case FLOAT:
-                sprintf (b, "%g", toDouble (8 * i + ofs));
+                snprintf(b, size - len, "%g", toDouble (8 * i + ofs));
                 break;
 
             default:
@@ -1748,7 +1778,7 @@ void Tag::toString (char* buffer, int ofs) const
         }
     }
 
-    if (count > maxcount) {
+    if (count > maxcount && size - strlen(buffer) > 3) {
         strcat (buffer, "...");
     }
 }
@@ -1761,7 +1791,7 @@ std::string Tag::nameToString (int i)
     if (attrib) {
         strncpy (buffer, attrib->name, 1024);
     } else {
-        sprintf (buffer, "0x%x", tag);
+        snprintf(buffer, sizeof(buffer), "0x%x", tag);
     }
 
     if (i > 0) {
@@ -1778,7 +1808,7 @@ std::string Tag::valueToString () const
         return attrib->interpreter->toString (this);
     } else {
         char buffer[1024];
-        toString (buffer);
+        toString (buffer, sizeof(buffer));
         return buffer;
     }
 }
@@ -2344,7 +2374,7 @@ void ExifManager::parseCIFF (int length, TagDirectory* root)
             ev = ((short)get2 (f, INTEL)) / 32.0f;
             fseek (f, 34, SEEK_CUR);
 
-            if (shutter > 1e6) {
+            if (shutter > 1e6f) {
                 shutter = get2 (f, INTEL) / 10.0f;
             }
 
@@ -2753,7 +2783,7 @@ parse_leafdata (TagDirectory* root, ByteOrder order)
                                    &tm.tm_mday, &tm.tm_hour,
                                    &tm.tm_min, &tm.tm_sec) == 6) {
                     char tstr[64];
-                    sprintf (tstr, "%04d:%02d:%02d %02d:%02d:%02d", tm.tm_year, tm.tm_mon,
+                    snprintf(tstr, sizeof(tstr), "%04d:%02d:%02d %02d:%02d:%02d", tm.tm_year, tm.tm_mon,
                              tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
                     t->initString (tstr);
                     exif->getDirectory()->addTagFront (t);
@@ -3049,19 +3079,14 @@ void ExifManager::parse (bool isRaw, bool skipIgnored, bool parseJpeg)
 
         bool frameRootDetected = false;
 
-        if(!frameRootDetected) {
-            std::vector<const Tag*> risTagList = root->findTags("RawImageSegmentation");
-            if (!risTagList.empty()) {
-                for (auto ris : risTagList) {
-                    frames.push_back(ris->getParent());
-                    frameRootDetected = true;
+        for (auto ris : root->findTags("RawImageSegmentation")) {
+            frames.push_back(ris->getParent());
+            frameRootDetected = true;
 
-    #if PRINT_METADATA_TREE
-                    printf("\n--------------- FRAME (RAWIMAGESEGMENTATION) ---------------\n\n");
-                    ris->getParent()->printAll ();
-    #endif
-                }
-            }
+#if PRINT_METADATA_TREE
+            printf("\n--------------- FRAME (RAWIMAGESEGMENTATION) ---------------\n\n");
+            ris->getParent()->printAll ();
+#endif
         }
 
         if(!frameRootDetected) {
@@ -3222,28 +3247,57 @@ std::vector<Tag*> ExifManager::getDefaultTIFFTags (TagDirectory* forthis)
 
 
 
-int ExifManager::createJPEGMarker (const TagDirectory* root, const rtengine::procparams::ExifPairs& changeList, int W, int H, unsigned char* buffer)
+void ExifManager::createJPEGMarker (const TagDirectory* root, const rtengine::procparams::ExifPairs& changeList, int W, int H, unsigned char *&buffer, unsigned &bufferSize)
 {
 
     // write tiff header
-    int offs = 6;
-    memcpy (buffer, "Exif\0\0", 6);
+    int offs = 6; // "Exif\0\0"
     ByteOrder order = INTEL;
 
     if (root) {
         order = root->getOrder ();
     }
 
-    sset2 ((unsigned short)order, buffer + offs, order);
-    offs += 2;
-    sset2 (42, buffer + offs, order);
-    offs += 2;
-    sset4 (8, buffer + offs, order);
-
     TagDirectory* cl;
 
     if (root) {
-        cl = (const_cast<TagDirectory*> (root))->clone (nullptr);
+        cl = root->clone(nullptr);
+
+        // Drop unwanted tags before exporting
+        // For example, Nikon Z-series has a 52Kb MakerNotes->ShotInfo tag
+        // which does not fit into the 65Kb limit on JPEG exif tags
+        const Tag* const make_tag = cl->getTag(271);
+        if (make_tag && !std::strncmp((const char*)make_tag->getValue(), "NIKON CORPORATION", 17)) {
+            [cl]()
+            {
+                Tag* const exif_tag = cl->getTag(34665);
+                if (!exif_tag) {
+                    return;
+                }
+
+                TagDirectory* const exif_dir = exif_tag->getDirectory();
+                if (!exif_dir) {
+                    return;
+                }
+
+                Tag* const make_notes_tag = exif_dir->getTag(37500);
+                if (!make_notes_tag) {
+                    return;
+                }
+
+                TagDirectory* const maker_notes_dir = make_notes_tag->getDirectory();
+                if (!maker_notes_dir) {
+                    return;
+                }
+
+                Tag* const shot_info_tag = maker_notes_dir->getTag(145);
+                if (!shot_info_tag) {
+                    return;
+                }
+
+                shot_info_tag->setKeep(false);
+            }();
+        }
     } else {
         cl = new TagDirectory (nullptr, ifdAttribs, INTEL);
     }
@@ -3265,11 +3319,18 @@ int ExifManager::createJPEGMarker (const TagDirectory* root, const rtengine::pro
     }
 
     cl->sort ();
-    int size = cl->write (8, buffer + 6);
+    bufferSize = cl->calculateSize() + 8 + 6;
+    buffer = new unsigned char[bufferSize]; // this has to be deleted in caller
+    memcpy (buffer, "Exif\0\0", 6);
+    sset2 ((unsigned short)order, buffer + offs, order);
+    offs += 2;
+    sset2 (42, buffer + offs, order);
+    offs += 2;
+    sset4 (8, buffer + offs, order);
+
+    cl->write (8, buffer + 6);
 
     delete cl;
-
-    return size + 6;
 }
 
 int ExifManager::createPNGMarker(const TagDirectory* root, const rtengine::procparams::ExifPairs &changeList, int W, int H, int bps, const char* iptcdata, int iptclen, unsigned char *&buffer, unsigned &bufferSize)

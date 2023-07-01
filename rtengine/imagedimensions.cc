@@ -54,6 +54,14 @@ int PreviewProps::getSkip() const
     return skip;
 }
 
+void PreviewProps::set (int x, int y, int w, int h, int skip) {
+    this->x = x;
+    this->y = y;
+    this->width = w;
+    this->height = h;
+    this->skip = skip;
+}
+
 ImageDimensions::ImageDimensions() :
     width(-1),
     height(-1)

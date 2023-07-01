@@ -18,9 +18,15 @@
  */
 #pragma once
 
-#include <glibmm/ustring.h>
 
 #include <cairomm/cairomm.h>
+
+namespace Glib
+{
+
+class ustring;
+
+}
 
 namespace rtengine
 {

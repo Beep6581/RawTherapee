@@ -31,6 +31,7 @@
 #include "colortemp.h"
 #include "curves.h"
 #include "dcp.h"
+#include "iccmatrices.h"
 #include "iccstore.h"
 #include "image8.h"
 #include "improcfun.h"
@@ -193,7 +194,7 @@ namespace rtengine
 
 using namespace procparams;
 
-Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh, double wbEq, bool inspectorMode)
+Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh, double wbEq, StandardObserver wbObserver, bool inspectorMode)
 {
 
     StdImageSource imgSrc;
@@ -204,11 +205,6 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
 
     ImageIO* img = imgSrc.getImageIO();
 
-    // agriggio -- hotfix for #3794, to be revised once a proper solution is implemented
-    if (std::max(img->getWidth(), img->getHeight()) / std::min(img->getWidth(), img->getHeight()) >= 10) {
-        return nullptr;
-    }
-    
     Thumbnail* tpp = new Thumbnail ();
 
     unsigned char* data;
@@ -234,14 +230,28 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
         h = img->getHeight();
         tpp->scale = 1.;
     } else {
-        if (fixwh == 1) {
+        if (fixwh < 0 && w > 0 && h > 0) {
+            const int ww = h * img->getWidth() / img->getHeight();
+            const int hh = w * img->getHeight() / img->getWidth();
+            if (ww <= w) {
+                w = ww;
+                tpp->scale = static_cast<double>(img->getHeight()) / h;
+            } else {
+                h = hh;
+                tpp->scale = static_cast<double>(img->getWidth()) / w;
+            }
+        } else if (fixwh == 1) {
             w = h * img->getWidth() / img->getHeight();
-            tpp->scale = (double)img->getHeight() / h;
+            tpp->scale = static_cast<double>(img->getHeight()) / h;
         } else {
             h = w * img->getHeight() / img->getWidth();
-            tpp->scale = (double)img->getWidth() / w;
+            tpp->scale = static_cast<double>(img->getWidth()) / w;
         }
     }
+
+    // Precaution to prevent division by zero later on
+    if (h < 1) h = 1;
+    if (w < 1) w = 1;
 
     // bilinear interpolation
     if (tpp->thumbImg) {
@@ -300,8 +310,9 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
             tpp->blueAWBMul  = avg_b / double (n);
             tpp->wbEqual = wbEq;
             tpp->wbTempBias = 0.0;
+            tpp->wbObserver = wbObserver;
 
-            cTemp.mul2temp (tpp->redAWBMul, tpp->greenAWBMul, tpp->blueAWBMul, tpp->wbEqual, tpp->autoWBTemp, tpp->autoWBGreen);
+            cTemp.mul2temp (tpp->redAWBMul, tpp->greenAWBMul, tpp->blueAWBMul, tpp->wbEqual, tpp->wbObserver, tpp->autoWBTemp, tpp->autoWBGreen);
         }
 
         tpp->init ();
@@ -339,7 +350,7 @@ Image8 *load_inspector_mode(const Glib::ustring &fname, RawMetaDataLocation &rml
     PreviewProps pp(0, 0, w, h, 1);
 
     Imagefloat tmp(w, h);
-    src.getImage(src.getWB(), TR_NONE, &tmp, pp, neutral.toneCurve, neutral.raw);
+    src.getImage(src.getWB(), TR_NONE, &tmp, pp, neutral.toneCurve, neutral.raw, 0);
     src.convertColorSpace(&tmp, neutral.icm, src.getWB());
 
     Image8 *img = new Image8(w, h);
@@ -511,8 +522,6 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
     ((filter >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==0 || !filter)
 #define FISGREEN(filter,row,col) \
     ((filter >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==1 || !filter)
-#define FISBLUE(filter,row,col) \
-    ((filter >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==2 || !filter)
 
 RawMetaDataLocation Thumbnail::loadMetaDataFromRaw (const Glib::ustring& fname)
 {
@@ -535,7 +544,7 @@ RawMetaDataLocation Thumbnail::loadMetaDataFromRaw (const Glib::ustring& fname)
     return rml;
 }
 
-Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, eSensorType &sensorType, int &w, int &h, int fixwh, double wbEq, bool rotate, bool forHistogramMatching)
+Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, eSensorType &sensorType, int &w, int &h, int fixwh, double wbEq, StandardObserver wbObserver, bool rotate, bool forHistogramMatching)
 {
     RawImage *ri = new RawImage (fname);
     unsigned int tempImageNum = 0;
@@ -594,6 +603,8 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
     //tpp->defGain = 1.0 / min(ri->get_pre_mul(0), ri->get_pre_mul(1), ri->get_pre_mul(2));
     tpp->defGain = max (scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]) / min (scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]);
     tpp->defGain *= std::pow(2, ri->getBaselineExposure());
+
+    tpp->scaleGain = scale_mul[0] / pre_mul[0]; // can be used to reconstruct scale_mul later in processing
 
     tpp->gammaCorrected = true;
 
@@ -972,9 +983,10 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
         tpp->blueAWBMul  = ri->get_rgb_cam (2, 0) * reds + ri->get_rgb_cam (2, 1) * greens + ri->get_rgb_cam (2, 2) * blues;
         tpp->wbEqual = wbEq;
         tpp->wbTempBias = 0.0;
+        tpp->wbObserver = wbObserver;
 
         ColorTemp cTemp;
-        cTemp.mul2temp (tpp->redAWBMul, tpp->greenAWBMul, tpp->blueAWBMul, tpp->wbEqual, tpp->autoWBTemp, tpp->autoWBGreen);
+        cTemp.mul2temp (tpp->redAWBMul, tpp->greenAWBMul, tpp->blueAWBMul, tpp->wbEqual, tpp->wbObserver, tpp->autoWBTemp, tpp->autoWBGreen);
     }
 
     if (rotate && ri->get_rotateDegree() > 0) {
@@ -1043,6 +1055,7 @@ Thumbnail::Thumbnail () :
     scaleForSave (8192),
     gammaCorrected (false),
     colorMatrix{},
+    scaleGain (1.0),
     isRaw (true)
 {
 }
@@ -1110,18 +1123,19 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     float iso = metadata->getISOSpeed(imgNum);
     float fcomp = metadata->getExpComp(imgNum);
     
-    // check if the WB's equalizer value has changed
-    if (wbEqual < (params.wb.equal - 5e-4) || wbEqual > (params.wb.equal + 5e-4) || wbTempBias < (params.wb.tempBias - 5e-4) || wbTempBias > (params.wb.tempBias + 5e-4)) {
+    // check if the WB's equalizer, temperature bias, or observer value has changed
+    if (wbEqual < (params.wb.equal - 5e-4) || wbEqual > (params.wb.equal + 5e-4) || wbTempBias < (params.wb.tempBias - 5e-4) || wbTempBias > (params.wb.tempBias + 5e-4) || wbObserver != params.wb.observer) {
         wbEqual = params.wb.equal;
         wbTempBias = params.wb.tempBias;
+        wbObserver = params.wb.observer;
         // recompute the autoWB
         ColorTemp cTemp;
-        cTemp.mul2temp (redAWBMul, greenAWBMul, blueAWBMul, wbEqual, autoWBTemp, autoWBGreen);
+        cTemp.mul2temp (redAWBMul, greenAWBMul, blueAWBMul, wbEqual, wbObserver, autoWBTemp, autoWBGreen);
         autoWBTemp += autoWBTemp * wbTempBias;
     }
 
     // compute WB multipliers
-    ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.equal, params.wb.method);
+    ColorTemp currWB = ColorTemp (params.wb.temperature, params.wb.green, params.wb.equal, params.wb.method, params.wb.observer);
 
     if (!params.wb.enabled) {
         currWB = ColorTemp();
@@ -1130,9 +1144,9 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         double cam_r = colorMatrix[0][0] * camwbRed + colorMatrix[0][1] * camwbGreen + colorMatrix[0][2] * camwbBlue;
         double cam_g = colorMatrix[1][0] * camwbRed + colorMatrix[1][1] * camwbGreen + colorMatrix[1][2] * camwbBlue;
         double cam_b = colorMatrix[2][0] * camwbRed + colorMatrix[2][1] * camwbGreen + colorMatrix[2][2] * camwbBlue;
-        currWB = ColorTemp (cam_r, cam_g, cam_b, params.wb.equal);
-    } else if (params.wb.method == "Auto") {
-        currWB = ColorTemp (autoWBTemp, autoWBGreen, wbEqual, "Custom");
+        currWB = ColorTemp (cam_r, cam_g, cam_b, params.wb.equal, params.wb.observer);
+    } else if (params.wb.method == "autold") {
+        currWB = ColorTemp (autoWBTemp, autoWBGreen, wbEqual, "Custom", wbObserver);
     }
 
     double rm, gm, bm;
@@ -1176,11 +1190,18 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         rwidth = int (size_t (thumbImg->getWidth()) * size_t (rheight) / size_t (thumbImg->getHeight()));
     }
 
+    if (rwidth < 1) rwidth = 1;
+    if (rheight < 1) rheight = 1;
 
     Imagefloat* baseImg = resizeTo<Imagefloat> (rwidth, rheight, interp, thumbImg);
 
-    if (isRaw && params.filmNegative.enabled) {
-        processFilmNegative(params, baseImg, rwidth, rheight, rmi, gmi, bmi);
+    // Film negative legacy mode, for backwards compatibility RT v5.8
+    if (params.filmNegative.enabled) {
+        if (params.filmNegative.backCompat == FilmNegativeParams::BackCompat::V1) {
+            processFilmNegative(params, baseImg, rwidth, rheight);
+        } else if (params.filmNegative.backCompat == FilmNegativeParams::BackCompat::V2) {
+            processFilmNegativeV2(params, baseImg, rwidth, rheight);
+        }
     }
 
     if (params.coarse.rotate) {
@@ -1222,6 +1243,19 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
     // if luma denoise has to be done for thumbnails, it should be right here
 
+    int fw = baseImg->getWidth();
+    int fh = baseImg->getHeight();
+    //ColorTemp::CAT02 (baseImg, &params)   ;//perhaps not good!
+
+    ImProcFunctions ipf (&params, forHistogramMatching); // enable multithreading when forHistogramMatching is true
+    ipf.setScale (sqrt (double (fw * fw + fh * fh)) / sqrt (double (thumbImg->getWidth() * thumbImg->getWidth() + thumbImg->getHeight() * thumbImg->getHeight()))*scale);
+    ipf.updateColorProfiles (ICCStore::getInstance()->getDefaultMonitorProfileName(), RenderingIntent(settings->monitorIntent), false, false);
+
+    // Process film negative BEFORE colorspace conversion, if needed
+    if (params.filmNegative.enabled && params.filmNegative.backCompat == FilmNegativeParams::BackCompat::CURRENT && params.filmNegative.colorSpace == FilmNegativeParams::ColorSpace::INPUT) {
+        ipf.filmNegativeProcess(baseImg, baseImg, params.filmNegative);
+    }
+
     // perform color space transformation
 
     if (isRaw) {
@@ -1231,28 +1265,25 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         StdImageSource::colorSpaceConversion (baseImg, params.icm, embProfile, thumbImg->getSampleFormat());
     }
 
-    int fw = baseImg->getWidth();
-    int fh = baseImg->getHeight();
-    //ColorTemp::CAT02 (baseImg, &params)   ;//perhaps not good!
-
-    ImProcFunctions ipf (&params, forHistogramMatching); // enable multithreading when forHistogramMatching is true
-    ipf.setScale (sqrt (double (fw * fw + fh * fh)) / sqrt (double (thumbImg->getWidth() * thumbImg->getWidth() + thumbImg->getHeight() * thumbImg->getHeight()))*scale);
-    ipf.updateColorProfiles (ICCStore::getInstance()->getDefaultMonitorProfileName(), RenderingIntent(settings->monitorIntent), false, false);
+    // Process film negative AFTER colorspace conversion, if needed
+    if (params.filmNegative.enabled && params.filmNegative.backCompat == FilmNegativeParams::BackCompat::CURRENT && params.filmNegative.colorSpace != FilmNegativeParams::ColorSpace::INPUT) {
+        ipf.filmNegativeProcess(baseImg, baseImg, params.filmNegative);
+    }
 
     LUTu hist16 (65536);
 
     ipf.firstAnalysis (baseImg, params, hist16);
 
-    ipf.dehaze(baseImg);
-    ipf.ToneMapFattal02(baseImg);
+    ipf.dehaze(baseImg, params.dehaze);
+    ipf.ToneMapFattal02(baseImg, params.fattal, 3, 0, nullptr, 0, 0, 0);
     
     // perform transform
-    if (ipf.needsTransform()) {
+    int origFW;
+    int origFH;
+    double tscale = 0.0;
+    getDimensions (origFW, origFH, tscale);
+    if (ipf.needsTransform(origFW * tscale + 0.5, origFH * tscale + 0.5, 0, metadata)) {
         Imagefloat* trImg = new Imagefloat (fw, fh);
-        int origFW;
-        int origFH;
-        double tscale = 0.0;
-        getDimensions (origFW, origFH, tscale);
         ipf.transform (baseImg, trImg, 0, 0, 0, 0, fw, fh, origFW * tscale + 0.5, origFH * tscale + 0.5, metadata, 0, true); // Raw rotate degree not detectable here
         delete baseImg;
         baseImg = trImg;
@@ -1325,10 +1356,10 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         params.colorToning.getCurves (ctColorCurve, ctOpacityCurve, wp, opautili);
 
         clToningcurve (65536);
-        CurveFactory::curveToning (params.colorToning.clcurve, clToningcurve, scale == 1 ? 1 : 16);
+        CurveFactory::diagonalCurve2Lut (params.colorToning.clcurve, clToningcurve, scale == 1 ? 1 : 16);
 
         cl2Toningcurve (65536);
-        CurveFactory::curveToning (params.colorToning.cl2curve, cl2Toningcurve, scale == 1 ? 1 : 16);
+        CurveFactory::diagonalCurve2Lut (params.colorToning.cl2curve, cl2Toningcurve, scale == 1 ? 1 : 16);
     }
 
     if (params.blackwhite.enabled) {
@@ -1404,23 +1435,37 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve,
                                  hist16, lumacurve, dummy, 16, utili);
 
-    bool clcutili;
-    CurveFactory::curveCL (clcutili, params.labCurve.clcurve, clcurve, 16);
+    const bool clcutili = CurveFactory::diagonalCurve2Lut(params.labCurve.clcurve, clcurve, 16);
 
     bool autili, butili, ccutili, cclutili;
     CurveFactory::complexsgnCurve (autili, butili, ccutili, cclutili, params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve,
                                    params.labCurve.lccurve, curve1, curve2, satcurve, lhskcurve, 16);
 
+
+    if (params.colorToning.enabled && params.colorToning.method == "LabGrid") {
+        ipf.colorToningLabGrid(labView, 0,labView->W , 0, labView->H, false);
+    }
+
+    ipf.shadowsHighlights(labView, params.sh.enabled, params.sh.lab,params.sh.highlights ,params.sh.shadows, params.sh.radius, 16, params.sh.htonalwidth, params.sh.stonalwidth);
+
+    if (params.localContrast.enabled) {
+        // Alberto's local contrast
+        ipf.localContrast(labView, labView->L, params.localContrast, false, 16);
+    }
     ipf.chromiLuminanceCurve (nullptr, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
 
-    ipf.vibrance (labView);
+    ipf.vibrance (labView, params.vibrance, params.toneCurve.hrenabled, params.icm.workingProfile);
     ipf.labColorCorrectionRegions(labView);
+
+
+
 
     if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || !params.colorappearance.enabled) {
         ipf.EPDToneMap (labView, 5, 6);
     }
 
-    ipf.softLight(labView);
+    ipf.softLight(labView, params.softlight);
+
 
     if (params.colorappearance.enabled) {
         CurveFactory::curveLightBrightColor (
@@ -1447,10 +1492,11 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
             adap = 2000.f;
         } else {
             float E_V = fcomp + log2 ((fnum * fnum) / fspeed / (fiso / 100.f));
-            float expo2 = params.toneCurve.expcomp; // exposure compensation in tonecurve ==> direct EV
+            double kexp = 0.;
+            float expo2 = kexp * params.toneCurve.expcomp; // exposure compensation in tonecurve ==> direct EV
             E_V += expo2;
             float expo1;//exposure raw white point
-            expo1 = log2 (params.raw.expos); //log2 ==>linear to EV
+            expo1 = 0.5 * log2 (params.raw.expos); //log2 ==>linear to EV
             E_V += expo1;
             adap = powf (2.f, E_V - 3.f); //cd / m2
             //end calculation adaptation scene luminosity
@@ -1469,7 +1515,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         ipf.ciecam_02float (cieView, adap, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, sk, execsharp, d, dj, yb, rtt);
         delete cieView;
     }
-    
+
+
     // color processing
     //ipf.colorCurve (labView, labView);
 
@@ -1544,27 +1591,28 @@ void Thumbnail::getDimensions (int& w, int& h, double& scaleFac)
     }
 }
 
-void Thumbnail::getCamWB (double& temp, double& green)
+void Thumbnail::getCamWB (double& temp, double& green, StandardObserver observer)
 {
 
     double cam_r = colorMatrix[0][0] * camwbRed + colorMatrix[0][1] * camwbGreen + colorMatrix[0][2] * camwbBlue;
     double cam_g = colorMatrix[1][0] * camwbRed + colorMatrix[1][1] * camwbGreen + colorMatrix[1][2] * camwbBlue;
     double cam_b = colorMatrix[2][0] * camwbRed + colorMatrix[2][1] * camwbGreen + colorMatrix[2][2] * camwbBlue;
-    ColorTemp currWB = ColorTemp (cam_r, cam_g, cam_b, 1.0);  // we do not take the equalizer into account here, because we want camera's WB
+    ColorTemp currWB = ColorTemp (cam_r, cam_g, cam_b, 1.0, observer);  // we do not take the equalizer into account here, because we want camera's WB
     temp = currWB.getTemp ();
     green = currWB.getGreen ();
 }
 
-void Thumbnail::getAutoWB (double& temp, double& green, double equal, double tempBias)
+void Thumbnail::getAutoWB (double& temp, double& green, double equal, double tempBias, StandardObserver observer)
 {
 
-    if (equal != wbEqual || tempBias != wbTempBias) {
+    if (equal != wbEqual || tempBias != wbTempBias || observer != wbObserver) {
         // compute the values depending on equal
         ColorTemp cTemp;
         wbEqual = equal;
         wbTempBias = tempBias;
+        wbObserver = observer;
         // compute autoWBTemp and autoWBGreen
-        cTemp.mul2temp (redAWBMul, greenAWBMul, blueAWBMul, wbEqual, autoWBTemp, autoWBGreen);
+        cTemp.mul2temp (redAWBMul, greenAWBMul, blueAWBMul, wbEqual, wbObserver, autoWBTemp, autoWBGreen);
         autoWBTemp += autoWBTemp * tempBias;
     }
 
@@ -1621,7 +1669,7 @@ void Thumbnail::getSpotWB (const procparams::ProcParams& params, int xp, int yp,
     double gm = colorMatrix[1][0] * reds + colorMatrix[1][1] * greens + colorMatrix[1][2] * blues;
     double bm = colorMatrix[2][0] * reds + colorMatrix[2][1] * greens + colorMatrix[2][2] * blues;
 
-    ColorTemp ct (rm, gm, bm, params.wb.equal);
+    ColorTemp ct (rm, gm, bm, params.wb.equal, params.wb.observer);
     rtemp = ct.getTemp ();
     rgreen = ct.getGreen ();
 }
@@ -1922,7 +1970,7 @@ bool Thumbnail::writeImage (const Glib::ustring& fname)
 
     Glib::ustring fullFName = fname + ".rtti";
 
-    FILE* f = g_fopen (fullFName.c_str (), "wb");
+    FILE* f = ::g_fopen (fullFName.c_str (), "wb");
 
     if (!f) {
         return false;
@@ -1965,7 +2013,7 @@ bool Thumbnail::readImage (const Glib::ustring& fname)
         return false;
     }
 
-    FILE* f = g_fopen(fullFName.c_str (), "rb");
+    FILE* f = ::g_fopen(fullFName.c_str (), "rb");
 
     if (!f) {
         return false;
@@ -2123,6 +2171,10 @@ bool Thumbnail::readData  (const Glib::ustring& fname)
                         colorMatrix[i][j] = cm[ix++];
                     }
             }
+            
+            if (keyFile.has_key ("LiveThumbData", "ScaleGain")) {
+                scaleGain           = keyFile.get_double ("LiveThumbData", "ScaleGain");
+            }
         }
 
         return true;
@@ -2174,6 +2226,7 @@ bool Thumbnail::writeData  (const Glib::ustring& fname)
         keyFile.set_boolean ("LiveThumbData", "GammaCorrected", gammaCorrected);
         Glib::ArrayHandle<double> cm ((double*)colorMatrix, 9, Glib::OWNERSHIP_NONE);
         keyFile.set_double_list ("LiveThumbData", "ColorMatrix", cm);
+        keyFile.set_double  ("LiveThumbData", "ScaleGain", scaleGain);
 
         keyData = keyFile.to_data ();
 
@@ -2191,7 +2244,7 @@ bool Thumbnail::writeData  (const Glib::ustring& fname)
         return false;
     }
 
-    FILE *f = g_fopen (fname.c_str (), "wt");
+    FILE *f = ::g_fopen (fname.c_str (), "wt");
 
     if (!f) {
         if (settings->verbose) {
@@ -2214,7 +2267,7 @@ bool Thumbnail::readEmbProfile  (const Glib::ustring& fname)
     embProfile = nullptr;
     embProfileLength = 0;
 
-    FILE* f = g_fopen (fname.c_str (), "rb");
+    FILE* f = ::g_fopen (fname.c_str (), "rb");
 
     if (f) {
         if (!fseek (f, 0, SEEK_END)) {
@@ -2242,48 +2295,10 @@ bool Thumbnail::writeEmbProfile (const Glib::ustring& fname)
 {
 
     if (embProfileData) {
-        FILE* f = g_fopen (fname.c_str (), "wb");
+        FILE* f = ::g_fopen (fname.c_str (), "wb");
 
         if (f) {
             fwrite (embProfileData, 1, embProfileLength, f);
-            fclose (f);
-            return true;
-        }
-    }
-
-    return false;
-}
-
-bool Thumbnail::readAEHistogram  (const Glib::ustring& fname)
-{
-
-    FILE* f = g_fopen(fname.c_str(), "rb");
-
-    if (!f) {
-        aeHistogram.reset();
-    } else {
-        aeHistogram(65536 >> aeHistCompression);
-        const size_t histoBytes = (65536 >> aeHistCompression) * sizeof(aeHistogram[0]);
-        const size_t bytesRead = fread(&aeHistogram[0], 1, histoBytes, f);
-        fclose (f);
-        if (bytesRead != histoBytes) {
-            aeHistogram.reset();
-            return false;
-        }
-        return true;
-    }
-
-    return false;
-}
-
-bool Thumbnail::writeAEHistogram (const Glib::ustring& fname)
-{
-
-    if (aeHistogram) {
-        FILE* f = g_fopen (fname.c_str (), "wb");
-
-        if (f) {
-            fwrite (&aeHistogram[0], 1, (65536 >> aeHistCompression)*sizeof (aeHistogram[0]), f);
             fclose (f);
             return true;
         }

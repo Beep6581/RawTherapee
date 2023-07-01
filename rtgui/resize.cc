@@ -29,45 +29,61 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), false, true), maxw(100000), maxh(100000)
+const Glib::ustring Resize::TOOL_NAME = "resize";
+
+Resize::Resize () : FoldableToolPanel(this, TOOL_NAME, M("TP_RESIZE_LABEL"), false, true), maxw(100000), maxh(100000)
 {
     auto m = ProcEventMapper::getInstance();
     EvResizeAllowUpscaling = m->newEvent(RESIZE, "HISTORY_MSG_RESIZE_ALLOWUPSCALING");
+    EvResizeLongedge = m->newEvent (RESIZE, "HISTORY_MSG_RESIZE_LONGEDGE");
+    EvResizeShortedge = m->newEvent (RESIZE, "HISTORY_MSG_RESIZE_SHORTEDGE");   
 
     cropw = 0;
     croph = 0;
 
-    Gtk::Table* combos = Gtk::manage (new Gtk::Table (2, 2));
+    Gtk::Grid* combos = Gtk::manage (new Gtk::Grid());
+    combos->set_row_spacing(4);
 
     appliesTo = Gtk::manage (new MyComboBoxText ());
     appliesTo->append (M("TP_RESIZE_CROPPEDAREA"));
     appliesTo->append (M("TP_RESIZE_FULLIMAGE"));
     appliesTo->set_active (0);
+    appliesTo->set_hexpand();
+    appliesTo->set_halign(Gtk::ALIGN_FILL);
 
     Gtk::Label *label = Gtk::manage (new Gtk::Label (M("TP_RESIZE_APPLIESTO"), Gtk::ALIGN_START));
-    combos->attach (*label, 0, 1, 0, 1, Gtk::SHRINK | Gtk::FILL, Gtk::SHRINK, 2, 2);
-    combos->attach (*appliesTo, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
+    
+    combos->attach(*label, 0, 0, 1, 1);
+    combos->attach(*appliesTo, 1, 0, 1, 1);
 
     // See Resize::methodChanged() when adding a new method.
     method = Gtk::manage (new MyComboBoxText ());
     method->append (M("TP_RESIZE_LANCZOS"));
     method->append (M("TP_RESIZE_NEAREST"));
     method->set_active (0);
+    method->set_hexpand();
+    method->set_halign(Gtk::ALIGN_FILL);
 
     label = Gtk::manage (new Gtk::Label (M("TP_RESIZE_METHOD"), Gtk::ALIGN_START));
-    combos->attach (*label, 0, 1, 1, 2, Gtk::SHRINK | Gtk::FILL, Gtk::SHRINK, 2, 2);
-    combos->attach (*method, 1, 2, 1, 2, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
+    
+    combos->attach(*label, 0, 1, 1, 1);
+    combos->attach(*method, 1, 1, 1, 1);
 
     spec = Gtk::manage (new MyComboBoxText ());
     spec->append (M("TP_RESIZE_SCALE"));
     spec->append (M("TP_RESIZE_WIDTH"));
     spec->append (M("TP_RESIZE_HEIGHT"));
     spec->append (M("TP_RESIZE_FITBOX"));
+    spec->append (M("TP_RESIZE_LONG"));
+    spec->append (M("TP_RESIZE_SHORT"));
     spec->set_active (0);
+    spec->set_hexpand();
+    spec->set_halign(Gtk::ALIGN_FILL);
 
     label = Gtk::manage (new Gtk::Label (M("TP_RESIZE_SPECIFY"), Gtk::ALIGN_START));
-    combos->attach (*label, 0, 1, 2, 3, Gtk::SHRINK | Gtk::FILL, Gtk::SHRINK, 2, 2);
-    combos->attach (*spec, 1, 2, 2, 3, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
+
+    combos->attach(*label, 0, 2, 1, 1);
+    combos->attach(*spec, 1, 2, 1, 1);
 
     pack_start (*combos, Gtk::PACK_SHRINK, 4);
 
@@ -76,24 +92,51 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
 
     pack_start (*scale, Gtk::PACK_SHRINK, 4);
 
-    sizeBox = Gtk::manage (new Gtk::VBox ());
+    sizeBox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
-    Gtk::HBox* sbox = Gtk::manage (new Gtk::HBox ());
-    Gtk::HBox* wbox = Gtk::manage (new Gtk::HBox ());
-    Gtk::HBox* hbox = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* sbox = Gtk::manage (new Gtk::Box ());
+    Gtk::Box* wbox = Gtk::manage (new Gtk::Box ());
+    Gtk::Box* hbox = Gtk::manage (new Gtk::Box ());
+    Gtk::Box* ebox = Gtk::manage (new Gtk::Box ());
+    Gtk::Box* lebox = Gtk::manage (new Gtk::Box ());
+    Gtk::Box* sebox = Gtk::manage (new Gtk::Box ());
+    
     w = Gtk::manage (new MySpinButton ());
+    w->set_width_chars(5);
+    setExpandAlignProperties(w, false, false, Gtk::ALIGN_END, Gtk::ALIGN_CENTER);
     h = Gtk::manage (new MySpinButton ());
-    wbox->set_spacing(3);
+    h->set_width_chars(5);
+    setExpandAlignProperties(h, false, false, Gtk::ALIGN_END, Gtk::ALIGN_CENTER);
+    le = Gtk::manage (new MySpinButton ());
+    le->set_width_chars(5);
+    setExpandAlignProperties(le, false, false, Gtk::ALIGN_END, Gtk::ALIGN_CENTER);
+    se = Gtk::manage (new MySpinButton ());
+    se->set_width_chars(5);
+    setExpandAlignProperties(se, false, false, Gtk::ALIGN_END, Gtk::ALIGN_CENTER);
+
     wbox->pack_start (*Gtk::manage (new Gtk::Label (M("TP_RESIZE_W"))), Gtk::PACK_SHRINK, 0);
     wbox->pack_start (*w);
     hbox->set_spacing(3);
     hbox->pack_start (*Gtk::manage (new Gtk::Label (M("TP_RESIZE_H"))), Gtk::PACK_SHRINK, 0);
     hbox->pack_start (*h);
+    lebox->set_spacing(3);
+    lebox->pack_start (*Gtk::manage (new Gtk::Label (M("TP_RESIZE_LE"))), Gtk::PACK_SHRINK, 0);
+    lebox->pack_start (*le);
+    sebox->set_spacing(3);
+    sebox->pack_start (*Gtk::manage (new Gtk::Label (M("TP_RESIZE_SE"))), Gtk::PACK_SHRINK, 0);
+    sebox->pack_start (*se);
+
     sbox->set_spacing(4);
     sbox->pack_start (*wbox);
     sbox->pack_start (*hbox);
-
+    sbox->set_homogeneous();
+    ebox->set_spacing(4);
+    ebox->pack_start (*lebox);
+    ebox->pack_start (*sebox);
+    ebox->set_homogeneous();
+    
     sizeBox->pack_start (*sbox, Gtk::PACK_SHRINK, 0);
+    sizeBox->pack_start (*ebox, Gtk::PACK_SHRINK, 0);
     sizeBox->show_all ();
     sizeBox->reference ();
 
@@ -103,24 +146,34 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
 
     w->set_digits (0);
     w->set_increments (1, 100);
-    w->set_value (800);
     w->set_range (32, MAX_SCALE * maxw);
+    w->set_value (800);           // Doesn't seem to have any effect (overwritten in Resize::read)
 
     h->set_digits (0);
     h->set_increments (1, 100);
-    h->set_value (600);
     h->set_range (32, MAX_SCALE * maxh);
+    h->set_value (600);           // Doesn't seem to have any effect (overwritten in Resize::read)
+
+    le->set_digits (0);
+    le->set_increments (1, 100);
+    le->set_range (32, MAX_SCALE * maxw);
+    le->set_value (900);
+
+    se->set_digits (0);
+    se->set_increments (1, 100);
+    se->set_range (32, MAX_SCALE * maxh);
+    se->set_value (900);
 
     wconn = w->signal_value_changed().connect ( sigc::mem_fun(*this, &Resize::entryWChanged), true);
     hconn = h->signal_value_changed().connect ( sigc::mem_fun(*this, &Resize::entryHChanged), true);
+    leconn = le->signal_value_changed().connect ( sigc::mem_fun(*this, &Resize::entryLEChanged), true);
+    seconn = se->signal_value_changed().connect ( sigc::mem_fun(*this, &Resize::entrySEChanged), true);
     aconn = appliesTo->signal_changed().connect ( sigc::mem_fun(*this, &Resize::appliesToChanged) );
     method->signal_changed().connect ( sigc::mem_fun(*this, &Resize::methodChanged) );
     sconn = spec->signal_changed().connect ( sigc::mem_fun(*this, &Resize::specChanged) );
 
-    packBox = Gtk::manage (new ToolParamBlock ());
-    pack_end (*packBox);
-    packBox->hide();
-    packBox->set_tooltip_markup (M("TP_PRSHARPENING_TOOLTIP"));
+    getSubToolsContainer()->hide();
+    getSubToolsContainer()->set_tooltip_markup (M("TP_PRSHARPENING_TOOLTIP"));
 
     show_all();
 }
@@ -139,15 +192,20 @@ void Resize::read (const ProcParams* pp, const ParamsEdited* pedited)
     aconn.block (true);
     wconn.block (true);
     hconn.block (true);
+    leconn.block (true);
+    seconn.block (true);
     sconn.block (true);
     scale->block(true);
 
     scale->setValue (pp->resize.scale);
     w->set_value (pp->resize.width);
     h->set_value (pp->resize.height);
+    le->set_value (pp->resize.longedge);
+    se->set_value (pp->resize.shortedge);
     setEnabled (pp->resize.enabled);
     spec->set_active (pp->resize.dataspec);
     allowUpscaling->set_active(pp->resize.allowUpscaling);
+    setDimensions();    // Sets Width/Height in the GUI according to value of Specify after loading a .pp3 profile (same behavior as if changed manually)
     updateGUI();
 
     appliesTo->set_active (0);
@@ -168,10 +226,14 @@ void Resize::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     wDirty = false;
     hDirty = false;
+    leDirty = false;
+    seDirty = false;
 
     if (pedited) {
         wDirty = pedited->resize.width;
         hDirty = pedited->resize.height;
+        leDirty = pedited->resize.longedge;
+        seDirty = pedited->resize.shortedge;
         scale->setEditedState (pedited->resize.scale ? Edited : UnEdited);
 
         if (!pedited->resize.appliesTo) {
@@ -183,17 +245,21 @@ void Resize::read (const ProcParams* pp, const ParamsEdited* pedited)
         }
 
         if (!pedited->resize.dataspec) {
-            spec->set_active (4);
+            spec->set_active (6);
         }
 
         allowUpscaling->set_inconsistent(!pedited->resize.allowUpscaling);
         set_inconsistent (multiImage && !pedited->resize.enabled);
     }
 
+    setDimensions(); // fixes the issue that values in GUI are not recomputed when loading profile
+    
     scale->block(false);
     sconn.block (false);
     wconn.block (false);
     hconn.block (false);
+    leconn.block (false);
+    seconn.block (false);
     aconn.block (false);
     enableListener ();
 }
@@ -201,7 +267,7 @@ void Resize::read (const ProcParams* pp, const ParamsEdited* pedited)
 void Resize::write (ProcParams* pp, ParamsEdited* pedited)
 {
     int dataSpec = spec->get_active_row_number();
-
+    
     pp->resize.scale  = scale->getValue();
 
     pp->resize.appliesTo = "Cropped area";
@@ -223,6 +289,8 @@ void Resize::write (ProcParams* pp, ParamsEdited* pedited)
     pp->resize.dataspec = dataSpec;
     pp->resize.width = w->get_value_as_int ();
     pp->resize.height = h->get_value_as_int ();
+    pp->resize.longedge = le->get_value_as_int ();
+    pp->resize.shortedge = se->get_value_as_int ();
     pp->resize.enabled = getEnabled ();
     //printf("  L:%d   H:%d\n", pp->resize.width, pp->resize.height);
 
@@ -230,7 +298,7 @@ void Resize::write (ProcParams* pp, ParamsEdited* pedited)
 
     if (pedited) {
         pedited->resize.enabled   = !get_inconsistent();
-        pedited->resize.dataspec  = dataSpec != MAX_SCALE;
+        pedited->resize.dataspec  = dataSpec != 6;
         pedited->resize.appliesTo = appliesTo->get_active_row_number() != 2;
         pedited->resize.method    = method->get_active_row_number() != 3;
 
@@ -238,10 +306,14 @@ void Resize::write (ProcParams* pp, ParamsEdited* pedited)
             pedited->resize.scale     = scale->getEditedState ();
             pedited->resize.width     = wDirty;
             pedited->resize.height    = hDirty;
+            pedited->resize.longedge  = leDirty;
+            pedited->resize.shortedge = seDirty;
         } else {
             pedited->resize.scale     = false;
             pedited->resize.width     = false;
             pedited->resize.height    = false;
+            pedited->resize.longedge  = false;
+            pedited->resize.shortedge = false;
         }
         pedited->resize.allowUpscaling = !allowUpscaling->get_inconsistent();
     }
@@ -275,31 +347,31 @@ void Resize::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-int Resize::getComputedWidth()
+int Resize::getComputedWidth(double height)
 {
 
     if (cropw && appliesTo->get_active_row_number() == 0)
         // we use the crop dimensions
     {
-        return (int)((double)(cropw) * (h->get_value() / (double)(croph)) + 0.5);
+        return (int)((double)(cropw) * (height / (double)(croph)) + 0.5);
     } else
         // we use the image dimensions
     {
-        return (int)((double)(maxw) * (h->get_value() / (double)(maxh)) + 0.5);
+        return (int)((double)(maxw) * (height / (double)(maxh)) + 0.5);
     }
 }
 
-int Resize::getComputedHeight()
+int Resize::getComputedHeight(double width)
 {
 
     if (croph && appliesTo->get_active_row_number() == 0)
         // we use the crop dimensions
     {
-        return (int)((double)(croph) * (w->get_value() / (double)(cropw)) + 0.5);
+        return (int)((double)(croph) * (width / (double)(cropw)) + 0.5);
     } else
         // we use the image dimensions
     {
-        return (int)((double)(maxh) * (w->get_value() / (double)(maxw)) + 0.5);
+        return (int)((double)(maxh) * (width / (double)(maxw)) + 0.5);
     }
 }
 
@@ -324,9 +396,9 @@ void Resize::methodChanged ()
 
     // Post-resize Sharpening assumes the image is in Lab space, and currently Lanczos is the only method which uses that space, and Lanczos is on row 0.
     if (method->get_active_row_number() == 0) {
-        packBox->set_sensitive(true);
+        getSubToolsContainer()->set_sensitive(true);
     } else {
-        packBox->set_sensitive(false);
+        getSubToolsContainer()->set_sensitive(false);
     }
 }
 
@@ -369,8 +441,10 @@ void Resize::setDimensions ()
         {
             wconn.block(true);
             hconn.block(true);
+            leconn.block(true);
+            seconn.block(true);
             scale->block(true);
-
+            
             int refw, refh;
 
             if (appliesTo->get_active_row_number() == 0 && cropw) {
@@ -421,6 +495,34 @@ void Resize::setDimensions ()
                     break;
                 }
 
+                case 4: {
+                    // Long edge mode
+                    if (refw > refh) {
+                        const double tmp_scale = le->get_value() / static_cast<double>(refw);
+                        scale->setValue(tmp_scale);
+                        se->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refh) * tmp_scale + 0.5)));
+                    } else {
+                        const double tmp_scale = le->get_value() / static_cast<double>(refh);
+                        scale->setValue(tmp_scale);
+                        se->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refw) * tmp_scale + 0.5)));
+                    }
+                    break;
+                }
+
+                case 5: {
+                    // Short edge mode
+                    if (refw > refh) {
+                        const double tmp_scale = se->get_value() / static_cast<double>(refh);
+                        scale->setValue(tmp_scale);
+                        le->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refw) * tmp_scale + 0.5)));
+                    } else {
+                        const double tmp_scale = se->get_value() / static_cast<double>(refw);
+                        scale->setValue(tmp_scale);
+                        le->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refh) * tmp_scale + 0.5)));
+                    }
+                    break;
+                }
+
                 default: {
                     break;
                 }
@@ -429,6 +531,8 @@ void Resize::setDimensions ()
             scale->block(false);
             wconn.block(false);
             hconn.block(false);
+            leconn.block(false);
+            seconn.block(false);
 
             return false;
         }
@@ -479,7 +583,7 @@ void Resize::entryWChanged ()
             hconn.block (true);
             scale->block (true);
 
-            h->set_value ((double)(getComputedHeight()));
+            h->set_value ((double)(getComputedHeight(w->get_value())));
             scale->setValue (w->get_value () / (cropw && appliesTo->get_active_row_number() == 0 ? (double)cropw : (double)maxw));
 
             scale->block (false);
@@ -512,7 +616,7 @@ void Resize::entryHChanged ()
             wconn.block (true);
             scale->block (true);
 
-            w->set_value ((double)(getComputedWidth()));
+            w->set_value ((double)(getComputedWidth(h->get_value())));
             scale->setValue (h->get_value () / (croph && appliesTo->get_active_row_number() == 0 ? (double)croph : (double)maxh));
 
             scale->block (false);
@@ -531,30 +635,122 @@ void Resize::entryHChanged ()
     }
 }
 
+void Resize::entryLEChanged ()
+{
+    
+    leDirty = true;
+
+    // updating long edge
+    if (!batchMode && listener) {
+        int refw, refh;
+        
+        seconn.block (true);
+        scale->block (true);
+        
+        if (cropw && appliesTo->get_active_row_number() == 0) {
+            // we use the crop dimensions
+            refw = cropw;
+            refh = croph;
+        } else {
+            // we use the image dimensions
+            refw = maxw;
+            refh = maxh;
+        } 
+
+        if (refw > refh) {
+            se->set_value ((double) (getComputedHeight(le->get_value())));
+            scale->setValue (le->get_value () / (cropw && appliesTo->get_active_row_number() == 0 ? (double)cropw : (double)maxw));
+        } else {
+            se->set_value ((double)(getComputedWidth(le->get_value())));
+            scale->setValue (le->get_value () / (croph && appliesTo->get_active_row_number() == 0 ? (double)croph : (double)maxh));
+        }
+         
+        scale->block (false);
+        seconn.block (false);
+    }
+
+    if (listener) {
+        if (getEnabled () || batchMode) {
+           listener->panelChanged (EvResizeLongedge, Glib::ustring::format (le->get_value_as_int()));
+       }
+    }
+}
+
+void Resize::entrySEChanged ()
+{
+
+    seDirty = true;
+
+    // updating short edge
+    if (!batchMode && listener) {
+        int refw, refh;
+        
+        leconn.block (true);
+        scale->block (true);
+        
+        if (cropw && appliesTo->get_active_row_number() == 0) {
+            // we use the crop dimensions
+            refw = cropw;
+            refh = croph;
+        } else {
+            // we use the image dimensions
+            refw = maxw;
+            refh = maxh;
+        } 
+
+        if (refw > refh) {
+            le->set_value ((double)(getComputedWidth(se->get_value())));
+            scale->setValue (se->get_value () / (croph && appliesTo->get_active_row_number() == 0 ? (double)croph : (double)maxh));
+        } else {
+            le->set_value ((double)(getComputedHeight(se->get_value())));
+            scale->setValue (se->get_value () / (cropw && appliesTo->get_active_row_number() == 0 ? (double)cropw : (double)maxw));
+        }
+
+        scale->block (false);
+        leconn.block (false);
+    }
+
+    if (listener) {
+        if (getEnabled () || batchMode) {
+           listener->panelChanged (EvResizeShortedge, Glib::ustring::format (se->get_value_as_int()));
+       }
+    }
+}
+
 void Resize::specChanged ()
 {
 
     switch (spec->get_active_row_number()) {
     case (0):
         // Scale mode
-        scale->sliderChanged ();
+        scale->sliderChanged();
         break;
 
     case (1):
         // Width mode
-        w->set_value((double)(getComputedWidth()));
-        entryWChanged ();
+        w->set_value((double)(getComputedWidth(h->get_value())));
+        entryWChanged();
         break;
 
     case (2):
         // Height mode
-        h->set_value((double)(getComputedHeight()));
-        entryHChanged ();
+        h->set_value((double)(getComputedHeight(w->get_value())));
+        entryHChanged();
         break;
 
     case (3):
         // Bounding box mode
         notifyBBox();
+        break;
+
+    case (4):
+        // Long edge mode
+        entryLEChanged();
+        break;
+
+    case (5):
+        // Short edge mode
+        entrySEChanged();
         break;
 
     default:
@@ -583,6 +779,8 @@ void Resize::updateGUI ()
         reorder_child(*allowUpscaling, 4);
         w->set_sensitive (true);
         h->set_sensitive (false);
+        w->get_parent()->get_parent()->show();
+        le->get_parent()->get_parent()->hide();
         break;
 
     case (2):
@@ -591,6 +789,8 @@ void Resize::updateGUI ()
         reorder_child(*allowUpscaling, 4);
         w->set_sensitive (false);
         h->set_sensitive (true);
+        w->get_parent()->get_parent()->show();
+        le->get_parent()->get_parent()->hide();
         break;
 
     case (3):
@@ -599,6 +799,28 @@ void Resize::updateGUI ()
         reorder_child(*allowUpscaling, 4);
         w->set_sensitive (true);
         h->set_sensitive (true);
+        w->get_parent()->get_parent()->show();
+        le->get_parent()->get_parent()->hide();
+        break;
+
+    case (4):
+        // Long edge mode
+        pack_start (*sizeBox, Gtk::PACK_SHRINK, 4);
+        reorder_child(*allowUpscaling, 4);
+        le->set_sensitive (true);
+        se->set_sensitive (false);
+        w->get_parent()->get_parent()->hide();
+        le->get_parent()->get_parent()->show();
+        break;
+
+    case (5):
+        // Short edge mode
+        pack_start (*sizeBox, Gtk::PACK_SHRINK, 4);
+        reorder_child(*allowUpscaling, 4);
+        le->set_sensitive (false);
+        se->set_sensitive (true);
+        w->get_parent()->get_parent()->hide();
+        le->get_parent()->get_parent()->show();
         break;
 
     default:

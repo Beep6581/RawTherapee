@@ -27,7 +27,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Vibrance::Vibrance () : FoldableToolPanel(this, "vibrance", M("TP_VIBRANCE_LABEL"), false, true)
+const Glib::ustring Vibrance::TOOL_NAME = "vibrance";
+
+Vibrance::Vibrance () : FoldableToolPanel(this, TOOL_NAME, M("TP_VIBRANCE_LABEL"), false, true)
 {
 
     std::vector<GradientMilestone> milestones;

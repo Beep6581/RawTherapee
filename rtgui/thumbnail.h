@@ -22,6 +22,7 @@
 #include <string>
 
 #include <glibmm/ustring.h>
+#include <glibmm/datetime.h>
 
 #include "cacheimagedata.h"
 #include "threadutils.h"
@@ -73,6 +74,7 @@ class Thumbnail
     // exif & date/time strings
     Glib::ustring   exifString;
     Glib::ustring   dateTimeString;
+    Glib::DateTime  dateTime;
 
     bool            initial_;
 
@@ -83,7 +85,6 @@ class Thumbnail
     void            _saveThumbnail ();
     void            _generateThumbnailImage ();
     int             infoFromImage (const Glib::ustring& fname, std::unique_ptr<rtengine::RawMetaDataLocation> rml = nullptr);
-    void            loadThumbnail (bool firstTrial = true);
     void            generateExifDateTimeStrings ();
 
     Glib::ustring    getCacheFileName (const Glib::ustring& subdir, const Glib::ustring& fext) const;
@@ -119,27 +120,28 @@ public:
 //        unsigned char*  getThumbnailImage (int &w, int &h, int fixwh=1); // fixwh = 0: fix w and calculate h, =1: fix h and calculate w
     rtengine::IImage8* processThumbImage    (const rtengine::procparams::ProcParams& pparams, int h, double& scale);
     rtengine::IImage8* upgradeThumbImage    (const rtengine::procparams::ProcParams& pparams, int h, double& scale);
-    int getThumbnailWidth (int h, const rtengine::procparams::ProcParams *pparams = nullptr) const;
+    void            getThumbnailSize        (int &w, int &h, const rtengine::procparams::ProcParams *pparams = nullptr);
     void            getFinalSize            (const rtengine::procparams::ProcParams& pparams, int& w, int& h);
-    void            getOriginalSize         (int& w, int& h);
+    void            getOriginalSize         (int& w, int& h) const;
 
     const Glib::ustring&  getExifString () const;
     const Glib::ustring&  getDateTimeString () const;
-    void                  getCamWB  (double& temp, double& green) const;
-    void                  getAutoWB (double& temp, double& green, double equal, double tempBias);
+    const Glib::DateTime& getDateTime () const;
+    void                  getCamWB  (double& temp, double& green, rtengine::StandardObserver observer) const;
+    void                  getAutoWB (double& temp, double& green, double equal, rtengine::StandardObserver observer, double tempBias);
     void                  getSpotWB (int x, int y, int rect, double& temp, double& green);
     void                  applyAutoExp (rtengine::procparams::ProcParams& pparams);
 
-    ThFileType      getType ();
+    ThFileType      getType () const;
     Glib::ustring   getFileName () const
     {
         return fname;
     }
     void            setFileName (const Glib::ustring &fn);
 
-    bool            isSupported ();
+    bool            isSupported () const;
 
-    const CacheImageData* getCacheImageData();
+    const CacheImageData* getCacheImageData() const;
     std::string     getMD5   () const;
 
     int             getRank  () const;

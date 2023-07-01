@@ -23,7 +23,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Vignetting::Vignetting () : FoldableToolPanel(this, "vignetting", M("TP_VIGNETTING_LABEL"))
+const Glib::ustring Vignetting::TOOL_NAME = "vignetting";
+
+Vignetting::Vignetting () : FoldableToolPanel(this, TOOL_NAME, M("TP_VIGNETTING_LABEL"))
 {
 
     amount = Gtk::manage (new Adjuster (M("TP_VIGNETTING_AMOUNT"), -100, 100, 1, 0));

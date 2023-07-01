@@ -399,6 +399,25 @@ DiagonalCurveEditor* DiagonalCurveEditorSubGroup::addCurve(Glib::ustring curveLa
     return newCE;
 }
 
+
+void DiagonalCurveEditorSubGroup::updateLocallabBackground(CurveEditor* ce)
+{
+    if (ce == parent->displayedCurve) {
+        paramCurve->updateLocallabBackground(ce->locallabRef);
+        customCurve->updateLocallabBackground(ce->locallabRef);
+        NURBSCurve->updateLocallabBackground(ce->locallabRef);
+    }
+}
+
+void DiagonalCurveEditorSubGroup::restoreLocallabBackground()
+{
+    if (parent->displayedCurve) {
+         paramCurve->updateLocallabBackground(parent->displayedCurve->locallabRef);
+         customCurve->updateLocallabBackground(parent->displayedCurve->locallabRef);
+         NURBSCurve->updateLocallabBackground(parent->displayedCurve->locallabRef);
+    }
+}
+
 /*
  * Switch off the edit button
  */
@@ -477,13 +496,13 @@ void DiagonalCurveEditorSubGroup::pipetteMouseOver(EditDataProvider *provider, i
             double pos[3];
             shcSelector->getPositions(pos[0], pos[1], pos[2]);
 
-            if     (pipetteVal >= pos[2]) {
+            if (static_cast<double>(pipetteVal) >= pos[2]) {
                 editedAdjuster = highlights;
                 paramCurve->setActiveParam(4);
-            } else if(pipetteVal >= pos[1]) {
+            } else if(static_cast<double>(pipetteVal) >= pos[1]) {
                 editedAdjuster = lights;
                 paramCurve->setActiveParam(5);
-            } else if(pipetteVal >= pos[0]) {
+            } else if(static_cast<double>(pipetteVal) >= pos[0]) {
                 editedAdjuster = darks;
                 paramCurve->setActiveParam(6);
             } else {

@@ -39,17 +39,26 @@ namespace procparams
 class ProcParams;
 }
 }
+class EditDataProvider;
 
 class ToolPanelListener
 {
 public:
     virtual ~ToolPanelListener() = default;
+
+    /// @brief Ask to refresh the preview not triggered by a parameter change (e.g. 'On Preview' editing).
+    virtual void refreshPreview(const rtengine::ProcEvent& event) = 0;
+    /// @brief Used to notify all listeners that a parameters has been effectively changed
     virtual void panelChanged(const rtengine::ProcEvent& event, const Glib::ustring& descr) = 0;
+    /// @brief Set the TweakOperator to the StagedImageProcessor, to let some tool enter into special modes
+    virtual void setTweakOperator (rtengine::TweakOperator *tOperator) = 0;
+    /// @brief Unset the TweakOperator to the StagedImageProcessor
+    virtual void unsetTweakOperator (rtengine::TweakOperator *tOperator) = 0;
 };
 
 /// @brief This class control the space around the group of tools inside a tab, as well as the space separating each tool. */
 class ToolVBox :
-    public Gtk::VBox
+    public Gtk::Box
 {
 public:
     ToolVBox();
@@ -57,10 +66,11 @@ public:
 
 /// @brief This class control the space around a tool's block of parameter. */
 class ToolParamBlock :
-    public Gtk::VBox
+    public Gtk::Box
 {
 public:
     ToolParamBlock();
+    Gtk::SizeRequestMode get_request_mode_vfunc () const override;
 };
 
 class ToolPanel :
@@ -86,6 +96,10 @@ public:
         return nullptr;
     }
     virtual MyExpander*    getExpander     ()
+    {
+        return nullptr;
+    }
+    virtual ToolParamBlock *getSubToolsContainer() const
     {
         return nullptr;
     }
@@ -143,7 +157,7 @@ public:
         this->batchMode = batchMode;
     }
 
-    virtual Glib::ustring getToolName () {
+    Glib::ustring getToolName () {
         return toolName;
     }
 };
@@ -155,6 +169,7 @@ class FoldableToolPanel :
 protected:
     Gtk::Box* parentContainer;
     MyExpander* exp;
+    ToolParamBlock *subToolsContainer;
     bool lastEnabled;
     sigc::connection enaConn;
     void foldThemAll (GdkEventButton* event);
@@ -164,11 +179,17 @@ public:
 
     FoldableToolPanel(Gtk::Box* content, Glib::ustring toolName, Glib::ustring UILabel, bool need11 = false, bool useEnabled = false);
 
-    MyExpander* getExpander() override
+    MyExpander* getExpander() final
     {
         return exp;
     }
-    void setExpanded (bool expanded) override
+
+    ToolParamBlock *getSubToolsContainer() const final
+    {
+        return subToolsContainer;
+    }
+
+    void setExpanded (bool expanded) final
     {
         if (exp) {
             exp->set_expanded( expanded );
@@ -186,7 +207,7 @@ public:
             exp->show();
         }
     }
-    bool getExpanded () override
+    bool getExpanded () final
     {
         if (exp) {
             return exp->get_expanded();
@@ -194,11 +215,11 @@ public:
 
         return false;
     }
-    void setParent (Gtk::Box* parent) override
+    void setParent (Gtk::Box* parent) final
     {
         parentContainer = parent;
     }
-    Gtk::Box* getParent () override
+    Gtk::Box* getParent () final
     {
         return parentContainer;
     }

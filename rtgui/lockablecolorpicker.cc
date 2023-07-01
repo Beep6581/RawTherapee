@@ -20,15 +20,23 @@
 #include "lockablecolorpicker.h"
 #include "options.h"
 #include "../rtengine/color.h"
+#include "../rtengine/improcfun.h"
 #include "../rtengine/rt_math.h"
 #include "../rtengine/utils.h"
 #include "imagearea.h"
 #include "multilangmgr.h"
 #include "navigator.h"
 
-LockableColorPicker::LockableColorPicker (CropWindow* cropWindow, Glib::ustring *oProfile, Glib::ustring *wProfile)
+namespace
+{
+
+const rtengine::procparams::ColorManagementParams DEFAULT_CMP;
+
+}
+
+LockableColorPicker::LockableColorPicker (CropWindow* cropWindow, rtengine::procparams::ColorManagementParams *color_management_params)
 : cropWindow(cropWindow), displayedValues(ColorPickerType::RGB), position(0, 0), size(Size::S15),
-  outputProfile(oProfile), workingProfile(wProfile), validity(Validity::OUTSIDE),
+  color_management_params(color_management_params), validity(Validity::OUTSIDE),
   r(0.f), g(0.f), b(0.f), rpreview(0.f), gpreview(0.f), bpreview(0.f), hue(0.f), sat(0.f), val(0.f), L(0.f), a(0.f), bb(0.f)
 {}
 
@@ -37,7 +45,7 @@ void LockableColorPicker::updateBackBuffer ()
     int newW, newH;
 
     // -------------------- setting some key constants ---------------------
-    constexpr float circlePadding = 3.f;  // keep this value odd
+    constexpr double circlePadding = 3.0;  // keep this value odd
     constexpr double opacity = 0.62;
     // ---------------------------------------------------------------------
 
@@ -121,18 +129,18 @@ void LockableColorPicker::updateBackBuffer ()
         bbcr->set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
         bbcr->set_line_width (0.);
 
-        float center = (float)size / 2.f + circlePadding;
+        double center = static_cast<double>(size) / 2.0 + circlePadding;
 
         // black background of the whole color picker
         bbcr->set_line_width (0.);
         bbcr->set_source_rgba (0., 0., 0., opacity);
-        bbcr->arc_negative (center, center, center, 0., (double)rtengine::RT_PI);
+        bbcr->arc_negative (center, center, center, 0., rtengine::RT_PI);
         bbcr->line_to (0, 2. * center + textHeight);
-        bbcr->arc_negative (2. * textPadding, 2. * center + textHeight, 2. * textPadding, (double)rtengine::RT_PI, (double)rtengine::RT_PI / 2.);
+        bbcr->arc_negative (2. * textPadding, 2. * center + textHeight, 2. * textPadding, rtengine::RT_PI, rtengine::RT_PI / 2.);
         bbcr->line_to (textWidth, 2. * center + textHeight + 2. * textPadding);
-        bbcr->arc_negative (textWidth, 2. * center + textHeight, 2. * textPadding, (double)rtengine::RT_PI / 2., 0.);
+        bbcr->arc_negative (textWidth, 2. * center + textHeight, 2. * textPadding, rtengine::RT_PI / 2., 0.);
         bbcr->line_to (textWidth + 2. * textPadding, 2. * center + 2. * textPadding);
-        bbcr->arc_negative (textWidth, 2. * center + 2. * textPadding, 2. * textPadding, 0., (double)rtengine::RT_PI * 1.5);
+        bbcr->arc_negative (textWidth, 2. * center + 2. * textPadding, 2. * textPadding, 0., rtengine::RT_PI * 1.5);
         bbcr->line_to (2. * center, 2. * center);
         bbcr->close_path();
         bbcr->set_line_join (Cairo::LINE_JOIN_BEVEL);
@@ -222,7 +230,7 @@ void LockableColorPicker::updateBackBuffer ()
 
         bbcr->set_antialias(Cairo::ANTIALIAS_SUBPIXEL);
 
-        float center = (float)size / 2.f + circlePadding;
+        double center = static_cast<double>(size) / 2. + circlePadding;
 
         // light grey circle around the color mark
         bbcr->arc (center, center, center - circlePadding / 2., 0., 2. * (double)rtengine::RT_PI);
@@ -277,7 +285,16 @@ void LockableColorPicker::setRGB (const float R, const float G, const float B, c
     bpreview = previewB;
 
     rtengine::Color::rgb2hsv01(r, g, b, hue, sat, val);
-    rtengine::Color::rgb2lab01(*outputProfile, *workingProfile, r, g, b, L, a, bb, options.rtSettings.HistogramWorking);  // TODO: Really sure this function works?
+    rtengine::ImProcFunctions::rgb2lab(
+        static_cast<std::uint8_t>(255 * r),
+        static_cast<std::uint8_t>(255 * g),
+        static_cast<std::uint8_t>(255 * b),
+        L, a, bb,
+        color_management_params != nullptr ? *color_management_params : DEFAULT_CMP,
+        true);
+    L /= 327.68f;
+    a /= 327.68f;
+    bb /= 327.68f;
 
     if (validity != Validity::OUTSIDE) {
         setDirty(true);

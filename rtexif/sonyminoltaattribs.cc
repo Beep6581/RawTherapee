@@ -15,8 +15,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _SONYMINOLTAATTRIBS_
-#define _SONYMINOLTAATTRIBS_
 
 #include <cmath>
 
@@ -541,7 +539,7 @@ public:
 };
 SAAntiBlurInterpreter saAntiBlurInterpreter;
 
-class SALensIDInterpreter : public IntLensInterpreter<int>
+class SALensIDInterpreter final : public IntLensInterpreter<int>
 {
 public:
     SALensIDInterpreter ()
@@ -574,11 +572,12 @@ public:
             {23, "Minolta AF 200mm f/4 Macro APO G"},
             {24, "Minolta/Sony AF 24-105mm f/3.5-4.5 (D) or Sigma or Tamron Lens"},
             {24, "Sigma 18-50mm f/2.8"},
-            {24, "Sigma 17-70mm f/2.8-4.5 (D)"},
+            {24, "Sigma 17-70mm f/2.8-4.5 DC Macro"},
             {24, "Sigma 20-40mm f/2.8 EX DG Aspherical IF"},
             {24, "Sigma 18-200mm f/3.5-6.3 DC"},
             {24, "Sigma DC 18-125mm f/4-5,6 D"},
             {24, "Tamron SP AF 28-75mm f/2.8 XR Di LD Aspherical [IF] Macro"},
+            {24, "Sigma 15-30mm f/3.5-4.5 EX DG Aspherical"},
             {25, "Minolta AF 100-300mm f/4.5-5.6 APO (D) or Sigma Lens"},
             {25, "Sigma 100-300mm f/4 EX (APO (D) or D IF)"},
             {25, "Sigma 70mm f/2.8 EX DG Macro"},
@@ -612,8 +611,9 @@ public:
             {45, "Carl Zeiss Planar T* 85mm f/1.4 ZA (SAL85F14Z)"},
             {46, "Carl Zeiss Vario-Sonnar T* DT 16-80mm f/3.5-4.5 ZA (SAL1680Z)"},
             {47, "Carl Zeiss Sonnar T* 135mm f/1.8 ZA (SAL135F18Z)"},
-            {48, "Carl Zeiss Vario-Sonnar T* 24-70mm f/2.8 ZA SSM (SAL2470Z) or ZA SSM II"},
+            {48, "Carl Zeiss Vario-Sonnar T* 24-70mm f/2.8 ZA SSM (SAL2470Z) or Other Lens"},
             {48, "Carl Zeiss Vario-Sonnar T* 24-70mm f/2.8 ZA SSM II (SAL2470Z2)"},
+            {48, "Tamron SP 24-70mm f/2.8 Di USD"},
             {49, "Sony DT 55-200mm f/4-5.6 (SAL55200)"},
             {50, "Sony DT 18-250mm f/3.5-6.3 (SAL18250)"},
             {51, "Sony DT 16-105mm f/3.5-5.6 (SAL16105)"},
@@ -645,7 +645,6 @@ public:
             {128, "Tamron or Sigma Lens (128)"},
             {128, "Tamron AF 18-200mm f/3.5-6.3 XR Di II LD Aspherical [IF] Macro"},
             {128, "Tamron AF 28-300mm f/3.5-6.3 XR Di LD Aspherical [IF] Macro"},
-            {128, "Tamron 80-300mm f/3.5-6.3"},
             {128, "Tamron AF 28-200mm f/3.8-5.6 XR Di Aspherical [IF] Macro"},
             {128, "Tamron SP AF 17-35mm f/2.8-4 Di LD Aspherical IF"},
             {128, "Sigma AF 50-150mm f/2.8 EX DC APO HSM II"},
@@ -680,7 +679,7 @@ public:
             {137, "Cosina 70-210mm f/2.8-4 AF"},
             {138, "Soligor 19-35mm f/3.5-4.5"},
             {139, "Tokina AF 28-300mm f/4-6.3"},
-            {142, "Voigtlander 70-300mm f/4.5-5.6"},
+            {142, "Cosina AF 70-300mm f/4.5-5.6 MC"},
             {146, "Voigtlander Macro APO-Lanthar 125mm f/2.5 SL"},
             {194, "Tamron SP AF 17-50mm f/2.8 XR Di II LD Aspherical [IF]"},
             {202, "Tamron SP AF 70-200mm f/2.8 Di LD [IF] Macro"},
@@ -723,10 +722,11 @@ public:
             {2552, "Angenieux AF 28-70mm f/2.6"},
             {2552, "Tokina AT-X 17 AF 17mm f/3.5"},
             {2552, "Tokina 20-35mm f/3.5-4.5 II AF"},
-            {2553, "Minolta AF 28-135mm f/4-4.5 or Sigma Lens"},
+            {2553, "Minolta AF 28-135mm f/4-4.5 or Other Lens"},
             {2553, "Sigma ZOOM-alpha 35-135mm f/3.5-4.5"},
             {2553, "Sigma 28-105mm f/2.8-4 Aspherical"},
             {2553, "Sigma 28-105mm f/4-5.6 UC"},
+            {2553, "Tokina AT-X 242 AF 24-200mm f/3.5-5.6"},
             {2554, "Minolta AF 35-105mm f/3.5-4.5"},
             {2555, "Minolta AF 70-210mm f/4 Macro or Sigma Lens"},
             {2555, "Sigma 70-210mm f/4-5.6 APO"},
@@ -805,7 +805,7 @@ public:
             {2624, "Minolta AF 35-80mm f/4-5.6 Power Zoom"},
             {2628, "Minolta AF 80-200mm f/2.8 HS-APO G"},
             {2629, "Minolta AF 85mm f/1.4 New"},
-            {2631, "Minolta/Sony AF 100-300mm f/4.5-5.6 APO"},
+            {2631, "Minolta AF 100-300mm f/4.5-5.6 APO"},
             {2632, "Minolta AF 24-50mm f/4 New"},
             {2638, "Minolta AF 50mm f/2.8 Macro New"},
             {2639, "Minolta AF 100mm f/2.8 Macro"},
@@ -818,6 +818,7 @@ public:
             {2672, "Minolta AF 24-105mm f/3.5-4.5 (D)"},
             {3046, "Metabones Canon EF Speed Booster"},
             {4567, "Tokina 70-210mm f/4-5.6"},
+            {4568, "Tokina AF 35-200mm f/4-5.6 Zoom SD"},
             {4570, "Tamron AF 35-135mm f/3.5-4.5"},
             {4571, "Vivitar 70-210mm f/4.5-5.6"},
             {4574, "2x Teleconverter or Tamron or Tokina Lens"},
@@ -832,97 +833,6 @@ public:
             {6118, "Canon EF Adapter"},
             {6528, "Sigma 16mm f/2.8 Filtermatic Fisheye"},
             {6553, "E-Mount, T-Mount, Other Lens or no lens"},
-            {6553, "Sony E 16mm f/2.8"},
-            {6553, "Sony E 18-55mm f/3.5-5.6 OSS"},
-            {6553, "Sony E 55-210mm f/4.5-6.3 OSS"},
-            {6553, "Sony E 18-200mm f/3.5-6.3 OSS"},
-            {6553, "Sony E 30mm f/3.5 Macro"},
-            {6553, "Sony E 24mm f/1.8 ZA"},
-            {6553, "Sony E 50mm f/1.8 OSS"},
-            {6553, "Sony E 16-70mm f/4 ZA OSS"},
-            {6553, "Sony E 10-18mm f/4 OSS"},
-            {6553, "Sony E PZ 16-50mm f/3.5-5.6 OSS"},
-            {6553, "Sony FE 35mm f/2.8 ZA"},
-            {6553, "Sony FE 24-70mm f/4 ZA OSS"},
-            {6553, "Sony FE 85mm f/1.8"},
-            {6553, "Sony E 18-200mm f/3.5-6.3 OSS LE"},
-            {6553, "Sony E 20mm f/2.8"},
-            {6553, "Sony E 35mm f/1.8 OSS"},
-            {6553, "Sony E PZ 18-105mm f/4 G OSS"},
-            {6553, "Sony FE 12-24mm f/4 G"},
-            {6553, "Sony FE 90mm f/2.8 Macro G OSS"},
-            {6553, "Sony E 18-50mm f/4-5.6"},
-            {6553, "Sony FE 24mm f/1.4 GM"},
-            {6553, "Sony FE 24-105mm f/4 G OSS"},
-            {6553, "Sony E PZ 18-200mm f/3.5-6.3 OSS"},
-            {6553, "Sony FE 55mm f/1.8 ZA"},
-            {6553, "Sony FE 70-200mm f/4 G OSS"},
-            {6553, "Sony FE 16-35mm f/4 ZA OSS"},
-            {6553, "Sony FE 50mm f/2.8 Macro"},
-            {6553, "Sony FE 28-70mm f/3.5-5.6 OSS"},
-            {6553, "Sony FE 35mm f/1.4 ZA"},
-            {6553, "Sony FE 24-240mm f/3.5-6.3 OSS"},
-            {6553, "Sony FE 28mm f/2"},
-            {6553, "Sony FE PZ 28-135mm f/4 G OSS"},
-            {6553, "Sony FE 100mm f/2.8 STF GM OSS"},
-            {6553, "Sony E PZ 18-110mm f/4 G OSS"},
-            {6553, "Sony FE 24-70mm f/2.8 GM"},
-            {6553, "Sony FE 50mm f/1.4 ZA"},
-            {6553, "Sony FE 85mm f/1.4 GM"},
-            {6553, "Sony FE 50mm f/1.8"},
-            {6553, "Sony FE 21mm f/2.8 (SEL28F20 + SEL075UWC)"},
-            {6553, "Sony FE 16mm f/3.5 Fisheye (SEL28F20 + SEL057FEC)"},
-            {6553, "Sony FE 70-300mm f/4.5-5.6 G OSS"},
-            {6553, "Sony FE 100-400mm f/4.5-5.6 GM OSS"},
-            {6553, "Sony FE 70-200mm f/2.8 GM OSS"},
-            {6553, "Sony FE 16-35mm f/2.8 GM"},
-            {6553, "Sony FE 400mm f/2.8 GM OSS"},
-            {6553, "Sony E 18-135mm f/3.5-5.6 OSS"},
-            {6553, "Sony FE 70-200mm f/2.8 GM OSS + 1.4X Teleconverter"},
-            {6553, "Sony FE 70-200mm f/2.8 GM OSS + 2X Teleconverter"},
-            {6553, "Sony FE 100-400mm f/4.5-5.6 GM OSS + 1.4X Teleconverter"},
-            {6553, "Sony FE 100-400mm f/4.5-5.6 GM OSS + 2X Teleconverter"},
-            {6553, "Sony FE 400mm f/2.8 GM OSS + 1.4X Teleconverter"},
-            {6553, "Sony FE 400mm f/2.8 GM OSS + 2X Teleconverter"},
-            {6553, "Samyang AF 50mm f/1.4 FE"},
-            {6553, "Samyang AF 14mm f/2.8 FE"},
-            {6553, "Samyang AF 24mm f/2.8"},
-            {6553, "Samyang AF 35mm f/2.8 FE"},
-            {6553, "Samyang AF 35mm f/1.4"},
-            {6553, "Sigma 19mm f/2.8 [EX] DN"},
-            {6553, "Sigma 30mm f/2.8 [EX] DN"},
-            {6553, "Sigma 60mm f/2.8 DN"},
-            {6553, "Sigma 30mm f/1.4 DC DN | C"},
-            {6553, "Sigma 85mm f/1.4 DG HSM | A"},
-            {6553, "Sigma 16mm f/1.4 DC DN | C"},
-            {6553, "Sigma 105mm f/1.4 DG HSM | A"},
-            {6553, "Sigma 56mm f/1.4 DC DN | C"},
-            {6553, "Sigma 70-200mm f/2.8 DG OS HSM | S"},
-            {6553, "Sigma 70mm f/2.8 DG MACRO | A"},
-            {6553, "Tamron 18-200mm f/3.5-6.3 Di III VC"},
-            {6553, "Tamron 28-75mm f/2.8 Di III RXD"},
-            {6553, "Tokina Firin 20mm f/2 FE MF"},
-            {6553, "Voigtlander SUPER WIDE-HELIAR 15mm f/4.5 III"},
-            {6553, "Voigtlander HELIAR-HYPER WIDE 10mm f/5.6"},
-            {6553, "Voigtlander ULTRA WIDE-HELIAR 12mm f/5.6 III"},
-            {6553, "Voigtlander MACRO APO-LANTHAR 65mm f/2 Aspherical"},
-            {6553, "Voigtlander NOKTON 40mm f/1.2 Aspherical"},
-            {6553, "Voigtlander NOKTON classic 35mm f/1.4"},
-            {6553, "Voigtlander MACRO APO-LANTHAR 110mm f/2.5"},
-            {6553, "Voigtlander COLOR-SKOPAR 21mm f/3.5 Aspherical"},
-            {6553, "Zeiss Touit 12mm f/2.8"},
-            {6553, "Zeiss Touit 32mm f/1.8"},
-            {6553, "Zeiss Touit 50mm f/2.8 Macro"},
-            {6553, "Zeiss Batis 25mm f/2"},
-            {6553, "Zeiss Batis 85mm f/1.8"},
-            {6553, "Zeiss Batis 18mm f/2.8"},
-            {6553, "Zeiss Batis 135mm f/2.8"},
-            {6553, "Zeiss Batis 40mm f/2 CF"},
-            {6553, "Zeiss Loxia 50mm f/2"},
-            {6553, "Zeiss Loxia 35mm f/2"},
-            {6553, "Zeiss Loxia 21mm f/2.8"},
-            {6553, "Zeiss Loxia 85mm f/2.4"},
-            {6553, "Zeiss Loxia 25mm f/2.4"},
             {6553, "Arax MC 35mm f/2.8 Tilt+Shift"},
             {6553, "Arax MC 80mm f/2.8 Tilt+Shift"},
             {6553, "Zenitar MF 16mm f/2.8 Fisheye M42"},
@@ -948,10 +858,11 @@ public:
             {25521, "Angenieux AF 28-70mm f/2.6"},
             {25521, "Tokina AT-X 17 AF 17mm f/3.5"},
             {25521, "Tokina 20-35mm f/3.5-4.5 II AF"},
-            {25531, "Minolta AF 28-135mm f/4-4.5 or Sigma Lens"},
+            {25531, "Minolta AF 28-135mm f/4-4.5 or Other Lens"},
             {25531, "Sigma ZOOM-alpha 35-135mm f/3.5-4.5"},
             {25531, "Sigma 28-105mm f/2.8-4 Aspherical"},
             {25531, "Sigma 28-105mm f/4-5.6 UC"},
+            {25531, "Tokina AT-X 242 AF 24-200mm f/3.5-5.6"},
             {25541, "Minolta AF 35-105mm f/3.5-4.5"},
             {25551, "Minolta AF 70-210mm f/4 Macro or Sigma Lens"},
             {25551, "Sigma 70-210mm f/4-5.6 APO"},
@@ -1030,7 +941,7 @@ public:
             {26241, "Minolta AF 35-80mm f/4-5.6 Power Zoom"},
             {26281, "Minolta AF 80-200mm f/2.8 HS-APO G"},
             {26291, "Minolta AF 85mm f/1.4 New"},
-            {26311, "Minolta/Sony AF 100-300mm f/4.5-5.6 APO"},
+            {26311, "Minolta AF 100-300mm f/4.5-5.6 APO"},
             {26321, "Minolta AF 24-50mm f/4 New"},
             {26381, "Minolta AF 50mm f/2.8 Macro New"},
             {26391, "Minolta AF 100mm f/2.8 Macro"},
@@ -1043,6 +954,7 @@ public:
             {26721, "Minolta AF 24-105mm f/3.5-4.5 (D)"},
             {30464, "Metabones Canon EF Speed Booster"},
             {45671, "Tokina 70-210mm f/4-5.6"},
+            {45681, "Tokina AF 35-200mm f/4-5.6 Zoom SD"},
             {45701, "Tamron AF 35-135mm f/3.5-4.5"},
             {45711, "Vivitar 70-210mm f/4.5-5.6"},
             {45741, "2x Teleconverter or Tamron or Tokina Lens"},
@@ -1057,104 +969,13 @@ public:
             {61184, "Canon EF Adapter"},
             {65280, "Sigma 16mm f/2.8 Filtermatic Fisheye"},
             {65535, "E-Mount, T-Mount, Other Lens or no lens"},
-            {65535, "Sony E 16mm f/2.8"},
-            {65535, "Sony E 18-55mm f/3.5-5.6 OSS"},
-            {65535, "Sony E 55-210mm f/4.5-6.3 OSS"},
-            {65535, "Sony E 18-200mm f/3.5-6.3 OSS"},
-            {65535, "Sony E 30mm f/3.5 Macro"},
-            {65535, "Sony E 24mm f/1.8 ZA"},
-            {65535, "Sony E 50mm f/1.8 OSS"},
-            {65535, "Sony E 16-70mm f/4 ZA OSS"},
-            {65535, "Sony E 10-18mm f/4 OSS"},
-            {65535, "Sony E PZ 16-50mm f/3.5-5.6 OSS"},
-            {65535, "Sony FE 35mm f/2.8 ZA"},
-            {65535, "Sony FE 24-70mm f/4 ZA OSS"},
-            {65535, "Sony FE 85mm f/1.8"},
-            {65535, "Sony E 18-200mm f/3.5-6.3 OSS LE"},
-            {65535, "Sony E 20mm f/2.8"},
-            {65535, "Sony E 35mm f/1.8 OSS"},
-            {65535, "Sony E PZ 18-105mm f/4 G OSS"},
-            {65535, "Sony FE 12-24mm f/4 G"},
-            {65535, "Sony FE 90mm f/2.8 Macro G OSS"},
-            {65535, "Sony E 18-50mm f/4-5.6"},
-            {65535, "Sony FE 24mm f/1.4 GM"},
-            {65535, "Sony FE 24-105mm f/4 G OSS"},
-            {65535, "Sony E PZ 18-200mm f/3.5-6.3 OSS"},
-            {65535, "Sony FE 55mm f/1.8 ZA"},
-            {65535, "Sony FE 70-200mm f/4 G OSS"},
-            {65535, "Sony FE 16-35mm f/4 ZA OSS"},
-            {65535, "Sony FE 50mm f/2.8 Macro"},
-            {65535, "Sony FE 28-70mm f/3.5-5.6 OSS"},
-            {65535, "Sony FE 35mm f/1.4 ZA"},
-            {65535, "Sony FE 24-240mm f/3.5-6.3 OSS"},
-            {65535, "Sony FE 28mm f/2"},
-            {65535, "Sony FE PZ 28-135mm f/4 G OSS"},
-            {65535, "Sony FE 100mm f/2.8 STF GM OSS"},
-            {65535, "Sony E PZ 18-110mm f/4 G OSS"},
-            {65535, "Sony FE 24-70mm f/2.8 GM"},
-            {65535, "Sony FE 50mm f/1.4 ZA"},
-            {65535, "Sony FE 85mm f/1.4 GM"},
-            {65535, "Sony FE 50mm f/1.8"},
-            {65535, "Sony FE 21mm f/2.8 (SEL28F20 + SEL075UWC)"},
-            {65535, "Sony FE 16mm f/3.5 Fisheye (SEL28F20 + SEL057FEC)"},
-            {65535, "Sony FE 70-300mm f/4.5-5.6 G OSS"},
-            {65535, "Sony FE 100-400mm f/4.5-5.6 GM OSS"},
-            {65535, "Sony FE 70-200mm f/2.8 GM OSS"},
-            {65535, "Sony FE 16-35mm f/2.8 GM"},
-            {65535, "Sony FE 400mm f/2.8 GM OSS"},
-            {65535, "Sony E 18-135mm f/3.5-5.6 OSS"},
-            {65535, "Sony FE 70-200mm f/2.8 GM OSS + 1.4X Teleconverter"},
-            {65535, "Sony FE 70-200mm f/2.8 GM OSS + 2X Teleconverter"},
-            {65535, "Sony FE 100-400mm f/4.5-5.6 GM OSS + 1.4X Teleconverter"},
-            {65535, "Sony FE 100-400mm f/4.5-5.6 GM OSS + 2X Teleconverter"},
-            {65535, "Sony FE 400mm f/2.8 GM OSS + 1.4X Teleconverter"},
-            {65535, "Sony FE 400mm f/2.8 GM OSS + 2X Teleconverter"},
-            {65535, "Samyang AF 50mm f/1.4 FE"},
-            {65535, "Samyang AF 14mm f/2.8 FE"},
-            {65535, "Samyang AF 24mm f/2.8"},
-            {65535, "Samyang AF 35mm f/2.8 FE"},
-            {65535, "Samyang AF 35mm f/1.4"},
-            {65535, "Sigma 19mm f/2.8 [EX] DN"},
-            {65535, "Sigma 30mm f/2.8 [EX] DN"},
-            {65535, "Sigma 60mm f/2.8 DN"},
-            {65535, "Sigma 30mm f/1.4 DC DN | C"},
-            {65535, "Sigma 85mm f/1.4 DG HSM | A"},
-            {65535, "Sigma 16mm f/1.4 DC DN | C"},
-            {65535, "Sigma 105mm f/1.4 DG HSM | A"},
-            {65535, "Sigma 56mm f/1.4 DC DN | C"},
-            {65535, "Sigma 70-200mm f/2.8 DG OS HSM | S"},
-            {65535, "Sigma 70mm f/2.8 DG MACRO | A"},
-            {65535, "Tamron 18-200mm f/3.5-6.3 Di III VC"},
-            {65535, "Tamron 28-75mm f/2.8 Di III RXD"},
-            {65535, "Tokina Firin 20mm f/2 FE MF"},
-            {65535, "Voigtlander SUPER WIDE-HELIAR 15mm f/4.5 III"},
-            {65535, "Voigtlander HELIAR-HYPER WIDE 10mm f/5.6"},
-            {65535, "Voigtlander ULTRA WIDE-HELIAR 12mm f/5.6 III"},
-            {65535, "Voigtlander MACRO APO-LANTHAR 65mm f/2 Aspherical"},
-            {65535, "Voigtlander NOKTON 40mm f/1.2 Aspherical"},
-            {65535, "Voigtlander NOKTON classic 35mm f/1.4"},
-            {65535, "Voigtlander MACRO APO-LANTHAR 110mm f/2.5"},
-            {65535, "Voigtlander COLOR-SKOPAR 21mm f/3.5 Aspherical"},
-            {65535, "Zeiss Touit 12mm f/2.8"},
-            {65535, "Zeiss Touit 32mm f/1.8"},
-            {65535, "Zeiss Touit 50mm f/2.8 Macro"},
-            {65535, "Zeiss Batis 25mm f/2"},
-            {65535, "Zeiss Batis 85mm f/1.8"},
-            {65535, "Zeiss Batis 18mm f/2.8"},
-            {65535, "Zeiss Batis 135mm f/2.8"},
-            {65535, "Zeiss Batis 40mm f/2 CF"},
-            {65535, "Zeiss Loxia 50mm f/2"},
-            {65535, "Zeiss Loxia 35mm f/2"},
-            {65535, "Zeiss Loxia 21mm f/2.8"},
-            {65535, "Zeiss Loxia 85mm f/2.4"},
-            {65535, "Zeiss Loxia 25mm f/2.4"},
             {65535, "Arax MC 35mm f/2.8 Tilt+Shift"},
             {65535, "Arax MC 80mm f/2.8 Tilt+Shift"},
             {65535, "Zenitar MF 16mm f/2.8 Fisheye M42"},
             {65535, "Samyang 500mm Mirror f/8.0"},
             {65535, "Pentacon Auto 135mm f/2.8"},
             {65535, "Pentacon Auto 29mm f/2.8"},
-            {65535, "Helios 44-2 58mm f/2.0"},
+            {65535, "Helios 44-2 58mm f/2.0"}
         };
     }
 
@@ -1192,36 +1013,53 @@ public:
 };
 SALensIDInterpreter saLensIDInterpreter;
 
-class SALensID2Interpreter : public IntLensInterpreter< int >
+class SALensID2Interpreter final : public IntLensInterpreter< int >
 {
 public:
     SALensID2Interpreter ()
     {
         choices.insert (p_t (0, "Unknown E-mount lens or other lens"));
+        choices.insert (p_t (0, "Sigma 19mm f/2.8 [EX] DN"));
+        choices.insert (p_t (0, "Sigma 30mm f/2.8 [EX] DN"));
+        choices.insert (p_t (0, "Sigma 60mm f/2.8 DN"));
+        choices.insert (p_t (0, "Sony E 18-200mm f/3.5-6.3 OSS LE"));
+        choices.insert (p_t (0, "Tamron 18-200mm f/3.5-6.3 Di III VC"));
+        choices.insert (p_t (0, "Tokina FiRIN 20mm f/2 FE AF"));
+        choices.insert (p_t (0, "Tokina FiRIN 20mm f/2 FE MF"));
+        choices.insert (p_t (0, "Zeiss Touit 12mm f/2.8"));
+        choices.insert (p_t (0, "Zeiss Touit 32mm f/1.8"));
+        choices.insert (p_t (0, "Zeiss Touit 50mm f/2.8 Macro"));
+        choices.insert (p_t (0, "Zeiss Loxia 50mm f/2"));
+        choices.insert (p_t (0, "Zeiss Loxia 35mm f/2"));
         choices.insert (p_t (1, "Sony LA-EA1 or Sigma MC-11 Adapter"));
         choices.insert (p_t (2, "Sony LA-EA2 Adapter"));
         choices.insert (p_t (3, "Sony LA-EA3 Adapter"));
         choices.insert (p_t (6, "Sony LA-EA4 Adapter"));
+        choices.insert (p_t (7, "Sony LA-EA5 Adapter"));
         choices.insert (p_t (44, "Metabones Canon EF Smart Adapter"));
         choices.insert (p_t (78, "Metabones Canon EF Smart Adapter Mark III or Other Adapter"));
+        choices.insert (p_t (184, "Metabones Canon EF Speed Booster Ultra"));
         choices.insert (p_t (234, "Metabones Canon EF Smart Adapter Mark IV"));
         choices.insert (p_t (239, "Metabones Canon EF Speed Booster"));
+        choices.insert (p_t (24593, "LA-EA4r MonsterAdapter"));
         choices.insert (p_t (32784, "Sony E 16mm f/2.8"));
         choices.insert (p_t (32785, "Sony E 18-55mm f/3.5-5.6 OSS"));
         choices.insert (p_t (32786, "Sony E 55-210mm f/4.5-6.3 OSS"));
         choices.insert (p_t (32787, "Sony E 18-200mm f/3.5-6.3 OSS"));
         choices.insert (p_t (32788, "Sony E 30mm f/3.5 Macro"));
-        choices.insert (p_t (32789, "Sony E 24mm f/1.8 ZA or Samyang AF 50mm f/1.4 FE"));
-        choices.insert (p_t (32789, "Samyang AF 50mm f/1.4 FE"));
-        choices.insert (p_t (32790, "Sony E 50mm f/1.8 OSS or Samyang AF 14mm f/2.8 FE"));
-        choices.insert (p_t (32790, "Samyang AF 14mm f/2.8 FE"));
+        choices.insert (p_t (32789, "Sony E 24mm f/1.8 ZA or Samyang AF 50mm f/1.4"));
+        choices.insert (p_t (32789, "Samyang AF 50mm f/1.4"));
+        choices.insert (p_t (32790, "Sony E 50mm f/1.8 OSS or Samyang AF 14mm f/2.8"));
+        choices.insert (p_t (32790, "Samyang AF 14mm f/2.8"));
         choices.insert (p_t (32791, "Sony E 16-70mm f/4 ZA OSS"));
         choices.insert (p_t (32792, "Sony E 10-18mm f/4 OSS"));
         choices.insert (p_t (32793, "Sony E PZ 16-50mm f/3.5-5.6 OSS"));
-        choices.insert (p_t (32794, "Sony FE 35mm f/2.8 ZA or Samyang AF 24mm f/2.8 FE"));
-        choices.insert (p_t (32794, "Samyang AF 24mm f/2.8 FE"));
+        choices.insert (p_t (32794, "Sony FE 35mm f/2.8 ZA or Samyang Lens"));
+        choices.insert (p_t (32794, "Samyang AF 24mm f/2.8"));
+        choices.insert (p_t (32794, "Samyang AF 35mm f/2.8"));
         choices.insert (p_t (32795, "Sony FE 24-70mm f/4 ZA OSS"));
-        choices.insert (p_t (32796, "Sony FE 85mm f/1.8"));
+        choices.insert (p_t (32796, "Sony FE 85mm f/1.8 or Viltrox PFU RBMH 85mm f/1.8"));
+        choices.insert (p_t (32796, "Viltrox PFU RBMH 85mm f/1.8"));
         choices.insert (p_t (32797, "Sony E 18-200mm f/3.5-6.3 OSS LE"));
         choices.insert (p_t (32798, "Sony E 20mm f/2.8"));
         choices.insert (p_t (32799, "Sony E 35mm f/1.8 OSS"));
@@ -1245,7 +1083,8 @@ public:
         choices.insert (p_t (32820, "Sony E PZ 18-110mm f/4 G OSS"));
         choices.insert (p_t (32821, "Sony FE 24-70mm f/2.8 GM"));
         choices.insert (p_t (32822, "Sony FE 50mm f/1.4 ZA"));
-        choices.insert (p_t (32823, "Sony FE 85mm f/1.4 GM"));
+        choices.insert (p_t (32823, "Sony FE 85mm f/1.4 GM or Samyang AF 85mm f/1.4"));
+        choices.insert (p_t (32823, "Samyang AF 85mm f/1.4"));
         choices.insert (p_t (32824, "Sony FE 50mm f/1.8"));
         choices.insert (p_t (32826, "Sony FE 21mm f/2.8 (SEL28F20 + SEL075UWC)"));
         choices.insert (p_t (32827, "Sony FE 16mm f/3.5 Fisheye (SEL28F20 + SEL057FEC)"));
@@ -1255,6 +1094,28 @@ public:
         choices.insert (p_t (32831, "Sony FE 16-35mm f/2.8 GM"));
         choices.insert (p_t (32848, "Sony FE 400mm f/2.8 GM OSS"));
         choices.insert (p_t (32849, "Sony E 18-135mm f/3.5-5.6 OSS"));
+        choices.insert (p_t (32850, "Sony FE 135mm f/1.8 GM"));
+        choices.insert (p_t (32851, "Sony FE 200-600mm f/5.6-6.3 G OSS"));
+        choices.insert (p_t (32852, "Sony FE 600mm f/4 GM OSS"));
+        choices.insert (p_t (32853, "Sony E 16-55mm f/2.8 G"));
+        choices.insert (p_t (32854, "Sony E 70-350mm f/4.5-6.3 G OSS"));
+        choices.insert (p_t (32855, "Sony FE C 16-35mm T3.1 G"));
+        choices.insert (p_t (32858, "Sony FE 35mm f/1.8"));
+        choices.insert (p_t (32859, "Sony FE 20mm f/1.8 G"));
+        choices.insert (p_t (32860, "Sony FE 12-24mm f/2.8 GM"));
+        choices.insert (p_t (32862, "Sony FE 50mm f/1.2 GM"));
+        choices.insert (p_t (32863, "Sony FE 14mm f/1.8 GM"));
+        choices.insert (p_t (32864, "Sony FE 28-60mm f/4-5.6"));
+        choices.insert (p_t (32865, "Sony FE 35mm f/1.4 GM"));
+        choices.insert (p_t (32866, "Sony FE 24mm f/2.8 G"));
+        choices.insert (p_t (32867, "Sony FE 40mm f/2.5 G"));
+        choices.insert (p_t (32868, "Sony FE 50mm f/2.5 G"));
+        choices.insert (p_t (32871, "Sony FE PZ 16-35mm f/4 G"));
+        choices.insert (p_t (32873, "Sony E PZ 10-20mm f/4 G"));
+        choices.insert (p_t (32874, "Sony FE 70-200mm f/2.8 GM OSS II"));
+        choices.insert (p_t (32875, "Sony FE 24-70mm f/2.8 GM II"));
+        choices.insert (p_t (32876, "Sony E 11mm f/1.8"));
+        choices.insert (p_t (32877, "Sony E 15mm f/1.4 G"));
         choices.insert (p_t (33072, "Sony FE 70-200mm f/2.8 GM OSS + 1.4X Teleconverter"));
         choices.insert (p_t (33073, "Sony FE 70-200mm f/2.8 GM OSS + 2X Teleconverter"));
         choices.insert (p_t (33076, "Sony FE 100mm f/2.8 STF GM OSS (macro mode)"));
@@ -1262,6 +1123,10 @@ public:
         choices.insert (p_t (33078, "Sony FE 100-400mm f/4.5-5.6 GM OSS + 2X Teleconverter"));
         choices.insert (p_t (33079, "Sony FE 400mm f/2.8 GM OSS + 1.4X Teleconverter"));
         choices.insert (p_t (33080, "Sony FE 400mm f/2.8 GM OSS + 2X Teleconverter"));
+        choices.insert (p_t (33081, "Sony FE 200-600mm f/5.6-6.3 G OSS + 1.4X Teleconverter"));
+        choices.insert (p_t (33082, "Sony FE 200-600mm f/5.6-6.3 G OSS + 2X Teleconverter"));
+        choices.insert (p_t (33083, "Sony FE 600mm f/4 GM OSS + 1.4X Teleconverter"));
+        choices.insert (p_t (33084, "Sony FE 600mm f/4 GM OSS + 2X Teleconverter"));
         choices.insert (p_t (49201, "Zeiss Touit 12mm f/2.8"));
         choices.insert (p_t (49202, "Zeiss Touit 32mm f/1.8"));
         choices.insert (p_t (49203, "Zeiss Touit 50mm f/2.8 Macro"));
@@ -1276,11 +1141,31 @@ public:
         choices.insert (p_t (49235, "Zeiss Loxia 85mm f/2.4"));
         choices.insert (p_t (49236, "Zeiss Loxia 25mm f/2.4"));
         choices.insert (p_t (49457, "Tamron 28-75mm f/2.8 Di III RXD"));
+        choices.insert (p_t (49458, "Tamron 17-28mm f/2.8 Di III RXD"));
+        choices.insert (p_t (49459, "Tamron 35mm f/2.8 Di III OSD M1:2"));
+        choices.insert (p_t (49460, "Tamron 24mm f/2.8 Di III OSD M1:2"));
+        choices.insert (p_t (49461, "Tamron 20mm f/2.8 Di III OSD M1:2"));
+        choices.insert (p_t (49462, "Tamron 70-180mm f/2.8 Di III VXD"));
+        choices.insert (p_t (49463, "Tamron 28-200mm f/2.8-5.6 Di III RXD"));
+        choices.insert (p_t (49464, "Tamron 70-300mm f/4.5-6.3 Di III RXD"));
+        choices.insert (p_t (49465, "Tamron 17-70mm f/2.8 Di III-A VC RXD"));
+        choices.insert (p_t (49466, "Tamron 150-500mm f/5-6.7 Di III VC VXD"));
+        choices.insert (p_t (49467, "Tamron 11-20mm f/2.8 Di III-A RXD"));
+        choices.insert (p_t (49468, "Tamron 18-300mm f/3.5-6.3 Di III-A VC VXD"));
+        choices.insert (p_t (49469, "Tamron 35-150mm f/2-F2.8 Di III VXD"));
+        choices.insert (p_t (49470, "Tamron 28-75mm f/2.8 Di III VXD G2"));
+        choices.insert (p_t (49471, "Tamron 50-400mm f/4.5-6.3 Di III VC VXD"));
+        choices.insert (p_t (49473, "Tokina atx-m 85mm f/1.8 FE or Viltrox lens"));
+        choices.insert (p_t (49473, "Viltrox 23mm f/1.4 E"));
+        choices.insert (p_t (49473, "Viltrox 56mm f/1.4 E"));
+        choices.insert (p_t (49712, "Tokina FiRIN 20mm f/2 FE AF"));
+        choices.insert (p_t (49713, "Tokina FiRIN 100mm f/2.8 FE MACRO"));
         choices.insert (p_t (50480, "Sigma 30mm f/1.4 DC DN | C"));
         choices.insert (p_t (50481, "Sigma 50mm f/1.4 DG HSM | A"));
         choices.insert (p_t (50482, "Sigma 18-300mm f/3.5-6.3 DC MACRO OS HSM | C + MC-11"));
         choices.insert (p_t (50483, "Sigma 18-35mm f/1.8 DC HSM | A + MC-11"));
         choices.insert (p_t (50484, "Sigma 24-35mm f/2 DG HSM | A + MC-11"));
+        choices.insert (p_t (50485, "Sigma 24mm f/1.4 DG HSM | A + MC-11"));
         choices.insert (p_t (50486, "Sigma 150-600mm f/5-6.3 DG OS HSM | C + MC-11"));
         choices.insert (p_t (50487, "Sigma 20mm f/1.4 DG HSM | A + MC-11"));
         choices.insert (p_t (50488, "Sigma 35mm f/1.4 DG HSM | A"));
@@ -1294,8 +1179,26 @@ public:
         choices.insert (p_t (50503, "Sigma 16mm f/1.4 DC DN | C"));
         choices.insert (p_t (50507, "Sigma 105mm f/1.4 DG HSM | A"));
         choices.insert (p_t (50508, "Sigma 56mm f/1.4 DC DN | C"));
-        choices.insert (p_t (50512, "Sigma 70-200mm f/2.8 DG OS HSM | S"));
+        choices.insert (p_t (50512, "Sigma 70-200mm f/2.8 DG OS HSM | S + MC-11"));
         choices.insert (p_t (50513, "Sigma 70mm f/2.8 DG MACRO | A"));
+        choices.insert (p_t (50514, "Sigma 45mm f/2.8 DG DN | C"));
+        choices.insert (p_t (50515, "Sigma 35mm f/1.2 DG DN | A"));
+        choices.insert (p_t (50516, "Sigma 14-24mm f/2.8 DG DN | A"));
+        choices.insert (p_t (50517, "Sigma 24-70mm f/2.8 DG DN | A"));
+        choices.insert (p_t (50518, "Sigma 100-400mm f/5-6.3 DG DN OS | C"));
+        choices.insert (p_t (50521, "Sigma 85mm f/1.4 DG DN | A"));
+        choices.insert (p_t (50522, "Sigma 105mm f/2.8 DG DN MACRO | A"));
+        choices.insert (p_t (50523, "Sigma 65mm f/2 DG DN | C"));
+        choices.insert (p_t (50524, "Sigma 35mm f/2 DG DN | C"));
+        choices.insert (p_t (50525, "Sigma 24mm f/3.5 DG DN | C"));
+        choices.insert (p_t (50526, "Sigma 28-70mm f/2.8 DG DN | C"));
+        choices.insert (p_t (50527, "Sigma 150-600mm f/5-6.3 DG DN OS | S"));
+        choices.insert (p_t (50528, "Sigma 35mm f/1.4 DG DN | A"));
+        choices.insert (p_t (50529, "Sigma 90mm f/2.8 DG DN | C"));
+        choices.insert (p_t (50530, "Sigma 24mm f/2 DG DN | C"));
+        choices.insert (p_t (50531, "Sigma 18-50mm f/2.8 DC DN | C"));
+        choices.insert (p_t (50532, "Sigma 20mm f/2 DG DN | C"));
+        choices.insert (p_t (50533, "Sigma 16-28mm f/2.8 DG DN | C"));
         choices.insert (p_t (50992, "Voigtlander SUPER WIDE-HELIAR 15mm f/4.5 III"));
         choices.insert (p_t (50993, "Voigtlander HELIAR-HYPER WIDE 10mm f/5.6"));
         choices.insert (p_t (50994, "Voigtlander ULTRA WIDE-HELIAR 12mm f/5.6 III"));
@@ -1304,9 +1207,25 @@ public:
         choices.insert (p_t (50997, "Voigtlander NOKTON classic 35mm f/1.4"));
         choices.insert (p_t (50998, "Voigtlander MACRO APO-LANTHAR 110mm f/2.5"));
         choices.insert (p_t (50999, "Voigtlander COLOR-SKOPAR 21mm f/3.5 Aspherical"));
-        choices.insert (p_t (51505, "Samyang AF 14mm f/2.8 FE or Samyang AF 35mm f/2.8 FE"));
-        choices.insert (p_t (51505, "Samyang AF 35mm f/2.8 FE"));
+        choices.insert (p_t (51000, "Voigtlander NOKTON 50mm f/1.2 Aspherical"));
+        choices.insert (p_t (51001, "Voigtlander NOKTON 21mm f/1.4 Aspherical"));
+        choices.insert (p_t (51002, "Voigtlander APO-LANTHAR 50mm f/2 Aspherical"));
+        choices.insert (p_t (51003, "Voigtlander NOKTON 35mm f/1.2 Aspherical SE"));
+        choices.insert (p_t (51006, "Voigtlander APO-LANTHAR 35mm f/2 Aspherical"));
+        choices.insert (p_t (51504, "Samyang AF 50mm f/1.4"));
+        choices.insert (p_t (51505, "Samyang AF 14mm f/2.8 or Samyang AF 35mm f/2.8"));
+        choices.insert (p_t (51505, "Samyang AF 35mm f/2.8"));
         choices.insert (p_t (51507, "Samyang AF 35mm f/1.4"));
+        choices.insert (p_t (51508, "Samyang AF 45mm f/1.8"));
+        choices.insert (p_t (51510, "Samyang AF 18mm f/2.8 or Samyang AF 35mm f/1.8"));
+        choices.insert (p_t (51510, "Samyang AF 35mm f/1.8"));
+        choices.insert (p_t (51512, "Samyang AF 75mm f/1.8"));
+        choices.insert (p_t (51513, "Samyang AF 35mm f/1.8"));
+        choices.insert (p_t (51514, "Samyang AF 24mm f/1.8"));
+        choices.insert (p_t (51515, "Samyang AF 12mm f/2.0"));
+        choices.insert (p_t (51516, "Samyang AF 24-70mm f/2.8"));
+        choices.insert (p_t (51517, "Samyang AF 50mm f/1.4 II"));
+        choices.insert (p_t (51518, "Samyang AF 135mm f/1.8"));
     }
 
     std::string toString (const Tag* t) const override
@@ -2109,7 +2028,7 @@ public:
 
         if (a > 0) {
             char buffer[32];
-            sprintf (buffer, "%.4f", a);
+            snprintf(buffer, sizeof(buffer), "%.4f", a);
             return buffer;
         } else {
             return "n/a";
@@ -2169,7 +2088,7 @@ public:
 
         if (a) {
             char buffer[32];
-            sprintf (buffer, "%.1f", a / 100. );
+            snprintf(buffer, sizeof(buffer), "%.1f", a / 100. );
             return buffer;
         } else {
             return "n/a";
@@ -2229,7 +2148,7 @@ public:
 
         if (a) {
             char buffer[32];
-            sprintf (buffer, "%d", a );
+            snprintf(buffer, sizeof(buffer), "%d", a );
             return buffer;
         } else {
             return "Auto";
@@ -2252,7 +2171,7 @@ public:
 
         // Decode the value
         if (a && a != 254) { // 254 = 'Auto' for CameraSettings3, but we might say the same for CameraSettings & CameraSettings2 (?)
-            return int (expf ((double (a) / 8.f - 6.f) * logf (2.f)) * 100.f + 0.5f);
+            return std::exp((a / 8.f - 6.f) * std::log(2.f)) * 100.f + 0.5f;
         } else {
             return 0;
         }
@@ -2268,7 +2187,7 @@ public:
     {
         double a = t->toDouble();
         char buffer[32];
-        sprintf (buffer, "%.2f", a );
+        snprintf(buffer, sizeof(buffer), "%.2f", a );
         return buffer;
     }
     double toDouble (const Tag* t, int ofs) override
@@ -2288,7 +2207,7 @@ public:
     std::string toString (const Tag* t) const override
     {
         char buffer[32];
-        sprintf (buffer, "%d", t->getValue()[0] - 20);
+        snprintf(buffer, sizeof(buffer), "%d", t->getValue()[0] - 20);
         return buffer;
     }
     int toInt (const Tag* t, int ofs, TagType astype) override
@@ -2327,7 +2246,7 @@ public:
     std::string toString (const Tag* t) const override
     {
         char buffer[32];
-        sprintf (buffer, "%d", t->getValue()[0] & 0x7f);
+        snprintf(buffer, sizeof(buffer), "%d", t->getValue()[0] & 0x7f);
         return buffer;
     }
     int toInt (const Tag* t, int ofs, TagType astype) override
@@ -2383,7 +2302,7 @@ public:
     std::string toString (const Tag* t) const override
     {
         char buffer[32];
-        sprintf (buffer, "%d", t->toInt());
+        snprintf(buffer, sizeof(buffer), "%d", t->toInt());
         return buffer;
     }
     int toInt (const Tag* t, int ofs, TagType astype) override
@@ -2635,6 +2554,4 @@ const TagAttrib sonyCameraSettingsAttribs3[] = {
  {-1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}};*/
 
 }
-#endif
-
 

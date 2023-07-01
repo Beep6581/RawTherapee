@@ -1355,7 +1355,6 @@ template<class T> void gaussVerticalmult (T** src, T** dst, const int W, const i
 
 template<class T> void gaussianBlurImpl(T** src, T** dst, const int W, const int H, const double sigma, bool useBoxBlur, eGaussType gausstype = GAUSS_STANDARD, T** buffer2 = nullptr)
 {
-    static constexpr auto GAUSS_SKIP = 0.25;
     static constexpr auto GAUSS_3X3_LIMIT = 0.6;
     static constexpr auto GAUSS_5X5_LIMIT = 0.84;
     static constexpr auto GAUSS_7X7_LIMIT = 1.15;
@@ -1405,6 +1404,9 @@ template<class T> void gaussianBlurImpl(T** src, T** dst, const int W, const int
     } else {
         if (sigma < GAUSS_SKIP) {
             // don't perform filtering
+#ifdef _OPENMP
+#pragma omp single
+#endif
             if (src != dst) {
                 for(int i = 0; i < H; ++i) {
                     memcpy(dst[i], src[i], W * sizeof(T));

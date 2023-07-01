@@ -16,8 +16,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include <glib.h>
-#include <glib/gstdio.h>
 #include "curves.h"
 #include <cmath>
 #include <vector>
@@ -65,23 +63,23 @@ DiagonalCurve::DiagonalCurve (const std::vector<double>& p, int poly_pn)
                 }
             }
 
-            if (x[0] != 0.0f || x[N - 1] != 1.0f)
+            if (x[0] != 0.0 || x[N - 1] != 1.0)
                 // Special (and very rare) case where all points are on the identity line but
                 // not reaching the limits
             {
                 identity = false;
             }
 
-            if(x[0] == 0.f && x[1] == 0.f)
+            if(x[0] == 0.0 && x[1] == 0.0)
                 // Avoid crash when first two points are at x = 0 (git Issue 2888)
             {
-                x[1] = 0.01f;
+                x[1] = 0.01;
             }
 
-            if(x[0] == 1.f && x[1] == 1.f)
+            if(x[0] == 1.0 && x[1] == 1.0)
                 // Avoid crash when first two points are at x = 1 (100 in gui) (git Issue 2923)
             {
-                x[0] = 0.99f;
+                x[0] = 0.99;
             }
 
             if (!identity) {
@@ -97,7 +95,7 @@ DiagonalCurve::DiagonalCurve (const std::vector<double>& p, int poly_pn)
                 }
             }
         } else if (kind == DCT_Parametric) {
-            if ((p.size() == 8 || p.size() == 9) && (p.at(4) != 0.0f || p.at(5) != 0.0f || p.at(6) != 0.0f || p.at(7) != 0.0f)) {
+            if ((p.size() == 8 || p.size() == 9) && (p.at(4) != 0.0 || p.at(5) != 0.0 || p.at(6) != 0.0 || p.at(7) != 0.0)) {
                 identity = false;
 
                 x = new double[9];
@@ -118,8 +116,8 @@ DiagonalCurve::DiagonalCurve (const std::vector<double>& p, int poly_pn)
                 }
 
                 mc = -xlog(2.0) / xlog(x[2]);
-                double mbase = pfull (0.5, x[8], x[6], x[5]);
-                mfc = mbase <= 1e-14 ? 0.0 : xexp(xlog(mbase) / mc);        // value of the curve at the center point
+                double mbase = pfull_alt (0.5, x[6], x[5]);
+                mfc = xexp(xlog(mbase) / mc);        // value of the curve at the center point
                 msc = -xlog(2.0) / xlog(x[1] / x[2]);
                 mhc = -xlog(2.0) / xlog((x[3] - x[2]) / (1 - x[2]));
             }
@@ -426,7 +424,6 @@ void DiagonalCurve::catmull_rom_set()
 
 /*****************************************************************************/
 
-
 double DiagonalCurve::getVal (double t) const
 {
 
@@ -437,20 +434,24 @@ double DiagonalCurve::getVal (double t) const
             return 0.0;
         }
 
-        double tv = xexp(mc * xlog(t));
-        double base = pfull (tv, x[8], x[6], x[5]);
-        double stretched = base <= 1e-14 ? 0.0 : xexp(xlog(base) / mc);
+        double tv = xexp(max(mc * xlog(t),-236.0)); // prevents numerical issues when calling pfull, at the cost of minor artifacts
+        double base = pfull_alt (tv, x[6], x[5]);
+        double stretched = xexp(xlog(base) / mc);
 
         if (t < x[2]) {
             // add shadows effect:
-            double stv = xexp(msc * xlog(stretched / mfc));
-            double sbase = pfull (stv, x[8], x[7], 0.5);
-            return mfc * (sbase <= 1e-14 ? 0.0 : xexp(xlog(sbase) / msc));
+            double stv = xexp(max(msc * xlog(stretched / mfc),-236.0));
+            double sbase = pfull_alt (stv, x[7], 0.5);
+            return mfc * xexp(xlog(sbase) / msc);
         } else {
             // add highlights effect:
-            double htv = xexp(mhc * xlog((stretched - mfc) / (1 - mfc)));
-            double hbase = pfull (htv, x[8], 0.5, x[4]);
-            return mfc + (1 - mfc) * (hbase <= 1e-14 ? 0.0 : xexp(xlog(hbase) / mhc));
+            double htv = xexp(max(mhc * xlog((stretched - mfc) / (1.0 - mfc)),-236.0));
+            if (htv < 1e-6) {
+                return stretched; // this part of the curve isn't affected by highlight, return the base curve
+            } else {
+                double hbase = pfull_alt (htv, 0.5, x[4]);
+                return mfc + (1.0 - mfc) * xexp(xlog(hbase) / mhc);
+            }
         }
 
         break;

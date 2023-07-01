@@ -25,8 +25,8 @@
 #include "guiutils.h"
 #include "toolpanel.h"
 
-class IPTCPanel :
-    public Gtk::VBox,
+class IPTCPanel final :
+    public Gtk::Box,
     public ToolPanel
 {
 

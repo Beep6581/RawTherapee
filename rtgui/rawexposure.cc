@@ -28,14 +28,14 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-RAWExposure::RAWExposure () : FoldableToolPanel(this, "rawexposure", M("TP_EXPOS_WHITEPOINT_LABEL"))
+const Glib::ustring RAWExposure::TOOL_NAME = "rawexposure";
+
+RAWExposure::RAWExposure () : FoldableToolPanel(this, TOOL_NAME, M("TP_EXPOS_WHITEPOINT_LABEL"))
 {
     PexPos = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_LINEAR"), 0.1, 16.0, 0.01, 1));
     PexPos->setAdjusterListener (this);
 
-    if (PexPos->delay < options.adjusterMaxDelay) {
-        PexPos->delay = options.adjusterMaxDelay;
-    }
+    PexPos->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     PexPos->show();
     pack_start( *PexPos, Gtk::PACK_SHRINK, 4);//exposi

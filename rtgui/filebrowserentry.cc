@@ -45,10 +45,8 @@ Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::hdr;
 Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::ps;
 
 FileBrowserEntry::FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname)
-    : ThumbBrowserEntryBase (fname), wasInside(false), iatlistener(nullptr), press_x(0), press_y(0), action_x(0), action_y(0), rot_deg(0.0), landscape(true), cropParams(new rtengine::procparams::CropParams), cropgl(nullptr), state(SNormal), crop_custom_ratio(0.f)
+    : ThumbBrowserEntryBase (fname, thm), wasInside(false), iatlistener(nullptr), press_x(0), press_y(0), action_x(0), action_y(0), rot_deg(0.0), landscape(true), cropParams(new rtengine::procparams::CropParams), cropgl(nullptr), state(SNormal), crop_custom_ratio(0.f)
 {
-    thumbnail = thm;
-
     feih = new FileBrowserEntryIdleHelper;
     feih->fbentry = this;
     feih->destroyed = false;
@@ -116,9 +114,12 @@ void FileBrowserEntry::refreshQuickThumbnailImage ()
 
 void FileBrowserEntry::calcThumbnailSize ()
 {
-
     if (thumbnail) {
-        prew = thumbnail->getThumbnailWidth(preh);
+        int ow = prew, oh = preh;
+        thumbnail->getThumbnailSize(prew, preh);
+        if (ow != prew || oh != preh || preview.size() != static_cast<std::size_t>(prew * preh * 3)) {
+            preview.clear();
+        }
     }
 }
 
@@ -173,10 +174,10 @@ void FileBrowserEntry::customBackBufferUpdate (Cairo::RefPtr<Cairo::Context> c)
             rtengine::procparams::CropParams cparams = thumbnail->getProcParams().crop;
             switch (options.cropGuides) {
             case Options::CROP_GUIDE_NONE:
-                cparams.guide = "None";
+                cparams.guide = rtengine::procparams::CropParams::Guide::NONE;
                 break;
             case Options::CROP_GUIDE_FRAME:
-                cparams.guide = "Frame";
+                cparams.guide = rtengine::procparams::CropParams::Guide::FRAME;
                 break;
             default:
                 break;
@@ -230,7 +231,7 @@ void FileBrowserEntry::updateImage(rtengine::IImage8* img, double scale, const r
                     --feih->pending;
                 }
 
-                img->free();
+                delete img;
                 return false;
             }
 
@@ -255,28 +256,22 @@ void FileBrowserEntry::_updateImage(rtengine::IImage8* img, double s, const rten
     bool rotated = false;
 
     if (preh == img->getHeight()) {
-        const bool resize = !preview || prew != img->getWidth();
         prew = img->getWidth ();
 
         // Check if image has been rotated since last time
-        rotated = preview && newLandscape != landscape;
+        rotated = !preview.empty() && newLandscape != landscape;
 
-        if (resize) {
-            if (preview) {
-                delete [] preview;
-            }
-            preview = new guint8 [prew * preh * 3];
-        }
-        memcpy(preview, img->getData(), prew * preh * 3);
+        preview.resize(prew * preh * 3);
+        std::copy(img->getData(), img->getData() + preview.size(), preview.begin());
         {
-        GThreadLock lock;
-        updateBackBuffer ();
+            GThreadLock lock;
+            updateBackBuffer ();
         }
     }
 
     landscape = newLandscape;
 
-    img->free();
+    delete img;
 
     if (parent) {
         if (rotated) {
@@ -297,7 +292,7 @@ bool FileBrowserEntry::motionNotify (int x, int y)
 
     Inspector* inspector = parent->getInspector();
 
-    if (inspector && inspector->isActive() && !parent->isInTabMode()) {
+    if (inspector && inspector->isActive() && (!parent->isInTabMode() || options.inspectorWindow)) {
         const rtengine::Coord2D coord(getPosInImgSpace(x, y));
 
         if (coord.x != -1.) {
@@ -601,7 +596,7 @@ bool FileBrowserEntry::onArea (CursorArea a, int x, int y)
 {
 
     MYREADERLOCK(l, lockRW);
-    if (!drawable || !preview) {
+    if (!drawable || preview.empty()) {
         return false;
     }
 

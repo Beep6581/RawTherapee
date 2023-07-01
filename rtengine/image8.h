@@ -27,7 +27,7 @@ namespace rtengine
 {
 class Imagefloat;
 
-class Image8 : public IImage8, public ImageIO
+class Image8 final : public IImage8, public ImageIO
 {
 
 public:
@@ -38,7 +38,7 @@ public:
 
     Image8* copy () const;
 
-    void getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* image, PreviewProps pp) const override;
+    void getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp) const override;
 
     const char* getType () const override
     {
@@ -64,11 +64,6 @@ public:
         return getEmbeddedProfile ();
     }
 
-    int getBitsPerPixel () const override
-    {
-        return 8 * sizeof(unsigned char);
-    }
-
     int saveToFile (const Glib::ustring &fname) const override
     {
         return save (fname);
@@ -84,19 +79,20 @@ public:
         return saveJPEG (fname, quality, subSamp);
     }
 
-    int saveAsTIFF (const Glib::ustring &fname, int bps = -1, bool isFloat = false, bool uncompressed = false) const override
+    int saveAsTIFF (
+        const Glib::ustring &fname,
+        int bps = -1,
+        bool isFloat = false,
+        bool uncompressed = false,
+        bool big = false
+    ) const override
     {
-        return saveTIFF (fname, bps, isFloat, uncompressed);
+        return saveTIFF (fname, bps, isFloat, uncompressed, big);
     }
 
     void setSaveProgressListener (ProgressListener* pl) override
     {
         setProgressListener (pl);
-    }
-
-    void free () override
-    {
-        delete this;
     }
 
 };

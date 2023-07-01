@@ -27,7 +27,7 @@
 
 class RTWindow;
 
-class ICCProfileCreator : public Gtk::Dialog, public AdjusterListener
+class ICCProfileCreator final : public Gtk::Dialog, public AdjusterListener
 {
 
 private:

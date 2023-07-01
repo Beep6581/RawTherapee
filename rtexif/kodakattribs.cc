@@ -1,8 +1,6 @@
 /*
  *  This file is part of RawTherapee.
  */
-#ifndef _KODAKATTRIBS_
-#define _KODAKATTRIBS_
 
 #include <string.h>
 #include "rtexif.h"
@@ -58,7 +56,7 @@ void parseKodakIfdTextualInfo (Tag *textualInfo, Tag* exif_)
             // Proback645 may have "Lens" but not "Focal Length"
             float flen = atof (val.c_str());
 
-            if (flen != 0.0) {
+            if (flen != 0.f) {
                 t = new Tag (exif, lookupAttrib (exifAttribs, "FocalLength"));
                 t->initRational (flen * 32, 32);
                 exif->replaceTag (t);
@@ -66,7 +64,7 @@ void parseKodakIfdTextualInfo (Tag *textualInfo, Tag* exif_)
         } else if (key == "Focal Length") {
             float flen = atof (val.c_str());
 
-            if (flen != 0.0) {
+            if (flen != 0.f) {
                 t = new Tag (exif, lookupAttrib (exifAttribs, "FocalLength"));
                 t->initRational (flen * 32, 32);
                 exif->replaceTag (t);
@@ -74,7 +72,7 @@ void parseKodakIfdTextualInfo (Tag *textualInfo, Tag* exif_)
         } else if (key == "Aperture") {
             float aperture = atof (&val.c_str()[1]);
 
-            if (aperture != 0.0) {
+            if (aperture != 0.f) {
                 t = new Tag (exif, lookupAttrib (exifAttribs, "FNumber"));
                 t->initRational ((int) (aperture * 10), 10);
                 exif->replaceTag (t);
@@ -161,5 +159,4 @@ const TagAttrib kodakIfdAttribs[] = {
 };
 
 }
-#endif
 

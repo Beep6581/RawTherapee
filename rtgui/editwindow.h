@@ -21,6 +21,7 @@
 #include <gtkmm.h>
 
 #include "rtimage.h"
+#include "guiutils.h"
 
 class EditorPanel;
 class RTWindow;
@@ -38,19 +39,24 @@ private:
     std::set<Glib::ustring> filesEdited;
     std::map<Glib::ustring, EditorPanel*> epanels;
 
+    sigc::signal<void> externalEditorChangedSignal;
+
     bool isFullscreen;
     bool isClosed;
+    bool isMinimized;
+    sigc::connection onConfEventConn;
     void toggleFullscreen ();
-    void restoreWindow();
     bool updateResolution();
     void setAppIcon();
+
+    IdleRegister idle_register;
 
 public:
     // Check if the system has more than one display and option is set
     static bool isMultiDisplayEnabled();
 
-    // Should only be created once, auto-creates window on correct display
-    static EditWindow* getInstance(RTWindow* p, bool restore = true);
+    // Should only be created once
+    static EditWindow* getInstance(RTWindow* p);
 
     explicit EditWindow (RTWindow* p);
 
@@ -60,13 +66,17 @@ public:
     bool selectEditorPanel(const std::string &name);
     bool closeOpenEditors();
     bool isProcessing();
+    void updateToolPanelToolLocations(
+        const std::vector<Glib::ustring> &favorites, bool cloneFavoriteTools);
 
     void toFront();
     bool keyPressed (GdkEventKey* event);
     bool on_configure_event(GdkEventConfigure* event) override;
     bool on_delete_event(GdkEventAny* event) override;
-    //bool on_window_state_event(GdkEventWindowState* event);
+    bool on_window_state_event(GdkEventWindowState* event) override;
     void on_mainNB_switch_page(Gtk::Widget* page, guint page_num);
     void set_title_decorated(Glib::ustring fname);
     void on_realize () override;
+    void get_position(int& x, int& y) const;
+    void restoreWindow();
 };

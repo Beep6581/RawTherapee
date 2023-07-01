@@ -37,6 +37,7 @@
 #include "rtsurface.h"
 
 #include "../rtengine/dcrop.h"
+#include "../rtengine/imagesource.h"
 #include "../rtengine/procparams.h"
 #include "../rtengine/rt_math.h"
 
@@ -123,14 +124,14 @@ void CropWindow::initZoomSteps()
     zoomSteps.push_back(ZoomStep("  8%", 1.0/12.0, 120, true));
     char lbl[64];
     for (int s = 100; s >= 11; --s) {
-        float z = 10./float(s);
-        sprintf(lbl, "% 2d%%", int(z * 100));
+        float z = 10.f / s;
+        snprintf(lbl, sizeof(lbl), "% 2d%%", int(z * 100));
         bool is_major = (s == s/10 * 10);
         zoomSteps.push_back(ZoomStep(lbl, z, s, is_major));
     }
     zoom11index = zoomSteps.size();
     for (int s = 1; s <= 8; ++s) {
-        sprintf(lbl, "%d00%%", s);
+        snprintf(lbl, sizeof(lbl), "%d00%%", s);
         zoomSteps.push_back(ZoomStep(lbl, s, s * 1000, true));
     }
     zoomSteps.push_back(ZoomStep("1600%", 16, 16000, true));
@@ -294,7 +295,7 @@ void CropWindow::flawnOver (bool isFlawnOver)
 void CropWindow::scroll (int state, GdkScrollDirection direction, int x, int y, double deltaX, double deltaY)
 {
     double delta = 0.0;
-    if (abs(deltaX) > abs(deltaY)) {
+    if (std::fabs(deltaX) > std::fabs(deltaY)) {
         delta = deltaX;
     } else {
         delta = deltaY;
@@ -303,7 +304,7 @@ void CropWindow::scroll (int state, GdkScrollDirection direction, int x, int y, 
     if (direction == GDK_SCROLL_SMOOTH) {
         scrollAccum += delta;
         //Only change zoom level if we've accumulated +/- 1.0 of deltas.  This conditional handles the previous delta=0.0 case
-        if (abs(scrollAccum) < 1.0) {
+        if (std::fabs(scrollAccum) < 1.0) {
             return;
         }
     }
@@ -402,7 +403,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                             // Add a new Color Picker
                             rtengine::Coord imgPos;
                             screenCoordToImage(x, y, imgPos.x, imgPos.y);
-                            LockableColorPicker *newPicker = new LockableColorPicker(this, &cropHandler.colorParams->outputProfile, &cropHandler.colorParams->workingProfile);
+                            LockableColorPicker *newPicker = new LockableColorPicker(this, cropHandler.colorParams.get());
                             colorPickers.push_back(newPicker);
                             hoveredPicker = newPicker;
                             updateHoveredPicker(&imgPos);
@@ -413,7 +414,8 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                             action_y = 0;
                             needRedraw = true;
                         }
-                    } else if (iarea->getToolMode () == TMHand
+                    } else if ((iarea->getToolMode () == TMHand
+                                || iarea->getToolMode() == TMPerspective)
                                && editSubscriber
                                && cropgl
                                && cropgl->inImageArea(iarea->posImage.x, iarea->posImage.y)
@@ -428,6 +430,8 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                                 state = SEditPick1;
                                 pickedObject = iarea->getObject();
                                 pickModifierKey = bstate;
+                            } else if (iarea->getToolMode() == TMPerspective) {
+                                state = SCropImgMove;
                             }
                             press_x = x;
                             press_y = y;
@@ -506,7 +510,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                         cropgl->cropInit (cropHandler.cropParams->x, cropHandler.cropParams->y, cropHandler.cropParams->w, cropHandler.cropParams->h);
                     } else if (iarea->getToolMode () == TMHand) {
                         if (editSubscriber) {
-                            if ((cropgl && cropgl->inImageArea(iarea->posImage.x, iarea->posImage.y) && editSubscriber->getEditingType() == ET_PIPETTE && (bstate & GDK_CONTROL_MASK))) {
+                            if ((cropgl && cropgl->inImageArea(iarea->posImage.x, iarea->posImage.y) && (editSubscriber->getEditingType() == ET_PIPETTE && (bstate & GDK_CONTROL_MASK))) || editSubscriber->getEditingType() == ET_OBJECTS) {
                                 needRedraw = editSubscriber->button1Pressed(bstate);
                                 if (editSubscriber->isDragging()) {
                                     state = SEditDrag1;
@@ -536,7 +540,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                         action_y = 0;
                     }
 
-                } else if (iarea->getToolMode () == TMHand) {  // events outside of the image domain
+                } else if (iarea->getToolMode () == TMHand || iarea->getToolMode() == TMPerspective) {  // events outside of the image domain
                     EditSubscriber *editSubscriber = iarea->getCurrSubscriber();
 
                     if (editSubscriber && editSubscriber->getEditingType() == ET_OBJECTS) {
@@ -591,7 +595,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
             }
         }
     } else if (button == 3) {
-        if (iarea->getToolMode () == TMHand) {
+        if (iarea->getToolMode () == TMHand || iarea->getToolMode() == TMPerspective) {
             EditSubscriber *editSubscriber = iarea->getCurrSubscriber();
             if (editSubscriber && editSubscriber->getEditingType() == ET_OBJECTS) {
                 needRedraw = editSubscriber->button3Pressed(bstate);
@@ -701,15 +705,15 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y)
         state = SNormal;
         needRedraw = true;
     } else if (state == SEditDrag1 || state == SEditDrag2 || state == SEditDrag3) {
-        if        (state == SEditDrag1) {
-            needRedraw = editSubscriber->button1Released();
-        } else if (state == SEditDrag2) {
-            needRedraw = editSubscriber->button2Released();
-        } else if (state == SEditDrag3) {
-            needRedraw = editSubscriber->button3Released();
-        }
-
         if (editSubscriber) {
+            if (state == SEditDrag1) {
+                needRedraw = editSubscriber->button1Released();
+            } else if (state == SEditDrag2) {
+                needRedraw = editSubscriber->button2Released();
+            } else if (state == SEditDrag3) {
+                needRedraw = editSubscriber->button3Released();
+            }
+
             rtengine::Crop* crop = static_cast<rtengine::Crop*>(cropHandler.getCrop());
             Coord imgPos;
             action_x = x;
@@ -763,7 +767,10 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y)
 
             iarea->setObject(ObjectMOBuffer::getObjectID(cropPos));
 
-            bool elemPicked = iarea->getObject() == pickedObject && bstate == pickModifierKey;
+            int buttonMask = ((state == SEditPick1) ? GDK_BUTTON1_MASK : 0)
+                           | ((state == SEditPick2) ? GDK_BUTTON2_MASK : 0)
+                           | ((state == SEditPick3) ? GDK_BUTTON3_MASK : 0);
+            bool elemPicked = iarea->getObject() == pickedObject && bstate == (pickModifierKey | buttonMask);
 
             if        (state == SEditPick1) {
                 needRedraw = editSubscriber->pick1 (elemPicked);
@@ -785,6 +792,13 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y)
         needRedraw = true;
     } else if (state == SNormal && iarea->getToolMode() == TMColorPicker && !hoveredPicker && button == 3) {
         iarea->setToolHand ();
+    }
+
+    if (state != SEditDrag1 && state != SEditDrag2 && state != SEditDrag3) {
+        iarea->deltaImage.set(0, 0);
+        iarea->deltaScreen.set(0, 0);
+        iarea->deltaPrevImage.set(0, 0);
+        iarea->deltaPrevScreen.set(0, 0);
     }
 
     if (cropgl && (state == SCropSelecting || state == SResizeH1 || state == SResizeH2 || state == SResizeW1 || state == SResizeW2 || state == SResizeTL || state == SResizeTR || state == SResizeBL || state == SResizeBR || state == SCropMove)) {
@@ -1081,10 +1095,10 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
                 printf("Using \"%s\" output\n", outputProfile.c_str());
                 if(outputProfile==options.rtSettings.srgb) printf("OK SRGB2");
             */
-            pmlistener->pointerMoved (false, cropHandler.colorParams->outputProfile, cropHandler.colorParams->workingProfile, mx, my, -1, -1, -1);
+            pmlistener->pointerMoved (false, *cropHandler.colorParams, mx, my, -1, -1, -1);
 
             if (pmhlistener) {
-                pmhlistener->pointerMoved (false, cropHandler.colorParams->outputProfile, cropHandler.colorParams->workingProfile, mx, my, -1, -1, -1);
+                pmhlistener->pointerMoved (false, *cropHandler.colorParams, mx, my, -1, -1, -1);
             }
 
         } else {
@@ -1121,7 +1135,7 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
                 rtengine::StagedImageProcessor* ipc = iarea->getImProcCoordinator();
                 if(ipc) {
                     procparams::ProcParams params;
-                    ipc->getParams(&params);
+                    ipc->getParams(&params, true);
                     isRaw = params.raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::NONE) || params.raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::NONE);
                     if(isRaw) {
                         ImageSource *isrc = static_cast<ImageSource*>(ipc->getInitialImage());
@@ -1131,11 +1145,11 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
 
                 // Updates the Navigator
                 // TODO: possible double color conversion if rval, gval, bval come from cropHandler.cropPixbuftrue ? see issue #4583
-                pmlistener->pointerMoved (true, cropHandler.colorParams->outputProfile, cropHandler.colorParams->workingProfile, mx, my, rval, gval, bval, isRaw);
+                pmlistener->pointerMoved (true, *cropHandler.colorParams, mx, my, rval, gval, bval, isRaw);
 
                 if (pmhlistener) {
                     // Updates the HistogramRGBArea
-                    pmhlistener->pointerMoved (true, cropHandler.colorParams->outputProfile, cropHandler.colorParams->workingProfile, mx, my, rval, gval, bval);
+                    pmhlistener->pointerMoved (true, *cropHandler.colorParams, mx, my, rval, gval, bval);
                 }
             }
         }
@@ -1286,7 +1300,10 @@ void CropWindow::updateCursor (int x, int y)
         } else if (onArea (CropToolBar, x, y)) {
             newType = CSMove;
         } else if (iarea->getObject() > -1 && editSubscriber && editSubscriber->getEditingType() == ET_OBJECTS) {
-            newType = editSubscriber->getCursor(iarea->getObject());
+            int cursorX;
+            int cursorY;
+            screenCoordToImage (x, y, cursorX, cursorY);
+            newType = editSubscriber->getCursor(iarea->getObject(), cursorX, cursorY);
         } else if (onArea (CropResize, x, y)) {
             newType = CSResizeDiagonal;
         } else if (tm == TMColorPicker && hoveredPicker) {
@@ -1313,7 +1330,10 @@ void CropWindow::updateCursor (int x, int y)
             }
 
             if (objectID > -1) {
-                newType = editSubscriber->getCursor(objectID);
+                int cursorX;
+                int cursorY;
+                screenCoordToImage (x, y, cursorX, cursorY);
+                newType = editSubscriber->getCursor(objectID, cursorX, cursorY);
             } else if (tm == TMHand) {
                 if (onArea (CropObserved, x, y)) {
                     newType = CSMove;
@@ -1339,7 +1359,10 @@ void CropWindow::updateCursor (int x, int y)
             }
 
             if (objectID > -1) {
-                newType = editSubscriber->getCursor(objectID);
+                int cursorX;
+                int cursorY;
+                screenCoordToImage (x, y, cursorX, cursorY);
+                newType = editSubscriber->getCursor(objectID, cursorX, cursorY);
             } else {
                 newType = CSArrow;
             }
@@ -1368,6 +1391,16 @@ void CropWindow::updateCursor (int x, int y)
         newType = CSResizeDiagonal;
     } else if (state == SDragPicker) {
         newType = CSMove2D;
+    } else if (editSubscriber && editSubscriber->getEditingType() == ET_OBJECTS) {
+        int objectID = iarea->getObject();
+        if (objectID > -1) {
+            int cursorX;
+            int cursorY;
+            screenCoordToImage (x, y, cursorX, cursorY);
+            newType = editSubscriber->getCursor(objectID, cursorX, cursorY);
+        } else {
+            newType = CSArrow;
+        }
     }
 
     if (newType != cursor_type) {
@@ -1437,10 +1470,10 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
         if (state == SNormal) {
             switch (options.cropGuides) {
             case Options::CROP_GUIDE_NONE:
-                cropParams.guide = "None";
+                cropParams.guide = procparams::CropParams::Guide::NONE;
                 break;
             case Options::CROP_GUIDE_FRAME:
-                cropParams.guide = "Frame";
+                cropParams.guide = procparams::CropParams::Guide::FRAME;
                 break;
             default:
                 break;

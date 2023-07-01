@@ -1,0 +1,38 @@
+[Exposure]
+Auto=false
+Compensation=0
+HistogramMatching=false
+CurveFromHistogramMatching=false
+ClampOOG=false
+CurveMode=Standard
+CurveMode2=Standard
+Curve=1;0;0;0.88544601940051371;1;
+Curve2=1;0;0;0.0397505754145333;0.020171771436200074;0.54669745433149319;0.69419974733677647;1;1;
+
+[HLRecovery]
+Enabled=false
+Method=Coloropp
+
+[Crop]
+FixedRatio=false
+
+[Color Management]
+InputProfile=(camera)
+ToneCurve=false
+ApplyLookTable=false
+ApplyHueSatMap=false
+WorkingProfile=Rec2020
+WorkingTRC=none
+
+[RAW Bayer]
+Method=rcd
+
+[Film Negative]
+Enabled=true
+RedRatio=1.360
+GreenExponent=1.5
+BlueRatio=0.86
+ColorSpace=1
+RefInput=0;0;0;
+RefOutput=0;0;0;
+BackCompat=0

@@ -9,7 +9,6 @@
 #include <cstdio>  /* fflush()          */
 #include <cstring> /* memset()          */
 #include <cmath>   /* fsqrt()           */
-#define fsqrt(X) sqrt(X)
 
 /* Our includes */
 #include "base.h"

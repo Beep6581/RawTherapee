@@ -41,7 +41,7 @@ public:
     std::vector<double> x, y;   // in case of parametric curves the curve parameters are stored in vector x. In other cases these vectors store the coordinates of the bullets.
 };
 
-class MyDiagonalCurve : public MyCurve
+class MyDiagonalCurve final : public MyCurve
 {
 private:
     IdleRegister idle_register;
@@ -62,6 +62,7 @@ protected:
     int activeParam;
     unsigned int* bghist;   // histogram values
     bool bghistvalid;
+    double locallabRef; // Locallab reference value to display in the background
 
     void draw (int handle);
     void interpolate ();
@@ -91,6 +92,7 @@ public:
     bool pipetteButton1Pressed(EditDataProvider *provider, int modifierKey) override;
     void pipetteButton1Released(EditDataProvider *provider) override;
     void pipetteDrag(EditDataProvider *provider, int modifierKey) override;
+    void updateLocallabBackground(double ref);
 
     void setPos(double pos, int chanIdx) override;
     void stopNumericalAdjustment() override;

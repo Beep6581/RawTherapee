@@ -34,6 +34,7 @@ protected:
     //Adjuster* edge;
 
 public:
+    static const Glib::ustring TOOL_NAME;
 
     ImpulseDenoise ();
 

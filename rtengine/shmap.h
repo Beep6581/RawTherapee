@@ -29,6 +29,7 @@ namespace rtengine
 {
 
 class Imagefloat;
+class LabImage;
 
 class SHMap :
     public NonCopyable
@@ -40,6 +41,7 @@ public:
 
     SHMap (int w, int h);
     ~SHMap ();
+    void updateLab (LabImage* img, double radius, bool hq, int skip);
 
     void update (Imagefloat* img, double radius, double lumi[3], bool hq, int skip);
     void updateL (float** L, double radius, bool hq, int skip);
@@ -47,9 +49,8 @@ public:
 
 private:
     int W, H;
+    void fillLuminanceLab( LabImage * img, float **luminance);
 
-    void fillLuminance( Imagefloat * img, float **luminance, double lumi[3] );
-    void fillLuminanceL( float ** L, float **luminance );
     void dirpyr_shmap(float ** data_fine, float ** data_coarse, int width, int height, const LUTf& rangefn, int level, int scale);
 
 };

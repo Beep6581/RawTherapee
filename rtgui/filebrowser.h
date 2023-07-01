@@ -56,7 +56,7 @@ public:
 /*
  * Class handling actions common to all thumbnails of the file browser
  */
-class FileBrowser  : public ThumbBrowserBase,
+class FileBrowser final : public ThumbBrowserBase,
     public LWButtonListener,
     public ExportPanelListener,
     public ProfileStoreListener,
@@ -81,10 +81,14 @@ protected:
     Gtk::MenuItem* remove;
     Gtk::MenuItem* removeInclProc;
     Gtk::MenuItem* open;
+    Gtk::MenuItem* inspect;
     Gtk::MenuItem* selall;
+    Gtk::RadioMenuItem* sortMethod[Options::SORT_METHOD_COUNT];
+    Gtk::RadioMenuItem* sortOrder[2];
     Gtk::MenuItem* copyTo;
     Gtk::MenuItem* moveTo;
 
+    Gtk::MenuItem* menuSort;
     Gtk::MenuItem* menuRank;
     Gtk::MenuItem* menuLabel;
     Gtk::MenuItem* menuFileOperations;
@@ -130,12 +134,15 @@ protected:
 
     void toTrashRequested   (std::vector<FileBrowserEntry*> tbe);
     void fromTrashRequested (std::vector<FileBrowserEntry*> tbe);
+    void sortMethodRequested (int method);
+    void sortOrderRequested (int order);
     void rankingRequested   (std::vector<FileBrowserEntry*> tbe, int rank);
     void colorlabelRequested   (std::vector<FileBrowserEntry*> tbe, int colorlabel);
     void requestRanking (int rank);
     void requestColorLabel(int colorlabel);
     void notifySelectionListener ();
     void openRequested( std::vector<FileBrowserEntry*> mselected);
+    void inspectRequested( std::vector<FileBrowserEntry*> mselected);
     ExportPanel* exportPanel;
 
     type_trash_changed m_trash_changed;
@@ -180,6 +187,8 @@ public:
     void saveThumbnailHeight (int height) override;
     int  getThumbnailHeight () override;
 
+
+    void enableTabMode(bool enable);
     bool isInTabMode() override
     {
         return tbl ? tbl->isInTabMode() : false;

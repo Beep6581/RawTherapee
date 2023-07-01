@@ -113,10 +113,10 @@ protected:
     void updateBackBuffer();
 
     Gtk::SizeRequestMode get_request_mode_vfunc () const override;
-    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const override;
-    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
-    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const override;
-    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const override;
+    void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const final;
+    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const final;
+    void get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const final;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const final;
     void on_realize () override;
     bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
     bool on_button_press_event (GdkEventButton* event) override;
@@ -215,7 +215,7 @@ public:
     {
         return doubleThresh;
     }
-    void styleChanged (const Glib::RefPtr<Gtk::Style>& style);
+    void styleChanged (const Glib::RefPtr<Gtk::StyleContext>& style);
     unsigned int getPrecision ()
     {
         return precisionTop;

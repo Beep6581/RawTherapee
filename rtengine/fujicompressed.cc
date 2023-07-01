@@ -25,7 +25,7 @@ int bitDiff (int value1, int value2)
     int decBits = 0;
 
     if ( value2 < value1 )
-        while (decBits <= 12 && (value2 << ++decBits) < value1)
+        while (decBits <= 14 && (value2 << ++decBits) < value1)
             ;
 
     return decBits;
@@ -42,7 +42,7 @@ void CLASS init_fuji_compr (struct fuji_compressed_params* info)
         derror();
     }
 
-    info->q_table = (char *) malloc (32768);
+    info->q_table = (char *) malloc (2 << fuji_bits);
     merror (info->q_table, "init_fuji_compr()");
 
     if (fuji_raw_type == 16) {
@@ -83,19 +83,23 @@ void CLASS init_fuji_compr (struct fuji_compressed_params* info)
     }
 
     // populting gradients
-    if (info->q_point[4] == 0x3FFF) {
-        info->total_values = 0x4000;
-        info->raw_bits = 14;
-        info->max_bits = 56;
-        info->maxDiff = 256;
-    } else if (info->q_point[4] == 0xFFF) {
-        info->total_values = 4096;
-        info->raw_bits = 12;
-        info->max_bits = 48;
-        info->maxDiff = 64;
-    } else {
-        derror();
-    }
+    //if (info->q_point[4] == 0x3FFF) {
+    //    info->total_values = 0x4000;
+    //    info->raw_bits = 14;
+    //    info->max_bits = 56;
+    //    info->maxDiff = 256;
+    //} else if (info->q_point[4] == 0xFFF) {
+    //    info->total_values = 4096;
+    //    info->raw_bits = 12;
+    //    info->max_bits = 48;
+    //    info->maxDiff = 64;
+    //} else {
+    //    derror();
+    //}
+    info->total_values = (1 << fuji_bits);
+    info->raw_bits = fuji_bits;
+    info->max_bits = 4 * info->raw_bits;
+    info->maxDiff = info->total_values >> 6;
 }
 
 #define FUJI_BUF_SIZE 0x10000u
@@ -1017,7 +1021,7 @@ void CLASS parse_fuji_compressed_header()
             || h_total_lines > 0x800
             || h_total_lines == 0
             || h_total_lines != h_raw_height / 6
-            || (h_raw_bits != 12 && h_raw_bits != 14)
+            || (h_raw_bits != 12 && h_raw_bits != 14 && h_raw_bits != 16)
             || (h_raw_type != 16 && h_raw_type != 0)) {
         xtransCompressed = false;
         return;

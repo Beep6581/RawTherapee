@@ -36,6 +36,7 @@ protected:
     Gtk::Image *imgIcon[9];
 
 public:
+    static const Glib::ustring TOOL_NAME;
 
     ChMixer ();
 

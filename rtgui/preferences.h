@@ -26,10 +26,12 @@
 #include "options.h"
 #include "../rtengine/profilestore.h"
 
+class ExternalEditorPreferences;
 class RTWindow;
 class Splash;
+class ToolLocationPreference;
 
-class Preferences :
+class Preferences final :
     public Gtk::Dialog,
     public ProfileStoreListener
 {
@@ -101,9 +103,20 @@ class Preferences :
     Gtk::RadioButton* edGimp;
     Gtk::RadioButton* edPS;
     Gtk::RadioButton* edOther;
+    ExternalEditorPreferences *externalEditors;
+    
+    Gtk::RadioButton *editor_dir_temp;
+    Gtk::RadioButton *editor_dir_current;
+    Gtk::RadioButton *editor_dir_custom;
+    MyFileChooserButton *editor_dir_custom_path;
+    Gtk::CheckButton *editor_float32;
+    Gtk::CheckButton *editor_bypass_output_profile;
+    
     MyFileChooserButton* darkFrameDir;
     MyFileChooserButton* flatFieldDir;
     MyFileChooserButton* clutsDir;
+	MyFileChooserButton* cameraProfilesDir;
+	MyFileChooserButton* lensProfilesDir;
     Gtk::Label *dfLabel;
     Gtk::Label *ffLabel;
 
@@ -117,12 +130,22 @@ class Preferences :
     Gtk::CheckButton* prtBPC;
     Gtk::ComboBoxText* monProfile;
     Gtk::ComboBoxText* monIntent;
+    Gtk::CheckButton* mcie;
     Gtk::CheckButton* monBPC;
     Gtk::CheckButton* cbAutoMonProfile;
     //Gtk::CheckButton* cbAutocielab;
     Gtk::CheckButton* cbdaubech;
     Gtk::SpinButton*  hlThresh;
     Gtk::SpinButton*  shThresh;
+//    Gtk::CheckButton* mwbacorr;
+ //   Gtk::CheckButton* mwbaforc;
+ //   Gtk::CheckButton* mwbanopurp;
+
+//    Gtk::CheckButton* mwbasort;
+//    Gtk::SpinButton*  wbacorrnb;
+//    Gtk::SpinButton*  wbaprecis;
+//    Gtk::SpinButton*  wbasizeref;
+//    Gtk::SpinButton*  wbagreendelta;
 
     Gtk::SpinButton*  panFactor;
     Gtk::CheckButton* rememberZoomPanCheckbutton;
@@ -138,13 +161,18 @@ class Preferences :
     Gtk::ComboBoxText* dnliss;
 
     Gtk::Frame* waveletFrame;
-    Gtk::HBox* waveletTileSizeHBox;
+    Gtk::Box* waveletTileSizeHBox;
     Gtk::Label* waveletTileSizeLabel;
     Gtk::ComboBoxText* waveletTileSizeCombo;
 
     Gtk::ComboBoxText* cprevdemo;
     Gtk::CheckButton* ctiffserialize;
     Gtk::ComboBoxText* curveBBoxPosC;
+
+    Gtk::ComboBoxText* complexitylocal;
+
+    Gtk::CheckButton* inspectorWindowCB;
+    Gtk::CheckButton* zoomOnScrollCB;
 
     Gtk::ComboBoxText* themeCBT;
     Gtk::FontButton* mainFontFB;
@@ -208,6 +236,7 @@ class Preferences :
     Gtk::CheckButton* ckbFileBrowserToolbarSingleRow;
     Gtk::CheckButton* ckbShowFilmStripToolBar;
     Gtk::CheckButton* ckbHideTPVScrollbar;
+    Gtk::CheckButton* ckbshowtooltiplocallab;
 
     Gtk::CheckButton* ckbAutoSaveTpOpen;
     Gtk::Button* btnSaveTpOpenNow;
@@ -222,12 +251,14 @@ class Preferences :
 
     Options moptions;
     sigc::connection tconn, sconn, fconn, cpfconn, addc, setc, dfconn, ffconn, bpconn, rpconn, ipconn;
-    sigc::connection autoMonProfileConn, sndEnableConn, langAutoDetectConn, autocielabConn;
+    sigc::connection autoMonProfileConn, sndEnableConn, langAutoDetectConn, autocielabConn, observer10Conn;
     Glib::ustring initialTheme;
     Glib::ustring initialFontFamily;
     int initialFontSize;
     bool newFont;
     bool newCPFont;
+
+    ToolLocationPreference *toolLocationPreference;
 
     void fillPreferences ();
     void storePreferences ();
@@ -254,6 +285,7 @@ class Preferences :
 
     Gtk::ScrolledWindow *swGeneral;
     Gtk::ScrolledWindow *swImageProcessing;
+    Gtk::ScrolledWindow *swFavorites;
     Gtk::ScrolledWindow *swDynamicProfile;
     Gtk::ScrolledWindow *swFileBrowser;
     Gtk::ScrolledWindow *swColorMan;
@@ -263,6 +295,7 @@ class Preferences :
 
     Gtk::Widget *getGeneralPanel();
     Gtk::Widget *getImageProcessingPanel();
+    Gtk::Widget *getFavoritesPanel();
     Gtk::Widget *getDynamicProfilePanel();
     Gtk::Widget *getFileBrowserPanel();
     Gtk::Widget *getColorManPanel();
@@ -283,6 +316,7 @@ public:
     void sndEnableToggled ();
     void langAutoDetectToggled ();
     void autocielabToggled ();
+    void observer10Toggled (); 
 
     void selectStartupDir ();
     void addExtPressed ();

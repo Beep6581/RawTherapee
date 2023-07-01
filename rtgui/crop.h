@@ -18,7 +18,7 @@
  */
 #pragma once
 
-#include <vector>
+#include <memory>
 
 #include <gtkmm.h>
 
@@ -41,6 +41,8 @@ class Crop final :
     public rtengine::SizeListener
 {
 public:
+    static const Glib::ustring TOOL_NAME;
+
     Crop();
     ~Crop() override;
 
@@ -91,15 +93,12 @@ public:
     void rotateCrop         (int deg, bool hflip, bool vflip);
 
 private:
-    struct CropRatio {
-        Glib::ustring label;
-        double value;
-    };
-
-    std::vector<CropRatio> crop_ratios;
+    class CropRatios;
 
     void adjustCropToRatio();
     void updateCurrentRatio();
+
+    const std::unique_ptr<CropRatios> crop_ratios;
 
     Gtk::CheckButton* fixr;
     MyComboBoxText* ratio;

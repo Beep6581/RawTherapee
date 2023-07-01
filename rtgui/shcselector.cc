@@ -321,7 +321,7 @@ bool SHCSelector::on_motion_notify_event (GdkEventMotion* event)
     return true;
 }
 
-void SHCSelector::styleChanged (const Glib::RefPtr<Gtk::Style>& style)
+void SHCSelector::styleChanged (const Glib::RefPtr<Gtk::StyleContext>& style)
 {
 
     setDirty(true);

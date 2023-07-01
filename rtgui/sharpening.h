@@ -39,18 +39,18 @@ protected:
     Adjuster* damount;
     Adjuster* ddamping;
     Adjuster* diter;
-    Gtk::VBox* usm;
-    Gtk::VBox* rld;
+    Gtk::Box* usm;
+    Gtk::Box* rld;
 
     Adjuster* radius;
     Adjuster* amount;
     Adjuster* eradius;
     Adjuster* etolerance;
     Adjuster* hcamount;
-    Gtk::VBox* edgebin;
-    Gtk::VBox* hcbin;
-    Gtk::VBox* edgebox;
-    Gtk::VBox* hcbox;
+    Gtk::Box* edgebin;
+    Gtk::Box* hcbin;
+    Gtk::Box* edgebox;
+    Gtk::Box* hcbox;
     ThresholdAdjuster* threshold;
     Gtk::CheckButton* edgesonly;
     bool lastEdgesOnly;
@@ -62,6 +62,7 @@ protected:
     rtengine::ProcEvent EvSharpenContrast;
     rtengine::ProcEvent EvSharpenBlur;
 public:
+    static const Glib::ustring TOOL_NAME;
 
     Sharpening ();
     ~Sharpening () override;

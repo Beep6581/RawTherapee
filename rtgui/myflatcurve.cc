@@ -46,7 +46,8 @@ MyFlatCurve::MyFlatCurve () :
     deletedPointX(0.0),
     leftTanHandle({0.0, 0.0}),
     rightTanHandle({0.0, 0.0}),
-    draggingElement(false)
+    draggingElement(false),
+    locallabRef(0.0)
 {
 
     lit_point = -1;
@@ -169,6 +170,20 @@ void MyFlatCurve::draw ()
 
     cr->set_line_width (1.0 * s);
 
+    // Draw Locallab reference value in the background
+    if (locallabRef > 0.0) {
+        cr->set_line_width(1.0);
+        cr->move_to(double(graphX + 1), double(graphY - 1));
+        c = style->get_color(state);
+        cr->set_source_rgba(c.get_red(), c.get_green(), c.get_blue(), 0.2);
+        cr->line_to(double(graphX + 1), double(graphY - 1) -  double(graphH - 2));
+        cr->line_to(double(graphX) + 1.5 + locallabRef*double(graphW -2), double(graphY - 1) - double(graphH - 2));
+        cr->line_to(double(graphX) + 1.5 + locallabRef*double(graphW -2), double(graphY - 1));
+        cr->close_path();
+        cr->fill();
+        cr->stroke();
+    }
+
     // draw the left colored bar
     if (leftBar) {
         // first the background
@@ -233,21 +248,21 @@ void MyFlatCurve::draw ()
         if (n > 1) {
             if (pipetteR > -1.f) {
                 cr->set_source_rgba (1., 0., 0., 0.5); // WARNING: assuming that red values are stored in pipetteR, which might not be the case!
-                cr->move_to (graphX + graphW*pipetteR, graphY + 1. * s);
+                cr->move_to (graphX + graphW * static_cast<double>(pipetteR), graphY + 1. * s);
                 cr->rel_line_to (0, -graphH - 1. * s);
                 cr->stroke ();
             }
 
             if (pipetteG > -1.f) {
                 cr->set_source_rgba (0., 1., 0., 0.5); // WARNING: assuming that green values are stored in pipetteG, which might not be the case!
-                cr->move_to (graphX + graphW*pipetteG, graphY + 1. * s);
+                cr->move_to (graphX + graphW * static_cast<double>(pipetteG), graphY + 1. * s);
                 cr->rel_line_to (0, -graphH - 1. * s);
                 cr->stroke ();
             }
 
             if (pipetteB > -1.f) {
                 cr->set_source_rgba (0., 0., 1., 0.5); // WARNING: assuming that blue values are stored in pipetteB, which might not be the case!
-                cr->move_to (graphX + graphW*pipetteB, graphY + 1. * s);
+                cr->move_to (graphX + graphW * static_cast<double>(pipetteB), graphY + 1. * s);
                 cr->rel_line_to (0, -graphH - 1. * s);
                 cr->stroke ();
             }
@@ -257,7 +272,7 @@ void MyFlatCurve::draw ()
             cr->set_line_width (2. * s);
             c = style->get_color (state);
             cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
-            cr->move_to (graphX + graphW*pipetteVal, graphY + 1. * s);
+            cr->move_to (graphX + graphW * static_cast<double>(pipetteVal), graphY + 1. * s);
             cr->rel_line_to (0, -graphH - 1. * s);
             cr->stroke ();
             cr->set_line_width (1. * s);
@@ -437,10 +452,10 @@ void MyFlatCurve::draw ()
     // draw curve
     c = style->get_color(state);
     cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
-    cr->move_to (graphX, getVal(point, 0) * -graphH + graphY);
+    cr->move_to (graphX, static_cast<double>(getVal(point, 0)) * -graphH + graphY);
 
     for (int i = 1; i < graphW; ++i) {
-        cr->line_to ((double)i + graphX, (double)getVal(point, i) * -graphH + graphY);
+        cr->line_to ((double)i + graphX, static_cast<double>(getVal(point, i)) * -graphH + graphY);
     }
 
     cr->stroke ();
@@ -1868,6 +1883,35 @@ void MyFlatCurve::stopNumericalAdjustment()
         setDirty(true);
         draw();
     }
+}
+
+void MyFlatCurve::updateLocallabBackground(double ref)
+{
+    locallabRef = ref;
+
+     mcih->pending++;
+
+     idle_register.add(
+        [this]() -> bool
+        {
+            if (mcih->destroyed) {
+                if (mcih->pending == 1) {
+                    delete mcih;
+                } else {
+                    --mcih->pending;
+                }
+
+                 return false;
+            }
+
+             mcih->clearPixmap();
+            mcih->myCurve->queue_draw();
+
+             --mcih->pending;
+
+             return false;
+        }
+    );
 }
 
 void MyFlatCurve::setType (FlatCurveType t)

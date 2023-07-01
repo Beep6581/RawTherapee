@@ -42,20 +42,20 @@ PreviewImage::PreviewImage (const Glib::ustring &fname, const Glib::ustring &ext
 
         if (ext.lowercase() == "jpg" || ext.lowercase() == "jpeg") {
             // int deg = infoFromImage (fname);
-            tpp = rtengine::Thumbnail::loadFromImage (fname, width, height, 1, 1., true);
+            tpp = rtengine::Thumbnail::loadFromImage (fname, width, height, 1, 1., ColorTemp::DEFAULT_OBSERVER, true);
 
             if (tpp) {
                 data = tpp->getImage8Data();
             }
         } else if (ext.lowercase() == "png") {
-            tpp = rtengine::Thumbnail::loadFromImage (fname, width, height, 1, 1., true);
+            tpp = rtengine::Thumbnail::loadFromImage (fname, width, height, 1, 1., ColorTemp::DEFAULT_OBSERVER, true);
 
             if (tpp) {
                 data = tpp->getImage8Data();
             }
         } else if (ext.lowercase() == "tif" || ext.lowercase() == "tiff") {
             // int deg = infoFromImage (fname);
-            tpp = rtengine::Thumbnail::loadFromImage (fname, width, height, 1, 1., true);
+            tpp = rtengine::Thumbnail::loadFromImage (fname, width, height, 1, 1., ColorTemp::DEFAULT_OBSERVER, true);
 
             if (tpp) {
                 data = tpp->getImage8Data();
@@ -121,7 +121,7 @@ PreviewImage::PreviewImage (const Glib::ustring &fname, const Glib::ustring &ext
             double contrastThresholdDummy = 0.0;
             rawImage.demosaic(params.raw, false, contrastThresholdDummy);
             Imagefloat image(fw, fh);
-            rawImage.getImage (wb, TR_NONE, &image, pp, params.toneCurve, params.raw);
+            rawImage.getImage (wb, TR_NONE, &image, pp, params.toneCurve, params.raw, 0);
             rtengine::Image8 output(fw, fh);
             rawImage.convertColorSpace(&image, params.icm, wb);
 #ifdef _OPENMP

@@ -100,7 +100,7 @@ Image8* Image8::copy () const
     return cp;
 }
 
-void Image8::getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* image, PreviewProps pp) const
+void Image8::getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp) const
 {
     // compute channel multipliers
     float rm = 1.f, gm = 1.f, bm = 1.f;
@@ -111,10 +111,10 @@ void Image8::getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* image, P
         gm = dgm;
         bm = dbm;
 
-        rm = 1.0 / rm;
-        gm = 1.0 / gm;
-        bm = 1.0 / bm;
-        float mul_lum = 0.299 * rm + 0.587 * gm + 0.114 * bm;
+        rm = 1.f / rm;
+        gm = 1.f / gm;
+        bm = 1.f / bm;
+        float mul_lum = 0.299f * rm + 0.587f * gm + 0.114f * bm;
         rm /= mul_lum;
         gm /= mul_lum;
         bm /= mul_lum;
@@ -150,8 +150,6 @@ void Image8::getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* image, P
     rm /= area;
     gm /= area;
     bm /= area;
-
-#define GCLIP( x ) Color::gamma_srgb(CLIP(x))
 
 #ifdef _OPENMP
     #pragma omp parallel

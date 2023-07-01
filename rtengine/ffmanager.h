@@ -29,7 +29,7 @@ namespace rtengine
 {
 
 class RawImage;
-class ffInfo
+class ffInfo final
 {
 public:
 
@@ -71,7 +71,7 @@ protected:
     void updateRawImage();
 };
 
-class FFManager
+class FFManager final
 {
 public:
     void init(const Glib::ustring &pathname);

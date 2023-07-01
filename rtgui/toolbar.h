@@ -30,6 +30,8 @@ class ToolBarListener
 
 public:
     virtual ~ToolBarListener() = default;
+    /// Callback when a tool is deselected. WARNING: Not yet called for most tools.
+    virtual void toolDeselected(ToolMode tool) = 0;
     /// Callback when a tool is selected
     virtual void toolSelected(ToolMode tool) = 0;
 
@@ -37,7 +39,7 @@ public:
     virtual void editModeSwitchedOff() = 0;
 };
 
-class ToolBar final : public Gtk::HBox
+class ToolBar final : public Gtk::Box
 {
 private:
     std::unique_ptr<RTImage> handimg;
@@ -51,6 +53,7 @@ private:
     void colPicker_pressed (GdkEventButton* event);
     void crop_pressed ();
     void stra_pressed ();
+    void persp_pressed ();
     bool showColorPickers(bool showCP);
     void switchColorPickersVisibility();
 
@@ -60,16 +63,19 @@ protected:
     Gtk::ToggleButton* colPickerTool;
     Gtk::ToggleButton* cropTool;
     Gtk::ToggleButton* straTool;
+    Gtk::ToggleButton* perspTool;
     ToolBarListener* listener;
     LockablePickerToolListener* pickerListener;
     ToolMode current;
     bool allowNoTool;
     bool editingMode;  // true if the cursor is being used to remotely edit tool's values
+    bool blockEdit; // true if edit tool shouldn't be disabled when pressing hand button or h/H key
     sigc::connection  handConn;
     sigc::connection  wbConn;
     sigc::connection  cpConn;
     sigc::connection  cropConn;
     sigc::connection  straConn;
+    sigc::connection  perspConn;
 
 public:
     ToolBar ();
@@ -99,4 +105,9 @@ public:
 
     bool handleShortcutKey (GdkEventKey* event);
     void setBatchMode();
+
+    void blockEditDeactivation(bool cond = true)
+    {
+        blockEdit = cond;
+    }
 };

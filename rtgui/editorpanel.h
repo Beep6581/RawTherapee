@@ -32,11 +32,21 @@
 #include "../rtengine/noncopyable.h"
 #include "../rtengine/rtengine.h"
 
+namespace rtengine
+{
+template<typename T>
+class array2D;
+}
+
+using ExternalEditorChangedSignal = sigc::signal<void>;
+
 class BatchQueueEntry;
 class EditorPanel;
 class FilePanel;
 class MyProgressBar;
 class Navigator;
+class PopUpButton;
+class RTAppChooserDialog;
 class Thumbnail;
 class ToolPanelCoordinator;
 
@@ -49,15 +59,17 @@ struct EditorPanelIdleHelper {
 class RTWindow;
 
 class EditorPanel final :
-    public Gtk::VBox,
+    public Gtk::Box,
     public PParamsChangeListener,
     public rtengine::ProgressListener,
     public ThumbnailListener,
     public HistoryBeforeLineListener,
     public rtengine::HistogramListener,
+    public HistogramPanelListener,
     public rtengine::NonCopyable
 {
 public:
+
     explicit EditorPanel (FilePanel* filePanel = nullptr);
     ~EditorPanel () override;
 
@@ -79,6 +91,7 @@ public:
 
     void writeOptions();
     void writeToolExpandedStatus (std::vector<int> &tpOpen);
+    void updateShowtooltipVisibility (bool showtooltip);
 
     void showTopPanel (bool show);
     bool isRealized()
@@ -125,8 +138,25 @@ public:
         const LUTu& histGreenRaw,
         const LUTu& histBlueRaw,
         const LUTu& histChroma,
-        const LUTu& histLRETI
+        const LUTu& histLRETI,
+        int vectorscopeScale,
+        const array2D<int>& vectorscopeHC,
+        const array2D<int>& vectorscopeHS,
+        int waveformScale,
+        const array2D<int>& waveformRed,
+        const array2D<int>& waveformGreen,
+        const array2D<int>& waveformBlue,
+        const array2D<int>& waveformLuma
     ) override;
+    void setObservable(rtengine::HistogramObservable* observable) override;
+    bool updateHistogram(void) const override;
+    bool updateHistogramRaw(void) const override;
+    bool updateVectorscopeHC(void) const override;
+    bool updateVectorscopeHS(void) const override;
+    bool updateWaveform(void) const override;
+
+    // HistogramPanelListener
+    void scopeTypeChanged(Options::ScopeType new_type) override;
 
     // event handlers
     void info_toggled ();
@@ -137,10 +167,16 @@ public:
     void tbBeforeLock_toggled();
     void saveAsPressed ();
     void queueImgPressed ();
-    void sendToGimpPressed ();
+    void sendToExternal();
+    void sendToExternalChanged(int);
+    void sendToExternalPressed();
     void openNextEditorImage ();
     void openPreviousEditorImage ();
     void syncFileBrowser ();
+
+    // Signals.
+    ExternalEditorChangedSignal * getExternalEditorChangedSignal();
+    void setExternalEditorChangedSignal(ExternalEditorChangedSignal *signal);
 
     void tbTopPanel_1_visible (bool visible);
     bool CheckSidePanelsVisibility();
@@ -157,9 +193,12 @@ public:
     {
         return isProcessing;
     }
+    void updateExternalEditorWidget(int selectedIndex, const std::vector<ExternalEditor> &editors);
     void updateProfiles (const Glib::ustring &printerProfile, rtengine::RenderingIntent printerIntent, bool printerBPC);
     void updateTPVScrollbar (bool hide);
     void updateHistogramPosition (int oldPosition, int newPosition);
+    void updateToolPanelToolLocations(
+        const std::vector<Glib::ustring> &favorites, bool cloneFavoriteTools);
 
     void defaultMonitorProfileChanged (const Glib::ustring &profile_name, bool auto_monitor_profile);
 
@@ -176,6 +215,9 @@ private:
     bool                idle_sendToGimp ( ProgressConnector<rtengine::IImagefloat*> *pc, Glib::ustring fname);
     bool                idle_sentToGimp (ProgressConnector<int> *pc, rtengine::IImagefloat* img, Glib::ustring filename);
     void                histogramProfile_toggled ();
+    RTAppChooserDialog *getAppChooserDialog();
+    void onAppChooserDialogResponse(int resposneId);
+    void updateExternalEditorSelection();
 
 
     Glib::ustring lastSaveAsFileName;
@@ -199,16 +241,26 @@ private:
     Gtk::Image *iShowHideSidePanels_exit;
     Gtk::Image *iBeforeLockON, *iBeforeLockOFF;
     Gtk::Paned *leftbox;
-    Gtk::Box *leftsubbox;
+    Gtk::Paned *leftsubpaned;
     Gtk::Paned *vboxright;
     Gtk::Box *vsubboxright;
 
     Gtk::Button* queueimg;
     Gtk::Button* saveimgas;
-    Gtk::Button* sendtogimp;
+    PopUpButton* send_to_external;
+    Gtk::RadioButtonGroup send_to_external_radio_group;
     Gtk::Button* navSync;
     Gtk::Button* navNext;
     Gtk::Button* navPrev;
+    Glib::RefPtr<Gio::AppInfo> external_editor_info;
+    bool external_editor_native_command;
+    std::unique_ptr<RTAppChooserDialog> app_chooser_dialog;
+    ExternalEditorChangedSignal *externalEditorChangedSignal;
+    sigc::connection externalEditorChangedSignalConnection;
+
+    rtengine::InitialImage *cached_exported_image;
+    rtengine::procparams::ProcParams cached_exported_pparams;
+    Glib::ustring cached_exported_filename;
 
     class ColorManagementToolbar;
     std::unique_ptr<ColorManagementToolbar> colorMgmtToolBar;
@@ -259,4 +311,7 @@ private:
     bool isProcessing;
 
     IdleRegister idle_register;
+
+    rtengine::HistogramObservable* histogram_observable;
+    Options::ScopeType histogram_scope_type;
 };

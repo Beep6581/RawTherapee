@@ -44,6 +44,7 @@ protected:
     bool lastchanthree;
 
 public:
+    static const Glib::ustring TOOL_NAME;
 
     SharpenEdge              ();
 

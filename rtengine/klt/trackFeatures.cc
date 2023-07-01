@@ -460,7 +460,7 @@ static int _trackFeature(
 
   /* Check whether window is out of bounds */
   if (*x2-hw < 0.0f || nc-(*x2+hw) < one_plus_eps ||
-      *y2-hh < 0.0f || nr-(*y2+hh) < one_plus_eps)
+      *y2-hh < 0.0f || nr-(*y2+hh) < one_plus_eps || std::isnan(*x2) || std::isnan(*y2))
     status = KLT_OOB;
 
   /* Check whether residue is too large */
@@ -1044,7 +1044,7 @@ static int _am_trackFeatureAffine(
 
 #ifdef DEBUG_AFFINE_MAPPING
       aff_diff_win->data = imgdiff;
-      sprintf(fname, "./debug/kltimg_trans_diff_win%03d.%03d.pgm", glob_index, counter);
+      snprintf(fname, sizeof(fname), "./debug/kltimg_trans_diff_win%03d.%03d.pgm", glob_index, counter);
       printf("%s\n", fname);
       _KLTWriteAbsFloatImageToPGM(aff_diff_win, fname,256.0);
       printf("iter = %d translation tracker res: %f\n", iteration, _sumAbsFloatWindow(imgdiff, width, height)/(width*height));
@@ -1095,13 +1095,13 @@ static int _am_trackFeatureAffine(
       counter++;
       _am_computeAffineMappedImage(img1, x1, y1,  1.0, 0.0 , 0.0, 1.0, width, height, imgdiff);
       aff_diff_win->data = imgdiff;
-      sprintf(fname, "./debug/kltimg_aff_diff_win%03d.%03d_1.pgm", glob_index, counter);
+      snprintf(fname, sizeof(fname), "./debug/kltimg_aff_diff_win%03d.%03d_1.pgm", glob_index, counter);
       printf("%s\n", fname);
       _KLTWriteAbsFloatImageToPGM(aff_diff_win, fname,256.0);
 
       _am_computeAffineMappedImage(img2, *x2, *y2,  *Axx, *Ayx , *Axy, *Ayy, width, height, imgdiff);
       aff_diff_win->data = imgdiff;
-      sprintf(fname, "./debug/kltimg_aff_diff_win%03d.%03d_2.pgm", glob_index, counter);
+      snprintf(fname, sizeof(fname), "./debug/kltimg_aff_diff_win%03d.%03d_2.pgm", glob_index, counter);
       printf("%s\n", fname);
       _KLTWriteAbsFloatImageToPGM(aff_diff_win, fname,256.0);
 #endif
@@ -1110,7 +1110,7 @@ static int _am_trackFeatureAffine(
 					   width, height, imgdiff);
 #ifdef DEBUG_AFFINE_MAPPING
       aff_diff_win->data = imgdiff;
-      sprintf(fname, "./debug/kltimg_aff_diff_win%03d.%03d_3.pgm", glob_index,counter);
+      snprintf(fname, sizeof(fname), "./debug/kltimg_aff_diff_win%03d.%03d_3.pgm", glob_index,counter);
       printf("%s\n", fname);
       _KLTWriteAbsFloatImageToPGM(aff_diff_win, fname,256.0);
 
@@ -1335,17 +1335,17 @@ void KLTTrackFeatures(
 	if (tc->writeInternalImages)  {
 		char fname[80];
 		for (i = 0 ; i < tc->nPyramidLevels ; i++)  {
-			sprintf(fname, "kltimg_tf_i%d.pgm", i);
+			snprintf(fname, sizeof(fname), "kltimg_tf_i%d.pgm", i);
 			_KLTWriteFloatImageToPGM(pyramid1->img[i], fname);
-			sprintf(fname, "kltimg_tf_i%d_gx.pgm", i);
+			snprintf(fname, sizeof(fname), "kltimg_tf_i%d_gx.pgm", i);
 			_KLTWriteFloatImageToPGM(pyramid1_gradx->img[i], fname);
-			sprintf(fname, "kltimg_tf_i%d_gy.pgm", i);
+			snprintf(fname, sizeof(fname), "kltimg_tf_i%d_gy.pgm", i);
 			_KLTWriteFloatImageToPGM(pyramid1_grady->img[i], fname);
-			sprintf(fname, "kltimg_tf_j%d.pgm", i);
+			snprintf(fname, sizeof(fname), "kltimg_tf_j%d.pgm", i);
 			_KLTWriteFloatImageToPGM(pyramid2->img[i], fname);
-			sprintf(fname, "kltimg_tf_j%d_gx.pgm", i);
+			snprintf(fname, sizeof(fname), "kltimg_tf_j%d_gx.pgm", i);
 			_KLTWriteFloatImageToPGM(pyramid2_gradx->img[i], fname);
-			sprintf(fname, "kltimg_tf_j%d_gy.pgm", i);
+			snprintf(fname, sizeof(fname), "kltimg_tf_j%d_gy.pgm", i);
 			_KLTWriteFloatImageToPGM(pyramid2_grady->img[i], fname);
 		}
 	}

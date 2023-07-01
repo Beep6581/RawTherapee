@@ -4,6 +4,7 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+#include "rt_algo.h"
 #include "sleef.h"
 
 #define DIAGONALS 5
@@ -42,21 +43,13 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
 
     //s is preconditionment of r. Without, direct to r.
     float *s = r;
-    double rs = 0.0; // use double precision for large summations
 
     if(Preconditioner != nullptr) {
         s = new float[n];
-
         Preconditioner(s, r, Pass);
     }
 
-#ifdef _OPENMP
-    #pragma omp parallel for reduction(+:rs)  // removed schedule(dynamic,10)
-#endif
-
-    for(int ii = 0; ii < n; ii++) {
-        rs += r[ii] * s[ii];
-    }
+    double rs = rtengine::accumulateProduct(r, s, n);
 
     //Search direction d.
     float *d = (buffer + n + 32);
@@ -77,22 +70,15 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
 
     for(iterate = 0; iterate < MaximumIterates; iterate++) {
         //Get step size alpha, store ax while at it.
-        double ab = 0.0; // use double precision for large summations
         Ax(ax, d, Pass);
-#ifdef _OPENMP
-        #pragma omp parallel for reduction(+:ab)
-#endif
 
-        for(int ii = 0; ii < n; ii++) {
-            ab += d[ii] * ax[ii];
-        }
-
-        if(ab == 0.0f) {
+        double ab = rtengine::accumulateProduct(d, ax, n);
+        if(ab == 0.0) {
             break;    //So unlikely. It means perfectly converged or singular, stop either way.
         }
 
         ab = rs / ab;
-
+        float abf = ab;
         //Update x and r with this step size.
         double rms = 0.0; // use double precision for large summations
 #ifdef _OPENMP
@@ -100,15 +86,15 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
 #endif
 
         for(int ii = 0; ii < n; ii++) {
-            x[ii] += ab * d[ii];
-            r[ii] -= ab * ax[ii]; //"Fast recursive formula", use explicit r = b - Ax occasionally?
-            rms += r[ii] * r[ii];
+            x[ii] += abf * d[ii];
+            r[ii] -= abf * ax[ii]; //"Fast recursive formula", use explicit r = b - Ax occasionally?
+            rms += rtengine::SQR<double>(r[ii]);
         }
 
         rms = sqrtf(rms / n);
 
         //Quit? This probably isn't the best stopping condition, but ok.
-        if(rms < RMSResidual) {
+        if(rms < static_cast<double>(RMSResidual)) {
             break;
         }
 
@@ -118,31 +104,16 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
 
         //Get beta.
         ab = rs;
-        rs = 0.0f;
-
-#ifdef _OPENMP
-        #pragma omp parallel
-#endif
-        {
-#ifdef _OPENMP
-            #pragma omp for reduction(+:rs)
-#endif
-
-            for(int ii = 0; ii < n; ii++) {
-                rs += r[ii] * s[ii];
-            }
-
-        }
-
+        rs = rtengine::accumulateProduct(r, s, n);
         ab = rs / ab;
-
+        abf = ab;
         //Update search direction p.
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
 
         for(int ii = 0; ii < n; ii++) {
-            d[ii] = s[ii] + ab * d[ii];
+            d[ii] = s[ii] + abf * d[ii];
         }
 
 
@@ -237,7 +208,7 @@ bool MultiDiagonalSymmetricMatrix::CreateDiagonal(int index, int StartRow)
     return true;
 }
 
-inline int MultiDiagonalSymmetricMatrix::FindIndex(int StartRow)
+inline int MultiDiagonalSymmetricMatrix::FindIndex(int StartRow) const
 {
     //There's GOT to be a better way to do this. "Bidirectional map?"
     // Issue 1895 : Changed start of loop from zero to one
@@ -916,7 +887,7 @@ void EdgePreservingDecomposition::CompressDynamicRange(float *Source, float Scal
     float temp;
 
     if(DetailBoost > 0.f) {
-        float betemp = expf(-(2.f - DetailBoost + 0.694f)) - 1.f; //0.694 = log(2)
+        float betemp = expf(-(2.f - DetailBoost + 0.693147f)) - 1.f; //0.694 = log(2)
         temp = 1.2f * xlogf( -betemp);
     } else {
         temp = CompressionExponent - 1.0f;
@@ -939,7 +910,7 @@ void EdgePreservingDecomposition::CompressDynamicRange(float *Source, float Scal
             cev = xexpf(LVFU(Source[i]) + LVFU(u[i]) * (tempv)) - epsv;
             uev = xexpf(LVFU(u[i])) - epsv;
             sourcev = xexpf(LVFU(Source[i])) - epsv;
-            _mm_storeu_ps( &Source[i], cev + DetailBoostv * (sourcev - uev) );
+            _mm_storeu_ps( &Source[i], cev + DetailBoostv * (sourcev - uev));
         }
     }
 

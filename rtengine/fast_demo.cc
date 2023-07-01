@@ -281,7 +281,6 @@ void RawImageSource::fast_demosaic()
                 int right  = min(left + TS, W - bord + 2);
 
 #ifdef __SSE2__
-                int j, cc;
                 __m128 wtuv, wtdv, wtlv, wtrv;
                 __m128 greenv, tempv, absv, abs2v;
                 __m128 c16v = _mm_set1_ps( 16.0f );
@@ -302,7 +301,7 @@ void RawImageSource::fast_demosaic()
                     float   wtu, wtd, wtl, wtr;
 #ifdef __SSE2__
                     selmask = (vmask)_mm_andnot_ps( (__m128)selmask, (__m128)andmask);
-
+                    int j, cc;
                     for (j = left, cc = 0; j < right - 3; j += 4, cc += 4) {
                         tempv = LVFU(rawData[i][j]);
                         absv = vabsf(LVFU(rawData[i - 1][j]) - LVFU(rawData[i + 1][j]));
@@ -421,16 +420,12 @@ void RawImageSource::fast_demosaic()
                         temp1v = LVFU(redtile[rr * TS + cc]);
                         temp2v = greenv - zd25v * (greensumv - LVFU(redtile[(rr - 1) * TS + cc]) - LVFU(redtile[(rr + 1) * TS + cc]) - LVFU(redtile[rr * TS + cc - 1]) - LVFU(redtile[rr * TS + cc + 1]));
 
-//              temp2v = greenv - zd25v*((LVFU(greentile[(rr-1)*TS+cc])-LVFU(redtile[(rr-1)*TS+cc]))+(LVFU(greentile[(rr+1)*TS+cc])-LVFU(redtile[(rr+1)*TS+cc]))+
-//                                                         (LVFU(greentile[rr*TS+cc-1])-LVFU(redtile[rr*TS+cc-1]))+(LVFU(greentile[rr*TS+cc+1])-LVFU(redtile[rr*TS+cc+1])));
                         _mm_storeu_ps( &redtile[rr * TS + cc], vself(selmask, temp1v, temp2v));
 
                         temp1v = LVFU(bluetile[rr * TS + cc]);
 
                         temp2v = greenv - zd25v * (greensumv - LVFU(bluetile[(rr - 1) * TS + cc]) - LVFU(bluetile[(rr + 1) * TS + cc]) - LVFU(bluetile[rr * TS + cc - 1]) - LVFU(bluetile[rr * TS + cc + 1]));
 
-//              temp2v = greenv - zd25v*((LVFU(greentile[(rr-1)*TS+cc])-LVFU(bluetile[(rr-1)*TS+cc]))+(LVFU(greentile[(rr+1)*TS+cc])-LVFU(bluetile[(rr+1)*TS+cc]))+
-//                                                          (LVFU(greentile[rr*TS+cc-1])-LVFU(bluetile[rr*TS+cc-1]))+(LVFU(greentile[rr*TS+cc+1])-LVFU(bluetile[rr*TS+cc+1])));
                         _mm_storeu_ps( &bluetile[rr * TS + cc], vself(selmask, temp1v, temp2v));
                     }
 
@@ -450,7 +445,7 @@ void RawImageSource::fast_demosaic()
 
                 for (int i = top + 2, rr = 2; i < bottom - 2; i++, rr++) {
 #ifdef __SSE2__
-
+                    int j, cc;
                     for (j = left + 2, cc = 2; j < right - 5; j += 4, cc += 4) {
                         _mm_storeu_ps(&red[i][j], vmaxf(LVFU(redtile[rr * TS + cc]), ZEROV));
                         _mm_storeu_ps(&green[i][j], vmaxf(LVFU(greentile[rr * TS + cc]), ZEROV));

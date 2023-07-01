@@ -19,13 +19,13 @@
     <url type="donation">https://www.paypal.me/rawtherapee</url>
     <url type="help">https://rawpedia.rawtherapee.com</url>
     <url type="homepage">https://www.rawtherapee.com</url>
-    <url type="translate">https://discuss.pixls.us/t/localization-how-to-translate-rawtherapee-and-rawpedia/2594</url>
+    <url type="translate">https://rawpedia.rawtherapee.com/Main_Page#Localization</url>
     <launchable type="desktop-id">rawtherapee.desktop</launchable>
     <releases>
+        <release version="5.9" date="2022-11-27" type="stable"></release>
+        <release version="5.8" date="2020-02-04" type="stable"></release>
         <release version="5.7" date="2019-09-10" type="stable"></release>
         <release version="5.6" date="2019-04-20" type="stable"></release>
-        <release version="5.6~rc2" date="2019-04-17" type="development"></release>
-        <release version="5.6~rc1" date="2019-04-10" type="development"></release>
         <release version="5.5" date="2018-12-17" type="stable"></release>
     </releases>
     <provides>

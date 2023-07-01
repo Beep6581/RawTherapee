@@ -35,13 +35,14 @@ DynamicProfilePanel::EditDialog::EditDialog (const Glib::ustring &title, Gtk::Wi
     Gtk::Dialog (title, parent)
 {
     profilepath_ = Gtk::manage (new ProfileStoreComboBox());
-    Gtk::HBox *hb = Gtk::manage (new Gtk::HBox());
+    Gtk::Box *hb = Gtk::manage (new Gtk::Box());
     hb->pack_start (*Gtk::manage (new Gtk::Label (M ("DYNPROFILEEDITOR_PROFILE"))), false, false, 4);
     hb->pack_start (*profilepath_, true, true, 2);
     get_content_area()->pack_start (*hb, Gtk::PACK_SHRINK, 4);
 
     add_optional (M ("EXIFFILTER_CAMERA"), has_camera_, camera_);
     add_optional (M ("EXIFFILTER_LENS"), has_lens_, lens_);
+    add_optional (M ("EXIFFILTER_PATH"), has_path_, path_);
     
     imagetype_ = Gtk::manage (new MyComboBoxText());
     imagetype_->append(Glib::ustring("(") + M("DYNPROFILEEDITOR_IMGTYPE_ANY") + ")");
@@ -49,7 +50,7 @@ DynamicProfilePanel::EditDialog::EditDialog (const Glib::ustring &title, Gtk::Wi
     imagetype_->append(M("DYNPROFILEEDITOR_IMGTYPE_HDR"));
     imagetype_->append(M("DYNPROFILEEDITOR_IMGTYPE_PS"));
     imagetype_->set_active(0);
-    hb = Gtk::manage (new Gtk::HBox());
+    hb = Gtk::manage (new Gtk::Box());
     hb->pack_start (*Gtk::manage (new Gtk::Label (M ("EXIFFILTER_IMAGETYPE"))), false, false, 4);
     hb->pack_start (*imagetype_, true, true, 2);
     get_content_area()->pack_start (*hb, Gtk::PACK_SHRINK, 4);
@@ -93,6 +94,9 @@ void DynamicProfilePanel::EditDialog::set_rule (
     has_lens_->set_active (rule.lens.enabled);
     lens_->set_text (rule.lens.value);
 
+    has_path_->set_active (rule.path.enabled);
+    path_->set_text (rule.path.value);
+
     if (!rule.imagetype.enabled) {
         imagetype_->set_active(0);
     } else if (rule.imagetype.value == "STD") {
@@ -135,6 +139,9 @@ DynamicProfileRule DynamicProfilePanel::EditDialog::get_rule()
 
     ret.lens.enabled = has_lens_->get_active();
     ret.lens.value = lens_->get_text();
+
+    ret.path.enabled = has_path_->get_active();
+    ret.path.value = path_->get_text();
 
     ret.imagetype.enabled = imagetype_->get_active_row_number() > 0;
     switch (imagetype_->get_active_row_number()) {
@@ -195,7 +202,7 @@ void DynamicProfilePanel::EditDialog::set_ranges()
 void DynamicProfilePanel::EditDialog::add_range (const Glib::ustring &name,
         Gtk::SpinButton *&from, Gtk::SpinButton *&to)
 {
-    Gtk::HBox *hb = Gtk::manage (new Gtk::HBox());
+    Gtk::Box *hb = Gtk::manage (new Gtk::Box());
     hb->pack_start (*Gtk::manage (new Gtk::Label (name)), false, false, 4);
     from = Gtk::manage (new Gtk::SpinButton());
     to = Gtk::manage (new Gtk::SpinButton());
@@ -210,7 +217,7 @@ void DynamicProfilePanel::EditDialog::add_range (const Glib::ustring &name,
 void DynamicProfilePanel::EditDialog::add_optional (const Glib::ustring &name, Gtk::CheckButton *&check, Gtk::Entry *&field)
 {
     check = Gtk::manage (new Gtk::CheckButton (name));
-    Gtk::HBox *hb = Gtk::manage (new Gtk::HBox());
+    Gtk::Box *hb = Gtk::manage (new Gtk::Box());
     hb->pack_start (*check, Gtk::PACK_SHRINK, 4);
     field = Gtk::manage (new Gtk::Entry());
     hb->pack_start (*field, true, true, 2);
@@ -231,10 +238,13 @@ DynamicProfilePanel::DynamicProfilePanel():
     button_edit_ (M ("DYNPROFILEEDITOR_EDIT")),
     button_delete_ (M ("DYNPROFILEEDITOR_DELETE"))
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    
     add (vbox_);
 
     treeview_.set_grid_lines (Gtk::TREE_VIEW_GRID_LINES_VERTICAL);
     scrolledwindow_.add (treeview_);
+    scrolledwindow_.set_vexpand();
 
     scrolledwindow_.set_policy (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 
@@ -291,6 +301,16 @@ DynamicProfilePanel::DynamicProfilePanel():
         col->set_cell_data_func (
             *cell, sigc::mem_fun (
                 *this, &DynamicProfilePanel::render_lens));
+    }
+
+    cell = Gtk::manage (new Gtk::CellRendererText());
+    cols_count = treeview_.append_column (M ("EXIFFILTER_PATH"), *cell);
+    col = treeview_.get_column (cols_count - 1);
+
+    if (col) {
+        col->set_cell_data_func (
+            *cell, sigc::mem_fun (
+                *this, &DynamicProfilePanel::render_path));
     }
 
     cell = Gtk::manage (new Gtk::CellRendererText());
@@ -372,6 +392,7 @@ void DynamicProfilePanel::update_rule (Gtk::TreeModel::Row row,
     row[columns_.expcomp] = rule.expcomp;
     row[columns_.camera] = rule.camera;
     row[columns_.lens] = rule.lens;
+    row[columns_.path] = rule.path;
     row[columns_.imagetype] = rule.imagetype;
     row[columns_.profilepath] = rule.profilepath;
 }
@@ -395,6 +416,7 @@ DynamicProfileRule DynamicProfilePanel::to_rule (Gtk::TreeModel::Row row,
     ret.expcomp = row[columns_.expcomp];
     ret.camera = row[columns_.camera];
     ret.lens = row[columns_.lens];
+    ret.path = row[columns_.path];
     ret.profilepath = row[columns_.profilepath];
     ret.imagetype = row[columns_.imagetype];
     return ret;
@@ -505,6 +527,12 @@ void DynamicProfilePanel::render_lens (
     Gtk::CellRenderer *cell, const Gtk::TreeModel::iterator &iter)
 {
     RENDER_OPTIONAL_ (lens);
+}
+
+void DynamicProfilePanel::render_path (
+    Gtk::CellRenderer *cell, const Gtk::TreeModel::iterator &iter)
+{
+    RENDER_OPTIONAL_ (path);
 }
 
 void DynamicProfilePanel::render_imagetype (

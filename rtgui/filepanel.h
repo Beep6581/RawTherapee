@@ -37,7 +37,7 @@ class RTWindow;
 class DirBrowser;
 
 class FilePanel final :
-    public Gtk::HPaned,
+    public Gtk::Paned,
     public FileSelectionListener,
     public rtengine::NonCopyable
 {
@@ -46,9 +46,9 @@ public:
     ~FilePanel () override;
 
     Gtk::Paned* placespaned;
-    Gtk::HPaned* dirpaned;
+    Gtk::Paned* dirpaned;
 
-    Gtk::HBox* rightBox;
+    Gtk::Box* rightBox;
 
     DirBrowser* dirBrowser;
     FilterPanel* filterPanel;
@@ -81,7 +81,10 @@ public:
     bool imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::InitialImage*> * );
 
     bool handleShortcutKey (GdkEventKey* event);
+    bool handleShortcutKeyRelease(GdkEventKey *event);
     void updateTPVScrollbar (bool hide);
+    void updateToolPanelToolLocations(
+        const std::vector<Glib::ustring> &favorites, bool cloneFavoriteTools);
 
 private:
     void on_NB_switch_page(Gtk::Widget* page, guint page_num);
@@ -90,7 +93,7 @@ private:
     RecentBrowser* recentBrowser;
 
     Inspector* inspectorPanel;
-    Gtk::VPaned* tpcPaned;
+    Gtk::Paned* tpcPaned;
     BatchToolPanelCoordinator* tpc;
     History* history;
     RTWindow* parent;

@@ -182,7 +182,7 @@ int RawImageSource::interpolateBadPixelsBayer(const PixelsMap &bitmapBads, array
 /* interpolateBadPixelsNcolors: correct raw pixels looking at the bitmap
  * takes into consideration if there are multiple bad pixels in the neighborhood
  */
-int RawImageSource::interpolateBadPixelsNColours(const PixelsMap &bitmapBads, const int colors)
+int RawImageSource::interpolateBadPixelsNColours(const PixelsMap &bitmapBads, const int colours)
 {
     constexpr float eps = 1.f;
     int counter = 0;
@@ -204,9 +204,9 @@ int RawImageSource::interpolateBadPixelsNColours(const PixelsMap &bitmapBads, co
                 continue;
             }
 
-            float wtdsum[colors];
-            float norm[colors];
-                for (int c = 0; c < colors; ++c) {
+            float wtdsum[colours];
+            float norm[colours];
+                for (int c = 0; c < colours; ++c) {
                     wtdsum[c] = norm[c] = 0.f;
                 }
 
@@ -216,41 +216,41 @@ int RawImageSource::interpolateBadPixelsNColours(const PixelsMap &bitmapBads, co
                     continue;
                 }
 
-                for (int c = 0; c < colors; ++c) {
-                    const float dirwt = 0.70710678f / (fabsf(rawData[row - 1][(col + dx) * colors + c] - rawData[row + 1][(col - dx) * colors + c]) + eps);
-                    wtdsum[c] += dirwt * (rawData[row - 1][(col + dx) * colors + c] + rawData[row + 1][(col - dx) * colors + c]);
+                for (int c = 0; c < colours; ++c) {
+                    const float dirwt = 0.70710678f / (fabsf(rawData[row - 1][(col + dx) * colours + c] - rawData[row + 1][(col - dx) * colours + c]) + eps);
+                    wtdsum[c] += dirwt * (rawData[row - 1][(col + dx) * colours + c] + rawData[row + 1][(col - dx) * colours + c]);
                     norm[c] += dirwt;
                 }
             }
 
             // horizontal interpolation
             if (!(bitmapBads.get(col - 1, row) || bitmapBads.get(col + 1, row))) {
-                for (int c = 0; c < colors; ++c) {
-                    const float dirwt = 1.f / (fabsf(rawData[row][(col - 1) * colors + c] - rawData[row][(col + 1) * colors + c]) + eps);
-                    wtdsum[c] += dirwt * (rawData[row][(col - 1) * colors + c] + rawData[row][(col + 1) * colors + c]);
+                for (int c = 0; c < colours; ++c) {
+                    const float dirwt = 1.f / (fabsf(rawData[row][(col - 1) * colours + c] - rawData[row][(col + 1) * colours + c]) + eps);
+                    wtdsum[c] += dirwt * (rawData[row][(col - 1) * colours + c] + rawData[row][(col + 1) * colours + c]);
                     norm[c] += dirwt;
                 }
             }
 
             // vertical interpolation
             if (!(bitmapBads.get(col, row - 1) || bitmapBads.get(col, row + 1))) {
-                for (int c = 0; c < colors; ++c) {
-                    const float dirwt = 1.f / (fabsf(rawData[row - 1][col * colors + c] - rawData[row + 1][col * colors + c]) + eps);
-                    wtdsum[c] += dirwt * (rawData[row - 1][col * colors + c] + rawData[row + 1][col * colors + c]);
+                for (int c = 0; c < colours; ++c) {
+                    const float dirwt = 1.f / (fabsf(rawData[row - 1][col * colours + c] - rawData[row + 1][col * colours + c]) + eps);
+                    wtdsum[c] += dirwt * (rawData[row - 1][col * colours + c] + rawData[row + 1][col * colours + c]);
                     norm[c] += dirwt;
                 }
             }
 
             if (LIKELY(norm[0] > 0.f)) { // This means, we found at least one pair of valid pixels in the steps above, likelihood of this case is about 99.999%
-                for (int c = 0; c < colors; ++c) {
-                    rawData[row][col * colors + c] = wtdsum[c] / (2.f * norm[c]); //gradient weighted average, Factor of 2.f is an optimization to avoid multiplications in former steps
+                for (int c = 0; c < colours; ++c) {
+                    rawData[row][col * colours + c] = wtdsum[c] / (2.f * norm[c]); //gradient weighted average, Factor of 2.f is an optimization to avoid multiplications in former steps
                 }
 
                 counter++;
             } else { //backup plan -- simple average. Same method for all channels. We could improve this, but it's really unlikely that this case happens
                 int tot = 0;
-                float sum[colors];
-                for (int c = 0; c < colors; ++c) {
+                float sum[colours];
+                for (int c = 0; c < colours; ++c) {
                     sum[c] = 0.f;
                 }
 
@@ -260,8 +260,8 @@ int RawImageSource::interpolateBadPixelsNColours(const PixelsMap &bitmapBads, co
                             continue;
                         }
 
-                        for (int c = 0; c < colors; ++c) {
-                            sum[c] += rawData[row + dy][(col + dx) * colors + c];
+                        for (int c = 0; c < colours; ++c) {
+                            sum[c] += rawData[row + dy][(col + dx) * colours + c];
                         }
 
                         tot++;
@@ -269,8 +269,8 @@ int RawImageSource::interpolateBadPixelsNColours(const PixelsMap &bitmapBads, co
                 }
 
                 if (tot > 0) {
-                    for (int c = 0; c < colors; ++c) {
-                        rawData[row][col * colors + c] = sum[c] / tot;
+                    for (int c = 0; c < colours; ++c) {
+                        rawData[row][col * colours + c] = sum[c] / tot;
                     }
 
                     counter ++;
@@ -477,7 +477,7 @@ int RawImageSource::interpolateBadPixelsXtrans(const PixelsMap &bitmapBads)
 int RawImageSource::findHotDeadPixels(PixelsMap &bpMap, const float thresh, const bool findHotPixels, const bool findDeadPixels) const
 {
     BENCHFUN
-    const float varthresh = (20.0 * (thresh / 100.0) + 1.0) / 24.f;
+    const float varthresh = (20.f * (thresh / 100.f) + 1.f) / 24.f;
 
     // counter for dead or hot pixels
     int counter = 0;

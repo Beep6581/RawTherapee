@@ -70,7 +70,6 @@ protected:
     char* profileData;
     int profileLength;
     char* loadedProfileData;
-    bool loadedProfileDataJpg;
     int loadedProfileLength;
     const std::unique_ptr<procparams::ExifPairs> exifChange;
     IptcData* iptc;
@@ -94,7 +93,7 @@ public:
     void setSampleArrangement(IIOSampleArrangement sArrangement);
     IIOSampleArrangement getSampleArrangement() const;
 
-    virtual void getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* image, PreviewProps pp) const = 0;
+    virtual void getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp) const = 0;
     virtual int getBPS () const = 0;
     virtual void getScanline (int row, unsigned char* buffer, int bps, bool isFloat = false) const = 0;
     virtual void setScanline (int row, const unsigned char* buffer, int bps, unsigned int numSamples = 3) = 0;
@@ -114,7 +113,13 @@ public:
 
     int savePNG (const Glib::ustring &fname, int bps = -1) const;
     int saveJPEG (const Glib::ustring &fname, int quality = 100, int subSamp = 3) const;
-    int saveTIFF (const Glib::ustring &fname, int bps = -1, bool isFloat = false, bool uncompressed = false) const;
+    int saveTIFF (
+        const Glib::ustring &fname,
+        int bps = -1,
+        bool isFloat = false,
+        bool uncompressed = false,
+        bool big = false
+    ) const;
 
     cmsHPROFILE getEmbeddedProfile () const;
     void getEmbeddedProfileData (int& length, unsigned char*& pdata) const;

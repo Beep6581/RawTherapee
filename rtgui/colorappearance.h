@@ -39,6 +39,8 @@ class ColorAppearance final :
     public ColorProvider
 {
 public:
+    static const Glib::ustring TOOL_NAME;
+
     ColorAppearance ();
     ~ColorAppearance () override;
 
@@ -53,6 +55,7 @@ public:
     void surroundChanged     ();
     void surrsrcChanged     ();
     void wbmodelChanged      ();
+    void illumChanged      ();
     void algoChanged         ();
     void surrsource_toggled  ();
     void gamut_toggled       ();
@@ -63,10 +66,10 @@ public:
     void autoCamChanged (double ccam, double ccamout) override;
     bool autoCamComputed_ ();
     void adapCamChanged (double cadap) override;
+    void wbCamChanged(double tem, double tin) override;
     bool adapCamComputed_ ();
     void ybCamChanged (int yb) override;
     bool ybCamComputed_ ();
-
     void curveChanged        (CurveEditor* ce) override;
     void curveMode1Changed   ();
     bool curveMode1Changed_  ();
@@ -75,12 +78,17 @@ public:
     void curveMode3Changed   ();
     bool curveMode3Changed_  ();
     void neutral_pressed       ();
+    void complexmethodChanged();
+    void modelmethodChanged();
+    void catmethodChanged();
+    void convertParamToNormal();
+    void updateGUIToMode(int mode);
 
     void expandCurve         (bool isExpanded);
     bool isCurveExpanded     ();
     void autoOpenCurve       () override;
 
-    void setAdjusterBehavior (bool degreeadd, bool adapscenadd, bool adaplumadd, bool badpixsladd, bool jlightadd, bool chromaadd, bool contrastadd, bool rstprotectionadd, bool qbrightadd, bool qcontrastadd, bool schromaadd, bool mchromaadd, bool colorhadd);
+    void setAdjusterBehavior (bool degreeadd, bool adapscenadd, bool adaplumadd, bool badpixsladd, bool jlightadd, bool chromaadd, bool contrastadd, bool rstprotectionadd, bool qbrightadd, bool qcontrastadd, bool schromaadd, bool mchromaadd, bool colorhadd, bool degreeoutadd, bool tempoutadd);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
     void updateCurveBackgroundHistogram(
         const LUTu& histToneCurve,
@@ -99,6 +107,11 @@ public:
     void writeOptions (std::vector<int> &tpOpen);
 
 private:
+    rtengine::ProcEvent EvCATAutotempout;
+    rtengine::ProcEvent EvCATillum;
+    rtengine::ProcEvent EvCATcomplex;
+    rtengine::ProcEvent EvCATmodel;
+    rtengine::ProcEvent EvCATcat;
     bool bgTTipQuery (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
     bool srTTipQuery (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
     void foldAllButMe (GdkEventButton* event, MyExpander *expander);
@@ -134,6 +147,9 @@ private:
     MyComboBoxText* toneCurveMode;
     MyComboBoxText* toneCurveMode2;
     MyComboBoxText* toneCurveMode3;
+    MyComboBoxText* complexmethod;
+    MyComboBoxText* modelmethod;
+    MyComboBoxText* catmethod;
 
     //Adjuster* edge;
     Gtk::CheckButton* surrsource;
@@ -143,6 +159,7 @@ private:
     Gtk::CheckButton* tonecie;
     //  Gtk::CheckButton* sharpcie;
     Gtk::Button* neutral;
+
     MyComboBoxText* surrsrc;
     sigc::connection  surrsrcconn;
 
@@ -150,11 +167,17 @@ private:
     sigc::connection  surroundconn;
     MyComboBoxText*   wbmodel;
     sigc::connection  wbmodelconn;
+    MyComboBoxText*   illum;
+    sigc::connection  illumconn;
     MyComboBoxText*   algo;
     sigc::connection  algoconn;
     sigc::connection  surrconn;
     sigc::connection  gamutconn, datacieconn, tonecieconn /*,badpixconn , sharpcieconn*/;
     sigc::connection  tcmodeconn, tcmode2conn, tcmode3conn, neutralconn;
+    sigc::connection  complexmethodconn, modelmethodconn, catmethodconn;
+    Gtk::Box* alHBox;
+    Gtk::Box* wbmHBox;
+    Gtk::Box* illumHBox;
     CurveEditorGroup* curveEditorG;
     CurveEditorGroup* curveEditorG2;
     CurveEditorGroup* curveEditorG3;
@@ -168,10 +191,13 @@ private:
     bool lastAutoAdapscen;
     bool lastAutoDegreeout;
     bool lastAutoybscen;
+    bool lastAutotempout;
     bool lastsurr;
     bool lastgamut;
     bool lastdatacie;
     bool lasttonecie;
+    double nexttemp;
+    double nextgreen;
 
     IdleRegister idle_register;
 };

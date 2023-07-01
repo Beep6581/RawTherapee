@@ -25,7 +25,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-ChMixer::ChMixer (): FoldableToolPanel(this, "chmixer", M("TP_CHMIXER_LABEL"), false, true)
+const Glib::ustring ChMixer::TOOL_NAME = "chmixer";
+
+ChMixer::ChMixer (): FoldableToolPanel(this, TOOL_NAME, M("TP_CHMIXER_LABEL"), false, true)
 {
 
     imgIcon[0] = Gtk::manage (new RTImage ("circle-red-small.png"));
@@ -47,7 +49,7 @@ ChMixer::ChMixer (): FoldableToolPanel(this, "chmixer", M("TP_CHMIXER_LABEL"), f
     red[1] = Gtk::manage (new Adjuster ("", -RANGE, RANGE, 0.1, 0, imgIcon[1]));
     red[2] = Gtk::manage (new Adjuster ("",  -RANGE, RANGE, 0.1, 0, imgIcon[2]));
 
-    Gtk::HSeparator* rsep = Gtk::manage (new Gtk::HSeparator ());
+    Gtk::Separator* rsep = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
 
     pack_start (*rlabel);
 
@@ -66,7 +68,7 @@ ChMixer::ChMixer (): FoldableToolPanel(this, "chmixer", M("TP_CHMIXER_LABEL"), f
     green[1] = Gtk::manage (new Adjuster ("", -RANGE, RANGE, 0.1, 100, imgIcon[4]));
     green[2] = Gtk::manage (new Adjuster ("",  -RANGE, RANGE, 0.1, 0, imgIcon[5]));
 
-    Gtk::HSeparator* gsep = Gtk::manage (new Gtk::HSeparator ());
+    Gtk::Separator* gsep = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
 
     pack_start (*glabel);
 

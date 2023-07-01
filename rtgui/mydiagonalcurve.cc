@@ -39,7 +39,9 @@ MyDiagonalCurve::MyDiagonalCurve () :
     ugpX(0.0),
     ugpY(0.0),
     activeParam(-1),
-    bghistvalid(false)
+    bghistvalid(false),
+    locallabRef(0.0)
+
 {
 
     grab_point = -1;
@@ -128,6 +130,36 @@ std::vector<double> MyDiagonalCurve::get_vector (int veclen)
     rtcurve.getVal (t, vector);
     return vector;
 }
+
+void MyDiagonalCurve::updateLocallabBackground(double ref)
+{
+    locallabRef = ref;
+
+     mcih->pending++;
+
+     idle_register.add(
+        [this]() -> bool
+        {
+            if (mcih->destroyed) {
+                if (mcih->pending == 1) {
+                    delete mcih;
+                } else {
+                    --mcih->pending;
+                }
+
+                 return false;
+            }
+
+             mcih->clearPixmap();
+            mcih->myCurve->queue_draw();
+
+             --mcih->pending;
+
+             return false;
+        }
+    );
+}
+
 
 void MyDiagonalCurve::get_LUT (LUTf &lut)
 {
@@ -260,6 +292,20 @@ void MyDiagonalCurve::draw (int handle)
 
     cr->set_line_width (1.0 * s);
 
+    // Draw Locallab reference value in the background
+    if (locallabRef > 0.0) {
+        cr->set_line_width(1.0);
+        cr->move_to(double(graphX + 1), double(graphY - 1));
+        c = style->get_color(state);
+        cr->set_source_rgba(c.get_red(), c.get_green(), c.get_blue(), 0.2);
+        cr->line_to(double(graphX + 1), double(graphY - 1) -  double(graphH - 2));
+        cr->line_to(double(graphX) + 1.5 + locallabRef*double(graphW -2), double(graphY - 1) - double(graphH - 2));
+        cr->line_to(double(graphX) + 1.5 + locallabRef*double(graphW -2), double(graphY - 1));
+        cr->close_path();
+        cr->fill();
+        cr->stroke();
+    }
+
     // draw the left colored bar
     if (leftBar) {
         // first the background
@@ -323,7 +369,7 @@ void MyDiagonalCurve::draw (int handle)
     // draw the grid lines:
     cr->set_line_width (1.0 * s);
     c = style->get_border_color(state);
-    cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
+    cr->set_source_rgba (c.get_red(), c.get_green(), c.get_blue(), 0.3);
     cr->set_antialias (Cairo::ANTIALIAS_NONE);
 
     for (int i = 0; i <= 10; i++) {
@@ -358,14 +404,14 @@ void MyDiagonalCurve::draw (int handle)
     // draw upper and lower bounds
     if (curve.type == DCT_Parametric && activeParam > 0 && lpoint.getUpperBound() > 1 && upoint.getUpperBound() > 1) {
         cr->set_source_rgba (1.0, 1.0, 1.0, 0.1);
-        cr->move_to (graphX, getVal(upoint, 0) * -graphH + graphY);
+        cr->move_to (graphX, static_cast<double>(getVal(upoint, 0)) * -graphH + graphY);
 
         for (int i = 1; i < graphW - 2; ++i) {
-            cr->line_to ((double)i + graphX, getVal(upoint, i) * -graphH + graphY);
+            cr->line_to ((double)i + graphX, static_cast<double>(getVal(upoint, i)) * -graphH + graphY);
         }
 
         for (int i = graphW - 3; i >= 0; --i) {
-            cr->line_to ((double)i + graphX, getVal(lpoint, i) * -graphH + graphY);
+            cr->line_to ((double)i + graphX, static_cast<double>(getVal(lpoint, i)) * -graphH + graphY);
         }
 
         cr->fill ();
@@ -390,21 +436,21 @@ void MyDiagonalCurve::draw (int handle)
         if (n > 1) {
             if (pipetteR > -1.f) {
                 cr->set_source_rgba (1., 0., 0., 0.5); // WARNING: assuming that red values are stored in pipetteR, which might not be the case!
-                cr->move_to (graphX + graphW*pipetteR, graphY + 1. * s);
+                cr->move_to (graphX + graphW * static_cast<double>(pipetteR), graphY + 1. * s);
                 cr->rel_line_to (0, -graphH - 1. * s);
                 cr->stroke ();
             }
 
             if (pipetteG > -1.f) {
                 cr->set_source_rgba (0., 1., 0., 0.5); // WARNING: assuming that green values are stored in pipetteG, which might not be the case!
-                cr->move_to (graphX + graphW*pipetteG, graphY + 1. * s);
+                cr->move_to (graphX + graphW * static_cast<double>(pipetteG), graphY + 1. * s);
                 cr->rel_line_to (0, -graphH - 1. * s);
                 cr->stroke ();
             }
 
             if (pipetteB > -1.f) {
                 cr->set_source_rgba (0., 0., 1., 0.5); // WARNING: assuming that blue values are stored in pipetteB, which might not be the case!
-                cr->move_to (graphX + graphW*pipetteB, graphY + 1. * s);
+                cr->move_to (graphX + graphW * static_cast<double>(pipetteB), graphY + 1. * s);
                 cr->rel_line_to (0, -graphH - 1. * s);
                 cr->stroke ();
             }
@@ -414,7 +460,7 @@ void MyDiagonalCurve::draw (int handle)
             cr->set_line_width (2. * s);
             c = style->get_color (state);
             cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
-            cr->move_to (graphX + graphW*pipetteVal, graphY + 1. * s);
+            cr->move_to (graphX + graphW * static_cast<double>(pipetteVal), graphY + 1. * s);
             cr->rel_line_to (0, -graphH - 1. * s);
             cr->stroke ();
             cr->set_line_width (1. * s);
@@ -460,7 +506,7 @@ void MyDiagonalCurve::draw (int handle)
 
     // draw curve
     cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
-    cr->move_to (graphX, getVal(point, 0) * -graphH + graphY);
+    cr->move_to (graphX, static_cast<double>(getVal(point, 0)) * -graphH + graphY);
 
     for (int i = 1; i < graphW; ++i) {
         cr->line_to ((double)i + graphX, (double)getVal(point, i) * -graphH + graphY);

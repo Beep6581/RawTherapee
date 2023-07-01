@@ -20,9 +20,14 @@
 
 #include <set>
 
-#include <glibmm/ustring.h>
-
 #include "../rtengine/noncopyable.h"
+
+namespace Glib
+{
+
+class ustring;
+
+}
 
 class FileBrowserEntry;
 

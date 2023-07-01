@@ -24,7 +24,7 @@
 class ImageArea;
 
 class IndicateClippedPanel :
-    public Gtk::HBox
+    public Gtk::Box
 {
 
 protected:

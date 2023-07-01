@@ -3,6 +3,11 @@
 //  this code was taken from http://shibatch.sourceforge.net/
 //  Many thanks to the author of original version: Naoki Shibata
 //
+//   Copyright Naoki Shibata and contributors 2010 - 2021.
+// Distributed under the Boost Software License, Version 1.0.
+//    (See accompanying file sleef_LICENSE.txt or copy at
+//          http://www.boost.org/LICENSE_1_0.txt)
+//
 //  This version contains modifications made by Ingo Weyrich
 //
 ////////////////////////////////////////////////////////////////
@@ -21,7 +26,6 @@
 #define L2U .69314718055966295651160180568695068359375
 #define L2L .28235290563031577122588448175013436025525412068e-12
 #define R_LN2 1.442695040888963407359924681001892137426645954152985934135449406931
-#define pow_F(a,b) (xexpf(b*xlogf(a)))
 
 __inline int64_t doubleToRawLongBits(double d) {
     union {
@@ -532,7 +536,7 @@ __inline double xlog(double d) {
 
     x = x * t + 0.693147180559945286226764 * e;
 
-    if (xisinf(d)) x = rtengine::RT_INFINITY;
+    if (xispinf(d)) x = rtengine::RT_INFINITY;
     if (d < 0) x = rtengine::RT_NAN;
     if (d == 0) x = -rtengine::RT_INFINITY;
 
@@ -864,7 +868,7 @@ __inline double xlog10(double a) {
     double2 d = mul_dd(logk(a), dd(0.43429448190325176116, 6.6494347733425473126e-17));
     double x = d.x + d.y;
 
-    if (xisinf(a)) x = rtengine::RT_INFINITY;
+    if (xispinf(a)) x = rtengine::RT_INFINITY;
     if (a < 0) x = rtengine::RT_NAN;
     if (a == 0) x = -rtengine::RT_INFINITY;
 
@@ -875,7 +879,7 @@ __inline double xlog1p(double a) {
     double2 d = logk2(add2_ss(a, 1));
     double x = d.x + d.y;
 
-    if (xisinf(a)) x = rtengine::RT_INFINITY;
+    if (xispinf(a)) x = rtengine::RT_INFINITY;
     if (a < -1) x = rtengine::RT_NAN;
     if (a == -1) x = -rtengine::RT_INFINITY;
 
@@ -894,6 +898,15 @@ __inline double xlog1p(double a) {
 
 #define R_LN2f 1.442695040888963407359924681001892137426645954152985934135449406931f
 
+#ifdef __SSE2__
+__inline int xrintf(float x) {
+    return _mm_cvt_ss2si(_mm_set_ss(x));
+}
+#else
+__inline int xrintf(float x) {
+    return x + (x < 0 ? -0.5f : 0.5f);
+}
+#endif
 __inline int32_t floatToRawIntBits(float d) {
     union {
         float f;
@@ -920,7 +933,7 @@ __inline float mulsignf(float x, float y) {
     return intBitsToFloat(floatToRawIntBits(x) ^ (floatToRawIntBits(y) & (1 << 31)));
 }
 
-__inline float signf(float d) { return copysign(1, d); }
+__inline float signf(float d) { return std::copysign(1.f, d); }
 __inline float mlaf(float x, float y, float z) { return x * y + z; }
 
 __inline int xisnanf(float x) { return x != x; }
@@ -980,7 +993,7 @@ __inline float xsinf(float d) {
     int q;
     float u, s;
 
-    q = rint(d * rtengine::RT_1_PI_F);
+    q = xrintf(d * rtengine::RT_1_PI_F);
 
     d = mlaf(q, -PI4_Af*4, d);
     d = mlaf(q, -PI4_Bf*4, d);
@@ -1009,7 +1022,7 @@ __inline float xcosf(float d) {
     int q;
     float u, s;
 
-    q = 1 + 2*rint(d * rtengine::RT_1_PI_F - 0.5f);
+    q = 1 + 2*xrintf(d * rtengine::RT_1_PI_F - 0.5f);
 
     d = mlaf(q, -PI4_Af*2, d);
     d = mlaf(q, -PI4_Bf*2, d);
@@ -1041,7 +1054,7 @@ __inline float2 xsincosf(float d) {
     float u, s, t;
     float2 r;
 
-    q = rint(d * rtengine::RT_2_PI_F);
+    q = xrintf(d * rtengine::RT_2_PI_F);
 
     s = d;
 
@@ -1083,7 +1096,7 @@ __inline float xtanf(float d) {
     int q;
     float u, s, x;
 
-    q = rint(d * (float)(2 * rtengine::RT_1_PI));
+    q = xrintf(d * (float)(2 * rtengine::RT_1_PI));
 
     x = d;
 
@@ -1199,9 +1212,33 @@ __inline float xlogf(float d) {
 
     x = x * t + 0.693147180559945286226764f * e;
 
-    if (xisinff(d)) x = rtengine::RT_INFINITY_F;
+    if (xispinff(d)) x = rtengine::RT_INFINITY_F;
     if (d < 0) x = rtengine::RT_NAN_F;
     if (d == 0) x = -rtengine::RT_INFINITY_F;
+
+    return x;
+}
+
+__inline float xlogf1(float d) { // does xlogf(vmaxf(d, 1.f)) but faster
+    float x, x2, t, m;
+    int e;
+
+    e = ilogbp1f(d * 0.7071f);
+    m = ldexpkf(d, -e);
+
+    x = (m-1.0f) / (m+1.0f);
+    x2 = x * x;
+
+    t = 0.2371599674224853515625f;
+    t = mlaf(t, x2, 0.285279005765914916992188f);
+    t = mlaf(t, x2, 0.400005519390106201171875f);
+    t = mlaf(t, x2, 0.666666567325592041015625f);
+    t = mlaf(t, x2, 2.0f);
+
+    x = x * t + 0.693147180559945286226764f * e;
+
+    if (xispinff(d)) x = rtengine::RT_INFINITY_F;
+    if (d <= 1.f) x = 0;
 
     return x;
 }
@@ -1209,7 +1246,7 @@ __inline float xlogf(float d) {
 __inline float xexpf(float d) {
     if(d<=-104.0f) return 0.0f;
 
-    int q = rint(d * R_LN2f);
+    int q = xrintf(d * R_LN2f);
     float s, u;
 
     s = mlaf(q, -L2Uf, d);

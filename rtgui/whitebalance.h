@@ -21,6 +21,7 @@
 #include <gtkmm.h>
 
 #include "adjuster.h"
+#include "checkbox.h"
 #include "guiutils.h"
 #include "toolpanel.h"
 #include "wbprovider.h"
@@ -35,13 +36,17 @@ public:
     virtual void spotWBRequested(int size) = 0;
 };
 
-class WhiteBalance final : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::AutoWBListener
+class WhiteBalance final : public ToolParamBlock, public AdjusterListener, public CheckBoxListener, public FoldableToolPanel, public rtengine::AutoWBListener
 {
 
     enum WB_LabelType {
         WBLT_GUI,
         WBLT_PP
     };
+
+private:
+    Gtk::Label*  StudLabel;
+    Gtk::Label*  mulLabel;
 
 protected:
     class MethodColumns : public Gtk::TreeModel::ColumnRecord
@@ -57,16 +62,20 @@ protected:
             add(colId);
         }
     };
+    
+    rtengine::ProcEvent EvWBObserver10;
 
     static Glib::RefPtr<Gdk::Pixbuf> wbPixbufs[rtengine::toUnderlying(rtengine::procparams::WBEntry::Type::CUSTOM) + 1];
     Glib::RefPtr<Gtk::TreeStore> refTreeModel;
     MethodColumns methodColumns;
     MyComboBox* method;
+    Gtk::Button* resetButton;
     MyComboBoxText* spotsize;
     Adjuster* temp;
     Adjuster* green;
     Adjuster* equal;
     Adjuster* tempBias;
+    CheckBox* observer10;
 
     Gtk::Button* spotbutton;
     int opt;
@@ -94,6 +103,7 @@ protected:
     std::pair<bool, const rtengine::procparams::WBEntry&> findWBEntry    (const Glib::ustring& label, enum WB_LabelType lblType = WBLT_GUI);
 
 public:
+    static const Glib::ustring TOOL_NAME;
 
     WhiteBalance ();
     ~WhiteBalance () override;
@@ -109,6 +119,7 @@ public:
     void spotPressed ();
     void spotSizeChanged ();
     void adjusterChanged(Adjuster* a, double newval) override;
+    void checkBoxToggled(CheckBox* c, CheckValue newval) override;
     int  getSize ();
     void setWBProvider (WBProvider* p)
     {
@@ -119,7 +130,8 @@ public:
         wblistener = l;
     }
     void setWB (int temp, double green);
-    void WBChanged           (double temp, double green) override;
+    void resetWB ();
+    void WBChanged           (double temp, double green, double rw, double gw, double bw, float studgood) override;
 
     void setAdjusterBehavior (bool tempadd, bool greenadd, bool equaladd, bool tempbiasadd);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;

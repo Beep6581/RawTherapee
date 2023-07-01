@@ -71,7 +71,7 @@ public:
      *                 dialogs.
      */
 
-    explicit CurveEditorGroup(Glib::ustring& curveDir, Glib::ustring groupLabel = "");
+    explicit CurveEditorGroup(Glib::ustring& curveDir, Glib::ustring groupLabel = "", int blank = 0);
     ~CurveEditorGroup() override;
     void newLine();
     void curveListComplete();
@@ -137,6 +137,7 @@ public:
     }
     void updateEditButton(CurveEditor* curve, Gtk::ToggleButton *button, sigc::connection &connection);
     virtual void updateBackgroundHistogram (CurveEditor* ce) {}
+    virtual void updateLocallabBackground(CurveEditor* ce) {};
     virtual void switchGUI() = 0;
     virtual void refresh(CurveEditor *curveToRefresh) = 0;
     virtual void editModeSwitchedOff() = 0;
@@ -166,6 +167,7 @@ protected:
     virtual void storeCurveValues (CurveEditor* ce, const std::vector<double>& p) = 0;
     virtual void storeDisplayedCurve () = 0;
     virtual void restoreDisplayedHistogram() {};
+    virtual void restoreLocallabBackground() {};
     virtual void removeEditor () = 0;
     virtual const std::vector<double> getCurveFromGUI (int type) = 0;
 

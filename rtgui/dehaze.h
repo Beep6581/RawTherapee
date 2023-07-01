@@ -28,16 +28,18 @@ class Dehaze final : public ToolParamBlock, public AdjusterListener, public Fold
 private:
     Adjuster *strength;
     Adjuster *depth;
+    Adjuster *saturation;
     Gtk::CheckButton *showDepthMap;
-    Gtk::CheckButton *luminance;
+//    Gtk::CheckButton *luminance;
 
     rtengine::ProcEvent EvDehazeEnabled;
     rtengine::ProcEvent EvDehazeStrength;
     rtengine::ProcEvent EvDehazeDepth;
     rtengine::ProcEvent EvDehazeShowDepthMap;
-    rtengine::ProcEvent EvDehazeLuminance;
+    rtengine::ProcEvent EvDehazeSaturation;
     
 public:
+    static const Glib::ustring TOOL_NAME;
 
     Dehaze();
 
@@ -49,7 +51,7 @@ public:
     void adjusterChanged(Adjuster *a, double newval) override;
     void enabledChanged() override;
     void showDepthMapChanged();
-    void luminanceChanged();
+//    void luminanceChanged();
     void setAdjusterBehavior(bool strengthAdd);
 };
 

@@ -22,36 +22,31 @@
 
 #include "guiutils.h"
 #include "options.h"
-
 #include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-XTransRAWExposure::XTransRAWExposure () : FoldableToolPanel(this, "xtransrawexposure", M("TP_EXPOS_BLACKPOINT_LABEL"))
+const Glib::ustring XTransRAWExposure::TOOL_NAME = "xtransrawexposure";
+
+XTransRAWExposure::XTransRAWExposure () : FoldableToolPanel(this, TOOL_NAME, M("TP_EXPOS_BLACKPOINT_LABEL"))
 {
     PexBlackRed = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACK_RED"), -2048, 2048, 1.0, 0)); //black level
     PexBlackRed->setAdjusterListener (this);
 
-    if (PexBlackRed->delay < options.adjusterMaxDelay) {
-        PexBlackRed->delay = options.adjusterMaxDelay;
-    }
+    PexBlackRed->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     PexBlackRed->show();
     PexBlackGreen = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACK_GREEN"), -2048, 2048, 1.0, 0)); //black level
     PexBlackGreen->setAdjusterListener (this);
 
-    if (PexBlackGreen->delay < options.adjusterMaxDelay) {
-        PexBlackGreen->delay = options.adjusterMaxDelay;
-    }
+    PexBlackGreen->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     PexBlackGreen->show();
     PexBlackBlue = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACK_BLUE"), -2048, 2048, 1.0, 0)); //black level
     PexBlackBlue->setAdjusterListener (this);
 
-    if (PexBlackBlue->delay < options.adjusterMaxDelay) {
-        PexBlackBlue->delay = options.adjusterMaxDelay;
-    }
+    PexBlackBlue->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     PexBlackBlue->show();
 

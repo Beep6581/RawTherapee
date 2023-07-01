@@ -34,6 +34,9 @@ ThumbBrowserBase::ThumbBrowserBase ()
 {
     inW = -1;
     inH = -1;
+    
+    hscroll.set_orientation(Gtk::ORIENTATION_HORIZONTAL);
+    vscroll.set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     setExpandAlignProperties(&internal, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
     setExpandAlignProperties(&hscroll, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
@@ -87,7 +90,16 @@ void ThumbBrowserBase::scroll (int direction, double deltaX, double deltaY)
     }
     //GDK_SCROLL_SMOOTH can come in as many events with small deltas, don't quantize these to +/-1.0 so trackpads work well
     double coef;
+    double scroll_unit;
+    if (arrangement == TB_Vertical) {
+        scroll_unit = vscroll.get_adjustment()->get_step_increment();
+    } else {
+        scroll_unit = hscroll.get_adjustment()->get_step_increment();
+    }
     if(direction == GDK_SCROLL_SMOOTH) {
+#ifdef GDK_WINDOWING_QUARTZ
+        scroll_unit = 1.0;
+#endif
         coef = delta;
     } else if (direction == GDK_SCROLL_DOWN) {
         coef = +1.0;
@@ -99,7 +111,7 @@ void ThumbBrowserBase::scroll (int direction, double deltaX, double deltaY)
     if (direction == GDK_SCROLL_UP || direction == GDK_SCROLL_DOWN || direction == GDK_SCROLL_SMOOTH) {
         if (arrangement == TB_Vertical) {
             double currValue = vscroll.get_value();
-            double newValue = rtengine::LIM<double>(currValue + coef * vscroll.get_adjustment()->get_step_increment(),
+            double newValue = rtengine::LIM<double>(currValue + coef * scroll_unit,
                                                     vscroll.get_adjustment()->get_lower (),
                                                     vscroll.get_adjustment()->get_upper());
             if (newValue != currValue) {
@@ -107,7 +119,7 @@ void ThumbBrowserBase::scroll (int direction, double deltaX, double deltaY)
             }
         } else {
             double currValue = hscroll.get_value();
-            double newValue = rtengine::LIM<double>(currValue + coef * hscroll.get_adjustment()->get_step_increment(),
+            double newValue = rtengine::LIM<double>(currValue + coef * scroll_unit,
                                                     hscroll.get_adjustment()->get_lower(),
                                                     hscroll.get_adjustment()->get_upper());
             if (newValue != currValue) {
@@ -1079,6 +1091,25 @@ bool ThumbBrowserBase::Internal::on_scroll_event (GdkEventScroll* event)
 }
 
 
+void ThumbBrowserBase::resort ()
+{
+    {
+        MYWRITERLOCK(l, entryRW);
+
+        std::sort(
+            fd.begin(),
+            fd.end(),
+            [](const ThumbBrowserEntryBase* a, const ThumbBrowserEntryBase* b)
+            {
+                bool lt = a->compare(*b, options.sortMethod);
+                return options.sortDescending ? !lt : lt;
+            }
+        );
+    }
+
+    redraw ();
+}
+
 void ThumbBrowserBase::redraw (ThumbBrowserEntryBase* entry)
 {
 
@@ -1206,9 +1237,30 @@ void ThumbBrowserBase::enableTabMode(bool enable)
     }
 }
 
-void ThumbBrowserBase::initEntry (ThumbBrowserEntryBase* entry)
+void ThumbBrowserBase::insertEntry (ThumbBrowserEntryBase* entry)
 {
-    entry->setOffset ((int)(hscroll.get_value()), (int)(vscroll.get_value()));
+    // find place in sort order
+    {
+        MYWRITERLOCK(l, entryRW);
+
+        fd.insert(
+            std::lower_bound(
+                fd.begin(),
+                fd.end(),
+                entry,
+                [](const ThumbBrowserEntryBase* a, const ThumbBrowserEntryBase* b)
+                {
+                    bool lt = a->compare(*b, options.sortMethod);
+                    return options.sortDescending ? !lt : lt;
+                }
+            ),
+            entry
+        );
+
+        entry->setOffset ((int)(hscroll.get_value()), (int)(vscroll.get_value()));
+    }
+
+    redraw ();
 }
 
 void ThumbBrowserBase::getScrollPosition (double& h, double& v)

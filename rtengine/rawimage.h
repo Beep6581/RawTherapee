@@ -33,11 +33,11 @@ class RawImage: public DCraw
 {
 public:
 
-    explicit RawImage( const Glib::ustring &name );
+    explicit RawImage(const Glib::ustring &name);
     ~RawImage();
 
-    int loadRaw (bool loadData, unsigned int imageNum = 0, bool closeFile = true, ProgressListener *plistener = nullptr, double progressRange = 1.0);
-    void get_colorsCoeff( float* pre_mul_, float* scale_mul_, float* cblack_, bool forceAutoWB );
+    int loadRaw(bool loadData, unsigned int imageNum = 0, bool closeFile = true, ProgressListener *plistener = nullptr, double progressRange = 1.0);
+    void get_colorsCoeff(float* pre_mul_, float* scale_mul_, float* cblack_, bool forceAutoWB);
     void set_prefilters()
     {
         if (isBayer() && get_colors() == 3) {
@@ -55,6 +55,7 @@ public:
     unsigned int getFrameCount() const { return is_raw; }
 
     double getBaselineExposure() const { return RT_baseline_exposure; }
+ 
 protected:
     Glib::ustring filename; // complete filename
     int rotate_deg; // 0,90,180,270 degree of rotation: info taken by dcraw from exif
@@ -115,8 +116,8 @@ public:
 
     eSensorType getSensorType() const;
 
-    void getRgbCam (float rgbcam[3][4]);
-    void getXtransMatrix ( int xtransMatrix[6][6]);
+    void getRgbCam(float rgbcam[3][4]);
+    void getXtransMatrix(int xtransMatrix[6][6]);
     unsigned get_filters() const
     {
         return filters;
@@ -137,7 +138,7 @@ public:
             return maximum;
         }
     }
-    unsigned short get_whiteSample( int r, int c ) const
+    unsigned short get_whiteSample(int r, int c) const
     {
         return white[r][c];
     }
@@ -171,13 +172,13 @@ public:
         return std::string(model);
     }
 
-    float get_cam_mul(int c )const
+    float get_cam_mul(int c)const
     {
         return cam_mul[c];
     }
-    float get_pre_mul(int c )const
+    float get_pre_mul(int c)const
     {
-        if(std::isfinite(pre_mul[c])) {
+        if (std::isfinite(pre_mul[c])) {
             return pre_mul[c];
         } else {
             std::cout << "Failure decoding '" << filename << "', please file a bug report including the raw file and the line below:" << std::endl;
@@ -185,7 +186,7 @@ public:
             return 1.f;
         }
     }
-    float get_rgb_cam( int r, int c) const
+    float get_rgb_cam(int r, int c) const
     {
         return rgb_cam[r][c];
     }
@@ -244,11 +245,6 @@ public:
         return zero_is_bad == 1;
     }
 
-    bool isBayer() const
-    {
-        return (filters != 0 && filters != 9);
-    }
-
     bool isXtrans() const
     {
         return filters == 9;
@@ -257,6 +253,10 @@ public:
     bool isFloat() const
     {
         return float_raw_image;
+    }
+    void set_filters(unsigned f)
+    {
+        filters = f;
     }
 
 public:
@@ -267,7 +267,7 @@ public:
     }
 
 public:
-    bool ISRED  (unsigned row, unsigned col) const
+    bool ISRED(unsigned row, unsigned col) const
     {
         return ((filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3) == 0);
     }
@@ -275,15 +275,15 @@ public:
     {
         return ((filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3) == 1);
     }
-    bool ISBLUE (unsigned row, unsigned col) const
+    bool ISBLUE(unsigned row, unsigned col) const
     {
         return ((filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3) == 2);
     }
-    unsigned FC (unsigned row, unsigned col) const
+    unsigned FC(unsigned row, unsigned col) const
     {
         return (filters >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3);
     }
-    bool ISXTRANSRED  (unsigned row, unsigned col) const
+    bool ISXTRANSRED(unsigned row, unsigned col) const
     {
         return ((xtrans[(row) % 6][(col) % 6]) == 0);
     }
@@ -291,16 +291,16 @@ public:
     {
         return ((xtrans[(row) % 6][(col) % 6]) == 1);
     }
-    bool ISXTRANSBLUE (unsigned row, unsigned col) const
+    bool ISXTRANSBLUE(unsigned row, unsigned col) const
     {
         return ((xtrans[(row) % 6][(col) % 6]) == 2);
     }
-    unsigned XTRANSFC (unsigned row, unsigned col) const
+    unsigned XTRANSFC(unsigned row, unsigned col) const
     {
         return (xtrans[(row) % 6][(col) % 6]);
     }
 
-    unsigned DNGVERSION ( ) const
+    unsigned DNGVERSION() const
     {
         return dng_version;
     }

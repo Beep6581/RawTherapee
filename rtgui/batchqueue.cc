@@ -264,6 +264,7 @@ bool BatchQueue::saveBatchQueue ()
                  << saveFormat.tiffBits << '|'  << (saveFormat.tiffFloat ? 1 : 0) << '|'  << saveFormat.tiffUncompressed << '|'
                  << saveFormat.saveParams << '|' << entry->forceFormatOpts << '|'
                  << entry->fast_pipeline << '|'
+                 << saveFormat.bigTiff << '|'
                  << std::endl;
         }
     }
@@ -331,6 +332,7 @@ bool BatchQueue::loadBatchQueue ()
             const auto saveParams = nextIntOr (options.saveFormat.saveParams);
             const auto forceFormatOpts = nextIntOr (options.forceFormatOpts);
             const auto fast = nextIntOr(false);
+            const auto bigTiff = nextIntOr (options.saveFormat.bigTiff);
 
             rtengine::procparams::ProcParams pparams;
 
@@ -344,8 +346,9 @@ bool BatchQueue::loadBatchQueue ()
 
             auto job = rtengine::ProcessingJob::create (source, thumb->getType () == FT_Raw, pparams, fast);
 
-            const auto prevh = getMaxThumbnailHeight ();
-            const auto prevw = thumb->getThumbnailWidth(prevh, &pparams);
+            auto prevh = getMaxThumbnailHeight();
+            auto prevw = prevh;
+            thumb->getThumbnailSize(prevw, prevh, &pparams);
 
             auto entry = new BatchQueueEntry (job, pparams, source, prevw, prevh, thumb, options.overwriteOutputFile);
             thumb->decreaseRef ();  // Removing the refCount acquired by cacheMgr->getEntry
@@ -369,6 +372,7 @@ bool BatchQueue::loadBatchQueue ()
                 saveFormat.tiffBits = tiffBits;
                 saveFormat.tiffFloat = tiffFloat == 1;
                 saveFormat.tiffUncompressed = tiffUncompressed != 0;
+                saveFormat.bigTiff = bigTiff != 0;
                 saveFormat.saveParams = saveParams != 0;
                 entry->forceFormatOpts = forceFormatOpts != 0;
             } else {
@@ -390,7 +394,7 @@ Glib::ustring BatchQueue::getTempFilenameForParams( const Glib::ustring &filenam
     timeval tv;
     gettimeofday(&tv, nullptr);
     char mseconds[11];
-    sprintf(mseconds, "%d", (int)(tv.tv_usec / 1000));
+    snprintf(mseconds, sizeof(mseconds), "%d", (int)(tv.tv_usec / 1000));
     time_t rawtime;
     struct tm *timeinfo;
     char stringTimestamp [80];
@@ -692,14 +696,20 @@ rtengine::ProcessingJob* BatchQueue::imageReady(rtengine::IImagefloat* img)
         int err = 0;
 
         if (saveFormat.format == "tif") {
-            err = img->saveAsTIFF (fname, saveFormat.tiffBits, saveFormat.tiffFloat, saveFormat.tiffUncompressed);
+            err = img->saveAsTIFF (
+                fname,
+                saveFormat.tiffBits,
+                saveFormat.tiffFloat,
+                saveFormat.tiffUncompressed,
+                saveFormat.bigTiff
+            );
         } else if (saveFormat.format == "png") {
             err = img->saveAsPNG (fname, saveFormat.pngBits);
         } else if (saveFormat.format == "jpg") {
             err = img->saveAsJPEG (fname, saveFormat.jpegQuality, saveFormat.jpegSubSamp);
         }
 
-        img->free ();
+        delete img;
 
         if (err) {
             throw Glib::FileError(Glib::FileError::FAILED, M("MAIN_MSG_CANNOTSAVE") + "\n" + fname);

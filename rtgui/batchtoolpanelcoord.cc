@@ -62,7 +62,8 @@ void BatchToolPanelCoordinator::selectionChanged (const std::vector<Thumbnail*>&
 void BatchToolPanelCoordinator::closeSession (bool save)
 {
 
-    pparamsEdited.set (false);
+    // Should remain commented for Locallab to work
+    // pparamsEdited.set (false);
 
     for (size_t i = 0; i < selected.size(); i++) {
         selected[i]->removeThumbnailListener (this);
@@ -139,7 +140,7 @@ void BatchToolPanelCoordinator::initSession ()
         if (selected.size() == 1) {
 
             for (size_t i = 0; i < toolPanels.size(); i++) {
-                toolPanels.at(i)->setMultiImage(false);
+                toolPanels.at (i)->setMultiImage (false);
             }
 
             toneCurve->setAdjusterBehavior (false, false, false, false, false, false, false, false);
@@ -147,11 +148,11 @@ void BatchToolPanelCoordinator::initSession ()
             whitebalance->setAdjusterBehavior (false, false, false, false);
             vibrance->setAdjusterBehavior (false, false);
             vignetting->setAdjusterBehavior (false, false, false, false);
-            colorappearance->setAdjusterBehavior (false, false, false, false, false, false, false, false, false, false, false, false, false);
+            colorappearance->setAdjusterBehavior (false, false, false, false, false, false, false, false, false, false, false, false, false, false, false);
             rotate->setAdjusterBehavior (false);
             resize->setAdjusterBehavior (false);
             distortion->setAdjusterBehavior (false);
-            perspective->setAdjusterBehavior (false);
+            perspective->setAdjusterBehavior (false, false, false, false, false, false, false);
             gradient->setAdjusterBehavior (false, false, false, false);
             pcvignette->setAdjusterBehavior (false, false, false);
             cacorrection->setAdjusterBehavior (false);
@@ -171,20 +172,20 @@ void BatchToolPanelCoordinator::initSession ()
 
             shadowshighlights->setAdjusterBehavior (false, false);
             dirpyrequalizer->setAdjusterBehavior (false, false, false);
-            wavelet->setAdjusterBehavior (false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false);
+            wavelet->setAdjusterBehavior (false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false);
             dirpyrdenoise->setAdjusterBehavior (false, false, false, false, false, false, false);
             bayerprocess->setAdjusterBehavior(false, false, false, false, false, false);
             xtransprocess->setAdjusterBehavior(false, false);
             bayerpreprocess->setAdjusterBehavior (false, false);
             rawcacorrection->setAdjusterBehavior (false);
-            flatfield->setAdjusterBehavior(false);
+            flatfield->setAdjusterBehavior (false);
             rawexposure->setAdjusterBehavior (false);
             bayerrawexposure->setAdjusterBehavior (false);
             xtransrawexposure->setAdjusterBehavior (false);
         } else {
 
             for (size_t i = 0; i < toolPanels.size(); i++) {
-                toolPanels.at(i)->setMultiImage(true);
+                toolPanels.at (i)->setMultiImage (true);
             }
 
             toneCurve->setAdjusterBehavior (options.baBehav[ADDSET_TC_EXPCOMP], options.baBehav[ADDSET_TC_HLCOMPAMOUNT], options.baBehav[ADDSET_TC_HLCOMPTHRESH], options.baBehav[ADDSET_TC_BRIGHTNESS], options.baBehav[ADDSET_TC_BLACKLEVEL], options.baBehav[ADDSET_TC_SHCOMP], options.baBehav[ADDSET_TC_CONTRAST], options.baBehav[ADDSET_TC_SATURATION]);
@@ -192,11 +193,11 @@ void BatchToolPanelCoordinator::initSession ()
             whitebalance->setAdjusterBehavior (options.baBehav[ADDSET_WB_TEMPERATURE], options.baBehav[ADDSET_WB_GREEN], options.baBehav[ADDSET_WB_EQUAL], options.baBehav[ADDSET_WB_TEMPBIAS]);
             vibrance->setAdjusterBehavior (options.baBehav[ADDSET_VIBRANCE_PASTELS], options.baBehav[ADDSET_VIBRANCE_SATURATED]);
             vignetting->setAdjusterBehavior (options.baBehav[ADDSET_VIGN_AMOUNT], options.baBehav[ADDSET_VIGN_RADIUS], options.baBehav[ADDSET_VIGN_STRENGTH], options.baBehav[ADDSET_VIGN_CENTER]);
-            colorappearance->setAdjusterBehavior (options.baBehav[ADDSET_CAT_DEGREE], options.baBehav[ADDSET_CAT_ADAPTSCENE], options.baBehav[ADDSET_CAT_ADAPTVIEWING], options.baBehav[ADDSET_CAT_BADPIX], options.baBehav[ADDSET_CAT_LIGHT], options.baBehav[ADDSET_CAT_CHROMA], options.baBehav[ADDSET_CAT_CONTRAST], options.baBehav[ADDSET_CAT_RSTPRO], options.baBehav[ADDSET_CAT_BRIGHT], options.baBehav[ADDSET_CAT_CONTRAST_Q], options.baBehav[ADDSET_CAT_CHROMA_S], options.baBehav[ADDSET_CAT_CHROMA_M], options.baBehav[ADDSET_CAT_HUE]);
+            colorappearance->setAdjusterBehavior (options.baBehav[ADDSET_CAT_DEGREE], options.baBehav[ADDSET_CAT_ADAPTSCENE], options.baBehav[ADDSET_CAT_ADAPTVIEWING], options.baBehav[ADDSET_CAT_BADPIX], options.baBehav[ADDSET_CAT_LIGHT], options.baBehav[ADDSET_CAT_CHROMA], options.baBehav[ADDSET_CAT_CONTRAST], options.baBehav[ADDSET_CAT_RSTPRO], options.baBehav[ADDSET_CAT_BRIGHT], options.baBehav[ADDSET_CAT_CONTRAST_Q], options.baBehav[ADDSET_CAT_CHROMA_S], options.baBehav[ADDSET_CAT_CHROMA_M], options.baBehav[ADDSET_CAT_HUE],options.baBehav[ADDSET_CAT_DEGREEOUT], options.baBehav[ADDSET_CAT_TEMPOUT] );
             rotate->setAdjusterBehavior (options.baBehav[ADDSET_ROTATE_DEGREE]);
             resize->setAdjusterBehavior (options.baBehav[ADDSET_RESIZE_SCALE]);
             distortion->setAdjusterBehavior (options.baBehav[ADDSET_DIST_AMOUNT]);
-            perspective->setAdjusterBehavior (options.baBehav[ADDSET_PERSPECTIVE]);
+            perspective->setAdjusterBehavior (options.baBehav[ADDSET_PERSPECTIVE], options.baBehav[ADDSET_PERSP_CAM_FOCAL_LENGTH], options.baBehav[ADDSET_PERSP_CAM_SHIFT], options.baBehav[ADDSET_PERSP_CAM_ANGLE], options.baBehav[ADDSET_PERSP_PROJ_ANGLE], options.baBehav[ADDSET_PERSP_PROJ_SHIFT], options.baBehav[ADDSET_PERSP_PROJ_ROTATE]);
             gradient->setAdjusterBehavior (options.baBehav[ADDSET_GRADIENT_DEGREE], options.baBehav[ADDSET_GRADIENT_FEATHER], options.baBehav[ADDSET_GRADIENT_STRENGTH], options.baBehav[ADDSET_GRADIENT_CENTER]);
             pcvignette->setAdjusterBehavior (options.baBehav[ADDSET_PCVIGNETTE_STRENGTH], options.baBehav[ADDSET_PCVIGNETTE_FEATHER], options.baBehav[ADDSET_PCVIGNETTE_ROUNDNESS]);
             cacorrection->setAdjusterBehavior (options.baBehav[ADDSET_CA]);
@@ -218,14 +219,15 @@ void BatchToolPanelCoordinator::initSession ()
             chmixer->setAdjusterBehavior (options.baBehav[ADDSET_CHMIXER] );
             blackwhite->setAdjusterBehavior (options.baBehav[ADDSET_BLACKWHITE_HUES], options.baBehav[ADDSET_BLACKWHITE_GAMMA]);
             shadowshighlights->setAdjusterBehavior (options.baBehav[ADDSET_SH_HIGHLIGHTS], options.baBehav[ADDSET_SH_SHADOWS]);
+            toneEqualizer->setAdjusterBehavior(options.baBehav[ADDSET_TONE_EQUALIZER_BANDS], options.baBehav[ADDSET_TONE_EQUALIZER_REGULARIZATION], options.baBehav[ADDSET_TONE_EQUALIZER_PIVOT]);
             dirpyrequalizer->setAdjusterBehavior (options.baBehav[ADDSET_DIRPYREQ], options.baBehav[ADDSET_DIRPYREQ_THRESHOLD], options.baBehav[ADDSET_DIRPYREQ_SKINPROTECT]);
-            wavelet->setAdjusterBehavior (options.baBehav[ADDSET_WA], options.baBehav[ADDSET_WA_THRESHOLD], options.baBehav[ADDSET_WA_THRESHOLD2], options.baBehav[ADDSET_WA_THRES], options.baBehav[ADDSET_WA_CHRO], options.baBehav[ADDSET_WA_CHROMA], options.baBehav[ADDSET_WA_CONTRAST], options.baBehav[ADDSET_WA_SKINPROTECT], options.baBehav[ADDSET_WA_RESCHRO], options.baBehav[ADDSET_WA_TMRS], options.baBehav[ADDSET_WA_RESCON], options.baBehav[ADDSET_WA_RESCONH], options.baBehav[ADDSET_WA_THRR], options.baBehav[ADDSET_WA_THRRH], options.baBehav[ADDSET_WA_SKYPROTECT], options.baBehav[ADDSET_WA_EDGRAD], options.baBehav[ADDSET_WA_EDGVAL], options.baBehav[ADDSET_WA_STRENGTH], options.baBehav[ADDSET_WA_GAMMA], options.baBehav[ADDSET_WA_EDGEDETECT], options.baBehav[ADDSET_WA_EDGEDETECTTHR], options.baBehav[ADDSET_WA_EDGEDETECTTHR2]);
+            wavelet->setAdjusterBehavior (options.baBehav[ADDSET_WA], options.baBehav[ADDSET_WA_THRESHOLD], options.baBehav[ADDSET_WA_THRESHOLD2], options.baBehav[ADDSET_WA_THRES], options.baBehav[ADDSET_WA_CHRO], options.baBehav[ADDSET_WA_CHROMA], options.baBehav[ADDSET_WA_CONTRAST], options.baBehav[ADDSET_WA_SKINPROTECT], options.baBehav[ADDSET_WA_RESCHRO], options.baBehav[ADDSET_WA_TMRS], options.baBehav[ADDSET_WA_EDGS], options.baBehav[ADDSET_WA_SCALE], options.baBehav[ADDSET_WA_RESCON], options.baBehav[ADDSET_WA_RESCONH], options.baBehav[ADDSET_WA_THRR], options.baBehav[ADDSET_WA_THRRH], options.baBehav[ADDSET_WA_RADIUS], options.baBehav[ADDSET_WA_SKYPROTECT], options.baBehav[ADDSET_WA_EDGRAD], options.baBehav[ADDSET_WA_EDGVAL], options.baBehav[ADDSET_WA_STRENGTH], options.baBehav[ADDSET_WA_GAMMA], options.baBehav[ADDSET_WA_EDGEDETECT], options.baBehav[ADDSET_WA_EDGEDETECTTHR], options.baBehav[ADDSET_WA_EDGEDETECTTHR2]);
             dirpyrdenoise->setAdjusterBehavior (options.baBehav[ADDSET_DIRPYRDN_LUMA], options.baBehav[ADDSET_DIRPYRDN_LUMDET], options.baBehav[ADDSET_DIRPYRDN_CHROMA], options.baBehav[ADDSET_DIRPYRDN_CHROMARED], options.baBehav[ADDSET_DIRPYRDN_CHROMABLUE], options.baBehav[ADDSET_DIRPYRDN_GAMMA], options.baBehav[ADDSET_DIRPYRDN_PASSES]);
             bayerprocess->setAdjusterBehavior(options.baBehav[ADDSET_BAYER_FALSE_COLOR_SUPPRESSION], options.baBehav[ADDSET_BAYER_ITER], options.baBehav[ADDSET_BAYER_DUALDEMOZCONTRAST], options.baBehav[ADDSET_BAYER_PS_SIGMA], options.baBehav[ADDSET_BAYER_PS_SMOOTH], options.baBehav[ADDSET_BAYER_PS_EPERISO]);
             xtransprocess->setAdjusterBehavior(options.baBehav[ADDSET_BAYER_FALSE_COLOR_SUPPRESSION], options.baBehav[ADDSET_BAYER_DUALDEMOZCONTRAST]);
             bayerpreprocess->setAdjusterBehavior (options.baBehav[ADDSET_PREPROCESS_LINEDENOISE], options.baBehav[ADDSET_PREPROCESS_GREENEQUIL]);
             rawcacorrection->setAdjusterBehavior (options.baBehav[ADDSET_RAWCACORR]);
-            flatfield->setAdjusterBehavior(options.baBehav[ADDSET_RAWFFCLIPCONTROL]);
+            flatfield->setAdjusterBehavior (options.baBehav[ADDSET_RAWFFCLIPCONTROL]);
             rawexposure->setAdjusterBehavior (options.baBehav[ADDSET_RAWEXPOS_LINEAR]);
             bayerrawexposure->setAdjusterBehavior (options.baBehav[ADDSET_RAWEXPOS_BLACKS]);
             xtransrawexposure->setAdjusterBehavior (options.baBehav[ADDSET_RAWEXPOS_BLACKS]);
@@ -241,6 +243,9 @@ void BatchToolPanelCoordinator::initSession ()
             if (options.baBehav[ADDSET_TC_SATURATION]) { pparams.toneCurve.saturation = 0;}
             if (options.baBehav[ADDSET_SH_HIGHLIGHTS]) { pparams.sh.highlights = 0; }
             if (options.baBehav[ADDSET_SH_SHADOWS]) { pparams.sh.shadows = 0; }
+            if (options.baBehav[ADDSET_TONE_EQUALIZER_BANDS]) { pparams.toneEqualizer.bands = {}; }
+            if (options.baBehav[ADDSET_TONE_EQUALIZER_PIVOT]) { pparams.toneEqualizer.pivot = 0; }
+            if (options.baBehav[ADDSET_TONE_EQUALIZER_REGULARIZATION]) { pparams.toneEqualizer.regularization = 0; }
             if (options.baBehav[ADDSET_LC_BRIGHTNESS]) { pparams.labCurve.brightness = 0; }
             if (options.baBehav[ADDSET_LC_CONTRAST]) { pparams.labCurve.contrast = 0; }
             if (options.baBehav[ADDSET_LC_CHROMATICITY]) { pparams.labCurve.chromaticity = 0; }
@@ -288,6 +293,8 @@ void BatchToolPanelCoordinator::initSession ()
             if (options.baBehav[ADDSET_CAT_CONTRAST]) { pparams.colorappearance.contrast = 0; }
             if (options.baBehav[ADDSET_CAT_CONTRAST_Q]) { pparams.colorappearance.qcontrast = 0; }
             if (options.baBehav[ADDSET_CAT_HUE]) { pparams.colorappearance.colorh = 0; }
+            if (options.baBehav[ADDSET_CAT_DEGREEOUT]) { pparams.colorappearance.degreeout = 0; }
+            if (options.baBehav[ADDSET_CAT_TEMPOUT]) { pparams.colorappearance.tempout = 0; }
             //if (options.baBehav[ADDSET_CBOOST_AMOUNT])  pparams.colorBoost.amount = 0;
             //if (options.baBehav[ADDSET_CS_BLUEYELLOW])  pparams.colorShift.a = 0;
             //if (options.baBehav[ADDSET_CS_GREENMAGENTA])  pparams.colorShift.b = 0;
@@ -308,6 +315,12 @@ void BatchToolPanelCoordinator::initSession ()
             if (options.baBehav[ADDSET_RESIZE_SCALE]) { pparams.resize.scale = 0; }
             if (options.baBehav[ADDSET_DIST_AMOUNT]) { pparams.distortion.amount = 0; }
             if (options.baBehav[ADDSET_PERSPECTIVE]) { pparams.perspective.horizontal = pparams.perspective.vertical = 0; }
+            if (options.baBehav[ADDSET_PERSP_CAM_FOCAL_LENGTH]) { pparams.perspective.camera_focal_length = pparams.perspective.camera_crop_factor = 0; }
+            if (options.baBehav[ADDSET_PERSP_CAM_SHIFT]) { pparams.perspective.camera_shift_horiz = pparams.perspective.camera_shift_vert = 0; }
+            if (options.baBehav[ADDSET_PERSP_CAM_ANGLE]) { pparams.perspective.camera_yaw = pparams.perspective.camera_pitch = 0; }
+            if (options.baBehav[ADDSET_PERSP_PROJ_ANGLE]) { pparams.perspective.projection_yaw = pparams.perspective.projection_pitch = 0; }
+            if (options.baBehav[ADDSET_PERSP_PROJ_SHIFT]) { pparams.perspective.projection_shift_horiz = pparams.perspective.projection_shift_vert = 0; }
+            if (options.baBehav[ADDSET_PERSP_PROJ_ROTATE]) { pparams.perspective.projection_rotate = 0; }
             if (options.baBehav[ADDSET_GRADIENT_DEGREE]) { pparams.gradient.degree = 0; }
             if (options.baBehav[ADDSET_GRADIENT_FEATHER]) { pparams.gradient.feather = 0; }
             if (options.baBehav[ADDSET_GRADIENT_STRENGTH]) { pparams.gradient.strength = 0; }
@@ -335,8 +348,11 @@ void BatchToolPanelCoordinator::initSession ()
             if (options.baBehav[ADDSET_WA_RESCONH]) { pparams.wavelet.resconH = 0; }
             if (options.baBehav[ADDSET_WA_RESCHRO]) { pparams.wavelet.reschro = 0; }
             if (options.baBehav[ADDSET_WA_TMRS]) { pparams.wavelet.tmrs = 0; }
+            if (options.baBehav[ADDSET_WA_EDGS]) { pparams.wavelet.edgs = 0; }
+            if (options.baBehav[ADDSET_WA_SCALE]) { pparams.wavelet.scale = 0; }
             if (options.baBehav[ADDSET_WA_THRR]) { pparams.wavelet.thr = 0; }
             if (options.baBehav[ADDSET_WA_THRRH]) { pparams.wavelet.thrH = 0; }
+            if (options.baBehav[ADDSET_WA_RADIUS]) { pparams.wavelet.radius = 0; }
             if (options.baBehav[ADDSET_WA_SKYPROTECT]) { pparams.wavelet.sky = 0; }
             if (options.baBehav[ADDSET_WA_EDGRAD]) { pparams.wavelet.edgrad = 0; }
             if (options.baBehav[ADDSET_WA_EDGVAL]) { pparams.wavelet.edgval = 0; }
@@ -389,9 +405,12 @@ void BatchToolPanelCoordinator::initSession ()
         for (size_t i = 0; i < paramcListeners.size(); i++)
             // send this initial state to the History
         {
-            paramcListeners[i]->procParamsChanged (&pparams, rtengine::EvPhotoLoaded, M("BATCH_PROCESSING"), &pparamsEdited);
+            paramcListeners[i]->procParamsChanged (&pparams, rtengine::EvPhotoLoaded, M ("BATCH_PROCESSING"), &pparamsEdited);
         }
     }
+
+    // ParamsEdited are set to false for initialization and is updated each time panel is changed (mandatory for Locallab)
+    pparamsEdited.set(false);
 }
 
 void BatchToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, const Glib::ustring& descr)
@@ -402,7 +421,8 @@ void BatchToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, c
 
     somethingChanged = true;
 
-    pparamsEdited.set (false);
+    // Should remain commented for Locallab to work
+    // pparamsEdited.set (false);
 
     // read new values from the gui
     for (size_t i = 0; i < toolPanels.size(); i++) {
@@ -414,7 +434,7 @@ void BatchToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, c
     if (selected.size() == 1) {
         // Compensate rotation on flip
         if (event == rtengine::EvCTHFlip || event == rtengine::EvCTVFlip) {
-            if (fabs(pparams.rotate.degree) > 0.001) {
+            if (fabs (pparams.rotate.degree) > 0.001) {
                 pparams.rotate.degree *= -1;
                 rotate->read (&pparams);
             }
@@ -422,7 +442,7 @@ void BatchToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, c
 
         int w, h;
         selected[0]->getFinalSize (selected[0]->getProcParams (), w, h);
-        crop->setDimensions(w, h);
+        crop->setDimensions (w, h);
 
         // Some transformations change the crop and resize parameter for convenience.
         if (event == rtengine::EvCTHFlip) {
@@ -444,7 +464,7 @@ void BatchToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, c
         // Compensate rotation on flip
         if (event == rtengine::EvCTHFlip || event == rtengine::EvCTVFlip) {
             for (size_t i = 0; i < selected.size(); i++) {
-                if (fabs(initialPP[i].rotate.degree) > 0.001) {
+                if (fabs (initialPP[i].rotate.degree) > 0.001) {
                     initialPP[i].rotate.degree *= -1.0;
 
                     pparamsEdited.rotate.degree = false;
@@ -486,30 +506,30 @@ void BatchToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, c
                 int rotation = (360 + newDeg - oldDeg) % 360;
                 ProcParams pptemp = selected[i]->getProcParams(); // Get actual procparams
 
-                if((pptemp.coarse.hflip != pptemp.coarse.vflip) && ((rotation % 180) == 90)) {
+                if ((pptemp.coarse.hflip != pptemp.coarse.vflip) && ((rotation % 180) == 90)) {
                     rotation = (rotation + 180) % 360;
                 }
 
 
                 switch (rotation) {
-                case 90:
-                    std::swap(crop.x, crop.y);
-                    std::swap(crop.w, crop.h);
+                    case 90:
+                        std::swap (crop.x, crop.y);
+                        std::swap (crop.w, crop.h);
 
-                    crop.x = h - crop.x - crop.w;
-                    break;
+                        crop.x = h - crop.x - crop.w;
+                        break;
 
-                case 270:
-                    std::swap(crop.x, crop.y);
-                    std::swap(crop.w, crop.h);
+                    case 270:
+                        std::swap (crop.x, crop.y);
+                        std::swap (crop.w, crop.h);
 
-                    crop.y = w - crop.y - crop.h;
-                    break;
+                        crop.y = w - crop.y - crop.h;
+                        break;
 
-                case 180:
-                    crop.x = w - crop.x - crop.w;
-                    crop.y = h - crop.y - crop.h;
-                    break;
+                    case 180:
+                        crop.x = w - crop.x - crop.w;
+                        crop.y = h - crop.y - crop.h;
+                        break;
                 }
 
                 initialPP[i].coarse.rotate = newDeg;
@@ -564,19 +584,27 @@ void BatchToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, c
     }
 }
 
-void BatchToolPanelCoordinator::getAutoWB (double& temp, double& green, double equal, double tempBias)
+void BatchToolPanelCoordinator::setTweakOperator (rtengine::TweakOperator *tOperator)
+{
+}
+
+void BatchToolPanelCoordinator::unsetTweakOperator (rtengine::TweakOperator *tOperator)
+{
+}
+
+void BatchToolPanelCoordinator::getAutoWB (double& temp, double& green, double equal, rtengine::StandardObserver observer, double tempBias)
 {
 
     if (!selected.empty()) {
-        selected[0]->getAutoWB (temp, green, equal, tempBias);
+        selected[0]->getAutoWB (temp, green, equal, observer, tempBias);
     }
 }
 
-void BatchToolPanelCoordinator::getCamWB (double& temp, double& green)
+void BatchToolPanelCoordinator::getCamWB (double& temp, double& green, rtengine::StandardObserver observer)
 {
 
     if (!selected.empty()) {
-        selected[0]->getCamWB (temp, green);
+        selected[0]->getCamWB (temp, green, observer);
     }
 }
 
@@ -596,13 +624,13 @@ void BatchToolPanelCoordinator::procParamsChanged (Thumbnail* thm, int whoChange
     }
 }
 
-void BatchToolPanelCoordinator::beginBatchPParamsChange(int numberOfEntries)
+void BatchToolPanelCoordinator::beginBatchPParamsChange (int numberOfEntries)
 {
 
     blockedUpdate = true;
 
     if (numberOfEntries > 50) { // Arbitrary amount
-        parent->set_sensitive(false);
+        parent->set_sensitive (false);
     }
 }
 
@@ -613,7 +641,7 @@ void BatchToolPanelCoordinator::endBatchPParamsChange()
     closeSession (false);
     initSession ();
     blockedUpdate = false;
-    parent->set_sensitive(true);
+    parent->set_sensitive (true);
 }
 
 /*
@@ -635,7 +663,7 @@ void BatchToolPanelCoordinator::profileChange(
         return;
     }
 
-    pparams = *(nparams->pparams);
+    pparams = * (nparams->pparams);
 
     if (paramsEdited) {
         pparamsEdited = *paramsEdited;

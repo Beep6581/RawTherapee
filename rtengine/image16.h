@@ -29,7 +29,7 @@ namespace rtengine
 class Image8;
 class Imagefloat;
 
-class Image16 : public IImage16, public ImageIO
+class Image16 final : public IImage16, public ImageIO
 {
 
 public:
@@ -39,10 +39,9 @@ public:
     ~Image16() override;
 
     Image16* copy() const;
+    Image16*             copySubRegion (int x, int y, int width, int height);
 
-    Image8* to8() const;
-
-    void getStdImage(const ColorTemp &ctemp, int tran, Imagefloat* image, PreviewProps pp) const override;
+    void getStdImage(const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp) const override;
 
     const char* getType() const override
     {
@@ -67,11 +66,6 @@ public:
         return getEmbeddedProfile();
     }
 
-    int getBitsPerPixel() const override
-    {
-        return 8 * sizeof(unsigned short);
-    }
-
     int saveToFile(const Glib::ustring &fname) const override
     {
         return save(fname);
@@ -87,7 +81,7 @@ public:
         return saveJPEG(fname, quality, subSamp);
     }
 
-    int saveAsTIFF(const Glib::ustring &fname, int bps = -1, bool isFloat = false, bool uncompressed = false) const override
+    int saveAsTIFF(const Glib::ustring &fname, int bps = -1, bool isFloat = false, bool uncompressed = false, bool big = false) const override
     {
         return saveTIFF(fname, bps, isFloat, uncompressed);
     }
@@ -97,10 +91,6 @@ public:
         setProgressListener(pl);
     }
 
-    void free() override
-    {
-        delete this;
-    }
     void ExecCMSTransform(cmsHTRANSFORM hTransform);
 
     /* void                 ExecCMSTransform(cmsHTRANSFORM hTransform, const LabImage &labImage, int cx, int cy); */

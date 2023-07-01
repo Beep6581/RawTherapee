@@ -42,10 +42,10 @@ static Glib::ustring makeFolderLabel(Glib::ustring path)
 
 BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
 {
-
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
     batchQueue = Gtk::manage( new BatchQueue(aFileCatalog) );
 
-    Gtk::VBox* batchQueueButtonBox = Gtk::manage (new Gtk::VBox);
+    Gtk::Box* batchQueueButtonBox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     batchQueueButtonBox->set_name("BatchQueueButtons");
 
     qStartStop = Gtk::manage (new Gtk::Switch());
@@ -61,12 +61,14 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
     batchQueueButtonBox->pack_start (*qStartStop, Gtk::PACK_SHRINK, 4);
     batchQueueButtonBox->pack_start (*qAutoStart, Gtk::PACK_SHRINK, 4);
     Gtk::Frame *bbox = Gtk::manage(new Gtk::Frame(M("MAIN_FRAME_QUEUE")));
+    bbox->set_label_align(0.025, 0.5);
     bbox->add(*batchQueueButtonBox);
 
     // Output directory selection
     fdir = Gtk::manage (new Gtk::Frame (M("QUEUE_LOCATION_TITLE")));
-    Gtk::VBox* odvb = Gtk::manage (new Gtk::VBox ());
-    Gtk::HBox* hb2 = Gtk::manage (new Gtk::HBox ());
+    fdir->set_label_align(0.025, 0.5);
+    Gtk::Box* odvb = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    Gtk::Box* hb2 = Gtk::manage (new Gtk::Box ());
     useTemplate = Gtk::manage (new Gtk::RadioButton (M("QUEUE_LOCATION_TEMPLATE") + ":"));
     hb2->pack_start (*useTemplate, Gtk::PACK_SHRINK, 4);
     outdirTemplate = Gtk::manage (new Gtk::Entry ());
@@ -74,7 +76,7 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
     odvb->pack_start (*hb2, Gtk::PACK_SHRINK, 4);
     outdirTemplate->set_tooltip_markup (M("QUEUE_LOCATION_TEMPLATE_TOOLTIP"));
     useTemplate->set_tooltip_markup (M("QUEUE_LOCATION_TEMPLATE_TOOLTIP"));
-    Gtk::HBox* hb3 = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* hb3 = Gtk::manage (new Gtk::Box ());
     useFolder = Gtk::manage (new Gtk::RadioButton (M("QUEUE_LOCATION_FOLDER") + ":"));
     hb3->pack_start (*useFolder, Gtk::PACK_SHRINK, 4);
 
@@ -112,6 +114,7 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
 
     // Output file format selection
     fformat = Gtk::manage (new Gtk::Frame (M("QUEUE_FORMAT_TITLE")));
+    fformat->set_label_align(0.025, 0.5);
     saveFormatPanel = Gtk::manage (new SaveFormatPanel ());
     setExpandAlignProperties(saveFormatPanel, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     fformat->add (*saveFormatPanel);
@@ -127,7 +130,7 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
     saveFormatPanel->setListener (this);
 
     // setup button bar
-    topBox = Gtk::manage (new Gtk::HBox ());
+    topBox = Gtk::manage (new Gtk::Box ());
     pack_start (*topBox, Gtk::PACK_SHRINK);
     topBox->set_name("BatchQueueButtonsMainContainer");
 
@@ -139,12 +142,12 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
     pack_start (*batchQueue);
 
     // lower box with thumbnail zoom
-    bottomBox = Gtk::manage (new Gtk::HBox ());
+    bottomBox = Gtk::manage (new Gtk::Box ());
     pack_start (*bottomBox, Gtk::PACK_SHRINK);
 
     // thumbnail zoom
-    Gtk::HBox* zoomBox = Gtk::manage (new Gtk::HBox ());
-    zoomBox->pack_start (*Gtk::manage (new Gtk::VSeparator), Gtk::PACK_SHRINK, 4);
+    Gtk::Box* zoomBox = Gtk::manage (new Gtk::Box ());
+    zoomBox->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_VERTICAL)), Gtk::PACK_SHRINK, 4);
     Gtk::Label* zoomLabel = Gtk::manage (new Gtk::Label (Glib::ustring("<b>") + M("FILEBROWSER_THUMBSIZE") + ":</b>"));
     zoomLabel->set_use_markup (true);
     zoomBox->pack_start (*zoomLabel, Gtk::PACK_SHRINK, 4);

@@ -103,7 +103,7 @@ void sharpenHaloCtrl (float** luminance, float** blurmap, float** base, float** 
 void dcdamping (float** aI, float** aO, float damping, int W, int H)
 {
 
-    const float dampingFac = -2.0 / (damping * damping);
+    const float dampingFac = -2.f / (damping * damping);
 
 #ifdef __SSE2__
     vfloat Iv, Ov, Uv, zerov, onev, fourv, fivev, dampingFacv, Tv, Wv, Lv;
@@ -163,7 +163,7 @@ namespace rtengine
 
 void ImProcFunctions::deconvsharpening (float** luminance, float** tmp, const float * const * blend, int W, int H, const procparams::SharpeningParams &sharpenParam, double Scale)
 {
-    if (sharpenParam.deconvamount == 0 && sharpenParam.blurradius < 0.25f) {
+    if (sharpenParam.deconvamount == 0 && sharpenParam.blurradius < 0.25) {
         return;
     }
 BENCHFUN
@@ -180,7 +180,7 @@ BENCHFUN
 
     JaggedArray<float>* blurbuffer = nullptr;
 
-    if (sharpenParam.blurradius >= 0.25f) {
+    if (sharpenParam.blurradius >= 0.25) {
         blurbuffer = new JaggedArray<float>(W, H);
         JaggedArray<float> &blur = *blurbuffer;
 #ifdef _OPENMP
@@ -229,7 +229,7 @@ BENCHFUN
             }
         }
 
-        if (sharpenParam.blurradius >= 0.25f) {
+        if (sharpenParam.blurradius >= 0.25) {
             JaggedArray<float> &blur = *blurbuffer;
 #ifdef _OPENMP
         #pragma omp for
@@ -244,6 +244,110 @@ BENCHFUN
     delete blurbuffer;
 }
 
+void ImProcFunctions::deconvsharpeningloc (float** luminance, float** tmp, int W, int H, float** loctemp, int damp, double radi, int ite, int amo, int contrast, double blurrad, int sk)
+{
+    // BENCHFUN
+
+    if (amo < 1) {
+        return;
+    }
+    JaggedArray<float> blend(W, H);
+    float contras = contrast / 100.f;
+    buildBlendMask(luminance, blend, W, H, contras, 1.f);
+
+
+    JaggedArray<float> tmpI(W, H);
+
+
+#ifdef _OPENMP
+    #pragma omp parallel for
+#endif
+    for (int i = 0; i < H; i++) {
+        for (int j = 0; j < W; j++) {
+            tmpI[i][j] = max(luminance[i][j], 0.f);
+        }
+    }
+
+    // calculate contrast based blend factors to reduce sharpening in regions with low contrast
+
+    JaggedArray<float>* blurbuffer = nullptr;
+
+    if (blurrad >= 0.25) {
+        blurbuffer = new JaggedArray<float>(W, H);
+        JaggedArray<float> &blur = *blurbuffer;
+#ifdef _OPENMP
+        #pragma omp parallel
+#endif
+        {
+            gaussianBlur(tmpI, blur, W, H, blurrad);
+#ifdef _OPENMP
+            #pragma omp for
+#endif
+            for (int i = 0; i < H; ++i) {
+                for (int j = 0; j < W; ++j) {
+                    blur[i][j] = intp(blend[i][j], luminance[i][j], std::max(blur[i][j], 0.0f));
+                }
+            }
+        }
+    }
+
+    float damping = (float) damp / 5.0;
+    bool needdamp = damp > 0;
+    double sigma = radi / sk;
+    const float amount = (float) amo / 100.f;
+
+    if (sigma < 0.26f) {
+        sigma = 0.26f;
+    }
+
+    int itera = ite;
+
+#ifdef _OPENMP
+    #pragma omp parallel
+#endif
+    {
+        for (int k = 0; k < itera; k++) {
+            if (!needdamp) {
+                // apply gaussian blur and divide luminance by result of gaussian blur
+            //    gaussianBlur (tmpI, tmp, W, H, sigma, nullptr, GAUSS_DIV, luminance);
+                gaussianBlur(tmpI, tmp, W, H, sigma, false, GAUSS_DIV, luminance);
+            } else {
+                // apply gaussian blur + damping
+                gaussianBlur (tmpI, tmp, W, H, sigma);
+                dcdamping (tmp, luminance, damping, W, H);
+            }
+
+            gaussianBlur (tmp, tmpI, W, H, sigma, false, GAUSS_MULT);
+        } // end for
+
+
+#ifdef _OPENMP
+        #pragma omp for
+#endif
+
+        for (int i = 0; i < H; i++)
+            for (int j = 0; j < W; j++) {
+                loctemp[i][j] = intp(blend[i][j] * amount, max(tmpI[i][j], 0.0f), luminance[i][j]);
+            }
+            
+        if (blurrad >= 0.25) {
+            JaggedArray<float> &blur = *blurbuffer;
+#ifdef _OPENMP
+        #pragma omp for
+#endif
+            for (int i = 0; i < H; ++i) {
+                for (int j = 0; j < W; ++j) {
+                    loctemp[i][j] = intp(blend[i][j], loctemp[i][j], max(blur[i][j], 0.0f));
+                }
+            }
+        }
+            
+    } // end parallel
+    delete blurbuffer;
+
+
+}
+
 void ImProcFunctions::sharpening (LabImage* lab, const procparams::SharpeningParams &sharpenParam, bool showMask)
 {
 
@@ -255,7 +359,7 @@ void ImProcFunctions::sharpening (LabImage* lab, const procparams::SharpeningPar
 
     // calculate contrast based blend factors to reduce sharpening in regions with low contrast
     JaggedArray<float> blend(W, H);
-    float contrast = sharpenParam.contrast / 100.f;
+    float contrast = sharpenParam.contrast / 100.0;
     buildBlendMask(lab->L, blend, W, H, contrast);
 
     if(showMask) {
@@ -292,7 +396,7 @@ BENCHFUN
 
     JaggedArray<float> blur(W, H);
 
-    if (sharpenParam.blurradius >= 0.25f) {
+    if (sharpenParam.blurradius >= 0.25) {
 #ifdef _OPENMP
         #pragma omp parallel
 #endif
@@ -372,7 +476,7 @@ BENCHFUN
         delete [] b3;
     }
 
-    if (sharpenParam.blurradius >= 0.25f) {
+    if (sharpenParam.blurradius >= 0.25) {
 #ifdef _OPENMP
     #pragma omp parallel for
 #endif
@@ -383,241 +487,6 @@ BENCHFUN
         }
     }
 
-}
-
-// To the extent possible under law, Manuel Llorens <manuelllorens@gmail.com>
-// has waived all copyright and related or neighboring rights to this work.
-// This work is published from: Spain.
-
-// Thanks to Manuel for this excellent job (Jacques Desmis JDC or frej83)
-void ImProcFunctions::MLsharpen (LabImage* lab)
-{
-    // JD: this algorithm maximize clarity of images; it does not play on accutance. It can remove (partially) the effects of the AA filter)
-    // I think we can use this algorithm alone in most cases, or first to clarify image and if you want a very little USM (unsharp mask sharpening) after...
-    if (!params->sharpenEdge.enabled) {
-        return;
-    }
-
-    MyTime t1e, t2e;
-    t1e.set();
-
-    int offset, c, i, j, p, width2;
-    int width = lab->W, height = lab->H;
-    float *L, lumH, lumV, lumD1, lumD2, v, contrast, s;
-    float difL, difR, difT, difB, difLT, difRB, difLB, difRT, wH, wV, wD1, wD2, chmax[3];
-    float f1, f2, f3, f4;
-    float templab;
-    int iii, kkk;
-    width2 = 2 * width;
-    const float epsil = 0.01f; //prevent divide by zero
-    const float eps2 = 0.001f; //prevent divide by zero
-    float amount;
-    amount = params->sharpenEdge.amount / 100.0f;
-
-    if (amount < 0.00001f) {
-        return;
-    }
-
-    if (settings->verbose) {
-        printf ("SharpenEdge amount %f\n", amount);
-    }
-
-    L = new float[width * height];
-
-    chmax[0] = 8.0f;
-    chmax[1] = 3.0f;
-    chmax[2] = 3.0f;
-
-    int channels;
-
-    if (params->sharpenEdge.threechannels) {
-        channels = 0;
-    } else {
-        channels = 2;
-    }
-
-    if (settings->verbose) {
-        printf ("SharpenEdge channels %d\n", channels);
-    }
-
-    int passes = params->sharpenEdge.passes;
-
-    if (settings->verbose) {
-        printf ("SharpenEdge passes %d\n", passes);
-    }
-
-    for (p = 0; p < passes; p++)
-        for (c = 0; c <= channels; c++) { // c=0 Luminance only
-
-#ifdef _OPENMP
-            #pragma omp parallel for private(offset) shared(L)
-#endif
-
-            for (offset = 0; offset < width * height; offset++) {
-                int ii = offset / width;
-                int kk = offset - ii * width;
-
-                if      (c == 0) {
-                    L[offset] = lab->L[ii][kk] / 327.68f;    // adjust to RT and to 0..100
-                } else if (c == 1) {
-                    L[offset] = lab->a[ii][kk] / 327.68f;
-                } else { /*if (c==2) */
-                    L[offset] = lab->b[ii][kk] / 327.68f;
-                }
-            }
-
-#ifdef _OPENMP
-            #pragma omp parallel for private(j,i,iii,kkk, templab,offset,wH,wV,wD1,wD2,s,lumH,lumV,lumD1,lumD2,v,contrast,f1,f2,f3,f4,difT,difB,difL,difR,difLT,difLB,difRT,difRB) shared(lab,L,amount)
-#endif
-
-            for(j = 2; j < height - 2; j++)
-                for(i = 2, offset = j * width + i; i < width - 2; i++, offset++) {
-                    // weight functions
-                    wH = eps2 + fabs(L[offset + 1] - L[offset - 1]);
-                    wV = eps2 + fabs(L[offset + width] - L[offset - width]);
-
-                    s = 1.0f + fabs(wH - wV) / 2.0f;
-                    wD1 = eps2 + fabs(L[offset + width + 1] - L[offset - width - 1]) / s;
-                    wD2 = eps2 + fabs(L[offset + width - 1] - L[offset - width + 1]) / s;
-                    s = wD1;
-                    wD1 /= wD2;
-                    wD2 /= s;
-
-                    // initial values
-                    int ii = offset / width;
-                    int kk = offset - ii * width;
-
-                    if      (c == 0) {
-                        lumH = lumV = lumD1 = lumD2 = v = lab->L[ii][kk] / 327.68f;
-                    } else if (c == 1) {
-                        lumH = lumV = lumD1 = lumD2 = v = lab->a[ii][kk] / 327.68f;
-                    } else { /* if (c==2) */
-                        lumH = lumV = lumD1 = lumD2 = v = lab->b[ii][kk] / 327.68f;
-                    }
-
-
-                    // contrast detection
-                    contrast = sqrt(fabs(L[offset + 1] - L[offset - 1]) * fabs(L[offset + 1] - L[offset - 1]) + fabs(L[offset + width] - L[offset - width]) * fabs(L[offset + width] - L[offset - width])) / chmax[c];
-
-                    if (contrast > 1.0f) {
-                        contrast = 1.0f;
-                    }
-
-                    // new possible values
-                    if (((L[offset] < L[offset - 1]) && (L[offset] > L[offset + 1])) || ((L[offset] > L[offset - 1]) && (L[offset] < L[offset + 1]))) {
-                        f1 = fabs(L[offset - 2] - L[offset - 1]);
-                        f2 = fabs(L[offset - 1] - L[offset]);
-                        f3 = fabs(L[offset - 1] - L[offset - width]) * fabs(L[offset - 1] - L[offset + width]);
-                        f4 = sqrt(fabs(L[offset - 1] - L[offset - width2]) * fabs(L[offset - 1] - L[offset + width2]));
-                        difL = f1 * f2 * f2 * f3 * f3 * f4;
-                        f1 = fabs(L[offset + 2] - L[offset + 1]);
-                        f2 = fabs(L[offset + 1] - L[offset]);
-                        f3 = fabs(L[offset + 1] - L[offset - width]) * fabs(L[offset + 1] - L[offset + width]);
-                        f4 = sqrt(fabs(L[offset + 1] - L[offset - width2]) * fabs(L[offset + 1] - L[offset + width2]));
-                        difR = f1 * f2 * f2 * f3 * f3 * f4;
-
-                        if ((difR > epsil) && (difL > epsil)) {
-                            lumH = (L[offset - 1] * difR + L[offset + 1] * difL) / (difL + difR);
-                            lumH = v * (1.f - contrast) + lumH * contrast;
-                        }
-                    }
-
-                    if (((L[offset] < L[offset - width]) && (L[offset] > L[offset + width])) || ((L[offset] > L[offset - width]) && (L[offset] < L[offset + width]))) {
-                        f1 = fabs(L[offset - width2] - L[offset - width]);
-                        f2 = fabs(L[offset - width] - L[offset]);
-                        f3 = fabs(L[offset - width] - L[offset - 1]) * fabs(L[offset - width] - L[offset + 1]);
-                        f4 = sqrt(fabs(L[offset - width] - L[offset - 2]) * fabs(L[offset - width] - L[offset + 2]));
-                        difT = f1 * f2 * f2 * f3 * f3 * f4;
-                        f1 = fabs(L[offset + width2] - L[offset + width]);
-                        f2 = fabs(L[offset + width] - L[offset]);
-                        f3 = fabs(L[offset + width] - L[offset - 1]) * fabs(L[offset + width] - L[offset + 1]);
-                        f4 = sqrt(fabs(L[offset + width] - L[offset - 2]) * fabs(L[offset + width] - L[offset + 2]));
-                        difB = f1 * f2 * f2 * f3 * f3 * f4;
-
-                        if ((difB > epsil) && (difT > epsil)) {
-                            lumV = (L[offset - width] * difB + L[offset + width] * difT) / (difT + difB);
-                            lumV = v * (1.f - contrast) + lumV * contrast;
-                        }
-                    }
-
-                    if (((L[offset] < L[offset - 1 - width]) && (L[offset] > L[offset + 1 + width])) || ((L[offset] > L[offset - 1 - width]) && (L[offset] < L[offset + 1 + width]))) {
-                        f1 = fabs(L[offset - 2 - width2] - L[offset - 1 - width]);
-                        f2 = fabs(L[offset - 1 - width] - L[offset]);
-                        f3 = fabs(L[offset - 1 - width] - L[offset - width + 1]) * fabs(L[offset - 1 - width] - L[offset + width - 1]);
-                        f4 = sqrt(fabs(L[offset - 1 - width] - L[offset - width2 + 2]) * fabs(L[offset - 1 - width] - L[offset + width2 - 2]));
-                        difLT = f1 * f2 * f2 * f3 * f3 * f4;
-                        f1 = fabs(L[offset + 2 + width2] - L[offset + 1 + width]);
-                        f2 = fabs(L[offset + 1 + width] - L[offset]);
-                        f3 = fabs(L[offset + 1 + width] - L[offset - width + 1]) * fabs(L[offset + 1 + width] - L[offset + width - 1]);
-                        f4 = sqrt(fabs(L[offset + 1 + width] - L[offset - width2 + 2]) * fabs(L[offset + 1 + width] - L[offset + width2 - 2]));
-                        difRB = f1 * f2 * f2 * f3 * f3 * f4;
-
-                        if ((difLT > epsil) && (difRB > epsil)) {
-                            lumD1 = (L[offset - 1 - width] * difRB + L[offset + 1 + width] * difLT) / (difLT + difRB);
-                            lumD1 = v * (1.f - contrast) + lumD1 * contrast;
-                        }
-                    }
-
-                    if (((L[offset] < L[offset + 1 - width]) && (L[offset] > L[offset - 1 + width])) || ((L[offset] > L[offset + 1 - width]) && (L[offset] < L[offset - 1 + width]))) {
-                        f1 = fabs(L[offset - 2 + width2] - L[offset - 1 + width]);
-                        f2 = fabs(L[offset - 1 + width] - L[offset]);
-                        f3 = fabs(L[offset - 1 + width] - L[offset - width - 1]) * fabs(L[offset - 1 + width] - L[offset + width + 1]);
-                        f4 = sqrt(fabs(L[offset - 1 + width] - L[offset - width2 - 2]) * fabs(L[offset - 1 + width] - L[offset + width2 + 2]));
-                        difLB = f1 * f2 * f2 * f3 * f3 * f4;
-                        f1 = fabs(L[offset + 2 - width2] - L[offset + 1 - width]);
-                        f2 = fabs(L[offset + 1 - width] - L[offset]) * fabs(L[offset + 1 - width] - L[offset]);
-                        f3 = fabs(L[offset + 1 - width] - L[offset + width + 1]) * fabs(L[offset + 1 - width] - L[offset - width - 1]);
-                        f4 = sqrt(fabs(L[offset + 1 - width] - L[offset + width2 + 2]) * fabs(L[offset + 1 - width] - L[offset - width2 - 2]));
-                        difRT = f1 * f2 * f2 * f3 * f3 * f4;
-
-                        if ((difLB > epsil) && (difRT > epsil)) {
-                            lumD2 = (L[offset + 1 - width] * difLB + L[offset - 1 + width] * difRT) / (difLB + difRT);
-                            lumD2 = v * (1.f - contrast) + lumD2 * contrast;
-                        }
-                    }
-
-                    s = amount;
-
-                    // avoid sharpening diagonals too much
-                    if (((fabs(wH / wV) < 0.45f) && (fabs(wH / wV) > 0.05f)) || ((fabs(wV / wH) < 0.45f) && (fabs(wV / wH) > 0.05f))) {
-                        s = amount / 3.0f;
-                    }
-
-                    // final mix
-                    if ((wH != 0.0f) && (wV != 0.0f) && (wD1 != 0.0f) && (wD2 != 0.0f)) {
-                        iii = offset / width;
-                        kkk = offset - iii * width;
-                        float provL = lab->L[iii][kkk] / 327.68f;
-
-                        if(c == 0) {
-                            if(provL < 92.f) {
-                                templab = v * (1.f - s) + (lumH * wH + lumV * wV + lumD1 * wD1 + lumD2 * wD2) / (wH + wV + wD1 + wD2) * s;
-                            } else {
-                                templab = provL;
-                            }
-                        } else {
-                            templab = v * (1.f - s) + (lumH * wH + lumV * wV + lumD1 * wD1 + lumD2 * wD2) / (wH + wV + wD1 + wD2) * s;
-                        }
-
-                        if      (c == 0) {
-                            lab->L[iii][kkk] = fabs(327.68f * templab);    // fabs because lab->L always >0
-                        } else if (c == 1) {
-                            lab->a[iii][kkk] =      327.68f * templab ;
-                        } else if (c == 2) {
-                            lab->b[iii][kkk] =      327.68f * templab ;
-                        }
-                    }
-
-                }
-        }
-
-    delete [] L;
-
-    t2e.set();
-
-    if (settings->verbose) {
-        printf("SharpenEdge gradient  %d usec\n", t2e.etime(t1e));
-    }
 }
 
 // To the extent possible under law, Manuel Llorens <manuelllorens@gmail.com>
@@ -640,10 +509,10 @@ BENCHFUN
     // k=2 matrix 5x5  k=1 matrix 3x3
     const int width = W, height = H;
     const int unif = params->sharpenMicro.uniformity;
-    const float amount = (k == 1 ? 2.7f : 1.f) * params->sharpenMicro.amount / 1500.0f; //amount 2000.0 quasi no artifacts ==> 1500 = maximum, after artifacts, 25/9 if 3x3
+    const float amount = (k == 1 ? 2.7 : 1.) * params->sharpenMicro.amount / 1500.0; //amount 2000.0 quasi no artifacts ==> 1500 = maximum, after artifacts, 25/9 if 3x3
 
     if (settings->verbose) {
-        printf ("Micro-contrast amount %f\n", amount);
+        printf ("Micro-contrast amount %f\n", static_cast<double>(amount));
         printf ("Micro-contrast uniformity %i\n", unif);
     }
 
@@ -674,8 +543,8 @@ BENCHFUN
 
     // calculate contrast based blend factors to reduce sharpening in regions with low contrast
     JaggedArray<float> blend(W, H);
-    float contrast = params->sharpenMicro.contrast / 100.f;
-    buildBlendMask(luminance, blend, W, H, contrast);
+    float contrastThreshold = params->sharpenMicro.contrast / 100.0;
+    buildBlendMask(luminance, blend, W, H, contrastThreshold);
 
 #ifdef _OPENMP
     #pragma omp parallel
@@ -883,7 +752,7 @@ void ImProcFunctions::sharpeningcam (CieImage* ncie, float** b2, bool showMask)
 
     // calculate contrast based blend factors to reduce sharpening in regions with low contrast
     JaggedArray<float> blend(W, H);
-    float contrast = params->sharpening.contrast / 100.f;
+    float contrast = params->sharpening.contrast / 100.0;
     buildBlendMask(ncie->sh_p, blend, W, H, contrast);
     if(showMask) {
 #ifdef _OPENMP

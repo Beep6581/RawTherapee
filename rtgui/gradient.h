@@ -21,7 +21,7 @@ private:
     int lastObject;
 
 protected:
-    Gtk::HBox *editHBox;
+    Gtk::Box *editHBox;
     Gtk::ToggleButton* edit;
     Adjuster* degree;
     Adjuster* feather;
@@ -35,8 +35,10 @@ protected:
     sigc::connection editConn;
 
     void editToggled ();
+    void releaseEdit();
 
 public:
+    static const Glib::ustring TOOL_NAME;
 
     Gradient ();
     ~Gradient () override;
@@ -55,7 +57,7 @@ public:
     void setEditProvider (EditDataProvider* provider) override;
 
     // EditSubscriber interface
-    CursorShape getCursor(int objectID) const override;
+    CursorShape getCursor(int objectID, int xPos, int yPos) const override;
     bool mouseOver(int modifierKey) override;
     bool button1Pressed(int modifierKey) override;
     bool button1Released() override;

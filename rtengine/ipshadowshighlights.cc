@@ -31,22 +31,20 @@
 #include "procparams.h"
 #include "sleef.h"
 
-namespace rtengine
+namespace rtengine {
+//modifications to pass parameters needs by locallab, to avoid 2 functions - no change in process - J.Desmis march 2019
+void ImProcFunctions::shadowsHighlights(LabImage *lab, bool ena, int labmode, int hightli, int shado, int rad, int scal, int hltonal, int shtonal)
 {
-
-void ImProcFunctions::shadowsHighlights(LabImage *lab)
-{
-    if (!params->sh.enabled || (!params->sh.highlights && !params->sh.shadows)){
+    if (!ena || (!hightli && !shado)){
         return;
     }
-
     const int width = lab->W;
     const int height = lab->H;
-    const bool lab_mode = params->sh.lab;
+    const bool lab_mode = labmode;
 
     array2D<float> mask(width, height);
     array2D<float> L(width, height);
-    const float radius = float(params->sh.radius) * 10 / scale;
+    const float radius = float(rad) * 10 / scal;
     LUTf f(lab_mode ? 32768 : 65536);
 
     TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
@@ -193,12 +191,12 @@ void ImProcFunctions::shadowsHighlights(LabImage *lab)
             }
         };
 
-    if (params->sh.highlights > 0) {
-        apply(params->sh.highlights * 0.7, params->sh.htonalwidth, true);
+    if (hightli > 0) {
+        apply(hightli * 0.7, hltonal, true);
     }
 
-    if (params->sh.shadows > 0) {
-        apply(params->sh.shadows * 0.6, params->sh.stonalwidth, false);
+    if (shado > 0) {
+        apply(shado * 0.6, shtonal, false);
     }
 }
 

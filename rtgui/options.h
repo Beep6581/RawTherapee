@@ -20,7 +20,15 @@
 
 #include <set>
 #include <vector>
+#if defined __has_include
+#if __has_include(<gtkmm/enums.h>)
 #include <gtkmm/enums.h>
+#else
+#include <gtkmm-3.0/gtkmm/enums.h>
+#endif
+#else
+#include <gtkmm/enums.h>
+#endif
 #include "../rtengine/settings.h"
 #include <exception>
 
@@ -44,6 +52,18 @@
 // Special name for the Dynamic profile
 #define DEFPROFILE_DYNAMIC  "Dynamic"
 
+struct ExternalEditor {
+    ExternalEditor();
+    ExternalEditor(const Glib::ustring &name, const Glib::ustring &command, bool native_command, const Glib::ustring &icon_serialized);
+    Glib::ustring name;
+    Glib::ustring command;
+    bool native_command;
+    Glib::ustring icon_serialized;
+
+    bool operator==(const ExternalEditor & other) const;
+    bool operator!=(const ExternalEditor & other) const;
+};
+
 struct SaveFormat {
     SaveFormat(
         const Glib::ustring& _format,
@@ -53,6 +73,7 @@ struct SaveFormat {
         int _tiff_bits,
         bool _tiff_float,
         bool _tiff_uncompressed,
+        bool _big_tiff,
         bool _save_params
     ) :
         format(_format),
@@ -62,6 +83,7 @@ struct SaveFormat {
         tiffBits(_tiff_bits),
         tiffFloat(_tiff_float),
         tiffUncompressed(_tiff_uncompressed),
+        bigTiff(_big_tiff),
         saveParams(_save_params)
     {
     }
@@ -79,6 +101,7 @@ struct SaveFormat {
             _tiff_bits,
             _tiff_float,
             true,
+            false,
             true
         )
     {
@@ -95,6 +118,7 @@ struct SaveFormat {
     int tiffBits;
     bool tiffFloat;
     bool tiffUncompressed;
+    bool bigTiff;
     bool saveParams;
 };
 
@@ -160,13 +184,23 @@ private:
                      const Glib::ustring& entryName, Glib::ustring& destination);
 
 public:
-
     enum class NavigatorUnit {
         PERCENT,
         R0_255,
         R0_1,
         _COUNT
     };
+
+    enum class ScopeType {
+        NONE = -1,
+        HISTOGRAM,
+        HISTOGRAM_RAW,
+        PARADE,
+        VECTORSCOPE_HC,
+        VECTORSCOPE_HS,
+        WAVEFORM
+    };
+
     bool savesParamsAtExit;
     SaveFormat saveFormat, saveFormatBatch;
     Glib::ustring savePathTemplate;
@@ -201,7 +235,6 @@ public:
     bool windowMaximized;
     int windowMonitor;
     int meowMonitor;
-    bool meowFullScreen;
     bool meowMaximized;
     int meowWidth;
     int meowHeight;
@@ -259,10 +292,23 @@ public:
     Glib::ustring gimpDir;
     Glib::ustring psDir;
     Glib::ustring customEditorProg;
+    std::vector<ExternalEditor> externalEditors;
+    int externalEditorIndex;
     Glib::ustring CPBPath; // Custom Profile Builder's path
     CPBKeyType CPBKeys; // Custom Profile Builder's key type
     int editorToSendTo;
+    enum EditorOutDir {
+        EDITOR_OUT_DIR_TEMP,
+        EDITOR_OUT_DIR_CURRENT,
+        EDITOR_OUT_DIR_CUSTOM
+    };
+    EditorOutDir editor_out_dir; // output directory for "open in external editor"
+    Glib::ustring editor_custom_out_dir;
+    bool editor_float32;
+    bool editor_bypass_output_profile;
+    
     int maxThumbnailHeight;
+    int maxThumbnailWidth;
     std::size_t maxCacheEntries;
     int thumbInterp; // 0: nearest, 1: bilinear
     std::vector<Glib::ustring> parseExtensions;   // List containing all extensions type
@@ -274,12 +320,15 @@ public:
     //std::vector<int> crvOpen;
     std::vector<int> baBehav;
     rtengine::Settings rtSettings;
-
+    bool showtooltip;
     std::vector<Glib::ustring> favoriteDirs;
     std::vector<Glib::ustring> renameTemplates;
     bool renameUseTemplates;
     bool internalThumbIfUntouched;
     bool overwriteOutputFile;
+    int complexity;
+    bool inspectorWindow; // open inspector in spearate window
+    bool zoomOnScroll;    // translate scroll events to zoom
 
     std::vector<double> thumbnailZoomRatios;
     bool overlayedFileNames;
@@ -299,10 +348,13 @@ public:
 
     int histogramPosition;  // 0=disabled, 1=left pane, 2=right pane
     bool histogramRed, histogramGreen, histogramBlue;
-    bool histogramLuma, histogramChroma, histogramRAW;
+    bool histogramLuma, histogramChroma;
     bool histogramBar;
     int histogramHeight;
     int histogramDrawMode;
+    ScopeType histogramScopeType;
+    bool histogramShowOptionButtons;
+    float histogramTraceBrightness;
     bool FileBrowserToolbarSingleRow;
     bool hideTPVScrollbar;
     int whiteBalanceSpotSize;
@@ -389,18 +441,24 @@ public:
     int           fastexport_resize_dataspec;
     int           fastexport_resize_width;
     int           fastexport_resize_height;
+    int           fastexport_resize_longedge;
+    int           fastexport_resize_shortedge;
     bool fastexport_use_fast_pipeline;
 
     std::vector<Glib::ustring> favorites;
+    bool cloneFavoriteTools;
     // Dialog settings
     Glib::ustring lastIccDir;
     Glib::ustring lastDarkframeDir;
     Glib::ustring lastFlatfieldDir;
+	Glib::ustring lastCameraProfilesDir;
+	Glib::ustring lastLensProfilesDir;
     Glib::ustring lastRgbCurvesDir;
     Glib::ustring lastLabCurvesDir;
     Glib::ustring lastRetinexDir;
     Glib::ustring lastDenoiseCurvesDir;
     Glib::ustring lastWaveletCurvesDir;
+    Glib::ustring lastlocalCurvesDir;
     Glib::ustring lastPFCurvesDir;
     Glib::ustring lastHsvCurvesDir;
     Glib::ustring lastToneCurvesDir;
@@ -414,6 +472,17 @@ public:
 
     size_t maxRecentFolders;                   // max. number of recent folders stored in options file
     std::vector<Glib::ustring> recentFolders;  // List containing all recent folders
+
+    enum SortMethod {
+        SORT_BY_NAME,
+        SORT_BY_DATE,
+        SORT_BY_EXIF,
+        SORT_BY_RANK,
+        SORT_BY_LABEL,
+        SORT_METHOD_COUNT,
+    };
+    SortMethod sortMethod; // remembers current state of file browser
+    bool sortDescending;
 
 
     Options ();
