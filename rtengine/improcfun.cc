@@ -1985,7 +1985,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
 
     Imagefloat* editImgFloat = nullptr;
     PlanarWhateverData<float>* editWhatever = nullptr;
-    EditUniqueID editID = pipetteBuffer ? pipetteBuffer->getEditID() : EUID_None;
+    EditUniqueID editID = pipetteBuffer && pipetteBuffer->bufferCreated() ? pipetteBuffer->getEditID() : EUID_None;
 
     if (editID != EUID_None) {
         switch (pipetteBuffer->getDataProvider()->getCurrSubscriber()->getPipetteBufferType()) {
