@@ -5724,6 +5724,11 @@ void ImProcFunctions::rgb2lab(const Imagefloat &src, LabImage &dst, const Glib::
 
 void ImProcFunctions::rgb2lab(const Image8 &src, int x, int y, int w, int h, float L[], float a[], float b[], const procparams::ColorManagementParams &icm, bool consider_histogram_settings) const
 {
+    rgb2lab(src, x, y, w, h, L, a, b, icm, consider_histogram_settings, multiThread);
+}
+
+void ImProcFunctions::rgb2lab(const Image8 &src, int x, int y, int w, int h, float L[], float a[], float b[], const procparams::ColorManagementParams &icm, bool consider_histogram_settings, bool multiThread)
+{
     // Adapted from ImProcFunctions::lab2rgb
     const int src_width = src.getWidth();
     const int src_height = src.getHeight();
@@ -5833,6 +5838,21 @@ void ImProcFunctions::rgb2lab(const Image8 &src, int x, int y, int w, int h, flo
             }
         }
     }
+}
+
+void ImProcFunctions::rgb2lab(std::uint8_t red, std::uint8_t green, std::uint8_t blue, float &L, float &a, float &b, const procparams::ColorManagementParams &icm, bool consider_histogram_settings)
+{
+    float l_channel[1];
+    float a_channel[1];
+    float b_channel[1];
+    rtengine::Image8 buf(1, 1);
+    buf.r(0, 0) = red;
+    buf.g(0, 0) = green;
+    buf.b(0, 0) = blue;
+    ImProcFunctions::rgb2lab(buf, 0, 0, 1, 1, l_channel, a_channel, b_channel, icm, consider_histogram_settings, false);
+    L = l_channel[0];
+    a = a_channel[0];
+    b = b_channel[0];
 }
 
 void ImProcFunctions::lab2rgb(const LabImage &src, Imagefloat &dst, const Glib::ustring &workingSpace)
