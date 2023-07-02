@@ -99,7 +99,7 @@ public:
     HistogramRGBArea();
     ~HistogramRGBArea() override;
 
-    void updateBackBuffer (int r, int g, int b, const Glib::ustring &profile = "", const Glib::ustring &profileW = "");
+    void updateBackBuffer(int r, int g, int b, const rtengine::procparams::ColorManagementParams *cmp = nullptr);
     bool getShow ();
     void setShow(bool show);
     void setParent (Gtk::Grid* p)
@@ -206,7 +206,7 @@ public:
 
     void updateBackBuffer ();
     /// Update pointer values. Returns true if widget needs redrawing.
-    bool updatePointer(int r, int g, int b, const Glib::ustring &profile = "", const Glib::ustring &profileW = "");
+    bool updatePointer(int r, int g, int b, const rtengine::procparams::ColorManagementParams *cmp = nullptr);
     void update(
         const LUTu& histRed,
         const LUTu& histGreen,
@@ -260,7 +260,7 @@ public:
 class HistogramPanel final : public Gtk::Grid, public PointerMotionListener, public DrawModeListener, public rtengine::NonCopyable
 {
 private:
-    DelayedCall<bool, Glib::ustring, Glib::ustring, int, int, int> pointer_moved_delayed_call;
+    DelayedCall<bool, const rtengine::procparams::ColorManagementParams *, int, int, int> pointer_moved_delayed_call;
 
 protected:
 
@@ -343,7 +343,7 @@ public:
         histogramArea->update(histRed, histGreen, histBlue, histLuma, histChroma, histRedRaw, histGreenRaw, histBlueRaw, vectorscopeScale, vectorscopeHC, vectorscopeHS, waveformScale, waveformRed, waveformGreen, waveformBlue, waveformLuma);
     }
     // pointermotionlistener interface
-    void pointerMoved (bool validPos, const Glib::ustring &profile, const Glib::ustring &profileW, int x, int y, int r, int g, int b, bool isRaw = false) override;
+    void pointerMoved (bool validPos, const rtengine::procparams::ColorManagementParams &cmp, int x, int y, int r, int g, int b, bool isRaw = false) override;
 
     // TODO should be protected
     void setHistRGBInvalid ();
