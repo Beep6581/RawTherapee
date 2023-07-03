@@ -17,7 +17,6 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "threadutils.h"
-#include <glibmm/threads.h>
 
 #include <csignal>
 #include <iostream>
@@ -27,6 +26,8 @@
 #endif
 
 #if STRICT_MUTEX && !NDEBUG
+
+MyMutex::MyMutex() : locked(false) {}
 
 void MyMutex::checkLock ()
 {
@@ -62,13 +63,18 @@ void MyMutex::checkUnlock ()
 
 #if !TRACE_MYRWMUTEX
 
+MyRWMutex::MyRWMutex() :
+    writerCount(0),
+    readerCount(0)
+{}
+
 void MyReaderLock::acquire ()
 {
     if (locked) {
         return;
     }
 
-    std::lock_guard<std::mutex> lock (mutex.mutex);
+    std::unique_lock<std::mutex> lock (mutex.mutex);
 
     if (mutex.writerCount == 0) {
         // There's no writer operating, we can increment the writer count which will lock writers.
@@ -77,7 +83,7 @@ void MyReaderLock::acquire ()
         // The writer count is non null, but a reader can be the owner of the writer lock,
         // which will be the case if the reader count is not zero too.
         while (mutex.writerCount != 0) {
-            mutex.cond.wait(mutex.mutex);
+            mutex.cond.wait (lock);
         }
 
         // Then, we can increment the writer count.
@@ -96,7 +102,7 @@ void MyReaderLock::release ()
         return;
     }
 
-    std::lock_guard<std::mutex> lock (mutex.mutex);
+    std::unique_lock<std::mutex> lock (mutex.mutex);
 
     // decrement the writer number first...
     --mutex.readerCount;
@@ -106,7 +112,7 @@ void MyReaderLock::release ()
         --mutex.writerCount;
 
         // ...and signal the next waiting reader/writer that it's free
-        mutex.cond.notify_one();  // notify_all ?
+        mutex.cond.notify_all ();
     }
 
     locked = false;
@@ -118,11 +124,11 @@ void MyWriterLock::acquire ()
         return;
     }
 
-    std::lock_guard<std::mutex> lock (mutex.mutex);
+    std::unique_lock<std::mutex> lock (mutex.mutex);
 
     // The writer count is not zero, so we have to wait for it to be zero again...
     while (mutex.writerCount != 0) {
-        mutex.cond.wait (mutex.mutex);
+        mutex.cond.wait (lock);
     }
 
     // ...then we can increment the writer count.
@@ -137,12 +143,12 @@ void MyWriterLock::release ()
         return;
     }
 
-    std::lock_guard<std::mutex> lock (mutex.mutex);
+    std::unique_lock<std::mutex> lock (mutex.mutex);
 
     // Decrement the writer number first...
     if (--mutex.writerCount == 0) {
-        // ...and if the writer count is zero again, we can wake up the next writer or reader.
-        mutex.cond.notify_one();  // notify_all ?
+        // ...and if the writer count is zero again, we wake up all of the waiting writer or reader.
+        mutex.cond.notify_all ();
     }
 
     locked = false;
@@ -155,12 +161,19 @@ namespace
 
 std::ostream& trace (const char* file, int line)
 {
-    const auto currentThread = Glib::Threads::Thread::self ();
+    const auto currentThread = std::this_thread::get_id();
 
     return std::cout << currentThread << ":" << file << ":" << line << ": ";
 }
 
 }
+
+MyRWMutex::MyRWMutex() :
+    lastWriterFile(nullptr),
+    lastWriterLine(0),
+    writerCount(0),
+    readerCount(0)
+{}
 
 void MyReaderLock::acquire (const char* file, int line)
 {
@@ -171,7 +184,7 @@ void MyReaderLock::acquire (const char* file, int line)
 
     trace (file, line) << "Acquiring MyReaderLock..." << std::endl;
 
-    std::lock_guard<std::mutex> lock (mutex.mutex);
+    std::unique_lock<std::mutex> lock (mutex.mutex);
 
     if (mutex.writerCount == 0) {
         // There's no writer operating, we can increment the writer count which will lock writers.
@@ -185,13 +198,13 @@ void MyReaderLock::acquire (const char* file, int line)
                                << "\tLast writer file: " << mutex.lastWriterFile << std::endl
                                << "\tLast writer line: " << mutex.lastWriterLine << std::endl;
 
-            mutex.cond.wait(mutex.mutex);
+            mutex.cond.wait (lock);
         }
 
         // Then, we can increment the writer count.
         ++mutex.writerCount;
 
-        mutex.ownerThread = Glib::Threads::Thread::self ();
+        mutex.ownerThread = std::this_thread::get_id ();
         mutex.lastWriterFile = file;
         mutex.lastWriterLine = line;
     }
@@ -212,7 +225,7 @@ void MyReaderLock::release (const char* file, int line)
 
     trace (file, line) << "Releasing MyReaderLock..." << std::endl;
 
-    std::lock_guard<std::mutex> lock (mutex.mutex);
+    std::unique_lock<std::mutex> lock (mutex.mutex);
 
     // decrement the writer number first...
     --mutex.readerCount;
@@ -222,9 +235,9 @@ void MyReaderLock::release (const char* file, int line)
         --mutex.writerCount;
 
         // ...and signal the next waiting reader/writer that it's free
-        mutex.cond.notify_one();  // notify_all ?
+        mutex.cond.notify_all ();
 
-        mutex.ownerThread = nullptr;
+        mutex.ownerThread = std::thread::id();
         mutex.lastWriterFile = "";
         mutex.lastWriterLine = 0;
     }
@@ -242,7 +255,7 @@ void MyWriterLock::acquire (const char* file, int line)
 
     trace (file, line) << "Acquiring MyWriterLock..." << std::endl;
 
-    std::lock_guard<std::mutex> lock (mutex.mutex);
+    std::unique_lock<std::mutex> lock (mutex.mutex);
 
     // The writer count is not zero, so we have to wait for it to be zero again...
     while (mutex.writerCount != 0) {
@@ -251,13 +264,13 @@ void MyWriterLock::acquire (const char* file, int line)
                            << "\tLast writer file: " << mutex.lastWriterFile << std::endl
                            << "\tLast writer line: " << mutex.lastWriterLine << std::endl;
 
-        mutex.cond.wait (mutex.mutex);
+        mutex.cond.wait (lock);
     }
 
     // ...then we can increment the writer count.
     ++mutex.writerCount;
 
-    mutex.ownerThread = Glib::Threads::Thread::self ();
+    mutex.ownerThread = std::this_thread::get_id ();
     mutex.lastWriterFile = file;
     mutex.lastWriterLine = line;
 
@@ -274,14 +287,14 @@ void MyWriterLock::release (const char* file, int line)
 
     trace (file, line) << "Releasing MyWriterLock..." << std::endl;
 
-    std::lock_guard<std::mutex> lock (mutex.mutex);
+    std::unique_lock<std::mutex> lock (mutex.mutex);
 
     // Decrement the writer number first...
     if (--mutex.writerCount == 0) {
-        // ...and if the writer count is zero again, we can wake up the next writer or reader.
-        mutex.cond.notify_one();  // notify_all ?
+        // ...and if the writer count is zero again, we wake up all of the waiting writer or reader.
+        mutex.cond.notify_all ();
 
-        mutex.ownerThread = nullptr;
+        mutex.ownerThread = std::thread::id();
         mutex.lastWriterFile = "";
         mutex.lastWriterLine = 0;
     }

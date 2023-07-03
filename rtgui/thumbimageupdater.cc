@@ -85,7 +85,7 @@ public:
 
     Glib::ThreadPool* threadPool_;
 
-    // Need to be a std::mutex because used in a std::condition_variable_any object...
+    // Need to be a std::mutex because used in a std::condition_variable object...
     // This is the only exceptions along with GThreadMutex (guiutils.cc), MyMutex is used everywhere else
     std::mutex mutex_;
 
@@ -95,7 +95,7 @@ public:
 
     bool inactive_waiting_;
 
-    std::condition_variable_any inactive_;
+    std::condition_variable inactive_;
 
     void
     processNextJob()
@@ -169,7 +169,7 @@ public:
             std::lock_guard<std::mutex> lock(mutex_);
             if (inactive_waiting_) {
                 inactive_waiting_ = false;
-                inactive_.notify_one();  // notify_all ?
+                inactive_.notify_all();
             }
         }
     }
@@ -246,9 +246,9 @@ void ThumbImageUpdater::removeJobs(ThumbImageUpdateListener* listener)
     while ( impl_->active_ != 0 ) {
         DEBUG("waiting for running jobs1");
         {
-            std::lock_guard<std::mutex> lock(impl_->mutex_);
+            std::unique_lock<std::mutex> lock(impl_->mutex_);
             impl_->inactive_waiting_ = true;
-            impl_->inactive_.wait(impl_->mutex_);
+            impl_->inactive_.wait(lock);
         }
     }
 }
@@ -266,9 +266,9 @@ void ThumbImageUpdater::removeAllJobs()
     while ( impl_->active_ != 0 ) {
         DEBUG("waiting for running jobs2");
         {
-            std::lock_guard<std::mutex> lock(impl_->mutex_);
+            std::unique_lock<std::mutex> lock(impl_->mutex_);
             impl_->inactive_waiting_ = true;
-            impl_->inactive_.wait(impl_->mutex_);
+            impl_->inactive_.wait(lock);
         }
     }
 }

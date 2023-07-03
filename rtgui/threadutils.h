@@ -25,6 +25,7 @@
 //#define STRICT_MUTEX 1
 
 #include <mutex>
+#include <thread>
 #include <condition_variable>
 #include "../rtengine/noncopyable.h"
 
@@ -54,8 +55,10 @@ public:
     void unlock ();
 
 #if STRICT_MUTEX && !NDEBUG
+    MyMutex();
+
 private:
-    bool locked = false;
+    bool locked;
     void checkLock ();
     void checkUnlock ();
 #endif
@@ -88,18 +91,20 @@ public:
     friend class MyReaderLock;
     friend class MyWriterLock;
 
+    MyRWMutex();
+
 private:
-    std::mutex mutex;
-    std::condition_variable_any cond;
-
-    std::size_t writerCount = 0;
-    std::size_t readerCount = 0;
-
 #if TRACE_MYRWMUTEX
-    Glib::Threads::Thread* ownerThread = nullptr;
-    const char* lastWriterFile = "";
-    int lastWriterLine = 0;
+    std::thread::id ownerThread;
+    const char* lastWriterFile;
+    int lastWriterLine;
 #endif
+
+    std::mutex mutex;
+    std::condition_variable cond;
+
+    std::size_t writerCount;
+    std::size_t readerCount;
 };
 
 /**
