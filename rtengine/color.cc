@@ -2895,7 +2895,7 @@ void Color::SkinSat (float lum, float hue, float chrom, float &satreduc)
  *
  * data (Munsell ==> Lab) obtained with WallKillcolor and http://www.cis.rit.edu/research/mcsl2/online/munsell.php
  * each LUT give Hue in function of C, for each color Munsell and Luminance
- * eg: _6PB20 : color Munsell 6PB for L=20 c=5 c=45 c=85 c=125..139 when possible: interpolation betwwen values
+ * eg: _6PB20 : color Munsell 6PB for L=20 c=5 c=45 c=85 c=125..139 when possible: interpolation between values
  * no value for C<5  (gray)
  * low memory footprint -- maximum: 195 LUTf * 140 values
  * errors due to small number of samples in LUT and linearization are very low (1 to 2%)
