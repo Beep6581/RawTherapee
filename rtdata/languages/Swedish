@@ -1,7 +1,9 @@
-#01 2008-01-22 Emil Ericsson
-#02 2010-2013 Updated by Johan Thor
-#03 2015-08-09 Johan Thor
-#04 2016-12-30 Johan Thor
+#001 2008-01-22 Emil Ericsson
+#002 2010-2013 Updated by Johan Thor
+#003 2015-08-09 Johan Thor
+#004 2016-12-30 Johan Thor
+#100
+#101 @LANGUAGE_DISPLAY_NAME=Svenska
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Erkännande

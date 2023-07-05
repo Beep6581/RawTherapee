@@ -1,51 +1,53 @@
-#00 Czech
-#01 2008-01-20 translated by absolution
-#02 2008-02-21 updated by mkyral (typos and some missing strings)
-#03 2008-04-24 updated by mkyral (for version 2.4m1)
-#04 2008-10-28 updated by mkyral (for version 2.4 beta1)
-#05 2010-11-25 updated by mkyral (for version 3.0)
-#06 2011-03-06 updated by mkyral (default branch)
-#07 2011-03-20 updated by mkyral (default branch)
-#08 2011-05-01 updated by mkyral
-#09 2011-05-18 updated by mkyral
-#10 2011-06-04 updated by mkyral
-#11 2011-06-12 updated by mkyral
-#12 2011-06-16 updated by mkyral
-#13 2011-07-03 updated by mkyral
-#14 2011-07-08 updated by mkyral
-#15 2011-09-04 updated by mkyral
-#16 2011-09-06 updated by mkyral
-#17 2011-11-12 updated by mkyral
-#18 2011-12-29 updated by mkyral
-#19 2012-02-22 updated by mkyral
-#20 2012-04-28 updated by mkyral
-#21 2012-10-10 updated by mkyral
-#22 2012-11-27 updated by mkyral
-#23 2013-03-12 updated by mkyral
-#24 2013-04-12 updated by mkyral
-#25 2013-09-12 updated by mkyral
-#26 2013-09-17 updated by mkyral
-#27 2013-12-09 updated by mkyral
-#28 2014-01-07 updated by mkyral
-#29 2014-04-08 updated by mkyral
-#30 2014-04-30 updated by mkyral
-#31 2014-05-12 updated by mkyral
-#32 2014-10-24 updated by mkyral
-#33 2015-02-22 updated by mkyral
-#34 2015-07-09 updated by mkyral
-#35 2015-11-24 updated by mkyral
-#36 2016-10-18 updated by mkyral
-#37 2017-01-10 updated by mkyral
-#38 2017-04-26 updated by mkyral
-#39 2017-07-21 updated by mkyral
-#40 2017-12-13 updated by mkyral
-#41 2018-03-03 updated by mkyral
-#42 2018-10-24 updated by mkyral
-#43 2018-12-04 updated by mkyral
-#44 2018-12-13 updated by mkyral
-#45 2020-04-20 updated by mkyral
-#46 2020-04-21 updated by mkyral
-#47 2020-06-02 updated by mkyral
+#000 Czech
+#001 2008-01-20 translated by absolution
+#002 2008-02-21 updated by mkyral (typos and some missing strings)
+#003 2008-04-24 updated by mkyral (for version 2.4m1)
+#004 2008-10-28 updated by mkyral (for version 2.4 beta1)
+#005 2010-11-25 updated by mkyral (for version 3.0)
+#006 2011-03-06 updated by mkyral (default branch)
+#007 2011-03-20 updated by mkyral (default branch)
+#008 2011-05-01 updated by mkyral
+#009 2011-05-18 updated by mkyral
+#010 2011-06-04 updated by mkyral
+#011 2011-06-12 updated by mkyral
+#012 2011-06-16 updated by mkyral
+#013 2011-07-03 updated by mkyral
+#014 2011-07-08 updated by mkyral
+#015 2011-09-04 updated by mkyral
+#016 2011-09-06 updated by mkyral
+#017 2011-11-12 updated by mkyral
+#018 2011-12-29 updated by mkyral
+#019 2012-02-22 updated by mkyral
+#020 2012-04-28 updated by mkyral
+#021 2012-10-10 updated by mkyral
+#022 2012-11-27 updated by mkyral
+#023 2013-03-12 updated by mkyral
+#024 2013-04-12 updated by mkyral
+#025 2013-09-12 updated by mkyral
+#026 2013-09-17 updated by mkyral
+#027 2013-12-09 updated by mkyral
+#028 2014-01-07 updated by mkyral
+#029 2014-04-08 updated by mkyral
+#030 2014-04-30 updated by mkyral
+#031 2014-05-12 updated by mkyral
+#032 2014-10-24 updated by mkyral
+#033 2015-02-22 updated by mkyral
+#034 2015-07-09 updated by mkyral
+#035 2015-11-24 updated by mkyral
+#036 2016-10-18 updated by mkyral
+#037 2017-01-10 updated by mkyral
+#038 2017-04-26 updated by mkyral
+#039 2017-07-21 updated by mkyral
+#040 2017-12-13 updated by mkyral
+#041 2018-03-03 updated by mkyral
+#042 2018-10-24 updated by mkyral
+#043 2018-12-04 updated by mkyral
+#044 2018-12-13 updated by mkyral
+#045 2020-04-20 updated by mkyral
+#046 2020-04-21 updated by mkyral
+#047 2020-06-02 updated by mkyral
+#100
+#101 @LANGUAGE_DISPLAY_NAME=Český
 
 ABOUT_TAB_BUILD;Verze
 ABOUT_TAB_CREDITS;Zásluhy
