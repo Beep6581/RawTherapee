@@ -630,13 +630,6 @@ public:
     static const double Colorlab_L40_30_m30spect2[97];
     static const double Colorlab_L40_20_m35spect[97];
     static const double Colorlab_L40_20_m35spect2[97];
-
-
-//3	A3	15,42 	11,25	20,90	40,00	30,00	-30,00
-//4	A4	13,77 	11,25	23,48	40,00	20,00	-35,00
-
-//1	A1	4,16 	3,50	5,45 	21,94	0,27	-41,6
-//2	A2	5,38 	5,00	7,80	26,70	-1,25	-46,9
  
     static void spectrum_to_xyz_daylight  (double _m1, double _m2, double &x, double &y, double &z, const color_match_type &color_match);
     static void spectrum_to_xyz_blackbody (double _temp, double &x, double &y, double &z, const color_match_type &color_match);

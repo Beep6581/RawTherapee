@@ -701,7 +701,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             illum = toUnderlying(ColorManagementParams::Illuminant::D65);
             Wx = 0.95045471;
             Wz = 1.08905029;
-/*
+
         } else if (profile == "BruceRGB") {
             p[0] = 0.6400;    // Bruce primaries
             p[1] = 0.3300;
@@ -713,7 +713,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             illum = toUnderlying(ColorManagementParams::Illuminant::D65);
             Wx = 0.95045471;
             Wz = 1.08905029;
-*/
+
         } else if (profile == "Beta RGB") {
             p[0] = 0.6888;    // Beta primaries
             p[1] = 0.3112;

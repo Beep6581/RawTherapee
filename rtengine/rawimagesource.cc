@@ -4572,7 +4572,7 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
         LUTf YYYthr(YYY.getSize());
         YYYthr.clear();
         bool purp = true;
-        float Ypurp = settings->itcwb_Ypurple;
+        float Ypurp = 0.5f; //settings->itcwb_Ypurple;
         float Ypurpmax = 1.f;
         //enable display cells
         /*
@@ -5922,7 +5922,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             N_t = sizeof(Txyzs) / sizeof(Txyzs[0]);   //number of temperature White point
         }
 
-        constexpr int Nc = 428 + 1; //429 number of reference spectral colors
+     //   constexpr int Nc = 428 + 1; //429 number of reference spectral colors
         int Ncr = 429;
 
         if (wbpar.itcwb_prim == "srgb") {
@@ -6432,7 +6432,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                     float mindeltaE = 100000.f;
                     int kN = 0;
 
-                    for (int j = 0; j < Nc ; j++) {
+                    for (int j = 0; j < Ncr ; j++) {
                         if (!good_spectral[j]) {
                             const float deltaE = SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[j][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[j][repref]);
 
