@@ -643,11 +643,6 @@ struct WBParams {
     double           equal;
     double           tempBias;
     StandardObserver observer;
-    int              itcwb_thres;
-    int              itcwb_precis;
-    int              itcwb_size;
-    int              itcwb_minsize;
-    int              itcwb_delta;
     int              itcwb_fgreen;
     double           itcwb_green;
     int              itcwb_rgreen;

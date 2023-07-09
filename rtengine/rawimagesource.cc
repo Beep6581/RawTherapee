@@ -5218,7 +5218,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     2) then, I choose the "camera temp" to initialize calculation (why not)
     3) for this temp, I calculated XYZ values for the 406 spectral data
     4) then I create for the image an "histogram", but for xyY (CIE 1931 color space or CIE 1964)
-    5) for each pixel (in fact to accelerate only 1/3 for and 1/3 for y), I determine for each couple xy, the number of occurrences, can be change by Itcwb_precis to 3 or 9
+    5) for each pixel (in fact to accelerate only 1/3 for and 1/3 for y), I determine for each couple xy, the number of occurrences
     6) I sort this result in ascending order
     7) in option we can sort in another manner to take into account chroma : chromax = x - white point x, chromay = y - white point y
     8) then I compare this result, with spectral data found above in 3) with deltaE (limited to chroma)
@@ -5256,7 +5256,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     itcwb_delta : 4 by default can be set between 0 to 5 ==> delta temp to build histogram xy - if camera temp is not probably good
     itcwb_nopurple : false default - allow to bypass highlight recovery and inpait opposed when need flowers and not purple due to highlights...
     itcwb_fgreen : 3 by default - between 2 to 6 - find the compromise student / green to reach green near of 1
-    Itcwb_minsize: minimal size of the patch
     itcwb_green - adjust green refinement
     */
     BENCHFUN
@@ -6427,7 +6426,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             float maxhist = -1000.f;
             float minhist = 100000000.f;
 
-            for (int nb = 1; nb <= maxnb; ++nb) { //max 5 iterations for Itcwb_thres=33, after trial 3 is good in most cases but in some cases 5
+            for (int nb = 1; nb <= maxnb; ++nb) {
                 for (int i = 0; i < w; ++i) {
                     float mindeltaE = 100000.f;
                     int kN = 0;
@@ -6490,7 +6489,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 YY_curref[i][repref] = YYY[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
             }
 
-            int minsize = wbpar.itcwb_minsize;
+            int minsize = 20;
             int maxsize = maxsiz;
             bool isponderate = wbpar.itcwb_ponder;//reused to build patch ponderate
 
@@ -6643,9 +6642,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
             int maxnb = 1; //since 8 april 2023
 
-            if (wbpar.itcwb_thres > 65) {//normally never used
-                maxnb = (Ncr - 1) / wbpar.itcwb_thres; //201 to 211
-            }
 
             float dEmean = 0.f;
             int ndEmean = 0;
@@ -6844,7 +6840,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 Tgstud[i].greenref = 55;// 1.f position in the list
             }
 
-            int newdelta = 1.8f * wbpar.itcwb_delta;
+            int newdelta = 1.8f * 4; // wbpar.itcwb_delta - default = 4;
             int dgoodref = rtengine::LIM(newdelta, 1, 10); // 1.8 increase delta temp scan
 
             if (oldsampling == true) {

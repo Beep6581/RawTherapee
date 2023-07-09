@@ -267,11 +267,6 @@ void ParamsEdited::set(bool v)
     wb.equal                   = v;
     wb.tempBias                = v;
     wb.observer                = v;
-    wb.itcwb_thres                = v;
-    wb.itcwb_precis                = v;
-    wb.itcwb_size                = v;
-    wb.itcwb_minsize                = v;
-    wb.itcwb_delta                = v;
     wb.itcwb_fgreen                = v;
     wb.itcwb_green                = v;
     wb.itcwb_rgreen                = v;
@@ -990,11 +985,6 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wb.temperature = wb.temperature && p.wb.temperature == other.wb.temperature;
         wb.tempBias = wb.tempBias && p.wb.tempBias == other.wb.tempBias;
         wb.observer = wb.observer && p.wb.observer == other.wb.observer;
-        wb.itcwb_thres = wb.itcwb_thres && p.wb.itcwb_thres == other.wb.itcwb_thres;
-        wb.itcwb_precis = wb.itcwb_precis && p.wb.itcwb_precis == other.wb.itcwb_precis;
-        wb.itcwb_size = wb.itcwb_size && p.wb.itcwb_size == other.wb.itcwb_size;
-        wb.itcwb_minsize = wb.itcwb_minsize && p.wb.itcwb_minsize == other.wb.itcwb_minsize;
-        wb.itcwb_delta = wb.itcwb_delta && p.wb.itcwb_delta == other.wb.itcwb_delta;
         wb.itcwb_fgreen = wb.itcwb_fgreen && p.wb.itcwb_fgreen == other.wb.itcwb_fgreen;
         wb.itcwb_green = wb.itcwb_green && p.wb.itcwb_green == other.wb.itcwb_green;
         wb.itcwb_rgreen = wb.itcwb_rgreen && p.wb.itcwb_rgreen == other.wb.itcwb_rgreen;
@@ -2878,26 +2868,6 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (wb.observer) {
         toEdit.wb.observer = mods.wb.observer;
-    }
-
-    if (wb.itcwb_thres) {
-        toEdit.wb.itcwb_thres = mods.wb.itcwb_thres;
-    }
-
-    if (wb.itcwb_precis) {
-        toEdit.wb.itcwb_precis = mods.wb.itcwb_precis;
-    }
-
-    if (wb.itcwb_size) {
-        toEdit.wb.itcwb_size = mods.wb.itcwb_size;
-    }
-
-    if (wb.itcwb_minsize) {
-        toEdit.wb.itcwb_minsize = mods.wb.itcwb_minsize;
-    }
-
-    if (wb.itcwb_delta) {
-        toEdit.wb.itcwb_delta = mods.wb.itcwb_delta;
     }
 
     if (wb.itcwb_fgreen) {

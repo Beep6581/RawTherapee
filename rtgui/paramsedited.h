@@ -249,11 +249,6 @@ struct WBParamsEdited {
     bool equal;
     bool observer;
     bool tempBias;
-    bool itcwb_thres;
-    bool itcwb_precis;
-    bool itcwb_size;
-    bool itcwb_minsize;
-    bool itcwb_delta;
     bool itcwb_fgreen;
     bool itcwb_rgreen;
     bool itcwb_nopurple;

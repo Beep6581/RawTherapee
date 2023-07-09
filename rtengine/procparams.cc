@@ -1387,11 +1387,6 @@ WBParams::WBParams() :
     equal(1.0),
     tempBias(0.0),
     observer(ColorTemp::DEFAULT_OBSERVER),
-    itcwb_thres(34),
-    itcwb_precis(3),
-    itcwb_size(70),
-    itcwb_minsize(20),
-    itcwb_delta(4),
     itcwb_fgreen(3),//slider
     itcwb_green(0.),//slider
     itcwb_rgreen(1),
@@ -1444,11 +1439,6 @@ bool WBParams::operator ==(const WBParams& other) const
         && equal == other.equal
         && tempBias == other.tempBias
         && observer == other.observer
-        && itcwb_thres == other.itcwb_thres
-        && itcwb_precis == other.itcwb_precis
-        && itcwb_size == other.itcwb_size
-        && itcwb_minsize == other.itcwb_minsize
-        && itcwb_delta == other.itcwb_delta
         && itcwb_fgreen == other.itcwb_fgreen
         && itcwb_green == other.itcwb_green
         && itcwb_rgreen == other.itcwb_rgreen
@@ -6233,11 +6223,6 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->wb.equal, "White Balance", "Equal", wb.equal, keyFile);
         saveToKeyfile(!pedited || pedited->wb.tempBias, "White Balance", "TemperatureBias", wb.tempBias, keyFile);
         saveToKeyfile(!pedited || pedited->wb.observer, "White Balance", "StandardObserver", Glib::ustring(wb.observer == StandardObserver::TWO_DEGREES ? "TWO_DEGREES" : "TEN_DEGREES"), keyFile);
-        saveToKeyfile(!pedited || pedited->wb.itcwb_thres, "White Balance", "Itcwb_thres", wb.itcwb_thres, keyFile);
-        saveToKeyfile(!pedited || pedited->wb.itcwb_precis, "White Balance", "Itcwb_precis", wb.itcwb_precis, keyFile);
-        saveToKeyfile(!pedited || pedited->wb.itcwb_size, "White Balance", "Itcwb_size", wb.itcwb_size, keyFile);
-        saveToKeyfile(!pedited || pedited->wb.itcwb_minsize, "White Balance", "Itcwb_minsize", wb.itcwb_minsize, keyFile);
-        saveToKeyfile(!pedited || pedited->wb.itcwb_delta, "White Balance", "Itcwb_delta", wb.itcwb_delta, keyFile);
         saveToKeyfile(!pedited || pedited->wb.itcwb_fgreen, "White Balance", "Itcwb_findgreen", wb.itcwb_fgreen, keyFile);
         saveToKeyfile(!pedited || pedited->wb.itcwb_green, "White Balance", "Itcwb_green", wb.itcwb_green, keyFile);
         saveToKeyfile(!pedited || pedited->wb.itcwb_rgreen, "White Balance", "Itcwb_rangegreen", wb.itcwb_rgreen, keyFile);
@@ -8218,11 +8203,6 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             } else if (standard_observer == "TWO_DEGREES") {
                 wb.observer = StandardObserver::TWO_DEGREES;
             }
-            assignFromKeyfile(keyFile, "White Balance", "Itcwb_thres", pedited, wb.itcwb_thres, pedited->wb.itcwb_thres);
-            assignFromKeyfile(keyFile, "White Balance", "Itcwb_precis", pedited, wb.itcwb_precis, pedited->wb.itcwb_precis);
-            assignFromKeyfile(keyFile, "White Balance", "Itcwb_size", pedited, wb.itcwb_size, pedited->wb.itcwb_size);
-            assignFromKeyfile(keyFile, "White Balance", "Itcwb_minsize", pedited, wb.itcwb_minsize, pedited->wb.itcwb_minsize);
-            assignFromKeyfile(keyFile, "White Balance", "Itcwb_delta", pedited, wb.itcwb_delta, pedited->wb.itcwb_delta);
             assignFromKeyfile(keyFile, "White Balance", "Itcwb_findgreen", pedited, wb.itcwb_fgreen, pedited->wb.itcwb_fgreen);
             assignFromKeyfile(keyFile, "White Balance", "Itcwb_green", pedited, wb.itcwb_green, pedited->wb.itcwb_green);
             assignFromKeyfile(keyFile, "White Balance", "Itcwb_rangegreen", pedited, wb.itcwb_rgreen, pedited->wb.itcwb_rgreen);

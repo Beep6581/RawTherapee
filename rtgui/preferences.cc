@@ -972,12 +972,6 @@ Gtk::Widget* Preferences::getColorManPanel ()
     setExpandAlignProperties(mwbaena, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     mwbaena->set_active(true);
     wbah->pack_start(*mwbaena, Gtk::PACK_SHRINK, 0);
-/*    
-    mwbaenacustom = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_WBAENACUSTOM")));
-    setExpandAlignProperties(mwbaenacustom, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    mwbaenacustom->set_active(false);
-    wbah->pack_start(*mwbaenacustom, Gtk::PACK_SHRINK, 0);
-*/    
     wbaVB->add(*wbah);
 
     fwbacorr->add (*wbaVB);
