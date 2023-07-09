@@ -1387,17 +1387,12 @@ WBParams::WBParams() :
     equal(1.0),
     tempBias(0.0),
     observer(ColorTemp::DEFAULT_OBSERVER),
-    itcwb_fgreen(3),//slider
     itcwb_green(0.),//slider
-    itcwb_rgreen(1),
-    itcwb_nopurple(false),
+    itcwb_rgreen(1),//keep for settings 
+    itcwb_nopurple(false),//keep for settings
     itcwb_alg(false),//checkbox
-    itcwb_custom(false),//checkbox
-    itcwb_ponder(true),
-    itcwb_sorted(true),
-    itcwb_forceextra(false),
     itcwb_prim("beta"),//combobox
-    itcwb_sampling(false)
+    itcwb_sampling(false)//keep for 5.9 and for settings
 
 {
 }
@@ -1422,7 +1417,6 @@ bool WBParams::isPanningRelatedChange(const WBParams& other) const
                 && itcwb_green == other.itcwb_green
                 && itcwb_prim == other.itcwb_prim
                 && itcwb_alg == other.itcwb_alg
-                && itcwb_custom == other.itcwb_custom
 
             )
         )
@@ -1439,15 +1433,10 @@ bool WBParams::operator ==(const WBParams& other) const
         && equal == other.equal
         && tempBias == other.tempBias
         && observer == other.observer
-        && itcwb_fgreen == other.itcwb_fgreen
         && itcwb_green == other.itcwb_green
         && itcwb_rgreen == other.itcwb_rgreen
         && itcwb_nopurple == other.itcwb_nopurple
         && itcwb_alg == other.itcwb_alg
-        && itcwb_custom == other.itcwb_custom
-        && itcwb_ponder == other.itcwb_ponder
-        && itcwb_sorted == other.itcwb_sorted
-        && itcwb_forceextra == other.itcwb_forceextra
         && itcwb_prim == other.itcwb_prim
         && itcwb_sampling == other.itcwb_sampling;
 
@@ -6223,15 +6212,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->wb.equal, "White Balance", "Equal", wb.equal, keyFile);
         saveToKeyfile(!pedited || pedited->wb.tempBias, "White Balance", "TemperatureBias", wb.tempBias, keyFile);
         saveToKeyfile(!pedited || pedited->wb.observer, "White Balance", "StandardObserver", Glib::ustring(wb.observer == StandardObserver::TWO_DEGREES ? "TWO_DEGREES" : "TEN_DEGREES"), keyFile);
-        saveToKeyfile(!pedited || pedited->wb.itcwb_fgreen, "White Balance", "Itcwb_findgreen", wb.itcwb_fgreen, keyFile);
         saveToKeyfile(!pedited || pedited->wb.itcwb_green, "White Balance", "Itcwb_green", wb.itcwb_green, keyFile);
         saveToKeyfile(!pedited || pedited->wb.itcwb_rgreen, "White Balance", "Itcwb_rangegreen", wb.itcwb_rgreen, keyFile);
         saveToKeyfile(!pedited || pedited->wb.itcwb_nopurple, "White Balance", "Itcwb_nopurple", wb.itcwb_nopurple, keyFile);
         saveToKeyfile(!pedited || pedited->wb.itcwb_alg, "White Balance", "Itcwb_alg", wb.itcwb_alg, keyFile);
-        saveToKeyfile(!pedited || pedited->wb.itcwb_custom, "White Balance", "Itcwb_custom", wb.itcwb_custom, keyFile);
-        saveToKeyfile(!pedited || pedited->wb.itcwb_ponder, "White Balance", "Itcwb_ponder", wb.itcwb_ponder, keyFile);
-        saveToKeyfile(!pedited || pedited->wb.itcwb_sorted, "White Balance", "Itcwb_sorted", wb.itcwb_sorted, keyFile);
-        saveToKeyfile(!pedited || pedited->wb.itcwb_forceextra, "White Balance", "Itcwb_forceextra", wb.itcwb_forceextra, keyFile);
         saveToKeyfile(!pedited || pedited->wb.itcwb_prim, "White Balance", "Itcwb_prim", wb.itcwb_prim, keyFile);
         saveToKeyfile(!pedited || pedited->wb.itcwb_sampling, "White Balance", "Itcwb_sampling", wb.itcwb_sampling, keyFile);
 
@@ -8203,15 +8187,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             } else if (standard_observer == "TWO_DEGREES") {
                 wb.observer = StandardObserver::TWO_DEGREES;
             }
-            assignFromKeyfile(keyFile, "White Balance", "Itcwb_findgreen", pedited, wb.itcwb_fgreen, pedited->wb.itcwb_fgreen);
             assignFromKeyfile(keyFile, "White Balance", "Itcwb_green", pedited, wb.itcwb_green, pedited->wb.itcwb_green);
             assignFromKeyfile(keyFile, "White Balance", "Itcwb_rangegreen", pedited, wb.itcwb_rgreen, pedited->wb.itcwb_rgreen);
             assignFromKeyfile(keyFile, "White Balance", "Itcwb_nopurple", pedited, wb.itcwb_nopurple, pedited->wb.itcwb_nopurple);
             assignFromKeyfile(keyFile, "White Balance", "Itcwb_alg", pedited, wb.itcwb_alg, pedited->wb.itcwb_alg);
-            assignFromKeyfile(keyFile, "White Balance", "Itcwb_custom", pedited, wb.itcwb_custom, pedited->wb.itcwb_custom);
-            assignFromKeyfile(keyFile, "White Balance", "Itcwb_ponder", pedited, wb.itcwb_ponder, pedited->wb.itcwb_ponder);
-            assignFromKeyfile(keyFile, "White Balance", "Itcwb_sorted", pedited, wb.itcwb_sorted, pedited->wb.itcwb_sorted);
-            assignFromKeyfile(keyFile, "White Balance", "Itcwb_forceextra", pedited, wb.itcwb_forceextra, pedited->wb.itcwb_forceextra);
             assignFromKeyfile(keyFile, "White Balance", "Itcwb_prim", pedited, wb.itcwb_prim, pedited->wb.itcwb_prim);
             if (ppVersion <= 349) { // 5.9 and earlier.
                 wb.itcwb_sampling = true;

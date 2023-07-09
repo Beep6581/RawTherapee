@@ -643,15 +643,10 @@ struct WBParams {
     double           equal;
     double           tempBias;
     StandardObserver observer;
-    int              itcwb_fgreen;
     double           itcwb_green;
     int              itcwb_rgreen;
     bool             itcwb_nopurple;
     bool             itcwb_alg;
-    bool             itcwb_custom;
-    bool             itcwb_ponder;
-    bool             itcwb_sorted;
-    bool             itcwb_forceextra;
     Glib::ustring    itcwb_prim;
     bool             itcwb_sampling;
 

@@ -5255,7 +5255,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     Itcwb_prim : sRGB, Beta rgb (default), XYZcam, JDCmax = Use near Ciexy diagram instead of sRGB
     itcwb_delta : 4 by default can be set between 0 to 5 ==> delta temp to build histogram xy - if camera temp is not probably good
     itcwb_nopurple : false default - allow to bypass highlight recovery and inpait opposed when need flowers and not purple due to highlights...
-    itcwb_fgreen : 3 by default - between 2 to 6 - find the compromise student / green to reach green near of 1
     itcwb_green - adjust green refinement
     */
     BENCHFUN
@@ -6491,7 +6490,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
             int minsize = 20;
             int maxsize = maxsiz;
-            bool isponderate = wbpar.itcwb_ponder;//reused to build patch ponderate
+            bool isponderate = true; //to build patch ponderate
 
             bool isponder = true;//with true moving average
             float powponder = settings->itcwb_powponder;//not used today...
@@ -6968,7 +6967,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 // perhaps we can used a Snedecor test ? but why...at least we have confidence interval > 90%
                 int greengood = 55;
 
-                int maxkgood = wbpar.itcwb_fgreen;//default 3 - we can change ...to test 2, 4, 5, 6. High values perhaps less good student, but it is a compromise...
+                int maxkgood = 3;//default 3 - we can change ...to test 2, 4, 5, 6. High values perhaps less good student, but it is a compromise...
                 maxkgood = rtengine::LIM(maxkgood, 1, 6);// 2 6
 
                 if (oldsampling == true) {

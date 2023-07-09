@@ -267,15 +267,10 @@ void ParamsEdited::set(bool v)
     wb.equal                   = v;
     wb.tempBias                = v;
     wb.observer                = v;
-    wb.itcwb_fgreen                = v;
     wb.itcwb_green                = v;
     wb.itcwb_rgreen                = v;
     wb.itcwb_nopurple             = v;
     wb.itcwb_alg             = v;
-    wb.itcwb_custom             = v;
-    wb.itcwb_ponder             = v;
-    wb.itcwb_sorted             = v;
-    wb.itcwb_forceextra         = v;
     wb.itcwb_prim                = v;
     wb.itcwb_sampling         = v;
     //colorShift.a               = v;
@@ -985,15 +980,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wb.temperature = wb.temperature && p.wb.temperature == other.wb.temperature;
         wb.tempBias = wb.tempBias && p.wb.tempBias == other.wb.tempBias;
         wb.observer = wb.observer && p.wb.observer == other.wb.observer;
-        wb.itcwb_fgreen = wb.itcwb_fgreen && p.wb.itcwb_fgreen == other.wb.itcwb_fgreen;
         wb.itcwb_green = wb.itcwb_green && p.wb.itcwb_green == other.wb.itcwb_green;
         wb.itcwb_rgreen = wb.itcwb_rgreen && p.wb.itcwb_rgreen == other.wb.itcwb_rgreen;
         wb.itcwb_nopurple = wb.itcwb_nopurple && p.wb.itcwb_nopurple == other.wb.itcwb_nopurple;
         wb.itcwb_alg = wb.itcwb_alg && p.wb.itcwb_alg == other.wb.itcwb_alg;
-        wb.itcwb_custom = wb.itcwb_custom && p.wb.itcwb_custom == other.wb.itcwb_custom;
-        wb.itcwb_ponder = wb.itcwb_ponder && p.wb.itcwb_ponder == other.wb.itcwb_ponder;
-        wb.itcwb_sorted = wb.itcwb_sorted && p.wb.itcwb_sorted == other.wb.itcwb_sorted;
-        wb.itcwb_forceextra = wb.itcwb_forceextra && p.wb.itcwb_forceextra == other.wb.itcwb_forceextra;
         wb.itcwb_prim = wb.itcwb_prim && p.wb.itcwb_prim == other.wb.itcwb_prim;
         wb.itcwb_sampling = wb.itcwb_sampling && p.wb.itcwb_sampling == other.wb.itcwb_sampling;
         //colorShift.a = colorShift.a && p.colorShift.a == other.colorShift.a;
@@ -2870,10 +2860,6 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.wb.observer = mods.wb.observer;
     }
 
-    if (wb.itcwb_fgreen) {
-        toEdit.wb.itcwb_fgreen = mods.wb.itcwb_fgreen;
-    }
-
     if (wb.itcwb_green) {
         toEdit.wb.itcwb_green = mods.wb.itcwb_green;
     }
@@ -2888,22 +2874,6 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (wb.itcwb_alg) {
         toEdit.wb.itcwb_alg = mods.wb.itcwb_alg;
-    }
-
-    if (wb.itcwb_custom) {
-        toEdit.wb.itcwb_custom = mods.wb.itcwb_custom;
-    }
-
-    if (wb.itcwb_ponder) {
-        toEdit.wb.itcwb_ponder = mods.wb.itcwb_ponder;
-    }
-
-    if (wb.itcwb_sorted) {
-        toEdit.wb.itcwb_sorted = mods.wb.itcwb_sorted;
-    }
-
-    if (wb.itcwb_forceextra) {
-        toEdit.wb.itcwb_forceextra = mods.wb.itcwb_forceextra;
     }
 
     if (wb.itcwb_prim) {
