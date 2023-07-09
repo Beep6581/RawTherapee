@@ -96,11 +96,7 @@ public:
     double          cbdlsensi;
 //    bool            showtooltip;
     bool            itcwb_enable;
-    bool            itcwb_custom_enable;
     double          itcwb_deltaspec;
-    double          itcwb_tempstdA;
-    int             itcwb_maxsize;
-    double          itcwb_Ypurple;
     double          itcwb_powponder;
 
 //wavelet levels

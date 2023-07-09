@@ -1853,7 +1853,6 @@ void Preferences::storePreferences()
     moptions.rtSettings.autoMonitorProfile = cbAutoMonProfile->get_active();
     moptions.rtSettings.autocielab = mcie->get_active();
     moptions.rtSettings.itcwb_enable = mwbaena->get_active();
-//    moptions.rtSettings.itcwb_custom_enable = mwbaenacustom->get_active();
 
 #endif
 
@@ -2014,7 +2013,6 @@ void Preferences::fillPreferences()
     monBPC->set_active(moptions.rtSettings.monitorBPC);
     mcie->set_active(moptions.rtSettings.autocielab);
     mwbaena->set_active(moptions.rtSettings.itcwb_enable);
-//    mwbaenacustom->set_active(moptions.rtSettings.itcwb_custom_enable);
 
     cbAutoMonProfile->set_active(moptions.rtSettings.autoMonitorProfile);
 #endif

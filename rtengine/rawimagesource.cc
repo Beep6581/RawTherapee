@@ -4572,7 +4572,7 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
         LUTf YYYthr(YYY.getSize());
         YYYthr.clear();
         bool purp = true;
-        float Ypurp = 0.5f; //settings->itcwb_Ypurple;
+        float Ypurp = 0.5f;
         float Ypurpmax = 1.f;
         //enable display cells
         /*
@@ -6336,7 +6336,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         int sizcurr2ref = sizcurrref - ntr;
         const int sizcu30 = sizcurrref - n30;
-        int maxsiz = settings->itcwb_maxsize; // between 60 to 90
+        int maxsiz = 70;
         maxsiz = LIM(maxsiz, 50, 80);
         int nbm = maxsiz;
         int sizcu4 = maxsiz;
