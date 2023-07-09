@@ -9689,8 +9689,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     icm.outputProfile = "RTv4_Best";
                 } else if (icm.outputProfile == "Rec2020") {
                     icm.outputProfile = "RTv4_Rec2020";
-//                } else if (icm.outputProfile == "Bruce") { // Have we ever provided this profile ? Should we convert this filename ?
-//                    icm.outputProfile = "RTv4_Bruce";
+                } else if (icm.outputProfile == "Bruce") { // Have we ever provided this profile ? Should we convert this filename ?
+                    icm.outputProfile = "RTv4_Bruce";
                 } else if (icm.outputProfile == "ACES") {
                     icm.outputProfile = "RTv4_ACES-AP0";
                 }
