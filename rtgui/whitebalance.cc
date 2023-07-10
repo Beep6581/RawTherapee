@@ -250,7 +250,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     EvWBitcwbprim = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_PRIM");
     EvWBitcwbalg = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_OBS");
     EvWBitcwgreen = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_GREEN");
-    EvWBitcwsampling = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_SAMPL");
+//    EvWBitcwsampling = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_SAMPL");
 
 
     //Add the model columns to the Combo (which is a kind of view),
@@ -387,8 +387,8 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     itcwb_alg ->set_tooltip_markup (M("TP_WBALANCE_ITCWALG_TOOLTIP"));
     itcwb_alg ->set_active (false);
 
-    itcwb_sampling = Gtk::manage (new Gtk::CheckButton (M("TP_WBALANCE_ITCWB_SAMPLING")));
-    itcwb_sampling ->set_active (false);
+   // itcwb_sampling = Gtk::manage (new Gtk::CheckButton (M("TP_WBALANCE_ITCWB_SAMPLING")));
+   // itcwb_sampling ->set_active (false);
 
 
     itcwb_prim = Gtk::manage (new MyComboBoxText ());
@@ -447,7 +447,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     spotbutton->signal_pressed().connect( sigc::mem_fun(*this, &WhiteBalance::spotPressed) );
     methconn = method->signal_changed().connect( sigc::mem_fun(*this, &WhiteBalance::optChanged) );
     itcwb_algconn = itcwb_alg->signal_toggled().connect( sigc::mem_fun(*this, &WhiteBalance::itcwb_alg_toggled) );
-    itcwb_samplingconn = itcwb_sampling->signal_toggled().connect( sigc::mem_fun(*this, &WhiteBalance::itcwb_sampling_toggled) );
+  //  itcwb_samplingconn = itcwb_sampling->signal_toggled().connect( sigc::mem_fun(*this, &WhiteBalance::itcwb_sampling_toggled) );
     
     resetButton->signal_pressed().connect( sigc::mem_fun(*this, &WhiteBalance::resetWB) );
     spotsize->signal_changed().connect( sigc::mem_fun(*this, &WhiteBalance::spotSizeChanged) );
@@ -500,7 +500,7 @@ void WhiteBalance::itcwb_alg_toggled ()
         }
     }
 }
-
+/*
 void WhiteBalance::itcwb_sampling_toggled ()
 {
     if (batchMode) {
@@ -523,7 +523,7 @@ void WhiteBalance::itcwb_sampling_toggled ()
         }
     }
 }
-
+*/
 
 void WhiteBalance::adjusterChanged(Adjuster* a, double newval)
 {
@@ -795,12 +795,12 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
     itcwb_alg->set_active (pp->wb.itcwb_alg);
     itcwb_algconn.block (false);
     lastitcwb_alg = pp->wb.itcwb_alg;
-
+/*
     itcwb_samplingconn.block (true);
     itcwb_sampling->set_active (pp->wb.itcwb_sampling);
     itcwb_samplingconn.block (false);
     lastitcwb_sampling = pp->wb.itcwb_sampling;
-
+*/
     itcwb_green->setValue (pp->wb.itcwb_green);
 
 
@@ -860,7 +860,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         tempBias->setEditedState (pedited->wb.tempBias ? Edited : UnEdited);
         observer10->setEdited(pedited->wb.observer);
         itcwb_alg->set_inconsistent (!pedited->wb.itcwb_alg);
-        itcwb_sampling->set_inconsistent (!pedited->wb.itcwb_sampling);
+   //     itcwb_sampling->set_inconsistent (!pedited->wb.itcwb_sampling);
         itcwb_green->setEditedState (pedited->wb.itcwb_green ? Edited : UnEdited);
     }
 
@@ -1011,7 +1011,7 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->wb.tempBias = tempBias->getEditedState ();
         pedited->wb.observer = observer10->getEdited();
         pedited->wb.itcwb_alg = !itcwb_alg->get_inconsistent();
-        pedited->wb.itcwb_sampling = !itcwb_sampling->get_inconsistent();
+     //   pedited->wb.itcwb_sampling = !itcwb_sampling->get_inconsistent();
         pedited->wb.method = row[methodColumns.colLabel] != M("GENERAL_UNCHANGED");
         pedited->wb.enabled = !get_inconsistent();
         pedited->wb.itcwb_prim  = itcwb_prim->get_active_text() != M("GENERAL_UNCHANGED");
@@ -1045,7 +1045,7 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
             ? rtengine::StandardObserver::TWO_DEGREES
             : pp->wb.observer;
     pp->wb.itcwb_alg = itcwb_alg->get_active ();
-    pp->wb.itcwb_sampling = itcwb_sampling->get_active ();
+  //  pp->wb.itcwb_sampling = itcwb_sampling->get_active ();
     pp->wb.tempBias = tempBias->getValue ();
     pp->wb.itcwb_green = itcwb_green->getValue ();
 }

@@ -795,7 +795,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             double rw = 1.;
             double gw = 1.;
             double bw = 1.;
-
             if (params->wb.enabled) {
                 currWB = currWB.convertObserver(params->wb.observer);
                 params->wb.temperature = static_cast<int>(currWB.getTemp());
@@ -803,6 +802,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                 currWB.getMultipliers(rw, gw, bw);
                 imgsrc->wbMul2Camera(rw, gw, bw);
+  //              params->wb.itcwb_sampling = false;
                 /*
                 printf("ra=%f ga=%f ba=%f\n", rw, gw, bw);
                 //recalculate temp and green with wb multipliers.
@@ -835,6 +835,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     awbListener->WBChanged(met, params->wb.temperature, params->wb.green, rw, gw, bw, -1.f,  -1.f, 1, 1, -1.f, -1.f, 1, -1.f, -1.f);
                 }
             }
+            
+            if (params->wb.enabled) {
+                params->wb.itcwb_sampling = false;
+            }
+            
 
             /*
                     GammaValues g_a;
