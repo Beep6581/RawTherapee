@@ -724,7 +724,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     params->wb.method = "autitcgreen";
 
                 }
-
+                float greenitc_low = 1.f;
+                float tempitc_low = 5000.f;
                 if (params->wb.method == "autitcgreen" || lastAwbEqual != params->wb.equal || lastAwbObserver != params->wb.observer || lastAwbTempBias != params->wb.tempBias || lastAwbauto != params->wb.method) {
                     double rm, gm, bm;
                     greenitc = 1.;
@@ -743,21 +744,24 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     }
 
                     if(params->wb.itcwb_sampling) {
-                        greenitc = greenref;
-                        tempitc = tempref;
+                        greenitc_low = greenref;
+                        tempitc_low = tempref;
                     }
 
                     if (settings->verbose && params->wb.method ==  "autitcgreen") {
                         printf("tempref=%f greref=%f tempitc=%f greenitc=%f\n", tempref, greenref, tempitc, greenitc);
                     }
 
-                    if(!params->wb.itcwb_sampling) {
-                        imgsrc->getAutoWBMultipliersitc(extra, tempref, greenref, tempitc, greenitc, temp0, delta,  bia, dread, kcam, nocam, studgood, minchrom, kmin, minhist, maxhist, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
-                    }
+                    imgsrc->getAutoWBMultipliersitc(extra, tempref, greenref, tempitc, greenitc, temp0, delta,  bia, dread, kcam, nocam, studgood, minchrom, kmin, minhist, maxhist, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
                     
                     if (params->wb.method ==  "autitcgreen") {
                         params->wb.temperature = tempitc;
                         params->wb.green = greenitc;
+                        if(params->wb.itcwb_sampling) {
+                            params->wb.temperature = tempitc_low;
+                            params->wb.green = greenitc_low;
+                        }
+                        
                         currWB = ColorTemp(params->wb.temperature, params->wb.green, 1., params->wb.method, params->wb.observer);
                         currWB.getMultipliers(rm, gm, bm);
                         autoWB.update(rm, gm, bm, params->wb.equal, params->wb.observer, params->wb.tempBias);

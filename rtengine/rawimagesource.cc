@@ -7354,7 +7354,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 avg_gm = optitc[0].avg_g;
                 avg_bm = optitc[0].avg_b;
             }
-        }
+        } 
     }
 
     t8.set();
