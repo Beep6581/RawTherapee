@@ -836,7 +836,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
             }
            
-            if (params->wb.enabled) {
+            if (params->wb.enabled  && params->wb.itcwb_sampling) {
                 params->wb.itcwb_sampling = false;              
                 if (params->wb.method ==  "autitcgreen") {
                     if (awbListener) {                 
