@@ -191,6 +191,68 @@ void rgb2temp(const RGB &refOut, double &outLev, double &temp, double &green)
 
 
 }
+std::unique_ptr<MyComboBoxText> spot_setup(int &associatedVar)
+{
+    std::unique_ptr<MyComboBoxText> spotSize(Gtk::manage (new MyComboBoxText ()));
+    setExpandAlignProperties(spotSize.get(), true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+
+    spotSize->append ("2");
+    if (associatedVar == 2) {
+        spotSize->set_active(0);
+    }
+
+    spotSize->append ("4");
+
+    if (associatedVar == 4) {
+        spotSize->set_active(1);
+    }
+
+    spotSize->append ("8");
+
+    if (associatedVar == 8) {
+        spotSize->set_active(2);
+    }
+
+    spotSize->append ("16");
+
+    if (associatedVar == 16) {
+        spotSize->set_active(3);
+    }
+
+    spotSize->append ("32");
+
+    if (associatedVar == 32) {
+        spotSize->set_active(4);
+    }
+    return spotSize;
+}
+
+void picker_setup(const std::unique_ptr<Gtk::Label> slab, const std::unique_ptr<Gtk::ToggleButton> spotButton, const std::unique_ptr<MyComboBoxText> spotSizeSetter)
+{
+    //    refInputLabel->set_justify(Gtk::Justification::JUSTIFY_CENTER);
+    //    refInputLabel->set_line_wrap(true);
+
+    // TODO make spot size configurable ?
+
+    setExpandAlignProperties(slab.get(), false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+
+    std::unique_ptr<Gtk::Grid> spotSizeHelper(Gtk::manage(new Gtk::Grid()));
+    spotSizeHelper->set_name("Spot-Size-Helper");
+    setExpandAlignProperties(spotSizeHelper.get(), false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+
+
+    std::unique_ptr<Gtk::Grid> spotgrid(Gtk::manage(new Gtk::Grid()));
+    spotgrid->get_style_context()->add_class("grid-spacing");
+    setExpandAlignProperties(spotgrid.get(), true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+
+    
+
+    spotSizeHelper->attach (*spotSizeSetter, 0, 0, 1, 1);
+
+    spotgrid->attach (*spotButton, 0, 0, 1, 1);
+    spotgrid->attach (*slab, 1, 0, 1, 1);
+    spotgrid->attach (*spotSizeHelper, 2, 0, 1, 1);
+}
 
 FilmNegative::FilmNegative() :
     FoldableToolPanel(this, TOOL_NAME, M("TP_FILMNEGATIVE_LABEL"), false, true),
@@ -223,28 +285,69 @@ FilmNegative::FilmNegative() :
 
     refSpotButton->set_tooltip_text(M("TP_FILMNEGATIVE_REF_TOOLTIP"));
 
+    spotSize = Gtk::manage(new MyComboBoxText());
+
     setExpandAlignProperties(refInputLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 //    refInputLabel->set_justify(Gtk::Justification::JUSTIFY_CENTER);
 //    refInputLabel->set_line_wrap(true);
 
     // TODO make spot size configurable ?
 
-    // Gtk::Label* slab = Gtk::manage (new Gtk::Label (M("TP_WBALANCE_SIZE")));
-    // setExpandAlignProperties(slab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    Gtk::Label* slab = Gtk::manage (new Gtk::Label (M("TP_SPOT_SIZE")));
+    setExpandAlignProperties(slab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
-    // Gtk::Grid* wbsizehelper = Gtk::manage(new Gtk::Grid());
-    // wbsizehelper->set_name("WB-Size-Helper");
-    // setExpandAlignProperties(wbsizehelper, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    Gtk::Grid* spotSizeHelper = Gtk::manage(new Gtk::Grid());
+    spotSizeHelper->set_name("Spot-Size-Helper");
+    setExpandAlignProperties(spotSizeHelper, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
-    // spotsize = Gtk::manage (new MyComboBoxText ());
-    // setExpandAlignProperties(spotsize, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    // spotsize->append ("2");
-    // spotsize->set_active(0);
-    // spotsize->append ("4");
 
-    // spotgrid->attach(*spotButton, 0, 1, 1, 1);
-    // spotgrid->attach (*slab, 1, 0, 1, 1);
-    // spotgrid->attach (*wbsizehelper, 2, 0, 1, 1);
+    // from white balance
+    Gtk::Grid* spotgrid = Gtk::manage(new Gtk::Grid());
+    spotgrid->get_style_context()->add_class("grid-spacing");
+    setExpandAlignProperties(spotgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+
+    spotSize = Gtk::manage (new MyComboBoxText ());
+    setExpandAlignProperties(spotSize, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+
+    spotSize->append ("2");
+    if (options.whiteBalanceSpotSize == 2) {
+        spotSize->set_active(0);
+    }
+
+    spotSize->append ("4");
+
+    if (options.whiteBalanceSpotSize == 4) {
+        spotSize->set_active(1);
+    }
+
+    spotSize->append ("8");
+
+    if (options.whiteBalanceSpotSize == 8) {
+        spotSize->set_active(2);
+    }
+
+    spotSize->append ("16");
+
+    if (options.whiteBalanceSpotSize == 16) {
+        spotSize->set_active(3);
+    }
+
+    spotSize->append ("32");
+
+    if (options.whiteBalanceSpotSize == 32) {
+        spotSize->set_active(4);
+    }
+
+    spotSizeHelper->attach (*spotSize, 0, 0, 1, 1);
+
+    spotgrid->attach (*spotButton, 0, 0, 1, 1);
+    spotgrid->attach (*slab, 1, 0, 1, 1);
+    spotgrid->attach (*spotSizeHelper, 2, 0, 1, 1);
+
+    //end
+    // refSpotSize->set_active(0);
+    // refSpotSize->append ("4");
+
 
     colorSpace->append(M("TP_FILMNEGATIVE_COLORSPACE_INPUT"));
     colorSpace->append(M("TP_FILMNEGATIVE_COLORSPACE_WORKING"));
@@ -265,7 +368,8 @@ FilmNegative::FilmNegative() :
     pack_start(*greenExp, Gtk::PACK_SHRINK, 0);
     pack_start(*redRatio, Gtk::PACK_SHRINK, 0);
     pack_start(*blueRatio, Gtk::PACK_SHRINK, 0);
-    pack_start(*spotButton, Gtk::PACK_SHRINK, 0);
+    pack_start (*spotgrid, Gtk::PACK_SHRINK, 0 );
+//    pack_start(*spotButton, Gtk::PACK_SHRINK, 0);
 
 //    pack_start(*oldMethod, Gtk::PACK_SHRINK, 0);
 

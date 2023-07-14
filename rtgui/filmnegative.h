@@ -124,6 +124,7 @@ private:
 
     Gtk::Label* const refInputLabel;
     Gtk::ToggleButton* const refSpotButton;
+    MyComboBoxText* spotSize;
 
     Adjuster* const outputLevel;
     Adjuster* const greenBalance;
