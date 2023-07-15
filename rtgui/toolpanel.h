@@ -70,6 +70,7 @@ class ToolParamBlock :
 {
 public:
     ToolParamBlock();
+    Gtk::SizeRequestMode get_request_mode_vfunc () const override;
 };
 
 class ToolPanel :

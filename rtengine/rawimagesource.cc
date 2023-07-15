@@ -849,7 +849,7 @@ void RawImageSource::getImage(const ColorTemp &ctemp, int tran, Imagefloat* imag
     bool doHr = (hrp.hrenabled && !iscolor);
 
     if (hrp.hrenabled && iscolor) {
-        if (hrp.method == "Coloropp" && opposed == 1) { //force Inpaint opposed if WB change, and opposed limited tne number to 1
+        if(hrp.method == "Coloropp" && opposed == 1) {//force Inpaint opposed if WB change, and opposed limited the number to 1
             rgbSourceModified  = false;
         }
 
@@ -6894,8 +6894,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                     //recalculate xy spectral now with good range of temp and green
 
                     for (int j = 0; j < Ncr ; ++j) {
-                        reff_spect_xxyy_prov[2 * j][tt] = Tx[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]); // x from xyY
-                        reff_spect_xxyy_prov[2 * j + 1][tt] = Ty[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]); // y from xyY
+                        reff_spect_xxyy_prov[2 * j][tt] = std::max(Tx[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]), 0.01f); // x from xyY
+                        reff_spect_xxyy_prov[2 * j + 1][tt] = std::max(Ty[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]), 0.01f); // y from xyY
                     }
 
                     int kkg = -1;

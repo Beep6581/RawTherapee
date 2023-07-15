@@ -1230,7 +1230,7 @@ Camera constants:
         "raw_crop": [ 160, 120, 6024, 4024 ]
     },
 
-    { // Quality C
+    { // Quality A
         "make_model": "Canon EOS R5",
         "dcraw_matrix" : [9766, -2953, -1254, -4276, 12116, 2433, -437, 1336, 5131],
         "raw_crop" : [
@@ -1241,7 +1241,7 @@ Camera constants:
             { "frame" : [ 8352, 5586 ], "areas": [ 94, 20, 5578, 122 ] },
             { "frame" : [ 5248, 3510 ], "areas": [ 94, 20, 3510, 122 ] }
         ],
-        "ranges" : { "white" : 16382 }
+        "ranges" : { "white" : 16300 } // 16382 without LENR, add margin for LENR. Dual-pixel frame 2 is lower for low ISOs.
     },
 
     { // Quality C
@@ -1259,10 +1259,10 @@ Camera constants:
     },
 
     { // Quality C
-        "make_model": "Canon EOS R6m2",
+        "make_model": ["Canon EOS R6m2", "Canon EOS R8"],
         "dcraw_matrix": [9539, -2795, -1224, -4175, 11998, 2458, -465, 1755, 6048],
         "raw_crop": [
-            {"frame": [6188, 4120], "crop": [154, 96, 6028, 4024]},
+            {"frame": [6188, 4120], "crop": [154, 96, 6024, 4024]},
             {"frame": [3936, 2612], "crop": [156, 96, 3780, 2516]}
         ],
         "masked_areas": [

@@ -22,10 +22,11 @@
 #include "options.h"
 #include <cstring>
 #include <cmath>
-#include "../rtengine/array2D.h"
-#include "../rtengine/LUT.h"
 #include "rtimage.h"
+#include "../rtengine/array2D.h"
 #include "../rtengine/color.h"
+#include "../rtengine/improcfun.h"
+#include "../rtengine/LUT.h"
 
 using namespace rtengine;
 
@@ -34,12 +35,20 @@ constexpr float HistogramArea::MIN_BRIGHT;
 
 using ScopeType = Options::ScopeType;
 
+
+namespace
+{
+
+const rtengine::procparams::ColorManagementParams DEFAULT_CMP;
+
+}
+
 //
 //
 // HistogramPanel
 HistogramPanel::HistogramPanel () :
     pointer_moved_delayed_call(
-        [this](bool validPos, const Glib::ustring &profile, const Glib::ustring &profileW, int r, int g, int b)
+        [this](bool validPos, const rtengine::procparams::ColorManagementParams *cmp, int r, int g, int b)
         {
             bool update_hist_area;
 
@@ -52,9 +61,9 @@ HistogramPanel::HistogramPanel () :
             } else {
                 // do something to show vertical bars
                 if (histogramRGBArea) {
-                    histogramRGBArea->updateBackBuffer(r, g, b, profile, profileW);
+                    histogramRGBArea->updateBackBuffer(r, g, b, cmp);
                 }
-                update_hist_area = histogramArea->updatePointer(r, g, b, profile, profileW);
+                update_hist_area = histogramArea->updatePointer(r, g, b, cmp);
             }
             if (histogramRGBArea) {
                 histogramRGBArea->queue_draw();
@@ -623,9 +632,9 @@ void HistogramPanel::setHistRGBInvalid ()
     histogramRGBArea->queue_draw ();
 }
 
-void HistogramPanel::pointerMoved (bool validPos, const Glib::ustring &profile, const Glib::ustring &profileW, int x, int y, int r, int g, int b, bool isRaw)
+void HistogramPanel::pointerMoved(bool validPos, const rtengine::procparams::ColorManagementParams &cmp, int x, int y, int r, int g, int b, bool isRaw)
 {
-    pointer_moved_delayed_call(validPos, profile, profileW, r, g, b);
+    pointer_moved_delayed_call(validPos, &cmp, r, g, b);
 }
 
 /*
@@ -797,7 +806,7 @@ void HistogramRGBArea::setShow(bool show)
     showMode = show;
 }
 
-void HistogramRGBArea::updateBackBuffer (int r, int g, int b, const Glib::ustring &profile, const Glib::ustring &profileW)
+void HistogramRGBArea::updateBackBuffer(int r, int g, int b, const rtengine::procparams::ColorManagementParams *cmp)
 {
     if (!get_realized () || !showMode || !(
         options.histogramScopeType == ScopeType::HISTOGRAM
@@ -856,19 +865,25 @@ void HistogramRGBArea::updateBackBuffer (int r, int g, int b, const Glib::ustrin
                     || options.histogramScopeType == ScopeType::WAVEFORM)
             ) {
                 float Lab_L, Lab_a, Lab_b;
-                rtengine::Color::rgb2lab01(profile, profileW, r / 255.f, g / 255.f, b / 255.f, Lab_L, Lab_a, Lab_b, options.rtSettings.HistogramWorking);
+                ImProcFunctions::rgb2lab(
+                    static_cast<std::uint8_t>(r),
+                    static_cast<std::uint8_t>(g),
+                    static_cast<std::uint8_t>(b),
+                    Lab_L, Lab_a, Lab_b,
+                    cmp != nullptr ? *cmp : DEFAULT_CMP,
+                    true);
 
                 if (needLuma) {
                     // Luma
                     cc->set_source_rgb(1.0, 1.0, 1.0);
-                    drawBar(cc, Lab_L, 100.0, winw, winh, s);
+                    drawBar(cc, Lab_L, 32768., winw, winh, s);
                 }
 
                 if (needChroma && options.histogramScopeType == ScopeType::HISTOGRAM) {
                     // Chroma
-                    double chromaval = sqrt(Lab_a * Lab_a + Lab_b * Lab_b) / 1.8;
+                    double chromaval = sqrt(Lab_a * Lab_a + Lab_b * Lab_b) / (255. * 188);
                     cc->set_source_rgb(0.9, 0.9, 0.0);
-                    drawBar(cc, chromaval, 100.0, winw, winh, s);
+                    drawBar(cc, chromaval, 1.0, winw, winh, s);
                 }
             }
         }
@@ -1443,7 +1458,7 @@ void HistogramArea::updateBackBuffer ()
     setDirty(false);
 }
 
-bool HistogramArea::updatePointer(int r, int g, int b, const Glib::ustring &profile, const Glib::ustring &profileW)
+bool HistogramArea::updatePointer(int r, int g, int b, const rtengine::procparams::ColorManagementParams *cmp)
 {
     if (!needPointer || !(scopeType == ScopeType::VECTORSCOPE_HC || scopeType == ScopeType::VECTORSCOPE_HS)) {
         return false;
@@ -1456,7 +1471,16 @@ bool HistogramArea::updatePointer(int r, int g, int b, const Glib::ustring &prof
     pointer_red = r;
     pointer_green = g;
     pointer_blue = b;
-    Color::rgb2lab01(profile, profileW, r / 255.f, g / 255.f, b / 255.f, L, pointer_a, pointer_b, options.rtSettings.HistogramWorking);
+    ImProcFunctions::rgb2lab(
+        static_cast<std::uint8_t>(r),
+        static_cast<std::uint8_t>(g),
+        static_cast<std::uint8_t>(b),
+        L, pointer_a, pointer_b,
+        cmp != nullptr ? *cmp : DEFAULT_CMP,
+        true);
+    L /= 327.68f;
+    pointer_a /= 327.68f;
+    pointer_b /= 327.68f;
     updateBackBuffer();
     return true;
 }
