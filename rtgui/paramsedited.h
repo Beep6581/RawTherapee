@@ -326,6 +326,7 @@ struct DirPyrDenoiseParamsEdited {
     bool chroma;
     bool redchro;
     bool bluechro;
+    bool gain;
     bool gamma;
     bool lcurve;
     bool cccurve;
