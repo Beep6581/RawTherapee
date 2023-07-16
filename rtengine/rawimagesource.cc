@@ -1683,7 +1683,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         }
     }
 
-    if (prepareDenoise && dirpyrdenoiseExpComp == RT_INFINITY) {
+    if (prepareDenoise) {
         LUTu aehist;
         int aehistcompr;
         double clip = 0;

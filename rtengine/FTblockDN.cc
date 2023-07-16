@@ -665,7 +665,7 @@ BENCHFUN
             Color::gammanf2lut(igamcurve, igam, 32768.f, 65535.f);
         }
 
-        const float gain = std::pow(2.0, expcomp);
+        const float gain = dnparams.autoGain ? static_cast<float>(std::pow(2.0, expcomp)) : 1.f;
         const double params_Ldetail = std::min(dnparams.Ldetail, 99.9); // max out to avoid div by zero when using noisevar_Ldetail as divisor
         const float noisevar_Ldetail = SQR((SQR(100. - params_Ldetail) + 50.0 * (100.0 - params_Ldetail)) * TS * 0.5);
 
@@ -3287,7 +3287,7 @@ void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat * provicalc,
 
     bool denoiseMethodRgb = (dnparams.dmethod == "RGB");
 
-    const float gain = pow(2.0f, float(expcomp));
+    const float gain = dnparams.autoGain ? pow(2.0f, float(expcomp)) : 1.f;
 
     int tilesize = 0;
     int overlap = 0;
