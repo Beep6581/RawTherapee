@@ -401,19 +401,12 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     itcwb_prim ->set_tooltip_markup (M("TP_WBALANCE_ITCWPRIM_TOOLTIP"));
     
     
-    /*  Gtk::Box* boxgreen = Gtk::manage (new Gtk::Box ());
-    boxgreen->show ();
-
-    boxgreen->pack_start(*igreenL);
-    boxgreen->pack_start(*green);
-    boxgreen->pack_start(*igreenR);*/
     pack_start(*mulLabel);
     pack_start(*StudLabel);
     pack_start(*PatchLabel);
     pack_start(*PatchlevelLabel);
 
     pack_start (*temp);
-    //pack_start (*boxgreen);
     pack_start (*green);
     pack_start (*equal);
     pack_start (*tempBias);
@@ -422,7 +415,6 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
 
     itcwbBox->pack_start (*itcwb_green);
     itcwbBox->pack_start (*itcwb_alg);
-    itcwbBox->pack_start (*itcwb_sampling);
     itcwbBox->pack_start (*itcwb_prim);
     itcwbFrame->add(*itcwbBox);
     pack_start(*itcwbFrame);

@@ -6800,7 +6800,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 }
             }
 
-            const float abstud = std::fabs(studentXY(xxyycurr_reduc, reff_spect_xxyy, 2 * w, 2 * kk, tt));
+            const float abstud = std::fabs(studentXY(xxyycurr_reduc, reff_spect_xxyy, 2 * w, 2 * (kk + 1), tt));
 
             if (abstud < minstud) {  // find the minimum Student
                 minstud = abstud;
@@ -6910,7 +6910,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
                     //now we have good spectral data
                     //calculate student correlation
-                    const float abstudgr = std::fabs(studentXY(xxyycurr_reduc, reff_spect_xxyy, 2 * w, 2 * kkg, tt));
+                    const float abstudgr = std::fabs(studentXY(xxyycurr_reduc, reff_spect_xxyy, 2 * w, 2 * (kkg + 1), tt));
 
                     if (abstudgr < minstudgr) {  // find the minimum Student
                         minstudgr = abstudgr;
