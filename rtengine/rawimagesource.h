@@ -249,6 +249,7 @@ protected:
         double cared,
         double cablue,
         bool avoidColourshift,
+        int border,
         array2D<float> &rawData,
         double* fitParamsTransfer,
         bool fitParamsIn,
