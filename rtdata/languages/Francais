@@ -130,7 +130,6 @@ FILEBROWSER_PARTIALPASTEPROFILE;Coller partiellement
 FILEBROWSER_PASTEPROFILE;Coller le profil
 FILEBROWSER_POPUPCANCELJOB;Retirer de la file de traitement
 FILEBROWSER_POPUPCOLORLABEL;Label couleur
-FILEBROWSER_POPUPCOLORLABEL0;Label: Aucun
 FILEBROWSER_POPUPCOLORLABEL1;Label: Rouge
 FILEBROWSER_POPUPCOLORLABEL2;Label: Jaune
 FILEBROWSER_POPUPCOLORLABEL3;Label: Vert
@@ -147,7 +146,6 @@ FILEBROWSER_POPUPPROCESS;Mettre dans la file de traitement
 FILEBROWSER_POPUPPROCESSFAST;Mettre dans la file de traitement (Export Rapide)
 FILEBROWSER_POPUPPROFILEOPERATIONS;Opérations sur les profils
 FILEBROWSER_POPUPRANK;Rang
-FILEBROWSER_POPUPRANK0;Aucun
 FILEBROWSER_POPUPRANK1;Rang 1 * 
 FILEBROWSER_POPUPRANK2;Rang 2 **
 FILEBROWSER_POPUPRANK3;Rang 3 ***
@@ -2201,7 +2199,6 @@ TP_LOCALLAB_MERNIN;Ecran
 TP_LOCALLAB_MERONE;Normal
 TP_LOCALLAB_MERSAT;Saturation
 TP_LOCALLAB_MERSEV;Soft Light (legacy)
-TP_LOCALLAB_MERSEV0;Soft Light Illusion
 TP_LOCALLAB_MERSEV1;Soft Light W3C
 TP_LOCALLAB_MERSEV2;Lumière dure
 TP_LOCALLAB_MERSIX;Divise
@@ -3032,6 +3029,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
+!EXIFFILTER_PATH;File path
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply 'find' keywords.
 !FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to <b>permanently</b> delete all <b>%1</b> files in trash?
 !FILEBROWSER_DELETEDIALOG_SELECTED;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files?
@@ -3040,10 +3038,13 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !FILEBROWSER_POPUPINSPECT;Inspect
 !FILEBROWSER_POPUPREMOVE;Delete permanently
 !FILEBROWSER_POPUPREMOVEINCLPROC;Delete permanently, including queue-processed version
+!FILEBROWSER_POPUPSORTBY;Sort Files
 !FILEBROWSER_SHOWNOTTRASHHINT;Show only images not in trash.
+!FILECHOOSER_FILTER_EXECUTABLE;Executable files
 !GENERAL_DELETE_ALL;Delete all
 !GENERAL_EDIT;Edit
 !GENERAL_HELP;Help
+!GENERAL_OTHER;Other
 !HISTOGRAM_TOOLTIP_CROSSHAIR;Show/Hide indicator crosshair.
 !HISTOGRAM_TOOLTIP_SHOW_OPTIONS;Toggle visibility of the scope option buttons.
 !HISTOGRAM_TOOLTIP_TRACE_BRIGHTNESS;Adjust scope brightness.
@@ -3722,12 +3723,16 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_COMPLEXRETI;Retinex complexity
 !HISTORY_MSG_DEHAZE_SATURATION;Dehaze - Saturation
 !HISTORY_MSG_EDGEFFECT;Edge Attenuation response
+!HISTORY_MSG_FF_FROMMETADATA;Flat-Field - From Metadata
+!HISTORY_MSG_GAMUTMUNSEL;Gamut-Munsell
 !HISTORY_MSG_HLBL;Color propagation - blur
+!HISTORY_MSG_HLTH;Inpaint opposed - gain threshold
 !HISTORY_MSG_ICL_LABGRIDCIEXY;Cie xy
 !HISTORY_MSG_ICM_AINTENT;Abstract profile intent
 !HISTORY_MSG_ICM_BLUX;Primaries Blue X
 !HISTORY_MSG_ICM_BLUY;Primaries Blue Y
 !HISTORY_MSG_ICM_FBW;Black and White
+!HISTORY_MSG_ICM_GAMUT;Gamut control
 !HISTORY_MSG_ICM_GREX;Primaries Green X
 !HISTORY_MSG_ICM_GREY;Primaries Green Y
 !HISTORY_MSG_ICM_PRESER;Preserve neutral
@@ -3736,6 +3741,8 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_ICM_WORKING_ILLUM_METHOD;Illuminant method
 !HISTORY_MSG_ICM_WORKING_PRIM_METHOD;Primaries method
 !HISTORY_MSG_ILLUM;CAL - SC - Illuminant
+!HISTORY_MSG_LOCALLAB_TE_PIVOT;Local - Equalizer pivot
+!HISTORY_MSG_LOCAL_GAMUTMUNSEL;Local - Gamut-Munsell
 !HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST;CS - Auto threshold
 !HISTORY_MSG_PDSHARPEN_AUTO_RADIUS;CS - Auto radius
 !HISTORY_MSG_PDSHARPEN_CHECKITER;CS - Auto limit iterations
@@ -3763,6 +3770,11 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_SIGMATON;Toning Attenuation response
 !HISTORY_MSG_TEMPOUT;CAM02 automatic temperature
 !HISTORY_MSG_THRESWAV;Balance threshold
+!HISTORY_MSG_TONE_EQUALIZER_BANDS;Tone equalizer - Bands
+!HISTORY_MSG_TONE_EQUALIZER_ENABLED;Tone equalizer
+!HISTORY_MSG_TONE_EQUALIZER_PIVOT;Tone equalizer - Pivot
+!HISTORY_MSG_TONE_EQUALIZER_REGULARIZATION;Tone equalizer - Regularization
+!HISTORY_MSG_TONE_EQUALIZER_SHOW_COLOR_MAP;Tone equalizer - Tonal map
 !HISTORY_MSG_TRANS_METHOD;Geometry - Method
 !HISTORY_MSG_WAVBALCHROM;Equalizer chrominance
 !HISTORY_MSG_WAVBALLUM;Equalizer luminance
@@ -3802,12 +3814,16 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_WAVTHRDEN;Threshold local contrast
 !HISTORY_MSG_WAVTHREND;Threshold local contrast
 !HISTORY_MSG_WAVUSHAMET;Clarity method
+!HISTORY_MSG_WBALANCE_OBSERVER10;Observer 10°
 !ICCPROFCREATOR_ILL_63;D63 : DCI-P3 Theater
 !ICCPROFCREATOR_PRIM_DCIP3;DCI-P3
 !INSPECTOR_WINDOW_TITLE;Inspector
 !MAIN_FRAME_PLACES_DEL;Remove
 !PARTIALPASTE_FILMNEGATIVE;Film negative
+!PARTIALPASTE_FLATFIELDFROMMETADATA;Flat-field from Metadata
 !PARTIALPASTE_PREPROCWB;Preprocess White Balance
+!PARTIALPASTE_TONE_EQUALIZER;Tone equalizer
+!PREFERENCES_CAMERAPROFILESDIR;Camera profiles directory
 !PREFERENCES_CIE;Ciecam
 !PREFERENCES_CIEARTIF;Avoid artifacts
 !PREFERENCES_COMPLEXITYLOC;Default complexity for Local Adjustments
@@ -3820,8 +3836,22 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !PREFERENCES_EXTEDITOR_DIR_CUSTOM;Custom
 !PREFERENCES_EXTEDITOR_DIR_TEMP;OS temp dir
 !PREFERENCES_EXTEDITOR_FLOAT32;32-bit float TIFF output
+!PREFERENCES_EXTERNALEDITOR_CHANGE;Change Application
+!PREFERENCES_EXTERNALEDITOR_CHANGE_FILE;Change Executable
+!PREFERENCES_EXTERNALEDITOR_COLUMN_COMMAND;Command
+!PREFERENCES_EXTERNALEDITOR_COLUMN_NAME;Name
+!PREFERENCES_EXTERNALEDITOR_COLUMN_NATIVE_COMMAND;Native command
 !PREFERENCES_INSPECTORWINDOW;Open inspector in own window or fullscreen
+!PREFERENCES_LENSPROFILESDIR;Lens profiles directory
 !PREFERENCES_SHOWTOOLTIP;Show Local Adjustments advice tooltips
+!PREFERENCES_TAB_FAVORITES;Favorites
+!PREFERENCES_TOOLPANEL_AVAILABLETOOLS;Available Tools
+!PREFERENCES_TOOLPANEL_CLONE_FAVORITES;Keep favorite tools in original locations
+!PREFERENCES_TOOLPANEL_CLONE_FAVORITES_TOOLTIP;If set, favorite tools will appear in both the favorites tab and their original tabs.\n\nNote: Enabling this option may result in a slight delay when switching tabs.
+!PREFERENCES_TOOLPANEL_FAVORITE;Favorite
+!PREFERENCES_TOOLPANEL_FAVORITESPANEL;Favorites Panel
+!PREFERENCES_TOOLPANEL_TOOL;Tool
+!PREFERENCES_WBA;White Balance
 !PREFERENCES_ZOOMONSCROLL;Zoom images by scrolling
 !PROGRESSBAR_DECODING;Decoding...
 !PROGRESSBAR_GREENEQUIL;Green equilibration...
@@ -3830,6 +3860,14 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !PROGRESSBAR_LINEDENOISE;Line noise filter...
 !PROGRESSBAR_RAWCACORR;Raw CA correction...
 !QUEUE_LOCATION_TITLE;Output Location
+!SAVEDLG_BIGTIFF;BigTIFF (no metadata support)
+!SORT_ASCENDING;Ascending
+!SORT_BY_DATE;By Date
+!SORT_BY_EXIF;By EXIF
+!SORT_BY_LABEL;By Color Label
+!SORT_BY_NAME;By Name
+!SORT_BY_RANK;By Rank
+!SORT_DESCENDING;Descending
 !TC_PRIM_BLUX;Bx
 !TC_PRIM_BLUY;By
 !TC_PRIM_GREX;Gx
@@ -3842,6 +3880,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_COLORAPP_CATMOD;Mode
 !TP_COLORAPP_CATSYMGEN;Automatic Symmetric
 !TP_COLORAPP_CATSYMSPE;Mixed
+!TP_COLORAPP_CIECAT_DEGREEOUT;Chromatic Adaptation Viewing
 !TP_COLORAPP_DEGREE_TOOLTIP;CAT02/16 is a chromatic adaptation. It converts the values of an image whose white point is that of a given illuminant (for example D65) into new values whose white point is that of the new illuminant - see WP model (for example D50 or D55).
 !TP_COLORAPP_DEGREOUT_TOOLTIP;CAT02/16 is a chromatic adaptation. It converts the values of an image whose white point is that of a given illuminant (for example D50) into new values whose white point is that of the new illuminant - see WP model (for example D75).
 !TP_COLORAPP_GEN;Settings
@@ -3864,12 +3903,19 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_COLORAPP_SURROUNDSRC;Surround
 !TP_COLORAPP_SURSOURCE_TOOLTIP;Changes tones and colors to take into account the surround conditions of the scene lighting. The darker the surround conditions, the brighter the image will become. Image brightness will not be changed when the surround is set to average.
 !TP_COLORAPP_TEMP2_TOOLTIP;Either symmetrical mode temp = White balance.\nEither select illuminant always set Tint=1.\n\nA temp=2856\nD41 temp=4100\nD50 temp=5003\nD55 temp=5503\nD60 temp=6000\nD65 temp=6504\nD75 temp=7504
+!TP_COLORAPP_TEMPOUT_TOOLTIP;Temperature and Tint.\nDepending on the choices made previously, the selected temperature is:\nWhite balance\nA temp=2856\nD41 temp=4100\nD50 temp=5003\nD55 temp=5503\nD60 temp=6000\nD65 temp=6504\nD75 temp=7504\nFree.
 !TP_COLORAPP_VIEWINGF_TOOLTIP;Takes into account the support on which the final image will be viewed (monitor, TV, projector, printer, etc.), as well as its environment. This process will take the data coming from process 'Image Adjustments' and 'bring' it to the support in such a way that the viewing conditions and its environment are taken into account.
 !TP_CROP_GTCENTEREDSQUARE;Centered square
 !TP_CROP_PPI;PPI
 !TP_DEHAZE_SATURATION;Saturation
+!TP_FILMNEGATIVE_PICK_SIZE;Size
+!TP_FILMNEGATIVE_REF_SIZE;Size
+!TP_FLATFIELD_FROMMETADATA;From Metadata
+!TP_HLREC_COLOROPP;Inpaint Opposed
 !TP_HLREC_HLBLUR;Blur
+!TP_HLREC_HLTH;Gain threshold
 !TP_ICM_FBW;Black-and-White
+!TP_ICM_GAMUT;Gamut control
 !TP_ICM_ILLUMPRIM_TOOLTIP;Choose the illuminant closest to the shooting conditions.\nChanges can only be made when the 'Destination primaries' selection is set to 'Custom (sliders)'.
 !TP_ICM_LABGRID_CIEXY;R(x)=%1 R(y)=%2\nG(x)=%3 G(y)=%4\nB(x)=%5 B(y)=%6
 !TP_ICM_NEUTRAL;Reset
@@ -3924,26 +3970,39 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_LENSPROFILE_USE_GEOMETRIC;Geometric distortion
 !TP_LENSPROFILE_USE_HEADER;Correct
 !TP_LOCALLAB_AUTOGRAYCIE;Auto
-!TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction (Uniform Perceptual Lab).\nMunsell correction always disabled when Jz or CAM16 is used.
+!TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction (Uniform Perceptual Lab).\nMunsell correction always disabled when Jz or CAM16 or Color Appearance and Lighting is used.\n\nDefault: Munsell.\nMunsell correction: fixes Lab mode hue drifts due to non-linearity, when chromaticity is changed (Uniform Perceptual Lab).\nLab: applies a gamut control, in relative colorimetric, Munsell is then applied.\nXYZ Absolute, applies gamut control, in absolute colorimetric, Munsell is then applied.\nXYZ Relative, applies gamut control, in relative colorimetric, Munsell is then applied.
 !TP_LOCALLAB_AVOIDMUN;Munsell correction only
 !TP_LOCALLAB_AVOIDMUN_TOOLTIP;Munsell correction always disabled when Jz or CAM16 is used.
 !TP_LOCALLAB_AVOIDRAD;Soft radius
 !TP_LOCALLAB_CATAD;Chromatic adaptation/Cat16
+!TP_LOCALLAB_CHRO46LABEL;Chroma levels 456: Mean=%1 High=%2
+!TP_LOCALLAB_CHROLABEL;Chroma levels 0123: Mean=%1 High=%2
 !TP_LOCALLAB_CHROML;Chroma (C)
 !TP_LOCALLAB_COLOR_CIE;Color curve
 !TP_LOCALLAB_CURVES_CIE;Tone curve
 !TP_LOCALLAB_DENOIMASK;Denoise chroma mask
 !TP_LOCALLAB_DENOIMASK_TOOLTIP;For all tools, allows you to control the chromatic noise level of the mask.\nUseful for better control of chrominance and to avoid artifacts when using the LC(h) curve.
+!TP_LOCALLAB_DENOIWAVCH;Wavelets: Chrominance
+!TP_LOCALLAB_DENOIWAVLUM;Wavelets: Luminance
 !TP_LOCALLAB_DIVGR;Gamma
 !TP_LOCALLAB_GAMC;Gamma
 !TP_LOCALLAB_GAMCOL_TOOLTIP;Apply a gamma on Luminance L*a*b* datas.\nIf gamma = 3.0 Luminance 'linear' is used.
 !TP_LOCALLAB_GAMC_TOOLTIP;Apply a gamma on Luminance L*a*b* datas before and after treatment Pyramid 1 and Pyramid 2.\nIf gamma = 3.0 Luminance 'linear' is used.
+!TP_LOCALLAB_GAMUTLABRELA;Lab
+!TP_LOCALLAB_GAMUTMUNSELL;Munsell only
+!TP_LOCALLAB_GAMUTNON;None
+!TP_LOCALLAB_GAMUTXYZABSO;XYZ Absolute
+!TP_LOCALLAB_GAMUTXYZRELA;XYZ Relative
 !TP_LOCALLAB_GAMW;Gamma (wavelet pyramids)
 !TP_LOCALLAB_GRAINFRA2;Coarseness
 !TP_LOCALLAB_HUECIE;Hue
 !TP_LOCALLAB_INVBL;Inverse
 !TP_LOCALLAB_LAPRAD2_TOOLTIP;Smooth radius uses a guided filter to decrease artifacts and smooth out the transition.
+!TP_LOCALLAB_LCLABELS;Residual noise levels
+!TP_LOCALLAB_LCLABELS_TOOLTIP;Displays the mean and high-end noise values for the area shown in the Preview Panel (at 100% zoom). The noise values are grouped by wavelet levels 0,1,2,3 and 4,5,6.\nThe displayed values are indicative only and are designed to assist with denoise adjustments. They should not be interpreted as absolute noise levels.\n\n 300: Very noisy\n 100-300: Noisy\n 50-100: Moderatly noisy\n < 50: Low noise\n\nThey allow you to see:\n*The impact of Noise Reduction in the main-menu Detail tab.\n*The influence of Non-local Means, Wavelets and DCT on the luminance noise.\n*The influence of Wavelets and DCT on the chroma noise.\n*The influence of Capture Sharpening and Demosaicing.
+!TP_LOCALLAB_LUM46LABEL;Luma levels 456: Mean=%1 High=%2
 !TP_LOCALLAB_LUMFRA;L*a*b* standard
+!TP_LOCALLAB_LUMLABEL;Luma levels 0123: Mean=%1 High=%2
 !TP_LOCALLAB_MASKDEINV_TOOLTIP;Reverses the way the algorithm interprets the mask.\nIf checked black and very light areas will be decreased.
 !TP_LOCALLAB_MASKLCTHR2;Light area luma threshold
 !TP_LOCALLAB_MASKLCTHRLOW2;Dark area luma threshold
@@ -3956,6 +4015,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_LOCALLAB_RECOTHRES02_TOOLTIP;If the 'Recovery threshold' value is greater than 1, the mask in Mask and Modifications takes into account any previous modifications made to the image but not those made with the current tool (e.g. Color and Light, Wavelet, Cam16, etc.)\nIf the value of the 'Recovery threshold' is less than 1, the mask in Mask and Modifications does not take into account any previous modifications to the image.\n\nIn both cases, the 'Recovery threshold' acts on the masked image as modified by the current tool (Color and Light, Wavelet, Cam16, etc.).
 !TP_LOCALLAB_RGBCURVE_TOOLTIP;In RGB mode you have 4 choices : Standard, Weighted standard, Luminance & Film-like.
 !TP_LOCALLAB_SATURV;Saturation (s)
+!TP_LOCALLAB_TE_PIVOT;Pivot (Ev)
 !TP_LOCALLAB_TOOLMASK_2;Wavelets
 !TP_LOCALLAB_WAVHUE_TOOLTIP;Allows you to reduce or increase the denoise based on hue.
 !TP_LOCALLAB_ZCAMFRA;ZCAM Image Adjustments
@@ -3983,6 +4043,16 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_RESIZE_SHORT;Short Edge
 !TP_SHARPENING_ITERCHECK;Auto limit iterations
 !TP_SHARPENING_RADIUS_BOOST;Corner radius boost
+!TP_TONE_EQUALIZER_BANDS;Bands
+!TP_TONE_EQUALIZER_BAND_0;Blacks
+!TP_TONE_EQUALIZER_BAND_1;Shadows
+!TP_TONE_EQUALIZER_BAND_2;Midtones
+!TP_TONE_EQUALIZER_BAND_3;Highlights
+!TP_TONE_EQUALIZER_BAND_4;Whites
+!TP_TONE_EQUALIZER_DETAIL;Regularization
+!TP_TONE_EQUALIZER_LABEL;Tone Equalizer
+!TP_TONE_EQUALIZER_PIVOT;Pivot (Ev)
+!TP_TONE_EQUALIZER_SHOW_COLOR_MAP;Show tonal map
 !TP_WAVELET_BALCHROM;Equalizer Color
 !TP_WAVELET_BALLUM;Denoise equalizer White-Black
 !TP_WAVELET_BL;Blur levels
@@ -4070,5 +4140,9 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !TP_WBALANCE_AUTOITCGREEN;Temperature correlation
 !TP_WBALANCE_AUTOOLD;RGB grey
 !TP_WBALANCE_AUTO_HEADER;Automatic
+!TP_WBALANCE_MULLABEL;Multipliers: r=%1 g=%2 b=%3
+!TP_WBALANCE_MULLABEL_TOOLTIP;Values given for information purposes. You cannot change them.
+!TP_WBALANCE_OBSERVER10;Observer 10° instead of Observer 2°
+!TP_WBALANCE_OBSERVER10_TOOLTIP;The color management in Rawtherapee (White balance, channel multipliers, highlight recovery,...) uses the spectral data of the illuminants and colors. Observer is an important parameter of this management which takes into account the angle of perception of the eye. In 1931 it was fixed at 2° (privileges the use of the cones). In 1964 it was fixed at 10° (privileges the use of the cones, but partially takes into account the rods).\nTo avoid a (rare) drift of the colors due to the choice Observer 10° - probably due to the conversion matrix - Observer 2° must be selected.\nIn a majority of cases Observer 10° (default) will be a more relevant choice.
 !TP_WBALANCE_STUDLABEL;Correlation factor: %1
 !TP_WBALANCE_STUDLABEL_TOOLTIP;Display calculated Student correlation.\nLower values are better, where <0.005 is excellent,\n<0.01 is good, and >0.5 is poor.\nLow values do not mean that the white balance is good:\nif the illuminant is non-standard the results can be erratic.\nA value of 1000 means previous calculations are used and\nthe resultsare probably good.

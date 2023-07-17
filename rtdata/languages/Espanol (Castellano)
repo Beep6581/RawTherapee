@@ -136,7 +136,6 @@ FILEBROWSER_PARTIALPASTEPROFILE;Pegar perfil (parcialmente)
 FILEBROWSER_PASTEPROFILE;Pegar perfil
 FILEBROWSER_POPUPCANCELJOB;Cancelar trabajo
 FILEBROWSER_POPUPCOLORLABEL;Etiquetar con un color
-FILEBROWSER_POPUPCOLORLABEL0;Etiqueta: Ninguna
 FILEBROWSER_POPUPCOLORLABEL1;Etiqueta: Roja
 FILEBROWSER_POPUPCOLORLABEL2;Etiqueta: Amarilla
 FILEBROWSER_POPUPCOLORLABEL3;Etiqueta: Verde
@@ -154,7 +153,6 @@ FILEBROWSER_POPUPPROCESS;Enviar la imagen a la cola
 FILEBROWSER_POPUPPROCESSFAST;Enviar a la cola (Exportación rápida)
 FILEBROWSER_POPUPPROFILEOPERATIONS;Operaciones con perfiles de revelado
 FILEBROWSER_POPUPRANK;Asignar rango
-FILEBROWSER_POPUPRANK0;Sin rango
 FILEBROWSER_POPUPRANK1;Rango 1 *
 FILEBROWSER_POPUPRANK2;Rango 2 **
 FILEBROWSER_POPUPRANK3;Rango 3 ***
@@ -3115,7 +3113,6 @@ TP_LOCALLAB_MERNIN;Pantalla
 TP_LOCALLAB_MERONE;Normal
 TP_LOCALLAB_MERSAT;Saturación
 TP_LOCALLAB_MERSEV;Luz suave (anterior)
-TP_LOCALLAB_MERSEV0;Ilusión de Luz suave
 TP_LOCALLAB_MERSEV1;Luz suave W3C
 TP_LOCALLAB_MERSEV2;Luz dura
 TP_LOCALLAB_MERSIX;Dividir
@@ -4066,3 +4063,84 @@ ZOOMPANEL_ZOOMFITSCREEN;Encajar la imagen entera en la vista previa\nAtajo de te
 ZOOMPANEL_ZOOMIN;Acercar\nAtajo de teclado: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Alejar\nAtajo de teclado: <b>-</b>
 
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!EXIFFILTER_PATH;File path
+!FILEBROWSER_POPUPSORTBY;Sort Files
+!FILECHOOSER_FILTER_EXECUTABLE;Executable files
+!GENERAL_OTHER;Other
+!HISTORY_MSG_FF_FROMMETADATA;Flat-Field - From Metadata
+!HISTORY_MSG_GAMUTMUNSEL;Gamut-Munsell
+!HISTORY_MSG_HLTH;Inpaint opposed - gain threshold
+!HISTORY_MSG_ICM_GAMUT;Gamut control
+!HISTORY_MSG_LOCALLAB_TE_PIVOT;Local - Equalizer pivot
+!HISTORY_MSG_LOCAL_GAMUTMUNSEL;Local - Gamut-Munsell
+!HISTORY_MSG_TONE_EQUALIZER_BANDS;Tone equalizer - Bands
+!HISTORY_MSG_TONE_EQUALIZER_ENABLED;Tone equalizer
+!HISTORY_MSG_TONE_EQUALIZER_PIVOT;Tone equalizer - Pivot
+!HISTORY_MSG_TONE_EQUALIZER_REGULARIZATION;Tone equalizer - Regularization
+!HISTORY_MSG_TONE_EQUALIZER_SHOW_COLOR_MAP;Tone equalizer - Tonal map
+!HISTORY_MSG_WBALANCE_OBSERVER10;Observer 10°
+!PARTIALPASTE_FLATFIELDFROMMETADATA;Flat-field from Metadata
+!PARTIALPASTE_TONE_EQUALIZER;Tone equalizer
+!PREFERENCES_CAMERAPROFILESDIR;Camera profiles directory
+!PREFERENCES_EXTERNALEDITOR_CHANGE;Change Application
+!PREFERENCES_EXTERNALEDITOR_CHANGE_FILE;Change Executable
+!PREFERENCES_EXTERNALEDITOR_COLUMN_COMMAND;Command
+!PREFERENCES_EXTERNALEDITOR_COLUMN_NAME;Name
+!PREFERENCES_EXTERNALEDITOR_COLUMN_NATIVE_COMMAND;Native command
+!PREFERENCES_LENSPROFILESDIR;Lens profiles directory
+!PREFERENCES_TAB_FAVORITES;Favorites
+!PREFERENCES_TOOLPANEL_AVAILABLETOOLS;Available Tools
+!PREFERENCES_TOOLPANEL_CLONE_FAVORITES;Keep favorite tools in original locations
+!PREFERENCES_TOOLPANEL_CLONE_FAVORITES_TOOLTIP;If set, favorite tools will appear in both the favorites tab and their original tabs.\n\nNote: Enabling this option may result in a slight delay when switching tabs.
+!PREFERENCES_TOOLPANEL_FAVORITE;Favorite
+!PREFERENCES_TOOLPANEL_FAVORITESPANEL;Favorites Panel
+!PREFERENCES_TOOLPANEL_TOOL;Tool
+!PREFERENCES_WBA;White Balance
+!SAVEDLG_BIGTIFF;BigTIFF (no metadata support)
+!SORT_ASCENDING;Ascending
+!SORT_BY_DATE;By Date
+!SORT_BY_EXIF;By EXIF
+!SORT_BY_LABEL;By Color Label
+!SORT_BY_NAME;By Name
+!SORT_BY_RANK;By Rank
+!SORT_DESCENDING;Descending
+!TP_COLORAPP_CIECAT_DEGREEOUT;Chromatic Adaptation Viewing
+!TP_COLORAPP_TEMPOUT_TOOLTIP;Temperature and Tint.\nDepending on the choices made previously, the selected temperature is:\nWhite balance\nA temp=2856\nD41 temp=4100\nD50 temp=5003\nD55 temp=5503\nD60 temp=6000\nD65 temp=6504\nD75 temp=7504\nFree.
+!TP_FILMNEGATIVE_PICK_SIZE;Size
+!TP_FILMNEGATIVE_REF_SIZE;Size
+!TP_FLATFIELD_FROMMETADATA;From Metadata
+!TP_HLREC_COLOROPP;Inpaint Opposed
+!TP_HLREC_HLTH;Gain threshold
+!TP_ICM_GAMUT;Gamut control
+!TP_LOCALLAB_CHRO46LABEL;Chroma levels 456: Mean=%1 High=%2
+!TP_LOCALLAB_CHROLABEL;Chroma levels 0123: Mean=%1 High=%2
+!TP_LOCALLAB_DENOIWAVCH;Wavelets: Chrominance
+!TP_LOCALLAB_DENOIWAVLUM;Wavelets: Luminance
+!TP_LOCALLAB_GAMUTLABRELA;Lab
+!TP_LOCALLAB_GAMUTMUNSELL;Munsell only
+!TP_LOCALLAB_GAMUTNON;None
+!TP_LOCALLAB_GAMUTXYZABSO;XYZ Absolute
+!TP_LOCALLAB_GAMUTXYZRELA;XYZ Relative
+!TP_LOCALLAB_LCLABELS;Residual noise levels
+!TP_LOCALLAB_LCLABELS_TOOLTIP;Displays the mean and high-end noise values for the area shown in the Preview Panel (at 100% zoom). The noise values are grouped by wavelet levels 0,1,2,3 and 4,5,6.\nThe displayed values are indicative only and are designed to assist with denoise adjustments. They should not be interpreted as absolute noise levels.\n\n 300: Very noisy\n 100-300: Noisy\n 50-100: Moderatly noisy\n < 50: Low noise\n\nThey allow you to see:\n*The impact of Noise Reduction in the main-menu Detail tab.\n*The influence of Non-local Means, Wavelets and DCT on the luminance noise.\n*The influence of Wavelets and DCT on the chroma noise.\n*The influence of Capture Sharpening and Demosaicing.
+!TP_LOCALLAB_LUM46LABEL;Luma levels 456: Mean=%1 High=%2
+!TP_LOCALLAB_LUMLABEL;Luma levels 0123: Mean=%1 High=%2
+!TP_LOCALLAB_TE_PIVOT;Pivot (Ev)
+!TP_TONE_EQUALIZER_BANDS;Bands
+!TP_TONE_EQUALIZER_BAND_0;Blacks
+!TP_TONE_EQUALIZER_BAND_1;Shadows
+!TP_TONE_EQUALIZER_BAND_2;Midtones
+!TP_TONE_EQUALIZER_BAND_3;Highlights
+!TP_TONE_EQUALIZER_BAND_4;Whites
+!TP_TONE_EQUALIZER_DETAIL;Regularization
+!TP_TONE_EQUALIZER_LABEL;Tone Equalizer
+!TP_TONE_EQUALIZER_PIVOT;Pivot (Ev)
+!TP_TONE_EQUALIZER_SHOW_COLOR_MAP;Show tonal map
+!TP_WBALANCE_MULLABEL;Multipliers: r=%1 g=%2 b=%3
+!TP_WBALANCE_MULLABEL_TOOLTIP;Values given for information purposes. You cannot change them.
+!TP_WBALANCE_OBSERVER10;Observer 10° instead of Observer 2°
+!TP_WBALANCE_OBSERVER10_TOOLTIP;The color management in Rawtherapee (White balance, channel multipliers, highlight recovery,...) uses the spectral data of the illuminants and colors. Observer is an important parameter of this management which takes into account the angle of perception of the eye. In 1931 it was fixed at 2° (privileges the use of the cones). In 1964 it was fixed at 10° (privileges the use of the cones, but partially takes into account the rods).\nTo avoid a (rare) drift of the colors due to the choice Observer 10° - probably due to the conversion matrix - Observer 2° must be selected.\nIn a majority of cases Observer 10° (default) will be a more relevant choice.
