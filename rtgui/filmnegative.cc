@@ -191,10 +191,10 @@ void rgb2temp(const RGB &refOut, double &outLev, double &temp, double &green)
 
 
 }
-std::unique_ptr<MyComboBoxText> spot_setup(int &associatedVar)
+MyComboBoxText* spot_setup(int const &associatedVar)
 {
-    std::unique_ptr<MyComboBoxText> spotSize(Gtk::manage (new MyComboBoxText ()));
-    setExpandAlignProperties(spotSize.get(), true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    MyComboBoxText* spotSize(Gtk::manage (new MyComboBoxText ()));
+    setExpandAlignProperties(spotSize, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
     spotSize->append ("2");
     if (associatedVar == 2) {
@@ -227,31 +227,30 @@ std::unique_ptr<MyComboBoxText> spot_setup(int &associatedVar)
     return spotSize;
 }
 
-void picker_setup(const std::unique_ptr<Gtk::Label> slab, const std::unique_ptr<Gtk::ToggleButton> spotButton, const std::unique_ptr<MyComboBoxText> spotSizeSetter)
+Gtk::Grid* picker_template( Gtk::Label* const &slab, Gtk::ToggleButton* const &spotButton, MyComboBoxText* const &spotSizeSetter)
 {
     //    refInputLabel->set_justify(Gtk::Justification::JUSTIFY_CENTER);
     //    refInputLabel->set_line_wrap(true);
 
     // TODO make spot size configurable ?
 
-    setExpandAlignProperties(slab.get(), false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(slab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
-    std::unique_ptr<Gtk::Grid> spotSizeHelper(Gtk::manage(new Gtk::Grid()));
+    Gtk::Grid* spotSizeHelper(Gtk::manage(new Gtk::Grid()));
     spotSizeHelper->set_name("Spot-Size-Helper");
-    setExpandAlignProperties(spotSizeHelper.get(), false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(spotSizeHelper, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
 
-    std::unique_ptr<Gtk::Grid> spotgrid(Gtk::manage(new Gtk::Grid()));
+    Gtk::Grid* spotgrid(Gtk::manage(new Gtk::Grid()));
     spotgrid->get_style_context()->add_class("grid-spacing");
-    setExpandAlignProperties(spotgrid.get(), true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-
-    
+    setExpandAlignProperties(spotgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
     spotSizeHelper->attach (*spotSizeSetter, 0, 0, 1, 1);
 
     spotgrid->attach (*spotButton, 0, 0, 1, 1);
     spotgrid->attach (*slab, 1, 0, 1, 1);
     spotgrid->attach (*spotSizeHelper, 2, 0, 1, 1);
+    return spotgrid;
 }
 
 FilmNegative::FilmNegative() :
@@ -272,6 +271,7 @@ FilmNegative::FilmNegative() :
     redRatio(createExponentAdjuster(this, M("TP_FILMNEGATIVE_RED"), 0.3, 5, 0.01, (2.04 / 1.5))), // ratio of red exponent to master exponent
     blueRatio(createExponentAdjuster(this, M("TP_FILMNEGATIVE_BLUE"), 0.3, 5, 0.01, (1.29 / 1.5))), // ratio of blue exponent to master exponent
     spotButton(Gtk::manage(new Gtk::ToggleButton(M("TP_FILMNEGATIVE_PICK")))),
+    spotSize(spot_setup(options.whiteBalanceSpotSize)),
     refInputLabel(Gtk::manage(new Gtk::Label(Glib::ustring::compose(M("TP_FILMNEGATIVE_REF_LABEL"), "- - -")))),
     refSpotButton(Gtk::manage(new Gtk::ToggleButton(M("TP_FILMNEGATIVE_REF_PICK")))),
     outputLevel(createLevelAdjuster(this, M("TP_FILMNEGATIVE_OUT_LEVEL"))),  // ref level
@@ -284,65 +284,15 @@ FilmNegative::FilmNegative() :
     spotButton->set_image(*Gtk::manage(new RTImage("color-picker-small.png")));
 
     refSpotButton->set_tooltip_text(M("TP_FILMNEGATIVE_REF_TOOLTIP"));
-
-    spotSize = Gtk::manage(new MyComboBoxText());
-
     setExpandAlignProperties(refInputLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 //    refInputLabel->set_justify(Gtk::Justification::JUSTIFY_CENTER);
 //    refInputLabel->set_line_wrap(true);
 
     // TODO make spot size configurable ?
-
-    Gtk::Label* slab = Gtk::manage (new Gtk::Label (M("TP_SPOT_SIZE")));
+    // spotSize = spot_setup(options.whiteBalanceSpotSize);
+    Gtk::Label *slab(Gtk::manage(new Gtk::Label(M("TP_SPOT_SIZE"))));
     setExpandAlignProperties(slab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-
-    Gtk::Grid* spotSizeHelper = Gtk::manage(new Gtk::Grid());
-    spotSizeHelper->set_name("Spot-Size-Helper");
-    setExpandAlignProperties(spotSizeHelper, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-
-
     // from white balance
-    Gtk::Grid* spotgrid = Gtk::manage(new Gtk::Grid());
-    spotgrid->get_style_context()->add_class("grid-spacing");
-    setExpandAlignProperties(spotgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-
-    spotSize = Gtk::manage (new MyComboBoxText ());
-    setExpandAlignProperties(spotSize, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-
-    spotSize->append ("2");
-    if (options.whiteBalanceSpotSize == 2) {
-        spotSize->set_active(0);
-    }
-
-    spotSize->append ("4");
-
-    if (options.whiteBalanceSpotSize == 4) {
-        spotSize->set_active(1);
-    }
-
-    spotSize->append ("8");
-
-    if (options.whiteBalanceSpotSize == 8) {
-        spotSize->set_active(2);
-    }
-
-    spotSize->append ("16");
-
-    if (options.whiteBalanceSpotSize == 16) {
-        spotSize->set_active(3);
-    }
-
-    spotSize->append ("32");
-
-    if (options.whiteBalanceSpotSize == 32) {
-        spotSize->set_active(4);
-    }
-
-    spotSizeHelper->attach (*spotSize, 0, 0, 1, 1);
-
-    spotgrid->attach (*spotButton, 0, 0, 1, 1);
-    spotgrid->attach (*slab, 1, 0, 1, 1);
-    spotgrid->attach (*spotSizeHelper, 2, 0, 1, 1);
 
     //end
     // refSpotSize->set_active(0);
@@ -368,10 +318,11 @@ FilmNegative::FilmNegative() :
     pack_start(*greenExp, Gtk::PACK_SHRINK, 0);
     pack_start(*redRatio, Gtk::PACK_SHRINK, 0);
     pack_start(*blueRatio, Gtk::PACK_SHRINK, 0);
-    pack_start (*spotgrid, Gtk::PACK_SHRINK, 0 );
-//    pack_start(*spotButton, Gtk::PACK_SHRINK, 0);
+    Gtk::Grid* spotgrid = picker_template(slab, spotButton, spotSize);
+    pack_start(*spotgrid, Gtk::PACK_SHRINK, 0);
+    //    pack_start(*spotButton, Gtk::PACK_SHRINK, 0);
 
-//    pack_start(*oldMethod, Gtk::PACK_SHRINK, 0);
+    //    pack_start(*oldMethod, Gtk::PACK_SHRINK, 0);
 
     Gtk::Separator* const sep = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     sep->get_style_context()->add_class("grid-row-separator");
@@ -387,6 +338,7 @@ FilmNegative::FilmNegative() :
     pack_start(*blueBalance, Gtk::PACK_SHRINK, 0);
     pack_start(*greenBalance, Gtk::PACK_SHRINK, 0);
 
+    // Gtk::Grid *refSpotGrid = picker_template(slab, refSpotButton, spotSize);
     pack_start(*refSpotButton, Gtk::PACK_SHRINK, 0);
 
     spotButton->signal_toggled().connect(sigc::mem_fun(*this, &FilmNegative::editToggled));
