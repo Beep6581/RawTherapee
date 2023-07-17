@@ -376,6 +376,12 @@ FilmNegative::~FilmNegative()
     for (auto geometry : mouseOverGeometry) {
         delete geometry;
     }
+    delete displayRectWidth;
+    delete refSpotSize;
+    delete refSpotButton;
+    delete refInputLabel;
+    delete spotSize;
+    delete spotButton;
 }
 
 
