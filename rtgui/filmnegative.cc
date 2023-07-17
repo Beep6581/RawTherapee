@@ -227,6 +227,16 @@ MyComboBoxText* spot_setup(int const &associatedVar)
     return spotSize;
 }
 
+Gtk::ToggleButton* spot_button_template(Glib::ustring const &key, const Glib::ustring &tooltip)
+{
+    Gtk::ToggleButton *spotButton(Gtk::manage(new Gtk::ToggleButton(key)));
+    setExpandAlignProperties(spotButton, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    spotButton->get_style_context()->add_class("independent");
+    spotButton->set_tooltip_text(tooltip);
+    spotButton->set_image(*Gtk::manage(new RTImage("color-picker-small.png")));
+    return spotButton;
+}
+
 Gtk::Grid* picker_template( Gtk::Label* const &slab, Gtk::ToggleButton* const &spotButton, MyComboBoxText* const &spotSizeSetter)
 {
     //    refInputLabel->set_justify(Gtk::Justification::JUSTIFY_CENTER);
@@ -270,21 +280,15 @@ FilmNegative::FilmNegative() :
     greenExp(createExponentAdjuster(this, M("TP_FILMNEGATIVE_GREEN"), 0.3, 4, 0.01, 1.5)),  // master exponent (green channel)
     redRatio(createExponentAdjuster(this, M("TP_FILMNEGATIVE_RED"), 0.3, 5, 0.01, (2.04 / 1.5))), // ratio of red exponent to master exponent
     blueRatio(createExponentAdjuster(this, M("TP_FILMNEGATIVE_BLUE"), 0.3, 5, 0.01, (1.29 / 1.5))), // ratio of blue exponent to master exponent
-    spotButton(Gtk::manage(new Gtk::ToggleButton(M("TP_FILMNEGATIVE_PICK")))),
+    spotButton(spot_button_template(M("TP_FILMNEGATIVE_PICK"), M("TP_FILMNEGATIVE_GUESS_TOOLTIP"))),
     spotSize(spot_setup(options.whiteBalanceSpotSize)),
     refInputLabel(Gtk::manage(new Gtk::Label(Glib::ustring::compose(M("TP_FILMNEGATIVE_REF_LABEL"), "- - -")))),
-    refSpotButton(Gtk::manage(new Gtk::ToggleButton(M("TP_FILMNEGATIVE_REF_PICK")))),
+    refSpotButton(spot_button_template(M("TP_FILMNEGATIVE_REF_PICK"), M("TP_FILMNEGATIVE_REF_TOOLTIP"))),
     refSpotSize(spot_setup(options.whiteBalanceSpotSize)),
     outputLevel(createLevelAdjuster(this, M("TP_FILMNEGATIVE_OUT_LEVEL"))),  // ref level
     greenBalance(createBalanceAdjuster(this, M("TP_FILMNEGATIVE_GREENBALANCE"), -3.0, 3.0, 0.0, "circle-magenta-small.png", "circle-green-small.png")),  // green balance
     blueBalance(createBalanceAdjuster(this, M("TP_FILMNEGATIVE_BLUEBALANCE"), -3.0, 3.0, 0.0, "circle-blue-small.png", "circle-yellow-small.png"))  // blue balance
 {
-    setExpandAlignProperties(spotButton, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    spotButton->get_style_context()->add_class("independent");
-    spotButton->set_tooltip_text(M("TP_FILMNEGATIVE_GUESS_TOOLTIP"));
-    spotButton->set_image(*Gtk::manage(new RTImage("color-picker-small.png")));
-
-    refSpotButton->set_tooltip_text(M("TP_FILMNEGATIVE_REF_TOOLTIP"));
     setExpandAlignProperties(refInputLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 //    refInputLabel->set_justify(Gtk::Justification::JUSTIFY_CENTER);
 //    refInputLabel->set_line_wrap(true);
