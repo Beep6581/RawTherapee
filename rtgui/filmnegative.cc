@@ -313,7 +313,7 @@ FilmNegative::FilmNegative() :
     colorSpace->signal_changed().connect(sigc::mem_fun(*this, &FilmNegative::colorSpaceChanged));
     colorSpace->show();
 
-    Gtk::Label *sLabel(Gtk::manage(new Gtk::Label(M("TP_SPOT_SIZE"))));
+    Gtk::Label *sLabel(Gtk::manage(new Gtk::Label(M("TP_FILMNEGATIVE_PICK_SIZE"))));
     setExpandAlignProperties(sLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
     pack_start(*greenExp, Gtk::PACK_SHRINK, 0);
@@ -339,7 +339,7 @@ FilmNegative::FilmNegative() :
     pack_start(*blueBalance, Gtk::PACK_SHRINK, 0);
     pack_start(*greenBalance, Gtk::PACK_SHRINK, 0);
 
-    Gtk::Label *negWBSpotLabel(Gtk::manage(new Gtk::Label(M("TP_WB_SPOT_SIZE"))));
+    Gtk::Label *negWBSpotLabel(Gtk::manage(new Gtk::Label(M("TP_FILMNEGATIVE_REF_SIZE"))));
     setExpandAlignProperties(negWBSpotLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     Gtk::Grid *refSpotGrid = pickerTemplate(negWBSpotLabel, refSpotButton, refSpotSize);
     pack_start(*refSpotGrid, Gtk::PACK_SHRINK, 0);
