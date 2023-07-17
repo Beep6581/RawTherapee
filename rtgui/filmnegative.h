@@ -121,10 +121,11 @@ private:
     Adjuster* const blueRatio;
 
     Gtk::ToggleButton* const spotButton;
+    MyComboBoxText* const spotSize;
 
     Gtk::Label* const refInputLabel;
     Gtk::ToggleButton* const refSpotButton;
-    MyComboBoxText* spotSize;
+    MyComboBoxText* const refSpotSize;
 
     Adjuster* const outputLevel;
     Adjuster* const greenBalance;

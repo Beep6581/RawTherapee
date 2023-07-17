@@ -274,6 +274,7 @@ FilmNegative::FilmNegative() :
     spotSize(spot_setup(options.whiteBalanceSpotSize)),
     refInputLabel(Gtk::manage(new Gtk::Label(Glib::ustring::compose(M("TP_FILMNEGATIVE_REF_LABEL"), "- - -")))),
     refSpotButton(Gtk::manage(new Gtk::ToggleButton(M("TP_FILMNEGATIVE_REF_PICK")))),
+    refSpotSize(spot_setup(options.whiteBalanceSpotSize)),
     outputLevel(createLevelAdjuster(this, M("TP_FILMNEGATIVE_OUT_LEVEL"))),  // ref level
     greenBalance(createBalanceAdjuster(this, M("TP_FILMNEGATIVE_GREENBALANCE"), -3.0, 3.0, 0.0, "circle-magenta-small.png", "circle-green-small.png")),  // green balance
     blueBalance(createBalanceAdjuster(this, M("TP_FILMNEGATIVE_BLUEBALANCE"), -3.0, 3.0, 0.0, "circle-blue-small.png", "circle-yellow-small.png"))  // blue balance
@@ -338,8 +339,9 @@ FilmNegative::FilmNegative() :
     pack_start(*blueBalance, Gtk::PACK_SHRINK, 0);
     pack_start(*greenBalance, Gtk::PACK_SHRINK, 0);
 
-    // Gtk::Grid *refSpotGrid = picker_template(slab, refSpotButton, spotSize);
-    pack_start(*refSpotButton, Gtk::PACK_SHRINK, 0);
+    Gtk::Label *WBslab(Gtk::manage(new Gtk::Label(M("TP_WB_SPOT_SIZE"))));
+    Gtk::Grid *refSpotGrid = picker_template(WBslab, refSpotButton, refSpotSize);
+    pack_start(*refSpotGrid, Gtk::PACK_SHRINK, 0);
 
     spotButton->signal_toggled().connect(sigc::mem_fun(*this, &FilmNegative::editToggled));
     // spotsize->signal_changed().connect( sigc::mem_fun(*this, &WhiteBalance::spotSizeChanged) );
