@@ -262,6 +262,8 @@ FilmNegative::FilmNegative() :
 
     pack_start(*refPicker, Gtk::PACK_SHRINK, 0);
 
+    //BUG: After selecting a spot for the first time after the button is toggled, picking is still possible, while the button is NOT toggled. After picking for the second time picking is only possible after retoggleing the button
+
     picker->_spotButton->signal_toggled().connect(sigc::mem_fun(*this, &FilmNegative::editToggled));
 
     refPicker->_spotButton->signal_toggled().connect(sigc::mem_fun(*this, &FilmNegative::refSpotToggled));
