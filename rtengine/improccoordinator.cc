@@ -1889,7 +1889,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
             if (params->colorappearance.enabled) {
                 // L histo  and Chroma histo for ciecam
-                // histogram well be for Lab (Lch) values, because very difficult to do with J,Q, M, s, C
+                // histogram will be for Lab (Lch) values, because very difficult to do with J,Q, M, s, C
                 int x1, y1, x2, y2;
                 params->crop.mapToResized(pW, pH, scale, x1, x2,  y1, y2);
                 lhist16CAM.clear();
@@ -1936,7 +1936,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     adap = pow(2.0, E_V - 3.0);  // cd / m2
                     // end calculation adaptation scene luminosity
                 }
-				if(params->colorappearance.catmethod == "symg") {//force abolute luminance scenescene to 400 in symmetric
+				if(params->colorappearance.catmethod == "symg") {//force absolute luminance scene to 400 in symmetric
 					adap = 400.;
 				}
                 float d, dj, yb;

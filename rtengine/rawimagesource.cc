@@ -847,7 +847,7 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
     const bool doClip = (chmax[0] >= clmax[0] || chmax[1] >= clmax[1] || chmax[2] >= clmax[2]) && !hrp.hrenabled && hrp.clampOOG;
     bool doHr = (hrp.hrenabled && !iscolor);
     if (hrp.hrenabled && iscolor) {
-        if(hrp.method == "Coloropp" && opposed == 1) {//force Inpaint opposed if WB change, and opposed limited tne number to 1
+        if(hrp.method == "Coloropp" && opposed == 1) {//force Inpaint opposed if WB change, and opposed limited the number to 1
             rgbSourceModified  = false;
         }
         if (!rgbSourceModified) {
@@ -5526,7 +5526,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     float gmm[N_t];
     float bmm[N_t];
 
-    int siza = 237; //192 untill 01/2023 size of histogram
+    int siza = 237; //192 until 01/2023 size of histogram
     if(wbpar.itcwb_sampling == true) {
         siza = 192;//old sampling 5.9 and before...
     }
@@ -5671,11 +5671,11 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             purp = false;
         }
         if(wbpar.itcwb_sampling == false) {
-            //printf("Use high smapling\n");
+            //printf("Use high sampling\n");
             histoxyY(bfhitc, bfwitc, xc, yc, Yc, xxx,  yyy, YYY, histxy, purp);//purp enable,  enable purple color in WB
             //return histogram x and y for each temp and in a range of 235 colors (siza)
         } else {
-            //printf("Use low smapling - 5.9\n");
+            //printf("Use low sampling - 5.9\n");
             histoxyY_low(bfhitc, bfwitc, xc, yc, Yc, xxx,  yyy, YYY, histxy);//low scaling 
         }
     }
@@ -5818,7 +5818,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
    // int maxnb = rtengine::LIM(settings->itcwb_sizereference, 1, 5);
    // int maxnb = rtengine::LIM(wbpar.itcwb_size, 1, 5);
     int maxnb = 3;
-    //wbpar.itcwb_size to verify if this setting is usefull...diificulties with High gamut and limited patch spectral colors.
+    //wbpar.itcwb_size to verify if this setting is useful...diificulties with High gamut and limited patch spectral colors.
 
     if (wbpar.itcwb_thres > 55) {//normally never used
         maxnb = 201 / wbpar.itcwb_thres;

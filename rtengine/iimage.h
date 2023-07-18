@@ -1858,7 +1858,7 @@ class IImage : virtual public ImageDimensions
 public:
 
     virtual ~IImage() {}
-    /** @brief Returns a mutex that can is useful in many situations. No image operations shuold be performed without locking this mutex.
+    /** @brief Returns a mutex that can is useful in many situations. No image operations should be performed without locking this mutex.
       * @return The mutex */
     virtual MyMutex& getMutex () = 0;
     virtual cmsHPROFILE getProfile () const = 0;
