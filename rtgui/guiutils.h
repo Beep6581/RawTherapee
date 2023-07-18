@@ -689,7 +689,35 @@ public:
     }
 };
 
-inline void setActiveTextOrIndex (Gtk::ComboBoxText& comboBox, const Glib::ustring& text, int index)
+/** 
+ * @brief A gui element for picking spots on an image
+ */ 
+class SpotPicker : public Gtk::Grid
+{
+    public:
+        int _associatedVar;
+        Gtk::Label* const _spotLabel;
+        MyComboBoxText* const _spotSizeSetter;
+        Gtk::ToggleButton* const _spotButton;
+
+        SpotPicker(int const defaultValue, Glib::ustring const &buttonKey, Glib::ustring const &buttonTooltip, Glib::ustring const &labelKey);
+        ~SpotPicker();
+        inline Gtk::TreeModel::iterator get_active()
+        {
+            return _spotSizeSetter->get_active();
+        }
+        void set_active(bool b)
+        {
+            _spotButton->set_active(b);
+        }
+
+    protected:
+        MyComboBoxText* selecterSetup();
+        static Gtk::ToggleButton *spotButtonTemplate(Glib::ustring const &key, const Glib::ustring &tooltip);
+        void spotSizeChanged();
+};
+
+inline void setActiveTextOrIndex(Gtk::ComboBoxText &comboBox, const Glib::ustring &text, int index)
 {
     bool valueSet = false;
     if (!text.empty()) {

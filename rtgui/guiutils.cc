@@ -1923,3 +1923,83 @@ void BackBuffer::copySurface(Cairo::RefPtr<Cairo::Context> crDest, Gdk::Rectangl
         crDest->fill();
     }
 }
+
+SpotPicker::SpotPicker(int const defaultValue, Glib::ustring const &buttonKey, Glib::ustring const &buttonTooltip, Glib::ustring const &labelKey) :
+    Gtk::Grid(),
+    _associatedVar(defaultValue),
+    _spotLabel(Gtk::manage(new Gtk::Label(M(labelKey)))),
+    _spotSizeSetter(Gtk::manage(selecterSetup())),
+    _spotButton(Gtk::manage(spotButtonTemplate(buttonKey, buttonTooltip)))
+
+{
+    setExpandAlignProperties(_spotLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+
+    Gtk::Grid* spotSizeHelper(Gtk::manage(new Gtk::Grid()));
+    spotSizeHelper->set_name("Spot-Size-Helper");
+    setExpandAlignProperties(spotSizeHelper, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+
+    this->get_style_context()->add_class("grid-spacing");
+    setExpandAlignProperties(this, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+
+    spotSizeHelper->attach (*_spotSizeSetter, 0, 0, 1, 1);
+
+    this->attach (*_spotButton, 0, 0, 1, 1);
+    this->attach (*_spotLabel, 1, 0, 1, 1);
+    this->attach (*spotSizeHelper, 2, 0, 1, 1);
+    _spotSizeSetter->signal_changed().connect( sigc::mem_fun(*this, &SpotPicker::spotSizeChanged));
+}
+SpotPicker::~SpotPicker()
+{
+
+}
+
+MyComboBoxText* SpotPicker::selecterSetup()
+{
+    MyComboBoxText* spotSize(new MyComboBoxText ());
+    setExpandAlignProperties(spotSize, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+
+    spotSize->append ("2");
+    if (_associatedVar == 2) {
+        spotSize->set_active(0);
+    }
+
+    spotSize->append ("4");
+
+    if (_associatedVar == 4) {
+        spotSize->set_active(1);
+    }
+
+    spotSize->append ("8");
+
+    if (_associatedVar == 8) {
+        spotSize->set_active(2);
+    }
+
+    spotSize->append ("16");
+
+    if (_associatedVar == 16) {
+        spotSize->set_active(3);
+    }
+
+    spotSize->append ("32");
+
+    if (_associatedVar == 32) {
+        spotSize->set_active(4);
+    }
+    return spotSize;
+}
+
+Gtk::ToggleButton* SpotPicker::spotButtonTemplate(Glib::ustring const &key, const Glib::ustring &tooltip)
+{
+    Gtk::ToggleButton *spotButton(new Gtk::ToggleButton(key));
+    setExpandAlignProperties(spotButton, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    spotButton->get_style_context()->add_class("independent");
+    spotButton->set_tooltip_text(tooltip);
+    spotButton->set_image(*Gtk::manage(new RTImage("color-picker-small.png")));
+    return spotButton;
+}
+
+void SpotPicker::spotSizeChanged()
+{
+    _associatedVar = atoi(_spotSizeSetter->get_active_text().c_str());
+}
