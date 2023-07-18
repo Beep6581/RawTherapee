@@ -97,8 +97,8 @@ private:
     void readOutputSliders(RGB &refOutput);
     void writeOutputSliders(const RGB &refOutput);
 
-    void spotSizeChanged();
-    void refSpotChanged();
+    // void spotSizeChanged();
+    // void refSpotChanged();
 
     // ColorTemp value corresponding to neutral RGB multipliers (1,1,1). Should be around 6500K.
     const rtengine::ColorTemp NEUTRAL_TEMP;
@@ -137,15 +137,11 @@ private:
 
     #define DEFAULT_SPOT_WIDTH 8
 
-    Gtk::ToggleButton* const spotButton;
-    int spotWidth;
-    MyComboBoxText* const spotSize;
+    SpotPicker* const picker;
 
     Gtk::Label* const refInputLabel;
-    Gtk::ToggleButton* const refSpotButton;
-    int refSpotWidth;
-    MyComboBoxText* const refSpotSize;
-    
+    SpotPicker* const refPicker;
+
     int* displayRectWidth;
 
     Adjuster* const outputLevel;
