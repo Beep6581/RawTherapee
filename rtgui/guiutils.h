@@ -702,9 +702,9 @@ class SpotPicker : public Gtk::Grid
 
         SpotPicker(int const defaultValue, Glib::ustring const &buttonKey, Glib::ustring const &buttonTooltip, Glib::ustring const &labelKey);
         ~SpotPicker();
-        inline Gtk::TreeModel::iterator get_active()
+        inline bool get_active()
         {
-            return _spotSizeSetter->get_active();
+            return _spotButton->get_active();
         }
         void set_active(bool b)
         {
