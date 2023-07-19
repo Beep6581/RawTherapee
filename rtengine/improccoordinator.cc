@@ -820,7 +820,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             if (awbListener) {
                 if (params->wb.method ==  "autitcgreen") {
                     if (params->wb.itcwb_sampling) {
-                        awbListener->WBChanged(met, params->wb.temperature, params->wb.green, rw, gw, bw, 0, 1, 0, dread, studgood, 0, 0, 0, 0, true);
+                        awbListener->WBChanged(met, params->wb.temperature, params->wb.green, rw, gw, bw, 0, 1, 0, dread, studgood, 0, 0, 0, 0);
 
                     } else {
                         minchrom = LIM(minchrom, 0.f, 0.9f);
@@ -829,21 +829,15 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         maxhist = std::max(maxhist, 1000.f);
                         kmin = std::max(kmin, 18);
                         dread = LIM(dread, 10, 239);
-                        awbListener->WBChanged(met, params->wb.temperature, params->wb.green, rw, gw, bw, temp0, delta, bia, dread, studgood, minchrom, kmin, minhist, maxhist, false);
+                        awbListener->WBChanged(met, params->wb.temperature, params->wb.green, rw, gw, bw, temp0, delta, bia, dread, studgood, minchrom, kmin, minhist, maxhist);
                     }
                 } else {
-                    awbListener->WBChanged(met, params->wb.temperature, params->wb.green, rw, gw, bw, -1.f,  -1.f, 1, 1, -1.f, -1.f, 1, -1.f, -1.f, false);
+                    awbListener->WBChanged(met, params->wb.temperature, params->wb.green, rw, gw, bw, -1.f,  -1.f, 1, 1, -1.f, -1.f, 1, -1.f, -1.f);
                 }
             }
-           
-            if (params->wb.enabled  && params->wb.itcwb_sampling) {
-                params->wb.itcwb_sampling = false;              
-                if (params->wb.method ==  "autitcgreen") {
-                    if (awbListener) {                 
-                        awbListener->WBChanged(met, params->wb.temperature, params->wb.green, rw, gw, bw, 0, 1, 0, dread, studgood, 0, 0, 0, 0, false);
-                    }
-                }
-
+            
+            if (params->wb.enabled) {
+                params->wb.itcwb_sampling = false;
             }
             
 
@@ -2165,7 +2159,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
             if (params->colorappearance.enabled) {
                 // L histo  and Chroma histo for ciecam
-                // histogram will be for Lab (Lch) values, because very difficult to do with J,Q, M, s, C
+                // histogram well be for Lab (Lch) values, because very difficult to do with J,Q, M, s, C
                 int x1, y1, x2, y2;
                 params->crop.mapToResized(pW, pH, scale, x1, x2,  y1, y2);
                 lhist16CAM.clear();
@@ -2212,7 +2206,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     adap = pow(2.0, E_V - 3.0);  // cd / m2
                     // end calculation adaptation scene luminosity
                 }
-				if(params->colorappearance.catmethod == "symg") {//force absolute luminance scene to 400 in symmetric
+
+                if (params->colorappearance.catmethod == "symg") { //force abolute luminance scenescene to 400 in symmetric
                     adap = 400.;
                 }
 
