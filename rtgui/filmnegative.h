@@ -137,10 +137,10 @@ private:
 
     #define DEFAULT_SPOT_WIDTH 8
 
-    SpotPicker* const picker;
+    SpotPicker picker;
 
     Gtk::Label* const refInputLabel;
-    SpotPicker* const refPicker;
+    SpotPicker refPicker;
 
     int* displayRectWidth;
 
