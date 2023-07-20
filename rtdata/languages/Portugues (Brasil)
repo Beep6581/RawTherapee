@@ -3136,10 +3136,10 @@ ZOOMPANEL_ZOOMOUT;Menos Zoom\nAtalho: <b>-</b>
 !TP_FILMNEGATIVE_GUESS_TOOLTIP;Automatically set the red and blue ratios by picking two patches which had a neutral hue (no color) in the original scene. The patches should differ in brightness.
 !TP_FILMNEGATIVE_LABEL;Film Negative
 !TP_FILMNEGATIVE_OUT_LEVEL;Output level
-!TP_FILMNEGATIVE_PICK_SIZE;Size
+!TP_FILMNEGATIVE_PICK_SIZE;Size:
 !TP_FILMNEGATIVE_REF_LABEL;Input RGB: %1
 !TP_FILMNEGATIVE_REF_PICK;Pick white balance spot
-!TP_FILMNEGATIVE_REF_SIZE;Size
+!TP_FILMNEGATIVE_REF_SIZE;Size:
 !TP_FILMNEGATIVE_REF_TOOLTIP;Pick a gray patch for white-balancing the output, positive image.
 !TP_FLATFIELD_FROMMETADATA;From Metadata
 !TP_HLREC_COLOROPP;Inpaint Opposed

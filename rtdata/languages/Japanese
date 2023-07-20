@@ -4109,8 +4109,8 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 !SORT_DESCENDING;Descending
 !TP_COLORAPP_CIECAT_DEGREEOUT;Chromatic Adaptation Viewing
 !TP_COLORAPP_TEMPOUT_TOOLTIP;Temperature and Tint.\nDepending on the choices made previously, the selected temperature is:\nWhite balance\nA temp=2856\nD41 temp=4100\nD50 temp=5003\nD55 temp=5503\nD60 temp=6000\nD65 temp=6504\nD75 temp=7504\nFree.
-!TP_FILMNEGATIVE_PICK_SIZE;Size
-!TP_FILMNEGATIVE_REF_SIZE;Size
+!TP_FILMNEGATIVE_PICK_SIZE;Size:
+!TP_FILMNEGATIVE_REF_SIZE;Size:
 !TP_FLATFIELD_FROMMETADATA;From Metadata
 !TP_HLREC_COLOROPP;Inpaint Opposed
 !TP_HLREC_HLTH;Gain threshold

@@ -2677,11 +2677,11 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !TP_FILMNEGATIVE_LABEL;Film Negative
 !TP_FILMNEGATIVE_OUT_LEVEL;Output level
 !TP_FILMNEGATIVE_PICK;Pick neutral spots
-!TP_FILMNEGATIVE_PICK_SIZE;Size
+!TP_FILMNEGATIVE_PICK_SIZE;Size:
 !TP_FILMNEGATIVE_RED;Red ratio
 !TP_FILMNEGATIVE_REF_LABEL;Input RGB: %1
 !TP_FILMNEGATIVE_REF_PICK;Pick white balance spot
-!TP_FILMNEGATIVE_REF_SIZE;Size
+!TP_FILMNEGATIVE_REF_SIZE;Size:
 !TP_FILMNEGATIVE_REF_TOOLTIP;Pick a gray patch for white-balancing the output, positive image.
 !TP_FILMSIMULATION_LABEL;Film Simulation
 !TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee is configured to look for Hald CLUT images, which are used for the Film Simulation tool, in a folder which is taking too long to load.\nGo to Preferences > Image Processing > Film Simulation\nto see which folder is being used. You should either point RawTherapee to a folder which contains only Hald CLUT images and nothing more, or to an empty folder if you don't want to use the Film Simulation tool.\n\nRead the Film Simulation article in RawPedia for more information.\n\nDo you want to cancel the scan now?
