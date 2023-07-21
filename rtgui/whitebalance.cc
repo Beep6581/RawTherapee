@@ -1032,6 +1032,10 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
 
     if (ppMethod.first) {
         pp->wb.method = ppMethod.second.ppLabel;
+        if (pp->wb.method != "autitcgreen") {
+            // Prepare migration to new ITCWB algorithm.
+            pp->wb.itcwb_sampling = false;
+        }
     }
 
     pp->wb.temperature = temp->getIntValue ();

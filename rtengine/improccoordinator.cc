@@ -835,11 +835,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     awbListener->WBChanged(met, params->wb.temperature, params->wb.green, rw, gw, bw, -1.f,  -1.f, 1, 1, -1.f, -1.f, 1, -1.f, -1.f);
                 }
             }
-            
-            if (params->wb.enabled) {
-                params->wb.itcwb_sampling = false;
-            }
-            
 
             /*
                     GammaValues g_a;
