@@ -471,7 +471,7 @@ PREFERENCES_FLATFIELDTEMPLATES;sablonok
 PREFERENCES_FORIMAGE;Egyéb képekhez
 PREFERENCES_FORRAW;RAW állományokhoz
 PREFERENCES_GIMPPATH;GIMP telepítési könyvtára
-PREFERENCES_HISTOGRAMPOSITIONLEFT;Hisztogram a bal oldali panelen
+PREFERENCES_HISTOGRAMPOSITIONLEFT;Hisztogramm a bal oldali panelen
 PREFERENCES_HLTHRESHOLD;Küszöbérték kiégett területekhez
 PREFERENCES_ICCDIR;ICC profilok könyvtára
 PREFERENCES_IMPROCPARAMS;Alapértelmezett feldolgozási paraméterek
@@ -899,178 +899,178 @@ GENERAL_SAVE_AS;Mentés másként
 GENERAL_SLIDER;Csúszka
 GENERAL_WARNING;Figyelem
 GIMP_PLUGIN_INFO;Üdvözlünk a RawTherapee GIMP plugin-ban!\nAmikor végeztél a szerkesztéssel, egyszerűen zárd be a fő RawTherapee ablakot, és a kép autómatikusan importálódik a GIMP-be.
-HISTOGRAM_TOOLTIP_CHRO;Kromacitás histogramm (mutat/elrejt).
+HISTOGRAM_TOOLTIP_CHRO;Kromacitás hisztogramm (mutat/elrejt).
 HISTOGRAM_TOOLTIP_CROSSHAIR;Indikátor célkereszt (mutat/elrejt).
 HISTOGRAM_TOOLTIP_MODE;Váltás lineáris, logaritmikus-lineáris és logaritmikus-logaritmikus histogramskálázás között.
 HISTOGRAM_TOOLTIP_SHOW_OPTIONS;Szkóp opciógombok (mutat/elrejt).
 HISTOGRAM_TOOLTIP_TRACE_BRIGHTNESS;Szkóp világosság állítása.
-HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM;Histogramm
-HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM_RAW;Raw Histogramm
+HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM;Hisztogramm
+HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM_RAW;Raw hisztogramm
 !HISTOGRAM_TOOLTIP_TYPE_PARADE;RGB Parade
 !HISTOGRAM_TOOLTIP_TYPE_VECTORSCOPE_HC;Hue-Chroma Vectorscope
 !HISTOGRAM_TOOLTIP_TYPE_VECTORSCOPE_HS;Hue-Saturation Vectorscope
 HISTOGRAM_TOOLTIP_TYPE_WAVEFORM;Hullámformátum
-!HISTORY_MSG_166;Exposure - Reset
-!HISTORY_MSG_167;Demosaicing method
-!HISTORY_MSG_168;L*a*b* - CC curve
-!HISTORY_MSG_169;L*a*b* - CH curve
-!HISTORY_MSG_170;Vibrance - HH curve
-!HISTORY_MSG_171;L*a*b* - LC curve
-!HISTORY_MSG_172;L*a*b* - Restrict LC
-!HISTORY_MSG_173;NR - Detail recovery
-!HISTORY_MSG_174;Color Appearance &amp; Lighting
-!HISTORY_MSG_175;CAL - SC - Adaptation
+HISTORY_MSG_166;Exponálás - Visszaállítás
+HISTORY_MSG_167;Mozaikmentesítési módszer
+HISTORY_MSG_168;L*a*b* - KK görbe
+HISTORY_MSG_169;L*a*b* - KH görbe
+HISTORY_MSG_170;Vibrancia - HH görbe
+HISTORY_MSG_171;L*a*b* - LK görbe
+HISTORY_MSG_172;L*a*b* - LK korlátozás
+HISTORY_MSG_173;ZCs - Részlet visszaállítás
+HISTORY_MSG_174;Szín Megjelenés &amp; Megvilágítás
+HISTORY_MSG_175;SzMM - SC - Alkalmazkodás
 !HISTORY_MSG_176;CAL - VC - Surround
-!HISTORY_MSG_177;CAL - SC - Absolute luminance
-!HISTORY_MSG_178;CAL - VC - Absolute luminance
-!HISTORY_MSG_179;CAL - SC - WP model
-!HISTORY_MSG_180;CAL - IA - Lightness (J)
+HISTORY_MSG_177;SzMM - SC - Abszolút luminancia
+HISTORY_MSG_178;SzMM - VC - Abszolút luminancia
+HISTORY_MSG_179;SzMM - SC - WP modell
+HISTORY_MSG_180;SzMM - IA - Világosság (J)
 !HISTORY_MSG_181;CAL - IA - Chroma (C)
-!HISTORY_MSG_182;CAL - SC - Auto adaptation
-!HISTORY_MSG_183;CAL - IA - Contrast (J)
+HISTORY_MSG_182;SzMM - SC - Auto alkalmazkodás
+HISTORY_MSG_183;SzMM - IA - Kontrast (J)
 !HISTORY_MSG_184;CAL - SC - Surround
-!HISTORY_MSG_185;CAL - Gamut control
-!HISTORY_MSG_186;CAL - IA - Algorithm
-!HISTORY_MSG_187;CAL - IA - Red/skin protection
-!HISTORY_MSG_188;CAL - IA - Brightness (Q)
-!HISTORY_MSG_189;CAL - IA - Contrast (Q)
-!HISTORY_MSG_190;CAL - IA - Saturation (S)
-!HISTORY_MSG_191;CAL - IA - Colorfulness (M)
+HISTORY_MSG_185;SzMM - Színskála kontroll
+HISTORY_MSG_186;SzMM - IA - Algoritmus
+HISTORY_MSG_187;SzMM - IA - Piros/bőr védelem
+HISTORY_MSG_188;SzMM - IA - Világosság (Q)
+HISTORY_MSG_189;SzMM - IA - Kontraszt (Q)
+HISTORY_MSG_190;SzMM - IA - Színtelítettség (S)
+HISTORY_MSG_191;SzMM - IA - Színesség (M)
 !HISTORY_MSG_192;CAL - IA - Hue (h)
-!HISTORY_MSG_193;CAL - IA - Tone curve 1
-!HISTORY_MSG_194;CAL - IA - Tone curve 2
-!HISTORY_MSG_195;CAL - IA - Tone curve 1 mode
-!HISTORY_MSG_196;CAL - IA - Tone curve 2 mode
-!HISTORY_MSG_197;CAL - IA - Color curve
-!HISTORY_MSG_198;CAL - IA - Color curve mode
-!HISTORY_MSG_199;CAL - IA - Use CAM output for histograms
-!HISTORY_MSG_200;CAL - IA - Use CAM for tone mapping
-!HISTORY_MSG_201;NR - Chrominance - R&amp;G
-!HISTORY_MSG_202;NR - Chrominance - B&amp;Y
-!HISTORY_MSG_203;NR - Color space
-!HISTORY_MSG_204;LMMSE enhancement steps
-!HISTORY_MSG_205;CAL - Hot/bad pixel filter
-!HISTORY_MSG_206;CAL - SC - Auto absolute luminance
-!HISTORY_MSG_207;Defringe - Hue curve
-!HISTORY_MSG_208;WB - B/R equalizer
-!HISTORY_MSG_210;GF - Angle
-!HISTORY_MSG_211;Graduated Filter
-!HISTORY_MSG_212;VF - Strength
+HISTORY_MSG_193;SzMM - IA - Tónus görbe 1
+HISTORY_MSG_194;SzMM - IA - Tónus görbe 2
+HISTORY_MSG_195;SzMM - IA - Tónus görbe 1 mód
+HISTORY_MSG_196;SzMM - IA - Tónus görbe 2 mód
+HISTORY_MSG_197;SzMM - IA - Színgörbe
+HISTORY_MSG_198;SzMM - IA - Színgörbe mód
+HISTORY_MSG_199;SzMM - IA - CAM kimenet használata hisztogrammokhoz.
+HISTORY_MSG_200;SzMM - IA - CAM használata tónusleképezés
+HISTORY_MSG_201;ZCs - Krominancia - P&amp;Z
+HISTORY_MSG_202;ZCs - Krominancia - K&amp;S
+HISTORY_MSG_203;ZCs - Színtér
+HISTORY_MSG_204;LMMSE feljavító lépések
+HISTORY_MSG_205;SzMM - Hot/bad pixel szűrő
+HISTORY_MSG_206;SzMM - SC - Auto abszolút luminancia
+HISTORY_MSG_207;Defringe - Hue görbe
+!HISTORY_MSG_208;FE - K/P kiegyenlítő
+HISTORY_MSG_210;ÁSz - Szög
+HISTORY_MSG_211;Átmenetes szűrő
+HISTORY_MSG_212;VF - Erősség
 !HISTORY_MSG_213;Vignette Filter
-!HISTORY_MSG_214;Black-and-White
-!HISTORY_MSG_215;B&amp;W - CM - Red
-!HISTORY_MSG_216;B&amp;W - CM - Green
-!HISTORY_MSG_217;B&amp;W - CM - Blue
-!HISTORY_MSG_218;B&amp;W - Gamma - Red
-!HISTORY_MSG_219;B&amp;W - Gamma - Green
-!HISTORY_MSG_220;B&amp;W - Gamma - Blue
-!HISTORY_MSG_221;B&amp;W - Color filter
+HISTORY_MSG_214;Fekete-Fehér
+HISTORY_MSG_215;Fekete&amp;Fehér - CM - Piros
+HISTORY_MSG_216;Fekete&amp;Fehér - CM - Zöld
+HISTORY_MSG_217;Fekete&amp;Fehér - CM - Kék
+HISTORY_MSG_218;Fekete&amp;Fehér - Gamma - Piros
+HISTORY_MSG_219;Fekete&amp;Fehér - Gamma - Zöld
+HISTORY_MSG_220;Fekete&amp;Fehér - Gamma - Kék
+HISTORY_MSG_221;Fekete&amp;Fehér - Színszűrő
 !HISTORY_MSG_222;B&amp;W - Presets
-!HISTORY_MSG_223;B&amp;W - CM - Orange
-!HISTORY_MSG_224;B&amp;W - CM - Yellow
-!HISTORY_MSG_225;B&amp;W - CM - Cyan
-!HISTORY_MSG_226;B&amp;W - CM - Magenta
-!HISTORY_MSG_227;B&amp;W - CM - Purple
-!HISTORY_MSG_228;B&amp;W - Luminance equalizer
-!HISTORY_MSG_229;B&amp;W - Luminance equalizer
-!HISTORY_MSG_230;B&amp;W - Mode
-!HISTORY_MSG_231;B&amp;W - 'Before' curve
-!HISTORY_MSG_232;B&amp;W - 'Before' curve type
-!HISTORY_MSG_233;B&amp;W - 'After' curve
-!HISTORY_MSG_234;B&amp;W - 'After' curve type
-!HISTORY_MSG_235;B&amp;W - CM - Auto
+HISTORY_MSG_223;Fekete&amp;Fehér - CM - Narancssárga
+HISTORY_MSG_224;Fekete&amp;Fehér - CM - Citromsárga
+HISTORY_MSG_225;Fekete&amp;Fehér - CM - Cián
+HISTORY_MSG_226;Fekete&amp;Fehér - CM - Magenta
+HISTORY_MSG_227;Fekete&amp;Fehér - CM - Lila
+HISTORY_MSG_228;Fekete&amp;Fehér - Luminancia kiegyenlítő
+HISTORY_MSG_229;Fekete&amp;Fehér - Luminancia kiegyenlítő
+HISTORY_MSG_230;Fekete&amp;Fehér - Mód
+HISTORY_MSG_231;Fekete&amp;Fehér - 'Elötte' görbe
+HISTORY_MSG_232;Fekete&amp;Fehér - ''Elötte' görbe típusa
+HISTORY_MSG_233;Fekete&amp;Fehér - 'Utána' görbe
+HISTORY_MSG_234;Fekete&amp;Fehér - 'Utána' görbe típusa
+HISTORY_MSG_235;Fekete&amp;Fehér - CM - Auto
 !HISTORY_MSG_236;--unused--
-!HISTORY_MSG_237;B&amp;W - CM
+HISTORY_MSG_237;Fekete&amp;Fehér - CM
 !HISTORY_MSG_238;GF - Feather
-!HISTORY_MSG_239;GF - Strength
-!HISTORY_MSG_240;GF - Center
+HISTORY_MSG_239;ÁSz - Erősség
+HISTORY_MSG_240;ÁSz - Közép
 !HISTORY_MSG_241;VF - Feather
-!HISTORY_MSG_242;VF - Roundness
-!HISTORY_MSG_243;VC - Radius
-!HISTORY_MSG_244;VC - Strength
-!HISTORY_MSG_245;VC - Center
-!HISTORY_MSG_246;L*a*b* - CL curve
-!HISTORY_MSG_247;L*a*b* - LH curve
-!HISTORY_MSG_248;L*a*b* - HH curve
-!HISTORY_MSG_249;CbDL - Threshold
-!HISTORY_MSG_251;B&amp;W - Algorithm
+HISTORY_MSG_242;VF - Kerekség
+HISTORY_MSG_243;VC - Sugár
+HISTORY_MSG_244;VC - Erősség
+HISTORY_MSG_245;VC - Közép
+HISTORY_MSG_246;L*a*b* - KL görbe
+HISTORY_MSG_247;L*a*b* - LH görbe
+HISTORY_MSG_248;L*a*b* - HH görbe
+HISTORY_MSG_249;CbDL - Határ
+HISTORY_MSG_251;Fekete&amp;Fehér - Algoritmus
 !HISTORY_MSG_252;CbDL - Skin tar/prot
-!HISTORY_MSG_253;CbDL - Reduce artifacts
-!HISTORY_MSG_254;CbDL - Skin hue
-!HISTORY_MSG_255;NR - Median filter
-!HISTORY_MSG_256;NR - Median - Type
-!HISTORY_MSG_257;Color Toning
-!HISTORY_MSG_258;CT - Color curve
-!HISTORY_MSG_259;CT - Opacity curve
-!HISTORY_MSG_260;CT - a*[b*] opacity
-!HISTORY_MSG_261;CT - Method
-!HISTORY_MSG_262;CT - b* opacity
-!HISTORY_MSG_263;CT - Shadows - Red
-!HISTORY_MSG_264;CT - Shadows - Green
-!HISTORY_MSG_265;CT - Shadows - Blue
-!HISTORY_MSG_266;CT - Mid - Red
-!HISTORY_MSG_267;CT - Mid - Green
-!HISTORY_MSG_268;CT - Mid - Blue
-!HISTORY_MSG_269;CT - High - Red
-!HISTORY_MSG_270;CT - High - Green
-!HISTORY_MSG_271;CT - High - Blue
-!HISTORY_MSG_272;CT - Balance
-!HISTORY_MSG_273;CT - Color Balance SMH
-!HISTORY_MSG_276;CT - Opacity
+HISTORY_MSG_253;CbDL - Artifaktok csökkentése
+HISTORY_MSG_254;CbDL - Bőr hue
+HISTORY_MSG_255;ZSz - Medián Szűrő
+HISTORY_MSG_256;ZSz - Medián - Típus
+HISTORY_MSG_257;Szín Tónusozás
+HISTORY_MSG_258;SzT - Színgörbe
+HISTORY_MSG_259;SzT - Átlátszatlanság görbe
+HISTORY_MSG_260;SzT - a*[b*] átlátszatlanság
+HISTORY_MSG_261;SzT - Metódus
+HISTORY_MSG_262;SzT - b* átlátszatlanság
+HISTORY_MSG_263;SzT - Árnyékok - Piros
+HISTORY_MSG_264;SzT - Árnyékok - Zöld
+HISTORY_MSG_265;SzT - Árnyékok - Kék
+HISTORY_MSG_266;SzT - Közepes - Piros
+HISTORY_MSG_267;SzT - Közepes - Zöld
+HISTORY_MSG_268;SzT - Közepes - Kék
+HISTORY_MSG_269;SzT - Magas - Piros
+HISTORY_MSG_270;SzT - Magas - Zöld
+HISTORY_MSG_271;SzT - Magas - Kék
+HISTORY_MSG_272;SzT - Egyensúlyózás
+HISTORY_MSG_273;SzT - Színegyensúly ÁKM
+HISTORY_MSG_276;SzT - Átlátszatlanság
 !HISTORY_MSG_277;--unused--
-!HISTORY_MSG_278;CT - Preserve luminance
-!HISTORY_MSG_279;CT - Shadows
-!HISTORY_MSG_280;CT - Highlights
-!HISTORY_MSG_281;CT - Sat. strength
-!HISTORY_MSG_282;CT - Sat. threshold
-!HISTORY_MSG_283;CT - Strength
-!HISTORY_MSG_284;CT - Auto sat. protection
-!HISTORY_MSG_285;NR - Median - Method
-!HISTORY_MSG_286;NR - Median - Type
-!HISTORY_MSG_287;NR - Median - Iterations
+HISTORY_MSG_278;SzT - Luminancia megőrzése
+HISTORY_MSG_279;SzT - Árnyékok
+HISTORY_MSG_280;SzT - Csúcsfények
+HISTORY_MSG_281;SzT - Színtelítettség erősség
+HISTORY_MSG_282;SzT - Színtelítettség küszöb
+HISTORY_MSG_283;SzT - Erősség
+HISTORY_MSG_284;SzT - Auto színtelítettség védelem
+HISTORY_MSG_285;ZCs - Medián - Metódus
+HISTORY_MSG_286;ZCs - Medián - Típus
+HISTORY_MSG_287;ZCs - Medián - Iterációk
 !HISTORY_MSG_288;Flat-Field - Clip control
 !HISTORY_MSG_289;Flat-Field - Clip control - Auto
-!HISTORY_MSG_290;Black Level - Red
-!HISTORY_MSG_291;Black Level - Green
-!HISTORY_MSG_292;Black Level - Blue
-!HISTORY_MSG_293;Film Simulation
-!HISTORY_MSG_294;Film Simulation - Strength
-!HISTORY_MSG_295;Film Simulation - Film
-!HISTORY_MSG_296;NR - Luminance curve
-!HISTORY_MSG_297;NR - Mode
-!HISTORY_MSG_298;Dead pixel filter
-!HISTORY_MSG_299;NR - Chrominance curve
-!HISTORY_MSG_301;NR - Luma control
-!HISTORY_MSG_302;NR - Chroma method
-!HISTORY_MSG_303;NR - Chroma method
-!HISTORY_MSG_304;W - Contrast levels
-!HISTORY_MSG_305;Wavelet Levels
-!HISTORY_MSG_306;W - Process
-!HISTORY_MSG_307;W - Process
-!HISTORY_MSG_308;W - Process direction
-!HISTORY_MSG_309;W - ES - Detail
+HISTORY_MSG_290;Fekete Szint - Piros
+HISTORY_MSG_291;Fekete Szint - Zöld
+HISTORY_MSG_292;Fekete Szint - Kék
+HISTORY_MSG_293;Filmszimuláció
+HISTORY_MSG_294;Filmszimuláció - Erősség
+HISTORY_MSG_295;Filmszimuláció - Film
+HISTORY_MSG_296;ZCs - Luminancia görbe
+HISTORY_MSG_297;ZCs - Mód
+HISTORY_MSG_298;Halott pixel szűrő
+HISTORY_MSG_299;ZCs - Krominancia görbe
+HISTORY_MSG_301;ZCs - Luma kontroll
+HISTORY_MSG_302;ZCs - Kroma metódus
+HISTORY_MSG_303;ZCs - Kroma metódus
+HISTORY_MSG_304;W - Kontraszt szintek
+HISTORY_MSG_305;Wavelet Szintek
+HISTORY_MSG_306;W - Folyamat
+HISTORY_MSG_307;W - Folyamat
+HISTORY_MSG_308;W - Folyamatirány
+HISTORY_MSG_309;W - ES - Részlet
 !HISTORY_MSG_310;W - Residual - Sky tar/prot
-!HISTORY_MSG_311;W - Wavelet levels
+HISTORY_MSG_311;W - Wavelet szintek
 !HISTORY_MSG_312;W - Residual - Shadows threshold
 !HISTORY_MSG_313;W - Chroma - Sat/past
-!HISTORY_MSG_314;W - Gamut - Reduce artifacts
+HISTORY_MSG_314;W - Színskála - Artifaktok csökkentése
 !HISTORY_MSG_315;W - Residual - Contrast
 !HISTORY_MSG_316;W - Gamut - Skin tar/prot
-!HISTORY_MSG_317;W - Gamut - Skin hue
-!HISTORY_MSG_318;W - Contrast - Finer levels
-!HISTORY_MSG_319;W - Contrast - Finer range
-!HISTORY_MSG_320;W - Contrast - Coarser range
-!HISTORY_MSG_321;W - Contrast - Coarser levels
-!HISTORY_MSG_322;W - Gamut - Avoid color shift
-!HISTORY_MSG_323;W - ES - Local contrast
-!HISTORY_MSG_324;W - Chroma - Pastel
-!HISTORY_MSG_325;W - Chroma - Saturated
-!HISTORY_MSG_326;W - Chroma - Method
-!HISTORY_MSG_327;W - Contrast - Apply to
-!HISTORY_MSG_328;W - Chroma - Link strength
-!HISTORY_MSG_329;W - Toning - Opacity RG
-!HISTORY_MSG_330;W - Toning - Opacity BY
-!HISTORY_MSG_331;W - Contrast levels - Extra
+HISTORY_MSG_317;W - Színskála - Bőr hue
+HISTORY_MSG_318;W - Kontraszt - Finomabb szintek
+HISTORY_MSG_319;W - Kontraszt - Finomabb tartomány
+HISTORY_MSG_320;W - Kontraszt - Durvább tartomány
+HISTORY_MSG_321;W - Kontraszt - Durvább szintek
+HISTORY_MSG_322;W - Színskála - Színeltolás elkerülése
+HISTORY_MSG_323;W - ES - Helyi kontraszt
+HISTORY_MSG_324;W - Kroma - Pasztel
+HISTORY_MSG_325;W - Kroma - Telített
+HISTORY_MSG_326;W - Kroma - Metodus
+HISTORY_MSG_327;W - Kontraszt - Alkalmazás rá
+HISTORY_MSG_328;W - Kroma - Link erősség
+HISTORY_MSG_329;W - Tónusozás - Átlátszatlanság PZ
+HISTORY_MSG_330;W - Tónusozás - Átlátszatlanság KS
+HISTORY_MSG_331;W - Kontraszt szintek - Extra
 !HISTORY_MSG_332;W - Tiling method
 !HISTORY_MSG_333;W - Residual - Shadows
 !HISTORY_MSG_334;W - Residual - Chroma
