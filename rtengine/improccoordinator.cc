@@ -2154,7 +2154,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
             if (params->colorappearance.enabled) {
                 // L histo  and Chroma histo for ciecam
-                // histogram well be for Lab (Lch) values, because very difficult to do with J,Q, M, s, C
+                // histogram will be for Lab (Lch) values, because very difficult to do with J,Q, M, s, C
                 int x1, y1, x2, y2;
                 params->crop.mapToResized(pW, pH, scale, x1, x2,  y1, y2);
                 lhist16CAM.clear();
