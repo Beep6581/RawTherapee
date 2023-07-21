@@ -809,107 +809,107 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!ADJUSTER_RESET_TO_DEFAULT;<b>Click</b> - reset to default value.\n<b>Ctrl</b>+<b>click</b> - reset to initial value.
+ADJUSTER_RESET_TO_DEFAULT;<b>Kattintás</b> - alapértelmezett érték visszaállítása.\n<b>Ctrl</b>+<b>kattintás</b> - eredeti érték visszaállítása.
 !CURVEEDITOR_AXIS_IN;I:
 !CURVEEDITOR_AXIS_LEFT_TAN;LT:
 !CURVEEDITOR_AXIS_OUT;O:
 !CURVEEDITOR_AXIS_RIGHT_TAN;RT:
-!CURVEEDITOR_CATMULLROM;Flexible
-!CURVEEDITOR_EDITPOINT_HINT;Enable edition of node in/out values.\n\nRight-click on a node to select it.\nRight-click on empty space to de-select the node.
-!DONT_SHOW_AGAIN;Don't show this message again.
-!DYNPROFILEEDITOR_DELETE;Delete
-!DYNPROFILEEDITOR_EDIT;Edit
-!DYNPROFILEEDITOR_EDIT_RULE;Edit Dynamic Profile Rule
-!DYNPROFILEEDITOR_ENTRY_TOOLTIP;The matching is case insensitive.\nUse the 're:' prefix to enter\na regular expression.
-!DYNPROFILEEDITOR_IMGTYPE_ANY;Any
-!DYNPROFILEEDITOR_IMGTYPE_HDR;HDR
+CURVEEDITOR_CATMULLROM;Rugalmas
+CURVEEDITOR_EDITPOINT_HINT;Csúcsok ki-/be értékeinek szerkesztésének engedélyezése.\n\nJobb-katt egy csúcsra a kijelöléshez.\nJobb-tatt üres területre a csúcs kijelölésének feloldásához.
+DONT_SHOW_AGAIN;Ne jelenjen meg újból ez az üzenet.
+DYNPROFILEEDITOR_DELETE;Törlés
+DYNPROFILEEDITOR_EDIT;Szerkesztés
+DYNPROFILEEDITOR_EDIT_RULE;Dinamikus Profilszabályok szerkesztése
+DYNPROFILEEDITOR_ENTRY_TOOLTIP;Az egyezéskeresés kis-nagybetű érzékeny.\nHasználd a 're:' előjelet\na reguláris kifejezés bevitelére.
+DYNPROFILEEDITOR_IMGTYPE_ANY;Bármely
+DYNPROFILEEDITOR_IMGTYPE_HDR;HDR (Magas Dinamikai Tartomány)
 !DYNPROFILEEDITOR_IMGTYPE_PS;Pixel Shift
 !DYNPROFILEEDITOR_IMGTYPE_STD;Standard
-!DYNPROFILEEDITOR_MOVE_DOWN;Move Down
-!DYNPROFILEEDITOR_MOVE_UP;Move Up
-!DYNPROFILEEDITOR_NEW;New
-!DYNPROFILEEDITOR_NEW_RULE;New Dynamic Profile Rule
-!DYNPROFILEEDITOR_PROFILE;Processing Profile
-!EDIT_OBJECT_TOOLTIP;Displays a widget on the preview window which lets you adjust this tool.
-!EDIT_PIPETTE_TOOLTIP;To add an adjustment point to the curve, hold the Ctrl key while left-clicking the desired spot in the image preview.\nTo adjust the point, hold the Ctrl key while left-clicking the corresponding area in the preview, then let go of Ctrl (unless you desire fine control) and while still holding the left mouse button move the mouse up or down to move that point up or down in the curve.
-!EXIFFILTER_IMAGETYPE;Image type
-!EXIFPANEL_SHOWALL;Show all
-!EXPORT_BYPASS;Processing steps to bypass
-!EXPORT_BYPASS_EQUALIZER;Bypass Wavelet Levels
-!EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Bypass [raw] LMMSE Enhancement Steps
-!EXPORT_PIPELINE;Processing pipeline
-!EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
-!EXPORT_USE_FAST_PIPELINE_TOOLTIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
-!EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
-!EXTPROGTARGET_1;raw
-!EXTPROGTARGET_2;queue-processed
-!FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply 'find' keywords.
-!FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
-!FILEBROWSER_CACHECLEARFROMPARTIAL;Clear all except cached profiles
-!FILEBROWSER_COLORLABEL_TOOLTIP;Color label.\n\nUse dropdown menu or shortcuts:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
-!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to <b>permanently</b> delete all <b>%1</b> files in trash?
-!FILEBROWSER_DELETEDIALOG_SELECTED;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files?
-!FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files, <b>including</b> a queue-processed version?
-!FILEBROWSER_EMPTYTRASHHINT;<b>Permanently</b> delete all files in trash.
-!FILEBROWSER_EXTPROGMENU;Open with
-!FILEBROWSER_OPENDEFAULTVIEWER;Windows default viewer (queue-processed)
-!FILEBROWSER_POPUPCOLORLABEL0;Label: None
-!FILEBROWSER_POPUPCOLORLABEL1;Label: Red
-!FILEBROWSER_POPUPCOLORLABEL2;Label: Yellow
-!FILEBROWSER_POPUPCOLORLABEL3;Label: Green
-!FILEBROWSER_POPUPCOLORLABEL4;Label: Blue
-!FILEBROWSER_POPUPCOLORLABEL5;Label: Purple
-!FILEBROWSER_POPUPINSPECT;Inspect
-!FILEBROWSER_POPUPRANK;Rank
-!FILEBROWSER_POPUPRANK0;Unrank
-!FILEBROWSER_POPUPRANK1;Rank 1 *
-!FILEBROWSER_POPUPRANK2;Rank 2 **
-!FILEBROWSER_POPUPRANK3;Rank 3 ***
-!FILEBROWSER_POPUPRANK4;Rank 4 ****
-!FILEBROWSER_POPUPRANK5;Rank 5 *****
-!FILEBROWSER_POPUPREMOVE;Delete permanently
-!FILEBROWSER_POPUPREMOVEINCLPROC;Delete permanently, including queue-processed version
-!FILEBROWSER_RANK1_TOOLTIP;Rank 1 *\nShortcut: <b>Shift-1</b>
-!FILEBROWSER_RANK2_TOOLTIP;Rank 2 *\nShortcut: <b>Shift-2</b>
-!FILEBROWSER_RANK3_TOOLTIP;Rank 3 *\nShortcut: <b>Shift-3</b>
-!FILEBROWSER_RANK4_TOOLTIP;Rank 4 *\nShortcut: <b>Shift-4</b>
-!FILEBROWSER_RANK5_TOOLTIP;Rank 5 *\nShortcut: <b>Shift-5</b>
-!FILEBROWSER_RESETDEFAULTPROFILE;Reset to default
-!FILEBROWSER_SHOWNOTTRASHHINT;Show only images not in trash.
-!FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
-!FILEBROWSER_UNRANK_TOOLTIP;Unrank.\nShortcut: <b>Shift-0</b>
-!FILECHOOSER_FILTER_ANY;All files
-!FILECHOOSER_FILTER_COLPROF;Color profiles (*.icc)
-!FILECHOOSER_FILTER_CURVE;Curve files
-!FILECHOOSER_FILTER_LCP;Lens correction profiles
-!FILECHOOSER_FILTER_PP;Processing profiles
-!FILECHOOSER_FILTER_SAME;Same format as current photo
-!FILECHOOSER_FILTER_TIFF;TIFF files
-!GENERAL_APPLY;Apply
-!GENERAL_ASIMAGE;As Image
-!GENERAL_AUTO;Automatic
-!GENERAL_CLOSE;Close
-!GENERAL_CURRENT;Current
-!GENERAL_DELETE_ALL;Delete all
-!GENERAL_EDIT;Edit
-!GENERAL_HELP;Help
-!GENERAL_OPEN;Open
-!GENERAL_RESET;Reset
-!GENERAL_SAVE_AS;Save as...
-!GENERAL_SLIDER;Slider
-!GENERAL_WARNING;Warning
-!GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
-!HISTOGRAM_TOOLTIP_CHRO;Show/Hide chromaticity histogram.
-!HISTOGRAM_TOOLTIP_CROSSHAIR;Show/Hide indicator crosshair.
-!HISTOGRAM_TOOLTIP_MODE;Toggle between linear, log-linear and log-log scaling of the histogram.
-!HISTOGRAM_TOOLTIP_SHOW_OPTIONS;Toggle visibility of the scope option buttons.
-!HISTOGRAM_TOOLTIP_TRACE_BRIGHTNESS;Adjust scope brightness.
-!HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM;Histogram
-!HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM_RAW;Raw Histogram
+DYNPROFILEEDITOR_MOVE_DOWN;Mozgás lefele
+DYNPROFILEEDITOR_MOVE_UP;Mozgás felfele
+DYNPROFILEEDITOR_NEW;Új
+DYNPROFILEEDITOR_NEW_RULE;Új Dinamikus Profilszabály
+DYNPROFILEEDITOR_PROFILE;Feldolgozási Profil
+EDIT_OBJECT_TOOLTIP;Egy widgetet jelenik meg az előnézeti ablakban, amellyel ez az eszköz állítható.
+EDIT_PIPETTE_TOOLTIP;Ahhoz, hogy egy pontot adjál a görbéhez, tartsd lenyomva a Ctrl billentyűt, miközben bal kattintassz a kiválasztott pontra a kép előnézetben.\nA pont módosításához, a Ctrl lenyomva tartásával bal kattintás a megfelelő területre az előnézetben, majd engedd el a Ctrl-t (kivéve, ha finom irányitásra vágys), és a bal egérgomb nyomvatartása közben mozgasd az eggeret fel/le ahhoz, hogy a pont a görbén fel/le mozogjon.
+EXIFFILTER_IMAGETYPE;Képtípus
+EXIFPANEL_SHOWALL;Összes megjelenítése
+EXPORT_BYPASS;Átugrandó feldolgozási lépések
+EXPORT_BYPASS_EQUALIZER;Wavelet Szintek Átugrása
+EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;[raw] LMMSE Feljavító Lépések átugrása
+EXPORT_PIPELINE;Feldolgozási pipeline
+EXPORT_USE_FAST_PIPELINE;Dedikált (teljes feldolgozás az átméretezett képen)
+EXPORT_USE_FAST_PIPELINE_TOOLTIP;Dedikált feldolgozási pipeline használata Gyors Export módban lévő képeken, amely a sebességet minőségre cseréli. A kép átméretezése a lehető leghamarabb történik ahhelyett, hogy végén történne a normál pipeline szerint. A gyorsítás jelentős lehet, de előfordulhatnak artifaktok és a kimenet minőségének általános degradációja.
+EXPORT_USE_NORMAL_PIPELINE;Standard (Pár lépés átugrása, átméretezés a végén)
+EXTPROGTARGET_1;nyers
+EXTPROGTARGET_2;sorfeldolgozott
+FILEBROWSER_BROWSEPATHBUTTONHINT;Kattints a megadott útvonal megnyitásához, a mappa újratöltéséhez és a 'find' külcsszavak alkalmazásához.
+FILEBROWSER_CACHECLEARFROMFULL;Összes törlése, a gyórsítótárban lévő profilokkal együtt
+FILEBROWSER_CACHECLEARFROMPARTIAL;Összes törlése, a gyórsítótárban lévő profilokat kivéve
+FILEBROWSER_COLORLABEL_TOOLTIP;Színcímke.\n\nHasználj leugró menüt vagy gyorsbillentyűket:\n<b>Shift-Ctrl-0</b> Nincs szín\n<b>Shift-Ctrl-1</b> Piros\n<b>Shift-Ctrl-2</b> Sárga\n<b>Shift-Ctrl-3</b> Zöld\n<b>Shift-Ctrl-4</b> Kék\n<b>Shift-Ctrl-5</b> Lila
+FILEBROWSER_DELETEDIALOG_ALL;Biztos vagy benne, hogy <b>véglegesen</b> törölni akarsz minden <b>%1</b> fájlt a kukában?
+FILEBROWSER_DELETEDIALOG_SELECTED;Biztos vagy benne, hogy <b>véglegesen</b> törölni akarod a kiválasztott <b>%1</b> fájlokat?
+FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Biztos vagy benne, hogy <b>véglegesen</b> törölni akarod a kiválasztott <b>%1</b> fájlokat <b>beleértve</b> egy sorfeldolgozott verziót?
+FILEBROWSER_EMPTYTRASHHINT;Összes kukában lévő fájl törlése <b>Véglegesen</b>.
+FILEBROWSER_EXTPROGMENU;Társítás
+FILEBROWSER_OPENDEFAULTVIEWER;Windows alapértelmezett nézegető (sorfeldolgozott)
+FILEBROWSER_POPUPCOLORLABEL0;Label: Nincs
+FILEBROWSER_POPUPCOLORLABEL1;Label: Piros
+FILEBROWSER_POPUPCOLORLABEL2;Label: Sárga
+FILEBROWSER_POPUPCOLORLABEL3;Label: Zöld
+FILEBROWSER_POPUPCOLORLABEL4;Label: Kék
+FILEBROWSER_POPUPCOLORLABEL5;Label: Lila
+FILEBROWSER_POPUPINSPECT;Vizsgálat
+FILEBROWSER_POPUPRANK;Rangsorolás
+FILEBROWSER_POPUPRANK0;Rang eltávolítása
+FILEBROWSER_POPUPRANK1;Rang 1 *
+FILEBROWSER_POPUPRANK2;Rang 2 **
+FILEBROWSER_POPUPRANK3;Rang 3 ***
+FILEBROWSER_POPUPRANK4;Rang 4 ****
+FILEBROWSER_POPUPRANK5;Rang 5 *****
+FILEBROWSER_POPUPREMOVE;Törlés véglegesen
+FILEBROWSER_POPUPREMOVEINCLPROC;Törlés véglegesen, a sorfeldolgozott varzióval együtt.
+FILEBROWSER_RANK1_TOOLTIP;Rang 1 *\nGyorsbillentyű: <b>Shift-1</b>
+FILEBROWSER_RANK3_TOOLTIP;Rang 3 *\nGyorsbillentyű: <b>Shift-3</b>
+FILEBROWSER_RANK2_TOOLTIP;Rang 2 *\nGyorsbillentyű: <b>Shift-2</b>
+FILEBROWSER_RANK4_TOOLTIP;Rang 4 *\nGyorsbillentyű: <b>Shift-4</b>
+FILEBROWSER_RANK5_TOOLTIP;Rang 5 *\nGyorsbillentyű: <b>Shift-5</b>
+FILEBROWSER_RESETDEFAULTPROFILE;Alapértelmezett visszaállítása
+FILEBROWSER_SHOWNOTTRASHHINT;Csak a kukából hiányzó képek mutatása.
+FILEBROWSER_SHOWORIGINALHINT;Csak eredeti képek mutatása.\n\nAmikor több azonos nevű kép létezik, de kiterjesztéseikben különböznek, az számít az eredetinek, amely kiterjesztése a legközelebb van a felismert kiterjesztések lista tetejéhez a Beállítások >  Fájl böngésző > Felismert Kiterjesztések -ben.
+FILEBROWSER_UNRANK_TOOLTIP;Rang eltávolítása.\nGyorsbillentyű: <b>Shift-0</b>
+FILECHOOSER_FILTER_ANY;Minden fájl
+FILECHOOSER_FILTER_COLPROF;Színprofilok (*.icc)
+FILECHOOSER_FILTER_CURVE;Görbefájlok
+FILECHOOSER_FILTER_LCP;Objektívkorrekciós profilok
+FILECHOOSER_FILTER_PP;Feldolgozási profilok
+FILECHOOSER_FILTER_SAME;A jelenlegi fotó formátuma
+FILECHOOSER_FILTER_TIFF;TIFF fájlok
+GENERAL_APPLY;Alkalmazás
+GENERAL_ASIMAGE;Mint Kép
+GENERAL_AUTO;Automatikus
+GENERAL_CLOSE;Bezárás
+GENERAL_CURRENT;Jelenlegi
+GENERAL_DELETE_ALL;Összes törlése
+GENERAL_EDIT;Szerkesztés
+GENERAL_HELP;Segítség
+GENERAL_OPEN;Megnyitás
+GENERAL_RESET;Visszaállítás
+GENERAL_SAVE_AS;Mentés másként
+GENERAL_SLIDER;Csúszka
+GENERAL_WARNING;Figyelem
+GIMP_PLUGIN_INFO;Üdvözlünk a RawTherapee GIMP plugin-ban!\nAmikor végeztél a szerkesztéssel, egyszerűen zárd be a fő RawTherapee ablakot, és a kép autómatikusan importálódik a GIMP-be.
+HISTOGRAM_TOOLTIP_CHRO;Kromacitás histogramm (mutat/elrejt).
+HISTOGRAM_TOOLTIP_CROSSHAIR;Indikátor célkereszt (mutat/elrejt).
+HISTOGRAM_TOOLTIP_MODE;Váltás lineáris, logaritmikus-lineáris és logaritmikus-logaritmikus histogramskálázás között.
+HISTOGRAM_TOOLTIP_SHOW_OPTIONS;Szkóp opciógombok (mutat/elrejt).
+HISTOGRAM_TOOLTIP_TRACE_BRIGHTNESS;Szkóp világosság állítása.
+HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM;Histogramm
+HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM_RAW;Raw Histogramm
 !HISTOGRAM_TOOLTIP_TYPE_PARADE;RGB Parade
 !HISTOGRAM_TOOLTIP_TYPE_VECTORSCOPE_HC;Hue-Chroma Vectorscope
 !HISTOGRAM_TOOLTIP_TYPE_VECTORSCOPE_HS;Hue-Saturation Vectorscope
-!HISTOGRAM_TOOLTIP_TYPE_WAVEFORM;Waveform
+HISTOGRAM_TOOLTIP_TYPE_WAVEFORM;Hullámformátum
 !HISTORY_MSG_166;Exposure - Reset
 !HISTORY_MSG_167;Demosaicing method
 !HISTORY_MSG_168;L*a*b* - CC curve
