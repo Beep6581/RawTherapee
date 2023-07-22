@@ -1,3 +1,52 @@
+#01 Hungarioan
+#02 Conventions used to keep the same writing style along new texts and versions
+#03
+#04  Rövidítések (Abbreviations)
+#05  -----------------------------
+#06   KA: Kromatikus Aberráció (fringe)
+#07   F&F: Fekete-Fehér (Black & White)
+#08   VK: Vignetta Korrekció (Vignette Filter: in Transform tab)
+#09   ÁSz: Átmenetes Szűrő (Gradient Filter)
+#10   VSz: Vignetta Szűrő (Vignette Filter: in Exposure tab)
+#11   CsK: Csatorna Keverő (Channel Mixer)
+#12   RGB: Színmodell Piros Zöld Kék (Red Green Blue)
+#13   FE: Fehéregyensúly (White Balance)
+#14   ZCs: Zajcsökkentés
+#15   SzMM: Színmegjelenés és Megvilágítás
+#16
+#17  
+#18  Fordítási konvenció a fontos kifejezésekhez:
+#19  ---------------------------------------------
+#20   Artifacts: Artifaktumok (from: http://home.mit.bme.hu/~hadhazi/Oktatas/OKD/diak/Kepjellemzok.pdf)
+#21   Brightness: Fényerősség
+#22   Checkbox: Jelölőnégyzet (kiválaszt/felold)
+#23   Chroma: Színintenzitás (from: http://home.mit.bme.hu/~hadhazi/Oktatas/OKD/diak/Kepjellemzok.pdf)
+#24   Chromatic: Kromatikus
+#25   Chromaticity: Kromacitás
+#26   Colorfulness: Színesség
+#27   Cyan: Cián
+#28   Dark Frame: Feketekép
+#29   Dim: Sötétítés
+#30   Feather: Elmosás
+#31   Illuminant: Megvilágító
+#32   Lightness: Világosság
+#33   Luminance: Luminancia
+#34   Luminosity: Fényesség
+#35   Mapping: Leképezés
+#36   Sharpening: Élesítés
+#37   Slider: Csúszka
+#38   Tone Curve: Tónusgörbe
+#39   Vibrance: Vibrancia
+#40   Gamut: Színskála
+#41   Raw: Nyers
+#42
+#43  Angolról nem lefordítható kifejezések a
+#44  RT/digitális fotográfiában használt formájuknak megfelelően:
+#45  -----------------------------------------------------
+#46   ICM (Image Color Management)
+#47   Gamma
+#48   L*a*b*
+
 #01 2010-11-20 RT 3.0 alpha 1 rev. 597:fb291bf74c by Dr. Gyurkó M. 'dualon' Dávid
 
 ABOUT_TAB_BUILD;Verzió
