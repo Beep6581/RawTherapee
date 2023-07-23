@@ -2183,37 +2183,37 @@ HISTOGRAM_TOOLTIP_TYPE_WAVEFORM;Hullámformátum
 !OPTIONS_BUNDLED_MISSING;The bundled profile '<b>%1</b>' could not be found!\n\nYour installation could be damaged.\n\nDefault internal values will be used instead.
 !OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n'<b>%1</b>' will be used instead.
 !OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n'<b>%1</b>' will be used instead.
-!PARTIALPASTE_ADVANCEDGROUP;Advanced Settings
-!PARTIALPASTE_CHANNELMIXERBW;Black-and-white
-!PARTIALPASTE_COLORAPP;Color Appearance & Lighting
-!PARTIALPASTE_COLORTONING;Color toning
-!PARTIALPASTE_DEHAZE;Haze removal
-!PARTIALPASTE_EQUALIZER;Wavelet levels
-!PARTIALPASTE_FILMNEGATIVE;Film negative
-!PARTIALPASTE_FILMSIMULATION;Film simulation
-!PARTIALPASTE_FLATFIELDCLIPCONTROL;Flat-field clip control
-!PARTIALPASTE_GRADIENT;Graduated filter
-!PARTIALPASTE_LENSPROFILE;Profiled lens correction
-!PARTIALPASTE_LOCALCONTRAST;Local contrast
-!PARTIALPASTE_LOCALLAB;Local Adjustments
-!PARTIALPASTE_LOCALLABGROUP;Local Adjustments Settings
-!PARTIALPASTE_METADATA;Metadata mode
-!PARTIALPASTE_PCVIGNETTE;Vignette filter
-!PARTIALPASTE_PREPROCESS_DEADPIXFILT;Dead pixel filter
-!PARTIALPASTE_PREPROCESS_HOTPIXFILT;Hot pixel filter
-!PARTIALPASTE_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
-!PARTIALPASTE_PREPROCWB;Preprocess White Balance
-!PARTIALPASTE_PRSHARPENING;Post-resize sharpening
-!PARTIALPASTE_RAWCACORR_AVOIDCOLORSHIFT;CA avoid color shift
-!PARTIALPASTE_RAWCACORR_CAREDBLUE;CA red & blue
-!PARTIALPASTE_RAW_BORDER;Raw border
-!PARTIALPASTE_RAW_IMAGENUM;Sub-image
-!PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
-!PARTIALPASTE_RAW_PIXELSHIFT;Pixel Shift
-!PARTIALPASTE_RETINEX;Retinex
-!PARTIALPASTE_SOFTLIGHT;Soft light
-!PARTIALPASTE_SPOT;Spot removal
-!PARTIALPASTE_TM_FATTAL;Dynamic range compression
+PARTIALPASTE_ADVANCEDGROUP;Haladó Beállítások
+PARTIALPASTE_CHANNELMIXERBW;Fekete-Fehér
+PARTIALPASTE_COLORAPP;Színmegjelenés és Megvilágítás
+PARTIALPASTE_COLORTONING;Színtónusozás
+PARTIALPASTE_DEHAZE;Ködeltávolítás
+PARTIALPASTE_EQUALIZER;Wavelet szintek
+PARTIALPASTE_FILMNEGATIVE;Film negatív
+PARTIALPASTE_FILMSIMULATION;Film szimuláció
+PARTIALPASTE_FLATFIELDCLIPCONTROL;FF klipp kontroll
+PARTIALPASTE_GRADIENT;Átmenetes szűrő
+PARTIALPASTE_LENSPROFILE;Profilozott Objektívkorrekció
+PARTIALPASTE_LOCALCONTRAST;Helyi kontraszt
+PARTIALPASTE_LOCALLAB;Helyi Igazítások
+PARTIALPASTE_LOCALLABGROUP;Helyi Igazítás Beállítások
+PARTIALPASTE_METADATA;Metaadat mód
+PARTIALPASTE_PCVIGNETTE;Vignetta Szűrő
+PARTIALPASTE_PREPROCESS_DEADPIXFILT;Halottpixel szűrő
+PARTIALPASTE_PREPROCESS_HOTPIXFILT;Forrópixel szűrő
+PARTIALPASTE_PREPROCESS_PDAFLINESFILTER;PDAF vonalszűrő
+PARTIALPASTE_PREPROCWB;Fehéregyensúly előfeldolgozása
+PARTIALPASTE_PRSHARPENING;Átméretezés utáni élesítés
+PARTIALPASTE_RAWCACORR_AVOIDCOLORSHIFT;KA színeltolás elkerülése
+PARTIALPASTE_RAWCACORR_CAREDBLUE;KA piros & kék
+PARTIALPASTE_RAW_BORDER;Nyers határ
+PARTIALPASTE_RAW_IMAGENUM;Szubkép
+PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE feljavító lépések
+PARTIALPASTE_RAW_PIXELSHIFT;Pixel Shift
+PARTIALPASTE_RETINEX;Retinex
+PARTIALPASTE_SOFTLIGHT;Szórt fény
+PARTIALPASTE_SPOT;Folteltávolítás
+PARTIALPASTE_TM_FATTAL;Magas Dinamikai Tartomány
 PREFERENCES_APPEARANCE;Megjelenés
 PREFERENCES_APPEARANCE_COLORPICKERFONT;Színválasztó betűtípusa
 PREFERENCES_APPEARANCE_CROPMASKCOLOR;Vágómaszk színe
