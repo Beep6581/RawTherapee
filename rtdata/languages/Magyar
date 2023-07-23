@@ -44,16 +44,17 @@
 #44   Filmstrip: Filmszalag
 #45   Dynamic Profile Rules: Dinamikus Profilszabályok
 #46   Bundled profiles: Csomagolt Profilok
-#47
-#48  Angolról nem lefordítható kifejezések a
-#49  RT/digitális fotográfiában használt formájuknak megfelelően:
-#50  -----------------------------------------------------
-#51   ICM (Image Color Management)
-#52   Gamma
-#53   L*a*b*
-#54   Pixel Shift
-#55   Retinex
-#56 2010-11-20 RT 3.0 alpha 1 rev. 597:fb291bf74c by Dr. Gyurkó M. 'dualon' Dávid
+#47   Inspector: Vizsgáló
+#48
+#49  Angolról nem lefordítható kifejezések a
+#50  RT/digitális fotográfiában használt formájuknak megfelelően:
+#51  -----------------------------------------------------
+#52   ICM (Image Color Management)
+#53   Gamma
+#54   L*a*b*
+#55   Pixel Shift
+#56   Retinex
+#57 2010-11-20 RT 3.0 alpha 1 rev. 597:fb291bf74c by Dr. Gyurkó M. 'dualon' Dávid
 
 ABOUT_TAB_BUILD;Verzió
 ABOUT_TAB_CREDITS;Szerzők
@@ -2119,32 +2120,32 @@ ICCPROFCREATOR_PROF_V4;ICC v4
 ICCPROFCREATOR_SAVEDIALOG_TITLE;ICC profil mentése másként
 ICCPROFCREATOR_SLOPE;Lejtő
 ICCPROFCREATOR_TRC_PRESET;Tónus válaszgörbe.
-!INSPECTOR_WINDOW_TITLE;Inspector
-!IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
-!IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
-!IPTCPANEL_COPYRIGHT;Copyright notice
-!IPTCPANEL_COPYRIGHTHINT;Enter a Notice on the current owner of the Copyright for this image, such as ©2008 Jane Doe.
-!IPTCPANEL_COUNTRYHINT;Enter the name of the country pictured in this image.
-!IPTCPANEL_CREATOR;Creator
-!IPTCPANEL_CREATORHINT;Enter the name of the person that created this image.
-!IPTCPANEL_CREATORJOBTITLE;Creator's job title
-!IPTCPANEL_CREATORJOBTITLEHINT;Enter the Job Title of the person listed in the Creator field.
-!IPTCPANEL_DATECREATEDHINT;Enter the Date the image was taken.
-!IPTCPANEL_DESCRIPTION;Description
-!IPTCPANEL_DESCRIPTIONHINT;Enter a 'caption' describing the who, what, and why of what is happening in this image, this might include names of people, and/or their role in the action that is taking place within the image.
-!IPTCPANEL_DESCRIPTIONWRITER;Description writer
-!IPTCPANEL_DESCRIPTIONWRITERHINT;Enter the name of the person involved in writing, editing or correcting the description of the image.
-!IPTCPANEL_HEADLINEHINT;Enter a brief publishable synopsis or summary of the contents of the image.
-!IPTCPANEL_INSTRUCTIONSHINT;Enter information about embargoes, or other restrictions not covered by the Copyright field.
-!IPTCPANEL_KEYWORDSHINT;Enter any number of keywords, terms or phrases used to express the subject matter in the image.
-!IPTCPANEL_PROVINCE;Province or state
-!IPTCPANEL_PROVINCEHINT;Enter the name of the province or state pictured in this image.
-!IPTCPANEL_SOURCEHINT;Enter or edit the name of a person or party who has a role in the content supply chain, such as a person or entity from whom you received this image from.
-!IPTCPANEL_SUPPCATEGORIES;Supplemental categories
-!IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image.
-!IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
-!IPTCPANEL_TRANSREFERENCE;Job ID
-!IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
+INSPECTOR_WINDOW_TITLE;Vizsgáló
+IPTCPANEL_CATEGORYHINT;Azonosítja a kép tárgyát a ellátó véleménye szerint.
+IPTCPANEL_CITYHINT;Add meg a képen szereplő város nevét.
+IPTCPANEL_COPYRIGHT;Szerzői jogi megjegyzés
+IPTCPANEL_COPYRIGHTHINT;Adj meg egy megjegyzést a kép szerzői jogának jelenlegi tülajdonosáról (pl.: ©2008 Jane Doe).
+IPTCPANEL_COUNTRYHINT;Add meg a képen szereplő ország nevét.
+IPTCPANEL_CREATOR;Készítő
+IPTCPANEL_CREATORHINT;Add meg a képet készítő személy nevét.
+IPTCPANEL_CREATORJOBTITLE;Készítő munkatitulusa
+IPTCPANEL_CREATORJOBTITLEHINT;Add meg a Készítő pontban megadott személy munkatitulusát.
+IPTCPANEL_DATECREATEDHINT;Add meg a kép készítésének dátumát.
+IPTCPANEL_DESCRIPTION;Leírás
+IPTCPANEL_DESCRIPTIONHINT;Adj meg egy 'képaláírást' amely leírja, hogy kivel, mi, miért történik a képen. Ide tartozhatnak emberek nevei, és/vagy a szerepük a képen történő éseményekben.
+IPTCPANEL_DESCRIPTIONWRITER;Leírás írója
+IPTCPANEL_DESCRIPTIONWRITERHINT;Add meg annak a nevét, akinek szerepe volt a kép leírásának írásában, szerkesztésében, javításában.
+IPTCPANEL_HEADLINEHINT;Adj meg egy rövid, kiadható vázlatot vagy összegzést a kép tartalmáról.
+IPTCPANEL_INSTRUCTIONSHINT;Adj meg információkat embargókról és egyéb korlátozásokról, amelyeket nem tartalmaz a Szerzői jog pont.
+IPTCPANEL_KEYWORDSHINT;Adj meg bármennyi kulcsszavat, fogalmat vagy kifejezést, amelyekkel a kép témája leírható.
+IPTCPANEL_PROVINCE;Tartomány vagy állam
+IPTCPANEL_PROVINCEHINT;Add meg a képen szereplő tartomány vagy állam nevét.
+IPTCPANEL_SOURCEHINT;Add meg vagy szerkeszd annak a személynek a nevét, akinek szerepe van az tartalom ellátási láncában (pl.: szmély/entitás akitől ezt a képet kaptad).
+IPTCPANEL_SUPPCATEGORIES;Kiegészítő kategóriák
+IPTCPANEL_SUPPCATEGORIESHINT;Tovább finomítja a kép tárgyát.
+IPTCPANEL_TITLEHINT;Adj meg egy rövid, sokat mondó és ember által olvasható nevet a képnek, ez akár a fájlnév is lehet.
+IPTCPANEL_TRANSREFERENCE;Munkaazonosító
+IPTCPANEL_TRANSREFERENCEHINT;Addj meg egy számot vagy azonosítót, amely szükséges munkafolyamat irányításához vagy nyomonkövetéséhez.
 !MAIN_BUTTON_ICCPROFCREATOR;ICC Profile Creator
 !MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the next image relative to image opened in the Editor.\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the next image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F4</b>
 !MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the previous image relative to image opened in the Editor.\nShortcut: <b>Shift-F3</b>\n\nTo navigate to the previous image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F3</b>
