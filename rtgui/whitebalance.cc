@@ -830,7 +830,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         itcwb_prim->hide();
         itcwbFrame->hide();
     }
-    
+/*    
         const Gtk::TreeModel::Row row = getActiveMethod();
         unsigned int methodId = findWBEntryId(row[methodColumns.colLabel], WBLT_GUI);
     
@@ -850,7 +850,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
             equal->show();
             itcwbFrame->set_sensitive(false);
         }
-
+*/
     if (pedited) {
         // By default, temperature and green are said "UnEdited", but it may change later
         temp->setEditedState (UnEdited);
@@ -974,7 +974,8 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
             PatchLabel->show();
             PatchlevelLabel->show();
             equal->hide();
-            itcwbFrame->set_sensitive(true);
+           // itcwbFrame->set_sensitive(true);
+            itcwbFrame->set_sensitive(!pp->wb.itcwb_sampling);            
             itcwb_prim_changed ();
         } else {
             StudLabel->hide();
