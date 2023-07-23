@@ -39,15 +39,21 @@
 #39   Vibrance: Vibrancia
 #40   Gamut: Színskála
 #41   Raw: Nyers
-#42
-#43  Angolról nem lefordítható kifejezések a
-#44  RT/digitális fotográfiában használt formájuknak megfelelően:
-#45  -----------------------------------------------------
-#46   ICM (Image Color Management)
-#47   Gamma
-#48   L*a*b*
-
-#01 2010-11-20 RT 3.0 alpha 1 rev. 597:fb291bf74c by Dr. Gyurkó M. 'dualon' Dávid
+#42   Demosaicing: Mozaiktalanítás
+#43   Inspector: Vizsgáló
+#44   Filmstrip: Filmszalag
+#45   Dynamic Profile Rules: Dinamikus Profilszabályok
+#46   Bundled profiles: Csomagolt Profilok
+#47
+#48  Angolról nem lefordítható kifejezések a
+#49  RT/digitális fotográfiában használt formájuknak megfelelően:
+#50  -----------------------------------------------------
+#51   ICM (Image Color Management)
+#52   Gamma
+#53   L*a*b*
+#54   Pixel Shift
+#55   Retinex
+#56 2010-11-20 RT 3.0 alpha 1 rev. 597:fb291bf74c by Dr. Gyurkó M. 'dualon' Dávid
 
 ABOUT_TAB_BUILD;Verzió
 ABOUT_TAB_CREDITS;Szerzők
@@ -570,7 +576,7 @@ PREFERENCES_TAB_COLORMGR;Színkezelés
 PREFERENCES_TAB_GENERAL;Általános
 PREFERENCES_TAB_IMPROC;Képfeldolgozás
 PREFERENCES_TAB_SOUND;Hangok
-PREFERENCES_TP_LABEL;Eszközök panel:
+PREFERENCES_TP_LABEL;Eszközpanel:
 PREFERENCES_TP_VSCROLLBAR;Függőleges görgetősáv elrejtése
 PREFERENCES_WORKFLOW;Munkamenet
 PROFILEPANEL_COPYPPASTE;Másolandó paraméterek
@@ -2208,110 +2214,110 @@ HISTOGRAM_TOOLTIP_TYPE_WAVEFORM;Hullámformátum
 !PARTIALPASTE_SOFTLIGHT;Soft light
 !PARTIALPASTE_SPOT;Spot removal
 !PARTIALPASTE_TM_FATTAL;Dynamic range compression
-!PREFERENCES_APPEARANCE;Appearance
-!PREFERENCES_APPEARANCE_COLORPICKERFONT;Color picker font
-!PREFERENCES_APPEARANCE_CROPMASKCOLOR;Crop mask color
-!PREFERENCES_APPEARANCE_MAINFONT;Main font
-!PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Navigator guide color
-!PREFERENCES_APPEARANCE_PSEUDOHIDPI;Pseudo-HiDPI mode
-!PREFERENCES_APPEARANCE_THEME;Theme
-!PREFERENCES_AUTOSAVE_TP_OPEN;Save tool collapsed/expanded state on exit
-!PREFERENCES_BEHADDALL;All to 'Add'
-!PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values.
-!PREFERENCES_BEHSETALL;All to 'Set'
-!PREFERENCES_BEHSETALLHINT;Set all parameters to the <b>Set</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>absolute</b>, the actual values will be displayed.
-!PREFERENCES_CACHECLEAR;Clear
-!PREFERENCES_CACHECLEAR_ALL;Clear all cached files:
-!PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Clear all cached files except for cached processing profiles:
-!PREFERENCES_CACHECLEAR_ONLYPROFILES;Clear only cached processing profiles:
-!PREFERENCES_CACHECLEAR_SAFETY;Only files in the cache are cleared. Processing profiles stored alongside the source images are not touched.
-!PREFERENCES_CHUNKSIZES;Tiles per thread
-!PREFERENCES_CHUNKSIZE_RAW_AMAZE;AMaZE demosaic
-!PREFERENCES_CHUNKSIZE_RAW_CA;Raw CA correction
-!PREFERENCES_CHUNKSIZE_RAW_RCD;RCD demosaic
-!PREFERENCES_CHUNKSIZE_RAW_XT;Xtrans demosaic
-!PREFERENCES_CHUNKSIZE_RGB;RGB processing
-!PREFERENCES_CIE;Ciecam
-!PREFERENCES_CIEARTIF;Avoid artifacts
-!PREFERENCES_CLUTSCACHE;HaldCLUT Cache
-!PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
-!PREFERENCES_CLUTSDIR;HaldCLUT directory
-!PREFERENCES_CMMBPC;Black point compensation
-!PREFERENCES_COMPLEXITYLOC;Default complexity for Local Adjustments
-!PREFERENCES_COMPLEXITY_EXP;Advanced
-!PREFERENCES_COMPLEXITY_NORM;Standard
-!PREFERENCES_COMPLEXITY_SIMP;Basic
-!PREFERENCES_CROP;Crop Editing
-!PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop
-!PREFERENCES_CROP_GUIDES;Guides shown when not editing the crop
-!PREFERENCES_CROP_GUIDES_FRAME;Frame
-!PREFERENCES_CROP_GUIDES_FULL;Original
-!PREFERENCES_CROP_GUIDES_NONE;None
-!PREFERENCES_CURVEBBOXPOS;Position of curve copy & paste buttons
-!PREFERENCES_CURVEBBOXPOS_ABOVE;Above
-!PREFERENCES_CURVEBBOXPOS_BELOW;Below
-!PREFERENCES_CURVEBBOXPOS_LEFT;Left
-!PREFERENCES_CURVEBBOXPOS_RIGHT;Right
-!PREFERENCES_CUSTPROFBUILDKEYFORMAT;Keys format
-!PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Name
-!PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
-!PREFERENCES_DIRECTORIES;Directories
-!PREFERENCES_EDITORCMDLINE;Custom command line
-!PREFERENCES_EXTEDITOR_BYPASS_OUTPUT_PROFILE;Bypass output profile
-!PREFERENCES_EXTEDITOR_DIR;Output directory
-!PREFERENCES_EXTEDITOR_DIR_CURRENT;Same as input image
-!PREFERENCES_EXTEDITOR_DIR_CUSTOM;Custom
-!PREFERENCES_EXTEDITOR_DIR_TEMP;OS temp dir
-!PREFERENCES_EXTEDITOR_FLOAT32;32-bit float TIFF output
-!PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Compact toolbars in File Browser
-!PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Filmstrip and the File Browser
-!PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Having separate thumbnail size will require more processing time each time you'll switch between the single Editor tab and the File Browser.
-!PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator panel, otherwise the gamma-corrected output profile is used.
-!PREFERENCES_INSPECTORWINDOW;Open inspector in own window or fullscreen
-!PREFERENCES_INSPECT_LABEL;Inspect
-!PREFERENCES_INSPECT_MAXBUFFERS_LABEL;Maximum number of cached images
-!PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;Set the maximum number of images stored in cache when hovering over them in the File Browser; systems with little RAM (2GB) should keep this value set to 1 or 2.
-!PREFERENCES_LANG;Language
-!PREFERENCES_MAXRECENTFOLDERS;Maximum number of recent folders
-!PREFERENCES_MENUGROUPEXTPROGS;Group 'Open with'
-!PREFERENCES_MONINTENT;Default rendering intent
-!PREFERENCES_MONITOR;Monitor
-!PREFERENCES_MONPROFILE;Default color profile
-!PREFERENCES_MONPROFILE_WARNOSX;Due to MacOS limitations, only sRGB is supported.
-!PREFERENCES_NAVIGATIONFRAME;Navigation
-!PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Overlay filenames on thumbnails in the editor pannel
-!PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
-!PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
-!PREFERENCES_PERFORMANCE_MEASURE;Measure
-!PREFERENCES_PERFORMANCE_MEASURE_HINT;Logs processing times in console
-!PREFERENCES_PERFORMANCE_THREADS;Threads
-!PREFERENCES_PERFORMANCE_THREADS_LABEL;Maximum number of threads for Noise Reduction and Wavelet Levels (0 = Automatic)
-!PREFERENCES_PREVDEMO;Preview Demosaic Method
-!PREFERENCES_PREVDEMO_FAST;Fast
-!PREFERENCES_PREVDEMO_LABEL;Demosaicing method used for the preview at <100% zoom:
-!PREFERENCES_PREVDEMO_SIDECAR;As in PP3
+PREFERENCES_APPEARANCE;Megjelenés
+PREFERENCES_APPEARANCE_COLORPICKERFONT;Színválasztó betűtípusa
+PREFERENCES_APPEARANCE_CROPMASKCOLOR;Vágómaszk színe
+PREFERENCES_APPEARANCE_MAINFONT;Főbetűtípus
+PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Navigátorútmutató színe
+PREFERENCES_APPEARANCE_PSEUDOHIDPI;Pszeudo-magasDPI mód
+PREFERENCES_APPEARANCE_THEME;Téma
+PREFERENCES_AUTOSAVE_TP_OPEN;Mentő eszköz összezárt/szétnyílt állapota kilépéskor
+PREFERENCES_BEHADDALL;Mindet 'Hozzáadás'-ra
+PREFERENCES_BEHADDALLHINT;Minden paraméter <b>Hozzáadás</b> módra állítása.\nA paraméterek állítása a csoport eszközpanelen <b>delta</b> értékeket eredményez.
+PREFERENCES_BEHSETALL;Mindet 'Beállít'-ra
+PREFERENCES_BEHSETALLHINT;Minden paraméter <b>Beállít</b> módra állítása.\nA paraméterek állítása a csoport eszközpanelen <b>abszolút</b> értékeket eredményez, a valós értékek jelennek meg.
+PREFERENCES_CACHECLEAR;Törlés
+PREFERENCES_CACHECLEAR_ALL;Összes fájl törlése a gyorsítótárból:
+PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Összes fájl törlése a gyorsítótárból a feldolgozási profilok kivételével:
+PREFERENCES_CACHECLEAR_ONLYPROFILES;Kizárólag a feldolgozási profilok törlése a gyorsítótárból:
+PREFERENCES_CACHECLEAR_SAFETY;Kizárólag a gyorsítótárban lévő fájlok törlődnek. A forrásfájlok mellett tárolt feldolgozási profilok érintetlenül maradnak.
+PREFERENCES_CHUNKSIZES;Csempe / Szál
+PREFERENCES_CHUNKSIZE_RAW_AMAZE;AMaZE mozaiktalanítás
+PREFERENCES_CHUNKSIZE_RAW_CA;Nyers KA korrekció
+PREFERENCES_CHUNKSIZE_RAW_RCD;RCD mozaiktalanítás
+PREFERENCES_CHUNKSIZE_RAW_XT;Xtrans mozaiktalanítás
+PREFERENCES_CHUNKSIZE_RGB;RGB Feldolgozás
+PREFERENCES_CIE;Ciecam
+PREFERENCES_CIEARTIF;Artifaktumok elkerülése
+PREFERENCES_CLUTSCACHE;HaldCLUT Gyorsítótár
+PREFERENCES_CLUTSCACHE_LABEL;Gyorsítótárban lévő CLUT-ok maximális száma
+PREFERENCES_CLUTSDIR;HaldCLUT könyvtár
+PREFERENCES_CMMBPC;Feketepont kompenzáció
+PREFERENCES_COMPLEXITYLOC;Alapértelmezett komplexitás Helyi Igazításhoz
+PREFERENCES_COMPLEXITY_EXP;Haladó
+PREFERENCES_COMPLEXITY_NORM;Standard
+PREFERENCES_COMPLEXITY_SIMP;Alap
+PREFERENCES_CROP;Vágás szerkesztés
+PREFERENCES_CROP_AUTO_FIT;Autómatikus közelítés vágáshoz illesztéshez.
+PREFERENCES_CROP_GUIDES;Megjelenített útmutatók a vágás szerkesztésén kívül
+PREFERENCES_CROP_GUIDES_FRAME;Keret
+PREFERENCES_CROP_GUIDES_FULL;Eredeti
+PREFERENCES_CROP_GUIDES_NONE;Üres
+PREFERENCES_CURVEBBOXPOS;A görbe másolás & beillesztés gombok helye
+PREFERENCES_CURVEBBOXPOS_ABOVE;Fent
+PREFERENCES_CURVEBBOXPOS_BELOW;Lent
+PREFERENCES_CURVEBBOXPOS_LEFT;Bal
+PREFERENCES_CURVEBBOXPOS_RIGHT;Jobb
+PREFERENCES_CUSTPROFBUILDKEYFORMAT;Kulcsformátum
+PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Név
+PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;Címkeazonosító
+PREFERENCES_DIRECTORIES;Könyvtárak
+PREFERENCES_EDITORCMDLINE;Egyedi parancssor
+PREFERENCES_EXTEDITOR_BYPASS_OUTPUT_PROFILE;Kimeneti profil átugrása
+PREFERENCES_EXTEDITOR_DIR;Kimeneti könyvtár
+PREFERENCES_EXTEDITOR_DIR_CURRENT;A bemeneti képpel megegyező
+PREFERENCES_EXTEDITOR_DIR_CUSTOM;Egyedi
+PREFERENCES_EXTEDITOR_DIR_TEMP;Operációs Rendszer átmeneti könyvtára
+PREFERENCES_EXTEDITOR_FLOAT32;32-bit lebegőpontos TIFF kimenet
+PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Kompakt eszköztár a Fájl böngészőben
+PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Azonos ikonmagasság a Filmszalag és a Fájl böngésző között
+PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Különböző ikonméretek használata több feldolgozási időt fog igénybe venni minden alkalommal, amikor az egyedi Szerkesztő fül és a Fájl böngésző között váltassz.
+PREFERENCES_HISTOGRAM_TOOLTIP;He be van kapcsolva, a munkaprofil lesz használva a fő hisztogramm és a Navigátorpanel számításához. Máskülönben a gamma-javítótt kimenet használatos.
+PREFERENCES_INSPECTORWINDOW;A vizsgáló megnyitása a saját ablakában vagy teljesképernyős módban
+PREFERENCES_INSPECT_LABEL;Vizsgálat
+PREFERENCES_INSPECT_MAXBUFFERS_LABEL;Gyorsítótárban tárolt képek max. száma
+PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;A gyorsítótárban lévő képek maximális számának beálítása amikor a kurzor felettük van a Fájlböngészőben. Kevés RAM-al (2GB) rendelkező rendszer esetén ezt az értéket 1-re vagy 2-re érdemes állítani.
+PREFERENCES_LANG;Nyelv
+PREFERENCES_MAXRECENTFOLDERS;A legutóbbi mappák maximális száma.
+PREFERENCES_MENUGROUPEXTPROGS;Csoportos 'Megnyitás mással'
+PREFERENCES_MONINTENT;Alapértelmezett renderelési szándék
+PREFERENCES_MONITOR;Monitor
+PREFERENCES_MONPROFILE;Alapértelmezett színprofil
+PREFERENCES_MONPROFILE_WARNOSX;MayOS korlátozásoknak köszönhetően kizárólag sRGB támogatott.
+PREFERENCES_NAVIGATIONFRAME;Navigáció
+PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Fájlnevek megjelenítése a szerkesztőpanel ikonjain
+PREFERENCES_PARSEDEXTDOWNHINT;A kiválasztott kiterjesztések lefele mozgatása a listán.
+PREFERENCES_PARSEDEXTUPHINT;A kiválasztott kiterjesztések felfele mozgatása a listán.
+PREFERENCES_PERFORMANCE_MEASURE;Mérés
+PREFERENCES_PERFORMANCE_MEASURE_HINT;A feldolgozási időket a konzolon naplózza.
+PREFERENCES_PERFORMANCE_THREADS;Szálak
+PREFERENCES_PERFORMANCE_THREADS_LABEL;A Zajcsökkentéshez és a Wavelet szintekhez használt szálak maximális száma (0 = Autómatikus)
+PREFERENCES_PREVDEMO;Előnézet mozaiktalanítási módszere
+PREFERENCES_PREVDEMO_FAST;Gyors
+PREFERENCES_PREVDEMO_LABEL;Az előnézethez használt mozaiktalanítási módszer <100%-os zoomnál:
+PREFERENCES_PREVDEMO_SIDECAR;Mint a PP3-ban
 !PREFERENCES_PRINTER;Printer (Soft-Proofing)
-!PREFERENCES_PROFILESAVEBOTH;Save processing profile both to the cache and next to the input file
-!PREFERENCES_PROFILESAVELOCATION;Processing profile saving location
-!PREFERENCES_PROFILE_NONE;None
-!PREFERENCES_PRTINTENT;Rendering intent
-!PREFERENCES_PRTPROFILE;Color profile
-!PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
-!PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in 'Single Editor Tab Mode' and when 'Demosaicing method used for the preview at <100% zoom' is set to 'As in PP3'.
-!PREFERENCES_SAVE_TP_OPEN_NOW;Save tool collapsed/expanded state now
-!PREFERENCES_SERIALIZE_TIFF_READ;TIFF Read Settings
-!PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialize reading of TIFF files
-!PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;Enabling this option when working with folders containing uncompressed TIFF files can increase performance of thumbnail generation.
-!PREFERENCES_SHOWFILMSTRIPTOOLBAR;Show Filmstrip toolbar
-!PREFERENCES_SHOWTOOLTIP;Show Local Adjustments advice tooltips
-!PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
-!PREFERENCES_TAB_PERFORMANCE;Performance
-!PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview
-!PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
-!PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw rendering
-!PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Embedded JPEG if fullsize, neutral raw otherwise
-!PREFERENCES_USEBUNDLEDPROFILES;Use bundled profiles
-!PREFERENCES_ZOOMONSCROLL;Zoom images by scrolling
+PREFERENCES_PROFILESAVEBOTH;Feldolgozási profil mentése mind a gyorsítótárba mind a bemeneti fájl mellé.
+PREFERENCES_PROFILESAVELOCATION;Feldolgozási profil mentésének helye
+PREFERENCES_PROFILE_NONE;Nincs
+PREFERENCES_PRTINTENT;Renderelési szándék
+PREFERENCES_PRTPROFILE;Színprofil
+PREFERENCES_REMEMBERZOOMPAN;A zoom % és a pásztázási eltolás megjegyzése
+PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;A jelenlegi kép zoom %-ának és az pásztázási eltolásának megjegyzése új kép megnyitásakor.\n\nEz a beállítás kizárólag az 'Egyetlen Szerkesztőfül Mód'-ban mőködik amikor a 'Az előnézethez használt mozaiktalanítási módszer <100%-os zoomnál' beállítás értéke 'Mint a PP3-ban'
+PREFERENCES_SAVE_TP_OPEN_NOW;A mentési eszköz összecsukott/kinyitott jelenlegi állapota
+PREFERENCES_SERIALIZE_TIFF_READ;TIFF Beolvasási beállítások
+PREFERENCES_SERIALIZE_TIFF_READ_LABEL;TIFF fájlok beolvasásának sorozatosítása
+PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;Ennek bekapcsolásával a tömörítetlen TIFF fájlokat tartalmazó mappák feldolgozásakor az ikongenerálás teljesítménye javulhat.
+PREFERENCES_SHOWFILMSTRIPTOOLBAR;Filmszalag eszköztárának megjelenítése
+PREFERENCES_SHOWTOOLTIP;A Helyi igazítások tanácsok megjelenítése
+PREFERENCES_TAB_DYNAMICPROFILE;Dinamikus Profilszabályok
+PREFERENCES_TAB_PERFORMANCE;Teljesítmény
+PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Beágyazott JPEG előnézet
+PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Megjelenítendő kép
+PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Semleges nyers renderelés
+PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Természetes JPEG, ha teljes méretű, máskülönben semleges nyers
+PREFERENCES_USEBUNDLEDPROFILES;Csomagolt Profilok használata
+PREFERENCES_ZOOMONSCROLL;Képek zoomolása görgetéssel
 !PROFILEPANEL_GLOBALPROFILES;Bundled profiles
 !PROFILEPANEL_MODE_TOOLTIP;Processing profile fill mode.\n\nButton pressed: partial profiles will be converted to full profiles; the missing values will be replaced with hard-coded defaults.\n\nButton released: profiles will be applied as they are, altering only those values which they contain.
 !PROFILEPANEL_MYPROFILES;My profiles
