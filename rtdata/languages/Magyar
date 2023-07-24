@@ -2170,17 +2170,17 @@ MAIN_TOOLTIP_BACKCOLOR2;Előnézet háttérszíne: <b>fehér</b>\nnGyorsbillenty
 MAIN_TOOLTIP_BACKCOLOR3;Előnézet háttérszíne: <b>középszürke</b>\nnGyorsbillentyű: <b>9</b>
 MAIN_TOOLTIP_PREVIEWSHARPMASK;Preview the <b>sharpening contrast mask</b>.\nnGyorsbillentyű: <b>p</b>\n\nCsak akkor működik, ha az élesítés be van kapcsolva, és a zoom >=100%.
 MONITOR_PROFILE_SYSTEM;Rendszer alapértelmezettje
-!NAVIGATOR_B;B:
-!NAVIGATOR_G;G:
-!NAVIGATOR_H;H:
-!NAVIGATOR_LAB_A;a*:
-!NAVIGATOR_LAB_B;b*:
-!NAVIGATOR_LAB_L;L*:
-!NAVIGATOR_NA; --
-!NAVIGATOR_R;R:
-!NAVIGATOR_S;S:
-!NAVIGATOR_V;V:
-!NAVIGATOR_XY_FULL;Width: %1, Height: %2
+NAVIGATOR_B;Kék:
+NAVIGATOR_G;Zöld:
+NAVIGATOR_H;H:
+NAVIGATOR_LAB_A;a*:
+NAVIGATOR_LAB_B;b*:
+NAVIGATOR_LAB_L;L*:
+NAVIGATOR_NA; --
+NAVIGATOR_R;Piros:
+NAVIGATOR_S;S:
+NAVIGATOR_V;V:
+NAVIGATOR_XY_FULL;Szélesség: %1, Magasság: %2
 OPTIONS_BUNDLED_MISSING;A csomagolt profilok '<b>%1</b>' nem találhatóak!\n\nA telepített másolatod sérült lehet.\n\nAz alapértelmezett belsős értékek lesznek használva helyettük.
 OPTIONS_DEFIMG_MISSING;Az alapértelmezett profil a <b>nem nyers fotókhoz</b> nem található, vagy nincsen beállítva.\n\nEllenőrizd a profilok könyvtárát. Lehet hogy hiányzik, vagy sérült.\n\n'<b>%1</b>' lesz használva helyette.
 OPTIONS_DEFRAW_MISSING;Az alapértelmezett profil a <b>nyers fotókhoz</b> nem található, vagy nincsen beállítva.\n\nEllenőrizd a profilok könyvtárát. Lehet hogy hiányzik, vagy sérült.\n\n'<b>%1</b>' lesz használva helyette.
