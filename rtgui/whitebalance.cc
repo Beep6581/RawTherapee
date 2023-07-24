@@ -796,27 +796,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         itcwb_prim->hide();
         itcwbFrame->hide();
     }
-/*    
-        const Gtk::TreeModel::Row row = getActiveMethod();
-        unsigned int methodId = findWBEntryId(row[methodColumns.colLabel], WBLT_GUI);
-    
-        const WBEntry& currMethod = WBParams::getWbEntries()[methodId];
 
-        bool autit = (currMethod.ppLabel == "autitcgreen");
-        if (autit) {
-            StudLabel->show();
-            PatchLabel->show();
-            PatchlevelLabel->show();
-            equal->hide();
-            itcwbFrame->set_sensitive(true);
-        } else {
-            StudLabel->hide();
-            PatchLabel->hide();
-            PatchlevelLabel->hide();
-            equal->show();
-            itcwbFrame->set_sensitive(false);
-        }
-*/
     if (pedited) {
         // By default, temperature and green are said "UnEdited", but it may change later
         temp->setEditedState (UnEdited);
