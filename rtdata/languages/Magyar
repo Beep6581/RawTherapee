@@ -2347,14 +2347,14 @@ SAMPLEFORMAT_8;32-bites LogLuv
 SAMPLEFORMAT_16;16-bites lebegőpontos
 SAMPLEFORMAT_32;24-bites lebegőpontos
 SAMPLEFORMAT_64;32-bites lebegőpontos
-!SAVEDLG_FILEFORMAT_FLOAT; floating-point
-!SAVEDLG_FORCEFORMATOPTS;Force saving options
-!SAVEDLG_SUBSAMP;Subsampling
-!SAVEDLG_SUBSAMP_1;Best compression
-!SAVEDLG_SUBSAMP_2;Balanced
-!SAVEDLG_SUBSAMP_3;Best quality
-!SAVEDLG_SUBSAMP_TOOLTIP;Best compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma halved horizontally and vertically.\n\nBalanced:\nJ:a:b 4:2:2\nh/v 2/1\nChroma halved horizontally.\n\nBest quality:\nJ:a:b 4:4:4\nh/v 1/1\nNo chroma subsampling.
-!SAVEDLG_WARNFILENAME;File will be named
+SAVEDLG_FILEFORMAT_FLOAT; lebegőpontos
+SAVEDLG_FORCEFORMATOPTS;Mentési beállítások kényszerítése
+SAVEDLG_SUBSAMP;Alulmintavételezés
+SAVEDLG_SUBSAMP_1;Legjobb tömörítés
+SAVEDLG_SUBSAMP_2;Kiegyensúlyozott
+SAVEDLG_SUBSAMP_3;Legjobb minőség
+SAVEDLG_SUBSAMP_TOOLTIP;Legjobb tömörítés:\nJ:a:b 4:2:0\nh/v 2/2\nSzínintenzitás vízszintesen és függőlegesen megfelezve.\n\nBalanced:\nJ:a:b 4:2:2\nh/v 2/1\nSzínintenzitás vízszintesen megfelezve.\n\nBest quality:\nJ:a:b 4:4:4\nh/v 1/1\nNincs színintenzitás alulmintavételezés.
+SAVEDLG_WARNFILENAME;A fájl leendő neve
 !SHCSELECTOR_TOOLTIP;Click right mouse button to reset the position of those 3 sliders.
 !SOFTPROOF_GAMUTCHECK_TOOLTIP;Highlight pixels with out-of-gamut colors with respect to:\n- the printer profile, if one is set and soft-proofing is enabled,\n- the output profile, if a printer profile is not set and soft-proofing is enabled,\n- the monitor profile, if soft-proofing is disabled.
 !SOFTPROOF_TOOLTIP;Soft-proofing simulates the appearance of the image:\n- when printed, if a printer profile is set in Preferences > Color Management,\n- when viewed on a display that uses the current output profile, if a printer profile is not set.
