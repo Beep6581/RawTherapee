@@ -2355,7 +2355,7 @@ SAVEDLG_SUBSAMP_2;Kiegyensúlyozott
 SAVEDLG_SUBSAMP_3;Legjobb minőség
 SAVEDLG_SUBSAMP_TOOLTIP;Legjobb tömörítés:\nJ:a:b 4:2:0\nh/v 2/2\nSzínintenzitás vízszintesen és függőlegesen megfelezve.\n\nBalanced:\nJ:a:b 4:2:2\nh/v 2/1\nSzínintenzitás vízszintesen megfelezve.\n\nBest quality:\nJ:a:b 4:4:4\nh/v 1/1\nNincs színintenzitás alulmintavételezés.
 SAVEDLG_WARNFILENAME;A fájl leendő neve
-!SHCSELECTOR_TOOLTIP;Click right mouse button to reset the position of those 3 sliders.
+SHCSELECTOR_TOOLTIP;Jobb klikk a 3 csúszka helyzetének visszaállításához.
 !SOFTPROOF_GAMUTCHECK_TOOLTIP;Highlight pixels with out-of-gamut colors with respect to:\n- the printer profile, if one is set and soft-proofing is enabled,\n- the output profile, if a printer profile is not set and soft-proofing is enabled,\n- the monitor profile, if soft-proofing is disabled.
 !SOFTPROOF_TOOLTIP;Soft-proofing simulates the appearance of the image:\n- when printed, if a printer profile is set in Preferences > Color Management,\n- when viewed on a display that uses the current output profile, if a printer profile is not set.
 !TC_PRIM_BLUX;Bx
