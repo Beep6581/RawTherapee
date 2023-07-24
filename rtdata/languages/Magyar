@@ -13,7 +13,7 @@
 #13   FE: Fehéregyensúly (White Balance)
 #14   ZCs: Zajcsökkentés
 #15   SzMM: Színmegjelenés és Megvilágítás
-#16
+#16   HDR: Magas Dinamikatartomány
 #17  
 #18  Fordítási konvenció a fontos kifejezésekhez:
 #19  ---------------------------------------------
@@ -878,7 +878,7 @@ DYNPROFILEEDITOR_EDIT;Szerkesztés
 DYNPROFILEEDITOR_EDIT_RULE;Dinamikus Profilszabályok szerkesztése
 DYNPROFILEEDITOR_ENTRY_TOOLTIP;Az egyezéskeresés kis-nagybetű érzékeny.\nHasználd a 're:' előjelet\na reguláris kifejezés bevitelére.
 DYNPROFILEEDITOR_IMGTYPE_ANY;Bármely
-DYNPROFILEEDITOR_IMGTYPE_HDR;HDR (Magas Dinamikai Tartomány)
+DYNPROFILEEDITOR_IMGTYPE_HDR;HDR (Magas Dinamikatartomány)
 !DYNPROFILEEDITOR_IMGTYPE_PS;Pixel Shift
 !DYNPROFILEEDITOR_IMGTYPE_STD;Standard
 DYNPROFILEEDITOR_MOVE_DOWN;Mozgás lefele
@@ -2214,7 +2214,7 @@ PARTIALPASTE_RAW_PIXELSHIFT;Pixel Shift
 PARTIALPASTE_RETINEX;Retinex
 PARTIALPASTE_SOFTLIGHT;Szórt fény
 PARTIALPASTE_SPOT;Folteltávolítás
-PARTIALPASTE_TM_FATTAL;Magas Dinamikai Tartomány
+PARTIALPASTE_TM_FATTAL;Magas Dinamikatartomány (HDR)
 PREFERENCES_APPEARANCE;Megjelenés
 PREFERENCES_APPEARANCE_COLORPICKERFONT;Színválasztó betűtípusa
 PREFERENCES_APPEARANCE_CROPMASKCOLOR;Vágómaszk színe
