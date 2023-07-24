@@ -2371,8 +2371,8 @@ THRESHOLDSELECTOR_HINT;Tarts a <b>Shift</b> billentyűt lenyomva egy-egy kontrol
 THRESHOLDSELECTOR_T;Felső
 THRESHOLDSELECTOR_TL;Balfelső
 THRESHOLDSELECTOR_TR;Jobbalsó
-!TOOLBAR_TOOLTIP_COLORPICKER;Lockable Color Picker\n\nWhen the tool is active:\n- Add a picker: <b>left-click</b>.\n- Drag a picker: <b>left-click and drag</b>.\n- Delete a picker: <b>right-click</b>.\n- Delete all pickers: <b>Ctrl</b>+<b>Shift</b>+<b>right-click</b>.\n- Revert to hand tool: <b>right-click</b> outside any picker.
-!TOOLBAR_TOOLTIP_PERSPECTIVE;<b>Perspective Correction</b>\n\nEdit control lines to correct perspective distortion. Click this button again to apply correction.
+TOOLBAR_TOOLTIP_COLORPICKER;Zárolható színválasztó\n\nAmikor az eszköz aktív:\n- Választó hozzáadása: <b>bal klikk</b>.\n- Egy választó mozgatása: <b>bal klikk és mozgatás</b>.\n- Választó törlése: <b>jobb klikk</b>.\n- Összes választó törlése: <b>Ctrl</b>+<b>Shift</b>+<b>jobb klikk</b>.\n- Kézeszközre visszaállás: <b>jobb klikk</b> választókon kívülre.
+TOOLBAR_TOOLTIP_PERSPECTIVE;<b>Perspektíva korrekció</b>\n\nSzerkeszd a kontrollvonalakat a perspektívatorzítás korrigálásához. Kattints újból erre a gombra a korrekció alkalmazásához.
 !TP_BWMIX_ALGO;Algorithm OYCPM
 !TP_BWMIX_ALGO_LI;Linear
 !TP_BWMIX_ALGO_SP;Special effects
