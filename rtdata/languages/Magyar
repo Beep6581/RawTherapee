@@ -2339,14 +2339,14 @@ QINFO_PIXELSHIFT;Pixel Shift / %2 képkocka
 QUEUE_DESTFILENAME;Elérési út és fájlnév
 QUEUE_LOCATION_TITLE;Kimeneti hely
 QUEUE_STARTSTOP_TOOLTIP;A sorban lévő képek feldolgozásának elindításáa vagy megállítása.\n\nGyorsbillentyű: <b>Ctrl</b>+<b>s</b>
-!SAMPLEFORMAT_0;Unknown data format
-!SAMPLEFORMAT_1;8-bit unsigned
-!SAMPLEFORMAT_2;16-bit unsigned
-!SAMPLEFORMAT_4;24-bit LogLuv
-!SAMPLEFORMAT_8;32-bit LogLuv
-!SAMPLEFORMAT_16;16-bit floating-point
-!SAMPLEFORMAT_32;24-bit floating-point
-!SAMPLEFORMAT_64;32-bit floating-point
+SAMPLEFORMAT_0;Ismeretlen adatformátum
+SAMPLEFORMAT_1;8-bites előjel nélküli 
+SAMPLEFORMAT_2;16-bites előjel nélküli
+SAMPLEFORMAT_4;24-bited LogLuv
+SAMPLEFORMAT_8;32-bites LogLuv
+SAMPLEFORMAT_16;16-bites lebegőpontos
+SAMPLEFORMAT_32;24-bites lebegőpontos
+SAMPLEFORMAT_64;32-bites lebegőpontos
 !SAVEDLG_FILEFORMAT_FLOAT; floating-point
 !SAVEDLG_FORCEFORMATOPTS;Force saving options
 !SAVEDLG_SUBSAMP;Subsampling
