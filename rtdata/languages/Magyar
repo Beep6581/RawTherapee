@@ -2336,9 +2336,9 @@ PROGRESSBAR_SNAPSHOT_ADDED;Pillanatkép hozzáadva
 QINFO_FRAMECOUNT;%2 képkocka
 QINFO_HDR;HDR / %2 képkocka
 QINFO_PIXELSHIFT;Pixel Shift / %2 képkocka
-!QUEUE_DESTFILENAME;Path and file name
-!QUEUE_LOCATION_TITLE;Output Location
-!QUEUE_STARTSTOP_TOOLTIP;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
+QUEUE_DESTFILENAME;Elérési út és fájlnév
+QUEUE_LOCATION_TITLE;Kimeneti hely
+QUEUE_STARTSTOP_TOOLTIP;A sorban lévő képek feldolgozásának elindításáa vagy megállítása.\n\nGyorsbillentyű: <b>Ctrl</b>+<b>s</b>
 !SAMPLEFORMAT_0;Unknown data format
 !SAMPLEFORMAT_1;8-bit unsigned
 !SAMPLEFORMAT_2;16-bit unsigned
