@@ -2333,9 +2333,9 @@ PROGRESSBAR_NOIMAGES;Nem találhatóak képek
 PROGRESSBAR_PROCESSING_PROFILESAVED;Feldolgozási profil mentve
 PROGRESSBAR_RAWCACORR;Nyers KA korrekció...
 PROGRESSBAR_SNAPSHOT_ADDED;Pillanatkép hozzáadva
-!QINFO_FRAMECOUNT;%2 frames
-!QINFO_HDR;HDR / %2 frame(s)
-!QINFO_PIXELSHIFT;Pixel Shift / %2 frame(s)
+QINFO_FRAMECOUNT;%2 képkocka
+QINFO_HDR;HDR / %2 képkocka
+QINFO_PIXELSHIFT;Pixel Shift / %2 képkocka
 !QUEUE_DESTFILENAME;Path and file name
 !QUEUE_LOCATION_TITLE;Output Location
 !QUEUE_STARTSTOP_TOOLTIP;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
