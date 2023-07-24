@@ -2364,13 +2364,13 @@ SHCSELECTOR_TOOLTIP;Jobb klikk a 3 csúszka helyzetének visszaállításához.
 !TC_PRIM_GREY;Gy
 !TC_PRIM_REDX;Rx
 !TC_PRIM_REDY;Ry
-!THRESHOLDSELECTOR_B;Bottom
-!THRESHOLDSELECTOR_BL;Bottom-left
-!THRESHOLDSELECTOR_BR;Bottom-right
-!THRESHOLDSELECTOR_HINT;Hold the <b>Shift</b> key to move individual control points.
-!THRESHOLDSELECTOR_T;Top
-!THRESHOLDSELECTOR_TL;Top-left
-!THRESHOLDSELECTOR_TR;Top-right
+THRESHOLDSELECTOR_B;Alsó
+THRESHOLDSELECTOR_BL;Balalsó
+THRESHOLDSELECTOR_BR;Jobbalsó
+THRESHOLDSELECTOR_HINT;Tarts a <b>Shift</b> billentyűt lenyomva egy-egy kontrollpont mozgatásához.
+THRESHOLDSELECTOR_T;Felső
+THRESHOLDSELECTOR_TL;Balfelső
+THRESHOLDSELECTOR_TR;Jobbalsó
 !TOOLBAR_TOOLTIP_COLORPICKER;Lockable Color Picker\n\nWhen the tool is active:\n- Add a picker: <b>left-click</b>.\n- Drag a picker: <b>left-click and drag</b>.\n- Delete a picker: <b>right-click</b>.\n- Delete all pickers: <b>Ctrl</b>+<b>Shift</b>+<b>right-click</b>.\n- Revert to hand tool: <b>right-click</b> outside any picker.
 !TOOLBAR_TOOLTIP_PERSPECTIVE;<b>Perspective Correction</b>\n\nEdit control lines to correct perspective distortion. Click this button again to apply correction.
 !TP_BWMIX_ALGO;Algorithm OYCPM
