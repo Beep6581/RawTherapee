@@ -2169,7 +2169,7 @@ MAIN_TOOLTIP_BACKCOLOR1;Előnézet háttérszíne: <b>fekete</b>\nnGyorsbillenty
 MAIN_TOOLTIP_BACKCOLOR2;Előnézet háttérszíne: <b>fehér</b>\nnGyorsbillentyű: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR3;Előnézet háttérszíne: <b>középszürke</b>\nnGyorsbillentyű: <b>9</b>
 MAIN_TOOLTIP_PREVIEWSHARPMASK;Preview the <b>sharpening contrast mask</b>.\nnGyorsbillentyű: <b>p</b>\n\nCsak akkor működik, ha az élesítés be van kapcsolva, és a zoom >=100%.
-!MONITOR_PROFILE_SYSTEM;System default
+MONITOR_PROFILE_SYSTEM;Rendszer alapértelmezettje
 !NAVIGATOR_B;B:
 !NAVIGATOR_G;G:
 !NAVIGATOR_H;H:
