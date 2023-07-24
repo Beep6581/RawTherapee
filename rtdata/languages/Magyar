@@ -2181,9 +2181,9 @@ MONITOR_PROFILE_SYSTEM;Rendszer alapértelmezettje
 !NAVIGATOR_S;S:
 !NAVIGATOR_V;V:
 !NAVIGATOR_XY_FULL;Width: %1, Height: %2
-!OPTIONS_BUNDLED_MISSING;The bundled profile '<b>%1</b>' could not be found!\n\nYour installation could be damaged.\n\nDefault internal values will be used instead.
-!OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n'<b>%1</b>' will be used instead.
-!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n'<b>%1</b>' will be used instead.
+OPTIONS_BUNDLED_MISSING;A csomagolt profilok '<b>%1</b>' nem találhatóak!\n\nA telepített másolatod sérült lehet.\n\nAz alapértelmezett belsős értékek lesznek használva helyettük.
+OPTIONS_DEFIMG_MISSING;Az alapértelmezett profil a <b>nem nyers fotókhoz</b> nem található, vagy nincsen beállítva.\n\nEllenőrizd a profilok könyvtárát. Lehet hogy hiányzik, vagy sérült.\n\n'<b>%1</b>' lesz használva helyette.
+OPTIONS_DEFRAW_MISSING;Az alapértelmezett profil a <b>nyers fotókhoz</b> nem található, vagy nincsen beállítva.\n\nEllenőrizd a profilok könyvtárát. Lehet hogy hiányzik, vagy sérült.\n\n'<b>%1</b>' lesz használva helyette.
 PARTIALPASTE_ADVANCEDGROUP;Haladó Beállítások
 PARTIALPASTE_CHANNELMIXERBW;Fekete-Fehér
 PARTIALPASTE_COLORAPP;Színmegjelenés és Megvilágítás
