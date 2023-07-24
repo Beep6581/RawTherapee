@@ -2319,11 +2319,11 @@ PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Semleges nyers renderelés
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Természetes JPEG, ha teljes méretű, máskülönben semleges nyers
 PREFERENCES_USEBUNDLEDPROFILES;Csomagolt Profilok használata
 PREFERENCES_ZOOMONSCROLL;Képek zoomolása görgetéssel
-!PROFILEPANEL_GLOBALPROFILES;Bundled profiles
-!PROFILEPANEL_MODE_TOOLTIP;Processing profile fill mode.\n\nButton pressed: partial profiles will be converted to full profiles; the missing values will be replaced with hard-coded defaults.\n\nButton released: profiles will be applied as they are, altering only those values which they contain.
-!PROFILEPANEL_MYPROFILES;My profiles
-!PROFILEPANEL_PDYNAMIC;Dynamic
-!PROFILEPANEL_PINTERNAL;Neutral
+PROFILEPANEL_GLOBALPROFILES;Csomagolt profilok
+PROFILEPANEL_MODE_TOOLTIP;Feldolgozási profilok kitöltési módja.\n\nGomblenyomásra: a eészleges profilok teljes profilokká lesznek alakítva; a hiányzó értékek beépített alapértelmezettekre lesznek cserélve.\n\nGombfelengedésre: a profilok úgy lesznek alkalmazva ahogy vannak, csak azok az értékek változnak meg, amelyeket a profilok tartalmaznak.
+PROFILEPANEL_MYPROFILES;Profiljaim
+PROFILEPANEL_PDYNAMIC;Dinamikus
+PROFILEPANEL_PINTERNAL;Semleges
 !PROGRESSBAR_DECODING;Decoding...
 !PROGRESSBAR_GREENEQUIL;Green equilibration...
 !PROGRESSBAR_HLREC;Highlight reconstruction...
