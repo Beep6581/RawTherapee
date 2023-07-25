@@ -45,16 +45,17 @@
 #45   Dynamic Profile Rules: Dinamikus Profilszabályok
 #46   Bundled profiles: Csomagolt Profilok
 #47   Inspector: Vizsgáló
-#48
-#49  Angolról nem lefordítható kifejezések a
-#50  RT/digitális fotográfiában használt formájuknak megfelelően:
-#51  -----------------------------------------------------
-#52   ICM (Image Color Management)
-#53   Gamma
-#54   L*a*b*
-#55   Pixel Shift
-#56   Retinex
-#57 2010-11-20 RT 3.0 alpha 1 rev. 597:fb291bf74c by Dr. Gyurkó M. 'dualon' Dávid
+#48   Preset: Előbeállítás
+#49
+#50  Angolról nem lefordítható kifejezések a
+#51  RT/digitális fotográfiában használt formájuknak megfelelően:
+#52  -----------------------------------------------------
+#53   ICM (Image Color Management)
+#54   Gamma
+#55   L*a*b*
+#56   Pixel Shift
+#57   Retinex
+#58 2010-11-20 RT 3.0 alpha 1 rev. 597:fb291bf74c by Dr. Gyurkó M. 'dualon' Dávid
 
 ABOUT_TAB_BUILD;Verzió
 ABOUT_TAB_CREDITS;Szerzők
@@ -2373,64 +2374,64 @@ THRESHOLDSELECTOR_TL;Balfelső
 THRESHOLDSELECTOR_TR;Jobbalsó
 TOOLBAR_TOOLTIP_COLORPICKER;Zárolható színválasztó\n\nAmikor az eszköz aktív:\n- Választó hozzáadása: <b>bal klikk</b>.\n- Egy választó mozgatása: <b>bal klikk és mozgatás</b>.\n- Választó törlése: <b>jobb klikk</b>.\n- Összes választó törlése: <b>Ctrl</b>+<b>Shift</b>+<b>jobb klikk</b>.\n- Kézeszközre visszaállás: <b>jobb klikk</b> választókon kívülre.
 TOOLBAR_TOOLTIP_PERSPECTIVE;<b>Perspektíva korrekció</b>\n\nSzerkeszd a kontrollvonalakat a perspektívatorzítás korrigálásához. Kattints újból erre a gombra a korrekció alkalmazásához.
-!TP_BWMIX_ALGO;Algorithm OYCPM
-!TP_BWMIX_ALGO_LI;Linear
-!TP_BWMIX_ALGO_SP;Special effects
-!TP_BWMIX_ALGO_TOOLTIP;Linear: will produce a normal <b>linear</b> response.\nSpecial effects: will produce special effects by mixing channels <b>non-linearly</b>.
-!TP_BWMIX_AUTOCH;Auto
-!TP_BWMIX_CC_ENABLED;Adjust complementary color
-!TP_BWMIX_CC_TOOLTIP;Enable to allow automatic adjustment of complementary colors in ROYGCBPM mode.
-!TP_BWMIX_CHANNEL;Luminance equalizer
-!TP_BWMIX_CURVEEDITOR1;'Before' curve
-!TP_BWMIX_CURVEEDITOR2;'After' curve
-!TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;Tone curve, after B&amp;W conversion, at the end of treatment.
-!TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;Tone curve, just before B&amp;W conversion.\nMay take into account the color components.
-!TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;Luminance according to hue L=f(H).\nPay attention to extreme values as they may cause artifacts.
-!TP_BWMIX_FILTER;Color Filter
-!TP_BWMIX_FILTER_BLUE;Blue
-!TP_BWMIX_FILTER_BLUEGREEN;Blue-Green
-!TP_BWMIX_FILTER_GREEN;Green
-!TP_BWMIX_FILTER_GREENYELLOW;Green-Yellow
-!TP_BWMIX_FILTER_NONE;None
-!TP_BWMIX_FILTER_PURPLE;Purple
-!TP_BWMIX_FILTER_RED;Red
-!TP_BWMIX_FILTER_REDYELLOW;Red-Yellow
-!TP_BWMIX_FILTER_TOOLTIP;The color filter simulates shots taken with a colored filter placed in front of the lens. Colored filters reduce the transmission of specific color ranges and therefore affect their lightness. E.g. a red filter darkens blue skies.
-!TP_BWMIX_FILTER_YELLOW;Yellow
-!TP_BWMIX_GAMMA;Gamma Correction
-!TP_BWMIX_GAM_TOOLTIP;Correct gamma for each RGB channel.
-!TP_BWMIX_LABEL;Black-and-White
-!TP_BWMIX_MET;Method
-!TP_BWMIX_MET_CHANMIX;Channel Mixer
-!TP_BWMIX_MET_DESAT;Desaturation
-!TP_BWMIX_MET_LUMEQUAL;Luminance Equalizer
-!TP_BWMIX_MIXC;Channel Mixer
-!TP_BWMIX_NEUTRAL;Reset
-!TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%   Total: %4%%
-!TP_BWMIX_RGBLABEL_HINT;Final RGB factors that take care of all the mixer options.\n'Total' displays the sum of the RGB values:\n- always 100% in relative mode\n- higher (lighter) or lower (darker) than 100% in absolute mode.
-!TP_BWMIX_RGB_TOOLTIP;Mix the RGB channels. Use presets for guidance.\nPay attention to negative values that may cause artifacts or erratic behavior.
-!TP_BWMIX_SETTING;Presets
-!TP_BWMIX_SETTING_TOOLTIP;Different presets (film, landscape, etc.) or manual Channel Mixer settings.
-!TP_BWMIX_SET_HIGHCONTAST;High contrast
-!TP_BWMIX_SET_HIGHSENSIT;High Sensitivity
-!TP_BWMIX_SET_HYPERPANCHRO;Hyper Panchromatic
-!TP_BWMIX_SET_INFRARED;Infrared
-!TP_BWMIX_SET_LANDSCAPE;Landscape
-!TP_BWMIX_SET_LOWSENSIT;Low Sensitivity
-!TP_BWMIX_SET_LUMINANCE;Luminance
-!TP_BWMIX_SET_NORMCONTAST;Normal Contrast
-!TP_BWMIX_SET_ORTHOCHRO;Orthochromatic
-!TP_BWMIX_SET_PANCHRO;Panchromatic
-!TP_BWMIX_SET_PORTRAIT;Portrait
-!TP_BWMIX_SET_RGBABS;Absolute RGB
-!TP_BWMIX_SET_RGBREL;Relative RGB
-!TP_BWMIX_SET_ROYGCBPMABS;Absolute ROYGCBPM
-!TP_BWMIX_SET_ROYGCBPMREL;Relative ROYGCBPM
-!TP_BWMIX_TCMODE_FILMLIKE;B&W Film-like
-!TP_BWMIX_TCMODE_SATANDVALBLENDING;B&W Saturation and Value Blending
-!TP_BWMIX_TCMODE_STANDARD;B&W Standard
-!TP_BWMIX_TCMODE_WEIGHTEDSTD;B&W Weighted Standard
-!TP_BWMIX_VAL;L
+TP_BWMIX_ALGO;OYCPM algoritmus
+TP_BWMIX_ALGO_LI;Lineáris
+TP_BWMIX_ALGO_SP;Speciális effektek
+TP_BWMIX_ALGO_TOOLTIP;Lineáris: normál <b>lineáris</b> reakciót fog eredményezni.\nSpeciális effektek: speciális effekteket fog eredményezni a csatornák <b>nem lineáris</b> keverésével.
+TP_BWMIX_AUTOCH;Autómatikus
+TP_BWMIX_CC_ENABLED;Színkomplemens állítása
+TP_BWMIX_CC_TOOLTIP;Színkomplemensek ROYGCBPM módban történő autómatikus állításának bekapcsolása.
+TP_BWMIX_CHANNEL;Luminancia kiegyenlítő
+TP_BWMIX_CURVEEDITOR1;'Előtte' görbe
+TP_BWMIX_CURVEEDITOR2;'Utána' görbe
+TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;Tónusgörbe a F&amp;F-re konverálás után, a kezelés legvégén.
+TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;Tónusgörbe közvetlen a F&amp;F-re konverálás előtt.\nFigyelembe veheti a színkomponenseket.
+TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;Luminancia a színtelítettség szerint L=f(színtelítettség).\nFigyelj az extrém értékekre, mivel azok artifaktumokat okozhatnak.
+TP_BWMIX_FILTER;Színszűrő
+TP_BWMIX_FILTER_BLUE;Kék
+TP_BWMIX_FILTER_BLUEGREEN;Kék-Zöld
+TP_BWMIX_FILTER_GREEN;Zöld
+TP_BWMIX_FILTER_GREENYELLOW;Kék-Sárga
+TP_BWMIX_FILTER_NONE;Nincs
+TP_BWMIX_FILTER_PURPLE;Lila
+TP_BWMIX_FILTER_RED;Piros
+TP_BWMIX_FILTER_REDYELLOW;Piros-Sárga
+TP_BWMIX_FILTER_TOOLTIP;A színszűrő olyan képet szimulál, mely készítésekor színezett szűrő volt az objektíven. A színezett szűrők csökkentik a fény átvitelét bizonyos színtartományokban, ezzel hatást gyakorolva azok világosságára (pl.: a piros szűrő a kék eget elsötétíti)
+TP_BWMIX_FILTER_YELLOW;Sárga
+TP_BWMIX_GAMMA;Gamma Korrekció
+TP_BWMIX_GAM_TOOLTIP;Korrigálja mindeegyik színcsatorna gammáját.
+TP_BWMIX_LABEL;Fekete-Fehér
+TP_BWMIX_MET;Metódus
+TP_BWMIX_MET_CHANMIX;Csatornakeverő
+TP_BWMIX_MET_DESAT;Halványító
+TP_BWMIX_MET_LUMEQUAL;Luminancia kiegyenlítő
+TP_BWMIX_MIXC;Csatornakeverő
+TP_BWMIX_NEUTRAL;Visszaállítás
+TP_BWMIX_RGBLABEL;Piros: %1%%   Zöld: %2%%   Kék: %3%%   Összesen: %4%%
+TP_BWMIX_RGBLABEL_HINT;A végső (RGB) csatornák faktorai, amelyek az összes keverőopcióért felelnek.\n'Összes' Az összes csatornaérték összege:\n- mindig 100% relatív módban\n- magasabb (világosabb) vagy alacsonyabb (sötétebb) mint 100% abszolút módban.
+TP_BWMIX_RGB_TOOLTIP;Az RGB csatornák keverése. Használd az előbeállításokat útmutatásként.\nFigyelj az olyan negatív értékekre, amelyek artifaktumokat vagy rendellenes viselkedést eredményezhetnek.
+TP_BWMIX_SETTING;Előbeállítások
+TP_BWMIX_SETTING_TOOLTIP;Különböző előbeállítások (film, tájkép, stb.) vagy kézi Csatornakeverő beállítások.
+TP_BWMIX_SET_HIGHCONTAST;Magas kontraszt
+TP_BWMIX_SET_HIGHSENSIT;Magas érzékenység
+TP_BWMIX_SET_HYPERPANCHRO;Hiperpanakromatikus
+TP_BWMIX_SET_INFRARED;Infravörös
+TP_BWMIX_SET_LANDSCAPE;Tájkép
+TP_BWMIX_SET_LOWSENSIT;Alacsony érzékenység
+TP_BWMIX_SET_LUMINANCE;Luminancia
+TP_BWMIX_SET_NORMCONTAST;Normálkontraszt
+TP_BWMIX_SET_ORTHOCHRO;Ortokromatikus
+TP_BWMIX_SET_PANCHRO;Panakromatikus
+TP_BWMIX_SET_PORTRAIT;Portré
+TP_BWMIX_SET_RGBABS;Abszolút RGB
+TP_BWMIX_SET_RGBREL;Relatív RGB
+TP_BWMIX_SET_ROYGCBPMABS;Abszolút ROYGCBPM
+TP_BWMIX_SET_ROYGCBPMREL;Relatív ROYGCBPM
+TP_BWMIX_TCMODE_FILMLIKE;Fekete-Fehér Film szerű
+TP_BWMIX_TCMODE_SATANDVALBLENDING;Fekete-Fehér Színtelítettség- és Értékhajlítás
+TP_BWMIX_TCMODE_STANDARD;Fekete-Fehér Sztenderd
+TP_BWMIX_TCMODE_WEIGHTEDSTD;Fekete-Fehér Súlyozott Sztenderd
+TP_BWMIX_VAL;L
 !TP_CBDL_AFT;After Black-and-White
 !TP_CBDL_BEF;Before Black-and-White
 !TP_CBDL_METHOD;Process located
