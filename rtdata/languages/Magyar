@@ -2432,10 +2432,10 @@ TP_BWMIX_TCMODE_SATANDVALBLENDING;Fekete-Fehér Színtelítettség- és Értékh
 TP_BWMIX_TCMODE_STANDARD;Fekete-Fehér Sztenderd
 TP_BWMIX_TCMODE_WEIGHTEDSTD;Fekete-Fehér Súlyozott Sztenderd
 TP_BWMIX_VAL;L
-!TP_CBDL_AFT;After Black-and-White
-!TP_CBDL_BEF;Before Black-and-White
-!TP_CBDL_METHOD;Process located
-!TP_CBDL_METHOD_TOOLTIP;Choose whether the Contrast by Detail Levels tool is to be positioned after the Black-and-White tool, which makes it work in L*a*b* space, or before it, which makes it work in RGB space.
+TP_CBDL_AFT;Fekete-Fehér Után
+TP_CBDL_BEF;Fekete-Fehér Előtt
+TP_CBDL_METHOD;Folyamatazonosított
+TP_CBDL_METHOD_TOOLTIP;Válaszd ki, hogy a Kontraszt Részletszintek Szerint eszköz a Fekete-Fehér eszköz után legyen-e helyezve, amitől L*a*b* térben működik, vagy elé, amitől RGB térben működik.
 !TP_COLORAPP_ABSOLUTELUMINANCE;Absolute luminance
 !TP_COLORAPP_ADAPSCEN_TOOLTIP;Corresponds to the luminance in candelas per m2 at the time of shooting, calculated automatically from the exif data.
 !TP_COLORAPP_ALGO;Algorithm
