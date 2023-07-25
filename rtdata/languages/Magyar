@@ -2358,12 +2358,12 @@ SAVEDLG_WARNFILENAME;A fájl leendő neve
 SHCSELECTOR_TOOLTIP;Jobb klikk a 3 csúszka helyzetének visszaállításához.
 !SOFTPROOF_GAMUTCHECK_TOOLTIP;Highlight pixels with out-of-gamut colors with respect to:\n- the printer profile, if one is set and soft-proofing is enabled,\n- the output profile, if a printer profile is not set and soft-proofing is enabled,\n- the monitor profile, if soft-proofing is disabled.
 !SOFTPROOF_TOOLTIP;Soft-proofing simulates the appearance of the image:\n- when printed, if a printer profile is set in Preferences > Color Management,\n- when viewed on a display that uses the current output profile, if a printer profile is not set.
-!TC_PRIM_BLUX;Bx
-!TC_PRIM_BLUY;By
-!TC_PRIM_GREX;Gx
-!TC_PRIM_GREY;Gy
-!TC_PRIM_REDX;Rx
-!TC_PRIM_REDY;Ry
+TC_PRIM_BLUX;Kék x
+TC_PRIM_BLUY;Kék y
+TC_PRIM_GREX;Zöld x
+TC_PRIM_GREY;Zöld y
+TC_PRIM_REDX;Piros x
+TC_PRIM_REDY;Piros y
 THRESHOLDSELECTOR_B;Alsó
 THRESHOLDSELECTOR_BL;Balalsó
 THRESHOLDSELECTOR_BR;Jobbalsó
