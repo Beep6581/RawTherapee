@@ -528,7 +528,7 @@ PREFERENCES_FLATFIELDTEMPLATES;sablonok
 PREFERENCES_FORIMAGE;Egyéb képekhez
 PREFERENCES_FORRAW;RAW állományokhoz
 PREFERENCES_GIMPPATH;GIMP telepítési könyvtára
-PREFERENCES_HISTOGRAMPOSITIONLEFT;Hisztogram a bal oldali panelen
+PREFERENCES_HISTOGRAMPOSITIONLEFT;Hisztogramm a bal oldali panelen
 PREFERENCES_HLTHRESHOLD;Küszöbérték kiégett területekhez
 PREFERENCES_ICCDIR;ICC profilok könyvtára
 PREFERENCES_IMPROCPARAMS;Alapértelmezett feldolgozási paraméterek
@@ -956,13 +956,13 @@ GENERAL_SAVE_AS;Mentés másként
 GENERAL_SLIDER;Csúszka
 GENERAL_WARNING;Figyelem
 GIMP_PLUGIN_INFO;Üdvözlünk a RawTherapee GIMP plugin-ban!\nAmikor végeztél a szerkesztéssel, egyszerűen zárd be a fő RawTherapee ablakot, és a kép autómatikusan importálódik a GIMP-be.
-HISTOGRAM_TOOLTIP_CHRO;Kromacitás histogramm (mutat/elrejt).
+HISTOGRAM_TOOLTIP_CHRO;Kromacitás hisztogramm (mutat/elrejt).
 HISTOGRAM_TOOLTIP_CROSSHAIR;Indikátor célkereszt (mutat/elrejt).
-HISTOGRAM_TOOLTIP_MODE;Váltás lineáris, logaritmikus-lineáris és logaritmikus-logaritmikus histogramskálázás között.
+HISTOGRAM_TOOLTIP_MODE;Váltás lineáris, logaritmikus-lineáris és logaritmikus-logaritmikus hisztogrammskálázás között.
 HISTOGRAM_TOOLTIP_SHOW_OPTIONS;Szkóp opciógombok (mutat/elrejt).
 HISTOGRAM_TOOLTIP_TRACE_BRIGHTNESS;Szkóp világosság állítása.
-HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM;Histogramm
-HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM_RAW;Raw Histogramm
+HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM;Hisztogramm
+HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM_RAW;Raw Hisztogramm
 !HISTOGRAM_TOOLTIP_TYPE_PARADE;RGB Parade
 !HISTOGRAM_TOOLTIP_TYPE_VECTORSCOPE_HC;Hue-Chroma Vectorscope
 !HISTOGRAM_TOOLTIP_TYPE_VECTORSCOPE_HS;Hue-Saturation Vectorscope
