@@ -6,6 +6,7 @@
 .settings
 .directory
 .vscode
+.DS_Store
 
 CMakeCache.txt
 CMakeFiles
