@@ -174,11 +174,11 @@ inline void addToSelection (ThumbBrowserEntryBase* entry, ThumbVector& selected)
     if (entry->selected || entry->filtered)
         return;
 
-    entry->selected = true;
+	entry->selected = true;
 	// load parameters (includes applying Dynamic Profile Rules)
-    entry->thumbnail->createProcParamsForUpdate(true, false); 
-    // update thumbnail
-    entry->thumbnail->notifylisterners_procParamsChanged(FILEBROWSER);
+	entry->thumbnail->createProcParamsForUpdate(true, false); 
+	// update thumbnail
+	entry->thumbnail->notifylisterners_procParamsChanged(FILEBROWSER);
     selected.push_back (entry);
 }
 
