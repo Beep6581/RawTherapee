@@ -124,6 +124,9 @@ private:
     std::vector<locallabRetiMinMax> retiMinMax;
 
     // Locallab tools mask background management data
+    std::vector<locallabDenoiseLC> denoiselc;
+
+    // Locallab tools mask background management data
     std::vector<locallabRef> maskBackRef;
 
     // Other widgets
@@ -145,6 +148,10 @@ public:
     // Locallab Retinex tool min/man management function
     void minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int selspot) override;
 
+    //Locallab denoise 
+    // Locallab Retinex tool min/man management function
+    void denChanged(const std::vector<locallabDenoiseLC> &denlc, int selspot) override;
+    
     // Locallab Log Encoding autocompute function
     void logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const bool autocomput, const bool autocie, const float jz1) override;
 

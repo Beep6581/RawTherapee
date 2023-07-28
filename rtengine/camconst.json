@@ -1230,7 +1230,7 @@ Camera constants:
         "raw_crop": [ 160, 120, 6024, 4024 ]
     },
 
-    { // Quality C
+    { // Quality A
         "make_model": "Canon EOS R5",
         "dcraw_matrix" : [9766, -2953, -1254, -4276, 12116, 2433, -437, 1336, 5131],
         "raw_crop" : [
@@ -1241,7 +1241,7 @@ Camera constants:
             { "frame" : [ 8352, 5586 ], "areas": [ 94, 20, 5578, 122 ] },
             { "frame" : [ 5248, 3510 ], "areas": [ 94, 20, 3510, 122 ] }
         ],
-        "ranges" : { "white" : 16382 }
+        "ranges" : { "white" : 16300 } // 16382 without LENR, add margin for LENR. Dual-pixel frame 2 is lower for low ISOs.
     },
 
     { // Quality C
@@ -1256,6 +1256,19 @@ Camera constants:
             { "frame": [3584, 2386], "areas": [ 40, 10, 2374, 110 ] }
         ],
         "ranges" : { "white" : 16382 }
+    },
+
+    { // Quality C
+        "make_model": ["Canon EOS R6m2", "Canon EOS R8"],
+        "dcraw_matrix": [9539, -2795, -1224, -4175, 11998, 2458, -465, 1755, 6048],
+        "raw_crop": [
+            {"frame": [6188, 4120], "crop": [154, 96, 6024, 4024]},
+            {"frame": [3936, 2612], "crop": [156, 96, 3780, 2516]}
+        ],
+        "masked_areas": [
+            {"frame": [6188, 4120], "areas": [4, 4, 4116, 150, 4, 150, 92, 6184]},
+            {"frame": [3936, 2612], "areas": [4, 4, 2608, 150, 4, 150, 92, 3932]}
+        ]
     },
 
     { // Quality C
@@ -1565,7 +1578,10 @@ Camera constants:
     { // Quality B
         "make_model": [ "FUJIFILM X-T30", "FUJIFILM X-T30 II", "FUJIFILM X100V", "FUJIFILM X-T4", "FUJIFILM X-S10" ],
         "dcraw_matrix": [ 13426,-6334,-1177,-4244,12136,2371,-580,1303,5980 ], // DNG_v11, standard_v2 d65
-        "raw_crop": [ 0, 5, 6252, 4176]
+        "raw_crop": [
+            {"frame": [6384, 3348], "crop": [624, 0, 5004, 3347]}, // Sports finder mode.
+            {"frame": [0, 0], "crop": [0, 5, 6252, 4176]}
+        ]
     },
 
     { // Quality B
@@ -3121,6 +3137,15 @@ Camera constants:
     { // Quality C
         "make_model": "Sony SLT-A99V",
         "dcraw_matrix": [ 6344, -1612, -462, -4863, 12477, 2681, -865, 1786, 6899 ] // DNG
+    },
+
+    { // Quality A
+        "make_model": "Sony ZV-1",
+        "dcraw_matrix": [ 8280, -2987, -703, -3531, 11645, 2133, -550, 1542, 5312 ], // DNG v15.2
+        "ranges": { "black": 800 }, // White level from EXIF.
+        "raw_crop": [ 0, 0, 5496, 3672 ],
+        "pdaf_pattern": [0, 24, 48, 72, 88, 120],
+        "pdaf_offset": 17
     },
 
     { // Quality C, No proper color data, beta samples, frame set to official jpeg,

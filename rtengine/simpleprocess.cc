@@ -1180,6 +1180,14 @@ private:
                 float Tsigma;
                 float Tmin;
                 float Tmax;
+                float highresi = 0.f;
+                float nresi = 0.f;
+                float highresi46 =0.f;
+                float nresi46 = 0.f;
+                float Lhighresi = 0.f;
+                float Lnresi = 0.f;
+                float Lhighresi46 = 0.f;
+                float Lnresi46 = 0.f;
 
                 // No Locallab mask is shown in exported picture
                 ipf.Lab_Local(2, sp, shbuffer, labView, labView, reservView.get(), savenormtmView.get(), savenormretiView.get(), lastorigView.get(), fw, fh, 0, 0, fw, fh,  1, locRETgainCurve, locRETtransCurve, 
@@ -1235,7 +1243,8 @@ private:
                         LHutili, HHutili, CHutili, HHutilijz, CHutilijz, LHutilijz, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                         huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                         minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
-                        meantme, stdtme, meanretie, stdretie, fab, maxicam
+                        meantme, stdtme, meanretie, stdretie, fab, maxicam, 
+                        highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46
 );
 
                 if (sp + 1u < params.locallab.spots.size()) {

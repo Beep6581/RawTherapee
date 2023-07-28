@@ -1175,7 +1175,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float stdtm = stdtms[sp] = stdtme;
                 float meanreti = meanretis[sp] = meanretie;
                 float stdreti = stdretis[sp] = stdretie;
-
                 huerefp[sp] = huer;
                 chromarefp[sp] = chromar;
                 lumarefp[sp] = lumar;
@@ -1200,6 +1199,15 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float Tmin;
                 float Tmax;
                 int lastsav;
+
+                float highresi = 0.f;
+                float nresi = 0.f;
+                float highresi46 =0.f;
+                float nresi46 = 0.f;
+                float Lhighresi = 0.f;
+                float Lnresi = 0.f;
+                float Lhighresi46 = 0.f;
+                float Lnresi46 = 0.f;
 
                 ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv.get(), savenormtm.get(), savenormreti.get(), lastorigimp.get(), fw, fh, 0, 0, pW, pH, scale, locRETgainCurve, locRETtransCurve,
                               lllocalcurve, locallutili,
@@ -1255,7 +1263,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               LHutili, HHutili, CHutili, HHutilijz, CHutilijz, LHutilijz, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                               huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
-                              meantm, stdtm, meanreti, stdreti, fab, maxicam);
+                              meantm, stdtm, meanreti, stdreti, fab, maxicam, 
+                              highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46);
+
 
                 fabrefp[sp] = fab;
                 float maxth = std::min(maxicam, 20.f); //20.f arbitrary value to limit threshold
@@ -1298,7 +1308,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 retiMinMax.Tmin = Tmin;
                 retiMinMax.Tmax = Tmax;
                 locallretiminmax.push_back(retiMinMax);
-
                 // Recalculate references after
                 if (params->locallab.spots.at(sp).spotMethod == "exc") {
                     ipf.calc_ref(sp, reserv.get(), reserv.get(), 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huer, chromar, lumar, sobeler, avg, locwavCurveden, locwavdenutili);
@@ -1866,7 +1875,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
             if (params->colorappearance.enabled) {
                 // L histo  and Chroma histo for ciecam
-                // histogram well be for Lab (Lch) values, because very difficult to do with J,Q, M, s, C
+                // histogram will be for Lab (Lch) values, because very difficult to do with J,Q, M, s, C
                 int x1, y1, x2, y2;
                 params->crop.mapToResized(pW, pH, scale, x1, x2,  y1, y2);
                 lhist16CAM.clear();
@@ -1913,7 +1922,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     adap = pow(2.0, E_V - 3.0);  // cd / m2
                     // end calculation adaptation scene luminosity
                 }
-				if(params->colorappearance.catmethod == "symg") {//force abolute luminance scenescene to 400 in symmetric
+				if(params->colorappearance.catmethod == "symg") {//force absolute luminance scene to 400 in symmetric
 					adap = 400.;
 				}
                 float d, dj, yb;
@@ -2786,6 +2795,7 @@ void ImProcCoordinator::process()
             || params->epd != nextParams->epd
             || params->fattal != nextParams->fattal
             || params->sh != nextParams->sh
+            || params->toneEqualizer != nextParams->toneEqualizer
             || params->crop != nextParams->crop
             || params->coarse != nextParams->coarse
             || params->commonTrans != nextParams->commonTrans

@@ -84,7 +84,7 @@ int calcDistortion(unsigned char* img1, unsigned char* img2, int ncols, int nrow
 
             r0[n] = sqrt((x0 - wc) * (x0 - wc) + (y0 - hc) * (y0 - hc)) / radius;
 
-            // dots too close to the center tends to have big diviation and create noise, extract them
+            // dots too close to the center tends to have big deviation and create noise, extract them
             if (r0[n] < CENTER_R) {
                 continue;
             }

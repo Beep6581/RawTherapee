@@ -133,6 +133,7 @@ set(RTENGINESOURCEFILES
     ipsharpen.cc
     ipsharpenedges.cc
     ipsoftlight.cc
+    iptoneequalizer.cc
     iptransform.cc
     ipvibrance.cc
     ipwavelet.cc

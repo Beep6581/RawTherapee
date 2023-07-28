@@ -17,6 +17,9 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <algorithm>
+#include <map>
+
 #include <glibmm/fileutils.h>
 #include <glibmm/miscutils.h>
 

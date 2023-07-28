@@ -703,6 +703,19 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
 
                 expreti.updateMinMax(cdma, cdmin, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
             }
+            // Update Locallab Denoise tool lum/chro
+            if (pp->locallab.selspot < (int) denoiselc.size()) {
+                const double highres = denoiselc.at(pp->locallab.selspot).highres;
+                const double nres = denoiselc.at(pp->locallab.selspot).nres;
+                const double highres46 = denoiselc.at(pp->locallab.selspot).highres46;
+                const double nres46 = denoiselc.at(pp->locallab.selspot).nres46;
+                const  double Lhighres = denoiselc.at(pp->locallab.selspot).Lhighres;
+                const double Lnres = denoiselc.at(pp->locallab.selspot).Lnres;
+                const double Lhighres46 = denoiselc.at(pp->locallab.selspot).Lhighres46;
+                const double Lnres46 = denoiselc.at(pp->locallab.selspot).Lnres46;
+
+                expblur.updatedenlc(highres, nres, highres46, nres46, Lhighres, Lnres, Lhighres46, Lnres46);
+            }
 
             // Update default values according to selected spot
             setDefaults(pp, pedited);
@@ -1093,6 +1106,28 @@ void Locallab::minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int 
         expreti.updateMinMax(cdma, cdmin, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
     }
 }
+
+void Locallab::denChanged(const std::vector<locallabDenoiseLC> &denlc, int selspot)
+{
+    // Saving transmitted min/max data
+    denoiselc = denlc;
+    
+    //Update Locallab Denoise tool lum chro
+    if (selspot < (int) denoiselc.size()) {
+        const double highres = denoiselc.at(selspot).highres;
+        const double nres = denoiselc.at(selspot).nres;
+        const double highres46 = denoiselc.at(selspot).highres46;
+        const double nres46 = denoiselc.at(selspot).nres46;
+        const  double Lhighres = denoiselc.at(selspot).Lhighres;
+        const double Lnres = denoiselc.at(selspot).Lnres;
+        const double Lhighres46 = denoiselc.at(selspot).Lhighres46;
+        const double Lnres46 = denoiselc.at(selspot).Lnres46;
+
+        expblur.updatedenlc(highres, nres, highres46, nres46, Lhighres, Lnres, Lhighres46, Lnres46);
+    }
+    
+}
+
 
 void Locallab::logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const bool autocomput, const bool autocie, const float jz1)
 {
