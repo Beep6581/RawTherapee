@@ -8795,6 +8795,8 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         }
 
         if (logcie->get_active()) {
+            sigcie->set_sensitive(false);
+
             sigmoidldacie->set_sensitive(false);
             sigmoidthcie->set_sensitive(false);
             sigmoidsenscie->set_sensitive(false);
@@ -8807,6 +8809,8 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             comprcieauto->set_active(true);
 
         } else {
+            sigcie->set_sensitive(true);
+           
             sigmoidldacie->set_sensitive(true);
             sigmoidthcie->set_sensitive(true);
             // sigmoidblcie->set_sensitive(true);
@@ -9484,12 +9488,12 @@ void Locallabcie::logcieChanged()
     const int mode = complexity->get_active_row_number();
 
     if (logcie->get_active()) {
+        sigcie->set_sensitive(false);
         sigmoidldacie->set_sensitive(false);
         sigmoidthcie->set_sensitive(false);
         sigmoidsenscie->set_sensitive(false);
         //    sigmoidblcie->set_sensitive(false);
         modeHBoxbwev->set_sensitive(false);
-
         comprcie->set_sensitive(true);
         comprcieth->set_sensitive(true);
         comprcie->setValue(defSpot.comprcie);//to test
@@ -9502,6 +9506,7 @@ void Locallabcie::logcieChanged()
         }
 
     } else {
+        sigcie->set_sensitive(true);       
         sigmoidldacie->set_sensitive(true);
         sigmoidthcie->set_sensitive(true);
         sigmoidsenscie->set_sensitive(true);
