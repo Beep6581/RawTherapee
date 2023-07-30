@@ -118,7 +118,7 @@ public:
     void clearParamChanges() override;
 
     // thumbnaillistener interface
-    void procParamsChanged (Thumbnail* thm, int whoChangedIt) override;
+    void procParamsChanged (Thumbnail* thm, int whoChangedIt, bool upgradeHint) override;
 
     // HistoryBeforeLineListener
     void historyBeforeLineChanged (const rtengine::procparams::ProcParams& params) override;
