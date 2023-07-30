@@ -460,6 +460,7 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
     const bool needsReprocessing =
            resetToDefault
         || blackLevelChanged
+        || pparams->raw.expos != pp.raw.expos
         || pparams->toneCurve != pp.toneCurve
         || pparams->locallab != pp.locallab
         || pparams->labCurve != pp.labCurve

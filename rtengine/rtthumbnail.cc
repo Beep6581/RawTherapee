@@ -1553,6 +1553,50 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
     ipf.softLight(labView, params.softlight);
 
+    if (params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE) {
+        const int GW = labView->W;
+        const int GH = labView->H;
+        std::unique_ptr<LabImage> provis;
+        const float pres = 0.01f * params.icm.preser;
+        if (pres > 0.f && params.icm.wprim != ColorManagementParams::Primaries::DEFAULT) {
+            provis.reset(new LabImage(GW, GH));
+            provis->CopyFrom(labView);
+        }
+
+        const std::unique_ptr<Imagefloat> tmpImage1(new Imagefloat(GW, GH));
+
+        ipf.lab2rgb(*labView, *tmpImage1, params.icm.workingProfile);
+
+        const float gamtone = params.icm.workingTRCGamma;
+        const float slotone = params.icm.workingTRCSlope;
+
+        int illum = toUnderlying(params.icm.will);
+        const int prim = toUnderlying(params.icm.wprim);
+
+        Glib::ustring prof = params.icm.workingProfile;
+
+        cmsHTRANSFORM dummy = nullptr;
+        int ill = 0;
+        ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, ill, 0, dummy, true, false, false);
+        ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, illum, prim, dummy, false, true, true);
+
+        ipf.rgb2lab(*tmpImage1, *labView, params.icm.workingProfile);
+        // labView and provis
+        if(provis) {
+            ipf.preserv(labView, provis.get(), GW, GH);
+        }
+        if(params.icm.fbw) {
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+        for (int x = 0; x < GH; x++)
+            for (int y = 0; y < GW; y++) {
+                labView->a[x][y] = 0.f;
+                labView->b[x][y] = 0.f;
+            }
+        }
+
+    }
 
     if (params.colorappearance.enabled) {
         CurveFactory::curveLightBrightColor (
