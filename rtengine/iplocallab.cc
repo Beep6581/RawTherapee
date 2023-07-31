@@ -3723,7 +3723,13 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
             printf("Cam16 Scene  Lighness_J Brightness_Q- HDR-PQ=%5.1f minJ=%3.1f maxJ=%3.1f meanJ=%3.1f minQ=%3.1f maxQ=%4.1f  meanQ=%4.1f\n", (double) plum, (double) minicam, (double) maxicamj, (double) sumcam, (double) minicamq, (double) maxicamq, (double) sumcamq);
             printf("Cam16 Scene  Saturati-s Colorfulln_M- minSat=%3.1f maxSat=%3.1f meanSat=%3.1f minM=%3.1f maxM=%3.1f meanM=%3.1f\n", (double) minisat, (double) maxisat, (double) sumsat, (double) miniM, (double) maxiM, (double) sumM);
-            maxicam = maxicamq;//maximum Brightness 
+           // maxicam = maxicamq;//maximum Brightness 
+            if((sumcamq + 0.3f * minicamq) < maxicamq) {
+                maxicam = sumcamq + 0.3f * minicamq;//maximum Brightness take into account
+                //ponderate maxicam with mean and mini
+            } else {
+                maxicam = 0.4f * sumcamq + 0.6f * maxicamq;               
+            }        
         }
 
         float base = 10.f;
@@ -3764,7 +3770,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             } 
 
         }
-
 
         const auto applytoq =
         [ = ](float x) -> float {
