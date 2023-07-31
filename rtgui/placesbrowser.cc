@@ -106,8 +106,31 @@ void PlacesBrowser::refreshPlacesList ()
 {
     placesModel->clear ();
 
+    // append favorites
+    for (size_t i = 0; i < options.favoriteDirs.size(); i++) {
+        Glib::RefPtr<Gio::File> fav = Gio::File::create_for_path (options.favoriteDirs[i]);
+
+        if (fav && fav->query_exists()) {
+            try {
+                if (auto info = fav->query_info ()) {
+                    Gtk::TreeModel::Row newrow = *(placesModel->append());
+                    newrow[placesColumns.label] = info->get_display_name ();
+                    newrow[placesColumns.icon]  = info->get_icon ();
+                    newrow[placesColumns.root]  = fav->get_parse_name ();
+                    newrow[placesColumns.type]  = 5;
+                    newrow[placesColumns.rowSeparator] = false;
+                }
+            } catch(Gio::Error&) {}
+        }
+    }
+
     // append home directory
     Glib::RefPtr<Gio::File> hfile = Gio::File::create_for_path (userHomeDir());  // Will send back "My documents" on Windows now, which has no restricted access
+
+    if (!placesModel->children().empty()) {
+        Gtk::TreeModel::Row newrow = *(placesModel->append());
+        newrow[placesColumns.rowSeparator] = true;
+    }
 
     if (hfile && hfile->query_exists()) {
         try {
@@ -221,29 +244,6 @@ void PlacesBrowser::refreshPlacesList ()
             newrow[placesColumns.root]  = mounts[i]->get_root ()->get_parse_name ();
             newrow[placesColumns.type]  = 1;
             newrow[placesColumns.rowSeparator] = false;
-        }
-    }
-
-    // append favorites
-    if (!placesModel->children().empty()) {
-        Gtk::TreeModel::Row newrow = *(placesModel->append());
-        newrow[placesColumns.rowSeparator] = true;
-    }
-
-    for (size_t i = 0; i < options.favoriteDirs.size(); i++) {
-        Glib::RefPtr<Gio::File> fav = Gio::File::create_for_path (options.favoriteDirs[i]);
-
-        if (fav && fav->query_exists()) {
-            try {
-                if (auto info = fav->query_info ()) {
-                    Gtk::TreeModel::Row newrow = *(placesModel->append());
-                    newrow[placesColumns.label] = info->get_display_name ();
-                    newrow[placesColumns.icon]  = info->get_icon ();
-                    newrow[placesColumns.root]  = fav->get_parse_name ();
-                    newrow[placesColumns.type]  = 5;
-                    newrow[placesColumns.rowSeparator] = false;
-                }
-            } catch(Gio::Error&) {}
         }
     }
 }
