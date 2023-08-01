@@ -7750,7 +7750,7 @@ Locallabcie::Locallabcie():
     gamcieBox->pack_start(*catBox);
     
     sigmoidgamFrame->add(*gamcieBox);
-    sigBox->pack_start(*sigmoidgamFrame);
+//    sigBox->pack_start(*sigmoidgamFrame);
     sigfraBox->pack_start(*sigmoidldacie);
     sigfraBox->pack_start(*sigmoidthcie);
     sigfraBox->pack_start(*sigmoidsenscie);
@@ -7771,7 +7771,7 @@ Locallabcie::Locallabcie():
     sigBox->pack_start(*sigmoidnormFrame);
 
     sigmoidFrame->add(*sigBox);
-    cieFBox->pack_start(*sigmoidFrame);
+  //  cieFBox->pack_start(*sigmoidFrame);
 
 
     sigmoidjzFrame->set_label_align(0.025, 0.5);
@@ -8148,6 +8148,7 @@ Locallabcie::Locallabcie():
     cieP1contBox->pack_start(*contthrescie);
     cie1contFrame->add(*cieP1contBox);
     cieP1Box->pack_start(*cie1contFrame);
+    cieP1Box->pack_start(*sigmoidgamFrame);
     ToolParamBlock* const cieP1colorBox = Gtk::manage(new ToolParamBlock());
     cieP1colorBox->pack_start(*chromlcie);
     cieP1colorBox->pack_start(*saturlcie);
@@ -8156,6 +8157,8 @@ Locallabcie::Locallabcie():
     cieP1colorBox->pack_start(*rstprotectcie);
     cie1colorFrame->add(*cieP1colorBox);
     cieP1Box->pack_start(*cie1colorFrame);
+    cieP1Box->pack_start(*sigmoidFrame);
+
 //   pack_start(*blackEvjz);
 //   pack_start(*whiteEvjz);
     /*
@@ -9431,10 +9434,17 @@ void Locallabcie::trccieChanged()
             catBox->set_sensitive(true);
         }
     } else {
-        gamjcie->set_sensitive(false);
+      /*  gamjcie->set_sensitive(false);
         slopjcie->set_sensitive(false);
         wprimBox->set_sensitive(false);
         catBox->set_sensitive(false);
+        */
+        gamjcie->set_sensitive(true);
+        slopjcie->set_sensitive(true);
+        if (mode != Expert) {
+            wprimBox->set_sensitive(false);
+            catBox->set_sensitive(false);
+        }     
     }
 
     if (isLocActivated && exp->getEnabled()) {
@@ -10003,8 +10013,13 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 catBox->set_sensitive(false);
 
             } else {
-                gamjcie->set_sensitive(false);
+               /* gamjcie->set_sensitive(false);
                 slopjcie->set_sensitive(false);
+                wprimBox->set_sensitive(false);
+                catBox->set_sensitive(false);
+                */
+                gamjcie->set_sensitive(true);
+                slopjcie->set_sensitive(true);
                 wprimBox->set_sensitive(false);
                 catBox->set_sensitive(false);
             }
@@ -10093,8 +10108,14 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 wprimBox->set_sensitive(false);
                 catBox->set_sensitive(false);
             } else {
+                /*
                 gamjcie->set_sensitive(false);
                 slopjcie->set_sensitive(false);
+                wprimBox->set_sensitive(false);
+                catBox->set_sensitive(false);
+                */
+                gamjcie->set_sensitive(true);
+                slopjcie->set_sensitive(true);
                 wprimBox->set_sensitive(false);
                 catBox->set_sensitive(false);
             }
@@ -10238,11 +10259,16 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 slopjcie->set_sensitive(true);
                 wprimBox->set_sensitive(true);
                 catBox->set_sensitive(true);
-            } else {
+            } else {/*
                 gamjcie->set_sensitive(false);
                 slopjcie->set_sensitive(false);
                 wprimBox->set_sensitive(false);
                 catBox->set_sensitive(false);
+                */
+                gamjcie->set_sensitive(true);
+                slopjcie->set_sensitive(true);
+                wprimBox->set_sensitive(true);
+                catBox->set_sensitive(true);
             }
 
             if (enacieMask->get_active()) {
