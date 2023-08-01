@@ -2249,8 +2249,10 @@ void EditorPanel::sendToExternalPressed()
         dialog->show();
     } else {
         struct ExternalEditor editor = options.externalEditors.at(options.externalEditorIndex);
-        external_editor_info = Gio::AppInfo::create_from_commandline(editor.command, editor.name, Gio::APP_INFO_CREATE_NONE);
-        external_editor_native_command = editor.native_command;
+        external_editor_info = {
+            editor.name,
+            editor.command,
+            editor.native_command};
         sendToExternal();
     }
 }
@@ -2416,7 +2418,7 @@ bool EditorPanel::idle_sentToGimp (ProgressConnector<int> *pc, rtengine::IImagef
 
         setUserOnlyPermission(Gio::File::create_for_path(filename), false);
 
-        success = ExtProgStore::openInExternalEditor(filename, external_editor_info, external_editor_native_command);
+        success = ExtProgStore::openInExternalEditor(filename, external_editor_info);
 
         if (!success) {
             Gtk::MessageDialog msgd (*parent, M ("MAIN_MSG_CANNOTSTARTEDITOR"), false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
@@ -2445,12 +2447,16 @@ RTAppChooserDialog *EditorPanel::getAppChooserDialog()
 void EditorPanel::onAppChooserDialogResponse(int responseId)
 {
     switch (responseId) {
-        case Gtk::RESPONSE_OK:
+        case Gtk::RESPONSE_OK: {
             getAppChooserDialog()->close();
-            external_editor_info = getAppChooserDialog()->get_app_info();
-            external_editor_native_command = false;
+            const auto app_info = getAppChooserDialog()->get_app_info();
+            external_editor_info = {
+                app_info->get_name(),
+                app_info->get_commandline(),
+                false};
             sendToExternal();
             break;
+        }
         case Gtk::RESPONSE_CANCEL:
         case Gtk::RESPONSE_CLOSE:
             getAppChooserDialog()->close();
@@ -2781,7 +2787,9 @@ void EditorPanel::updateExternalEditorWidget(int selectedIndex, const std::vecto
             send_to_external->insertEntry(i, "palette-brush.png", name, &send_to_external_radio_group);
         }
     }
+#ifndef __APPLE__
     send_to_external->addEntry("palette-brush.png", M("GENERAL_OTHER"), &send_to_external_radio_group);
+#endif
     send_to_external->setSelected(selectedIndex);
     send_to_external->show();
 }
