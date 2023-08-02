@@ -7712,7 +7712,7 @@ Locallabcie::Locallabcie():
     primMethod->append(M("TP_ICM_WORKING_PRIM_REC"));
     primMethod->append(M("TP_ICM_WORKING_PRIM_ADOB"));
     primMethod->append(M("TP_ICM_WORKING_PRIM_SRGB"));
-    
+
     primMethod->set_active(0);
     primMethodconn = primMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::primMethodChanged));
 
@@ -7729,8 +7729,8 @@ Locallabcie::Locallabcie():
 
     ToolParamBlock* const signormBox = Gtk::manage(new ToolParamBlock());
     ToolParamBlock* const sigfraBox = Gtk::manage(new ToolParamBlock());
-    
-   // Gtk::Separator* const separatorsig = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
+
+    // Gtk::Separator* const separatorsig = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     Gtk::Separator* const separatorsig2 = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     modeHBoxbwev->set_spacing(2);
     //modeHBoxcam->set_tooltip_markup (M ("TP_LOCALLAB_CAMMODE_TOOLTIP"));
@@ -7748,7 +7748,7 @@ Locallabcie::Locallabcie():
     gamcieBox->pack_start(*slopjcie);
     gamcieBox->pack_start(*wprimBox);
     gamcieBox->pack_start(*catBox);
-    
+
     sigmoidgamFrame->add(*gamcieBox);
 //    sigBox->pack_start(*sigmoidgamFrame);
     sigfraBox->pack_start(*sigmoidldacie);
@@ -7771,7 +7771,7 @@ Locallabcie::Locallabcie():
     sigBox->pack_start(*sigmoidnormFrame);
 
     sigmoidFrame->add(*sigBox);
-  //  cieFBox->pack_start(*sigmoidFrame);
+    //  cieFBox->pack_start(*sigmoidFrame);
 
 
     sigmoidjzFrame->set_label_align(0.025, 0.5);
@@ -8740,6 +8740,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         if (Autograycie->get_active()) {
             comprcieauto->set_active(true);
         }
+
         if (spot.primMethod == "non") {
             primMethod->set_active(0);
         } else if (spot.primMethod == "pro") {
@@ -8813,7 +8814,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
 
         } else {
             sigcie->set_sensitive(true);
-           
+
             sigmoidldacie->set_sensitive(true);
             sigmoidthcie->set_sensitive(true);
             // sigmoidblcie->set_sensitive(true);
@@ -9045,7 +9046,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
 
         if (primMethod->get_active_row_number() == 0) {
             spot.primMethod = "non";
-        } else if (primMethod->get_active_row_number() == 1) {            
+        } else if (primMethod->get_active_row_number() == 1) {
             spot.primMethod = "pro";
         } else if (primMethod->get_active_row_number() == 2) {
             spot.primMethod = "wid";
@@ -9061,7 +9062,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
 
         if (catMethod->get_active_row_number() == 0) {
             spot.catMethod = "brad";
-        } else if (catMethod->get_active_row_number() == 1) {            
+        } else if (catMethod->get_active_row_number() == 1) {
             spot.catMethod = "cat16";
         } else if (catMethod->get_active_row_number() == 2) {
             spot.catMethod = "cat02";
@@ -9423,10 +9424,11 @@ void Locallabcie::normcieChanged()
 void Locallabcie::trccieChanged()
 {
     const int mode = complexity->get_active_row_number();
-    
+
     if (trccie->get_active()) {
         wprimBox->set_sensitive(false);
         catBox->set_sensitive(false);
+
         if (mode == Expert) {
             wprimBox->set_sensitive(true);
             catBox->set_sensitive(true);
@@ -9435,7 +9437,7 @@ void Locallabcie::trccieChanged()
         if (mode != Expert) {
             wprimBox->set_sensitive(false);
             catBox->set_sensitive(false);
-        }     
+        }
     }
 
     if (isLocActivated && exp->getEnabled()) {
@@ -9455,8 +9457,9 @@ void Locallabcie::trccieChanged()
 void Locallabcie::sigcieChanged()
 {
     const int mode = complexity->get_active_row_number();
+
     if (sigcie->get_active() && bwevMethod->get_active_row_number() == 2) {
-        if(mode == Expert) {
+        if (mode == Expert) {
             comprcie->set_sensitive(true);
             comprcieth->set_sensitive(true);
             comprcieauto->set_sensitive(true);
@@ -9500,14 +9503,15 @@ void Locallabcie::logcieChanged()
         comprcie->setValue(defSpot.comprcie);//to test
         comprcieauto->set_sensitive(true);
         comprcieauto->set_active(true);
-        if(mode == Simple) {
+
+        if (mode == Simple) {
             comprcie->set_sensitive(false);
             comprcieth->set_sensitive(false);
             comprcieauto->set_sensitive(false);
         }
 
     } else {
-        sigcie->set_sensitive(true);       
+        sigcie->set_sensitive(true);
         sigmoidldacie->set_sensitive(true);
         sigmoidthcie->set_sensitive(true);
         sigmoidsenscie->set_sensitive(true);
@@ -9579,6 +9583,7 @@ void Locallabcie::sigqChanged()
     } else {
         sigBox->hide();
     }
+
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (sigq->get_active()) {
@@ -9811,6 +9816,7 @@ void Locallabcie::modecamChanged()
         targabscie->show();
         surrHBoxcie->show();
         cie2Frame->show();
+
         if (mode == Expert) {
             pqremapcam16->show();
         } else {
@@ -9883,11 +9889,11 @@ void Locallabcie::sursourcieChanged()
 
 void Locallabcie::catMethodChanged()
 {
-    
+
     if (listener) {
         listener->panelChanged(Evlocallabcatcie, catMethod->get_active_text());
     }
-    
+
 }
 
 void Locallabcie::primMethodChanged()
@@ -9908,7 +9914,8 @@ void Locallabcie::bwevMethodChanged()
         comprcieth->set_sensitive(true);
         comprcieauto->set_sensitive(true);
         comprcieauto->set_active(true);
-        if( mode == Simple) {
+
+        if (mode == Simple) {
             comprcie->set_sensitive(false);
             comprcieth->set_sensitive(false);
             comprcieauto->set_sensitive(false);
