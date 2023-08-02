@@ -7728,13 +7728,13 @@ Locallabcie::Locallabcie():
     catMethodconn = catMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::catMethodChanged));
 
     ToolParamBlock* const signormBox = Gtk::manage(new ToolParamBlock());
-    ToolParamBlock* const gamcieBox = Gtk::manage(new ToolParamBlock());
     ToolParamBlock* const sigfraBox = Gtk::manage(new ToolParamBlock());
     
    // Gtk::Separator* const separatorsig = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     Gtk::Separator* const separatorsig2 = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     modeHBoxbwev->set_spacing(2);
     //modeHBoxcam->set_tooltip_markup (M ("TP_LOCALLAB_CAMMODE_TOOLTIP"));
+    ToolParamBlock* const gamcieBox = Gtk::manage(new ToolParamBlock());
     Gtk::Label* modeLabelbwev = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_SIGMOIDQJ") + ":"));
     modeHBoxbwev->pack_start(*modeLabelbwev, Gtk::PACK_SHRINK);
 
@@ -9425,8 +9425,6 @@ void Locallabcie::trccieChanged()
     const int mode = complexity->get_active_row_number();
     
     if (trccie->get_active()) {
-        gamjcie->set_sensitive(true);
-        slopjcie->set_sensitive(true);
         wprimBox->set_sensitive(false);
         catBox->set_sensitive(false);
         if (mode == Expert) {
@@ -9434,13 +9432,6 @@ void Locallabcie::trccieChanged()
             catBox->set_sensitive(true);
         }
     } else {
-      /*  gamjcie->set_sensitive(false);
-        slopjcie->set_sensitive(false);
-        wprimBox->set_sensitive(false);
-        catBox->set_sensitive(false);
-        */
-        gamjcie->set_sensitive(true);
-        slopjcie->set_sensitive(true);
         if (mode != Expert) {
             wprimBox->set_sensitive(false);
             catBox->set_sensitive(false);
@@ -10007,19 +9998,10 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             comprBox->hide();
 
             if (trccie->get_active()) {
-                gamjcie->set_sensitive(true);
-                slopjcie->set_sensitive(true);
                 wprimBox->set_sensitive(false);
                 catBox->set_sensitive(false);
 
             } else {
-               /* gamjcie->set_sensitive(false);
-                slopjcie->set_sensitive(false);
-                wprimBox->set_sensitive(false);
-                catBox->set_sensitive(false);
-                */
-                gamjcie->set_sensitive(true);
-                slopjcie->set_sensitive(true);
                 wprimBox->set_sensitive(false);
                 catBox->set_sensitive(false);
             }
@@ -10103,19 +10085,9 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             comprBox->show();
 
             if (trccie->get_active()) {
-                gamjcie->set_sensitive(true);
-                slopjcie->set_sensitive(true);
                 wprimBox->set_sensitive(false);
                 catBox->set_sensitive(false);
             } else {
-                /*
-                gamjcie->set_sensitive(false);
-                slopjcie->set_sensitive(false);
-                wprimBox->set_sensitive(false);
-                catBox->set_sensitive(false);
-                */
-                gamjcie->set_sensitive(true);
-                slopjcie->set_sensitive(true);
                 wprimBox->set_sensitive(false);
                 catBox->set_sensitive(false);
             }
@@ -10255,18 +10227,9 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             comprBox->show();
 
             if (trccie->get_active()) {
-                gamjcie->set_sensitive(true);
-                slopjcie->set_sensitive(true);
                 wprimBox->set_sensitive(true);
                 catBox->set_sensitive(true);
-            } else {/*
-                gamjcie->set_sensitive(false);
-                slopjcie->set_sensitive(false);
-                wprimBox->set_sensitive(false);
-                catBox->set_sensitive(false);
-                */
-                gamjcie->set_sensitive(true);
-                slopjcie->set_sensitive(true);
+            } else {
                 wprimBox->set_sensitive(true);
                 catBox->set_sensitive(true);
             }
