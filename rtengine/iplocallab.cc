@@ -2212,6 +2212,7 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
         }
     }
 
+
     maxVal *= 1.5f;
     minVal *= 0.5f;
 
@@ -3744,7 +3745,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         double drd = ((double) dynamic_range - drref) / drref;
         double dratt = (double) dynamic_range / drref;
         comprfactor = 0.4f * comprfactor * (float) dratt;//adapt comprfactor to Dynamic Range
-        
+        float newgray = 0.18f;
         if (islogq  || mobwev != 0) {//increase Dyn Range when log encod and sigmoid 
             dynamic_range += 0.5;
             if(mobwev == 2 && !islogq) {
@@ -3763,10 +3764,10 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
             float corlog = xlogf(maxicam)/log2;//correction base logarithme
             linbase = linbaseor / corlog;
-
+            newgray = gray - 0.025f * (6.f - maxicam);//empirical formula to take into account Q in DR.
 
             if (settings->verbose) {
-                printf("Gray=%1.3f MaxicamQ=%3.2f Base log encode corrected Q=%5.1f Base log encode origig Q=%5.1f\n", (double) gray, (double) maxicam, (double) linbase, (double) linbaseor);
+                printf("Gray=%1.3f newgray=%1.3f MaxicamQ=%3.2f Base log encode corrected Q=%5.1f Base log encode origig Q=%5.1f\n", (double) gray, (double) newgray, (double) maxicam, (double) linbase, (double) linbaseor);
             } 
 
         }
@@ -3775,7 +3776,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         [ = ](float x) -> float {
 
             x = rtengine::max(x, (float) noise);
-            x = rtengine::max(x / gray, (float) noise);//gray = gain - before log conversion
+            x = rtengine::max(x / newgray, (float) noise);//gray = gain - before log conversion
 
             if (compr && x >= comprth)
             {
