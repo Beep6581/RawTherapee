@@ -2445,6 +2445,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     const float sigmoidbl = params->locallab.spots.at(sp).sigmoidblcie;
     const bool sigmoidnorm = params->locallab.spots.at(sp).normcie;
     int mobwev = 0;
+    float sumcamq01 = 0.5f;
 
     if (params->locallab.spots.at(sp).bwevMethod == "none") {
         mobwev = 0;
@@ -3646,6 +3647,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             float sumcamq = 0.f;
             float sumsat = 0.f;
             float sumM = 0.f;
+//            float sumcamq01 = 0.f;
 
             if (lp.logena && !(params->locallab.spots.at(sp).expcie && mocam == 1)) { //Log encoding only, but enable for log encoding if we use Cam16 module both with log encoding
                 plum = 100.f;
@@ -3722,7 +3724,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             sumsat /= nccam;
             sumM /= nccam;
 
-            printf("Cam16 Scene  Lighness_J Brightness_Q- HDR-PQ=%5.1f minJ=%3.1f maxJ=%3.1f meanJ=%3.1f minQ=%3.1f maxQ=%4.1f  meanQ=%4.1f\n", (double) plum, (double) minicam, (double) maxicamj, (double) sumcam, (double) minicamq, (double) maxicamq, (double) sumcamq);
+            printf("Cam16 Scene  Lighness_J Brightness_Q- HDR-PQ=%5.1f minJ=%3.1f maxJ=%3.1f meanJ=%3.1f minQ=%3.1f maxQ=%4.1f  meanQ=%4.1f meanQ1=%2.3f\n", (double) plum, (double) minicam, (double) maxicamj, (double) sumcam, (double) minicamq, (double) maxicamq, (double) sumcamq, (double) (sumcamq * coefq));
             printf("Cam16 Scene  Saturati-s Colorfulln_M- minSat=%3.1f maxSat=%3.1f meanSat=%3.1f minM=%3.1f maxM=%3.1f meanM=%3.1f\n", (double) minisat, (double) maxisat, (double) sumsat, (double) miniM, (double) maxiM, (double) sumM);
            // maxicam = maxicamq;//maximum Brightness 
             if((sumcamq + 0.1f * minicamq) < maxicamq) {
@@ -3730,7 +3732,9 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 //ponderate maxicam with mean and mini
             } else {
                 maxicam = 0.4f * sumcamq + 0.6f * maxicamq;               
-            }        
+            } 
+            sumcamq01 = sumcamq * coefq;
+
         }
 
         float base = 10.f;
@@ -3945,13 +3949,13 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                                 Qpro *=  f;
                                 val = Qpro * coefq;
                             }
-
+                            
                             if (sigmoidth >= 1.f) {
                                 th = ath * val + bth;
                             } else {
                                 th = at * val + bt;
                             }
-
+                            
                             sigmoidla(val, th, sigm);
                             Qpro = std::max(Qpro + val / coefq, 0.f);
                         }
@@ -3963,10 +3967,12 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                                 val = std::max((xlog(val) / log2 - shadows_range) / (dynamic_range + 1.5), noise);//in range EV
                             }
 
-                            if (sigmoidth >= 1.f) {
-                                th = ath * val + bth;
+                            float sigreal = sigmoidth * sumcamq01;//correction for sigmoid Q take into account mean Q
+
+                            if (sigreal >= 1.f) {
+                                th = (sigreal - 1.f) * val + 1.f;
                             } else {
-                                th = at * val + bt;
+                                th = (1.f - sigreal) * val + sigreal;
                             }
 
                             sigmoidla(val, th, sigm);
