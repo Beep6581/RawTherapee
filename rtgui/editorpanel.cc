@@ -2030,7 +2030,7 @@ bool EditorPanel::idle_saveImage (ProgressConnector<rtengine::IImagefloat*> *pc,
         msgd.run ();
 
         saveimgas->set_sensitive (true);
-        send_to_external->set_sensitive(true);
+        send_to_external->set_sensitive(send_to_external->getEntryCount());
         isProcessing = false;
 
     }
@@ -2058,7 +2058,7 @@ bool EditorPanel::idle_imageSaved (ProgressConnector<int> *pc, rtengine::IImagef
     }
 
     saveimgas->set_sensitive (true);
-    send_to_external->set_sensitive(true);
+    send_to_external->set_sensitive(send_to_external->getEntryCount());
 
     parent->setProgressStr ("");
     parent->setProgress (0.);
@@ -2390,7 +2390,7 @@ bool EditorPanel::idle_sendToGimp ( ProgressConnector<rtengine::IImagefloat*> *p
         Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
         msgd.run ();
         saveimgas->set_sensitive (true);
-        send_to_external->set_sensitive(true);
+        send_to_external->set_sensitive(send_to_external->getEntryCount());
     }
 
     return false;
@@ -2411,7 +2411,7 @@ bool EditorPanel::idle_sentToGimp (ProgressConnector<int> *pc, rtengine::IImagef
 
     if ((!img && Glib::file_test(filename, Glib::FILE_TEST_IS_REGULAR)) || (img && !errore)) {
         saveimgas->set_sensitive (true);
-        send_to_external->set_sensitive(true);
+        send_to_external->set_sensitive(send_to_external->getEntryCount());
         parent->setProgressStr ("");
         parent->setProgress (0.);
         bool success = false;
@@ -2790,6 +2790,7 @@ void EditorPanel::updateExternalEditorWidget(int selectedIndex, const std::vecto
 #ifndef __APPLE__
     send_to_external->addEntry("palette-brush.png", M("GENERAL_OTHER"), &send_to_external_radio_group);
 #endif
+    send_to_external->set_sensitive(send_to_external->getEntryCount());
     send_to_external->setSelected(selectedIndex);
     send_to_external->show();
 }
