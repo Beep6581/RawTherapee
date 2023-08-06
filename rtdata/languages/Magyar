@@ -2436,105 +2436,105 @@ TP_CBDL_AFT;Fekete-Fehér Után
 TP_CBDL_BEF;Fekete-Fehér Előtt
 TP_CBDL_METHOD;Folyamatazonosított
 TP_CBDL_METHOD_TOOLTIP;Válaszd ki, hogy a Kontraszt Részletszintek Szerint eszköz a Fekete-Fehér eszköz után legyen-e helyezve, amitől L*a*b* térben működik, vagy elé, amitől RGB térben működik.
-!TP_COLORAPP_ABSOLUTELUMINANCE;Absolute luminance
-!TP_COLORAPP_ADAPSCEN_TOOLTIP;Corresponds to the luminance in candelas per m2 at the time of shooting, calculated automatically from the exif data.
-!TP_COLORAPP_ALGO;Algorithm
-!TP_COLORAPP_ALGO_ALL;All
-!TP_COLORAPP_ALGO_JC;Lightness + Chroma (JC)
-!TP_COLORAPP_ALGO_JS;Lightness + Saturation (JS)
-!TP_COLORAPP_ALGO_QM;Brightness + Colorfulness (QM)
-!TP_COLORAPP_ALGO_TOOLTIP;Lets you choose between parameter subsets or all parameters.
-!TP_COLORAPP_BADPIXSL;Hot/bad pixel filter
-!TP_COLORAPP_BADPIXSL_TOOLTIP;Suppression of hot/bad (brightly colored) pixels.\n0 = No effect\n1 = Median\n2 = Gaussian.\nAlternatively, adjust the image to avoid very dark shadows.\n\nThese artifacts are due to limitations of CIECAM02.
-!TP_COLORAPP_BRIGHT;Brightness (Q)
-!TP_COLORAPP_BRIGHT_TOOLTIP;Brightness in CIECAM is the amount of perceived light emanating from a stimulus. It differs from L*a*b* and RGB brightness.
-!TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;When setting manually, values above 65 are recommended.
-!TP_COLORAPP_CATCLASSIC;Classic
-!TP_COLORAPP_CATMET_TOOLTIP;Classic - traditional CIECAM operation. The chromatic adaptation transforms are applied separately on 'Scene conditions' and basic illuminant on the one hand, and on basic illuminant and 'Viewing conditions' on the other.\n\nSymmetric – The chromatic adaptation is based on the white balance. The 'Scene conditions', 'Image adjustments' and 'Viewing conditions' settings are neutralized.\n\nMixed – Same as the 'Classic' option but in this case, the chromatic adaptation is based on the white balance.
-!TP_COLORAPP_CATMOD;Mode
-!TP_COLORAPP_CATSYMGEN;Automatic Symmetric
-!TP_COLORAPP_CATSYMSPE;Mixed
-!TP_COLORAPP_CHROMA;Chroma (C)
-!TP_COLORAPP_CHROMA_M;Colorfulness (M)
-!TP_COLORAPP_CHROMA_M_TOOLTIP;Colorfulness in CIECAM is the perceived amount of hue in relation to gray, an indicator that a stimulus appears to be more or less colored.
-!TP_COLORAPP_CHROMA_S;Saturation (S)
-!TP_COLORAPP_CHROMA_S_TOOLTIP;Saturation in CIECAM corresponds to the color of a stimulus in relation to its own brightness. It differs from L*a*b* and RGB saturation.
-!TP_COLORAPP_CHROMA_TOOLTIP;Chroma in CIECAM corresponds to the color of a stimulus relative to the clarity of a stimulus that appears white under identical conditions. It differs from L*a*b* and RGB chroma.
-!TP_COLORAPP_CIECAT_DEGREE;Adaptation
-!TP_COLORAPP_CONTRAST;Contrast (J)
-!TP_COLORAPP_CONTRAST_Q;Contrast (Q)
-!TP_COLORAPP_CONTRAST_Q_TOOLTIP;Contrast (Q) in CIECAM is based on brightness. It differs from L*a*b* and RGB contrast.
-!TP_COLORAPP_CONTRAST_TOOLTIP;Contrast (J) in CIECAM is based on lightness. It differs from L*a*b* and RGB contrast.
-!TP_COLORAPP_CURVEEDITOR1;Tone curve 1
-!TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Shows the histogram of L* (L*a*b*) before CIECAM.\nIf the 'Show CIECAM output histograms in CAL curves' checkbox is enabled, shows the histogram of J after CIECAM.\n\nJ is not shown in the main histogram panel.\n\nFor final output refer to the main histogram panel.
-!TP_COLORAPP_CURVEEDITOR2;Tone curve 2
-!TP_COLORAPP_CURVEEDITOR2_TOOLTIP;Same usage as with the first J(J) tone curve.
-!TP_COLORAPP_CURVEEDITOR3;Color curve
-!TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Adjust either chroma, saturation or colorfulness.\n\nShows the histogram of chromaticity (L*a*b*) before CIECAM.\nIf the 'Show CIECAM output histograms in CAL curves' checkbox is enabled, shows the histogram of C, S or M after CIECAM.\n\nC, S and M are not shown in the main histogram panel.\nFor final output refer to the main histogram panel.
-!TP_COLORAPP_DATACIE;Show CIECAM output histograms in CAL curves
-!TP_COLORAPP_DATACIE_TOOLTIP;Affects histograms shown in Color Appearance &amp; Lightning curves. Does not affect RawTherapee's main histogram.\n\nEnabled: show approximate values for J and C, S or M after the CIECAM adjustments.\nDisabled: show L*a*b* values before CIECAM adjustments.
-!TP_COLORAPP_DEGREE_TOOLTIP;CAT02/16 is a chromatic adaptation. It converts the values of an image whose white point is that of a given illuminant (for example D65) into new values whose white point is that of the new illuminant - see WP model (for example D50 or D55).
-!TP_COLORAPP_DEGREOUT_TOOLTIP;CAT02/16 is a chromatic adaptation. It converts the values of an image whose white point is that of a given illuminant (for example D50) into new values whose white point is that of the new illuminant - see WP model (for example D75).
-!TP_COLORAPP_FREE;Free temp + tint + CAT02/16 +[output]
-!TP_COLORAPP_GAMUT;Use gamut control in L*a*b* mode
-!TP_COLORAPP_GEN;Settings
-!TP_COLORAPP_GEN_TOOLTIP;This module is based on the CIECAM color appearance models, which were designed to better simulate how human vision perceives colors under different lighting conditions, e.g. against different backgrounds. It takes into account the environment of each color and modifies its appearance to get as close as possible to human perception. It also adapts the output to the intended viewing conditions (monitor, TV, projector, printer, etc.) so that the chromatic appearance is preserved across the scene and display environments.
-!TP_COLORAPP_HUE;Hue (h)
-!TP_COLORAPP_HUE_TOOLTIP;Hue (h) is the degree to which a stimulus can be described as similar to a color described as red, green, blue and yellow.
-!TP_COLORAPP_IL41;D41
-!TP_COLORAPP_IL50;D50
-!TP_COLORAPP_IL55;D55
-!TP_COLORAPP_IL60;D60
-!TP_COLORAPP_IL65;D65
-!TP_COLORAPP_IL75;D75
-!TP_COLORAPP_ILA;Incandescent StdA 2856K
-!TP_COLORAPP_ILFREE;Free
-!TP_COLORAPP_ILLUM;Illuminant
-!TP_COLORAPP_ILLUM_TOOLTIP;Select the illuminant closest to the shooting conditions.\nIn general D50, but it can change depending on the time and latitude.
-!TP_COLORAPP_LABEL;Color Appearance & Lighting
-!TP_COLORAPP_LABEL_CAM02;Image Adjustments
-!TP_COLORAPP_LABEL_SCENE;Scene Conditions
-!TP_COLORAPP_LABEL_VIEWING;Viewing Conditions
-!TP_COLORAPP_LIGHT;Lightness (J)
-!TP_COLORAPP_LIGHT_TOOLTIP;Lightness in CIECAM is the clarity of a stimulus relative to the clarity of a stimulus that appears white under similar viewing conditions. It differs from L*a*b* and RGB lightness.
-!TP_COLORAPP_MEANLUMINANCE;Mean luminance (Yb%)
-!TP_COLORAPP_MOD02;CAM02
-!TP_COLORAPP_MOD16;CAM16
-!TP_COLORAPP_MODEL;WP model
-!TP_COLORAPP_MODELCAT;CAM
-!TP_COLORAPP_MODELCAT_TOOLTIP;Allows you to choose between CAM02 or CAM16.\nCAM02 will sometimes be more accurate.\nCAM16 should generate fewer artifacts.
-!TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's white balance is used for the scene, CIECAM is set to D50, and the output device's white balance is set in Viewing Conditions.\n\n<b>WB [RT+CAT02/16] + [output]</b>: RT's white balance settings are used by CAT02 and the output device's white balance is set in Viewing Conditions.\n\n<b>Free temp + tint + CAT02/16 + [output]:</b> temp and tint are selected by the user, the output device's white balance is set in Viewing Conditions.
-!TP_COLORAPP_NEUTRAL;Reset
-!TP_COLORAPP_NEUTRAL_TOOLTIP;Reset all sliders checkbox and curves to their default values.
-!TP_COLORAPP_RSTPRO;Red & skin-tones protection
-!TP_COLORAPP_RSTPRO_TOOLTIP;Red &amp; skin-tones protection affects both sliders and curves.
-!TP_COLORAPP_SOURCEF_TOOLTIP;Corresponds to the shooting conditions and how to bring the conditions and data back to a 'normal' area. Normal means average or standard conditions and data, i.e. without taking into account CIECAM corrections.
+TP_COLORAPP_ABSOLUTELUMINANCE;Abszolút luminancia
+TP_COLORAPP_ADAPSCEN_TOOLTIP;A fényképezéskori luminanciának felel meg kandella / m<sup>2</sup> - ben, ami autómatikusan, az exif adatok alapján kerül kiszámításra.
+TP_COLORAPP_ALGO;Algoritmus
+TP_COLORAPP_ALGO_ALL;Mind
+TP_COLORAPP_ALGO_JC;Világosság + Színintenzitás (JC)
+TP_COLORAPP_ALGO_JS;Világosság + Színtelítettség (JS)
+TP_COLORAPP_ALGO_QM;Fényerősség + Színesség (QM)
+TP_COLORAPP_ALGO_TOOLTIP;Választhatsz paraméterel részhalmazai és minden paraméter közott.
+TP_COLORAPP_BADPIXSL;Forró/Rossz pixel szűrő
+TP_COLORAPP_BADPIXSL_TOOLTIP;A forró/rossz (világos színű) pixelek elnyomása.\n0 = Nincs effekt\n1 = Median\n2 = Gauss.\nAlternatívaként, állíthatsz a képen, hogy elkerüld a nagyon sötét árnyékokat.\n\nEzek az artifaktumok a CIECAM02 korlátozásainak következményei.
+TP_COLORAPP_BRIGHT;Fényerősség (Q)
+TP_COLORAPP_BRIGHT_TOOLTIP;Fényerősség CIECAM-ben az annaka fénynek az érzékelt mennyisége, amely az élénkítőből származik. Különbözik a L*a*b* és RGB fényerősségtől.
+TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;Kézi beállítás esetén 65-feletti értékek ajánlottak.
+TP_COLORAPP_CATCLASSIC;Klasszikus
+TP_COLORAPP_CATMET_TOOLTIP;Klasszikus - hagyományos CIACAM működés. A kromatikus adaptáció transzformációk külön kerülnek alkalmazásra. Egyfelől a 'Színhelykörülmények'-re és az alap megvilágítóra, másfelől az alap megvilágítóra és a 'Megtekintési körülmények'-re.\n\nSzimmetrikus - A kromatikus adaptáció a fehéregyensúlyon alapszik. A 'Színhelykörülmények', a 'Képigazítások' és a 'Megtekintési körülmények' beállítások semlegesítve vannak.\n\nKevert – Ugyan az, mint a 'Klasszikus' opció, csak kis-nagybetű érzékeny. A kromatikus adaptáció a fehéregyensúlyon alapszik.
+TP_COLORAPP_CATMOD;Mód
+TP_COLORAPP_CATSYMGEN;Autómatikus Szimmetrikus
+TP_COLORAPP_CATSYMSPE;Kevert
+TP_COLORAPP_CHROMA;Színintenzitás (C)
+TP_COLORAPP_CHROMA_M;Színesség (M)
+TP_COLORAPP_CHROMA_M_TOOLTIP;A színesség CIECAM-ben az érzékelt színárnyaltosság (hue) mértéke a szürkéhez viszonyítva, egy indikátor, anely azt jelzi, hogy az élénkítő többé kevésbé színesnek tűnik.
+TP_COLORAPP_CHROMA_S;Színtelítettség (S)
+TP_COLORAPP_CHROMA_S_TOOLTIP;A színtelítettség CIECAM-ben megfelel az élénkítő színe és fényerősse közti viszonynak. Különbözik a L*a*b* és RGB színtelítettségtől.
+TP_COLORAPP_CHROMA_TOOLTIP;A színintenzitás CIECAM-ben megfelel egy élénkítő színének egy másik, azonos körülmények között fehérnek látszó élénkítő tisztaságához relatívan. Különbözik a L*a*b* és RGB színintenzitástól.
+TP_COLORAPP_CIECAT_DEGREE;Adaptáció
+TP_COLORAPP_CONTRAST;Kontraszt (J)
+TP_COLORAPP_CONTRAST_Q;Kontraszt (Q)
+TP_COLORAPP_CONTRAST_Q_TOOLTIP;A kontraszt (Q) CIECAM-ben a fényresősségen alapszik. Különbözik a L*a*b* és RGB kontraszttól.
+TP_COLORAPP_CONTRAST_TOOLTIP;A kontraszt (J) CIECAM-ben a világosságon alapszik. Különbözik a L*a*b* és RGB kontraszttól.
+TP_COLORAPP_CURVEEDITOR1;Tónusgörbe 1
+TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Az L* (L*a*b*) hisztogrammját mutatja CIECAM előtt.\nHa a 'CIECAM kimenet megjelenítése SzMM görbéken' jelölőnégyzet be van kapcsolva, J hisztogrammját mutatja CIECAM után.\n\nJ nem jelenik meg a fő hisztogrammpanelen.\n\nA végső kinmenethez lásd a fő hisztogrammpanelt.
+TP_COLORAPP_CURVEEDITOR2;Tónusgörbe 2
+TP_COLORAPP_CURVEEDITOR2_TOOLTIP;Ugyan úgy használatos, mint az első J(J) tónusgörbe.
+TP_COLORAPP_CURVEEDITOR3;Színgörbe
+TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Állítsd a színintenzitást, a színtelítettséget vagy a színességet.\n\nA színintenzitás (L*a*b*) hisztogrammját mutatja CIECAM előtt.\nHa a 'CIECAM kimenet megjelenítése SzMM görbéken' jelölőnégyzet be van lapcsolva, a C, S vagy M hisztogrammját mutatja CIECAM után\n\nC, S és M nem jelennek meg a fő hisztogrammpanelen.\nA végső kinmenethez lásd a fő hisztogrammpanelt.
+TP_COLORAPP_DATACIE;CIECAM kimenet megjelenítése SzMM görbéken
+TP_COLORAPP_DATACIE_TOOLTIP;A Színmegjelenés és Megvilágítás görbéknél látható hisztogrammra van hatással.Nincs hatással a RawTherapee fő hisztogrammjára.\n\nBekapcsolva: J és C, S vagy M becsült értékeit mutatja CIECAM módosítások után\nKikapcsolva: L*a*b értékek jelennek meg CIECAM módosítások előtt.
+TP_COLORAPP_DEGREE_TOOLTIP;CAT02/16 egy kromatikus adaptáció. Egy megadott megvilágító (pl.: D65) fehérpontjával rendelkező kép értékeit konvertálja át új értékekké, amelyek fehérpontja egy másik (pl.: D50 vagy D55) megvilágítóié - lásd: fehérpont modell.
+TP_COLORAPP_DEGREOUT_TOOLTIP;;CAT02/16 egy kromatikus adaptáció. Egy megadott megvilágító (pl.: D50) fehérpontjával rendelkező kép értékeit konvertálja át új értékekké, amelyek fehérpontja egy másik (pl.: D75) megvilágítóié - lásd: fehérpont modell.
+TP_COLORAPP_FREE;Szabad hő + színezet + CAT02/16 +[kimenet]
+TP_COLORAPP_GAMUT;Színskála-irányítás használata L*a*b* módban
+TP_COLORAPP_GEN;Beállítások
+TP_COLORAPP_GEN_TOOLTIP;Ez a modul a CIECAM színmegjelenés modelleken alapszik, amelyeket arra terveztek, hogy jobban szimulálják azt, hogy hogyan érzékeli az emberi látás a színeket különböző megvilágítási körülmények között, például különbőző hátterek előtt. Figyelembe veszi minden egyes szín környezetét és úgy módosítja a megjelenését, hogy a lehető legközelebb kerüljön az emberi érzékeléshez. Emellet a kimenetet a szándékozott megtekintési körülményekhez adaptálja (monitor, TV, projektor, nyomtató, stb.) úgy, hogy a kromatikus megjelenés megőrződjön a kép és a megjelenítési környezet között.
+TP_COLORAPP_HUE;Színárnyalat (h)
+TP_COLORAPP_HUE_TOOLTIP;A színárnyalat (h) az a fokozat, amely az élénkítő a pirossal, zölddel, kékkel és sárgával leírható színhez való hasonlóságát adja meg.
+TP_COLORAPP_IL41;D41
+TP_COLORAPP_IL50;D50
+TP_COLORAPP_IL55;D55
+TP_COLORAPP_IL60;D60
+TP_COLORAPP_IL65;D65
+TP_COLORAPP_IL75;D75
+TP_COLORAPP_ILA;Izzó StdA 2856K
+TP_COLORAPP_ILFREE;Szabad
+TP_COLORAPP_ILLUM;Megvilágító
+TP_COLORAPP_ILLUM_TOOLTIP;Válaszd ki a fényképezési körülményekhez legközelebb álló megvilágítót.\nÁltalánosságban D50, de időtől és szélességi foktól függően változhat.
+TP_COLORAPP_LABEL;Színmegjelenés és Megvilágítás
+TP_COLORAPP_LABEL_CAM02;Képigazítások
+TP_COLORAPP_LABEL_SCENE;Színhelykörülmények
+TP_COLORAPP_LABEL_VIEWING;Megtekintési körülmények
+TP_COLORAPP_LIGHT;Világosság (J)
+TP_COLORAPP_LIGHT_TOOLTIP;A világosság CIECAM-ben az egy élénkítő tisztasága a relatívan egy hasonló megtekintési körülmények között fehérnek tűnő élénkítő tisztaságához.Különbözik a L*a*b* és az RGB világosságtól.
+TP_COLORAPP_MEANLUMINANCE;Átlag luminancia (Yb%)
+TP_COLORAPP_MOD02;CAM02
+TP_COLORAPP_MOD16;CAM16
+TP_COLORAPP_MODEL;Fehérpontmodell
+TP_COLORAPP_MODELCAT;CAM
+TP_COLORAPP_MODELCAT_TOOLTIP;Lehetővé teszi, hogy válassz CAM02 és CAM16 között.\nCAM02 néha pontosoabb lehet.\nCAM16 kevesebb artifaktumot generálhat.
+TP_COLORAPP_MODEL_TOOLTIP;Fehérpontmodell.\n\n<b>FE [RT] + [kimenet]</b>: RT fehéregyensúlya van a színhelyre alkalmazva, CIECAM D50-re van állítva, és a kimeneti eszköz fehéregyensúlya a Megtekintési körülményekben van megadva.\n\n<b>FE [RT+CAT02/16] + [kimenet]</b>: RT fehéregyensúly beállításait használja a CAT02, és a kimeneti eszköz fehéregyensúlya a Megtekintési körülményekben van megadva\n\n<b>Szabad hő + színezet + CAT02/16 + [kimenet]:</b> a hőt és a színezetet a felhasználó választja ki, a kimeneti eszköz fehéregyensúlya a Megtekintési körülményekben van megadva.
+TP_COLORAPP_NEUTRAL;Visszaállítás
+TP_COLORAPP_NEUTRAL_TOOLTIP;Az összes csúszka, jelölőnégyzet és görbe értékét az alapértelmezettre állítja.
+TP_COLORAPP_RSTPRO;Piros & bőrtónus védelem
+TP_COLORAPP_RSTPRO_TOOLTIP;A piros és bőrtónus védelem hatással van a csúszkákra és a görbékre is.
+TP_COLORAPP_SOURCEF_TOOLTIP;Megfelel a fényképezési körülményeknek és annak, hogy hogyan lehet a körülményeket és az adatokat visszahozni egy 'normális' területre. A 'normális' átlag vagy sztenderd körülményeket és adatokat jelent (pl.: CIECAM korrekciók figyelembevétele nélkül).
 !TP_COLORAPP_SURROUND;Surround
 !TP_COLORAPP_SURROUNDSRC;Surround
-!TP_COLORAPP_SURROUND_AVER;Average
-!TP_COLORAPP_SURROUND_DARK;Dark
-!TP_COLORAPP_SURROUND_DIM;Dim
-!TP_COLORAPP_SURROUND_EXDARK;Extremly Dark (Cutsheet)
-!TP_COLORAPP_SURROUND_TOOLTIP;Changes tones and colors to take into account the viewing conditions of the output device. The darker the viewing conditions, the darker the image will become. Image brightness will not be changed when the viewing conditions are set to average.
-!TP_COLORAPP_SURSOURCE_TOOLTIP;Changes tones and colors to take into account the surround conditions of the scene lighting. The darker the surround conditions, the brighter the image will become. Image brightness will not be changed when the surround is set to average.
-!TP_COLORAPP_TCMODE_BRIGHTNESS;Brightness
-!TP_COLORAPP_TCMODE_CHROMA;Chroma
-!TP_COLORAPP_TCMODE_COLORF;Colorfulness
-!TP_COLORAPP_TCMODE_LABEL1;Curve mode 1
-!TP_COLORAPP_TCMODE_LABEL2;Curve mode 2
-!TP_COLORAPP_TCMODE_LABEL3;Curve chroma mode
-!TP_COLORAPP_TCMODE_LIGHTNESS;Lightness
-!TP_COLORAPP_TCMODE_SATUR;Saturation
-!TP_COLORAPP_TEMP2_TOOLTIP;Either symmetrical mode temp = White balance.\nEither select illuminant always set Tint=1.\n\nA temp=2856\nD41 temp=4100\nD50 temp=5003\nD55 temp=5503\nD60 temp=6000\nD65 temp=6504\nD75 temp=7504
-!TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant, always set Tint=1.\n\nA temp=2856\nD41 temp=4100\nD50 temp=5003\nD55 temp=5503\nD60 temp=6000\nD65 temp=6504\nD75 temp=7504
-!TP_COLORAPP_TONECIE;Use CIECAM for tone mapping
-!TP_COLORAPP_TONECIE_TOOLTIP;If this option is disabled, tone mapping is done in L*a*b* space.\nIf this option is enabled, tone mapping is done using CIECAM02.\nThe Tone Mapping tool must be enabled for this setting to take effect.
-!TP_COLORAPP_VIEWINGF_TOOLTIP;Takes into account the support on which the final image will be viewed (monitor, TV, projector, printer, etc.), as well as its environment. This process will take the data coming from process 'Image Adjustments' and 'bring' it to the support in such a way that the viewing conditions and its environment are taken into account.
-!TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;Absolute luminance of the viewing environment\n(usually 16 cd/m²).
-!TP_COLORAPP_WBCAM;WB [RT+CAT02/16] + [output]
-!TP_COLORAPP_WBRT;WB [RT] + [output]
-!TP_COLORAPP_YBOUT_TOOLTIP;Yb is the relative luminance of the background, expressed in % of gray. 18% gray corresponds to a background luminance of 50% expressed in CIE L.\nThe data is based on the mean luminance of the image.
-!TP_COLORAPP_YBSCEN_TOOLTIP;Yb is the relative luminance of the background, expressed in % of gray. 18% gray corresponds to a background luminance of 50% expressed in CIE L.\nThe data is based on the mean luminance of the image.
+TP_COLORAPP_SURROUND_AVER;Átlag
+TP_COLORAPP_SURROUND_DARK;Sötét
+TP_COLORAPP_SURROUND_DIM;Homályos
+TP_COLORAPP_SURROUND_EXDARK;Extrémen Sötét (Vágólap)
+TP_COLORAPP_SURROUND_TOOLTIP;Megváltoztatja a tónusokat és a színeket, hogy vegyék figyelembe a megtekintési körülnényeket és a kimeneti eszközt. Minél sötétebbek a megtekintési körülmények, annál sötétebb lesz a kép. A kép fényerőssége nem lesz megváltoztatva, amikor a megtekintési körülmények 'átlagos'-ra vannak állítva.
+TP_COLORAPP_SURSOURCE_TOOLTIP;Megváltoztatja a tónusokat és a színeket úgy, hogy figyelembe vegyék a helyszín megvilágítása körüli körülményeket. Minél sötétebbek a körülmények, annál világosabb lesz a kép. A kép fényerőssége nem lesz megváltoztatva, amikor a 'surround' 'átlagos'-ra van állítva.
+TP_COLORAPP_TCMODE_BRIGHTNESS;Fényerősség
+TP_COLORAPP_TCMODE_CHROMA;Színintenzitás
+TP_COLORAPP_TCMODE_COLORF;Színesség
+TP_COLORAPP_TCMODE_LABEL1;Görbe mód 1
+TP_COLORAPP_TCMODE_LABEL2;Görbe mód 2
+TP_COLORAPP_TCMODE_LABEL3;Görbe mód 
+TP_COLORAPP_TCMODE_LIGHTNESS;Világosság
+TP_COLORAPP_TCMODE_SATUR;Színtelítettség
+TP_COLORAPP_TEMP2_TOOLTIP;Bármely szimmetrikus hőmérséklet = Fehéregyensúly mód.\nVálaszd ki bármely megvilágítót (színezet mindíg = 1).\n\nA hőmérséklet=2856\nD41 hőmérséklet=4100\nD50 hőmérséklet=5003\nD55 hőmérséklet=5503\nD60 hőmérséklet=6000\nD65 hőmérséklet=6504\nD75 hőmérséklet=7504
+TP_COLORAPP_TEMP_TOOLTIP;Egy megvilágító kivélasztásához mindíg állíts színezetet = 1 -et.\n\nA hőmérséklet=2856\nD41 hőmérséklet=4100\nD50 hőmérséklet=5003\nD55 hőmérséklet=5503\nD60 hőmérséklet=6000\nD65 hőmérséklet=6504\nD75 hőmérséklet=7504
+TP_COLORAPP_TONECIE;CIECAM használata tónustérképezéshez
+TP_COLORAPP_TONECIE_TOOLTIP;Ha ez az opció ki van kapcsolva, akkor a tónustérképezés L*a*b* térben történik.\nHa ez az opció be van kapcsolva, akkor a tónustérképezés CIECAM02 használatával történik.\nA Tónustérképezés eszköznek bekapcsolva kell lennie ahhoz, hogy ez a beállítás hatásba lépjen.
+TP_COLORAPP_VIEWINGF_TOOLTIP;Figyelembe veszi a támogatást, amin a amelyen a végső kép meg lesz tekintve (monitor, TV, projektor, nyomtató, etc.), és annak környezetét. Ez a folyamat a 'Kép Igazítások' folyamatból jövő adatokat fogja felhasználni, és 'behozza' a támogatóba úgy, hogy a megtekintési körülmények és a környezete is figyelembe van véve.
+TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;A megtekintési környezet abszolút luminanciája\n(általában 16 cd/m²).
+TP_COLORAPP_WBCAM;WB [RT+CAT02/16] + [kimenet]
+TP_COLORAPP_WBRT;WB [RT] + [kimenet]
+TP_COLORAPP_YBOUT_TOOLTIP;Yb a háttér relatív luminaniája szürke %-ában kifejezve. 18% szürke megfelel egy 50%-os háttérluminenciának CIE L-ben kifejezve.\nAz adat a kép középluminanciáján alapszik.
+TP_COLORAPP_YBSCEN_TOOLTIP;Yb a háttér relatív luminaniája szürke %-ában kifejezve. 18% szürke megfelel egy 50%-os háttérluminenciának CIE L-ben kifejezve.\nAz adat a kép középluminanciáján alapszik.
 !TP_COLORTONING_AB;o C/L
 !TP_COLORTONING_AUTOSAT;Automatic
 !TP_COLORTONING_BALANCE;Balance
