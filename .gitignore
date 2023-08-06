@@ -6,6 +6,7 @@
 .settings
 .directory
 .vscode
+.DS_Store
 .idea
 
 CMakeCache.txt
@@ -44,4 +45,3 @@ clean
 *.tar
 *.xz
 *.zip
-
