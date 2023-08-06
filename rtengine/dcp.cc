@@ -430,6 +430,16 @@ std::map<std::string, std::string> getAliases(const Glib::ustring& profile_dir)
     return res;
 }
 
+/**
+ * Returns a locale-independent case-insensitive collate key. Differs from
+ * Glib::ustring::casefold_collate_key() in that the Glib method may return
+ * different results depending on the current locale.
+ */
+std::string casefold_collate_key(const Glib::ustring &str)
+{
+    return str.casefold().raw();
+}
+
 }
 
 struct DCPProfileApplyState::Data {
@@ -1831,7 +1841,7 @@ void DCPStore::init(const Glib::ustring& rt_profile_dir, bool loadAll)
                     && lastdot <= sname.size() - 4
                     && !sname.casefold().compare(lastdot, 4, ".dcp")
                     ) {
-                    file_std_profiles[sname.substr(0, lastdot).casefold_collate_key()] = fname; // They will be loaded and cached on demand
+                    file_std_profiles[casefold_collate_key(sname.substr(0, lastdot))] = fname; // They will be loaded and cached on demand
                 }
             } else {
                 // Directory
@@ -1842,10 +1852,10 @@ void DCPStore::init(const Glib::ustring& rt_profile_dir, bool loadAll)
 
         for (const auto& alias : getAliases(rt_profile_dir)) {
             const Glib::ustring alias_name = Glib::ustring(alias.first).uppercase();
-            const std::map<std::string, Glib::ustring>::const_iterator real = file_std_profiles.find(Glib::ustring(alias.second).casefold_collate_key());
+            const std::map<std::string, Glib::ustring>::const_iterator real = file_std_profiles.find(casefold_collate_key(alias.second));
 
             if (real != file_std_profiles.end()) {
-                file_std_profiles[alias_name.casefold_collate_key()] = real->second;
+                file_std_profiles[casefold_collate_key(alias_name)] = real->second;
         }
     }
 }
@@ -1892,7 +1902,7 @@ DCPProfile* DCPStore::getProfile(const Glib::ustring& filename) const
 
 DCPProfile* DCPStore::getStdProfile(const Glib::ustring& requested_cam_short_name) const
 {
-    const std::map<std::string, Glib::ustring>::const_iterator iter = file_std_profiles.find(requested_cam_short_name.casefold_collate_key());
+    const std::map<std::string, Glib::ustring>::const_iterator iter = file_std_profiles.find(casefold_collate_key(requested_cam_short_name));
     if (iter != file_std_profiles.end()) {
         return getProfile(iter->second);
     }
