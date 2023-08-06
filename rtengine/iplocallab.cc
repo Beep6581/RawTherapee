@@ -3750,12 +3750,14 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         double dratt = (double) dynamic_range / drref;
         comprfactor = 0.4f * comprfactor * (float) dratt;//adapt comprfactor to Dynamic Range
         float newgray = 0.18f;
-        if (islogq  || mobwev != 0) {//increase Dyn Range when log encod and sigmoid 
-            dynamic_range += 0.5;
-            if(mobwev == 2 && !islogq) {
-                dynamic_range += 0.5;
-            }
 
+        if (islogq  || mobwev != 0) {//increase Dyn Range when log encod and sigmoid 
+            if(issig && issigq && iscie && !islogq && mobwev == 2) {
+                dynamic_range += 0.6;//empirical value
+            } else if (islogq && issigq && iscie) {
+                dynamic_range += 0.1;//empirical value
+            }
+                
             gray = 0.01f * (float) params->locallab.spots.at(sp).sourceGraycie;
             const float targetgraycie = params->locallab.spots.at(sp).targetGraycie;
             float targetgraycor = 0.01f * targetgraycie;
