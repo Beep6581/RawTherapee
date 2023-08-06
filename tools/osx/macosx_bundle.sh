@@ -225,8 +225,11 @@ ModifyInstallNames 2>&1
 # Copy libpng16 to the app bundle
 cp ${LOCAL_PREFIX}/lib/libpng16.16.dylib "${CONTENTS}/Frameworks/libpng16.16.dylib"
 
-# Copy libtiff 5 into the app bundle
-cp ${LOCAL_PREFIX}/lib/libtiff.5.dylib "${CONTENTS}/Frameworks/libtiff.5.dylib"
+# Copy graphite to Frameworks
+cp ${LOCAL_PREFIX}/lib/libgraphite2.3.dylib "${CONTENTS}/Frameworks"
+
+# Copy libtiff 6 into the app bundle
+cp ${LOCAL_PREFIX}/lib/libtiff.6.dylib "${CONTENTS}/Frameworks/libtiff.6.dylib"
 
 # Copy libomp to Frameworks
 cp ${LOCAL_PREFIX}/lib/libomp.dylib "${CONTENTS}/Frameworks"
