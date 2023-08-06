@@ -20,6 +20,8 @@
 
 #include <fstream>
 #include <glib.h>
+#include <iostream>
+#include <utility>
 #ifdef WIN32
 #include <windows.h>
 #include <winnls.h>
@@ -27,6 +29,8 @@
 #ifdef __APPLE__
 #include <CoreFoundation/CoreFoundation.h>
 #endif
+
+#include "../rtengine/settings.h"
 
 namespace
 {
@@ -162,6 +166,25 @@ void setGtkLanguage(const Glib::ustring &language)
 
 }
 
+TranslationMetadata::TranslationMetadata(std::map<std::string, std::string> &&metadata) :
+    metadata(std::move(metadata))
+{
+}
+
+std::string TranslationMetadata::get(const std::string &key, const std::string &default_value) const
+{
+    const auto found_entry = metadata.find(key);
+    if (found_entry == metadata.end()) {
+        return default_value;
+    }
+    return found_entry->second;
+}
+
+std::string TranslationMetadata::getLanguageName(const std::string &default_name) const
+{
+    return get("LANGUAGE_DISPLAY_NAME", default_name);
+}
+
 MultiLangMgr langMgr;
 
 MultiLangMgr::MultiLangMgr ()
@@ -217,6 +240,77 @@ Glib::ustring MultiLangMgr::getStr (const std::string& key) const
     }
 
     return key;
+}
+
+const TranslationMetadata *MultiLangMgr::getMetadata(const Glib::ustring &fname) const
+{
+    static const char comment_symbol = '#';
+    static const char *space_chars = " \t";
+    static const char var_symbol = '@';
+    static const char key_value_separator = '=';
+
+    // Look for the metadata in the cache.
+    const auto &found_metadata = lang_files_metadata.find(fname);
+    if (found_metadata != lang_files_metadata.end()) {
+        return &found_metadata->second;
+    }
+
+    std::ifstream file(fname.c_str());
+    if (!file.is_open()) {
+        if (rtengine::settings->verbose) {
+            std::cerr << "Unable to open language file " << fname << " to get metadata." << std::endl;
+        }
+        return nullptr;
+    }
+
+    if (rtengine::settings->verbose) {
+        std::cout << "Reading metadata from language file " << fname << std::endl;
+    }
+    std::map<std::string, std::string> raw_metadata;
+    const auto read_key_value = [&raw_metadata](const std::string &meta_line) {
+        // One metadata key-value pair per line. The format is as follows:
+        // #001 @KEY=VALUE
+        // The line must begin with the comment symbol (#). After the first
+        // sequence of whitespace characters, the metadata variable symbol (@)
+        // must appear. It is followed immediately with the key name. The end of
+        // the key name is marked with the equal sign (=). All remaining
+        // characters until the end of the line make up the metadata value.
+        if (meta_line.empty() || meta_line.front() != comment_symbol) {
+            return;
+        }
+        const auto first_space = meta_line.find_first_of(space_chars, 1);
+        if (first_space == std::string::npos) {
+            return;
+        }
+        const auto definition_start = meta_line.find_first_not_of(space_chars, first_space + 1);
+        if (definition_start == std::string::npos || meta_line[definition_start] != var_symbol) {
+            return;
+        }
+        const auto separator_pos = meta_line.find(key_value_separator, definition_start + 1);
+        if (separator_pos == std::string::npos) {
+            return;
+        }
+        std::string key = meta_line.substr(definition_start + 1, separator_pos - definition_start - 1);
+        std::string value = meta_line.substr(separator_pos + 1);
+        if (rtengine::settings->verbose) {
+            std::cout << "Found metadata key " << key << " with value " << value << std::endl;
+        }
+        raw_metadata.emplace(std::move(key), std::move(value));
+    };
+
+    // Read lines in order. Metadata only appear in the first section of each
+    // file.
+    for (
+        std::string line;
+        std::getline(file, line) && (line.empty() ||
+                                        line.front() == comment_symbol ||
+                                        line.find_first_not_of(space_chars) == std::string::npos);) {
+        read_key_value(line);
+    }
+
+    // Add metadata to cache and return.
+    lang_files_metadata[fname] = TranslationMetadata(std::move(raw_metadata));
+    return &lang_files_metadata[fname];
 }
 
 bool MultiLangMgr::isOSLanguageDetectSupported ()

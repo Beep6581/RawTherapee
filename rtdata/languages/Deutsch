@@ -1,90 +1,92 @@
-#01 keenonkites; Aktualisierte Version für 2.3 beta2
-#02 phberlin; basiert auf keenonkites' Erstübersetzung
-#03 2007-12-20
-#04 2007-12-22
-#05 2008-01-08
-#06 2008-01-15
-#07 2008-02-20
-#08 2008-12-19 keenonkites, Anpassungen für 2.4beta4
-#09 2008-09-20 keenonkites, Anpassungen für 2.4m2
-#10 2008-04-04 Anpassungen für 2.4
-#11 Leichte Anpassungen (keenonkites/klonk)
-#12 Erweiterung (oduis)
-#13 Erweiterung (oduis)
-#14 Erweiterung (oduis)
-#15 Erweiterung (oduis)
-#16 2012-12-05 3.0 alpha: Erweiterung und Korrekturen (Metex)
-#17 2012-04-29 Erweiterungen und Korrekturen (MaWe)
-#18 Erweiterung (oduis)
-#19 Erweiterung (oduis)
-#20 2013-02-27 Erweiterung (cytrinox)
-#21 2013-12-31 Erweiterung (Ingo)
-#22 2015-09-04 komplette Überarbeitung (TooWaBoo)
-#23 2015-10-24 Retinexübersetzung und Korrekturen (TooWaBoo)
-#24 2015-11-01 Korrekturen (TooWaBoo) RT4.2.450
-#25 2015-11-30 Korrekturen (TooWaBoo) RT4.2.507
-#26 2015-12-13 Korrekturen (TooWaBoo) RT4.2.514
-#26 2015-12-22 Korrekturen (TooWaBoo) RT4.2.536
-#27 2016-02-12 Retinexübersetzung (TooWaBoo) RT4.2.730
-#28 2016-03-19 Erweiterung/Korrekturen (TooWaBoo) RT4.2.880
-#29 2016-05-24 Erweiterung/Korrekturen (TooWaBoo) RT4.2.1005
-#30 2016-09-30 Erweiterung/Korrekturen (TooWaBoo) RT4.2.1234
-#31 2016-12-01 Erweiterung/Korrekturen (TooWaBoo) RT4.2.1408
-#32 2016-12-29 Erweiterung/Korrekturen (TooWaBoo) RT4.2.1464
-#33 2017-01-04 Erweiterung/Korrekturen/Soft-Proofing (TooWaBoo) RT4.2.1477
-#34 2017-01-07 IPTC (TooWaBoo) RT4.2.1492
-#35 2017-02-18 AWB bias (TooWaBoo) RT 5.0 r1
-#36 2017-02-23 Korrekturen (TooWaBoo)  RT 5.0 r1
-#37 2017-03-06 Dynamisches Profil (TooWaBoo) RT 5.0 r1
-#38 2017-03-26 Pixel-Shift (TooWaBoo) RT 5.0 r1
-#39 06.04.2017 Fast Export (TooWaBoo) RT 5.0 r1
-#40 30.04.2017 Erweiterung/Korrekturen (TooWaBoo) RT 5.0 r1
-#41 03.05.2017 Erweiterung/Korrekturen (TooWaBoo) RT 5.0 r1
-#42 13.05.2017 Erweiterung (TooWaBoo) RT 5.0 r1
-#43 21.07.2017 Erweiterung (TooWaBoo) RT 5.1
-#44 21.09.2017 Erweiterung (TooWaBoo) RT 5.2
-#45 15.10.2017 Erweiterung (TooWaBoo) RT 5.3
-#46 18.10.2017 Erweiterung (TooWaBoo) RT 5.3
-#47 19.11.2017 HDR-Dynamikkompression (TooWaBoo) RT 5.3
-#48 13.12.2017 Erweiterung (TooWaBoo) RT 5.3
-#49 21.12.2017 Lokaler Kontrast (TooWaBoo) RT 5.3
-#50 07.01.2018 Crop Settings (TooWaBoo) RT 5.3
-#51 10.02.2018 Erweiterung (TooWaBoo) RT 5.3
-#52 10.02.2018 Korrektur (TooWaBoo) RT 5.3
-#53 26.02.2018 Erweiterung (TooWaBoo) RT 5.3
-#54 30.03.2018 Erweiterung (TooWaBoo) RT 5.4
-#55 06.04.2018 Erweiterung (TooWaBoo) RT 5.4
-#56 27.04.2018 Erweiterung (TooWaBoo) RT 5.4
-#57 17.05.2018 Erweiterung (TooWaBoo) RT 5.4
-#58 19.05.2018 Erweiterung (TooWaBoo) RT 5.4
-#59 29.05.2018 Erweiterung (TooWaBoo) RT 5.4
-#60 14.06.2018 Erweiterung (TooWaBoo) RT 5.4
-#61 14.06.2018 Korrektur (TooWaBoo) RT 5.4
-#62 22.06.2018 Korrektur (TooWaBoo) RT 5.4
-#63 24.06.2018 DCB/RCD+VNG4 (TooWaBoo) RT 5.4
-#64 24.06.2018 Erweiterung/Korrektur (TooWaBoo) RT 5.4
-#65 25.06.2018 Korrekturen (TooWaBoo) RT 5.4
-#66 04.07.2018 Erweiterung (TooWaBoo) RT 5.4
-#67 05.07.2018 Erweiterung (TooWaBoo) RT 5.4
-#68 05.07.2018 Erweiterung (TooWaBoo) RT 5.4
-#69 25.07.2018 Erweiterung (TooWaBoo) RT 5.4
-#70 25.07.2018 Korrekturen (TooWaBoo) RT 5.4
-#71 28.09.2018 Korrekturen (TooWaBoo) RT 5.5
-#72 05.10.2018 Korrekturen (TooWaBoo) RT 5.5
-#73 21.11.2018 Erweiterung (TooWaBoo) RT 5.5
-#74 24.11.2018 Erweiterung (TooWaBoo) RT 5.5
-#75 02.12.2018 Erweiterung (TooWaBoo) RT 5.5
-#76 11.12.2018 Erweiterung (TooWaBoo) RT 5.5
-#77 16.12.2018 Korrektur Farbwähler-Tooltip (TooWaBoo) RT 5.5
-#78 19.01.2019 Erweiterung (TooWaBoo) RT 5.5
-#79 24.02.2019 Erweiterung (TooWaBoo) RT 5.5
-#80 25.03.2019 Erweiterung (TooWaBoo) RT 5.6
-#81 15.04.2019 Erweiterung (TooWaBoo) RT 5.6
-#82 25.05.2019 Erweiterung (TooWaBoo) RT 5.6
-#83 06.07.2019 Erweiterung (TooWaBoo) RT 5.6
-#84 06.10.2019 Erweiterung (TooWaBoo) RT 5.7
-#84 18.07.2019 Erweiterung (TooWaBoo) RT 5.6
-#85 29.07.2022 Erweiterung (marter, mozzihh) RT 5.9 
+#001 keenonkites; Aktualisierte Version für 2.3 beta2
+#002 phberlin; basiert auf keenonkites' Erstübersetzung
+#003 2007-12-20
+#004 2007-12-22
+#005 2008-01-08
+#006 2008-01-15
+#007 2008-02-20
+#008 2008-12-19 keenonkites, Anpassungen für 2.4beta4
+#009 2008-09-20 keenonkites, Anpassungen für 2.4m2
+#010 2008-04-04 Anpassungen für 2.4
+#011 Leichte Anpassungen (keenonkites/klonk)
+#012 Erweiterung (oduis)
+#013 Erweiterung (oduis)
+#014 Erweiterung (oduis)
+#015 Erweiterung (oduis)
+#016 2012-12-05 3.0 alpha: Erweiterung und Korrekturen (Metex)
+#017 2012-04-29 Erweiterungen und Korrekturen (MaWe)
+#018 Erweiterung (oduis)
+#019 Erweiterung (oduis)
+#020 2013-02-27 Erweiterung (cytrinox)
+#021 2013-12-31 Erweiterung (Ingo)
+#022 2015-09-04 komplette Überarbeitung (TooWaBoo)
+#023 2015-10-24 Retinexübersetzung und Korrekturen (TooWaBoo)
+#024 2015-11-01 Korrekturen (TooWaBoo) RT4.2.450
+#025 2015-11-30 Korrekturen (TooWaBoo) RT4.2.507
+#026 2015-12-13 Korrekturen (TooWaBoo) RT4.2.514
+#026 2015-12-22 Korrekturen (TooWaBoo) RT4.2.536
+#027 2016-02-12 Retinexübersetzung (TooWaBoo) RT4.2.730
+#028 2016-03-19 Erweiterung/Korrekturen (TooWaBoo) RT4.2.880
+#029 2016-05-24 Erweiterung/Korrekturen (TooWaBoo) RT4.2.1005
+#030 2016-09-30 Erweiterung/Korrekturen (TooWaBoo) RT4.2.1234
+#031 2016-12-01 Erweiterung/Korrekturen (TooWaBoo) RT4.2.1408
+#032 2016-12-29 Erweiterung/Korrekturen (TooWaBoo) RT4.2.1464
+#033 2017-01-04 Erweiterung/Korrekturen/Soft-Proofing (TooWaBoo) RT4.2.1477
+#034 2017-01-07 IPTC (TooWaBoo) RT4.2.1492
+#035 2017-02-18 AWB bias (TooWaBoo) RT 5.0 r1
+#036 2017-02-23 Korrekturen (TooWaBoo)  RT 5.0 r1
+#037 2017-03-06 Dynamisches Profil (TooWaBoo) RT 5.0 r1
+#038 2017-03-26 Pixel-Shift (TooWaBoo) RT 5.0 r1
+#039 06.04.2017 Fast Export (TooWaBoo) RT 5.0 r1
+#040 30.04.2017 Erweiterung/Korrekturen (TooWaBoo) RT 5.0 r1
+#041 03.05.2017 Erweiterung/Korrekturen (TooWaBoo) RT 5.0 r1
+#042 13.05.2017 Erweiterung (TooWaBoo) RT 5.0 r1
+#043 21.07.2017 Erweiterung (TooWaBoo) RT 5.1
+#044 21.09.2017 Erweiterung (TooWaBoo) RT 5.2
+#045 15.10.2017 Erweiterung (TooWaBoo) RT 5.3
+#046 18.10.2017 Erweiterung (TooWaBoo) RT 5.3
+#047 19.11.2017 HDR-Dynamikkompression (TooWaBoo) RT 5.3
+#048 13.12.2017 Erweiterung (TooWaBoo) RT 5.3
+#049 21.12.2017 Lokaler Kontrast (TooWaBoo) RT 5.3
+#050 07.01.2018 Crop Settings (TooWaBoo) RT 5.3
+#051 10.02.2018 Erweiterung (TooWaBoo) RT 5.3
+#052 10.02.2018 Korrektur (TooWaBoo) RT 5.3
+#053 26.02.2018 Erweiterung (TooWaBoo) RT 5.3
+#054 30.03.2018 Erweiterung (TooWaBoo) RT 5.4
+#055 06.04.2018 Erweiterung (TooWaBoo) RT 5.4
+#056 27.04.2018 Erweiterung (TooWaBoo) RT 5.4
+#057 17.05.2018 Erweiterung (TooWaBoo) RT 5.4
+#058 19.05.2018 Erweiterung (TooWaBoo) RT 5.4
+#059 29.05.2018 Erweiterung (TooWaBoo) RT 5.4
+#060 14.06.2018 Erweiterung (TooWaBoo) RT 5.4
+#061 14.06.2018 Korrektur (TooWaBoo) RT 5.4
+#062 22.06.2018 Korrektur (TooWaBoo) RT 5.4
+#063 24.06.2018 DCB/RCD+VNG4 (TooWaBoo) RT 5.4
+#064 24.06.2018 Erweiterung/Korrektur (TooWaBoo) RT 5.4
+#065 25.06.2018 Korrekturen (TooWaBoo) RT 5.4
+#066 04.07.2018 Erweiterung (TooWaBoo) RT 5.4
+#067 05.07.2018 Erweiterung (TooWaBoo) RT 5.4
+#068 05.07.2018 Erweiterung (TooWaBoo) RT 5.4
+#069 25.07.2018 Erweiterung (TooWaBoo) RT 5.4
+#070 25.07.2018 Korrekturen (TooWaBoo) RT 5.4
+#071 28.09.2018 Korrekturen (TooWaBoo) RT 5.5
+#072 05.10.2018 Korrekturen (TooWaBoo) RT 5.5
+#073 21.11.2018 Erweiterung (TooWaBoo) RT 5.5
+#074 24.11.2018 Erweiterung (TooWaBoo) RT 5.5
+#075 02.12.2018 Erweiterung (TooWaBoo) RT 5.5
+#076 11.12.2018 Erweiterung (TooWaBoo) RT 5.5
+#077 16.12.2018 Korrektur Farbwähler-Tooltip (TooWaBoo) RT 5.5
+#078 19.01.2019 Erweiterung (TooWaBoo) RT 5.5
+#079 24.02.2019 Erweiterung (TooWaBoo) RT 5.5
+#080 25.03.2019 Erweiterung (TooWaBoo) RT 5.6
+#081 15.04.2019 Erweiterung (TooWaBoo) RT 5.6
+#082 25.05.2019 Erweiterung (TooWaBoo) RT 5.6
+#083 06.07.2019 Erweiterung (TooWaBoo) RT 5.6
+#084 06.10.2019 Erweiterung (TooWaBoo) RT 5.7
+#084 18.07.2019 Erweiterung (TooWaBoo) RT 5.6
+#085 29.07.2022 Erweiterung (marter, mozzihh) RT 5.9 
+#100
+#101 @LANGUAGE_DISPLAY_NAME=Deutsch
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
