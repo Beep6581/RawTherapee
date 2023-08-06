@@ -267,15 +267,11 @@ void ParamsEdited::set(bool v)
     wb.equal                   = v;
     wb.tempBias                = v;
     wb.observer                = v;
-    wb.itcwb_thres                = v;
-    wb.itcwb_precis                = v;
-    wb.itcwb_size                = v;
-    wb.itcwb_delta                = v;
-    wb.itcwb_fgreen                = v;
+    wb.itcwb_green                = v;
     wb.itcwb_rgreen                = v;
     wb.itcwb_nopurple             = v;
-    wb.itcwb_sorted             = v;
-    wb.itcwb_forceextra         = v;
+    wb.itcwb_alg             = v;
+    wb.itcwb_prim                = v;
     wb.itcwb_sampling         = v;
     //colorShift.a               = v;
     //colorShift.b               = v;
@@ -328,6 +324,11 @@ void ParamsEdited::set(bool v)
     sh.stonalwidth   = v;
     sh.radius        = v;
     sh.lab           = v;
+    toneEqualizer.enabled        = v;
+    toneEqualizer.bands.fill(v);
+    toneEqualizer.regularization = v;
+    toneEqualizer.show_colormap  = v;
+    toneEqualizer.pivot  = v;
     crop.enabled = v;
     crop.x       = v;
     crop.y       = v;
@@ -980,15 +981,11 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wb.temperature = wb.temperature && p.wb.temperature == other.wb.temperature;
         wb.tempBias = wb.tempBias && p.wb.tempBias == other.wb.tempBias;
         wb.observer = wb.observer && p.wb.observer == other.wb.observer;
-        wb.itcwb_thres = wb.itcwb_thres && p.wb.itcwb_thres == other.wb.itcwb_thres;
-        wb.itcwb_precis = wb.itcwb_precis && p.wb.itcwb_precis == other.wb.itcwb_precis;
-        wb.itcwb_size = wb.itcwb_size && p.wb.itcwb_size == other.wb.itcwb_size;
-        wb.itcwb_delta = wb.itcwb_delta && p.wb.itcwb_delta == other.wb.itcwb_delta;
-        wb.itcwb_fgreen = wb.itcwb_fgreen && p.wb.itcwb_fgreen == other.wb.itcwb_fgreen;
+        wb.itcwb_green = wb.itcwb_green && p.wb.itcwb_green == other.wb.itcwb_green;
         wb.itcwb_rgreen = wb.itcwb_rgreen && p.wb.itcwb_rgreen == other.wb.itcwb_rgreen;
         wb.itcwb_nopurple = wb.itcwb_nopurple && p.wb.itcwb_nopurple == other.wb.itcwb_nopurple;
-        wb.itcwb_sorted = wb.itcwb_sorted && p.wb.itcwb_sorted == other.wb.itcwb_sorted;
-        wb.itcwb_forceextra = wb.itcwb_forceextra && p.wb.itcwb_forceextra == other.wb.itcwb_forceextra;
+        wb.itcwb_alg = wb.itcwb_alg && p.wb.itcwb_alg == other.wb.itcwb_alg;
+        wb.itcwb_prim = wb.itcwb_prim && p.wb.itcwb_prim == other.wb.itcwb_prim;
         wb.itcwb_sampling = wb.itcwb_sampling && p.wb.itcwb_sampling == other.wb.itcwb_sampling;
         //colorShift.a = colorShift.a && p.colorShift.a == other.colorShift.a;
         //colorShift.b = colorShift.b && p.colorShift.b == other.colorShift.b;
@@ -1055,6 +1052,13 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         crop.ratio = crop.ratio && p.crop.ratio == other.crop.ratio;
         crop.orientation = crop.orientation && p.crop.orientation == other.crop.orientation;
         crop.guide = crop.guide && p.crop.guide == other.crop.guide;
+        toneEqualizer.enabled = toneEqualizer.enabled && p.toneEqualizer.enabled == other.toneEqualizer.enabled;
+        for (size_t i = 0; i < toneEqualizer.bands.size(); ++i) {
+            toneEqualizer.bands[i] = toneEqualizer.bands[i] && p.toneEqualizer.bands[i] == other.toneEqualizer.bands[i];
+        }
+        toneEqualizer.regularization = toneEqualizer.regularization && p.toneEqualizer.regularization == other.toneEqualizer.regularization;
+        toneEqualizer.show_colormap = toneEqualizer.show_colormap && p.toneEqualizer.show_colormap == other.toneEqualizer.show_colormap;
+        toneEqualizer.pivot = toneEqualizer.pivot && p.toneEqualizer.pivot == other.toneEqualizer.pivot;
         coarse.rotate = coarse.rotate && p.coarse.rotate == other.coarse.rotate;
         coarse.hflip = coarse.hflip && p.coarse.hflip == other.coarse.hflip;
         coarse.vflip = coarse.vflip && p.coarse.vflip == other.coarse.vflip;
@@ -1294,6 +1298,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).slomaskSH = locallab.spots.at(j).slomaskSH && pSpot.slomaskSH == otherSpot.slomaskSH;
                 locallab.spots.at(j).lapmaskSH = locallab.spots.at(j).lapmaskSH && pSpot.lapmaskSH == otherSpot.lapmaskSH;
                 locallab.spots.at(j).detailSH = locallab.spots.at(j).detailSH && pSpot.detailSH == otherSpot.detailSH;
+                locallab.spots.at(j).tePivot = locallab.spots.at(j).tePivot && pSpot.tePivot == otherSpot.tePivot;
                 locallab.spots.at(j).reparsh = locallab.spots.at(j).reparsh && pSpot.reparsh == otherSpot.reparsh;
                 locallab.spots.at(j).LmaskSHcurve = locallab.spots.at(j).LmaskSHcurve && pSpot.LmaskSHcurve == otherSpot.LmaskSHcurve;
                 locallab.spots.at(j).fatamountSH = locallab.spots.at(j).fatamountSH && pSpot.fatamountSH == otherSpot.fatamountSH;
@@ -2857,24 +2862,8 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.wb.observer = mods.wb.observer;
     }
 
-    if (wb.itcwb_thres) {
-        toEdit.wb.itcwb_thres = mods.wb.itcwb_thres;
-    }
-
-    if (wb.itcwb_precis) {
-        toEdit.wb.itcwb_precis = mods.wb.itcwb_precis;
-    }
-
-    if (wb.itcwb_size) {
-        toEdit.wb.itcwb_size = mods.wb.itcwb_size;
-    }
-
-    if (wb.itcwb_delta) {
-        toEdit.wb.itcwb_delta = mods.wb.itcwb_delta;
-    }
-
-    if (wb.itcwb_fgreen) {
-        toEdit.wb.itcwb_fgreen = mods.wb.itcwb_fgreen;
+    if (wb.itcwb_green) {
+        toEdit.wb.itcwb_green = mods.wb.itcwb_green;
     }
 
     if (wb.itcwb_rgreen) {
@@ -2885,12 +2874,12 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.wb.itcwb_nopurple = mods.wb.itcwb_nopurple;
     }
 
-    if (wb.itcwb_sorted) {
-        toEdit.wb.itcwb_sorted = mods.wb.itcwb_sorted;
+    if (wb.itcwb_alg) {
+        toEdit.wb.itcwb_alg = mods.wb.itcwb_alg;
     }
 
-    if (wb.itcwb_forceextra) {
-        toEdit.wb.itcwb_forceextra = mods.wb.itcwb_forceextra;
+    if (wb.itcwb_prim) {
+        toEdit.wb.itcwb_prim = mods.wb.itcwb_prim;
     }
 
     if (wb.itcwb_sampling) {
@@ -3263,6 +3252,37 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (sh.lab) {
         toEdit.sh.lab = mods.sh.lab;
+    }
+
+    if (toneEqualizer.enabled) {
+        toEdit.toneEqualizer.enabled = mods.toneEqualizer.enabled;
+    }
+
+    for (size_t i = 0; i < toneEqualizer.bands.size(); ++i) {
+        if (toneEqualizer.bands[i]) {
+            toEdit.toneEqualizer.bands[i] =
+                dontforceSet && options.baBehav[ADDSET_TONE_EQUALIZER_BANDS]
+                    ? toEdit.toneEqualizer.bands[i] + mods.toneEqualizer.bands[i]
+                    : mods.toneEqualizer.bands[i];
+        }
+    }
+
+    if (toneEqualizer.regularization) {
+        toEdit.toneEqualizer.regularization =
+            dontforceSet && options.baBehav[ADDSET_TONE_EQUALIZER_REGULARIZATION]
+                ? toEdit.toneEqualizer.regularization + mods.toneEqualizer.regularization
+                : mods.toneEqualizer.regularization;
+    }
+
+    if (toneEqualizer.show_colormap) {
+        toEdit.toneEqualizer.show_colormap = mods.toneEqualizer.show_colormap;
+    }
+
+    if (toneEqualizer.pivot) {
+        toEdit.toneEqualizer.pivot =
+            dontforceSet && options.baBehav[ADDSET_TONE_EQUALIZER_PIVOT]
+                ? toEdit.toneEqualizer.pivot + mods.toneEqualizer.pivot
+                : mods.toneEqualizer.pivot;
     }
 
     if (crop.enabled) {
@@ -4205,6 +4225,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).detailSH) {
             toEdit.locallab.spots.at(i).detailSH = mods.locallab.spots.at(i).detailSH;
+        }
+
+        if (locallab.spots.at(i).tePivot) {
+            toEdit.locallab.spots.at(i).tePivot = mods.locallab.spots.at(i).tePivot;
         }
 
         if (locallab.spots.at(i).reparsh) {
@@ -7660,6 +7684,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     slomaskSH(v),
     lapmaskSH(v),
     detailSH(v),
+    tePivot(v),
     reparsh(v),
     LmaskSHcurve(v),
     fatamountSH(v),
@@ -8355,6 +8380,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     slomaskSH = v;
     lapmaskSH = v;
     detailSH = v;
+    tePivot = v;
     reparsh = v;
     LmaskSHcurve = v;
     fatamountSH = v;

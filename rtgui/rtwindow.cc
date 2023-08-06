@@ -241,6 +241,7 @@ RTWindow::RTWindow ()
     RTImage::init();
     WhiteBalance::init();
     MyExpander::init();
+    FileBrowserEntry::init();
 
 #ifndef WIN32
     const std::vector<Glib::RefPtr<Gdk::Pixbuf>> appIcons = {

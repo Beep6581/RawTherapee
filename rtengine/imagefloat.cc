@@ -341,6 +341,38 @@ void Imagefloat::getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* imag
 #endif
 }
 
+// From ART.
+void Imagefloat::multiply(float factor, bool multithread)
+{
+    const int W = width;
+    const int H = height;
+#ifdef __SSE2__
+    vfloat vfactor = F2V(factor);
+#endif
+
+#ifdef _OPENMP
+#   pragma omp parallel for firstprivate(W, H) schedule(dynamic, 5) if (multithread)
+#endif
+    for (int y = 0; y < H; y++) {
+        int x = 0;
+#ifdef __SSE2__
+        for (; x < W-3; x += 4) {
+            vfloat rv = LVF(r(y, x));
+            vfloat gv = LVF(g(y, x));
+            vfloat bv = LVF(b(y, x));
+            STVF(r(y, x), rv * vfactor);
+            STVF(g(y, x), gv * vfactor);
+            STVF(b(y, x), bv * vfactor);
+        }
+#endif
+        for (; x < W; ++x) {
+            r(y, x) *= factor;
+            g(y, x) *= factor;
+            b(y, x) *= factor;
+        }
+    }
+}
+
 void Imagefloat::normalizeFloat(float srcMinVal, float srcMaxVal)
 {
 
@@ -362,43 +394,15 @@ void Imagefloat::normalizeFloat(float srcMinVal, float srcMaxVal)
 }
 
 // convert values's range to [0;1] ; this method assumes that the input values's range is [0;65535]
-void Imagefloat::normalizeFloatTo1()
+void Imagefloat::normalizeFloatTo1(bool multithread)
 {
-
-    const int w = width;
-    const int h = height;
-
-#ifdef _OPENMP
-    #pragma omp parallel for schedule(dynamic, 5)
-#endif
-
-    for (int y = 0; y < h; y++) {
-        for (int x = 0; x < w; x++) {
-            r(y, x) /= 65535.f;
-            g(y, x) /= 65535.f;
-            b(y, x) /= 65535.f;
-        }
-    }
+    multiply(1.f/65535.f, multithread);
 }
 
 // convert values's range to [0;65535 ; this method assumes that the input values's range is [0;1]
-void Imagefloat::normalizeFloatTo65535()
+void Imagefloat::normalizeFloatTo65535(bool multithread)
 {
-
-    const int w = width;
-    const int h = height;
-
-#ifdef _OPENMP
-    #pragma omp parallel for schedule(dynamic, 5)
-#endif
-
-    for (int y = 0; y < h; y++) {
-        for (int x = 0; x < w; x++) {
-            r(y, x) *= 65535.f;
-            g(y, x) *= 65535.f;
-            b(y, x) *= 65535.f;
-        }
-    }
+    multiply(65535.f, multithread);
 }
 
 // Parallelized transformation; create transform with cmsFLAGS_NOCACHE!

@@ -18,6 +18,7 @@
  */
 #pragma once
 
+#include <array>
 #include <vector>
 
 namespace rtengine
@@ -248,16 +249,12 @@ struct WBParamsEdited {
     bool equal;
     bool observer;
     bool tempBias;
-    bool itcwb_thres;
-    bool itcwb_precis;
-    bool itcwb_size;
-    bool itcwb_delta;
-    bool itcwb_fgreen;
     bool itcwb_rgreen;
     bool itcwb_nopurple;
-    bool itcwb_sorted;
-    bool itcwb_forceextra;
+    bool itcwb_alg;
+    bool itcwb_prim;
     bool itcwb_sampling;
+    bool itcwb_green;
 
 };
 
@@ -368,6 +365,14 @@ struct SHParamsEdited {
     bool stonalwidth;
     bool radius;
     bool lab;
+};
+
+struct ToneEqualizerParamsEdited {
+    bool enabled;
+    std::array<bool, 5> bands;
+    bool regularization;
+    bool show_colormap;
+    bool pivot;
 };
 
 struct CropParamsEdited {
@@ -591,6 +596,7 @@ public:
         bool slomaskSH;
         bool lapmaskSH;
         bool detailSH;
+        bool tePivot;
         bool reparsh;
         bool LmaskSHcurve;
         bool fatamountSH;
@@ -1559,6 +1565,7 @@ struct ParamsEdited {
     FattalToneMappingParamsEdited fattal;
     ImpulseDenoiseParamsEdited impulseDenoise;
     SHParamsEdited sh;
+    ToneEqualizerParamsEdited toneEqualizer;
     CropParamsEdited crop;
     CoarseTransformParamsEdited coarse;
     CommonTransformParamsEdited commonTrans;

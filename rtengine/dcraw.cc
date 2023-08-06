@@ -4422,10 +4422,10 @@ void CLASS crop_masked_pixels()
     }
   } else {
     if (height + top_margin > raw_height) {
-      top_margin = raw_height - height;
+      top_margin = raw_height - MIN(height, raw_height);
     }
     if (width + left_margin > raw_width) {
-      left_margin = raw_width - width;
+      left_margin = raw_width - MIN(width, raw_width);
     }
 #ifdef _OPENMP
 #pragma omp parallel for
@@ -6812,17 +6812,17 @@ guess_cfa_pc:
 	linear_table (len);
 	break;
       case 50713:			/* BlackLevelRepeatDim */
-	if (tiff_ifd[ifd].new_sub_file_type != 0) continue;
+	if (tiff_ifd[ifd].new_sub_file_type != 0) break;
 	cblack[4] = get2();
 	cblack[5] = get2();
 	if (cblack[4] * cblack[5] > sizeof cblack / sizeof *cblack - 6)
 	    cblack[4] = cblack[5] = 1;
 	break;
       case 61450:
-	if (tiff_ifd[ifd].new_sub_file_type != 0) continue;
+	if (tiff_ifd[ifd].new_sub_file_type != 0) break;
 	cblack[4] = cblack[5] = MIN(sqrt(len),64);
       case 50714:			/* BlackLevel */
-	if (tiff_ifd[ifd].new_sub_file_type != 0) continue;
+	if (tiff_ifd[ifd].new_sub_file_type != 0) break;
                 RT_blacklevel_from_constant = ThreeValBool::F;
 //-----------------------------------------------------------------------------
 // taken from LibRaw.
@@ -8675,7 +8675,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
     { "Olympus E-M5MarkII", 0, 0,
 	{ 9422,-3258,-711,-2655,10898,2015,-512,1354,5512 } },
     { "Olympus E-M5", 0, 0xfe1,
-	{ 8380,-2630,-639,-2887,10725,2496,-627,1427,5438 } },
+	{ 8380,-2630,-639,-2887,10725,2496,-627,1427,5438 } },//D65
+//	{ 9033,-3597, 26,-2351, 9700, 3111, -181, 807, 5838} },//stDA
     { "Olympus PEN-F", 0, 0,
 	{ 9476,-3182,-765,-2613,10958,1893,-449,1315,5268 } },
     { "Olympus SH-2", 0, 0,
@@ -9807,9 +9808,9 @@ void CLASS identify()
   if (!strncasecmp (model, make, i) && model[i++] == ' ')
     memmove (model, model+i, 64-i);
   if (!strncmp (model,"FinePix ",8))
-    strcpy (model, model+8);
+/* RT */    memmove (model, model+8, 64-8);
   if (!strncmp (model,"Digital Camera ",15))
-    strcpy (model, model+15);
+/* RT */    memmove (model, model+15, 64-15);
   desc[511] = artist[63] = make[63] = model[63] = model2[63] = 0;
   if (!is_raw) goto notraw;
 
@@ -10138,8 +10139,8 @@ canon_a5:
         width = raw_width = 5504;
         height = raw_height = 3856;
     }
-    top_margin = (raw_height - height) >> 2 << 1;
-    left_margin = (raw_width - width ) >> 2 << 1;
+    top_margin = (raw_height - MIN(height, raw_height)) >> 2 << 1;
+    left_margin = (raw_width - MIN(width, raw_width) ) >> 2 << 1;
     if (width == 2848 || width == 3664) filters = 0x16161616;
     if (width == 4032 || width == 4952 || width == 6032 || width == 8280) left_margin = 0;
     if (width == 3328 && (width -= 66)) left_margin = 34;

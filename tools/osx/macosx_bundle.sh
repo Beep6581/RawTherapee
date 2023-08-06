@@ -225,8 +225,11 @@ ModifyInstallNames 2>&1
 # Copy libpng16 to the app bundle
 cp ${LOCAL_PREFIX}/lib/libpng16.16.dylib "${CONTENTS}/Frameworks/libpng16.16.dylib"
 
-# Copy libtiff 5 into the app bundle
-cp ${LOCAL_PREFIX}/lib/libtiff.5.dylib "${CONTENTS}/Frameworks/libtiff.5.dylib"
+# Copy graphite to Frameworks
+cp ${LOCAL_PREFIX}/lib/libgraphite2.3.dylib "${CONTENTS}/Frameworks"
+
+# Copy libtiff 6 into the app bundle
+cp ${LOCAL_PREFIX}/lib/libtiff.6.dylib "${CONTENTS}/Frameworks/libtiff.6.dylib"
 
 # Copy libomp to Frameworks
 cp ${LOCAL_PREFIX}/lib/libomp.dylib "${CONTENTS}/Frameworks"
@@ -316,7 +319,7 @@ for frameworklibs in "${LIB}"/*{dylib,so,cli}; do
 done
 install_name_tool -delete_rpath RawTherapee.app/Contents/Frameworks "${EXECUTABLE}"-cli 2>/dev/null
 install_name_tool -add_rpath /Applications/"${LIB}" "${EXECUTABLE}"-cli 2>/dev/null
-ditto "${EXECUTABLE}"-cli "${APP}"/..
+# ditto "${EXECUTABLE}"-cli "${APP}"/..
 
 # Merge the app with the other architecture to create the Universal app.
 if [[ -n $UNIVERSAL_URL ]]; then
@@ -324,7 +327,7 @@ if [[ -n $UNIVERSAL_URL ]]; then
     curl -L ${UNIVERSAL_URL} -o univ.zip
     msg "Extracting app."
     unzip univ.zip -d univapp
-    hdiutil attach -mountpoint ./RawTherapeeuniv univapp/*/*dmg
+    hdiutil attach -mountpoint ./RawTherapeeuniv univapp/*dmg
     if [[ $arch = "arm64" ]]; then
         cp -R RawTherapee.app RawTherapee-arm64.app
         minimum_arm64_version=$(f=$(cat RawTherapee-arm64.app/Contents/Resources/AboutThisBuild.txt | grep mmacosx-version); echo "${f#*min=}" | cut -d ' ' -f1)
@@ -344,13 +347,15 @@ if [[ -n $UNIVERSAL_URL ]]; then
     hdiutil unmount ./RawTherapeeuniv
     rm -r univapp
     # Create the fat main RawTherapee binary and move it into the new bundle
-    lipo -create -output RawTherapee RawTherapee-arm64.app/Contents/MacOS/RawTherapee RawTherapee-x86_64.app/Contents/MacOS/RawTherapee
-    mv RawTherapee RawTherapee.app/Contents/MacOS
+    lipo -create -output RawTherapee RawTherapee-arm64.app/Contents/MacOS/rawtherapee RawTherapee-x86_64.app/Contents/MacOS/rawtherapee
+    lipo -create -output rawtherapee-cli RawTherapee-arm64.app/Contents/MacOS/rawtherapee-cli RawTherapee-x86_64.app/Contents/MacOS/rawtherapee-cli
+    mv rawtherapee RawTherapee.app/Contents/MacOS
     # Create all the fat dependencies and move them into the bundle
     for lib in RawTherapee-arm64.app/Contents/Frameworks/* ; do
         lipo -create -output $(basename $lib) RawTherapee-arm64.app/Contents/Frameworks/$(basename $lib) RawTherapee-x86_64.app/Contents/Frameworks/$(basename $lib)
     done
-    sudo mv *cli *so *dylib RawTherapee.app/Contents/Frameworks
+    sudo mv *so *dylib RawTherapee.app/Contents/Frameworks
+    sudo mv *-cli RawTherapee.app/Contents/MacOS
     rm -r RawTherapee-arm64.app
     rm -r RawTherapee-x86_64.app
 else
@@ -363,7 +368,8 @@ fi
 if [[ -n $CODESIGNID ]]; then
     msg "Codesigning Application."
     iconv -f UTF-8 -t ASCII "${PROJECT_SOURCE_DATA_DIR}"/rt.entitlements > "${CMAKE_BUILD_TYPE}"/rt.entitlements
-    mv "${EXECUTABLE}"-cli "${LIB}"
+#    mv "${EXECUTABLE}"-cli "${LIB}"
+    codesign --force --deep --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee-cli "${APP}"/Contents/MacOS/rawtherapee-cli
     codesign --force --deep --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements "${APP}"
     spctl -a -vvvv "${APP}"
 fi
@@ -441,7 +447,8 @@ function CreateDmg {
     # Zip disk image for redistribution
     msg "Zipping disk image for redistribution:"
     mkdir "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}_folder"
-        cp {"${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}.dmg","${PROJECT_NAME}.app/Contents/Frameworks/rawtherapee-cli","${PROJECT_SOURCE_DATA_DIR}/INSTALL.readme.rtf"} "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}_folder"
+    cp {"${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}.dmg","${PROJECT_NAME}.app/Contents/MacOS/rawtherapee-cli","${PROJECT_SOURCE_DATA_DIR}/INSTALL.readme.rtf"} "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}_folder"
+    codesign -s - -i com.rawtherapee.rawtherapee-cli -f "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}_folder/rawtherapee-cli"
     zip -r "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}.zip" "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}_folder/"
     if [[ -n $NIGHTLY ]]; then
         cp "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}.zip" "${PROJECT_NAME}_macOS_${arch}_latest.zip"

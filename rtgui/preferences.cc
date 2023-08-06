@@ -233,6 +233,12 @@ Gtk::Widget* Preferences::getBatchProcPanel()
     appendBehavList(mi, M("TP_SHADOWSHLIGHTS_SHADOWS"), ADDSET_SH_SHADOWS, false);
 
     mi = behModel->append();
+    mi->set_value(behavColumns.label, M("TP_TONE_EQUALIZER_LABEL"));
+    appendBehavList(mi, M("TP_TONE_EQUALIZER_BANDS"), ADDSET_TONE_EQUALIZER_BANDS, false);
+    appendBehavList(mi, M("TP_TONE_EQUALIZER_PIVOT"), ADDSET_TONE_EQUALIZER_PIVOT, false);
+    appendBehavList(mi, M("TP_TONE_EQUALIZER_DETAIL"), ADDSET_TONE_EQUALIZER_REGULARIZATION, false);
+
+    mi = behModel->append();
     mi->set_value(behavColumns.label, M("TP_LABCURVE_LABEL"));
     appendBehavList(mi, M("TP_LABCURVE_BRIGHTNESS"), ADDSET_LC_BRIGHTNESS, false);
     appendBehavList(mi, M("TP_LABCURVE_CONTRAST"), ADDSET_LC_CONTRAST, false);
@@ -980,6 +986,23 @@ Gtk::Widget* Preferences::getColorManPanel ()
     vbColorMan->pack_start (*fcie, Gtk::PACK_SHRINK);
 
 
+    //------------White-Balance auto temperature correlation
+    
+    Gtk::Frame* fwbacorr = Gtk::manage(new Gtk::Frame(M("PREFERENCES_WBACORR")));
+    fwbacorr->set_tooltip_text(M("PREFERENCES_WBACORR_TOOLTIP"));
+    fwbacorr->set_label_align(0.025, 0.5);
+    Gtk::Box* wbaVB = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL) );
+    Gtk::Box* wbah = Gtk::manage ( new Gtk::Box () );
+    wbah->set_spacing (4);
+    
+    mwbaena = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_WBAENA")));
+    setExpandAlignProperties(mwbaena, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    mwbaena->set_active(true);
+    wbah->pack_start(*mwbaena, Gtk::PACK_SHRINK, 0);
+    wbaVB->add(*wbah);
+
+    fwbacorr->add (*wbaVB);
+    vbColorMan->pack_start (*fwbacorr, Gtk::PACK_SHRINK);
     //-------------
 
     swColorMan->add(*vbColorMan);
@@ -1850,6 +1873,7 @@ void Preferences::storePreferences()
     moptions.rtSettings.monitorBPC = monBPC->get_active();
     moptions.rtSettings.autoMonitorProfile = cbAutoMonProfile->get_active();
     moptions.rtSettings.autocielab = mcie->get_active();
+    moptions.rtSettings.itcwb_enable = mwbaena->get_active();
 
 #endif
 
@@ -2012,6 +2036,7 @@ void Preferences::fillPreferences()
 
     monBPC->set_active(moptions.rtSettings.monitorBPC);
     mcie->set_active(moptions.rtSettings.autocielab);
+    mwbaena->set_active(moptions.rtSettings.itcwb_enable);
 
     cbAutoMonProfile->set_active(moptions.rtSettings.autoMonitorProfile);
 #endif

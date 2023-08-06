@@ -82,59 +82,6 @@ void IdleRegister::destroy()
     mutex.unlock();
 }
 
-/*
-gboolean giveMeAGo(void* data) {
-    GThreadLock *threadMutex = static_cast<GThreadLock*>(data);
-    printf("A\n");
-    Glib::Threads::Mutex::Lock GUILock(threadMutex->GUI);
-    printf("B\n");
-    {
-    Glib::Threads::Mutex::Lock operationLock(threadMutex->operation);
-    printf("C\n");
-
-    threadMutex->operationCond.signal();
-    printf("D\n");
-    operationLock.release();  // because we're not sure that "lock" destructor happens here...
-    }
-    threadMutex->GUICond.wait(threadMutex->GUI);
-    printf("E\n");
-
-    GUILock.release();
-
-    return false;
-}
-
-GThreadLock::GThreadLock() : sameThread(false) {
-    if (Glib::Threads::Thread::self() == mainThread) {
-        sameThread = true;
-        return;
-    }
-
-    printf("10\n");
-    {
-    Glib::Threads::Mutex::Lock operationLock(operation);
-
-    printf("20\n");
-    gdk_threads_add_idle(giveMeAGo, this);
-
-    printf("30\n");
-    operationCond.wait(operation);
-    printf("40\n");
-    operationLock.release();
-    }
-}
-
-GThreadLock::~GThreadLock() {
-    if (!sameThread) {
-        printf("50\n");
-        Glib::Threads::Mutex::Lock lock(GUI);
-        printf("60\n");
-        GUICond.signal();
-        printf("Fin\n");
-    }
-}
-*/
-
 Glib::ustring escapeHtmlChars(const Glib::ustring &src)
 {
 

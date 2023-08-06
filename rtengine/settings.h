@@ -9,7 +9,7 @@
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *  RawTherapee is distributed in the hope that it will be useful,
-itcw *
+ * 
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
@@ -61,6 +61,7 @@ public:
     Glib::ustring   srgb;                   // filename of sRGB         profile (default to the bundled one)
     Glib::ustring   rec2020;                // filename of Rec2020      profile (default to the bundled one)
     Glib::ustring   ACESp0;                 // filename of ACES P0      profile (default to the bundled one)
+    Glib::ustring   JDCmax;                 // filename of JDCmax      profile (default to the bundled one)
     Glib::ustring   ACESp1;                 // filename of ACES P1      profile (default to the bundled one)
     Glib::ustring   DCIP3;                 // filename of DCIP3         profile (default to the bundled one)
 
@@ -96,6 +97,9 @@ public:
     double          cbdlsensi;
 //    bool            showtooltip;
     bool            itcwb_enable;
+    double          itcwb_deltaspec;
+    double          itcwb_powponder;
+
 //wavelet levels
     double          edghi;
     double          edglo;

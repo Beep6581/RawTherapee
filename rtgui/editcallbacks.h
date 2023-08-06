@@ -18,6 +18,8 @@
  */
 #pragma once
 
+#include <vector>
+
 #include "editid.h"
 #include "cursormanager.h"
 #include "../rtengine/coord.h"
