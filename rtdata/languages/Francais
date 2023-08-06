@@ -2732,8 +2732,8 @@ TP_RGBCURVES_BLUE;B
 TP_RGBCURVES_CHANNEL;Canal
 TP_RGBCURVES_GREEN;V
 TP_RGBCURVES_LABEL;Courbes RVB
-TP_RGBCURVES_LUMAMODE;Mode Lominosité
-TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Mode Lominosité</b> permet de faire varier la contribution des canaux R, V et B à la luminosité de l'image, sans altérer les couleurs de l'image.
+TP_RGBCURVES_LUMAMODE;Mode Luminosité
+TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Mode Luminosité</b> permet de faire varier la contribution des canaux R, V et B à la luminosité de l'image, sans altérer les couleurs de l'image.
 TP_RGBCURVES_RED;R
 TP_ROTATE_DEGREE;Degré
 TP_ROTATE_LABEL;Rotation

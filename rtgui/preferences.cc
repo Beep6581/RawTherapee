@@ -959,6 +959,23 @@ Gtk::Widget* Preferences::getColorManPanel ()
     vbColorMan->pack_start (*fcie, Gtk::PACK_SHRINK);
 
 
+    //------------White-Balance auto temperature correlation
+    
+    Gtk::Frame* fwbacorr = Gtk::manage(new Gtk::Frame(M("PREFERENCES_WBACORR")));
+    fwbacorr->set_tooltip_text(M("PREFERENCES_WBACORR_TOOLTIP"));
+    fwbacorr->set_label_align(0.025, 0.5);
+    Gtk::Box* wbaVB = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL) );
+    Gtk::Box* wbah = Gtk::manage ( new Gtk::Box () );
+    wbah->set_spacing (4);
+    
+    mwbaena = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_WBAENA")));
+    setExpandAlignProperties(mwbaena, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    mwbaena->set_active(true);
+    wbah->pack_start(*mwbaena, Gtk::PACK_SHRINK, 0);
+    wbaVB->add(*wbah);
+
+    fwbacorr->add (*wbaVB);
+    vbColorMan->pack_start (*fwbacorr, Gtk::PACK_SHRINK);
     //-------------
 
     swColorMan->add(*vbColorMan);
@@ -1755,7 +1772,12 @@ void Preferences::storePreferences()
 
     const std::vector<ExternalEditorPreferences::EditorInfo> &editors = externalEditors->getEditors();
     moptions.externalEditors.resize(editors.size());
-    moptions.externalEditorIndex = -1;
+    moptions.externalEditorIndex =
+#ifdef __APPLE__
+        editors.empty() ? -1 : 0;
+#else
+        -1;
+#endif
     for (unsigned i = 0; i < editors.size(); i++) {
         moptions.externalEditors[i] = (ExternalEditor(
             editors[i].name, editors[i].command, editors[i].native_command, editors[i].icon_serialized));
@@ -1829,6 +1851,7 @@ void Preferences::storePreferences()
     moptions.rtSettings.monitorBPC = monBPC->get_active();
     moptions.rtSettings.autoMonitorProfile = cbAutoMonProfile->get_active();
     moptions.rtSettings.autocielab = mcie->get_active();
+    moptions.rtSettings.itcwb_enable = mwbaena->get_active();
 
 #endif
 
@@ -1988,6 +2011,7 @@ void Preferences::fillPreferences()
 
     monBPC->set_active(moptions.rtSettings.monitorBPC);
     mcie->set_active(moptions.rtSettings.autocielab);
+    mwbaena->set_active(moptions.rtSettings.itcwb_enable);
 
     cbAutoMonProfile->set_active(moptions.rtSettings.autoMonitorProfile);
 #endif

@@ -1231,7 +1231,7 @@ Camera constants:
         "raw_crop": [ 160, 120, 6024, 4024 ]
     },
 
-    { // Quality C
+    { // Quality A
         "make_model": "Canon EOS R5",
         "dcraw_matrix" : [9766, -2953, -1254, -4276, 12116, 2433, -437, 1336, 5131],
         "raw_crop" : [
@@ -1242,7 +1242,7 @@ Camera constants:
             { "frame" : [ 8352, 5586 ], "areas": [ 94, 20, 5578, 122 ] },
             { "frame" : [ 5248, 3510 ], "areas": [ 94, 20, 3510, 122 ] }
         ],
-        "ranges" : { "white" : 16382 }
+        "ranges" : { "white" : 16300 } // 16382 without LENR, add margin for LENR. Dual-pixel frame 2 is lower for low ISOs.
     },
 
     { // Quality C
@@ -1260,10 +1260,10 @@ Camera constants:
     },
 
     { // Quality C
-        "make_model": "Canon EOS R6m2",
+        "make_model": ["Canon EOS R6m2", "Canon EOS R8"],
         "dcraw_matrix": [9539, -2795, -1224, -4175, 11998, 2458, -465, 1755, 6048],
         "raw_crop": [
-            {"frame": [6188, 4120], "crop": [154, 96, 6028, 4024]},
+            {"frame": [6188, 4120], "crop": [154, 96, 6024, 4024]},
             {"frame": [3936, 2612], "crop": [156, 96, 3780, 2516]}
         ],
         "masked_areas": [
@@ -1756,7 +1756,7 @@ Camera constants:
     { // Quality B, lacks aperture and ISO scaling, known to exist, but little to gain as the levels are so close to white_max
         "make_model": "Nikon D7000",
         "dcraw_matrix": [ 7530,-1942,-255,-4318,11390,3362,-926,1694,7649 ], // matrix provided by Tanveer(tsk1979)
-        //"dcraw_matrix": [ 8198, -2239, -725, -4871, 12388, 2798, -1043, 2050, 7181 ], // DNG v13.2
+       // "dcraw_matrix": [ 8198, -2239, -725, -4871, 12388, 2798, -1043, 2050, 7181 ], // DNG v13.2
         "ranges": {
             // measured at ISO 100. ISO differences not measured, but known to exist
             "white": [ 16300, 15700, 16300 ], // typical R 16383, G 15778, B 16383
@@ -2204,8 +2204,8 @@ Camera constants:
 
     { // Quality B
         "make_model": [ "Panasonic DC-LX100M2" ],
-        "dcraw_matrix": [ 11577, -4230, -1106, -3967, 12211, 1957, -759, 1762, 5610 ], // DNG v13.2
-        //"dcraw_matrix": [ 8585, -3127, -833, -4005, 12250, 1953, -650, 1494, 4862 ], // DNG v13.2 alternate
+        //"dcraw_matrix": [ 11577, -4230, -1106, -3967, 12211, 1957, -759, 1762, 5610 ], // DNG v13.2
+        "dcraw_matrix": [ 8585, -3127, -833, -4005, 12250, 1953, -650, 1494, 4862 ], // DNG v13.2 alternate
         "raw_crop": [ 0, 0, 0, 0 ],
         "ranges": { "black": 15 }
     },

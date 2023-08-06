@@ -111,7 +111,7 @@ public:
     {
         rm = gm = bm = 1.0;
     }
-    virtual void getAutoWBMultipliersitc(double &tempref, double &greenref, double &tempitc, double &greenitc, float &studgood,  int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double &rm, double &gm, double &bm, const procparams::WBParams & wbpar, const procparams::ColorManagementParams &cmp, const procparams::RAWParams &raw, const procparams::ToneCurveParams &hrp)
+    virtual void getAutoWBMultipliersitc(bool extra, double &tempref, double &greenref, double &tempitc, double &greenitc, float &temp0, float &delta, int &bia, int &dread, int &kcam,  int &nocam, float &studgood,  float &minchrom, int &kmin, float &minhist, float &maxhist, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double &rm, double &gm, double &bm, const procparams::WBParams & wbpar, const procparams::ColorManagementParams &cmp, const procparams::RAWParams &raw, const procparams::ToneCurveParams &hrp)
     {
         rm = gm = bm = 1.0;
     }
@@ -1858,7 +1858,7 @@ class IImage : virtual public ImageDimensions
 public:
 
     virtual ~IImage() {}
-    /** @brief Returns a mutex that can is useful in many situations. No image operations shuold be performed without locking this mutex.
+    /** @brief Returns a mutex that can is useful in many situations. No image operations should be performed without locking this mutex.
       * @return The mutex */
     virtual MyMutex& getMutex () = 0;
     virtual cmsHPROFILE getProfile () const = 0;

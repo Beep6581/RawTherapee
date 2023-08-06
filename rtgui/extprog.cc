@@ -344,13 +344,13 @@ bool ExtProgStore::openInCustomEditor (const Glib::ustring& fileName, const Glib
 
 }
 
-bool ExtProgStore::openInExternalEditor(const Glib::ustring &fileName, const Glib::RefPtr<Gio::AppInfo> &editorInfo, bool nativeCommand)
+bool ExtProgStore::openInExternalEditor(const Glib::ustring &fileName, const EditorInfo &editorInfo)
 {
-    if (nativeCommand) {
+    if (editorInfo.isNativeCommand) {
         if (rtengine::settings->verbose) {
             std::cout << "Launching external editor as native command." << std::endl;
         }
-        const Glib::ustring command = editorInfo->get_commandline();
+        const Glib::ustring command = editorInfo.commandline;
         return openInCustomEditor(fileName, &command);
     }
 
@@ -361,7 +361,10 @@ bool ExtProgStore::openInExternalEditor(const Glib::ustring &fileName, const Gli
     bool success = false;
 
     try {
-        success = editorInfo->launch(Gio::File::create_for_path(fileName));
+        Glib::RefPtr<Gio::AppInfo> appInfo =
+            Gio::AppInfo::create_from_commandline(
+                editorInfo.commandline, editorInfo.name, Gio::APP_INFO_CREATE_NONE);
+        success = appInfo->launch(Gio::File::create_for_path(fileName));
     } catch (const Glib::Error &e) {
         std::cerr
             << "Error launching external editor.\n"
@@ -377,7 +380,7 @@ bool ExtProgStore::openInExternalEditor(const Glib::ustring &fileName, const Gli
     if (rtengine::settings->verbose) {
         std::cout << "Unable to launch external editor with Gio. Trying custom launcher." << std::endl;
     }
-    Glib::ustring command = editorInfo->get_commandline();
+    Glib::ustring command = editorInfo.commandline;
 #if defined WIN32
     if (command.length() > 2 && command[0] == '"' && command[command.length() - 1] == '"') {
         command = command.substr(1, command.length() - 2);
