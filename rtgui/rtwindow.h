@@ -20,6 +20,7 @@
 #include <set>
 
 #include <gtkmm.h>
+#include <sigc++/signal.h>
 
 #if defined(__APPLE__)
 #include <gtkosxapplication.h>
@@ -47,6 +48,8 @@ private:
     BatchQueuePanel* bpanel;
     std::set<Glib::ustring> filesEdited;
     std::map<Glib::ustring, EditorPanel*> epanels;
+
+    sigc::signal<void> externalEditorChangedSignal;
 
     Splash* splash;
     Gtk::ProgressBar prProgBar;
