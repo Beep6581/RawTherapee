@@ -1772,7 +1772,12 @@ void Preferences::storePreferences()
 
     const std::vector<ExternalEditorPreferences::EditorInfo> &editors = externalEditors->getEditors();
     moptions.externalEditors.resize(editors.size());
-    moptions.externalEditorIndex = -1;
+    moptions.externalEditorIndex =
+#ifdef __APPLE__
+        editors.empty() ? -1 : 0;
+#else
+        -1;
+#endif
     for (unsigned i = 0; i < editors.size(); i++) {
         moptions.externalEditors[i] = (ExternalEditor(
             editors[i].name, editors[i].command, editors[i].native_command, editors[i].icon_serialized));
