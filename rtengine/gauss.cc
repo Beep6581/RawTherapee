@@ -19,6 +19,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
+#include <vector>
 
 #include "gauss.h"
 
@@ -1129,40 +1130,45 @@ template<class T> void gaussVertical (T** src, T** dst, const int W, const int H
 
     // process 'numcols' columns for better usage of L1 cpu cache (especially faster for large values of H)
     static const int numcols = 8;
-    double temp2[H][numcols] ALIGNED16;
+    std::vector<double> temp2(H * numcols);
     double temp2Hm1[numcols], temp2H[numcols], temp2Hp1[numcols];
+
+    auto coord =
+    [](const int &x, const int &y) -> int {
+        return x * numcols + y;
+    };
 #ifdef _OPENMP
     #pragma omp for nowait
 #endif
 
     for (unsigned int i = 0; i < static_cast<unsigned>(std::max(0, W - numcols + 1)); i += numcols) {
         for (int k = 0; k < numcols; k++) {
-            temp2[0][k] = B * src[0][i + k] + b1 * src[0][i + k] + b2 * src[0][i + k] + b3 * src[0][i + k];
-            temp2[1][k] = B * src[1][i + k] + b1 * temp2[0][k] + b2 * src[0][i + k] + b3 * src[0][i + k];
-            temp2[2][k] = B * src[2][i + k] + b1 * temp2[1][k] + b2 * temp2[0][k] + b3 * src[0][i + k];
+            temp2[coord(0, k)] = B * src[0][i + k] + b1 * src[0][i + k] + b2 * src[0][i + k] + b3 * src[0][i + k];
+            temp2[coord(1, k)] = B * src[1][i + k] + b1 * temp2[coord(0, k)] + b2 * src[0][i + k] + b3 * src[0][i + k];
+            temp2[coord(2, k)] = B * src[2][i + k] + b1 * temp2[coord(1, k)] + b2 * temp2[coord(0, k)] + b3 * src[0][i + k];
         }
 
         for (int j = 3; j < H; j++) {
             for (int k = 0; k < numcols; k++) {
-                temp2[j][k] = B * src[j][i + k] + b1 * temp2[j - 1][k] + b2 * temp2[j - 2][k] + b3 * temp2[j - 3][k];
+                temp2[coord(j, k)] = B * src[j][i + k] + b1 * temp2[coord(j - 1, k)] + b2 * temp2[coord(j - 2, k)] + b3 * temp2[coord(j - 3, k)];
             }
         }
 
         for (int k = 0; k < numcols; k++) {
-            temp2Hm1[k] = src[H - 1][i + k] + M[0][0] * (temp2[H - 1][k] - src[H - 1][i + k]) + M[0][1] * (temp2[H - 2][k] - src[H - 1][i + k]) + M[0][2] * (temp2[H - 3][k] - src[H - 1][i + k]);
-            temp2H[k]   = src[H - 1][i + k] + M[1][0] * (temp2[H - 1][k] - src[H - 1][i + k]) + M[1][1] * (temp2[H - 2][k] - src[H - 1][i + k]) + M[1][2] * (temp2[H - 3][k] - src[H - 1][i + k]);
-            temp2Hp1[k] = src[H - 1][i + k] + M[2][0] * (temp2[H - 1][k] - src[H - 1][i + k]) + M[2][1] * (temp2[H - 2][k] - src[H - 1][i + k]) + M[2][2] * (temp2[H - 3][k] - src[H - 1][i + k]);
+            temp2Hm1[k] = src[H - 1][i + k] + M[0][0] * (temp2[coord(H - 1, k)] - src[H - 1][i + k]) + M[0][1] * (temp2[coord(H - 2, k)] - src[H - 1][i + k]) + M[0][2] * (temp2[coord(H - 3, k)] - src[H - 1][i + k]);
+            temp2H[k]   = src[H - 1][i + k] + M[1][0] * (temp2[coord(H - 1, k)] - src[H - 1][i + k]) + M[1][1] * (temp2[coord(H - 2, k)] - src[H - 1][i + k]) + M[1][2] * (temp2[coord(H - 3, k)] - src[H - 1][i + k]);
+            temp2Hp1[k] = src[H - 1][i + k] + M[2][0] * (temp2[coord(H - 1, k)] - src[H - 1][i + k]) + M[2][1] * (temp2[coord(H - 2, k)] - src[H - 1][i + k]) + M[2][2] * (temp2[coord(H - 3, k)] - src[H - 1][i + k]);
         }
 
         for (int k = 0; k < numcols; k++) {
-            dst[H - 1][i + k] = temp2[H - 1][k] = temp2Hm1[k];
-            dst[H - 2][i + k] = temp2[H - 2][k] = B * temp2[H - 2][k] + b1 * temp2[H - 1][k] + b2 * temp2H[k] + b3 * temp2Hp1[k];
-            dst[H - 3][i + k] = temp2[H - 3][k] = B * temp2[H - 3][k] + b1 * temp2[H - 2][k] + b2 * temp2[H - 1][k] + b3 * temp2H[k];
+            dst[H - 1][i + k] = temp2[coord(H - 1, k)] = temp2Hm1[k];
+            dst[H - 2][i + k] = temp2[coord(H - 2, k)] = B * temp2[coord(H - 2, k)] + b1 * temp2[coord(H - 1, k)] + b2 * temp2H[k] + b3 * temp2Hp1[k];
+            dst[H - 3][i + k] = temp2[coord(H - 3, k)] = B * temp2[coord(H - 3, k)] + b1 * temp2[coord(H - 2, k)] + b2 * temp2[coord(H - 1, k)] + b3 * temp2H[k];
         }
 
         for (int j = H - 4; j >= 0; j--) {
             for (int k = 0; k < numcols; k++) {
-                dst[j][i + k] = temp2[j][k] = B * temp2[j][k] + b1 * temp2[j + 1][k] + b2 * temp2[j + 2][k] + b3 * temp2[j + 3][k];
+                dst[j][i + k] = temp2[coord(j, k)] = B * temp2[coord(j, k)] + b1 * temp2[coord(j + 1, k)] + b2 * temp2[coord(j + 2, k)] + b3 * temp2[coord(j + 3, k)];
             }
         }
     }
@@ -1173,24 +1179,24 @@ template<class T> void gaussVertical (T** src, T** dst, const int W, const int H
 
     // process remaining columns
     for (int i = W - (W % numcols); i < W; i++) {
-        temp2[0][0] = B * src[0][i] + b1 * src[0][i] + b2 * src[0][i] + b3 * src[0][i];
-        temp2[1][0] = B * src[1][i] + b1 * temp2[0][0]  + b2 * src[0][i] + b3 * src[0][i];
-        temp2[2][0] = B * src[2][i] + b1 * temp2[1][0]  + b2 * temp2[0][0]  + b3 * src[0][i];
+        temp2[coord(0, 0)] = B * src[0][i] + b1 * src[0][i] + b2 * src[0][i] + b3 * src[0][i];
+        temp2[coord(1, 0)] = B * src[1][i] + b1 * temp2[coord(0, 0)]  + b2 * src[0][i] + b3 * src[0][i];
+        temp2[coord(2, 0)] = B * src[2][i] + b1 * temp2[coord(1, 0)]  + b2 * temp2[coord(0, 0)]  + b3 * src[0][i];
 
         for (int j = 3; j < H; j++) {
-            temp2[j][0] = B * src[j][i] + b1 * temp2[j - 1][0] + b2 * temp2[j - 2][0] + b3 * temp2[j - 3][0];
+            temp2[coord(j, 0)] = B * src[j][i] + b1 * temp2[coord(j - 1, 0)] + b2 * temp2[coord(j - 2, 0)] + b3 * temp2[coord(j - 3, 0)];
         }
 
-        double temp2Hm1 = src[H - 1][i] + M[0][0] * (temp2[H - 1][0] - src[H - 1][i]) + M[0][1] * (temp2[H - 2][0] - src[H - 1][i]) + M[0][2] * (temp2[H - 3][0] - src[H - 1][i]);
-        double temp2H   = src[H - 1][i] + M[1][0] * (temp2[H - 1][0] - src[H - 1][i]) + M[1][1] * (temp2[H - 2][0] - src[H - 1][i]) + M[1][2] * (temp2[H - 3][0] - src[H - 1][i]);
-        double temp2Hp1 = src[H - 1][i] + M[2][0] * (temp2[H - 1][0] - src[H - 1][i]) + M[2][1] * (temp2[H - 2][0] - src[H - 1][i]) + M[2][2] * (temp2[H - 3][0] - src[H - 1][i]);
+        double temp2Hm1 = src[H - 1][i] + M[0][0] * (temp2[coord(H - 1, 0)] - src[H - 1][i]) + M[0][1] * (temp2[coord(H - 2, 0)] - src[H - 1][i]) + M[0][2] * (temp2[coord(H - 3, 0)] - src[H - 1][i]);
+        double temp2H   = src[H - 1][i] + M[1][0] * (temp2[coord(H - 1, 0)] - src[H - 1][i]) + M[1][1] * (temp2[coord(H - 2, 0)] - src[H - 1][i]) + M[1][2] * (temp2[coord(H - 3, 0)] - src[H - 1][i]);
+        double temp2Hp1 = src[H - 1][i] + M[2][0] * (temp2[coord(H - 1, 0)] - src[H - 1][i]) + M[2][1] * (temp2[coord(H - 2, 0)] - src[H - 1][i]) + M[2][2] * (temp2[coord(H - 3, 0)] - src[H - 1][i]);
 
-        dst[H - 1][i] = temp2[H - 1][0] = temp2Hm1;
-        dst[H - 2][i] = temp2[H - 2][0] = B * temp2[H - 2][0] + b1 * temp2[H - 1][0] + b2 * temp2H + b3 * temp2Hp1;
-        dst[H - 3][i] = temp2[H - 3][0] = B * temp2[H - 3][0] + b1 * temp2[H - 2][0] + b2 * temp2[H - 1][0] + b3 * temp2H;
+        dst[H - 1][i] = temp2[coord(H - 1, 0)] = temp2Hm1;
+        dst[H - 2][i] = temp2[coord(H - 2, 0)] = B * temp2[coord(H - 2, 0)] + b1 * temp2[coord(H - 1, 0)] + b2 * temp2H + b3 * temp2Hp1;
+        dst[H - 3][i] = temp2[coord(H - 3, 0)] = B * temp2[coord(H - 3, 0)] + b1 * temp2[coord(H - 2, 0)] + b2 * temp2[coord(H - 1, 0)] + b3 * temp2H;
 
         for (int j = H - 4; j >= 0; j--) {
-            dst[j][i] = temp2[j][0] = B * temp2[j][0] + b1 * temp2[j + 1][0] + b2 * temp2[j + 2][0] + b3 * temp2[j + 3][0];
+            dst[j][i] = temp2[coord(j, 0)] = B * temp2[coord(j, 0)] + b1 * temp2[coord(j + 1, 0)] + b2 * temp2[coord(j + 2, 0)] + b3 * temp2[coord(j + 3, 0)];
         }
     }
 }
@@ -1208,40 +1214,45 @@ template<class T> void gaussVerticaldiv (T** src, T** dst, T** divBuffer, const 
 
     // process 'numcols' columns for better usage of L1 cpu cache (especially faster for large values of H)
     static const int numcols = 8;
-    double temp2[H][numcols] ALIGNED16;
+    std::vector<double> temp2(H * numcols);
     double temp2Hm1[numcols], temp2H[numcols], temp2Hp1[numcols];
+
+    auto coord =
+    [](const int &x, const int &y) -> int {
+        return x * numcols + y;
+    };
 #ifdef _OPENMP
     #pragma omp for nowait
 #endif
 
     for (int i = 0; i < W - numcols + 1; i += numcols) {
         for (int k = 0; k < numcols; k++) {
-            temp2[0][k] = B * src[0][i + k] + b1 * src[0][i + k] + b2 * src[0][i + k] + b3 * src[0][i + k];
-            temp2[1][k] = B * src[1][i + k] + b1 * temp2[0][k] + b2 * src[0][i + k] + b3 * src[0][i + k];
-            temp2[2][k] = B * src[2][i + k] + b1 * temp2[1][k] + b2 * temp2[0][k] + b3 * src[0][i + k];
+            temp2[coord(0, k)] = B * src[0][i + k] + b1 * src[0][i + k] + b2 * src[0][i + k] + b3 * src[0][i + k];
+            temp2[coord(1, k)] = B * src[1][i + k] + b1 * temp2[coord(0, k)] + b2 * src[0][i + k] + b3 * src[0][i + k];
+            temp2[coord(2, k)] = B * src[2][i + k] + b1 * temp2[coord(1, k)] + b2 * temp2[coord(0, k)] + b3 * src[0][i + k];
         }
 
         for (int j = 3; j < H; j++) {
             for (int k = 0; k < numcols; k++) {
-                temp2[j][k] = B * src[j][i + k] + b1 * temp2[j - 1][k] + b2 * temp2[j - 2][k] + b3 * temp2[j - 3][k];
+                temp2[coord(j, k)] = B * src[j][i + k] + b1 * temp2[coord(j - 1, k)] + b2 * temp2[coord(j - 2, k)] + b3 * temp2[coord(j - 3, k)];
             }
         }
 
         for (int k = 0; k < numcols; k++) {
-            temp2Hm1[k] = src[H - 1][i + k] + M[0][0] * (temp2[H - 1][k] - src[H - 1][i + k]) + M[0][1] * (temp2[H - 2][k] - src[H - 1][i + k]) + M[0][2] * (temp2[H - 3][k] - src[H - 1][i + k]);
-            temp2H[k]   = src[H - 1][i + k] + M[1][0] * (temp2[H - 1][k] - src[H - 1][i + k]) + M[1][1] * (temp2[H - 2][k] - src[H - 1][i + k]) + M[1][2] * (temp2[H - 3][k] - src[H - 1][i + k]);
-            temp2Hp1[k] = src[H - 1][i + k] + M[2][0] * (temp2[H - 1][k] - src[H - 1][i + k]) + M[2][1] * (temp2[H - 2][k] - src[H - 1][i + k]) + M[2][2] * (temp2[H - 3][k] - src[H - 1][i + k]);
+            temp2Hm1[k] = src[H - 1][i + k] + M[0][0] * (temp2[coord(H - 1, k)] - src[H - 1][i + k]) + M[0][1] * (temp2[coord(H - 2, k)] - src[H - 1][i + k]) + M[0][2] * (temp2[coord(H - 3, k)] - src[H - 1][i + k]);
+            temp2H[k]   = src[H - 1][i + k] + M[1][0] * (temp2[coord(H - 1, k)] - src[H - 1][i + k]) + M[1][1] * (temp2[coord(H - 2, k)] - src[H - 1][i + k]) + M[1][2] * (temp2[coord(H - 3, k)] - src[H - 1][i + k]);
+            temp2Hp1[k] = src[H - 1][i + k] + M[2][0] * (temp2[coord(H - 1, k)] - src[H - 1][i + k]) + M[2][1] * (temp2[coord(H - 2, k)] - src[H - 1][i + k]) + M[2][2] * (temp2[coord(H - 3, k)] - src[H - 1][i + k]);
         }
 
         for (int k = 0; k < numcols; k++) {
-            dst[H - 1][i + k] = rtengine::max(divBuffer[H - 1][i + k] / (temp2[H - 1][k] = temp2Hm1[k]), 0.0);
-            dst[H - 2][i + k] = rtengine::max(divBuffer[H - 2][i + k] / (temp2[H - 2][k] = B * temp2[H - 2][k] + b1 * temp2[H - 1][k] + b2 * temp2H[k] + b3 * temp2Hp1[k]), 0.0);
-            dst[H - 3][i + k] = rtengine::max(divBuffer[H - 3][i + k] / (temp2[H - 3][k] = B * temp2[H - 3][k] + b1 * temp2[H - 2][k] + b2 * temp2[H - 1][k] + b3 * temp2H[k]), 0.0);
+            dst[H - 1][i + k] = rtengine::max(divBuffer[H - 1][i + k] / (temp2[coord(H - 1, k)] = temp2Hm1[k]), 0.0);
+            dst[H - 2][i + k] = rtengine::max(divBuffer[H - 2][i + k] / (temp2[coord(H - 2, k)] = B * temp2[coord(H - 2, k)] + b1 * temp2[coord(H - 1, k)] + b2 * temp2H[k] + b3 * temp2Hp1[k]), 0.0);
+            dst[H - 3][i + k] = rtengine::max(divBuffer[H - 3][i + k] / (temp2[coord(H - 3, k)] = B * temp2[coord(H - 3, k)] + b1 * temp2[coord(H - 2, k)] + b2 * temp2[coord(H - 1, k)] + b3 * temp2H[k]), 0.0);
         }
 
         for (int j = H - 4; j >= 0; j--) {
             for (int k = 0; k < numcols; k++) {
-                dst[j][i + k] = rtengine::max(divBuffer[j][i + k] / (temp2[j][k] = B * temp2[j][k] + b1 * temp2[j + 1][k] + b2 * temp2[j + 2][k] + b3 * temp2[j + 3][k]), 0.0);
+                dst[j][i + k] = rtengine::max(divBuffer[j][i + k] / (temp2[coord(j, k)] = B * temp2[coord(j, k)] + b1 * temp2[coord(j + 1, k)] + b2 * temp2[coord(j + 2, k)] + b3 * temp2[coord(j + 3, k)]), 0.0);
             }
         }
     }
@@ -1252,24 +1263,24 @@ template<class T> void gaussVerticaldiv (T** src, T** dst, T** divBuffer, const 
 
     // process remaining columns
     for (int i = W - (W % numcols); i < W; i++) {
-        temp2[0][0] = B * src[0][i] + b1 * src[0][i] + b2 * src[0][i] + b3 * src[0][i];
-        temp2[1][0] = B * src[1][i] + b1 * temp2[0][0]  + b2 * src[0][i] + b3 * src[0][i];
-        temp2[2][0] = B * src[2][i] + b1 * temp2[1][0]  + b2 * temp2[0][0]  + b3 * src[0][i];
+        temp2[coord(0, 0)] = B * src[0][i] + b1 * src[0][i] + b2 * src[0][i] + b3 * src[0][i];
+        temp2[coord(1, 0)] = B * src[1][i] + b1 * temp2[coord(0, 0)]  + b2 * src[0][i] + b3 * src[0][i];
+        temp2[coord(2, 0)] = B * src[2][i] + b1 * temp2[coord(1, 0)]  + b2 * temp2[coord(0, 0)]  + b3 * src[0][i];
 
         for (int j = 3; j < H; j++) {
-            temp2[j][0] = B * src[j][i] + b1 * temp2[j - 1][0] + b2 * temp2[j - 2][0] + b3 * temp2[j - 3][0];
+            temp2[coord(j, 0)] = B * src[j][i] + b1 * temp2[coord(j - 1, 0)] + b2 * temp2[coord(j - 2, 0)] + b3 * temp2[coord(j - 3, 0)];
         }
 
-        double temp2Hm1 = src[H - 1][i] + M[0][0] * (temp2[H - 1][0] - src[H - 1][i]) + M[0][1] * (temp2[H - 2][0] - src[H - 1][i]) + M[0][2] * (temp2[H - 3][0] - src[H - 1][i]);
-        double temp2H   = src[H - 1][i] + M[1][0] * (temp2[H - 1][0] - src[H - 1][i]) + M[1][1] * (temp2[H - 2][0] - src[H - 1][i]) + M[1][2] * (temp2[H - 3][0] - src[H - 1][i]);
-        double temp2Hp1 = src[H - 1][i] + M[2][0] * (temp2[H - 1][0] - src[H - 1][i]) + M[2][1] * (temp2[H - 2][0] - src[H - 1][i]) + M[2][2] * (temp2[H - 3][0] - src[H - 1][i]);
+        double temp2Hm1 = src[H - 1][i] + M[0][0] * (temp2[coord(H - 1, 0)] - src[H - 1][i]) + M[0][1] * (temp2[coord(H - 2, 0)] - src[H - 1][i]) + M[0][2] * (temp2[coord(H - 3, 0)] - src[H - 1][i]);
+        double temp2H   = src[H - 1][i] + M[1][0] * (temp2[coord(H - 1, 0)] - src[H - 1][i]) + M[1][1] * (temp2[coord(H - 2, 0)] - src[H - 1][i]) + M[1][2] * (temp2[coord(H - 3, 0)] - src[H - 1][i]);
+        double temp2Hp1 = src[H - 1][i] + M[2][0] * (temp2[coord(H - 1, 0)] - src[H - 1][i]) + M[2][1] * (temp2[coord(H - 2, 0)] - src[H - 1][i]) + M[2][2] * (temp2[coord(H - 3, 0)] - src[H - 1][i]);
 
-        dst[H - 1][i] = rtengine::max(divBuffer[H - 1][i] / (temp2[H - 1][0] = temp2Hm1), 0.0);
-        dst[H - 2][i] = rtengine::max(divBuffer[H - 2][i] / (temp2[H - 2][0] = B * temp2[H - 2][0] + b1 * temp2[H - 1][0] + b2 * temp2H + b3 * temp2Hp1), 0.0);
-        dst[H - 3][i] = rtengine::max(divBuffer[H - 3][i] / (temp2[H - 3][0] = B * temp2[H - 3][0] + b1 * temp2[H - 2][0] + b2 * temp2[H - 1][0] + b3 * temp2H), 0.0);
+        dst[H - 1][i] = rtengine::max(divBuffer[H - 1][i] / (temp2[coord(H - 1, 0)] = temp2Hm1), 0.0);
+        dst[H - 2][i] = rtengine::max(divBuffer[H - 2][i] / (temp2[coord(H - 2, 0)] = B * temp2[coord(H - 2, 0)] + b1 * temp2[coord(H - 1, 0)] + b2 * temp2H + b3 * temp2Hp1), 0.0);
+        dst[H - 3][i] = rtengine::max(divBuffer[H - 3][i] / (temp2[coord(H - 3, 0)] = B * temp2[coord(H - 3, 0)] + b1 * temp2[coord(H - 2, 0)] + b2 * temp2[coord(H - 1, 0)] + b3 * temp2H), 0.0);
 
         for (int j = H - 4; j >= 0; j--) {
-            dst[j][i] = rtengine::max(divBuffer[j][i] / (temp2[j][0] = B * temp2[j][0] + b1 * temp2[j + 1][0] + b2 * temp2[j + 2][0] + b3 * temp2[j + 3][0]), 0.0);
+            dst[j][i] = rtengine::max(divBuffer[j][i] / (temp2[coord(j, 0)] = B * temp2[coord(j, 0)] + b1 * temp2[coord(j + 1, 0)] + b2 * temp2[coord(j + 2, 0)] + b3 * temp2[coord(j + 3, 0)]), 0.0);
         }
     }
 }
@@ -1286,40 +1297,45 @@ template<class T> void gaussVerticalmult (T** src, T** dst, const int W, const i
 
     // process 'numcols' columns for better usage of L1 cpu cache (especially faster for large values of H)
     static const int numcols = 8;
-    double temp2[H][numcols] ALIGNED16;
+    std::vector<double> temp2(H * numcols);
     double temp2Hm1[numcols], temp2H[numcols], temp2Hp1[numcols];
+
+    auto coord =
+    [](const int &x, const int &y) -> int {
+        return x * numcols + y;
+    };
 #ifdef _OPENMP
     #pragma omp for nowait
 #endif
 
     for (int i = 0; i < W - numcols + 1; i += numcols) {
         for (int k = 0; k < numcols; k++) {
-            temp2[0][k] = B * src[0][i + k] + b1 * src[0][i + k] + b2 * src[0][i + k] + b3 * src[0][i + k];
-            temp2[1][k] = B * src[1][i + k] + b1 * temp2[0][k] + b2 * src[0][i + k] + b3 * src[0][i + k];
-            temp2[2][k] = B * src[2][i + k] + b1 * temp2[1][k] + b2 * temp2[0][k] + b3 * src[0][i + k];
+            temp2[coord(0, k)] = B * src[0][i + k] + b1 * src[0][i + k] + b2 * src[0][i + k] + b3 * src[0][i + k];
+            temp2[coord(1, k)] = B * src[1][i + k] + b1 * temp2[coord(0, k)] + b2 * src[0][i + k] + b3 * src[0][i + k];
+            temp2[coord(2, k)] = B * src[2][i + k] + b1 * temp2[coord(1, k)] + b2 * temp2[coord(0, k)] + b3 * src[0][i + k];
         }
 
         for (int j = 3; j < H; j++) {
             for (int k = 0; k < numcols; k++) {
-                temp2[j][k] = B * src[j][i + k] + b1 * temp2[j - 1][k] + b2 * temp2[j - 2][k] + b3 * temp2[j - 3][k];
+                temp2[coord(j, k)] = B * src[j][i + k] + b1 * temp2[coord(j - 1, k)] + b2 * temp2[coord(j - 2, k)] + b3 * temp2[coord(j - 3, k)];
             }
         }
 
         for (int k = 0; k < numcols; k++) {
-            temp2Hm1[k] = src[H - 1][i + k] + M[0][0] * (temp2[H - 1][k] - src[H - 1][i + k]) + M[0][1] * (temp2[H - 2][k] - src[H - 1][i + k]) + M[0][2] * (temp2[H - 3][k] - src[H - 1][i + k]);
-            temp2H[k]   = src[H - 1][i + k] + M[1][0] * (temp2[H - 1][k] - src[H - 1][i + k]) + M[1][1] * (temp2[H - 2][k] - src[H - 1][i + k]) + M[1][2] * (temp2[H - 3][k] - src[H - 1][i + k]);
-            temp2Hp1[k] = src[H - 1][i + k] + M[2][0] * (temp2[H - 1][k] - src[H - 1][i + k]) + M[2][1] * (temp2[H - 2][k] - src[H - 1][i + k]) + M[2][2] * (temp2[H - 3][k] - src[H - 1][i + k]);
+            temp2Hm1[k] = src[H - 1][i + k] + M[0][0] * (temp2[coord(H - 1, k)] - src[H - 1][i + k]) + M[0][1] * (temp2[coord(H - 2, k)] - src[H - 1][i + k]) + M[0][2] * (temp2[coord(H - 3, k)] - src[H - 1][i + k]);
+            temp2H[k]   = src[H - 1][i + k] + M[1][0] * (temp2[coord(H - 1, k)] - src[H - 1][i + k]) + M[1][1] * (temp2[coord(H - 2, k)] - src[H - 1][i + k]) + M[1][2] * (temp2[coord(H - 3, k)] - src[H - 1][i + k]);
+            temp2Hp1[k] = src[H - 1][i + k] + M[2][0] * (temp2[coord(H - 1, k)] - src[H - 1][i + k]) + M[2][1] * (temp2[coord(H - 2, k)] - src[H - 1][i + k]) + M[2][2] * (temp2[coord(H - 3, k)] - src[H - 1][i + k]);
         }
 
         for (int k = 0; k < numcols; k++) {
-            dst[H - 1][i + k] *= temp2[H - 1][k] = temp2Hm1[k];
-            dst[H - 2][i + k] *= temp2[H - 2][k] = B * temp2[H - 2][k] + b1 * temp2[H - 1][k] + b2 * temp2H[k] + b3 * temp2Hp1[k];
-            dst[H - 3][i + k] *= temp2[H - 3][k] = B * temp2[H - 3][k] + b1 * temp2[H - 2][k] + b2 * temp2[H - 1][k] + b3 * temp2H[k];
+            dst[H - 1][i + k] *= temp2[coord(H - 1, k)] = temp2Hm1[k];
+            dst[H - 2][i + k] *= temp2[coord(H - 2, k)] = B * temp2[coord(H - 2, k)] + b1 * temp2[coord(H - 1, k)] + b2 * temp2H[k] + b3 * temp2Hp1[k];
+            dst[H - 3][i + k] *= temp2[coord(H - 3, k)] = B * temp2[coord(H - 3, k)] + b1 * temp2[coord(H - 2, k)] + b2 * temp2[coord(H - 1, k)] + b3 * temp2H[k];
         }
 
         for (int j = H - 4; j >= 0; j--) {
             for (int k = 0; k < numcols; k++) {
-                dst[j][i + k] *= (temp2[j][k] = B * temp2[j][k] + b1 * temp2[j + 1][k] + b2 * temp2[j + 2][k] + b3 * temp2[j + 3][k]);
+                dst[j][i + k] *= (temp2[coord(j, k)] = B * temp2[coord(j, k)] + b1 * temp2[coord(j + 1, k)] + b2 * temp2[coord(j + 2, k)] + b3 * temp2[coord(j + 3, k)]);
             }
         }
     }
@@ -1330,24 +1346,24 @@ template<class T> void gaussVerticalmult (T** src, T** dst, const int W, const i
 
     // process remaining columns
     for (int i = W - (W % numcols); i < W; i++) {
-        temp2[0][0] = B * src[0][i] + b1 * src[0][i] + b2 * src[0][i] + b3 * src[0][i];
-        temp2[1][0] = B * src[1][i] + b1 * temp2[0][0]  + b2 * src[0][i] + b3 * src[0][i];
-        temp2[2][0] = B * src[2][i] + b1 * temp2[1][0]  + b2 * temp2[0][0]  + b3 * src[0][i];
+        temp2[coord(0, 0)] = B * src[0][i] + b1 * src[0][i] + b2 * src[0][i] + b3 * src[0][i];
+        temp2[coord(1, 0)] = B * src[1][i] + b1 * temp2[coord(0, 0)]  + b2 * src[0][i] + b3 * src[0][i];
+        temp2[coord(2, 0)] = B * src[2][i] + b1 * temp2[coord(1, 0)]  + b2 * temp2[coord(0, 0)]  + b3 * src[0][i];
 
         for (int j = 3; j < H; j++) {
-            temp2[j][0] = B * src[j][i] + b1 * temp2[j - 1][0] + b2 * temp2[j - 2][0] + b3 * temp2[j - 3][0];
+            temp2[coord(j, 0)] = B * src[j][i] + b1 * temp2[coord(j - 1, 0)] + b2 * temp2[coord(j - 2, 0)] + b3 * temp2[coord(j - 3, 0)];
         }
 
-        double temp2Hm1 = src[H - 1][i] + M[0][0] * (temp2[H - 1][0] - src[H - 1][i]) + M[0][1] * (temp2[H - 2][0] - src[H - 1][i]) + M[0][2] * (temp2[H - 3][0] - src[H - 1][i]);
-        double temp2H   = src[H - 1][i] + M[1][0] * (temp2[H - 1][0] - src[H - 1][i]) + M[1][1] * (temp2[H - 2][0] - src[H - 1][i]) + M[1][2] * (temp2[H - 3][0] - src[H - 1][i]);
-        double temp2Hp1 = src[H - 1][i] + M[2][0] * (temp2[H - 1][0] - src[H - 1][i]) + M[2][1] * (temp2[H - 2][0] - src[H - 1][i]) + M[2][2] * (temp2[H - 3][0] - src[H - 1][i]);
+        double temp2Hm1 = src[H - 1][i] + M[0][0] * (temp2[coord(H - 1, 0)] - src[H - 1][i]) + M[0][1] * (temp2[coord(H - 2, 0)] - src[H - 1][i]) + M[0][2] * (temp2[coord(H - 3, 0)] - src[H - 1][i]);
+        double temp2H   = src[H - 1][i] + M[1][0] * (temp2[coord(H - 1, 0)] - src[H - 1][i]) + M[1][1] * (temp2[coord(H - 2, 0)] - src[H - 1][i]) + M[1][2] * (temp2[coord(H - 3, 0)] - src[H - 1][i]);
+        double temp2Hp1 = src[H - 1][i] + M[2][0] * (temp2[coord(H - 1, 0)] - src[H - 1][i]) + M[2][1] * (temp2[coord(H - 2, 0)] - src[H - 1][i]) + M[2][2] * (temp2[coord(H - 3, 0)] - src[H - 1][i]);
 
-        dst[H - 1][i] *= temp2[H - 1][0] = temp2Hm1;
-        dst[H - 2][i] *= temp2[H - 2][0] = B * temp2[H - 2][0] + b1 * temp2[H - 1][0] + b2 * temp2H + b3 * temp2Hp1;
-        dst[H - 3][i] *= temp2[H - 3][0] = B * temp2[H - 3][0] + b1 * temp2[H - 2][0] + b2 * temp2[H - 1][0] + b3 * temp2H;
+        dst[H - 1][i] *= temp2[coord(H - 1, 0)] = temp2Hm1;
+        dst[H - 2][i] *= temp2[coord(H - 2, 0)] = B * temp2[coord(H - 2, 0)] + b1 * temp2[coord(H - 1, 0)] + b2 * temp2H + b3 * temp2Hp1;
+        dst[H - 3][i] *= temp2[coord(H - 3, 0)] = B * temp2[coord(H - 3, 0)] + b1 * temp2[coord(H - 2, 0)] + b2 * temp2[coord(H - 1, 0)] + b3 * temp2H;
 
         for (int j = H - 4; j >= 0; j--) {
-            dst[j][i] *= (temp2[j][0] = B * temp2[j][0] + b1 * temp2[j + 1][0] + b2 * temp2[j + 2][0] + b3 * temp2[j + 3][0]);
+            dst[j][i] *= (temp2[coord(j, 0)] = B * temp2[coord(j, 0)] + b1 * temp2[coord(j + 1, 0)] + b2 * temp2[coord(j + 2, 0)] + b3 * temp2[coord(j + 3, 0)]);
         }
     }
 }
