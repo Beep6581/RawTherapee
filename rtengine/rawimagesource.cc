@@ -1697,15 +1697,14 @@ void RawImageSource::preprocess(const RAWParams &raw, const LensProfParams &lens
 
         if (numFrames == 4) {
             double fitParams[64];
-            float *buffer = CA_correct_RT(raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, *rawDataFrames[0], fitParams, false, true, nullptr, false, options.chunkSizeCA, options.measure);
-
+            float *buffer = CA_correct_RT(raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, raw.bayersensor.border, *rawDataFrames[0], fitParams, false, true, nullptr, false, options.chunkSizeCA, options.measure);
             for (int i = 1; i < 3; ++i) {
-                CA_correct_RT(raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, *rawDataFrames[i], fitParams, true, false, buffer, false, options.chunkSizeCA, options.measure);
+                CA_correct_RT(raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, raw.bayersensor.border, *rawDataFrames[i], fitParams, true, false, buffer, false, options.chunkSizeCA, options.measure);
             }
 
-            CA_correct_RT(raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, *rawDataFrames[3], fitParams, true, false, buffer, true, options.chunkSizeCA, options.measure);
+            CA_correct_RT(raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, raw.bayersensor.border, *rawDataFrames[3], fitParams, true, false, buffer, true, options.chunkSizeCA, options.measure);
         } else {
-            CA_correct_RT(raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, rawData, nullptr, false, false, nullptr, true, options.chunkSizeCA, options.measure);
+            CA_correct_RT(raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, raw.bayersensor.border, rawData, nullptr, false, false, nullptr, true, options.chunkSizeCA, options.measure);
         }
     }
 
@@ -6114,7 +6113,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
             reff_spect_xx_camera[j][repref] = xxx;
             reff_spect_yy_camera[j][repref] = yyy;
             reff_spect_Y_camera[j][repref] =  YY;
- /*           
+ /*
             //display spectral datas
                                 float xr = reff_spect_xx_camera[j][repref];
                                 float yr = reff_spect_yy_camera[j][repref];
@@ -6127,7 +6126,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
 
                         printf("Nc=%i repref=%i xxx=%f yyy=%f YY=%f Lr=%f a=%f b=%f\n", j, repref, (double) xxx, (double) yyy, (double) YY, (double) Lr/327.68f, (double) ar/327.68f, (double) br/327.68f);
- */          
+ */
         }
 
         array2D<float> xc(bfwitc, bfhitc);
@@ -7354,7 +7353,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                 avg_gm = optitc[0].avg_g;
                 avg_bm = optitc[0].avg_b;
             }
-        } 
+        }
     }
 
     t8.set();
