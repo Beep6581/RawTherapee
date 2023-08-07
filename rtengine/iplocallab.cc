@@ -18659,7 +18659,7 @@ void ImProcFunctions::Lab_Local(
                 const float rad = params->locallab.spots.at(sp).radmask; 
                 const float gamma = params->locallab.spots.at(sp).gammask; 
                 const float slope =  params->locallab.spots.at(sp).slopmask;
-                float blendm =  params->locallab.spots.at(sp).blendmask;
+                float blendm =  0.1 * params->locallab.spots.at(sp).blendmask;
                 float blendmab =  params->locallab.spots.at(sp).blendmaskab;
                 if (lp.showmask_met == 2) {
                     blendm = 0.f;//normalize behavior mask with others no action of blend
