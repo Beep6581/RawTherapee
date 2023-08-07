@@ -5342,6 +5342,7 @@ void ImProcFunctions::blendstruc(int bfw, int bfh, LabImage* bufcolorig, float r
 
 static void blendmask(const local_params& lp, int xstart, int ystart, int cx, int cy, int bfw, int bfh, LabImage* bufexporig, LabImage* original, LabImage* bufmaskor, LabImage* originalmas, float bl, float blab, int inv)
 {
+    bl /= 10.f;
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16)
 #endif
