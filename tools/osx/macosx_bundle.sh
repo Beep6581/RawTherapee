@@ -9,11 +9,11 @@
 # - GTK_PREFIX
 
 # Formatting
-fNormal="$(tput sgr0)" >/dev/null 2>&1
-fBold="$(tput bold)" >/dev/null 2>&1
+fNormal="$(printf "\e[0m")"
+fBold="$(printf "\e[1m")"
 # Colors depend upon the user's terminal emulator color scheme - what is readable for you may be not readable for someone else.
-fMagenta="$(tput setaf 5)" >/dev/null 2>&1
-fRed="$(tput setaf 1)" >/dev/null 2>&1
+fMagenta="$(printf "\e[1;35m")"
+fRed="$(printf "\e[1;31m")"
 
 function msg {
     printf "\\n${fBold}-- %s${fNormal}\\n" "${@}"
