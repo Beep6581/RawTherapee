@@ -19,7 +19,7 @@ Curve2=0;
 
 [HLRecovery]
 Enabled=true
-Method=Coloropp
+Method=Blend
 
 [Luminance Curve]
 Enabled=true

@@ -427,7 +427,7 @@ ToneCurveParams::ToneCurveParams() :
     autoexp(false),
     clip(0.02),
     hrenabled(false),
-    method("Coloropp"),
+    method("Blend"),
     expcomp(0),
     curve{
         DCT_Linear
