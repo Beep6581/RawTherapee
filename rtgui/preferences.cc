@@ -16,21 +16,27 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+#include <sstream>
+
+#include <glibmm/miscutils.h>
+#include <glibmm/ustring.h>
 #include <sigc++/slot.h>
-#include "externaleditorpreferences.h"
-#include "preferences.h"
-#include "multilangmgr.h"
-#include "splash.h"
-#include "cachemanager.h"
+
 #include "addsetids.h"
+#include "cachemanager.h"
+#include "externaleditorpreferences.h"
+#include "multilangmgr.h"
+#include "preferences.h"
+#include "rtimage.h"
+#include "rtwindow.h"
+#include "splash.h"
+#include "toollocationpref.h"
+
 #include "../rtengine/dfmanager.h"
 #include "../rtengine/ffmanager.h"
 #include "../rtengine/iccstore.h"
 #include "../rtengine/procparams.h"
-#include <sstream>
-#include "rtimage.h"
-#include "rtwindow.h"
-#include "toollocationpref.h"
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -960,6 +966,23 @@ Gtk::Widget* Preferences::getColorManPanel ()
     vbColorMan->pack_start (*fcie, Gtk::PACK_SHRINK);
 
 
+    //------------White-Balance auto temperature correlation
+    
+    Gtk::Frame* fwbacorr = Gtk::manage(new Gtk::Frame(M("PREFERENCES_WBACORR")));
+    fwbacorr->set_tooltip_text(M("PREFERENCES_WBACORR_TOOLTIP"));
+    fwbacorr->set_label_align(0.025, 0.5);
+    Gtk::Box* wbaVB = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL) );
+    Gtk::Box* wbah = Gtk::manage ( new Gtk::Box () );
+    wbah->set_spacing (4);
+    
+    mwbaena = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_WBAENA")));
+    setExpandAlignProperties(mwbaena, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    mwbaena->set_active(true);
+    wbah->pack_start(*mwbaena, Gtk::PACK_SHRINK, 0);
+    wbaVB->add(*wbah);
+
+    fwbacorr->add (*wbaVB);
+    vbColorMan->pack_start (*fwbacorr, Gtk::PACK_SHRINK);
     //-------------
 
     swColorMan->add(*vbColorMan);
@@ -1096,9 +1119,14 @@ Gtk::Widget* Preferences::getGeneralPanel()
     std::vector<Glib::ustring> langs;
     parseDir(argv0 + "/languages", langs, "");
 
-    for (size_t i = 0; i < langs.size(); i++) {
-        if ("default" != langs[i] && "README" != langs[i] && "LICENSE" != langs[i]) {
-            languages->append(langs[i]);
+    for (const auto &lang : langs) {
+        if ("default" != lang && "README" != lang && "LICENSE" != lang) {
+            auto lang_metadata = langMgr.getMetadata(Glib::build_filename(argv0 + "/languages", lang));
+            const auto &display_name =
+                lang_metadata != nullptr
+                    ? Glib::ustring(lang_metadata->getLanguageName(lang))
+                    : lang;
+            languages->append(lang, display_name);
         }
     }
 
@@ -1722,7 +1750,7 @@ void Preferences::storePreferences()
     moptions.menuGroupExtProg = ckbmenuGroupExtProg->get_active();
     moptions.highlightThreshold = (int)hlThresh->get_value();
     moptions.shadowThreshold = (int)shThresh->get_value();
-    moptions.language = languages->get_active_text();
+    moptions.language = languages->get_active_id();
     moptions.languageAutoDetect = ckbLangAutoDetect->get_active();
     moptions.theme = themeFNames.at (themeCBT->get_active_row_number ()).longFName;
 
@@ -1756,7 +1784,12 @@ void Preferences::storePreferences()
 
     const std::vector<ExternalEditorPreferences::EditorInfo> &editors = externalEditors->getEditors();
     moptions.externalEditors.resize(editors.size());
-    moptions.externalEditorIndex = -1;
+    moptions.externalEditorIndex =
+#ifdef __APPLE__
+        editors.empty() ? -1 : 0;
+#else
+        -1;
+#endif
     for (unsigned i = 0; i < editors.size(); i++) {
         moptions.externalEditors[i] = (ExternalEditor(
             editors[i].name, editors[i].command, editors[i].native_command, editors[i].icon_serialized));
@@ -1830,6 +1863,7 @@ void Preferences::storePreferences()
     moptions.rtSettings.monitorBPC = monBPC->get_active();
     moptions.rtSettings.autoMonitorProfile = cbAutoMonProfile->get_active();
     moptions.rtSettings.autocielab = mcie->get_active();
+    moptions.rtSettings.itcwb_enable = mwbaena->get_active();
 
 #endif
 
@@ -1989,6 +2023,7 @@ void Preferences::fillPreferences()
 
     monBPC->set_active(moptions.rtSettings.monitorBPC);
     mcie->set_active(moptions.rtSettings.autocielab);
+    mwbaena->set_active(moptions.rtSettings.itcwb_enable);
 
     cbAutoMonProfile->set_active(moptions.rtSettings.autoMonitorProfile);
 #endif
@@ -1998,7 +2033,7 @@ void Preferences::fillPreferences()
     }
 
     cprevdemo->set_active (moptions.prevdemo);
-    languages->set_active_text(moptions.language);
+    languages->set_active_id(moptions.language);
     ckbLangAutoDetect->set_active(moptions.languageAutoDetect);
     int themeNbr = getThemeRowNumber(moptions.theme);
     themeCBT->set_active (themeNbr == -1 ? 0 : themeNbr);

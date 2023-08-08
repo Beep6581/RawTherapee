@@ -1,20 +1,22 @@
-#01 2007-12-26 Rens Duijsens en Brent Huisman
-#02 2008-03-14 updated by reggybe
-#03 2009-02-01 updated to RT2.4-RC by paul.matthijsse
-#04 2010-05-02 updated to rt3a1 by paul.matthijsse
-#05 2011-03-03 updated to rt3a2 by paul.matthijsse
-#06 2011-10-10 updated to rt4.0 by wim ter meer
-#07 2011-11-28 updated by pm
-#08 2012-05-17 updated to rt4.0.8 by wim ter meer
-#09 2013-03-27 updated to rt4.0.10 by wim ter meer
-#10 2013-11-27 updated to rt4.0.11 by wim ter meer
-#11 2014-03-24 updated to rt4.1 by wim ter meer
-#12 2014-10-19 updated to rt4.1.92 by wim ter meer
-#13 2015-03-03 updated to rt4.2.102 by wim ter meer
-#14 2015-11-23 update by wim ter meer
-#15 2016-07-21 update by wim ter meer
-#16 2017-04-21 update by wim ter meer
-#17 2020-06-05 update by dheijl 
+#001 2007-12-26 Rens Duijsens en Brent Huisman
+#002 2008-03-14 updated by reggybe
+#003 2009-02-01 updated to RT2.4-RC by paul.matthijsse
+#004 2010-05-02 updated to rt3a1 by paul.matthijsse
+#005 2011-03-03 updated to rt3a2 by paul.matthijsse
+#006 2011-10-10 updated to rt4.0 by wim ter meer
+#007 2011-11-28 updated by pm
+#008 2012-05-17 updated to rt4.0.8 by wim ter meer
+#009 2013-03-27 updated to rt4.0.10 by wim ter meer
+#010 2013-11-27 updated to rt4.0.11 by wim ter meer
+#011 2014-03-24 updated to rt4.1 by wim ter meer
+#012 2014-10-19 updated to rt4.1.92 by wim ter meer
+#013 2015-03-03 updated to rt4.2.102 by wim ter meer
+#014 2015-11-23 update by wim ter meer
+#015 2016-07-21 update by wim ter meer
+#016 2017-04-21 update by wim ter meer
+#017 2020-06-05 update by dheijl 
+#100
+#101 @LANGUAGE_DISPLAY_NAME=Nederlands
 
 ABOUT_TAB_BUILD;Versie
 ABOUT_TAB_CREDITS;Credits

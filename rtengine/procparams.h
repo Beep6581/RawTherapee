@@ -643,15 +643,11 @@ struct WBParams {
     double           equal;
     double           tempBias;
     StandardObserver observer;
-    int              itcwb_thres;
-    int              itcwb_precis;
-    int              itcwb_size;
-    int              itcwb_delta;
-    int              itcwb_fgreen;
+    double           itcwb_green;
     int              itcwb_rgreen;
     bool             itcwb_nopurple;
-    bool             itcwb_sorted;
-    bool             itcwb_forceextra;
+    bool             itcwb_alg;
+    Glib::ustring    itcwb_prim;
     bool             itcwb_sampling;
 
     WBParams();
@@ -1944,6 +1940,7 @@ struct ColorManagementParams {
         ACES_P1,
         WIDE_GAMUT,
         ACES_P0,
+        JDC_MAX,
         BRUCE_RGB,
         BETA_RGB,
         BEST_RGB,

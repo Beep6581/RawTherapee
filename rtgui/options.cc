@@ -631,7 +631,8 @@ void Options::setDefaults()
     rtSettings.fftwsigma = true; //choice between sigma^2 or empirical formula
 // end locallab
     rtSettings.itcwb_enable = true;
-
+    rtSettings.itcwb_deltaspec = 0.075;
+    rtSettings.itcwb_powponder = 0.15;//max 0.2
 //wavelet
     rtSettings.edghi = 3.0;//1.1 and 5.
     rtSettings.edglo = 0.5;//0.1 and 0.95
@@ -1819,6 +1820,16 @@ void Options::readFromFile(Glib::ustring fname)
                 }
 
 
+                if (keyFile.has_key("Color Management", "Itcwb_deltaspec")) {
+                    rtSettings.itcwb_deltaspec = keyFile.get_double("Color Management", "Itcwb_deltaspec");
+                }
+
+
+                if (keyFile.has_key("Color Management", "Itcwb_powponder")) {
+                    rtSettings.itcwb_powponder = keyFile.get_double("Color Management", "Itcwb_powponder");
+                }
+
+
                 //if (keyFile.has_key ("Color Management", "Colortoningab")) rtSettings.colortoningab = keyFile.get_double("Color Management", "Colortoningab");
                 //if (keyFile.has_key ("Color Management", "Decaction")) rtSettings.decaction = keyFile.get_double("Color Management", "Decaction");
 
@@ -2596,6 +2607,8 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_double("Color Management", "CBDLlevel0", rtSettings.level0_cbdl);
         keyFile.set_double("Color Management", "CBDLlevel123", rtSettings.level123_cbdl);
         keyFile.set_boolean("Color Management", "Itcwb_enable", rtSettings.itcwb_enable);
+        keyFile.set_double("Color Management", "Itcwb_deltaspec", rtSettings.itcwb_deltaspec);
+        keyFile.set_double("Color Management", "Itcwb_powponder", rtSettings.itcwb_powponder);
 
         //keyFile.set_double  ("Color Management", "Colortoningab", rtSettings.colortoningab);
         //keyFile.set_double  ("Color Management", "Decaction", rtSettings.decaction);
