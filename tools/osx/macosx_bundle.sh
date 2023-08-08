@@ -9,11 +9,11 @@
 # - GTK_PREFIX
 
 # Formatting
-fNormal="$(tput sgr0)" >/dev/null 2>&1
-fBold="$(tput bold)" >/dev/null 2>&1
+fNormal="$(printf "\e[0m")"
+fBold="$(printf "\e[1m")"
 # Colors depend upon the user's terminal emulator color scheme - what is readable for you may be not readable for someone else.
-fMagenta="$(tput setaf 5)" >/dev/null 2>&1
-fRed="$(tput setaf 1)" >/dev/null 2>&1
+fMagenta="$(printf "\e[1;35m")"
+fRed="$(printf "\e[1;31m")"
 
 function msg {
     printf "\\n${fBold}-- %s${fNormal}\\n" "${@}"
@@ -448,7 +448,7 @@ function CreateDmg {
     msg "Zipping disk image for redistribution:"
     mkdir "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}_folder"
     cp {"${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}.dmg","${PROJECT_NAME}.app/Contents/MacOS/rawtherapee-cli","${PROJECT_SOURCE_DATA_DIR}/INSTALL.readme.rtf"} "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}_folder"
-    codesign -s - -i com.rawtherapee.rawtherapee-cli -f "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}_folder/rawtherapee-cli"
+    codesign -s "${CODESIGNID}" -i com.rawtherapee.rawtherapee-cli -f "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}_folder/rawtherapee-cli"
     zip -r "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}.zip" "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}_folder/"
     if [[ -n $NIGHTLY ]]; then
         cp "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}.zip" "${PROJECT_NAME}_macOS_${arch}_latest.zip"
