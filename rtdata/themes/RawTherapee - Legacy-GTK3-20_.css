@@ -227,6 +227,8 @@ menu separator {
 }
 
 #PlacesPaned .view.separator {
+    min-height: 0.16666666666666666em;
+    color: #363636;
 }
 
 #MetaPanelNotebook separator {
