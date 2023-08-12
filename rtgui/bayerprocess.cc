@@ -36,7 +36,7 @@ BayerProcess::BayerProcess () :
 {
 
     auto m = ProcEventMapper::getInstance();
-    EvDemosaicBorder = m->newEvent(DEMOSAIC, "HISTORY_MSG_RAW_BORDER");
+    EvDemosaicBorder = m->newEvent(DARKFRAME, "HISTORY_MSG_RAW_BORDER");
     EvDemosaicContrast = m->newEvent(DEMOSAIC, "HISTORY_MSG_DUALDEMOSAIC_CONTRAST");
     EvDemosaicAutoContrast = m->newEvent(DEMOSAIC, "HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST");
     EvDemosaicPixelshiftDemosaicMethod = m->newEvent(DEMOSAIC, "HISTORY_MSG_PIXELSHIFT_DEMOSAIC");

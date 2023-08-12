@@ -41,6 +41,7 @@ protected:
     Gtk::Grid* grid;
     Gtk::Label* label;
     Gtk::Image *imageIcon1;
+    Gtk::Image *imageIcon2;
     MyHScale* slider;
     MySpinButton* spin;
     Gtk::Button* reset;
@@ -133,4 +134,5 @@ public:
     void trimValue (int &val) const;
     void setLogScale(double base, double pivot, bool anchorMiddle = false);
     void setDelay(unsigned int min_delay_ms, unsigned int max_delay_ms = 0);
+    void showIcons(bool yes);
 };

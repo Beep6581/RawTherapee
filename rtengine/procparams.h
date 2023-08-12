@@ -18,6 +18,7 @@
  */
 #pragma once
 
+#include <array>
 #include <cmath>
 #include <cstdio>
 #include <map>
@@ -642,15 +643,11 @@ struct WBParams {
     double           equal;
     double           tempBias;
     StandardObserver observer;
-    int              itcwb_thres;
-    int              itcwb_precis;
-    int              itcwb_size;
-    int              itcwb_delta;
-    int              itcwb_fgreen;
+    double           itcwb_green;
     int              itcwb_rgreen;
     bool             itcwb_nopurple;
-    bool             itcwb_sorted;
-    bool             itcwb_forceextra;
+    bool             itcwb_alg;
+    Glib::ustring    itcwb_prim;
     bool             itcwb_sampling;
 
     WBParams();
@@ -838,6 +835,22 @@ struct SHParams {
 
     bool operator ==(const SHParams& other) const;
     bool operator !=(const SHParams& other) const;
+};
+
+/**
+ * Tone equalizer parameters.
+ */
+struct ToneEqualizerParams {
+    bool enabled;
+    std::array<int, 5> bands;
+    int regularization;
+    bool show_colormap;
+    double pivot;
+
+    ToneEqualizerParams();
+
+    bool operator ==(const ToneEqualizerParams &other) const;
+    bool operator !=(const ToneEqualizerParams &other) const;
 };
 
 /**
@@ -1210,6 +1223,7 @@ struct LocallabParams {
         double slomaskSH;
         double lapmaskSH;
         int detailSH;
+        double tePivot;
         double reparsh;
         std::vector<double> LmaskSHcurve;
         double fatamountSH;
@@ -1922,6 +1936,7 @@ struct ColorManagementParams {
         ACES_P1,
         WIDE_GAMUT,
         ACES_P0,
+        JDC_MAX,
         BRUCE_RGB,
         BETA_RGB,
         BEST_RGB,
@@ -2562,6 +2577,7 @@ public:
     EPDParams               epd;             ///< Edge Preserving Decomposition parameters
     FattalToneMappingParams fattal;          ///< Fattal02 tone mapping
     SHParams                sh;              ///< Shadow/highlight enhancement parameters
+    ToneEqualizerParams     toneEqualizer;   ///< Tone equalizer parameters
     CropParams              crop;            ///< Crop parameters
     CoarseTransformParams   coarse;          ///< Coarse transformation (90, 180, 270 deg rotation, h/v flipping) parameters
     CommonTransformParams   commonTrans;     ///< Common transformation parameters (autofill)

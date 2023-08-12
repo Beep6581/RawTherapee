@@ -22,11 +22,12 @@
 #include "options.h"
 #include <cstring>
 #include <cmath>
-#include "../rtengine/array2D.h"
-#include "../rtengine/LUT.h"
 #include "rtimage.h"
 #include "rtscalable.h"
+#include "../rtengine/array2D.h"
 #include "../rtengine/color.h"
+#include "../rtengine/improcfun.h"
+#include "../rtengine/LUT.h"
 
 using namespace rtengine;
 
@@ -35,12 +36,20 @@ constexpr float HistogramArea::MIN_BRIGHT;
 
 using ScopeType = Options::ScopeType;
 
+
+namespace
+{
+
+const rtengine::procparams::ColorManagementParams DEFAULT_CMP;
+
+}
+
 //
 //
 // HistogramPanel
 HistogramPanel::HistogramPanel () :
     pointer_moved_delayed_call(
-        [this](bool validPos, const Glib::ustring &profile, const Glib::ustring &profileW, int r, int g, int b)
+        [this](bool validPos, const rtengine::procparams::ColorManagementParams *cmp, int r, int g, int b)
         {
             bool update_hist_area = false, update_hist_rgb_area = false;
 
@@ -54,10 +63,10 @@ HistogramPanel::HistogramPanel () :
             } else {
                 // do something to show vertical bars
                 if (histogramRGBArea) {
-                    update_hist_rgb_area = histogramRGBArea->updatePointer(r, g, b, profile, profileW);
+                    update_hist_rgb_area = histogramRGBArea->updatePointer(r, g, b, cmp);
                 }
 
-                update_hist_area = histogramArea->updatePointer(r, g, b, profile, profileW);
+                update_hist_area = histogramArea->updatePointer(r, g, b, cmp);
             }
 
             if (histogramRGBArea && update_hist_rgb_area) {
@@ -669,9 +678,9 @@ void HistogramPanel::rgbv_toggled ()
     }
 }
 
-void HistogramPanel::pointerMoved (bool validPos, const Glib::ustring &profile, const Glib::ustring &profileW, int x, int y, int r, int g, int b, bool isRaw)
+void HistogramPanel::pointerMoved (bool validPos, const rtengine::procparams::ColorManagementParams &cmp, int x, int y, int r, int g, int b, bool isRaw)
 {
-    pointer_moved_delayed_call(validPos, profile, profileW, r, g, b);
+    pointer_moved_delayed_call(validPos, &cmp, r, g, b);
 }
 
 /*
@@ -848,19 +857,19 @@ void HistogramRGBArea::updateDrawingArea (const ::Cairo::RefPtr< Cairo::Context>
         if (needLuma) {
             // Luma
             cc->set_source_rgb(1.0, 1.0, 1.0);
-            drawBar(cc, lab_L, 100.0, winw, winh);
+            drawBar(cc, lab_L, 32768., winw, winh);
         }
 
         if (needChroma && scopeType == Options::ScopeType::HISTOGRAM) {
             // Chroma
-            double chromaval = sqrt(lab_a * lab_a + lab_b * lab_b) / 1.8;
+            double chromaval = sqrt(lab_a * lab_a + lab_b * lab_b) / (255. * 188);
             cc->set_source_rgb(0.9, 0.9, 0.0);
-            drawBar(cc, chromaval, 100.0, winw, winh);
+            drawBar(cc, chromaval, 1.0, winw, winh);
         }
     }
 }
 
-bool HistogramRGBArea::updatePointer (const int new_r, const int new_g, const int new_b, const Glib::ustring &profile, const Glib::ustring &profileW)
+bool HistogramRGBArea::updatePointer (const int new_r, const int new_g, const int new_b, const rtengine::procparams::ColorManagementParams *cmp)
 {
     // Do not update pointer values if bar is not visible
     // (by user choice or according to scope type)
@@ -884,11 +893,13 @@ bool HistogramRGBArea::updatePointer (const int new_r, const int new_g, const in
         r = new_r;
         g = new_g;
         b = new_b;
-        Color::rgb2lab01(profile, profileW,
-                static_cast<float>(r) / 255.f,
-                static_cast<float>(g) / 255.f,
-                static_cast<float>(b) / 255.f,
-                lab_L, lab_a, lab_b, options.rtSettings.HistogramWorking);
+        ImProcFunctions::rgb2lab(
+            static_cast<std::uint8_t>(r),
+            static_cast<std::uint8_t>(g),
+            static_cast<std::uint8_t>(b),
+            lab_L, lab_a, lab_b,
+            cmp != nullptr ? *cmp : DEFAULT_CMP,
+            true);
         pointerValid = true;
     }
 
@@ -1151,7 +1162,7 @@ void HistogramArea::update(
                     break;
                 case ScopeType::PARADE:
                 case ScopeType::WAVEFORM: {
-                    MyWriterLock wave_lock(wave_mutex);
+                    MYWRITERLOCK(wave_lock, wave_mutex)
                     waveform_scale = waveformScale;
                     rwave = waveformRed;
                     gwave = waveformGreen;
@@ -1266,7 +1277,7 @@ void HistogramArea::updateDrawingArea (const ::Cairo::RefPtr< Cairo::Context> &c
 
     cr->unset_dash();
 
-    MyReaderLock wave_lock(wave_mutex);
+    MYREADERLOCK(wave_lock, wave_mutex)
     if (LUT_valid && (scopeType == Options::ScopeType::HISTOGRAM || scopeType == Options::ScopeType::HISTOGRAM_RAW)) {
         const bool rawMode = (scopeType == Options::ScopeType::HISTOGRAM_RAW);
 
@@ -1383,10 +1394,10 @@ void HistogramArea::updateDrawingArea (const ::Cairo::RefPtr< Cairo::Context> &c
     } else if (scopeType == Options::ScopeType::VECTORSCOPE_HC || scopeType == Options::ScopeType::VECTORSCOPE_HS) {
         drawVectorscope(cr, winw, winh);
     }
-    wave_lock.release();
+    MYREADERLOCK_RELEASE(wave_lock);
 }
 
-bool HistogramArea::updatePointer(const int r, const int g, const int b, const Glib::ustring &profile, const Glib::ustring &profileW)
+bool HistogramArea::updatePointer(const int r, const int g, const int b, const rtengine::procparams::ColorManagementParams *cmp)
 {
     // Do not update pointer values if pointer is not visible
     // (by user choice or according to scope type)
@@ -1410,11 +1421,16 @@ bool HistogramArea::updatePointer(const int r, const int g, const int b, const G
         pointer_red = r;
         pointer_green = g;
         pointer_blue = b;
-        Color::rgb2lab01(profile, profileW,
-                static_cast<float>(r) / 255.f,
-                static_cast<float>(g) / 255.f,
-                static_cast<float>(b) / 255.f,
-                L, pointer_a, pointer_b, options.rtSettings.HistogramWorking);
+        ImProcFunctions::rgb2lab(
+            static_cast<std::uint8_t>(r),
+            static_cast<std::uint8_t>(g),
+            static_cast<std::uint8_t>(b),
+            L, pointer_a, pointer_b,
+            cmp != nullptr ? *cmp : DEFAULT_CMP,
+            true);
+        L /= 327.68f;
+        pointer_a /= 327.68f;
+        pointer_b /= 327.68f;
         pointer_valid = true;
     }
 

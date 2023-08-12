@@ -49,6 +49,7 @@ protected:
     Gtk::Frame* dcpFrame;
     Gtk::Frame* coipFrame;
     Gtk::Frame* redFrame;
+    MyExpander* trcExp;
 
     Adjuster* wGamma;
     Adjuster* wSlope;
@@ -168,6 +169,7 @@ private:
     Glib::ustring camName;
     void updateDCP(int dcpIlluminant, Glib::ustring dcp_name);
     void updateRenderingIntent(const Glib::ustring &profile);
+    void foldAllButMe (GdkEventButton* event, MyExpander *expander);
     
     float nextrx;
     float nextry;

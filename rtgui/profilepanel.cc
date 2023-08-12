@@ -286,6 +286,12 @@ void ProfilePanel::save_clicked (GdkEventButton* event)
         toSave = entry ? ProfileStore::getInstance()->getProfile(entry) : nullptr;
     }
 
+    // If no entry has been selected or anything unpredictable happened, toSave
+    // can be nullptr.
+    if (toSave == nullptr) {
+        return;
+    }
+
     // If it's a partial profile, it's more intuitive to first allow the user
     // to choose which parameters to save before showing the Save As dialog
     // #5491
@@ -334,50 +340,70 @@ void ProfilePanel::save_clicked (GdkEventButton* event)
     filter_any->add_pattern("*");
     dialog.add_filter(filter_any);
 
-    bool done = true;
+    while (true) {
 
-    do {
-        if (dialog.run() == Gtk::RESPONSE_OK) {
+        // Run the saving dialog and let the user select a path and filename.
+        const auto response = dialog.run();
 
-            std::string fname = dialog.get_filename();
+        if (response != Gtk::RESPONSE_OK) {
+            // Just exit the loop, cause the user cancels the dialog.
+            
+            break;
+        } else {
+            // Go on with saving the the profile.
+
+            auto fname = dialog.get_filename();
 
             if (("." + getExtension(fname)) != paramFileExtension) {
                 fname += paramFileExtension;
             }
 
             if (!confirmOverwrite(dialog, fname)) {
+
+                // The user doesn't want to override the existing file. So, just restart the loop,
+                // so the user can select a different path or file name.
                 continue;
             }
 
             lastFilename = Glib::path_get_basename(fname);
 
-            if (toSave) {
-                int retCode;
+            auto retCode = -1;
 
-                if (isPartial) {
-                    // Build partial profile
-                    PartialProfile ppTemp(true);
-                    partialProfileDlg->applyPaste(ppTemp.pparams, ppTemp.pedited, toSave->pparams, nullptr);
-                    // Save partial profile
-                    retCode = ppTemp.pparams->save(fname, "", true, ppTemp.pedited);
-                    // Cleanup
-                    ppTemp.deleteInstance();
-                } else {
-                    // Save full profile
-                    retCode = toSave->pparams->save(fname);
-                }
+            if (isPartial) {
+                // Build partial profile
+                PartialProfile ppTemp(true);
+                partialProfileDlg->applyPaste(ppTemp.pparams, ppTemp.pedited, toSave->pparams, nullptr);
+                
+                // Save partial profile
+                retCode = ppTemp.pparams->save(fname, "", true, ppTemp.pedited);
+                
+                // Cleanup
+                ppTemp.deleteInstance();
+            } else {
+                // Save full profile
+                retCode = toSave->pparams->save(fname);
+            }
 
-                if (!retCode) {
-                    const auto ccPrevState = changeconn.block(true);
-                    ProfileStore::getInstance()->parseProfiles();
-                    changeconn.block(ccPrevState);
-                } else {
-                    done = false;
-                    writeFailed(dialog, fname);
-                }
+            if (retCode == 0) {
+                // Saving the profile was successfull.
+
+                const auto ccPrevState = changeconn.block(true);
+                ProfileStore::getInstance()->parseProfiles();
+                changeconn.block(ccPrevState);
+
+                // Because saving has been successfull, just leave the loop;
+                break;
+            } else {
+                // Saving the profile was not successfull.
+
+                writeFailed(dialog, fname);
+
+                // In case the saving process was not successfull (missing permissions, ...)
+                // reopen the dialog and try again.
+                continue;
             }
         }
-    } while (!done);
+    }
 }
 
 /*

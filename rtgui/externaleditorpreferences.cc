@@ -36,7 +36,9 @@ ExternalEditorPreferences::ExternalEditorPreferences():
     list_view = Gtk::manage(new Gtk::TreeView());
     list_view->set_model(list_model);
     list_view->append_column(*Gtk::manage(makeAppColumn()));
+#ifndef __APPLE__
     list_view->append_column(*Gtk::manage(makeNativeCommandColumn()));
+#endif
     list_view->append_column(*Gtk::manage(makeCommandColumn()));
 
     for (auto &&column : list_view->get_columns()) {
@@ -56,11 +58,18 @@ ExternalEditorPreferences::ExternalEditorPreferences():
     button_remove = Gtk::manage(new Gtk::Button());
     button_add->set_image_from_icon_name("add-small");
     button_remove->set_image_from_icon_name("remove-small");
-    button_app_chooser = Gtk::manage(new Gtk::Button(M("PREFERENCES_EXTERNALEDITOR_CHANGE")));
+    button_app_chooser =
+#ifdef __APPLE__
+        nullptr;
+#else
+        Gtk::manage(new Gtk::Button(M("PREFERENCES_EXTERNALEDITOR_CHANGE")));
+#endif
     button_file_chooser = Gtk::manage(new Gtk::Button(M("PREFERENCES_EXTERNALEDITOR_CHANGE_FILE")));
 
-    button_app_chooser->signal_pressed().connect(sigc::mem_fun(
-                *this, &ExternalEditorPreferences::openAppChooserDialog));
+    if (button_app_chooser) {
+        button_app_chooser->signal_pressed().connect(sigc::mem_fun(
+                    *this, &ExternalEditorPreferences::openAppChooserDialog));
+    }
     button_add->signal_pressed().connect(sigc::mem_fun(
             *this, &ExternalEditorPreferences::addEditor));
     button_file_chooser->signal_pressed().connect(sigc::mem_fun(
@@ -74,7 +83,9 @@ ExternalEditorPreferences::ExternalEditorPreferences():
 
     // Toolbar.
     toolbar.set_halign(Gtk::Align::ALIGN_END);
-    toolbar.add(*button_app_chooser);
+    if (button_app_chooser) {
+        toolbar.add(*button_app_chooser);
+    }
     toolbar.add(*button_file_chooser);
     toolbar.add(*button_add);
     toolbar.add(*button_remove);
@@ -153,6 +164,9 @@ void ExternalEditorPreferences::addEditor()
     }
 
     row[model_columns.name] = "-";
+#ifdef __APPLE__
+    row[model_columns.native_command] = true;
+#endif
     list_view->get_selection()->select(row);
 }
 
@@ -241,7 +255,12 @@ void ExternalEditorPreferences::onFileChooserDialogResponse(
             for (const auto &selected : selection) {
                 auto row = *list_model->get_iter(selected);
                 row[model_columns.icon] = Glib::RefPtr<Gio::Icon>(nullptr);
-                row[model_columns.native_command] = false;
+                row[model_columns.native_command] =
+#ifdef __APPLE__
+                    true;
+#else
+                    false;
+#endif
                 row[model_columns.command] =
 #ifdef WIN32
                     '"' + dialog->get_filename() + '"';
@@ -357,7 +376,9 @@ void ExternalEditorPreferences::setAppName(
 void ExternalEditorPreferences::updateToolbarSensitivity()
 {
     bool selected = list_view->get_selection()->count_selected_rows();
-    button_app_chooser->set_sensitive(selected);
+    if (button_app_chooser) {
+        button_app_chooser->set_sensitive(selected);
+    }
     button_file_chooser->set_sensitive(selected);
     button_remove->set_sensitive(selected);
 }

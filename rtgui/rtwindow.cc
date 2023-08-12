@@ -255,6 +255,9 @@ RTWindow::RTWindow ()
 
     // ------- end loading theme files
 
+    // Initialize FileBrowserEntry icons
+    FileBrowserEntry::init();
+
     // For UNIX system, set app icon
 #ifndef WIN32
     try {

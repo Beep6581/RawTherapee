@@ -136,6 +136,21 @@ bool PopUpCommon::insertEntryImpl(int position, const Glib::ustring& iconName, c
     return true;
 }
 
+void PopUpCommon::setEmptyImage(const Glib::ustring &fileName)
+{
+    emptyImageFilename = fileName;
+
+    if (getEntryCount()) {
+        return;
+    }
+    if (fileName.empty()) {
+        buttonImage->hide();
+    } else {
+        changeImage(emptyImageFilename, Glib::RefPtr<const Gio::Icon>());
+        buttonImage->show();
+    }
+}
+
 void PopUpCommon::removeEntry(int position)
 {
     if (position < 0 || position >= getEntryCount()) {
@@ -147,8 +162,13 @@ void PopUpCommon::removeEntry(int position)
         button->get_style_context()->remove_class("Left");
         arrowButton->hide();
         hasMenu = false;
-        // Remove the button image.
-        buttonImage->hide();
+        if (emptyImageFilename.empty()) {
+            // Remove the button image.
+            buttonImage->hide();
+        } else {
+            // Show the empty icon.
+            changeImage(emptyImageFilename, Glib::RefPtr<const Gio::Icon>());
+        }
         selected = -1;
     }
     else if (position < selected) {

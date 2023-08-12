@@ -1,12 +1,14 @@
-#01 2007-12-23 ArtDen
-#02 2008-07-20 Denis Artemov
-#03 2009-02-16 Kvark
-#04 2010-02-26 Sergey Smirnov AKA smiserg
-#05 2010-11-01 Ilia Popov <ilia_popov@rambler.ru>
-#06 2012-07-17 Roman Milanskij <loooooker@gmail.com>
-#07 2014-02-12 Kostia (Kildor) Romanov <kromanov@gmail.com>
-#08 2018-02-10 Kostia (Kildor) Romanov <kromanov@gmail.com>
-#09 2018-12-13 Kostia (Kildor) Romanov <kromanov@gmail.com>
+#001 2007-12-23 ArtDen
+#002 2008-07-20 Denis Artemov
+#003 2009-02-16 Kvark
+#004 2010-02-26 Sergey Smirnov AKA smiserg
+#005 2010-11-01 Ilia Popov <ilia_popov@rambler.ru>
+#006 2012-07-17 Roman Milanskij <loooooker@gmail.com>
+#007 2014-02-12 Kostia (Kildor) Romanov <kromanov@gmail.com>
+#008 2018-02-10 Kostia (Kildor) Romanov <kromanov@gmail.com>
+#009 2018-12-13 Kostia (Kildor) Romanov <kromanov@gmail.com>
+#100
+#101 @LANGUAGE_DISPLAY_NAME=Русский
 
 ABOUT_TAB_BUILD;Версия
 ABOUT_TAB_CREDITS;Авторы

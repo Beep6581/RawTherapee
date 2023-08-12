@@ -1033,7 +1033,7 @@ int ImageIO::savePNG  (const Glib::ustring &fname, int bps) const
 #if defined(PNG_SKIP_sRGB_CHECK_PROFILE) && defined(PNG_SET_OPTION_SUPPORTED)
     png_set_option(png, PNG_SKIP_sRGB_CHECK_PROFILE, PNG_OPTION_ON);
 #endif
-    
+
     png_infop info = png_create_info_struct(png);
 
     if (!info) {
@@ -1232,25 +1232,34 @@ int ImageIO::saveJPEG (const Glib::ustring &fname, int quality, int subSamp) con
 
     jpeg_start_compress(&cinfo, TRUE);
 
-    // buffer for exif and iptc markers
-    unsigned char* buffer = new unsigned char[165535]; //FIXME: no buffer size check so it can be overflowed in createJPEGMarker() for large tags, and then software will crash
-    unsigned int size;
+    // buffer for exif marker
+    unsigned char* exifBuffer = nullptr;
+    unsigned int exifBufferSize = 0;
 
     // assemble and write exif marker
     if (exifRoot) {
-        int size = rtexif::ExifManager::createJPEGMarker (exifRoot, *exifChange, cinfo.image_width, cinfo.image_height, buffer);
+        rtexif::ExifManager::createJPEGMarker (exifRoot, *exifChange, cinfo.image_width, cinfo.image_height, exifBuffer, exifBufferSize);
 
-        if (size > 0 && size < 65530) {
-            jpeg_write_marker(&cinfo, JPEG_APP0 + 1, buffer, size);
+        if (exifBufferSize > 0 && exifBufferSize < 65530) {
+            jpeg_write_marker(&cinfo, JPEG_APP0 + 1, exifBuffer, exifBufferSize);
         }
+
     }
+
+    if (exifBuffer != nullptr) {
+        delete [] exifBuffer;
+    }
+
+    // buffer for iptc marker
+    unsigned char* iptcBuffer = new unsigned char[65535];
 
     // assemble and write iptc marker
     if (iptc) {
         unsigned char* iptcdata;
+        unsigned int iptcSize;
         bool error = false;
 
-        if (iptc_data_save (iptc, &iptcdata, &size)) {
+        if (iptc_data_save (iptc, &iptcdata, &iptcSize)) {
             if (iptcdata) {
                 iptc_data_free_buf (iptc, iptcdata);
             }
@@ -1260,7 +1269,7 @@ int ImageIO::saveJPEG (const Glib::ustring &fname, int quality, int subSamp) con
 
         int bytes = 0;
 
-        if (!error && (bytes = iptc_jpeg_ps3_save_iptc (nullptr, 0, iptcdata, size, buffer, 65532)) < 0) {
+        if (!error && (bytes = iptc_jpeg_ps3_save_iptc (nullptr, 0, iptcdata, iptcSize, iptcBuffer, 65532)) < 0) {
             error = true;
         }
 
@@ -1269,11 +1278,11 @@ int ImageIO::saveJPEG (const Glib::ustring &fname, int quality, int subSamp) con
         }
 
         if (!error) {
-            jpeg_write_marker(&cinfo, JPEG_APP0 + 13, buffer, bytes);
+            jpeg_write_marker(&cinfo, JPEG_APP0 + 13, iptcBuffer, bytes);
         }
     }
 
-    delete [] buffer;
+    delete [] iptcBuffer;
 
     // write icc profile to the output
     if (profileData) {

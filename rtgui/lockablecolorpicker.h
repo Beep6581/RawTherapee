@@ -24,6 +24,18 @@
 
 class CropWindow;
 
+namespace rtengine
+{
+
+namespace procparams
+{
+
+struct ColorManagementParams;
+
+}
+
+}
+
 class LockablePickerToolListener
 {
 public:
@@ -60,8 +72,7 @@ private:
     rtengine::Coord position;  // Coordinate in image space
     rtengine::Coord anchorOffset;
     Size size;
-    Glib::ustring *outputProfile;
-    Glib::ustring *workingProfile;
+    rtengine::procparams::ColorManagementParams *color_management_params;
     Validity validity;
     float r, g, b;  // red green blue in [0;1] range
     float rpreview, gpreview, bpreview;
@@ -72,7 +83,7 @@ private:
 
 public:
 
-    LockableColorPicker (CropWindow* cropWindow, Glib::ustring *oProfile, Glib::ustring *wProfile);
+    LockableColorPicker (CropWindow* cropWindow, rtengine::procparams::ColorManagementParams *color_management_params);
 
     void draw (const Cairo::RefPtr<Cairo::Context> &cr);
 

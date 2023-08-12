@@ -37,7 +37,6 @@
 
 //extern Glib::Threads::Thread* mainThread;
 
-bool FileBrowserEntry::iconsLoaded(false);
 std::shared_ptr<RTSurface> FileBrowserEntry::editedIcon(std::shared_ptr<RTSurface>(nullptr));
 std::shared_ptr<RTSurface> FileBrowserEntry::recentlySavedIcon(std::shared_ptr<RTSurface>(nullptr));
 std::shared_ptr<RTSurface> FileBrowserEntry::enqueuedIcon(std::shared_ptr<RTSurface>(nullptr));
@@ -57,15 +56,6 @@ FileBrowserEntry::FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname)
     exifline = thumbnail->getExifString ();
 
     scale = 1;
-
-    if (!iconsLoaded) {
-        editedIcon = std::shared_ptr<RTSurface>(new RTSurface("tick-small", Gtk::ICON_SIZE_SMALL_TOOLBAR));
-        recentlySavedIcon = std::shared_ptr<RTSurface>(new RTSurface("save-small", Gtk::ICON_SIZE_SMALL_TOOLBAR));
-        enqueuedIcon = std::shared_ptr<RTSurface>(new RTSurface("gears-small", Gtk::ICON_SIZE_SMALL_TOOLBAR));
-        hdr = std::shared_ptr<RTSurface>(new RTSurface("filetype-hdr", Gtk::ICON_SIZE_SMALL_TOOLBAR));
-        ps = std::shared_ptr<RTSurface>(new RTSurface("filetype-ps", Gtk::ICON_SIZE_SMALL_TOOLBAR));
-        iconsLoaded = true;
-    }
 
     thumbnail->addThumbnailListener (this);
 }
@@ -88,6 +78,15 @@ FileBrowserEntry::~FileBrowserEntry ()
         thumbnail->removeThumbnailListener (this);
         thumbnail->decreaseRef ();
     }
+}
+
+void FileBrowserEntry::init ()
+{
+    editedIcon = std::shared_ptr<RTSurface>(new RTSurface("tick-small", Gtk::ICON_SIZE_SMALL_TOOLBAR));
+    recentlySavedIcon = std::shared_ptr<RTSurface>(new RTSurface("save-small", Gtk::ICON_SIZE_SMALL_TOOLBAR));
+    enqueuedIcon = std::shared_ptr<RTSurface>(new RTSurface("gears-small", Gtk::ICON_SIZE_SMALL_TOOLBAR));
+    hdr = std::shared_ptr<RTSurface>(new RTSurface("filetype-hdr", Gtk::ICON_SIZE_SMALL_TOOLBAR));
+    ps = std::shared_ptr<RTSurface>(new RTSurface("filetype-ps", Gtk::ICON_SIZE_SMALL_TOOLBAR));
 }
 
 void FileBrowserEntry::refreshThumbnailImage ()

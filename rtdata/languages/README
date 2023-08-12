@@ -45,6 +45,13 @@ comments in the right order, e.g.:
   #01 Line 2...
   #02 3, etc.
 
+Metadata for the language file appear in comments with the following syntax:
+  #10 @KEY=VALUE
+The @ character must appear immediately after the whitespace following the
+numeric prefix. KEY is the metadata name and VALUE is value for that metadata
+name. The following key(s) are recognized:
+  a) LANGUAGE_DISPLAY_NAME: The language name as shown in preferences.
+
 To create a file with only Latin characters from a non-Latin one, you can use 
 sed with the "y" command. For example, to create a latin-only "Polish (Latin 
 Characters)" file from the non-latin "Polish" one:

@@ -1444,6 +1444,7 @@ HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
 HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Local Contrast - Lightness
 HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
 HISTORY_MSG_LOCAL_GAMUTMUNSEL;Local - Gamut-Munsell
+HISTORY_MSG_LOCALLAB_TE_PIVOT;Local - Equalizer pivot
 HISTORY_MSG_METADATA_MODE;Metadata copy mode
 HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrast threshold
 HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST;CS - Auto threshold
@@ -1489,6 +1490,11 @@ HISTORY_MSG_SPOT_ENTRY;Spot removal - Point modif.
 HISTORY_MSG_TEMPOUT;CAM02 automatic temperature
 HISTORY_MSG_THRESWAV;Balance threshold
 HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
+HISTORY_MSG_TONE_EQUALIZER_BANDS;Tone equalizer - Bands
+HISTORY_MSG_TONE_EQUALIZER_ENABLED;Tone equalizer
+HISTORY_MSG_TONE_EQUALIZER_PIVOT;Tone equalizer - Pivot
+HISTORY_MSG_TONE_EQUALIZER_REGULARIZATION;Tone equalizer - Regularization
+HISTORY_MSG_TONE_EQUALIZER_SHOW_COLOR_MAP;Tone equalizer - Tonal map
 HISTORY_MSG_TRANS_METHOD;Geometry - Method
 HISTORY_MSG_WAVBALCHROM;Equalizer chrominance
 HISTORY_MSG_WAVBALLUM;Equalizer luminance
@@ -1529,6 +1535,22 @@ HISTORY_MSG_WAVTHRDEN;Threshold local contrast
 HISTORY_MSG_WAVTHREND;Threshold local contrast
 HISTORY_MSG_WAVUSHAMET;Clarity method
 HISTORY_MSG_WBALANCE_OBSERVER10;Observer 10°
+HISTORY_MSG_WBITC_OBS;Remove algo 2 passes
+HISTORY_MSG_WBITC_CUSTOM;Itcwb Custom
+HISTORY_MSG_WBITC_SAMPLING;Low sampling
+HISTORY_MSG_WBITC_THRES;Itcwb Theshold
+HISTORY_MSG_WBITC_NOPURPLE;Itcwb Nopurple
+HISTORY_MSG_WBITC_PRIM;Primaries
+HISTORY_MSG_WBITC_SORTED;Itcwb ponderated
+HISTORY_MSG_WBITC_FORCE;Itcwb Force
+HISTORY_MSG_WBITC_SIZE;Itcwb Size
+HISTORY_MSG_WBITC_PRECIS;Itcwb Precision
+HISTORY_MSG_WBITC_DELTA;Itcwb Delta green
+HISTORY_MSG_WBITC_FGREEN;Itcwb Green - student
+HISTORY_MSG_WBITC_RGREEN;Itcwb Green range
+HISTORY_MSG_WBITC_MINSIZE;Patch min size
+HISTORY_MSG_WBITC_PONDER;Itcwb ponderated
+HISTORY_MSG_WBITC_GREEN;Grren refinement
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -1796,6 +1818,7 @@ PARTIALPASTE_SHARPENMICRO;Microcontrast
 PARTIALPASTE_SOFTLIGHT;Soft light
 PARTIALPASTE_SPOT;Spot removal
 PARTIALPASTE_TM_FATTAL;Dynamic range compression
+PARTIALPASTE_TONE_EQUALIZER;Tone equalizer
 PARTIALPASTE_VIBRANCE;Vibrance
 PARTIALPASTE_VIGNETTING;Vignetting correction
 PARTIALPASTE_WHITEBALANCE;White balance
@@ -1834,6 +1857,17 @@ PREFERENCES_CHUNKSIZE_RGB;RGB processing
 PREFERENCES_CIE;Ciecam
 PREFERENCES_CIEARTIF;Avoid artifacts
 PREFERENCES_WBA;White Balance
+PREFERENCES_WBACORR;White Balance - Automatic temperature correlation
+PREFERENCES_WBACORR_TOOLTIP;These settings allow, depending on the images (type of raw file, colorimetry, etc.), an adaptation of the " Temperature correlation " algorithm in order to obtain the best overall results. There is no absolute rule, linking these parameters to the results obtained.\n\nThe settings are of 3 types: \n* those accessible to the user from the GUI.\n* those accessible only in reading from each pp3 file : Itcwb_minsize=20, Itcwb_delta=4 Itcwb_rgreen=1 Itcwb_nopurple=false (See Rawpedia)\n* those accessible to the user in 'options' (see Rawpedia)\n You can use "Awb temperature bias" and "Green refinement" to adjust the results. Each movement of these commands brings a new calculation of temperature, tint and correlation.\n\nPlease note that the 3 indicators 'Correlation factor', 'Patch chroma' and ΔE are given for information only. It is not because one of these indicators is better that the result will necessarily be better.
+PREFERENCES_WBAENA;Show White Balance auto Temperature correlation Settings
+PREFERENCES_WBAENACUSTOM;Use Custom temperature & tint
+PREFERENCES_WBAPATCH;Number maximum of colors used in picture
+PREFERENCES_WBAFORC;Forces Extra algoritm
+PREFERENCES_WBAGREENDELTA;Delta temperature in green iterate loop (if Force Extra enabled)
+PREFERENCES_WBANOPURP;No purple color used
+PREFERENCES_WBAPRECIS;Precision algorithm - scale used
+PREFERENCES_WBASIZEREF;Size of reference color compare to size of histogram color
+PREFERENCES_WBASORT;Sort in chroma order instead of histogram 
 PREFERENCES_CLIPPINGIND;Clipping Indication
 PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
@@ -2609,6 +2643,7 @@ TP_ICM_WORKING_PRIM_BRU;BruceRGB
 TP_ICM_WORKING_PRIM_BST;BestRGB
 TP_ICM_WORKING_PRIM_CUS;Custom (sliders)
 TP_ICM_WORKING_PRIM_CUSGR;Custom (CIE xy Diagram)
+TP_ICM_WORKING_PRIM_JDCMAX;JDC Max
 TP_ICM_WORKING_PRIM_NONE;Default
 TP_ICM_WORKING_PRIM_PROP;ProPhoto
 TP_ICM_WORKING_PRIM_REC;Rec2020
@@ -2839,13 +2874,15 @@ TP_LOCALLAB_DENOIMASK;Denoise chroma mask
 TP_LOCALLAB_DENOIMASK_TOOLTIP;For all tools, allows you to control the chromatic noise level of the mask.\nUseful for better control of chrominance and to avoid artifacts when using the LC(h) curve.
 TP_LOCALLAB_DENOIQUA_TOOLTIP;Conservative mode preserves low frequency detail. Aggressive mode removes low frequency detail.\nConservative and Aggressive modes use wavelets and DCT and can be used in conjunction with 'Non-local Means – Luminance'.
 TP_LOCALLAB_DENOITHR_TOOLTIP;Adjusts edge detection to help reduce noise in uniform, low-contrast areas.
+TP_LOCALLAB_DENOIWAVCH;Wavelets: Chrominance
+TP_LOCALLAB_DENOIWAVLUM;Wavelets: Luminance
 TP_LOCALLAB_DENOI_EXP;Denoise
 TP_LOCALLAB_DENOI_TOOLTIP;This module can be used for noise reduction either on its own (at the end of the processing pipeline) or in addition to the Noise Reduction module in the Detail tab (which works at the beginning of the pipeline).\n Scope allows you to differentiate the action based on color (ΔE).\nMinimum RT-spot size: 128x128.
 TP_LOCALLAB_DEPTH;Depth
 TP_LOCALLAB_DETAIL;Local contrast
 TP_LOCALLAB_DETAILFRA;Edge detection - DCT
 TP_LOCALLAB_DETAILSH;Details
-TP_LOCALLAB_DETAILTHR;Luma-chro detail threshold
+TP_LOCALLAB_DETAILTHR;Lum/chrom detail threshold
 TP_LOCALLAB_DIVGR;Gamma
 TP_LOCALLAB_DUPLSPOTNAME;Copy
 TP_LOCALLAB_EDGFRA;Edge sharpness
@@ -3110,7 +3147,7 @@ TP_LOCALLAB_MASKLCTHRLOW;Dark area luminance threshold
 TP_LOCALLAB_MASKLCTHRLOW2;Dark area luma threshold
 TP_LOCALLAB_MASKLCTHRMID;Gray area luma denoise
 TP_LOCALLAB_MASKLCTHRMIDCH;Gray area chroma denoise
-TP_LOCALLAB_MASKLC_TOOLTIP;This allows you to target the denoise based on the image luminance information contained in the L(L) or LC(H) mask (Mask and Modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n 'Dark area luminance threshold'. If 'Reinforce denoise in dark and light areas' > 1 the denoise is progressively increased from 0% at the threshold setting to 100% at the maximum black value (determined by mask).\n 'Light area luminance threshold'. The denoise is progressively decreased from 100% at the threshold setting to 0% at the maximum white value (determined by mask).\n In the area between the two thresholds, the denoise settings are not affected by the mask.
+TP_LOCALLAB_MASKLC_TOOLTIP;Used by wavelet luminance.\nThis allows you to target the denoise based on the image luminance information contained in the L(L) or LC(H) mask (Mask and Modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n 'Dark area luminance threshold'. If 'Reinforce denoise in dark and light areas' > 1 the denoise is progressively increased from 0% at the threshold setting to 100% at the maximum black value (determined by mask).\n 'Light area luminance threshold'. The denoise is progressively decreased from 100% at the threshold setting to 0% at the maximum white value (determined by mask).\n In the area between the two thresholds, the denoise settings are not affected by the mask.
 TP_LOCALLAB_MASKLNOISELOW;Reinforce dark/light areas
 TP_LOCALLAB_MASKLOWTHRESCB_TOOLTIP;Dark-tone limit below which the CBDL parameters (Luminance only) will be restored progressively to their original values prior to being modified by the CBDL settings.\n You can use certain tools in 'Mask and modifications' to change the gray levels: 'Smooth radius', Gamma and Slope, 'Contrast curve'.\n Use a 'lockable color picker' on the mask to see which areas will be affected. Make sure you set 'Background color mask' = 0 in Settings.
 TP_LOCALLAB_MASKLOWTHRESC_TOOLTIP;Dark-tone limit below which the parameters will be restored progressively to their original values prior to being modified by the Color and Light settings.\n You can use certain tools in 'Mask and modifications' to change the gray levels: 'Structure mask', 'blur mask', 'Smooth radius', Gamma and Slope, 'Contrast curve', 'Local contrast' (wavelets).\n Use a 'lockable color picker' on the mask to see which areas will be affected. Make sure you set 'Background color mask' = 0 in Settings.
@@ -3169,6 +3206,12 @@ TP_LOCALLAB_MERTHR;Difference
 TP_LOCALLAB_MERTWE;Exclusion
 TP_LOCALLAB_MERTWO;Subtract
 TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts.
+TP_LOCALLAB_LCLABELS;Residual noise levels
+TP_LOCALLAB_LCLABELS_TOOLTIP;Displays the mean and high-end noise values for the area shown in the Preview Panel (at 100% zoom). The noise values are grouped by wavelet levels 0,1,2,3 and 4,5,6.\nThe displayed values are indicative only and are designed to assist with denoise adjustments. They should not be interpreted as absolute noise levels.\n\n 300: Very noisy\n 100-300: Noisy\n 50-100: Moderatly noisy\n < 50: Low noise\n\nThey allow you to see:\n*The impact of Noise Reduction in the main-menu Detail tab.\n*The influence of Non-local Means, Wavelets and DCT on the luminance noise.\n*The influence of Wavelets and DCT on the chroma noise.\n*The influence of Capture Sharpening and Demosaicing.
+TP_LOCALLAB_LUMLABEL;Luma levels 0123: Mean=%1 High=%2 
+TP_LOCALLAB_LUM46LABEL;Luma levels 456: Mean=%1 High=%2
+TP_LOCALLAB_CHROLABEL;Chroma levels 0123: Mean=%1 High=%2
+TP_LOCALLAB_CHRO46LABEL;Chroma levels 456: Mean=%1 High=%2
 TP_LOCALLAB_MLABEL;Restored data Min=%1 Max=%2
 TP_LOCALLAB_MLABEL_TOOLTIP;The values should be close to Min=0 Max=32768 (log mode) but other values are possible.You can adjust 'Clip restored data (gain)' and 'Offset' to normalize.\nRecovers image data without blending.
 TP_LOCALLAB_MODE_EXPERT;Advanced
@@ -3185,7 +3228,7 @@ TP_LOCALLAB_NLDENOISENLPAT_TOOLTIP;Use this slider to adapt the amount of denois
 TP_LOCALLAB_NLDENOISENLRAD_TOOLTIP;Higher values increase denoise at the expense of processing time.
 TP_LOCALLAB_NLDENOISE_TOOLTIP;'Detail recovery' acts on a Laplacian transform to target uniform areas rather than areas with detail.
 TP_LOCALLAB_NLDET;Detail recovery
-TP_LOCALLAB_NLFRA;Non-local Means - Luminance
+TP_LOCALLAB_NLFRA;Non-local Means: Luminance
 TP_LOCALLAB_NLFRAME_TOOLTIP;Non-local means denoising takes a mean of all pixels in the image, weighted by how similar they are to the target pixel.\nReduces loss of detail compared with local mean algorithms.\nOnly luminance noise is taken into account. Chrominance noise is best processed using wavelets and Fourier transforms (DCT).\nCan be used in conjunction with 'Luminance denoise by level' or on its own.
 TP_LOCALLAB_NLGAM;Gamma
 TP_LOCALLAB_NLLUM;Strength
@@ -3379,6 +3422,7 @@ TP_LOCALLAB_STYPE_TOOLTIP;You can choose between:\nSymmetrical - left handle lin
 TP_LOCALLAB_SYM;Symmetrical (mouse)
 TP_LOCALLAB_SYMSL;Symmetrical (mouse + sliders)
 TP_LOCALLAB_TARGET_GRAY;Mean luminance (Yb%)
+TP_LOCALLAB_TE_PIVOT;Pivot (Ev)
 TP_LOCALLAB_THRES;Threshold structure
 TP_LOCALLAB_THRESDELTAE;ΔE scope threshold
 TP_LOCALLAB_THRESRETI;Threshold
@@ -3775,6 +3819,16 @@ TP_TM_FATTAL_AMOUNT;Amount
 TP_TM_FATTAL_ANCHOR;Anchor
 TP_TM_FATTAL_LABEL;Dynamic Range Compression
 TP_TM_FATTAL_THRESHOLD;Detail
+TP_TONE_EQUALIZER_BAND_0;Blacks
+TP_TONE_EQUALIZER_BAND_1;Shadows
+TP_TONE_EQUALIZER_BAND_2;Midtones
+TP_TONE_EQUALIZER_BAND_3;Highlights
+TP_TONE_EQUALIZER_BAND_4;Whites
+TP_TONE_EQUALIZER_BANDS;Bands
+TP_TONE_EQUALIZER_DETAIL;Regularization
+TP_TONE_EQUALIZER_LABEL;Tone Equalizer
+TP_TONE_EQUALIZER_PIVOT;Pivot (Ev)
+TP_TONE_EQUALIZER_SHOW_COLOR_MAP;Show tonal map
 TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid color shift
 TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Skin-tones
@@ -4051,7 +4105,7 @@ TP_WAVELET_WAVOFFSET;Offset
 TP_WBALANCE_AUTO;Auto
 TP_WBALANCE_AUTOITCGREEN;Temperature correlation
 TP_WBALANCE_AUTOOLD;RGB grey
-TP_WBALANCE_AUTO_HEADER;Automatic
+TP_WBALANCE_AUTO_HEADER;Automatic & Refinement
 TP_WBALANCE_CAMERA;Camera
 TP_WBALANCE_CLOUDY;Cloudy
 TP_WBALANCE_CUSTOM;Custom
@@ -4078,6 +4132,47 @@ TP_WBALANCE_FLUO_HEADER;Fluorescent
 TP_WBALANCE_GREEN;Tint
 TP_WBALANCE_GTI;GTI
 TP_WBALANCE_HMI;HMI
+TP_WBALANCE_ITCWB_DELTA;Delta temperature in green loop
+TP_WBALANCE_ITCWBDELTA_TOOLTIP;Fixed for each "green" iteration tried, the temperature difference to be taken into account.
+//TP_WBALANCE_ITCWB_FORCED;Forces use of the entire CIE diagram
+TP_WBALANCE_ITCWB_FORCED;Close to full CIE diagram
+TP_WBALANCE_ITCWFORCED_TOOLTIP;By default (box not checked) the data scanned during sampling is brought back to the sRGB profile, which is the most widespread, both for calibrating DCP or ICC profiles with the Colorchecker24, or used on the web.\n If you have very high gamut images (some flowers, artificial colors), then it may be necessary to use the entire CIExy diagram, the profile used will be ACESP0. In this second case, the number of colors that can be used in internal to the algorithm will be more important.
+TP_WBALANCE_ITCWB_FGREEN;Find green student
+TP_WBALANCE_ITCWGREEN;Green refinement
+TP_WBALANCE_ITCWGREEN_TOOLTIP;Allows you to change the "tint" (green) which will serve as a reference when starting the algorithm. It has substantially the same role for greens as "AWB temperature bias" for temperature.\nThe whole algorithm is recalculated.
+TP_WBALANCE_ITCWBFGREEN_TOOLTIP;Find the best compromise between Student and green.
+TP_WBALANCE_ITCWB_FRA;Auto Temperature correlation Settings
+TP_WBALANCE_ITCWB_FRA_TOOLTIP;These settings allow, depending on the images (type of raw, colorimetry, etc.), an adaptation of the 'Temperature correlation' algorithm. There is no absolute rule linking these parameters to the results obtained.
+TP_WBALANCE_ITCWB_MINSIZEPATCH;Patch minimum size
+TP_WBALANCE_ITCWBMINSIZEPATCH_TOOLTIP;Allows you to set the minimum patch value. values that are too low can lead to a lack of correlation.
+TP_WBALANCE_ITCWB_NOPURPLE;Filter on purple color
+//TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP;By default when "Inpaint opposed" is activated, purple colors are not taken into account. However, if the image does not need highlight reconstruction, or if this image naturally contains purple tints (flowers, etc.), it may be necessary to deactivate, to take into account all the colors.
+TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP;Allows you to filter magenta/purple data from the image. If the box is checked a filter limiting the value of Y is applied. By default this value is 0.4. You can change it in 'options' Itcwb_Ypurple (Maximum 1)
+TP_WBALANCE_ITCWB_ALG;Remove 2 pass algorithm
+TP_WBALANCE_ITCWB_CUSTOM;Use Custom temperature & tint
+TP_WBALANCE_ITCWCUSTOM_TOOLTIP;Allows you to use Custom settings Temperature and Green (tint).\n\nUsage tips:\n1) start Itcwb , enable 'Use Custom temperature and tint'.\n2) Set 'Temperature and tint' to your liking :free, Pick,...(Custom)\n3) go back to 'Temperature correlation'.\n\nYou cannot use : 2 passes, AWB temperature bias, Green refinement.
+TP_WBALANCE_ITCWALG_TOOLTIP;Allows you to switch to the other Alternative temperature (Alt_temp), when possible.\nInactive in the "single choice" case.
+TP_WBALANCE_ITCWB_PRECIS;Precision algorithm - scale used
+TP_WBALANCE_ITCWBPRECIS_TOOLTIP;The lower the value, the more relevant the data, but increases the processing time. Since the processing time is low, this parameter should generally be able to remain at the default value
+TP_WBALANCE_ITCWB_PRIM_SRGB;Low sampling & No use Camera settings
+TP_WBALANCE_ITCWB_PRIM_ADOB;Medium sampling
+TP_WBALANCE_ITCWB_PRIM_BETA;Medium sampling - near Pointer's gamut
+TP_WBALANCE_ITCWB_PRIM_REC;High sampling
+TP_WBALANCE_ITCWB_PRIM_ACE;Forces use of the entire CIE diagram
+TP_WBALANCE_ITCWB_PRIM_JDCMAX;Close to full CIE diagram
+TP_WBALANCE_ITCWB_PRIM_XYZCAM;Camera XYZ matrix
+TP_WBALANCE_ITCWB_PRIM_XYZCAM2;JDCmax after Camera XYZ matrix
+TP_WBALANCE_ITCWPRIM_TOOLTIP;Allows you to select the image sampling.\n'Close to full CIE diagram' almost uses the data present on the sensor, possibly including the imaginary colors.\n'Camera XYZ matrix' - uses the matrix directly derived from Color Matrix.\n'Medium sampling' (default) - near Pointer's gamut: corresponds substantially to the most common cases of human vision.\nThe other choice 'Low sampling and No use camera settings' allow you to isolate high gamut parts of the image and forces the algorithm in some cases (tint > 0.8,...) not to use camera settings. This will obviously have an impact on the result.\n\nThis sampling only has an influence on the channel multipliers, it has nothing to do with the "working profile" and does not modify the gamut of the image.
+TP_WBALANCE_ITCWB_RGREEN;Green range
+TP_WBALANCE_ITCWBRGREEN_TOOLTIP;Sets the green value review amplitude in iterations, from low amplitude 0.82 to 1.25 to maximum amplitude 0.4 to 4.
+TP_WBALANCE_ITCWB_SAMPLING;Low sampling 5.9
+TP_WBALANCE_ITCWSAMPLING_TOOLTIP;Allows you to use the old sampling algorithm to ensure better compatibility with 5.9. You must enable Observer 10° (default).
+TP_WBALANCE_ITCWB_SIZE;Size of ref. color compare to histogram
+TP_WBALANCE_ITCWB_SIZEPATCH;Size of color patch
+TP_WBALANCE_ITCWBSIZEPATCH_TOOLTIP;This setting sets the size of color datas used by algorithm.
+TP_WBALANCE_ITCWBSIZE_TOOLTIP;This setting sets the number of iterations to find the best correspondence between the reference spectral colors and those in xyY value of the image. A value of 3 seams a good compromise.
+TP_WBALANCE_ITCWB_THRES;Colors used in picture (preset)
+TP_WBALANCE_ITCWBTHRES_TOOLTIP;Limits comparison sampling between spectral data and image data.
 TP_WBALANCE_JUDGEIII;JudgeIII
 TP_WBALANCE_LABEL;White Balance
 TP_WBALANCE_LAMP_HEADER;Lamp
@@ -4089,6 +4184,10 @@ TP_WBALANCE_MULLABEL;Multipliers: r=%1 g=%2 b=%3
 TP_WBALANCE_MULLABEL_TOOLTIP;Values given for information purposes. You cannot change them.
 TP_WBALANCE_OBSERVER10;Observer 10° instead of Observer 2°
 TP_WBALANCE_OBSERVER10_TOOLTIP;The color management in Rawtherapee (White balance, channel multipliers, highlight recovery,...) uses the spectral data of the illuminants and colors. Observer is an important parameter of this management which takes into account the angle of perception of the eye. In 1931 it was fixed at 2° (privileges the use of the cones). In 1964 it was fixed at 10° (privileges the use of the cones, but partially takes into account the rods).\nTo avoid a (rare) drift of the colors due to the choice Observer 10° - probably due to the conversion matrix - Observer 2° must be selected.\nIn a majority of cases Observer 10° (default) will be a more relevant choice.
+TP_WBALANCE_PATCHLABEL;Read colors:%1 Patch: Chroma:%2 Size=%3
+TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colors (max=237).\nDisplay calculated Patch Chroma.\nAWB temperature bias, lets try to reduce this value, a minimum may seem to optimize the algorithm.\n\nPatch size matching chroma optimization.
+TP_WBALANCE_PATCHLEVELLABEL;Patch: ΔE=%1 - datas x 9 Min:%2 Max=%3
+TP_WBALANCE_PATCHLEVELLABEL_TOOLTIP;Display ΔE patch (this assumes there is enough spectral data), between image and spectral datas.\n Display read datas found. The 2 values correspond to the minimum and maximum data values taken into account. The coefficient x9 must be taken into account to obtain the number of pixels concerned in the image.
 TP_WBALANCE_PICKER;Pick
 TP_WBALANCE_SHADE;Shade
 TP_WBALANCE_SIZE;Size:
@@ -4097,10 +4196,12 @@ TP_WBALANCE_SOLUX41;Solux 4100K
 TP_WBALANCE_SOLUX47;Solux 4700K (vendor)
 TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
 TP_WBALANCE_SPOTWB;Use the pipette to pick the white balance from a neutral patch in the preview.
-TP_WBALANCE_STUDLABEL;Correlation factor: %1
-TP_WBALANCE_STUDLABEL_TOOLTIP;Display calculated Student correlation.\nLower values are better, where <0.005 is excellent,\n<0.01 is good, and >0.5 is poor.\nLow values do not mean that the white balance is good:\nif the illuminant is non-standard the results can be erratic.\nA value of 1000 means previous calculations are used and\nthe resultsare probably good.
+TP_WBALANCE_STUDLABEL;Correlation factor: %1 Passes:%2 Worst_alt=%3
+TP_WBALANCE_STUDLABEL1;Correlation factor: %1 Passes:%2 Best_alt=%3
+TP_WBALANCE_STUDLABEL0;Correlation factor: %1 Passes:%2 Alt=%3
+TP_WBALANCE_STUDLABEL_TOOLTIP;Display calculated Student correlation.\nLower values are better, where <0.005 is excellent,\n<0.01 is good, and >0.5 is poor.\nLow values do not mean that the white balance is good:\nif the illuminant is non-standard the results can be erratic.\nA value of 1000 means previous calculations are used and\nthe resultsare probably good.\n\nPasses : number of passes made.\nAlt_temp : Alternative temperature.
 TP_WBALANCE_TEMPBIAS;AWB temperature bias
-TP_WBALANCE_TEMPBIAS_TOOLTIP;Allows to alter the computation of the 'auto white balance'\nby biasing it towards warmer or cooler temperatures. The bias\nis expressed as a percentage of the computed temperature,\nso that the result is given by 'computedTemp + computedTemp * bias'.
+TP_WBALANCE_TEMPBIAS_TOOLTIP;Allows to alter the computation of the 'auto white balance'\nby biasing it towards warmer or cooler temperatures. The bias\nis expressed as a percentage of the computed temperature,\nso that the result is given by 'computedTemp + computedTemp * bias'.\n\nYou can use "Awb temperature bias" to adjust the "Temperature correlation" results. Each movement of this command brings a new calculation of temperature, tint and correlation.
 TP_WBALANCE_TEMPERATURE;Temperature
 TP_WBALANCE_TUNGSTEN;Tungsten
 TP_WBALANCE_WATER1;UnderWater 1

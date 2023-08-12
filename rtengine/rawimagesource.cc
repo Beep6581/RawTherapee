@@ -43,7 +43,6 @@
 #include "rt_math.h"
 #include "rtengine.h"
 #include "rtlensfun.h"
-
 #include "../rtgui/options.h"
 
 #define BENCHMARK
@@ -58,9 +57,9 @@
 namespace
 {
 
-void rotateLine (const float* const line, rtengine::PlanarPtr<float> &channel, const int tran, const int i, const int w, const int h)
+void rotateLine(const float* const line, rtengine::PlanarPtr<float> &channel, const int tran, const int i, const int w, const int h)
 {
-    switch(tran & TR_ROT) {
+    switch (tran & TR_ROT) {
         case TR_R180:
             for (int j = 0; j < w; j++) {
                 channel(h - 1 - i, w - 1 - j) = line[j];
@@ -90,15 +89,15 @@ void rotateLine (const float* const line, rtengine::PlanarPtr<float> &channel, c
     }
 }
 
-void transLineStandard (const float* const red, const float* const green, const float* const blue, const int i, rtengine::Imagefloat* const image, const int tran, const int imwidth, const int imheight)
+void transLineStandard(const float* const red, const float* const green, const float* const blue, const int i, rtengine::Imagefloat* const image, const int tran, const int imwidth, const int imheight)
 {
     // conventional CCD coarse rotation
-    rotateLine (red, image->r, tran, i, imwidth, imheight);
-    rotateLine (green, image->g, tran, i, imwidth, imheight);
-    rotateLine (blue, image->b, tran, i, imwidth, imheight);
+    rotateLine(red, image->r, tran, i, imwidth, imheight);
+    rotateLine(green, image->g, tran, i, imwidth, imheight);
+    rotateLine(blue, image->b, tran, i, imwidth, imheight);
 }
 
-void transLineFuji (const float* const red, const float* const green, const float* const blue, const int i, rtengine::Imagefloat* const image, const int tran, const int imheight, const int fw)
+void transLineFuji(const float* const red, const float* const green, const float* const blue, const int i, rtengine::Imagefloat* const image, const int tran, const int imheight, const int fw)
 {
 
     // Fuji SuperCCD rotation + coarse rotation
@@ -107,7 +106,7 @@ void transLineFuji (const float* const red, const float* const green, const floa
     int h = (imheight - fw) * 2 + 1;
     int end = min(h + fw - i, w - fw + i);
 
-    switch(tran & TR_ROT) {
+    switch (tran & TR_ROT) {
         case TR_R180:
             for (int j = start; j < end; j++) {
                 int y = i + j - fw;
@@ -165,14 +164,14 @@ void transLineFuji (const float* const red, const float* const green, const floa
     }
 }
 
-void transLineD1x (const float* const red, const float* const green, const float* const blue, const int i, rtengine::Imagefloat* const image, const int tran, const int imwidth, const int imheight, const bool oddHeight, const bool clip)
+void transLineD1x(const float* const red, const float* const green, const float* const blue, const int i, rtengine::Imagefloat* const image, const int tran, const int imwidth, const int imheight, const bool oddHeight, const bool clip)
 {
     // Nikon D1X has an uncommon sensor with 4028 x 1324 sensels.
     // Vertical sensel size is 2x horizontal sensel size
     // We have to do vertical interpolation for the 'missing' rows
     // We do that in combination with coarse rotation
 
-    switch(tran & TR_ROT) {
+    switch (tran & TR_ROT) {
         case TR_R180: // rotate 180 degree
             for (int j = 0; j < imwidth; j++) {
                 image->r(2 * (imheight - 1 - i), imwidth - 1 - j) = red[j];
@@ -370,9 +369,9 @@ void transLineD1x (const float* const red, const float* const green, const float
 
         case TR_NONE: // no coarse rotation
         default:
-            rotateLine (red, image->r, tran, 2 * i, imwidth, imheight);
-            rotateLine (green, image->g, tran, 2 * i, imwidth, imheight);
-            rotateLine (blue, image->b, tran, 2 * i, imwidth, imheight);
+            rotateLine(red, image->r, tran, 2 * i, imwidth, imheight);
+            rotateLine(green, image->g, tran, 2 * i, imwidth, imheight);
+            rotateLine(blue, image->b, tran, 2 * i, imwidth, imheight);
 
             if (i == 1 || i == 2) { // linear interpolation
                 for (int j = 0; j < imwidth; j++) {
@@ -426,7 +425,7 @@ void transLineD1x (const float* const red, const float* const green, const float
 namespace rtengine
 {
 
-RawImageSource::RawImageSource ()
+RawImageSource::RawImageSource()
     : ImageSource()
     , W(0), H(0)
     , plistener(nullptr)
@@ -476,7 +475,7 @@ RawImageSource::RawImageSource ()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-RawImageSource::~RawImageSource ()
+RawImageSource::~RawImageSource()
 {
 
     delete idata;
@@ -493,11 +492,11 @@ RawImageSource::~RawImageSource ()
     }
 
     if (camProfile) {
-        cmsCloseProfile (camProfile);
+        cmsCloseProfile(camProfile);
     }
 
     if (embProfile) {
-        cmsCloseProfile (embProfile);
+        cmsCloseProfile(embProfile);
     }
 }
 
@@ -506,7 +505,7 @@ unsigned RawImageSource::FC(int row, int col) const
     return ri->FC(row, col);
 }
 
-eSensorType RawImageSource::getSensorType () const
+eSensorType RawImageSource::getSensorType() const
 {
     return ri != nullptr ? ri->getSensorType() : ST_NONE;
 }
@@ -523,7 +522,7 @@ int RawImageSource::getRotateDegree() const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::transformRect (const PreviewProps &pp, int tran, int &ssx1, int &ssy1, int &width, int &height, int &fw)
+void RawImageSource::transformRect(const PreviewProps &pp, int tran, int &ssx1, int &ssy1, int &width, int &height, int &fw)
 {
     int pp_x = pp.getX() + border;
     int pp_y = pp.getY() + border;
@@ -674,7 +673,7 @@ void RawImageSource::wbCamera2Mul(double &rm, double &gm, double &bm)
     double r = ri->get_pre_mul(0) / rm;
     double g = ri->get_pre_mul(1) / gm;
     double b = ri->get_pre_mul(2) / bm;
-    
+
     if (imatrices) {
         double rr = imatrices->rgb_cam[0][0] * r + imatrices->rgb_cam[0][1] * g + imatrices->rgb_cam[0][2] * b;
         double gg = imatrices->rgb_cam[1][0] * r + imatrices->rgb_cam[1][1] * g + imatrices->rgb_cam[1][2] * b;
@@ -692,7 +691,7 @@ void RawImageSource::wbCamera2Mul(double &rm, double &gm, double &bm)
 
 
 
-void RawImageSource::getWBMults (const ColorTemp &ctemp, const RAWParams &raw, std::array<float, 4>& out_scale_mul, float &autoGainComp, float &rm, float &gm, float &bm) const
+void RawImageSource::getWBMults(const ColorTemp &ctemp, const RAWParams &raw, std::array<float, 4>& out_scale_mul, float &autoGainComp, float &rm, float &gm, float &bm) const
 {
     // compute channel multipliers
     double r, g, b;
@@ -704,7 +703,7 @@ void RawImageSource::getWBMults (const ColorTemp &ctemp, const RAWParams &raw, s
         gm = ri->get_pre_mul(1);
         bm = ri->get_pre_mul(2);
     } else {
-        ctemp.getMultipliers (r, g, b);
+        ctemp.getMultipliers(r, g, b);
         rm = imatrices.cam_rgb[0][0] * r + imatrices.cam_rgb[0][1] * g + imatrices.cam_rgb[0][2] * b;
         gm = imatrices.cam_rgb[1][0] * r + imatrices.cam_rgb[1][1] * g + imatrices.cam_rgb[1][2] * b;
         bm = imatrices.cam_rgb[2][0] * r + imatrices.cam_rgb[2][1] * g + imatrices.cam_rgb[2][2] * b;
@@ -715,9 +714,10 @@ void RawImageSource::getWBMults (const ColorTemp &ctemp, const RAWParams &raw, s
     float new_scale_mul[4];
 
     bool isMono = (ri->getSensorType() == ST_FUJI_XTRANS && raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO))
-                    || (ri->getSensorType() == ST_BAYER && raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO));
+                  || (ri->getSensorType() == ST_BAYER && raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO));
 
     float c_white[4];
+
     for (int i = 0; i < 4; ++i) {
         c_white[i] = (ri->get_white(i) - cblacksom[i]) / static_cast<float>(raw.expos) + cblacksom[i];
     }
@@ -741,10 +741,11 @@ void RawImageSource::getWBMults (const ColorTemp &ctemp, const RAWParams &raw, s
     autoGainComp = camInitialGain / initialGain;
 }
 
-void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const RAWParams &raw, int opposed)
-{// added int opposed to force getimage to use inpaint-opposed if enable, only once
+void RawImageSource::getImage(const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const RAWParams &raw, int opposed)
+{
+    // added int opposed to force getimage to use inpaint-opposed if enable, only once
     MyMutex::MyLock lock(getImageMutex);
-    tran = defTransform (tran);
+    tran = defTransform(tran);
 
     // compute channel multipliers
     double r, g, b;
@@ -756,9 +757,9 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
         gm = ri->get_pre_mul(1);
         bm = ri->get_pre_mul(2);
     } else {
-      // ctemp.getMultipliers (r, g, b);
-		r = g = b = 1;
-		wbCamera2Mul(r, g, b);   
+        // ctemp.getMultipliers (r, g, b);
+        r = g = b = 1;
+        wbCamera2Mul(r, g, b);
         rm = imatrices.cam_rgb[0][0] * r + imatrices.cam_rgb[0][1] * g + imatrices.cam_rgb[0][2] * b;
         gm = imatrices.cam_rgb[1][0] * r + imatrices.cam_rgb[1][1] * g + imatrices.cam_rgb[1][2] * b;
         bm = imatrices.cam_rgb[2][0] * r + imatrices.cam_rgb[2][1] * g + imatrices.cam_rgb[2][2] * b;
@@ -802,7 +803,7 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
     defGain = 0.0;
     // compute image area to render in order to provide the requested part of the image
     int sx1, sy1, imwidth, imheight, fw, d1xHeightOdd = 0;
-    transformRect (pp, tran, sx1, sy1, imwidth, imheight, fw);
+    transformRect(pp, tran, sx1, sy1, imwidth, imheight, fw);
 
     // check possible overflows
     int maximwidth, maximheight;
@@ -846,20 +847,24 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
     bool iscolor = (hrp.method == "Color" || hrp.method == "Coloropp");
     const bool doClip = (chmax[0] >= clmax[0] || chmax[1] >= clmax[1] || chmax[2] >= clmax[2]) && !hrp.hrenabled && hrp.clampOOG;
     bool doHr = (hrp.hrenabled && !iscolor);
+
     if (hrp.hrenabled && iscolor) {
-        if(hrp.method == "Coloropp" && opposed == 1) {//force Inpaint opposed if WB change, and opposed limited tne number to 1
+        if(hrp.method == "Coloropp" && opposed == 1) {//force Inpaint opposed if WB change, and opposed limited the number to 1
             rgbSourceModified  = false;
         }
+
         if (!rgbSourceModified) {
-            if(hrp.method == "Color") {
+            if (hrp.method == "Color") {
                 if (settings->verbose) {
-                    printf ("Applying Highlight Recovery: Color propagation.\n");
+                    printf("Applying Highlight Recovery: Color propagation.\n");
                 }
-                HLRecovery_inpaint (red, green, blue, hrp.hlbl);
-            } else if(hrp.method == "Coloropp"  && ctemp.getTemp() >= 0) {
+
+                HLRecovery_inpaint(red, green, blue, hrp.hlbl);
+            } else if (hrp.method == "Coloropp"  && ctemp.getTemp() >= 0) {
                 float s[3] = { rm, gm, bm };
                 highlight_recovery_opposed(s, ctemp, hrp.hlth);
             }
+
             rgbSourceModified = true;
         }
     }
@@ -874,6 +879,7 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
         gm *= g;
         bm *= b;
     }
+
     hlmax[0] = clmax[0] * rm;
     hlmax[1] = clmax[1] * gm;
     hlmax[2] = clmax[2] * bm;
@@ -887,8 +893,8 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
     rm /= area;
     gm /= area;
     bm /= area;
-   
-    
+
+
 #ifdef _OPENMP
     #pragma omp parallel if(!d1x)       // omp disabled for D1x to avoid race conditions (see Issue 1088 http://code.google.com/p/rawtherapee/issues/detail?id=1088)
     {
@@ -973,15 +979,15 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
 
             //process all highlight recovery other than "Color"
             if (doHr) {
-                hlRecovery (hrp.method, line_red, line_grn, line_blue, imwidth, hlmax);
+                hlRecovery(hrp.method, line_red, line_grn, line_blue, imwidth, hlmax);
             }
 
             if (d1x) {
-                transLineD1x (line_red, line_grn, line_blue, ix, image, tran, imwidth, imheight, d1xHeightOdd, doClip);
+                transLineD1x(line_red, line_grn, line_blue, ix, image, tran, imwidth, imheight, d1xHeightOdd, doClip);
             } else if (fuji) {
-                transLineFuji (line_red, line_grn, line_blue, ix, image, tran, imheight, fw);
+                transLineFuji(line_red, line_grn, line_blue, ix, image, tran, imheight, fw);
             } else {
-                transLineStandard (line_red, line_grn, line_blue, ix, image, tran, imwidth, imheight);
+                transLineStandard(line_red, line_grn, line_blue, ix, image, tran, imwidth, imheight);
             }
 
         }
@@ -1040,22 +1046,22 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
 
     // Flip if needed
     if (tran & TR_HFLIP) {
-        hflip (image);
+        hflip(image);
     }
 
     if (tran & TR_VFLIP) {
-        vflip (image);
+        vflip(image);
     }
 
     // Colour correction (only when running on full resolution)
     if (pp.getSkip() == 1) {
-        switch(ri->getSensorType()) {
+        switch (ri->getSensorType()) {
             case ST_BAYER:
-                processFalseColorCorrection (image, raw.bayersensor.ccSteps);
+                processFalseColorCorrection(image, raw.bayersensor.ccSteps);
                 break;
 
             case ST_FUJI_XTRANS:
-                processFalseColorCorrection (image, raw.xtranssensor.ccSteps);
+                processFalseColorCorrection(image, raw.xtranssensor.ccSteps);
                 break;
 
             case ST_FOVEON:
@@ -1079,6 +1085,7 @@ DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, DCPProfileA
         if (settings->verbose) {
             printf("Can't load DCP profile '%s'!\n", cmp.inputProfile.c_str());
         }
+
         return nullptr;
     }
 
@@ -1089,13 +1096,13 @@ DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, DCPProfileA
 void RawImageSource::convertColorSpace(Imagefloat* image, const ColorManagementParams &cmp, const ColorTemp &wb)
 {
     double pre_mul[3] = { ri->get_pre_mul(0), ri->get_pre_mul(1), ri->get_pre_mul(2) };
-    colorSpaceConversion (image, cmp, wb, pre_mul, embProfile, camProfile, imatrices.xyz_cam, (static_cast<const FramesData*>(getMetaData()))->getCamera());
+    colorSpaceConversion(image, cmp, wb, pre_mul, embProfile, camProfile, imatrices.xyz_cam, (static_cast<const FramesData*>(getMetaData()))->getCamera());
 }
 
-void RawImageSource::getFullSize (int& w, int& h, int tr)
+void RawImageSource::getFullSize(int& w, int& h, int tr)
 {
 
-    tr = defTransform (tr);
+    tr = defTransform(tr);
 
     if (fuji) {
         w = ri->get_FujiWidth() * 2 + 1;
@@ -1120,7 +1127,7 @@ void RawImageSource::getFullSize (int& w, int& h, int tr)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::getSize (const PreviewProps &pp, int& w, int& h)
+void RawImageSource::getSize(const PreviewProps &pp, int& w, int& h)
 {
     w = pp.getWidth() / pp.getSkip() + (pp.getWidth() % pp.getSkip() > 0);
     h = pp.getHeight() / pp.getSkip() + (pp.getHeight() % pp.getSkip() > 0);
@@ -1128,14 +1135,14 @@ void RawImageSource::getSize (const PreviewProps &pp, int& w, int& h)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::hflip (Imagefloat* image)
+void RawImageSource::hflip(Imagefloat* image)
 {
     image->hflip();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::vflip (Imagefloat* image)
+void RawImageSource::vflip(Imagefloat* image)
 {
     image->vflip();
 }
@@ -1143,7 +1150,7 @@ void RawImageSource::vflip (Imagefloat* image)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
+int RawImageSource::load(const Glib::ustring &fname, bool firstFrameOnly)
 {
 
     MyTime t1, t2;
@@ -1151,15 +1158,17 @@ int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
     fileName = fname;
 
     if (plistener) {
-        plistener->setProgressStr ("PROGRESSBAR_DECODING");
-        plistener->setProgress (0.0);
+        plistener->setProgressStr("PROGRESSBAR_DECODING");
+        plistener->setProgress(0.0);
     }
+
     ri = new RawImage(fname);
-    int errCode = ri->loadRaw (false, 0, false);
+    int errCode = ri->loadRaw(false, 0, false);
 
     if (errCode) {
         return errCode;
     }
+
     numFrames = firstFrameOnly ? (numFrames < 7 ? 1 : ri->getFrameCount()) : ri->getFrameCount();
 
     errCode = 0;
@@ -1172,6 +1181,7 @@ int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
         } else {
             numFrames = 6;
         }
+
 #ifdef _OPENMP
         #pragma omp parallel
 #endif
@@ -1180,15 +1190,17 @@ int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
 #ifdef _OPENMP
             #pragma omp for nowait
 #endif
+
             for (unsigned int i = 0; i < numFrames; ++i) {
                 if (i == 0) {
                     riFrames[i] = ri;
-                    errCodeThr = riFrames[i]->loadRaw (true, i + 1, true, plistener, 0.8);
+                    errCodeThr = riFrames[i]->loadRaw(true, i + 1, true, plistener, 0.8);
                 } else {
                     riFrames[i] = new RawImage(fname);
-                    errCodeThr = riFrames[i]->loadRaw (true, i + 1);
+                    errCodeThr = riFrames[i]->loadRaw(true, i + 1);
                 }
             }
+
 #ifdef _OPENMP
             #pragma omp critical
 #endif
@@ -1205,15 +1217,18 @@ int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
 #ifdef _OPENMP
             #pragma omp for nowait
 #endif
-            for (unsigned int i = 0; i < numFrames; ++i) {
+
+            for (unsigned int i = 0; i < numFrames; ++i)
+            {
                 if (i == 0) {
                     riFrames[i] = ri;
-                    errCodeThr = riFrames[i]->loadRaw (true, i, true, plistener, 0.8);
+                    errCodeThr = riFrames[i]->loadRaw(true, i, true, plistener, 0.8);
                 } else {
                     riFrames[i] = new RawImage(fname);
-                    errCodeThr = riFrames[i]->loadRaw (true, i);
+                    errCodeThr = riFrames[i]->loadRaw(true, i);
                 }
             }
+
 #ifdef _OPENMP
             #pragma omp critical
 #endif
@@ -1223,7 +1238,7 @@ int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
         }
     } else {
         riFrames[0] = ri;
-        errCode = riFrames[0]->loadRaw (true, 0, true, plistener, 0.8);
+        errCode = riFrames[0]->loadRaw(true, 0, true, plistener, 0.8);
     }
 
     if (!errCode) {
@@ -1241,7 +1256,7 @@ int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
     }
 
     if (plistener) {
-        plistener->setProgress (0.9);
+        plistener->setProgress(0.9);
     }
 
     /***** Copy once constant data extracted from raw *******/
@@ -1256,7 +1271,7 @@ int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
 
     // compute inverse of the color transformation matrix
     // first arg is matrix, second arg is inverse
-    inverse33 (imatrices.rgb_cam, imatrices.cam_rgb);
+    inverse33(imatrices.rgb_cam, imatrices.cam_rgb);
 
     d1x = ! ri->get_model().compare("D1X");
 
@@ -1269,11 +1284,11 @@ int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
     }
 
     if (ri->get_profile()) {
-        embProfile = cmsOpenProfileFromMem (ri->get_profile(), ri->get_profileLen());
+        embProfile = cmsOpenProfileFromMem(ri->get_profile(), ri->get_profileLen());
     }
 
     // create profile
-    memset (imatrices.xyz_cam, 0, sizeof(imatrices.xyz_cam));
+    memset(imatrices.xyz_cam, 0, sizeof(imatrices.xyz_cam));
 
     for (int i = 0; i < 3; i++)
         for (int j = 0; j < 3; j++)
@@ -1281,8 +1296,8 @@ int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
                 imatrices.xyz_cam[i][j] += xyz_sRGB[i][k] * imatrices.rgb_cam[k][j];
             }
 
-    camProfile = ICCStore::getInstance()->createFromMatrix (imatrices.xyz_cam, false, "Camera");
-    inverse33 (imatrices.xyz_cam, imatrices.cam_xyz);
+    camProfile = ICCStore::getInstance()->createFromMatrix(imatrices.xyz_cam, false, "Camera");
+    inverse33(imatrices.xyz_cam, imatrices.cam_xyz);
 
     // First we get the "as shot" ("Camera") white balance and store it
     float pre_mul[4];
@@ -1296,7 +1311,7 @@ int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
     double cam_r = imatrices.rgb_cam[0][0] * camwb_red + imatrices.rgb_cam[0][1] * camwb_green + imatrices.rgb_cam[0][2] * camwb_blue;
     double cam_g = imatrices.rgb_cam[1][0] * camwb_red + imatrices.rgb_cam[1][1] * camwb_green + imatrices.rgb_cam[1][2] * camwb_blue;
     double cam_b = imatrices.rgb_cam[2][0] * camwb_red + imatrices.rgb_cam[2][1] * camwb_green + imatrices.rgb_cam[2][2] * camwb_blue;
-    camera_wb = ColorTemp (cam_r, cam_g, cam_b, 1., ColorTemp::DEFAULT_OBSERVER); // as shot WB
+    camera_wb = ColorTemp(cam_r, cam_g, cam_b, 1., ColorTemp::DEFAULT_OBSERVER);  // as shot WB
 
     if (settings->verbose) {
         printf("Raw As Shot White balance: temp %f, tint %f\n", camera_wb.getTemp(), camera_wb.getGreen());
@@ -1332,15 +1347,15 @@ int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
                 initialGain = 1.0 / min(pre_mul[0], pre_mul[1], pre_mul[2]);
     }*/
 
-    for (unsigned int i = 0;i < numFrames; ++i) {
+    for (unsigned int i = 0; i < numFrames; ++i) {
         riFrames[i]->set_prefilters();
     }
 
 
     // Load complete Exif information
-    std::unique_ptr<RawMetaDataLocation> rml(new RawMetaDataLocation (ri->get_exifBase(), ri->get_ciffBase(), ri->get_ciffLen()));
-    idata = new FramesData (fname, std::move(rml));
-    idata->setDCRawFrameCount (numFrames);
+    std::unique_ptr<RawMetaDataLocation> rml(new RawMetaDataLocation(ri->get_exifBase(), ri->get_ciffBase(), ri->get_ciffLen()));
+    idata = new FramesData(fname, std::move(rml));
+    idata->setDCRawFrameCount(numFrames);
 
     green(W, H);
     red(W, H);
@@ -1348,7 +1363,7 @@ int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
     //hpmap = allocArray<char>(W, H);
 
     if (plistener) {
-        plistener->setProgress (1.0);
+        plistener->setProgress(1.0);
     }
 
     plistener = nullptr; // This must be reset, because only load() is called through progressConnector
@@ -1363,7 +1378,7 @@ int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse, bool prepareDenoise)
+void RawImageSource::preprocess(const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse, bool prepareDenoise)
 {
 //    BENCHFUN
     MyTime t1, t2;
@@ -1373,7 +1388,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         // Recalculate the scaling coefficients, using auto WB if selected in the Preprocess WB param.
         // Auto WB gives us better demosaicing and CA auto-correct performance for strange white balance settings (such as UniWB)
         float dummy_cblk[4] = { 0.f }; // Avoid overwriting c_black, see issue #5676
-        ri->get_colorsCoeff( ref_pre_mul, scale_mul, dummy_cblk, raw.preprocessWB.mode == RAWParams::PreprocessWB::Mode::AUTO);
+        ri->get_colorsCoeff(ref_pre_mul, scale_mul, dummy_cblk, raw.preprocessWB.mode == RAWParams::PreprocessWB::Mode::AUTO);
 
         refwb_red = ri->get_pre_mul(0) / ref_pre_mul[0];
         refwb_green = ri->get_pre_mul(1) / ref_pre_mul[1];
@@ -1383,7 +1398,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         const double ref_r = imatrices.rgb_cam[0][0] * refwb_red + imatrices.rgb_cam[0][1] * refwb_green + imatrices.rgb_cam[0][2] * refwb_blue;
         const double ref_g = imatrices.rgb_cam[1][0] * refwb_red + imatrices.rgb_cam[1][1] * refwb_green + imatrices.rgb_cam[1][2] * refwb_blue;
         const double ref_b = imatrices.rgb_cam[2][0] * refwb_red + imatrices.rgb_cam[2][1] * refwb_green + imatrices.rgb_cam[2][2] * refwb_blue;
-        const ColorTemp ReferenceWB = ColorTemp (ref_r, ref_g, ref_b, 1., ColorTemp::DEFAULT_OBSERVER);
+        const ColorTemp ReferenceWB = ColorTemp(ref_r, ref_g, ref_b, 1., ColorTemp::DEFAULT_OBSERVER);
 
         if (settings->verbose) {
             printf("Raw Reference white balance: temp %f, tint %f, multipliers [%f %f %f | %f %f %f]\n", ReferenceWB.getTemp(), ReferenceWB.getGreen(), ref_r, ref_g, ref_b, refwb_red, refwb_blue, refwb_green);
@@ -1438,14 +1453,16 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 
     if (numFrames == 4) {
         int bufferNumber = 0;
-        for (unsigned int i=0; i<4; ++i) {
-            if (i==currFrame) {
+
+        for (unsigned int i = 0; i < 4; ++i) {
+            if (i == currFrame) {
                 copyOriginalPixels(raw, ri, rid, rif, rawData);
                 rawDataFrames[i] = &rawData;
             } else {
                 if (!rawDataBuffer[bufferNumber]) {
                     rawDataBuffer[bufferNumber] = new array2D<float>;
                 }
+
                 rawDataFrames[i] = rawDataBuffer[bufferNumber];
                 ++bufferNumber;
                 copyOriginalPixels(raw, riFrames[i], rid, rif, *rawDataFrames[i]);
@@ -1455,6 +1472,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         if (!rawDataBuffer[0]) {
             rawDataBuffer[0] = new array2D<float>;
         }
+
         rawDataFrames[1] = rawDataBuffer[0];
         copyOriginalPixels(raw, riFrames[1], rid, rif, *rawDataFrames[1]);
         copyOriginalPixels(raw, ri, rid, rif, rawData);
@@ -1467,6 +1485,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     } else {
         copyOriginalPixels(raw, ri, rid, rif, rawData);
     }
+
     //FLATFIELD end
 
     if (raw.ff_FromMetaData && isGainMapSupported()) {
@@ -1510,7 +1529,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     }
 
     if (numFrames == 4) {
-        for (int i=0; i<4; ++i) {
+        for (int i = 0; i < 4; ++i) {
             scaleColors(0, 0, W, H, raw, *rawDataFrames[i]);
         }
     } else {
@@ -1520,6 +1539,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     // Correct vignetting of lens profile
     if (!hasFlatField && lensProf.useVign && lensProf.lcMode != LensProfParams::LcMode::NONE) {
         std::unique_ptr<LensCorrection> pmap;
+
         if (lensProf.useLensfun()) {
             pmap = LFDatabase::getInstance()->findModifier(lensProf, idata, W, H, coarse, -1);
         } else {
@@ -1532,6 +1552,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 
         if (pmap) {
             LensCorrection &map = *pmap;
+
             if (ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS || ri->get_colors() == 1) {
                 if (numFrames == 4) {
                     for (int i = 0; i < 4; ++i) {
@@ -1550,8 +1571,8 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 
     if (ri->getSensorType() == ST_BAYER && (raw.hotPixelFilter > 0 || raw.deadPixelFilter > 0)) {
         if (plistener) {
-            plistener->setProgressStr ("PROGRESSBAR_HOTDEADPIXELFILTER");
-            plistener->setProgress (0.0);
+            plistener->setProgressStr("PROGRESSBAR_HOTDEADPIXELFILTER");
+            plistener->setProgress(0.0);
         }
 
         if (!bitmapBads) {
@@ -1572,16 +1593,17 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         if (!bitmapBads) {
             bitmapBads.reset(new PixelsMap(W, H));
         }
-        
+
         int n = f.mark(rawData, *bitmapBads);
         totBP += n;
 
         if (n > 0) {
             if (settings->verbose) {
-                printf("Marked %d hot pixels from PDAF lines\n", n);            
+                printf("Marked %d hot pixels from PDAF lines\n", n);
             }
 
-            auto &thresh = f.greenEqThreshold();        
+            auto &thresh = f.greenEqThreshold();
+
             if (numFrames == 4) {
                 for (int i = 0; i < 4; ++i) {
                     green_equilibrate(thresh, *rawDataFrames[i]);
@@ -1594,17 +1616,17 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 
     // check if green equilibration is needed. If yes, compute G channel pre-compensation factors
     const auto globalGreenEq =
-        [&]() -> bool
-        {
-            CameraConstantsStore *ccs = CameraConstantsStore::getInstance();
-            const CameraConst *cc = ccs->get(ri->get_maker().c_str(), ri->get_model().c_str());
-            return cc && cc->get_globalGreenEquilibration();
-        };
-    
+    [&]() -> bool {
+        CameraConstantsStore *ccs = CameraConstantsStore::getInstance();
+        const CameraConst *cc = ccs->get(ri->get_maker().c_str(), ri->get_model().c_str());
+        return cc && cc->get_globalGreenEquilibration();
+    };
+
     if (ri->getSensorType() == ST_BAYER && (raw.bayersensor.greenthresh || (globalGreenEq() && raw.bayersensor.method != RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::VNG4)))) {
         if (settings->verbose) {
             printf("Performing global green equilibration...\n");
         }
+
         // global correction
         if (numFrames == 4) {
             for (int i = 0; i < 4; ++i) {
@@ -1617,8 +1639,8 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 
     if (ri->getSensorType() == ST_BAYER && raw.bayersensor.greenthresh > 0) {
         if (plistener) {
-            plistener->setProgressStr ("PROGRESSBAR_GREENEQUIL");
-            plistener->setProgress (0.0);
+            plistener->setProgressStr("PROGRESSBAR_GREENEQUIL");
+            plistener->setProgress(0.0);
         }
 
         GreenEqulibrateThreshold thresh(0.01 * raw.bayersensor.greenthresh);
@@ -1651,11 +1673,12 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 
     if (ri->getSensorType() == ST_BAYER && raw.bayersensor.linenoise > 0) {
         if (plistener) {
-            plistener->setProgressStr ("PROGRESSBAR_LINEDENOISE");
-            plistener->setProgress (0.0);
+            plistener->setProgressStr("PROGRESSBAR_LINEDENOISE");
+            plistener->setProgress(0.0);
         }
 
         std::unique_ptr<CFALineDenoiseRowBlender> line_denoise_rowblender;
+
         if (raw.bayersensor.linenoiseDirection == RAWParams::BayerSensor::LineNoiseDirection::PDAF_LINES) {
             PDAFLinesFilter f(ri);
             line_denoise_rowblender = f.lineDenoiseRowBlender();
@@ -1668,18 +1691,20 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 
     if ((raw.ca_autocorrect || std::fabs(raw.cared) > 0.001 || std::fabs(raw.cablue) > 0.001) && ri->getSensorType() == ST_BAYER) { // Auto CA correction disabled for X-Trans, for now...
         if (plistener) {
-            plistener->setProgressStr ("PROGRESSBAR_RAWCACORR");
-            plistener->setProgress (0.0);
+            plistener->setProgressStr("PROGRESSBAR_RAWCACORR");
+            plistener->setProgress(0.0);
         }
+
         if (numFrames == 4) {
             double fitParams[64];
-            float *buffer = CA_correct_RT(raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, *rawDataFrames[0], fitParams, false, true, nullptr, false, options.chunkSizeCA, options.measure);
+            float *buffer = CA_correct_RT(raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, raw.bayersensor.border, *rawDataFrames[0], fitParams, false, true, nullptr, false, options.chunkSizeCA, options.measure);
             for (int i = 1; i < 3; ++i) {
-                CA_correct_RT(raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, *rawDataFrames[i], fitParams, true, false, buffer, false, options.chunkSizeCA, options.measure);
+                CA_correct_RT(raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, raw.bayersensor.border, *rawDataFrames[i], fitParams, true, false, buffer, false, options.chunkSizeCA, options.measure);
             }
-            CA_correct_RT(raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, *rawDataFrames[3], fitParams, true, false, buffer, true, options.chunkSizeCA, options.measure);
+
+            CA_correct_RT(raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, raw.bayersensor.border, *rawDataFrames[3], fitParams, true, false, buffer, true, options.chunkSizeCA, options.measure);
         } else {
-            CA_correct_RT(raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, rawData, nullptr, false, false, nullptr, true, options.chunkSizeCA, options.measure);
+            CA_correct_RT(raw.ca_autocorrect, raw.caautoiterations, raw.cared, raw.cablue, raw.ca_avoidcolourshift, raw.bayersensor.border, rawData, nullptr, false, false, nullptr, true, options.chunkSizeCA, options.measure);
         }
     }
 
@@ -1688,8 +1713,8 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         int aehistcompr;
         double clip = 0;
         int brightness, contrast, black, hlcompr, hlcomprthresh;
-        getAutoExpHistogram (aehist, aehistcompr);
-        ImProcFunctions::getAutoExp (aehist, aehistcompr, clip, dirpyrdenoiseExpComp, brightness, contrast, black, hlcompr, hlcomprthresh);
+        getAutoExpHistogram(aehist, aehistcompr);
+        ImProcFunctions::getAutoExp(aehist, aehistcompr, clip, dirpyrdenoiseExpComp, brightness, contrast, black, hlcompr, hlcomprthresh);
     }
 
     t2.set();
@@ -1710,13 +1735,13 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
 
     if (ri->getSensorType() == ST_BAYER) {
         if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::HPHD)) {
-            hphd_demosaic ();
+            hphd_demosaic();
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::VNG4)) {
-            vng4_demosaic (rawData, red, green, blue);
+            vng4_demosaic(rawData, red, green, blue);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AHD)) {
-            ahd_demosaic ();
+            ahd_demosaic();
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZE)) {
-            amaze_demosaic_RT (0, 0, W, H, rawData, red, green, blue, options.chunkSizeAMAZE, options.measure);
+            amaze_demosaic_RT(0, 0, W, H, rawData, red, green, blue, options.chunkSizeAMAZE, options.measure);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZEBILINEAR)
                    || raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZEVNG4)
                    || raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::DCBBILINEAR)
@@ -1725,16 +1750,16 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
                    || raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::RCDVNG4)) {
             if (!autoContrast) {
                 double threshold = raw.bayersensor.dualDemosaicContrast;
-                dual_demosaic_RT (true, raw, W, H, rawData, red, green, blue, threshold, false);
+                dual_demosaic_RT(true, raw, W, H, rawData, red, green, blue, threshold, false);
             } else {
-                dual_demosaic_RT (true, raw, W, H, rawData, red, green, blue, contrastThreshold, true);
+                dual_demosaic_RT(true, raw, W, H, rawData, red, green, blue, contrastThreshold, true);
             }
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::PIXELSHIFT)) {
             pixelshift(0, 0, W, H, raw, currFrame, ri->get_maker(), ri->get_model(), raw.expos);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::DCB)) {
             dcb_demosaic(raw.bayersensor.dcb_iterations, raw.bayersensor.dcb_enhance);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::EAHD)) {
-            eahd_demosaic ();
+            eahd_demosaic();
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::IGV)) {
             igv_interpolate(W, H);
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::LMMSE)) {
@@ -1758,9 +1783,9 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
         } else if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FOUR_PASS) || raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::TWO_PASS)) {
             if (!autoContrast) {
                 double threshold = raw.xtranssensor.dualDemosaicContrast;
-                dual_demosaic_RT (false, raw, W, H, rawData, red, green, blue, threshold, false);
+                dual_demosaic_RT(false, raw, W, H, rawData, red, green, blue, threshold, false);
             } else {
-                dual_demosaic_RT (false, raw, W, H, rawData, red, green, blue, contrastThreshold, true);
+                dual_demosaic_RT(false, raw, W, H, rawData, red, green, blue, contrastThreshold, true);
             }
         } else if (raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO)) {
             nodemosaic(true);
@@ -1779,12 +1804,14 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
 
 
     rgbSourceModified = false;
+
     if (cache) {
         if (!redCache) {
             redCache = new array2D<float>(W, H);
             greenCache = new array2D<float>(W, H);
             blueCache = new array2D<float>(W, H);
         }
+
 #ifdef _OPENMP
         #pragma omp parallel sections
 #endif
@@ -1792,22 +1819,27 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
 #ifdef _OPENMP
             #pragma omp section
 #endif
+
             for (int i = 0; i < H; ++i) {
                 for (int j = 0; j < W; ++j) {
                     (*redCache)[i][j] = red[i][j];
                 }
             }
+
 #ifdef _OPENMP
             #pragma omp section
 #endif
+
             for (int i = 0; i < H; ++i) {
                 for (int j = 0; j < W; ++j) {
                     (*greenCache)[i][j] = green[i][j];
                 }
             }
+
 #ifdef _OPENMP
             #pragma omp section
 #endif
+
             for (int i = 0; i < H; ++i) {
                 for (int j = 0; j < W; ++j) {
                     (*blueCache)[i][j] = blue[i][j];
@@ -1822,6 +1854,7 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
         delete blueCache;
         blueCache = nullptr;
     }
+
     if (settings->verbose) {
         if (getSensorType() == ST_BAYER) {
             printf("Demosaicing Bayer data: %s - %d usec\n", raw.bayersensor.method.c_str(), t2.etime(t1));
@@ -1836,10 +1869,10 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
 void RawImageSource::retinexPrepareBuffers(const ColorManagementParams& cmp, const RetinexParams &retinexParams, multi_array2D<float, 4> &conversionBuffer, LUTu &lhist16RETI)
 {
     bool useHsl = (retinexParams.retinexcolorspace == "HSLLOG" || retinexParams.retinexcolorspace == "HSLLIN");
-    conversionBuffer[0] (W - 2 * border, H - 2 * border);
-    conversionBuffer[1] (W - 2 * border, H - 2 * border);
-    conversionBuffer[2] (W - 2 * border, H - 2 * border);
-    conversionBuffer[3] (W - 2 * border, H - 2 * border);
+    conversionBuffer[0](W - 2 * border, H - 2 * border);
+    conversionBuffer[1](W - 2 * border, H - 2 * border);
+    conversionBuffer[2](W - 2 * border, H - 2 * border);
+    conversionBuffer[3](W - 2 * border, H - 2 * border);
 
     LUTf *retinexgamtab = nullptr;//gamma before and after Retinex to restore tones
     LUTf lutTonereti;
@@ -1883,9 +1916,9 @@ void RawImageSource::retinexPrepareBuffers(const ColorManagementParams& cmp, con
             double x;
 
             if (gamm2 < 1.) {
-                x = Color::igammareti (val, gamm, start, ts, mul , add);
+                x = Color::igammareti(val, gamm, start, ts, mul, add);
             } else {
-                x = Color::gammareti (val, gamm, start, ts, mul , add);
+                x = Color::gammareti(val, gamm, start, ts, mul, add);
             }
 
             lutTonereti[i] = CLIP(x * 65535.);// CLIP avoid in some case extra values
@@ -2024,7 +2057,7 @@ void RawImageSource::retinexPrepareBuffers(const ColorManagementParams& cmp, con
 
         }
     } else {
-        TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (cmp.workingProfile);
+        TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(cmp.workingProfile);
         const float wp[3][3] = {
             {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
             {static_cast<float>(wprof[1][0]), static_cast<float>(wprof[1][1]), static_cast<float>(wprof[1][2])},
@@ -2106,7 +2139,7 @@ void RawImageSource::retinex(const ColorManagementParams& cmp, const RetinexPara
     t4.set();
 
     if (settings->verbose) {
-        printf ("Applying Retinex\n");
+        printf("Applying Retinex\n");
     }
 
     LUTf lutToneireti;
@@ -2151,9 +2184,9 @@ void RawImageSource::retinex(const ColorManagementParams& cmp, const RetinexPara
             double x;
 
             if (gamm2 < 1.) {
-                x = Color::gammareti (val, gamm, start, ts, mul , add);
+                x = Color::gammareti(val, gamm, start, ts, mul, add);
             } else {
-                x = Color::igammareti (val, gamm, start, ts, mul , add);
+                x = Color::igammareti(val, gamm, start, ts, mul, add);
             }
 
             lutToneireti[i] = CLIP(x * 65535.);
@@ -2167,7 +2200,7 @@ void RawImageSource::retinex(const ColorManagementParams& cmp, const RetinexPara
     const int HNew = H - 2 * border;
     const int WNew = W - 2 * border;
 
-    array2D<float> LBuffer (WNew, HNew);
+    array2D<float> LBuffer(WNew, HNew);
     float **temp = conversionBuffer[2]; // one less dereference
     LUTf dLcurve;
     LUTu hist16RET;
@@ -2222,8 +2255,7 @@ void RawImageSource::retinex(const ColorManagementParams& cmp, const RetinexPara
                         int pos = LBuffer[i][j];
                         hist16RETThr[pos]++; //histogram in Curve
                     }
-                }
-            else
+                } else
                 for (int j = 0; j < W - 2 * border; j++) {
                     LBuffer[i][j] = temp[i][j];
                 }
@@ -2300,7 +2332,7 @@ void RawImageSource::retinex(const ColorManagementParams& cmp, const RetinexPara
         }
 
     } else {
-        TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (cmp.workingProfile);
+        TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(cmp.workingProfile);
 
         double wip[3][3] = {
             {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
@@ -2495,6 +2527,7 @@ void RawImageSource::flush()
     if (rawData) {
         rawData(0, 0);
     }
+
     if (green) {
         green(0, 0);
     }
@@ -2522,16 +2555,16 @@ void RawImageSource::flush()
 
 void RawImageSource::HLRecovery_Global(const ToneCurveParams &hrp)
 {
- //   if (hrp.hrenabled && hrp.method == "Color") {
- //       if (!rgbSourceModified) {
- //           if (settings->verbose) {
- //               printf ("Applying Highlight Recovery: Color propagation...\n");
- //           }
+//   if (hrp.hrenabled && hrp.method == "Color") {
+//       if (!rgbSourceModified) {
+//           if (settings->verbose) {
+//               printf ("Applying Highlight Recovery: Color propagation...\n");
+//           }
 //
- //           HLRecovery_inpaint (red, green, blue, hrp.hlbl);
-//			
+//           HLRecovery_inpaint (red, green, blue, hrp.hlbl);
+//
 //            rgbSourceModified = true;
- //       }
+//       }
 //    }
 
 }
@@ -2557,16 +2590,19 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, con
 #ifdef _OPENMP
             #pragma omp parallel for
 #endif
+
             for (int row = 0; row < H; row++) {
                 const int c0 = FC(row, 0);
                 const float black0 = black[(c0 == 1 && !(row & 1)) ? 3 : c0];
                 const int c1 = FC(row, 1);
                 const float black1 = black[(c1 == 1 && !(row & 1)) ? 3 : c1];
                 int col;
+
                 for (col = 0; col < W - 1; col += 2) {
                     rawData[row][col] = max(src->data[row][col] + black0 - riDark->data[row][col], 0.0f);
                     rawData[row][col + 1] = max(src->data[row][col + 1] + black1 - riDark->data[row][col + 1], 0.0f);
                 }
+
                 if (col < W) {
                     rawData[row][col] = max(src->data[row][col] + black0 - riDark->data[row][col], 0.0f);
                 }
@@ -2607,6 +2643,7 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, con
                 }
             }
         }
+
         if (riFlatFile && W == riFlatFile->get_width() && H == riFlatFile->get_height()) {
             processFlatField(raw, riFlatFile, rawData, black);
         }  // flatfield
@@ -2810,7 +2847,7 @@ void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const R
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-int RawImageSource::defTransform (int tran)
+int RawImageSource::defTransform(int tran)
 {
 
     int deg = ri->get_rotateDegree();
@@ -2849,7 +2886,7 @@ int RawImageSource::defTransform (int tran)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 // Thread called part
-void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, array2D<float> &rbconv_Y, array2D<float> &rbconv_I, array2D<float> &rbconv_Q, array2D<float> &rbout_I, array2D<float> &rbout_Q, const int row_from, const int row_to)
+void RawImageSource::processFalseColorCorrectionThread(Imagefloat* im, array2D<float> &rbconv_Y, array2D<float> &rbconv_I, array2D<float> &rbconv_Q, array2D<float> &rbout_I, array2D<float> &rbout_Q, const int row_from, const int row_to)
 {
 
     const int W = im->getWidth();
@@ -2871,8 +2908,8 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, array2D
 
     int px = (row_from - 1) % 3, cx = row_from % 3, nx = 0;
 
-    convert_row_to_YIQ (im->r(row_from - 1), im->g(row_from - 1), im->b(row_from - 1), rbconv_Y[px], rbconv_I[px], rbconv_Q[px], W);
-    convert_row_to_YIQ (im->r(row_from), im->g(row_from), im->b(row_from), rbconv_Y[cx], rbconv_I[cx], rbconv_Q[cx], W);
+    convert_row_to_YIQ(im->r(row_from - 1), im->g(row_from - 1), im->b(row_from - 1), rbconv_Y[px], rbconv_I[px], rbconv_Q[px], W);
+    convert_row_to_YIQ(im->r(row_from), im->g(row_from), im->b(row_from), rbconv_Y[cx], rbconv_I[cx], rbconv_Q[cx], W);
 
     for (int j = 0; j < W; j++) {
         rbout_I[px][j] = rbconv_I[px][j];
@@ -2885,11 +2922,11 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, array2D
         cx = i % 3;
         nx = (i + 1) % 3;
 
-        convert_row_to_YIQ (im->r(i + 1), im->g(i + 1), im->b(i + 1), rbconv_Y[nx], rbconv_I[nx], rbconv_Q[nx], W);
+        convert_row_to_YIQ(im->r(i + 1), im->g(i + 1), im->b(i + 1), rbconv_Y[nx], rbconv_I[nx], rbconv_Q[nx], W);
 
 #ifdef __SSE2__
-        pre1[0] = _mm_setr_ps(rbconv_I[px][0], rbconv_Q[px][0], 0, 0) , pre1[1] = _mm_setr_ps(rbconv_I[cx][0], rbconv_Q[cx][0], 0, 0), pre1[2] = _mm_setr_ps(rbconv_I[nx][0], rbconv_Q[nx][0], 0, 0);
-        pre2[0] = _mm_setr_ps(rbconv_I[px][1], rbconv_Q[px][1], 0, 0) , pre2[1] = _mm_setr_ps(rbconv_I[cx][1], rbconv_Q[cx][1], 0, 0), pre2[2] = _mm_setr_ps(rbconv_I[nx][1], rbconv_Q[nx][1], 0, 0);
+        pre1[0] = _mm_setr_ps(rbconv_I[px][0], rbconv_Q[px][0], 0, 0), pre1[1] = _mm_setr_ps(rbconv_I[cx][0], rbconv_Q[cx][0], 0, 0), pre1[2] = _mm_setr_ps(rbconv_I[nx][0], rbconv_Q[nx][0], 0, 0);
+        pre2[0] = _mm_setr_ps(rbconv_I[px][1], rbconv_Q[px][1], 0, 0), pre2[1] = _mm_setr_ps(rbconv_I[cx][1], rbconv_Q[cx][1], 0, 0), pre2[2] = _mm_setr_ps(rbconv_I[nx][1], rbconv_Q[nx][1], 0, 0);
 
         // fill first element in rbout_I and rbout_Q
         rbout_I[cx][0] = rbconv_I[cx][0];
@@ -2962,7 +2999,7 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, array2D
 
         // blur i-1th row
         if (i > row_from) {
-            convert_to_RGB (im->r(i - 1, 0), im->g(i - 1, 0), im->b(i - 1, 0), rbconv_Y[px][0], rbout_I[px][0], rbout_Q[px][0]);
+            convert_to_RGB(im->r(i - 1, 0), im->g(i - 1, 0), im->b(i - 1, 0), rbconv_Y[px][0], rbout_I[px][0], rbout_Q[px][0]);
 
 #ifdef _OPENMP
             #pragma omp simd
@@ -2971,15 +3008,15 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, array2D
             for (int j = 1; j < W - 1; j++) {
                 float I = (rbout_I[px][j - 1] + rbout_I[px][j] + rbout_I[px][j + 1] + rbout_I[cx][j - 1] + rbout_I[cx][j] + rbout_I[cx][j + 1] + rbout_I[nx][j - 1] + rbout_I[nx][j] + rbout_I[nx][j + 1]) * onebynine;
                 float Q = (rbout_Q[px][j - 1] + rbout_Q[px][j] + rbout_Q[px][j + 1] + rbout_Q[cx][j - 1] + rbout_Q[cx][j] + rbout_Q[cx][j + 1] + rbout_Q[nx][j - 1] + rbout_Q[nx][j] + rbout_Q[nx][j + 1]) * onebynine;
-                convert_to_RGB (im->r(i - 1, j), im->g(i - 1, j), im->b(i - 1, j), rbconv_Y[px][j], I, Q);
+                convert_to_RGB(im->r(i - 1, j), im->g(i - 1, j), im->b(i - 1, j), rbconv_Y[px][j], I, Q);
             }
 
-            convert_to_RGB (im->r(i - 1, W - 1), im->g(i - 1, W - 1), im->b(i - 1, W - 1), rbconv_Y[px][W - 1], rbout_I[px][W - 1], rbout_Q[px][W - 1]);
+            convert_to_RGB(im->r(i - 1, W - 1), im->g(i - 1, W - 1), im->b(i - 1, W - 1), rbconv_Y[px][W - 1], rbout_I[px][W - 1], rbout_Q[px][W - 1]);
         }
     }
 
     // blur last 3 row and finalize H-1th row
-    convert_to_RGB (im->r(row_to - 1, 0), im->g(row_to - 1, 0), im->b(row_to - 1, 0), rbconv_Y[cx][0], rbout_I[cx][0], rbout_Q[cx][0]);
+    convert_to_RGB(im->r(row_to - 1, 0), im->g(row_to - 1, 0), im->b(row_to - 1, 0), rbconv_Y[cx][0], rbout_I[cx][0], rbout_Q[cx][0]);
 #ifdef _OPENMP
     #pragma omp simd
 #endif
@@ -2987,16 +3024,16 @@ void RawImageSource::processFalseColorCorrectionThread  (Imagefloat* im, array2D
     for (int j = 1; j < W - 1; j++) {
         float I = (rbout_I[px][j - 1] + rbout_I[px][j] + rbout_I[px][j + 1] + rbout_I[cx][j - 1] + rbout_I[cx][j] + rbout_I[cx][j + 1] + rbconv_I[nx][j - 1] + rbconv_I[nx][j] + rbconv_I[nx][j + 1]) * onebynine;
         float Q = (rbout_Q[px][j - 1] + rbout_Q[px][j] + rbout_Q[px][j + 1] + rbout_Q[cx][j - 1] + rbout_Q[cx][j] + rbout_Q[cx][j + 1] + rbconv_Q[nx][j - 1] + rbconv_Q[nx][j] + rbconv_Q[nx][j + 1]) * onebynine;
-        convert_to_RGB (im->r(row_to - 1, j), im->g(row_to - 1, j), im->b(row_to - 1, j), rbconv_Y[cx][j], I, Q);
+        convert_to_RGB(im->r(row_to - 1, j), im->g(row_to - 1, j), im->b(row_to - 1, j), rbconv_Y[cx][j], I, Q);
     }
 
-    convert_to_RGB (im->r(row_to - 1, W - 1), im->g(row_to - 1, W - 1), im->b(row_to - 1, W - 1), rbconv_Y[cx][W - 1], rbout_I[cx][W - 1], rbout_Q[cx][W - 1]);
+    convert_to_RGB(im->r(row_to - 1, W - 1), im->g(row_to - 1, W - 1), im->b(row_to - 1, W - 1), rbconv_Y[cx][W - 1], rbout_I[cx][W - 1], rbout_Q[cx][W - 1]);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 // correction_YIQ_LQ
-void RawImageSource::processFalseColorCorrection  (Imagefloat* im, const int steps)
+void RawImageSource::processFalseColorCorrection(Imagefloat* im, const int steps)
 {
 
     if (im->getHeight() < 4 || steps < 1) {
@@ -3006,7 +3043,7 @@ void RawImageSource::processFalseColorCorrection  (Imagefloat* im, const int ste
 #ifdef _OPENMP
     #pragma omp parallel
     {
-        multi_array2D<float, 5> buffer (W, 3);
+        multi_array2D<float, 5> buffer(W, 3);
         int tid = omp_get_thread_num();
         int nthreads = omp_get_num_threads();
         int blk = (im->getHeight() - 2) / nthreads;
@@ -3014,19 +3051,19 @@ void RawImageSource::processFalseColorCorrection  (Imagefloat* im, const int ste
         for (int t = 0; t < steps; t++) {
 
             if (tid < nthreads - 1) {
-                processFalseColorCorrectionThread (im, buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], 1 + tid * blk, 1 + (tid + 1)*blk);
+                processFalseColorCorrectionThread(im, buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], 1 + tid * blk, 1 + (tid + 1)*blk);
             } else {
-                processFalseColorCorrectionThread (im, buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], 1 + tid * blk, im->getHeight() - 1);
+                processFalseColorCorrectionThread(im, buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], 1 + tid * blk, im->getHeight() - 1);
             }
 
             #pragma omp barrier
         }
     }
 #else
-    multi_array2D<float, 5> buffer (W, 3);
+    multi_array2D<float, 5> buffer(W, 3);
 
     for (int t = 0; t < steps; t++) {
-        processFalseColorCorrectionThread (im, buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], 1 , im->getHeight() - 1);
+        processFalseColorCorrectionThread(im, buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], 1, im->getHeight() - 1);
     }
 
 #endif
@@ -3100,7 +3137,7 @@ lab2ProphotoRgbD50(float L, float A, float B, float& r, float& g, float& b)
 }
 
 // Converts raw image including ICC input profile to working space - floating point version
-void RawImageSource::colorSpaceConversion_ (Imagefloat* im, const ColorManagementParams& cmp, const ColorTemp &wb, double pre_mul[3], cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], const std::string &camName)
+void RawImageSource::colorSpaceConversion_(Imagefloat* im, const ColorManagementParams& cmp, const ColorTemp &wb, double pre_mul[3], cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], const std::string &camName)
 {
 
 //    MyTime t1, t2, t3;
@@ -3134,7 +3171,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, const ColorManagemen
         // in this case we avoid using the slllllooooooowwww lcms
 
         // Calculate matrix for direct conversion raw>working space
-        TMatrix work = ICCStore::getInstance()->workingSpaceInverseMatrix (cmp.workingProfile);
+        TMatrix work = ICCStore::getInstance()->workingSpaceInverseMatrix(cmp.workingProfile);
         double mat[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
 
         for (int i = 0; i < 3; i++)
@@ -3235,6 +3272,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, const ColorManagemen
             TMatrix toxyz = ICCStore::getInstance()->workingSpaceMatrix(cmp.workingProfile);
             TMatrix torgb = ICCStore::getInstance()->workingSpaceInverseMatrix("ProPhoto");
             float rgb[3] = {0.f, 0.f, 0.f};
+
             for (int i = 0; i < 2 && !working_space_is_prophoto; ++i) {
                 rgb[i] = 1.f;
                 float x, y, z;
@@ -3246,17 +3284,20 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, const ColorManagemen
                     if (rgb[j] < 0.f || rgb[j] > 1.f) {
                         working_space_is_prophoto = true;
                         prophoto = ICCStore::getInstance()->workingSpace(cmp.workingProfile);
+
                         if (settings->verbose) {
                             std::cout << "colorSpaceConversion_: converting directly to " << cmp.workingProfile << " instead of passing through ProPhoto" << std::endl;
                         }
+
                         break;
                     }
+
                     rgb[j] = 0.f;
                 }
             }
         }
-        
-        lcmsMutex->lock ();
+
+        lcmsMutex->lock();
 
         switch (camera_icc_type) {
             case CAMERA_ICC_TYPE_PHASE_ONE:
@@ -3265,7 +3306,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, const ColorManagemen
                 transform_via_pcs_lab = true;
                 separate_pcs_lab_highlights = true;
                 // We transform to Lab because we can and that we avoid getting an unnecessary unmatched gamma conversion which we would need to revert.
-                hTransform = cmsCreateTransform (in, TYPE_RGB_FLT, nullptr, TYPE_Lab_FLT, INTENT_RELATIVE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
+                hTransform = cmsCreateTransform(in, TYPE_RGB_FLT, nullptr, TYPE_Lab_FLT, INTENT_RELATIVE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
 
                 for (int i = 0; i < 3; i++) {
                     for (int j = 0; j < 3; j++) {
@@ -3283,24 +3324,24 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, const ColorManagemen
             case CAMERA_ICC_TYPE_NIKON:
             case CAMERA_ICC_TYPE_GENERIC:
             default:
-                hTransform = cmsCreateTransform (in, TYPE_RGB_FLT, prophoto, TYPE_RGB_FLT, INTENT_RELATIVE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);  // NOCACHE is important for thread safety
+                hTransform = cmsCreateTransform(in, TYPE_RGB_FLT, prophoto, TYPE_RGB_FLT, INTENT_RELATIVE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);   // NOCACHE is important for thread safety
                 break;
         }
 
-        lcmsMutex->unlock ();
+        lcmsMutex->unlock();
 
         if (hTransform == nullptr) {
             // Fallback: create transform from camera profile. Should not happen normally.
-            lcmsMutex->lock ();
-            hTransform = cmsCreateTransform (camprofile, TYPE_RGB_FLT, prophoto, TYPE_RGB_FLT, INTENT_RELATIVE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
-            lcmsMutex->unlock ();
+            lcmsMutex->lock();
+            hTransform = cmsCreateTransform(camprofile, TYPE_RGB_FLT, prophoto, TYPE_RGB_FLT, INTENT_RELATIVE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
+            lcmsMutex->unlock();
         }
 
         TMatrix toxyz = {}, torgb = {};
 
         if (!working_space_is_prophoto) {
-            toxyz = ICCStore::getInstance()->workingSpaceMatrix ("ProPhoto");
-            torgb = ICCStore::getInstance()->workingSpaceInverseMatrix (cmp.workingProfile); //sRGB .. Adobe...Wide...
+            toxyz = ICCStore::getInstance()->workingSpaceMatrix("ProPhoto");
+            torgb = ICCStore::getInstance()->workingSpaceInverseMatrix(cmp.workingProfile);  //sRGB .. Adobe...Wide...
         }
 
 #ifdef _OPENMP
@@ -3389,10 +3430,10 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, const ColorManagemen
                 }
 
                 // Run icc transform
-                cmsDoTransform (hTransform, buffer.data, buffer.data, im->getWidth());
+                cmsDoTransform(hTransform, buffer.data, buffer.data, im->getWidth());
 
                 if (separate_pcs_lab_highlights) {
-                    cmsDoTransform (hTransform, hl_buffer.data, hl_buffer.data, im->getWidth());
+                    cmsDoTransform(hTransform, hl_buffer.data, hl_buffer.data, im->getWidth());
                 }
 
                 // Apply post-processing
@@ -3518,7 +3559,7 @@ bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embed
     } else if (inProfile != "(camera)" && !inProfile.empty()) {
         Glib::ustring normalName = inProfile;
 
-        if (!inProfile.compare (0, 5, "file:")) {
+        if (!inProfile.compare(0, 5, "file:")) {
             normalName = inProfile.substr(5);
         }
 
@@ -3527,7 +3568,7 @@ bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embed
         }
 
         if (*dcpProf == nullptr) {
-            in = ICCStore::getInstance()->getProfile (inProfile);
+            in = ICCStore::getInstance()->getProfile(inProfile);
         }
     }
 
@@ -3558,6 +3599,7 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
     const float satthresh = 0.5;
 
     float clip[3];
+
     for (int c = 0; c < ColorCount; ++c) {
         clip[c] = rtengine::min(maxave, hlmax[c]);
     }
@@ -3601,8 +3643,7 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
             for (int c = 0; c < ColorCount; ++c) {
                 lab[i][c] = 0;
 
-                for (int j = 0; j < ColorCount; j++)
-                {
+                for (int j = 0; j < ColorCount; j++) {
                     lab[i][c] += trans[c][j] * cam[i][j];
                 }
             }
@@ -3625,11 +3666,11 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
         for (int c = 0; c < ColorCount; ++c) {
             cam[0][c] = 0;
 
-            for (int j = 0; j < ColorCount; j++)
-            {
+            for (int j = 0; j < ColorCount; j++) {
                 cam[0][c] += itrans[c][j] * lab[0][j];
             }
         }
+
         for (int c = 0; c < ColorCount; ++c) {
             rgb[c] = cam[0][c] / ColorCount;
         }
@@ -3669,7 +3710,7 @@ void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int wi
     }
 }
 
-void RawImageSource::HLRecovery_Luminance (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, float maxval)
+void RawImageSource::HLRecovery_Luminance(float* rin, float* gin, float* bin, float* rout, float* gout, float* bout, int width, float maxval)
 {
 
     for (int i = 0; i < width; i++) {
@@ -3686,7 +3727,7 @@ void RawImageSource::HLRecovery_Luminance (float* rin, float* gin, float* bin, f
             double Ho = 2 * bo - ro - go;
 
             if (r != g && g != b) {
-                double ratio = std::sqrt ((Co * Co + Ho * Ho) / (C * C + H * H));
+                double ratio = std::sqrt((Co * Co + Ho * Ho) / (C * C + H * H));
                 C *= ratio;
                 H *= ratio;
             }
@@ -3707,8 +3748,8 @@ void RawImageSource::HLRecovery_Luminance (float* rin, float* gin, float* bin, f
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::HLRecovery_CIELab (float* rin, float* gin, float* bin, float* rout, float* gout, float* bout,
-                                        int width, float maxval, double xyz_cam[3][3], double cam_xyz[3][3])
+void RawImageSource::HLRecovery_CIELab(float* rin, float* gin, float* bin, float* rout, float* gout, float* bout,
+                                       int width, float maxval, double xyz_cam[3][3], double cam_xyz[3][3])
 {
 
     //static bool crTableReady = false;
@@ -3764,16 +3805,15 @@ void RawImageSource::HLRecovery_CIELab (float* rin, float* gin, float* bin, floa
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::hlRecovery (const std::string &method, float* red, float* green, float* blue, int width, float* hlmax)
+void RawImageSource::hlRecovery(const std::string &method, float* red, float* green, float* blue, int width, float* hlmax)
 {
-//	BENCHFUN
+//  BENCHFUN
 
     if (method == "Luminance") {
-        HLRecovery_Luminance (red, green, blue, red, green, blue, width, 65535.0);
+        HLRecovery_Luminance(red, green, blue, red, green, blue, width, 65535.0);
     } else if (method == "CIELab blending") {
-        HLRecovery_CIELab (red, green, blue, red, green, blue, width, 65535.0, imatrices.xyz_cam, imatrices.cam_xyz);
-    }
-    else if (method == "Blend") { // derived from Dcraw
+        HLRecovery_CIELab(red, green, blue, red, green, blue, width, 65535.0, imatrices.xyz_cam, imatrices.cam_xyz);
+    } else if (method == "Blend") { // derived from Dcraw
         HLRecovery_blend(red, green, blue, width, 65535.0, hlmax);
     }
 
@@ -3781,7 +3821,7 @@ void RawImageSource::hlRecovery (const std::string &method, float* red, float* g
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr)
+void RawImageSource::getAutoExpHistogram(LUTu & histogram, int& histcompr)
 {
 //    BENCHFUN
     histcompr = 3;
@@ -3802,7 +3842,7 @@ void RawImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr)
 
         for (int i = border; i < H - border; i++) {
             int start, end;
-            getRowStartEnd (i, start, end);
+            getRowStartEnd(i, start, end);
 
             if (ri->getSensorType() == ST_BAYER) {
                 // precalculate factors to avoid expensive per pixel calculations
@@ -3863,7 +3903,7 @@ void RawImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr)
 }
 
 // Histogram MUST be 256 in size; gamma is applied, blackpoint and gain also
-void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw)
+void RawImageSource::getRAWHistogram(LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw)
 {
 //    BENCHFUN
     histRedRaw.clear();
@@ -3930,7 +3970,7 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
 
         for (int i = border; i < H - border; i++) {
             int start, end;
-            getRowStartEnd (i, start, end);
+            getRowStartEnd(i, start, end);
 
             if (ri->getSensorType() == ST_BAYER) {
                 int j;
@@ -3983,11 +4023,10 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
     } // end of parallel region
 
     const auto getidx =
-        [&](int c, int i) -> int
-        {
-            float f = mult[c] * std::max(0.f, i - cblacksom[c]);
-            return f > 0.f ? (f < 1.f ? 1 : std::min(int(f), 255)) : 0;
-        };
+    [&](int c, int i) -> int {
+        float f = mult[c] * std::max(0.f, i - cblacksom[c]);
+        return f > 0.f ? (f < 1.f ? 1 : std::min(int(f), 255)) : 0;
+    };
 
     for (int i = 0; i < histoSize; i++) {
         int idx = getidx(0, i);
@@ -4010,12 +4049,10 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
     if (ri->getSensorType() == ST_BAYER)    // since there are twice as many greens, correct for it
         for (int i = 0; i < 256; i++) {
             histGreenRaw[i] >>= 1;
-        }
-    else if (ri->getSensorType() == ST_FUJI_XTRANS)  // since Xtrans has 2.5 as many greens, correct for it
+        } else if (ri->getSensorType() == ST_FUJI_XTRANS) // since Xtrans has 2.5 as many greens, correct for it
         for (int i = 0; i < 256; i++) {
             histGreenRaw[i] = (histGreenRaw[i] * 2) / 5;
-        }
-    else if (ri->get_colors() == 1) { // monochrome sensor => set all histograms equal
+        } else if (ri->get_colors() == 1) { // monochrome sensor => set all histograms equal
         histGreenRaw += histRedRaw;
         histBlueRaw += histRedRaw;
     }
@@ -4024,7 +4061,7 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::getRowStartEnd (int x, int &start, int &end)
+void RawImageSource::getRowStartEnd(int x, int &start, int &end)
 {
     if (fuji) {
         int fw = ri->get_FujiWidth();
@@ -4057,9 +4094,12 @@ static void histoxyY_low(int bfhitc, int bfwitc, const array2D<float> & xc, cons
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic, 4) nowait
 #endif
-        for (int y = 0; y < bfhitc ; y++) {
+
+        for (int y = 0; y < bfhitc ; y++)
+        {
             for (int x = 0; x < bfwitc ; x++) {
                 int nh = -1;
+
                 if (xc[y][x] < 0.12f && xc[y][x] > 0.03f && yc[y][x] > 0.1f) { // near Prophoto
                     if (yc[y][x] < 0.2f) {
                         nh = 0;
@@ -4482,6 +4522,7 @@ static void histoxyY_low(int bfhitc, int bfwitc, const array2D<float> & xc, cons
                 } else if (xc[y][x] < 0.75f && yc[y][x] > 0.1f) {
                     nh = 191;
                 }
+
                 if (nh >= 0) {
                     histxythr[nh]++;
                     xxxthr[nh] += xc[y][x];
@@ -4490,6 +4531,7 @@ static void histoxyY_low(int bfhitc, int bfwitc, const array2D<float> & xc, cons
                 }
             }
         }
+
 #ifdef _OPENMP
         #pragma omp critical
 #endif
@@ -4503,16 +4545,21 @@ static void histoxyY_low(int bfhitc, int bfwitc, const array2D<float> & xc, cons
 }
 
 
+//enable display cells
 
+//int cellxy[80][90] ;
 
-static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const array2D<float> & yc, const array2D<float> & Yc, LUTf &xxx, LUTf &yyy, LUTf &YYY, LUTu &histxy, bool purp)
+static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const array2D<float> & yc, const array2D<float> & Yc, LUTf &xxx, LUTf &yyy, LUTf &YYY, LUTu &histxy, bool purpe)
 {
     // calculate histogram x y in a range of 236 colors
     // this "choice" are guided by generally colors who are in nature skin, sky, etc. in those cases "steps" are small
     // of course we can change to be more precise
     // purp enable or not purple color in xyY - approximation...
+//enable display cells
+//    int totalpixels = 0;
+
 #ifdef _OPENMP
-    #pragma omp parallel
+    #pragma omp parallel  // disabled if enable display cells
 #endif
     {
         LUTu histxythr(histxy.getSize());
@@ -4523,15 +4570,33 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
         yyythr.clear();
         LUTf YYYthr(YYY.getSize());
         YYYthr.clear();
-        //  bool purp = false;
+        bool purp = true;
+        float Ypurp = 0.5f;
+        float Ypurpmax = 1.f;
+        //enable display cells
+        /*
+                // clear
+                for (int i = 0; i < 80; ++i) {
+                    for (int j = 0 ; j < 90; ++j) {
+                        cellxy[i][j] = 0;
+                    }
+                }
+        */
 #ifdef _OPENMP
-        #pragma omp for schedule(dynamic, 4) nowait
+        #pragma omp for schedule(dynamic, 4) nowait //disable if enable display cells
+
 #endif
 
         for (int y = 0; y < bfhitc ; y++)
         {
             for (int x = 0; x < bfwitc ; x++) {
                 int nh = -1;
+
+                if (!purpe) {
+                    purp = (Yc[y][x] < Ypurp);//cut values with Y > Ypurp
+                } else {
+                    purp = (Yc[y][x] < Ypurpmax);//
+                }
 
                 if (xc[y][x] < 0.12f && xc[y][x] > 0.03f && yc[y][x] > 0.1f) { // near Prophoto
                     if (yc[y][x] < 0.2f) {
@@ -5051,11 +5116,23 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
                     yyythr[nh] += yc[y][x];
                     YYYthr[nh] += Yc[y][x];
                 }
+
+//enable display cells
+                /*
+                                    // update
+                                    int x1 = (int)(100.0 * (xc[y][x]));
+                                    int y1 = (int)(100.0 * (yc[y][x]));
+
+                                    if (x1 >= 0 && x1 < 80 && y1 >= 0 && y1 < 90) {
+                                        cellxy[x1][y1]++;
+                                        totalpixels++;
+                                    }
+                */
             }
         }
 
 #ifdef _OPENMP
-        #pragma omp critical
+        #pragma omp critical    //disable if enable display cells
 #endif
         {
             histxy += histxythr;
@@ -5119,10 +5196,10 @@ float static studentXY(const array2D<float> & YYcurr, const array2D<float> & ref
 
 
 
-void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double &tempitc, double &greenitc, float &studgood, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, const ColorManagementParams &cmp, const RAWParams &raw, const WBParams & wbpar, const ToneCurveParams &hrp)
+void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double &tempitc, double &greenitc, float &temp0, float &delta, int &bia, int &dread, int &kcam, int &nocam, float &studgood, float &minchrom, int &kmin, float &minhist, float &maxhist,  array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, const ColorManagementParams &cmp, const RAWParams &raw, const WBParams & wbpar, const ToneCurveParams &hrp)
 {
     /*
-    Copyright (c) Jacques Desmis 6 - 2018 jdesmis@gmail.com, update 2 - 2023
+    Copyright (c) Jacques Desmis 6 - 2018 jdesmis@gmail.com, update 6 - 2023
     Copyright (c) Ingo Weyrich 3 - 2020 (heckflosse67@gmx.de)
 
     This algorithm try to find temperature correlation between 20 to 80 colors between 201 spectral color and about 20 to 55 color found in the image between 236, I just found the idea in the web "correlate with chroma" instead of RGB grey point,but I don't use any algo found on the web.
@@ -5130,17 +5207,17 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     I have test many many algorithms to find the first one that work :)
     Probably (sure) there are improvement to do...
 
-    I have create a table temperature with temp and white point with 118 values between 2000K and 12000K we can obviously  change these values, more...with different steps
+    I have create a table temperature with temp and white point with 191 values between 2000K and 15000K we can obviously  change these values, more...with different steps
     I have create a table for tint (green)with 134 values between 0.4 to 4.
-    I have create or recuparate and transformed 201 spectral colors from Colorchecker24, others color and my 468 colors target, or from web flowers, etc. with a step of 5nm, I think it is large enough.
-    I think this value of 201 is now complete: I tested correlation with 60, 90, 100, 120, 155...better student increase with number of color, but now it seems stabilized
+    I have create or recuparate and transformed 406 spectral colors from Colorchecker24, others color and my 468 colors target, or from web flowers, etc. with a step of 5nm, I think it is large enough.
+    I think this value of 265 is now complete: I tested correlation with 60, 90, 100, 120, 155...better student increase with number of color, but now it seems stabilized
     Of course we can increase this number :)
 
     1) for the current raw file we create a table for each temp of RGB multipliers
     2) then, I choose the "camera temp" to initialize calculation (why not)
-    3) for this temp, I calculated XYZ values for the 201 spectral data
-    4) then I create for the image an "histogram", but for xyY (CIE 1931 color space or CIE 1964 (default))
-    5) for each pixel (in fact to accelerate only 1/5 for and 1/5 for y), I determine for each couple xy, the number of occurrences, can be change by Itcwb_precis to 3 or 9
+    3) for this temp, I calculated XYZ values for the 406 spectral data
+    4) then I create for the image an "histogram", but for xyY (CIE 1931 color space or CIE 1964)
+    5) for each pixel (in fact to accelerate only 1/3 for and 1/3 for y), I determine for each couple xy, the number of occurrences
     6) I sort this result in ascending order
     7) in option we can sort in another manner to take into account chroma : chromax = x - white point x, chromay = y - white point y
     8) then I compare this result, with spectral data found above in 3) with deltaE (limited to chroma)
@@ -5155,13 +5232,13 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     17) after we pass this value to improccoordinator
 
     18) in a second part if camera green is out, I used an "extra" algorithm
-    19) we make vary green between 2 limits (settings in option)
-    20) between these green limits, we make slightly vary temp (settings in options) and recalculated RGB multipliers
+    19) we make vary green between 2 limits
+    20) between these green limits, we make slightly vary temp and recalculated RGB multipliers
     21) with this multipliers for the RGB color find in histogram we recalculate xyY
     22) we re-adjust references color for these xyY from 20)
     23) then find all Student correlation for each couple green / temp
     24) sort these Student values, and choose the minimum
-    25) then for the 5 better couple "temp / green" choose the one where green is nearest from 1.
+    25) then for the 3 better couple "temp / green" choose the one where green is nearest from 1.
 
     Some variables or function are not used, keep in case of
     I have test with cat02 but result are not stable enough ! why ??, therefore cat02 neutralized
@@ -5173,916 +5250,2139 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     You must avoid when illuminant is non standard (fluorescent, LED...) and also, when the subject is lost in the image (some target to generate profiles).
 
     You can change  parameters in White Balance - Frame adapted to Itcwb
-    Itcwb_thres : 34 by default ==> number of color used in final algorithm - between 10 and max 55
-    Itcwb_sorted : true by default, can improve algorithm if true, ==> sort value in something near chroma order, instead of histogram number
-    Itcwb_greenrange : 0 amplitude of green variation - between 0 to 2
-    Itcwb_greendelta : 1 - delta temp in green iterate loop for "extra" - between 0 to 4
-    Itcwb_forceextra : false by default - Use all Ciexy diagram instead of sRGB
-    //Itcwb_sizereference : repalce by int maxnb 3 by default, can be set to 5 ==> size of reference color compare to size of histogram real color
-    itcwb_delta : 1 by default can be set between 0 to 5 ==> delta temp to build histogram xy - if camera temp is not probably good
-    //itcwb_precis : replace by int precision = 3 by default - can be set to 3 or 9 - 3 best sampling but more time...9 "old" settings - but low differences in times with 3 instead of 9 about twice time 160ms instead of 80ms for a big raw file
-    itcwb_nopurple : true default - allow to bypass highlight recovery and inpait opposed when need flowers and not purple due to highlights...
-    itcwb_fgreen : 5 by default - between 3 to 6 - find the compromise student / green to reach green near of 1 
-    
-    In file options.
-    use standard observer 10°, false = standard observer 2°
+    Itcwb_rgreen : 1 amplitude of green variation - between 0 to 2
+    Itcwb_prim : sRGB, Beta rgb (default), XYZcam, JDCmax = Use near Ciexy diagram instead of sRGB
+    itcwb_delta : 4 by default can be set between 0 to 5 ==> delta temp to build histogram xy - if camera temp is not probably good
+    itcwb_nopurple : false default - allow to bypass highlight recovery and inpait opposed when need flowers and not purple due to highlights...
+    itcwb_green - adjust green refinement
     */
-   // BENCHFUN
+    BENCHFUN
+    MyTime t1, t2, t3, t4, t5, t6, t7, t8;
+    t1.set();
 
-    Glib::ustring profuse;
-    profuse = "sRGB";//or "Adobe RGB"
-    if( wbpar.itcwb_forceextra && wbpar.itcwb_sampling == false) {//Adobe RGB
-       profuse = "ACESp0";//cover all CIE xy diagram
-    }
-    
-    TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(profuse); //ACESp0 or sRGB
-    const float wp[3][3] = {
-        {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
-        {static_cast<float>(wprof[1][0]), static_cast<float>(wprof[1][1]), static_cast<float>(wprof[1][2])},
-        {static_cast<float>(wprof[2][0]), static_cast<float>(wprof[2][1]), static_cast<float>(wprof[2][2])}
+    bool itciterate = true;
+    bool lastitc = true;
+
+    typedef struct Wboptim {//store config Itcwb
+        float stud;
+        float minc;
+        double titc;
+        double gritc;
+        double tempre;
+        double greenre;
+        int drea;
+        int kmi;
+        float minhis;
+        float maxhis;
+        double avg_r;
+        double avg_g;
+        double avg_b;
+        float delt;
+
+    } Wboptim;
+
+    Wboptim optitc[2] = {
+        {0.f, 0.f, 5000., 1., 5000., 1., 1, 1, 10.f, 100.f, 1., 1., 1., 0.f},
+        {0.f, 0.f, 5000., 1., 5000., 1., 1, 1, 10.f, 100.f, 1., 1., 1., 0.f}
     };
+    int nbitc = 0;
+    int choiceitc = 0;
+    bool oldsampling = wbpar.itcwb_sampling;
 
-    TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(profuse);//ACESp0 or sRGB
-    //inverse matrix user select
-    const float wip[3][3] = {
-        {static_cast<float>(wiprof[0][0]), static_cast<float>(wiprof[0][1]), static_cast<float>(wiprof[0][2])},
-        {static_cast<float>(wiprof[1][0]), static_cast<float>(wiprof[1][1]), static_cast<float>(wiprof[1][2])},
-        {static_cast<float>(wiprof[2][0]), static_cast<float>(wiprof[2][1]), static_cast<float>(wiprof[2][2])}
-    };
+    while (itciterate) {//loop to find best mix minchrom and studgood and deltaE patch
+        Glib::ustring profuse;
+        profuse = "JDCmax";
 
-    const int bfwitc = bfw;
-    const int bfhitc = bfh;
+        int limx = 0.05f;
+        int limy = 0.04f;
 
-    typedef struct WbGreen {
-        double green;
-        float snedecor;//1. actually but put in case of confiance interval
-    } WbGreen;
-    //green (tint) values between 0.4 to 4.0
-    constexpr WbGreen gree[134] = {//symmetric coefficient between 0.717 and 1.40
-        {0.400, 1.f},
-        {0.420, 1.f},
-        {0.440, 1.f},
-        {0.460, 1.f},
-        {0.480, 1.f},
-        {0.500, 1.f},
-        {0.520, 1.f},
-        {0.540, 1.f},
-        {0.550, 1.f},
-        {0.560, 1.f},
-        {0.570, 1.f},
-        {0.580, 1.f},
-        {0.590, 1.f},
-        {0.600, 1.f},
-        {0.610, 1.f},
-        {0.620, 1.f},//extended range
-        {0.630, 1.f},
-        {0.640, 1.f},
-        {0.650, 1.f},
-        {0.660, 1.f},
-        {0.670, 1.f},
-        {0.680, 1.f},
-        {0.690, 1.f},
-        {0.700, 1.f},
-        {0.714, 1.f},//usual 2 range
-        {0.727, 1.f},
-        {0.741, 1.f},
-        {0.755, 1.f},
-        {0.769, 1.f},
-        {0.784, 1.f},
-        {0.800, 1.f},
-        {0.806, 1.f},
-        {0.813, 1.f},
-        {0.820, 1.f},//usual range
-        {0.826, 1.f},
-        {0.833, 1.f},
-        {0.840, 1.f},
-        {0.847, 1.f},
-        {0.855, 1.f},
-        {0.862, 1.f},
-        {0.870, 1.f},
-        {0.877, 1.f},
-        {0.885, 1.f},
-        {0.893, 1.f},
-        {0.901, 1.f},
-        {0.909, 1.f},
-        {0.917, 1.f},
-        {0.926, 1.f},
-        {0.935, 1.f},
-        {0.943, 1.f},
-        {0.952, 1.f},
-        {0.962, 1.f},
-        {0.971, 1.f},
-        {0.980, 1.f},
-        {0.990, 1.f},
-        {1.000, 1.f},//55 reference
-        {1.010, 1.f},
-        {1.020, 1.f},
-        {1.030, 1.f},
-        {1.040, 1.f},
-        {1.050, 1.f},
-        {1.060, 1.f},
-        {1.070, 1.f},
-        {1.080, 1.f},
-        {1.090, 1.f},
-        {1.100, 1.f},
-        {1.110, 1.f},
-        {1.120, 1.f},
-        {1.130, 1.f},
-        {1.140, 1.f},
-        {1.150, 1.f},
-        {1.160, 1.f},
-        {1.170, 1.f},
-        {1.180, 1.f},
-        {1.190, 1.f},
-        {1.200, 1.f},
-        {1.210, 1.f},
-        {1.220, 1.f},
-        {1.230, 1.f},
-        {1.240, 1.f},
-        {1.250, 1.f},// usual range
-        {1.275, 1.f},
-        {1.300, 1.f},
-        {1.325, 1.f},
-        {1.350, 1.f},
-        {1.375, 1.f},
-        {1.400, 1.f},//usual 2 range
-        {1.425, 1.f},
-        {1.450, 1.f},
-        {1.475, 1.f},
-        {1.500, 1.f},
-        {1.525, 1.f},
-        {1.550, 1.f},
-        {1.575, 1.f},//extended range
-        {1.600, 1.f},
-        {1.633, 1.f},
-        {1.666, 1.f},
-        {1.700, 1.f},
-        {1.733, 1.f},
-        {1.766, 1.f},
-        {1.800, 1.f},
-        {1.833, 1.f},
-        {1.866, 1.f},
-        {1.900, 1.f},
-        {1.933, 1.f},
-        {1.966, 1.f},
-        {2.000, 1.f},
-        {2.033, 1.f},
-        {2.066, 1.f},
-        {2.100, 1.f},
-        {2.133, 1.f},
-        {2.166, 1.f},
-        {2.200, 1.f},
-        {2.250, 1.f},
-        {2.300, 1.f},
-        {2.350, 1.f},
-        {2.400, 1.f},
-        {2.450, 1.f},
-        {2.500, 1.f},
-        {2.550, 1.f},
-        {2.600, 1.f},
-        {2.650, 1.f},
-        {2.700, 1.f},
-        {2.750, 1.f},
-        {2.800, 1.f},
-        {2.850, 1.f},
-        {2.900, 1.f},
-        {2.950, 1.f},
-        {3.000, 1.f},
-        {3.200, 1.f},
-        {3.400, 1.f},
-        {3.600, 1.f},
-        {3.800, 1.f},
-        {4.000, 1.f}
-    };
-    const int N_g = sizeof(gree) / sizeof(gree[0]);   //number of green
-
-    typedef struct RangeGreen {
-        int begin;
-        int end;
-    } RangeGreen;
-
-    constexpr RangeGreen Rangestandard = {33, 80};//usual green range
-    constexpr RangeGreen Rangestandard2 = {24, 86};//usual 2 green range
-    constexpr RangeGreen Rangeextended = {15, 93};
-    const RangeGreen Rangemax = {0, N_g};
-
-    RangeGreen Rangegreenused;
-
-    if (wbpar.itcwb_rgreen == 0) {
-        Rangegreenused = Rangestandard;
-    } else if (wbpar.itcwb_rgreen == 1) {
-        Rangegreenused = Rangestandard2;
-    } else if (wbpar.itcwb_rgreen == 2) {
-        Rangegreenused = Rangeextended;
-    } else {
-        Rangegreenused = Rangemax;
-    }
-    if(wbpar.itcwb_sampling == true) {
-        Rangegreenused = Rangestandard2;
-    }
-    typedef struct WbTxyz {
-        double Tem;
-        double XX;
-        double ZZ;
-    } WbTxyz;
-    //we can change step to increase precision if need  - also in Colortemp.cc with same changes
-    //I don't know how to pass this structure to Colortemp !
-    // X and Z values calculate for each temp between 2000K to  12000K, so no result after 12000K !
-    //of course we can change the step between each temp if need
-    constexpr WbTxyz Txyz[118] = {//temperature Xwb Zwb 118 values  x wb and y wb are calculated after,  Xwb and Ywb calculated with a spreadsheet
-        {2001., 1.273842, 0.145295},
-        {2101., 1.244008, 0.167533},
-        {2201., 1.217338, 0.190697},
-        {2301., 1.193444, 0.214632},
-        {2401., 1.171996, 0.239195},
-        {2501., 1.152883, 0.264539},
-        {2605., 1.134667, 0.290722},
-        {2655., 1.126659, 0.303556},
-        {2705., 1.119049, 0.316446},
-        {2755., 1.111814, 0.329381},
-        {2803., 1.105381, 0.342193},
-        {2856., 1.098258, 0.355599},
-        {2910., 1.091550, 0.369645},
-        {2960., 1.085649, 0.382655},
-        {3003., 1.080982, 0.394258},
-        {3050., 1.075727, 0.406057},
-        {3103., 1.070277, 0.419815},
-        {3153., 1.065384, 0.432769},
-        {3203., 1.060906, 0.446161},
-        {3250., 1.056535, 0.457806},
-        {3303., 1.052034, 0.471422},
-        {3353., 1.047990, 0.484218},
-        {3400., 1.044547, 0.496719},
-        {3450., 1.040667, 0.508891},
-        {3500., 1.037145, 0.521523},
-        {3550., 1.033783, 0.534090},
-        {3600., 1.030574, 0.546590},
-        {3650., 1.027510, 0.559020},
-        {3699., 1.024834, 0.571722},
-        {3801., 1.019072, 0.596102},
-        {3851., 1.016527, 0.608221},
-        {3902., 1.014244, 0.621136},
-        {3952., 1.011729, 0.632447},
-        {4002., 0.996153, 0.609518},
-        {4052., 0.993720, 0.620805},
-        {4102., 0.993908, 0.631520},
-        {4152., 0.989179, 0.643262},
-        {4202., 0.989283, 0.653999},
-        {4252., 0.985039, 0.665536},
-        {4302., 0.985067, 0.676288},
-        {4352., 0.981271, 0.687599},
-        {4402., 0.981228, 0.698349},
-        {4452., 0.977843, 0.709425},
-        {4502., 0.977736, 0.720159},
-        {4552., 0.974728, 0.730993},
-        {4602., 0.974562, 0.741698},
-        {4652., 0.971899, 0.752284},
-        {4702., 0.971681, 0.762949},
-        {4752., 0.969335, 0.773285},
-        {4802., 0.969069, 0.783899},
-        {4827., 0.967570, 0.788836},
-        {4852., 0.967011, 0.793982},
-        {4877., 0.966465, 0.799108},
-        {4902., 0.965933, 0.804214},
-        {4927., 0.965414, 0.809229},
-        {4952., 0.964908, 0.814366},
-        {4977., 0.964415, 0.819412},
-        {5002., 0.963934, 0.824438},//57 reference
-        {5027., 0.963465, 0.829444},
-        {5052., 0.963008, 0.834429},
-        {5077., 0.962563, 0.839395},
-        {5102., 0.962129, 0.844339},
-        {5127., 0.961706, 0.849263},
-        {5152., 0.961294, 0.854166},
-        {5177., 0.960893, 0.859049},
-        {5202., 0.960501, 0.863911},
-        {5252., 0.959749, 0.873572},
-        {5302., 0.959313, 0.883815},
-        {5352., 0.958361, 0.892644},
-        {5402., 0.957903, 0.902793},
-        {5452., 0.957116, 0.911379},
-        {5502., 0.956639, 0.921431},
-        {5552., 0.956002, 0.929779},
-        {5602., 0.955509, 0.939728},
-        {5652., 0.955008, 0.947842},
-        {5702., 0.954502, 0.957685},
-        {5752., 0.954124, 0.965569},
-        {5802., 0.953608, 0.975303},
-        {5852., 0.953342, 0.982963},
-        {5902., 0.952818, 0.992584},
-        {5952., 0.952652, 1.000025},
-        {6002., 0.952122, 1.009532},
-        {6052., 0.952047, 1.016759},
-        {6102., 0.951514, 1.026149},
-        {6152., 0.951520, 1.033168},
-        {6202., 0.950985, 1.042439},
-        {6252., 0.951064, 1.049256},
-        {6302., 0.950530, 1.058406},
-        {6352., 0.950674, 1.065027},
-        {6402., 0.950143, 1.074055},
-        {6452., 0.950345, 1.080484},
-        {6502., 0.950201, 1.088097},
-        {6552., 0.950070, 1.095633},
-        {6602., 0.949952, 1.103094},
-        {6652., 0.949846, 1.110479},
-        {6702., 0.949752, 1.119138},
-        {6752., 0.949668, 1.125027},
-        {6802., 0.949596, 1.132190},
-        {6902., 0.949033, 1.147691},
-        {7002., 0.949402, 1.160129},
-        {7152., 0.949348, 1.180429},
-        {7301., 0.948896, 1.201432},
-        {7451., 0.949434, 1.219076},
-        {7601., 0.949099, 1.239061},
-        {7751., 0.949729, 1.255559},
-        {7901., 0.949498, 1.274460},
-        {8151., 0.950361, 1.300912},
-        {8301., 0.950253, 1.318464},
-        {8451., 0.950966, 1.332651},
-        {8601., 0.950941, 1.349261},
-        {8801., 0.951772, 1.367421},
-        {9001., 0.951969, 1.387639},
-        {9201., 0.952784, 1.404422},
-        {9401., 0.953081, 1.423213},
-        {9901., 0.954537, 1.464134},
-        {10501., 0.956321, 1.508623},
-        {11001., 0.957747, 1.541281},
-        {12001., 0.960440, 1.601019}
-    };
-    const int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
-    constexpr int Nc = 201 + 1;//201 number of reference spectral colors, I think it is enough to retrieve good values
-    array2D<float> Tx(N_t, Nc);
-    array2D<float> Ty(N_t, Nc);
-    array2D<float> Tz(N_t, Nc);
-    array2D<float> Ta(N_t, Nc);
-    array2D<float> Tb(N_t, Nc);
-    array2D<float> TL(N_t, Nc);
-    double TX[Nc];
-    double TY[Nc];
-    double TZ[Nc];
-    std::vector<bool> good_spectral(Nc, false);
-
-    float rmm[N_t];
-    float gmm[N_t];
-    float bmm[N_t];
-
-    int siza = 237; //192 untill 01/2023 size of histogram
-    if(wbpar.itcwb_sampling == true) {
-        siza = 192;//old sampling 5.9 and before...
-    }
-    // tempref and greenref are camera wb values.
-    // I used them by default to select good spectral values !! but they are changed after
-    tempref = rtengine::min(tempref, 12000.0);
-
-    int repref = 0;
-
-    for (int tt = 0; tt < N_t; tt++) {
-        if (Txyz[tt].Tem > tempref) {
-            repref = tt;//show the select temp
-            break;
-        }
-    }
-
-    //calculate R G B multiplier in function illuminant and temperature
-    const bool isMono = (ri->getSensorType() == ST_FUJI_XTRANS && raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO))
-                        || (ri->getSensorType() == ST_BAYER && raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO));
-    for (int tt = 0; tt < N_t; ++tt) {
-        double r, g, b;
-        float rm, gm, bm;
-        ColorTemp WBiter = ColorTemp(Txyz[tt].Tem, greenitc, 1.f, "Custom", wbpar.observer);
-        WBiter.getMultipliers(r, g, b);
-        
-        rm = imatrices.cam_rgb[0][0] * r + imatrices.cam_rgb[0][1] * g + imatrices.cam_rgb[0][2] * b;
-        gm = imatrices.cam_rgb[1][0] * r + imatrices.cam_rgb[1][1] * g + imatrices.cam_rgb[1][2] * b;
-        bm = imatrices.cam_rgb[2][0] * r + imatrices.cam_rgb[2][1] * g + imatrices.cam_rgb[2][2] * b;
-
-        const float new_pre_mul[4] = { ri->get_pre_mul(0) / rm, ri->get_pre_mul(1) / gm, ri->get_pre_mul(2) / bm, ri->get_pre_mul(3) / gm };
-        float new_scale_mul[4];
-        const float gain = calculate_scale_mul(new_scale_mul, new_pre_mul, c_white, cblacksom, isMono, ri->get_colors());
-
-        rm = new_scale_mul[0] / scale_mul[0] * gain;
-        gm = new_scale_mul[1] / scale_mul[1] * gain;
-        bm = new_scale_mul[2] / scale_mul[2] * gain;
-        rmm[tt] = rm / gm;
-        gmm[tt] = 1.f;
-        bmm[tt] = bm / gm;
-        //return rmm, gmm, bmm in function of temp
-    }
-
-    struct hiss {
-        int histnum;
-        int index;
-        bool operator()(const hiss& lhis, const hiss& rhis)
-        {
-            return lhis.histnum < rhis.histnum;
+        if (wbpar.itcwb_prim == "srgb") {
+            profuse = "sRGB";
+            limx = 0.12f;
+            limy = 0.06f;
+        } else if (wbpar.itcwb_prim == "beta") {
+            profuse = "Beta RGB";
+            limx = 0.1f;
+            limy = 0.05f;
+        } else if (wbpar.itcwb_prim == "XYZcam") {
+            profuse = "XYZcam";
+            limx = 0.05f;
+            limy = 0.04f;
+        } else if (wbpar.itcwb_prim == "jdcmax") {
+            profuse = "JDCmax";
+            limx = 0.05f;
+            limy = 0.04f;
         }
 
-    } ;
 
-    //intermediate structure
-    struct chrom {
-        float chroxy_number;
-        float chroxy;
-        float chrox;
-        float chroy;
-        float Y;
-        int index;
-        int interest;
-        bool operator()(const chrom& lchro, const chrom& rchro)
-        {
-            return lchro.chroxy_number < rchro.chroxy_number;
+        if (oldsampling) {
+            profuse = "sRGB";
         }
 
-    } ;
+        float wb[3][3], iwb[3][3];
+        double wb2[3][3];
 
-    LUTu histxy(siza); //number of values for each pair xy
+        if (profuse == "XYZcam") {//thanks to Reffort
 
-    histxy.clear();
+            // get a copy of the camera matrices
+            for (int r = 0; r < 3; ++r) {
+                for (int c = 0; c < 3; ++c) {
+                    wb[r][c] = imatrices.xyz_cam[r][c];
+                    wb2[r][c] = imatrices.xyz_cam[r][c];
+                    iwb[r][c] = imatrices.cam_xyz[r][c];
+                }
+            }
+        } else if ((cmp.inputProfile == "(camera)")) {//when no input profile found or if user select Camera standard
+            if (settings->verbose) {
+                printf("Use Camera Dcraw-Matrix and modify rgbloc\n");
+            }
 
-    LUTf xxx(siza);//for color references calculated ==> max in images "like histogram"
+            //improvment with new values for redloc, greenloc, blueloc when Camera Dcraw is used
+            TMatrix iwork = ICCStore::getInstance()->workingSpaceInverseMatrix(profuse);
+            TMatrix workn = ICCStore::getInstance()->workingSpaceMatrix(profuse);
+            double mat[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
 
-    xxx.clear();
+            for (int i = 0; i < 3; i++)
+                for (int j = 0; j < 3; j++)
+                    for (int k = 0; k < 3; k++) {
+                        mat[i][j] += iwork[i][k] * imatrices.xyz_cam[k][j];    // rgb_xyz * imatrices.xyz_cam
+                    }
 
-    LUTf yyy(siza);
-
-    yyy.clear();
-
-    LUTf YYY(siza);//not used directly, but necessary to keep good range
-
-    YYY.clear();
-
-    bool separated = true;
-
-    int w = -1;
-
-    array2D<float> reff_spect_yy_camera(N_t, 2 * Nc + 2);
-
-    array2D<float> reff_spect_xx_camera(N_t, 2 * Nc + 2);
-
-    //here we select the good spectral color inside the 113 values
-    //call tempxy to calculate for 201 color references Temp and XYZ with cat02
-
-    ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar); //calculate chroma xy (xyY) for Z known colors on under 200 illuminants
-
-    //find the good spectral values
-    //calculate xy reference spectral for tempref
-    for (int j = 0; j < Nc ; j++) {
-        reff_spect_xx_camera[j][repref] = TX[j] / (TX[j] + TY[j] +  TZ[j]); // x from xyY
-        reff_spect_yy_camera[j][repref] = TY[j] / (TX[j] + TY[j] +  TZ[j]); // y from xyY
-    }
-
-    array2D<float> xc(bfwitc, bfhitc);
-    array2D<float> yc(bfwitc, bfhitc);
-    array2D<float> Yc(bfwitc, bfhitc);
-
-    const int deltarepref = 1; //settings->itcwb_delta;
-
-    for (int nn = 0, drep = -deltarepref; nn <= 2; ++nn, drep += deltarepref) {
-        //three loop to refine color if temp camera is probably not very good
-        const int rep = rtengine::LIM(repref + drep, 0, N_t);
-
-        //initialize calculation of xy current for tempref
 #ifdef _OPENMP
-        #pragma omp parallel for
+            #pragma omp parallel for
 #endif
 
-        for (int y = 0; y < bfh ; ++y) {
-            for (int x = 0; x < bfw ; ++x) {
-                const float RR = rmm[rep] * redloc[y][x];
-                const float GG = gmm[rep] * greenloc[y][x];
-                const float BB = bmm[rep] * blueloc[y][x];
-                Color::rgbxyY(RR, GG, BB, xc[y][x], yc[y][x], Yc[y][x], wp);//use sRGB or ACESp0
+            for (int y = 0; y < bfh; y++)
+                for (int x = 0; x < bfw; x++) {
+
+                    float newred = mat[0][0] *  redloc[y][x] + mat[0][1] *  greenloc[y][x] + mat[0][2] * blueloc[y][x];
+                    float newgreen = mat[1][0] *  redloc[y][x] + mat[1][1] *  greenloc[y][x] + mat[1][2] * blueloc[y][x];
+                    float newblue = mat[2][0] *  redloc[y][x] + mat[2][1] *  greenloc[y][x] + mat[2][2] * blueloc[y][x];
+
+                    redloc[y][x] = newred;//new values for redloc
+                    greenloc[y][x] = newgreen;
+                    blueloc[y][x] = newblue;
+
+                }
+
+            for (int r = 0; r < 3; ++r) {
+                for (int c = 0; c < 3; ++c) {
+                    wb[r][c] = workn[r][c];
+                    wb2[r][c] = workn[r][c];
+                    iwb[r][c] = iwork[r][c];
+                }
             }
-        }
 
-        //histogram xy depend of temp...but in most cases D45 ..D65..
-        //calculate for this image the mean values for each family of color, near histogram x y (number)
-        //xy vary from x 0..0.77  y 0..0.82
-        //neutral values are near x=0.34 0.33 0.315 0.37 y =0.35 0.36 0.34
-        //skin are about x 0.45  0.49 y 0.4 0.47
-        //blue sky x=0.25 y=0.28  and x=0.29 y=0.32
-        // step about 0.02   x 0.32 0.34  y= 0.34 0.36 skin    --  sky x 0.24 0.30 y 0.28 0.32
-        //big step about 0.2
-
-        bool purp = true;//if inpaint-opposed or something else enable purp
-
- //       if (hrp.hrenabled && hrp.method == "Coloropp" && settings->itcwb_nopurple == true) {//we disabled (user) with settings if image are naturally with purple (flowers...)
-        if (hrp.hrenabled && hrp.method == "Coloropp" && wbpar.itcwb_nopurple == true) {//we disabled (user) with settings if image are naturally with purple (flowers...)
-            purp = false;
-        }
-        if(wbpar.itcwb_sampling == false) {
-            //printf("Use high smapling\n");
-            histoxyY(bfhitc, bfwitc, xc, yc, Yc, xxx,  yyy, YYY, histxy, purp);//purp enable,  enable purple color in WB
-            //return histogram x and y for each temp and in a range of 235 colors (siza)
         } else {
-            //printf("Use low smapling - 5.9\n");
-            histoxyY_low(bfhitc, bfwitc, xc, yc, Yc, xxx,  yyy, YYY, histxy);//low scaling 
-        }
-    }
 
-    // free some memory
-    xc.free();
-    yc.free();
-    Yc.free();
-    //calculate x y Y
-    const int sizcurrref = siza;//choice of number of correlate colors in image
-    array2D<float> histcurrref(N_t, sizcurrref);
-    array2D<float> xx_curref(N_t, sizcurrref);
-    array2D<float> yy_curref(N_t, sizcurrref);
-    array2D<float> YY_curref(N_t, sizcurrref);
-    array2D<float> xx_curref_reduc(N_t, sizcurrref);
-    array2D<float> yy_curref_reduc(N_t, sizcurrref);
-    array2D<float> YY_curref_reduc(N_t, sizcurrref);
+            TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(profuse);
+            TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(profuse);
 
-    hiss Wbhis[siza];
-
-    for (int nh = 0; nh < siza; nh++) {
-        Wbhis[nh].histnum = histxy[nh];
-        Wbhis[nh].index = nh;
-    }
-
-    //sort in ascending order
-    std::sort(Wbhis, Wbhis + siza, Wbhis[0]);
-
-    int n1 = 0;
-    int n4 = 0;
-    int n15 = 0;
-    int n30 = 0;
-
-    //part to improve
-    //determined the number of colors who be used after
-    for (int nh = 0; nh < siza; nh++) {
-        if (Wbhis[nh].histnum < 30) {
-            n30++;    //keep only existing color but avoid to small
-
-            if (Wbhis[nh].histnum < 15) {
-                n15++;    //keep only existing color but avoid to small
-
-                if (Wbhis[nh].histnum < 4) {
-                    n4++;    //keep only existing color but avoid to small
-
-                    if (Wbhis[nh].histnum < 1) {
-                        n1++;    //keep only existing color but avoid to small
-                    }
+            for (int r = 0; r < 3; ++r) {
+                for (int c = 0; c < 3; ++c) {
+                    wb[r][c] = wprof[r][c];
+                    wb2[r][c] = wprof[r][c];
+                    iwb[r][c] = wiprof[r][c];
                 }
-            }
-        }
-    }
-
-    int ntr = n30;
-
-    if (ntr > (siza - 25)) {
-        ntr = n15;    //if to less elements 25 elements mini
-    }
-
-    if (ntr > (siza - 23)) {
-        ntr = n4;    //if to less elements 25 elements mini
-    }
-
-    if (ntr > (siza - 20)) {
-        ntr = n1;    //if to less elements 20 elements mini - normally never be used !
-    }
-
-    int sizcurr2ref = sizcurrref - ntr;
-    const int sizcu30 = sizcurrref - n30;
-    int nbm = 77;//number max of color used = 1.4 * 55 in case all CIExy diagram
-    if(profuse == "sRGB" || wbpar.itcwb_sampling == true) {
-        nbm = 55;
-    }
-    const int sizcu4 = rtengine::min(sizcu30, nbm);//size of chroma values
-
-    if (settings->verbose) {
-        printf("ntr=%i sizcurr2ref=%i sizcu30=%i sizcu4=%i\n", ntr, sizcurr2ref, sizcu30, sizcu4);
-    }
-
-    chrom wbchro[sizcu4];
-    const float swpr = Txyz[repref].XX + Txyz[repref].ZZ + 1.f;
-    const float xwpr = Txyz[repref].XX / swpr;//white point for tt in xy coordinates
-    const float ywpr = 1.f / swpr;
-
-    for (int i = 0; i < sizcu4; ++i) { //take the max values
-        histcurrref[i][repref] = Wbhis[siza - (i + 1)].histnum;
-        xx_curref[i][repref] = xxx[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
-        yy_curref[i][repref] = yyy[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
-        YY_curref[i][repref] = YYY[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
-    }
-
-    float estimchrom = 0.f;
-
-    //estimate chromaticity for references
-    for (int nh = 0; nh < sizcu4; ++nh) {
-        const float chxy = std::sqrt(SQR(xx_curref[nh][repref] - xwpr) + SQR(yy_curref[nh][repref] - ywpr));
-        wbchro[nh].chroxy_number = chxy * std::sqrt(histcurrref[nh][repref]);
-        wbchro[nh].chroxy = std::sqrt(chxy);
-        wbchro[nh].chrox = xx_curref[nh][repref];
-        wbchro[nh].chroy = yy_curref[nh][repref];
-        wbchro[nh].Y = YY_curref[nh][repref];
-        wbchro[nh].index = nh;
-        estimchrom += chxy;
-    }
-
-    estimchrom /= sizcu4;
-
-    if (settings->verbose) {
-        printf("estimchrom=%f\n", estimchrom);
-    }
-    bool issorted = wbpar.itcwb_sorted;
-
-    if(wbpar.itcwb_sampling == true) {
-        issorted = false;
-    }
-
-
-    if (issorted) { //sort in ascending with chroma values
-        std::sort(wbchro, wbchro + sizcu4, wbchro[0]);
-    }
-
-    int maxval = rtengine::LIM(wbpar.itcwb_thres, 10, 55);//max values of color to find correlation
-    if(wbpar.itcwb_sampling == true) {
-        maxval = 34;
-    }
-
-    sizcurr2ref = rtengine::min(sizcurr2ref, maxval);    //keep about the biggest values,
-
-    for (int i = 0; i < sizcurr2ref; ++i) {
-        //is condition chroxy necessary ?
-        if (wbchro[sizcu4 - (i + 1)].chrox > 0.1f && wbchro[sizcu4 - (i + 1)].chroy > 0.1f && wbchro[sizcu4 - (i + 1)].chroxy > 0.0f) { //suppress value too far from reference spectral
-            w++;
-            xx_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chrox;
-            yy_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chroy;
-            YY_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].Y;
-        }
-    }
-
-    //calculate deltaE xx to find best values of spectrals data - limited to chroma values
-   // int maxnb = rtengine::LIM(settings->itcwb_sizereference, 1, 5);
-   // int maxnb = rtengine::LIM(wbpar.itcwb_size, 1, 5);
-    int maxnb = 3;
-    //wbpar.itcwb_size to verify if this setting is usefull...diificulties with High gamut and limited patch spectral colors.
-
-    if (wbpar.itcwb_thres > 55) {//normally never used
-        maxnb = 201 / wbpar.itcwb_thres;
-    }
-
-    for (int nb = 1; nb <= maxnb; ++nb) { //max 5 iterations for Itcwb_thres=33, after trial 3 is good in most cases but in some cases 5
-        for (int i = 0; i < w; ++i) {
-            float mindeltaE = 100000.f;//we can change this value...
-            int kN = 0;
-
-            for (int j = 0; j < Nc ; j++) {
-                if (!good_spectral[j]) {
-                    const float deltaE = SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[j][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[j][repref]);
-
-                    if (deltaE < mindeltaE) {
-                        mindeltaE = deltaE;
-                        kN = j;
-                    }
-                }
-            }
-
-            good_spectral[kN] = true;//good spectral are spectral color that match color histogram xy
-        }
-    }
-
-    // reuse some buffers
-    array2D<float>& R_curref_reduc = xx_curref_reduc;
-    array2D<float>& G_curref_reduc = yy_curref_reduc;
-    array2D<float>& B_curref_reduc = YY_curref_reduc;
-
-    //reconvert to RGB for "reduction"
-    for (int i = 0; i < w; i++) {
-        const float X = 65535.f * xx_curref_reduc[i][repref] * YY_curref_reduc[i][repref] / yy_curref_reduc[i][repref];
-        const float Y = 65535.f * YY_curref_reduc[i][repref];
-        const float Z = 65535.f * (1.f - xx_curref_reduc[i][repref] - yy_curref_reduc[i][repref]) * YY_curref_reduc[i][repref] / yy_curref_reduc[i][repref];
-        float r, g, b;
-        Color::xyz2rgb(X, Y, Z, r, g, b, wip);
-        R_curref_reduc[i][repref] = r / rmm[repref];
-        G_curref_reduc[i][repref] = g / gmm[repref];
-        B_curref_reduc[i][repref] = b / bmm[repref];
-
-    }
-
-//end first part
-
-    //Now begin real calculations
-    separated = false;
-    //recalculate histogram with good values and not estimated
-    ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar); //calculate chroma xy (xyY) for Z known colors on under 90 illuminants
-    //calculate x y Y
-    int sizcurr = siza;//choice of number of correlate colors in image
-    array2D<float> xxyycurr_reduc(N_t, 2 * sizcurr);
-    array2D<float> reff_spect_xxyy(N_t, 2 * Nc + 2);
-    array2D<float> reff_spect_xxyy_prov(N_t, 2 * Nc + 2);
-
-    float minstud = 100000.f;
-    int goodref = 1;
-
-//calculate  x y z for each pixel with multiplier rmm gmm bmm
-
-    for (int tt = 0; tt < N_t; ++tt) {//N_t
-        for (int i = 0; i < w; ++i) {
-            float unused;
-
-            const float RR = rmm[tt] * R_curref_reduc[i][repref];
-            const float GG = gmm[tt] * G_curref_reduc[i][repref];
-            const float BB = bmm[tt] * B_curref_reduc[i][repref];
-            Color::rgbxyY(RR, GG, BB, xxyycurr_reduc[2 * i][tt], xxyycurr_reduc[2 * i + 1][tt], unused, wp);
-        }
-
-        for (int j = 0; j < Nc ; ++j) {
-            reff_spect_xxyy_prov[2 * j][tt] = Tx[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]); // x from xyY
-            reff_spect_xxyy_prov[2 * j + 1][tt] = Ty[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]); // y from xyY
-        }
-
-        int kk = -1;
-
-        for (int i = 0; i < Nc ; ++i) {
-            if (good_spectral[i]) {
-                kk++;
-                //we calculate now absolute chroma for each spectral color
-                reff_spect_xxyy[2 * kk][tt] = reff_spect_xxyy_prov[2 * i][tt];
-                reff_spect_xxyy[2 * kk + 1][tt] = reff_spect_xxyy_prov[2 * i + 1][tt];
-            }
-        }
-
-        const float abstud = std::fabs(studentXY(xxyycurr_reduc, reff_spect_xxyy, 2 * w, 2 * kk, tt));
-
-        if (abstud < minstud) {  // find the minimum Student
-            minstud = abstud;
-            goodref = tt;
-        }
-    }
-
-    if (extra) {//always used if extra = true because I made this choice, brings better results
-        struct Tempgreen {
-            float student;
-            int tempref;
-            int greenref;
-            bool operator()(const Tempgreen& ltg, const Tempgreen& rtg)
-            {
-                return ltg.student < rtg.student;
-            }
-        };
-        Tempgreen  Tgstud[N_g];
-
-        for (int i = 0; i < N_g; ++i) {//init variables with
-            Tgstud[i].student = 1000.f;//max value to initialize
-            Tgstud[i].tempref = 57;//5002K position in the list
-            Tgstud[i].greenref = 55;// 1.f position in the list
-        }
-
-        int dgoodref = rtengine::LIM(wbpar.itcwb_delta,1, 4);
-        if(wbpar.itcwb_sampling == true) {
-            dgoodref = 2;
-        }
-        const int scantempbeg = rtengine::max(goodref - (dgoodref + 1), 1);
-        const int scantempend = rtengine::min(goodref + dgoodref, N_t - 1);
-
-        for (int gr = Rangegreenused.begin; gr < Rangegreenused.end; ++gr) {
-            float minstudgr = 100000.f;
-            int goodrefgr = 1;
-
-            for (int tt = scantempbeg; tt < scantempend; ++tt) {
-                double r, g, b;
-                ColorTemp WBiter(Txyz[tt].Tem, gree[gr].green, 1.f, "Custom", wbpar.observer);
-                WBiter.getMultipliers(r, g, b);
-                float rm = imatrices.cam_rgb[0][0] * r + imatrices.cam_rgb[0][1] * g + imatrices.cam_rgb[0][2] * b;
-                float gm = imatrices.cam_rgb[1][0] * r + imatrices.cam_rgb[1][1] * g + imatrices.cam_rgb[1][2] * b;
-                float bm = imatrices.cam_rgb[2][0] * r + imatrices.cam_rgb[2][1] * g + imatrices.cam_rgb[2][2] * b;
-                //recalculate Multipliers now with good range of temp and green
-
-                const float new_pre_mul[4] = { ri->get_pre_mul(0) / rm, ri->get_pre_mul(1) / gm, ri->get_pre_mul(2) / bm, ri->get_pre_mul(3) / gm };
-                float new_scale_mul[4];
-                const float gain = calculate_scale_mul(new_scale_mul, new_pre_mul, c_white, cblacksom, isMono, ri->get_colors());
-
-                rm = new_scale_mul[0] / scale_mul[0] * gain;
-                gm = new_scale_mul[1] / scale_mul[1] * gain;
-                bm = new_scale_mul[2] / scale_mul[2] * gain;
-                rmm[tt] = rm / gm;
-                gmm[tt] = 1.f;
-                bmm[tt] = bm / gm;
-            }
-
-
-            for (int tt = scantempbeg; tt < scantempend; ++tt) {//N_t
-                for (int i = 0; i < w; ++i) {
-                    float unused;
-
-                    const float RR = rmm[tt] * R_curref_reduc[i][repref];
-                    const float GG = gmm[tt] * G_curref_reduc[i][repref];
-                    const float BB = bmm[tt] * B_curref_reduc[i][repref];
-                    Color::rgbxyY(RR, GG, BB, xxyycurr_reduc[2 * i][tt], xxyycurr_reduc[2 * i + 1][tt], unused, wp);
-                }
-
-                //recalculate xy spectral now with good range of temp and green
-
-                for (int j = 0; j < Nc ; ++j) {
-                    reff_spect_xxyy_prov[2 * j][tt] = Tx[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]); // x from xyY
-                    reff_spect_xxyy_prov[2 * j + 1][tt] = Ty[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]); // y from xyY
-                }
-
-                int kkg = -1;
-
-                for (int i = 0; i < Nc ; ++i) {
-                    if (good_spectral[i]) {
-                        kkg++;
-                        reff_spect_xxyy[2 * kkg][tt] = reff_spect_xxyy_prov[2 * i][tt];
-                        reff_spect_xxyy[2 * kkg + 1][tt] = reff_spect_xxyy_prov[2 * i + 1][tt];
-                    }
-                }
-
-                //now we have good spectral data
-                //calculate student correlation
-                const float abstudgr = std::fabs(studentXY(xxyycurr_reduc, reff_spect_xxyy, 2 * w, 2 * kkg, tt));
-
-                if (abstudgr < minstudgr) {  // find the minimum Student
-                    minstudgr = abstudgr;
-                    goodrefgr = tt;
-                }
-
-                //found the values
-                Tgstud[gr].tempref = goodrefgr;
-                Tgstud[gr].greenref = gr;
-                Tgstud[gr].student = minstudgr;
-
-            }
-        }
-
-        std::sort(Tgstud, Tgstud + N_g, Tgstud[0]);
-
-        // now search the value of green the nearest of 1 with a good student value, I think it is a good choice, perhaps no...
-        // I take the 5 first values
-        // I admit a symetrie in green coefiicient for rgb multiplier...probably not exactly true
-        // perhaps we can used a Snedecor test ? but why...at least we have confidence interval > 90%
-        int greengood = 55;
-
-        int maxkgood = wbpar.itcwb_fgreen;//we can change ...to test 3, 4, 5. High values perhaps less good student, but it is a compromise...
-        maxkgood = rtengine::LIM(maxkgood, 3, 6);
-        if(wbpar.itcwb_sampling == true) {
-            maxkgood = 3; // force to 3 with old low sampling
-        }
-
-        int mingood = std::min(std::fabs(Tgstud[0].greenref - 55), std::fabs(Tgstud[1].greenref - 55));
-
-        for (int k = 2; k < maxkgood; ++k) {
-            mingood = std::min(std::fabs(mingood), std::fabs(Tgstud[k].greenref - 55));
-        }
-
-        for (int k = 0; k < maxkgood ; ++k) {
-            if (mingood == fabs(Tgstud[k].greenref - 55)) {
-                greengood = Tgstud[k].greenref ;
-                goodref = Tgstud[k].tempref;
-                studgood = Tgstud[k].student;;
             }
         }
 
         if (settings->verbose) {
-            printf("Student_0=%f Student_k= %f\n", Tgstud[0].student, Tgstud[maxkgood - 1].student);
-            printf("mingood=%i greeng=%i goodref=%i stud=%f\n", mingood, greengood, goodref, (double) studgood);
+            printf("Sampling=%s \n", profuse.c_str());
+            printf("wp = %f %f %f\n", wb[0][0], wb[0][1], wb[0][2]);
+            printf("     %f %f %f\n", wb[1][0], wb[1][1], wb[1][2]);
+            printf("     %f %f %f\n", wb[2][0], wb[2][1], wb[2][2]);
         }
 
-        tempitc = Txyz[goodref].Tem;
-        greenitc = gree[greengood].green;
+        const int bfwitc = bfw;
+        const int bfhitc = bfh;
 
-        if (estimchrom < 0.025f) {
-            float ac = -2.40f * estimchrom + 0.06f;//small empirical  correction, maximum 0.06 if chroma=0 for all image, currently for very low chroma +0.02
-            greenitc += ac;
+        typedef struct WbGreen {
+            double green;
+            float snedecor;//1. actually but put in case of confiance interval
+        } WbGreen;
+        //green (tint) values between 0.4 to 4.0
+        constexpr WbGreen gree[134] = {//symmetric coefficient between 0.717 and 1.40
+            {0.400, 1.f},
+            {0.420, 1.f},
+            {0.440, 1.f},
+            {0.460, 1.f},
+            {0.480, 1.f},
+            {0.500, 1.f},
+            {0.520, 1.f},
+            {0.540, 1.f},
+            {0.550, 1.f},
+            {0.560, 1.f},
+            {0.570, 1.f},
+            {0.580, 1.f},
+            {0.590, 1.f},
+            {0.600, 1.f},
+            {0.610, 1.f},
+            {0.620, 1.f},//extended range
+            {0.630, 1.f},
+            {0.640, 1.f},
+            {0.650, 1.f},
+            {0.660, 1.f},
+            {0.670, 1.f},
+            {0.680, 1.f},
+            {0.690, 1.f},
+            {0.700, 1.f},
+            {0.714, 1.f},//usual 2 range
+            {0.727, 1.f},
+            {0.741, 1.f},
+            {0.755, 1.f},
+            {0.769, 1.f},
+            {0.784, 1.f},
+            {0.800, 1.f},
+            {0.806, 1.f},
+            {0.813, 1.f},
+            {0.820, 1.f},//usual range
+            {0.826, 1.f},
+            {0.833, 1.f},
+            {0.840, 1.f},
+            {0.847, 1.f},
+            {0.855, 1.f},
+            {0.862, 1.f},
+            {0.870, 1.f},
+            {0.877, 1.f},
+            {0.885, 1.f},
+            {0.893, 1.f},
+            {0.901, 1.f},
+            {0.909, 1.f},
+            {0.917, 1.f},
+            {0.926, 1.f},
+            {0.935, 1.f},
+            {0.943, 1.f},//49 limit low normal
+            {0.952, 1.f},
+            {0.962, 1.f},
+            {0.971, 1.f},
+            {0.980, 1.f},
+            {0.990, 1.f},
+            {1.000, 1.f},//55 reference
+            {1.010, 1.f},
+            {1.020, 1.f},
+            {1.030, 1.f},
+            {1.040, 1.f},
+            {1.050, 1.f},
+            {1.060, 1.f},
+            {1.070, 1.f},
+            {1.080, 1.f},
+            {1.090, 1.f},
+            {1.100, 1.f},
+            {1.110, 1.f},
+            {1.120, 1.f},
+            {1.130, 1.f},
+            {1.140, 1.f},
+            {1.150, 1.f},
+            {1.160, 1.f},
+            {1.170, 1.f},
+            {1.180, 1.f},
+            {1.190, 1.f},
+            {1.200, 1.f},
+            {1.210, 1.f},
+            {1.220, 1.f},
+            {1.230, 1.f},
+            {1.240, 1.f},
+            {1.250, 1.f},// usual range
+            {1.275, 1.f},
+            {1.300, 1.f},
+            {1.325, 1.f},
+            {1.350, 1.f},
+            {1.375, 1.f},
+            {1.400, 1.f},//usual 2 range
+            {1.425, 1.f},
+            {1.450, 1.f},
+            {1.475, 1.f},
+            {1.500, 1.f},
+            {1.525, 1.f},
+            {1.550, 1.f},
+            {1.575, 1.f},//extended range
+            {1.600, 1.f},
+            {1.633, 1.f},
+            {1.666, 1.f},
+            {1.700, 1.f},
+            {1.733, 1.f},
+            {1.766, 1.f},
+            {1.800, 1.f},
+            {1.833, 1.f},
+            {1.866, 1.f},
+            {1.900, 1.f},
+            {1.933, 1.f},
+            {1.966, 1.f},
+            {2.000, 1.f},
+            {2.033, 1.f},
+            {2.066, 1.f},
+            {2.100, 1.f},
+            {2.133, 1.f},
+            {2.166, 1.f},
+            {2.200, 1.f},
+            {2.250, 1.f},
+            {2.300, 1.f},
+            {2.350, 1.f},
+            {2.400, 1.f},
+            {2.450, 1.f},
+            {2.500, 1.f},
+            {2.550, 1.f},
+            {2.600, 1.f},
+            {2.650, 1.f},
+            {2.700, 1.f},
+            {2.750, 1.f},
+            {2.800, 1.f},
+            {2.850, 1.f},
+            {2.900, 1.f},
+            {2.950, 1.f},
+            {3.000, 1.f},
+            {3.200, 1.f},
+            {3.400, 1.f},
+            {3.600, 1.f},
+            {3.800, 1.f},
+            {4.000, 1.f}
+        };
+        const int N_g = sizeof(gree) / sizeof(gree[0]);   //number of green
+
+        typedef struct RangeGreen {
+            int begin;
+            int end;
+        } RangeGreen;
+
+        int greenrefo = 55;
+        double origgreen = greenitc;
+
+        for (int gg = 0; gg < N_g; gg++) {
+            if (gree[gg].green > origgreen) {
+                greenrefo = gg;//show the green
+                break;
+            }
+        }
+
+        constexpr RangeGreen Rangestandard = {33, 80};//usual green range
+        constexpr RangeGreen Rangestandard2 = {24, 86};//usual 2 green range
+        constexpr RangeGreen Rangeextended = {15, 93};
+        const RangeGreen Rangemax = {0, N_g};
+
+        RangeGreen Rangegreenused;
+
+        if (wbpar.itcwb_rgreen == 0) {
+            Rangegreenused = Rangestandard;
+        } else if (wbpar.itcwb_rgreen == 1) {
+            Rangegreenused = Rangestandard2;
+        } else if (wbpar.itcwb_rgreen == 2) {
+            Rangegreenused = Rangeextended;
+        } else {
+            Rangegreenused = Rangemax;
+        }
+
+
+        if (wbpar.itcwb_rgreen == 0) {//new way to set green
+            Rangegreenused.begin = std::max(greenrefo - 13, 0);
+            Rangegreenused.end = std::min(greenrefo + 13, N_g);
+        }
+
+        if (wbpar.itcwb_rgreen == 1) {//new way to set green
+            Rangegreenused.begin = std::max(greenrefo - 17, 0);
+            Rangegreenused.end = std::min(greenrefo + 17, N_g);
+        }
+
+        if (oldsampling == true) {
+            Rangegreenused = Rangestandard2;
+        }
+
+        typedef struct WbTxyz {
+            double Tem;
+            double XX;
+            double ZZ;
+        } WbTxyz;
+        //we can change step to increase precision if need  - also in Colortemp.cc with same changes
+        //I don't know how to pass this structure to Colortemp !
+        // X and Z values calculate for each temp between 2000K to  15000K, so no result after 15000K !
+        //of course we can change the step between each temp if need
+
+        constexpr WbTxyz Txyz[191] = {//temperature Xwb Zwb 191 values  x wb and y wb are calculated after,  Xwb and Ywb calculated with a spreadsheet
+            {2001., 1.273842, 0.145295},
+            {2051., 1.258802, 0.156066},
+            {2101., 1.244008, 0.167533},
+            {2151., 1.230570, 0.178778},
+            {2201., 1.217338, 0.190697},
+            {2251., 1.205305, 0.202338},
+            {2301., 1.193444, 0.214632},
+            {2351., 1.182648, 0.226598},
+            {2401., 1.171996, 0.239195},
+            {2451., 1.162290, 0.251421},
+            {2501., 1.152883, 0.264539},
+            {2551., 1.143965, 0.276682},
+            {2605., 1.134667, 0.290722},
+            {2655., 1.126659, 0.303556},
+            {2705., 1.119049, 0.316446},
+            {2755., 1.111814, 0.329381},
+            {2790., 1.106961, 0.338455},
+            {2803., 1.105381, 0.342193},
+            {2825., 1.102275, 0.347542},
+            {2856., 1.098258, 0.355599},
+            {2880., 1.095233, 0.361840},
+            {2910., 1.091550, 0.369645},
+            {2930., 1.089155, 0.374849},
+            {2960., 1.085649, 0.382655},
+            {2980., 1.083369, 0.387858},
+            {3003., 1.080982, 0.394258},
+            {3025., 1.078397, 0.399561},
+            {3050., 1.075727, 0.406057},
+            {3075., 1.073122, 0.412550},
+            {3103., 1.070277, 0.419815},
+            {3128., 1.067801, 0.426296},
+            {3153., 1.065384, 0.432769},
+            {3175., 1.063305, 0.438459},
+            {3203., 1.060906, 0.446161},
+            {3225., 1.058738, 0.451367},
+            {3250., 1.056535, 0.457806},
+            {3280., 1.053960, 0.465519},
+            {3303., 1.052034, 0.471422},
+            {3353., 1.047990, 0.484218},
+            {3400., 1.044547, 0.496719},
+            {3450., 1.040667, 0.508891},
+            {3500., 1.037145, 0.521523},
+            {3550., 1.033783, 0.534090},
+            {3600., 1.030574, 0.546590},
+            {3650., 1.027510, 0.559020},
+            {3699., 1.024834, 0.571722},
+            {3801., 1.019072, 0.596102},
+            {3851., 1.016527, 0.608221},
+            {3902., 1.014244, 0.621136},
+            {3952., 1.011729, 0.632447},
+            {4002., 0.996153, 0.609518},
+            {4052., 0.993720, 0.620805},
+            {4102., 0.993908, 0.631520},
+            {4152., 0.989179, 0.643262},
+            {4202., 0.989283, 0.653999},
+            {4252., 0.985039, 0.665536},
+            {4302., 0.985067, 0.676288},
+            {4352., 0.981271, 0.687599},
+            {4402., 0.981228, 0.698349},
+            {4452., 0.977843, 0.709425},
+            {4502., 0.977736, 0.720159},
+            {4552., 0.974728, 0.730993},
+            {4602., 0.974562, 0.741698},
+            {4652., 0.971899, 0.752284},
+            {4702., 0.971681, 0.762949},
+            {4752., 0.969335, 0.773285},
+            {4802., 0.969069, 0.783899},
+            {4827., 0.967570, 0.788836},
+            {4852., 0.967011, 0.793982},
+            {4877., 0.966465, 0.799108},
+            {4902., 0.965933, 0.804214},
+            {4914., 0.965682, 0.806658},
+            {4927., 0.965414, 0.809229},
+            {4940., 0.965149, 0.811937},
+            {4952., 0.964908, 0.814366},
+            {4965., 0.964650, 0.816993},
+            {4977., 0.964415, 0.819412},
+            {4990., 0.964163, 0.822028},
+            {5002., 0.963934, 0.824438},//80
+            {5015., 0.963689, 0.827044},
+            {5027., 0.963465, 0.829444},
+            {5040., 0.963226, 0.832039},
+            {5051., 0.963008, 0.834429},
+            {5065., 0.963226, 0.832039},
+            {5077., 0.962563, 0.839395},
+            {5090., 0.962336, 0.841968},
+            {5102., 0.962129, 0.844339},
+            {5115., 0.961907, 0.846902},
+            {5127., 0.961706, 0.849263},
+            {5140., 0.961490, 0.851815},
+            {5151., 0.961294, 0.854166},
+            {5177., 0.960893, 0.859049},
+            {5202., 0.960501, 0.863911},
+            {5253., 0.959749, 0.873572},
+            {5302., 0.959313, 0.883815},
+            {5351., 0.958361, 0.892644},
+            {5402., 0.957903, 0.902793},
+            {5452., 0.957116, 0.911379},
+            {5502., 0.956639, 0.921431},
+            {5553., 0.956002, 0.929779},
+            {5602., 0.955509, 0.939728},
+            {5652., 0.955008, 0.947842},
+            {5702., 0.954502, 0.957685},
+            {5752., 0.954124, 0.965569},
+            {5802., 0.953608, 0.975303},
+            {5852., 0.953342, 0.982963},
+            {5902., 0.952818, 0.992584},
+            {5952., 0.952652, 1.000025},
+            {6002., 0.952122, 1.009532},
+            {6052., 0.952047, 1.016759},
+            {6102., 0.951514, 1.026149},
+            {6152., 0.951520, 1.033168},
+            {6202., 0.950985, 1.042439},
+            {6252., 0.951064, 1.049256},
+            {6302., 0.950530, 1.058406},
+            {6352., 0.950674, 1.065027},
+            {6380., 0.950576, 1.069386},
+            {6402., 0.950143, 1.074055},
+            {6425., 0.950428, 1.076341},
+            {6452., 0.950345, 1.080484},
+            {6475., 0.950277, 1.083996},
+            {6502., 0.950201, 1.088097},
+            {6525., 0.950139, 1.091573},
+            {6552., 0.950070, 1.095633},
+            {6575., 0.950014, 1.099075},
+            {6602., 0.949952, 1.103094},
+            {6625., 0.949902, 1.106501},
+            {6652., 0.949846, 1.110479},
+            {6675., 0.949801, 1.113852},
+            {6702., 0.949752, 1.119138},
+            {6725., 0.949712, 1.121128},
+            {6752., 0.949668, 1.125027},
+            {6802., 0.949596, 1.132190},
+            {6852., 0.949533, 1.139281},
+            {6902., 0.949033, 1.147691},
+            {6952., 0.949437, 1.153246},
+            {7002., 0.949402, 1.160129},
+            {7052., 0.949376, 1.166966},
+            {7102., 0.949358, 1.173732},
+            {7152., 0.949348, 1.180429},
+            {7202., 0.949346, 1.187058},
+            {7252., 0.949350, 1.193619},
+            {7301., 0.948896, 1.201432},
+            {7352., 0.949380, 1.206541},
+            {7402., 0.949405, 1.212904},
+            {7451., 0.949434, 1.219076},
+            {7501., 0.949471, 1.225312},
+            {7551., 0.949512, 1.231485},
+            {7601., 0.949099, 1.239061},
+            {7675., 0.949638, 1.246525},
+            {7751., 0.949729, 1.255559},
+            {7825., 0.949828, 1.264225},
+            {7901., 0.949498, 1.274460},
+            {7952., 0.950018, 1.278800},
+            {8025., 0.950137, 1.287013},
+            {8095., 0.950259, 1.294777},
+            {8151., 0.950361, 1.300912},
+            {8225., 0.950501, 1.308915},
+            {8301., 0.950253, 1.318464},
+            {8375., 0.950804, 1.324786},
+            {8451., 0.950966, 1.332651},
+            {8525., 0.951129, 1.340199},
+            {8601., 0.950941, 1.349261},
+            {8701., 0.951533, 1.357724},
+            {8801., 0.951772, 1.367421},
+            {8901., 0.952018, 1.376935},
+            {9001., 0.951969, 1.387639},
+            {9201., 0.952784, 1.404422},
+            {9401., 0.953081, 1.423213},//since 5 2023 I increased the number of temp references above 12000K
+            {9651., 0.953993, 1.442883},
+            {9901., 0.954537, 1.464134},
+            {10201., 0.955520, 1.485825},
+            {10501., 0.956321, 1.508623},
+            {10751., 0.957057, 1.524806},
+            {11001., 0.957747, 1.541281},
+            {11251., 0.958436, 1.557207},
+            {11501., 0.959112, 1.572366},
+            {11751., 0.959784, 1.587037},
+            {12001., 0.960440, 1.601019},//since 5 2023 I increased the number of temp refrences above 12000K
+            {12251., 0.961090, 1.614566},
+            {12501., 0.963963, 1.627492},
+            {12751., 0.962350, 1.640031},
+            {13001., 0.962962, 1.652055},
+            {13251., 0.963561, 1.663638},
+            {13501., 0.964147, 1.674804},
+            {13751., 0.964720, 1.685571},
+            {14001., 0.965279, 1.695919},
+            {14251., 0.965827, 1.705950},
+            {14501., 0.966363, 1.715637},
+            {14751., 0.966886, 1.724998},
+            {15001., 0.967397, 1.734047}
+        };
+        //compatibility 5.9
+        constexpr WbTxyz Txyzs[118] = {//temperature Xwb Zwb 118 values - same table as in Rawimagesource.cc  x wb and y wb are calculated after
+            {2001., 1.273842, 0.145295},
+            {2101., 1.244008, 0.167533},
+            {2201., 1.217338, 0.190697},
+            {2301., 1.193444, 0.214632},
+            {2401., 1.171996, 0.239195},
+            {2501., 1.152883, 0.264539},
+            {2605., 1.134667, 0.290722},
+            {2655., 1.126659, 0.303556},
+            {2705., 1.119049, 0.316446},
+            {2755., 1.111814, 0.329381},
+            {2803., 1.105381, 0.342193},
+            {2856., 1.098258, 0.355599},
+            {2910., 1.091550, 0.369645},
+            {2960., 1.085649, 0.382655},
+            {3003., 1.080982, 0.394258},
+            {3050., 1.075727, 0.406057},
+            {3103., 1.070277, 0.419815},
+            {3153., 1.065384, 0.432769},
+            {3203., 1.060906, 0.446161},
+            {3250., 1.056535, 0.457806},
+            {3303., 1.052034, 0.471422},
+            {3353., 1.047990, 0.484218},
+            {3400., 1.044547, 0.496719},
+            {3450., 1.040667, 0.508891},
+            {3500., 1.037145, 0.521523},
+            {3550., 1.033783, 0.534090},
+            {3600., 1.030574, 0.546590},
+            {3650., 1.027510, 0.559020},
+            {3699., 1.024834, 0.571722},
+            {3801., 1.019072, 0.596102},
+            {3851., 1.016527, 0.608221},
+            {3902., 1.014244, 0.621136},
+            {3952., 1.011729, 0.632447},
+            {4002., 0.996153, 0.609518},
+            {4052., 0.993720, 0.620805},
+            {4102., 0.993908, 0.631520},
+            {4152., 0.989179, 0.643262},
+            {4202., 0.989283, 0.653999},
+            {4252., 0.985039, 0.665536},
+            {4302., 0.985067, 0.676288},
+            {4352., 0.981271, 0.687599},
+            {4402., 0.981228, 0.698349},
+            {4452., 0.977843, 0.709425},
+            {4502., 0.977736, 0.720159},
+            {4552., 0.974728, 0.730993},
+            {4602., 0.974562, 0.741698},
+            {4652., 0.971899, 0.752284},
+            {4702., 0.971681, 0.762949},
+            {4752., 0.969335, 0.773285},
+            {4802., 0.969069, 0.783899},
+            {4827., 0.967570, 0.788836},
+            {4852., 0.967011, 0.793982},
+            {4877., 0.966465, 0.799108},
+            {4902., 0.965933, 0.804214},
+            {4927., 0.965414, 0.809229},
+            {4952., 0.964908, 0.814366},
+            {4977., 0.964415, 0.819412},
+            {5002., 0.963934, 0.824438},
+            {5027., 0.963465, 0.829444},
+            {5052., 0.963008, 0.834429},
+            {5077., 0.962563, 0.839395},
+            {5102., 0.962129, 0.844339},
+            {5127., 0.961706, 0.849263},
+            {5152., 0.961294, 0.854166},
+            {5177., 0.960893, 0.859049},
+            {5202., 0.960501, 0.863911},
+            {5252., 0.959749, 0.873572},
+            {5302., 0.959313, 0.883815},
+            {5352., 0.958361, 0.892644},
+            {5402., 0.957903, 0.902793},
+            {5452., 0.957116, 0.911379},
+            {5502., 0.956639, 0.921431},
+            {5552., 0.956002, 0.929779},
+            {5602., 0.955509, 0.939728},
+            {5652., 0.955008, 0.947842},
+            {5702., 0.954502, 0.957685},
+            {5752., 0.954124, 0.965569},
+            {5802., 0.953608, 0.975303},
+            {5852., 0.953342, 0.982963},
+            {5902., 0.952818, 0.992584},
+            {5952., 0.952652, 1.000025},
+            {6002., 0.952122, 1.009532},
+            {6052., 0.952047, 1.016759},
+            {6102., 0.951514, 1.026149},
+            {6152., 0.951520, 1.033168},
+            {6202., 0.950985, 1.042439},
+            {6252., 0.951064, 1.049256},
+            {6302., 0.950530, 1.058406},
+            {6352., 0.950674, 1.065027},
+            {6402., 0.950143, 1.074055},
+            {6452., 0.950345, 1.080484},
+            {6502., 0.950201, 1.088097},
+            {6552., 0.950070, 1.095633},
+            {6602., 0.949952, 1.103094},
+            {6652., 0.949846, 1.110479},
+            {6702., 0.949752, 1.119138},
+            {6752., 0.949668, 1.125027},
+            {6802., 0.949596, 1.132190},
+            {6902., 0.949033, 1.147691},
+            {7002., 0.949402, 1.160129},
+            {7152., 0.949348, 1.180429},
+            {7301., 0.948896, 1.201432},
+            {7451., 0.949434, 1.219076},
+            {7601., 0.949099, 1.239061},
+            {7751., 0.949729, 1.255559},
+            {7901., 0.949498, 1.274460},
+            {8151., 0.950361, 1.300912},
+            {8301., 0.950253, 1.318464},
+            {8451., 0.950966, 1.332651},
+            {8601., 0.950941, 1.349261},
+            {8801., 0.951772, 1.367421},
+            {9001., 0.951969, 1.387639},
+            {9201., 0.952784, 1.404422},
+            {9401., 0.953081, 1.423213},
+            {9901., 0.954537, 1.464134},
+            {10501., 0.956321, 1.508623},
+            {11001., 0.957747, 1.541281},
+            {12001., 0.960440, 1.601019}
+        };
+        bool purp = true;//if inpaint-opposed or something else enable purp
+
+        int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
+
+        if (oldsampling) {
+            N_t = sizeof(Txyzs) / sizeof(Txyzs[0]);   //number of temperature White point
+        }
+
+     //   constexpr int Nc = 428 + 1; //429 number of reference spectral colors
+        int Ncr = 429;
+
+        if (wbpar.itcwb_prim == "srgb") {
+            Ncr = 429;
+        } else if (wbpar.itcwb_prim == "adob") {
+            Ncr = 429;
+        } else if (wbpar.itcwb_prim == "XYZcam") {
+            Ncr = 429;
+        } else if (wbpar.itcwb_prim == "jdcmax") {
+            Ncr = 429;
+        }
+
+        if (oldsampling) { //low sampling 5.9 with less spectral datas 201
+            Ncr = 202;
+        }
+
+        array2D<float> Tx(N_t, Ncr);
+        array2D<float> Ty(N_t, Ncr);
+        array2D<float> Tz(N_t, Ncr);
+        array2D<float> Ta(N_t, Ncr);
+        array2D<float> Tb(N_t, Ncr);
+        array2D<float> TL(N_t, Ncr);
+
+        double TX[Ncr];
+        double TY[Ncr];
+        double TZ[Ncr];
+
+        std::vector<bool> good_spectral(Ncr, false);
+        std::vector<bool> good_size(Ncr, false);
+
+        double WPX[N_t];
+        double WPZ[N_t];
+
+        float rmm[N_t];
+        float gmm[N_t];
+        float bmm[N_t];
+
+        int siza = 237; //192 untill 01/2023 size of histogram
+
+        if (oldsampling == true) {
+            siza = 192;//old sampling 5.9 and before...
+        }
+
+        // tempref and greenref are camera wb values.
+        // I used them by default to select good spectral values !! but they are changed after
+        tempref = rtengine::min(tempref, 15000.0);
+        int repref = 0;
+
+        for (int tt = 0; tt < N_t; tt++) {
+            if (Txyz[tt].Tem > tempref) {
+                repref = tt;//show the select temp
+                break;
+            }
+        }
+
+        if (oldsampling) {
+            for (int tt = 0; tt < N_t; tt++) {
+                if (Txyzs[tt].Tem > tempref) {
+                    repref = tt;//show the select temp
+                    break;
+                }
+            }
+        }
+
+        if (repref >= N_t - 1) {
+            repref = N_t - 2;
+        }
+
+        //calculate R G B multiplier in function illuminant and temperature
+        const bool isMono = (ri->getSensorType() == ST_FUJI_XTRANS && raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO))
+                            || (ri->getSensorType() == ST_BAYER && raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO));
+        greenitc += wbpar.itcwb_green;
+        double keepgreen = greenitc;
+
+        for (int tt = 0; tt < N_t; ++tt) {
+            double r, g, b;
+            float rm, gm, bm;
+
+            if (!oldsampling) {
+                ColorTemp(Txyz[tt].Tem, greenitc, 1., "Custom", wbpar.observer).getMultipliers(r, g, b);
+            } else {
+                ColorTemp(Txyzs[tt].Tem, greenitc, 1., "Custom", wbpar.observer).getMultipliers(r, g, b);//brings differences with old version 5.9, maybe Observer in 5.9, I did not find a solution
+            }
+
+            rm = imatrices.cam_rgb[0][0] * r + imatrices.cam_rgb[0][1] * g + imatrices.cam_rgb[0][2] * b;
+            gm = imatrices.cam_rgb[1][0] * r + imatrices.cam_rgb[1][1] * g + imatrices.cam_rgb[1][2] * b;
+            bm = imatrices.cam_rgb[2][0] * r + imatrices.cam_rgb[2][1] * g + imatrices.cam_rgb[2][2] * b;
+
+            const float new_pre_mul[4] = { ri->get_pre_mul(0) / rm, ri->get_pre_mul(1) / gm, ri->get_pre_mul(2) / bm, ri->get_pre_mul(3) / gm };
+            float new_scale_mul[4];
+            const float gain = calculate_scale_mul(new_scale_mul, new_pre_mul, c_white, cblacksom, isMono, ri->get_colors());
+            rm = new_scale_mul[0] / scale_mul[0] * gain;
+            gm = new_scale_mul[1] / scale_mul[1] * gain;
+            bm = new_scale_mul[2] / scale_mul[2] * gain;
+            rmm[tt] = rm / gm;
+            gmm[tt] = 1.f;
+            bmm[tt] = bm / gm;
+            //return rmm, gmm, bmm in function of temp
+        }
+
+        t2.set();
+
+        if (settings->verbose) {
+            printf("First: up calculate multipliers: %d nsec\n",  t2.etime(t1));
+        }
+
+        struct hiss {//histogram
+            int histnum;
+            int index;
+            bool operator()(const hiss& lhis, const hiss& rhis)
+            {
+                return lhis.histnum < rhis.histnum;
+            }
+
+        } ;
+
+        //intermediate structure
+        struct chrom {//chroma image
+            float chroxy_number;
+            float number;
+            float hue;
+            float chroxy;
+            float chrox;
+            float chroy;
+            float Y;
+            int index;
+            int interest;
+            bool operator()(const chrom& lchro, const chrom& rchro)
+            {
+                return lchro.chroxy_number < rchro.chroxy_number;
+            }
+
+        } ;
+
+        struct Temppatch {//patch characterictics
+            float minchroma;
+            float delt_E;
+            float minhi;
+            float maxhi;
+            bool operator()(const Temppatch& ltp, const Temppatch& rtp)
+            {
+                return ltp.minchroma < rtp.minchroma;
+            }
+        };
+
+        Temppatch  Tppat[N_t];
+
+        LUTu histxy(siza); //number of values for each pair xy
+
+        histxy.clear();
+
+        LUTf xxx(siza);//for color references calculated ==> max in images "like histogram"
+
+        xxx.clear();
+
+        LUTf yyy(siza);
+
+        yyy.clear();
+
+        LUTf YYY(siza);//not used directly, but necessary to keep good range
+
+        YYY.clear();
+
+        bool separated = true;//true
+
+        int w = -1;
+
+        array2D<float> reff_spect_yy_camera(N_t, 2 * Ncr + 2);
+
+        array2D<float> reff_spect_xx_camera(N_t, 2 * Ncr + 2);
+
+        array2D<float> reff_spect_Y_camera(N_t, 2 * Ncr + 2);
+
+        int ttbeg = 0;
+
+        int ttend = N_t;
+
+        //call tempxy to calculate for 406 or 201 color references Temp and XYZ with cat02
+        double wpx = 0.;
+
+        double wpz = 0.;
+
+        ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar, ttbeg, ttend, wpx, wpz, WPX, WPZ); //calculate chroma xy (xyY) for Z known colors on under 200 illuminants
+
+        //find the good spectral values
+        //calculate xy reference spectral for tempref
+        for (int j = 0; j < Ncr ; j++) {
+            float xxx = std::max(TX[j] / (TX[j] + TY[j] +  TZ[j]), 0.01); // x from xyY
+            float yyy = std::max(TY[j] / (TX[j] + TY[j] +  TZ[j]), 0.01); // y from xyY
+            float YY = TY[j];
+            reff_spect_xx_camera[j][repref] = xxx;
+            reff_spect_yy_camera[j][repref] = yyy;
+            reff_spect_Y_camera[j][repref] =  YY;
+ /*
+            //display spectral datas
+                                float xr = reff_spect_xx_camera[j][repref];
+                                float yr = reff_spect_yy_camera[j][repref];
+                                float Yr = reff_spect_Y_camera[j][repref];
+                                float X_r = (65535.f * (xr * Yr)) / yr;
+                                float Z_r = (65535.f * (1.f - xr - yr) * Yr) / yr;
+                                float Y_r = 65535.f * Yr;
+                                float Lr, ar, br;
+                                Color::XYZ2Lab(X_r, Y_r, Z_r, Lr, ar, br);//it make sense, because known spectral color
+
+
+                        printf("Nc=%i repref=%i xxx=%f yyy=%f YY=%f Lr=%f a=%f b=%f\n", j, repref, (double) xxx, (double) yyy, (double) YY, (double) Lr/327.68f, (double) ar/327.68f, (double) br/327.68f);
+ */
+        }
+
+        array2D<float> xc(bfwitc, bfhitc);
+        array2D<float> yc(bfwitc, bfhitc);
+        array2D<float> zc(bfwitc, bfhitc);
+        array2D<float> Yc(bfwitc, bfhitc);
+
+        // int rep = rtengine::LIM(repref + 1, 0, N_t);
+
+        //initialize calculation of xy current for tempref
+        if (oldsampling == false) {
+
+            //small denoise with median 3x3 strong
+            float** tmL;
+            int wid = bfw;
+            int hei = bfh;
+            tmL = new float*[hei];
+
+            for (int i = 0; i < hei; ++i) {
+                tmL[i] = new float[wid];
+            }
+
+            typedef ImProcFunctions::Median Median;
+            Median medianTypeL = Median::TYPE_3X3_STRONG;//x2
+            int pas = 2;
+            ImProcFunctions::Median_Denoise(redloc, redloc, bfw, bfh, medianTypeL, pas, false, tmL);
+            ImProcFunctions::Median_Denoise(greenloc, greenloc, bfw, bfh, medianTypeL, pas, false, tmL);
+            ImProcFunctions::Median_Denoise(blueloc, blueloc, bfw, bfh, medianTypeL, pas, false, tmL);
+
+            for (int i = 0; i < hei; ++i) {
+                delete[] tmL[i];
+            }
+
+            delete[] tmL;
+        }
+
+        t3.set();
+
+        if (settings->verbose) {
+            printf("Second: from first to up median 3x3: %d nsec\n", t3.etime(t2));
+        }
+
+        if (oldsampling == false) {
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
+
+            for (int y = 0; y < bfh ; ++y) {
+                for (int x = 0; x < bfw ; ++x) {
+                    const float RR = rmm[repref] * redloc[y][x];
+                    const float GG = gmm[repref] * greenloc[y][x];
+                    const float BB = bmm[repref] * blueloc[y][x];
+
+                    Color::rgbxyz(RR, GG, BB, xc[y][x], yc[y][x], zc[y][x], wb2);//use sRGB Adobe Rec2020 ACESp0
+                    float X_r = xc[y][x];
+                    float Y_r = yc[y][x];
+                    float Z_r = zc[y][x];
+
+                    if (oldsampling == false) {
+                        Color::gamutmap(X_r, Y_r, Z_r, wb2);//gamut control
+                    }
+
+                    const float som = X_r + Y_r + Z_r;
+                    xc[y][x] = X_r / som;
+                    yc[y][x] = Y_r / som;
+                    Yc[y][x] = Y_r / 65535.f;
+                }
+            }
+
+            //histogram xy depend of temp...but in most cases D45 ..D65..
+            // these values change with temp
+            //calculate for this image the mean values for each family of color, near histogram x y (number)
+            //xy vary from x 0..0.77  y 0..0.82
+            //neutral values are near x=0.34 0.33 0.315 0.37 y =0.35 0.36 0.34
+            //skin are about x 0.45  0.49 y 0.4 0.47
+            //blue sky x=0.25 y=0.28  and x=0.29 y=0.32
+            // step about 0.02   x 0.32 0.34  y= 0.34 0.36 skin    --  sky x 0.24 0.30 y 0.28 0.32
+
+
+            if (wbpar.itcwb_nopurple == true) {//since 21 april - change to filter magenta
+                purp = false;
+            }
+
+            histoxyY(bfhitc, bfwitc, xc, yc, Yc, xxx,  yyy, YYY, histxy, purp);//purp enable,  enable purple color in WB
+            //return histogram x and y for each temp and in a range of 235 colors (siza)
+
+        } else {
+            const int deltarepref = 1;
+
+            for (int nn = 0, drep = -deltarepref; nn <= 2; ++nn, drep += deltarepref) {
+                //three loop to refine color if temp camera is probably not very good
+                const int rep = rtengine::LIM(repref + drep, 0, N_t);
+
+                //initialize calculation of xy current for tempref
+#ifdef _OPENMP
+                #pragma omp parallel for
+#endif
+
+                for (int y = 0; y < bfh ; ++y) {
+                    for (int x = 0; x < bfw ; ++x) {
+                        const float RR = rmm[rep] * redloc[y][x];
+                        const float GG = gmm[rep] * greenloc[y][x];
+                        const float BB = bmm[rep] * blueloc[y][x];
+                        Color::rgbxyY(RR, GG, BB, xc[y][x], yc[y][x], Yc[y][x], wb);
+                    }
+                }
+
+
+                histoxyY_low(bfhitc, bfwitc, xc, yc, Yc, xxx,  yyy, YYY, histxy);
+                //return histogram x and y for each temp and in a range of 158 colors (siza)
+            }
+
+        }
+
+//enable display cells
+        /*
+                printf ("xc\tyc\tcount\n") ;
+                printf ("--\t--\t-----\n") ;
+                for (int x1 = 0 ; x1 < 80; ++x1) {
+                    for (int y1 = 0; y1 < 90; ++y1) {
+                        if (cellxy[x1][y1] > 0) {
+                            printf ("%d\t%d\t%d\n", x1, y1, cellxy[x1][y1]);
+                        }
+                    }
+                }
+        */
+
+        // free some memory
+        xc.free();
+        yc.free();
+        Yc.free();
+        //calculate x y Y
+        const int sizcurrref = siza;//choice of number of correlate colors in image
+        array2D<float> histcurrref(N_t, sizcurrref);
+        array2D<float> xx_curref(N_t, sizcurrref);
+        array2D<float> yy_curref(N_t, sizcurrref);
+        array2D<float> YY_curref(N_t, sizcurrref);
+        array2D<float> xx_curref_reduc(N_t, sizcurrref);
+        array2D<float> yy_curref_reduc(N_t, sizcurrref);
+        array2D<float> YY_curref_reduc(N_t, sizcurrref);
+        array2D<float> nn_curref_reduc(N_t, sizcurrref);//new array to improve patch
+        array2D<float> chronum_curref_reduc(N_t, sizcurrref);//new array to improve patch
+        array2D<float> hue_curref_reduc(N_t, sizcurrref);//new array to improve patch
+        array2D<float> chro_curref_reduc(N_t, sizcurrref);//new array to improve patch
+        array2D<float> estim_hue(N_t, sizcurrref);//new array to improve patch
+
+        hiss Wbhis[siza];
+
+        for (int nh = 0; nh < siza; nh++) {
+            Wbhis[nh].histnum = histxy[nh];
+            Wbhis[nh].index = nh;
+        }
+
+        //sort in ascending order
+        std::sort(Wbhis, Wbhis + siza, Wbhis[0]);
+        int n1 = 0;
+        int n4 = 0;
+        int n15 = 0;
+        int n30 = 0;
+
+        //part to improve
+        //determined the number of colors who be used after
+        int ntot = 0;
+
+        for (int nh = 0; nh < siza; nh++) {
+            if (Wbhis[nh].histnum > 0) {
+                ntot++;
+            }
+        }
+
+        dread = ntot;//read colors
+
+        for (int nh = 0; nh < siza; nh++) {
+            if (Wbhis[nh].histnum < 30) {
+                n30++;    //keep only existing color but avoid to small
+
+                if (Wbhis[nh].histnum < 15) {
+                    n15++;    //keep only existing color but avoid to small
+
+                    if (Wbhis[nh].histnum < 4) {
+                        n4++;    //keep only existing color but avoid to small
+
+                        if (Wbhis[nh].histnum < 1) {
+                            n1++;    //keep only existing color but avoid to small
+                        }
+                    }
+                }
+            }
+        }
+
+        int ntr = n30;
+
+        if (ntr > (siza - 25)) {
+            ntr = n15;    //if to less elements 25 elements mini
+        }
+
+        if (ntr > (siza - 23)) {
+            ntr = n4;    //if to less elements 25 elements mini
+        }
+
+        if (ntr > (siza - 20)) {
+            ntr = n1;    //if to less elements 20 elements mini - normally never be used !
+        }
+
+        int sizcurr2ref = sizcurrref - ntr;
+        const int sizcu30 = sizcurrref - n30;
+        int maxsiz = 70;
+        maxsiz = LIM(maxsiz, 50, 80);
+        int nbm = maxsiz;
+        int sizcu4 = maxsiz;
+
+        if (oldsampling == true) {
+            nbm = 55;
+            sizcu4 = rtengine::min(sizcu30, nbm);//size of chroma values
+        }
+
+        Tppat[repref].maxhi = Wbhis[siza - 1].histnum;
+        Tppat[repref].minhi = Wbhis[siza - nbm].histnum;
+
+        if (settings->verbose) {
+            printf("number total datas read=%i\n", ntot);
+            printf("Others datas - ntr=%i sizcurr2ref=%i sizcu4=%i sizcu30=%i\n", ntr, sizcurr2ref, sizcu4, sizcu30);
+            printf("Number max of data samples in last patch=%i\n", (int) Tppat[repref].maxhi);
+            printf("Number of data samples in beginning patch =%i\n", (int) Tppat[repref].minhi);
+        }
+
+        chrom wbchro[sizcu4];
+        float swpr = wpx + wpz + 1.f;
+        float xwpr = wpx / swpr;//white point for tt in xy coordinates
+        float ywpr = 1.f / swpr;
+
+        if (oldsampling == true) {
+            swpr = Txyz[repref].XX + Txyz[repref].ZZ + 1.f;
+            xwpr = Txyz[repref].XX / swpr;//white point for tt in xy coordinates
+            ywpr = 1.f / swpr;
+        }
+
+        if (settings->verbose) {
+            printf("White Point XYZ x=%f y=%f z=%f\n", wpx, 1., wpz);
+            printf("White Point xyY x=%f y=%f\n", xwpr, ywpr);
+        }
+
+        float estimchrom = 0.f;
+
+        if (oldsampling == true) {
+            for (int i = 0; i < sizcu4; ++i) { //take the max values
+                histcurrref[i][repref] = Wbhis[siza - (i + 1)].histnum;
+                xx_curref[i][repref] = xxx[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
+                yy_curref[i][repref] = yyy[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
+                YY_curref[i][repref] = YYY[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
+            }
+            if (settings->verbose) {
+                printf("Sizcu4=%i\n", sizcu4);
+            }
+
+            //estimate chromaticity for references
+            for (int nh = 0; nh < sizcu4; ++nh) {
+                const float chxy = std::sqrt(SQR(xx_curref[nh][repref] - xwpr) + SQR(yy_curref[nh][repref] - ywpr));
+                wbchro[nh].chroxy_number = chxy * std::sqrt(histcurrref[nh][repref]);
+                wbchro[nh].chroxy = std::sqrt(chxy);
+                wbchro[nh].chrox = xx_curref[nh][repref];
+                wbchro[nh].chroy = yy_curref[nh][repref];
+                wbchro[nh].Y = YY_curref[nh][repref];
+                wbchro[nh].index = nh;
+                estimchrom += chxy;
+            }
+
+            estimchrom /= sizcu4;
+
+            if (settings->verbose) {
+                printf("estimchrom=%f\n", estimchrom);
+            }
+
+            const int maxval = 34;
+
+            sizcurr2ref = rtengine::min(sizcurr2ref, maxval);    //keep about the biggest values,
+
+            for (int i = 0; i < sizcurr2ref; ++i) {
+                //is condition chroxy necessary ?
+                if (wbchro[sizcu4 - (i + 1)].chrox > 0.1f && wbchro[sizcu4 - (i + 1)].chroy > 0.1f && wbchro[sizcu4 - (i + 1)].chroxy > 0.0f) { //suppress value too far from reference spectral
+                    w++;
+                    xx_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chrox;
+                    yy_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chroy;
+                    YY_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].Y;
+                    nn_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].number;
+                }
+            }
+
+            //calculate deltaE xx to find best values of spectrals data - limited to chroma values
+            int maxnb = 3;
+
+
+            float dEmean = 0.f;
+            int ndEmean = 0;
+            float maxhist = -1000.f;
+            float minhist = 100000000.f;
+
+            for (int nb = 1; nb <= maxnb; ++nb) {
+                for (int i = 0; i < w; ++i) {
+                    float mindeltaE = 100000.f;
+                    int kN = 0;
+
+                    for (int j = 0; j < Ncr ; j++) {
+                        if (!good_spectral[j]) {
+                            const float deltaE = SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[j][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[j][repref]);
+
+                            if (deltaE < mindeltaE) {
+                                mindeltaE = deltaE;
+                                kN = j;
+                            }
+                        }
+                    }
+
+                    {//display in console for 5.9
+                        float spectlimit = settings->itcwb_deltaspec;
+                        float dE = sqrt(SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[kN][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[kN][repref]));
+                        dEmean += dE;
+                        ndEmean++;
+
+                        if (nn_curref_reduc[i][repref] < minhist) {
+                            minhist = nn_curref_reduc[i][repref];
+                        }
+
+                        if (nn_curref_reduc[i][repref] > maxhist) {
+                            maxhist = nn_curref_reduc[i][repref];
+                        }
+
+                        if (settings->verbose) {
+                            float xr = reff_spect_xx_camera[kN][repref];
+                            float yr = reff_spect_yy_camera[kN][repref];
+                            float Yr = reff_spect_Y_camera[kN][repref];
+                            float X_r = (65535.f * (xr * Yr)) / yr;
+                            float Z_r = (65535.f * (1.f - xr - yr) * Yr) / yr;
+                            float Y_r = 65535.f * Yr;
+                            float Lr, ar, br;
+                            Color::XYZ2Lab(X_r, Y_r, Z_r, Lr, ar, br);//it make sense, because known spectral color
+
+                            if (dE > spectlimit) {
+                                printf("i=%i kn=%i REFLAB for info not used - not relevant Lr=%3.2f ar=%3.2f br=%3.2f \n", i,  kN, (double)(Lr / 327.68f), (double)(ar / 327.68f), (double)(br / 327.68f));
+                                printf("IMAGE: kn=%i hist=%7.0f chro_num=%5.1f hue=%2.2f chro=%2.3f xx=%f yy=%f YY=%f\n", kN, (double) nn_curref_reduc[i][repref], (double) chronum_curref_reduc[i][repref], (double) hue_curref_reduc[i][repref], (double) chro_curref_reduc[i][repref], (double) xx_curref_reduc[i][repref], (double) yy_curref_reduc[i][repref], (double) YY_curref_reduc[i][repref]);
+                                printf("kn=%i REfxy xxr=%f yyr=%f YYr=%f\n", kN, (double) reff_spect_xx_camera[kN][repref], (double) reff_spect_yy_camera[kN][repref], (double) reff_spect_Y_camera[kN][repref]);
+                                printf("kn=%i DELTA delt=%f\n", kN, dE);
+                                printf("....  \n");
+                            }
+                        }
+
+                    }
+
+                    good_spectral[kN] = true;//good spectral are spectral color that match color histogram xy
+                }
+            }
+        } else {
+
+            for (int i = 0; i < sizcu4; ++i) { //take the max values
+                histcurrref[i][repref] = Wbhis[siza - (i + 1)].histnum;
+                xx_curref[i][repref] = xxx[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
+                yy_curref[i][repref] = yyy[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
+                YY_curref[i][repref] = YYY[Wbhis[siza - (i + 1)].index] / histcurrref[i][repref];
+            }
+
+            int minsize = 20;
+            int maxsize = maxsiz;
+            bool isponderate = true; //to build patch ponderate
+
+            bool isponder = true;//with true moving average
+            float powponder = settings->itcwb_powponder;//not used today...
+            powponder = LIM(powponder, 0.01f, 0.2f);
+            float estimchrom = 0.f;
+
+            for (int j = minsize; j < maxsize; ++j) {//20 empirical minimal value default to ensure a correlation
+                if (!good_size[j]) {
+                    float countchxynum = 0.f;
+                    estimchrom = 0.f;
+                    float xh = 0.f;
+                    float yh = 0.f;
+                    wbchro[j].hue =  0.f;
+                    wbchro[j].chroxy_number = 0.f;
+                    wbchro[j].number = 0.f;
+                    wbchro[j].chroxy = 0.f;
+                    wbchro[j].chrox = 0.f;
+                    wbchro[j].chroy = 0.f;
+                    wbchro[j].Y = 0.f;
+                    wbchro[j].index = 0;
+                    int ind1 = 1;
+                    int ind2 = -1;
+                    float chxy1 = 0.f;
+                    float chxy2 = 0.f;
+                    float chxynum1 = 0.f;
+                    float chxynum2 = 0.f;
+
+                    for (int nh = 0; nh < j; ++nh) {
+                        ind1++;
+                        ind2++;
+
+                        if (ind1 < j && !isponderate) {
+                            chxy1 = std::sqrt(SQR(xx_curref[ind1][repref] - xwpr) + SQR(yy_curref[ind1][repref] - ywpr));
+                        }
+
+                        if (ind2 <= 0 && !isponderate) {
+                            chxy2 = std::sqrt(SQR(xx_curref[ind2][repref] - xwpr) + SQR(yy_curref[ind2][repref] - ywpr));
+                        }
+
+                        const float chxy = std::sqrt(SQR(xx_curref[nh][repref] - xwpr) + SQR(yy_curref[nh][repref] - ywpr));
+                        xh += xx_curref[nh][repref] - xwpr;
+                        yh += yy_curref[nh][repref] - ywpr;
+                        wbchro[nh].hue =  fmodf(xatan2f(yy_curref[nh][repref] - ywpr, xx_curref[nh][repref] - xwpr), 2.f * RT_PI_F);
+                        const float chxynum = wbchro[nh].chroxy_number = chxy * pow((double) histcurrref[nh][repref], 0.05);//sqrt was too big no convergence
+
+                        //We can replace 0.05 by powponder
+                        if (ind1 < j && isponderate) { //with issorted ponderate chroma
+                            chxynum1 = chxy1 * pow((double) histcurrref[ind1][repref], 0.05);//0.05 to 0.1 allows convergence, near 1.5 betwween max and min value
+                        }//We can replace 0.05 by powponder
+
+                        if (ind2 < 0 && isponderate) {
+                            chxynum2 = chxy2 * pow((double) histcurrref[ind2][repref], 0.05);//We can replace 0.05 by powponder
+                        }
+
+                        wbchro[nh].number = histcurrref[nh][repref];
+                        wbchro[nh].chroxy = std::sqrt(chxy);
+                        wbchro[nh].chrox = xx_curref[nh][repref];
+                        wbchro[nh].chroy = yy_curref[nh][repref];
+                        wbchro[nh].Y = YY_curref[nh][repref];
+                        wbchro[nh].index = nh;
+
+                        if (!isponderate) {
+                            estimchrom += chxy;
+
+                            if (isponder && !isponderate) {
+                                estimchrom += chxy1;
+                                estimchrom += chxy2;
+                            }
+                        }
+
+                        if (isponderate) {
+                            estimchrom += chxynum;
+
+                            if (isponder) {
+                                estimchrom += chxynum1;
+                                estimchrom += chxynum2;
+                            }
+
+                            countchxynum += pow((double)histcurrref[nh][repref], 0.05);//no error, to take into account mean value //We can replace 0.05 by powponder
+                        }
+                    }
+
+                    estim_hue[j][repref] = xatan2f(yh, xh);
+
+                    if (isponder) {
+                        estimchrom /= (j + 2 * (j - 1)); //extrem not taken
+                    } else {
+                        estimchrom /= j;
+                    }
+
+                    if (estimchrom < minchrom) {
+                        minchrom = estimchrom;
+                        Tppat[repref].minchroma = minchrom;
+                        kmin = j;
+                    }
+
+                    Tppat[repref].minchroma = minchrom;
+                }
+
+                good_size[kmin] = true;
+            }
+
+            sizcu4 = kmin;
+
+            int maxval = maxsiz;
+            sizcurr2ref = rtengine::min(sizcurr2ref, maxval);    //keep about the biggest values,
+            int index1 = 0;
+            int index2 = sizcu4;
+            int indn = index1;
+
+
+            for (int i = index1; i < index2; ++i) {
+                if (wbchro[sizcu4 - (i + 1)].number < 400.f) { //remove too low numbers datas about an area 60*60 pixels or reparted
+                    indn++;
+                }
+            }
+
+            Tppat[repref].minhi = (float) rtengine::max((int) wbchro[sizcu4 - (indn + 1)].number, (int) Tppat[repref].minhi);
+
+            if (settings->verbose) {
+                printf("Index1=%i index2=%i \n", indn, index2);
+            }
+
+            if (settings->verbose) {
+                printf("Info2 - patch estimation of wp displacement (before):j=%i repref=%i real=%i Tppat=%f chrom=%f hue=%f\n", kmin, repref, index2 - indn, (double) Tppat[repref].minchroma, (double) minchrom, (double) estim_hue[kmin][repref]);
+            };
+
+            float limexclu = 0.96f;//to avoid highlight in some rare cases (sky...)
+
+
+            for (int i = indn; i < index2; ++i) {
+                //improvment to limit high Y values wbchro[sizcu4 - (i + 1)].Y < 0.96  0.96 arbitrary high value, maybe 0.9 or 0.98...or 1.0
+                if (wbchro[sizcu4 - (i + 1)].chrox > limx && wbchro[sizcu4 - (i + 1)].chroy > limy  && wbchro[sizcu4 - (i + 1)].Y < limexclu) { //remove value too far from reference spectral
+                    w++;// w number of real tests
+                    xx_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chrox;
+                    yy_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chroy;
+                    YY_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].Y;
+                    chronum_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chroxy_number;
+                    nn_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].number;
+                    hue_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].hue;
+                    chro_curref_reduc[w][repref] = wbchro[sizcu4 - (i + 1)].chroxy;
+                }
+            }
+
+            if (settings->verbose) {
+                printf("Number of real tests=%i\n", w);
+            }
+
+            int maxnb = 1; //since 8 april 2023
+
+
+            float dEmean = 0.f;
+            int ndEmean = 0;
+            maxhist = -1000.f;
+            minhist = 100000000.f;
+
+            for (int nb = 1; nb <= maxnb; ++nb) { //1 is good, but 2 3 or 4 help to find more spectral values
+                for (int i = 0; i < w; ++i) {
+                    float mindeltaE = 100000.f;
+                    int kN = 0;
+
+                    for (int j = 0; j < Ncr ; j++) {
+                        if (!good_spectral[j]) {
+                            const float deltaE = SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[j][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[j][repref]);
+
+                            if (deltaE < mindeltaE) {
+                                mindeltaE = deltaE;
+                                kN = j;
+                            }
+                        }
+                    }
+                    //display in console
+                    float spectlimit = settings->itcwb_deltaspec;
+                    float dE = sqrt(SQR(xx_curref_reduc[i][repref] - reff_spect_xx_camera[kN][repref]) + SQR(yy_curref_reduc[i][repref] - reff_spect_yy_camera[kN][repref]));
+                    dEmean += dE;
+                    ndEmean++;
+
+                    if (nn_curref_reduc[i][repref] < minhist) {
+                        minhist = nn_curref_reduc[i][repref];
+                    }
+
+                    if (nn_curref_reduc[i][repref] > maxhist) {
+                        maxhist = nn_curref_reduc[i][repref];
+                    }
+
+                    if (settings->verbose) {
+                        float xr = reff_spect_xx_camera[kN][repref];
+                        float yr = reff_spect_yy_camera[kN][repref];
+                        float Yr = reff_spect_Y_camera[kN][repref];
+                        float X_r = (65535.f * (xr * Yr)) / yr;
+                        float Z_r = (65535.f * (1.f - xr - yr) * Yr) / yr;
+                        float Y_r = 65535.f * Yr;
+                        float Lr, ar, br;
+                        Color::XYZ2Lab(X_r, Y_r, Z_r, Lr, ar, br);//it make sense, because known spectral color
+
+                        if (dE > spectlimit) {
+                            printf("i=%i kn=%i REFLAB for info not used - not relevant Lr=%3.2f ar=%3.2f br=%3.2f \n", i,  kN, (double)(Lr / 327.68f), (double)(ar / 327.68f), (double)(br / 327.68f));
+                            printf("IMAGE: kn=%i hist=%7.0f chro_num=%5.1f hue=%2.2f chro=%2.3f xx=%f yy=%f YY=%f\n", kN, (double) nn_curref_reduc[i][repref], (double) chronum_curref_reduc[i][repref], (double) hue_curref_reduc[i][repref], (double) chro_curref_reduc[i][repref], (double) xx_curref_reduc[i][repref], (double) yy_curref_reduc[i][repref], (double) YY_curref_reduc[i][repref]);
+                            printf("kn=%i REfxy xxr=%f yyr=%f YYr=%f\n", kN, (double) reff_spect_xx_camera[kN][repref], (double) reff_spect_yy_camera[kN][repref], (double) reff_spect_Y_camera[kN][repref]);
+                            printf("kn=%i DELTA delt=%f\n", kN, dE);
+                            printf("....  \n");
+                        }
+                    }
+
+
+                    good_spectral[kN] = true;//good spectral are spectral color that match color histogram xy
+                }
+
+                if (ndEmean == 0) {
+                    ndEmean = 2;
+                }
+
+                Tppat[repref].delt_E = dEmean / ndEmean;
+                delta = Tppat[repref].delt_E;
+                Tppat[repref].maxhi = maxhist;
+                Tppat[repref].minhi = minhist;
+
+                if (settings->verbose  && !oldsampling) {
+                    printf("Patch Mean - Repref=%i deltaE=%f minhisto=%6.0f maxhisto=%7.0f \n", repref, (double) dEmean / ndEmean, (double) minhist, (double) maxhist);
+                }
+            }
+        }
+
+        // reuse some buffers
+        array2D<float>& R_curref_reduc = xx_curref_reduc;
+        array2D<float>& G_curref_reduc = yy_curref_reduc;
+        array2D<float>& B_curref_reduc = YY_curref_reduc;
+
+        //reconvert to RGB for "reduction"
+        for (int i = 0; i < w; i++) {
+            const float X = 65535.f * xx_curref_reduc[i][repref] * YY_curref_reduc[i][repref] / yy_curref_reduc[i][repref];
+            const float Y = 65535.f * YY_curref_reduc[i][repref];
+            const float Z = 65535.f * (1.f - xx_curref_reduc[i][repref] - yy_curref_reduc[i][repref]) * YY_curref_reduc[i][repref] / yy_curref_reduc[i][repref];
+            float r, g, b;
+            Color::xyz2rgb(X, Y, Z, r, g, b, iwb);
+            R_curref_reduc[i][repref] = r / rmm[repref];
+            G_curref_reduc[i][repref] = g / gmm[repref];
+            B_curref_reduc[i][repref] = b / bmm[repref];
+        }
+
+        t4.set();
+
+        if (settings->verbose) {
+            printf("Third: from second to find patch: %d nsec\n", t4.etime(t3));
+        }
+
+
+//end first part
+
+        //Now begin real calculations
+        separated = false;
+        ttbeg = 0;
+        ttend = N_t;
+
+        ttbeg = std::max(repref - 11, 0);//enough in all cases > dgoodref
+        ttend = std::min(repref + 11, N_t);
+
+        if (oldsampling == true) {
+            ttbeg = 0;
+            ttend = N_t;
+        }
+
+        //recalculate histogram with good values and not estimated
+        double wpx1 = 0.;
+        double wpz1 = 0.;
+
+        ColorTemp::tempxy(separated, repref, Tx, Ty, Tz, Ta, Tb, TL, TX, TY, TZ, wbpar, ttbeg, ttend, wpx1, wpz1, WPX, WPZ); //calculate chroma xy (xyY) for Z known colors on under 90 illuminants
+        //calculate x y Y
+        int sizcurr = siza;//choice of number of correlate colors in image
+        array2D<float> xxyycurr_reduc(N_t, 2 * sizcurr);
+        array2D<float> reff_spect_xxyy(N_t, 2 * Ncr + 2);
+        array2D<float> reff_spect_xxyy_prov(N_t, 2 * Ncr + 2);
+        t5.set();
+
+        if (settings->verbose) {
+            printf("Fourth: from third recalculate spectral: %d nsec\n",  t5.etime(t4));
+        }
+
+        float minstud = 100000.f;
+        int goodref = 1;
+
+//calculate  x y z for each pixel with multiplier rmm gmm bmm
+
+        for (int tt = ttbeg; tt < ttend; ++tt) {//N_t
+            for (int i = 0; i < w; ++i) {
+                float unused;
+
+                const float RR = rmm[tt] * R_curref_reduc[i][repref];
+                const float GG = gmm[tt] * G_curref_reduc[i][repref];
+                const float BB = bmm[tt] * B_curref_reduc[i][repref];
+                Color::rgbxyY(RR, GG, BB, xxyycurr_reduc[2 * i][tt], xxyycurr_reduc[2 * i + 1][tt], unused, wb);
+            }
+
+            for (int j = 0; j < Ncr ; ++j) {
+                reff_spect_xxyy_prov[2 * j][tt] = std::max(Tx[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]), 0.01f); // x from xyY
+                reff_spect_xxyy_prov[2 * j + 1][tt] = std::max(Ty[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]), 0.01f); // y from xyY
+            }
+
+            int kk = -1;
+
+            for (int i = 0; i < Ncr ; ++i) {
+                if (good_spectral[i]) {
+                    kk++;
+                    //we calculate now absolute chroma for each spectral color
+                    reff_spect_xxyy[2 * kk][tt] = reff_spect_xxyy_prov[2 * i][tt];
+                    reff_spect_xxyy[2 * kk + 1][tt] = reff_spect_xxyy_prov[2 * i + 1][tt];
+                }
+            }
+
+            const float abstud = std::fabs(studentXY(xxyycurr_reduc, reff_spect_xxyy, 2 * w, 2 * (kk + 1), tt));
+
+            if (abstud < minstud) {  // find the minimum Student
+                minstud = abstud;
+                goodref = tt;
+            }
+        }
+
+        t6.set();
+
+        if (settings->verbose) {
+            printf("Fifth: from fourth to find first correlation: %d nsec\n",  t6.etime(t5));
+        }
+
+        {
+            //always used if extra = true because I made this choice, brings better results
+            struct Tempgreen {
+                float student;
+                int tempref;
+                int greenref;
+                bool operator()(const Tempgreen& ltg, const Tempgreen& rtg)
+                {
+                    return ltg.student < rtg.student;
+                }
+            };
+            Tempgreen  Tgstud[N_g];
+
+            for (int i = 0; i < N_g; ++i) {//init variables with
+                Tgstud[i].student = 1000.f;//max value to initialize
+
+                if (!oldsampling) {
+                    Tgstud[i].tempref = 80;//5002K position in the list
+                } else {
+                    Tgstud[i].tempref = 57;//5002K position in the list
+                }
+
+                Tgstud[i].greenref = 55;// 1.f position in the list
+            }
+
+            int newdelta = 1.8f * 4; // wbpar.itcwb_delta - default = 4;
+            int dgoodref = rtengine::LIM(newdelta, 1, 10); // 1.8 increase delta temp scan
+
+            if (oldsampling == true) {
+                dgoodref = 2;
+            }
+
+            const int scantempbeg = rtengine::max(goodref - (dgoodref + 1), 1);
+            const int scantempend = rtengine::min(goodref + dgoodref, N_t - 1);
+            int goodrefgr = 1;
+
+            for (int gr = Rangegreenused.begin; gr < Rangegreenused.end; ++gr) {
+                float minstudgr = 100000.f;
+                goodrefgr = 1;
+
+                for (int tt = scantempbeg; tt < scantempend; ++tt) {
+                    double r, g, b;
+
+                    if (!oldsampling) {
+                        ColorTemp(Txyz[tt].Tem, gree[gr].green, 1., "Custom", wbpar.observer).getMultipliers(r, g, b);
+                    } else {
+                        ColorTemp(Txyzs[tt].Tem, gree[gr].green, 1., "Custom", wbpar.observer).getMultipliers(r, g, b);
+                    }
+
+                    float rm = imatrices.cam_rgb[0][0] * r + imatrices.cam_rgb[0][1] * g + imatrices.cam_rgb[0][2] * b;
+                    float gm = imatrices.cam_rgb[1][0] * r + imatrices.cam_rgb[1][1] * g + imatrices.cam_rgb[1][2] * b;
+                    float bm = imatrices.cam_rgb[2][0] * r + imatrices.cam_rgb[2][1] * g + imatrices.cam_rgb[2][2] * b;
+                    //recalculate Multipliers now with good range of temp and green
+
+                    const float new_pre_mul[4] = { ri->get_pre_mul(0) / rm, ri->get_pre_mul(1) / gm, ri->get_pre_mul(2) / bm, ri->get_pre_mul(3) / gm };
+                    float new_scale_mul[4];
+                    const float gain = calculate_scale_mul(new_scale_mul, new_pre_mul, c_white, cblacksom, isMono, ri->get_colors());
+
+                    rm = new_scale_mul[0] / scale_mul[0] * gain;
+                    gm = new_scale_mul[1] / scale_mul[1] * gain;
+                    bm = new_scale_mul[2] / scale_mul[2] * gain;
+                    rmm[tt] = rm / gm;
+                    gmm[tt] = 1.f;
+                    bmm[tt] = bm / gm;
+                }
+
+
+                for (int tt = scantempbeg; tt < scantempend; ++tt) {//N_t
+                    for (int i = 0; i < w; ++i) {
+                        float unused;
+
+                        const float RR = rmm[tt] * R_curref_reduc[i][repref];
+                        const float GG = gmm[tt] * G_curref_reduc[i][repref];
+                        const float BB = bmm[tt] * B_curref_reduc[i][repref];
+                        Color::rgbxyY(RR, GG, BB, xxyycurr_reduc[2 * i][tt], xxyycurr_reduc[2 * i + 1][tt], unused, wb);
+                    }
+
+                    //recalculate xy spectral now with good range of temp and green
+
+                    for (int j = 0; j < Ncr ; ++j) {
+                        reff_spect_xxyy_prov[2 * j][tt] = std::max(Tx[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]), 0.01f); // x from xyY
+                        reff_spect_xxyy_prov[2 * j + 1][tt] = std::max(Ty[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]), 0.01f); // y from xyY
+                    }
+
+                    int kkg = -1;
+
+                    for (int i = 0; i < Ncr ; ++i) {
+                        if (good_spectral[i]) {
+                            kkg++;
+                            reff_spect_xxyy[2 * kkg][tt] = reff_spect_xxyy_prov[2 * i][tt];
+                            reff_spect_xxyy[2 * kkg + 1][tt] = reff_spect_xxyy_prov[2 * i + 1][tt];
+                        }
+                    }
+
+                    //now we have good spectral data
+                    //calculate student correlation
+                    const float abstudgr = std::fabs(studentXY(xxyycurr_reduc, reff_spect_xxyy, 2 * w, 2 * (kkg + 1), tt));
+
+                    if (abstudgr < minstudgr) {  // find the minimum Student
+                        minstudgr = abstudgr;
+                        goodrefgr = tt;
+                    }
+
+                    //found the values
+                    Tgstud[gr].tempref = goodrefgr;
+                    Tgstud[gr].greenref = gr;
+                    Tgstud[gr].student = minstudgr;
+
+                }
+            }
+
+            t7.set();
+
+            if (settings->verbose) {
+                printf("Sixth: from fifth to find patch in extra mode: %d nsec\n", t7.etime(t6));
+            }
+
+            float estimchromf = 0.f;
+            float estimhuef = 0.f;
+            float xhf = 0.f;
+            float yhf = 0.f;
+
+            const float swprf = WPX[goodrefgr] + WPZ[goodrefgr] + 1.f;
+            const float xwprf = WPX[goodrefgr] / swpr;//white point for tt in xy coordinates
+
+            const float ywprf = 1.f / swprf;
+
+            for (int nh = 0; nh < w; ++nh) {
+                const float chxy = std::sqrt(SQR(xxyycurr_reduc[2 * nh][goodrefgr] - xwprf) + SQR(xxyycurr_reduc[2 * nh + 1][goodrefgr] - ywprf));
+                xhf += xxyycurr_reduc[2 * nh][goodrefgr] - xwprf;
+                yhf += xxyycurr_reduc[2 * nh + 1][goodrefgr] - ywprf;
+                estimchromf += chxy;
+            }
+
+            estimhuef = xatan2f(yhf, xhf);
+            estimchromf /= w;
+
+            if (settings->verbose) {
+                printf("New white point calculated patch for information : xwprf=%f ywprf=%f\n", (double) xwprf, (double) ywprf);
+                printf("Info - patch estimation of white-point displacement: chrom=%f hue=%f\n", (double) estimchromf, (double) estimhuef);
+            }
+
+
+            std::sort(Tgstud, Tgstud + N_g, Tgstud[0]);
+
+            if (!oldsampling) {
+
+                // now search the value of green the nearest of 1 with a good student value, I think it is a good choice, perhaps no...
+                // I take the first values
+                // I admit a symetrie in green coefiicient for rgb multiplier...probably not exactly true
+                // perhaps we can used a Snedecor test ? but why...at least we have confidence interval > 90%
+                int greengood = 55;
+
+                int maxkgood = 3;//default 3 - we can change ...to test 2, 4, 5, 6. High values perhaps less good student, but it is a compromise...
+                maxkgood = rtengine::LIM(maxkgood, 1, 6);// 2 6
+
+                if (oldsampling == true) {
+                    maxkgood = 3; // force to 3 with old low sampling
+                }
+
+                int mingood = std::min(std::fabs(Tgstud[0].greenref - 55), std::fabs(Tgstud[1].greenref - 55));
+
+                for (int k = 0; k < maxkgood; ++k) {
+                    mingood = std::min(std::fabs(mingood), std::fabs(Tgstud[k].greenref - 55));
+                }
+
+                for (int k = 0; k < maxkgood ; ++k) {
+                    if (mingood == fabs(Tgstud[k].greenref - 55)) {
+                        greengood = Tgstud[k].greenref ;
+                        goodref = Tgstud[k].tempref;
+                        studgood = Tgstud[k].student;
+                    }
+                }
+
+                if (settings->verbose) {
+                    printf("Green comparison=%f\n", keepgreen);
+                    printf("Rangegreen begin=%i  Rangegreen end=%i\n", Rangegreenused.begin, Rangegreenused.end);
+                    printf("scantemp begin=%i scantemp end=%i\n", scantempbeg, scantempend);
+                    printf("Student_0=%f Student_k= %f\n", Tgstud[0].student, Tgstud[maxkgood - 1].student);
+                    printf("mingood=%i greeng=%i goodref=%i stud=%f\n", mingood, greengood, goodref, (double) studgood);
+                }
+
+                tempitc = Txyz[goodref].Tem;
+
+                greenitc = gree[greengood].green;
+
+                int greencam = 55;
+
+                for (int gg = 0; gg < N_g; gg++) {
+                    if (gree[gg].green > keepgreen) {
+                        greencam = gg;//show the green
+                        break;
+                    }
+                }
+
+                bool greenex = false;
+
+                if ((keepgreen > 0.92 && keepgreen < 1.23)) {
+                    if (abs(greengood - greencam) > 5) {
+                        double ag = 0.;
+                        double gcal = gree[greengood].green;
+                        ag = 0.89 * (gcal - keepgreen);
+                        greenitc = gcal - ag;
+                        greenex = true;
+
+                        if (settings->verbose) {
+                            printf("green correction_1=%f \n", ag);
+                        }
+                    } else {
+                        double ag = 0.;
+                        double gcal = gree[greengood].green;
+
+                        if (keepgreen > 1.09) {
+                            ag = 0.10 * (gcal - keepgreen) * abs(greengood - greencam);
+                        } else {
+                            ag = 0.16 * (gcal - keepgreen) * abs(greengood - greencam);
+                        }
+
+                        greenitc = gcal - ag;
+                        greenex = true;
+
+                        if (settings->verbose) {
+                            printf("green correction_0=%f \n", ag);
+                        }
+
+                    }
+                }
+
+                if (((keepgreen >= 0.952 && keepgreen < 1.25) && greengood > 55) && !greenex) {
+                    double ag = 0.;
+                    double gcal = gree[greengood].green;//empirical  correction when green suspicious
+                    ag = 0.96 * (gcal - keepgreen);
+                    greenitc = gcal - ag;
+                    greenex = true;
+
+                    if (settings->verbose) {
+                        printf("green correction_2=%f \n", ag);
+                    }
+                }
+
+                if (((greengood > 41 &&  keepgreen < 0.7)  || (greengood > 46 &&  keepgreen < 0.952)) && !greenex) {
+                    double ag = 0.;
+                    double gcal = gree[greengood].green;
+                    ag = 0.95 * (gcal - keepgreen);//empirical  correction when green low - to improve
+
+                    if (purp == false) {
+                        ag -= 0.12;
+                    }
+
+                    if (settings->verbose) {
+                        printf("green correction_3=%f \n", ag);
+                    }
+
+                    greenitc = gcal - ag;
+                }
+            } else {//oldsampling
+                int greengood;
+                int greengoodprov;
+                int goodrefprov;
+                float studprov;
+                const int goodref0 = Tgstud[0].tempref;
+                const int greengood0 = Tgstud[0].greenref - 55;//55 green = 1
+                const float stud0 = Tgstud[0].student;
+                const int goodref1 = Tgstud[1].tempref;
+                const float stud1 = Tgstud[1].student;
+                const int greengood1 = Tgstud[1].greenref - 55;
+                const int goodref2 = Tgstud[2].tempref;
+                const int greengood2 = Tgstud[2].greenref - 55;
+                const float stud2 = Tgstud[2].student;
+
+                if (std::fabs(greengood2) < std::fabs(greengood1)) {
+                    greengoodprov = greengood2;
+                    goodrefprov = goodref2;
+                    studprov = stud2;
+                } else {
+                    greengoodprov = greengood1;
+                    goodrefprov = goodref1;
+                    studprov = stud1;
+
+                }
+
+                if (std::fabs(greengoodprov) < std::fabs(greengood0)) {
+                    goodref = goodrefprov;
+                    greengood = greengoodprov + 55;
+                    studgood = studprov;
+
+                } else {
+                    goodref = goodref0;
+                    greengood = greengood0 + 55;
+                    studgood = stud0;
+                }
+
+                tempitc = Txyz[goodref].Tem;
+                greenitc = gree[greengood].green;
+
+                if (estimchrom < 0.025f) {
+                    float ac = -2.40f * estimchrom + 0.06f;//small empirical  correction, maximum 0.06 if chroma=0 for all image, currently for very low chroma +0.02
+                    greenitc += ac;
+                }
+
+                itciterate = false;
+
+            }
+        }
+
+        avg_rm = 10000.f * rmm[goodref];
+        avg_gm = 10000.f * gmm[goodref];
+        avg_bm = 10000.f * bmm[goodref];
+
+        //now we have temp green and student
+        if (!oldsampling) {
+            if (lastitc  && nocam == 0 && wbpar.itcwb_alg == false) { //try to find if another tempref
+                if ((tempitc < 4000.f || tempitc > 6000.f) || extra == true) {
+                    optitc[nbitc].stud = studgood;
+                    optitc[nbitc].minc = Tppat[repref].minchroma;
+                    optitc[nbitc].titc = tempitc;
+                    optitc[nbitc].gritc = greenitc;
+                    optitc[nbitc].tempre = tempref;
+                    optitc[nbitc].greenre = greenref;
+                    optitc[nbitc].drea = dread;
+                    optitc[nbitc].kmi = kmin;
+                    optitc[nbitc].minhis = Tppat[repref].minhi;
+                    optitc[nbitc].maxhis = Tppat[repref].maxhi;
+                    optitc[nbitc].avg_r = avg_rm;
+                    optitc[nbitc].avg_g = avg_gm;
+                    optitc[nbitc].avg_b = avg_bm;
+                    optitc[nbitc].delt = Tppat[repref].delt_E;
+
+                    nbitc++;
+
+                    if (tempitc < 4000.f) {//change the second temp to be near of the first one
+                        if (tempitc < 2800.f  && kcam == 1) {
+                            tempitc += 151.f;
+                        } else if (tempitc >= 2800.f  && kcam == 1) {
+                            tempitc -= 149.f;
+                        } else {
+                            tempitc += 201.f;
+                        }
+                    } else {
+                        if (tempitc < 8000.f) {
+                            tempitc = 4197.f + 0.1255f * tempitc;
+                        } else {
+                            tempitc = 5200.f * (1.f * (tempitc / 8000.f));
+                        }
+                    }
+
+                    tempref = tempitc * (1. + wbpar.tempBias);
+
+                    optitc[nbitc].stud = studgood;
+                    optitc[nbitc].minc =  Tppat[repref].minchroma;
+                    optitc[nbitc].titc = tempitc;
+                    optitc[nbitc].gritc = greenitc;
+                    optitc[nbitc].tempre = tempref;
+                    optitc[nbitc].greenre = greenref;
+                    optitc[nbitc].drea = dread;
+                    optitc[nbitc].kmi = kmin;
+                    optitc[nbitc].minhis = Tppat[repref].minhi;
+                    optitc[nbitc].maxhis = Tppat[repref].maxhi;
+                    optitc[nbitc].avg_r = avg_rm;
+                    optitc[nbitc].avg_g = avg_gm;
+                    optitc[nbitc].avg_b = avg_bm;
+                    optitc[nbitc].delt = Tppat[repref].delt_E;
+                    lastitc = false;
+
+                } else if ((tempitc >= 4000.f && tempitc <= 6000.f) || extra == true) {
+                    optitc[nbitc].stud = studgood;
+                    optitc[nbitc].minc = Tppat[repref].minchroma;
+                    optitc[nbitc].titc = tempitc;
+                    optitc[nbitc].gritc = greenitc;
+                    optitc[nbitc].tempre = tempref;
+                    optitc[nbitc].greenre = greenref;
+                    optitc[nbitc].drea = dread;
+                    optitc[nbitc].kmi = kmin;
+                    optitc[nbitc].minhis = Tppat[repref].minhi;
+                    optitc[nbitc].maxhis = Tppat[repref].maxhi;
+                    optitc[nbitc].avg_r = avg_rm;
+                    optitc[nbitc].avg_g = avg_gm;
+                    optitc[nbitc].avg_b = avg_bm;
+                    optitc[nbitc].delt = Tppat[repref].delt_E;
+
+                    nbitc++;
+
+                    if (tempitc < 5000.f) {//change the second temp to be near of the first one
+                        tempitc += 105.f;
+                    } else {
+                        tempitc -= 105.f;
+                    }
+
+                    tempref = tempitc * (1. + wbpar.tempBias);
+
+                    optitc[nbitc].stud = studgood;
+                    optitc[nbitc].minc =  Tppat[repref].minchroma;
+                    optitc[nbitc].titc = tempitc;
+                    optitc[nbitc].gritc = greenitc;
+                    optitc[nbitc].tempre = tempref;
+                    optitc[nbitc].greenre = greenref;
+                    optitc[nbitc].drea = dread;
+                    optitc[nbitc].kmi = kmin;
+                    optitc[nbitc].minhis = Tppat[repref].minhi;
+                    optitc[nbitc].maxhis = Tppat[repref].maxhi;
+                    optitc[nbitc].avg_r = avg_rm;
+                    optitc[nbitc].avg_g = avg_gm;
+                    optitc[nbitc].avg_b = avg_bm;
+                    optitc[nbitc].delt = Tppat[repref].delt_E;
+                    lastitc = false;
+
+                }
+            } else if (nocam > 0 && wbpar.itcwb_alg == false) {
+                optitc[nbitc].stud = studgood;
+                optitc[nbitc].minc = Tppat[repref].minchroma;
+                optitc[nbitc].titc = tempitc;
+                optitc[nbitc].gritc = greenitc;
+                optitc[nbitc].tempre = tempref;
+                optitc[nbitc].greenre = greenref;
+                optitc[nbitc].drea = dread;
+                optitc[nbitc].kmi = kmin;
+                optitc[nbitc].minhis = Tppat[repref].minhi;
+                optitc[nbitc].maxhis = Tppat[repref].maxhi;
+                optitc[nbitc].avg_r = avg_rm;
+                optitc[nbitc].avg_g = avg_gm;
+                optitc[nbitc].avg_b = avg_bm;
+                optitc[nbitc].delt = Tppat[repref].delt_E;
+
+                nbitc++;
+
+                if (nocam == 1) { //new tempitc empirical values to refine
+                    tempitc -= 199.f;
+                } else if (nocam == 2) {
+                    tempitc += 201.f;
+                } else if (nocam == 3) {
+                    tempitc -= 199.f;
+                } else if (nocam == 4) {
+                    tempitc += 201.f;
+                } else if (nocam == 5) {
+                    tempitc += 299.f;
+                } else if (nocam == 6) {
+                    tempitc += 201.f;
+                } else if (nocam == 7) {
+                    tempitc += 299.f;
+                } else if (nocam == 8) {
+                    tempitc += 500.f;
+                } else if (nocam == 9) {
+                    tempitc += 199.f;
+                } else if (nocam == 10) {
+                    tempitc += 199.f;
+                }
+
+                nocam = 0;
+                tempref = tempitc * (1. + wbpar.tempBias);
+
+                optitc[nbitc].stud = studgood;
+                optitc[nbitc].minc =  Tppat[repref].minchroma;
+                optitc[nbitc].titc = tempitc;
+                optitc[nbitc].gritc = greenitc;
+                optitc[nbitc].tempre = tempref;
+                optitc[nbitc].greenre = greenref;
+                optitc[nbitc].drea = dread;
+                optitc[nbitc].kmi = kmin;
+                optitc[nbitc].minhis = Tppat[repref].minhi;
+                optitc[nbitc].maxhis = Tppat[repref].maxhi;
+                optitc[nbitc].avg_r = avg_rm;
+                optitc[nbitc].avg_g = avg_gm;
+                optitc[nbitc].avg_b = avg_bm;
+                optitc[nbitc].delt = Tppat[repref].delt_E;
+                lastitc = false;
+            } else {
+                optitc[nbitc].stud = studgood;
+                optitc[nbitc].minc =  Tppat[repref].minchroma;
+                optitc[nbitc].titc = tempitc;
+                optitc[nbitc].gritc = greenitc;
+                optitc[nbitc].tempre = tempref;
+                optitc[nbitc].greenre = greenref;
+                optitc[nbitc].drea = dread;
+                optitc[nbitc].kmi = kmin;
+                optitc[nbitc].minhis = Tppat[repref].minhi;
+                optitc[nbitc].maxhis = Tppat[repref].maxhi;
+                optitc[nbitc].avg_r = avg_rm;
+                optitc[nbitc].avg_g = avg_gm;
+                optitc[nbitc].avg_b = avg_bm;
+                optitc[nbitc].delt = Tppat[repref].delt_E;
+
+                lastitc = false;
+                itciterate = false;
+            }
+
+
+            if (optitc[1].minc > 0.f) {
+                choiceitc = 1;
+                temp0 = optitc[0].titc;
+            } else {
+                choiceitc = 0;
+                temp0 = 0.f;
+            }
+        }//end loop
+
+        if (!oldsampling) {
+
+            if (settings->verbose) {
+                for (int d = 0; d < 2; d++) {
+                    printf("n=%i nbitc=%i stu=%f minc=%f tempitc=%f greenitc=%f deltaE=%f choiceitc=%i\n", d, nbitc, (double) optitc[d].stud, (double) optitc[d].minc, (double) optitc[d].titc, (double) optitc[d].gritc, (double) optitc[d].delt, choiceitc);
+                }
+            }
+
+            if ((nbitc == 1 && choiceitc == 1) && wbpar.itcwb_alg == false && oldsampling == false) {
+                bia = 2;
+
+                if ((std::max(optitc[1].stud, 0.0004f) * optitc[1].delt < std::max(optitc[0].stud, 0.0004f) * optitc[0].delt) && wbpar.itcwb_alg == false) {
+                    bia = 3;
+                } else {
+                    bia = 2;
+                }
+
+                studgood = optitc[choiceitc].stud;
+                minchrom = optitc[choiceitc].minc;
+                tempitc = optitc[choiceitc].titc;
+                greenitc = optitc[choiceitc].gritc;
+                tempref = optitc[choiceitc].tempre;
+                greenref = optitc[choiceitc].greenre;
+                dread = optitc[choiceitc].drea;
+                kmin = optitc[choiceitc].kmi;
+                minhist = optitc[choiceitc].minhis;
+                maxhist = optitc[choiceitc].maxhis;
+                avg_rm = optitc[choiceitc].avg_r;
+                avg_gm = optitc[choiceitc].avg_g;
+                avg_bm = optitc[choiceitc].avg_b;
+            } else if (!oldsampling) {
+                studgood = optitc[0].stud;
+                minchrom = optitc[0].minc;
+                tempitc = optitc[0].titc;
+                greenitc = optitc[0].gritc;
+                tempref = optitc[0].tempre;
+                greenref = optitc[0].greenre;
+                dread = optitc[0].drea;
+                kmin = optitc[0].kmi;
+                minhist = optitc[0].minhis;
+                maxhist = optitc[0].maxhis;
+                avg_rm = optitc[0].avg_r;
+                avg_gm = optitc[0].avg_g;
+                avg_bm = optitc[0].avg_b;
+            }
         }
     }
 
-    avg_rm = 10000.f * rmm[goodref];
-    avg_gm = 10000.f * gmm[goodref];
-    avg_bm = 10000.f * bmm[goodref];
+    t8.set();
 
-    if (!extra) {
-        tempitc = Txyz[goodref].Tem;
-    }
-
-    //now we have temp green and student
     if (settings->verbose) {
-        printf("ITCWB tempitc=%f gritc=%f stud=%f \n", tempitc, greenitc, studgood);
+        printf("Seventh: from sixth to end: %d nsec\n",  t8.etime(t7));
     }
+
 }
 
-void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double & avg_rm, double & avg_gm, double & avg_bm, double & tempitc, double & greenitc, float & studgood, bool & twotimes, const WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const ColorManagementParams & cmp, const RAWParams & raw, const ToneCurveParams &hrp)
+void RawImageSource::WBauto(bool extra, double & tempref, double & greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double & avg_rm, double & avg_gm, double & avg_bm, double & tempitc, double & greenitc, float &temp0, float &delta, int &bia,  int &dread, int &kcam, int &nocam, float & studgood, float &minchrom, int &kmin, float &minhist, float &maxhist, bool & twotimes, const WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const ColorManagementParams & cmp, const RAWParams & raw, const ToneCurveParams &hrp)
 {
 //    BENCHFUN
     //auto white balance
     //put green (tint) in reasonable limits for an Daylight illuminant
     // avoid too bi or too low values
     if (wbpar.method == "autitcgreen") {
-        bool extra = true;
+        // bool extra = true;
 
         if (greenref > 0.5 && greenref < 1.3) {// 0.5 and 1.3 arbitraties values
             greenitc = greenref;
 
         } else {
             greenitc = 1.;
-            extra = true;
+            //     extra = true;
         }
 
         tempitc = 5000.;
-        ItcWB(extra, tempref, greenref, tempitc, greenitc, studgood, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, cmp, raw, wbpar, hrp);
+        ItcWB(extra, tempref, greenref, tempitc, greenitc, temp0, delta, bia, dread, kcam, nocam, studgood, minchrom, kmin, minhist, maxhist, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, cmp, raw, wbpar, hrp);
     }
 }
 
@@ -6092,7 +7392,9 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
     //used by auto WB local to calculate red, green, blue in local region
 
     int precision = 3;//must be 3 5 or 9
-    if(wbpar.itcwb_sampling == true) {
+    bool oldsampling = wbpar.itcwb_sampling;
+
+    if (oldsampling == true) {
         precision = 5;
     }
 
@@ -6163,7 +7465,7 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
     }
 }
 
-void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref, double & tempitc, double & greenitc, float &studgood,  int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double & rm, double & gm, double & bm, const WBParams & wbpar, const ColorManagementParams & cmp, const RAWParams & raw, const ToneCurveParams &hrp)
+void RawImageSource::getAutoWBMultipliersitc(bool extra, double & tempref, double & greenref, double & tempitc, double & greenitc, float &temp0, float &delta,  int &bia, int &dread, int &kcam, int &nocam, float &studgood, float &minchrom, int &kmin,  float &minhist, float &maxhist, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double & rm, double & gm, double & bm, const WBParams & wbpar, const ColorManagementParams & cmp, const RAWParams & raw, const ToneCurveParams &hrp)
 {
 //    BENCHFUN
     constexpr double clipHigh = 64000.0;
@@ -6356,21 +7658,24 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
     if (wbpar.method == "autitcgreen") {
         bool twotimes = false;
         int precision = 3;//must be 3 5 or 9
-        if(wbpar.itcwb_sampling == true) {
+        bool oldsampling = wbpar.itcwb_sampling;
+
+        if (oldsampling == true) {
             precision = 5;
         }
 
+        // bool extra = true;
         const int bfw = W / precision + ((W % precision) > 0 ? 1 : 0);// 5 arbitrary value can be change to 3 or 9 ;
         const int bfh = H / precision + ((H % precision) > 0 ? 1 : 0);
-        WBauto(tempref, greenref, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, tempitc, greenitc, studgood, twotimes, wbpar, begx, begy, yEn,  xEn,  cx,  cy, cmp, raw, hrp);
+        WBauto(extra, tempref, greenref, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, tempitc, greenitc, temp0, delta,  bia, dread, kcam, nocam, studgood, minchrom, kmin, minhist, maxhist, twotimes, wbpar, begx, begy, yEn,  xEn,  cx,  cy, cmp, raw, hrp);
     }
 
     redloc(0, 0);
     greenloc(0, 0);
     blueloc(0, 0);
 
-    if (settings->verbose) {
-        printf("AVG: %g %g %g\n", avg_r / std::max(1, rn), avg_g / std::max(1, gn), avg_b / std::max(1, bn));
+    if (settings->verbose  && wbpar.method != "autitcgreen") {
+        printf("RGB grey AVG: %g %g %g\n", avg_r / std::max(1, rn), avg_g / std::max(1, gn), avg_b / std::max(1, bn));
     }
 
     if (wbpar.method == "autitcgreen") {
@@ -6605,7 +7910,7 @@ void RawImageSource::getAutoWBMultipliers(double &rm, double &gm, double &bm)
     blueAWBMul = bm = imatrices.rgb_cam[2][0] * reds + imatrices.rgb_cam[2][1] * greens + imatrices.rgb_cam[2][2] * blues;
 }
 
-ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran, double equal, StandardObserver observer)
+ColorTemp RawImageSource::getSpotWB(std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran, double equal, StandardObserver observer)
 {
 
     int x;
@@ -6618,7 +7923,7 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
             int d[9][2] = {{0, 0}, { -1, -1}, { -1, 0}, { -1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
 
             for (size_t i = 0; i < red.size(); i++) {
-                transformPosition (red[i].x, red[i].y, tran, x, y);
+                transformPosition(red[i].x, red[i].y, tran, x, y);
                 double rloc, gloc, bloc;
                 int rnbrs, gnbrs, bnbrs;
                 rloc = gloc = bloc = rnbrs = gnbrs = bnbrs = 0;
@@ -6661,11 +7966,11 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
             int xr, xg, xb, yr, yg, yb;
 
             for (size_t i = 0; i < red.size(); i++) {
-                transformPosition (red[i].x, red[i].y, tran, xr, yr);
-                transformPosition (green[i].x, green[i].y, tran, xg, yg);
-                transformPosition (blue[i].x, blue[i].y, tran, xb, yb);
+                transformPosition(red[i].x, red[i].y, tran, xr, yr);
+                transformPosition(green[i].x, green[i].y, tran, xg, yg);
+                transformPosition(blue[i].x, blue[i].y, tran, xb, yb);
 
-                if (initialGain * (rawData[yr][3 * xr] ) > 52500 ||
+                if (initialGain * (rawData[yr][3 * xr]) > 52500 ||
                         initialGain * (rawData[yg][3 * xg + 1]) > 52500 ||
                         initialGain * (rawData[yb][3 * xb + 2]) > 52500) {
                     continue;
@@ -6677,7 +7982,7 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
                 ymax = max(yr, yg, yb);
 
                 if (xmin >= 0 && ymin >= 0 && xmax < W && ymax < H) {
-                    reds    += (rawData[yr][3 * xr] );
+                    reds    += (rawData[yr][3 * xr]);
                     greens  += (rawData[yg][3 * xg + 1]);
                     blues   += (rawData[yb][3 * xb + 2]);
                     rn++;
@@ -6690,7 +7995,7 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
         int d[9][2] = {{0, 0}, { -1, -1}, { -1, 0}, { -1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
 
         for (size_t i = 0; i < red.size(); i++) {
-            transformPosition (red[i].x, red[i].y, tran, x, y);
+            transformPosition(red[i].x, red[i].y, tran, x, y);
             double rloc, gloc, bloc;
             int rnbrs, gnbrs, bnbrs;
             rloc = gloc = bloc = rnbrs = gnbrs = bnbrs = 0;
@@ -6728,7 +8033,7 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
                 rn++;
             }
 
-            transformPosition (green[i].x, green[i].y, tran, x, y);//these are redundant now ??? if not, repeat for these blocks same as for red[]
+            transformPosition(green[i].x, green[i].y, tran, x, y); //these are redundant now ??? if not, repeat for these blocks same as for red[]
             rloc = gloc = bloc = rnbrs = gnbrs = bnbrs = 0;
 
             for (int k = 0; k < 9; k++) {
@@ -6764,7 +8069,7 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
                 rn++;
             }
 
-            transformPosition (blue[i].x, blue[i].y, tran, x, y);
+            transformPosition(blue[i].x, blue[i].y, tran, x, y);
             rloc = gloc = bloc = rnbrs = gnbrs = bnbrs = 0;
 
             for (int k = 0; k < 9; k++) {
@@ -6803,7 +8108,7 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
     }
 
     if (2u * rn < red.size()) {
-        return ColorTemp (equal);
+        return ColorTemp(equal);
     } else {
         reds = reds / std::max(1u, rn) * refwb_red;
         greens = greens / std::max(1u, rn) * refwb_green;
@@ -6813,14 +8118,14 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
         double gm = imatrices.rgb_cam[1][0] * reds + imatrices.rgb_cam[1][1] * greens + imatrices.rgb_cam[1][2] * blues;
         double bm = imatrices.rgb_cam[2][0] * reds + imatrices.rgb_cam[2][1] * greens + imatrices.rgb_cam[2][2] * blues;
 
-        return ColorTemp (rm, gm, bm, equal, observer);
+        return ColorTemp(rm, gm, bm, equal, observer);
     }
 }
 
-void RawImageSource::transformPosition (int x, int y, int tran, int& ttx, int& tty)
+void RawImageSource::transformPosition(int x, int y, int tran, int& ttx, int& tty)
 {
 
-    tran = defTransform (tran);
+    tran = defTransform(tran);
 
     x += border;
     y += border;
@@ -6882,7 +8187,7 @@ void RawImageSource::transformPosition (int x, int y, int tran, int& ttx, int& t
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::inverse33 (const double (*rgb_cam)[3], double (*cam_rgb)[3])
+void RawImageSource::inverse33(const double (*rgb_cam)[3], double (*cam_rgb)[3])
 {
     double nom = (rgb_cam[0][2] * rgb_cam[1][1] * rgb_cam[2][0] - rgb_cam[0][1] * rgb_cam[1][2] * rgb_cam[2][0] -
                   rgb_cam[0][2] * rgb_cam[1][0] * rgb_cam[2][1] + rgb_cam[0][0] * rgb_cam[1][2] * rgb_cam[2][1] +
@@ -6901,7 +8206,7 @@ void RawImageSource::inverse33 (const double (*rgb_cam)[3], double (*cam_rgb)[3]
 DiagonalCurve* RawImageSource::phaseOneIccCurve;
 DiagonalCurve* RawImageSource::phaseOneIccCurveInv;
 
-void RawImageSource::init ()
+void RawImageSource::init()
 {
 
     {
@@ -6950,56 +8255,70 @@ void RawImageSource::getRawValues(int x, int y, int rotate, int &R, int &G, int 
         R = G = B = 0;
         return;
     }
+
     int xnew = x + border;
     int ynew = y + border;
     rotate += ri->get_rotateDegree();
     rotate %= 360;
+
     if (rotate == 90) {
-        std::swap(xnew,ynew);
+        std::swap(xnew, ynew);
         ynew = H - 1 - ynew;
     } else if (rotate == 180) {
         xnew = W - 1 - xnew;
         ynew = H - 1 - ynew;
     } else if (rotate == 270) {
-        std::swap(xnew,ynew);
+        std::swap(xnew, ynew);
         xnew = W - 1 - xnew;
     }
 
     xnew = LIM(xnew, 0, W - 1);
     ynew = LIM(ynew, 0, H - 1);
-    int c = ri->getSensorType() == ST_FUJI_XTRANS ? ri->XTRANSFC(ynew,xnew) : ri->FC(ynew,xnew);
+    int c = ri->getSensorType() == ST_FUJI_XTRANS ? ri->XTRANSFC(ynew, xnew) : ri->FC(ynew, xnew);
     int val = round(rawData[ynew][xnew] / scale_mul[c]);
+
     if (c == 0) {
-        R = val; G = 0; B = 0;
+        R = val;
+        G = 0;
+        B = 0;
     } else if (c == 2) {
-        R = 0; G = 0; B = val;
+        R = 0;
+        G = 0;
+        B = val;
     } else {
-        R = 0; G = val; B = 0;
+        R = 0;
+        G = val;
+        B = 0;
     }
 }
 
-bool RawImageSource::isGainMapSupported() const {
+bool RawImageSource::isGainMapSupported() const
+{
     return ri->isGainMapSupported();
 }
 
-void RawImageSource::applyDngGainMap(const float black[4], const std::vector<GainMap> &gainMaps) {
+void RawImageSource::applyDngGainMap(const float black[4], const std::vector<GainMap> &gainMaps)
+{
     // now we can apply each gain map to raw_data
     array2D<float> mvals[2][2];
+
     for (auto &m : gainMaps) {
         mvals[m.Top & 1][m.Left & 1](m.MapPointsH, m.MapPointsV, m.MapGain.data());
     }
 
     // now we assume, col_scale and row scale is the same for all maps
-    const float col_scale = float(gainMaps[0].MapPointsH-1) / float(W);
-    const float row_scale = float(gainMaps[0].MapPointsV-1) / float(H);
+    const float col_scale = float(gainMaps[0].MapPointsH - 1) / float(W);
+    const float row_scale = float(gainMaps[0].MapPointsV - 1) / float(H);
 
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic, 16)
 #endif
+
     for (std::size_t y = 0; y < static_cast<size_t>(H); ++y) {
-        const float rowBlack[2] = {black[FC(y,0)], black[FC(y,1)]};
+        const float rowBlack[2] = {black[FC(y, 0)], black[FC(y, 1)]};
         const float ys = y * row_scale;
         float xs = 0.f;
+
         for (std::size_t x = 0; x < static_cast<std::size_t>(W); ++x, xs += col_scale) {
             const float f = getBilinearValue(mvals[y & 1][x & 1], xs, ys);
             const float b = rowBlack[x & 1];
@@ -7008,7 +8327,7 @@ void RawImageSource::applyDngGainMap(const float black[4], const std::vector<Gai
     }
 }
 
-void RawImageSource::cleanup ()
+void RawImageSource::cleanup()
 {
     delete phaseOneIccCurve;
     delete phaseOneIccCurveInv;

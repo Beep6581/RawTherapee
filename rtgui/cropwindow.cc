@@ -415,7 +415,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                             // Add a new Color Picker
                             rtengine::Coord imgPos;
                             screenCoordToImage(x, y, imgPos.x, imgPos.y);
-                            LockableColorPicker *newPicker = new LockableColorPicker(this, &cropHandler.colorParams->outputProfile, &cropHandler.colorParams->workingProfile);
+                            LockableColorPicker *newPicker = new LockableColorPicker(this, cropHandler.colorParams.get());
                             colorPickers.push_back(newPicker);
                             hoveredPicker = newPicker;
                             updateHoveredPicker(&imgPos);
@@ -1107,10 +1107,10 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
                 printf("Using \"%s\" output\n", outputProfile.c_str());
                 if(outputProfile==options.rtSettings.srgb) printf("OK SRGB2");
             */
-            pmlistener->pointerMoved (false, cropHandler.colorParams->outputProfile, cropHandler.colorParams->workingProfile, mx, my, -1, -1, -1);
+            pmlistener->pointerMoved (false, *cropHandler.colorParams, mx, my, -1, -1, -1);
 
             if (pmhlistener) {
-                pmhlistener->pointerMoved (false, cropHandler.colorParams->outputProfile, cropHandler.colorParams->workingProfile, mx, my, -1, -1, -1);
+                pmhlistener->pointerMoved (false, *cropHandler.colorParams, mx, my, -1, -1, -1);
             }
 
         } else {
@@ -1157,11 +1157,11 @@ void CropWindow::pointerMoved (int bstate, int x, int y)
 
                 // Updates the Navigator
                 // TODO: possible double color conversion if rval, gval, bval come from cropHandler.cropPixbuftrue ? see issue #4583
-                pmlistener->pointerMoved (true, cropHandler.colorParams->outputProfile, cropHandler.colorParams->workingProfile, mx, my, rval, gval, bval, isRaw);
+                pmlistener->pointerMoved (true, *cropHandler.colorParams, mx, my, rval, gval, bval, isRaw);
 
                 if (pmhlistener) {
                     // Updates the HistogramRGBArea
-                    pmhlistener->pointerMoved (true, cropHandler.colorParams->outputProfile, cropHandler.colorParams->workingProfile, mx, my, rval, gval, bval);
+                    pmhlistener->pointerMoved (true, *cropHandler.colorParams, mx, my, rval, gval, bval);
                 }
             }
         }

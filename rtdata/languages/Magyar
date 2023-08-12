@@ -1,4 +1,6 @@
-#01 2010-11-20 RT 3.0 alpha 1 rev. 597:fb291bf74c by Dr. Gyurkó M. 'dualon' Dávid
+#001 2010-11-20 RT 3.0 alpha 1 rev. 597:fb291bf74c by Dr. Gyurkó M. 'dualon' Dávid
+#100
+#101 @LANGUAGE_DISPLAY_NAME=Magyar
 
 ABOUT_TAB_BUILD;Verzió
 ABOUT_TAB_CREDITS;Szerzők

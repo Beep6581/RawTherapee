@@ -87,7 +87,7 @@ public:
     ~HistogramRGBArea() override;
 
     // Update pointer values: returns true if widget needs redrawing
-    bool updatePointer (const int new_r, const int new_g, const int new_b, const Glib::ustring &new_profile = "", const Glib::ustring &new_profileW = "");
+    bool updatePointer (const int new_r, const int new_g, const int new_b, const rtengine::procparams::ColorManagementParams *cmp = nullptr);
     // Update internal parameters from options
     void updateFromOptions ();
 
@@ -197,7 +197,7 @@ public:
     ~HistogramArea() override;
 
     // Update pointer values: returns true if widget needs redrawing
-    bool updatePointer(const int r, const int g, const int b, const Glib::ustring &profile = "", const Glib::ustring &profileW = "");
+    bool updatePointer(const int r, const int g, const int b, const rtengine::procparams::ColorManagementParams *cmp = nullptr);
     // Update histogram data
     void update(
         const LUTu& histRed,
@@ -263,7 +263,7 @@ public:
 class HistogramPanel final : public Gtk::Grid, public PointerMotionListener, public DrawModeListener, public rtengine::NonCopyable
 {
 private:
-    DelayedCall<bool, Glib::ustring, Glib::ustring, int, int, int> pointer_moved_delayed_call;
+    DelayedCall<bool, const rtengine::procparams::ColorManagementParams *, int, int, int> pointer_moved_delayed_call;
 
 protected:
 
@@ -345,7 +345,7 @@ public:
         histogramArea->update(histRed, histGreen, histBlue, histLuma, histChroma, histRedRaw, histGreenRaw, histBlueRaw, vectorscopeScale, vectorscopeHC, vectorscopeHS, waveformScale, waveformRed, waveformGreen, waveformBlue, waveformLuma);
     }
     // pointermotionlistener interface
-    void pointerMoved (bool validPos, const Glib::ustring &profile, const Glib::ustring &profileW, int x, int y, int r, int g, int b, bool isRaw = false) override;
+    void pointerMoved (bool validPos, const rtengine::procparams::ColorManagementParams &cmp, int x, int y, int r, int g, int b, bool isRaw = false) override;
 
     void reorder (Gtk::PositionType position);
     void red_toggled ();

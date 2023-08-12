@@ -52,6 +52,7 @@ Adjuster::Adjuster(
     grid(nullptr),
     label(nullptr),
     imageIcon1(imgIcon1),
+    imageIcon2(imgIcon2),
     automatic(nullptr),
     adjusterListener(nullptr),
     spinChange(options.adjusterMinDelay, options.adjusterMaxDelay),
@@ -77,8 +78,8 @@ Adjuster::Adjuster(
         setExpandAlignProperties(imageIcon1, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     }
 
-    if (imgIcon2) {
-        setExpandAlignProperties(imgIcon2, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+    if (imageIcon2) {
+        setExpandAlignProperties(imageIcon2, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     }
 
     set_column_spacing(0);
@@ -121,9 +122,9 @@ Adjuster::Adjuster(
             attach_next_to(*imageIcon1, *slider, Gtk::POS_LEFT, 1, 1);
         }
 
-        if (imgIcon2) {
-            attach_next_to(*imgIcon2, *slider, Gtk::POS_RIGHT, 1, 1);
-            attach_next_to(*spin, *imgIcon2, Gtk::POS_RIGHT, 1, 1);
+        if (imageIcon2) {
+            attach_next_to(*imageIcon2, *slider, Gtk::POS_RIGHT, 1, 1);
+            attach_next_to(*spin, *imageIcon2, Gtk::POS_RIGHT, 1, 1);
         } else {
             attach_next_to(*spin, *slider, Gtk::POS_RIGHT, 1, 1);
         }
@@ -141,9 +142,9 @@ Adjuster::Adjuster(
             grid->attach_next_to(*imageIcon1, *slider, Gtk::POS_LEFT, 1, 1);
         }
 
-        if (imgIcon2) {
-            grid->attach_next_to(*imgIcon2, Gtk::POS_RIGHT, 1, 1);
-            grid->attach_next_to(*reset, *imgIcon2, Gtk::POS_RIGHT, 1, 1);
+        if (imageIcon2) {
+            grid->attach_next_to(*imageIcon2, Gtk::POS_RIGHT, 1, 1);
+            grid->attach_next_to(*reset, *imageIcon2, Gtk::POS_RIGHT, 1, 1);
         } else {
             grid->attach_next_to(*reset, *slider, Gtk::POS_RIGHT, 1, 1);
         }
@@ -683,4 +684,16 @@ void Adjuster::setDelay(unsigned int min_delay_ms, unsigned int max_delay_ms)
 {
     spinChange.setDelay(min_delay_ms, max_delay_ms);
     sliderChange.setDelay(min_delay_ms, max_delay_ms);
+}
+
+void Adjuster::showIcons(bool yes)
+{
+    if (imageIcon1) {
+        imageIcon1->set_visible(yes);
+        imageIcon1->set_no_show_all(!yes);
+    }
+    if (imageIcon2) {
+        imageIcon2->set_visible(yes);
+        imageIcon2->set_no_show_all(!yes);
+    }
 }
