@@ -647,6 +647,7 @@ Camera constants:
         "make_model": "Canon EOS 7D Mark II",
         "dcraw_matrix": [ 7268,-1082,-969,-4186,11839,2663,-825,2029,5839 ], // dng_v8.7 d65
         //"dcraw_matrix": [ 6285,-147,-821,-4080,11695,2714,-1045,2459,5497 ], // DXO D50
+        "raw_crop": [ 72, 38, 5496, 3669 ],
         "ranges": {
             "white": [
                 { "iso": [ 100, 125 ], "levels": 13500 }, // typical 13583 - LENR 13550
@@ -2993,8 +2994,8 @@ Camera constants:
         "dcraw_matrix": [ 6629,-1900,-483,-4618,12349,2550,-622,1381,6514 ], // DNG_v9.1.1 D65
         "raw_crop": [ 0, 0, -36, 0 ], // full raw frame 8000x5320 - 36 rightmost columns are garbage
         "ranges": { "black": 512, "white": 16300 },
-        // PDAF info provided by Horshack with the rawshack tool (http://testcams.com/rawshack/)
-        "pdaf_pattern" : [ 0,24,36,60,84,120,132,156,192,204,240,252,276,300,324,360,372,396,420 ],
+        // PDAF lines pattern detected from image provided by elite4jonny at https://github.com/Beep6581/RawTherapee/issues/6801.
+        "pdaf_pattern" : [ 0,24,36,60,84,120,132,156,192,204,240,252,276,300,324,360,372,396,420,444,480,492,504,540,564,576,612,636,660,696,720,732,756,780,804,840 ],
         "pdaf_offset" : 31
     },
 

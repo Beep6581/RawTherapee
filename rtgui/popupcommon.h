@@ -64,6 +64,8 @@ public:
     bool addEntry (const Glib::ustring& fileName, const Glib::ustring& label, Gtk::RadioButtonGroup* radioGroup = nullptr);
     bool insertEntry(int position, const Glib::ustring& fileName, const Glib::ustring& label, Gtk::RadioButtonGroup* radioGroup = nullptr);
     bool insertEntry(int position, const Glib::RefPtr<const Gio::Icon>& gIcon, const Glib::ustring& label, Gtk::RadioButtonGroup* radioGroup = nullptr);
+    /// Sets the button image to show when there are no entries.
+    void setEmptyImage(const Glib::ustring &fileName);
     int getEntryCount () const;
     bool setSelected (int entryNum);
     int  getSelected () const;
@@ -77,6 +79,7 @@ private:
     type_signal_changed messageChanged;
     type_signal_item_selected messageItemSelected;
 
+    Glib::ustring emptyImageFilename;
     std::vector<Glib::RefPtr<const Gio::Icon>> imageIcons;
     std::vector<Glib::ustring> imageFilenames;
     std::vector<const RTImage*> images;

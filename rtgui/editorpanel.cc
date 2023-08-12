@@ -905,6 +905,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     send_to_external = Gtk::manage(new PopUpButton("", false));
     send_to_external->set_tooltip_text(M("MAIN_BUTTON_SENDTOEDITOR_TOOLTIP"));
+    send_to_external->setEmptyImage("palette-brush.png");
     setExpandAlignProperties(send_to_external->buttonGroup, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     updateExternalEditorWidget(
         options.externalEditorIndex >= 0 ? options.externalEditorIndex : options.externalEditors.size(),
@@ -2037,7 +2038,7 @@ bool EditorPanel::idle_saveImage (ProgressConnector<rtengine::IImagefloat*> *pc,
         msgd.run ();
 
         saveimgas->set_sensitive (true);
-        send_to_external->set_sensitive(true);
+        send_to_external->set_sensitive(send_to_external->getEntryCount());
         isProcessing = false;
 
     }
@@ -2065,7 +2066,7 @@ bool EditorPanel::idle_imageSaved (ProgressConnector<int> *pc, rtengine::IImagef
     }
 
     saveimgas->set_sensitive (true);
-    send_to_external->set_sensitive(true);
+    send_to_external->set_sensitive(send_to_external->getEntryCount());
 
     parent->setProgressStr ("");
     parent->setProgress (0.);
@@ -2256,8 +2257,10 @@ void EditorPanel::sendToExternalPressed()
         dialog->show();
     } else {
         struct ExternalEditor editor = options.externalEditors.at(options.externalEditorIndex);
-        external_editor_info = Gio::AppInfo::create_from_commandline(editor.command, editor.name, Gio::APP_INFO_CREATE_NONE);
-        external_editor_native_command = editor.native_command;
+        external_editor_info = {
+            editor.name,
+            editor.command,
+            editor.native_command};
         sendToExternal();
     }
 }
@@ -2395,7 +2398,7 @@ bool EditorPanel::idle_sendToGimp ( ProgressConnector<rtengine::IImagefloat*> *p
         Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
         msgd.run ();
         saveimgas->set_sensitive (true);
-        send_to_external->set_sensitive(true);
+        send_to_external->set_sensitive(send_to_external->getEntryCount());
     }
 
     return false;
@@ -2416,14 +2419,14 @@ bool EditorPanel::idle_sentToGimp (ProgressConnector<int> *pc, rtengine::IImagef
 
     if ((!img && Glib::file_test(filename, Glib::FILE_TEST_IS_REGULAR)) || (img && !errore)) {
         saveimgas->set_sensitive (true);
-        send_to_external->set_sensitive(true);
+        send_to_external->set_sensitive(send_to_external->getEntryCount());
         parent->setProgressStr ("");
         parent->setProgress (0.);
         bool success = false;
 
         setUserOnlyPermission(Gio::File::create_for_path(filename), false);
 
-        success = ExtProgStore::openInExternalEditor(filename, external_editor_info, external_editor_native_command);
+        success = ExtProgStore::openInExternalEditor(filename, external_editor_info);
 
         if (!success) {
             Gtk::MessageDialog msgd (*parent, M ("MAIN_MSG_CANNOTSTARTEDITOR"), false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
@@ -2452,12 +2455,16 @@ RTAppChooserDialog *EditorPanel::getAppChooserDialog()
 void EditorPanel::onAppChooserDialogResponse(int responseId)
 {
     switch (responseId) {
-        case Gtk::RESPONSE_OK:
+        case Gtk::RESPONSE_OK: {
             getAppChooserDialog()->close();
-            external_editor_info = getAppChooserDialog()->get_app_info();
-            external_editor_native_command = false;
+            const auto app_info = getAppChooserDialog()->get_app_info();
+            external_editor_info = {
+                app_info->get_name(),
+                app_info->get_commandline(),
+                false};
             sendToExternal();
             break;
+        }
         case Gtk::RESPONSE_CANCEL:
         case Gtk::RESPONSE_CLOSE:
             getAppChooserDialog()->close();
@@ -2788,7 +2795,10 @@ void EditorPanel::updateExternalEditorWidget(int selectedIndex, const std::vecto
             send_to_external->insertEntry(i, "palette-brush.png", name, &send_to_external_radio_group);
         }
     }
+#ifndef __APPLE__
     send_to_external->addEntry("palette-brush.png", M("GENERAL_OTHER"), &send_to_external_radio_group);
+#endif
+    send_to_external->set_sensitive(send_to_external->getEntryCount());
     send_to_external->setSelected(selectedIndex);
     send_to_external->show();
 }
