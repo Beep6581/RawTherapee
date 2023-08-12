@@ -559,7 +559,7 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     iprofiles->set_size_request(50, -1);
     setExpandAlignProperties(iprofiles, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
     ipconn = iprofiles->signal_changed().connect(sigc::mem_fun(*this, &Preferences::forImageComboChanged));
-    
+
     Gtk::Grid* defpt = Gtk::manage(new Gtk::Grid());
     defpt->set_row_spacing(2);
     defpt->attach(*drlab, 0, 0, 1, 1);
@@ -567,7 +567,7 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     defpt->attach(*drimg, 0, 1, 1, 1);
     defpt->attach(*iprofiles, 1, 1, 1, 1);
     vbpp->pack_start(*defpt, Gtk::PACK_SHRINK, 4);
-    
+
     useBundledProfiles = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_USEBUNDLEDPROFILES")));
     bpconn = useBundledProfiles->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::bundledProfilesChanged));
     vbpp->pack_start(*useBundledProfiles, Gtk::PACK_SHRINK, 4);
@@ -613,9 +613,36 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     fdp->add(*vbdp);
     vbImageProcessing->pack_start (*fdp, Gtk::PACK_SHRINK, 4);
 
-//    Gtk::Frame* fdf = Gtk::manage (new Gtk::Frame (M ("PREFERENCES_DARKFRAME")) );
-//    Gtk::Box* hb42 = Gtk::manage (new Gtk::Box ());
-//    darkFrameDir = Gtk::manage (new Gtk::FileChooserButton (M ("PREFERENCES_DIRDARKFRAMES"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
+    // Metadata
+    Gtk::Frame *mf = Gtk::manage(new Gtk::Frame(M("PREFERENCES_METADATA")));
+    Gtk::Grid *mtbl = Gtk::manage(new Gtk::Grid());
+    setExpandAlignProperties(mtbl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+
+    metadataSyncCombo = Gtk::manage(new Gtk::ComboBoxText());
+    metadataSyncCombo->set_active(0);
+    metadataSyncCombo->append(M("PREFERENCES_METADATA_SYNC_NONE"));
+    metadataSyncCombo->append(M("PREFERENCES_METADATA_SYNC_READ"));
+    metadataSyncCombo->append(M("PREFERENCES_METADATA_SYNC_READWRITE"));
+    Gtk::Label *mlbl = Gtk::manage(new Gtk::Label(M("PREFERENCES_METADATA_SYNC") + ": "));
+    mtbl->attach(*mlbl, 0, 0, 1, 1);
+    mtbl->attach_next_to(*metadataSyncCombo, *mlbl, Gtk::POS_RIGHT, 1, 1);
+    setExpandAlignProperties(mlbl, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(metadataSyncCombo, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+
+    xmpSidecarCombo = Gtk::manage(new Gtk::ComboBoxText());
+    xmpSidecarCombo->set_active(0);
+    xmpSidecarCombo->append(M("PREFERENCES_XMP_SIDECAR_MODE_STD"));
+    xmpSidecarCombo->append(M("PREFERENCES_XMP_SIDECAR_MODE_EXT"));
+
+    mlbl = Gtk::manage(new Gtk::Label(M("PREFERENCES_XMP_SIDECAR_MODE") + ": "));
+    mtbl->attach(*mlbl, 0, 2, 1, 1);
+    mtbl->attach_next_to(*xmpSidecarCombo, *mlbl, Gtk::POS_RIGHT, 1, 1);
+    setExpandAlignProperties(mlbl, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(xmpSidecarCombo, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+
+    mf->add(*mtbl);
+    vbImageProcessing->pack_start(*mf, Gtk::PACK_SHRINK, 4);
+
     // Directories
     Gtk::Frame* cdf = Gtk::manage(new Gtk::Frame(M("PREFERENCES_DIRECTORIES")));
     Gtk::Grid* dirgrid = Gtk::manage(new Gtk::Grid());
@@ -1196,7 +1223,7 @@ Gtk::Widget* Preferences::getGeneralPanel()
     setExpandAlignProperties(pseudoHiDPI, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
 
     Gtk::Separator *vSep = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_VERTICAL));
-    
+
 
     appearanceGrid->attach(*themeLbl,           0, 0, 1, 1);
     appearanceGrid->attach(*themeCBT,           1, 0, 1, 1);
@@ -1959,6 +1986,9 @@ void Preferences::storePreferences()
     moptions.cropAutoFit = cropAutoFitCB->get_active();
 
     toolLocationPreference->updateOptions();
+
+    moptions.rtSettings.metadata_xmp_sync = rtengine::Settings::MetadataXmpSync(metadataSyncCombo->get_active_row_number());
+    moptions.rtSettings.xmp_sidecar_style = rtengine::Settings::XmpSidecarStyle(xmpSidecarCombo->get_active_row_number());
 }
 
 void Preferences::fillPreferences()
@@ -2137,7 +2167,7 @@ void Preferences::fillPreferences()
     }
 
     curveBBoxPosC->set_active(moptions.curvebboxpos);
-    complexitylocal->set_active(moptions.complexity); 
+    complexitylocal->set_active(moptions.complexity);
     inspectorWindowCB->set_active(moptions.inspectorWindow);
     zoomOnScrollCB->set_active(moptions.zoomOnScroll);
 
@@ -2208,6 +2238,9 @@ void Preferences::fillPreferences()
     txtSndLngEditProcDone->set_text(moptions.sndLngEditProcDone);
     spbSndLngEditProcDoneSecs->set_value(moptions.sndLngEditProcDoneSecs);
 #endif
+
+    metadataSyncCombo->set_active(int(moptions.rtSettings.metadata_xmp_sync));
+    xmpSidecarCombo->set_active(int(moptions.rtSettings.xmp_sidecar_style));
 }
 
 /*

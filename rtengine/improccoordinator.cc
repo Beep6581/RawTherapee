@@ -33,6 +33,7 @@
 #include "image8.h"
 #include "imagefloat.h"
 #include "improcfun.h"
+#include "metadata.h"
 #include "labimage.h"
 #include "lcp.h"
 #include "procparams.h"
@@ -753,7 +754,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     }
 
                     imgsrc->getAutoWBMultipliersitc(extra, tempref, greenref, tempitc, greenitc, temp0, delta,  bia, dread, kcam, nocam, studgood, minchrom, kmin, minhist, maxhist, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
-                    
+
                     if (params->wb.method ==  "autitcgreen") {
                         params->wb.temperature = tempitc;
                         params->wb.green = greenitc;
@@ -761,7 +762,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                             params->wb.temperature = tempitc_low;
                             params->wb.green = greenitc_low;
                         }
-                        
+
                         currWB = ColorTemp(params->wb.temperature, params->wb.green, 1., params->wb.method, params->wb.observer);
                         currWB.getMultipliers(rm, gm, bm);
                         autoWB.update(rm, gm, bm, params->wb.equal, params->wb.observer, params->wb.tempBias);
@@ -2177,20 +2178,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                                     customColCurve1, customColCurve2, customColCurve3, 1);
 
                 const FramesMetaData* metaData = imgsrc->getMetaData();
-                int imgNum = 0;
-
-                if (imgsrc->isRAW()) {
-                    if (imgsrc->getSensorType() == ST_BAYER) {
-                        imgNum = rtengine::LIM<unsigned int>(params->raw.bayersensor.imageNum, 0, metaData->getFrameCount() - 1);
-                    } else if (imgsrc->getSensorType() == ST_FUJI_XTRANS) {
-                        //imgNum = rtengine::LIM<unsigned int>(params->raw.xtranssensor.imageNum, 0, metaData->getFrameCount() - 1);
-                    }
-                }
-
-                float fnum = metaData->getFNumber(imgNum);          // F number
-                float fiso = metaData->getISOSpeed(imgNum) ;        // ISO
-                float fspeed = metaData->getShutterSpeed(imgNum) ;  // Speed
-                double fcomp = metaData->getExpComp(imgNum);        // Compensation +/-
+                float fnum = metaData->getFNumber();          // F number
+                float fiso = metaData->getISOSpeed() ;        // ISO
+                float fspeed = metaData->getShutterSpeed() ;  // Speed
+                double fcomp = metaData->getExpComp();        // Compensation +/-
                 double adap;
 
                 if (fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f) { //if no exif data or wrong
@@ -3032,7 +3023,7 @@ void ImProcCoordinator::saveInputICCReference(const Glib::ustring& fname, bool a
         im = tempImage;
     }
 
-    im->setMetadata(imgsrc->getMetaData()->getRootExifData());
+    im->setMetadata(Exiv2Metadata(imgsrc->getFileName(), false));
 
     im->saveTIFF(fname, 16, false, true);
     delete im;

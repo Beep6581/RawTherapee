@@ -475,31 +475,31 @@ void Polyline::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned shor
     }
 }
 
-void Rectangle::setXYWH(int left, int top, int width, int height)
+void EditRectangle::setXYWH(int left, int top, int width, int height)
 {
     topLeft.set(left, top);
     bottomRight.set(left + width, top + height);
 }
 
-void Rectangle::setXYXY(int left, int top, int right, int bottom)
+void EditRectangle::setXYXY(int left, int top, int right, int bottom)
 {
     topLeft.set(left, top);
     bottomRight.set(right, bottom);
 }
 
-void Rectangle::setXYWH(rtengine::Coord topLeft, rtengine::Coord widthHeight)
+void EditRectangle::setXYWH(rtengine::Coord topLeft, rtengine::Coord widthHeight)
 {
     this->topLeft = topLeft;
     this->bottomRight = topLeft + widthHeight;
 }
 
-void Rectangle::setXYXY(rtengine::Coord topLeft, rtengine::Coord bottomRight)
+void EditRectangle::setXYXY(rtengine::Coord topLeft, rtengine::Coord bottomRight)
 {
     this->topLeft = topLeft;
     this->bottomRight = bottomRight;
 }
 
-void Rectangle::drawOuterGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
+void EditRectangle::drawOuterGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
 {
     double lineWidth = getOuterLineWidth();
     if ((flags & F_VISIBLE) && state != INSENSITIVE && lineWidth > 0. && innerLineWidth > 0.) {
@@ -544,7 +544,7 @@ void Rectangle::drawOuterGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuf
     }
 }
 
-void Rectangle::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
+void EditRectangle::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
 {
     if (flags & F_VISIBLE) {
         if (state != INSENSITIVE) {
@@ -604,7 +604,7 @@ void Rectangle::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuf
     }
 }
 
-void Rectangle::drawToMOChannel(Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
+void EditRectangle::drawToMOChannel(Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
 {
     if (flags & F_HOVERABLE) {
         cr->set_line_width( getMouseOverLineWidth() );

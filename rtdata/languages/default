@@ -52,6 +52,7 @@ DYNPROFILEEDITOR_PROFILE;Processing Profile
 EDITWINDOW_TITLE;Image Edit
 EDIT_OBJECT_TOOLTIP;Displays a widget on the preview window which lets you adjust this tool.
 EDIT_PIPETTE_TOOLTIP;To add an adjustment point to the curve, hold the Ctrl key while left-clicking the desired spot in the image preview.\nTo adjust the point, hold the Ctrl key while left-clicking the corresponding area in the preview, then let go of Ctrl (unless you desire fine control) and while still holding the left mouse button move the mouse up or down to move that point up or down in the curve.
+ERROR_MSG_METADATA_VALUE;Metadata: error setting %1 to %2
 EXIFFILTER_APERTURE;Aperture
 EXIFFILTER_CAMERA;Camera
 EXIFFILTER_EXPOSURECOMPENSATION;Exposure compensation (EV)
@@ -63,6 +64,8 @@ EXIFFILTER_LENS;Lens
 EXIFFILTER_METADATAFILTER;Enable metadata filters
 EXIFFILTER_PATH;File path
 EXIFFILTER_SHUTTER;Shutter
+EXIFPANEL_ACTIVATE_ALL_HINT;Select all tags
+EXIFPANEL_ACTIVATE_NONE_HINT;Unselect all tags
 EXIFPANEL_ADDEDIT;Add/Edit
 EXIFPANEL_ADDEDITHINT;Add new tag or edit tag.
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Enter value
@@ -76,8 +79,8 @@ EXIFPANEL_RESET;Reset
 EXIFPANEL_RESETALL;Reset All
 EXIFPANEL_RESETALLHINT;Reset all tags to their original values.
 EXIFPANEL_RESETHINT;Reset the selected tags to their original values.
-EXIFPANEL_SHOWALL;Show all
-EXIFPANEL_SUBDIRECTORY;Subdirectory
+EXIFPANEL_BASIC_GROUP;Basic
+EXIFPANEL_VALUE_NOT_SHOWN;Not shown
 EXPORT_BYPASS;Processing steps to bypass
 EXPORT_BYPASS_ALL;Select / Unselect All
 EXPORT_BYPASS_DEFRINGE;Bypass Defringe
@@ -1683,7 +1686,7 @@ MAIN_TAB_COLOR;Color
 MAIN_TAB_COLOR_TOOLTIP;Shortcut: <b>Alt-c</b>
 MAIN_TAB_DETAIL;Detail
 MAIN_TAB_DETAIL_TOOLTIP;Shortcut: <b>Alt-d</b>
-MAIN_TAB_DEVELOP; Batch Edit 
+MAIN_TAB_DEVELOP; Batch Edit
 MAIN_TAB_EXIF;Exif
 MAIN_TAB_EXPORT; Fast Export 
 MAIN_TAB_EXPOSURE;Exposure
@@ -1691,7 +1694,7 @@ MAIN_TAB_EXPOSURE_TOOLTIP;Shortcut: <b>Alt-e</b>
 MAIN_TAB_FAVORITES;Favorites
 MAIN_TAB_FAVORITES_TOOLTIP;Shortcut: <b>Alt-u</b>
 MAIN_TAB_FILTER; Filter 
-MAIN_TAB_INSPECT; Inspect 
+MAIN_TAB_INSPECT; Inspect
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_LOCALLAB;Local
 MAIN_TAB_LOCALLAB_TOOLTIP;Shortcut: <b>Alt-o</b>
@@ -1955,6 +1958,11 @@ PREFERENCES_MENUGROUPLABEL;Group 'Color label'
 PREFERENCES_MENUGROUPPROFILEOPERATIONS;Group 'Processing profile operations'
 PREFERENCES_MENUGROUPRANK;Group 'Rank'
 PREFERENCES_MENUOPTIONS;Context Menu Options
+PREFERENCES_METADATA;Metadata
+PREFERENCES_METADATA_SYNC;Metadata synchronization with XMP sidecars
+PREFERENCES_METADATA_SYNC_NONE;Off
+PREFERENCES_METADATA_SYNC_READ;Read only
+PREFERENCES_METADATA_SYNC_READWRITE;Bidirectional
 PREFERENCES_MONINTENT;Default rendering intent
 PREFERENCES_MONITOR;Monitor
 PREFERENCES_MONPROFILE;Default color profile
@@ -2037,6 +2045,9 @@ PREFERENCES_TP_LABEL;Tool panel:
 PREFERENCES_TP_VSCROLLBAR;Hide vertical scrollbar
 PREFERENCES_USEBUNDLEDPROFILES;Use bundled profiles
 PREFERENCES_WORKFLOW;Layout
+PREFERENCES_XMP_SIDECAR_MODE;XMP sidecar style
+PREFERENCES_XMP_SIDECAR_MODE_STD;Standard (FILENAME.xmp for FILENAME.ext)
+PREFERENCES_XMP_SIDECAR_MODE_EXT;darktable-like (FILENAME.ext.xmp for FILENAME.ext)
 PREFERENCES_ZOOMONSCROLL;Zoom images by scrolling
 PROFILEPANEL_COPYPPASTE;Parameters to copy
 PROFILEPANEL_GLOBALPROFILES;Bundled profiles
