@@ -904,7 +904,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     send_to_external = Gtk::manage(new PopUpButton("", false));
     send_to_external->set_tooltip_text(M("MAIN_BUTTON_SENDTOEDITOR_TOOLTIP"));
-    send_to_external->setEmptyImage("palette-brush.png");
+    send_to_external->setEmptyImage("palette-brush");
     setExpandAlignProperties(send_to_external->buttonGroup, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     updateExternalEditorWidget(
         options.externalEditorIndex >= 0 ? options.externalEditorIndex : options.externalEditors.size(),

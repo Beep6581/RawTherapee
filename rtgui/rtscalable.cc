@@ -70,9 +70,7 @@ Cairo::RefPtr<Cairo::ImageSurface> RTScalable::loadSurfaceFromIcon(const Glib::u
     const auto iconInfo = theme->lookup_icon(iconName, size);
 
     if (!iconInfo) {
-        if (rtengine::settings->verbose) {
-            std::cerr << "Failed to load icon \"" << iconName << "\" for size " << size << "px" << std::endl;
-        }
+        std::cerr << "Failed to load icon \"" << iconName << "\" for size " << size << "px" << std::endl;
 
         return surf;
     }
@@ -80,9 +78,7 @@ Cairo::RefPtr<Cairo::ImageSurface> RTScalable::loadSurfaceFromIcon(const Glib::u
     const auto iconPath = iconInfo.get_filename();
 
     if (iconPath.empty()) {
-        if (rtengine::settings->verbose) {
-            std::cerr << "Failed to load icon \"" << iconName << "\" for size " << size << "px" << std::endl;
-        }
+        std::cerr << "Failed to load icon \"" << iconName << "\" for size " << size << "px" << std::endl;
 
         return surf;
     }
@@ -130,9 +126,7 @@ Cairo::RefPtr<Cairo::ImageSurface> RTScalable::loadSurfaceFromPNG(const Glib::us
     if (Glib::file_test(path.c_str(), Glib::FILE_TEST_EXISTS)) {
         surf = Cairo::ImageSurface::create_from_png(path);
     } else {
-        if (rtengine::settings->verbose) {
-            std::cerr << "Failed to load PNG file \"" << fname << "\"" << std::endl;
-        }
+        std::cerr << "Failed to load PNG file \"" << fname << "\"" << std::endl;
     }
 
     return surf;
@@ -230,9 +224,7 @@ Cairo::RefPtr<Cairo::ImageSurface> RTScalable::loadSurfaceFromSVG(const Glib::us
             static_cast<double>(RTScalable::getScale()),
             static_cast<double>(RTScalable::getScale()));
     } else {
-        if (rtengine::settings->verbose) {
-            std::cerr << "Failed to load SVG file \"" << fname << "\"" << std::endl;
-        }
+        std::cerr << "Failed to load SVG file \"" << fname << "\"" << std::endl;
     }
 
     return surf;
