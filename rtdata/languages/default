@@ -1683,15 +1683,15 @@ MAIN_TAB_COLOR;Color
 MAIN_TAB_COLOR_TOOLTIP;Shortcut: <b>Alt-c</b>
 MAIN_TAB_DETAIL;Detail
 MAIN_TAB_DETAIL_TOOLTIP;Shortcut: <b>Alt-d</b>
-MAIN_TAB_DEVELOP; Batch Edit 
+MAIN_TAB_DEVELOP; Batch Edit
 MAIN_TAB_EXIF;Exif
-MAIN_TAB_EXPORT; Fast Export 
+MAIN_TAB_EXPORT; Fast Export
 MAIN_TAB_EXPOSURE;Exposure
 MAIN_TAB_EXPOSURE_TOOLTIP;Shortcut: <b>Alt-e</b>
 MAIN_TAB_FAVORITES;Favorites
 MAIN_TAB_FAVORITES_TOOLTIP;Shortcut: <b>Alt-u</b>
-MAIN_TAB_FILTER; Filter 
-MAIN_TAB_INSPECT; Inspect 
+MAIN_TAB_FILTER; Filter
+MAIN_TAB_INSPECT; Inspect
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_LOCALLAB;Local
 MAIN_TAB_LOCALLAB_TOOLTIP;Shortcut: <b>Alt-o</b>
@@ -1828,7 +1828,6 @@ PREFERENCES_APPEARANCE_COLORPICKERFONT;Color picker font
 PREFERENCES_APPEARANCE_CROPMASKCOLOR;Crop mask color
 PREFERENCES_APPEARANCE_MAINFONT;Main font
 PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Navigator guide color
-PREFERENCES_APPEARANCE_PSEUDOHIDPI;Pseudo-HiDPI mode
 PREFERENCES_APPEARANCE_THEME;Theme
 PREFERENCES_APPLNEXTSTARTUP;restart required
 PREFERENCES_AUTOMONPROFILE;Use operating system's main monitor color profile
@@ -1867,7 +1866,7 @@ PREFERENCES_WBAGREENDELTA;Delta temperature in green iterate loop (if Force Extr
 PREFERENCES_WBANOPURP;No purple color used
 PREFERENCES_WBAPRECIS;Precision algorithm - scale used
 PREFERENCES_WBASIZEREF;Size of reference color compare to size of histogram color
-PREFERENCES_WBASORT;Sort in chroma order instead of histogram 
+PREFERENCES_WBASORT;Sort in chroma order instead of histogram
 PREFERENCES_CLIPPINGIND;Clipping Indication
 PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
@@ -3208,7 +3207,7 @@ TP_LOCALLAB_MERTWO;Subtract
 TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts.
 TP_LOCALLAB_LCLABELS;Residual noise levels
 TP_LOCALLAB_LCLABELS_TOOLTIP;Displays the mean and high-end noise values for the area shown in the Preview Panel (at 100% zoom). The noise values are grouped by wavelet levels 0,1,2,3 and 4,5,6.\nThe displayed values are indicative only and are designed to assist with denoise adjustments. They should not be interpreted as absolute noise levels.\n\n 300: Very noisy\n 100-300: Noisy\n 50-100: Moderatly noisy\n < 50: Low noise\n\nThey allow you to see:\n*The impact of Noise Reduction in the main-menu Detail tab.\n*The influence of Non-local Means, Wavelets and DCT on the luminance noise.\n*The influence of Wavelets and DCT on the chroma noise.\n*The influence of Capture Sharpening and Demosaicing.
-TP_LOCALLAB_LUMLABEL;Luma levels 0123: Mean=%1 High=%2 
+TP_LOCALLAB_LUMLABEL;Luma levels 0123: Mean=%1 High=%2
 TP_LOCALLAB_LUM46LABEL;Luma levels 456: Mean=%1 High=%2
 TP_LOCALLAB_CHROLABEL;Chroma levels 0123: Mean=%1 High=%2
 TP_LOCALLAB_CHRO46LABEL;Chroma levels 456: Mean=%1 High=%2

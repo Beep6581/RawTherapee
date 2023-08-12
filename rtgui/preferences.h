@@ -104,14 +104,14 @@ class Preferences final :
     Gtk::RadioButton* edPS;
     Gtk::RadioButton* edOther;
     ExternalEditorPreferences *externalEditors;
-    
+
     Gtk::RadioButton *editor_dir_temp;
     Gtk::RadioButton *editor_dir_current;
     Gtk::RadioButton *editor_dir_custom;
     MyFileChooserButton *editor_dir_custom_path;
     Gtk::CheckButton *editor_float32;
     Gtk::CheckButton *editor_bypass_output_profile;
-    
+
     MyFileChooserButton* darkFrameDir;
     MyFileChooserButton* flatFieldDir;
     MyFileChooserButton* clutsDir;
@@ -181,8 +181,6 @@ class Preferences final :
     Gtk::FontButton* colorPickerFontFB;
     Gtk::ColorButton* cropMaskColorCB;
     Gtk::ColorButton* navGuideColorCB;
-    Gtk::CheckButton* pseudoHiDPI;
-
 
     Gtk::SpinButton*   maxRecentFolders;
     Gtk::SpinButton*   maxThumbHeightSB;
@@ -318,7 +316,7 @@ public:
     void sndEnableToggled ();
     void langAutoDetectToggled ();
     void autocielabToggled ();
-    void observer10Toggled (); 
+    void observer10Toggled ();
 
     void selectStartupDir ();
     void addExtPressed ();

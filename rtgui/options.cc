@@ -358,7 +358,6 @@ void Options::setDefaults()
     fontSize = 10;
     CPFontFamily = "default";
     CPFontSize = 8;
-    pseudoHiDPISupport = false;
     lastScale = 5;
     lastShowAllExif = false;
     panAccelFactor = 5;
@@ -576,7 +575,7 @@ void Options::setDefaults()
     rtSettings.flatFieldsPath = "";
 	rtSettings.cameraProfilesPath = "";
 	rtSettings.lensProfilesPath = "";
-	
+
 #ifdef WIN32
     const gchar* sysRoot = g_getenv("SystemRoot");  // Returns e.g. "c:\Windows"
 
@@ -637,7 +636,7 @@ void Options::setDefaults()
     rtSettings.edghi = 3.0;//1.1 and 5.
     rtSettings.edglo = 0.5;//0.1 and 0.95
     rtSettings.limrad = 20.;//1 and 60
-    
+
 
     rtSettings.protectred = 60;
     rtSettings.protectredh = 0.3;
@@ -851,7 +850,7 @@ void Options::readFromFile(Glib::ustring fname)
                 if (keyFile.has_key("External Editor", "CustomEditor")) {
                     customEditorProg = keyFile.get_string("External Editor", "CustomEditor");
                 }
-                
+
                 if (keyFile.has_key("External Editor", "OutputDir")) {
                     int v = keyFile.get_integer("External Editor", "OutputDir");
                     if (v < int(EDITOR_OUT_DIR_TEMP) || v > int(EDITOR_OUT_DIR_CUSTOM)) {
@@ -872,7 +871,7 @@ void Options::readFromFile(Glib::ustring fname)
                 if (keyFile.has_key("External Editor", "BypassOutputProfile")) {
                     editor_bypass_output_profile = keyFile.get_boolean("External Editor", "BypassOutputProfile");
                 }
-                
+
             }
 
             if (keyFile.has_group("External Editor")) {
@@ -1550,10 +1549,6 @@ void Options::readFromFile(Glib::ustring fname)
                     CPFontSize = keyFile.get_integer("GUI", "CPFontSize");
                 }
 
-                if (keyFile.has_key("GUI", "PseudoHiDPISupport")) {
-                    pseudoHiDPISupport = keyFile.get_boolean("GUI", "PseudoHiDPISupport");
-                }
-
                 if (keyFile.has_key("GUI", "LastPreviewScale")) {
                     lastScale = keyFile.get_integer("GUI", "LastPreviewScale");
                 }
@@ -1714,11 +1709,11 @@ void Options::readFromFile(Glib::ustring fname)
                 if (keyFile.has_key("GUI", "CurveBBoxPosition")) {
                     curvebboxpos = keyFile.get_integer("GUI", "CurveBBoxPosition");
                 }
-                
+
                 if (keyFile.has_key("GUI", "Complexity")) {
                     complexity = keyFile.get_integer("GUI", "Complexity");
                 }
-                
+
                 if (keyFile.has_key("GUI", "InspectorWindow")) {
                     inspectorWindow = keyFile.get_boolean("GUI", "InspectorWindow");
                 }
@@ -1972,8 +1967,8 @@ void Options::readFromFile(Glib::ustring fname)
                 }
 
             }
-            
-            
+
+
             if (keyFile.has_group("ICC Profile Creator")) {
                 if (keyFile.has_key("ICC Profile Creator", "PimariesPreset")) {
                     ICCPC_primariesPreset = keyFile.get_string("ICC Profile Creator", "PimariesPreset");
@@ -2515,7 +2510,6 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("GUI", "FontSize", fontSize);
         keyFile.set_string("GUI", "CPFontFamily", CPFontFamily);
         keyFile.set_integer("GUI", "CPFontSize", CPFontSize);
-        keyFile.set_boolean("GUI", "PseudoHiDPISupport", pseudoHiDPISupport);
         keyFile.set_integer("GUI", "LastPreviewScale", lastScale);
         keyFile.set_boolean("GUI", "LastShowAllExif", lastShowAllExif);
         keyFile.set_integer("GUI", "PanAccelFactor", panAccelFactor);

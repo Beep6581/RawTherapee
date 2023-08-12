@@ -966,14 +966,14 @@ Gtk::Widget* Preferences::getColorManPanel ()
 
 
     //------------White-Balance auto temperature correlation
-    
+
     Gtk::Frame* fwbacorr = Gtk::manage(new Gtk::Frame(M("PREFERENCES_WBACORR")));
     fwbacorr->set_tooltip_text(M("PREFERENCES_WBACORR_TOOLTIP"));
     fwbacorr->set_label_align(0.025, 0.5);
     Gtk::Box* wbaVB = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL) );
     Gtk::Box* wbah = Gtk::manage ( new Gtk::Box () );
     wbah->set_spacing (4);
-    
+
     mwbaena = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_WBAENA")));
     setExpandAlignProperties(mwbaena, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     mwbaena->set_active(true);
@@ -1192,9 +1192,6 @@ Gtk::Widget* Preferences::getGeneralPanel()
     navGuideColorCB = Gtk::manage(new Gtk::ColorButton());
     navGuideColorCB->set_use_alpha(true);
 
-    pseudoHiDPI = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_APPEARANCE_PSEUDOHIDPI") + Glib::ustring (" (") + M ("PREFERENCES_APPLNEXTSTARTUP") + ")"));
-    setExpandAlignProperties(pseudoHiDPI, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
-
     Gtk::Separator *vSep = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_VERTICAL));
 
 
@@ -1210,7 +1207,6 @@ Gtk::Widget* Preferences::getGeneralPanel()
     appearanceGrid->attach(*colorPickerFontFB,  1, 2, 1, 1);
     appearanceGrid->attach(*navGuideColorLbl,   3, 2, 1, 1);
     appearanceGrid->attach(*navGuideColorCB,    4, 2, 1, 1);
-    appearanceGrid->attach(*pseudoHiDPI,        0, 3, 5, 1);
 
     appearanceFrame->add(*appearanceGrid);
     vbGeneral->attach_next_to(*appearanceFrame, *flang, Gtk::POS_BOTTOM, 2, 1);
@@ -1779,8 +1775,6 @@ void Preferences::storePreferences()
         moptions.CPFontSize = cpfd.get_size() / Pango::SCALE;
     }
 
-    moptions.pseudoHiDPISupport = pseudoHiDPI->get_active();
-
     const std::vector<ExternalEditorPreferences::EditorInfo> &editors = externalEditors->getEditors();
     moptions.externalEditors.resize(editors.size());
     moptions.externalEditorIndex =
@@ -2059,8 +2053,6 @@ void Preferences::fillPreferences()
         colorPickerFontFB->set_font_name (Glib::ustring::compose ("%1 %2", options.CPFontFamily, options.CPFontSize));
     }
 
-    pseudoHiDPI->set_active(options.pseudoHiDPISupport);
-
     showDateTime->set_active(moptions.fbShowDateTime);
     showBasicExif->set_active(moptions.fbShowBasicExif);
     showExpComp->set_active(moptions.fbShowExpComp);
@@ -2166,9 +2158,9 @@ void Preferences::fillPreferences()
     flatFieldChanged();
 
     clutsDir->set_current_folder(moptions.clutsDir);
-	
+
 	cameraProfilesDir->set_current_folder(moptions.rtSettings.cameraProfilesPath);
-	
+
 	lensProfilesDir->set_current_folder(moptions.rtSettings.lensProfilesPath);
 
     addc.block(true);
