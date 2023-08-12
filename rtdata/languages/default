@@ -1914,7 +1914,9 @@ PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show embedded JPEG thumbnail if raw is uned
 PREFERENCES_LANG;Language
 PREFERENCES_LANGAUTODETECT;Use system language
 PREFERENCES_LENSFUNDBDIR;Lensfun database directory
+PREFERENCES_LENSFUNDBDIR_TOOLTIP;Directory containing the Lensfun database.  Leave empty to use the default directories.
 PREFERENCES_LENSPROFILESDIR;Lens profiles directory
+PREFERENCES_LENSPROFILESDIR_TOOLTIP;Directory containing Adobe Lens Correction Profiles (LCPs)
 PREFERENCES_MAXRECENTFOLDERS;Maximum number of recent folders
 PREFERENCES_MENUGROUPEXTPROGS;Group 'Open with'
 PREFERENCES_MENUGROUPFILEOPERATIONS;Group 'File operations'

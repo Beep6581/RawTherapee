@@ -660,6 +660,7 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
 
 	//Lens Profiles Dir
     Gtk::Label *lensProfilesDirLabel = Gtk::manage(new Gtk::Label(M("PREFERENCES_LENSPROFILESDIR") + ":"));
+    lensProfilesDirLabel->set_tooltip_text(M("PREFERENCES_LENSPROFILESDIR_TOOLTIP"));
     setExpandAlignProperties(lensProfilesDirLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     lensProfilesDir = Gtk::manage(new MyFileChooserButton(M("PREFERENCES_LENSPROFILESDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
     setExpandAlignProperties(lensProfilesDir, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
@@ -669,6 +670,7 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
 
     // Lensfun DB dir
     Gtk::Label *lensfunDbDirLabel = Gtk::manage(new Gtk::Label(M("PREFERENCES_LENSFUNDBDIR") + ":"));
+    lensfunDbDirLabel->set_tooltip_text(M("PREFERENCES_LENSFUNDBDIR_TOOLTIP"));
     setExpandAlignProperties(lensfunDbDirLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     lensfunDbDir = Gtk::manage(new MyFileChooserEntry(M("PREFERENCES_LENSFUNDBDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
     lensfunDbDir->set_placeholder_text(Glib::ustring::compose("(%1)", M("GENERAL_AUTO")));
