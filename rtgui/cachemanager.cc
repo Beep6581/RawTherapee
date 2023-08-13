@@ -24,7 +24,7 @@
 #include <giomm.h>
 #include <glib/gstdio.h>
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <fileapi.h>
 #endif
 
@@ -310,7 +310,7 @@ void CacheManager::deleteFiles (const Glib::ustring& fname, const std::string& m
 std::string CacheManager::getMD5 (const Glib::ustring& fname)
 {
 
-#ifdef WIN32
+#ifdef _WIN32
 
     std::unique_ptr<wchar_t, GFreeFunc> wfname(reinterpret_cast<wchar_t*>(g_utf8_to_utf16 (fname.c_str (), -1, NULL, NULL, NULL)), g_free);
 

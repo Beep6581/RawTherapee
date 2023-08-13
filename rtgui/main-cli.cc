@@ -41,7 +41,7 @@
 #include "extprog.h"
 #include "pathutils.h"
 
-#ifndef WIN32
+#ifndef _WIN32
 #include <glibmm/fileutils.h>
 #include <glib.h>
 #include <glib/gstdio.h>
@@ -96,7 +96,7 @@ int main (int argc, char **argv)
     char exname[512] = {0};
     Glib::ustring exePath;
     // get the path where the rawtherapee executable is stored
-#ifdef WIN32
+#ifdef _WIN32
     WCHAR exnameU[512] = {0};
     GetModuleFileNameW (NULL, exnameU, 511);
     WideCharToMultiByte (CP_UTF8, 0, exnameU, -1, exname, 511, 0, 0 );
@@ -182,7 +182,7 @@ int main (int argc, char **argv)
 
     TIFFSetWarningHandler (nullptr);   // avoid annoying message boxes
 
-#ifndef WIN32
+#ifndef _WIN32
 
     // Move the old path to the new one if the new does not exist
     if (Glib::file_test (Glib::build_filename (options.rtdir, "cache"), Glib::FILE_TEST_IS_DIR) && !Glib::file_test (options.cacheBaseDir, Glib::FILE_TEST_IS_DIR)) {

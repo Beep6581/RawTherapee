@@ -129,7 +129,7 @@ LensProfilePanel::LensProfilePanel() :
     const Glib::ustring defDir = LCPStore::getInstance()->getDefaultCommonDirectory();
 
     if (!defDir.empty()) {
-#ifdef WIN32
+#ifdef _WIN32
         corrLcpFileChooser->set_show_hidden(true);  // ProgramData is hidden on Windows
 #endif
         corrLcpFileChooser->set_current_folder(defDir);

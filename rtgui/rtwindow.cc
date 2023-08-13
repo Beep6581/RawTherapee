@@ -243,7 +243,7 @@ RTWindow::RTWindow ()
     MyExpander::init();
     FileBrowserEntry::init();
 
-#ifndef WIN32
+#ifndef _WIN32
     const std::vector<Glib::RefPtr<Gdk::Pixbuf>> appIcons = {
         RTImage::createPixbufFromFile("rawtherapee-logo-16.png"),
         RTImage::createPixbufFromFile("rawtherapee-logo-24.png"),

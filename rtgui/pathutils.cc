@@ -55,7 +55,7 @@ Glib::ustring getExtension (const Glib::ustring& filename)
 // so we're using Glib::filename_to_utf8 for Linux/Apple and Glib::locale_to_utf8 for Windows.
 Glib::ustring fname_to_utf8(const std::string &fname)
 {
-#ifdef WIN32
+#ifdef _WIN32
 
     try {
         return Glib::locale_to_utf8(fname);
