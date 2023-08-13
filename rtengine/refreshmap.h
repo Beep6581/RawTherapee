@@ -32,6 +32,7 @@
 
 // Elementary functions that can be done to
 // the preview image when an event occurs
+#define M_WB          (1<<20)
 #define M_SPOT        (1<<19)
 #define M_CSHARP      (1<<18)
 #define M_MONITOR     (1<<14)

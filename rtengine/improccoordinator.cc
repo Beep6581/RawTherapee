@@ -414,14 +414,15 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             imageTypeListener->imageTypeChanged(imgsrc->isRAW(), imgsrc->getSensorType() == ST_BAYER, imgsrc->getSensorType() == ST_FUJI_XTRANS, imgsrc->isMono(), imgsrc->isGainMapSupported());
         }
 
-        bool iscolor = (params->toneCurve.method == "Color");// || params->toneCurve.method == "Coloropp");
+        bool iscolor = (params->toneCurve.method == "Color" || params->toneCurve.method == "Coloropp");
 
         if ((todo & M_RAW)
                 || (!highDetailRawComputed && highDetailNeeded)
                 // || (params->toneCurve.hrenabled && params->toneCurve.method != "Color" && imgsrc->isRGBSourceModified())
                 // || (!params->toneCurve.hrenabled && params->toneCurve.method == "Color" && imgsrc->isRGBSourceModified())) {
                 || (params->toneCurve.hrenabled && !iscolor && imgsrc->isRGBSourceModified())
-                || (!params->toneCurve.hrenabled && iscolor && imgsrc->isRGBSourceModified())) {
+                || (!params->toneCurve.hrenabled && iscolor && imgsrc->isRGBSourceModified())
+                || ((todo & M_WB) && params->toneCurve.hrenabled && params->toneCurve.method == "Coloropp")) {
 
             if (settings->verbose) {
                 if (imgsrc->getSensorType() == ST_BAYER) {
@@ -477,7 +478,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 //  || (params->toneCurve.hrenabled && params->toneCurve.method != "Color" && imgsrc->isRGBSourceModified())
                 //  || (!params->toneCurve.hrenabled && params->toneCurve.method == "Color" && imgsrc->isRGBSourceModified())) {
                 || (params->toneCurve.hrenabled && !iscolor && imgsrc->isRGBSourceModified())
-                || (!params->toneCurve.hrenabled && iscolor && imgsrc->isRGBSourceModified())) {
+                || (!params->toneCurve.hrenabled && iscolor && imgsrc->isRGBSourceModified())
+                || ((todo & M_WB) && params->toneCurve.hrenabled && params->toneCurve.method == "Coloropp")) {
             if (highDetailNeeded) {
                 highDetailRawComputed = true;
             } else {
@@ -872,7 +874,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             PreviewProps pp(0, 0, fw, fh, scale);
             // Tells to the ImProcFunctions' tools what is the preview scale, which may lead to some simplifications
             ipf.setScale(scale);
-            int inpaintopposed = 1;//force getimage to use inpaint-opposed if enable, only once
+            int inpaintopposed = 0;//force getimage to use inpaint-opposed if enable, only once
             imgsrc->getImage(currWB, tr, orig_prev, pp, params->toneCurve, params->raw, inpaintopposed);
 
             if ((todo & M_SPOT) && params->spot.enabled && !params->spot.entries.empty()) {
