@@ -92,7 +92,7 @@ class Preferences final :
     Gtk::ComboBoxText* languages;
     Gtk::CheckButton* ckbLangAutoDetect;
     Gtk::Entry* dateformat;
-    Gtk::Entry* startupdir;
+    MyFileChooserEntry* startupdir;
     Gtk::RadioButton* sdcurrent;
     Gtk::RadioButton* sdlast;
     Gtk::RadioButton* sdhome;
@@ -115,8 +115,9 @@ class Preferences final :
     MyFileChooserButton* darkFrameDir;
     MyFileChooserButton* flatFieldDir;
     MyFileChooserButton* clutsDir;
-	MyFileChooserButton* cameraProfilesDir;
-	MyFileChooserButton* lensProfilesDir;
+    MyFileChooserButton* cameraProfilesDir;
+    MyFileChooserButton* lensProfilesDir;
+    MyFileChooserEntry* lensfunDbDir;
     Gtk::Label *dfLabel;
     Gtk::Label *ffLabel;
 
