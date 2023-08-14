@@ -3145,7 +3145,7 @@ void ImProcCoordinator::process()
         paramsUpdateMutex.unlock();
 
         // M_VOID means no update, and is a bit higher that the rest
-        if (change & (M_VOID - 1)) {
+        if (change & (~M_VOID)) {
             updatePreviewImage(change, panningRelatedChange);
         }
 
