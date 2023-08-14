@@ -2281,20 +2281,10 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
         //calculate La - Absolute luminance shooting
 
         const FramesMetaData* metaData = imgsrc->getMetaData();
-        int imgNum = 0;
-
-        if (imgsrc->isRAW()) {
-            if (imgsrc->getSensorType() == ST_BAYER) {
-                imgNum = rtengine::LIM<unsigned int>(params->raw.bayersensor.imageNum, 0, metaData->getFrameCount() - 1);
-            } else if (imgsrc->getSensorType() == ST_FUJI_XTRANS) {
-                //imgNum = rtengine::LIM<unsigned int>(params->raw.xtranssensor.imageNum, 0, metaData->getFrameCount() - 1);
-            }
-        }
-
-        float fnum = metaData->getFNumber(imgNum);          // F number
-        float fiso = metaData->getISOSpeed(imgNum) ;        // ISO
-        float fspeed = metaData->getShutterSpeed(imgNum) ;  // Speed
-        double fcomp = metaData->getExpComp(imgNum);        // Compensation +/-
+        float fnum = metaData->getFNumber();          // F number
+        float fiso = metaData->getISOSpeed() ;        // ISO
+        float fspeed = metaData->getShutterSpeed() ;  // Speed
+        double fcomp = metaData->getExpComp();        // Compensation +/-
         double adap;
 
         if (fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f) { //if no exif data or wrong
@@ -5670,6 +5660,7 @@ void ImProcFunctions::blendstruc(int bfw, int bfh, LabImage* bufcolorig, float r
 
 static void blendmask(const local_params& lp, int xstart, int ystart, int cx, int cy, int bfw, int bfh, LabImage* bufexporig, LabImage* original, LabImage* bufmaskor, LabImage* originalmas, float bl, float blab, int inv)
 {
+    bl /= 10.f;
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -19567,7 +19558,7 @@ void ImProcFunctions::Lab_Local(
                 const float rad = params->locallab.spots.at(sp).radmask;
                 const float gamma = params->locallab.spots.at(sp).gammask;
                 const float slope =  params->locallab.spots.at(sp).slopmask;
-                float blendm =  params->locallab.spots.at(sp).blendmask;
+                float blendm =  0.1 * params->locallab.spots.at(sp).blendmask;
                 float blendmab =  params->locallab.spots.at(sp).blendmaskab;
 
                 if (lp.showmask_met == 2) {

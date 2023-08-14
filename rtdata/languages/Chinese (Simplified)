@@ -1,12 +1,14 @@
-#00 Chinese (Simplified)
-#01 2008-02-13 Forrest Sun
-#02 2008-11-06 Yang Gao (grantyale)
-#03 2013-10-20 Jiero
-#04 2014-10-24 Jie Luo
-#05 2017-09-18 Chongnuo Ji
-#06 2020-08-11 十一元人民币
-#07 2021-09-24 十一元人民币
-#08 2022-07-26 十一元人民币
+#000 Chinese (Simplified)
+#001 2008-02-13 Forrest Sun
+#002 2008-11-06 Yang Gao (grantyale)
+#003 2013-10-20 Jiero
+#004 2014-10-24 Jie Luo
+#005 2017-09-18 Chongnuo Ji
+#006 2020-08-11 十一元人民币
+#007 2021-09-24 十一元人民币
+#008 2022-07-26 十一元人民币
+#100
+#101 @LANGUAGE_DISPLAY_NAME=简体中文
 
 ABOUT_TAB_BUILD;版本
 ABOUT_TAB_CREDITS;致谢名单

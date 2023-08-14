@@ -47,7 +47,7 @@ private:
     static LUTf invGrad;  // for fast_demosaic
     static LUTf initInvGrad ();
     static void colorSpaceConversion_ (Imagefloat* im, const procparams::ColorManagementParams& cmp, const ColorTemp &wb, double pre_mul[3], cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], const std::string &camName);
-    int  defTransform (int tran);
+    static int  defTransform (const RawImage *ri, int tran);
 
 protected:
     MyMutex getImageMutex;  // locks getImage
@@ -112,7 +112,7 @@ protected:
     void hlRecovery(const std::string &method, float* red, float* green, float* blue, int width, float* hlmax);
     void transformRect(const PreviewProps &pp, int tran, int &sx1, int &sy1, int &width, int &height, int &fw);
     void transformPosition(int x, int y, int tran, int& tx, int& ty);
-    void ItcWB(bool extra, double &tempref, double &greenref, double &tempitc, double &greenitc, float &studgood, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, const procparams::ColorManagementParams &cmp, const procparams::RAWParams &raw, const procparams::WBParams & wbpar, const procparams::ToneCurveParams &hrp);
+    void ItcWB(bool extra, double &tempref, double &greenref, double &tempitc, double &greenitc, float &temp0, float &delta, int &bia, int &dread, int &kcam, int &nocam, float &studgood, float &minchrom, int &kmin, float &minhist, float &maxhist,  array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, const procparams::ColorManagementParams &cmp, const procparams::RAWParams &raw, const procparams::WBParams & wbpar, const procparams::ToneCurveParams &hrp);
 
     unsigned FC(int row, int col) const;
     inline void getRowStartEnd (int x, int &start, int &end);
@@ -141,8 +141,8 @@ public:
     void        processFlatField(const procparams::RAWParams &raw, const RawImage *riFlatFile, array2D<float> &rawData, const float black[4]);
     void        copyOriginalPixels(const procparams::RAWParams &raw, RawImage *ri, const RawImage *riDark, RawImage *riFlatFile, array2D<float> &rawData  );
     void        scaleColors (int winx, int winy, int winw, int winh, const procparams::RAWParams &raw, array2D<float> &rawData); // raw for cblack
-    void        WBauto(double &tempref, double &greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, double &tempitc, double &greenitc, float &studgood, bool &twotimes, const procparams::WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const procparams::ColorManagementParams &cmp, const procparams::RAWParams &raw, const procparams::ToneCurveParams &hrp) override;
-    void        getAutoWBMultipliersitc(double &tempref, double &greenref, double &tempitc, double &greenitc, float &studgood, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double &rm, double &gm, double &bm, const procparams::WBParams & wbpar, const procparams::ColorManagementParams &cmp, const procparams::RAWParams &raw, const procparams::ToneCurveParams &hrp) override;
+    void        WBauto(bool extra, double &tempref, double &greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, double &tempitc, double &greenitc, float &temp0, float &delta, int &bia,  int &dread, int &kcam, int &nocam, float &studgood, float &minchrom, int &kmin, float &minhist, float &maxhist, bool &twotimes, const procparams::WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const procparams::ColorManagementParams &cmp, const procparams::RAWParams &raw, const procparams::ToneCurveParams &hrp) override;
+    void        getAutoWBMultipliersitc(bool extra, double &tempref, double &greenref, double &tempitc, double &greenitc, float &temp0, float &delta, int &bia, int &dread, int &kcam, int &nocam, float &studgood, float &minchrom, int &kmin, float &minhist, float &maxhist, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double &rm, double &gm, double &bm, const procparams::WBParams & wbpar, const procparams::ColorManagementParams &cmp, const procparams::RAWParams &raw, const procparams::ToneCurveParams &hrp) override;
     void        getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, const procparams::WBParams & wbpar) override;
 
     void        getWBMults  (const ColorTemp &ctemp, const procparams::RAWParams &raw, std::array<float, 4>& scale_mul, float &autoGainComp, float &rm, float &gm, float &bm) const override;
@@ -232,6 +232,8 @@ public:
         virtual float operator()(int row) const { return 1.f; }
     };
     
+    static void computeFullSize(const RawImage *ri, int tr, int &w, int &h, int border=-1);
+
 protected:
     typedef unsigned short ushort;
     void processFalseColorCorrection(Imagefloat* i, const int steps);
@@ -249,6 +251,7 @@ protected:
         double cared,
         double cablue,
         bool avoidColourshift,
+        int border,
         array2D<float> &rawData,
         double* fitParamsTransfer,
         bool fitParamsIn,
