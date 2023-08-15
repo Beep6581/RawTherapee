@@ -407,6 +407,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             Color HLR alters rgb output of demosaic, so re-demosaic is needed when Color HLR is being turned off;
             if HLR is enabled and changing method *from* Color to any other method
             OR HLR gets disabled when Color method was selected
+            If white balance changed with inpaint opposed, because inpaint opposed depends on the white balance
         */
         // If high detail (=100%) is newly selected, do a demosaic update, since the last was just with FAST
 
@@ -415,14 +416,16 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         }
 
         bool iscolor = (params->toneCurve.method == "Color" || params->toneCurve.method == "Coloropp");
+        if ((todo & M_WB) && params->toneCurve.hrenabled && params->toneCurve.method == "Coloropp") {
+            todo |= DEMOSAIC;
+        }
 
         if ((todo & M_RAW)
                 || (!highDetailRawComputed && highDetailNeeded)
                 // || (params->toneCurve.hrenabled && params->toneCurve.method != "Color" && imgsrc->isRGBSourceModified())
                 // || (!params->toneCurve.hrenabled && params->toneCurve.method == "Color" && imgsrc->isRGBSourceModified())) {
                 || (params->toneCurve.hrenabled && !iscolor && imgsrc->isRGBSourceModified())
-                || (!params->toneCurve.hrenabled && iscolor && imgsrc->isRGBSourceModified())
-                || ((todo & M_WB) && params->toneCurve.hrenabled && params->toneCurve.method == "Coloropp")) {
+                || (!params->toneCurve.hrenabled && iscolor && imgsrc->isRGBSourceModified())) {
 
             if (settings->verbose) {
                 if (imgsrc->getSensorType() == ST_BAYER) {
@@ -478,8 +481,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 //  || (params->toneCurve.hrenabled && params->toneCurve.method != "Color" && imgsrc->isRGBSourceModified())
                 //  || (!params->toneCurve.hrenabled && params->toneCurve.method == "Color" && imgsrc->isRGBSourceModified())) {
                 || (params->toneCurve.hrenabled && !iscolor && imgsrc->isRGBSourceModified())
-                || (!params->toneCurve.hrenabled && iscolor && imgsrc->isRGBSourceModified())
-                || ((todo & M_WB) && params->toneCurve.hrenabled && params->toneCurve.method == "Coloropp")) {
+                || (!params->toneCurve.hrenabled && iscolor && imgsrc->isRGBSourceModified())) {
             if (highDetailNeeded) {
                 highDetailRawComputed = true;
             } else {
