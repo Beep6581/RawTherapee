@@ -84,7 +84,7 @@ void getSpotAvgMax(ImageSource *imgsrc, ColorTemp currWB, const std::unique_ptr<
     }
 
     rtengine::Imagefloat spotImg(spotSize, spotSize);
-    imgsrc->getImage(currWB, tr, &spotImg, pp, params->toneCurve, params->raw, 0);
+    imgsrc->getImage(currWB, tr, &spotImg, pp, params->toneCurve, params->raw);
 
     auto avgMax = [spotSize, &spotImg](RGB & avg, RGB & max) -> void {
         avg = {};

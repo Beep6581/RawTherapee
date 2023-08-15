@@ -741,9 +741,8 @@ void RawImageSource::getWBMults(const ColorTemp &ctemp, const RAWParams &raw, st
     autoGainComp = camInitialGain / initialGain;
 }
 
-void RawImageSource::getImage(const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const RAWParams &raw, int opposed)
+void RawImageSource::getImage(const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const RAWParams &raw)
 {
-    // added int opposed to force getimage to use inpaint-opposed if enable, only once
     MyMutex::MyLock lock(getImageMutex);
 
     tran = defTransform(ri, tran);
@@ -850,10 +849,6 @@ void RawImageSource::getImage(const ColorTemp &ctemp, int tran, Imagefloat* imag
     bool doHr = (hrp.hrenabled && !iscolor);
 
     if (hrp.hrenabled && iscolor) {
-        if(hrp.method == "Coloropp" && opposed == 1) {//force Inpaint opposed if WB change, and opposed limited the number to 1
-            rgbSourceModified  = false;
-        }
-
         if (!rgbSourceModified) {
             if (hrp.method == "Color") {
                 if (settings->verbose) {
