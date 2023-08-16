@@ -7787,6 +7787,7 @@ Locallabcie::Locallabcie():
     cieFBox->pack_start(*sigmoidjzFrame);
 
     cieFBox->pack_start(*surHBoxcie);
+    cieFBox->pack_start(*sigmoidgamFrame);
     cieFrame->add(*cieFBox);
     pack_start(*cieFrame);
 
@@ -8148,7 +8149,7 @@ Locallabcie::Locallabcie():
     cieP1contBox->pack_start(*contthrescie);
     cie1contFrame->add(*cieP1contBox);
     cieP1Box->pack_start(*cie1contFrame);
-    cieP1Box->pack_start(*sigmoidgamFrame);
+//    cieP1Box->pack_start(*sigmoidgamFrame);
     ToolParamBlock* const cieP1colorBox = Gtk::manage(new ToolParamBlock());
     cieP1colorBox->pack_start(*chromlcie);
     cieP1colorBox->pack_start(*saturlcie);
