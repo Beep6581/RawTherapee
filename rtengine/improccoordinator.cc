@@ -407,6 +407,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             Color HLR alters rgb output of demosaic, so re-demosaic is needed when Color HLR is being turned off;
             if HLR is enabled and changing method *from* Color to any other method
             OR HLR gets disabled when Color method was selected
+            If white balance changed with inpaint opposed, because inpaint opposed depends on the white balance
         */
         // If high detail (=100%) is newly selected, do a demosaic update, since the last was just with FAST
 
@@ -414,7 +415,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             imageTypeListener->imageTypeChanged(imgsrc->isRAW(), imgsrc->getSensorType() == ST_BAYER, imgsrc->getSensorType() == ST_FUJI_XTRANS, imgsrc->isMono(), imgsrc->isGainMapSupported());
         }
 
-        bool iscolor = (params->toneCurve.method == "Color");// || params->toneCurve.method == "Coloropp");
+        bool iscolor = (params->toneCurve.method == "Color" || params->toneCurve.method == "Coloropp");
+        if ((todo & M_WB) && params->toneCurve.hrenabled && params->toneCurve.method == "Coloropp") {
+            todo |= DEMOSAIC;
+        }
 
         if ((todo & M_RAW)
                 || (!highDetailRawComputed && highDetailNeeded)
@@ -872,8 +876,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             PreviewProps pp(0, 0, fw, fh, scale);
             // Tells to the ImProcFunctions' tools what is the preview scale, which may lead to some simplifications
             ipf.setScale(scale);
-            int inpaintopposed = 1;//force getimage to use inpaint-opposed if enable, only once
-            imgsrc->getImage(currWB, tr, orig_prev, pp, params->toneCurve, params->raw, inpaintopposed);
+            imgsrc->getImage(currWB, tr, orig_prev, pp, params->toneCurve, params->raw);
 
             if ((todo & M_SPOT) && params->spot.enabled && !params->spot.entries.empty()) {
                 spotsDone = true;
@@ -2952,7 +2955,7 @@ void ImProcCoordinator::saveInputICCReference(const Glib::ustring& fname, bool a
         currWB = ColorTemp(); // = no white balance
     }
 
-    imgsrc->getImage(currWB, tr, im, pp, ppar.toneCurve, ppar.raw, 0);
+    imgsrc->getImage(currWB, tr, im, pp, ppar.toneCurve, ppar.raw);
     ImProcFunctions ipf(&ppar, true);
 
     if (ipf.needsTransform(fW, fH, imgsrc->getRotateDegree(), imgsrc->getMetaData())) {
@@ -3129,7 +3132,7 @@ void ImProcCoordinator::process()
         paramsUpdateMutex.unlock();
 
         // M_VOID means no update, and is a bit higher that the rest
-        if (change & (M_VOID - 1)) {
+        if (change & (~M_VOID)) {
             updatePreviewImage(change, panningRelatedChange);
         }
 
