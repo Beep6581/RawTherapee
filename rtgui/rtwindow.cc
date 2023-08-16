@@ -118,41 +118,11 @@ RTWindow::RTWindow ()
         RTScalable::init(this);
 
         // Look for theme and set it
-        Glib::RefPtr<Glib::Regex> regex = Glib::Regex::create (THEMEREGEXSTR, Glib::RegexCompileFlags::REGEX_CASELESS);
-        Glib::ustring filename;
-        Glib::MatchInfo mInfo;
-        bool match = regex->match(options.theme + ".css", mInfo);
-        if (match) {
-            // save old theme (name + version)
-            Glib::ustring initialTheme(options.theme);
-
-            // update version
-            auto pos = options.theme.find("-GTK3-");
-            Glib::ustring themeRootName(options.theme.substr(0, pos));
-            if (GTK_MINOR_VERSION < 20) {
-                options.theme = themeRootName + "-GTK3-_19";
-            } else {
-                options.theme = themeRootName + "-GTK3-20_";
-            }
-            // check if this version exist
-            if (!Glib::file_test(Glib::build_filename(argv0, "themes", options.theme + ".css"), Glib::FILE_TEST_EXISTS)) {
-                // set back old theme version if the actual one doesn't exist yet
-                options.theme = initialTheme;
-            }
-        }
-        filename = Glib::build_filename(argv0, "themes", options.theme + ".css");
-
-        if (!match || !Glib::file_test(filename, Glib::FILE_TEST_EXISTS)) {
-            options.theme = "RawTherapee-GTK";
-
-            // We're not testing GTK_MAJOR_VERSION == 3 here, since this branch requires Gtk3 only
-            if (GTK_MINOR_VERSION < 20) {
-                options.theme = options.theme + "3-_19";
-            } else {
-                options.theme = options.theme + "3-20_";
-            }
-
-            filename = Glib::build_filename (argv0, "themes", options.theme + ".css");
+        // Check if the current theme name in options exists, otherwise set it to default one (i.e. "RawTherapee.css")
+        auto filename = Glib::build_filename(argv0, "themes", options.theme + ".css");
+        if (!Glib::file_test(filename, Glib::FILE_TEST_EXISTS)) {
+            options.theme = "RawTherapee";
+            filename = Glib::build_filename(argv0, "themes", options.theme + ".css");
         }
 
         cssRT = Gtk::CssProvider::create();

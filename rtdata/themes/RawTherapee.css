@@ -19,7 +19,7 @@
 */
 
 /***************************/
-/**/ @import "size.css"; /**/ /* TODO: Remove this weird dependency */
+/**/ @import url("./common/size.css"); /**/ /* TODO: Remove this weird dependency */
 /***************************/
 
 /** Set style defaults **/
@@ -1068,7 +1068,7 @@ dialog frame > label:not(.dummy) {
 }
 
 #ToolPanelNotebook viewport {
-    padding: 0;	
+    padding: 0;
 }
 
 #ToolPanelNotebook .PanelEnding {
@@ -1226,7 +1226,7 @@ dialog frame > label:not(.dummy) {
     border-top-width: 0.083333333333333333em;
 }
 
-#Navigator box label { 
+#Navigator box label {
     margin: 0;
     padding: 0;
 }

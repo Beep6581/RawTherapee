@@ -70,18 +70,9 @@ class Preferences final :
         }
     };
 
-    class ThemeFilename
-    {
-    public:
-        Glib::ustring shortFName;
-        Glib::ustring longFName;
-
-        ThemeFilename (Glib::ustring sfname, Glib::ustring lfname) : shortFName (sfname), longFName (lfname) {}
-    };
-
     Glib::RefPtr<Gtk::TreeStore> behModel;
     BehavColumns behavColumns;
-    std::vector<ThemeFilename> themeFNames;
+    std::vector<Glib::ustring> themeNames;
     Glib::RefPtr<Glib::Regex> regex;
     Glib::MatchInfo matchInfo;
     Splash* splash;
@@ -279,7 +270,7 @@ class Preferences final :
     void switchFontTo  (const Glib::ustring &newFontFamily, const int newFontSize);
     bool splashClosed (GdkEventAny* event);
 
-    int getThemeRowNumber (const Glib::ustring& longThemeFName);
+    int getThemeRowNumber (const Glib::ustring& name);
 
     void appendBehavList (Gtk::TreeModel::iterator& parent, Glib::ustring label, int id, bool set);
 

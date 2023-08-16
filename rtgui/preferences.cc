@@ -139,14 +139,11 @@ Preferences::~Preferences()
     get_size(options.preferencesWidth, options.preferencesHeight);
 }
 
-int Preferences::getThemeRowNumber (const Glib::ustring& longThemeFName)
+int Preferences::getThemeRowNumber (const Glib::ustring& name)
 {
-
-    if (regex->match(longThemeFName + ".css", matchInfo)) {
-        for (size_t i = 0 ; i < themeFNames.size(); ++i) {
-            if (themeFNames.at(i).longFName == longThemeFName) {
-                return (int)i;
-            }
+    for (size_t i = 0 ; i < themeNames.size(); ++i) {
+        if (themeNames.at(i) == name) {
+            return (int)i;
         }
     }
 
@@ -1154,8 +1151,8 @@ Gtk::Widget* Preferences::getGeneralPanel()
     themeCBT = Gtk::manage(new Gtk::ComboBoxText());
     themeCBT->set_active(0);
     parseThemeDir(Glib::build_filename(argv0, "themes"));
-    for (size_t i = 0; i < themeFNames.size(); i++) {
-        themeCBT->append(themeFNames.at(i).shortFName);
+    for (size_t i = 0; i < themeNames.size(); i++) {
+        themeCBT->append(themeNames.at(i));
     }
 
     Gtk::Label* mainFontLbl = Gtk::manage(new Gtk::Label(M("PREFERENCES_APPEARANCE_MAINFONT")));
@@ -1665,7 +1662,7 @@ void Preferences::parseThemeDir(Glib::ustring dirname)
         return;
     }
 
-    // process directory
+    // Process directory
     Glib::Dir* dir = nullptr;
 
     try {
@@ -1675,40 +1672,17 @@ void Preferences::parseThemeDir(Glib::ustring dirname)
     }
 
     for (Glib::DirIterator i = dir->begin(); i != dir->end(); ++i) {
-        Glib::ustring fname = Glib::build_filename(dirname, *i);
-        Glib::ustring sname = *i;
+        Glib::ustring fname = *i;
 
-        // ignore directories and filter out unsupported theme
-        if (regex->match(sname, matchInfo) && !Glib::file_test(fname, Glib::FILE_TEST_IS_DIR) && sname.size() >= 4) {
-            bool keepIt = false;
-            Glib::ustring fname2 = matchInfo.fetch(1);
-            Glib::ustring minMinor = matchInfo.fetch(2);
-            Glib::ustring maxMinor = matchInfo.fetch(3);
-
-            if (!minMinor.empty()) {
-                guint64 minMinorVal = g_ascii_strtoll(minMinor.c_str(), 0, 0);
-
-                if ((guint64)GTK_MINOR_VERSION >= minMinorVal) {
-                    keepIt = true;
-                }
-            }
-
-            if (!maxMinor.empty()) {
-                guint64 maxMinorVal = g_ascii_strtoll(maxMinor.c_str(), 0, 0);
-
-                if ((guint64)GTK_MINOR_VERSION <= maxMinorVal) {
-                    keepIt = true;
-                }
-            }
-
-            if (keepIt) {
-                themeFNames.push_back(ThemeFilename(matchInfo.fetch(1), sname.substr(0, sname.size() - 4)));
-            }
+        // Ignore directories and filter to keep css files only
+        if (regex->match(fname, matchInfo) && !Glib::file_test(fname, Glib::FILE_TEST_IS_DIR) && fname.size() >= 4) {
+            themeNames.push_back(fname.substr(0, fname.size() - 4));
         }
     }
 
-    std::sort(themeFNames.begin(), themeFNames.end(), [](const ThemeFilename & firstDir, const ThemeFilename & secondDir) {
-        return firstDir.longFName < secondDir.longFName;
+    // Sort theme by names
+    std::sort(themeNames.begin(), themeNames.end(), [](const Glib::ustring & first, const Glib::ustring & second) {
+        return first < second;
     });
 
     delete dir;
@@ -1747,7 +1721,7 @@ void Preferences::storePreferences()
     moptions.shadowThreshold = (int)shThresh->get_value();
     moptions.language = languages->get_active_id();
     moptions.languageAutoDetect = ckbLangAutoDetect->get_active();
-    moptions.theme = themeFNames.at (themeCBT->get_active_row_number ()).longFName;
+    moptions.theme = themeNames.at (themeCBT->get_active_row_number ());
 
     Gdk::RGBA cropCol = cropMaskColorCB->get_rgba();
     moptions.cutOverlayBrush[0] = cropCol.get_red();
@@ -2262,7 +2236,7 @@ void Preferences::okPressed()
 void Preferences::cancelPressed()
 {
     // set the initial theme back
-    if (themeFNames.at (themeCBT->get_active_row_number ()).longFName != options.theme) {
+    if (themeNames.at (themeCBT->get_active_row_number ()) != options.theme) {
         switchThemeTo(options.theme);
     }
 
@@ -2318,7 +2292,7 @@ void Preferences::aboutPressed()
 void Preferences::themeChanged()
 {
 
-    moptions.theme = themeFNames.at (themeCBT->get_active_row_number ()).longFName;
+    moptions.theme = themeNames.at (themeCBT->get_active_row_number ());
     switchThemeTo(moptions.theme);
 }
 

@@ -20,15 +20,15 @@
 
 
 /*****************************************/
-/**/ @import "TooWaBlue-GTK3-20_.css"; /**/
+/**/ @import "TooWaBlue.css"; /**/
 /*****************************************/
 
 /*** Change me *** rgb(red,green,blue) *** allowed values from 0 to 255 for each color ***/
 
-@define-color accent-color rgb(65,65,65);              /*** Active color for Lists, Menu, Borders ... * Default: rgb(33,82,145) ***/
+@define-color accent-color rgb(33,82,150);              /*** Active color for Lists, Menu, Borders ... * Default: rgb(33,82,145) ***/
 @define-color text-hl-color rgb(200,200,200);           /*** Active text color * Default: rgb(200,200,200) ***/
 
-@define-color bg-highlighted-text-color rgb(33,82,150); /*** Highlighted text color background* Default: rgb(33,82,145) ***/
+@define-color bg-highlighted-text-color rgb(33,82,145); /*** Highlighted text color background* Default: rgb(33,82,145) ***/
 @define-color highlighted-text-color rgb(200,200,200);  /*** Highlighted text color * Default: rgb(200,200,200) ***/
 
 @define-color bg-image rgb(58,58,58);                   /*** Image area & File Browser background * Default: rgb(58,58,58) ***/
@@ -36,7 +36,7 @@
 @define-color accent-color2 rgb(33,82,150);             /*** Scale, Progressbar, Scrollbar, Tabs * Default: rgb(33,82,145) ***/
 @define-color accent-color4 rgb(98,98,98);              /*** Slider knob * Default: rgb(98,98,98) ***/
 
-@define-color accent-color3 rgb(30,30,30);             /*** Selected thumbnail background color * Default: rgb(33,82,145) ***/
+@define-color accent-color3 rgb(33,82,145);             /*** Selected thumbnail background color * Default: rgb(33,82,145) ***/
 @define-color text-hl-color3 rgb(200,200,200);          /*** Selected thumbnail text color * Default: rgb(200,200,200) ***/
 
 /*** Change me end *****************************************************************************/

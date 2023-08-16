@@ -37,7 +37,7 @@
 #define STARTUPDIR_CUSTOM  2
 #define STARTUPDIR_LAST    3
 
-#define THEMEREGEXSTR      "^(.+)-GTK3-(\\d{1,2})?_(\\d{1,2})?\\.css$"
+#define THEMEREGEXSTR      "^(.+)\\.css$"
 
 // Default bundled profile name to use for Raw images
 #ifdef WIN32

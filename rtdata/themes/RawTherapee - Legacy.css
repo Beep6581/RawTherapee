@@ -20,7 +20,7 @@
 */
 
 /***************************/
-/**/ @import "size - Legacy.css"; /**/
+/**/ @import url("./common/size - Legacy.css"); /**/
 /***************************/
 
 /* text-shadow causes a serious performance degradation in rendering the UI,
