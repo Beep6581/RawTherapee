@@ -9582,7 +9582,8 @@ void Locallabcie::sigqChanged()
     if (sigq->get_active()) {
         sigBox->show();
     } else {
-        sigBox->hide();
+        //sigBox->hide();
+        sigBox->show();
     }
 
     if (isLocActivated && exp->getEnabled()) {

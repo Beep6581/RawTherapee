@@ -3717,8 +3717,8 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             printf("Cam16 Scene  Lighness_J Brightness_Q- HDR-PQ=%5.1f minJ=%3.1f maxJ=%3.1f meanJ=%3.1f minQ=%3.1f maxQ=%4.1f  meanQ=%4.1f meanQ1=%2.3f\n", (double) plum, (double) minicam, (double) maxicamj, (double) sumcam, (double) minicamq, (double) maxicamq, (double) sumcamq, (double) (sumcamq * coefq));
             printf("Cam16 Scene  Saturati-s Colorfulln_M- minSat=%3.1f maxSat=%3.1f meanSat=%3.1f minM=%3.1f maxM=%3.1f meanM=%3.1f\n", (double) minisat, (double) maxisat, (double) sumsat, (double) miniM, (double) maxiM, (double) sumM);
            // maxicam = maxicamq;//maximum Brightness 
-            if((sumcamq + 0.1f * minicamq) < maxicamq) {
-                maxicam = sumcamq + 0.1f * minicamq;//maximum Brightness take into account
+            if((sumcamq + 0.2f * minicamq) < maxicamq) {
+                 maxicam = sumcamq + 0.2f * minicamq;//maximum Brightness take into account
                 //ponderate maxicam with mean and mini
             } else {
                 maxicam = 0.4f * sumcamq + 0.6f * maxicamq;               
@@ -3760,7 +3760,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
             float corlog = xlogf(maxicam)/log2;//correction base logarithme
             linbase = linbaseor / corlog;
-            newgray = gray - 0.025f * (6.f - maxicam);//empirical formula to take into account Q in DR.
+            newgray = gray - 0.022f * (6.f - maxicam);//empirical formula to take into account Q in DR.
 
             if (settings->verbose) {
                 printf("Gray=%1.3f newgray=%1.3f MaxicamQ=%3.2f Base log encode corrected Q=%5.1f Base log encode origig Q=%5.1f\n", (double) gray, (double) newgray, (double) maxicam, (double) linbase, (double) linbaseor);
@@ -3774,7 +3774,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             x = rtengine::max(x, (float) noise);
             x = rtengine::max(x / newgray, (float) noise);//gray = gain - before log conversion
 
-            if (compr && x >= comprth)
+            if (compr && x >= comprth)//comprth = maxicam
             {
                 x = intp(comprfactor, (std::tanh((x - comprth) / comprth) + 1.f) * comprth, x); //as sigmoid... but tanh (tg hyperbolic), inspired by the work of alberto Grigio
             }
