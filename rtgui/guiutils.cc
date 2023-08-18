@@ -1926,32 +1926,25 @@ void BackBuffer::copySurface(Cairo::RefPtr<Cairo::Context> crDest, Gdk::Rectangl
 
 SpotPicker::SpotPicker(int const defaultValue, Glib::ustring const &buttonKey, Glib::ustring const &buttonTooltip, Glib::ustring const &labelKey) :
     Gtk::Grid(),
-    _associatedVar(defaultValue),
+    _spotHalfWidth(defaultValue),
     _spotLabel(labelSetup(labelKey)),
-    _spotSizeSetter(new MyComboBoxText(selecterSetup())),
+    _spotSizeSetter(MyComboBoxText(selecterSetup())),
     _spotButton(spotButtonTemplate(buttonKey, buttonTooltip))
 
 {
-    Gtk::Grid* spotSizeHelper = new Gtk::Grid();
-    spotSizeHelper->set_name("Spot-Size-Helper");
-    setExpandAlignProperties(spotSizeHelper, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-
     this->get_style_context()->add_class("grid-spacing");
     setExpandAlignProperties(this, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
-    spotSizeHelper->attach (*_spotSizeSetter, 0, 0, 1, 1);
-
     this->attach (_spotButton, 0, 0, 1, 1);
     this->attach (_spotLabel, 1, 0, 1, 1);
-    this->attach (*spotSizeHelper, 2, 0, 1, 1);
-    _spotSizeSetter->signal_changed().connect( sigc::mem_fun(*this, &SpotPicker::spotSizeChanged));
+    this->attach (_spotSizeSetter, 2, 0, 1, 1);
+    _spotSizeSetter.signal_changed().connect( sigc::mem_fun(*this, &SpotPicker::spotSizeChanged));
 }
 SpotPicker::~SpotPicker()
 {
-    delete _spotSizeSetter;
 }
 
-Gtk::Label SpotPicker::labelSetup(Glib::ustring const &key)
+Gtk::Label SpotPicker::labelSetup(Glib::ustring const &key) const
 {
     Gtk::Label label(key);
     setExpandAlignProperties(&label, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
@@ -1961,34 +1954,34 @@ Gtk::Label SpotPicker::labelSetup(Glib::ustring const &key)
 MyComboBoxText SpotPicker::selecterSetup()
 {
     MyComboBoxText spotSize = MyComboBoxText();
-    setExpandAlignProperties(&spotSize, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(&spotSize, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 
     spotSize.append ("2");
-    if (_associatedVar == 2) {
+    if (_spotHalfWidth == 2) {
         spotSize.set_active(0);
     }
 
     spotSize.append ("4");
 
-    if (_associatedVar == 4) {
+    if (_spotHalfWidth == 4) {
         spotSize.set_active(1);
     }
 
     spotSize.append ("8");
 
-    if (_associatedVar == 8) {
+    if (_spotHalfWidth == 8) {
         spotSize.set_active(2);
     }
 
     spotSize.append ("16");
 
-    if (_associatedVar == 16) {
+    if (_spotHalfWidth == 16) {
         spotSize.set_active(3);
     }
 
     spotSize.append ("32");
 
-    if (_associatedVar == 32) {
+    if (_spotHalfWidth == 32) {
         spotSize.set_active(4);
     }
     return spotSize;
@@ -2006,5 +1999,5 @@ Gtk::ToggleButton SpotPicker::spotButtonTemplate(Glib::ustring const &key, const
 
 void SpotPicker::spotSizeChanged()
 {
-    _associatedVar = atoi(_spotSizeSetter->get_active_text().c_str());
+    _spotHalfWidth = atoi(_spotSizeSetter.get_active_text().c_str());
 }

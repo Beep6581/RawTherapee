@@ -694,12 +694,12 @@ public:
  */ 
 class SpotPicker : public Gtk::Grid
 {
-    public:
-        int _associatedVar;
+    private:
+        int _spotHalfWidth;
         Gtk::Label _spotLabel;
-        MyComboBoxText* const _spotSizeSetter;
+        MyComboBoxText _spotSizeSetter;
         Gtk::ToggleButton _spotButton;
-
+    public:
         SpotPicker(int const defaultValue, Glib::ustring const &buttonKey, Glib::ustring const &buttonTooltip, Glib::ustring const &labelKey);
         ~SpotPicker();
         inline bool get_active()
@@ -710,9 +710,21 @@ class SpotPicker : public Gtk::Grid
         {
             _spotButton.set_active(b);
         }
+        int get_spot_half_width()
+        {
+            return _spotHalfWidth;
+        }
+        template <class T_return, class T_obj> void add_button_toggled_event(T_return& returnv, const T_obj function)
+        {
+            _spotButton.signal_toggled().connect(sigc::mem_fun(returnv, function));
+        }
+        bool remove_if_there(Gtk::Container* cont, bool increference = true)
+        {
+            return removeIfThere(cont, &_spotButton, increference);
+        }
 
     protected:
-        static Gtk::Label labelSetup(Glib::ustring const &key);
+        Gtk::Label labelSetup(Glib::ustring const &key) const;
         MyComboBoxText selecterSetup();
         static Gtk::ToggleButton spotButtonTemplate(Glib::ustring const &key, const Glib::ustring &tooltip);
         void spotSizeChanged();

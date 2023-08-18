@@ -43,12 +43,6 @@ public:
 
     virtual bool getFilmNegativeSpot(rtengine::Coord spot, int spotSize, RGB &refInput, RGB &refOutput) = 0;
 };
-// class FilmNegSpotListener
-// {
-//     public:
-//         virtual ~FilmNegSpotListener() = default;
-//         virtual void spotNegRequested(int size) = 0;
-// };
 
 class FilmNegative final :
     public ToolParamBlock,
@@ -85,10 +79,6 @@ public:
     bool button1Released() override;
     bool button3Pressed(int modifierKey) override;
     void switchOffEditMode() override;
-    // void setFilmNegSpotListener(FilmNegSpotListener* listener)
-    // {
-    //     spotlistener = listener;
-    // }
 
 private:
     void editToggled();
@@ -96,9 +86,6 @@ private:
 
     void readOutputSliders(RGB &refOutput);
     void writeOutputSliders(const RGB &refOutput);
-
-    // void spotSizeChanged();
-    // void refSpotChanged();
 
     // ColorTemp value corresponding to neutral RGB multipliers (1,1,1). Should be around 6500K.
     const rtengine::ColorTemp NEUTRAL_TEMP;
@@ -108,8 +95,6 @@ private:
     const rtengine::ProcEvent evFilmNegativeRefSpot;
     const rtengine::ProcEvent evFilmNegativeBalance;
     const rtengine::ProcEvent evFilmNegativeColorSpace;
-
-    // FilmNegSpotListener* spotlistener;
 
     std::vector<rtengine::Coord> refSpotCoords;
 
@@ -135,14 +120,14 @@ private:
     Adjuster* const redRatio;
     Adjuster* const blueRatio;
 
-    #define DEFAULT_SPOT_WIDTH 8
+    static constexpr int DEFAULT_SPOT_WIDTH = 8;
 
     SpotPicker picker;
 
     Gtk::Label* const refInputLabel;
     SpotPicker refPicker;
 
-    int* displayRectWidth;
+    SpotPicker* activePicker;
 
     Adjuster* const outputLevel;
     Adjuster* const greenBalance;
