@@ -589,6 +589,7 @@ void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name)
     } else {
         ep->setParent (this);
         ep->setParentWindow (this);
+        ep->setExternalEditorChangedSignal(&externalEditorChangedSignal);
 
         // construct closeable tab for the image
         Gtk::Grid* titleGrid = Gtk::manage (new Gtk::Grid ());
@@ -637,6 +638,7 @@ void RTWindow::remEditorPanel (EditorPanel* ep)
         wndEdit->remEditorPanel (ep);
     } else {
         bool queueHadFocus = (mainNB->get_current_page() == mainNB->page_num (*bpanel));
+        ep->setExternalEditorChangedSignal(nullptr);
         epanels.erase (ep->getFileName());
         filesEdited.erase (ep->getFileName ());
         fpanel->refreshEditedState (filesEdited);
@@ -1059,6 +1061,15 @@ void RTWindow::updateExternalEditorWidget(int selectedIndex, const std::vector<E
 {
     if (epanel) {
         epanel->updateExternalEditorWidget(selectedIndex, editors);
+    }
+
+    for (auto panel : epanels) {
+        panel.second->updateExternalEditorWidget(selectedIndex, editors);
+    }
+
+    if (options.multiDisplayMode > 0) {
+        EditWindow::getInstance(this)
+            ->updateExternalEditorWidget(selectedIndex, editors);
     }
 }
 

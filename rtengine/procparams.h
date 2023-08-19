@@ -1994,30 +1994,21 @@ struct ColorManagementParams {
 };
 
 /**
-  * Parameters for metadata handling
-  */
-struct MetaDataParams {
-    enum Mode {
-        TUNNEL,
-        EDIT,
-        STRIP
-    };
-    Mode mode;
-
-    MetaDataParams();
-
-    bool operator ==(const MetaDataParams &other) const;
-    bool operator !=(const MetaDataParams &other) const;
-};
-
-
-/**
   * Minimal wrapper allowing forward declaration for representing a key/value for the exif metadata information
   */
 class ExifPairs final
 {
+private:
+    using Pairs = std::map<Glib::ustring, Glib::ustring>;
+
 public:
-    using const_iterator = std::map<Glib::ustring, Glib::ustring>::const_iterator;
+    using const_iterator = Pairs::const_iterator;
+    using size_type = Pairs::size_type;
+
+    const_iterator find(const Glib::ustring& key) const
+    {
+        return pairs.find(key);
+    }
 
     const_iterator begin() const
     {
@@ -2034,6 +2025,16 @@ public:
         pairs.clear();
     }
 
+    size_type erase(const Glib::ustring& key)
+    {
+        return pairs.erase(key);
+    }
+
+    bool empty() const
+    {
+        return pairs.empty();
+    }
+
     Glib::ustring& operator[](const Glib::ustring& key)
     {
         return pairs[key];
@@ -2045,7 +2046,7 @@ public:
     }
 
 private:
-    std::map<Glib::ustring, Glib::ustring> pairs;
+    Pairs pairs;
 };
 
 /**
@@ -2077,6 +2078,11 @@ public:
         return pairs.empty();
     }
 
+    iterator erase(const const_iterator& key)
+    {
+        return pairs.erase(key);
+    }
+
     void clear()
     {
         pairs.clear();
@@ -2095,6 +2101,29 @@ public:
 private:
     std::map<Glib::ustring, std::vector<Glib::ustring>> pairs;
 };
+
+/**
+  * Parameters for metadata handling
+  */
+struct MetaDataParams {
+    enum Mode {
+        TUNNEL,
+        EDIT,
+        STRIP
+    };
+    Mode mode;
+    std::vector<std::string> exifKeys;
+    ExifPairs exif;
+    IPTCPairs iptc;
+
+    MetaDataParams();
+
+    bool operator ==(const MetaDataParams &other) const;
+    bool operator !=(const MetaDataParams &other) const;
+
+    static std::vector<std::string> basicExifKeys;
+};
+
 
 struct WaveletParams {
     std::vector<double> ccwcurve;
@@ -2614,8 +2643,8 @@ public:
     int                     ppVersion;       ///< Version of the PP file from which the parameters have been read
 
     MetaDataParams          metadata;        ///< Metadata parameters
-    ExifPairs               exif;            ///< List of modifications appplied on the exif tags of the input image
-    IPTCPairs               iptc;            ///< The IPTC tags and values to be saved to the output image
+    // ExifPairs               exif;            ///< List of modifications appplied on the exif tags of the input image
+    // IPTCPairs               iptc;            ///< The IPTC tags and values to be saved to the output image
 
     /**
       * The constructor only sets the hand-wired defaults.

@@ -33,6 +33,7 @@
 #include "image8.h"
 #include "imagefloat.h"
 #include "improcfun.h"
+#include "metadata.h"
 #include "labimage.h"
 #include "lcp.h"
 #include "procparams.h"
@@ -406,6 +407,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             Color HLR alters rgb output of demosaic, so re-demosaic is needed when Color HLR is being turned off;
             if HLR is enabled and changing method *from* Color to any other method
             OR HLR gets disabled when Color method was selected
+            If white balance changed with inpaint opposed, because inpaint opposed depends on the white balance
         */
         // If high detail (=100%) is newly selected, do a demosaic update, since the last was just with FAST
 
@@ -413,7 +415,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             imageTypeListener->imageTypeChanged(imgsrc->isRAW(), imgsrc->getSensorType() == ST_BAYER, imgsrc->getSensorType() == ST_FUJI_XTRANS, imgsrc->isMono(), imgsrc->isGainMapSupported());
         }
 
-        bool iscolor = (params->toneCurve.method == "Color");// || params->toneCurve.method == "Coloropp");
+        bool iscolor = (params->toneCurve.method == "Color" || params->toneCurve.method == "Coloropp");
+        if ((todo & M_WB) && params->toneCurve.hrenabled && params->toneCurve.method == "Coloropp") {
+            todo |= DEMOSAIC;
+        }
 
         if ((todo & M_RAW)
                 || (!highDetailRawComputed && highDetailNeeded)
@@ -753,7 +758,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     }
 
                     imgsrc->getAutoWBMultipliersitc(extra, tempref, greenref, tempitc, greenitc, temp0, delta,  bia, dread, kcam, nocam, studgood, minchrom, kmin, minhist, maxhist, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw, params->toneCurve);
-                    
+
                     if (params->wb.method ==  "autitcgreen") {
                         params->wb.temperature = tempitc;
                         params->wb.green = greenitc;
@@ -761,7 +766,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                             params->wb.temperature = tempitc_low;
                             params->wb.green = greenitc_low;
                         }
-                        
+
                         currWB = ColorTemp(params->wb.temperature, params->wb.green, 1., params->wb.method, params->wb.observer);
                         currWB.getMultipliers(rm, gm, bm);
                         autoWB.update(rm, gm, bm, params->wb.equal, params->wb.observer, params->wb.tempBias);
@@ -871,8 +876,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             PreviewProps pp(0, 0, fw, fh, scale);
             // Tells to the ImProcFunctions' tools what is the preview scale, which may lead to some simplifications
             ipf.setScale(scale);
-            int inpaintopposed = 1;//force getimage to use inpaint-opposed if enable, only once
-            imgsrc->getImage(currWB, tr, orig_prev, pp, params->toneCurve, params->raw, inpaintopposed);
+            imgsrc->getImage(currWB, tr, orig_prev, pp, params->toneCurve, params->raw);
 
             if ((todo & M_SPOT) && params->spot.enabled && !params->spot.entries.empty()) {
                 spotsDone = true;
@@ -2177,20 +2181,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                                     customColCurve1, customColCurve2, customColCurve3, 1);
 
                 const FramesMetaData* metaData = imgsrc->getMetaData();
-                int imgNum = 0;
-
-                if (imgsrc->isRAW()) {
-                    if (imgsrc->getSensorType() == ST_BAYER) {
-                        imgNum = rtengine::LIM<unsigned int>(params->raw.bayersensor.imageNum, 0, metaData->getFrameCount() - 1);
-                    } else if (imgsrc->getSensorType() == ST_FUJI_XTRANS) {
-                        //imgNum = rtengine::LIM<unsigned int>(params->raw.xtranssensor.imageNum, 0, metaData->getFrameCount() - 1);
-                    }
-                }
-
-                float fnum = metaData->getFNumber(imgNum);          // F number
-                float fiso = metaData->getISOSpeed(imgNum) ;        // ISO
-                float fspeed = metaData->getShutterSpeed(imgNum) ;  // Speed
-                double fcomp = metaData->getExpComp(imgNum);        // Compensation +/-
+                float fnum = metaData->getFNumber();          // F number
+                float fiso = metaData->getISOSpeed() ;        // ISO
+                float fspeed = metaData->getShutterSpeed() ;  // Speed
+                double fcomp = metaData->getExpComp();        // Compensation +/-
                 double adap;
 
                 if (fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f) { //if no exif data or wrong
@@ -2976,7 +2970,7 @@ void ImProcCoordinator::saveInputICCReference(const Glib::ustring& fname, bool a
         currWB = ColorTemp(); // = no white balance
     }
 
-    imgsrc->getImage(currWB, tr, im, pp, ppar.toneCurve, ppar.raw, 0);
+    imgsrc->getImage(currWB, tr, im, pp, ppar.toneCurve, ppar.raw);
     ImProcFunctions ipf(&ppar, true);
 
     if (ipf.needsTransform(fW, fH, imgsrc->getRotateDegree(), imgsrc->getMetaData())) {
@@ -3032,7 +3026,7 @@ void ImProcCoordinator::saveInputICCReference(const Glib::ustring& fname, bool a
         im = tempImage;
     }
 
-    im->setMetadata(imgsrc->getMetaData()->getRootExifData());
+    im->setMetadata(Exiv2Metadata(imgsrc->getFileName(), false));
 
     im->saveTIFF(fname, 16, false, true);
     delete im;
@@ -3153,7 +3147,7 @@ void ImProcCoordinator::process()
         paramsUpdateMutex.unlock();
 
         // M_VOID means no update, and is a bit higher that the rest
-        if (change & (M_VOID - 1)) {
+        if (change & (~M_VOID)) {
             updatePreviewImage(change, panningRelatedChange);
         }
 

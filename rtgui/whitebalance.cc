@@ -246,10 +246,10 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     }
 
     auto m = ProcEventMapper::getInstance();
-    EvWBObserver10 = m->newEvent(ALLNORAW, "HISTORY_MSG_WBALANCE_OBSERVER10");
-    EvWBitcwbprim = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_PRIM");
-    EvWBitcwbalg = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_OBS");
-    EvWBitcwgreen = m->newEvent(ALLNORAW, "HISTORY_MSG_WBITC_GREEN");
+    EvWBObserver10 = m->newEvent(WB, "HISTORY_MSG_WBALANCE_OBSERVER10");
+    EvWBitcwbprim = m->newEvent(WB, "HISTORY_MSG_WBITC_PRIM");
+    EvWBitcwbalg = m->newEvent(WB, "HISTORY_MSG_WBITC_OBS");
+    EvWBitcwgreen = m->newEvent(WB, "HISTORY_MSG_WBITC_GREEN");
 
 
     //Add the model columns to the Combo (which is a kind of view),

@@ -1531,6 +1531,7 @@ struct RAWParamsEdited {
 
 struct MetaDataParamsEdited {
     bool mode;
+    bool exifKeys;
 };
 
 struct FilmNegativeParamsEdited {

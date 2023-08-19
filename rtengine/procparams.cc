@@ -232,6 +232,17 @@ void getFromKeyfile(
     }
 }
 
+void getFromKeyfile(
+    const Glib::KeyFile& keyfile,
+    const Glib::ustring& group_name,
+    const Glib::ustring& key,
+    std::vector<std::string>& value
+)
+{
+    auto tmpval = keyfile.get_string_list(group_name, key);
+    value.assign(tmpval.begin(), tmpval.end());
+}
+
 template<typename T>
 bool assignFromKeyfile(
     const Glib::KeyFile& keyfile,
@@ -363,6 +374,17 @@ void putToKeyfile(
 void putToKeyfile(
     const Glib::ustring& group_name,
     const Glib::ustring& key,
+    const std::vector<std::string>& value,
+    Glib::KeyFile& keyfile
+)
+{
+    const Glib::ArrayHandle<Glib::ustring> list = value;
+    keyfile.set_string_list(group_name, key, list);
+}
+
+void putToKeyfile(
+    const Glib::ustring& group_name,
+    const Glib::ustring& key,
     const rtengine::procparams::FilmNegativeParams::RGB& value,
     Glib::KeyFile& keyfile
 )
@@ -411,7 +433,8 @@ bool saveToKeyfile(
     return false;
 }
 
-}
+
+} // namespace
 
 namespace rtengine
 {
@@ -1404,7 +1427,7 @@ bool WBParams::isPanningRelatedChange(const WBParams& other) const
             enabled == other.enabled
             && (
                 (
-                    method == "Camera" 
+                    method == "Camera"
                     && other.method == "Camera"
                 )
             || (
@@ -2488,25 +2511,25 @@ WaveletParams::WaveletParams() :
     },
     blcurve{
         static_cast<double>(FCT_MinMaxCPoints),
-        0.0, 
-        0.0, 
-        0.0, 
-        0.35, 
-        0.5, 
-        0., 
+        0.0,
+        0.0,
+        0.0,
+        0.35,
+        0.5,
+        0.,
         0.35,
         0.35,
         1.0,
         0.0,
         0.35,
         0.35
-/*      
+/*
         0.0,
-        0.35, 
-        0.35, 
-        1.0, 
-        0.0, 
-        0.35, 
+        0.35,
+        0.35,
+        1.0,
+        0.0,
+        0.35,
         0.35
 */
     },
@@ -5799,21 +5822,6 @@ Glib::ustring RAWParams::getFlatFieldBlurTypeString(FlatFieldBlurType type)
 }
 
 
-MetaDataParams::MetaDataParams():
-    mode(MetaDataParams::TUNNEL)
-{
-}
-
-bool MetaDataParams::operator==(const MetaDataParams &other) const
-{
-    return mode == other.mode;
-}
-
-bool MetaDataParams::operator!=(const MetaDataParams &other) const
-{
-    return !(*this == other);
-}
-
 FilmNegativeParams::FilmNegativeParams() :
     enabled(false),
     redRatio(1.36),
@@ -5865,6 +5873,96 @@ bool FilmNegativeParams::operator !=(const FilmNegativeParams& other) const
 {
     return !(*this == other);
 }
+
+
+namespace {
+
+const std::map<std::string, std::string> exif_keys = {
+    {"Copyright", "Exif.Image.Copyright"},
+    {"Artist", "Exif.Image.Artist"},
+    {"ImageDescription", "Exif.Image.ImageDescription"},
+    {"Exif.UserComment", "Exif.Photo.UserComment"},
+    {"ISOSpeed", "Exif.Photo.ISOSpeedRatings"},
+    {"FNumber", "Exif.Photo.FNumber"},
+    {"ShutterSpeed", "Exif.Photo.ExposureTime"},
+    {"FocalLength", "Exif.Photo.FocalLength"},
+    {"ExpComp", "Exif.Photo.ExposureBiasValue"},
+    {"Flash", "Exif.Photo.Flash"},
+    {"Make", "Exif.Image.Make"},
+    {"Model", "Exif.Image.Model"},
+    {"Lens", "Exif.Photo.LensModel"},
+    {"DateTime", "Exif.Photo.DateTimeOriginal"},
+    {"XResolution", "Exif.Image.XResolution"},
+    {"YResolution", "Exif.Image.YResolution"}
+};
+
+const std::map<std::string, std::string> iptc_keys = {
+    {"Title", "Iptc.Application2.ObjectName"},
+    {"Category", "Iptc.Application2.Category"},
+    {"SupplementalCategories", "Iptc.Application2.SuppCategory"},
+    {"Keywords", "Iptc.Application2.Keywords"},
+    {"Instructions", "Iptc.Application2.SpecialInstructions"},
+    {"DateCreated", "Iptc.Application2.DateCreated"},
+    {"Creator", "Iptc.Application2.Byline"},
+    {"CreatorJobTitle", "Iptc.Application2.BylineTitle"},
+    {"City", "Iptc.Application2.City"},
+    {"Province", "Iptc.Application2.ProvinceState"},
+    {"Country", "Iptc.Application2.CountryName"},
+    {"TransReference", "Iptc.Application2.TransmissionReference"},
+    {"Headline", "Iptc.Application2.Headline"},
+    {"Credit", "Iptc.Application2.Credit"},
+    {"Source", "Iptc.Application2.Source"},
+    {"Copyright", "Iptc.Application2.Copyright"},
+    {"Caption", "Iptc.Application2.Caption"},
+    {"CaptionWriter", "Iptc.Application2.Writer"}
+};
+
+} // namespace
+
+
+std::vector<std::string> MetaDataParams::basicExifKeys = {
+    "Exif.Image.Copyright",
+    "Exif.Image.Artist",
+    "Exif.Image.ImageDescription",
+    "Exif.Photo.UserComment",
+    "Exif.Image.Make",
+    "Exif.Image.Model",
+    "Exif.Photo.LensModel",
+    "Exif.Photo.FNumber",
+    "Exif.Photo.ExposureTime",
+    "Exif.Photo.FocalLength",
+    "Exif.Photo.ISOSpeedRatings",
+    "Exif.Photo.ExposureBiasValue",
+    "Exif.Photo.Flash",
+    "Exif.Photo.DateTimeOriginal",
+    "Exif.Image.XResolution",
+    "Exif.Image.YResolution"
+};
+
+
+MetaDataParams::MetaDataParams():
+    mode(MetaDataParams::EDIT),
+    exifKeys{},
+    exif{},
+    iptc{}
+{
+    exifKeys = basicExifKeys;
+}
+
+
+bool MetaDataParams::operator==(const MetaDataParams &other) const
+{
+    return mode == other.mode
+        && exifKeys == other.exifKeys
+        && exif == other.exif
+        && iptc == other.iptc;
+}
+
+bool MetaDataParams::operator!=(const MetaDataParams &other) const
+{
+    return !(*this == other);
+}
+
 
 ProcParams::ProcParams()
 {
@@ -5966,8 +6064,8 @@ void ProcParams::setDefaults()
     raw = {};
 
     metadata = {};
-    exif.clear();
-    iptc.clear();
+    //exif.clear();
+    //iptc.clear();
 
     // -1 means that there's no pp3 data with rank yet. In this case, the
     // embedded Rating metadata should take precedence. -1 should never be
@@ -5994,7 +6092,9 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         keyFile.set_string("Version", "AppVersion", RTVERSION);
         keyFile.set_integer("Version", "Version", PPVERSION);
 
-        saveToKeyfile(!pedited || pedited->general.rank, "General", "Rank", rank, keyFile);
+        if (rank >= 0) {
+            saveToKeyfile(!pedited || pedited->general.rank, "General", "Rank", rank, keyFile);
+        }
         saveToKeyfile(!pedited || pedited->general.colorlabel, "General", "ColorLabel", colorlabel, keyFile);
         saveToKeyfile(!pedited || pedited->general.intrash, "General", "InTrash", inTrash, keyFile);
 
@@ -6293,9 +6393,9 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // Dehaze
         saveToKeyfile(!pedited || pedited->dehaze.enabled, "Dehaze", "Enabled", dehaze.enabled, keyFile);
-        saveToKeyfile(!pedited || pedited->dehaze.strength, "Dehaze", "Strength", dehaze.strength, keyFile);        
-        saveToKeyfile(!pedited || pedited->dehaze.showDepthMap, "Dehaze", "ShowDepthMap", dehaze.showDepthMap, keyFile);        
-        saveToKeyfile(!pedited || pedited->dehaze.depth, "Dehaze", "Depth", dehaze.depth, keyFile);        
+        saveToKeyfile(!pedited || pedited->dehaze.strength, "Dehaze", "Strength", dehaze.strength, keyFile);
+        saveToKeyfile(!pedited || pedited->dehaze.showDepthMap, "Dehaze", "ShowDepthMap", dehaze.showDepthMap, keyFile);
+        saveToKeyfile(!pedited || pedited->dehaze.depth, "Dehaze", "Depth", dehaze.depth, keyFile);
         saveToKeyfile(!pedited || pedited->dehaze.depth, "Dehaze", "Saturation", dehaze.saturation, keyFile);
 
 // Directional pyramid denoising
@@ -7669,6 +7769,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // MetaData
         saveToKeyfile(!pedited || pedited->metadata.mode, "MetaData", "Mode", metadata.mode, keyFile);
+        saveToKeyfile(!pedited || pedited->metadata.exifKeys, "MetaData", "ExifKeys", metadata.exifKeys, keyFile);
 
 // Film negative
         saveToKeyfile(!pedited || pedited->filmNegative.enabled, "Film Negative", "Enabled", filmNegative.enabled, keyFile);
@@ -7682,7 +7783,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
             saveToKeyfile(!pedited || pedited->filmNegative.refInput, "Film Negative", "GreenBase", filmNegative.refInput.g, keyFile);
             saveToKeyfile(!pedited || pedited->filmNegative.refInput, "Film Negative", "BlueBase", filmNegative.refInput.b, keyFile);
         }
-        
+
         saveToKeyfile(!pedited || pedited->filmNegative.colorSpace, "Film Negative", "ColorSpace", toUnderlying(filmNegative.colorSpace), keyFile);
         saveToKeyfile(!pedited || pedited->filmNegative.refInput, "Film Negative", "RefInput", filmNegative.refInput, keyFile);
         saveToKeyfile(!pedited || pedited->filmNegative.refOutput, "Film Negative", "RefOutput", filmNegative.refOutput, keyFile);
@@ -7696,16 +7797,30 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // EXIF change list
         if (!pedited || pedited->exif) {
-            for (ExifPairs::const_iterator i = exif.begin(); i != exif.end(); ++i) {
-                keyFile.set_string("Exif", i->first, i->second);
+            std::map<Glib::ustring, Glib::ustring> m;
+            for (auto &p : exif_keys) {
+                m[p.second] = p.first;
+            }
+            for (auto &p : metadata.exif) {
+                auto it = m.find(p.first);
+                if (it != m.end()) {
+                    keyFile.set_string("Exif", it->second, p.second);
+                }
             }
         }
 
 // IPTC change list
         if (!pedited || pedited->iptc) {
-            for (IPTCPairs::const_iterator i = iptc.begin(); i != iptc.end(); ++i) {
-                Glib::ArrayHandle<Glib::ustring> values = i->second;
-                keyFile.set_string_list("IPTC", i->first, values);
+            std::map<std::string, std::string> m;
+            for (auto &p : iptc_keys) {
+                m[p.second] = p.first;
+            }
+            for (auto &p : metadata.iptc) {
+                auto it = m.find(p.first);
+                if (it != m.end()) {
+                    Glib::ArrayHandle<Glib::ustring> values = p.second;
+                    keyFile.set_string_list("IPTC", it->second, values);
+                }
             }
         }
 
@@ -8238,7 +8353,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     pedited->colorappearance.complexmethod = true;
                 }
             }
-            
+
             if (keyFile.has_key("Color appearance", "ModelCat")) {
                 assignFromKeyfile(keyFile, "Color appearance", "ModelCat", pedited, colorappearance.modelmethod, pedited->colorappearance.modelmethod);
             } else if (colorappearance.enabled) {
@@ -8248,7 +8363,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 }
             }
             assignFromKeyfile(keyFile, "Color appearance", "CatCat", pedited, colorappearance.catmethod, pedited->colorappearance.catmethod);
-            
+
             assignFromKeyfile(keyFile, "Color appearance", "Surround", pedited, colorappearance.surround, pedited->colorappearance.surround);
             assignFromKeyfile(keyFile, "Color appearance", "Surrsrc", pedited, colorappearance.surrsrc, pedited->colorappearance.surrsrc);
             assignFromKeyfile(keyFile, "Color appearance", "AdaptLum", pedited, colorappearance.adaplum, pedited->colorappearance.adaplum);
@@ -10130,7 +10245,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Dehaze", "Saturation", pedited, dehaze.saturation, pedited->dehaze.saturation);
             }
         }
-        
+
         if (keyFile.has_group("Film Simulation")) {
             assignFromKeyfile(keyFile, "Film Simulation", "Enabled", pedited, filmSimulation.enabled, pedited->filmSimulation.enabled);
 			assignFromKeyfile(keyFile, "Film Simulation", "ClutFilename", pedited, filmSimulation.clutFilename, pedited->filmSimulation.clutFilename);
@@ -10562,20 +10677,25 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
         }
 
         if (keyFile.has_group("MetaData")) {
-            int mode = int(MetaDataParams::TUNNEL);
+            int mode = int(MetaDataParams::EDIT);
             assignFromKeyfile(keyFile, "MetaData", "Mode", pedited, mode, pedited->metadata.mode);
 
             if (mode >= int(MetaDataParams::TUNNEL) && mode <= int(MetaDataParams::STRIP)) {
                 metadata.mode = static_cast<MetaDataParams::Mode>(mode);
             }
+
+            assignFromKeyfile(keyFile, "MetaData", "ExifKeys", pedited, metadata.exifKeys, pedited->metadata.exifKeys);
         }
 
         if (keyFile.has_group("Exif")) {
             for (const auto& key : keyFile.get_keys("Exif")) {
-                exif[key] = keyFile.get_string("Exif", key);
+                auto it = exif_keys.find(key);
+                if (it != exif_keys.end()) {
+                    metadata.exif[it->second] = keyFile.get_string("Exif", key);
 
-                if (pedited) {
-                    pedited->exif = true;
+                    if (pedited) {
+                        pedited->exif = true;
+                    }
                 }
             }
         }
@@ -10595,16 +10715,22 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
         if (keyFile.has_group("IPTC")) {
             for (const auto& key : keyFile.get_keys("IPTC")) {
                 // does this key already exist?
-                const IPTCPairs::iterator element = iptc.find(key);
+                auto it = iptc_keys.find(key);
+                if (it == iptc_keys.end()) {
+                    continue;
+                }
 
-                if (element != iptc.end()) {
+                auto kk = it->second;
+                const IPTCPairs::iterator element = metadata.iptc.find(kk);
+
+                if (element != metadata.iptc.end()) {
                     // it already exist so we cleanup the values
                     element->second.clear();
                 }
 
                 // TODO: look out if merging Keywords and SupplementalCategories from the procparams chain would be interesting
                 for (const auto& currLoadedTagValue : keyFile.get_string_list("IPTC", key)) {
-                    iptc[key].push_back(currLoadedTagValue);
+                    metadata.iptc[kk].push_back(currLoadedTagValue);
                 }
 
                 if (pedited) {
@@ -10684,8 +10810,6 @@ bool ProcParams::operator ==(const ProcParams& other) const
         && rgbCurves == other.rgbCurves
         && colorToning == other.colorToning
         && metadata == other.metadata
-        && exif == other.exif
-        && iptc == other.iptc
         && dehaze == other.dehaze
         && filmNegative == other.filmNegative;
 }

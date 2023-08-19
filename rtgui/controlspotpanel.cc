@@ -1977,8 +1977,8 @@ void ControlSpotPanel::addControlSpotCurve(Gtk::TreeModel::Row& row)
     shape_ellipse = new Ellipse();
     shape_ellipse->datum = Geometry::IMAGE;
     shape_ellipse->radiusInImageSpace = true;
-    Rectangle* shape_rectangle;
-    shape_rectangle = new Rectangle();
+    EditRectangle* shape_rectangle;
+    shape_rectangle = new EditRectangle();
     shape_rectangle->datum = Geometry::IMAGE;
     EditSubscriber::visibleGeometry.push_back(centerCircle); // (curveid - 1) * 7
     EditSubscriber::visibleGeometry.push_back(shape_ellipse); // (curveid - 1) * 7 + 1
@@ -2012,7 +2012,7 @@ void ControlSpotPanel::addControlSpotCurve(Gtk::TreeModel::Row& row)
     shape_ellipse = new Ellipse();
     shape_ellipse->datum = Geometry::IMAGE;
     shape_ellipse->radiusInImageSpace = true;
-    shape_rectangle = new Rectangle();
+    shape_rectangle = new EditRectangle();
     shape_rectangle->datum = Geometry::IMAGE;
     EditSubscriber::mouseOverGeometry.push_back(centerCircle);  // (curveid - 1) * 7
     EditSubscriber::mouseOverGeometry.push_back(shape_ellipse);  // (curveid - 1) * 7 + 1
@@ -2082,7 +2082,7 @@ void ControlSpotPanel::updateControlSpotCurve(const Gtk::TreeModel::Row& row)
     };
 
     const auto updateRectangle = [&](Geometry * geometry) {
-        const auto rectangle = static_cast<Rectangle*>(geometry);
+        const auto rectangle = static_cast<EditRectangle*>(geometry);
         rectangle->bottomRight.x = origin.x + decayX;
         rectangle->bottomRight.y = origin.y + decayY;
         rectangle->topLeft.x = origin.x - decayXL;
