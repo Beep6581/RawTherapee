@@ -313,14 +313,14 @@ public:
     void drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem) override;
 };
 
-class Rectangle : public Geometry
+class EditRectangle : public Geometry // New class name to avoid conflict elsewhere (exiv2), would be nicer to put in namespace?
 {
 public:
     rtengine::Coord topLeft;
     rtengine::Coord bottomRight;
     bool filled;
 
-    Rectangle ();
+    EditRectangle ();
 
     void setXYWH(int left, int top, int width, int height);
     void setXYXY(int left, int top, int right, int bottom);
@@ -546,7 +546,7 @@ inline Circle::Circle () :
                 false) {
 }
 
-inline Rectangle::Rectangle () :
+inline EditRectangle::EditRectangle () :
         topLeft (0, 0), bottomRight (10, 10), filled (false) {
 }
 

@@ -127,3 +127,9 @@ void MetaDataPanel::metaDataModeChanged()
         listener->panelChanged(EvMetaDataMode, M("HISTORY_CHANGED"));
     }
 }
+
+
+void MetaDataPanel::setProgressListener(rtengine::ProgressListener *pl)
+{
+    exifpanel->setProgressListener(pl);
+}

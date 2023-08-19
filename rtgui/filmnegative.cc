@@ -264,14 +264,14 @@ FilmNegative::FilmNegative() :
 
     // Editing geometry; create the spot rectangle
     // TODO: Change behaviour to match that of the white balance spot picker (rectangle disappears behind right toolbar)
-    Rectangle* const spotRect = new Rectangle();
+    EditRectangle* const spotRect = new EditRectangle();
     spotRect->filled = false;
 
     visibleGeometry.push_back(spotRect);
 
     // Stick a dummy rectangle over the whole image in mouseOverGeometry.
     // This is to make sure the getCursor() call is fired everywhere.
-    Rectangle* const imgRect = new Rectangle();
+    EditRectangle* const imgRect = new EditRectangle();
     imgRect->filled = true;
 
     mouseOverGeometry.push_back(imgRect);
@@ -537,7 +537,7 @@ CursorShape FilmNegative::getCursor(int objectID, int xPos, int yPos) const
 bool FilmNegative::mouseOver(int modifierKey)
 {
     EditDataProvider* const provider = getEditProvider();
-    Rectangle* const spotRect = static_cast<Rectangle*>(visibleGeometry.at(0));
+    EditRectangle* const spotRect = static_cast<EditRectangle*>(visibleGeometry.at(0));
     spotRect->setXYWH(provider->posImage.x - activePicker->get_spot_half_width(), provider->posImage.y - activePicker->get_spot_half_width() ,activePicker->get_spot_half_width() * 2, activePicker->get_spot_half_width() * 2);
 
     return true;
@@ -690,7 +690,7 @@ void FilmNegative::editToggled()
 
         // Stick a dummy rectangle over the whole image in mouseOverGeometry.
         // This is to make sure the getCursor() call is fired everywhere.
-        Rectangle* const imgRect = static_cast<Rectangle*>(mouseOverGeometry.at(0));
+        EditRectangle* const imgRect = static_cast<EditRectangle*>(mouseOverGeometry.at(0));
         imgRect->setXYWH(0, 0, w, h);
     } else {
         refSpotCoords.clear();
@@ -714,7 +714,7 @@ void FilmNegative::refSpotToggled()
 
         // Stick a dummy rectangle over the whole image in mouseOverGeometry.
         // This is to make sure the getCursor() call is fired everywhere.
-        Rectangle* const imgRect = static_cast<Rectangle*>(mouseOverGeometry.at(0));
+        EditRectangle* const imgRect = static_cast<EditRectangle*>(mouseOverGeometry.at(0));
         imgRect->setXYWH(0, 0, w, h);
 
     } else {

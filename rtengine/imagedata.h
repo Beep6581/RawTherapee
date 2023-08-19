@@ -21,12 +21,9 @@
 #include <cstdio>
 #include <memory>
 #include <string>
-#include <vector>
-
-
-#include <libiptcdata/iptc-data.h>
 
 #include "imageio.h"
+#include "metadata.h"
 
 namespace Glib
 {
@@ -35,22 +32,16 @@ class ustring;
 
 }
 
-namespace rtexif
-{
-
-class TagDirectory;
-}
-
 namespace rtengine
 {
 
-class FrameData final
+class FramesData final :
+    public FramesMetaData
 {
-
-protected:
-    rtexif::TagDirectory* frameRootDir;
-    IptcData* iptc;
-
+private:
+    bool ok_;
+    Glib::ustring fname_;
+    unsigned int dcrawFrameCount;
     struct tm time;
     time_t timeStamp;
     int iso_speed;
@@ -64,87 +55,44 @@ protected:
     int rating;
     std::string lens;
     IIOSampleFormat sampleFormat;
-
-    // each frame has the knowledge of "being an"
-    // or "being part of an" HDR or PS image
-    bool isPixelShift;
-    bool isHDR;
-
-public:
-
-    FrameData (rtexif::TagDirectory* frameRootDir, rtexif::TagDirectory* rootDir, rtexif::TagDirectory* firstRootDir, time_t ts = 0);
-    virtual ~FrameData ();
-
-    bool getPixelShift () const;
-    bool getHDR () const;
-    std::string getImageType () const;
-    IIOSampleFormat getSampleFormat () const;
-    rtexif::TagDirectory* getExifData () const;
-    procparams::IPTCPairs getIPTCData () const;
-    static procparams::IPTCPairs getIPTCData (IptcData* iptc_);
-    bool hasExif () const;
-    bool hasIPTC () const;
-    tm getDateTime () const;
-    time_t getDateTimeAsTS () const;
-    int getISOSpeed () const;
-    double getFNumber () const;
-    double getFocalLen () const;
-    double getFocalLen35mm () const;
-    float getFocusDist () const;
-    double getShutterSpeed () const;
-    double getExpComp  () const;
-    std::string getMake () const;
-    std::string getModel () const;
-    std::string getLens () const;
-    std::string getSerialNumber () const;
-    std::string getOrientation () const;
-    int getRating () const;
-};
-
-class FramesData final : public FramesMetaData {
-private:
-    // frame's root IFD, can be a file root IFD or a SUB-IFD
-    std::vector<std::unique_ptr<FrameData>> frames;
-    // root IFD in the file
-    std::vector<rtexif::TagDirectory*> roots;
-    IptcData* iptc;
-    unsigned int dcrawFrameCount;
     struct tm modTime;
     time_t modTimeStamp;
+    bool isPixelShift;
+    bool isHDR;
+    int w_;
+    int h_;
 
 public:
-    explicit FramesData (const Glib::ustring& fname, std::unique_ptr<RawMetaDataLocation> rml = nullptr, bool firstFrameOnly = false);
-    ~FramesData () override;
+    explicit FramesData(const Glib::ustring& fname, time_t ts = 0);
 
-    void setDCRawFrameCount (unsigned int frameCount);
-    unsigned int getRootCount () const override;
-    unsigned int getFrameCount () const override;
-    bool getPixelShift () const override;
-    bool getHDR (unsigned int frame = 0) const override;
-    std::string getImageType (unsigned int frame) const override;
-    IIOSampleFormat getSampleFormat (unsigned int frame = 0) const override;
-    rtexif::TagDirectory* getFrameExifData (unsigned int frame = 0) const override;
-    rtexif::TagDirectory* getRootExifData (unsigned int root = 0) const override;
-    rtexif::TagDirectory* getBestExifData (ImageSource *imgSource, procparams::RAWParams *rawParams) const override;
-    procparams::IPTCPairs getIPTCData (unsigned int frame = 0) const override;
-    bool hasExif (unsigned int frame = 0) const override;
-    bool hasIPTC (unsigned int frame = 0) const override;
-    tm getDateTime (unsigned int frame = 0) const override;
-    time_t getDateTimeAsTS (unsigned int frame = 0) const override;
-    int getISOSpeed (unsigned int frame = 0) const override;
-    double getFNumber (unsigned int frame = 0) const override;
-    double getFocalLen (unsigned int frame = 0) const override;
-    double getFocalLen35mm (unsigned int frame = 0) const override;
-    float getFocusDist (unsigned int frame = 0) const override;
-    double getShutterSpeed (unsigned int frame = 0) const override;
-    double getExpComp (unsigned int frame = 0) const override;
-    std::string getMake (unsigned int frame = 0) const override;
-    std::string getModel (unsigned int frame = 0) const override;
-    std::string getLens (unsigned int frame = 0) const override;
-    std::string getSerialNumber (unsigned int frame = 0) const;
-    std::string getOrientation (unsigned int frame = 0) const override;
-    int getRating (unsigned int frame = 0) const override;
+    void setDCRawFrameCount(unsigned int frameCount);
+    unsigned int getFrameCount() const override;
+    bool getPixelShift() const override;
+    bool getHDR() const override;
+    std::string getImageType() const override;
+    IIOSampleFormat getSampleFormat() const override;
+    bool hasExif() const override;
+    tm getDateTime() const override;
+    time_t getDateTimeAsTS() const override;
+    int getISOSpeed() const override;
+    double getFNumber() const override;
+    double getFocalLen() const override;
+    double getFocalLen35mm() const override;
+    float getFocusDist() const override;
+    double getShutterSpeed() const override;
+    double getExpComp() const override;
+    std::string getMake() const override;
+    std::string getModel() const override;
+    std::string getLens() const override;
+    std::string getSerialNumber() const;
+    std::string getOrientation() const override;
+    Glib::ustring getFileName() const override;
+    int getRating() const override;
+    void getDimensions(int &w, int &h) const override;
+
+    void fillBasicTags(Exiv2::ExifData &exif) const;
+
+    void setDimensions(int w, int h);
 };
-
 
 }
