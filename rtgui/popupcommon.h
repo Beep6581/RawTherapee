@@ -20,12 +20,13 @@
  */
 #pragma once
 
-#include "glibmm/refptr.h"
+#include "threadutils.h"
+
 #include <memory>
 #include <vector>
 
+#include <glibmm/refptr.h>
 #include <glibmm/ustring.h>
-
 #include <sigc++/signal.h>
 
 namespace Gio
@@ -91,6 +92,7 @@ private:
     Gtk::Button* arrowButton;
     int selected;
     bool hasMenu;
+    MyMutex entrySelectionMutex;
 
     void changeImage(int position);
     void changeImage(const Glib::ustring& fileName, const Glib::RefPtr<const Gio::Icon>& gIcon);
