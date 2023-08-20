@@ -740,6 +740,10 @@ class SpotPicker : public Gtk::Grid
         {
             return _spotHalfWidth;
         }
+        int get_spot_full_width() const
+        {
+            return _spotHalfWidth * 2;
+        }
         template <class T_return, class T_obj> void add_button_toggled_event(T_return& returnv, const T_obj function)
         {
             _spotButton.signal_toggled().connect(sigc::mem_fun(returnv, function));

@@ -538,7 +538,7 @@ bool FilmNegative::mouseOver(int modifierKey)
 {
     EditDataProvider* const provider = getEditProvider();
     EditRectangle* const spotRect = static_cast<EditRectangle*>(visibleGeometry.at(0));
-    spotRect->setXYWH(provider->posImage.x - activePicker->get_spot_half_width(), provider->posImage.y - activePicker->get_spot_half_width() ,activePicker->get_spot_half_width() * 2, activePicker->get_spot_half_width() * 2);
+    spotRect->setXYWH(provider->posImage.x - activePicker->get_spot_half_width(), provider->posImage.y - activePicker->get_spot_half_width() ,activePicker->get_spot_full_width(), activePicker->get_spot_full_width());
 
     return true;
 }
@@ -560,8 +560,8 @@ bool FilmNegative::button1Pressed(int modifierKey)
 
                 RGB ref1, ref2, dummy;
 
-                if (fnp->getFilmNegativeSpot(refSpotCoords[0], picker.get_spot_half_width(), ref1, dummy) &&
-                        fnp->getFilmNegativeSpot(refSpotCoords[1], picker.get_spot_half_width(), ref2, dummy)) {
+                if (fnp->getFilmNegativeSpot(refSpotCoords[0], picker.get_spot_full_width(), ref1, dummy) &&
+                        fnp->getFilmNegativeSpot(refSpotCoords[1], picker.get_spot_full_width(), ref2, dummy)) {
 
                     disableListener();
 
@@ -607,7 +607,7 @@ bool FilmNegative::button1Pressed(int modifierKey)
             }
 
             RGB refOut;
-            fnp->getFilmNegativeSpot(provider->posImage, refPicker.get_spot_half_width(), refInputValues, refOut);
+            fnp->getFilmNegativeSpot(provider->posImage, refPicker.get_spot_full_width(), refInputValues, refOut);
 
             // Output luminance of the sampled spot
             float spotLum = rtengine::Color::rgbLuminance(refOut.r, refOut.g, refOut.b);
