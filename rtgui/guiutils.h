@@ -728,7 +728,6 @@ class SpotPicker : public Gtk::Grid
         Gtk::ToggleButton _spotButton;
     public:
         SpotPicker(int const defaultValue, Glib::ustring const &buttonKey, Glib::ustring const &buttonTooltip, Glib::ustring const &labelKey);
-        ~SpotPicker();
         inline bool get_active()
         {
             return _spotButton.get_active();

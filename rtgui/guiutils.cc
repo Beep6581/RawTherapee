@@ -1981,9 +1981,6 @@ SpotPicker::SpotPicker(int const defaultValue, Glib::ustring const &buttonKey, G
     this->attach (_spotSizeSetter, 2, 0, 1, 1);
     _spotSizeSetter.signal_changed().connect( sigc::mem_fun(*this, &SpotPicker::spotSizeChanged));
 }
-SpotPicker::~SpotPicker()
-{
-}
 
 Gtk::Label SpotPicker::labelSetup(Glib::ustring const &key) const
 {
