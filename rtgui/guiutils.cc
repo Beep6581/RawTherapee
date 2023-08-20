@@ -1989,7 +1989,7 @@ Gtk::Label SpotPicker::labelSetup(Glib::ustring const &key) const
     return label;
 }
 
-MyComboBoxText SpotPicker::selecterSetup()
+MyComboBoxText SpotPicker::selecterSetup() const
 {
     MyComboBoxText spotSize = MyComboBoxText();
     setExpandAlignProperties(&spotSize, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
@@ -2025,7 +2025,7 @@ MyComboBoxText SpotPicker::selecterSetup()
     return spotSize;
 }
 
-Gtk::ToggleButton SpotPicker::spotButtonTemplate(Glib::ustring const &key, const Glib::ustring &tooltip)
+Gtk::ToggleButton SpotPicker::spotButtonTemplate(Glib::ustring const &key, const Glib::ustring &tooltip) const
 {
     Gtk::ToggleButton spotButton = Gtk::ToggleButton(key);
     setExpandAlignProperties(&spotButton, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);

@@ -728,7 +728,7 @@ class SpotPicker : public Gtk::Grid
         Gtk::ToggleButton _spotButton;
     public:
         SpotPicker(int const defaultValue, Glib::ustring const &buttonKey, Glib::ustring const &buttonTooltip, Glib::ustring const &labelKey);
-        inline bool get_active()
+        inline bool get_active() const
         {
             return _spotButton.get_active();
         }
@@ -736,7 +736,7 @@ class SpotPicker : public Gtk::Grid
         {
             _spotButton.set_active(b);
         }
-        int get_spot_half_width()
+        int get_spot_half_width() const
         {
             return _spotHalfWidth;
         }
@@ -751,8 +751,8 @@ class SpotPicker : public Gtk::Grid
 
     protected:
         Gtk::Label labelSetup(Glib::ustring const &key) const;
-        MyComboBoxText selecterSetup();
-        static Gtk::ToggleButton spotButtonTemplate(Glib::ustring const &key, const Glib::ustring &tooltip);
+        MyComboBoxText selecterSetup() const;
+        Gtk::ToggleButton spotButtonTemplate(Glib::ustring const &key, const Glib::ustring &tooltip) const;
         void spotSizeChanged();
 };
 
