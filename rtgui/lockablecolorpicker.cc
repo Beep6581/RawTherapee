@@ -53,22 +53,13 @@ void LockableColorPicker::updateBackBuffer ()
         Gtk::DrawingArea *iArea = cropWindow->getImageArea();
 
         Glib::RefPtr<Pango::Context> pangoContext = iArea->get_pango_context ();
-        Pango::FontDescription fontd = pangoContext->get_font_description();
+        Pango::FontDescription fontd = iArea->get_style_context()->get_font();
         // set font family and size
         fontd.set_family(options.CPFontFamily == "default" ? "sans" : options.CPFontFamily);
         const int fontSize = options.CPFontFamily == "default" ? 8 : options.CPFontSize; // pt
-        // Converting font size to "px" based on DPI and scale
-#ifndef __APPLE__
-        const double fontScale = RTScalable::getDPI() / RTScalable::pangoDPI; // Refer to notes in rtscalable.h
-#else
-        // On MacOS, font is already scaled by the System library
-        // Refer to https://gitlab.gnome.org/GNOME/gtk/-/blob/gtk-3-24/gdk/quartz/gdkscreen-quartz.c
-        const double fontScale = 1.;
-#endif
-        const double absoluteFontSize = static_cast<double>(fontSize) * fontScale; // px
-        // Absolute size is defined in "Pango units" and shall be multiplied by
-        // Pango::SCALE from "px":
-        fontd.set_absolute_size (absoluteFontSize * static_cast<double>(Pango::SCALE));
+        // Non-absolute size is defined in "Pango units" and shall be multiplied by
+        // Pango::SCALE from "pt":
+        fontd.set_size (fontSize * Pango::SCALE);
         fontd.set_weight(Pango::WEIGHT_NORMAL);
         pangoContext->set_font_description (fontd);
 

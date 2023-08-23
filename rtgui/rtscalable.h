@@ -34,6 +34,11 @@
  *         - Non-absolute size (i.e. "pt"): The default resolution is 72 DPI (i.e. pt per inch). To
  *             convert the size to "px", use the following formula:
  *                 "size in px" = "size in pt" * ("device resolution" / 72)
+ *     Notes:
+ *         - By default, size is expressed in non-absolute size (i.e. "pt"). Conversion between absolute
+ *            and non-absolute size is ensured by Pango.
+ *         - On MacOS, font is already scaled by the System library (i.e. "size in px" = "size in pt" * 1.).
+ *            Refer to https://gitlab.gnome.org/GNOME/gtk/-/blob/gtk-3-24/gdk/quartz/gdkscreen-quartz.c
  *
  * Hi-DPI implementation according to the OS (source: GDK code):
  *     - Windows: A default DPI of 96 is considered. Current DPI parameter is provided by the OS.

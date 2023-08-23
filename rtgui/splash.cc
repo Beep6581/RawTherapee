@@ -41,21 +41,12 @@ bool SplashImage::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
         cfo.set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
         Glib::RefPtr<Pango::Context> context = get_pango_context ();
         context->set_cairo_font_options (cfo);
-        Pango::FontDescription fontd = context->get_font_description ();
+        Pango::FontDescription fontd = get_style_context()->get_font();
         fontd.set_weight (Pango::WEIGHT_LIGHT);
         const int fontSize = 12; // pt
-        // Converting font size to "px" based on DPI and scale
-#ifndef __APPLE__
-        const double fontScale = RTScalable::getDPI() / RTScalable::pangoDPI; // Refer to notes in rtscalable.h
-#else
-        // On MacOS, font is already scaled by the System library
-        // Refer to https://gitlab.gnome.org/GNOME/gtk/-/blob/gtk-3-24/gdk/quartz/gdkscreen-quartz.c
-        const double fontScale = 1.;
-#endif
-        const double absoluteFontSize = static_cast<double>(fontSize) * fontScale; // px
-        // Absolute size is defined in "Pango units" and shall be multiplied by
-        // Pango::SCALE from "px":
-        fontd.set_absolute_size (absoluteFontSize * static_cast<double>(Pango::SCALE));
+        // Non-absolute size is defined in "Pango units" and shall be multiplied by
+        // Pango::SCALE from "pt":
+        fontd.set_size(fontSize * Pango::SCALE);
         context->set_font_description (fontd);
 
         int w, h;

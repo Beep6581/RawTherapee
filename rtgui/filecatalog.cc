@@ -525,7 +525,7 @@ void FileCatalog::on_realize()
 {
 
     Gtk::Box::on_realize();
-    Pango::FontDescription fontd = get_pango_context()->get_font_description ();
+    Pango::FontDescription fontd = get_style_context()->get_font();
     fileBrowser->get_pango_context()->set_font_description (fontd);
 //    batchQueue->get_pango_context()->set_font_description (fontd);
 }

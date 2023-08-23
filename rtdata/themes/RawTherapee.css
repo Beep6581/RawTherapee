@@ -26,7 +26,6 @@
 * {
     color: #BBBBBB;
     text-shadow: none; /* Keep at none, or suffer serious performance issues */
-    font-size: 1em;
 }
 
 *:disabled {

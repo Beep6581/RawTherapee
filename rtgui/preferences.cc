@@ -82,9 +82,22 @@ Preferences::Preferences(RTWindow *rtwindow)
     set_size_request(650, -1);
     set_default_size(options.preferencesWidth, options.preferencesHeight);
 
-    Pango::FontDescription defaultFont = get_style_context()->get_font();
-    initialFontFamily = defaultFont.get_family();
-    initialFontSize = defaultFont.get_size() / Pango::SCALE;
+    // Request default font and size from Gtk::Settings
+    const auto defaultSettings = Gtk::Settings::get_default();
+    Glib::ustring defaultFont;
+    defaultSettings->get_property("gtk-font-name", defaultFont);
+    const Pango::FontDescription defaultFontDesc = Pango::FontDescription(defaultFont);
+    initialFontFamily = defaultFontDesc.get_family();
+#if defined(__APPLE__)
+    // Default MacOS font (i.e. "") is not correctly handled
+    // in Gtk css. Replacing it by "-apple-system" to avoid this
+    if (initialFontFamily == ".AppleSystemUIFont") {
+        initialFontFamily = "-apple-system";
+    }
+#endif
+    initialFontSize = defaultFontDesc.get_size() / Pango::SCALE; // Font size is managed in ()"pt" * Pango::SCALE) by Pango (also refer to notes in rtscalable.h)
+
+    printf("initialFont: %s %d\n", initialFontFamily.c_str(), initialFontSize);
 
     Gtk::Box* mainBox = get_content_area();
 //GTK318
@@ -2016,15 +2029,15 @@ void Preferences::fillPreferences()
     navGuideColorCB->set_alpha ( (unsigned short) (moptions.navGuideBrush[3] * 65535.0));
 
     if (options.fontFamily == "default") {
-        mainFontFB->set_font_name (Glib::ustring::compose ("%1 %2", initialFontFamily, initialFontSize));
+        mainFontFB->set_font_name (Glib::ustring::compose ("%1, %2", initialFontFamily, initialFontSize));
     } else {
-        mainFontFB->set_font_name (Glib::ustring::compose ("%1 %2", options.fontFamily, options.fontSize));
+        mainFontFB->set_font_name (Glib::ustring::compose ("%1, %2", options.fontFamily, options.fontSize));
     }
 
     if (options.CPFontFamily == "default") {
-        colorPickerFontFB->set_font_name (Glib::ustring::compose ("%1 %2", initialFontFamily, initialFontSize));
+        colorPickerFontFB->set_font_name (Glib::ustring::compose ("%1, %2", initialFontFamily, initialFontSize));
     } else {
-        colorPickerFontFB->set_font_name (Glib::ustring::compose ("%1 %2", options.CPFontFamily, options.CPFontSize));
+        colorPickerFontFB->set_font_name (Glib::ustring::compose ("%1, %2", options.CPFontFamily, options.CPFontSize));
     }
 
     showDateTime->set_active(moptions.fbShowDateTime);
@@ -2243,7 +2256,7 @@ void Preferences::cancelPressed()
     // set the initial font back
     Pango::FontDescription fd (mainFontFB->get_font_name());
 
-    if (fd.get_family() != options.fontFamily && (fd.get_size() / Pango::SCALE) != options.fontSize) {
+    if (fd.get_family() != options.fontFamily || (fd.get_size() / Pango::SCALE) != options.fontSize) {
         if (options.fontFamily == "default") {
             switchFontTo(initialFontFamily, initialFontSize);
         } else {
@@ -2446,6 +2459,7 @@ void Preferences::fontChanged()
 {
     newFont = true;
     Pango::FontDescription fd (mainFontFB->get_font_name());
+    printf("test: %s\n", mainFontFB->get_font_name().c_str());
     switchFontTo(fd.get_family(), fd.get_size() / Pango::SCALE);
 }
 
@@ -2457,34 +2471,26 @@ void Preferences::cpFontChanged()
 
 void Preferences::switchFontTo(const Glib::ustring &newFontFamily, const int newFontSize)
 {
-
-    if (newFontFamily != "default") {
-        if (!fontcss) {
-            fontcss = Gtk::CssProvider::create();
-            Glib::RefPtr<Gdk::Screen> screen = Gdk::Screen::get_default();
-            Gtk::StyleContext::add_provider_for_screen(screen, fontcss, GTK_STYLE_PROVIDER_PRIORITY_USER);
-        }
-
-        try {
-            //GTK318
-//#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
-//            fontcss->load_from_data (Glib::ustring::compose ("* { font-family: %1; font-size: %2px }", newFontFamily, newFontSize));
-//#else
-            fontcss->load_from_data (Glib::ustring::compose ("* { font-family: %1; font-size: %2pt }", newFontFamily, newFontSize));
-//#endif
-            //GTK318
-        } catch (Glib::Error &err) {
-            printf("Error: \"%s\"\n", err.what().c_str());
-        } catch (...) {
-            printf("Error: Can't find the font named \"%s\"\n", newFontFamily.c_str());
-        }
-    } else {
-        if (fontcss) {
-            fontcss = Gtk::CssProvider::create();
-            Glib::RefPtr<Gdk::Screen> screen = Gdk::Screen::get_default();
-            Gtk::StyleContext::remove_provider_for_screen(screen, fontcss);
-        }
+    // Create CssProvider if not existing
+    if (!fontcss) {
+        fontcss = Gtk::CssProvider::create();
+        Glib::RefPtr<Gdk::Screen> screen = Gdk::Screen::get_default();
+        Gtk::StyleContext::add_provider_for_screen(screen, fontcss, GTK_STYLE_PROVIDER_PRIORITY_USER);
     }
+
+    // Create css to load based on new font name and size
+    const auto css = Glib::ustring::compose ("* { font-family: %1; font-size: %2pt }", newFontFamily, newFontSize);
+
+    // Load css to update font name and size
+    try {
+        fontcss->load_from_data (css);
+    } catch (Glib::Error &err) {
+        printf("Error: \"%s\"\n", err.what().c_str());
+    } catch (...) {
+        printf("Error: Can't load the desired font correctly\n");
+    }
+
+    printf("switchFontTo: %s\n", css.c_str());
 }
 
 void Preferences::workflowUpdate()

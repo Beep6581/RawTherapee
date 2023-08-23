@@ -139,70 +139,34 @@ RTWindow::RTWindow ()
         // Set the font face and size
         Glib::ustring css;
 
-#ifndef __APPLE__
-        const double fontScale = RTScalable::getDPI() / RTScalable::pangoDPI; // Refer to notes in rtscalable.h
-#else
-        // On MacOS, font is already scaled by the System library
-        // Refer to https://gitlab.gnome.org/GNOME/gtk/-/blob/gtk-3-24/gdk/quartz/gdkscreen-quartz.c
-        const double fontScale = 1.;
-#endif
-        auto style = get_pango_context();
-
         if (options.fontFamily != "default") { // Set font and size according to user choice
-            // Scale font size based on DPI and Scale
-            const int scaledFontSize = static_cast<int>(options.fontSize * fontScale + 0.5);
+            // Set font and size in css from options
+            css = Glib::ustring::compose ("* { font-family: %1; font-size: %2pt}",
+                options.fontFamily,
+                options.fontSize); // Font size is in "pt" in options
+        } else { // Set font and size according to default values
+            // Retrieve default style values from Gtk::Settings
+            const auto defaultSettings = Gtk::Settings::get_default();
+            Glib::ustring defaultFont;
+            defaultSettings->get_property("gtk-font-name", defaultFont);
+            const Pango::FontDescription defaultFontDesc = Pango::FontDescription(defaultFont);
 
             // Set font and size in css
-            css = Glib::ustring::compose ("* { font-family: %1; font-size: %2px}", options.fontFamily, scaledFontSize);
-
-            if (rtengine::settings->verbose) {
-                printf("\"Non-Default\" font size in pt(%d) * scale(%.3f) = font size in px(%d)\n", options.fontSize, fontScale, scaledFontSize);
+            auto defaultFontFamily = defaultFontDesc.get_family();
+            const int defaultFontSize = defaultFontDesc.get_size() / Pango::SCALE; // Font size is managed in ()"pt" * Pango::SCALE) by Pango (also refer to notes in rtscalable.h)
+#if defined(__APPLE__)
+            // Default MacOS font (i.e. "") is not correctly handled
+            // in Gtk css. Replacing it by "-apple-system" to avoid this
+            if (defaultFontFamily == ".AppleSystemUIFont") {
+                defaultFontFamily = "-apple-system";
             }
-        } else { // Set font and size according to default values
-            // Retrieve default style values
-            Glib::RefPtr<Gtk::StyleContext> style = Gtk::StyleContext::create();
-            Pango::FontDescription pfd = style->get_font(Gtk::STATE_FLAG_NORMAL);
-
-            if (pfd.get_set_fields() & Pango::FONT_MASK_SIZE) {
-                int fontSize = pfd.get_size();
-                const bool isAbsoluteFontSize = pfd.get_size_is_absolute();
-                int newFontSize;
-
-                if (isAbsoluteFontSize) {
-                    // Absolute size is defined in "Pango units" and shall be divided by
-                    // Pango::SCALE to get "px"
-                    fontSize = fontSize / Pango::SCALE;
-
-#ifndef __APPLE__
-                    // Guessing that pixel size is given for a 96 DPI reference:
-                    const double newFontScale = RTScalable::getDPI() / RTScalable::baseDPI; // Refer to notes in rtscalable.h
-#else
-                    // On MacOS, font is already scaled by the System library
-                    // Refer to https://gitlab.gnome.org/GNOME/gtk/-/blob/gtk-3-24/gdk/quartz/gdkscreen-quartz.c
-                    const double newFontScale = 1.;
 #endif
-                    newFontSize = static_cast<int>(fontSize * newFontScale + 0.5);
-
-                    if (rtengine::settings->verbose) {
-                        printf("\"Default\" absolute font size(%d)\n", newFontSize);
-                    }
-                } else {
-                    // Non-absolute size is defined in "Pango units" and shall be divided by
-                    // Pango::SCALE to get "px"
-                    fontSize = fontSize / Pango::SCALE;
-
-                    // Non-absolute size is defined in "pt" and shall be converted to "px"
-                    newFontSize = static_cast<int>(fontSize * fontScale + 0.5);
-
-                    if (rtengine::settings->verbose) {
-                        printf("\"Default\" non-absolute font size in pt(%d) * scale(%.3f) = font size in px(%d)\n", fontSize, fontScale, newFontSize);
-                    }
-                }
-
-                // Set font and size in css
-                css = Glib::ustring::compose ("* { font-size: %1px}", newFontSize);
-            }
+            css = Glib::ustring::compose ("* { font-family: %1; font-size: %2pt}",
+                defaultFontFamily,
+                defaultFontSize);
         }
+
+        printf("test : %s\n", css.c_str());
 
         // Load custom CSS for font
         if (!css.empty()) {
@@ -218,7 +182,7 @@ RTWindow::RTWindow ()
             } catch (Glib::Error &err) {
                 printf ("Error: \"%s\"\n", err.what().c_str());
             } catch (...) {
-                printf ("Error: Can't find the font named \"%s\"\n", options.fontFamily.c_str());
+                printf ("Error: Can't load the desired font correctly\n");
             }
         }
     }

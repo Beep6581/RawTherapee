@@ -376,7 +376,7 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
 
         // draw file name
         Glib::RefPtr<Pango::Context> context = w->get_pango_context () ;
-        Pango::FontDescription fontd = context->get_font_description ();
+        Pango::FontDescription fontd = w->get_style_context()->get_font();
         fontd.set_weight (Pango::WEIGHT_BOLD);
 
         if (italicstyle) {
@@ -442,7 +442,7 @@ void ThumbBrowserEntryBase::getTextSizes (int& infow, int& infoh)
 
 
     // filename:
-    Pango::FontDescription fontd = context->get_font_description ();
+    Pango::FontDescription fontd = w->get_style_context()->get_font();
     fontd.set_weight (Pango::WEIGHT_BOLD);
     context->set_font_description (fontd);
     Glib::RefPtr<Pango::Layout> fn = w->create_pango_layout(dispname);
