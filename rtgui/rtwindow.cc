@@ -166,8 +166,6 @@ RTWindow::RTWindow ()
                 defaultFontSize);
         }
 
-        printf("test : %s\n", css.c_str());
-
         // Load custom CSS for font
         if (!css.empty()) {
             if (rtengine::settings->verbose) {

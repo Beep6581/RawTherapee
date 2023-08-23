@@ -97,8 +97,6 @@ Preferences::Preferences(RTWindow *rtwindow)
 #endif
     initialFontSize = defaultFontDesc.get_size() / Pango::SCALE; // Font size is managed in ()"pt" * Pango::SCALE) by Pango (also refer to notes in rtscalable.h)
 
-    printf("initialFont: %s %d\n", initialFontFamily.c_str(), initialFontSize);
-
     Gtk::Box* mainBox = get_content_area();
 //GTK318
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
@@ -2459,7 +2457,6 @@ void Preferences::fontChanged()
 {
     newFont = true;
     Pango::FontDescription fd (mainFontFB->get_font_name());
-    printf("test: %s\n", mainFontFB->get_font_name().c_str());
     switchFontTo(fd.get_family(), fd.get_size() / Pango::SCALE);
 }
 
@@ -2489,8 +2486,6 @@ void Preferences::switchFontTo(const Glib::ustring &newFontFamily, const int new
     } catch (...) {
         printf("Error: Can't load the desired font correctly\n");
     }
-
-    printf("switchFontTo: %s\n", css.c_str());
 }
 
 void Preferences::workflowUpdate()
