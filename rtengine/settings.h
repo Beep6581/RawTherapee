@@ -1,4 +1,5 @@
-/*
+/* -*- C++ -*-
+ *  
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
@@ -111,6 +112,19 @@ public:
         RAW_IF_NOT_JPEG_FULLSIZE
     };
     ThumbnailInspectorMode thumbnail_inspector_mode;
+
+    enum class XmpSidecarStyle {
+        STD, // FILENAME.xmp for FILENAME.ext
+        EXT  // FILENAME.ext.xmp for FILENAME.ext
+    };
+    XmpSidecarStyle xmp_sidecar_style;
+
+    enum class MetadataXmpSync {
+        NONE,
+        READ,
+        READ_WRITE
+    };
+    MetadataXmpSync metadata_xmp_sync;
 
     /** Creates a new instance of Settings.
       * @return a pointer to the new Settings instance. */

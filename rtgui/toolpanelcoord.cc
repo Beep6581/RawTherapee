@@ -1181,8 +1181,8 @@ void ToolPanelCoordinator::profileChange(
 
     // Reset IPTC values when switching procparams from the History
     if (event == rtengine::EvHistoryBrowsed) {
-        mergedParams->iptc.clear();
-        mergedParams->exif.clear();
+        mergedParams->metadata.iptc.clear();
+        mergedParams->metadata.exif.clear();
     }
 
     // And apply the partial profile nparams to mergedParams
@@ -1904,6 +1904,12 @@ void ToolPanelCoordinator::setEditProvider(EditDataProvider *provider)
 bool ToolPanelCoordinator::getFilmNegativeSpot(rtengine::Coord spot, int spotSize, RGB &refInput, RGB &refOutput)
 {
     return ipc && ipc->getFilmNegativeSpot(spot.x, spot.y, spotSize, refInput, refOutput);
+}
+
+
+void ToolPanelCoordinator::setProgressListener(rtengine::ProgressListener *pl)
+{
+    metadata->setProgressListener(pl);
 }
 
 FoldableToolPanel *ToolPanelCoordinator::getFoldableToolPanel(Tool tool) const

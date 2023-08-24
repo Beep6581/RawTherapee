@@ -20,10 +20,12 @@
  */
 
 #include <gtkmm.h>
+
+#include "guiutils.h"
 #include "multilangmgr.h"
 #include "popupcommon.h"
 #include "rtimage.h"
-#include "guiutils.h"
+#include "threadutils.h"
 
 PopUpCommon::PopUpCommon (Gtk::Button* thisButton, const Glib::ustring& label)
     : buttonImage (nullptr)
@@ -203,6 +205,15 @@ void PopUpCommon::changeImage(const Glib::ustring& iconName, const Glib::RefPtr<
 
 void PopUpCommon::entrySelected(Gtk::Widget* widget)
 {
+    if (widget != menu->get_active()) { // Not actually selected.
+        return;
+    }
+
+    if (!entrySelectionMutex.trylock()) { // Already being updated.
+        return;
+    }
+    entrySelectionMutex.unlock();
+
     int i = 0;
     for (const auto & child : menu->get_children()) {
         if (widget == child) {
@@ -249,7 +260,8 @@ bool PopUpCommon::setSelected (int entryNum)
         setButtonHint();
 
         auto radioMenuItem = dynamic_cast<Gtk::RadioMenuItem*>(menu->get_children()[entryNum]);
-        if (radioMenuItem && menu->get_active() != radioMenuItem) {
+        if (radioMenuItem && !radioMenuItem->get_active()) {
+            MyMutex::MyLock updateLock(entrySelectionMutex);
             radioMenuItem->set_active();
         }
 

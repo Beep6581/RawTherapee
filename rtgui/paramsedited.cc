@@ -715,6 +715,7 @@ void ParamsEdited::set(bool v)
     dehaze.depth = v;
     dehaze.saturation = v;
     metadata.mode = v;
+    metadata.exifKeys = v;
     filmNegative.enabled = v;
     filmNegative.redRatio = v;
     filmNegative.greenExp = v;
@@ -2133,6 +2134,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         dehaze.depth = dehaze.depth && p.dehaze.depth == other.dehaze.depth;
         dehaze.saturation = dehaze.saturation && p.dehaze.saturation == other.dehaze.saturation;
         metadata.mode = metadata.mode && p.metadata.mode == other.metadata.mode;
+        metadata.exifKeys = metadata.exifKeys && p.metadata.exifKeys == other.metadata.exifKeys;
         filmNegative.enabled = filmNegative.enabled && p.filmNegative.enabled == other.filmNegative.enabled;
         filmNegative.redRatio = filmNegative.redRatio && p.filmNegative.redRatio == other.filmNegative.redRatio;
         filmNegative.greenExp = filmNegative.greenExp && p.filmNegative.greenExp == other.filmNegative.greenExp;
@@ -7406,6 +7408,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.metadata.mode = mods.metadata.mode;
     }
 
+    if (metadata.exifKeys) {
+        toEdit.metadata.exifKeys = mods.metadata.exifKeys;
+    }
+
     if (filmNegative.enabled) {
         toEdit.filmNegative.enabled = mods.filmNegative.enabled;
     }
@@ -7443,15 +7449,15 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     // Exif changes are added to the existing ones
     if (exif) {
-        for (procparams::ExifPairs::const_iterator i = mods.exif.begin(); i != mods.exif.end(); ++i) {
-            toEdit.exif[i->first] = i->second;
+        for (procparams::ExifPairs::const_iterator i = mods.metadata.exif.begin(); i != mods.metadata.exif.end(); ++i) {
+            toEdit.metadata.exif[i->first] = i->second;
         }
     }
 
     // IPTC changes are added to the existing ones
     if (iptc) {
-        for (procparams::IPTCPairs::const_iterator i = mods.iptc.begin(); i != mods.iptc.end(); ++i) {
-            toEdit.iptc[i->first] = i->second;
+        for (procparams::IPTCPairs::const_iterator i = mods.metadata.iptc.begin(); i != mods.metadata.iptc.end(); ++i) {
+            toEdit.metadata.iptc[i->first] = i->second;
         }
     }
 }

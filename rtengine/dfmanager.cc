@@ -569,7 +569,7 @@ dfInfo* rtengine::DFManager::Implementation::addFileInfo(const Glib::ustring& fi
             return &(iter->second);
         }
 
-        FramesData idata(filename, std::unique_ptr<RawMetaDataLocation>(new RawMetaDataLocation(ri.get_exifBase(), ri.get_ciffBase(), ri.get_ciffLen())), true);
+        FramesData idata(filename);
         /* Files are added in the map, divided by same maker/model,ISO and shutter*/
         std::string key(dfInfo::key(toUppercase(idata.getMake()), toUppercase(idata.getModel()), idata.getISOSpeed(), idata.getShutterSpeed()));
         auto iter = dfList.find(key);

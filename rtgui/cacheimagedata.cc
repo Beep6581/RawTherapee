@@ -27,6 +27,15 @@
 #include "../rtengine/procparams.h"
 #include "../rtengine/settings.h"
 
+
+namespace
+{
+
+const Glib::ustring INI_GROUP_XMP_SIDECAR = "XmpSidecar";
+const Glib::ustring INI_XMP_SIDECAR_MD5 = "MD5";
+
+}
+
 CacheImageData::CacheImageData() :
     supported(false),
     format(FT_Invalid),
@@ -57,7 +66,9 @@ CacheImageData::CacheImageData() :
     greenAWBMul(-1.0),
     blueAWBMul(-1.0),
     rotate(0),
-    thumbImgType(0)
+    thumbImgType(0),
+    width(-1),
+    height(-1)
 {
 }
 
@@ -104,6 +115,12 @@ int CacheImageData::load (const Glib::ustring& fname)
 
                 if (keyFile.has_key ("General", "RecentlySaved")) {
                     recentlySaved = keyFile.get_boolean ("General", "RecentlySaved");
+                }
+            }
+
+            if (keyFile.has_group(INI_GROUP_XMP_SIDECAR)) {
+                if (keyFile.has_key(INI_GROUP_XMP_SIDECAR, INI_XMP_SIDECAR_MD5)) {
+                    xmpSidecarMd5 = keyFile.get_string(INI_GROUP_XMP_SIDECAR, INI_XMP_SIDECAR_MD5);
                 }
             }
 
@@ -209,6 +226,12 @@ int CacheImageData::load (const Glib::ustring& fname)
                 if (keyFile.has_key ("FileInfo", "SampleFormat")) {
                     sampleFormat = (rtengine::IIO_Sample_Format)keyFile.get_integer ("FileInfo", "SampleFormat");
                 }
+                if (keyFile.has_key("FileInfo", "Width")) {
+                    width = keyFile.get_integer("FileInfo", "Width");
+                }
+                if (keyFile.has_key("FileInfo", "Height")) {
+                    height = keyFile.get_integer("FileInfo", "Height");
+                }
             }
 
             if (format == FT_Raw && keyFile.has_group ("ExtraRawInfo")) {
@@ -263,6 +286,8 @@ int CacheImageData::save (const Glib::ustring& fname)
     keyFile.set_boolean ("General", "RecentlySaved", recentlySaved);
     keyFile.set_integer ("General", "Rating", rating);
 
+    keyFile.set_string(INI_GROUP_XMP_SIDECAR, INI_XMP_SIDECAR_MD5, xmpSidecarMd5);
+
     // remove the old implementation of Rank and InTrash from cache
     if (keyFile.has_key ("General", "Rank")) {
         keyFile.remove_key("General", "Rank");
@@ -301,6 +326,8 @@ int CacheImageData::save (const Glib::ustring& fname)
     keyFile.set_string  ("FileInfo", "Filetype", filetype);
     keyFile.set_integer ("FileInfo", "FrameCount", frameCount);
     keyFile.set_integer ("FileInfo", "SampleFormat", sampleFormat);
+    keyFile.set_integer("FileInfo", "Width", width);
+    keyFile.set_integer("FileInfo", "Height", height);
 
     if (format == FT_Raw) {
         keyFile.set_integer ("ExtraRawInfo", "ThumbImageType", thumbImgType);
@@ -338,7 +365,3 @@ int CacheImageData::save (const Glib::ustring& fname)
     }
 }
 
-rtengine::procparams::IPTCPairs CacheImageData::getIPTCData(unsigned int frame) const
-{
-    return {};
-}

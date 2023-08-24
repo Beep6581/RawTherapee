@@ -89,7 +89,7 @@ bool DynamicProfileRule::matches (const rtengine::FramesMetaData *im,  const Gli
             && camera (im->getCamera())
             && lens (im->getLens())
             && path (filename)
-            && imagetype(im->getImageType(0)));
+            && imagetype(im->getImageType()));
 }
 
 namespace

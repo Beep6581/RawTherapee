@@ -47,7 +47,7 @@ private:
     static LUTf invGrad;  // for fast_demosaic
     static LUTf initInvGrad ();
     static void colorSpaceConversion_ (Imagefloat* im, const procparams::ColorManagementParams& cmp, const ColorTemp &wb, double pre_mul[3], cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], const std::string &camName);
-    int  defTransform (int tran);
+    static int  defTransform (const RawImage *ri, int tran);
 
 protected:
     MyMutex getImageMutex;  // locks getImage
@@ -146,7 +146,7 @@ public:
     void        getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, const procparams::WBParams & wbpar) override;
 
     void        getWBMults  (const ColorTemp &ctemp, const procparams::RAWParams &raw, std::array<float, 4>& scale_mul, float &autoGainComp, float &rm, float &gm, float &bm) const override;
-    void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const procparams::ToneCurveParams &hrp, const procparams::RAWParams &raw, int opposed) override;
+    void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const procparams::ToneCurveParams &hrp, const procparams::RAWParams &raw) override;
     eSensorType getSensorType () const override;
     bool        isMono () const override;
     ColorTemp   getWB () const override
@@ -232,6 +232,8 @@ public:
         virtual float operator()(int row) const { return 1.f; }
     };
     
+    static void computeFullSize(const RawImage *ri, int tr, int &w, int &h, int border=-1);
+
 protected:
     typedef unsigned short ushort;
     void processFalseColorCorrection(Imagefloat* i, const int steps);

@@ -696,6 +696,9 @@ void Options::setDefaults()
     cropAutoFit = false;
 
     rtSettings.thumbnail_inspector_mode = rtengine::Settings::ThumbnailInspectorMode::JPEG;
+
+    rtSettings.xmp_sidecar_style = rtengine::Settings::XmpSidecarStyle::STD;
+    rtSettings.metadata_xmp_sync = rtengine::Settings::MetadataXmpSync::NONE;
 }
 
 Options* Options::copyFrom(Options* other)
@@ -2252,6 +2255,27 @@ void Options::readFromFile(Glib::ustring fname)
                 }
             }
 
+            if (keyFile.has_group("Metadata")) {
+                if (keyFile.has_key("Metadata", "XMPSidecarStyle")) {
+                    std::string val = keyFile.get_string("Metadata", "XMPSidecarStyle");
+                    if (val == "ext") {
+                        rtSettings.xmp_sidecar_style = rtengine::Settings::XmpSidecarStyle::EXT;
+                    } else {
+                        rtSettings.xmp_sidecar_style = rtengine::Settings::XmpSidecarStyle::STD;
+                    }
+                }
+                if (keyFile.has_key("Metadata", "XMPSynchronization")) {
+                    std::string val = keyFile.get_string("Metadata", "XMPSynchronization");
+                    if (val == "read") {
+                        rtSettings.metadata_xmp_sync = rtengine::Settings::MetadataXmpSync::READ;
+                    } else if (val == "readwrite") {
+                        rtSettings.metadata_xmp_sync = rtengine::Settings::MetadataXmpSync::READ_WRITE;
+                    } else {
+                        rtSettings.metadata_xmp_sync = rtengine::Settings::MetadataXmpSync::NONE;
+                    }
+                }
+            }
+
 // --------------------------------------------------------------------------------------------------------
 
             filterOutParsedExtensions();
@@ -2701,6 +2725,25 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_boolean("Dialogs", "GimpPluginShowInfoDialog", gimpPluginShowInfoDialog);
 
         keyFile.set_string("Lensfun", "DBDirectory", rtSettings.lensfunDbDirectory);
+
+        switch (rtSettings.xmp_sidecar_style) {
+        case rtengine::Settings::XmpSidecarStyle::EXT:
+            keyFile.set_string("Metadata", "XMPSidecarStyle", "ext");
+            break;
+        default:
+            keyFile.set_string("Metadata", "XMPSidecarStyle", "std");
+        }
+
+        switch (rtSettings.metadata_xmp_sync) {
+        case rtengine::Settings::MetadataXmpSync::READ:
+            keyFile.set_string("Metadata", "XMPSynchronization", "read");
+            break;
+        case rtengine::Settings::MetadataXmpSync::READ_WRITE:
+            keyFile.set_string("Metadata", "XMPSynchronization", "readwrite");
+            break;
+        default:
+            keyFile.set_string("Metadata", "XMPSynchronization", "none");
+        }
 
         keyData = keyFile.to_data();
 

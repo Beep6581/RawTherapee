@@ -30,7 +30,21 @@ jobs:
           echo "Running apt update."
           sudo apt update
           echo "Installing dependencies with apt."
-          DEBIAN_FRONTEND=noninteractive sudo apt install -y cmake libgtk-3-dev libgtkmm-3.0-dev liblensfun-dev librsvg2-dev liblcms2-dev libfftw3-dev libiptcdata0-dev libtiff5-dev libcanberra-gtk3-dev liblensfun-bin
+          DEBIAN_FRONTEND=noninteractive sudo apt install -y cmake libgtk-3-dev libgtkmm-3.0-dev liblensfun-dev librsvg2-dev liblcms2-dev libfftw3-dev libiptcdata0-dev libtiff5-dev libcanberra-gtk3-dev liblensfun-bin libexpat1-dev libbrotli-dev zlib1g-dev libinih-dev
+
+      - name: Install Exiv2
+        run: |
+          EXIV2_VERSION='v0.28.0'
+          echo "Cloning Exiv2 $EXIV2_VERSION."
+          git clone --depth 1 --branch "$EXIV2_VERSION" https://github.com/Exiv2/exiv2.git ext/exiv2
+
+          echo "Configuring build."
+          mkdir ext/exiv2/build
+          cd ext/exiv2/build
+          cmake -DCMAKE_BUILD_TYPE=Release -DEXIV2_ENABLE_BMFF=ON ..
+
+          echo "Building and installing."
+          sudo make -j$(nproc) install
 
       - name: Configure build
         run: |
@@ -113,6 +127,9 @@ jobs:
       - name: Package AppImage
         working-directory: ./build
         run: |
+          echo "LD_LIBRARY_PATH is '$LD_LIBRARY_PATH'. Adding /usr/local/lib."
+          export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/lib"
+
           echo "Creating artifact name."
           if [ '${{github.ref_type}}' == 'tag' ]; then
             ARTIFACT_NAME="RawTherapee_${REF_NAME_FILTERED}_${{matrix.build_type}}"

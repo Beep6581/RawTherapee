@@ -721,7 +721,8 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     firstProcessingDone = false;
 
     // construct toolpanelcoordinator
-    tpc = new ToolPanelCoordinator ();
+    tpc = new ToolPanelCoordinator();
+    tpc->setProgressListener(this);
 
     // build GUI
 
@@ -1465,6 +1466,7 @@ void EditorPanel::setProgressState(bool inProcessing)
 
 void EditorPanel::error(const Glib::ustring& descr)
 {
+    parent->error(descr);
 }
 
 void EditorPanel::error(const Glib::ustring& title, const Glib::ustring& descr)
@@ -1571,16 +1573,16 @@ void EditorPanel::info_toggled ()
 
     const rtengine::FramesMetaData* idata = ipc->getInitialImage()->getMetaData();
 
-    if (idata && idata->hasExif(selectedFrame)) {
+    if (idata && idata->hasExif()) {
         infoString = Glib::ustring::compose ("%1 + %2\n<span size=\"small\">f/</span><span size=\"large\">%3</span>  <span size=\"large\">%4</span><span size=\"small\">s</span>  <span size=\"small\">%5</span><span size=\"large\">%6</span>  <span size=\"large\">%7</span><span size=\"small\">mm</span>",
                                               escapeHtmlChars (idata->getMake() + " " + idata->getModel()),
                                               escapeHtmlChars (idata->getLens()),
-                                              Glib::ustring (idata->apertureToString (idata->getFNumber(selectedFrame))),
-                                              Glib::ustring (idata->shutterToString (idata->getShutterSpeed(selectedFrame))),
-                                              M ("QINFO_ISO"), idata->getISOSpeed(selectedFrame),
-                                              Glib::ustring::format (std::setw (3), std::fixed, std::setprecision (2), idata->getFocalLen(selectedFrame)));
+                                              Glib::ustring (idata->apertureToString (idata->getFNumber())),
+                                              Glib::ustring (idata->shutterToString (idata->getShutterSpeed())),
+                                              M ("QINFO_ISO"), idata->getISOSpeed(),
+                                              Glib::ustring::format (std::setw (3), std::fixed, std::setprecision (2), idata->getFocalLen()));
 
-        expcomp = Glib::ustring (idata->expcompToString (idata->getExpComp(selectedFrame), true)); // maskZeroexpcomp
+        expcomp = Glib::ustring (idata->expcompToString (idata->getExpComp(), true)); // maskZeroexpcomp
 
         if (!expcomp.empty ()) {
             infoString = Glib::ustring::compose ("%1  <span size=\"large\">%2</span><span size=\"small\">EV</span>",
@@ -1593,8 +1595,13 @@ void EditorPanel::info_toggled ()
                                               escapeHtmlChars (Glib::path_get_dirname (openThm->getFileName())) + G_DIR_SEPARATOR_S,
                                               escapeHtmlChars (Glib::path_get_basename (openThm->getFileName()))  );
 
-        int ww = ipc->getFullWidth();
-        int hh = ipc->getFullHeight();
+        int ww = -1, hh = -1;
+        idata->getDimensions(ww, hh);
+        if (ww <= 0) {
+            ww = ipc->getFullWidth();
+            hh = ipc->getFullHeight();
+        }
+
         //megapixels
         infoString = Glib::ustring::compose ("%1\n<span size=\"small\">%2 MP (%3x%4)</span>",
                                              infoString,
@@ -1608,7 +1615,7 @@ void EditorPanel::info_toggled ()
         if (isHDR) {
             infoString = Glib::ustring::compose ("%1\n" + M("QINFO_HDR"), infoString, numFrames);
             if (numFrames == 1) {
-                int sampleFormat = idata->getSampleFormat(selectedFrame);
+                int sampleFormat = idata->getSampleFormat();
                 infoString = Glib::ustring::compose ("%1 / %2", infoString, M(Glib::ustring::compose("SAMPLEFORMAT_%1", sampleFormat)));
             }
         } else if (isPixelShift) {

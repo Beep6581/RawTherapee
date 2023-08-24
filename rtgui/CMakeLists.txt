@@ -199,7 +199,7 @@ if(WIN32)
         ${RSVG_INCLUDE_DIRS}
         ${TIFF_INCLUDE_DIRS}
         )
-    link_directories(. "${PROJECT_SOURCE_DIR}/rtexif"
+    link_directories(.
         ${EXTRA_LIBDIR}
         ${GIOMM_LIBRARY_DIRS}
         ${GIO_LIBRARY_DIRS}

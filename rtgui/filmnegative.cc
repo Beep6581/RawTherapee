@@ -291,14 +291,14 @@ FilmNegative::FilmNegative() :
     refSpotButton->signal_toggled().connect(sigc::mem_fun(*this, &FilmNegative::refSpotToggled));
 
     // Editing geometry; create the spot rectangle
-    Rectangle* const spotRect = new Rectangle();
+    EditRectangle* const spotRect = new EditRectangle();
     spotRect->filled = false;
 
     visibleGeometry.push_back(spotRect);
 
     // Stick a dummy rectangle over the whole image in mouseOverGeometry.
     // This is to make sure the getCursor() call is fired everywhere.
-    Rectangle* const imgRect = new Rectangle();
+    EditRectangle* const imgRect = new EditRectangle();
     imgRect->filled = true;
 
     mouseOverGeometry.push_back(imgRect);
@@ -564,7 +564,7 @@ CursorShape FilmNegative::getCursor(int objectID, int xPos, int yPos) const
 bool FilmNegative::mouseOver(int modifierKey)
 {
     EditDataProvider* const provider = getEditProvider();
-    Rectangle* const spotRect = static_cast<Rectangle*>(visibleGeometry.at(0));
+    EditRectangle* const spotRect = static_cast<EditRectangle*>(visibleGeometry.at(0));
     spotRect->setXYWH(provider->posImage.x - 16, provider->posImage.y - 16, 32, 32);
 
     return true;
@@ -716,7 +716,7 @@ void FilmNegative::editToggled()
 
         // Stick a dummy rectangle over the whole image in mouseOverGeometry.
         // This is to make sure the getCursor() call is fired everywhere.
-        Rectangle* const imgRect = static_cast<Rectangle*>(mouseOverGeometry.at(0));
+        EditRectangle* const imgRect = static_cast<EditRectangle*>(mouseOverGeometry.at(0));
         imgRect->setXYWH(0, 0, w, h);
     } else {
         refSpotCoords.clear();
@@ -739,7 +739,7 @@ void FilmNegative::refSpotToggled()
 
         // Stick a dummy rectangle over the whole image in mouseOverGeometry.
         // This is to make sure the getCursor() call is fired everywhere.
-        Rectangle* const imgRect = static_cast<Rectangle*>(mouseOverGeometry.at(0));
+        EditRectangle* const imgRect = static_cast<EditRectangle*>(mouseOverGeometry.at(0));
         imgRect->setXYWH(0, 0, w, h);
 
     } else {
