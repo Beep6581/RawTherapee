@@ -6,9 +6,8 @@ file(GLOB DCPFILES "dcpprofiles/*")
 
 set(PROFILESDIR "profiles")
 set(THEMEDIR "themes")
-
-file(GLOB IMG_SVG LIST_DIRECTORIES false "images/svg/*.svg")
-file(GLOB IMG_ICO LIST_DIRECTORIES false "images/*")
+set(ICONSDIR "icons")
+set(IMAGESDIR "images")
 
 if(WIN32)
     set(OPTIONSFILE "options/options.win")
@@ -27,15 +26,6 @@ if(UNIX)
     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/rawtherapee.desktop" DESTINATION ${DESKTOPDIR})
 endif()
 
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/images/png/rawtherapee-logo-16.png" DESTINATION "${ICONSDIR}/rawtherapee/16x16/app_icons" RENAME rawtherapee.png)
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/images/png/rawtherapee-logo-24.png" DESTINATION "${ICONSDIR}/rawtherapee/24x24/app_icons" RENAME rawtherapee.png)
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/images/png/rawtherapee-logo-32.png" DESTINATION "${ICONSDIR}/rawtherapee/32x32/app_icons" RENAME rawtherapee.png)
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/images/png/rawtherapee-logo-48.png" DESTINATION "${ICONSDIR}/rawtherapee/48x48/app_icons" RENAME rawtherapee.png)
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/images/png/rawtherapee-logo-64.png" DESTINATION "${ICONSDIR}/rawtherapee/64x64/app_icons" RENAME rawtherapee.png)
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/images/png/rawtherapee-logo-128.png" DESTINATION "${ICONSDIR}/rawtherapee/128x128/app_icons" RENAME rawtherapee.png)
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/images/png/rawtherapee-logo-256.png" DESTINATION "${ICONSDIR}/rawtherapee/256x256/app_icons" RENAME rawtherapee.png)
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/images/rt-logo.svg" DESTINATION "${ICONSDIR}/rawtherapee/scalable/app_icons" RENAME rawtherapee.svg)
-
 install(FILES ${LANGUAGEFILES} DESTINATION "${DATADIR}/languages")
 install(FILES ${SOUNDFILES} DESTINATION "${DATADIR}/sounds")
 install(FILES ${INPUTICCFILES} DESTINATION "${DATADIR}/iccprofiles/input")
@@ -45,11 +35,8 @@ install(FILES ${OPTIONSFILE} DESTINATION "${DATADIR}" PERMISSIONS OWNER_WRITE OW
 
 install(DIRECTORY "${PROFILESDIR}" DESTINATION "${DATADIR}" FILES_MATCHING PATTERN "*.pp3")
 install(DIRECTORY "${THEMEDIR}" DESTINATION "${DATADIR}")
-
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/images/png/empty.png" DESTINATION "${ICONSDIR}/rawtherapee/24x24/apps")
-install(FILES ${IMG_SVG} DESTINATION "${ICONSDIR}/rawtherapee/scalable/apps")
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/images/svg/index.theme" DESTINATION "${ICONSDIR}/rawtherapee")
-install(FILES ${IMG_ICO} DESTINATION "${DATADIR}/images")
+install(DIRECTORY "${ICONSDIR}" DESTINATION "${DATADIR}")
+install(DIRECTORY "${IMAGESDIR}" DESTINATION "${DATADIR}")
 
 if(APPLE)
     # CMake escapes first item quote character. Do not remove 'DUMMY_VARIABLE='
