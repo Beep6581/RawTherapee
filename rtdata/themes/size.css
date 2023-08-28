@@ -102,7 +102,7 @@ notebook > header.left > tabs > arrow {
 }
 
 
-/* Adds a line on top of the notebook as a separtor for the titlebar (only on CSD) */
+/* Adds a line on top of the notebook as a separator for the titlebar (only on CSD) */
 dialog.csd #PrefNotebook > header,
 dialog.csd #AboutNotebook > header,
 window.csd:not(.fullscreen) #MainNotebook > header.top {
@@ -349,6 +349,11 @@ menu arrow {
     margin: 0 -0.19em;
     padding: 0;
     margin: 0 -0.25em 0 0;
+}
+
+menu menuitem > radio + * image:not(.dummy),
+#MyExpander menu menuitem > radio + * image:not(.dummy) {
+    margin-left: 1pt;
 }
 
 menu image:not(.dummy),

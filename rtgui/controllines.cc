@@ -79,7 +79,7 @@ constexpr int mouseOverIdToLineId(int mouse_over_id)
 
 ControlLineManager::ControlLineManager():
     EditSubscriber(ET_OBJECTS),
-    canvas_area(new Rectangle()),
+    canvas_area(new EditRectangle()),
     cursor(CSHandOpen),
     draw_mode(false),
     drawing_line(false),

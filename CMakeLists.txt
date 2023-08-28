@@ -46,7 +46,7 @@ endif()
 
 # Warning for GCC vectorization issues, which causes problems #5749 and #6384:
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "10.0" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "10.2")
-    message(STATUS "WARNING: gcc ${CMAKE_CXX_COMPILER_VERSION} is known to miscompile RawTherapee when using -ftree-loop-vectorize, forcing the option to be off")    
+    message(STATUS "WARNING: gcc ${CMAKE_CXX_COMPILER_VERSION} is known to miscompile RawTherapee when using -ftree-loop-vectorize, forcing the option to be off")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-tree-loop-vectorize")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-tree-loop-vectorize")
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "11.0")
@@ -87,6 +87,9 @@ option(OSX_DEV_BUILD "Generate macOS development builds" OFF)
 # On macOS, optionally generate the final zip artifact file without version in the name for nightly upload purposes.
 option(OSX_NIGHTLY "Generate a generically-named zip" OFF)
 
+# On macOS, optionally generate RawTherapee_<branch>_macOS_<buildtype>.zip for the CI
+option(OSX_CONTINUOUS "Generate a generically-named zip for CI" OFF)
+
 # Generate a universal macOS build
 option(OSX_UNIVERSAL "Generate a universal app" OFF)
 
@@ -94,13 +97,12 @@ option(OSX_UNIVERSAL "Generate a universal app" OFF)
 if(OSX_UNIVERSAL)
     if(NOT "${OSX_UNIVERSAL_URL}")
         if(CMAKE_OSX_ARCHITECTURES STREQUAL "arm64")
-            set(OSX_UNIVERSAL_URL "https://kd6kxr.keybase.pub/RawTherapee_macOS_x86_64_latest.zip" CACHE STRING "URL of x86_64 app for lipo")
+            set(OSX_UNIVERSAL_URL "file:///rawtherapee/latest/RawTherapee_macOS_x86_64_latest.zip" CACHE STRING "URL of x86_64 app for lipo")
         else()
-            set(OSX_UNIVERSAL_URL "https://kd6kxr.keybase.pub/RawTherapee_macOS_arm64_latest.zip" CACHE STRING "URL of arm64 app for lipo")
+            set(OSX_UNIVERSAL_URL "file:///rawtherapee/latest/RawTherapee_macOS_arm64_latest.zip" CACHE STRING "URL of arm64 app for lipo")
         endif()
     endif()
 endif()
-
 
 # By default we don't use a specific processor target, so PROC_TARGET_NUMBER is
 # set to 0. Specify other values to optimize for specific processor architecture
@@ -495,6 +497,31 @@ pkg_check_modules(SIGC REQUIRED sigc++-2.0>=2.3.1)
 pkg_check_modules(LENSFUN REQUIRED lensfun>=0.2)
 pkg_check_modules(RSVG REQUIRED librsvg-2.0>=2.40)
 
+# Require exiv2 >= 0.24 to make sure everything we need is available
+#find_package(Exiv2 0.24 REQUIRED)
+pkg_check_modules(EXIV2 REQUIRED exiv2>=0.24)
+#include_directories(SYSTEM ${Exiv2_INCLUDE_DIRS})
+#list(APPEND LIBS ${EXIV2_LIBRARIES})
+add_definitions(${EXIV2_DEFINITIONS})
+set(_exiv2_libs ${EXIV2_LIBRARIES})
+set(EXIV2_LIBRARIES "")
+foreach(l ${_exiv2_libs})
+    set(_el "_el-NOTFOUND")
+    if(EXIV2_LIBRARY_DIRS)
+        message(STATUS "searching for library ${l} in ${EXIV2_LIBRARY_DIRS}")
+        find_library(_el ${l} PATHS ${EXIV2_LIBRARY_DIRS} NO_DEFAULT_PATH)
+        if(NOT _el)
+            message(STATUS  "  NOT FOUND, searching again in default path")
+            find_library(_el ${l})
+        endif()
+    else()
+        message(STATUS "searching for library ${l}")
+        find_library(_el ${l})# PATHS ${EXIV2_LIBRARY_DIRS})
+    endif()
+    message(STATUS "  result: ${_el}")
+    set(EXIV2_LIBRARIES ${EXIV2_LIBRARIES} ${_el})
+endforeach()
+
 if(WIN32)
     add_definitions(-DWIN32)
     add_definitions(-D_WIN32)
@@ -536,6 +563,12 @@ endif()
 
 if(WITH_MYFILE_MMAP)
     add_definitions(-DMYFILE_MMAP)
+endif()
+
+# Atomic is required in some builds: #6821
+find_package(ATOMIC)
+if(ATOMIC_FOUND)
+	target_link_libraries(executable ${ATOMIC_LIBRARIES})
 endif()
 
 if(WITH_LTO)
@@ -604,6 +637,7 @@ if(OPENMP_FOUND)
     set(CMAKE_REQUIRED_INCLUDES ${FFTW3F_INCLUDE_DIRS})
     set(CMAKE_REQUIRED_LIBRARIES)
     foreach(l ${FFTW3F_LIBRARIES})
+        set(_f "_f-NOTFOUND")
         find_library(_f ${l} PATHS ${FFTW3F_LIBRARY_DIRS})
         set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${_f})
     endforeach()
@@ -788,13 +822,18 @@ foreach(l ${LENSFUN_LIBRARIES})
         # the NO_DEFAULT_PATH is to make sure we find the lensfun version we
         # want, and not the system's one (e.g. if we have a custom version
         # installed in a non-standard location)
+        set(_l "_l-NOTFOUND")
+        message(STATUS "searching for library ${l} in ${LENSFUN_LIBRARY_DIRS}")
         find_library(_l ${l} PATHS ${LENSFUN_LIBRARY_DIRS} NO_DEFAULT_PATH)
     else()
         # LENSFUN_LIBRARY_DIRS can be empty if lensfun is installed in the
         # default path. In this case, adding NO_DEFAULT_PATH would make
         # find_library fail...
+        set(_l "_l-NOTFOUND")
+        message(STATUS "searching for library ${l}")
         find_library(_l ${l})
     endif()
+    message(STATUS "  result: ${_l}")
     set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${_l})
 endforeach()
 check_cxx_source_compiles(
@@ -836,7 +875,6 @@ else()
         CACHE INTERNAL "" FORCE)
 endif()
 
-add_subdirectory(rtexif)
 add_subdirectory(rtengine)
 add_subdirectory(rtgui)
 add_subdirectory(rtdata)

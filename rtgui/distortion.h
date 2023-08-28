@@ -37,6 +37,7 @@ protected:
     LensGeomListener * rlistener;
 
 public:
+    static const Glib::ustring TOOL_NAME;
 
     Distortion ();
 

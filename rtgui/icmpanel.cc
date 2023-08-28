@@ -35,7 +35,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iunchanged(nullptr), icmplistener(nullptr)
+const Glib::ustring ICMPanel::TOOL_NAME = "icm";
+
+ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iunchanged(nullptr), icmplistener(nullptr)
 {
     auto m = ProcEventMapper::getInstance();
     EvICMprimariMethod = m->newEvent(GAMMA, "HISTORY_MSG_ICM_OUTPUT_PRIMARIES");
@@ -62,6 +64,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     EvICMpreser = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_PRESER");
     EvICMLabGridciexy = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICL_LABGRIDCIEXY");
     EvICMfbw = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_FBW");
+    EvICMgamut = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_GAMUT");
     isBatchMode = lastToneCurve = lastApplyLookTable = lastApplyBaselineExposureOffset = lastApplyHueSatMap = false;
 
     ipDialog = Gtk::manage(new MyFileChooserButton(M("TP_ICM_INPUTDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
@@ -201,10 +204,13 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wFrame->add(*wProfVBox);
 
     //-----------------gamma TRC working
-    Gtk::Frame *trcFrame = Gtk::manage(new Gtk::Frame(M("TP_ICM_TRCFRAME")));
-    trcFrame->set_label_align(0.025, 0.5);
+//    Gtk::Frame *trcFrame = Gtk::manage(new Gtk::Frame(M("TP_ICM_TRCFRAME")));
+    trcExp = Gtk::manage(new MyExpander(false, M("TP_ICM_TRCFRAME")));
+    setExpandAlignProperties(trcExp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+//    trcFrame->set_label_align(0.025, 0.5);
     Gtk::Box *trcProfVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
-    trcFrame->set_tooltip_text(M("TP_ICM_TRCFRAME_TOOLTIP"));
+    trcExp->set_tooltip_text(M("TP_ICM_TRCFRAME_TOOLTIP"));
+    trcExp->signal_button_release_event().connect_notify ( sigc::bind ( sigc::mem_fun (this, &ICMPanel::foldAllButMe), trcExp) );
 
     wTRCBox = Gtk::manage(new Gtk::Box());
 
@@ -263,8 +269,12 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wprimBox->pack_start(*wprim, Gtk::PACK_EXPAND_WIDGET);
     fbw = Gtk::manage(new Gtk::CheckButton((M("TP_ICM_FBW"))));
     fbw->set_active(true);
+    gamut = Gtk::manage(new Gtk::CheckButton((M("TP_ICM_GAMUT"))));
+    gamut->set_active(false);
+
     trcProfVBox->pack_start(*wprimBox, Gtk::PACK_EXPAND_WIDGET);
     trcProfVBox->pack_start(*fbw, Gtk::PACK_EXPAND_WIDGET);
+    trcProfVBox->pack_start(*gamut, Gtk::PACK_EXPAND_WIDGET);
 
     neutral = Gtk::manage (new Gtk::Button (M ("TP_ICM_NEUTRAL")));
     setExpandAlignProperties (neutral, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
@@ -285,6 +295,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wprim->append(M("TP_ICM_WORKING_PRIM_ACE"));
     wprim->append(M("TP_ICM_WORKING_PRIM_WID"));
     wprim->append(M("TP_ICM_WORKING_PRIM_AC0"));
+    wprim->append(M("TP_ICM_WORKING_PRIM_JDCMAX"));
     wprim->append(M("TP_ICM_WORKING_PRIM_BRU"));
     wprim->append(M("TP_ICM_WORKING_PRIM_BET"));
     wprim->append(M("TP_ICM_WORKING_PRIM_BST"));
@@ -374,11 +385,13 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     aRendIntent->show();
     riaHBox->pack_start(*aRendIntent->buttonGroup, Gtk::PACK_EXPAND_PADDING);
 
-    trcFrame->add(*trcProfVBox);
 
     pack_start(*wFrame, Gtk::PACK_EXPAND_WIDGET);
-    pack_start(*trcFrame, Gtk::PACK_EXPAND_WIDGET);
-    pack_start(*redFrame, Gtk::PACK_EXPAND_WIDGET);
+    trcProfVBox->pack_start(*redFrame, Gtk::PACK_EXPAND_WIDGET);
+    trcExp->add(*trcProfVBox, false);
+    trcExp->setLevel (2);
+    pack_start(*trcExp, Gtk::PACK_EXPAND_WIDGET);
+    trcExp->set_expanded(false);
 
 
     // ---------------------------- Output profile
@@ -468,6 +481,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wprimconn = wprim->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wprimChanged));
 
     fbwconn = fbw->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::fbwChanged));
+    gamutconn = gamut->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::gamutChanged));
     obpcconn = obpc->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::oBPCChanged));
     tcurveconn = ckbToneCurve->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::toneCurveChanged));
     ltableconn = ckbApplyLookTable->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::applyLookTableChanged));
@@ -485,6 +499,14 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     show_all();
 }
 
+void ICMPanel::foldAllButMe (GdkEventButton* event, MyExpander *expander)
+{
+    if (event->button == 3) {
+        trcExp->set_expanded (trcExp == expander);
+    }
+}
+
+
 void ICMPanel::neutral_pressed ()
 {   //find working profile and set the same destination proile
     if (wProfNames->get_active_text() == "Rec2020") {
@@ -501,6 +523,8 @@ void ICMPanel::neutral_pressed ()
         wprim->set_active(toUnderlying(ColorManagementParams::Primaries::WIDE_GAMUT));
     } else if (wProfNames->get_active_text() == "ACESp0") {
         wprim->set_active(toUnderlying(ColorManagementParams::Primaries::ACES_P0));
+    } else if (wProfNames->get_active_text() == "JDCmax") {
+        wprim->set_active(toUnderlying(ColorManagementParams::Primaries::JDC_MAX));
     } else if (wProfNames->get_active_text() == "BruceRGB") {
         wprim->set_active(toUnderlying(ColorManagementParams::Primaries::BRUCE_RGB));
     } else if (wProfNames->get_active_text() == "Beta RGB") {
@@ -513,6 +537,7 @@ void ICMPanel::neutral_pressed ()
     wSlope->setValue(defPar.workingTRCSlope);//12.92
     preser->setValue(defPar.preser);
     fbw->set_active(defPar.fbw);
+    gamut->set_active(defPar.gamut);	
     wTRC->set_active(toUnderlying(ColorManagementParams::WorkingTrc::NONE));//reset to none
     will->set_active(toUnderlying(ColorManagementParams::Illuminant::DEFAULT));//reset to default - after wprim
 }
@@ -765,6 +790,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
 
     ConnectionBlocker obpcconn_(obpcconn);
     ConnectionBlocker fbwconn_(fbwconn);
+    ConnectionBlocker gamutconn_(gamutconn);
     ConnectionBlocker ipc_(ipc);
     ConnectionBlocker tcurveconn_(tcurveconn);
     ConnectionBlocker ltableconn_(ltableconn);
@@ -778,6 +804,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     ConnectionBlocker wtrcconn_(wtrcconn);
     ConnectionBlocker willconn_(willconn);
     ConnectionBlocker wprimconn_(wprimconn);
+    trcExp->set_expanded(false);
 
     if (pp->icm.inputProfile.substr(0, 5) != "file:") {
         ipDialog->set_filename(" ");
@@ -838,6 +865,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
 
     obpc->set_active(pp->icm.outputBPC);
     fbw->set_active(pp->icm.fbw);
+    gamut->set_active(pp->icm.gamut);
     ckbToneCurve->set_active(pp->icm.toneCurve);
     lastToneCurve = pp->icm.toneCurve;
     ckbApplyLookTable->set_active(pp->icm.applyLookTable);
@@ -862,6 +890,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         iunchanged->set_active(!pedited->icm.inputProfile);
         obpc->set_inconsistent(!pedited->icm.outputBPC);
         fbw->set_inconsistent(!pedited->icm.fbw);
+        gamut->set_inconsistent(!pedited->icm.gamut);
         ckbToneCurve->set_inconsistent(!pedited->icm.toneCurve);
         ckbApplyLookTable->set_inconsistent(!pedited->icm.applyLookTable);
         ckbApplyBaselineExposureOffset->set_inconsistent(!pedited->icm.applyBaselineExposureOffset);
@@ -920,6 +949,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             willulab->set_sensitive(false);
             wprim->set_sensitive(false);
             fbw->set_sensitive(false);
+            gamut->set_sensitive(false);
             wprimlab->set_sensitive(false);
             riaHBox->set_sensitive(false);
             redFrame->hide();
@@ -931,6 +961,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             willulab->set_sensitive(true);
             wprim->set_sensitive(true);
             fbw->set_sensitive(true);
+            gamut->set_sensitive(true);
             wprimlab->set_sensitive(true);
             if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::DEFAULT) {
                 redFrame->hide();
@@ -973,6 +1004,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             willulab->set_sensitive(true);
             wprim->set_sensitive(true);
             fbw->set_sensitive(true);
+            gamut->set_sensitive(true);
             wprimlab->set_sensitive(true);
             wGamma->set_sensitive(false);
             wSlope->set_sensitive(false);
@@ -990,6 +1022,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             willulab->set_sensitive(true);
             wprim->set_sensitive(true);
             fbw->set_sensitive(true);
+            gamut->set_sensitive(true);
             wprimlab->set_sensitive(true);
             wGamma->set_sensitive(false);
             wSlope->set_sensitive(false);
@@ -1007,6 +1040,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             willulab->set_sensitive(true);
             wprim->set_sensitive(true);
             fbw->set_sensitive(true);
+            gamut->set_sensitive(true);
             wprimlab->set_sensitive(true);
             redFrame->show();
             wGamma->set_sensitive(false);
@@ -1025,6 +1059,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             willulab->set_sensitive(true);
             wprim->set_sensitive(true);
             fbw->set_sensitive(true);
+            gamut->set_sensitive(true);
             wprimlab->set_sensitive(true);
             riaHBox->set_sensitive(true);
             if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::DEFAULT) {
@@ -1042,6 +1077,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             willulab->set_sensitive(true);
             wprim->set_sensitive(true);
             fbw->set_sensitive(true);
+            gamut->set_sensitive(true);
             wprimlab->set_sensitive(true);
             wGamma->set_sensitive(false);
             wSlope->set_sensitive(false);
@@ -1063,6 +1099,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         case ColorManagementParams::Primaries::ACES_P1:
         case ColorManagementParams::Primaries::WIDE_GAMUT:
         case ColorManagementParams::Primaries::ACES_P0:
+        case ColorManagementParams::Primaries::JDC_MAX:
         case ColorManagementParams::Primaries::BRUCE_RGB:
         case ColorManagementParams::Primaries::BETA_RGB:
         case ColorManagementParams::Primaries::BEST_RGB: {
@@ -1143,6 +1180,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     pp->icm.applyHueSatMap = ckbApplyHueSatMap->get_active();
     pp->icm.outputBPC = obpc->get_active();
     pp->icm.fbw = fbw->get_active();
+    pp->icm.gamut = gamut->get_active();
     pp->icm.workingTRCGamma =  wGamma->getValue();
     pp->icm.workingTRCSlope =  wSlope->getValue();
     pp->icm.redx =  redx->getValue();
@@ -1162,6 +1200,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->icm.aRendIntent = aRendIntent->getSelected() < 4;
         pedited->icm.outputBPC = !obpc->get_inconsistent();
         pedited->icm.fbw = !fbw->get_inconsistent();
+        pedited->icm.gamut = !gamut->get_inconsistent();
         pedited->icm.dcpIlluminant = dcpIll->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.toneCurve = !ckbToneCurve->get_inconsistent();
         pedited->icm.applyLookTable = !ckbApplyLookTable->get_inconsistent();
@@ -1268,6 +1307,7 @@ void ICMPanel::wtrcinChanged()
             willulab->set_sensitive(false);
             wprim->set_sensitive(false);
             fbw->set_sensitive(false);
+            gamut->set_sensitive(false);
             wprimlab->set_sensitive(false);
             redFrame->hide();
             riaHBox->set_sensitive(false);
@@ -1278,6 +1318,7 @@ void ICMPanel::wtrcinChanged()
             will->set_sensitive(false);
             wprim->set_sensitive(true);
             fbw->set_sensitive(true);
+            gamut->set_sensitive(true);
             wprimlab->set_sensitive(true);
             willulab->set_sensitive(true);
             if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::DEFAULT) {
@@ -1311,6 +1352,7 @@ void ICMPanel::wtrcinChanged()
             willulab->set_sensitive(true);
             wprim->set_sensitive(true);
             fbw->set_sensitive(true);
+            gamut->set_sensitive(true);
             wprimlab->set_sensitive(true);
             wGamma->set_sensitive(false);
             wSlope->set_sensitive(false);
@@ -1336,6 +1378,7 @@ void ICMPanel::wtrcinChanged()
             willulab->set_sensitive(true);
             wprim->set_sensitive(true);
             fbw->set_sensitive(true);
+            gamut->set_sensitive(true);
             wGamma->set_sensitive(false);
             wSlope->set_sensitive(false);
             riaHBox->set_sensitive(true);
@@ -1362,6 +1405,7 @@ void ICMPanel::wtrcinChanged()
             willulab->set_sensitive(true);
             wprim->set_sensitive(true);
             fbw->set_sensitive(true);
+            gamut->set_sensitive(true);
             wprimlab->set_sensitive(true);
             wGamma->set_sensitive(false);
             wSlope->set_sensitive(false);
@@ -1389,6 +1433,7 @@ void ICMPanel::wtrcinChanged()
             willulab->set_sensitive(true);
             wprim->set_sensitive(true);
             fbw->set_sensitive(true);
+            gamut->set_sensitive(true);
             wprimlab->set_sensitive(true);
             wGamma->set_sensitive(false);
             wSlope->set_sensitive(false);
@@ -1416,6 +1461,7 @@ void ICMPanel::wtrcinChanged()
             willulab->set_sensitive(true);
             wprim->set_sensitive(true);
             fbw->set_sensitive(true);
+            gamut->set_sensitive(true);
             wprimlab->set_sensitive(true);
             wGamma->set_sensitive(false);
             wSlope->set_sensitive(false);
@@ -1447,6 +1493,7 @@ void ICMPanel::wtrcinChanged()
         case ColorManagementParams::Primaries::ACES_P1:
         case ColorManagementParams::Primaries::WIDE_GAMUT:
         case ColorManagementParams::Primaries::ACES_P0:
+        case ColorManagementParams::Primaries::JDC_MAX:
         case ColorManagementParams::Primaries::BRUCE_RGB:
         case ColorManagementParams::Primaries::BETA_RGB:
         case ColorManagementParams::Primaries::BEST_RGB: {
@@ -1479,7 +1526,7 @@ void ICMPanel::wtrcinChanged()
 
 void ICMPanel::willChanged()
 {
-    switch (ColorManagementParams::Primaries(wprim->get_active_row_number())) {
+    switch (ColorManagementParams::Primaries(wprim->get_active_row_number() )) {
         case ColorManagementParams::Primaries::DEFAULT:
         case ColorManagementParams::Primaries::SRGB:
         case ColorManagementParams::Primaries::ADOBE_RGB:
@@ -1488,6 +1535,7 @@ void ICMPanel::willChanged()
         case ColorManagementParams::Primaries::ACES_P1:
         case ColorManagementParams::Primaries::WIDE_GAMUT:
         case ColorManagementParams::Primaries::ACES_P0:
+        case ColorManagementParams::Primaries::JDC_MAX:
         case ColorManagementParams::Primaries::BRUCE_RGB:
         case ColorManagementParams::Primaries::BETA_RGB:
         case ColorManagementParams::Primaries::BEST_RGB: {
@@ -1602,6 +1650,17 @@ void ICMPanel::wprimChanged()
             break;
         }
 
+        case ColorManagementParams::Primaries::JDC_MAX: {
+            redx->setValue(0.734702);
+            redy->setValue(0.265302);
+            grex->setValue(0.021908);
+            grey->setValue(0.930288);
+            blux->setValue(0.120593);
+            bluy->setValue(0.001583);
+            will->set_active(toUnderlying(ColorManagementParams::Illuminant::D50));
+            break;
+        }
+
         case ColorManagementParams::Primaries::BRUCE_RGB: {
             redx->setValue(0.64);
             redy->setValue(0.33);
@@ -1694,6 +1753,14 @@ void ICMPanel::wprimChanged()
             blux->setValue(0.0001);
             bluy->setValue(-0.077);
             will->set_active(toUnderlying(ColorManagementParams::Illuminant::D60));
+        } else if (wProfNames->get_active_text() == "JDCmax") {
+            redx->setValue(0.734702);
+            redy->setValue(0.265302);
+            grex->setValue(0.021908);
+            grey->setValue(0.930288);
+            blux->setValue(0.120593);
+            bluy->setValue(0.001583);
+            will->set_active(toUnderlying(ColorManagementParams::Illuminant::D50));
         } else if (wProfNames->get_active_text() == "BruceRGB") {
             redx->setValue(0.64);
             redy->setValue(0.33);
@@ -1701,7 +1768,7 @@ void ICMPanel::wprimChanged()
             grey->setValue(0.65);
             blux->setValue(0.15);
             bluy->setValue(0.06);
-            will->set_active(toUnderlying(ColorManagementParams::Illuminant::D65));
+            will->set_active(toUnderlying(ColorManagementParams::Illuminant::D65)); 
         } else if (wProfNames->get_active_text() == "Beta RGB") {
             redx->setValue(0.6888);
             redy->setValue(0.3112);
@@ -2022,6 +2089,33 @@ void ICMPanel::fbwChanged()
         }
     }
 }
+
+void ICMPanel::gamutChanged()
+{
+    if (multiImage) {
+        if (gamut->get_inconsistent()) {
+            gamut->set_inconsistent(false);
+            gamutconn.block(true);
+            gamut->set_active(false);
+            gamutconn.block(false);
+        } else if (lastgamut) {
+            gamut->set_inconsistent(true);
+        }
+
+        lastgamut = gamut->get_active();
+    }
+
+    if (listener) {
+        if (gamut->get_inconsistent()) {
+            listener->panelChanged(EvICMgamut, M("GENERAL_UNCHANGED"));
+        } else if (fbw->get_active()) {
+            listener->panelChanged(EvICMgamut, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged(EvICMgamut, M("GENERAL_DISABLED"));
+        }
+    }
+}
+
 
 void ICMPanel::setRawMeta(bool raw, const rtengine::FramesData* pMeta)
 {

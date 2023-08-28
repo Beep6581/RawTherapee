@@ -36,8 +36,10 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
+const Glib::ustring LensProfilePanel::TOOL_NAME = "lensprof";
+
 LensProfilePanel::LensProfilePanel() :
-    FoldableToolPanel(this, "lensprof", M("TP_LENSPROFILE_LABEL")),
+    FoldableToolPanel(this, TOOL_NAME, M("TP_LENSPROFILE_LABEL")),
     lcModeChanged(false),
     lcpFileChanged(false),
     useDistChanged(false),
@@ -439,6 +441,7 @@ void LensProfilePanel::setBatchMode(bool yes)
     modesGrid->attach_next_to(*corrUnchangedRB, Gtk::POS_TOP, 3, 1);
     corrUnchangedRB->signal_toggled().connect(sigc::bind(sigc::mem_fun(*this, &LensProfilePanel::onCorrModeChanged), corrUnchangedRB));
     corrUnchangedRB->set_active(true);
+    corrUnchangedRB->show();
 }
 
 void LensProfilePanel::onLensfunCameraChanged()

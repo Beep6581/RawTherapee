@@ -241,6 +241,7 @@ RTWindow::RTWindow ()
     RTImage::init();
     WhiteBalance::init();
     MyExpander::init();
+    FileBrowserEntry::init();
 
 #ifndef WIN32
     const std::vector<Glib::RefPtr<Gdk::Pixbuf>> appIcons = {
@@ -588,6 +589,7 @@ void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name)
     } else {
         ep->setParent (this);
         ep->setParentWindow (this);
+        ep->setExternalEditorChangedSignal(&externalEditorChangedSignal);
 
         // construct closeable tab for the image
         Gtk::Grid* titleGrid = Gtk::manage (new Gtk::Grid ());
@@ -636,6 +638,7 @@ void RTWindow::remEditorPanel (EditorPanel* ep)
         wndEdit->remEditorPanel (ep);
     } else {
         bool queueHadFocus = (mainNB->get_current_page() == mainNB->page_num (*bpanel));
+        ep->setExternalEditorChangedSignal(nullptr);
         epanels.erase (ep->getFileName());
         filesEdited.erase (ep->getFileName ());
         fpanel->refreshEditedState (filesEdited);
@@ -1054,6 +1057,22 @@ void RTWindow::MoveFileBrowserToEditor()
     }
 }
 
+void RTWindow::updateExternalEditorWidget(int selectedIndex, const std::vector<ExternalEditor> & editors)
+{
+    if (epanel) {
+        epanel->updateExternalEditorWidget(selectedIndex, editors);
+    }
+
+    for (auto panel : epanels) {
+        panel.second->updateExternalEditorWidget(selectedIndex, editors);
+    }
+
+    if (options.multiDisplayMode > 0) {
+        EditWindow::getInstance(this)
+            ->updateExternalEditorWidget(selectedIndex, editors);
+    }
+}
+
 void RTWindow::updateProfiles (const Glib::ustring &printerProfile, rtengine::RenderingIntent printerIntent, bool printerBPC)
 {
     if (epanel) {
@@ -1107,6 +1126,27 @@ void RTWindow::updateHistogramPosition (int oldPosition, int newPosition)
 
     for (auto panel : epanels) {
         panel.second->updateHistogramPosition (oldPosition, newPosition);
+    }
+}
+
+void RTWindow::updateToolPanelToolLocations(
+    const std::vector<Glib::ustring> &favorites, bool cloneFavoriteTools)
+{
+    if (fpanel) {
+        fpanel->updateToolPanelToolLocations(favorites, cloneFavoriteTools);
+    }
+
+    if (epanel) {
+        epanel->updateToolPanelToolLocations(favorites, cloneFavoriteTools);
+    }
+
+    for (const auto &panel : epanels) {
+        panel.second->updateToolPanelToolLocations(favorites, cloneFavoriteTools);
+    }
+
+    if (options.multiDisplayMode > 0) {
+        EditWindow::getInstance(this)
+            ->updateToolPanelToolLocations(favorites, cloneFavoriteTools);
     }
 }
 

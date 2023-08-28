@@ -18,12 +18,19 @@
  */
 #pragma once
 
+namespace rtengine
+{
+
+enum class StandardObserver;
+
+}
+
 class WBProvider
 {
 
 public:
     virtual ~WBProvider() {}
-    virtual void getAutoWB (double& temp, double& green, double equal, double tempBias) {}
-    virtual void getCamWB (double& temp, double& green) {}
+    virtual void getAutoWB (double& temp, double& green, double equal, rtengine::StandardObserver observer, double tempBias) {}
+    virtual void getCamWB (double& temp, double& green, rtengine::StandardObserver observer) {}
     virtual void spotWBRequested (int size) {}
 };

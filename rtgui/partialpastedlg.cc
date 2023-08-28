@@ -219,6 +219,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     wb          = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_WHITEBALANCE")));
     exposure    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EXPOSURE")));
     sh          = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_SHADOWSHIGHLIGHTS")));
+    toneEqualizer = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_TONE_EQUALIZER")));
     epd         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_EPD")));
     fattal      = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_TM_FATTAL")));
     pcvignette  = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PCVIGNETTE")));
@@ -301,6 +302,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     //---
     ff_file             = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_FLATFIELDFILE")));
     ff_AutoSelect       = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_FLATFIELDAUTOSELECT")));
+    ff_FromMetaData     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_FLATFIELDFROMMETADATA")));
     ff_BlurType         = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_FLATFIELDBLURTYPE")));
     ff_BlurRadius       = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_FLATFIELDBLURRADIUS")));
     ff_ClipControl      = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_FLATFIELDCLIPCONTROL")));
@@ -331,6 +333,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     vboxes[0]->pack_start (*wb, Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*exposure, Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*sh, Gtk::PACK_SHRINK, 2);
+    vboxes[0]->pack_start (*toneEqualizer, Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*epd, Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*fattal, Gtk::PACK_SHRINK, 2);
     vboxes[0]->pack_start (*pcvignette, Gtk::PACK_SHRINK, 2);
@@ -423,6 +426,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     vboxes[8]->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_SHRINK, 0);
     vboxes[8]->pack_start (*ff_file, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*ff_AutoSelect, Gtk::PACK_SHRINK, 2);
+    vboxes[8]->pack_start (*ff_FromMetaData, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*ff_BlurType, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*ff_BlurRadius, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*ff_ClipControl, Gtk::PACK_SHRINK, 2);
@@ -496,6 +500,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     wbConn          = wb->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
     exposureConn    = exposure->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
     shConn          = sh->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
+    toneEqualizerConn = toneEqualizer->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
     epdConn         = epd->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
     fattalConn      = fattal->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
     pcvignetteConn  = pcvignette->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
@@ -574,6 +579,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     //---
     ff_fileConn             = ff_file->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     ff_AutoSelectConn       = ff_AutoSelect->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
+    ff_FromMetaDataConn     = ff_FromMetaData->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     ff_BlurTypeConn         = ff_BlurType->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     ff_BlurRadiusConn       = ff_BlurRadius->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
     ff_ClipControlConn      = ff_ClipControl->signal_toggled().connect (sigc::bind (sigc::mem_fun(*raw, &Gtk::CheckButton::set_inconsistent), true));
@@ -655,6 +661,7 @@ void PartialPasteDlg::rawToggled ()
     ConnectionBlocker df_AutoSelectBlocker(df_AutoSelectConn);
     ConnectionBlocker ff_fileBlocker(ff_fileConn);
     ConnectionBlocker ff_AutoSelectBlocker(ff_AutoSelectConn);
+    ConnectionBlocker ff_FromMetaDataBlocker(ff_FromMetaDataConn);
     ConnectionBlocker ff_BlurTypeBlocker(ff_BlurTypeConn);
     ConnectionBlocker ff_BlurRadiusBlocker(ff_BlurRadiusConn);
     ConnectionBlocker ff_ClipControlBlocker(ff_ClipControlConn);
@@ -685,6 +692,7 @@ void PartialPasteDlg::rawToggled ()
     df_AutoSelect->set_active (raw->get_active ());
     ff_file->set_active (raw->get_active ());
     ff_AutoSelect->set_active (raw->get_active ());
+    ff_FromMetaData->set_active (raw->get_active ());
     ff_BlurType->set_active (raw->get_active ());
     ff_BlurRadius->set_active (raw->get_active ());
     ff_ClipControl->set_active (raw->get_active ());
@@ -701,6 +709,7 @@ void PartialPasteDlg::basicToggled ()
     ConnectionBlocker wbBlocker(wbConn);
     ConnectionBlocker exposureBlocker(exposureConn);
     ConnectionBlocker shBlocker(shConn);
+    ConnectionBlocker toneEqualizerBlocker(toneEqualizerConn);
     ConnectionBlocker epdBlocker(epdConn);
     ConnectionBlocker fattalBlocker(fattalConn);
     ConnectionBlocker pcvignetteBlocker(pcvignetteConn);
@@ -712,6 +721,7 @@ void PartialPasteDlg::basicToggled ()
     wb->set_active (basic->get_active ());
     exposure->set_active (basic->get_active ());
     sh->set_active (basic->get_active ());
+    toneEqualizer->set_active (basic->get_active ());
     epd->set_active (basic->get_active ());
     fattal->set_active (basic->get_active ());
     pcvignette->set_active (basic->get_active ());
@@ -887,6 +897,10 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
 
     if (!sh->get_active ()) {
         filterPE.sh         = falsePE.sh;
+    }
+
+    if (!toneEqualizer->get_active ()) {
+        filterPE.toneEqualizer = falsePE.toneEqualizer;
     }
 
     if (!epd->get_active ()) {
@@ -1171,6 +1185,10 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
 
     if (!ff_AutoSelect->get_active ()) {
         filterPE.raw.ff_AutoSelect      = falsePE.raw.ff_AutoSelect;
+    }
+
+    if (!ff_FromMetaData->get_active ()) {
+        filterPE.raw.ff_FromMetaData    = falsePE.raw.ff_FromMetaData;
     }
 
     if (!ff_BlurRadius->get_active ()) {

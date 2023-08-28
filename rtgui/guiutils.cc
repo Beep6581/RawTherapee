@@ -82,59 +82,6 @@ void IdleRegister::destroy()
     mutex.unlock();
 }
 
-/*
-gboolean giveMeAGo(void* data) {
-    GThreadLock *threadMutex = static_cast<GThreadLock*>(data);
-    printf("A\n");
-    Glib::Threads::Mutex::Lock GUILock(threadMutex->GUI);
-    printf("B\n");
-    {
-    Glib::Threads::Mutex::Lock operationLock(threadMutex->operation);
-    printf("C\n");
-
-    threadMutex->operationCond.signal();
-    printf("D\n");
-    operationLock.release();  // because we're not sure that "lock" destructor happens here...
-    }
-    threadMutex->GUICond.wait(threadMutex->GUI);
-    printf("E\n");
-
-    GUILock.release();
-
-    return false;
-}
-
-GThreadLock::GThreadLock() : sameThread(false) {
-    if (Glib::Threads::Thread::self() == mainThread) {
-        sameThread = true;
-        return;
-    }
-
-    printf("10\n");
-    {
-    Glib::Threads::Mutex::Lock operationLock(operation);
-
-    printf("20\n");
-    gdk_threads_add_idle(giveMeAGo, this);
-
-    printf("30\n");
-    operationCond.wait(operation);
-    printf("40\n");
-    operationLock.release();
-    }
-}
-
-GThreadLock::~GThreadLock() {
-    if (!sameThread) {
-        printf("50\n");
-        Glib::Threads::Mutex::Lock lock(GUI);
-        printf("60\n");
-        GUICond.signal();
-        printf("Fin\n");
-    }
-}
-*/
-
 Glib::ustring escapeHtmlChars(const Glib::ustring &src)
 {
 
@@ -1299,23 +1246,201 @@ bool MyHScale::on_key_press_event (GdkEventKey* event)
     }
 }
 
-MyFileChooserButton::MyFileChooserButton(const Glib::ustring &title, Gtk::FileChooserAction action):
-    title_(title),
-    action_(action),
-    lbl_("", Gtk::ALIGN_START),
-    show_hidden_(false)
+class MyFileChooserWidget::Impl
 {
-    lbl_.set_ellipsize(Pango::ELLIPSIZE_MIDDLE);
-    lbl_.set_justify(Gtk::JUSTIFY_LEFT);
-    set_none();
-    box_.pack_start(lbl_, true, true);
-    Gtk::Image *img = Gtk::manage(new Gtk::Image());
-    img->set_from_icon_name("folder-open", Gtk::ICON_SIZE_BUTTON);
-    box_.pack_start(*Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_VERTICAL)), false, false, 5);
-    box_.pack_start(*img, false, false);
-    box_.show_all_children();
-    add(box_);
-    signal_clicked().connect(sigc::mem_fun(*this, &MyFileChooserButton::show_chooser));
+public:
+    Impl(const Glib::ustring &title, Gtk::FileChooserAction action) :
+        title_(title),
+        action_(action)
+    {
+    }
+
+    Glib::ustring title_;
+    Gtk::FileChooserAction action_;
+    std::string filename_;
+    std::string current_folder_;
+    std::vector<Glib::RefPtr<Gtk::FileFilter>> file_filters_;
+    Glib::RefPtr<Gtk::FileFilter> cur_filter_;
+    std::vector<std::string> shortcut_folders_;
+    bool show_hidden_{false};
+    sigc::signal<void> selection_changed_;
+};
+
+
+MyFileChooserWidget::MyFileChooserWidget(const Glib::ustring &title, Gtk::FileChooserAction action) :
+    pimpl(new Impl(title, action))
+{
+}
+
+
+std::unique_ptr<Gtk::Image> MyFileChooserWidget::make_folder_image()
+{
+    return std::unique_ptr<Gtk::Image>(new RTImage("folder-open-small.png"));
+}
+
+void MyFileChooserWidget::show_chooser(Gtk::Widget *parent)
+{
+    Gtk::FileChooserDialog dlg(getToplevelWindow(parent), pimpl->title_, pimpl->action_);
+    dlg.add_button(M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
+    dlg.add_button(M(pimpl->action_ == Gtk::FILE_CHOOSER_ACTION_SAVE ? "GENERAL_SAVE" : "GENERAL_OPEN"), Gtk::RESPONSE_OK);
+    dlg.set_filename(pimpl->filename_);
+    for (auto &f : pimpl->file_filters_) {
+        dlg.add_filter(f);
+    }
+    if (pimpl->cur_filter_) {
+        dlg.set_filter(pimpl->cur_filter_);
+    }
+    for (auto &f : pimpl->shortcut_folders_) {
+        dlg.add_shortcut_folder(f);
+    }
+    if (!pimpl->current_folder_.empty()) {
+        dlg.set_current_folder(pimpl->current_folder_);
+    }
+    dlg.set_show_hidden(pimpl->show_hidden_);
+    int res = dlg.run();
+    if (res == Gtk::RESPONSE_OK) {
+        pimpl->filename_ = dlg.get_filename();
+        pimpl->current_folder_ = dlg.get_current_folder();
+        on_filename_set();
+        pimpl->selection_changed_.emit();
+    }
+}
+
+
+void MyFileChooserWidget::on_filename_set()
+{
+    // Sub-classes decide if anything needs to be done.
+}
+
+
+sigc::signal<void> &MyFileChooserWidget::signal_selection_changed()
+{
+    return pimpl->selection_changed_;
+}
+
+
+sigc::signal<void> &MyFileChooserWidget::signal_file_set()
+{
+    return pimpl->selection_changed_;
+}
+
+
+std::string MyFileChooserWidget::get_filename() const
+{
+    return pimpl->filename_;
+}
+
+
+bool MyFileChooserWidget::set_filename(const std::string &filename)
+{
+    pimpl->filename_ = filename;
+    on_filename_set();
+    return true;
+}
+
+
+void MyFileChooserWidget::add_filter(const Glib::RefPtr<Gtk::FileFilter> &filter)
+{
+    pimpl->file_filters_.push_back(filter);
+}
+
+
+void MyFileChooserWidget::remove_filter(const Glib::RefPtr<Gtk::FileFilter> &filter)
+{
+    auto it = std::find(pimpl->file_filters_.begin(), pimpl->file_filters_.end(), filter);
+    if (it != pimpl->file_filters_.end()) {
+        pimpl->file_filters_.erase(it);
+    }
+}
+
+
+void MyFileChooserWidget::set_filter(const Glib::RefPtr<Gtk::FileFilter> &filter)
+{
+    pimpl->cur_filter_ = filter;
+}
+
+
+std::vector<Glib::RefPtr<Gtk::FileFilter>> MyFileChooserWidget::list_filters() const
+{
+    return pimpl->file_filters_;
+}
+
+
+bool MyFileChooserWidget::set_current_folder(const std::string &filename)
+{
+    pimpl->current_folder_ = filename;
+    if (pimpl->action_ == Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER) {
+        set_filename(filename);
+    }
+    return true;
+}
+
+std::string MyFileChooserWidget::get_current_folder() const
+{
+    return pimpl->current_folder_;
+}
+
+
+bool MyFileChooserWidget::add_shortcut_folder(const std::string &folder)
+{
+    pimpl->shortcut_folders_.push_back(folder);
+    return true;
+}
+
+
+bool MyFileChooserWidget::remove_shortcut_folder(const std::string &folder)
+{
+    auto it = std::find(pimpl->shortcut_folders_.begin(), pimpl->shortcut_folders_.end(), folder);
+    if (it != pimpl->shortcut_folders_.end()) {
+        pimpl->shortcut_folders_.erase(it);
+    }
+    return true;
+}
+
+
+void MyFileChooserWidget::unselect_all()
+{
+    pimpl->filename_ = "";
+    on_filename_set();
+}
+
+
+void MyFileChooserWidget::unselect_filename(const std::string &filename)
+{
+    if (pimpl->filename_ == filename) {
+        unselect_all();
+    }
+}
+
+
+void MyFileChooserWidget::set_show_hidden(bool yes)
+{
+    pimpl->show_hidden_ = yes;
+}
+
+
+class MyFileChooserButton::Impl
+{
+public:
+    Gtk::Box box_;
+    Gtk::Label lbl_{"", Gtk::ALIGN_START};
+};
+
+MyFileChooserButton::MyFileChooserButton(const Glib::ustring &title, Gtk::FileChooserAction action):
+    MyFileChooserWidget(title, action),
+    pimpl(new Impl())
+{
+    pimpl->lbl_.set_ellipsize(Pango::ELLIPSIZE_MIDDLE);
+    pimpl->lbl_.set_justify(Gtk::JUSTIFY_LEFT);
+    on_filename_set();
+    pimpl->box_.pack_start(pimpl->lbl_, true, true);
+    pimpl->box_.pack_start(*Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_VERTICAL)), false, false, 5);
+    pimpl->box_.pack_start(*Gtk::manage(make_folder_image().release()), false, false);
+    pimpl->box_.show_all_children();
+    add(pimpl->box_);
+    signal_clicked().connect([this]() {
+        show_chooser(this);
+    });
 
     if (GTK_MINOR_VERSION < 20) {
         set_border_width(2); // margin doesn't work on GTK < 3.20
@@ -1324,150 +1449,15 @@ MyFileChooserButton::MyFileChooserButton(const Glib::ustring &title, Gtk::FileCh
     set_name("MyFileChooserButton");
 }
 
-
-void MyFileChooserButton::show_chooser()
+void MyFileChooserButton::on_filename_set()
 {
-    Gtk::FileChooserDialog dlg(getToplevelWindow(this), title_, action_);
-    dlg.add_button(M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
-    dlg.add_button(M(action_ == Gtk::FILE_CHOOSER_ACTION_SAVE ? "GENERAL_SAVE" : "GENERAL_OPEN"), Gtk::RESPONSE_OK);
-    dlg.set_filename(filename_);
-    for (auto &f : file_filters_) {
-        dlg.add_filter(f);
-    }
-    if (cur_filter_) {
-        dlg.set_filter(cur_filter_);
-    }
-    for (auto &f : shortcut_folders_) {
-        dlg.add_shortcut_folder(f);
-    }
-    if (!current_folder_.empty()) {
-        dlg.set_current_folder(current_folder_);
-    }
-    dlg.set_show_hidden(show_hidden_);
-    int res = dlg.run();
-    if (res == Gtk::RESPONSE_OK) {
-        filename_ = dlg.get_filename();
-        current_folder_ = dlg.get_current_folder();
-        lbl_.set_label(Glib::path_get_basename(filename_));
-        selection_changed_.emit();
-    }
-}
-
-
-sigc::signal<void> &MyFileChooserButton::signal_selection_changed()
-{
-    return selection_changed_;
-}
-
-
-sigc::signal<void> &MyFileChooserButton::signal_file_set()
-{
-    return selection_changed_;
-}
-
-
-std::string MyFileChooserButton::get_filename() const
-{
-    return filename_;
-}
-
-
-bool MyFileChooserButton::set_filename(const std::string &filename)
-{
-    filename_ = filename;
-    if (Glib::file_test(filename_, Glib::FILE_TEST_EXISTS)) {
-        lbl_.set_label(Glib::path_get_basename(filename_));
+    if (Glib::file_test(get_filename(), Glib::FILE_TEST_EXISTS)) {
+        pimpl->lbl_.set_label(Glib::path_get_basename(get_filename()));
     } else {
-        set_none();
-    }
-    return true;
-}
-
-
-void MyFileChooserButton::add_filter(const Glib::RefPtr<Gtk::FileFilter> &filter)
-{
-    file_filters_.push_back(filter);
-}
-
-
-void MyFileChooserButton::remove_filter(const Glib::RefPtr<Gtk::FileFilter> &filter)
-{
-    auto it = std::find(file_filters_.begin(), file_filters_.end(), filter);
-    if (it != file_filters_.end()) {
-        file_filters_.erase(it);
+        pimpl->lbl_.set_label(Glib::ustring("(") + M("GENERAL_NONE") + ")");
     }
 }
 
-
-void MyFileChooserButton::set_filter(const Glib::RefPtr<Gtk::FileFilter> &filter)
-{
-    cur_filter_ = filter;
-}
-
-
-std::vector<Glib::RefPtr<Gtk::FileFilter>> MyFileChooserButton::list_filters()
-{
-    return file_filters_;
-}
-
-
-bool MyFileChooserButton::set_current_folder(const std::string &filename)
-{
-    current_folder_ = filename;
-    if (action_ == Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER) {
-        set_filename(filename);
-    }
-    return true;
-}
-
-std::string MyFileChooserButton::get_current_folder() const
-{
-    return current_folder_;
-}
-
-
-bool MyFileChooserButton::add_shortcut_folder(const std::string &folder)
-{
-    shortcut_folders_.push_back(folder);
-    return true;
-}
-
-
-bool MyFileChooserButton::remove_shortcut_folder(const std::string &folder)
-{
-    auto it = std::find(shortcut_folders_.begin(), shortcut_folders_.end(), folder);
-    if (it != shortcut_folders_.end()) {
-        shortcut_folders_.erase(it);
-    }
-    return true;
-}
-
-
-void MyFileChooserButton::unselect_all()
-{
-    filename_ = "";
-    set_none();
-}
-
-
-void MyFileChooserButton::unselect_filename(const std::string &filename)
-{
-    if (filename_ == filename) {
-        unselect_all();
-    }
-}
-
-
-void MyFileChooserButton::set_show_hidden(bool yes)
-{
-    show_hidden_ = yes;
-}
-
-
-void MyFileChooserButton::set_none()
-{
-    lbl_.set_label(Glib::ustring("(") + M("GENERAL_NONE") + ")");
-}
 
 // For an unknown reason (a bug ?), it doesn't work when action = FILE_CHOOSER_ACTION_SELECT_FOLDER !
 bool MyFileChooserButton::on_scroll_event (GdkEventScroll* event)
@@ -1493,6 +1483,57 @@ void MyFileChooserButton::get_preferred_width_for_height_vfunc (int height, int 
 }
 
 
+class MyFileChooserEntry::Impl
+{
+public:
+    Gtk::Entry entry;
+    Gtk::Button file_chooser_button;
+};
+
+
+MyFileChooserEntry::MyFileChooserEntry(const Glib::ustring &title, Gtk::FileChooserAction action) :
+    MyFileChooserWidget(title, action),
+    pimpl(new Impl())
+{
+    const auto on_text_changed = [this]() {
+        set_filename(pimpl->entry.get_text());
+    };
+    pimpl->entry.get_buffer()->signal_deleted_text().connect([on_text_changed](guint, guint) { on_text_changed(); });
+    pimpl->entry.get_buffer()->signal_inserted_text().connect([on_text_changed](guint, const gchar *, guint) { on_text_changed(); });
+
+    pimpl->file_chooser_button.set_image(*Gtk::manage(make_folder_image().release()));
+    pimpl->file_chooser_button.signal_clicked().connect([this]() {
+        const auto &filename = get_filename();
+        if (Glib::file_test(filename, Glib::FILE_TEST_IS_DIR)) {
+            set_current_folder(filename);
+        }
+        show_chooser(this);
+    });
+
+    pack_start(pimpl->entry, true, true);
+    pack_start(pimpl->file_chooser_button, false, false);
+}
+
+
+Glib::ustring MyFileChooserEntry::get_placeholder_text() const
+{
+    return pimpl->entry.get_placeholder_text();
+}
+
+
+void MyFileChooserEntry::set_placeholder_text(const Glib::ustring &text)
+{
+    pimpl->entry.set_placeholder_text(text);
+}
+
+
+void MyFileChooserEntry::on_filename_set()
+{
+    if (pimpl->entry.get_text() != get_filename()) {
+        pimpl->entry.set_text(get_filename());
+    }
+}
+
 
 TextOrIcon::TextOrIcon (const Glib::ustring &fname, const Glib::ustring &labelTx, const Glib::ustring &tooltipTx)
 {
@@ -1506,33 +1547,110 @@ TextOrIcon::TextOrIcon (const Glib::ustring &fname, const Glib::ustring &labelTx
 
 }
 
-MyImageMenuItem::MyImageMenuItem(Glib::ustring label, Glib::ustring imageFileName)
+class ImageAndLabel::Impl
 {
-    box = Gtk::manage (new Gtk::Grid());
-    this->label = Gtk::manage( new Gtk::Label(label));
-    box->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
+public:
+    RTImage* image;
+    Gtk::Label* label;
 
-    if (!imageFileName.empty()) {
-        image = Gtk::manage( new RTImage(imageFileName) );
-        box->attach_next_to(*image, Gtk::POS_LEFT, 1, 1);
-    } else {
-        image = nullptr;
+    Impl(RTImage* image, Gtk::Label* label) : image(image), label(label) {}
+    static std::unique_ptr<RTImage> createImage(const Glib::ustring& fileName);
+};
+
+std::unique_ptr<RTImage> ImageAndLabel::Impl::createImage(const Glib::ustring& fileName)
+{
+    if (fileName.empty()) {
+        return nullptr;
+    }
+    return std::unique_ptr<RTImage>(new RTImage(fileName));
+}
+
+ImageAndLabel::ImageAndLabel(const Glib::ustring& label, const Glib::ustring& imageFileName) :
+    ImageAndLabel(label, Gtk::manage(Impl::createImage(imageFileName).release()))
+{
+}
+
+ImageAndLabel::ImageAndLabel(const Glib::ustring& label, RTImage *image) :
+    pimpl(new Impl(image, Gtk::manage(new Gtk::Label(label))))
+{
+    Gtk::Grid* grid = Gtk::manage(new Gtk::Grid());
+    grid->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
+
+    if (image) {
+        grid->attach_next_to(*image, Gtk::POS_LEFT, 1, 1);
     }
 
-    box->attach_next_to(*this->label, Gtk::POS_RIGHT, 1, 1);
-    box->set_column_spacing(4);
-    box->set_row_spacing(0);
-    add(*box);
+    grid->attach_next_to(*(pimpl->label), Gtk::POS_RIGHT, 1, 1);
+    grid->set_column_spacing(4);
+    grid->set_row_spacing(0);
+    pack_start(*grid, Gtk::PACK_SHRINK, 0);
+}
+
+const RTImage* ImageAndLabel::getImage() const
+{
+    return pimpl->image;
+}
+
+const Gtk::Label* ImageAndLabel::getLabel() const
+{
+    return pimpl->label;
+}
+
+class MyImageMenuItem::Impl
+{
+private:
+    std::unique_ptr<ImageAndLabel> widget;
+
+public:
+    Impl(const Glib::ustring &label, const Glib::ustring &imageFileName) :
+        widget(new ImageAndLabel(label, imageFileName)) {}
+    Impl(const Glib::ustring &label, RTImage *itemImage) :
+        widget(new ImageAndLabel(label, itemImage)) {}
+    ImageAndLabel* getWidget() const { return widget.get(); }
+};
+
+MyImageMenuItem::MyImageMenuItem(const Glib::ustring& label, const Glib::ustring& imageFileName) :
+    pimpl(new Impl(label, imageFileName))
+{
+    add(*(pimpl->getWidget()));
+}
+
+MyImageMenuItem::MyImageMenuItem(const Glib::ustring& label, RTImage* itemImage) :
+    pimpl(new Impl(label, itemImage))
+{
+    add(*(pimpl->getWidget()));
 }
 
 const RTImage *MyImageMenuItem::getImage () const
 {
-    return image;
+    return pimpl->getWidget()->getImage();
 }
 
 const Gtk::Label* MyImageMenuItem::getLabel () const
 {
-    return label;
+    return pimpl->getWidget()->getLabel();
+}
+
+class MyRadioImageMenuItem::Impl
+{
+    std::unique_ptr<ImageAndLabel> widget;
+
+public:
+    Impl(const Glib::ustring &label, RTImage *image) :
+        widget(new ImageAndLabel(label, image)) {}
+    ImageAndLabel* getWidget() const { return widget.get(); }
+};
+
+MyRadioImageMenuItem::MyRadioImageMenuItem(const Glib::ustring& label, RTImage *image, Gtk::RadioButton::Group& group) :
+    Gtk::RadioMenuItem(group),
+    pimpl(new Impl(label, image))
+{
+    add(*(pimpl->getWidget()));
+}
+
+const Gtk::Label* MyRadioImageMenuItem::getLabel() const
+{
+    return pimpl->getWidget()->getLabel();
 }
 
 MyProgressBar::MyProgressBar(int width) : w(rtengine::max(width, 10 * RTScalable::getScale())) {}
@@ -1845,4 +1963,79 @@ void BackBuffer::copySurface(Cairo::RefPtr<Cairo::Context> crDest, Gdk::Rectangl
 
         crDest->fill();
     }
+}
+
+SpotPicker::SpotPicker(int const defaultValue, Glib::ustring const &buttonKey, Glib::ustring const &buttonTooltip, Glib::ustring const &labelKey) :
+    Gtk::Grid(),
+    _spotHalfWidth(defaultValue),
+    _spotLabel(labelSetup(labelKey)),
+    _spotSizeSetter(MyComboBoxText(selecterSetup())),
+    _spotButton(spotButtonTemplate(buttonKey, buttonTooltip))
+
+{
+    this->get_style_context()->add_class("grid-spacing");
+    setExpandAlignProperties(this, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+
+    this->attach (_spotButton, 0, 0, 1, 1);
+    this->attach (_spotLabel, 1, 0, 1, 1);
+    this->attach (_spotSizeSetter, 2, 0, 1, 1);
+    _spotSizeSetter.signal_changed().connect( sigc::mem_fun(*this, &SpotPicker::spotSizeChanged));
+}
+
+Gtk::Label SpotPicker::labelSetup(Glib::ustring const &key) const
+{
+    Gtk::Label label(key);
+    setExpandAlignProperties(&label, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    return label;
+}
+
+MyComboBoxText SpotPicker::selecterSetup() const
+{
+    MyComboBoxText spotSize = MyComboBoxText();
+    setExpandAlignProperties(&spotSize, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+
+    spotSize.append ("2");
+    if (_spotHalfWidth == 2) {
+        spotSize.set_active(0);
+    }
+
+    spotSize.append ("4");
+
+    if (_spotHalfWidth == 4) {
+        spotSize.set_active(1);
+    }
+
+    spotSize.append ("8");
+
+    if (_spotHalfWidth == 8) {
+        spotSize.set_active(2);
+    }
+
+    spotSize.append ("16");
+
+    if (_spotHalfWidth == 16) {
+        spotSize.set_active(3);
+    }
+
+    spotSize.append ("32");
+
+    if (_spotHalfWidth == 32) {
+        spotSize.set_active(4);
+    }
+    return spotSize;
+}
+
+Gtk::ToggleButton SpotPicker::spotButtonTemplate(Glib::ustring const &key, const Glib::ustring &tooltip) const
+{
+    Gtk::ToggleButton spotButton = Gtk::ToggleButton(key);
+    setExpandAlignProperties(&spotButton, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    spotButton.get_style_context()->add_class("independent");
+    spotButton.set_tooltip_text(tooltip);
+    spotButton.set_image(*Gtk::manage(new RTImage("color-picker-small.png")));
+    return spotButton;
+}
+
+void SpotPicker::spotSizeChanged()
+{
+    _spotHalfWidth = atoi(_spotSizeSetter.get_active_text().c_str());
 }

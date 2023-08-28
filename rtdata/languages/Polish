@@ -1,16 +1,18 @@
-#01 2007-12-24 Mateusz Ludwin
-#02 2010-01-08 Bartosz "Simek" Kaszubowski
-#03 2011-09-06 Dariusz 'Salvadhor' Duma
-#04 2011-11-30 DrSlony
-#05 2012-01-14 DrSlony
-#06 2012-01-30 DrSlony
-#07 2012-04-02 DrSlony
-#08 2013-05-21 DrSlony
-#09 2014-10-16 DrSlony
-#10 2020-02-02 Bartłomiej Wiśniowski
-#11 2020-02-02 Bartłomiej Wiśniowski
-#12 2020-02-15 Bartłomiej Wiśniowski
-#13 2020-02-17 Bartłomiej Wiśniowski
+#001 2007-12-24 Mateusz Ludwin
+#002 2010-01-08 Bartosz "Simek" Kaszubowski
+#003 2011-09-06 Dariusz 'Salvadhor' Duma
+#004 2011-11-30 DrSlony
+#005 2012-01-14 DrSlony
+#006 2012-01-30 DrSlony
+#007 2012-04-02 DrSlony
+#008 2013-05-21 DrSlony
+#009 2014-10-16 DrSlony
+#010 2020-02-02 Bartłomiej Wiśniowski
+#011 2020-02-02 Bartłomiej Wiśniowski
+#012 2020-02-15 Bartłomiej Wiśniowski
+#013 2020-02-17 Bartłomiej Wiśniowski
+#100
+#101 @LANGUAGE_DISPLAY_NAME=Polski
 
 ABOUT_TAB_BUILD;Wersja
 ABOUT_TAB_CREDITS;Zasługi

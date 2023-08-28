@@ -42,8 +42,11 @@ if(NOT WITH_SYSTEM_KLT)
 else()
     include_directories("${KLT_INCLUDE_DIRS}")
 endif()
+if(EXIV2_INCLUDE_DIRS)
+    include_directories("${EXIV2_INCLUDE_DIRS}")
+endif()
 
-link_directories("${PROJECT_SOURCE_DIR}/rtexif"
+link_directories(
     "${EXPAT_LIBRARY_DIRS}"
     "${EXTRA_LIBDIR}"
     "${FFTW3F_LIBRARY_DIRS}"
@@ -133,6 +136,7 @@ set(RTENGINESOURCEFILES
     ipsharpen.cc
     ipsharpenedges.cc
     ipsoftlight.cc
+    iptoneequalizer.cc
     iptransform.cc
     ipvibrance.cc
     ipwavelet.cc
@@ -142,6 +146,7 @@ set(RTENGINESOURCEFILES
     lcp.cc
     lmmse_demosaic.cc
     loadinitial.cc
+    metadata.cc
     munselllch.cc
     myfile.cc
     panasonic_decoders.cc
@@ -174,6 +179,19 @@ set(RTENGINESOURCEFILES
 
 if(LENSFUN_HAS_LOAD_DIRECTORY)
     set_source_files_properties(rtlensfun.cc PROPERTIES COMPILE_DEFINITIONS RT_LENSFUN_HAS_LOAD_DIRECTORY)
+endif()
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "12.0")
+    # procparams.cc takes a long time to compile with optimizations starting
+    # with GCC 12.1 due to PTA (see issue #6548)
+    get_source_file_property(PROCPARAMS_COMPILE_OPTIONS procparams.cc COMPILE_OPTIONS)
+    if(PROCPARAMS_COMPILE_OPTIONS STREQUAL "NOTFOUND")
+        set(PROCPARAMS_COMPILE_OPTIONS "")
+    else()
+        set(PROCPARAMS_COMPILE_OPTIONS "${PROCPARAMS_COMPILE_OPTIONS};")
+    endif()
+    set(PROCPARAMS_COMPILE_OPTIONS "${PROCPARAMS_COMPILE_OPTIONS}-fno-tree-pta")
+    set_source_files_properties(procparams.cc PROPERTIES COMPILE_OPTIONS ${PROCPARAMS_COMPILE_OPTIONS})
 endif()
 
 if(WITH_BENCHMARK)
@@ -209,7 +227,7 @@ endif()
 
 set_target_properties(rtengine PROPERTIES COMPILE_FLAGS "${RTENGINE_CXX_FLAGS}")
 
-target_link_libraries(rtengine rtexif
+target_link_libraries(rtengine
     ${EXPAT_LIBRARIES}
     ${EXTRA_LIB}
     ${FFTW3F_LIBRARIES}
@@ -226,7 +244,8 @@ target_link_libraries(rtengine rtexif
     ${LENSFUN_LIBRARIES}
     ${RSVG_LIBRARIES}
     ${KLT_LIBRARIES}
-)
+    ${EXIV2_LIBRARIES}
+    )
 
 if(OpenMP_FOUND)
     target_link_libraries(rtengine ${OpenMP_CXX_LIBRARIES})

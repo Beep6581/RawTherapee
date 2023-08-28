@@ -21,6 +21,7 @@
 
 #include <gtkmm.h>
 
+#include "extprog.h"
 #include "histogrampanel.h"
 #include "history.h"
 #include "imageareapanel.h"
@@ -38,11 +39,15 @@ template<typename T>
 class array2D;
 }
 
+using ExternalEditorChangedSignal = sigc::signal<void>;
+
 class BatchQueueEntry;
 class EditorPanel;
 class FilePanel;
 class MyProgressBar;
 class Navigator;
+class PopUpButton;
+class RTAppChooserDialog;
 class Thumbnail;
 class ToolPanelCoordinator;
 
@@ -65,6 +70,7 @@ class EditorPanel final :
     public rtengine::NonCopyable
 {
 public:
+
     explicit EditorPanel (FilePanel* filePanel = nullptr);
     ~EditorPanel () override;
 
@@ -162,10 +168,16 @@ public:
     void tbBeforeLock_toggled();
     void saveAsPressed ();
     void queueImgPressed ();
-    void sendToGimpPressed ();
+    void sendToExternal();
+    void sendToExternalChanged(int);
+    void sendToExternalPressed();
     void openNextEditorImage ();
     void openPreviousEditorImage ();
     void syncFileBrowser ();
+
+    // Signals.
+    ExternalEditorChangedSignal * getExternalEditorChangedSignal();
+    void setExternalEditorChangedSignal(ExternalEditorChangedSignal *signal);
 
     void tbTopPanel_1_visible (bool visible);
     bool CheckSidePanelsVisibility();
@@ -182,9 +194,12 @@ public:
     {
         return isProcessing;
     }
+    void updateExternalEditorWidget(int selectedIndex, const std::vector<ExternalEditor> &editors);
     void updateProfiles (const Glib::ustring &printerProfile, rtengine::RenderingIntent printerIntent, bool printerBPC);
     void updateTPVScrollbar (bool hide);
     void updateHistogramPosition (int oldPosition, int newPosition);
+    void updateToolPanelToolLocations(
+        const std::vector<Glib::ustring> &favorites, bool cloneFavoriteTools);
 
     void defaultMonitorProfileChanged (const Glib::ustring &profile_name, bool auto_monitor_profile);
 
@@ -201,6 +216,9 @@ private:
     bool                idle_sendToGimp ( ProgressConnector<rtengine::IImagefloat*> *pc, Glib::ustring fname);
     bool                idle_sentToGimp (ProgressConnector<int> *pc, rtengine::IImagefloat* img, Glib::ustring filename);
     void                histogramProfile_toggled ();
+    RTAppChooserDialog *getAppChooserDialog();
+    void onAppChooserDialogResponse(int resposneId);
+    void updateExternalEditorSelection();
 
 
     Glib::ustring lastSaveAsFileName;
@@ -230,10 +248,19 @@ private:
 
     Gtk::Button* queueimg;
     Gtk::Button* saveimgas;
-    Gtk::Button* sendtogimp;
+    PopUpButton* send_to_external;
+    Gtk::RadioButtonGroup send_to_external_radio_group;
     Gtk::Button* navSync;
     Gtk::Button* navNext;
     Gtk::Button* navPrev;
+    EditorInfo external_editor_info;
+    std::unique_ptr<RTAppChooserDialog> app_chooser_dialog;
+    ExternalEditorChangedSignal *externalEditorChangedSignal;
+    sigc::connection externalEditorChangedSignalConnection;
+
+    rtengine::InitialImage *cached_exported_image;
+    rtengine::procparams::ProcParams cached_exported_pparams;
+    Glib::ustring cached_exported_filename;
 
     class ColorManagementToolbar;
     std::unique_ptr<ColorManagementToolbar> colorMgmtToolBar;

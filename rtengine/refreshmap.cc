@@ -64,9 +64,9 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DARKFRAME,        // EvLCPUseVign,
     HDR,        // EvLCPUseCA,
     M_VOID,           // EvFixedExp
-    ALLNORAW,         // EvWBMethod,
-    ALLNORAW,         // EvWBTemp,
-    ALLNORAW,         // EvWBGreen,
+    WB,               // EvWBMethod,
+    WB,               // EvWBTemp,
+    WB,               // EvWBGreen,
     AUTOEXP,         // EvToneCurveMode1,
     AUTOEXP,         // EvToneCurve2,
     AUTOEXP,         // EvToneCurveMode2,
@@ -94,7 +94,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     HDR,        // EvCACorr,
     ALLNORAW,         // EvHREnabled,
     0,         // EvHRAmount : obsolete,
-    ALLNORAW,         // EvHRMethod,
+    ALLNORAW|M_RAW,   // EvHRMethod,
     DEMOSAIC,         // EvWProfile,
     OUTPUTPROFILE,    // EvOProfile,
     ALLNORAW,         // EvIProfile,
@@ -234,7 +234,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     LUMINANCECURVE,   // EvCATbadpix
     LUMINANCECURVE,   // EvCATAutoadap
     DEFRINGE,         // EvPFCurve
-    ALLNORAW,         // EvWBequal
+    WB,               // EvWBequal
     0,         // EvWBequalbo : obsolete
     HDR,        // EvGradientDegree
     HDR,        // EvGradientEnabled
@@ -470,7 +470,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     RETINEX,          // EvRetinexgaintransmission
     RETINEX,          // EvLskal
     OUTPUTPROFILE,    // EvOBPCompens
-    ALLNORAW,         // EvWBtempBias
+    WB,               // EvWBtempBias
     DARKFRAME,        // EvRawImageNum
     0,                // unused
     0,                // unused
@@ -517,7 +517,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     ALLNORAW,         // EvTMFattalEnabled
     HDR,              // EvTMFattalThreshold
     HDR,              // EvTMFattalAmount
-    ALLNORAW,         // EvWBEnabled
+    WB,               // EvWBEnabled
     AUTOEXP,         // EvRGBEnabled
     LUMINANCECURVE,   // EvLEnabled
     DEMOSAIC,         // EvPdShrEnabled
@@ -1185,8 +1185,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     AUTOEXP,    //Evlocallabforcebw
     AUTOEXP,    //Evlocallabsigjz
     AUTOEXP,    //Evlocallabsigq
-    AUTOEXP    //Evlocallablogcie
-
+    AUTOEXP    //Evlocallablogcie	
 };
 
 

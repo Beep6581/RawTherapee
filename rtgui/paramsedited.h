@@ -18,6 +18,7 @@
  */
 #pragma once
 
+#include <array>
 #include <vector>
 
 namespace rtengine
@@ -52,6 +53,7 @@ struct ToneCurveParamsEdited {
     bool shcompr;
     bool hlcompr;
     bool hlbl;
+    bool hlth;
     bool hlcomprthresh;
     bool autoexp;
     bool clip;
@@ -109,7 +111,7 @@ struct LCurveParamsEdited {
     bool brightness;
     bool contrast;
     bool chromaticity;
-    bool avoidcolorshift;
+    bool gamutmunselmethod;
     bool rstprotection;
     bool lcurve;
     bool acurve;
@@ -245,7 +247,15 @@ struct WBParamsEdited {
     bool temperature;
     bool green;
     bool equal;
+    bool observer;
     bool tempBias;
+    bool itcwb_rgreen;
+    bool itcwb_nopurple;
+    bool itcwb_alg;
+    bool itcwb_prim;
+    bool itcwb_sampling;
+    bool itcwb_green;
+
 };
 
 struct DefringeParamsEdited {
@@ -305,7 +315,6 @@ struct ColorAppearanceParamsEdited {
     bool ybout;
     bool tempsc;
     bool greensc;
-    bool presetcat02;
 };
 
 struct DirPyrDenoiseParamsEdited {
@@ -358,6 +367,14 @@ struct SHParamsEdited {
     bool lab;
 };
 
+struct ToneEqualizerParamsEdited {
+    bool enabled;
+    std::array<bool, 5> bands;
+    bool regularization;
+    bool show_colormap;
+    bool pivot;
+};
+
 struct CropParamsEdited {
     bool enabled;
     bool x;
@@ -403,6 +420,7 @@ public:
         bool structexclu;
         bool struc;
         bool shapeMethod;
+        bool avoidgamutMethod;
         bool loc;
         bool centerX;
         bool centerY;
@@ -422,8 +440,6 @@ public:
         bool transitgrad;
         bool hishow;
         bool activ;
-        bool avoid;
-        bool avoidmun;
         bool blwh;
         bool recurs;
         bool laplac;
@@ -580,6 +596,7 @@ public:
         bool slomaskSH;
         bool lapmaskSH;
         bool detailSH;
+        bool tePivot;
         bool reparsh;
         bool LmaskSHcurve;
         bool fatamountSH;
@@ -1231,6 +1248,7 @@ struct ColorManagementParamsEdited {
     bool bluy;
     bool preser;
     bool fbw;
+    bool gamut;
     bool labgridcieALow;
     bool labgridcieBLow;
     bool labgridcieAHigh;
@@ -1489,6 +1507,7 @@ struct RAWParamsEdited {
     bool df_autoselect;
     bool ff_file;
     bool ff_AutoSelect;
+    bool ff_FromMetaData;
     bool ff_BlurRadius;
     bool ff_BlurType;
     bool ff_AutoClipControl;
@@ -1509,6 +1528,7 @@ struct RAWParamsEdited {
 
 struct MetaDataParamsEdited {
     bool mode;
+    bool exifKeys;
 };
 
 struct FilmNegativeParamsEdited {
@@ -1545,6 +1565,7 @@ struct ParamsEdited {
     FattalToneMappingParamsEdited fattal;
     ImpulseDenoiseParamsEdited impulseDenoise;
     SHParamsEdited sh;
+    ToneEqualizerParamsEdited toneEqualizer;
     CropParamsEdited crop;
     CoarseTransformParamsEdited coarse;
     CommonTransformParamsEdited commonTrans;

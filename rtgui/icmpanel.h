@@ -49,6 +49,7 @@ protected:
     Gtk::Frame* dcpFrame;
     Gtk::Frame* coipFrame;
     Gtk::Frame* redFrame;
+    MyExpander* trcExp;
 
     Adjuster* wGamma;
     Adjuster* wSlope;
@@ -81,6 +82,8 @@ protected:
     bool lastfbw;
     sigc::connection fbwconn;
     bool isBatchMode;
+    bool lastgamut;
+    sigc::connection gamutconn;
 
 private:
     rtengine::ProcEvent EvICMprimariMethod;
@@ -107,6 +110,7 @@ private:
     rtengine::ProcEvent EvICMpreser;
     rtengine::ProcEvent EvICMLabGridciexy;
     rtengine::ProcEvent EvICMfbw;
+    rtengine::ProcEvent EvICMgamut;
     LabGrid *labgridcie;
     IdleRegister idle_register;
 
@@ -121,6 +125,7 @@ private:
     Gtk::Box* iVBox;
     Gtk::Box* wTRCBox;
     Gtk::CheckButton* fbw;
+    Gtk::CheckButton* gamut;
 
     Gtk::CheckButton* obpc;
     Gtk::RadioButton* inone;
@@ -164,6 +169,7 @@ private:
     Glib::ustring camName;
     void updateDCP(int dcpIlluminant, Glib::ustring dcp_name);
     void updateRenderingIntent(const Glib::ustring &profile);
+    void foldAllButMe (GdkEventButton* event, MyExpander *expander);
     
     float nextrx;
     float nextry;
@@ -175,6 +181,8 @@ private:
     float nextwy;
 
 public:
+    static const Glib::ustring TOOL_NAME;
+
     ICMPanel();
     ~ICMPanel() override;
 
@@ -196,6 +204,7 @@ public:
     void aiChanged(int n);
     void oBPCChanged();
     void fbwChanged();
+    void gamutChanged();
     void ipChanged();
     void ipSelectionChanged();
     void dcpIlluminantChanged();

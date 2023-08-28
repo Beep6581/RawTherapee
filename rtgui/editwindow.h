@@ -24,6 +24,7 @@
 #include "guiutils.h"
 
 class EditorPanel;
+class ExternalEditor;
 class RTWindow;
 
 class EditWindow :
@@ -38,6 +39,8 @@ private:
     Gtk::Notebook* mainNB;
     std::set<Glib::ustring> filesEdited;
     std::map<Glib::ustring, EditorPanel*> epanels;
+
+    sigc::signal<void> externalEditorChangedSignal;
 
     bool isFullscreen;
     bool isClosed;
@@ -64,6 +67,9 @@ public:
     bool selectEditorPanel(const std::string &name);
     bool closeOpenEditors();
     bool isProcessing();
+    void updateExternalEditorWidget(int selectedIndex, const std::vector<ExternalEditor> &editors);
+    void updateToolPanelToolLocations(
+        const std::vector<Glib::ustring> &favorites, bool cloneFavoriteTools);
 
     void toFront();
     bool keyPressed (GdkEventKey* event);

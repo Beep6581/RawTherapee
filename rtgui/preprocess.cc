@@ -28,7 +28,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-PreProcess::PreProcess () : FoldableToolPanel(this, "preprocess", M("TP_PREPROCESS_LABEL"), options.prevdemo != PD_Sidecar)
+const Glib::ustring PreProcess::TOOL_NAME = "preprocess";
+
+PreProcess::PreProcess () : FoldableToolPanel(this, TOOL_NAME, M("TP_PREPROCESS_LABEL"), options.prevdemo != PD_Sidecar)
 {
 
     Gtk::Box* hotdeadPixel = Gtk::manage( new Gtk::Box () );

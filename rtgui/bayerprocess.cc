@@ -28,14 +28,15 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
+const Glib::ustring BayerProcess::TOOL_NAME = "bayerprocess";
 
 BayerProcess::BayerProcess () :
-    FoldableToolPanel(this, "bayerprocess", M("TP_RAW_LABEL"), options.prevdemo != PD_Sidecar),
+    FoldableToolPanel(this, TOOL_NAME, M("TP_RAW_LABEL"), options.prevdemo != PD_Sidecar),
     oldMethod(-1)
 {
 
     auto m = ProcEventMapper::getInstance();
-    EvDemosaicBorder = m->newEvent(DEMOSAIC, "HISTORY_MSG_RAW_BORDER");
+    EvDemosaicBorder = m->newEvent(DARKFRAME, "HISTORY_MSG_RAW_BORDER");
     EvDemosaicContrast = m->newEvent(DEMOSAIC, "HISTORY_MSG_DUALDEMOSAIC_CONTRAST");
     EvDemosaicAutoContrast = m->newEvent(DEMOSAIC, "HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST");
     EvDemosaicPixelshiftDemosaicMethod = m->newEvent(DEMOSAIC, "HISTORY_MSG_PIXELSHIFT_DEMOSAIC");

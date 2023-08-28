@@ -703,6 +703,7 @@ struct local_params {
     float mulloc[6];
     int mullocsh[5];
     int detailsh;
+    double tePivot;
     float threshol;
     float chromacb;
     float strengt;
@@ -1700,6 +1701,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
  
 
     lp.detailsh = locallab.spots.at(sp).detailSH; 
+    lp.tePivot = locallab.spots.at(sp).tePivot;
     lp.threshol = thresho;
     lp.chromacb = chromcbdl;
     lp.expvib = locallab.spots.at(sp).expvibrance && lp.activspot ;
@@ -2235,20 +2237,11 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
         //calculate La - Absolute luminance shooting
 
         const FramesMetaData* metaData = imgsrc->getMetaData();
-        int imgNum = 0;
-
-        if (imgsrc->isRAW()) {
-            if (imgsrc->getSensorType() == ST_BAYER) {
-                imgNum = rtengine::LIM<unsigned int>(params->raw.bayersensor.imageNum, 0, metaData->getFrameCount() - 1);
-            } else if (imgsrc->getSensorType() == ST_FUJI_XTRANS) {
-                        //imgNum = rtengine::LIM<unsigned int>(params->raw.xtranssensor.imageNum, 0, metaData->getFrameCount() - 1);
-            }
-        }
         
-        float fnum = metaData->getFNumber(imgNum);          // F number
-        float fiso = metaData->getISOSpeed(imgNum) ;        // ISO
-        float fspeed = metaData->getShutterSpeed(imgNum) ;  // Speed
-        double fcomp = metaData->getExpComp(imgNum);        // Compensation +/-
+        float fnum = metaData->getFNumber();          // F number
+        float fiso = metaData->getISOSpeed() ;        // ISO
+        float fspeed = metaData->getShutterSpeed() ;  // Speed
+        double fcomp = metaData->getExpComp();        // Compensation +/-
         double adap;
 
         if (fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f) { //if no exif data or wrong
@@ -2267,231 +2260,14 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
     }
 }
 
-void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B,  const struct local_params & lp, const Glib::ustring &workingProfile, double scale, bool multithread)
-// adapted from the tone equalizer of darktable
-/*
-    Copyright 2019 Alberto Griggio <alberto.griggio@gmail.com>
-    Small adaptation to Local Adjustment 10 2019 Jacques Desmis <jdesmis@gmail.com>
-    This file is part of darktable,
-    copyright (c) 2018 Aurelien Pierre.
-
-    darktable is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    darktable is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with darktable.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+void tone_eq(ImProcFunctions *ipf, Imagefloat *rgb, const struct local_params &lp, const Glib::ustring &workingProfile, double scale, bool multithread)
 {
-   // BENCHFUN
-
-    const int W = R.getWidth();
-    const int H = R.getHeight();
-    array2D<float> Y(W, H);
-
-    const auto log2 =
-    [](float x) -> float {
-        static const float l2 = xlogf(2);
-        return xlogf(x) / l2;
-    };
-
-    const auto exp2 =
-    [](float x) -> float {
-        return pow_F(2.f, x);
-    };
-    // Build the luma channels: band-pass filters with gaussian windows of
-    // std 2 EV, spaced by 2 EV
-    const float centers[12] = {
-        -18.0f, -16.0f, -14.0f, -12.0f, -10.0f, -8.0f, -6.0f,
-        -4.0f, -2.0f, 0.0f, 2.0f, 4.0f
-    };
-
-    const auto conv = [&](int v, float lo, float hi) -> float {
-        const float f = v < 0 ? lo : hi;
-        return exp2(float(v) / 100.f * f);
-    };
-    const float factors[12] = {
-        conv(lp.mullocsh[0], 2.f, 3.f), // -18 EV
-        conv(lp.mullocsh[0], 2.f, 3.f), // -16 EV
-        conv(lp.mullocsh[0], 2.f, 3.f), // -14 EV
-        conv(lp.mullocsh[0], 2.f, 3.f), // -12 EV
-        conv(lp.mullocsh[0], 2.f, 3.f), // -10 EV
-        conv(lp.mullocsh[0], 2.f, 3.f), //  -8 EV
-        conv(lp.mullocsh[1], 2.f, 3.f), //  -6 EV
-        conv(lp.mullocsh[2], 2.5f, 2.5f), //  -4 EV
-        conv(lp.mullocsh[3], 3.f, 2.f), //  -2 EV
-        conv(lp.mullocsh[4], 3.f, 2.f), //   0 EV
-        conv(lp.mullocsh[4], 3.f, 2.f), //   2 EV
-        conv(lp.mullocsh[4], 3.f, 2.f)  //   4 EV
-    };
-
-    TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix(workingProfile);
-
-#ifdef _OPENMP
-    #pragma omp parallel for if (multithread)
-#endif
-    for (int y = 0; y < H; ++y) {
-        for (int x = 0; x < W; ++x) {
-            Y[y][x] = Color::rgbLuminance(R[y][x], G[y][x], B[y][x], ws);
-        }
-    }
-
-    int detail = LIM(lp.detailsh + 5, 0, 5);
-    int radius = detail / scale + 0.5;
-    float epsilon2 = 0.01f + 0.002f * rtengine::max(detail - 3, 0);
-
-    if (radius > 0) {
-        rtengine::guidedFilterLog(10.f, Y, radius, epsilon2, multithread);
-    }
-
-    if (lp.detailsh > 0) {
-        array2D<float> Y2(W, H);
-        constexpr float base_epsilon = 0.02f;
-        constexpr float base_posterization = 5.f;
-
-#ifdef _OPENMP
-        #pragma omp parallel for if (multithread)
-#endif
-        for (int y = 0; y < H; ++y) {
-            for (int x = 0; x < W; ++x) {
-                float l = LIM(log2(rtengine::max(Y[y][x], 1e-9f)), centers[0], centers[11]);
-                float ll = round(l * base_posterization) / base_posterization;
-                Y2[y][x] = Y[y][x];
-                Y[y][x] = exp2(ll);
-            }
-        }
-
-        radius = 350.0 / scale;
-        epsilon2 = base_epsilon / float(6 - rtengine::min(lp.detailsh, 5));
-        rtengine::guidedFilter(Y2, Y, Y, radius, epsilon2, multithread);
-    }
-
-    const auto gauss =
-    [](float b, float x) -> float {
-        return xexpf((-SQR(x - b) / 4.0f));
-    };
-
-    // For every pixel luminance, the sum of the gaussian masks
-    float w_sum = 0.f;
-
-    for (int i = 0; i < 12; ++i) {
-        w_sum += gauss(centers[i], 0.f);
-    }
-
-    const auto process_pixel =
-    [&](float y) -> float {
-        // convert to log space
-        const float luma = rtengine::max(log2(rtengine::max(y, 0.f)), -18.0f);
-
-        // build the correction as the sum of the contribution of each
-        // luminance channel to current pixel
-        float correction = 0.0f;
-
-        for (int c = 0; c < 12; ++c)
-        {
-            correction += gauss(centers[c], luma) * factors[c];
-        }
-
-        correction /= w_sum;
-
-        return correction;
-    };
-
-    LUTf lut(65536);
-
-    for (int i = 0; i < 65536; ++i) {
-        float y = float(i) / 65535.f;
-        float c = process_pixel(y);
-        lut[i] = c;
-    }
-
-
-#ifdef __SSE2__
-    vfloat vfactors[12];
-    vfloat vcenters[12];
-
-    for (int i = 0; i < 12; ++i) {
-        vfactors[i] = F2V(factors[i]);
-        vcenters[i] = F2V(centers[i]);
-    }
-
-    const auto vgauss =
-    [](vfloat b, vfloat x) -> vfloat {
-        static const vfloat fourv = F2V(4.f);
-        return xexpf((-SQR(x - b) / fourv));
-    };
-
-    vfloat zerov = F2V(0.f);
-    vfloat vw_sum = F2V(w_sum);
-
-    const vfloat noisev = F2V(-18.f);
-    const vfloat xlog2v = F2V(xlogf(2.f));
-
-    const auto vprocess_pixel =
-    [&](vfloat y) -> vfloat {
-        const vfloat luma = vmaxf(xlogf(vmaxf(y, zerov)) / xlog2v, noisev);
-
-        vfloat correction = zerov;
-
-        for (int c = 0; c < 12; ++c)
-        {
-            correction += vgauss(vcenters[c], luma) * vfactors[c];
-        }
-
-        correction /= vw_sum;
-
-        return correction;
-    };
-
-
-    vfloat v1 = F2V(1.f);
-    vfloat v65535 = F2V(65535.f);
-#endif // __SSE2__
-
-
-#ifdef _OPENMP
-    #pragma omp parallel for if (multithread)
-#endif
-    for (int y = 0; y < H; ++y) {
-        int x = 0;
-
-
-#ifdef __SSE2__
-
-        for (; x < W - 3; x += 4) {
-            vfloat cY = LVFU(Y[y][x]);
-            vmask m = vmaskf_gt(cY, v1);
-            vfloat corr;
-
-            if (_mm_movemask_ps((vfloat)m)) {
-                corr = vprocess_pixel(cY);
-            } else {
-                corr = lut[cY * v65535];
-            }
-
-            STVF(R[y][x], LVF(R[y][x]) * corr);
-            STVF(G[y][x], LVF(G[y][x]) * corr);
-            STVF(B[y][x], LVF(B[y][x]) * corr);
-        }
-
-#endif // __SSE2__
-
-        for (; x < W; ++x) {
-            float cY = Y[y][x];
-            float corr = cY > 1.f ? process_pixel(cY) : lut[cY * 65535.f];
-            R[y][x] *= corr;
-            G[y][x] *= corr;
-            B[y][x] *= corr;
-        }
-    }
-
+    ToneEqualizerParams params;
+    params.enabled = true;
+    params.regularization = lp.detailsh;
+    params.pivot = lp.tePivot;
+    std::copy(lp.mullocsh, lp.mullocsh + params.bands.size(), params.bands.begin());
+    ipf->toneEqualizer(rgb, params, workingProfile, scale, multithread);
 }
 void ImProcFunctions::loccont(int bfw, int bfh, LabImage* tmp1, float rad, float stren, int sk)
 {
@@ -2804,9 +2580,9 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         }
     }
 
-    ColorTemp::temp2mulxyz(params->wb.temperature, params->wb.method, Xw, Zw);  //compute white Xw Yw Zw  : white current WB
-    ColorTemp::temp2mulxyz(tempo, "Custom", Xwout, Zwout);
-    ColorTemp::temp2mulxyz(5000, "Custom", Xwsc, Zwsc);
+    ColorTemp::temp2mulxyz(params->wb.temperature, params->wb.method, params->wb.observer, Xw, Zw);  //compute white Xw Yw Zw  : white current WB
+    ColorTemp::temp2mulxyz(tempo, "Custom", params->wb.observer, Xwout, Zwout);
+    ColorTemp::temp2mulxyz(5000, "Custom", params->wb.observer, Xwsc, Zwsc);
 
     //viewing condition for surrsrc
     f  = 1.00f;
@@ -5557,6 +5333,7 @@ void ImProcFunctions::blendstruc(int bfw, int bfh, LabImage* bufcolorig, float r
 
 static void blendmask(const local_params& lp, int xstart, int ystart, int cx, int cy, int bfw, int bfh, LabImage* bufexporig, LabImage* original, LabImage* bufmaskor, LabImage* originalmas, float bl, float blab, int inv)
 {
+    bl /= 10.f;
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -7815,12 +7592,7 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
             }
 
             if (tonequ) {
-                tmpImage->normalizeFloatTo1();
-                array2D<float> Rtemp(GW, GH, tmpImage->r.ptrs, ARRAY2D_BYREFERENCE);
-                array2D<float> Gtemp(GW, GH, tmpImage->g.ptrs, ARRAY2D_BYREFERENCE);
-                array2D<float> Btemp(GW, GH, tmpImage->b.ptrs, ARRAY2D_BYREFERENCE);
-                tone_eq(Rtemp, Gtemp, Btemp, lp, params->icm.workingProfile, sk, multiThread);
-                tmpImage->normalizeFloatTo65535();
+                tone_eq(this, tmpImage.get(), lp, params->icm.workingProfile, sk, multiThread);
             }
 
             rgb2lab(*tmpImage, *temp, params->icm.workingProfile);
@@ -8165,7 +7937,7 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
         deltasobelL = new LabImage(spotSi, spotSi);
         bool isdenoise = false;
 
-        if ((lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.wavcurvedenoi || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f) && lp.denoiena) {
+        if ((lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.wavcurvedenoi || lp.nlstr > 0 || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f) && lp.denoiena) {
             isdenoise = true;
         }
 
@@ -10872,7 +10644,8 @@ void ImProcFunctions::fftw_denoise(int sk, int GW, int GH, int max_numblox_W, in
 
 }
 
-void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * slidb, int aut,  bool noiscfactiv, const struct local_params & lp, LabImage * originalmaskbl, LabImage *  bufmaskblurbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage * original, LabImage * transformed, int cx, int cy, int sk, const LocwavCurve& locwavCurvehue, bool locwavhueutili)
+void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct local_params & lp, LabImage * originalmaskbl, LabImage *  bufmaskblurbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage * original, LabImage * transformed,
+    int cx, int cy, int sk, const LocwavCurve& locwavCurvehue, bool locwavhueutili, float& highresi, float& nresi, float& highresi46, float& nresi46, float& Lhighresi, float& Lnresi, float& Lhighresi46, float& Lnresi46)
 {
     BENCHFUN
 //local denoise
@@ -10891,7 +10664,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 //    const int hspot = ye - ys;
 //    const int wspot = xe - xs;
 
-    if (((lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.nlstr > 0 || lp.wavcurvedenoi || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f
+   if (((lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.nlstr > 0 || lp.wavcurvedenoi || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f
             || execmaskden || aut == 1 || aut == 2) && lp.denoiena && lp.quamet != 3) || execdenoi) {  // sk == 1 ??
 
         StopWatch Stop1("locallab Denoise called");
@@ -10943,7 +10716,6 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                 }
             }
 
-     //   if (call == 1 && GW >= mDEN && GH >= mDEN) {
         if (call == 1 && ((GW >= mDEN && GH >= mDEN  && isnois) || lp.quamet == 2)) {
 
 
@@ -10965,6 +10737,9 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                     tmp1.a[ir][jr] = original->a[ir][jr];
                     tmp1.b[ir][jr] = original->b[ir][jr];
                 }
+            if(lp.nlstr > 0) {
+                NLMeans(tmp1.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, GW, GH, float (sk), multiThread);
+            }
 
             float gamma = lp.noisegam;
             rtengine::GammaValues g_a; //gamma parameters
@@ -11003,14 +10778,13 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
             if (!Ldecomp.memory_allocation_failed()) {
 #ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic) collapse(2) if (multiThread)
+            //    #pragma omp parallel for schedule(dynamic) collapse(2) if (multiThread)
 #endif
                 for (int lvl = 0; lvl < levred; lvl++) {
                     for (int dir = 1; dir < 4; dir++) {
                         int Wlvl_L = Ldecomp.level_W(lvl);
                         int Hlvl_L = Ldecomp.level_H(lvl);
                         const float* const* WavCoeffs_L = Ldecomp.level_coeffs(lvl);
-
                         madL[lvl][dir - 1] = SQR(Mad(WavCoeffs_L[dir], Wlvl_L * Hlvl_L));
                     }
                 }
@@ -11019,67 +10793,36 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                 float mxsl = 0.f;
                 //      float mxsfl = 0.f;
 
-                if (aut == 0) {
-                    if (levred == 7) {
-                        edge = 2;
-                        vari[0] = 0.8f * SQR((lp.noiself0 / 125.f) * (1.f + lp.noiself0 / 25.f));
-                        vari[1] = 0.8f * SQR((lp.noiself / 125.f) * (1.f + lp.noiself / 25.f));
-                        vari[2] = 0.8f * SQR((lp.noiself2 / 125.f) * (1.f + lp.noiself2 / 25.f));
+                edge = 2;
+                vari[0] = 0.8f * SQR((lp.noiself0 / 125.f) * (1.f + lp.noiself0 / 25.f));
+                vari[1] = 0.8f * SQR((lp.noiself / 125.f) * (1.f + lp.noiself / 25.f));
+                vari[2] = 0.8f * SQR((lp.noiself2 / 125.f) * (1.f + lp.noiself2 / 25.f));
 
-                        vari[3] = 0.8f * SQR((lp.noiselc / 125.f) * (1.f + lp.noiselc / 25.f));
-                        vari[4] = 0.8f * SQR((lp.noiselc4 / 125.f) * (1.f + lp.noiselc4 / 25.f));
-                        vari[5] = 0.8f * SQR((lp.noiselc5 / 125.f) * (1.f + lp.noiselc5 / 25.f));
-                        vari[6] = 0.8f * SQR((lp.noiselc6 / 125.f) * (1.f + lp.noiselc6 / 25.f));
-                    } else if (levred == 4) {
-                        edge = 3;
-                        vari[0] = 0.8f * SQR((lp.noiself0 / 125.f) * (1.f + lp.noiself0 / 25.f));
-                        vari[1] = 0.8f * SQR((lp.noiself / 125.f) * (1.f + lp.noiself / 25.f));
-                        vari[2] = 0.8f * SQR((lp.noiselc / 125.f) * (1.f + lp.noiselc / 25.f));
-                        vari[3] = 0.8f * SQR((lp.noiselc / 125.f) * (1.f + lp.noiselc / 25.f));
-
-                    }
-                } else if (aut == 1  || aut == 2) {
-                    edge = 2;
-                    vari[0] = SQR(slidL[0]);
-                    vari[1] = SQR(slidL[1]);
-                    vari[2] = SQR(slidL[2]);
-                    vari[3] = SQR(slidL[3]);
-                    vari[4] = SQR(slidL[4]);
-                    vari[5] = SQR(slidL[5]);
-                    vari[6] = SQR(slidL[6]);
-                    float mxslid34 = rtengine::max(slidL[3], slidL[4]);
-                    float mxslid56 = rtengine::max(slidL[5], slidL[6]);
-                    mxsl = rtengine::max(mxslid34, mxslid56);
-
-                }
+                vari[3] = 0.8f * SQR((lp.noiselc / 125.f) * (1.f + lp.noiselc / 25.f));
+                vari[4] = 1.f * SQR((lp.noiselc4 / 125.f) * (1.f + lp.noiselc4 / 25.f));
+                vari[5] = 1.5f * SQR((lp.noiselc5 / 125.f) * (1.f + lp.noiselc5 / 25.f));
+                vari[6] = 2.5f * SQR((lp.noiselc6 / 125.f) * (1.f + lp.noiselc6 / 25.f));
 
                 {
                     float kr3 = 0.f;
 
-                    if (aut == 0 || aut == 1) {
-                        if ((lp.noiselc < 30.f && aut == 0) || (mxsl < 30.f && aut == 1)) {
+                        if (lp.noiselc < 30.f) {
                             kr3 = 0.f;
-                        } else if ((lp.noiselc < 50.f && aut == 0) || (mxsl < 50.f && aut == 1)) {
+                        } else if (lp.noiselc < 50.f) {
                             kr3 = 0.5f;
-                        } else if ((lp.noiselc < 70.f && aut == 0) || (mxsl < 70.f && aut == 1)) {
+                        } else if (lp.noiselc < 70.f) {
                             kr3 = 0.7f;
                         } else {
                             kr3 = 1.f;
                         }
-                    } else if (aut == 2) {
-                        kr3 = 1.f;
-                    }
 
                     vari[0] = rtengine::max(0.000001f, vari[0]);
                     vari[1] = rtengine::max(0.000001f, vari[1]);
                     vari[2] = rtengine::max(0.000001f, vari[2]);
                     vari[3] = rtengine::max(0.000001f, kr3 * vari[3]);
-
-                    if (levred == 7) {
-                        vari[4] = rtengine::max(0.000001f, vari[4]);
-                        vari[5] = rtengine::max(0.000001f, vari[5]);
-                        vari[6] = rtengine::max(0.000001f, vari[6]);
-                    }
+                    vari[4] = rtengine::max(0.000001f, vari[4]);
+                    vari[5] = rtengine::max(0.000001f, vari[5]);
+                    vari[6] = rtengine::max(0.000001f, vari[6]);
 
                     float* noisevarlum = new float[GH * GW];
                     float* noisevarhue = new float[GH * GW];
@@ -11218,75 +10961,25 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
             }
 
             if (!adecomp.memory_allocation_failed() && !bdecomp.memory_allocation_failed()) {
-                float maxcfine = 0.f;
                 float maxccoarse = 0.f;
 
-                if (aut == 0) {
-                    if (levred == 7) {
-                        edge = 2;
-                        variC[0] = SQR(noisecfr);
-                        variC[1] = SQR(noisecfr);
-                        variC[2] = SQR(noisecfr);
+            edge = 2;
+            variC[0] = SQR(noisecfr);
+            variC[1] = SQR(noisecfr);
+            variC[2] = SQR(noisecfr);
+            variC[3] = SQR(1.2f * noisecfr);
+            variC[4] = SQR(noisecfr);
+            variC[5] = SQR(1.2f * noiseccr);
+            variC[6] = SQR(1.5f * noiseccr);
 
-                        variC[3] = SQR(noisecfr);
-                        variC[4] = SQR(noisecfr);
-                        variC[5] = SQR(noiseccr);
-                        variC[6] = SQR(noiseccr);
+            variCb[0] = SQR(noisecfb);
+            variCb[1] = SQR(noisecfb);
+            variCb[2] = SQR(noisecfb);
+            variCb[3] = SQR(noisecfb);
+            variCb[4] = SQR(noisecfb);
+            variCb[5] = SQR(1.2f * noiseccb);
+            variCb[6] = SQR(1.5f * noiseccb);
 
-                        variCb[0] = SQR(noisecfb);
-                        variCb[1] = SQR(noisecfb);
-                        variCb[2] = SQR(noisecfb);
-
-                        variCb[3] = SQR(noisecfb);
-                        variCb[4] = SQR(noisecfb);
-                        variCb[5] = SQR(noiseccb);
-                        variCb[6] = SQR(noiseccb);
-
-                    } else if (levred == 4) {
-                        edge = 3;
-                        variC[0] = SQR(lp.noisecf / 10.f);
-                        variC[1] = SQR(lp.noisecf / 10.f);
-                        variC[2] = SQR(lp.noisecf / 10.f);
-                        variC[3] = SQR(lp.noisecf / 10.f);
-
-                        variCb[0] = SQR(lp.noisecf / 10.f);
-                        variCb[1] = SQR(lp.noisecf / 10.f);
-                        variCb[2] = SQR(lp.noisecf / 10.f);
-                        variCb[3] = SQR(lp.noisecf / 10.f);
-
-                    }
-                } else if (aut == 1  || aut == 2) {
-                    edge = 2;
-                    variC[0] = SQR(slida[0]);
-                    variC[1] = SQR(slida[1]);
-                    variC[2] = SQR(slida[2]);
-                    variC[3] = SQR(slida[3]);
-                    variC[4] = SQR(slida[4]);
-                    variC[5] = SQR(slida[5]);
-                    variC[6] = SQR(slida[6]);
-                    float maxc01 = rtengine::max(slida[0], slida[1]);
-                    float maxc23 = rtengine::max(slida[2], slida[3]);
-                    float max03 = rtengine::max(maxc01, maxc23);
-                    float maxrf = rtengine::max(max03, slida[4]);
-                    float maxrc = rtengine::max(slida[5], slida[6]);
-
-                    variCb[0] = SQR(slidb[0]);
-                    variCb[1] = SQR(slidb[1]);
-                    variCb[2] = SQR(slidb[2]);
-                    variCb[3] = SQR(slidb[3]);
-                    variCb[4] = SQR(slidb[4]);
-                    variCb[5] = SQR(slidb[5]);
-                    variCb[6] = SQR(slidb[6]);
-                    float maxb01 = rtengine::max(slidb[0], slidb[1]);
-                    float maxb23 = rtengine::max(slidb[2], slidb[3]);
-                    float maxb03 = rtengine::max(maxb01, maxb23);
-                    float maxbf = rtengine::max(maxb03, slidb[4]);
-                    maxcfine = rtengine::max(maxrf, maxbf);
-
-                    float maxbc = rtengine::max(slidb[5], slidb[6]);
-                    maxccoarse = rtengine::max(maxrc, maxbc);
-
-                }
 
                 {
                     float minic = 0.000001f;
@@ -11299,52 +10992,51 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                     float k2 = 0.f;
                     float k3 = 0.f;
 
-                    if (aut == 0 || aut == 1) {
-                        if ((lp.noisecf < 0.2f && aut == 0) || (maxcfine < 0.2f && aut == 1)) {
+                        if (lp.noisecf < 0.2f) {
                             k1 = 0.05f;
                             k2 = 0.f;
                             k3 = 0.f;
-                        } else if ((lp.noisecf < 0.3f && aut == 0) || (maxcfine < 0.3f && aut == 1)) {
+                        } else if (lp.noisecf < 0.3f) {
                             k1 = 0.1f;
                             k2 = 0.0f;
                             k3 = 0.f;
-                        } else if ((lp.noisecf < 0.5f && aut == 0) || (maxcfine < 0.5f && aut == 1)) {
+                        } else if (lp.noisecf < 0.5f) {
                             k1 = 0.2f;
                             k2 = 0.1f;
                             k3 = 0.f;
-                        } else if ((lp.noisecf < 0.8f && aut == 0) || (maxcfine < 0.8f && aut == 1)) {
+                        } else if (lp.noisecf < 0.8f) {
                             k1 = 0.3f;
                             k2 = 0.25f;
                             k3 = 0.f;
-                        } else if ((lp.noisecf < 1.f && aut == 0) || (maxcfine < 1.f && aut == 1)) {
+                        } else if (lp.noisecf < 1.f) {
                             k1 = 0.4f;
                             k2 = 0.25f;
                             k3 = 0.1f;
-                        } else if ((lp.noisecf < 2.f && aut == 0) || (maxcfine < 2.f && aut == 1)) {
+                        } else if (lp.noisecf < 2.f) {
                             k1 = 0.5f;
                             k2 = 0.3f;
                             k3 = 0.15f;
-                        } else if ((lp.noisecf < 3.f && aut == 0) || (maxcfine < 3.f && aut == 1)) {
+                        } else if (lp.noisecf < 3.f) {
                             k1 = 0.6f;
                             k2 = 0.45f;
                             k3 = 0.3f;
-                        } else if ((lp.noisecf < 4.f && aut == 0) || (maxcfine < 4.f && aut == 1)) {
+                        } else if (lp.noisecf < 4.f) {
                             k1 = 0.7f;
                             k2 = 0.5f;
                             k3 = 0.4f;
-                        } else if ((lp.noisecf < 5.f && aut == 0) || (maxcfine < 5.f && aut == 1)) {
+                        } else if (lp.noisecf < 5.f) {
                             k1 = 0.8f;
                             k2 = 0.6f;
                             k3 = 0.5f;
-                        } else if ((lp.noisecf < 6.f && aut == 0) || (maxcfine < 10.f && aut == 1)) {
+                        } else if (lp.noisecf < 6.f) {
                             k1 = 0.85f;
                             k2 = 0.7f;
                             k3 = 0.6f;
-                        } else if ((lp.noisecf < 8.f && aut == 0) || (maxcfine < 20.f && aut == 1)) {
+                        } else if (lp.noisecf < 8.f) {
                             k1 = 0.9f;
                             k2 = 0.8f;
                             k3 = 0.7f;
-                        } else if ((lp.noisecf < 10.f && aut == 0) || (maxcfine < 50.f && aut == 1)) {
+                        } else if (lp.noisecf < 10.f) {
                             k1 = 1.f;
                             k2 = 1.f;
                             k3 = 0.9f;
@@ -11352,14 +11044,8 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                         } else {
                             k1 = 1.f;
                             k2 = 1.f;
-                            k3 = 1.f;
+                            k3 = 1.5f;
                         }
-                    } else if (aut == 2) {
-                        k1 = 1.f;
-                        k2 = 1.f;
-                        k3 = 1.f;
-                    }
-
 
                     variC[0] = rtengine::max(minic, variC[0]);
                     variC[1] = rtengine::max(minic, k1 * variC[1]);
@@ -11371,27 +11057,26 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                     variCb[2] = rtengine::max(minic, k2 * variCb[2]);
                     variCb[3] = rtengine::max(minic, k3 * variCb[3]);
 
-                    if (levred == 7) {
                         float k4 = 0.f;
                         float k5 = 0.f;
                         float k6 = 0.f;
 
-                        if ((lp.noisecc < 0.2f && aut == 0) || (maxccoarse < 0.2f && aut == 1)) {
+                        if (lp.noisecc < 0.2f) {
                             k4 = 0.1f;
                             k5 = 0.02f;
-                        } else if ((lp.noisecc < 0.5f && aut == 0) || (maxccoarse < 0.5f && aut == 1)) {
+                        } else if (lp.noisecc < 0.5f) {
                             k4 = 0.15f;
                             k5 = 0.05f;
-                        } else if ((lp.noisecc < 1.f && aut == 0) || (maxccoarse < 1.f && aut == 1)) {
+                        } else if (lp.noisecc < 1.f) {
                             k4 = 0.15f;
                             k5 = 0.1f;
-                        } else if ((lp.noisecc < 3.f && aut == 0) || (maxccoarse < 3.f && aut == 1)) {
+                        } else if (lp.noisecc < 3.f) {
                             k4 = 0.3f;
                             k5 = 0.15f;
-                        } else if ((lp.noisecc < 4.f && aut == 0) || (maxccoarse < 5.f && aut == 1)) {
+                        } else if (lp.noisecc < 4.f) {
                             k4 = 0.6f;
                             k5 = 0.4f;
-                        } else if ((lp.noisecc < 6.f && aut == 0) || (maxccoarse < 6.f && aut == 1)) {
+                        } else if (lp.noisecc < 6.f) {
                             k4 = 0.8f;
                             k5 = 0.6f;
                         } else {
@@ -11404,11 +11089,11 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                         variCb[4] = rtengine::max(0.000001f, k4 * variCb[4]);
                         variCb[5] = rtengine::max(0.000001f, k5 * variCb[5]);
 
-                        if ((lp.noisecc < 4.f && aut == 0) || (maxccoarse < 4.f && aut == 1)) {
+                        if (lp.noisecc < 4.f) {
                             k6 = 0.f;
-                        } else if ((lp.noisecc < 5.f && aut == 0) || (maxccoarse < 5.f && aut == 1)) {
+                        } else if (lp.noisecc < 5.f) {
                             k6 = 0.4f;
-                        } else if ((lp.noisecc < 6.f && aut == 0) || (maxccoarse < 6.f && aut == 1)) {
+                        } else if (lp.noisecc < 6.f) {
                             k6 = 0.7f;
                         } else {
                             k6 = 1.f;
@@ -11417,7 +11102,6 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                         variC[6] = rtengine::max(0.00001f, k6 * variC[6]);
                         variCb[6] = rtengine::max(0.00001f, k6 * variCb[6]);
 
-                    }
 
                     float* noisevarchrom = new float[GH * GW];
                     //noisevarchrom in function chroma
@@ -11425,7 +11109,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                     float nvch = 0.6f;//high value
                     float nvcl = 0.1f;//low value
 
-                    if ((lp.noisecf > 100.f && aut == 0) || (maxcfine > 100.f && (aut == 1 || aut == 2))) {
+                    if (lp.noisecf > 100.f) {
                         nvch = 0.8f;
                         nvcl = 0.4f;
                     }
@@ -11534,7 +11218,6 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                 }
 
             }
-
             if(gamma > 1.f) {
 #ifdef _OPENMP
 #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -11550,10 +11233,6 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                         tmp1.L[y][x] = 32768.f * gammalog(tmp1.L[y][x] / 32768.f, gamma, ts, g_a[3], g_a[4]);
                     }
                 }
-            }
-
-            if(lp.nlstr > 0) {
-                NLMeans(tmp1.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, GW, GH, float (sk), multiThread);
             }
 
             if(lp.smasktyp != 0) {
@@ -11634,7 +11313,82 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                     masklum.free();
                     masklumch.free();
                 }
-                DeNoise_Local(call, lp,  originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);
+                
+// re read wavelet decomposition to calaculate noise residual
+            float chresid = 0.f;
+            float chresidtemp = 0.f;
+            float chmaxresid = 0.f;
+            float chmaxresidtemp = 0.f;
+            float chresid46 = 0.f;
+            float chresidtemp46 = 0.f;
+            float chmaxresid46 = 0.f;
+            float chmaxresidtemp46 = 0.f;
+            float Lresid = 0.f;
+            float Lmaxresid = 0.f;
+            float Lresid46 = 0.f;
+            float Lmaxresid46 = 0.f;
+            
+            
+//calculate and display residual noise luma and chroma
+// various coefficient from  1 to 5 - tries to take into account the difference between calculate Noise and percepted noise
+            wavelet_decomposition Ldecompinf(tmp1.L[0], tmp1.W, tmp1.H, levwavL, 1, skip, numThreads, lp.daubLen);
+            wavelet_decomposition adecompinf(tmp1.a[0], tmp1.W, tmp1.H, levwavL, 1, skip, numThreads, lp.daubLen);
+            wavelet_decomposition bdecompinf(tmp1.b[0], tmp1.W, tmp1.H, levwavL, 1, skip, numThreads, lp.daubLen);
+
+            Noise_residualAB(adecompinf, chresid, chmaxresid, false, 0, 3);
+            chresidtemp = chresid;
+            chmaxresidtemp = chmaxresid;
+            Noise_residualAB(bdecompinf, chresid, chmaxresid, false, 0, 3);
+            chresid += chresidtemp;
+            chmaxresid += chmaxresidtemp;
+            int nbmaddir = 4;
+            chresid = sqrt(chresid / ( 3 * nbmaddir * 2));
+            highresi = chresid + 0.5f * (sqrt(chmaxresid) - chresid); //evaluate sigma
+            nresi = chresid;
+            highresi /= 1.4f;//arbitrary coefficient
+            nresi /= 1.4f;
+
+    //        printf("nresi03=%f highresi=%f \n", (double) nresi, (double) highresi);
+
+
+            Noise_residualAB(adecompinf, chresid46, chmaxresid46, false, 4, 6);
+            nbmaddir = 3;
+            chresidtemp46 = chresid46;
+            chmaxresidtemp46 = chmaxresid46;
+            Noise_residualAB(bdecompinf, chresid46, chmaxresid46, false, 4, 6);
+            chresid46 += chresidtemp46;
+            chmaxresid46 += chmaxresidtemp46;
+            chresid46 = sqrt(chresid46 / ( 3 * nbmaddir * 2));
+            highresi46 = chresid46 + 0.5f * (sqrt(chmaxresid46) - chresid46); //evaluate sigma
+            nresi46 = chresid46;
+            highresi46 /= 2.f;//arbitrary coefficient
+            nresi46 /= 2.f;
+            
+    //        printf("nresi46=%f highresi=%f \n", (double) nresi46, (double) highresi46);
+
+
+            Noise_residualAB(Ldecompinf, Lresid, Lmaxresid, false, 0, 3);
+            nbmaddir = 4;
+            Lresid = sqrt(Lresid / (3 * nbmaddir));
+            Lhighresi = Lresid + 0.5f * (sqrt(Lmaxresid) - Lresid); //evaluate sigma
+            Lnresi = Lresid;
+            Lnresi /= 2.f;//arbitrary coefficient
+            Lhighresi /= 2.f;
+           // printf("Lresi03=%f Lhighresi=%f levwavL=%i\n", (double) Lnresi, (double) Lhighresi, levwavL);
+
+            Noise_residualAB(Ldecompinf, Lresid46, Lmaxresid46, false, 4, 6);
+            nbmaddir = 3;
+            Lresid46 = sqrt(Lresid46 / (3 * nbmaddir));
+            Lhighresi46 = Lresid46 + 0.5f * (sqrt(Lmaxresid46) - Lresid46); //evaluate sigma
+            Lnresi46 = Lresid46;
+            Lhighresi46 /= 5.f;//arbitrary coefficient
+            Lnresi46 /= 5.f;
+           // printf("Lresi46=%f Lhighresi=%f levwavL=%i\n", (double) Lnresi46, (double) Lhighresi46, levwavL);
+
+// end calculate
+                
+            DeNoise_Local(call, lp,  originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);
+
             } else {
                 DeNoise_Local(call, lp,  original, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);
             }
@@ -11731,69 +11485,40 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
                     float vari[levred];
                     float mxsl = 0.f;
-                    //     float mxsfl = 0.f;
 
-                    if (aut == 0) {
-                        if (levred == 7) {
+                        {
                             edge = 2;
                             vari[0] = 0.8f * SQR((lp.noiself0 / 125.f) * (1.f + lp.noiself0 / 25.f));
                             vari[1] = 0.8f * SQR((lp.noiself / 125.f) * (1.f + lp.noiself / 25.f));
                             vari[2] = 0.8f * SQR((lp.noiself2 / 125.f) * (1.f + lp.noiself2 / 25.f));
-
                             vari[3] = 0.8f * SQR((lp.noiselc / 125.f) * (1.f + lp.noiselc / 25.f));
-                            vari[4] = 0.8f * SQR((lp.noiselc4 / 125.f) * (1.f + lp.noiselc4 / 25.f));
-                            vari[5] = 0.8f * SQR((lp.noiselc5 / 125.f) * (1.f + lp.noiselc5 / 25.f));
-                            vari[6] = 0.8f * SQR((lp.noiselc6 / 125.f) * (1.f + lp.noiselc6 / 25.f));
-                        } else if (levred == 4) {
-                            edge = 3;
-                            vari[0] = 0.8f * SQR((lp.noiself0 / 125.f) * (1.f + lp.noiself0 / 25.f));
-                            vari[1] = 0.8f * SQR((lp.noiself / 125.f) * (1.f + lp.noiself / 25.f));
-                            vari[2] = 0.8f * SQR((lp.noiselc / 125.f) * (1.f + lp.noiselc / 25.f));
-                            vari[3] = 0.8f * SQR((lp.noiselc / 125.f) * (1.f + lp.noiselc / 25.f));
-
-                        }
-                    } else if (aut == 1 || aut == 2) {
-                        edge = 2;
-                        vari[0] = SQR(slidL[0]);
-                        vari[1] = SQR(slidL[1]);
-                        vari[2] = SQR(slidL[2]);
-                        vari[3] = SQR(slidL[3]);
-                        vari[4] = SQR(slidL[4]);
-                        vari[5] = SQR(slidL[5]);
-                        vari[6] = SQR(slidL[6]);
-                        float mxslid34 = rtengine::max(slidL[3], slidL[4]);
-                        float mxslid56 = rtengine::max(slidL[5], slidL[6]);
-                        mxsl = rtengine::max(mxslid34, mxslid56);
-
-                    }
+                            vari[4] = 1.f * SQR((lp.noiselc4 / 125.f) * (1.f + lp.noiselc4 / 25.f));
+                            vari[5] = 1.5f * SQR((lp.noiselc5 / 125.f) * (1.f + lp.noiselc5 / 25.f));
+                            vari[6] = 2.5f * SQR((lp.noiselc6 / 125.f) * (1.f + lp.noiselc6 / 25.f));
+                        } 
 
                     {
                         float kr3 = 0.f;
 
-                        if (aut == 0 || aut == 1) {
-                            if ((lp.noiselc < 30.f && aut == 0) || (mxsl < 30.f && aut == 1)) {
+                        {
+                            if (lp.noiselc < 30.f) {
                                 kr3 = 0.f;
-                            } else if ((lp.noiselc < 50.f && aut == 0) || (mxsl < 50.f && aut == 1)) {
+                            } else if (lp.noiselc < 50.f) {
                                 kr3 = 0.5f;
-                            } else if ((lp.noiselc < 70.f && aut == 0) || (mxsl < 70.f && aut == 1)) {
+                            } else if (lp.noiselc < 70.f) {
                                 kr3 = 0.7f;
                             } else {
                                 kr3 = 1.f;
                             }
-                        } else if (aut == 2) {
-                            kr3 = 1.f;
-                        }
+                        } 
 
                         vari[0] = rtengine::max(0.000001f, vari[0]);
                         vari[1] = rtengine::max(0.000001f, vari[1]);
                         vari[2] = rtengine::max(0.000001f, vari[2]);
                         vari[3] = rtengine::max(0.000001f, kr3 * vari[3]);
-
-                        if (levred == 7) {
-                            vari[4] = rtengine::max(0.000001f, vari[4]);
-                            vari[5] = rtengine::max(0.000001f, vari[5]);
-                            vari[6] = rtengine::max(0.000001f, vari[6]);
-                        }
+                        vari[4] = rtengine::max(0.000001f, vari[4]);
+                        vari[5] = rtengine::max(0.000001f, vari[5]);
+                        vari[6] = rtengine::max(0.000001f, vari[6]);
 
                         //    float* noisevarlum = nullptr;  // we need a dummy to pass it to WaveletDenoiseAllL
                         float* noisevarlum = new float[bfh * bfw];
@@ -11930,77 +11655,28 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
 
                 if (!adecomp.memory_allocation_failed() && !bdecomp.memory_allocation_failed()) {
-                    float maxcfine = 0.f;
                     float maxccoarse = 0.f;
 
-                    if (aut == 0) {
 
-                        if (levred == 7) {
+                        {
                             edge = 2;
                             variC[0] = SQR(noisecfr);
                             variC[1] = SQR(noisecfr);
                             variC[2] = SQR(noisecfr);
-
-                            variC[3] = SQR(noisecfr);
+                            variC[3] = SQR(1.2f * noisecfr);
                             variC[4] = SQR(noisecfr);
-                            variC[5] = SQR(noiseccr);
-                            variC[6] = SQR(noiseccr);
+                            variC[5] = SQR(1.2f * noiseccr);
+                            variC[6] = SQR(1.5f * noiseccr);
 
                             variCb[0] = SQR(noisecfb);
                             variCb[1] = SQR(noisecfb);
                             variCb[2] = SQR(noisecfb);
-
                             variCb[3] = SQR(noisecfb);
                             variCb[4] = SQR(noisecfb);
-                            variCb[5] = SQR(noiseccb);
-                            variCb[6] = SQR(noiseccb);
+                            variCb[5] = SQR(1.2f * noiseccb);
+                            variCb[6] = SQR(1.5f * noiseccb);
 
-                        } else if (levred == 4) {
-                            edge = 3;
-                            variC[0] = SQR(lp.noisecf / 10.f);
-                            variC[1] = SQR(lp.noisecf / 10.f);
-                            variC[2] = SQR(lp.noisecf / 10.f);
-                            variC[3] = SQR(lp.noisecf / 10.f);
-
-                            variCb[0] = SQR(lp.noisecf / 10.f);
-                            variCb[1] = SQR(lp.noisecf / 10.f);
-                            variCb[2] = SQR(lp.noisecf / 10.f);
-                            variCb[3] = SQR(lp.noisecf / 10.f);
-
-
-                        }
-                    } else if (aut == 1 || aut == 2) {
-                        edge = 2;
-                        variC[0] = SQR(slida[0]);
-                        variC[1] = SQR(slida[1]);
-                        variC[2] = SQR(slida[2]);
-                        variC[3] = SQR(slida[3]);
-                        variC[4] = SQR(slida[4]);
-                        variC[5] = SQR(slida[5]);
-                        variC[6] = SQR(slida[6]);
-                        float maxc01 = rtengine::max(slida[0], slida[1]);
-                        float maxc23 = rtengine::max(slida[2], slida[3]);
-                        float max03 = rtengine::max(maxc01, maxc23);
-                        float maxrf = rtengine::max(max03, slida[4]);
-                        float maxrc = rtengine::max(slida[5], slida[6]);
-
-                        variCb[0] = SQR(slidb[0]);
-                        variCb[1] = SQR(slidb[1]);
-                        variCb[2] = SQR(slidb[2]);
-                        variCb[3] = SQR(slidb[3]);
-                        variCb[4] = SQR(slidb[4]);
-                        variCb[5] = SQR(slidb[5]);
-                        variCb[6] = SQR(slidb[6]);
-                        float maxb01 = rtengine::max(slidb[0], slidb[1]);
-                        float maxb23 = rtengine::max(slidb[2], slidb[3]);
-                        float maxb03 = rtengine::max(maxb01, maxb23);
-                        float maxbf = rtengine::max(maxb03, slidb[4]);
-                        maxcfine = rtengine::max(maxrf, maxbf);
-
-                        float maxbc = rtengine::max(slidb[5], slidb[6]);
-                        maxccoarse = rtengine::max(maxrc, maxbc);
-
-                    }
+                        } 
 
                     {
                         float minic = 0.000001f;
@@ -12013,52 +11689,51 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                         float k2 = 0.f;
                         float k3 = 0.f;
 
-                        if (aut == 0 || aut == 1) {
-                            if ((lp.noisecf < 0.2f && aut == 0) || (maxcfine < 0.2f && aut == 1)) {
+                            if (lp.noisecf < 0.2f) {
                                 k1 = 0.05f;
                                 k2 = 0.f;
                                 k3 = 0.f;
-                            } else if ((lp.noisecf < 0.3f && aut == 0) || (maxcfine < 0.3f && aut == 1)) {
+                            } else if (lp.noisecf < 0.3f) {
                                 k1 = 0.1f;
                                 k2 = 0.0f;
                                 k3 = 0.f;
-                            } else if ((lp.noisecf < 0.5f && aut == 0) || (maxcfine < 0.5f && aut == 1)) {
+                            } else if (lp.noisecf < 0.5f) {
                                 k1 = 0.2f;
                                 k2 = 0.1f;
                                 k3 = 0.f;
-                            } else if ((lp.noisecf < 0.8f && aut == 0) || (maxcfine < 0.8f && aut == 1)) {
+                            } else if (lp.noisecf < 0.8f) {
                                 k1 = 0.3f;
                                 k2 = 0.25f;
                                 k3 = 0.f;
-                            } else if ((lp.noisecf < 1.f && aut == 0) || (maxcfine < 1.f && aut == 1)) {
+                            } else if (lp.noisecf < 1.f) {
                                 k1 = 0.4f;
                                 k2 = 0.25f;
                                 k3 = 0.1f;
-                            } else if ((lp.noisecf < 2.f && aut == 0) || (maxcfine < 2.f && aut == 1)) {
+                            } else if (lp.noisecf < 2.f) {
                                 k1 = 0.5f;
                                 k2 = 0.3f;
                                 k3 = 0.15f;
-                            } else if ((lp.noisecf < 3.f && aut == 0) || (maxcfine < 3.f && aut == 1)) {
+                            } else if (lp.noisecf < 3.f) {
                                 k1 = 0.6f;
                                 k2 = 0.45f;
                                 k3 = 0.3f;
-                            } else if ((lp.noisecf < 4.f && aut == 0) || (maxcfine < 4.f && aut == 1)) {
+                            } else if (lp.noisecf < 4.f) {
                                 k1 = 0.7f;
                                 k2 = 0.5f;
                                 k3 = 0.4f;
-                            } else if ((lp.noisecf < 5.f && aut == 0) || (maxcfine < 5.f && aut == 1)) {
+                            } else if (lp.noisecf < 5.f) {
                                 k1 = 0.8f;
                                 k2 = 0.6f;
                                 k3 = 0.5f;
-                            } else if ((lp.noisecf < 6.f && aut == 0) || (maxcfine < 10.f && aut == 1)) {
+                            } else if (lp.noisecf < 6.f) {
                                 k1 = 0.85f;
                                 k2 = 0.7f;
                                 k3 = 0.6f;
-                            } else if ((lp.noisecf < 8.f && aut == 0) || (maxcfine < 20.f && aut == 1)) {
+                            } else if (lp.noisecf < 8.f) {
                                 k1 = 0.9f;
                                 k2 = 0.8f;
                                 k3 = 0.7f;
-                            } else if ((lp.noisecf < 10.f && aut == 0) || (maxcfine < 50.f && aut == 1)) {
+                            } else if (lp.noisecf < 10.f) {
                                 k1 = 1.f;
                                 k2 = 1.f;
                                 k3 = 0.9f;
@@ -12066,13 +11741,8 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                             } else {
                                 k1 = 1.f;
                                 k2 = 1.f;
-                                k3 = 1.f;
+                                k3 = 1.5f;
                             }
-                        } else if (aut == 2) {
-                            k1 = 1.f;
-                            k2 = 1.f;
-                            k3 = 1.f;
-                        }
 
                         variC[0] = rtengine::max(minic, variC[0]);
                         variC[1] = rtengine::max(minic, k1 * variC[1]);
@@ -12084,27 +11754,27 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                         variCb[2] = rtengine::max(minic, k2 * variCb[2]);
                         variCb[3] = rtengine::max(minic, k3 * variCb[3]);
 
-                        if (levred == 7) {
+                        {
                             float k4 = 0.f;
                             float k5 = 0.f;
                             float k6 = 0.f;
 
-                            if ((lp.noisecc < 0.2f && aut == 0) || (maxccoarse < 0.2f && aut == 1)) {
+                            if (lp.noisecc < 0.2f) {
                                 k4 = 0.1f;
                                 k5 = 0.02f;
-                            } else if ((lp.noisecc < 0.5f && aut == 0) || (maxccoarse < 0.5f && aut == 1)) {
+                            } else if (lp.noisecc < 0.5f) {
                                 k4 = 0.15f;
                                 k5 = 0.05f;
-                            } else if ((lp.noisecc < 1.f && aut == 0) || (maxccoarse < 1.f && aut == 1)) {
+                            } else if (lp.noisecc < 1.f) {
                                 k4 = 0.15f;
                                 k5 = 0.1f;
-                            } else if ((lp.noisecc < 3.f && aut == 0) || (maxccoarse < 3.f && aut == 1)) {
+                            } else if (lp.noisecc < 3.f) {
                                 k4 = 0.3f;
                                 k5 = 0.15f;
-                            } else if ((lp.noisecc < 4.f && aut == 0) || (maxccoarse < 5.f && aut == 1)) {
+                            } else if (lp.noisecc < 4.f) {
                                 k4 = 0.6f;
                                 k5 = 0.4f;
-                            } else if ((lp.noisecc < 6.f && aut == 0) || (maxccoarse < 6.f && aut == 1)) {
+                            } else if (lp.noisecc < 6.f) {
                                 k4 = 0.8f;
                                 k5 = 0.6f;
                             } else {
@@ -12118,11 +11788,11 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                             variCb[4] = rtengine::max(0.000001f, k4 * variCb[4]);
                             variCb[5] = rtengine::max(0.000001f, k5 * variCb[5]);
 
-                            if ((lp.noisecc < 4.f && aut == 0) || (maxccoarse < 4.f && aut == 1)) {
+                            if (lp.noisecc < 4.f) {
                                 k6 = 0.f;
-                            } else if ((lp.noisecc < 5.f && aut == 0) || (maxccoarse < 5.f && aut == 1)) {
+                            } else if (lp.noisecc < 5.f) {
                                 k6 = 0.4f;
-                            } else if ((lp.noisecc < 6.f && aut == 0) || (maxccoarse < 6.f && aut == 1)) {
+                            } else if (lp.noisecc < 6.f) {
                                 k6 = 0.7f;
                             } else {
                                 k6 = 1.f;
@@ -12137,7 +11807,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                         float nvch = 0.6f;//high value
                         float nvcl = 0.1f;//low value
 
-                        if ((lp.noisecf > 30.f && aut == 0) || (maxcfine > 100.f && (aut == 1 || aut == 2))) {
+                        if (lp.noisecf > 30.f) {
                             nvch = 0.8f;
                             nvcl = 0.4f;
                         }
@@ -12377,6 +12047,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                 }
             }
         }
+ 
     }
 
 }
@@ -12540,12 +12211,31 @@ void ImProcFunctions::clarimerge(const struct local_params& lp, float &mL, float
     }
 }
 
-void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImage * original, LabImage *transformed, int cy, int cx, int sk)
+void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImage *transformed, LabImage *reserved, int cy, int cx, int sk)
 {
-    if (params->locallab.spots.at(sp).avoid  && lp.islocal) {
+    int avoidgamut = 0;
+
+    if (params->locallab.spots.at(sp).avoidgamutMethod == "NONE") {
+        avoidgamut = 0;
+    } else if (params->locallab.spots.at(sp).avoidgamutMethod == "LAB") {
+        avoidgamut = 1;
+    } else if (params->locallab.spots.at(sp).avoidgamutMethod == "XYZ") {
+        avoidgamut = 2;
+    } else if (params->locallab.spots.at(sp).avoidgamutMethod == "XYZREL") {
+        avoidgamut = 3;
+    } else if (params->locallab.spots.at(sp).avoidgamutMethod == "MUNS") {
+        avoidgamut = 4;
+    }
+
+    if (avoidgamut == 0) {
+        return;
+    }
+
+    if (avoidgamut > 0  && lp.islocal) {
         const float ach = lp.trans / 100.f;
         bool execmunsell = true;
-        if(params->locallab.spots.at(sp).expcie && (params->locallab.spots.at(sp).modecam == "all" || params->locallab.spots.at(sp).modecam == "jz" || params->locallab.spots.at(sp).modecam == "cam16")) {
+
+        if (params->locallab.spots.at(sp).expcie && (params->locallab.spots.at(sp).modecam == "all" || params->locallab.spots.at(sp).modecam == "jz" || params->locallab.spots.at(sp).modecam == "cam16")) {
             execmunsell = false;
         }
 
@@ -12556,11 +12246,18 @@ void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImag
             {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
         };
 
+        TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
+        const double wp[3][3] = {//improve precision with double
+            {wprof[0][0], wprof[0][1], wprof[0][2]},
+            {wprof[1][0], wprof[1][1], wprof[1][2]},
+            {wprof[2][0], wprof[2][1], wprof[2][2]}
+        };
+
         const float softr = params->locallab.spots.at(sp).avoidrad;//max softr = 30
-        const bool muns = params->locallab.spots.at(sp).avoidmun;//Munsell control with 200 LUT
+        //   const bool muns = params->locallab.spots.at(sp).avoidmun;//Munsell control with 200 LUT
         //improve precision with mint and maxt
         const float tr = std::min(2.f, softr);
-        const float mint = 0.15f - 0.06f * tr;//between 0.15f and 0.03f 
+        const float mint = 0.15f - 0.06f * tr;//between 0.15f and 0.03f
         const float maxt = 0.98f + 0.008f * tr;//between 0.98f and 0.996f
 
         const bool highlight = params->toneCurve.hrenabled;
@@ -12581,6 +12278,7 @@ void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImag
 #ifdef _OPENMP
             #pragma omp for schedule(dynamic,16)
 #endif
+
             for (int y = 0; y < transformed->H; y++) {
                 const int loy = cy + y;
                 const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
@@ -12640,7 +12338,7 @@ void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImag
 
                     if (lp.shapmet == 0) {
                         calcTransition(lox, loy, ach, lp, zone, localFactor);
-                    } else /*if (lp.shapmet == 1)*/ {
+                    } else { /*if (lp.shapmet == 1)*/
                         calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                     }
 
@@ -12675,42 +12373,103 @@ void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImag
                         sincosval.y = aa / (Chprov1 * 327.68f);
                         sincosval.x = bb / (Chprov1 * 327.68f);
                     }
+
 #endif
+                    float lnew = transformed->L[y][x];
+                    float anew = transformed->a[y][x];
+                    float bnew = transformed->b[y][x];
+                    Lprov1 = lnew / 327.68f;
+                    //HH = xatan2f(bnew, anew);
 
-                    Color::pregamutlab(Lprov1, HH, chr);
-                    Chprov1 = rtengine::min(Chprov1, chr);
-                    if(!muns) {
-                       float R, G, B;
+                    if (avoidgamut == 1) { //Lab correction
+
+                        Color::pregamutlab(Lprov1, HH, chr);
+                        Chprov1 = rtengine::min(Chprov1, chr);
+
+                        float R, G, B;
                         Color::gamutLchonly(HH, sincosval, Lprov1, Chprov1, R, G, B, wip, highlight, mint, maxt);//replace for best results
-                    }
-                    transformed->L[y][x] = Lprov1 * 327.68f;
-                    transformed->a[y][x] = 327.68f * Chprov1 * sincosval.y;
-                    transformed->b[y][x] = 327.68f * Chprov1 * sincosval.x;
+                        lnew = Lprov1 * 327.68f;
+                        anew = 327.68f * Chprov1 * sincosval.y;
+                        bnew = 327.68f * Chprov1 * sincosval.x;
+                        //HH = xatan2f(bnew, anew);
+                        transformed->a[y][x] = anew;
+                        transformed->b[y][x] = bnew;
 
-                    if (needHH) {
-                        const float Lprov2 = original->L[y][x] / 327.68f;
+                    } else if (avoidgamut == 2  || avoidgamut == 3) { //XYZ correction
+                        float xg, yg, zg;
+                        const float aag = transformed->a[y][x];//anew
+                        const float bbg = transformed->b[y][x];//bnew
+                        float Lag = transformed->L[y][x];
+
+                        Color::Lab2XYZ(Lag, aag, bbg, xg, yg, zg);
+                        float x0 = xg;
+                        float y0 = yg;
+                        float z0 = zg;
+
+                        Color::gamutmap(xg, yg, zg, wp);
+
+                        if (avoidgamut == 3) {//0.5f arbitrary coeff
+                            xg = xg + 0.5f * (x0 - xg);
+                            yg = yg + 0.5f * (y0 - yg);
+                            zg = zg + 0.5f * (z0 - zg);
+                        }
+
+                        //Color::gamutmap(xg, yg, zg, wp);//Put XYZ in gamut wp
+                        float aag2, bbg2;
+                        Color::XYZ2Lab(xg, yg, zg, Lag, aag2, bbg2);
+                        Lprov1 = Lag / 327.68f;
+                        HH = xatan2f(bbg2, aag2);//rebuild HH in case of...absolute colorimetry
+                        Chprov1 = std::sqrt(SQR(aag2) + SQR(bbg2)) / 327.68f;
+
+                        if (Chprov1 == 0.0f) {
+                            sincosval.y = 1.f;
+                            sincosval.x = 0.0f;
+                        } else {
+                            sincosval.y = aag2 / (Chprov1 * 327.68f);
+                            sincosval.x = bbg2 / (Chprov1 * 327.68f);
+                        }
+
+                        lnew = Lprov1 * 327.68f;
+                        anew = 327.68f * Chprov1 * sincosval.y;
+                        bnew = 327.68f * Chprov1 * sincosval.x;
+                        transformed->a[y][x] = anew;
+                        transformed->b[y][x] = bnew;
+
+                    }
+
+                    if (needHH && avoidgamut <= 4) {//Munsell
+                        Lprov1 = lnew / 327.68f;
+                        float Chprov = sqrt(SQR(anew) + SQR(bnew)) / 327.68f;
+
+                        const float Lprov2 = reserved->L[y][x] / 327.68f;
                         float correctionHue = 0.f; // Munsell's correction
                         float correctlum = 0.f;
-                        const float memChprov = std::sqrt(SQR(original->a[y][x]) + SQR(original->b[y][x])) / 327.68f;
-                        float Chprov = std::sqrt(SQR(transformed->a[y][x]) + SQR(transformed->b[y][x])) / 327.68f;
-                        if(execmunsell) {
+                        const float memChprov = std::sqrt(SQR(reserved->a[y][x]) + SQR(reserved->b[y][x])) / 327.68f;
+
+                        if (execmunsell) {
                             Color::AllMunsellLch(true, Lprov1, Lprov2, HH, Chprov, memChprov, correctionHue, correctlum);
                         }
 
-                        if (std::fabs(correctionHue) < 0.015f) {
-                            HH += correctlum;    // correct only if correct Munsell chroma very small.
+                        if (correctionHue != 0.f || correctlum != 0.f) {
+
+                            if (std::fabs(correctionHue) < 0.015f) {
+                                HH += correctlum;    // correct only if correct Munsell chroma very small.
+                            }
+
+                            sincosval = xsincosf(HH + correctionHue);
                         }
 
-                        sincosval = xsincosf(HH + correctionHue);
-                        transformed->a[y][x] = 327.68f * Chprov * sincosval.y; // apply Munsell
-                        transformed->b[y][x] = 327.68f * Chprov * sincosval.x;
+                        anew = 327.68f * Chprov * sincosval.y; // apply Munsell
+                        bnew = 327.68f * Chprov * sincosval.x;
+                        transformed->a[y][x] = anew; // apply Munsell
+                        transformed->b[y][x] = bnew;
                     }
                 }
             }
         }
 
-        //Guidedfilter to reduce artifacts in transitions
-        if (softr != 0.f) {//soft for L a b because we change color...
+        //Guidedfilter to reduce artifacts in transitions : case Lab
+        if (softr != 0.f && avoidgamut == 1) {//soft for L a b because we change color...
             const float tmpblur = softr < 0.f ? -1.f / softr : 1.f + softr;
             const int r1 = rtengine::max<int>(6 / sk * tmpblur + 0.5f, 1);
             const int r2 = rtengine::max<int>(10 / sk * tmpblur + 0.5f, 1);
@@ -12734,13 +12493,15 @@ void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImag
             for (int y = 0; y < bh ; y++) {
                 for (int x = 0; x < bw; x++) {
                     ble[y][x] = transformed->L[y][x] / 32768.f;
-                    guid[y][x] = original->L[y][x] / 32768.f;
+                    guid[y][x] = reserved->L[y][x] / 32768.f;
                 }
             }
+
             rtengine::guidedFilter(guid, ble, ble, r2, 0.2f * epsil, multiThread);
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
             for (int y = 0; y < bh; y++) {
                 for (int x = 0; x < bw; x++) {
                     transformed->L[y][x] = 32768.f * ble[y][x];
@@ -12757,11 +12518,13 @@ void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImag
                     blechro[y][x] = std::sqrt(SQR(transformed->b[y][x]) + SQR(transformed->a[y][x])) / 32768.f;
                 }
             }
+
             rtengine::guidedFilter(guid, blechro, blechro, r1, epsil, multiThread);
 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
             for (int y = 0; y < bh; y++) {
                 for (int x = 0; x < bw; x++) {
                     const float Chprov1 = std::sqrt(SQR(transformed->a[y][x]) + SQR(transformed->b[y][x]));
@@ -12933,7 +12696,6 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
     if(scale > 5.f) {//avoid to small values - leads to crash - but enough to evaluate noise 
         return;
     }
-
     BENCHFUN
     const int W = bfw;
     const int H = bfh;
@@ -13272,7 +13034,9 @@ void ImProcFunctions::Lab_Local(
     double& huerefblur, double& chromarefblur, double& lumarefblur, double& hueref, double& chromaref, double& lumaref, double& sobelref, int &lastsav,
     bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, int llcieMask, 
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax,
-    float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab
+    float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,
+    float& highresi, float& nresi, float& highresi46, float& nresi46, float& Lhighresi, float& Lnresi, float& Lhighresi46, float& Lnresi46
+
     )
 {
     //general call of others functions : important return hueref, chromaref, lumaref
@@ -13286,7 +13050,7 @@ void ImProcFunctions::Lab_Local(
     struct local_params lp;
     calcLocalParams(sp, oW, oH, params->locallab, lp, prevDeltaE, llColorMask, llColorMaskinv, llExpMask, llExpMaskinv, llSHMask, llSHMaskinv, llvibMask, lllcMask, llsharMask, llcbMask, llretiMask, llsoftMask, lltmMask, llblMask, lllogMask, ll_Mask, llcieMask, locwavCurveden, locwavdenutili);
 
-    avoidcolshi(lp, sp, original, transformed, cy, cx, sk);
+    //avoidcolshi(lp, sp, transformed, reserved,  cy, cx, sk);
 
     const float radius = lp.rad / (sk * 1.4); //0 to 70 ==> see skip
     int levred;
@@ -13574,7 +13338,7 @@ void ImProcFunctions::Lab_Local(
 //Prepare mask for Blur and noise and Denoise
     bool denoiz = false;
 
-    if ((lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.noiselc > 0.f || lp.wavcurvedenoi || lp.noisecf > 0.f || lp.noisecc > 0.f  || lp.bilat > 0.f) && lp.denoiena) {
+    if ((lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.noiselc > 0.f || lp.wavcurvedenoi || lp.nlstr > 0 || lp.noisecf > 0.f || lp.noisecc > 0.f  || lp.bilat > 0.f) && lp.denoiena) {
         denoiz = true;
     }
 
@@ -14318,13 +14082,10 @@ void ImProcFunctions::Lab_Local(
     }
 
 //local denoise
-    if (lp.activspot && lp.denoiena && (lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.wavcurvedenoi || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f )) {//disable denoise if not used
-        float slidL[8] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f}; 
-        float slida[8] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
-        float slidb[8] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
+    if (lp.activspot && lp.denoiena && (lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.wavcurvedenoi ||lp.nlstr > 0 || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f )) {//disable denoise if not used
         constexpr int aut = 0;
-        DeNoise(call, slidL, slida, slidb, aut, noiscfactiv, lp, originalmaskbl.get(), bufmaskblurbl.get(), levred, huerefblur, lumarefblur, chromarefblur, original, transformed, cx, cy, sk, locwavCurvehue, locwavhueutili);
-
+        DeNoise(call, aut, noiscfactiv, lp, originalmaskbl.get(), bufmaskblurbl.get(), levred, huerefblur, lumarefblur, chromarefblur, original, transformed, cx, cy, sk, locwavCurvehue, locwavhueutili,
+                highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46);
         if (lp.recur) {
             original->CopyFrom(transformed, multiThread);
             float avge;
@@ -16030,12 +15791,7 @@ void ImProcFunctions::Lab_Local(
                     }
 
                     if (tonequ) {
-                        tmpImage->normalizeFloatTo1();
-                        array2D<float> Rtemp(bfw, bfh, tmpImage->r.ptrs, ARRAY2D_BYREFERENCE);
-                        array2D<float> Gtemp(bfw, bfh, tmpImage->g.ptrs, ARRAY2D_BYREFERENCE);
-                        array2D<float> Btemp(bfw, bfh, tmpImage->b.ptrs, ARRAY2D_BYREFERENCE);
-                        tone_eq(Rtemp, Gtemp, Btemp, lp, params->icm.workingProfile, scal, multiThread);
-                        tmpImage->normalizeFloatTo65535();
+                        tone_eq(this, tmpImage, lp, params->icm.workingProfile, scal, multiThread);
                     }
 
                     rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
@@ -18481,9 +18237,9 @@ void ImProcFunctions::Lab_Local(
 #endif
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
-                                        tmpImageorig->r(y, x) = intp(lp.opacol, screen(tmpImageorig->r(y, x), tmpImagereserv->r(y, x), maxR), tmpImageorig->r(y, x));
-                                        tmpImageorig->g(y, x) = intp(lp.opacol, screen(tmpImageorig->g(y, x), tmpImagereserv->g(y, x), maxG), tmpImageorig->g(y, x));
-                                        tmpImageorig->b(y, x) = intp(lp.opacol, screen(tmpImageorig->b(y, x), tmpImagereserv->b(y, x), maxB), tmpImageorig->b(y, x));
+                                        tmpImageorig->r(y, x) = intp(lp.opacol, screen(tmpImageorig->r(y, x), tmpImagereserv->r(y, x), 1.f), tmpImageorig->r(y, x));
+                                        tmpImageorig->g(y, x) = intp(lp.opacol, screen(tmpImageorig->g(y, x), tmpImagereserv->g(y, x), 1.f), tmpImageorig->g(y, x));
+                                        tmpImageorig->b(y, x) = intp(lp.opacol, screen(tmpImageorig->b(y, x), tmpImagereserv->b(y, x), 1.f), tmpImageorig->b(y, x));
                                     }
                                 }
                             } else if (lp.mergecolMethod == 12) { //darken only
@@ -18894,7 +18650,7 @@ void ImProcFunctions::Lab_Local(
                 const float rad = params->locallab.spots.at(sp).radmask; 
                 const float gamma = params->locallab.spots.at(sp).gammask; 
                 const float slope =  params->locallab.spots.at(sp).slopmask;
-                float blendm =  params->locallab.spots.at(sp).blendmask;
+                float blendm =  0.1 * params->locallab.spots.at(sp).blendmask;
                 float blendmab =  params->locallab.spots.at(sp).blendmaskab;
                 if (lp.showmask_met == 2) {
                     blendm = 0.f;//normalize behavior mask with others no action of blend
@@ -19184,11 +18940,12 @@ void ImProcFunctions::Lab_Local(
                     calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
                 }
             }
+
         }
 
 
 // Gamut and Munsell control - very important do not deactivated to avoid crash
-    avoidcolshi(lp, sp, original, transformed, cy, cx, sk);
+    avoidcolshi(lp, sp, transformed, reserved, cy, cx, sk);
 }
 
 }

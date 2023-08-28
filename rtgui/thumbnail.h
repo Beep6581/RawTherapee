@@ -22,6 +22,7 @@
 #include <string>
 
 #include <glibmm/ustring.h>
+#include <glibmm/datetime.h>
 
 #include "cacheimagedata.h"
 #include "threadutils.h"
@@ -73,6 +74,7 @@ class Thumbnail
     // exif & date/time strings
     Glib::ustring   exifString;
     Glib::ustring   dateTimeString;
+    Glib::DateTime  dateTime;
 
     bool            initial_;
 
@@ -82,15 +84,20 @@ class Thumbnail
     void            _loadThumbnail (bool firstTrial = true);
     void            _saveThumbnail ();
     void            _generateThumbnailImage ();
-    int             infoFromImage (const Glib::ustring& fname, std::unique_ptr<rtengine::RawMetaDataLocation> rml = nullptr);
+    int             infoFromImage (const Glib::ustring& fname);
     void            generateExifDateTimeStrings ();
 
     Glib::ustring    getCacheFileName (const Glib::ustring& subdir, const Glib::ustring& fext) const;
 
+    void saveMetadata();
+
 public:
     Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf);
-    Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5);
+    Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5, const std::string &xmpSidecarMd5);
     ~Thumbnail ();
+
+    static int infoFromImage(const Glib::ustring &fname, CacheImageData &cfs);
+    static Glib::ustring xmpSidecarPath(const Glib::ustring &imagePath);
 
     bool              hasProcParams () const;
     const rtengine::procparams::ProcParams& getProcParams ();
@@ -124,8 +131,9 @@ public:
 
     const Glib::ustring&  getExifString () const;
     const Glib::ustring&  getDateTimeString () const;
-    void                  getCamWB  (double& temp, double& green) const;
-    void                  getAutoWB (double& temp, double& green, double equal, double tempBias);
+    const Glib::DateTime& getDateTime () const;
+    void                  getCamWB  (double& temp, double& green, rtengine::StandardObserver observer) const;
+    void                  getAutoWB (double& temp, double& green, double equal, rtengine::StandardObserver observer, double tempBias);
     void                  getSpotWB (int x, int y, int rect, double& temp, double& green);
     void                  applyAutoExp (rtengine::procparams::ProcParams& pparams);
 

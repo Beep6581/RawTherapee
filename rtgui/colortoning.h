@@ -30,6 +30,8 @@ class ColorToning final :
     public AdjusterListener
 {
 public:
+    static const Glib::ustring TOOL_NAME;
+
     ColorToning ();
     ~ColorToning() override;
     void read                  (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;

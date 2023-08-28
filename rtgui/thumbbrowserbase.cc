@@ -781,6 +781,11 @@ void ThumbBrowserBase::arrangeFiles(ThumbBrowserEntryBase* entry)
 
             for (int i = 0; ct < fd.size() && i < numOfCols; ++i, ++ct) {
                 for (; ct < fd.size() && fd[ct]->filtered; ++ct) {
+                    // Thumbs that are not going be drawn should also have a minimum height and width. Cause
+                    // the properties might be used in other parts of the code. The position is just set to be
+                    // zero as a default.
+                    fd[ct]->setPosition(0, 0, colWidths[i], rowHeight);
+
                     fd[ct]->drawable = false;
                 }
 
@@ -1091,6 +1096,25 @@ bool ThumbBrowserBase::Internal::on_scroll_event (GdkEventScroll* event)
 }
 
 
+void ThumbBrowserBase::resort ()
+{
+    {
+        MYWRITERLOCK(l, entryRW);
+
+        std::sort(
+            fd.begin(),
+            fd.end(),
+            [](const ThumbBrowserEntryBase* a, const ThumbBrowserEntryBase* b)
+            {
+                bool lt = a->compare(*b, options.sortMethod);
+                return options.sortDescending ? !lt : lt;
+            }
+        );
+    }
+
+    redraw ();
+}
+
 void ThumbBrowserBase::redraw (ThumbBrowserEntryBase* entry)
 {
 
@@ -1218,9 +1242,30 @@ void ThumbBrowserBase::enableTabMode(bool enable)
     }
 }
 
-void ThumbBrowserBase::initEntry (ThumbBrowserEntryBase* entry)
+void ThumbBrowserBase::insertEntry (ThumbBrowserEntryBase* entry)
 {
-    entry->setOffset ((int)(hscroll.get_value()), (int)(vscroll.get_value()));
+    // find place in sort order
+    {
+        MYWRITERLOCK(l, entryRW);
+
+        fd.insert(
+            std::lower_bound(
+                fd.begin(),
+                fd.end(),
+                entry,
+                [](const ThumbBrowserEntryBase* a, const ThumbBrowserEntryBase* b)
+                {
+                    bool lt = a->compare(*b, options.sortMethod);
+                    return options.sortDescending ? !lt : lt;
+                }
+            ),
+            entry
+        );
+
+        entry->setOffset ((int)(hscroll.get_value()), (int)(vscroll.get_value()));
+    }
+
+    redraw ();
 }
 
 void ThumbBrowserBase::getScrollPosition (double& h, double& v)

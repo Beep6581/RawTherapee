@@ -28,6 +28,8 @@ class LensProfilePanel final :
     public FoldableToolPanel
 {
 public:
+    static const Glib::ustring TOOL_NAME;
+
     LensProfilePanel();
 
     void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;

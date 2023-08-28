@@ -52,6 +52,18 @@
 // Special name for the Dynamic profile
 #define DEFPROFILE_DYNAMIC  "Dynamic"
 
+struct ExternalEditor {
+    ExternalEditor();
+    ExternalEditor(const Glib::ustring &name, const Glib::ustring &command, bool native_command, const Glib::ustring &icon_serialized);
+    Glib::ustring name;
+    Glib::ustring command;
+    bool native_command;
+    Glib::ustring icon_serialized;
+
+    bool operator==(const ExternalEditor & other) const;
+    bool operator!=(const ExternalEditor & other) const;
+};
+
 struct SaveFormat {
     SaveFormat(
         const Glib::ustring& _format,
@@ -61,6 +73,7 @@ struct SaveFormat {
         int _tiff_bits,
         bool _tiff_float,
         bool _tiff_uncompressed,
+        bool _big_tiff,
         bool _save_params
     ) :
         format(_format),
@@ -70,6 +83,7 @@ struct SaveFormat {
         tiffBits(_tiff_bits),
         tiffFloat(_tiff_float),
         tiffUncompressed(_tiff_uncompressed),
+        bigTiff(_big_tiff),
         saveParams(_save_params)
     {
     }
@@ -87,6 +101,7 @@ struct SaveFormat {
             _tiff_bits,
             _tiff_float,
             true,
+            false,
             true
         )
     {
@@ -103,6 +118,7 @@ struct SaveFormat {
     int tiffBits;
     bool tiffFloat;
     bool tiffUncompressed;
+    bool bigTiff;
     bool saveParams;
 };
 
@@ -276,6 +292,8 @@ public:
     Glib::ustring gimpDir;
     Glib::ustring psDir;
     Glib::ustring customEditorProg;
+    std::vector<ExternalEditor> externalEditors;
+    int externalEditorIndex;
     Glib::ustring CPBPath; // Custom Profile Builder's path
     CPBKeyType CPBKeys; // Custom Profile Builder's key type
     int editorToSendTo;
@@ -309,7 +327,7 @@ public:
     bool internalThumbIfUntouched;
     bool overwriteOutputFile;
     int complexity;
-    bool inspectorWindow; // open inspector in spearate window
+    bool inspectorWindow; // open inspector in separate window
     bool zoomOnScroll;    // translate scroll events to zoom
 
     std::vector<double> thumbnailZoomRatios;
@@ -428,10 +446,13 @@ public:
     bool fastexport_use_fast_pipeline;
 
     std::vector<Glib::ustring> favorites;
+    bool cloneFavoriteTools;
     // Dialog settings
     Glib::ustring lastIccDir;
     Glib::ustring lastDarkframeDir;
     Glib::ustring lastFlatfieldDir;
+	Glib::ustring lastCameraProfilesDir;
+	Glib::ustring lastLensProfilesDir;
     Glib::ustring lastRgbCurvesDir;
     Glib::ustring lastLabCurvesDir;
     Glib::ustring lastRetinexDir;
@@ -451,6 +472,17 @@ public:
 
     size_t maxRecentFolders;                   // max. number of recent folders stored in options file
     std::vector<Glib::ustring> recentFolders;  // List containing all recent folders
+
+    enum SortMethod {
+        SORT_BY_NAME,
+        SORT_BY_DATE,
+        SORT_BY_EXIF,
+        SORT_BY_RANK,
+        SORT_BY_LABEL,
+        SORT_METHOD_COUNT,
+    };
+    SortMethod sortMethod; // remembers current state of file browser
+    bool sortDescending;
 
 
     Options ();

@@ -340,7 +340,7 @@ bool rtengine::ImProcFunctions::filmNegativeProcess(
         imgsrc->getWBMults(currWB, params->raw, scale_mul, autoGainComp, rm, gm, bm);
 
         float rm2, gm2, bm2;
-        imgsrc->getWBMults(rtengine::ColorTemp(3500., 1., 1., "Custom"), params->raw, scale_mul, autoGainComp, rm2, gm2, bm2);
+        imgsrc->getWBMults(rtengine::ColorTemp(3500., 1., 1., "Custom", currWB.getObserver()), params->raw, scale_mul, autoGainComp, rm2, gm2, bm2);
         float mg = rtengine::max(rm2, gm2, bm2);
         rm2 /= mg;
         gm2 /= mg;
@@ -611,7 +611,7 @@ void rtengine::Thumbnail::processFilmNegativeV2(
     // as in the main image processing.
 
     double r, g, b;
-    ColorTemp(3500., 1., 1., "Custom").getMultipliers(r, g, b);
+    ColorTemp(3500., 1., 1., "Custom", params.wb.observer).getMultipliers(r, g, b);
     //iColorMatrix is cam_rgb
     const double rm = camwbRed   / (iColorMatrix[0][0] * r + iColorMatrix[0][1] * g + iColorMatrix[0][2] * b);
     const double gm = camwbGreen / (iColorMatrix[1][0] * r + iColorMatrix[1][1] * g + iColorMatrix[1][2] * b);

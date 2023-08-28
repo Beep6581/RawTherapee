@@ -74,12 +74,14 @@ protected:
     ImageSource* imgsrc;
 
     ColorTemp currWB;
+    ColorTemp currWBcust;
     ColorTemp autoWB;
     ColorTemp currWBloc;
     ColorTemp autoWBloc;
     ColorTemp currWBitc;
 
     double lastAwbEqual;
+    StandardObserver lastAwbObserver{ColorTemp::DEFAULT_OBSERVER};
     double lastAwbTempBias;
     Glib::ustring lastAwbauto;
 
@@ -364,6 +366,7 @@ protected:
     std::vector<float> stdtms;
     std::vector<float> meanretis;
     std::vector<float> stdretis;
+    
     bool lastspotdup;
     bool previewDeltaE;
     int locallColorMask;
@@ -433,8 +436,8 @@ public:
 
     void setTweakOperator (TweakOperator *tOperator) override;
     void unsetTweakOperator (TweakOperator *tOperator) override;
-    bool getAutoWB   (double& temp, double& green, double equal, double tempBias) override;
-    void getCamWB    (double& temp, double& green) override;
+    bool getAutoWB   (double& temp, double& green, double equal, StandardObserver observer, double tempBias) override;
+    void getCamWB    (double& temp, double& green, StandardObserver observer) override;
     void getSpotWB   (int x, int y, int rectSize, double& temp, double& green) override;
     bool getFilmNegativeSpot(int x, int y, int spotSize, FilmNegativeParams::RGB &refInput, FilmNegativeParams::RGB &refOutput) override;
     void getAutoCrop (double ratio, int &x, int &y, int &w, int &h) override;

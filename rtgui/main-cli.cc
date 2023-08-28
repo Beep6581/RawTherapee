@@ -67,25 +67,6 @@ Glib::ustring argv1;
 namespace
 {
 
-// For an unknown reason, Glib::filename_to_utf8 doesn't work on reliably Windows,
-// so we're using Glib::filename_to_utf8 for Linux/Apple and Glib::locale_to_utf8 for Windows.
-Glib::ustring fname_to_utf8 (const char* fname)
-{
-#ifdef WIN32
-
-    try {
-        return Glib::locale_to_utf8 (fname);
-    } catch (Glib::Error&) {
-        return Glib::convert_with_fallback (fname, "UTF-8", "ISO-8859-1", "?");
-    }
-
-#else
-
-    return Glib::filename_to_utf8 (fname);
-
-#endif
-}
-
 bool fast_export = false;
 
 }
@@ -743,7 +724,7 @@ int processLineParams ( int argc, char **argv )
                 if (options.defProfRaw == DEFPROFILE_DYNAMIC) {
                     rawParams->deleteInstance();
                     delete rawParams;
-                    rawParams = ProfileStore::getInstance()->loadDynamicProfile (ii->getMetaData());
+                    rawParams = ProfileStore::getInstance()->loadDynamicProfile (ii->getMetaData(), inputFile);
                 }
 
                 std::cout << "  Merging default raw processing profile." << std::endl;
@@ -752,7 +733,7 @@ int processLineParams ( int argc, char **argv )
                 if (options.defProfImg == DEFPROFILE_DYNAMIC) {
                     imgParams->deleteInstance();
                     delete imgParams;
-                    imgParams = ProfileStore::getInstance()->loadDynamicProfile (ii->getMetaData());
+                    imgParams = ProfileStore::getInstance()->loadDynamicProfile (ii->getMetaData(), inputFile);
                 }
 
                 std::cout << "  Merging default non-raw processing profile." << std::endl;

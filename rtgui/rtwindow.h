@@ -20,6 +20,7 @@
 #include <set>
 
 #include <gtkmm.h>
+#include <sigc++/signal.h>
 
 #if defined(__APPLE__)
 #include <gtkosxapplication.h>
@@ -33,6 +34,7 @@
 class BatchQueueEntry;
 class BatchQueuePanel;
 class EditorPanel;
+struct ExternalEditor;
 class FilePanel;
 class PLDBridge;
 class RTWindow final :
@@ -46,6 +48,8 @@ private:
     BatchQueuePanel* bpanel;
     std::set<Glib::ustring> filesEdited;
     std::map<Glib::ustring, EditorPanel*> epanels;
+
+    sigc::signal<void> externalEditorChangedSignal;
 
     Splash* splash;
     Gtk::ProgressBar prProgBar;
@@ -118,12 +122,15 @@ public:
     void MoveFileBrowserToEditor();
     void MoveFileBrowserToMain();
 
+    void updateExternalEditorWidget(int selectedIndex, const std::vector<ExternalEditor> &editors);
     void updateProfiles (const Glib::ustring &printerProfile, rtengine::RenderingIntent printerIntent, bool printerBPC);
     void updateTPVScrollbar (bool hide);
     void updateHistogramPosition (int oldPosition, int newPosition);
     void updateFBQueryTB (bool singleRow);
     void updateFBToolBarVisibility (bool showFilmStripToolBar);
     void updateShowtooltipVisibility (bool showtooltip);
+    void updateToolPanelToolLocations(
+        const std::vector<Glib::ustring> &favorites, bool cloneFavoriteTools);
     bool getIsFullscreen()
     {
         return is_fullscreen;

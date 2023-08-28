@@ -1,7 +1,7 @@
 /*
  *  This file is part of RawTherapee.
  *
- *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
+ *  Copyright (c) 2021 Ingo Weyrich <heckflosse67@gmx.de>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,22 +16,28 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #pragma once
 
-namespace rtengine
+#include <cstdint>
+#include <vector>
+
+struct GainMap
 {
-
-class RawMetaDataLocation {
-
-public:
-    int exifBase;
-    int ciffBase;
-    int ciffLength;
-
-    RawMetaDataLocation () : exifBase(-1), ciffBase(-1), ciffLength(-1) {}
-    explicit RawMetaDataLocation (int exifBase) : exifBase(exifBase), ciffBase(-1), ciffLength(-1) {}
-    RawMetaDataLocation (int ciffBase, int ciffLength) : exifBase(-1), ciffBase(ciffBase), ciffLength(ciffLength) {}
-    RawMetaDataLocation (int exifBase, int ciffBase, int ciffLength) : exifBase(exifBase), ciffBase(ciffBase), ciffLength(ciffLength) {}
+    std::uint32_t Top;
+    std::uint32_t Left;
+    std::uint32_t Bottom;
+    std::uint32_t Right;
+    std::uint32_t Plane;
+    std::uint32_t Planes;
+    std::uint32_t RowPitch;
+    std::uint32_t ColPitch;
+    std::uint32_t MapPointsV;
+    std::uint32_t MapPointsH;
+    double MapSpacingV;
+    double MapSpacingH;
+    double MapOriginV;
+    double MapOriginH;
+    std::uint32_t MapPlanes;
+    std::vector<float> MapGain;
 };
-
-}

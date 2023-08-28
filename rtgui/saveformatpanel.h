@@ -39,6 +39,7 @@ class SaveFormatPanel : public Gtk::Grid, public AdjusterListener, public rtengi
 protected:
     Adjuster*           jpegQual;
     Gtk::CheckButton*   tiffUncompressed;
+    Gtk::CheckButton*   bigTiff;
     MyComboBoxText*     format;
     MyComboBoxText*     jpegSubSamp;
     Gtk::Grid*          formatOpts;

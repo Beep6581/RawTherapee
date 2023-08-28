@@ -42,28 +42,27 @@ PreviewImage::PreviewImage (const Glib::ustring &fname, const Glib::ustring &ext
 
         if (ext.lowercase() == "jpg" || ext.lowercase() == "jpeg") {
             // int deg = infoFromImage (fname);
-            tpp = rtengine::Thumbnail::loadFromImage (fname, width, height, 1, 1., true);
+            tpp = rtengine::Thumbnail::loadFromImage (fname, width, height, 1, 1., ColorTemp::DEFAULT_OBSERVER, true);
 
             if (tpp) {
                 data = tpp->getImage8Data();
             }
         } else if (ext.lowercase() == "png") {
-            tpp = rtengine::Thumbnail::loadFromImage (fname, width, height, 1, 1., true);
+            tpp = rtengine::Thumbnail::loadFromImage (fname, width, height, 1, 1., ColorTemp::DEFAULT_OBSERVER, true);
 
             if (tpp) {
                 data = tpp->getImage8Data();
             }
         } else if (ext.lowercase() == "tif" || ext.lowercase() == "tiff") {
             // int deg = infoFromImage (fname);
-            tpp = rtengine::Thumbnail::loadFromImage (fname, width, height, 1, 1., true);
+            tpp = rtengine::Thumbnail::loadFromImage (fname, width, height, 1, 1., ColorTemp::DEFAULT_OBSERVER, true);
 
             if (tpp) {
                 data = tpp->getImage8Data();
             }
         } else {
-            rtengine::RawMetaDataLocation ri;
             eSensorType sensorType = rtengine::ST_NONE;
-            tpp = rtengine::Thumbnail::loadQuickFromRaw (fname, ri, sensorType, width, height, 1, true, true);
+            tpp = rtengine::Thumbnail::loadQuickFromRaw (fname, sensorType, width, height, 1, true, true);
 
             if (tpp) {
                 data = tpp->getImage8Data();

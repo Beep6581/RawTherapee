@@ -18,6 +18,7 @@
  */
 #pragma once
 
+#include <list>
 #include <map>
 #include <vector>
 
@@ -209,7 +210,7 @@ public:
     void addListener (ProfileStoreListener *listener);
     void removeListener (ProfileStoreListener *listener);
 
-    rtengine::procparams::PartialProfile*        loadDynamicProfile (const rtengine::FramesMetaData *im);
+    rtengine::procparams::PartialProfile*        loadDynamicProfile (const rtengine::FramesMetaData *im, const Glib::ustring& filename);
 
     void dumpFolderList();
 };

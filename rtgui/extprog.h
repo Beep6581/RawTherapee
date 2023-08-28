@@ -20,9 +20,15 @@
 
 #include <vector>
 
+#include <glibmm/refptr.h>
 #include <glibmm/ustring.h>
 
 #include "threadutils.h"
+
+namespace Gio
+{
+    class AppInfo;
+}
 
 struct ExtProgAction
 {
@@ -34,6 +40,13 @@ struct ExtProgAction
     Glib::ustring getFullName () const;  // e.g. "Photoshop (RAW)"
 
     bool execute (const std::vector<Glib::ustring>& fileNames) const;
+};
+
+struct EditorInfo
+{
+    Glib::ustring name;
+    Glib::ustring commandline;
+    bool isNativeCommand;
 };
 
 // Stores all external programs that could be called by the user
@@ -63,7 +76,8 @@ public:
 
     static bool openInGimp (const Glib::ustring& fileName);
     static bool openInPhotoshop (const Glib::ustring& fileName);
-    static bool openInCustomEditor (const Glib::ustring& fileName);
+    static bool openInCustomEditor (const Glib::ustring& fileName, const Glib::ustring* command = nullptr);
+    static bool openInExternalEditor(const Glib::ustring &fileName, const EditorInfo &editorInfo);
 };
 
 #define extProgStore ExtProgStore::getInstance()

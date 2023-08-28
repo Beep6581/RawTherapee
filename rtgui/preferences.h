@@ -26,8 +26,10 @@
 #include "options.h"
 #include "../rtengine/profilestore.h"
 
+class ExternalEditorPreferences;
 class RTWindow;
 class Splash;
+class ToolLocationPreference;
 
 class Preferences final :
     public Gtk::Dialog,
@@ -90,7 +92,7 @@ class Preferences final :
     Gtk::ComboBoxText* languages;
     Gtk::CheckButton* ckbLangAutoDetect;
     Gtk::Entry* dateformat;
-    Gtk::Entry* startupdir;
+    MyFileChooserEntry* startupdir;
     Gtk::RadioButton* sdcurrent;
     Gtk::RadioButton* sdlast;
     Gtk::RadioButton* sdhome;
@@ -101,6 +103,7 @@ class Preferences final :
     Gtk::RadioButton* edGimp;
     Gtk::RadioButton* edPS;
     Gtk::RadioButton* edOther;
+    ExternalEditorPreferences *externalEditors;
     
     Gtk::RadioButton *editor_dir_temp;
     Gtk::RadioButton *editor_dir_current;
@@ -112,6 +115,9 @@ class Preferences final :
     MyFileChooserButton* darkFrameDir;
     MyFileChooserButton* flatFieldDir;
     MyFileChooserButton* clutsDir;
+    MyFileChooserButton* cameraProfilesDir;
+    MyFileChooserButton* lensProfilesDir;
+    MyFileChooserEntry* lensfunDbDir;
     Gtk::Label *dfLabel;
     Gtk::Label *ffLabel;
 
@@ -132,6 +138,17 @@ class Preferences final :
     Gtk::CheckButton* cbdaubech;
     Gtk::SpinButton*  hlThresh;
     Gtk::SpinButton*  shThresh;
+    Gtk::CheckButton* mwbacorr;
+ //   Gtk::CheckButton* mwbaforc;
+ //   Gtk::CheckButton* mwbanopurp;
+    Gtk::CheckButton* mwbaena;
+//    Gtk::CheckButton* mwbaenacustom;
+
+//    Gtk::CheckButton* mwbasort;
+//    Gtk::SpinButton*  wbacorrnb;
+//    Gtk::SpinButton*  wbaprecis;
+//    Gtk::SpinButton*  wbasizeref;
+//    Gtk::SpinButton*  wbagreendelta;
 
     Gtk::SpinButton*  panFactor;
     Gtk::CheckButton* rememberZoomPanCheckbutton;
@@ -232,17 +249,22 @@ class Preferences final :
     Gtk::ComboBoxText *cropGuidesCombo;
     Gtk::CheckButton *cropAutoFitCB;
 
+    Gtk::ComboBoxText *metadataSyncCombo;
+    Gtk::ComboBoxText *xmpSidecarCombo;
+
     Glib::ustring storedValueRaw;
     Glib::ustring storedValueImg;
 
     Options moptions;
     sigc::connection tconn, sconn, fconn, cpfconn, addc, setc, dfconn, ffconn, bpconn, rpconn, ipconn;
-    sigc::connection autoMonProfileConn, sndEnableConn, langAutoDetectConn, autocielabConn;
+    sigc::connection autoMonProfileConn, sndEnableConn, langAutoDetectConn, autocielabConn, observer10Conn;
     Glib::ustring initialTheme;
     Glib::ustring initialFontFamily;
     int initialFontSize;
     bool newFont;
     bool newCPFont;
+
+    ToolLocationPreference *toolLocationPreference;
 
     void fillPreferences ();
     void storePreferences ();
@@ -269,6 +291,7 @@ class Preferences final :
 
     Gtk::ScrolledWindow *swGeneral;
     Gtk::ScrolledWindow *swImageProcessing;
+    Gtk::ScrolledWindow *swFavorites;
     Gtk::ScrolledWindow *swDynamicProfile;
     Gtk::ScrolledWindow *swFileBrowser;
     Gtk::ScrolledWindow *swColorMan;
@@ -278,6 +301,7 @@ class Preferences final :
 
     Gtk::Widget *getGeneralPanel();
     Gtk::Widget *getImageProcessingPanel();
+    Gtk::Widget *getFavoritesPanel();
     Gtk::Widget *getDynamicProfilePanel();
     Gtk::Widget *getFileBrowserPanel();
     Gtk::Widget *getColorManPanel();
@@ -298,6 +322,7 @@ public:
     void sndEnableToggled ();
     void langAutoDetectToggled ();
     void autocielabToggled ();
+    void observer10Toggled (); 
 
     void selectStartupDir ();
     void addExtPressed ();

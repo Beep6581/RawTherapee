@@ -37,7 +37,6 @@
 
 //extern Glib::Threads::Thread* mainThread;
 
-bool FileBrowserEntry::iconsLoaded(false);
 Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::editedIcon;
 Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::recentlySavedIcon;
 Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::enqueuedIcon;
@@ -45,10 +44,8 @@ Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::hdr;
 Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::ps;
 
 FileBrowserEntry::FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname)
-    : ThumbBrowserEntryBase (fname), wasInside(false), iatlistener(nullptr), press_x(0), press_y(0), action_x(0), action_y(0), rot_deg(0.0), landscape(true), cropParams(new rtengine::procparams::CropParams), cropgl(nullptr), state(SNormal), crop_custom_ratio(0.f)
+    : ThumbBrowserEntryBase (fname, thm), wasInside(false), iatlistener(nullptr), press_x(0), press_y(0), action_x(0), action_y(0), rot_deg(0.0), landscape(true), cropParams(new rtengine::procparams::CropParams), cropgl(nullptr), state(SNormal), crop_custom_ratio(0.f)
 {
-    thumbnail = thm;
-
     feih = new FileBrowserEntryIdleHelper;
     feih->fbentry = this;
     feih->destroyed = false;
@@ -59,15 +56,6 @@ FileBrowserEntry::FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname)
     exifline = thumbnail->getExifString ();
 
     scale = 1;
-
-    if (!iconsLoaded) {
-        editedIcon = RTImage::createPixbufFromFile ("tick-small.png");
-        recentlySavedIcon = RTImage::createPixbufFromFile ("save-small.png");
-        enqueuedIcon = RTImage::createPixbufFromFile ("gears-small.png");
-        hdr = RTImage::createPixbufFromFile ("filetype-hdr.png");
-        ps = RTImage::createPixbufFromFile ("filetype-ps.png");
-        iconsLoaded = true;
-    }
 
     thumbnail->addThumbnailListener (this);
 }
@@ -90,6 +78,15 @@ FileBrowserEntry::~FileBrowserEntry ()
         thumbnail->removeThumbnailListener (this);
         thumbnail->decreaseRef ();
     }
+}
+
+void FileBrowserEntry::init ()
+{
+    editedIcon = RTImage::createPixbufFromFile ("tick-small.png");
+    recentlySavedIcon = RTImage::createPixbufFromFile ("save-small.png");
+    enqueuedIcon = RTImage::createPixbufFromFile ("gears-small.png");
+    hdr = RTImage::createPixbufFromFile ("filetype-hdr.png");
+    ps = RTImage::createPixbufFromFile ("filetype-ps.png");
 }
 
 void FileBrowserEntry::refreshThumbnailImage ()

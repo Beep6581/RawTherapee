@@ -1,8 +1,10 @@
-#01 2008-01-19 v2.3 breek
-#02 2008-11-01 v2.4 pantaraf, chelidon, roberto
-#03 2011-08-26 v3.0 joker, chelidon, ffsup2
-#04 2011-08-31 v4.0 chelidon, ffsup2
-#05 2014-04-21 crx
+#001 2008-01-19 v2.3 breek
+#002 2008-11-01 v2.4 pantaraf, chelidon, roberto
+#003 2011-08-26 v3.0 joker, chelidon, ffsup2
+#004 2011-08-31 v4.0 chelidon, ffsup2
+#005 2014-04-21 crx
+#100
+#101 @LANGUAGE_DISPLAY_NAME=Italiano
 
 ABOUT_TAB_BUILD;Versione
 ABOUT_TAB_CREDITS;Riconoscimenti

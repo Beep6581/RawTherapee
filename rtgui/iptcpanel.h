@@ -34,6 +34,7 @@ private:
     const std::unique_ptr<rtengine::procparams::IPTCPairs> changeList;
     const std::unique_ptr<rtengine::procparams::IPTCPairs> defChangeList;
     const std::unique_ptr<rtengine::procparams::IPTCPairs> embeddedData;
+    bool changelist_valid_;
 
     Gtk::TextView*  captionView;
     Glib::RefPtr<Gtk::TextBuffer> captionText;
