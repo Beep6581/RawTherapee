@@ -1276,7 +1276,7 @@ bool FileBrowser::keyPressed (GdkEventKey* event)
     }
 
 #ifdef __WIN32__
-    else if (shift && !ctrl && !alt && !altgr) { // rank
+    else if (!shift && !ctrl && !alt && !altgr) { // rank
         switch(event->hardware_keycode) {
         case 0x30:  // 0-key
             requestRanking (0);
@@ -1331,7 +1331,7 @@ bool FileBrowser::keyPressed (GdkEventKey* event)
     }
 
 #else
-    else if (shift && !ctrl && !alt) { // rank
+    else if (!shift && !ctrl && !alt) { // rank
         switch(event->hardware_keycode) {
         case 0x13:
             requestRanking (0);
