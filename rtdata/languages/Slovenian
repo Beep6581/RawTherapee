@@ -170,11 +170,11 @@ FILEBROWSER_POPUPUNTRASH;Odstrani iz smetnjaka
 FILEBROWSER_QUERYBUTTONHINT;Očisti poizvedbo iskanja
 FILEBROWSER_QUERYHINT;Vnesi imena iskanih datotek. Dovolj je že del imena. Loči iskalne termine z vejicami, npr.\n<i>1001,1004,1199</i>\n\nIzloči termine iskanje s predpono <i>!=</i>\nnpr.\n<i>!=1001,1004,1199</i>\n\nBližnjice:\n<b>Ctrl-f</b> - fokusiraj rubriko iskanja,\n<b>Enter</b> - išči,\n<b>Esc</b> - očisti rubriko iskanja,\n<b>Shift-Esc</b> - sprosti fokus na rubriki iskanja.
 FILEBROWSER_QUERYLABEL; Išči:
-FILEBROWSER_RANK1_TOOLTIP;Rank 1 *\nBližnjica: <b>Shift-1</b>
-FILEBROWSER_RANK2_TOOLTIP;Rank 2 *\nBližnjica: <b>Shift-2</b>
-FILEBROWSER_RANK3_TOOLTIP;Rank 3 *\nBližnjica: <b>Shift-3</b>
-FILEBROWSER_RANK4_TOOLTIP;Rank 4 *\nBližnjica: <b>Shift-4</b>
-FILEBROWSER_RANK5_TOOLTIP;Rank 5 *\nBližnjica: <b>Shift-5</b>
+FILEBROWSER_RANK1_TOOLTIP;Rank 1 *\nBližnjica: <b>1</b>
+FILEBROWSER_RANK2_TOOLTIP;Rank 2 *\nBližnjica: <b>2</b>
+FILEBROWSER_RANK3_TOOLTIP;Rank 3 *\nBližnjica: <b>3</b>
+FILEBROWSER_RANK4_TOOLTIP;Rank 4 *\nBližnjica: <b>4</b>
+FILEBROWSER_RANK5_TOOLTIP;Rank 5 *\nBližnjica: <b>5</b>
 FILEBROWSER_RENAMEDLGLABEL;Preimenuj datoteko
 FILEBROWSER_RESETDEFAULTPROFILE;Nastavi na privzeto vrednost
 FILEBROWSER_SELECTDARKFRAME;Izberi dark-frame...
@@ -185,23 +185,23 @@ FILEBROWSER_SHOWCOLORLABEL3HINT;Prikaži slike označene z zeleno.\nBližnjica: 
 FILEBROWSER_SHOWCOLORLABEL4HINT;Prikaži slike označene z modro.\nBližnjica: <b>Alt-4</b>
 FILEBROWSER_SHOWCOLORLABEL5HINT;Prikaži slike označene s škrlatno.\nBližnjica: <b>Alt-5</b>
 FILEBROWSER_SHOWDIRHINT;Odstrani vse filtre.\nBližnjica: <b>d</b>
-FILEBROWSER_SHOWEDITEDHINT;Prikaži spremenjene slike.\nBližnjica: <b>7</b>
-FILEBROWSER_SHOWEDITEDNOTHINT;Prikaži nespremenjene slike.\nBližnjica: <b>6</b>
+FILEBROWSER_SHOWEDITEDHINT;Prikaži spremenjene slike.\nBližnjica: <b>Shift-7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;Prikaži nespremenjene slike.\nBližnjica: <b>Shift-6</b>
 FILEBROWSER_SHOWEXIFINFO;Prikaži Exif informacije.\n\nBližnjice:\n<b>i</b> - Način zavihkov več urejevalnikov,\n<b>Alt-i</b> - Način enega zavihka urejevalnika.
 FILEBROWSER_SHOWNOTTRASHHINT;Prikaži samo nezbrisane slike.
 FILEBROWSER_SHOWORIGINALHINT;Prikaži samo izvirne slike.\n\nKadar obstaja več slik z enakim imenom a različnimi podaljški imena, smatram za izvirnik tisto, katere podaljšek je najvišje v seznamu podaljškov v nastavitvah > File Browser > Parsed Extensions.
-FILEBROWSER_SHOWRANK1HINT;Prikaži slike označene z 1 zvezdico.\nBližnjica: <b>1</b>
-FILEBROWSER_SHOWRANK2HINT;Prikaži slike označene z 2 zvezdicama.\nBližnjica: <b>2</b>
-FILEBROWSER_SHOWRANK3HINT;Prikaži slike označene z 3 zvezdicami.\nBližnjica: <b>3</b>
-FILEBROWSER_SHOWRANK4HINT;Prikaži slike označene z 4 zvezdicami.\nBližnjica: <b>4</b>
-FILEBROWSER_SHOWRANK5HINT;Prikaži slike označene z 5 zvezdicami.\nBližnjica: <b>5</b>
+FILEBROWSER_SHOWRANK1HINT;Prikaži slike označene z 1 zvezdico.\nBližnjica: <b>Shift-1</b>
+FILEBROWSER_SHOWRANK2HINT;Prikaži slike označene z 2 zvezdicama.\nBližnjica: <b>Shift-2</b>
+FILEBROWSER_SHOWRANK3HINT;Prikaži slike označene z 3 zvezdicami.\nBližnjica: <b>Shift-3</b>
+FILEBROWSER_SHOWRANK4HINT;Prikaži slike označene z 4 zvezdicami.\nBližnjica: <b>Shift-4</b>
+FILEBROWSER_SHOWRANK5HINT;Prikaži slike označene z 5 zvezdicami.\nBližnjica: <b>Shift-5</b>
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Pokaži shranjene slike.\nBližnjica: <b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Pokaži neshranjene slike.\nBližnjica: <b>Alt-6</b>
 FILEBROWSER_SHOWTRASHHINT;Pokaži vsebino smetnjaka.\nBližnjica: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;Pokaži slike brez barvne oznake.\nShortcut: <b>Alt-0</b>
-FILEBROWSER_SHOWUNRANKHINT;Prikaži nerangirane slike.\nShortcut: <b>0</b>
+FILEBROWSER_SHOWUNRANKHINT;Prikaži nerangirane slike.\nShortcut: <b>Shift-0</b>
 FILEBROWSER_THUMBSIZE;Velikost predogledne sličice
-FILEBROWSER_UNRANK_TOOLTIP;Odstrani rang.\nShortcut: <b>Shift-0</b>
+FILEBROWSER_UNRANK_TOOLTIP;Odstrani rang.\nShortcut: <b>0</b>
 FILEBROWSER_ZOOMINHINT;Povečaj velikost predogledne sličice.\n\nBližnjice:\n<b>+</b> - Način z več zavihki urejevalnika,\n<b>Alt</b>-<b>+</b> - Način z enim zavihkom in urejevalnikom.
 FILEBROWSER_ZOOMOUTHINT;Pomanjšaj velikost predogledne sličice.\n\nBližnjice:\n<b>-</b> - Način z več zavihki urejevalnika,\n<b>Alt</b>-<b>-</b> - Način z enim zavihkom in urejevalnikom.
 FILECHOOSER_FILTER_ANY;Vse datoteke

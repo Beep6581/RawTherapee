@@ -166,11 +166,11 @@ FILEBROWSER_POPUPUNTRASH;Usuń z kosza
 FILEBROWSER_QUERYBUTTONHINT;Wyczyść hasło szukania
 FILEBROWSER_QUERYHINT;Wprowadź część nazwy, by zlokalizować plik. Oddziel hasła przecinkami, np.\n<i>1001,1004,1199</i>\n\nWyklucz hasła poprzedzając je znakiem <i>!=</i>\nnp.\n<i>!=1001,1004,1199</i>\n\nSkróty:\n<b>Ctrl-f</b> - przejdź do pola "Znajdź",\n<b>Enter</b> - szukaj,\n<b>Esc</b> - wyczyść pole "Znajdź",\n<b>Shift-Esc</b> - wyjdź z pola "Znajdź".
 FILEBROWSER_QUERYLABEL; Znajdź:
-FILEBROWSER_RANK1_TOOLTIP;Oceń 1 *\nSkrót: <b>Shift-1</b>
-FILEBROWSER_RANK2_TOOLTIP;Oceń 2 *\nSkrót: <b>Shift-2</b>
-FILEBROWSER_RANK3_TOOLTIP;Oceń 3 *\nSkrót: <b>Shift-3</b>
-FILEBROWSER_RANK4_TOOLTIP;Oceń 4 *\nSkrót: <b>Shift-4</b>
-FILEBROWSER_RANK5_TOOLTIP;Oceń 5 *\nSkrót: <b>Shift-5</b>
+FILEBROWSER_RANK1_TOOLTIP;Oceń 1 *\nSkrót: <b>1</b>
+FILEBROWSER_RANK2_TOOLTIP;Oceń 2 *\nSkrót: <b>2</b>
+FILEBROWSER_RANK3_TOOLTIP;Oceń 3 *\nSkrót: <b>3</b>
+FILEBROWSER_RANK4_TOOLTIP;Oceń 4 *\nSkrót: <b>4</b>
+FILEBROWSER_RANK5_TOOLTIP;Oceń 5 *\nSkrót: <b>5</b>
 FILEBROWSER_RENAMEDLGLABEL;Zmień nazwę pliku
 FILEBROWSER_RESETDEFAULTPROFILE;Przywróć domyślne
 FILEBROWSER_SELECTDARKFRAME;Wybierz czarną klatkę...
@@ -181,22 +181,22 @@ FILEBROWSER_SHOWCOLORLABEL3HINT;Pokazuje zdjęcia z zieloną etykietą.\nSkrót:
 FILEBROWSER_SHOWCOLORLABEL4HINT;Pokazuje zdjęcia z niebieską etykietą.\nSkrót: <b>Alt-4</b>
 FILEBROWSER_SHOWCOLORLABEL5HINT;Pokazuje zdjęcia z purpurową etykietą.\nSkrót: <b>Alt-5</b>
 FILEBROWSER_SHOWDIRHINT;Wyłącza wyszstkie filtry.\nSkrót: <b>d</b>
-FILEBROWSER_SHOWEDITEDHINT;Pokazuje edytowane zdjęcia.\nSkrót: <b>7</b>
-FILEBROWSER_SHOWEDITEDNOTHINT;Pokazuje nieedytowane zdjęcia.\nSkrót: <b>6</b>
+FILEBROWSER_SHOWEDITEDHINT;Pokazuje edytowane zdjęcia.\nSkrót: <b>Shift-7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;Pokazuje nieedytowane zdjęcia.\nSkrót: <b>Shift-6</b>
 FILEBROWSER_SHOWEXIFINFO;Pokaż dane Exif.\n\nSkróty:\n<b>i</b> - Tryb wielu zakładek,\n<b>Alt-i</b> - Tryb jednej zakładki.
 FILEBROWSER_SHOWNOTTRASHHINT;Pokazuj tylko obrazy które nie znajdują się w koszu.
-FILEBROWSER_SHOWRANK1HINT;Pokazuje zdjęcia ocenione na 1 gwiazdkę.\nSkrót: <b>1</b>
-FILEBROWSER_SHOWRANK2HINT;Pokazuje zdjęcia ocenione na 2 gwiazdki.\nSkrót: <b>2</b>
-FILEBROWSER_SHOWRANK3HINT;Pokazuje zdjęcia ocenione na 3 gwiazdki.\nSkrót: <b>3</b>
-FILEBROWSER_SHOWRANK4HINT;Pokazuje zdjęcia ocenione na 4 gwiazdki.\nSkrót: <b>4</b>
-FILEBROWSER_SHOWRANK5HINT;Pokazuje zdjęcia ocenione na 5 gwiazdek.\nSkrót: <b>5</b>
+FILEBROWSER_SHOWRANK1HINT;Pokazuje zdjęcia ocenione na 1 gwiazdkę.\nSkrót: <b>Shift-1</b>
+FILEBROWSER_SHOWRANK2HINT;Pokazuje zdjęcia ocenione na 2 gwiazdki.\nSkrót: <b>Shift-2</b>
+FILEBROWSER_SHOWRANK3HINT;Pokazuje zdjęcia ocenione na 3 gwiazdki.\nSkrót: <b>Shift-3</b>
+FILEBROWSER_SHOWRANK4HINT;Pokazuje zdjęcia ocenione na 4 gwiazdki.\nSkrót: <b>Shift-4</b>
+FILEBROWSER_SHOWRANK5HINT;Pokazuje zdjęcia ocenione na 5 gwiazdek.\nSkrót: <b>Shift-5</b>
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Pokazuje zapisane zdjęcia.\nSkrót: <b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Pokazuje niezapisane zdjęcia.\nSkrót: <b>Alt-6</b>
 FILEBROWSER_SHOWTRASHHINT;Pokazuje zawartość kosza.\nSkrót: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;Pokazuje zdjęcia bez kolorowej etykiety.\nSkrót: <b>Alt-0</b>
-FILEBROWSER_SHOWUNRANKHINT;Pokazuje nieocenione zdjęcia.\nSkrót: <b>0</b>
+FILEBROWSER_SHOWUNRANKHINT;Pokazuje nieocenione zdjęcia.\nSkrót: <b>Shift-0</b>
 FILEBROWSER_THUMBSIZE;Rozmiar minaturek
-FILEBROWSER_UNRANK_TOOLTIP;Usuń ocenę.\nSkrót: <b>Shift-0</b>
+FILEBROWSER_UNRANK_TOOLTIP;Usuń ocenę.\nSkrót: <b>0</b>
 FILEBROWSER_ZOOMINHINT;Zwiększa rozmiar miniaturek.\n\nSkróty:\n<b>+</b> - Tryb wielu zakładek,\n<b>Alt</b>-<b>+</b> - Tryb pojedyńczej zakładki.
 FILEBROWSER_ZOOMOUTHINT;Zmniejsza rozmiar miniaturek.\n\nSkróty:\n<b>-</b> - Tryb wielu zakładek,\n<b>Alt</b>-<b>-</b> - Tryb pojedyńczej zakładki.
 FILECHOOSER_FILTER_ANY;Wszystkie pliki
