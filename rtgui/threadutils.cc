@@ -21,7 +21,7 @@
 #include <csignal>
 #include <iostream>
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
 #endif
 
@@ -34,7 +34,7 @@ void MyMutex::checkLock ()
     if (locked) {
         std::cerr << "MyMutex already locked!" << std::endl;
 
-#ifdef WIN32
+#ifdef _WIN32
         DebugBreak ();
 #else
         raise (SIGTRAP);
@@ -49,7 +49,7 @@ void MyMutex::checkUnlock ()
     if (!locked) {
         std::cerr << "MyMutex already unlocked!" << std::endl;
 
-#ifdef WIN32
+#ifdef _WIN32
         DebugBreak ();
 #else
         raise (SIGTRAP);

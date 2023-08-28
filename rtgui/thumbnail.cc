@@ -15,7 +15,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
 #endif
 
@@ -1142,7 +1142,7 @@ void Thumbnail::removeThumbnailListener (ThumbnailListener* tnl)
 bool Thumbnail::openDefaultViewer(int destination)
 {
 
-#ifdef WIN32
+#ifdef _WIN32
     Glib::ustring openFName;
 
     if (destination == 1) {

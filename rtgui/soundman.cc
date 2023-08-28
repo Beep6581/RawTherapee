@@ -21,7 +21,7 @@
 #include "soundman.h"
 #include "options.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
 #include <mmsystem.h>
 #endif
@@ -33,7 +33,7 @@
 
 void SoundManager::init()
 {
-#ifdef WIN32
+#ifdef _WIN32
 // TODO: On Windows Vista/7 RT should register with the OS sound system, so it can enjoy application specific
 // volume, safed, process independent etc. from the start.
 // Function call is IAudioClient::Initialize
@@ -53,7 +53,7 @@ void SoundManager::playSoundAsync(const Glib::ustring &sound)
         return;
     }
 
-#ifdef WIN32
+#ifdef _WIN32
     DWORD sndParam = SND_ASYNC | SND_NODEFAULT;
 
     if (sound.find('.') != Glib::ustring::npos) {

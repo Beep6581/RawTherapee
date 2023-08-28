@@ -43,7 +43,7 @@
 #include "thumbnail.h"
 #include "toolpanelcoord.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #include "windows.h"
 
 #include "../rtengine/winutils.h"
@@ -70,7 +70,7 @@ void setprogressStrUI(double val, const Glib::ustring str, MyProgressBar* pProgr
 #if !defined(__APPLE__) // monitor profile not supported on apple
 bool find_default_monitor_profile (GdkWindow *rootwin, Glib::ustring &defprof, Glib::ustring &defprofname)
 {
-#ifdef WIN32
+#ifdef _WIN32
     HDC hDC = GetDC (nullptr);
 
     if (hDC != nullptr) {
@@ -151,7 +151,7 @@ bool hasUserOnlyPermission(const Glib::ustring &dirname)
     const guint32 mode = file_info->get_attribute_uint32("unix::mode");
 
     return (mode & 0777) == 0700 && owner == Glib::get_user_name();
-#elif defined(WIN32)
+#elif defined(_WIN32)
     const Glib::RefPtr<Gio::File> file = Gio::File::create_for_path(dirname);
     const Glib::RefPtr<Gio::FileInfo> file_info = file->query_info("owner::user");
     if (!file_info) {
@@ -254,7 +254,7 @@ void setUserOnlyPermission(const Glib::RefPtr<Gio::File> file, bool execute)
         file->set_attribute_uint32("unix::mode", mode, Gio::FILE_QUERY_INFO_NONE);
     } catch (Gio::Error &) {
     }
-#elif defined(WIN32)
+#elif defined(_WIN32)
     // Get the current user's SID.
     HANDLE process_token_raw;
     if (!OpenProcessToken(GetCurrentProcess(), TOKEN_READ, &process_token_raw)) {
@@ -324,7 +324,7 @@ void setUserOnlyPermission(const Glib::RefPtr<Gio::File> file, bool execute)
  */
 Glib::ustring getTmpDirectory()
 {
-#if defined(__linux__) || defined(__APPLE__) || defined(WIN32)
+#if defined(__linux__) || defined(__APPLE__) || defined(_WIN32)
     static Glib::ustring recent_dir = "";
     const Glib::ustring tmp_dir_root = Glib::get_tmp_dir();
     const Glib::ustring subdir_base =
@@ -1545,7 +1545,7 @@ void EditorPanel::refreshProcessingState (bool inProcessingP)
         val = 0.0;
         str = "PROGRESSBAR_READY";
 
-#ifdef WIN32
+#ifdef _WIN32
 
         // Maybe accessing "parent", which is a Gtk object, can justify to get the Gtk lock...
         if (!firstProcessingDone && static_cast<RTWindow*> (parent)->getIsFullscreen()) {

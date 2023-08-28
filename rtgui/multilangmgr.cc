@@ -22,7 +22,7 @@
 #include <glib.h>
 #include <iostream>
 #include <utility>
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
 #include <winnls.h>
 #endif
@@ -315,7 +315,7 @@ const TranslationMetadata *MultiLangMgr::getMetadata(const Glib::ustring &fname)
 
 bool MultiLangMgr::isOSLanguageDetectSupported ()
 {
-#if defined (WIN32) || defined (__linux__) || defined (__APPLE__)
+#if defined (_WIN32) || defined (__linux__) || defined (__APPLE__)
     return true;
 #else
     return false;
@@ -326,7 +326,7 @@ Glib::ustring MultiLangMgr::getOSUserLanguage ()
 {
     Glib::ustring langName ("default");
 
-#if defined (WIN32)
+#if defined (_WIN32)
 
     const LCID localeID = GetUserDefaultLCID ();
     TCHAR localeName[18];
