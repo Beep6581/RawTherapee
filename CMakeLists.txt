@@ -565,6 +565,12 @@ if(WITH_MYFILE_MMAP)
     add_definitions(-DMYFILE_MMAP)
 endif()
 
+# Atomic is required in some builds: #6821
+find_package(ATOMIC)
+if(ATOMIC_FOUND)
+	target_link_libraries(executable ${ATOMIC_LIBRARIES})
+endif()
+
 if(WITH_LTO)
     # Using LTO with older versions of binutils requires setting extra flags
     set(BINUTILS_VERSION_MININUM "2.29")
