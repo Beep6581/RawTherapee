@@ -7690,13 +7690,8 @@ void CLASS parse_fuji (int offset)
       read_crop.left_margin = get2();
       read_crop_c += 2;
     }
-    // 0x112 = 274 unknown tag
-    // 0x113 = 275 unknown tag
     // 0x115 = 277 RawImageAspectRatio
-    // 0x141 = 321 unknown tag
     // 0x9650 = 38480 RawExposureBias
-    // 0x9651 = 38481 unknown tag
-    // 0x17f8 = 6136 unknown tag
 
     fseek (ifp, save+len, SEEK_SET);
   }
@@ -10164,11 +10159,6 @@ canon_a5:
             width = raw_width = x_width;
             height = raw_height = x_height;
         }
-        // due to this (mainly raw_width and raw_height) not beimg read from the file, a segmentation fault occurs, when trying to read the raw image
-        // the following data should be read from the exif data, and passed to the corresponding variables:
-        // RAF - RawImageCroppedSize ------- Test image: 4992x3328
-        // raw_width = 4992;
-        // raw_height = 3328;
     } else if (!strcmp(model, "DBP for GX680")) { // Special case for #4204
         width = raw_width = 5504;
         height = raw_height = 3856;
