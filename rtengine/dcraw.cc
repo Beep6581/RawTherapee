@@ -7113,8 +7113,8 @@ void CLASS apply_tiff()
     (unsigned)tiff_ifd[i].bps < 33 && (unsigned)tiff_ifd[i].samples < 13 && // RT
 	 ns && ((ns > os && (ties = 1)) ||
 		(ns == os && shot_select == ties++))) {
-      raw_width     = read_crop.complete ? read_crop.width : tiff_ifd[i].width;
-      raw_height    = read_crop.complete ? read_crop.height : tiff_ifd[i].height;
+      raw_width     = read_crop.complete ? read_crop.width : tiff_ifd[i].width;   // RT
+      raw_height    = read_crop.complete ? read_crop.height : tiff_ifd[i].height; // RT
       tiff_bps      = tiff_ifd[i].bps;
       tiff_compress = tiff_ifd[i].comp;
       data_offset   = tiff_ifd[i].offset;
@@ -7647,57 +7647,57 @@ void CLASS parse_fuji (int offset)
 
   fseek (ifp, offset, SEEK_SET);
   entries = get4();
-  int read_crop_c = 0;
-  bool read_crop_dimensions = false;
+  int read_crop_c = 0;                                                  // RT
+  bool read_crop_dimensions = false;                                    // RT
   if (entries > 255) return;
   while (entries--) {
     tag = get2();
     len = get2();
     save = ftell(ifp);
-    // tag 0x100 = 256 RawImageFullSize
+    // tag 0x100 = 256 RawImageFullSize                                    RT
     if (tag == 0x100) {
       raw_height = get2();
       raw_width  = get2();
     } else if (tag == 0x121) {
       height = get2();
       if ((width = get2()) == 4284) width += 3;
-      // tag 0x130 = 304 FujiLayout
+      // tag 0x130 = 304 FujiLayout                                        RT
     } else if (tag == 0x130) {
       fuji_layout = fgetc(ifp) >> 7;
       fuji_width = !(fgetc(ifp) & 8);
-      // tag 0x131 = 305 XTransLayout
+      // tag 0x131 = 305 XTransLayout                                      RT
     } else if (tag == 0x131) {
       filters = 9;
       FORC(36) xtrans_abs[0][35-c] = fgetc(ifp) & 3;
     } else if (tag == 0x2ff0) {
       FORC4 cam_mul[c ^ 1] = get2();
-    } else if (tag == 0xc000 && len > 20000 && !read_crop_dimensions) {
+    } else if (tag == 0xc000 && len > 20000 && !read_crop_dimensions) { // RT
       c = order;
       order = 0x4949;
       while ((tag = get4()) > raw_width);
       width = tag;
       height = get4();
       order = c;
-    // RawImageCroppedSize 0x111 = 273 	(including borders)
-    } else if (tag == 0x111) {
-      height = raw_height = read_crop.height = get2();
-      width = raw_width = read_crop.width = get2();
-      read_crop_dimensions = true;
-      read_crop_c += 2;
-      // RawImageTopLeft 0x110 = 272 (top margin first, then left margin)
-    } else if (tag == 0x110){
-      read_crop.top_margin = get2();
-      read_crop.left_margin = get2();
-      read_crop_c += 2;
-    }
-    // 0x115 = 277 RawImageAspectRatio
-    // 0x9650 = 38480 RawExposureBias
+    // RawImageCroppedSize 0x111 = 273 	(including borders)                RT
+    } else if (tag == 0x111) {                                          // RT
+      height = raw_height = read_crop.height = get2();                  // RT
+      width = raw_width = read_crop.width = get2();                     // RT
+      read_crop_dimensions = true;                                      // RT
+      read_crop_c += 2;                                                 // RT
+      // RawImageTopLeft 0x110 = 272 (top margin first, then left margin)  RT
+    } else if (tag == 0x110){                                           // RT
+      read_crop.top_margin = get2();                                    // RT
+      read_crop.left_margin = get2();                                   // RT
+      read_crop_c += 2;                                                 // RT
+    }                                                                   // RT
+    // 0x115 = 277 RawImageAspectRatio                                     RT
+    // 0x9650 = 38480 RawExposureBias                                      RT
 
     fseek (ifp, save+len, SEEK_SET);
   }
   height <<= fuji_layout;
   width  >>= fuji_layout;
-  read_crop.complete = read_crop_c == 4;
+  read_crop.complete = read_crop_c == 4;                                // RT
 }
 
 int CLASS parse_jpeg (int offset)
@@ -10153,12 +10153,12 @@ canon_a5:
         width = raw_width = 6016;
         height = raw_height = 4014;
     } else if (!strcmp(model, "X-Pro3") || !strcmp(model, "X-T3") || !strcmp(model, "X-T30") || !strcmp(model, "X-T4") || !strcmp(model, "X100V") || !strcmp(model, "X-S10")) {
-        constexpr std::uint_fast16_t x_width = 6384, x_height = 4182;
-        is_cropped = read_crop.complete && (x_width - raw_width > is_cropped_margin || x_height - raw_height > is_cropped_margin);
-        if (!is_cropped) {
-            width = raw_width = x_width;
-            height = raw_height = x_height;
-        }
+        constexpr std::uint_fast16_t x_width = 6384, x_height = 4182;                                                               // RT
+        is_cropped = read_crop.complete && (x_width - raw_width > is_cropped_margin || x_height - raw_height > is_cropped_margin);  // RT
+        if (!is_cropped) {                                                                                                          // RT
+            width = raw_width = x_width;                                                                                            // RT
+            height = raw_height = x_height;                                                                                         // RT
+        }                                                                                                                           // RT
     } else if (!strcmp(model, "DBP for GX680")) { // Special case for #4204
         width = raw_width = 5504;
         height = raw_height = 3856;

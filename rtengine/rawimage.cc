@@ -560,13 +560,13 @@ int RawImage::loadRaw(bool loadData, unsigned int imageNum, bool closeFile, Prog
                 raw_crop_cc = true;
                 int lm, tm, w, h;
                 cc->get_rawCrop(raw_width, raw_height, lm, tm, w, h);
-                is_cropped = read_crop.complete && (raw_width - read_crop.width > is_cropped_margin || raw_height - read_crop.height > is_cropped_margin);
-                if (is_cropped){
-                    left_margin = read_crop.left_margin;
-                    top_margin = read_crop.top_margin;
-                    tm = 0;
-                    lm = 0;
-                }
+                is_cropped = read_crop.complete && (raw_width - read_crop.width > is_cropped_margin || raw_height - read_crop.height > is_cropped_margin);  // RT
+                if (is_cropped){                                                                                                                            // RT
+                    left_margin = read_crop.left_margin;                                                                                                    // RT
+                    top_margin = read_crop.top_margin;                                                                                                      // RT
+                    tm = 0;                                                                                                                                 // RT
+                    lm = 0;                                                                                                                                 // RT
+                }                                                                                                                                           // RT
 
                 if (isXtrans()) {
                     shiftXtransMatrix(6 - ((top_margin - tm) % 6), 6 - ((left_margin - lm) % 6));
@@ -576,10 +576,10 @@ int RawImage::loadRaw(bool loadData, unsigned int imageNum, bool closeFile, Prog
                     }
                 }
 
-                if (!is_cropped) {
+                if (!is_cropped) {      // RT
                     left_margin = lm;
                     top_margin = tm;
-                }
+                }                       // RT
 
                 if (w < 0) {
                     iwidth += w;

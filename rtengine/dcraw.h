@@ -76,22 +76,22 @@ public:
     }
 
 protected:
-    // stores the cropdata read from the file
-    struct CropData {
-        std::uint_fast16_t  width,
-                            height,
-                            top_margin,
-                            left_margin;
-        bool complete = false;
-    } read_crop;
-    /*
-        If the difference between the read dimension (width /height)
-        and the constant dimension (eg.: from cameraconstants) 
-        is greater than this amount,
-        then the file should be considered raw cropped (for fuji cropped raw)
-    */
-    static constexpr std::uint_fast16_t is_cropped_margin = 500;
-    bool is_cropped = false;
+    // stores the cropdata read from the file                                       RT
+    struct CropData {                                                            // RT
+        std::uint_fast16_t  width,                                               // RT
+                            height,                                              // RT
+                            top_margin,                                          // RT
+                            left_margin;                                         // RT
+        bool complete = false;                                                   // RT
+    } read_crop;                                                                 // RT
+    /*                                                                              RT
+        If the difference between the read dimension (width /height)                RT
+        and the constant dimension (eg.: from cameraconstants)                      RT
+        is greater than this amount,                                                RT
+        then the file should be considered raw cropped (for fuji cropped raw)       RT
+    */                                                                           // RT
+    static constexpr std::uint_fast16_t is_cropped_margin = 500;                 // RT
+    bool is_cropped = false;                                                     // RT
     int exif_base, ciff_base, ciff_len;
     rtengine::IMFILE *ifp;
     FILE *ofp;
