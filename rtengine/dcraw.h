@@ -76,6 +76,22 @@ public:
     }
 
 protected:
+    // stores the cropdata read from the file
+    struct CropData {
+        std::uint_fast16_t  width,
+                            height,
+                            top_margin,
+                            left_margin;
+        bool complete = false;
+    } read_crop;
+    /*
+        If the difference between the read dimension (width /height)
+        and the constant dimension (eg.: from cameraconstants) 
+        is greater than this amount,
+        then the file should be considered raw cropped (for fuji cropped raw)
+    */
+    static constexpr std::uint_fast16_t is_cropped_margin = 500;
+    bool is_cropped = false;
     int exif_base, ciff_base, ciff_len;
     rtengine::IMFILE *ifp;
     FILE *ofp;
