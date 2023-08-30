@@ -176,11 +176,11 @@ FILEBROWSER_POPUPUNTRASH;Remove from trash
 FILEBROWSER_QUERYBUTTONHINT;Clear the Find query
 FILEBROWSER_QUERYHINT;Type filenames to search for. Supports partial filenames. Separate the search terms using commas, e.g.\n<i>1001,1004,1199</i>\n\nExclude search terms by prefixing them with <i>!=</i>\ne.g.\n<i>!=1001,1004,1199</i>\n\nShortcuts:\n<b>Ctrl-f</b> - focus the Find box,\n<b>Enter</b> - search,\n<b>Esc</b> - clear the Find box,\n<b>Shift-Esc</b> - defocus the Find box.
 FILEBROWSER_QUERYLABEL; Find:
-FILEBROWSER_RANK1_TOOLTIP;Rank 1 *\nShortcut: <b>Shift-1</b>
-FILEBROWSER_RANK2_TOOLTIP;Rank 2 *\nShortcut: <b>Shift-2</b>
-FILEBROWSER_RANK3_TOOLTIP;Rank 3 *\nShortcut: <b>Shift-3</b>
-FILEBROWSER_RANK4_TOOLTIP;Rank 4 *\nShortcut: <b>Shift-4</b>
-FILEBROWSER_RANK5_TOOLTIP;Rank 5 *\nShortcut: <b>Shift-5</b>
+FILEBROWSER_RANK1_TOOLTIP;Rank 1 *\nShortcut: <b>1</b>
+FILEBROWSER_RANK2_TOOLTIP;Rank 2 *\nShortcut: <b>2</b>
+FILEBROWSER_RANK3_TOOLTIP;Rank 3 *\nShortcut: <b>3</b>
+FILEBROWSER_RANK4_TOOLTIP;Rank 4 *\nShortcut: <b>4</b>
+FILEBROWSER_RANK5_TOOLTIP;Rank 5 *\nShortcut: <b>5</b>
 FILEBROWSER_RENAMEDLGLABEL;Rename file
 FILEBROWSER_RESETDEFAULTPROFILE;Reset to default
 FILEBROWSER_SELECTDARKFRAME;Select dark-frame...
@@ -191,23 +191,23 @@ FILEBROWSER_SHOWCOLORLABEL3HINT;Show images labeled Green.\nShortcut: <b>Alt-3</
 FILEBROWSER_SHOWCOLORLABEL4HINT;Show images labeled Blue.\nShortcut: <b>Alt-4</b>
 FILEBROWSER_SHOWCOLORLABEL5HINT;Show images labeled Purple.\nShortcut: <b>Alt-5</b>
 FILEBROWSER_SHOWDIRHINT;Clear all filters.\nShortcut: <b>d</b>
-FILEBROWSER_SHOWEDITEDHINT;Show edited images.\nShortcut: <b>7</b>
-FILEBROWSER_SHOWEDITEDNOTHINT;Show not edited images.\nShortcut: <b>6</b>
+FILEBROWSER_SHOWEDITEDHINT;Show edited images.\nShortcut: <b>Shift-7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;Show not edited images.\nShortcut: <b>Shift-6</b>
 FILEBROWSER_SHOWEXIFINFO;Show Exif info.\n\nShortcuts:\n<b>i</b> - Multiple Editor Tabs Mode,\n<b>Alt-i</b> - Single Editor Tab Mode.
 FILEBROWSER_SHOWNOTTRASHHINT;Show only images not in trash.
 FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
-FILEBROWSER_SHOWRANK1HINT;Show images ranked as 1-star.\nShortcut: <b>1</b>
-FILEBROWSER_SHOWRANK2HINT;Show images ranked as 2-star.\nShortcut: <b>2</b>
-FILEBROWSER_SHOWRANK3HINT;Show images ranked as 3-star.\nShortcut: <b>3</b>
-FILEBROWSER_SHOWRANK4HINT;Show images ranked as 4-star.\nShortcut: <b>4</b>
-FILEBROWSER_SHOWRANK5HINT;Show images ranked as 5-star.\nShortcut: <b>5</b>
+FILEBROWSER_SHOWRANK1HINT;Show images ranked as 1-star.\nShortcut: <b>Shift-1</b>
+FILEBROWSER_SHOWRANK2HINT;Show images ranked as 2-star.\nShortcut: <b>Shift-2</b>
+FILEBROWSER_SHOWRANK3HINT;Show images ranked as 3-star.\nShortcut: <b>Shift-3</b>
+FILEBROWSER_SHOWRANK4HINT;Show images ranked as 4-star.\nShortcut: <b>Shift-4</b>
+FILEBROWSER_SHOWRANK5HINT;Show images ranked as 5-star.\nShortcut: <b>Shift-5</b>
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Show saved images.\nShortcut: <b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Show unsaved images.\nShortcut: <b>Alt-6</b>
 FILEBROWSER_SHOWTRASHHINT;Show contents of trash.\nShortcut: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;Show images without a color label.\nShortcut: <b>Alt-0</b>
-FILEBROWSER_SHOWUNRANKHINT;Show unranked images.\nShortcut: <b>0</b>
+FILEBROWSER_SHOWUNRANKHINT;Show unranked images.\nShortcut: <b>Shift-0</b>
 FILEBROWSER_THUMBSIZE;Thumbnail size
-FILEBROWSER_UNRANK_TOOLTIP;Unrank.\nShortcut: <b>Shift-0</b>
+FILEBROWSER_UNRANK_TOOLTIP;Unrank.\nShortcut: <b>0</b>
 FILEBROWSER_ZOOMINHINT;Increase thumbnail size.\n\nShortcuts:\n<b>+</b> - Multiple Editor Tabs Mode,\n<b>Alt</b>-<b>+</b> - Single Editor Tab Mode.
 FILEBROWSER_ZOOMOUTHINT;Decrease thumbnail size.\n\nShortcuts:\n<b>-</b> - Multiple Editor Tabs Mode,\n<b>Alt</b>-<b>-</b> - Single Editor Tab Mode.
 FILECHOOSER_FILTER_ANY;All files
@@ -2542,9 +2542,11 @@ TP_FILMNEGATIVE_GUESS_TOOLTIP;Automatically set the red and blue ratios by picki
 TP_FILMNEGATIVE_LABEL;Film Negative
 TP_FILMNEGATIVE_OUT_LEVEL;Output level
 TP_FILMNEGATIVE_PICK;Pick neutral spots
+TP_FILMNEGATIVE_PICK_SIZE;Size:
 TP_FILMNEGATIVE_RED;Red ratio
 TP_FILMNEGATIVE_REF_LABEL;Input RGB: %1
 TP_FILMNEGATIVE_REF_PICK;Pick white balance spot
+TP_FILMNEGATIVE_REF_SIZE;Size:
 TP_FILMNEGATIVE_REF_TOOLTIP;Pick a gray patch for white-balancing the output, positive image.
 TP_FILMSIMULATION_LABEL;Film Simulation
 TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee is configured to look for Hald CLUT images, which are used for the Film Simulation tool, in a folder which is taking too long to load.\nGo to Preferences > Image Processing > Film Simulation\nto see which folder is being used. You should either point RawTherapee to a folder which contains only Hald CLUT images and nothing more, or to an empty folder if you don't want to use the Film Simulation tool.\n\nRead the Film Simulation article in RawPedia for more information.\n\nDo you want to cancel the scan now?

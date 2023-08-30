@@ -78,7 +78,7 @@ FramesMetaData* FramesMetaData::fromFile(const Glib::ustring& fname)
 
 static struct tm timeFromTS(const time_t ts)
 {
-#if !defined(WIN32)
+#if !defined(_WIN32)
         struct tm tm;
         return *gmtime_r(&ts, &tm);
 #else

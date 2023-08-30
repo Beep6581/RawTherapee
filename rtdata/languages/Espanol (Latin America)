@@ -224,11 +224,11 @@ FILEBROWSER_POPUPUNTRASH;Sacar de la papelera
 FILEBROWSER_QUERYBUTTONHINT;Borrar la búsqueda
 FILEBROWSER_QUERYHINT;Escriba <i>parte del nombre del archivo</i> a buscar, o una <i>lista separada con comas</i>.\nP.ej. <i>1001,1004,1199</i>\n\n<b>Ctrl-F</b> Para poner el foco en el campo Buscar.\n<b>Enter</b> Para iniciar la búsqueda.\n<b>Esc</b> Para limpiar.\n<b>Shift-Esc</b> Para quitar el foco.
 FILEBROWSER_QUERYLABEL; Buscar:
-FILEBROWSER_RANK1_TOOLTIP;Rango 1 *\nTecla de Atajo<b>Shift-1</b>
-FILEBROWSER_RANK2_TOOLTIP;Rango 2 **\nTecla de Atajo<b>Shift-2</b>
-FILEBROWSER_RANK3_TOOLTIP;Rango 3 ***\nTecla de Atajo<b>Shift-3</b>
-FILEBROWSER_RANK4_TOOLTIP;Rango 4 ****\nTecla de Atajo<b>Shift-4</b>
-FILEBROWSER_RANK5_TOOLTIP;Rango 5 *****\nTecla de Atajo<b>Shift-5</b>
+FILEBROWSER_RANK1_TOOLTIP;Rango 1 *\nTecla de Atajo<b>1</b>
+FILEBROWSER_RANK2_TOOLTIP;Rango 2 **\nTecla de Atajo<b>2</b>
+FILEBROWSER_RANK3_TOOLTIP;Rango 3 ***\nTecla de Atajo<b>3</b>
+FILEBROWSER_RANK4_TOOLTIP;Rango 4 ****\nTecla de Atajo<b>4</b>
+FILEBROWSER_RANK5_TOOLTIP;Rango 5 *****\nTecla de Atajo<b>5</b>
 FILEBROWSER_RENAMEDLGLABEL;Renombrar archivo
 FILEBROWSER_RESETDEFAULTPROFILE;Restablecen a los predeterminados
 FILEBROWSER_SELECTDARKFRAME;Seleccionar Toma Negra…
@@ -239,22 +239,22 @@ FILEBROWSER_SHOWCOLORLABEL3HINT;Mostrar imágenes etiquetadas con Verde <b>Alt-3
 FILEBROWSER_SHOWCOLORLABEL4HINT;Mostrar imágenes etiquetadas con Azul <b>Alt-4</b>
 FILEBROWSER_SHOWCOLORLABEL5HINT;Mostrar imágenes etiquetadas con Púrpura <b>Alt-5</b>
 FILEBROWSER_SHOWDIRHINT;Quitar todos los filtros.\nTecla de Atajo: <b>d</b>
-FILEBROWSER_SHOWEDITEDHINT;Mostrar imágenes editadas.\nTecla de Atajo: <b>7</b>
-FILEBROWSER_SHOWEDITEDNOTHINT;Mostrar imágenes no editadas.\nTecla de Atajo: <b>6</b>
+FILEBROWSER_SHOWEDITEDHINT;Mostrar imágenes editadas.\nTecla de Atajo: <b>Shift-7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;Mostrar imágenes no editadas.\nTecla de Atajo: <b>Shift-6</b>
 FILEBROWSER_SHOWEXIFINFO;Mostrar datos Exif.\nTecla de Atajo: <b>i</b>\n\nTecla de Atajo en modo editor simple: <b>Alt-I</b>
 FILEBROWSER_SHOWORIGINALHINT;Muestre solo imágenes originales. \nCuando existen varias imágenes con el mismo nombre de archivo pero con diferentes extensiones, la que se considera original es aquella cuya extensión está más cerca de la parte superior de la lista de extensiones analizadas en Preferencias> Explorador de archivos> Extensiones analizadas.
-FILEBROWSER_SHOWRANK1HINT;Mostrar imágenes con 1 estrella.\nTecla de Atajo: <b>1</b>
-FILEBROWSER_SHOWRANK2HINT;Mostrar imágenes con 2 estrellas.\nTecla de Atajo: <b>2</b>
-FILEBROWSER_SHOWRANK3HINT;Mostrar imágenes con 3 estrellas.\nTecla de Atajo: <b>3</b>
-FILEBROWSER_SHOWRANK4HINT;Mostrar imágenes con 4 estrellas.\nTecla de Atajo: <b>4</b>
-FILEBROWSER_SHOWRANK5HINT;Mostrar imágenes con 5 estrellas.\nTecla de Atajo: <b>5</b>
+FILEBROWSER_SHOWRANK1HINT;Mostrar imágenes con 1 estrella.\nTecla de Atajo: <b>Shift-1</b>
+FILEBROWSER_SHOWRANK2HINT;Mostrar imágenes con 2 estrellas.\nTecla de Atajo: <b>Shift-2</b>
+FILEBROWSER_SHOWRANK3HINT;Mostrar imágenes con 3 estrellas.\nTecla de Atajo: <b>Shift-3</b>
+FILEBROWSER_SHOWRANK4HINT;Mostrar imágenes con 4 estrellas.\nTecla de Atajo: <b>Shift-4</b>
+FILEBROWSER_SHOWRANK5HINT;Mostrar imágenes con 5 estrellas.\nTecla de Atajo: <b>Shift-5</b>
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Mostrar imágenes guardadas recientemente.\nTecla de Atajo: <b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Mostrar imágenes no guardadas recientemente.\nTecla de Atajo: <b>Alt-6</b>
 FILEBROWSER_SHOWTRASHHINT;Mostrar el contenido de la papelera.\nTecla de Atajo: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;Mostrar imágenes sin etiqueta de color.\nTecla de Atajo: <b>Alt-0</b>
-FILEBROWSER_SHOWUNRANKHINT;Mostrar imágenes sin rango.\nTecla de Atajo: <b>0</b>
+FILEBROWSER_SHOWUNRANKHINT;Mostrar imágenes sin rango.\nTecla de Atajo: <b>Shift-0</b>
 FILEBROWSER_THUMBSIZE;Tamaño miniatura
-FILEBROWSER_UNRANK_TOOLTIP;Sin Rango\nTecla de Atajo<b>Shift - 0</b>
+FILEBROWSER_UNRANK_TOOLTIP;Sin Rango\nTecla de Atajo<b>0</b>
 FILEBROWSER_ZOOMINHINT;Agrandar miniatura.\nTecla de Atajo: <b>+</b>\n\nTecla de Atajo en modo editor simple: <b>Alt-+</b>
 FILEBROWSER_ZOOMOUTHINT;Reducir miniatura.\nTecla de Atajo: <b>-</b>\n\nTecla de Atajo en modo editor simple: <b>Alt--</b>
 FILECHOOSER_FILTER_ANY;Todos los archivos

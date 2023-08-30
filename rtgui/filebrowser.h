@@ -203,7 +203,7 @@ public:
     void partPasteProfile ();
     void openNextPreviousEditorImage(const Glib::ustring& fname, eRTNav eNextPrevious);
 
-#ifdef WIN32
+#ifdef _WIN32
     void openDefaultViewer (int destination);
 #endif
 

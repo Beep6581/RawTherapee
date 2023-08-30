@@ -119,7 +119,7 @@ Preferences::Preferences(RTWindow *rtwindow)
     nb->append_page(*getBatchProcPanel(), M("PREFERENCES_BATCH_PROCESSING"));
     nb->append_page(*getPerformancePanel(), M("PREFERENCES_TAB_PERFORMANCE"));
     // Sounds only on Windows and Linux
-#if defined(WIN32) || defined(__linux__)
+#if defined(_WIN32) || defined(__linux__)
     nb->append_page(*getSoundsPanel(), M("PREFERENCES_TAB_SOUND"));
 #endif
     nb->set_current_page(0);
@@ -1986,7 +1986,7 @@ void Preferences::storePreferences()
     moptions.rtSettings.thumbnail_inspector_mode = static_cast<rtengine::Settings::ThumbnailInspectorMode>(thumbnailInspectorMode->get_active_row_number());
 
 // Sounds only on Windows and Linux
-#if defined(WIN32) || defined(__linux__)
+#if defined(_WIN32) || defined(__linux__)
     moptions.sndEnable = ckbSndEnable->get_active();
     moptions.sndBatchQueueDone = txtSndBatchQueueDone->get_text();
     moptions.sndLngEditProcDone = txtSndLngEditProcDone->get_text();
@@ -2245,7 +2245,7 @@ void Preferences::fillPreferences()
     chOverwriteOutputFile->set_active(moptions.overwriteOutputFile);
 
     // Sounds only on Windows and Linux
-#if defined(WIN32) || defined(__linux__)
+#if defined(_WIN32) || defined(__linux__)
     ckbSndEnable->set_active(moptions.sndEnable);
     txtSndBatchQueueDone->set_text(moptions.sndBatchQueueDone);
     txtSndLngEditProcDone->set_text(moptions.sndLngEditProcDone);
