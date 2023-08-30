@@ -204,10 +204,13 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wFrame->add(*wProfVBox);
 
     //-----------------gamma TRC working
-    Gtk::Frame *trcFrame = Gtk::manage(new Gtk::Frame(M("TP_ICM_TRCFRAME")));
-    trcFrame->set_label_align(0.025, 0.5);
+//    Gtk::Frame *trcFrame = Gtk::manage(new Gtk::Frame(M("TP_ICM_TRCFRAME")));
+    trcExp = Gtk::manage(new MyExpander(false, M("TP_ICM_TRCFRAME")));
+    setExpandAlignProperties(trcExp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+//    trcFrame->set_label_align(0.025, 0.5);
     Gtk::Box *trcProfVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
-    trcFrame->set_tooltip_text(M("TP_ICM_TRCFRAME_TOOLTIP"));
+    trcExp->set_tooltip_text(M("TP_ICM_TRCFRAME_TOOLTIP"));
+    trcExp->signal_button_release_event().connect_notify ( sigc::bind ( sigc::mem_fun (this, &ICMPanel::foldAllButMe), trcExp) );
 
     wTRCBox = Gtk::manage(new Gtk::Box());
 
@@ -268,7 +271,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     fbw->set_active(true);
     gamut = Gtk::manage(new Gtk::CheckButton((M("TP_ICM_GAMUT"))));
     gamut->set_active(false);
-	
+
     trcProfVBox->pack_start(*wprimBox, Gtk::PACK_EXPAND_WIDGET);
     trcProfVBox->pack_start(*fbw, Gtk::PACK_EXPAND_WIDGET);
     trcProfVBox->pack_start(*gamut, Gtk::PACK_EXPAND_WIDGET);
@@ -292,6 +295,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wprim->append(M("TP_ICM_WORKING_PRIM_ACE"));
     wprim->append(M("TP_ICM_WORKING_PRIM_WID"));
     wprim->append(M("TP_ICM_WORKING_PRIM_AC0"));
+    wprim->append(M("TP_ICM_WORKING_PRIM_JDCMAX"));
     wprim->append(M("TP_ICM_WORKING_PRIM_BRU"));
     wprim->append(M("TP_ICM_WORKING_PRIM_BET"));
     wprim->append(M("TP_ICM_WORKING_PRIM_BST"));
@@ -381,11 +385,13 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     aRendIntent->show();
     riaHBox->pack_start(*aRendIntent->buttonGroup, Gtk::PACK_EXPAND_PADDING);
 
-    trcFrame->add(*trcProfVBox);
 
     pack_start(*wFrame, Gtk::PACK_EXPAND_WIDGET);
-    pack_start(*trcFrame, Gtk::PACK_EXPAND_WIDGET);
-    pack_start(*redFrame, Gtk::PACK_EXPAND_WIDGET);
+    trcProfVBox->pack_start(*redFrame, Gtk::PACK_EXPAND_WIDGET);
+    trcExp->add(*trcProfVBox, false);
+    trcExp->setLevel (2);
+    pack_start(*trcExp, Gtk::PACK_EXPAND_WIDGET);
+    trcExp->set_expanded(false);
 
 
     // ---------------------------- Output profile
@@ -461,7 +467,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     ipDialog->add_filter(filter_icc);
     ipDialog->add_filter(filter_iccdng);
     ipDialog->add_filter(filter_any);
-#ifdef WIN32
+#ifdef _WIN32
     ipDialog->set_show_hidden(true);  // ProgramData is hidden on Windows
 #endif
 
@@ -493,6 +499,14 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     show_all();
 }
 
+void ICMPanel::foldAllButMe (GdkEventButton* event, MyExpander *expander)
+{
+    if (event->button == 3) {
+        trcExp->set_expanded (trcExp == expander);
+    }
+}
+
+
 void ICMPanel::neutral_pressed ()
 {   //find working profile and set the same destination proile
     if (wProfNames->get_active_text() == "Rec2020") {
@@ -509,6 +523,8 @@ void ICMPanel::neutral_pressed ()
         wprim->set_active(toUnderlying(ColorManagementParams::Primaries::WIDE_GAMUT));
     } else if (wProfNames->get_active_text() == "ACESp0") {
         wprim->set_active(toUnderlying(ColorManagementParams::Primaries::ACES_P0));
+    } else if (wProfNames->get_active_text() == "JDCmax") {
+        wprim->set_active(toUnderlying(ColorManagementParams::Primaries::JDC_MAX));
     } else if (wProfNames->get_active_text() == "BruceRGB") {
         wprim->set_active(toUnderlying(ColorManagementParams::Primaries::BRUCE_RGB));
     } else if (wProfNames->get_active_text() == "Beta RGB") {
@@ -788,6 +804,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     ConnectionBlocker wtrcconn_(wtrcconn);
     ConnectionBlocker willconn_(willconn);
     ConnectionBlocker wprimconn_(wprimconn);
+    trcExp->set_expanded(false);
 
     if (pp->icm.inputProfile.substr(0, 5) != "file:") {
         ipDialog->set_filename(" ");
@@ -1082,6 +1099,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         case ColorManagementParams::Primaries::ACES_P1:
         case ColorManagementParams::Primaries::WIDE_GAMUT:
         case ColorManagementParams::Primaries::ACES_P0:
+        case ColorManagementParams::Primaries::JDC_MAX:
         case ColorManagementParams::Primaries::BRUCE_RGB:
         case ColorManagementParams::Primaries::BETA_RGB:
         case ColorManagementParams::Primaries::BEST_RGB: {
@@ -1475,6 +1493,7 @@ void ICMPanel::wtrcinChanged()
         case ColorManagementParams::Primaries::ACES_P1:
         case ColorManagementParams::Primaries::WIDE_GAMUT:
         case ColorManagementParams::Primaries::ACES_P0:
+        case ColorManagementParams::Primaries::JDC_MAX:
         case ColorManagementParams::Primaries::BRUCE_RGB:
         case ColorManagementParams::Primaries::BETA_RGB:
         case ColorManagementParams::Primaries::BEST_RGB: {
@@ -1507,7 +1526,7 @@ void ICMPanel::wtrcinChanged()
 
 void ICMPanel::willChanged()
 {
-    switch (ColorManagementParams::Primaries(wprim->get_active_row_number())) {
+    switch (ColorManagementParams::Primaries(wprim->get_active_row_number() )) {
         case ColorManagementParams::Primaries::DEFAULT:
         case ColorManagementParams::Primaries::SRGB:
         case ColorManagementParams::Primaries::ADOBE_RGB:
@@ -1516,6 +1535,7 @@ void ICMPanel::willChanged()
         case ColorManagementParams::Primaries::ACES_P1:
         case ColorManagementParams::Primaries::WIDE_GAMUT:
         case ColorManagementParams::Primaries::ACES_P0:
+        case ColorManagementParams::Primaries::JDC_MAX:
         case ColorManagementParams::Primaries::BRUCE_RGB:
         case ColorManagementParams::Primaries::BETA_RGB:
         case ColorManagementParams::Primaries::BEST_RGB: {
@@ -1630,6 +1650,17 @@ void ICMPanel::wprimChanged()
             break;
         }
 
+        case ColorManagementParams::Primaries::JDC_MAX: {
+            redx->setValue(0.734702);
+            redy->setValue(0.265302);
+            grex->setValue(0.021908);
+            grey->setValue(0.930288);
+            blux->setValue(0.120593);
+            bluy->setValue(0.001583);
+            will->set_active(toUnderlying(ColorManagementParams::Illuminant::D50));
+            break;
+        }
+
         case ColorManagementParams::Primaries::BRUCE_RGB: {
             redx->setValue(0.64);
             redy->setValue(0.33);
@@ -1722,6 +1753,14 @@ void ICMPanel::wprimChanged()
             blux->setValue(0.0001);
             bluy->setValue(-0.077);
             will->set_active(toUnderlying(ColorManagementParams::Illuminant::D60));
+        } else if (wProfNames->get_active_text() == "JDCmax") {
+            redx->setValue(0.734702);
+            redy->setValue(0.265302);
+            grex->setValue(0.021908);
+            grey->setValue(0.930288);
+            blux->setValue(0.120593);
+            bluy->setValue(0.001583);
+            will->set_active(toUnderlying(ColorManagementParams::Illuminant::D50));
         } else if (wProfNames->get_active_text() == "BruceRGB") {
             redx->setValue(0.64);
             redy->setValue(0.33);
@@ -1729,7 +1768,7 @@ void ICMPanel::wprimChanged()
             grey->setValue(0.65);
             blux->setValue(0.15);
             bluy->setValue(0.06);
-            will->set_active(toUnderlying(ColorManagementParams::Illuminant::D65));
+            will->set_active(toUnderlying(ColorManagementParams::Illuminant::D65)); 
         } else if (wProfNames->get_active_text() == "Beta RGB") {
             redx->setValue(0.6888);
             redy->setValue(0.3112);

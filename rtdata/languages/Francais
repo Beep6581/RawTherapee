@@ -1,4 +1,6 @@
-#01 2008-03-01 Initial translation by Hombre
+#001 2008-03-01 Initial translation by Hombre
+#100
+#101 @LANGUAGE_DISPLAY_NAME=Français
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Crédits
@@ -161,11 +163,11 @@ FILEBROWSER_POPUPUNTRASH;Retirer de la corbeille
 FILEBROWSER_QUERYBUTTONHINT;Effacer la recherche
 FILEBROWSER_QUERYHINT;Taper la <i>partie du nom</i> du fichier à chercher ou une <i>liste spéarée par des virgules</i>.\nEx: <i>1001.1004.1199</i>\n\n<b>Ctrl-F</b> pour placer le curseur dans le champ de saisie.\n<b>Entrée</b> pour lancer la recherche\n<b>Esc</b> pour effacer.\n<b>Shift-Esc</b> pour enlever le focus.
 FILEBROWSER_QUERYLABEL;Chercher: 
-FILEBROWSER_RANK1_TOOLTIP;Rang 1 *\nRaccourci: <b>Shift-1</b>
-FILEBROWSER_RANK2_TOOLTIP;Rang 2 *\nRaccourci: <b>Shift-2</b>
-FILEBROWSER_RANK3_TOOLTIP;Rang 3 *\nRaccourci: <b>Shift-3</b>
-FILEBROWSER_RANK4_TOOLTIP;Rang 4 *\nRaccourci: <b>Shift-4</b>
-FILEBROWSER_RANK5_TOOLTIP;Rang 5 *\nRaccourci: <b>Shift-5</b>
+FILEBROWSER_RANK1_TOOLTIP;Rang 1 *\nRaccourci: <b>1</b>
+FILEBROWSER_RANK2_TOOLTIP;Rang 2 *\nRaccourci: <b>2</b>
+FILEBROWSER_RANK3_TOOLTIP;Rang 3 *\nRaccourci: <b>3</b>
+FILEBROWSER_RANK4_TOOLTIP;Rang 4 *\nRaccourci: <b>4</b>
+FILEBROWSER_RANK5_TOOLTIP;Rang 5 *\nRaccourci: <b>5</b>
 FILEBROWSER_RENAMEDLGLABEL;Renommage du fichier
 FILEBROWSER_RESETDEFAULTPROFILE;Réinitialise au traitement par défaut
 FILEBROWSER_SELECTDARKFRAME;Choisir une image de Trame Noire...
@@ -176,22 +178,22 @@ FILEBROWSER_SHOWCOLORLABEL3HINT;Afficher les images avec un label Vert\nRaccourc
 FILEBROWSER_SHOWCOLORLABEL4HINT;Afficher les images avec un label Bleu\nRaccourci: <b>Alt-4</b>
 FILEBROWSER_SHOWCOLORLABEL5HINT;Afficher les images avec un label Pourpre\nRaccourci: <b>Alt-5</b>
 FILEBROWSER_SHOWDIRHINT;Voir toutes les images du dossier\nRaccourci: <b>d</b>
-FILEBROWSER_SHOWEDITEDHINT;Afficher les images éditées\nRaccourci: <b>7</b>
-FILEBROWSER_SHOWEDITEDNOTHINT;Afficher les images non éditées\nRaccourci: <b>6</b>
+FILEBROWSER_SHOWEDITEDHINT;Afficher les images éditées\nRaccourci: <b>Shift-7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;Afficher les images non éditées\nRaccourci: <b>Shift-6</b>
 FILEBROWSER_SHOWEXIFINFO;Montrer les infos EXIF.\nRaccourci: <b>i</b>\n\nRaccourcis dans le mode Éditeur Unique: <b>Alt-i</b>
 FILEBROWSER_SHOWORIGINALHINT;Voir seulement les images originales.\n\nQuand plusieurs images éxistent avec le même nom de fichier mais des extensions différentes, celle considéré originale est celle dont l'extention est au plus dans la liste des extensions dans Préférences > Navigateur de fichiers > Extensions considérées.
-FILEBROWSER_SHOWRANK1HINT;Voir les images 1 étoile\nRaccourci: <b>1</b>
-FILEBROWSER_SHOWRANK2HINT;Voir les images 2 étoiles\nRaccourci: <b>2</b>
-FILEBROWSER_SHOWRANK3HINT;Voir les images 3 étoiles\nRaccourci: <b>3</b>
-FILEBROWSER_SHOWRANK4HINT;Voir les images 4 étoiles\nRaccourci: <b>4</b>
-FILEBROWSER_SHOWRANK5HINT;Voir les images 5 étoiles\nRaccourci: <b>5</b>
+FILEBROWSER_SHOWRANK1HINT;Voir les images 1 étoile\nRaccourci: <b>Shift-1</b>
+FILEBROWSER_SHOWRANK2HINT;Voir les images 2 étoiles\nRaccourci: <b>Shift-2</b>
+FILEBROWSER_SHOWRANK3HINT;Voir les images 3 étoiles\nRaccourci: <b>Shift-3</b>
+FILEBROWSER_SHOWRANK4HINT;Voir les images 4 étoiles\nRaccourci: <b>Shift-4</b>
+FILEBROWSER_SHOWRANK5HINT;Voir les images 5 étoiles\nRaccourci: <b>Shift-5</b>
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Afficher les images sauvegardées récemment\nRaccourci: <b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT; Afficher les images non sauvegardées récemment\nRaccourci: <b>Alt-6</b>
 FILEBROWSER_SHOWTRASHHINT;Voir le contenu de la corbeille\nRaccourci: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;Afficher les images sans label de couleur\nRaccourci: <b>Alt-0</b>
-FILEBROWSER_SHOWUNRANKHINT;Voir les images sans étoile\nRaccourci: <b>0</b>
+FILEBROWSER_SHOWUNRANKHINT;Voir les images sans étoile\nRaccourci: <b>Shift-0</b>
 FILEBROWSER_THUMBSIZE;Taille vign.
-FILEBROWSER_UNRANK_TOOLTIP;Effacer le rang\nRaccourci: <b>Shift-0</b>
+FILEBROWSER_UNRANK_TOOLTIP;Effacer le rang\nRaccourci: <b>0</b>
 FILEBROWSER_ZOOMINHINT;Augmenter la taille des vignettes.\nRaccourci: <b>+</b>\n\nRaccourcis dans le mode Éditeur Unique:  <b>Alt-+</b>
 FILEBROWSER_ZOOMOUTHINT;Diminuer la taille des vignettes.\nRaccourci: <b>-</b>\n\nRaccourcis dans le mode Éditeur Unique:  <b>Alt--</b>
 FILECHOOSER_FILTER_ANY;Tous les fichiers
@@ -2732,8 +2734,8 @@ TP_RGBCURVES_BLUE;B
 TP_RGBCURVES_CHANNEL;Canal
 TP_RGBCURVES_GREEN;V
 TP_RGBCURVES_LABEL;Courbes RVB
-TP_RGBCURVES_LUMAMODE;Mode Lominosité
-TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Mode Lominosité</b> permet de faire varier la contribution des canaux R, V et B à la luminosité de l'image, sans altérer les couleurs de l'image.
+TP_RGBCURVES_LUMAMODE;Mode Luminosité
+TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Mode Luminosité</b> permet de faire varier la contribution des canaux R, V et B à la luminosité de l'image, sans altérer les couleurs de l'image.
 TP_RGBCURVES_RED;R
 TP_ROTATE_DEGREE;Degré
 TP_ROTATE_LABEL;Rotation

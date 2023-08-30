@@ -1,66 +1,68 @@
-#01 Latin America - Spanish
-#02 Conventions used to keep the same writing style along new texts and versions
-#03
-#04  Abreviaturas (Abbreviations)
-#05  -----------------------------
-#06   AC: Aberración cromática (fringe)
-#07   B&N: Blanco y Negro (Black & White)
-#08   CV: Corrección de Viñeteado (Vignette Filter: in Transform tab)
-#09   FG: Filtro Graduado (Gradient Filter)
-#10   FV: Filtrar Viñeteado (Vignette Filter: in Exposure tab)
-#11   MC: Mezclador de canales (Channel Mixer)
-#12   RGB: Modelo de color Rojo Verde Azul (Red Green Blue)
-#13   WB: Balance de blancos (White Balance)
-#14
-#15  Convención de traducción de términos importantes,
-#16  sin equivalente estándar o poco conocidos en español:
-#17  ---------------------------------------------
-#18   Artifacts: Elementos extraños
-#19   Brightness: Brillo
-#20   Checkbox: Casilla (seleccionada/desmarcada)
-#21   Chroma: Crominancia (**, definida en es.wikipedia)
-#22   Chromatic: Cromática (*)
-#23   Chromaticity: Cromaticidad (**)
-#24   Colorfulness: Colorido
-#25   Cyan: Cian (*)
-#26   Dark Frame: Toma Negra
-#27   Dim: Luz tenue
-#28   Feather: Difuminado
-#29   Illuminant: Iluminante
-#30   Lightness: Claridad
-#31   Luminance: Luminancia (*)
-#32   Luminosity: Luminosidad
-#33   Mapping: Mapeo (*)
-#34   Sharpening: Enfoque
-#35   Slider: Control deslizante
-#36   Tone Curve: Curva tonal
-#37   Vibrance: Vibranza
-#38
-#39   (*) Término incluido en diccionario RAE
-#40   (**) Término no incluido en diccionario RAE
-#41
-#42  Términos conservados en Inglés por no tener traducción breve
-#43  al español en el sentido usado por RT/fotografía digital
-#44  -----------------------------------------------------
-#45   ICM (Image Color Management)
-#46   Gamut
-#47   Gamma
-#48   Raw
-#49
-#50 2008-01-15 keenonkites, first translation
-#51 2008-03-03 Ioritz Ibarguren, corrections
-#52 2008-04-05 keenonkites, completed for 2.4m1
-#53 2008-04-09 Ramon, partly corrected (part of 2.3)
-#54 2008-04-29 Ramon, small correction
-#55 2008-06-09 Ramon, Adaptions regarding 2.4m1 and others
-#56 2008-09-20 keenonkites, first version for 2.4m2
-#57 2008-12-19 keenonkites, first version for 2.4beta4
-#58 2010-12-07 rickydh, some translations of untranslated keys for 3.0 alpha1
-#59 2011-12-25 plores, translation improvement, translation of untranslated strings
-#60 2013-01-03 OdeLama, translation for v4.0.12 of untranslated/changed strings
-#61 2014-01-14 mapelo, bug correction and small enhancements.
-#62 2014-10-10 fotger
-#63 2018-12-09 Faber777
+#001 Latin America - Spanish
+#002 Conventions used to keep the same writing style along new texts and versions
+#003
+#004  Abreviaturas (Abbreviations)
+#005  -----------------------------
+#006   AC: Aberración cromática (fringe)
+#007   B&N: Blanco y Negro (Black & White)
+#008   CV: Corrección de Viñeteado (Vignette Filter: in Transform tab)
+#009   FG: Filtro Graduado (Gradient Filter)
+#010   FV: Filtrar Viñeteado (Vignette Filter: in Exposure tab)
+#011   MC: Mezclador de canales (Channel Mixer)
+#012   RGB: Modelo de color Rojo Verde Azul (Red Green Blue)
+#013   WB: Balance de blancos (White Balance)
+#014
+#015  Convención de traducción de términos importantes,
+#016  sin equivalente estándar o poco conocidos en español:
+#017  ---------------------------------------------
+#018   Artifacts: Elementos extraños
+#019   Brightness: Brillo
+#020   Checkbox: Casilla (seleccionada/desmarcada)
+#021   Chroma: Crominancia (**, definida en es.wikipedia)
+#022   Chromatic: Cromática (*)
+#023   Chromaticity: Cromaticidad (**)
+#024   Colorfulness: Colorido
+#025   Cyan: Cian (*)
+#026   Dark Frame: Toma Negra
+#027   Dim: Luz tenue
+#028   Feather: Difuminado
+#029   Illuminant: Iluminante
+#030   Lightness: Claridad
+#031   Luminance: Luminancia (*)
+#032   Luminosity: Luminosidad
+#033   Mapping: Mapeo (*)
+#034   Sharpening: Enfoque
+#035   Slider: Control deslizante
+#036   Tone Curve: Curva tonal
+#037   Vibrance: Vibranza
+#038
+#039   (*) Término incluido en diccionario RAE
+#040   (**) Término no incluido en diccionario RAE
+#041
+#042  Términos conservados en Inglés por no tener traducción breve
+#043  al español en el sentido usado por RT/fotografía digital
+#044  -----------------------------------------------------
+#045   ICM (Image Color Management)
+#046   Gamut
+#047   Gamma
+#048   Raw
+#049
+#050 2008-01-15 keenonkites, first translation
+#051 2008-03-03 Ioritz Ibarguren, corrections
+#052 2008-04-05 keenonkites, completed for 2.4m1
+#053 2008-04-09 Ramon, partly corrected (part of 2.3)
+#054 2008-04-29 Ramon, small correction
+#055 2008-06-09 Ramon, Adaptions regarding 2.4m1 and others
+#056 2008-09-20 keenonkites, first version for 2.4m2
+#057 2008-12-19 keenonkites, first version for 2.4beta4
+#058 2010-12-07 rickydh, some translations of untranslated keys for 3.0 alpha1
+#059 2011-12-25 plores, translation improvement, translation of untranslated strings
+#060 2013-01-03 OdeLama, translation for v4.0.12 of untranslated/changed strings
+#061 2014-01-14 mapelo, bug correction and small enhancements.
+#062 2014-10-10 fotger
+#063 2018-12-09 Faber777
+#100
+#101 @LANGUAGE_DISPLAY_NAME=Español (Latinoamericano)
 
 ABOUT_TAB_BUILD;Versión
 ABOUT_TAB_CREDITS;Créditos
@@ -222,11 +224,11 @@ FILEBROWSER_POPUPUNTRASH;Sacar de la papelera
 FILEBROWSER_QUERYBUTTONHINT;Borrar la búsqueda
 FILEBROWSER_QUERYHINT;Escriba <i>parte del nombre del archivo</i> a buscar, o una <i>lista separada con comas</i>.\nP.ej. <i>1001,1004,1199</i>\n\n<b>Ctrl-F</b> Para poner el foco en el campo Buscar.\n<b>Enter</b> Para iniciar la búsqueda.\n<b>Esc</b> Para limpiar.\n<b>Shift-Esc</b> Para quitar el foco.
 FILEBROWSER_QUERYLABEL; Buscar:
-FILEBROWSER_RANK1_TOOLTIP;Rango 1 *\nTecla de Atajo<b>Shift-1</b>
-FILEBROWSER_RANK2_TOOLTIP;Rango 2 **\nTecla de Atajo<b>Shift-2</b>
-FILEBROWSER_RANK3_TOOLTIP;Rango 3 ***\nTecla de Atajo<b>Shift-3</b>
-FILEBROWSER_RANK4_TOOLTIP;Rango 4 ****\nTecla de Atajo<b>Shift-4</b>
-FILEBROWSER_RANK5_TOOLTIP;Rango 5 *****\nTecla de Atajo<b>Shift-5</b>
+FILEBROWSER_RANK1_TOOLTIP;Rango 1 *\nTecla de Atajo<b>1</b>
+FILEBROWSER_RANK2_TOOLTIP;Rango 2 **\nTecla de Atajo<b>2</b>
+FILEBROWSER_RANK3_TOOLTIP;Rango 3 ***\nTecla de Atajo<b>3</b>
+FILEBROWSER_RANK4_TOOLTIP;Rango 4 ****\nTecla de Atajo<b>4</b>
+FILEBROWSER_RANK5_TOOLTIP;Rango 5 *****\nTecla de Atajo<b>5</b>
 FILEBROWSER_RENAMEDLGLABEL;Renombrar archivo
 FILEBROWSER_RESETDEFAULTPROFILE;Restablecen a los predeterminados
 FILEBROWSER_SELECTDARKFRAME;Seleccionar Toma Negra…
@@ -237,22 +239,22 @@ FILEBROWSER_SHOWCOLORLABEL3HINT;Mostrar imágenes etiquetadas con Verde <b>Alt-3
 FILEBROWSER_SHOWCOLORLABEL4HINT;Mostrar imágenes etiquetadas con Azul <b>Alt-4</b>
 FILEBROWSER_SHOWCOLORLABEL5HINT;Mostrar imágenes etiquetadas con Púrpura <b>Alt-5</b>
 FILEBROWSER_SHOWDIRHINT;Quitar todos los filtros.\nTecla de Atajo: <b>d</b>
-FILEBROWSER_SHOWEDITEDHINT;Mostrar imágenes editadas.\nTecla de Atajo: <b>7</b>
-FILEBROWSER_SHOWEDITEDNOTHINT;Mostrar imágenes no editadas.\nTecla de Atajo: <b>6</b>
+FILEBROWSER_SHOWEDITEDHINT;Mostrar imágenes editadas.\nTecla de Atajo: <b>Shift-7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;Mostrar imágenes no editadas.\nTecla de Atajo: <b>Shift-6</b>
 FILEBROWSER_SHOWEXIFINFO;Mostrar datos Exif.\nTecla de Atajo: <b>i</b>\n\nTecla de Atajo en modo editor simple: <b>Alt-I</b>
 FILEBROWSER_SHOWORIGINALHINT;Muestre solo imágenes originales. \nCuando existen varias imágenes con el mismo nombre de archivo pero con diferentes extensiones, la que se considera original es aquella cuya extensión está más cerca de la parte superior de la lista de extensiones analizadas en Preferencias> Explorador de archivos> Extensiones analizadas.
-FILEBROWSER_SHOWRANK1HINT;Mostrar imágenes con 1 estrella.\nTecla de Atajo: <b>1</b>
-FILEBROWSER_SHOWRANK2HINT;Mostrar imágenes con 2 estrellas.\nTecla de Atajo: <b>2</b>
-FILEBROWSER_SHOWRANK3HINT;Mostrar imágenes con 3 estrellas.\nTecla de Atajo: <b>3</b>
-FILEBROWSER_SHOWRANK4HINT;Mostrar imágenes con 4 estrellas.\nTecla de Atajo: <b>4</b>
-FILEBROWSER_SHOWRANK5HINT;Mostrar imágenes con 5 estrellas.\nTecla de Atajo: <b>5</b>
+FILEBROWSER_SHOWRANK1HINT;Mostrar imágenes con 1 estrella.\nTecla de Atajo: <b>Shift-1</b>
+FILEBROWSER_SHOWRANK2HINT;Mostrar imágenes con 2 estrellas.\nTecla de Atajo: <b>Shift-2</b>
+FILEBROWSER_SHOWRANK3HINT;Mostrar imágenes con 3 estrellas.\nTecla de Atajo: <b>Shift-3</b>
+FILEBROWSER_SHOWRANK4HINT;Mostrar imágenes con 4 estrellas.\nTecla de Atajo: <b>Shift-4</b>
+FILEBROWSER_SHOWRANK5HINT;Mostrar imágenes con 5 estrellas.\nTecla de Atajo: <b>Shift-5</b>
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Mostrar imágenes guardadas recientemente.\nTecla de Atajo: <b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Mostrar imágenes no guardadas recientemente.\nTecla de Atajo: <b>Alt-6</b>
 FILEBROWSER_SHOWTRASHHINT;Mostrar el contenido de la papelera.\nTecla de Atajo: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;Mostrar imágenes sin etiqueta de color.\nTecla de Atajo: <b>Alt-0</b>
-FILEBROWSER_SHOWUNRANKHINT;Mostrar imágenes sin rango.\nTecla de Atajo: <b>0</b>
+FILEBROWSER_SHOWUNRANKHINT;Mostrar imágenes sin rango.\nTecla de Atajo: <b>Shift-0</b>
 FILEBROWSER_THUMBSIZE;Tamaño miniatura
-FILEBROWSER_UNRANK_TOOLTIP;Sin Rango\nTecla de Atajo<b>Shift - 0</b>
+FILEBROWSER_UNRANK_TOOLTIP;Sin Rango\nTecla de Atajo<b>0</b>
 FILEBROWSER_ZOOMINHINT;Agrandar miniatura.\nTecla de Atajo: <b>+</b>\n\nTecla de Atajo en modo editor simple: <b>Alt-+</b>
 FILEBROWSER_ZOOMOUTHINT;Reducir miniatura.\nTecla de Atajo: <b>-</b>\n\nTecla de Atajo en modo editor simple: <b>Alt--</b>
 FILECHOOSER_FILTER_ANY;Todos los archivos

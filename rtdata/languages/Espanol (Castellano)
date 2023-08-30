@@ -1,5 +1,7 @@
-#01 Español - Castellano
-#02 2022-10-08 Francisco Lorés y Javier Bartol, para la versión 5.9
+#001 Español - Castellano
+#002 2022-10-08 Francisco Lorés y Javier Bartol, para la versión 5.9
+#100
+#101 @LANGUAGE_DISPLAY_NAME=Español (Castellano)
 
 ABOUT_TAB_BUILD;Versión
 ABOUT_TAB_CREDITS;Reconocimientos
@@ -170,11 +172,11 @@ FILEBROWSER_POPUPUNTRASH;Sacar de la papelera
 FILEBROWSER_QUERYBUTTONHINT;Borrar la búsqueda
 FILEBROWSER_QUERYHINT;Aquí se escriben los nombres de archivo que se desea buscar. También se puede indicar sólo una parte del nombre del archivo. Los términos de la búsqueda se separan mediante comas (por ej.<i>1001,1004,1199</i>)\nLos términos de búsqueda no deseados se pueden excluir añadiendo el prefijo <i>!=</i>\npor ej. <i>!=1001,1004,1199</i>\n\nAtajos de teclado:\n<b>Ctrl-f</b> - lleva el foco al cuadro de texto <b>Buscar:</b>\n<b>Intro</b> - realiza la búsqueda,\n<b>Esc</b> - borra el cuadro de texto <b>Buscar:</b>\n<b>Mayús-Esc</b> - quita el foco del cuadro de texto <b>Buscar:</b>.
 FILEBROWSER_QUERYLABEL;Buscar:
-FILEBROWSER_RANK1_TOOLTIP;Rango 1 *\nAtajo de teclado: <b>Mayús-1</b>
-FILEBROWSER_RANK2_TOOLTIP;Rango 2 **\nAtajo de teclado: <b>Mayús-2</b>
-FILEBROWSER_RANK3_TOOLTIP;Rango 3 ***\nAtajo de teclado: <b>Mayús-3</b>
-FILEBROWSER_RANK4_TOOLTIP;Rango 4 ****\nAtajo de teclado: <b>Mayús-4</b>
-FILEBROWSER_RANK5_TOOLTIP;Rango 5 *****\nAtajo de teclado: <b>Mayús-5</b>
+FILEBROWSER_RANK1_TOOLTIP;Rango 1 *\nAtajo de teclado: <b>1</b>
+FILEBROWSER_RANK2_TOOLTIP;Rango 2 **\nAtajo de teclado: <b>2</b>
+FILEBROWSER_RANK3_TOOLTIP;Rango 3 ***\nAtajo de teclado: <b>3</b>
+FILEBROWSER_RANK4_TOOLTIP;Rango 4 ****\nAtajo de teclado: <b>4</b>
+FILEBROWSER_RANK5_TOOLTIP;Rango 5 *****\nAtajo de teclado: <b>5</b>
 FILEBROWSER_RENAMEDLGLABEL;Renombrar el archivo
 FILEBROWSER_RESETDEFAULTPROFILE;Restablecer el perfil a los valores predeterminados
 FILEBROWSER_SELECTDARKFRAME;Seleccionar Foto Negra...
@@ -185,23 +187,23 @@ FILEBROWSER_SHOWCOLORLABEL3HINT;Muestra imágenes etiquetadas con color verde.\n
 FILEBROWSER_SHOWCOLORLABEL4HINT;Muestra imágenes etiquetadas con color azul.\nAtajo de teclado: <b>Alt-4</b>
 FILEBROWSER_SHOWCOLORLABEL5HINT;Muestra imágenes etiquetadas con color morado.\nAtajo de teclado: <b>Alt-5</b>
 FILEBROWSER_SHOWDIRHINT;Quita todos los filtros.\nAtajo de teclado: <b>d</b>
-FILEBROWSER_SHOWEDITEDHINT;Muestra las imágenes editadas.\nAtajo de teclado: <b>7</b>
-FILEBROWSER_SHOWEDITEDNOTHINT;Muestra las imágenes no editadas.\nAtajo de teclado: <b>6</b>
+FILEBROWSER_SHOWEDITEDHINT;Muestra las imágenes editadas.\nAtajo de teclado: <b>Mayús-7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;Muestra las imágenes no editadas.\nAtajo de teclado: <b>Mayús-6</b>
 FILEBROWSER_SHOWEXIFINFO;Muestra los datos Exif.\n\nAtajos de teclado:\n<b>i</b> - Modo de Editor de pestañas múltiples,\n<b>Alt-i</b> - Modo de Editor de pestaña única.
 FILEBROWSER_SHOWNOTTRASHHINT;Muestra sólo las imágenes no borradas.
 FILEBROWSER_SHOWORIGINALHINT;Muestra sólo las imágenes originales.\n\nCuando existen varias imágenes con el mismo nombre de archivo pero con diferentes extensiones, la que se considera original es aquella cuya extensión está más cerca de la parte superior de la lista de extensiones analizadas en Preferencias > Navegador de archivos > Extensiones analizadas.
-FILEBROWSER_SHOWRANK1HINT;Muestra las imágenes con 1 estrella.\nAtajo de teclado: <b>1</b>
-FILEBROWSER_SHOWRANK2HINT;Muestra las imágenes con 2 estrellas.\nAtajo de teclado: <b>2</b>
-FILEBROWSER_SHOWRANK3HINT;Muestra las imágenes con 3 estrellas.\nAtajo de teclado: <b>3</b>
-FILEBROWSER_SHOWRANK4HINT;Muestra las imágenes con 4 estrellas.\nAtajo de teclado: <b>4</b>
-FILEBROWSER_SHOWRANK5HINT;Muestra las imágenes con 5 estrellas.\nAtajo de teclado: <b>5</b>
+FILEBROWSER_SHOWRANK1HINT;Muestra las imágenes con 1 estrella.\nAtajo de teclado: <b>Mayús-1</b>
+FILEBROWSER_SHOWRANK2HINT;Muestra las imágenes con 2 estrellas.\nAtajo de teclado: <b>Mayús-2</b>
+FILEBROWSER_SHOWRANK3HINT;Muestra las imágenes con 3 estrellas.\nAtajo de teclado: <b>Mayús-3</b>
+FILEBROWSER_SHOWRANK4HINT;Muestra las imágenes con 4 estrellas.\nAtajo de teclado: <b>Mayús-4</b>
+FILEBROWSER_SHOWRANK5HINT;Muestra las imágenes con 5 estrellas.\nAtajo de teclado: <b>Mayús-5</b>
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Muestra las imágenes guardadas recientemente.\nAtajo de teclado: <b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Muestra las imágenes que no se han guardado recientemente.\nAtajo de teclado: <b>Alt-6</b>
 FILEBROWSER_SHOWTRASHHINT;Muestra el contenido de la papelera.\nAtajo de teclado: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;Muestra las imágenes sin etiqueta de color.\nAtajo de teclado: <b>Alt-0</b>
-FILEBROWSER_SHOWUNRANKHINT;Muestra las imágenes sin rango.\nAtajo de teclado: <b>0</b>
+FILEBROWSER_SHOWUNRANKHINT;Muestra las imágenes sin rango.\nAtajo de teclado: <b>Mayús-0</b>
 FILEBROWSER_THUMBSIZE;Tamaño de las miniaturas
-FILEBROWSER_UNRANK_TOOLTIP;Borra el rango.\nAtajo de teclado:<b>May - 0</b>
+FILEBROWSER_UNRANK_TOOLTIP;Borra el rango.\nAtajo de teclado:<b>0</b>
 FILEBROWSER_ZOOMINHINT;Aumenta las miniaturas.\nAtajos de teclado:\n<b>+</b> - Modo de Editor de pestañas múltiples,\n<b>Alt</b>-<b>+</b> - Modo de Editor de Pestaña Única
 FILEBROWSER_ZOOMOUTHINT;Reduce las miniaturas.\nAtajos de teclado:\n<b>-</b> - Modo de Editor de pestañas múltiples,\n<b>Alt</b>-<b>-</b> - Modo de Editor de pestaña única
 FILECHOOSER_FILTER_ANY;Todos los archivos

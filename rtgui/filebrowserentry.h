@@ -50,7 +50,6 @@ class FileBrowserEntry final : public ThumbBrowserEntryBase,
 {
 
     double scale;
-    static bool iconsLoaded;
     bool wasInside;
     ImageAreaToolListener* iatlistener;
     int press_x, press_y, action_x, action_y;
@@ -81,6 +80,7 @@ public:
 
     FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname);
     ~FileBrowserEntry () override;
+    static void init ();
     void draw (Cairo::RefPtr<Cairo::Context> cc) override;
 
     void setImageAreaToolListener (ImageAreaToolListener* l)

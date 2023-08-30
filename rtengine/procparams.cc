@@ -67,7 +67,7 @@ Glib::ustring expandRelativePath(const Glib::ustring &procparams_fname, const Gl
 
 Glib::ustring expandRelativePath2(const Glib::ustring &procparams_fname, const Glib::ustring &procparams_fname2, const Glib::ustring &prefix, Glib::ustring embedded_fname)
 {
-	#if defined (WIN32)
+	#if defined (_WIN32)
 	// if this is Windows, replace any "/" in the filename with "\\"
 	size_t pos = embedded_fname.find("/");
 	while (pos != string::npos) {
@@ -75,7 +75,7 @@ Glib::ustring expandRelativePath2(const Glib::ustring &procparams_fname, const G
 		pos = embedded_fname.find("/", pos);
 	}
 	#endif
-	#if !defined (WIN32)
+	#if !defined (_WIN32)
 	// if this is not Windows, replace any "\\" in the filename with "/"
 	size_t pos = embedded_fname.find("\\");
 	while (pos != string::npos) {
@@ -232,6 +232,17 @@ void getFromKeyfile(
     }
 }
 
+void getFromKeyfile(
+    const Glib::KeyFile& keyfile,
+    const Glib::ustring& group_name,
+    const Glib::ustring& key,
+    std::vector<std::string>& value
+)
+{
+    auto tmpval = keyfile.get_string_list(group_name, key);
+    value.assign(tmpval.begin(), tmpval.end());
+}
+
 template<typename T>
 bool assignFromKeyfile(
     const Glib::KeyFile& keyfile,
@@ -363,6 +374,17 @@ void putToKeyfile(
 void putToKeyfile(
     const Glib::ustring& group_name,
     const Glib::ustring& key,
+    const std::vector<std::string>& value,
+    Glib::KeyFile& keyfile
+)
+{
+    const Glib::ArrayHandle<Glib::ustring> list = value;
+    keyfile.set_string_list(group_name, key, list);
+}
+
+void putToKeyfile(
+    const Glib::ustring& group_name,
+    const Glib::ustring& key,
     const rtengine::procparams::FilmNegativeParams::RGB& value,
     Glib::KeyFile& keyfile
 )
@@ -411,7 +433,8 @@ bool saveToKeyfile(
     return false;
 }
 
-}
+
+} // namespace
 
 namespace rtengine
 {
@@ -1387,16 +1410,12 @@ WBParams::WBParams() :
     equal(1.0),
     tempBias(0.0),
     observer(ColorTemp::DEFAULT_OBSERVER),
-    itcwb_thres(34),
-    itcwb_precis(3),
-    itcwb_size(3),
-    itcwb_delta(2),
-    itcwb_fgreen(5),
-    itcwb_rgreen(1),
-    itcwb_nopurple(true),
-    itcwb_sorted(false),
-    itcwb_forceextra(false),
-    itcwb_sampling(false)
+    itcwb_green(0.),//slider
+    itcwb_rgreen(1),//keep for settings 
+    itcwb_nopurple(false),//keep for settings
+    itcwb_alg(false),//checkbox
+    itcwb_prim("beta"),//combobox
+    itcwb_sampling(false)//keep for 5.9 and for settings
 
 {
 }
@@ -1408,7 +1427,7 @@ bool WBParams::isPanningRelatedChange(const WBParams& other) const
             enabled == other.enabled
             && (
                 (
-                    method == "Camera" 
+                    method == "Camera"
                     && other.method == "Camera"
                 )
             || (
@@ -1418,6 +1437,10 @@ bool WBParams::isPanningRelatedChange(const WBParams& other) const
                 && equal == other.equal
                 && tempBias == other.tempBias
                 && observer == other.observer
+                && itcwb_green == other.itcwb_green
+                && itcwb_prim == other.itcwb_prim
+                && itcwb_alg == other.itcwb_alg
+
             )
         )
     );
@@ -1433,15 +1456,11 @@ bool WBParams::operator ==(const WBParams& other) const
         && equal == other.equal
         && tempBias == other.tempBias
         && observer == other.observer
-        && itcwb_thres == other.itcwb_thres
-        && itcwb_precis == other.itcwb_precis
-        && itcwb_size == other.itcwb_size
-        && itcwb_delta == other.itcwb_delta
-        && itcwb_fgreen == other.itcwb_fgreen
+        && itcwb_green == other.itcwb_green
         && itcwb_rgreen == other.itcwb_rgreen
         && itcwb_nopurple == other.itcwb_nopurple
-        && itcwb_sorted == other.itcwb_sorted
-        && itcwb_forceextra == other.itcwb_forceextra
+        && itcwb_alg == other.itcwb_alg
+        && itcwb_prim == other.itcwb_prim
         && itcwb_sampling == other.itcwb_sampling;
 
 }
@@ -2493,25 +2512,25 @@ WaveletParams::WaveletParams() :
     },
     blcurve{
         static_cast<double>(FCT_MinMaxCPoints),
-        0.0, 
-        0.0, 
-        0.0, 
-        0.35, 
-        0.5, 
-        0., 
+        0.0,
+        0.0,
+        0.0,
+        0.35,
+        0.5,
+        0.,
         0.35,
         0.35,
         1.0,
         0.0,
         0.35,
         0.35
-/*      
+/*
         0.0,
-        0.35, 
-        0.35, 
-        1.0, 
-        0.0, 
-        0.35, 
+        0.35,
+        0.35,
+        1.0,
+        0.0,
+        0.35,
         0.35
 */
     },
@@ -5804,21 +5823,6 @@ Glib::ustring RAWParams::getFlatFieldBlurTypeString(FlatFieldBlurType type)
 }
 
 
-MetaDataParams::MetaDataParams():
-    mode(MetaDataParams::TUNNEL)
-{
-}
-
-bool MetaDataParams::operator==(const MetaDataParams &other) const
-{
-    return mode == other.mode;
-}
-
-bool MetaDataParams::operator!=(const MetaDataParams &other) const
-{
-    return !(*this == other);
-}
-
 FilmNegativeParams::FilmNegativeParams() :
     enabled(false),
     redRatio(1.36),
@@ -5870,6 +5874,96 @@ bool FilmNegativeParams::operator !=(const FilmNegativeParams& other) const
 {
     return !(*this == other);
 }
+
+
+namespace {
+
+const std::map<std::string, std::string> exif_keys = {
+    {"Copyright", "Exif.Image.Copyright"},
+    {"Artist", "Exif.Image.Artist"},
+    {"ImageDescription", "Exif.Image.ImageDescription"},
+    {"Exif.UserComment", "Exif.Photo.UserComment"},
+    {"ISOSpeed", "Exif.Photo.ISOSpeedRatings"},
+    {"FNumber", "Exif.Photo.FNumber"},
+    {"ShutterSpeed", "Exif.Photo.ExposureTime"},
+    {"FocalLength", "Exif.Photo.FocalLength"},
+    {"ExpComp", "Exif.Photo.ExposureBiasValue"},
+    {"Flash", "Exif.Photo.Flash"},
+    {"Make", "Exif.Image.Make"},
+    {"Model", "Exif.Image.Model"},
+    {"Lens", "Exif.Photo.LensModel"},
+    {"DateTime", "Exif.Photo.DateTimeOriginal"},
+    {"XResolution", "Exif.Image.XResolution"},
+    {"YResolution", "Exif.Image.YResolution"}
+};
+
+const std::map<std::string, std::string> iptc_keys = {
+    {"Title", "Iptc.Application2.ObjectName"},
+    {"Category", "Iptc.Application2.Category"},
+    {"SupplementalCategories", "Iptc.Application2.SuppCategory"},
+    {"Keywords", "Iptc.Application2.Keywords"},
+    {"Instructions", "Iptc.Application2.SpecialInstructions"},
+    {"DateCreated", "Iptc.Application2.DateCreated"},
+    {"Creator", "Iptc.Application2.Byline"},
+    {"CreatorJobTitle", "Iptc.Application2.BylineTitle"},
+    {"City", "Iptc.Application2.City"},
+    {"Province", "Iptc.Application2.ProvinceState"},
+    {"Country", "Iptc.Application2.CountryName"},
+    {"TransReference", "Iptc.Application2.TransmissionReference"},
+    {"Headline", "Iptc.Application2.Headline"},
+    {"Credit", "Iptc.Application2.Credit"},
+    {"Source", "Iptc.Application2.Source"},
+    {"Copyright", "Iptc.Application2.Copyright"},
+    {"Caption", "Iptc.Application2.Caption"},
+    {"CaptionWriter", "Iptc.Application2.Writer"}
+};
+
+} // namespace
+
+
+std::vector<std::string> MetaDataParams::basicExifKeys = {
+    "Exif.Image.Copyright",
+    "Exif.Image.Artist",
+    "Exif.Image.ImageDescription",
+    "Exif.Photo.UserComment",
+    "Exif.Image.Make",
+    "Exif.Image.Model",
+    "Exif.Photo.LensModel",
+    "Exif.Photo.FNumber",
+    "Exif.Photo.ExposureTime",
+    "Exif.Photo.FocalLength",
+    "Exif.Photo.ISOSpeedRatings",
+    "Exif.Photo.ExposureBiasValue",
+    "Exif.Photo.Flash",
+    "Exif.Photo.DateTimeOriginal",
+    "Exif.Image.XResolution",
+    "Exif.Image.YResolution"
+};
+
+
+MetaDataParams::MetaDataParams():
+    mode(MetaDataParams::EDIT),
+    exifKeys{},
+    exif{},
+    iptc{}
+{
+    exifKeys = basicExifKeys;
+}
+
+
+bool MetaDataParams::operator==(const MetaDataParams &other) const
+{
+    return mode == other.mode
+        && exifKeys == other.exifKeys
+        && exif == other.exif
+        && iptc == other.iptc;
+}
+
+bool MetaDataParams::operator!=(const MetaDataParams &other) const
+{
+    return !(*this == other);
+}
+
 
 ProcParams::ProcParams()
 {
@@ -5971,8 +6065,8 @@ void ProcParams::setDefaults()
     raw = {};
 
     metadata = {};
-    exif.clear();
-    iptc.clear();
+    //exif.clear();
+    //iptc.clear();
 
     // -1 means that there's no pp3 data with rank yet. In this case, the
     // embedded Rating metadata should take precedence. -1 should never be
@@ -5999,7 +6093,9 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         keyFile.set_string("Version", "AppVersion", RTVERSION);
         keyFile.set_integer("Version", "Version", PPVERSION);
 
-        saveToKeyfile(!pedited || pedited->general.rank, "General", "Rank", rank, keyFile);
+        if (rank >= 0) {
+            saveToKeyfile(!pedited || pedited->general.rank, "General", "Rank", rank, keyFile);
+        }
         saveToKeyfile(!pedited || pedited->general.colorlabel, "General", "ColorLabel", colorlabel, keyFile);
         saveToKeyfile(!pedited || pedited->general.intrash, "General", "InTrash", inTrash, keyFile);
 
@@ -6216,15 +6312,11 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->wb.equal, "White Balance", "Equal", wb.equal, keyFile);
         saveToKeyfile(!pedited || pedited->wb.tempBias, "White Balance", "TemperatureBias", wb.tempBias, keyFile);
         saveToKeyfile(!pedited || pedited->wb.observer, "White Balance", "StandardObserver", Glib::ustring(wb.observer == StandardObserver::TWO_DEGREES ? "TWO_DEGREES" : "TEN_DEGREES"), keyFile);
-        saveToKeyfile(!pedited || pedited->wb.itcwb_thres, "White Balance", "Itcwb_thres", wb.itcwb_thres, keyFile);
-        saveToKeyfile(!pedited || pedited->wb.itcwb_precis, "White Balance", "Itcwb_precis", wb.itcwb_precis, keyFile);
-        saveToKeyfile(!pedited || pedited->wb.itcwb_size, "White Balance", "Itcwb_size", wb.itcwb_size, keyFile);
-        saveToKeyfile(!pedited || pedited->wb.itcwb_delta, "White Balance", "Itcwb_delta", wb.itcwb_delta, keyFile);
-        saveToKeyfile(!pedited || pedited->wb.itcwb_fgreen, "White Balance", "Itcwb_findgreen", wb.itcwb_fgreen, keyFile);
+        saveToKeyfile(!pedited || pedited->wb.itcwb_green, "White Balance", "Itcwb_green", wb.itcwb_green, keyFile);
         saveToKeyfile(!pedited || pedited->wb.itcwb_rgreen, "White Balance", "Itcwb_rangegreen", wb.itcwb_rgreen, keyFile);
         saveToKeyfile(!pedited || pedited->wb.itcwb_nopurple, "White Balance", "Itcwb_nopurple", wb.itcwb_nopurple, keyFile);
-        saveToKeyfile(!pedited || pedited->wb.itcwb_sorted, "White Balance", "Itcwb_sorted", wb.itcwb_sorted, keyFile);
-        saveToKeyfile(!pedited || pedited->wb.itcwb_forceextra, "White Balance", "Itcwb_forceextra", wb.itcwb_forceextra, keyFile);
+        saveToKeyfile(!pedited || pedited->wb.itcwb_alg, "White Balance", "Itcwb_alg", wb.itcwb_alg, keyFile);
+        saveToKeyfile(!pedited || pedited->wb.itcwb_prim, "White Balance", "Itcwb_prim", wb.itcwb_prim, keyFile);
         saveToKeyfile(!pedited || pedited->wb.itcwb_sampling, "White Balance", "Itcwb_sampling", wb.itcwb_sampling, keyFile);
 
 // Colorappearance
@@ -6302,9 +6394,9 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // Dehaze
         saveToKeyfile(!pedited || pedited->dehaze.enabled, "Dehaze", "Enabled", dehaze.enabled, keyFile);
-        saveToKeyfile(!pedited || pedited->dehaze.strength, "Dehaze", "Strength", dehaze.strength, keyFile);        
-        saveToKeyfile(!pedited || pedited->dehaze.showDepthMap, "Dehaze", "ShowDepthMap", dehaze.showDepthMap, keyFile);        
-        saveToKeyfile(!pedited || pedited->dehaze.depth, "Dehaze", "Depth", dehaze.depth, keyFile);        
+        saveToKeyfile(!pedited || pedited->dehaze.strength, "Dehaze", "Strength", dehaze.strength, keyFile);
+        saveToKeyfile(!pedited || pedited->dehaze.showDepthMap, "Dehaze", "ShowDepthMap", dehaze.showDepthMap, keyFile);
+        saveToKeyfile(!pedited || pedited->dehaze.depth, "Dehaze", "Depth", dehaze.depth, keyFile);
         saveToKeyfile(!pedited || pedited->dehaze.depth, "Dehaze", "Saturation", dehaze.saturation, keyFile);
 
 // Directional pyramid denoising
@@ -7293,6 +7385,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 {ColorManagementParams::Primaries::ACES_P1, "aces"},
                 {ColorManagementParams::Primaries::WIDE_GAMUT, "wid"},
                 {ColorManagementParams::Primaries::ACES_P0, "ac0"},
+                {ColorManagementParams::Primaries::JDC_MAX, "jdcmax"},
                 {ColorManagementParams::Primaries::BRUCE_RGB, "bru"},
                 {ColorManagementParams::Primaries::BETA_RGB, "bet"},
                 {ColorManagementParams::Primaries::BEST_RGB, "bst"},
@@ -7674,6 +7767,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // MetaData
         saveToKeyfile(!pedited || pedited->metadata.mode, "MetaData", "Mode", metadata.mode, keyFile);
+        saveToKeyfile(!pedited || pedited->metadata.exifKeys, "MetaData", "ExifKeys", metadata.exifKeys, keyFile);
 
 // Film negative
         saveToKeyfile(!pedited || pedited->filmNegative.enabled, "Film Negative", "Enabled", filmNegative.enabled, keyFile);
@@ -7687,7 +7781,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
             saveToKeyfile(!pedited || pedited->filmNegative.refInput, "Film Negative", "GreenBase", filmNegative.refInput.g, keyFile);
             saveToKeyfile(!pedited || pedited->filmNegative.refInput, "Film Negative", "BlueBase", filmNegative.refInput.b, keyFile);
         }
-        
+
         saveToKeyfile(!pedited || pedited->filmNegative.colorSpace, "Film Negative", "ColorSpace", toUnderlying(filmNegative.colorSpace), keyFile);
         saveToKeyfile(!pedited || pedited->filmNegative.refInput, "Film Negative", "RefInput", filmNegative.refInput, keyFile);
         saveToKeyfile(!pedited || pedited->filmNegative.refOutput, "Film Negative", "RefOutput", filmNegative.refOutput, keyFile);
@@ -7701,16 +7795,30 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // EXIF change list
         if (!pedited || pedited->exif) {
-            for (ExifPairs::const_iterator i = exif.begin(); i != exif.end(); ++i) {
-                keyFile.set_string("Exif", i->first, i->second);
+            std::map<Glib::ustring, Glib::ustring> m;
+            for (auto &p : exif_keys) {
+                m[p.second] = p.first;
+            }
+            for (auto &p : metadata.exif) {
+                auto it = m.find(p.first);
+                if (it != m.end()) {
+                    keyFile.set_string("Exif", it->second, p.second);
+                }
             }
         }
 
 // IPTC change list
         if (!pedited || pedited->iptc) {
-            for (IPTCPairs::const_iterator i = iptc.begin(); i != iptc.end(); ++i) {
-                Glib::ArrayHandle<Glib::ustring> values = i->second;
-                keyFile.set_string_list("IPTC", i->first, values);
+            std::map<std::string, std::string> m;
+            for (auto &p : iptc_keys) {
+                m[p.second] = p.first;
+            }
+            for (auto &p : metadata.iptc) {
+                auto it = m.find(p.first);
+                if (it != m.end()) {
+                    Glib::ArrayHandle<Glib::ustring> values = p.second;
+                    keyFile.set_string_list("IPTC", it->second, values);
+                }
             }
         }
 
@@ -8194,15 +8302,11 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             } else if (standard_observer == "TWO_DEGREES") {
                 wb.observer = StandardObserver::TWO_DEGREES;
             }
-            assignFromKeyfile(keyFile, "White Balance", "Itcwb_thres", pedited, wb.itcwb_thres, pedited->wb.itcwb_thres);
-            assignFromKeyfile(keyFile, "White Balance", "Itcwb_precis", pedited, wb.itcwb_precis, pedited->wb.itcwb_precis);
-            assignFromKeyfile(keyFile, "White Balance", "Itcwb_size", pedited, wb.itcwb_size, pedited->wb.itcwb_size);
-            assignFromKeyfile(keyFile, "White Balance", "Itcwb_delta", pedited, wb.itcwb_delta, pedited->wb.itcwb_delta);
-            assignFromKeyfile(keyFile, "White Balance", "Itcwb_findgreen", pedited, wb.itcwb_fgreen, pedited->wb.itcwb_fgreen);
+            assignFromKeyfile(keyFile, "White Balance", "Itcwb_green", pedited, wb.itcwb_green, pedited->wb.itcwb_green);
             assignFromKeyfile(keyFile, "White Balance", "Itcwb_rangegreen", pedited, wb.itcwb_rgreen, pedited->wb.itcwb_rgreen);
             assignFromKeyfile(keyFile, "White Balance", "Itcwb_nopurple", pedited, wb.itcwb_nopurple, pedited->wb.itcwb_nopurple);
-            assignFromKeyfile(keyFile, "White Balance", "Itcwb_sorted", pedited, wb.itcwb_sorted, pedited->wb.itcwb_sorted);
-            assignFromKeyfile(keyFile, "White Balance", "Itcwb_forceextra", pedited, wb.itcwb_forceextra, pedited->wb.itcwb_forceextra);
+            assignFromKeyfile(keyFile, "White Balance", "Itcwb_alg", pedited, wb.itcwb_alg, pedited->wb.itcwb_alg);
+            assignFromKeyfile(keyFile, "White Balance", "Itcwb_prim", pedited, wb.itcwb_prim, pedited->wb.itcwb_prim);
             if (ppVersion <= 349) { // 5.9 and earlier.
                 wb.itcwb_sampling = true;
                 if (pedited) {
@@ -8247,7 +8351,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     pedited->colorappearance.complexmethod = true;
                 }
             }
-            
+
             if (keyFile.has_key("Color appearance", "ModelCat")) {
                 assignFromKeyfile(keyFile, "Color appearance", "ModelCat", pedited, colorappearance.modelmethod, pedited->colorappearance.modelmethod);
             } else if (colorappearance.enabled) {
@@ -8257,7 +8361,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 }
             }
             assignFromKeyfile(keyFile, "Color appearance", "CatCat", pedited, colorappearance.catmethod, pedited->colorappearance.catmethod);
-            
+
             assignFromKeyfile(keyFile, "Color appearance", "Surround", pedited, colorappearance.surround, pedited->colorappearance.surround);
             assignFromKeyfile(keyFile, "Color appearance", "Surrsrc", pedited, colorappearance.surrsrc, pedited->colorappearance.surrsrc);
             assignFromKeyfile(keyFile, "Color appearance", "AdaptLum", pedited, colorappearance.adaplum, pedited->colorappearance.adaplum);
@@ -9630,6 +9734,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                         {"aces", ColorManagementParams::Primaries::ACES_P1},
                         {"wid", ColorManagementParams::Primaries::WIDE_GAMUT},
                         {"ac0", ColorManagementParams::Primaries::ACES_P0},
+                        {"jdcmax", ColorManagementParams::Primaries::JDC_MAX},
                         {"bru", ColorManagementParams::Primaries::BRUCE_RGB},
                         {"bet", ColorManagementParams::Primaries::BETA_RGB},
                         {"bst", ColorManagementParams::Primaries::BEST_RGB},
@@ -10135,11 +10240,11 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Dehaze", "Saturation", pedited, dehaze.saturation, pedited->dehaze.saturation);
             }
         }
-        
+
         if (keyFile.has_group("Film Simulation")) {
             assignFromKeyfile(keyFile, "Film Simulation", "Enabled", pedited, filmSimulation.enabled, pedited->filmSimulation.enabled);
 			assignFromKeyfile(keyFile, "Film Simulation", "ClutFilename", pedited, filmSimulation.clutFilename, pedited->filmSimulation.clutFilename);
-			#if defined (WIN32)
+			#if defined (_WIN32)
 			// if this is Windows, replace any "/" in the filename with "\\"
 			size_t pos = filmSimulation.clutFilename.find("/");
 			while (pos != string::npos) {
@@ -10147,7 +10252,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 				pos = filmSimulation.clutFilename.find("/", pos);
 			}
 			#endif
-			#if !defined (WIN32)
+			#if !defined (_WIN32)
 			// if this is not Windows, replace any "\\" in the filename with "/"
 			size_t pos = filmSimulation.clutFilename.find("\\");
 			while (pos != string::npos) {
@@ -10567,20 +10672,25 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
         }
 
         if (keyFile.has_group("MetaData")) {
-            int mode = int(MetaDataParams::TUNNEL);
+            int mode = int(MetaDataParams::EDIT);
             assignFromKeyfile(keyFile, "MetaData", "Mode", pedited, mode, pedited->metadata.mode);
 
             if (mode >= int(MetaDataParams::TUNNEL) && mode <= int(MetaDataParams::STRIP)) {
                 metadata.mode = static_cast<MetaDataParams::Mode>(mode);
             }
+
+            assignFromKeyfile(keyFile, "MetaData", "ExifKeys", pedited, metadata.exifKeys, pedited->metadata.exifKeys);
         }
 
         if (keyFile.has_group("Exif")) {
             for (const auto& key : keyFile.get_keys("Exif")) {
-                exif[key] = keyFile.get_string("Exif", key);
+                auto it = exif_keys.find(key);
+                if (it != exif_keys.end()) {
+                    metadata.exif[it->second] = keyFile.get_string("Exif", key);
 
-                if (pedited) {
-                    pedited->exif = true;
+                    if (pedited) {
+                        pedited->exif = true;
+                    }
                 }
             }
         }
@@ -10600,16 +10710,22 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
         if (keyFile.has_group("IPTC")) {
             for (const auto& key : keyFile.get_keys("IPTC")) {
                 // does this key already exist?
-                const IPTCPairs::iterator element = iptc.find(key);
+                auto it = iptc_keys.find(key);
+                if (it == iptc_keys.end()) {
+                    continue;
+                }
 
-                if (element != iptc.end()) {
+                auto kk = it->second;
+                const IPTCPairs::iterator element = metadata.iptc.find(kk);
+
+                if (element != metadata.iptc.end()) {
                     // it already exist so we cleanup the values
                     element->second.clear();
                 }
 
                 // TODO: look out if merging Keywords and SupplementalCategories from the procparams chain would be interesting
                 for (const auto& currLoadedTagValue : keyFile.get_string_list("IPTC", key)) {
-                    iptc[key].push_back(currLoadedTagValue);
+                    metadata.iptc[kk].push_back(currLoadedTagValue);
                 }
 
                 if (pedited) {
@@ -10689,8 +10805,6 @@ bool ProcParams::operator ==(const ProcParams& other) const
         && rgbCurves == other.rgbCurves
         && colorToning == other.colorToning
         && metadata == other.metadata
-        && exif == other.exif
-        && iptc == other.iptc
         && dehaze == other.dehaze
         && filmNegative == other.filmNegative;
 }

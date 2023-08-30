@@ -1,8 +1,10 @@
-#01 2008-01-19 v2.3 breek
-#02 2008-11-01 v2.4 pantaraf, chelidon, roberto
-#03 2011-08-26 v3.0 joker, chelidon, ffsup2
-#04 2011-08-31 v4.0 chelidon, ffsup2
-#05 2014-04-21 crx
+#001 2008-01-19 v2.3 breek
+#002 2008-11-01 v2.4 pantaraf, chelidon, roberto
+#003 2011-08-26 v3.0 joker, chelidon, ffsup2
+#004 2011-08-31 v4.0 chelidon, ffsup2
+#005 2014-04-21 crx
+#100
+#101 @LANGUAGE_DISPLAY_NAME=Italiano
 
 ABOUT_TAB_BUILD;Versione
 ABOUT_TAB_CREDITS;Riconoscimenti
@@ -134,11 +136,11 @@ FILEBROWSER_POPUPUNTRASH;Rimuovi dal cestino
 FILEBROWSER_QUERYBUTTONHINT;Azzera la ricerca
 FILEBROWSER_QUERYHINT;Scrivi il nome del file da cercare. Supporta nomi parziali. Separa i termini di ricerca con una virgola, ad esempio:\n<i>1001,1004,1199</i>\n\nScorciatoie:\n<b>Ctrl-f</b> - Posiziona sulla Casella di Ricerca,\n<b>Invio</b> - ricerca,\n<b>Esc<\b> - cancellare la Casella di Ricerca,\n<b>Shift-Esc</b> - Toglie il fuoco dalla Casella di Ricerca.
 FILEBROWSER_QUERYLABEL; Cerca:
-FILEBROWSER_RANK1_TOOLTIP;Punteggio 1 *\nScorciatoia: <b>Shift-1</b>
-FILEBROWSER_RANK2_TOOLTIP;Punteggio 2 *\nScorciatoia: <b>Shift-2</b>
-FILEBROWSER_RANK3_TOOLTIP;Punteggio 3 *\nScorciatoia: <b>Shift-3</b>
-FILEBROWSER_RANK4_TOOLTIP;Punteggio 4 *\nScorciatoia: <b>Shift-4</b>
-FILEBROWSER_RANK5_TOOLTIP;Punteggio 5 *\nScorciatoia: <b>Shift-5</b>
+FILEBROWSER_RANK1_TOOLTIP;Punteggio 1 *\nScorciatoia: <b>1</b>
+FILEBROWSER_RANK2_TOOLTIP;Punteggio 2 *\nScorciatoia: <b>2</b>
+FILEBROWSER_RANK3_TOOLTIP;Punteggio 3 *\nScorciatoia: <b>3</b>
+FILEBROWSER_RANK4_TOOLTIP;Punteggio 4 *\nScorciatoia: <b>4</b>
+FILEBROWSER_RANK5_TOOLTIP;Punteggio 5 *\nScorciatoia: <b>5</b>
 FILEBROWSER_RENAMEDLGLABEL;Rinomina il file
 FILEBROWSER_SELECTDARKFRAME;Seleziona un Dark Frame...
 FILEBROWSER_SELECTFLATFIELD;Seleziona un Flat Field...
@@ -148,21 +150,21 @@ FILEBROWSER_SHOWCOLORLABEL3HINT;Mostra le immagini con etichetta Verde.\nScorcia
 FILEBROWSER_SHOWCOLORLABEL4HINT;Mostra le immagini con etichetta Blu.\nScorciatoia: <b>Alt-4</b>
 FILEBROWSER_SHOWCOLORLABEL5HINT;Mostra le immagini con etichetta Viola.\nScorciatoia: <b>Alt-5</b>
 FILEBROWSER_SHOWDIRHINT;Rimuovi tutti i filtri.\nScorciatoia: <b>d</b>
-FILEBROWSER_SHOWEDITEDHINT;Mostra immagini modificate.\nScorciatoia: <b>7</b>
-FILEBROWSER_SHOWEDITEDNOTHINT;Mostra immagini non modificate.\nScorciatoia: <b>6</b>
+FILEBROWSER_SHOWEDITEDHINT;Mostra immagini modificate.\nScorciatoia: <b>Shift-7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;Mostra immagini non modificate.\nScorciatoia: <b>Shift-6</b>
 FILEBROWSER_SHOWEXIFINFO;Mostra informazioni Exif.\nScorciatoie:\n<b>i</b> - Modalità a Schede Multiple,\n<b>Alt-i</b> - Modalità a Schede Singole.
-FILEBROWSER_SHOWRANK1HINT;Mostra le immagini classificate con 1 stella.\nScorciatoia: <b>1</b>
-FILEBROWSER_SHOWRANK2HINT;Mostra le immagini classificate con 2 stelle.\nScorciatoia: <b>2</b>
-FILEBROWSER_SHOWRANK3HINT;Mostra le immagini classificate con 3 stelle.\nScorciatoia: <b>3</b>
-FILEBROWSER_SHOWRANK4HINT;Mostra le immagini classificate con 4 stelle.\nScorciatoia: <b>4</b>
-FILEBROWSER_SHOWRANK5HINT;Mostra le immagini classificate con 5 stelle.\nScorciatoia: <b>5</b>
+FILEBROWSER_SHOWRANK1HINT;Mostra le immagini classificate con 1 stella.\nScorciatoia: <b>Shift-1</b>
+FILEBROWSER_SHOWRANK2HINT;Mostra le immagini classificate con 2 stelle.\nScorciatoia: <b>Shift-2</b>
+FILEBROWSER_SHOWRANK3HINT;Mostra le immagini classificate con 3 stelle.\nScorciatoia: <b>Shift-3</b>
+FILEBROWSER_SHOWRANK4HINT;Mostra le immagini classificate con 4 stelle.\nScorciatoia: <b>Shift-4</b>
+FILEBROWSER_SHOWRANK5HINT;Mostra le immagini classificate con 5 stelle.\nScorciatoia: <b>Shift-5</b>
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Mostra le immagini salvate.\nScorciatoia: <b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Mostra le immagini non salvate.\nScorciatoia: <b>Alt-6</b>
 FILEBROWSER_SHOWTRASHHINT;Mostra il contenuto del cestino.\nScorciatoia: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;Mostra le immagini senza etichetta colorata.\nScorciatoia: <b>Alt-0</b>
-FILEBROWSER_SHOWUNRANKHINT;Mostra le immagini non classificate.\nScorciatoia: <b>0</b>
+FILEBROWSER_SHOWUNRANKHINT;Mostra le immagini non classificate.\nScorciatoia: <b>Shift-0</b>
 FILEBROWSER_THUMBSIZE;Dimensione miniature
-FILEBROWSER_UNRANK_TOOLTIP;Nessun Punteggio.\nScorciatoia: <b>Shift-0</b>
+FILEBROWSER_UNRANK_TOOLTIP;Nessun Punteggio.\nScorciatoia: <b>0</b>
 FILEBROWSER_ZOOMINHINT;Aumenta la dimensione delle miniature.\n\nScorciatoie:\n<b>+</b> - Modalità a Schede Multiple,\n<b>Alt</b>-<b>+</b> - Modalità a Schede Singole.
 FILEBROWSER_ZOOMOUTHINT;Diminuisci la dimensione delle miniature.\n\nScorciatoie:\n<b>-</b> - Modalità a Schede Multiple,\n<b>Alt</b>-<b>-</b> - Modalità a Schede Singole.
 GENERAL_ABOUT;Informazioni

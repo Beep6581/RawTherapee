@@ -43,7 +43,7 @@
 #include "thumbnail.h"
 #include "toolpanelcoord.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #include "windows.h"
 
 #include "../rtengine/winutils.h"
@@ -70,7 +70,7 @@ void setprogressStrUI(double val, const Glib::ustring str, MyProgressBar* pProgr
 #if !defined(__APPLE__) // monitor profile not supported on apple
 bool find_default_monitor_profile (GdkWindow *rootwin, Glib::ustring &defprof, Glib::ustring &defprofname)
 {
-#ifdef WIN32
+#ifdef _WIN32
     HDC hDC = GetDC (nullptr);
 
     if (hDC != nullptr) {
@@ -151,7 +151,7 @@ bool hasUserOnlyPermission(const Glib::ustring &dirname)
     const guint32 mode = file_info->get_attribute_uint32("unix::mode");
 
     return (mode & 0777) == 0700 && owner == Glib::get_user_name();
-#elif defined(WIN32)
+#elif defined(_WIN32)
     const Glib::RefPtr<Gio::File> file = Gio::File::create_for_path(dirname);
     const Glib::RefPtr<Gio::FileInfo> file_info = file->query_info("owner::user");
     if (!file_info) {
@@ -254,7 +254,7 @@ void setUserOnlyPermission(const Glib::RefPtr<Gio::File> file, bool execute)
         file->set_attribute_uint32("unix::mode", mode, Gio::FILE_QUERY_INFO_NONE);
     } catch (Gio::Error &) {
     }
-#elif defined(WIN32)
+#elif defined(_WIN32)
     // Get the current user's SID.
     HANDLE process_token_raw;
     if (!OpenProcessToken(GetCurrentProcess(), TOKEN_READ, &process_token_raw)) {
@@ -324,7 +324,7 @@ void setUserOnlyPermission(const Glib::RefPtr<Gio::File> file, bool execute)
  */
 Glib::ustring getTmpDirectory()
 {
-#if defined(__linux__) || defined(__APPLE__) || defined(WIN32)
+#if defined(__linux__) || defined(__APPLE__) || defined(_WIN32)
     static Glib::ustring recent_dir = "";
     const Glib::ustring tmp_dir_root = Glib::get_tmp_dir();
     const Glib::ustring subdir_base =
@@ -721,7 +721,8 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     firstProcessingDone = false;
 
     // construct toolpanelcoordinator
-    tpc = new ToolPanelCoordinator ();
+    tpc = new ToolPanelCoordinator();
+    tpc->setProgressListener(this);
 
     // build GUI
 
@@ -904,6 +905,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     send_to_external = Gtk::manage(new PopUpButton("", false));
     send_to_external->set_tooltip_text(M("MAIN_BUTTON_SENDTOEDITOR_TOOLTIP"));
+    send_to_external->setEmptyImage("palette-brush.png");
     setExpandAlignProperties(send_to_external->buttonGroup, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     updateExternalEditorWidget(
         options.externalEditorIndex >= 0 ? options.externalEditorIndex : options.externalEditors.size(),
@@ -1464,6 +1466,7 @@ void EditorPanel::setProgressState(bool inProcessing)
 
 void EditorPanel::error(const Glib::ustring& descr)
 {
+    parent->error(descr);
 }
 
 void EditorPanel::error(const Glib::ustring& title, const Glib::ustring& descr)
@@ -1542,7 +1545,7 @@ void EditorPanel::refreshProcessingState (bool inProcessingP)
         val = 0.0;
         str = "PROGRESSBAR_READY";
 
-#ifdef WIN32
+#ifdef _WIN32
 
         // Maybe accessing "parent", which is a Gtk object, can justify to get the Gtk lock...
         if (!firstProcessingDone && static_cast<RTWindow*> (parent)->getIsFullscreen()) {
@@ -1570,16 +1573,16 @@ void EditorPanel::info_toggled ()
 
     const rtengine::FramesMetaData* idata = ipc->getInitialImage()->getMetaData();
 
-    if (idata && idata->hasExif(selectedFrame)) {
+    if (idata && idata->hasExif()) {
         infoString = Glib::ustring::compose ("%1 + %2\n<span size=\"small\">f/</span><span size=\"large\">%3</span>  <span size=\"large\">%4</span><span size=\"small\">s</span>  <span size=\"small\">%5</span><span size=\"large\">%6</span>  <span size=\"large\">%7</span><span size=\"small\">mm</span>",
                                               escapeHtmlChars (idata->getMake() + " " + idata->getModel()),
                                               escapeHtmlChars (idata->getLens()),
-                                              Glib::ustring (idata->apertureToString (idata->getFNumber(selectedFrame))),
-                                              Glib::ustring (idata->shutterToString (idata->getShutterSpeed(selectedFrame))),
-                                              M ("QINFO_ISO"), idata->getISOSpeed(selectedFrame),
-                                              Glib::ustring::format (std::setw (3), std::fixed, std::setprecision (2), idata->getFocalLen(selectedFrame)));
+                                              Glib::ustring (idata->apertureToString (idata->getFNumber())),
+                                              Glib::ustring (idata->shutterToString (idata->getShutterSpeed())),
+                                              M ("QINFO_ISO"), idata->getISOSpeed(),
+                                              Glib::ustring::format (std::setw (3), std::fixed, std::setprecision (2), idata->getFocalLen()));
 
-        expcomp = Glib::ustring (idata->expcompToString (idata->getExpComp(selectedFrame), true)); // maskZeroexpcomp
+        expcomp = Glib::ustring (idata->expcompToString (idata->getExpComp(), true)); // maskZeroexpcomp
 
         if (!expcomp.empty ()) {
             infoString = Glib::ustring::compose ("%1  <span size=\"large\">%2</span><span size=\"small\">EV</span>",
@@ -1592,8 +1595,13 @@ void EditorPanel::info_toggled ()
                                               escapeHtmlChars (Glib::path_get_dirname (openThm->getFileName())) + G_DIR_SEPARATOR_S,
                                               escapeHtmlChars (Glib::path_get_basename (openThm->getFileName()))  );
 
-        int ww = ipc->getFullWidth();
-        int hh = ipc->getFullHeight();
+        int ww = -1, hh = -1;
+        idata->getDimensions(ww, hh);
+        if (ww <= 0) {
+            ww = ipc->getFullWidth();
+            hh = ipc->getFullHeight();
+        }
+
         //megapixels
         infoString = Glib::ustring::compose ("%1\n<span size=\"small\">%2 MP (%3x%4)</span>",
                                              infoString,
@@ -1607,7 +1615,7 @@ void EditorPanel::info_toggled ()
         if (isHDR) {
             infoString = Glib::ustring::compose ("%1\n" + M("QINFO_HDR"), infoString, numFrames);
             if (numFrames == 1) {
-                int sampleFormat = idata->getSampleFormat(selectedFrame);
+                int sampleFormat = idata->getSampleFormat();
                 infoString = Glib::ustring::compose ("%1 / %2", infoString, M(Glib::ustring::compose("SAMPLEFORMAT_%1", sampleFormat)));
             }
         } else if (isPixelShift) {
@@ -2030,7 +2038,7 @@ bool EditorPanel::idle_saveImage (ProgressConnector<rtengine::IImagefloat*> *pc,
         msgd.run ();
 
         saveimgas->set_sensitive (true);
-        send_to_external->set_sensitive(true);
+        send_to_external->set_sensitive(send_to_external->getEntryCount());
         isProcessing = false;
 
     }
@@ -2058,7 +2066,7 @@ bool EditorPanel::idle_imageSaved (ProgressConnector<int> *pc, rtengine::IImagef
     }
 
     saveimgas->set_sensitive (true);
-    send_to_external->set_sensitive(true);
+    send_to_external->set_sensitive(send_to_external->getEntryCount());
 
     parent->setProgressStr ("");
     parent->setProgress (0.);
@@ -2249,8 +2257,10 @@ void EditorPanel::sendToExternalPressed()
         dialog->show();
     } else {
         struct ExternalEditor editor = options.externalEditors.at(options.externalEditorIndex);
-        external_editor_info = Gio::AppInfo::create_from_commandline(editor.command, editor.name, Gio::APP_INFO_CREATE_NONE);
-        external_editor_native_command = editor.native_command;
+        external_editor_info = {
+            editor.name,
+            editor.command,
+            editor.native_command};
         sendToExternal();
     }
 }
@@ -2361,7 +2371,7 @@ bool EditorPanel::idle_sendToGimp ( ProgressConnector<rtengine::IImagefloat*> *p
             sf.tiffBits = 16;
             sf.tiffFloat = false;
         }
-        
+
         sf.tiffUncompressed = true;
         sf.saveParams = true;
 
@@ -2388,7 +2398,7 @@ bool EditorPanel::idle_sendToGimp ( ProgressConnector<rtengine::IImagefloat*> *p
         Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
         msgd.run ();
         saveimgas->set_sensitive (true);
-        send_to_external->set_sensitive(true);
+        send_to_external->set_sensitive(send_to_external->getEntryCount());
     }
 
     return false;
@@ -2409,14 +2419,14 @@ bool EditorPanel::idle_sentToGimp (ProgressConnector<int> *pc, rtengine::IImagef
 
     if ((!img && Glib::file_test(filename, Glib::FILE_TEST_IS_REGULAR)) || (img && !errore)) {
         saveimgas->set_sensitive (true);
-        send_to_external->set_sensitive(true);
+        send_to_external->set_sensitive(send_to_external->getEntryCount());
         parent->setProgressStr ("");
         parent->setProgress (0.);
         bool success = false;
 
         setUserOnlyPermission(Gio::File::create_for_path(filename), false);
 
-        success = ExtProgStore::openInExternalEditor(filename, external_editor_info, external_editor_native_command);
+        success = ExtProgStore::openInExternalEditor(filename, external_editor_info);
 
         if (!success) {
             Gtk::MessageDialog msgd (*parent, M ("MAIN_MSG_CANNOTSTARTEDITOR"), false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
@@ -2445,12 +2455,16 @@ RTAppChooserDialog *EditorPanel::getAppChooserDialog()
 void EditorPanel::onAppChooserDialogResponse(int responseId)
 {
     switch (responseId) {
-        case Gtk::RESPONSE_OK:
+        case Gtk::RESPONSE_OK: {
             getAppChooserDialog()->close();
-            external_editor_info = getAppChooserDialog()->get_app_info();
-            external_editor_native_command = false;
+            const auto app_info = getAppChooserDialog()->get_app_info();
+            external_editor_info = {
+                app_info->get_name(),
+                app_info->get_commandline(),
+                false};
             sendToExternal();
             break;
+        }
         case Gtk::RESPONSE_CANCEL:
         case Gtk::RESPONSE_CLOSE:
             getAppChooserDialog()->close();
@@ -2781,7 +2795,10 @@ void EditorPanel::updateExternalEditorWidget(int selectedIndex, const std::vecto
             send_to_external->insertEntry(i, "palette-brush.png", name, &send_to_external_radio_group);
         }
     }
+#ifndef __APPLE__
     send_to_external->addEntry("palette-brush.png", M("GENERAL_OTHER"), &send_to_external_radio_group);
+#endif
+    send_to_external->set_sensitive(send_to_external->getEntryCount());
     send_to_external->setSelected(selectedIndex);
     send_to_external->show();
 }

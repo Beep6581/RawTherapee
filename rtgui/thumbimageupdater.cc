@@ -88,9 +88,9 @@ public:
 
     Glib::ThreadPool* threadPool_;
 
-    // Need to be a Glib::Threads::Mutex because used in a Glib::Threads::Cond object...
+    // Need to be a std::mutex because used in a std::condition_variable object...
     // This is the only exceptions along with GThreadMutex (guiutils.cc), MyMutex is used everywhere else
-    Glib::Threads::Mutex mutex_;
+    std::mutex mutex_;
 
     JobList jobs_;
 
@@ -98,7 +98,7 @@ public:
 
     bool inactive_waiting_;
 
-    Glib::Threads::Cond inactive_;
+    std::condition_variable inactive_;
 
     void
     processNextJob()
@@ -106,7 +106,7 @@ public:
         Job j;
 
         {
-            Glib::Threads::Mutex::Lock lock(mutex_);
+            std::lock_guard<std::mutex> lock(mutex_);
 
             // nothing to do; could be jobs have been removed
             if ( jobs_.empty() ) {
@@ -169,10 +169,10 @@ public:
         }
 
         if ( --active_ == 0 ) {
-            Glib::Threads::Mutex::Lock lock(mutex_);
+            std::lock_guard<std::mutex> lock(mutex_);
             if (inactive_waiting_) {
                 inactive_waiting_ = false;
-                inactive_.broadcast();
+                inactive_.notify_all();
             }
         }
     }
@@ -201,7 +201,7 @@ void ThumbImageUpdater::add(ThumbBrowserEntryBase* tbe, bool* priority, bool upg
         return;
     }
 
-    Glib::Threads::Mutex::Lock lock(impl_->mutex_);
+    std::lock_guard<std::mutex> lock(impl_->mutex_);
 
     // look up if an older version is in the queue
     Impl::JobList::iterator i(impl_->jobs_.begin());
@@ -234,7 +234,7 @@ void ThumbImageUpdater::removeJobs(ThumbImageUpdateListener* listener)
     DEBUG("removeJobs(%p)", listener);
 
     {
-        Glib::Threads::Mutex::Lock lock(impl_->mutex_);
+        std::lock_guard<std::mutex> lock(impl_->mutex_);
 
         for( Impl::JobList::iterator i(impl_->jobs_.begin()); i != impl_->jobs_.end(); ) {
             if (i->listener_ == listener) {
@@ -250,9 +250,9 @@ void ThumbImageUpdater::removeJobs(ThumbImageUpdateListener* listener)
     while ( impl_->active_ != 0 ) {
         DEBUG("waiting for running jobs1");
         {
-            Glib::Threads::Mutex::Lock lock(impl_->mutex_);
+            std::unique_lock<std::mutex> lock(impl_->mutex_);
             impl_->inactive_waiting_ = true;
-            impl_->inactive_.wait(impl_->mutex_);
+            impl_->inactive_.wait(lock);
         }
     }
 }
@@ -262,7 +262,7 @@ void ThumbImageUpdater::removeAllJobs()
     DEBUG("stop");
 
     {
-        Glib::Threads::Mutex::Lock lock(impl_->mutex_);
+        std::lock_guard<std::mutex> lock(impl_->mutex_);
 
         impl_->jobs_.clear();
     }
@@ -270,9 +270,9 @@ void ThumbImageUpdater::removeAllJobs()
     while ( impl_->active_ != 0 ) {
         DEBUG("waiting for running jobs2");
         {
-            Glib::Threads::Mutex::Lock lock(impl_->mutex_);
+            std::unique_lock<std::mutex> lock(impl_->mutex_);
             impl_->inactive_waiting_ = true;
-            impl_->inactive_.wait(impl_->mutex_);
+            impl_->inactive_.wait(lock);
         }
     }
 }
