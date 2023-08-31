@@ -55,7 +55,11 @@
 #55   L*a*b*
 #56   Pixel Shift
 #57   Retinex
-#58 2010-11-20 RT 3.0 alpha 1 rev. 597:fb291bf74c by Dr. Gyurkó M. 'dualon' Dávid
+#58
+#59 ------------------------------------------------------
+#60 Credits:
+#61 2010-11-20 RT 3.0 alpha 1 rev. 597:fb291bf74c by Dr. Gyurkó M. 'dualon' Dávid
+#62 2023-08-31 RawTherapee, version nightly-github-actions-229-g5f8290140 (5.10) by Battyányi Dániel
 
 ABOUT_TAB_BUILD;Verzió
 ABOUT_TAB_CREDITS;Szerzők
