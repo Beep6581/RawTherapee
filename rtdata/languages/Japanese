@@ -1,4 +1,6 @@
-#Last update 10-12-2022
+#001 Last update 10-12-2022
+#100
+#101 @LANGUAGE_DISPLAY_NAME=日本語
 
 ABOUT_TAB_BUILD;バージョン
 ABOUT_TAB_CREDITS;クレジット
@@ -169,11 +171,11 @@ FILEBROWSER_POPUPUNTRASH;ゴミ箱から移動
 FILEBROWSER_QUERYBUTTONHINT;検索ボックス内のヒントをクリア
 FILEBROWSER_QUERYHINT;ファイルを検索する。<i>ファイル名の一部</i>でも可。複数の場合は、<i>ファイル名をカンマで区切る</i>\n例 <i>1001,1004,1199</i>\n\n入力した名前以外のファイルを検索する場合は、先頭に<i>!=</i>を入れる\n例　<i>!=1001,1004,1199</i>\n\nショートカット：\n<b>Ctrl-F</b> 検索ボックスをフォーカスにする\n<b>Enter</b> 検索を開始\n<b>Esc</b> クリア\n<b>Shift-Esc</b>フォーカスを解除
 FILEBROWSER_QUERYLABEL; 検索:
-FILEBROWSER_RANK1_TOOLTIP;ランク 1 *\nショートカット: <b>Shift-1</b>
-FILEBROWSER_RANK2_TOOLTIP;ランク 2 *\nショートカット: <b>Shift-2</b>
-FILEBROWSER_RANK3_TOOLTIP;ランク 3 *\nショートカット: <b>Shift-3</b>
-FILEBROWSER_RANK4_TOOLTIP;ランク 4 *\nショートカット: <b>Shift-4</b>
-FILEBROWSER_RANK5_TOOLTIP;ランク 5 *\nショートカット: <b>Shift-5</b>
+FILEBROWSER_RANK1_TOOLTIP;ランク 1 *\nショートカット: <b>1</b>
+FILEBROWSER_RANK2_TOOLTIP;ランク 2 *\nショートカット: <b>2</b>
+FILEBROWSER_RANK3_TOOLTIP;ランク 3 *\nショートカット: <b>3</b>
+FILEBROWSER_RANK4_TOOLTIP;ランク 4 *\nショートカット: <b>4</b>
+FILEBROWSER_RANK5_TOOLTIP;ランク 5 *\nショートカット: <b>5</b>
 FILEBROWSER_RENAMEDLGLABEL;ファイル名変更
 FILEBROWSER_RESETDEFAULTPROFILE;デフォルトにリセット
 FILEBROWSER_SELECTDARKFRAME;ダークフレームの選択...
@@ -184,23 +186,23 @@ FILEBROWSER_SHOWCOLORLABEL3HINT;グリーン・ラベルの画像を表示\nシ�
 FILEBROWSER_SHOWCOLORLABEL4HINT;ブルー・ラベルの画像を表示\nショートカット: <b>Alt-4</b>
 FILEBROWSER_SHOWCOLORLABEL5HINT;パープル・ラベルの画像を表示\nショートカット: <b>Alt-5</b>
 FILEBROWSER_SHOWDIRHINT;全ての絞り込みをクリア\nショートカット: <b>d</b>
-FILEBROWSER_SHOWEDITEDHINT;編集済み画像を表示\nショートカット: <b>7</b>
-FILEBROWSER_SHOWEDITEDNOTHINT;未編集画像を表示\nショートカット: <b>6</b>
+FILEBROWSER_SHOWEDITEDHINT;編集済み画像を表示\nショートカット: <b>Shift-7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;未編集画像を表示\nショートカット: <b>Shift-6</b>
 FILEBROWSER_SHOWEXIFINFO;EXIF情報を表示\nショートカット: <b>i</b>\n\nシングル編集タブのショートカット: <b>Alt-i</b>
 FILEBROWSER_SHOWNOTTRASHHINT;ゴミ箱の中にある画像だけを表示
 FILEBROWSER_SHOWORIGINALHINT;元画像だけを表示\n\nファイル名は同じだが拡張子が異なる画像がある場合は、環境設定の中のファイルブラウザタブにある拡張子リストの上位に位置する拡張子を持った画像を元画像とする。
-FILEBROWSER_SHOWRANK1HINT;１つ星ランクを表示\nショートカット: <b>1</b>
-FILEBROWSER_SHOWRANK2HINT;２つ星ランクを表示\nショートカット: <b>2</b>
-FILEBROWSER_SHOWRANK3HINT;３つ星ランクを表示\nショートカット: <b>3</b>
-FILEBROWSER_SHOWRANK4HINT;４つ星ランクを表示\nショートカット: <b>4</b>
-FILEBROWSER_SHOWRANK5HINT;５つ星ランクを表示\nショートカット: <b>5</b>
+FILEBROWSER_SHOWRANK1HINT;１つ星ランクを表示\nショートカット: <b>Shift-1</b>
+FILEBROWSER_SHOWRANK2HINT;２つ星ランクを表示\nショートカット: <b>Shift-2</b>
+FILEBROWSER_SHOWRANK3HINT;３つ星ランクを表示\nショートカット: <b>Shift-3</b>
+FILEBROWSER_SHOWRANK4HINT;４つ星ランクを表示\nショートカット: <b>Shift-4</b>
+FILEBROWSER_SHOWRANK5HINT;５つ星ランクを表示\nショートカット: <b>Shift-5</b>
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;最近保存された画像を表示\nショートカット:  <b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;最近保存されていない画像を表示\nショートカット: <b>Alt-6</b>
 FILEBROWSER_SHOWTRASHHINT;ゴミ箱の内容を表示\nショートカット: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;カラー・ラベルのない画像を表示\nショートカット: <b>Alt-0</b>
-FILEBROWSER_SHOWUNRANKHINT;ランクなし画像を表示\nショートカット:  <b>0</b>
+FILEBROWSER_SHOWUNRANKHINT;ランクなし画像を表示\nショートカット:  <b>Shift-0</b>
 FILEBROWSER_THUMBSIZE;サムネイルのサイズ
-FILEBROWSER_UNRANK_TOOLTIP;ランクなし\nショートカット: <b>Shift-0</b>
+FILEBROWSER_UNRANK_TOOLTIP;ランクなし\nショートカット: <b>0</b>
 FILEBROWSER_ZOOMINHINT;サムネイルサイズの拡大\nショートカット: <b>+</b>\n\nシングル編集タブのショートカット: <b>Alt-+</b>
 FILEBROWSER_ZOOMOUTHINT;サムネイルサイズの縮小\nショートカット: <b>-</b>\n\nシングル編集タブのショートカット: <b>Alt--</b>
 FILECHOOSER_FILTER_ANY;全てのファイル

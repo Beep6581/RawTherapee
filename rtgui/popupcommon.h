@@ -20,12 +20,13 @@
  */
 #pragma once
 
-#include "glibmm/refptr.h"
+#include "threadutils.h"
+
 #include <memory>
 #include <vector>
 
+#include <glibmm/refptr.h>
 #include <glibmm/ustring.h>
-
 #include <sigc++/signal.h>
 
 namespace Gio
@@ -64,6 +65,8 @@ public:
     bool addEntry (const Glib::ustring& fileName, const Glib::ustring& label, Gtk::RadioButtonGroup* radioGroup = nullptr);
     bool insertEntry(int position, const Glib::ustring& fileName, const Glib::ustring& label, Gtk::RadioButtonGroup* radioGroup = nullptr);
     bool insertEntry(int position, const Glib::RefPtr<const Gio::Icon>& gIcon, const Glib::ustring& label, Gtk::RadioButtonGroup* radioGroup = nullptr);
+    /// Sets the button image to show when there are no entries.
+    void setEmptyImage(const Glib::ustring &fileName);
     int getEntryCount () const;
     bool setSelected (int entryNum);
     int  getSelected () const;
@@ -77,6 +80,7 @@ private:
     type_signal_changed messageChanged;
     type_signal_item_selected messageItemSelected;
 
+    Glib::ustring emptyImageFilename;
     std::vector<Glib::RefPtr<const Gio::Icon>> imageIcons;
     std::vector<Glib::ustring> imageFilenames;
     std::vector<const RTImage*> images;
@@ -88,6 +92,7 @@ private:
     Gtk::Button* arrowButton;
     int selected;
     bool hasMenu;
+    MyMutex entrySelectionMutex;
 
     void changeImage(int position);
     void changeImage(const Glib::ustring& fileName, const Glib::RefPtr<const Gio::Icon>& gIcon);

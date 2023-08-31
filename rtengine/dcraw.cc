@@ -86,7 +86,7 @@
 #ifdef __CYGWIN__
 #include <io.h>
 #endif
-#ifdef WIN32
+#ifdef _WIN32
 #include <sys/utime.h>
 #include <winsock2.h>
 #ifndef strcasecmp
@@ -4516,7 +4516,7 @@ mask_set:
 //      free (fname);
 //      if (errno != ERANGE) return;
 //    }
-//#if defined(WIN32) || defined(DJGPP)
+//#if defined(_WIN32) || defined(DJGPP)
 //    if (fname[1] == ':')
 //      memmove (fname, fname+2, len-2);
 //    for (cp=fname; *cp; cp++)
@@ -8675,7 +8675,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
     { "Olympus E-M5MarkII", 0, 0,
 	{ 9422,-3258,-711,-2655,10898,2015,-512,1354,5512 } },
     { "Olympus E-M5", 0, 0xfe1,
-	{ 8380,-2630,-639,-2887,10725,2496,-627,1427,5438 } },
+	{ 8380,-2630,-639,-2887,10725,2496,-627,1427,5438 } },//D65
+//	{ 9033,-3597, 26,-2351, 9700, 3111, -181, 807, 5838} },//stDA
     { "Olympus PEN-F", 0, 0,
 	{ 9476,-3182,-765,-2613,10958,1893,-449,1315,5268 } },
     { "Olympus SH-2", 0, 0,

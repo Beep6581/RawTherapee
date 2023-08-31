@@ -27,6 +27,7 @@
 
 #include "../rtengine/noncopyable.h"
 
+class CacheImageData;
 class Thumbnail;
 
 class CacheManager :
@@ -42,6 +43,7 @@ private:
     void deleteFiles (const Glib::ustring& fname, const std::string& md5, bool purgeData, bool purgeProfile) const;
 
     void applyCacheSizeLimitation () const;
+    void updateImageInfo(const Glib::ustring &fname, CacheImageData &imageData, const Glib::ustring &xmpSidecarMd5) const;
 
 public:
     static CacheManager* getInstance ();

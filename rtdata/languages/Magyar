@@ -61,6 +61,8 @@
 #61 Credits:
 #62 2010-11-20 RT 3.0 alpha 1 rev. 597:fb291bf74c by Dr. Gyurkó M. 'dualon' Dávid
 #63 2023-08-31 RawTherapee, version nightly-github-actions-229-g5f8290140 (5.10) by Battyányi Dániel
+#100
+#101 @LANGUAGE_DISPLAY_NAME=Magyar
 
 ABOUT_TAB_BUILD;Verzió
 ABOUT_TAB_CREDITS;Szerzők
@@ -180,8 +182,8 @@ FILEBROWSER_SHOWCOLORLABEL3HINT;Zöld címkéjű képek megjelenítése.\nGyorsb
 FILEBROWSER_SHOWCOLORLABEL4HINT;Kék címkéjű képek megjelenítése.\nGyorsbillentyű: <b>Alt-4</b>
 FILEBROWSER_SHOWCOLORLABEL5HINT;Lila címkéjű képek megjelenítése.\nGyorsbillentyű: <b>Alt-5</b>
 FILEBROWSER_SHOWDIRHINT;A könyvtárban lévő összes kép mutatása
-FILEBROWSER_SHOWEDITEDHINT;Szerkesztett képek megjelenítése.\nGyorsbillentyű: <b>7</b>
-FILEBROWSER_SHOWEDITEDNOTHINT;Még nem szerkesztett képek megjelenítése.\nGyorsbillentyű: <b>6</b>
+FILEBROWSER_SHOWEDITEDHINT;Szerkesztett képek megjelenítése.\nGyorsbillentyű: <b>Shift-7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;Még nem szerkesztett képek megjelenítése.\nGyorsbillentyű: <b>Shift-6</b>
 FILEBROWSER_SHOWEXIFINFO;EXIF info megjelenítése: <b>i</b>
 FILEBROWSER_SHOWRANK1HINT;1 csillaggal jelölt képek mutatása
 FILEBROWSER_SHOWRANK2HINT;2 csillaggal jelölt képek mutatása
@@ -892,15 +894,6 @@ DYNPROFILEEDITOR_MOVE_UP;Mozgás felfele
 DYNPROFILEEDITOR_NEW;Új
 DYNPROFILEEDITOR_NEW_RULE;Új Dinamikus Profilszabály
 DYNPROFILEEDITOR_PROFILE;Feldolgozási Profil
-EDIT_OBJECT_TOOLTIP;Egy widgetet jelenik meg az előnézeti ablakban, amellyel ez az eszköz állítható.
-EDIT_PIPETTE_TOOLTIP;Ahhoz, hogy egy pontot adjál a görbéhez, tartsd lenyomva a Ctrl billentyűt, miközben bal klikkelsz a kiválasztott pontra a kép előnézetben.\nA pont módosításához, a Ctrl lenyomva tartásával bal kattintás a megfelelő területre az előnézetben, majd engedd el a Ctrl-t (kivéve, ha finom irányításra vágysz), és a bal egérgomb nyomvatartása közben mozgasd az egeret fel/le ahhoz, hogy a pont a görbén fel/le mozogjon.
-EXIFFILTER_IMAGETYPE;Képtípus
-EXIFPANEL_SHOWALL;Összes megjelenítése
-EXPORT_BYPASS;Átugrandó feldolgozási lépések
-EXPORT_BYPASS_EQUALIZER;Wavelet Szintek Átugrása
-EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;[raw] LMMSE Feljavító Lépések átugrása
-EXPORT_PIPELINE;Feldolgozási pipeline
-EXPORT_USE_FAST_PIPELINE;Dedikált (teljes feldolgozás az átméretezett képen)
 EXPORT_USE_FAST_PIPELINE_TOOLTIP;Dedikált feldolgozási pipeline használata Gyors Export módban lévő képeken, amely a sebességet minőségre cseréli. A kép átméretezése a lehető leghamarabb történik ahelyett, hogy végén történne a normál pipeline szerint. A gyorsítás jelentős lehet, de előfordulhatnak artifaktumok és a kimenet minőségének általános degradációja.
 EXPORT_USE_NORMAL_PIPELINE;Standard (Pár lépés átugrása, átméretezés a végén)
 EXTPROGTARGET_1;nyers
@@ -931,15 +924,15 @@ FILEBROWSER_POPUPRANK4;Rang 4 ****
 FILEBROWSER_POPUPRANK5;Rang 5 *****
 FILEBROWSER_POPUPREMOVE;Törlés véglegesen
 FILEBROWSER_POPUPREMOVEINCLPROC;Törlés véglegesen, a sorfeldolgozott verzióval együtt.
-FILEBROWSER_RANK1_TOOLTIP;Rang 1 *\nGyorsbillentyű: <b>Shift-1</b>
-FILEBROWSER_RANK3_TOOLTIP;Rang 3 *\nGyorsbillentyű: <b>Shift-3</b>
-FILEBROWSER_RANK2_TOOLTIP;Rang 2 *\nGyorsbillentyű: <b>Shift-2</b>
-FILEBROWSER_RANK4_TOOLTIP;Rang 4 *\nGyorsbillentyű: <b>Shift-4</b>
-FILEBROWSER_RANK5_TOOLTIP;Rang 5 *\nGyorsbillentyű: <b>Shift-5</b>
+FILEBROWSER_RANK1_TOOLTIP;Rang 1 *\nGyorsbillentyű: <b>1</b>
+FILEBROWSER_RANK2_TOOLTIP;Rang 2 *\nGyorsbillentyű: <b>2</b>
+FILEBROWSER_RANK3_TOOLTIP;Rang 3 *\nGyorsbillentyű: <b>3</b>
+FILEBROWSER_RANK4_TOOLTIP;Rang 4 *\nGyorsbillentyű: <b>4</b>
+FILEBROWSER_RANK5_TOOLTIP;Rang 5 *\nGyorsbillentyű: <b>5</b>
 FILEBROWSER_RESETDEFAULTPROFILE;Alapértelmezett visszaállítása
 FILEBROWSER_SHOWNOTTRASHHINT;Csak a kukából hiányzó képek mutatása.
 FILEBROWSER_SHOWORIGINALHINT;Csak eredeti képek mutatása.\n\nAmikor több azonos nevű kép létezik, de kiterjesztéseikben különböznek, az számít az eredetinek, amely kiterjesztése a legközelebb van a felismert kiterjesztések lista tetejéhez a Beállítások >  Fájl böngésző > Felismert Kiterjesztések -ben.
-FILEBROWSER_UNRANK_TOOLTIP;Rang eltávolítása.\nGyorsbillentyű: <b>Shift-0</b>
+FILEBROWSER_UNRANK_TOOLTIP;Rang eltávolítása.\nGyorsbillentyű: <b>0</b>
 FILECHOOSER_FILTER_ANY;Minden fájl
 FILECHOOSER_FILTER_COLPROF;Színprofilok (*.icc)
 FILECHOOSER_FILTER_CURVE;Görbefájlok

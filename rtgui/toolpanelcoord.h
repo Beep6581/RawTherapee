@@ -461,6 +461,8 @@ public:
 
     void setEditProvider(EditDataProvider *provider);
 
+    void setProgressListener(rtengine::ProgressListener *pl);
+
 protected:
     static std::unordered_map<std::string, Tool> toolNamesReverseMap;
 
