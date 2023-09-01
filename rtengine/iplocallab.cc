@@ -19819,10 +19819,18 @@ void ImProcFunctions::Lab_Local(
 
 
             if (lp.showmaskciemet == 0 || lp.showmaskciemet == 1  || lp.showmaskciemet == 2 || lp.showmaskciemet == 4 || lp.enacieMask) {
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+                for (int y = 0; y < bfh ; y++) {
+                    for (int x = 0; x < bfw; x++) {
+                        bufexpfin->L[y][x] = original->L[y + ystart][x + xstart];
+                        bufexpfin->a[y][x] = original->a[y + ystart][x + xstart];
+                        bufexpfin->b[y][x] = original->b[y + ystart][x + xstart];
+                    }
+                }
 
-                bufexpfin->CopyFrom(bufexporig.get(), multiThread);
                 if (params->locallab.spots.at(sp).trccie) {
-
                     Imagefloat *tmpImage = nullptr;
                     tmpImage = new Imagefloat(bfw, bfh);
                     lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
@@ -19878,7 +19886,7 @@ void ImProcFunctions::Lab_Local(
                     params->locallab.spots.at(sp).catMethod;
                     workingtrc(tmpImage, tmpImage, bfw, bfh, -5, prof, 2.4, 12.92310, 0, ill, 0, dummy, true, false, false, false);
                     workingtrc(tmpImage, tmpImage, bfw, bfh, typ, prof, gamtone, slotone, catx, ill, prim, dummy, false, true, true, true);//be careful no gamut control
-
+                    
                     rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
                     delete tmpImage;
