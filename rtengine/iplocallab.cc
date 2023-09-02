@@ -718,6 +718,7 @@ struct local_params {
     float mulloc[6];
     int mullocsh[5];
     int detailsh;
+    int whitescie;
     double tePivot;
     float threshol;
     float chromacb;
@@ -1726,6 +1727,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.activspot = locallab.spots.at(sp).activ;
     lp.detailsh = locallab.spots.at(sp).detailSH; 
     lp.tePivot = locallab.spots.at(sp).tePivot;
+    lp.whitescie = locallab.spots.at(sp).whitescie; 
     lp.threshol = thresho;
     lp.chromacb = chromcbdl;
     lp.expvib = locallab.spots.at(sp).expvibrance && lp.activspot ;
@@ -2313,6 +2315,20 @@ void tone_eq(ImProcFunctions *ipf, Imagefloat *rgb, const struct local_params &l
     std::copy(lp.mullocsh, lp.mullocsh + params.bands.size(), params.bands.begin());
     ipf->toneEqualizer(rgb, params, workingProfile, scale, multithread);
 }
+
+void tone_eqcam(ImProcFunctions *ipf, Imagefloat *rgb, const struct local_params &lp, const Glib::ustring &workingProfile, double scale, bool multithread)
+{
+    ToneEqualizerParams params;
+    params.enabled = true;
+    params.regularization = 0.f;
+    params.pivot = 0.f;
+    params.bands[4] = lp.whitescie;
+    if(lp.whitescie < -60) {
+        params.bands[3] = 0.5f * (lp.whitescie + 60);
+    }
+    ipf->toneEqualizer(rgb, params, workingProfile, scale, multithread);
+}
+
 void ImProcFunctions::loccont(int bfw, int bfh, LabImage* tmp1, float rad, float stren, int sk)
 {
     if (rad > 0.f) {
@@ -19831,10 +19847,12 @@ void ImProcFunctions::Lab_Local(
                 }
 
                 if (params->locallab.spots.at(sp).trccie) {
+                    double scal = (double)(sk);
                     Imagefloat *tmpImage = nullptr;
                     tmpImage = new Imagefloat(bfw, bfh);
                     lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
                     Glib::ustring prof = params->icm.workingProfile;
+                    tone_eqcam(this, tmpImage, lp, params->icm.workingProfile, scal, multiThread);
 
                     float gamtone = params->locallab.spots.at(sp).gamjcie;
                     float slotone = params->locallab.spots.at(sp).slopjcie;
@@ -19886,7 +19904,7 @@ void ImProcFunctions::Lab_Local(
                     params->locallab.spots.at(sp).catMethod;
                     workingtrc(tmpImage, tmpImage, bfw, bfh, -5, prof, 2.4, 12.92310, 0, ill, 0, dummy, true, false, false, false);
                     workingtrc(tmpImage, tmpImage, bfw, bfh, typ, prof, gamtone, slotone, catx, ill, prim, dummy, false, true, true, true);//be careful no gamut control
-                    
+                   
                     rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
                     delete tmpImage;

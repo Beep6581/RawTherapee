@@ -1773,6 +1773,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).comprcieth = locallab.spots.at(j).comprcieth && pSpot.comprcieth == otherSpot.comprcieth;
                 locallab.spots.at(j).gamjcie = locallab.spots.at(j).gamjcie && pSpot.gamjcie == otherSpot.gamjcie;
                 locallab.spots.at(j).slopjcie = locallab.spots.at(j).slopjcie && pSpot.slopjcie == otherSpot.slopjcie;
+                locallab.spots.at(j).whitescie = locallab.spots.at(j).whitescie && pSpot.whitescie == otherSpot.whitescie;
                 locallab.spots.at(j).primMethod = locallab.spots.at(j).primMethod && pSpot.primMethod == otherSpot.primMethod;
                 locallab.spots.at(j).catMethod = locallab.spots.at(j).catMethod && pSpot.catMethod == otherSpot.catMethod;
                 locallab.spots.at(j).sigmoidldajzcie = locallab.spots.at(j).sigmoidldajzcie && pSpot.sigmoidldajzcie == otherSpot.sigmoidldajzcie;
@@ -6087,6 +6088,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).slopjcie = mods.locallab.spots.at(i).slopjcie;
         }
 
+        if (locallab.spots.at(i).whitescie) {
+            toEdit.locallab.spots.at(i).whitescie = mods.locallab.spots.at(i).whitescie;
+        }
+
         if (locallab.spots.at(i).primMethod) {
             toEdit.locallab.spots.at(i).primMethod = mods.locallab.spots.at(i).primMethod;
         }
@@ -8257,6 +8262,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     comprcieth(v),
     gamjcie(v),
     slopjcie(v),
+    whitescie(v),
     primMethod(v),
     catMethod(v),
     sigmoidldajzcie(v),
@@ -8977,6 +8983,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     comprcieth = v;
     gamjcie = v;
     slopjcie = v;
+    whitescie = v;
     primMethod = v;
     catMethod = v;
     sigmoidldajzcie = v;

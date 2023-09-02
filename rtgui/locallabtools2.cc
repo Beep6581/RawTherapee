@@ -7483,6 +7483,7 @@ Locallabcie::Locallabcie():
     trccie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGTRCCIE")))),
     gamjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGGAMJCIE"), 0.7, 4., 0.01, 2.4))),
     slopjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGSLOPJCIE"), 0., 100., 0.01, 12.923))),
+    whitescie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGWHITESCIE"), -100, 40., 1, 0))),
     wprimBox(Gtk::manage(new Gtk::Box())),
     primMethod(Gtk::manage(new MyComboBoxText())),
     catBox(Gtk::manage(new Gtk::Box())),
@@ -7612,6 +7613,7 @@ Locallabcie::Locallabcie():
     Evlocallabsigcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SIG");
     Evlocallabprimcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_PRIM");
     Evlocallabcatcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_CAT");
+    Evlocallabwhitescie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_WHITES");
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     // Parameter Ciecam specific widgets
@@ -7746,6 +7748,7 @@ Locallabcie::Locallabcie():
     modeHBoxbwev->pack_start(*bwevMethod);
     gamcieBox->pack_start(*gamjcie);
     gamcieBox->pack_start(*slopjcie);
+    gamcieBox->pack_start(*whitescie);
     gamcieBox->pack_start(*wprimBox);
     gamcieBox->pack_start(*catBox);
 
@@ -8082,6 +8085,7 @@ Locallabcie::Locallabcie():
     comprcieth->setAdjusterListener(this);
     gamjcie->setAdjusterListener(this);
     slopjcie->setAdjusterListener(this);
+    whitescie->setAdjusterListener(this);
     sigmoidldajzcie->setAdjusterListener(this);
     sigmoidthjzcie->setAdjusterListener(this);
     sigmoidbljzcie->setAdjusterListener(this);
@@ -8457,6 +8461,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         comprcieth->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDQJCOMPRCIE_TOOLTIP"));
         gamjcie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDTRCCIE_TOOLTIP"));
         slopjcie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDTRCCIE_TOOLTIP"));
+        //whitescie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP"));
         normcie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDNORMCIE_TOOLTIP"));
         trccie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDTRCCIE_TOOLTIP"));
         sigmoidblcie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDNORMCIEBLEND_TOOLTIP"));
@@ -8528,6 +8533,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         comprcieth->set_tooltip_text("");
         gamjcie->set_tooltip_text("");
         slopjcie->set_tooltip_text("");
+        //whitescie->set_tooltip_text("");
         modeHBoxbwev->set_tooltip_text("");
         normcie->set_tooltip_text("");
         trccie->set_tooltip_text("");
@@ -8906,6 +8912,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         comprcieth->setValue(spot.comprcieth);
         gamjcie->setValue(spot.gamjcie);
         slopjcie->setValue(spot.slopjcie);
+        whitescie->setValue(spot.whitescie);
         sigmoidldajzcie->setValue(spot.sigmoidldajzcie);
         sigmoidthjzcie->setValue(spot.sigmoidthjzcie);
         sigmoidbljzcie->setValue(spot.sigmoidbljzcie);
@@ -9134,6 +9141,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.comprcieth = comprcieth->getValue();
         spot.gamjcie = gamjcie->getValue();
         spot.slopjcie = slopjcie->getValue();
+        spot.whitescie = whitescie->getIntValue();
         spot.sigmoidldajzcie = sigmoidldajzcie->getValue();
         spot.sigmoidthjzcie = sigmoidthjzcie->getValue();
         spot.sigmoidbljzcie = sigmoidbljzcie->getValue();
@@ -10631,6 +10639,7 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         comprcie->setDefault(defSpot.comprcie);
         comprcieth->setDefault(defSpot.comprcieth);
         gamjcie->setDefault(defSpot.gamjcie);
+        whitescie->setDefault(defSpot.whitescie);
         slopjcie->setDefault(defSpot.slopjcie);
         sigmoidldajzcie->setDefault(defSpot.sigmoidldajzcie);
         sigmoidthjzcie->setDefault(defSpot.sigmoidthjzcie);
@@ -11122,6 +11131,13 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabslopjcie,
                                        slopjcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == whitescie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabwhitescie,
+                                       whitescie->getTextValue() + spName);
             }
         }
 
