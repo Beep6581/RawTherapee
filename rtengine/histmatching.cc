@@ -229,7 +229,7 @@ void mappingToCurve(const std::vector<int> &mapping, std::vector<double> &curve)
 } // namespace
 
 
-void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, StandardObserver observer, std::vector<double> &outCurve)
+void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, const procparams::RAWParams &rawParams, StandardObserver observer, std::vector<double> &outCurve)
 {
     BENCHFUN
 
@@ -311,7 +311,7 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, St
         eSensorType sensor_type;
         double scale;
         int w = fw / skip, h = fh / skip;
-        const std::unique_ptr<Thumbnail> thumb(Thumbnail::loadFromRaw(getFileName(), sensor_type, w, h, 1, false, observer, false, true));
+        const std::unique_ptr<Thumbnail> thumb(Thumbnail::loadFromRaw(getFileName(), sensor_type, w, h, 1, false, observer, false, &rawParams, true));
         if (!thumb) {
             if (settings->verbose) {
                 std::cout << "histogram matching: raw decoding failed, generating a neutral curve" << std::endl;

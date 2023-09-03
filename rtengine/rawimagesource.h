@@ -186,7 +186,7 @@ public:
     }
     void        getAutoExpHistogram (LUTu & histogram, int& histcompr) override;
     void        getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw) override;
-    void getAutoMatchedToneCurve(const procparams::ColorManagementParams &cp, StandardObserver observer, std::vector<double> &outCurve) override;
+    void getAutoMatchedToneCurve(const procparams::ColorManagementParams &cp, const procparams::RAWParams &rawParams, StandardObserver observer, std::vector<double> &outCurve) override;
     DCPProfile *getDCP(const procparams::ColorManagementParams &cmp, DCPProfileApplyState &as) override;
 
     void convertColorSpace(Imagefloat* image, const procparams::ColorManagementParams &cmp, const ColorTemp &wb) override;

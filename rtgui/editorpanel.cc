@@ -1995,7 +1995,7 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event)
     return false;
 }
 
-void EditorPanel::procParamsChanged (Thumbnail* thm, int whoChangedIt)
+void EditorPanel::procParamsChanged (Thumbnail* thm, int whoChangedIt, bool upgradeHint)
 {
 
     if (whoChangedIt != EDITOR) {
