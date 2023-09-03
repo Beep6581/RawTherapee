@@ -1,4 +1,66 @@
-#001 2010-11-20 RT 3.0 alpha 1 rev. 597:fb291bf74c by Dr. Gyurkó M. 'dualon' Dávid
+#01 Hungarian
+#02 Conventions used to keep the same writing style along new texts and versions
+#03
+#04  Rövidítések (Abbreviations)
+#05  -----------------------------
+#06   KA: Kromatikus Aberráció (fringe)
+#07   F&F: Fekete-Fehér (Black & White)
+#08   VK: Vignetta Korrekció (Vignette Filter: in Transform tab)
+#09   ÁSz: Átmenetes Szűrő (Gradient Filter)
+#10   VSz: Vignetta Szűrő (Vignette Filter: in Exposure tab)
+#11   CsK: Csatorna Keverő (Channel Mixer)
+#12   RGB: Színmodell Piros Zöld Kék (Red Green Blue)
+#13   FE: Fehéregyensúly (White Balance)
+#14   ZCs: Zajcsökkentés
+#15   SzMM: Színmegjelenés és Megvilágítás
+#16   HDR: Magas Dinamikatartomány
+#17  
+#18  Fordítási konvenció a fontos kifejezésekhez:
+#19  ---------------------------------------------
+#20   Artifacts: Artifaktumok (from: http://home.mit.bme.hu/~hadhazi/Oktatas/OKD/diak/Kepjellemzok.pdf)
+#21   Brightness: Fényerősség
+#22   Checkbox: Jelölőnégyzet (kiválaszt/felold)
+#23   Chroma: Színintenzitás (from: http://home.mit.bme.hu/~hadhazi/Oktatas/OKD/diak/Kepjellemzok.pdf)
+#24   Chromatic: Kromatikus
+#25   Chromaticity: Kromacitás
+#26   Colorfulness: Színesség
+#27   Cyan: Cián
+#28   Dark Frame: Feketekép
+#29   Dim: Sötétítés
+#30   Feather: Elmosás
+#31   Illuminant: Megvilágító
+#32   Lightness: Világosság
+#33   Luminance: Luminancia
+#34   Luminosity: Fényesség
+#35   Mapping: Leképezés
+#36   Sharpening: Élesítés
+#37   Slider: Csúszka
+#38   Tone Curve: Tónusgörbe
+#39   Vibrance: Vibrancia
+#40   Gamut: Színskála
+#41   Raw: Nyers
+#42   Demosaicing: Mozaiktalanítás
+#43   Inspector: Vizsgáló
+#44   Filmstrip: Filmszalag
+#45   Dynamic Profile Rules: Dinamikus Profilszabályok
+#46   Bundled profiles: Csomagolt Profilok
+#47   Inspector: Vizsgáló
+#48   Preset: Előbeállítás
+#49   Hue: Színárnyalat
+#50
+#51  Angolról nem lefordítható kifejezések a
+#52  RT/digitális fotográfiában használt formájuknak megfelelően:
+#53  -----------------------------------------------------
+#54   ICM (Image Color Management)
+#55   Gamma
+#56   L*a*b*
+#57   Pixel Shift
+#58   Retinex
+#59
+#60 ------------------------------------------------------
+#61 Credits:
+#62 2010-11-20 RT 3.0 alpha 1 rev. 597:fb291bf74c by Dr. Gyurkó M. 'dualon' Dávid
+#63 2023-08-31 RawTherapee, version nightly-github-actions-229-g5f8290140 (5.10) by Battyányi Dániel
 #100
 #101 @LANGUAGE_DISPLAY_NAME=Magyar
 
@@ -153,11 +215,11 @@ GENERAL_OK;OK
 GENERAL_PORTRAIT;Álló
 GENERAL_SAVE;Mentés
 GENERAL_UNCHANGED;(Változatlan)
-HISTOGRAM_TOOLTIP_B;Kék csatorna hisztogrammja (mutat/elrejt)
+HISTOGRAM_TOOLTIP_B;Kék csatorna hisztogramja (mutat/elrejt)
 HISTOGRAM_TOOLTIP_BAR;RGB jelzősáv megjelenítése/elrejtése.\nKattints jobb gombbal a kép előnézetére a fagyasztáshoz / feloldáshoz.
-HISTOGRAM_TOOLTIP_G;Zöld csatorna hisztogrammja (mutat/elrejt)
-HISTOGRAM_TOOLTIP_L;CIELAB Luminancia hisztogramm (mutat/elrejt)
-HISTOGRAM_TOOLTIP_R;Piros csatorna hisztogrammja (mutat/elrejt)
+HISTOGRAM_TOOLTIP_G;Zöld csatorna hisztogramja (mutat/elrejt)
+HISTOGRAM_TOOLTIP_L;CIELAB Luminancia hisztogram (mutat/elrejt)
+HISTOGRAM_TOOLTIP_R;Piros csatorna hisztogramja (mutat/elrejt)
 HISTORY_CHANGED;Változott
 HISTORY_CUSTOMCURVE;Saját görbe
 HISTORY_FROMCLIPBOARD;Vágólapról
@@ -523,7 +585,7 @@ PREFERENCES_TAB_COLORMGR;Színkezelés
 PREFERENCES_TAB_GENERAL;Általános
 PREFERENCES_TAB_IMPROC;Képfeldolgozás
 PREFERENCES_TAB_SOUND;Hangok
-PREFERENCES_TP_LABEL;Eszközök panel:
+PREFERENCES_TP_LABEL;Eszközpanel:
 PREFERENCES_TP_VSCROLLBAR;Függőleges görgetősáv elrejtése
 PREFERENCES_WORKFLOW;Munkamenet
 PROFILEPANEL_COPYPPASTE;Másolandó paraméterek
@@ -811,268 +873,259 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!ADJUSTER_RESET_TO_DEFAULT;<b>Click</b> - reset to default value.\n<b>Ctrl</b>+<b>click</b> - reset to initial value.
+ADJUSTER_RESET_TO_DEFAULT;<b>Klikk</b> - alapértelmezett érték visszaállítása.\n<b>Ctrl</b>+<b>Klikk</b> - eredeti érték visszaállítása.
 !CURVEEDITOR_AXIS_IN;I:
 !CURVEEDITOR_AXIS_LEFT_TAN;LT:
 !CURVEEDITOR_AXIS_OUT;O:
 !CURVEEDITOR_AXIS_RIGHT_TAN;RT:
-!CURVEEDITOR_CATMULLROM;Flexible
-!CURVEEDITOR_EDITPOINT_HINT;Enable edition of node in/out values.\n\nRight-click on a node to select it.\nRight-click on empty space to de-select the node.
-!DONT_SHOW_AGAIN;Don't show this message again.
-!DYNPROFILEEDITOR_DELETE;Delete
-!DYNPROFILEEDITOR_EDIT;Edit
-!DYNPROFILEEDITOR_EDIT_RULE;Edit Dynamic Profile Rule
-!DYNPROFILEEDITOR_ENTRY_TOOLTIP;The matching is case insensitive.\nUse the 're:' prefix to enter\na regular expression.
-!DYNPROFILEEDITOR_IMGTYPE_ANY;Any
-!DYNPROFILEEDITOR_IMGTYPE_HDR;HDR
+CURVEEDITOR_CATMULLROM;Rugalmas
+CURVEEDITOR_EDITPOINT_HINT;Csúcsok ki-/be értékeinek szerkesztésének engedélyezése.\n\nJobb-Klikk egy csúcsra a kijelöléshez.\nJobb-Klikk üres területre a csúcs kijelölésének feloldásához.
+DONT_SHOW_AGAIN;Ne jelenjen meg újból ez az üzenet.
+DYNPROFILEEDITOR_DELETE;Törlés
+DYNPROFILEEDITOR_EDIT;Szerkesztés
+DYNPROFILEEDITOR_EDIT_RULE;Dinamikus Profilszabályok szerkesztése
+DYNPROFILEEDITOR_ENTRY_TOOLTIP;Az egyezéskeresés kis-nagybetű érzékeny.\nHasználd a 're:' előjelet\na reguláris kifejezés bevitelére.
+DYNPROFILEEDITOR_IMGTYPE_ANY;Bármely
+DYNPROFILEEDITOR_IMGTYPE_HDR;HDR (Magas Dinamikatartomány)
 !DYNPROFILEEDITOR_IMGTYPE_PS;Pixel Shift
 !DYNPROFILEEDITOR_IMGTYPE_STD;Standard
-!DYNPROFILEEDITOR_MOVE_DOWN;Move Down
-!DYNPROFILEEDITOR_MOVE_UP;Move Up
-!DYNPROFILEEDITOR_NEW;New
-!DYNPROFILEEDITOR_NEW_RULE;New Dynamic Profile Rule
-!DYNPROFILEEDITOR_PROFILE;Processing Profile
-!EDIT_OBJECT_TOOLTIP;Displays a widget on the preview window which lets you adjust this tool.
-!EDIT_PIPETTE_TOOLTIP;To add an adjustment point to the curve, hold the Ctrl key while left-clicking the desired spot in the image preview.\nTo adjust the point, hold the Ctrl key while left-clicking the corresponding area in the preview, then let go of Ctrl (unless you desire fine control) and while still holding the left mouse button move the mouse up or down to move that point up or down in the curve.
-!EXIFFILTER_IMAGETYPE;Image type
-!EXIFPANEL_SHOWALL;Show all
-!EXPORT_BYPASS;Processing steps to bypass
-!EXPORT_BYPASS_EQUALIZER;Bypass Wavelet Levels
-!EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Bypass [raw] LMMSE Enhancement Steps
-!EXPORT_PIPELINE;Processing pipeline
-!EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
-!EXPORT_USE_FAST_PIPELINE_TOOLTIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
-!EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
-!EXTPROGTARGET_1;raw
-!EXTPROGTARGET_2;queue-processed
-!FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply 'find' keywords.
-!FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
-!FILEBROWSER_CACHECLEARFROMPARTIAL;Clear all except cached profiles
-!FILEBROWSER_COLORLABEL_TOOLTIP;Color label.\n\nUse dropdown menu or shortcuts:\n<b>Shift-Ctrl-0</b> No Color\n<b>Shift-Ctrl-1</b> Red\n<b>Shift-Ctrl-2</b> Yellow\n<b>Shift-Ctrl-3</b> Green\n<b>Shift-Ctrl-4</b> Blue\n<b>Shift-Ctrl-5</b> Purple
-!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to <b>permanently</b> delete all <b>%1</b> files in trash?
-!FILEBROWSER_DELETEDIALOG_SELECTED;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files?
-!FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files, <b>including</b> a queue-processed version?
-!FILEBROWSER_EMPTYTRASHHINT;<b>Permanently</b> delete all files in trash.
-!FILEBROWSER_EXTPROGMENU;Open with
-!FILEBROWSER_OPENDEFAULTVIEWER;Windows default viewer (queue-processed)
-!FILEBROWSER_POPUPCOLORLABEL0;Label: None
-!FILEBROWSER_POPUPCOLORLABEL1;Label: Red
-!FILEBROWSER_POPUPCOLORLABEL2;Label: Yellow
-!FILEBROWSER_POPUPCOLORLABEL3;Label: Green
-!FILEBROWSER_POPUPCOLORLABEL4;Label: Blue
-!FILEBROWSER_POPUPCOLORLABEL5;Label: Purple
-!FILEBROWSER_POPUPINSPECT;Inspect
-!FILEBROWSER_POPUPRANK;Rank
-!FILEBROWSER_POPUPRANK0;Unrank
-!FILEBROWSER_POPUPRANK1;Rank 1 *
-!FILEBROWSER_POPUPRANK2;Rank 2 **
-!FILEBROWSER_POPUPRANK3;Rank 3 ***
-!FILEBROWSER_POPUPRANK4;Rank 4 ****
-!FILEBROWSER_POPUPRANK5;Rank 5 *****
-!FILEBROWSER_POPUPREMOVE;Delete permanently
-!FILEBROWSER_POPUPREMOVEINCLPROC;Delete permanently, including queue-processed version
-!FILEBROWSER_RANK1_TOOLTIP;Rank 1 *\nShortcut: <b>1</b>
-!FILEBROWSER_RANK2_TOOLTIP;Rank 2 *\nShortcut: <b>2</b>
-!FILEBROWSER_RANK3_TOOLTIP;Rank 3 *\nShortcut: <b>3</b>
-!FILEBROWSER_RANK4_TOOLTIP;Rank 4 *\nShortcut: <b>4</b>
-!FILEBROWSER_RANK5_TOOLTIP;Rank 5 *\nShortcut: <b>5</b>
-!FILEBROWSER_RESETDEFAULTPROFILE;Reset to default
-!FILEBROWSER_SHOWNOTTRASHHINT;Show only images not in trash.
-!FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
-!FILEBROWSER_UNRANK_TOOLTIP;Unrank.\nShortcut: <b>0</b>
-!FILECHOOSER_FILTER_ANY;All files
-!FILECHOOSER_FILTER_COLPROF;Color profiles (*.icc)
-!FILECHOOSER_FILTER_CURVE;Curve files
-!FILECHOOSER_FILTER_LCP;Lens correction profiles
-!FILECHOOSER_FILTER_PP;Processing profiles
-!FILECHOOSER_FILTER_SAME;Same format as current photo
-!FILECHOOSER_FILTER_TIFF;TIFF files
-!GENERAL_APPLY;Apply
-!GENERAL_ASIMAGE;As Image
-!GENERAL_AUTO;Automatic
-!GENERAL_CLOSE;Close
-!GENERAL_CURRENT;Current
-!GENERAL_DELETE_ALL;Delete all
-!GENERAL_EDIT;Edit
-!GENERAL_HELP;Help
-!GENERAL_OPEN;Open
-!GENERAL_RESET;Reset
-!GENERAL_SAVE_AS;Save as...
-!GENERAL_SLIDER;Slider
-!GENERAL_WARNING;Warning
-!GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
-!HISTOGRAM_TOOLTIP_CHRO;Show/Hide chromaticity histogram.
-!HISTOGRAM_TOOLTIP_CROSSHAIR;Show/Hide indicator crosshair.
-!HISTOGRAM_TOOLTIP_MODE;Toggle between linear, log-linear and log-log scaling of the histogram.
-!HISTOGRAM_TOOLTIP_SHOW_OPTIONS;Toggle visibility of the scope option buttons.
-!HISTOGRAM_TOOLTIP_TRACE_BRIGHTNESS;Adjust scope brightness.
-!HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM;Histogram
-!HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM_RAW;Raw Histogram
+DYNPROFILEEDITOR_MOVE_DOWN;Mozgás lefele
+DYNPROFILEEDITOR_MOVE_UP;Mozgás felfele
+DYNPROFILEEDITOR_NEW;Új
+DYNPROFILEEDITOR_NEW_RULE;Új Dinamikus Profilszabály
+DYNPROFILEEDITOR_PROFILE;Feldolgozási Profil
+EXPORT_USE_FAST_PIPELINE_TOOLTIP;Dedikált feldolgozási pipeline használata Gyors Export módban lévő képeken, amely a sebességet minőségre cseréli. A kép átméretezése a lehető leghamarabb történik ahelyett, hogy végén történne a normál pipeline szerint. A gyorsítás jelentős lehet, de előfordulhatnak artifaktumok és a kimenet minőségének általános degradációja.
+EXPORT_USE_NORMAL_PIPELINE;Standard (Pár lépés átugrása, átméretezés a végén)
+EXTPROGTARGET_1;nyers
+EXTPROGTARGET_2;sorfeldolgozott
+FILEBROWSER_BROWSEPATHBUTTONHINT;Kattints a megadott útvonal megnyitásához, a mappa újratöltéséhez és a 'find' kulcsszavak alkalmazásához.
+FILEBROWSER_CACHECLEARFROMFULL;Összes törlése, a gyorsítótárban lévő profilokkal együtt
+FILEBROWSER_CACHECLEARFROMPARTIAL;Összes törlése, a gyorsítótárban lévő profilokat kivéve
+FILEBROWSER_COLORLABEL_TOOLTIP;Színcímke.\n\nHasználj leugró menüt vagy gyorsbillentyűket:\n<b>Shift-Ctrl-0</b> Nincs szín\n<b>Shift-Ctrl-1</b> Piros\n<b>Shift-Ctrl-2</b> Sárga\n<b>Shift-Ctrl-3</b> Zöld\n<b>Shift-Ctrl-4</b> Kék\n<b>Shift-Ctrl-5</b> Lila
+FILEBROWSER_DELETEDIALOG_ALL;Biztos vagy benne, hogy <b>véglegesen</b> törölni akarsz minden <b>%1</b> fájlt a kukában?
+FILEBROWSER_DELETEDIALOG_SELECTED;Biztos vagy benne, hogy <b>véglegesen</b> törölni akarod a kiválasztott <b>%1</b> fájlokat?
+FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Biztos vagy benne, hogy <b>véglegesen</b> törölni akarod a kiválasztott <b>%1</b> fájlokat <b>beleértve</b> egy sorfeldolgozott verziót?
+FILEBROWSER_EMPTYTRASHHINT;Összes kukában lévő fájl törlése <b>Véglegesen</b>.
+FILEBROWSER_EXTPROGMENU;Társítás
+FILEBROWSER_OPENDEFAULTVIEWER;Windows alapértelmezett nézegető (sorfeldolgozott)
+FILEBROWSER_POPUPCOLORLABEL0;Label: Nincs
+FILEBROWSER_POPUPCOLORLABEL1;Label: Piros
+FILEBROWSER_POPUPCOLORLABEL2;Label: Sárga
+FILEBROWSER_POPUPCOLORLABEL3;Label: Zöld
+FILEBROWSER_POPUPCOLORLABEL4;Label: Kék
+FILEBROWSER_POPUPCOLORLABEL5;Label: Lila
+FILEBROWSER_POPUPINSPECT;Vizsgálat
+FILEBROWSER_POPUPRANK;Rangsorolás
+FILEBROWSER_POPUPRANK0;Rang eltávolítása
+FILEBROWSER_POPUPRANK1;Rang 1 *
+FILEBROWSER_POPUPRANK2;Rang 2 **
+FILEBROWSER_POPUPRANK3;Rang 3 ***
+FILEBROWSER_POPUPRANK4;Rang 4 ****
+FILEBROWSER_POPUPRANK5;Rang 5 *****
+FILEBROWSER_POPUPREMOVE;Törlés véglegesen
+FILEBROWSER_POPUPREMOVEINCLPROC;Törlés véglegesen, a sorfeldolgozott verzióval együtt.
+FILEBROWSER_RANK1_TOOLTIP;Rang 1 *\nGyorsbillentyű: <b>1</b>
+FILEBROWSER_RANK2_TOOLTIP;Rang 2 *\nGyorsbillentyű: <b>2</b>
+FILEBROWSER_RANK3_TOOLTIP;Rang 3 *\nGyorsbillentyű: <b>3</b>
+FILEBROWSER_RANK4_TOOLTIP;Rang 4 *\nGyorsbillentyű: <b>4</b>
+FILEBROWSER_RANK5_TOOLTIP;Rang 5 *\nGyorsbillentyű: <b>5</b>
+FILEBROWSER_RESETDEFAULTPROFILE;Alapértelmezett visszaállítása
+FILEBROWSER_SHOWNOTTRASHHINT;Csak a kukából hiányzó képek mutatása.
+FILEBROWSER_SHOWORIGINALHINT;Csak eredeti képek mutatása.\n\nAmikor több azonos nevű kép létezik, de kiterjesztéseikben különböznek, az számít az eredetinek, amely kiterjesztése a legközelebb van a felismert kiterjesztések lista tetejéhez a Beállítások >  Fájl böngésző > Felismert Kiterjesztések -ben.
+FILEBROWSER_UNRANK_TOOLTIP;Rang eltávolítása.\nGyorsbillentyű: <b>0</b>
+FILECHOOSER_FILTER_ANY;Minden fájl
+FILECHOOSER_FILTER_COLPROF;Színprofilok (*.icc)
+FILECHOOSER_FILTER_CURVE;Görbefájlok
+FILECHOOSER_FILTER_LCP;Objektívkorrekciós profilok
+FILECHOOSER_FILTER_PP;Feldolgozási profilok
+FILECHOOSER_FILTER_SAME;A jelenlegi fotó formátuma
+FILECHOOSER_FILTER_TIFF;TIFF fájlok
+GENERAL_APPLY;Alkalmazás
+GENERAL_ASIMAGE;Mint Kép
+GENERAL_AUTO;Automatikus
+GENERAL_CLOSE;Bezárás
+GENERAL_CURRENT;Jelenlegi
+GENERAL_DELETE_ALL;Összes törlése
+GENERAL_EDIT;Szerkesztés
+GENERAL_HELP;Segítség
+GENERAL_OPEN;Megnyitás
+GENERAL_RESET;Visszaállítás
+GENERAL_SAVE_AS;Mentés másként
+GENERAL_SLIDER;Csúszka
+GENERAL_WARNING;Figyelem
+GIMP_PLUGIN_INFO;Üdvözlünk a RawTherapee GIMP plugin-ban!\nAmikor végeztél a szerkesztéssel, egyszerűen zárd be a fő RawTherapee ablakot, és a kép automatikusan importálódik a GIMP-be.
+HISTOGRAM_TOOLTIP_CHRO;Kromacitás hisztogram (mutat/elrejt).
+HISTOGRAM_TOOLTIP_CROSSHAIR;Indikátor célkereszt (mutat/elrejt).
+HISTOGRAM_TOOLTIP_MODE;Váltás lineáris, logaritmikus-lineáris és logaritmikus-logaritmikus hisztogramskálázás között.
+HISTOGRAM_TOOLTIP_SHOW_OPTIONS;Szkóp opciógombok (mutat/elrejt).
+HISTOGRAM_TOOLTIP_TRACE_BRIGHTNESS;Szkóp világosság állítása.
+HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM;Hisztogram
+HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM_RAW;Raw hisztogram
 !HISTOGRAM_TOOLTIP_TYPE_PARADE;RGB Parade
-!HISTOGRAM_TOOLTIP_TYPE_VECTORSCOPE_HC;Hue-Chroma Vectorscope
-!HISTOGRAM_TOOLTIP_TYPE_VECTORSCOPE_HS;Hue-Saturation Vectorscope
-!HISTOGRAM_TOOLTIP_TYPE_WAVEFORM;Waveform
-!HISTORY_MSG_166;Exposure - Reset
-!HISTORY_MSG_167;Demosaicing method
-!HISTORY_MSG_168;L*a*b* - CC curve
-!HISTORY_MSG_169;L*a*b* - CH curve
-!HISTORY_MSG_170;Vibrance - HH curve
-!HISTORY_MSG_171;L*a*b* - LC curve
-!HISTORY_MSG_172;L*a*b* - Restrict LC
-!HISTORY_MSG_173;NR - Detail recovery
-!HISTORY_MSG_174;Color Appearance &amp; Lighting
-!HISTORY_MSG_175;CAL - SC - Adaptation
+HISTOGRAM_TOOLTIP_TYPE_VECTORSCOPE_HC;Színárnyalat-Színintenzitás Vektorszkóp
+HISTOGRAM_TOOLTIP_TYPE_VECTORSCOPE_HS;Színárnyalat-Színtelítettség Vektorszkóp
+HISTOGRAM_TOOLTIP_TYPE_WAVEFORM;Hullámformátum
+HISTORY_MSG_166;Exponálás - Visszaállítás
+HISTORY_MSG_167;Mozaikmentesítési módszer
+HISTORY_MSG_168;L*a*b* - KK görbe
+HISTORY_MSG_169;L*a*b* - KH görbe
+HISTORY_MSG_170;Vibrancia - HH görbe
+HISTORY_MSG_171;L*a*b* - LK görbe
+HISTORY_MSG_172;L*a*b* - LK korlátozás
+HISTORY_MSG_173;ZCs - Részlet visszaállítás
+HISTORY_MSG_174;Szín Megjelenés &amp; Megvilágítás
+HISTORY_MSG_175;SzMM - SC - Alkalmazkodás
 !HISTORY_MSG_176;CAL - VC - Surround
-!HISTORY_MSG_177;CAL - SC - Absolute luminance
-!HISTORY_MSG_178;CAL - VC - Absolute luminance
-!HISTORY_MSG_179;CAL - SC - WP model
-!HISTORY_MSG_180;CAL - IA - Lightness (J)
+HISTORY_MSG_177;SzMM - SC - Abszolút luminancia
+HISTORY_MSG_178;SzMM - VC - Abszolút luminancia
+HISTORY_MSG_179;SzMM - SC - WP modell
+HISTORY_MSG_180;SzMM - IA - Világosság (J)
 !HISTORY_MSG_181;CAL - IA - Chroma (C)
-!HISTORY_MSG_182;CAL - SC - Auto adaptation
-!HISTORY_MSG_183;CAL - IA - Contrast (J)
+HISTORY_MSG_182;SzMM - SC - Auto alkalmazkodás
+HISTORY_MSG_183;SzMM - IA - Kontraszt (J)
 !HISTORY_MSG_184;CAL - SC - Surround
-!HISTORY_MSG_185;CAL - Gamut control
-!HISTORY_MSG_186;CAL - IA - Algorithm
-!HISTORY_MSG_187;CAL - IA - Red/skin protection
-!HISTORY_MSG_188;CAL - IA - Brightness (Q)
-!HISTORY_MSG_189;CAL - IA - Contrast (Q)
-!HISTORY_MSG_190;CAL - IA - Saturation (S)
-!HISTORY_MSG_191;CAL - IA - Colorfulness (M)
+HISTORY_MSG_185;SzMM - Színskála kontroll
+HISTORY_MSG_186;SzMM - IA - Algoritmus
+HISTORY_MSG_187;SzMM - IA - Piros/bőr védelem
+HISTORY_MSG_188;SzMM - IA - Világosság (Q)
+HISTORY_MSG_189;SzMM - IA - Kontraszt (Q)
+HISTORY_MSG_190;SzMM - IA - Színtelítettség (S)
+HISTORY_MSG_191;SzMM - IA - Színesség (M)
 !HISTORY_MSG_192;CAL - IA - Hue (h)
-!HISTORY_MSG_193;CAL - IA - Tone curve 1
-!HISTORY_MSG_194;CAL - IA - Tone curve 2
-!HISTORY_MSG_195;CAL - IA - Tone curve 1 mode
-!HISTORY_MSG_196;CAL - IA - Tone curve 2 mode
-!HISTORY_MSG_197;CAL - IA - Color curve
-!HISTORY_MSG_198;CAL - IA - Color curve mode
-!HISTORY_MSG_199;CAL - IA - Use CAM output for histograms
-!HISTORY_MSG_200;CAL - IA - Use CAM for tone mapping
-!HISTORY_MSG_201;NR - Chrominance - R&amp;G
-!HISTORY_MSG_202;NR - Chrominance - B&amp;Y
-!HISTORY_MSG_203;NR - Color space
-!HISTORY_MSG_204;LMMSE enhancement steps
-!HISTORY_MSG_205;CAL - Hot/bad pixel filter
-!HISTORY_MSG_206;CAL - SC - Auto absolute luminance
-!HISTORY_MSG_207;Defringe - Hue curve
-!HISTORY_MSG_208;WB - B/R equalizer
-!HISTORY_MSG_210;GF - Angle
-!HISTORY_MSG_211;Graduated Filter
-!HISTORY_MSG_212;VF - Strength
+HISTORY_MSG_193;SzMM - IA - Tónus görbe 1
+HISTORY_MSG_194;SzMM - IA - Tónus görbe 2
+HISTORY_MSG_195;SzMM - IA - Tónus görbe 1 mód
+HISTORY_MSG_196;SzMM - IA - Tónus görbe 2 mód
+HISTORY_MSG_197;SzMM - IA - Színgörbe
+HISTORY_MSG_198;SzMM - IA - Színgörbe mód
+HISTORY_MSG_199;SzMM - IA - CAM kimenet használata hisztogramokhoz.
+HISTORY_MSG_200;SzMM - IA - CAM használata tónustérképezéshez.
+HISTORY_MSG_201;ZCs - Krominancia - P&amp;Z
+HISTORY_MSG_202;ZCs - Krominancia - K&amp;S
+HISTORY_MSG_203;ZCs - Színtér
+HISTORY_MSG_204;LMMSE feljavító lépések
+HISTORY_MSG_205;SzMM - Hot/bad pixel szűrő
+HISTORY_MSG_206;SzMM - SC - Auto abszolút luminancia
+HISTORY_MSG_207;Szegélyelmosás - Hue görbe
+!HISTORY_MSG_208;FE - K/P kiegyenlítő
+HISTORY_MSG_210;ÁSz - Szög
+HISTORY_MSG_211;Átmenetes szűrő
+HISTORY_MSG_212;VF - Erősség
 !HISTORY_MSG_213;Vignette Filter
-!HISTORY_MSG_214;Black-and-White
-!HISTORY_MSG_215;B&amp;W - CM - Red
-!HISTORY_MSG_216;B&amp;W - CM - Green
-!HISTORY_MSG_217;B&amp;W - CM - Blue
-!HISTORY_MSG_218;B&amp;W - Gamma - Red
-!HISTORY_MSG_219;B&amp;W - Gamma - Green
-!HISTORY_MSG_220;B&amp;W - Gamma - Blue
-!HISTORY_MSG_221;B&amp;W - Color filter
+HISTORY_MSG_214;Fekete-Fehér
+HISTORY_MSG_215;Fekete&amp;Fehér - CM - Piros
+HISTORY_MSG_216;Fekete&amp;Fehér - CM - Zöld
+HISTORY_MSG_217;Fekete&amp;Fehér - CM - Kék
+HISTORY_MSG_218;Fekete&amp;Fehér - Gamma - Piros
+HISTORY_MSG_219;Fekete&amp;Fehér - Gamma - Zöld
+HISTORY_MSG_220;Fekete&amp;Fehér - Gamma - Kék
+HISTORY_MSG_221;Fekete&amp;Fehér - Színszűrő
 !HISTORY_MSG_222;B&amp;W - Presets
-!HISTORY_MSG_223;B&amp;W - CM - Orange
-!HISTORY_MSG_224;B&amp;W - CM - Yellow
-!HISTORY_MSG_225;B&amp;W - CM - Cyan
-!HISTORY_MSG_226;B&amp;W - CM - Magenta
-!HISTORY_MSG_227;B&amp;W - CM - Purple
-!HISTORY_MSG_228;B&amp;W - Luminance equalizer
-!HISTORY_MSG_229;B&amp;W - Luminance equalizer
-!HISTORY_MSG_230;B&amp;W - Mode
-!HISTORY_MSG_231;B&amp;W - 'Before' curve
-!HISTORY_MSG_232;B&amp;W - 'Before' curve type
-!HISTORY_MSG_233;B&amp;W - 'After' curve
-!HISTORY_MSG_234;B&amp;W - 'After' curve type
-!HISTORY_MSG_235;B&amp;W - CM - Auto
+HISTORY_MSG_223;Fekete&amp;Fehér - CM - Narancssárga
+HISTORY_MSG_224;Fekete&amp;Fehér - CM - Citromsárga
+HISTORY_MSG_225;Fekete&amp;Fehér - CM - Cián
+HISTORY_MSG_226;Fekete&amp;Fehér - CM - Magenta
+HISTORY_MSG_227;Fekete&amp;Fehér - CM - Lila
+HISTORY_MSG_228;Fekete&amp;Fehér - Luminancia kiegyenlítő
+HISTORY_MSG_229;Fekete&amp;Fehér - Luminancia kiegyenlítő
+HISTORY_MSG_230;Fekete&amp;Fehér - Mód
+HISTORY_MSG_231;Fekete&amp;Fehér - 'Előtte' görbe
+HISTORY_MSG_232;Fekete&amp;Fehér - 'Előtte' görbe típusa
+HISTORY_MSG_233;Fekete&amp;Fehér - 'Utána' görbe
+HISTORY_MSG_234;Fekete&amp;Fehér - 'Utána' görbe típusa
+HISTORY_MSG_235;Fekete&amp;Fehér - CM - Auto
 !HISTORY_MSG_236;--unused--
-!HISTORY_MSG_237;B&amp;W - CM
-!HISTORY_MSG_238;GF - Feather
-!HISTORY_MSG_239;GF - Strength
-!HISTORY_MSG_240;GF - Center
-!HISTORY_MSG_241;VF - Feather
-!HISTORY_MSG_242;VF - Roundness
-!HISTORY_MSG_243;VC - Radius
-!HISTORY_MSG_244;VC - Strength
-!HISTORY_MSG_245;VC - Center
-!HISTORY_MSG_246;L*a*b* - CL curve
-!HISTORY_MSG_247;L*a*b* - LH curve
-!HISTORY_MSG_248;L*a*b* - HH curve
-!HISTORY_MSG_249;CbDL - Threshold
-!HISTORY_MSG_251;B&amp;W - Algorithm
+HISTORY_MSG_237;Fekete&amp;Fehér - CM
+HISTORY_MSG_238;GF - Pehely
+HISTORY_MSG_239;ÁSz - Erősség
+HISTORY_MSG_240;ÁSz - Közép
+!HISTORY_MSG_241;VF - Pehely
+HISTORY_MSG_242;VF - Kerekség
+HISTORY_MSG_243;VC - Sugár
+HISTORY_MSG_244;VC - Erősség
+HISTORY_MSG_245;VC - Közép
+HISTORY_MSG_246;L*a*b* - KL görbe
+HISTORY_MSG_247;L*a*b* - LH görbe
+HISTORY_MSG_248;L*a*b* - HH görbe
+HISTORY_MSG_249;CbDL - Határ
+HISTORY_MSG_251;Fekete&amp;Fehér - Algoritmus
 !HISTORY_MSG_252;CbDL - Skin tar/prot
-!HISTORY_MSG_253;CbDL - Reduce artifacts
-!HISTORY_MSG_254;CbDL - Skin hue
-!HISTORY_MSG_255;NR - Median filter
-!HISTORY_MSG_256;NR - Median - Type
-!HISTORY_MSG_257;Color Toning
-!HISTORY_MSG_258;CT - Color curve
-!HISTORY_MSG_259;CT - Opacity curve
-!HISTORY_MSG_260;CT - a*[b*] opacity
-!HISTORY_MSG_261;CT - Method
-!HISTORY_MSG_262;CT - b* opacity
-!HISTORY_MSG_263;CT - Shadows - Red
-!HISTORY_MSG_264;CT - Shadows - Green
-!HISTORY_MSG_265;CT - Shadows - Blue
-!HISTORY_MSG_266;CT - Mid - Red
-!HISTORY_MSG_267;CT - Mid - Green
-!HISTORY_MSG_268;CT - Mid - Blue
-!HISTORY_MSG_269;CT - High - Red
-!HISTORY_MSG_270;CT - High - Green
-!HISTORY_MSG_271;CT - High - Blue
-!HISTORY_MSG_272;CT - Balance
-!HISTORY_MSG_273;CT - Color Balance SMH
-!HISTORY_MSG_276;CT - Opacity
+HISTORY_MSG_253;CbDL - Artifaktumok csökkentése
+HISTORY_MSG_254;CbDL - Bőr hue
+HISTORY_MSG_255;ZSz - Medián Szűrő
+HISTORY_MSG_256;ZSz - Medián - Típus
+HISTORY_MSG_257;Szín Tónusozás
+HISTORY_MSG_258;SzT - Színgörbe
+HISTORY_MSG_259;SzT - Átlátszatlanság görbe
+HISTORY_MSG_260;SzT - a*[b*] átlátszatlanság
+HISTORY_MSG_261;SzT - Metódus
+HISTORY_MSG_262;SzT - b* átlátszatlanság
+HISTORY_MSG_263;SzT - Árnyékok - Piros
+HISTORY_MSG_264;SzT - Árnyékok - Zöld
+HISTORY_MSG_265;SzT - Árnyékok - Kék
+HISTORY_MSG_266;SzT - Közepes - Piros
+HISTORY_MSG_267;SzT - Közepes - Zöld
+HISTORY_MSG_268;SzT - Közepes - Kék
+HISTORY_MSG_269;SzT - Magas - Piros
+HISTORY_MSG_270;SzT - Magas - Zöld
+HISTORY_MSG_271;SzT - Magas - Kék
+HISTORY_MSG_272;SzT - Egyensúlyozás
+HISTORY_MSG_273;SzT - Színegyensúly ÁKM
+HISTORY_MSG_276;SzT - Átlátszatlanság
 !HISTORY_MSG_277;--unused--
-!HISTORY_MSG_278;CT - Preserve luminance
-!HISTORY_MSG_279;CT - Shadows
-!HISTORY_MSG_280;CT - Highlights
-!HISTORY_MSG_281;CT - Sat. strength
-!HISTORY_MSG_282;CT - Sat. threshold
-!HISTORY_MSG_283;CT - Strength
-!HISTORY_MSG_284;CT - Auto sat. protection
-!HISTORY_MSG_285;NR - Median - Method
-!HISTORY_MSG_286;NR - Median - Type
-!HISTORY_MSG_287;NR - Median - Iterations
+HISTORY_MSG_278;SzT - Luminancia megőrzése
+HISTORY_MSG_279;SzT - Árnyékok
+HISTORY_MSG_280;SzT - Csúcsfények
+HISTORY_MSG_281;SzT - Színtelítettség erősség
+HISTORY_MSG_282;SzT - Színtelítettség küszöb
+HISTORY_MSG_283;SzT - Erősség
+HISTORY_MSG_284;SzT - Auto színtelítettség védelem
+HISTORY_MSG_285;ZCs - Medián - Metódus
+HISTORY_MSG_286;ZCs - Medián - Típus
+HISTORY_MSG_287;ZCs - Medián - Iterációk
 !HISTORY_MSG_288;Flat-Field - Clip control
 !HISTORY_MSG_289;Flat-Field - Clip control - Auto
-!HISTORY_MSG_290;Black Level - Red
-!HISTORY_MSG_291;Black Level - Green
-!HISTORY_MSG_292;Black Level - Blue
-!HISTORY_MSG_293;Film Simulation
-!HISTORY_MSG_294;Film Simulation - Strength
-!HISTORY_MSG_295;Film Simulation - Film
-!HISTORY_MSG_296;NR - Luminance curve
-!HISTORY_MSG_297;NR - Mode
-!HISTORY_MSG_298;Dead pixel filter
-!HISTORY_MSG_299;NR - Chrominance curve
-!HISTORY_MSG_301;NR - Luma control
-!HISTORY_MSG_302;NR - Chroma method
-!HISTORY_MSG_303;NR - Chroma method
-!HISTORY_MSG_304;W - Contrast levels
-!HISTORY_MSG_305;Wavelet Levels
-!HISTORY_MSG_306;W - Process
-!HISTORY_MSG_307;W - Process
-!HISTORY_MSG_308;W - Process direction
-!HISTORY_MSG_309;W - ES - Detail
+HISTORY_MSG_290;Fekete Szint - Piros
+HISTORY_MSG_291;Fekete Szint - Zöld
+HISTORY_MSG_292;Fekete Szint - Kék
+HISTORY_MSG_293;Filmszimuláció
+HISTORY_MSG_294;Filmszimuláció - Erősség
+HISTORY_MSG_295;Filmszimuláció - Film
+HISTORY_MSG_296;ZCs - Luminancia görbe
+HISTORY_MSG_297;ZCs - Mód
+HISTORY_MSG_298;Halott pixel szűrő
+HISTORY_MSG_299;ZCs - Krominancia görbe
+HISTORY_MSG_301;ZCs - Luma kontroll
+HISTORY_MSG_302;ZCs - Színintenzitás metódusa
+HISTORY_MSG_303;ZCs - Színintenzitás metódusa
+HISTORY_MSG_304;W - Kontraszt szintek
+HISTORY_MSG_305;Wavelet Szintek
+HISTORY_MSG_306;W - Folyamat
+HISTORY_MSG_307;W - Folyamat
+HISTORY_MSG_308;W - Folyamatirány
+HISTORY_MSG_309;W - ES - Részlet
 !HISTORY_MSG_310;W - Residual - Sky tar/prot
-!HISTORY_MSG_311;W - Wavelet levels
+HISTORY_MSG_311;W - Wavelet szintek
 !HISTORY_MSG_312;W - Residual - Shadows threshold
 !HISTORY_MSG_313;W - Chroma - Sat/past
-!HISTORY_MSG_314;W - Gamut - Reduce artifacts
+HISTORY_MSG_314;W - Színskála - Artifaktumok csökkentése
 !HISTORY_MSG_315;W - Residual - Contrast
 !HISTORY_MSG_316;W - Gamut - Skin tar/prot
-!HISTORY_MSG_317;W - Gamut - Skin hue
-!HISTORY_MSG_318;W - Contrast - Finer levels
-!HISTORY_MSG_319;W - Contrast - Finer range
-!HISTORY_MSG_320;W - Contrast - Coarser range
-!HISTORY_MSG_321;W - Contrast - Coarser levels
-!HISTORY_MSG_322;W - Gamut - Avoid color shift
-!HISTORY_MSG_323;W - ES - Local contrast
-!HISTORY_MSG_324;W - Chroma - Pastel
-!HISTORY_MSG_325;W - Chroma - Saturated
-!HISTORY_MSG_326;W - Chroma - Method
-!HISTORY_MSG_327;W - Contrast - Apply to
-!HISTORY_MSG_328;W - Chroma - Link strength
-!HISTORY_MSG_329;W - Toning - Opacity RG
-!HISTORY_MSG_330;W - Toning - Opacity BY
-!HISTORY_MSG_331;W - Contrast levels - Extra
+HISTORY_MSG_317;W - Színskála - Bőr hue
+HISTORY_MSG_318;W - Kontraszt - Finomabb szintek
+HISTORY_MSG_319;W - Kontraszt - Finomabb tartomány
+HISTORY_MSG_320;W - Kontraszt - Durvább tartomány
+HISTORY_MSG_321;W - Kontraszt - Durvább szintek
+HISTORY_MSG_322;W - Színskála - Színeltolódás elkerülése
+HISTORY_MSG_323;W - ES - Helyi kontraszt
+HISTORY_MSG_324;W - Színintenzitás - Pasztell
+HISTORY_MSG_325;W - Színintenzitás - Telített
+HISTORY_MSG_326;W - Színintenzitás - Metódus
+HISTORY_MSG_327;W - Kontraszt - Alkalmazás rá
+HISTORY_MSG_328;W - Színintenzitás - Link erősség
+HISTORY_MSG_329;W - Tónusozás - Átlátszatlanság PZ
+HISTORY_MSG_330;W - Tónusozás - Átlátszatlanság KS
+HISTORY_MSG_331;W - Kontraszt szintek - Extra
 !HISTORY_MSG_332;W - Tiling method
 !HISTORY_MSG_333;W - Residual - Shadows
 !HISTORY_MSG_334;W - Residual - Chroma
@@ -2023,463 +2076,463 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !HISTORY_MSG_WAVTHREND;Threshold local contrast
 !HISTORY_MSG_WAVUSHAMET;Clarity method
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
-!ICCPROFCREATOR_COPYRIGHT;Copyright:
-!ICCPROFCREATOR_COPYRIGHT_RESET_TOOLTIP;Reset to the default copyright, granted to 'RawTherapee, CC0'.
-!ICCPROFCREATOR_CUSTOM;Custom
-!ICCPROFCREATOR_DESCRIPTION;Description:
-!ICCPROFCREATOR_DESCRIPTION_ADDPARAM;Append gamma and slope values to the description
-!ICCPROFCREATOR_DESCRIPTION_TOOLTIP;Leave empty to set the default description.
-!ICCPROFCREATOR_GAMMA;Gamma
-!ICCPROFCREATOR_ICCVERSION;ICC version:
-!ICCPROFCREATOR_ILL;Illuminant:
-!ICCPROFCREATOR_ILL_41;D41
-!ICCPROFCREATOR_ILL_50;D50
-!ICCPROFCREATOR_ILL_55;D55
-!ICCPROFCREATOR_ILL_60;D60
-!ICCPROFCREATOR_ILL_63;D63 : DCI-P3 Theater
-!ICCPROFCREATOR_ILL_65;D65
-!ICCPROFCREATOR_ILL_80;D80
-!ICCPROFCREATOR_ILL_DEF;Default
-!ICCPROFCREATOR_ILL_INC;StdA 2856K
-!ICCPROFCREATOR_ILL_TOOLTIP;You can set the illuminant for ICC v4 profiles and also for ICC v2 profiles.
-!ICCPROFCREATOR_PRIMARIES;Primaries:
-!ICCPROFCREATOR_PRIM_ACESP0;ACES AP0
-!ICCPROFCREATOR_PRIM_ACESP1;ACES AP1
-!ICCPROFCREATOR_PRIM_ADOBE;Adobe RGB (1998)
-!ICCPROFCREATOR_PRIM_BEST;BestRGB
-!ICCPROFCREATOR_PRIM_BETA;BetaRGB
-!ICCPROFCREATOR_PRIM_BLUX;Blue X
-!ICCPROFCREATOR_PRIM_BLUY;Blue Y
-!ICCPROFCREATOR_PRIM_BRUCE;BruceRGB
-!ICCPROFCREATOR_PRIM_DCIP3;DCI-P3
-!ICCPROFCREATOR_PRIM_GREX;Green X
-!ICCPROFCREATOR_PRIM_GREY;Green Y
-!ICCPROFCREATOR_PRIM_PROPH;Prophoto
-!ICCPROFCREATOR_PRIM_REC2020;Rec2020
-!ICCPROFCREATOR_PRIM_REDX;Red X
-!ICCPROFCREATOR_PRIM_REDY;Red Y
-!ICCPROFCREATOR_PRIM_SRGB;sRGB
-!ICCPROFCREATOR_PRIM_TOOLTIP;You can set custom primaries for ICC v4 profiles and also for ICC v2 profiles.
-!ICCPROFCREATOR_PRIM_WIDEG;Widegamut
-!ICCPROFCREATOR_PROF_V2;ICC v2
-!ICCPROFCREATOR_PROF_V4;ICC v4
-!ICCPROFCREATOR_SAVEDIALOG_TITLE;Save ICC profile as...
-!ICCPROFCREATOR_SLOPE;Slope
-!ICCPROFCREATOR_TRC_PRESET;Tone response curve
-!INSPECTOR_WINDOW_TITLE;Inspector
-!IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
-!IPTCPANEL_CITYHINT;Enter the name of the city pictured in this image.
-!IPTCPANEL_COPYRIGHT;Copyright notice
-!IPTCPANEL_COPYRIGHTHINT;Enter a Notice on the current owner of the Copyright for this image, such as ©2008 Jane Doe.
-!IPTCPANEL_COUNTRYHINT;Enter the name of the country pictured in this image.
-!IPTCPANEL_CREATOR;Creator
-!IPTCPANEL_CREATORHINT;Enter the name of the person that created this image.
-!IPTCPANEL_CREATORJOBTITLE;Creator's job title
-!IPTCPANEL_CREATORJOBTITLEHINT;Enter the Job Title of the person listed in the Creator field.
-!IPTCPANEL_DATECREATEDHINT;Enter the Date the image was taken.
-!IPTCPANEL_DESCRIPTION;Description
-!IPTCPANEL_DESCRIPTIONHINT;Enter a 'caption' describing the who, what, and why of what is happening in this image, this might include names of people, and/or their role in the action that is taking place within the image.
-!IPTCPANEL_DESCRIPTIONWRITER;Description writer
-!IPTCPANEL_DESCRIPTIONWRITERHINT;Enter the name of the person involved in writing, editing or correcting the description of the image.
-!IPTCPANEL_HEADLINEHINT;Enter a brief publishable synopsis or summary of the contents of the image.
-!IPTCPANEL_INSTRUCTIONSHINT;Enter information about embargoes, or other restrictions not covered by the Copyright field.
-!IPTCPANEL_KEYWORDSHINT;Enter any number of keywords, terms or phrases used to express the subject matter in the image.
-!IPTCPANEL_PROVINCE;Province or state
-!IPTCPANEL_PROVINCEHINT;Enter the name of the province or state pictured in this image.
-!IPTCPANEL_SOURCEHINT;Enter or edit the name of a person or party who has a role in the content supply chain, such as a person or entity from whom you received this image from.
-!IPTCPANEL_SUPPCATEGORIES;Supplemental categories
-!IPTCPANEL_SUPPCATEGORIESHINT;Further refines the subject of the image.
-!IPTCPANEL_TITLEHINT;Enter a short verbal and human readable name for the image, this may be the file name.
-!IPTCPANEL_TRANSREFERENCE;Job ID
-!IPTCPANEL_TRANSREFERENCEHINT;Enter a number or identifier needed for workflow control or tracking.
-!MAIN_BUTTON_ICCPROFCREATOR;ICC Profile Creator
-!MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigate to the next image relative to image opened in the Editor.\nShortcut: <b>Shift-F4</b>\n\nTo navigate to the next image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F4</b>
-!MAIN_BUTTON_NAVPREV_TOOLTIP;Navigate to the previous image relative to image opened in the Editor.\nShortcut: <b>Shift-F3</b>\n\nTo navigate to the previous image relative to the currently selected thumbnail in the File Browser or Filmstrip:\nShortcut: <b>F3</b>
-!MAIN_BUTTON_NAVSYNC_TOOLTIP;Synchronize the File Browser or Filmstrip with the Editor to reveal the thumbnail of the currently opened image, and clear any active filters.\nShortcut: <b>x</b>\n\nAs above, but without clearing active filters:\nShortcut: <b>y</b>\n(Note that the thumbnail of the opened image will not be shown if filtered out).
-!MAIN_FRAME_PLACES_DEL;Remove
-!MAIN_MSG_IMAGEUNPROCESSED;This command requires all selected images to be queue-processed first.
-!MAIN_MSG_OPERATIONCANCELLED;Operation cancelled
-!MAIN_MSG_PATHDOESNTEXIST;The path\n\n<b>%1</b>\n\ndoes not exist. Please set a correct path in Preferences.
-!MAIN_MSG_SETPATHFIRST;You first have to set a target path in Preferences in order to use this function!
-!MAIN_MSG_TOOMANYOPENEDITORS;Too many open editors.\nPlease close an editor to continue.
-!MAIN_MSG_WRITEFAILED;Failed to write\n<b>'%1'</b>\n\nMake sure that the folder exists and that you have write permission to it.
-!MAIN_TAB_ADVANCED;Advanced
-!MAIN_TAB_ADVANCED_TOOLTIP;Shortcut: <b>Alt</b>-<b>a</b>
-!MAIN_TAB_FAVORITES;Favorites
-!MAIN_TAB_FAVORITES_TOOLTIP;Shortcut: <b>Alt-u</b>
-!MAIN_TAB_INSPECT; Inspect
-!MAIN_TAB_LOCALLAB;Local
-!MAIN_TAB_LOCALLAB_TOOLTIP;Shortcut: <b>Alt-o</b>
-!MAIN_TOOLTIP_BACKCOLOR0;Background color of the preview: <b>theme-based</b>\nShortcut: <b>9</b>
-!MAIN_TOOLTIP_BACKCOLOR1;Background color of the preview: <b>black</b>\nShortcut: <b>9</b>
-!MAIN_TOOLTIP_BACKCOLOR2;Background color of the preview: <b>white</b>\nShortcut: <b>9</b>
-!MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>middle grey</b>\nShortcut: <b>9</b>
-!MAIN_TOOLTIP_PREVIEWSHARPMASK;Preview the <b>sharpening contrast mask</b>.\nShortcut: <b>p</b>\n\nOnly works when sharpening is enabled and zoom >= 100%.
-!MONITOR_PROFILE_SYSTEM;System default
-!NAVIGATOR_B;B:
-!NAVIGATOR_G;G:
-!NAVIGATOR_H;H:
-!NAVIGATOR_LAB_A;a*:
-!NAVIGATOR_LAB_B;b*:
-!NAVIGATOR_LAB_L;L*:
-!NAVIGATOR_NA; --
-!NAVIGATOR_R;R:
-!NAVIGATOR_S;S:
-!NAVIGATOR_V;V:
-!NAVIGATOR_XY_FULL;Width: %1, Height: %2
-!OPTIONS_BUNDLED_MISSING;The bundled profile '<b>%1</b>' could not be found!\n\nYour installation could be damaged.\n\nDefault internal values will be used instead.
-!OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n'<b>%1</b>' will be used instead.
-!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n'<b>%1</b>' will be used instead.
-!PARTIALPASTE_ADVANCEDGROUP;Advanced Settings
-!PARTIALPASTE_CHANNELMIXERBW;Black-and-white
-!PARTIALPASTE_COLORAPP;Color Appearance & Lighting
-!PARTIALPASTE_COLORTONING;Color toning
-!PARTIALPASTE_DEHAZE;Haze removal
-!PARTIALPASTE_EQUALIZER;Wavelet levels
-!PARTIALPASTE_FILMNEGATIVE;Film negative
-!PARTIALPASTE_FILMSIMULATION;Film simulation
-!PARTIALPASTE_FLATFIELDCLIPCONTROL;Flat-field clip control
-!PARTIALPASTE_GRADIENT;Graduated filter
-!PARTIALPASTE_LENSPROFILE;Profiled lens correction
-!PARTIALPASTE_LOCALCONTRAST;Local contrast
-!PARTIALPASTE_LOCALLAB;Local Adjustments
-!PARTIALPASTE_LOCALLABGROUP;Local Adjustments Settings
-!PARTIALPASTE_METADATA;Metadata mode
-!PARTIALPASTE_PCVIGNETTE;Vignette filter
-!PARTIALPASTE_PREPROCESS_DEADPIXFILT;Dead pixel filter
-!PARTIALPASTE_PREPROCESS_HOTPIXFILT;Hot pixel filter
-!PARTIALPASTE_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
-!PARTIALPASTE_PREPROCWB;Preprocess White Balance
-!PARTIALPASTE_PRSHARPENING;Post-resize sharpening
-!PARTIALPASTE_RAWCACORR_AVOIDCOLORSHIFT;CA avoid color shift
-!PARTIALPASTE_RAWCACORR_CAREDBLUE;CA red & blue
-!PARTIALPASTE_RAW_BORDER;Raw border
-!PARTIALPASTE_RAW_IMAGENUM;Sub-image
-!PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE enhancement steps
-!PARTIALPASTE_RAW_PIXELSHIFT;Pixel Shift
-!PARTIALPASTE_RETINEX;Retinex
-!PARTIALPASTE_SOFTLIGHT;Soft light
-!PARTIALPASTE_SPOT;Spot removal
-!PARTIALPASTE_TM_FATTAL;Dynamic range compression
-!PREFERENCES_APPEARANCE;Appearance
-!PREFERENCES_APPEARANCE_COLORPICKERFONT;Color picker font
-!PREFERENCES_APPEARANCE_CROPMASKCOLOR;Crop mask color
-!PREFERENCES_APPEARANCE_MAINFONT;Main font
-!PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Navigator guide color
-!PREFERENCES_APPEARANCE_PSEUDOHIDPI;Pseudo-HiDPI mode
-!PREFERENCES_APPEARANCE_THEME;Theme
-!PREFERENCES_AUTOSAVE_TP_OPEN;Save tool collapsed/expanded state on exit
-!PREFERENCES_BEHADDALL;All to 'Add'
-!PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>deltas</b> to the stored values.
-!PREFERENCES_BEHSETALL;All to 'Set'
-!PREFERENCES_BEHSETALLHINT;Set all parameters to the <b>Set</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>absolute</b>, the actual values will be displayed.
-!PREFERENCES_CACHECLEAR;Clear
-!PREFERENCES_CACHECLEAR_ALL;Clear all cached files:
-!PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Clear all cached files except for cached processing profiles:
-!PREFERENCES_CACHECLEAR_ONLYPROFILES;Clear only cached processing profiles:
-!PREFERENCES_CACHECLEAR_SAFETY;Only files in the cache are cleared. Processing profiles stored alongside the source images are not touched.
-!PREFERENCES_CHUNKSIZES;Tiles per thread
-!PREFERENCES_CHUNKSIZE_RAW_AMAZE;AMaZE demosaic
-!PREFERENCES_CHUNKSIZE_RAW_CA;Raw CA correction
-!PREFERENCES_CHUNKSIZE_RAW_RCD;RCD demosaic
-!PREFERENCES_CHUNKSIZE_RAW_XT;Xtrans demosaic
-!PREFERENCES_CHUNKSIZE_RGB;RGB processing
-!PREFERENCES_CIE;Ciecam
-!PREFERENCES_CIEARTIF;Avoid artifacts
-!PREFERENCES_CLUTSCACHE;HaldCLUT Cache
-!PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
-!PREFERENCES_CLUTSDIR;HaldCLUT directory
-!PREFERENCES_CMMBPC;Black point compensation
-!PREFERENCES_COMPLEXITYLOC;Default complexity for Local Adjustments
-!PREFERENCES_COMPLEXITY_EXP;Advanced
-!PREFERENCES_COMPLEXITY_NORM;Standard
-!PREFERENCES_COMPLEXITY_SIMP;Basic
-!PREFERENCES_CROP;Crop Editing
-!PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop
-!PREFERENCES_CROP_GUIDES;Guides shown when not editing the crop
-!PREFERENCES_CROP_GUIDES_FRAME;Frame
-!PREFERENCES_CROP_GUIDES_FULL;Original
-!PREFERENCES_CROP_GUIDES_NONE;None
-!PREFERENCES_CURVEBBOXPOS;Position of curve copy & paste buttons
-!PREFERENCES_CURVEBBOXPOS_ABOVE;Above
-!PREFERENCES_CURVEBBOXPOS_BELOW;Below
-!PREFERENCES_CURVEBBOXPOS_LEFT;Left
-!PREFERENCES_CURVEBBOXPOS_RIGHT;Right
-!PREFERENCES_CUSTPROFBUILDKEYFORMAT;Keys format
-!PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Name
-!PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
-!PREFERENCES_DIRECTORIES;Directories
-!PREFERENCES_EDITORCMDLINE;Custom command line
-!PREFERENCES_EXTEDITOR_BYPASS_OUTPUT_PROFILE;Bypass output profile
-!PREFERENCES_EXTEDITOR_DIR;Output directory
-!PREFERENCES_EXTEDITOR_DIR_CURRENT;Same as input image
-!PREFERENCES_EXTEDITOR_DIR_CUSTOM;Custom
-!PREFERENCES_EXTEDITOR_DIR_TEMP;OS temp dir
-!PREFERENCES_EXTEDITOR_FLOAT32;32-bit float TIFF output
-!PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Compact toolbars in File Browser
-!PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Filmstrip and the File Browser
-!PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Having separate thumbnail size will require more processing time each time you'll switch between the single Editor tab and the File Browser.
-!PREFERENCES_HISTOGRAM_TOOLTIP;If enabled, the working profile is used for rendering the main histogram and the Navigator panel, otherwise the gamma-corrected output profile is used.
-!PREFERENCES_INSPECTORWINDOW;Open inspector in own window or fullscreen
-!PREFERENCES_INSPECT_LABEL;Inspect
-!PREFERENCES_INSPECT_MAXBUFFERS_LABEL;Maximum number of cached images
-!PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;Set the maximum number of images stored in cache when hovering over them in the File Browser; systems with little RAM (2GB) should keep this value set to 1 or 2.
-!PREFERENCES_LANG;Language
-!PREFERENCES_MAXRECENTFOLDERS;Maximum number of recent folders
-!PREFERENCES_MENUGROUPEXTPROGS;Group 'Open with'
-!PREFERENCES_MONINTENT;Default rendering intent
-!PREFERENCES_MONITOR;Monitor
-!PREFERENCES_MONPROFILE;Default color profile
-!PREFERENCES_MONPROFILE_WARNOSX;Due to MacOS limitations, only sRGB is supported.
-!PREFERENCES_NAVIGATIONFRAME;Navigation
-!PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Overlay filenames on thumbnails in the editor pannel
-!PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
-!PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
-!PREFERENCES_PERFORMANCE_MEASURE;Measure
-!PREFERENCES_PERFORMANCE_MEASURE_HINT;Logs processing times in console
-!PREFERENCES_PERFORMANCE_THREADS;Threads
-!PREFERENCES_PERFORMANCE_THREADS_LABEL;Maximum number of threads for Noise Reduction and Wavelet Levels (0 = Automatic)
-!PREFERENCES_PREVDEMO;Preview Demosaic Method
-!PREFERENCES_PREVDEMO_FAST;Fast
-!PREFERENCES_PREVDEMO_LABEL;Demosaicing method used for the preview at <100% zoom:
-!PREFERENCES_PREVDEMO_SIDECAR;As in PP3
+ICCPROFCREATOR_COPYRIGHT;Szerzői jog:
+ICCPROFCREATOR_COPYRIGHT_RESET_TOOLTIP;Visszaállítás az alapértelmezett szerzői jogra, amely 'RawTherapee, CC0'-nak van megadva.
+ICCPROFCREATOR_CUSTOM;Egyedi
+ICCPROFCREATOR_DESCRIPTION;Leírás:
+ICCPROFCREATOR_DESCRIPTION_ADDPARAM;Gamma- és lejtőértékek illesztése a leírás végére.
+ICCPROFCREATOR_DESCRIPTION_TOOLTIP;Hagyd üresen az alapértelmezett leírás használatához.
+ICCPROFCREATOR_GAMMA;Gamma
+ICCPROFCREATOR_ICCVERSION;ICC verzió:
+ICCPROFCREATOR_ILL;Megvilágító:
+ICCPROFCREATOR_ILL_41;D41
+ICCPROFCREATOR_ILL_50;D50
+ICCPROFCREATOR_ILL_55;D55
+ICCPROFCREATOR_ILL_60;D60
+ICCPROFCREATOR_ILL_63;D63 : DCI-P3 Színház
+ICCPROFCREATOR_ILL_65;D65
+ICCPROFCREATOR_ILL_80;D80
+ICCPROFCREATOR_ILL_DEF;Alapértelmezett
+ICCPROFCREATOR_ILL_INC;StdA 2856K
+ICCPROFCREATOR_ILL_TOOLTIP;Beállíthatod a megvilágítót ICC v4 és ICC v2 profiloknál.
+ICCPROFCREATOR_PRIMARIES;Elsődlegesek:
+ICCPROFCREATOR_PRIM_ACESP0;ACES AP0
+ICCPROFCREATOR_PRIM_ACESP1;ACES AP1
+ICCPROFCREATOR_PRIM_ADOBE;Adobe RGB (1998)
+ICCPROFCREATOR_PRIM_BEST;BestRGB
+ICCPROFCREATOR_PRIM_BETA;BetaRGB
+ICCPROFCREATOR_PRIM_BLUX;Kék X
+ICCPROFCREATOR_PRIM_BLUY;Kék Y
+ICCPROFCREATOR_PRIM_BRUCE;BruceRGB
+ICCPROFCREATOR_PRIM_DCIP3;DCI-P3
+ICCPROFCREATOR_PRIM_GREX;Zöld X
+ICCPROFCREATOR_PRIM_GREY;Zöld Y
+ICCPROFCREATOR_PRIM_PROPH;Prophoto
+ICCPROFCREATOR_PRIM_REC2020;Rec2020
+ICCPROFCREATOR_PRIM_REDX;Piros X
+ICCPROFCREATOR_PRIM_REDY;Piros Y
+ICCPROFCREATOR_PRIM_SRGB;sRGB
+ICCPROFCREATOR_PRIM_TOOLTIP;Beállíthatsz egyedi elsődlegeseket ICC v4 és ICC v2 profiloknál.
+ICCPROFCREATOR_PRIM_WIDEG;Széles színskála (Widegamut)
+ICCPROFCREATOR_PROF_V2;ICC v2
+ICCPROFCREATOR_PROF_V4;ICC v4
+ICCPROFCREATOR_SAVEDIALOG_TITLE;ICC profil mentése másként
+ICCPROFCREATOR_SLOPE;Lejtő
+ICCPROFCREATOR_TRC_PRESET;Tónus válaszgörbe.
+INSPECTOR_WINDOW_TITLE;Vizsgáló
+IPTCPANEL_CATEGORYHINT;Azonosítja a kép tárgyát a ellátó véleménye szerint.
+IPTCPANEL_CITYHINT;Add meg a képen szereplő város nevét.
+IPTCPANEL_COPYRIGHT;Szerzői jogi megjegyzés
+IPTCPANEL_COPYRIGHTHINT;Adj meg egy megjegyzést a kép szerzői jogának jelenlegi tulajdonosáról (pl.: ©2008 Jane Doe).
+IPTCPANEL_COUNTRYHINT;Add meg a képen szereplő ország nevét.
+IPTCPANEL_CREATOR;Készítő
+IPTCPANEL_CREATORHINT;Add meg a képet készítő személy nevét.
+IPTCPANEL_CREATORJOBTITLE;Készítő munkatitulusa
+IPTCPANEL_CREATORJOBTITLEHINT;Add meg a Készítő pontban megadott személy munkatitulusát.
+IPTCPANEL_DATECREATEDHINT;Add meg a kép készítésének dátumát.
+IPTCPANEL_DESCRIPTION;Leírás
+IPTCPANEL_DESCRIPTIONHINT;Adj meg egy 'képaláírást' amely leírja, hogy kivel, mi, miért történik a képen. Ide tartozhatnak emberek nevei, és/vagy a szerepük a képen történő éseményekben.
+IPTCPANEL_DESCRIPTIONWRITER;Leírás írója
+IPTCPANEL_DESCRIPTIONWRITERHINT;Add meg annak a nevét, akinek szerepe volt a kép leírásának írásában, szerkesztésében, javításában.
+IPTCPANEL_HEADLINEHINT;Adj meg egy rövid, kiadható vázlatot vagy összegzést a kép tartalmáról.
+IPTCPANEL_INSTRUCTIONSHINT;Adj meg információkat embargókról és egyéb korlátozásokról, amelyeket nem tartalmaz a Szerzői jog pont.
+IPTCPANEL_KEYWORDSHINT;Adj meg bármennyi kulcsszavat, fogalmat vagy kifejezést, amelyekkel a kép témája leírható.
+IPTCPANEL_PROVINCE;Tartomány vagy állam
+IPTCPANEL_PROVINCEHINT;Add meg a képen szereplő tartomány vagy állam nevét.
+IPTCPANEL_SOURCEHINT;Add meg vagy szerkeszd annak a személynek a nevét, akinek szerepe van az tartalom ellátási láncában (pl.: személy/entitás akitől ezt a képet kaptad).
+IPTCPANEL_SUPPCATEGORIES;Kiegészítő kategóriák
+IPTCPANEL_SUPPCATEGORIESHINT;Tovább finomítja a kép tárgyát.
+IPTCPANEL_TITLEHINT;Adj meg egy rövid, sokat mondó és ember által olvasható nevet a képnek, ez akár a fájlnév is lehet.
+IPTCPANEL_TRANSREFERENCE;Munkaazonosító
+IPTCPANEL_TRANSREFERENCEHINT;Adj meg egy számot vagy azonosítót, amely szükséges a munkafolyamat irányításához vagy nyomon követéséhez.
+MAIN_BUTTON_ICCPROFCREATOR;ICC Profilkészítő
+MAIN_BUTTON_NAVNEXT_TOOLTIP;A Szerkesztőben megnyitott képet követő képhez navigálás.\nGyorsbillentyű: <b>Shift-F4</b>\n\nA Fájl böngészőben vagy Filmszalagban jelenleg kijelölt ikont követő képhez navigálás.\nGyorsbillentyű: <b>F4</b>
+MAIN_BUTTON_NAVPREV_TOOLTIP;A Szerkesztőben megnyitott képet megelőző képhez navigálás.\nGyorsbillentyű: <b>Shift-F3</b>\n\nA Fájl böngészőben vagy Filmszalagban jelenleg kijelölt ikont megelőző képhez navigálás.\nGyorsbillentyű: <b>F3</b>
+MAIN_BUTTON_NAVSYNC_TOOLTIP;A Fájl böngészőben vagy Filmszalag szinkronizálása a Szerkesztővel a jelenleg megnyitott kép ikonjának felfedéséért, és minden aktív szűrő törlése.\nGyorsbillentyű: <b>x</b>\n\nMint fentebb, de az aktív szűrők törlése nélkül.\nGyorsbillentyű: <b>y</b>\n(Vedd figyelembe, hogy a megnyitott kép ikonja nem fog megjelenni, amennyiben az ki van szűrve).
+MAIN_FRAME_PLACES_DEL;Eltávolítás
+MAIN_MSG_IMAGEUNPROCESSED;Ez a parancs előbb az összes kiválasztott kép sorfeldolgozását igényli.
+MAIN_MSG_OPERATIONCANCELLED;Művelet megszakítva
+MAIN_MSG_PATHDOESNTEXIST;Az elérési út\n\n<b>%1</b>\n\nnem létezik. Adj meg egy helyes utat a Beállításokban.
+MAIN_MSG_SETPATHFIRST;Előbb be kell állítanod egy célútvonalat a Beállításokban ennek a funkciónak a használatához!
+MAIN_MSG_TOOMANYOPENEDITORS;Túl sok szerkesztő van megnyitva.\nZárj be egy szerkesztőt a folytatáshoz.
+MAIN_MSG_WRITEFAILED;Sikertelen írás\n<b>'%1'</b>\n\nBizonyosodj meg róla, hogy a mappa létezik, és ahhoz írási jogosultsággal rendelkezel.
+MAIN_TAB_ADVANCED;Haladó
+MAIN_TAB_ADVANCED_TOOLTIP;Gyorsbillentyű: <b>Alt</b>-<b>a</b>
+MAIN_TAB_FAVORITES;Kedvencek
+MAIN_TAB_FAVORITES_TOOLTIP;Gyorsbillentyű: <b>Alt-u</b>
+MAIN_TAB_INSPECT;Vizsgálat
+MAIN_TAB_LOCALLAB;Helyi
+MAIN_TAB_LOCALLAB_TOOLTIP;Gyorsbillentyű: <b>Alt-o</b>
+MAIN_TOOLTIP_BACKCOLOR0;Előnézet háttérszíne: <b>téma alapú</b>\nGyorsbillentyű: <b>9</b>
+MAIN_TOOLTIP_BACKCOLOR1;Előnézet háttérszíne: <b>fekete</b>\nnGyorsbillentyű: <b>9</b>
+MAIN_TOOLTIP_BACKCOLOR2;Előnézet háttérszíne: <b>fehér</b>\nnGyorsbillentyű: <b>9</b>
+MAIN_TOOLTIP_BACKCOLOR3;Előnézet háttérszíne: <b>középszürke</b>\nnGyorsbillentyű: <b>9</b>
+MAIN_TOOLTIP_PREVIEWSHARPMASK;Preview the <b>sharpening contrast mask</b>.\nnGyorsbillentyű: <b>p</b>\n\nCsak akkor működik, ha az élesítés be van kapcsolva, és a zoom >=100%.
+MONITOR_PROFILE_SYSTEM;Rendszer alapértelmezettje
+NAVIGATOR_B;Kék:
+NAVIGATOR_G;Zöld:
+NAVIGATOR_H;H:
+NAVIGATOR_LAB_A;a*:
+NAVIGATOR_LAB_B;b*:
+NAVIGATOR_LAB_L;L*:
+NAVIGATOR_NA; --
+NAVIGATOR_R;Piros:
+NAVIGATOR_S;S:
+NAVIGATOR_V;V:
+NAVIGATOR_XY_FULL;Szélesség: %1, Magasság: %2
+OPTIONS_BUNDLED_MISSING;A csomagolt profilok '<b>%1</b>' nem találhatóak!\n\nA telepített másolatod sérült lehet.\n\nAz alapértelmezett belsős értékek lesznek használva helyettük.
+OPTIONS_DEFIMG_MISSING;Az alapértelmezett profil a <b>nem nyers fotókhoz</b> nem található, vagy nincsen beállítva.\n\nEllenőrizd a profilok könyvtárát. Lehet hogy hiányzik, vagy sérült.\n\n'<b>%1</b>' lesz használva helyette.
+OPTIONS_DEFRAW_MISSING;Az alapértelmezett profil a <b>nyers fotókhoz</b> nem található, vagy nincsen beállítva.\n\nEllenőrizd a profilok könyvtárát. Lehet hogy hiányzik, vagy sérült.\n\n'<b>%1</b>' lesz használva helyette.
+PARTIALPASTE_ADVANCEDGROUP;Haladó Beállítások
+PARTIALPASTE_CHANNELMIXERBW;Fekete-Fehér
+PARTIALPASTE_COLORAPP;Színmegjelenés és Megvilágítás
+PARTIALPASTE_COLORTONING;Színtónusozás
+PARTIALPASTE_DEHAZE;Ködeltávolítás
+PARTIALPASTE_EQUALIZER;Wavelet szintek
+PARTIALPASTE_FILMNEGATIVE;Film negatív
+PARTIALPASTE_FILMSIMULATION;Film szimuláció
+PARTIALPASTE_FLATFIELDCLIPCONTROL;FF klip kontroll
+PARTIALPASTE_GRADIENT;Átmenetes szűrő
+PARTIALPASTE_LENSPROFILE;Profilozott Objektívkorrekció
+PARTIALPASTE_LOCALCONTRAST;Helyi kontraszt
+PARTIALPASTE_LOCALLAB;Helyi Igazítások
+PARTIALPASTE_LOCALLABGROUP;Helyi Igazítás Beállítások
+PARTIALPASTE_METADATA;Metaadat mód
+PARTIALPASTE_PCVIGNETTE;Vignetta Szűrő
+PARTIALPASTE_PREPROCESS_DEADPIXFILT;Halottpixel szűrő
+PARTIALPASTE_PREPROCESS_HOTPIXFILT;Forrópixel szűrő
+PARTIALPASTE_PREPROCESS_PDAFLINESFILTER;PDAF vonalszűrő
+PARTIALPASTE_PREPROCWB;Fehéregyensúly előfeldolgozása
+PARTIALPASTE_PRSHARPENING;Átméretezés utáni élesítés
+PARTIALPASTE_RAWCACORR_AVOIDCOLORSHIFT;KA színeltolódás elkerülése
+PARTIALPASTE_RAWCACORR_CAREDBLUE;KA piros & kék
+PARTIALPASTE_RAW_BORDER;Nyers határ
+PARTIALPASTE_RAW_IMAGENUM;Szubkép
+PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE feljavító lépések
+PARTIALPASTE_RAW_PIXELSHIFT;Pixel Shift
+PARTIALPASTE_RETINEX;Retinex
+PARTIALPASTE_SOFTLIGHT;Szórt fény
+PARTIALPASTE_SPOT;Folteltávolítás
+PARTIALPASTE_TM_FATTAL;Magas Dinamikatartomány (HDR)
+PREFERENCES_APPEARANCE;Megjelenés
+PREFERENCES_APPEARANCE_COLORPICKERFONT;Színválasztó betűtípusa
+PREFERENCES_APPEARANCE_CROPMASKCOLOR;Vágómaszk színe
+PREFERENCES_APPEARANCE_MAINFONT;Főbetűtípus
+PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Navigátor útmutató színe
+PREFERENCES_APPEARANCE_PSEUDOHIDPI;Pszeudo-magasDPI mód
+PREFERENCES_APPEARANCE_THEME;Téma
+PREFERENCES_AUTOSAVE_TP_OPEN;Mentő eszköz összezárt/szétnyílt állapota kilépéskor
+PREFERENCES_BEHADDALL;Mindet 'Hozzáadás'-ra
+PREFERENCES_BEHADDALLHINT;Minden paraméter <b>Hozzáadás</b> módra állítása.\nA paraméterek állítása a csoport eszközpanelen <b>delta</b> értékeket eredményez.
+PREFERENCES_BEHSETALL;Mindet 'Beállít'-ra
+PREFERENCES_BEHSETALLHINT;Minden paraméter <b>Beállít</b> módra állítása.\nA paraméterek állítása a csoport eszközpanelen <b>abszolút</b> értékeket eredményez, a valós értékek jelennek meg.
+PREFERENCES_CACHECLEAR;Törlés
+PREFERENCES_CACHECLEAR_ALL;Összes fájl törlése a gyorsítótárból:
+PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Összes fájl törlése a gyorsítótárból a feldolgozási profilok kivételével:
+PREFERENCES_CACHECLEAR_ONLYPROFILES;Kizárólag a feldolgozási profilok törlése a gyorsítótárból:
+PREFERENCES_CACHECLEAR_SAFETY;Kizárólag a gyorsítótárban lévő fájlok törlődnek. A forrásfájlok mellett tárolt feldolgozási profilok érintetlenül maradnak.
+PREFERENCES_CHUNKSIZES;Csempe / Szál
+PREFERENCES_CHUNKSIZE_RAW_AMAZE;AMaZE mozaiktalanítás
+PREFERENCES_CHUNKSIZE_RAW_CA;Nyers KA korrekció
+PREFERENCES_CHUNKSIZE_RAW_RCD;RCD mozaiktalanítás
+PREFERENCES_CHUNKSIZE_RAW_XT;Xtrans mozaiktalanítás
+PREFERENCES_CHUNKSIZE_RGB;RGB Feldolgozás
+PREFERENCES_CIE;Ciecam
+PREFERENCES_CIEARTIF;Artifaktumok elkerülése
+PREFERENCES_CLUTSCACHE;HaldCLUT Gyorsítótár
+PREFERENCES_CLUTSCACHE_LABEL;Gyorsítótárban lévő CLUT-ok maximális száma
+PREFERENCES_CLUTSDIR;HaldCLUT könyvtár
+PREFERENCES_CMMBPC;Feketepont kompenzáció
+PREFERENCES_COMPLEXITYLOC;Alapértelmezett komplexitás Helyi Igazításhoz
+PREFERENCES_COMPLEXITY_EXP;Haladó
+PREFERENCES_COMPLEXITY_NORM;Standard
+PREFERENCES_COMPLEXITY_SIMP;Alap
+PREFERENCES_CROP;Vágás szerkesztés
+PREFERENCES_CROP_AUTO_FIT;Automatikus közelítés vágáshoz illesztéshez.
+PREFERENCES_CROP_GUIDES;Megjelenített útmutatók a vágás szerkesztésén kívül
+PREFERENCES_CROP_GUIDES_FRAME;Keret
+PREFERENCES_CROP_GUIDES_FULL;Eredeti
+PREFERENCES_CROP_GUIDES_NONE;Üres
+PREFERENCES_CURVEBBOXPOS;A görbe másolás & beillesztés gombok helye
+PREFERENCES_CURVEBBOXPOS_ABOVE;Fent
+PREFERENCES_CURVEBBOXPOS_BELOW;Lent
+PREFERENCES_CURVEBBOXPOS_LEFT;Bal
+PREFERENCES_CURVEBBOXPOS_RIGHT;Jobb
+PREFERENCES_CUSTPROFBUILDKEYFORMAT;Kulcsformátum
+PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Név
+PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;Címke azonosító
+PREFERENCES_DIRECTORIES;Könyvtárak
+PREFERENCES_EDITORCMDLINE;Egyedi parancssor
+PREFERENCES_EXTEDITOR_BYPASS_OUTPUT_PROFILE;Kimeneti profil átugrása
+PREFERENCES_EXTEDITOR_DIR;Kimeneti könyvtár
+PREFERENCES_EXTEDITOR_DIR_CURRENT;A bemeneti képpel megegyező
+PREFERENCES_EXTEDITOR_DIR_CUSTOM;Egyedi
+PREFERENCES_EXTEDITOR_DIR_TEMP;Operációs Rendszer átmeneti könyvtára
+PREFERENCES_EXTEDITOR_FLOAT32;32-bit lebegőpontos TIFF kimenet
+PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Kompakt eszköztár a Fájl böngészőben
+PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Azonos ikonmagasság a Filmszalag és a Fájl böngésző között
+PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Különböző ikonméretek használata több feldolgozási időt fog igénybe venni minden alkalommal, amikor az egyedi Szerkesztő fül és a Fájl böngésző között váltassz.
+PREFERENCES_HISTOGRAM_TOOLTIP;He be van kapcsolva, a munkaprofil lesz használva a fő hisztogram és a Navigátorpanel számításához. Máskülönben a gamma-javított kimenet használatos.
+PREFERENCES_INSPECTORWINDOW;A vizsgáló megnyitása a saját ablakában vagy teljes képernyős módban
+PREFERENCES_INSPECT_LABEL;Vizsgálat
+PREFERENCES_INSPECT_MAXBUFFERS_LABEL;Gyorsítótárban tárolt képek max. száma
+PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;A gyorsítótárban lévő képek maximális számának beállítása amikor a kurzor felettük van a Fájlböngészőben. Kevés RAM-al (2GB) rendelkező rendszer esetén ezt az értéket 1-re vagy 2-re érdemes állítani.
+PREFERENCES_LANG;Nyelv
+PREFERENCES_MAXRECENTFOLDERS;A legutóbbi mappák maximális száma.
+PREFERENCES_MENUGROUPEXTPROGS;Csoportos 'Megnyitás mással'
+PREFERENCES_MONINTENT;Alapértelmezett renderelési szándék
+PREFERENCES_MONITOR;Monitor
+PREFERENCES_MONPROFILE;Alapértelmezett színprofil
+PREFERENCES_MONPROFILE_WARNOSX;MayOS korlátozásoknak köszönhetően kizárólag sRGB támogatott.
+PREFERENCES_NAVIGATIONFRAME;Navigáció
+PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Fájlnevek megjelenítése a szerkesztőpanel ikonjain
+PREFERENCES_PARSEDEXTDOWNHINT;A kiválasztott kiterjesztések lefele mozgatása a listán.
+PREFERENCES_PARSEDEXTUPHINT;A kiválasztott kiterjesztések felfele mozgatása a listán.
+PREFERENCES_PERFORMANCE_MEASURE;Mérés
+PREFERENCES_PERFORMANCE_MEASURE_HINT;A feldolgozási időket a konzolon naplózza.
+PREFERENCES_PERFORMANCE_THREADS;Szálak
+PREFERENCES_PERFORMANCE_THREADS_LABEL;A Zajcsökkentéshez és a Wavelet szintekhez használt szálak maximális száma (0 = Automatikus)
+PREFERENCES_PREVDEMO;Előnézet mozaiktalanítási módszere
+PREFERENCES_PREVDEMO_FAST;Gyors
+PREFERENCES_PREVDEMO_LABEL;Az előnézethez használt mozaiktalanítási módszer <100%-os zoom--nál:
+PREFERENCES_PREVDEMO_SIDECAR;Mint a PP3-ban
 !PREFERENCES_PRINTER;Printer (Soft-Proofing)
-!PREFERENCES_PROFILESAVEBOTH;Save processing profile both to the cache and next to the input file
-!PREFERENCES_PROFILESAVELOCATION;Processing profile saving location
-!PREFERENCES_PROFILE_NONE;None
-!PREFERENCES_PRTINTENT;Rendering intent
-!PREFERENCES_PRTPROFILE;Color profile
-!PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
-!PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in 'Single Editor Tab Mode' and when 'Demosaicing method used for the preview at <100% zoom' is set to 'As in PP3'.
-!PREFERENCES_SAVE_TP_OPEN_NOW;Save tool collapsed/expanded state now
-!PREFERENCES_SERIALIZE_TIFF_READ;TIFF Read Settings
-!PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialize reading of TIFF files
-!PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;Enabling this option when working with folders containing uncompressed TIFF files can increase performance of thumbnail generation.
-!PREFERENCES_SHOWFILMSTRIPTOOLBAR;Show Filmstrip toolbar
-!PREFERENCES_SHOWTOOLTIP;Show Local Adjustments advice tooltips
-!PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
-!PREFERENCES_TAB_PERFORMANCE;Performance
-!PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview
-!PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
-!PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw rendering
-!PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Embedded JPEG if fullsize, neutral raw otherwise
-!PREFERENCES_USEBUNDLEDPROFILES;Use bundled profiles
-!PREFERENCES_ZOOMONSCROLL;Zoom images by scrolling
-!PROFILEPANEL_GLOBALPROFILES;Bundled profiles
-!PROFILEPANEL_MODE_TOOLTIP;Processing profile fill mode.\n\nButton pressed: partial profiles will be converted to full profiles; the missing values will be replaced with hard-coded defaults.\n\nButton released: profiles will be applied as they are, altering only those values which they contain.
-!PROFILEPANEL_MYPROFILES;My profiles
-!PROFILEPANEL_PDYNAMIC;Dynamic
-!PROFILEPANEL_PINTERNAL;Neutral
-!PROGRESSBAR_DECODING;Decoding...
-!PROGRESSBAR_GREENEQUIL;Green equilibration...
-!PROGRESSBAR_HLREC;Highlight reconstruction...
-!PROGRESSBAR_HOTDEADPIXELFILTER;Hot/dead pixel filter...
-!PROGRESSBAR_LINEDENOISE;Line noise filter...
-!PROGRESSBAR_NOIMAGES;No images found
-!PROGRESSBAR_PROCESSING_PROFILESAVED;Processing profile saved
-!PROGRESSBAR_RAWCACORR;Raw CA correction...
-!PROGRESSBAR_SNAPSHOT_ADDED;Snapshot added
-!QINFO_FRAMECOUNT;%2 frames
-!QINFO_HDR;HDR / %2 frame(s)
-!QINFO_PIXELSHIFT;Pixel Shift / %2 frame(s)
-!QUEUE_DESTFILENAME;Path and file name
-!QUEUE_LOCATION_TITLE;Output Location
-!QUEUE_STARTSTOP_TOOLTIP;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
-!SAMPLEFORMAT_0;Unknown data format
-!SAMPLEFORMAT_1;8-bit unsigned
-!SAMPLEFORMAT_2;16-bit unsigned
-!SAMPLEFORMAT_4;24-bit LogLuv
-!SAMPLEFORMAT_8;32-bit LogLuv
-!SAMPLEFORMAT_16;16-bit floating-point
-!SAMPLEFORMAT_32;24-bit floating-point
-!SAMPLEFORMAT_64;32-bit floating-point
-!SAVEDLG_FILEFORMAT_FLOAT; floating-point
-!SAVEDLG_FORCEFORMATOPTS;Force saving options
-!SAVEDLG_SUBSAMP;Subsampling
-!SAVEDLG_SUBSAMP_1;Best compression
-!SAVEDLG_SUBSAMP_2;Balanced
-!SAVEDLG_SUBSAMP_3;Best quality
-!SAVEDLG_SUBSAMP_TOOLTIP;Best compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma halved horizontally and vertically.\n\nBalanced:\nJ:a:b 4:2:2\nh/v 2/1\nChroma halved horizontally.\n\nBest quality:\nJ:a:b 4:4:4\nh/v 1/1\nNo chroma subsampling.
-!SAVEDLG_WARNFILENAME;File will be named
-!SHCSELECTOR_TOOLTIP;Click right mouse button to reset the position of those 3 sliders.
+PREFERENCES_PROFILESAVEBOTH;Feldolgozási profil mentése mind a gyorsítótárba mind a bemeneti fájl mellé.
+PREFERENCES_PROFILESAVELOCATION;Feldolgozási profil mentésének helye
+PREFERENCES_PROFILE_NONE;Nincs
+PREFERENCES_PRTINTENT;Renderelési szándék
+PREFERENCES_PRTPROFILE;Színprofil
+PREFERENCES_REMEMBERZOOMPAN;A zoom % és a pásztázási eltolás megjegyzése
+PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;A jelenlegi kép zoom %-ának és az pásztázási eltolásának megjegyzése új kép megnyitásakor.\n\nEz a beállítás kizárólag az 'Egyetlen Szerkesztőfül Mód'-ban működik amikor a 'Az előnézethez használt mozaiktalanítási módszer <100%-os zoom-nál' beállítás értéke 'Mint a PP3-ban'
+PREFERENCES_SAVE_TP_OPEN_NOW;A mentési eszköz összecsukott/kinyitott jelenlegi állapota
+PREFERENCES_SERIALIZE_TIFF_READ;TIFF Beolvasási beállítások
+PREFERENCES_SERIALIZE_TIFF_READ_LABEL;TIFF fájlok beolvasásának sorozatosítása
+PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;Ennek bekapcsolásával a tömörítetlen TIFF fájlokat tartalmazó mappák feldolgozásakor az ikongenerálás teljesítménye javulhat.
+PREFERENCES_SHOWFILMSTRIPTOOLBAR;Filmszalag eszköztárának megjelenítése
+PREFERENCES_SHOWTOOLTIP;A Helyi igazítások tanácsok megjelenítése
+PREFERENCES_TAB_DYNAMICPROFILE;Dinamikus Profilszabályok
+PREFERENCES_TAB_PERFORMANCE;Teljesítmény
+PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Beágyazott JPEG előnézet
+PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Megjelenítendő kép
+PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Semleges nyers renderelés
+PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Természetes JPEG, ha teljes méretű, máskülönben semleges nyers
+PREFERENCES_USEBUNDLEDPROFILES;Csomagolt Profilok használata
+PREFERENCES_ZOOMONSCROLL;Képek zoomolása görgetéssel
+PROFILEPANEL_GLOBALPROFILES;Csomagolt profilok
+PROFILEPANEL_MODE_TOOLTIP;Feldolgozási profilok kitöltési módja.\n\nGomblenyomásra: a részleges profilok teljes profilokká lesznek alakítva; a hiányzó értékek beépített alapértelmezettekre lesznek cserélve.\n\nGombfelengedésre: a profilok úgy lesznek alkalmazva ahogy vannak, csak azok az értékek változnak meg, amelyeket a profilok tartalmaznak.
+PROFILEPANEL_MYPROFILES;Profiljaim
+PROFILEPANEL_PDYNAMIC;Dinamikus
+PROFILEPANEL_PINTERNAL;Semleges
+PROGRESSBAR_DECODING;Dekódolás...
+PROGRESSBAR_GREENEQUIL;Zöld-kiegyensúlyozás...
+PROGRESSBAR_HLREC;Csúcsfény-rekonstrukció...
+PROGRESSBAR_HOTDEADPIXELFILTER;Forró-/halottpixel-szűrő...
+PROGRESSBAR_LINEDENOISE;Sorzajszűrő...
+PROGRESSBAR_NOIMAGES;Nem találhatóak képek
+PROGRESSBAR_PROCESSING_PROFILESAVED;Feldolgozási profil mentve
+PROGRESSBAR_RAWCACORR;Nyers KA korrekció...
+PROGRESSBAR_SNAPSHOT_ADDED;Pillanatkép hozzáadva
+QINFO_FRAMECOUNT;%2 képkocka
+QINFO_HDR;HDR / %2 képkocka
+QINFO_PIXELSHIFT;Pixel Shift / %2 képkocka
+QUEUE_DESTFILENAME;Elérési út és fájlnév
+QUEUE_LOCATION_TITLE;Kimeneti hely
+QUEUE_STARTSTOP_TOOLTIP;A sorban lévő képek feldolgozásának elindítása vagy megállítása.\n\nGyorsbillentyű: <b>Ctrl</b>+<b>s</b>
+SAMPLEFORMAT_0;Ismeretlen adatformátum
+SAMPLEFORMAT_1;8-bites előjel nélküli 
+SAMPLEFORMAT_2;16-bites előjel nélküli
+SAMPLEFORMAT_4;24-bited LogLuv
+SAMPLEFORMAT_8;32-bites LogLuv
+SAMPLEFORMAT_16;16-bites lebegőpontos
+SAMPLEFORMAT_32;24-bites lebegőpontos
+SAMPLEFORMAT_64;32-bites lebegőpontos
+SAVEDLG_FILEFORMAT_FLOAT; lebegőpontos
+SAVEDLG_FORCEFORMATOPTS;Mentési beállítások kényszerítése
+SAVEDLG_SUBSAMP;Alulmintavételezés
+SAVEDLG_SUBSAMP_1;Legjobb tömörítés
+SAVEDLG_SUBSAMP_2;Kiegyensúlyozott
+SAVEDLG_SUBSAMP_3;Legjobb minőség
+SAVEDLG_SUBSAMP_TOOLTIP;Legjobb tömörítés:\nJ:a:b 4:2:0\nh/v 2/2\nSzínintenzitás vízszintesen és függőlegesen megfelezve.\n\nKiegyensúlyozott:\nJ:a:b 4:2:2\nh/v 2/1\nSzínintenzitás vízszintesen megfelezve.\n\nLegjobb minőség:\nJ:a:b 4:4:4\nh/v 1/1\nNincs színintenzitás alul mintavételezés.
+SAVEDLG_WARNFILENAME;A fájl leendő neve
+SHCSELECTOR_TOOLTIP;Jobb klikk a 3 csúszka helyzetének visszaállításához.
 !SOFTPROOF_GAMUTCHECK_TOOLTIP;Highlight pixels with out-of-gamut colors with respect to:\n- the printer profile, if one is set and soft-proofing is enabled,\n- the output profile, if a printer profile is not set and soft-proofing is enabled,\n- the monitor profile, if soft-proofing is disabled.
 !SOFTPROOF_TOOLTIP;Soft-proofing simulates the appearance of the image:\n- when printed, if a printer profile is set in Preferences > Color Management,\n- when viewed on a display that uses the current output profile, if a printer profile is not set.
-!TC_PRIM_BLUX;Bx
-!TC_PRIM_BLUY;By
-!TC_PRIM_GREX;Gx
-!TC_PRIM_GREY;Gy
-!TC_PRIM_REDX;Rx
-!TC_PRIM_REDY;Ry
-!THRESHOLDSELECTOR_B;Bottom
-!THRESHOLDSELECTOR_BL;Bottom-left
-!THRESHOLDSELECTOR_BR;Bottom-right
-!THRESHOLDSELECTOR_HINT;Hold the <b>Shift</b> key to move individual control points.
-!THRESHOLDSELECTOR_T;Top
-!THRESHOLDSELECTOR_TL;Top-left
-!THRESHOLDSELECTOR_TR;Top-right
-!TOOLBAR_TOOLTIP_COLORPICKER;Lockable Color Picker\n\nWhen the tool is active:\n- Add a picker: <b>left-click</b>.\n- Drag a picker: <b>left-click and drag</b>.\n- Delete a picker: <b>right-click</b>.\n- Delete all pickers: <b>Ctrl</b>+<b>Shift</b>+<b>right-click</b>.\n- Revert to hand tool: <b>right-click</b> outside any picker.
-!TOOLBAR_TOOLTIP_PERSPECTIVE;<b>Perspective Correction</b>\n\nEdit control lines to correct perspective distortion. Click this button again to apply correction.
-!TP_BWMIX_ALGO;Algorithm OYCPM
-!TP_BWMIX_ALGO_LI;Linear
-!TP_BWMIX_ALGO_SP;Special effects
-!TP_BWMIX_ALGO_TOOLTIP;Linear: will produce a normal <b>linear</b> response.\nSpecial effects: will produce special effects by mixing channels <b>non-linearly</b>.
-!TP_BWMIX_AUTOCH;Auto
-!TP_BWMIX_CC_ENABLED;Adjust complementary color
-!TP_BWMIX_CC_TOOLTIP;Enable to allow automatic adjustment of complementary colors in ROYGCBPM mode.
-!TP_BWMIX_CHANNEL;Luminance equalizer
-!TP_BWMIX_CURVEEDITOR1;'Before' curve
-!TP_BWMIX_CURVEEDITOR2;'After' curve
-!TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;Tone curve, after B&amp;W conversion, at the end of treatment.
-!TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;Tone curve, just before B&amp;W conversion.\nMay take into account the color components.
-!TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;Luminance according to hue L=f(H).\nPay attention to extreme values as they may cause artifacts.
-!TP_BWMIX_FILTER;Color Filter
-!TP_BWMIX_FILTER_BLUE;Blue
-!TP_BWMIX_FILTER_BLUEGREEN;Blue-Green
-!TP_BWMIX_FILTER_GREEN;Green
-!TP_BWMIX_FILTER_GREENYELLOW;Green-Yellow
-!TP_BWMIX_FILTER_NONE;None
-!TP_BWMIX_FILTER_PURPLE;Purple
-!TP_BWMIX_FILTER_RED;Red
-!TP_BWMIX_FILTER_REDYELLOW;Red-Yellow
-!TP_BWMIX_FILTER_TOOLTIP;The color filter simulates shots taken with a colored filter placed in front of the lens. Colored filters reduce the transmission of specific color ranges and therefore affect their lightness. E.g. a red filter darkens blue skies.
-!TP_BWMIX_FILTER_YELLOW;Yellow
-!TP_BWMIX_GAMMA;Gamma Correction
-!TP_BWMIX_GAM_TOOLTIP;Correct gamma for each RGB channel.
-!TP_BWMIX_LABEL;Black-and-White
-!TP_BWMIX_MET;Method
-!TP_BWMIX_MET_CHANMIX;Channel Mixer
-!TP_BWMIX_MET_DESAT;Desaturation
-!TP_BWMIX_MET_LUMEQUAL;Luminance Equalizer
-!TP_BWMIX_MIXC;Channel Mixer
-!TP_BWMIX_NEUTRAL;Reset
-!TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%   Total: %4%%
-!TP_BWMIX_RGBLABEL_HINT;Final RGB factors that take care of all the mixer options.\n'Total' displays the sum of the RGB values:\n- always 100% in relative mode\n- higher (lighter) or lower (darker) than 100% in absolute mode.
-!TP_BWMIX_RGB_TOOLTIP;Mix the RGB channels. Use presets for guidance.\nPay attention to negative values that may cause artifacts or erratic behavior.
-!TP_BWMIX_SETTING;Presets
-!TP_BWMIX_SETTING_TOOLTIP;Different presets (film, landscape, etc.) or manual Channel Mixer settings.
-!TP_BWMIX_SET_HIGHCONTAST;High contrast
-!TP_BWMIX_SET_HIGHSENSIT;High Sensitivity
-!TP_BWMIX_SET_HYPERPANCHRO;Hyper Panchromatic
-!TP_BWMIX_SET_INFRARED;Infrared
-!TP_BWMIX_SET_LANDSCAPE;Landscape
-!TP_BWMIX_SET_LOWSENSIT;Low Sensitivity
-!TP_BWMIX_SET_LUMINANCE;Luminance
-!TP_BWMIX_SET_NORMCONTAST;Normal Contrast
-!TP_BWMIX_SET_ORTHOCHRO;Orthochromatic
-!TP_BWMIX_SET_PANCHRO;Panchromatic
-!TP_BWMIX_SET_PORTRAIT;Portrait
-!TP_BWMIX_SET_RGBABS;Absolute RGB
-!TP_BWMIX_SET_RGBREL;Relative RGB
-!TP_BWMIX_SET_ROYGCBPMABS;Absolute ROYGCBPM
-!TP_BWMIX_SET_ROYGCBPMREL;Relative ROYGCBPM
-!TP_BWMIX_TCMODE_FILMLIKE;B&W Film-like
-!TP_BWMIX_TCMODE_SATANDVALBLENDING;B&W Saturation and Value Blending
-!TP_BWMIX_TCMODE_STANDARD;B&W Standard
-!TP_BWMIX_TCMODE_WEIGHTEDSTD;B&W Weighted Standard
-!TP_BWMIX_VAL;L
-!TP_CBDL_AFT;After Black-and-White
-!TP_CBDL_BEF;Before Black-and-White
-!TP_CBDL_METHOD;Process located
-!TP_CBDL_METHOD_TOOLTIP;Choose whether the Contrast by Detail Levels tool is to be positioned after the Black-and-White tool, which makes it work in L*a*b* space, or before it, which makes it work in RGB space.
-!TP_COLORAPP_ABSOLUTELUMINANCE;Absolute luminance
-!TP_COLORAPP_ADAPSCEN_TOOLTIP;Corresponds to the luminance in candelas per m2 at the time of shooting, calculated automatically from the exif data.
-!TP_COLORAPP_ALGO;Algorithm
-!TP_COLORAPP_ALGO_ALL;All
-!TP_COLORAPP_ALGO_JC;Lightness + Chroma (JC)
-!TP_COLORAPP_ALGO_JS;Lightness + Saturation (JS)
-!TP_COLORAPP_ALGO_QM;Brightness + Colorfulness (QM)
-!TP_COLORAPP_ALGO_TOOLTIP;Lets you choose between parameter subsets or all parameters.
-!TP_COLORAPP_BADPIXSL;Hot/bad pixel filter
-!TP_COLORAPP_BADPIXSL_TOOLTIP;Suppression of hot/bad (brightly colored) pixels.\n0 = No effect\n1 = Median\n2 = Gaussian.\nAlternatively, adjust the image to avoid very dark shadows.\n\nThese artifacts are due to limitations of CIECAM02.
-!TP_COLORAPP_BRIGHT;Brightness (Q)
-!TP_COLORAPP_BRIGHT_TOOLTIP;Brightness in CIECAM is the amount of perceived light emanating from a stimulus. It differs from L*a*b* and RGB brightness.
-!TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;When setting manually, values above 65 are recommended.
-!TP_COLORAPP_CATCLASSIC;Classic
-!TP_COLORAPP_CATMET_TOOLTIP;Classic - traditional CIECAM operation. The chromatic adaptation transforms are applied separately on 'Scene conditions' and basic illuminant on the one hand, and on basic illuminant and 'Viewing conditions' on the other.\n\nSymmetric – The chromatic adaptation is based on the white balance. The 'Scene conditions', 'Image adjustments' and 'Viewing conditions' settings are neutralized.\n\nMixed – Same as the 'Classic' option but in this case, the chromatic adaptation is based on the white balance.
-!TP_COLORAPP_CATMOD;Mode
-!TP_COLORAPP_CATSYMGEN;Automatic Symmetric
-!TP_COLORAPP_CATSYMSPE;Mixed
-!TP_COLORAPP_CHROMA;Chroma (C)
-!TP_COLORAPP_CHROMA_M;Colorfulness (M)
-!TP_COLORAPP_CHROMA_M_TOOLTIP;Colorfulness in CIECAM is the perceived amount of hue in relation to gray, an indicator that a stimulus appears to be more or less colored.
-!TP_COLORAPP_CHROMA_S;Saturation (S)
-!TP_COLORAPP_CHROMA_S_TOOLTIP;Saturation in CIECAM corresponds to the color of a stimulus in relation to its own brightness. It differs from L*a*b* and RGB saturation.
-!TP_COLORAPP_CHROMA_TOOLTIP;Chroma in CIECAM corresponds to the color of a stimulus relative to the clarity of a stimulus that appears white under identical conditions. It differs from L*a*b* and RGB chroma.
-!TP_COLORAPP_CIECAT_DEGREE;Adaptation
-!TP_COLORAPP_CONTRAST;Contrast (J)
-!TP_COLORAPP_CONTRAST_Q;Contrast (Q)
-!TP_COLORAPP_CONTRAST_Q_TOOLTIP;Contrast (Q) in CIECAM is based on brightness. It differs from L*a*b* and RGB contrast.
-!TP_COLORAPP_CONTRAST_TOOLTIP;Contrast (J) in CIECAM is based on lightness. It differs from L*a*b* and RGB contrast.
-!TP_COLORAPP_CURVEEDITOR1;Tone curve 1
-!TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Shows the histogram of L* (L*a*b*) before CIECAM.\nIf the 'Show CIECAM output histograms in CAL curves' checkbox is enabled, shows the histogram of J after CIECAM.\n\nJ is not shown in the main histogram panel.\n\nFor final output refer to the main histogram panel.
-!TP_COLORAPP_CURVEEDITOR2;Tone curve 2
-!TP_COLORAPP_CURVEEDITOR2_TOOLTIP;Same usage as with the first J(J) tone curve.
-!TP_COLORAPP_CURVEEDITOR3;Color curve
-!TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Adjust either chroma, saturation or colorfulness.\n\nShows the histogram of chromaticity (L*a*b*) before CIECAM.\nIf the 'Show CIECAM output histograms in CAL curves' checkbox is enabled, shows the histogram of C, S or M after CIECAM.\n\nC, S and M are not shown in the main histogram panel.\nFor final output refer to the main histogram panel.
-!TP_COLORAPP_DATACIE;Show CIECAM output histograms in CAL curves
-!TP_COLORAPP_DATACIE_TOOLTIP;Affects histograms shown in Color Appearance &amp; Lightning curves. Does not affect RawTherapee's main histogram.\n\nEnabled: show approximate values for J and C, S or M after the CIECAM adjustments.\nDisabled: show L*a*b* values before CIECAM adjustments.
-!TP_COLORAPP_DEGREE_TOOLTIP;CAT02/16 is a chromatic adaptation. It converts the values of an image whose white point is that of a given illuminant (for example D65) into new values whose white point is that of the new illuminant - see WP model (for example D50 or D55).
-!TP_COLORAPP_DEGREOUT_TOOLTIP;CAT02/16 is a chromatic adaptation. It converts the values of an image whose white point is that of a given illuminant (for example D50) into new values whose white point is that of the new illuminant - see WP model (for example D75).
-!TP_COLORAPP_FREE;Free temp + tint + CAT02/16 +[output]
-!TP_COLORAPP_GAMUT;Use gamut control in L*a*b* mode
-!TP_COLORAPP_GEN;Settings
-!TP_COLORAPP_GEN_TOOLTIP;This module is based on the CIECAM color appearance models, which were designed to better simulate how human vision perceives colors under different lighting conditions, e.g. against different backgrounds. It takes into account the environment of each color and modifies its appearance to get as close as possible to human perception. It also adapts the output to the intended viewing conditions (monitor, TV, projector, printer, etc.) so that the chromatic appearance is preserved across the scene and display environments.
-!TP_COLORAPP_HUE;Hue (h)
-!TP_COLORAPP_HUE_TOOLTIP;Hue (h) is the degree to which a stimulus can be described as similar to a color described as red, green, blue and yellow.
-!TP_COLORAPP_IL41;D41
-!TP_COLORAPP_IL50;D50
-!TP_COLORAPP_IL55;D55
-!TP_COLORAPP_IL60;D60
-!TP_COLORAPP_IL65;D65
-!TP_COLORAPP_IL75;D75
-!TP_COLORAPP_ILA;Incandescent StdA 2856K
-!TP_COLORAPP_ILFREE;Free
-!TP_COLORAPP_ILLUM;Illuminant
-!TP_COLORAPP_ILLUM_TOOLTIP;Select the illuminant closest to the shooting conditions.\nIn general D50, but it can change depending on the time and latitude.
-!TP_COLORAPP_LABEL;Color Appearance & Lighting
-!TP_COLORAPP_LABEL_CAM02;Image Adjustments
-!TP_COLORAPP_LABEL_SCENE;Scene Conditions
-!TP_COLORAPP_LABEL_VIEWING;Viewing Conditions
-!TP_COLORAPP_LIGHT;Lightness (J)
-!TP_COLORAPP_LIGHT_TOOLTIP;Lightness in CIECAM is the clarity of a stimulus relative to the clarity of a stimulus that appears white under similar viewing conditions. It differs from L*a*b* and RGB lightness.
-!TP_COLORAPP_MEANLUMINANCE;Mean luminance (Yb%)
-!TP_COLORAPP_MOD02;CAM02
-!TP_COLORAPP_MOD16;CAM16
-!TP_COLORAPP_MODEL;WP model
-!TP_COLORAPP_MODELCAT;CAM
-!TP_COLORAPP_MODELCAT_TOOLTIP;Allows you to choose between CAM02 or CAM16.\nCAM02 will sometimes be more accurate.\nCAM16 should generate fewer artifacts.
-!TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's white balance is used for the scene, CIECAM is set to D50, and the output device's white balance is set in Viewing Conditions.\n\n<b>WB [RT+CAT02/16] + [output]</b>: RT's white balance settings are used by CAT02 and the output device's white balance is set in Viewing Conditions.\n\n<b>Free temp + tint + CAT02/16 + [output]:</b> temp and tint are selected by the user, the output device's white balance is set in Viewing Conditions.
-!TP_COLORAPP_NEUTRAL;Reset
-!TP_COLORAPP_NEUTRAL_TOOLTIP;Reset all sliders checkbox and curves to their default values.
-!TP_COLORAPP_RSTPRO;Red & skin-tones protection
-!TP_COLORAPP_RSTPRO_TOOLTIP;Red &amp; skin-tones protection affects both sliders and curves.
-!TP_COLORAPP_SOURCEF_TOOLTIP;Corresponds to the shooting conditions and how to bring the conditions and data back to a 'normal' area. Normal means average or standard conditions and data, i.e. without taking into account CIECAM corrections.
+TC_PRIM_BLUX;Kék x
+TC_PRIM_BLUY;Kék y
+TC_PRIM_GREX;Zöld x
+TC_PRIM_GREY;Zöld y
+TC_PRIM_REDX;Piros x
+TC_PRIM_REDY;Piros y
+THRESHOLDSELECTOR_B;Alsó
+THRESHOLDSELECTOR_BL;Bal alsó
+THRESHOLDSELECTOR_BR;Jobb alsó
+THRESHOLDSELECTOR_HINT;Tarts a <b>Shift</b> billentyűt lenyomva egy-egy kontrollpont mozgatásához.
+THRESHOLDSELECTOR_T;Felső
+THRESHOLDSELECTOR_TL;Bal felső
+THRESHOLDSELECTOR_TR;Jobb alsó
+TOOLBAR_TOOLTIP_COLORPICKER;Zárolható színválasztó\n\nAmikor az eszköz aktív:\n- Választó hozzáadása: <b>bal klikk</b>.\n- Egy választó mozgatása: <b>bal klikk és mozgatás</b>.\n- Választó törlése: <b>jobb klikk</b>.\n- Összes választó törlése: <b>Ctrl</b>+<b>Shift</b>+<b>jobb klikk</b>.\n- Kézeszközre visszaállás: <b>jobb klikk</b> választókon kívülre.
+TOOLBAR_TOOLTIP_PERSPECTIVE;<b>Perspektíva korrekció</b>\n\nSzerkeszd a kontrollvonalakat a perspektíva torzítás korrigálásához. Kattints újból erre a gombra a korrekció alkalmazásához.
+TP_BWMIX_ALGO;OYCPM algoritmus
+TP_BWMIX_ALGO_LI;Lineáris
+TP_BWMIX_ALGO_SP;Speciális effektek
+TP_BWMIX_ALGO_TOOLTIP;Lineáris: normál <b>lineáris</b> reakciót fog eredményezni.\nSpeciális effektek: speciális effekteket fog eredményezni a csatornák <b>nem lineáris</b> keverésével.
+TP_BWMIX_AUTOCH;Automatikus
+TP_BWMIX_CC_ENABLED;Színkomplemens állítása
+TP_BWMIX_CC_TOOLTIP;Színkomplemensek ROYGCBPM módban történő automatikus állításának bekapcsolása.
+TP_BWMIX_CHANNEL;Luminancia kiegyenlítő
+TP_BWMIX_CURVEEDITOR1;'Előtte' görbe
+TP_BWMIX_CURVEEDITOR2;'Utána' görbe
+TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;Tónusgörbe a F&amp;F-re konvertálás után, a kezelés legvégén.
+TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;Tónusgörbe közvetlen a F&amp;F-re konvertálás előtt.\nFigyelembe veheti a színkomponenseket.
+TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;Luminancia a színtelítettség szerint L=f(színtelítettség).\nFigyelj az extrém értékekre, mivel azok artifaktumokat okozhatnak.
+TP_BWMIX_FILTER;Színszűrő
+TP_BWMIX_FILTER_BLUE;Kék
+TP_BWMIX_FILTER_BLUEGREEN;Kék-Zöld
+TP_BWMIX_FILTER_GREEN;Zöld
+TP_BWMIX_FILTER_GREENYELLOW;Kék-Sárga
+TP_BWMIX_FILTER_NONE;Nincs
+TP_BWMIX_FILTER_PURPLE;Lila
+TP_BWMIX_FILTER_RED;Piros
+TP_BWMIX_FILTER_REDYELLOW;Piros-Sárga
+TP_BWMIX_FILTER_TOOLTIP;A színszűrő olyan képet szimulál, mely készítésekor színezett szűrő volt az objektíven. A színezett szűrők csökkentik a fény átvitelét bizonyos színtartományokban, ezzel hatást gyakorolva azok világosságára (pl.: a piros szűrő a kék eget elsötétíti)
+TP_BWMIX_FILTER_YELLOW;Sárga
+TP_BWMIX_GAMMA;Gamma Korrekció
+TP_BWMIX_GAM_TOOLTIP;Korrigálja mindegyik színcsatorna gammáját.
+TP_BWMIX_LABEL;Fekete-Fehér
+TP_BWMIX_MET;Metódus
+TP_BWMIX_MET_CHANMIX;Csatornakeverő
+TP_BWMIX_MET_DESAT;Halványító
+TP_BWMIX_MET_LUMEQUAL;Luminancia kiegyenlítő
+TP_BWMIX_MIXC;Csatornakeverő
+TP_BWMIX_NEUTRAL;Visszaállítás
+TP_BWMIX_RGBLABEL;Piros: %1%%   Zöld: %2%%   Kék: %3%%   Összesen: %4%%
+TP_BWMIX_RGBLABEL_HINT;A végső (RGB) csatornák faktorai, amelyek az összes keverő opcióért felelnek.\n'Összes' Az összes csatornaérték összege:\n- mindig 100% relatív módban\n- magasabb (világosabb) vagy alacsonyabb (sötétebb) mint 100% abszolút módban.
+TP_BWMIX_RGB_TOOLTIP;Az RGB csatornák keverése. Használd az előbeállításokat útmutatásként.\nFigyelj az olyan negatív értékekre, amelyek artifaktumokat vagy rendellenes viselkedést eredményezhetnek.
+TP_BWMIX_SETTING;Előbeállítások
+TP_BWMIX_SETTING_TOOLTIP;Különböző előbeállítások (film, tájkép, stb.) vagy kézi Csatornakeverő beállítások.
+TP_BWMIX_SET_HIGHCONTAST;Magas kontraszt
+TP_BWMIX_SET_HIGHSENSIT;Magas érzékenység
+TP_BWMIX_SET_HYPERPANCHRO;Hiperpanakromatikus
+TP_BWMIX_SET_INFRARED;Infravörös
+TP_BWMIX_SET_LANDSCAPE;Tájkép
+TP_BWMIX_SET_LOWSENSIT;Alacsony érzékenység
+TP_BWMIX_SET_LUMINANCE;Luminancia
+TP_BWMIX_SET_NORMCONTAST;Normálkontraszt
+TP_BWMIX_SET_ORTHOCHRO;Ortokromatikus
+TP_BWMIX_SET_PANCHRO;Panakromatikus
+TP_BWMIX_SET_PORTRAIT;Portré
+TP_BWMIX_SET_RGBABS;Abszolút RGB
+TP_BWMIX_SET_RGBREL;Relatív RGB
+TP_BWMIX_SET_ROYGCBPMABS;Abszolút ROYGCBPM
+TP_BWMIX_SET_ROYGCBPMREL;Relatív ROYGCBPM
+TP_BWMIX_TCMODE_FILMLIKE;Fekete-Fehér Film szerű
+TP_BWMIX_TCMODE_SATANDVALBLENDING;Fekete-Fehér Színtelítettség- és Értékhajlítás
+TP_BWMIX_TCMODE_STANDARD;Fekete-Fehér Sztenderd
+TP_BWMIX_TCMODE_WEIGHTEDSTD;Fekete-Fehér Súlyozott Sztenderd
+TP_BWMIX_VAL;L
+TP_CBDL_AFT;Fekete-Fehér Után
+TP_CBDL_BEF;Fekete-Fehér Előtt
+TP_CBDL_METHOD;Folyamatazonosított
+TP_CBDL_METHOD_TOOLTIP;Válaszd ki, hogy a Kontraszt Részletszintek Szerint eszköz a Fekete-Fehér eszköz után legyen-e helyezve, amitől L*a*b* térben működik, vagy elé, amitől RGB térben működik.
+TP_COLORAPP_ABSOLUTELUMINANCE;Abszolút luminancia
+TP_COLORAPP_ADAPSCEN_TOOLTIP;A fényképezéskori luminanciának felel meg kandela / m<sup>2</sup>-ben, ami automatikusan, az exif adatok alapján kerül kiszámításra.
+TP_COLORAPP_ALGO;Algoritmus
+TP_COLORAPP_ALGO_ALL;Mind
+TP_COLORAPP_ALGO_JC;Világosság + Színintenzitás (JC)
+TP_COLORAPP_ALGO_JS;Világosság + Színtelítettség (JS)
+TP_COLORAPP_ALGO_QM;Fényerősség + Színesség (QM)
+TP_COLORAPP_ALGO_TOOLTIP;Választhatsz paraméterek részhalmazai és minden paraméter között.
+TP_COLORAPP_BADPIXSL;Forró/Rossz pixel szűrő
+TP_COLORAPP_BADPIXSL_TOOLTIP;A forró/rossz (világos színű) pixelek elnyomása.\n0 = Nincs effekt\n1 = Median\n2 = Gauss.\nAlternatívaként, állíthatsz a képen, hogy elkerüld a nagyon sötét árnyékokat.\n\nEzek az artifaktumok a CIECAM02 korlátozásainak következményei.
+TP_COLORAPP_BRIGHT;Fényerősség (Q)
+TP_COLORAPP_BRIGHT_TOOLTIP;Fényerősség CIECAM-ben az annak a fénynek az érzékelt mennyisége, amely az élénkítőből származik. Különbözik a L*a*b* és RGB fényerősségtől.
+TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;Kézi beállítás esetén 65-feletti értékek ajánlottak.
+TP_COLORAPP_CATCLASSIC;Klasszikus
+TP_COLORAPP_CATMET_TOOLTIP;Klasszikus - hagyományos CIACAM működés. A kromatikus adaptáció transzformációk külön kerülnek alkalmazásra. Egyfelől a 'Színhelykörülmények'-re és az alap megvilágítóra, másfelől az alap megvilágítóra és a 'Megtekintési körülmények'-re.\n\nSzimmetrikus - A kromatikus adaptáció a fehéregyensúlyon alapszik. A 'Színhelykörülmények', a 'Képigazítások' és a 'Megtekintési körülmények' beállítások semlegesítve vannak.\n\nKevert – Ugyan az, mint a 'Klasszikus' opció, csak kis-nagybetű érzékeny. A kromatikus adaptáció a fehéregyensúlyon alapszik.
+TP_COLORAPP_CATMOD;Mód
+TP_COLORAPP_CATSYMGEN;Autómatikus Szimmetrikus
+TP_COLORAPP_CATSYMSPE;Kevert
+TP_COLORAPP_CHROMA;Színintenzitás (C)
+TP_COLORAPP_CHROMA_M;Színesség (M)
+TP_COLORAPP_CHROMA_M_TOOLTIP;A színesség CIECAM-ben az érzékelt színárnyalat (hue) mértéke a szürkéhez viszonyítva, egy indikátor, amely azt jelzi, hogy az élénkítő többé kevésbé színesnek tűnik.
+TP_COLORAPP_CHROMA_S;Színtelítettség (S)
+TP_COLORAPP_CHROMA_S_TOOLTIP;A színtelítettség CIECAM-ben megfelel az élénkítő színe és fényerőssége közti viszonynak. Különbözik a L*a*b* és RGB színtelítettségtől.
+TP_COLORAPP_CHROMA_TOOLTIP;A színintenzitás CIECAM-ben megfelel egy élénkítő színének egy másik, azonos körülmények között fehérnek látszó élénkítő tisztaságához relatívan. Különbözik a L*a*b* és RGB színintenzitástól.
+TP_COLORAPP_CIECAT_DEGREE;Adaptáció
+TP_COLORAPP_CONTRAST;Kontraszt (J)
+TP_COLORAPP_CONTRAST_Q;Kontraszt (Q)
+TP_COLORAPP_CONTRAST_Q_TOOLTIP;A kontraszt (Q) CIECAM-ben a fényerősségen alapszik. Különbözik a L*a*b* és RGB kontraszttól.
+TP_COLORAPP_CONTRAST_TOOLTIP;A kontraszt (J) CIECAM-ben a világosságon alapszik. Különbözik a L*a*b* és RGB kontraszttól.
+TP_COLORAPP_CURVEEDITOR1;Tónusgörbe 1
+TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Az L* (L*a*b*) hisztogramját mutatja CIECAM előtt.\nHa a 'CIECAM kimenet megjelenítése SzMM görbéken' jelölőnégyzet be van kapcsolva, J hisztogramját mutatja CIECAM után.\n\nJ nem jelenik meg a fő hisztogram panelen.\n\nA végső kimenethez lásd a fő hisztogram panelt.
+TP_COLORAPP_CURVEEDITOR2;Tónusgörbe 2
+TP_COLORAPP_CURVEEDITOR2_TOOLTIP;Ugyan úgy használatos, mint az első J(J) tónusgörbe.
+TP_COLORAPP_CURVEEDITOR3;Színgörbe
+TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Állítsd a színintenzitást, a színtelítettséget vagy a színességet.\n\nA színintenzitás (L*a*b*) hisztogramját mutatja CIECAM előtt.\nHa a 'CIECAM kimenet megjelenítése SzMM görbéken' jelölőnégyzet be van kapcsolva, a C, S vagy M hisztogramját mutatja CIECAM után\n\nC, S és M nem jelennek meg a fő hisztogram panelen.\nA végső kimenethez lásd a fő hisztogram panelt.
+TP_COLORAPP_DATACIE;CIECAM kimenet megjelenítése SzMM görbéken
+TP_COLORAPP_DATACIE_TOOLTIP;A Színmegjelenés és Megvilágítás görbéknél látható hisztogramra van hatással. Nincs hatással a RawTherapee fő hisztogramjára.\n\nBekapcsolva: J és C, S vagy M becsült értékeit mutatja CIECAM módosítások után\nKikapcsolva: L*a*b értékek jelennek meg CIECAM módosítások előtt.
+TP_COLORAPP_DEGREE_TOOLTIP;CAT02/16 egy kromatikus adaptáció. Egy megadott megvilágító (pl.: D65) fehérpontjával rendelkező kép értékeit konvertálja át új értékekké, amelyek fehérpontja egy másik (pl.: D50 vagy D55) megvilágítóié - lásd: fehérpont modell.
+TP_COLORAPP_DEGREOUT_TOOLTIP;;CAT02/16 egy kromatikus adaptáció. Egy megadott megvilágító (pl.: D50) fehérpontjával rendelkező kép értékeit konvertálja át új értékekké, amelyek fehérpontja egy másik (pl.: D75) megvilágítóié - lásd: fehérpont modell.
+TP_COLORAPP_FREE;Szabad hő + színezet + CAT02/16 +[kimenet]
+TP_COLORAPP_GAMUT;Színskála-irányítás használata L*a*b* módban
+TP_COLORAPP_GEN;Beállítások
+TP_COLORAPP_GEN_TOOLTIP;Ez a modul a CIECAM színmegjelenés modelleken alapszik, amelyeket arra terveztek, hogy jobban szimulálják azt, hogy hogyan érzékeli az emberi látás a színeket különböző megvilágítási körülmények között, például különbőző hátterek előtt. Figyelembe veszi minden egyes szín környezetét és úgy módosítja a megjelenését, hogy a lehető legközelebb kerüljön az emberi érzékeléshez. Emellet a kimenetet a szándékozott megtekintési körülményekhez adaptálja (monitor, TV, projektor, nyomtató, stb.) úgy, hogy a kromatikus megjelenés megőrződjön a kép és a megjelenítési környezet között.
+TP_COLORAPP_HUE;Színárnyalat (h)
+TP_COLORAPP_HUE_TOOLTIP;A színárnyalat (h) az a fokozat, amely az élénkítő a pirossal, zölddel, kékkel és sárgával leírható színhez való hasonlóságát adja meg.
+TP_COLORAPP_IL41;D41
+TP_COLORAPP_IL50;D50
+TP_COLORAPP_IL55;D55
+TP_COLORAPP_IL60;D60
+TP_COLORAPP_IL65;D65
+TP_COLORAPP_IL75;D75
+TP_COLORAPP_ILA;Izzó StdA 2856K
+TP_COLORAPP_ILFREE;Szabad
+TP_COLORAPP_ILLUM;Megvilágító
+TP_COLORAPP_ILLUM_TOOLTIP;Válaszd ki a fényképezési körülményekhez legközelebb álló megvilágítót.\nÁltalánosságban D50, de időtől és szélességi foktól függően változhat.
+TP_COLORAPP_LABEL;Színmegjelenés és Megvilágítás
+TP_COLORAPP_LABEL_CAM02;Képigazítások
+TP_COLORAPP_LABEL_SCENE;Színhelykörülmények
+TP_COLORAPP_LABEL_VIEWING;Megtekintési körülmények
+TP_COLORAPP_LIGHT;Világosság (J)
+TP_COLORAPP_LIGHT_TOOLTIP;A világosság CIECAM-ben az egy élénkítő tisztasága a relatívan egy hasonló megtekintési körülmények között fehérnek tűnő élénkítő tisztaságához. Különbözik a L*a*b* és az RGB világosságtól.
+TP_COLORAPP_MEANLUMINANCE;Átlag luminancia (Yb%)
+TP_COLORAPP_MOD02;CAM02
+TP_COLORAPP_MOD16;CAM16
+TP_COLORAPP_MODEL;Fehérpont modell
+TP_COLORAPP_MODELCAT;CAM
+TP_COLORAPP_MODELCAT_TOOLTIP;Lehetővé teszi, hogy válassz CAM02 és CAM16 között.\nCAM02 néha pontosabb lehet.\nCAM16 kevesebb artifaktumot generálhat.
+TP_COLORAPP_MODEL_TOOLTIP;Fehérpont modell.\n\n<b>FE [RT] + [kimenet]</b>: RT fehéregyensúlya van a színhelyre alkalmazva, CIECAM D50-re van állítva, és a kimeneti eszköz fehéregyensúlya a Megtekintési körülményekben van megadva.\n\n<b>FE [RT+CAT02/16] + [kimenet]</b>: RT fehéregyensúly beállításait használja a CAT02, és a kimeneti eszköz fehéregyensúlya a Megtekintési körülményekben van megadva\n\n<b>Szabad hő + színezet + CAT02/16 + [kimenet]:</b> a hőt és a színezetet a felhasználó választja ki, a kimeneti eszköz fehéregyensúlya a Megtekintési körülményekben van megadva.
+TP_COLORAPP_NEUTRAL;Visszaállítás
+TP_COLORAPP_NEUTRAL_TOOLTIP;Az összes csúszka, jelölőnégyzet és görbe értékét az alapértelmezettre állítja.
+TP_COLORAPP_RSTPRO;Piros & bőrtónus védelem
+TP_COLORAPP_RSTPRO_TOOLTIP;A piros és bőrtónus védelem hatással van a csúszkákra és a görbékre is.
+TP_COLORAPP_SOURCEF_TOOLTIP;Megfelel a fényképezési körülményeknek és annak, hogy hogyan lehet a körülményeket és az adatokat visszahozni egy 'normális' területre. A 'normális' átlag vagy sztenderd körülményeket és adatokat jelent (pl.: CIECAM korrekciók figyelembevétele nélkül).
 !TP_COLORAPP_SURROUND;Surround
 !TP_COLORAPP_SURROUNDSRC;Surround
-!TP_COLORAPP_SURROUND_AVER;Average
-!TP_COLORAPP_SURROUND_DARK;Dark
-!TP_COLORAPP_SURROUND_DIM;Dim
-!TP_COLORAPP_SURROUND_EXDARK;Extremly Dark (Cutsheet)
-!TP_COLORAPP_SURROUND_TOOLTIP;Changes tones and colors to take into account the viewing conditions of the output device. The darker the viewing conditions, the darker the image will become. Image brightness will not be changed when the viewing conditions are set to average.
-!TP_COLORAPP_SURSOURCE_TOOLTIP;Changes tones and colors to take into account the surround conditions of the scene lighting. The darker the surround conditions, the brighter the image will become. Image brightness will not be changed when the surround is set to average.
-!TP_COLORAPP_TCMODE_BRIGHTNESS;Brightness
-!TP_COLORAPP_TCMODE_CHROMA;Chroma
-!TP_COLORAPP_TCMODE_COLORF;Colorfulness
-!TP_COLORAPP_TCMODE_LABEL1;Curve mode 1
-!TP_COLORAPP_TCMODE_LABEL2;Curve mode 2
-!TP_COLORAPP_TCMODE_LABEL3;Curve chroma mode
-!TP_COLORAPP_TCMODE_LIGHTNESS;Lightness
-!TP_COLORAPP_TCMODE_SATUR;Saturation
-!TP_COLORAPP_TEMP2_TOOLTIP;Either symmetrical mode temp = White balance.\nEither select illuminant always set Tint=1.\n\nA temp=2856\nD41 temp=4100\nD50 temp=5003\nD55 temp=5503\nD60 temp=6000\nD65 temp=6504\nD75 temp=7504
-!TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant, always set Tint=1.\n\nA temp=2856\nD41 temp=4100\nD50 temp=5003\nD55 temp=5503\nD60 temp=6000\nD65 temp=6504\nD75 temp=7504
-!TP_COLORAPP_TONECIE;Use CIECAM for tone mapping
-!TP_COLORAPP_TONECIE_TOOLTIP;If this option is disabled, tone mapping is done in L*a*b* space.\nIf this option is enabled, tone mapping is done using CIECAM02.\nThe Tone Mapping tool must be enabled for this setting to take effect.
-!TP_COLORAPP_VIEWINGF_TOOLTIP;Takes into account the support on which the final image will be viewed (monitor, TV, projector, printer, etc.), as well as its environment. This process will take the data coming from process 'Image Adjustments' and 'bring' it to the support in such a way that the viewing conditions and its environment are taken into account.
-!TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;Absolute luminance of the viewing environment\n(usually 16 cd/m²).
-!TP_COLORAPP_WBCAM;WB [RT+CAT02/16] + [output]
-!TP_COLORAPP_WBRT;WB [RT] + [output]
-!TP_COLORAPP_YBOUT_TOOLTIP;Yb is the relative luminance of the background, expressed in % of gray. 18% gray corresponds to a background luminance of 50% expressed in CIE L.\nThe data is based on the mean luminance of the image.
-!TP_COLORAPP_YBSCEN_TOOLTIP;Yb is the relative luminance of the background, expressed in % of gray. 18% gray corresponds to a background luminance of 50% expressed in CIE L.\nThe data is based on the mean luminance of the image.
+TP_COLORAPP_SURROUND_AVER;Átlag
+TP_COLORAPP_SURROUND_DARK;Sötét
+TP_COLORAPP_SURROUND_DIM;Homályos
+TP_COLORAPP_SURROUND_EXDARK;Extrémen Sötét (Vágólap)
+TP_COLORAPP_SURROUND_TOOLTIP;Megváltoztatja a tónusokat és a színeket, hogy vegyék figyelembe a megtekintési körülményeket és a kimeneti eszközt. Minél sötétebbek a megtekintési körülmények, annál sötétebb lesz a kép. A kép fényerőssége nem lesz megváltoztatva, amikor a megtekintési körülmények 'átlagos'-ra vannak állítva.
+TP_COLORAPP_SURSOURCE_TOOLTIP;Megváltoztatja a tónusokat és a színeket úgy, hogy figyelembe vegyék a helyszín megvilágítása körüli körülményeket. Minél sötétebbek a körülmények, annál világosabb lesz a kép. A kép fényerőssége nem lesz megváltoztatva, amikor a 'surround' 'átlagos'-ra van állítva.
+TP_COLORAPP_TCMODE_BRIGHTNESS;Fényerősség
+TP_COLORAPP_TCMODE_CHROMA;Színintenzitás
+TP_COLORAPP_TCMODE_COLORF;Színesség
+TP_COLORAPP_TCMODE_LABEL1;Görbe mód 1
+TP_COLORAPP_TCMODE_LABEL2;Görbe mód 2
+TP_COLORAPP_TCMODE_LABEL3;Görbe mód 
+TP_COLORAPP_TCMODE_LIGHTNESS;Világosság
+TP_COLORAPP_TCMODE_SATUR;Színtelítettség
+TP_COLORAPP_TEMP2_TOOLTIP;Bármely szimmetrikus hőmérséklet = Fehéregyensúly mód.\nVálaszd ki bármely megvilágítót (színezet mindig = 1).\n\nA hőmérséklet=2856\nD41 hőmérséklet=4100\D50 hőmérséklet=5003\nD55 hőmérséklet=5503\nD60 hőmérséklet=6000\nD65 hőmérséklet=6504\nD75 hőmérséklet=7504
+TP_COLORAPP_TEMP_TOOLTIP;Egy megvilágító kiválasztásához mindig állíts színezetet = 1 -et.\n\nA hőmérséklet=2856\nD41 hőmérséklet=4100\nD50 hőmérséklet=5003\nD55 hőmérséklet=5503\nD60 hőmérséklet=6000\nD65 hőmérséklet=6504\nD75 hőmérséklet=7504
+TP_COLORAPP_TONECIE;CIECAM használata tónustérképezéshez
+TP_COLORAPP_TONECIE_TOOLTIP;Ha ez az opció ki van kapcsolva, akkor a tónustérképezés L*a*b* térben történik.\nHa ez az opció be van kapcsolva, akkor a tónustérképezés CIECAM02 használatával történik.\nA Tónustérképezés eszköznek bekapcsolva kell lennie ahhoz, hogy ez a beállítás hatásba lépjen.
+TP_COLORAPP_VIEWINGF_TOOLTIP;Figyelembe veszi a támogatást, amin a amelyen a végső kép meg lesz tekintve (monitor, TV, projektor, nyomtató, etc.), és annak környezetét. Ez a folyamat a 'Kép Igazítások' folyamatból jövő adatokat fogja felhasználni, és 'behozza' a támogatóba úgy, hogy a megtekintési körülmények és a környezete is figyelembe van véve.
+TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;A megtekintési környezet abszolút luminanciája\n(általában 16 cd/m²).
+TP_COLORAPP_WBCAM;WB [RT+CAT02/16] + [kimenet]
+TP_COLORAPP_WBRT;WB [RT] + [kimenet]
+TP_COLORAPP_YBOUT_TOOLTIP;Yb a háttér relatív luminaniája szürke %-ában kifejezve. 18% szürke megfelel egy 50%-os háttérluminanciának CIE L-ben kifejezve.\nAz adat a kép középluminanciáján alapszik.
+TP_COLORAPP_YBSCEN_TOOLTIP;Yb a háttér relatív luminaniája szürke %-ában kifejezve. 18% szürke megfelel egy 50%-os háttérluminanciának CIE L-ben kifejezve.\nAz adat a kép középluminanciáján alapszik.
 !TP_COLORTONING_AB;o C/L
 !TP_COLORTONING_AUTOSAT;Automatic
 !TP_COLORTONING_BALANCE;Balance
