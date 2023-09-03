@@ -568,7 +568,8 @@ endif()
 # Atomic is required in some builds: #6821
 find_package(ATOMIC)
 if(ATOMIC_FOUND)
-	target_link_libraries(executable ${ATOMIC_LIBRARIES})
+        target_link_libraries(rth ${ATOMIC_LIBRARIES})
+        target_link_libraries(rth-cli ${ATOMIC_LIBRARIES})
 endif()
 
 if(WITH_LTO)
