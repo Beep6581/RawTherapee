@@ -1435,7 +1435,6 @@ HISTORY_MSG_ICM_OUTPUT_TYPE;Output - Type
 HISTORY_MSG_ICM_PRESER;Preserve neutral
 HISTORY_MSG_ICM_REDX;Primaries Red X
 HISTORY_MSG_ICM_REDY;Primaries Red Y
-HISTORY_MSG_LOCAL_CIE_CAT;Matrix adaptation
 HISTORY_MSG_ICM_WORKING_GAMMA;TRC - Gamma
 HISTORY_MSG_ICM_WORKING_ILLUM_METHOD;Illuminant method
 HISTORY_MSG_ICM_WORKING_PRIM_METHOD;Primaries method
@@ -1444,6 +1443,7 @@ HISTORY_MSG_ICM_WORKING_TRC_METHOD;TRC method
 HISTORY_MSG_ILLUM;CAL - SC - Illuminant
 HISTORY_MSG_LOCAL_CIE_BRICOMP;Local CIECAM Brightness compression
 HISTORY_MSG_LOCAL_CIE_BRICOMPTH;Local CIECAM Brightness compression threshold
+HISTORY_MSG_LOCAL_CIE_CAT;Matrix adaptation
 HISTORY_MSG_LOCAL_CIE_GAM;Local CIECAM Gamma
 HISTORY_MSG_LOCAL_CIE_NORM;Local CIECAM Normalize L
 HISTORY_MSG_LOCAL_CIE_PRIM;Local CIECAM TRC Primaries
@@ -1452,6 +1452,7 @@ HISTORY_MSG_LOCAL_CIE_SIGADAP;Local CIECAM Sigmoid adaptability
 HISTORY_MSG_LOCAL_CIE_SIGMET;Local CIECAM - Sigmoid method
 HISTORY_MSG_LOCAL_CIE_SLOP;Local CIECAM - Slope
 HISTORY_MSG_LOCAL_CIE_TRC;Local CIECAM - TRC
+HISTORY_MSG_LOCAL_CIE_WHITES;Local CIECAM - Whites
 HISTORY_MSG_LOCAL_CIEMASK_BLURCONT;Local Cie mask blur contrast
 HISTORY_MSG_LOCAL_CIEMASK_BLURFFT;Local Cie mask blur fftw
 HISTORY_MSG_LOCAL_CIEMASK_BLURRAD;Local Cie mask blur radius
@@ -3438,7 +3439,7 @@ TP_LOCALLAB_SIGMOIDQJ;Black Ev & White Ev
 TP_LOCALLAB_SIGMOIDSENSI;Adaptability
 TP_LOCALLAB_SIGMOIDTH;Threshold (Gray point)
 TP_LOCALLAB_SIGMOID_TOOLTIP;Allows you to simulate a Tone-mapping appearance using both the 'Jz' and 'Sigmoid' function.\nThree sliders: a) Contrast acts on the shape of the sigmoid curve and consequently on the strength; b) Threshold (Gray point) distributes the action according to the luminance; c)Blend acts on the final aspect of the image, contrast and luminance.
-TP_LOCALLAB_SIGMOIDTRCCIE_TOOLTIP;This TRC modifies the tones of the image. The values are changed:\n-Gamma acts mainly on light tones -Slope acts mainly on dark tones.\nYou can choose any pair of 'gamma and slope' (values >1) and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.\n-Whites, acts on very high lights.\n\n-Destination primaries (Advanced): which allows you to change the destination primaries to restore or change image color (saturation), the color balance is preserved  when the 'Working Profile' and the 'Destination primaries' are not too different, 'Working Profiles' are not modified.
+TP_LOCALLAB_SIGMOIDTRCCIE_TOOLTIP;This TRC modifies the tones of the image just before the Ciecam process. The values are changed:\n-Gamma acts mainly on light tones -Slope acts mainly on dark tones.\nYou can choose any pair of 'gamma and slope' (values >1) and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.\n-Whites, acts on very high lights.\n\n-Destination primaries (Advanced): which allows you to change the destination primaries to restore or change image color (saturation), the color balance is preserved  when the 'Working Profile' and the 'Destination primaries' are not too different, 'Working Profiles' are not modified.
 TP_LOCALLAB_SIGMOID16_TOOLTIP;Allows you to simulate a Tone-mapping appearance using both the'Ciecam' and 'Sigmoid Q' or/and 'Log encoding Q'.\nSigmoid Q: three sliders: a) Contrast acts on the shape of the sigmoid curve and consequently on the strength; b) Threshold (Gray point) distributes the action according to the luminance; c)Adaptability weights the action of the sigmoid by action on the internal exponential function.
 TP_LOCALLAB_SIGMOIDLOGEV_TOOLTIP;If the comboxbox selection 'Black Ev and White Ev' is 'Sigmoid and Log encoding' instead of 'Sigmoid only', the two algorithms 'Log encoding' and 'Sigmoid' are used together.
 TP_LOCALLAB_SIGMOIDNORMCIE;Normalize Luminance

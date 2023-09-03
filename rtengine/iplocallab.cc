@@ -2324,7 +2324,7 @@ void tone_eqcam(ImProcFunctions *ipf, Imagefloat *rgb, const struct local_params
     params.pivot = 0.f;
     params.bands[4] = lp.whitescie;
     if(lp.whitescie < -60) {
-        params.bands[3] = 0.5f * (lp.whitescie + 60);
+        params.bands[3] = 0.8f * (lp.whitescie + 60);
     }
     ipf->toneEqualizer(rgb, params, workingProfile, scale, multithread);
 }
@@ -3776,7 +3776,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
             float corlog = xlogf(maxicam)/log2;//correction base logarithme
             linbase = linbaseor / corlog;
-            newgray = gray - 0.022f * (6.f - maxicam);//empirical formula to take into account Q in DR.
+            newgray = gray - 0.022f * (6.f - maxicam);//empirical formula to take into account Q in DR. 6.f  =>approach to mean overall images
 
             if (settings->verbose) {
                 printf("Gray=%1.3f newgray=%1.3f MaxicamQ=%3.2f Base log encode corrected Q=%5.1f Base log encode origig Q=%5.1f\n", (double) gray, (double) newgray, (double) maxicam, (double) linbase, (double) linbaseor);
