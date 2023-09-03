@@ -455,6 +455,16 @@ LFLens LFDatabase::findLens(const LFCamera &camera, const Glib::ustring &name) c
     LFLens ret;
     if (data_ && !name.empty()) {
         MyMutex::MyLock lock(lfDBMutex);
+        if (!camera.data_) {
+            // Only the lens name provided. Try to find exact match by name.
+            LFLens candidate;
+            for (auto lens_list = data_->GetLenses(); lens_list[0]; lens_list++) {
+                candidate.data_ = lens_list[0];
+                if (name == candidate.getLens()) {
+                    return candidate;
+                }
+            }
+        }
         auto found = data_->FindLenses(camera.data_, nullptr, name.c_str());
         for (size_t pos = 0; !found && pos < name.size(); ) {
             // try to split the maker from the model of the lens -- we have to
