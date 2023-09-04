@@ -2135,7 +2135,7 @@ Camera constants:
     { // Quality C
         "make_model": "OLYMPUS E-M10MarkIV",
         "dcraw_matrix": [ 9476, -3182, -765, -2613, 10958, 1893, -449, 1315, 5268 ],
-        "range": { "white": 4000, "black": 254 }
+        "ranges": { "white": 4000 }
     },
 
     { // Quality A, white level correction
