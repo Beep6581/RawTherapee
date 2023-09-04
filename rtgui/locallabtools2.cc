@@ -7742,7 +7742,7 @@ Locallabcie::Locallabcie():
 
     bwevMethod->append(M("TP_LOCALLAB_BWEVNONE"));
     bwevMethod->append(M("TP_LOCALLAB_BWEVSIG"));
-    bwevMethod->append(M("TP_LOCALLAB_BWEVSIGLOG"));
+   // bwevMethod->append(M("TP_LOCALLAB_BWEVSIGLOG"));
     bwevMethod->set_active(0);
     bwevMethodConn = bwevMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::bwevMethodChanged));
     modeHBoxbwev->pack_start(*bwevMethod);
@@ -8455,7 +8455,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         blurcie->set_tooltip_text(M("TP_LOCALLAB_BLURRMASK_TOOLTIP"));
         LLmaskcieshapewav->setTooltip(M("TP_LOCALLAB_LMASK_LEVEL_TOOLTIP"));
         maskcieHCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_HHMASK_TOOLTIP"));
-        modeHBoxbwev->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDLOGEV_TOOLTIP"));
+       // modeHBoxbwev->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDLOGEV_TOOLTIP"));
         //  comprcieauto->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDCOMPRCIEAUTO_TOOLTIP"));
         comprcie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDQJCOMPRCIE_TOOLTIP"));
         comprcieth->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDQJCOMPRCIE_TOOLTIP"));
@@ -8534,7 +8534,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         gamjcie->set_tooltip_text("");
         slopjcie->set_tooltip_text("");
         //whitescie->set_tooltip_text("");
-        modeHBoxbwev->set_tooltip_text("");
+        //modeHBoxbwev->set_tooltip_text("");
         normcie->set_tooltip_text("");
         trccie->set_tooltip_text("");
         sigmoidblcie->set_tooltip_text("");
@@ -8801,8 +8801,8 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             bwevMethod->set_active(0);
         } else if (spot.bwevMethod == "sig") {
             bwevMethod->set_active(1);
-        } else if (spot.bwevMethod == "logsig") {
-            bwevMethod->set_active(2);
+       // } else if (spot.bwevMethod == "logsig") {
+       //     bwevMethod->set_active(2);
         }
 
         if (logcie->get_active()) {
@@ -9047,8 +9047,8 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.bwevMethod = "none";
         } else if (bwevMethod->get_active_row_number() == 1) {
             spot.bwevMethod = "sig";
-        } else if (bwevMethod->get_active_row_number() == 2) {
-            spot.bwevMethod = "logsig";
+       // } else if (bwevMethod->get_active_row_number() == 2) {
+       //     spot.bwevMethod = "logsig";
         }
 
 
