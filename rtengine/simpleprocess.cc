@@ -782,7 +782,7 @@ private:
 
         if (params.toneCurve.histmatching) {
             if (!params.toneCurve.fromHistMatching) {
-                imgsrc->getAutoMatchedToneCurve(params.icm, params.wb.observer, params.toneCurve.curve);
+                imgsrc->getAutoMatchedToneCurve(params.icm, params.raw, params.wb.observer, params.toneCurve.curve);
             }
 
             if (params.toneCurve.autoexp) {

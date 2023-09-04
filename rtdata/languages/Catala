@@ -125,19 +125,19 @@ FILEBROWSER_SHOWCOLORLABEL3HINT;Mostra imatges etiqueta verda.\nDrecera: <b>Alt-
 FILEBROWSER_SHOWCOLORLABEL4HINT;Mostra imatges etiqueta blava.\nDrecera: <b>Alt-4</b>
 FILEBROWSER_SHOWCOLORLABEL5HINT;Mostra imatges etiqueta porpra.\nDrecera: <b>Alt-5</b>
 FILEBROWSER_SHOWDIRHINT;Neteja tots els filtres.\nDrecera: <b>D</b>
-FILEBROWSER_SHOWEDITEDHINT;Mostra imatges editades.\nDrecera: <b>7</b>
-FILEBROWSER_SHOWEDITEDNOTHINT;Mostra imatges no editades.\nDrecera: <b>6</b>
+FILEBROWSER_SHOWEDITEDHINT;Mostra imatges editades.\nDrecera: <b>Shift-7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;Mostra imatges no editades.\nDrecera: <b>Shift-6</b>
 FILEBROWSER_SHOWEXIFINFO;Mostra dades EXIF.\nDrecera: <b>i</b>
-FILEBROWSER_SHOWRANK1HINT;Exposa imatges d' 1 estrella.\nDrecera: <b>1</b>
-FILEBROWSER_SHOWRANK2HINT;Exposa imatges de 2 estrelles.\nDrecera: <b>2</b>
-FILEBROWSER_SHOWRANK3HINT;Exposa imatges de 3 estrelles.\nDrecera: <b>3</b>
-FILEBROWSER_SHOWRANK4HINT;Exposa imatges de 4 estrelles.\nDrecera: <b>4</b>
-FILEBROWSER_SHOWRANK5HINT;Exposa imatges de 5 estrelles.\nDrecera: <b>5</b>
+FILEBROWSER_SHOWRANK1HINT;Exposa imatges d' 1 estrella.\nDrecera: <b>Shift-1</b>
+FILEBROWSER_SHOWRANK2HINT;Exposa imatges de 2 estrelles.\nDrecera: <b>Shift-2</b>
+FILEBROWSER_SHOWRANK3HINT;Exposa imatges de 3 estrelles.\nDrecera: <b>Shift-3</b>
+FILEBROWSER_SHOWRANK4HINT;Exposa imatges de 4 estrelles.\nDrecera: <b>Shift-4</b>
+FILEBROWSER_SHOWRANK5HINT;Exposa imatges de 5 estrelles.\nDrecera: <b>Shift-5</b>
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Mostra últimes imatges desades.\nDrecera: <b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Mostra imatges no recentment desades.\nDrecera: <b>Alt-6</b>
 FILEBROWSER_SHOWTRASHHINT;Veure què hi ha a la paperera.\nDrecera: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;Mostra imatges sense etiqueta de color.\nDrecera: <b>Alt-0</b>
-FILEBROWSER_SHOWUNRANKHINT;Mostra imatges sense rang.\nDrecera: <b>0</b>
+FILEBROWSER_SHOWUNRANKHINT;Mostra imatges sense rang.\nDrecera: <b>Shift-0</b>
 FILEBROWSER_THUMBSIZE;Tamany minifoto
 FILEBROWSER_ZOOMINHINT;Engrandir minifoto.\nDrecera: <b>+</b>
 FILEBROWSER_ZOOMOUTHINT;Reduïr minifoto.\nDrecera: <b>-</b>
@@ -940,15 +940,15 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !FILEBROWSER_POPUPRANK5;Rank 5 *****
 !FILEBROWSER_POPUPREMOVE;Delete permanently
 !FILEBROWSER_POPUPREMOVEINCLPROC;Delete permanently, including queue-processed version
-!FILEBROWSER_RANK1_TOOLTIP;Rank 1 *\nShortcut: <b>Shift-1</b>
-!FILEBROWSER_RANK2_TOOLTIP;Rank 2 *\nShortcut: <b>Shift-2</b>
-!FILEBROWSER_RANK3_TOOLTIP;Rank 3 *\nShortcut: <b>Shift-3</b>
-!FILEBROWSER_RANK4_TOOLTIP;Rank 4 *\nShortcut: <b>Shift-4</b>
-!FILEBROWSER_RANK5_TOOLTIP;Rank 5 *\nShortcut: <b>Shift-5</b>
+!FILEBROWSER_RANK1_TOOLTIP;Rank 1 *\nShortcut: <b>1</b>
+!FILEBROWSER_RANK2_TOOLTIP;Rank 2 *\nShortcut: <b>2</b>
+!FILEBROWSER_RANK3_TOOLTIP;Rank 3 *\nShortcut: <b>3</b>
+!FILEBROWSER_RANK4_TOOLTIP;Rank 4 *\nShortcut: <b>4</b>
+!FILEBROWSER_RANK5_TOOLTIP;Rank 5 *\nShortcut: <b>5</b>
 !FILEBROWSER_RESETDEFAULTPROFILE;Reset to default
 !FILEBROWSER_SHOWNOTTRASHHINT;Show only images not in trash.
 !FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
-!FILEBROWSER_UNRANK_TOOLTIP;Unrank.\nShortcut: <b>Shift-0</b>
+!FILEBROWSER_UNRANK_TOOLTIP;Unrank.\nShortcut: <b>0</b>
 !FILECHOOSER_FILTER_ANY;All files
 !FILECHOOSER_FILTER_COLPROF;Color profiles (*.icc)
 !FILECHOOSER_FILTER_CURVE;Curve files

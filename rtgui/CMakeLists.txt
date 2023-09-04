@@ -251,9 +251,10 @@ else()
 endif()
 
 # Excluding libatomic needed by Clang/FreeBSD, #3636
-if(OPENMP_FOUND AND NOT APPLE AND NOT ${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
-    set(EXTRA_LIB_RTGUI "${EXTRA_LIB_RTGUI}" "atomic")
-endif()
+# Now handled in cmake/modules/findATOMIC.cmake, #6821
+# if(OPENMP_FOUND AND NOT APPLE AND NOT ${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
+#     set(EXTRA_LIB_RTGUI "${EXTRA_LIB_RTGUI}" "atomic")
+# endif()
 
 # Create config.h which defines where data are stored
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/config.h.in" "${CMAKE_CURRENT_BINARY_DIR}/config.h")

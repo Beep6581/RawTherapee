@@ -15,7 +15,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
 #endif
 
@@ -240,7 +240,7 @@ void Thumbnail::_generateThumbnailImage ()
 
         if ( tpp == nullptr ) {
             quick = false;
-            tpp = rtengine::Thumbnail::loadFromRaw (fname, sensorType, tw, th, 1, pparams->wb.equal, pparams->wb.observer, TRUE);
+            tpp = rtengine::Thumbnail::loadFromRaw (fname, sensorType, tw, th, 1, pparams->wb.equal, pparams->wb.observer, TRUE, &(pparams->raw));
         }
 
         cfs.sensortype = sensorType;
@@ -387,7 +387,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
 void Thumbnail::notifylisterners_procParamsChanged(int whoChangedIt)
 {
     for (size_t i = 0; i < listeners.size(); i++) {
-        listeners[i]->procParamsChanged (this, whoChangedIt);
+        listeners[i]->procParamsChanged (this, whoChangedIt, false);
     }
 }
 
@@ -490,7 +490,7 @@ void Thumbnail::clearProcParams (int whoClearedIt)
     } // end of mutex lock
 
     for (size_t i = 0; i < listeners.size(); i++) {
-        listeners[i]->procParamsChanged (this, whoClearedIt);
+        listeners[i]->procParamsChanged (this, whoClearedIt, false);
     }
 }
 
@@ -502,8 +502,18 @@ bool Thumbnail::hasProcParams () const
 
 void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoChangedIt, bool updateCacheNow, bool resetToDefault)
 {
+    const bool blackLevelChanged =
+        pparams->raw.bayersensor.black0 != pp.raw.bayersensor.black0
+        || pparams->raw.bayersensor.black1 != pp.raw.bayersensor.black1
+        || pparams->raw.bayersensor.black2 != pp.raw.bayersensor.black2
+        || pparams->raw.bayersensor.black3 != pp.raw.bayersensor.black3
+        || pparams->raw.xtranssensor.blackred != pp.raw.xtranssensor.blackred
+        || pparams->raw.xtranssensor.blackgreen != pp.raw.xtranssensor.blackgreen
+        || pparams->raw.xtranssensor.blackblue != pp.raw.xtranssensor.blackblue;
     const bool needsReprocessing =
            resetToDefault
+        || blackLevelChanged
+        || pparams->raw.expos != pp.raw.expos
         || pparams->toneCurve != pp.toneCurve
         || pparams->locallab != pp.locallab
         || pparams->labCurve != pp.labCurve
@@ -538,6 +548,7 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
         || pparams->filmNegative != pp.filmNegative
         || whoChangedIt == FILEBROWSER
         || whoChangedIt == BATCHEDITOR;
+    const bool upgradeHint = blackLevelChanged;
 
     {
         MyMutex::MyLock lock(mutex);
@@ -573,7 +584,7 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
 
     if (needsReprocessing) {
         for (size_t i = 0; i < listeners.size(); i++) {
-            listeners[i]->procParamsChanged (this, whoChangedIt);
+            listeners[i]->procParamsChanged (this, whoChangedIt, upgradeHint);
         }
     }
 }
@@ -747,12 +758,12 @@ rtengine::IImage8* Thumbnail::processThumbImage (const rtengine::procparams::Pro
     return image;
 }
 
-rtengine::IImage8* Thumbnail::upgradeThumbImage (const rtengine::procparams::ProcParams& pparams, int h, double& scale)
+rtengine::IImage8* Thumbnail::upgradeThumbImage (const rtengine::procparams::ProcParams& pparams, int h, double& scale, bool forceUpgrade)
 {
 
     MyMutex::MyLock lock(mutex);
 
-    if ( cfs.thumbImgType != CacheImageData::QUICK_THUMBNAIL ) {
+    if ( cfs.thumbImgType != CacheImageData::QUICK_THUMBNAIL && !forceUpgrade ) {
         return nullptr;
     }
 
@@ -1142,7 +1153,7 @@ void Thumbnail::removeThumbnailListener (ThumbnailListener* tnl)
 bool Thumbnail::openDefaultViewer(int destination)
 {
 
-#ifdef WIN32
+#ifdef _WIN32
     Glib::ustring openFName;
 
     if (destination == 1) {

@@ -73,7 +73,7 @@ public:
     void getCamWB (double& temp, double& green, rtengine::StandardObserver observer) override;
 
     // thumbnaillistener interface
-    void procParamsChanged (Thumbnail* thm, int whoChangedIt) override;
+    void procParamsChanged (Thumbnail* thm, int whoChangedIt, bool upgradeHint) override;
 
     // batchpparamschangelistener interface
     void beginBatchPParamsChange(int numberOfEntries) override;

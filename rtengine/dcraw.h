@@ -33,7 +33,7 @@ public:
 	typedef unsigned short ushort;
 	typedef unsigned char uchar;
 	typedef unsigned short (*dcrawImage_t)[4];
-#ifdef WIN32
+#ifdef _WIN32
 	typedef __int64 INT64;
 	typedef unsigned __int64 UINT64;
 #else

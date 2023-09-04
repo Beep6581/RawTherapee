@@ -24,6 +24,7 @@
 #include "guiutils.h"
 
 class EditorPanel;
+class ExternalEditor;
 class RTWindow;
 
 class EditWindow :
@@ -66,6 +67,7 @@ public:
     bool selectEditorPanel(const std::string &name);
     bool closeOpenEditors();
     bool isProcessing();
+    void updateExternalEditorWidget(int selectedIndex, const std::vector<ExternalEditor> &editors);
     void updateToolPanelToolLocations(
         const std::vector<Glib::ustring> &favorites, bool cloneFavoriteTools);
 

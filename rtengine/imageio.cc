@@ -31,7 +31,7 @@
 #include <tiff.h>
 #include <tiffio.h>
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <winsock2.h>
 #else
 #include <netinet/in.h>
@@ -64,7 +64,7 @@ namespace
 FILE* g_fopen_withBinaryAndLock(const Glib::ustring& fname)
 {
 
-#ifdef WIN32
+#ifdef _WIN32
 
     // Use native function to disallow sharing, i.e. lock the file for exclusive access.
     // This is important to e.g. prevent Windows Explorer from crashing RT due to concurrently scanning an image file.
@@ -382,7 +382,7 @@ void my_error_exit (j_common_ptr cinfo)
     (*cinfo->err->output_message) (cinfo);
 
     /* Return control to the setjmp point */
-#if defined( WIN32 ) && defined( __x86_64__ ) && !defined(__clang__)
+#if defined( _WIN32 ) && defined( __x86_64__ ) && !defined(__clang__)
     __builtin_longjmp(myerr->setjmp_buffer, 1);
 #else
     longjmp(myerr->setjmp_buffer, 1);
@@ -406,7 +406,7 @@ int ImageIO::loadJPEGFromMemory (const char* buffer, int bufsize)
     jerr.pub.error_exit = my_error_exit;
 
     /* Establish the setjmp return context for my_error_exit to use. */
-#if defined( WIN32 ) && defined( __x86_64__ ) && !defined(__clang__)
+#if defined( _WIN32 ) && defined( __x86_64__ ) && !defined(__clang__)
 
     if (__builtin_setjmp(jerr.setjmp_buffer)) {
 #else
@@ -492,7 +492,7 @@ int ImageIO::loadJPEG (const Glib::ustring &fname)
 
     my_jpeg_stdio_src (&cinfo, file);
 
-#if defined( WIN32 ) && defined( __x86_64__ ) && !defined(__clang__)
+#if defined( _WIN32 ) && defined( __x86_64__ ) && !defined(__clang__)
     if ( __builtin_setjmp((reinterpret_cast<rt_jpeg_error_mgr*>(cinfo.src))->error_jmp_buf) == 0 ) {
 #else
     if ( setjmp((reinterpret_cast<rt_jpeg_error_mgr*>(cinfo.src))->error_jmp_buf) == 0 ) {
@@ -568,7 +568,7 @@ int ImageIO::loadJPEG (const Glib::ustring &fname)
 
 int ImageIO::getTIFFSampleFormat (const Glib::ustring &fname, IIOSampleFormat &sFormat, IIOSampleArrangement &sArrangement)
 {
-#ifdef WIN32
+#ifdef _WIN32
     wchar_t *wfilename = (wchar_t*)g_utf8_to_utf16 (fname.c_str(), -1, NULL, NULL, NULL);
     TIFF* in = TIFFOpenW (wfilename, "r");
     g_free (wfilename);
@@ -681,7 +681,7 @@ int ImageIO::loadTIFF (const Glib::ustring &fname)
         lock.release();
     }
 
-#ifdef WIN32
+#ifdef _WIN32
     wchar_t *wfilename = (wchar_t*)g_utf8_to_utf16 (fname.c_str(), -1, NULL, NULL, NULL);
     TIFF* in = TIFFOpenW (wfilename, "r");
     g_free (wfilename);
@@ -988,7 +988,7 @@ int ImageIO::saveJPEG (const Glib::ustring &fname, int quality, int subSamp) con
     jerr.pub.error_exit = my_error_exit;
 
     /* Establish the setjmp return context for my_error_exit to use. */
-#if defined( WIN32 ) && defined( __x86_64__ ) && !defined(__clang__)
+#if defined( _WIN32 ) && defined( __x86_64__ ) && !defined(__clang__)
 
     if (__builtin_setjmp(jerr.setjmp_buffer)) {
 #else
@@ -1063,7 +1063,7 @@ int ImageIO::saveJPEG (const Glib::ustring &fname, int quality, int subSamp) con
     unsigned char *row = new unsigned char [rowlen];
 
     /* To avoid memory leaks we establish a new setjmp return context for my_error_exit to use. */
-#if defined( WIN32 ) && defined( __x86_64__ ) && !defined(__clang__)
+#if defined( _WIN32 ) && defined( __x86_64__ ) && !defined(__clang__)
 
     if (__builtin_setjmp(jerr.setjmp_buffer)) {
 #else
@@ -1147,7 +1147,7 @@ int ImageIO::saveTIFF (
         mode += '8';
     }
 
-#ifdef WIN32
+#ifdef _WIN32
     FILE *file = g_fopen_withBinaryAndLock (fname);
     int fileno = _fileno(file);
     int osfileno = _get_osfhandle(fileno);
@@ -1245,7 +1245,7 @@ int ImageIO::saveTIFF (
     }
 
     TIFFClose (out);
-#ifdef WIN32
+#ifdef _WIN32
     fclose (file);
 #endif
 

@@ -35,7 +35,7 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWindow)
 
 #endif
 
-    Glib::RefPtr<Gdk::Pixbuf> add           = RTImage::createPixbufFromFile("crosshair-small.png");
+    Glib::RefPtr<Gdk::Pixbuf> add           = RTImage::createPixbufFromFile("crosshair-hicontrast.png");
     Glib::RefPtr<Gdk::Pixbuf> colPick       = RTImage::createPixbufFromFile("color-picker-hicontrast.png");
     Glib::RefPtr<Gdk::Pixbuf> colPickAdd    = RTImage::createPixbufFromFile("color-picker-add-hicontrast.png");
     Glib::RefPtr<Gdk::Pixbuf> cropDraw      = RTImage::createPixbufFromFile("crop-point-hicontrast.png");
