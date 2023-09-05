@@ -106,8 +106,13 @@ PREFERENCES_MENUGROUPLABEL;Group 'Colour label'
 PREFERENCES_MONPROFILE;Default colour profile
 PREFERENCES_PRTPROFILE;Colour profile
 PREFERENCES_TAB_COLORMGR;Colour Management
+PREFERENCES_WBACORR_TOOLTIP;These settings allow, depending on the images (type of raw file, colourimetry, etc.), an adaptation of the " Temperature correlation " algorithm in order to obtain the best overall results. There is no absolute rule, linking these parameters to the results obtained.\n\nThe settings are of 3 types: \n* those accessible to the user from the GUI.\n* those accessible only in reading from each pp3 file : Itcwb_minsize=20, Itcwb_delta=4 Itcwb_rgreen=1 Itcwb_nopurple=false (See Rawpedia)\n* those accessible to the user in 'options' (see Rawpedia)\n You can use "Awb temperature bias" and "Green refinement" to adjust the results. Each movement of these commands brings a new calculation of temperature, tint and correlation.\n\nPlease note that the 3 indicators 'Correlation factor', 'Patch chroma' and ΔE are given for information only. It is not because one of these indicators is better that the result will necessarily be better.
+PREFERENCES_WBANOPURP;No purple colour used
+PREFERENCES_WBAPATCH;Number maximum of colours used in picture
+PREFERENCES_WBASIZEREF;Size of reference colour compare to size of histogram colour
 SOFTPROOF_GAMUTCHECK_TOOLTIP;Highlight pixels with out-of-gamut colours with respect to:\n- the printer profile, if one is set and soft-proofing is enabled,\n- the output profile, if a printer profile is not set and soft-proofing is enabled,\n- the monitor profile, if soft-proofing is disabled.
 SOFTPROOF_TOOLTIP;Soft-proofing simulates the appearance of the image:\n- when printed, if a printer profile is set in Preferences > Colour Management,\n- when viewed on a display that uses the current output profile, if a printer profile is not set.
+SORT_BY_LABEL;By Colour Label
 TOOLBAR_TOOLTIP_COLORPICKER;Lockable Colour Picker\n\nWhen the tool is active:\n- Add a picker: <b>left-click</b>.\n- Drag a picker: <b>left-click and drag</b>.\n- Delete a picker: <b>right-click</b>.\n- Delete all pickers: <b>Ctrl</b>+<b>Shift</b>+<b>right-click</b>.\n- Revert to hand tool: <b>right-click</b> outside any picker.
 TOOLBAR_TOOLTIP_STRAIGHTEN;<b>Straighten</b> / <b>fine rotation</b>.\nShortcut: <b>s</b>\n\nIndicate the vertical or horizontal by drawing a guide line over the image. Angle of rotation will be shown next to the guide line. Centre of rotation is the geometrical centre of the image.
 TP_BWMIX_CC_ENABLED;Adjust complementary colour
@@ -166,11 +171,9 @@ TP_ICM_INPUTEMBEDDED_TOOLTIP;Use colour profile embedded in non-raw files.
 TP_ICM_INPUTNONE_TOOLTIP;Use no input colour profile at all.\nUse only in special cases.
 TP_ICM_LABEL;Colour Management
 TP_ICM_PRIMILLUM_TOOLTIP;You can change an image from its original mode ('working profile') to a different mode ('destination primaries'). When you choose a different colour mode for an image, you permanently change the colour values in the image.\n\nChanging the 'primaries' is quite complex and difficult to use. It requires a lot of experimenting.\n It is capable of making exotic colour adjustments as Channel Mixer primaries.\n Allows you to modify the camera calibration with Custom (sliders).
-TP_LABCURVE_AVOIDCOLORSHIFT;Avoid colour shift
-TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colours into gamut of the working colour space and apply Munsell correction (Uniform Perceptual Lab).
 TP_LOCALLAB_ADJ;Equalizer Colour
 TP_LOCALLAB_AVOID;Avoid colour shift
-TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Fit colours into gamut of the working colour space and apply Munsell correction (Uniform Perceptual Lab).\nMunsell correction always disabled when Jz or CAM16 is used.
+TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Fit colours into gamut of the working colour space and apply Munsell correction (Uniform Perceptual Lab).\nMunsell correction always disabled when Jz or CAM16 or Colour Appearance and Lighting is used.\n\nDefault: Munsell.\nMunsell correction: fixes Lab mode hue drifts due to non-linearity, when chromaticity is changed (Uniform Perceptual Lab).\nLab: applies a gamut control, in relative colourimetric, Munsell is then applied.\nXYZ Absolute, applies gamut control, in absolute colourimetric, Munsell is then applied.\nXYZ Relative, applies gamut control, in relative colourimetric, Munsell is then applied.
 TP_LOCALLAB_BLWH_TOOLTIP;Force colour components 'a' and 'b' to zero.\nUseful for black and white processing, or film simulation.
 TP_LOCALLAB_CENTER_X;Centre X
 TP_LOCALLAB_CENTER_Y;Centre Y
@@ -271,6 +274,19 @@ TP_WAVELET_DENWAVHUE_TOOLTIP;Amplify or reduce denoising depending on the colour
 TP_WAVELET_EDGTHRESH_TOOLTIP;Change the repartition between the first levels and the others. The higher the threshold the more the action is centreed on the first levels. Be careful with negative values, they increase the action of high levels and can introduce artifacts.
 TP_WAVELET_TONFRAME;Excluded colours
 TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'white balance' by modulating the blue/red balance.\nThis can be useful when shooting conditions:\na) are far from the standard illuminant (e.g. underwater),\nb) are far from conditions where calibrations were performed,\nc) where the matrices or ICC profiles are unsuitable.
+TP_WBALANCE_ITCWBSIZEPATCH_TOOLTIP;This setting sets the size of colour datas used by algorithm.
+TP_WBALANCE_ITCWBSIZE_TOOLTIP;This setting sets the number of iterations to find the best correspondence between the reference spectral colours and those in xyY value of the image. A value of 3 seams a good compromise.
+TP_WBALANCE_ITCWB_FRA_TOOLTIP;These settings allow, depending on the images (type of raw, colourimetry, etc.), an adaptation of the 'Temperature correlation' algorithm. There is no absolute rule linking these parameters to the results obtained.
+TP_WBALANCE_ITCWB_NOPURPLE;Filter on purple colour
+TP_WBALANCE_ITCWB_SIZE;Size of ref. colour compare to histogram
+TP_WBALANCE_ITCWB_SIZEPATCH;Size of colour patch
+TP_WBALANCE_ITCWB_THRES;Colours used in picture (preset)
+TP_WBALANCE_ITCWFORCED_TOOLTIP;By default (box not checked) the data scanned during sampling is brought back to the sRGB profile, which is the most widespread, both for calibrating DCP or ICC profiles with the Colourchecker24, or used on the web.\n If you have very high gamut images (some flowers, artificial colours), then it may be necessary to use the entire CIExy diagram, the profile used will be ACESP0. In this second case, the number of colours that can be used in internal to the algorithm will be more important.
+TP_WBALANCE_ITCWPRIM_TOOLTIP;Allows you to select the image sampling.\n'Close to full CIE diagram' almost uses the data present on the sensor, possibly including the imaginary colours.\n'Camera XYZ matrix' - uses the matrix directly derived from Colour Matrix.\n'Medium sampling' (default) - near Pointer's gamut: corresponds substantially to the most common cases of human vision.\nThe other choice 'Low sampling and No use camera settings' allow you to isolate high gamut parts of the image and forces the algorithm in some cases (tint > 0.8,...) not to use camera settings. This will obviously have an impact on the result.\n\nThis sampling only has an influence on the channel multipliers, it has nothing to do with the "working profile" and does not modify the gamut of the image.
+TP_WBALANCE_OBSERVER10_TOOLTIP;The colour management in Rawtherapee (White balance, channel multipliers, highlight recovery,...) uses the spectral data of the illuminants and colours. Observer is an important parameter of this management which takes into account the angle of perception of the eye. In 1931 it was fixed at 2° (privileges the use of the cones). In 1964 it was fixed at 10° (privileges the use of the cones, but partially takes into account the rods).\nTo avoid a (rare) drift of the colours due to the choice Observer 10° - probably due to the conversion matrix - Observer 2° must be selected.\nIn a majority of cases Observer 10° (default) will be a more relevant choice.
+TP_WBALANCE_PATCHLABEL;Read colours:%1 Patch: Chroma:%2 Size=%3
+TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colours (max=237).\nDisplay calculated Patch Chroma.\nAWB temperature bias, lets try to reduce this value, a minimum may seem to optimize the algorithm.\n\nPatch size matching chroma optimization.
+//TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP;By default when "Inpaint opposed" is activated, purple colours are not taken into account. However, if the image does not need highlight reconstruction, or if this image naturally contains purple tints (flowers, etc.), it may be necessary to deactivate, to take into account all the colours.
 
 !!!!!!!!!!!!!!!!!!!!!!!!!
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
@@ -326,6 +342,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !EDITWINDOW_TITLE;Image Edit
 !EDIT_OBJECT_TOOLTIP;Displays a widget on the preview window which lets you adjust this tool.
 !EDIT_PIPETTE_TOOLTIP;To add an adjustment point to the curve, hold the Ctrl key while left-clicking the desired spot in the image preview.\nTo adjust the point, hold the Ctrl key while left-clicking the corresponding area in the preview, then let go of Ctrl (unless you desire fine control) and while still holding the left mouse button move the mouse up or down to move that point up or down in the curve.
+!ERROR_MSG_METADATA_VALUE;Metadata: error setting %1 to %2
 !EXIFFILTER_APERTURE;Aperture
 !EXIFFILTER_CAMERA;Camera
 !EXIFFILTER_EXPOSURECOMPENSATION;Exposure compensation (EV)
@@ -335,12 +352,16 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !EXIFFILTER_ISO;ISO
 !EXIFFILTER_LENS;Lens
 !EXIFFILTER_METADATAFILTER;Enable metadata filters
+!EXIFFILTER_PATH;File path
 !EXIFFILTER_SHUTTER;Shutter
+!EXIFPANEL_ACTIVATE_ALL_HINT;Select all tags
+!EXIFPANEL_ACTIVATE_NONE_HINT;Unselect all tags
 !EXIFPANEL_ADDEDIT;Add/Edit
 !EXIFPANEL_ADDEDITHINT;Add new tag or edit tag.
 !EXIFPANEL_ADDTAGDLG_ENTERVALUE;Enter value
 !EXIFPANEL_ADDTAGDLG_SELECTTAG;Select tag
 !EXIFPANEL_ADDTAGDLG_TITLE;Add/Edit Tag
+!EXIFPANEL_BASIC_GROUP;Basic
 !EXIFPANEL_KEEP;Keep
 !EXIFPANEL_KEEPHINT;Keep the selected tags when writing output file.
 !EXIFPANEL_REMOVE;Remove
@@ -349,8 +370,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !EXIFPANEL_RESETALL;Reset All
 !EXIFPANEL_RESETALLHINT;Reset all tags to their original values.
 !EXIFPANEL_RESETHINT;Reset the selected tags to their original values.
-!EXIFPANEL_SHOWALL;Show all
-!EXIFPANEL_SUBDIRECTORY;Subdirectory
+!EXIFPANEL_VALUE_NOT_SHOWN;Not shown
 !EXPORT_BYPASS;Processing steps to bypass
 !EXPORT_BYPASS_ALL;Select / Unselect All
 !EXPORT_BYPASS_DEFRINGE;Bypass Defringe
@@ -436,6 +456,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !FILEBROWSER_POPUPREMOVEINCLPROC;Delete permanently, including queue-processed version
 !FILEBROWSER_POPUPRENAME;Rename
 !FILEBROWSER_POPUPSELECTALL;Select all
+!FILEBROWSER_POPUPSORTBY;Sort Files
 !FILEBROWSER_POPUPTRASH;Move to trash
 !FILEBROWSER_POPUPUNRANK;Unrank
 !FILEBROWSER_POPUPUNTRASH;Remove from trash
@@ -477,6 +498,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !FILEBROWSER_ZOOMOUTHINT;Decrease thumbnail size.\n\nShortcuts:\n<b>-</b> - Multiple Editor Tabs Mode,\n<b>Alt</b>-<b>-</b> - Single Editor Tab Mode.
 !FILECHOOSER_FILTER_ANY;All files
 !FILECHOOSER_FILTER_CURVE;Curve files
+!FILECHOOSER_FILTER_EXECUTABLE;Executable files
 !FILECHOOSER_FILTER_LCP;Lens correction profiles
 !FILECHOOSER_FILTER_PP;Processing profiles
 !FILECHOOSER_FILTER_SAME;Same format as current photo
@@ -504,6 +526,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !GENERAL_NONE;None
 !GENERAL_OK;OK
 !GENERAL_OPEN;Open
+!GENERAL_OTHER;Other
 !GENERAL_PORTRAIT;Portrait
 !GENERAL_RESET;Reset
 !GENERAL_SAVE;Save
@@ -1598,16 +1621,20 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;Dual demosaic - Auto threshold
 !HISTORY_MSG_DUALDEMOSAIC_CONTRAST;Dual demosaic - Contrast threshold
 !HISTORY_MSG_EDGEFFECT;Edge Attenuation response
+!HISTORY_MSG_FF_FROMMETADATA;Flat-Field - From Metadata
 !HISTORY_MSG_FILMNEGATIVE_BALANCE;FN - Reference output
 !HISTORY_MSG_FILMNEGATIVE_ENABLED;Film Negative
 !HISTORY_MSG_FILMNEGATIVE_REF_SPOT;FN - Reference input
 !HISTORY_MSG_FILMNEGATIVE_VALUES;Film negative values
+!HISTORY_MSG_GAMUTMUNSEL;Gamut-Munsell
 !HISTORY_MSG_HISTMATCHING;Auto-matched tone curve
+!HISTORY_MSG_HLTH;Inpaint opposed - gain threshold
 !HISTORY_MSG_ICL_LABGRIDCIEXY;Cie xy
 !HISTORY_MSG_ICM_AINTENT;Abstract profile intent
 !HISTORY_MSG_ICM_BLUX;Primaries Blue X
 !HISTORY_MSG_ICM_BLUY;Primaries Blue Y
 !HISTORY_MSG_ICM_FBW;Black and White
+!HISTORY_MSG_ICM_GAMUT;Gamut control
 !HISTORY_MSG_ICM_GREX;Primaries Green X
 !HISTORY_MSG_ICM_GREY;Primaries Green Y
 !HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Output - Primaries
@@ -1627,6 +1654,8 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
 !HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Local Contrast - Lightness
 !HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
+!HISTORY_MSG_LOCALLAB_TE_PIVOT;Local - Equalizer pivot
+!HISTORY_MSG_LOCAL_GAMUTMUNSEL;Local - Gamut-Munsell
 !HISTORY_MSG_METADATA_MODE;Metadata copy mode
 !HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrast threshold
 !HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST;CS - Auto threshold
@@ -1670,6 +1699,11 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !HISTORY_MSG_TEMPOUT;CAM02 automatic temperature
 !HISTORY_MSG_THRESWAV;Balance threshold
 !HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
+!HISTORY_MSG_TONE_EQUALIZER_BANDS;Tone equalizer - Bands
+!HISTORY_MSG_TONE_EQUALIZER_ENABLED;Tone equalizer
+!HISTORY_MSG_TONE_EQUALIZER_PIVOT;Tone equalizer - Pivot
+!HISTORY_MSG_TONE_EQUALIZER_REGULARIZATION;Tone equalizer - Regularization
+!HISTORY_MSG_TONE_EQUALIZER_SHOW_COLOR_MAP;Tone equalizer - Tonal map
 !HISTORY_MSG_TRANS_METHOD;Geometry - Method
 !HISTORY_MSG_WAVBALCHROM;Equalizer chrominance
 !HISTORY_MSG_WAVBALLUM;Equalizer luminance
@@ -1708,6 +1742,23 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !HISTORY_MSG_WAVTHRDEN;Threshold local contrast
 !HISTORY_MSG_WAVTHREND;Threshold local contrast
 !HISTORY_MSG_WAVUSHAMET;Clarity method
+!HISTORY_MSG_WBALANCE_OBSERVER10;Observer 10°
+!HISTORY_MSG_WBITC_CUSTOM;Itcwb Custom
+!HISTORY_MSG_WBITC_DELTA;Itcwb Delta green
+!HISTORY_MSG_WBITC_FGREEN;Itcwb Green - student
+!HISTORY_MSG_WBITC_FORCE;Itcwb Force
+!HISTORY_MSG_WBITC_GREEN;Grren refinement
+!HISTORY_MSG_WBITC_MINSIZE;Patch min size
+!HISTORY_MSG_WBITC_NOPURPLE;Itcwb Nopurple
+!HISTORY_MSG_WBITC_OBS;Remove algo 2 passes
+!HISTORY_MSG_WBITC_PONDER;Itcwb ponderated
+!HISTORY_MSG_WBITC_PRECIS;Itcwb Precision
+!HISTORY_MSG_WBITC_PRIM;Primaries
+!HISTORY_MSG_WBITC_RGREEN;Itcwb Green range
+!HISTORY_MSG_WBITC_SAMPLING;Low sampling
+!HISTORY_MSG_WBITC_SIZE;Itcwb Size
+!HISTORY_MSG_WBITC_SORTED;Itcwb ponderated
+!HISTORY_MSG_WBITC_THRES;Itcwb Theshold
 !HISTORY_NEWSNAPSHOT;Add
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !HISTORY_SNAPSHOT;Snapshot
@@ -1807,7 +1858,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Put current image to processing queue.\nShortcut: <b>Ctrl+b</b>
 !MAIN_BUTTON_SAVE_TOOLTIP;Save current image.\nShortcut: <b>Ctrl+s</b>\nSave current profile (.pp3).\nShortcut: <b>Ctrl+Shift+s</b>
 !MAIN_BUTTON_SENDTOEDITOR;Edit image in external editor
-!MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor.\nShortcut: <b>Ctrl+e</b>
+!MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor.\nShortcut: <b>Ctrl+e</b>\nCurrent editor:
 !MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels.\nShortcut: <b>m</b>
 !MAIN_BUTTON_UNFULLSCREEN;Exit fullscreen
 !MAIN_FRAME_EDITOR;Editor
@@ -1919,6 +1970,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !PARTIALPASTE_FLATFIELDBLURTYPE;Flat-field blur type
 !PARTIALPASTE_FLATFIELDCLIPCONTROL;Flat-field clip control
 !PARTIALPASTE_FLATFIELDFILE;Flat-field file
+!PARTIALPASTE_FLATFIELDFROMMETADATA;Flat-field from Metadata
 !PARTIALPASTE_GRADIENT;Graduated filter
 !PARTIALPASTE_HSVEQUALIZER;HSV equalizer
 !PARTIALPASTE_IMPULSEDENOISE;Impulse noise reduction
@@ -1963,6 +2015,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !PARTIALPASTE_SOFTLIGHT;Soft light
 !PARTIALPASTE_SPOT;Spot removal
 !PARTIALPASTE_TM_FATTAL;Dynamic range compression
+!PARTIALPASTE_TONE_EQUALIZER;Tone equalizer
 !PARTIALPASTE_VIBRANCE;Vibrance
 !PARTIALPASTE_VIGNETTING;Vignetting correction
 !PARTIALPASTE_WHITEBALANCE;White balance
@@ -1986,6 +2039,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !PREFERENCES_CACHEMAXENTRIES;Maximum number of cache entries
 !PREFERENCES_CACHEOPTS;Cache Options
 !PREFERENCES_CACHETHUMBHEIGHT;Maximum thumbnail height
+!PREFERENCES_CAMERAPROFILESDIR;Camera profiles directory
 !PREFERENCES_CHUNKSIZES;Tiles per thread
 !PREFERENCES_CHUNKSIZE_RAW_AMAZE;AMaZE demosaic
 !PREFERENCES_CHUNKSIZE_RAW_CA;Raw CA correction
@@ -2041,6 +2095,11 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !PREFERENCES_EXTEDITOR_DIR_TEMP;OS temp dir
 !PREFERENCES_EXTEDITOR_FLOAT32;32-bit float TIFF output
 !PREFERENCES_EXTERNALEDITOR;External Editor
+!PREFERENCES_EXTERNALEDITOR_CHANGE;Change Application
+!PREFERENCES_EXTERNALEDITOR_CHANGE_FILE;Change Executable
+!PREFERENCES_EXTERNALEDITOR_COLUMN_COMMAND;Command
+!PREFERENCES_EXTERNALEDITOR_COLUMN_NAME;Name
+!PREFERENCES_EXTERNALEDITOR_COLUMN_NATIVE_COMMAND;Native command
 !PREFERENCES_FBROWSEROPTS;File Browser / Thumbnail Options
 !PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Compact toolbars in File Browser
 !PREFERENCES_FLATFIELDFOUND;Found
@@ -2065,12 +2124,21 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Show embedded JPEG thumbnail if raw is unedited
 !PREFERENCES_LANG;Language
 !PREFERENCES_LANGAUTODETECT;Use system language
+!PREFERENCES_LENSFUNDBDIR;Lensfun database directory
+!PREFERENCES_LENSFUNDBDIR_TOOLTIP;Directory containing the Lensfun database.  Leave empty to use the default directories.
+!PREFERENCES_LENSPROFILESDIR;Lens profiles directory
+!PREFERENCES_LENSPROFILESDIR_TOOLTIP;Directory containing Adobe Lens Correction Profiles (LCPs)
 !PREFERENCES_MAXRECENTFOLDERS;Maximum number of recent folders
 !PREFERENCES_MENUGROUPEXTPROGS;Group 'Open with'
 !PREFERENCES_MENUGROUPFILEOPERATIONS;Group 'File operations'
 !PREFERENCES_MENUGROUPPROFILEOPERATIONS;Group 'Processing profile operations'
 !PREFERENCES_MENUGROUPRANK;Group 'Rank'
 !PREFERENCES_MENUOPTIONS;Context Menu Options
+!PREFERENCES_METADATA;Metadata
+!PREFERENCES_METADATA_SYNC;Metadata synchronization with XMP sidecars
+!PREFERENCES_METADATA_SYNC_NONE;Off
+!PREFERENCES_METADATA_SYNC_READ;Read only
+!PREFERENCES_METADATA_SYNC_READWRITE;Bidirectional
 !PREFERENCES_MONINTENT;Default rendering intent
 !PREFERENCES_MONITOR;Monitor
 !PREFERENCES_MONPROFILE_WARNOSX;Due to MacOS limitations, only sRGB is supported.
@@ -2131,6 +2199,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !PREFERENCES_STARTUPIMDIR;Image Directory at Startup
 !PREFERENCES_TAB_BROWSER;File Browser
 !PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
+!PREFERENCES_TAB_FAVORITES;Favorites
 !PREFERENCES_TAB_GENERAL;General
 !PREFERENCES_TAB_IMPROC;Image Processing
 !PREFERENCES_TAB_PERFORMANCE;Performance
@@ -2139,10 +2208,27 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw rendering
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Embedded JPEG if fullsize, neutral raw otherwise
+!PREFERENCES_TOOLPANEL_AVAILABLETOOLS;Available Tools
+!PREFERENCES_TOOLPANEL_CLONE_FAVORITES;Keep favorite tools in original locations
+!PREFERENCES_TOOLPANEL_CLONE_FAVORITES_TOOLTIP;If set, favorite tools will appear in both the favorites tab and their original tabs.\n\nNote: Enabling this option may result in a slight delay when switching tabs.
+!PREFERENCES_TOOLPANEL_FAVORITE;Favorite
+!PREFERENCES_TOOLPANEL_FAVORITESPANEL;Favorites Panel
+!PREFERENCES_TOOLPANEL_TOOL;Tool
 !PREFERENCES_TP_LABEL;Tool panel:
 !PREFERENCES_TP_VSCROLLBAR;Hide vertical scrollbar
 !PREFERENCES_USEBUNDLEDPROFILES;Use bundled profiles
+!PREFERENCES_WBA;White Balance
+!PREFERENCES_WBACORR;White Balance - Automatic temperature correlation
+!PREFERENCES_WBAENA;Show White Balance auto Temperature correlation Settings
+!PREFERENCES_WBAENACUSTOM;Use Custom temperature & tint
+!PREFERENCES_WBAFORC;Forces Extra algoritm
+!PREFERENCES_WBAGREENDELTA;Delta temperature in green iterate loop (if Force Extra enabled)
+!PREFERENCES_WBAPRECIS;Precision algorithm - scale used
+!PREFERENCES_WBASORT;Sort in chroma order instead of histogram
 !PREFERENCES_WORKFLOW;Layout
+!PREFERENCES_XMP_SIDECAR_MODE;XMP sidecar style
+!PREFERENCES_XMP_SIDECAR_MODE_EXT;darktable-like (FILENAME.ext.xmp for FILENAME.ext)
+!PREFERENCES_XMP_SIDECAR_MODE_STD;Standard (FILENAME.xmp for FILENAME.ext)
 !PREFERENCES_ZOOMONSCROLL;Zoom images by scrolling
 !PROFILEPANEL_COPYPPASTE;Parameters to copy
 !PROFILEPANEL_GLOBALPROFILES;Bundled profiles
@@ -2206,6 +2292,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !SAMPLEFORMAT_32;24-bit floating-point
 !SAMPLEFORMAT_64;32-bit floating-point
 !SAVEDLG_AUTOSUFFIX;Automatically add a suffix if the file already exists
+!SAVEDLG_BIGTIFF;BigTIFF (no metadata support)
 !SAVEDLG_FILEFORMAT;File format
 !SAVEDLG_FILEFORMAT_FLOAT; floating-point
 !SAVEDLG_FORCEFORMATOPTS;Force saving options
@@ -2223,6 +2310,12 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !SAVEDLG_TIFFUNCOMPRESSED;Uncompressed TIFF
 !SAVEDLG_WARNFILENAME;File will be named
 !SHCSELECTOR_TOOLTIP;Click right mouse button to reset the position of those 3 sliders.
+!SORT_ASCENDING;Ascending
+!SORT_BY_DATE;By Date
+!SORT_BY_EXIF;By EXIF
+!SORT_BY_NAME;By Name
+!SORT_BY_RANK;By Rank
+!SORT_DESCENDING;Descending
 !TC_PRIM_BLUX;Bx
 !TC_PRIM_BLUY;By
 !TC_PRIM_GREX;Gx
@@ -2325,7 +2418,8 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !TP_COLORAPP_CATSYMSPE;Mixed
 !TP_COLORAPP_CHROMA;Chroma (C)
 !TP_COLORAPP_CHROMA_S;Saturation (S)
-!TP_COLORAPP_CIECAT_DEGREE;Adaptation
+!TP_COLORAPP_CIECAT_DEGREE;Chromatic Adaptation Scene
+!TP_COLORAPP_CIECAT_DEGREEOUT;Chromatic Adaptation Viewing
 !TP_COLORAPP_CONTRAST;Contrast (J)
 !TP_COLORAPP_CONTRAST_Q;Contrast (Q)
 !TP_COLORAPP_CONTRAST_Q_TOOLTIP;Contrast (Q) in CIECAM is based on brightness. It differs from L*a*b* and RGB contrast.
@@ -2382,6 +2476,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !TP_COLORAPP_TCMODE_LIGHTNESS;Lightness
 !TP_COLORAPP_TCMODE_SATUR;Saturation
 !TP_COLORAPP_TEMP2_TOOLTIP;Either symmetrical mode temp = White balance.\nEither select illuminant always set Tint=1.\n\nA temp=2856\nD41 temp=4100\nD50 temp=5003\nD55 temp=5503\nD60 temp=6000\nD65 temp=6504\nD75 temp=7504
+!TP_COLORAPP_TEMPOUT_TOOLTIP;Temperature and Tint.\nDepending on the choices made previously, the selected temperature is:\nWhite balance\nA temp=2856\nD41 temp=4100\nD50 temp=5003\nD55 temp=5503\nD60 temp=6000\nD65 temp=6504\nD75 temp=7504\nFree.
 !TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant, always set Tint=1.\n\nA temp=2856\nD41 temp=4100\nD50 temp=5003\nD55 temp=5503\nD60 temp=6000\nD65 temp=6504\nD75 temp=7504
 !TP_COLORAPP_TONECIE;Use CIECAM for tone mapping
 !TP_COLORAPP_TONECIE_TOOLTIP;If this option is disabled, tone mapping is done in L*a*b* space.\nIf this option is enabled, tone mapping is done using CIECAM02.\nThe Tone Mapping tool must be enabled for this setting to take effect.
@@ -2572,9 +2667,11 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !TP_FILMNEGATIVE_LABEL;Film Negative
 !TP_FILMNEGATIVE_OUT_LEVEL;Output level
 !TP_FILMNEGATIVE_PICK;Pick neutral spots
+!TP_FILMNEGATIVE_PICK_SIZE;Size:
 !TP_FILMNEGATIVE_RED;Red ratio
 !TP_FILMNEGATIVE_REF_LABEL;Input RGB: %1
 !TP_FILMNEGATIVE_REF_PICK;Pick white balance spot
+!TP_FILMNEGATIVE_REF_SIZE;Size:
 !TP_FILMNEGATIVE_REF_TOOLTIP;Pick a gray patch for white-balancing the output, positive image.
 !TP_FILMSIMULATION_LABEL;Film Simulation
 !TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee is configured to look for Hald CLUT images, which are used for the Film Simulation tool, in a folder which is taking too long to load.\nGo to Preferences > Image Processing > Film Simulation\nto see which folder is being used. You should either point RawTherapee to a folder which contains only Hald CLUT images and nothing more, or to an empty folder if you don't want to use the Film Simulation tool.\n\nRead the Film Simulation article in RawPedia for more information.\n\nDo you want to cancel the scan now?
@@ -2589,6 +2686,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !TP_FLATFIELD_BT_VERTICAL;Vertical
 !TP_FLATFIELD_CLIPCONTROL;Clip control
 !TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Clip control avoids clipped highlights caused by applying the flat field. If there are already clipped highlights before applying the flat field, value 0 is used.
+!TP_FLATFIELD_FROMMETADATA;From Metadata
 !TP_FLATFIELD_LABEL;Flat-Field
 !TP_GENERAL_11SCALE_TOOLTIP;The effects of this tool are only visible or only accurate at a preview scale of 1:1.
 !TP_GRADIENT_CENTER_X_TOOLTIP;Shift gradient to the left (negative values) or right (positive values).
@@ -2602,8 +2700,10 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !TP_GRADIENT_STRENGTH_TOOLTIP;Filter strength in stops.
 !TP_HLREC_BLEND;Blend
 !TP_HLREC_CIELAB;CIELab Blending
+!TP_HLREC_COLOROPP;Inpaint Opposed
 !TP_HLREC_ENA_TOOLTIP;Could be activated by Auto Levels.
 !TP_HLREC_HLBLUR;Blur
+!TP_HLREC_HLTH;Gain threshold
 !TP_HLREC_LABEL;Highlight reconstruction
 !TP_HLREC_LUMINANCE;Luminance Recovery
 !TP_HLREC_METHOD;Method:
@@ -2623,6 +2723,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
 !TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is 'interpolated' which is a mix between the two based on white balance. The setting is only available if a dual-illuminant DCP with interpolation support is selected.
 !TP_ICM_FBW;Black-and-White
+!TP_ICM_GAMUT;Gamut control
 !TP_ICM_ILLUMPRIM_TOOLTIP;Choose the illuminant closest to the shooting conditions.\nChanges can only be made when the 'Destination primaries' selection is set to 'Custom (sliders)'.
 !TP_ICM_INPUTCAMERA;Camera standard
 !TP_ICM_INPUTCAMERAICC;Auto-matched camera profile
@@ -2675,6 +2776,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !TP_ICM_WORKING_PRIM_BST;BestRGB
 !TP_ICM_WORKING_PRIM_CUS;Custom (sliders)
 !TP_ICM_WORKING_PRIM_CUSGR;Custom (CIE xy Diagram)
+!TP_ICM_WORKING_PRIM_JDCMAX;JDC Max
 !TP_ICM_WORKING_PRIM_NONE;Default
 !TP_ICM_WORKING_PRIM_PROP;ProPhoto
 !TP_ICM_WORKING_PRIM_REC;Rec2020
@@ -2810,6 +2912,8 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !TP_LOCALLAB_CBDL_THRES_TOOLTIP;Prevents the sharpening of noise.
 !TP_LOCALLAB_CBDL_TOOLNAME;Contrast by Detail Levels
 !TP_LOCALLAB_CH;CL - LC
+!TP_LOCALLAB_CHRO46LABEL;Chroma levels 456: Mean=%1 High=%2
+!TP_LOCALLAB_CHROLABEL;Chroma levels 0123: Mean=%1 High=%2
 !TP_LOCALLAB_CHROMA;Chrominance
 !TP_LOCALLAB_CHROMABLU;Chroma levels
 !TP_LOCALLAB_CHROMABLU_TOOLTIP;Increases or reduces the effect depending on the luma settings.\nValues under 1 reduce the effect. Values greater than 1 increase the effect.
@@ -2883,12 +2987,14 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !TP_LOCALLAB_DENOIMASK_TOOLTIP;For all tools, allows you to control the chromatic noise level of the mask.\nUseful for better control of chrominance and to avoid artifacts when using the LC(h) curve.
 !TP_LOCALLAB_DENOIQUA_TOOLTIP;Conservative mode preserves low frequency detail. Aggressive mode removes low frequency detail.\nConservative and Aggressive modes use wavelets and DCT and can be used in conjunction with 'Non-local Means – Luminance'.
 !TP_LOCALLAB_DENOITHR_TOOLTIP;Adjusts edge detection to help reduce noise in uniform, low-contrast areas.
+!TP_LOCALLAB_DENOIWAVCH;Wavelets: Chrominance
+!TP_LOCALLAB_DENOIWAVLUM;Wavelets: Luminance
 !TP_LOCALLAB_DENOI_EXP;Denoise
 !TP_LOCALLAB_DEPTH;Depth
 !TP_LOCALLAB_DETAIL;Local contrast
 !TP_LOCALLAB_DETAILFRA;Edge detection - DCT
 !TP_LOCALLAB_DETAILSH;Details
-!TP_LOCALLAB_DETAILTHR;Luma-chro detail threshold
+!TP_LOCALLAB_DETAILTHR;Lum/chrom detail threshold
 !TP_LOCALLAB_DIVGR;Gamma
 !TP_LOCALLAB_DUPLSPOTNAME;Copy
 !TP_LOCALLAB_EDGFRA;Edge sharpness
@@ -2958,6 +3064,11 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !TP_LOCALLAB_GAMMASKCOL;Gamma
 !TP_LOCALLAB_GAMMASK_TOOLTIP;Adjusting Gamma and Slope can provide a soft and artifact-free transformation of the mask by progressively modifying 'L' to avoid any discontinuities.
 !TP_LOCALLAB_GAMSH;Gamma
+!TP_LOCALLAB_GAMUTLABRELA;Lab
+!TP_LOCALLAB_GAMUTMUNSELL;Munsell only
+!TP_LOCALLAB_GAMUTNON;None
+!TP_LOCALLAB_GAMUTXYZABSO;XYZ Absolute
+!TP_LOCALLAB_GAMUTXYZRELA;XYZ Relative
 !TP_LOCALLAB_GAMW;Gamma (wavelet pyramids)
 !TP_LOCALLAB_GRADANG;Gradient angle
 !TP_LOCALLAB_GRADANG_TOOLTIP;Rotation angle in degrees: -180 0 +180.
@@ -3042,6 +3153,8 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !TP_LOCALLAB_LAPRAD2_TOOLTIP;Smooth radius uses a guided filter to decrease artifacts and smooth out the transition.
 !TP_LOCALLAB_LAPRAD_TOOLTIP;Smooth radius uses a guided filter to decrease artifacts and smooth out the transition.
 !TP_LOCALLAB_LAP_MASK_TOOLTIP;Solves PDEs for all Laplacian masks.\nIf enabled the Laplacian threshold mask reduces artifacts and smooths the result.\nIf disabled the response is linear.
+!TP_LOCALLAB_LCLABELS;Residual noise levels
+!TP_LOCALLAB_LCLABELS_TOOLTIP;Displays the mean and high-end noise values for the area shown in the Preview Panel (at 100% zoom). The noise values are grouped by wavelet levels 0,1,2,3 and 4,5,6.\nThe displayed values are indicative only and are designed to assist with denoise adjustments. They should not be interpreted as absolute noise levels.\n\n 300: Very noisy\n 100-300: Noisy\n 50-100: Moderatly noisy\n < 50: Low noise\n\nThey allow you to see:\n*The impact of Noise Reduction in the main-menu Detail tab.\n*The influence of Non-local Means, Wavelets and DCT on the luminance noise.\n*The influence of Wavelets and DCT on the chroma noise.\n*The influence of Capture Sharpening and Demosaicing.
 !TP_LOCALLAB_LC_FFTW_TOOLTIP;FFT improves quality and allows the use of large radii, but increases processing time (depends on the area to be processed). Preferable to use only for large radii. The size of the area can be reduced by a few pixels to optimize the FFTW. This can reduce the processing time by a factor of 1.5 to 10.
 !TP_LOCALLAB_LC_TOOLNAME;Local Contrast & Wavelets
 !TP_LOCALLAB_LEVELBLUR;Maximum blur levels
@@ -3093,9 +3206,11 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !TP_LOCALLAB_LOGVIEWING_TOOLTIP;Corresponds to the medium on which the final image will be viewed (monitor, TV, projector, printer, etc.), as well as the surrounding conditions.
 !TP_LOCALLAB_LOG_TOOLNAME;Log Encoding
 !TP_LOCALLAB_LUM;LL - CC
+!TP_LOCALLAB_LUM46LABEL;Luma levels 456: Mean=%1 High=%2
 !TP_LOCALLAB_LUMADARKEST;Darkest
 !TP_LOCALLAB_LUMAWHITESEST;Lightest
 !TP_LOCALLAB_LUMFRA;L*a*b* standard
+!TP_LOCALLAB_LUMLABEL;Luma levels 0123: Mean=%1 High=%2
 !TP_LOCALLAB_MASFRAME;Mask and Merge
 !TP_LOCALLAB_MASFRAME_TOOLTIP;For all masks.\nTakes into account the ΔE image to avoid modifying the selection area when the following Mask Tools are used: Gamma, Slope, Chroma, Contrast curve, Local contrast (by wavelet level), Blur Mask and Structure Mask (if enabled ).\nDisabled when Inverse mode is used.
 !TP_LOCALLAB_MASK;Curves
@@ -3114,7 +3229,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !TP_LOCALLAB_MASKLCTHRLOW2;Dark area luma threshold
 !TP_LOCALLAB_MASKLCTHRMID;Gray area luma denoise
 !TP_LOCALLAB_MASKLCTHRMIDCH;Gray area chroma denoise
-!TP_LOCALLAB_MASKLC_TOOLTIP;This allows you to target the denoise based on the image luminance information contained in the L(L) or LC(H) mask (Mask and Modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n 'Dark area luminance threshold'. If 'Reinforce denoise in dark and light areas' > 1 the denoise is progressively increased from 0% at the threshold setting to 100% at the maximum black value (determined by mask).\n 'Light area luminance threshold'. The denoise is progressively decreased from 100% at the threshold setting to 0% at the maximum white value (determined by mask).\n In the area between the two thresholds, the denoise settings are not affected by the mask.
+!TP_LOCALLAB_MASKLC_TOOLTIP;Used by wavelet luminance.\nThis allows you to target the denoise based on the image luminance information contained in the L(L) or LC(H) mask (Mask and Modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n 'Dark area luminance threshold'. If 'Reinforce denoise in dark and light areas' > 1 the denoise is progressively increased from 0% at the threshold setting to 100% at the maximum black value (determined by mask).\n 'Light area luminance threshold'. The denoise is progressively decreased from 100% at the threshold setting to 0% at the maximum white value (determined by mask).\n In the area between the two thresholds, the denoise settings are not affected by the mask.
 !TP_LOCALLAB_MASKLNOISELOW;Reinforce dark/light areas
 !TP_LOCALLAB_MASKRECOTHRES;Recovery threshold
 !TP_LOCALLAB_MASKREEXP_TOOLTIP;Used to modulate the effect of the 'Dynamic range and Exposure' settings based on the image luminance information contained in the L(L) or LC(H) masks (Mask and modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n The 'dark' and 'light' areas below the dark threshold and above the light threshold will be restored progressively to their original values prior to being modified by the 'Dynamic range and Exposure' settings \n In between these two areas, the full value of the 'Dynamic range and Exposure' settings will be applied.
@@ -3173,7 +3288,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !TP_LOCALLAB_NLDENOISENLRAD_TOOLTIP;Higher values increase denoise at the expense of processing time.
 !TP_LOCALLAB_NLDENOISE_TOOLTIP;'Detail recovery' acts on a Laplacian transform to target uniform areas rather than areas with detail.
 !TP_LOCALLAB_NLDET;Detail recovery
-!TP_LOCALLAB_NLFRA;Non-local Means - Luminance
+!TP_LOCALLAB_NLFRA;Non-local Means: Luminance
 !TP_LOCALLAB_NLFRAME_TOOLTIP;Non-local means denoising takes a mean of all pixels in the image, weighted by how similar they are to the target pixel.\nReduces loss of detail compared with local mean algorithms.\nOnly luminance noise is taken into account. Chrominance noise is best processed using wavelets and Fourier transforms (DCT).\nCan be used in conjunction with 'Luminance denoise by level' or on its own.
 !TP_LOCALLAB_NLGAM;Gamma
 !TP_LOCALLAB_NLLUM;Strength
@@ -3359,6 +3474,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !TP_LOCALLAB_SYM;Symmetrical (mouse)
 !TP_LOCALLAB_SYMSL;Symmetrical (mouse + sliders)
 !TP_LOCALLAB_TARGET_GRAY;Mean luminance (Yb%)
+!TP_LOCALLAB_TE_PIVOT;Pivot (Ev)
 !TP_LOCALLAB_THRES;Threshold structure
 !TP_LOCALLAB_THRESDELTAE;ΔE scope threshold
 !TP_LOCALLAB_THRESRETI;Threshold
@@ -3745,6 +3861,16 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !TP_TM_FATTAL_ANCHOR;Anchor
 !TP_TM_FATTAL_LABEL;Dynamic Range Compression
 !TP_TM_FATTAL_THRESHOLD;Detail
+!TP_TONE_EQUALIZER_BANDS;Bands
+!TP_TONE_EQUALIZER_BAND_0;Blacks
+!TP_TONE_EQUALIZER_BAND_1;Shadows
+!TP_TONE_EQUALIZER_BAND_2;Midtones
+!TP_TONE_EQUALIZER_BAND_3;Highlights
+!TP_TONE_EQUALIZER_BAND_4;Whites
+!TP_TONE_EQUALIZER_DETAIL;Regularization
+!TP_TONE_EQUALIZER_LABEL;Tone Equalizer
+!TP_TONE_EQUALIZER_PIVOT;Pivot (Ev)
+!TP_TONE_EQUALIZER_SHOW_COLOR_MAP;Show tonal map
 !TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
 !TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Skin-tones
 !TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE1;Red/Purple
@@ -4010,7 +4136,7 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !TP_WBALANCE_AUTO;Auto
 !TP_WBALANCE_AUTOITCGREEN;Temperature correlation
 !TP_WBALANCE_AUTOOLD;RGB grey
-!TP_WBALANCE_AUTO_HEADER;Automatic
+!TP_WBALANCE_AUTO_HEADER;Automatic & Refinement
 !TP_WBALANCE_CAMERA;Camera
 !TP_WBALANCE_CLOUDY;Cloudy
 !TP_WBALANCE_CUSTOM;Custom
@@ -4036,6 +4162,36 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !TP_WBALANCE_GREEN;Tint
 !TP_WBALANCE_GTI;GTI
 !TP_WBALANCE_HMI;HMI
+!TP_WBALANCE_ITCWALG_TOOLTIP;Allows you to switch to the other Alternative temperature (Alt_temp), when possible.\nInactive in the "single choice" case.
+!TP_WBALANCE_ITCWBDELTA_TOOLTIP;Fixed for each "green" iteration tried, the temperature difference to be taken into account.
+!TP_WBALANCE_ITCWBFGREEN_TOOLTIP;Find the best compromise between Student and green.
+!TP_WBALANCE_ITCWBMINSIZEPATCH_TOOLTIP;Allows you to set the minimum patch value. values that are too low can lead to a lack of correlation.
+!TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP;Allows you to filter magenta/purple data from the image. If the box is checked a filter limiting the value of Y is applied. By default this value is 0.4. You can change it in 'options' Itcwb_Ypurple (Maximum 1)
+!TP_WBALANCE_ITCWBPRECIS_TOOLTIP;The lower the value, the more relevant the data, but increases the processing time. Since the processing time is low, this parameter should generally be able to remain at the default value
+!TP_WBALANCE_ITCWBRGREEN_TOOLTIP;Sets the green value review amplitude in iterations, from low amplitude 0.82 to 1.25 to maximum amplitude 0.4 to 4.
+!TP_WBALANCE_ITCWBTHRES_TOOLTIP;Limits comparison sampling between spectral data and image data.
+!TP_WBALANCE_ITCWB_ALG;Remove 2 pass algorithm
+!TP_WBALANCE_ITCWB_CUSTOM;Use Custom temperature & tint
+!TP_WBALANCE_ITCWB_DELTA;Delta temperature in green loop
+!TP_WBALANCE_ITCWB_FGREEN;Find green student
+!TP_WBALANCE_ITCWB_FORCED;Close to full CIE diagram
+!TP_WBALANCE_ITCWB_FRA;Auto Temperature correlation Settings
+!TP_WBALANCE_ITCWB_MINSIZEPATCH;Patch minimum size
+!TP_WBALANCE_ITCWB_PRECIS;Precision algorithm - scale used
+!TP_WBALANCE_ITCWB_PRIM_ACE;Forces use of the entire CIE diagram
+!TP_WBALANCE_ITCWB_PRIM_ADOB;Medium sampling
+!TP_WBALANCE_ITCWB_PRIM_BETA;Medium sampling - near Pointer's gamut
+!TP_WBALANCE_ITCWB_PRIM_JDCMAX;Close to full CIE diagram
+!TP_WBALANCE_ITCWB_PRIM_REC;High sampling
+!TP_WBALANCE_ITCWB_PRIM_SRGB;Low sampling & No use Camera settings
+!TP_WBALANCE_ITCWB_PRIM_XYZCAM;Camera XYZ matrix
+!TP_WBALANCE_ITCWB_PRIM_XYZCAM2;JDCmax after Camera XYZ matrix
+!TP_WBALANCE_ITCWB_RGREEN;Green range
+!TP_WBALANCE_ITCWB_SAMPLING;Low sampling 5.9
+!TP_WBALANCE_ITCWCUSTOM_TOOLTIP;Allows you to use Custom settings Temperature and Green (tint).\n\nUsage tips:\n1) start Itcwb , enable 'Use Custom temperature and tint'.\n2) Set 'Temperature and tint' to your liking :free, Pick,...(Custom)\n3) go back to 'Temperature correlation'.\n\nYou cannot use : 2 passes, AWB temperature bias, Green refinement.
+!TP_WBALANCE_ITCWGREEN;Green refinement
+!TP_WBALANCE_ITCWGREEN_TOOLTIP;Allows you to change the "tint" (green) which will serve as a reference when starting the algorithm. It has substantially the same role for greens as "AWB temperature bias" for temperature.\nThe whole algorithm is recalculated.
+!TP_WBALANCE_ITCWSAMPLING_TOOLTIP;Allows you to use the old sampling algorithm to ensure better compatibility with 5.9. You must enable Observer 10° (default).
 !TP_WBALANCE_JUDGEIII;JudgeIII
 !TP_WBALANCE_LABEL;White Balance
 !TP_WBALANCE_LAMP_HEADER;Lamp
@@ -4043,6 +4199,11 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !TP_WBALANCE_LED_HEADER;LED
 !TP_WBALANCE_LED_LSI;LSI Lumelex 2040
 !TP_WBALANCE_METHOD;Method
+!TP_WBALANCE_MULLABEL;Multipliers: r=%1 g=%2 b=%3
+!TP_WBALANCE_MULLABEL_TOOLTIP;Values given for information purposes. You cannot change them.
+!TP_WBALANCE_OBSERVER10;Observer 10° instead of Observer 2°
+!TP_WBALANCE_PATCHLEVELLABEL;Patch: ΔE=%1 - datas x 9 Min:%2 Max=%3
+!TP_WBALANCE_PATCHLEVELLABEL_TOOLTIP;Display ΔE patch (this assumes there is enough spectral data), between image and spectral datas.\n Display read datas found. The 2 values correspond to the minimum and maximum data values taken into account. The coefficient x9 must be taken into account to obtain the number of pixels concerned in the image.
 !TP_WBALANCE_PICKER;Pick
 !TP_WBALANCE_SHADE;Shade
 !TP_WBALANCE_SIZE;Size:
@@ -4051,10 +4212,12 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !TP_WBALANCE_SOLUX47;Solux 4700K (vendor)
 !TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
 !TP_WBALANCE_SPOTWB;Use the pipette to pick the white balance from a neutral patch in the preview.
-!TP_WBALANCE_STUDLABEL;Correlation factor: %1
-!TP_WBALANCE_STUDLABEL_TOOLTIP;Display calculated Student correlation.\nLower values are better, where <0.005 is excellent,\n<0.01 is good, and >0.5 is poor.\nLow values do not mean that the white balance is good:\nif the illuminant is non-standard the results can be erratic.\nA value of 1000 means previous calculations are used and\nthe resultsare probably good.
+!TP_WBALANCE_STUDLABEL;Correlation factor: %1 Passes:%2 Worst_alt=%3
+!TP_WBALANCE_STUDLABEL0;Correlation factor: %1 Passes:%2 Alt=%3
+!TP_WBALANCE_STUDLABEL1;Correlation factor: %1 Passes:%2 Best_alt=%3
+!TP_WBALANCE_STUDLABEL_TOOLTIP;Display calculated Student correlation.\nLower values are better, where <0.005 is excellent,\n<0.01 is good, and >0.5 is poor.\nLow values do not mean that the white balance is good:\nif the illuminant is non-standard the results can be erratic.\nA value of 1000 means previous calculations are used and\nthe resultsare probably good.\n\nPasses : number of passes made.\nAlt_temp : Alternative temperature.
 !TP_WBALANCE_TEMPBIAS;AWB temperature bias
-!TP_WBALANCE_TEMPBIAS_TOOLTIP;Allows to alter the computation of the 'auto white balance'\nby biasing it towards warmer or cooler temperatures. The bias\nis expressed as a percentage of the computed temperature,\nso that the result is given by 'computedTemp + computedTemp * bias'.
+!TP_WBALANCE_TEMPBIAS_TOOLTIP;Allows to alter the computation of the 'auto white balance'\nby biasing it towards warmer or cooler temperatures. The bias\nis expressed as a percentage of the computed temperature,\nso that the result is given by 'computedTemp + computedTemp * bias'.\n\nYou can use "Awb temperature bias" to adjust the "Temperature correlation" results. Each movement of this command brings a new calculation of temperature, tint and correlation.
 !TP_WBALANCE_TEMPERATURE;Temperature
 !TP_WBALANCE_TUNGSTEN;Tungsten
 !TP_WBALANCE_WATER1;UnderWater 1
@@ -4067,3 +4230,4 @@ TP_WBALANCE_EQBLUERED_TOOLTIP;Allows to deviate from the normal behaviour of 'wh
 !ZOOMPANEL_ZOOMFITSCREEN;Fit whole image to screen\nShortcut: <b>Alt</b>-<b>f</b>
 !ZOOMPANEL_ZOOMIN;Zoom In\nShortcut: <b>+</b>
 !ZOOMPANEL_ZOOMOUT;Zoom Out\nShortcut: <b>-</b>
+!//TP_WBALANCE_ITCWB_FORCED;Forces use of the entire CIE diagram
