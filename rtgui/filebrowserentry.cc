@@ -89,14 +89,19 @@ void FileBrowserEntry::init ()
     ps = RTImage::createPixbufFromFile ("filetype-ps.png");
 }
 
-void FileBrowserEntry::refreshThumbnailImage ()
+void FileBrowserEntry::refreshThumbnailImage(bool upgradeHint)
 {
 
     if (!thumbnail) {
         return;
     }
 
-    thumbImageUpdater->add (this, &updatepriority, false, this);
+    thumbImageUpdater->add (this, &updatepriority, upgradeHint, upgradeHint, this);
+}
+
+void FileBrowserEntry::refreshThumbnailImage ()
+{
+    refreshThumbnailImage(false);
 }
 
 void FileBrowserEntry::refreshQuickThumbnailImage ()
@@ -108,7 +113,7 @@ void FileBrowserEntry::refreshQuickThumbnailImage ()
 
     // Only make a (slow) processed preview if the picture has been edited at all
     bool upgrade_to_processed = (!options.internalThumbIfUntouched || thumbnail->isPParamsValid());
-    thumbImageUpdater->add(this, &updatepriority, upgrade_to_processed, this);
+    thumbImageUpdater->add(this, &updatepriority, upgrade_to_processed, false, this);
 }
 
 void FileBrowserEntry::calcThumbnailSize ()
@@ -202,13 +207,13 @@ FileThumbnailButtonSet* FileBrowserEntry::getThumbButtonSet ()
     return (static_cast<FileThumbnailButtonSet*>(buttonSet));
 }
 
-void FileBrowserEntry::procParamsChanged (Thumbnail* thm, int whoChangedIt)
+void FileBrowserEntry::procParamsChanged (Thumbnail* thm, int whoChangedIt, bool upgradeHint)
 {
 
     if ( thumbnail->isQuick() ) {
         refreshQuickThumbnailImage ();
     } else {
-        refreshThumbnailImage ();
+        refreshThumbnailImage(upgradeHint);
     }
 }
 
