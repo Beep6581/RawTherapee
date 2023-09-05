@@ -4171,7 +4171,7 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 !HISTORY_MSG_HLTH;Inpaint opposed - gain threshold
 !HISTORY_MSG_ICM_GAMUT;Gamut control
 !HISTORY_MSG_LOCALLAB_TE_PIVOT;Local - Equalizer pivot
-!HISTORY_MSG_LOCAL_GAMUTMUNSEL;Local - Gamut-Munsell
+!HISTORY_MSG_LOCAL_GAMUTMUNSEL;Local - SC - Avoid Color Shift
 !HISTORY_MSG_TONE_EQUALIZER_BANDS;Tone equalizer - Bands
 !HISTORY_MSG_TONE_EQUALIZER_ENABLED;Tone equalizer
 !HISTORY_MSG_TONE_EQUALIZER_PIVOT;Tone equalizer - Pivot

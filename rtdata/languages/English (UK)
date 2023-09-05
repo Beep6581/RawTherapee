@@ -24,7 +24,7 @@ HISTORY_MSG_322;W - Gamut - Avoid colour shift
 HISTORY_MSG_385;W - Residual - Colour balance
 HISTORY_MSG_392;W - Residual - Colour balance
 HISTORY_MSG_419;Retinex - Colour space
-HISTORY_MSG_507;Local Spot centre
+HISTORY_MSG_507;Local - Spot - Centre
 HISTORY_MSG_516;Local - Colour and light
 HISTORY_MSG_527;Local - Colour Inverse
 HISTORY_MSG_542;Local - Vib avoid colourshift
@@ -62,8 +62,8 @@ HISTORY_MSG_830;Local - Colour gradient strength L
 HISTORY_MSG_831;Local - Colour gradient angle
 HISTORY_MSG_832;Local - Colour gradient strength C
 HISTORY_MSG_834;Local - Colour gradient strength H
-HISTORY_MSG_894;Local - Colour Preview dE
-HISTORY_MSG_925;Local - Scope colour tools
+HISTORY_MSG_894;Local - SD - ΔE preview colour intensity
+HISTORY_MSG_925;Local - Scope (colour tools)
 HISTORY_MSG_928;Local - Common colour mask
 HISTORY_MSG_980;Local - Log encoding Colourfulness M
 HISTORY_MSG_996;Local - Colour recovery threshold
@@ -80,6 +80,7 @@ HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Colour correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Colour correction
 HISTORY_MSG_FILMNEGATIVE_COLORSPACE;Film negative colour space
 HISTORY_MSG_HLBL;Colour propagation - blur
+HISTORY_MSG_LOCAL_GAMUTMUNSEL;Local - SC - Avoid Colour Shift
 HISTORY_MSG_RAWCACORR_COLORSHIFT;Raw CA Correction - Avoid colour shift
 HISTORY_MSG_SH_COLORSPACE;S/H - Colourspace
 HISTORY_MSG_WAVLABGRID_VALUE;Toning - exclude colours
@@ -188,18 +189,18 @@ TP_LOCALLAB_COLORSCOPE;Scope (colour tools)
 TP_LOCALLAB_COLORSCOPE_TOOLTIP;Common Scope slider for Colour and Light, Shadows/Highlights, Vibrance.\nOther tools have their own scope controls.
 TP_LOCALLAB_COLOR_CIE;Colour curve
 TP_LOCALLAB_COLOR_TOOLNAME;Colour & Light
-TP_LOCALLAB_CURVEEDITORM_CC_TOOLTIP;If the curves are at the top, the mask is completely black and no changes are made to the image.\nAs you lower the curve, the mask gradually becomes more colourful and bright, progressively changing the image.\n\nIt is recommended (but not mandatory) to position the top of the curves on the gray boundary line which represents the reference values of chroma, luma, hue for the RT-spot.
-TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP;If curves are at the top, the mask is completely black and no changes are made to the image.\nAs you lower the curve, the mask gradually becomes more colourful and bright, progressively changing the image.\n\nIt is recommended (but not mandatory) to position the top of the curves on the gray boundary line which represents the reference values of chroma, luma, hue for the RT-spot.
+TP_LOCALLAB_CURVEEDITORM_CC_TOOLTIP;If the curves are at the top, the mask is completely black and no changes are made to the image.\nAs you lower the curve, the mask gradually becomes more colourful and bright, progressively changing the image.\n\nIt is recommended (but not mandatory) to position the top of the curves on the gray boundary line which represents the reference values of chroma, luma, hue for the spot.
+TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP;If curves are at the top, the mask is completely black and no changes are made to the image.\nAs you lower the curve, the mask gradually becomes more colourful and bright, progressively changing the image.\n\nIt is recommended (but not mandatory) to position the top of the curves on the gray boundary line which represents the reference values of chroma, luma, hue for the spot.
 TP_LOCALLAB_CURVEEDITOR_TONES_TOOLTIP;L=f(L), can be used with L(H) in Colour and Light.
 TP_LOCALLAB_DEHAZFRAME_TOOLTIP;Removes atmospheric haze. Increases overall saturation and detail.\nCan remove colour casts, but may also introduce a blue cast which can be corrected with other tools.
 TP_LOCALLAB_DENOIEQUALCHRO_TOOLTIP;Allows you to direct the chroma noise reduction towards either the blue-yellow or red-green colours.
-TP_LOCALLAB_DENOI_TOOLTIP;This module can be used for noise reduction either on its own (at the end of the processing pipeline) or in addition to the Noise Reduction module in the Detail tab (which works at the beginning of the pipeline).\n Scope allows you to differentiate the action based on colour (ΔE).\nMinimum RT-spot size: 128x128.
+TP_LOCALLAB_DENOI_TOOLTIP;This module can be used for noise reduction either on its own (at the end of the processing pipeline) or in addition to the Noise Reduction module in the Detail tab (which works at the beginning of the pipeline).\n Scope allows you to differentiate the action based on colour (ΔE).\nMinimum spot size: 128x128.
 TP_LOCALLAB_EXCLUF_TOOLTIP;'Excluding' mode prevents adjacent spots from influencing certain parts of the image. Adjusting 'Scope' will extend the range of colours.\n You can also add tools to an Excluding spot and use them in the same way as for a normal spot.
 TP_LOCALLAB_EXPCHROMA_TOOLTIP;Use in association with 'Exposure compensation f' and 'Contrast Attenuator f' to avoid desaturating colours.
 TP_LOCALLAB_EXPCOLOR_TOOLTIP;Adjust colour, lightness, contrast and correct small defects such as red-eye, sensor dust etc.
 TP_LOCALLAB_EXPCOMP_TOOLTIP;For portraits or images with a low colour gradient. You can change 'Shape detection' in 'Settings':\n\nIncrease 'ΔE scope threshold'\nReduce 'ΔE decay'\nIncrease 'ab-L balance (ΔE)'
 TP_LOCALLAB_EXPGRADCOL_TOOLTIP;A graduated filter is available in Colour and Light (luminance, chrominance & hue gradients, and 'Merge file'), Exposure (luminance grad.), Exposure Mask (luminance grad.), Shadows/Highlights (luminance grad.), Vibrance (luminance, chrominance & hue gradients), Local contrast & wavelet pyramid (local contrast grad.).\nFeather is located in Settings.
-TP_LOCALLAB_EXPMERGEFILE_TOOLTIP;Allows you to use GIMP or Photoshop (c) layer blend modes i.e. Difference, Multiply, Soft Light, Overlay etc., with opacity control.\nOriginal Image : merge current RT-Spot with Original.\nPrevious spot : merge current Rt-Spot with previous - if there is only one spot, previous = original.\nBackground : merge current RT-Spot with a colour and luminance background (fewer possibilties).
+TP_LOCALLAB_EXPMERGEFILE_TOOLTIP;Allows you to use GIMP or Photoshop layer blend modes (difference, multiply, soft light, overlay, etc.) with opacity control.\nOriginal image: merge current spot with original.\nPrevious spot: merge current spot with previous (if there is only one spot, previous = original).\nBackground: merge current spot with a colour and luminance background (fewer possibilties).
 TP_LOCALLAB_GRIDFRAME_TOOLTIP;You can use this tool as a brush. Use a small spot and adapt the 'Transition value' and 'Transition decay'\nOnly 'Normal' mode and possibly Hue, Saturation, Colour, Luminosity are concerned by Merge background (ΔE).
 TP_LOCALLAB_GRIDMETH_TOOLTIP;Colour toning: the luminance is taken into account when varying chroma. Equivalent to H=f(H) if the 'white dot' on the grid remains at zero and you only vary the 'black dot'. Equivalent to 'Colour toning' if you vary the 2 dots.\n\nDirect: acts directly on the chroma.
 TP_LOCALLAB_GRIDONE;Colour Toning
@@ -248,7 +249,7 @@ TP_LOCALLAB_RECOTHRES02_TOOLTIP;If the 'Recovery threshold' value is greater tha
 TP_LOCALLAB_REPARCOL_TOOLTIP;Allows you to adjust the relative strength of the Colour and Light image with respect to the original image.
 TP_LOCALLAB_RSTPROTECT_TOOLTIP;Red and skin-tone protection affects the Saturation, Chroma and Colourfulness sliders.
 TP_LOCALLAB_SENSIEXCLU_TOOLTIP;Adjust the colours to be excluded.
-TP_LOCALLAB_SENSIMASK_TOOLTIP;Scope adjustment specific to common mask tool.\nActs on the difference between the original image and the mask.\nUses the luma, chroma and hue references from the centre of the RT-spot\n\nYou can also adjust the ΔE of the mask itself by using 'Scope (ΔE image mask)' in 'Settings' > 'Mask and Merge'.
+TP_LOCALLAB_SENSIMASK_TOOLTIP;Scope adjustment specific to common mask tool.\nActs on the difference between the original image and the mask.\nUses the luma, chroma and hue references from the centre of the spot\n\nYou can also adjust the ΔE of the mask itself by using 'Scope (ΔE image mask)' in 'Settings' > 'Mask and Merge'.
 TP_LOCALLAB_SENSI_TOOLTIP;Adjusts the scope of the action:\nSmall values limit the action to colours similar to those in the centre of the spot.\nHigh values let the tool act on a wider range of colours.
 TP_LOCALLAB_STRENGRID_TOOLTIP;You can adjust the desired effect with 'strength', but you can also use the 'scope' function which allows you to delimit the action (e.g. to isolate a particular colour).
 TP_LOCALLAB_STRUMASK_TOOLTIP;Structure mask (slider) with the checkbox 'Structure mask as tool' unchecked: In this case a mask showing the structure will be generated even if none of the 3 curves is activated. Structure masks are available for mask (Blur and denoise') and mask(Colour & Light).
@@ -1004,29 +1005,29 @@ TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colours (max=237).\nDispla
 !HISTORY_MSG_494;Capture Sharpening
 !HISTORY_MSG_496;Local Spot deleted
 !HISTORY_MSG_497;Local Spot selected
-!HISTORY_MSG_498;Local Spot name
-!HISTORY_MSG_499;Local Spot visibility
-!HISTORY_MSG_500;Local Spot shape
-!HISTORY_MSG_501;Local Spot method
-!HISTORY_MSG_502;Local Spot shape method
-!HISTORY_MSG_503;Local Spot locX
-!HISTORY_MSG_504;Local Spot locXL
-!HISTORY_MSG_505;Local Spot locY
-!HISTORY_MSG_506;Local Spot locYT
-!HISTORY_MSG_508;Local Spot circrad
-!HISTORY_MSG_509;Local Spot quality method
-!HISTORY_MSG_510;Local Spot transition
-!HISTORY_MSG_511;Local Spot thresh
-!HISTORY_MSG_512;Local Spot ΔE decay
-!HISTORY_MSG_513;Local Spot scope
-!HISTORY_MSG_514;Local Spot structure
+!HISTORY_MSG_498;--unused--
+!HISTORY_MSG_499;--unused--
+!HISTORY_MSG_500;Local - Spot shape
+!HISTORY_MSG_501;Local - Spot method
+!HISTORY_MSG_502;Local - SC - Shape method
+!HISTORY_MSG_503;Local - Spot - Right
+!HISTORY_MSG_504;Local - Spot - Left
+!HISTORY_MSG_505;Local - Spot - Bottom
+!HISTORY_MSG_506;Local - Spot - Top
+!HISTORY_MSG_508;Local - Spot - Size
+!HISTORY_MSG_509;Local - Spot quality method
+!HISTORY_MSG_510;Local - TG - Transition value
+!HISTORY_MSG_511;Local - SD - ΔE scope threshold
+!HISTORY_MSG_512;Local - SD - ΔE decay
+!HISTORY_MSG_513;Local - Spot - Excluding - Scope
+!HISTORY_MSG_514;Local - Spot structure
 !HISTORY_MSG_515;Local Adjustments
 !HISTORY_MSG_517;Local - Enable super
 !HISTORY_MSG_518;Local - Lightness
 !HISTORY_MSG_519;Local - Contrast
 !HISTORY_MSG_520;Local - Chrominance
 !HISTORY_MSG_521;Local - Scope
-!HISTORY_MSG_522;Local - curve method
+!HISTORY_MSG_522;Local - Curve method
 !HISTORY_MSG_523;Local - LL Curve
 !HISTORY_MSG_524;Local - CC curve
 !HISTORY_MSG_525;Local - LH Curve
@@ -1083,16 +1084,16 @@ TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colours (max=237).\nDispla
 !HISTORY_MSG_578;Local - cbdl threshold
 !HISTORY_MSG_579;Local - cbdl scope
 !HISTORY_MSG_580;--unused--
-!HISTORY_MSG_581;Local - deNoise lum f 1
-!HISTORY_MSG_582;Local - deNoise lum c
-!HISTORY_MSG_583;Local - deNoise lum detail
-!HISTORY_MSG_584;Local - deNoise equalizer White-Black
-!HISTORY_MSG_585;Local - deNoise chro f
-!HISTORY_MSG_586;Local - deNoise chro c
-!HISTORY_MSG_587;Local - deNoise chro detail
-!HISTORY_MSG_588;Local - deNoise equalizer Blue-Red
-!HISTORY_MSG_589;Local - deNoise bilateral
-!HISTORY_MSG_590;Local - deNoise Scope
+!HISTORY_MSG_581;Local - Denoise lum f 1
+!HISTORY_MSG_582;Local - Denoise lum c
+!HISTORY_MSG_583;Local - Denoise lum detail
+!HISTORY_MSG_584;Local - Denoise equalizer White-Black
+!HISTORY_MSG_585;Local - Denoise chro f
+!HISTORY_MSG_586;Local - Denoise chro c
+!HISTORY_MSG_587;Local - Denoise chro detail
+!HISTORY_MSG_588;Local - Denoise equalizer Blue-Red
+!HISTORY_MSG_589;Local - Denoise bilateral
+!HISTORY_MSG_590;Local - Denoise Scope
 !HISTORY_MSG_592;Local - Sh Contrast
 !HISTORY_MSG_593;Local - Local contrast
 !HISTORY_MSG_594;Local - Local contrast radius
@@ -1116,7 +1117,7 @@ TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colours (max=237).\nDispla
 !HISTORY_MSG_619;Local - Use Exp Mask
 !HISTORY_MSG_620;Local - Blur col
 !HISTORY_MSG_621;Local - Exp inverse
-!HISTORY_MSG_622;Local - Exclude structure
+!HISTORY_MSG_622;Local - Spot - Excluding - Spot structure
 !HISTORY_MSG_623;Local - Exp Chroma compensation
 !HISTORY_MSG_627;Local - Shadow Highlight
 !HISTORY_MSG_628;Local - SH Highlight
@@ -1135,7 +1136,7 @@ TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colours (max=237).\nDispla
 !HISTORY_MSG_642;Local - radius SH
 !HISTORY_MSG_643;Local - Blur SH
 !HISTORY_MSG_644;Local - inverse SH
-!HISTORY_MSG_645;Local - balance ΔE ab-L
+!HISTORY_MSG_645;Local - SD - ab-L balance
 !HISTORY_MSG_646;Local - Exp mask chroma
 !HISTORY_MSG_647;Local - Exp mask gamma
 !HISTORY_MSG_648;Local - Exp mask slope
@@ -1145,11 +1146,11 @@ TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colours (max=237).\nDispla
 !HISTORY_MSG_655;Local - SH mask slope
 !HISTORY_MSG_657;Local - Retinex Reduce artifacts
 !HISTORY_MSG_658;Local - CBDL soft radius
-!HISTORY_MSG_659;Local Spot transition-decay
+!HISTORY_MSG_659;Local - TG - Transition decay
 !HISTORY_MSG_660;Local - cbdl clarity
 !HISTORY_MSG_661;Local - cbdl contrast residual
-!HISTORY_MSG_662;Local - deNoise lum f 0
-!HISTORY_MSG_663;Local - deNoise lum f 2
+!HISTORY_MSG_662;Local - Denoise lum f 0
+!HISTORY_MSG_663;Local - Denoise lum f 2
 !HISTORY_MSG_664;--unused--
 !HISTORY_MSG_665;Local - cbdl mask Blend
 !HISTORY_MSG_666;Local - cbdl mask radius
@@ -1162,7 +1163,7 @@ TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colours (max=237).\nDispla
 !HISTORY_MSG_673;Local - Use cbdl mask
 !HISTORY_MSG_674;Local - Tool removed
 !HISTORY_MSG_675;Local - TM soft radius
-!HISTORY_MSG_676;Local Spot transition-differentiation
+!HISTORY_MSG_676;Local - TG - Transition differentiation
 !HISTORY_MSG_677;Local - TM amount
 !HISTORY_MSG_678;Local - TM saturation
 !HISTORY_MSG_679;Local - Retinex mask C
@@ -1244,7 +1245,7 @@ TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colours (max=237).\nDispla
 !HISTORY_MSG_762;Local - cbdl Laplacian mask
 !HISTORY_MSG_763;Local - Blur Laplacian mask
 !HISTORY_MSG_764;Local - Solve PDE Laplacian mask
-!HISTORY_MSG_765;Local - deNoise Detail threshold
+!HISTORY_MSG_765;Local - Denoise Detail threshold
 !HISTORY_MSG_766;Local - Blur Fast Fourier
 !HISTORY_MSG_767;Local - Grain Iso
 !HISTORY_MSG_768;Local - Grain Strength
@@ -1259,19 +1260,19 @@ TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colours (max=237).\nDispla
 !HISTORY_MSG_778;Local - Mask highlights
 !HISTORY_MSG_781;Local - Contrast Mask Wavelet level
 !HISTORY_MSG_782;Local - Blur Denoise Mask Wavelet levels
-!HISTORY_MSG_784;Local - Mask ΔE
-!HISTORY_MSG_785;Local - Mask Scope ΔE
+!HISTORY_MSG_784;Local - Mask - ΔE Image Mask
+!HISTORY_MSG_785;Local - Mask - Scope
 !HISTORY_MSG_786;Local - SH method
 !HISTORY_MSG_787;Local - Equalizer multiplier
 !HISTORY_MSG_788;Local - Equalizer detail
 !HISTORY_MSG_789;Local - SH mask amount
 !HISTORY_MSG_790;Local - SH mask anchor
 !HISTORY_MSG_791;Local - Mask Short L curves
-!HISTORY_MSG_792;Local - Mask Luminance Background
+!HISTORY_MSG_792;Local - Mask - Background
 !HISTORY_MSG_793;Local - SH TRC gamma
 !HISTORY_MSG_794;Local - SH TRC slope
 !HISTORY_MSG_795;Local - Mask save restore image
-!HISTORY_MSG_796;Local - Recursive references
+!HISTORY_MSG_796;Local - SC - Recursive references
 !HISTORY_MSG_797;Local - Merge Original method
 !HISTORY_MSG_798;Local - Opacity
 !HISTORY_MSG_802;Local - Contrast threshold
@@ -1294,7 +1295,7 @@ TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colours (max=237).\nDispla
 !HISTORY_MSG_827;Local - Exp gradient angle
 !HISTORY_MSG_828;Local - SH gradient strength
 !HISTORY_MSG_829;Local - SH gradient angle
-!HISTORY_MSG_833;Local - Gradient feather
+!HISTORY_MSG_833;Local - TG - Feather gradient
 !HISTORY_MSG_835;Local - Vib gradient strength L
 !HISTORY_MSG_836;Local - Vib gradient angle
 !HISTORY_MSG_837;Local - Vib gradient strength C
@@ -1326,7 +1327,7 @@ TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colours (max=237).\nDispla
 !HISTORY_MSG_864;Local - Wavelet dir contrast attenuation
 !HISTORY_MSG_865;Local - Wavelet dir contrast delta
 !HISTORY_MSG_866;Local - Wavelet dir compression
-!HISTORY_MSG_868;Local - Balance ΔE C-H
+!HISTORY_MSG_868;Local - SD - C-H balance
 !HISTORY_MSG_869;Local - Denoise by level
 !HISTORY_MSG_870;Local - Wavelet mask curve H
 !HISTORY_MSG_871;Local - Wavelet mask curve C
@@ -1364,7 +1365,7 @@ TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colours (max=237).\nDispla
 !HISTORY_MSG_907;Local - Contrast Wavelet ES amplification
 !HISTORY_MSG_908;Local - Contrast Wavelet ES neighboring
 !HISTORY_MSG_909;Local - Contrast Wavelet ES show
-!HISTORY_MSG_910;Local - Wavelet Edge performance
+!HISTORY_MSG_910;Local - SC - Wavelet Edge performance
 !HISTORY_MSG_911;Local - Blur Chroma Luma
 !HISTORY_MSG_912;Local - Blur Guide filter strength
 !HISTORY_MSG_913;Local - Contrast Wavelet Sigma DR
@@ -1376,7 +1377,7 @@ TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colours (max=237).\nDispla
 !HISTORY_MSG_919;Local - Residual wavelet highlights threshold
 !HISTORY_MSG_920;Local - Wavelet sigma LC
 !HISTORY_MSG_921;Local - Wavelet Graduated sigma LC2
-!HISTORY_MSG_922;Local - changes In Black and White
+!HISTORY_MSG_922;Local - SC - Changes in B/W
 !HISTORY_MSG_923;Local - Tool complexity mode
 !HISTORY_MSG_924;--unused--
 !HISTORY_MSG_926;Local - Show mask type
@@ -1486,7 +1487,7 @@ TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colours (max=237).\nDispla
 !HISTORY_MSG_1037;Local - Nlmeans - radius
 !HISTORY_MSG_1038;Local - Nlmeans - gamma
 !HISTORY_MSG_1039;Local - Grain - gamma
-!HISTORY_MSG_1040;Local - Spot - soft radius
+!HISTORY_MSG_1040;Local - SC - Soft radius
 !HISTORY_MSG_1041;Local - Spot - Munsell
 !HISTORY_MSG_1042;Local - Log encoding - threshold
 !HISTORY_MSG_1043;Local - Exp - normalize
@@ -1572,7 +1573,7 @@ TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colours (max=237).\nDispla
 !HISTORY_MSG_1128;Local - Cie mask slope
 !HISTORY_MSG_1129;Local - Cie Relative luminance
 !HISTORY_MSG_1130;Local - Cie Saturation Jz
-!HISTORY_MSG_1131;Local - Mask denoise chroma
+!HISTORY_MSG_1131;Local - Mask - Denoise
 !HISTORY_MSG_1132;Local - Cie Wav sigma Jz
 !HISTORY_MSG_1133;Local - Cie Wav level Jz
 !HISTORY_MSG_1134;Local - Cie Wav local contrast Jz
@@ -1655,7 +1656,6 @@ TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colours (max=237).\nDispla
 !HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Local Contrast - Lightness
 !HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
 !HISTORY_MSG_LOCALLAB_TE_PIVOT;Local - Equalizer pivot
-!HISTORY_MSG_LOCAL_GAMUTMUNSEL;Local - Gamut-Munsell
 !HISTORY_MSG_METADATA_MODE;Metadata copy mode
 !HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrast threshold
 !HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST;CS - Auto threshold
@@ -2882,7 +2882,7 @@ TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colours (max=237).\nDispla
 !TP_LOCALLAB_BLNOI_EXP;Blur & Noise
 !TP_LOCALLAB_BLNORM;Normal
 !TP_LOCALLAB_BLUFR;Blur/Grain & Denoise
-!TP_LOCALLAB_BLUMETHOD_TOOLTIP;To blur the background and isolate the foreground:\n-blur the background by completely covering the image with an an RT-spot (high values for scope and transition and 'Normal' or 'Inverse' in checkbox).\n-Isolate the foreground by using one or more 'Excluding' RT-spot(s) and increase the scope.\n\nThis module (including the 'median' and 'Guided filter') can be used in addition to the main-menu noise reduction.
+!TP_LOCALLAB_BLUMETHOD_TOOLTIP;To blur the background and isolate the foreground:\n-blur the background by completely covering the image with a spot (high values for scope and transition and 'Normal' or 'Inverse' in checkbox).\n-Isolate the foreground by using one or more 'Excluding' spots and increase the scope.\n\nThis module (including the 'median' and 'Guided filter') can be used in addition to the main-menu noise reduction.
 !TP_LOCALLAB_BLUR;Gaussian Blur - Noise - Grain
 !TP_LOCALLAB_BLURCOL;Radius
 !TP_LOCALLAB_BLURCOLDE_TOOLTIP;The image used to calculate dE is blurred slightly to avoid taking isolated pixels into account.
@@ -2936,7 +2936,7 @@ TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colours (max=237).\nDispla
 !TP_LOCALLAB_CIEMODE_WAV;Wavelet
 !TP_LOCALLAB_CIETOOLEXP;Curves
 !TP_LOCALLAB_CIRCRADIUS;Spot size
-!TP_LOCALLAB_CIRCRAD_TOOLTIP;Contains the references of the RT-spot, useful for shape detection (hue, luma, chroma, Sobel).\nLow values may be useful for processing foliage.\nHigh values may be useful for processing skin.
+!TP_LOCALLAB_CIRCRAD_TOOLTIP;Contains the references of the spot, useful for shape detection (hue, luma, chroma, Sobel).\nLow values may be useful for processing foliage.\nHigh values may be useful for processing skin.
 !TP_LOCALLAB_CLARICRES;Merge chroma
 !TP_LOCALLAB_CLARIFRA;Clarity & Sharp mask/Blend & Soften Images
 !TP_LOCALLAB_CLARIJZ_TOOLTIP;Levels 0 to 4 (included): 'Sharp mask' is enabled\nLevels 5 and above: 'Clarity' is enabled.
@@ -3026,7 +3026,7 @@ TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colours (max=237).\nDispla
 !TP_LOCALLAB_EXPCOMP;Exposure compensation ƒ
 !TP_LOCALLAB_EXPCOMPINV;Exposure compensation
 !TP_LOCALLAB_EXPCONTRASTPYR_TOOLTIP;See the documentation for Wavelet Levels.\nThere are some differences in the Local Adjustments version, which has more tools and more possibilities for working on individual detail levels.\nE.g. wavelet-level tone mapping.
-!TP_LOCALLAB_EXPCONTRAST_TOOLTIP;Avoid spots that are too small ( < 32x32 pixels).\nUse low 'Transition value' and high 'Transition decay' and 'Scope' to simulate small RT-spots and deal with defects.\nUse 'Clarity and Sharp mask and Blend and Soften Images' if necessary by adjusting 'Soft radius' to reduce artifacts.
+!TP_LOCALLAB_EXPCONTRAST_TOOLTIP;Avoid spots that are too small ( < 32x32 pixels).\nUse low 'Transition value' and high 'Transition decay' and 'Scope' to simulate small spots and deal with defects.\nUse 'Clarity and Sharp mask and Blend and Soften Images' if necessary by adjusting 'Soft radius' to reduce artifacts.
 !TP_LOCALLAB_EXPCURV;Curves
 !TP_LOCALLAB_EXPGRAD;Graduated Filter
 !TP_LOCALLAB_EXPLAPBAL_TOOLTIP;Changes the transformed/original image blend.
@@ -3037,7 +3037,7 @@ TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colours (max=237).\nDispla
 !TP_LOCALLAB_EXPOSE;Dynamic Range & Exposure
 !TP_LOCALLAB_EXPOSURE_TOOLTIP;Modify exposure in L*a*b space using Laplacian PDE algorithms to take into account dE and minimize artifacts.
 !TP_LOCALLAB_EXPRETITOOLS;Advanced Retinex Tools
-!TP_LOCALLAB_EXPSHARP_TOOLTIP;RT-Spot minimum 39*39.\nUse low transition values and high 'Transition decay' and 'Scope' values to simulate smaller RT-Spots.
+!TP_LOCALLAB_EXPSHARP_TOOLTIP;Spot minimum 39*39.\nUse low transition values and high 'Transition decay' and 'Scope' values to simulate smaller spots.
 !TP_LOCALLAB_EXPTOOL;Exposure Tools
 !TP_LOCALLAB_EXP_TOOLNAME;Dynamic Range & Exposure
 !TP_LOCALLAB_FATAMOUNT;Amount
@@ -3241,7 +3241,7 @@ TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colours (max=237).\nDispla
 !TP_LOCALLAB_MASKRESWAV_TOOLTIP;Used to modulate the effect of the Local contrast and Wavelet settings based on the image luminance information contained in the L(L) or LC(H) masks (Mask and modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n The 'dark' and 'light' areas below the dark threshold and above the light threshold will be restored progressively to their original values prior to being modified by the Local contrast and Wavelet settings \n In between these two areas, the full value of the Local contrast and Wavelet settings will be applied.
 !TP_LOCALLAB_MASKUNUSABLE;Mask disabled (Mask & modifications)
 !TP_LOCALLAB_MASKUSABLE;Mask enabled (Mask & modifications)
-!TP_LOCALLAB_MASK_TOOLTIP;You can enable multiple masks for a tool by activating another tool and using only the mask (set the tool sliders to 0 ).\n\nYou can also duplicate the RT-spot and place it close to the first spot. The small variations in the spot references allow you to make fine adjustments.
+!TP_LOCALLAB_MASK_TOOLTIP;You can enable multiple masks for a tool by activating another tool and using only the mask (set the tool sliders to 0 ).\n\nYou can also duplicate the spot and place it close to the first spot. The small variations in the spot references allow you to make fine adjustments.
 !TP_LOCALLAB_MEDIAN;Median Low
 !TP_LOCALLAB_MEDIANITER_TOOLTIP;The number of successive iterations carried out by the median filter.
 !TP_LOCALLAB_MEDIAN_TOOLTIP;You can choose a median value in the range 3x3 to 9x9 pixels. Higher values increase noise reduction and blur.
@@ -3387,7 +3387,7 @@ TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colours (max=237).\nDispla
 !TP_LOCALLAB_SHADMASK_TOOLTIP;Lifts the shadows of the mask in the same way as the shadows/highlights algorithm.
 !TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP;Adjust shadows and highlights either with shadows & highlights sliders or with a tone equalizer.\nCan be used instead of, or in conjunction with the Exposure module.\nCan also be used as a graduated filter.
 !TP_LOCALLAB_SHAMASKCOL;Shadows
-!TP_LOCALLAB_SHAPETYPE;RT-spot shape
+!TP_LOCALLAB_SHAPETYPE;Spot shape
 !TP_LOCALLAB_SHAPE_TOOLTIP;'Ellipse' is the normal mode.\n 'Rectangle' can be used in certain cases, for example to work in full-image mode by placing the delimiters outside the preview area. In this case, set transition = 100.\n\nFuture developments will include polygon shapes and Bezier curves.
 !TP_LOCALLAB_SHARAMOUNT;Amount
 !TP_LOCALLAB_SHARBLUR;Blur radius

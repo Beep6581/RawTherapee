@@ -3083,23 +3083,23 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_494;Capture Sharpening
 !HISTORY_MSG_496;Local Spot deleted
 !HISTORY_MSG_497;Local Spot selected
-!HISTORY_MSG_498;Local Spot name
-!HISTORY_MSG_499;Local Spot visibility
-!HISTORY_MSG_500;Local Spot shape
-!HISTORY_MSG_501;Local Spot method
-!HISTORY_MSG_502;Local Spot shape method
-!HISTORY_MSG_503;Local Spot locX
-!HISTORY_MSG_504;Local Spot locXL
-!HISTORY_MSG_505;Local Spot locY
-!HISTORY_MSG_506;Local Spot locYT
-!HISTORY_MSG_507;Local Spot center
-!HISTORY_MSG_508;Local Spot circrad
-!HISTORY_MSG_509;Local Spot quality method
-!HISTORY_MSG_510;Local Spot transition
-!HISTORY_MSG_511;Local Spot thresh
-!HISTORY_MSG_512;Local Spot ΔE decay
-!HISTORY_MSG_513;Local Spot scope
-!HISTORY_MSG_514;Local Spot structure
+!HISTORY_MSG_498;--unused--
+!HISTORY_MSG_499;--unused--
+!HISTORY_MSG_500;Local - Spot shape
+!HISTORY_MSG_501;Local - Spot method
+!HISTORY_MSG_502;Local - SC - Shape method
+!HISTORY_MSG_503;Local - Spot - Right
+!HISTORY_MSG_504;Local - Spot - Left
+!HISTORY_MSG_505;Local - Spot - Bottom
+!HISTORY_MSG_506;Local - Spot - Top
+!HISTORY_MSG_507;Local - Spot - Center
+!HISTORY_MSG_508;Local - Spot - Size
+!HISTORY_MSG_509;Local - Spot quality method
+!HISTORY_MSG_510;Local - TG - Transition value
+!HISTORY_MSG_511;Local - SD - ΔE scope threshold
+!HISTORY_MSG_512;Local - SD - ΔE decay
+!HISTORY_MSG_513;Local - Spot - Excluding - Scope
+!HISTORY_MSG_514;Local - Spot structure
 !HISTORY_MSG_515;Local Adjustments
 !HISTORY_MSG_516;Local - Color and light
 !HISTORY_MSG_517;Local - Enable super
@@ -3107,7 +3107,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_519;Local - Contrast
 !HISTORY_MSG_520;Local - Chrominance
 !HISTORY_MSG_521;Local - Scope
-!HISTORY_MSG_522;Local - curve method
+!HISTORY_MSG_522;Local - Curve method
 !HISTORY_MSG_523;Local - LL Curve
 !HISTORY_MSG_524;Local - CC curve
 !HISTORY_MSG_525;Local - LH Curve
@@ -3166,16 +3166,16 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_578;Local - cbdl threshold
 !HISTORY_MSG_579;Local - cbdl scope
 !HISTORY_MSG_580;--unused--
-!HISTORY_MSG_581;Local - deNoise lum f 1
-!HISTORY_MSG_582;Local - deNoise lum c
-!HISTORY_MSG_583;Local - deNoise lum detail
-!HISTORY_MSG_584;Local - deNoise equalizer White-Black
-!HISTORY_MSG_585;Local - deNoise chro f
-!HISTORY_MSG_586;Local - deNoise chro c
-!HISTORY_MSG_587;Local - deNoise chro detail
-!HISTORY_MSG_588;Local - deNoise equalizer Blue-Red
-!HISTORY_MSG_589;Local - deNoise bilateral
-!HISTORY_MSG_590;Local - deNoise Scope
+!HISTORY_MSG_581;Local - Denoise lum f 1
+!HISTORY_MSG_582;Local - Denoise lum c
+!HISTORY_MSG_583;Local - Denoise lum detail
+!HISTORY_MSG_584;Local - Denoise equalizer White-Black
+!HISTORY_MSG_585;Local - Denoise chro f
+!HISTORY_MSG_586;Local - Denoise chro c
+!HISTORY_MSG_587;Local - Denoise chro detail
+!HISTORY_MSG_588;Local - Denoise equalizer Blue-Red
+!HISTORY_MSG_589;Local - Denoise bilateral
+!HISTORY_MSG_590;Local - Denoise Scope
 !HISTORY_MSG_591;Local - Avoid color shift
 !HISTORY_MSG_592;Local - Sh Contrast
 !HISTORY_MSG_593;Local - Local contrast
@@ -3206,7 +3206,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_619;Local - Use Exp Mask
 !HISTORY_MSG_620;Local - Blur col
 !HISTORY_MSG_621;Local - Exp inverse
-!HISTORY_MSG_622;Local - Exclude structure
+!HISTORY_MSG_622;Local - Spot - Excluding - Spot structure
 !HISTORY_MSG_623;Local - Exp Chroma compensation
 !HISTORY_MSG_624;Local - Color correction grid
 !HISTORY_MSG_625;Local - Color correction strength
@@ -3229,7 +3229,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_642;Local - radius SH
 !HISTORY_MSG_643;Local - Blur SH
 !HISTORY_MSG_644;Local - inverse SH
-!HISTORY_MSG_645;Local - balance ΔE ab-L
+!HISTORY_MSG_645;Local - SD - ab-L balance
 !HISTORY_MSG_646;Local - Exp mask chroma
 !HISTORY_MSG_647;Local - Exp mask gamma
 !HISTORY_MSG_648;Local - Exp mask slope
@@ -3243,11 +3243,11 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_656;Local - Color soft radius
 !HISTORY_MSG_657;Local - Retinex Reduce artifacts
 !HISTORY_MSG_658;Local - CBDL soft radius
-!HISTORY_MSG_659;Local Spot transition-decay
+!HISTORY_MSG_659;Local - TG - Transition decay
 !HISTORY_MSG_660;Local - cbdl clarity
 !HISTORY_MSG_661;Local - cbdl contrast residual
-!HISTORY_MSG_662;Local - deNoise lum f 0
-!HISTORY_MSG_663;Local - deNoise lum f 2
+!HISTORY_MSG_662;Local - Denoise lum f 0
+!HISTORY_MSG_663;Local - Denoise lum f 2
 !HISTORY_MSG_664;--unused--
 !HISTORY_MSG_665;Local - cbdl mask Blend
 !HISTORY_MSG_666;Local - cbdl mask radius
@@ -3260,7 +3260,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_673;Local - Use cbdl mask
 !HISTORY_MSG_674;Local - Tool removed
 !HISTORY_MSG_675;Local - TM soft radius
-!HISTORY_MSG_676;Local Spot transition-differentiation
+!HISTORY_MSG_676;Local - TG - Transition differentiation
 !HISTORY_MSG_677;Local - TM amount
 !HISTORY_MSG_678;Local - TM saturation
 !HISTORY_MSG_679;Local - Retinex mask C
@@ -3343,7 +3343,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_762;Local - cbdl Laplacian mask
 !HISTORY_MSG_763;Local - Blur Laplacian mask
 !HISTORY_MSG_764;Local - Solve PDE Laplacian mask
-!HISTORY_MSG_765;Local - deNoise Detail threshold
+!HISTORY_MSG_765;Local - Denoise Detail threshold
 !HISTORY_MSG_766;Local - Blur Fast Fourier
 !HISTORY_MSG_767;Local - Grain Iso
 !HISTORY_MSG_768;Local - Grain Strength
@@ -3362,19 +3362,19 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_781;Local - Contrast Mask Wavelet level
 !HISTORY_MSG_782;Local - Blur Denoise Mask Wavelet levels
 !HISTORY_MSG_783;Local - Color Wavelet levels
-!HISTORY_MSG_784;Local - Mask ΔE
-!HISTORY_MSG_785;Local - Mask Scope ΔE
+!HISTORY_MSG_784;Local - Mask - ΔE Image Mask
+!HISTORY_MSG_785;Local - Mask - Scope
 !HISTORY_MSG_786;Local - SH method
 !HISTORY_MSG_787;Local - Equalizer multiplier
 !HISTORY_MSG_788;Local - Equalizer detail
 !HISTORY_MSG_789;Local - SH mask amount
 !HISTORY_MSG_790;Local - SH mask anchor
 !HISTORY_MSG_791;Local - Mask Short L curves
-!HISTORY_MSG_792;Local - Mask Luminance Background
+!HISTORY_MSG_792;Local - Mask - Background
 !HISTORY_MSG_793;Local - SH TRC gamma
 !HISTORY_MSG_794;Local - SH TRC slope
 !HISTORY_MSG_795;Local - Mask save restore image
-!HISTORY_MSG_796;Local - Recursive references
+!HISTORY_MSG_796;Local - SC - Recursive references
 !HISTORY_MSG_797;Local - Merge Original method
 !HISTORY_MSG_798;Local - Opacity
 !HISTORY_MSG_799;Local - Color RGB ToneCurve
@@ -3410,7 +3410,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_830;Local - Color gradient strength L
 !HISTORY_MSG_831;Local - Color gradient angle
 !HISTORY_MSG_832;Local - Color gradient strength C
-!HISTORY_MSG_833;Local - Gradient feather
+!HISTORY_MSG_833;Local - TG - Feather gradient
 !HISTORY_MSG_834;Local - Color gradient strength H
 !HISTORY_MSG_835;Local - Vib gradient strength L
 !HISTORY_MSG_836;Local - Vib gradient angle
@@ -3443,7 +3443,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_864;Local - Wavelet dir contrast attenuation
 !HISTORY_MSG_865;Local - Wavelet dir contrast delta
 !HISTORY_MSG_866;Local - Wavelet dir compression
-!HISTORY_MSG_868;Local - Balance ΔE C-H
+!HISTORY_MSG_868;Local - SD - C-H balance
 !HISTORY_MSG_869;Local - Denoise by level
 !HISTORY_MSG_870;Local - Wavelet mask curve H
 !HISTORY_MSG_871;Local - Wavelet mask curve C
@@ -3468,7 +3468,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_891;Local - Contrast Wavelet Graduated
 !HISTORY_MSG_892;Local - Log Encoding Graduated Strength
 !HISTORY_MSG_893;Local - Log Encoding Graduated angle
-!HISTORY_MSG_894;Local - Color Preview dE
+!HISTORY_MSG_894;Local - SD - ΔE preview color intensity
 !HISTORY_MSG_897;Local - Contrast Wavelet ES strength
 !HISTORY_MSG_898;Local - Contrast Wavelet ES radius
 !HISTORY_MSG_899;Local - Contrast Wavelet ES detail
@@ -3482,7 +3482,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_907;Local - Contrast Wavelet ES amplification
 !HISTORY_MSG_908;Local - Contrast Wavelet ES neighboring
 !HISTORY_MSG_909;Local - Contrast Wavelet ES show
-!HISTORY_MSG_910;Local - Wavelet Edge performance
+!HISTORY_MSG_910;Local - SC - Wavelet Edge performance
 !HISTORY_MSG_911;Local - Blur Chroma Luma
 !HISTORY_MSG_912;Local - Blur Guide filter strength
 !HISTORY_MSG_913;Local - Contrast Wavelet Sigma DR
@@ -3494,10 +3494,10 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_919;Local - Residual wavelet highlights threshold
 !HISTORY_MSG_920;Local - Wavelet sigma LC
 !HISTORY_MSG_921;Local - Wavelet Graduated sigma LC2
-!HISTORY_MSG_922;Local - changes In Black and White
+!HISTORY_MSG_922;Local - SC - Changes in B/W
 !HISTORY_MSG_923;Local - Tool complexity mode
 !HISTORY_MSG_924;--unused--
-!HISTORY_MSG_925;Local - Scope color tools
+!HISTORY_MSG_925;Local - Scope (color tools)
 !HISTORY_MSG_926;Local - Show mask type
 !HISTORY_MSG_927;Local - Shadow
 !HISTORY_MSG_928;Local - Common color mask
@@ -3611,7 +3611,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_1037;Local - Nlmeans - radius
 !HISTORY_MSG_1038;Local - Nlmeans - gamma
 !HISTORY_MSG_1039;Local - Grain - gamma
-!HISTORY_MSG_1040;Local - Spot - soft radius
+!HISTORY_MSG_1040;Local - SC - Soft radius
 !HISTORY_MSG_1041;Local - Spot - Munsell
 !HISTORY_MSG_1042;Local - Log encoding - threshold
 !HISTORY_MSG_1043;Local - Exp - normalize
@@ -3702,7 +3702,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_1128;Local - Cie mask slope
 !HISTORY_MSG_1129;Local - Cie Relative luminance
 !HISTORY_MSG_1130;Local - Cie Saturation Jz
-!HISTORY_MSG_1131;Local - Mask denoise chroma
+!HISTORY_MSG_1131;Local - Mask - Denoise
 !HISTORY_MSG_1132;Local - Cie Wav sigma Jz
 !HISTORY_MSG_1133;Local - Cie Wav level Jz
 !HISTORY_MSG_1134;Local - Cie Wav local contrast Jz
@@ -3752,7 +3752,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_ICM_WORKING_PRIM_METHOD;Primaries method
 !HISTORY_MSG_ILLUM;CAL - SC - Illuminant
 !HISTORY_MSG_LOCALLAB_TE_PIVOT;Local - Equalizer pivot
-!HISTORY_MSG_LOCAL_GAMUTMUNSEL;Local - Gamut-Munsell
+!HISTORY_MSG_LOCAL_GAMUTMUNSEL;Local - SC - Avoid Color Shift
 !HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST;CS - Auto threshold
 !HISTORY_MSG_PDSHARPEN_AUTO_RADIUS;CS - Auto radius
 !HISTORY_MSG_PDSHARPEN_CHECKITER;CS - Auto limit iterations
