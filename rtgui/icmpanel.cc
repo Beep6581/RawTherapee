@@ -467,7 +467,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     ipDialog->add_filter(filter_icc);
     ipDialog->add_filter(filter_iccdng);
     ipDialog->add_filter(filter_any);
-#ifdef WIN32
+#ifdef _WIN32
     ipDialog->set_show_hidden(true);  // ProgramData is hidden on Windows
 #endif
 

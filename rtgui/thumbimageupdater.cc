@@ -45,12 +45,13 @@ public:
 
     struct Job {
         Job(ThumbBrowserEntryBase* tbe, bool* priority, bool upgrade,
-            ThumbImageUpdateListener* listener):
+            bool forceUpgrade, ThumbImageUpdateListener* listener):
             tbe_(tbe),
             /*pparams_(pparams),
             height_(height), */
             priority_(priority),
             upgrade_(upgrade),
+            force_upgrade_(forceUpgrade),
             listener_(listener)
         {}
 
@@ -58,6 +59,7 @@ public:
             tbe_(nullptr),
             priority_(nullptr),
             upgrade_(false),
+            force_upgrade_(false),
             listener_(nullptr)
         {}
 
@@ -66,6 +68,7 @@ public:
         int height_;*/
         bool* priority_;
         bool upgrade_;
+        bool force_upgrade_;
         ThumbImageUpdateListener* listener_;
     };
 
@@ -153,8 +156,8 @@ public:
         Thumbnail* thm = j.tbe_->thumbnail;
 
         if ( j.upgrade_ ) {
-            if ( thm->isQuick() ) {
-                img = thm->upgradeThumbImage(thm->getProcParams(), j.tbe_->getPreviewHeight(), scale);
+            if ( thm->isQuick() || j.force_upgrade_ ) {
+                img = thm->upgradeThumbImage(thm->getProcParams(), j.tbe_->getPreviewHeight(), scale, j.force_upgrade_);
             }
         } else {
             img = thm->processThumbImage(thm->getProcParams(), j.tbe_->getPreviewHeight(), scale);
@@ -191,7 +194,7 @@ ThumbImageUpdater::~ThumbImageUpdater() {
     delete impl_;
 }
 
-void ThumbImageUpdater::add(ThumbBrowserEntryBase* tbe, bool* priority, bool upgrade, ThumbImageUpdateListener* l)
+void ThumbImageUpdater::add(ThumbBrowserEntryBase* tbe, bool* priority, bool upgrade, bool forceUpgrade, ThumbImageUpdateListener* l)
 {
     // nobody listening?
     if ( l == nullptr ) {
@@ -206,7 +209,8 @@ void ThumbImageUpdater::add(ThumbBrowserEntryBase* tbe, bool* priority, bool upg
     for ( ; i != impl_->jobs_.end(); ++i ) {
         if ( i->tbe_ == tbe &&
                 i->listener_ == l &&
-                i->upgrade_ == upgrade ) {
+                i->upgrade_ == upgrade &&
+                i->force_upgrade_ == forceUpgrade) {
             DEBUG("updating job %s", tbe->shortname.c_str());
             // we have one, update queue entry, will be picked up by thread when processed
             /*i->pparams_ = params;
@@ -218,7 +222,7 @@ void ThumbImageUpdater::add(ThumbBrowserEntryBase* tbe, bool* priority, bool upg
 
     // create a new job and append to queue
     DEBUG("queueing job %s", tbe->shortname.c_str());
-    impl_->jobs_.push_back(Impl::Job(tbe, priority, upgrade, l));
+    impl_->jobs_.push_back(Impl::Job(tbe, priority, upgrade, forceUpgrade, l));
 
     DEBUG("adding run request %s", tbe->shortname.c_str());
     impl_->threadPool_->push(sigc::mem_fun(*impl_, &ThumbImageUpdater::Impl::processNextJob));

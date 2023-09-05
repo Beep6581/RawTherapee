@@ -18,7 +18,7 @@
  */
 #include "placesbrowser.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
 #include <shlobj.h>
 #include <Shlwapi.h>
@@ -231,7 +231,7 @@ void PlacesBrowser::refreshPlacesList ()
     // (Drives in Windows)
     std::vector<Glib::RefPtr<Gio::Mount> > mounts = vm->get_mounts ();
 
-#ifdef WIN32
+#ifdef _WIN32
     // on Windows, it's usual to sort by drive letter, not by name
     std::sort (mounts.begin(), mounts.end(), compareMountByRoot);
 #endif
@@ -353,7 +353,7 @@ void PlacesBrowser::delPressed ()
 
 Glib::ustring PlacesBrowser::userHomeDir ()
 {
-#ifdef WIN32
+#ifdef _WIN32
 
     // get_home_dir crashes on some Windows configurations,
     // so we rather use the safe native functions here.
@@ -378,7 +378,7 @@ Glib::ustring PlacesBrowser::userHomeDir ()
 
 Glib::ustring PlacesBrowser::userPicturesDir ()
 {
-#ifdef WIN32
+#ifdef _WIN32
 
     // get_user_special_dir crashes on some Windows configurations,
     // so we rather use the safe native functions here.

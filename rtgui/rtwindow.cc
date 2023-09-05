@@ -191,7 +191,7 @@ RTWindow::RTWindow ()
     FileBrowserEntry::init();
 
     // For UNIX system, set app icon
-#ifndef WIN32
+#ifndef _WIN32
     try {
         set_default_icon_name("rawtherapee");
     } catch (Glib::Exception& ex) {

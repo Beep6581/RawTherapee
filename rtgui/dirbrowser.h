@@ -69,7 +69,7 @@ private:
 
     bool expandSuccess;
 
-#ifdef WIN32
+#ifdef _WIN32
     unsigned int volumes;
 public:
     void updateVolumes ();

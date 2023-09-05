@@ -86,7 +86,7 @@
 #ifdef __CYGWIN__
 #include <io.h>
 #endif
-#ifdef WIN32
+#ifdef _WIN32
 #include <sys/utime.h>
 #include <winsock2.h>
 #ifndef strcasecmp
@@ -4516,7 +4516,7 @@ mask_set:
 //      free (fname);
 //      if (errno != ERANGE) return;
 //    }
-//#if defined(WIN32) || defined(DJGPP)
+//#if defined(_WIN32) || defined(DJGPP)
 //    if (fname[1] == ':')
 //      memmove (fname, fname+2, len-2);
 //    for (cp=fname; *cp; cp++)

@@ -22,7 +22,7 @@
 // get mmap() sorted out
 #ifdef MYFILE_MMAP
 
-#ifdef WIN32
+#ifdef _WIN32
 
 #include <fcntl.h>
 #include <windows.h>
@@ -59,13 +59,13 @@ int munmap(void *start, size_t length)
 #pragma GCC diagnostic pop
 #endif
 
-#else // WIN32
+#else // _WIN32
 
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/mman.h>
 
-#endif // WIN32
+#endif // _WIN32
 #endif // MYFILE_MMAP
 
 #ifdef MYFILE_MMAP
@@ -74,7 +74,7 @@ rtengine::IMFILE* rtengine::fopen (const char* fname)
 {
     int fd;
 
-#ifdef WIN32
+#ifdef _WIN32
 
     fd = -1;
     // First convert UTF8 to UTF16, then use Windows function to open the file and convert back to file descriptor.

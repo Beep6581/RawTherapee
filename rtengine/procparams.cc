@@ -67,7 +67,7 @@ Glib::ustring expandRelativePath(const Glib::ustring &procparams_fname, const Gl
 
 Glib::ustring expandRelativePath2(const Glib::ustring &procparams_fname, const Glib::ustring &procparams_fname2, const Glib::ustring &prefix, Glib::ustring embedded_fname)
 {
-	#if defined (WIN32)
+	#if defined (_WIN32)
 	// if this is Windows, replace any "/" in the filename with "\\"
 	size_t pos = embedded_fname.find("/");
 	while (pos != string::npos) {
@@ -75,7 +75,7 @@ Glib::ustring expandRelativePath2(const Glib::ustring &procparams_fname, const G
 		pos = embedded_fname.find("/", pos);
 	}
 	#endif
-	#if !defined (WIN32)
+	#if !defined (_WIN32)
 	// if this is not Windows, replace any "\\" in the filename with "/"
 	size_t pos = embedded_fname.find("\\");
 	while (pos != string::npos) {
@@ -10244,7 +10244,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
         if (keyFile.has_group("Film Simulation")) {
             assignFromKeyfile(keyFile, "Film Simulation", "Enabled", pedited, filmSimulation.enabled, pedited->filmSimulation.enabled);
 			assignFromKeyfile(keyFile, "Film Simulation", "ClutFilename", pedited, filmSimulation.clutFilename, pedited->filmSimulation.clutFilename);
-			#if defined (WIN32)
+			#if defined (_WIN32)
 			// if this is Windows, replace any "/" in the filename with "\\"
 			size_t pos = filmSimulation.clutFilename.find("/");
 			while (pos != string::npos) {
@@ -10252,7 +10252,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 				pos = filmSimulation.clutFilename.find("/", pos);
 			}
 			#endif
-			#if !defined (WIN32)
+			#if !defined (_WIN32)
 			// if this is not Windows, replace any "\\" in the filename with "/"
 			size_t pos = filmSimulation.clutFilename.find("\\");
 			while (pos != string::npos) {

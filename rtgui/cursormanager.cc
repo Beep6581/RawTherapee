@@ -57,7 +57,7 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWindow)
         return cursor;
     };
 
-    cAdd        = createCursor("crosshair-small", Gdk::PLUS);
+    cAdd        = createCursor("crosshair-hicontrast", Gdk::PLUS);
     cAddPicker  = createCursor("color-picker-add-hicontrast", Gdk::PLUS, -0.333, 0.75);
     cCropDraw   = createCursor("crop-point-hicontrast", Gdk::DIAMOND_CROSS);
     cCrosshair  = createCursor("crosshair-hicontrast", Gdk::CROSSHAIR);

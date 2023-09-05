@@ -16,6 +16,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+#include <algorithm>
+#include <array>
 #include <clocale>
 
 #include <lcms2.h>
@@ -63,6 +65,84 @@ bool checkRawImageThumb (const rtengine::RawImage& raw_image)
         : raw_image.get_thumbLength();
 
     return raw_image.get_thumbOffset() + length <= raw_image.get_file()->size;
+}
+
+/**
+ * Apply the black level adjustments in the processing parameters.
+ *
+ * @param cblack The original black levels that will be modified.
+ * @param sensorType Sensor type.
+ * @param rawParams Subset of processing parameters for raw data.
+ */
+void adjustBlackLevels(float cblack[4], rtengine::eSensorType sensorType, const rtengine::RAWParams *rawParams)
+{
+    if (!rawParams) {
+        return;
+    }
+
+    std::array<float, 4> black_adjust{0.f, 0.f, 0.f, 0.f};
+
+    switch (sensorType) {
+        case rtengine::eSensorType::ST_BAYER:
+        case rtengine::eSensorType::ST_FOVEON:
+            black_adjust[0] = static_cast<float>(rawParams->bayersensor.black1); // R
+            black_adjust[1] = static_cast<float>(rawParams->bayersensor.black0); // G1
+            black_adjust[2] = static_cast<float>(rawParams->bayersensor.black2); // B
+            black_adjust[3] = static_cast<float>(rawParams->bayersensor.black3); // G2
+            break;
+        case rtengine::eSensorType::ST_FUJI_XTRANS:
+            black_adjust[0] = static_cast<float>(rawParams->xtranssensor.blackred);
+            black_adjust[1] = static_cast<float>(rawParams->xtranssensor.blackgreen);
+            black_adjust[2] = static_cast<float>(rawParams->xtranssensor.blackblue);
+            black_adjust[3] = static_cast<float>(rawParams->xtranssensor.blackgreen);
+            break;
+        case rtengine::eSensorType::ST_NONE:
+            break;
+    }
+
+    for (int i = 0; i < black_adjust.size(); i++) {
+        cblack[i] = std::max(0.f, cblack[i] + black_adjust[i]);
+    }
+}
+
+/**
+ * Calculate the new scale multipliers based on new black levels.
+ *
+ * @param scale_mul The original scale multipliers to be adjusted.
+ * @param pre_mul Pre-multipliers.
+ * @param c_black Updated black levels.
+ * @param isMono Is the image using mono demosaicing?
+ * @param ri Pointer to the raw image.
+ */
+void calculate_scale_mul(float scale_mul[4], const float pre_mul_[4], const float c_black[4], bool isMono, const rtengine::RawImage *ri)
+{
+    std::array<float, 4> c_white;
+
+    for (int i = 0; i < c_white.size(); ++i) {
+        c_white[i] = static_cast<float>(ri->get_white(i));
+    }
+
+    if (isMono || ri->get_colors() == 1) {
+        for (int c = 0; c < 4; c++) {
+            scale_mul[c] = 65535.f / (c_white[c] - c_black[c]);
+        }
+    } else {
+        std::array<float, 4> pre_mul;
+
+        for (int c = 0; c < 4; c++) {
+            pre_mul[c] = pre_mul_[c];
+        }
+
+        if (pre_mul[3] == 0) {
+            pre_mul[3] = pre_mul[1]; // G2 == G1
+        }
+
+        float maxpremul = std::max(std::max(std::max(pre_mul[0], pre_mul[1]), pre_mul[2]), pre_mul[3]);
+
+        for (int c = 0; c < 4; c++) {
+            scale_mul[c] = (pre_mul[c] / maxpremul) * 65535.f / (c_white[c] - c_black[c]);
+        }
+    }
 }
 
 
@@ -519,7 +599,7 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, eSensorType 
 #define FISGREEN(filter,row,col) \
     ((filter >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==1 || !filter)
 
-Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, eSensorType &sensorType, int &w, int &h, int fixwh, double wbEq, StandardObserver wbObserver, bool rotate, bool forHistogramMatching)
+Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, eSensorType &sensorType, int &w, int &h, int fixwh, double wbEq, StandardObserver wbObserver, bool rotate, const RAWParams *rawParams, bool forHistogramMatching)
 {
     RawImage *ri = new RawImage (fname);
     unsigned int tempImageNum = 0;
@@ -562,8 +642,15 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, eSensorType &sens
     tpp->greenMultiplier = ri->get_pre_mul (1);
     tpp->blueMultiplier = ri->get_pre_mul (2);
 
+    bool isMono =
+        (ri->getSensorType() == ST_FUJI_XTRANS &&
+            rawParams->xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO)) ||
+        (ri->getSensorType() == ST_BAYER &&
+            rawParams->bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO));
     float pre_mul[4], scale_mul[4], cblack[4];
     ri->get_colorsCoeff (pre_mul, scale_mul, cblack, false);
+    adjustBlackLevels(cblack, sensorType, rawParams);
+    calculate_scale_mul(scale_mul, pre_mul, cblack, isMono, ri);
     scale_colors (ri, scale_mul, cblack, forHistogramMatching); // enable multithreading when forHistogramMatching is true
 
     ri->pre_interpolate();
@@ -1434,6 +1521,50 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
     ipf.softLight(labView, params.softlight);
 
+    if (params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE) {
+        const int GW = labView->W;
+        const int GH = labView->H;
+        std::unique_ptr<LabImage> provis;
+        const float pres = 0.01f * params.icm.preser;
+        if (pres > 0.f && params.icm.wprim != ColorManagementParams::Primaries::DEFAULT) {
+            provis.reset(new LabImage(GW, GH));
+            provis->CopyFrom(labView);
+        }
+
+        const std::unique_ptr<Imagefloat> tmpImage1(new Imagefloat(GW, GH));
+
+        ipf.lab2rgb(*labView, *tmpImage1, params.icm.workingProfile);
+
+        const float gamtone = params.icm.workingTRCGamma;
+        const float slotone = params.icm.workingTRCSlope;
+
+        int illum = toUnderlying(params.icm.will);
+        const int prim = toUnderlying(params.icm.wprim);
+
+        Glib::ustring prof = params.icm.workingProfile;
+
+        cmsHTRANSFORM dummy = nullptr;
+        int ill = 0;
+        ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, ill, 0, dummy, true, false, false);
+        ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, illum, prim, dummy, false, true, true);
+
+        ipf.rgb2lab(*tmpImage1, *labView, params.icm.workingProfile);
+        // labView and provis
+        if(provis) {
+            ipf.preserv(labView, provis.get(), GW, GH);
+        }
+        if(params.icm.fbw) {
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+        for (int x = 0; x < GH; x++)
+            for (int y = 0; y < GW; y++) {
+                labView->a[x][y] = 0.f;
+                labView->b[x][y] = 0.f;
+            }
+        }
+
+    }
 
     if (params.colorappearance.enabled) {
         CurveFactory::curveLightBrightColor (

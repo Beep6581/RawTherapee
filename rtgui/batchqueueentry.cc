@@ -51,7 +51,7 @@ BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine:
 
     thumbnail = thm;
 
-#if 1 //ndef WIN32
+#if 1 //ndef _WIN32
     // The BatchQueueEntryIdleHelper tracks if an entry has been deleted while it was sitting waiting for "idle"
     bqih = new BatchQueueEntryIdleHelper;
     bqih->bqentry = this;

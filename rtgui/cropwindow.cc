@@ -17,7 +17,7 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <iomanip>
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
 #endif
 
@@ -1499,7 +1499,7 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
 
             // While the Right-side ALT is pressed, auto-enable highlight and shadow clipping indicators
             // TODO: Add linux/MacOS specific functions for alternative
-#ifdef WIN32
+#ifdef _WIN32
 
             if (GetKeyState(VK_RMENU) < 0) {
                 showcs = true;

@@ -2135,7 +2135,7 @@ Camera constants:
     { // Quality C
         "make_model": "OLYMPUS E-M10MarkIV",
         "dcraw_matrix": [ 9476, -3182, -765, -2613, 10958, 1893, -449, 1315, 5268 ],
-        "range": { "white": 4000, "black": 254 }
+        "ranges": { "white": 4000 }
     },
 
     { // Quality A, white level correction
@@ -2199,6 +2199,17 @@ Camera constants:
            { "frame" : [10400, 7792], "crop": [0, 0, 10390, 7792] },
            { "frame" : [8180, 6132], "crop": [0, 0, 8172, 6132] },
            { "frame" : [5220, 3912], "crop": [0, 0, 5220, 3912] }
+        ]
+    },
+
+    { // Quality X
+        "make_model": ["OM Digital Solutions OM-5"],
+        "dcraw_matrix": [ 11896, -5110, -1076, -3181, 11378, 2048, -519, 1224, 5166 ], // ColorMatrix2 using illuminant D65 from Adobe DNG Converter 15.0
+        "ranges": { "white": 3825 },
+        "raw_crop" : [
+           { "frame" : [8200, 6132], "crop": [0, 0, 8172, 6132] },
+           { "frame" : [5240, 3912], "crop": [0, 0, 5240, 3912] },
+           { "frame" : [10400, 7792], "crop": [0, 0, 10390, 7792] }
         ]
     },
 

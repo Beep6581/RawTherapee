@@ -262,7 +262,7 @@ void ExternalEditorPreferences::onFileChooserDialogResponse(
                     false;
 #endif
                 row[model_columns.command] =
-#ifdef WIN32
+#ifdef _WIN32
                     '"' + dialog->get_filename() + '"';
 #else
                     Glib::shell_quote(dialog->get_filename());
@@ -311,7 +311,7 @@ void ExternalEditorPreferences::openFileChooserDialog()
     const auto exe_filter = Gtk::FileFilter::create();
     exe_filter->set_name(M("FILECHOOSER_FILTER_EXECUTABLE"));
     exe_filter->add_custom(Gtk::FILE_FILTER_MIME_TYPE, [](const Gtk::FileFilter::Info &info) {
-#ifdef WIN32
+#ifdef _WIN32
         return info.mime_type == "application/x-msdownload";
 #else
         return Gio::content_type_can_be_executable(info.mime_type);

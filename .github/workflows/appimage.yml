@@ -10,8 +10,10 @@ on:
     branches:
       - dev
   workflow_dispatch:
+
 env:
   publish_pre_dev_labels: '[]'
+
 jobs:
   build:
     runs-on: ubuntu-20.04
@@ -21,7 +23,7 @@ jobs:
         build_type: [release]
     steps:
       - name: Checkout source
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -104,7 +106,7 @@ jobs:
 
       - name: Restore AppImage tools from cache
         id: appimage-tools-cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           key: appimage-tools-1
           path: |
@@ -157,7 +159,7 @@ jobs:
           echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> $GITHUB_ENV
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ${{env.ARTIFACT_NAME}}.AppImage
           path: ${{github.workspace}}/build/${{env.ARTIFACT_NAME}}.AppImage

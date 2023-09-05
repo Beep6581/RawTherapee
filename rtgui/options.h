@@ -40,7 +40,7 @@
 #define THEMEREGEXSTR      "^(.+)\\.css$"
 
 // Default bundled profile name to use for Raw images
-#ifdef WIN32
+#ifdef _WIN32
 #define DEFPROFILE_RAW      "${G}\\Auto-Matched Curve - ISO Low"
 #else
 #define DEFPROFILE_RAW      "${G}/Auto-Matched Curve - ISO Low"

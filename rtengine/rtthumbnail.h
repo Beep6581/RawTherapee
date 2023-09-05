@@ -99,7 +99,7 @@ public:
     void     getDimensions  (int& w, int& h, double& scaleFac);
 
     static Thumbnail* loadQuickFromRaw (const Glib::ustring& fname, eSensorType &sensorType, int &w, int &h, int fixwh, bool rotate, bool inspectorMode = false, bool forHistogramMatching = false);
-    static Thumbnail* loadFromRaw (const Glib::ustring& fname, eSensorType &sensorType, int &w, int &h, int fixwh, double wbEq, StandardObserver wbObserver, bool rotate, bool forHistogramMatching=false);
+    static Thumbnail* loadFromRaw (const Glib::ustring& fname, eSensorType &sensorType, int &w, int &h, int fixwh, double wbEq, StandardObserver wbObserver, bool rotate, const RAWParams *rawParams, bool forHistogramMatching=false);
     static Thumbnail* loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh, double wbEq, StandardObserver wbObserver, bool inspectorMode = false);
 
     void getCamWB     (double& temp, double& green, StandardObserver observer);

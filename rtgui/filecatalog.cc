@@ -1332,11 +1332,11 @@ bool FileCatalog::isInTabMode() const
 void FileCatalog::categoryButtonToggled (Gtk::ToggleButton* b, bool isMouseClick)
 {
 
-    //was control key pressed
-    bool control_down = modifierKey & GDK_CONTROL_MASK;
+    //was control key pressed (ignored if was not mouse click)
+    bool control_down = modifierKey & GDK_CONTROL_MASK && isMouseClick;
 
-    //was shift key pressed
-    bool shift_down   = modifierKey & GDK_SHIFT_MASK;
+    //was shift key pressed (ignored if was not mouse click)
+    bool shift_down   = modifierKey & GDK_SHIFT_MASK && isMouseClick;
 
     // The event is process here, we can clear modifierKey now, it'll be set again on the next even
     modifierKey = 0;
@@ -2242,7 +2242,7 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
 
 #ifdef __WIN32__
 
-    if (!alt && !shift && !altgr) { // shift is reserved for ranking
+    if (!alt && shift && !altgr) {
         switch(event->hardware_keycode) {
         case 0x30:
             categoryButtonToggled(bUnRanked, false);
@@ -2330,7 +2330,7 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
 
 #else
 
-    if (!alt && !shift && !altgr) { // shift is reserved for ranking
+    if (!alt && shift && !altgr) {
         switch(event->hardware_keycode) {
         case 0x13:
             categoryButtonToggled(bUnRanked, false);
