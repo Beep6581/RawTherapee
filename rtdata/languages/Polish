@@ -343,7 +343,7 @@ HISTORY_MSG_108;Próg kompresji prześwietleń
 HISTORY_MSG_109;Zmiana rozmiaru - Wymiary obwodu
 HISTORY_MSG_110;Zmiana rozmiaru dotyczy
 HISTORY_MSG_111;L*a*b* - Unikaj przycinania koloru
-HISTORY_MSG_112;-
+HISTORY_MSG_112;--nieużywane--
 HISTORY_MSG_113;L*a*b* - Ograniczenie nasyczenia
 HISTORY_MSG_114;DCB - Liczba powtórzeń
 HISTORY_MSG_115;DCB - Zapobieganie fałszowaniu koloru
@@ -458,7 +458,7 @@ HISTORY_MSG_231;B&amp;W - Krzywa 'Przed'
 HISTORY_MSG_232;B&amp;W - Rodzaj krzywej 'Przed'
 HISTORY_MSG_233;B&amp;W - Krzywa 'Po'
 HISTORY_MSG_234;B&amp;W - Rodzaj krzywej 'Po'
-HISTORY_MSG_236;-
+HISTORY_MSG_236;--nieużywane--
 HISTORY_MSG_238;FP - Wtapianie
 HISTORY_MSG_239;FP - Siła
 HISTORY_MSG_240;FP - Środek
@@ -494,7 +494,7 @@ HISTORY_MSG_270;Koloryzacja - Podświetlenia - Zielona
 HISTORY_MSG_271;Koloryzacja - Podświetlenia - Niebieskie
 HISTORY_MSG_272;Koloryzacja - Balans
 HISTORY_MSG_276;Koloryzacja - Przezroczystość
-HISTORY_MSG_277;--unused--
+HISTORY_MSG_277;--nieużywane--
 HISTORY_MSG_278;Koloryzacja - Zachowaj luminancję
 HISTORY_MSG_279;Koloryzacja - Cienie
 HISTORY_MSG_280;Koloryzacja - Tony jasne
@@ -1924,154 +1924,155 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!CURVEEDITOR_EDITPOINT_HINT;Enable edition of node in/out values.\n\nRight-click on a node to select it.\nRight-click on empty space to de-select the node.
-!DYNPROFILEEDITOR_EDIT_RULE;Edit Dynamic Profile Rule
-!DYNPROFILEEDITOR_ENTRY_TOOLTIP;The matching is case insensitive.\nUse the 're:' prefix to enter\na regular expression.
-!DYNPROFILEEDITOR_IMGTYPE_PS;Pixel Shift
-!DYNPROFILEEDITOR_NEW_RULE;New Dynamic Profile Rule
-!ERROR_MSG_METADATA_VALUE;Metadata: error setting %1 to %2
-!EXIFFILTER_PATH;File path
-!EXIFPANEL_ACTIVATE_ALL_HINT;Select all tags
-!EXIFPANEL_ACTIVATE_NONE_HINT;Unselect all tags
-!EXIFPANEL_BASIC_GROUP;Basic
-!EXIFPANEL_VALUE_NOT_SHOWN;Not shown
-!EXPORT_BYPASS;Processing steps to bypass
-!EXPORT_BYPASS_EQUALIZER;Bypass Wavelet Levels
-!EXPORT_PIPELINE;Processing pipeline
-!EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
-!EXPORT_USE_FAST_PIPELINE_TOOLTIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
-!EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
-!FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply 'find' keywords.
-!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to <b>permanently</b> delete all <b>%1</b> files in trash?
-!FILEBROWSER_DELETEDIALOG_SELECTED;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files?
-!FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files, <b>including</b> a queue-processed version?
-!FILEBROWSER_POPUPINSPECT;Inspect
-!FILEBROWSER_POPUPREMOVEINCLPROC;Delete permanently, including queue-processed version
-!FILEBROWSER_POPUPSORTBY;Sort Files
-!FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
-!FILECHOOSER_FILTER_EXECUTABLE;Executable files
-!GENERAL_DELETE_ALL;Delete all
-!GENERAL_EDIT;Edit
-!GENERAL_OTHER;Other
-!GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
-!HISTOGRAM_TOOLTIP_CROSSHAIR;Show/Hide indicator crosshair.
-!HISTOGRAM_TOOLTIP_MODE;Toggle between linear, log-linear and log-log scaling of the histogram.
-!HISTOGRAM_TOOLTIP_SHOW_OPTIONS;Toggle visibility of the scope option buttons.
-!HISTOGRAM_TOOLTIP_TRACE_BRIGHTNESS;Adjust scope brightness.
-!HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM;Histogram
-!HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM_RAW;Raw Histogram
-!HISTOGRAM_TOOLTIP_TYPE_PARADE;RGB Parade
-!HISTOGRAM_TOOLTIP_TYPE_VECTORSCOPE_HC;Hue-Chroma Vectorscope
-!HISTOGRAM_TOOLTIP_TYPE_VECTORSCOPE_HS;Hue-Saturation Vectorscope
-!HISTOGRAM_TOOLTIP_TYPE_WAVEFORM;Waveform
-!HISTORY_MSG_235;B&amp;W - CM - Auto
-!HISTORY_MSG_237;B&amp;W - CM
-!HISTORY_MSG_273;CT - Color Balance SMH
-!HISTORY_MSG_305;Wavelet Levels
-!HISTORY_MSG_310;W - Residual - Sky tar/prot
-!HISTORY_MSG_311;W - Wavelet levels
-!HISTORY_MSG_313;W - Chroma - Sat/past
-!HISTORY_MSG_314;W - Gamut - Reduce artifacts
-!HISTORY_MSG_316;W - Gamut - Skin tar/prot
-!HISTORY_MSG_327;W - Contrast - Apply to
-!HISTORY_MSG_328;W - Chroma - Link strength
-!HISTORY_MSG_329;W - Toning - Opacity RG
-!HISTORY_MSG_330;W - Toning - Opacity BY
-!HISTORY_MSG_331;W - Contrast levels - Extra
-!HISTORY_MSG_332;W - Tiling method
-!HISTORY_MSG_341;W - Edge performance
-!HISTORY_MSG_342;W - ES - First level
-!HISTORY_MSG_344;W - Meth chroma sl/cur
-!HISTORY_MSG_350;W - ES - Edge detection
-!HISTORY_MSG_351;W - Residual - HH curve
-!HISTORY_MSG_353;W - ES - Gradient sensitivity
-!HISTORY_MSG_354;W - ES - Enhanced
-!HISTORY_MSG_357;W - Denoise - Link with ES
-!HISTORY_MSG_358;W - Gamut - CH
-!HISTORY_MSG_360;TM - Gamma
-!HISTORY_MSG_361;W - Final - Chroma balance
-!HISTORY_MSG_365;W - Final - Delta balance
-!HISTORY_MSG_366;W - Residual - Compression gamma
-!HISTORY_MSG_367;W - Final - 'After' contrast curve
-!HISTORY_MSG_371;Post-Resize Sharpening
-!HISTORY_MSG_375;PRS USM - Sharpen only edges
-!HISTORY_MSG_378;PRS USM - Halo control
-!HISTORY_MSG_379;PRS USM - Halo control amount
-!HISTORY_MSG_383;PRS RLD - Damping
-!HISTORY_MSG_386;W - Residual - CB green high
-!HISTORY_MSG_387;W - Residual - CB blue high
-!HISTORY_MSG_388;W - Residual - CB green mid
-!HISTORY_MSG_389;W - Residual - CB blue mid
-!HISTORY_MSG_390;W - Residual - CB green low
-!HISTORY_MSG_391;W - Residual - CB blue low
-!HISTORY_MSG_393;DCP - Look table
-!HISTORY_MSG_394;DCP - Baseline exposure
-!HISTORY_MSG_395;DCP - Base table
-!HISTORY_MSG_396;W - Contrast sub-tool
-!HISTORY_MSG_397;W - Chroma sub-tool
-!HISTORY_MSG_398;W - ES sub-tool
-!HISTORY_MSG_399;W - Residual sub-tool
-!HISTORY_MSG_400;W - Final sub-tool
-!HISTORY_MSG_401;W - Toning sub-tool
-!HISTORY_MSG_402;W - Denoise sub-tool
-!HISTORY_MSG_403;W - ES - Edge sensitivity
-!HISTORY_MSG_404;W - ES - Base amplification
-!HISTORY_MSG_406;W - ES - Neighboring pixels
-!HISTORY_MSG_412;Retinex - Gaussian gradient
-!HISTORY_MSG_414;Retinex - Histogram - Lab
-!HISTORY_MSG_415;Retinex - Transmission
-!HISTORY_MSG_416;Retinex
-!HISTORY_MSG_417;Retinex - Transmission median
-!HISTORY_MSG_420;Retinex - Histogram - HSL
-!HISTORY_MSG_423;Retinex - Gamma slope
-!HISTORY_MSG_424;Retinex - HL threshold
-!HISTORY_MSG_425;--unused--
-!HISTORY_MSG_427;Output rendering intent
-!HISTORY_MSG_428;Monitor rendering intent
-!HISTORY_MSG_430;Retinex - Transmission gradient
-!HISTORY_MSG_431;Retinex - Strength gradient
-!HISTORY_MSG_433;Retinex - M - Highlights TW
-!HISTORY_MSG_435;Retinex - M - Shadows TW
-!HISTORY_MSG_441;Retinex - Gain transmission
-!HISTORY_MSG_443;Output black point compensation
-!HISTORY_MSG_444;WB - Temp bias
-!HISTORY_MSG_445;Raw Sub-Image
-!HISTORY_MSG_446;--unused--
-!HISTORY_MSG_447;--unused--
-!HISTORY_MSG_448;--unused--
-!HISTORY_MSG_450;--unused--
-!HISTORY_MSG_451;--unused--
-!HISTORY_MSG_454;--unused--
-!HISTORY_MSG_455;--unused--
-!HISTORY_MSG_456;--unused--
-!HISTORY_MSG_457;PS Check red/blue
-!HISTORY_MSG_458;--unused--
-!HISTORY_MSG_459;--unused--
-!HISTORY_MSG_460;--unused--
-!HISTORY_MSG_461;--unused--
-!HISTORY_MSG_462;PS Check green
-!HISTORY_MSG_463;--unused--
-!HISTORY_MSG_464;PS Blur motion mask
-!HISTORY_MSG_466;--unused--
-!HISTORY_MSG_467;--unused--
-!HISTORY_MSG_469;PS Median
-!HISTORY_MSG_470;--unused--
-!HISTORY_MSG_476;CAL - VC - Temperature
-!HISTORY_MSG_477;CAL - VC - Tint
-!HISTORY_MSG_478;CAL - VC - Mean luminance
-!HISTORY_MSG_479;CAL - VC - Adaptation
-!HISTORY_MSG_480;CAL - VC - Auto adaptation
-!HISTORY_MSG_481;CAL - SC - Temperature
-!HISTORY_MSG_482;CAL - SC - Tint
-!HISTORY_MSG_483;CAL - SC - Mean luminance
-!HISTORY_MSG_484;CAL - SC - Auto mean luminance
-!HISTORY_MSG_488;Dynamic Range Compression
-!HISTORY_MSG_493;L*a*b* Adjustments
-!HISTORY_MSG_494;Capture Sharpening
-!HISTORY_MSG_496;Local Spot deleted
-!HISTORY_MSG_497;Local Spot selected
-!HISTORY_MSG_498;Local Spot name
-!HISTORY_MSG_499;Local Spot visibility
+CURVEEDITOR_EDITPOINT_HINT;Włącz edycję wartości węzła.\n\nKliknij prawym przyciskiem myszy w węzeł, aby go wybrać.\nKliknij prawym przyciskiem myszy w pustą przestrzeń, aby odznaczyć węzeł.
+DYNPROFILEEDITOR_EDIT_RULE;Edytuj regułę dynamicznego profilu
+DYNPROFILEEDITOR_ENTRY_TOOLTIP;Wyszukiwanie nie uwzględnia wielkości liter.\nUżyj przedrostka "re:" aby wprowadzić wyrażenie regularne.
+DYNPROFILEEDITOR_IMGTYPE_PS;Pixel Shift
+DYNPROFILEEDITOR_NEW_RULE;Nowa reguła dynamicznego profilu
+ERROR_MSG_METADATA_VALUE;Metadane: błąd ustawiania %1 na %2
+EXIFFILTER_PATH;Ścieżka pliku
+EXIFPANEL_ACTIVATE_ALL_HINT;Zaznacz wszystkie tagi
+EXIFPANEL_ACTIVATE_NONE_HINT;Odznacz wszystkie tagi
+EXIFPANEL_BASIC_GROUP;Podstawowy
+EXIFPANEL_VALUE_NOT_SHOWN;Nie wyświetlane
+EXPORT_BYPASS;Kroki przetwarzania do pominięcia
+EXPORT_BYPASS_EQUALIZER;Omiń poziomy falkowe
+EXPORT_PIPELINE;Rurociąg przetwarzania
+EXPORT_USE_FAST_PIPELINE;Dedykowane (pełne przetwarzanie na zmniejszonym obrazie)
+EXPORT_USE_FAST_PIPELINE_TOOLTIP;Użyj dedykowanego rurociągu przetwarzania obrazu w trybie Szybkiego Eksportu, co przyspieszy proces kosztem jakości. Skalowanie obrazu odbywa się jak najwcześniej, zamiast na końcu, jak w normalnym przetwarzaniu. Przyspieszenie może być znaczne, ale przygotuj się na występowanie artefaktów i ogólną degradację jakości wyjściowej.
+EXPORT_USE_NORMAL_PIPELINE;Standardowe (pominięcie niektórych kroków, skalowanie na końcu)
+FILEBROWSER_BROWSEPATHBUTTONHINT;Kliknij, aby otworzyć wskazaną ścieżkę, odświeżyć folder i zastosować poszukiwane słowa kluczowe.
+FILEBROWSER_DELETEDIALOG_ALL;Czy na pewno chcesz <b>trwale</b> usunąć wszystkie pliki <b>%1</b> w koszu?
+FILEBROWSER_DELETEDIALOG_SELECTED;Czy na pewno chcesz <b>trwale</b> usunąć wybrane pliki <b>%1</b>?
+FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Czy na pewno chcesz <b>trwale</b> usunąć wybrane pliki <b>%1</b>, <b>włącznie</b> z wersją przetworzoną w kolejce?
+FILEBROWSER_POPUPINSPECT;Inspekcja
+FILEBROWSER_POPUPREMOVEINCLPROC;Usuń trwale, włącznie z wersją przetworzoną w kolejce
+FILEBROWSER_POPUPSORTBY;Sortuj pliki
+FILEBROWSER_SHOWORIGINALHINT;Pokaż tylko oryginalne obrazy.\n\nJeśli istnieje wiele obrazów o tej samej nazwie pliku, ale o różnych rozszerzeniach, uważa się za oryginalny ten, którego rozszerzenie jest najbliżej góry listy przetwarzanych rozszerzeń w Preferencje > Przeglądarka plików > Przetwarzane rozszerzenia.
+FILECHOOSER_FILTER_EXECUTABLE;Pliki wykonywalne
+GENERAL_DELETE_ALL;Usuń wszystko
+GENERAL_EDIT;Edytuj
+GENERAL_OTHER;Inne
+GIMP_PLUGIN_INFO;Witaj w wtyczce RawTherapee dla GIMP!\nPo zakończeniu edycji, po prostu zamknij główne okno RawTherapee, a obraz zostanie automatycznie zaimportowany do GIMP.
+HISTOGRAM_TOOLTIP_CROSSHAIR;Pokaż/Ukryj wskaźnik krzyżowy.
+HISTOGRAM_TOOLTIP_MODE;Przełącz między liniową, logarytmiczną-liniową i logarytmiczną-logarytmiczną skalą histogramu.
+HISTOGRAM_TOOLTIP_SHOW_OPTIONS;Przełącz widoczność przycisków opcji widoku.
+HISTOGRAM_TOOLTIP_TRACE_BRIGHTNESS;Dostosuj jasność widoku.
+HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM;Histogram
+HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM_RAW;Histogram raw
+HISTOGRAM_TOOLTIP_TYPE_PARADE;Parada RGB
+HISTOGRAM_TOOLTIP_TYPE_VECTORSCOPE_HC;Wektorskop barwa-chrominancja
+HISTOGRAM_TOOLTIP_TYPE_VECTORSCOPE_HS;Wektorskop barwa-nasycenie
+HISTOGRAM_TOOLTIP_TYPE_WAVEFORM;Wykres przebiegu
+HISTORY_MSG_235;B&amp;W - CM - Auto
+HISTORY_MSG_237;B&amp;W - CM
+HISTORY_MSG_273;CT - Balans kolorów SMH
+HISTORY_MSG_305;Poziomy falkowe
+HISTORY_MSG_310;W - Pozostałe - Ochrona/celowanie odcieni nieba
+HISTORY_MSG_311;W - Poziomy falkowe
+HISTORY_MSG_313;W - Chroma - Nasycone/pastelowe
+HISTORY_MSG_314;W - Gamut - Redukcja artefaktów
+HISTORY_MSG_316;W - Gamut - Ochrona/celowanie odcieni skóry
+HISTORY_MSG_327;W - Kontrast - Zastosuj do
+HISTORY_MSG_328;W - Chroma - Siła łączenia
+HISTORY_MSG_329;W - Odcienie - Przezroczystość RG
+HISTORY_MSG_330;W - Odcienie - Przezroczystość BY
+HISTORY_MSG_331;W - Poziomy kontrastu - Dodatkowe
+HISTORY_MSG_332;W - Metoda kafelkowania
+HISTORY_MSG_341;W - Wydajność krawędzi
+HISTORY_MSG_342;W - ES - Pierwszy poziom
+HISTORY_MSG_344;W - Metoda chroma sl/cur
+HISTORY_MSG_350;W - ES - Wykrywanie krawędzi
+HISTORY_MSG_351;W - Pozostałe - Krzywa HH
+HISTORY_MSG_353;W - ES - Czułość gradientu
+HISTORY_MSG_354;W - ES - Rozszerzone
+HISTORY_MSG_357;W - Redukcja szumów - Połącz z ES
+HISTORY_MSG_358;W - Gamut - CH
+HISTORY_MSG_360;TM - Gamma
+HISTORY_MSG_361;W - Ostateczne - Balans chrominancji
+HISTORY_MSG_365;W - Ostateczne - Balans delta
+HISTORY_MSG_366;W - Pozostałe - Gamma kompresji
+HISTORY_MSG_367;W - Ostateczne - Krzywa kontrastu 'Po'
+HISTORY_MSG_371;Wyostrzanie po zmianie rozmiaru
+HISTORY_MSG_375;PRS USM - Wyostrzanie tylko krawędzi
+HISTORY_MSG_378;PRS USM - Kontrola aureoli
+HISTORY_MSG_379;PRS USM - Wartość kontroli aureoli
+HISTORY_MSG_383;PRS RLD - Tłumienie
+HISTORY_MSG_386;W - Pozostałe - Zielony wyższy balans CB
+HISTORY_MSG_387;W - Pozostałe - Niebieski wyższy balans CB
+HISTORY_MSG_388;W - Pozostałe - Zielony średni balans CB
+HISTORY_MSG_389;W - Pozostałe - Niebieski średni balans CB
+HISTORY_MSG_390;W - Pozostałe - Zielony niższy balans CB
+HISTORY_MSG_391;W - Pozostałe - Niebieski niższy balans CB
+HISTORY_MSG_393;DCP - Tabela wyglądu
+HISTORY_MSG_394;DCP - Ekspozycja bazowa
+HISTORY_MSG_395;DCP - Tabela bazowa
+HISTORY_MSG_396;W - Narzędzie do kontrastu
+HISTORY_MSG_397;W - Narzędzie do chrominancji
+HISTORY_MSG_398;W - Narzędzie ES
+HISTORY_MSG_399;W - Narzędzie pozostałe
+HISTORY_MSG_400;W - Narzędzie ostateczne
+HISTORY_MSG_401;W - Narzędzie do tonowania
+HISTORY_MSG_402;W - Narzędzie redukcji szumów
+HISTORY_MSG_403;W - ES - Czułość krawędzi
+HISTORY_MSG_404;W - ES - Wzmocnienie bazowe
+HISTORY_MSG_406;W - ES - Sąsiednie piksele
+HISTORY_MSG_412;Retinex - Gradient Gaussa
+HISTORY_MSG_414;Retinex - Histogram - Lab
+HISTORY_MSG_415;Retinex - Transmisja
+HISTORY_MSG_416;Retinex
+HISTORY_MSG_417;Retinex - Mediana transmisji
+HISTORY_MSG_420;Retinex - Histogram - HSL
+HISTORY_MSG_423;Retinex - Pochylenie gamma
+HISTORY_MSG_424;Retinex - Prog HL
+HISTORY_MSG_425;--nieużywane--
+HISTORY_MSG_427;Sposób renderowania wynikowego
+HISTORY_MSG_428;Sposób renderowania na monitorze
+HISTORY_MSG_430;Retinex - Gradient transmisji
+HISTORY_MSG_431;Retinex - Gradient siły
+HISTORY_MSG_433;Retinex - M - Wysokie światła TW
+HISTORY_MSG_435;Retinex - M - Cienie TW
+HISTORY_MSG_441;Retinex - Wzmocnienie transmisji
+HISTORY_MSG_443;Kompensacja czerni wyjściowej
+HISTORY_MSG_444;WB - Odchylenie temperatury
+HISTORY_MSG_445;Podobraz raw
+HISTORY_MSG_446;--nieużywane--
+HISTORY_MSG_447;--nieużywane--
+HISTORY_MSG_448;--nieużywane--
+HISTORY_MSG_450;--nieużywane--
+HISTORY_MSG_451;--nieużywane--
+HISTORY_MSG_454;--nieużywane--
+HISTORY_MSG_455;--nieużywane--
+HISTORY_MSG_456;--nieużywane--
+HISTORY_MSG_457;PS Sprawdź czerwony/niebieski
+HISTORY_MSG_458;--nieużywane--
+HISTORY_MSG_459;--nieużywane--
+HISTORY_MSG_460;--nieużywane--
+HISTORY_MSG_461;--nieużywane--
+HISTORY_MSG_462;PS Sprawdź zielony
+HISTORY_MSG_463;--nieużywane--
+HISTORY_MSG_464;PS Rozmyj maskę ruchu
+HISTORY_MSG_466;--nieużywane--
+HISTORY_MSG_467;--nieużywane--
+HISTORY_MSG_469;PS Mediana
+HISTORY_MSG_470;--nieużywane--
+HISTORY_MSG_476;KAL - VC - Temperatura
+HISTORY_MSG_477;KAL - VC - Odcień
+HISTORY_MSG_478;KAL - VC - Średnia luminancja
+HISTORY_MSG_479;KAL - VC - Adaptacja
+HISTORY_MSG_480;KAL - VC - Automatyczna adaptacja
+HISTORY_MSG_481;KAL - SC - Temperatura
+HISTORY_MSG_482;KAL - SC - Odcień
+HISTORY_MSG_483;KAL - SC - Średnia luminancja
+HISTORY_MSG_484;KAL - SC - Automatyczna średnia luminancja
+HISTORY_MSG_488;Kompresja zakresu dynamicznego
+HISTORY_MSG_493;Korekty w przestrzeni barw L*a*b*
+HISTORY_MSG_494;Wyostrzanie po przechwyceniu
+HISTORY_MSG_496;Usunięto lokalny punkt
+HISTORY_MSG_497;Wybrano lokalny punkt
+HISTORY_MSG_498;--nieużywane--
+HISTORY_MSG_499;--nieużywane--
+
 !HISTORY_MSG_500;Local Spot shape
 !HISTORY_MSG_501;Local Spot method
 !HISTORY_MSG_502;Local Spot shape method
