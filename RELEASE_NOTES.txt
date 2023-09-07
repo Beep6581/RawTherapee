@@ -1,6 +1,6 @@
-RAWTHERAPEE 5.9-dev RELEASE NOTES
+RAWTHERAPEE 5.10-beta1 RELEASE NOTES
 
-This is a development version of RawTherapee. We update the code almost daily. Every few months, once enough changes have accumulated and the code is stabilized, we make a new official release. Every code change between these releases is known as a "development" version, and this is one of them.
+This is beta1 of RawTherapee 5.10, released on 2023-09-08. This is not the final release yet.
 
 
 
@@ -33,11 +33,12 @@ NEW FEATURES SINCE 5.9
 NEWS RELEVANT TO PACKAGE MAINTAINERS
 
 New since 5.9:
+- Dependency on Exiv2 >= 0.24.
 - TODO
 
 In general:
 - To get the source code, either clone from git or use the tarball from https://rawtherapee.com/shared/source/ . Do not use the auto-generated GitHub release tarballs.
-- Requires GTK+ version >=3.16, though >=3.22.24 is recommended.
+- Requires GTK+ version >=3.22.24 in Windows, else >=3.16 (though >=3.22.24 is recommended).
 - GTK+ versions 3.24.2 - 3.24.6 have an issue where combobox menu scroll-arrows are missing when the combobox list does not fit vertically on the screen. As a result, users would not be able to scroll in the following comboboxes: Processing Profiles, Film Simulation, and the camera and lens profiles in Profiled Lens Correction.
 - RawTherapee 5 requires GCC-4.9 or higher, or Clang.
 - Do not use -ffast-math, it will not make RawTherapee faster but will introduce artifacts.
