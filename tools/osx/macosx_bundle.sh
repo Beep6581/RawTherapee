@@ -468,4 +468,8 @@ function CreateDmg {
 
 CreateDmg
 msg "Finishing build:"
+# Clean up items
+rm *app.zip
+rm *dmg.zip
+rm univ.zip
 echo "Script complete."
