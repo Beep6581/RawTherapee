@@ -2817,7 +2817,6 @@ TP_LOCALLAB_BUTTON_DUPL;Duplicate
 TP_LOCALLAB_BUTTON_REN;Rename
 TP_LOCALLAB_BUTTON_VIS;Show/Hide
 TP_LOCALLAB_BWEVNONE;None
-//TP_LOCALLAB_BWEVSIG;Sigmoid only
 TP_LOCALLAB_BWEVSIG;Activated
 TP_LOCALLAB_BWEVSIGLOG;Sigmoid & Log-Encoding
 TP_LOCALLAB_BWFORCE;Uses Black Ev & White Ev
@@ -3139,8 +3138,7 @@ TP_LOCALLAB_LOGAUTO_TOOLTIP;Pressing this button will calculate the dynamic rang
 TP_LOCALLAB_LOGBASE_TOOLTIP;Default = 2.\nValues less than 2 reduce the action of the algorithm making the shadows darker and the highlights brighter.\nWith values greater than 2, the shadows are grayer and the highlights become more washed out.
 TP_LOCALLAB_LOGCATAD_TOOLTIP;Chromatic adaptation allows us to interpret a color according to its spatio-temporal environment.\nUseful when the white balance deviates significantly from the D50 reference.\nAdapts colors to the illuminant of the output device.
 TP_LOCALLAB_LOGCIE;Log encoding
-TP_LOCALLAB_LOGCIE_TOOLTIP;Allows you tu use Black Ev, White Ev, Scene Mean luminance(Yb%) and Viewing Mean luminance(Yb%) for tone-mapping using 'Log encoding Q' or 'Sigmoid and Log encoding Q' in Standard and Advanced modes:\n Brightness compression\n Compression threshold\n Auto threshold.
-//TP_LOCALLAB_LOGCIE_TOOLTIP;Allows you tu use Black Ev, White Ev, Scene Mean luminance(Yb%) and Viewing Mean luminance(Yb%) for tone-mapping using 'Log encoding Q' in Standard and Advanced modes:\n Brightness compression\n Compression threshold\n Auto threshold.
+TP_LOCALLAB_LOGCIE_TOOLTIP;Allows you tu use Black Ev, White Ev, Scene Mean luminance(Yb%) and Viewing Mean luminance(Yb%) for tone-mapping using 'Log encoding Q' in Standard and Advanced modes:\n -Brightness compression\n -Compression threshold\n -Auto threshold.
 TP_LOCALLAB_LOGCOLORFL;Colorfulness (M)
 TP_LOCALLAB_LOGCOLORF_TOOLTIP;Perceived amount of hue in relation to gray.\nIndicator that a stimulus appears more or less colored.
 TP_LOCALLAB_LOGCONQL;Contrast (Q)
