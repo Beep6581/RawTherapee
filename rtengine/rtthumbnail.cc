@@ -643,10 +643,11 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, eSensorType &sens
     tpp->blueMultiplier = ri->get_pre_mul (2);
 
     bool isMono =
-        (ri->getSensorType() == ST_FUJI_XTRANS &&
-            rawParams->xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO)) ||
-        (ri->getSensorType() == ST_BAYER &&
-            rawParams->bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO));
+        rawParams &&
+        ((ri->getSensorType() == ST_FUJI_XTRANS &&
+             rawParams->xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO)) ||
+            (ri->getSensorType() == ST_BAYER &&
+                rawParams->bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO)));
     float pre_mul[4], scale_mul[4], cblack[4];
     ri->get_colorsCoeff (pre_mul, scale_mul, cblack, false);
     adjustBlackLevels(cblack, sensorType, rawParams);
