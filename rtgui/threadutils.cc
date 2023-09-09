@@ -29,9 +29,13 @@
 
 MyMutex::MyMutex() : locked(false) {}
 
-void MyMutex::checkLock ()
+bool MyMutex::checkLock (bool noError)
 {
     if (locked) {
+        if (noError) {
+            return false;
+        }
+
         std::cerr << "MyMutex already locked!" << std::endl;
 
 #ifdef _WIN32
@@ -42,6 +46,7 @@ void MyMutex::checkLock ()
     }
 
     locked = true;
+    return true;
 }
 
 void MyMutex::checkUnlock ()
