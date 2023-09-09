@@ -59,7 +59,7 @@ public:
 
 private:
     bool locked;
-    void checkLock ();
+    bool checkLock (bool noError=false);
     void checkUnlock ();
 #endif
 };
@@ -172,10 +172,10 @@ inline bool MyMutex::trylock ()
 {
     if (MyMutexBase::try_lock ()) {
 #if STRICT_MUTEX && !NDEBUG
-        checkLock ();
-#endif
-
+        return checkLock(true);
+#else
         return true;
+#endif
     }
 
     return false;
