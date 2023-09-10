@@ -59,7 +59,7 @@ public:
 
 private:
     bool locked;
-    bool checkLock (bool noError=false);
+    bool checkLock (bool noError = false);
     void checkUnlock ();
 #endif
 };
