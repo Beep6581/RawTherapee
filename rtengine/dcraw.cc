@@ -7649,8 +7649,6 @@ void CLASS parse_fuji (int offset)
 
   fseek (ifp, offset, SEEK_SET);
   entries = get4();
-  int read_crop_c = 0;                                                  // RT
-  bool read_crop_dimensions = false;                                    // RT
   if (entries > 255) return;
   while (entries--) {
     tag = get2();
@@ -7673,7 +7671,7 @@ void CLASS parse_fuji (int offset)
       FORC(36) xtrans_abs[0][35-c] = fgetc(ifp) & 3;
     } else if (tag == 0x2ff0) {
       FORC4 cam_mul[c ^ 1] = get2();
-    } else if (tag == 0xc000 && len > 20000 && !read_crop_dimensions) { // RT
+    } else if (tag == 0xc000 && len > 20000) {
       c = order;
       order = 0x4949;
       while ((tag = get4()) > raw_width);
@@ -7682,21 +7680,27 @@ void CLASS parse_fuji (int offset)
       order = c;
     // RawImageCroppedSize 0x111 = 273 	(including borders)                RT
     } else if (tag == 0x111) {                                          // RT
-      height = read_crop.height = get2();                               // RT
-      width = read_crop.width = get2();                                 // RT
-      read_crop_dimensions = true;                                      // RT
-      read_crop_c += 2;                                                 // RT
+      read_crop.height = get2();                                        // RT
+      read_crop.width = get2();                                         // RT
       // RawImageTopLeft 0x110 = 272 (top margin first, then left margin)  RT
     } else if (tag == 0x110){                                           // RT
       read_crop.top_margin = get2();                                    // RT
       read_crop.left_margin = get2();                                   // RT
-      read_crop_c += 2;                                                 // RT
     }                                                                   // RT
     // 0x115 = 277 RawImageAspectRatio                                     RT
     // 0x9650 = 38480 RawExposureBias                                      RT
 
     fseek (ifp, save+len, SEEK_SET);
   }
+
+  if (read_crop.crop_mode)                // RT
+  {                                       // RT
+    height = read_crop.height;            // RT
+    width = read_crop.width;              // RT
+    top_margin = read_crop.top_margin;    // RT
+    left_margin = read_crop.left_margin;  // RT
+  }                                       // RT
+
   height <<= fuji_layout;
   width  >>= fuji_layout;
 }
