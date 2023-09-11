@@ -560,8 +560,7 @@ int RawImage::loadRaw(bool loadData, unsigned int imageNum, bool closeFile, Prog
                 raw_crop_cc = true;
                 int lm, tm, w, h;
                 cc->get_rawCrop(raw_width, raw_height, lm, tm, w, h);
-                is_cropped = read_crop.complete && (raw_width - read_crop.width > is_cropped_margin || raw_height - read_crop.height > is_cropped_margin);  // RT
-                if (is_cropped){                                                                                                                            // RT
+                if (read_crop.crop_mode){                                                                                                                   // RT
                     left_margin = read_crop.left_margin;                                                                                                    // RT
                     top_margin = read_crop.top_margin;                                                                                                      // RT
                     tm = 0;                                                                                                                                 // RT
@@ -576,10 +575,10 @@ int RawImage::loadRaw(bool loadData, unsigned int imageNum, bool closeFile, Prog
                     }
                 }
 
-                if (!is_cropped) {      // RT
+                if (!read_crop.crop_mode) { // RT
                     left_margin = lm;
                     top_margin = tm;
-                }                       // RT
+                }                           // RT
 
                 if (w < 0) {
                     iwidth += w;

@@ -5775,6 +5775,8 @@ nf: order = 0x4949;
       cam_mul[0] = get2() / 256.0;
     if (tag == 0x1018 || tag == 0x20400100)
       cam_mul[2] = get2() / 256.0;
+    if (tag == 0x104D)
+        read_crop.crop_mode = (CropMode)get2();
     if (tag == 0x2011 && len == 2) {
 get2_256:
       order = 0x4d4d;
@@ -7697,7 +7699,6 @@ void CLASS parse_fuji (int offset)
   }
   height <<= fuji_layout;
   width  >>= fuji_layout;
-  read_crop.complete = read_crop_c == 4;                                // RT
 }
 
 int CLASS parse_jpeg (int offset)
@@ -10153,12 +10154,12 @@ canon_a5:
         width = raw_width = 6016;
         height = raw_height = 4014;
     } else if (!strcmp(model, "X-Pro3") || !strcmp(model, "X-T3") || !strcmp(model, "X-T30") || !strcmp(model, "X-T4") || !strcmp(model, "X100V") || !strcmp(model, "X-S10")) {
-        constexpr std::uint_fast16_t x_width = 6384, x_height = 4182;                                                               // RT
-        is_cropped = read_crop.complete && (x_width - raw_width > is_cropped_margin || x_height - raw_height > is_cropped_margin);  // RT
-        if (!is_cropped) {                                                                                                          // RT
-            width = raw_width = x_width;                                                                                            // RT
-            height = raw_height = x_height;                                                                                         // RT
-        }                                                                                                                           // RT
+        raw_width = 6384;           // RT
+        raw_height = 4182;          // RT
+        if (!read_crop.crop_mode) { // RT
+            width = 6384;           // RT
+            height = 4182;          // RT
+        }                           // RT
     } else if (!strcmp(model, "DBP for GX680")) { // Special case for #4204
         width = raw_width = 5504;
         height = raw_height = 3856;
