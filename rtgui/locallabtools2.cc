@@ -7753,8 +7753,6 @@ Locallabcie::Locallabcie():
     modeHBoxbwev->pack_start(*bwevMethod);
     gamcieBox->pack_start(*gamjcie);
     gamcieBox->pack_start(*slopjcie);
-//    gamcieBox->pack_start(*whitescie);
-//    gamcieBox->pack_start(*blackscie);
     gamcieBox->pack_start(*wprimBox);
     gamcieBox->pack_start(*catBox);
 
@@ -8468,7 +8466,8 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         comprcieth->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDQJCOMPRCIE_TOOLTIP"));
         gamjcie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDTRCCIE_TOOLTIP"));
         slopjcie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDTRCCIE_TOOLTIP"));
-        //whitescie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP"));
+        whitescie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP"));
+        blackscie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP"));
         normcie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDNORMCIE_TOOLTIP"));
         trccie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDTRCCIE_TOOLTIP"));
         sigmoidblcie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDNORMCIEBLEND_TOOLTIP"));
@@ -8540,7 +8539,8 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         comprcieth->set_tooltip_text("");
         gamjcie->set_tooltip_text("");
         slopjcie->set_tooltip_text("");
-        //whitescie->set_tooltip_text("");
+        whitescie->set_tooltip_text("");
+        blackscie->set_tooltip_text("");
         //modeHBoxbwev->set_tooltip_text("");
         normcie->set_tooltip_text("");
         trccie->set_tooltip_text("");
