@@ -2341,9 +2341,14 @@ void ImProcFunctions::tone_eqcam2(ImProcFunctions *ipf, Imagefloat *rgb, int whi
     params.bands[0] = blacks;
     int bla = abs(blacks);
     int threshblawhi = 50;
+    int threshblawhi2 = 70;
     if(bla > threshblawhi) {
         params.bands[1] = sign(blacks) * (bla - threshblawhi);
     }
+    if(bla > threshblawhi2) {
+        params.bands[2] = sign(blacks) * (bla - threshblawhi2);
+    }
+    
     params.bands[4] = whits;
     int whi = abs(whits);
     if(whi > threshblawhi) {
@@ -19871,7 +19876,7 @@ void ImProcFunctions::Lab_Local(
                 }
 
                 if (params->locallab.spots.at(sp).trccie) {
-                    double scal = (double)(sk);
+                   // double scal = (double)(sk);
                     Imagefloat *tmpImage = nullptr;
                     tmpImage = new Imagefloat(bfw, bfh);
                     lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);

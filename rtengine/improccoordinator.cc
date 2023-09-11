@@ -1182,6 +1182,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 delete [] targetg;
                 delete [] sourceab;
                 delete [] whits;
+                delete [] blacks;
                 delete [] sourceg;
                 delete [] cie;
                 delete [] log;
