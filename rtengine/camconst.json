@@ -1571,7 +1571,10 @@ Camera constants:
     { // Quality A, samples provided by Daniel Catalina (#5839) and pi99y (#5860)
         "make_model": [ "FUJIFILM X-T3", "FUJIFILM X-PRO3" ],
         "dcraw_matrix": [ 13426,-6334,-1177,-4244,12136,2371,-580,1303,5980 ], // DNG_v11, standard_v2 d65
-        "raw_crop": [ 0, 5, 6252, 4176],
+        "raw_crop" : [
+           { "frame" : [6384, 4182], "crop": [ 0, 5, 6252, 4176] },
+           { "frame" : [6384, 3348], "crop": [624, 0, 5004, 3348] }
+        ],
         "white": [ 16170, 16275, 16170 ] // typical safe-margins with LENR
         // negligible aperture scaling effect
     },

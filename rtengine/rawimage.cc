@@ -560,12 +560,6 @@ int RawImage::loadRaw(bool loadData, unsigned int imageNum, bool closeFile, Prog
                 raw_crop_cc = true;
                 int lm, tm, w, h;
                 cc->get_rawCrop(raw_width, raw_height, lm, tm, w, h);
-                if (read_crop.crop_mode){                                                                                                                   // RT
-                    left_margin = read_crop.left_margin;                                                                                                    // RT
-                    top_margin = read_crop.top_margin;                                                                                                      // RT
-                    tm = 0;                                                                                                                                 // RT
-                    lm = 0;                                                                                                                                 // RT
-                }                                                                                                                                           // RT
 
                 if (isXtrans()) {
                     shiftXtransMatrix(6 - ((top_margin - tm) % 6), 6 - ((left_margin - lm) % 6));
@@ -575,10 +569,8 @@ int RawImage::loadRaw(bool loadData, unsigned int imageNum, bool closeFile, Prog
                     }
                 }
 
-                if (!read_crop.crop_mode) { // RT
-                    left_margin = lm;
-                    top_margin = tm;
-                }                           // RT
+                left_margin = lm;
+                top_margin = tm;
 
                 if (w < 0) {
                     iwidth += w;
