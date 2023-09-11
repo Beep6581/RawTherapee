@@ -7658,6 +7658,15 @@ void CLASS parse_fuji (int offset)
     if (tag == 0x100) {
       raw_height = get2();
       raw_width  = get2();
+    // RawImageCroppedSize 0x111 = 273 	(including borders)                RT
+    } else if (tag == 0x111) {                                          // RT
+      read_crop.height = get2();                                        // RT
+      read_crop.width = get2();                                         // RT
+      // RawImageTopLeft 0x110 = 272 (top margin first, then left margin)  RT
+    } else if (tag == 0x110){                                           // RT
+      read_crop.top_margin = get2();                                    // RT
+      read_crop.left_margin = get2();                                   // RT
+    // 0x115 = 277 RawImageAspectRatio                                     RT
     } else if (tag == 0x121) {
       height = get2();
       if ((width = get2()) == 4284) width += 3;
@@ -7678,16 +7687,7 @@ void CLASS parse_fuji (int offset)
       width = tag;
       height = get4();
       order = c;
-    // RawImageCroppedSize 0x111 = 273 	(including borders)                RT
-    } else if (tag == 0x111) {                                          // RT
-      read_crop.height = get2();                                        // RT
-      read_crop.width = get2();                                         // RT
-      // RawImageTopLeft 0x110 = 272 (top margin first, then left margin)  RT
-    } else if (tag == 0x110){                                           // RT
-      read_crop.top_margin = get2();                                    // RT
-      read_crop.left_margin = get2();                                   // RT
-    }                                                                   // RT
-    // 0x115 = 277 RawImageAspectRatio                                     RT
+    }
     // 0x9650 = 38480 RawExposureBias                                      RT
 
     fseek (ifp, save+len, SEEK_SET);
