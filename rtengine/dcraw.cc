@@ -7113,8 +7113,8 @@ void CLASS apply_tiff()
     (unsigned)tiff_ifd[i].bps < 33 && (unsigned)tiff_ifd[i].samples < 13 && // RT
 	 ns && ((ns > os && (ties = 1)) ||
 		(ns == os && shot_select == ties++))) {
-      raw_width     = read_crop.complete ? read_crop.width : tiff_ifd[i].width;   // RT
-      raw_height    = read_crop.complete ? read_crop.height : tiff_ifd[i].height; // RT
+      raw_width     = tiff_ifd[i].width;
+      raw_height    = tiff_ifd[i].height;
       tiff_bps      = tiff_ifd[i].bps;
       tiff_compress = tiff_ifd[i].comp;
       data_offset   = tiff_ifd[i].offset;
@@ -7680,8 +7680,8 @@ void CLASS parse_fuji (int offset)
       order = c;
     // RawImageCroppedSize 0x111 = 273 	(including borders)                RT
     } else if (tag == 0x111) {                                          // RT
-      height = raw_height = read_crop.height = get2();                  // RT
-      width = raw_width = read_crop.width = get2();                     // RT
+      height = read_crop.height = get2();                               // RT
+      width = read_crop.width = get2();                                 // RT
       read_crop_dimensions = true;                                      // RT
       read_crop_c += 2;                                                 // RT
       // RawImageTopLeft 0x110 = 272 (top margin first, then left margin)  RT
