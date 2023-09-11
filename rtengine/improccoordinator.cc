@@ -1082,6 +1082,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 Autogr = new bool[sizespot];
                 bool *autocie = nullptr;
                 autocie = new bool[sizespot];
+                int *whits = nullptr;
+                whits = new int[sizespot];
+                int *blacks = nullptr;
+                blacks = new int[sizespot];
 
 
                 float *locx = nullptr;
@@ -1106,6 +1110,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     whiteev[sp] = params->locallab.spots.at(sp).whiteEv;
                     sourceg[sp] = params->locallab.spots.at(sp).sourceGray;
                     sourceab[sp] = params->locallab.spots.at(sp).sourceabs;
+                    whits[sp] = params->locallab.spots.at(sp).whitescie;
+                    blacks[sp] = params->locallab.spots.at(sp).blackscie;
                     Autogr[sp] = params->locallab.spots.at(sp).Autogray;
                     targetg[sp] = params->locallab.spots.at(sp).targetGray;
                     locx[sp] = params->locallab.spots.at(sp).loc.at(0) / 2000.0;
@@ -1143,7 +1149,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                             xend = 1.f;
                         }
 
-                        ipf.getAutoLogloc(sp, imgsrc, sourceg, blackev, whiteev, Autogr, sourceab, fw, fh, xsta, xend, ysta, yend, SCALE);
+                        ipf.getAutoLogloc(sp, imgsrc, sourceg, blackev, whiteev, Autogr, sourceab, whits, blacks, fw, fh, xsta, xend, ysta, yend, SCALE);
                         params->locallab.spots.at(sp).blackEv = blackev[sp];
                         params->locallab.spots.at(sp).whiteEv = whiteev[sp];
                         params->locallab.spots.at(sp).blackEvjz = blackev[sp];
@@ -1152,6 +1158,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         params->locallab.spots.at(sp).sourceabs = sourceab[sp];
                         params->locallab.spots.at(sp).sourceGraycie = sourceg[sp];
                         params->locallab.spots.at(sp).sourceabscie = sourceab[sp];
+                        params->locallab.spots.at(sp).whitescie = whits[sp];
+                        params->locallab.spots.at(sp).blackscie = blacks[sp];
                         float jz1 = defSpot.jz100;
 
                         if (locallListener) {
@@ -1173,6 +1181,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 delete [] blackev;
                 delete [] targetg;
                 delete [] sourceab;
+                delete [] whits;
                 delete [] sourceg;
                 delete [] cie;
                 delete [] log;

@@ -2162,7 +2162,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
     }
 }
 
-void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg, float *blackev, float *whiteev, bool *Autogr, float *sourceab,  int fw, int fh, float xsta, float xend, float ysta, float yend, int SCALE)
+void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg, float *blackev, float *whiteev, bool *Autogr, float *sourceab,  int *whits,  int *blacks, int fw, int fh, float xsta, float xend, float ysta, float yend, int SCALE)
 {
     //BENCHFUN
 //adpatation to local adjustments Jacques Desmis 12 2019 and 11 2021 (from ART)
@@ -2191,7 +2191,10 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
     array2D<float> YY(www, hhh);
 
     double mean = 0.0;
-    int nc = 0;
+    int nc = 0;     
+    int whit = -whits[sp];
+    int blac = -blacks[sp];
+    ImProcFunctions::tone_eqcam2(this, &img, whit, blac, params->icm.workingProfile, SCALE, multiThread);
 
     for (int y = hsta; y < hend; ++y) {
         for (int x = wsta; x < wend; ++x) {
@@ -2326,6 +2329,27 @@ void tone_eqcam(ImProcFunctions *ipf, Imagefloat *rgb, const struct local_params
     if(lp.whitescie < -60) {
         params.bands[3] = 0.8f * (lp.whitescie + 60);
     }
+    ipf->toneEqualizer(rgb, params, workingProfile, scale, multithread);
+}
+
+void ImProcFunctions::tone_eqcam2(ImProcFunctions *ipf, Imagefloat *rgb, int whits, int blacks, const Glib::ustring &workingProfile, double scale, bool multithread)
+{
+    ToneEqualizerParams params;
+    params.enabled = true;
+    params.regularization = 0.f;
+    params.pivot = 0.f;
+    params.bands[0] = blacks;
+    int bla = abs(blacks);
+    int threshblawhi = 50;
+    if(bla > threshblawhi) {
+        params.bands[1] = sign(blacks) * (bla - threshblawhi);
+    }
+    params.bands[4] = whits;
+    int whi = abs(whits);
+    if(whi > threshblawhi) {
+        params.bands[3] = sign(whits) * (whi - threshblawhi);
+    }
+    
     ipf->toneEqualizer(rgb, params, workingProfile, scale, multithread);
 }
 
@@ -19852,7 +19876,7 @@ void ImProcFunctions::Lab_Local(
                     tmpImage = new Imagefloat(bfw, bfh);
                     lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
                     Glib::ustring prof = params->icm.workingProfile;
-                    tone_eqcam(this, tmpImage, lp, params->icm.workingProfile, scal, multiThread);
+                    //tone_eqcam(this, tmpImage, lp, params->icm.workingProfile, scal, multiThread);
 
                     float gamtone = params->locallab.spots.at(sp).gamjcie;
                     float slotone = params->locallab.spots.at(sp).slopjcie;

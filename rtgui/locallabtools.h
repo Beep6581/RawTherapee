@@ -77,6 +77,7 @@ protected:
     rtengine::ProcEvent Evlocallabprimcie;
     rtengine::ProcEvent Evlocallabcatcie;
     rtengine::ProcEvent Evlocallabwhitescie;
+    rtengine::ProcEvent Evlocallabblackscie;
 
     // LocallabTool parameters
     bool needMode;
@@ -1636,6 +1637,7 @@ private:
     Adjuster* const gamjcie;
     Adjuster* const slopjcie;
     Adjuster* const whitescie;
+    Adjuster* const blackscie;
     Gtk::Box* wprimBox;
     MyComboBoxText* const primMethod;
     Gtk::Box* catBox;

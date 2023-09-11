@@ -1699,6 +1699,7 @@ struct LocallabParams {
         double gamjcie;
         double slopjcie;
         int whitescie;
+        int blackscie;
         Glib::ustring primMethod;
         Glib::ustring catMethod;
         double sigmoidldajzcie;
