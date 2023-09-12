@@ -9598,14 +9598,14 @@ void Locallabcie::sigqChanged()
 {
     if (sigq->get_active()) {
         sigBox->show();
-        whitescie->show();
-        blackscie->show();
+        whitescie->set_sensitive(true);
+        blackscie->set_sensitive(true);
        
     } else {
         //sigBox->hide();
         sigBox->show();
-        whitescie->hide();
-        blackscie->hide();
+        whitescie->set_sensitive(false);
+        blackscie->set_sensitive(false);
    }
 
     if (isLocActivated && exp->getEnabled()) {
