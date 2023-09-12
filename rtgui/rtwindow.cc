@@ -821,7 +821,6 @@ bool RTWindow::on_delete_event (GdkEventAny* event)
     }
     
     // Ask user "Do you really want to quit RawTherapee?"
-    GtkDialogFlags diaflags = GTK_DIALOG_MODAL;
     Gtk::MessageDialog d = Gtk::MessageDialog (*this, M("MAIN_MSG_QUIT"), GTK_DIALOG_MODAL, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_OK_CANCEL, true);
     int sigresp;
     sigresp = d.run();
