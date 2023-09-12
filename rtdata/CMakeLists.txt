@@ -6,7 +6,7 @@ file(GLOB DCPFILES "dcpprofiles/*")
 
 set(PROFILESDIR "profiles")
 set(THEMEDIR "themes")
-set(ICONSDIR "icons")
+set(ICONTHEMEDIR "icons")
 set(IMAGESDIR "images")
 
 if(WIN32)
@@ -24,6 +24,7 @@ endif()
 if(UNIX)
     configure_file("${CMAKE_CURRENT_SOURCE_DIR}/rawtherapee.desktop.in" "${CMAKE_CURRENT_BINARY_DIR}/rawtherapee.desktop")
     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/rawtherapee.desktop" DESTINATION ${DESKTOPDIR})
+    install(DIRECTORY "${ICONTHEMEDIR}/hicolor" DESTINATION "${ICONSDIR}")
 endif()
 
 install(FILES ${LANGUAGEFILES} DESTINATION "${DATADIR}/languages")
@@ -35,7 +36,7 @@ install(FILES ${OPTIONSFILE} DESTINATION "${DATADIR}" PERMISSIONS OWNER_WRITE OW
 
 install(DIRECTORY "${PROFILESDIR}" DESTINATION "${DATADIR}" FILES_MATCHING PATTERN "*.pp3")
 install(DIRECTORY "${THEMEDIR}" DESTINATION "${DATADIR}")
-install(DIRECTORY "${ICONSDIR}" DESTINATION "${DATADIR}")
+install(DIRECTORY "${ICONTHEMEDIR}/rawtherapee" DESTINATION "${DATADIR}/${ICONTHEMEDIR}")
 install(DIRECTORY "${IMAGESDIR}" DESTINATION "${DATADIR}")
 
 if(APPLE)
