@@ -7693,7 +7693,7 @@ void CLASS parse_fuji (int offset)
     fseek (ifp, save+len, SEEK_SET);
   }
 
-  if ((std::uint_fast16_t)read_crop.crop_mode) {  // RT
+  if (read_crop.crop_mode != CropMode::NA) {      // RT
     height = read_crop.height;                    // RT
     width = read_crop.width;                      // RT
     top_margin = read_crop.top_margin;            // RT
@@ -10159,7 +10159,7 @@ canon_a5:
     } else if (!strcmp(model, "X-Pro3") || !strcmp(model, "X-T3") || !strcmp(model, "X-T30") || !strcmp(model, "X-T4") || !strcmp(model, "X100V") || !strcmp(model, "X-S10")) {
         raw_width = 6384;           // RT
         raw_height = 4182;          // RT
-        if (!(std::uint_fast16_t)read_crop.crop_mode) { // RT
+        if (read_crop.crop_mode != CropMode::NA) {      // RT
             width = raw_width;                          // RT
             height = raw_height;                        // RT
         }                                               // RT
