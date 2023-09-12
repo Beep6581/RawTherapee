@@ -1464,6 +1464,8 @@ HISTORY_MSG_LOCAL_CIEMASK_STRU;Local Cie mask structure
 HISTORY_MSG_LOCAL_CIEMASK_STRU_TOOL;Local Cie mask structure as tool
 HISTORY_MSG_LOCAL_CIEMASK_WLC;Local CIECAM mask wavelet Lc
 HISTORY_MSG_LOCAL_CIEMASK_WLEV;Local CIECAM mask wavelet levels
+HISTORY_MSG_LOCAL_LOG_WHITES;Local Log - Whites distribution
+HISTORY_MSG_LOCAL_LOG_BLACKS;Local Log - Blacks distribution
 HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
 HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
 HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
@@ -3453,7 +3455,7 @@ TP_LOCALLAB_SIGSLOPJCIE;Slope
 TP_LOCALLAB_SIGTRCCIE;TRC
 TP_LOCALLAB_SIGBLACKSSCIE;Blacks distribution
 TP_LOCALLAB_SIGWHITESCIE;Whites distribution
-TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP;Allows you, when the dynamic range of the image is high, to change the distribution of lights in whites and deep blacks.\nCan be used with Sigmoid: log encoding or Black Ev and White Ev enabled
+TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP;Allows you, when the dynamic range of the image is high, to change the distribution of lights in whites and deep blacks.\nCan be used with Log encoding or Sigmoid with Black Ev and White Ev enabled.\n\nThe algorithm does not change the basic data, but acts on the components necessary to calculate the Dynamic range, Black Ev, White Ev and the Gray point.
 TP_LOCALLAB_SLOMASKCOL;Slope
 TP_LOCALLAB_SLOMASK_TOOLTIP;Adjusting Gamma and Slope can provide a soft and artifact-free transformation of the mask by progressively modifying 'L' to avoid any discontinuities.
 TP_LOCALLAB_SLOSH;Slope

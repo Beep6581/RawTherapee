@@ -2166,6 +2166,7 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
 {
     //BENCHFUN
 //adpatation to local adjustments Jacques Desmis 12 2019 and 11 2021 (from ART)
+// improvment white aand black toen_eqcam 9 2023 
     const PreviewProps pp(0, 0, fw, fh, SCALE);
 
     Imagefloat img(int(fw / SCALE + 0.5), int(fh / SCALE + 0.5));

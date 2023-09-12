@@ -5293,8 +5293,8 @@ LocallabLog::LocallabLog():
 
 {
     auto m = ProcEventMapper::getInstance();
-    Evlocallabwhiteslog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_WHITES");
-    Evlocallabblackslog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_BLACKS");
+    Evlocallabwhiteslog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_LOG_WHITES");
+    Evlocallabblackslog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_LOG_BLACKS");
     
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -5562,6 +5562,9 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
         exprecovl->set_tooltip_markup(M("TP_LOCALLAB_MASKRELOG_TOOLTIP"));
         blackEv->set_tooltip_text("");
         whiteEv->set_tooltip_text("");
+        whiteslog->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP"));
+        blackslog->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP"));
+        
         sourceGray->set_tooltip_text(M("TP_LOCALLAB_JZLOGYBOUT_TOOLTIP"));
         sourceabs->set_tooltip_text(M("TP_COLORAPP_ADAPSCEN_TOOLTIP"));
         targabs->set_tooltip_text(M("TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP"));
@@ -5641,6 +5644,8 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
         decayl->set_tooltip_text("");
         lowthresl->set_tooltip_text("");
         higthresl->set_tooltip_text("");
+        whiteslog->set_tooltip_text("");
+        blackslog->set_tooltip_text("");
 
     }
 }
@@ -6569,6 +6574,8 @@ void LocallabLog::updateLogGUI()
         blackEv->set_sensitive(false);
         whiteEv->set_sensitive(false);
         sourceGray->set_sensitive(false);
+        blackslog->set_sensitive(true);
+        whiteslog->set_sensitive(true);
 
         if (mode == Expert || mode == Normal) {
             sourceabs->set_sensitive(false);
@@ -6579,6 +6586,8 @@ void LocallabLog::updateLogGUI()
         blackEv->set_sensitive(true);
         whiteEv->set_sensitive(true);
         sourceGray->set_sensitive(true);
+        blackslog->set_sensitive(false);
+        whiteslog->set_sensitive(false);
 
         if (mode == Expert || mode == Normal) {
             sourceabs->set_sensitive(true);
