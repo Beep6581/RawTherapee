@@ -1571,6 +1571,8 @@ struct LocallabParams {
         bool ciecam;
         double blackEv;
         double whiteEv;
+        int whiteslog;
+        int blackslog;
         double detail;
         int sensilog;
         Glib::ustring sursour;

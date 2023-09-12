@@ -944,6 +944,8 @@ public:
         bool ciecam;
         bool blackEv;
         bool whiteEv;
+        bool whiteslog;
+        bool blackslog;
         bool detail;
         bool sursour;
         bool surround;

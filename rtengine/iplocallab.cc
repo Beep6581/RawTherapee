@@ -2162,7 +2162,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
     }
 }
 
-void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg, float *blackev, float *whiteev, bool *Autogr, float *sourceab,  int *whits,  int *blacks, int fw, int fh, float xsta, float xend, float ysta, float yend, int SCALE)
+void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg, float *blackev, float *whiteev, bool *Autogr, float *sourceab,  int *whits,  int *blacks, int *whitslog,  int *blackslog, int fw, int fh, float xsta, float xend, float ysta, float yend, int SCALE)
 {
     //BENCHFUN
 //adpatation to local adjustments Jacques Desmis 12 2019 and 11 2021 (from ART)
@@ -2189,12 +2189,22 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
     int www = int(fw / SCALE + 0.5);
     int hhh = int(fh / SCALE + 0.5);
     array2D<float> YY(www, hhh);
-
     double mean = 0.0;
     int nc = 0;     
+
     int whit = -whits[sp];
     int blac = -blacks[sp];
-    ImProcFunctions::tone_eqcam2(this, &img, whit, blac, params->icm.workingProfile, SCALE, multiThread);
+
+    if(params->locallab.spots.at(sp).expcie && params->locallab.spots.at(sp).Autograycie) {
+        ImProcFunctions::tone_eqcam2(this, &img, whit, blac, params->icm.workingProfile, SCALE, multiThread);
+    }
+
+    int whitlog = -whitslog[sp];
+    int blaclog = -blackslog[sp];
+    
+    if(params->locallab.spots.at(sp).explog && params->locallab.spots.at(sp).autocompute) {
+        ImProcFunctions::tone_eqcam2(this, &img, whitlog, blaclog, params->icm.workingProfile, SCALE, multiThread);
+    }
 
     for (int y = hsta; y < hend; ++y) {
         for (int x = wsta; x < wend; ++x) {

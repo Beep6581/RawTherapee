@@ -1651,6 +1651,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).repar = locallab.spots.at(j).repar && pSpot.repar == otherSpot.repar;
                 locallab.spots.at(j).blackEv = locallab.spots.at(j).blackEv && pSpot.blackEv == otherSpot.blackEv;
                 locallab.spots.at(j).whiteEv = locallab.spots.at(j).whiteEv && pSpot.whiteEv == otherSpot.whiteEv;
+                locallab.spots.at(j).whiteslog = locallab.spots.at(j).whiteslog && pSpot.whiteslog == otherSpot.whiteslog;
+                locallab.spots.at(j).blackslog = locallab.spots.at(j).blackslog && pSpot.blackslog == otherSpot.blackslog;
                 locallab.spots.at(j).detail = locallab.spots.at(j).detail && pSpot.detail == otherSpot.detail;
                 locallab.spots.at(j).sursour = locallab.spots.at(j).sursour && pSpot.sursour == otherSpot.sursour;
                 locallab.spots.at(j).surround = locallab.spots.at(j).surround && pSpot.surround == otherSpot.surround;
@@ -5623,6 +5625,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).whiteEv = mods.locallab.spots.at(i).whiteEv;
         }
 
+        if (locallab.spots.at(i).whiteslog) {
+            toEdit.locallab.spots.at(i).whiteslog = mods.locallab.spots.at(i).whiteslog;
+        }
+
+        if (locallab.spots.at(i).blackslog) {
+            toEdit.locallab.spots.at(i).blackslog = mods.locallab.spots.at(i).blackslog;
+        }
+
         if (locallab.spots.at(i).detail) {
             toEdit.locallab.spots.at(i).detail = mods.locallab.spots.at(i).detail;
         }
@@ -8147,6 +8157,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     ciecam(v),
     blackEv(v),
     whiteEv(v),
+    whiteslog(v),
+    blackslog(v),
     detail(v),
     sursour(v),
     surround(v),
@@ -8869,6 +8881,8 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     ciecam = v;
     blackEv = v;
     whiteEv = v;
+    whiteslog = v;
+    blackslog = v;
     detail = v;
     sursour = v;
     surround = v;

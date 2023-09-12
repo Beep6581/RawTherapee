@@ -292,7 +292,7 @@ enum class BlurType {
     //3 functions from Alberto Griggio, adapted J.Desmis 2019
     void filmGrain(Imagefloat *rgb, int isogr, int strengr, int scalegr,float divgr, int bfw, int bfh, int call, int fw, int fh);
     void log_encode(Imagefloat *rgb, struct local_params & lp, bool multiThread, int bfw, int bfh);
-    void getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg, float *blackev, float *whiteev, bool *Autogr, float *sourceab, int *whits, int *blacks, int fw, int fh, float xsta, float xend, float ysta, float yend, int SCALE);
+    void getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg, float *blackev, float *whiteev, bool *Autogr, float *sourceab, int *whits, int *blacks, int *whitslog, int *blackslog, int fw, int fh, float xsta, float xend, float ysta, float yend, int SCALE);
 
     void MSRLocal(int call, int sp, bool fftw, int lum, float** reducDE, LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, LabImage * bufmaskorigreti, float** luminance, const float* const *originalLuminance,
         const int width, const int height, int bfwr, int bfhr, const procparams::LocallabParams &loc, const int skip, const LocretigainCurve &locRETgainCcurve, const LocretitransCurve &locRETtransCcurve,
