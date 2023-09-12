@@ -7693,8 +7693,7 @@ void CLASS parse_fuji (int offset)
     fseek (ifp, save+len, SEEK_SET);
   }
 
-  if (read_crop.crop_mode)                // RT
-  {                                       // RT
+  if (read_crop.crop_mode) {              // RT
     height = read_crop.height;            // RT
     width = read_crop.width;              // RT
     top_margin = read_crop.top_margin;    // RT
@@ -10161,8 +10160,8 @@ canon_a5:
         raw_width = 6384;           // RT
         raw_height = 4182;          // RT
         if (!read_crop.crop_mode) { // RT
-            width = 6384;           // RT
-            height = 4182;          // RT
+            width = raw_width;      // RT
+            height = raw_height;    // RT
         }                           // RT
     } else if (!strcmp(model, "DBP for GX680")) { // Special case for #4204
         width = raw_width = 5504;
