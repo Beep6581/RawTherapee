@@ -76,7 +76,7 @@ public:
     }
 
 protected:
-    enum CropMode : std::uint_fast16_t {                                         // RT
+    enum class CropMode : std::uint_fast16_t {                                   // RT
         NA = 0,                                                                  // RT
         FullFrameOnGfx = 1,                                                      // RT
         SportsFinderMode = 2,                                                    // RT
@@ -88,7 +88,7 @@ protected:
                             height,                                              // RT
                             top_margin,                                          // RT
                             left_margin;                                         // RT
-        CropMode crop_mode = NA;                                                 // RT
+        CropMode crop_mode = CropMode::NA;                                       // RT
     } read_crop;                                                                 // RT
     int exif_base, ciff_base, ciff_len;
     rtengine::IMFILE *ifp;
