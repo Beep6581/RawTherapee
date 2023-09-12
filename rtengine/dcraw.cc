@@ -10159,7 +10159,7 @@ canon_a5:
     } else if (!strcmp(model, "X-Pro3") || !strcmp(model, "X-T3") || !strcmp(model, "X-T30") || !strcmp(model, "X-T4") || !strcmp(model, "X100V") || !strcmp(model, "X-S10")) {
         raw_width = 6384;           // RT
         raw_height = 4182;          // RT
-        if (read_crop.crop_mode != CropMode::NA) {      // RT
+        if (read_crop.crop_mode == CropMode::NA) {      // RT
             width = raw_width;                          // RT
             height = raw_height;                        // RT
         }                                               // RT
