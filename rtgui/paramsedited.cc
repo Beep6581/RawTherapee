@@ -1653,6 +1653,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).whiteEv = locallab.spots.at(j).whiteEv && pSpot.whiteEv == otherSpot.whiteEv;
                 locallab.spots.at(j).whiteslog = locallab.spots.at(j).whiteslog && pSpot.whiteslog == otherSpot.whiteslog;
                 locallab.spots.at(j).blackslog = locallab.spots.at(j).blackslog && pSpot.blackslog == otherSpot.blackslog;
+                locallab.spots.at(j).comprlog = locallab.spots.at(j).comprlog && pSpot.comprlog == otherSpot.comprlog;
                 locallab.spots.at(j).detail = locallab.spots.at(j).detail && pSpot.detail == otherSpot.detail;
                 locallab.spots.at(j).sursour = locallab.spots.at(j).sursour && pSpot.sursour == otherSpot.sursour;
                 locallab.spots.at(j).surround = locallab.spots.at(j).surround && pSpot.surround == otherSpot.surround;
@@ -5633,6 +5634,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).blackslog = mods.locallab.spots.at(i).blackslog;
         }
 
+        if (locallab.spots.at(i).comprlog) {
+            toEdit.locallab.spots.at(i).comprlog = mods.locallab.spots.at(i).comprlog;
+        }
+
         if (locallab.spots.at(i).detail) {
             toEdit.locallab.spots.at(i).detail = mods.locallab.spots.at(i).detail;
         }
@@ -8159,6 +8164,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     whiteEv(v),
     whiteslog(v),
     blackslog(v),
+    comprlog(v),
     detail(v),
     sursour(v),
     surround(v),
@@ -8883,6 +8889,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     whiteEv = v;
     whiteslog = v;
     blackslog = v;
+    comprlog = v;
     detail = v;
     sursour = v;
     surround = v;

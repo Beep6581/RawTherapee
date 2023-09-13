@@ -80,6 +80,7 @@ protected:
     rtengine::ProcEvent Evlocallabblackscie;
     rtengine::ProcEvent Evlocallabwhiteslog;
     rtengine::ProcEvent Evlocallabblackslog;
+    rtengine::ProcEvent Evlocallabcomprlog;
 
     // LocallabTool parameters
     bool needMode;
@@ -1362,6 +1363,7 @@ private:
     Adjuster* const whiteEv;
     Adjuster* const whiteslog;
     Adjuster* const blackslog;
+    Adjuster* const comprlog; 
     Gtk::CheckButton* const fullimage;
     Gtk::Frame* const logFrame;
     Gtk::CheckButton* const Autogray;

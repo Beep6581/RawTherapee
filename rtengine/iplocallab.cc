@@ -832,6 +832,7 @@ struct local_params {
     float mCjz;
     float softrjz;
     bool fftcieMask;
+    float comprlo;
 
 };
 
@@ -1453,6 +1454,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float blurciemask = (float) locallab.spots.at(sp).blurcie;
     float contciemask = (float) locallab.spots.at(sp).contcie;
 
+    lp.comprlo = locallab.spots.at(sp).comprlog;
+
     lp.deltaem = locallab.spots.at(sp).deltae;
     lp.scalereti = scaleret;
     lp.cir = circr;
@@ -2023,7 +2026,9 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
     // BENCHFUN
     const float gray = 0.01f * lp.sourcegray;
     const float shadows_range = lp.blackev;
-
+    const bool comprlog = lp.comprlo  > 0.f;
+    float comprfactorlog = lp.comprlo;
+    float comprthlog = 1.f;
     float dynamic_range = max(lp.whiteev - lp.blackev, 0.5f);
     const float noise = pow_F(2.f, -16.f);
     const float log2 = xlogf(2.f);
@@ -2044,6 +2049,12 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
 
         x = rtengine::max(x, noise);
         x = rtengine::max(x / gray, noise);
+        if (comprlog && x >= comprthlog)
+        {
+                x = intp(comprfactorlog, (std::tanh((x - comprthlog) / comprthlog) + 1.f) * comprthlog, x);
+        }
+        
+        
         x = rtengine::max((xlogf(x) / log2 - shadows_range) / dynamic_range, noise);
         assert(x == x);
 

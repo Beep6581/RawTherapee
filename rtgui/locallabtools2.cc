@@ -5237,6 +5237,7 @@ LocallabLog::LocallabLog():
     whiteEv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WHITE_EV"), 0., 32.0, 0.1, 10.0))),
     whiteslog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGWHITESCIE"), -100, 100, 1, 0))),
     blackslog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGBLACKSSCIE"), -100, 100, 1, 0))),
+    comprlog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIE"), 0., 1., 0.01, 0.5))),
     fullimage(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FULLIMAGE")))),
     logFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGFRA")))),
     Autogray(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AUTOGRAY")))),
@@ -5295,7 +5296,8 @@ LocallabLog::LocallabLog():
     auto m = ProcEventMapper::getInstance();
     Evlocallabwhiteslog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_LOG_WHITES");
     Evlocallabblackslog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_LOG_BLACKS");
-    
+    Evlocallabcomprlog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_LOG_COMPR");
+   
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     // Parameter Log encoding specific widgets
@@ -5311,6 +5313,7 @@ LocallabLog::LocallabLog():
     
     whiteslog->setAdjusterListener(this);
     blackslog->setAdjusterListener(this);
+    comprlog->setAdjusterListener(this);
     
     ciecamconn = ciecam->signal_toggled().connect(sigc::mem_fun(*this, &LocallabLog::ciecamChanged));
 
@@ -5452,6 +5455,7 @@ LocallabLog::LocallabLog():
     logPBox->pack_start(*whiteEv);
     logPBox->pack_start(*whiteslog);
     logPBox->pack_start(*blackslog);
+    logPBox->pack_start(*comprlog);
     logPBox->pack_start(*fullimage);
     logPFrame->add(*logPBox);
     pack_start(*logPFrame);
@@ -5564,6 +5568,7 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
         whiteEv->set_tooltip_text("");
         whiteslog->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP"));
         blackslog->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP"));
+        comprlog->set_tooltip_text(M("TP_LOCALLAB_COMPRLOG_TOOLTIP"));
         
         sourceGray->set_tooltip_text(M("TP_LOCALLAB_JZLOGYBOUT_TOOLTIP"));
         sourceabs->set_tooltip_text(M("TP_COLORAPP_ADAPSCEN_TOOLTIP"));
@@ -5646,6 +5651,7 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
         higthresl->set_tooltip_text("");
         whiteslog->set_tooltip_text("");
         blackslog->set_tooltip_text("");
+        comprlog->set_tooltip_text("");
 
     }
 }
@@ -5720,6 +5726,7 @@ void LocallabLog::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         whiteEv->setValue(spot.whiteEv);
         whiteslog->setValue(spot.whiteslog);
         blackslog->setValue(spot.blackslog);
+        comprlog->setValue(spot.comprlog);
 
         /*        if(whiteEv->getValue() < 1.5){
                     whiteEv->setValue(1.5);
@@ -5813,6 +5820,7 @@ void LocallabLog::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.whiteEv = whiteEv->getValue();
         spot.whiteslog = whiteslog->getIntValue();
         spot.blackslog = blackslog->getIntValue();
+        spot.comprlog = comprlog->getValue();
         spot.fullimage = fullimage->get_active();
         spot.ciecam = ciecam->get_active();
         spot.Autogray = Autogray->get_active();
@@ -6119,6 +6127,7 @@ void LocallabLog::setDefaults(const rtengine::procparams::ProcParams* defParams,
         whiteEv->setDefault(defSpot.whiteEv);
         whiteslog->setDefault(defSpot.whiteslog);
         blackslog->setDefault(defSpot.blackslog);
+        comprlog->setDefault(defSpot.comprlog);
         sourceGray->setDefault(defSpot.sourceGray);
         sourceabs->setDefault(defSpot.sourceabs);
         targabs->setDefault(defSpot.targabs);
@@ -6186,6 +6195,13 @@ void LocallabLog::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged( Evlocallabblackslog,
                                        blackslog->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == comprlog) {
+            if (listener) {
+                listener->panelChanged( Evlocallabcomprlog,
+                                       comprlog->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 

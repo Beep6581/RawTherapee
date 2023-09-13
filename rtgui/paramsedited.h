@@ -946,6 +946,7 @@ public:
         bool whiteEv;
         bool whiteslog;
         bool blackslog;
+        bool comprlog;
         bool detail;
         bool sursour;
         bool surround;

@@ -1573,6 +1573,7 @@ struct LocallabParams {
         double whiteEv;
         int whiteslog;
         int blackslog;
+        double comprlog;
         double detail;
         int sensilog;
         Glib::ustring sursour;
