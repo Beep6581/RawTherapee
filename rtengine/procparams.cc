@@ -4230,7 +4230,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     whiteEv(10.0),
     whiteslog(0),
     blackslog(0),
-    comprlog(0.5),
+    comprlog(0.4),
     detail(0.6),
     sensilog(60),
     sursour("Average"),

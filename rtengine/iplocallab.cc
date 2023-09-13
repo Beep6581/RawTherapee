@@ -2035,6 +2035,13 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
     const float base = lp.targetgray > 1 && lp.targetgray < 100 && dynamic_range > 0 ? find_gray(std::abs(lp.blackev) / dynamic_range, 0.01f * lp.targetgray) : 0.f;
     const float linbase = rtengine::max(base, 2.f);//2 to avoid bad behavior
     TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
+    float ac = -5.f;//max 4
+    float bc = 4.f;
+    if(lp.comprlo < 0.6f) {
+        comprthlog = ac * lp.comprlo + bc;
+    } else {
+        comprthlog = 1.f;
+    }
 
     if (settings->verbose) {
         printf("Base Log encoding std=%5.1f\n", (double) linbase);
