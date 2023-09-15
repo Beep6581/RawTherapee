@@ -1141,19 +1141,19 @@ void ToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, const 
     // Locallab spot curves are set visible if at least one photo has been loaded (to avoid
     // segfault) and locallab panel is active
     // When a new photo is loaded, Locallab spot curves need to be set visible again
-const auto func =
-    [this]() -> bool
-    {
-        if (photoLoadedOnce && (toolPanelNotebook->get_nth_page(toolPanelNotebook->get_current_page()) == locallabPanelSW)) {
-            locallab->subscribe();
-       }
+	const auto func =
+		[this]() -> bool
+		{
+			if (photoLoadedOnce && (toolPanelNotebook->get_nth_page(toolPanelNotebook->get_current_page()) == locallabPanelSW)) {
+				locallab->subscribe();
+		   }
 
-        return false;
-    };
+			return false;
+		};
 
-if (event == rtengine::EvPhotoLoaded) {
-    idle_register.add(func);
-}
+	if (event == rtengine::EvPhotoLoaded) {
+		idle_register.add(func);
+	}
 
     photoLoadedOnce = true;
 
