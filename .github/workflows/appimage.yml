@@ -32,7 +32,7 @@ jobs:
           echo "Running apt update."
           sudo apt update
           echo "Installing dependencies with apt."
-          DEBIAN_FRONTEND=noninteractive sudo apt install -y cmake libgtk-3-dev libgtkmm-3.0-dev liblensfun-dev librsvg2-dev liblcms2-dev libfftw3-dev libiptcdata0-dev libtiff5-dev libcanberra-gtk3-dev liblensfun-bin libexpat1-dev libbrotli-dev zlib1g-dev libinih-dev
+          DEBIAN_FRONTEND=noninteractive sudo apt install -y cmake libgtk-3-dev libgtkmm-3.0-dev liblensfun-dev librsvg2-dev liblcms2-dev libfftw3-dev libiptcdata0-dev libtiff5-dev libcanberra-gtk3-dev liblensfun-bin libexpat1-dev libbrotli-dev zlib1g-dev libinih-dev adwaita-icon-theme-full
 
       - name: Install Exiv2
         run: |
@@ -123,6 +123,27 @@ jobs:
           mkdir -p build/AppDir/usr/share/lensfun
           echo "Copying Lensfun database to the build directory."
           cp -R ~/.local/share/lensfun/updates/* build/AppDir/usr/share/lensfun/
+
+      - name: Include Adwaita icon theme (partial)
+        run: |
+          mkdir build/AppDir/usr/bin/icons/Adwaita
+          icons_dir=('actions' 'devices' 'mimetypes' 'places' 'status' 'ui' 'devices')
+          for dir in "${icons_dir[@]}"; do
+            find_res=$(find /usr/share/icons/Adwaita -name "${dir}" -type d)
+            if [ -z "$find_res" ]
+            then
+              echo "-Warning: Icons folder '"${dir}"' not found in Adwaita theme."
+            else
+              new_dir=($(echo "$find_res" | awk -F/ '{print $(NF-1)"/"$NF}'))
+              for d in "${new_dir[@]}"; do
+                echo "-Copying '"${d}"' into 'AppDir/usr/bin/icons/Adwaita'."
+                mkdir -p "build/AppDir/usr/bin/icons/Adwaita/${d}"
+                cp -R "/usr/share/icons/Adwaita/${d}/." "build/AppDir/usr/bin/icons/Adwaita/${d}"
+              done
+            fi
+          done
+          echo "-Copying 'index.theme' into 'AppDir/usr/bin/icons/Adwaita'."
+          cp /usr/share/icons/Adwaita/index.theme build/AppDir/usr/bin/icons/Adwaita
 
       - name: Restore AppImage tools from cache
         id: appimage-tools-cache
