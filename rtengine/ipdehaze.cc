@@ -478,7 +478,10 @@ void ImProcFunctions::dehazeloc(Imagefloat *img, const DehazeParams &dehazeParam
 
     int whit = 0;
     int blac = params->locallab.spots.at(sp).dehazeblack;
-    ImProcFunctions::tone_eqdehaz(this, img, whit, blac, params->icm.workingProfile, sk, multiThread);
+
+    if(blac != 0) {
+        ImProcFunctions::tone_eqdehaz(this, img, whit, blac, params->icm.workingProfile, sk, multiThread);
+    }
 
     {
         array2D<float>& R = dark; // R and dark can safely use the same buffer, which is faster and reduces memory allocations/deallocations
