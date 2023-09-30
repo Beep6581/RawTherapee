@@ -2303,6 +2303,34 @@ void ImProcFunctions::loccont(int bfw, int bfh, LabImage* tmp1, float rad, float
     }
 }
 
+void ImProcFunctions::tone_eqdehaz(ImProcFunctions *ipf, Imagefloat *rgb, int whits, int blacks, const Glib::ustring &workingProfile, double scale, bool multithread)
+{
+    ToneEqualizerParams params;
+    params.enabled = true;
+    params.regularization = 0.f;
+    params.pivot = 0.f;
+    double blred = 0.4;
+    params.bands[0] = blred * blacks;
+    int bla = abs(blacks);
+    int threshblawhi = 50;
+    int threshblawhi2 = 85;
+    if(bla > threshblawhi) {
+        params.bands[1] = blred * sign(blacks) * (bla - threshblawhi);
+    }
+    if(bla > threshblawhi2) {
+        params.bands[2] = blred * sign(blacks) * (bla - threshblawhi2);
+    }
+    
+    params.bands[4] = whits;
+    int whi = abs(whits);
+    if(whi > threshblawhi) {
+        params.bands[3] = sign(whits) * (whi - threshblawhi);
+    }
+    
+    ipf->toneEqualizer(rgb, params, workingProfile, scale, multithread);
+}
+
+
 void sigmoidla (float &valj, float thresj, float lambda) 
 {
     //thres : shifts the action of sigmoid to darker tones or lights
@@ -14412,7 +14440,7 @@ void ImProcFunctions::Lab_Local(
             dehazeParams.saturation = lp.dehazeSaturation;
             dehazeParams.depth = lp.depth;
             lab2rgb(*bufexpfin, *tmpImage.get(), params->icm.workingProfile);
-            dehazeloc(tmpImage.get(), dehazeParams);
+            dehazeloc(tmpImage.get(), dehazeParams, sk, sp);
             rgb2lab(*tmpImage.get(), *bufexpfin, params->icm.workingProfile);
 
             transit_shapedetect2(sp, 0.f, 0.f, call, 30, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
