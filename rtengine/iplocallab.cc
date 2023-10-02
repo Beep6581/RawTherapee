@@ -2213,7 +2213,7 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
 
     int whit = -whits[sp];
     int blac = -blacks[sp];
-
+    printf("SCALE...=%i\n", SCALE);
     if(params->locallab.spots.at(sp).expcie && params->locallab.spots.at(sp).Autograycie) {
         ImProcFunctions::tone_eqcam2(this, &img, whit, blac, params->icm.workingProfile, SCALE, multiThread);
     }
