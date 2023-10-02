@@ -9586,16 +9586,16 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "WhiteEvjz_" + index_str, spot.whiteEvjz, spotEdited.whiteEvjz);
                 assignFromKeyfile(keyFile, "Locallab", "Targetjz_" + index_str, spot.targetjz, spotEdited.targetjz);
                 assignFromKeyfile(keyFile, "Locallab", "Sigmoidthcie_" + index_str, spot.sigmoidthcie, spotEdited.sigmoidthcie);
-                assignFromKeyfile(keyFile, "Locallab", "Sigmoidsenscie_" + index_str, pedited, spot.sigmoidsenscie, spotEdited.sigmoidsenscie);
-                assignFromKeyfile(keyFile, "Locallab", "Sigmoidldajzcie_" + index_str, spot.sigmoidldajzcie, spotEdited.sigmoidldajzcie);
-                assignFromKeyfile(keyFile, "Locallab", "comprcie_" + index_str, pedited, spot.comprcie, spotEdited.comprcie);
-                assignFromKeyfile(keyFile, "Locallab", "comprcieth_" + index_str, pedited, spot.comprcieth, spotEdited.comprcieth);
-                assignFromKeyfile(keyFile, "Locallab", "gamjcie_" + index_str, pedited, spot.gamjcie, spotEdited.gamjcie);
-                assignFromKeyfile(keyFile, "Locallab", "slopjcie_" + index_str, pedited, spot.slopjcie, spotEdited.slopjcie);
-                assignFromKeyfile(keyFile, "Locallab", "whitescie_" + index_str, pedited, spot.whitescie, spotEdited.whitescie);
-                assignFromKeyfile(keyFile, "Locallab", "blackscie_" + index_str, pedited, spot.blackscie, spotEdited.blackscie);
-                assignFromKeyfile(keyFile, "Locallab", "primMethod_" + index_str, pedited, spot.primMethod, spotEdited.primMethod);
-                assignFromKeyfile(keyFile, "Locallab", "catMethod_" + index_str, pedited, spot.catMethod, spotEdited.catMethod);
+                assignFromKeyfile(keyFile, "Locallab", "Sigmoidsenscie_" + index_str, spot.sigmoidsenscie, spotEdited.sigmoidsenscie);
+                assignFromKeyfile(keyFile, "Locallab", "Sigmoidblcie_" + index_str, spot.sigmoidblcie, spotEdited.sigmoidblcie);
+                assignFromKeyfile(keyFile, "Locallab", "comprcie_" + index_str, spot.comprcie, spotEdited.comprcie);
+                assignFromKeyfile(keyFile, "Locallab", "comprcieth_" + index_str, spot.comprcieth, spotEdited.comprcieth);
+                assignFromKeyfile(keyFile, "Locallab", "gamjcie_" + index_str, spot.gamjcie, spotEdited.gamjcie);
+                assignFromKeyfile(keyFile, "Locallab", "slopjcie_" + index_str, spot.slopjcie, spotEdited.slopjcie);
+                assignFromKeyfile(keyFile, "Locallab", "whitescie_" + index_str, spot.whitescie, spotEdited.whitescie);
+                assignFromKeyfile(keyFile, "Locallab", "blackscie_" + index_str, spot.blackscie, spotEdited.blackscie);
+                assignFromKeyfile(keyFile, "Locallab", "primMethod_" + index_str, spot.primMethod, spotEdited.primMethod);
+                assignFromKeyfile(keyFile, "Locallab", "catMethod_" + index_str, spot.catMethod, spotEdited.catMethod);
 /*
                 assignFromKeyfile(keyFile, "Locallab", "Lightlzcam_" + index_str, spot.lightlzcam, spotEdited.lightlzcam);
                 assignFromKeyfile(keyFile, "Locallab", "Lightqzcam_" + index_str, spot.lightqzcam, spotEdited.lightqzcam);
@@ -9616,7 +9616,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "CCmaskcieCurve_" + index_str, spot.CCmaskciecurve, spotEdited.CCmaskciecurve);
                 assignFromKeyfile(keyFile, "Locallab", "LLmaskcieCurve_" + index_str, spot.LLmaskciecurve, spotEdited.LLmaskciecurve);
                 assignFromKeyfile(keyFile, "Locallab", "HHmaskcieCurve_" + index_str, spot.HHmaskciecurve, spotEdited.HHmaskciecurve);
-                assignFromKeyfile(keyFile, "Locallab", "HHhmaskcieCurve_" + index_str, pedited, spot.HHhmaskciecurve, spotEdited.HHhmaskciecurve);
+                assignFromKeyfile(keyFile, "Locallab", "HHhmaskcieCurve_" + index_str,,spot.HHhmaskciecurve, spotEdited.HHhmaskciecurve);
                 assignFromKeyfile(keyFile, "Locallab", "Radmaskcie_" + index_str, spot.radmaskcie, spotEdited.radmaskcie);
                 assignFromKeyfile(keyFile, "Locallab", "Chromaskcie_" + index_str, spot.chromaskcie, spotEdited.chromaskcie);
                 assignFromKeyfile(keyFile, "Locallab", "Lapmaskcie_" + index_str, spot.lapmaskcie, spotEdited.lapmaskcie);
@@ -9627,14 +9627,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Lowthrescie_" + index_str, spot.lowthrescie, spotEdited.lowthrescie);
                 assignFromKeyfile(keyFile, "Locallab", "Higthrescie_" + index_str, spot.higthrescie, spotEdited.higthrescie);
                 assignFromKeyfile(keyFile, "Locallab", "Decaycie_" + index_str, spot.decaycie, spotEdited.decaycie);
-                assignFromKeyfile(keyFile, "Locallab", "strumaskcie_" + index_str, pedited, spot.strumaskcie, spotEdited.strumaskcie);
-                assignFromKeyfile(keyFile, "Locallab", "toolcie_" + index_str, pedited, spot.toolcie, spotEdited.toolcie);
-                assignFromKeyfile(keyFile, "Locallab", "FftcieMask_" + index_str, pedited, spot.fftcieMask, spotEdited.fftcieMask);
-                assignFromKeyfile(keyFile, "Locallab", "contcie_" + index_str, pedited, spot.contcie, spotEdited.contcie);
-                assignFromKeyfile(keyFile, "Locallab", "blurcie_" + index_str, pedited, spot.blurcie, spotEdited.blurcie);
-                assignFromKeyfile(keyFile, "Locallab", "highmaskcie_" + index_str, pedited, spot.highmaskcie, spotEdited.highmaskcie);
-                assignFromKeyfile(keyFile, "Locallab", "shadmaskcie_" + index_str, pedited, spot.shadmaskcie, spotEdited.shadmaskcie);
-                assignFromKeyfile(keyFile, "Locallab", "LLmaskcieCurvewav_" + index_str, pedited, spot.LLmaskciecurvewav, spotEdited.LLmaskciecurvewav);
+                assignFromKeyfile(keyFile, "Locallab", "strumaskcie_" + index_str, spot.strumaskcie, spotEdited.strumaskcie);
+                assignFromKeyfile(keyFile, "Locallab", "toolcie_" + index_str,  spot.toolcie, spotEdited.toolcie);
+                assignFromKeyfile(keyFile, "Locallab", "FftcieMask_" + index_str, spot.fftcieMask, spotEdited.fftcieMask);
+                assignFromKeyfile(keyFile, "Locallab", "contcie_" + index_str, spot.contcie, spotEdited.contcie);
+                assignFromKeyfile(keyFile, "Locallab", "blurcie_" + index_str, spot.blurcie, spotEdited.blurcie);
+                assignFromKeyfile(keyFile, "Locallab", "highmaskcie_" + index_str, spot.highmaskcie, spotEdited.highmaskcie);
+                assignFromKeyfile(keyFile, "Locallab", "shadmaskcie_" + index_str, spot.shadmaskcie, spotEdited.shadmaskcie);
+                assignFromKeyfile(keyFile, "Locallab", "LLmaskcieCurvewav_" + index_str, spot.LLmaskciecurvewav, spotEdited.LLmaskciecurvewav);
 
                 if (keyFile.has_key("Locallab", "CSThresholdcie_" + index_str)) {
                     const std::vector<int> thresh = keyFile.get_integer_list("Locallab", "CSThresholdcie_" + index_str);
