@@ -476,13 +476,6 @@ void ImProcFunctions::dehazeloc(Imagefloat *img, const DehazeParams &dehazeParam
     float ambient[3];
     float maxDistance = 0.f;
 
-  //  if (params->dehaze.blackpoint) {
- //       subtract_black(img, params->dehaze.blackpoint, multiThread);
-//    }
-    int whit = 0;
-    int blac = dehazeParams.saturation;
-    int SCALE = 1;
-    ImProcFunctions::tone_eqcam2(this, img, whit, blac, params->icm.workingProfile, SCALE, multiThread);
 
     {
         array2D<float>& R = dark; // R and dark can safely use the same buffer, which is faster and reduces memory allocations/deallocations
