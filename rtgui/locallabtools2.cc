@@ -9566,7 +9566,7 @@ void Locallabcie::logcieChanged()
     const LocallabParams::LocallabSpot defSpot;
     const int mode = complexity->get_active_row_number();
 
-    if (logcie->get_active()) {
+    if (logcie->get_active()  && sigq->get_active()) {
         sigcie->set_sensitive(false);
         sigmoidldacie->set_sensitive(false);
         sigmoidthcie->set_sensitive(false);
@@ -9583,6 +9583,10 @@ void Locallabcie::logcieChanged()
             comprcie->set_sensitive(false);
             comprcieth->set_sensitive(false);
             comprcieauto->set_sensitive(false);
+        } else {
+            comprcie->set_sensitive(true);
+            comprcieth->set_sensitive(true);
+            comprcieauto->set_sensitive(true);      
         }
 
     } else {
@@ -9653,16 +9657,33 @@ void Locallabcie::sigjzChanged()
 
 void Locallabcie::sigqChanged()
 {
+     const int mode = complexity->get_active_row_number();
+   
     if (sigq->get_active()) {
         sigBox->show();
         whitescie->set_sensitive(true);
         blackscie->set_sensitive(true);
+        
+        if (mode == Simple) {
+            comprcie->set_sensitive(false);
+            comprcieth->set_sensitive(false);
+            comprcieauto->set_sensitive(false);
+        } else {
+            if(logcie->get_active()) {
+                comprcie->set_sensitive(true);
+                comprcieth->set_sensitive(true);
+                comprcieauto->set_sensitive(true);
+            }           
+        }
        
     } else {
         //sigBox->hide();
         sigBox->show();
         whitescie->set_sensitive(false);
         blackscie->set_sensitive(false);
+        comprcie->set_sensitive(false);
+        comprcieth->set_sensitive(false);
+        comprcieauto->set_sensitive(false);
    }
 
     if (isLocActivated && exp->getEnabled()) {
