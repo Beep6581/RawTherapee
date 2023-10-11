@@ -20,10 +20,12 @@
  */
 
 #include <gtkmm.h>
+
+#include "guiutils.h"
 #include "multilangmgr.h"
 #include "popupcommon.h"
 #include "rtimage.h"
-#include "guiutils.h"
+#include "threadutils.h"
 
 PopUpCommon::PopUpCommon (Gtk::Button* thisButton, const Glib::ustring& label)
     : buttonImage (nullptr)
@@ -136,6 +138,21 @@ bool PopUpCommon::insertEntryImpl(int position, const Glib::ustring& fileName, c
     return true;
 }
 
+void PopUpCommon::setEmptyImage(const Glib::ustring &fileName)
+{
+    emptyImageFilename = fileName;
+
+    if (getEntryCount()) {
+        return;
+    }
+    if (fileName.empty()) {
+        buttonImage->hide();
+    } else {
+        changeImage(emptyImageFilename, Glib::RefPtr<const Gio::Icon>());
+        buttonImage->show();
+    }
+}
+
 void PopUpCommon::removeEntry(int position)
 {
     if (position < 0 || position >= getEntryCount()) {
@@ -147,8 +164,13 @@ void PopUpCommon::removeEntry(int position)
         button->get_style_context()->remove_class("Left");
         arrowButton->hide();
         hasMenu = false;
-        // Remove the button image.
-        buttonImage->hide();
+        if (emptyImageFilename.empty()) {
+            // Remove the button image.
+            buttonImage->hide();
+        } else {
+            // Show the empty icon.
+            changeImage(emptyImageFilename, Glib::RefPtr<const Gio::Icon>());
+        }
         selected = -1;
     }
     else if (position < selected) {
@@ -183,6 +205,15 @@ void PopUpCommon::changeImage(const Glib::ustring& fileName, const Glib::RefPtr<
 
 void PopUpCommon::entrySelected(Gtk::Widget* widget)
 {
+    if (widget != menu->get_active()) { // Not actually selected.
+        return;
+    }
+
+    if (!entrySelectionMutex.trylock()) { // Already being updated.
+        return;
+    }
+    entrySelectionMutex.unlock();
+
     int i = 0;
     for (const auto & child : menu->get_children()) {
         if (widget == child) {
@@ -229,7 +260,8 @@ bool PopUpCommon::setSelected (int entryNum)
         setButtonHint();
 
         auto radioMenuItem = dynamic_cast<Gtk::RadioMenuItem*>(menu->get_children()[entryNum]);
-        if (radioMenuItem && menu->get_active() != radioMenuItem) {
+        if (radioMenuItem && !radioMenuItem->get_active()) {
+            MyMutex::MyLock updateLock(entrySelectionMutex);
             radioMenuItem->set_active();
         }
 

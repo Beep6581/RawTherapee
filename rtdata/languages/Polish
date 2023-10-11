@@ -1,16 +1,18 @@
-#01 2007-12-24 Mateusz Ludwin
-#02 2010-01-08 Bartosz "Simek" Kaszubowski
-#03 2011-09-06 Dariusz 'Salvadhor' Duma
-#04 2011-11-30 DrSlony
-#05 2012-01-14 DrSlony
-#06 2012-01-30 DrSlony
-#07 2012-04-02 DrSlony
-#08 2013-05-21 DrSlony
-#09 2014-10-16 DrSlony
-#10 2020-02-02 Bartłomiej Wiśniowski
-#11 2020-02-02 Bartłomiej Wiśniowski
-#12 2020-02-15 Bartłomiej Wiśniowski
-#13 2020-02-17 Bartłomiej Wiśniowski
+#001 2007-12-24 Mateusz Ludwin
+#002 2010-01-08 Bartosz "Simek" Kaszubowski
+#003 2011-09-06 Dariusz 'Salvadhor' Duma
+#004 2011-11-30 DrSlony
+#005 2012-01-14 DrSlony
+#006 2012-01-30 DrSlony
+#007 2012-04-02 DrSlony
+#008 2013-05-21 DrSlony
+#009 2014-10-16 DrSlony
+#010 2020-02-02 Bartłomiej Wiśniowski
+#011 2020-02-02 Bartłomiej Wiśniowski
+#012 2020-02-15 Bartłomiej Wiśniowski
+#013 2020-02-17 Bartłomiej Wiśniowski
+#100
+#101 @LANGUAGE_DISPLAY_NAME=Polski
 
 ABOUT_TAB_BUILD;Wersja
 ABOUT_TAB_CREDITS;Zasługi
@@ -28,6 +30,7 @@ CURVEEDITOR_CURVE;Krzywa
 CURVEEDITOR_CURVES;Krzywe
 CURVEEDITOR_CUSTOM;Własna
 CURVEEDITOR_DARKS;Ciemne
+CURVEEDITOR_EDITPOINT_HINT;Włącz edycję wartości węzła.\n\nKliknij prawym przyciskiem myszy w węzeł, aby go wybrać.\nKliknij prawym przyciskiem myszy w pustą przestrzeń, aby odznaczyć węzeł.
 CURVEEDITOR_HIGHLIGHTS;Najjaśniejsze
 CURVEEDITOR_LIGHTS;Jasne
 CURVEEDITOR_LINEAR;Liniowa
@@ -47,16 +50,21 @@ DIRBROWSER_FOLDERS;Katalogi
 DONT_SHOW_AGAIN;Nie pokazuj tej wiadomości ponownie.
 DYNPROFILEEDITOR_DELETE;Usuń
 DYNPROFILEEDITOR_EDIT;Edytuj
+DYNPROFILEEDITOR_EDIT_RULE;Edytuj regułę dynamicznego profilu
+DYNPROFILEEDITOR_ENTRY_TOOLTIP;Wyszukiwanie nie uwzględnia wielkości liter.\nUżyj przedrostka "re:" aby wprowadzić wyrażenie regularne.
 DYNPROFILEEDITOR_IMGTYPE_ANY;Każdy
 DYNPROFILEEDITOR_IMGTYPE_HDR;HDR
+DYNPROFILEEDITOR_IMGTYPE_PS;Pixel Shift
 DYNPROFILEEDITOR_IMGTYPE_STD;Standardowy
 DYNPROFILEEDITOR_MOVE_DOWN;Przesuń w dół
 DYNPROFILEEDITOR_MOVE_UP;Przesuń w górę
 DYNPROFILEEDITOR_NEW;Nowy
+DYNPROFILEEDITOR_NEW_RULE;Nowa reguła dynamicznego profilu
 DYNPROFILEEDITOR_PROFILE;Profil przetwarzania
 EDITWINDOW_TITLE;Edytor obrazu
 EDIT_OBJECT_TOOLTIP;Wyświetla widżet na podglądzie który ułatwia ustawienie narzędzia.
 EDIT_PIPETTE_TOOLTIP;Aby dodać punkt do krzywej należy trzymac wciśnięty klawisz Ctrl podczas kliknięcia lewym guzikiem myszki na danym obszarze głównego podglądu.\nAby zmienic ustawienie już istniejącego punktu, należy trzymać wduszony klawisz Ctrl podczas kliknięcia lewym guzikiem myszki na danym obszarze głównego podglądu, następnie należy puścić klawisz Ctrl (chyba że chodzi nam o bardzo precyzyjne ustawienie dzieki spowolnieniu jakie trzymanie klawisza Ctrl nam daje) i podczas trzymania lewego guzika myszki należy myszką ruszać w pionie aby odpowiednio manipulować punktem w pionie.
+ERROR_MSG_METADATA_VALUE;Metadane: błąd ustawiania %1 na %2
 EXIFFILTER_APERTURE;Przysłona
 EXIFFILTER_CAMERA;Aparat
 EXIFFILTER_EXPOSURECOMPENSATION;Korekcja ekspozycji (EV)
@@ -66,12 +74,16 @@ EXIFFILTER_IMAGETYPE;Typ obrazu
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Obiektyw
 EXIFFILTER_METADATAFILTER;Włącz filtry metadanych
+EXIFFILTER_PATH;Ścieżka pliku
 EXIFFILTER_SHUTTER;Migawka
+EXIFPANEL_ACTIVATE_ALL_HINT;Zaznacz wszystkie tagi
+EXIFPANEL_ACTIVATE_NONE_HINT;Odznacz wszystkie tagi
 EXIFPANEL_ADDEDIT;Dodaj/Edytuj
 EXIFPANEL_ADDEDITHINT;Dodaje nową etykietę lub edytuje etykietę
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Wpisz wartość
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Wybierz etykietę
 EXIFPANEL_ADDTAGDLG_TITLE;Dodaj/Edytuj etykietę
+EXIFPANEL_BASIC_GROUP;Podstawowy
 EXIFPANEL_KEEP;Zapamiętaj
 EXIFPANEL_KEEPHINT;Zapamiętuje wybrane etykiety podczas zapisywania pliku wyjściowego
 EXIFPANEL_REMOVE;Usuń
@@ -82,10 +94,13 @@ EXIFPANEL_RESETALLHINT;Przywraca orginalne wartości etykiet
 EXIFPANEL_RESETHINT;Przywraca orginalne wartości wybranych etykiet
 EXIFPANEL_SHOWALL;Pokaż wszystkie
 EXIFPANEL_SUBDIRECTORY;Podkatalog
+EXIFPANEL_VALUE_NOT_SHOWN;Nie wyświetlane
+EXPORT_BYPASS;Kroki przetwarzania do pominięcia
 EXPORT_BYPASS_ALL;Zaznacz / Odznacz wszystkie
 EXPORT_BYPASS_DEFRINGE;Pomiń usuwanie widma
 EXPORT_BYPASS_DIRPYRDENOISE;Pomiń redukcję szumów
 EXPORT_BYPASS_DIRPYREQUALIZER;Pomiń kontrast wg. poziomu detali
+EXPORT_BYPASS_EQUALIZER;Omiń poziomy falkowe
 EXPORT_BYPASS_RAW_CA;Pomiń redukcję aberracji chromatycznej (raw)
 EXPORT_BYPASS_RAW_CCSTEPS;Pomiń tłumienie fałszowania koloru (raw)
 EXPORT_BYPASS_RAW_DCB_ENHANCE;Pomiń poprawę DCB (raw)
@@ -102,14 +117,19 @@ EXPORT_FASTEXPORTOPTIONS;<b>Opcje szybkiego eksportu</b>
 EXPORT_INSTRUCTIONS;Opcje szybkiego eksportu umożliwiają pominięcie pewnych narzędzi które mogą być dość wymagające na procesor oraz mogą znacznie przedłużyc czas przetwarzania podczas eksportowania zdjęć. Ta metoda jest zalecana w razie potrzeby szybkiego uzyskania zdjęć o niższej rozdzielczości oraz jakości kiedy zależy nam na czasie a nie chcemy modyfikować plików PP3.
 EXPORT_MAXHEIGHT;Maksymalna wysokość:
 EXPORT_MAXWIDTH;Maksymalna szerokość:
+EXPORT_PIPELINE;Rurociąg przetwarzania
 EXPORT_PUTTOQUEUEFAST;  Dodaj do kolejki szybkiego eksportu  
 EXPORT_RAW_DMETHOD;Algorytm demozaikowania
+EXPORT_USE_FAST_PIPELINE;Dedykowane (pełne przetwarzanie na zmniejszonym obrazie)
+EXPORT_USE_FAST_PIPELINE_TOOLTIP;Użyj dedykowanego rurociągu przetwarzania obrazu w trybie Szybkiego Eksportu, co przyspieszy proces kosztem jakości. Skalowanie obrazu odbywa się jak najwcześniej, zamiast na końcu, jak w normalnym przetwarzaniu. Przyspieszenie może być znaczne, ale przygotuj się na występowanie artefaktów i ogólną degradację jakości wyjściowej.
+EXPORT_USE_NORMAL_PIPELINE;Standardowe (pominięcie niektórych kroków, skalowanie na końcu)
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;wywołane w kolejce
 FILEBROWSER_APPLYPROFILE;Zastosuj profil
 FILEBROWSER_APPLYPROFILE_PARTIAL;Zastosuj częściowy profil
 FILEBROWSER_AUTODARKFRAME;Automatyczne użycie czarnej klatki
 FILEBROWSER_AUTOFLATFIELD;Automatyczne użycie klatki typu puste pole
+FILEBROWSER_BROWSEPATHBUTTONHINT;Kliknij, aby otworzyć wskazaną ścieżkę, odświeżyć folder i zastosować poszukiwane słowa kluczowe.
 FILEBROWSER_BROWSEPATHHINT;Umożliwia przeglądanie wprowadzonej ścieżki\n<b>Ctrl-o</b> zaznaczenie\n<b>Enter</b>, <b>Ctrl-Enter</b> (w menedżerze plików) przeglądanie\nSkróty:\n  <b>~</b>      - katalog domowy użytkownika\n  <b>!</b>        - katalog z obrazami użytkownia
 FILEBROWSER_CACHE;Pamięć podręczna
 FILEBROWSER_CACHECLEARFROMFULL;Wyczyść wszystkie profile
@@ -119,7 +139,10 @@ FILEBROWSER_COLORLABEL_TOOLTIP;Kolorowe etykiety\n\nUżyj za pomocą rozwijanej 
 FILEBROWSER_COPYPROFILE;Kopiuj profil
 FILEBROWSER_CURRENT_NAME;Obecna nazwa:
 FILEBROWSER_DARKFRAME;Czarna klatka
+FILEBROWSER_DELETEDIALOG_ALL;Czy na pewno chcesz <b>trwale</b> usunąć wszystkie pliki <b>%1</b> w koszu?
 FILEBROWSER_DELETEDIALOG_HEADER;Potwierdzenie usunięcia pliku
+FILEBROWSER_DELETEDIALOG_SELECTED;Czy na pewno chcesz <b>trwale</b> usunąć wybrane pliki <b>%1</b>?
+FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Czy na pewno chcesz <b>trwale</b> usunąć wybrane pliki <b>%1</b>, <b>włącznie</b> z wersją przetworzoną w kolejce?
 FILEBROWSER_EMPTYTRASH;Wyczyść kosz
 FILEBROWSER_EMPTYTRASHHINT;Usuwa <b>na zawsze</b> pliki znajdujące się w koszu.
 FILEBROWSER_EXTPROGMENU;Otwórz za pomocą
@@ -140,6 +163,7 @@ FILEBROWSER_POPUPCOLORLABEL4;Etykieta: Niebieska
 FILEBROWSER_POPUPCOLORLABEL5;Etykieta: Purpurowa
 FILEBROWSER_POPUPCOPYTO;Skopiuj do...
 FILEBROWSER_POPUPFILEOPERATIONS;Operacje na plikach
+FILEBROWSER_POPUPINSPECT;Inspekcja
 FILEBROWSER_POPUPMOVEEND;Przenieś na koniec kolejki
 FILEBROWSER_POPUPMOVEHEAD;Przenieś na początek kolejki
 FILEBROWSER_POPUPMOVETO;Przenieś do...
@@ -156,19 +180,21 @@ FILEBROWSER_POPUPRANK3;Ocena 3 ***
 FILEBROWSER_POPUPRANK4;Ocena 4 ****
 FILEBROWSER_POPUPRANK5;Ocena 5 *****
 FILEBROWSER_POPUPREMOVE;Usuń na zawsze
+FILEBROWSER_POPUPREMOVEINCLPROC;Usuń trwale, włącznie z wersją przetworzoną w kolejce
 FILEBROWSER_POPUPRENAME;Zmień nazwę
 FILEBROWSER_POPUPSELECTALL;Zaznacz wszystkie
+FILEBROWSER_POPUPSORTBY;Sortuj pliki
 FILEBROWSER_POPUPTRASH;Przenieś do kosza
 FILEBROWSER_POPUPUNRANK;Usuń ocenę
 FILEBROWSER_POPUPUNTRASH;Usuń z kosza
 FILEBROWSER_QUERYBUTTONHINT;Wyczyść hasło szukania
 FILEBROWSER_QUERYHINT;Wprowadź część nazwy, by zlokalizować plik. Oddziel hasła przecinkami, np.\n<i>1001,1004,1199</i>\n\nWyklucz hasła poprzedzając je znakiem <i>!=</i>\nnp.\n<i>!=1001,1004,1199</i>\n\nSkróty:\n<b>Ctrl-f</b> - przejdź do pola "Znajdź",\n<b>Enter</b> - szukaj,\n<b>Esc</b> - wyczyść pole "Znajdź",\n<b>Shift-Esc</b> - wyjdź z pola "Znajdź".
 FILEBROWSER_QUERYLABEL; Znajdź:
-FILEBROWSER_RANK1_TOOLTIP;Oceń 1 *\nSkrót: <b>Shift-1</b>
-FILEBROWSER_RANK2_TOOLTIP;Oceń 2 *\nSkrót: <b>Shift-2</b>
-FILEBROWSER_RANK3_TOOLTIP;Oceń 3 *\nSkrót: <b>Shift-3</b>
-FILEBROWSER_RANK4_TOOLTIP;Oceń 4 *\nSkrót: <b>Shift-4</b>
-FILEBROWSER_RANK5_TOOLTIP;Oceń 5 *\nSkrót: <b>Shift-5</b>
+FILEBROWSER_RANK1_TOOLTIP;Oceń 1 *\nSkrót: <b>1</b>
+FILEBROWSER_RANK2_TOOLTIP;Oceń 2 *\nSkrót: <b>2</b>
+FILEBROWSER_RANK3_TOOLTIP;Oceń 3 *\nSkrót: <b>3</b>
+FILEBROWSER_RANK4_TOOLTIP;Oceń 4 *\nSkrót: <b>4</b>
+FILEBROWSER_RANK5_TOOLTIP;Oceń 5 *\nSkrót: <b>5</b>
 FILEBROWSER_RENAMEDLGLABEL;Zmień nazwę pliku
 FILEBROWSER_RESETDEFAULTPROFILE;Przywróć domyślne
 FILEBROWSER_SELECTDARKFRAME;Wybierz czarną klatkę...
@@ -179,27 +205,29 @@ FILEBROWSER_SHOWCOLORLABEL3HINT;Pokazuje zdjęcia z zieloną etykietą.\nSkrót:
 FILEBROWSER_SHOWCOLORLABEL4HINT;Pokazuje zdjęcia z niebieską etykietą.\nSkrót: <b>Alt-4</b>
 FILEBROWSER_SHOWCOLORLABEL5HINT;Pokazuje zdjęcia z purpurową etykietą.\nSkrót: <b>Alt-5</b>
 FILEBROWSER_SHOWDIRHINT;Wyłącza wyszstkie filtry.\nSkrót: <b>d</b>
-FILEBROWSER_SHOWEDITEDHINT;Pokazuje edytowane zdjęcia.\nSkrót: <b>7</b>
-FILEBROWSER_SHOWEDITEDNOTHINT;Pokazuje nieedytowane zdjęcia.\nSkrót: <b>6</b>
+FILEBROWSER_SHOWEDITEDHINT;Pokazuje edytowane zdjęcia.\nSkrót: <b>Shift-7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;Pokazuje nieedytowane zdjęcia.\nSkrót: <b>Shift-6</b>
 FILEBROWSER_SHOWEXIFINFO;Pokaż dane Exif.\n\nSkróty:\n<b>i</b> - Tryb wielu zakładek,\n<b>Alt-i</b> - Tryb jednej zakładki.
 FILEBROWSER_SHOWNOTTRASHHINT;Pokazuj tylko obrazy które nie znajdują się w koszu.
-FILEBROWSER_SHOWRANK1HINT;Pokazuje zdjęcia ocenione na 1 gwiazdkę.\nSkrót: <b>1</b>
-FILEBROWSER_SHOWRANK2HINT;Pokazuje zdjęcia ocenione na 2 gwiazdki.\nSkrót: <b>2</b>
-FILEBROWSER_SHOWRANK3HINT;Pokazuje zdjęcia ocenione na 3 gwiazdki.\nSkrót: <b>3</b>
-FILEBROWSER_SHOWRANK4HINT;Pokazuje zdjęcia ocenione na 4 gwiazdki.\nSkrót: <b>4</b>
-FILEBROWSER_SHOWRANK5HINT;Pokazuje zdjęcia ocenione na 5 gwiazdek.\nSkrót: <b>5</b>
+FILEBROWSER_SHOWORIGINALHINT;Pokaż tylko oryginalne obrazy.\n\nJeśli istnieje wiele obrazów o tej samej nazwie pliku, ale o różnych rozszerzeniach, uważa się za oryginalny ten, którego rozszerzenie jest najbliżej góry listy przetwarzanych rozszerzeń w Preferencje > Przeglądarka plików > Przetwarzane rozszerzenia.
+FILEBROWSER_SHOWRANK1HINT;Pokazuje zdjęcia ocenione na 1 gwiazdkę.\nSkrót: <b>Shift-1</b>
+FILEBROWSER_SHOWRANK2HINT;Pokazuje zdjęcia ocenione na 2 gwiazdki.\nSkrót: <b>Shift-2</b>
+FILEBROWSER_SHOWRANK3HINT;Pokazuje zdjęcia ocenione na 3 gwiazdki.\nSkrót: <b>Shift-3</b>
+FILEBROWSER_SHOWRANK4HINT;Pokazuje zdjęcia ocenione na 4 gwiazdki.\nSkrót: <b>Shift-4</b>
+FILEBROWSER_SHOWRANK5HINT;Pokazuje zdjęcia ocenione na 5 gwiazdek.\nSkrót: <b>Shift-5</b>
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Pokazuje zapisane zdjęcia.\nSkrót: <b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Pokazuje niezapisane zdjęcia.\nSkrót: <b>Alt-6</b>
 FILEBROWSER_SHOWTRASHHINT;Pokazuje zawartość kosza.\nSkrót: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;Pokazuje zdjęcia bez kolorowej etykiety.\nSkrót: <b>Alt-0</b>
-FILEBROWSER_SHOWUNRANKHINT;Pokazuje nieocenione zdjęcia.\nSkrót: <b>0</b>
+FILEBROWSER_SHOWUNRANKHINT;Pokazuje nieocenione zdjęcia.\nSkrót: <b>Shift-0</b>
 FILEBROWSER_THUMBSIZE;Rozmiar minaturek
-FILEBROWSER_UNRANK_TOOLTIP;Usuń ocenę.\nSkrót: <b>Shift-0</b>
+FILEBROWSER_UNRANK_TOOLTIP;Usuń ocenę.\nSkrót: <b>0</b>
 FILEBROWSER_ZOOMINHINT;Zwiększa rozmiar miniaturek.\n\nSkróty:\n<b>+</b> - Tryb wielu zakładek,\n<b>Alt</b>-<b>+</b> - Tryb pojedyńczej zakładki.
 FILEBROWSER_ZOOMOUTHINT;Zmniejsza rozmiar miniaturek.\n\nSkróty:\n<b>-</b> - Tryb wielu zakładek,\n<b>Alt</b>-<b>-</b> - Tryb pojedyńczej zakładki.
 FILECHOOSER_FILTER_ANY;Wszystkie pliki
 FILECHOOSER_FILTER_COLPROF;Profile kolorów (*.icc)
 FILECHOOSER_FILTER_CURVE;Pliki krzywych
+FILECHOOSER_FILTER_EXECUTABLE;Pliki wykonywalne
 FILECHOOSER_FILTER_LCP;Profile korekcyjne obiektywów
 FILECHOOSER_FILTER_PP;Profile przetwarzania
 FILECHOOSER_FILTER_SAME;Taki sam format jak aktualnego zdjęcia
@@ -213,8 +241,10 @@ GENERAL_BEFORE;Przed
 GENERAL_CANCEL;Anuluj
 GENERAL_CLOSE;Zamknij
 GENERAL_CURRENT;Obecny
+GENERAL_DELETE_ALL;Usuń wszystko
 GENERAL_DISABLE;Wyłącz
 GENERAL_DISABLED;Wyłączone
+GENERAL_EDIT;Edytuj
 GENERAL_ENABLE;Włącz
 GENERAL_ENABLED;Włączone
 GENERAL_FILE;Plik
@@ -225,6 +255,7 @@ GENERAL_NO;Nie
 GENERAL_NONE;Żaden
 GENERAL_OK;OK
 GENERAL_OPEN;Otwórz
+GENERAL_OTHER;Inne
 GENERAL_PORTRAIT;Pionowo
 GENERAL_RESET;Resetuj
 GENERAL_SAVE;Zapisz
@@ -232,12 +263,23 @@ GENERAL_SAVE_AS;Zapisz jako...
 GENERAL_SLIDER;Suwak
 GENERAL_UNCHANGED;(Niezmienione)
 GENERAL_WARNING;Uwaga
+GIMP_PLUGIN_INFO;Witaj w wtyczce RawTherapee dla GIMP!\nPo zakończeniu edycji, po prostu zamknij główne okno RawTherapee, a obraz zostanie automatycznie zaimportowany do GIMP.
 HISTOGRAM_TOOLTIP_B;Pokaż/Ukryj histogram błękitów.
 HISTOGRAM_TOOLTIP_BAR;Pokazuje/Ukrywa wskaźnik RGB.\nKliknięcie prawym przyciskiem myszy na podglądzie zdjęcia blokuje/odblokowuje.
 HISTOGRAM_TOOLTIP_CHRO;Pokaż/Ukryj histogram chromatyczności.
+HISTOGRAM_TOOLTIP_CROSSHAIR;Pokaż/Ukryj wskaźnik krzyżowy.
 HISTOGRAM_TOOLTIP_G;Pokaż/Ukryj histogram zieleni.
 HISTOGRAM_TOOLTIP_L;Pokaż/Ukryj histogram luminancji CIELab.
+HISTOGRAM_TOOLTIP_MODE;Przełącz między liniową, logarytmiczną-liniową i logarytmiczną-logarytmiczną skalą histogramu.
 HISTOGRAM_TOOLTIP_R;Pokaż/Ukryj histogram czerwieni.
+HISTOGRAM_TOOLTIP_SHOW_OPTIONS;Przełącz widoczność przycisków opcji widoku.
+HISTOGRAM_TOOLTIP_TRACE_BRIGHTNESS;Dostosuj jasność widoku.
+HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM;Histogram
+HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM_RAW;Histogram raw
+HISTOGRAM_TOOLTIP_TYPE_PARADE;Parada RGB
+HISTOGRAM_TOOLTIP_TYPE_VECTORSCOPE_HC;Wektorskop barwa-chrominancja
+HISTOGRAM_TOOLTIP_TYPE_VECTORSCOPE_HS;Wektorskop barwa-nasycenie
+HISTOGRAM_TOOLTIP_TYPE_WAVEFORM;Wykres przebiegu
 HISTORY_CHANGED;Zmieniono
 HISTORY_CUSTOMCURVE;Krzywa własna
 HISTORY_FROMCLIPBOARD;Ze schowka
@@ -341,7 +383,7 @@ HISTORY_MSG_108;Próg kompresji prześwietleń
 HISTORY_MSG_109;Zmiana rozmiaru - Wymiary obwodu
 HISTORY_MSG_110;Zmiana rozmiaru dotyczy
 HISTORY_MSG_111;L*a*b* - Unikaj przycinania koloru
-HISTORY_MSG_112;-
+HISTORY_MSG_112;--nieużywane--
 HISTORY_MSG_113;L*a*b* - Ograniczenie nasyczenia
 HISTORY_MSG_114;DCB - Liczba powtórzeń
 HISTORY_MSG_115;DCB - Zapobieganie fałszowaniu koloru
@@ -456,7 +498,9 @@ HISTORY_MSG_231;B&amp;W - Krzywa 'Przed'
 HISTORY_MSG_232;B&amp;W - Rodzaj krzywej 'Przed'
 HISTORY_MSG_233;B&amp;W - Krzywa 'Po'
 HISTORY_MSG_234;B&amp;W - Rodzaj krzywej 'Po'
-HISTORY_MSG_236;-
+HISTORY_MSG_235;B&amp;W - CM - Auto
+HISTORY_MSG_236;--nieużywane--
+HISTORY_MSG_237;B&amp;W - CM
 HISTORY_MSG_238;FP - Wtapianie
 HISTORY_MSG_239;FP - Siła
 HISTORY_MSG_240;FP - Środek
@@ -491,8 +535,9 @@ HISTORY_MSG_269;Koloryzacja - Podświetlenia - Czerwone
 HISTORY_MSG_270;Koloryzacja - Podświetlenia - Zielona
 HISTORY_MSG_271;Koloryzacja - Podświetlenia - Niebieskie
 HISTORY_MSG_272;Koloryzacja - Balans
+HISTORY_MSG_273;CT - Balans kolorów SMH
 HISTORY_MSG_276;Koloryzacja - Przezroczystość
-HISTORY_MSG_277;--unused--
+HISTORY_MSG_277;--nieużywane--
 HISTORY_MSG_278;Koloryzacja - Zachowaj luminancję
 HISTORY_MSG_279;Koloryzacja - Cienie
 HISTORY_MSG_280;Koloryzacja - Tony jasne
@@ -519,12 +564,18 @@ HISTORY_MSG_301;NR - Kontrola luminancji
 HISTORY_MSG_302;NR - Metoda chrominancji
 HISTORY_MSG_303;NR - Metoda chrominancji
 HISTORY_MSG_304;W - Poziomy kontrastu
+HISTORY_MSG_305;Poziomy falkowe
 HISTORY_MSG_306;W - Proces
 HISTORY_MSG_307;W - Proces
 HISTORY_MSG_308;W - Kierunek procesu
 HISTORY_MSG_309;W - ES - Detale
+HISTORY_MSG_310;W - Pozostałe - Ochrona/celowanie odcieni nieba
+HISTORY_MSG_311;W - Poziomy falkowe
 HISTORY_MSG_312;W - Residual - Próg cieni
+HISTORY_MSG_313;W - Chroma - Nasycone/pastelowe
+HISTORY_MSG_314;W - Gamut - Redukcja artefaktów
 HISTORY_MSG_315;W - Residual - Kontrast
+HISTORY_MSG_316;W - Gamut - Ochrona/celowanie odcieni skóry
 HISTORY_MSG_317;W - Gamut - Odcień skóry
 HISTORY_MSG_318;W - Kontrast - Poziom podświetleń
 HISTORY_MSG_319;W - Kontrast - Zakres podświetleń
@@ -535,6 +586,12 @@ HISTORY_MSG_323;W - ES - Kontrast lokalny
 HISTORY_MSG_324;W - Chroma - Pastelowe
 HISTORY_MSG_325;W - Chroma - Nasycone
 HISTORY_MSG_326;W - Chroma - Metoda
+HISTORY_MSG_327;W - Kontrast - Zastosuj do
+HISTORY_MSG_328;W - Chroma - Siła łączenia
+HISTORY_MSG_329;W - Odcienie - Przezroczystość RG
+HISTORY_MSG_330;W - Odcienie - Przezroczystość BY
+HISTORY_MSG_331;W - Poziomy kontrastu - Dodatkowe
+HISTORY_MSG_332;W - Metoda kafelkowania
 HISTORY_MSG_333;W - Residual - Cienie
 HISTORY_MSG_334;W - Residual - Chrominancja
 HISTORY_MSG_335;W - Residual - Podświetlenia
@@ -543,69 +600,162 @@ HISTORY_MSG_337;W - Residual - Odcień nieba
 HISTORY_MSG_338;W - ES - Promień
 HISTORY_MSG_339;W - ES - Siła
 HISTORY_MSG_340;W - Siła
+HISTORY_MSG_341;W - Wydajność krawędzi
+HISTORY_MSG_342;W - ES - Pierwszy poziom
 HISTORY_MSG_343;W - Poziomy chrominancji
+HISTORY_MSG_344;W - Metoda chroma sl/cur
 HISTORY_MSG_345;W - ES - Kontrast lokalny
 HISTORY_MSG_346;W - ES - Tryb kontrastu lokalnego
 HISTORY_MSG_347;W - Odszumianie - Poziom 1
 HISTORY_MSG_348;W - Odszumianie - Poziom 2
 HISTORY_MSG_349;W - Odszumianie - Poziom 3
+HISTORY_MSG_350;W - ES - Wykrywanie krawędzi
+HISTORY_MSG_351;W - Pozostałe - Krzywa HH
 HISTORY_MSG_352;W - Tło
+HISTORY_MSG_353;W - ES - Czułość gradientu
+HISTORY_MSG_354;W - ES - Rozszerzone
 HISTORY_MSG_355;W - ES - Niski próg
 HISTORY_MSG_356;W - ES - Wysoki próg
+HISTORY_MSG_357;W - Redukcja szumów - Połącz z ES
+HISTORY_MSG_358;W - Gamut - CH
 HISTORY_MSG_359;Hot/Dead - Próg
+HISTORY_MSG_360;TM - Gamma
+HISTORY_MSG_361;W - Ostateczne - Balans chrominancji
 HISTORY_MSG_362;W - Residual - Metoda kompresji
 HISTORY_MSG_363;W - Residual - Siła kompersji
 HISTORY_MSG_364;W - Final - Balans kontrastu
+HISTORY_MSG_365;W - Ostateczne - Balans delta
+HISTORY_MSG_366;W - Pozostałe - Gamma kompresji
+HISTORY_MSG_367;W - Ostateczne - Krzywa kontrastu 'Po'
 HISTORY_MSG_368;W - Final - Balans kontrastu
 HISTORY_MSG_369;W - Final - Metoda balansu
 HISTORY_MSG_370;W - Final - Krzywa lokalnego kontrastu
+HISTORY_MSG_371;Wyostrzanie po zmianie rozmiaru
 HISTORY_MSG_372;PRS USM - Promień
 HISTORY_MSG_373;PRS USM - Ilość
 HISTORY_MSG_374;PRS USM - Próg
+HISTORY_MSG_375;PRS USM - Wyostrzanie tylko krawędzi
 HISTORY_MSG_376;PRS USM - Promień wykrywania krawędzi
 HISTORY_MSG_377;PRS USM - Tolerancja krawędzi
+HISTORY_MSG_378;PRS USM - Kontrola aureoli
+HISTORY_MSG_379;PRS USM - Wartość kontroli aureoli
 HISTORY_MSG_380;PRS - Metoda
 HISTORY_MSG_381;PRS RLD - Promień
 HISTORY_MSG_382;PRS RLD - Ilość
+HISTORY_MSG_383;PRS RLD - Tłumienie
 HISTORY_MSG_384;PRS RLD - Iteracje
 HISTORY_MSG_385;W - Residual - Balans kolorów
+HISTORY_MSG_386;W - Pozostałe - Zielony wyższy balans CB
+HISTORY_MSG_387;W - Pozostałe - Niebieski wyższy balans CB
+HISTORY_MSG_388;W - Pozostałe - Zielony średni balans CB
+HISTORY_MSG_389;W - Pozostałe - Niebieski średni balans CB
+HISTORY_MSG_390;W - Pozostałe - Zielony niższy balans CB
+HISTORY_MSG_391;W - Pozostałe - Niebieski niższy balans CB
 HISTORY_MSG_392;W - Residual - Balans kolorów
+HISTORY_MSG_393;DCP - Tabela wyglądu
+HISTORY_MSG_394;DCP - Ekspozycja bazowa
+HISTORY_MSG_395;DCP - Tabela bazowa
+HISTORY_MSG_396;W - Narzędzie do kontrastu
+HISTORY_MSG_397;W - Narzędzie do chrominancji
+HISTORY_MSG_398;W - Narzędzie ES
+HISTORY_MSG_399;W - Narzędzie pozostałe
+HISTORY_MSG_400;W - Narzędzie ostateczne
+HISTORY_MSG_401;W - Narzędzie do tonowania
+HISTORY_MSG_402;W - Narzędzie redukcji szumów
+HISTORY_MSG_403;W - ES - Czułość krawędzi
+HISTORY_MSG_404;W - ES - Wzmocnienie bazowe
 HISTORY_MSG_405;W - Odszumianie - Poziom 4
+HISTORY_MSG_406;W - ES - Sąsiednie piksele
 HISTORY_MSG_407;Retinex - Metoda
 HISTORY_MSG_408;Retinex - Promień
 HISTORY_MSG_410;Retinex - Przesunięcie
 HISTORY_MSG_411;Retinex - Siła
+HISTORY_MSG_412;Retinex - Gradient Gaussa
 HISTORY_MSG_413;Retinex - Kontrast
+HISTORY_MSG_414;Retinex - Histogram - Lab
+HISTORY_MSG_415;Retinex - Transmisja
+HISTORY_MSG_416;Retinex
+HISTORY_MSG_417;Retinex - Mediana transmisji
 HISTORY_MSG_418;Retinex - Próg
 HISTORY_MSG_419;Retinex - Przestrzeń kolorów
+HISTORY_MSG_420;Retinex - Histogram - HSL
 HISTORY_MSG_421;Retinex - Gamma
 HISTORY_MSG_422;Retinex - Gamma
+HISTORY_MSG_423;Retinex - Pochylenie gamma
+HISTORY_MSG_424;Retinex - Prog HL
+HISTORY_MSG_425;--nieużywane--
 HISTORY_MSG_426;Retinex - Wyrównywanie odcieni
+HISTORY_MSG_427;Sposób renderowania wynikowego
+HISTORY_MSG_428;Sposób renderowania na monitorze
 HISTORY_MSG_429;Retinex - Iteracje
+HISTORY_MSG_430;Retinex - Gradient transmisji
+HISTORY_MSG_431;Retinex - Gradient siły
 HISTORY_MSG_432;Retinex - M - Podświetlenia
+HISTORY_MSG_433;Retinex - M - Wysokie światła TW
 HISTORY_MSG_434;Retinex - M - Cienie
+HISTORY_MSG_435;Retinex - M - Cienie TW
 HISTORY_MSG_436;Retinex - M - Promień
 HISTORY_MSG_437;Retinex - M - Metoda
 HISTORY_MSG_438;Retinex - M - Wyrównywanie
 HISTORY_MSG_439;Retinex - Proces
 HISTORY_MSG_440;CbDL - Metoda
+HISTORY_MSG_441;Retinex - Wzmocnienie transmisji
 HISTORY_MSG_442;Retinex - Skala
+HISTORY_MSG_443;Kompensacja czerni wyjściowej
+HISTORY_MSG_444;WB - Odchylenie temperatury
+HISTORY_MSG_445;Podobraz raw
+HISTORY_MSG_446;--nieużywane--
+HISTORY_MSG_447;--nieużywane--
+HISTORY_MSG_448;--nieużywane--
 HISTORY_MSG_449;PS - Adaptacja ISO
+HISTORY_MSG_450;--nieużywane--
+HISTORY_MSG_451;--nieużywane--
 HISTORY_MSG_452;PS - Pokaż ruch
 HISTORY_MSG_453;PS - Pokaż tylko maskę
+HISTORY_MSG_454;--nieużywane--
+HISTORY_MSG_455;--nieużywane--
+HISTORY_MSG_456;--nieużywane--
+HISTORY_MSG_457;PS Sprawdź czerwony/niebieski
+HISTORY_MSG_458;--nieużywane--
+HISTORY_MSG_459;--nieużywane--
+HISTORY_MSG_460;--nieużywane--
+HISTORY_MSG_461;--nieużywane--
+HISTORY_MSG_462;PS Sprawdź zielony
+HISTORY_MSG_463;--nieużywane--
+HISTORY_MSG_464;PS Rozmyj maskę ruchu
 HISTORY_MSG_465;PS - Promień rozmycia
+HISTORY_MSG_466;--nieużywane--
+HISTORY_MSG_467;--nieużywane--
 HISTORY_MSG_468;PS - Wypełnij dziury
+HISTORY_MSG_469;PS Mediana
+HISTORY_MSG_470;--nieużywane--
 HISTORY_MSG_471;PS - Korekcja ruchu
 HISTORY_MSG_472;PS - Miękkie przejścia
 HISTORY_MSG_474;PS - Wyrównaj
 HISTORY_MSG_475;PS - Wyrównaj kanał
+HISTORY_MSG_476;KAL - VC - Temperatura
+HISTORY_MSG_477;KAL - VC - Odcień
+HISTORY_MSG_478;KAL - VC - Średnia luminancja
+HISTORY_MSG_479;KAL - VC - Adaptacja
+HISTORY_MSG_480;KAL - VC - Automatyczna adaptacja
+HISTORY_MSG_481;KAL - SC - Temperatura
+HISTORY_MSG_482;KAL - SC - Odcień
+HISTORY_MSG_483;KAL - SC - Średnia luminancja
+HISTORY_MSG_484;KAL - SC - Automatyczna średnia luminancja
 HISTORY_MSG_485;Korekcja obiektywu
 HISTORY_MSG_486;Korekcja obiektywu - Aparat
 HISTORY_MSG_487;Korekcja obiektywu - Obiektyw
+HISTORY_MSG_488;Kompresja zakresu dynamicznego
 HISTORY_MSG_489;DRC - Detal
 HISTORY_MSG_490;DRC - Ilość
 HISTORY_MSG_491;Balans bieli
 HISTORY_MSG_492;Krzywe RGB
+HISTORY_MSG_493;Korekty w przestrzeni barw L*a*b*
+HISTORY_MSG_494;Wyostrzanie po przechwyceniu
+HISTORY_MSG_496;Usunięto lokalny punkt
+HISTORY_MSG_497;Wybrano lokalny punkt
+HISTORY_MSG_498;--nieużywane--
+HISTORY_MSG_499;--nieużywane--
 HISTORY_MSG_CLAMPOOG;Ucinaj kolory spoza zakresu
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Korekcja koloru
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Korekcja koloru
@@ -1922,160 +2072,21 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!CURVEEDITOR_EDITPOINT_HINT;Enable edition of node in/out values.\n\nRight-click on a node to select it.\nRight-click on empty space to de-select the node.
-!DYNPROFILEEDITOR_EDIT_RULE;Edit Dynamic Profile Rule
-!DYNPROFILEEDITOR_ENTRY_TOOLTIP;The matching is case insensitive.\nUse the 're:' prefix to enter\na regular expression.
-!DYNPROFILEEDITOR_IMGTYPE_PS;Pixel Shift
-!DYNPROFILEEDITOR_NEW_RULE;New Dynamic Profile Rule
-!EXPORT_BYPASS;Processing steps to bypass
-!EXPORT_BYPASS_EQUALIZER;Bypass Wavelet Levels
-!EXPORT_PIPELINE;Processing pipeline
-!EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
-!EXPORT_USE_FAST_PIPELINE_TOOLTIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
-!EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
-!FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply 'find' keywords.
-!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to <b>permanently</b> delete all <b>%1</b> files in trash?
-!FILEBROWSER_DELETEDIALOG_SELECTED;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files?
-!FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files, <b>including</b> a queue-processed version?
-!FILEBROWSER_POPUPINSPECT;Inspect
-!FILEBROWSER_POPUPREMOVEINCLPROC;Delete permanently, including queue-processed version
-!FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
-!GENERAL_DELETE_ALL;Delete all
-!GENERAL_EDIT;Edit
-!GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
-!HISTOGRAM_TOOLTIP_CROSSHAIR;Show/Hide indicator crosshair.
-!HISTOGRAM_TOOLTIP_MODE;Toggle between linear, log-linear and log-log scaling of the histogram.
-!HISTOGRAM_TOOLTIP_SHOW_OPTIONS;Toggle visibility of the scope option buttons.
-!HISTOGRAM_TOOLTIP_TRACE_BRIGHTNESS;Adjust scope brightness.
-!HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM;Histogram
-!HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM_RAW;Raw Histogram
-!HISTOGRAM_TOOLTIP_TYPE_PARADE;RGB Parade
-!HISTOGRAM_TOOLTIP_TYPE_VECTORSCOPE_HC;Hue-Chroma Vectorscope
-!HISTOGRAM_TOOLTIP_TYPE_VECTORSCOPE_HS;Hue-Saturation Vectorscope
-!HISTOGRAM_TOOLTIP_TYPE_WAVEFORM;Waveform
-!HISTORY_MSG_235;B&amp;W - CM - Auto
-!HISTORY_MSG_237;B&amp;W - CM
-!HISTORY_MSG_273;CT - Color Balance SMH
-!HISTORY_MSG_305;Wavelet Levels
-!HISTORY_MSG_310;W - Residual - Sky tar/prot
-!HISTORY_MSG_311;W - Wavelet levels
-!HISTORY_MSG_313;W - Chroma - Sat/past
-!HISTORY_MSG_314;W - Gamut - Reduce artifacts
-!HISTORY_MSG_316;W - Gamut - Skin tar/prot
-!HISTORY_MSG_327;W - Contrast - Apply to
-!HISTORY_MSG_328;W - Chroma - Link strength
-!HISTORY_MSG_329;W - Toning - Opacity RG
-!HISTORY_MSG_330;W - Toning - Opacity BY
-!HISTORY_MSG_331;W - Contrast levels - Extra
-!HISTORY_MSG_332;W - Tiling method
-!HISTORY_MSG_341;W - Edge performance
-!HISTORY_MSG_342;W - ES - First level
-!HISTORY_MSG_344;W - Meth chroma sl/cur
-!HISTORY_MSG_350;W - ES - Edge detection
-!HISTORY_MSG_351;W - Residual - HH curve
-!HISTORY_MSG_353;W - ES - Gradient sensitivity
-!HISTORY_MSG_354;W - ES - Enhanced
-!HISTORY_MSG_357;W - Denoise - Link with ES
-!HISTORY_MSG_358;W - Gamut - CH
-!HISTORY_MSG_360;TM - Gamma
-!HISTORY_MSG_361;W - Final - Chroma balance
-!HISTORY_MSG_365;W - Final - Delta balance
-!HISTORY_MSG_366;W - Residual - Compression gamma
-!HISTORY_MSG_367;W - Final - 'After' contrast curve
-!HISTORY_MSG_371;Post-Resize Sharpening
-!HISTORY_MSG_375;PRS USM - Sharpen only edges
-!HISTORY_MSG_378;PRS USM - Halo control
-!HISTORY_MSG_379;PRS USM - Halo control amount
-!HISTORY_MSG_383;PRS RLD - Damping
-!HISTORY_MSG_386;W - Residual - CB green high
-!HISTORY_MSG_387;W - Residual - CB blue high
-!HISTORY_MSG_388;W - Residual - CB green mid
-!HISTORY_MSG_389;W - Residual - CB blue mid
-!HISTORY_MSG_390;W - Residual - CB green low
-!HISTORY_MSG_391;W - Residual - CB blue low
-!HISTORY_MSG_393;DCP - Look table
-!HISTORY_MSG_394;DCP - Baseline exposure
-!HISTORY_MSG_395;DCP - Base table
-!HISTORY_MSG_396;W - Contrast sub-tool
-!HISTORY_MSG_397;W - Chroma sub-tool
-!HISTORY_MSG_398;W - ES sub-tool
-!HISTORY_MSG_399;W - Residual sub-tool
-!HISTORY_MSG_400;W - Final sub-tool
-!HISTORY_MSG_401;W - Toning sub-tool
-!HISTORY_MSG_402;W - Denoise sub-tool
-!HISTORY_MSG_403;W - ES - Edge sensitivity
-!HISTORY_MSG_404;W - ES - Base amplification
-!HISTORY_MSG_406;W - ES - Neighboring pixels
-!HISTORY_MSG_412;Retinex - Gaussian gradient
-!HISTORY_MSG_414;Retinex - Histogram - Lab
-!HISTORY_MSG_415;Retinex - Transmission
-!HISTORY_MSG_416;Retinex
-!HISTORY_MSG_417;Retinex - Transmission median
-!HISTORY_MSG_420;Retinex - Histogram - HSL
-!HISTORY_MSG_423;Retinex - Gamma slope
-!HISTORY_MSG_424;Retinex - HL threshold
-!HISTORY_MSG_425;--unused--
-!HISTORY_MSG_427;Output rendering intent
-!HISTORY_MSG_428;Monitor rendering intent
-!HISTORY_MSG_430;Retinex - Transmission gradient
-!HISTORY_MSG_431;Retinex - Strength gradient
-!HISTORY_MSG_433;Retinex - M - Highlights TW
-!HISTORY_MSG_435;Retinex - M - Shadows TW
-!HISTORY_MSG_441;Retinex - Gain transmission
-!HISTORY_MSG_443;Output black point compensation
-!HISTORY_MSG_444;WB - Temp bias
-!HISTORY_MSG_445;Raw Sub-Image
-!HISTORY_MSG_446;--unused--
-!HISTORY_MSG_447;--unused--
-!HISTORY_MSG_448;--unused--
-!HISTORY_MSG_450;--unused--
-!HISTORY_MSG_451;--unused--
-!HISTORY_MSG_454;--unused--
-!HISTORY_MSG_455;--unused--
-!HISTORY_MSG_456;--unused--
-!HISTORY_MSG_457;PS Check red/blue
-!HISTORY_MSG_458;--unused--
-!HISTORY_MSG_459;--unused--
-!HISTORY_MSG_460;--unused--
-!HISTORY_MSG_461;--unused--
-!HISTORY_MSG_462;PS Check green
-!HISTORY_MSG_463;--unused--
-!HISTORY_MSG_464;PS Blur motion mask
-!HISTORY_MSG_466;--unused--
-!HISTORY_MSG_467;--unused--
-!HISTORY_MSG_469;PS Median
-!HISTORY_MSG_470;--unused--
-!HISTORY_MSG_476;CAL - VC - Temperature
-!HISTORY_MSG_477;CAL - VC - Tint
-!HISTORY_MSG_478;CAL - VC - Mean luminance
-!HISTORY_MSG_479;CAL - VC - Adaptation
-!HISTORY_MSG_480;CAL - VC - Auto adaptation
-!HISTORY_MSG_481;CAL - SC - Temperature
-!HISTORY_MSG_482;CAL - SC - Tint
-!HISTORY_MSG_483;CAL - SC - Mean luminance
-!HISTORY_MSG_484;CAL - SC - Auto mean luminance
-!HISTORY_MSG_488;Dynamic Range Compression
-!HISTORY_MSG_493;L*a*b* Adjustments
-!HISTORY_MSG_494;Capture Sharpening
-!HISTORY_MSG_496;Local Spot deleted
-!HISTORY_MSG_497;Local Spot selected
-!HISTORY_MSG_498;Local Spot name
-!HISTORY_MSG_499;Local Spot visibility
-!HISTORY_MSG_500;Local Spot shape
-!HISTORY_MSG_501;Local Spot method
-!HISTORY_MSG_502;Local Spot shape method
-!HISTORY_MSG_503;Local Spot locX
-!HISTORY_MSG_504;Local Spot locXL
-!HISTORY_MSG_505;Local Spot locY
-!HISTORY_MSG_506;Local Spot locYT
-!HISTORY_MSG_507;Local Spot center
-!HISTORY_MSG_508;Local Spot circrad
-!HISTORY_MSG_509;Local Spot quality method
-!HISTORY_MSG_510;Local Spot transition
-!HISTORY_MSG_511;Local Spot thresh
-!HISTORY_MSG_512;Local Spot ΔE decay
-!HISTORY_MSG_513;Local Spot scope
-!HISTORY_MSG_514;Local Spot structure
+!HISTORY_MSG_500;Local - Spot shape
+!HISTORY_MSG_501;Local - Spot method
+!HISTORY_MSG_502;Local - SC - Shape method
+!HISTORY_MSG_503;Local - Spot - Right
+!HISTORY_MSG_504;Local - Spot - Left
+!HISTORY_MSG_505;Local - Spot - Bottom
+!HISTORY_MSG_506;Local - Spot - Top
+!HISTORY_MSG_507;Local - Spot - Center
+!HISTORY_MSG_508;Local - Spot - Size
+!HISTORY_MSG_509;Local - Spot quality method
+!HISTORY_MSG_510;Local - TG - Transition value
+!HISTORY_MSG_511;Local - SD - ΔE scope threshold
+!HISTORY_MSG_512;Local - SD - ΔE decay
+!HISTORY_MSG_513;Local - Spot - Excluding - Scope
+!HISTORY_MSG_514;Local - Spot structure
 !HISTORY_MSG_515;Local Adjustments
 !HISTORY_MSG_516;Local - Color and light
 !HISTORY_MSG_517;Local - Enable super
@@ -2083,7 +2094,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !HISTORY_MSG_519;Local - Contrast
 !HISTORY_MSG_520;Local - Chrominance
 !HISTORY_MSG_521;Local - Scope
-!HISTORY_MSG_522;Local - curve method
+!HISTORY_MSG_522;Local - Curve method
 !HISTORY_MSG_523;Local - LL Curve
 !HISTORY_MSG_524;Local - CC curve
 !HISTORY_MSG_525;Local - LH Curve
@@ -2142,16 +2153,16 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !HISTORY_MSG_578;Local - cbdl threshold
 !HISTORY_MSG_579;Local - cbdl scope
 !HISTORY_MSG_580;--unused--
-!HISTORY_MSG_581;Local - deNoise lum f 1
-!HISTORY_MSG_582;Local - deNoise lum c
-!HISTORY_MSG_583;Local - deNoise lum detail
-!HISTORY_MSG_584;Local - deNoise equalizer White-Black
-!HISTORY_MSG_585;Local - deNoise chro f
-!HISTORY_MSG_586;Local - deNoise chro c
-!HISTORY_MSG_587;Local - deNoise chro detail
-!HISTORY_MSG_588;Local - deNoise equalizer Blue-Red
-!HISTORY_MSG_589;Local - deNoise bilateral
-!HISTORY_MSG_590;Local - deNoise Scope
+!HISTORY_MSG_581;Local - Denoise lum f 1
+!HISTORY_MSG_582;Local - Denoise lum c
+!HISTORY_MSG_583;Local - Denoise lum detail
+!HISTORY_MSG_584;Local - Denoise equalizer White-Black
+!HISTORY_MSG_585;Local - Denoise chro f
+!HISTORY_MSG_586;Local - Denoise chro c
+!HISTORY_MSG_587;Local - Denoise chro detail
+!HISTORY_MSG_588;Local - Denoise equalizer Blue-Red
+!HISTORY_MSG_589;Local - Denoise bilateral
+!HISTORY_MSG_590;Local - Denoise Scope
 !HISTORY_MSG_591;Local - Avoid color shift
 !HISTORY_MSG_592;Local - Sh Contrast
 !HISTORY_MSG_593;Local - Local contrast
@@ -2182,7 +2193,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !HISTORY_MSG_619;Local - Use Exp Mask
 !HISTORY_MSG_620;Local - Blur col
 !HISTORY_MSG_621;Local - Exp inverse
-!HISTORY_MSG_622;Local - Exclude structure
+!HISTORY_MSG_622;Local - Spot - Excluding - Spot structure
 !HISTORY_MSG_623;Local - Exp Chroma compensation
 !HISTORY_MSG_624;Local - Color correction grid
 !HISTORY_MSG_625;Local - Color correction strength
@@ -2205,7 +2216,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !HISTORY_MSG_642;Local - radius SH
 !HISTORY_MSG_643;Local - Blur SH
 !HISTORY_MSG_644;Local - inverse SH
-!HISTORY_MSG_645;Local - balance ΔE ab-L
+!HISTORY_MSG_645;Local - SD - ab-L balance
 !HISTORY_MSG_646;Local - Exp mask chroma
 !HISTORY_MSG_647;Local - Exp mask gamma
 !HISTORY_MSG_648;Local - Exp mask slope
@@ -2219,11 +2230,11 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !HISTORY_MSG_656;Local - Color soft radius
 !HISTORY_MSG_657;Local - Retinex Reduce artifacts
 !HISTORY_MSG_658;Local - CBDL soft radius
-!HISTORY_MSG_659;Local Spot transition-decay
+!HISTORY_MSG_659;Local - TG - Transition decay
 !HISTORY_MSG_660;Local - cbdl clarity
 !HISTORY_MSG_661;Local - cbdl contrast residual
-!HISTORY_MSG_662;Local - deNoise lum f 0
-!HISTORY_MSG_663;Local - deNoise lum f 2
+!HISTORY_MSG_662;Local - Denoise lum f 0
+!HISTORY_MSG_663;Local - Denoise lum f 2
 !HISTORY_MSG_664;--unused--
 !HISTORY_MSG_665;Local - cbdl mask Blend
 !HISTORY_MSG_666;Local - cbdl mask radius
@@ -2236,7 +2247,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !HISTORY_MSG_673;Local - Use cbdl mask
 !HISTORY_MSG_674;Local - Tool removed
 !HISTORY_MSG_675;Local - TM soft radius
-!HISTORY_MSG_676;Local Spot transition-differentiation
+!HISTORY_MSG_676;Local - TG - Transition differentiation
 !HISTORY_MSG_677;Local - TM amount
 !HISTORY_MSG_678;Local - TM saturation
 !HISTORY_MSG_679;Local - Retinex mask C
@@ -2319,7 +2330,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !HISTORY_MSG_762;Local - cbdl Laplacian mask
 !HISTORY_MSG_763;Local - Blur Laplacian mask
 !HISTORY_MSG_764;Local - Solve PDE Laplacian mask
-!HISTORY_MSG_765;Local - deNoise Detail threshold
+!HISTORY_MSG_765;Local - Denoise Detail threshold
 !HISTORY_MSG_766;Local - Blur Fast Fourier
 !HISTORY_MSG_767;Local - Grain Iso
 !HISTORY_MSG_768;Local - Grain Strength
@@ -2338,19 +2349,19 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !HISTORY_MSG_781;Local - Contrast Mask Wavelet level
 !HISTORY_MSG_782;Local - Blur Denoise Mask Wavelet levels
 !HISTORY_MSG_783;Local - Color Wavelet levels
-!HISTORY_MSG_784;Local - Mask ΔE
-!HISTORY_MSG_785;Local - Mask Scope ΔE
+!HISTORY_MSG_784;Local - Mask - ΔE Image Mask
+!HISTORY_MSG_785;Local - Mask - Scope
 !HISTORY_MSG_786;Local - SH method
 !HISTORY_MSG_787;Local - Equalizer multiplier
 !HISTORY_MSG_788;Local - Equalizer detail
 !HISTORY_MSG_789;Local - SH mask amount
 !HISTORY_MSG_790;Local - SH mask anchor
 !HISTORY_MSG_791;Local - Mask Short L curves
-!HISTORY_MSG_792;Local - Mask Luminance Background
+!HISTORY_MSG_792;Local - Mask - Background
 !HISTORY_MSG_793;Local - SH TRC gamma
 !HISTORY_MSG_794;Local - SH TRC slope
 !HISTORY_MSG_795;Local - Mask save restore image
-!HISTORY_MSG_796;Local - Recursive references
+!HISTORY_MSG_796;Local - SC - Recursive references
 !HISTORY_MSG_797;Local - Merge Original method
 !HISTORY_MSG_798;Local - Opacity
 !HISTORY_MSG_799;Local - Color RGB ToneCurve
@@ -2386,7 +2397,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !HISTORY_MSG_830;Local - Color gradient strength L
 !HISTORY_MSG_831;Local - Color gradient angle
 !HISTORY_MSG_832;Local - Color gradient strength C
-!HISTORY_MSG_833;Local - Gradient feather
+!HISTORY_MSG_833;Local - TG - Feather gradient
 !HISTORY_MSG_834;Local - Color gradient strength H
 !HISTORY_MSG_835;Local - Vib gradient strength L
 !HISTORY_MSG_836;Local - Vib gradient angle
@@ -2419,7 +2430,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !HISTORY_MSG_864;Local - Wavelet dir contrast attenuation
 !HISTORY_MSG_865;Local - Wavelet dir contrast delta
 !HISTORY_MSG_866;Local - Wavelet dir compression
-!HISTORY_MSG_868;Local - Balance ΔE C-H
+!HISTORY_MSG_868;Local - SD - C-H balance
 !HISTORY_MSG_869;Local - Denoise by level
 !HISTORY_MSG_870;Local - Wavelet mask curve H
 !HISTORY_MSG_871;Local - Wavelet mask curve C
@@ -2444,7 +2455,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !HISTORY_MSG_891;Local - Contrast Wavelet Graduated
 !HISTORY_MSG_892;Local - Log Encoding Graduated Strength
 !HISTORY_MSG_893;Local - Log Encoding Graduated angle
-!HISTORY_MSG_894;Local - Color Preview dE
+!HISTORY_MSG_894;Local - SD - ΔE preview color intensity
 !HISTORY_MSG_897;Local - Contrast Wavelet ES strength
 !HISTORY_MSG_898;Local - Contrast Wavelet ES radius
 !HISTORY_MSG_899;Local - Contrast Wavelet ES detail
@@ -2458,7 +2469,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !HISTORY_MSG_907;Local - Contrast Wavelet ES amplification
 !HISTORY_MSG_908;Local - Contrast Wavelet ES neighboring
 !HISTORY_MSG_909;Local - Contrast Wavelet ES show
-!HISTORY_MSG_910;Local - Wavelet Edge performance
+!HISTORY_MSG_910;Local - SC - Wavelet Edge performance
 !HISTORY_MSG_911;Local - Blur Chroma Luma
 !HISTORY_MSG_912;Local - Blur Guide filter strength
 !HISTORY_MSG_913;Local - Contrast Wavelet Sigma DR
@@ -2470,10 +2481,10 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !HISTORY_MSG_919;Local - Residual wavelet highlights threshold
 !HISTORY_MSG_920;Local - Wavelet sigma LC
 !HISTORY_MSG_921;Local - Wavelet Graduated sigma LC2
-!HISTORY_MSG_922;Local - changes In Black and White
+!HISTORY_MSG_922;Local - SC - Changes in B/W
 !HISTORY_MSG_923;Local - Tool complexity mode
 !HISTORY_MSG_924;--unused--
-!HISTORY_MSG_925;Local - Scope color tools
+!HISTORY_MSG_925;Local - Scope (color tools)
 !HISTORY_MSG_926;Local - Show mask type
 !HISTORY_MSG_927;Local - Shadow
 !HISTORY_MSG_928;Local - Common color mask
@@ -2587,7 +2598,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !HISTORY_MSG_1037;Local - Nlmeans - radius
 !HISTORY_MSG_1038;Local - Nlmeans - gamma
 !HISTORY_MSG_1039;Local - Grain - gamma
-!HISTORY_MSG_1040;Local - Spot - soft radius
+!HISTORY_MSG_1040;Local - SC - Soft radius
 !HISTORY_MSG_1041;Local - Spot - Munsell
 !HISTORY_MSG_1042;Local - Log encoding - threshold
 !HISTORY_MSG_1043;Local - Exp - normalize
@@ -2678,7 +2689,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !HISTORY_MSG_1128;Local - Cie mask slope
 !HISTORY_MSG_1129;Local - Cie Relative luminance
 !HISTORY_MSG_1130;Local - Cie Saturation Jz
-!HISTORY_MSG_1131;Local - Mask denoise chroma
+!HISTORY_MSG_1131;Local - Mask - Denoise
 !HISTORY_MSG_1132;Local - Cie Wav sigma Jz
 !HISTORY_MSG_1133;Local - Cie Wav level Jz
 !HISTORY_MSG_1134;Local - Cie Wav local contrast Jz
@@ -2721,18 +2732,22 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;Dual demosaic - Auto threshold
 !HISTORY_MSG_DUALDEMOSAIC_CONTRAST;Dual demosaic - Contrast threshold
 !HISTORY_MSG_EDGEFFECT;Edge Attenuation response
+!HISTORY_MSG_FF_FROMMETADATA;Flat-Field - From Metadata
 !HISTORY_MSG_FILMNEGATIVE_BALANCE;FN - Reference output
 !HISTORY_MSG_FILMNEGATIVE_COLORSPACE;Film negative color space
 !HISTORY_MSG_FILMNEGATIVE_ENABLED;Film Negative
 !HISTORY_MSG_FILMNEGATIVE_REF_SPOT;FN - Reference input
 !HISTORY_MSG_FILMNEGATIVE_VALUES;Film negative values
+!HISTORY_MSG_GAMUTMUNSEL;Gamut-Munsell
 !HISTORY_MSG_HISTMATCHING;Auto-matched tone curve
 !HISTORY_MSG_HLBL;Color propagation - blur
+!HISTORY_MSG_HLTH;Inpaint opposed - gain threshold
 !HISTORY_MSG_ICL_LABGRIDCIEXY;Cie xy
 !HISTORY_MSG_ICM_AINTENT;Abstract profile intent
 !HISTORY_MSG_ICM_BLUX;Primaries Blue X
 !HISTORY_MSG_ICM_BLUY;Primaries Blue Y
 !HISTORY_MSG_ICM_FBW;Black and White
+!HISTORY_MSG_ICM_GAMUT;Gamut control
 !HISTORY_MSG_ICM_GREX;Primaries Green X
 !HISTORY_MSG_ICM_GREY;Primaries Green Y
 !HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Output - Primaries
@@ -2747,6 +2762,8 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !HISTORY_MSG_ICM_WORKING_SLOPE;TRC - Slope
 !HISTORY_MSG_ICM_WORKING_TRC_METHOD;TRC method
 !HISTORY_MSG_ILLUM;CAL - SC - Illuminant
+!HISTORY_MSG_LOCALLAB_TE_PIVOT;Local - Equalizer pivot
+!HISTORY_MSG_LOCAL_GAMUTMUNSEL;Local - SC - Avoid Color Shift
 !HISTORY_MSG_METADATA_MODE;Metadata copy mode
 !HISTORY_MSG_PDSHARPEN_RADIUS_BOOST;CS - Corner radius boost
 !HISTORY_MSG_PERSP_CAM_ANGLE;Perspective - Camera
@@ -2777,6 +2794,11 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !HISTORY_MSG_TEMPOUT;CAM02 automatic temperature
 !HISTORY_MSG_THRESWAV;Balance threshold
 !HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
+!HISTORY_MSG_TONE_EQUALIZER_BANDS;Tone equalizer - Bands
+!HISTORY_MSG_TONE_EQUALIZER_ENABLED;Tone equalizer
+!HISTORY_MSG_TONE_EQUALIZER_PIVOT;Tone equalizer - Pivot
+!HISTORY_MSG_TONE_EQUALIZER_REGULARIZATION;Tone equalizer - Regularization
+!HISTORY_MSG_TONE_EQUALIZER_SHOW_COLOR_MAP;Tone equalizer - Tonal map
 !HISTORY_MSG_WAVBALCHROM;Equalizer chrominance
 !HISTORY_MSG_WAVBALLUM;Equalizer luminance
 !HISTORY_MSG_WAVBL;Blur levels
@@ -2815,6 +2837,23 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !HISTORY_MSG_WAVTHRDEN;Threshold local contrast
 !HISTORY_MSG_WAVTHREND;Threshold local contrast
 !HISTORY_MSG_WAVUSHAMET;Clarity method
+!HISTORY_MSG_WBALANCE_OBSERVER10;Observer 10°
+!HISTORY_MSG_WBITC_CUSTOM;Itcwb Custom
+!HISTORY_MSG_WBITC_DELTA;Itcwb Delta green
+!HISTORY_MSG_WBITC_FGREEN;Itcwb Green - student
+!HISTORY_MSG_WBITC_FORCE;Itcwb Force
+!HISTORY_MSG_WBITC_GREEN;Grren refinement
+!HISTORY_MSG_WBITC_MINSIZE;Patch min size
+!HISTORY_MSG_WBITC_NOPURPLE;Itcwb Nopurple
+!HISTORY_MSG_WBITC_OBS;Remove algo 2 passes
+!HISTORY_MSG_WBITC_PONDER;Itcwb ponderated
+!HISTORY_MSG_WBITC_PRECIS;Itcwb Precision
+!HISTORY_MSG_WBITC_PRIM;Primaries
+!HISTORY_MSG_WBITC_RGREEN;Itcwb Green range
+!HISTORY_MSG_WBITC_SAMPLING;Low sampling
+!HISTORY_MSG_WBITC_SIZE;Itcwb Size
+!HISTORY_MSG_WBITC_SORTED;Itcwb ponderated
+!HISTORY_MSG_WBITC_THRES;Itcwb Theshold
 !ICCPROFCREATOR_DESCRIPTION_ADDPARAM;Append gamma and slope values to the description
 !ICCPROFCREATOR_DESCRIPTION_TOOLTIP;Leave empty to set the default description.
 !ICCPROFCREATOR_ILL;Illuminant:
@@ -2845,6 +2884,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n'<b>%1</b>' will be used instead.
 !PARTIALPASTE_EQUALIZER;Wavelet levels
 !PARTIALPASTE_FILMNEGATIVE;Film negative
+!PARTIALPASTE_FLATFIELDFROMMETADATA;Flat-field from Metadata
 !PARTIALPASTE_LOCALLAB;Local Adjustments
 !PARTIALPASTE_LOCALLABGROUP;Local Adjustments Settings
 !PARTIALPASTE_METADATA;Metadata mode
@@ -2857,9 +2897,11 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !PARTIALPASTE_RAW_IMAGENUM;Sub-image
 !PARTIALPASTE_RAW_PIXELSHIFT;Pixel Shift
 !PARTIALPASTE_SPOT;Spot removal
+!PARTIALPASTE_TONE_EQUALIZER;Tone equalizer
 !PREFERENCES_AUTOSAVE_TP_OPEN;Save tool collapsed/expanded state on exit
 !PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Clear all cached files except for cached processing profiles:
 !PREFERENCES_CACHECLEAR_SAFETY;Only files in the cache are cleared. Processing profiles stored alongside the source images are not touched.
+!PREFERENCES_CAMERAPROFILESDIR;Camera profiles directory
 !PREFERENCES_CIE;Ciecam
 !PREFERENCES_CIEARTIF;Avoid artifacts
 !PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
@@ -2873,10 +2915,24 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !PREFERENCES_EXTEDITOR_DIR_CUSTOM;Custom
 !PREFERENCES_EXTEDITOR_DIR_TEMP;OS temp dir
 !PREFERENCES_EXTEDITOR_FLOAT32;32-bit float TIFF output
+!PREFERENCES_EXTERNALEDITOR_CHANGE;Change Application
+!PREFERENCES_EXTERNALEDITOR_CHANGE_FILE;Change Executable
+!PREFERENCES_EXTERNALEDITOR_COLUMN_COMMAND;Command
+!PREFERENCES_EXTERNALEDITOR_COLUMN_NAME;Name
+!PREFERENCES_EXTERNALEDITOR_COLUMN_NATIVE_COMMAND;Native command
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Same thumbnail height between the Filmstrip and the File Browser
 !PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Having separate thumbnail size will require more processing time each time you'll switch between the single Editor tab and the File Browser.
 !PREFERENCES_INSPECTORWINDOW;Open inspector in own window or fullscreen
 !PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;Set the maximum number of images stored in cache when hovering over them in the File Browser; systems with little RAM (2GB) should keep this value set to 1 or 2.
+!PREFERENCES_LENSFUNDBDIR;Lensfun database directory
+!PREFERENCES_LENSFUNDBDIR_TOOLTIP;Directory containing the Lensfun database.  Leave empty to use the default directories.
+!PREFERENCES_LENSPROFILESDIR;Lens profiles directory
+!PREFERENCES_LENSPROFILESDIR_TOOLTIP;Directory containing Adobe Lens Correction Profiles (LCPs)
+!PREFERENCES_METADATA;Metadata
+!PREFERENCES_METADATA_SYNC;Metadata synchronization with XMP sidecars
+!PREFERENCES_METADATA_SYNC_NONE;Off
+!PREFERENCES_METADATA_SYNC_READ;Read only
+!PREFERENCES_METADATA_SYNC_READWRITE;Bidirectional
 !PREFERENCES_MONINTENT;Default rendering intent
 !PREFERENCES_PERFORMANCE_MEASURE_HINT;Logs processing times in console
 !PREFERENCES_PERFORMANCE_THREADS_LABEL;Maximum number of threads for Noise Reduction and Wavelet Levels (0 = Automatic)
@@ -2891,14 +2947,44 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !PREFERENCES_SHOWFILMSTRIPTOOLBAR;Show Filmstrip toolbar
 !PREFERENCES_SHOWTOOLTIP;Show Local Adjustments advice tooltips
 !PREFERENCES_TAB_DYNAMICPROFILE;Dynamic Profile Rules
+!PREFERENCES_TAB_FAVORITES;Favorites
 !PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw rendering
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Embedded JPEG if fullsize, neutral raw otherwise
+!PREFERENCES_TOOLPANEL_AVAILABLETOOLS;Available Tools
+!PREFERENCES_TOOLPANEL_CLONE_FAVORITES;Keep favorite tools in original locations
+!PREFERENCES_TOOLPANEL_CLONE_FAVORITES_TOOLTIP;If set, favorite tools will appear in both the favorites tab and their original tabs.\n\nNote: Enabling this option may result in a slight delay when switching tabs.
+!PREFERENCES_TOOLPANEL_FAVORITE;Favorite
+!PREFERENCES_TOOLPANEL_FAVORITESPANEL;Favorites Panel
+!PREFERENCES_TOOLPANEL_TOOL;Tool
+!PREFERENCES_WBA;White Balance
+!PREFERENCES_WBACORR;White Balance - Automatic temperature correlation
+!PREFERENCES_WBACORR_TOOLTIP;These settings allow, depending on the images (type of raw file, colorimetry, etc.), an adaptation of the " Temperature correlation " algorithm in order to obtain the best overall results. There is no absolute rule, linking these parameters to the results obtained.\n\nThe settings are of 3 types: \n* those accessible to the user from the GUI.\n* those accessible only in reading from each pp3 file : Itcwb_minsize=20, Itcwb_delta=4 Itcwb_rgreen=1 Itcwb_nopurple=false (See Rawpedia)\n* those accessible to the user in 'options' (see Rawpedia)\n You can use "Awb temperature bias" and "Green refinement" to adjust the results. Each movement of these commands brings a new calculation of temperature, tint and correlation.\n\nPlease note that the 3 indicators 'Correlation factor', 'Patch chroma' and ΔE are given for information only. It is not because one of these indicators is better that the result will necessarily be better.
+!PREFERENCES_WBAENA;Show White Balance auto Temperature correlation Settings
+!PREFERENCES_WBAENACUSTOM;Use Custom temperature & tint
+!PREFERENCES_WBAFORC;Forces Extra algoritm
+!PREFERENCES_WBAGREENDELTA;Delta temperature in green iterate loop (if Force Extra enabled)
+!PREFERENCES_WBANOPURP;No purple color used
+!PREFERENCES_WBAPATCH;Number maximum of colors used in picture
+!PREFERENCES_WBAPRECIS;Precision algorithm - scale used
+!PREFERENCES_WBASIZEREF;Size of reference color compare to size of histogram color
+!PREFERENCES_WBASORT;Sort in chroma order instead of histogram
+!PREFERENCES_XMP_SIDECAR_MODE;XMP sidecar style
+!PREFERENCES_XMP_SIDECAR_MODE_EXT;darktable-like (FILENAME.ext.xmp for FILENAME.ext)
+!PREFERENCES_XMP_SIDECAR_MODE_STD;Standard (FILENAME.xmp for FILENAME.ext)
 !PREFERENCES_ZOOMONSCROLL;Zoom images by scrolling
 !QUEUE_STARTSTOP_TOOLTIP;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
+!SAVEDLG_BIGTIFF;BigTIFF (no metadata support)
 !SAVEDLG_SUBSAMP_TOOLTIP;Best compression:\nJ:a:b 4:2:0\nh/v 2/2\nChroma halved horizontally and vertically.\n\nBalanced:\nJ:a:b 4:2:2\nh/v 2/1\nChroma halved horizontally.\n\nBest quality:\nJ:a:b 4:4:4\nh/v 1/1\nNo chroma subsampling.
 !SOFTPROOF_GAMUTCHECK_TOOLTIP;Highlight pixels with out-of-gamut colors with respect to:\n- the printer profile, if one is set and soft-proofing is enabled,\n- the output profile, if a printer profile is not set and soft-proofing is enabled,\n- the monitor profile, if soft-proofing is disabled.
 !SOFTPROOF_TOOLTIP;Soft-proofing simulates the appearance of the image:\n- when printed, if a printer profile is set in Preferences > Color Management,\n- when viewed on a display that uses the current output profile, if a printer profile is not set.
+!SORT_ASCENDING;Ascending
+!SORT_BY_DATE;By Date
+!SORT_BY_EXIF;By EXIF
+!SORT_BY_LABEL;By Color Label
+!SORT_BY_NAME;By Name
+!SORT_BY_RANK;By Rank
+!SORT_DESCENDING;Descending
 !TC_PRIM_BLUX;Bx
 !TC_PRIM_BLUY;By
 !TC_PRIM_GREX;Gx
@@ -2915,6 +3001,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_COLORAPP_CATMOD;Mode
 !TP_COLORAPP_CATSYMGEN;Automatic Symmetric
 !TP_COLORAPP_CATSYMSPE;Mixed
+!TP_COLORAPP_CIECAT_DEGREEOUT;Chromatic Adaptation Viewing
 !TP_COLORAPP_DEGREE_TOOLTIP;CAT02/16 is a chromatic adaptation. It converts the values of an image whose white point is that of a given illuminant (for example D65) into new values whose white point is that of the new illuminant - see WP model (for example D50 or D55).
 !TP_COLORAPP_DEGREOUT_TOOLTIP;CAT02/16 is a chromatic adaptation. It converts the values of an image whose white point is that of a given illuminant (for example D50) into new values whose white point is that of the new illuminant - see WP model (for example D75).
 !TP_COLORAPP_FREE;Free temp + tint + CAT02/16 +[output]
@@ -2939,6 +3026,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_COLORAPP_SURROUNDSRC;Surround
 !TP_COLORAPP_SURSOURCE_TOOLTIP;Changes tones and colors to take into account the surround conditions of the scene lighting. The darker the surround conditions, the brighter the image will become. Image brightness will not be changed when the surround is set to average.
 !TP_COLORAPP_TEMP2_TOOLTIP;Either symmetrical mode temp = White balance.\nEither select illuminant always set Tint=1.\n\nA temp=2856\nD41 temp=4100\nD50 temp=5003\nD55 temp=5503\nD60 temp=6000\nD65 temp=6504\nD75 temp=7504
+!TP_COLORAPP_TEMPOUT_TOOLTIP;Temperature and Tint.\nDepending on the choices made previously, the selected temperature is:\nWhite balance\nA temp=2856\nD41 temp=4100\nD50 temp=5003\nD55 temp=5503\nD60 temp=6000\nD65 temp=6504\nD75 temp=7504\nFree.
 !TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant, always set Tint=1.\n\nA temp=2856\nD41 temp=4100\nD50 temp=5003\nD55 temp=5503\nD60 temp=6000\nD65 temp=6504\nD75 temp=7504
 !TP_COLORAPP_VIEWINGF_TOOLTIP;Takes into account the support on which the final image will be viewed (monitor, TV, projector, printer, etc.), as well as its environment. This process will take the data coming from process 'Image Adjustments' and 'bring' it to the support in such a way that the viewing conditions and its environment are taken into account.
 !TP_COLORAPP_YBOUT_TOOLTIP;Yb is the relative luminance of the background, expressed in % of gray. 18% gray corresponds to a background luminance of 50% expressed in CIE L.\nThe data is based on the mean luminance of the image.
@@ -2978,11 +3066,16 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_FILMNEGATIVE_GREENBALANCE;Magenta/Green
 !TP_FILMNEGATIVE_GUESS_TOOLTIP;Automatically set the red and blue ratios by picking two patches which had a neutral hue (no color) in the original scene. The patches should differ in brightness.
 !TP_FILMNEGATIVE_OUT_LEVEL;Output level
+!TP_FILMNEGATIVE_PICK_SIZE;Size:
 !TP_FILMNEGATIVE_REF_LABEL;Input RGB: %1
 !TP_FILMNEGATIVE_REF_PICK;Pick white balance spot
+!TP_FILMNEGATIVE_REF_SIZE;Size:
 !TP_FILMNEGATIVE_REF_TOOLTIP;Pick a gray patch for white-balancing the output, positive image.
 !TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee is configured to look for Hald CLUT images, which are used for the Film Simulation tool, in a folder which is taking too long to load.\nGo to Preferences > Image Processing > Film Simulation\nto see which folder is being used. You should either point RawTherapee to a folder which contains only Hald CLUT images and nothing more, or to an empty folder if you don't want to use the Film Simulation tool.\n\nRead the Film Simulation article in RawPedia for more information.\n\nDo you want to cancel the scan now?
+!TP_FLATFIELD_FROMMETADATA;From Metadata
+!TP_HLREC_COLOROPP;Inpaint Opposed
 !TP_HLREC_HLBLUR;Blur
+!TP_HLREC_HLTH;Gain threshold
 !TP_ICM_APPLYBASELINEEXPOSUREOFFSET;Baseline exposure
 !TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP;Employ the embedded DCP baseline exposure offset. The setting is only available if the selected DCP has one.
 !TP_ICM_APPLYHUESATMAP;Base table
@@ -2990,6 +3083,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_ICM_APPLYLOOKTABLE;Look table
 !TP_ICM_APPLYLOOKTABLE_TOOLTIP;Employ the embedded DCP look table. The setting is only available if the selected DCP has one.
 !TP_ICM_FBW;Black-and-White
+!TP_ICM_GAMUT;Gamut control
 !TP_ICM_ILLUMPRIM_TOOLTIP;Choose the illuminant closest to the shooting conditions.\nChanges can only be made when the 'Destination primaries' selection is set to 'Custom (sliders)'.
 !TP_ICM_LABGRID_CIEXY;R(x)=%1 R(y)=%2\nG(x)=%3 G(y)=%4\nB(x)=%5 B(y)=%6
 !TP_ICM_NEUTRAL;Reset
@@ -3029,6 +3123,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_ICM_WORKING_PRIM_BST;BestRGB
 !TP_ICM_WORKING_PRIM_CUS;Custom (sliders)
 !TP_ICM_WORKING_PRIM_CUSGR;Custom (CIE xy Diagram)
+!TP_ICM_WORKING_PRIM_JDCMAX;JDC Max
 !TP_ICM_WORKING_PRIM_NONE;Default
 !TP_ICM_WORKING_PRIM_PROP;ProPhoto
 !TP_ICM_WORKING_PRIM_REC;Rec2020
@@ -3049,7 +3144,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_LOCALLAB_AUTOGRAY;Auto mean luminance (Yb%)
 !TP_LOCALLAB_AUTOGRAYCIE;Auto
 !TP_LOCALLAB_AVOID;Avoid color shift
-!TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction (Uniform Perceptual Lab).\nMunsell correction always disabled when Jz or CAM16 is used.
+!TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction (Uniform Perceptual Lab).\nMunsell correction always disabled when Jz or CAM16 or Color Appearance and Lighting is used.\n\nDefault: Munsell.\nMunsell correction: fixes Lab mode hue drifts due to non-linearity, when chromaticity is changed (Uniform Perceptual Lab).\nLab: applies a gamut control, in relative colorimetric, Munsell is then applied.\nXYZ Absolute, applies gamut control, in absolute colorimetric, Munsell is then applied.\nXYZ Relative, applies gamut control, in relative colorimetric, Munsell is then applied.
 !TP_LOCALLAB_AVOIDMUN;Munsell correction only
 !TP_LOCALLAB_AVOIDMUN_TOOLTIP;Munsell correction always disabled when Jz or CAM16 is used.
 !TP_LOCALLAB_AVOIDRAD;Soft radius
@@ -3075,7 +3170,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_LOCALLAB_BLNOI_EXP;Blur & Noise
 !TP_LOCALLAB_BLNORM;Normal
 !TP_LOCALLAB_BLUFR;Blur/Grain & Denoise
-!TP_LOCALLAB_BLUMETHOD_TOOLTIP;To blur the background and isolate the foreground:\n-blur the background by completely covering the image with an an RT-spot (high values for scope and transition and 'Normal' or 'Inverse' in checkbox).\n-Isolate the foreground by using one or more 'Excluding' RT-spot(s) and increase the scope.\n\nThis module (including the 'median' and 'Guided filter') can be used in addition to the main-menu noise reduction.
+!TP_LOCALLAB_BLUMETHOD_TOOLTIP;To blur the background and isolate the foreground:\n-blur the background by completely covering the image with a spot (high values for scope and transition and 'Normal' or 'Inverse' in checkbox).\n-Isolate the foreground by using one or more 'Excluding' spots and increase the scope.\n\nThis module (including the 'median' and 'Guided filter') can be used in addition to the main-menu noise reduction.
 !TP_LOCALLAB_BLUR;Gaussian Blur - Noise - Grain
 !TP_LOCALLAB_BLURCOL;Radius
 !TP_LOCALLAB_BLURCOLDE_TOOLTIP;The image used to calculate dE is blurred slightly to avoid taking isolated pixels into account.
@@ -3108,6 +3203,8 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_LOCALLAB_CENTER_X;Center X
 !TP_LOCALLAB_CENTER_Y;Center Y
 !TP_LOCALLAB_CH;CL - LC
+!TP_LOCALLAB_CHRO46LABEL;Chroma levels 456: Mean=%1 High=%2
+!TP_LOCALLAB_CHROLABEL;Chroma levels 0123: Mean=%1 High=%2
 !TP_LOCALLAB_CHROMA;Chrominance
 !TP_LOCALLAB_CHROMABLU;Chroma levels
 !TP_LOCALLAB_CHROMABLU_TOOLTIP;Increases or reduces the effect depending on the luma settings.\nValues under 1 reduce the effect. Values greater than 1 increase the effect.
@@ -3134,7 +3231,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_LOCALLAB_CIETOOLEXP;Curves
 !TP_LOCALLAB_CIE_TOOLNAME;Color appearance (Cam16 & JzCzHz)
 !TP_LOCALLAB_CIRCRADIUS;Spot size
-!TP_LOCALLAB_CIRCRAD_TOOLTIP;Contains the references of the RT-spot, useful for shape detection (hue, luma, chroma, Sobel).\nLow values may be useful for processing foliage.\nHigh values may be useful for processing skin.
+!TP_LOCALLAB_CIRCRAD_TOOLTIP;Contains the references of the spot, useful for shape detection (hue, luma, chroma, Sobel).\nLow values may be useful for processing foliage.\nHigh values may be useful for processing skin.
 !TP_LOCALLAB_CLARICRES;Merge chroma
 !TP_LOCALLAB_CLARIFRA;Clarity & Sharp mask/Blend & Soften Images
 !TP_LOCALLAB_CLARIJZ_TOOLTIP;Levels 0 to 4 (included): 'Sharp mask' is enabled\nLevels 5 and above: 'Clarity' is enabled.
@@ -3169,8 +3266,8 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_LOCALLAB_CSTHRESHOLDBLUR;Wavelet level selection
 !TP_LOCALLAB_CURV;Lightness - Contrast - Chrominance 'Super'
 !TP_LOCALLAB_CURVCURR;Normal
-!TP_LOCALLAB_CURVEEDITORM_CC_TOOLTIP;If the curves are at the top, the mask is completely black and no changes are made to the image.\nAs you lower the curve, the mask gradually becomes more colorful and bright, progressively changing the image.\n\nIt is recommended (but not mandatory) to position the top of the curves on the gray boundary line which represents the reference values of chroma, luma, hue for the RT-spot.
-!TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP;If curves are at the top, the mask is completely black and no changes are made to the image.\nAs you lower the curve, the mask gradually becomes more colorful and bright, progressively changing the image.\n\nIt is recommended (but not mandatory) to position the top of the curves on the gray boundary line which represents the reference values of chroma, luma, hue for the RT-spot.
+!TP_LOCALLAB_CURVEEDITORM_CC_TOOLTIP;If the curves are at the top, the mask is completely black and no changes are made to the image.\nAs you lower the curve, the mask gradually becomes more colorful and bright, progressively changing the image.\n\nIt is recommended (but not mandatory) to position the top of the curves on the gray boundary line which represents the reference values of chroma, luma, hue for the spot.
+!TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP;If curves are at the top, the mask is completely black and no changes are made to the image.\nAs you lower the curve, the mask gradually becomes more colorful and bright, progressively changing the image.\n\nIt is recommended (but not mandatory) to position the top of the curves on the gray boundary line which represents the reference values of chroma, luma, hue for the spot.
 !TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP;To activate the curves, set the 'Curve type' combobox to 'Normal'.
 !TP_LOCALLAB_CURVEEDITOR_TONES_LABEL;Tone curve
 !TP_LOCALLAB_CURVEEDITOR_TONES_TOOLTIP;L=f(L), can be used with L(H) in Color and Light.
@@ -3197,13 +3294,15 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_LOCALLAB_DENOIMASK_TOOLTIP;For all tools, allows you to control the chromatic noise level of the mask.\nUseful for better control of chrominance and to avoid artifacts when using the LC(h) curve.
 !TP_LOCALLAB_DENOIQUA_TOOLTIP;Conservative mode preserves low frequency detail. Aggressive mode removes low frequency detail.\nConservative and Aggressive modes use wavelets and DCT and can be used in conjunction with 'Non-local Means – Luminance'.
 !TP_LOCALLAB_DENOITHR_TOOLTIP;Adjusts edge detection to help reduce noise in uniform, low-contrast areas.
+!TP_LOCALLAB_DENOIWAVCH;Wavelets: Chrominance
+!TP_LOCALLAB_DENOIWAVLUM;Wavelets: Luminance
 !TP_LOCALLAB_DENOI_EXP;Denoise
-!TP_LOCALLAB_DENOI_TOOLTIP;This module can be used for noise reduction either on its own (at the end of the processing pipeline) or in addition to the Noise Reduction module in the Detail tab (which works at the beginning of the pipeline).\n Scope allows you to differentiate the action based on color (ΔE).\nMinimum RT-spot size: 128x128.
+!TP_LOCALLAB_DENOI_TOOLTIP;This module can be used for noise reduction either on its own (at the end of the processing pipeline) or in addition to the Noise Reduction module in the Detail tab (which works at the beginning of the pipeline).\n Scope allows you to differentiate the action based on color (ΔE).\nMinimum spot size: 128x128.
 !TP_LOCALLAB_DEPTH;Depth
 !TP_LOCALLAB_DETAIL;Local contrast
 !TP_LOCALLAB_DETAILFRA;Edge detection - DCT
 !TP_LOCALLAB_DETAILSH;Details
-!TP_LOCALLAB_DETAILTHR;Luma-chro detail threshold
+!TP_LOCALLAB_DETAILTHR;Lum/chrom detail threshold
 !TP_LOCALLAB_DIVGR;Gamma
 !TP_LOCALLAB_DUPLSPOTNAME;Copy
 !TP_LOCALLAB_EDGFRA;Edge sharpness
@@ -3239,7 +3338,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_LOCALLAB_EXPCOMPINV;Exposure compensation
 !TP_LOCALLAB_EXPCOMP_TOOLTIP;For portraits or images with a low color gradient. You can change 'Shape detection' in 'Settings':\n\nIncrease 'ΔE scope threshold'\nReduce 'ΔE decay'\nIncrease 'ab-L balance (ΔE)'
 !TP_LOCALLAB_EXPCONTRASTPYR_TOOLTIP;See the documentation for Wavelet Levels.\nThere are some differences in the Local Adjustments version, which has more tools and more possibilities for working on individual detail levels.\nE.g. wavelet-level tone mapping.
-!TP_LOCALLAB_EXPCONTRAST_TOOLTIP;Avoid spots that are too small ( < 32x32 pixels).\nUse low 'Transition value' and high 'Transition decay' and 'Scope' to simulate small RT-spots and deal with defects.\nUse 'Clarity and Sharp mask and Blend and Soften Images' if necessary by adjusting 'Soft radius' to reduce artifacts.
+!TP_LOCALLAB_EXPCONTRAST_TOOLTIP;Avoid spots that are too small ( < 32x32 pixels).\nUse low 'Transition value' and high 'Transition decay' and 'Scope' to simulate small spots and deal with defects.\nUse 'Clarity and Sharp mask and Blend and Soften Images' if necessary by adjusting 'Soft radius' to reduce artifacts.
 !TP_LOCALLAB_EXPCURV;Curves
 !TP_LOCALLAB_EXPGRAD;Graduated Filter
 !TP_LOCALLAB_EXPGRADCOL_TOOLTIP;A graduated filter is available in Color and Light (luminance, chrominance & hue gradients, and 'Merge file'), Exposure (luminance grad.), Exposure Mask (luminance grad.), Shadows/Highlights (luminance grad.), Vibrance (luminance, chrominance & hue gradients), Local contrast & wavelet pyramid (local contrast grad.).\nFeather is located in Settings.
@@ -3247,12 +3346,12 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_LOCALLAB_EXPLAPGAMM_TOOLTIP;Changes the behaviour for images with too much or too little contrast by adding a gamma curve before and after the Laplace transform.
 !TP_LOCALLAB_EXPLAPLIN_TOOLTIP;Changes the behaviour for underexposed images by adding a linear component prior to applying the Laplace transform.
 !TP_LOCALLAB_EXPLAP_TOOLTIP;Moving the slider to the right progressively reduces the contrast.
-!TP_LOCALLAB_EXPMERGEFILE_TOOLTIP;Allows you to use GIMP or Photoshop (c) layer blend modes i.e. Difference, Multiply, Soft Light, Overlay etc., with opacity control.\nOriginal Image : merge current RT-Spot with Original.\nPrevious spot : merge current Rt-Spot with previous - if there is only one spot, previous = original.\nBackground : merge current RT-Spot with a color and luminance background (fewer possibilties).
+!TP_LOCALLAB_EXPMERGEFILE_TOOLTIP;Allows you to use GIMP or Photoshop layer blend modes (difference, multiply, soft light, overlay, etc.) with opacity control.\nOriginal image: merge current spot with original.\nPrevious spot: merge current spot with previous (if there is only one spot, previous = original).\nBackground: merge current spot with a color and luminance background (fewer possibilties).
 !TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP;Applies a median filter before the Laplace transform to prevent artifacts (noise).\nYou can also use the 'Denoise' tool.
 !TP_LOCALLAB_EXPOSE;Dynamic Range & Exposure
 !TP_LOCALLAB_EXPOSURE_TOOLTIP;Modify exposure in L*a*b space using Laplacian PDE algorithms to take into account dE and minimize artifacts.
 !TP_LOCALLAB_EXPRETITOOLS;Advanced Retinex Tools
-!TP_LOCALLAB_EXPSHARP_TOOLTIP;RT-Spot minimum 39*39.\nUse low transition values and high 'Transition decay' and 'Scope' values to simulate smaller RT-Spots.
+!TP_LOCALLAB_EXPSHARP_TOOLTIP;Spot minimum 39*39.\nUse low transition values and high 'Transition decay' and 'Scope' values to simulate smaller spots.
 !TP_LOCALLAB_EXPTOOL;Exposure Tools
 !TP_LOCALLAB_EXP_TOOLNAME;Dynamic Range & Exposure
 !TP_LOCALLAB_FATAMOUNT;Amount
@@ -3279,6 +3378,11 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_LOCALLAB_GAMMASKCOL;Gamma
 !TP_LOCALLAB_GAMMASK_TOOLTIP;Adjusting Gamma and Slope can provide a soft and artifact-free transformation of the mask by progressively modifying 'L' to avoid any discontinuities.
 !TP_LOCALLAB_GAMSH;Gamma
+!TP_LOCALLAB_GAMUTLABRELA;Lab
+!TP_LOCALLAB_GAMUTMUNSELL;Munsell only
+!TP_LOCALLAB_GAMUTNON;None
+!TP_LOCALLAB_GAMUTXYZABSO;XYZ Absolute
+!TP_LOCALLAB_GAMUTXYZRELA;XYZ Relative
 !TP_LOCALLAB_GAMW;Gamma (wavelet pyramids)
 !TP_LOCALLAB_GRADANG;Gradient angle
 !TP_LOCALLAB_GRADANG_TOOLTIP;Rotation angle in degrees: -180 0 +180.
@@ -3367,6 +3471,8 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_LOCALLAB_LAPRAD2_TOOLTIP;Smooth radius uses a guided filter to decrease artifacts and smooth out the transition.
 !TP_LOCALLAB_LAPRAD_TOOLTIP;Smooth radius uses a guided filter to decrease artifacts and smooth out the transition.
 !TP_LOCALLAB_LAP_MASK_TOOLTIP;Solves PDEs for all Laplacian masks.\nIf enabled the Laplacian threshold mask reduces artifacts and smooths the result.\nIf disabled the response is linear.
+!TP_LOCALLAB_LCLABELS;Residual noise levels
+!TP_LOCALLAB_LCLABELS_TOOLTIP;Displays the mean and high-end noise values for the area shown in the Preview Panel (at 100% zoom). The noise values are grouped by wavelet levels 0,1,2,3 and 4,5,6.\nThe displayed values are indicative only and are designed to assist with denoise adjustments. They should not be interpreted as absolute noise levels.\n\n 300: Very noisy\n 100-300: Noisy\n 50-100: Moderatly noisy\n < 50: Low noise\n\nThey allow you to see:\n*The impact of Noise Reduction in the main-menu Detail tab.\n*The influence of Non-local Means, Wavelets and DCT on the luminance noise.\n*The influence of Wavelets and DCT on the chroma noise.\n*The influence of Capture Sharpening and Demosaicing.
 !TP_LOCALLAB_LC_FFTW_TOOLTIP;FFT improves quality and allows the use of large radii, but increases processing time (depends on the area to be processed). Preferable to use only for large radii. The size of the area can be reduced by a few pixels to optimize the FFTW. This can reduce the processing time by a factor of 1.5 to 10.
 !TP_LOCALLAB_LC_TOOLNAME;Local Contrast & Wavelets
 !TP_LOCALLAB_LEVELBLUR;Maximum blur levels
@@ -3427,11 +3533,13 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_LOCALLAB_LOGVIEWING_TOOLTIP;Corresponds to the medium on which the final image will be viewed (monitor, TV, projector, printer, etc.), as well as the surrounding conditions.
 !TP_LOCALLAB_LOG_TOOLNAME;Log Encoding
 !TP_LOCALLAB_LUM;LL - CC
+!TP_LOCALLAB_LUM46LABEL;Luma levels 456: Mean=%1 High=%2
 !TP_LOCALLAB_LUMADARKEST;Darkest
 !TP_LOCALLAB_LUMASK;Background color/luma mask
 !TP_LOCALLAB_LUMASK_TOOLTIP;Adjusts the shade of gray or color of the mask background in Show Mask (Mask and modifications).
 !TP_LOCALLAB_LUMAWHITESEST;Lightest
 !TP_LOCALLAB_LUMFRA;L*a*b* standard
+!TP_LOCALLAB_LUMLABEL;Luma levels 0123: Mean=%1 High=%2
 !TP_LOCALLAB_MASFRAME;Mask and Merge
 !TP_LOCALLAB_MASFRAME_TOOLTIP;For all masks.\nTakes into account the ΔE image to avoid modifying the selection area when the following Mask Tools are used: Gamma, Slope, Chroma, Contrast curve, Local contrast (by wavelet level), Blur Mask and Structure Mask (if enabled ).\nDisabled when Inverse mode is used.
 !TP_LOCALLAB_MASK;Curves
@@ -3463,7 +3571,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_LOCALLAB_MASKLCTHRLOW2;Dark area luma threshold
 !TP_LOCALLAB_MASKLCTHRMID;Gray area luma denoise
 !TP_LOCALLAB_MASKLCTHRMIDCH;Gray area chroma denoise
-!TP_LOCALLAB_MASKLC_TOOLTIP;This allows you to target the denoise based on the image luminance information contained in the L(L) or LC(H) mask (Mask and Modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n 'Dark area luminance threshold'. If 'Reinforce denoise in dark and light areas' > 1 the denoise is progressively increased from 0% at the threshold setting to 100% at the maximum black value (determined by mask).\n 'Light area luminance threshold'. The denoise is progressively decreased from 100% at the threshold setting to 0% at the maximum white value (determined by mask).\n In the area between the two thresholds, the denoise settings are not affected by the mask.
+!TP_LOCALLAB_MASKLC_TOOLTIP;Used by wavelet luminance.\nThis allows you to target the denoise based on the image luminance information contained in the L(L) or LC(H) mask (Mask and Modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n 'Dark area luminance threshold'. If 'Reinforce denoise in dark and light areas' > 1 the denoise is progressively increased from 0% at the threshold setting to 100% at the maximum black value (determined by mask).\n 'Light area luminance threshold'. The denoise is progressively decreased from 100% at the threshold setting to 0% at the maximum white value (determined by mask).\n In the area between the two thresholds, the denoise settings are not affected by the mask.
 !TP_LOCALLAB_MASKLNOISELOW;Reinforce dark/light areas
 !TP_LOCALLAB_MASKLOWTHRESCB_TOOLTIP;Dark-tone limit below which the CBDL parameters (Luminance only) will be restored progressively to their original values prior to being modified by the CBDL settings.\n You can use certain tools in 'Mask and modifications' to change the gray levels: 'Smooth radius', Gamma and Slope, 'Contrast curve'.\n Use a 'lockable color picker' on the mask to see which areas will be affected. Make sure you set 'Background color mask' = 0 in Settings.
 !TP_LOCALLAB_MASKLOWTHRESC_TOOLTIP;Dark-tone limit below which the parameters will be restored progressively to their original values prior to being modified by the Color and Light settings.\n You can use certain tools in 'Mask and modifications' to change the gray levels: 'Structure mask', 'blur mask', 'Smooth radius', Gamma and Slope, 'Contrast curve', 'Local contrast' (wavelets).\n Use a 'lockable color picker' on the mask to see which areas will be affected. Make sure you set 'Background color mask' = 0 in Settings.
@@ -3488,7 +3596,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_LOCALLAB_MASKRESWAV_TOOLTIP;Used to modulate the effect of the Local contrast and Wavelet settings based on the image luminance information contained in the L(L) or LC(H) masks (Mask and modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n The 'dark' and 'light' areas below the dark threshold and above the light threshold will be restored progressively to their original values prior to being modified by the Local contrast and Wavelet settings \n In between these two areas, the full value of the Local contrast and Wavelet settings will be applied.
 !TP_LOCALLAB_MASKUNUSABLE;Mask disabled (Mask & modifications)
 !TP_LOCALLAB_MASKUSABLE;Mask enabled (Mask & modifications)
-!TP_LOCALLAB_MASK_TOOLTIP;You can enable multiple masks for a tool by activating another tool and using only the mask (set the tool sliders to 0 ).\n\nYou can also duplicate the RT-spot and place it close to the first spot. The small variations in the spot references allow you to make fine adjustments.
+!TP_LOCALLAB_MASK_TOOLTIP;You can enable multiple masks for a tool by activating another tool and using only the mask (set the tool sliders to 0 ).\n\nYou can also duplicate the spot and place it close to the first spot. The small variations in the spot references allow you to make fine adjustments.
 !TP_LOCALLAB_MEDIAN;Median Low
 !TP_LOCALLAB_MEDIANITER_TOOLTIP;The number of successive iterations carried out by the median filter.
 !TP_LOCALLAB_MEDIAN_TOOLTIP;You can choose a median value in the range 3x3 to 9x9 pixels. Higher values increase noise reduction and blur.
@@ -3538,7 +3646,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_LOCALLAB_NLDENOISENLRAD_TOOLTIP;Higher values increase denoise at the expense of processing time.
 !TP_LOCALLAB_NLDENOISE_TOOLTIP;'Detail recovery' acts on a Laplacian transform to target uniform areas rather than areas with detail.
 !TP_LOCALLAB_NLDET;Detail recovery
-!TP_LOCALLAB_NLFRA;Non-local Means - Luminance
+!TP_LOCALLAB_NLFRA;Non-local Means: Luminance
 !TP_LOCALLAB_NLFRAME_TOOLTIP;Non-local means denoising takes a mean of all pixels in the image, weighted by how similar they are to the target pixel.\nReduces loss of detail compared with local mean algorithms.\nOnly luminance noise is taken into account. Chrominance noise is best processed using wavelets and Fourier transforms (DCT).\nCan be used in conjunction with 'Luminance denoise by level' or on its own.
 !TP_LOCALLAB_NLGAM;Gamma
 !TP_LOCALLAB_NLLUM;Strength
@@ -3631,7 +3739,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_LOCALLAB_SENSI;Scope
 !TP_LOCALLAB_SENSIEXCLU;Scope
 !TP_LOCALLAB_SENSIEXCLU_TOOLTIP;Adjust the colors to be excluded.
-!TP_LOCALLAB_SENSIMASK_TOOLTIP;Scope adjustment specific to common mask tool.\nActs on the difference between the original image and the mask.\nUses the luma, chroma and hue references from the center of the RT-spot\n\nYou can also adjust the ΔE of the mask itself by using 'Scope (ΔE image mask)' in 'Settings' > 'Mask and Merge'.
+!TP_LOCALLAB_SENSIMASK_TOOLTIP;Scope adjustment specific to common mask tool.\nActs on the difference between the original image and the mask.\nUses the luma, chroma and hue references from the center of the spot\n\nYou can also adjust the ΔE of the mask itself by using 'Scope (ΔE image mask)' in 'Settings' > 'Mask and Merge'.
 !TP_LOCALLAB_SENSI_TOOLTIP;Adjusts the scope of the action:\nSmall values limit the action to colors similar to those in the center of the spot.\nHigh values let the tool act on a wider range of colors.
 !TP_LOCALLAB_SETTINGS;Settings
 !TP_LOCALLAB_SH1;Shadows Highlights
@@ -3643,7 +3751,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_LOCALLAB_SHADMASK_TOOLTIP;Lifts the shadows of the mask in the same way as the shadows/highlights algorithm.
 !TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP;Adjust shadows and highlights either with shadows & highlights sliders or with a tone equalizer.\nCan be used instead of, or in conjunction with the Exposure module.\nCan also be used as a graduated filter.
 !TP_LOCALLAB_SHAMASKCOL;Shadows
-!TP_LOCALLAB_SHAPETYPE;RT-spot shape
+!TP_LOCALLAB_SHAPETYPE;Spot shape
 !TP_LOCALLAB_SHAPE_TOOLTIP;'Ellipse' is the normal mode.\n 'Rectangle' can be used in certain cases, for example to work in full-image mode by placing the delimiters outside the preview area. In this case, set transition = 100.\n\nFuture developments will include polygon shapes and Bezier curves.
 !TP_LOCALLAB_SHARAMOUNT;Amount
 !TP_LOCALLAB_SHARBLUR;Blur radius
@@ -3732,6 +3840,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_LOCALLAB_SYM;Symmetrical (mouse)
 !TP_LOCALLAB_SYMSL;Symmetrical (mouse + sliders)
 !TP_LOCALLAB_TARGET_GRAY;Mean luminance (Yb%)
+!TP_LOCALLAB_TE_PIVOT;Pivot (Ev)
 !TP_LOCALLAB_THRES;Threshold structure
 !TP_LOCALLAB_THRESDELTAE;ΔE scope threshold
 !TP_LOCALLAB_THRESRETI;Threshold
@@ -3926,6 +4035,16 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_SPOT_HINT;Click on this button to be able to operate on the preview area.\n\nTo edit a spot, hover the white mark locating an edited area, making the editing geometry appear.\n\nTo add a spot, press Ctrl and left mouse button, drag the circle (Ctrl key can be released) to a source location, then release the mouse button.\n\nTo move the source or destination spot, hover its center then drag it.\n\nThe inner circle (maximum effect area) and the 'feather' circle can be resized by hovering them (the circle becomes orange) and dragging it (the circle becomes red).\n\nWhen the changes are done, right click outside any spot to end the Spot editing mode, or click on this button again.
 !TP_SPOT_LABEL;Spot Removal
 !TP_TM_FATTAL_ANCHOR;Anchor
+!TP_TONE_EQUALIZER_BANDS;Bands
+!TP_TONE_EQUALIZER_BAND_0;Blacks
+!TP_TONE_EQUALIZER_BAND_1;Shadows
+!TP_TONE_EQUALIZER_BAND_2;Midtones
+!TP_TONE_EQUALIZER_BAND_3;Highlights
+!TP_TONE_EQUALIZER_BAND_4;Whites
+!TP_TONE_EQUALIZER_DETAIL;Regularization
+!TP_TONE_EQUALIZER_LABEL;Tone Equalizer
+!TP_TONE_EQUALIZER_PIVOT;Pivot (Ev)
+!TP_TONE_EQUALIZER_SHOW_COLOR_MAP;Show tonal map
 !TP_WAVELET_B2;Residual
 !TP_WAVELET_BALANCE;Contrast balance d/v-h
 !TP_WAVELET_BALANCE_TOOLTIP;Alters the balance between the wavelet directions: vertical-horizontal and diagonal.\nIf contrast, chroma or residual tone mapping are activated, the effect due to balance is amplified.
@@ -4078,7 +4197,58 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_WAVELET_WAVOFFSET;Offset
 !TP_WBALANCE_AUTOITCGREEN;Temperature correlation
 !TP_WBALANCE_AUTOOLD;RGB grey
-!TP_WBALANCE_AUTO_HEADER;Automatic
-!TP_WBALANCE_STUDLABEL;Correlation factor: %1
-!TP_WBALANCE_STUDLABEL_TOOLTIP;Display calculated Student correlation.\nLower values are better, where <0.005 is excellent,\n<0.01 is good, and >0.5 is poor.\nLow values do not mean that the white balance is good:\nif the illuminant is non-standard the results can be erratic.\nA value of 1000 means previous calculations are used and\nthe resultsare probably good.
-!TP_WBALANCE_TEMPBIAS_TOOLTIP;Allows to alter the computation of the 'auto white balance'\nby biasing it towards warmer or cooler temperatures. The bias\nis expressed as a percentage of the computed temperature,\nso that the result is given by 'computedTemp + computedTemp * bias'.
+!TP_WBALANCE_AUTO_HEADER;Automatic & Refinement
+!TP_WBALANCE_ITCWALG_TOOLTIP;Allows you to switch to the other Alternative temperature (Alt_temp), when possible.\nInactive in the "single choice" case.
+!TP_WBALANCE_ITCWBDELTA_TOOLTIP;Fixed for each "green" iteration tried, the temperature difference to be taken into account.
+!TP_WBALANCE_ITCWBFGREEN_TOOLTIP;Find the best compromise between Student and green.
+!TP_WBALANCE_ITCWBMINSIZEPATCH_TOOLTIP;Allows you to set the minimum patch value. values that are too low can lead to a lack of correlation.
+!TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP;Allows you to filter magenta/purple data from the image. If the box is checked a filter limiting the value of Y is applied. By default this value is 0.4. You can change it in 'options' Itcwb_Ypurple (Maximum 1)
+!TP_WBALANCE_ITCWBPRECIS_TOOLTIP;The lower the value, the more relevant the data, but increases the processing time. Since the processing time is low, this parameter should generally be able to remain at the default value
+!TP_WBALANCE_ITCWBRGREEN_TOOLTIP;Sets the green value review amplitude in iterations, from low amplitude 0.82 to 1.25 to maximum amplitude 0.4 to 4.
+!TP_WBALANCE_ITCWBSIZEPATCH_TOOLTIP;This setting sets the size of color datas used by algorithm.
+!TP_WBALANCE_ITCWBSIZE_TOOLTIP;This setting sets the number of iterations to find the best correspondence between the reference spectral colors and those in xyY value of the image. A value of 3 seams a good compromise.
+!TP_WBALANCE_ITCWBTHRES_TOOLTIP;Limits comparison sampling between spectral data and image data.
+!TP_WBALANCE_ITCWB_ALG;Remove 2 pass algorithm
+!TP_WBALANCE_ITCWB_CUSTOM;Use Custom temperature & tint
+!TP_WBALANCE_ITCWB_DELTA;Delta temperature in green loop
+!TP_WBALANCE_ITCWB_FGREEN;Find green student
+!TP_WBALANCE_ITCWB_FORCED;Close to full CIE diagram
+!TP_WBALANCE_ITCWB_FRA;Auto Temperature correlation Settings
+!TP_WBALANCE_ITCWB_FRA_TOOLTIP;These settings allow, depending on the images (type of raw, colorimetry, etc.), an adaptation of the 'Temperature correlation' algorithm. There is no absolute rule linking these parameters to the results obtained.
+!TP_WBALANCE_ITCWB_MINSIZEPATCH;Patch minimum size
+!TP_WBALANCE_ITCWB_NOPURPLE;Filter on purple color
+!TP_WBALANCE_ITCWB_PRECIS;Precision algorithm - scale used
+!TP_WBALANCE_ITCWB_PRIM_ACE;Forces use of the entire CIE diagram
+!TP_WBALANCE_ITCWB_PRIM_ADOB;Medium sampling
+!TP_WBALANCE_ITCWB_PRIM_BETA;Medium sampling - near Pointer's gamut
+!TP_WBALANCE_ITCWB_PRIM_JDCMAX;Close to full CIE diagram
+!TP_WBALANCE_ITCWB_PRIM_REC;High sampling
+!TP_WBALANCE_ITCWB_PRIM_SRGB;Low sampling & No use Camera settings
+!TP_WBALANCE_ITCWB_PRIM_XYZCAM;Camera XYZ matrix
+!TP_WBALANCE_ITCWB_PRIM_XYZCAM2;JDCmax after Camera XYZ matrix
+!TP_WBALANCE_ITCWB_RGREEN;Green range
+!TP_WBALANCE_ITCWB_SAMPLING;Low sampling 5.9
+!TP_WBALANCE_ITCWB_SIZE;Size of ref. color compare to histogram
+!TP_WBALANCE_ITCWB_SIZEPATCH;Size of color patch
+!TP_WBALANCE_ITCWB_THRES;Colors used in picture (preset)
+!TP_WBALANCE_ITCWCUSTOM_TOOLTIP;Allows you to use Custom settings Temperature and Green (tint).\n\nUsage tips:\n1) start Itcwb , enable 'Use Custom temperature and tint'.\n2) Set 'Temperature and tint' to your liking :free, Pick,...(Custom)\n3) go back to 'Temperature correlation'.\n\nYou cannot use : 2 passes, AWB temperature bias, Green refinement.
+!TP_WBALANCE_ITCWFORCED_TOOLTIP;By default (box not checked) the data scanned during sampling is brought back to the sRGB profile, which is the most widespread, both for calibrating DCP or ICC profiles with the Colorchecker24, or used on the web.\n If you have very high gamut images (some flowers, artificial colors), then it may be necessary to use the entire CIExy diagram, the profile used will be ACESP0. In this second case, the number of colors that can be used in internal to the algorithm will be more important.
+!TP_WBALANCE_ITCWGREEN;Green refinement
+!TP_WBALANCE_ITCWGREEN_TOOLTIP;Allows you to change the "tint" (green) which will serve as a reference when starting the algorithm. It has substantially the same role for greens as "AWB temperature bias" for temperature.\nThe whole algorithm is recalculated.
+!TP_WBALANCE_ITCWPRIM_TOOLTIP;Allows you to select the image sampling.\n'Close to full CIE diagram' almost uses the data present on the sensor, possibly including the imaginary colors.\n'Camera XYZ matrix' - uses the matrix directly derived from Color Matrix.\n'Medium sampling' (default) - near Pointer's gamut: corresponds substantially to the most common cases of human vision.\nThe other choice 'Low sampling and No use camera settings' allow you to isolate high gamut parts of the image and forces the algorithm in some cases (tint > 0.8,...) not to use camera settings. This will obviously have an impact on the result.\n\nThis sampling only has an influence on the channel multipliers, it has nothing to do with the "working profile" and does not modify the gamut of the image.
+!TP_WBALANCE_ITCWSAMPLING_TOOLTIP;Allows you to use the old sampling algorithm to ensure better compatibility with 5.9. You must enable Observer 10° (default).
+!TP_WBALANCE_MULLABEL;Multipliers: r=%1 g=%2 b=%3
+!TP_WBALANCE_MULLABEL_TOOLTIP;Values given for information purposes. You cannot change them.
+!TP_WBALANCE_OBSERVER10;Observer 10° instead of Observer 2°
+!TP_WBALANCE_OBSERVER10_TOOLTIP;The color management in Rawtherapee (White balance, channel multipliers, highlight recovery,...) uses the spectral data of the illuminants and colors. Observer is an important parameter of this management which takes into account the angle of perception of the eye. In 1931 it was fixed at 2° (privileges the use of the cones). In 1964 it was fixed at 10° (privileges the use of the cones, but partially takes into account the rods).\nTo avoid a (rare) drift of the colors due to the choice Observer 10° - probably due to the conversion matrix - Observer 2° must be selected.\nIn a majority of cases Observer 10° (default) will be a more relevant choice.
+!TP_WBALANCE_PATCHLABEL;Read colors:%1 Patch: Chroma:%2 Size=%3
+!TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colors (max=237).\nDisplay calculated Patch Chroma.\nAWB temperature bias, lets try to reduce this value, a minimum may seem to optimize the algorithm.\n\nPatch size matching chroma optimization.
+!TP_WBALANCE_PATCHLEVELLABEL;Patch: ΔE=%1 - datas x 9 Min:%2 Max=%3
+!TP_WBALANCE_PATCHLEVELLABEL_TOOLTIP;Display ΔE patch (this assumes there is enough spectral data), between image and spectral datas.\n Display read datas found. The 2 values correspond to the minimum and maximum data values taken into account. The coefficient x9 must be taken into account to obtain the number of pixels concerned in the image.
+!TP_WBALANCE_STUDLABEL;Correlation factor: %1 Passes:%2 Worst_alt=%3
+!TP_WBALANCE_STUDLABEL0;Correlation factor: %1 Passes:%2 Alt=%3
+!TP_WBALANCE_STUDLABEL1;Correlation factor: %1 Passes:%2 Best_alt=%3
+!TP_WBALANCE_STUDLABEL_TOOLTIP;Display calculated Student correlation.\nLower values are better, where <0.005 is excellent,\n<0.01 is good, and >0.5 is poor.\nLow values do not mean that the white balance is good:\nif the illuminant is non-standard the results can be erratic.\nA value of 1000 means previous calculations are used and\nthe resultsare probably good.\n\nPasses : number of passes made.\nAlt_temp : Alternative temperature.
+!TP_WBALANCE_TEMPBIAS_TOOLTIP;Allows to alter the computation of the 'auto white balance'\nby biasing it towards warmer or cooler temperatures. The bias\nis expressed as a percentage of the computed temperature,\nso that the result is given by 'computedTemp + computedTemp * bias'.\n\nYou can use "Awb temperature bias" to adjust the "Temperature correlation" results. Each movement of this command brings a new calculation of temperature, tint and correlation.
+!//TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP;By default when "Inpaint opposed" is activated, purple colors are not taken into account. However, if the image does not need highlight reconstruction, or if this image naturally contains purple tints (flowers, etc.), it may be necessary to deactivate, to take into account all the colors.
+!//TP_WBALANCE_ITCWB_FORCED;Forces use of the entire CIE diagram

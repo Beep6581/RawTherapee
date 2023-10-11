@@ -946,7 +946,7 @@ dialog notebook stack {
 }
 
 
-/* Adds a line on top of the notebook as a separtor for the titlebar (only on CSD) */
+/* Adds a line on top of the notebook as a separator for the titlebar (only on CSD) */
 dialog.csd #PrefNotebook > header,
 dialog.csd #AboutNotebook > header,
 window.csd:not(.fullscreen) #MainNotebook > header.top {

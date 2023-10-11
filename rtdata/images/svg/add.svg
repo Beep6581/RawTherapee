@@ -17,7 +17,7 @@
    inkscape:export-filename="/tmp/template.png"
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96"
-   inkscape:version="0.92.2 2405546, 2018-03-11"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="add.svg">
   <sodipodi:namedview
      id="base"
@@ -26,16 +26,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1"
+     inkscape:zoom="11.313708"
      inkscape:cx="20.683456"
      inkscape:cy="15.839861"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:window-width="1920"
-     inkscape:window-height="1019"
+     inkscape:window-height="1017"
      inkscape:window-x="0"
-     inkscape:window-y="0"
+     inkscape:window-y="30"
      inkscape:window-maximized="1"
      inkscape:grid-bbox="true"
      inkscape:pagecheckerboard="false"
@@ -70,7 +70,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
         <dc:creator>
           <cc:Agent>
             <dc:title>Maciej Dworak</dc:title>
@@ -120,8 +120,8 @@
        style="opacity:0.7;fill:none;fill-opacity:0.53333285;fill-rule:nonzero;stroke:#2a7fff;stroke-width:1.99999988;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal" />
     <path
        id="path4951"
-       style="opacity:0.7;fill:none;fill-rule:evenodd;stroke:#2a7fff;stroke-width:4;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M 12,3 V 21 M 3,12 h 18"
+       style="opacity:0.7;fill:none;fill-rule:evenodd;stroke:#2a7fff;stroke-width:3.33607316;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 12.447464,4.4346736 0,15.1306544 M 5,12 19.89493,12"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccc" />
   </g>

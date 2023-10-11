@@ -21,6 +21,7 @@
 
 #include <gtkmm.h>
 
+#include "extprog.h"
 #include "histogrampanel.h"
 #include "history.h"
 #include "imageareapanel.h"
@@ -118,7 +119,7 @@ public:
     void clearParamChanges() override;
 
     // thumbnaillistener interface
-    void procParamsChanged (Thumbnail* thm, int whoChangedIt) override;
+    void procParamsChanged (Thumbnail* thm, int whoChangedIt, bool upgradeHint) override;
 
     // HistoryBeforeLineListener
     void historyBeforeLineChanged (const rtengine::procparams::ProcParams& params) override;
@@ -252,8 +253,7 @@ private:
     Gtk::Button* navSync;
     Gtk::Button* navNext;
     Gtk::Button* navPrev;
-    Glib::RefPtr<Gio::AppInfo> external_editor_info;
-    bool external_editor_native_command;
+    EditorInfo external_editor_info;
     std::unique_ptr<RTAppChooserDialog> app_chooser_dialog;
     ExternalEditorChangedSignal *externalEditorChangedSignal;
     sigc::connection externalEditorChangedSignalConnection;

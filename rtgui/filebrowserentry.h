@@ -50,7 +50,6 @@ class FileBrowserEntry final : public ThumbBrowserEntryBase,
 {
 
     double scale;
-    static bool iconsLoaded;
     bool wasInside;
     ImageAreaToolListener* iatlistener;
     int press_x, press_y, action_x, action_y;
@@ -69,6 +68,7 @@ class FileBrowserEntry final : public ThumbBrowserEntryBase,
     void updateCursor (int x, int y);
     void drawStraightenGuide (Cairo::RefPtr<Cairo::Context> c);
     void customBackBufferUpdate (Cairo::RefPtr<Cairo::Context> c) override;
+    void refreshThumbnailImage(bool upgradeHint);
 
 public:
 
@@ -80,6 +80,7 @@ public:
 
     FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname);
     ~FileBrowserEntry () override;
+    static void init ();
     void draw (Cairo::RefPtr<Cairo::Context> cc) override;
 
     void setImageAreaToolListener (ImageAreaToolListener* l)
@@ -98,7 +99,7 @@ public:
     void getIconSize (int& w, int& h) const override;
 
     // thumbnaillistener interface
-    void procParamsChanged (Thumbnail* thm, int whoChangedIt) override;
+    void procParamsChanged (Thumbnail* thm, int whoChangedIt, bool upgradeHint) override;
     // thumbimageupdatelistener interface
     void updateImage(rtengine::IImage8* img, double scale, const rtengine::procparams::CropParams& cropParams) override;
     void _updateImage(rtengine::IImage8* img, double scale, const rtengine::procparams::CropParams& cropParams); // inside gtk thread

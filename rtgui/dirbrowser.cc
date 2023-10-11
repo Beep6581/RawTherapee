@@ -87,7 +87,7 @@ DirBrowser::DirBrowser () : dirTreeModel(),
     dtColumns(),
     tvc(M("DIRBROWSER_FOLDERS")),
     expandSuccess(false)
-#ifdef WIN32
+#ifdef _WIN32
     , volumes(0)
 #endif
 {
@@ -160,7 +160,7 @@ void DirBrowser::fillDirTree ()
     dirTreeModel->signal_sort_column_changed().connect(sigc::mem_fun(*this, &DirBrowser::on_sort_column_changed));
 }
 
-#ifdef WIN32
+#ifdef _WIN32
 void DirBrowser::addRoot (char letter)
 {
 
@@ -251,7 +251,7 @@ int updateVolumesUI (void* br)
 void DirBrowser::fillRoot ()
 {
 
-#ifdef WIN32
+#ifdef _WIN32
     volumes = GetLogicalDrives ();
 
     for (int i = 0; i < 32; i++)
@@ -396,7 +396,7 @@ Gtk::TreePath DirBrowser::expandToDir (const Glib::ustring& absDirPath)
     int count = 0;
     expandSuccess = true;
 
-#ifndef WIN32
+#ifndef _WIN32
     Gtk::TreeModel::iterator j = dirTreeModel->get_iter (path);
     path.up ();
     path.push_back (0);
@@ -406,7 +406,7 @@ Gtk::TreePath DirBrowser::expandToDir (const Glib::ustring& absDirPath)
 
     while (dir) {
         Glib::ustring dirstr = dir;
-#ifdef WIN32
+#ifdef _WIN32
 
         if (count == 0) {
             dirstr = dirstr + "\\";
@@ -419,7 +419,7 @@ Gtk::TreePath DirBrowser::expandToDir (const Glib::ustring& absDirPath)
         while (i && expandSuccess) {
             Gtk::TreeModel::Row crow = *i;
             Glib::ustring str = crow[dtColumns.filename];
-#ifdef WIN32
+#ifdef _WIN32
 
             if (str.casefold() == dirstr.casefold()) {
 #else

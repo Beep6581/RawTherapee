@@ -37,7 +37,6 @@
 
 //extern Glib::Threads::Thread* mainThread;
 
-bool FileBrowserEntry::iconsLoaded(false);
 Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::editedIcon;
 Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::recentlySavedIcon;
 Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::enqueuedIcon;
@@ -57,15 +56,6 @@ FileBrowserEntry::FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname)
     exifline = thumbnail->getExifString ();
 
     scale = 1;
-
-    if (!iconsLoaded) {
-        editedIcon = RTImage::createPixbufFromFile ("tick-small.png");
-        recentlySavedIcon = RTImage::createPixbufFromFile ("save-small.png");
-        enqueuedIcon = RTImage::createPixbufFromFile ("gears-small.png");
-        hdr = RTImage::createPixbufFromFile ("filetype-hdr.png");
-        ps = RTImage::createPixbufFromFile ("filetype-ps.png");
-        iconsLoaded = true;
-    }
 
     thumbnail->addThumbnailListener (this);
 }
@@ -90,14 +80,28 @@ FileBrowserEntry::~FileBrowserEntry ()
     }
 }
 
-void FileBrowserEntry::refreshThumbnailImage ()
+void FileBrowserEntry::init ()
+{
+    editedIcon = RTImage::createPixbufFromFile ("tick-small.png");
+    recentlySavedIcon = RTImage::createPixbufFromFile ("save-small.png");
+    enqueuedIcon = RTImage::createPixbufFromFile ("gears-small.png");
+    hdr = RTImage::createPixbufFromFile ("filetype-hdr.png");
+    ps = RTImage::createPixbufFromFile ("filetype-ps.png");
+}
+
+void FileBrowserEntry::refreshThumbnailImage(bool upgradeHint)
 {
 
     if (!thumbnail) {
         return;
     }
 
-    thumbImageUpdater->add (this, &updatepriority, false, this);
+    thumbImageUpdater->add (this, &updatepriority, upgradeHint, upgradeHint, this);
+}
+
+void FileBrowserEntry::refreshThumbnailImage ()
+{
+    refreshThumbnailImage(false);
 }
 
 void FileBrowserEntry::refreshQuickThumbnailImage ()
@@ -109,7 +113,7 @@ void FileBrowserEntry::refreshQuickThumbnailImage ()
 
     // Only make a (slow) processed preview if the picture has been edited at all
     bool upgrade_to_processed = (!options.internalThumbIfUntouched || thumbnail->isPParamsValid());
-    thumbImageUpdater->add(this, &updatepriority, upgrade_to_processed, this);
+    thumbImageUpdater->add(this, &updatepriority, upgrade_to_processed, false, this);
 }
 
 void FileBrowserEntry::calcThumbnailSize ()
@@ -203,13 +207,13 @@ FileThumbnailButtonSet* FileBrowserEntry::getThumbButtonSet ()
     return (static_cast<FileThumbnailButtonSet*>(buttonSet));
 }
 
-void FileBrowserEntry::procParamsChanged (Thumbnail* thm, int whoChangedIt)
+void FileBrowserEntry::procParamsChanged (Thumbnail* thm, int whoChangedIt, bool upgradeHint)
 {
 
     if ( thumbnail->isQuick() ) {
         refreshQuickThumbnailImage ();
     } else {
-        refreshThumbnailImage ();
+        refreshThumbnailImage(upgradeHint);
     }
 }
 

@@ -44,7 +44,7 @@ textview.view, treeview.view {
     padding: 0;
     margin: 0;
 }
-.view, .textview, textview, textview.view {
+.view, .textview, textview, textview.view, treeview > entry {
     background-color: #262626;
 }
 /* The headers of these panels */
@@ -207,6 +207,8 @@ menu separator {
 }
 
 #PlacesPaned .view.separator {
+    min-height: 0.16666666666666666em;
+    color: #363636;
 }
 
 #MetaPanelNotebook separator {

@@ -92,7 +92,7 @@ class Preferences final :
     Gtk::ComboBoxText* languages;
     Gtk::CheckButton* ckbLangAutoDetect;
     Gtk::Entry* dateformat;
-    Gtk::Entry* startupdir;
+    MyFileChooserEntry* startupdir;
     Gtk::RadioButton* sdcurrent;
     Gtk::RadioButton* sdlast;
     Gtk::RadioButton* sdhome;
@@ -115,8 +115,9 @@ class Preferences final :
     MyFileChooserButton* darkFrameDir;
     MyFileChooserButton* flatFieldDir;
     MyFileChooserButton* clutsDir;
-	MyFileChooserButton* cameraProfilesDir;
-	MyFileChooserButton* lensProfilesDir;
+    MyFileChooserButton* cameraProfilesDir;
+    MyFileChooserButton* lensProfilesDir;
+    MyFileChooserEntry* lensfunDbDir;
     Gtk::Label *dfLabel;
     Gtk::Label *ffLabel;
 
@@ -137,9 +138,11 @@ class Preferences final :
     Gtk::CheckButton* cbdaubech;
     Gtk::SpinButton*  hlThresh;
     Gtk::SpinButton*  shThresh;
-//    Gtk::CheckButton* mwbacorr;
+    Gtk::CheckButton* mwbacorr;
  //   Gtk::CheckButton* mwbaforc;
  //   Gtk::CheckButton* mwbanopurp;
+    Gtk::CheckButton* mwbaena;
+//    Gtk::CheckButton* mwbaenacustom;
 
 //    Gtk::CheckButton* mwbasort;
 //    Gtk::SpinButton*  wbacorrnb;
@@ -245,6 +248,9 @@ class Preferences final :
 
     Gtk::ComboBoxText *cropGuidesCombo;
     Gtk::CheckButton *cropAutoFitCB;
+
+    Gtk::ComboBoxText *metadataSyncCombo;
+    Gtk::ComboBoxText *xmpSidecarCombo;
 
     Glib::ustring storedValueRaw;
     Glib::ustring storedValueImg;
