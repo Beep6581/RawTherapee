@@ -1911,7 +1911,7 @@ void Color::Lch2Luv(float c, float h, float &u, float &v)
     v = c * sincosval.y;
 }
 
-void Color::primaries_to_xyz(double p[6], double Wx, double Wz, double *pxyz)
+void Color::primaries_to_xyz(double p[6], double Wx, double Wz, double *pxyz, int cat)
 {
     //calculate Xr, Xg, Xb, Yr, Yb, Tg, Zr,Zg Zb
     double Wy = 1.0;
@@ -1967,29 +1967,112 @@ void Color::primaries_to_xyz(double p[6], double Wx, double Wz, double *pxyz)
     mat_xyz[2][1] = Sb * Yb;
     mat_xyz[2][2] = Sb * Zb;
 
-    //chromatic adaptation Bradford
+    //chromatic adaptation
     Matrix MaBradford = {};
-    MaBradford[0][0] = 0.8951;
-    MaBradford[0][1] = -0.7502;
-    MaBradford[0][2] = 0.0389;
-    MaBradford[1][0] = 0.2664;
-    MaBradford[1][1] = 1.7135;
-    MaBradford[1][2] = -0.0685;
-    MaBradford[2][0] = -0.1614;
-    MaBradford[2][1] = 0.0367;
-    MaBradford[2][2] = 1.0296;
+    if( cat == 0 ) {//i bradford
+        MaBradford[0][0] = 0.8951;
+        MaBradford[0][1] = -0.7502;
+        MaBradford[0][2] = 0.0389;
+        MaBradford[1][0] = 0.2664;
+        MaBradford[1][1] = 1.7135;
+        MaBradford[1][2] = -0.0685;
+        MaBradford[2][0] = -0.1614;
+        MaBradford[2][1] = 0.0367;
+        MaBradford[2][2] = 1.0296;
+    } else if ( cat == 1 ) {// icat16
+        MaBradford[0][0] = 1.86206786;
+        MaBradford[0][1] = -1.01125463;
+        MaBradford[0][2] = 0.14918677;
+        MaBradford[1][0] = 0.38752654;
+        MaBradford[1][1] = 0.62144744;
+        MaBradford[1][2] = -0.00897398;
+        MaBradford[2][0] = -0.0158415;
+        MaBradford[2][1] = -0.03412294;
+        MaBradford[2][2] = 1.04996444;
+    } else if ( cat == 2 ) {// icat02
+        MaBradford[0][0] =  0.99015849;
+        MaBradford[0][1] = -0.00838772;
+        MaBradford[0][2] = 0.018229217;
+        MaBradford[1][0] = 0.239565979;
+        MaBradford[1][1] = 0.758664642;
+        MaBradford[1][2] = 0.001770137;
+        MaBradford[2][0] = 0.0;
+        MaBradford[2][1] = 0.0;
+        MaBradford[2][2] = 1.0;
+    } else if ( cat == 3 ) {//Von Kries
+        MaBradford[0][0] = 0.40024;
+        MaBradford[0][1] = -0.2263;
+        MaBradford[0][2] = 0.0;
+        MaBradford[1][0] = 0.7076;
+        MaBradford[1][1] = 1.16532;
+        MaBradford[1][2] = 0.0;
+        MaBradford[2][0] = -0.08081;
+        MaBradford[2][1] = 0.0457;
+        MaBradford[2][2] = 0.91822;
+    } else if ( cat == 4 ) {//None XYZ
+        MaBradford[0][0] = 1.0;
+        MaBradford[0][1] = 0.0;
+        MaBradford[0][2] = 0.0;
+        MaBradford[1][0] = 0.0;
+        MaBradford[1][1] = 1.0;
+        MaBradford[1][2] = 0.0;
+        MaBradford[2][0] = 0.0;
+        MaBradford[2][1] = 0.0;
+        MaBradford[2][2] = 1.0;
+    }
 
     Matrix Ma_oneBradford = {};
-    Ma_oneBradford[0][0] = 0.9869929;
-    Ma_oneBradford[0][1] = 0.4323053;
-    Ma_oneBradford[0][2] = -0.0085287;
-    Ma_oneBradford[1][0] = -0.1470543;
-    Ma_oneBradford[1][1] = 0.5183603;
-    Ma_oneBradford[1][2] = 0.0400428;
-    Ma_oneBradford[2][0] = 0.1599627;
-    Ma_oneBradford[2][1] = 0.0492912;
-    Ma_oneBradford[2][2] = 0.9684867;
-
+    if( cat == 0 ) {//Bradford
+        Ma_oneBradford[0][0] = 0.9869929;
+        Ma_oneBradford[0][1] = 0.4323053;
+        Ma_oneBradford[0][2] = -0.0085287;
+        Ma_oneBradford[1][0] = -0.1470543;
+        Ma_oneBradford[1][1] = 0.5183603;
+        Ma_oneBradford[1][2] = 0.0400428;
+        Ma_oneBradford[2][0] = 0.1599627;
+        Ma_oneBradford[2][1] = 0.0492912;
+        Ma_oneBradford[2][2] = 0.9684867;
+    } else if ( cat == 1 ) { //cat16
+        Ma_oneBradford[0][0] = 0.401288;
+        Ma_oneBradford[0][1] = 0.650173;
+        Ma_oneBradford[0][2] = -0.051461;
+        Ma_oneBradford[1][0] = -0.250268;
+        Ma_oneBradford[1][1] = 1.204414;
+        Ma_oneBradford[1][2] = 0.045854;
+        Ma_oneBradford[2][0] = -0.002079;
+        Ma_oneBradford[2][1] = 0.048952;
+        Ma_oneBradford[2][2] = 0.953127;
+    } else if ( cat == 2 ) { //cat02
+        Ma_oneBradford[0][0] = 1.007245;
+        Ma_oneBradford[0][1] = 0.011136;
+        Ma_oneBradford[0][2] = -0.018381;
+        Ma_oneBradford[1][0] = -0.318061;
+        Ma_oneBradford[1][1] = 1.314589;
+        Ma_oneBradford[1][2] = 0.003471;
+        Ma_oneBradford[2][0] = 0.0;
+        Ma_oneBradford[2][1] = 0.0;
+        Ma_oneBradford[2][2] = 1.0;
+    } else if ( cat == 3 ) { //Von Kries
+        Ma_oneBradford[0][0] = 1.8599364;
+        Ma_oneBradford[0][1] = 0.3611914;
+        Ma_oneBradford[0][2] = 0.0;
+        Ma_oneBradford[1][0] = -1.1293816;
+        Ma_oneBradford[1][1] = 0.6388125;
+        Ma_oneBradford[1][2] = 0.0;
+        Ma_oneBradford[2][0] = 0.2198974;
+        Ma_oneBradford[2][1] = -0.0000064;
+        Ma_oneBradford[2][2] = 1.0890636;
+    } else if ( cat == 4 ) { //none XYZ
+        Ma_oneBradford[0][0] = 1.0;
+        Ma_oneBradford[0][1] = 0.0;
+        Ma_oneBradford[0][2] = 0.0;
+        Ma_oneBradford[1][0] = 0.0;
+        Ma_oneBradford[1][1] = 1.0;
+        Ma_oneBradford[1][2] = 0.0;
+        Ma_oneBradford[2][0] = 0.0;
+        Ma_oneBradford[2][1] = 0.0;
+        Ma_oneBradford[2][2] = 1.0;
+    }
     //R G B source
     double Rs = Wx * MaBradford[0][0] + Wy * MaBradford[1][0] + Wz * MaBradford[2][0];
     double Gs = Wx * MaBradford[0][1] + Wy * MaBradford[1][1] + Wz * MaBradford[2][1];
@@ -2081,17 +2164,16 @@ void Color::primaries_to_xyz(double p[6], double Wx, double Wz, double *pxyz)
  
 void Color::gamutmap(float &X, float Y, float &Z, const double p[3][3])
 {
-	float epsil = 0.0001f;
-	float intermXYZ = X + 15 * Y + 3 * Z;
-	if(intermXYZ <= 0.f) {
-		intermXYZ = epsil;
-	}
-		
-	float u = 4 * X / (intermXYZ) - u0;
+    float epsil = 0.0001f;
+    float intermXYZ = X + 15 * Y + 3 * Z;
+    if(intermXYZ <= 0.f) {
+        intermXYZ = epsil;
+    }
+
+    float u = 4 * X / (intermXYZ) - u0;
     float v = 9 * Y / (intermXYZ) - v0;
     float lam[3][2];
     float lam_min = 1.0f;
-
     for (int c = 0; c < 3; c++)
         for (int m = 0; m < 2; m++) {
 
@@ -2118,14 +2200,11 @@ void Color::gamutmap(float &X, float Y, float &Z, const double p[3][3])
     v = v * (double) lam_min + v0;
 
     X = (9 * u * Y) / (4 * v);
-	float intermuv = 12 - 3 * u - 20 * v;
-	if(intermuv < 0.f) {
-		intermuv = 0.f;
-	}
+    float intermuv = 12 - 3 * u - 20 * v;
+    if(intermuv < 0.f) {
+        intermuv = 0.f;
+    }
     Z = (intermuv) * Y / (4 * v);
-
-
-	
 }
 
 void Color::skinredfloat ( float J, float h, float sres, float Sp, float dred, float protect_red, int sk, float rstprotection, float ko, float &s)

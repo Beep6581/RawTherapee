@@ -944,6 +944,9 @@ public:
         bool ciecam;
         bool blackEv;
         bool whiteEv;
+        bool whiteslog;
+        bool blackslog;
+        bool comprlog;
         bool detail;
         bool sursour;
         bool surround;
@@ -1003,7 +1006,10 @@ public:
         bool forcebw;
         bool qtoj;
         bool jabcie;
-        bool sigmoidqjcie;
+        bool comprcieauto;
+        bool normcie;
+        bool trccie;
+        bool sigcie;
         bool logcie;
         bool logjz;
         bool sigjz;
@@ -1013,6 +1019,7 @@ public:
         bool sourceabscie;
         bool sursourcie;
         bool modecam;
+        bool bwevMethod;
         bool modecie;
         bool saturlcie;
         bool rstprotectcie;
@@ -1054,7 +1061,16 @@ public:
         bool targetjz;
         bool sigmoidldacie;
         bool sigmoidthcie;
+        bool sigmoidsenscie;
         bool sigmoidblcie;
+        bool comprcie;
+        bool comprcieth;
+        bool gamjcie;
+        bool slopjcie;
+        bool whitescie;
+        bool blackscie;
+        bool primMethod;
+        bool catMethod;
         bool sigmoidldajzcie;
         bool sigmoidthjzcie;
         bool sigmoidbljzcie;
@@ -1079,6 +1095,7 @@ public:
         bool CCmaskciecurve;
         bool LLmaskciecurve;
         bool HHmaskciecurve;
+        bool HHhmaskciecurve;
         bool blendmaskcie;
         bool radmaskcie;
         bool sigmalcjz;
@@ -1096,7 +1113,16 @@ public:
         bool lowthrescie;
         bool higthrescie;
         bool decaycie;
-
+        bool strumaskcie;
+        bool toolcie;
+		bool fftcieMask;
+		bool contcie;
+		bool blurcie;
+        bool highmaskcie;
+        bool shadmaskcie;
+        bool LLmaskciecurvewav;
+        bool csthresholdcie;
+		
         LocallabSpotEdited(bool v);
 
         void set(bool v);

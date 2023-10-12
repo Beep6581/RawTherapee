@@ -476,6 +476,7 @@ void ImProcFunctions::dehazeloc(Imagefloat *img, const DehazeParams &dehazeParam
     float ambient[3];
     float maxDistance = 0.f;
 
+
     {
         array2D<float>& R = dark; // R and dark can safely use the same buffer, which is faster and reduces memory allocations/deallocations
         array2D<float> G(W, H);

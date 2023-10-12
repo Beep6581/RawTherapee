@@ -1310,7 +1310,7 @@ HISTORY_MSG_1078;Local - Red and skin protection
 HISTORY_MSG_1079;Local - CIECAM Sigmoid strength J
 HISTORY_MSG_1080;Local - CIECAM Sigmoid threshold
 HISTORY_MSG_1081;Local - CIECAM Sigmoid blend
-HISTORY_MSG_1082;Local - CIECAM Sigmoid Q BlackEv WhiteEv
+HISTORY_MSG_1082;Local - CIECAM Auto threshold
 HISTORY_MSG_1083;Local - CIECAM Hue
 HISTORY_MSG_1084;Local - Uses Black Ev - White Ev
 HISTORY_MSG_1085;Local - Jz lightness
@@ -1441,6 +1441,32 @@ HISTORY_MSG_ICM_WORKING_PRIM_METHOD;Primaries method
 HISTORY_MSG_ICM_WORKING_SLOPE;TRC - Slope
 HISTORY_MSG_ICM_WORKING_TRC_METHOD;TRC method
 HISTORY_MSG_ILLUM;CAL - SC - Illuminant
+HISTORY_MSG_LOCAL_CIE_BRICOMP;Local CIECAM Brightness compression
+HISTORY_MSG_LOCAL_CIE_BRICOMPTH;Local CIECAM Brightness compression threshold
+HISTORY_MSG_LOCAL_CIE_CAT;Matrix adaptation
+HISTORY_MSG_LOCAL_CIE_GAM;Local CIECAM Gamma
+HISTORY_MSG_LOCAL_CIE_NORM;Local CIECAM Normalize L
+HISTORY_MSG_LOCAL_CIE_PRIM;Local CIECAM TRC Primaries
+HISTORY_MSG_LOCAL_CIE_SIG;Sigmoid
+HISTORY_MSG_LOCAL_CIE_SIGADAP;Local CIECAM Sigmoid adaptability
+HISTORY_MSG_LOCAL_CIE_SIGMET;Local CIECAM - Sigmoid method
+HISTORY_MSG_LOCAL_CIE_SLOP;Local CIECAM - Slope
+HISTORY_MSG_LOCAL_CIE_TRC;Local CIECAM - TRC
+HISTORY_MSG_LOCAL_CIE_WHITES;Local CIECAM - Whites distribution
+HISTORY_MSG_LOCAL_CIE_BLACKS;Local CIECAM - Blacks distribution
+HISTORY_MSG_LOCAL_CIEMASK_BLURCONT;Local Cie mask blur contrast
+HISTORY_MSG_LOCAL_CIEMASK_BLURFFT;Local Cie mask blur fftw
+HISTORY_MSG_LOCAL_CIEMASK_BLURRAD;Local Cie mask blur radius
+HISTORY_MSG_LOCAL_CIEMASK_CHH;Local Cie mask curve hh
+HISTORY_MSG_LOCAL_CIEMASK_HIGH;Local Cie mask highlights
+HISTORY_MSG_LOCAL_CIEMASK_SHAD;Local Cie mask shadows
+HISTORY_MSG_LOCAL_CIEMASK_STRU;Local Cie mask structure
+HISTORY_MSG_LOCAL_CIEMASK_STRU_TOOL;Local Cie mask structure as tool
+HISTORY_MSG_LOCAL_CIEMASK_WLC;Local CIECAM mask wavelet Lc
+HISTORY_MSG_LOCAL_CIEMASK_WLEV;Local CIECAM mask wavelet levels
+HISTORY_MSG_LOCAL_LOG_WHITES;Local Log - Whites distribution
+HISTORY_MSG_LOCAL_LOG_BLACKS;Local Log - Blacks distribution
+HISTORY_MSG_LOCAL_LOG_COMPR;Local Log - Compress brightness
 HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
 HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
 HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
@@ -2632,9 +2658,16 @@ TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile
 TP_ICM_TONECURVE;Tone curve
 TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only available if the selected DCP has a tone curve.
 TP_ICM_TRCFRAME;Abstract Profile
-TP_ICM_TRCFRAME_TOOLTIP;Also known as 'synthetic' or 'virtual' profiles, which are applied at the end of the processing pipeline (prior to ciecam) allowing you to create custom image effects.\nYou can make changes to the:\n 'Tone response curve', which modifies the tones of the image.\n 'Illuminant' : which allows you to change the profile primaries to adapt them to the shooting conditions.\n 'Destination primaries': which allows you to change the destination primaries with two main uses - channel mixer and calibration.\nNote: Abstract profiles take into account the built-in Working profiles without modifying them. They do not work with custom Working profiles.
+TP_ICM_TRCFRAME_TOOLTIP;Also known as 'synthetic' or 'virtual' profiles, which are applied at the end of the processing pipeline (prior to ciecam) allowing you to create custom image effects.\nYou can make changes to the:\n 'Tone response curve', which modifies the tones of the image.\n 'Illuminant' : which allows you to change the profile primaries to adapt them to the shooting conditions.\n 'Destination primaries': which allows you to change the destination primaries with three main uses - channel mixer, restore image color (saturation), calibration.\nNote: Abstract profiles take into account the built-in Working profiles without modifying them. They do not work with custom Working profiles.
 TP_ICM_TRC_TOOLTIP;Allows you to change the default sRGB 'Tone response curve' in RT (g=2.4 s=12.92).\nThis TRC modifies the tones of the image. The RGB and Lab values, histogram and output (screen, TIF, JPG) are changed:\n-Gamma acts mainly on light tones -Slope acts mainly on dark tones.\nYou can choose any pair of 'gamma and slope' (values >1) and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.\nA selection other than 'none' activates the 'Illuminant' and 'Destination primaries' menus.
 TP_ICM_WORKINGPROFILE;Working Profile
+TP_ICM_WORKING_CAT;Matrix adaptation
+TP_ICM_WORKING_CAT_BRAD;Bradford
+TP_ICM_WORKING_CAT_CAT16;Cat16
+TP_ICM_WORKING_CAT_CAT02;Cat02
+TP_ICM_WORKING_CAT_TOOLTIP;Performs the chromatic adaptation of the XYZ conversion matrix. Default Bradford
+TP_ICM_WORKING_CAT_VK;Von Kries
+TP_ICM_WORKING_CAT_XYZ;XYZ scale
 TP_ICM_WORKING_CIEDIAG;CIE xy diagram
 TP_ICM_WORKING_ILLU;Illuminant
 TP_ICM_WORKING_ILLU_1500;Tungsten 1500K
@@ -2648,8 +2681,10 @@ TP_ICM_WORKING_ILLU_D80;D80
 TP_ICM_WORKING_ILLU_D120;D120
 TP_ICM_WORKING_ILLU_NONE;Default
 TP_ICM_WORKING_ILLU_STDA;stdA 2875K
+TP_ICM_WORKING_NON;None
 TP_ICM_WORKING_PRESER;Preserves Pastel tones
 TP_ICM_WORKING_PRIM;Destination primaries
+TP_ICM_WORKING_PRIM_TOOLTIP;Destination primaries (Advanced): which allows you to change the destination primaries to restore or change image color (saturation), the color balance is preserved when the 'Working Profile' and the 'Destination primaries' are not too different, 'Working Profiles' are not modified. Perform a gamut control.
 TP_ICM_WORKING_PRIMFRAME_TOOLTIP;When 'Custom CIE xy diagram' is selected in 'Destination- primaries'' combobox, you can modify the values of the 3 primaries directly on the graph.\nNote that in this case, the white point position on the graph will not be updated.
 TP_ICM_WORKING_PRIM_AC0;ACESp0
 TP_ICM_WORKING_PRIM_ACE;ACESp1
@@ -2785,6 +2820,9 @@ TP_LOCALLAB_BUTTON_DEL;Delete
 TP_LOCALLAB_BUTTON_DUPL;Duplicate
 TP_LOCALLAB_BUTTON_REN;Rename
 TP_LOCALLAB_BUTTON_VIS;Show/Hide
+TP_LOCALLAB_BWEVNONE;None
+TP_LOCALLAB_BWEVSIG;Activated
+TP_LOCALLAB_BWEVSIGLOG;Sigmoid & Log-Encoding
 TP_LOCALLAB_BWFORCE;Uses Black Ev & White Ev
 TP_LOCALLAB_CAM16PQREMAP;HDR PQ (Peak Luminance)
 TP_LOCALLAB_CAM16PQREMAP_TOOLTIP;PQ (Perceptual Quantizer) adapted to CAM16. Allows you to change the internal PQ function (usually 10000 cd/m2 - default 100 cd/m2 - disabled for 100 cd/m2).\nCan be used to adapt to different devices and images.
@@ -2852,6 +2890,9 @@ TP_LOCALLAB_COL_NAME;Name
 TP_LOCALLAB_COL_VIS;Status
 TP_LOCALLAB_COMPFRA;Directional contrast
 TP_LOCALLAB_COMPREFRA;Wavelet level tone mapping
+TP_LOCALLAB_COMPRCIE;Brightness compression
+TP_LOCALLAB_COMPRCIETH;Compression threshold
+TP_LOCALLAB_COMPRLOG_TOOLTIP;This algorithm compress the data before log conversion, above the theshold slider value. To use in conjunction with Whites distribution.
 TP_LOCALLAB_CONTCOL;Contrast threshold
 TP_LOCALLAB_CONTFRA;Contrast by level
 TP_LOCALLAB_CONTRAST;Contrast
@@ -3101,8 +3142,8 @@ TP_LOCALLAB_LOGAUTOGRAY_TOOLTIP;Automatically calculates the 'Mean luminance' fo
 TP_LOCALLAB_LOGAUTO_TOOLTIP;Pressing this button will calculate the dynamic range and 'Mean luminance' for the scene conditions if the 'Auto mean luminance (Yb%)' is checked).\nAlso calculates the absolute luminance at the time of shooting.\nPress the button again to adjust the automatically calculated values.
 TP_LOCALLAB_LOGBASE_TOOLTIP;Default = 2.\nValues less than 2 reduce the action of the algorithm making the shadows darker and the highlights brighter.\nWith values greater than 2, the shadows are grayer and the highlights become more washed out.
 TP_LOCALLAB_LOGCATAD_TOOLTIP;Chromatic adaptation allows us to interpret a color according to its spatio-temporal environment.\nUseful when the white balance deviates significantly from the D50 reference.\nAdapts colors to the illuminant of the output device.
-TP_LOCALLAB_LOGCIE;Log encoding instead of Sigmoid
-TP_LOCALLAB_LOGCIE_TOOLTIP;Allows you tu use Black Ev, White Ev, Scene Mean luminance(Yb%) and Viewing Mean luminance(Yb%) for tone-mapping using Log encoding Q.
+TP_LOCALLAB_LOGCIE;Log encoding
+TP_LOCALLAB_LOGCIE_TOOLTIP;Allows you tu use Black Ev, White Ev, Scene Mean luminance(Yb%) and Viewing Mean luminance(Yb%) for tone-mapping using 'Log encoding Q' in Standard and Advanced modes:\n -Brightness compression\n -Compression threshold\n -Auto threshold.
 TP_LOCALLAB_LOGCOLORFL;Colorfulness (M)
 TP_LOCALLAB_LOGCOLORF_TOOLTIP;Perceived amount of hue in relation to gray.\nIndicator that a stimulus appears more or less colored.
 TP_LOCALLAB_LOGCONQL;Contrast (Q)
@@ -3393,14 +3434,30 @@ TP_LOCALLAB_SHOWVI;Mask and modifications
 TP_LOCALLAB_SHRESFRA;Shadows/Highlights & TRC
 TP_LOCALLAB_SHTRC_TOOLTIP;Based on 'working profile' (only those provided), modifies the tones of the image by acting on a TRC (Tone Response Curve).\nGamma acts mainly on light tones.\nSlope acts mainly on dark tones.\nIt is recommended that the TRC of both devices (monitor and output profile) be sRGB (default).
 TP_LOCALLAB_SH_TOOLNAME;Shadows/Highlights & Tone Equalizer
-TP_LOCALLAB_SIGFRA;Sigmoid Q & Log encoding Q
+TP_LOCALLAB_SIGCIE;Sigmoid
+TP_LOCALLAB_SIGFRA;Sigmoid Q & Log encoding Q 
+TP_LOCALLAB_SIGGAMJCIE;Gamma
 TP_LOCALLAB_SIGJZFRA;Sigmoid Jz
 TP_LOCALLAB_SIGMAWAV;Attenuation response
 TP_LOCALLAB_SIGMOIDBL;Blend
 TP_LOCALLAB_SIGMOIDLAMBDA;Contrast
-TP_LOCALLAB_SIGMOIDQJ;Uses Black Ev & White Ev
+TP_LOCALLAB_SIGMOIDLOGAUTO;Auto threshold
+TP_LOCALLAB_SIGMOIDQJ;Black Ev & White Ev
+TP_LOCALLAB_SIGMOIDSENSI;Adaptability
 TP_LOCALLAB_SIGMOIDTH;Threshold (Gray point)
-TP_LOCALLAB_SIGMOID_TOOLTIP;Allows you to simulate a Tone-mapping appearance using both the'Ciecam' (or 'Jz') and 'Sigmoid' function.\nThree sliders: a) Contrast acts on the shape of the sigmoid curve and consequently on the strength; b) Threshold (Gray point) distributes the action according to the luminance; c)Blend acts on the final aspect of the image, contrast and luminance.
+TP_LOCALLAB_SIGMOID_TOOLTIP;Allows you to simulate a Tone-mapping appearance using both the 'Jz' and 'Sigmoid' function.\nThree sliders: a) Contrast acts on the shape of the sigmoid curve and consequently on the strength; b) Threshold (Gray point) distributes the action according to the luminance; c)Blend acts on the final aspect of the image, contrast and luminance.
+TP_LOCALLAB_SIGMOIDTRCCIE_TOOLTIP;This TRC modifies the tones of the image just before the Ciecam process. The values are changed:\n-Gamma acts mainly on light tones -Slope acts mainly on dark tones.\nYou can choose any pair of 'gamma and slope' (values >1) and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.\n\n\n-Destination primaries (Advanced): which allows you to change the destination primaries to restore or change image color (saturation), the color balance is preserved  when the 'Working Profile' and the 'Destination primaries' are not too different, 'Working Profiles' are not modified.
+TP_LOCALLAB_SIGMOID16_TOOLTIP;Allows you to simulate a Tone-mapping appearance using both the'Ciecam' and 'Sigmoid Q' or/and 'Log encoding Q'.\nSigmoid Q: three sliders: a) Contrast acts on the shape of the sigmoid curve and consequently on the strength; b) Threshold (Gray point) distributes the action according to the luminance; c)Adaptability weights the action of the sigmoid by action on the internal exponential function.
+TP_LOCALLAB_SIGMOIDLOGEV_TOOLTIP;If the comboxbox selection 'Black Ev and White Ev' is 'Sigmoid and Log encoding' instead of 'Sigmoid only', the two algorithms 'Log encoding' and 'Sigmoid' are used together.
+TP_LOCALLAB_SIGMOIDNORMCIE;Normalize Luminance
+TP_LOCALLAB_SIGMOIDNORMCIE_TOOLTIP;Reconstruct luminance so that the mean and variance of the output image take into account those of the original.\nAll the adjustments acting on J or Q are taken into account, including those which are not relative to Sigmoid Q and Log encoding Q.
+TP_LOCALLAB_SIGMOIDNORMCIEBLEND_TOOLTIP;Blend acts on the final aspect of the image, contrast and luminance : ratio between original and output image.
+TP_LOCALLAB_SIGMOIDQJCOMPRCIE_TOOLTIP;When the comboxbox selection'Uses Black Ev and White Ev' is 'Sigmoid and Log encoding Q' or 'Log encoding instead of Sigmoid' checked. This algorithm compress the data above the threshold slider value. This last value stands for brightness (Q) should be a near the possible value 'Compression treshold' (calculate when 'Auto threshold" checked, often > 1).
+TP_LOCALLAB_SIGSLOPJCIE;Slope
+TP_LOCALLAB_SIGTRCCIE;TRC
+TP_LOCALLAB_SIGBLACKSSCIE;Blacks distribution
+TP_LOCALLAB_SIGWHITESCIE;Whites distribution
+TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP;Allows you, when the dynamic range of the image is high, to change the distribution of lights in whites and deep blacks.\nCan be used with Log encoding or Sigmoid with Black Ev and White Ev enabled.\n\nThe algorithm does not change the basic data, but acts on the components necessary to calculate the Dynamic range, Black Ev, White Ev and the Gray point.
 TP_LOCALLAB_SLOMASKCOL;Slope
 TP_LOCALLAB_SLOMASK_TOOLTIP;Adjusting Gamma and Slope can provide a soft and artifact-free transformation of the mask by progressively modifying 'L' to avoid any discontinuities.
 TP_LOCALLAB_SLOSH;Slope

@@ -1150,6 +1150,16 @@ void Locallab::refChanged2(float *huerefp, float *chromarefp, float *lumarefp, f
             tool->refChanged(huer, lumar, chromar, fab);
         }
 }
+
+void Locallab::maxcam(float *maxicamp, bool *autocam, int selspot)
+{
+        const float maxicam = maxicamp[selspot];
+		if(autocam) {
+			expcie.updateAutocam(maxicam, autocam);
+		}
+
+}
+
 /*
 void Locallab::refChanged(const std::vector<locallabRef> &ref, int selspot)
 {

@@ -55,6 +55,32 @@ protected:
         Normal = 1,
         Simple = 2
     };
+    rtengine::ProcEvent Evlocallabnormcie;
+    rtengine::ProcEvent Evlocallabstrumaskcie;
+    rtengine::ProcEvent EvLocallabtoolcie;
+    rtengine::ProcEvent EvLocallabfftcieMask;
+    rtengine::ProcEvent Evlocallabcontcie;
+    rtengine::ProcEvent Evlocallabblurcie;
+    rtengine::ProcEvent Evlocallabhighmaskcie;
+    rtengine::ProcEvent Evlocallabshadmaskcie;
+    rtengine::ProcEvent Evlocallabsigmoidsenscie;
+    rtengine::ProcEvent EvlocallabLLmaskcieshapewav;
+    rtengine::ProcEvent EvlocallabcsThresholdcie;
+    rtengine::ProcEvent Evlocallabcomprcie;
+    rtengine::ProcEvent Evlocallabcomprcieth;
+    rtengine::ProcEvent EvlocallabHHhmaskcieshape;
+    rtengine::ProcEvent EvlocallabbwevMethod;
+    rtengine::ProcEvent Evlocallabgamjcie;
+    rtengine::ProcEvent Evlocallabslopjcie;
+    rtengine::ProcEvent Evlocallabtrccie;
+    rtengine::ProcEvent Evlocallabsigcie;
+    rtengine::ProcEvent Evlocallabprimcie;
+    rtengine::ProcEvent Evlocallabcatcie;
+    rtengine::ProcEvent Evlocallabwhitescie;
+    rtengine::ProcEvent Evlocallabblackscie;
+    rtengine::ProcEvent Evlocallabwhiteslog;
+    rtengine::ProcEvent Evlocallabblackslog;
+    rtengine::ProcEvent Evlocallabcomprlog;
 
     // LocallabTool parameters
     bool needMode;
@@ -1335,6 +1361,9 @@ private:
     Gtk::Frame* const logPFrame;
     Adjuster* const blackEv;
     Adjuster* const whiteEv;
+    Adjuster* const whiteslog;
+    Adjuster* const blackslog;
+    Adjuster* const comprlog; 
     Gtk::CheckButton* const fullimage;
     Gtk::Frame* const logFrame;
     Gtk::CheckButton* const Autogray;
@@ -1592,15 +1621,38 @@ private:
     Adjuster* const targetjz;
     Gtk::Frame* const bevwevFrame;
     Gtk::CheckButton* const forcebw;
-    
+    ToolParamBlock* const sigBox;
     Gtk::Frame* const sigmoidFrame;
+    Gtk::Frame* const sigmoidnormFrame;
     Gtk::CheckButton* const sigq;
     Adjuster* const sigmoidldacie;
     Adjuster* const sigmoidthcie;
+    Adjuster* const sigmoidsenscie;
     Adjuster* const sigmoidblcie;
-    Gtk::CheckButton* const sigmoidqjcie;
+    Gtk::Box* autocomprHBox;
+    Gtk::ToggleButton* const comprcieauto;
+    Gtk::CheckButton* const normcie;
+    Gtk::Box* const modeHBoxbwev;
+    MyComboBoxText* const bwevMethod;
+    Gtk::Frame* const logcieFrame;
     Gtk::CheckButton* const logcie;
+    ToolParamBlock* const comprBox;
+    Adjuster* const comprcie;
+    Adjuster* const comprcieth;
+    Gtk::CheckButton* const trccie;
+    Adjuster* const gamjcie;
+    Adjuster* const slopjcie;
+    Adjuster* const whitescie;
+    Adjuster* const blackscie;
+    Gtk::Box* wprimBox;
+    MyComboBoxText* const primMethod;
+    Gtk::Box* catBox;
+    MyComboBoxText* const catMethod;
+
     Gtk::Frame* const sigmoidjzFrame;
+    Gtk::Frame* const sigmoidgamFrame;
+    Gtk::Frame* const sigmoid2Frame;
+    Gtk::CheckButton* const sigcie;
     Gtk::CheckButton* const sigjz;
     Adjuster* const sigmoidldajzcie;
     Adjuster* const sigmoidthjzcie;
@@ -1674,17 +1726,35 @@ private:
     FlatCurveEditor* const CCmaskcieshape;
     FlatCurveEditor* const LLmaskcieshape;
     FlatCurveEditor* const HHmaskcieshape;
+    Gtk::Frame* const struFramecie;
+    Adjuster* const strumaskcie;
+    Gtk::CheckButton* const toolcie;
+    Gtk::Frame* const blurFramecie;
+    Gtk::CheckButton* const fftcieMask;
+    Adjuster* const contcie;
+    Adjuster* const blurcie;
+
     Adjuster* const blendmaskcie;
     Adjuster* const radmaskcie;
     Adjuster* const lapmaskcie;
     Adjuster* const chromaskcie;
     Adjuster* const gammaskcie;
     Adjuster* const slomaskcie;
-    
+    Adjuster* const highmaskcie;
+    Adjuster* const shadmaskcie;
+    CurveEditorGroup* const maskcieHCurveEditorG;
+    FlatCurveEditor* const HHhmaskcieshape;
+
     CurveEditorGroup* const mask2cieCurveEditorG;
     DiagonalCurveEditor* const Lmaskcieshape;
-    
-    sigc::connection AutograycieConn,  forcejzConn, forcebwConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, sigmoidqjcieconn, logcieconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2;
+    Gtk::Frame* const wavFramecie;   
+    CurveEditorGroup* const mask2cieCurveEditorGwav;
+    FlatCurveEditor* const LLmaskcieshapewav;
+    Gtk::Box* const quaHcieBox;
+    ThresholdAdjuster* const csThresholdcie;
+    int nextcomprciecount = 0;
+   
+    sigc::connection AutograycieConn, primMethodconn, catMethodconn, forcejzConn, forcebwConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, comprcieautoconn, normcieconn, logcieconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethodConn, fftcieMaskConn, trccieconn, sigcieconn;
 public:
     Locallabcie();
     ~Locallabcie();
@@ -1715,7 +1785,9 @@ public:
     void curveChanged(CurveEditor* ce) override;
     void toneMethodcieChanged();
     void toneMethodcie2Changed();
+    void bwevMethodChanged();
     void updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const float jz1);
+    void updateAutocam(const float maxicam, const bool autocam);
 
 private:
     void enabledChanged() override;
@@ -1728,8 +1800,13 @@ private:
     void forcebwChanged();
     void qtojChanged();
     void jabcieChanged();
-    void sigmoidqjcieChanged();
+    void comprcieautoChanged();
+    void normcieChanged();
+    void trccieChanged();
+    void primMethodChanged();
+    void catMethodChanged();
     void logcieChanged();
+    void sigcieChanged();
     void logjzChanged();
     void sigjzChanged();
     void sigqChanged();
@@ -1738,6 +1815,8 @@ private:
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
     void showmaskcieMethodChanged();
     void enacieMaskChanged();
+    void toolcieChanged();
+    void fftcieMaskChanged();
 
 };
 
