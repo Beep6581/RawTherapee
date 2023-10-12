@@ -940,6 +940,7 @@ private:
     Adjuster* const dehaz;
     Adjuster* const depth;
     Adjuster* const dehazeSaturation;
+    Adjuster* const dehazeblack;
     Gtk::Frame* const retiFrame;
     Adjuster* const str;
     Gtk::CheckButton* const loglin;
@@ -990,6 +991,8 @@ private:
     CurveEditorGroup* const mask2retiCurveEditorG;
     DiagonalCurveEditor* const Lmaskretishape;
     Gtk::CheckButton* const inversret;
+
+    rtengine::ProcEvent Evlocallabdehazeblack;
 
     sigc::connection loglinConn, retinexMethodConn, fftwretiConn, equilretConn, showmaskretiMethodConn, enaretiMaskConn, enaretiMasktmapConn, inversretConn;
 
