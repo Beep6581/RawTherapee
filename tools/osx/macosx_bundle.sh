@@ -216,12 +216,6 @@ CheckLink "${EXECUTABLE}" 2>&1
 # dylib install names
 ModifyInstallNames 2>&1
 
-## Copy libexpat into the app bundle (which is keg-only)
-## if [[ -d /usr/local/Cellar/expat ]]; then ditto /usr/local/Cellar/expat/*/lib/libexpat.1.dylib "${CONTENTS}/Frameworks"; else cp "${EXPATLIB}" "${CONTENTS}/Frameworks/libexpat.1.dylib"; fi
-
-## Copy libz into the app bundle
-## cp ${LOCAL_PREFIX}/lib/libz.1.dylib "${CONTENTS}/Frameworks"
-
 # Copy libpng16 to the app bundle
 cp ${LOCAL_PREFIX}/lib/libpng16.16.dylib "${CONTENTS}/Frameworks/libpng16.16.dylib"
 
@@ -295,7 +289,6 @@ ditto "${PROJECT_SOURCE_DIR}/rtdata/fonts" "${ETC}/fonts"
 
 # App bundle resources
 ditto "${PROJECT_SOURCE_DATA_DIR}/"{rawtherapee,profile}.icns "${RESOURCES}"
-#ditto "${PROJECT_SOURCE_DATA_DIR}/PkgInfo" "${CONTENTS}"
 
 update-mime-database -V  "${RESOURCES}/share/mime"
 cp -RL "${LOCAL_PREFIX}/share/locale" "${RESOURCES}/share/locale"
@@ -319,7 +312,6 @@ for frameworklibs in "${LIB}"/*{dylib,so,cli}; do
 done
 install_name_tool -delete_rpath RawTherapee.app/Contents/Frameworks "${EXECUTABLE}"-cli 2>/dev/null
 install_name_tool -add_rpath /Applications/"${LIB}" "${EXECUTABLE}"-cli 2>/dev/null
-# ditto "${EXECUTABLE}"-cli "${APP}"/..
 
 # Merge the app with the other architecture to create the Universal app.
 if [[ -n $UNIVERSAL_URL ]]; then
@@ -411,21 +403,32 @@ function CreateDmg {
     fi
     
     msg "Creating disk image:"
-    if [[ ! -z $FANCY_DMG ]]; then
+    if [[ $FANCY_DMG == "ON" ]]; then
         echo "Building Fancy .dmg"
-        mkdir "${srcDir}/.background"
-        cp -R "${PROJECT_SOURCE_DATA_DIR}/rtdmg.icns" "${srcDir}/.VolumeIcon.icns"
-        cp -R "${PROJECT_SOURCE_DATA_DIR}/rtdmg-bkgd.png" "${srcDir}/.background/background.png"
-        SetFile -c incC "${srcDir}/.VolumeIcon.icns"
-        create-dmg "${dmg_name}.dmg" "${srcDir}" \
-        --volname "${PROJECT_NAME}_${PROJECT_FULL_VERSION}" \
-        --appname "${PROJECT_NAME}" \
-        --volicon "${srcDir}/.VolumeIcon.icns" \
-        --sandbox-safe \
+        create-dmg \
+        --background ${PROJECT_SOURCE_DATA_DIR}/rtdmg-bkgd.png \
+        --volname ${PROJECT_NAME}_${PROJECT_FULL_VERSION} \
+        --volicon ${PROJECT_SOURCE_DATA_DIR}/rtdmg.icns \
+        --window-pos 72 72 \
+        --window-size 1000 689 \
+        --text-size 16 \
+        --icon-size 80 \
+        --icon LICENSE 810 0 \
+        --icon RawTherapee.app 250 178 \
+        --icon Applications 700 178 \
+        --icon Website.webloc 300 423 \
+        --icon Forum.webloc 420 423 \
+        --icon Report\ Bug.webloc 540 423 \
+        --icon Documentation.webloc 680 423 \
         --no-internet-enable \
-        --eula LICENSE.txt \
+        --eula ${PROJECT_SOURCE_DATA_DIR}/../../LICENSE \
         --hdiutil-verbose \
-        --rez /Library/Developer/CommandLineTools/usr/bin/Rez
+        --hide-extension Website.webloc \
+        --hide-extension Report\ Bug.webloc \
+        --hide-extension Forum.webloc \
+        --hide-extension Documentation.webloc \
+        --filesystem APFS \
+        ${dmg_name}.dmg ${srcDir}
     else
         hdiutil create -format UDBZ -fs HFS+ -srcdir "${srcDir}" -volname "${PROJECT_NAME}_${PROJECT_FULL_VERSION}" "${dmg_name}.dmg"
     fi
@@ -448,6 +451,7 @@ function CreateDmg {
     msg "Zipping disk image for redistribution:"
     mkdir "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}_folder"
     cp {"${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}.dmg","${PROJECT_NAME}.app/Contents/MacOS/rawtherapee-cli","${PROJECT_SOURCE_DATA_DIR}/INSTALL.readme.rtf"} "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}_folder"
+    mv "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}_folder/INSTALL.readme.rtf" "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}_folder/install-readme.txt"
     codesign -s "${CODESIGNID}" -i com.rawtherapee.rawtherapee-cli -f "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}_folder/rawtherapee-cli"
     zip -r "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}.zip" "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}_folder/"
     if [[ -n $NIGHTLY ]]; then
@@ -464,4 +468,8 @@ function CreateDmg {
 
 CreateDmg
 msg "Finishing build:"
+# Clean up items
+rm *app.zip
+rm *dmg.zip
+rm univ.zip
 echo "Script complete."
