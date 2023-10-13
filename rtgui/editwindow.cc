@@ -62,8 +62,10 @@ EditWindow::EditWindow (RTWindow* p)
     , isClosed(true)
     , isMinimized(false)
 {
-    // Set window icon
+    // For UNIX system, set app icon
+#ifndef _WIN32
     set_default_icon_name("rawtherapee");
+#endif
 
     set_title_decorated("");
     set_modal(false);
