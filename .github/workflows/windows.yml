@@ -37,7 +37,6 @@ jobs:
           update: true
           msystem: MINGW64
           install: |
-            gzip
             git
             intltool
           pacboy: |
