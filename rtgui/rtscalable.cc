@@ -32,7 +32,7 @@ extern Glib::ustring argv0;
 double RTScalable::dpi = 96.;
 int RTScalable::scale = 1;
 
-void RTScalable::updateDPInScale(const Gtk::Window* window, double &newDPI, int &newScale)
+void RTScalable::getDPInScale(const Gtk::Window* window, double &newDPI, int &newScale)
 {
     if (window) {
         const auto screen = window->get_screen();
@@ -169,6 +169,7 @@ Cairo::RefPtr<Cairo::ImageSurface> RTScalable::loadSurfaceFromSVG(const Glib::us
         if (error) {
             std::cerr << "Failed to load SVG file \"" << fname << "\": " << std::endl
                       << Glib::ustring(error->message) << std::endl;
+            free(error);
             return surf;
         }
 
@@ -215,6 +216,7 @@ Cairo::RefPtr<Cairo::ImageSurface> RTScalable::loadSurfaceFromSVG(const Glib::us
         if (!success && error) {
             std::cerr << "Failed to load SVG file \"" << fname << "\": " << std::endl
                       << Glib::ustring(error->message) << std::endl;
+            free(error);
             return surf;
         }
 
@@ -234,12 +236,12 @@ Cairo::RefPtr<Cairo::ImageSurface> RTScalable::loadSurfaceFromSVG(const Glib::us
 void RTScalable::init(const Gtk::Window* window)
 {
     // Retrieve DPI and Scale paremeters from OS
-    updateDPInScale(window, dpi, scale);
+    getDPInScale(window, dpi, scale);
 }
 
 void RTScalable::setDPInScale (const Gtk::Window* window)
 {
-    updateDPInScale(window, dpi, scale);
+    getDPInScale(window, dpi, scale);
 }
 
 void RTScalable::setDPInScale (const double newDPI, const int newScale)

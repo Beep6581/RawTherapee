@@ -43,12 +43,10 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWindow)
         // - By default, cursor hotspot is located at middle of surface.
         // Use (offX, offY) between -1 and 0.99 to move cursor hotspot
         auto cursor_surf = RTSurface(name, Gtk::ICON_SIZE_MENU);
-        double offXb = std::min(std::max(-1., offX), 0.99); // offX should belong to (-1; 0.99)
-        double offYb = std::min(std::max(-1., offY), 0.99); // offY should belong to (-1; 0.99)
         auto cursor = Gdk::Cursor::create(this->display,
             cursor_surf.get(),
-            cursor_surf.getWidth() / 2 * (1. + offXb),
-            cursor_surf.getHeight() / 2 * (1. + offYb));
+            std::min(std::max(cursor_surf.getWidth() / 2 * (1. + offX), 0.), static_cast<double>(cursor_surf.getWidth())),
+            std::min(std::max(cursor_surf.getHeight() / 2 * (1. + offY), 0.), static_cast<double>(cursor_surf.getHeight())));
 
         if (!cursor) {
             cursor = Gdk::Cursor::create(this->display, fb_cursor);
@@ -58,7 +56,7 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWindow)
     };
 
     cAdd        = createCursor("crosshair-hicontrast", Gdk::PLUS);
-    cAddPicker  = createCursor("color-picker-add-hicontrast", Gdk::PLUS, -0.333, 0.75);
+    cAddPicker  = createCursor("color-picker-add-hicontrast", Gdk::PLUS, -0.666, 0.75);
     cCropDraw   = createCursor("crop-point-hicontrast", Gdk::DIAMOND_CROSS);
     cCrosshair  = createCursor("crosshair-hicontrast", Gdk::CROSSHAIR);
     cEmpty      = createCursor("empty", Gdk::BLANK_CURSOR);
@@ -74,7 +72,7 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWindow)
     cMoveXY     = createCursor("node-move-xy-hicontrast", Gdk::FLEUR);
     cMoveY      = createCursor("node-move-y-hicontrast", Gdk::SB_V_DOUBLE_ARROW);
     cRotate     = createCursor("rotate-aroundnode-hicontrast", Gdk::EXCHANGE);
-    cWB         = createCursor("color-picker-hicontrast", Gdk::TARGET, -0.333, 0.75);
+    cWB         = createCursor("color-picker-hicontrast", Gdk::TARGET, -0.666, 0.75);
     cWait       = createCursor("gears", Gdk::CLOCK);
 
     window = mainWindow;

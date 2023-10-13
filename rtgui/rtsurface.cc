@@ -32,7 +32,7 @@ RTSurface::RTSurface() :
     scaleBack = RTScalable::getScale();
 
     // Initialize other private parameters
-    type = RTSurface::InvalidType;
+    type = RTSurfaceType::InvalidType;
     name = "";
     icon_size = Gtk::ICON_SIZE_INVALID;
 }
@@ -45,7 +45,7 @@ RTSurface::RTSurface(const Glib::ustring &icon_name, const Gtk::IconSize iconSiz
 
     if (surface) {
         // Save private parameters
-        type = RTSurface::IconType;
+        type = RTSurfaceType::IconType;
         name = icon_name;
         icon_size = iconSize;
     }
@@ -67,7 +67,7 @@ RTSurface::RTSurface(const Glib::ustring &fname) :
 
             if (surface) {
                 // Save private parameter
-                type = RTSurface::PNGType;
+                type = RTSurfaceType::PNGType;
                 name = fname;
             }
         }
@@ -79,7 +79,7 @@ RTSurface::RTSurface(const Glib::ustring &fname) :
 
             if (surface) {
                 // Save private parameter
-                type = RTSurface::SVGType;
+                type = RTSurfaceType::SVGType;
                 name = fname;
             }
         }
@@ -92,7 +92,7 @@ int RTSurface::getWidth()
 
     if (hasSurface()) {
         switch (type) {
-            case RTSurface::IconType:
+            case RTSurfaceType::IconType:
                 // Get width from Gtk::IconSize
                 if (!Gtk::IconSize::lookup(icon_size, w, h)) { // Size in invalid
                     w = h = -1; // Invalid case
@@ -100,15 +100,15 @@ int RTSurface::getWidth()
 
                 return w;
 
-            case RTSurface::PNGType:
+            case RTSurfaceType::PNGType:
                 // Directly return surface width
                 return surface->get_width();
 
-            case RTSurface::SVGType:
+            case RTSurfaceType::SVGType:
                 // Returned size shall consider the scaling
                 return (surface->get_width() / RTScalable::getScale());
 
-            case RTSurface::InvalidType:
+            case RTSurfaceType::InvalidType:
             default:
                 // Invalid case
                 return -1;
@@ -125,7 +125,7 @@ int RTSurface::getHeight()
 
     if (hasSurface()) {
         switch (type) {
-            case RTSurface::IconType:
+            case RTSurfaceType::IconType:
                 // Get width from Gtk::IconSize
                 if (!Gtk::IconSize::lookup(icon_size, w, h)) { // Size in invalid
                     w = h = -1; // Invalid case
@@ -133,15 +133,15 @@ int RTSurface::getHeight()
 
                 return h;
 
-            case RTSurface::PNGType:
+            case RTSurfaceType::PNGType:
                 // Directly return surface width
                 return surface->get_height();
 
-            case RTSurface::SVGType:
+            case RTSurfaceType::SVGType:
                 // Returned size shall consider the scaling
                 return (surface->get_height() / RTScalable::getScale());
 
-            case RTSurface::InvalidType:
+            case RTSurfaceType::InvalidType:
             default:
                 // Invalid case
                 return -1;
@@ -175,13 +175,13 @@ void RTSurface::updateSurface()
 {
     // Update surface based on the scale
     switch (type) {
-        case RTSurface::IconType :
+        case RTSurfaceType::IconType :
             surface = RTScalable::loadSurfaceFromIcon(name, icon_size);
             break;
-        case RTSurface::PNGType :
+        case RTSurfaceType::PNGType :
             surface = RTScalable::loadSurfaceFromPNG(name);
             break;
-        case RTSurface::SVGType :
+        case RTSurfaceType::SVGType :
             surface = RTScalable::loadSurfaceFromSVG(name);
             break;
         default :

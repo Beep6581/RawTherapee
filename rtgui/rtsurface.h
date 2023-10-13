@@ -27,11 +27,11 @@
 class RTSurface final : public RTScalable
 {
 public:
-    enum RTSurfaceType {
-        InvalidType = 1,
-        IconType = 2,
-        PNGType = 3,
-        SVGType = 4
+    enum class RTSurfaceType {
+        InvalidType,
+        IconType,
+        PNGType,
+        SVGType
     };
 
 private:

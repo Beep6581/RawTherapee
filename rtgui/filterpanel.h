@@ -63,7 +63,7 @@ protected:
     ExifFilterSettings curefs;
     FilterPanelListener* listener;
 
-    std::shared_ptr<RTSurface> ornamentSurface;
+    std::unique_ptr<RTSurface> ornamentSurface;
 
 public:
     FilterPanel ();

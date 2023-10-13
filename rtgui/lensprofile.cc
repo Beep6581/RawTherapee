@@ -64,7 +64,7 @@ LensProfilePanel::LensProfilePanel() :
     lensfunCameras(Gtk::manage((new MyComboBox()))),
     lensfunLensesLbl(Gtk::manage((new Gtk::Label(M("EXIFFILTER_LENS"))))),
     lensfunLenses(Gtk::manage((new MyComboBox()))),
-    warning(Gtk::manage(new RTImage("warning"))),
+    warning(Gtk::manage(new RTImage("warning", Gtk::ICON_SIZE_LARGE_TOOLBAR))),
     ckbUseDist(Gtk::manage((new Gtk::CheckButton(M("TP_LENSPROFILE_USE_GEOMETRIC"))))),
     ckbUseVign(Gtk::manage((new Gtk::CheckButton(M("TP_LENSPROFILE_USE_VIGNETTING"))))),
     ckbUseCA(Gtk::manage((new Gtk::CheckButton(M("TP_LENSPROFILE_USE_CA")))))

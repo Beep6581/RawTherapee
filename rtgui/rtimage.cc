@@ -82,20 +82,7 @@ RTImage::RTImage (const Glib::RefPtr<const Gio::Icon>& gIcon, const Gtk::IconSiz
 
 void RTImage::set_from_icon_name(const Glib::ustring& iconName)
 {
-    this->icon_name = iconName;
-
-    // Set surface from icon cache
-    surface = RTImageCache::getCachedSurface(this->icon_name, this->size);
-
-    // Add it to the RTImage if surface exists
-    if (surface) {
-        set(surface->get());
-    }
-
-    // Unset Gio::Icon if firstly exists
-    if (this->g_icon) {
-        g_icon = Glib::RefPtr<const Gio::Icon>();
-    }
+    set_from_icon_name(iconName, this->size);
 }
 
 void RTImage::set_from_icon_name(const Glib::ustring& iconName, const Gtk::IconSize iconSize)
@@ -119,17 +106,7 @@ void RTImage::set_from_icon_name(const Glib::ustring& iconName, const Gtk::IconS
 
 void RTImage::set_from_gicon(const Glib::RefPtr<const Gio::Icon>& gIcon)
 {
-    this->g_icon = gIcon;
-
-    // Set image from Gio::Icon
-    set(this->g_icon, this->size);
-
-    // Unset surface if previously chosen
-    this->icon_name = "";
-
-    if (surface) {
-        surface = std::shared_ptr<RTSurface>();
-    }
+    set_from_gicon(gIcon, this->size);
 }
 
 void RTImage::set_from_gicon(const Glib::RefPtr<const Gio::Icon>& gIcon, const Gtk::IconSize iconSize)

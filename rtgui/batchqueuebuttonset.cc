@@ -25,9 +25,9 @@
 
 bool BatchQueueButtonSet::iconsLoaded = false;
 
-std::shared_ptr<RTSurface> BatchQueueButtonSet::cancelIcon = std::shared_ptr<RTSurface>(nullptr);
-std::shared_ptr<RTSurface> BatchQueueButtonSet::headIcon = std::shared_ptr<RTSurface>(nullptr);
-std::shared_ptr<RTSurface> BatchQueueButtonSet::tailIcon = std::shared_ptr<RTSurface>(nullptr);
+std::shared_ptr<RTSurface> BatchQueueButtonSet::cancelIcon;
+std::shared_ptr<RTSurface> BatchQueueButtonSet::headIcon;
+std::shared_ptr<RTSurface> BatchQueueButtonSet::tailIcon;
 
 Glib::ustring BatchQueueButtonSet::moveHeadToolTip;
 Glib::ustring BatchQueueButtonSet::moveEndToolTip;

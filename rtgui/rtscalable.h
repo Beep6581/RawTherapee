@@ -54,7 +54,7 @@ class RTScalable
 private:
     static double dpi;
     static int scale;
-    static void updateDPInScale(const Gtk::Window* window, double &newDPI, int &newScale);
+    static void getDPInScale(const Gtk::Window* window, double &newDPI, int &newScale);
 
 protected:
     static Cairo::RefPtr<Cairo::ImageSurface> loadSurfaceFromIcon(const Glib::ustring &icon_name, const Gtk::IconSize iconSize = Gtk::ICON_SIZE_SMALL_TOOLBAR);
