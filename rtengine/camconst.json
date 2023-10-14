@@ -389,13 +389,18 @@ Camera constants:
         "ranges": {
             // black levels are read from raw masked pixels
             // white levels are same for all colors all ISOs, but safety margin vary on ISO
+            // actually not, 160 & 320 & 640 seem to have different white levels per color
             "white": [
                 { "iso": 50,  "levels": 16350 }, // typical for all ISOs: 16383, stdev 2.25
                 { "iso": 100, "levels": 16350 }, // stdev 2.25
-                { "iso": [ 125, 160, 200, 250 ], "levels": 16340 }, // stdev 2.5
-                { "iso": [ 320, 400, 500 ], "levels": 16330 }, // stdev 2.95
-                { "iso": [ 640, 800, 1000 ], "levels": 16320 }, // stdev x, 4.0 , x
-                { "iso": [ 1250, 1600, 2000 ], "levels": 16300 }, // stdev x, 6.0 , x
+                { "iso": [ 125, 200, 250 ], "levels": 16340 }, // stdev 2.5
+                { "iso": 160, "levels": [ 16340, 14450, 15600 ] }, // based on CarVac's testing
+                { "iso": [ 400, 500 ], "levels": 16330 }, // stdev 2.95
+                { "iso": 320, "levels": [ 16330, 16000, 16330 ] }, // based on CarVac's testing
+                { "iso": [ 800, 1000 ], "levels": 16320 }, // stdev x, 4.0 , x
+                { "iso": 640, "levels": [ 16320, 15800, 16320 ] }, // based on CarVac's testing
+                { "iso": [ 1600, 2000 ], "levels": 16300 }, // stdev x, 6.0 , x
+                { "iso": 1250, "levels": [ 16300, 16050, 16300 ] }, // based on CarVac's testing
                 { "iso": [ 2500, 3200, 4000 ], "levels": 16250 }, // STDEV x, 9.8 , x
                 { "iso": [ 5000, 6400, 8000 ], "levels": 16150 }, // stdev x, 17, x
                 { "iso": [ 10000, 12800, 16000 ], "levels": 16100 }, // stdev x, 34 , x
