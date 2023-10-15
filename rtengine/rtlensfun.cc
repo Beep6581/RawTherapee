@@ -435,11 +435,21 @@ std::vector<LFLens> LFDatabase::getLenses() const
 }
 
 
-LFCamera LFDatabase::findCamera(const Glib::ustring &make, const Glib::ustring &model) const
+LFCamera LFDatabase::findCamera(const Glib::ustring &make, const Glib::ustring &model, bool autoMatch) const
 {
     LFCamera ret;
     if (data_ && !make.empty()) {
         MyMutex::MyLock lock(lfDBMutex);
+        if (!autoMatch) {
+            // Try to find exact match by name.
+            for (auto camera_list = data_->GetCameras(); camera_list[0]; camera_list++) {
+                const auto camera = camera_list[0];
+                if (make == camera->Maker && model == camera->Model) {
+                    ret.data_ = camera;
+                    return ret;
+                }
+            }
+        }
         auto found = data_->FindCamerasExt(make.c_str(), model.c_str());
         if (found) {
             ret.data_ = found[0];
@@ -551,7 +561,7 @@ std::unique_ptr<LFModifier> LFDatabase::findModifier(
         return nullptr;
     }
 
-    const LFCamera c = findCamera(make, model);
+    const LFCamera c = findCamera(make, model, lensProf.lfAutoMatch());
     const LFLens l = findLens(
         lensProf.lfAutoMatch()
             ? c
