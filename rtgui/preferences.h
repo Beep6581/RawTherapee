@@ -196,7 +196,7 @@ class Preferences final :
     Gtk::CheckButton* sameThumbSize;
     Gtk::SpinButton* browseRecursiveDepth;
     Gtk::SpinButton* browseRecursiveMaxDirs;
-    Gtk::CheckButton* browseRecursiveFollowLinks;
+    Gtk::CheckButton* browseRecursiveFollowLinks{nullptr};
 
     Gtk::SpinButton*  threadsSpinBtn;
     Gtk::SpinButton*  clutCacheSizeSB;
