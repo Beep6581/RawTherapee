@@ -856,10 +856,15 @@ ToolPanelCoordinator::updateToolPanel(
         }
         FoldableToolPanel *tool_panel =
             getFoldableToolPanel(*new_tool_trees_iter);
-        if (tool_panel->getParent()) {
+        const bool reparent = tool_panel->getParent();
+        if (reparent) {
             tool_panel->getParent()->remove(*tool_panel->getExpander());
         }
         addPanel(panelBox, tool_panel, level);
+        if (!reparent) {
+            // If attaching for the first time, update the widget sizes.
+            tool_panel->getExpander()->check_resize();
+        }
     }
 
     // Update the child tools.

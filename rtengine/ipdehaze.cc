@@ -454,7 +454,7 @@ void ImProcFunctions::dehaze(Imagefloat *img, const DehazeParams &dehazeParams)
     }
 }
 
-void ImProcFunctions::dehazeloc(Imagefloat *img, const DehazeParams &dehazeParams)
+void ImProcFunctions::dehazeloc(Imagefloat *img, const DehazeParams &dehazeParams, int sk, int sp)
 {
     //J.Desmis 12 2019 - this version derived from ART, is slower than the main from maximum 10% - probably use of SSE
     //Probably Ingo could solved this problem in some times
@@ -475,6 +475,13 @@ void ImProcFunctions::dehazeloc(Imagefloat *img, const DehazeParams &dehazeParam
     int patchsize = max(int(5 / scale), 2);
     float ambient[3];
     float maxDistance = 0.f;
+
+    int whit = 0;
+    int blac = params->locallab.spots.at(sp).dehazeblack;
+
+    if(blac != 0) {
+        ImProcFunctions::tone_eqdehaz(this, img, whit, blac, params->icm.workingProfile, sk, multiThread);
+    }
 
     {
         array2D<float>& R = dark; // R and dark can safely use the same buffer, which is faster and reduces memory allocations/deallocations
