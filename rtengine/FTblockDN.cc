@@ -2106,7 +2106,7 @@ float ImProcFunctions::Mad(const float * DataList, const int datalen)
 
     //calculate histogram of absolute values of wavelet coeffs
     for (int i = 0; i < datalen; ++i) {
-        histo[static_cast<int>(rtengine::min(32768.f, fabsf(DataList[i])))]++;
+        histo[static_cast<int>(rtengine::min(32767.f, fabsf(DataList[i])))]++;
     }
 
     //find median of histogram
