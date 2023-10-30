@@ -5307,8 +5307,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         Glib::ustring profuse;
         profuse = "JDCmax";
 
-        int limx = 0.05f;
-        int limy = 0.04f;
+        float limx = 0.05f;
+        float limy = 0.04f;
 
         if (wbpar.itcwb_prim == "srgb") {
             profuse = "sRGB";
