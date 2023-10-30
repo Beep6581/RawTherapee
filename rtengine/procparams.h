@@ -1407,6 +1407,7 @@ struct LocallabParams {
         bool equilret;
         bool loglin;
         double dehazeSaturation;
+        double dehazeblack;
         double softradiusret;
         std::vector<double> CCmaskreticurve;
         std::vector<double> LLmaskreticurve;

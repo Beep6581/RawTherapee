@@ -778,6 +778,7 @@ public:
         bool equilret;
         bool loglin;
         bool dehazeSaturation;
+        bool dehazeblack;
         bool softradiusret;
         bool CCmaskreticurve;
         bool LLmaskreticurve;
