@@ -275,7 +275,7 @@ private:
         if (params.wb.method == "autitcgreen"  && flush) {
             imgsrc->getrgbloc(0, 0, fh, fw, 0, 0, fh, fw, params.wb);
         }
-        const bool autowb = (params.wb.method == "autold" || params.wb.method == "autitcgreen");
+        const bool autowb = params.wb.method == "autitcgreen";
         ColorTemp autoWB;
         int dread = 0;
         int bia = 1;
@@ -297,11 +297,11 @@ private:
             currWB = ColorTemp();
         } else if (params.wb.method == "Camera") {
             currWB = imgsrc->getWB();
-/*        } else if (params.wb.method == "autold") {
+        } else if (params.wb.method == "autold") {
             double rm, gm, bm;
             imgsrc->getAutoWBMultipliers(rm, gm, bm);
             currWB.update(rm, gm, bm, params.wb.equal, params.wb.observer, params.wb.tempBias);
-*/
+
         } else if (autowb  && flush) {//flush to enable only when batch
         //near same code as in improccordinator
                 float tem = 5000.f;
@@ -479,7 +479,7 @@ private:
                 float greenitc_low = 1.f;
                 float tempitc_low = 5000.f;
 
-                if (params.wb.method == "autitcgreen") {
+                //if (params.wb.method == "autitcgreen") {
                     double rm, gm, bm;
                     greenitc = 1.;
                     currWBitc = imgsrc->getWB();
@@ -532,7 +532,7 @@ private:
                     } else {
                         autoWB.useDefaults(params.wb.equal, params.wb.observer);
                     }
-                }
+            //    }
 
                 currWB = autoWB;
         }
