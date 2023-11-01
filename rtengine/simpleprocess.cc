@@ -297,13 +297,13 @@ private:
             currWB = ColorTemp();
         } else if (params.wb.method == "Camera") {
             currWB = imgsrc->getWB();
-        } else if (params.wb.method == "autold") {
+        } else if (params.wb.method == "autold") {//for Auto RGB
             double rm, gm, bm;
             imgsrc->getAutoWBMultipliers(rm, gm, bm);
             currWB.update(rm, gm, bm, params.wb.equal, params.wb.observer, params.wb.tempBias);
 
-        } else if (autowb  && flush) {//flush to enable only when batch
-        //near same code as in improccordinator
+        } else if (autowb  && flush) {//for auto Itcwb - flush to enable only when batch
+        //code similar to that present in improccoordinator.cc
                 float tem = 5000.f;
                 float gre  = 1.f;
                 double tempref0bias = 5000.;
@@ -311,8 +311,7 @@ private:
                 bool autowb1 = true;
                 double green_thres = 0.8;
 
-                if (params.wb.method == "autitcgreen") {
-
+                {
                     currWBitc = imgsrc->getWB();
 
                     double greenref = currWBitc.getGreen();
@@ -476,10 +475,10 @@ private:
                     params.wb.method = "autitcgreen";
 
                 }
+
                 float greenitc_low = 1.f;
                 float tempitc_low = 5000.f;
-
-                //if (params.wb.method == "autitcgreen") {
+                {
                     double rm, gm, bm;
                     greenitc = 1.;
                     currWBitc = imgsrc->getWB();
@@ -507,36 +506,25 @@ private:
 
                     imgsrc->getAutoWBMultipliersitc(extra, tempref, greenref, tempitc, greenitc, temp0, delta,  bia, dread, kcam, nocam, studgood, minchrom, kmin, minhist, maxhist, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params.wb, params.icm, params.raw, params.toneCurve);
 
-                    if (params.wb.method ==  "autitcgreen") {
-                        params.wb.temperature = tempitc;
-                        params.wb.green = greenitc;
-                        if(params.wb.itcwb_sampling) {
-                            params.wb.temperature = tempitc_low;
-                            params.wb.green = greenitc_low;
-                        }
-
-                        currWB = ColorTemp(params.wb.temperature, params.wb.green, 1., params.wb.method, params.wb.observer);
-                        currWB.getMultipliers(rm, gm, bm);
-                        autoWB.update(rm, gm, bm, params.wb.equal, params.wb.observer, params.wb.tempBias);
+                    
+                    params.wb.temperature = tempitc;
+                    params.wb.green = greenitc;
+                    
+                    if(params.wb.itcwb_sampling) {
+                        params.wb.temperature = tempitc_low;
+                        params.wb.green = greenitc_low;
                     }
 
-                    if (rm != -1.) {
-
-                        double bias = params.wb.tempBias;
-
-                        if (params.wb.method ==  "autitcgreen") {
-                            bias = 0.;
-                        }
-
-                        autoWB.update(rm, gm, bm, params.wb.equal, params.wb.observer, bias);
-                    } else {
-                        autoWB.useDefaults(params.wb.equal, params.wb.observer);
-                    }
-            //    }
+                    currWB = ColorTemp(params.wb.temperature, params.wb.green, 1., params.wb.method, params.wb.observer);
+                    currWB.getMultipliers(rm, gm, bm);
+                    autoWB.update(rm, gm, bm, params.wb.equal, params.wb.observer, params.wb.tempBias);
+                    
+                }
 
                 currWB = autoWB;
         }
-
+        //end WB auto
+        
         calclum = nullptr ;
         params.dirpyrDenoise.getCurves(noiseLCurve, noiseCCurve);
         autoNR = (float) settings->nrauto;//
