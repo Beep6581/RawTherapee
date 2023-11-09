@@ -801,6 +801,7 @@ LocallabRetinex::LocallabRetinex():
     dehaz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEHAZ"), -100, 100, 1, 0))),
     depth(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEPTH"), 0, 100, 1, 25))),
     dehazeSaturation(Gtk::manage(new Adjuster(M("TP_DEHAZE_SATURATION"), 0, 100, 1, 50))),
+    dehazeblack(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEHAZE_BLACK"), -65., 100., 1., 0.))),
     retiFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RETIFRA")))),
     str(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STR"), 0., 100., 0.2, 0.))),
     loglin(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LOGLIN")))),
@@ -853,6 +854,10 @@ LocallabRetinex::LocallabRetinex():
     Lmaskretishape(static_cast<DiagonalCurveEditor*>(mask2retiCurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
     inversret(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS"))))
 {
+    
+    auto m = ProcEventMapper::getInstance();
+    Evlocallabdehazeblack = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_DEHAZE_BLACK");
+   
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     const LocallabParams::LocallabSpot defSpot;
@@ -862,6 +867,7 @@ LocallabRetinex::LocallabRetinex():
 
     dehazeSaturation->setAdjusterListener(this);
     depth->setAdjusterListener(this);
+    dehazeblack->setAdjusterListener(this);
 
     retiFrame->set_label_align(0.025, 0.5);
 
@@ -996,6 +1002,7 @@ LocallabRetinex::LocallabRetinex():
     dehaBox->pack_start(*dehaz);
     dehaBox->pack_start(*depth);
     dehaBox->pack_start(*dehazeSaturation);
+    dehaBox->pack_start(*dehazeblack);
     dehaFrame->add(*dehaBox);
     auxBox->add(*dehaFrame);
     ToolParamBlock* const deharetiBox = Gtk::manage(new ToolParamBlock());
@@ -1252,6 +1259,7 @@ void LocallabRetinex::read(const rtengine::procparams::ProcParams* pp, const Par
         dehaz->setValue((double)spot.dehaz);
         depth->setValue((double)spot.depth);
         dehazeSaturation->setValue((double)spot.dehazeSaturation);
+        dehazeblack->setValue((double)spot.dehazeblack);
         str->setValue(spot.str);
         loglin->set_active(spot.loglin);
         sensih->setValue((double)spot.sensih);
@@ -1330,6 +1338,7 @@ void LocallabRetinex::write(rtengine::procparams::ProcParams* pp, ParamsEdited* 
         spot.dehaz = dehaz->getIntValue();
         spot.depth = depth->getIntValue();
         spot.dehazeSaturation = dehazeSaturation->getIntValue();
+        spot.dehazeblack = dehazeblack->getValue();
         spot.str = str->getValue();
         spot.loglin = loglin->get_active();
         spot.sensih = sensih->getIntValue();
@@ -1388,6 +1397,7 @@ void LocallabRetinex::setDefaults(const rtengine::procparams::ProcParams* defPar
         // Set default values for adjuster widgets
         dehaz->setDefault((double)defSpot.dehaz);
         dehazeSaturation->setDefault((double)defSpot.dehazeSaturation);
+        dehazeblack->setDefault((double)defSpot.dehazeblack);
         depth->setDefault((double)defSpot.depth);
         str->setDefault(defSpot.str);
         sensih->setDefault((double)defSpot.sensih);
@@ -1440,6 +1450,13 @@ void LocallabRetinex::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(EvlocallabdehazeSaturation,
                                        dehazeSaturation->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == dehazeblack) {
+            if (listener) {
+                listener->panelChanged(Evlocallabdehazeblack,
+                                       dehazeblack->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 

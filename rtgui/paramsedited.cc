@@ -1478,6 +1478,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).equilret = locallab.spots.at(j).equilret && pSpot.equilret == otherSpot.equilret;
                 locallab.spots.at(j).loglin = locallab.spots.at(j).loglin && pSpot.loglin == otherSpot.loglin;
                 locallab.spots.at(j).dehazeSaturation = locallab.spots.at(j).dehazeSaturation && pSpot.dehazeSaturation == otherSpot.dehazeSaturation;
+                locallab.spots.at(j).dehazeblack = locallab.spots.at(j).dehazeblack && pSpot.dehazeblack == otherSpot.dehazeblack;
                 locallab.spots.at(j).softradiusret = locallab.spots.at(j).softradiusret && pSpot.softradiusret == otherSpot.softradiusret;
                 locallab.spots.at(j).CCmaskreticurve = locallab.spots.at(j).CCmaskreticurve && pSpot.CCmaskreticurve == otherSpot.CCmaskreticurve;
                 locallab.spots.at(j).LLmaskreticurve = locallab.spots.at(j).LLmaskreticurve && pSpot.LLmaskreticurve == otherSpot.LLmaskreticurve;
@@ -4959,6 +4960,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).dehazeSaturation = mods.locallab.spots.at(i).dehazeSaturation;
         }
 
+        if (locallab.spots.at(i).dehazeblack) {
+            toEdit.locallab.spots.at(i).dehazeblack = mods.locallab.spots.at(i).dehazeblack;
+        }
+
         if (locallab.spots.at(i).softradiusret) {
             toEdit.locallab.spots.at(i).softradiusret = mods.locallab.spots.at(i).softradiusret;
         }
@@ -7994,6 +7999,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     equilret(v),
     loglin(v),
     dehazeSaturation(v),
+    dehazeblack(v),
     softradiusret(v),
     CCmaskreticurve(v),
     LLmaskreticurve(v),
@@ -8715,6 +8721,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     equilret = v;
     loglin = v;
     dehazeSaturation = v;
+    dehazeblack = v;
     softradiusret = v;
     CCmaskreticurve = v;
     LLmaskreticurve = v;
