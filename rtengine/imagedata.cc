@@ -315,7 +315,29 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
         /*
          * Get the focus distance in meters.
          */
-        if (find_exif_tag("Exif.NikonLd2.FocusDistance")
+        if (Exiv2::testVersion(0, 27, 4) && find_exif_tag("Exif.NikonLd4.LensID") && to_long(pos) != 0) {
+            // Z lens, need to specifically look for the second instance of
+            // Exif.NikonLd4.FocusDistance unless using Exiv2 0.28.x and later
+            // (also expanded to 2 bytes of precision since 0.28.1).
+#if EXIV2_TEST_VERSION(0, 28, 0)
+            if (find_exif_tag("Exif.NikonLd4.FocusDistance2")) {
+                float value = pos->toFloat();
+                if (Exiv2::testVersion(0, 28, 1)) {
+                    value /= 256.f;
+                }
+#else
+            pos = exif.end();
+            for (auto it = exif.begin(); it != exif.end(); it++) {
+                if (it->key() == "Exif.NikonLd4.FocusDistance") {
+                    pos = it;
+                }
+            }
+            if (pos != exif.end() && pos->size()) {
+                float value = pos->toFloat();
+#endif
+                focus_dist = 0.01 * std::pow(10, value / 40);
+            }
+        } else if (find_exif_tag("Exif.NikonLd2.FocusDistance")
             || find_exif_tag("Exif.NikonLd3.FocusDistance")
             || (Exiv2::testVersion(0, 27, 4)
                 && find_exif_tag("Exif.NikonLd4.FocusDistance"))) {
