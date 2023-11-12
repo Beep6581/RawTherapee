@@ -791,7 +791,7 @@ int ImageIO::loadTIFF (const Glib::ustring &fname)
 
         if (samplesperpixel > 3) {
             for (int i = 0; i < width; i++) {
-                memcpy(linebuffer.get() + i * 3 * bitspersample / 8, linebuffer.get() + i * samplesperpixel * bitspersample / 8, 3 * bitspersample / 8);
+                memmove(linebuffer.get() + i * 3 * bitspersample / 8, linebuffer.get() + i * samplesperpixel * bitspersample / 8, 3 * bitspersample / 8);
             }
         }
         else if (samplesperpixel == 1) {
