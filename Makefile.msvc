@@ -1,0 +1,628 @@
+# Additional compiler flags (OpenMP, SSEx, AVX, ...)
+
+#COPT_OPT=/arch:SSE2 /arch:AVX
+
+# Compile with RawSpeed support
+#CFLAGS_RAWSPEED=/DUSE_RAWSPEED /I"..\\RawSpeed" /I"..\\RawSpeed\include" /I"..\\RawSpeed\include\libjpeg"
+#LDFLAGS_RAWSPEED=..\RawSpeed\lib\rawspeed.lib ..\RawSpeed\lib\libxml2.lib ..\RawSpeed\lib\iconv.lib ..\RawSpeed\lib\charset.lib ..\RawSpeed\lib\turbojpeg-static.lib
+
+# Compile with DNG SDK support
+#CFLAGS_DNG=/DUSE_DNGSDK /I"..\\dng_sdk\\source"
+#LDFLAGS_DNG=..\\dng_sdk\\release\\libdng.lib  ..\\dng_sdk\\release\\XMPCore.lib
+# you may also need to specify zlib.lib and jpeg.lib in the line above
+
+# LCMS 1.x support
+#LCMS_DEF=/DUSE_LCMS /DCMS_DLL /I..\lcms-1.19\include
+#LCMS_LIB=..\lcms-1.19\bin\lcms.lib
+
+# LCMS 2.x support
+#LCMS_DEF=/DUSE_LCMS2 /DCMS_DLL /I..\lcms2-2.3\include
+#LCMS_LIB=..\lcms2-2.3\bin\lcms2_dll.lib
+
+# JPEG support for DNG
+#JPEG_DEF=/DUSE_JPEG /I..\jpeg-8d
+#JPEG_LIB=..\jpeg-8d\Release\jpeg.lib
+
+
+SAMPLES=bin\raw-identify.exe bin\simple_dcraw.exe  bin\dcraw_emu.exe bin\dcraw_half.exe \
+        bin\half_mt.exe bin\mem_image.exe bin\unprocessed_raw.exe bin\4channels.exe \
+        bin\multirender_test.exe bin\postprocessing_benchmark.exe bin\openbayer_sample.exe \
+	bin\rawtextdump.exe
+
+LIBSTATIC=lib\libraw_static.lib
+DLL=bin\libraw.dll
+LIBDLL=lib\libraw.lib
+
+all: $(DLL) $(LIBSTATIC) $(SAMPLES)
+
+$(LIBDLL): $(DLL)
+
+# Guess LIBPATH from $INCLUDE
+
+LIB_OBJECTS= object\libraw_datastream_st.obj object\libraw_c_api_st.obj \
+  object\cameralist_st.obj object\fuji_compressed_st.obj \
+  object\crx_st.obj object\fp_dng_st.obj object\decoders_libraw_st.obj \
+  object\unpack_st.obj object\unpack_thumb_st.obj \
+  object\rawspeed_glue_st.obj object\dngsdk_glue_st.obj \
+  object\colorconst_st.obj object\utils_libraw_st.obj object\init_close_utils_st.obj \
+  object\decoder_info_st.obj object\open_st.obj object\phaseone_processing_st.obj \
+  object\thumb_utils_st.obj \
+  object\tiff_writer_st.obj object\subtract_black_st.obj object\postprocessing_utils_st.obj \
+  object\dcraw_process_st.obj object\raw2image_st.obj object\mem_image_st.obj \
+  object\x3f_utils_patched_st.obj object\x3f_parse_process_st.obj \
+  object\read_utils_st.obj object\curves_st.obj object\utils_dcraw_st.obj \
+  object\colordata_st.obj \
+  object\canon_600_st.obj  object\decoders_dcraw_st.obj \
+  object\decoders_libraw_dcrdefs_st.obj  object\generic_st.obj \
+  object\kodak_decoders_st.obj object\dng_st.obj object\smal_st.obj \
+  object\load_mfbacks_st.obj \
+  object\sony_st.obj object\nikon_st.obj object\samsung_st.obj object\cr3_parser_st.obj \
+  object\canon_st.obj  object\epson_st.obj object\olympus_st.obj object\leica_st.obj \
+  object\fuji_st.obj object\adobepano_st.obj object\pentax_st.obj object\p1_st.obj \
+  object\makernotes_st.obj object\exif_gps_st.obj object\kodak_st.obj \
+  object\tiff_st.obj object\ciff_st.obj object\mediumformat_st.obj object\minolta_st.obj \
+  object\identify_tools_st.obj \
+  object\hasselblad_model_st.obj object\normalize_model_st.obj object\identify_st.obj \
+  object\misc_parsers_st.obj object\wblists_st.obj \
+  object\postprocessing_aux_st.obj object\postprocessing_utils_dcrdefs_st.obj \
+  object\aspect_ratio_st.obj \
+  object\misc_demosaic_st.obj object\xtrans_demosaic_st.obj object\ahd_demosaic_st.obj \
+  object\dht_demosaic_st.obj  object\aahd_demosaic_st.obj  object\dcb_demosaic_st.obj \
+  object\file_write_st.obj \
+  object\ext_preprocess_st.obj   object\apply_profile_st.obj
+
+
+DLL_OBJECTS= object\libraw_datastream.obj object\libraw_c_api.obj \
+  object\cameralist.obj object\fuji_compressed.obj \
+  object\crx.obj object\fp_dng.obj object\decoders_libraw.obj \
+  object\unpack.obj object\unpack_thumb.obj \
+  object\rawspeed_glue.obj object\dngsdk_glue.obj \
+  object\colorconst.obj object\utils_libraw.obj \
+  object\init_close_utils.obj \
+  object\decoder_info.obj object\open.obj object\phaseone_processing.obj \
+  object\thumb_utils.obj \
+  object\tiff_writer.obj object\subtract_black.obj \
+  object\postprocessing_utils.obj object\dcraw_process.obj \
+  object\raw2image.obj object\mem_image.obj \
+  object\x3f_utils_patched.obj object\x3f_parse_process.obj \
+  object\read_utils.obj object\curves.obj object\utils_dcraw.obj \
+  object\colordata.obj \
+  object\canon_600.obj  object\decoders_dcraw.obj \
+  object\decoders_libraw_dcrdefs.obj  object\generic.obj \
+  object\kodak_decoders.obj object\dng.obj object\smal.obj \
+  object\load_mfbacks.obj \
+  object\sony.obj object\nikon.obj object\samsung.obj \
+  object\cr3_parser.obj object\canon.obj  object\epson.obj \
+  object\olympus.obj object\leica.obj \
+  object\fuji.obj object\adobepano.obj object\pentax.obj object\p1.obj \
+  object\makernotes.obj object\exif_gps.obj object\kodak.obj \
+  object\tiff.obj object\ciff.obj object\mediumformat.obj \
+  object\minolta.obj \
+  object\identify_tools.obj \
+  object\hasselblad_model.obj object\normalize_model.obj object\identify.obj \
+  object\misc_parsers.obj object\wblists.obj \
+  object\postprocessing_aux.obj object\postprocessing_utils_dcrdefs.obj \
+  object\aspect_ratio.obj \
+  object\misc_demosaic.obj object\xtrans_demosaic.obj \
+  object\ahd_demosaic.obj object\dht_demosaic.obj \
+  object\aahd_demosaic.obj object\dcb_demosaic.obj \
+  object\file_write.obj \
+  object\ext_preprocess.obj   object\apply_profile.obj
+
+
+CC=cl.exe
+COPT=/EHsc /MP /MD /I. /DWIN32 /O2 /W0 /nologo $(COPT_OPT) $(CFLAGSG2) $(CFLAGSG3) $(LCMS_DEF) $(JPEG_DEF) $(CFLAGS_RAWSPEED) $(CFLAGS_DNG)
+
+LINKLIB=$(LIBDLL) $(LDFLAGS_RAWSPEED) $(LDFLAGS_DNG)
+
+
+
+# Samples - default to dynamic (DLL) link, uncomment next lines
+#CFLAGS2=/DLIBRAW_NODLL
+#LINKLIB=$(LIBSTATIC)
+
+bin\raw-identify.exe: $(LINKLIB) samples\raw-identify.cpp
+	$(CC) $(COPT) $(CFLAGS2) /Fe"bin\\raw-identify.exe" /Fo"object\\" samples\raw-identify.cpp $(LINKLIB)
+
+bin\unprocessed_raw.exe: $(LINKLIB) samples\unprocessed_raw.cpp
+	$(CC) $(COPT) $(CFLAGS2) /Fe"bin\\unprocessed_raw.exe" /Fo"object\\" samples\unprocessed_raw.cpp $(LINKLIB) ws2_32.lib
+
+bin\4channels.exe: $(LINKLIB) samples\4channels.cpp
+	$(CC) $(COPT) $(CFLAGS2) /Fe"bin\\4channels.exe" /Fo"object\\" samples\4channels.cpp $(LINKLIB)
+
+bin\rawtextdump.exe: $(LINKLIB) samples\rawtextdump.cpp
+	$(CC) $(COPT) $(CFLAGS2) /Fe"bin\\rawtextdump.exe" /Fo"object\\" samples\rawtextdump.cpp $(LINKLIB)
+
+bin\simple_dcraw.exe: $(LINKLIB) samples\simple_dcraw.cpp
+	$(CC) $(COPT) $(CFLAGS2) /Fe"bin\\simple_dcraw.exe" /Fo"object\\" samples\simple_dcraw.cpp $(LINKLIB)
+
+bin\postprocessing_benchmark.exe: $(LINKLIB) samples\postprocessing_benchmark.cpp
+	$(CC) $(COPT) $(CFLAGS2) /Fe"bin\\postprocessing_benchmark.exe" /Fo"object\\" samples\postprocessing_benchmark.cpp $(LINKLIB)
+
+bin\multirender_test.exe: $(LINKLIB) samples\multirender_test.cpp
+	$(CC) $(COPT) $(CFLAGS2) /Fe"bin\\multirender_test.exe" /Fo"object\\" samples\multirender_test.cpp $(LINKLIB)
+
+bin\openbayer_sample.exe: $(LINKLIB) samples\openbayer_sample.cpp
+	$(CC) $(COPT) $(CFLAGS2) /Fe"bin\\openbayer_sample.exe" /Fo"object\\" samples\openbayer_sample.cpp $(LINKLIB)
+
+bin\mem_image.exe: $(LINKLIB) samples\mem_image_sample.cpp
+	$(CC) $(COPT) $(CFLAGS2) /Fe"bin\\mem_image.exe" /Fo"object\\" samples\mem_image_sample.cpp $(LINKLIB)
+
+bin\dcraw_emu.exe: $(LINKLIB) samples\dcraw_emu.cpp
+	$(CC) $(COPT) $(CFLAGS2) /Fe"bin\\dcraw_emu.exe" /Fo"object\\" samples\dcraw_emu.cpp $(LINKLIB)
+
+bin\dcraw_half.exe: $(LINKLIB) samples\dcraw_half.c
+	$(CC) $(COPT) $(CFLAGS2) /Fe"bin\\dcraw_half.exe" /Fo"object\\" samples\dcraw_half.c $(LINKLIB)
+
+bin\half_mt.exe: $(LINKLIB) samples\half_mt_win32.c
+	$(CC) $(COPT) $(CFLAGS2) /Fe"bin\\half_mt.exe" /Fo"object\\" samples\half_mt_win32.c $(LINKLIB)
+
+# DLL build
+
+$(DLL): $(DLL_OBJECTS)
+	-del /f $(DLL) $(LIBDLL)
+	cl $(COPT) /LD $(DLL_OBJECTS) $(LDFLAGS_RAWSPEED) $(LDFLAGS_DNG) $(LCMS_LIB) $(JPEG_LIB) /link /out:"$(DLL)" /implib:"$(LIBDLL)"
+
+# LIBRARY BUILD
+$(LIBSTATIC): $(LIB_OBJECTS)
+        -del /f $(LIBSTATIC)
+	lib /OUT:$(LIBSTATIC) /LTCG $(LIB_OBJECTS)
+
+# clean
+clean:
+	-del $(LIBSTATIC) $(LIBDLL) lib\*.exp
+	-del $(LIB_OBJECTS) $(DLL_OBJECTS)
+        -del object\*.o
+	-del $(DLL) $(SAMPLES)
+
+# OBJ generation rules
+object\canon_600_st.obj: src\decoders\canon_600.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\canon_600_st.obj" /c src\decoders\canon_600.cpp
+
+object\canon_600.obj: src\decoders\canon_600.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\canon_600.obj" /c src\decoders\canon_600.cpp
+
+object\crx_st.obj: src\decoders\crx.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\crx_st.obj" /c src\decoders\crx.cpp
+
+object\crx.obj: src\decoders\crx.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\crx.obj" /c src\decoders\crx.cpp
+
+object\decoders_dcraw_st.obj: src\decoders\decoders_dcraw.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\decoders_dcraw_st.obj" /c src\decoders\decoders_dcraw.cpp
+
+object\decoders_dcraw.obj: src\decoders\decoders_dcraw.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\decoders_dcraw.obj" /c src\decoders\decoders_dcraw.cpp
+
+object\decoders_libraw_dcrdefs_st.obj: src\decoders\decoders_libraw_dcrdefs.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\decoders_libraw_dcrdefs_st.obj" /c src\decoders\decoders_libraw_dcrdefs.cpp
+
+object\decoders_libraw_dcrdefs.obj: src\decoders\decoders_libraw_dcrdefs.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\decoders_libraw_dcrdefs.obj" /c src\decoders\decoders_libraw_dcrdefs.cpp
+
+object\decoders_libraw_st.obj: src\decoders\decoders_libraw.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\decoders_libraw_st.obj" /c src\decoders\decoders_libraw.cpp
+
+object\decoders_libraw.obj: src\decoders\decoders_libraw.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\decoders_libraw.obj" /c src\decoders\decoders_libraw.cpp
+
+object\dng_st.obj: src\decoders\dng.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\dng_st.obj" /c src\decoders\dng.cpp
+
+object\dng.obj: src\decoders\dng.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\dng.obj" /c src\decoders\dng.cpp
+
+object\fp_dng_st.obj: src\decoders\fp_dng.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\fp_dng_st.obj" /c src\decoders\fp_dng.cpp
+
+object\fp_dng.obj: src\decoders\fp_dng.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\fp_dng.obj" /c src\decoders\fp_dng.cpp
+
+object\fuji_compressed_st.obj: src\decoders\fuji_compressed.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\fuji_compressed_st.obj" /c src\decoders\fuji_compressed.cpp
+
+object\fuji_compressed.obj: src\decoders\fuji_compressed.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\fuji_compressed.obj" /c src\decoders\fuji_compressed.cpp
+
+object\generic_st.obj: src\decoders\generic.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\generic_st.obj" /c src\decoders\generic.cpp
+
+object\generic.obj: src\decoders\generic.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\generic.obj" /c src\decoders\generic.cpp
+
+object\kodak_decoders_st.obj: src\decoders\kodak_decoders.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\kodak_decoders_st.obj" /c src\decoders\kodak_decoders.cpp
+
+object\kodak_decoders.obj: src\decoders\kodak_decoders.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\kodak_decoders.obj" /c src\decoders\kodak_decoders.cpp
+
+object\load_mfbacks_st.obj: src\decoders\load_mfbacks.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\load_mfbacks_st.obj" /c src\decoders\load_mfbacks.cpp
+
+object\load_mfbacks.obj: src\decoders\load_mfbacks.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\load_mfbacks.obj" /c src\decoders\load_mfbacks.cpp
+
+object\smal_st.obj: src\decoders\smal.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\smal_st.obj" /c src\decoders\smal.cpp
+
+object\smal.obj: src\decoders\smal.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\smal.obj" /c src\decoders\smal.cpp
+
+object\unpack_thumb_st.obj: src\decoders\unpack_thumb.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\unpack_thumb_st.obj" /c src\decoders\unpack_thumb.cpp
+
+object\unpack_thumb.obj: src\decoders\unpack_thumb.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\unpack_thumb.obj" /c src\decoders\unpack_thumb.cpp
+
+object\unpack_st.obj: src\decoders\unpack.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\unpack_st.obj" /c src\decoders\unpack.cpp
+
+object\unpack.obj: src\decoders\unpack.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\unpack.obj" /c src\decoders\unpack.cpp
+
+object\aahd_demosaic_st.obj: src\demosaic\aahd_demosaic.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\aahd_demosaic_st.obj" /c src\demosaic\aahd_demosaic.cpp
+
+object\aahd_demosaic.obj: src\demosaic\aahd_demosaic.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\aahd_demosaic.obj" /c src\demosaic\aahd_demosaic.cpp
+
+object\ahd_demosaic_st.obj: src\demosaic\ahd_demosaic.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\ahd_demosaic_st.obj" /c src\demosaic\ahd_demosaic.cpp
+
+object\ahd_demosaic.obj: src\demosaic\ahd_demosaic.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\ahd_demosaic.obj" /c src\demosaic\ahd_demosaic.cpp
+
+object\dcb_demosaic_st.obj: src\demosaic\dcb_demosaic.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\dcb_demosaic_st.obj" /c src\demosaic\dcb_demosaic.cpp
+
+object\dcb_demosaic.obj: src\demosaic\dcb_demosaic.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\dcb_demosaic.obj" /c src\demosaic\dcb_demosaic.cpp
+
+object\dht_demosaic_st.obj: src\demosaic\dht_demosaic.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\dht_demosaic_st.obj" /c src\demosaic\dht_demosaic.cpp
+
+object\dht_demosaic.obj: src\demosaic\dht_demosaic.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\dht_demosaic.obj" /c src\demosaic\dht_demosaic.cpp
+
+object\misc_demosaic_st.obj: src\demosaic\misc_demosaic.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\misc_demosaic_st.obj" /c src\demosaic\misc_demosaic.cpp
+
+object\misc_demosaic.obj: src\demosaic\misc_demosaic.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\misc_demosaic.obj" /c src\demosaic\misc_demosaic.cpp
+
+object\xtrans_demosaic_st.obj: src\demosaic\xtrans_demosaic.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\xtrans_demosaic_st.obj" /c src\demosaic\xtrans_demosaic.cpp
+
+object\xtrans_demosaic.obj: src\demosaic\xtrans_demosaic.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\xtrans_demosaic.obj" /c src\demosaic\xtrans_demosaic.cpp
+
+object\dngsdk_glue_st.obj: src\integration\dngsdk_glue.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\dngsdk_glue_st.obj" /c src\integration\dngsdk_glue.cpp
+
+object\dngsdk_glue.obj: src\integration\dngsdk_glue.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\dngsdk_glue.obj" /c src\integration\dngsdk_glue.cpp
+
+object\rawspeed_glue_st.obj: src\integration\rawspeed_glue.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\rawspeed_glue_st.obj" /c src\integration\rawspeed_glue.cpp
+
+object\rawspeed_glue.obj: src\integration\rawspeed_glue.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\rawspeed_glue.obj" /c src\integration\rawspeed_glue.cpp
+
+object\adobepano_st.obj: src\metadata\adobepano.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\adobepano_st.obj" /c src\metadata\adobepano.cpp
+
+object\adobepano.obj: src\metadata\adobepano.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\adobepano.obj" /c src\metadata\adobepano.cpp
+
+object\canon_st.obj: src\metadata\canon.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\canon_st.obj" /c src\metadata\canon.cpp
+
+object\canon.obj: src\metadata\canon.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\canon.obj" /c src\metadata\canon.cpp
+
+object\ciff_st.obj: src\metadata\ciff.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\ciff_st.obj" /c src\metadata\ciff.cpp
+
+object\ciff.obj: src\metadata\ciff.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\ciff.obj" /c src\metadata\ciff.cpp
+
+object\cr3_parser_st.obj: src\metadata\cr3_parser.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\cr3_parser_st.obj" /c src\metadata\cr3_parser.cpp
+
+object\cr3_parser.obj: src\metadata\cr3_parser.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\cr3_parser.obj" /c src\metadata\cr3_parser.cpp
+
+object\epson_st.obj: src\metadata\epson.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\epson_st.obj" /c src\metadata\epson.cpp
+
+object\epson.obj: src\metadata\epson.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\epson.obj" /c src\metadata\epson.cpp
+
+object\exif_gps_st.obj: src\metadata\exif_gps.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\exif_gps_st.obj" /c src\metadata\exif_gps.cpp
+
+object\exif_gps.obj: src\metadata\exif_gps.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\exif_gps.obj" /c src\metadata\exif_gps.cpp
+
+object\fuji_st.obj: src\metadata\fuji.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\fuji_st.obj" /c src\metadata\fuji.cpp
+
+object\fuji.obj: src\metadata\fuji.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\fuji.obj" /c src\metadata\fuji.cpp
+
+object\identify_tools_st.obj: src\metadata\identify_tools.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\identify_tools_st.obj" /c src\metadata\identify_tools.cpp
+
+object\identify_tools.obj: src\metadata\identify_tools.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\identify_tools.obj" /c src\metadata\identify_tools.cpp
+
+object\identify_st.obj: src\metadata\identify.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\identify_st.obj" /c src\metadata\identify.cpp
+
+object\identify.obj: src\metadata\identify.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\identify.obj" /c src\metadata\identify.cpp
+
+object\kodak_st.obj: src\metadata\kodak.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\kodak_st.obj" /c src\metadata\kodak.cpp
+
+object\kodak.obj: src\metadata\kodak.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\kodak.obj" /c src\metadata\kodak.cpp
+
+object\leica_st.obj: src\metadata\leica.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\leica_st.obj" /c src\metadata\leica.cpp
+
+object\leica.obj: src\metadata\leica.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\leica.obj" /c src\metadata\leica.cpp
+
+object\makernotes_st.obj: src\metadata\makernotes.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\makernotes_st.obj" /c src\metadata\makernotes.cpp
+
+object\makernotes.obj: src\metadata\makernotes.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\makernotes.obj" /c src\metadata\makernotes.cpp
+
+object\mediumformat_st.obj: src\metadata\mediumformat.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\mediumformat_st.obj" /c src\metadata\mediumformat.cpp
+
+object\mediumformat.obj: src\metadata\mediumformat.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\mediumformat.obj" /c src\metadata\mediumformat.cpp
+
+object\minolta_st.obj: src\metadata\minolta.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\minolta_st.obj" /c src\metadata\minolta.cpp
+
+object\minolta.obj: src\metadata\minolta.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\minolta.obj" /c src\metadata\minolta.cpp
+
+object\misc_parsers_st.obj: src\metadata\misc_parsers.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\misc_parsers_st.obj" /c src\metadata\misc_parsers.cpp
+
+object\misc_parsers.obj: src\metadata\misc_parsers.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\misc_parsers.obj" /c src\metadata\misc_parsers.cpp
+
+object\nikon_st.obj: src\metadata\nikon.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\nikon_st.obj" /c src\metadata\nikon.cpp
+
+object\nikon.obj: src\metadata\nikon.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\nikon.obj" /c src\metadata\nikon.cpp
+
+object\hasselblad_model_st.obj: src\metadata\hasselblad_model.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\hasselblad_model_st.obj" /c src\metadata\hasselblad_model.cpp
+
+object\hasselblad_model.obj: src\metadata\hasselblad_model.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\hasselblad_model.obj" /c src\metadata\hasselblad_model.cpp
+
+object\normalize_model_st.obj: src\metadata\normalize_model.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\normalize_model_st.obj" /c src\metadata\normalize_model.cpp
+
+object\normalize_model.obj: src\metadata\normalize_model.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\normalize_model.obj" /c src\metadata\normalize_model.cpp
+
+object\olympus_st.obj: src\metadata\olympus.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\olympus_st.obj" /c src\metadata\olympus.cpp
+
+object\olympus.obj: src\metadata\olympus.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\olympus.obj" /c src\metadata\olympus.cpp
+
+object\p1_st.obj: src\metadata\p1.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\p1_st.obj" /c src\metadata\p1.cpp
+
+object\p1.obj: src\metadata\p1.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\p1.obj" /c src\metadata\p1.cpp
+
+object\pentax_st.obj: src\metadata\pentax.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\pentax_st.obj" /c src\metadata\pentax.cpp
+
+object\pentax.obj: src\metadata\pentax.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\pentax.obj" /c src\metadata\pentax.cpp
+
+object\samsung_st.obj: src\metadata\samsung.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\samsung_st.obj" /c src\metadata\samsung.cpp
+
+object\samsung.obj: src\metadata\samsung.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\samsung.obj" /c src\metadata\samsung.cpp
+
+object\sony_st.obj: src\metadata\sony.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\sony_st.obj" /c src\metadata\sony.cpp
+
+object\sony.obj: src\metadata\sony.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\sony.obj" /c src\metadata\sony.cpp
+
+object\tiff_st.obj: src\metadata\tiff.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\tiff_st.obj" /c src\metadata\tiff.cpp
+
+object\tiff.obj: src\metadata\tiff.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\tiff.obj" /c src\metadata\tiff.cpp
+
+object\aspect_ratio_st.obj: src\postprocessing\aspect_ratio.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\aspect_ratio_st.obj" /c src\postprocessing\aspect_ratio.cpp
+
+object\aspect_ratio.obj: src\postprocessing\aspect_ratio.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\aspect_ratio.obj" /c src\postprocessing\aspect_ratio.cpp
+
+object\dcraw_process_st.obj: src\postprocessing\dcraw_process.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\dcraw_process_st.obj" /c src\postprocessing\dcraw_process.cpp
+
+object\dcraw_process.obj: src\postprocessing\dcraw_process.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\dcraw_process.obj" /c src\postprocessing\dcraw_process.cpp
+
+object\mem_image_st.obj: src\postprocessing\mem_image.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\mem_image_st.obj" /c src\postprocessing\mem_image.cpp
+
+object\mem_image.obj: src\postprocessing\mem_image.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\mem_image.obj" /c src\postprocessing\mem_image.cpp
+
+object\postprocessing_aux_st.obj: src\postprocessing\postprocessing_aux.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\postprocessing_aux_st.obj" /c src\postprocessing\postprocessing_aux.cpp
+
+object\postprocessing_aux.obj: src\postprocessing\postprocessing_aux.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\postprocessing_aux.obj" /c src\postprocessing\postprocessing_aux.cpp
+
+object\postprocessing_utils_dcrdefs_st.obj: src\postprocessing\postprocessing_utils_dcrdefs.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\postprocessing_utils_dcrdefs_st.obj" /c src\postprocessing\postprocessing_utils_dcrdefs.cpp
+
+object\postprocessing_utils_dcrdefs.obj: src\postprocessing\postprocessing_utils_dcrdefs.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\postprocessing_utils_dcrdefs.obj" /c src\postprocessing\postprocessing_utils_dcrdefs.cpp
+
+object\postprocessing_utils_st.obj: src\postprocessing\postprocessing_utils.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\postprocessing_utils_st.obj" /c src\postprocessing\postprocessing_utils.cpp
+
+object\postprocessing_utils.obj: src\postprocessing\postprocessing_utils.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\postprocessing_utils.obj" /c src\postprocessing\postprocessing_utils.cpp
+
+object\ext_preprocess_st.obj: src\preprocessing\ext_preprocess.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\ext_preprocess_st.obj" /c src\preprocessing\ext_preprocess.cpp
+
+object\ext_preprocess.obj: src\preprocessing\ext_preprocess.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\ext_preprocess.obj" /c src\preprocessing\ext_preprocess.cpp
+
+object\raw2image_st.obj: src\preprocessing\raw2image.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\raw2image_st.obj" /c src\preprocessing\raw2image.cpp
+
+object\raw2image.obj: src\preprocessing\raw2image.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\raw2image.obj" /c src\preprocessing\raw2image.cpp
+
+object\subtract_black_st.obj: src\preprocessing\subtract_black.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\subtract_black_st.obj" /c src\preprocessing\subtract_black.cpp
+
+object\subtract_black.obj: src\preprocessing\subtract_black.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\subtract_black.obj" /c src\preprocessing\subtract_black.cpp
+
+object\cameralist_st.obj: src\tables\cameralist.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\cameralist_st.obj" /c src\tables\cameralist.cpp
+
+object\cameralist.obj: src\tables\cameralist.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\cameralist.obj" /c src\tables\cameralist.cpp
+
+object\colorconst_st.obj: src\tables\colorconst.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\colorconst_st.obj" /c src\tables\colorconst.cpp
+
+object\colorconst.obj: src\tables\colorconst.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\colorconst.obj" /c src\tables\colorconst.cpp
+
+object\colordata_st.obj: src\tables\colordata.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\colordata_st.obj" /c src\tables\colordata.cpp
+
+object\colordata.obj: src\tables\colordata.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\colordata.obj" /c src\tables\colordata.cpp
+
+object\wblists_st.obj: src\tables\wblists.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\wblists_st.obj" /c src\tables\wblists.cpp
+
+object\wblists.obj: src\tables\wblists.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\wblists.obj" /c src\tables\wblists.cpp
+
+object\curves_st.obj: src\utils\curves.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\curves_st.obj" /c src\utils\curves.cpp
+
+object\curves.obj: src\utils\curves.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\curves.obj" /c src\utils\curves.cpp
+
+object\decoder_info_st.obj: src\utils\decoder_info.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\decoder_info_st.obj" /c src\utils\decoder_info.cpp
+
+object\decoder_info.obj: src\utils\decoder_info.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\decoder_info.obj" /c src\utils\decoder_info.cpp
+
+object\init_close_utils_st.obj: src\utils\init_close_utils.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\init_close_utils_st.obj" /c src\utils\init_close_utils.cpp
+
+object\init_close_utils.obj: src\utils\init_close_utils.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\init_close_utils.obj" /c src\utils\init_close_utils.cpp
+
+object\open_st.obj: src\utils\open.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\open_st.obj" /c src\utils\open.cpp
+
+object\open.obj: src\utils\open.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\open.obj" /c src\utils\open.cpp
+
+object\phaseone_processing_st.obj: src\utils\phaseone_processing.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\phaseone_processing_st.obj" /c src\utils\phaseone_processing.cpp
+
+object\phaseone_processing.obj: src\utils\phaseone_processing.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\phaseone_processing.obj" /c src\utils\phaseone_processing.cpp
+
+object\read_utils_st.obj: src\utils\read_utils.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\read_utils_st.obj" /c src\utils\read_utils.cpp
+
+object\read_utils.obj: src\utils\read_utils.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\read_utils.obj" /c src\utils\read_utils.cpp
+
+object\thumb_utils_st.obj: src\utils\thumb_utils.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\thumb_utils_st.obj" /c src\utils\thumb_utils.cpp
+
+object\thumb_utils.obj: src\utils\thumb_utils.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\thumb_utils.obj" /c src\utils\thumb_utils.cpp
+
+object\utils_dcraw_st.obj: src\utils\utils_dcraw.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\utils_dcraw_st.obj" /c src\utils\utils_dcraw.cpp
+
+object\utils_dcraw.obj: src\utils\utils_dcraw.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\utils_dcraw.obj" /c src\utils\utils_dcraw.cpp
+
+object\utils_libraw_st.obj: src\utils\utils_libraw.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\utils_libraw_st.obj" /c src\utils\utils_libraw.cpp
+
+object\utils_libraw.obj: src\utils\utils_libraw.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\utils_libraw.obj" /c src\utils\utils_libraw.cpp
+
+object\apply_profile_st.obj: src\write\apply_profile.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\apply_profile_st.obj" /c src\write\apply_profile.cpp
+
+object\apply_profile.obj: src\write\apply_profile.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\apply_profile.obj" /c src\write\apply_profile.cpp
+
+object\file_write_st.obj: src\write\file_write.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\file_write_st.obj" /c src\write\file_write.cpp
+
+object\file_write.obj: src\write\file_write.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\file_write.obj" /c src\write\file_write.cpp
+
+object\tiff_writer_st.obj: src\write\tiff_writer.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\tiff_writer_st.obj" /c src\write\tiff_writer.cpp
+
+object\tiff_writer.obj: src\write\tiff_writer.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\tiff_writer.obj" /c src\write\tiff_writer.cpp
+
+object\x3f_parse_process_st.obj: src\x3f\x3f_parse_process.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\x3f_parse_process_st.obj" /c src\x3f\x3f_parse_process.cpp
+
+object\x3f_parse_process.obj: src\x3f\x3f_parse_process.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\x3f_parse_process.obj" /c src\x3f\x3f_parse_process.cpp
+
+object\x3f_utils_patched_st.obj: src\x3f\x3f_utils_patched.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\x3f_utils_patched_st.obj" /c src\x3f\x3f_utils_patched.cpp
+
+object\x3f_utils_patched.obj: src\x3f\x3f_utils_patched.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\x3f_utils_patched.obj" /c src\x3f\x3f_utils_patched.cpp
+
+object\libraw_c_api_st.obj: src\libraw_c_api.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\libraw_c_api_st.obj" /c src\libraw_c_api.cpp
+
+object\libraw_c_api.obj: src\libraw_c_api.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\libraw_c_api.obj" /c src\libraw_c_api.cpp
+
+object\libraw_datastream_st.obj: src\libraw_datastream.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\libraw_datastream_st.obj" /c src\libraw_datastream.cpp
+
+object\libraw_datastream.obj: src\libraw_datastream.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\libraw_datastream.obj" /c src\libraw_datastream.cpp
+

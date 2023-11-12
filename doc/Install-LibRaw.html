@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=windows-1252">
+    <title>LibRaw Compilation and Installation</title>
+  </head>
+  <body> <a href="index.html">[back to Index]</a>
+    <h1>LibRaw Compilation and Installation</h1>
+    <p>LibRaw is distributed in the form of source codes. For further use, they
+      should be compiled (and, if desired, placed into system folders with
+      libraries and include-files).</p>
+    <a name="unix"></a>
+    <h2>Unix Systems (FreeBSD, Linux, Mac OS X)</h2>
+    <p> To build the library, you will need a working C++ compiler (gcc 3+ and
+      clang 2+ are OK) and the make utility. </p>
+    <p>Additional libraries (optional):</p>
+    <ul>
+      <li>zlib (used to decode deflated DNGs)</li>
+      <li>libjasper (used to decode RED files)</li>
+      <li>libjpeg8 (used to decode lossy DNGs and several old Kodak cameras)</li>
+    </ul>
+    <p> LibRaw has been tested on 32- and 64-bit Unix systems working on x86-
+      (and AMD64-) compatible processors. Building and work on other
+      architectures have not been tested. </p>
+    <h3>Compilation of Library and Examples</h3>
+    <p> Unpack the downloaded distribution package.</p>
+    <pre>        tar xzvf LibRaw-X.YY.tar.gz
+</pre>
+    <p>For GitHub downloads (clones), perform ./configure script generation via</p>
+    <pre>        autoreconf --install</pre>
+    <p>Go to LibRaw directory and run <b>./configure</b> and <b>make</b>: </p>
+    <pre>cd LibRaw-X.YY
+./configure # with optional args
+make
+    </pre>
+    <p>As a result, you will compile</p>
+    <ul>
+      <li>Library libraw.a in the lib/ folder</li>
+      <li><a href="Samples-LibRaw.html">Examples</a> in the bin/ folder (source
+        codes of examples are in the samples/ folder).</li>
+    </ul>
+    <p>In the current version, only static libraries are built:</p>
+    <ul>
+      <li>libraw.a: non-thread-safe version</li>
+      <li>libraw_r.a: thread-safe</li>
+    </ul>
+    <h3>Build parameters</h3>
+    <p> ./configure script have some non-standard parameters: </p>
+    <dl>
+      <dt> --enable-openmp<br>
+        --disable-openmp </dt>
+      <dd> Enable/disable OpenMP support if compiler supports it. OpenMP is
+        enabled by default. </dd>
+      <dt> --enable-lcms<br>
+        --disable-lcms </dt>
+      <dd> Enable/disable LCMS color engine support. If enabled, ./configure
+        will try to find lcms library. Both LCMS-1.x and LCMS-2.x are supported
+        LCMS support is enabled by default </dd>
+      <dt> --enable-examples<br>
+        --disable-examples </dt>
+      <dd> Enables/disables examples compilation and installation. Enabled by
+        default </dd>
+    </dl>
+    <h3>Installation and Usage</h3>
+    <p>To install the library, run</p>
+    <pre>    sudo make install
+    </pre>
+    <p> It will place the libraries in <b>/usr/local/lib</b>, the include-files
+      in <b>/usr/local/include</b> (subfolder of libraw) and LibRaw samples to
+      <b>/usr/local/bin</b>. You can override installation path by using
+      ./configure script. <br>
+      To use LibRaw, add the following parameters to the compiler call (when
+      building your own projects): </p>
+    <ul>
+      <li>Path to include-files: -I/usr/local/include</li>
+      <li>Path to libraries: -L/usr/local/lib</li>
+      <li>Library: -lraw (ordinary version) or -lraw_r (thread-safe version).</li>
+    </ul>
+    <h2>Windows: Building under Cygwin</h2>
+    <p> Building and installation are completely similar to <a href="#unix">building
+        and installation under Unix systems</a>. </p>
+    <h2>Windows: Native Building</h2>
+    <p> Building under Windows has three steps: </p>
+    <ul>
+      <li>Unpack the distribution package (if you have got no tar+gzip, take the
+        LibRaw distribution package in the .ZIP format) and go to folder
+        LibRaw-X.YYY. </li>
+      <li>Set the environment parameters so that the compiler/linker would find
+        the libraries and include-files. For Visual C++, this is done by running
+        <b>vcvars32.bat</b>. </li>
+      <li> Run<br>
+        <b>nmake -f Makefile.msvc</b><br>
+      </li>
+    </ul>
+    <p>You may need to edit Makefile.msvc to provide libjpeg/zlib/libjasper
+      paths to INCLUDE/LIB.</p>
+    <p> If all paths are set correctly and the include-files/libraries have been
+      found, then the following will be compiled:</p>
+    <ul>
+      <li>Library libraw_static.lib in folder lib</li>
+      <li>Dynamic library bin/libraw.dll and linking library for it
+        lib/libraw.lib</li>
+      <li>Examples in folder bin/.</li>
+    </ul>
+    <p>Only the thread-safe library is built under Win32, but it can be used
+      with non-threaded applications as well. All examples are linked with the
+      dynamic library (DLL); if static linking is necessary, one should link
+      applications with library libraw_static.lib and set the preprocessor
+      option /DLIBRAW_NODLL during compilation. </p>
+    <p> Windows-version compiles without LCMS support for now. </p>
+    <p> During building of DLL, all public functions are exported; further, the
+      exported subset may be reduced. </p>
+    <p> Unfortunately, paths to include/ libraries depend on the way Visual C
+      (or other compiler) is installed; therefore, it is impossible to specify
+      some standard paths in Makefile.msvc. </p>
+    <h2>Windows Installation</h2>
+    <p> No installation under Windows is supported. It is assumed that all DLLs
+      will be supplied together with the software using them (and this software
+      will perform the installation). Accordingly, in building of programs using
+      LibRaw, the paths to libraries, DLLs, and include-files should be
+      specified manually. </p>
+    <a href="index.html">[back to Index]</a>
+  </body>
+</html>
