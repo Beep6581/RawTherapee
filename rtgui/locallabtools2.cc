@@ -9385,7 +9385,10 @@ void Locallabcie::AutograycieChanged()
         jz100->set_sensitive(false);
         blackEvjz->set_sensitive(false);
         whiteEvjz->set_sensitive(false);
+
         comprcieauto->set_active(true);
+        whitescie->set_sensitive(true);
+        blackscie->set_sensitive(true);
 
     } else {
         sourceGraycie->set_sensitive(true);
@@ -9394,6 +9397,8 @@ void Locallabcie::AutograycieChanged()
         jz100->set_sensitive(true);
         blackEvjz->set_sensitive(true);
         whiteEvjz->set_sensitive(true);
+        whitescie->set_sensitive(false);
+        blackscie->set_sensitive(false);
         //  adapjzcie->set_sensitive(false);
         //  jz100->set_sensitive(false);
     }
@@ -10588,6 +10593,8 @@ void Locallabcie::updatecieGUI()
         jz100->set_sensitive(false);
         blackEvjz->set_sensitive(false);
         whiteEvjz->set_sensitive(false);
+        whitescie->set_sensitive(true);
+        blackscie->set_sensitive(true);
         comprcieauto->set_active(true);
 
     } else {
@@ -10596,6 +10603,8 @@ void Locallabcie::updatecieGUI()
         adapjzcie->set_sensitive(true);
         blackEvjz->set_sensitive(true);
         whiteEvjz->set_sensitive(true);
+        whitescie->set_sensitive(false);
+        blackscie->set_sensitive(false);
         jz100->set_sensitive(true);
     }
 
