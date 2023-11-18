@@ -660,7 +660,7 @@ void ControlSpotPanel::on_button_delete()
     nbSpotChanged_ = true;
     selSpotChanged_ = true;
     eventType = SpotDeletion;
-    std::unique_ptr<SpotRow> const delSpotRow = getSpot(selIndex);
+    const std::unique_ptr<SpotRow> delSpotRow = getSpot(selIndex);
     listener->panelChanged(EvLocallabSpotDeleted, delSpotRow->name);
 }
 
@@ -682,7 +682,7 @@ void ControlSpotPanel::on_button_duplicate()
     nbSpotChanged_ = true;
     selSpotChanged_ = true;
     eventType = SpotDuplication;
-    std::unique_ptr<SpotRow> const duplSpotRow = getSpot(selIndex);
+    const std::unique_ptr<SpotRow> duplSpotRow = getSpot(selIndex);
     listener->panelChanged(EvLocallabSpotCreated, M("TP_LOCALLAB_EV_DUPL") + " "
                            + duplSpotRow->name);
 }
@@ -779,7 +779,7 @@ bool ControlSpotPanel::on_button_visibility(GdkEventButton* event)
 
             // Raise event
             visibilityChanged_ = true;
-            std::unique_ptr<SpotRow> const spotRow = getSpot(getSelectedSpot());
+            const std::unique_ptr<SpotRow> spotRow = getSpot(getSelectedSpot());
 
             if (row[spots_.isvisible]) {
                 listener->panelChanged(EvLocallabSpotVisibility, M("TP_LOCALLAB_EV_VIS") + " (" + spotRow->name + ")");
@@ -896,7 +896,7 @@ void ControlSpotPanel::controlspotChanged()
 
     selSpotChanged_ = true;
     eventType = SpotSelection;
-    std::unique_ptr<SpotRow> const spotRow = getSpot(selIndex);
+    const std::unique_ptr<SpotRow> spotRow = getSpot(selIndex);
 
     // Image area shall be regenerated if mask or deltaE preview was active when switching spot
     if (maskPrevActive || preview_->get_active()) {
