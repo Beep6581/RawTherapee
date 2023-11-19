@@ -85,10 +85,7 @@
 #084 06.10.2019 Erweiterung (TooWaBoo) RT 5.7
 #084 18.07.2019 Erweiterung (TooWaBoo) RT 5.6
 #085 29.07.2022 Erweiterung (marter, mozzihh) RT 5.9 
-#086 15.09.2023 Erweiterung (marter) RT 5.10
-
-#100
-#101 @LANGUAGE_DISPLAY_NAME=Deutsch
+#086 2023-09, Version RT 5.10 (marter)
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -140,6 +137,7 @@ DYNPROFILEEDITOR_PROFILE;Profil
 EDITWINDOW_TITLE;Bildbearbeitung
 EDIT_OBJECT_TOOLTIP;Schaltet das Einstellungswerkzeug im Vorschaubild ein/aus.
 EDIT_PIPETTE_TOOLTIP;Um einen Punkt der Kurve hinzuzufügen, halten Sie die Strg-Taste gedrückt und klicken mit der linke Maustaste auf die gewünschte Stelle in der Vorschau.\nUm den Punkt anzupassen, halten Sie die Strg-Taste gedrückt und klicken Sie mit der linken Maustaste auf den entsprechenden Bereich in der Vorschau. Dann lassen Sie die Strg-Taste los (es sei denn, Sie möchten eine Feineinstellung vornehmen) und bewegen die Maus bei gedrückter linker Maustaste nach oben oder unten, um den Punkt auf der Kurve zu bewegen.
+!ERROR_MSG_METADATA_VALUE;Metadata: error setting %1 to %2
 EXIFFILTER_APERTURE;Blende
 EXIFFILTER_CAMERA;Kamera
 EXIFFILTER_EXPOSURECOMPENSATION;Belichtungskorrektur (EV)
@@ -1534,6 +1532,7 @@ HISTORY_MSG_LOCALCONTRAST_ENABLED;(Details - Lokaler Kontrast)
 HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;(Details - Lokaler Kontrast)\nHelle Bereiche
 HISTORY_MSG_LOCALCONTRAST_RADIUS;(Details - Lokaler Kontrast)\nRadius
 HISTORY_MSG_LOCALLAB_TE_PIVOT;(Lokal - Schatten/Lichter)\nTonwert-Equalizer\nWichtung
+HISTORY_MSG_LOCAL_DEHAZE_BLACK;(Lokal - Dunst entfernen)\nSchwarzpunkt
 HISTORY_MSG_LOCAL_GAMUTMUNSEL;(Lokal - Spot)\nSpeziell\nFarbverschiebung vermeiden
 HISTORY_MSG_METADATA_MODE;(Metadaten)\nKopiermodus
 HISTORY_MSG_MICROCONTRAST_CONTRAST;(Details - Mikrokontrast)\nKontrastschwelle
@@ -1626,10 +1625,21 @@ HISTORY_MSG_WAVTHREND;(Erweitert - Wavelet)\nEndretusche - finales Glätten\nSch
 HISTORY_MSG_WAVUSHAMET;(Erweitert - Wavelet)\nSchärfemaske und Klarheit\nMethode
 HISTORY_MSG_WBALANCE_OBSERVER10;(Farbe - Weißabgleich)\nBeobachter 10°
 HISTORY_MSG_WBITC_CUSTOM;(Farbe - Weißabgleich)\nTemperaturbezogen - Benutzerdefiniert
+!HISTORY_MSG_WBITC_DELTA;Itcwb Delta grün
+!HISTORY_MSG_WBITC_FGREEN;Itcwb Grün - Kandidat
+!HISTORY_MSG_WBITC_FORCE;Itcwb erzwingen
 HISTORY_MSG_WBITC_GREEN;(Farbe - Weißabgleich)\nGrün-Verfeinerung
 HISTORY_MSG_WBITC_MINSIZE;(Farbe-Weißabgleich)\nPatch Mindestgröße
+!HISTORY_MSG_WBITC_NOPURPLE;Itcwb Nopurple
 HISTORY_MSG_WBITC_OBS;(Farbe - Weißabgleich)\n2-Wege-Algorithmus entfernt
+!HISTORY_MSG_WBITC_PONDER;Itcwb ponderated
+!HISTORY_MSG_WBITC_PRECIS;Itcwb Precision
 HISTORY_MSG_WBITC_PRIM;(Farbe - Weißabgleich)\nWahl der Abtastung
+!HISTORY_MSG_WBITC_RGREEN;Itcwb Grün range
+!HISTORY_MSG_WBITC_SAMPLING;Low sampling
+!HISTORY_MSG_WBITC_SIZE;Itcwb Größe
+!HISTORY_MSG_WBITC_SORTED;Itcwb ponderated
+!HISTORY_MSG_WBITC_THRES;Itcwb Schwellenwert
 HISTORY_NEWSNAPSHOT;Hinzufügen
 HISTORY_NEWSNAPSHOT_TOOLTIP;Taste: <b>Alt</b> + <b>s</b>
 HISTORY_SNAPSHOT;Schnappschuss
@@ -2113,9 +2123,16 @@ PREFERENCES_TP_VSCROLLBAR;Keine vertikale Scrollbar
 PREFERENCES_USEBUNDLEDPROFILES;Standardprofile verwenden
 PREFERENCES_WBA;Weißabgleich
 PREFERENCES_WBACORR;Weissabgleich - automatische Temperaturkorrelation
-PREFERENCES_WBACORR_TOOLTIP;Diese Einstellungen ermöglichen, abhängig von den Bildern (Art der Rohdatei, Farbmetrik usw.), eine Anpassung des Algorithmus "Temperaturkorrelation", um die besten Gesamtergebnisse zu erzielen. Es gibt keine absolute Regel, diese Parameter mit den erhaltenen Ergebnissen zu verknüpfen.\n\nEs gibt drei Arten von Einstellungen:\n* solche, die für den Benutzer über die GUI zugänglich sind.\n* solche, die nur beim Lesen aus jeder pp3-Datei zugänglich sind\n* diejenigen, auf die der Benutzer in "Optionen" zugreifen kann (siehe Rawpedia)\n Sie können "AWB-Temperatur-Bias" und "Grün-Verfeinerung" verwenden, um die Ergebnisse anzupassen. Jede Veränderung führt zu einer Neuberechnung von Temperatur, Farbton und Bezug.\n\nBitte beachten Sie, dass die drei Indikatoren "Bezugsfaktor", "Patch-Chroma" und ΔE nur zur Information dienen. Nur weil einer dieser Indikatoren besser ist, ist das Ergebnis nicht zwangsläufig besser.
+PREFERENCES_WBACORR_TOOLTIP;Diese Einstellungen ermöglichen, abhängig von den Bildern (Art der Rohdatei, Farbmetrik usw.), eine Anpassung des Algorithmus "Temperaturkorrelation", um die besten Gesamtergebnisse zu erzielen. Es gibt keine absolute Regel, diese Parameter mit den erhaltenen Ergebnissen zu verknüpfen.\n\nEs gibt drei Arten von Einstellungen: \n* solche, die für den Benutzer über die GUI zugänglich sind.\n* solche, die nur beim Lesen aus jeder pp3-Datei zugänglich sind\n* diejenigen, auf die der Benutzer in "Optionen" zugreifen kann (siehe Rawpedia)\n Sie können "AWB-Temperatur-Bias" und "Grün-Verfeinerung" verwenden, um die Ergebnisse anzupassen. Jede Veränderung führt zu einer Neuberechnung von Temperatur, Farbton und Bezug.\n\nBitte beachten Sie, dass die drei Indikatoren "Bezugsfaktor", "Patch-Chroma" und ΔE nur zur Information dienen. Nur weil einer dieser Indikatoren besser ist, ist das Ergebnis nicht zwangsläufig besser.
 PREFERENCES_WBAENA;Zeige Einstellungen der Temperaturkorrelation bei automatischem Weißabgleich 
 PREFERENCES_WBAENACUSTOM;Benutzerdefinierte Temperatur und Tönung
+!PREFERENCES_WBAFORC;Forces Extra algoritm
+!PREFERENCES_WBAGREENDELTA;Delta temperature in green iterate loop (if Force Extra enabled)
+!PREFERENCES_WBANOPURP;No purple color used
+!PREFERENCES_WBAPATCH;Number maximum of colors used in picture
+!PREFERENCES_WBAPRECIS;Precision algorithm - scale used
+!PREFERENCES_WBASIZEREF;Size of reference color compare to size of histogram color
+!PREFERENCES_WBASORT;Sort in chroma order instead of histogram 
 PREFERENCES_WORKFLOW;Layout
 PREFERENCES_XMP_SIDECAR_MODE;Datei-Endung für XMP (Sidecar)
 PREFERENCES_XMP_SIDECAR_MODE_EXT;wie Darktable (DATEINAME.ext.xmp für DATEINAME.ext)
@@ -2945,6 +2962,7 @@ TP_LOCALLAB_DARKRETI;Dunkelheit
 TP_LOCALLAB_DEHAFRA;Dunst entfernen
 TP_LOCALLAB_DEHAZ;Intensität
 TP_LOCALLAB_DEHAZFRAME_TOOLTIP;Entfernt atmosphärischen Dunst. Erhöht Sättigung und Details.\nKann einen Farbstich entfernen, aber auch einen Blaustich hinzufügen, der wiederum mit anderen Werkzeugen wieder entfernt werden kann.
+!TP_LOCALLAB_DEHAZE_BLACK;Black
 TP_LOCALLAB_DEHAZ_TOOLTIP;Negative Werte fügen Dunst hinzu.
 TP_LOCALLAB_DELTAD;Ebenenbalance
 TP_LOCALLAB_DELTAEC;ΔE-Bildmaske
@@ -4236,23 +4254,25 @@ TP_WBALANCE_ITCWB_FRA;Einstellungen Auto-Temperatur-Korrelation
 TP_WBALANCE_ITCWB_FRA_TOOLTIP;Diese Einstellungen ermöglichen je nach Bildart (Rohtyp, Farbmetrik usw.) eine Anpassung des Algorithmus "Temperaturkorrelation". Es gibt keine absolute Regel, die diese Parameter mit den erzielten Ergebnissen verknüpft.
 TP_WBALANCE_ITCWB_MINSIZEPATCH;Patch Minimalgröße
 TP_WBALANCE_ITCWB_NOPURPLE;Filter auf Violett
+!TP_WBALANCE_ITCWB_PRECIS;Precision algorithm - scale used
 TP_WBALANCE_ITCWB_PRIM_ACE;Erzwingt die Verwendung des vollständiigen CIE-Diagrammes
 TP_WBALANCE_ITCWB_PRIM_ADOB;Mittlere Abttastung
 TP_WBALANCE_ITCWB_PRIM_BETA;Mittlere Abtastung (Standard) - nahe der Farbskala des Zeigers
 TP_WBALANCE_ITCWB_PRIM_JDCMAX;Annähernd vollständiges CIE-Diagramm
 TP_WBALANCE_ITCWB_PRIM_REC;Hohe Abtastung
-TP_WBALANCE_ITCWB_PRIM_SRGB;Geringe Abtastung und keine Kameraeinstellungen verwenden
+TP_WBALANCE_ITCWB_PRIM_SRGB;Geringe Abtastung und Kameraeinstellungen ignorieren
 TP_WBALANCE_ITCWB_PRIM_XYZCAM;Kamera-XYZ-Matrix
 TP_WBALANCE_ITCWB_PRIM_XYZCAM2;JDCmax nach Kamera XYZ-Matrix
 TP_WBALANCE_ITCWB_RGREEN;Grün-Bereich
 TP_WBALANCE_ITCWB_SAMPLING;Niedrige Abtastung 5.9
+!TP_WBALANCE_ITCWB_SIZE;Size of ref. color compare to histogram
 TP_WBALANCE_ITCWB_SIZEPATCH;Größe des Farb-Patches
 TP_WBALANCE_ITCWB_THRES;Verwendete Farben (Voreingestellt)
 TP_WBALANCE_ITCWCUSTOM_TOOLTIP;Ermöglicht Ihnen die Verwendung benutzerdefinierter Einstellungen für Temperatur und Grün (Tönung).\n\nNutzungstipps:\n1) Starten Sie Itcwb und aktivieren Sie "Benutzerdefinierte Temperatur und Tönung verwenden".\n2) Stellen Sie "Temperatur und Tönung" nach Ihren Wünschen ein: frei, auswählen ,...(Benutzerdefiniert)\n3) Gehen Sie zurück zu "Temperaturkorrelation".\n\nSie können nicht verwenden: 2 Durchgänge, AWB-Temperatur-Bias, Grün-Verfeinerung.
 TP_WBALANCE_ITCWFORCED_TOOLTIP;Standardmäßig (Kontrollkästchen nicht aktiviert) werden die während der Abtastung gescannten Daten auf das sRGB-Profil zurückgeführt, das am weitesten verbreitet ist, sowohl für die Kalibrierung von DCP- oder ICC-Profilen mit dem Colorchecker24 als auch für die Verwendung im Internet.\nWenn Sie Bilder mit sehr hohem Farbumfang haben (einige Blumen, künstliche Farben), kann es erforderlich sein, das gesamte CIExy-Diagramm zu verwenden. Das verwendete Profil ist ACESP0. In diesem zweiten Fall ist die Anzahl der Farben, die innerhalb des Algorithmus verwendet werden können, wichtiger.
 TP_WBALANCE_ITCWGREEN;Grün-Verfeinerung
 TP_WBALANCE_ITCWGREEN_TOOLTIP;Verändert die Grün-Tönung als Referenz für den Algorithmus. Es hat im Wesentlichen die gleiche Rolle für Grün wie die "AWB-Temperaturabweichung" für die Temperatur.\nDer gesamte Algorithmus wird neu berechnet.
-TP_WBALANCE_ITCWPRIM_TOOLTIP;Ermöglicht die Auswahl der Bildabtastung.\n'Annähernd vollständiges CIE-Diagramm' verwendet fast die auf dem Sensor vorhandenen Daten, möglicherweise einschließlich der imaginären Farben.\n'Kamera-XYZ-Matrix' – verwendet die direkt von der Farbmatrix abgeleitete Matrix.\n'Mittlere Abtastung (Standard) - nahe der Farbskala des Zeigers' entspricht im Wesentlichen den häufigsten Fällen des menschlichen Sehens.\nMit 'Geringe Abtastung und keine Kameraeinstellungen verwenden' können Sie Teile des Bildes mit hoher Farbskala isolieren und den Algorithmus zwingen, die Kameraeinstellungen in einigen Fällen (Tönung > 0,8,...) nicht zu verwenden. Dies wird sich natürlich auf das Ergebnis auswirken.\n\nDieses Sampling hat nur einen Einfluss auf die Kanalmultiplikatoren, es hat nichts mit dem "Arbeitsprofil" zu tun und verändert nicht die Farbskala des Bildes.
+TP_WBALANCE_ITCWPRIM_TOOLTIP;Ermöglicht die Auswahl der Bildabtastung.\n'Annähernd vollständiges CIE-Diagramm' verwendet fast die auf dem Sensor vorhandenen Daten, möglicherweise einschließlich der imaginären Farben.\n'Kamera-XYZ-Matrix' – verwendet die direkt von der Farbmatrix abgeleitete Matrix.\n'Mittlere Abtastung (Standard) - nahe der Farbskala des Zeigers' entspricht im Wesentlichen den häufigsten Fällen des menschlichen Sehens.\nMit 'Geringe Abtastung und keine Kameraeinstellungen verwenden' können Sie Teile des Bildes mit hoher Farbskala isolieren und den Algorithmus zwingen, die Kameraeinstellungen in einigen Fällen (Tönung > 0,8,...) zu ignorieren. Dies wird sich natürlich auf das Ergebnis auswirken.\n\nDieses Sampling hat nur einen Einfluss auf die Kanalmultiplikatoren, es hat nichts mit dem "Arbeitsprofil" zu tun und verändert nicht die Farbskala des Bildes.
 TP_WBALANCE_ITCWSAMPLING_TOOLTIP;Ermöglicht die Verwendung des alten Sampling-Algorithmus, um eine bessere Kompatibilität mit 5.9 sicherzustellen. Dazu muss Beobachter 10° (Standard) aktiviert sein.
 TP_WBALANCE_JUDGEIII;JudgeIII
 TP_WBALANCE_LABEL;Weißabgleich
