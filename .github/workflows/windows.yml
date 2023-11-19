@@ -43,6 +43,7 @@ jobs:
             cc:p
             pkgconf:p
             cmake:p
+            autotools:p
             ninja:p
             gtkmm3:p
             lcms2:p

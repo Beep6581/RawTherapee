@@ -21,13 +21,22 @@
 #include <ctime>
 #include <cmath>
 #include <iostream>
+#include <memory>
 #include <glibmm/ustring.h>
 
 #include "dcraw.h"
 #include "imageformat.h"
 
+
+class LibRaw;
+
+
 namespace rtengine
 {
+
+
+class Image8;
+
 
 class RawImage: public DCraw
 {
@@ -57,11 +66,18 @@ public:
     double getBaselineExposure() const { return RT_baseline_exposure; }
  
 protected:
+    enum class Decoder {
+        DCRAW,
+        LIBRAW,
+    };
+
     Glib::ustring filename; // complete filename
     int rotate_deg; // 0,90,180,270 degree of rotation: info taken by dcraw from exif
     char* profile_data; // Embedded ICC color profile
     float* allocation; // pointer to allocated memory
     int maximum_c4[4];
+    Decoder decoder{Decoder::DCRAW};
+    std::unique_ptr<LibRaw> libraw;
     bool isFoveon() const
     {
         return is_foveon;
@@ -261,10 +277,7 @@ public:
 
 public:
     // dcraw functions
-    void pre_interpolate()
-    {
-        DCraw::pre_interpolate();
-    }
+    void pre_interpolate();
 
 public:
     bool ISRED(unsigned row, unsigned col) const
@@ -304,6 +317,11 @@ public:
     {
         return dng_version;
     }
+
+public:
+    bool checkThumbOk() const;
+    Image8 *getThumbnail() const;
+
 };
 
 }

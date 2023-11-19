@@ -67,6 +67,7 @@ public:
 	,getbithuff(this,ifp,zero_after_ff)
 	,nikbithuff(ifp)
     {
+        shrink=0;
         memset(&hbd, 0, sizeof(hbd));
         aber[0]=aber[1]=aber[2]=aber[3]=1;
         gamm[0]=0.45;gamm[1]=4.5;gamm[2]=gamm[3]=gamm[4]=gamm[5]=0;
