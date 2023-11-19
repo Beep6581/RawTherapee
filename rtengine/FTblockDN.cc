@@ -1246,7 +1246,9 @@ BENCHFUN
                                         chresid = sqrt(chresid / (6 * (levwav)));
                                         highresi = chresid + 0.66f * (sqrt(chmaxresid) - chresid); //evaluate sigma
                                         nresi = chresid;
-             printf("Nresi=%f Highresi=%f lev=%i\n", (double) nresi, (double) highresi, levwav);
+                                        if (settings->verbose) {
+                                            printf("Nresi=%f Highresi=%f lev=%i\n", (double) nresi, (double) highresi, levwav);
+                                        }
                                     }
 
                                     bdecomp->reconstruct(labdn->b[0]);
@@ -1773,7 +1775,6 @@ BENCHFUN
 
 //median 3x3 in complement on RGB
     if (dnparams.methodmed == "RGB" && dnparams.median) {
-//printf("RGB den\n");
         int wid = dst->getWidth(), hei = dst->getHeight();
         float** tm;
         tm = new float*[hei];
@@ -2106,7 +2107,7 @@ float ImProcFunctions::Mad(const float * DataList, const int datalen)
 
     //calculate histogram of absolute values of wavelet coeffs
     for (int i = 0; i < datalen; ++i) {
-        histo[static_cast<int>(rtengine::min(32768.f, fabsf(DataList[i])))]++;
+        histo[static_cast<int>(rtengine::min(32767.f, fabsf(DataList[i])))]++;
     }
 
     //find median of histogram
@@ -2381,7 +2382,10 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposition& Wavelet
 bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposition& WaveletCoeffs_L, wavelet_decomposition& WaveletCoeffs_ab, float *noisevarchrom, float madL[8][3], float *variC, int local, float noisevar_ab, const bool useNoiseCCurve,  bool autoch, bool denoiseMethodRgb, int denoiseNestedLevels)
 {
     int maxlvl = WaveletCoeffs_L.maxlevel();
-    printf("Ftblockdn ab bishrink\n");
+    
+    if (settings->verbose) {
+        printf("Ftblockdn ab bishrink\n");
+    }
 
     if (local == 1) {
         maxlvl = 6;    //for local denoise
@@ -2463,7 +2467,6 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposition& Wavele
                     float* const* WavCoeffs_ab = WaveletCoeffs_ab.level_coeffs(lvl);
 
                     if (lvl == maxlvl - 1) {
-                        //printf("Shrink ab bis\n");
                         ShrinkAllAB(WaveletCoeffs_L, WaveletCoeffs_ab, buffer, lvl, dir, noisevarchrom, noisevar_ab, useNoiseCCurve, autoch, denoiseMethodRgb, madL[lvl], nullptr, 0, madab[lvl], true);
                     } else {
                         //simple wavelet shrinkage
