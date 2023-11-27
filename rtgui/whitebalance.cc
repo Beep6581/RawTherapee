@@ -1079,7 +1079,7 @@ void WhiteBalance::setWB (int vtemp, double vgreen)
 
 void WhiteBalance::resetWB ()
 {
-    setActiveMethod("Camera");
+    setActiveMethod(M("TP_WBALANCE_CAMERA"));
 }
 
 void WhiteBalance::setAdjusterBehavior (bool tempadd, bool greenadd, bool equaladd, bool tempbiasadd)
