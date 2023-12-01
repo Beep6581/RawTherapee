@@ -4598,7 +4598,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     redyl(0.2653),
     whitescie(0),
     blackscie(0),
-    primMethod("non"),
+    primMethod("pro"),
     catMethod("brad"),
     sigmoidldajzcie(0.5),
     sigmoidthjzcie(1.),

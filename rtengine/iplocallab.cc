@@ -19952,16 +19952,11 @@ void ImProcFunctions::Lab_Local(
                     int ill = 2;
                     int prim = 3;
                     int typ = 1;
-                    /*
-                    float rdx = 0.f;
-                    float rdy = 0.f;
-                    float grx = 0.f;
-                    float gry = 0.f;
-                    float blx = 0.f;
-                    float bly = 0.f;
-                    */
-                    if (params->locallab.spots.at(sp).primMethod == "non") {
-                        typ = 1;
+
+                    if (params->locallab.spots.at(sp).primMethod == "beta") {
+                        typ = 5;
+                        ill = 2;
+                        prim = 10;
                     } else if (params->locallab.spots.at(sp).primMethod == "srgb") {
                         prim = 1;
                         ill = 5;

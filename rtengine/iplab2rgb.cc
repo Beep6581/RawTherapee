@@ -774,6 +774,22 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             gry = p[3];
             blx = p[4];
             bly = p[5];
+        } else if (prim == 10) {
+            p[0] = 0.6888;    // Beta primaries
+            p[1] = 0.3112;
+            p[2] = 0.1986;
+            p[3] = 0.7551;
+            p[4] = 0.1265;
+            p[5] = 0.0352;
+            illum = toUnderlying(ColorManagementParams::Illuminant::D50);
+            Wx = 0.964295676;
+            Wz = 0.825104603;
+            rdx = p[0];
+            rdy = p[1];
+            grx = p[2];
+            gry = p[3];
+            blx = p[4];
+            bly = p[5];           
         } else if (prim == 15) {
             p[0] = rdx;
             p[1] = rdy;
@@ -781,7 +797,23 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[3] = gry;
             p[4] = blx;
             p[5] = bly;
-        }
+        } else {
+            p[0] = 0.7347;    //ProPhoto and default primaries
+            p[1] = 0.2653;
+            p[2] = 0.1596;
+            p[3] = 0.8404;
+            p[4] = 0.0366;
+            p[5] = 0.0001;
+            illum = toUnderlying(ColorManagementParams::Illuminant::D50);
+            Wx = 0.964295676;
+            Wz = 0.825104603;
+            rdx = p[0];
+            rdy = p[1];
+            grx = p[2];
+            gry = p[3];
+            blx = p[4];
+            bly = p[5];
+        }    
 
 
     }
