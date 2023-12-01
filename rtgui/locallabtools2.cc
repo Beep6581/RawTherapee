@@ -7700,8 +7700,8 @@ Locallabcie::Locallabcie():
     Evlocallabcatcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_CAT");
     Evlocallabwhitescie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_WHITES");
     Evlocallabblackscie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_BLACKS");
-    Evlocallabredxl1 = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_REDXL");
-    Evlocallabredyl1 = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_REDYL");
+    Evlocallabredxl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_REDXL");
+    Evlocallabredyl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_REDYL");
     Evlocallabgrexl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GREXL");
     Evlocallabgreyl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GREYL");
     Evlocallabbluxl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_BLUXL");
@@ -9399,6 +9399,27 @@ void Locallabcie::updateMaskBackground(const double normChromar, const double no
     );
 }
 
+void Locallabcie::updatePrimloc (const float redx, const float redy, const float grex, const float grey, const float blux, const float bluy)
+{
+        idle_register.add(
+            [this, redx, redy, grex, grey, blux, bluy]() -> bool {
+                GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+                // Update adjuster values according to autocomputed ones
+                disableListener();
+                redxl->setValue(redx);
+                redyl->setValue(redy);
+                grexl->setValue(grex);
+                greyl->setValue(grey);
+                bluxl->setValue(blux);
+                bluyl->setValue(bluy);
+                enableListener();
+
+                return false;
+            }
+        );
+   
+}
 
 void Locallabcie::updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const float jz1)
 {
@@ -9605,16 +9626,19 @@ void Locallabcie::trccieChanged()
     if (trccie->get_active()) {
         wprimBox->set_sensitive(false);
         catBox->set_sensitive(false);
+        redlFrame->set_sensitive(false);
 
         if (mode == Expert) {
             wprimBox->set_sensitive(true);
             catBox->set_sensitive(true);
+            redlFrame->set_sensitive(true);
         }
     } else {
         if (mode != Expert) {
             wprimBox->set_sensitive(false);
             catBox->set_sensitive(false);
-        }
+            redlFrame->set_sensitive(false);
+       }
     }
 
     if (isLocActivated && exp->getEnabled()) {
@@ -10211,10 +10235,13 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             if (trccie->get_active()) {
                 wprimBox->set_sensitive(false);
                 catBox->set_sensitive(false);
+                redlFrame->set_sensitive(false);
 
             } else {
                 wprimBox->set_sensitive(false);
                 catBox->set_sensitive(false);
+                redlFrame->set_sensitive(false);
+  
             }
 
             if (modecam->get_active_row_number() == 2) {
@@ -10298,9 +10325,11 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             if (trccie->get_active()) {
                 wprimBox->set_sensitive(false);
                 catBox->set_sensitive(false);
+                redlFrame->set_sensitive(false);
             } else {
                 wprimBox->set_sensitive(false);
                 catBox->set_sensitive(false);
+                redlFrame->set_sensitive(false);
             }
 
             jzFrame->hide();
@@ -10440,10 +10469,12 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             if (trccie->get_active()) {
                 wprimBox->set_sensitive(true);
                 catBox->set_sensitive(true);
-            } else {
+                redlFrame->set_sensitive(true);
+           } else {
                 wprimBox->set_sensitive(true);
                 catBox->set_sensitive(true);
-            }
+                redlFrame->set_sensitive(true);
+           }
 
             if (enacieMask->get_active()) {
                 maskusablecie->show();
@@ -11341,14 +11372,14 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
 
         if (a == redxl) {
             if (listener) {
-                listener->panelChanged(Evlocallabredxl1,
+                listener->panelChanged(Evlocallabredxl,
                                        redxl->getTextValue() + spName);
             }
         }
 
         if (a == redyl) {
             if (listener) {
-                listener->panelChanged(Evlocallabredyl1,
+                listener->panelChanged(Evlocallabredyl,
                                        redyl->getTextValue() + spName);
             }
         }

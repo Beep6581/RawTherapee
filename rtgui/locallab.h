@@ -155,6 +155,8 @@ public:
     // Locallab Log Encoding autocompute function
     void logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const bool autocomput, const bool autocie, const float jz1) override;
 
+    void primlocChanged(const float redx, const float redy, const float grex, const float grey, const float blux, const float bluy) override;
+
     // Locallab tools mask background management function
 //    void refChanged(const std::vector<locallabRef> &ref, int selspot) override;
     void refChanged2(float *huerefp, float *chromarefp, float *lumarefp, float *fabrefp, int selspot)override;

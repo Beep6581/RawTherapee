@@ -1128,6 +1128,12 @@ void Locallab::denChanged(const std::vector<locallabDenoiseLC> &denlc, int selsp
     
 }
 
+void Locallab::primlocChanged(const float redx, const float redy, const float grex, const float grey, const float blux, const float bluy) 
+{
+    expcie.updatePrimloc(redx, redy, grex, grey, blux, bluy);
+  
+}
+
 
 void Locallab::logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const bool autocomput, const bool autocie, const float jz1)
 {

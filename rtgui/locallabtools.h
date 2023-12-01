@@ -81,8 +81,8 @@ protected:
     rtengine::ProcEvent Evlocallabwhiteslog;
     rtengine::ProcEvent Evlocallabblackslog;
     rtengine::ProcEvent Evlocallabcomprlog;
-    rtengine::ProcEvent Evlocallabredxl1;
-    rtengine::ProcEvent Evlocallabredyl1;
+    rtengine::ProcEvent Evlocallabredxl;
+    rtengine::ProcEvent Evlocallabredyl;
     rtengine::ProcEvent Evlocallabgrexl;
     rtengine::ProcEvent Evlocallabgreyl;
     rtengine::ProcEvent Evlocallabbluxl;
@@ -1806,6 +1806,7 @@ public:
     void bwevMethodChanged();
     void updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const float jz1);
     void updateAutocam(const float maxicam, const bool autocam);
+    void updatePrimloc(const float redx, const float redy, const float grex, const float grey, const float blux, const float bluy);
 
 private:
     void enabledChanged() override;
