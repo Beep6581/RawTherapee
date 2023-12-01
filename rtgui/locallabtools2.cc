@@ -7827,14 +7827,6 @@ Locallabcie::Locallabcie():
     setExpandAlignProperties(redyl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     
     ToolParamBlock* const redBox = Gtk::manage(new ToolParamBlock());
-    /*
-    redBox->pack_start(*redxl);
-    redBox->pack_start(*redyl);
-    redBox->pack_start(*grexl);
-    redBox->pack_start(*greyl);
-    redBox->pack_start(*bluxl);
-    redBox->pack_start(*bluyl);
-    */
 
     primCoordGridl->set_column_homogeneous(true);
     primCoordGridl->attach(*redxl, 0, 0, 1, 1);
@@ -9637,12 +9629,18 @@ void Locallabcie::trccieChanged()
         if (mode == Expert) {
             wprimBox->set_sensitive(true);
             catBox->set_sensitive(true);
-            redlFrame->set_sensitive(true);
+            if (primMethod->get_active_row_number() == 8) {
+                redlFrame->set_sensitive(true);
+            } else {
+                redlFrame->set_sensitive(false);
+            }         
         }
     } else {
         if (mode != Expert) {
             wprimBox->set_sensitive(false);
             catBox->set_sensitive(false);
+            redlFrame->set_sensitive(false);
+       } else {
             redlFrame->set_sensitive(false);
        }
     }
