@@ -2045,9 +2045,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 cmsHTRANSFORM dummy = nullptr;
                 int ill = 0;
                 bool gamutcontrol = params->icm.gamut;
-
-                ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0, dummy, true, false, false, false);
-                ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, 0, illum, prim, dummy, false, true, true, gamutcontrol);
+                int locprim = 0;
+                ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, dummy, true, false, false, false);
+                ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, 0, illum, prim, locprim, dummy, false, true, true, gamutcontrol);
 
                 ipf.rgb2lab(*tmpImage1, *nprevl, params->icm.workingProfile);
 

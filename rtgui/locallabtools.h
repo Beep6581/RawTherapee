@@ -81,6 +81,12 @@ protected:
     rtengine::ProcEvent Evlocallabwhiteslog;
     rtengine::ProcEvent Evlocallabblackslog;
     rtengine::ProcEvent Evlocallabcomprlog;
+    rtengine::ProcEvent Evlocallabredxl1;
+    rtengine::ProcEvent Evlocallabredyl1;
+    rtengine::ProcEvent Evlocallabgrexl;
+    rtengine::ProcEvent Evlocallabgreyl;
+    rtengine::ProcEvent Evlocallabbluxl;
+    rtengine::ProcEvent Evlocallabbluyl;
 
     // LocallabTool parameters
     bool needMode;
@@ -1649,6 +1655,15 @@ private:
     Adjuster* const blackscie;
     Gtk::Box* wprimBox;
     MyComboBoxText* const primMethod;
+    Gtk::Grid* primCoordGridl;
+    Gtk::Frame* redlFrame;    
+    Adjuster* const redxl;
+    Adjuster* const redyl;
+    Adjuster* const grexl;
+    Adjuster* const greyl;
+    Adjuster* const bluxl;
+    Adjuster* const bluyl;
+   
     Gtk::Box* catBox;
     MyComboBoxText* const catMethod;
 

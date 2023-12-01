@@ -412,7 +412,7 @@ void ImProcFunctions::preserv(LabImage *nprevl, LabImage *provis, int cw, int ch
         }
 }
 
-void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring &profile, double gampos, double slpos, int cat, int &illum, int prim, cmsHTRANSFORM &transform, bool normalizeIn, bool normalizeOut, bool keepTransForm, bool gamutcontrol) const
+void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring &profile, double gampos, double slpos, int cat, int &illum, int prim, int locprim, cmsHTRANSFORM &transform, bool normalizeIn, bool normalizeOut, bool keepTransForm, bool gamutcontrol) const
 {
     const TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 
@@ -560,7 +560,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         return;
     }
 
-
+    if(locprim == 0) {
     switch (ColorManagementParams::Primaries(prim)) {
         case ColorManagementParams::Primaries::DEFAULT: {
             break;
@@ -631,7 +631,23 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             break;
         }
     }
-
+    } else {
+        //local primaries
+        if(prim == 1) {
+            profile = "sRGB";
+        } else if (prim == 2) {
+            profile = "Adobe RGB";
+        } else if (prim == 3) {
+            profile = "ProPhoto";
+        } else if (prim == 4) {
+            profile = "Rec2020";
+        } else if (prim == 5) {
+            profile = "ACESp1";
+        } else if (prim == 6) {
+            profile = "WideGamut";
+        }   
+            
+    }
     if (settings->verbose  && prim != 0) {
         printf("prim=%i Profile Destination=%s\n", prim, profile.c_str());
     }

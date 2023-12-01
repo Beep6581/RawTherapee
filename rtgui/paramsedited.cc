@@ -1777,6 +1777,12 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).comprcieth = locallab.spots.at(j).comprcieth && pSpot.comprcieth == otherSpot.comprcieth;
                 locallab.spots.at(j).gamjcie = locallab.spots.at(j).gamjcie && pSpot.gamjcie == otherSpot.gamjcie;
                 locallab.spots.at(j).slopjcie = locallab.spots.at(j).slopjcie && pSpot.slopjcie == otherSpot.slopjcie;
+                locallab.spots.at(j).grexl = locallab.spots.at(j).grexl && pSpot.grexl == otherSpot.grexl;
+                locallab.spots.at(j).greyl = locallab.spots.at(j).greyl && pSpot.greyl == otherSpot.greyl;
+                locallab.spots.at(j).redxl = locallab.spots.at(j).redxl && pSpot.redxl == otherSpot.redxl;
+                locallab.spots.at(j).redyl = locallab.spots.at(j).redyl && pSpot.redyl == otherSpot.redyl;
+                locallab.spots.at(j).bluxl = locallab.spots.at(j).bluxl && pSpot.bluxl == otherSpot.bluxl;
+                locallab.spots.at(j).bluyl = locallab.spots.at(j).bluyl && pSpot.bluyl == otherSpot.bluyl;
                 locallab.spots.at(j).whitescie = locallab.spots.at(j).whitescie && pSpot.whitescie == otherSpot.whitescie;
                 locallab.spots.at(j).blackscie = locallab.spots.at(j).blackscie && pSpot.blackscie == otherSpot.blackscie;
                 locallab.spots.at(j).primMethod = locallab.spots.at(j).primMethod && pSpot.primMethod == otherSpot.primMethod;
@@ -6109,6 +6115,30 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).slopjcie = mods.locallab.spots.at(i).slopjcie;
         }
 
+        if (locallab.spots.at(i).grexl) {
+            toEdit.locallab.spots.at(i).grexl = mods.locallab.spots.at(i).grexl;
+        }
+
+        if (locallab.spots.at(i).greyl) {
+            toEdit.locallab.spots.at(i).greyl = mods.locallab.spots.at(i).greyl;
+        }
+
+        if (locallab.spots.at(i).redxl) {
+            toEdit.locallab.spots.at(i).redxl = mods.locallab.spots.at(i).redxl;
+        }
+
+        if (locallab.spots.at(i).redyl) {
+            toEdit.locallab.spots.at(i).redyl = mods.locallab.spots.at(i).redyl;
+        }
+
+        if (locallab.spots.at(i).bluxl) {
+            toEdit.locallab.spots.at(i).bluxl = mods.locallab.spots.at(i).bluxl;
+        }
+
+        if (locallab.spots.at(i).bluyl) {
+            toEdit.locallab.spots.at(i).bluyl = mods.locallab.spots.at(i).bluyl;
+        }
+
         if (locallab.spots.at(i).whitescie) {
             toEdit.locallab.spots.at(i).whitescie = mods.locallab.spots.at(i).whitescie;
         }
@@ -8291,6 +8321,12 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     comprcieth(v),
     gamjcie(v),
     slopjcie(v),
+    redxl(v),
+    redyl(v),
+    grexl(v),
+    greyl(v),
+    bluxl(v),
+    bluyl(v),
     whitescie(v),
     blackscie(v),
     primMethod(v),
@@ -9017,6 +9053,12 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     comprcieth = v;
     gamjcie = v;
     slopjcie = v;
+    redxl = v;
+    redyl = v;
+    grexl = v;
+    greyl = v;
+    bluxl = v;
+    bluyl = v;
     whitescie = v;
     blackscie = v;
     primMethod = v;

@@ -1702,6 +1702,12 @@ struct LocallabParams {
         double comprcieth;
         double gamjcie;
         double slopjcie;
+        double grexl;
+        double greyl;
+        double bluxl;
+        double bluyl;
+        double redxl;
+        double redyl;
         int whitescie;
         int blackscie;
         Glib::ustring primMethod;

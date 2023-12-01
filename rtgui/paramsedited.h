@@ -1068,6 +1068,12 @@ public:
         bool comprcieth;
         bool gamjcie;
         bool slopjcie;
+        bool redxl;
+        bool redyl;
+        bool grexl;
+        bool greyl;
+        bool bluxl;
+        bool bluyl;
         bool whitescie;
         bool blackscie;
         bool primMethod;

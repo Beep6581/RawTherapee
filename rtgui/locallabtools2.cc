@@ -7561,6 +7561,16 @@ Locallabcie::Locallabcie():
     blackscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGBLACKSSCIE"), -100, 100, 1, 0))),
     wprimBox(Gtk::manage(new Gtk::Box())),
     primMethod(Gtk::manage(new MyComboBoxText())),
+    primCoordGridl(Gtk::manage(new Gtk::Grid())),
+    redlFrame(Gtk::manage(new Gtk::Frame(M("TP_ICM_REDFRAME")))),
+   
+    redxl(Gtk::manage(new Adjuster(M("TC_PRIM_REDX"), 0.41, 1.0, 0.0001, 0.7347))),
+    redyl(Gtk::manage(new Adjuster(M("TC_PRIM_REDY"), 0.0, 0.70, 0.0001, 0.2653))),
+    grexl(Gtk::manage(new Adjuster(M("TC_PRIM_GREX"), -0.1, 0.4, 0.0001, 0.1596))),
+    greyl(Gtk::manage(new Adjuster(M("TC_PRIM_GREY"), 0.50, 1.0, 0.0001, 0.8404))),
+    bluxl(Gtk::manage(new Adjuster(M("TC_PRIM_BLUX"), -0.1, 0.4, 0.0001, 0.0366))),
+    bluyl(Gtk::manage(new Adjuster(M("TC_PRIM_BLUY"), -0.1, 0.49, 0.0001, 0.0001))),
+    
     catBox(Gtk::manage(new Gtk::Box())),
     catMethod(Gtk::manage(new MyComboBoxText())),
 
@@ -7690,6 +7700,14 @@ Locallabcie::Locallabcie():
     Evlocallabcatcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_CAT");
     Evlocallabwhitescie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_WHITES");
     Evlocallabblackscie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_BLACKS");
+    Evlocallabredxl1 = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_REDXL");
+    Evlocallabredyl1 = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_REDYL");
+    Evlocallabgrexl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GREXL");
+    Evlocallabgreyl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GREYL");
+    Evlocallabbluxl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_BLUXL");
+    Evlocallabbluyl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_BLUYL");
+
+
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     // Parameter Ciecam specific widgets
@@ -7793,9 +7811,48 @@ Locallabcie::Locallabcie():
     primMethod->append(M("TP_ICM_WORKING_PRIM_REC"));
     primMethod->append(M("TP_ICM_WORKING_PRIM_ADOB"));
     primMethod->append(M("TP_ICM_WORKING_PRIM_SRGB"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_FREE"));
 
     primMethod->set_active(0);
     primMethodconn = primMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::primMethodChanged));
+
+    redlFrame->set_label_align(0.025, 0.5);
+
+    setExpandAlignProperties(grexl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(greyl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(bluxl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(bluyl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(redxl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(redyl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    
+    ToolParamBlock* const redBox = Gtk::manage(new ToolParamBlock());
+    /*
+    redBox->pack_start(*redxl);
+    redBox->pack_start(*redyl);
+    redBox->pack_start(*grexl);
+    redBox->pack_start(*greyl);
+    redBox->pack_start(*bluxl);
+    redBox->pack_start(*bluyl);
+    */
+
+    primCoordGridl->set_column_homogeneous(true);
+    primCoordGridl->attach(*redxl, 0, 0, 1, 1);
+    primCoordGridl->attach_next_to(*redyl, *redxl, Gtk::PositionType::POS_RIGHT, 1, 1);
+    primCoordGridl->attach_next_to(*grexl, *redxl, Gtk::PositionType::POS_BOTTOM, 1, 1);
+    primCoordGridl->attach_next_to(*greyl, *grexl, Gtk::PositionType::POS_RIGHT, 1, 1);
+    primCoordGridl->attach_next_to(*bluxl, *grexl, Gtk::PositionType::POS_BOTTOM, 1, 1);
+    primCoordGridl->attach_next_to(*bluyl, *bluxl, Gtk::PositionType::POS_RIGHT, 1, 1);
+
+    redBox->pack_start(*primCoordGridl, Gtk::PACK_EXPAND_WIDGET);
+   
+    redlFrame->add(*redBox);
+
+    redxl->setAdjusterListener(this);
+    redyl->setAdjusterListener(this);
+    grexl->setAdjusterListener(this);
+    greyl->setAdjusterListener(this);
+    bluxl->setAdjusterListener(this);
+    bluyl->setAdjusterListener(this);
 
     Gtk::Label* catLabel = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_CAT") + ":"));
     catBox->pack_start(*catLabel, Gtk::PACK_SHRINK);
@@ -7828,6 +7885,7 @@ Locallabcie::Locallabcie():
     gamcieBox->pack_start(*gamjcie);
     gamcieBox->pack_start(*slopjcie);
     gamcieBox->pack_start(*wprimBox);
+    gamcieBox->pack_start(*redlFrame);
     gamcieBox->pack_start(*catBox);
 
     sigmoidgamFrame->add(*gamcieBox);
@@ -8843,6 +8901,8 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             primMethod->set_active(5);
         } else if (spot.primMethod == "srgb") {
             primMethod->set_active(6);
+        } else if (spot.primMethod == "free") {
+            primMethod->set_active(7);
         }
 
         if (spot.catMethod == "brad") {
@@ -8856,6 +8916,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         } else if (spot.catMethod == "xyz") {
             catMethod->set_active(4);
         }
+
 
         normcie->set_active(spot.normcie);
         trccie->set_active(spot.trccie);
@@ -9004,6 +9065,15 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         targetGraycie->setValue(spot.targetGraycie);
         detailcie->setValue(spot.detailcie);
         catadcie->setValue(spot.catadcie);
+        
+        grexl->setValue(spot.grexl);
+        greyl->setValue(spot.greyl);
+        bluxl->setValue(spot.bluxl);
+        bluyl->setValue(spot.bluyl);
+        redxl->setValue(spot.redxl);
+        redyl->setValue(spot.redyl);
+       
+        
         /*
                 lightlzcam->setValue(spot.lightlzcam);
                 lightqzcam->setValue(spot.lightqzcam);
@@ -9100,6 +9170,14 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.toneMethodcie2 = "thrc";
         }
 
+        spot.redxl =  redxl->getValue();
+        spot.redyl =  redyl->getValue();
+        spot.grexl =  grexl->getValue();
+        spot.greyl =  greyl->getValue();
+        spot.bluxl =  bluxl->getValue();
+        spot.bluyl =  bluyl->getValue();
+
+
         spot.Autograycie = Autograycie->get_active();
         spot.forcejz = forcejz->get_active();
         spot.forcebw = forcebw->get_active();
@@ -9148,6 +9226,8 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.primMethod = "ado";
         } else if (primMethod->get_active_row_number() == 6) {
             spot.primMethod = "srgb";
+        } else if (primMethod->get_active_row_number() == 7) {
+            spot.primMethod = "free";
         }
 
         if (catMethod->get_active_row_number() == 0) {
@@ -10785,6 +10865,12 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         contcie->setDefault(defSpot.contcie);
         blurcie->setDefault(defSpot.blurcie);
         csThresholdcie->setDefault<int>(defSpot.csthresholdcie);
+        redxl->setDefault(defSpot.redxl);
+        redyl->setDefault(defSpot.redyl);
+        grexl->setDefault(defSpot.grexl);
+        greyl->setDefault(defSpot.greyl);
+        bluxl->setDefault(defSpot.bluxl);
+        bluyl->setDefault(defSpot.bluyl);
 
     }
 }
@@ -11250,6 +11336,49 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabslopjcie,
                                        slopjcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == redxl) {
+            if (listener) {
+                listener->panelChanged(Evlocallabredxl1,
+                                       redxl->getTextValue() + spName);
+            }
+        }
+
+        if (a == redyl) {
+            if (listener) {
+                listener->panelChanged(Evlocallabredyl1,
+                                       redyl->getTextValue() + spName);
+            }
+        }
+
+
+        if (a == grexl) {
+            if (listener) {
+                listener->panelChanged(Evlocallabgrexl,
+                                       grexl->getTextValue() + spName);
+            }
+        }
+
+        if (a == greyl) {
+            if (listener) {
+                listener->panelChanged(Evlocallabgreyl,
+                                       greyl->getTextValue() + spName);
+            }
+        }
+
+        if (a == bluxl) {
+            if (listener) {
+                listener->panelChanged(Evlocallabbluxl,
+                                       bluxl->getTextValue() + spName);
+            }
+        }
+
+        if (a == bluyl) {
+            if (listener) {
+                listener->panelChanged(Evlocallabbluyl,
+                                       bluyl->getTextValue() + spName);
             }
         }
 
