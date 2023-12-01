@@ -412,7 +412,7 @@ void ImProcFunctions::preserv(LabImage *nprevl, LabImage *provis, int cw, int ch
         }
 }
 
-void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring &profile, double gampos, double slpos, int cat, int &illum, int prim, int locprim, cmsHTRANSFORM &transform, bool normalizeIn, bool normalizeOut, bool keepTransForm, bool gamutcontrol) const
+void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring &profile, double gampos, double slpos, int cat, int &illum, int prim, int locprim, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly,cmsHTRANSFORM &transform, bool normalizeIn, bool normalizeOut, bool keepTransForm, bool gamutcontrol) const
 {
     const TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 
@@ -559,6 +559,15 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
     if ((bluyy < yc + 0.0004f) && (bluyy > yc - 0.0004f)) { //under 0.0004 in some case crash because space too small
         return;
     }
+    enum class ColorTemp {
+        D50 = 5003, // for Widegamut, ProPhoto Best, Beta -> D50
+        D65 = 6504, // for sRGB, AdobeRGB, Bruce Rec2020  -> D65
+        D60 = 6005  // for ACES AP0 and AP1
+    };
+    double tempv4 = 5003.;
+    double p[6]; //primaries
+    double Wx = 1.0;
+    double Wz = 1.0;
 
     if(locprim == 0) {
     switch (ColorManagementParams::Primaries(prim)) {
@@ -634,18 +643,119 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
     } else {
         //local primaries
         if(prim == 1) {
-            profile = "sRGB";
+            p[0] = 0.6400;    // sRGB primaries
+            p[1] = 0.3300;
+            p[2] = 0.3000;
+            p[3] = 0.6000;
+            p[4] = 0.1500;
+            p[5] = 0.0600;
+            tempv4 = 6504.;
+            illum = toUnderlying(ColorManagementParams::Illuminant::D65);
+            Wx = 0.95045471;
+            Wz = 1.08905029;
+            rdx = p[0];
+            rdy = p[1];
+            grx = p[2];
+            gry = p[3];
+            blx = p[4];
+            bly = p[5];
+            
         } else if (prim == 2) {
-            profile = "Adobe RGB";
+            p[0] = 0.6400;    //Adobe primaries
+            p[1] = 0.3300;
+            p[2] = 0.2100;
+            p[3] = 0.7100;
+            p[4] = 0.1500;
+            p[5] = 0.0600;
+            tempv4 = 6504.;
+            illum = toUnderlying(ColorManagementParams::Illuminant::D65);
+            Wx = 0.95045471;
+            Wz = 1.08905029;
+            rdx = p[0];
+            rdy = p[1];
+            grx = p[2];
+            gry = p[3];
+            blx = p[4];
+            bly = p[5];
+            
         } else if (prim == 3) {
-            profile = "ProPhoto";
+            p[0] = 0.7347;    //ProPhoto and default primaries
+            p[1] = 0.2653;
+            p[2] = 0.1596;
+            p[3] = 0.8404;
+            p[4] = 0.0366;
+            p[5] = 0.0001;
+            illum = toUnderlying(ColorManagementParams::Illuminant::D50);
+            Wx = 0.964295676;
+            Wz = 0.825104603;
+            rdx = p[0];
+            rdy = p[1];
+            grx = p[2];
+            gry = p[3];
+            blx = p[4];
+            bly = p[5];
+          
         } else if (prim == 4) {
-            profile = "Rec2020";
+            p[0] = 0.7080;    // Rec2020 primaries
+            p[1] = 0.2920;
+            p[2] = 0.1700;
+            p[3] = 0.7970;
+            p[4] = 0.1310;
+            p[5] = 0.0460;
+            tempv4 = 6504.;
+            illum = toUnderlying(ColorManagementParams::Illuminant::D65);
+            Wx = 0.95045471;
+            Wz = 1.08905029;
+            rdx = p[0];
+            rdy = p[1];
+            grx = p[2];
+            gry = p[3];
+            blx = p[4];
+            bly = p[5];
+            
         } else if (prim == 5) {
-            profile = "ACESp1";
+            p[0] = 0.713;    // ACES P1 primaries
+            p[1] = 0.293;
+            p[2] = 0.165;
+            p[3] = 0.830;
+            p[4] = 0.128;
+            p[5] = 0.044;
+            tempv4 = 6004.;
+            illum = toUnderlying(ColorManagementParams::Illuminant::D60);
+            Wx = 0.952646075;
+            Wz = 1.008825184;
+            rdx = p[0];
+            rdy = p[1];
+            grx = p[2];
+            gry = p[3];
+            blx = p[4];
+            bly = p[5];
+            
         } else if (prim == 6) {
-            profile = "WideGamut";
-        }   
+            p[0] = 0.7350;    //Widegamut primaries
+            p[1] = 0.2650;
+            p[2] = 0.1150;
+            p[3] = 0.8260;
+            p[4] = 0.1570;
+            p[5] = 0.0180;
+            illum = toUnderlying(ColorManagementParams::Illuminant::D50);
+            Wx = 0.964295676;
+            Wz = 0.825104603;
+            rdx = p[0];
+            rdy = p[1];
+            grx = p[2];
+            gry = p[3];
+            blx = p[4];
+            bly = p[5];           
+        } else if (prim == 15) {
+            p[0] = rdx;
+            p[1] = rdy;
+            p[2] = grx;
+            p[3] = gry;
+            p[4] = blx;
+            p[5] = bly;         
+        }
+  
             
     }
     if (settings->verbose  && prim != 0) {
@@ -670,19 +780,8 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
 
         //  int select_temp = 1; //5003K
         constexpr double eps = 0.000000001; // not divide by zero
-
-        enum class ColorTemp {
-            D50 = 5003, // for Widegamut, ProPhoto Best, Beta -> D50
-            D65 = 6504, // for sRGB, AdobeRGB, Bruce Rec2020  -> D65
-            D60 = 6005  // for ACES AP0 and AP1
-
-        };
-        double tempv4 = 5003.;
-        double p[6]; //primaries
-        double Wx = 1.0;
-        double Wz = 1.0;
-
         //primaries for 10 working profiles ==> output profiles
+      if(locprim == 0) {       
         if (profile == "WideGamut") {
             p[0] = 0.7350;    //Widegamut primaries
             p[1] = 0.2650;
@@ -817,6 +916,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[3] = greyy;
             p[4] = bluxx;
             p[5] = bluyy;
+                     
         } else {
             p[0] = 0.7347;    //default primaries always unused
             p[1] = 0.2653;
@@ -825,7 +925,9 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[4] = 0.0366;
             p[5] = 0.0001;
         }
+      }
 
+        
         if (slpos == 0) {
             slpos = eps;
         }

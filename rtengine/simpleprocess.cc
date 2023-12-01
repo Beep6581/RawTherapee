@@ -1407,6 +1407,7 @@ private:
                 float stdretie;
                 float fab = 1.f;
 				float maxicam = -1000.f;
+                float rdx, rdy, grx, gry, blx, bly = 0.f;
 
                 if (params.locallab.spots.at(sp).spotMethod == "exc") {
                     ipf.calc_ref(sp, reservView.get(), reservView.get(), 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
@@ -1487,7 +1488,7 @@ private:
                         LHutili, HHutili, CHutili, HHutilijz, CHutilijz, LHutilijz, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                         huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                         minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
-                        meantme, stdtme, meanretie, stdretie, fab, maxicam, 
+                        meantme, stdtme, meanretie, stdretie, fab, maxicam, rdx, rdy, grx, gry, blx, bly,
                         highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46
 );
 
@@ -1895,8 +1896,9 @@ private:
             int ill = 0;
             bool gamutcontrol = params.icm.gamut;
             int locprim = 0;
-            ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, dummy, true, false, false, false);
-            ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, 0, illum, prim, locprim, dummy, false, true, true, gamutcontrol);
+            float rdx, rdy, grx, gry, blx, bly = 0.f;
+            ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rdx, rdy, grx, gry, blx, bly,dummy, true, false, false, false);
+            ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, 0, illum, prim, locprim, rdx, rdy, grx, gry, blx, bly,dummy, false, true, true, gamutcontrol);
 
             ipf.rgb2lab(*tmpImage1, *labView, params.icm.workingProfile);
             // labView and provis

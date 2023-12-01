@@ -1269,6 +1269,19 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             bool *autocam = nullptr;
             autocam = new bool[sizespot];
 
+            float *redxloc = nullptr;
+            redxloc = new float[sizespot];
+            float *redyloc = nullptr;
+            redyloc = new float[sizespot];
+            float *grexloc = nullptr;
+            grexloc = new float[sizespot];
+            float *greyloc = nullptr;
+            greyloc = new float[sizespot];
+            float *bluxloc = nullptr;
+            bluxloc = new float[sizespot];
+            float *bluyloc = nullptr;
+            bluyloc = new float[sizespot];
+
             for (int sp = 0; sp < (int)params->locallab.spots.size(); sp++) {
 
                 if (params->locallab.spots.at(sp).equiltm  && params->locallab.spots.at(sp).exptonemap) {
@@ -1389,6 +1402,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 stdretie = 0.f;
                 float fab = 1.f;
                 float maxicam = -1000.f;
+                float rdx, rdy, grx, gry, blx, bly = 0.f;
                 bool istm = params->locallab.spots.at(sp).equiltm  && params->locallab.spots.at(sp).exptonemap;
                 bool isreti = params->locallab.spots.at(sp).equilret  && params->locallab.spots.at(sp).expreti;
                 //preparation for mean and sigma on current RT-spot
@@ -1531,7 +1545,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               LHutili, HHutili, CHutili, HHutilijz, CHutilijz, LHutilijz, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                               huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
-                              meantm, stdtm, meanreti, stdreti, fab, maxicam, 
+                              meantm, stdtm, meanreti, stdreti, fab, maxicam, rdx, rdy, grx, gry, blx, bly,
                               highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46);
 
 
@@ -1541,6 +1555,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 //basecor = LIM(basecor, 0.05f, 0.50f);
                 // maxicamp[sp] = basecor * maxth;//or 0.12 * maxth
                 maxicamp[sp] = maxth;
+                redxloc[sp] = rdx;
+                redyloc[sp] = rdy;
+                grexloc[sp] = grx;
+                greyloc[sp] = gry;
+                bluxloc[sp] = blx;
+                bluyloc[sp] = bly;
+
                 if (istm) { //calculate mean and sigma on full image for use by normalize_mean_dt
                     float meanf = 0.f;
                     float stdf = 0.f;
@@ -1598,6 +1619,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     locallListener->refChanged2(huerefp, chromarefp, lumarefp, fabrefp, params->locallab.selspot);
                     locallListener->minmaxChanged(locallretiminmax, params->locallab.selspot);
                     locallListener->maxcam(maxicamp, autocam, params->locallab.selspot);
+                    locallListener->primlocChanged(redxloc[sp], redyloc[sp], grexloc[sp], greyloc[sp], bluxloc[sp], bluyloc[sp]); 
+
                 }
             }
 
@@ -1607,6 +1630,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             delete [] fabrefp;
             delete [] maxicamp;
             delete [] autocam;
+            delete [] redxloc;
+            delete [] redyloc;
+            delete [] grexloc;
+            delete [] greyloc;
+            delete [] bluxloc;
+            delete [] bluyloc;
 
             ipf.lab2rgb(*nprevl, *oprevi, params->icm.workingProfile);
             //*************************************************************
@@ -2046,8 +2075,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 int ill = 0;
                 bool gamutcontrol = params->icm.gamut;
                 int locprim = 0;
-                ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, dummy, true, false, false, false);
-                ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, 0, illum, prim, locprim, dummy, false, true, true, gamutcontrol);
+                float rdx, rdy, grx, gry, blx, bly = 0.f;
+                ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0, 0,  rdx, rdy, grx, gry, blx, bly, dummy, true, false, false, false);
+                ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, 0, illum, prim, locprim,  rdx, rdy, grx, gry, blx, bly ,dummy, false, true, true, gamutcontrol);
 
                 ipf.rgb2lab(*tmpImage1, *nprevl, params->icm.workingProfile);
 

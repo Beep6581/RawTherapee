@@ -1547,8 +1547,9 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         cmsHTRANSFORM dummy = nullptr;
         int ill = 0;
         int locprim = 0;
-        ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, dummy, true, false, false);
-        ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone,0, illum, prim, locprim, dummy, false, true, true);
+        float rdx, rdy, grx, gry, blx, bly = 0.f;
+        ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rdx, rdy, grx, gry, blx, bly,dummy, true, false, false);
+        ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone,0, illum, prim, locprim, rdx, rdy, grx, gry, blx, bly,dummy, false, true, true);
 
         ipf.rgb2lab(*tmpImage1, *labView, params.icm.workingProfile);
         // labView and provis
