@@ -19986,18 +19986,19 @@ void ImProcFunctions::Lab_Local(
                         prim = 6;
                         ill = 3;
                         typ = 5;
+                    } else if (params->locallab.spots.at(sp).primMethod == "jdcmax") {
+                        prim = 8;
+                        ill = 2;
+                        typ = 5;                     
                     } else if (params->locallab.spots.at(sp).primMethod == "free") {
                         prim = 15;
-                       // ill = 3;
                         typ = 5;
                         rdx = params->locallab.spots.at(sp).redxl;
                         rdy = params->locallab.spots.at(sp).redyl;
                         grx = params->locallab.spots.at(sp).grexl;
                         gry = params->locallab.spots.at(sp).greyl;
                         blx = params->locallab.spots.at(sp).bluxl;
-                        bly = params->locallab.spots.at(sp).bluyl;
-                        
-                        
+                        bly = params->locallab.spots.at(sp).bluyl;                     
                     }
 
                     int catx = 0; 

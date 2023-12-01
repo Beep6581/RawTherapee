@@ -7811,6 +7811,7 @@ Locallabcie::Locallabcie():
     primMethod->append(M("TP_ICM_WORKING_PRIM_REC"));
     primMethod->append(M("TP_ICM_WORKING_PRIM_ADOB"));
     primMethod->append(M("TP_ICM_WORKING_PRIM_SRGB"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_JDCMAX"));
     primMethod->append(M("TP_ICM_WORKING_PRIM_FREE"));
 
     primMethod->set_active(0);
@@ -8901,8 +8902,10 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             primMethod->set_active(5);
         } else if (spot.primMethod == "srgb") {
             primMethod->set_active(6);
-        } else if (spot.primMethod == "free") {
+        } else if (spot.primMethod == "jdcmax") {
             primMethod->set_active(7);
+        } else if (spot.primMethod == "free") {
+            primMethod->set_active(8);
         }
 
         if (spot.catMethod == "brad") {
@@ -8938,6 +8941,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         comprcieautoChanged();
         sigqChanged();
         logcieChanged();
+        primMethodChanged();
 
         if (spot.bwevMethod == "none") {
             bwevMethod->set_active(0);
@@ -9227,6 +9231,8 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         } else if (primMethod->get_active_row_number() == 6) {
             spot.primMethod = "srgb";
         } else if (primMethod->get_active_row_number() == 7) {
+            spot.primMethod = "jdcmax";
+        } else if (primMethod->get_active_row_number() == 8) {
             spot.primMethod = "free";
         }
 
@@ -10126,6 +10132,13 @@ void Locallabcie::catMethodChanged()
 
 void Locallabcie::primMethodChanged()
 {
+    
+    if (primMethod->get_active_row_number() == 8) {
+        redlFrame->set_sensitive(true);
+    } else {
+        redlFrame->set_sensitive(false);
+    }
+   
     if (listener) {
         listener->panelChanged(Evlocallabprimcie, primMethod->get_active_text());
     }

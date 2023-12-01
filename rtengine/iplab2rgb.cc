@@ -34,7 +34,8 @@
 namespace rtengine
 {
 
-namespace {
+namespace
+{
 
 inline void copyAndClampLine(const float *src, unsigned char *dst, const int W)
 {
@@ -65,10 +66,12 @@ inline void copyAndClamp(const LabImage *src, unsigned char *dst, const double r
             rgb_xyzv[i][j] = F2V(rgb_xyzf[i][j]);
         }
     }
+
 #endif
 #ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+    #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
+
     for (int i = 0; i < H; ++i) {
         float* rL = src->L[i];
         float* ra = src->a[i];
@@ -80,19 +83,21 @@ inline void copyAndClamp(const LabImage *src, unsigned char *dst, const double r
         float gbuffer[W] ALIGNED16;
         float bbuffer[W] ALIGNED16;
         int j = 0;
+
         for (; j < W - 3; j += 4) {
             vfloat R, G, B;
             vfloat x_, y_, z_;
-            Color::Lab2XYZ(LVFU(rL[j]), LVFU(ra[j]), LVFU(rb[j]), x_, y_, z_ );
+            Color::Lab2XYZ(LVFU(rL[j]), LVFU(ra[j]), LVFU(rb[j]), x_, y_, z_);
             Color::xyz2rgb(x_, y_, z_, R, G, B, rgb_xyzv);
             STVF(rbuffer[j], Color::gamma2curve[R]);
             STVF(gbuffer[j], Color::gamma2curve[G]);
             STVF(bbuffer[j], Color::gamma2curve[B]);
         }
+
         for (; j < W; ++j) {
             float R, G, B;
             float x_, y_, z_;
-            Color::Lab2XYZ(rL[j], ra[j], rb[j], x_, y_, z_ );
+            Color::Lab2XYZ(rL[j], ra[j], rb[j], x_, y_, z_);
             Color::xyz2rgb(x_, y_, z_, R, G, B, rgb_xyzf);
             rbuffer[j] = Color::gamma2curve[R];
             gbuffer[j] = Color::gamma2curve[G];
@@ -106,16 +111,18 @@ inline void copyAndClamp(const LabImage *src, unsigned char *dst, const double r
         }
 
 #else
+
         for (int j = 0; j < W; ++j) {
             float R, G, B;
             float x_, y_, z_;
-            Color::Lab2XYZ(rL[j], ra[j], rb[j], x_, y_, z_ );
+            Color::Lab2XYZ(rL[j], ra[j], rb[j], x_, y_, z_);
             Color::xyz2rgb(x_, y_, z_, R, G, B, rgb_xyzf);
 
             dst[ix++] = uint16ToUint8Rounded(Color::gamma2curve[R]);
             dst[ix++] = uint16ToUint8Rounded(Color::gamma2curve[G]);
             dst[ix++] = uint16ToUint8Rounded(Color::gamma2curve[B]);
         }
+
 #endif
     }
 }
@@ -250,7 +257,7 @@ Image8* ImProcFunctions::lab2rgb(LabImage* lab, int cx, int cy, int cw, int ch, 
 
         lcmsMutex->lock();
         cmsHPROFILE LabIProf  = cmsCreateLab4Profile(nullptr);
-        cmsHTRANSFORM hTransform = cmsCreateTransform (LabIProf, TYPE_Lab_DBL, oprof, TYPE_RGB_FLT, icm.outputIntent, flags);
+        cmsHTRANSFORM hTransform = cmsCreateTransform(LabIProf, TYPE_Lab_DBL, oprof, TYPE_RGB_FLT, icm.outputIntent, flags);
         cmsCloseProfile(LabIProf);
         lcmsMutex->unlock();
 
@@ -284,7 +291,7 @@ Image8* ImProcFunctions::lab2rgb(LabImage* lab, int cx, int cy, int cw, int ch, 
                     buffer[iy++] = rb[j] / 327.68f;
                 }
 
-                cmsDoTransform (hTransform, buffer, outbuffer, cw);
+                cmsDoTransform(hTransform, buffer, outbuffer, cw);
                 copyAndClampLine(outbuffer, data + ix, cw);
             }
         } // End of parallelization
@@ -353,7 +360,7 @@ Imagefloat* ImProcFunctions::lab2rgbOut(LabImage* lab, int cx, int cy, int cw, i
         cmsDeleteTransform(hTransform);
         image->normalizeFloatTo65535();
     } else {
-        
+
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -389,35 +396,38 @@ Imagefloat* ImProcFunctions::lab2rgbOut(LabImage* lab, int cx, int cy, int cw, i
 }
 
 void ImProcFunctions::preserv(LabImage *nprevl, LabImage *provis, int cw, int ch)
-{//avoid too strong in middle values chroma when changing primaries
-  float pres = 0.01f * params->icm.preser;
-  float neutral = 2000000000.f;//if a2 + b2 < 200000000 scale 0..100 a and b about : 140 > a & b > -140  decrease effect 
-  float medneutral = 10000000.f;//plein effect 10 > a & b > -10
-  float aaneu = 1.f / (medneutral - neutral);
-  float bbneu = - aaneu * neutral;
+{
+    //avoid too strong in middle values chroma when changing primaries
+    float pres = 0.01f * params->icm.preser;
+    float neutral = 2000000000.f;//if a2 + b2 < 200000000 scale 0..100 a and b about : 140 > a & b > -140  decrease effect
+    float medneutral = 10000000.f;//plein effect 10 > a & b > -10
+    float aaneu = 1.f / (medneutral - neutral);
+    float bbneu = - aaneu * neutral;
 #ifdef _OPENMP
-            #pragma omp for schedule(dynamic, 16) nowait
+    #pragma omp for schedule(dynamic, 16) nowait
 #endif
-    for (int i = 0; i < ch; ++i) 
+
+    for (int i = 0; i < ch; ++i)
         for (int j = 0; j < cw; ++j) {
             float neu = SQR(provis->a[i][j]) + SQR(provis->b[i][j]);
+
             if (neu < medneutral) {//plein effect
-                nprevl->a[i][j] = intp(pres, provis->a[i][j], nprevl->a[i][j]); 
-                nprevl->b[i][j] = intp(pres, provis->b[i][j], nprevl->b[i][j]); 
+                nprevl->a[i][j] = intp(pres, provis->a[i][j], nprevl->a[i][j]);
+                nprevl->b[i][j] = intp(pres, provis->b[i][j], nprevl->b[i][j]);
             } else if (neu < neutral) {//decrease effect
                 float presred = aaneu * neu + bbneu;
-                nprevl->a[i][j] = intp(pres * presred, provis->a[i][j], nprevl->a[i][j]); 
-                nprevl->b[i][j] = intp(pres * presred, provis->b[i][j], nprevl->b[i][j]); 
-            } 
+                nprevl->a[i][j] = intp(pres * presred, provis->a[i][j], nprevl->a[i][j]);
+                nprevl->b[i][j] = intp(pres * presred, provis->b[i][j], nprevl->b[i][j]);
+            }
         }
 }
 
-void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring &profile, double gampos, double slpos, int cat, int &illum, int prim, int locprim, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly,cmsHTRANSFORM &transform, bool normalizeIn, bool normalizeOut, bool keepTransForm, bool gamutcontrol) const
+void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring &profile, double gampos, double slpos, int cat, int &illum, int prim, int locprim, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, cmsHTRANSFORM &transform, bool normalizeIn, bool normalizeOut, bool keepTransForm, bool gamutcontrol) const
 {
     const TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 
     double wprofprim[3][3];//store primaries to XYZ
-  //  bool gamutcontrol = params->icm.gamut;
+    //  bool gamutcontrol = params->icm.gamut;
     const float toxyz[3][3] = {
         {
             static_cast<float>(wprof[0][0] / ((normalizeIn ? 65535.0 : 1.0))), //I have suppressed / Color::D50x
@@ -559,6 +569,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
     if ((bluyy < yc + 0.0004f) && (bluyy > yc - 0.0004f)) { //under 0.0004 in some case crash because space too small
         return;
     }
+
     enum class ColorTemp {
         D50 = 5003, // for Widegamut, ProPhoto Best, Beta -> D50
         D65 = 6504, // for sRGB, AdobeRGB, Bruce Rec2020  -> D65
@@ -569,80 +580,80 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
     double Wx = 1.0;
     double Wz = 1.0;
 
-    if(locprim == 0) {
-    switch (ColorManagementParams::Primaries(prim)) {
-        case ColorManagementParams::Primaries::DEFAULT: {
-            break;
-        }
+    if (locprim == 0) {
+        switch (ColorManagementParams::Primaries(prim)) {
+            case ColorManagementParams::Primaries::DEFAULT: {
+                break;
+            }
 
-        case ColorManagementParams::Primaries::SRGB: {
-            profile = "sRGB";
-            break;
-        }
+            case ColorManagementParams::Primaries::SRGB: {
+                profile = "sRGB";
+                break;
+            }
 
-        case ColorManagementParams::Primaries::ADOBE_RGB: {
-            profile = "Adobe RGB";
-            break;
-        }
+            case ColorManagementParams::Primaries::ADOBE_RGB: {
+                profile = "Adobe RGB";
+                break;
+            }
 
-        case ColorManagementParams::Primaries::PRO_PHOTO: {
-            profile = "ProPhoto";
-            break;
-        }
+            case ColorManagementParams::Primaries::PRO_PHOTO: {
+                profile = "ProPhoto";
+                break;
+            }
 
-        case ColorManagementParams::Primaries::REC2020: {
-            profile = "Rec2020";
-            break;
-        }
+            case ColorManagementParams::Primaries::REC2020: {
+                profile = "Rec2020";
+                break;
+            }
 
-        case ColorManagementParams::Primaries::ACES_P1: {
-            profile = "ACESp1";
-            break;
-        }
+            case ColorManagementParams::Primaries::ACES_P1: {
+                profile = "ACESp1";
+                break;
+            }
 
-        case ColorManagementParams::Primaries::WIDE_GAMUT: {
-            profile = "WideGamut";
-            break;
-        }
+            case ColorManagementParams::Primaries::WIDE_GAMUT: {
+                profile = "WideGamut";
+                break;
+            }
 
-        case ColorManagementParams::Primaries::ACES_P0: {
-            profile = "ACESp0";
-            break;
-        }
+            case ColorManagementParams::Primaries::ACES_P0: {
+                profile = "ACESp0";
+                break;
+            }
 
-        case ColorManagementParams::Primaries::JDC_MAX: {
-            profile = "JDCmax";
-            break;
-        }
+            case ColorManagementParams::Primaries::JDC_MAX: {
+                profile = "JDCmax";
+                break;
+            }
 
-        case ColorManagementParams::Primaries::BRUCE_RGB: {
-            profile = "BruceRGB";
-            break;
-        }
+            case ColorManagementParams::Primaries::BRUCE_RGB: {
+                profile = "BruceRGB";
+                break;
+            }
 
-        case ColorManagementParams::Primaries::BETA_RGB: {
-            profile = "Beta RGB";
-            break;
-        }
+            case ColorManagementParams::Primaries::BETA_RGB: {
+                profile = "Beta RGB";
+                break;
+            }
 
-        case ColorManagementParams::Primaries::BEST_RGB: {
-            profile = "BestRGB";
-            break;
-        }
+            case ColorManagementParams::Primaries::BEST_RGB: {
+                profile = "BestRGB";
+                break;
+            }
 
-        case ColorManagementParams::Primaries::CUSTOM: {
-            profile = "Custom";
-            break;
-        }
+            case ColorManagementParams::Primaries::CUSTOM: {
+                profile = "Custom";
+                break;
+            }
 
-        case ColorManagementParams::Primaries::CUSTOM_GRID: {
-            profile = "Custom";
-            break;
+            case ColorManagementParams::Primaries::CUSTOM_GRID: {
+                profile = "Custom";
+                break;
+            }
         }
-    }
     } else {
         //local primaries
-        if(prim == 1) {
+        if (prim == 1) {
             p[0] = 0.6400;    // sRGB primaries
             p[1] = 0.3300;
             p[2] = 0.3000;
@@ -659,7 +670,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             gry = p[3];
             blx = p[4];
             bly = p[5];
-            
+
         } else if (prim == 2) {
             p[0] = 0.6400;    //Adobe primaries
             p[1] = 0.3300;
@@ -677,7 +688,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             gry = p[3];
             blx = p[4];
             bly = p[5];
-            
+
         } else if (prim == 3) {
             p[0] = 0.7347;    //ProPhoto and default primaries
             p[1] = 0.2653;
@@ -694,7 +705,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             gry = p[3];
             blx = p[4];
             bly = p[5];
-          
+
         } else if (prim == 4) {
             p[0] = 0.7080;    // Rec2020 primaries
             p[1] = 0.2920;
@@ -712,7 +723,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             gry = p[3];
             blx = p[4];
             bly = p[5];
-            
+
         } else if (prim == 5) {
             p[0] = 0.713;    // ACES P1 primaries
             p[1] = 0.293;
@@ -730,7 +741,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             gry = p[3];
             blx = p[4];
             bly = p[5];
-            
+
         } else if (prim == 6) {
             p[0] = 0.7350;    //Widegamut primaries
             p[1] = 0.2650;
@@ -746,18 +757,35 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             grx = p[2];
             gry = p[3];
             blx = p[4];
-            bly = p[5];           
+            bly = p[5];
+        } else if (prim == 8) {
+            p[0] = 0.734702;    // JDC max primaries
+            p[1] = 0.265302;
+            p[2] = 0.021908;
+            p[3] = 0.930288;
+            p[4] = 0.120593;
+            p[5] = 0.001583;
+            illum = toUnderlying(ColorManagementParams::Illuminant::D50);
+            Wx = 0.964295676;
+            Wz = 0.825104603;
+            rdx = p[0];
+            rdy = p[1];
+            grx = p[2];
+            gry = p[3];
+            blx = p[4];
+            bly = p[5];
         } else if (prim == 15) {
             p[0] = rdx;
             p[1] = rdy;
             p[2] = grx;
             p[3] = gry;
             p[4] = blx;
-            p[5] = bly;         
+            p[5] = bly;
         }
-  
-            
+
+
     }
+
     if (settings->verbose  && prim != 0) {
         printf("prim=%i Profile Destination=%s\n", prim, profile.c_str());
     }
@@ -780,154 +808,155 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
 
         //  int select_temp = 1; //5003K
         constexpr double eps = 0.000000001; // not divide by zero
+
         //primaries for 10 working profiles ==> output profiles
-      if(locprim == 0) {       
-        if (profile == "WideGamut") {
-            p[0] = 0.7350;    //Widegamut primaries
-            p[1] = 0.2650;
-            p[2] = 0.1150;
-            p[3] = 0.8260;
-            p[4] = 0.1570;
-            p[5] = 0.0180;
-            illum = toUnderlying(ColorManagementParams::Illuminant::D50);
-            Wx = 0.964295676;
-            Wz = 0.825104603;
+        if (locprim == 0) {
+            if (profile == "WideGamut") {
+                p[0] = 0.7350;    //Widegamut primaries
+                p[1] = 0.2650;
+                p[2] = 0.1150;
+                p[3] = 0.8260;
+                p[4] = 0.1570;
+                p[5] = 0.0180;
+                illum = toUnderlying(ColorManagementParams::Illuminant::D50);
+                Wx = 0.964295676;
+                Wz = 0.825104603;
 
-        } else if (profile == "Adobe RGB") {
-            p[0] = 0.6400;    //Adobe primaries
-            p[1] = 0.3300;
-            p[2] = 0.2100;
-            p[3] = 0.7100;
-            p[4] = 0.1500;
-            p[5] = 0.0600;
-            tempv4 = 6504.;
-            illum = toUnderlying(ColorManagementParams::Illuminant::D65);
-            Wx = 0.95045471;
-            Wz = 1.08905029;
+            } else if (profile == "Adobe RGB") {
+                p[0] = 0.6400;    //Adobe primaries
+                p[1] = 0.3300;
+                p[2] = 0.2100;
+                p[3] = 0.7100;
+                p[4] = 0.1500;
+                p[5] = 0.0600;
+                tempv4 = 6504.;
+                illum = toUnderlying(ColorManagementParams::Illuminant::D65);
+                Wx = 0.95045471;
+                Wz = 1.08905029;
 
-        } else if (profile == "sRGB") {
-            p[0] = 0.6400;    // sRGB primaries
-            p[1] = 0.3300;
-            p[2] = 0.3000;
-            p[3] = 0.6000;
-            p[4] = 0.1500;
-            p[5] = 0.0600;
-            tempv4 = 6504.;
-            illum = toUnderlying(ColorManagementParams::Illuminant::D65);
-            Wx = 0.95045471;
-            Wz = 1.08905029;
+            } else if (profile == "sRGB") {
+                p[0] = 0.6400;    // sRGB primaries
+                p[1] = 0.3300;
+                p[2] = 0.3000;
+                p[3] = 0.6000;
+                p[4] = 0.1500;
+                p[5] = 0.0600;
+                tempv4 = 6504.;
+                illum = toUnderlying(ColorManagementParams::Illuminant::D65);
+                Wx = 0.95045471;
+                Wz = 1.08905029;
 
-        } else if (profile == "BruceRGB") {
-            p[0] = 0.6400;    // Bruce primaries
-            p[1] = 0.3300;
-            p[2] = 0.2800;
-            p[3] = 0.6500;
-            p[4] = 0.1500;
-            p[5] = 0.0600;
-            tempv4 = 6504.;
-            illum = toUnderlying(ColorManagementParams::Illuminant::D65);
-            Wx = 0.95045471;
-            Wz = 1.08905029;
+            } else if (profile == "BruceRGB") {
+                p[0] = 0.6400;    // Bruce primaries
+                p[1] = 0.3300;
+                p[2] = 0.2800;
+                p[3] = 0.6500;
+                p[4] = 0.1500;
+                p[5] = 0.0600;
+                tempv4 = 6504.;
+                illum = toUnderlying(ColorManagementParams::Illuminant::D65);
+                Wx = 0.95045471;
+                Wz = 1.08905029;
 
-        } else if (profile == "Beta RGB") {
-            p[0] = 0.6888;    // Beta primaries
-            p[1] = 0.3112;
-            p[2] = 0.1986;
-            p[3] = 0.7551;
-            p[4] = 0.1265;
-            p[5] = 0.0352;
-            illum = toUnderlying(ColorManagementParams::Illuminant::D50);
-            Wx = 0.964295676;
-            Wz = 0.825104603;
+            } else if (profile == "Beta RGB") {
+                p[0] = 0.6888;    // Beta primaries
+                p[1] = 0.3112;
+                p[2] = 0.1986;
+                p[3] = 0.7551;
+                p[4] = 0.1265;
+                p[5] = 0.0352;
+                illum = toUnderlying(ColorManagementParams::Illuminant::D50);
+                Wx = 0.964295676;
+                Wz = 0.825104603;
 
-        } else if (profile == "BestRGB") {
-            p[0] = 0.7347;    // Best primaries
-            p[1] = 0.2653;
-            p[2] = 0.2150;
-            p[3] = 0.7750;
-            p[4] = 0.1300;
-            p[5] = 0.0350;
-            illum = toUnderlying(ColorManagementParams::Illuminant::D50);
-            Wx = 0.964295676;
-            Wz = 0.825104603;
+            } else if (profile == "BestRGB") {
+                p[0] = 0.7347;    // Best primaries
+                p[1] = 0.2653;
+                p[2] = 0.2150;
+                p[3] = 0.7750;
+                p[4] = 0.1300;
+                p[5] = 0.0350;
+                illum = toUnderlying(ColorManagementParams::Illuminant::D50);
+                Wx = 0.964295676;
+                Wz = 0.825104603;
 
-        } else if (profile == "Rec2020") {
-            p[0] = 0.7080;    // Rec2020 primaries
-            p[1] = 0.2920;
-            p[2] = 0.1700;
-            p[3] = 0.7970;
-            p[4] = 0.1310;
-            p[5] = 0.0460;
-            tempv4 = 6504.;
-            illum = toUnderlying(ColorManagementParams::Illuminant::D65);
-            Wx = 0.95045471;
-            Wz = 1.08905029;
+            } else if (profile == "Rec2020") {
+                p[0] = 0.7080;    // Rec2020 primaries
+                p[1] = 0.2920;
+                p[2] = 0.1700;
+                p[3] = 0.7970;
+                p[4] = 0.1310;
+                p[5] = 0.0460;
+                tempv4 = 6504.;
+                illum = toUnderlying(ColorManagementParams::Illuminant::D65);
+                Wx = 0.95045471;
+                Wz = 1.08905029;
 
-        } else if (profile == "ACESp0") {
-            p[0] = 0.7347;    // ACES P0 primaries
-            p[1] = 0.2653;
-            p[2] = 0.0000;
-            p[3] = 1.0;
-            p[4] = 0.0001;
-            p[5] = -0.0770;
-            tempv4 = 6004.;
-            illum = toUnderlying(ColorManagementParams::Illuminant::D60);
-            Wx = 0.952646075;
-            Wz = 1.008825184;
+            } else if (profile == "ACESp0") {
+                p[0] = 0.7347;    // ACES P0 primaries
+                p[1] = 0.2653;
+                p[2] = 0.0000;
+                p[3] = 1.0;
+                p[4] = 0.0001;
+                p[5] = -0.0770;
+                tempv4 = 6004.;
+                illum = toUnderlying(ColorManagementParams::Illuminant::D60);
+                Wx = 0.952646075;
+                Wz = 1.008825184;
 
-        } else if (profile == "JDCmax") {
-            p[0] = 0.734702;    // JDC max primaries
-            p[1] = 0.265302;
-            p[2] = 0.021908;
-            p[3] = 0.930288;
-            p[4] = 0.120593;
-            p[5] = 0.001583;
-            illum = toUnderlying(ColorManagementParams::Illuminant::D50);
-            Wx = 0.964295676;
-            Wz = 0.825104603;
+            } else if (profile == "JDCmax") {
+                p[0] = 0.734702;    // JDC max primaries
+                p[1] = 0.265302;
+                p[2] = 0.021908;
+                p[3] = 0.930288;
+                p[4] = 0.120593;
+                p[5] = 0.001583;
+                illum = toUnderlying(ColorManagementParams::Illuminant::D50);
+                Wx = 0.964295676;
+                Wz = 0.825104603;
 
-        } else if (profile == "ACESp1") {
-            p[0] = 0.713;    // ACES P1 primaries
-            p[1] = 0.293;
-            p[2] = 0.165;
-            p[3] = 0.830;
-            p[4] = 0.128;
-            p[5] = 0.044;
-            tempv4 = 6004.;
-            illum = toUnderlying(ColorManagementParams::Illuminant::D60);
-            Wx = 0.952646075;
-            Wz = 1.008825184;
+            } else if (profile == "ACESp1") {
+                p[0] = 0.713;    // ACES P1 primaries
+                p[1] = 0.293;
+                p[2] = 0.165;
+                p[3] = 0.830;
+                p[4] = 0.128;
+                p[5] = 0.044;
+                tempv4 = 6004.;
+                illum = toUnderlying(ColorManagementParams::Illuminant::D60);
+                Wx = 0.952646075;
+                Wz = 1.008825184;
 
-        } else if (profile == "ProPhoto") {
-            p[0] = 0.7347;    //ProPhoto and default primaries
-            p[1] = 0.2653;
-            p[2] = 0.1596;
-            p[3] = 0.8404;
-            p[4] = 0.0366;
-            p[5] = 0.0001;
-            illum = toUnderlying(ColorManagementParams::Illuminant::D50);
-            Wx = 0.964295676;
-            Wz = 0.825104603;
+            } else if (profile == "ProPhoto") {
+                p[0] = 0.7347;    //ProPhoto and default primaries
+                p[1] = 0.2653;
+                p[2] = 0.1596;
+                p[3] = 0.8404;
+                p[4] = 0.0366;
+                p[5] = 0.0001;
+                illum = toUnderlying(ColorManagementParams::Illuminant::D50);
+                Wx = 0.964295676;
+                Wz = 0.825104603;
 
-        } else if (profile == "Custom") {
-            p[0] = redxx;
-            p[1] = redyy;
-            p[2] = grexx;
-            p[3] = greyy;
-            p[4] = bluxx;
-            p[5] = bluyy;
-                     
-        } else {
-            p[0] = 0.7347;    //default primaries always unused
-            p[1] = 0.2653;
-            p[2] = 0.1596;
-            p[3] = 0.8404;
-            p[4] = 0.0366;
-            p[5] = 0.0001;
+            } else if (profile == "Custom") {
+                p[0] = redxx;
+                p[1] = redyy;
+                p[2] = grexx;
+                p[3] = greyy;
+                p[4] = bluxx;
+                p[5] = bluyy;
+
+            } else {
+                p[0] = 0.7347;    //default primaries always unused
+                p[1] = 0.2653;
+                p[2] = 0.1596;
+                p[3] = 0.8404;
+                p[4] = 0.0366;
+                p[5] = 0.0001;
+            }
         }
-      }
 
-        
+
         if (slpos == 0) {
             slpos = eps;
         }
@@ -1084,7 +1113,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
 
         if (gamutcontrol) {
             //xyz in functiuon primaries and illuminant
-           // int cat = 0;
+            // int cat = 0;
             Color::primaries_to_xyz(p, Wx, Wz, wprofpri, cat);
 
             for (int i = 0; i < 3; ++i) {
