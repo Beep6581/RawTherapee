@@ -7804,8 +7804,8 @@ Locallabcie::Locallabcie():
     Gtk::Label* primLabel = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_PRIM") + ":"));
     wprimBox->pack_start(*primLabel, Gtk::PACK_SHRINK);
     wprimBox->pack_start(*primMethod, Gtk::PACK_EXPAND_WIDGET);
-    primMethod->append(M("TP_ICM_WORKING_PRIM_BET"));
     primMethod->append(M("TP_ICM_WORKING_PRIM_PROP"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_BET"));
     primMethod->append(M("TP_ICM_WORKING_PRIM_WID"));
     primMethod->append(M("TP_ICM_WORKING_PRIM_ACE"));
     primMethod->append(M("TP_ICM_WORKING_PRIM_REC"));
@@ -7814,7 +7814,7 @@ Locallabcie::Locallabcie():
     primMethod->append(M("TP_ICM_WORKING_PRIM_JDCMAX"));
     primMethod->append(M("TP_ICM_WORKING_PRIM_FREE"));
 
-    primMethod->set_active(1);
+    primMethod->set_active(0);
     primMethodconn = primMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::primMethodChanged));
 
     redlFrame->set_label_align(0.025, 0.5);
@@ -8880,9 +8880,9 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             comprcieauto->set_active(true);
         }
 
-        if (spot.primMethod == "beta") {
+        if (spot.primMethod == "pro") {
             primMethod->set_active(0);
-        } else if (spot.primMethod == "pro") {
+        } else if (spot.primMethod == "beta") {
             primMethod->set_active(1);
         } else if (spot.primMethod == "wid") {
             primMethod->set_active(2);
@@ -9209,9 +9209,9 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
 
 
         if (primMethod->get_active_row_number() == 0) {
-            spot.primMethod = "beta";
-        } else if (primMethod->get_active_row_number() == 1) {
             spot.primMethod = "pro";
+        } else if (primMethod->get_active_row_number() == 1) {
+            spot.primMethod = "beta";
         } else if (primMethod->get_active_row_number() == 2) {
             spot.primMethod = "wid";
         } else if (primMethod->get_active_row_number() == 3) {
