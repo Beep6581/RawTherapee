@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        build_type: [release]
+        build_type: [release, debug]
     steps:
       - name: Checkout source
         uses: actions/checkout@v3
