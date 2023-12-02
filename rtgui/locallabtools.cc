@@ -3056,6 +3056,23 @@ void LocallabExposure::read(const rtengine::procparams::ProcParams* pp, const Pa
         structexp->setValue(spot.structexp);
         blurexpde->setValue(spot.blurexpde);
         expcomp->setValue(spot.expcomp);
+        
+        if(expcomp->getValue()== 0.) {
+            black->hide();
+            hlcompr->hide();
+            hlcomprthresh->hide();
+            shadex->hide();
+            shcompr->hide();
+            expchroma->hide();
+       } else {
+            black->show();
+            hlcompr->show();
+            hlcomprthresh->show();
+            shadex->show();
+            shcompr->show();
+            expchroma->show();
+        }
+
         black->setValue(spot.black);
         hlcompr->setValue(spot.hlcompr);
         hlcomprthresh->setValue(spot.hlcomprthresh);
@@ -3353,6 +3370,22 @@ void LocallabExposure::adjusterChanged(Adjuster* a, double newval)
         }
 
         if (a == expcomp) {
+            if(expcomp->getValue()== 0.) {
+                black->hide();
+                hlcompr->hide();
+                hlcomprthresh->hide();
+                shadex->hide();
+                shcompr->hide();
+                expchroma->hide();
+            } else {
+                black->show();
+                hlcompr->show();
+                hlcomprthresh->show();
+                shadex->show();
+                shcompr->show();
+                expchroma->show();
+           }
+               
             if (listener) {
                 listener->panelChanged(Evlocallabexpcomp,
                                        expcomp->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
