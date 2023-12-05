@@ -7570,7 +7570,9 @@ Locallabcie::Locallabcie():
     greyl(Gtk::manage(new Adjuster(M("TC_PRIM_GREY"), 0.50, 1.0, 0.0001, 0.8404))),
     bluxl(Gtk::manage(new Adjuster(M("TC_PRIM_BLUX"), -0.1, 0.4, 0.0001, 0.0366))),
     bluyl(Gtk::manage(new Adjuster(M("TC_PRIM_BLUY"), -0.1, 0.49, 0.0001, 0.0001))),
-    
+    gridFramecie(Gtk::manage(new Gtk::Frame(M("TP_ICM_WORKING_CIEDIAG")))),
+    labgridcie(Gtk::manage(new LabGrid(EvlocallabGridciexy, M("TP_ICM_LABGRID_CIEXY"), true, true))),
+   
     catBox(Gtk::manage(new Gtk::Box())),
     catMethod(Gtk::manage(new MyComboBoxText())),
 
@@ -7706,7 +7708,7 @@ Locallabcie::Locallabcie():
     Evlocallabgreyl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GREYL");
     Evlocallabbluxl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_BLUXL");
     Evlocallabbluyl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_BLUYL");
-
+    EvlocallabGridciexy = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_LABGRIDCIE");
 
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -7846,6 +7848,12 @@ Locallabcie::Locallabcie():
     greyl->setAdjusterListener(this);
     bluxl->setAdjusterListener(this);
     bluyl->setAdjusterListener(this);
+    
+
+    gridFramecie->set_label_align(0.025, 0.5);
+    ToolParamBlock* const gridBox = Gtk::manage(new ToolParamBlock());
+    gridBox->pack_start(*labgridcie);
+    gridFramecie->add(*gridBox);
 
     Gtk::Label* catLabel = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_CAT") + ":"));
     catBox->pack_start(*catLabel, Gtk::PACK_SHRINK);
@@ -7879,6 +7887,7 @@ Locallabcie::Locallabcie():
     gamcieBox->pack_start(*slopjcie);
     gamcieBox->pack_start(*wprimBox);
     gamcieBox->pack_start(*redlFrame);
+    gamcieBox->pack_start(*gridFramecie);
     gamcieBox->pack_start(*catBox);
 
     sigmoidgamFrame->add(*gamcieBox);
@@ -8481,6 +8490,15 @@ Locallabcie::Locallabcie():
 
 
 }
+
+void Locallabcie::setListener(ToolPanelListener* tpl)
+{
+    LocallabTool::setListener(tpl);
+
+    labgridcie->setListener(tpl);
+}
+
+
 Locallabcie::~Locallabcie()
 {
     delete jz1CurveEditorG;
@@ -9069,6 +9087,15 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         redxl->setValue(spot.redxl);
         redyl->setValue(spot.redyl);
        
+        labgridcie->setParams(spot.labgridcieALow,
+                           spot.labgridcieBLow,
+                           spot.labgridcieAHigh,
+                           spot.labgridcieBHigh,
+                           spot.labgridcieGx,
+                           spot.labgridcieGy,
+                           spot.labgridcieWx,
+                           spot.labgridcieWy,
+                           false);
         
         /*
                 lightlzcam->setValue(spot.lightlzcam);
@@ -9173,6 +9200,14 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.bluxl =  bluxl->getValue();
         spot.bluyl =  bluyl->getValue();
 
+        labgridcie->getParams(spot.labgridcieALow,
+                           spot.labgridcieBLow,
+                           spot.labgridcieAHigh,
+                           spot.labgridcieBHigh,
+                           spot.labgridcieGx,
+                           spot.labgridcieGy,
+                           spot.labgridcieWx,
+                           spot.labgridcieWy);
 
         spot.Autograycie = Autograycie->get_active();
         spot.forcejz = forcejz->get_active();
@@ -10913,6 +10948,14 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         greyl->setDefault(defSpot.greyl);
         bluxl->setDefault(defSpot.bluxl);
         bluyl->setDefault(defSpot.bluyl);
+        labgridcie->setDefault(defSpot.labgridcieALow,
+                            defSpot.labgridcieBLow,
+                            defSpot.labgridcieAHigh,
+                            defSpot.labgridcieBHigh,
+                            defSpot.labgridcieGx,
+                            defSpot.labgridcieGy,
+                            defSpot.labgridcieWx,
+                            defSpot.labgridcieWy);
 
     }
 }

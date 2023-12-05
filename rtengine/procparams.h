@@ -1708,6 +1708,15 @@ struct LocallabParams {
         double bluyl;
         double redxl;
         double redyl;
+        double labgridcieALow;
+        double labgridcieBLow;
+        double labgridcieAHigh;
+        double labgridcieBHigh;
+        double labgridcieGx;
+        double labgridcieGy;
+        double labgridcieWx;
+        double labgridcieWy;
+        
         int whitescie;
         int blackscie;
         Glib::ustring primMethod;

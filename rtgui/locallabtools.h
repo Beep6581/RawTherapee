@@ -87,6 +87,7 @@ protected:
     rtengine::ProcEvent Evlocallabgreyl;
     rtengine::ProcEvent Evlocallabbluxl;
     rtengine::ProcEvent Evlocallabbluyl;
+    rtengine::ProcEvent EvlocallabGridciexy;
 
     // LocallabTool parameters
     bool needMode;
@@ -1663,6 +1664,8 @@ private:
     Adjuster* const greyl;
     Adjuster* const bluxl;
     Adjuster* const bluyl;
+    Gtk::Frame* const gridFramecie;
+    LabGrid* const labgridcie;
    
     Gtk::Box* catBox;
     MyComboBoxText* const catMethod;
@@ -1776,7 +1779,9 @@ private:
 public:
     Locallabcie();
     ~Locallabcie();
-    
+
+    void setListener(ToolPanelListener* tpl) override;
+   
     bool isMaskViewActive() override;
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask) override;

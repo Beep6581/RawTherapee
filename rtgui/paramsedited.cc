@@ -1783,6 +1783,15 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).redyl = locallab.spots.at(j).redyl && pSpot.redyl == otherSpot.redyl;
                 locallab.spots.at(j).bluxl = locallab.spots.at(j).bluxl && pSpot.bluxl == otherSpot.bluxl;
                 locallab.spots.at(j).bluyl = locallab.spots.at(j).bluyl && pSpot.bluyl == otherSpot.bluyl;
+                locallab.spots.at(j).labgridcieALow = locallab.spots.at(j).labgridcieALow && pSpot.labgridcieALow == otherSpot.labgridcieALow;
+                locallab.spots.at(j).labgridcieBLow = locallab.spots.at(j).labgridcieBLow && pSpot.labgridcieBLow == otherSpot.labgridcieBLow;
+                locallab.spots.at(j).labgridcieAHigh = locallab.spots.at(j).labgridcieAHigh && pSpot.labgridcieAHigh == otherSpot.labgridcieAHigh;
+                locallab.spots.at(j).labgridcieBHigh = locallab.spots.at(j).labgridcieBHigh && pSpot.labgridcieBHigh == otherSpot.labgridcieBHigh;
+                locallab.spots.at(j).labgridcieGx = locallab.spots.at(j).labgridcieGx && pSpot.labgridcieGx == otherSpot.labgridcieGx;
+                locallab.spots.at(j).labgridcieGy = locallab.spots.at(j).labgridcieGy && pSpot.labgridcieGy == otherSpot.labgridcieGy;
+                locallab.spots.at(j).labgridcieWx = locallab.spots.at(j).labgridcieWx && pSpot.labgridcieWx == otherSpot.labgridcieWx;
+                locallab.spots.at(j).labgridcieWy = locallab.spots.at(j).labgridcieWy && pSpot.labgridcieWy == otherSpot.labgridcieWy;
+
                 locallab.spots.at(j).whitescie = locallab.spots.at(j).whitescie && pSpot.whitescie == otherSpot.whitescie;
                 locallab.spots.at(j).blackscie = locallab.spots.at(j).blackscie && pSpot.blackscie == otherSpot.blackscie;
                 locallab.spots.at(j).primMethod = locallab.spots.at(j).primMethod && pSpot.primMethod == otherSpot.primMethod;
@@ -6139,6 +6148,38 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).bluyl = mods.locallab.spots.at(i).bluyl;
         }
 
+        if (locallab.spots.at(i).labgridcieALow) {
+            toEdit.locallab.spots.at(i).labgridcieALow = mods.locallab.spots.at(i).labgridcieALow;
+        }
+
+        if (locallab.spots.at(i).labgridcieBLow) {
+            toEdit.locallab.spots.at(i).labgridcieBLow = mods.locallab.spots.at(i).labgridcieBLow;
+        }
+
+        if (locallab.spots.at(i).labgridcieAHigh) {
+            toEdit.locallab.spots.at(i).labgridcieAHigh = mods.locallab.spots.at(i).labgridcieAHigh;
+        }
+
+        if (locallab.spots.at(i).labgridcieBHigh) {
+            toEdit.locallab.spots.at(i).labgridcieBHigh = mods.locallab.spots.at(i).labgridcieBHigh;
+        }
+
+        if (locallab.spots.at(i).labgridcieGx) {
+            toEdit.locallab.spots.at(i).labgridcieGx = mods.locallab.spots.at(i).labgridcieGx;
+        }
+
+        if (locallab.spots.at(i).labgridcieGy) {
+            toEdit.locallab.spots.at(i).labgridcieGy = mods.locallab.spots.at(i).labgridcieGy;
+        }
+
+        if (locallab.spots.at(i).labgridcieWx) {
+            toEdit.locallab.spots.at(i).labgridcieWx = mods.locallab.spots.at(i).labgridcieWx;
+        }
+
+        if (locallab.spots.at(i).labgridcieWy) {
+            toEdit.locallab.spots.at(i).labgridcieWy = mods.locallab.spots.at(i).labgridcieWy;
+        }
+
         if (locallab.spots.at(i).whitescie) {
             toEdit.locallab.spots.at(i).whitescie = mods.locallab.spots.at(i).whitescie;
         }
@@ -8327,6 +8368,14 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     greyl(v),
     bluxl(v),
     bluyl(v),
+    labgridcieALow(v),
+    labgridcieBLow(v),
+    labgridcieAHigh(v),
+    labgridcieBHigh(v),
+    labgridcieGx(v),
+    labgridcieGy(v),
+    labgridcieWx(v),
+    labgridcieWy(v),       
     whitescie(v),
     blackscie(v),
     primMethod(v),
@@ -9059,6 +9108,14 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     greyl = v;
     bluxl = v;
     bluyl = v;
+    labgridcieALow = v;
+    labgridcieBLow  = v;
+    labgridcieAHigh= v;
+    labgridcieBHigh = v;
+    labgridcieGx = v;
+    labgridcieGy = v;
+    labgridcieWx = v;
+    labgridcieWy = v;         
     whitescie = v;
     blackscie = v;
     primMethod = v;

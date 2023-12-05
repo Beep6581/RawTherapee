@@ -1074,6 +1074,14 @@ public:
         bool greyl;
         bool bluxl;
         bool bluyl;
+        bool labgridcieALow;
+        bool labgridcieBLow;
+        bool labgridcieAHigh;
+        bool labgridcieBHigh;
+        bool labgridcieGx;
+        bool labgridcieGy;
+        bool labgridcieWx;
+        bool labgridcieWy;       
         bool whitescie;
         bool blackscie;
         bool primMethod;
