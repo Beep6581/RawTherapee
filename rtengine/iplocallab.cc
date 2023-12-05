@@ -13760,7 +13760,7 @@ void ImProcFunctions::Lab_Local(
     double& huerefblur, double& chromarefblur, double& lumarefblur, double& hueref, double& chromaref, double& lumaref, double& sobelref, int &lastsav,
     bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, int llcieMask,
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax,
-    float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly,
+    float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, int &ill,
     float& highresi, float& nresi, float& highresi46, float& nresi46, float& Lhighresi, float& Lnresi, float& Lhighresi46, float& Lnresi46
 
     )
@@ -19949,7 +19949,7 @@ void ImProcFunctions::Lab_Local(
                     float gamtone = params->locallab.spots.at(sp).gamjcie;
                     float slotone = params->locallab.spots.at(sp).slopjcie;
                     cmsHTRANSFORM dummy = nullptr;
-                    int ill = 2;
+                    //int ill = 2;
                     int prim = 3;
                     int typ = 1;
 
@@ -19979,7 +19979,7 @@ void ImProcFunctions::Lab_Local(
                         typ = 5;
                     } else if (params->locallab.spots.at(sp).primMethod == "wid") {
                         prim = 6;
-                        ill = 3;
+                        ill = 2;
                         typ = 5;
                     } else if (params->locallab.spots.at(sp).primMethod == "jdcmax") {
                         prim = 8;

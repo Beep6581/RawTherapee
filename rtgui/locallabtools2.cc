@@ -9454,6 +9454,23 @@ void Locallabcie::updatePrimloc (const float redx, const float redy, const float
    
 }
 
+void Locallabcie::updateiPrimloc (const float r_x, const float r_y, const float g_x, const float g_y, const float b_x, const float b_y, const float w_x, const float w_y)
+{
+        idle_register.add(
+            [this, r_x, r_y, g_x, g_y, b_x, b_y, w_x, w_y]() -> bool {
+                GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+                // Update adjuster values according to autocomputed ones
+                disableListener();
+                enableListener();
+
+                return false;
+            }
+        );
+   
+}
+
+
 void Locallabcie::updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const float jz1)
 {
 

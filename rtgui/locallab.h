@@ -157,6 +157,8 @@ public:
 
     void primlocChanged(const float redx, const float redy, const float grex, const float grey, const float blux, const float bluy) override;
 
+    void iprimlocChanged(const float r_x, const float r_y, const float g_x, const float g_y, const float b_x, const float b_y, const float w_x, const float w_y) override;
+
     // Locallab tools mask background management function
 //    void refChanged(const std::vector<locallabRef> &ref, int selspot) override;
     void refChanged2(float *huerefp, float *chromarefp, float *lumarefp, float *fabrefp, int selspot)override;

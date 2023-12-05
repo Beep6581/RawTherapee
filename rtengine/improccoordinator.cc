@@ -1281,6 +1281,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             bluxloc = new float[sizespot];
             float *bluyloc = nullptr;
             bluyloc = new float[sizespot];
+            float *wxloc = nullptr;
+            wxloc = new float[sizespot];
+            float *wyloc = nullptr;
+            wyloc = new float[sizespot];
 
             for (int sp = 0; sp < (int)params->locallab.spots.size(); sp++) {
 
@@ -1403,6 +1407,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float fab = 1.f;
                 float maxicam = -1000.f;
                 float rdx, rdy, grx, gry, blx, bly = 0.f;
+                int ill = 2;
                 bool istm = params->locallab.spots.at(sp).equiltm  && params->locallab.spots.at(sp).exptonemap;
                 bool isreti = params->locallab.spots.at(sp).equilret  && params->locallab.spots.at(sp).expreti;
                 //preparation for mean and sigma on current RT-spot
@@ -1545,7 +1550,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               LHutili, HHutili, CHutili, HHutilijz, CHutilijz, LHutilijz, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                               huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
-                              meantm, stdtm, meanreti, stdreti, fab, maxicam, rdx, rdy, grx, gry, blx, bly,
+                              meantm, stdtm, meanreti, stdreti, fab, maxicam, rdx, rdy, grx, gry, blx, bly, ill,
                               highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46);
 
 
@@ -1562,6 +1567,30 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 bluxloc[sp] = blx;
                 bluyloc[sp] = bly;
 
+                //Illuminant
+             //   float Wx, Wz = 1.f;
+                float w_x, w_y = 0.3f;
+                if(ill == 2) {
+                   // Wx = 0.964295676f;
+                   // Wz = 0.825104603f;
+                    w_x = 0.3457f;
+                    w_y = 0.3585f;
+                } else if(ill == 4) {
+                    //Wx = 0.952646075f;
+                    //Wz = 1.008825184f;                  
+                    w_x = 0.3217f;
+                    w_y = 0.3377f;
+                } else if(ill == 5) {
+                    //Wx = 0.95045471f;
+                    //Wz = 1.08905029f;
+                    w_x = 0.3127f;
+                    w_y = 0.3290f;
+                }
+                wxloc[sp] = w_x;
+                wyloc[sp] = w_y;
+                
+      
+      
                 if (istm) { //calculate mean and sigma on full image for use by normalize_mean_dt
                     float meanf = 0.f;
                     float stdf = 0.f;
@@ -1621,6 +1650,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     locallListener->maxcam(maxicamp, autocam, params->locallab.selspot);
                     if(params->locallab.spots.at(sp).trccie) {
                         locallListener->primlocChanged(redxloc[sp], redyloc[sp], grexloc[sp], greyloc[sp], bluxloc[sp], bluyloc[sp]);
+                        locallListener->iprimlocChanged(redxloc[sp], redyloc[sp], grexloc[sp], greyloc[sp], bluxloc[sp], bluyloc[sp], wxloc[sp], wyloc[sp]);
                     }
                 }
             }

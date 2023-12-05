@@ -1134,6 +1134,11 @@ void Locallab::primlocChanged(const float redx, const float redy, const float gr
   
 }
 
+void Locallab::iprimlocChanged(const float r_x, const float r_y, const float g_x, const float g_y, const float b_x, const float b_y, const float w_x, const float w_y) 
+{
+    expcie.updateiPrimloc(r_x, r_y, g_x, g_y, b_x, b_y, w_x, w_y);
+  
+}
 
 void Locallab::logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const bool autocomput, const bool autocie, const float jz1)
 {
