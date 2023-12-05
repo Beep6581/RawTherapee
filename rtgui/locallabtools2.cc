@@ -9456,18 +9456,50 @@ void Locallabcie::updatePrimloc (const float redx, const float redy, const float
 
 void Locallabcie::updateiPrimloc (const float r_x, const float r_y, const float g_x, const float g_y, const float b_x, const float b_y, const float w_x, const float w_y)
 {
+        /*
         idle_register.add(
             [this, r_x, r_y, g_x, g_y, b_x, b_y, w_x, w_y]() -> bool {
                 GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
 
                 // Update adjuster values according to autocomputed ones
                 disableListener();
+                
+                
                 enableListener();
 
                 return false;
             }
+           
         );
-   
+        */
+     nextrx = r_x;
+    nextry = r_y;
+    nextbx = b_x;
+    nextby = b_y;
+    nextgx = g_x;
+    nextgy = g_y;
+    nextwx = w_x;
+    nextwy = w_y;
+    //convert xy datas in datas for labgrid areas
+    nextrx = 1.81818f * (nextrx + 0.1f) - 1.f;
+    nextry = 1.81818f * (nextry + 0.1f) - 1.f;
+    nextbx = 1.81818f * (nextbx + 0.1f) - 1.f;
+    nextby = 1.81818f * (nextby + 0.1f) - 1.f;
+    nextgx = 1.81818f * (nextgx + 0.1f) - 1.f;
+    nextgy = 1.81818f * (nextgy + 0.1f) - 1.f;
+    nextwx = 1.81818f * (nextwx + 0.1f) - 1.f;
+    nextwy = 1.81818f * (nextwy + 0.1f) - 1.f;
+
+    idle_register.add(
+        [this]() -> bool
+        {
+            disableListener();
+            labgridcie->setParams(nextrx, nextry, nextbx, nextby, nextgx, nextgy, nextwx, nextwy, false);
+            enableListener();
+            return false;
+        }
+    );
+  
 }
 
 

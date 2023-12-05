@@ -1843,6 +1843,15 @@ private:
     void toolcieChanged();
     void fftcieMaskChanged();
 
+    float nextrx;
+    float nextry;
+    float nextbx;
+    float nextby;
+    float nextgx;
+    float nextgy;
+    float nextwx;
+    float nextwy;
+
 };
 
 #endif
