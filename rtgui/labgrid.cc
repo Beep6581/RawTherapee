@@ -75,7 +75,7 @@ bool LabGridArea::notifyListener()
 }
 
 
-LabGridArea::LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low, bool ciexy):
+LabGridArea::LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low, bool ciexy, bool mous):
     Gtk::DrawingArea(),
     evt(evt), evtMsg(msg),
     litPoint(NONE),
@@ -85,7 +85,9 @@ LabGridArea::LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool
     edited(false),
     isDragged(false),
     low_enabled(enable_low),
-    ciexy_enabled(ciexy)
+    ciexy_enabled(ciexy),
+    mous_enabled(mous)
+    
     
 {
     set_can_focus(false); // prevent moving the grid while you're moving a point
@@ -467,7 +469,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
 
 bool LabGridArea::on_button_press_event(GdkEventButton *event)
 {
-    if (event->button == 1) {
+    if (event->button == 1  && mous_enabled) {
       if (!ciexy_enabled) {        
         if (event->type == GDK_2BUTTON_PRESS) {
             switch (litPoint) {
@@ -491,14 +493,15 @@ bool LabGridArea::on_button_press_event(GdkEventButton *event)
             isDragged = true;
         }
       } else {
-        if (event->type == GDK_2BUTTON_PRESS) {
-            edited = true;
-            notifyListener();
-            queue_draw();
-        } else if (event->type == GDK_BUTTON_PRESS && litPoint != NONE) {
-            isDragged = true;
+        if(mous_enabled) {
+            if (event->type == GDK_2BUTTON_PRESS) {
+                edited = true;
+                notifyListener();
+                queue_draw();
+            } else if (event->type == GDK_BUTTON_PRESS && litPoint != NONE) {
+                isDragged = true;
+            }
         }
-
       }
         return false;
     }
@@ -508,7 +511,7 @@ bool LabGridArea::on_button_press_event(GdkEventButton *event)
 
 bool LabGridArea::on_button_release_event(GdkEventButton *event)
 {
-    if (event->button == 1) {
+    if (event->button == 1  && mous_enabled) {
         isDragged = false;
         return false;
     }
@@ -633,12 +636,21 @@ void LabGridArea::setciexyEnabled(bool yes)
     }
 }
 
+void LabGridArea::setmousEnabled(bool yes)
+{
+    if (mous_enabled != yes) {
+        mous_enabled = yes;
+        queue_draw();
+    }
+}
+
+
 //-----------------------------------------------------------------------------
 // LabGrid
 //-----------------------------------------------------------------------------
 
-LabGrid::LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low, bool ciexy):
-    grid(evt, msg, enable_low, ciexy)
+LabGrid::LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low, bool ciexy, bool mous):
+    grid(evt, msg, enable_low, ciexy, mous)
 {
     Gtk::Button *reset = Gtk::manage(new Gtk::Button());
     reset->set_tooltip_markup(M("ADJUSTER_RESET_TO_DEFAULT"));
@@ -653,7 +665,7 @@ LabGrid::LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_
     reset->set_can_focus(false);
     reset->set_size_request(-1, 20);
 
-    pack_start(grid, true, true);
+    pack_start(grid, true, true, true);
     pack_start(*reset, false, false);
     show_all_children();
 }

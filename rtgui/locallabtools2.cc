@@ -7571,7 +7571,7 @@ Locallabcie::Locallabcie():
     bluxl(Gtk::manage(new Adjuster(M("TC_PRIM_BLUX"), -0.1, 0.4, 0.0001, 0.0366))),
     bluyl(Gtk::manage(new Adjuster(M("TC_PRIM_BLUY"), -0.1, 0.49, 0.0001, 0.0001))),
     gridFramecie(Gtk::manage(new Gtk::Frame(M("TP_ICM_WORKING_CIEDIAG")))),
-    labgridcie(Gtk::manage(new LabGrid(EvlocallabGridciexy, M("TP_ICM_LABGRID_CIEXY"), true, true))),
+    labgridcie(Gtk::manage(new LabGrid(EvlocallabGridciexy, M("TP_ICM_LABGRID_CIEXY"), true, true, false))),
    
     catBox(Gtk::manage(new Gtk::Box())),
     catMethod(Gtk::manage(new MyComboBoxText())),
@@ -9456,23 +9456,7 @@ void Locallabcie::updatePrimloc (const float redx, const float redy, const float
 
 void Locallabcie::updateiPrimloc (const float r_x, const float r_y, const float g_x, const float g_y, const float b_x, const float b_y, const float w_x, const float w_y)
 {
-        /*
-        idle_register.add(
-            [this, r_x, r_y, g_x, g_y, b_x, b_y, w_x, w_y]() -> bool {
-                GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
-
-                // Update adjuster values according to autocomputed ones
-                disableListener();
-                
-                
-                enableListener();
-
-                return false;
-            }
-           
-        );
-        */
-     nextrx = r_x;
+    nextrx = r_x;
     nextry = r_y;
     nextbx = b_x;
     nextby = b_y;
@@ -9480,6 +9464,7 @@ void Locallabcie::updateiPrimloc (const float r_x, const float r_y, const float 
     nextgy = g_y;
     nextwx = w_x;
     nextwy = w_y;
+    
     //convert xy datas in datas for labgrid areas
     nextrx = 1.81818f * (nextrx + 0.1f) - 1.f;
     nextry = 1.81818f * (nextry + 0.1f) - 1.f;
@@ -9491,9 +9476,17 @@ void Locallabcie::updateiPrimloc (const float r_x, const float r_y, const float 
     nextwy = 1.81818f * (nextwy + 0.1f) - 1.f;
 
     idle_register.add(
-        [this]() -> bool
+        [this, r_x, r_y, g_x, g_y, b_x, b_y]() -> bool
         {
+            GThreadLock lock;
             disableListener();
+                redxl->setValue(r_x);
+                redyl->setValue(r_y);
+                grexl->setValue(g_x);
+                greyl->setValue(g_y);
+                bluxl->setValue(b_x);
+                bluyl->setValue(b_y);
+            
             labgridcie->setParams(nextrx, nextry, nextbx, nextby, nextgx, nextgy, nextwx, nextwy, false);
             enableListener();
             return false;
@@ -9704,7 +9697,7 @@ void Locallabcie::normcieChanged()
 void Locallabcie::trccieChanged()
 {
     const int mode = complexity->get_active_row_number();
-
+    //gridFramecie->set_sensitive(false);
     if (trccie->get_active()) {
         wprimBox->set_sensitive(false);
         catBox->set_sensitive(false);
@@ -10331,11 +10324,13 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 wprimBox->set_sensitive(false);
                 catBox->set_sensitive(false);
                 redlFrame->set_sensitive(false);
+             //   gridFramecie->set_sensitive(false);
 
             } else {
                 wprimBox->set_sensitive(false);
                 catBox->set_sensitive(false);
                 redlFrame->set_sensitive(false);
+             //   gridFramecie->set_sensitive(false);
   
             }
 
@@ -10426,6 +10421,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 catBox->set_sensitive(false);
                 redlFrame->set_sensitive(false);
             }
+            //gridFramecie->set_sensitive(false);
 
             jzFrame->hide();
             adapjzcie->hide();
@@ -10570,6 +10566,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 catBox->set_sensitive(true);
                 redlFrame->set_sensitive(true);
            }
+            //gridFramecie->set_sensitive(false);
 
             if (enacieMask->get_active()) {
                 maskusablecie->show();
