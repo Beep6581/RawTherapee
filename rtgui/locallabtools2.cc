@@ -9480,13 +9480,14 @@ void Locallabcie::updateiPrimloc (const float r_x, const float r_y, const float 
         {
             GThreadLock lock;
             disableListener();
+            /*
                 redxl->setValue(r_x);
                 redyl->setValue(r_y);
                 grexl->setValue(g_x);
                 greyl->setValue(g_y);
                 bluxl->setValue(b_x);
                 bluyl->setValue(b_y);
-            
+            */
             labgridcie->setParams(nextrx, nextry, nextbx, nextby, nextgx, nextgy, nextwx, nextwy, false);
             enableListener();
             return false;

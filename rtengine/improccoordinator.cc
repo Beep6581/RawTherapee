@@ -1649,7 +1649,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     locallListener->refChanged2(huerefp, chromarefp, lumarefp, fabrefp, params->locallab.selspot);
                     locallListener->minmaxChanged(locallretiminmax, params->locallab.selspot);
                     locallListener->maxcam(maxicamp, autocam, params->locallab.selspot);
-                    //  locallListener->primlocChanged(redxloc[sp], redyloc[sp], grexloc[sp], greyloc[sp], bluxloc[sp], bluyloc[sp]);
+                    locallListener->primlocChanged(redxloc[sp], redyloc[sp], grexloc[sp], greyloc[sp], bluxloc[sp], bluyloc[sp]);
                     locallListener->iprimlocChanged(redxloc[sp], redyloc[sp], grexloc[sp], greyloc[sp], bluxloc[sp], bluyloc[sp], wxloc[sp], wyloc[sp]);
                 }
             }
