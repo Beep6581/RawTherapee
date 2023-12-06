@@ -1666,6 +1666,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             delete [] greyloc;
             delete [] bluxloc;
             delete [] bluyloc;
+            delete [] wyloc;
+            delete [] wxloc;
 
             ipf.lab2rgb(*nprevl, *oprevi, params->icm.workingProfile);
             //*************************************************************
