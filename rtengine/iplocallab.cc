@@ -20012,7 +20012,7 @@ void ImProcFunctions::Lab_Local(
                     params->locallab.spots.at(sp).catMethod;
                     int locprim = 1;
                     workingtrc(tmpImage, tmpImage, bfw, bfh, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rdx, rdy, grx, gry, blx, bly, dummy, true, false, false, false);
-                    workingtrc(tmpImage, tmpImage, bfw, bfh, typ, prof, gamtone, slotone, catx, ill, prim, locprim, rdx, rdy, grx, gry, blx, bly, dummy, false, true, true, true);//be careful no gamut control
+                    workingtrc(tmpImage, tmpImage, bfw, bfh, typ, prof, gamtone, slotone, catx, ill, prim, locprim, rdx, rdy, grx, gry, blx, bly, dummy, false, true, true, true);//with gamut control
                    
                     rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 

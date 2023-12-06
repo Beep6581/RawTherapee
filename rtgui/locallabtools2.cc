@@ -9697,15 +9697,17 @@ void Locallabcie::normcieChanged()
 void Locallabcie::trccieChanged()
 {
     const int mode = complexity->get_active_row_number();
-    //gridFramecie->set_sensitive(false);
     if (trccie->get_active()) {
         wprimBox->set_sensitive(false);
         catBox->set_sensitive(false);
         redlFrame->set_sensitive(false);
+        gridFramecie->set_sensitive(false);
 
         if (mode == Expert) {
             wprimBox->set_sensitive(true);
             catBox->set_sensitive(true);
+            gridFramecie->set_sensitive(true);
+            
             if (primMethod->get_active_row_number() == 8) {
                 redlFrame->set_sensitive(true);
             } else {
@@ -9717,8 +9719,10 @@ void Locallabcie::trccieChanged()
             wprimBox->set_sensitive(false);
             catBox->set_sensitive(false);
             redlFrame->set_sensitive(false);
+            gridFramecie->set_sensitive(false);
        } else {
             redlFrame->set_sensitive(false);
+            gridFramecie->set_sensitive(false);        
        }
     }
 
@@ -10324,13 +10328,13 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 wprimBox->set_sensitive(false);
                 catBox->set_sensitive(false);
                 redlFrame->set_sensitive(false);
-             //   gridFramecie->set_sensitive(false);
+                gridFramecie->set_sensitive(false);
 
             } else {
                 wprimBox->set_sensitive(false);
                 catBox->set_sensitive(false);
                 redlFrame->set_sensitive(false);
-             //   gridFramecie->set_sensitive(false);
+                gridFramecie->set_sensitive(false);
   
             }
 
@@ -10411,6 +10415,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             comprcieth->show();
             comprcieauto->show();
             comprBox->show();
+            gridFramecie->set_sensitive(false);
 
             if (trccie->get_active()) {
                 wprimBox->set_sensitive(false);
@@ -10561,12 +10566,15 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 wprimBox->set_sensitive(true);
                 catBox->set_sensitive(true);
                 redlFrame->set_sensitive(true);
+                gridFramecie->set_sensitive(true);
+                
            } else {
                 wprimBox->set_sensitive(true);
                 catBox->set_sensitive(true);
                 redlFrame->set_sensitive(true);
+                gridFramecie->set_sensitive(false);
+                
            }
-            //gridFramecie->set_sensitive(false);
 
             if (enacieMask->get_active()) {
                 maskusablecie->show();
