@@ -8495,7 +8495,7 @@ void Locallabcie::setListener(ToolPanelListener* tpl)
 {
     LocallabTool::setListener(tpl);
 
-    labgridcie->setListener(tpl);
+   // labgridcie->setListener(tpl);
 }
 
 
@@ -9478,7 +9478,7 @@ void Locallabcie::updateiPrimloc (const float r_x, const float r_y, const float 
     idle_register.add(
         [this, r_x, r_y, g_x, g_y, b_x, b_y]() -> bool
         {
-            GThreadLock lock;
+         //   GThreadLock lock;
             disableListener();
             /*
                 redxl->setValue(r_x);
