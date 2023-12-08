@@ -519,6 +519,10 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
     float greyy = params->icm.grey;
     float epsil = 0.0001f;
 
+    double Wx = 1.0;
+    double Wz = 1.0;
+    cmsCIExyY xyD;
+
     if (locprim == 1) {
         rdx = params->locallab.spots.at(sp).redxl;
         rdy = params->locallab.spots.at(sp).redyl;
@@ -526,6 +530,23 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
         gry = params->locallab.spots.at(sp).greyl;
         blx = params->locallab.spots.at(sp).bluxl;
         bly = params->locallab.spots.at(sp).bluyl;
+        
+        if(params->locallab.spots.at(sp).illMethod == "d50") {
+            illum = 2;
+            xyD = {0.3457, 0.3585, 1.0}; // near LCMS values but not perfect... it's a compromise!!
+            Wx = 0.964295676;
+            Wz = 0.825104603;          
+        } else if(params->locallab.spots.at(sp).illMethod == "d60") {
+            illum = 4;
+            Wx = 0.952646075;
+            Wz = 1.008825184;
+            xyD = {0.32168, 0.33767, 1.0};
+        } else if(params->locallab.spots.at(sp).illMethod == "d65") {
+            Wx = 0.95045471;
+            Wz = 1.08905029;
+            xyD = {0.312700492, 0.329000939, 1.0};
+        }
+        
     }
 
     if (prim == 13) {//convert datas area to xy
@@ -586,8 +607,8 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
     };
     double tempv4 = 5003.;
     double p[6]; //primaries
-    double Wx = 1.0;
-    double Wz = 1.0;
+//    double Wx = 1.0;
+//    double Wz = 1.0;
 
     if (locprim == 0) {
         switch (ColorManagementParams::Primaries(prim)) {
@@ -670,7 +691,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             p[4] = 0.1500;
             p[5] = 0.0600;
             tempv4 = 6504.;
-            illum = toUnderlying(ColorManagementParams::Illuminant::D65);
+            //illum = toUnderlying(ColorManagementParams::Illuminant::D65);
             Wx = 0.95045471;
             Wz = 1.08905029;
             rdx = p[0];
@@ -688,7 +709,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             p[4] = 0.1500;
             p[5] = 0.0600;
             tempv4 = 6504.;
-            illum = toUnderlying(ColorManagementParams::Illuminant::D65);
+            //illum = toUnderlying(ColorManagementParams::Illuminant::D65);
             Wx = 0.95045471;
             Wz = 1.08905029;
             rdx = p[0];
@@ -705,7 +726,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             p[3] = 0.8404;
             p[4] = 0.0366;
             p[5] = 0.0001;
-            illum = toUnderlying(ColorManagementParams::Illuminant::D50);
+            //illum = toUnderlying(ColorManagementParams::Illuminant::D50);
             Wx = 0.964295676;
             Wz = 0.825104603;
             rdx = p[0];
@@ -723,7 +744,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             p[4] = 0.1310;
             p[5] = 0.0460;
             tempv4 = 6504.;
-            illum = toUnderlying(ColorManagementParams::Illuminant::D65);
+            //illum = toUnderlying(ColorManagementParams::Illuminant::D65);
             Wx = 0.95045471;
             Wz = 1.08905029;
             rdx = p[0];
@@ -741,7 +762,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             p[4] = 0.128;
             p[5] = 0.044;
             tempv4 = 6004.;
-            illum = toUnderlying(ColorManagementParams::Illuminant::D60);
+            //illum = toUnderlying(ColorManagementParams::Illuminant::D60);
             Wx = 0.952646075;
             Wz = 1.008825184;
             rdx = p[0];
@@ -758,7 +779,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             p[3] = 0.8260;
             p[4] = 0.1570;
             p[5] = 0.0180;
-            illum = toUnderlying(ColorManagementParams::Illuminant::D50);
+            //illum = toUnderlying(ColorManagementParams::Illuminant::D50);
             Wx = 0.964295676;
             Wz = 0.825104603;
             rdx = p[0];
@@ -774,7 +795,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             p[3] = 0.930288;
             p[4] = 0.120593;
             p[5] = 0.001583;
-            illum = toUnderlying(ColorManagementParams::Illuminant::D50);
+           // illum = toUnderlying(ColorManagementParams::Illuminant::D50);
             Wx = 0.964295676;
             Wz = 0.825104603;
             rdx = p[0];
@@ -790,7 +811,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             p[3] = 0.7551;
             p[4] = 0.1265;
             p[5] = 0.0352;
-            illum = toUnderlying(ColorManagementParams::Illuminant::D50);
+           // illum = toUnderlying(ColorManagementParams::Illuminant::D50);
             Wx = 0.964295676;
             Wz = 0.825104603;
             rdx = p[0];
@@ -813,7 +834,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             p[3] = 0.8404;
             p[4] = 0.0366;
             p[5] = 0.0001;
-            illum = toUnderlying(ColorManagementParams::Illuminant::D50);
+         //   illum = toUnderlying(ColorManagementParams::Illuminant::D50);
             Wx = 0.964295676;
             Wz = 0.825104603;
             rdx = p[0];
@@ -1017,9 +1038,10 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
         // printf("ga0=%f ga1=%f ga2=%f ga3=%f ga4=%f\n", ga0, ga1, ga2, ga3, ga4);
 
         // 7 parameters for smoother curves
-        cmsCIExyY xyD;
+//        cmsCIExyY xyD;
 
         Glib::ustring ills = "D50";
+    if (locprim == 0) {
 
         switch (ColorManagementParams::Illuminant(illum)) {
             case ColorManagementParams::Illuminant::DEFAULT:
@@ -1149,7 +1171,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
                 break;
             }
         }
-
+    }
         double wprofpri[9];
 
         if (gamutcontrol) {

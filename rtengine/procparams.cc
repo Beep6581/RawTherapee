@@ -4606,6 +4606,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     labgridcieWy(-0.16636),//    
     whitescie(0),
     blackscie(0),
+    illMethod("d50"),
     primMethod("pro"),
     catMethod("brad"),
     sigmoidldajzcie(0.5),
@@ -5432,6 +5433,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && labgridcieWy == other.labgridcieWy        
         && whitescie == other.whitescie
         && blackscie == other.blackscie
+        && illMethod == other.illMethod
         && primMethod == other.primMethod
         && catMethod == other.catMethod
         && sigmoidldajzcie == other.sigmoidldajzcie
@@ -7359,6 +7361,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
                     saveToKeyfile(!pedited || spot_edited->whitescie, "Locallab", "whitescie_" + index_str, spot.whitescie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->blackscie, "Locallab", "blackscie_" + index_str, spot.blackscie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->illMethod, "Locallab", "illMethod_" + index_str, spot.illMethod, keyFile);
                     saveToKeyfile(!pedited || spot_edited->primMethod, "Locallab", "primMethod_" + index_str, spot.primMethod, keyFile);
                     saveToKeyfile(!pedited || spot_edited->catMethod, "Locallab", "catMethod_" + index_str, spot.catMethod, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sigmoidldajzcie, "Locallab", "Sigmoidldajzcie_" + index_str, spot.sigmoidldajzcie, keyFile);
@@ -9663,6 +9666,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 
                 assignFromKeyfile(keyFile, "Locallab", "whitescie_" + index_str, spot.whitescie, spotEdited.whitescie);
                 assignFromKeyfile(keyFile, "Locallab", "blackscie_" + index_str, spot.blackscie, spotEdited.blackscie);
+                assignFromKeyfile(keyFile, "Locallab", "illMethod_" + index_str, spot.illMethod, spotEdited.illMethod);
                 assignFromKeyfile(keyFile, "Locallab", "primMethod_" + index_str, spot.primMethod, spotEdited.primMethod);
                 assignFromKeyfile(keyFile, "Locallab", "catMethod_" + index_str, spot.catMethod, spotEdited.catMethod);
                 assignFromKeyfile(keyFile, "Locallab", "Sigmoidldajzcie_" + index_str, spot.sigmoidldajzcie, spotEdited.sigmoidldajzcie);

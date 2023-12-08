@@ -1084,6 +1084,7 @@ public:
         bool labgridcieWy;       
         bool whitescie;
         bool blackscie;
+        bool illMethod;
         bool primMethod;
         bool catMethod;
         bool sigmoidldajzcie;
