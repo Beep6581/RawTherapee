@@ -422,7 +422,7 @@ void ImProcFunctions::preserv(LabImage *nprevl, LabImage *provis, int cw, int ch
         }
 }
 
-void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring &profile, double gampos, double slpos, int cat, int &illum, int prim, int locprim, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, cmsHTRANSFORM &transform, bool normalizeIn, bool normalizeOut, bool keepTransForm, bool gamutcontrol) const
+void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring &profile, double gampos, double slpos, int cat, int &illum, int prim, int locprim, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, cmsHTRANSFORM &transform, bool normalizeIn, bool normalizeOut, bool keepTransForm, bool gamutcontrol) const
 {
     const TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 
@@ -518,6 +518,15 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
     float grexx = params->icm.grex;
     float greyy = params->icm.grey;
     float epsil = 0.0001f;
+
+    if (locprim == 1) {
+        rdx = params->locallab.spots.at(sp).redxl;
+        rdy = params->locallab.spots.at(sp).redyl;
+        grx = params->locallab.spots.at(sp).grexl;
+        gry = params->locallab.spots.at(sp).greyl;
+        blx = params->locallab.spots.at(sp).bluxl;
+        bly = params->locallab.spots.at(sp).bluyl;
+    }
 
     if (prim == 13) {//convert datas area to xy
         float redgraphx =  params->icm.labgridcieALow;
