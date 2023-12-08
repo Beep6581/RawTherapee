@@ -547,14 +547,27 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             Wz = 1.08905029;
             xyD = {0.312700492, 0.329000939, 1.0};
         } else if(params->locallab.spots.at(sp).illMethod == "d41") {
+            illum = 1;
             Wx = 0.991488263;
             Wz = 0.631604625;
             xyD = {0.376137, 0.374021, 1.0};
         } else if(params->locallab.spots.at(sp).illMethod == "d55") {
+            illum = 3;
             Wx = 0.956565934;
             Wz = 0.920253249;
             xyD = {0.332424, 0.347426, 1.0};
+        } else if(params->locallab.spots.at(sp).illMethod == "d80") {
+            illum = 6;
+            Wx = 0.950095542;
+            Wz = 1.284213976;
+            xyD = {0.293756, 0.309185, 1.0};
+        } else if(params->locallab.spots.at(sp).illMethod == "stda") {
+            illum = 8;
+            Wx = 1.098500393;
+            Wz = 0.355848714;
+            xyD = {0.447573, 0.407440, 1.0};
         }
+        
     }
 
     if (prim == 13) {//convert datas area to xy

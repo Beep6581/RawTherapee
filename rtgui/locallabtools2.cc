@@ -7808,12 +7808,15 @@ Locallabcie::Locallabcie():
     logcieFrame->set_label_widget(*logcie);
     Gtk::Label* illLabel = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_ILLU") + ":"));
     willBox->pack_start(*illLabel, Gtk::PACK_SHRINK);
-    willBox->pack_start(*illMethod, Gtk::PACK_SHRINK);
+    willBox->pack_start(*illMethod, Gtk::PACK_EXPAND_WIDGET);
     illMethod->append(M("TP_ICM_WORKING_ILLU_D41"));
     illMethod->append(M("TP_ICM_WORKING_ILLU_D50"));
     illMethod->append(M("TP_ICM_WORKING_ILLU_D55"));
     illMethod->append(M("TP_ICM_WORKING_ILLU_D60"));
     illMethod->append(M("TP_ICM_WORKING_ILLU_D65"));
+    illMethod->append(M("TP_ICM_WORKING_ILLU_D80"));
+    illMethod->append(M("TP_ICM_WORKING_ILLU_STDA"));
+    
     illMethod->set_active(1);
     illMethodconn = illMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::illMethodChanged));
     
@@ -8926,6 +8929,10 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             illMethod->set_active(3);
         } else if (spot.illMethod == "d65") {
             illMethod->set_active(4);
+        } else if (spot.illMethod == "d80") {
+            illMethod->set_active(5);
+        } else if (spot.illMethod == "stda") {
+            illMethod->set_active(6);
         }
         illMethod->set_sensitive(false);
 
@@ -9294,7 +9301,12 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.illMethod = "d60";
         } else if (illMethod->get_active_row_number() == 4) {
             spot.illMethod = "d65";
+        } else if (illMethod->get_active_row_number() == 5) {
+            spot.illMethod = "d80";
+        } else if (illMethod->get_active_row_number() == 6) {
+            spot.illMethod = "stda";
         }
+
 
 
         if (primMethod->get_active_row_number() == 0) {
