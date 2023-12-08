@@ -7809,13 +7809,12 @@ Locallabcie::Locallabcie():
     Gtk::Label* illLabel = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_ILLU") + ":"));
     willBox->pack_start(*illLabel, Gtk::PACK_SHRINK);
     willBox->pack_start(*illMethod, Gtk::PACK_SHRINK);
-    illMethod->append(M("TP_ICM_WORKING_ILLU_NONE"));
     illMethod->append(M("TP_ICM_WORKING_ILLU_D41"));
     illMethod->append(M("TP_ICM_WORKING_ILLU_D50"));
     illMethod->append(M("TP_ICM_WORKING_ILLU_D55"));
     illMethod->append(M("TP_ICM_WORKING_ILLU_D60"));
     illMethod->append(M("TP_ICM_WORKING_ILLU_D65"));
-    illMethod->set_active(2);
+    illMethod->set_active(1);
     illMethodconn = illMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::illMethodChanged));
     
     
@@ -8917,46 +8916,47 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             comprcieauto->set_active(true);
         }
 
-        if (spot.illMethod == "none") {
+        if (spot.illMethod == "d41") {
             illMethod->set_active(0);
-        } else if (spot.illMethod == "d41") {
-            illMethod->set_active(1);
         } else if (spot.illMethod == "d50") {
-            illMethod->set_active(2);
+            illMethod->set_active(1);
         } else if (spot.illMethod == "d55") {
-            illMethod->set_active(3);
+            illMethod->set_active(2);
         } else if (spot.illMethod == "d60") {
-            illMethod->set_active(4);
+            illMethod->set_active(3);
         } else if (spot.illMethod == "d65") {
-            illMethod->set_active(5);
+            illMethod->set_active(4);
         }
+        illMethod->set_sensitive(false);
 
         if (spot.primMethod == "pro") {
             primMethod->set_active(0);
-            illMethod->set_active(2);
+            illMethod->set_active(1);
         } else if (spot.primMethod == "beta") {
             primMethod->set_active(1);
-            illMethod->set_active(2);
+            illMethod->set_active(1);
         } else if (spot.primMethod == "wid") {
             primMethod->set_active(2);
-            illMethod->set_active(2);
+            illMethod->set_active(1);
         } else if (spot.primMethod == "ac1") {
             primMethod->set_active(3);
-            illMethod->set_active(4);
+            illMethod->set_active(3);
         } else if (spot.primMethod == "rec") {
             primMethod->set_active(4);
-            illMethod->set_active(5);
+            illMethod->set_active(4);
         } else if (spot.primMethod == "ado") {
             primMethod->set_active(5);
-            illMethod->set_active(5);
+            illMethod->set_active(4);
         } else if (spot.primMethod == "srgb") {
             primMethod->set_active(6);
-            illMethod->set_active(5);
+            illMethod->set_active(4);
         } else if (spot.primMethod == "jdcmax") {
             primMethod->set_active(7);
-            illMethod->set_active(2);
+            illMethod->set_active(1);
         } else if (spot.primMethod == "free") {
             primMethod->set_active(8);
+            illMethod->set_sensitive(true);
+
         }
 
         if (spot.catMethod == "brad") {
@@ -9285,16 +9285,14 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         }
 
         if (illMethod->get_active_row_number() == 0) {
-            spot.illMethod = "none";
-        } else if (illMethod->get_active_row_number() == 1) {
             spot.illMethod = "d41";
-        } else if (illMethod->get_active_row_number() == 2) {
+        } else if (illMethod->get_active_row_number() == 1) {
             spot.illMethod = "d50";
-        } else if (illMethod->get_active_row_number() == 3) {
+        } else if (illMethod->get_active_row_number() == 2) {
             spot.illMethod = "d55";
-        } else if (illMethod->get_active_row_number() == 4) {
+        } else if (illMethod->get_active_row_number() == 3) {
             spot.illMethod = "d60";
-        } else if (illMethod->get_active_row_number() == 5) {
+        } else if (illMethod->get_active_row_number() == 4) {
             spot.illMethod = "d65";
         }
 
@@ -10281,25 +10279,28 @@ void Locallabcie::primMethodChanged()
 {
  
     if (primMethod->get_active_row_number() == 0) {
-        illMethod->set_active(2);
+        illMethod->set_active(1);
     } else if (primMethod->get_active_row_number() == 1) {
-        illMethod->set_active(2);
+        illMethod->set_active(1);
     } else if (primMethod->get_active_row_number() == 2) {
-        illMethod->set_active(2);
+        illMethod->set_active(1);
     } else if (primMethod->get_active_row_number() == 3) {
-        illMethod->set_active(4);
+        illMethod->set_active(3);
     } else if (primMethod->get_active_row_number() == 4) {
-        illMethod->set_active(5);
+        illMethod->set_active(4);
     } else if (primMethod->get_active_row_number() == 5) {
-        illMethod->set_active(5);
+        illMethod->set_active(4);
     } else if (primMethod->get_active_row_number() == 6) {
-        illMethod->set_active(5);
+        illMethod->set_active(4);
     } else if (primMethod->get_active_row_number() == 7) {
-        illMethod->set_active(2);
+        illMethod->set_active(1);
     } 
+    illMethod->set_sensitive(false);
 
     if (primMethod->get_active_row_number() == 8) {
         redlFrame->set_sensitive(true);
+        illMethod->set_sensitive(true);
+        
     } else {
         redlFrame->set_sensitive(false);
     }
