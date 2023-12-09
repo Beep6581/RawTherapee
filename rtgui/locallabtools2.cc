@@ -7577,6 +7577,8 @@ Locallabcie::Locallabcie():
    
     catBox(Gtk::manage(new Gtk::Box())),
     catMethod(Gtk::manage(new MyComboBoxText())),
+    gamutcieBox(Gtk::manage(new Gtk::Box())),
+    gamutcie(Gtk::manage(new Gtk::CheckButton(M("TP_ICM_GAMUT")))),
 
     sigmoidjzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGJZFRA")))),
     sigmoidgamFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGGAMFRA")))),
@@ -7712,6 +7714,7 @@ Locallabcie::Locallabcie():
     Evlocallabbluxl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_BLUXL");
     Evlocallabbluyl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_BLUYL");
     EvlocallabGridciexy = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_LABGRIDCIE");
+    Evlocallabgamutcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GAMUTCIE");
 
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -7856,6 +7859,14 @@ Locallabcie::Locallabcie():
     primCoordGridl->attach_next_to(*bluxl, *grexl, Gtk::PositionType::POS_BOTTOM, 1, 1);
     primCoordGridl->attach_next_to(*bluyl, *bluxl, Gtk::PositionType::POS_RIGHT, 1, 1);
 
+/*
+    redBox->pack_start(*redxl, Gtk::PACK_EXPAND_WIDGET);
+    redBox->pack_start(*redyl, Gtk::PACK_EXPAND_WIDGET);
+    redBox->pack_start(*grexl, Gtk::PACK_EXPAND_WIDGET);
+    redBox->pack_start(*greyl, Gtk::PACK_EXPAND_WIDGET);
+    redBox->pack_start(*bluxl, Gtk::PACK_EXPAND_WIDGET);
+    redBox->pack_start(*bluyl, Gtk::PACK_EXPAND_WIDGET);
+*/
     redBox->pack_start(*primCoordGridl, Gtk::PACK_EXPAND_WIDGET);
    
     redlFrame->add(*redBox);
@@ -7883,6 +7894,9 @@ Locallabcie::Locallabcie():
     catMethod->append(M("TP_ICM_WORKING_CAT_XYZ"));
     catMethod->set_active(0);
     catMethodconn = catMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::catMethodChanged));
+    gamutcieBox->pack_start(*gamutcie, Gtk::PACK_EXPAND_WIDGET);
+
+    gamutcieconn = gamutcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::gamutcieChanged));
 
     ToolParamBlock* const signormBox = Gtk::manage(new ToolParamBlock());
     ToolParamBlock* const sigfraBox = Gtk::manage(new ToolParamBlock());
@@ -7908,6 +7922,7 @@ Locallabcie::Locallabcie():
     gamcieBox->pack_start(*redlFrame);
     gamcieBox->pack_start(*gridFramecie);
     gamcieBox->pack_start(*catBox);
+    gamcieBox->pack_start(*gamutcieBox);
 
     sigmoidgamFrame->add(*gamcieBox);
 //    sigBox->pack_start(*sigmoidgamFrame);
@@ -8723,6 +8738,7 @@ void Locallabcie::disableListener()
     comprcieautoconn.block(true);
     normcieconn.block(true);
     trccieconn.block(true);
+    gamutcieconn.block(true);
     primMethodconn.block(true);
     illMethodconn.block(true);
     catMethodconn.block(true);
@@ -8756,6 +8772,7 @@ void Locallabcie::enableListener()
     comprcieautoconn.block(false);
     normcieconn.block(false);
     trccieconn.block(false);
+    gamutcieconn.block(false);
     primMethodconn.block(false);
     illMethodconn.block(false);
     catMethodconn.block(false);
@@ -8981,6 +8998,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
 
         normcie->set_active(spot.normcie);
         trccie->set_active(spot.trccie);
+        gamutcie->set_active(spot.gamutcie);
         sigcie->set_active(spot.sigcie);
         logcie->set_active(spot.logcie);
         logjz->set_active(spot.logjz);
@@ -8995,6 +9013,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         bwevMethodChanged();
         normcieChanged();
         trccieChanged();
+        gamutcieChanged();
         sigcieChanged();
         comprcieautoChanged();
         sigqChanged();
@@ -9268,6 +9287,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.comprcieauto = comprcieauto->get_active();
         spot.normcie = normcie->get_active();
         spot.trccie = trccie->get_active();
+        spot.gamutcie = gamutcie->get_active();
         spot.sigcie = sigcie->get_active();
         spot.logcie = logcie->get_active();
         spot.logjz = logjz->get_active();
@@ -9512,6 +9532,7 @@ void Locallabcie::updatePrimloc (const float redx, const float redy, const float
                 greyl->setValue(grey);
                 bluxl->setValue(blux);
                 bluyl->setValue(bluy);
+                
                 enableListener();
 
                 return false;
@@ -9544,16 +9565,16 @@ void Locallabcie::updateiPrimloc (const float r_x, const float r_y, const float 
     idle_register.add(
         [this, r_x, r_y, g_x, g_y, b_x, b_y]() -> bool
         {
-         //   GThreadLock lock;
+            GThreadLock lock;
             disableListener();
-            /*
+            
                 redxl->setValue(r_x);
                 redyl->setValue(r_y);
                 grexl->setValue(g_x);
                 greyl->setValue(g_y);
                 bluxl->setValue(b_x);
                 bluyl->setValue(b_y);
-            */
+            
             labgridcie->setParams(nextrx, nextry, nextbx, nextby, nextgx, nextgy, nextwx, nextwy, false);
             enableListener();
             return false;
@@ -9761,6 +9782,24 @@ void Locallabcie::normcieChanged()
 
 }
 
+
+void Locallabcie::gamutcieChanged()
+{
+     if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (gamutcie->get_active()) {
+                listener->panelChanged(Evlocallabgamutcie,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabgamutcie,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+   
+}
+
+
 void Locallabcie::trccieChanged()
 {
     const int mode = complexity->get_active_row_number();
@@ -9768,6 +9807,7 @@ void Locallabcie::trccieChanged()
         wprimBox->set_sensitive(false);
         willBox->set_sensitive(false);
         catBox->set_sensitive(false);
+        gamutcieBox->set_sensitive(false);
         redlFrame->set_sensitive(false);
         gridFramecie->set_sensitive(false);
 
@@ -9775,6 +9815,7 @@ void Locallabcie::trccieChanged()
             wprimBox->set_sensitive(true);
             willBox->set_sensitive(true);
             catBox->set_sensitive(true);
+            gamutcieBox->set_sensitive(true);
             gridFramecie->set_sensitive(true);
             
             if (primMethod->get_active_row_number() == 8) {
@@ -9788,6 +9829,7 @@ void Locallabcie::trccieChanged()
             wprimBox->set_sensitive(false);
             willBox->set_sensitive(false);
             catBox->set_sensitive(false);
+            gamutcieBox->set_sensitive(false);
             redlFrame->set_sensitive(false);
             gridFramecie->set_sensitive(false);
        } else {
@@ -10430,6 +10472,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 wprimBox->set_sensitive(false);
                 willBox->set_sensitive(false);
                 catBox->set_sensitive(false);
+                gamutcieBox->set_sensitive(false);
                 redlFrame->set_sensitive(false);
                 gridFramecie->set_sensitive(false);
 
@@ -10437,6 +10480,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 wprimBox->set_sensitive(false);
                 willBox->set_sensitive(false);
                 catBox->set_sensitive(false);
+                gamutcieBox->set_sensitive(false);
                 redlFrame->set_sensitive(false);
                 gridFramecie->set_sensitive(false);
   
@@ -10525,11 +10569,13 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 wprimBox->set_sensitive(false);
                 willBox->set_sensitive(false);
                 catBox->set_sensitive(false);
+                gamutcieBox->set_sensitive(false);
                 redlFrame->set_sensitive(false);
             } else {
                 wprimBox->set_sensitive(false);
                 willBox->set_sensitive(false);
                 catBox->set_sensitive(false);
+                gamutcieBox->set_sensitive(false);
                 redlFrame->set_sensitive(false);
             }
             //gridFramecie->set_sensitive(false);
@@ -10672,6 +10718,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 wprimBox->set_sensitive(true);
                 willBox->set_sensitive(true);
                 catBox->set_sensitive(true);
+                gamutcieBox->set_sensitive(true);
                 redlFrame->set_sensitive(true);
                 gridFramecie->set_sensitive(true);
                 
@@ -10679,6 +10726,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 wprimBox->set_sensitive(true);
                 willBox->set_sensitive(true);
                 catBox->set_sensitive(true);
+                gamutcieBox->set_sensitive(true);
                 redlFrame->set_sensitive(true);
                 gridFramecie->set_sensitive(false);
                 

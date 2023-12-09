@@ -1638,6 +1638,7 @@ struct LocallabParams {
         bool comprcieauto;
         bool normcie;
         bool trccie;
+        bool gamutcie;
         bool sigcie;
         bool logcie;
         bool logjz;

@@ -1242,6 +1242,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             float avge, meantme, stdtme, meanretie, stdretie;
             //std::vector<LocallabListener::locallabRef> locallref;
             std::vector<LocallabListener::locallabRetiMinMax> locallretiminmax;
+            std::vector<LocallabListener::locallabcieLC> locallcielc;
             huerefs.resize(params->locallab.spots.size());
             huerefblurs.resize(params->locallab.spots.size());
             chromarefblurs.resize(params->locallab.spots.size());
@@ -1268,23 +1269,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             maxicamp = new float[sizespot];
             bool *autocam = nullptr;
             autocam = new bool[sizespot];
-
-            float *redxloc = nullptr;
-            redxloc = new float[sizespot];
-            float *redyloc = nullptr;
-            redyloc = new float[sizespot];
-            float *grexloc = nullptr;
-            grexloc = new float[sizespot];
-            float *greyloc = nullptr;
-            greyloc = new float[sizespot];
-            float *bluxloc = nullptr;
-            bluxloc = new float[sizespot];
-            float *bluyloc = nullptr;
-            bluyloc = new float[sizespot];
-            float *wxloc = nullptr;
-            wxloc = new float[sizespot];
-            float *wyloc = nullptr;
-            wyloc = new float[sizespot];
 
             for (int sp = 0; sp < (int)params->locallab.spots.size(); sp++) {
 
@@ -1388,7 +1372,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 double shcompr = params->locallab.spots.at(sp).shcompr;
                 double br = params->locallab.spots.at(sp).lightness;
                 double cont = params->locallab.spots.at(sp).contrast;
-
+           
                 if (black < 0. && params->locallab.spots.at(sp).expMethod == "pde") {
                     black *= 1.5;
                 }
@@ -1560,36 +1544,33 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 //basecor = LIM(basecor, 0.05f, 0.50f);
                 // maxicamp[sp] = basecor * maxth;//or 0.12 * maxth
                 maxicamp[sp] = maxth;
-                redxloc[sp] = rdx;
-                redyloc[sp] = rdy;
-                grexloc[sp] = grx;
-                greyloc[sp] = gry;
-                bluxloc[sp] = blx;
-                bluyloc[sp] = bly;
 
                 //Illuminant
-             //   float Wx, Wz = 1.f;
                 float w_x = 0.3f;
                 float w_y = 0.3f;
                 if(ill == 2) {
-                   // Wx = 0.964295676f;
-                   // Wz = 0.825104603f;
                     w_x = 0.3457f;
                     w_y = 0.3585f;
                 } else if(ill == 4) {
-                    //Wx = 0.952646075f;
-                    //Wz = 1.008825184f;                  
                     w_x = 0.3217f;
                     w_y = 0.3377f;
                 } else if(ill == 5) {
-                    //Wx = 0.95045471f;
-                    //Wz = 1.08905029f;
                     w_x = 0.3127f;
                     w_y = 0.3290f;
+                } else if(ill == 1) {
+                    w_x = 0.376137f;
+                    w_y = 0.374021f;
+                } else if(ill == 3) {
+                    w_x = 0.332424f;
+                    w_y = 0.347426f;
+                } else if(ill == 6) {
+                    w_x = 0.293756f;
+                    w_y = 0.309185f;
+                } else if(ill == 8) {
+                    w_x = 0.447573f;
+                    w_y = 0.407440f;
                 }
-                wxloc[sp] = w_x;
-                wyloc[sp] = w_y;
-                
+              
       
       
                 if (istm) { //calculate mean and sigma on full image for use by normalize_mean_dt
@@ -1629,6 +1610,18 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 retiMinMax.Tmax = Tmax;
                 locallretiminmax.push_back(retiMinMax);
 
+                //save Locallab CIE primaries and white for current spot
+                LocallabListener::locallabcieLC loccielc;
+                loccielc.redxlc = rdx;
+                loccielc.redylc = rdy;
+                loccielc.grexlc = grx;
+                loccielc.greylc = gry;
+                loccielc.bluxlc = blx;
+                loccielc.bluylc = bly;
+                loccielc.wxlc = w_x;
+                loccielc.wylc = w_y;
+                
+                locallcielc.push_back(loccielc);
                 // Recalculate references after
                 if (params->locallab.spots.at(sp).spotMethod == "exc") {
                     ipf.calc_ref(sp, reserv.get(), reserv.get(), 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huer, chromar, lumar, sobeler, avg, locwavCurveden, locwavdenutili);
@@ -1644,16 +1637,17 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     fabrefp[sp] = fab;
 
                 }
+             
 
                 if (locallListener) {
                     locallListener->refChanged2(huerefp, chromarefp, lumarefp, fabrefp, params->locallab.selspot);
                     locallListener->minmaxChanged(locallretiminmax, params->locallab.selspot);
                     locallListener->maxcam(maxicamp, autocam, params->locallab.selspot);
                     if (params->locallab.spots.at(sp).trccie) {
-                        locallListener->primlocChanged(redxloc[sp], redyloc[sp], grexloc[sp], greyloc[sp], bluxloc[sp], bluyloc[sp]);
-                        locallListener->iprimlocChanged(redxloc[sp], redyloc[sp], grexloc[sp], greyloc[sp], bluxloc[sp], bluyloc[sp], wxloc[sp], wyloc[sp]);
+                        locallListener->cieChanged(locallcielc,params->locallab.selspot); 
                     }
                 }
+                
             }
 
             delete [] huerefp;
@@ -1662,14 +1656,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             delete [] fabrefp;
             delete [] maxicamp;
             delete [] autocam;
-            delete [] redxloc;
-            delete [] redyloc;
-            delete [] grexloc;
-            delete [] greyloc;
-            delete [] bluxloc;
-            delete [] bluyloc;
-            delete [] wyloc;
-            delete [] wxloc;
 
             ipf.lab2rgb(*nprevl, *oprevi, params->icm.workingProfile);
             //*************************************************************

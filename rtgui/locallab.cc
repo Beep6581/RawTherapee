@@ -1128,17 +1128,27 @@ void Locallab::denChanged(const std::vector<locallabDenoiseLC> &denlc, int selsp
     
 }
 
-void Locallab::primlocChanged(const float redx, const float redy, const float grex, const float grey, const float blux, const float bluy) 
+void Locallab::cieChanged(const std::vector<locallabcieLC> &cielc, int selspot)
 {
-    expcie.updatePrimloc(redx, redy, grex, grey, blux, bluy);
-  
+    // Saving transmitted min/max data
+    cie_lc = cielc;
+    
+    //Update Locallab Denoise tool lum chro
+    if (selspot < (int) cie_lc.size()) {
+        const double r1 = cie_lc.at(selspot).redxlc;
+        const double r2 = cie_lc.at(selspot).redylc;
+        const double g1 = cie_lc.at(selspot).grexlc;
+        const double g2 = cie_lc.at(selspot).greylc;
+        const  double b1 = cie_lc.at(selspot).bluxlc;
+        const double b2 = cie_lc.at(selspot).bluylc;
+        const double w1 = cie_lc.at(selspot).wxlc;
+        const double w2 = cie_lc.at(selspot).wylc;
+
+        expcie.updateiPrimloc(r1, r2, g1, g2, b1, b2, w1, w2);
+    }
+    
 }
 
-void Locallab::iprimlocChanged(const float r_x, const float r_y, const float g_x, const float g_y, const float b_x, const float b_y, const float w_x, const float w_y) 
-{
-    expcie.updateiPrimloc(r_x, r_y, g_x, g_y, b_x, b_y, w_x, w_y);
-  
-}
 
 void Locallab::logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const bool autocomput, const bool autocie, const float jz1)
 {

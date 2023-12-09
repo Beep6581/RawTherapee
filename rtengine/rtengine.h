@@ -423,16 +423,27 @@ public:
         double Lhighres46; 
         double Lnres46;
     };
+    
+    struct locallabcieLC {
+        double redxlc;
+        double redylc;
+        double grexlc;
+        double greylc;
+        double bluxlc;
+        double bluylc; 
+        double wxlc;
+        double wylc;
+    };
 
     virtual ~LocallabListener() = default;
 //    virtual void refChanged(const std::vector<locallabRef> &ref, int selspot) = 0;
     virtual void minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int selspot) = 0;
     virtual void denChanged(const std::vector<locallabDenoiseLC> &denlc, int selspot) = 0;
+    virtual void cieChanged(const std::vector<locallabcieLC> &cielc, int selspot) = 0;
+
     virtual void logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const bool autocomput, const bool autocie, const float jz1) = 0;
     virtual void refChanged2(float *huerefp, float *chromarefp, float *lumarefp, float *fabrefp, int selspot) = 0;
     virtual void maxcam(float *maxicamp, bool *autocam, int selspot) = 0;
-    virtual void primlocChanged(const float redx, const float redy, const float grex, const float grey, const float blux, const float bluy) = 0;
-    virtual void iprimlocChanged(const float r_x, const float r_y, const float g_x, const float g_y, const float b_x, const float b_y, const float w_x, const float w_y) = 0;
 	
 };
 

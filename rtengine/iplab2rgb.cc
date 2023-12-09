@@ -523,7 +523,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
     double Wz = 1.0;
     cmsCIExyY xyD;
 
-    if (locprim == 1) {
+    if (locprim == 1  && mul == 5) {
         rdx = params->locallab.spots.at(sp).redxl;
         rdy = params->locallab.spots.at(sp).redyl;
         grx = params->locallab.spots.at(sp).grexl;
@@ -702,7 +702,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
                 break;
             }
         }
-    } else {
+    } else if (locprim == 1 && mul == 5){
         //local primaries
         if (prim == 1) {
             p[0] = 0.6400;    // sRGB primaries

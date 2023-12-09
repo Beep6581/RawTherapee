@@ -126,6 +126,8 @@ private:
     // Locallab tools mask background management data
     std::vector<locallabDenoiseLC> denoiselc;
 
+    std::vector<locallabcieLC> cie_lc;
+
     // Locallab tools mask background management data
     std::vector<locallabRef> maskBackRef;
 
@@ -152,12 +154,12 @@ public:
     // Locallab Retinex tool min/man management function
     void denChanged(const std::vector<locallabDenoiseLC> &denlc, int selspot) override;
     
+    // Locallab CIE tool primaries function
+    void cieChanged(const std::vector<locallabcieLC> &cielc, int selspot) override;
+   
     // Locallab Log Encoding autocompute function
     void logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const bool autocomput, const bool autocie, const float jz1) override;
 
-    void primlocChanged(const float redx, const float redy, const float grex, const float grey, const float blux, const float bluy) override;
-
-    void iprimlocChanged(const float r_x, const float r_y, const float g_x, const float g_y, const float b_x, const float b_y, const float w_x, const float w_y) override;
 
     // Locallab tools mask background management function
 //    void refChanged(const std::vector<locallabRef> &ref, int selspot) override;

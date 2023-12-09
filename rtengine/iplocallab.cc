@@ -20001,14 +20001,15 @@ void ImProcFunctions::Lab_Local(
                     } else if (params->locallab.spots.at(sp).primMethod == "free") {
                         prim = 15;
                         typ = 5;
+                        
                         rdx = params->locallab.spots.at(sp).redxl;
                         rdy = params->locallab.spots.at(sp).redyl;
                         grx = params->locallab.spots.at(sp).grexl;
                         gry = params->locallab.spots.at(sp).greyl;
                         blx = params->locallab.spots.at(sp).bluxl;
-                        bly = params->locallab.spots.at(sp).bluyl;                     
+                        bly = params->locallab.spots.at(sp).bluyl; 
+                        
                     }
-
                     int catx = 0; 
                      if (params->locallab.spots.at(sp).catMethod == "brad") {
                         catx = 0;
@@ -20024,8 +20025,10 @@ void ImProcFunctions::Lab_Local(
 
                     params->locallab.spots.at(sp).catMethod;
                     int locprim = 1;
-                    workingtrc(sp, tmpImage, tmpImage, bfw, bfh, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rdx, rdy, grx, gry, blx, bly, dummy, true, false, false, false);
-                    workingtrc(sp, tmpImage, tmpImage, bfw, bfh, typ, prof, gamtone, slotone, catx, ill, prim, locprim, rdx, rdy, grx, gry, blx, bly, dummy, false, true, true, true);//with gamut control
+                    bool gamcie = params->locallab.spots.at(sp).gamutcie;
+                    float rx, ry, gx, gy, bx, by;
+                    workingtrc(sp, tmpImage, tmpImage, bfw, bfh, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rx, ry, gx, gy, bx, by, dummy, true, false, false, false);
+                    workingtrc(sp, tmpImage, tmpImage, bfw, bfh, typ, prof, gamtone, slotone, catx, ill, prim, locprim, rdx, rdy, grx, gry, blx, bly, dummy, false, true, true, gamcie);//with gamut control
                    
                     rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 

@@ -4408,6 +4408,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     comprcieauto(false),
     normcie(true),
     trccie(false),
+    gamutcie(false),
     sigcie(true),
     logcie(false),
     logjz(false),
@@ -5353,6 +5354,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && comprcieauto == other.comprcieauto
         && normcie == other.normcie
         && trccie == other.trccie
+        && gamutcie == other.gamutcie
         && sigcie == other.sigcie
         && logcie == other.logcie
         && logjz == other.logjz
@@ -7280,6 +7282,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->comprcieauto, "Locallab", "comprcieauto_" + index_str, spot.comprcieauto, keyFile);
                     saveToKeyfile(!pedited || spot_edited->normcie, "Locallab", "normcie_" + index_str, spot.normcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->trccie, "Locallab", "trccie_" + index_str, spot.trccie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->gamutcie, "Locallab", "gamutcie_" + index_str, spot.gamutcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sigcie, "Locallab", "sigcie_" + index_str, spot.sigcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->logcie, "Locallab", "logcie_" + index_str, spot.logcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->logjz, "Locallab", "Logjz_" + index_str, spot.logjz, keyFile);
@@ -9576,6 +9579,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "comprcieauto_" + index_str, spot.comprcieauto, spotEdited.comprcieauto);
                 assignFromKeyfile(keyFile, "Locallab", "normcie_" + index_str, spot.normcie, spotEdited.normcie);
                 assignFromKeyfile(keyFile, "Locallab", "trccie_" + index_str, spot.trccie, spotEdited.trccie);
+                assignFromKeyfile(keyFile, "Locallab", "gamutcie_" + index_str, spot.gamutcie, spotEdited.gamutcie);
                 assignFromKeyfile(keyFile, "Locallab", "sigcie_" + index_str, spot.sigcie, spotEdited.sigcie);
                 assignFromKeyfile(keyFile, "Locallab", "logcie_" + index_str, spot.logcie, spotEdited.logcie);
                 assignFromKeyfile(keyFile, "Locallab", "Logjz_" + index_str, spot.logjz, spotEdited.logjz);
