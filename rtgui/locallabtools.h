@@ -1661,6 +1661,9 @@ private:
     Gtk::Box* wprimBox;
     MyComboBoxText* const primMethod;
     Gtk::Grid* primCoordGridl;
+    Gtk::Frame* trcFrame;
+    Gtk::Frame* primillFrame;
+    
     Gtk::Frame* redlFrame;    
     Adjuster* const redxl;
     Adjuster* const redyl;

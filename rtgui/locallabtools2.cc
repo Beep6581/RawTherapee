@@ -7564,8 +7564,9 @@ Locallabcie::Locallabcie():
     wprimBox(Gtk::manage(new Gtk::Box())),
     primMethod(Gtk::manage(new MyComboBoxText())),
     primCoordGridl(Gtk::manage(new Gtk::Grid())),
+    trcFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TRCFRAME")))),
+    primillFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_PRIMILLFRAME")))),  
     redlFrame(Gtk::manage(new Gtk::Frame(M("TP_ICM_REDFRAME")))),
-   
     redxl(Gtk::manage(new Adjuster(M("TC_PRIM_REDX"), 0.41, 1.0, 0.0001, 0.7347))),
     redyl(Gtk::manage(new Adjuster(M("TC_PRIM_REDY"), 0.0, 0.70, 0.0001, 0.2653))),
     grexl(Gtk::manage(new Adjuster(M("TC_PRIM_GREX"), -0.1, 0.4, 0.0001, 0.1596))),
@@ -7839,9 +7840,10 @@ Locallabcie::Locallabcie():
 
     primMethod->set_active(0);
     primMethodconn = primMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::primMethodChanged));
+    trcFrame->set_label_align(0.025, 0.5);
 
     redlFrame->set_label_align(0.025, 0.5);
-
+    primillFrame->set_label_align(0.025, 0.5);
     setExpandAlignProperties(grexl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     setExpandAlignProperties(greyl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     setExpandAlignProperties(bluxl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
@@ -7924,14 +7926,22 @@ Locallabcie::Locallabcie():
     logcieFrame->add(*comprBox);
     gamcieBox->pack_start(*logcieFrame);
 
-    gamcieBox->pack_start(*gamjcie);
-    gamcieBox->pack_start(*slopjcie);
-    gamcieBox->pack_start(*willBox);
-    gamcieBox->pack_start(*wprimBox);
-    gamcieBox->pack_start(*redlFrame);
-    gamcieBox->pack_start(*gridFramecie);
-    gamcieBox->pack_start(*catBox);
-    gamcieBox->pack_start(*gamutcieBox);
+    ToolParamBlock* const trccieBox = Gtk::manage(new ToolParamBlock());
+    ToolParamBlock* const primillBox = Gtk::manage(new ToolParamBlock());
+
+    trccieBox->pack_start(*gamjcie);
+    trccieBox->pack_start(*slopjcie);
+    trcFrame->add(*trccieBox);
+    gamcieBox->pack_start(*trcFrame);
+    primillBox->pack_start(*willBox);
+    primillBox->pack_start(*wprimBox);
+    primillBox->pack_start(*redlFrame);
+    primillBox->pack_start(*gridFramecie);
+    primillBox->pack_start(*catBox);
+    primillBox->pack_start(*gamutcieBox);
+    primillFrame->add(*primillBox);    
+    gamcieBox->pack_start(*primillFrame);
+    
 
 
 
@@ -9814,6 +9824,7 @@ void Locallabcie::gamutcieChanged()
 
 void Locallabcie::trccieChanged()
 {
+    /*
     const int mode = complexity->get_active_row_number();
     if (trccie->get_active()) {
         wprimBox->set_sensitive(false);
@@ -9849,7 +9860,7 @@ void Locallabcie::trccieChanged()
             gridFramecie->set_sensitive(false);        
        }
     }
-
+*/
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (trccie->get_active()) {
@@ -10480,7 +10491,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             comprcieth->hide();
             comprcieauto->hide();
             comprBox->hide();
-
+/*
             if (trccie->get_active()) {
                 wprimBox->set_sensitive(false);
                 willBox->set_sensitive(false);
@@ -10498,7 +10509,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 gridFramecie->set_sensitive(false);
   
             }
-
+*/
             if (modecam->get_active_row_number() == 2) {
                 PQFrame->hide();
                 logjzFrame->hide();
@@ -10577,7 +10588,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             comprcieauto->show();
             comprBox->show();
             gridFramecie->set_sensitive(false);
-
+            /*
             if (trccie->get_active()) {
                 wprimBox->set_sensitive(false);
                 willBox->set_sensitive(false);
@@ -10591,6 +10602,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 gamutcieBox->set_sensitive(false);
                 redlFrame->set_sensitive(false);
             }
+            */
             //gridFramecie->set_sensitive(false);
 
             jzFrame->hide();
@@ -10726,7 +10738,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             blurFramecie->show();
             wavFramecie->show();
             comprBox->show();
-
+/*
             if (trccie->get_active()) {
                 wprimBox->set_sensitive(true);
                 willBox->set_sensitive(true);
@@ -10744,7 +10756,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 gridFramecie->set_sensitive(false);
                 
            }
-
+*/
             if (enacieMask->get_active()) {
                 maskusablecie->show();
                 maskunusablecie->hide();

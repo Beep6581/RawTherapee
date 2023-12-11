@@ -3331,6 +3331,7 @@ TP_LOCALLAB_PDEFRAME_TOOLTIP;PDE IPOL algorithm adapted for Rawtherapee : gives 
 TP_LOCALLAB_PREVHIDE;Hide additional settings
 TP_LOCALLAB_PREVIEW;Preview ΔE
 TP_LOCALLAB_PREVSHOW;Show additional settings
+TP_LOCALLAB_PRIMILLFRAME;Primaries & Illuminant
 TP_LOCALLAB_PROXI;ΔE decay
 TP_LOCALLAB_QUAAGRES;Aggressive
 TP_LOCALLAB_QUACONSER;Conservative
@@ -3465,7 +3466,7 @@ TP_LOCALLAB_SIGMOIDNORMCIE_TOOLTIP;Reconstruct luminance so that the mean and va
 TP_LOCALLAB_SIGMOIDNORMCIEBLEND_TOOLTIP;Blend acts on the final aspect of the image, contrast and luminance : ratio between original and output image.
 TP_LOCALLAB_SIGMOIDQJCOMPRCIE_TOOLTIP;When the comboxbox selection'Uses Black Ev and White Ev' is 'Sigmoid and Log encoding Q' or 'Log encoding instead of Sigmoid' checked. This algorithm compress the data above the threshold slider value. This last value stands for brightness (Q) should be a near the possible value 'Compression treshold' (calculate when 'Auto threshold" checked, often > 1).
 TP_LOCALLAB_SIGSLOPJCIE;Slope
-TP_LOCALLAB_SIGTRCCIE;TRC & Primaries
+TP_LOCALLAB_SIGTRCCIE;Pre Ciecam
 TP_LOCALLAB_SIGBLACKSSCIE;Blacks distribution
 TP_LOCALLAB_SIGWHITESCIE;Whites distribution
 TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP;Allows you, in Automatic, when the dynamic range of the image is high, to change the distribution of lights in whites and deep blacks.\nCan be used with Log encoding or Sigmoid with Black Ev and White Ev enabled.\n\nThe algorithm does not change the basic data, but acts on the components necessary to calculate the Dynamic range, Black Ev, White Ev and the Gray point.
@@ -3536,6 +3537,7 @@ TP_LOCALLAB_TRANSIT_TOOLTIP;Adjust smoothness of transition between affected and
 TP_LOCALLAB_TRANSMISSIONGAIN;Transmission gain
 TP_LOCALLAB_TRANSMISSIONMAP;Transmission map
 TP_LOCALLAB_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbscissa: transmission from negative values (min), mean, and positive values (max).\nOrdinate: amplification or reduction.\nYou can adjust this curve to change the Transmission and reduce artifacts.
+TP_LOCALLAB_TRCFRAME;Tone Response Curve
 TP_LOCALLAB_USEMASK;Laplacian
 TP_LOCALLAB_VART;Variance (contrast)
 TP_LOCALLAB_VIBRANCE;Vibrance & Warm/Cool
