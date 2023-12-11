@@ -2556,7 +2556,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     bool islogjz = params->locallab.spots.at(sp).forcebw;
     bool issigjz = params->locallab.spots.at(sp).sigjz;
     bool issigq = params->locallab.spots.at(sp).sigq;
-    bool islogq = params->locallab.spots.at(sp).logcie;
+ //   bool islogq = params->locallab.spots.at(sp).logcie;
    // bool istrc = params->locallab.spots.at(sp).trccie;
     bool issig = true; //params->locallab.spots.at(sp).sigcie;
 
@@ -2616,11 +2616,11 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     }
 
     float th = 1.f;
-    const float at = 1.f - sigmoidth;
-    const float bt = sigmoidth;
+//    const float at = 1.f - sigmoidth;
+//    const float bt = sigmoidth;
 
-    const float ath = sigmoidth - 1.f;
-    const float bth = 1;
+   // const float ath = sigmoidth - 1.f;
+   // const float bth = 1;
     float sila = pow_F(sigmoidlambda, senssig);
     sila = LIM01(sila);
     const float sigm = 3.3f + 7.1f * (1.f - sila); //e^10.4 = 32860 => sigm vary from 3.3 to 10.4
@@ -3069,7 +3069,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     double dynamic_range = std::max(params->locallab.spots.at(sp).whiteEvjz - shadows_range, 0.5);
     const double noise = pow(2., -16.6);//16.6 instead of 16 a little less than others, but we work in double
     const double log2 = xlog(2.);
-    const float log2f = xlogf(2.f);
+  //  const float log2f = xlogf(2.f);
 
     if ((mocam == 0 || mocam == 2)  && call == 0) { //Jz az bz ==> Jz Cz Hz before Ciecam16
         double mini = 1000.;
@@ -3859,7 +3859,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             sumcamq01 = sumcamq * coefq;
 
         }
-
+/*
         float base = 10.f;
         float linbaseor = 10.f;
         float linbase = 10.f;
@@ -3868,8 +3868,11 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         const bool compr = params->locallab.spots.at(sp).comprcie > 0.;
         float comprfactor = params->locallab.spots.at(sp).comprcie;
         float comprth = 0.1 +  params->locallab.spots.at(sp).comprcieth;
+*/ 
         double drref = 8.5; //Dynamic Range standard
+ 
         double drd = ((double) dynamic_range - drref) / drref;
+ /*
         double dratt = (double) dynamic_range / drref;
         comprfactor = 0.4f * comprfactor * (float) dratt;//adapt comprfactor to Dynamic Range
         float newgray = 0.18f;
@@ -3923,7 +3926,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
             return x;
         };
-
+*/
         //prepare Normalize luminance
         float *datain = nullptr;
         float *data = nullptr;
