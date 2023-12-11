@@ -793,6 +793,10 @@ struct local_params {
     float targetgray;
     float blackev;
     float whiteev;
+    float sourcegraycie;
+    float targetgraycie;
+    float blackevjz;
+    float whiteevjz;
     float detail;
     int sensilog;
     int sensicie;
@@ -833,6 +837,7 @@ struct local_params {
     float softrjz;
     bool fftcieMask;
     float comprlo;
+    float comprlocie;
 
 };
 
@@ -1441,6 +1446,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.targetgray = (float) locallab.spots.at(sp).targetGray;
     lp.blackev = (float) locallab.spots.at(sp).blackEv;
     lp.whiteev  = (float) locallab.spots.at(sp).whiteEv;
+    lp.sourcegraycie = (float) locallab.spots.at(sp).sourceGraycie;
+    lp.targetgraycie = (float) locallab.spots.at(sp).targetGraycie;
+    lp.blackevjz = (float) locallab.spots.at(sp).blackEvjz;
+    lp.whiteevjz  = (float) locallab.spots.at(sp).whiteEvjz;
     lp.detail = locallab.spots.at(sp).detail;
     lp.sensilog = locallab.spots.at(sp).sensilog;
     lp.Autogray = locallab.spots.at(sp).Autogray;
@@ -1455,6 +1464,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float contciemask = (float) locallab.spots.at(sp).contcie;
 
     lp.comprlo = locallab.spots.at(sp).comprlog;
+    lp.comprlocie = locallab.spots.at(sp).comprcie;
+
 
     lp.deltaem = locallab.spots.at(sp).deltae;
     lp.scalereti = scaleret;
@@ -2024,21 +2035,39 @@ inline float norm(float r, float g, float b, TMatrix ws)
 void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool multiThread, int bfw, int bfh)
 {
     // BENCHFUN
-    const float gray = 0.01f * lp.sourcegray;
-    const float shadows_range = lp.blackev;
-    const bool comprlog = lp.comprlo  > 0.f;
-    float comprfactorlog = lp.comprlo;
+        float gray = 0.1f;
+        float shadows_range = 0.f;
+        bool comprlog = 0.f;
+        float comprfactorlog = 0.f;
+        float dynamic_range = 1.f;
+        float targray = 0.1f;
+        
+    if(lp.logena) {
+        gray = 0.01f * lp.sourcegray;
+        shadows_range = lp.blackev;
+        comprlog = lp.comprlo  > 0.f;
+        comprfactorlog = lp.comprlo;
+        dynamic_range = max(lp.whiteev - lp.blackev, 0.5f);
+        targray = lp.targetgray;
+    } else if (lp.cieena) {
+        printf("OK2 LOG\n");
+        gray = 0.01f * lp.sourcegraycie;
+        shadows_range = lp.blackevjz;
+        comprlog = lp.comprlocie  > 0.f;
+        comprfactorlog = lp.comprlocie;
+        dynamic_range = max(lp.whiteevjz - lp.blackevjz, 0.5f);
+        targray = lp.targetgraycie;
+    }
     float comprthlog = 1.f;
-    float dynamic_range = max(lp.whiteev - lp.blackev, 0.5f);
     const float noise = pow_F(2.f, -16.f);
     const float log2 = xlogf(2.f);
-    const float base = lp.targetgray > 1 && lp.targetgray < 100 && dynamic_range > 0 ? find_gray(std::abs(lp.blackev) / dynamic_range, 0.01f * lp.targetgray) : 0.f;
+    const float base = targray > 1 && targray < 100 && dynamic_range > 0 ? find_gray(std::abs(shadows_range) / dynamic_range, 0.01f * targray) : 0.f;
     const float linbase = rtengine::max(base, 2.f);//2 to avoid bad behavior
     TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
     float ac = -5.f;//max 4
     float bc = 4.f;
-    if(lp.comprlo < 0.6f) {
-        comprthlog = ac * lp.comprlo + bc;
+    if(comprlog < 0.6f) {
+        comprthlog = ac * comprlog + bc;
     } else {
         comprthlog = 1.f;
     }
@@ -2529,7 +2558,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     bool issigq = params->locallab.spots.at(sp).sigq;
     bool islogq = params->locallab.spots.at(sp).logcie;
    // bool istrc = params->locallab.spots.at(sp).trccie;
-    bool issig = params->locallab.spots.at(sp).sigcie;
+    bool issig = true; //params->locallab.spots.at(sp).sigcie;
 
     //sigmoid J Q variables
     const float sigmoidlambda = params->locallab.spots.at(sp).sigmoidldacie;
@@ -3846,6 +3875,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         float newgray = 0.18f;
 
         if (islogq  || mobwev != 0) {//increase Dyn Range when log encod and sigmoid 
+          //  if(issig && issigq && iscie && !islogq && mobwev == 2) {
             if(issig && issigq && iscie && !islogq && mobwev == 2) {
                 dynamic_range += 0.6;//empirical value
             } else if (islogq && issigq && iscie) {
@@ -4025,7 +4055,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
                     if (ciec) {
                         bool jp = false;
-
+/*
                         if (islogq && issigq && iscie) {//log encoding Q
                             float val =  Qpro *  coefq;
 
@@ -4055,8 +4085,9 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                             sigmoidla(val, th, sigm);
                             Qpro = std::max(Qpro + val / coefq, 0.f);
                         }
-
-                        if (issig && issigq && iscie && !islogq && mobwev != 2) { //sigmoid Q only and black Ev & white Ev
+*/
+                      //  if (issig && issigq && iscie && !islogq && mobwev != 2) { //sigmoid Q only and black Ev & white Ev
+                        if (issig && issigq && iscie && mobwev != 2) { //sigmoid Q only and black Ev & white Ev
                             float val = Qpro * coefq;
 
                             if (mobwev == 1) {
@@ -20027,6 +20058,11 @@ void ImProcFunctions::Lab_Local(
                     int locprim = 1;
                     bool gamcie = params->locallab.spots.at(sp).gamutcie;
                     float rx, ry, gx, gy, bx, by;
+                    if(params->locallab.spots.at(sp).logcie) {
+                        printf("OK LOG CIE\n");
+                        log_encode(tmpImage, lp, multiThread, bfw, bfh);
+                    }
+                    
                     workingtrc(sp, tmpImage, tmpImage, bfw, bfh, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rx, ry, gx, gy, bx, by, dummy, true, false, false, false);
                     workingtrc(sp, tmpImage, tmpImage, bfw, bfh, typ, prof, gamtone, slotone, catx, ill, prim, locprim, rdx, rdy, grx, gry, blx, bly, dummy, false, true, true, gamcie);//with gamut control
                    
