@@ -2387,7 +2387,7 @@ void tone_eqcam(ImProcFunctions *ipf, Imagefloat *rgb, const struct local_params
     params.pivot = 0.f;
     params.bands[2] = lp.midtcie;
     int mid = abs(lp.midtcie);
-    int threshmid = 60;
+    int threshmid = 50;
     if(mid > threshmid) {
         params.bands[1] = sign(lp.midtcie) * (mid - threshmid);
         params.bands[3] = sign(lp.midtcie) * (mid - threshmid);     

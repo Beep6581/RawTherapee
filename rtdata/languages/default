@@ -3155,7 +3155,7 @@ TP_LOCALLAB_LOGAUTO_TOOLTIP;Pressing this button will calculate the dynamic rang
 TP_LOCALLAB_LOGBASE_TOOLTIP;Default = 2.\nValues less than 2 reduce the action of the algorithm making the shadows darker and the highlights brighter.\nWith values greater than 2, the shadows are grayer and the highlights become more washed out.
 TP_LOCALLAB_LOGCATAD_TOOLTIP;Chromatic adaptation allows us to interpret a color according to its spatio-temporal environment.\nUseful when the white balance deviates significantly from the D50 reference.\nAdapts colors to the illuminant of the output device.
 TP_LOCALLAB_LOGCIE;Log encoding
-TP_LOCALLAB_LOGCIE_TOOLTIP;Allows you tu use Black Ev, White Ev, Scene Mean luminance(Yb%) and Viewing Mean luminance(Yb%) for tone-mapping using 'Log encoding Q' in Standard and Advanced modes:\n -Brightness compression\n -Compression threshold\n -Auto threshold.
+TP_LOCALLAB_LOGCIE_TOOLTIP;Allows you tu use Black Ev, White Ev, White and Black distribution, Scene Mean luminance(Yb%) and Viewing Mean luminance(Yb%) for tone-mapping using 'Log encoding' with Brightness compression.
 TP_LOCALLAB_LOGCOLORFL;Colorfulness (M)
 TP_LOCALLAB_LOGCOLORF_TOOLTIP;Perceived amount of hue in relation to gray.\nIndicator that a stimulus appears more or less colored.
 TP_LOCALLAB_LOGCONQL;Contrast (Q)
@@ -3460,7 +3460,7 @@ TP_LOCALLAB_SIGMOIDQJ;Black Ev & White Ev
 TP_LOCALLAB_SIGMOIDSENSI;Adaptability
 TP_LOCALLAB_SIGMOIDTH;Threshold (Gray point)
 TP_LOCALLAB_SIGMOID_TOOLTIP;Allows you to simulate a Tone-mapping appearance using both the 'Jz' and 'Sigmoid' function.\nThree sliders: a) Contrast acts on the shape of the sigmoid curve and consequently on the strength; b) Threshold (Gray point) distributes the action according to the luminance; c)Blend acts on the final aspect of the image, contrast and luminance.
-TP_LOCALLAB_SIGMOIDTRCCIE_TOOLTIP;This 'TRC and Primaries' (simplified Abstract Profile) modifies the tones of the image and also primaries, just before the Ciecam process. The values are changed:\n-Gamma acts mainly on light tones -Slope acts mainly on dark tones.\nYou can choose any pair of 'gamma and slope' (values >1) and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.\n\n\n-Destination primaries (Advanced): which allows you to change the destination primaries to restore or change image color (saturation), the color balance is significantly preserved  when the 'Working Profile' and the 'Destination primaries' are not too different, 'Working Profiles' are not modified.
+TP_LOCALLAB_SIGMOIDTRCCIE_TOOLTIP;This 'Pre Ciecam' modifies: a)the Dynamic Range using Log encoding; b) the tones of the image and primaries(simplified Abstract Profile) and also midtones, just before the Ciecam process. The values are changed:\n-Gamma acts mainly on light tones -Slope acts mainly on dark tones.\nYou can choose any pair of 'gamma and slope' (values >1) and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.\n\n\n-Destination primaries (Advanced): which allows you to change the destination primaries to restore or change image color (saturation), the color balance is significantly preserved  when the 'Working Profile' and the 'Destination primaries' are not too different, 'Working Profiles' are not modified.\nYou can also finely adapt the primaries and the illuminant
 TP_LOCALLAB_SIGMOID16_TOOLTIP;Allows you to simulate a Tone-mapping appearance using both the'Ciecam' and 'Sigmoid Q' or/and 'Log encoding Q'.\nSigmoid Q: three sliders: a) Contrast acts on the shape of the sigmoid curve and consequently on the strength; b) Threshold (Gray point) distributes the action according to the luminance; c)Adaptability weights the action of the sigmoid by action on the internal exponential function.
 TP_LOCALLAB_SIGMOIDLOGEV_TOOLTIP;If the comboxbox selection 'Black Ev and White Ev' is 'Sigmoid and Log encoding' instead of 'Sigmoid only', the two algorithms 'Log encoding' and 'Sigmoid' are used together.
 TP_LOCALLAB_SIGMOIDNORMCIE;Normalize Luminance
@@ -3539,7 +3539,7 @@ TP_LOCALLAB_TRANSIT_TOOLTIP;Adjust smoothness of transition between affected and
 TP_LOCALLAB_TRANSMISSIONGAIN;Transmission gain
 TP_LOCALLAB_TRANSMISSIONMAP;Transmission map
 TP_LOCALLAB_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbscissa: transmission from negative values (min), mean, and positive values (max).\nOrdinate: amplification or reduction.\nYou can adjust this curve to change the Transmission and reduce artifacts.
-TP_LOCALLAB_TRCFRAME;Tone Response Curve
+TP_LOCALLAB_TRCFRAME;Tone Response Curve & Midtones
 TP_LOCALLAB_USEMASK;Laplacian
 TP_LOCALLAB_VART;Variance (contrast)
 TP_LOCALLAB_VIBRANCE;Vibrance & Warm/Cool
