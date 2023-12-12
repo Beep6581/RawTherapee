@@ -1447,6 +1447,7 @@ HISTORY_MSG_LOCAL_CIE_CAT;Matrix adaptation
 HISTORY_MSG_LOCAL_CIE_GAM;Local CIECAM Gamma
 HISTORY_MSG_LOCAL_CIE_GAMUTCIE;Local CIECAM Gamut
 HISTORY_MSG_LOCAL_CIE_ILL;Local CIECAM TRC Illuminant
+HISTORY_MSG_LOCAL_CIE_MIDT;Local CIECAM Mid Tones
 HISTORY_MSG_LOCAL_CIE_NORM;Local CIECAM Normalize L
 HISTORY_MSG_LOCAL_CIE_PRIM;Local CIECAM TRC Primaries
 HISTORY_MSG_LOCAL_CIE_SIG;Sigmoid
@@ -3280,6 +3281,7 @@ TP_LOCALLAB_MERTHR;Difference
 TP_LOCALLAB_MERTWE;Exclusion
 TP_LOCALLAB_MERTWO;Subtract
 TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts.
+TP_LOCALLAB_MIDTCIE;Mid Tones
 TP_LOCALLAB_MLABEL;Restored data Min=%1 Max=%2
 TP_LOCALLAB_MLABEL_TOOLTIP;The values should be close to Min=0 Max=32768 (log mode) but other values are possible.You can adjust 'Clip restored data (gain)' and 'Offset' to normalize.\nRecovers image data without blending.
 TP_LOCALLAB_MODE_EXPERT;Advanced

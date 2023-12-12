@@ -719,6 +719,7 @@ struct local_params {
     int mullocsh[5];
     int detailsh;
     int whitescie;
+    int midtcie;
     double tePivot;
     float threshol;
     float chromacb;
@@ -1741,7 +1742,9 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.activspot = locallab.spots.at(sp).activ;
     lp.detailsh = locallab.spots.at(sp).detailSH; 
     lp.tePivot = locallab.spots.at(sp).tePivot;
-    lp.whitescie = locallab.spots.at(sp).whitescie; 
+    lp.whitescie = locallab.spots.at(sp).whitescie;
+    lp.midtcie = locallab.spots.at(sp).midtcie; 
+    
     lp.threshol = thresho;
     lp.chromacb = chromcbdl;
     lp.expvib = locallab.spots.at(sp).expvibrance && lp.activspot ;
@@ -2050,7 +2053,6 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
         dynamic_range = max(lp.whiteev - lp.blackev, 0.5f);
         targray = lp.targetgray;
     } else if (lp.cieena) {
-        printf("OK2 LOG\n");
         gray = 0.01f * lp.sourcegraycie;
         shadows_range = lp.blackevjz;
         comprlog = lp.comprlocie  > 0.f;
@@ -2383,10 +2385,14 @@ void tone_eqcam(ImProcFunctions *ipf, Imagefloat *rgb, const struct local_params
     params.enabled = true;
     params.regularization = 0.f;
     params.pivot = 0.f;
-    params.bands[4] = lp.whitescie;
-    if(lp.whitescie < -60) {
-        params.bands[3] = 0.8f * (lp.whitescie + 60);
+    params.bands[2] = lp.midtcie;
+    int mid = abs(lp.midtcie);
+    int threshmid = 60;
+    if(mid > threshmid) {
+        params.bands[1] = sign(lp.midtcie) * (mid - threshmid);
+        params.bands[3] = sign(lp.midtcie) * (mid - threshmid);     
     }
+   
     ipf->toneEqualizer(rgb, params, workingProfile, scale, multithread);
 }
 
@@ -20062,12 +20068,14 @@ void ImProcFunctions::Lab_Local(
                     bool gamcie = params->locallab.spots.at(sp).gamutcie;
                     float rx, ry, gx, gy, bx, by;
                     if(params->locallab.spots.at(sp).logcie) {
-                        printf("OK LOG CIE\n");
                         log_encode(tmpImage, lp, multiThread, bfw, bfh);
                     }
                     
                     workingtrc(sp, tmpImage, tmpImage, bfw, bfh, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rx, ry, gx, gy, bx, by, dummy, true, false, false, false);
                     workingtrc(sp, tmpImage, tmpImage, bfw, bfh, typ, prof, gamtone, slotone, catx, ill, prim, locprim, rdx, rdy, grx, gry, blx, bly, dummy, false, true, true, gamcie);//with gamut control
+                    if(lp.midtcie != 0) {
+                        tone_eqcam(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);
+                    }
                    
                     rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 

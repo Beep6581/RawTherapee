@@ -4591,6 +4591,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     comprcieth(6.),
     gamjcie(2.4),
     slopjcie(12.923),
+    midtcie(0),
     grexl(0.1596),
     greyl(0.8404),
     bluxl(0.0366),
@@ -5419,6 +5420,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && comprcieth == other.comprcieth
         && gamjcie == other.gamjcie
         && slopjcie == other.slopjcie
+        && midtcie == other.midtcie
         && redxl == other.redxl
         && redyl == other.redyl
         && grexl == other.grexl
@@ -7347,6 +7349,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->comprcieth, "Locallab", "comprcieth_" + index_str, spot.comprcieth, keyFile);
                     saveToKeyfile(!pedited || spot_edited->gamjcie, "Locallab", "gamjcie_" + index_str, spot.gamjcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->slopjcie, "Locallab", "slopjcie_" + index_str, spot.slopjcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->midtcie, "Locallab", "midtcie_" + index_str, spot.midtcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->redxl, "Locallab", "redxl_" + index_str, spot.redxl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->redyl, "Locallab", "redyl_" + index_str, spot.redyl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->grexl, "Locallab", "grexl_" + index_str, spot.grexl, keyFile);
@@ -9653,6 +9656,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "comprcieth_" + index_str, spot.comprcieth, spotEdited.comprcieth);
                 assignFromKeyfile(keyFile, "Locallab", "gamjcie_" + index_str, spot.gamjcie, spotEdited.gamjcie);
                 assignFromKeyfile(keyFile, "Locallab", "slopjcie_" + index_str, spot.slopjcie, spotEdited.slopjcie);
+                assignFromKeyfile(keyFile, "Locallab", "midtcie_" + index_str, spot.midtcie, spotEdited.midtcie);
                 assignFromKeyfile(keyFile, "Locallab", "grexl_" + index_str, spot.grexl, spotEdited.grexl);
                 assignFromKeyfile(keyFile, "Locallab", "greyl_" + index_str, spot.greyl, spotEdited.greyl);
                 assignFromKeyfile(keyFile, "Locallab", "bluxl_" + index_str, spot.bluxl, spotEdited.bluxl);

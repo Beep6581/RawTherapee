@@ -7557,6 +7557,7 @@ Locallabcie::Locallabcie():
     trccie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGTRCCIE")))),
     gamjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGGAMJCIE"), 0.7, 4., 0.01, 2.4))),
     slopjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGSLOPJCIE"), 0., 100., 0.01, 12.923))),
+    midtcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MIDTCIE"), -100, 100, 1, 0))),
     whitescie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGWHITESCIE"), -100, 100, 1, 0))),
     blackscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGBLACKSSCIE"), -100, 100, 1, 0))),
     willBox(Gtk::manage(new Gtk::Box())),
@@ -7701,6 +7702,7 @@ Locallabcie::Locallabcie():
     EvlocallabbwevMethod = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SIGMET");
     Evlocallabgamjcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GAM");
     Evlocallabslopjcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SLOP");
+    Evlocallabmidtcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_MIDT");
     Evlocallabtrccie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_TRC");
     Evlocallabsigcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SIG");
     Evlocallabillcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_ILL");
@@ -7931,6 +7933,7 @@ Locallabcie::Locallabcie():
 
     trccieBox->pack_start(*gamjcie);
     trccieBox->pack_start(*slopjcie);
+    trccieBox->pack_start(*midtcie);
     trcFrame->add(*trccieBox);
     gamcieBox->pack_start(*trcFrame);
     primillBox->pack_start(*willBox);
@@ -8279,6 +8282,7 @@ Locallabcie::Locallabcie():
     comprcieth->setAdjusterListener(this);
     gamjcie->setAdjusterListener(this);
     slopjcie->setAdjusterListener(this);
+    midtcie->setAdjusterListener(this);
     whitescie->setAdjusterListener(this);
     blackscie->setAdjusterListener(this);
     sigmoidldajzcie->setAdjusterListener(this);
@@ -9158,6 +9162,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         comprcieth->setValue(spot.comprcieth);
         gamjcie->setValue(spot.gamjcie);
         slopjcie->setValue(spot.slopjcie);
+        midtcie->setValue(spot.midtcie);
         whitescie->setValue(spot.whitescie);
         blackscie->setValue(spot.blackscie);
         sigmoidldajzcie->setValue(spot.sigmoidldajzcie);
@@ -9444,6 +9449,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.comprcieth = comprcieth->getValue();
         spot.gamjcie = gamjcie->getValue();
         spot.slopjcie = slopjcie->getValue();
+        spot.midtcie = midtcie->getIntValue();
         spot.whitescie = whitescie->getIntValue();
         spot.blackscie = blackscie->getIntValue();
         spot.sigmoidldajzcie = sigmoidldajzcie->getValue();
@@ -11152,6 +11158,7 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         whitescie->setDefault(defSpot.whitescie);
         blackscie->setDefault(defSpot.blackscie);
         slopjcie->setDefault(defSpot.slopjcie);
+        midtcie->setDefault(defSpot.midtcie);
         sigmoidldajzcie->setDefault(defSpot.sigmoidldajzcie);
         sigmoidthjzcie->setDefault(defSpot.sigmoidthjzcie);
         sigmoidbljzcie->setDefault(defSpot.sigmoidbljzcie);
@@ -11656,6 +11663,13 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabslopjcie,
                                        slopjcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == midtcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabmidtcie,
+                                       midtcie->getTextValue() + spName);
             }
         }
 

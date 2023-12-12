@@ -1069,6 +1069,7 @@ public:
         bool comprcieth;
         bool gamjcie;
         bool slopjcie;
+        bool midtcie;
         bool redxl;
         bool redyl;
         bool grexl;

@@ -72,6 +72,7 @@ protected:
     rtengine::ProcEvent EvlocallabbwevMethod;
     rtengine::ProcEvent Evlocallabgamjcie;
     rtengine::ProcEvent Evlocallabslopjcie;
+    rtengine::ProcEvent Evlocallabmidtcie;
     rtengine::ProcEvent Evlocallabtrccie;
     rtengine::ProcEvent Evlocallabsigcie;
     rtengine::ProcEvent Evlocallabillcie;
@@ -1654,6 +1655,7 @@ private:
     Gtk::CheckButton* const trccie;
     Adjuster* const gamjcie;
     Adjuster* const slopjcie;
+    Adjuster* const midtcie;
     Adjuster* const whitescie;
     Adjuster* const blackscie;
     Gtk::Box* willBox;

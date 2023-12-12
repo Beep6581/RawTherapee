@@ -1703,6 +1703,7 @@ struct LocallabParams {
         double comprcieth;
         double gamjcie;
         double slopjcie;
+        int midtcie;
         double grexl;
         double greyl;
         double bluxl;
