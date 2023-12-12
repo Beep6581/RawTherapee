@@ -7584,7 +7584,7 @@ Locallabcie::Locallabcie():
 
     sigmoidjzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGJZFRA")))),
     sigmoidgamFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGGAMFRA")))),
-    sigmoid2Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIG2FRA")))),
+    sigmoid2Frame(Gtk::manage(new Gtk::Frame(M("")))),//TP_LOCALLAB_SIG2FRA
     sigcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGCIE")))),
     sigjz(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGJZFRA")))),
     sigmoidldajzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0., 1.0, 0.01, 0.5))),
