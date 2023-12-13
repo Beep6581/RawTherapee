@@ -8669,6 +8669,8 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         comprcieth->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDQJCOMPRCIE_TOOLTIP"));
         gamjcie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDTRCCIE_TOOLTIP"));
         slopjcie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDTRCCIE_TOOLTIP"));
+        trcFrame->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDTRCCIE_TOOLTIP"));
+        midtcie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDTRCCIE_TOOLTIP"));
         whitescie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP"));
         blackscie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP"));
         normcie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDNORMCIE_TOOLTIP"));
@@ -8742,6 +8744,8 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         comprcieth->set_tooltip_text("");
         gamjcie->set_tooltip_text("");
         slopjcie->set_tooltip_text("");
+        trcFrame->set_tooltip_text("");
+        midtcie->set_tooltip_text("");
         whitescie->set_tooltip_text("");
         blackscie->set_tooltip_text("");
         //modeHBoxbwev->set_tooltip_text("");
