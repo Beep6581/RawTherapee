@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 env:
-  publish_pre_dev_labels: '["lacam16n"]'
+  publish_pre_dev_labels: '["Beep6581:lacam16n"]'
 
 jobs:
   build:
