@@ -9693,6 +9693,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "TargetGraycie_" + index_str, spot.targetGraycie, spotEdited.targetGraycie);
                 assignFromKeyfile(keyFile, "Locallab", "Catadcie_" + index_str, spot.catadcie, spotEdited.catadcie);
                 assignFromKeyfile(keyFile, "Locallab", "Detailcie_" + index_str, spot.detailcie, spotEdited.detailcie);
+                assignFromKeyfile(keyFile, "Locallab", "Surroundcie_" + index_str, spot.surroundcie, spotEdited.surroundcie);
+               
 /*
                 assignFromKeyfile(keyFile, "Locallab", "Colorflzcam_" + index_str, spot.colorflzcam, spotEdited.colorflzcam);
                 assignFromKeyfile(keyFile, "Locallab", "Saturzcam_" + index_str, spot.saturzcam, spotEdited.saturzcam);
