@@ -772,6 +772,7 @@ struct DirPyrDenoiseParams {
     double  chroma;
     double  redchro;
     double  bluechro;
+    bool autoGain;
     double  gamma;
     Glib::ustring dmethod;
     Glib::ustring Lmethod;
