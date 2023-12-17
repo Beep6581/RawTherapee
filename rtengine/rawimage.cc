@@ -492,8 +492,14 @@ int RawImage::loadRaw(bool loadData, unsigned int imageNum, bool closeFile, Prog
 
     shot_select = imageNum;
 
-    libraw.reset(new LibRaw());
+    if (settings->enableLibRaw) {
+        libraw.reset(new LibRaw());
+    }
     int libraw_error = [&]() -> int {
+        if (!settings->enableLibRaw) {
+            return LIBRAW_SUCCESS;
+        }
+
         libraw->imgdata.params.use_camera_wb = 1;
 
         int err = libraw->open_buffer(ifp->data, ifp->size);
@@ -654,7 +660,9 @@ int RawImage::loadRaw(bool loadData, unsigned int imageNum, bool closeFile, Prog
             return libraw_error;
         }
     } else {
-        libraw->recycle();
+        if (libraw) {
+            libraw->recycle();
+        }
     }
 
     if (decoder == Decoder::DCRAW) {

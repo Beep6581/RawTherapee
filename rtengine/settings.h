@@ -51,6 +51,7 @@ public:
     Glib::ustring   flatFieldsPath;         ///< The default directory for flat fields
     Glib::ustring   cameraProfilesPath;     ///< The default directory for camera profiles
     Glib::ustring   lensProfilesPath;       ///< The default directory for lens profiles
+    bool            enableLibRaw;           ///< Use LibRaw to decode raw images.
 
     Glib::ustring   adobe;                  // filename of AdobeRGB1998 profile (default to the bundled one)
     Glib::ustring   prophoto;               // filename of Prophoto     profile (default to the bundled one)
