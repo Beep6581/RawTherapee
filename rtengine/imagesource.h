@@ -177,15 +177,15 @@ public:
         return dirpyrdenoiseExpComp;
     }
     // functions inherited from the InitialImage interface
-    Glib::ustring getFileName () final
+    Glib::ustring getFileName() const final override
     {
         return fileName;
     }
-    cmsHPROFILE getEmbeddedProfile () final
+    cmsHPROFILE getEmbeddedProfile() const final override
     {
         return embProfile;
     }
-    const FramesMetaData* getMetaData () final
+    const FramesMetaData *getMetaData() const final override
     {
         return idata;
     }

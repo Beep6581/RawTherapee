@@ -24,7 +24,6 @@
 
 #include "myfile.h"
 #include <csetjmp>
-#include "dnggainmap.h"
 #include "settings.h"
 
 class DCraw
@@ -170,7 +169,6 @@ protected:
         PanasonicRW2Info(): bpp(0), encoding(0) {}
     };
     PanasonicRW2Info RT_pana_info;
-    std::vector<GainMap> gainMaps;
 
 public:
     struct CanonCR3Data {
@@ -205,12 +203,6 @@ public:
     {
         return (filters != 0 && filters != 9);
     }
-
-    const std::vector<GainMap>& getGainMaps() const {
-        return gainMaps;
-    }
-
-    bool isGainMapSupported() const;
 
     struct CanonLevelsData {
         unsigned cblack[4];

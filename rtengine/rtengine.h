@@ -51,6 +51,7 @@ class LUT;
 using LUTu = LUT<uint32_t>;
 
 class EditDataProvider;
+class GainMap;
 
 namespace rtengine
 {
@@ -158,6 +159,7 @@ public:
     static FramesMetaData* fromFile(const Glib::ustring& fname);
 
     virtual Glib::ustring getFileName() const = 0;
+    virtual std::vector<GainMap> getGainMaps() const = 0;
     virtual void getDimensions(int &w, int &h) const = 0;
 };
 
@@ -192,13 +194,13 @@ class InitialImage
 public:
     /** Returns the file name of the image.
       * @return The file name of the image */
-    virtual Glib::ustring getFileName () = 0;
+    virtual Glib::ustring getFileName() const = 0;
     /** Returns the embedded icc profile of the image.
       * @return The handle of the embedded profile */
-    virtual cmsHPROFILE getEmbeddedProfile () = 0;
+    virtual cmsHPROFILE getEmbeddedProfile() const = 0;
     /** Returns a class providing access to the exif and iptc metadata tags of all frames of the image.
       * @return An instance of the FramesMetaData class */
-    virtual const FramesMetaData* getMetaData () = 0;
+    virtual const FramesMetaData *getMetaData() const = 0;
     /** This is a function used for internal purposes only. */
     virtual ImageSource* getImageSource () = 0;
     /** This class has manual reference counting. You have to call this function each time to make a new reference to an instance. */

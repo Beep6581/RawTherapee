@@ -6958,48 +6958,8 @@ it under the terms of the one of two licenses as you choose:
           break;
         }
       case 51009:			/* OpcodeList2 */
-        {
-            meta_offset = ftell(ifp);
-            const unsigned oldOrder = order;
-            order = 0x4d4d; // always big endian per definition in https://www.adobe.com/content/dam/acom/en/products/photoshop/pdfs/dng_spec_1.4.0.0.pdf chapter 7
-            unsigned ntags = get4(); // read the number of opcodes
-            if (ntags < ifp->size / 12) { // rough check for wrong value (happens for example with DNG files from DJI FC6310)
-                while (ntags-- && !ifp->eof) {
-                    unsigned opcode = get4();
-                    if (opcode == 9 && gainMaps.size() < 4) {
-                        fseek(ifp, 4, SEEK_CUR); // skip 4 bytes as we know that the opcode 4 takes 4 byte
-                        fseek(ifp, 8, SEEK_CUR); // skip 8 bytes as they don't interest us currently
-                        GainMap gainMap;
-                        gainMap.Top = get4();
-                        gainMap.Left = get4();
-                        gainMap.Bottom = get4();
-                        gainMap.Right = get4();
-                        gainMap.Plane = get4();
-                        gainMap.Planes = get4();
-                        gainMap.RowPitch = get4();
-                        gainMap.ColPitch = get4();
-                        gainMap.MapPointsV = get4();
-                        gainMap.MapPointsH = get4();
-                        gainMap.MapSpacingV = getreal(12);
-                        gainMap.MapSpacingH = getreal(12);
-                        gainMap.MapOriginV = getreal(12);
-                        gainMap.MapOriginH = getreal(12);
-                        gainMap.MapPlanes = get4();
-                        const std::size_t n = static_cast<std::size_t>(gainMap.MapPointsV) * static_cast<std::size_t>(gainMap.MapPointsH) * static_cast<std::size_t>(gainMap.MapPlanes);
-                        gainMap.MapGain.reserve(n);
-                        for (std::size_t i = 0; i < n; ++i) {
-                            gainMap.MapGain.push_back(getreal(11));
-                        }
-                        gainMaps.push_back(std::move(gainMap));
-                    } else {
-                        fseek(ifp, 8, SEEK_CUR); // skip 8 bytes as they don't interest us currently
-                        fseek(ifp, get4(), SEEK_CUR);
-                    }
-                }
-            }
-            order = oldOrder;
-            break;
-        }
+        meta_offset = ftell(ifp);
+        break;
       case 64772:			/* Kodak P-series */
 	if (len < 13) break;
 	fseek (ifp, 16, SEEK_CUR);
@@ -11121,70 +11081,6 @@ void CLASS nikon_14bit_load_raw()
             unpack7bytesto4x16_nikon(buf + sp, dest + dp);
     }
     free(buf);
-}
-
-bool CLASS isGainMapSupported() const {
-    if (!(dng_version && isBayer())) {
-        return false;
-    }
-    const auto n = gainMaps.size();
-    if (n != 4) { // we need 4 gainmaps for bayer files
-        if (rtengine::settings->verbose) {
-            std::cout << "GainMap has " << n << " maps, but 4 are needed" << std::endl;
-        }
-        return false;
-    }
-    unsigned int check = 0;
-    bool noOp = true;
-    for (const auto &m : gainMaps) {
-        if (m.MapGain.size() < 1) {
-            if (rtengine::settings->verbose) {
-                std::cout << "GainMap has invalid size of " << m.MapGain.size() << std::endl;
-            }
-            return false;
-        }
-        if (m.MapGain.size() != static_cast<std::size_t>(m.MapPointsV) * static_cast<std::size_t>(m.MapPointsH) * static_cast<std::size_t>(m.MapPlanes)) {
-            if (rtengine::settings->verbose) {
-                std::cout << "GainMap has size of " << m.MapGain.size() << ", but needs " << m.MapPointsV * m.MapPointsH * m.MapPlanes << std::endl;
-            }
-            return false;
-        }
-        if (m.RowPitch != 2 || m.ColPitch != 2) {
-            if (rtengine::settings->verbose) {
-                std::cout << "GainMap needs Row/ColPitch of 2/2, but has " << m.RowPitch << "/" << m.ColPitch << std::endl;
-            }
-            return false;
-        }
-        if (m.Top == 0){
-            if (m.Left == 0) {
-                check += 1;
-            } else if (m.Left == 1) {
-                check += 2;
-            }
-        } else if (m.Top == 1) {
-            if (m.Left == 0) {
-                check += 4;
-            } else if (m.Left == 1) {
-                check += 8;
-            }
-        }
-        for (size_t i = 0; noOp && i < m.MapGain.size(); ++i) {
-            if (m.MapGain[i] != 1.f) { // we have at least one value != 1.f => map is not a nop
-                noOp = false;
-            }
-        }
-    }
-    if (noOp || check != 15) { // all maps are nops or the structure of the combination of 4 maps is not correct
-        if (rtengine::settings->verbose) {
-            if (noOp) {
-                std::cout << "GainMap is a nop" << std::endl;
-            } else {
-                std::cout << "GainMap has unsupported type : " << check << std::endl;
-            }
-        }
-        return false;
-    }
-    return true;
 }
 
 /* RT: Delete from here */

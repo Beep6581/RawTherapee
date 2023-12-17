@@ -22,6 +22,7 @@
 
 #include "options.h"
 
+#include "../rtengine/dnggainmap.h"
 #include "../rtengine/imageformat.h"
 #include "../rtengine/rtengine.h"
 
@@ -116,6 +117,7 @@ public:
     bool getHDR() const override { return isHDR; }
     std::string getImageType() const override { return isPixelShift ? "PS" : isHDR ? "HDR" : "STD"; }
     rtengine::IIOSampleFormat getSampleFormat() const override { return sampleFormat; }
+    std::vector<GainMap> getGainMaps() const override;
     void getDimensions(int &w, int &h) const override
     {
         w = width;

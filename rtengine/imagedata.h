@@ -22,6 +22,7 @@
 #include <memory>
 #include <string>
 
+#include "dnggainmap.h"
 #include "imageio.h"
 #include "metadata.h"
 
@@ -59,6 +60,7 @@ private:
     time_t modTimeStamp;
     bool isPixelShift;
     bool isHDR;
+    std::vector<GainMap> gain_maps_;
     int w_;
     int h_;
 
@@ -88,6 +90,7 @@ public:
     std::string getOrientation() const override;
     Glib::ustring getFileName() const override;
     int getRating() const override;
+    std::vector<GainMap> getGainMaps() const override;
     void getDimensions(int &w, int &h) const override;
 
     void fillBasicTags(Exiv2::ExifData &exif) const;

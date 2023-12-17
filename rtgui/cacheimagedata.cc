@@ -362,3 +362,7 @@ int CacheImageData::save (const Glib::ustring& fname)
     }
 }
 
+std::vector<GainMap> CacheImageData::getGainMaps() const
+{
+    return std::vector<GainMap>();
+}
