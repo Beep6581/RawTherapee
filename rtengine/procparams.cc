@@ -1712,6 +1712,7 @@ DirPyrDenoiseParams::DirPyrDenoiseParams() :
     chroma(15),
     redchro(0),
     bluechro(0),
+    autoGain(true),
     gamma(1.7),
     dmethod("Lab"),
     Lmethod("SLI"),
@@ -1739,6 +1740,7 @@ bool DirPyrDenoiseParams::operator ==(const DirPyrDenoiseParams& other) const
         && chroma == other.chroma
         && redchro == other.redchro
         && bluechro == other.bluechro
+        && autoGain == other.autoGain
         && gamma == other.gamma
         && dmethod == other.dmethod
         && Lmethod == other.Lmethod
@@ -2985,7 +2987,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     avoidrad(0.),
     transitweak(1.0),
     transitgrad(0.0),
-    hishow(false),
+    hishow(options.complexity != 2),
     activ(true),
     blwh(false),
     recurs(false),
@@ -6532,6 +6534,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->dirpyrDenoise.methodmed, "Directional Pyramid Denoising", "MethodMed", dirpyrDenoise.methodmed, keyFile);
         saveToKeyfile(!pedited || pedited->dirpyrDenoise.redchro, "Directional Pyramid Denoising", "Redchro", dirpyrDenoise.redchro, keyFile);
         saveToKeyfile(!pedited || pedited->dirpyrDenoise.bluechro, "Directional Pyramid Denoising", "Bluechro", dirpyrDenoise.bluechro, keyFile);
+        saveToKeyfile(!pedited || pedited->dirpyrDenoise.gain, "Directional Pyramid Denoising", "AutoGain", dirpyrDenoise.autoGain, keyFile);
         saveToKeyfile(!pedited || pedited->dirpyrDenoise.gamma, "Directional Pyramid Denoising", "Gamma", dirpyrDenoise.gamma, keyFile);
         saveToKeyfile(!pedited || pedited->dirpyrDenoise.passes, "Directional Pyramid Denoising", "Passes", dirpyrDenoise.passes, keyFile);
         saveToKeyfile(!pedited || pedited->dirpyrDenoise.lcurve, "Directional Pyramid Denoising", "LCurve", dirpyrDenoise.lcurve, keyFile);
@@ -8611,6 +8614,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
             assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "Redchro", dirpyrDenoise.redchro, pedited->dirpyrDenoise.redchro);
             assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "Bluechro", dirpyrDenoise.bluechro, pedited->dirpyrDenoise.bluechro);
+            assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "AutoGain", dirpyrDenoise.autoGain, pedited->dirpyrDenoise.gain);
             assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "Gamma", dirpyrDenoise.gamma, pedited->dirpyrDenoise.gamma);
             assignFromKeyfile(keyFile, "Directional Pyramid Denoising", "Passes", dirpyrDenoise.passes, pedited->dirpyrDenoise.passes);
         }
