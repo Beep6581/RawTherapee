@@ -1643,7 +1643,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     locallListener->refChanged2(huerefp, chromarefp, lumarefp, fabrefp, params->locallab.selspot);
                     locallListener->minmaxChanged(locallretiminmax, params->locallab.selspot);
                     locallListener->maxcam(maxicamp, autocam, params->locallab.selspot);
-                    if (params->locallab.spots.at(sp).trccie) {
+                    if (params->locallab.spots.at(sp).expprecam) {
                         locallListener->cieChanged(locallcielc,params->locallab.selspot); 
                     }
                 }

@@ -1000,6 +1000,7 @@ public:
         bool visicie;
         bool complexcie;
         bool expcie;
+        bool expprecam;
         bool reparcie;
         bool sensicie;
         bool Autograycie;
@@ -1009,7 +1010,6 @@ public:
         bool jabcie;
         bool comprcieauto;
         bool normcie;
-        bool trccie;
         bool gamutcie;
         bool sigcie;
         bool logcie;

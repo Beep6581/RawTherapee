@@ -1444,6 +1444,7 @@ HISTORY_MSG_ILLUM;CAL - SC - Illuminant
 HISTORY_MSG_LOCAL_CIE_BRICOMP;Local CIECAM Brightness compression
 HISTORY_MSG_LOCAL_CIE_BRICOMPTH;Local CIECAM Brightness compression threshold
 HISTORY_MSG_LOCAL_CIE_CAT;Matrix adaptation
+HISTORY_MSG_LOCAL_CIE_EXPPRECAM;Local CIECAM Pre-Cam
 HISTORY_MSG_LOCAL_CIE_GAM;Local CIECAM Gamma
 HISTORY_MSG_LOCAL_CIE_GAMUTCIE;Local CIECAM Gamut
 HISTORY_MSG_LOCAL_CIE_ILL;Local CIECAM TRC Illuminant
@@ -3328,6 +3329,7 @@ TP_LOCALLAB_ORRETILAP_TOOLTIP;Modifies ΔE prior to any changes made by 'Scope'.
 TP_LOCALLAB_ORRETISTREN_TOOLTIP;Acts on the Laplacian threshold, the greater the action, the more the differences in contrast will be reduced.
 TP_LOCALLAB_PASTELS2;Vibrance
 TP_LOCALLAB_PDE;Contrast Attenuator - Dynamic Range compression
+TP_LOCALLAB_PRECAM_TOOLTIP;This 'Pre-Ciecam' modifies: a)the Dynamic Range using Log encoding; b) the tones of the image and primaries(simplified Abstract Profile) and also midtones, just before the Ciecam process. The values are changed:\n-Gamma acts mainly on light tones -Slope acts mainly on dark tones.\nYou can choose any pair of 'gamma and slope' (values >1) and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.\n\n\n-Destination primaries (Advanced): which allows you to change the destination primaries to restore or change image color (saturation), the color balance is significantly preserved  when the 'Working Profile' and the 'Destination primaries' are not too different, 'Working Profiles' are not modified.\nYou can also finely adapt the primaries and the illuminant
 TP_LOCALLAB_PDEFRA;Contrast Attenuator ƒ
 TP_LOCALLAB_PDEFRAME_TOOLTIP;PDE IPOL algorithm adapted for Rawtherapee : gives different results and requires different settings compared to main-menu 'Exposure'.\nMay be useful for under-exposed or high dynamic range images.
 TP_LOCALLAB_PREVHIDE;Hide additional settings
@@ -3460,7 +3462,6 @@ TP_LOCALLAB_SIGMOIDQJ;Black Ev & White Ev
 TP_LOCALLAB_SIGMOIDSENSI;Adaptability
 TP_LOCALLAB_SIGMOIDTH;Threshold (Gray point)
 TP_LOCALLAB_SIGMOID_TOOLTIP;Allows you to simulate a Tone-mapping appearance using both the 'Jz' and 'Sigmoid' function.\nThree sliders: a) Contrast acts on the shape of the sigmoid curve and consequently on the strength; b) Threshold (Gray point) distributes the action according to the luminance; c)Blend acts on the final aspect of the image, contrast and luminance.
-TP_LOCALLAB_SIGMOIDTRCCIE_TOOLTIP;This 'Pre-Ciecam' modifies: a)the Dynamic Range using Log encoding; b) the tones of the image and primaries(simplified Abstract Profile) and also midtones, just before the Ciecam process. The values are changed:\n-Gamma acts mainly on light tones -Slope acts mainly on dark tones.\nYou can choose any pair of 'gamma and slope' (values >1) and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.\n\n\n-Destination primaries (Advanced): which allows you to change the destination primaries to restore or change image color (saturation), the color balance is significantly preserved  when the 'Working Profile' and the 'Destination primaries' are not too different, 'Working Profiles' are not modified.\nYou can also finely adapt the primaries and the illuminant
 TP_LOCALLAB_SIGMOID16_TOOLTIP;Allows you to simulate a Tone-mapping appearance using both the'Ciecam' and 'Sigmoid Q'.\nSigmoid Q: three sliders: a) Contrast acts on the shape of the sigmoid curve and consequently on the strength; b) Threshold (Gray point) distributes the action according to the luminance; c)Adaptability weights the action of the sigmoid by action on the internal exponential function.
 TP_LOCALLAB_SIGMOIDLOGEV_TOOLTIP;If the comboxbox selection 'Black Ev and White Ev' is 'Sigmoid and Log encoding' instead of 'Sigmoid only', the two algorithms 'Log encoding' and 'Sigmoid' are used together.
 TP_LOCALLAB_SIGMOIDNORMCIE;Normalize Luminance

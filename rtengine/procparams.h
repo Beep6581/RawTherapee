@@ -1627,6 +1627,7 @@ struct LocallabParams {
         //ciecam
         bool visicie;
         bool expcie;
+        bool expprecam;
         int complexcie;
         double reparcie;
         int sensicie;
@@ -1637,7 +1638,6 @@ struct LocallabParams {
         bool jabcie;
         bool comprcieauto;
         bool normcie;
-        bool trccie;
         bool gamutcie;
         bool sigcie;
         bool logcie;

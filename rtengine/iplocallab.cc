@@ -19987,7 +19987,8 @@ void ImProcFunctions::Lab_Local(
                     }
                 }
 
-                if (params->locallab.spots.at(sp).trccie) {
+              //  if (params->locallab.spots.at(sp).trccie) {
+                if (params->locallab.spots.at(sp).expprecam) {
                     Imagefloat *tmpImage = nullptr;
                     tmpImage = new Imagefloat(bfw, bfh);
                     lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);

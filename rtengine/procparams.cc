@@ -4397,6 +4397,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     // ciecam
     visicie(false),
     expcie(false),
+    expprecam(false),
     complexcie(0),
     reparcie(100.),
     sensicie(60),
@@ -4407,7 +4408,6 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     jabcie(true),
     comprcieauto(false),
     normcie(true),
-    trccie(false),
     gamutcie(false),
     sigcie(true),
     logcie(false),
@@ -5344,6 +5344,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         //ciecam
         && visicie == other.visicie
         && expcie == other.expcie
+        && expprecam == other.expprecam
         && complexcie == other.complexcie
         && reparcie == other.reparcie
         && sensicie == other.sensicie
@@ -5354,7 +5355,6 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && jabcie == other.jabcie
         && comprcieauto == other.comprcieauto
         && normcie == other.normcie
-        && trccie == other.trccie
         && gamutcie == other.gamutcie
         && sigcie == other.sigcie
         && logcie == other.logcie
@@ -7273,6 +7273,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 //ciecam
                 if ((!pedited || spot_edited->visicie) && spot.visicie) {
                     saveToKeyfile(!pedited || spot_edited->expcie, "Locallab", "Expcie_" + index_str, spot.expcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->expprecam, "Locallab", "Expprecam_" + index_str, spot.expprecam, keyFile);
                     saveToKeyfile(!pedited || spot_edited->complexcie, "Locallab", "Complexcie_" + index_str, spot.complexcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->reparcie, "Locallab", "Reparcie_" + index_str, spot.reparcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sensicie, "Locallab", "Sensicie_" + index_str, spot.sensicie, keyFile);
@@ -7283,7 +7284,6 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->jabcie, "Locallab", "jabcie_" + index_str, spot.jabcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->comprcieauto, "Locallab", "comprcieauto_" + index_str, spot.comprcieauto, keyFile);
                     saveToKeyfile(!pedited || spot_edited->normcie, "Locallab", "normcie_" + index_str, spot.normcie, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->trccie, "Locallab", "trccie_" + index_str, spot.trccie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->gamutcie, "Locallab", "gamutcie_" + index_str, spot.gamutcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sigcie, "Locallab", "sigcie_" + index_str, spot.sigcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->logcie, "Locallab", "logcie_" + index_str, spot.logcie, keyFile);
@@ -9571,6 +9571,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 if (spot.visicie) {
                     spotEdited.visicie = true;
                 }
+                assignFromKeyfile(keyFile, "Locallab", "Expprecam_" + index_str, spot.expprecam, spotEdited.expprecam);
                 assignFromKeyfile(keyFile, "Locallab", "Complexcie_" + index_str, spot.complexcie, spotEdited.complexcie);
                 assignFromKeyfile(keyFile, "Locallab", "Reparcie_" + index_str, spot.reparcie, spotEdited.reparcie);
                 assignFromKeyfile(keyFile, "Locallab", "Sensicie_" + index_str, spot.sensicie, spotEdited.sensicie);
@@ -9581,7 +9582,6 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "jabcie_" + index_str, spot.jabcie, spotEdited.jabcie);
                 assignFromKeyfile(keyFile, "Locallab", "comprcieauto_" + index_str, spot.comprcieauto, spotEdited.comprcieauto);
                 assignFromKeyfile(keyFile, "Locallab", "normcie_" + index_str, spot.normcie, spotEdited.normcie);
-                assignFromKeyfile(keyFile, "Locallab", "trccie_" + index_str, spot.trccie, spotEdited.trccie);
                 assignFromKeyfile(keyFile, "Locallab", "gamutcie_" + index_str, spot.gamutcie, spotEdited.gamutcie);
                 assignFromKeyfile(keyFile, "Locallab", "sigcie_" + index_str, spot.sigcie, spotEdited.sigcie);
                 assignFromKeyfile(keyFile, "Locallab", "logcie_" + index_str, spot.logcie, spotEdited.logcie);

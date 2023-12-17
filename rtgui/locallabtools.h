@@ -73,7 +73,6 @@ protected:
     rtengine::ProcEvent Evlocallabgamjcie;
     rtengine::ProcEvent Evlocallabslopjcie;
     rtengine::ProcEvent Evlocallabmidtcie;
-    rtengine::ProcEvent Evlocallabtrccie;
     rtengine::ProcEvent Evlocallabsigcie;
     rtengine::ProcEvent Evlocallabillcie;
     rtengine::ProcEvent Evlocallabprimcie;
@@ -91,6 +90,7 @@ protected:
     rtengine::ProcEvent Evlocallabbluyl;
     rtengine::ProcEvent EvlocallabGridciexy;
     rtengine::ProcEvent Evlocallabgamutcie;
+    rtengine::ProcEvent Evlocallabexpprecam;
 
     // LocallabTool parameters
     bool needMode;
@@ -1652,7 +1652,7 @@ private:
     ToolParamBlock* const comprBox;
     Adjuster* const comprcie;
     Adjuster* const comprcieth;
-    Gtk::CheckButton* const trccie;
+    MyExpander* const expprecam;    
     Adjuster* const gamjcie;
     Adjuster* const slopjcie;
     Adjuster* const midtcie;
@@ -1682,7 +1682,6 @@ private:
     Gtk::CheckButton* const gamutcie;
 
     Gtk::Frame* const sigmoidjzFrame;
-    Gtk::Frame* const sigmoidgamFrame;
     Gtk::Frame* const sigmoid2Frame;
     Gtk::CheckButton* const sigcie;
     Gtk::CheckButton* const sigjz;
@@ -1786,7 +1785,7 @@ private:
     ThresholdAdjuster* const csThresholdcie;
     int nextcomprciecount = 0;
    
-    sigc::connection AutograycieConn, primMethodconn, illMethodconn, catMethodconn, forcejzConn, forcebwConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, comprcieautoconn, normcieconn, logcieconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethodConn, fftcieMaskConn, trccieconn, gamutcieconn, sigcieconn;
+    sigc::connection AutograycieConn, primMethodconn, illMethodconn, catMethodconn, forcejzConn, forcebwConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, comprcieautoconn, normcieconn, logcieconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethodConn, fftcieMaskConn, gamutcieconn, expprecamconn, sigcieconn;
 public:
     Locallabcie();
     ~Locallabcie();
@@ -1838,7 +1837,6 @@ private:
     void jabcieChanged();
     void comprcieautoChanged();
     void normcieChanged();
-    void trccieChanged();
     void gamutcieChanged();
     void illMethodChanged();
     void primMethodChanged();
@@ -1855,6 +1853,7 @@ private:
     void enacieMaskChanged();
     void toolcieChanged();
     void fftcieMaskChanged();
+    void expprecamChanged();
 
     float nextrx;
     float nextry;
