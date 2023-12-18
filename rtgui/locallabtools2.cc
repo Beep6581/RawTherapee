@@ -7585,7 +7585,7 @@ Locallabcie::Locallabcie():
     gamutcie(Gtk::manage(new Gtk::CheckButton(M("TP_ICM_GAMUT")))),
 
     sigmoidjzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGJZFRA")))),
-    sigmoid2Frame(Gtk::manage(new Gtk::Frame(M("")))),//TP_LOCALLAB_SIG2FRA
+    sigmoid2Frame(Gtk::manage(new Gtk::Frame(M("")))),
     sigcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGCIE")))),
     sigjz(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGJZFRA")))),
     sigmoidldajzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0., 1.0, 0.01, 0.5))),
@@ -7751,7 +7751,6 @@ Locallabcie::Locallabcie():
     modecie->append(M("TP_LOCALLAB_CIEMODE_TM"));
     modecie->append(M("TP_LOCALLAB_CIEMODE_WAV"));
     modecie->append(M("TP_LOCALLAB_CIEMODE_DR"));
-//    modecie->append (M ("TP_LOCALLAB_CIEMODE_LOG"));
     modecie->set_active(0);
     modeHBoxcie->pack_start(*modecie);
     modecieconn = modecie->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::modecieChanged));
@@ -7876,14 +7875,6 @@ Locallabcie::Locallabcie():
     primCoordGridl->attach_next_to(*bluxl, *grexl, Gtk::PositionType::POS_BOTTOM, 1, 1);
     primCoordGridl->attach_next_to(*bluyl, *bluxl, Gtk::PositionType::POS_RIGHT, 1, 1);
 
-/*
-    redBox->pack_start(*redxl, Gtk::PACK_EXPAND_WIDGET);
-    redBox->pack_start(*redyl, Gtk::PACK_EXPAND_WIDGET);
-    redBox->pack_start(*grexl, Gtk::PACK_EXPAND_WIDGET);
-    redBox->pack_start(*greyl, Gtk::PACK_EXPAND_WIDGET);
-    redBox->pack_start(*bluxl, Gtk::PACK_EXPAND_WIDGET);
-    redBox->pack_start(*bluyl, Gtk::PACK_EXPAND_WIDGET);
-*/
     redBox->pack_start(*primCoordGridl, Gtk::PACK_EXPAND_WIDGET);
    
     redlFrame->add(*redBox);
@@ -7918,26 +7909,18 @@ Locallabcie::Locallabcie():
     ToolParamBlock* const signormBox = Gtk::manage(new ToolParamBlock());
     ToolParamBlock* const sigfraBox = Gtk::manage(new ToolParamBlock());
 
-    // Gtk::Separator* const separatorsig = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
- //   Gtk::Separator* const separatorsig2 = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     modeHBoxbwev->set_spacing(2);
-    //modeHBoxcam->set_tooltip_markup (M ("TP_LOCALLAB_CAMMODE_TOOLTIP"));
     ToolParamBlock* const gamcieBox = Gtk::manage(new ToolParamBlock());
     Gtk::Label* modeLabelbwev = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_SIGMOIDQJ") + ":"));
     modeHBoxbwev->pack_start(*modeLabelbwev, Gtk::PACK_SHRINK);
 
     bwevMethod->append(M("TP_LOCALLAB_BWEVNONE"));
     bwevMethod->append(M("TP_LOCALLAB_BWEVSIG"));
-   // bwevMethod->append(M("TP_LOCALLAB_BWEVSIGLOG"));
     bwevMethod->set_active(0);
     bwevMethodConn = bwevMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::bwevMethodChanged));
     modeHBoxbwev->pack_start(*bwevMethod);
 
     comprBox->pack_start(*comprcie);
-   // comprBox->pack_start(*comprcieth);
-   // autocomprHBox->pack_start(*comprcieauto);
-   // autocomprHBox->pack_end(*Gtk::manage(new Gtk::Label("  ")));
-   // comprBox->pack_start(*autocomprHBox);
     logcieFrame->add(*comprBox);
     gamcieBox->pack_start(*logcieFrame);
 
@@ -7969,16 +7952,7 @@ Locallabcie::Locallabcie():
     sigfraBox->pack_start(*modeHBoxbwev);
     sigmoid2Frame->add(*sigfraBox);
     sigBox->pack_start(*sigmoid2Frame);
-    /*
-    comprBox->pack_start(*comprcie);
-    comprBox->pack_start(*comprcieth);
-    autocomprHBox->pack_start(*comprcieauto);
-    autocomprHBox->pack_end(*Gtk::manage(new Gtk::Label("  ")));
-    comprBox->pack_start(*autocomprHBox);
-    logcieFrame->add(*comprBox);
-    sigBox->pack_start(*logcieFrame);
-    */
-  //  sigBox->pack_start(*separatorsig2);
+
     signormBox->pack_start(*sigmoidblcie);
     sigmoidnormFrame->add(*signormBox);
     sigBox->pack_start(*sigmoidnormFrame);
@@ -7995,7 +7969,6 @@ Locallabcie::Locallabcie():
     sigjzBox->pack_start(*forcebw);
     sigmoidjzFrame->add(*sigjzBox);
 
-    //  jzBox->pack_start(*sigmoidjzFrame);
     cieFBox->pack_start(*sigmoidjzFrame);
 
     cieFBox->pack_start(*surHBoxcie);
@@ -8129,17 +8102,7 @@ Locallabcie::Locallabcie():
     jzHHBox->pack_start(*softjzcie);
     HFramejz->add(*jzHHBox);
     jzBox->pack_start(*HFramejz);
-    /*
-    sigmoidjzFrame->set_label_align(0.025, 0.5);
-    ToolParamBlock* const sigjzBox = Gtk::manage(new ToolParamBlock());
-    sigjzBox->pack_start(*sigmoidldajzcie);
-    sigjzBox->pack_start(*sigmoidthjzcie);
-    sigjzBox->pack_start(*sigmoidbljzcie);
-    sigjzBox->pack_start(*jabcie);
-    sigmoidjzFrame->add(*sigjzBox);
 
-    //  jzBox->pack_start(*sigmoidjzFrame);
-    */
     jzshFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const jzshBox = Gtk::manage(new ToolParamBlock());
     jzshBox->pack_start(*hljzcie);
@@ -8243,7 +8206,6 @@ Locallabcie::Locallabcie():
     shapecie2->setRangeDefaultMilestones(0.05, 0.2, 0.58);
 
     std::vector<GradientMilestone> shape2Milestones;
-//    float R, G, B;
 
     for (int i = 0; i < 7; i++) {
         float x = float (i) * (1.0f / 6.f);
@@ -8376,19 +8338,7 @@ Locallabcie::Locallabcie():
     cieP1Box->pack_start(*cie1colorFrame);
     cieP1Box->pack_start(*sigmoidFrame);
 
-//   pack_start(*blackEvjz);
-//   pack_start(*whiteEvjz);
-    /*
-        sigmoidFrame->set_label_align(0.025, 0.5);
-        ToolParamBlock* const sigBox = Gtk::manage(new ToolParamBlock());
 
-        sigBox->pack_start(*sigmoidldacie);
-        sigBox->pack_start(*sigmoidthcie);
-        sigBox->pack_start(*sigmoidblcie);
-        sigBox->pack_start(*comprcieauto);
-        sigmoidFrame->add(*sigBox);
-        cieP1Box->pack_start(*sigmoidFrame);
-        */
     ToolParamBlock* const cieP11Box = Gtk::manage(new ToolParamBlock());
     cieP11Box->pack_start(*cieCurveEditorG);
     cieP11Box->pack_start(*cieCurveEditorG2);
@@ -8677,9 +8627,6 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         blurcie->set_tooltip_text(M("TP_LOCALLAB_BLURRMASK_TOOLTIP"));
         LLmaskcieshapewav->setTooltip(M("TP_LOCALLAB_LMASK_LEVEL_TOOLTIP"));
         maskcieHCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_HHMASK_TOOLTIP"));
-       // modeHBoxbwev->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDLOGEV_TOOLTIP"));
-        //  comprcieauto->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDCOMPRCIEAUTO_TOOLTIP"));
-       // comprcie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDQJCOMPRCIE_TOOLTIP"));
         comprcieth->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDQJCOMPRCIE_TOOLTIP"));
         gamjcie->set_tooltip_text(M("TP_LOCALLAB_PRECAM_TOOLTIP"));
         slopjcie->set_tooltip_text(M("TP_LOCALLAB_PRECAM_TOOLTIP"));
@@ -8754,7 +8701,6 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         blurcie->set_tooltip_text("");
         LLmaskcieshapewav->setTooltip("");
         maskcieHCurveEditorG->set_tooltip_text("");
-        //  comprcieauto->set_tooltip_text("");
         comprcieth->set_tooltip_text("");
         gamjcie->set_tooltip_text("");
         slopjcie->set_tooltip_text("");
@@ -8762,7 +8708,6 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         midtcie->set_tooltip_text("");
         whitescie->set_tooltip_text("");
         blackscie->set_tooltip_text("");
-        //modeHBoxbwev->set_tooltip_text("");
         normcie->set_tooltip_text("");
         sigmoidblcie->set_tooltip_text("");
         catBox->set_tooltip_text("");

@@ -4113,6 +4113,8 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
                             sigmoidla(val, th, sigm);
                             Qpro = std::max(Qpro + val / coefq, 0.f);
+                            Jpro = SQR((10.f * Qpro) / wh);
+
                         }
 
                         if ((cielocalcurve && localcieutili) && mecamcurve == 1) {//curve Q
