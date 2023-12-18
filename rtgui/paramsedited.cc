@@ -297,6 +297,7 @@ void ParamsEdited::set(bool v)
     dirpyrDenoise.chroma       = v;
     dirpyrDenoise.redchro      = v;
     dirpyrDenoise.bluechro     = v;
+    dirpyrDenoise.gain = v;
     dirpyrDenoise.gamma        = v;
     dirpyrDenoise.passes        = v;
     dirpyrDenoise.dmethod      = v;
@@ -1016,6 +1017,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         dirpyrDenoise.chroma = dirpyrDenoise.chroma && p.dirpyrDenoise.chroma == other.dirpyrDenoise.chroma;
         dirpyrDenoise.redchro = dirpyrDenoise.redchro && p.dirpyrDenoise.redchro == other.dirpyrDenoise.redchro;
         dirpyrDenoise.bluechro = dirpyrDenoise.bluechro && p.dirpyrDenoise.bluechro == other.dirpyrDenoise.bluechro;
+        dirpyrDenoise.gain = dirpyrDenoise.gain && p.dirpyrDenoise.autoGain == other.dirpyrDenoise.autoGain;
         dirpyrDenoise.gamma = dirpyrDenoise.gamma && p.dirpyrDenoise.gamma == other.dirpyrDenoise.gamma;
         dirpyrDenoise.passes = dirpyrDenoise.passes && p.dirpyrDenoise.passes == other.dirpyrDenoise.passes;
         dirpyrDenoise.dmethod = dirpyrDenoise.dmethod && p.dirpyrDenoise.dmethod == other.dirpyrDenoise.dmethod;
@@ -3150,6 +3152,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (dirpyrDenoise.bluechro) {
         toEdit.dirpyrDenoise.bluechro = dontforceSet && options.baBehav[ADDSET_DIRPYRDN_CHROMABLUE] ? toEdit.dirpyrDenoise.bluechro + mods.dirpyrDenoise.bluechro : mods.dirpyrDenoise.bluechro;
+    }
+
+    if (dirpyrDenoise.gain) {
+        toEdit.dirpyrDenoise.autoGain = mods.dirpyrDenoise.autoGain;
     }
 
     if (dirpyrDenoise.gamma) {

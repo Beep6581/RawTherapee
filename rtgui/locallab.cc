@@ -845,6 +845,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             r->colorde = newSpot->colorde;
             r->colorscope = newSpot->colorscope;
             r->avoidrad = newSpot->avoidrad;
+            r->hishow = newSpot->hishow;
             r->activ = newSpot->activ;
             r->blwh = newSpot->blwh;
             r->recurs = newSpot->recurs;
