@@ -459,7 +459,7 @@ class AutoWBListener
 {
 public:
     virtual ~AutoWBListener() = default;
-    virtual void WBChanged(int met, double temp, double green, double rw, double gw, double bw, float temp0,  float delta, int bia, int dread, float studgood, float minchrom, int kmin, float histmin, float histmax) = 0;
+    virtual void WBChanged(int met, double temp, double green, double rw, double gw, double bw, float temp0,  float delta, int bia, int dread, float studgood, float minchrom, int kmin, float histmin, float histmax, bool isra) = 0;
 };
 
 class FrameCountListener

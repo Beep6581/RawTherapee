@@ -1184,10 +1184,10 @@ inline Gtk::TreeRow WhiteBalance::getActiveMethod ()
     return *(method->get_active());
 }
 
-void WhiteBalance::WBChanged(int met, double temperature, double greenVal, double rw, double gw, double bw, float temp0, float delta, int bia, int dread, float studgood, float minchrom, int kmin, float histmin, float histmax)
+void WhiteBalance::WBChanged(int met, double temperature, double greenVal, double rw, double gw, double bw, float temp0, float delta, int bia, int dread, float studgood, float minchrom, int kmin, float histmin, float histmax, bool isra)
 {
     idle_register.add(
-        [this, met, temperature, greenVal, rw, gw, bw, temp0, delta,  bia, dread, studgood, minchrom, kmin, histmin, histmax]() -> bool
+        [this, met, temperature, greenVal, rw, gw, bw, temp0, delta,  bia, dread, studgood, minchrom, kmin, histmin, histmax, isra]() -> bool
         {
             disableListener();
             temp->setValue(temperature);
@@ -1239,7 +1239,17 @@ void WhiteBalance::WBChanged(int met, double temperature, double greenVal, doubl
                                    Glib::ustring::format(std::fixed, std::setprecision(0), histmin),
                                    Glib::ustring::format(std::fixed, std::setprecision(0), histmax))
             );
-                
+            if(isra) {
+                itcwb_green->set_sensitive(true);
+                tempBias->set_sensitive(true);
+                itcwb_alg->set_sensitive(true);
+                itcwb_prim->set_sensitive(true);
+            } else {
+                itcwb_green->set_sensitive(false);
+                tempBias->set_sensitive(false);
+                itcwb_alg->set_sensitive(false);
+                itcwb_prim->set_sensitive(false);
+           }
             temp->setDefault(temperature);
             green->setDefault(greenVal);
             enableListener();

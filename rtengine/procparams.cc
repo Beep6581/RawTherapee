@@ -8293,7 +8293,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "White Balance", "Enabled", wb.enabled, pedited->wb.enabled);
             assignFromKeyfile(keyFile, "White Balance", "Setting", wb.method, pedited->wb.method);
             if (wb.method == "Auto") {
-                wb.method = "autold";
+                wb.method = "autitcgreen"; //"autold";
             }
             assignFromKeyfile(keyFile, "White Balance", "Temperature", wb.temperature, pedited->wb.temperature);
             assignFromKeyfile(keyFile, "White Balance", "Green", wb.green, pedited->wb.green);
