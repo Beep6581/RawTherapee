@@ -534,7 +534,15 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             }
 
             currWB = ColorTemp(params->wb.temperature, params->wb.green, params->wb.equal, params->wb.method, params->wb.observer);
-
+            int tempnotisraw = 6501;//D65
+            double greennotisraw = 1.;//D65
+            
+            if(!imgsrc->isRAW()) {
+                currWBitc = imgsrc->getWB();//if jpg TIF with another illuminant
+                tempnotisraw = currWBitc.getTemp();
+                greennotisraw = currWBitc.getGreen();
+            }
+            
             int dread = 0;
             int bia = 1;
             float studgood = 1000.f;
@@ -728,9 +736,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                     params->wb.method = "autitcgreen";
 
-                } else { // Itcwb and no raw
-                    params->wb.temperature = 6501.;
-                    params->wb.green = 1.;
+                } else if(params->wb.method == "autitcgreen"  && !imgsrc->isRAW()){ // Itcwb and no raw
+                    params->wb.temperature = tempnotisraw;
+                    params->wb.green = greennotisraw;
                 }
                 float greenitc_low = 1.f;
                 float tempitc_low = 5000.f;
@@ -843,8 +851,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         awbListener->WBChanged(met, params->wb.temperature, params->wb.green, rw, gw, bw, temp0, delta, bia, dread, studgood, minchrom, kmin, minhist, maxhist, true);
                     }
                 } else if (params->wb.method ==  "autitcgreen"  && !imgsrc->isRAW()) {//non raw files
-                    params->wb.temperature = 6501.;
-                    params->wb.green = 1.;
+                    params->wb.temperature = tempnotisraw;
+                    params->wb.green = greennotisraw;
                     currWB = ColorTemp(params->wb.temperature, params->wb.green, params->wb.equal, params->wb.method, params->wb.observer);
 
                     awbListener->WBChanged(met, params->wb.temperature, params->wb.green, rw, gw, bw, -1.f,  -1.f, 1, 1, -1.f, -1.f, 1, -1.f, -1.f, false);//false => hide settings
