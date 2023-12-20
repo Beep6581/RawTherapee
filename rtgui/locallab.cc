@@ -1129,6 +1129,19 @@ void Locallab::denChanged(const std::vector<locallabDenoiseLC> &denlc, int selsp
     
 }
 
+void Locallab::sigChanged(const std::vector<locallabcieSIG> &ciesig, int selspot)
+{
+     cie_sig = ciesig;
+
+    if (selspot < (int) cie_sig.size()) {
+        const double s1 = cie_sig.at(selspot).contsigq;
+        const double s2 = cie_sig.at(selspot).lightsigq;
+        
+        expcie.updatesigloc(s1, s2);
+    }
+     
+}
+
 void Locallab::cieChanged(const std::vector<locallabcieLC> &cielc, int selspot)
 {
     // Saving transmitted min/max data

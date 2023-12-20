@@ -1393,9 +1393,13 @@ private:
                 double shcompr = params.locallab.spots.at(sp).shcompr;
                 double br = params.locallab.spots.at(sp).lightness;
                 double cont = params.locallab.spots.at(sp).contrast;
+                
                 if (lblack < 0. && params.locallab.spots.at(sp).expMethod == "pde" ) {
                     lblack *= 1.5;
                 }
+                float contsig = params.locallab.spots.at(sp).contsigqcie;
+            
+                float lightsig = params.locallab.spots.at(sp).lightsigqcie;
 
                 // Reference parameters computation
                 double huere, chromare, lumare, huerefblu, chromarefblu, lumarefblu, sobelre;
@@ -1489,7 +1493,7 @@ private:
                         LHutili, HHutili, CHutili, HHutilijz, CHutilijz, LHutilijz, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                         huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                         minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
-                        meantme, stdtme, meanretie, stdretie, fab, maxicam, rdx, rdy, grx, gry, blx, bly, ill, 
+                        meantme, stdtme, meanretie, stdretie, fab, maxicam, rdx, rdy, grx, gry, blx, bly, ill, contsig, lightsig,
                         highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46
 );
 

@@ -9511,6 +9511,26 @@ void Locallabcie::updatePrimloc (const float redx, const float redy, const float
    
 }
 
+void Locallabcie::updatesigloc(const float cont_sig, const float light_sig)
+{
+     idle_register.add(
+        [this, cont_sig, light_sig]() -> bool
+        {
+            GThreadLock lock;
+            disableListener();
+            
+                contsigqcie->setValue(cont_sig);
+                lightsigqcie->setValue(light_sig);
+            
+            enableListener();
+            return false;
+        }
+    );
+   
+}
+
+
+
 void Locallabcie::updateiPrimloc (const float r_x, const float r_y, const float g_x, const float g_y, const float b_x, const float b_y, const float w_x, const float w_y)
 {
     nextrx = r_x;

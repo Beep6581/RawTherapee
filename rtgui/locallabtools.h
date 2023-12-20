@@ -1827,6 +1827,7 @@ public:
     void updateAutocam(const float maxicam, const bool autocam);
     void updatePrimloc(const float redx, const float redy, const float grex, const float grey, const float blux, const float bluy);
     void updateiPrimloc(const float r_x, const float r_y, const float g_x, const float g_y, const float b_x, const float b_y, const float w_x, const float w_y);
+    void updatesigloc(const float cont_sig, const float light_sig);
 
 private:
     void enabledChanged() override;

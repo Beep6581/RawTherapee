@@ -1243,6 +1243,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             //std::vector<LocallabListener::locallabRef> locallref;
             std::vector<LocallabListener::locallabRetiMinMax> locallretiminmax;
             std::vector<LocallabListener::locallabcieLC> locallcielc;
+            std::vector<LocallabListener::locallabcieSIG> locallciesig;
             huerefs.resize(params->locallab.spots.size());
             huerefblurs.resize(params->locallab.spots.size());
             chromarefblurs.resize(params->locallab.spots.size());
@@ -1372,7 +1373,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 double shcompr = params->locallab.spots.at(sp).shcompr;
                 double br = params->locallab.spots.at(sp).lightness;
                 double cont = params->locallab.spots.at(sp).contrast;
-           
+                float contsig = params->locallab.spots.at(sp).contsigqcie;
+            
+                float lightsig = params->locallab.spots.at(sp).lightsigqcie;
+          
                 if (black < 0. && params->locallab.spots.at(sp).expMethod == "pde") {
                     black *= 1.5;
                 }
@@ -1534,7 +1538,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               LHutili, HHutili, CHutili, HHutilijz, CHutilijz, LHutilijz, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                               huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
-                              meantm, stdtm, meanreti, stdreti, fab, maxicam, rdx, rdy, grx, gry, blx, bly, ill,
+                              meantm, stdtm, meanreti, stdreti, fab, maxicam, rdx, rdy, grx, gry, blx, bly, ill, contsig, lightsig,
                               highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46);
 
 
@@ -1620,8 +1624,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 loccielc.bluylc = bly;
                 loccielc.wxlc = w_x;
                 loccielc.wylc = w_y;
-                
                 locallcielc.push_back(loccielc);
+
+                LocallabListener::locallabcieSIG locciesig;
+                locciesig.contsigq = contsig;
+                locciesig.lightsigq = lightsig;
+                locallciesig.push_back(locciesig);
+              
                 // Recalculate references after
                 if (params->locallab.spots.at(sp).spotMethod == "exc") {
                     ipf.calc_ref(sp, reserv.get(), reserv.get(), 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huer, chromar, lumar, sobeler, avg, locwavCurveden, locwavdenutili);
@@ -1646,6 +1655,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     if (params->locallab.spots.at(sp).expprecam) {
                         locallListener->cieChanged(locallcielc,params->locallab.selspot); 
                     }
+                    locallListener->sigChanged(locallciesig,params->locallab.selspot);
                 }
                 
             }

@@ -1080,6 +1080,9 @@ void Crop::update(int todo)
             float Lnresi = 0.f;
             float Lhighresi46 = 0.f;
             float Lnresi46 = 0.f;
+            float contsig = params.locallab.spots.at(sp).contsigqcie;
+            
+            float lightsig = params.locallab.spots.at(sp).lightsigqcie;
 /*            huerefp[sp] = huere;
             chromarefp[sp] = chromare;
             lumarefp[sp] = lumare;
@@ -1149,7 +1152,7 @@ void Crop::update(int todo)
                         huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, 
                         parent->previewDeltaE, parent->locallColorMask, parent->locallColorMaskinv, parent->locallExpMask, parent->locallExpMaskinv, parent->locallSHMask, parent->locallSHMaskinv, parent->locallvibMask,  parent->localllcMask, parent->locallsharMask, parent->locallcbMask, parent->locallretiMask, parent->locallsoftMask, parent->localltmMask, parent->locallblMask,
                         parent->localllogMask, parent->locall_Mask, parent->locallcieMask, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
-                        meantme, stdtme, meanretie, stdretie, fab, maxicam,rdx, rdy, grx, gry, blx, bly, ill,
+                        meantme, stdtme, meanretie, stdretie, fab, maxicam,rdx, rdy, grx, gry, blx, bly, ill, contsig, lightsig,
                         highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46);
                         
                         LocallabListener::locallabDenoiseLC denoiselc;
@@ -1262,7 +1265,7 @@ void Crop::update(int todo)
                         LHutili, HHutili, CHutili, HHutilijz, CHutilijz, LHutilijz, cclocalcurve2, localcutili, rgblocalcurve2, localrgbutili, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2,
                         huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                         minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
-                        meantme, stdtme, meanretie, stdretie, fab, maxicam, rdx, rdy, grx, gry, blx, bly, ill,
+                        meantme, stdtme, meanretie, stdretie, fab, maxicam, rdx, rdy, grx, gry, blx, bly, ill, contsig, lightsig,
                         highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46);
             }
             

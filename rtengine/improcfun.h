@@ -194,7 +194,7 @@ enum class BlurType {
 
     void luminanceCurve(LabImage* lold, LabImage* lnew, const LUTf &curve);
     void ciecamloc_02float(const struct local_params& lp, int sp, LabImage* lab, int bfw, int bfh, int call, int sk, const LUTf& cielocalcurve, bool localcieutili, const LUTf& cielocalcurve2, bool localcieutili2, const LUTf& jzlocalcurve, bool localjzutili, const LUTf& czlocalcurve, bool localczutili, const LUTf& czjzlocalcurve, bool localczjzutili, const LocCHCurve& locchCurvejz, const LocHHCurve& lochhCurve, const LocLHCurve& loclhCurve, bool HHcurvejz, bool CHcurvejz, bool LHcurvejz, 
-		const LocwavCurve& locwavCurvejz, bool locwavutilijz, float &maxicam);
+		const LocwavCurve& locwavCurvejz, bool locwavutilijz, float &maxicam, float &comtsig, float &lightsig);
 
     void ciecam_02float(CieImage* ncie, float adap, int pW, int pwb, LabImage* lab, const procparams::ProcParams* params,
                         const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve, const ColorAppearance & customColCurve3,
@@ -364,7 +364,7 @@ enum class BlurType {
                 double& huerefblur, double &chromarefblur, double& lumarefblur, double &hueref, double &chromaref, double &lumaref, double &sobelref, int &lastsav,
                 bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, int llcieMask,
                 float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax,
-                float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab, float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, int &ill,
+                float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab, float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, int &ill, float &contsig, float &lightsig,
                 float &highresi, float &nresi, float &highresi46, float &nresi46, float &Lhighresi, float &Lnresi, float &Lhighresi46, float &Lnresi46);
     
     void tone_eqcam2(ImProcFunctions *ipf, Imagefloat *rgb, int whits, int blacks, const Glib::ustring &workingProfile, double scale, bool multithread);
