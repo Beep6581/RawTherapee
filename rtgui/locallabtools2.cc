@@ -7923,7 +7923,7 @@ Locallabcie::Locallabcie():
 
     bwevMethod->append(M("TP_LOCALLAB_BWEVNONE"));
     bwevMethod->append(M("TP_LOCALLAB_BWEVSIG"));
-    bwevMethod->set_active(0);
+    bwevMethod->set_active(1);
     bwevMethodConn = bwevMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::bwevMethodChanged));
     modeHBoxbwev->pack_start(*bwevMethod);
 
@@ -9870,6 +9870,8 @@ void Locallabcie::sigjzChanged()
 
 void Locallabcie::sigqChanged()
 {
+    contsigqcie->hide();
+    lightsigqcie->hide();
 
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
@@ -10370,6 +10372,8 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 logjzFrame->hide();
                 catadcie->hide();
             }
+            contsigqcie->hide();
+            lightsigqcie->hide();
 
             break;
 
@@ -10488,6 +10492,8 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 exprecovcie->hide();
                 expmaskcie->hide();
             }
+            contsigqcie->hide();
+            lightsigqcie->hide();
 
             break;
 
@@ -10643,6 +10649,8 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 exprecovcie->hide();
                 expmaskcie->hide();
             }
+            contsigqcie->hide();
+            lightsigqcie->hide();
 
     }
 }
@@ -10653,6 +10661,9 @@ void Locallabcie::updatecieGUI()
     expmaskcie->show();
     exprecovcie->show();
 
+    contsigqcie->hide();
+    lightsigqcie->hide();
+    
     if (modecie->get_active_row_number() > 0) {
         sensicie->hide();
         reparcie->hide();
