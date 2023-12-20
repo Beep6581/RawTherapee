@@ -1047,6 +1047,7 @@ public:
         bool lightlcie;
         bool lightjzcie;
         bool lightqcie;
+        bool lightsigqcie;
         bool contlcie;
         bool contjzcie;
         bool adapjzcie;
@@ -1094,6 +1095,7 @@ public:
         bool sigmoidthjzcie;
         bool sigmoidbljzcie;
         bool contqcie;
+        bool contsigqcie;
         bool colorflcie;
 /*
         bool lightlzcam;

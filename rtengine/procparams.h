@@ -1675,6 +1675,7 @@ struct LocallabParams {
         double lightlcie;
         double lightjzcie;
         double lightqcie;
+        double lightsigqcie;
         double contlcie;
         double contjzcie;
         double adapjzcie;
@@ -1729,6 +1730,7 @@ struct LocallabParams {
         double sigmoidthjzcie;
         double sigmoidbljzcie;
         double contqcie;
+        double contsigqcie;
         double colorflcie;
 /*
         double lightlzcam;

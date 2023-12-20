@@ -91,6 +91,8 @@ protected:
     rtengine::ProcEvent EvlocallabGridciexy;
     rtengine::ProcEvent Evlocallabgamutcie;
     rtengine::ProcEvent Evlocallabexpprecam;
+    rtengine::ProcEvent Evlocallablightsigqcie;
+    rtengine::ProcEvent Evlocallabcontsigqcie;
 
     // LocallabTool parameters
     bool needMode;
@@ -1626,6 +1628,8 @@ private:
     Adjuster* const lightqcie;
     Adjuster* const contlcie;
     Adjuster* const contqcie;
+    Adjuster* const lightsigqcie;
+    Adjuster* const contsigqcie;
     Adjuster* const contthrescie;
     Gtk::Frame* const logjzFrame;
     Gtk::CheckButton* const logjz;

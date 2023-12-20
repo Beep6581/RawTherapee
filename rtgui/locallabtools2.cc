@@ -7527,6 +7527,9 @@ Locallabcie::Locallabcie():
     lightqcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGLIGHTQ"), -100., 100., 0.05, 0.))),
     contlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONTL"), -100., 100., 0.5, 0.))),
     contqcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONQL"), -100., 100., 0.5, 0.))),
+    lightsigqcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGL"), -100., 100., 0.5, 0.))),
+    contsigqcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGC"), -100., 100., 0.5, 0.))),
+
     contthrescie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONTHRES"), -1., 1., 0.01, 0.))),
 
     logjzFrame(Gtk::manage(new Gtk::Frame())),
@@ -7719,6 +7722,10 @@ Locallabcie::Locallabcie():
     EvlocallabGridciexy = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_LABGRIDCIE");
     Evlocallabgamutcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GAMUTCIE");
     Evlocallabexpprecam = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_EXPPRECAM");
+    Evlocallablightsigqcie = m->newEvent(AUTOEXP, "");
+    Evlocallabcontsigqcie = m->newEvent(AUTOEXP, "");
+
+
 
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -8232,6 +8239,7 @@ Locallabcie::Locallabcie():
     lightjzcie->setAdjusterListener(this);
 
     lightqcie->setAdjusterListener(this);
+    lightsigqcie->setAdjusterListener(this);
     contlcie->setAdjusterListener(this);
     contjzcie->setAdjusterListener(this);
     adapjzcie->setAdjusterListener(this);
@@ -8266,6 +8274,7 @@ Locallabcie::Locallabcie():
     sigmoidbljzcie->setAdjusterListener(this);
 
     contqcie->setAdjusterListener(this);
+    contsigqcie->setAdjusterListener(this);
     colorflcie->setAdjusterListener(this);
     /*
         lightlzcam->setAdjusterListener(this);
@@ -8319,12 +8328,14 @@ Locallabcie::Locallabcie():
     ToolParamBlock* const cieP1lightBox = Gtk::manage(new ToolParamBlock());
     cieP1lightBox->pack_start(*lightlcie);
     cieP1lightBox->pack_start(*lightqcie);
+    cieP1lightBox->pack_start(*lightsigqcie);
     cie1lightFrame->add(*cieP1lightBox);
     cieP1Box->pack_start(*cie1lightFrame);
     ToolParamBlock* const cieP1contBox = Gtk::manage(new ToolParamBlock());
     cieP1contBox->pack_start(*detailcie);
     cieP1contBox->pack_start(*contlcie);
     cieP1contBox->pack_start(*contqcie);
+    cieP1contBox->pack_start(*contsigqcie);
     cieP1contBox->pack_start(*contthrescie);
     cie1contFrame->add(*cieP1contBox);
     cieP1Box->pack_start(*cie1contFrame);
@@ -9060,6 +9071,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         lightlcie->setValue(spot.lightlcie);
         lightjzcie->setValue(spot.lightjzcie);
         lightqcie->setValue(spot.lightqcie);
+        lightsigqcie->setValue(spot.lightsigqcie);
         contlcie->setValue(spot.contlcie);
         contjzcie->setValue(spot.contjzcie);
         adapjzcie->setValue(spot.adapjzcie);
@@ -9096,6 +9108,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         sigmoidthjzcie->setValue(spot.sigmoidthjzcie);
         sigmoidbljzcie->setValue(spot.sigmoidbljzcie);
         contqcie->setValue(spot.contqcie);
+        contsigqcie->setValue(spot.contsigqcie);
         colorflcie->setValue(spot.colorflcie);
         targabscie->setValue(spot.targabscie);
         targetGraycie->setValue(spot.targetGraycie);
@@ -9347,6 +9360,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.lightlcie = lightlcie->getValue();
         spot.lightjzcie = lightjzcie->getValue();
         spot.lightqcie = lightqcie->getValue();
+        spot.lightsigqcie = lightsigqcie->getValue();
         spot.contlcie = contlcie->getValue();
         spot.contjzcie = contjzcie->getValue();
         spot.adapjzcie = adapjzcie->getValue();
@@ -9383,6 +9397,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.sigmoidthjzcie = sigmoidthjzcie->getValue();
         spot.sigmoidbljzcie = sigmoidbljzcie->getValue();
         spot.contqcie = contqcie->getValue();
+        spot.contsigqcie = contsigqcie->getValue();
         spot.colorflcie = colorflcie->getValue();
         spot.targabscie = targabscie->getValue();
         spot.targetGraycie = targetGraycie->getValue();
@@ -10787,6 +10802,7 @@ void Locallabcie::convertParamToNormal()
     // Disable all listeners
     disableListener();
     contqcie->setValue(defSpot.contqcie);
+    //contsigqcie->setValue(defSpot.contsigqcie);
     colorflcie->setValue(defSpot.colorflcie);
     lightqcie->setValue(defSpot.lightqcie);
     chromlcie->setValue(defSpot.chromlcie);
@@ -10869,6 +10885,7 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         lightlcie->setDefault(defSpot.lightlcie);
         lightjzcie->setDefault(defSpot.lightjzcie);
         lightqcie->setDefault(defSpot.lightqcie);
+        lightsigqcie->setDefault(defSpot.lightsigqcie);
         contlcie->setDefault(defSpot.contlcie);
         contjzcie->setDefault(defSpot.contjzcie);
         adapjzcie->setDefault(defSpot.adapjzcie);
@@ -10904,6 +10921,7 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         sigmoidthjzcie->setDefault(defSpot.sigmoidthjzcie);
         sigmoidbljzcie->setDefault(defSpot.sigmoidbljzcie);
         contqcie->setDefault(defSpot.contqcie);
+        contsigqcie->setDefault(defSpot.contsigqcie);
         colorflcie->setDefault(defSpot.colorflcie);
         targabscie->setDefault(defSpot.targabscie);
         targetGraycie->setDefault(defSpot.targetGraycie);
@@ -11201,6 +11219,13 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             }
         }
 
+        if (a == lightsigqcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallablightsigqcie,
+                                       lightsigqcie->getTextValue() + spName);
+            }
+        }
+
 
         if (a == contlcie) {
             if (listener) {
@@ -11482,6 +11507,13 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabcontqcie,
                                        contqcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == contsigqcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabcontsigqcie,
+                                       contsigqcie->getTextValue() + spName);
             }
         }
 
