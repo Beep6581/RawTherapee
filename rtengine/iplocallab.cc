@@ -2726,16 +2726,12 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         float lightL = 0.f;
         float contQ = 0.f;
         float lightQ = 0.f;
-       // float contsigQ = 0.f;
-       // float lightsigQ = 0.f;
 
         if (iscie) {
             contL = 0.6 * params->locallab.spots.at(sp).contlcie; //0.6 less effect, no need 1.
             lightL = 0.4 * params->locallab.spots.at(sp).lightlcie; //0.4 less effect, no need 1.
             contQ = 0.5 * params->locallab.spots.at(sp).contqcie; //0.5 less effect, no need 1.
             lightQ = 0.4 * params->locallab.spots.at(sp).lightqcie; //0.4 less effect, no need 1.
-          // contsigQ = 0.5 * params->locallab.spots.at(sp).contsigqcie; //0.5 less effect, no need 1.
-          //  lightsigQ = 0.4 * params->locallab.spots.at(sp).lightsigqcie; //0.4 less effect, no need 1.
         } else {
             contL = 0.6 * params->locallab.spots.at(sp).contl; //0.6 less effect, no need 1.
             lightL = 0.4 * params->locallab.spots.at(sp).lightl; //0.4 less effect, no need 1.
@@ -2772,11 +2768,9 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         CAMBrightCurveJ /= 327.68f;
 
         Ciecam02::curveJfloat(lightQ, contQ, thQ, hist16Q, CAMBrightCurveQ); //brightness Q and contrast Q
-       // double KL = params->locallab.spots.at(sp).contlcie;
-       // double LK = params->locallab.spots.at(sp).lightlcie;
         lightsig = -35. * params->locallab.spots.at(sp).sigmoidldacie;
         contsig = 50. * params->locallab.spots.at(sp).sigmoidldacie;
-        Ciecam02::curveJfloat(lightsig, contsig, thQsig, hist16Q, CAMBrightCurveQsig); //brightness Q and contrast Q
+        Ciecam02::curveJfloat(lightsig, contsig, thQsig, hist16Q, CAMBrightCurveQsig); //brightness Q and contrast Q bypass.
     }
 
 

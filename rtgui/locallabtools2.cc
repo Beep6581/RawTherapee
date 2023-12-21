@@ -8337,6 +8337,10 @@ Locallabcie::Locallabcie():
     cieP1contBox->pack_start(*contqcie);
     cieP1contBox->pack_start(*contsigqcie);
     cieP1contBox->pack_start(*contthrescie);
+    
+    contsigqcie->hide();
+    lightsigqcie->hide();
+    
     cie1contFrame->add(*cieP1contBox);
     cieP1Box->pack_start(*cie1contFrame);
     ToolParamBlock* const cieP1colorBox = Gtk::manage(new ToolParamBlock());
