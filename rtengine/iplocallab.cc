@@ -2774,8 +2774,8 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         Ciecam02::curveJfloat(lightQ, contQ, thQ, hist16Q, CAMBrightCurveQ); //brightness Q and contrast Q
        // double KL = params->locallab.spots.at(sp).contlcie;
        // double LK = params->locallab.spots.at(sp).lightlcie;
-        lightsig = -25. * params->locallab.spots.at(sp).sigmoidldacie;
-        contsig = 40. * params->locallab.spots.at(sp).sigmoidldacie;
+        lightsig = -35. * params->locallab.spots.at(sp).sigmoidldacie;
+        contsig = 50. * params->locallab.spots.at(sp).sigmoidldacie;
         Ciecam02::curveJfloat(lightsig, contsig, thQsig, hist16Q, CAMBrightCurveQsig); //brightness Q and contrast Q
     }
 

@@ -9808,6 +9808,9 @@ void Locallabcie::expprecamChanged ()
 
 void Locallabcie::sigcieChanged()
 {
+    contsigqcie->hide();
+    lightsigqcie->hide();
+    
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (sigcie->get_active()) {
@@ -9910,6 +9913,8 @@ void Locallabcie::chjzcieChanged()
 void Locallabcie::modecamChanged()
 {
     const int mode = complexity->get_active_row_number();
+    contsigqcie->hide();
+    lightsigqcie->hide();
 
     if (modecam->get_active_row_number() == 1 || modecam->get_active_row_number() == 2) {
         expjz->show();
@@ -10113,6 +10118,8 @@ void Locallabcie::modecamChanged()
         }
     }
 
+    contsigqcie->hide();
+    lightsigqcie->hide();
 
 
     if (isLocActivated && exp->getEnabled()) {
@@ -10148,6 +10155,8 @@ void Locallabcie::modecieChanged()
                 expmaskcie->show();
             }
         }
+        contsigqcie->hide();
+        lightsigqcie->hide();
 
         if (mode == Simple || mode == Normal) { // Keep widget hidden in Normal and Simple mode
 
