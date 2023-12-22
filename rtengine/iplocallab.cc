@@ -2766,10 +2766,30 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         float thQsig = 0.6f;
         Ciecam02::curveJfloat(lightL, contL, thL, hist16J, CAMBrightCurveJ); //lightness J and contrast J
         CAMBrightCurveJ /= 327.68f;
+        double podcont = 50.;
+        double podcont0 = 50.;
+        double podcont1 = 35.;
+        double ka = -(podcont0 - podcont1) / 0.5;
+        double kb = podcont1 - ka;
 
+        double podlight = 35.;
+        double podlight0 = 35.;
+        double podlight1 = 45.;
+        double kal = -(podlight0 - podlight1) / 0.5;
+        double kbl = podlight1 - kal;
+        
+        double contbase = params->locallab.spots.at(sp).sigmoidldacie;
+        if(contbase <= 0.5)  {
+            podcont = podcont0;
+            podlight = podlight0;
+            
+        } else {
+            podcont = ka * contbase + kb;
+            podlight = kal * contbase + kbl;           
+        }
         Ciecam02::curveJfloat(lightQ, contQ, thQ, hist16Q, CAMBrightCurveQ); //brightness Q and contrast Q
-        lightsig = -35. * params->locallab.spots.at(sp).sigmoidldacie;
-        contsig = 50. * params->locallab.spots.at(sp).sigmoidldacie;
+        lightsig = -podlight * contbase;
+        contsig = podcont * contbase;
         Ciecam02::curveJfloat(lightsig, contsig, thQsig, hist16Q, CAMBrightCurveQsig); //brightness Q and contrast Q bypass.
     }
 
