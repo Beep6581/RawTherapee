@@ -10827,7 +10827,7 @@ void Locallabcie::convertParamToSimple()
     // Disable all listeners
     disableListener();
     sigmoidblcie->setValue(defSpot.sigmoidblcie);
-    sigq->set_active(defSpot.sigq);
+    //sigq->set_active(defSpot.sigq);
     pqremapcam16->setValue(defSpot.pqremapcam16);
     showmaskcieMethod->set_active(0);
     enacieMask->set_active(defSpot.enacieMask);
