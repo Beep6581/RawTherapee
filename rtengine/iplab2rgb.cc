@@ -566,6 +566,11 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             Wx = 1.098500393;
             Wz = 0.355848714;
             xyD = {0.447573, 0.407440, 1.0};
+        } else if(params->locallab.spots.at(sp).illMethod == "iE") {
+            illum = 20;
+            Wx = 1.;
+            Wz = 1.;
+            xyD = {0.333333, 0.333333, 1.0};
         }
         
     }

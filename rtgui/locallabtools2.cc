@@ -7841,6 +7841,7 @@ Locallabcie::Locallabcie():
     illMethod->append(M("TP_ICM_WORKING_ILLU_D65"));
     illMethod->append(M("TP_ICM_WORKING_ILLU_D80"));
     illMethod->append(M("TP_ICM_WORKING_ILLU_STDA"));
+    illMethod->append(M("TP_ICM_WORKING_ILLU_E"));
     
     illMethod->set_active(1);
     illMethodconn = illMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::illMethodChanged));
@@ -8955,6 +8956,8 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             illMethod->set_active(5);
         } else if (spot.illMethod == "stda") {
             illMethod->set_active(6);
+        } else if (spot.illMethod == "iE") {
+            illMethod->set_active(7);
         }
         illMethod->set_sensitive(false);
 
@@ -9296,6 +9299,8 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.illMethod = "d80";
         } else if (illMethod->get_active_row_number() == 6) {
             spot.illMethod = "stda";
+        } else if (illMethod->get_active_row_number() == 7) {
+            spot.illMethod = "iE";
         }
 
 
