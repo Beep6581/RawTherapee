@@ -534,11 +534,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             }
 
             currWB = ColorTemp(params->wb.temperature, params->wb.green, params->wb.equal, params->wb.method, params->wb.observer);
-            int tempnotisraw = 6501;//D65
-            double greennotisraw = 1.;//D65
+            int tempnotisraw = 6501;//D65 with Observer 2° - 6473 with Observer 10°
+            double greennotisraw = 1.;//D65 with Observer 2° - 0.967 with Observer 10°
             
             if(!imgsrc->isRAW()) {
                 currWBitc = imgsrc->getWB();//if jpg TIF with another illuminant
+                currWBitc = currWBitc.convertObserver(params->wb.observer);                
                 tempnotisraw = currWBitc.getTemp();
                 greennotisraw = currWBitc.getGreen();
             }
