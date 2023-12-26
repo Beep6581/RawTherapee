@@ -20070,6 +20070,10 @@ void ImProcFunctions::Lab_Local(
                         prim = 8;
                         ill = 2;
                         typ = 5;                     
+                    } else if (params->locallab.spots.at(sp).primMethod == "jdcmaxstdA") {
+                        prim = 9;
+                        ill = 8;
+                        typ = 5;                     
                     } else if (params->locallab.spots.at(sp).primMethod == "free") {
                         prim = 15;
                         typ = 5;

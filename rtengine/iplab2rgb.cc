@@ -575,7 +575,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
         
     }
 
-    if (prim == 13) {//convert datas area to xy
+    if (prim == 14) {//convert datas area to xy
         float redgraphx =  params->icm.labgridcieALow;
         float redgraphy =  params->icm.labgridcieBLow;
         float blugraphx =  params->icm.labgridcieAHigh;
@@ -835,6 +835,22 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             gry = p[3];
             blx = p[4];
             bly = p[5];
+        } else if (prim == 9) {
+            p[0] = 0.734702;    // JDC max primaries
+            p[1] = 0.265302;
+            p[2] = 0.021908;
+            p[3] = 0.930288;
+            p[4] = 0.120593;
+            p[5] = 0.001583;
+           // illum = toUnderlying(ColorManagementParams::Illuminant::D50);
+            Wx = 1.098500393;
+            Wz = 0.355848714;
+            rdx = p[0];
+            rdy = p[1];
+            grx = p[2];
+            gry = p[3];
+            blx = p[4];
+            bly = p[5];          
         } else if (prim == 10) {
             p[0] = 0.6888;    // Beta primaries
             p[1] = 0.3112;
