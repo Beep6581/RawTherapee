@@ -1760,7 +1760,7 @@ void ICMPanel::wprimChanged()
             grey->setValue(0.930288);
             blux->setValue(0.120593);
             bluy->setValue(0.001583);
-            will->set_active(toUnderlying(ColorManagementParams::Illuminant::D50));
+            will->set_active(toUnderlying(ColorManagementParams::Illuminant::D50));//D50
         } else if (wProfNames->get_active_text() == "BruceRGB") {
             redx->setValue(0.64);
             redy->setValue(0.33);

@@ -999,7 +999,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
                 p[3] = 0.930288;
                 p[4] = 0.120593;
                 p[5] = 0.001583;
-                illum = toUnderlying(ColorManagementParams::Illuminant::D50);
+                illum = toUnderlying(ColorManagementParams::Illuminant::D50);//D50
                 Wx = 0.964295676;
                 Wz = 0.825104603;
 
