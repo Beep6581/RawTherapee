@@ -296,6 +296,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wprim->append(M("TP_ICM_WORKING_PRIM_WID"));
     wprim->append(M("TP_ICM_WORKING_PRIM_AC0"));
     wprim->append(M("TP_ICM_WORKING_PRIM_JDCMAX"));
+    wprim->append(M("TP_ICM_WORKING_PRIM_JDCMAXSTDA"));
     wprim->append(M("TP_ICM_WORKING_PRIM_BRU"));
     wprim->append(M("TP_ICM_WORKING_PRIM_BET"));
     wprim->append(M("TP_ICM_WORKING_PRIM_BST"));
@@ -525,6 +526,8 @@ void ICMPanel::neutral_pressed ()
         wprim->set_active(toUnderlying(ColorManagementParams::Primaries::ACES_P0));
     } else if (wProfNames->get_active_text() == "JDCmax") {
         wprim->set_active(toUnderlying(ColorManagementParams::Primaries::JDC_MAX));
+    } else if (wProfNames->get_active_text() == "JDCmax stdA") {
+        wprim->set_active(toUnderlying(ColorManagementParams::Primaries::JDC_MAXSTDA));
     } else if (wProfNames->get_active_text() == "BruceRGB") {
         wprim->set_active(toUnderlying(ColorManagementParams::Primaries::BRUCE_RGB));
     } else if (wProfNames->get_active_text() == "Beta RGB") {
@@ -1100,6 +1103,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         case ColorManagementParams::Primaries::WIDE_GAMUT:
         case ColorManagementParams::Primaries::ACES_P0:
         case ColorManagementParams::Primaries::JDC_MAX:
+        case ColorManagementParams::Primaries::JDC_MAXSTDA:
         case ColorManagementParams::Primaries::BRUCE_RGB:
         case ColorManagementParams::Primaries::BETA_RGB:
         case ColorManagementParams::Primaries::BEST_RGB: {
@@ -1494,6 +1498,7 @@ void ICMPanel::wtrcinChanged()
         case ColorManagementParams::Primaries::WIDE_GAMUT:
         case ColorManagementParams::Primaries::ACES_P0:
         case ColorManagementParams::Primaries::JDC_MAX:
+        case ColorManagementParams::Primaries::JDC_MAXSTDA:
         case ColorManagementParams::Primaries::BRUCE_RGB:
         case ColorManagementParams::Primaries::BETA_RGB:
         case ColorManagementParams::Primaries::BEST_RGB: {
@@ -1536,6 +1541,7 @@ void ICMPanel::willChanged()
         case ColorManagementParams::Primaries::WIDE_GAMUT:
         case ColorManagementParams::Primaries::ACES_P0:
         case ColorManagementParams::Primaries::JDC_MAX:
+        case ColorManagementParams::Primaries::JDC_MAXSTDA:
         case ColorManagementParams::Primaries::BRUCE_RGB:
         case ColorManagementParams::Primaries::BETA_RGB:
         case ColorManagementParams::Primaries::BEST_RGB: {
@@ -1661,6 +1667,17 @@ void ICMPanel::wprimChanged()
             break;
         }
 
+        case ColorManagementParams::Primaries::JDC_MAXSTDA: {
+            redx->setValue(0.734702);
+            redy->setValue(0.265302);
+            grex->setValue(0.021908);
+            grey->setValue(0.930288);
+            blux->setValue(0.120593);
+            bluy->setValue(0.001583);
+            will->set_active(toUnderlying(ColorManagementParams::Illuminant::STDA));
+            break;
+        }
+
         case ColorManagementParams::Primaries::BRUCE_RGB: {
             redx->setValue(0.64);
             redy->setValue(0.33);
@@ -1761,6 +1778,14 @@ void ICMPanel::wprimChanged()
             blux->setValue(0.120593);
             bluy->setValue(0.001583);
             will->set_active(toUnderlying(ColorManagementParams::Illuminant::D50));//D50
+        } else if (wProfNames->get_active_text() == "JDCmax stdA") {
+            redx->setValue(0.734702);
+            redy->setValue(0.265302);
+            grex->setValue(0.021908);
+            grey->setValue(0.930288);
+            blux->setValue(0.120593);
+            bluy->setValue(0.001583);
+            will->set_active(toUnderlying(ColorManagementParams::Illuminant::STDA));
         } else if (wProfNames->get_active_text() == "BruceRGB") {
             redx->setValue(0.64);
             redy->setValue(0.33);
