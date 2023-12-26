@@ -111,6 +111,7 @@ private:
     rtengine::ProcEvent EvICMLabGridciexy;
     rtengine::ProcEvent EvICMfbw;
     rtengine::ProcEvent EvICMgamut;
+    rtengine::ProcEvent EvICMcat;
     LabGrid *labgridcie;
     IdleRegister idle_register;
 
@@ -126,6 +127,10 @@ private:
     Gtk::Box* wTRCBox;
     Gtk::CheckButton* fbw;
     Gtk::CheckButton* gamut;
+
+    Gtk::Box* wcatBox;
+    Gtk::Label* wcatlab;
+
 
     Gtk::CheckButton* obpc;
     Gtk::RadioButton* inone;
@@ -149,6 +154,9 @@ private:
     sigc::connection willconn;
     MyComboBoxText* wprim;
     sigc::connection wprimconn;
+    MyComboBoxText* wcat;
+    sigc::connection wcatconn;
+    
     std::unique_ptr<PopUpButton> aRendIntent;
     sigc::connection arendintentconn;
 
@@ -199,6 +207,7 @@ public:
     void wtrcinChanged();
     void willChanged();
     void wprimChanged();
+    void wcatChanged();
     void opChanged();
     void oiChanged(int n);
     void aiChanged(int n);

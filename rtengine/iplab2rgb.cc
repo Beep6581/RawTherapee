@@ -722,7 +722,6 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             p[4] = 0.1500;
             p[5] = 0.0600;
             tempv4 = 6504.;
-            //illum = toUnderlying(ColorManagementParams::Illuminant::D65);
             Wx = 0.95045471;
             Wz = 1.08905029;
             rdx = p[0];
@@ -740,7 +739,6 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             p[4] = 0.1500;
             p[5] = 0.0600;
             tempv4 = 6504.;
-            //illum = toUnderlying(ColorManagementParams::Illuminant::D65);
             Wx = 0.95045471;
             Wz = 1.08905029;
             rdx = p[0];
@@ -757,7 +755,6 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             p[3] = 0.8404;
             p[4] = 0.0366;
             p[5] = 0.0001;
-            //illum = toUnderlying(ColorManagementParams::Illuminant::D50);
             Wx = 0.964295676;
             Wz = 0.825104603;
             rdx = p[0];
@@ -775,7 +772,6 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             p[4] = 0.1310;
             p[5] = 0.0460;
             tempv4 = 6504.;
-            //illum = toUnderlying(ColorManagementParams::Illuminant::D65);
             Wx = 0.95045471;
             Wz = 1.08905029;
             rdx = p[0];
@@ -793,7 +789,6 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             p[4] = 0.128;
             p[5] = 0.044;
             tempv4 = 6004.;
-            //illum = toUnderlying(ColorManagementParams::Illuminant::D60);
             Wx = 0.952646075;
             Wz = 1.008825184;
             rdx = p[0];
@@ -810,7 +805,6 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             p[3] = 0.8260;
             p[4] = 0.1570;
             p[5] = 0.0180;
-            //illum = toUnderlying(ColorManagementParams::Illuminant::D50);
             Wx = 0.964295676;
             Wz = 0.825104603;
             rdx = p[0];
@@ -826,7 +820,6 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             p[3] = 0.930288;
             p[4] = 0.120593;
             p[5] = 0.001583;
-           // illum = toUnderlying(ColorManagementParams::Illuminant::D50);
             Wx = 0.964295676;
             Wz = 0.825104603;
             rdx = p[0];
@@ -842,7 +835,6 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             p[3] = 0.930288;
             p[4] = 0.120593;
             p[5] = 0.001583;
-           // illum = toUnderlying(ColorManagementParams::Illuminant::D50);
             Wx = 1.098500393;
             Wz = 0.355848714;
             rdx = p[0];
@@ -858,7 +850,6 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             p[3] = 0.7551;
             p[4] = 0.1265;
             p[5] = 0.0352;
-           // illum = toUnderlying(ColorManagementParams::Illuminant::D50);
             Wx = 0.964295676;
             Wz = 0.825104603;
             rdx = p[0];
@@ -881,7 +872,6 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             p[3] = 0.8404;
             p[4] = 0.0366;
             p[5] = 0.0001;
-         //   illum = toUnderlying(ColorManagementParams::Illuminant::D50);
             Wx = 0.964295676;
             Wz = 0.825104603;
             rdx = p[0];
@@ -1020,12 +1010,12 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
                 p[3] = 0.930288;
                 p[4] = 0.120593;
                 p[5] = 0.001583;
-                illum = toUnderlying(ColorManagementParams::Illuminant::D50);//D50
+                illum = toUnderlying(ColorManagementParams::Illuminant::D50);
                 Wx = 0.964295676;
                 Wz = 0.825104603;
 
             } else if (profile == "JDCmax stdA") {
-                p[0] = 0.734702;    // JDC max primaries
+                p[0] = 0.734702;    // JDC max primaries and stdA
                 p[1] = 0.265302;
                 p[2] = 0.021908;
                 p[3] = 0.930288;

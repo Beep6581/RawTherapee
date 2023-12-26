@@ -65,6 +65,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     EvICMLabGridciexy = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICL_LABGRIDCIEXY");
     EvICMfbw = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_FBW");
     EvICMgamut = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_GAMUT");
+    EvICMcat = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_CAT");
     isBatchMode = lastToneCurve = lastApplyLookTable = lastApplyBaselineExposureOffset = lastApplyHueSatMap = false;
 
     ipDialog = Gtk::manage(new MyFileChooserButton(M("TP_ICM_INPUTDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
@@ -356,7 +357,22 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     redVBox->pack_start(*cielab, Gtk::PACK_SHRINK);
 
     redVBox->pack_start(*labgridcie, Gtk::PACK_EXPAND_WIDGET, 4);
-    
+
+    wcatBox = Gtk::manage(new Gtk::Box());
+    wcatlab = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_CAT") + ":"));
+    wcatBox->pack_start(*wcatlab, Gtk::PACK_SHRINK);
+    wcat = Gtk::manage(new MyComboBoxText());
+    wcatBox->pack_start(*wcat, Gtk::PACK_EXPAND_WIDGET);
+
+    wcat->append(M("TP_ICM_WORKING_CAT_BRAD"));
+    wcat->append(M("TP_ICM_WORKING_CAT_CAT16"));
+    wcat->append(M("TP_ICM_WORKING_CAT_CAT02"));
+    wcat->append(M("TP_ICM_WORKING_CAT_VK"));
+    wcat->append(M("TP_ICM_WORKING_CAT_XYZ"));
+    wcat->set_active(0);
+  //  catMethodconn = catMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::catMethodChanged));
+    redVBox->pack_start(*wcatBox, Gtk::PACK_SHRINK); 
+
     redFrame->add(*redVBox);
 
     wGamma->setAdjusterListener(this);
@@ -480,6 +496,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wtrcconn = wTRC->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wtrcinChanged));
     willconn = will->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::willChanged));
     wprimconn = wprim->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wprimChanged));
+    wcatconn = wcat->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wcatChanged));
 
     fbwconn = fbw->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::fbwChanged));
     gamutconn = gamut->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::gamutChanged));
@@ -852,6 +869,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     wtrcinChanged();
     willChanged();
     wprimChanged();
+    wcatChanged();
 
     if (pp->icm.outputProfile == ColorManagementParams::NoICMString) {
         oProfNames->set_active_text(M("TP_ICM_NOICM"));
@@ -1487,6 +1505,7 @@ void ICMPanel::wtrcinChanged()
         }
     }
     wprimChanged();
+    wcatChanged();
 
     switch (ColorManagementParams::Primaries(wprim->get_active_row_number())) {
         case ColorManagementParams::Primaries::DEFAULT:
@@ -1841,6 +1860,14 @@ void ICMPanel::wprimChanged()
     if (listener) {
         listener->panelChanged(EvICMwprimMethod, wprim->get_active_text());
     }
+}
+
+void ICMPanel::wcatChanged()
+{
+    if (listener) {
+        listener->panelChanged(EvICMcat, wprim->get_active_text());
+    }
+    
 }
 
 void ICMPanel::dcpIlluminantChanged()
