@@ -479,6 +479,7 @@ void ParamsEdited::set(bool v)
     icm.workingTRC = v;
     icm.will = v;
     icm.wprim = v;
+    icm.wcat = v;
     raw.bayersensor.method = v;
     raw.bayersensor.border = v;
     raw.bayersensor.imageNum = v;
@@ -1954,6 +1955,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         icm.workingTRC = icm.workingTRC && p.icm.workingTRC == other.icm.workingTRC;
         icm.will = icm.will && p.icm.will == other.icm.will;
         icm.wprim = icm.wprim && p.icm.wprim == other.icm.wprim;
+        icm.wcat = icm.wcat && p.icm.wcat == other.icm.wcat;
         raw.bayersensor.method = raw.bayersensor.method && p.raw.bayersensor.method == other.raw.bayersensor.method;
         raw.bayersensor.border = raw.bayersensor.border && p.raw.bayersensor.border == other.raw.bayersensor.border;
         raw.bayersensor.imageNum = raw.bayersensor.imageNum && p.raw.bayersensor.imageNum == other.raw.bayersensor.imageNum;
@@ -6759,6 +6761,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (icm.wprim) {
         toEdit.icm.wprim = mods.icm.wprim;
+    }
+
+    if (icm.wcat) {
+        toEdit.icm.wcat = mods.icm.wcat;
     }
 
     if (raw.bayersensor.method) {

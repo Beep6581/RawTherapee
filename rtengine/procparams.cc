@@ -2387,6 +2387,7 @@ ColorManagementParams::ColorManagementParams() :
     workingTRC(WorkingTrc::NONE),
     will(Illuminant::DEFAULT),
     wprim(Primaries::DEFAULT),
+    wcat(Cat::BRAD),
     workingTRCGamma(2.4),//gamma sRGB
     workingTRCSlope(12.92),
     redx(0.7347),
@@ -2426,6 +2427,7 @@ bool ColorManagementParams::operator ==(const ColorManagementParams& other) cons
         && workingTRC == other.workingTRC
         && will == other.will
         && wprim == other.wprim
+        && wcat == other.wcat
         && workingTRCGamma == other.workingTRCGamma
         && workingTRCSlope == other.workingTRCSlope
         && redx == other.redx
@@ -7555,6 +7557,21 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
             icm.wprim,
             keyFile
         );
+        saveToKeyfile(
+            !pedited || pedited->icm.wcat,
+            "Color Management",
+            "Wcat",
+            {
+                {ColorManagementParams::Cat::BRAD, "brad"},
+                {ColorManagementParams::Cat::CAT16, "cat16"},
+                {ColorManagementParams::Cat::CAT02, "cat02"},
+                {ColorManagementParams::Cat::CAT_VK, "cat_vk"},
+                {ColorManagementParams::Cat::CAT_XYZ, "cat_xyz"}
+            },
+            icm.wcat,
+            keyFile
+        );
+        
         saveToKeyfile(!pedited || pedited->icm.workingTRCGamma, "Color Management", "WorkingTRCGamma", icm.workingTRCGamma, keyFile);
         saveToKeyfile(!pedited || pedited->icm.workingTRCSlope, "Color Management", "WorkingTRCSlope", icm.workingTRCSlope, keyFile);
         saveToKeyfile(!pedited || pedited->icm.redx, "Color Management", "Redx", icm.redx, keyFile);
@@ -9969,6 +9986,23 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     pedited->icm.wprim = true;
                 }
             }
+            if (
+                !assignFromKeyfile(
+                    keyFile,
+                    "Color Management",
+                    "Wcat",
+                    {
+                        {"brad", ColorManagementParams::Cat::BRAD},
+                        {"cat16", ColorManagementParams::Cat::CAT16},
+                        {"cat02", ColorManagementParams::Cat::CAT02},
+                        {"cat_vk", ColorManagementParams::Cat::CAT_VK},
+                        {"cat_xyz", ColorManagementParams::Cat::CAT_XYZ}
+                    },
+                    icm.wcat,
+                    pedited->icm.wcat
+                )
+            )
+            
             assignFromKeyfile(keyFile, "Color Management", "WorkingTRCGamma", icm.workingTRCGamma, pedited->icm.workingTRCGamma);
             assignFromKeyfile(keyFile, "Color Management", "WorkingTRCSlope", icm.workingTRCSlope, pedited->icm.workingTRCSlope);
 

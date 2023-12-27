@@ -1637,10 +1637,11 @@ void Crop::update(int todo)
             int ill = 0;
             int locprim = 0;
             bool gamutcontrol = params.icm.gamut;
+            int catc = rtengine::toUnderlying(params.icm.wcat);
             float rdx, rdy, grx, gry, blx, bly = 0.f;
            
             parent->ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rdx, rdy, grx, gry, blx, bly,cmsDummy, true, false, false, false);
-            parent->ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, 0,  illum, prim, locprim, rdx, rdy, grx, gry, blx, bly,cmsDummy, false, true, true, gamutcontrol);
+            parent->ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, catc,  illum, prim, locprim, rdx, rdy, grx, gry, blx, bly,cmsDummy, false, true, true, gamutcontrol);
 
             parent->ipf.rgb2lab(*tmpImage1, *labnCrop, params.icm.workingProfile);
             //labnCrop and provis

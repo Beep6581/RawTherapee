@@ -1993,6 +1993,14 @@ struct ColorManagementParams {
         CUSTOM_GRID
     };
 
+    enum class Cat {
+        BRAD,
+        CAT16,
+        CAT02,
+        CAT_VK,
+        CAT_XYZ
+    };
+
     Glib::ustring inputProfile;
     bool toneCurve;
     bool applyLookTable;
@@ -2004,6 +2012,7 @@ struct ColorManagementParams {
     WorkingTrc workingTRC;
     Illuminant will;
     Primaries wprim;
+    Cat wcat;
     double workingTRCGamma;
     double workingTRCSlope;
     double redx;
