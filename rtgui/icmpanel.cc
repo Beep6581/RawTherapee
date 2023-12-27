@@ -275,7 +275,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
 
     trcProfVBox->pack_start(*wprimBox, Gtk::PACK_EXPAND_WIDGET);
     trcProfVBox->pack_start(*fbw, Gtk::PACK_EXPAND_WIDGET);
-    trcProfVBox->pack_start(*gamut, Gtk::PACK_EXPAND_WIDGET);
+//    trcProfVBox->pack_start(*gamut, Gtk::PACK_EXPAND_WIDGET);
 
     neutral = Gtk::manage (new Gtk::Button (M ("TP_ICM_NEUTRAL")));
     setExpandAlignProperties (neutral, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
@@ -357,6 +357,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     redVBox->pack_start(*cielab, Gtk::PACK_SHRINK);
 
     redVBox->pack_start(*labgridcie, Gtk::PACK_EXPAND_WIDGET, 4);
+    redVBox->pack_start(*gamut, Gtk::PACK_EXPAND_WIDGET);
 
     wcatBox = Gtk::manage(new Gtk::Box());
     wcatlab = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_CAT") + ":"));
@@ -871,6 +872,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     willChanged();
     wprimChanged();
     wcatChanged();
+    gamutChanged();
 
     if (pp->icm.outputProfile == ColorManagementParams::NoICMString) {
         oProfNames->set_active_text(M("TP_ICM_NOICM"));
@@ -991,6 +993,12 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             wprim->set_sensitive(true);
             wcat->set_sensitive(true);
             wcatlab->set_sensitive(true);
+            if (gamut->get_active()) {
+                wcatBox->set_sensitive(true);
+            } else {
+                wcatBox->set_sensitive(false);
+            }
+            
             fbw->set_sensitive(true);
             gamut->set_sensitive(true);
             wprimlab->set_sensitive(true);
@@ -1036,6 +1044,12 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             wprim->set_sensitive(true);
             wcat->set_sensitive(true);
             wcatlab->set_sensitive(true);
+            if (gamut->get_active()) {
+                wcatBox->set_sensitive(true);
+            } else {
+                wcatBox->set_sensitive(false);
+            }
+            
             fbw->set_sensitive(true);
             gamut->set_sensitive(true);
             wprimlab->set_sensitive(true);
@@ -1056,6 +1070,11 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             wprim->set_sensitive(true);
             wcat->set_sensitive(true);
             wcatlab->set_sensitive(true);
+            if (gamut->get_active()) {
+                wcatBox->set_sensitive(true);
+            } else {
+                wcatBox->set_sensitive(false);
+            }
             fbw->set_sensitive(true);
             gamut->set_sensitive(true);
             wprimlab->set_sensitive(true);
@@ -1076,6 +1095,11 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             wprim->set_sensitive(true);
             wcat->set_sensitive(true);
             wcatlab->set_sensitive(true);
+            if (gamut->get_active()) {
+                wcatBox->set_sensitive(true);
+            } else {
+                wcatBox->set_sensitive(false);
+            }
             fbw->set_sensitive(true);
             gamut->set_sensitive(true);
             wprimlab->set_sensitive(true);
@@ -1097,6 +1121,11 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             wprim->set_sensitive(true);
             wcat->set_sensitive(true);
             wcatlab->set_sensitive(true);
+            if (gamut->get_active()) {
+                wcatBox->set_sensitive(true);
+            } else {
+                wcatBox->set_sensitive(false);
+            }
             fbw->set_sensitive(true);
             gamut->set_sensitive(true);
             wprimlab->set_sensitive(true);
@@ -1117,6 +1146,11 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             wprim->set_sensitive(true);
             wcat->set_sensitive(true);
             wcatlab->set_sensitive(true);
+             if (gamut->get_active()) {
+                wcatBox->set_sensitive(true);
+            } else {
+                wcatBox->set_sensitive(false);
+            }
             fbw->set_sensitive(true);
             gamut->set_sensitive(true);
             wprimlab->set_sensitive(true);
@@ -2190,11 +2224,17 @@ void ICMPanel::gamutChanged()
 
         lastgamut = gamut->get_active();
     }
-
+    
+    if (gamut->get_active()) {
+        wcatBox->set_sensitive(true);
+    } else {
+        wcatBox->set_sensitive(false);
+    }
+    
     if (listener) {
         if (gamut->get_inconsistent()) {
             listener->panelChanged(EvICMgamut, M("GENERAL_UNCHANGED"));
-        } else if (fbw->get_active()) {
+        } else if (gamut->get_active()) {
             listener->panelChanged(EvICMgamut, M("GENERAL_ENABLED"));
         } else {
             listener->panelChanged(EvICMgamut, M("GENERAL_DISABLED"));

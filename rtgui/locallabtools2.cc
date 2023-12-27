@@ -7945,8 +7945,8 @@ Locallabcie::Locallabcie():
     primillBox->pack_start(*wprimBox);
     primillBox->pack_start(*redlFrame);
     primillBox->pack_start(*gridFramecie);
-    primillBox->pack_start(*catBox);
     primillBox->pack_start(*gamutcieBox);
+    primillBox->pack_start(*catBox);
     primillFrame->add(*primillBox);    
     gamcieBox->pack_start(*primillFrame);
     
@@ -9790,6 +9790,11 @@ void Locallabcie::normcieChanged()
 
 void Locallabcie::gamutcieChanged()
 {
+    if (gamutcie->get_active()) {    
+        catBox->set_sensitive(true);
+    } else {
+        catBox->set_sensitive(false);
+    }
      if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (gamutcie->get_active()) {

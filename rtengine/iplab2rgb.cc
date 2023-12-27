@@ -1222,8 +1222,8 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
     }
         double wprofpri[9];
 
-        if (gamutcontrol) {
-            //xyz in functiuon primaries and illuminant
+       // if (gamutcontrol) {
+            //xyz in function primaries and illuminant
             // int cat = 0;
             Color::primaries_to_xyz(p, Wx, Wz, wprofpri, cat);
 
@@ -1233,7 +1233,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
                     //xyz in TMatrix format
                 }
             }
-        }
+      // }
 
         //D41  0.377984  0.381229
         //D55  0.332424  0.347426

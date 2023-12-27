@@ -2107,7 +2107,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 cmsHTRANSFORM dummy = nullptr;
                 int ill = 0;
                 bool gamutcontrol = params->icm.gamut;
-                int catc = toUnderlying(params->icm.wcat); 
+                int catc = toUnderlying(params->icm.wcat);
                 int locprim = 0;
                 float rdx, rdy, grx, gry, blx, bly = 0.f;
                 ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0, 0,  rdx, rdy, grx, gry, blx, bly, dummy, true, false, false, false);
