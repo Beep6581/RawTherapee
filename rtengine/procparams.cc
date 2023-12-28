@@ -2398,7 +2398,7 @@ ColorManagementParams::ColorManagementParams() :
     bluy(0.0001),
     preser(0.),
     fbw(false),
-    gamut(false),
+    gamut(true),
     labgridcieALow(0.51763),//Prophoto red = (0.7347+0.1) * 1.81818 - 1
     labgridcieBLow(-0.33582),
     labgridcieAHigh(-0.75163),//Prophoto blue
@@ -4412,7 +4412,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     jabcie(true),
     comprcieauto(false),
     normcie(true),
-    gamutcie(false),
+    gamutcie(true),
     sigcie(true),
     logcie(false),
     logjz(false),

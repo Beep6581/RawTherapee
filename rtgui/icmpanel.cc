@@ -271,7 +271,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     fbw = Gtk::manage(new Gtk::CheckButton((M("TP_ICM_FBW"))));
     fbw->set_active(true);
     gamut = Gtk::manage(new Gtk::CheckButton((M("TP_ICM_GAMUT"))));
-    gamut->set_active(false);
+    gamut->set_active(true);
 
     trcProfVBox->pack_start(*wprimBox, Gtk::PACK_EXPAND_WIDGET);
     trcProfVBox->pack_start(*fbw, Gtk::PACK_EXPAND_WIDGET);
@@ -1039,7 +1039,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         case ColorManagementParams::WorkingTrc::BT709:
             wGamma->setValue(2.222);
             wSlope->setValue(4.5);
-            will->set_sensitive(true);
+            will->set_sensitive(false);
             willulab->set_sensitive(true);
             wprim->set_sensitive(true);
             wcat->set_sensitive(true);
@@ -1065,7 +1065,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         case ColorManagementParams::WorkingTrc::SRGB:
             wGamma->setValue(2.4);
             wSlope->setValue(12.92);
-            will->set_sensitive(true);
+            will->set_sensitive(false);
             willulab->set_sensitive(true);
             wprim->set_sensitive(true);
             wcat->set_sensitive(true);
@@ -1090,7 +1090,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         case ColorManagementParams::WorkingTrc::GAMMA_2_2:
             wGamma->setValue(2.2);
             wSlope->setValue(0.);
-            will->set_sensitive(true);
+            will->set_sensitive(false);
             willulab->set_sensitive(true);
             wprim->set_sensitive(true);
             wcat->set_sensitive(true);
@@ -1116,7 +1116,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         case ColorManagementParams::WorkingTrc::GAMMA_1_8:
             wGamma->setValue(1.8);
             wSlope->setValue(0.);
-            will->set_sensitive(true);
+            will->set_sensitive(false);
             willulab->set_sensitive(true);
             wprim->set_sensitive(true);
             wcat->set_sensitive(true);
@@ -1141,7 +1141,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         case ColorManagementParams::WorkingTrc::LINEAR:
             wGamma->setValue(1.);
             wSlope->setValue(1.);
-            will->set_sensitive(true);
+            will->set_sensitive(false);
             willulab->set_sensitive(true);
             wprim->set_sensitive(true);
             wcat->set_sensitive(true);
@@ -1609,6 +1609,8 @@ void ICMPanel::wtrcinChanged()
 
     if (ColorManagementParams::WorkingTrc(wTRC->get_active_row_number()) == ColorManagementParams::WorkingTrc::NONE) {
         redFrame->hide();
+        will->set_sensitive(false);
+        
     }
 
     if (listener) {
