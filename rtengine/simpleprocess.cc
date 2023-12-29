@@ -1412,6 +1412,7 @@ private:
                 float fab = 1.f;
 				float maxicam = -1000.f;
                 float rdx, rdy, grx, gry, blx, bly = 0.f;
+                float meanx, meany, meanxe, meanye = 0.f;
                 int ill = 2;
 
                 if (params.locallab.spots.at(sp).spotMethod == "exc") {
@@ -1493,7 +1494,7 @@ private:
                         LHutili, HHutili, CHutili, HHutilijz, CHutilijz, LHutilijz, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                         huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                         minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
-                        meantme, stdtme, meanretie, stdretie, fab, maxicam, rdx, rdy, grx, gry, blx, bly, ill, contsig, lightsig,
+                        meantme, stdtme, meanretie, stdretie, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, ill, contsig, lightsig,
                         highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46
 );
 
@@ -1903,8 +1904,9 @@ private:
             int catc = toUnderlying(params.icm.wcat);
             int locprim = 0;
             float rdx, rdy, grx, gry, blx, bly = 0.f;
-            ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rdx, rdy, grx, gry, blx, bly,dummy, true, false, false, false);
-            ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, catc, illum, prim, locprim, rdx, rdy, grx, gry, blx, bly,dummy, false, true, true, gamutcontrol);
+            float meanx, meany, meanxe, meanye = 0.f;
+            ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye,dummy, true, false, false, false);
+            ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, catc, illum, prim, locprim, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, dummy, false, true, true, gamutcontrol);
 
             ipf.rgb2lab(*tmpImage1, *labView, params.icm.workingProfile);
             // labView and provis

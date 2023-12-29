@@ -422,9 +422,52 @@ void ImProcFunctions::preserv(LabImage *nprevl, LabImage *provis, int cw, int ch
         }
 }
 
-void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring &profile, double gampos, double slpos, int cat, int &illum, int prim, int locprim, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, cmsHTRANSFORM &transform, bool normalizeIn, bool normalizeOut, bool keepTransForm, bool gamutcontrol) const
+void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring &profile, double gampos, double slpos, int cat, int &illum, int prim, int locprim, 
+    float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, 
+    cmsHTRANSFORM &transform, bool normalizeIn, bool normalizeOut, bool keepTransForm, bool gamutcontrol) const
 {
     const TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
+    double wb2[3][3];
+            for (int r = 0; r < 3; ++r) {
+                for (int c = 0; c < 3; ++c) {
+                    wb2[r][c] = wprof[r][c];
+                }
+            }
+        array2D<float> xcb(cw, ch);
+        array2D<float> ycb(cw, ch);
+        array2D<float> zcb(cw, ch);
+        array2D<float> Ycb(cw, ch);
+     //   float meanx = 0.f;
+     //   float meany = 0.f;
+#ifdef _OPENMP
+            #pragma omp parallel for reduction(+:meanx, meany) if(multiThread)
+#endif
+
+            for (int y = 0; y < ch ; ++y) {
+                for (int x = 0; x < cw ; ++x) {
+                    const float RR =src->r(y,x);
+                    const float GG = src->g(y,x);
+                    const float BB = src->b(y, x);
+
+                    Color::rgbxyz(RR, GG, BB, xcb[y][x], ycb[y][x], zcb[y][x], wb2);//use sRGB Adobe Rec2020 ACESp0
+                    float X_r = xcb[y][x];
+                    float Y_r = ycb[y][x];
+                    float Z_r = zcb[y][x];
+
+
+                    const float som = X_r + Y_r + Z_r;
+                    xcb[y][x] = X_r / som;
+                    ycb[y][x] = Y_r / som;
+                    Ycb[y][x] = Y_r / 65535.f;
+                    meanx += xcb[y][x];
+                    meany += ycb[y][x];
+                    
+                }
+            }
+            meanx /= (ch*cw);
+            meany /= (ch*cw);
+            printf("meanx=%f meany=%f \n", (double) meanx, (double) meany);
+            
 
     double wprofprim[3][3];//store primaries to XYZ
     //  bool gamutcontrol = params->icm.gamut;
@@ -1328,6 +1371,42 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
 
         transform = hTransform;
     }
+    
+        array2D<float> xce(cw, ch);
+        array2D<float> yce(cw, ch);
+        array2D<float> zce(cw, ch);
+        array2D<float> Yce(cw, ch);
+   //    float meanxe = 0.f;
+   //     float meanye = 0.f;
+#ifdef _OPENMP
+            #pragma omp parallel for reduction(+:meanxe, meanye) if(multiThread)
+#endif
+
+            for (int y = 0; y < ch ; ++y) {
+                for (int x = 0; x < cw ; ++x) {
+                    const float RR = dst->r(y,x);
+                    const float GG = dst->g(y,x);
+                    const float BB = dst->b(y, x);
+
+                    Color::rgbxyz(RR, GG, BB, xce[y][x], yce[y][x], zce[y][x], wb2);//use sRGB Adobe Rec2020 ACESp0
+                    float X_r = xce[y][x];
+                    float Y_r = yce[y][x];
+                    float Z_r = zce[y][x];
+
+
+                    const float som = X_r + Y_r + Z_r;
+                    xce[y][x] = X_r / som;
+                    yce[y][x] = Y_r / som;
+                    Yce[y][x] = Y_r / 65535.f;
+                    meanxe += xce[y][x];
+                    meanye += yce[y][x];
+                    
+                }
+            }
+            meanxe /= (ch*cw);
+            meanye /= (ch*cw);
+            printf("meanxE=%f meanyE=%f \n", (double) meanxe, (double) meanye);
+    
 }
 
 
