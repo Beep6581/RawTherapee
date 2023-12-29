@@ -1263,6 +1263,16 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             }
         }
     }
+    
+        //xyD
+        double  kwhx = 1.;
+        double kwhy = 1.;
+        xyD.x *= kwhx;
+        xyD.y *= kwhy;
+        Wx = xyD.x / xyD.y;
+        Wz = (1. - xyD.x - xyD.y) / xyD.y;
+        
+       // printf("xyDx=%f \n", (double) xyD.x); 
         double wprofpri[9];
 
        // if (gamutcontrol) {

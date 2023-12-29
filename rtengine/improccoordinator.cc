@@ -1628,6 +1628,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 loccielc.bluylc = bly;
                 loccielc.wxlc = w_x;
                 loccielc.wylc = w_y;
+                loccielc.meanxlc = meanx;
+                loccielc.meanylc = meany;
+                loccielc.meanxelc = meanxe;
+                loccielc.meanyelc = meanye;        
                 locallcielc.push_back(loccielc);
 
                 LocallabListener::locallabcieSIG locciesig;

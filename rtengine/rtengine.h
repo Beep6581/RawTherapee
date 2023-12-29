@@ -433,6 +433,10 @@ public:
         double bluylc; 
         double wxlc;
         double wylc;
+        double meanxlc;
+        double meanylc;
+        double meanxelc;
+        double meanyelc;
     };
 
     struct locallabcieSIG {

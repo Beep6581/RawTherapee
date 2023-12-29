@@ -9546,7 +9546,7 @@ void Locallabcie::updatesigloc(const float cont_sig, const float light_sig)
 
 
 
-void Locallabcie::updateiPrimloc (const float r_x, const float r_y, const float g_x, const float g_y, const float b_x, const float b_y, const float w_x, const float w_y)
+void Locallabcie::updateiPrimloc (const float r_x, const float r_y, const float g_x, const float g_y, const float b_x, const float b_y, const float w_x, const float w_y, const float m_x, const float m_y,  const float me_x, const float me_y)
 {
     nextrx = r_x;
     nextry = r_y;

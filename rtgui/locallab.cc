@@ -1157,8 +1157,12 @@ void Locallab::cieChanged(const std::vector<locallabcieLC> &cielc, int selspot)
         const double b2 = cie_lc.at(selspot).bluylc;
         const double w1 = cie_lc.at(selspot).wxlc;
         const double w2 = cie_lc.at(selspot).wylc;
+        const double m1 = cie_lc.at(selspot).meanxlc;
+        const double m2 = cie_lc.at(selspot).meanylc;
+        const double me1 = cie_lc.at(selspot).meanxelc;
+        const double me2 = cie_lc.at(selspot).meanyelc;
 
-        expcie.updateiPrimloc(r1, r2, g1, g2, b1, b2, w1, w2);
+        expcie.updateiPrimloc(r1, r2, g1, g2, b1, b2, w1, w2, m1, m2, me1, me2);
     }
     
 }
