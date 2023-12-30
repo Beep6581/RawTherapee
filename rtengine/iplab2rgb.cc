@@ -1265,10 +1265,13 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
     }
     
         //xyD
-        double  kwhx = 1.;
-        double kwhy = 1.;
-        xyD.x *= kwhx;
-        xyD.y *= kwhy;
+        //meanx, meany
+        double refin = params->locallab.spots.at(sp).refi;
+        double arefi = (xyD.y - meany) / (xyD.x - meanx);
+        double brefi = xyD.y - arefi * xyD.x;
+        double scalrefi = meanx - xyD.x;
+        xyD.x = xyD.x + scalrefi * refin;
+        xyD.y = xyD.x * arefi + brefi;
         Wx = xyD.x / xyD.y;
         Wz = (1. - xyD.x - xyD.y) / xyD.y;
         

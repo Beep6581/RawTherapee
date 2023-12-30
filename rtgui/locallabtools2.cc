@@ -7579,6 +7579,8 @@ Locallabcie::Locallabcie():
     greyl(Gtk::manage(new Adjuster(M("TC_PRIM_GREY"), 0.50, 1.0, 0.0001, 0.8404))),
     bluxl(Gtk::manage(new Adjuster(M("TC_PRIM_BLUX"), -0.1, 0.4, 0.0001, 0.0366))),
     bluyl(Gtk::manage(new Adjuster(M("TC_PRIM_BLUY"), -0.1, 0.49, 0.0001, 0.0001))),
+    refi(Gtk::manage(new Adjuster(M("TC_PRIM_REFI"), 0., 1., 0.0001, 0.))),
+    
     gridFramecie(Gtk::manage(new Gtk::Frame(M("TP_ICM_WORKING_CIEDIAG")))),
     labgridcie(Gtk::manage(new LabGrid(EvlocallabGridciexy, M("TP_ICM_LABGRID_CIEXY"), true, true, false))),
    
@@ -7724,6 +7726,7 @@ Locallabcie::Locallabcie():
     Evlocallabexpprecam = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_EXPPRECAM");
     Evlocallablightsigqcie = m->newEvent(AUTOEXP, "");
     Evlocallabcontsigqcie = m->newEvent(AUTOEXP, "");
+    Evlocallabrefi = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_REFI");
 
 
 
@@ -7842,7 +7845,8 @@ Locallabcie::Locallabcie():
     illMethod->append(M("TP_ICM_WORKING_ILLU_D80"));
     illMethod->append(M("TP_ICM_WORKING_ILLU_STDA"));
     illMethod->append(M("TP_ICM_WORKING_ILLU_E"));
-    
+
+
     illMethod->set_active(1);
     illMethodconn = illMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::illMethodChanged));
     
@@ -7894,6 +7898,7 @@ Locallabcie::Locallabcie():
     greyl->setAdjusterListener(this);
     bluxl->setAdjusterListener(this);
     bluyl->setAdjusterListener(this);
+    refi->setAdjusterListener(this);
     
 
     gridFramecie->set_label_align(0.025, 0.5);
@@ -7942,6 +7947,8 @@ Locallabcie::Locallabcie():
     trcFrame->add(*trccieBox);
     gamcieBox->pack_start(*trcFrame);
     primillBox->pack_start(*willBox);
+    primillBox->pack_start(*refi); 
+    
     primillBox->pack_start(*wprimBox);
     primillBox->pack_start(*redlFrame);
     primillBox->pack_start(*gridFramecie);
@@ -9132,6 +9139,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         bluyl->setValue(spot.bluyl);
         redxl->setValue(spot.redxl);
         redyl->setValue(spot.redyl);
+        refi->setValue(spot.refi);
        
         labgridcie->setParams(spot.labgridcieALow,
                            spot.labgridcieBLow,
@@ -9246,6 +9254,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.greyl =  greyl->getValue();
         spot.bluxl =  bluxl->getValue();
         spot.bluyl =  bluyl->getValue();
+        spot.refi =  refi->getValue();
 
         labgridcie->getParams(spot.labgridcieALow,
                            spot.labgridcieBLow,
@@ -11011,6 +11020,7 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         greyl->setDefault(defSpot.greyl);
         bluxl->setDefault(defSpot.bluxl);
         bluyl->setDefault(defSpot.bluyl);
+        refi->setDefault(defSpot.refi);
         labgridcie->setDefault(defSpot.labgridcieALow,
                             defSpot.labgridcieBLow,
                             defSpot.labgridcieAHigh,
@@ -11541,6 +11551,13 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabbluyl,
                                        bluyl->getTextValue() + spName);
+            }
+        }
+
+        if (a == refi) {
+            if (listener) {
+                listener->panelChanged(Evlocallabrefi,
+                                       refi->getTextValue() + spName);
             }
         }
 

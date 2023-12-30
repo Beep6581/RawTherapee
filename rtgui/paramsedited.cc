@@ -1789,6 +1789,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).redyl = locallab.spots.at(j).redyl && pSpot.redyl == otherSpot.redyl;
                 locallab.spots.at(j).bluxl = locallab.spots.at(j).bluxl && pSpot.bluxl == otherSpot.bluxl;
                 locallab.spots.at(j).bluyl = locallab.spots.at(j).bluyl && pSpot.bluyl == otherSpot.bluyl;
+                locallab.spots.at(j).refi = locallab.spots.at(j).refi && pSpot.refi == otherSpot.refi;
                 locallab.spots.at(j).labgridcieALow = locallab.spots.at(j).labgridcieALow && pSpot.labgridcieALow == otherSpot.labgridcieALow;
                 locallab.spots.at(j).labgridcieBLow = locallab.spots.at(j).labgridcieBLow && pSpot.labgridcieBLow == otherSpot.labgridcieBLow;
                 locallab.spots.at(j).labgridcieAHigh = locallab.spots.at(j).labgridcieAHigh && pSpot.labgridcieAHigh == otherSpot.labgridcieAHigh;
@@ -6174,6 +6175,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).bluyl = mods.locallab.spots.at(i).bluyl;
         }
 
+        if (locallab.spots.at(i).refi) {
+            toEdit.locallab.spots.at(i).refi = mods.locallab.spots.at(i).refi;
+        }
+
         if (locallab.spots.at(i).labgridcieALow) {
             toEdit.locallab.spots.at(i).labgridcieALow = mods.locallab.spots.at(i).labgridcieALow;
         }
@@ -8409,6 +8414,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     greyl(v),
     bluxl(v),
     bluyl(v),
+    refi(v),
     labgridcieALow(v),
     labgridcieBLow(v),
     labgridcieAHigh(v),
@@ -9154,6 +9160,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     greyl = v;
     bluxl = v;
     bluyl = v;
+    refi = v;
     labgridcieALow = v;
     labgridcieBLow  = v;
     labgridcieAHigh= v;

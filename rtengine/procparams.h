@@ -1712,6 +1712,7 @@ struct LocallabParams {
         double bluyl;
         double redxl;
         double redyl;
+        double refi;
         double labgridcieALow;
         double labgridcieBLow;
         double labgridcieAHigh;

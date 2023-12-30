@@ -1078,6 +1078,7 @@ public:
         bool greyl;
         bool bluxl;
         bool bluyl;
+        bool refi;
         bool labgridcieALow;
         bool labgridcieBLow;
         bool labgridcieAHigh;

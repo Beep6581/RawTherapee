@@ -93,6 +93,7 @@ protected:
     rtengine::ProcEvent Evlocallabexpprecam;
     rtengine::ProcEvent Evlocallablightsigqcie;
     rtengine::ProcEvent Evlocallabcontsigqcie;
+    rtengine::ProcEvent Evlocallabrefi;
 
     // LocallabTool parameters
     bool needMode;
@@ -1677,6 +1678,8 @@ private:
     Adjuster* const greyl;
     Adjuster* const bluxl;
     Adjuster* const bluyl;
+    Adjuster* const refi;
+   
     Gtk::Frame* const gridFramecie;
     LabGrid* const labgridcie;
    
