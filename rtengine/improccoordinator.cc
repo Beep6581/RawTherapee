@@ -518,7 +518,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             }
         }
 
-        const bool autowb = (params->wb.method == "autold" || params->wb.method == "autitcgreen");
+       // const bool autowb = (params->wb.method == "autold" || params->wb.method == "autitcgreen");
 
         if (settings->verbose) {
             printf("automethod=%s \n", params->wb.method.c_str());
@@ -537,7 +537,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             int tempnotisraw = 6501;//D65 with Observer 2° - 6473 with Observer 10°
             double greennotisraw = 1.;//D65 with Observer 2° - 0.967 with Observer 10°
             
-            if(!imgsrc->isRAW()) {
+            if(!imgsrc->isRAW()  && params->wb.method == "autitcgreen") {
                 currWBitc = imgsrc->getWB();//if jpg TIF with another illuminant
                 currWBitc = currWBitc.convertObserver(params->wb.observer);                
                 tempnotisraw = currWBitc.getTemp();
@@ -564,8 +564,34 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 currWB = ColorTemp();
             } else if (params->wb.method == "Camera") {
                 currWB = imgsrc->getWB();
-                lastAwbauto = ""; //reinitialize auto
-            } else if (autowb) {
+            } else if (params->wb.method == "autold") {
+                 if (lastAwbEqual != params->wb.equal || lastAwbTempBias != params->wb.tempBias) {
+                    double rm, gm, bm;
+                    imgsrc->getAutoWBMultipliers(rm, gm, bm);
+
+                    if (rm != -1.) {
+                        double bias = params->wb.tempBias;
+
+                        autoWB.update(rm, gm, bm, params->wb.equal, params->wb.observer, bias);
+                        lastAwbEqual = params->wb.equal;
+                        lastAwbObserver = params->wb.observer;
+                        lastAwbTempBias = params->wb.tempBias;
+                        lastAwbauto = params->wb.method;
+                    } else {
+                        lastAwbEqual = -1.;
+                        lastAwbObserver = ColorTemp::DEFAULT_OBSERVER;
+                        lastAwbTempBias = 0.0;
+                        lastAwbauto = "";
+                        autoWB.useDefaults(params->wb.equal, params->wb.observer);
+                        
+                    } 
+
+                    //double rr,gg,bb;
+                    //autoWB.getMultipliers(rr,gg,bb);
+                }
+                currWB = autoWB;               
+               // lastAwbauto = ""; //reinitialize auto
+            } else if (params->wb.method == "autold""autitcgreen") { //(// autowb) {
                 float tem = 5000.f;
                 float gre  = 1.f;
                 double tempref0bias = 5000.;
@@ -835,12 +861,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
             int met = 0;
 
-            if (awbListener) {
+            if (awbListener && params->wb.enabled) {
                 if (params->wb.method ==  "autitcgreen"  && imgsrc->isRAW()) {//Raw files
                     if (params->wb.itcwb_sampling) {
                         dread = 1;
                         studgood = 1.f;
-                        awbListener->WBChanged(met, params->wb.temperature, params->wb.green, rw, gw, bw, 0, 1, 0, dread, studgood, 0, 0, 0, 0, true);
+                        awbListener->WBChanged(met, params->wb.temperature, params->wb.green, rw, gw, bw, 0, 1, 0, dread, studgood, 0, 0, 0, 0, 2);
 
                     } else {
                         minchrom = LIM(minchrom, 0.f, 0.9f);
@@ -849,17 +875,17 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         maxhist = std::max(maxhist, 1000.f);
                         kmin = std::max(kmin, 18);
                         dread = LIM(dread, 10, 239);
-                        awbListener->WBChanged(met, params->wb.temperature, params->wb.green, rw, gw, bw, temp0, delta, bia, dread, studgood, minchrom, kmin, minhist, maxhist, true);
+                        awbListener->WBChanged(met, params->wb.temperature, params->wb.green, rw, gw, bw, temp0, delta, bia, dread, studgood, minchrom, kmin, minhist, maxhist, 2);
                     }
                 } else if (params->wb.method ==  "autitcgreen"  && !imgsrc->isRAW()) {//non raw files
                     params->wb.temperature = tempnotisraw;
                     params->wb.green = greennotisraw;
                     currWB = ColorTemp(params->wb.temperature, params->wb.green, params->wb.equal, params->wb.method, params->wb.observer);
 
-                    awbListener->WBChanged(met, params->wb.temperature, params->wb.green, rw, gw, bw, -1.f,  -1.f, 1, 1, -1.f, -1.f, 1, -1.f, -1.f, false);//false => hide settings
+                    awbListener->WBChanged(met, params->wb.temperature, params->wb.green, rw, gw, bw, -1.f,  -1.f, 1, 1, -1.f, -1.f, 1, -1.f, -1.f, 0);//false => hide settings
                     
-                } else {
-                    awbListener->WBChanged(met, params->wb.temperature, params->wb.green, rw, gw, bw, -1.f,  -1.f, 1, 1, -1.f, -1.f, 1, -1.f, -1.f, false);
+                } else if (params->wb.method == "autold"){
+                    awbListener->WBChanged(met, params->wb.temperature, params->wb.green, rw, gw, bw, -1.f,  -1.f, 1, 1, -1.f, -1.f, 1, -1.f, -1.f, 1);
                 }
             }
 

@@ -142,7 +142,7 @@ public:
     }
     void setWB (int temp, double green);
     void resetWB ();
-    void WBChanged           (int met, double temp, double green, double rw, double gw, double bw, float temp0, float delta, int bia, int dread, float studgood, float minchrom, int kmin, float histmin, float histmax, bool isra) override;
+    void WBChanged           (int met, double temp, double green, double rw, double gw, double bw, float temp0, float delta, int bia, int dread, float studgood, float minchrom, int kmin, float histmin, float histmax, int isitc) override;
     void itcwb_alg_toggled ();
     void itcwb_prim_changed ();
     void setAdjusterBehavior (bool tempadd, bool greenadd, bool equaladd, bool tempbiasadd);
