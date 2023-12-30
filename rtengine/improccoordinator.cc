@@ -564,8 +564,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 currWB = ColorTemp();
             } else if (params->wb.method == "Camera") {
                 currWB = imgsrc->getWB();
+                lastAwbauto = ""; //reinitialize auto
+                
             } else if (params->wb.method == "autold") {
-                 if (lastAwbEqual != params->wb.equal || lastAwbTempBias != params->wb.tempBias) {
+                 if (lastAwbEqual != params->wb.equal || lastAwbTempBias != params->wb.tempBias || lastAwbauto != params->wb.method) {
                     double rm, gm, bm;
                     imgsrc->getAutoWBMultipliers(rm, gm, bm);
 
@@ -591,7 +593,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
                 currWB = autoWB;               
                // lastAwbauto = ""; //reinitialize auto
-            } else if (params->wb.method == "autold""autitcgreen") { //(// autowb) {
+            } else if (params->wb.method == "autitcgreen") { //(// autowb) {
                 float tem = 5000.f;
                 float gre  = 1.f;
                 double tempref0bias = 5000.;
@@ -886,6 +888,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     
                 } else if (params->wb.method == "autold"){
                     awbListener->WBChanged(met, params->wb.temperature, params->wb.green, rw, gw, bw, -1.f,  -1.f, 1, 1, -1.f, -1.f, 1, -1.f, -1.f, 1);
+                } else {
+                    awbListener->WBChanged(met, params->wb.temperature, params->wb.green, rw, gw, bw, -1.f,  -1.f, 1, 1, -1.f, -1.f, 1, -1.f, -1.f, 0);
                 }
             }
 
