@@ -7407,7 +7407,6 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
 
     int precision = 3;//must be 3 5 or 9
     bool oldsampling = wbpar.itcwb_sampling;
-
     if (oldsampling == true) {
         precision = 5;
     }
