@@ -115,6 +115,7 @@ public:
     {
         rm = gm = bm = 1.0;
     }
+    virtual void getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, const procparams::WBParams & wbpar) {}
 
 };
 
