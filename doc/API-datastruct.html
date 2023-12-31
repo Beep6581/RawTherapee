@@ -427,6 +427,12 @@
         </dl>
       </dd>
     </dl>
+   <p>
+   Note: even if no thumbnails were found in TIFF/CR3 structure, the
+   thumbcount field will be initialized to 1 and thumblist[0] will be
+   initialized to thumbnail data from the thumbnail data, so 
+   LibRaw::unpack_thumb_ex(0) will do the same as LibRaw::unpack_thumb().
+   </p>
     <p><a name="libraw_lensinfo_t"></a></p>
     <h3>Structure libraw_lensinfo_t: parsed lens data</h3>
     <p>The following parameters are extracted from Makernotes and EXIF, to help

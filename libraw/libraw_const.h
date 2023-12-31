@@ -24,6 +24,10 @@ it under the terms of the one of two licenses as you choose:
 #define LIBRAW_MAX_ALLOC_MB_DEFAULT 2048L
 #endif
 
+#ifndef LIBRAW_MAX_PROFILE_SIZE_MB
+#define LIBRAW_MAX_PROFILE_SIZE_MB 256LL
+#endif
+
 #ifndef LIBRAW_MAX_NONDNG_RAW_FILE_SIZE
 #define LIBRAW_MAX_NONDNG_RAW_FILE_SIZE 2147483647ULL
 #endif

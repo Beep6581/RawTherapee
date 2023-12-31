@@ -43,6 +43,8 @@ void LibRaw::raw2image_start()
 
   // adjust for half mode!
   IO.shrink =
+	  !imgdata.rawdata.color4_image && !imgdata.rawdata.color3_image &&
+	  !imgdata.rawdata.float4_image && !imgdata.rawdata.float3_image &&
       P1.filters &&
       (O.half_size || ((O.threshold || O.aber[0] != 1 || O.aber[2] != 1)));
 

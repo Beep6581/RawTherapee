@@ -132,7 +132,7 @@ void LibRaw::parseAdobeRAFMakernote()
   }
 
 #define CHECKSPACE(s)                                                          \
-  if (posPrivateMknBuf + (s) > PrivateMknLength)                               \
+  if (INT64(posPrivateMknBuf) + INT64(s) > INT64(PrivateMknLength))            \
   {                                                                            \
     free(PrivateMknBuf);                                                       \
     return;                                                                    \
@@ -209,7 +209,7 @@ void LibRaw::parseAdobeRAFMakernote()
     PrivateOrder = sget2(PrivateMknBuf);
     unsigned s, l;
     s = ifd_start = sget4(PrivateMknBuf +2)+6;
-    CHECKSPACE(ifd_start+4);
+    CHECKSPACE(INT64(ifd_start)+4LL);
     l = ifd_len = sget4(PrivateMknBuf +ifd_start);
 	CHECKSPACE_ABS3(ifd_start, ifd_len, 4);
 
@@ -767,7 +767,7 @@ void LibRaw::parseAdobeRAFMakernote()
 
 		  if (wb_section_offset)
 		  {
-			  CHECKSPACE(wb_section_offset + 12);
+			  CHECKSPACE(INT64(wb_section_offset) + 12LL);
 		  }
 
           if (wb_section_offset &&

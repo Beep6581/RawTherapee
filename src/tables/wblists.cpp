@@ -17,15 +17,15 @@
 
 #define _ARR_SZ(a) (sizeof(a)/sizeof(a[0]))
 
-static const int _tagtype_dataunit_bytes [19] = {
-    1, 1, 1, 2, 4, 8, 1, 1, 2, 4, 8, 4, 8, 4, 2, 8, 8, 8, 8
+static const int _tagtype_dataunit_bytes [20] = {
+    1, 1, 1, 2, 4, 8, 1, 1, 2, 4, 8, 4, 8, 4, 2, 8, 8, 8, 8, 8
 };
 
 libraw_static_table_t LibRaw::tagtype_dataunit_bytes(_tagtype_dataunit_bytes, _ARR_SZ(_tagtype_dataunit_bytes));
 
 int libraw_tagtype_dataunit_bytes(int tagtype)
 {
-    return _tagtype_dataunit_bytes[((unsigned)tagtype <= _ARR_SZ(_tagtype_dataunit_bytes)) ? tagtype : 0];
+    return _tagtype_dataunit_bytes[((unsigned)tagtype < _ARR_SZ(_tagtype_dataunit_bytes)) ? tagtype : 0];
 }
 
 

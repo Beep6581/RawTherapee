@@ -22,6 +22,9 @@
 void LibRaw::sony_arq_load_raw()
 {
   int row, col;
+  if (imgdata.idata.filters || imgdata.idata.colors < 3)
+	  throw LIBRAW_EXCEPTION_IO_CORRUPT;
+
   read_shorts(imgdata.rawdata.raw_image,
               imgdata.sizes.raw_width * imgdata.sizes.raw_height * 4);
   libraw_internal_data.internal_data.input->seek(

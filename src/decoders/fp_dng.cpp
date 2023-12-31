@@ -556,7 +556,7 @@ _forceinline
 #else
 inline
 #endif
-void swap24(uchar *data, int len)
+void libraw_swap24(uchar *data, int len)
 {
     for (int i = 0; i < len - 2; i += 3)
     {
@@ -572,7 +572,7 @@ _forceinline
 #else
 inline
 #endif
-void swap32(uchar *data, int len)
+void libraw_swap32(uchar *data, int len)
 {
     unsigned *d = (unsigned*)data;
     for (int i = 0; i < len / 4; i++)
@@ -646,9 +646,9 @@ void LibRaw::uncompressed_fp_dng_load_raw()
                 if (bytesps == 2 && difford)
                     libraw_swab(dst, fullrowbytes);
                 else if (bytesps == 3 && (libraw_internal_data.unpacker_data.order == 0x4949)) // II-16bit
-                    swap24(dst, fullrowbytes);
+                    libraw_swap24(dst, fullrowbytes);
                 if (bytesps == 4 && difford)
-                    swap32(dst, fullrowbytes);
+                    libraw_swap32(dst, fullrowbytes);
 
                 float lmax = expandFloats(
                     dst,
