@@ -428,46 +428,41 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
 {
     const TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
     double wb2[3][3];
-            for (int r = 0; r < 3; ++r) {
-                for (int c = 0; c < 3; ++c) {
-                    wb2[r][c] = wprof[r][c];
-                }
-            }
-        array2D<float> xcb(cw, ch);
-        array2D<float> ycb(cw, ch);
-        array2D<float> zcb(cw, ch);
-        array2D<float> Ycb(cw, ch);
-     //   float meanx = 0.f;
-     //   float meany = 0.f;
+    for (int r = 0; r < 3; ++r) {
+        for (int c = 0; c < 3; ++c) {
+            wb2[r][c] = wprof[r][c];
+        }
+    }
+
+    meanx = 0.f;
+    meany = 0.f;
+    if (locprim == 1) {
+
 #ifdef _OPENMP
             #pragma omp parallel for reduction(+:meanx, meany) if(multiThread)
 #endif
-
             for (int y = 0; y < ch ; ++y) {
                 for (int x = 0; x < cw ; ++x) {
-                    const float RR =src->r(y,x);
+                    const float RR = src->r(y,x);
                     const float GG = src->g(y,x);
-                    const float BB = src->b(y, x);
-
-                    Color::rgbxyz(RR, GG, BB, xcb[y][x], ycb[y][x], zcb[y][x], wb2);//use sRGB Adobe Rec2020 ACESp0
-                    float X_r = xcb[y][x];
-                    float Y_r = ycb[y][x];
-                    float Z_r = zcb[y][x];
-
-
+                    const float BB = src->b(y,x);
+                    float xcb, ycb, zcb;
+                    Color::rgbxyz(RR, GG, BB, xcb, ycb, zcb, wb2);//use sRGB Adobe Rec2020 ACESp0
+                    float X_r = xcb;
+                    float Y_r = ycb;
+                    float Z_r = zcb;
                     const float som = X_r + Y_r + Z_r;
-                    xcb[y][x] = X_r / som;
-                    ycb[y][x] = Y_r / som;
-                    Ycb[y][x] = Y_r / 65535.f;
-                    meanx += xcb[y][x];
-                    meany += ycb[y][x];
-                    
+                    X_r = X_r / som;
+                    Y_r = Y_r / som;
+                    Z_r = Y_r / 65535.f;
+                    meanx += X_r;
+                    meany += Y_r;                  
                 }
             }
             meanx /= (ch*cw);
             meany /= (ch*cw);
             printf("meanx=%f meany=%f \n", (double) meanx, (double) meany);
-            
+    }        
 
     double wprofprim[3][3];//store primaries to XYZ
     //  bool gamutcontrol = params->icm.gamut;
@@ -1263,33 +1258,30 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             }
         }
     }
-    
-        //xyD
-        //meanx, meany
-        double refin = params->locallab.spots.at(sp).refi;
-        double arefi = (xyD.y - meany) / (xyD.x - meanx);
-        double brefi = xyD.y - arefi * xyD.x;
-        double scalrefi = meanx - xyD.x;
-        xyD.x = xyD.x + scalrefi * refin;
-        xyD.y = xyD.x * arefi + brefi;
-        Wx = xyD.x / xyD.y;
-        Wz = (1. - xyD.x - xyD.y) / xyD.y;
-        
-       // printf("xyDx=%f \n", (double) xyD.x); 
+        if (locprim == 1) {
+            //xyD
+            //meanx, meany
+            double refin = params->locallab.spots.at(sp).refi;
+            double arefi = (xyD.y - meany) / (xyD.x - meanx);
+            double brefi = xyD.y - arefi * xyD.x;
+            double scalrefi = meanx - xyD.x;
+            xyD.x = xyD.x + scalrefi * refin;
+            xyD.y = xyD.x * arefi + brefi;
+            Wx = xyD.x / xyD.y;
+            Wz = (1. - xyD.x - xyD.y) / xyD.y;
+        }
+
         double wprofpri[9];
 
-       // if (gamutcontrol) {
             //xyz in function primaries and illuminant
-            // int cat = 0;
-            Color::primaries_to_xyz(p, Wx, Wz, wprofpri, cat);
+        Color::primaries_to_xyz(p, Wx, Wz, wprofpri, cat);
 
-            for (int i = 0; i < 3; ++i) {
-                for (int j = 0; j < 3; ++j) {
-                    wprofprim[i][j] = (double) wprofpri[j * 3 + i];
+        for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < 3; ++j) {
+                wprofprim[i][j] = (double) wprofpri[j * 3 + i];
                     //xyz in TMatrix format
-                }
             }
-      // }
+        }
 
         //D41  0.377984  0.381229
         //D55  0.332424  0.347426
@@ -1385,41 +1377,35 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
         transform = hTransform;
     }
     
-        array2D<float> xce(cw, ch);
-        array2D<float> yce(cw, ch);
-        array2D<float> zce(cw, ch);
-        array2D<float> Yce(cw, ch);
-   //    float meanxe = 0.f;
-   //     float meanye = 0.f;
+        meanxe = 0.f;
+        meanye = 0.f;
+        if (locprim == 1) {
+        
 #ifdef _OPENMP
             #pragma omp parallel for reduction(+:meanxe, meanye) if(multiThread)
 #endif
-
             for (int y = 0; y < ch ; ++y) {
                 for (int x = 0; x < cw ; ++x) {
                     const float RR = dst->r(y,x);
                     const float GG = dst->g(y,x);
-                    const float BB = dst->b(y, x);
-
-                    Color::rgbxyz(RR, GG, BB, xce[y][x], yce[y][x], zce[y][x], wb2);//use sRGB Adobe Rec2020 ACESp0
-                    float X_r = xce[y][x];
-                    float Y_r = yce[y][x];
-                    float Z_r = zce[y][x];
-
-
+                    const float BB = dst->b(y,x);
+                    float xcb, ycb, zcb;
+                    Color::rgbxyz(RR, GG, BB, xcb, ycb, zcb, wb2);//use sRGB Adobe Rec2020 ACESp0
+                    float X_r = xcb;
+                    float Y_r = ycb;
+                    float Z_r = zcb;
                     const float som = X_r + Y_r + Z_r;
-                    xce[y][x] = X_r / som;
-                    yce[y][x] = Y_r / som;
-                    Yce[y][x] = Y_r / 65535.f;
-                    meanxe += xce[y][x];
-                    meanye += yce[y][x];
-                    
+                    X_r = X_r / som;
+                    Y_r = Y_r / som;
+                    Z_r = Y_r / 65535.f;
+                    meanxe += X_r;
+                    meanye += Y_r;                  
                 }
             }
             meanxe /= (ch*cw);
             meanye /= (ch*cw);
             printf("meanxE=%f meanyE=%f \n", (double) meanxe, (double) meanye);
-    
+        }
 }
 
 

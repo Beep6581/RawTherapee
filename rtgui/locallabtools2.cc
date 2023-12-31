@@ -7947,13 +7947,14 @@ Locallabcie::Locallabcie():
     trcFrame->add(*trccieBox);
     gamcieBox->pack_start(*trcFrame);
     primillBox->pack_start(*willBox);
-    primillBox->pack_start(*refi); 
     
     primillBox->pack_start(*wprimBox);
     primillBox->pack_start(*redlFrame);
     primillBox->pack_start(*gridFramecie);
     primillBox->pack_start(*gamutcieBox);
     primillBox->pack_start(*catBox);
+    primillBox->pack_start(*refi); 
+
     primillFrame->add(*primillBox);    
     gamcieBox->pack_start(*primillFrame);
     
