@@ -13,13 +13,14 @@
 #include <netinet/in.h>
 #endif
 
+#include <libraw/libraw.h>
+
 #include "image8.h"
 #include "rawimage.h"
 #include "settings.h"
 #include "camconst.h"
 #include "utils.h"
 #include "rtengine.h"
-#include "libraw/libraw/libraw.h"
 
 namespace rtengine
 {
