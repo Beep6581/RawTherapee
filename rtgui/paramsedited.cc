@@ -464,6 +464,7 @@ void ParamsEdited::set(bool v)
     icm.grey = v;
     icm.blux = v;
     icm.bluy = v;
+    icm.refi = v;
     icm.preser = v;
     icm.fbw = v;
     icm.gamut = v;
@@ -1941,6 +1942,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         icm.grey = icm.grey && p.icm.grey == other.icm.grey;
         icm.blux = icm.blux && p.icm.blux == other.icm.blux;
         icm.bluy = icm.bluy && p.icm.bluy == other.icm.bluy;
+        icm.refi = icm.refi && p.icm.refi == other.icm.refi;
         icm.labgridcieALow = icm.labgridcieALow && p.icm.labgridcieALow == other.icm.labgridcieALow;
         icm.labgridcieBLow = icm.labgridcieBLow && p.icm.labgridcieBLow == other.icm.labgridcieBLow;
         icm.labgridcieAHigh = icm.labgridcieAHigh && p.icm.labgridcieAHigh == other.icm.labgridcieAHigh;
@@ -6706,6 +6708,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (icm.bluy) {
         toEdit.icm.bluy = mods.icm.bluy;
+    }
+
+    if (icm.refi) {
+        toEdit.icm.refi = mods.icm.refi;
     }
 
     if (icm.preser) {

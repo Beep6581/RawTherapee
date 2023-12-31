@@ -2022,6 +2022,7 @@ struct ColorManagementParams {
     double grey;
     double blux;
     double bluy;
+    double refi;
     double preser;
     bool fbw;
     bool gamut;

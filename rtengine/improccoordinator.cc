@@ -2236,6 +2236,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                             break;
                     }
 
+                    double refin = params->icm.refi;
+                    double arefi = (wy - meany) / (wx - meanx);
+                    double brefi = wy - arefi * wx;
+                    double scalrefi = meanx - wx;
+                    wx = wx + scalrefi * refin;
+                    wy = wx * arefi + brefi;
+
                     if (primListener) {
                         primListener->iprimChanged(r_x, r_y, b_x, b_y, g_x, g_y, wx, wy);
                     }

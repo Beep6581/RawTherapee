@@ -60,6 +60,7 @@ protected:
     Adjuster* blux;
     Adjuster* bluy;
     Adjuster* preser;
+    Adjuster* refi;
 
     Gtk::Label* labmga;
     Gtk::Box* gabox;
@@ -112,6 +113,7 @@ private:
     rtengine::ProcEvent EvICMfbw;
     rtengine::ProcEvent EvICMgamut;
     rtengine::ProcEvent EvICMcat;
+    rtengine::ProcEvent EvICMrefi;
     LabGrid *labgridcie;
     IdleRegister idle_register;
 

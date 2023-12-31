@@ -436,7 +436,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
 
     meanx = 0.f;
     meany = 0.f;
-    if (locprim == 1) {
+ //   if (locprim == 1) {
 
 #ifdef _OPENMP
             #pragma omp parallel for reduction(+:meanx, meany) if(multiThread)
@@ -462,7 +462,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             meanx /= (ch*cw);
             meany /= (ch*cw);
             printf("meanx=%f meany=%f \n", (double) meanx, (double) meany);
-    }        
+ //   }        
 
     double wprofprim[3][3];//store primaries to XYZ
     //  bool gamutcontrol = params->icm.gamut;
@@ -1258,18 +1258,21 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             }
         }
     }
-        if (locprim == 1) {
-            //xyD
-            //meanx, meany
-            double refin = params->locallab.spots.at(sp).refi;
-            double arefi = (xyD.y - meany) / (xyD.x - meanx);
-            double brefi = xyD.y - arefi * xyD.x;
-            double scalrefi = meanx - xyD.x;
-            xyD.x = xyD.x + scalrefi * refin;
-            xyD.y = xyD.x * arefi + brefi;
-            Wx = xyD.x / xyD.y;
-            Wz = (1. - xyD.x - xyD.y) / xyD.y;
+        //xyD
+        //meanx, meany
+        double refin = 0.;
+        if (locprim == 1) {           
+            refin = params->locallab.spots.at(sp).refi;
+        } else if (locprim == 0) {
+            refin = params->icm.refi;
         }
+        double arefi = (xyD.y - meany) / (xyD.x - meanx);
+        double brefi = xyD.y - arefi * xyD.x;
+        double scalrefi = meanx - xyD.x;
+        xyD.x = xyD.x + scalrefi * refin;
+        xyD.y = xyD.x * arefi + brefi;
+        Wx = xyD.x / xyD.y;
+        Wz = (1. - xyD.x - xyD.y) / xyD.y;
 
         double wprofpri[9];
 
@@ -1306,7 +1309,11 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             cmsCIEXYZ *redT = static_cast<cmsCIEXYZ*>(cmsReadTag(oprofdef, cmsSigRedMatrixColumnTag));
             cmsCIEXYZ *greenT  = static_cast<cmsCIEXYZ*>(cmsReadTag(oprofdef, cmsSigGreenMatrixColumnTag));
             cmsCIEXYZ *blueT  = static_cast<cmsCIEXYZ*>(cmsReadTag(oprofdef, cmsSigBlueMatrixColumnTag));
-            printf("Illuminant=%s\n", ills.c_str());
+            if (locprim == 0) {
+                printf("Illuminant=%s\n", ills.c_str());
+            } else {
+                printf("Illuminant=%s\n", params->locallab.spots.at(sp).illMethod.c_str());
+            }
             printf("rX=%f gX=%f bX=%f\n", redT->X, greenT->X, blueT->X);
             printf("rY=%f gY=%f bY=%f\n", redT->Y, greenT->Y, blueT->Y);
             printf("rZ=%f gZ=%f bZ=%f\n", redT->Z, greenT->Z, blueT->Z);
@@ -1379,6 +1386,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
     
         meanxe = 0.f;
         meanye = 0.f;
+        /*
         if (locprim == 1) {
         
 #ifdef _OPENMP
@@ -1406,6 +1414,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             meanye /= (ch*cw);
             printf("meanxE=%f meanyE=%f \n", (double) meanxe, (double) meanye);
         }
+        */
 }
 
 
