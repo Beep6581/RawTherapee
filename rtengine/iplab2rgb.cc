@@ -436,7 +436,6 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
 
     meanx = 0.f;
     meany = 0.f;
- //   if (locprim == 1) {
 
 #ifdef _OPENMP
             #pragma omp parallel for reduction(+:meanx, meany) if(multiThread)
@@ -462,7 +461,6 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             meanx /= (ch*cw);
             meany /= (ch*cw);
             printf("meanx=%f meany=%f \n", (double) meanx, (double) meany);
- //   }        
 
     double wprofprim[3][3];//store primaries to XYZ
     //  bool gamutcontrol = params->icm.gamut;

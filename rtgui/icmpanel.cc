@@ -67,6 +67,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     EvICMgamut = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_GAMUT");
     EvICMcat = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_CAT");
     EvICMrefi = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_REFI");
+    EvICMtrcExp = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_TRCEXP");
     isBatchMode = lastToneCurve = lastApplyLookTable = lastApplyBaselineExposureOffset = lastApplyHueSatMap = false;
 
     ipDialog = Gtk::manage(new MyFileChooserButton(M("TP_ICM_INPUTDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
@@ -207,12 +208,13 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
 
     //-----------------gamma TRC working
 //    Gtk::Frame *trcFrame = Gtk::manage(new Gtk::Frame(M("TP_ICM_TRCFRAME")));
-    trcExp = Gtk::manage(new MyExpander(false, M("TP_ICM_TRCFRAME")));
+    trcExp = Gtk::manage(new MyExpander(true, M("TP_ICM_TRCFRAME")));
     setExpandAlignProperties(trcExp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 //    trcFrame->set_label_align(0.025, 0.5);
     Gtk::Box *trcProfVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     trcExp->set_tooltip_text(M("TP_ICM_TRCFRAME_TOOLTIP"));
     trcExp->signal_button_release_event().connect_notify ( sigc::bind ( sigc::mem_fun (this, &ICMPanel::foldAllButMe), trcExp) );
+    trcExpconn = trcExp->signal_enabled_toggled().connect(sigc::mem_fun(*this, &ICMPanel::trcExpChanged));
 
     wTRCBox = Gtk::manage(new Gtk::Box());
 
@@ -828,6 +830,8 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     ConnectionBlocker willconn_(willconn);
     ConnectionBlocker wprimconn_(wprimconn);
     ConnectionBlocker wcatconn_(wcatconn);
+    ConnectionBlocker trcExpconn_(trcExpconn);
+    
     trcExp->set_expanded(false);
 
     if (pp->icm.inputProfile.substr(0, 5) != "file:") {
@@ -892,6 +896,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
 
     obpc->set_active(pp->icm.outputBPC);
     fbw->set_active(pp->icm.fbw);
+    trcExp->setEnabled(pp->icm.trcExp);
     gamut->set_active(pp->icm.gamut);
     ckbToneCurve->set_active(pp->icm.toneCurve);
     lastToneCurve = pp->icm.toneCurve;
@@ -918,6 +923,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         iunchanged->set_active(!pedited->icm.inputProfile);
         obpc->set_inconsistent(!pedited->icm.outputBPC);
         fbw->set_inconsistent(!pedited->icm.fbw);
+        trcExp->set_inconsistent(!pedited->icm.trcExp);
         gamut->set_inconsistent(!pedited->icm.gamut);
         ckbToneCurve->set_inconsistent(!pedited->icm.toneCurve);
         ckbApplyLookTable->set_inconsistent(!pedited->icm.applyLookTable);
@@ -1262,6 +1268,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     pp->icm.applyHueSatMap = ckbApplyHueSatMap->get_active();
     pp->icm.outputBPC = obpc->get_active();
     pp->icm.fbw = fbw->get_active();
+    pp->icm.trcExp = trcExp->getEnabled();
     pp->icm.gamut = gamut->get_active();
     pp->icm.workingTRCGamma =  wGamma->getValue();
     pp->icm.workingTRCSlope =  wSlope->getValue();
@@ -1283,6 +1290,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->icm.aRendIntent = aRendIntent->getSelected() < 4;
         pedited->icm.outputBPC = !obpc->get_inconsistent();
         pedited->icm.fbw = !fbw->get_inconsistent();
+        pedited->icm.trcExp = !trcExp->get_inconsistent();
         pedited->icm.gamut = !gamut->get_inconsistent();
         pedited->icm.dcpIlluminant = dcpIll->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.toneCurve = !ckbToneCurve->get_inconsistent();
@@ -2196,6 +2204,20 @@ void ICMPanel::oBPCChanged()
         }
     }
 }
+
+void ICMPanel::trcExpChanged()
+{
+
+    if (listener) {
+        if (trcExp->getEnabled()) {
+            listener->panelChanged(EvICMtrcExp, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged(EvICMtrcExp, M("GENERAL_DISABLED"));
+        }
+    }
+}
+
+
 
 void ICMPanel::fbwChanged()
 {

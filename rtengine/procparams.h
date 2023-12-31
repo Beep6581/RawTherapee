@@ -2025,6 +2025,7 @@ struct ColorManagementParams {
     double refi;
     double preser;
     bool fbw;
+    bool trcExp;
     bool gamut;
     double labgridcieALow;
     double labgridcieBLow;

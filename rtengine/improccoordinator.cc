@@ -2095,7 +2095,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
             ipf.softLight(nprevl, params->softlight);
 
-            if (params->icm.workingTRC != ColorManagementParams::WorkingTrc::NONE) {
+            if (params->icm.workingTRC != ColorManagementParams::WorkingTrc::NONE  && params->icm.trcExp) {
                 const int GW = nprevl->W;
                 const int GH = nprevl->H;
                 std::unique_ptr<LabImage> provis;

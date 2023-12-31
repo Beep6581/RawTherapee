@@ -1522,7 +1522,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
     ipf.softLight(labView, params.softlight);
 
-    if (params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE) {
+    if (params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE && params.icm.trcExp) {
         const int GW = labView->W;
         const int GH = labView->H;
         std::unique_ptr<LabImage> provis;

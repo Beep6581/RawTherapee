@@ -68,6 +68,8 @@ protected:
     //Gtk::Label* blg;
     //Gtk::Label* blb;
     Gtk::Button* neutral;
+    sigc::connection trcExpconn;
+    bool lasttrcExp;
 
     sigc::connection neutralconn;
     bool lastToneCurve;
@@ -114,6 +116,7 @@ private:
     rtengine::ProcEvent EvICMgamut;
     rtengine::ProcEvent EvICMcat;
     rtengine::ProcEvent EvICMrefi;
+    rtengine::ProcEvent EvICMtrcExp;
     LabGrid *labgridcie;
     IdleRegister idle_register;
 
@@ -210,6 +213,7 @@ public:
     void willChanged();
     void wprimChanged();
     void wcatChanged();
+    void trcExpChanged();
     void opChanged();
     void oiChanged(int n);
     void aiChanged(int n);

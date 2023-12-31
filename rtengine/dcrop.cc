@@ -1612,7 +1612,7 @@ void Crop::update(int todo)
         
         parent->ipf.softLight(labnCrop, params.softlight);
 
-        if (params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE) {
+        if (params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE && params.icm.trcExp) {
             const int GW = labnCrop->W;
             const int GH = labnCrop->H;
             std::unique_ptr<LabImage> provis;
