@@ -501,6 +501,7 @@ int RawImage::loadRaw(bool loadData, unsigned int imageNum, bool closeFile, Prog
         }
 
         libraw->imgdata.params.use_camera_wb = 1;
+        libraw->imgdata.rawparams.shot_select = shot_select;
 
         int err = libraw->open_buffer(ifp->data, ifp->size);
         if (err == LIBRAW_FILE_UNSUPPORTED || err == LIBRAW_TOO_BIG) {
