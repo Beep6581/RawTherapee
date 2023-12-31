@@ -207,19 +207,6 @@ public:
         return rgb_cam[r][c];
     }
 
-    int get_exifBase()  const
-    {
-        return exif_base;
-    }
-    int get_ciffBase() const
-    {
-        return ciff_base;
-    }
-    int get_ciffLen()  const
-    {
-        return ciff_len;
-    }
-
     int get_profileLen() const
     {
         return profile_length;
