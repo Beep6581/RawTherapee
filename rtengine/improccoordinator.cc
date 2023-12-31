@@ -1578,14 +1578,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     w_x = 0.333333f;
                     w_y = 0.333333f;
                 }
+                //move white-point in GUI
                 double refin = params->locallab.spots.at(sp).refi;
                 double arefi = (w_y - meany) / (w_x - meanx);
                 double brefi = w_y - arefi * w_x;
                 double scalrefi = meanx - w_x;
                 w_x = w_x + scalrefi * refin;
                 w_y = w_x * arefi + brefi;
-             //   Wx = xyD.x / xyD.y;
-             //   Wz = (1. - xyD.x - xyD.y) / xyD.y;
               
       
       
@@ -2235,7 +2234,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                             wy = 0.3932f;
                             break;
                     }
-
+                    //move white point in GUI
                     double refin = params->icm.refi;
                     double arefi = (wy - meany) / (wx - meanx);
                     double brefi = wy - arefi * wx;

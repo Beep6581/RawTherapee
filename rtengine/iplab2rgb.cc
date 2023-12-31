@@ -427,6 +427,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
     cmsHTRANSFORM &transform, bool normalizeIn, bool normalizeOut, bool keepTransForm, bool gamutcontrol) const
 {
     const TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
+    
     double wb2[3][3];
     for (int r = 0; r < 3; ++r) {
         for (int c = 0; c < 3; ++c) {
@@ -434,6 +435,9 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
         }
     }
 
+// I try to find the dominant color by a simple way (average of x and y)
+// It is probably intellectually more relevant to place this algorithm at the end, but it is complex at the GUI level (at least for me). 
+// The errors made are relatively minimal and result seems good enough
     meanx = 0.f;
     meany = 0.f;
 
@@ -446,7 +450,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
                     const float GG = src->g(y,x);
                     const float BB = src->b(y,x);
                     float xcb, ycb, zcb;
-                    Color::rgbxyz(RR, GG, BB, xcb, ycb, zcb, wb2);//use sRGB Adobe Rec2020 ACESp0
+                    Color::rgbxyz(RR, GG, BB, xcb, ycb, zcb, wb2);
                     float X_r = xcb;
                     float Y_r = ycb;
                     float Z_r = zcb;
@@ -460,10 +464,10 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             }
             meanx /= (ch*cw);
             meany /= (ch*cw);
-            printf("meanx=%f meany=%f \n", (double) meanx, (double) meany);
+         //   printf("meanx=%f meany=%f \n", (double) meanx, (double) meany);
 
     double wprofprim[3][3];//store primaries to XYZ
-    //  bool gamutcontrol = params->icm.gamut;
+
     const float toxyz[3][3] = {
         {
             static_cast<float>(wprof[0][0] / ((normalizeIn ? 65535.0 : 1.0))), //I have suppressed / Color::D50x
@@ -669,8 +673,6 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
     };
     double tempv4 = 5003.;
     double p[6]; //primaries
-//    double Wx = 1.0;
-//    double Wz = 1.0;
 
     if (locprim == 0) {
         switch (ColorManagementParams::Primaries(prim)) {
@@ -1258,6 +1260,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
     }
         //xyD
         //meanx, meany
+        // adjust refinement (purity) with a simple algorithm
         double refin = 0.;
         if (locprim == 1) {           
             refin = params->locallab.spots.at(sp).refi;
@@ -1269,6 +1272,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
         double scalrefi = meanx - xyD.x;
         xyD.x = xyD.x + scalrefi * refin;
         xyD.y = xyD.x * arefi + brefi;
+        // recalculate Wx Wy
         Wx = xyD.x / xyD.y;
         Wz = (1. - xyD.x - xyD.y) / xyD.y;
 
@@ -1373,20 +1377,16 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
                 }
             }
         }
+ /*
+ // alternative to find dominant color xy
+// Not use :
+//  1) GUI complex at least for mean
+//  2) small difference for meanxe, meanye with meanx , meany above in most cases 
 
-        if (!keepTransForm) {
-            cmsDeleteTransform(hTransform);
-            hTransform = nullptr;
-        }
-
-        transform = hTransform;
-    }
-    
-        meanxe = 0.f;
-        meanye = 0.f;
-        /*
         if (locprim == 1) {
-        
+            meanxe = 0.f;
+            meanye = 0.f;
+       
 #ifdef _OPENMP
             #pragma omp parallel for reduction(+:meanxe, meanye) if(multiThread)
 #endif
@@ -1412,7 +1412,14 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             meanye /= (ch*cw);
             printf("meanxE=%f meanyE=%f \n", (double) meanxe, (double) meanye);
         }
-        */
+*/
+        if (!keepTransForm) {
+            cmsDeleteTransform(hTransform);
+            hTransform = nullptr;
+        }
+
+        transform = hTransform;
+    }
 }
 
 
