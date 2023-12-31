@@ -1,3 +1,25 @@
+2023-12-19  Alex Tutubalin <lexa@lexa.ru>
+
+ LibRaw 0.21.2-Release
+
+  * New compile-defined limit LIBRAW_MAX_PROFILE_SIZE_MB: 
+       limits allocation/read size for embedded color profile (default: 256Mb)
+
+  * Embedded color profile allocation/read size: limited by input file size.
+
+  * Multiple fixes (mostly inspired by oss-fuzz) to improve library stability and/or input checks.
+
+  * raw-identify: use fallback if PATH_MAX not available   
+
+  * Disabled color conversion for Canon 16-bit thumbnails
+
+  * docs/changelog: explained the case when no thumbnail is found in specific file
+
+  * swapXX renamed to libraw_swapXX to avoid name conflict
+
+  * better striped thumbnails handling
+
+ 
 2023-01-05  Alex Tutubalin <lexa@lexa.ru>
  LibRaw 0.21.1-Release
  * fixed typo in panasonic metadata parser
@@ -52,7 +74,11 @@
 
   Notes:
     -  Only TIFF-based and CR3 files are parsed for thumbnail list, other formats will have
-       thumbcount = 1 (or 0 if no thumbnail found in file).
+       thumbcount = 1.
+
+    - If no thumbnails are found in file: thumbcount will be set to 1 and
+      thumblist[0] will be initialized with data from thumbnail fields, 
+      so LibRaw::unpack_thumb_ex(0) will do the same as LibRaw::unpack_thumb()
 
     -  Thumbnail image size may be unknown (not recorded in metadata), in this case twidth and theight are zero.
        Usually small(er) thumbnails will always have twidth/theight filled, while largest one may have these fields set to zero.

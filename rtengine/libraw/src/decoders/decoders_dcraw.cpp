@@ -577,6 +577,9 @@ void LibRaw::lossless_jpeg_load_raw()
           i = jidx / (cr2_slice[1] * raw_height);
           if ((j = i >= cr2_slice[0]))
             i = cr2_slice[0];
+		  if(!cr2_slice[1+j])
+            throw LIBRAW_EXCEPTION_IO_CORRUPT;
+
           jidx -= i * (cr2_slice[1] * raw_height);
           row = jidx / cr2_slice[1 + j];
           col = jidx % cr2_slice[1 + j] + i * cr2_slice[1];
@@ -609,9 +612,15 @@ void LibRaw::canon_sraw_load_raw()
   int saved_w = width, saved_h = height;
   char *cp;
 
+  if(!image)
+    throw LIBRAW_EXCEPTION_IO_CORRUPT;
+
   if (!ljpeg_start(&jh, 0) || jh.clrs < 4)
     return;
   jwide = (jh.wide >>= 1) * jh.clrs;
+
+  if (jwide < 32 || jwide > 65535)
+	  throw LIBRAW_EXCEPTION_IO_CORRUPT;
 
   if (load_flags & 256)
   {
@@ -1170,6 +1179,8 @@ void LibRaw::panasonic_load_raw()
   }
   else
   {
+	if (load_flags >= 0x4000)
+	  throw LIBRAW_EXCEPTION_IO_CORRUPT;
     for (row = 0; row < raw_height; row++)
     {
       checkCancel();

@@ -265,6 +265,10 @@ void LibRaw::xtrans_interpolate(int passes)
                 {
                     rix = &rgb[0][row - top][col - left];
                     int h = fcol(row, col + 1);
+
+					if (h == 1) // Incorrect pattern
+                      break;
+
                     float diff[6];
                     memset(diff, 0, sizeof diff);
                     for (int i = 1, d = 0; d < 6; d++, i ^= LIBRAW_AHD_TILE ^ 1, h ^= 2)

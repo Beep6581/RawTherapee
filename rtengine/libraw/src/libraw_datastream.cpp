@@ -460,7 +460,7 @@ int LibRaw_buffer_datastream::scanf_one(const char *fmt, void *val)
   if (scanf_res > 0)
   {
     int xcnt = 0;
-    while (streampos < streamsize)
+    while (streampos < streamsize-1)
     {
       streampos++;
       xcnt++;

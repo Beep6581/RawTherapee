@@ -266,8 +266,9 @@ int LibRaw::unpack_thumb(void)
               tiff_ifd[pifd].strip_byte_counts_count)
           {
             // We found it, calculate final size
-            unsigned total_size = 0;
-            for (int i = 0; i < tiff_ifd[pifd].strip_byte_counts_count; i++)
+            INT64 total_size = 0;
+            for (int i = 0; i < tiff_ifd[pifd].strip_byte_counts_count 
+				&& i < tiff_ifd[pifd].strip_offsets_count; i++)
               total_size += tiff_ifd[pifd].strip_byte_counts[i];
             if (total_size != (unsigned)t_length) // recalculate colors
             {
@@ -284,15 +285,15 @@ int LibRaw::unpack_thumb(void)
 
             char *dest = T.thumb;
             INT64 pos = ID.input->tell();
+            INT64 remain = T.tlength;
 
             for (int i = 0; i < tiff_ifd[pifd].strip_byte_counts_count &&
                             i < tiff_ifd[pifd].strip_offsets_count;
                  i++)
             {
-              int remain = T.tlength;
               int sz = tiff_ifd[pifd].strip_byte_counts[i];
-              int off = tiff_ifd[pifd].strip_offsets[i];
-              if (off >= 0 && off + sz <= ID.input->size() && sz <= remain)
+              INT64 off = tiff_ifd[pifd].strip_offsets[i];
+              if (off >= 0 && off + sz <= ID.input->size() && sz > 0 && INT64(sz) <= remain)
               {
                 ID.input->seek(off, SEEK_SET);
                 ID.input->read(dest, sz, 1);
@@ -332,13 +333,13 @@ int LibRaw::unpack_thumb(void)
         int o_bps = (imgdata.rawparams.options & LIBRAW_RAWOPTIONS_USE_PPM16_THUMBS) ? 2 : 1;
         int o_length = T.twidth * T.theight * t_colors * o_bps;
         int i_length = T.twidth * T.theight * t_colors * 2;
-        if (!T.tlength)
-          T.tlength = o_length;
-        THUMB_SIZE_CHECKTNZ(o_length);
+
+		THUMB_SIZE_CHECKTNZ(o_length);
         THUMB_SIZE_CHECKTNZ(i_length);
-        THUMB_SIZE_CHECKTNZ(T.tlength);
 
         ushort *t_thumb = (ushort *)calloc(i_length, 1);
+	if (!t_thumb)
+		throw LIBRAW_EXCEPTION_ALLOC;
         ID.input->read(t_thumb, 1, i_length);
         if ((libraw_internal_data.unpacker_data.order == 0x4949) ==
             (ntohs(0x1234) == 0x1234))
@@ -350,14 +351,18 @@ int LibRaw::unpack_thumb(void)
         {
           T.thumb = (char *)t_thumb;
           T.tformat = LIBRAW_THUMBNAIL_BITMAP16;
+          T.tlength = i_length;
         }
         else
         {
           T.thumb = (char *)malloc(o_length);
+          if (!T.thumb)
+            throw LIBRAW_EXCEPTION_ALLOC;
           for (int i = 0; i < o_length; i++)
             T.thumb[i] = t_thumb[i] >> 8;
           free(t_thumb);
           T.tformat = LIBRAW_THUMBNAIL_BITMAP;
+          T.tlength = o_length;
         }
         SET_PROC_FLAG(LIBRAW_PROGRESS_THUMB_LOAD);
         return 0;

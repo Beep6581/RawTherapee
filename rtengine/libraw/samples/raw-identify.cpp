@@ -40,7 +40,11 @@ it under the terms of the one of two licenses as you choose:
 #include <sys/mman.h>
 #include <sys/time.h>
 #ifndef MAX_PATH
+#ifdef PATH_MAX
 #define MAX_PATH PATH_MAX
+#else
+#define MAX_PATH 4096
+#endif
 #endif
 #endif
 
