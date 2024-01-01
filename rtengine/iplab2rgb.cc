@@ -464,8 +464,9 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             }
             meanx /= (ch*cw);
             meany /= (ch*cw);
-         //   printf("meanx=%f meany=%f \n", (double) meanx, (double) meany);
-
+            if (settings->verbose) {             
+                printf("Estimation dominant color : x=%f y=%f \n", (double) meanx, (double) meany);
+            }
     double wprofprim[3][3];//store primaries to XYZ
 
     const float toxyz[3][3] = {

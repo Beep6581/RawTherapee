@@ -8664,7 +8664,8 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         catBox->set_tooltip_text(M("TP_ICM_WORKING_CAT_TOOLTIP"));
         wprimBox->set_tooltip_text(M("TP_ICM_WORKING_PRIM_TOOLTIP"));
         expprecam->set_tooltip_text(M("TP_LOCALLAB_PRECAM_TOOLTIP"));
-
+        refi->set_tooltip_text(M("TP_LOCALLAB_PRECAMREFI_TOOLTIP"));
+        gamutcie->set_tooltip_text(M("TP_LOCALLAB_PRECAMGAMUT_TOOLTIP"));
     } else {
         reparcie->set_tooltip_text("");
         recothrescie->set_tooltip_text("");
@@ -8738,6 +8739,8 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         catBox->set_tooltip_text("");
         expprecam->set_tooltip_text("");
         wprimBox->set_tooltip_text("");
+        refi->set_tooltip_text("");
+        gamutcie->set_tooltip_text("");
 
     }
 }
