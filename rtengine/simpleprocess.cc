@@ -517,7 +517,7 @@ private:
 
                     currWB = ColorTemp(params.wb.temperature, params.wb.green, 1., params.wb.method, params.wb.observer);
                     currWB.getMultipliers(rm, gm, bm);
-                    autoWB.update(rm, gm, bm, params.wb.equal, params.wb.observer, params.wb.tempBias);
+                    autoWB.update(rm, gm, bm, params.wb.equal, params.wb.observer, 0.); //params.wb.tempBias already used before
                     
                 }
 
