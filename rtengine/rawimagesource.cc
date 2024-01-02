@@ -1439,7 +1439,7 @@ void RawImageSource::preprocess(const RAWParams &raw, const LensProfParams &lens
 
     int totBP = 0; // Hold count of bad pixels to correct
 
-    if (ri->zeroIsBad()) { // mark all pixels with value zero as bad, has to be called before FF and DF. dcraw sets this flag only for some cameras (mainly Panasonic and Leica)
+    if (ri->zeroIsBad() || (getMetaData()->hasFixBadPixelsConstant() && getMetaData()->getFixBadPixelsConstant() == 0)) { // mark all pixels with value zero as bad, has to be called before FF and DF. dcraw sets this flag only for some cameras (mainly Panasonic and Leica)
         bitmapBads.reset(new PixelsMap(W, H));
         totBP = findZeroPixels(*bitmapBads);
 

@@ -20,6 +20,7 @@
 #pragma once
 
 #include <array>
+#include <cstdint>
 #include <ctime>
 #include <string>
 #include <memory>
@@ -159,6 +160,8 @@ public:
     static FramesMetaData* fromFile(const Glib::ustring& fname);
 
     virtual Glib::ustring getFileName() const = 0;
+    virtual std::uint32_t getFixBadPixelsConstant() const = 0;
+    virtual bool hasFixBadPixelsConstant() const = 0;
     virtual std::vector<GainMap> getGainMaps() const = 0;
     virtual void getDimensions(int &w, int &h) const = 0;
 };

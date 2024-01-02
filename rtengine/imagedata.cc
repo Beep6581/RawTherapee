@@ -168,10 +168,15 @@ public:
     }
 };
 
+std::uint32_t readFixBadPixelsConstant(TagValueReader &reader)
+{
+    reader.seekRelative(12); // Skip DNG spec version, flags, and tag size.
+    return reader.readUInt();
+}
+
 GainMap readGainMap(TagValueReader &reader)
 {
-    reader.seekRelative(4); // skip 4 bytes as we know that the opcode 4 takes 4 byte
-    reader.seekRelative(8); // skip 8 bytes as they don't interest us currently
+    reader.seekRelative(12); // Skip DNG spec version, flags, and tag size.
     GainMap gainMap;
     gainMap.Top = reader.readUInt();
     gainMap.Left = reader.readUInt();
@@ -196,7 +201,11 @@ GainMap readGainMap(TagValueReader &reader)
     return gainMap;
 }
 
-void readOpcodesList(const Exiv2::Value &value, std::vector<GainMap> &gainMaps)
+void readOpcodesList(
+    const Exiv2::Value &value,
+    std::uint32_t *fixBadPixelsConstant,
+    bool *hasFixBadPixelsConstant,
+    std::vector<GainMap> *gainMaps)
 {
     TagValueReader reader(value);
     std::uint32_t ntags = reader.readUInt(); // read the number of opcodes
@@ -205,8 +214,16 @@ void readOpcodesList(const Exiv2::Value &value, std::vector<GainMap> &gainMaps)
     }
     while (ntags-- && !reader.isEnd()) {
         unsigned opcode = reader.readUInt();
-        if (opcode == 9 && gainMaps.size() < 4) {
-            gainMaps.push_back(readGainMap(reader));
+        if (opcode == 4 && (fixBadPixelsConstant || hasFixBadPixelsConstant)) {
+            const auto constant = readFixBadPixelsConstant(reader);
+            if (fixBadPixelsConstant) {
+                *fixBadPixelsConstant = constant;
+            }
+            if (hasFixBadPixelsConstant) {
+                *hasFixBadPixelsConstant = true;
+            }
+        } else if (opcode == 9 && gainMaps && gainMaps->size() < 4) {
+            gainMaps->push_back(readGainMap(reader));
         } else {
             reader.seekRelative(8); // skip 8 bytes as they don't interest us currently
             reader.seekRelative(reader.readUInt());
@@ -826,16 +843,20 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
             }
         }
 
-        uint32_t dngVersion = 0;
+        std::uint32_t dngVersion = 0;
         if (find_exif_tag("Exif.Image.DNGVersion") && pos->count() == 4) {
             for (int i = 0; i < 4; i++) {
-                dngVersion = (dngVersion << 8) + static_cast<uint32_t>(to_long(pos, i));
+                dngVersion = (dngVersion << 8) + static_cast<std::uint32_t>(to_long(pos, i));
             }
         }
 
-        // Read gain maps.
+        // Read DNG OpcodeList1.
+        if (dngVersion && (find_exif_tag("Exif.SubImage1.OpcodeList1") || find_exif_tag("Exif.Image.OpcodeList1"))) {
+            readOpcodesList(pos->value(), &fixBadPixelsConstant, &hasFixBadPixelsConstant_, nullptr);
+        }
+        // Read DNG OpcodeList2.
         if (dngVersion && (find_exif_tag("Exif.SubImage1.OpcodeList2") || find_exif_tag("Exif.Image.OpcodeList2"))) {
-            readOpcodesList(pos->value(), gain_maps_);
+            readOpcodesList(pos->value(), nullptr, nullptr, &gain_maps_);
         }
     } catch (const std::exception& e) {
         if (settings->verbose) {
@@ -1076,6 +1097,16 @@ void FramesData::fillBasicTags(Exiv2::ExifData &exif) const
     auto t = getDateTime();
     strftime(buf, 256, "%Y:%m:%d %H:%M:%S", &t);
     set_exif(exif, "Exif.Photo.DateTimeOriginal", buf);
+}
+
+std::uint32_t FramesData::getFixBadPixelsConstant() const
+{
+    return fixBadPixelsConstant;
+}
+
+bool FramesData::hasFixBadPixelsConstant() const
+{
+    return hasFixBadPixelsConstant_;
 }
 
 std::vector<GainMap> FramesData::getGainMaps() const

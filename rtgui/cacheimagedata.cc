@@ -362,6 +362,16 @@ int CacheImageData::save (const Glib::ustring& fname)
     }
 }
 
+std::uint32_t CacheImageData::getFixBadPixelsConstant() const
+{
+    return 0;
+}
+
+bool CacheImageData::hasFixBadPixelsConstant() const
+{
+    return false;
+}
+
 std::vector<GainMap> CacheImageData::getGainMaps() const
 {
     return std::vector<GainMap>();

@@ -60,6 +60,8 @@ private:
     time_t modTimeStamp;
     bool isPixelShift;
     bool isHDR;
+    std::uint32_t fixBadPixelsConstant;
+    bool hasFixBadPixelsConstant_{false};
     std::vector<GainMap> gain_maps_;
     int w_;
     int h_;
@@ -90,6 +92,8 @@ public:
     std::string getOrientation() const override;
     Glib::ustring getFileName() const override;
     int getRating() const override;
+    std::uint32_t getFixBadPixelsConstant() const override;
+    bool hasFixBadPixelsConstant() const override;
     std::vector<GainMap> getGainMaps() const override;
     void getDimensions(int &w, int &h) const override;
 
