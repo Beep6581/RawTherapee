@@ -402,7 +402,7 @@ int LibRaw::adobe_coeff(unsigned make_idx, const char *t_model,
 
     { LIBRAW_CAMERAMAKER_Fujifilm, "HS10", 0, 0xf68,
       { 12440,-3954,-1183,-1123,9674,1708,-83,1614,4086 } },
-    { LIBRAW_CAMERAMAKER_Fujifilm, "HS2", 0, 0, // HS20EXR/HS22EXR
+    { LIBRAW_CAMERAMAKER_Fujifilm, "HS2", 0, 0xfef, // HS20EXR/HS22EXR
       { 13690,-5358,-1474,-3369,11600,1998,-132,1554,4395 } },
     { LIBRAW_CAMERAMAKER_Fujifilm, "HS3", 0, 0, // HS30EXR/HS33EXR/HS35EXR
       { 13690,-5358,-1474,-3369,11600,1998,-132,1554,4395 } },
@@ -1387,6 +1387,9 @@ int LibRaw::adobe_coeff(unsigned make_idx, const char *t_model,
       { 7564,-2263,-606,-3148,11239,2177,-540,1435,4853 } },
     { LIBRAW_CAMERAMAKER_Panasonic, "DC-GX9", -15, 0,
       { 7564,-2263,-606,-3148,11239,2177,-540,1435,4853 } },
+
+    { LIBRAW_CAMERAMAKER_Panasonic, "DMC-TZ82", -15, 0,
+      { 8550,-2908,-842,-3195,11529,1881,-338,1603,4631 } },
 
     { LIBRAW_CAMERAMAKER_Panasonic, "DMC-ZS100", -15, 0,
       { 7790,-2736,-755,-3452,11870,1769,-628,1647,4898 } },
