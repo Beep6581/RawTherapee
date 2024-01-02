@@ -505,6 +505,22 @@ int RawImage::loadRaw(bool loadData, unsigned int imageNum, bool closeFile, Prog
         libraw->imgdata.rawparams.shot_select = shot_select;
 
         int err = libraw->open_buffer(ifp->data, ifp->size);
+
+        merged_pixelshift.is_merged_pixelshift =
+            err == LIBRAW_SUCCESS &&
+            (strncmp(libraw->unpack_function_name(), "sony_arq_load_raw", 17) == 0 &&
+                libraw->imgdata.idata.raw_count == 1 &&
+                libraw->imgdata.idata.colors == 4);
+
+        if (err == LIBRAW_REQUEST_FOR_NONEXISTENT_IMAGE || (merged_pixelshift.is_merged_pixelshift && shot_select)) {
+            // Try again last valid frame. Sony Pixel Shift, for example, has a
+            // single frame, but we want to represent the data as four.
+            shot_select = merged_pixelshift.is_merged_pixelshift ? shot_select / 4 : shot_select;
+            shot_select = std::min(shot_select, std::max(libraw->imgdata.idata.raw_count, 1u) - 1);
+            libraw->imgdata.rawparams.shot_select = shot_select;
+            err = libraw->open_buffer(ifp->data, ifp->size);
+        }
+
         if (err == LIBRAW_FILE_UNSUPPORTED || err == LIBRAW_TOO_BIG) {
             // fallback to the internal one
             return err;
@@ -531,6 +547,18 @@ int RawImage::loadRaw(bool loadData, unsigned int imageNum, bool closeFile, Prog
         is_foveon = d.is_foveon;
         colors = d.colors;
         tiff_bps = 0;
+
+        if (merged_pixelshift.is_merged_pixelshift ||
+            (strncmp(libraw->unpack_function_name(), "sony_arq_load_raw", 17) == 0 &&
+                is_raw == 1 && colors == 4)) {
+            // Represent merged pixelshift as 4 sub-frames.
+            merged_pixelshift.is_merged_pixelshift = true;
+            merged_pixelshift.sub_frame_shot_select = imageNum % 4;
+
+            filters = 0x94949494;
+            colors = 3;
+            is_raw = 4;
+        }
 
         for (int i = 0; i < 6; ++i) {
             for (int j = 0; j < 6; ++j) {
@@ -575,6 +603,9 @@ int RawImage::loadRaw(bool loadData, unsigned int imageNum, bool closeFile, Prog
         for (int i = 0; i < 4; ++i) {
             cam_mul[i] = cd.cam_mul[i];
             pre_mul[i] = cd.pre_mul[i];
+        }
+        if (merged_pixelshift.is_merged_pixelshift) {
+            pre_mul[3] = 0.f; // 4th value is undefined after reducing to 3 colors.
         }
 
         for (int i = 0; i < 3; ++i) {
@@ -1102,6 +1133,41 @@ float** RawImage::compress_image(unsigned int frameNum, bool freeImage)
 
         delete [] float_raw_image;
         float_raw_image = nullptr;
+    } else if (merged_pixelshift.is_merged_pixelshift) {
+        // Frame 0 is not shifted. Frame 1 is shifted down. Frame 2 is shifted
+        // down and right. Frame 3 is shifted right.
+        int h_shift = (merged_pixelshift.sub_frame_shot_select >> 1) & 1;
+        int v_shift = ((merged_pixelshift.sub_frame_shot_select + 1u) >> 1) & 1;
+
+        // Reset edges to 0.
+        for (int row = 0; row < v_shift; ++row) {
+            for (int col = 0; col < width; ++col) {
+                this->data[row][col] = 0;
+            }
+        }
+        for (int col = 0; col < h_shift; ++col) {
+            for (int row = 0; row < height; ++row) {
+                this->data[row][col] = 0;
+            }
+        }
+
+        const int image_v_shift = top_margin - v_shift;
+        const int image_h_shift = left_margin - h_shift;
+        const unsigned original_filters = filters;
+
+        filters = 0xb4b4b4b4; // R G1 B G2.
+
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+
+        for (int row = v_shift; row < height; row++) {
+            for (int col = h_shift; col < width; col++) {
+                this->data[row][col] = image[(row + image_v_shift) * iwidth + col + image_h_shift][FC(row, col)];
+            }
+        }
+
+        filters = original_filters;
     } else if (filters != 0 && !isXtrans()) {
 #ifdef _OPENMP
         #pragma omp parallel for
