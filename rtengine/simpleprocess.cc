@@ -275,7 +275,7 @@ private:
         if (params.wb.method == "autitcgreen"  && flush) {
             imgsrc->getrgbloc(0, 0, fh, fw, 0, 0, fh, fw, params.wb);
         }
-        const bool autowb = params.wb.method == "autitcgreen";
+        const bool autowb = (params.wb.method == "autitcgreen" && imgsrc->isRAW() && flush);
         ColorTemp autoWB;
         int dread = 0;
         int bia = 1;
@@ -295,14 +295,14 @@ private:
 
         if (!params.wb.enabled) {
             currWB = ColorTemp();
-        } else if (params.wb.method == "Camera") {
+        } else if (params.wb.method == "Camera" || (params.wb.method == "autitcgreen" && !imgsrc->isRAW() && flush)) {//Use also Camera settings for Temperature correlation and TIF/Jpg
             currWB = imgsrc->getWB();
         } else if (params.wb.method == "autold") {//for Auto RGB
             double rm, gm, bm;
             imgsrc->getAutoWBMultipliers(rm, gm, bm);
             currWB.update(rm, gm, bm, params.wb.equal, params.wb.observer, params.wb.tempBias);
 
-        } else if (autowb  && flush) {//for auto Itcwb - flush to enable only when batch
+        } else if (autowb) {//for auto Itcwb - flush to enable only when batch only with Raw files
         //code similar to that present in improccoordinator.cc
                 float tem = 5000.f;
                 float gre  = 1.f;
