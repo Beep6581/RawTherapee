@@ -2125,7 +2125,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float meanx, meany, meanxe, meanye = 0.f;
 
                 ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0, 0,  rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, dummy, true, false, false, false);
-                ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, catc, illum, prim, locprim,  rdx, rdy, grx, gry, blx, bly,meanx, meany, meanxe, meanye, dummy, false, true, true, gamutcontrol);
+                ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, catc, illum, prim, locprim,  rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, dummy, false, true, true, gamutcontrol);
 
                 ipf.rgb2lab(*tmpImage1, *nprevl, params->icm.workingProfile);
 
@@ -2243,7 +2243,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     wy = wx * arefi + brefi;
 
                     if (primListener) {
-                        primListener->iprimChanged(r_x, r_y, b_x, b_y, g_x, g_y, wx, wy);
+                        primListener->iprimChanged(r_x, r_y, b_x, b_y, g_x, g_y, wx, wy, meanx, meany);
                     }
                 }
             }

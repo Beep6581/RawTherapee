@@ -79,8 +79,8 @@ LabGridArea::LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool
     Gtk::DrawingArea(),
     evt(evt), evtMsg(msg),
     litPoint(NONE),
-    low_a(0.f), high_a(0.f), low_b(0.f), high_b(0.f), gre_x(0.f), gre_y(0.f), whi_x(0.f), whi_y(0.f),//these variables are used as xy in Ciexy - no change labels
-    defaultLow_a(0.f), defaultHigh_a(0.f), defaultLow_b(0.f), defaultHigh_b(0.f), defaultgre_x(0.f), defaultgre_y(0.f), defaultwhi_x(0.f), defaultwhi_y(0.f),
+    low_a(0.f), high_a(0.f), low_b(0.f), high_b(0.f), gre_x(0.f), gre_y(0.f), whi_x(0.f), whi_y(0.f), me_x(0.f), me_y(0.f),//these variables are used as xy in Ciexy - no change labels
+    defaultLow_a(0.f), defaultHigh_a(0.f), defaultLow_b(0.f), defaultHigh_b(0.f), defaultgre_x(0.f), defaultgre_y(0.f), defaultwhi_x(0.f), defaultwhi_y(0.f), defaultme_x(0.f), defaultme_y(0.f),
     listener(nullptr),
     edited(false),
     isDragged(false),
@@ -96,7 +96,7 @@ LabGridArea::LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool
     get_style_context()->add_class("drawingarea");
 }
 
-void LabGridArea::getParams(double &la, double &lb, double &ha, double &hb, double &gx, double &gy, double &wx, double &wy) const
+void LabGridArea::getParams(double &la, double &lb, double &ha, double &hb, double &gx, double &gy, double &wx, double &wy, double &mx, double &my) const
 {
     la = low_a;
     ha = high_a;
@@ -106,11 +106,13 @@ void LabGridArea::getParams(double &la, double &lb, double &ha, double &hb, doub
     gy = gre_y;
     wx = whi_x;
     wy = whi_y;
+    mx = me_x;
+    my = me_y;
  //  printf("la=%f ha=%f lb=%f hb=%f gx=%f gy=%f\n", la, ha, lb, hb, gx, gy);
 }
 
 
-void LabGridArea::setParams(double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, bool notify)
+void LabGridArea::setParams(double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my, bool notify)
 {
     const double lo = -1.0;
     const double hi = 1.0;
@@ -122,6 +124,8 @@ void LabGridArea::setParams(double la, double lb, double ha, double hb, double g
     gre_y = rtengine::LIM(gy, lo, hi);
     whi_x = rtengine::LIM(wx, lo, hi);
     whi_y = rtengine::LIM(wy, lo, hi);
+    me_x = rtengine::LIM(mx, lo, hi);
+    me_y = rtengine::LIM(my, lo, hi);
     
     queue_draw();
     if (notify) {
@@ -129,7 +133,7 @@ void LabGridArea::setParams(double la, double lb, double ha, double hb, double g
     }
 }
 
-void LabGridArea::setDefault (double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy)
+void LabGridArea::setDefault (double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my)
 {
     defaultLow_a = la;
     defaultLow_b = lb;
@@ -139,16 +143,18 @@ void LabGridArea::setDefault (double la, double lb, double ha, double hb, double
     defaultgre_y = gy;
     defaultwhi_x = wx;
     defaultwhi_y = wy;
+    defaultme_x = mx;
+    defaultme_y = my;
 }
 
 
 void LabGridArea::reset(bool toInitial)
 {
     if (toInitial) {
-        setParams(defaultLow_a, defaultLow_b, defaultHigh_a, defaultHigh_b, defaultgre_x, defaultgre_y, defaultwhi_x, defaultwhi_y, true);
+        setParams(defaultLow_a, defaultLow_b, defaultHigh_a, defaultHigh_b, defaultgre_x, defaultgre_y, defaultwhi_x, defaultwhi_y, defaultme_x, defaultme_y, true);
     } else {
    //     printf("RESET \n");
-        setParams(0., 0., 0., 0., 0., 0., 0., 0., true);
+        setParams(0., 0., 0., 0., 0., 0., 0., 0., 0., 0., true);
     }
 }
 
@@ -361,7 +367,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
         }
         // drawing the connection line
         cr->set_antialias(Cairo::ANTIALIAS_DEFAULT);
-        float loa, hia, lob, hib, grx, gry, whx, why;
+        float loa, hia, lob, hib, grx, gry, whx, why, mex, mey;
         loa = .5 * (width + width * low_a);
         hia = .5 * (width + width * high_a);
         lob = .5 * (height + height * low_b);
@@ -370,6 +376,8 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
         gry = .5 * (height + height * gre_y);
         whx = .5 * (width + width * whi_x);
         why = .5 * (height + height * whi_y);
+        mex = .5 * (width + width * me_x);
+        mey = .5 * (height + height * me_y);
         cr->set_line_width(1.5f * double(s));
         cr->set_source_rgb(0.6, 0.6, 0.6);
         cr->move_to(loa, lob);
@@ -450,6 +458,12 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
         if (ciexy_enabled) {//White Point
             cr->set_source_rgb(1., 1., 1.);//White
             cr->arc(whx, why, 3 * s, 0, 2. * rtengine::RT_PI);
+            cr->fill();
+        }
+
+        if (ciexy_enabled) {//Dominant
+            cr->set_source_rgb(0.3, 0.4, 0.3);
+            cr->arc(mex, mey, 3 * s, 0, 2. * rtengine::RT_PI);
             cr->fill();
         }
 

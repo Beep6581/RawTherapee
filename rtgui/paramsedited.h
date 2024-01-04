@@ -1087,6 +1087,8 @@ public:
         bool labgridcieGy;
         bool labgridcieWx;
         bool labgridcieWy;       
+        bool labgridcieMx;
+        bool labgridcieMy;       
         bool whitescie;
         bool blackscie;
         bool illMethod;
@@ -1308,6 +1310,8 @@ struct ColorManagementParamsEdited {
     bool labgridcieGy;
     bool labgridcieWx;
     bool labgridcieWy;
+    bool labgridcieMx;
+    bool labgridcieMy;
     bool aRendIntent;
     bool outputProfile;
     bool outputIntent;

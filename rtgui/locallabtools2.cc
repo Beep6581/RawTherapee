@@ -9150,6 +9150,8 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
                            spot.labgridcieGy,
                            spot.labgridcieWx,
                            spot.labgridcieWy,
+                           spot.labgridcieMx,
+                           spot.labgridcieMy,
                            false);
         
         /*
@@ -9256,7 +9258,6 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.bluxl =  bluxl->getValue();
         spot.bluyl =  bluyl->getValue();
         spot.refi =  refi->getValue();
-
         labgridcie->getParams(spot.labgridcieALow,
                            spot.labgridcieBLow,
                            spot.labgridcieAHigh,
@@ -9264,7 +9265,9 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
                            spot.labgridcieGx,
                            spot.labgridcieGy,
                            spot.labgridcieWx,
-                           spot.labgridcieWy);
+                           spot.labgridcieWy,
+                           spot.labgridcieMx,
+                           spot.labgridcieMy);
 
         spot.Autograycie = Autograycie->get_active();
         spot.forcejz = forcejz->get_active();
@@ -9566,6 +9569,8 @@ void Locallabcie::updateiPrimloc (const float r_x, const float r_y, const float 
     nextgy = g_y;
     nextwx = w_x;
     nextwy = w_y;
+    nextmx = m_x;
+    nextmy = m_y;
     
     //convert xy datas in datas for labgrid areas
     nextrx = 1.81818f * (nextrx + 0.1f) - 1.f;
@@ -9576,6 +9581,8 @@ void Locallabcie::updateiPrimloc (const float r_x, const float r_y, const float 
     nextgy = 1.81818f * (nextgy + 0.1f) - 1.f;
     nextwx = 1.81818f * (nextwx + 0.1f) - 1.f;
     nextwy = 1.81818f * (nextwy + 0.1f) - 1.f;
+    nextmx = 1.81818f * (nextmx + 0.1f) - 1.f;
+    nextmy = 1.81818f * (nextmy + 0.1f) - 1.f;
 
     idle_register.add(
         [this, r_x, r_y, g_x, g_y, b_x, b_y]() -> bool
@@ -9589,7 +9596,7 @@ void Locallabcie::updateiPrimloc (const float r_x, const float r_y, const float 
                 greyl->setValue(g_y);
                 bluxl->setValue(b_x);
                 bluyl->setValue(b_y);
-            labgridcie->setParams(nextrx, nextry, nextbx, nextby, nextgx, nextgy, nextwx, nextwy, false);
+            labgridcie->setParams(nextrx, nextry, nextbx, nextby, nextgx, nextgy, nextwx, nextwy, nextmx, nextmy, false);
             enableListener();
             return false;
         }
@@ -11028,7 +11035,9 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
                             defSpot.labgridcieGx,
                             defSpot.labgridcieGy,
                             defSpot.labgridcieWx,
-                            defSpot.labgridcieWy);
+                            defSpot.labgridcieWy,
+                            defSpot.labgridcieMx,
+                            defSpot.labgridcieMy);
 
     }
 }

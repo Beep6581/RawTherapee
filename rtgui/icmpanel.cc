@@ -639,7 +639,7 @@ void ICMPanel::primChanged (float rx, float ry, float bx, float by, float gx, fl
     );
 }
 
-void ICMPanel::iprimChanged (float r_x, float r_y, float b_x, float b_y, float g_x, float g_y, float w_x, float w_y)
+void ICMPanel::iprimChanged (float r_x, float r_y, float b_x, float b_y, float g_x, float g_y, float w_x, float w_y, float m_x, float m_y)
 {//update CIE xy graph
     nextrx = r_x;
     nextry = r_y;
@@ -649,6 +649,8 @@ void ICMPanel::iprimChanged (float r_x, float r_y, float b_x, float b_y, float g
     nextgy = g_y;
     nextwx = w_x;
     nextwy = w_y;
+    nextmx = m_x;
+    nextmy = m_y;
     //convert xy datas in datas for labgrid areas
     nextrx = 1.81818f * (nextrx + 0.1f) - 1.f;
     nextry = 1.81818f * (nextry + 0.1f) - 1.f;
@@ -658,12 +660,14 @@ void ICMPanel::iprimChanged (float r_x, float r_y, float b_x, float b_y, float g
     nextgy = 1.81818f * (nextgy + 0.1f) - 1.f;
     nextwx = 1.81818f * (nextwx + 0.1f) - 1.f;
     nextwy = 1.81818f * (nextwy + 0.1f) - 1.f;
+    nextmx = 1.81818f * (nextmx + 0.1f) - 1.f;
+    nextmy = 1.81818f * (nextmy + 0.1f) - 1.f;
 
     idle_register.add(
         [this]() -> bool
         {
             disableListener();
-            labgridcie->setParams(nextrx, nextry, nextbx, nextby, nextgx, nextgy, nextwx, nextwy, false);
+            labgridcie->setParams(nextrx, nextry, nextbx, nextby, nextgx, nextgy, nextwx, nextwy, nextmx, nextmy,  false);
             enableListener();
             return false;
         }
@@ -917,7 +921,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     bluy->setValue(pp->icm.bluy);
     refi->setValue(pp->icm.refi);
     preser->setValue(pp->icm.preser);
-    labgridcie->setParams(pp->icm.labgridcieALow, pp->icm.labgridcieBLow, pp->icm.labgridcieAHigh, pp->icm.labgridcieBHigh, pp->icm.labgridcieGx, pp->icm.labgridcieGy, pp->icm.labgridcieWx, pp->icm.labgridcieWy, false);
+    labgridcie->setParams(pp->icm.labgridcieALow, pp->icm.labgridcieBLow, pp->icm.labgridcieAHigh, pp->icm.labgridcieBHigh, pp->icm.labgridcieGx, pp->icm.labgridcieGy, pp->icm.labgridcieWx, pp->icm.labgridcieWy, pp->icm.labgridcieMx, pp->icm.labgridcieMy, false);
 
     if (pedited) {
         iunchanged->set_active(!pedited->icm.inputProfile);
@@ -966,7 +970,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             wcat->set_active_text(M("GENERAL_UNCHANGED"));
         }
         
-        labgridcie->setEdited(pedited->icm.labgridcieALow || pedited->icm.labgridcieBLow || pedited->icm.labgridcieAHigh || pedited->icm.labgridcieBHigh  || pedited->icm.labgridcieGx  || pedited->icm.labgridcieGy || pedited->icm.labgridcieWx  || pedited->icm.labgridcieWy);
+        labgridcie->setEdited(pedited->icm.labgridcieALow || pedited->icm.labgridcieBLow || pedited->icm.labgridcieAHigh || pedited->icm.labgridcieBHigh  || pedited->icm.labgridcieGx  || pedited->icm.labgridcieGy || pedited->icm.labgridcieWx  || pedited->icm.labgridcieWy || pedited->icm.labgridcieMx || pedited->icm.labgridcieMy);
 
         wGamma->setEditedState(pedited->icm.workingTRCGamma ? Edited : UnEdited);
         wSlope->setEditedState(pedited->icm.workingTRCSlope  ? Edited : UnEdited);
@@ -1233,7 +1237,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
 
     pp->icm.workingProfile = wProfNames->get_active_text();
     pp->icm.dcpIlluminant = rtengine::max<int>(dcpIll->get_active_row_number(), 0);
-    labgridcie->getParams(pp->icm.labgridcieALow, pp->icm.labgridcieBLow, pp->icm.labgridcieAHigh, pp->icm.labgridcieBHigh, pp->icm.labgridcieGx, pp->icm.labgridcieGy, pp->icm.labgridcieWx, pp->icm.labgridcieWy);
+    labgridcie->getParams(pp->icm.labgridcieALow, pp->icm.labgridcieBLow, pp->icm.labgridcieAHigh, pp->icm.labgridcieBHigh, pp->icm.labgridcieGx, pp->icm.labgridcieGy, pp->icm.labgridcieWx, pp->icm.labgridcieWy, pp->icm.labgridcieMx, pp->icm.labgridcieMy);
 
     if (oProfNames->get_active_text() == M("TP_ICM_NOICM")) {
         pp->icm.outputProfile  = ColorManagementParams::NoICMString;
@@ -1305,7 +1309,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->icm.wcat = wcat->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.redx = redx->getEditedState();
         pedited->icm.redy = redy->getEditedState();
-        pedited->icm.labgridcieALow = pedited->icm.labgridcieBLow = pedited->icm.labgridcieAHigh = pedited->icm.labgridcieBHigh = pedited->icm.labgridcieGx = pedited->icm.labgridcieGy = pedited->icm.labgridcieWx = pedited->icm.labgridcieWy = labgridcie->getEdited();
+        pedited->icm.labgridcieALow = pedited->icm.labgridcieBLow = pedited->icm.labgridcieAHigh = pedited->icm.labgridcieBHigh = pedited->icm.labgridcieGx = pedited->icm.labgridcieGy = pedited->icm.labgridcieWx = pedited->icm.labgridcieWy = pedited->icm.labgridcieMx = pedited->icm.labgridcieMy = labgridcie->getEdited();
    }
 }
 
@@ -1321,7 +1325,7 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
     bluy->setDefault(defParams->icm.bluy);
     refi->setDefault(defParams->icm.refi);
     preser->setDefault(defParams->icm.preser);
-    labgridcie->setDefault(defParams->icm.labgridcieALow, defParams->icm.labgridcieBLow , defParams->icm.labgridcieAHigh, defParams->icm.labgridcieBHigh, defParams->icm.labgridcieGx, defParams->icm.labgridcieGy, defParams->icm.labgridcieWx, defParams->icm.labgridcieWy);
+    labgridcie->setDefault(defParams->icm.labgridcieALow, defParams->icm.labgridcieBLow , defParams->icm.labgridcieAHigh, defParams->icm.labgridcieBHigh, defParams->icm.labgridcieGx, defParams->icm.labgridcieGy, defParams->icm.labgridcieWx, defParams->icm.labgridcieWy, defParams->icm.labgridcieMx, defParams->icm.labgridcieMy);
 
     if (pedited) {
         wGamma->setDefaultEditedState(pedited->icm.workingTRCGamma ? Edited : UnEdited);
@@ -1333,7 +1337,7 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
         blux->setDefaultEditedState(pedited->icm.blux ? Edited : UnEdited);
         bluy->setDefaultEditedState(pedited->icm.bluy ? Edited : UnEdited);
         refi->setDefaultEditedState(pedited->icm.refi ? Edited : UnEdited);
-        labgridcie->setEdited((pedited->icm.labgridcieALow || pedited->icm.labgridcieBLow || pedited->icm.labgridcieAHigh || pedited->icm.labgridcieBHigh || pedited->icm.labgridcieGx || pedited->icm.labgridcieGy || pedited->icm.labgridcieWx || pedited->icm.labgridcieWy) ? Edited : UnEdited);
+        labgridcie->setEdited((pedited->icm.labgridcieALow || pedited->icm.labgridcieBLow || pedited->icm.labgridcieAHigh || pedited->icm.labgridcieBHigh || pedited->icm.labgridcieGx || pedited->icm.labgridcieGy || pedited->icm.labgridcieWx || pedited->icm.labgridcieWy || pedited->icm.labgridcieMx || pedited->icm.labgridcieMy) ? Edited : UnEdited);
         preser->setDefaultEditedState(pedited->icm.preser ? Edited : UnEdited);
 
     } else {

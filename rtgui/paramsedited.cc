@@ -477,6 +477,8 @@ void ParamsEdited::set(bool v)
     icm.labgridcieGy = v;
     icm.labgridcieWx = v;
     icm.labgridcieWy = v;
+    icm.labgridcieMx = v;
+    icm.labgridcieMy = v;
     icm.aRendIntent = v;
     icm.workingTRC = v;
     icm.will = v;
@@ -1800,6 +1802,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).labgridcieGy = locallab.spots.at(j).labgridcieGy && pSpot.labgridcieGy == otherSpot.labgridcieGy;
                 locallab.spots.at(j).labgridcieWx = locallab.spots.at(j).labgridcieWx && pSpot.labgridcieWx == otherSpot.labgridcieWx;
                 locallab.spots.at(j).labgridcieWy = locallab.spots.at(j).labgridcieWy && pSpot.labgridcieWy == otherSpot.labgridcieWy;
+                locallab.spots.at(j).labgridcieMx = locallab.spots.at(j).labgridcieMx && pSpot.labgridcieMx == otherSpot.labgridcieMx;
+                locallab.spots.at(j).labgridcieMy = locallab.spots.at(j).labgridcieMy && pSpot.labgridcieMy == otherSpot.labgridcieMy;
 
                 locallab.spots.at(j).whitescie = locallab.spots.at(j).whitescie && pSpot.whitescie == otherSpot.whitescie;
                 locallab.spots.at(j).blackscie = locallab.spots.at(j).blackscie && pSpot.blackscie == otherSpot.blackscie;
@@ -1952,6 +1956,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         icm.labgridcieGy = icm.labgridcieGy && p.icm.labgridcieGy == other.icm.labgridcieGy;
         icm.labgridcieWx = icm.labgridcieWx && p.icm.labgridcieWx == other.icm.labgridcieWx;
         icm.labgridcieWy = icm.labgridcieWy && p.icm.labgridcieWy == other.icm.labgridcieWy;
+        icm.labgridcieMx = icm.labgridcieMx && p.icm.labgridcieMx == other.icm.labgridcieMx;
+        icm.labgridcieMy = icm.labgridcieMy && p.icm.labgridcieMy == other.icm.labgridcieMy;
         icm.preser = icm.preser && p.icm.preser == other.icm.preser;
         icm.fbw = icm.fbw && p.icm.fbw == other.icm.fbw;
         icm.trcExp = icm.trcExp && p.icm.trcExp == other.icm.trcExp;
@@ -6215,6 +6221,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).labgridcieWy = mods.locallab.spots.at(i).labgridcieWy;
         }
 
+        if (locallab.spots.at(i).labgridcieMx) {
+            toEdit.locallab.spots.at(i).labgridcieMx = mods.locallab.spots.at(i).labgridcieMx;
+        }
+
+        if (locallab.spots.at(i).labgridcieMy) {
+            toEdit.locallab.spots.at(i).labgridcieMy = mods.locallab.spots.at(i).labgridcieMy;
+        }
+
         if (locallab.spots.at(i).whitescie) {
             toEdit.locallab.spots.at(i).whitescie = mods.locallab.spots.at(i).whitescie;
         }
@@ -6762,6 +6776,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (icm.labgridcieWy) {
         toEdit.icm.labgridcieWy = mods.icm.labgridcieWy;
+    }
+
+    if (icm.labgridcieMx) {
+        toEdit.icm.labgridcieMx = mods.icm.labgridcieMx;
+    }
+
+    if (icm.labgridcieMy) {
+        toEdit.icm.labgridcieMy = mods.icm.labgridcieMy;
     }
 
     if (icm.aRendIntent) {
@@ -8435,6 +8457,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     labgridcieGy(v),
     labgridcieWx(v),
     labgridcieWy(v),       
+    labgridcieMx(v),
+    labgridcieMy(v),       
     whitescie(v),
     blackscie(v),
     illMethod(v),
@@ -9181,6 +9205,8 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     labgridcieGy = v;
     labgridcieWx = v;
     labgridcieWy = v;         
+    labgridcieMx = v;
+    labgridcieMy = v;         
     whitescie = v;
     blackscie = v;
     illMethod = v;

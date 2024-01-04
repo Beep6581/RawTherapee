@@ -1721,6 +1721,8 @@ struct LocallabParams {
         double labgridcieGy;
         double labgridcieWx;
         double labgridcieWy;
+        double labgridcieMx;
+        double labgridcieMy;
         
         int whitescie;
         int blackscie;
@@ -2035,6 +2037,8 @@ struct ColorManagementParams {
     double labgridcieGy;
     double labgridcieWx;
     double labgridcieWy;
+    double labgridcieMx;
+    double labgridcieMy;
     RenderingIntent aRendIntent;
 
     Glib::ustring outputProfile;

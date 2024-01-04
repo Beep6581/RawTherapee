@@ -2409,6 +2409,8 @@ ColorManagementParams::ColorManagementParams() :
     labgridcieGy(-0.70909),//0.84
     labgridcieWx(-0.18964),//D50 0.3457, 0.3585,
     labgridcieWy(-0.16636),//
+    labgridcieMx(0.),//D50 0.3457, 0.3585,
+    labgridcieMy(0.),//
     aRendIntent(RI_RELATIVE),
     outputProfile(options.rtSettings.srgb),
     outputIntent(RI_RELATIVE),
@@ -2447,6 +2449,8 @@ bool ColorManagementParams::operator ==(const ColorManagementParams& other) cons
         && labgridcieGy == other.labgridcieGy
         && labgridcieWx == other.labgridcieWx
         && labgridcieWy == other.labgridcieWy
+        && labgridcieMx == other.labgridcieMx
+        && labgridcieMy == other.labgridcieMy
         && preser == other.preser
         && fbw == other.fbw
         && trcExp == other.trcExp
@@ -4616,6 +4620,8 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     labgridcieGy(0.7096),//0.84
     labgridcieWx(-0.18964),//D50 0.3457, 0.3585,
     labgridcieWy(-0.16636),//    
+    labgridcieMx(0.),
+    labgridcieMy(0.),//    
     whitescie(0),
     blackscie(0),
     illMethod("d50"),
@@ -5448,6 +5454,8 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && labgridcieGy == other.labgridcieGy
         && labgridcieWx == other.labgridcieWx
         && labgridcieWy == other.labgridcieWy        
+        && labgridcieMx == other.labgridcieMx
+        && labgridcieMy == other.labgridcieMy        
         && whitescie == other.whitescie
         && blackscie == other.blackscie
         && illMethod == other.illMethod
@@ -7381,6 +7389,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->labgridcieGy, "Locallab", "labgridcieGy_" + index_str, spot.labgridcieGy, keyFile);
                     saveToKeyfile(!pedited || spot_edited->labgridcieWx, "Locallab", "labgridcieWx_" + index_str, spot.labgridcieWx, keyFile);
                     saveToKeyfile(!pedited || spot_edited->labgridcieWy, "Locallab", "labgridcieWy_" + index_str, spot.labgridcieWy, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->labgridcieMx, "Locallab", "labgridcieMx_" + index_str, spot.labgridcieMx, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->labgridcieMy, "Locallab", "labgridcieMy_" + index_str, spot.labgridcieMy, keyFile);
 
                     saveToKeyfile(!pedited || spot_edited->whitescie, "Locallab", "whitescie_" + index_str, spot.whitescie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->blackscie, "Locallab", "blackscie_" + index_str, spot.blackscie, keyFile);
@@ -7596,6 +7606,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->icm.labgridcieGy, "Color Management", "LabGridcieGy", icm.labgridcieGy, keyFile);
         saveToKeyfile(!pedited || pedited->icm.labgridcieWx, "Color Management", "LabGridcieWx", icm.labgridcieWx, keyFile);
         saveToKeyfile(!pedited || pedited->icm.labgridcieWy, "Color Management", "LabGridcieWy", icm.labgridcieWy, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.labgridcieMx, "Color Management", "LabGridcieMx", icm.labgridcieMx, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.labgridcieMy, "Color Management", "LabGridcieMy", icm.labgridcieMy, keyFile);
         saveToKeyfile(!pedited || pedited->icm.preser, "Color Management", "Preser", icm.preser, keyFile);
         saveToKeyfile(!pedited || pedited->icm.fbw, "Color Management", "Fbw", icm.fbw, keyFile);
         saveToKeyfile(!pedited || pedited->icm.trcExp, "Color Management", "TrcExp", icm.trcExp, keyFile);
@@ -9710,6 +9722,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "labgridcieGy_" + index_str, spot.labgridcieGy, spotEdited.labgridcieGy);
                 assignFromKeyfile(keyFile, "Locallab", "labgridcieWx_" + index_str, spot.labgridcieWx, spotEdited.labgridcieWx);
                 assignFromKeyfile(keyFile, "Locallab", "labgridcieWy_" + index_str, spot.labgridcieWy, spotEdited.labgridcieWy);
+                assignFromKeyfile(keyFile, "Locallab", "labgridcieMx_" + index_str, spot.labgridcieMx, spotEdited.labgridcieMx);
+                assignFromKeyfile(keyFile, "Locallab", "labgridcieMy_" + index_str, spot.labgridcieMy, spotEdited.labgridcieMy);
                 
                 assignFromKeyfile(keyFile, "Locallab", "whitescie_" + index_str, spot.whitescie, spotEdited.whitescie);
                 assignFromKeyfile(keyFile, "Locallab", "blackscie_" + index_str, spot.blackscie, spotEdited.blackscie);
@@ -10035,6 +10049,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color Management", "LabGridcieGy", icm.labgridcieGy, pedited->icm.labgridcieGy);
             assignFromKeyfile(keyFile, "Color Management", "LabGridcieWx", icm.labgridcieWx, pedited->icm.labgridcieWx);
             assignFromKeyfile(keyFile, "Color Management", "LabGridcieWy", icm.labgridcieWy, pedited->icm.labgridcieWy);
+            assignFromKeyfile(keyFile, "Color Management", "LabGridcieMx", icm.labgridcieMx, pedited->icm.labgridcieMx);
+            assignFromKeyfile(keyFile, "Color Management", "LabGridcieMy", icm.labgridcieMy, pedited->icm.labgridcieMy);
             if (keyFile.has_key("Color Management", "aIntent")) {
                 Glib::ustring intent = keyFile.get_string("Color Management", "aIntent");
 

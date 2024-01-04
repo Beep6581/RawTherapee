@@ -1870,6 +1870,8 @@ private:
     float nextgy;
     float nextwx;
     float nextwy;
+    float nextmx;
+    float nextmy;
 
 };
 
