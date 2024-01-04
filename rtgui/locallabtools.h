@@ -94,6 +94,8 @@ protected:
     rtengine::ProcEvent Evlocallablightsigqcie;
     rtengine::ProcEvent Evlocallabcontsigqcie;
     rtengine::ProcEvent Evlocallabrefi;
+    rtengine::ProcEvent Evlocallabshiftxl;
+    rtengine::ProcEvent Evlocallabshiftyl;
 
     // LocallabTool parameters
     bool needMode;
@@ -1686,6 +1688,8 @@ private:
     MyComboBoxText* const catMethod;
     Gtk::Box* gamutcieBox;
     Gtk::CheckButton* const gamutcie;
+    Adjuster* const shiftxl;
+    Adjuster* const shiftyl;
 
     Gtk::Frame* const sigmoidjzFrame;
     Gtk::Frame* const sigmoid2Frame;

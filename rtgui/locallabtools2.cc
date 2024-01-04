@@ -7588,6 +7588,8 @@ Locallabcie::Locallabcie():
     catMethod(Gtk::manage(new MyComboBoxText())),
     gamutcieBox(Gtk::manage(new Gtk::Box())),
     gamutcie(Gtk::manage(new Gtk::CheckButton(M("TP_ICM_GAMUT")))),
+    shiftxl(Gtk::manage(new Adjuster(M("TC_PRIM_SHIFTX"), -0.05, 0.05, 0.0001, 0.))),
+    shiftyl(Gtk::manage(new Adjuster(M("TC_PRIM_SHIFTY"), -0.05, 0.05, 0.0001, 0.))),
 
     sigmoidjzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGJZFRA")))),
     sigmoid2Frame(Gtk::manage(new Gtk::Frame(M("")))),
@@ -7727,6 +7729,8 @@ Locallabcie::Locallabcie():
     Evlocallablightsigqcie = m->newEvent(AUTOEXP, "");
     Evlocallabcontsigqcie = m->newEvent(AUTOEXP, "");
     Evlocallabrefi = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_REFI");
+    Evlocallabshiftxl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SHIFTXL");
+    Evlocallabshiftyl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SHIFTYL");
 
 
 
@@ -7896,7 +7900,9 @@ Locallabcie::Locallabcie():
     bluxl->setAdjusterListener(this);
     bluyl->setAdjusterListener(this);
     refi->setAdjusterListener(this);
-    
+    shiftxl->setAdjusterListener(this);
+    shiftyl->setAdjusterListener(this);
+   
 
     gridFramecie->set_label_align(0.025, 0.5);
     ToolParamBlock* const gridBox = Gtk::manage(new ToolParamBlock());
@@ -7951,6 +7957,8 @@ Locallabcie::Locallabcie():
     primillBox->pack_start(*gamutcieBox);
     primillBox->pack_start(*catBox);
     primillBox->pack_start(*refi); 
+    primillBox->pack_start(*shiftxl); 
+    primillBox->pack_start(*shiftyl); 
 
     primillFrame->add(*primillBox);    
     gamcieBox->pack_start(*primillFrame);
@@ -9141,6 +9149,8 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         redxl->setValue(spot.redxl);
         redyl->setValue(spot.redyl);
         refi->setValue(spot.refi);
+        shiftxl->setValue(spot.shiftxl);
+        shiftyl->setValue(spot.shiftyl);
        
         labgridcie->setParams(spot.labgridcieALow,
                            spot.labgridcieBLow,
@@ -9258,6 +9268,8 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.bluxl =  bluxl->getValue();
         spot.bluyl =  bluyl->getValue();
         spot.refi =  refi->getValue();
+        spot.shiftxl =  shiftxl->getValue();
+        spot.shiftyl =  shiftyl->getValue();
         labgridcie->getParams(spot.labgridcieALow,
                            spot.labgridcieBLow,
                            spot.labgridcieAHigh,
@@ -11027,6 +11039,8 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         greyl->setDefault(defSpot.greyl);
         bluxl->setDefault(defSpot.bluxl);
         bluyl->setDefault(defSpot.bluyl);
+        shiftxl->setDefault(defSpot.shiftxl);
+        shiftyl->setDefault(defSpot.shiftyl);
         refi->setDefault(defSpot.refi);
         labgridcie->setDefault(defSpot.labgridcieALow,
                             defSpot.labgridcieBLow,
@@ -11567,6 +11581,20 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabrefi,
                                        refi->getTextValue() + spName);
+            }
+        }
+
+        if (a == shiftxl) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshiftxl,
+                                       shiftxl->getTextValue() + spName);
+            }
+        }
+
+        if (a == shiftyl) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshiftyl,
+                                       shiftyl->getTextValue() + spName);
             }
         }
 

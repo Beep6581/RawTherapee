@@ -1079,6 +1079,8 @@ public:
         bool bluxl;
         bool bluyl;
         bool refi;
+        bool shiftxl;
+        bool shiftyl;
         bool labgridcieALow;
         bool labgridcieBLow;
         bool labgridcieAHigh;

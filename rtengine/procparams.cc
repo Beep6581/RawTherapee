@@ -2409,7 +2409,7 @@ ColorManagementParams::ColorManagementParams() :
     labgridcieGy(-0.70909),//0.84
     labgridcieWx(-0.18964),//D50 0.3457, 0.3585,
     labgridcieWy(-0.16636),//
-    labgridcieMx(0.),//D50 0.3457, 0.3585,
+    labgridcieMx(0.),//
     labgridcieMy(0.),//
     aRendIntent(RI_RELATIVE),
     outputProfile(options.rtSettings.srgb),
@@ -4612,6 +4612,8 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     redxl(0.7347),
     redyl(0.2653),
     refi(0.),
+    shiftxl(0.),
+    shiftyl(0.),
     labgridcieALow(0.51763),//Prophoto red = (0.7347+0.1) * 1.81818 - 1
     labgridcieBLow(-0.33582),
     labgridcieAHigh(-0.75163),//Prophoto blue
@@ -5446,6 +5448,8 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && bluxl == other.bluxl
         && bluyl == other.bluyl
         && refi == other.refi
+        && shiftxl == other.shiftxl
+        && shiftyl == other.shiftyl
         && labgridcieALow == other.labgridcieALow
         && labgridcieBLow == other.labgridcieBLow
         && labgridcieAHigh == other.labgridcieAHigh
@@ -7380,7 +7384,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->greyl, "Locallab", "greyl_" + index_str, spot.greyl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->bluxl, "Locallab", "bluxl_" + index_str, spot.bluxl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->bluyl, "Locallab", "bluyl_" + index_str, spot.bluyl, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->bluyl, "Locallab", "refi_" + index_str, spot.refi, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->refi, "Locallab", "refi_" + index_str, spot.refi, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->shiftxl, "Locallab", "shiftxl_" + index_str, spot.shiftxl, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->shiftyl, "Locallab", "shiftyl_" + index_str, spot.shiftyl, keyFile);
+                    
                     saveToKeyfile(!pedited || spot_edited->labgridcieALow, "Locallab", "labgridcieALow_" + index_str, spot.labgridcieALow, keyFile);
                     saveToKeyfile(!pedited || spot_edited->labgridcieBLow, "Locallab", "labgridcieBLow_" + index_str, spot.labgridcieBLow, keyFile);
                     saveToKeyfile(!pedited || spot_edited->labgridcieAHigh, "Locallab", "labgridcieAHigh_" + index_str, spot.labgridcieAHigh, keyFile);
@@ -9714,6 +9721,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "redxl_" + index_str, spot.redxl, spotEdited.redxl);
                 assignFromKeyfile(keyFile, "Locallab", "redyl_" + index_str, spot.redyl, spotEdited.redyl);
                 assignFromKeyfile(keyFile, "Locallab", "refi_" + index_str, spot.refi, spotEdited.refi);
+                assignFromKeyfile(keyFile, "Locallab", "shiftxl_" + index_str, spot.shiftxl, spotEdited.shiftxl);
+                assignFromKeyfile(keyFile, "Locallab", "shiftyl_" + index_str, spot.shiftyl, spotEdited.shiftyl);
                 assignFromKeyfile(keyFile, "Locallab", "labgridcieALow_" + index_str, spot.labgridcieALow, spotEdited.labgridcieALow);
                 assignFromKeyfile(keyFile, "Locallab", "labgridcieBLow_" + index_str, spot.labgridcieBLow, spotEdited.labgridcieBLow);
                 assignFromKeyfile(keyFile, "Locallab", "labgridcieAHigh_" + index_str, spot.labgridcieAHigh, spotEdited.labgridcieAHigh);
