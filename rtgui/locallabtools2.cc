@@ -7572,7 +7572,7 @@ Locallabcie::Locallabcie():
     primCoordGridl(Gtk::manage(new Gtk::Grid())),
     trcFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TRCFRAME")))),
     primillFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_PRIMILLFRAME")))),  
-    redlFrame(Gtk::manage(new Gtk::Frame(M("TP_ICM_REDFRAME")))),
+    redBox(Gtk::manage(new ToolParamBlock())),
     redxl(Gtk::manage(new Adjuster(M("TC_PRIM_REDX"), 0.41, 1.0, 0.0001, 0.7347))),
     redyl(Gtk::manage(new Adjuster(M("TC_PRIM_REDY"), 0.0, 0.70, 0.0001, 0.2653))),
     grexl(Gtk::manage(new Adjuster(M("TC_PRIM_GREX"), -0.1, 0.4, 0.0001, 0.1596))),
@@ -7869,7 +7869,6 @@ Locallabcie::Locallabcie():
     primMethodconn = primMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::primMethodChanged));
     trcFrame->set_label_align(0.025, 0.5);
 
-    redlFrame->set_label_align(0.025, 0.5);
     primillFrame->set_label_align(0.025, 0.5);
     setExpandAlignProperties(grexl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     setExpandAlignProperties(greyl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
@@ -7878,7 +7877,6 @@ Locallabcie::Locallabcie():
     setExpandAlignProperties(redxl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     setExpandAlignProperties(redyl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     
-    ToolParamBlock* const redBox = Gtk::manage(new ToolParamBlock());
 
     primCoordGridl->set_column_homogeneous(true);
     primCoordGridl->attach(*redxl, 0, 0, 1, 1);
@@ -7890,7 +7888,6 @@ Locallabcie::Locallabcie():
 
     redBox->pack_start(*primCoordGridl, Gtk::PACK_EXPAND_WIDGET);
    
-    redlFrame->add(*redBox);
 
     redxl->setAdjusterListener(this);
     redyl->setAdjusterListener(this);
@@ -7949,7 +7946,7 @@ Locallabcie::Locallabcie():
     primillBox->pack_start(*willBox);
     
     primillBox->pack_start(*wprimBox);
-    primillBox->pack_start(*redlFrame);
+    primillBox->pack_start(*redBox);
     primillBox->pack_start(*gridFramecie);
     primillBox->pack_start(*gamutcieBox);
     primillBox->pack_start(*catBox);
@@ -10262,11 +10259,11 @@ void Locallabcie::primMethodChanged()
     illMethod->set_sensitive(false);
 
     if (primMethod->get_active_row_number() == 9) {
-        redlFrame->set_sensitive(true);
+        redBox->set_sensitive(true);
         illMethod->set_sensitive(true);
         
     } else {
-        redlFrame->set_sensitive(false);
+        redBox->set_sensitive(false);
     }
    
     if (listener) {

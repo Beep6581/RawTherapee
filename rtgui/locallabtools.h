@@ -1670,8 +1670,7 @@ private:
     Gtk::Grid* primCoordGridl;
     Gtk::Frame* trcFrame;
     Gtk::Frame* primillFrame;
-    
-    Gtk::Frame* redlFrame;    
+    ToolParamBlock* const redBox;  
     Adjuster* const redxl;
     Adjuster* const redyl;
     Adjuster* const grexl;
