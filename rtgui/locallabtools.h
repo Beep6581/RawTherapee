@@ -1683,6 +1683,7 @@ private:
    
     Gtk::Frame* const gridFramecie;
     LabGrid* const labgridcie;
+    Gtk::Frame* const colorFramecie;
    
     Gtk::Box* catBox;
     MyComboBoxText* const catMethod;

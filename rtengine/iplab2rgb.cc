@@ -1265,6 +1265,8 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
         double refin = 0.;
         if (locprim == 1) {           
             refin = params->locallab.spots.at(sp).refi;
+            meanx += params->locallab.spots.at(sp).shiftxl;
+            meany += params->locallab.spots.at(sp).shiftyl;
         } else if (locprim == 0) {
             refin = params->icm.refi;
         }

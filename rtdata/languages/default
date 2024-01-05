@@ -2907,6 +2907,7 @@ TP_LOCALLAB_COLORSCOPE;Scope (color tools)
 TP_LOCALLAB_COLORSCOPE_TOOLTIP;Common Scope slider for Color and Light, Shadows/Highlights, Vibrance.\nOther tools have their own scope controls.
 TP_LOCALLAB_COLOR_CIE;Color curve
 TP_LOCALLAB_COLOR_TOOLNAME;Color & Light
+TP_LOCALLAB_COLORFRAME;Dominant color
 TP_LOCALLAB_COL_NAME;Name
 TP_LOCALLAB_COL_VIS;Status
 TP_LOCALLAB_COMPFRA;Directional contrast
@@ -3341,11 +3342,15 @@ TP_LOCALLAB_PDE;Contrast Attenuator - Dynamic Range compression
 TP_LOCALLAB_PRECAM_TOOLTIP;This 'Pre-Ciecam' modifies: a)the Dynamic Range using Log encoding; b) the tones of the image and primaries(simplified Abstract Profile) and also midtones, just before the Ciecam process. The values are changed:\n-Gamma acts mainly on light tones -Slope acts mainly on dark tones.\nYou can choose any pair of 'gamma and slope' (values >1) and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.\n\n\n-Destination primaries: which allows you to change the destination primaries to restore or change image color (saturation), the color balance is 'significantly' preserved  when the 'Working Profile' and the 'Destination primaries' are not too different (be careful), 'Working Profiles' are not modified.\nYou can also finely adapt the primaries and the illuminant (white-point).\nMoving a primary away from the white point reduces saturation and vice versa. Pay attention to the gamut.
 TP_LOCALLAB_PRECAMGAMUT_TOOLTIP;If checked ensures a gamut control just after primary conversion to XYZ matrix.
 TP_LOCALLAB_PRECAMREFI_TOOLTIP;Allows you to move the white-point in such a way that it approaches the dominant color. This action modifies the purity.
+TP_LOCALLAB_PRECAMREFIMAIN_TOOLTIP;Allows you to move the white-point in such a way that it approaches the dominant color. This action modifies the purity. In combination with "Shift x" and "Shift y" allows you to carry out moderate Color Toning.
 TP_LOCALLAB_PDEFRA;Contrast Attenuator ƒ
 TP_LOCALLAB_PDEFRAME_TOOLTIP;PDE IPOL algorithm adapted for Rawtherapee : gives different results and requires different settings compared to main-menu 'Exposure'.\nMay be useful for under-exposed or high dynamic range images.
 TP_LOCALLAB_PREVHIDE;Hide additional settings
 TP_LOCALLAB_PREVIEW;Preview ΔE
 TP_LOCALLAB_PREVSHOW;Show additional settings
+TC_LOCALLAB_PRIM_SHIFTX;Shift x
+TC_LOCALLAB_PRIM_SHIFTY;Shift y
+TC_LOCALLAB_PRIM_SHIFTX_TOOLTIP;In combination with "Refine colors" allows you:\n 1) for low values adjust the image purity.\n 2) for higher values, carry out moderate Color Toning.
 TP_LOCALLAB_PRIMILLFRAME;Primaries & Illuminant
 TP_LOCALLAB_PROXI;ΔE decay
 TP_LOCALLAB_QUAAGRES;Aggressive

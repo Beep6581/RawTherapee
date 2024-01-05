@@ -7583,13 +7583,14 @@ Locallabcie::Locallabcie():
     
     gridFramecie(Gtk::manage(new Gtk::Frame(M("TP_ICM_WORKING_CIEDIAG")))),
     labgridcie(Gtk::manage(new LabGrid(EvlocallabGridciexy, M("TP_ICM_LABGRID_CIEXY"), true, true, false))),
-   
+    colorFramecie(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_COLORFRAME")))),  
+  
     catBox(Gtk::manage(new Gtk::Box())),
     catMethod(Gtk::manage(new MyComboBoxText())),
     gamutcieBox(Gtk::manage(new Gtk::Box())),
     gamutcie(Gtk::manage(new Gtk::CheckButton(M("TP_ICM_GAMUT")))),
-    shiftxl(Gtk::manage(new Adjuster(M("TC_PRIM_SHIFTX"), -0.05, 0.05, 0.0001, 0.))),
-    shiftyl(Gtk::manage(new Adjuster(M("TC_PRIM_SHIFTY"), -0.05, 0.05, 0.0001, 0.))),
+    shiftxl(Gtk::manage(new Adjuster(M("TC_LOCALLAB_PRIM_SHIFTX"), -0.05, 0.05, 0.0001, 0.))),
+    shiftyl(Gtk::manage(new Adjuster(M("TC_LOCALLAB_PRIM_SHIFTY"), -0.05, 0.05, 0.0001, 0.))),
 
     sigmoidjzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGJZFRA")))),
     sigmoid2Frame(Gtk::manage(new Gtk::Frame(M("")))),
@@ -7943,6 +7944,7 @@ Locallabcie::Locallabcie():
 
     ToolParamBlock* const trccieBox = Gtk::manage(new ToolParamBlock());
     ToolParamBlock* const primillBox = Gtk::manage(new ToolParamBlock());
+    ToolParamBlock* const colorBox = Gtk::manage(new ToolParamBlock());
 
     trccieBox->pack_start(*gamjcie);
     trccieBox->pack_start(*slopjcie);
@@ -7950,16 +7952,18 @@ Locallabcie::Locallabcie():
     trcFrame->add(*trccieBox);
     gamcieBox->pack_start(*trcFrame);
     primillBox->pack_start(*willBox);
+    colorFramecie->set_label_align(0.025, 0.5);
     
     primillBox->pack_start(*wprimBox);
     primillBox->pack_start(*redBox);
     primillBox->pack_start(*gridFramecie);
     primillBox->pack_start(*gamutcieBox);
     primillBox->pack_start(*catBox);
-    primillBox->pack_start(*refi); 
-    primillBox->pack_start(*shiftxl); 
-    primillBox->pack_start(*shiftyl); 
-
+    colorBox->pack_start(*refi); 
+    colorBox->pack_start(*shiftxl); 
+    colorBox->pack_start(*shiftyl); 
+    colorFramecie->add(*colorBox);    
+    primillBox->pack_start(*colorFramecie);
     primillFrame->add(*primillBox);    
     gamcieBox->pack_start(*primillFrame);
     
@@ -8670,7 +8674,11 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         wprimBox->set_tooltip_text(M("TP_ICM_WORKING_PRIM_TOOLTIP"));
         expprecam->set_tooltip_text(M("TP_LOCALLAB_PRECAM_TOOLTIP"));
         refi->set_tooltip_text(M("TP_LOCALLAB_PRECAMREFI_TOOLTIP"));
+        colorFramecie->set_tooltip_text(M("TP_LOCALLAB_PRECAMREFIMAIN_TOOLTIP"));
         gamutcie->set_tooltip_text(M("TP_LOCALLAB_PRECAMGAMUT_TOOLTIP"));
+        shiftxl->set_tooltip_text(M("TC_LOCALLAB_PRIM_SHIFTX_TOOLTIP"));
+        shiftyl->set_tooltip_text(M("TC_LOCALLAB_PRIM_SHIFTX_TOOLTIP"));
+        
     } else {
         reparcie->set_tooltip_text("");
         recothrescie->set_tooltip_text("");
@@ -8746,6 +8754,9 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         wprimBox->set_tooltip_text("");
         refi->set_tooltip_text("");
         gamutcie->set_tooltip_text("");
+        colorFramecie->set_tooltip_text("");
+        shiftxl->set_tooltip_text("");
+        shiftyl->set_tooltip_text("");
 
     }
 }
