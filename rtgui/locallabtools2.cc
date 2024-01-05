@@ -7589,8 +7589,8 @@ Locallabcie::Locallabcie():
     catMethod(Gtk::manage(new MyComboBoxText())),
     gamutcieBox(Gtk::manage(new Gtk::Box())),
     gamutcie(Gtk::manage(new Gtk::CheckButton(M("TP_ICM_GAMUT")))),
-    shiftxl(Gtk::manage(new Adjuster(M("TC_LOCALLAB_PRIM_SHIFTX"), -0.05, 0.05, 0.0001, 0.))),
-    shiftyl(Gtk::manage(new Adjuster(M("TC_LOCALLAB_PRIM_SHIFTY"), -0.05, 0.05, 0.0001, 0.))),
+    shiftxl(Gtk::manage(new Adjuster(M("TC_LOCALLAB_PRIM_SHIFTX"), -0.1, 0.1, 0.0001, 0.))),
+    shiftyl(Gtk::manage(new Adjuster(M("TC_LOCALLAB_PRIM_SHIFTY"), -0.1, 0.1, 0.0001, 0.))),
 
     sigmoidjzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGJZFRA")))),
     sigmoid2Frame(Gtk::manage(new Gtk::Frame(M("")))),
