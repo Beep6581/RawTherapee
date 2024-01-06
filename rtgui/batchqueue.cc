@@ -837,6 +837,7 @@ static inline Glib::ustring combineDirectoryNames(unsigned startIndex, unsigned 
 
 // Look for N or -N in templateText at position ix, meaning "index from end" and "index from start"
 // For N, return Nth index from the end, and for -N return the Nth index from the start
+// N is a digit 1 through 9
 static inline unsigned decodePathIndex(unsigned & ix, Glib::ustring & templateText, size_t numPathElements)
 {
     unsigned pathIndex = numPathElements;    // means input was invalid
@@ -854,7 +855,6 @@ static inline unsigned decodePathIndex(unsigned & ix, Glib::ustring & templateTe
         unsigned n = templateText[ix] - '1';
         if (!fromStart)
         {
-            // n=1 is the last element, n=2 is the one before that
             n = numPathElements - n - 1;
         }
         if (n < numPathElements)
@@ -870,7 +870,6 @@ static inline unsigned decodePathIndex(unsigned & ix, Glib::ustring & templateTe
 Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileName, int sequence)
 {
 
-    std::vector<Glib::ustring> pa;
     std::vector<Glib::ustring> da;
 
     for (size_t i = 0; i < origFileName.size(); i++) {
@@ -893,26 +892,8 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
         }
     }
 
-    if (origFileName[0] == '/') {
-        pa.push_back ("/" + da[0]);
-    } else if (origFileName[0] == '\\') {
-        if (origFileName.size() > 1 && origFileName[1] == '\\') {
-            pa.push_back ("\\\\" + da[0]);
-        } else {
-            pa.push_back ("/" + da[0]);
-        }
-    } else {
-        pa.push_back (da[0]);
-    }
-
-    for (size_t i = 1; i < da.size(); i++) {
-        pa.push_back (pa[i - 1] + "/" + da[i]);
-    }
-
 //    for (int i=0; i<da.size(); i++)
 //        printf ("da: %s\n", da[i].c_str());
-//    for (int i=0; i<pa.size(); i++)
-//        printf ("pa: %s\n", pa[i].c_str());
 
     // extracting filebase
     Glib::ustring filename;
@@ -940,11 +921,25 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
                 ix++;
 
                 if (options.savePathTemplate[ix] == 'p') {
+                    // insert path elements from given index to the end
                     ix++;
-                    unsigned int i = options.savePathTemplate[ix] - '1';
-
-                    if (i < pa.size()) {
-                        path = path + pa[pa.size() - i - 1] + '/';
+                    unsigned n = decodePathIndex(ix, options.savePathTemplate, da.size());
+                    if (n < da.size()) {
+                        for (unsigned i=n; i<da.size(); i++) {
+                            path = path + da[i] + '/';
+                        }
+                    }
+                    // If the next template character is a slash or backslash, skip it, because path already has a trailing slash
+                    ix++;
+                    if (ix < options.savePathTemplate.size() && options.savePathTemplate[ix] != '/' && options.savePathTemplate[ix] != '\\') {
+                        ix--;
+                    }
+                } else if (options.savePathTemplate[ix] == 'P') {
+                    // insert path elements from the start of the path up to the given index
+                    ix++;
+                    unsigned n = decodePathIndex(ix, options.savePathTemplate, da.size());
+                    for (unsigned i=0; i<=n && i<da.size(); i++) {
+                        path = path + da[i] + '/';
                     }
                     // If the next template character is a slash or backslash, skip it, because path already has a trailing slash
                     ix++;
