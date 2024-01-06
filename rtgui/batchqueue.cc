@@ -824,6 +824,47 @@ rtengine::ProcessingJob* BatchQueue::imageReady(rtengine::IImagefloat* img)
     return processing ? processing->job : nullptr;
 }
 
+// Combine a range of elements from "names" into a slash-delimited path
+static inline Glib::ustring combineDirectoryNames(unsigned startIndex, unsigned endIndex, const std::vector<Glib::ustring> & names)
+{
+    Glib::ustring resultPath;
+    for (unsigned i = startIndex; i <= endIndex && i < names.size(); ++i)
+    {
+        resultPath = resultPath + names[i] + '/';
+    }
+    return resultPath;
+}
+
+// Look for N or -N in templateText at position ix, meaning "index from end" and "index from start"
+// For N, return Nth index from the end, and for -N return the Nth index from the start
+static inline unsigned decodePathIndex(unsigned & ix, Glib::ustring & templateText, size_t numPathElements)
+{
+    unsigned pathIndex = numPathElements;    // means input was invalid
+    bool fromStart = false;
+    if (ix < templateText.size())
+    {
+        if (templateText[ix] == '-')
+        {
+            fromStart = true;   // minus sign means N is from the start rather than the end of the path
+            ix++;
+        }
+    }
+    if (ix < templateText.size())
+    {
+        unsigned n = templateText[ix] - '1';
+        if (!fromStart)
+        {
+            // n=1 is the last element, n=2 is the one before that
+            n = numPathElements - n - 1;
+        }
+        if (n < numPathElements)
+        {
+            pathIndex = n;
+        }
+    }
+    return pathIndex;
+}
+
 // Calculates automatic filename of processed batch entry, but just the base name
 // example output: "c:\out\converted\dsc0121"
 Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileName, int sequence)
@@ -847,7 +888,9 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
             tok = tok + origFileName[i++];
         }
 
-        da.push_back (tok);
+        if (i < origFileName.size()) {  // omit the last token, which is the file name
+            da.push_back (tok);
+        }
     }
 
     if (origFileName[0] == '/') {
@@ -898,19 +941,24 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
 
                 if (options.savePathTemplate[ix] == 'p') {
                     ix++;
-                    unsigned int i = options.savePathTemplate[ix] - '0';
+                    unsigned int i = options.savePathTemplate[ix] - '1';
 
                     if (i < pa.size()) {
                         path = path + pa[pa.size() - i - 1] + '/';
                     }
-
+                    // If the next template character is a slash or backslash, skip it, because path already has a trailing slash
                     ix++;
+                    if (ix < options.savePathTemplate.size() && options.savePathTemplate[ix] != '/' && options.savePathTemplate[ix] != '\\') {
+                        ix--;
+                    }
                 } else if (options.savePathTemplate[ix] == 'd') {
+                    // insert a single directory name from the file's path
+                    // da.size()-1 omits the last element, which is the filename
                     ix++;
-                    unsigned i = options.savePathTemplate[ix] - '0';
-
-                    if (i < da.size()) {
-                        path = path + da[da.size() - i - 1];
+                    unsigned n = decodePathIndex(ix, options.savePathTemplate, da.size());
+                    if (n < da.size())
+                    {
+                        path += da[n];
                     }
                 } else if (options.savePathTemplate[ix] == 'f') {
                     path = path + filename;
