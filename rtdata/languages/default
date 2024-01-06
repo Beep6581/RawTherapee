@@ -2101,6 +2101,8 @@ QINFO_PIXELSHIFT;Pixel Shift / %2 frame(s)
 QUEUE_AUTOSTART;Auto-start
 QUEUE_AUTOSTART_TOOLTIP;Start processing automatically when a new job arrives.
 QUEUE_DESTFILENAME;Path and file name
+QUEUE_DESTPREVIEW_TITLE;Select a thumbnail to preview its destination path here
+QUEUE_DESTPREVIEW_TOOLTIP;Destination path for the first selected image appears here
 QUEUE_FORMAT_TITLE;File Format
 QUEUE_LOCATION_FOLDER;Save to folder
 QUEUE_LOCATION_TEMPLATE;Use template
