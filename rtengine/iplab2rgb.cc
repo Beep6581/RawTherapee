@@ -1272,7 +1272,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
         }
         double arefi = (xyD.y - meany) / (xyD.x - meanx);
         double brefi = xyD.y - arefi * xyD.x;
-        double scalrefi = meanx - xyD.x;
+        double scalrefi = 0.95 * (meanx - xyD.x);
         xyD.x = xyD.x + scalrefi * refin;
         xyD.y = xyD.x * arefi + brefi;
         // recalculate Wx Wy

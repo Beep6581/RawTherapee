@@ -1176,7 +1176,23 @@ private:
 			}
 		}
 
-        if (params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) {
+        bool execcam = false;
+        //execcam => work around for pre-ciecam in LA
+        for (int sp = 0; sp < (int)params.locallab.spots.size(); sp++) {
+            if(params.locallab.spots.at(sp).expprecam ) {
+                execcam = true;
+            }
+        }
+
+        if ((params.dirpyrequalizer.cbdlMethod == "bef") && (params.dirpyrequalizer.enabled  || execcam) && !params.colorappearance.enabled) {
+            if(execcam  && !params.dirpyrequalizer.enabled) {
+                params.dirpyrequalizer.enabled = true;
+                if(params.dirpyrequalizer.mult[0] == 1.) {
+                    params.dirpyrequalizer.mult[0] = 1.01;
+                }
+
+            }
+            
             const int W = baseImg->getWidth();
             const int H = baseImg->getHeight();
             LabImage labcbdl(W, H);
@@ -1714,8 +1730,8 @@ private:
                 ipf.dirpyrequalizer(labView, 1);     //TODO: this is the luminance tonecurve, not the RGB one
             }
         }
-
-        if ((params.wavelet.enabled)) {
+        bool savestrength = params.wavelet.strength;
+        if ((params.wavelet.enabled)  || (params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE  && params.icm.trcExp )) {
             LabImage *unshar = nullptr;
             WaveletParams WaveParams = params.wavelet;
             WavCurve wavCLVCurve;
@@ -1734,7 +1750,10 @@ private:
             bool profin = WaveParams.expfinal;
             bool proton = WaveParams.exptoning;
             bool pronois = WaveParams.expnoise;
-
+            //work around for Abstract Profile enable
+            if((params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE  && params.icm.trcExp) && (!params.wavelet.enabled)) {
+                params.wavelet.strength = 0.f;
+            }
 /*
             if(WaveParams.showmask) {
                 WaveParams.showmask = false;
@@ -1876,7 +1895,7 @@ private:
         ipf.softLight(labView, params.softlight);
 
 
-        if (params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE  && params.icm.trcExp) {
+        if (params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE  && params.icm.trcExp ) {
             const int GW = labView->W;
             const int GH = labView->H;
             std::unique_ptr<LabImage> provis;
@@ -1925,6 +1944,8 @@ private:
             }
 
         }
+        
+        params.wavelet.strength = savestrength;
 
         //Colorappearance and tone-mapping associated
 

@@ -2116,6 +2116,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 const int prim = toUnderlying(params->icm.wprim);
 
                 Glib::ustring prof = params->icm.workingProfile;
+                
                 cmsHTRANSFORM dummy = nullptr;
                 int ill = 0;
                 bool gamutcontrol = params->icm.gamut;
