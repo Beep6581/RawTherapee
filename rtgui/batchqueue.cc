@@ -575,24 +575,7 @@ void BatchQueue::updateDestinationPathPreview()
     {
         auto &entry = *selected.at(0);
         int sequence = 0;   // Sequence during subsequent queue processing can't be determined here
-        Glib::ustring baseDestination;
-        if (options.saveUsePathTemplate)
-        {
-            baseDestination = calcAutoFileNameBase(entry.filename, sequence);
-        }
-        else
-        {
-            Glib::ustring baseFilename;
-            int extpos = entry.filename.size() - 1;
-            for (; extpos >= 0 && entry.filename[extpos] != '.'; extpos--)
-            {
-            }
-            for (int k = extpos - 1; k >= 0 && entry.filename[k] != '/' && entry.filename[k] != '\\'; k--)
-            {
-                baseFilename = entry.filename[k] + baseFilename;
-            }
-            baseDestination = options.savePathFolder + '/' + baseFilename;
-        }
+        Glib::ustring baseDestination = calcAutoFileNameBase(entry.filename, sequence);
         Glib::ustring destination = Glib::ustring::compose ("%1.%2", baseDestination, options.saveFormatBatch.format);
 
         if (listener)
