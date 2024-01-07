@@ -397,4 +397,5 @@ void BatchQueuePanel::pathFolderChanged ()
 void BatchQueuePanel::formatChanged(const Glib::ustring& format)
 {
     options.saveFormatBatch = saveFormatPanel->getFormat();
+    batchQueue->updateDestinationPathPreview();
 }
