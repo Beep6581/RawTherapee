@@ -915,7 +915,7 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
             if (options.savePathTemplate[ix] == '%') {
                 ix++;
 
-                if (options.savePathTemplate[ix] == 'p') {
+                if (options.savePathTemplate[ix] == 'P') {
                     // insert path elements from given index to the end
                     ix++;
                     unsigned n = decodePathIndex(ix, options.savePathTemplate, da.size());
@@ -929,7 +929,7 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
                     if (ix < options.savePathTemplate.size() && options.savePathTemplate[ix] != '/' && options.savePathTemplate[ix] != '\\') {
                         ix--;
                     }
-                } else if (options.savePathTemplate[ix] == 'P') {
+                } else if (options.savePathTemplate[ix] == 'p') {
                     // insert path elements from the start of the path up to the given index
                     ix++;
                     unsigned n = decodePathIndex(ix, options.savePathTemplate, da.size());
