@@ -699,7 +699,7 @@ struct local_params {
     float decaycie;
     float blurciemask;
     float contciemask;
-
+    bool islogcie; 
     int noiselequal;
     float noisechrodetail;
     float bilat;
@@ -862,7 +862,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
 //    if (thre > 8.f || thre < 0.f) {//to avoid artifacts if user does not clear cache with new settings. Can be suppressed after
 //        thre = 2.f;
 //    }
-    thre = LIM(thre, 0.f, 10.0f);
+    thre = LIM(thre, 0.f, 15.0f);
 
     double local_x = locallab.spots.at(sp).loc.at(0) / 2000.0;
     double local_y = locallab.spots.at(sp).loc.at(2) / 2000.0;
@@ -952,7 +952,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.showmask_met = ll_Mask;
     lp.showmaskciemet = llcieMask;
     lp.fftcieMask = locallab.spots.at(sp).fftcieMask;
-
+    lp.islogcie = locallab.spots.at(sp).logcie;
     lp.enaColorMask = locallab.spots.at(sp).enaColorMask && llsoftMask == 0 && llColorMaskinv == 0 && llSHMaskinv == 0 && llColorMask == 0 && llExpMaskinv == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
     lp.enaColorMaskinv = locallab.spots.at(sp).enaColorMask && llColorMaskinv == 0 && llSHMaskinv == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
     lp.enaExpMask = locallab.spots.at(sp).enaExpMask && llExpMask == 0 && llExpMaskinv == 0 && llSHMaskinv == 0 && llColorMask == 0 && llColorMaskinv == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
@@ -9173,12 +9173,19 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
 
     //parameters deltaE
     //increase a bit lp.thr and lp.iterat and kL if HDR only with log encoding and CAM16 Jz
-    if (senstype == 11 || senstype == 31) {
+    int limvarsens = 50;
+    if ((senstype == 11 || (senstype == 31 && lp.islogcie)) && (varsens < limvarsens)) {
         lp.thr *= 1.2f;
         lp.iterat *= 1.2f;
-        kL *= 1.2f;
+        kL /= 1.2f;
+    } else if ((senstype == 11 || (senstype == 31  && lp.islogcie)) && (varsens >= limvarsens)) {
+        lp.thr += 10.f;
+        lp.thr = LIM(lp.thr, 0.f, 15.0f);
+        lp.balance -= 2.3f;
+        lp.balance = LIM(lp.balance, 0.05f, 2.5f);       
+        kL = lp.balance / SQR(327.68f);
     }
-
+    
     const float mindE = 2.f + MINSCOPE * varsens * lp.thr;
     const float maxdE = 5.f + MAXSCOPE * varsens * (1 + 0.1f * lp.thr);
     const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
@@ -9264,8 +9271,14 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
 
                 const float dE = rsob + std::sqrt(kab * (kch * chrodelta2 + kH * huedelta2) + kL * SQR(refL - maskptr->L[y][x]));
                 //reduction action with deltaE
-                const float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens);
-
+                float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens);
+               // float reducdEL = reducdE;
+                if ((senstype == 11 || ( senstype == 31 && lp.islogcie)) && (varsens >= limvarsens)) {
+                    int maxvarsens = 90;
+                    float ared = (1.f - reducdE) / (maxvarsens - limvarsens);
+                    float bred = 1.f - ared * maxvarsens;
+                    reducdE = ared * varsens + bred;
+                }
                 float cli = (bufexpfin->L[y][x] - bufexporig->L[y][x]);
                 float cla = (bufexpfin->a[y][x] - bufexporig->a[y][x]);
                 float clb = (bufexpfin->b[y][x] - bufexporig->b[y][x]);
