@@ -924,7 +924,7 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
                             path = path + da[i] + PATH_SEPARATOR;
                         }
                     }
-                    // If the next template character is a slash or backslash, skip it, because path already has a trailing slash
+                    // If the next template character is a separator, skip it, because path already has one
                     ix++;
                     if (ix < options.savePathTemplate.size() && options.savePathTemplate[ix] != '/' && options.savePathTemplate[ix] != '\\') {
                         ix--;
@@ -936,7 +936,7 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
                     for (unsigned i=0; i<=n && i<da.size(); i++) {
                         path = path + da[i] + PATH_SEPARATOR;
                     }
-                    // If the next template character is a slash or backslash, skip it, because path already has a trailing slash
+                    // If the next template character is a separator, skip it, because path already has one
                     ix++;
                     if (ix < options.savePathTemplate.size() && options.savePathTemplate[ix] != '/' && options.savePathTemplate[ix] != '\\') {
                         ix--;
