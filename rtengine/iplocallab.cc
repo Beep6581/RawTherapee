@@ -20036,17 +20036,16 @@ void ImProcFunctions::Lab_Local(
                     }
                 }
 
-              //  if (params->locallab.spots.at(sp).trccie) {
                 if (params->locallab.spots.at(sp).expprecam) {
                     Imagefloat *tmpImage = nullptr;
                     tmpImage = new Imagefloat(bfw, bfh);
+                    
                     lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
                     Glib::ustring prof = params->icm.workingProfile;
 
                     float gamtone = params->locallab.spots.at(sp).gamjcie;
                     float slotone = params->locallab.spots.at(sp).slopjcie;
                     cmsHTRANSFORM dummy = nullptr;
-                    //int ill = 2;
                     int prim = 3;
                     int typ = 1;
                     rdx = params->locallab.spots.at(sp).redxl;
@@ -20122,14 +20121,15 @@ void ImProcFunctions::Lab_Local(
                     bool gamcie = params->locallab.spots.at(sp).gamutcie;
                     float rx, ry, gx, gy, bx, by;
                     float mx, my, mxe, mye;
-                    if(params->locallab.spots.at(sp).logcie) {
-                        log_encode(tmpImage, lp, multiThread, bfw, bfh);
-                    }
-                    //float meanx, meany, meanxe, meanye = 0.f;
+
                     workingtrc(sp, tmpImage, tmpImage, bfw, bfh, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rx, ry, gx, gy, bx, by, mx, my, mxe, mye, dummy, true, false, false, false);
                     workingtrc(sp, tmpImage, tmpImage, bfw, bfh, typ, prof, gamtone, slotone, catx, ill, prim, locprim, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, dummy, false, true, true, gamcie);//with gamut control
                     if(lp.midtcie != 0) {
                         tone_eqcam(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);
+                    }
+
+                    if(params->locallab.spots.at(sp).logcie) {
+                        log_encode(tmpImage, lp, multiThread, bfw, bfh);
                     }
                    
                     rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);

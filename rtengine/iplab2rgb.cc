@@ -434,7 +434,18 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             wb2[r][c] = wprof[r][c];
         }
     }
-
+    //const std::unique_ptr<Imagefloat> reser(new Imagefloat(*src, true));
+    Imagefloat *provis = new Imagefloat(cw, ch);
+    
+            for (int y = 0; y < ch ; ++y) {
+                for (int x = 0; x < cw ; ++x) {
+                    provis->r(y,x) = src->r(y,x);
+                    provis->g(y,x) = src->g(y,x);
+                    provis->b(y,x) = src->b(y,x);
+                }
+            }
+               
+    
 // I try to find the dominant color by a simple way (average of x and y)
 // It is probably intellectually more relevant to place this algorithm at the end, but it is complex at the GUI level (at least for me). 
 // The errors made are relatively minimal and result seems good enough
@@ -446,9 +457,9 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
 #endif
             for (int y = 0; y < ch ; ++y) {
                 for (int x = 0; x < cw ; ++x) {
-                    const float RR = src->r(y,x);
-                    const float GG = src->g(y,x);
-                    const float BB = src->b(y,x);
+                    const float RR = provis->r(y,x);
+                    const float GG = provis->g(y,x);
+                    const float BB = provis->b(y,x);
                     float xcb, ycb, zcb;
                     Color::rgbxyz(RR, GG, BB, xcb, ycb, zcb, wb2);
                     float X_r = xcb;
