@@ -9172,17 +9172,17 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
     const LabImage *maskptr = usemaskall ? origblurmask.get() : origblur.get();
 
     //parameters deltaE
-    //increase a bit lp.thr and lp.iterat and kL if HDR only with log encoding and CAM16 Jz
-    int limvarsens = 50;
+    int limvarsens = 50;//begin change calculation reduction deltaE
     if ((senstype == 11 || (senstype == 31 && lp.islogcie)) && (varsens < limvarsens)) {
+        //increase a bit lp.thr and lp.iterat and kL if HDR only with log encoding and CAM16 Jz
         lp.thr *= 1.2f;
         lp.iterat *= 1.2f;
         kL /= 1.2f;
-    } else if ((senstype == 11 || (senstype == 31  && lp.islogcie)) && (varsens >= limvarsens)) {
-        lp.thr += 10.f;
+    } else if ((senstype == 11 || (senstype == 31  && lp.islogcie)) && (varsens >= limvarsens)) {//for log encoding and cam16 is log encode used
+        lp.thr += 10.f;//increase  threshold deltaE
         lp.thr = LIM(lp.thr, 0.f, 15.0f);
         lp.balance -= 2.3f;
-        lp.balance = LIM(lp.balance, 0.05f, 2.5f);       
+        lp.balance = LIM(lp.balance, 0.05f, 2.5f); // down balance ab-L     
         kL = lp.balance / SQR(327.68f);
     }
     
@@ -9272,13 +9272,15 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                 const float dE = rsob + std::sqrt(kab * (kch * chrodelta2 + kH * huedelta2) + kL * SQR(refL - maskptr->L[y][x]));
                 //reduction action with deltaE
                 float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens);
-               // float reducdEL = reducdE;
+
                 if ((senstype == 11 || ( senstype == 31 && lp.islogcie)) && (varsens >= limvarsens)) {
-                    int maxvarsens = 90;
+                    int maxvarsens = 90;//arbitrary value to get maximum incidence  
                     float ared = (1.f - reducdE) / (maxvarsens - limvarsens);
                     float bred = 1.f - ared * maxvarsens;
                     reducdE = ared * varsens + bred;
+                    reducdE = LIM(reducdE, 0.1f, 1.f);
                 }
+                
                 float cli = (bufexpfin->L[y][x] - bufexporig->L[y][x]);
                 float cla = (bufexpfin->a[y][x] - bufexporig->a[y][x]);
                 float clb = (bufexpfin->b[y][x] - bufexporig->b[y][x]);
