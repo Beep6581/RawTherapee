@@ -110,6 +110,7 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
     odvb->pack_start (*hb3, Gtk::PACK_SHRINK, 4);
     destinationPreviewLabel = Gtk::manage (new Gtk::Label ());
     destinationPreviewLabel->set_tooltip_markup(M("QUEUE_DESTPREVIEW_TOOLTIP"));
+    destinationPreviewLabel->set_selectable(true);  // so users can copy the path to the clipboard
     odvb->pack_start (*destinationPreviewLabel);
     Gtk::RadioButton::Group g = useTemplate->get_group();
     useFolder->set_group (g);
