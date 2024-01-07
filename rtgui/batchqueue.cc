@@ -43,6 +43,12 @@
 using namespace std;
 using namespace rtengine;
 
+#ifdef _WIN32
+#define PATH_SEPARATOR '\\';
+#else
+#define PATH_SEPARATOR '/';
+#endif
+
 BatchQueue::BatchQueue (FileCatalog* aFileCatalog) : processing(nullptr), fileCatalog(aFileCatalog), sequence(0), listener(nullptr)
 {
 
@@ -824,17 +830,6 @@ rtengine::ProcessingJob* BatchQueue::imageReady(rtengine::IImagefloat* img)
     return processing ? processing->job : nullptr;
 }
 
-// Combine a range of elements from "names" into a slash-delimited path
-static inline Glib::ustring combineDirectoryNames(unsigned startIndex, unsigned endIndex, const std::vector<Glib::ustring> & names)
-{
-    Glib::ustring resultPath;
-    for (unsigned i = startIndex; i <= endIndex && i < names.size(); ++i)
-    {
-        resultPath = resultPath + names[i] + '/';
-    }
-    return resultPath;
-}
-
 // Look for N or -N in templateText at position ix, meaning "index from end" and "index from start"
 // For N, return Nth index from the end, and for -N return the Nth index from the start
 // N is a digit 1 through 9
@@ -926,7 +921,7 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
                     unsigned n = decodePathIndex(ix, options.savePathTemplate, da.size());
                     if (n < da.size()) {
                         for (unsigned i=n; i<da.size(); i++) {
-                            path = path + da[i] + '/';
+                            path = path + da[i] + PATH_SEPARATOR;
                         }
                     }
                     // If the next template character is a slash or backslash, skip it, because path already has a trailing slash
@@ -939,7 +934,7 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
                     ix++;
                     unsigned n = decodePathIndex(ix, options.savePathTemplate, da.size());
                     for (unsigned i=0; i<=n && i<da.size(); i++) {
-                        path = path + da[i] + '/';
+                        path = path + da[i] + PATH_SEPARATOR;
                     }
                     // If the next template character is a slash or backslash, skip it, because path already has a trailing slash
                     ix++;
