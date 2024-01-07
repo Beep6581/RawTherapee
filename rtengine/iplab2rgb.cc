@@ -434,17 +434,21 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             wb2[r][c] = wprof[r][c];
         }
     }
-    //const std::unique_ptr<Imagefloat> reser(new Imagefloat(*src, true));
-    Imagefloat *provis = new Imagefloat(cw, ch);
     
-            for (int y = 0; y < ch ; ++y) {
-                for (int x = 0; x < cw ; ++x) {
-                    provis->r(y,x) = src->r(y,x);
-                    provis->g(y,x) = src->g(y,x);
-                    provis->b(y,x) = src->b(y,x);
-                }
-            }
-               
+    Imagefloat *provis = nullptr;
+    provis = new Imagefloat(cw, ch);
+
+#ifdef _OPENMP
+            #pragma omp parallel for if(multiThread)
+#endif
+    for (int y = 0; y < ch ; ++y) {
+        for (int x = 0; x < cw ; ++x) {
+            provis->r(y,x) = src->r(y,x);
+            provis->g(y,x) = src->g(y,x);
+            provis->b(y,x) = src->b(y,x);
+        }
+    }
+
     
 // I try to find the dominant color by a simple way (average of x and y)
 // It is probably intellectually more relevant to place this algorithm at the end, but it is complex at the GUI level (at least for me). 
@@ -478,6 +482,8 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             if (settings->verbose) {             
                 printf("Estimation dominant color : x=%f y=%f \n", (double) meanx, (double) meany);
             }
+    delete provis;
+    
     double wprofprim[3][3];//store primaries to XYZ
 
     const float toxyz[3][3] = {

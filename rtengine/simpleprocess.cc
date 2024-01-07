@@ -1730,7 +1730,9 @@ private:
                 ipf.dirpyrequalizer(labView, 1);     //TODO: this is the luminance tonecurve, not the RGB one
             }
         }
-        if ((params.wavelet.enabled)) {
+        
+        bool savestrength = params.wavelet.strength;
+        if ((params.wavelet.enabled)  || (params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE  && params.icm.trcExp )) {        
             LabImage *unshar = nullptr;
             WaveletParams WaveParams = params.wavelet;
             WavCurve wavCLVCurve;
@@ -1749,7 +1751,11 @@ private:
             bool profin = WaveParams.expfinal;
             bool proton = WaveParams.exptoning;
             bool pronois = WaveParams.expnoise;
-
+            //work around for Abstract Profile enable
+            if((params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE  && params.icm.trcExp) && (!params.wavelet.enabled)) {
+                params.wavelet.strength = 0.f;
+            }
+            
             if (WaveParams.softrad > 0.f) {
                 provradius = new LabImage(*labView, true);
             }
@@ -1935,6 +1941,7 @@ private:
 
         }
         
+        params.wavelet.strength = savestrength;       
         //Colorappearance and tone-mapping associated
 
         int f_w = 1, f_h = 1;
