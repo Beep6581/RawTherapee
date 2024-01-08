@@ -469,18 +469,21 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
                     float X_r = xcb;
                     float Y_r = ycb;
                     float Z_r = zcb;
+                    Color::gamutmap(X_r, Y_r, Z_r, wb2);//gamut control
                     const float som = X_r + Y_r + Z_r;
                     X_r = X_r / som;
                     Y_r = Y_r / som;
-                    Z_r = Y_r / 65535.f;
                     meanx += X_r;
-                    meany += Y_r;                  
+                    meany += Y_r;
                 }
             }
+            
             meanx /= (ch*cw);
             meany /= (ch*cw);
+            meanx += 0.01f;
+            meany += 0.01f; //ampirical mean delta with value end in process
             if (settings->verbose) {             
-                printf("Estimation dominant color : x=%f y=%f \n", (double) meanx, (double) meany);
+                printf("Estimation dominant color : x=%f y=%f\n", (double) meanx, (double) meany);
             }
     delete provis;
     
@@ -1289,7 +1292,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
         }
         double arefi = (xyD.y - meany) / (xyD.x - meanx);
         double brefi = xyD.y - arefi * xyD.x;
-        double scalrefi = 0.95 * (meanx - xyD.x);
+        double scalrefi = 0.98 * (meanx - xyD.x);
         xyD.x = xyD.x + scalrefi * refin;
         xyD.y = xyD.x * arefi + brefi;
         // recalculate Wx Wy
@@ -1397,12 +1400,12 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
                 }
             }
         }
- /*
+ 
  // alternative to find dominant color xy
 // Not use :
 //  1) GUI complex at least for mean
 //  2) small difference for meanxe, meanye with meanx , meany above in most cases 
-
+/*
         if (locprim == 1) {
             meanxe = 0.f;
             meanye = 0.f;
@@ -1417,20 +1420,21 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
                     const float BB = dst->b(y,x);
                     float xcb, ycb, zcb;
                     Color::rgbxyz(RR, GG, BB, xcb, ycb, zcb, wb2);//use sRGB Adobe Rec2020 ACESp0
+                    
                     float X_r = xcb;
                     float Y_r = ycb;
                     float Z_r = zcb;
+                    Color::gamutmap(X_r, Y_r, Z_r, wb2);//gamut control                    
                     const float som = X_r + Y_r + Z_r;
                     X_r = X_r / som;
                     Y_r = Y_r / som;
-                    Z_r = Y_r / 65535.f;
                     meanxe += X_r;
                     meanye += Y_r;                  
                 }
             }
             meanxe /= (ch*cw);
             meanye /= (ch*cw);
-            printf("meanxE=%f meanyE=%f \n", (double) meanxe, (double) meanye);
+            printf("DiffmeanxE=%f DiffmeanyE=%f \n", (double) (meanxe - meanx), (double) (meanye - meany));
         }
 */
         if (!keepTransForm) {

@@ -7579,7 +7579,7 @@ Locallabcie::Locallabcie():
     greyl(Gtk::manage(new Adjuster(M("TC_PRIM_GREY"), 0.50, 1.0, 0.0001, 0.8404))),
     bluxl(Gtk::manage(new Adjuster(M("TC_PRIM_BLUX"), -0.1, 0.4, 0.0001, 0.0366))),
     bluyl(Gtk::manage(new Adjuster(M("TC_PRIM_BLUY"), -0.1, 0.49, 0.0001, 0.0001))),
-    refi(Gtk::manage(new Adjuster(M("TC_PRIM_REFI"), 0., 1., 0.0001, 0.))),
+    refi(Gtk::manage(new Adjuster(M("TC_PRIM_REFI"), -0.5, 1., 0.0001, 0.))),
     
     gridFramecie(Gtk::manage(new Gtk::Frame(M("TP_ICM_WORKING_CIEDIAG")))),
     labgridcie(Gtk::manage(new LabGrid(EvlocallabGridciexy, M("TP_ICM_LABGRID_CIEXY"), true, true, false))),
@@ -7589,8 +7589,8 @@ Locallabcie::Locallabcie():
     catMethod(Gtk::manage(new MyComboBoxText())),
     gamutcieBox(Gtk::manage(new Gtk::Box())),
     gamutcie(Gtk::manage(new Gtk::CheckButton(M("TP_ICM_GAMUT")))),
-    shiftxl(Gtk::manage(new Adjuster(M("TC_LOCALLAB_PRIM_SHIFTX"), -0.1, 0.1, 0.0001, 0.))),
-    shiftyl(Gtk::manage(new Adjuster(M("TC_LOCALLAB_PRIM_SHIFTY"), -0.1, 0.1, 0.0001, 0.))),
+    shiftxl(Gtk::manage(new Adjuster(M("TC_LOCALLAB_PRIM_SHIFTX"), -0.15, 0.15, 0.0001, 0.))),
+    shiftyl(Gtk::manage(new Adjuster(M("TC_LOCALLAB_PRIM_SHIFTY"), -0.15, 0.15, 0.0001, 0.))),
 
     sigmoidjzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGJZFRA")))),
     sigmoid2Frame(Gtk::manage(new Gtk::Frame(M("")))),
