@@ -422,71 +422,76 @@ void ImProcFunctions::preserv(LabImage *nprevl, LabImage *provis, int cw, int ch
         }
 }
 
-void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring &profile, double gampos, double slpos, int cat, int &illum, int prim, int locprim, 
-    float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, 
-    cmsHTRANSFORM &transform, bool normalizeIn, bool normalizeOut, bool keepTransForm, bool gamutcontrol) const
+void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring &profile, double gampos, double slpos, int cat, int &illum, int prim, int locprim,
+                                 float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye,
+                                 cmsHTRANSFORM &transform, bool normalizeIn, bool normalizeOut, bool keepTransForm, bool gamutcontrol) const
 {
     const TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
-    
+
     double wb2[3][3];
+
     for (int r = 0; r < 3; ++r) {
         for (int c = 0; c < 3; ++c) {
             wb2[r][c] = wprof[r][c];
         }
     }
-    
+
     Imagefloat *provis = nullptr;
     provis = new Imagefloat(cw, ch);
 
 #ifdef _OPENMP
-            #pragma omp parallel for if(multiThread)
+    #pragma omp parallel for if(multiThread)
 #endif
+
     for (int y = 0; y < ch ; ++y) {
         for (int x = 0; x < cw ; ++x) {
-            provis->r(y,x) = src->r(y,x);
-            provis->g(y,x) = src->g(y,x);
-            provis->b(y,x) = src->b(y,x);
+            provis->r(y, x) = src->r(y, x);
+            provis->g(y, x) = src->g(y, x);
+            provis->b(y, x) = src->b(y, x);
         }
     }
 
-    
+
 // I try to find the dominant color by a simple way (average of x and y)
-// It is probably intellectually more relevant to place this algorithm at the end, but it is complex at the GUI level (at least for me). 
+// It is probably intellectually more relevant to place this algorithm at the end, but it is complex at the GUI level (at least for me).
 // The errors made are relatively minimal and result seems good enough
     meanx = 0.f;
     meany = 0.f;
 
 #ifdef _OPENMP
-            #pragma omp parallel for reduction(+:meanx, meany) if(multiThread)
+    #pragma omp parallel for reduction(+:meanx, meany) if(multiThread)
 #endif
-            for (int y = 0; y < ch ; ++y) {
-                for (int x = 0; x < cw ; ++x) {
-                    const float RR = provis->r(y,x);
-                    const float GG = provis->g(y,x);
-                    const float BB = provis->b(y,x);
-                    float xcb, ycb, zcb;
-                    Color::rgbxyz(RR, GG, BB, xcb, ycb, zcb, wb2);
-                    float X_r = xcb;
-                    float Y_r = ycb;
-                    float Z_r = zcb;
-                    Color::gamutmap(X_r, Y_r, Z_r, wb2);//gamut control
-                    const float som = X_r + Y_r + Z_r;
-                    X_r = X_r / som;
-                    Y_r = Y_r / som;
-                    meanx += X_r;
-                    meany += Y_r;
-                }
-            }
-            
-            meanx /= (ch*cw);
-            meany /= (ch*cw);
-            meanx += 0.01f;
-            meany += 0.01f; //ampirical mean delta with value end in process
-            if (settings->verbose) {             
-                printf("Estimation dominant color : x=%f y=%f\n", (double) meanx, (double) meany);
-            }
+
+    for (int y = 0; y < ch ; ++y) {
+        for (int x = 0; x < cw ; ++x) {
+            const float RR = provis->r(y, x);
+            const float GG = provis->g(y, x);
+            const float BB = provis->b(y, x);
+            float xcb, ycb, zcb;
+            Color::rgbxyz(RR, GG, BB, xcb, ycb, zcb, wb2);
+            float X_r = xcb;
+            float Y_r = ycb;
+            float Z_r = zcb;
+            Color::gamutmap(X_r, Y_r, Z_r, wb2);//gamut control
+            const float som = X_r + Y_r + Z_r;
+            X_r = X_r / som;
+            Y_r = Y_r / som;
+            meanx += X_r;
+            meany += Y_r;
+        }
+    }
+
+    meanx /= (ch * cw);
+    meany /= (ch * cw);
+    meanx += 0.005f;
+    meany += 0.005f; //ampirical mean delta with value end in process
+
+    if (settings->verbose) {
+        printf("Estimation dominant color : x=%f y=%f\n", (double) meanx, (double) meany);
+    }
+
     delete provis;
-    
+
     double wprofprim[3][3];//store primaries to XYZ
 
     const float toxyz[3][3] = {
@@ -540,7 +545,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
 
     }
 
-    if (mul == 1 || (params->icm.wprim == ColorManagementParams::Primaries::DEFAULT && params->icm.will == ColorManagementParams::Illuminant::DEFAULT)) { //shortcut and speedup when no call primaries and illuminant - no gamut control...in this case be careful
+    if (mul == 1) { // || (params->icm.wprim == ColorManagementParams::Primaries::DEFAULT && params->icm.will == ColorManagementParams::Illuminant::DEFAULT)) { //shortcut and speedup when no call primaries and illuminant - no gamut control...in this case be careful
         GammaValues g_a; //gamma parameters
         double pwr = 1.0 / static_cast<double>(gampos);
         Color::calcGamma(pwr, slpos, g_a); // call to calcGamma with selected gamma and slope
@@ -591,49 +596,49 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
         gry = params->locallab.spots.at(sp).greyl;
         blx = params->locallab.spots.at(sp).bluxl;
         bly = params->locallab.spots.at(sp).bluyl;
-        
-        if(params->locallab.spots.at(sp).illMethod == "d50") {
+
+        if (params->locallab.spots.at(sp).illMethod == "d50") {
             illum = 2;
             xyD = {0.3457, 0.3585, 1.0}; // near LCMS values but not perfect... it's a compromise!!
             Wx = 0.964295676;
-            Wz = 0.825104603;          
-        } else if(params->locallab.spots.at(sp).illMethod == "d60") {
+            Wz = 0.825104603;
+        } else if (params->locallab.spots.at(sp).illMethod == "d60") {
             illum = 4;
             Wx = 0.952646075;
             Wz = 1.008825184;
             xyD = {0.32168, 0.33767, 1.0};
-        } else if(params->locallab.spots.at(sp).illMethod == "d65") {
+        } else if (params->locallab.spots.at(sp).illMethod == "d65") {
             illum = 5;
             Wx = 0.95045471;
             Wz = 1.08905029;
             xyD = {0.312700492, 0.329000939, 1.0};
-        } else if(params->locallab.spots.at(sp).illMethod == "d41") {
+        } else if (params->locallab.spots.at(sp).illMethod == "d41") {
             illum = 1;
             Wx = 0.991488263;
             Wz = 0.631604625;
             xyD = {0.376137, 0.374021, 1.0};
-        } else if(params->locallab.spots.at(sp).illMethod == "d55") {
+        } else if (params->locallab.spots.at(sp).illMethod == "d55") {
             illum = 3;
             Wx = 0.956565934;
             Wz = 0.920253249;
             xyD = {0.332424, 0.347426, 1.0};
-        } else if(params->locallab.spots.at(sp).illMethod == "d80") {
+        } else if (params->locallab.spots.at(sp).illMethod == "d80") {
             illum = 6;
             Wx = 0.950095542;
             Wz = 1.284213976;
             xyD = {0.293756, 0.309185, 1.0};
-        } else if(params->locallab.spots.at(sp).illMethod == "stda") {
+        } else if (params->locallab.spots.at(sp).illMethod == "stda") {
             illum = 8;
             Wx = 1.098500393;
             Wz = 0.355848714;
             xyD = {0.447573, 0.407440, 1.0};
-        } else if(params->locallab.spots.at(sp).illMethod == "iE") {
+        } else if (params->locallab.spots.at(sp).illMethod == "iE") {
             illum = 20;
             Wx = 1.;
             Wz = 1.;
             xyD = {0.333333, 0.333333, 1.0};
         }
-        
+
     }
 
     if (prim == 14) {//convert datas area to xy
@@ -771,7 +776,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
                 break;
             }
         }
-    } else if (locprim == 1 && mul == 5){
+    } else if (locprim == 1 && mul == 5) {
         //local primaries
         if (prim == 1) {
             p[0] = 0.6400;    // sRGB primaries
@@ -901,7 +906,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             grx = p[2];
             gry = p[3];
             blx = p[4];
-            bly = p[5];          
+            bly = p[5];
         } else if (prim == 10) {
             p[0] = 0.6888;    // Beta primaries
             p[1] = 0.3112;
@@ -916,7 +921,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             grx = p[2];
             gry = p[3];
             blx = p[4];
-            bly = p[5];           
+            bly = p[5];
         } else if (prim == 15) {
             p[0] = rdx;
             p[1] = rdy;
@@ -939,7 +944,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             gry = p[3];
             blx = p[4];
             bly = p[5];
-        }    
+        }
 
 
     }
@@ -1148,148 +1153,152 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
 //        cmsCIExyY xyD;
 
         Glib::ustring ills = "D50";
-    if (locprim == 0) {
 
-        switch (ColorManagementParams::Illuminant(illum)) {
-            case ColorManagementParams::Illuminant::DEFAULT:
-            case ColorManagementParams::Illuminant::STDA:
-            case ColorManagementParams::Illuminant::TUNGSTEN_2000K:
-            case ColorManagementParams::Illuminant::TUNGSTEN_1500K: {
-                break;
+        if (locprim == 0) {
+
+            switch (ColorManagementParams::Illuminant(illum)) {
+                case ColorManagementParams::Illuminant::DEFAULT:
+                case ColorManagementParams::Illuminant::STDA:
+                case ColorManagementParams::Illuminant::TUNGSTEN_2000K:
+                case ColorManagementParams::Illuminant::TUNGSTEN_1500K: {
+                    break;
+                }
+
+                case ColorManagementParams::Illuminant::D41: {
+                    tempv4 = 4100.;
+                    ills = "D41";
+                    break;
+                }
+
+                case ColorManagementParams::Illuminant::D50: {
+                    tempv4 = 5003.;
+                    ills = "D50";
+                    break;
+                }
+
+                case ColorManagementParams::Illuminant::D55: {
+                    tempv4 = 5500.;
+                    ills = "D55";
+                    break;
+                }
+
+                case ColorManagementParams::Illuminant::D60: {
+                    tempv4 = 6004.;
+                    ills = "D60";
+                    break;
+                }
+
+                case ColorManagementParams::Illuminant::D65: {
+                    tempv4 = 6504.;
+                    ills = "D65";
+                    break;
+                }
+
+                case ColorManagementParams::Illuminant::D80: {
+                    tempv4 = 8000.;
+                    ills = "D80";
+                    break;
+                }
+
+                case ColorManagementParams::Illuminant::D120: {
+                    tempv4 = 12000.;
+                    ills = "D120";
+                    break;
+                }
             }
 
-            case ColorManagementParams::Illuminant::D41: {
-                tempv4 = 4100.;
-                ills = "D41";
-                break;
-            }
+            cmsWhitePointFromTemp(&xyD, tempv4);
 
-            case ColorManagementParams::Illuminant::D50: {
-                tempv4 = 5003.;
-                ills = "D50";
-                break;
-            }
+            switch (ColorManagementParams::Illuminant(illum)) {
+                case ColorManagementParams::Illuminant::DEFAULT: {
+                    break;
+                }
 
-            case ColorManagementParams::Illuminant::D55: {
-                tempv4 = 5500.;
-                ills = "D55";
-                break;
-            }
+                case ColorManagementParams::Illuminant::D55: {
+                    Wx = 0.956565934;
+                    Wz = 0.920253249;
+                    break;
+                }
 
-            case ColorManagementParams::Illuminant::D60: {
-                tempv4 = 6004.;
-                ills = "D60";
-                break;
-            }
+                case ColorManagementParams::Illuminant::D80: {
+                    Wx = 0.950095542;
+                    Wz = 1.284213976;
+                    break;
+                }
 
-            case ColorManagementParams::Illuminant::D65: {
-                tempv4 = 6504.;
-                ills = "D65";
-                break;
-            }
+                case ColorManagementParams::Illuminant::D41: {
+                    Wx = 0.991488263;
+                    Wz = 0.631604625;
+                    break;
+                }
 
-            case ColorManagementParams::Illuminant::D80: {
-                tempv4 = 8000.;
-                ills = "D80";
-                break;
-            }
+                case ColorManagementParams::Illuminant::D50: {
+                    xyD = {0.3457, 0.3585, 1.0}; // near LCMS values but not perfect... it's a compromise!!
+                    Wx = 0.964295676;
+                    Wz = 0.825104603;
+                    break;
+                }
 
-            case ColorManagementParams::Illuminant::D120: {
-                tempv4 = 12000.;
-                ills = "D120";
-                break;
+                case ColorManagementParams::Illuminant::D60: {
+                    Wx = 0.952646075;
+                    Wz = 1.008825184;
+                    xyD = {0.32168, 0.33767, 1.0};
+                    break;
+                }
+
+                case ColorManagementParams::Illuminant::D65: {
+                    Wx = 0.95045471;
+                    Wz = 1.08905029;
+                    xyD = {0.312700492, 0.329000939, 1.0};
+                    break;
+                }
+
+                case ColorManagementParams::Illuminant::D120: {
+                    Wx = 0.979182;
+                    Wz = 1.623623;
+                    xyD = {0.269669, 0.28078, 1.0};
+                    break;
+                }
+
+                case ColorManagementParams::Illuminant::STDA: {
+                    Wx = 1.098500393;
+                    Wz = 0.355848714;
+                    xyD = {0.447573, 0.407440, 1.0};
+                    ills = "stdA 2875K";
+                    break;
+                }
+
+                case ColorManagementParams::Illuminant::TUNGSTEN_2000K: {
+                    Wx = 1.274335;
+                    Wz = 0.145233;
+                    xyD = {0.526591, 0.41331, 1.0};
+                    ills = "Tungsten 2000K";
+                    break;
+                }
+
+                case ColorManagementParams::Illuminant::TUNGSTEN_1500K: {
+                    Wx = 1.489921;
+                    Wz = 0.053826;
+                    xyD = {0.585703, 0.393157, 1.0};
+                    ills = "Tungsten 1500K";
+                    break;
+                }
             }
         }
 
-        cmsWhitePointFromTemp(&xyD, tempv4);
-
-        switch (ColorManagementParams::Illuminant(illum)) {
-            case ColorManagementParams::Illuminant::DEFAULT: {
-                break;
-            }
-
-            case ColorManagementParams::Illuminant::D55: {
-                Wx = 0.956565934;
-                Wz = 0.920253249;
-                break;
-            }
-
-            case ColorManagementParams::Illuminant::D80: {
-                Wx = 0.950095542;
-                Wz = 1.284213976;
-                break;
-            }
-
-            case ColorManagementParams::Illuminant::D41: {
-                Wx = 0.991488263;
-                Wz = 0.631604625;
-                break;
-            }
-
-            case ColorManagementParams::Illuminant::D50: {
-                xyD = {0.3457, 0.3585, 1.0}; // near LCMS values but not perfect... it's a compromise!!
-                Wx = 0.964295676;
-                Wz = 0.825104603;
-                break;
-            }
-
-            case ColorManagementParams::Illuminant::D60: {
-                Wx = 0.952646075;
-                Wz = 1.008825184;
-                xyD = {0.32168, 0.33767, 1.0};
-                break;
-            }
-
-            case ColorManagementParams::Illuminant::D65: {
-                Wx = 0.95045471;
-                Wz = 1.08905029;
-                xyD = {0.312700492, 0.329000939, 1.0};
-                break;
-            }
-
-            case ColorManagementParams::Illuminant::D120: {
-                Wx = 0.979182;
-                Wz = 1.623623;
-                xyD = {0.269669, 0.28078, 1.0};
-                break;
-            }
-
-            case ColorManagementParams::Illuminant::STDA: {
-                Wx = 1.098500393;
-                Wz = 0.355848714;
-                xyD = {0.447573, 0.407440, 1.0};
-                ills = "stdA 2875K";
-                break;
-            }
-
-            case ColorManagementParams::Illuminant::TUNGSTEN_2000K: {
-                Wx = 1.274335;
-                Wz = 0.145233;
-                xyD = {0.526591, 0.41331, 1.0};
-                ills = "Tungsten 2000K";
-                break;
-            }
-
-            case ColorManagementParams::Illuminant::TUNGSTEN_1500K: {
-                Wx = 1.489921;
-                Wz = 0.053826;
-                xyD = {0.585703, 0.393157, 1.0};
-                ills = "Tungsten 1500K";
-                break;
-            }
-        }
-    }
         //xyD
         //meanx, meany
         // adjust refinement (purity) with a simple algorithm
         double refin = 0.;
-        if (locprim == 1) {           
+
+        if (locprim == 1) {
             refin = params->locallab.spots.at(sp).refi;
             meanx += params->locallab.spots.at(sp).shiftxl;
             meany += params->locallab.spots.at(sp).shiftyl;
         } else if (locprim == 0) {
             refin = params->icm.refi;
         }
+
         double arefi = (xyD.y - meany) / (xyD.x - meanx);
         double brefi = xyD.y - arefi * xyD.x;
         double scalrefi = 0.98 * (meanx - xyD.x);
@@ -1301,13 +1310,13 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
 
         double wprofpri[9];
 
-            //xyz in function primaries and illuminant
+        //xyz in function primaries and illuminant
         Color::primaries_to_xyz(p, Wx, Wz, wprofpri, cat);
 
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
                 wprofprim[i][j] = (double) wprofpri[j * 3 + i];
-                    //xyz in TMatrix format
+                //xyz in TMatrix format
             }
         }
 
@@ -1334,11 +1343,13 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             cmsCIEXYZ *redT = static_cast<cmsCIEXYZ*>(cmsReadTag(oprofdef, cmsSigRedMatrixColumnTag));
             cmsCIEXYZ *greenT  = static_cast<cmsCIEXYZ*>(cmsReadTag(oprofdef, cmsSigGreenMatrixColumnTag));
             cmsCIEXYZ *blueT  = static_cast<cmsCIEXYZ*>(cmsReadTag(oprofdef, cmsSigBlueMatrixColumnTag));
+
             if (locprim == 0) {
                 printf("Illuminant=%s\n", ills.c_str());
             } else {
                 printf("Illuminant=%s\n", params->locallab.spots.at(sp).illMethod.c_str());
             }
+
             printf("rX=%f gX=%f bX=%f\n", redT->X, greenT->X, blueT->X);
             printf("rY=%f gY=%f bY=%f\n", redT->Y, greenT->Y, blueT->Y);
             printf("rZ=%f gZ=%f bZ=%f\n", redT->Z, greenT->Z, blueT->Z);
@@ -1400,43 +1411,43 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
                 }
             }
         }
- 
- // alternative to find dominant color xy
+
+// alternative to find dominant color xy
 // Not use :
 //  1) GUI complex at least for mean
-//  2) small difference for meanxe, meanye with meanx , meany above in most cases 
-/*
-        if (locprim == 1) {
-            meanxe = 0.f;
-            meanye = 0.f;
-       
-#ifdef _OPENMP
-            #pragma omp parallel for reduction(+:meanxe, meanye) if(multiThread)
-#endif
-            for (int y = 0; y < ch ; ++y) {
-                for (int x = 0; x < cw ; ++x) {
-                    const float RR = dst->r(y,x);
-                    const float GG = dst->g(y,x);
-                    const float BB = dst->b(y,x);
-                    float xcb, ycb, zcb;
-                    Color::rgbxyz(RR, GG, BB, xcb, ycb, zcb, wb2);//use sRGB Adobe Rec2020 ACESp0
-                    
-                    float X_r = xcb;
-                    float Y_r = ycb;
-                    float Z_r = zcb;
-                    Color::gamutmap(X_r, Y_r, Z_r, wb2);//gamut control                    
-                    const float som = X_r + Y_r + Z_r;
-                    X_r = X_r / som;
-                    Y_r = Y_r / som;
-                    meanxe += X_r;
-                    meanye += Y_r;                  
+//  2) small difference for meanxe, meanye with meanx , meany above in most cases
+        /*
+                if (locprim == 1) {
+                    meanxe = 0.f;
+                    meanye = 0.f;
+
+        #ifdef _OPENMP
+                    #pragma omp parallel for reduction(+:meanxe, meanye) if(multiThread)
+        #endif
+                    for (int y = 0; y < ch ; ++y) {
+                        for (int x = 0; x < cw ; ++x) {
+                            const float RR = dst->r(y,x);
+                            const float GG = dst->g(y,x);
+                            const float BB = dst->b(y,x);
+                            float xcb, ycb, zcb;
+                            Color::rgbxyz(RR, GG, BB, xcb, ycb, zcb, wb2);//use sRGB Adobe Rec2020 ACESp0
+
+                            float X_r = xcb;
+                            float Y_r = ycb;
+                            float Z_r = zcb;
+                            Color::gamutmap(X_r, Y_r, Z_r, wb2);//gamut control
+                            const float som = X_r + Y_r + Z_r;
+                            X_r = X_r / som;
+                            Y_r = Y_r / som;
+                            meanxe += X_r;
+                            meanye += Y_r;
+                        }
+                    }
+                    meanxe /= (ch*cw);
+                    meanye /= (ch*cw);
+                    printf("DiffmeanxE=%f DiffmeanyE=%f \n", (double) (meanxe - meanx), (double) (meanye - meany));
                 }
-            }
-            meanxe /= (ch*cw);
-            meanye /= (ch*cw);
-            printf("DiffmeanxE=%f DiffmeanyE=%f \n", (double) (meanxe - meanx), (double) (meanye - meany));
-        }
-*/
+        */
         if (!keepTransForm) {
             cmsDeleteTransform(hTransform);
             hTransform = nullptr;
