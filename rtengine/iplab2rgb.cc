@@ -430,7 +430,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
 
     double wb2[3][3];
 
-    if (mul == 5) {
+    if (mul == 5) {//only second pass workingtrc - avoid this code first pass
         for (int r = 0; r < 3; ++r) {
             for (int c = 0; c < 3; ++c) {
                 wb2[r][c] = wprof[r][c];
@@ -702,7 +702,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
     double tempv4 = 5003.;
     double p[6]; //primaries
 
-    if (locprim == 0) {
+    if (locprim == 0 && mul == 5) {
         switch (ColorManagementParams::Primaries(prim)) {
             case ColorManagementParams::Primaries::DEFAULT: {
                 break;
@@ -975,7 +975,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
         constexpr double eps = 0.000000001; // not divide by zero
 
         //primaries for 10 working profiles ==> output profiles
-        if (locprim == 0) {
+        if (locprim == 0  && mul ==5) {
             if (profile == "WideGamut") {
                 p[0] = 0.7350;    //Widegamut primaries
                 p[1] = 0.2650;
@@ -1156,7 +1156,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
 
         Glib::ustring ills = "D50";
 
-        if (locprim == 0) {
+        if (locprim == 0  && mul == 5) {
 
             switch (ColorManagementParams::Illuminant(illum)) {
                 case ColorManagementParams::Illuminant::DEFAULT:
@@ -1343,7 +1343,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
         cmsWriteTag(oprofdef, cmsSigBlueTRCTag, GammaTRC[2]);
 
         //to read XYZ values and illuminant
-        if (rtengine::settings->verbose) {
+        if (rtengine::settings->verbose  && mul == 5) {
             cmsCIEXYZ *redT = static_cast<cmsCIEXYZ*>(cmsReadTag(oprofdef, cmsSigRedMatrixColumnTag));
             cmsCIEXYZ *greenT  = static_cast<cmsCIEXYZ*>(cmsReadTag(oprofdef, cmsSigGreenMatrixColumnTag));
             cmsCIEXYZ *blueT  = static_cast<cmsCIEXYZ*>(cmsReadTag(oprofdef, cmsSigBlueMatrixColumnTag));

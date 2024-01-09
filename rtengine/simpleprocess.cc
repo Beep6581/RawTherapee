@@ -1737,7 +1737,7 @@ private:
             }
         }
 
-        int savestr = params.wavelet.strength;//work around for abstract profile = 0.1 second
+        int savestr = params.wavelet.strength;//work around for abstract profile: time about = 0.1 second
         if ((params.wavelet.enabled)  || (params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE  && params.icm.trcExp)) {
             LabImage *unshar = nullptr;
             WaveletParams WaveParams = params.wavelet;
