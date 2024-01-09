@@ -1180,24 +1180,7 @@ private:
             }
         }
 
-        bool execcam = false;
-
-        //execcam => work around for pre-ciecam in LA: about 0.1 second
-        for (int sp = 0; sp < (int)params.locallab.spots.size(); sp++) {
-            if (params.locallab.spots.at(sp).expprecam) {
-                execcam = true;
-            }
-        }
-
-        if ((params.dirpyrequalizer.cbdlMethod == "bef") && (params.dirpyrequalizer.enabled  || execcam) && !params.colorappearance.enabled) {
-            if (execcam  && !params.dirpyrequalizer.enabled) {
-                params.dirpyrequalizer.enabled = true;
-
-                if (params.dirpyrequalizer.mult[0] == 1.) {
-                    params.dirpyrequalizer.mult[0] = 1.01;
-                }
-
-            }
+        if (params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) {
 
             const int W = baseImg->getWidth();
             const int H = baseImg->getHeight();
@@ -1740,9 +1723,8 @@ private:
             }
         }
 
-        bool savestrength = params.wavelet.strength;
 
-        if ((params.wavelet.enabled)  || (params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE  && params.icm.trcExp)) {
+        if (params.wavelet.enabled) {
             LabImage *unshar = nullptr;
             WaveletParams WaveParams = params.wavelet;
             WavCurve wavCLVCurve;
@@ -1761,11 +1743,6 @@ private:
             bool profin = WaveParams.expfinal;
             bool proton = WaveParams.exptoning;
             bool pronois = WaveParams.expnoise;
-
-            //work around for Abstract Profile enable : about 0.1 second
-            if ((params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE  && params.icm.trcExp) && (!params.wavelet.enabled)) {
-                params.wavelet.strength = 0.f;
-            }
 
             if (WaveParams.softrad > 0.f) {
                 provradius = new LabImage(*labView, true);
@@ -1958,7 +1935,6 @@ private:
 
         }
 
-        params.wavelet.strength = savestrength;
         //Colorappearance and tone-mapping associated
 
         int f_w = 1, f_h = 1;

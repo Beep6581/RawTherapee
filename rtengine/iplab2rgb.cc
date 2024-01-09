@@ -430,67 +430,69 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
 
     double wb2[3][3];
 
-    for (int r = 0; r < 3; ++r) {
-        for (int c = 0; c < 3; ++c) {
-            wb2[r][c] = wprof[r][c];
+    if (mul == 5) {
+        for (int r = 0; r < 3; ++r) {
+            for (int c = 0; c < 3; ++c) {
+                wb2[r][c] = wprof[r][c];
+            }
         }
-    }
 
-    Imagefloat *provis = nullptr;
-    provis = new Imagefloat(cw, ch);
+        Imagefloat *provis = nullptr;
+        provis = new Imagefloat(cw, ch);
 
 #ifdef _OPENMP
-    #pragma omp parallel for if(multiThread)
+        #pragma omp parallel for if(multiThread)
 #endif
 
-    for (int y = 0; y < ch ; ++y) {
-        for (int x = 0; x < cw ; ++x) {
-            provis->r(y, x) = src->r(y, x);
-            provis->g(y, x) = src->g(y, x);
-            provis->b(y, x) = src->b(y, x);
+        for (int y = 0; y < ch ; ++y) {
+            for (int x = 0; x < cw ; ++x) {
+                provis->r(y, x) = src->r(y, x);
+                provis->g(y, x) = src->g(y, x);
+                provis->b(y, x) = src->b(y, x);
+            }
         }
-    }
 
 
 // I try to find the dominant color by a simple way (average of x and y)
 // It is probably intellectually more relevant to place this algorithm at the end, but it is complex at the GUI level (at least for me).
 // The errors made are relatively minimal and result seems good enough
-    meanx = 0.f;
-    meany = 0.f;
+        meanx = 0.f;
+        meany = 0.f;
 
 #ifdef _OPENMP
-    #pragma omp parallel for reduction(+:meanx, meany) if(multiThread)
+        #pragma omp parallel for reduction(+:meanx, meany) if(multiThread)
 #endif
 
-    for (int y = 0; y < ch ; ++y) {
-        for (int x = 0; x < cw ; ++x) {
-            const float RR = provis->r(y, x);
-            const float GG = provis->g(y, x);
-            const float BB = provis->b(y, x);
-            float xcb, ycb, zcb;
-            Color::rgbxyz(RR, GG, BB, xcb, ycb, zcb, wb2);
-            float X_r = xcb;
-            float Y_r = ycb;
-            float Z_r = zcb;
-            Color::gamutmap(X_r, Y_r, Z_r, wb2);//gamut control
-            const float som = X_r + Y_r + Z_r;
-            X_r = X_r / som;
-            Y_r = Y_r / som;
-            meanx += X_r;
-            meany += Y_r;
+        for (int y = 0; y < ch ; ++y) {
+            for (int x = 0; x < cw ; ++x) {
+                const float RR = provis->r(y, x);
+                const float GG = provis->g(y, x);
+                const float BB = provis->b(y, x);
+                float xcb, ycb, zcb;
+                Color::rgbxyz(RR, GG, BB, xcb, ycb, zcb, wb2);
+                float X_r = xcb;
+                float Y_r = ycb;
+                float Z_r = zcb;
+                Color::gamutmap(X_r, Y_r, Z_r, wb2);//gamut control
+                const float som = X_r + Y_r + Z_r;
+                X_r = X_r / som;
+                Y_r = Y_r / som;
+                meanx += X_r;
+                meany += Y_r;
+            }
         }
+
+        meanx /= (ch * cw);
+        meany /= (ch * cw);
+        meanx += 0.005f;
+        meany += 0.005f; //ampirical mean delta with value end in process
+
+        if (settings->verbose) {
+            printf("Estimation dominant color : x=%f y=%f\n", (double) meanx, (double) meany);
+        }
+
+        delete provis;
     }
-
-    meanx /= (ch * cw);
-    meany /= (ch * cw);
-    meanx += 0.005f;
-    meany += 0.005f; //ampirical mean delta with value end in process
-
-    if (settings->verbose) {
-        printf("Estimation dominant color : x=%f y=%f\n", (double) meanx, (double) meany);
-    }
-
-    delete provis;
 
     double wprofprim[3][3];//store primaries to XYZ
 
@@ -1289,24 +1291,26 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
         //xyD
         //meanx, meany
         // adjust refinement (purity) with a simple algorithm
-        double refin = 0.;
+        if (mul == 5) {
+            double refin = 0.;
 
-        if (locprim == 1) {
-            refin = params->locallab.spots.at(sp).refi;
-            meanx += params->locallab.spots.at(sp).shiftxl;
-            meany += params->locallab.spots.at(sp).shiftyl;
-        } else if (locprim == 0) {
-            refin = params->icm.refi;
+            if (locprim == 1) {
+                refin = params->locallab.spots.at(sp).refi;
+                meanx += params->locallab.spots.at(sp).shiftxl;
+                meany += params->locallab.spots.at(sp).shiftyl;
+            } else if (locprim == 0) {
+                refin = params->icm.refi;
+            }
+
+            double arefi = (xyD.y - meany) / (xyD.x - meanx);
+            double brefi = xyD.y - arefi * xyD.x;
+            double scalrefi = 0.98 * (meanx - xyD.x);
+            xyD.x = xyD.x + scalrefi * refin;
+            xyD.y = xyD.x * arefi + brefi;
+            // recalculate Wx Wy
+            Wx = xyD.x / xyD.y;
+            Wz = (1. - xyD.x - xyD.y) / xyD.y;
         }
-
-        double arefi = (xyD.y - meany) / (xyD.x - meanx);
-        double brefi = xyD.y - arefi * xyD.x;
-        double scalrefi = 0.98 * (meanx - xyD.x);
-        xyD.x = xyD.x + scalrefi * refin;
-        xyD.y = xyD.x * arefi + brefi;
-        // recalculate Wx Wy
-        Wx = xyD.x / xyD.y;
-        Wz = (1. - xyD.x - xyD.y) / xyD.y;
 
         double wprofpri[9];
 
