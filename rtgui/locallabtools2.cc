@@ -9988,7 +9988,7 @@ void Locallabcie::modecamChanged()
         sigmoidjzFrame->show();
         sigmoidFrame->hide();
         forcejz->hide();
-
+        expprecam->hide();
     } else {
         expjz->hide();
         jzFrame->hide();
@@ -10009,6 +10009,8 @@ void Locallabcie::modecamChanged()
         if (modecam->get_active_row_number() == 0) {
             bevwevFrame->show();
             sigmoidFrame->show();
+            expprecam->show();
+            
         }
 
         sigmoidjzFrame->hide();
@@ -10036,6 +10038,7 @@ void Locallabcie::modecamChanged()
         cie2Frame->hide();
         exprecovcie->hide();
         expmaskcie->hide();
+        expprecam->hide();
 
         if (mode == Expert) {
             exprecovcie->show();
@@ -10119,6 +10122,8 @@ void Locallabcie::modecamChanged()
         if (modecam->get_active_row_number() == 0) {
             bevwevFrame->show();
             sigmoidjzFrame->hide();
+            expprecam->show();
+
 
         }
 
@@ -10169,6 +10174,7 @@ void Locallabcie::modecamChanged()
         targabscie->show();
         surrHBoxcie->show();
         cie2Frame->show();
+        expprecam->show();
 
         if (mode == Expert) {
             pqremapcam16->show();
@@ -10406,11 +10412,15 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 sigmoidjzFrame->hide();
                 bevwevFrame->hide();
                 sigmoidFrame->hide();
+                expprecam->hide();
+                
             }
 
             if (modecam->get_active_row_number() == 0) {
                 bevwevFrame->show();
                 sigmoidFrame->show();
+                expprecam->show();
+                
             }
 
             if (modecam->get_active_row_number() == 1) {
@@ -10430,6 +10440,8 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 maskunusablecie->hide();
                 decaycie->hide();
                 expmaskcie->hide();
+                expprecam->hide();
+                
             }
 
             if (modecam->get_active_row_number() == 3) {
@@ -10518,6 +10530,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             if (modecam->get_active_row_number() == 0) {
                 bevwevFrame->show();
                 sigmoidFrame->show();
+                expprecam->show();
             }
 
             if (modecam->get_active_row_number() == 2) {
@@ -10544,6 +10557,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 expmaskcie->hide();
                 maskusablecie->hide();
                 maskunusablecie->hide();
+                expprecam->hide();
 
             }
 
@@ -10626,6 +10640,8 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
 
             if (modecam->get_active_row_number() == 0) {
                 bevwevFrame->show();
+                expprecam->show();
+                
             }
 
             if (modecam->get_active_row_number() == 1 || modecam->get_active_row_number() == 2) {
@@ -10641,6 +10657,8 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 sigmoidjzFrame->show();
                 sigmoidFrame->hide();
                 forcejz->hide();
+                expprecam->hide();
+
 
             }
 
@@ -10660,6 +10678,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 if (modecam->get_active_row_number() == 0) {
                     bevwevFrame->show();
                     sigmoidFrame->show();
+                    expprecam->show();
                 }
 
             }
@@ -10688,6 +10707,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 expmaskcie->show();
                 maskusablecie->show();
                 maskunusablecie->show();
+                expprecam->hide();
 
                 if (chjzcie->get_active()) {
                     thrhjzcie->set_sensitive(true);
@@ -10753,6 +10773,8 @@ void Locallabcie::updatecieGUI()
 
     if (modecam->get_active_row_number() == 0) {
         bevwevFrame->show();
+        expprecam->show();
+
     }
 
     if (modecam->get_active_row_number() == 2  && mode == Expert) {
@@ -10789,6 +10811,7 @@ void Locallabcie::updatecieGUI()
         sigmoidFrame->hide();
         catadcie->hide();
         cie2Frame->hide();
+        expprecam->hide();
 
         if (mode != Expert) {
             cieFrame->hide();

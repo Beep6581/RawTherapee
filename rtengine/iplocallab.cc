@@ -19873,7 +19873,7 @@ void ImProcFunctions::Lab_Local(
     //contsig = params->locallab.spots.at(sp).contsigqcie;
     //lightsig = params->locallab.spots.at(sp).lightsigqcie;
 
-    if (params->locallab.spots.at(sp).expcie  && params->locallab.spots.at(sp).modecie == "com"  && lp.activspot) { //ciecam
+    if (params->locallab.spots.at(sp).expcie   && params->locallab.spots.at(sp).modecie == "com"  && lp.activspot) { //ciecam
         int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
         int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
         int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
@@ -20036,7 +20036,7 @@ void ImProcFunctions::Lab_Local(
                     }
                 }
 
-                if (params->locallab.spots.at(sp).expprecam) {
+                if (params->locallab.spots.at(sp).expprecam && params->locallab.spots.at(sp).modecam == "cam16") {
                     Imagefloat *tmpImage = nullptr;
                     tmpImage = new Imagefloat(bfw, bfh);
                     
