@@ -436,19 +436,29 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
                 wb2[r][c] = wprof[r][c];
             }
         }
+        
+        //provis  - samme approach as in WB itcwb
+        //we can add others function on colors ...others than mean (actually)
+        int precision = 3;
+        const int bfw = cw / precision + ((cw % precision) > 0 ? 1 : 0);
+        const int bfh = ch / precision + ((ch % precision) > 0 ? 1 : 0);
 
         Imagefloat *provis = nullptr;
-        provis = new Imagefloat(cw, ch);
-
+        provis = new Imagefloat(bfw, bfh);//cw, ch
+        
 #ifdef _OPENMP
-        #pragma omp parallel for if(multiThread)
+        #pragma omp parallel for
 #endif
 
-        for (int y = 0; y < ch ; ++y) {
-            for (int x = 0; x < cw ; ++x) {
-                provis->r(y, x) = src->r(y, x);
-                provis->g(y, x) = src->g(y, x);
-                provis->b(y, x) = src->b(y, x);
+        for (int i = 0; i < bfh ; ++i) {
+            const int ii = i * precision;
+            
+            if (ii < ch) {
+                for (int j = 0, jj = 0; j < bfw ; ++j, jj += precision) {
+                    provis->r(i, j) = src->r(ii, jj);
+                    provis->g(i, j) = src->g(ii, jj);
+                    provis->b(i, j) = src->b(ii, jj);
+                }
             }
         }
 
@@ -463,8 +473,8 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
         #pragma omp parallel for reduction(+:meanx, meany) if(multiThread)
 #endif
 
-        for (int y = 0; y < ch ; ++y) {
-            for (int x = 0; x < cw ; ++x) {
+        for (int y = 0; y < bfh ; ++y) {
+            for (int x = 0; x < bfw ; ++x) {
                 const float RR = provis->r(y, x);
                 const float GG = provis->g(y, x);
                 const float BB = provis->b(y, x);
@@ -482,8 +492,8 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             }
         }
 
-        meanx /= (ch * cw);
-        meany /= (ch * cw);
+        meanx /= (bfh * bfw);
+        meany /= (bfh * bfw);
         meanx += 0.005f;
         meany += 0.005f; //ampirical mean delta with value end in process
 
@@ -491,7 +501,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
             printf("Estimation dominant color : x=%f y=%f\n", (double) meanx, (double) meany);
         }
 
-        delete provis;
+       delete provis;
     }
 
     double wprofprim[3][3];//store primaries to XYZ
@@ -643,7 +653,7 @@ void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst,
 
     }
 
-    if (prim == 14) {//convert datas area to xy
+    if (prim == 14 && locprim == 0 && mul == 5) {//convert datas area to xy
         float redgraphx =  params->icm.labgridcieALow;
         float redgraphy =  params->icm.labgridcieBLow;
         float blugraphx =  params->icm.labgridcieAHigh;
