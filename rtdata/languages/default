@@ -3352,7 +3352,7 @@ TP_LOCALLAB_PREVIEW;Preview ΔE
 TP_LOCALLAB_PREVSHOW;Show additional settings
 TC_LOCALLAB_PRIM_SHIFTX;Shift x
 TC_LOCALLAB_PRIM_SHIFTY;Shift y
-TC_LOCALLAB_PRIM_SHIFTX_TOOLTIP;In combination with "Refine colors" allows you:\n 1) for low values adjust the image purity.\n 2) for higher values, carry out moderate Color Toning.
+TC_LOCALLAB_PRIM_SHIFTX_TOOLTIP;In combination with "Refine colors" allows you:\n 1) for low values adjust the image purity.\n 2) for higher values, carry out moderate Color Toning.\n 3) Be careful not to go outside the CIE xy diagram.
 TP_LOCALLAB_PRIMILLFRAME;Primaries & Illuminant
 TP_LOCALLAB_PROXI;ΔE decay
 TP_LOCALLAB_QUAAGRES;Aggressive

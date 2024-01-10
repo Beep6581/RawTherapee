@@ -5930,12 +5930,12 @@ void LocallabLog::updateGUIToMode(const modeType new_type)
         case Simple:
             // Expert and Normal mode widgets are hidden in Simple mode
             ciecam->hide();
-            ciecam->set_active(false);
+            ciecam->set_active(true);
             sourceabs->hide();
             targabs->hide();
             saturl->hide();
             chroml->hide();
-            contl->hide();
+            contl->show();
             contthres->hide();
             lightl->hide();
             lightq->hide();
@@ -5967,7 +5967,7 @@ void LocallabLog::updateGUIToMode(const modeType new_type)
             lightq->show();
             contl->show();
             contthres->show();
-            contq->show();
+            contq->hide();
             colorfl->show();
             surrHBox->show();
             expL->hide();
@@ -7589,8 +7589,8 @@ Locallabcie::Locallabcie():
     catMethod(Gtk::manage(new MyComboBoxText())),
     gamutcieBox(Gtk::manage(new Gtk::Box())),
     gamutcie(Gtk::manage(new Gtk::CheckButton(M("TP_ICM_GAMUT")))),
-    shiftxl(Gtk::manage(new Adjuster(M("TC_LOCALLAB_PRIM_SHIFTX"), -0.15, 0.15, 0.0001, 0.))),
-    shiftyl(Gtk::manage(new Adjuster(M("TC_LOCALLAB_PRIM_SHIFTY"), -0.15, 0.15, 0.0001, 0.))),
+    shiftxl(Gtk::manage(new Adjuster(M("TC_LOCALLAB_PRIM_SHIFTX"), -0.20, 0.20, 0.0001, 0.))),
+    shiftyl(Gtk::manage(new Adjuster(M("TC_LOCALLAB_PRIM_SHIFTY"), -0.20, 0.20, 0.0001, 0.))),
 
     sigmoidjzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGJZFRA")))),
     sigmoid2Frame(Gtk::manage(new Gtk::Frame(M("")))),
