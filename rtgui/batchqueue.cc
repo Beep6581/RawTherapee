@@ -54,7 +54,7 @@ namespace   // local helper functions
     // Look for N or -N in templateText at position ix, meaning "index from end" and "index from start"
     // For N, return Nth index from the end, and for -N return the Nth index from the start
     // N is a digit 1 through 9
-    unsigned int decodePathIndex(unsigned int & ix, Glib::ustring & templateText, size_t numPathElements)
+    unsigned int decodePathIndex(unsigned int& ix, Glib::ustring& templateText, size_t numPathElements)
     {
         unsigned int pathIndex = numPathElements;    // means input was invalid
         bool fromStart = false;
@@ -606,7 +606,7 @@ void BatchQueue::updateDestinationPathPreview()
     MYWRITERLOCK(l, entryRW);
 
     if (!selected.empty()) {
-        auto &entry = *selected.at(0);
+        auto& entry = *selected.at(0);
         int sequence = 0;   // Sequence during subsequent queue processing can't be determined here
         Glib::ustring baseDestination = calcAutoFileNameBase(entry.filename, sequence);
         Glib::ustring destination = Glib::ustring::compose ("%1.%2", baseDestination, options.saveFormatBatch.format);
