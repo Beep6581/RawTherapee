@@ -548,6 +548,12 @@ int RawImage::loadRaw(bool loadData, unsigned int imageNum, bool closeFile, Prog
         colors = d.colors;
         tiff_bps = 0;
 
+        if (!strcmp("Hasselblad", make)) {
+            // For Hasselblad, "model" provides the better name.
+            strncpy(model, d.model, sizeof(model) - 1);
+            model[sizeof(model) - 1] = 0;
+        }
+
         if (merged_pixelshift.is_merged_pixelshift ||
             (strncmp(libraw->unpack_function_name(), "sony_arq_load_raw", 17) == 0 &&
                 is_raw == 1 && colors == 4)) {
