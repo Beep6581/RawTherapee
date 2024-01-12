@@ -357,6 +357,10 @@ typedef unsigned long long UINT64;
 */
     double mnColorMatrix[4][3];
 
+    off_t levels; // RT
+    off_t unknown1; // RT
+    off_t flatfield; // RT
+
   } libraw_hasselblad_makernotes_t;
 
   typedef struct

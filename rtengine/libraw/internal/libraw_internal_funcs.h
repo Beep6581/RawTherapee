@@ -119,6 +119,8 @@ it under the terms of the one of two licenses as you choose:
 	const char* HassyRawFormat_idx2HR(unsigned idx);
 	void	process_Hassy_Lens (int LensMount);
 	void parseHassyModel ();
+	void parse_hasselblad_gain(); // RT
+	void hasselblad_correct(); // RT
 
 	void	setLeicaBodyFeatures(int LeicaMakernoteSignature);
 	void	parseLeicaLensID();

@@ -75,6 +75,10 @@ int LibRaw::raw2image(void)
       }
     }
 
+    if (load_raw == &LibRaw::hasselblad_load_raw) { // RT
+      hasselblad_correct();                         // RT
+    }
+
     // free and re-allocate image bitmap
     if (imgdata.image)
     {

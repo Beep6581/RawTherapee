@@ -664,6 +664,9 @@ void LibRaw::parse_makernote(int base, int uptag)
         imHassy.SensorCode = getint(type);
       else if (tag == 0x0016)
         imHassy.CoatingCode = getint(type);
+      else if (tag == 0x0019 && len == 0x300000) { // RT
+        parse_hasselblad_gain();                   // RT
+      }
       else if ((tag == 0x002a) &&
                tagtypeIs(LIBRAW_EXIFTAG_TYPE_SRATIONAL) &&
                (len == 12)) {

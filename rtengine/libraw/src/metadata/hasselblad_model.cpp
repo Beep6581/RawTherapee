@@ -536,3 +536,97 @@ static const char *Hasselblad_SensorEnclosures[] = {
   if (normalized_model[0]  && !CM_found)
     CM_found = adobe_coeff(maker_index, normalized_model);
 }
+
+// RT: From dcraw.cc.
+void LibRaw::parse_hasselblad_gain()
+{
+    /*
+      Reverse-engineer's notes:
+
+      The Hasselblad gain tag (0x19 in makernotes) is only available in the 3FR format and
+      is applied and removed when Hasselblad Phocus converts it to the FFF format. It's
+      always 0x300000 bytes large regardless of (tested) model, not all space in it is
+      used though.
+
+      It contains individual calibration information from the factory to tune the sensor
+      performance.
+
+      There is more calibration data in the tag than what is applied in conversion to FFF,
+      I've only cared to figure out the data which is actually used, but have some leads on
+      remaining info.
+
+      The format is not equal between all models. Due to lack of 3FR files (harder to get
+      than FFF) only a subset of the models have been reverse-engineered.
+
+      The header space is 512 bytes and is a mix of 16 and 32 bit values. Offset to blocks
+      are 32 bit values, but all information seems to be encoded in 16 bit values. Many
+      values in the header can be zeroed with no effect on FFF conversion, and their
+      meaning, if any, have not been further investigated.
+
+      Formats:
+      hdr16[22] = raw width
+      hdr16[23] = raw height
+      hdr32[24] = offset to level corr block
+         Data block format. Seems to differ depending on sensor type. For tested H4D-50
+         and H3D-31: 10 16 bit signed values per row
+         value 0: a correction factor (k) used on even columns, where the new pixel value is
+         calculated as follows:
+         new_value = old_value + (2 * ((k * (old_value_on_row_above-256)) / 32767) - 2)
+         note the connection to the value on the row above, seems to be some sort of signal
+         leakage correction.
+         value 1: same as value 0 but using old value on row below instead of above
+         value 2-3: same as value 0-1 but for odd columns
+         value 4-9: has some effect if non-zero (probably similar to the others) but not
+         investigated which, as it's seems to be always zero for the tested cameras.
+
+      hdr32[25] = probably offset to "bad/unreliable pixels" info, always 512 as it starts
+                  directly after the header. Not applied in FFF conversion (at least
+                  typically).
+                  Data block format guess: raw_height packets of
+                    <type?><number of coords><coords...>
+
+      hdr32[27] = offset to unknown data (bad colulmns?), of the form:
+                  <packet count><packets><0>
+                  packet: <column><?><?><?>.
+
+      hdr32[34] = curves offset, seems to be A/D curves (one per channel) on newer models
+                  and some sort of a film curve on older. Not applied in FFF conversion.
+
+      hdr32[36] = flatfield correction, not available in older models. Data format:
+                  <1><block width><block height><rows><cols><11 * 2 pad><packets>
+                  packet: <R><G1><G2><B>
+
+                  The header pad is not zeroed and might seem to contain some sort of
+                  information, but it makes no difference if set to zero. See
+                  hasselblad_correct() how the flatfield is applied.
+
+      Applied in FFF conversion is levels, flatfield correction, and the bad columns(?)
+      data. A/D curves are surprisingly not applied, maybe pre-applied in hardware and
+      only available as information? Levels are applied before flatfield, further
+      ordering has not been investigated.
+
+      Not all combinations/models have been tested so there may be gaps.
+
+      Most clipped pixels in a 3FR is at 65535, but there's also some at 65534. Both
+      are set to 65535 when calibrated, while 65533 is treated as a normal value. In
+      the calibration process smaller values can be scaled to 65534 (which should
+      not be seen as clipped).
+    */
+
+    auto &hbd = imHassy;
+    int offset;
+    off_t base;
+
+    base = ftell(ifp);
+    fseek(ifp, 2 * 23, SEEK_CUR);
+    get2();
+    fseek(ifp, 48, SEEK_CUR);
+    offset = get4();
+    hbd.levels = offset ? base + offset : 0;
+    fseek(ifp, 8, SEEK_CUR);
+    offset = get4();
+    hbd.unknown1 = offset ? base + offset : 0;
+    fseek(ifp, 32, SEEK_CUR);
+    offset = get4();
+    hbd.flatfield = (offset && (base + offset < ifp->size())) ? base + offset : 0;
+}
