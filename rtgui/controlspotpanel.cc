@@ -1000,7 +1000,8 @@ void ControlSpotPanel::spotMethodChanged()
     row[spots_.spotMethod] = spotMethod_->get_active_row_number();
     //ctboxspotmethod->show();
     hishow_->show();
-
+    ctboxshape->show();
+    artifBox2->show();
     // Update Control Spot GUI according to spotMethod_ combobox state (to be compliant with updateParamVisibility function)
     if (multiImage && spotMethod_->get_active_text() == M("GENERAL_UNCHANGED")) {
         excluFrame->show();
@@ -1066,12 +1067,16 @@ void ControlSpotPanel::spotMethodChanged()
         if(spotMethod_->get_active_row_number() == 3) {        
           //  ctboxactivmethod->hide();
           //  ctboxspotmethod->hide();
+            ctboxshape->hide();
+
             artifBox2->hide();
             hishow_->hide();
             hishow_->set_active(false);           
         } else {
            // ctboxactivmethod->show();
            // ctboxspotmethod->show();
+            ctboxshape->show();
+           
             artifBox2->show();
             hishow_->show();
             hishow_->set_active(options.complexity != 2);
@@ -1326,6 +1331,9 @@ void ControlSpotPanel::updateParamVisibility()
 }
    // ctboxspotmethod->show();
     hishow_->show();
+    artifBox2->show();
+    ctboxshape->show();
+    
     // Update Control Spot GUI according to spotMethod_ combobox state (to be compliant with spotMethodChanged function)
     if (multiImage && spotMethod_->get_active_text() == M("GENERAL_UNCHANGED")) {
         excluFrame->show();
@@ -1342,6 +1350,7 @@ void ControlSpotPanel::updateParamVisibility()
             artifBox2->hide();
             hishow_->hide();
             hishow_->set_active(false);           
+            ctboxshape->hide();
 
         } else {
           //  ctboxactivmethod->show();
@@ -1349,6 +1358,7 @@ void ControlSpotPanel::updateParamVisibility()
             artifBox2->show();
             hishow_->show();
             hishow_->set_active(options.complexity != 2);
+            ctboxshape->show();
             
         }    
 
@@ -1364,6 +1374,9 @@ void ControlSpotPanel::updateParamVisibility()
         ctboxshape->show();
     } else if (prevMethod_->get_active_row_number() == 0) { // Normal case
     */
+    //ctboxshape->show();
+   // artifBox2->show();
+   
     if (!hishow_->get_active()  || spotMethod_->get_active_row_number() == 3) { // Normal case
         expTransGrad_->hide();
         expShapeDetect_->hide();
@@ -1372,11 +1385,17 @@ void ControlSpotPanel::updateParamVisibility()
         circrad_->hide();
         ctboxshape->hide();
         if(spotMethod_->get_active_row_number() == 3) {
+            artifBox2->hide();
             hishow_->hide();
             hishow_->set_active(false);           
+            ctboxshape->hide();
+            
         } else {
             hishow_->show();
             hishow_->set_active(options.complexity != 2);
+            artifBox2->show();
+            hishow_->show();
+            ctboxshape->show();
             
         }
         
@@ -1653,6 +1672,7 @@ void ControlSpotPanel::hishowChanged()
     row[spots_.hishow] = hishow_->get_active();
 
 
+    ctboxshape->show();
 
     if (!hishow_->get_active()  || spotMethod_->get_active_row_number() == 3) { // Normal case
         expTransGrad_->hide();
