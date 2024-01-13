@@ -1079,7 +1079,7 @@ void ControlSpotPanel::spotMethodChanged()
            
             artifBox2->show();
             hishow_->show();
-            hishow_->set_active(options.complexity != 2);
+           // hishow_->set_active(options.complexity != 2);
         }    
         
     }
@@ -1357,7 +1357,7 @@ void ControlSpotPanel::updateParamVisibility()
           //  ctboxspotmethod->show();
             artifBox2->show();
             hishow_->show();
-            hishow_->set_active(options.complexity != 2);
+        //    hishow_->set_active(options.complexity != 2);
             ctboxshape->show();
             
         }    
@@ -1392,7 +1392,7 @@ void ControlSpotPanel::updateParamVisibility()
             
         } else {
             hishow_->show();
-            hishow_->set_active(options.complexity != 2);
+           // hishow_->set_active(options.complexity != 2);
             artifBox2->show();
             hishow_->show();
             ctboxshape->show();
@@ -1407,7 +1407,7 @@ void ControlSpotPanel::updateParamVisibility()
         circrad_->show();
         ctboxshape->show();
         hishow_->show();
-        hishow_->set_active(options.complexity != 2);
+       // hishow_->set_active(options.complexity != 2);
         
     }
 
@@ -1688,7 +1688,7 @@ void ControlSpotPanel::hishowChanged()
             
         } else {
             hishow_->show();
-            hishow_->set_active(options.complexity != 2);
+         //   hishow_->set_active(options.complexity != 2);
             
         }
 
@@ -1700,7 +1700,7 @@ void ControlSpotPanel::hishowChanged()
         circrad_->show();
         ctboxshape->show();
         hishow_->show();
-        hishow_->set_active(options.complexity != 2);
+      //  hishow_->set_active(options.complexity != 2);
         
    }
 
