@@ -99,8 +99,11 @@ ControlSpotPanel::ControlSpotPanel():
 
     preview_(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
     ctboxshape(Gtk::manage(new Gtk::Box())),
+    ctboxactivmethod(Gtk::manage(new Gtk::Box())),
+    ctboxspotmethod(Gtk::manage(new Gtk::Box())),    
     ctboxshapemethod(Gtk::manage(new Gtk::Box())),
     ctboxgamut(Gtk::manage(new Gtk::Box())),
+    artifBox2(Gtk::manage(new ToolParamBlock())),
 
     controlPanelListener(nullptr),
     lastObject_(-1),
@@ -204,7 +207,7 @@ ControlSpotPanel::ControlSpotPanel():
     scrolledwindow_->set_min_content_height(150);
     pack_start(*scrolledwindow_);
 
-    Gtk::Box* const ctboxactivmethod = Gtk::manage(new Gtk::Box());
+   // Gtk::Box* const ctboxactivmethod = Gtk::manage(new Gtk::Box());
     ctboxactivmethod->pack_start(*activ_);
     pack_start(*ctboxactivmethod);
 
@@ -222,7 +225,7 @@ ControlSpotPanel::ControlSpotPanel():
         shape_->set_tooltip_text(M("TP_LOCALLAB_SHAPE_TOOLTIP"));
     }
 
-    Gtk::Box* const ctboxspotmethod = Gtk::manage(new Gtk::Box());
+   // Gtk::Box* const ctboxspotmethod = Gtk::manage(new Gtk::Box());
     Gtk::Label* const labelspotmethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_EXCLUTYPE") + ":"));
     ctboxspotmethod->pack_start(*labelspotmethod, Gtk::PACK_SHRINK, 4);
 
@@ -233,6 +236,7 @@ ControlSpotPanel::ControlSpotPanel():
     spotMethod_->append(M("TP_LOCALLAB_EXNORM"));
     spotMethod_->append(M("TP_LOCALLAB_EXECLU"));
     spotMethod_->append(M("TP_LOCALLAB_EXFULL"));
+    spotMethod_->append(M("TP_LOCALLAB_EXMAIN"));
     spotMethod_->set_active(0);
     spotMethodconn_ = spotMethod_->signal_changed().connect(
                           sigc::mem_fun(
@@ -387,7 +391,7 @@ ControlSpotPanel::ControlSpotPanel():
 //    artifBox->pack_start(*colorscope_);
     expShapeDetect_->add(*artifBox, false);
     pack_start(*expShapeDetect_, false, false);
-    ToolParamBlock* const artifBox2 = Gtk::manage(new ToolParamBlock());
+//    ToolParamBlock* const artifBox2 = Gtk::manage(new ToolParamBlock());
     
     artifBox2->pack_start(*preview_);
     artifBox2->pack_start(*colorscope_);
@@ -994,6 +998,8 @@ void ControlSpotPanel::spotMethodChanged()
 
     const int oldSpotMethod = row[spots_.spotMethod];
     row[spots_.spotMethod] = spotMethod_->get_active_row_number();
+    //ctboxspotmethod->show();
+    hishow_->show();
 
     // Update Control Spot GUI according to spotMethod_ combobox state (to be compliant with updateParamVisibility function)
     if (multiImage && spotMethod_->get_active_text() == M("GENERAL_UNCHANGED")) {
@@ -1040,7 +1046,7 @@ void ControlSpotPanel::spotMethodChanged()
             disableParamlistener(false);
             updateControlSpotCurve(row);
         }
-    } else if (spotMethod_->get_active_row_number() == 2) { // Full image case
+    } else if (spotMethod_->get_active_row_number() == 2  || spotMethod_->get_active_row_number() == 3) { // Full image case
         excluFrame->hide();
         shape_->set_active(0);
 
@@ -1056,6 +1062,21 @@ void ControlSpotPanel::spotMethodChanged()
         row[spots_.shape] = shape_->get_active_row_number();
         transit_->setValue(100.);
         row[spots_.transit] = transit_->getValue();
+        
+        if(spotMethod_->get_active_row_number() == 3) {        
+          //  ctboxactivmethod->hide();
+          //  ctboxspotmethod->hide();
+            artifBox2->hide();
+            hishow_->hide();
+            hishow_->set_active(false);           
+        } else {
+           // ctboxactivmethod->show();
+           // ctboxspotmethod->show();
+            artifBox2->show();
+            hishow_->show();
+            hishow_->set_active(options.complexity != 2);
+        }    
+        
     }
 
     // Raise event
@@ -1303,7 +1324,8 @@ void ControlSpotPanel::updateParamVisibility()
     } else {
         avoidrad_->hide();
 }
-
+   // ctboxspotmethod->show();
+    hishow_->show();
     // Update Control Spot GUI according to spotMethod_ combobox state (to be compliant with spotMethodChanged function)
     if (multiImage && spotMethod_->get_active_text() == M("GENERAL_UNCHANGED")) {
         excluFrame->show();
@@ -1311,8 +1333,25 @@ void ControlSpotPanel::updateParamVisibility()
         excluFrame->hide();
     } else if (spotMethod_->get_active_row_number() == 1) { // Excluding case
         excluFrame->show();
-    } else if (spotMethod_->get_active_row_number() == 2) {//full image
+    } else if (spotMethod_->get_active_row_number() == 2 || spotMethod_->get_active_row_number() == 3) {//full image
         excluFrame->hide();
+        
+        if(spotMethod_->get_active_row_number() == 3) {        
+          //  ctboxactivmethod->hide();
+          //  ctboxspotmethod->hide();
+            artifBox2->hide();
+            hishow_->hide();
+            hishow_->set_active(false);           
+
+        } else {
+          //  ctboxactivmethod->show();
+          //  ctboxspotmethod->show();
+            artifBox2->show();
+            hishow_->show();
+            hishow_->set_active(options.complexity != 2);
+            
+        }    
+
     }
 
 /*
@@ -1325,13 +1364,22 @@ void ControlSpotPanel::updateParamVisibility()
         ctboxshape->show();
     } else if (prevMethod_->get_active_row_number() == 0) { // Normal case
     */
-    if (!hishow_->get_active()) { // Normal case
+    if (!hishow_->get_active()  || spotMethod_->get_active_row_number() == 3) { // Normal case
         expTransGrad_->hide();
         expShapeDetect_->hide();
         expSpecCases_->hide();
         expMaskMerge_->hide();
         circrad_->hide();
         ctboxshape->hide();
+        if(spotMethod_->get_active_row_number() == 3) {
+            hishow_->hide();
+            hishow_->set_active(false);           
+        } else {
+            hishow_->show();
+            hishow_->set_active(options.complexity != 2);
+            
+        }
+        
     } else { // Excluding case
         expTransGrad_->show();
         expShapeDetect_->show();
@@ -1339,6 +1387,9 @@ void ControlSpotPanel::updateParamVisibility()
         expMaskMerge_->show();
         circrad_->show();
         ctboxshape->show();
+        hishow_->show();
+        hishow_->set_active(options.complexity != 2);
+        
     }
 
     
@@ -1603,7 +1654,7 @@ void ControlSpotPanel::hishowChanged()
 
 
 
-    if (!hishow_->get_active()) { // Normal case
+    if (!hishow_->get_active()  || spotMethod_->get_active_row_number() == 3) { // Normal case
         expTransGrad_->hide();
         expShapeDetect_->hide();
         expSpecCases_->hide();
@@ -1611,6 +1662,15 @@ void ControlSpotPanel::hishowChanged()
         circrad_->hide();
         ctboxshape->hide();
         shapeMethod_->set_active(0);
+        if(spotMethod_->get_active_row_number() == 3) {
+            hishow_->hide();
+            hishow_->set_active(false);           
+            
+        } else {
+            hishow_->show();
+            hishow_->set_active(options.complexity != 2);
+            
+        }
 
     } else { // Excluding case
         expTransGrad_->show();
@@ -1619,7 +1679,10 @@ void ControlSpotPanel::hishowChanged()
         expMaskMerge_->show();
         circrad_->show();
         ctboxshape->show();
-    }
+        hishow_->show();
+        hishow_->set_active(options.complexity != 2);
+        
+   }
 
     // Raise event
     if (listener) {

@@ -433,8 +433,12 @@ private:
     sigc::connection previewConn_;
 
     Gtk::Box* const ctboxshape;
+    Gtk::Box* const ctboxactivmethod;
+    Gtk::Box* const ctboxspotmethod;
+    
     Gtk::Box* const ctboxshapemethod;
     Gtk::Box* const ctboxgamut;
+    ToolParamBlock* const artifBox2;
 
     // Internal variables
     ControlPanelListener* controlPanelListener;

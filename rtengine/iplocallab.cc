@@ -901,9 +901,12 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.fullim = 0;
     } else if(locallab.spots.at(sp).spotMethod == "exc"){
         lp.fullim = 1;
-    } else if (locallab.spots.at(sp).spotMethod == "full"){
+    } else if (locallab.spots.at(sp).spotMethod == "full") { //  || locallab.spots.at(sp).spotMethod == "main"){
         lp.fullim = 2;
+    } else if (locallab.spots.at(sp).spotMethod == "main") {
+        lp.fullim = 3;
     }
+        
    // printf("Lpfullim=%i\n", lp.fullim);
     
     lp.fftColorMask = locallab.spots.at(sp).fftColorMask;
@@ -1046,7 +1049,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.excmet = 1;
     } else if (locallab.spots.at(sp).spotMethod == "full") {
         lp.excmet = 2;
+    } else if (locallab.spots.at(sp).spotMethod == "main") {
+        lp.excmet = 3;
     }
+
 
     if (locallab.spots.at(sp).merMethod == "mone") {
         lp.mergemet = 0;
@@ -4654,6 +4660,9 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp, Lab
                     difa = tmp1.a[y][x] - original->a[y][x];
                     difb = tmp1.b[y][x] - original->b[y][x];
                 }
+                if(lp.fullim == 3 ) {
+                    reducdEL = reducdEa = reducdEb = 1.f;
+                }
 
                 difL *= localFactor * reducdEL;
                 difa *= localFactor * reducdEa;
@@ -4804,6 +4813,9 @@ void ImProcFunctions::DeNoise_Local2(const struct local_params& lp, LabImage* or
                 difL = tmp1.L[y-ystart][x-xstart] - original->L[y][x];
                 difa = tmp1.a[y-ystart][x-xstart] - original->a[y][x];
                 difb = tmp1.b[y-ystart][x-xstart] - original->b[y][x];
+                if(lp.fullim == 3 ) {
+                    reducdEL = reducdEa = reducdEb = 1.f;
+                }
 
                 difL *= localFactor * reducdEL;
                 difa *= localFactor * reducdEa;
@@ -4892,7 +4904,10 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
 
                 float rL = origblur->L[y][x] / 327.68f;
                 float dE = std::sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
-                const float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensh);
+                float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensh);
+                if(lp.fullim == 3 ) {
+                    reducdE = 1.f;
+                }
 
                 switch (zone) {
                     case 0: { // outside selection and outside transition zone => full effect, no transition
@@ -8156,7 +8171,7 @@ void optfft(int N_fftwsize, int &bfh, int &bfw, int &bfhr, int &bfwr, struct loc
         }
     }
     
-    if(fulima == 2) {// if full image, the ftsizeH and ftsizeW is a bit larger (about 10 to 200 pixels) than the image dimensions so that it is fully processed (consumes a bit more resources)
+    if(fulima >= 2) {// if full image, the ftsizeH and ftsizeW is a bit larger (about 10 to 200 pixels) than the image dimensions so that it is fully processed (consumes a bit more resources)
         for (int ftfu = 0; ftfu < N_fftwsize; ftfu++) { //find best values
             if (fftw_size[ftfu] <= (H + deltah)) {
                 ftsizeH = fftw_size[ftfu];
@@ -8699,8 +8714,10 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
 
                 const float dE = rsob + std::sqrt(kab * (kch * chrodelta2 + kH * huedelta2) + kL * SQR(refL - maskptr->L[y][x]));
                 //reduction action with deltaE
-                const float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens);
-
+                float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens);
+                if(lp.fullim == 3 ) {
+                    reducdE = 1.f;
+                }
                 float cli = (bufexpfin->L[y][x] - bufexporig->L[y][x]);
                 float cla = (bufexpfin->a[y][x] - bufexporig->a[y][x]);
                 float clb = (bufexpfin->b[y][x] - bufexporig->b[y][x]);
@@ -14542,7 +14559,11 @@ void ImProcFunctions::Lab_Local(
             for (int y = 0; y < transformed->H ; y++)
                 for (int x = 0; x < transformed->W; x++) {
                     float dE = std::sqrt(SQR(refa - bufreti->a[y][x] / 327.68f) + SQR(refb - bufreti->b[y][x] / 327.68f) + SQR(static_cast<float>(lumaref) - bufreti->b[y][x] / 327.68f));
-                    const float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sensibefore);
+                    float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sensibefore);
+                    if(lp.fullim == 3 ) {
+                        reducdE = 1.f;
+                    }
+                    
                     reducDE[y][x] = clipDE(reducdE);
                 }
 
@@ -14888,7 +14909,11 @@ void ImProcFunctions::Lab_Local(
             for (int y = ystart; y < yend ; y++) {
                 for (int x = xstart; x < xend; x++) {
                     const float dE = std::sqrt(SQR(refa - bufreti->a[y - ystart][x - xstart] / 327.68f) + SQR(refb - bufreti->b[y - ystart][x - xstart] / 327.68f) + SQR(static_cast<float>(lumaref) - bufreti->b[y - ystart][x - xstart] / 327.68f));
-                    const float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sensibefore);
+                    float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sensibefore);
+                    if(lp.fullim == 3 ) {
+                        reducdE = 1.f;
+                    }
+                  
                     reducDE[y - ystart][x - xstart] = clipDE(reducdE);
                 }
             }
@@ -16590,7 +16615,7 @@ void ImProcFunctions::Lab_Local(
             int yEn = lp.yc + lp.ly;
             int xEn = lp.xc + lp.lx;
 
-			if(lp.fullim == 2) {//limit sharpening to image dimension...no more...to avoid a long treatment
+			if(lp.fullim >= 2) {//limit sharpening to image dimension...no more...to avoid a long treatment
 				begy = 0;
 				begx = 0;
 				yEn = original->H;

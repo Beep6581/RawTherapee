@@ -265,8 +265,10 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
             r->spotMethod = 1;
         } else if (pp->locallab.spots.at(i).spotMethod == "full"){
             r->spotMethod = 2;
+        } else if (pp->locallab.spots.at(i).spotMethod == "main"){
+            r->spotMethod = 3;
         }
-
+        
         r->sensiexclu = pp->locallab.spots.at(i).sensiexclu;
         r->structexclu = pp->locallab.spots.at(i).structexclu;
 
@@ -438,6 +440,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 r->spotMethod = 1;
             } else if(newSpot->spotMethod == "full") {
                 r->spotMethod = 2;
+            } else if(newSpot->spotMethod == "main") {
+                r->spotMethod = 3;
             }
 
             r->sensiexclu = newSpot->sensiexclu;
@@ -762,8 +766,10 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 r->spotMethod = 1;
             } else if (newSpot->spotMethod == "full") {
                 r->spotMethod = 2;
+            } else if (newSpot->spotMethod == "main") {
+                r->spotMethod = 3;
             }
-
+            
             r->sensiexclu = newSpot->sensiexclu;
             r->structexclu = newSpot->structexclu;
 
@@ -810,7 +816,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 }
             }
 
-            if(r->spotMethod != 2) {
+            if(r->spotMethod == 0 || r->spotMethod == 1 ) {
                 r->locX = newSpot->loc.at(0);
                 r->locXL = newSpot->loc.at(1);
                 r->locY = newSpot->loc.at(2);
@@ -958,6 +964,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pp->locallab.spots.at(pp->locallab.selspot).spotMethod = "exc";
                     } else if (r->spotMethod == 2) {
                         pp->locallab.spots.at(pp->locallab.selspot).spotMethod = "full";
+                    } else if (r->spotMethod == 3) {
+                        pp->locallab.spots.at(pp->locallab.selspot).spotMethod = "main";
                     }
 
                     pp->locallab.spots.at(pp->locallab.selspot).sensiexclu = r->sensiexclu;
