@@ -2256,7 +2256,18 @@ Camera constants:
 
     { // Quality C
         "make_model": [ "Panasonic DC-G100", "Panasonic DC-G110" ],
-        "dcraw_matrix": [ 8370, -2869, -710, -3389, 11372, 2298, -640, 1598, 4887 ] // DNG
+        "dcraw_matrix": [ 8370, -2869, -710, -3389, 11372, 2298, -640, 1598, 4887 ], // DNG
+        "ranges": {
+            "white": [ // Measured with DC-G100 (#6913). Levels affected by LENR for ISOs 1600-4000.
+                { "iso": [ 200, 400, 800, 1250 ], "levels": 4095 },
+                { "iso": 1600, "levels": 4050 },
+                { "iso": 2000, "levels": 4040 },
+                { "iso": 2500, "levels": 4025 },
+                { "iso": 3200, "levels": 4010 },
+                { "iso": 4000, "levels": 4000 },
+                { "iso": [ 5000, 6400, 12800, 25600 ], "levels": 4095 }
+            ]
+        }
     },
 
     { // Quality C, only color matrix
