@@ -396,7 +396,7 @@ public:
 
             swap(rotatedImg);
         } else if (deg == 180) {
-            int height2 = height / 2 + (height & 1);
+            int height2 = height / 2;
 
 #ifdef _OPENMP
             // difficult to find a cutoff value where parallelization is counter productive because of processor's data cache collision...
@@ -413,6 +413,21 @@ public:
                     tmp = v(i, j);
                     v(i, j) = v(y, x);
                     v(y, x) = tmp;
+                }
+            }
+
+            // Middle row of odd-height images: only go half way otherwise the
+            // pixels will be swapped twice.
+            if (height & 1) {
+                int i = height / 2;
+                int width2 = width / 2;
+                for (int j = 0; j < width2; j++) {
+                    T tmp;
+                    int x = width - 1 - j;
+
+                    tmp = v(i, j);
+                    v(i, j) = v(i, x);
+                    v(i, x) = tmp;
                 }
             }
 #ifdef _OPENMP
@@ -828,7 +843,7 @@ public:
 
             swap(rotatedImg);
         } else if (deg == 180) {
-            int height2 = height / 2 + (height & 1);
+            int height2 = height / 2;
 
 #ifdef _OPENMP
             // difficult to find a cutoff value where parallelization is counter productive because of processor's data cache collision...
@@ -853,6 +868,29 @@ public:
                     tmp = b(i, j);
                     b(i, j) = b(y, x);
                     b(y, x) = tmp;
+                }
+            }
+
+            // Middle row of odd-height images: only go half way otherwise the
+            // pixels will be swapped twice.
+            if (height & 1) {
+                int i = height / 2;
+                int width2 = width / 2;
+                for (int j = 0; j < width2; j++) {
+                    T tmp;
+                    int x = width - 1 - j;
+
+                    tmp = r(i, j);
+                    r(i, j) = r(i, x);
+                    r(i, x) = tmp;
+
+                    tmp = g(i, j);
+                    g(i, j) = g(i, x);
+                    g(i, x) = tmp;
+
+                    tmp = b(i, j);
+                    b(i, j) = b(i, x);
+                    b(i, x) = tmp;
                 }
             }
 #ifdef _OPENMP
@@ -1481,7 +1519,7 @@ public:
 
             swap(rotatedImg);
         } else if (deg == 180) {
-            int height2 = height / 2 + (height & 1);
+            int height2 = height / 2;
 
             // Maybe not sufficiently optimized, but will do what it has to do
             for (int i = 0; i < height2; i++) {
@@ -1501,6 +1539,29 @@ public:
                     tmp = b(i, j);
                     b(i, j) = b(y, x);
                     b(y, x) = tmp;
+                }
+            }
+
+            // Middle row of odd-height images: only go half way otherwise the
+            // pixels will be swapped twice.
+            if (height & 1) {
+                int i = height / 2;
+                int width2 = width / 2;
+                for (int j = 0; j < width2; j++) {
+                    T tmp;
+                    int x = width - 1 - j;
+
+                    tmp = r(i, j);
+                    r(i, j) = r(i, x);
+                    r(i, x) = tmp;
+
+                    tmp = g(i, j);
+                    g(i, j) = g(i, x);
+                    g(i, x) = tmp;
+
+                    tmp = b(i, j);
+                    b(i, j) = b(i, x);
+                    b(i, x) = tmp;
                 }
             }
         }
