@@ -4551,7 +4551,10 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp, Lab
     //simple algo , perhaps we can improve as the others, but noise is here and not good for hue detection
     // BENCHFUN
     lumaref *= 327.68f;
-    const float ach = lp.trans / 100.f;
+    float ach = lp.trans / 100.f;
+    if(lp.fullim == 3 ) {
+        ach = 1.f;
+    }
 
     const float factnoise1 = 1.f + (lp.noisecf) / 500.f;
     const float factnoise2 = 1.f + (lp.noisecc) / 500.f;
@@ -4626,6 +4629,9 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp, Lab
                     calcTransition(lox, loy, ach, lp, zone, localFactor);
                 } else /*if (lp.shapmet == 1)*/ {
                     calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
+                }
+                if(lp.fullim == 3 ) {
+                    localFactor = 1.f;
                 }
 
                 if (zone == 0) { // outside selection and outside transition zone => no effect, keep original values
@@ -4708,7 +4714,10 @@ void ImProcFunctions::DeNoise_Local2(const struct local_params& lp, LabImage* or
     
     
     lumaref *= 327.68f;
-    const float ach = lp.trans / 100.f;
+    float ach = lp.trans / 100.f;
+    if(lp.fullim == 3 ) {
+        ach = 1.f;
+    }
 
     const float factnoise1 = 1.f + (lp.noisecf) / 500.f;
     const float factnoise2 = 1.f + (lp.noisecc) / 500.f;
@@ -4784,6 +4793,9 @@ void ImProcFunctions::DeNoise_Local2(const struct local_params& lp, LabImage* or
                     calcTransition(lox, loy, ach, lp, zone, localFactor);
                 } else { /*if (lp.shapmet == 1)*/
                     calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
+                }
+                if(lp.fullim == 3 ) {
+                    localFactor = 1.f;
                 }
 
                 if (zone == 0) { // outside selection and outside transition zone => no effect, keep original values
@@ -5051,6 +5063,10 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, const stru
                     float huedelta2 = abdelta2 - chrodelta2;
                     float dE = std::sqrt(kab * (kch * chrodelta2 + kH * huedelta2) + kL * SQR(refL - maskptr->L[y][x]));
                     reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensbn);
+                    if(lp.fullim == 3 ) {
+                        reducdE = 1.f;
+                    }
+                   
                 }
 
                 switch (zone) {
@@ -5388,12 +5404,18 @@ static void blendmask(const local_params& lp, int xstart, int ystart, int cx, in
             int zone;
 
             float localFactor = 1.f;
-            const float achm = lp.trans / 100.f;
+            float achm = lp.trans / 100.f;
+            if(lp.fullim == 3 ) {
+                achm = 1.f;
+            }
 
             if (lp.shapmet == 0) {
                 calcTransition(lox, loy, achm, lp, zone, localFactor);
             } else /*if (lp.shapmet == 1)*/ {
                 calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
+            }
+            if(lp.fullim == 3 ) {
+                localFactor = 1.f;
             }
 
             if (inv == 0) {
@@ -8669,13 +8691,19 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                 const int lox = x + xstart + cx;
                 int zone;
                 float localFactor = 1.f;
-                const float achm = lp.trans / 100.f;
+                float achm = lp.trans / 100.f;
+                if(lp.fullim == 3 ) {
+                    achm = 1.f;
+                }
 
                 //calculate transition
                 if (lp.shapmet == 0) {
                     calcTransition(lox, loy, achm, lp, zone, localFactor);
                 } else /*if (lp.shapmet == 1)*/ {
                     calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
+                }
+                if(lp.fullim == 3 ) {
+                    localFactor = 1.f;
                 }
 
 //                float hueh = 0;

@@ -1065,21 +1065,22 @@ void ControlSpotPanel::spotMethodChanged()
         row[spots_.transit] = transit_->getValue();
         
         if(spotMethod_->get_active_row_number() == 3) {        
-          //  ctboxactivmethod->hide();
-          //  ctboxspotmethod->hide();
             ctboxshape->hide();
 
             artifBox2->hide();
             hishow_->hide();
-            hishow_->set_active(false);           
+            expTransGrad_->hide();
+            expShapeDetect_->hide();
+            expSpecCases_->hide();
+            expMaskMerge_->hide();
+            circrad_->hide();
+            ctboxshape->hide();
         } else {
-           // ctboxactivmethod->show();
-           // ctboxspotmethod->show();
             ctboxshape->show();
+            circrad_->show();
            
             artifBox2->show();
             hishow_->show();
-           // hishow_->set_active(options.complexity != 2);
         }    
         
     }
@@ -1351,14 +1352,17 @@ void ControlSpotPanel::updateParamVisibility()
             hishow_->hide();
             hishow_->set_active(false);           
             ctboxshape->hide();
+            circrad_->hide();
+            expTransGrad_->hide();
+            expShapeDetect_->hide();
+            expSpecCases_->hide();
+            expMaskMerge_->hide();
 
         } else {
-          //  ctboxactivmethod->show();
-          //  ctboxspotmethod->show();
             artifBox2->show();
             hishow_->show();
-        //    hishow_->set_active(options.complexity != 2);
             ctboxshape->show();
+            circrad_->show();
             
         }    
 
@@ -1387,16 +1391,19 @@ void ControlSpotPanel::updateParamVisibility()
         if(spotMethod_->get_active_row_number() == 3) {
             artifBox2->hide();
             hishow_->hide();
-            hishow_->set_active(false);           
             ctboxshape->hide();
+            circrad_->hide();
+            expTransGrad_->hide();
+            expShapeDetect_->hide();
+            expSpecCases_->hide();
+            expMaskMerge_->hide();
             
         } else {
             hishow_->show();
-           // hishow_->set_active(options.complexity != 2);
             artifBox2->show();
             hishow_->show();
             ctboxshape->show();
-            
+            circrad_->show();
         }
         
     } else { // Excluding case
@@ -1685,10 +1692,15 @@ void ControlSpotPanel::hishowChanged()
         if(spotMethod_->get_active_row_number() == 3) {
             hishow_->hide();
             hishow_->set_active(false);           
+            circrad_->hide();
+            expTransGrad_->hide();
+            expShapeDetect_->hide();
+            expSpecCases_->hide();
+            expMaskMerge_->hide();
             
         } else {
             hishow_->show();
-         //   hishow_->set_active(options.complexity != 2);
+            circrad_->show();
             
         }
 
@@ -1700,7 +1712,6 @@ void ControlSpotPanel::hishowChanged()
         circrad_->show();
         ctboxshape->show();
         hishow_->show();
-      //  hishow_->set_active(options.complexity != 2);
         
    }
 
