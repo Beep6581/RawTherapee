@@ -296,6 +296,7 @@ public:
     void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override {}; // Not used
     void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR) override;
     void curveChanged(CurveEditor* ce) override;
+    void updateguicolor(int spottype);
 
 private:
     void enabledChanged() override;
@@ -318,7 +319,6 @@ private:
     void enaColorMaskChanged();
     void toolcolChanged();
     void fftColorMaskChanged();
-
     void updateColorGUI1();
     void updateColorGUI2();
     void updateColorGUI3();
@@ -416,6 +416,7 @@ public:
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void adjusterChanged(Adjuster* a, double newval) override;
     void curveChanged(CurveEditor* ce) override;
+    void updateguiexpos(int spottype);
 
 private:
     void enabledChanged() override;
@@ -506,6 +507,7 @@ public:
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask) override;
 
     void updateAdviceTooltips(const bool showTooltips) override;
+    void updateguishad(int spottype);
 
     void setDefaultExpanderVisibility() override;
     void disableListener() override;

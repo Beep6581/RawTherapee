@@ -1081,6 +1081,12 @@ void ControlSpotPanel::spotMethodChanged()
            
             artifBox2->show();
             hishow_->show();
+            if(hishow_->get_active()) {
+                expTransGrad_->show();
+                expShapeDetect_->show();
+                expSpecCases_->show();
+                expMaskMerge_->show();
+            }
         }    
         
     }
@@ -1363,6 +1369,12 @@ void ControlSpotPanel::updateParamVisibility()
             hishow_->show();
             ctboxshape->show();
             circrad_->show();
+            if(hishow_->get_active()) {
+                expTransGrad_->show();
+                expShapeDetect_->show();
+                expSpecCases_->show();
+                expMaskMerge_->show();
+            }
             
         }    
 

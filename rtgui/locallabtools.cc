@@ -367,6 +367,8 @@ void LocallabTool::enableListener()
     }
 }
 
+
+
 bool LocallabTool::on_remove_change(GdkEventButton* event)
 {
     if (event->button == GDK_BUTTON_PRIMARY) {
@@ -956,6 +958,32 @@ void LocallabColor::setListener(ToolPanelListener* tpl)
     labgrid->setListener(tpl);
     labgridmerg->setListener(tpl);
 }
+
+void LocallabColor::updateguicolor(int spottype)
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype >= 2) {
+                invers->hide();
+            } else {
+                invers->show();
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
+
 
 bool LocallabColor::isMaskViewActive()
 {
@@ -2868,6 +2896,32 @@ bool LocallabExposure::isMaskViewActive()
     return ((showmaskexpMethod->get_active_row_number() != 0) || (showmaskexpMethodinv->get_active_row_number() != 0));
 }
 
+void LocallabExposure::updateguiexpos(int spottype) 
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype >= 2) {
+                inversex->hide();
+                sensiex->hide();
+            } else {
+                inversex->show();
+                sensiex->show();
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
 void LocallabExposure::resetMaskView()
 {
     showmaskexpMethodConn.block(true);
@@ -4253,6 +4307,32 @@ void LocallabShadow::resetMaskView()
     showmaskSHMethodConn.block(false);
     showmaskSHMethodConninv.block(false);
 }
+
+
+void LocallabShadow::updateguishad(int spottype)
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype >= 2) {
+                inverssh->hide();
+            } else {
+                inverssh->show();
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
 
 void LocallabShadow::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask)
 {

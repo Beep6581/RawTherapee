@@ -1245,6 +1245,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             lumarefp = new float[sizespot];
             float *fabrefp = nullptr;
             fabrefp = new float[sizespot];
+            int *mainfp = nullptr;
+            mainfp = new int[sizespot];
 
             for (int sp = 0; sp < (int)params->locallab.spots.size(); sp++) {
 
@@ -1586,10 +1588,17 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 //    locallref.at(sp).fab = fab;
 
                 //    locallref.push_back(spotref);
+                mainfp[sp] = 0;        
+                if (params->locallab.spots.at(sp).spotMethod == "main") {
+                    mainfp[sp] = 3;
+                } else if (params->locallab.spots.at(sp).spotMethod == "full") {
+                    mainfp[sp] = 2;
+                }
                 if (locallListener) {
                     //  locallListener->refChanged(locallref, params->locallab.selspot);
                     locallListener->refChanged2(huerefp, chromarefp, lumarefp, fabrefp, params->locallab.selspot);
                     locallListener->minmaxChanged(locallretiminmax, params->locallab.selspot);
+                    locallListener->mainChanged(mainfp[sp], params->locallab.selspot);
                 }
 
             }

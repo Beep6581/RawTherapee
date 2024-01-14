@@ -1137,6 +1137,14 @@ void Locallab::denChanged(const std::vector<locallabDenoiseLC> &denlc, int selsp
     
 }
 
+void Locallab::mainChanged(int spottype, int selspot)
+{
+
+    expcolor.updateguicolor(spottype);
+    expshadhigh.updateguishad(spottype);
+    expexpose.updateguiexpos(spottype);
+}
+
 
 void Locallab::logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const bool autocomput, const bool autocie, const float jz1)
 {

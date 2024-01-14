@@ -147,6 +147,7 @@ public:
 
     // Locallab Retinex tool min/man management function
     void minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int selspot) override;
+    void mainChanged(int spottype, int selspot)override;
 
     //Locallab denoise 
     // Locallab Retinex tool min/man management function
