@@ -466,6 +466,9 @@ void Options::setDefaults()
     histogramTraceBrightness = 1;
     curvebboxpos = 1;
     complexity = 2;
+  //  spotmet = 3;
+  //  spotM = "norm";
+    
     inspectorWindow = false;
     zoomOnScroll = true;
     prevdemo = PD_Sidecar;
@@ -1722,6 +1725,10 @@ void Options::readFromFile(Glib::ustring fname)
                     complexity = keyFile.get_integer("GUI", "Complexity");
                 }
 
+        //        if (keyFile.has_key("GUI", "Spotmet")) {
+        //            complexity = keyFile.get_integer("GUI", "Spotmet");
+        //        }
+
                 if (keyFile.has_key("GUI", "InspectorWindow")) {
                     inspectorWindow = keyFile.get_boolean("GUI", "InspectorWindow");
                 }
@@ -2580,6 +2587,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("GUI", "CurveBBoxPosition", curvebboxpos);
         keyFile.set_boolean("GUI", "Showtooltip", showtooltip);
         keyFile.set_integer("GUI", "Complexity", complexity);
+   //     keyFile.set_integer("GUI", "Spotmet", spotmet);
         keyFile.set_boolean("GUI", "InspectorWindow", inspectorWindow);
         keyFile.set_boolean("GUI", "ZoomOnScroll", zoomOnScroll);
 

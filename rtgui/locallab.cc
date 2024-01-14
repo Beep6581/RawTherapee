@@ -1139,12 +1139,20 @@ void Locallab::denChanged(const std::vector<locallabDenoiseLC> &denlc, int selsp
 
 void Locallab::mainChanged(int spottype, int selspot)
 {
-
     expcolor.updateguicolor(spottype);
     expshadhigh.updateguishad(spottype);
     expexpose.updateguiexpos(spottype);
     expsoft.updateguisoft(spottype);
     expblur.updateguiblur(spottype);
+    exptonemap.updateguitone(spottype);
+    expreti.updateguireti(spottype);
+    expsharp.updateguisharp(spottype);
+    expcontrast.updateguicont(spottype);
+    expcbdl.updateguicbdl(spottype);
+    explog.updateguilog(spottype);
+    expmask.updateguimask(spottype);
+    expcie.updateguicie(spottype);
+    
 }
 
 

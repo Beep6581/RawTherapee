@@ -2015,6 +2015,7 @@ PREFERENCES_SND_HELP;Enter a full file path to set a sound, or leave blank for n
 PREFERENCES_SND_LNGEDITPROCDONE;Editor processing done
 PREFERENCES_SND_QUEUEDONE;Queue processing done
 PREFERENCES_SND_THRESHOLDSECS;After seconds
+PREFERENCES_SPOTLOC;Define Spot method for Local Adjustments
 PREFERENCES_STARTUPIMDIR;Image Directory at Startup
 PREFERENCES_TAB_BROWSER;File Browser
 PREFERENCES_TAB_COLORMGR;Color Management

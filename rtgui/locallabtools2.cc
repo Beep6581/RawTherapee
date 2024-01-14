@@ -393,6 +393,31 @@ void LocallabTone::enableListener()
     enatmMaskaftConn.block(false);
 }
 
+void LocallabTone::updateguitone(int spottype)
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype >= 2) {
+                sensitm->hide();
+            } else {
+                sensitm->show();
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
+
 void LocallabTone::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
 {
     // Disable all listeners
@@ -1097,6 +1122,31 @@ void LocallabRetinex::updateMinMax(const double cdma, const double cdmin, const 
     }
     );
 }
+
+void LocallabRetinex::updateguireti(int spottype)
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype >= 2) {
+                sensih->hide();
+            } else {
+                sensih->show();
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
 
 bool LocallabRetinex::isMaskViewActive()
 {
@@ -2103,6 +2153,32 @@ void LocallabSharp::enableListener()
     showmasksharMethodConn.block(false);
 }
 
+void LocallabSharp::updateguisharp(int spottype)
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype >= 2) {
+                sensisha->hide();
+                inverssha->hide();
+            } else {
+                sensisha->show();
+                inverssha->show();
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
 void LocallabSharp::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
 {
     // Disable all listeners
@@ -2950,6 +3026,31 @@ void LocallabContrast::getMaskView(int &colorMask, int &colorMaskinv, int &expMa
 {
     lcMask = showmasklcMethod->get_active_row_number();
 }
+
+void LocallabContrast::updateguicont(int spottype)
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype >= 2) {
+                sensilc->hide();
+            } else {
+                sensilc->show();
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
 
 void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
 {
@@ -4652,6 +4753,31 @@ void LocallabCBDL::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, 
     cbMask = showmaskcbMethod->get_active_row_number();
 }
 
+void LocallabCBDL::updateguicbdl(int spottype)
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype >= 2) {
+                sensicb->hide();
+            } else {
+                sensicb->show();
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
+
 void LocallabCBDL::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
@@ -5536,6 +5662,30 @@ void LocallabLog::setDefaultExpanderVisibility()
     expmaskL->set_expanded(false);
     expL->set_expanded(false);
 
+}
+
+void LocallabLog::updateguilog(int spottype)
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype >= 2) {
+                sensilog->hide();
+            } else {
+                sensilog->show();
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
 }
 
 void LocallabLog::updateAdviceTooltips(const bool showTooltips)
@@ -6768,6 +6918,32 @@ void LocallabMask::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, 
 {
     maskMask = showmask_Method->get_active_row_number();
 }
+
+void LocallabMask::updateguimask(int spottype)
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype >= 2) {
+                sensimask->hide();
+            } else {
+                sensimask->show();
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
+
 
 void LocallabMask::updateAdviceTooltips(const bool showTooltips)
 {
@@ -8179,6 +8355,31 @@ void Locallabcie::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, i
 {
    cieMask = showmaskcieMethod->get_active_row_number();
 }
+
+void Locallabcie::updateguicie(int spottype)
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype >= 2) {
+                sensicie->hide();
+            } else {
+                sensicie->show();
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
 
 void Locallabcie::setDefaultExpanderVisibility()
 {
