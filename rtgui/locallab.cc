@@ -1143,6 +1143,8 @@ void Locallab::mainChanged(int spottype, int selspot)
     expcolor.updateguicolor(spottype);
     expshadhigh.updateguishad(spottype);
     expexpose.updateguiexpos(spottype);
+    expsoft.updateguisoft(spottype);
+    expblur.updateguiblur(spottype);
 }
 
 

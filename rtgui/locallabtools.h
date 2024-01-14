@@ -653,6 +653,7 @@ public:
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask) override;
 
     void updateAdviceTooltips(const bool showTooltips) override;
+    void updateguisoft(int spottype);
 
     void disableListener() override;
     void enableListener() override;
@@ -811,6 +812,7 @@ public:
 
     void updateAdviceTooltips(const bool showTooltips) override;
     void neutral_pressed();
+    void updateguiblur(int spottype);
 
     void setDefaultExpanderVisibility() override;
     void disableListener() override;

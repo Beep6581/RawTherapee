@@ -6243,6 +6243,31 @@ void LocallabSoft::resetMaskView()
     showmasksoftMethodConn.block(false);
 }
 
+void LocallabSoft::updateguisoft(int spottype) 
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype >= 2) {
+                sensisf->hide();
+            } else {
+                sensisf->show();
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
+
 void LocallabSoft::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask)
 {
     softMask = showmasksoftMethod->get_active_row_number();
@@ -7117,6 +7142,37 @@ void LocallabBlur::resetMaskView()
     showmaskblMethod->set_active(0);
     showmaskblMethodConn.block(false);
 }
+
+void LocallabBlur::updateguiblur(int spottype) 
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype >= 2) {
+                sensibn->hide();
+                sensiden->hide();
+                invbl->hide();
+
+            } else {
+                sensibn->show();
+                sensiden->show();
+                invbl->show();
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
+
 
 void LocallabBlur::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask)
 {
