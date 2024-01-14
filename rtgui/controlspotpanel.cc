@@ -555,7 +555,6 @@ ControlSpotPanel::ControlSpotPanel():
     pack_start(*ctboxwavmethod);
 */
     show_all();
-
     // Define row background color
     // Mouseovered spot (opaque orange)
     colorMouseover.set_red(1.);
@@ -1005,11 +1004,11 @@ void ControlSpotPanel::spotMethodChanged()
     // Update Control Spot GUI according to spotMethod_ combobox state (to be compliant with updateParamVisibility function)
     if (multiImage && spotMethod_->get_active_text() == M("GENERAL_UNCHANGED")) {
         excluFrame->show();
+
     } else if (spotMethod_->get_active_row_number() == 0) { // Normal case
         excluFrame->hide();
-
         // Reset spot shape only if previous spotMethod is Full image
-        if (oldSpotMethod == 2) {
+        if (oldSpotMethod == 2  || oldSpotMethod == 3) {
             disableParamlistener(true);
             locX_->setValue(150.);
             row[spots_.locX] = locX_->getIntValue();
@@ -1030,7 +1029,7 @@ void ControlSpotPanel::spotMethodChanged()
         excluFrame->show();
 
         // Reset spot shape only if previous spotMethod is Full image
-        if (oldSpotMethod == 2) {
+        if (oldSpotMethod == 2 || oldSpotMethod == 3) {
             disableParamlistener(true);
             locX_->setValue(150.);
             row[spots_.locX] = locX_->getIntValue();

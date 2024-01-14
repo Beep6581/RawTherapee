@@ -4663,9 +4663,23 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     lowthrescie(12.),
     higthrescie(85.),
     decaycie(2.)
-    
+   
 
 {
+ /* 
+    if(options.spotmet == 3) {
+        spotMethod = "main";
+        loc = {3000, 3000, 3000, 3000};
+        transit =100.;
+        shape = "RECT";
+    } else if(options.spotmet == 2) {
+        spotMethod = "full";
+    } else if(options.spotmet == 1) {
+        spotMethod = "exc";
+    } else if(options.spotmet == 0) {
+        spotMethod = "norm";
+    }
+*/
 }
 
 bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const

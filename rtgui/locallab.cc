@@ -249,7 +249,7 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
 
         if (pp->locallab.spots.at(i).shape == "ELI") {
             r->shape = 0;
-        } else {
+        } else if (pp->locallab.spots.at(i).shape == "RECT")  {
             r->shape = 1;
         }
 
@@ -423,7 +423,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
 
             if (newSpot->shape == "ELI") {
                 r->shape = 0;
-            } else {
+            } else if (newSpot->shape == "RECT"){
                 r->shape = 1;
             }
 
@@ -750,7 +750,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
 
             if (newSpot->shape == "ELI") {
                 r->shape = 0;
-            } else {
+            } else if (newSpot->shape == "RECT"){
                 r->shape = 1;
             }
 

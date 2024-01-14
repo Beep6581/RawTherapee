@@ -327,8 +327,7 @@ public:
     bool internalThumbIfUntouched;
     bool overwriteOutputFile;
     int complexity;
-  //  int spotmet;
- //   Glib::ustring spotM;
+//    int spotmet;
     
     bool inspectorWindow; // open inspector in separate window
     bool zoomOnScroll;    // translate scroll events to zoom
