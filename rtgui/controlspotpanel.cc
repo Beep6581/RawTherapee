@@ -2869,14 +2869,14 @@ void ControlSpotPanel::deleteControlSpot(const int index)
 void ControlSpotPanel::updateguiset(int spottype)
 {
     {  //with this function we can 1) activate Settings SpotMethod
-        // alse if need GUI for mask todo...
+        // also if need GUI for mask ,  todo...
         idle_register.add(
         [this, spottype]() -> bool {
             GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
 
             // Update GUI fullimage or main
             disableListener();
-            if(spottype >= 2) {
+            if(spottype >= 2  && options.spotmet >= 2) {//optimize update
                 spotMethodChanged();
             }
             enableListener();

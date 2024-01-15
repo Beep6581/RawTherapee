@@ -1598,7 +1598,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     //  locallListener->refChanged(locallref, params->locallab.selspot);
                     locallListener->refChanged2(huerefp, chromarefp, lumarefp, fabrefp, params->locallab.selspot);
                     locallListener->minmaxChanged(locallretiminmax, params->locallab.selspot);
-                    locallListener->mainChanged(mainfp[sp], params->locallab.selspot);
+                    if (mainfp[sp] >= 2) {//minimize call to idle register
+                        locallListener->mainChanged(mainfp[sp], params->locallab.selspot);
+                    }
                 }
 
             }
