@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 env:
-  publish_pre_dev_labels: '[]'
+  publish_pre_dev_labels: '["Beep6581:laspotmain"]'
 
 jobs:
   build:
