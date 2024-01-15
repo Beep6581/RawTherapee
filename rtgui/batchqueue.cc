@@ -51,12 +51,13 @@ using namespace rtengine;
 
 namespace   // local helper functions
 {
-    // Look for N or -N in templateText at position ix, meaning "index from end" and "index from start"
-    // For N, return Nth index from the end, and for -N return the Nth index from the start
-    // N is a digit 1 through 9
-    unsigned int decodePathIndex(unsigned int& ix, Glib::ustring& templateText, size_t numPathElements)
+    // Look for N or -N in templateText at position ix, meaning "index from end" and "index from start".
+    // For N, return Nth index from the end, and for -N return the Nth index from the start.
+    // N is a digit 1 through 9. The returned value is not range-checked, so it may be >=numPathElements.
+    // or negative. The caller performs any required range-checking.
+    int decodePathIndex(unsigned int& ix, Glib::ustring& templateText, size_t numPathElements)
     {
-        unsigned int pathIndex = numPathElements;    // means input was invalid
+        int pathIndex = (int)numPathElements;    // a value that means input was invalid
         bool fromStart = false;
         if (ix < templateText.size()) {
             if (templateText[ix] == '-') {
@@ -65,12 +66,9 @@ namespace   // local helper functions
             }
         }
         if (ix < templateText.size()) {
-            unsigned int n = templateText[ix] - '1';
+            pathIndex = templateText[ix] - '1';
             if (!fromStart) {
-                n = numPathElements - n - 1;
-            }
-            if (n < numPathElements) {
-                pathIndex = n;
+                pathIndex = numPathElements - pathIndex - 1;
             }
         }
         return pathIndex;
@@ -900,8 +898,8 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
         }
     }
 
-//    for (int i=0; i<da.size(); i++)
-//        printf ("da: %s\n", da[i].c_str());
+//    for (unsigned i=0; i<da.size(); i++)
+//        printf ("da[%u]: \"%s\"\n", i, da[i].c_str());
 
     // extracting filebase
     Glib::ustring filename;
@@ -931,12 +929,15 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
                 if (options.savePathTemplate[ix] == 'P') {
                     // insert path elements from given index to the end
                     ix++;
-                    unsigned int n = decodePathIndex(ix, options.savePathTemplate, da.size());
-                    if (n < da.size()) {
+                    int n = decodePathIndex(ix, options.savePathTemplate, da.size());
+                    if (n < 0) {
+                        n = 0;  // if too many elements specified, return all available elements
+                    }
+                    if (n < (int)da.size()) {
                         if (n == 0) {
                             appendAbsolutePathPrefix(path, origFileName);
                         }
-                        for (unsigned int i=n; i < da.size(); i++) {
+                        for (unsigned int i = (unsigned int)n; i < da.size(); i++) {
                             path += da[i] + PATH_SEPARATOR;
                         }
                     }
@@ -948,11 +949,11 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
                 } else if (options.savePathTemplate[ix] == 'p') {
                     // insert path elements from the start of the path up to the given index
                     ix++;
-                    unsigned int n = decodePathIndex(ix, options.savePathTemplate, da.size());
-                    for (unsigned int i=0; i <= n && i < da.size(); i++) {
-                        if (i == 0) {
-                            appendAbsolutePathPrefix(path, origFileName);
-                        }
+                    int n = decodePathIndex(ix, options.savePathTemplate, da.size());
+                    if (n > 0) {
+                        appendAbsolutePathPrefix(path, origFileName);
+                    }
+                    for (unsigned int i=0; (int)i <= n && i < da.size(); i++) {
                         path += da[i] + PATH_SEPARATOR;
                     }
                     // If the next template character is a separator, skip it, because path already has one
@@ -962,10 +963,9 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
                     }
                 } else if (options.savePathTemplate[ix] == 'd') {
                     // insert a single directory name from the file's path
-                    // da.size()-1 omits the last element, which is the filename
                     ix++;
                     unsigned int n = decodePathIndex(ix, options.savePathTemplate, da.size());
-                    if (n < da.size()) {
+                    if (n >= 0 && n < da.size()) {
                         path += da[n];
                     }
                 } else if (options.savePathTemplate[ix] == 'f') {
