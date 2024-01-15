@@ -797,6 +797,7 @@ bool ControlSpotPanel::on_button_visibility(GdkEventButton* event)
     return false;
 }
 
+
 bool ControlSpotPanel::blockTreeviewSearch(GdkEventKey* event)
 {
     // printf("blockTreeviewSearch\n");
@@ -2864,6 +2865,30 @@ void ControlSpotPanel::deleteControlSpot(const int index)
 
     disableParamlistener(false);
 }
+
+void ControlSpotPanel::updateguiset(int spottype)
+{
+    {  //with this function we can 1) activate Settings SpotMethod
+        // alse if need GUI for mask todo...
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+            if(spottype >= 2) {
+                spotMethodChanged();
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
+
 
 void ControlSpotPanel::setDefaults(const rtengine::procparams::ProcParams * defParams, const ParamsEdited * pedited)
 {

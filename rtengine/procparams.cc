@@ -4666,20 +4666,35 @@ LocallabParams::LocallabSpot::LocallabSpot() :
    
 
 {
- /* 
+  // init settings with Preferences / options : must be followed by call to spotMethodChanged in controlspotpanel.cc  (idle_register)    
+
     if(options.spotmet == 3) {
         spotMethod = "main";
         loc = {3000, 3000, 3000, 3000};
         transit =100.;
         shape = "RECT";
+        colorscope = 100.0;
+
     } else if(options.spotmet == 2) {
         spotMethod = "full";
+        loc = {3000, 3000, 3000, 3000};
+        transit =100.;
+        shape = "RECT";       
+        colorscope = 30.0;
+       
     } else if(options.spotmet == 1) {
         spotMethod = "exc";
+        shape = "ELI";
+        loc = {150, 150, 150, 150};
+        transit= 60.;
+       
     } else if(options.spotmet == 0) {
         spotMethod = "norm";
+        shape = "ELI";
+        loc = {150, 150, 150, 150};
+        transit= 60.;
     }
-*/
+
 }
 
 bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const

@@ -1152,7 +1152,8 @@ void Locallab::mainChanged(int spottype, int selspot)
     explog.updateguilog(spottype);
     expmask.updateguimask(spottype);
     expcie.updateguicie(spottype);
-    
+    expsettings->updateguiset(spottype);
+   
 }
 
 

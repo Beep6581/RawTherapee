@@ -104,6 +104,7 @@ public:
         SpotDuplication = 4,
         SpotAllVisibilityChanged = 5
     };
+    IdleRegister idle_register;
 
     // Constructor and management functions
     /**
@@ -218,6 +219,7 @@ public:
 
     // Batch mode management
     // Note: Batch mode is deactivated for Locallab
+    void updateguiset(int spottype);
 
 private:
     // Cell renderer
@@ -229,6 +231,7 @@ private:
     void on_button_duplicate();
     void on_button_rename();
     bool on_button_visibility(GdkEventButton* event);
+   // void updateguiset(int spottype);
 
     bool blockTreeviewSearch(GdkEventKey* event);
     bool onSpotSelectionEvent(GdkEventButton* event);

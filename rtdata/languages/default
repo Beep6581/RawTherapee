@@ -2933,7 +2933,7 @@ TP_LOCALLAB_EXCLUTYPE;Spot method
 TP_LOCALLAB_EXCLUTYPE_TOOLTIP;Normal spot uses recursive data.\n\nExcluding spot reinitializes all local adjustment data.\nCan be used to totally or partially cancel a previous action or to carry out operations in Inverse mode.\n\n'Full image' allows you to use the local adjustment tools on the whole image.\n The RT Spot delimiters are set beyond the image preview boundaries.\n The transition is set to 100.\nNote, you may have to reposition the RT Spot slightly and adjust the Spot size to get the desired effect.\nPlease note: using Denoise or Wavelet or FFTW in full-image mode uses large amounts of memory and may cause the application to crash on lower capacity systems.
 TP_LOCALLAB_EXECLU;Excluding spot
 TP_LOCALLAB_EXFULL;Full image
-TP_LOCALLAB_EXMAIN;Main
+TP_LOCALLAB_EXMAIN;Global
 TP_LOCALLAB_EXNORM;Normal spot
 TP_LOCALLAB_EXPCBDL_TOOLTIP;Can be used to remove marks on the sensor or lens by reducing the contrast on the appropriate detail level(s).
 TP_LOCALLAB_EXPCHROMA;Chroma compensation
