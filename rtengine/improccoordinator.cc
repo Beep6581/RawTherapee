@@ -1594,6 +1594,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 } else if (params->locallab.spots.at(sp).spotMethod == "full") {
                     mainfp[sp] = 2;
                 }
+              //  if (params->locallab.spots.at(sp).enaColorMask) 
                 if (locallListener) {
                     //  locallListener->refChanged(locallref, params->locallab.selspot);
                     locallListener->refChanged2(huerefp, chromarefp, lumarefp, fabrefp, params->locallab.selspot);
@@ -1609,6 +1610,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             delete [] chromarefp;
             delete [] lumarefp;
             delete [] fabrefp;
+            delete [] mainfp;
             // Transmit Locallab reference values and Locallab Retinex min/max to LocallabListener
             /*
             if (locallListener) {
