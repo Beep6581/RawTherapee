@@ -76,12 +76,16 @@ namespace   // local helper functions
 
     // Extract the initial characters from a canonical absolute path, and append
     // those to a path string. Initial characters are '/' for Unix/Linux paths and
-    // '\\' for UNC paths. A single backslash is also accepted, for driveless
+    // '\\' or '//' for UNC paths. A single backslash is also accepted, for driveless
     // Windows paths.
     void appendAbsolutePathPrefix(Glib::ustring& path, const Glib::ustring& absolutePath)
     {
         if (absolutePath[0] == '/') {
-            path += '/';    // Start of a Unix/Linux path
+            if (absolutePath.size() > 1 && absolutePath[1] == '/') {
+                path += "//"; // Start of a Samba UNC path
+            } else {
+                path += '/';    // Start of a Unix/Linux path
+            }
         } else if (absolutePath[0] == '\\') {
             if (absolutePath.size() > 1 && absolutePath[1] == '\\') {
                 path += "\\\\"; // Start of a UNC path
