@@ -75,6 +75,23 @@ namespace   // local helper functions
         }
         return pathIndex;
     }
+
+    // Extract the initial characters from a canonical absolute path, and append
+    // those to a path string. Initial characters are '/' for Unix/Linux paths and
+    // '\\' for UNC paths. A single backslash is also accepted, for driveless
+    // Windows paths.
+    void appendAbsolutePathPrefix(Glib::ustring& path, const Glib::ustring& absolutePath)
+    {
+        if (absolutePath[0] == '/') {
+            path += '/';    // Start of a Unix/Linux path
+        } else if (absolutePath[0] == '\\') {
+            if (absolutePath.size() > 1 && absolutePath[1] == '\\') {
+                path += "\\\\"; // Start of a UNC path
+            } else {
+                path += '\\';   // Start of a Windows path that does not include a drive letter
+            }
+        }
+    }
 }
 
 BatchQueue::BatchQueue (FileCatalog* aFileCatalog) : processing(nullptr), fileCatalog(aFileCatalog), sequence(0), listener(nullptr)
@@ -916,6 +933,9 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
                     ix++;
                     unsigned int n = decodePathIndex(ix, options.savePathTemplate, da.size());
                     if (n < da.size()) {
+                        if (n == 0) {
+                            appendAbsolutePathPrefix(path, origFileName);
+                        }
                         for (unsigned int i=n; i < da.size(); i++) {
                             path += da[i] + PATH_SEPARATOR;
                         }
@@ -930,6 +950,9 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
                     ix++;
                     unsigned int n = decodePathIndex(ix, options.savePathTemplate, da.size());
                     for (unsigned int i=0; i <= n && i < da.size(); i++) {
+                        if (i == 0) {
+                            appendAbsolutePathPrefix(path, origFileName);
+                        }
                         path += da[i] + PATH_SEPARATOR;
                     }
                     // If the next template character is a separator, skip it, because path already has one
