@@ -403,7 +403,7 @@ void LocallabTone::updateguitone(int spottype)
             // Update GUI fullimage or main
             disableListener();
 
-            if(spottype >= 2) {
+            if(spottype == 3) {
                 sensitm->hide();
             } else {
                 sensitm->show();
@@ -1133,7 +1133,7 @@ void LocallabRetinex::updateguireti(int spottype)
             // Update GUI fullimage or main
             disableListener();
 
-            if(spottype >= 2) {
+            if(spottype == 3) {
                 sensih->hide();
             } else {
                 sensih->show();
@@ -2163,7 +2163,7 @@ void LocallabSharp::updateguisharp(int spottype)
             // Update GUI fullimage or main
             disableListener();
 
-            if(spottype >= 2) {
+            if(spottype == 3) {
                 sensisha->hide();
                 inverssha->hide();
             } else {
@@ -3037,7 +3037,7 @@ void LocallabContrast::updateguicont(int spottype)
             // Update GUI fullimage or main
             disableListener();
 
-            if(spottype >= 2) {
+            if(spottype == 3) {
                 sensilc->hide();
             } else {
                 sensilc->show();
@@ -4763,7 +4763,7 @@ void LocallabCBDL::updateguicbdl(int spottype)
             // Update GUI fullimage or main
             disableListener();
 
-            if(spottype >= 2) {
+            if(spottype == 3) {
                 sensicb->hide();
             } else {
                 sensicb->show();
@@ -5674,7 +5674,7 @@ void LocallabLog::updateguilog(int spottype)
             // Update GUI fullimage or main
             disableListener();
 
-            if(spottype >= 2) {
+            if(spottype == 3) {
                 sensilog->hide();
             } else {
                 sensilog->show();
@@ -6929,7 +6929,7 @@ void LocallabMask::updateguimask(int spottype)
             // Update GUI fullimage or main
             disableListener();
 
-            if(spottype >= 2) {
+            if(spottype == 3) {
                 sensimask->hide();
             } else {
                 sensimask->show();
@@ -8366,7 +8366,7 @@ void Locallabcie::updateguicie(int spottype)
             // Update GUI fullimage or main
             disableListener();
 
-            if(spottype >= 2) {
+            if(spottype == 3) {
                 sensicie->hide();
             } else {
                 sensicie->show();

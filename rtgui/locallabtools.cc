@@ -971,10 +971,12 @@ void LocallabColor::updateguicolor(int spottype)
             // Update GUI fullimage or main
             disableListener();
 
-            if(spottype >= 2) {
+            if(spottype == 3) {
                 invers->hide();
+                sensi->hide();
             } else {
                 invers->show();
+                sensi->show();
             }
             enableListener();
 
@@ -2908,7 +2910,7 @@ void LocallabExposure::updateguiexpos(int spottype)
             // Update GUI fullimage or main
             disableListener();
 
-            if(spottype >= 2) {
+            if(spottype == 3) {
                 inversex->hide();
                 sensiex->hide();
             } else {
@@ -4323,9 +4325,11 @@ void LocallabShadow::updateguishad(int spottype)
             // Update GUI fullimage or main
             disableListener();
 
-            if(spottype >= 2) {
+            if(spottype == 3) {
                 inverssh->hide();
+                sensihs->hide();
             } else {
+                sensihs->show();
                 inverssh->show();
             }
             enableListener();
@@ -6258,7 +6262,7 @@ void LocallabSoft::updateguisoft(int spottype)
             // Update GUI fullimage or main
             disableListener();
 
-            if(spottype >= 2) {
+            if(spottype == 3) {
                 sensisf->hide();
             } else {
                 sensisf->show();
@@ -7158,7 +7162,7 @@ void LocallabBlur::updateguiblur(int spottype)
             // Update GUI fullimage or main
             disableListener();
 
-            if(spottype >= 2) {
+            if(spottype == 3) {
                 sensibn->hide();
                 sensiden->hide();
                 invbl->hide();
