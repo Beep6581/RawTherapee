@@ -1765,10 +1765,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.blwh = locallab.spots.at(sp).blwh;
     lp.senscolor = (int) locallab.spots.at(sp).colorscope;
     //replace scope color vibrance shadows
-    lp.sens = lp.senscolor;
+/*    lp.sens = lp.senscolor;
     lp.sensv = lp.senscolor;
     lp.senshs = lp.senscolor;
-
+*/
     lp.mLjz = locallab.spots.at(sp).clarilresjz / 100.0;
     lp.mCjz = locallab.spots.at(sp).claricresjz / 100.0;
     lp.softrjz = locallab.spots.at(sp).clarisoftjz;

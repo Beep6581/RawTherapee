@@ -3017,7 +3017,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     labgridAHighmerg(-3500.0),
     labgridBHighmerg(-4600.0),
     strengthgrid(30),
-    sensi(15),
+    sensi(30),
     structcol(0),
     strcol(0.),
     strcolab(0.),
@@ -3362,7 +3362,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     shadows(0),
     s_tonalwidth(30),
     sh_radius(40),
-    sensihs(15),
+    sensihs(30),
     enaSHMask(false),
     CCmaskSHcurve{
         static_cast<double>(FCT_MinMaxCPoints),
@@ -3449,7 +3449,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     protectskins(false),
     avoidcolorshift(true),
     pastsattog(true),
-    sensiv(15),
+    sensiv(30),
     skintonescurve{
         static_cast<double>(DCT_Linear)
     },

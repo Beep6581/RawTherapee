@@ -447,7 +447,7 @@ LocallabColor::LocallabColor():
     labgrid(Gtk::manage(new LabGrid(EvLocallabLabGridValue, M("TP_LOCALLAB_LABGRID_VALUES"), true, false))),
     gridMethod(Gtk::manage(new MyComboBoxText())),
     strengthgrid(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRGRID"), 0, 100, 1, 30))),
-    sensi(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),
+    sensi(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 30))),
     structcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL1"), 0, 100, 1, 0))),
     blurcolde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
     softradiuscol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 0.))),
@@ -815,6 +815,8 @@ LocallabColor::LocallabColor():
 
     // Add Color & Light specific widgets to GUI
     pack_start(*reparcol);
+    pack_start(*sensi);
+    
     pack_start(*invers);
     ToolParamBlock* const lumBox = Gtk::manage(new ToolParamBlock());
     lumBox->pack_start(*lightness);
@@ -835,7 +837,7 @@ LocallabColor::LocallabColor():
     superBox->pack_start(*gridFrame);
     superFrame->add(*superBox);
     pack_start(*superFrame);
-    // pack_start(*sensi);
+ //   pack_start(*sensi);
     pack_start(*structcol);
     pack_start(*blurcolde);
     pack_start(*softradiuscol);
@@ -4070,7 +4072,7 @@ LocallabShadow::LocallabShadow():
     shadows(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_SHADOWS"), 0, 100, 1, 0))),
     s_tonalwidth(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_SHTONALW"), 10, 100, 1, 30))),
     sh_radius(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_RADIUS"), 0, 100, 1, 40))),
-    sensihs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),//unused here, but used for normalize_mean_dt 
+    sensihs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 30))),//reused - unused here, but used for normalize_mean_dt 
     blurSHde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
     exprecovs(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
     maskusables(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
@@ -4226,6 +4228,8 @@ LocallabShadow::LocallabShadow():
 
     // Add Shadow highlight specific widgets to GUI
     pack_start(*reparsh);
+    pack_start(*sensihs);// reused / unused here, but used for normalize_mean_dt 
+    
     pack_start(*inverssh);
     pack_start(*shMethod);
 
@@ -4240,7 +4244,7 @@ LocallabShadow::LocallabShadow():
     pack_start(*shadows);
     pack_start(*s_tonalwidth);
     pack_start(*sh_radius);
-    // pack_start(*sensihs);//unused here, but used for normalize_mean_dt 
+//    pack_start(*sensihs);// reused / unused here, but used for normalize_mean_dt 
     pack_start(*blurSHde);
     ToolParamBlock* const shBox3 = Gtk::manage(new ToolParamBlock());
     shBox3->pack_start(*maskusables, Gtk::PACK_SHRINK, 0);
@@ -5209,7 +5213,7 @@ LocallabVibrance::LocallabVibrance():
     protectSkins(Gtk::manage(new Gtk::CheckButton(M("TP_VIBRANCE_PROTECTSKINS")))),
     avoidColorShift(Gtk::manage(new Gtk::CheckButton(M("TP_VIBRANCE_AVOIDCOLORSHIFT")))),
     pastSatTog(Gtk::manage(new Gtk::CheckButton(M("TP_VIBRANCE_PASTSATTOG")))),
-    sensiv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),//unused here, but used for normalize_mean_dt 
+    sensiv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 30))),//reused - unused here, but used for normalize_mean_dt 
     curveEditorGG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL"))),
     skinTonesCurve(static_cast<DiagonalCurveEditor*>(curveEditorGG->addCurve(CT_Diagonal, M("TP_VIBRANCE_CURVEEDITOR_SKINTONES")))),
     exprecovv(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
@@ -5356,6 +5360,7 @@ LocallabVibrance::LocallabVibrance():
     mask2vibCurveEditorG->curveListComplete();
 
     // Add Vibrance specific widgets to GUI
+    pack_start(*sensiv, Gtk::PACK_SHRINK, 0);//reused - nused here, but used for normalize_mean_dt 
     pack_start(*saturated, Gtk::PACK_SHRINK, 0);
     pack_start(*pastels, Gtk::PACK_SHRINK, 0);
     pack_start(*vibgam, Gtk::PACK_SHRINK, 0);
@@ -5366,7 +5371,7 @@ LocallabVibrance::LocallabVibrance():
     pack_start(*protectSkins, Gtk::PACK_SHRINK, 0);
     pack_start(*avoidColorShift, Gtk::PACK_SHRINK, 0);
     pack_start(*pastSatTog, Gtk::PACK_SHRINK, 0);
-    // pack_start(*sensiv, Gtk::PACK_SHRINK, 0);//unused here, but used for normalize_mean_dt 
+//    pack_start(*sensiv, Gtk::PACK_SHRINK, 0);//reused - nused here, but used for normalize_mean_dt 
     pack_start(*curveEditorGG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     ToolParamBlock* const vibBox3 = Gtk::manage(new ToolParamBlock());
     vibBox3->pack_start(*maskusablev, Gtk::PACK_SHRINK, 0);

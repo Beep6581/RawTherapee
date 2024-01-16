@@ -118,7 +118,7 @@ ControlSpotPanel::ControlSpotPanel():
     auto m = ProcEventMapper::getInstance();
     EvLocallabavoidgamutMethod = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GAMUTMUNSEL");
     const bool showtooltip = options.showtooltip;
-    pack_start(*hishow_);
+//    pack_start(*hishow_);
 
     Gtk::Box* const ctboxprevmethod = Gtk::manage(new Gtk::Box());
     prevMethod_->append(M("TP_LOCALLAB_PREVHIDE"));
@@ -206,6 +206,7 @@ ControlSpotPanel::ControlSpotPanel():
     scrolledwindow_->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
     scrolledwindow_->set_min_content_height(150);
     pack_start(*scrolledwindow_);
+    pack_start(*hishow_);
 
    // Gtk::Box* const ctboxactivmethod = Gtk::manage(new Gtk::Box());
     ctboxactivmethod->pack_start(*activ_);
@@ -394,7 +395,7 @@ ControlSpotPanel::ControlSpotPanel():
 //    ToolParamBlock* const artifBox2 = Gtk::manage(new ToolParamBlock());
     
     artifBox2->pack_start(*preview_);
-    artifBox2->pack_start(*colorscope_);
+//    artifBox2->pack_start(*colorscope_);//unused since 16 / 01 : 2024
     pack_start(*artifBox2);
     ToolParamBlock* const specCaseBox = Gtk::manage(new ToolParamBlock());
 
