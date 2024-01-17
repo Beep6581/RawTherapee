@@ -430,7 +430,11 @@ public:
     virtual void denChanged(const std::vector<locallabDenoiseLC> &denlc, int selspot) = 0;
     virtual void logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const bool autocomput, const bool autocie, const float jz1) = 0;
     virtual void refChanged2(float *huerefp, float *chromarefp, float *lumarefp, float *fabrefp, int selspot) = 0;
-    virtual void mainChanged(int spottype, int selspot) = 0;
+    virtual void mainChanged(int spottype, int selspot, bool iscolor, bool issh, bool isvib, bool isexpos, bool issoft, bool isblur, bool istom, bool isret, bool issharp, bool iscont, bool iscbdl, bool islog, bool ismas, bool iscie) = 0;
+    virtual void scopeChangedcol(int scope, int selspot, bool enab) = 0;
+    virtual void scopeChangedsh(int scope, int selspot, bool enab) = 0;
+    virtual void scopeChangedvib(int scope, int selspot, bool enab) = 0;
+    virtual void scopeChangedset(int scope, int selspot, bool enab) = 0;
 
 };
 

@@ -220,6 +220,7 @@ public:
     // Batch mode management
     // Note: Batch mode is deactivated for Locallab
     void updateguiset(int spottype);
+    void updateguiscopeset(int scope);
 
 private:
     // Cell renderer

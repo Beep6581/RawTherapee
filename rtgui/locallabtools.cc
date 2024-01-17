@@ -964,6 +964,10 @@ void LocallabColor::setListener(ToolPanelListener* tpl)
 void LocallabColor::updateguicolor(int spottype)
 {
     {
+        
+
+    // Disable all listeners
+       
         idle_register.add(
         [this, spottype]() -> bool {
             GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
@@ -974,9 +978,11 @@ void LocallabColor::updateguicolor(int spottype)
             if(spottype == 3) {
                 invers->hide();
                 sensi->hide();
+                sensi->setValue(100);
             } else {
                 invers->show();
                 sensi->show();
+              //  sensi->setValue(30);
             }
             enableListener();
 
@@ -987,6 +993,23 @@ void LocallabColor::updateguicolor(int spottype)
    
 }
 
+void LocallabColor::updateguiscopecolor(int scope)
+{
+    {
+        idle_register.add(
+        [this, scope]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            disableListener();
+            sensi->setValue(scope);
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
 
 
 bool LocallabColor::isMaskViewActive()
@@ -2913,9 +2936,11 @@ void LocallabExposure::updateguiexpos(int spottype)
             if(spottype == 3) {
                 inversex->hide();
                 sensiex->hide();
-            } else {
+                sensiex->setValue(100);
+           } else {
                 inversex->show();
                 sensiex->show();
+             //   sensiex->setValue(60);
             }
             enableListener();
 
@@ -4328,9 +4353,11 @@ void LocallabShadow::updateguishad(int spottype)
             if(spottype == 3) {
                 inverssh->hide();
                 sensihs->hide();
+                sensihs->setValue(100);
             } else {
                 sensihs->show();
                 inverssh->show();
+             //   sensihs->setValue(30);
             }
             enableListener();
 
@@ -4340,6 +4367,25 @@ void LocallabShadow::updateguishad(int spottype)
     }
    
 }
+
+void LocallabShadow::updateguiscopesahd(int scope)
+{
+    {
+        idle_register.add(
+        [this, scope]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            disableListener();
+            sensihs->setValue(scope);
+           
+            enableListener();
+        return false;
+        }
+        );
+    }
+   
+}
+
 
 
 void LocallabShadow::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask)
@@ -5429,6 +5475,50 @@ void LocallabVibrance::resetMaskView()
     showmaskvibMethodConn.block(false);
 }
 
+void LocallabVibrance::updateguivib(int spottype)
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype == 3) {
+                sensiv->hide();
+                sensiv->setValue(100);
+            } else {
+                sensiv->show();
+            //    sensiv->setValue(30);
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
+void LocallabVibrance::updateguiscopevib(int scope)
+{
+    {
+        idle_register.add(
+        [this, scope]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            disableListener();
+            sensiv->setValue(scope);
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
 void LocallabVibrance::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask)
 {
     vibMask = showmaskvibMethod->get_active_row_number();
@@ -6264,8 +6354,10 @@ void LocallabSoft::updateguisoft(int spottype)
 
             if(spottype == 3) {
                 sensisf->hide();
+                sensisf->setValue(100);
             } else {
                 sensisf->show();
+             //   sensisf->setValue(30);
             }
             enableListener();
 
@@ -7166,11 +7258,16 @@ void LocallabBlur::updateguiblur(int spottype)
                 sensibn->hide();
                 sensiden->hide();
                 invbl->hide();
+                sensibn->setValue(100);
+                sensiden->setValue(100);
 
             } else {
                 sensibn->show();
                 sensiden->show();
                 invbl->show();
+              //  sensibn->setValue(40);
+              //  sensiden->setValue(60);
+
             }
             enableListener();
 

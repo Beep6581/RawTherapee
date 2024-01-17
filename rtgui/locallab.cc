@@ -1137,21 +1137,97 @@ void Locallab::denChanged(const std::vector<locallabDenoiseLC> &denlc, int selsp
     
 }
 
-void Locallab::mainChanged(int spottype, int selspot)
+void Locallab::scopeChangedcol(int scope, int selspot, bool enab)
 {
-    expcolor.updateguicolor(spottype);
-    expshadhigh.updateguishad(spottype);
-    expexpose.updateguiexpos(spottype);
-    expsoft.updateguisoft(spottype);
-    expblur.updateguiblur(spottype);
-    exptonemap.updateguitone(spottype);
-    expreti.updateguireti(spottype);
-    expsharp.updateguisharp(spottype);
-    expcontrast.updateguicont(spottype);
-    expcbdl.updateguicbdl(spottype);
-    explog.updateguilog(spottype);
-    expmask.updateguimask(spottype);
-    expcie.updateguicie(spottype);
+    if(enab) {
+        expcolor.updateguiscopecolor(scope);
+    }
+   
+}
+void Locallab::scopeChangedsh(int scope, int selspot, bool enab)
+{
+    if(enab) {
+        expshadhigh.updateguiscopesahd(scope); 
+    }
+   
+}
+
+void Locallab::scopeChangedvib(int scope, int selspot, bool enab)
+{
+    if(enab) {
+        expvibrance.updateguiscopevib(scope); 
+    }
+   
+}
+
+void Locallab::scopeChangedset(int scope, int selspot, bool enab)
+{
+    if(enab) {
+        expsettings->updateguiscopeset(30);
+    }
+   
+}
+
+
+void Locallab::mainChanged(int spottype, int selspot, bool iscolor, bool issh, bool isvib, bool isexpos, bool issoft, bool isblur, bool istom, bool isret, bool issharp, bool iscont, bool iscbdl, bool islog, bool ismas, bool iscie )
+{
+    if(iscolor) {
+        expcolor.updateguicolor(spottype);
+    }
+    
+    if(issh) {
+        expshadhigh.updateguishad(spottype);
+    }
+    
+    if(isvib) {   
+        expvibrance.updateguivib(spottype);
+    }
+    
+    if(isexpos) {     
+        expexpose.updateguiexpos(spottype);
+    }
+    
+    if(issoft) {         
+        expsoft.updateguisoft(spottype);
+    }
+    
+    if(isblur) {        
+        expblur.updateguiblur(spottype);
+    }
+    
+    if(istom) {         
+        exptonemap.updateguitone(spottype);
+    }
+    
+    if(isret) {        
+        expreti.updateguireti(spottype);
+    }
+    
+    if(issharp) {        
+        expsharp.updateguisharp(spottype);
+    }
+    
+    if(iscont) {         
+        expcontrast.updateguicont(spottype);
+    }
+    
+    if(iscbdl) {       
+        expcbdl.updateguicbdl(spottype);
+    }
+    
+    if(islog) {     
+        explog.updateguilog(spottype);
+    }
+    
+    if(ismas) {     
+        expmask.updateguimask(spottype);
+    }
+    
+    if(iscie) {        
+        expcie.updateguicie(spottype);
+    }
+    
+    
     expsettings->updateguiset(spottype);
    
 }

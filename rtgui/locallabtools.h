@@ -275,7 +275,6 @@ public:
     ~LocallabColor();
 
     void setListener(ToolPanelListener* tpl) override;
-
     bool isMaskViewActive() override;
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask) override;
@@ -297,6 +296,7 @@ public:
     void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR) override;
     void curveChanged(CurveEditor* ce) override;
     void updateguicolor(int spottype);
+    void updateguiscopecolor(int scope);
 
 private:
     void enabledChanged() override;
@@ -508,7 +508,8 @@ public:
 
     void updateAdviceTooltips(const bool showTooltips) override;
     void updateguishad(int spottype);
-
+    void updateguiscopesahd(int scope);
+         
     void setDefaultExpanderVisibility() override;
     void disableListener() override;
     void enableListener() override;
@@ -595,6 +596,8 @@ public:
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask) override;
 
     void updateAdviceTooltips(const bool showTooltips) override;
+    void updateguivib(int spottype);
+    void updateguiscopevib(int scope);
 
     void setDefaultExpanderVisibility() override;
     void disableListener() override;

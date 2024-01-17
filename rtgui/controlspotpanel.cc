@@ -395,7 +395,8 @@ ControlSpotPanel::ControlSpotPanel():
 //    ToolParamBlock* const artifBox2 = Gtk::manage(new ToolParamBlock());
     
     artifBox2->pack_start(*preview_);
-//    artifBox2->pack_start(*colorscope_);//unused since 16 / 01 : 2024
+    artifBox2->pack_start(*colorscope_);//unused with contrlspotpanel since 17 / 01 : 2024 but data used in color, vibrance, sh
+    colorscope_->hide();
     pack_start(*artifBox2);
     ToolParamBlock* const specCaseBox = Gtk::manage(new ToolParamBlock());
 
@@ -1003,6 +1004,8 @@ void ControlSpotPanel::spotMethodChanged()
     hishow_->show();
     ctboxshape->show();
     artifBox2->show();
+    colorscope_->hide();
+
     // Update Control Spot GUI according to spotMethod_ combobox state (to be compliant with updateParamVisibility function)
     if (multiImage && spotMethod_->get_active_text() == M("GENERAL_UNCHANGED")) {
         excluFrame->show();
@@ -1069,6 +1072,7 @@ void ControlSpotPanel::spotMethodChanged()
             ctboxshape->hide();
 
             artifBox2->hide();
+            
             hishow_->hide();
             expTransGrad_->hide();
             expShapeDetect_->hide();
@@ -1081,6 +1085,8 @@ void ControlSpotPanel::spotMethodChanged()
             circrad_->show();
            
             artifBox2->show();
+            colorscope_->hide();
+           
             hishow_->show();
             if(hishow_->get_active()) {
                 expTransGrad_->show();
@@ -1341,6 +1347,7 @@ void ControlSpotPanel::updateParamVisibility()
     hishow_->show();
     artifBox2->show();
     ctboxshape->show();
+    colorscope_->hide();
     
     // Update Control Spot GUI according to spotMethod_ combobox state (to be compliant with spotMethodChanged function)
     if (multiImage && spotMethod_->get_active_text() == M("GENERAL_UNCHANGED")) {
@@ -1367,6 +1374,7 @@ void ControlSpotPanel::updateParamVisibility()
 
         } else {
             artifBox2->show();
+            colorscope_->hide();
             hishow_->show();
             ctboxshape->show();
             circrad_->show();
@@ -1414,6 +1422,7 @@ void ControlSpotPanel::updateParamVisibility()
         } else {
             hishow_->show();
             artifBox2->show();
+            colorscope_->hide();
             hishow_->show();
             ctboxshape->show();
             circrad_->show();
@@ -2889,6 +2898,24 @@ void ControlSpotPanel::updateguiset(int spottype)
    
 }
 
+void ControlSpotPanel::updateguiscopeset(int scope)
+{
+    {  //with this function we can disabled old values scope 
+        idle_register.add(
+        [this, scope]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            disableListener();
+            colorscope_->setValue(scope);
+            adjusterChanged(colorscope_, 0.);
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
 
 
 void ControlSpotPanel::setDefaults(const rtengine::procparams::ProcParams * defParams, const ParamsEdited * pedited)

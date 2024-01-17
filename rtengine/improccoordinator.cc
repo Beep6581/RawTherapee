@@ -1247,6 +1247,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             fabrefp = new float[sizespot];
             int *mainfp = nullptr;
             mainfp = new int[sizespot];
+            int *scopefp = nullptr;
+            scopefp = new int[sizespot];
 
             for (int sp = 0; sp < (int)params->locallab.spots.size(); sp++) {
 
@@ -1257,7 +1259,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 if (params->locallab.spots.at(sp).equilret  && params->locallab.spots.at(sp).expreti) {
                     savenormreti.reset(new LabImage(*oprevl, true));
                 }
-
+                if(params->locallab.spots.at(sp).colorscope != 30) {
+                    //params->locallab.spots.at(sp).sensi 
+                    scopefp[sp]= params->locallab.spots.at(sp).colorscope;
+                }
                 // Set local curves of current spot to LUT
                 locRETgainCurve.Set(params->locallab.spots.at(sp).localTgaincurve);
                 locRETtransCurve.Set(params->locallab.spots.at(sp).localTtranscurve);
@@ -1594,14 +1599,37 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 } else if (params->locallab.spots.at(sp).spotMethod == "full") {
                     mainfp[sp] = 2;
                 }
-              //  if (params->locallab.spots.at(sp).enaColorMask) 
+                bool iscolor = params->locallab.spots.at(sp).expcolor;
+                bool issh = params->locallab.spots.at(sp).expshadhigh;
+                bool isvib = params->locallab.spots.at(sp).expvibrance;
+                bool isexpos = params->locallab.spots.at(sp).expexpose;
+                bool issoft = params->locallab.spots.at(sp).expsoft;
+                bool isblur = params->locallab.spots.at(sp).expblur;
+                bool istom = params->locallab.spots.at(sp).exptonemap;
+                bool isret = params->locallab.spots.at(sp).expreti;
+                bool issharp = params->locallab.spots.at(sp).expsharp;
+                bool iscont = params->locallab.spots.at(sp).expcontrast;
+                bool iscbdl = params->locallab.spots.at(sp).expcbdl;
+                bool islog = params->locallab.spots.at(sp).explog;
+                bool ismas = params->locallab.spots.at(sp).expmask;
+                bool iscie = params->locallab.spots.at(sp).expcie;
+                             
+                bool isset = iscolor || issh || isvib;
                 if (locallListener) {
                     //  locallListener->refChanged(locallref, params->locallab.selspot);
                     locallListener->refChanged2(huerefp, chromarefp, lumarefp, fabrefp, params->locallab.selspot);
                     locallListener->minmaxChanged(locallretiminmax, params->locallab.selspot);
                     if (mainfp[sp] >= 2) {//minimize call to idle register
-                        locallListener->mainChanged(mainfp[sp], params->locallab.selspot);
+                        locallListener->mainChanged(mainfp[sp], params->locallab.selspot, iscolor, issh, isvib, isexpos, issoft, isblur, istom, isret, issharp, iscont, iscbdl, islog, ismas, iscie);
                     }
+                    if(params->locallab.spots.at(sp).colorscope != 30) {
+                            locallListener->scopeChangedcol(scopefp[sp], params->locallab.selspot, iscolor);
+                            locallListener->scopeChangedsh(scopefp[sp], params->locallab.selspot, issh);
+                            locallListener->scopeChangedvib(scopefp[sp], params->locallab.selspot, isvib);
+                            locallListener->scopeChangedset(scopefp[sp], params->locallab.selspot, isset);
+                        params->locallab.spots.at(sp).colorscope = 30;
+                    }
+
                 }
 
             }
@@ -1611,6 +1639,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             delete [] lumarefp;
             delete [] fabrefp;
             delete [] mainfp;
+            delete [] scopefp;
             // Transmit Locallab reference values and Locallab Retinex min/max to LocallabListener
             /*
             if (locallListener) {
