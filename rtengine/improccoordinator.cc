@@ -1259,8 +1259,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 if (params->locallab.spots.at(sp).equilret  && params->locallab.spots.at(sp).expreti) {
                     savenormreti.reset(new LabImage(*oprevl, true));
                 }
-                if(params->locallab.spots.at(sp).colorscope != 30) {
-                    //params->locallab.spots.at(sp).sensi 
+                if(params->locallab.spots.at(sp).colorscope != 30) {//compatibility with old method in controlspotpanel
                     scopefp[sp]= params->locallab.spots.at(sp).colorscope;
                 }
                 // Set local curves of current spot to LUT
@@ -1622,7 +1621,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     if (mainfp[sp] >= 2) {//minimize call to idle register
                         locallListener->mainChanged(mainfp[sp], params->locallab.selspot, iscolor, issh, isvib, isexpos, issoft, isblur, istom, isret, issharp, iscont, iscbdl, islog, ismas, iscie);
                     }
-                    if(params->locallab.spots.at(sp).colorscope != 30) {
+                    if(params->locallab.spots.at(sp).colorscope != 30) {//compatibility with old method in controlspotpanel
                             locallListener->scopeChangedcol(scopefp[sp], params->locallab.selspot, iscolor);
                             locallListener->scopeChangedsh(scopefp[sp], params->locallab.selspot, issh);
                             locallListener->scopeChangedvib(scopefp[sp], params->locallab.selspot, isvib);

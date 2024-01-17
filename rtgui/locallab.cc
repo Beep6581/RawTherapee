@@ -1171,6 +1171,8 @@ void Locallab::scopeChangedset(int scope, int selspot, bool enab)
 
 void Locallab::mainChanged(int spottype, int selspot, bool iscolor, bool issh, bool isvib, bool isexpos, bool issoft, bool isblur, bool istom, bool isret, bool issharp, bool iscont, bool iscbdl, bool islog, bool ismas, bool iscie )
 {
+    
+
     if(iscolor) {
         expcolor.updateguicolor(spottype);
     }

@@ -4673,7 +4673,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         loc = {3000, 3000, 3000, 3000};
         transit =100.;
         shape = "RECT";
-        colorscope = 100.0;
+        colorscope = 30.0;
 
     } else if(options.spotmet == 2) {
         spotMethod = "full";
@@ -4681,18 +4681,62 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         transit =100.;
         shape = "RECT";       
         colorscope = 30.0;
-       
+        sensi = 30;
+        sensiex = 60;
+        sensihs = 30;
+        sensiv = 30;
+        sensisf = 30; 
+        sensibn = 40;
+        sensiden = 60;
+        sensitm = 60;
+        sensih = 60;
+        sensisha = 40;
+        sensilc = 60;
+        sensicb = 60; 
+        sensilog = 60;
+        sensimask = 60;
+        sensicie = 60;
+        
     } else if(options.spotmet == 1) {
         spotMethod = "exc";
         shape = "ELI";
         loc = {150, 150, 150, 150};
         transit= 60.;
-       
+        sensi = 30;
+        sensiex = 60;
+        sensihs = 30;
+        sensiv = 30;
+        sensibn = 40;
+        sensiden = 60;
+        sensitm = 60;
+        sensih = 60;
+        sensisha = 40;       
+        sensilc = 60;        
+        sensicb = 60; 
+        sensilog = 60;
+        sensimask = 60;
+        sensicie = 60;
+        
     } else if(options.spotmet == 0) {
         spotMethod = "norm";
         shape = "ELI";
         loc = {150, 150, 150, 150};
         transit= 60.;
+        sensi = 30;
+        sensiex = 60;
+        sensihs = 30;
+        sensiv = 30;
+        sensibn = 40;
+        sensiden = 60;
+        sensitm = 60;
+        sensih = 60;
+        sensisha = 40;       
+        sensilc = 60;        
+        sensicb = 60; 
+        sensilog = 60;
+        sensimask = 60;
+        sensicie = 60;
+    
     }
 
 }

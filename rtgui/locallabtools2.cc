@@ -405,10 +405,8 @@ void LocallabTone::updateguitone(int spottype)
 
             if(spottype == 3) {
                 sensitm->hide();
-                sensitm->setValue(100);
             } else {
                 sensitm->show();
-             //   sensitm->setValue(60);
            }
             enableListener();
 
@@ -1137,10 +1135,8 @@ void LocallabRetinex::updateguireti(int spottype)
 
             if(spottype == 3) {
                 sensih->hide();
-                sensih->setValue(100);
             } else {
                 sensih->show();
-            //    sensih->setValue(60);
             }
             enableListener();
 
@@ -2170,11 +2166,9 @@ void LocallabSharp::updateguisharp(int spottype)
             if(spottype == 3) {
                 sensisha->hide();
                 inverssha->hide();
-                sensisha->setValue(100);
             } else {
                 sensisha->show();
                 inverssha->show();
-            //    sensisha->setValue(40);
             }
             enableListener();
 
@@ -3045,10 +3039,8 @@ void LocallabContrast::updateguicont(int spottype)
 
             if(spottype == 3) {
                 sensilc->hide();
-                sensilc->setValue(100);
             } else {
                 sensilc->show();
-            //    sensilc->setValue(60);
             }
             enableListener();
 
@@ -4773,10 +4765,8 @@ void LocallabCBDL::updateguicbdl(int spottype)
 
             if(spottype == 3) {
                 sensicb->hide();
-                sensicb->setValue(100);
             } else {
                 sensicb->show();
-            //    sensicb->setValue(60);
             }
             enableListener();
 
@@ -5686,10 +5676,8 @@ void LocallabLog::updateguilog(int spottype)
 
             if(spottype == 3) {
                 sensilog->hide();
-                sensilog->setValue(100);
             } else {
                 sensilog->show();
-            //    sensilog->setValue(60);
             }
             enableListener();
 
@@ -6943,10 +6931,8 @@ void LocallabMask::updateguimask(int spottype)
 
             if(spottype == 3) {
                 sensimask->hide();
-                sensimask->setValue(100);
             } else {
                 sensimask->show();
-              //  sensimask->setValue(60);
             }
             enableListener();
 
@@ -8382,10 +8368,8 @@ void Locallabcie::updateguicie(int spottype)
 
             if(spottype == 3) {
                 sensicie->hide();
-                sensicie->setValue(100);
             } else {
                 sensicie->show();
-              //  sensicie->setValue(60);
            }
             enableListener();
 

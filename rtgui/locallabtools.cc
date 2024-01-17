@@ -967,7 +967,6 @@ void LocallabColor::updateguicolor(int spottype)
         
 
     // Disable all listeners
-       
         idle_register.add(
         [this, spottype]() -> bool {
             GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
@@ -978,11 +977,9 @@ void LocallabColor::updateguicolor(int spottype)
             if(spottype == 3) {
                 invers->hide();
                 sensi->hide();
-                sensi->setValue(100);
             } else {
                 invers->show();
                 sensi->show();
-              //  sensi->setValue(30);
             }
             enableListener();
 
@@ -1650,7 +1647,7 @@ void LocallabColor::adjusterChanged(Adjuster* a, double newval)
         if (a == sensi) {
             if (listener) {
                 listener->panelChanged(Evlocallabsensi,
-                                       sensi->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+                                       sensi->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");                                      
             }
         }
 
@@ -2936,7 +2933,6 @@ void LocallabExposure::updateguiexpos(int spottype)
             if(spottype == 3) {
                 inversex->hide();
                 sensiex->hide();
-                sensiex->setValue(100);
            } else {
                 inversex->show();
                 sensiex->show();
@@ -4353,11 +4349,9 @@ void LocallabShadow::updateguishad(int spottype)
             if(spottype == 3) {
                 inverssh->hide();
                 sensihs->hide();
-                sensihs->setValue(100);
             } else {
                 sensihs->show();
                 inverssh->show();
-             //   sensihs->setValue(30);
             }
             enableListener();
 
@@ -5487,10 +5481,8 @@ void LocallabVibrance::updateguivib(int spottype)
 
             if(spottype == 3) {
                 sensiv->hide();
-                sensiv->setValue(100);
             } else {
                 sensiv->show();
-            //    sensiv->setValue(30);
             }
             enableListener();
 
@@ -6354,10 +6346,8 @@ void LocallabSoft::updateguisoft(int spottype)
 
             if(spottype == 3) {
                 sensisf->hide();
-                sensisf->setValue(100);
             } else {
                 sensisf->show();
-             //   sensisf->setValue(30);
             }
             enableListener();
 
@@ -7258,15 +7248,11 @@ void LocallabBlur::updateguiblur(int spottype)
                 sensibn->hide();
                 sensiden->hide();
                 invbl->hide();
-                sensibn->setValue(100);
-                sensiden->setValue(100);
 
             } else {
                 sensibn->show();
                 sensiden->show();
                 invbl->show();
-              //  sensibn->setValue(40);
-              //  sensiden->setValue(60);
 
             }
             enableListener();
