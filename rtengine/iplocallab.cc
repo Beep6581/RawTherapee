@@ -7588,7 +7588,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                                 transformed->L[y][x] = CLIP(12000.f + difL);
                                 transformed->a[y][x] = clipC(difa);
                                 transformed->b[y][x] = clipC(difb);
-                            } else if (previewcb  || previewtm || lp.prevdE) {
+                            } else if (/* previewcb  ||*/ previewtm || lp.prevdE) {
                                 if (std::fabs(difb) < 500.f) {
                                     difb += difL;
                                 }
