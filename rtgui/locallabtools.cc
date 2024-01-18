@@ -961,11 +961,10 @@ void LocallabColor::setListener(ToolPanelListener* tpl)
     labgridmerg->setListener(tpl);
 }
 
+//new function Global
 void LocallabColor::updateguicolor(int spottype)
 {
     {
-        
-
     // Disable all listeners
         idle_register.add(
         [this, spottype]() -> bool {
@@ -990,6 +989,7 @@ void LocallabColor::updateguicolor(int spottype)
    
 }
 
+//new function scope
 void LocallabColor::updateguiscopecolor(int scope)
 {
     {
@@ -2920,6 +2920,7 @@ bool LocallabExposure::isMaskViewActive()
     return ((showmaskexpMethod->get_active_row_number() != 0) || (showmaskexpMethodinv->get_active_row_number() != 0));
 }
 
+//new function Global
 void LocallabExposure::updateguiexpos(int spottype) 
 {
     {
@@ -2936,7 +2937,6 @@ void LocallabExposure::updateguiexpos(int spottype)
            } else {
                 inversex->show();
                 sensiex->show();
-             //   sensiex->setValue(60);
             }
             enableListener();
 
@@ -4335,7 +4335,7 @@ void LocallabShadow::resetMaskView()
     showmaskSHMethodConninv.block(false);
 }
 
-
+//new function Global
 void LocallabShadow::updateguishad(int spottype)
 {
     {
@@ -5469,6 +5469,7 @@ void LocallabVibrance::resetMaskView()
     showmaskvibMethodConn.block(false);
 }
 
+//new function Global
 void LocallabVibrance::updateguivib(int spottype)
 {
     {
@@ -5493,6 +5494,7 @@ void LocallabVibrance::updateguivib(int spottype)
    
 }
 
+//new function scope
 void LocallabVibrance::updateguiscopevib(int scope)
 {
     {
@@ -6334,6 +6336,7 @@ void LocallabSoft::resetMaskView()
     showmasksoftMethodConn.block(false);
 }
 
+//new function Global
 void LocallabSoft::updateguisoft(int spottype) 
 {
     {
@@ -7234,6 +7237,7 @@ void LocallabBlur::resetMaskView()
     showmaskblMethodConn.block(false);
 }
 
+//new function Global
 void LocallabBlur::updateguiblur(int spottype) 
 {
     {

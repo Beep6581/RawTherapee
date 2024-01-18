@@ -4666,21 +4666,20 @@ LocallabParams::LocallabSpot::LocallabSpot() :
    
 
 {
-  // init settings with Preferences / options : must be followed by call to spotMethodChanged in controlspotpanel.cc  (idle_register)    
+  // init settings with Preferences / options : must be followed by call to spotMethodChanged in controlspotpanel.cc  (idle_register)
+  // new values default with different SpotMethod.
 
-    if(options.spotmet == 3) {
+    if(options.spotmet == 3) {//global
         spotMethod = "main";
         loc = {3000, 3000, 3000, 3000};
         transit =100.;
         shape = "RECT";
-        colorscope = 30.0;
 
-    } else if(options.spotmet == 2) {
+    } else if(options.spotmet == 2) {//full image
         spotMethod = "full";
         loc = {3000, 3000, 3000, 3000};
         transit =100.;
         shape = "RECT";       
-        colorscope = 30.0;
         sensi = 30;
         sensiex = 60;
         sensihs = 30;
@@ -4697,7 +4696,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         sensimask = 60;
         sensicie = 60;
         
-    } else if(options.spotmet == 1) {
+    } else if(options.spotmet == 1) {//exclude
         spotMethod = "exc";
         shape = "ELI";
         loc = {150, 150, 150, 150};
@@ -4717,7 +4716,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         sensimask = 60;
         sensicie = 60;
         
-    } else if(options.spotmet == 0) {
+    } else if(options.spotmet == 0) {//normal
         spotMethod = "norm";
         shape = "ELI";
         loc = {150, 150, 150, 150};
@@ -4735,8 +4734,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         sensicb = 60; 
         sensilog = 60;
         sensimask = 60;
-        sensicie = 60;
-    
+        sensicie = 60;  
     }
 
 }

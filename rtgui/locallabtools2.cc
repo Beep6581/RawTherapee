@@ -393,6 +393,7 @@ void LocallabTone::enableListener()
     enatmMaskaftConn.block(false);
 }
 
+//new function Global
 void LocallabTone::updateguitone(int spottype)
 {
     {
@@ -1123,6 +1124,7 @@ void LocallabRetinex::updateMinMax(const double cdma, const double cdmin, const 
     );
 }
 
+//new function Global
 void LocallabRetinex::updateguireti(int spottype)
 {
     {
@@ -2153,6 +2155,7 @@ void LocallabSharp::enableListener()
     showmasksharMethodConn.block(false);
 }
 
+//new function Global
 void LocallabSharp::updateguisharp(int spottype)
 {
     {
@@ -3027,6 +3030,7 @@ void LocallabContrast::getMaskView(int &colorMask, int &colorMaskinv, int &expMa
     lcMask = showmasklcMethod->get_active_row_number();
 }
 
+//new function Global
 void LocallabContrast::updateguicont(int spottype)
 {
     {
@@ -4753,6 +4757,7 @@ void LocallabCBDL::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, 
     cbMask = showmaskcbMethod->get_active_row_number();
 }
 
+//new function Global
 void LocallabCBDL::updateguicbdl(int spottype)
 {
     {
@@ -5664,6 +5669,7 @@ void LocallabLog::setDefaultExpanderVisibility()
 
 }
 
+//new function Global
 void LocallabLog::updateguilog(int spottype)
 {
     {
@@ -6919,6 +6925,7 @@ void LocallabMask::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, 
     maskMask = showmask_Method->get_active_row_number();
 }
 
+//new function Global
 void LocallabMask::updateguimask(int spottype)
 {
     {
@@ -8356,6 +8363,7 @@ void Locallabcie::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, i
    cieMask = showmaskcieMethod->get_active_row_number();
 }
 
+//new function Global
 void Locallabcie::updateguicie(int spottype)
 {
     {

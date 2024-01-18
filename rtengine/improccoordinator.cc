@@ -1245,6 +1245,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             lumarefp = new float[sizespot];
             float *fabrefp = nullptr;
             fabrefp = new float[sizespot];
+            //new controls mainfp and scopefp with multi spots
             int *mainfp = nullptr;
             mainfp = new int[sizespot];
             int *scopefp = nullptr;
@@ -1259,7 +1260,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 if (params->locallab.spots.at(sp).equilret  && params->locallab.spots.at(sp).expreti) {
                     savenormreti.reset(new LabImage(*oprevl, true));
                 }
-                if(params->locallab.spots.at(sp).colorscope != 30) {//compatibility with old method in controlspotpanel
+                if(params->locallab.spots.at(sp).colorscope != 30) {//compatibility with old method in controlspotpanel to change scope - default value 30
                     scopefp[sp]= params->locallab.spots.at(sp).colorscope;
                 }
                 // Set local curves of current spot to LUT
@@ -1592,12 +1593,15 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 //    locallref.at(sp).fab = fab;
 
                 //    locallref.push_back(spotref);
+                
+                // new used linked to global and scope 
                 mainfp[sp] = 0;        
                 if (params->locallab.spots.at(sp).spotMethod == "main") {
                     mainfp[sp] = 3;
                 } else if (params->locallab.spots.at(sp).spotMethod == "full") {
                     mainfp[sp] = 2;
                 }
+                //keep using tools
                 bool iscolor = params->locallab.spots.at(sp).expcolor;
                 bool issh = params->locallab.spots.at(sp).expshadhigh;
                 bool isvib = params->locallab.spots.at(sp).expvibrance;
@@ -1618,7 +1622,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     //  locallListener->refChanged(locallref, params->locallab.selspot);
                     locallListener->refChanged2(huerefp, chromarefp, lumarefp, fabrefp, params->locallab.selspot);
                     locallListener->minmaxChanged(locallretiminmax, params->locallab.selspot);
-                    if (mainfp[sp] >= 2) {//minimize call to idle register
+                    if (mainfp[sp] >= 2) {//minimize call to idle register 
+                        //used by Global fullimage.
                         locallListener->mainChanged(mainfp[sp], params->locallab.selspot, iscolor, issh, isvib, isexpos, issoft, isblur, istom, isret, issharp, iscont, iscbdl, islog, ismas, iscie);
                     }
                     if(params->locallab.spots.at(sp).colorscope != 30) {//compatibility with old method in controlspotpanel

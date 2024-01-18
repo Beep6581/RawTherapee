@@ -901,9 +901,9 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.fullim = 0;
     } else if(locallab.spots.at(sp).spotMethod == "exc"){
         lp.fullim = 1;
-    } else if (locallab.spots.at(sp).spotMethod == "full") { //  || locallab.spots.at(sp).spotMethod == "main"){
+    } else if (locallab.spots.at(sp).spotMethod == "full") {
         lp.fullim = 2;
-    } else if (locallab.spots.at(sp).spotMethod == "main") {
+    } else if (locallab.spots.at(sp).spotMethod == "main") {//new Global
         lp.fullim = 3;
     }
         
@@ -4552,7 +4552,7 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp, Lab
     // BENCHFUN
     lumaref *= 327.68f;
     float ach = lp.trans / 100.f;
-    if(lp.fullim == 3 ) {
+    if(lp.fullim == 3 ) {//disabled transit
         ach = 1.f;
     }
 
@@ -4630,7 +4630,7 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp, Lab
                 } else /*if (lp.shapmet == 1)*/ {
                     calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                 }
-                if(lp.fullim == 3 ) {
+                if(lp.fullim == 3 ) {//disabled scope
                     localFactor = 1.f;
                 }
 
@@ -4666,7 +4666,7 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp, Lab
                     difa = tmp1.a[y][x] - original->a[y][x];
                     difb = tmp1.b[y][x] - original->b[y][x];
                 }
-                if(lp.fullim == 3 ) {
+                if(lp.fullim == 3 ) {//disable scope
                     reducdEL = reducdEa = reducdEb = 1.f;
                 }
 
@@ -4715,7 +4715,7 @@ void ImProcFunctions::DeNoise_Local2(const struct local_params& lp, LabImage* or
     
     lumaref *= 327.68f;
     float ach = lp.trans / 100.f;
-    if(lp.fullim == 3 ) {
+    if(lp.fullim == 3 ) {//disabled transit
         ach = 1.f;
     }
 
@@ -4794,7 +4794,7 @@ void ImProcFunctions::DeNoise_Local2(const struct local_params& lp, LabImage* or
                 } else { /*if (lp.shapmet == 1)*/
                     calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                 }
-                if(lp.fullim == 3 ) {
+                if(lp.fullim == 3 ) {//disabled scope
                     localFactor = 1.f;
                 }
 
@@ -4825,7 +4825,7 @@ void ImProcFunctions::DeNoise_Local2(const struct local_params& lp, LabImage* or
                 difL = tmp1.L[y-ystart][x-xstart] - original->L[y][x];
                 difa = tmp1.a[y-ystart][x-xstart] - original->a[y][x];
                 difb = tmp1.b[y-ystart][x-xstart] - original->b[y][x];
-                if(lp.fullim == 3 ) {
+                if(lp.fullim == 3 ) {//disable scope
                     reducdEL = reducdEa = reducdEb = 1.f;
                 }
 
@@ -4917,7 +4917,7 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
                 float rL = origblur->L[y][x] / 327.68f;
                 float dE = std::sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
                 float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensh);
-                if(lp.fullim == 3 ) {
+                if(lp.fullim == 3 ) {//disable scope
                     reducdE = 1.f;
                 }
 
@@ -5063,7 +5063,7 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, const stru
                     float huedelta2 = abdelta2 - chrodelta2;
                     float dE = std::sqrt(kab * (kch * chrodelta2 + kH * huedelta2) + kL * SQR(refL - maskptr->L[y][x]));
                     reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensbn);
-                    if(lp.fullim == 3 ) {
+                    if(lp.fullim == 3 ) {//disabled scope
                         reducdE = 1.f;
                     }
                    
@@ -5405,7 +5405,7 @@ static void blendmask(const local_params& lp, int xstart, int ystart, int cx, in
 
             float localFactor = 1.f;
             float achm = lp.trans / 100.f;
-            if(lp.fullim == 3 ) {
+            if(lp.fullim == 3 ) {//disable transit
                 achm = 1.f;
             }
 
@@ -5414,7 +5414,7 @@ static void blendmask(const local_params& lp, int xstart, int ystart, int cx, in
             } else /*if (lp.shapmet == 1)*/ {
                 calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
             }
-            if(lp.fullim == 3 ) {
+            if(lp.fullim == 3 ) {//disable scope
                 localFactor = 1.f;
             }
 
@@ -8692,7 +8692,7 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                 int zone;
                 float localFactor = 1.f;
                 float achm = lp.trans / 100.f;
-                if(lp.fullim == 3 ) {
+                if(lp.fullim == 3 ) {//disable transit
                     achm = 1.f;
                 }
 
@@ -8702,7 +8702,7 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                 } else /*if (lp.shapmet == 1)*/ {
                     calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
                 }
-                if(lp.fullim == 3 ) {
+                if(lp.fullim == 3 ) {//disable scope
                     localFactor = 1.f;
                 }
 
@@ -8743,7 +8743,7 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                 const float dE = rsob + std::sqrt(kab * (kch * chrodelta2 + kH * huedelta2) + kL * SQR(refL - maskptr->L[y][x]));
                 //reduction action with deltaE
                 float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens);
-                if(lp.fullim == 3 ) {
+                if(lp.fullim == 3 ) {//disable scope
                     reducdE = 1.f;
                 }
                 float cli = (bufexpfin->L[y][x] - bufexporig->L[y][x]);
@@ -14588,7 +14588,7 @@ void ImProcFunctions::Lab_Local(
                 for (int x = 0; x < transformed->W; x++) {
                     float dE = std::sqrt(SQR(refa - bufreti->a[y][x] / 327.68f) + SQR(refb - bufreti->b[y][x] / 327.68f) + SQR(static_cast<float>(lumaref) - bufreti->b[y][x] / 327.68f));
                     float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sensibefore);
-                    if(lp.fullim == 3 ) {
+                    if(lp.fullim == 3 ) {//disable scope
                         reducdE = 1.f;
                     }
                     
@@ -14938,7 +14938,7 @@ void ImProcFunctions::Lab_Local(
                 for (int x = xstart; x < xend; x++) {
                     const float dE = std::sqrt(SQR(refa - bufreti->a[y - ystart][x - xstart] / 327.68f) + SQR(refb - bufreti->b[y - ystart][x - xstart] / 327.68f) + SQR(static_cast<float>(lumaref) - bufreti->b[y - ystart][x - xstart] / 327.68f));
                     float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sensibefore);
-                    if(lp.fullim == 3 ) {
+                    if(lp.fullim == 3 ) {//disable scope
                         reducdE = 1.f;
                     }
                   
@@ -16643,7 +16643,7 @@ void ImProcFunctions::Lab_Local(
             int yEn = lp.yc + lp.ly;
             int xEn = lp.xc + lp.lx;
 
-			if(lp.fullim >= 2) {//limit sharpening to image dimension...no more...to avoid a long treatment
+			if(lp.fullim >= 2) {//full-iamge and global - limit sharpening to image dimension...no more...to avoid a long treatment
 				begy = 0;
 				begx = 0;
 				yEn = original->H;

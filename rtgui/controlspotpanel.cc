@@ -226,7 +226,6 @@ ControlSpotPanel::ControlSpotPanel():
         shape_->set_tooltip_text(M("TP_LOCALLAB_SHAPE_TOOLTIP"));
     }
 
-   // Gtk::Box* const ctboxspotmethod = Gtk::manage(new Gtk::Box());
     Gtk::Label* const labelspotmethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_EXCLUTYPE") + ":"));
     ctboxspotmethod->pack_start(*labelspotmethod, Gtk::PACK_SHRINK, 4);
 
@@ -237,7 +236,7 @@ ControlSpotPanel::ControlSpotPanel():
     spotMethod_->append(M("TP_LOCALLAB_EXNORM"));
     spotMethod_->append(M("TP_LOCALLAB_EXECLU"));
     spotMethod_->append(M("TP_LOCALLAB_EXFULL"));
-    spotMethod_->append(M("TP_LOCALLAB_EXMAIN"));
+    spotMethod_->append(M("TP_LOCALLAB_EXMAIN"));//new choice Global
     spotMethod_->set_active(0);
     spotMethodconn_ = spotMethod_->signal_changed().connect(
                           sigc::mem_fun(
@@ -987,7 +986,7 @@ void ControlSpotPanel::prevMethodChanged()
 
 void ControlSpotPanel::spotMethodChanged()
 {
-
+    //01 2024 take into account new problems linked to Global spotmethod
     // Get selected control spot
     const auto s = treeview_->get_selection();
 
@@ -1033,7 +1032,7 @@ void ControlSpotPanel::spotMethodChanged()
     } else if (spotMethod_->get_active_row_number() == 1) { // Excluding case
         excluFrame->show();
 
-        // Reset spot shape only if previous spotMethod is Full image
+        // Reset spot shape only if previous spotMethod is Full image or Global
         if (oldSpotMethod == 2 || oldSpotMethod == 3) {
             disableParamlistener(true);
             locX_->setValue(150.);
@@ -1051,7 +1050,7 @@ void ControlSpotPanel::spotMethodChanged()
             disableParamlistener(false);
             updateControlSpotCurve(row);
         }
-    } else if (spotMethod_->get_active_row_number() == 2  || spotMethod_->get_active_row_number() == 3) { // Full image case
+    } else if (spotMethod_->get_active_row_number() == 2  || spotMethod_->get_active_row_number() == 3) { // Full image or Global case
         excluFrame->hide();
         shape_->set_active(0);
 
@@ -1068,11 +1067,9 @@ void ControlSpotPanel::spotMethodChanged()
         transit_->setValue(100.);
         row[spots_.transit] = transit_->getValue();
         
-        if(spotMethod_->get_active_row_number() == 3) {        
+        if(spotMethod_->get_active_row_number() == 3) { //global       
             ctboxshape->hide();
-
-            artifBox2->hide();
-            
+            artifBox2->hide();           
             hishow_->hide();
             expTransGrad_->hide();
             expShapeDetect_->hide();
@@ -1082,8 +1079,7 @@ void ControlSpotPanel::spotMethodChanged()
             ctboxshape->hide();
         } else {
             ctboxshape->show();
-            circrad_->show();
-           
+            circrad_->show();    
             artifBox2->show();
             colorscope_->hide();
            
@@ -1356,12 +1352,10 @@ void ControlSpotPanel::updateParamVisibility()
         excluFrame->hide();
     } else if (spotMethod_->get_active_row_number() == 1) { // Excluding case
         excluFrame->show();
-    } else if (spotMethod_->get_active_row_number() == 2 || spotMethod_->get_active_row_number() == 3) {//full image
+    } else if (spotMethod_->get_active_row_number() == 2 || spotMethod_->get_active_row_number() == 3) {//full image or global
         excluFrame->hide();
         
         if(spotMethod_->get_active_row_number() == 3) {        
-          //  ctboxactivmethod->hide();
-          //  ctboxspotmethod->hide();
             artifBox2->hide();
             hishow_->hide();
             hishow_->set_active(false);           
@@ -1402,7 +1396,7 @@ void ControlSpotPanel::updateParamVisibility()
     //ctboxshape->show();
    // artifBox2->show();
    
-    if (!hishow_->get_active()  || spotMethod_->get_active_row_number() == 3) { // Normal case
+    if (!hishow_->get_active()  || spotMethod_->get_active_row_number() == 3) { // Normal case or Global 
         expTransGrad_->hide();
         expShapeDetect_->hide();
         expSpecCases_->hide();
@@ -1436,7 +1430,6 @@ void ControlSpotPanel::updateParamVisibility()
         circrad_->show();
         ctboxshape->show();
         hishow_->show();
-       // hishow_->set_active(options.complexity != 2);
         
     }
 
@@ -1703,7 +1696,7 @@ void ControlSpotPanel::hishowChanged()
 
     ctboxshape->show();
 
-    if (!hishow_->get_active()  || spotMethod_->get_active_row_number() == 3) { // Normal case
+    if (!hishow_->get_active()  || spotMethod_->get_active_row_number() == 3) { // Normal case or Global
         expTransGrad_->hide();
         expShapeDetect_->hide();
         expSpecCases_->hide();
@@ -2876,6 +2869,7 @@ void ControlSpotPanel::deleteControlSpot(const int index)
     disableParamlistener(false);
 }
 
+//new function linked to Global and options 
 void ControlSpotPanel::updateguiset(int spottype)
 {
     {  //with this function we can 1) activate Settings SpotMethod
@@ -2897,7 +2891,7 @@ void ControlSpotPanel::updateguiset(int spottype)
     }
    
 }
-
+//new function linked to change scope
 void ControlSpotPanel::updateguiscopeset(int scope)
 {
     {  //with this function we can disabled old values scope 

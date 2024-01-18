@@ -1136,7 +1136,7 @@ void Locallab::denChanged(const std::vector<locallabDenoiseLC> &denlc, int selsp
     }
     
 }
-
+// New fonctions to change Scope color 
 void Locallab::scopeChangedcol(int scope, int selspot, bool enab)
 {
     if(enab) {
@@ -1144,6 +1144,8 @@ void Locallab::scopeChangedcol(int scope, int selspot, bool enab)
     }
    
 }
+// New fonctions to change Scope Shadows Highlight
+
 void Locallab::scopeChangedsh(int scope, int selspot, bool enab)
 {
     if(enab) {
@@ -1151,6 +1153,8 @@ void Locallab::scopeChangedsh(int scope, int selspot, bool enab)
     }
    
 }
+
+// New fonctions to change Scope Vibrance
 
 void Locallab::scopeChangedvib(int scope, int selspot, bool enab)
 {
@@ -1160,15 +1164,16 @@ void Locallab::scopeChangedvib(int scope, int selspot, bool enab)
    
 }
 
+//reinit expsettings
 void Locallab::scopeChangedset(int scope, int selspot, bool enab)
 {
     if(enab) {
-        expsettings->updateguiscopeset(30);
+        expsettings->updateguiscopeset(30);//30 defaut value..perhaps possible to pass default value ??
     }
    
 }
 
-
+//main new fonction global to hide show and activated or not some functions - inverse, scope...
 void Locallab::mainChanged(int spottype, int selspot, bool iscolor, bool issh, bool isvib, bool isexpos, bool issoft, bool isblur, bool istom, bool isret, bool issharp, bool iscont, bool iscbdl, bool islog, bool ismas, bool iscie )
 {
     
