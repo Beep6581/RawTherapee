@@ -1584,6 +1584,8 @@ private:
     Gtk::Box* const modeHBoxcam;
     Gtk::Box* const modeHBoxcie;
     Gtk::Frame* const cieFrame;
+    MyExpander* const expcamscene;
+    
     Gtk::CheckButton* const Autograycie;
     Adjuster* const sourceGraycie;
     Adjuster* const sourceabscie;
@@ -1627,6 +1629,7 @@ private:
     Adjuster* const clarisoftjz;
     
     MyExpander* const expcam16;
+    MyExpander* const expcamviewing;
     
     Adjuster* const lightqcie;
     Adjuster* const contlcie;
