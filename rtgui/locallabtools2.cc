@@ -8017,7 +8017,7 @@ Locallabcie::Locallabcie():
     cieFBox->pack_start(*sigmoidjzFrame);
 
     cieFBox->pack_start(*surHBoxcie);
-    cieFBox->pack_start(*expprecam, false, false);
+    //cieFBox->pack_start(*expprecam, false, false);
 
 //    cieFrame->add(*cieFBox);
 //    pack_start(*cieFrame);
@@ -8026,6 +8026,7 @@ Locallabcie::Locallabcie():
     expcamscene->add(*cieFBox, false);
 
     pack_start(*expcamscene, false, false);
+    pack_start(*expprecam, false, false);
 
 
     ToolParamBlock* const jzallBox = Gtk::manage(new ToolParamBlock());
