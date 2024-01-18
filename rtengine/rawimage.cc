@@ -606,6 +606,11 @@ int RawImage::loadRaw(bool loadData, unsigned int imageNum, bool closeFile, Prog
         for (size_t i = 0; i < sizeof(cblack)/sizeof(unsigned); ++i) {
             cblack[i] = cd.cblack[i];
         }
+        // put the global black level where the rest of the code expects to find it
+        if (dng_version && isXtrans() && cblack[6] == 0 && black > 0) {
+            cblack[6] = black;
+        }
+
         for (int i = 0; i < 4; ++i) {
             cam_mul[i] = cd.cam_mul[i];
             pre_mul[i] = cd.pre_mul[i];
