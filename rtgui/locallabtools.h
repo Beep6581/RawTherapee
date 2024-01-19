@@ -56,6 +56,7 @@ protected:
         Simple = 2
     };
     rtengine::ProcEvent Evlocallabpreviewcol;
+    rtengine::ProcEvent Evlocallabpreviewexe;
 
     // LocallabTool parameters
     bool needMode;
@@ -309,7 +310,6 @@ private:
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
-//    void previewcolChanged();
     void curvactivChanged();
     void gridMethodChanged();
     void inversChanged();
@@ -354,6 +354,8 @@ private:
     Adjuster* const fatanchor;
     Adjuster* const gamex;
     Adjuster* const sensiex;
+    Gtk::ToggleButton* const previewexe;
+    
     Adjuster* const structexp;
     Adjuster* const blurexpde;
     MyExpander* const exptoolexp;
@@ -400,7 +402,7 @@ private:
     CurveEditorGroup* const mask2expCurveEditorG;
     DiagonalCurveEditor* const Lmaskexpshape;
 
-    sigc::connection expMethodConn, exnoiseMethodConn, inversexConn, normConn, showmaskexpMethodConn, showmaskexpMethodConninv, enaExpMaskConn, enaExpMaskaftConn;
+    sigc::connection expMethodConn, exnoiseMethodConn, previewexeConn, inversexConn, normConn, showmaskexpMethodConn, showmaskexpMethodConninv, enaExpMaskConn, enaExpMaskaftConn;
 
 public:
     LocallabExposure();
@@ -421,6 +423,7 @@ public:
     void adjusterChanged(Adjuster* a, double newval) override;
     void curveChanged(CurveEditor* ce) override;
     void updateguiexpos(int spottype);
+    void previewexeChanged();
 
 private:
     void enabledChanged() override;

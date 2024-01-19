@@ -965,7 +965,6 @@ LocallabColor::~LocallabColor()
 
 void LocallabColor::previewcolChanged()
 {
-   // curvactiv->get_active())
     if(previewcol->get_active()) {
         showmaskcolMethod->set_active(5);
     } else {
@@ -974,9 +973,7 @@ void LocallabColor::previewcolChanged()
     
     if (isLocActivated) {
         if (listener) {
-   
-                 listener->panelChanged(Evlocallabpreviewcol,"");
-                           //            M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            listener->panelChanged(Evlocallabpreviewcol,"");
         }
     } 
 }
@@ -1004,9 +1001,14 @@ void LocallabColor::updateguicolor(int spottype)
             if(spottype == 3) {
                 invers->hide();
                 sensi->hide();
+                showmaskcolMethod->set_active(0);
+                previewcol->hide();
+                previewcol->set_active(false);
+                resetMaskView();
             } else {
                 invers->show();
                 sensi->show();
+                previewcol->show();
             }
             enableListener();
 
@@ -2653,6 +2655,8 @@ LocallabExposure::LocallabExposure():
     fatanchor(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHOR"), 0.1, 100.0, 0.01, 50., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     gamex(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMC"), 0.5, 3.0, 0.05, 1.))),
     sensiex(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
+    previewexe(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
+    
     structexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL"), 0, 100, 1, 0))),
     blurexpde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
     exptoolexp(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPTOOL")))),
@@ -2702,6 +2706,8 @@ LocallabExposure::LocallabExposure():
     set_orientation(Gtk::ORIENTATION_VERTICAL);
     
     const LocallabParams::LocallabSpot defSpot;
+    auto m = ProcEventMapper::getInstance();
+    Evlocallabpreviewexe = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWEXE");
 
     // Parameter Exposure specific widgets
     expMethod->append(M("TP_LOCALLAB_STD"));
@@ -2783,6 +2789,12 @@ LocallabExposure::LocallabExposure():
     lowthrese->setAdjusterListener(this);
     higthrese->setAdjusterListener(this);
     decaye->setAdjusterListener(this);
+    
+    previewexe->set_active(false);
+    previewexeConn = previewexe->signal_clicked().connect(
+                       sigc::mem_fun(
+                           *this, &LocallabExposure::previewexeChanged));
+    
     setExpandAlignProperties(exprecove, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     normConn  = norm->signal_toggled().connect(sigc::mem_fun(*this, &LocallabExposure::normChanged));
 
@@ -2857,6 +2869,7 @@ LocallabExposure::LocallabExposure():
 
     // Add Color & Light specific widgets to GUI
     pack_start(*sensiex);
+    pack_start(*previewexe);
     pack_start(*reparexp);
     pack_start(*inversex);
     ToolParamBlock* const pdeBox = Gtk::manage(new ToolParamBlock());
@@ -2962,9 +2975,13 @@ void LocallabExposure::updateguiexpos(int spottype)
             if(spottype == 3) {
                 inversex->hide();
                 sensiex->hide();
+                previewexe->hide();
+                previewexe->set_active(false);
+                resetMaskView();
            } else {
                 inversex->show();
                 sensiex->show();
+                previewexe->show();
             }
             enableListener();
 
@@ -2974,6 +2991,22 @@ void LocallabExposure::updateguiexpos(int spottype)
     }
    
 }
+
+void LocallabExposure::previewexeChanged()
+{
+    if(previewexe->get_active()) {
+        showmaskexpMethod->set_active(5);
+    } else {
+        showmaskexpMethod->set_active(0);
+    }
+    
+    if (isLocActivated) {
+        if (listener) {
+            listener->panelChanged(Evlocallabpreviewexe,"");
+        }
+    } 
+}
+
 
 void LocallabExposure::resetMaskView()
 {
