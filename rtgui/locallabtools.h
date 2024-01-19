@@ -55,6 +55,7 @@ protected:
         Normal = 1,
         Simple = 2
     };
+    rtengine::ProcEvent Evlocallabpreviewcol;
 
     // LocallabTool parameters
     bool needMode;
@@ -190,6 +191,8 @@ private:
     MyComboBoxText* const gridMethod;
     Adjuster* const strengthgrid;
     Adjuster* const sensi;
+    Gtk::ToggleButton* const previewcol;
+    
     Adjuster* const structcol;
     Adjuster* const blurcolde;
     Adjuster* const softradiuscol;
@@ -268,7 +271,7 @@ private:
     FlatCurveEditor* const LLmaskcolshapewav;
     ThresholdAdjuster* const csThresholdcol;
 
-    sigc::connection curvactivConn, gridMethodConn, inversConn, qualitycurveMethodConn, toneMethodConn, specialConn, merMethodConn, mergecolMethodConn, showmaskcolMethodConn, showmaskcolMethodConninv, enaColorMaskConn, toolcolConn, fftColorMaskConn;
+    sigc::connection curvactivConn, previewcolConn, gridMethodConn, inversConn, qualitycurveMethodConn, toneMethodConn, specialConn, merMethodConn, mergecolMethodConn, showmaskcolMethodConn, showmaskcolMethodConninv, enaColorMaskConn, toolcolConn, fftColorMaskConn;
 
 public:
     LocallabColor();
@@ -297,6 +300,7 @@ public:
     void curveChanged(CurveEditor* ce) override;
     void updateguicolor(int spottype);
     void updateguiscopecolor(int scope);
+    void previewcolChanged();
 
 private:
     void enabledChanged() override;
@@ -305,7 +309,7 @@ private:
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
-
+//    void previewcolChanged();
     void curvactivChanged();
     void gridMethodChanged();
     void inversChanged();

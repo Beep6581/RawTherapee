@@ -6064,6 +6064,7 @@ void LocallabLog::updateGUIToMode(const modeType new_type)
             maskusablel->hide();
             maskunusablel->hide();
             decayl->hide();
+           
             break;
 
         case Normal:
@@ -6154,6 +6155,7 @@ void LocallabLog::convertParamToSimple()
     strlog->setValue(defSpot.strlog);
     anglog->setValue(defSpot.anglog);
     enaLMask->set_active(false);
+    showmaskLMethod->set_active(0);
     recothresl->setValue(defSpot.recothresl);
     lowthresl->setValue(defSpot.lowthresl);
     higthresl->setValue(defSpot.higthresl);
@@ -7422,6 +7424,7 @@ void LocallabMask::convertParamToSimple()
     // Set hidden specific GUI widgets in Simple mode to default spot values
     gammask->setValue(defSpot.gammask);
     slopmask->setValue(defSpot.slopmask);
+    
     //Lmask_shape->setCurve(defSpot.Lmask_curve);
 
     // Enable all listeners

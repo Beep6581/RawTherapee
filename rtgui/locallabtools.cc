@@ -448,6 +448,8 @@ LocallabColor::LocallabColor():
     gridMethod(Gtk::manage(new MyComboBoxText())),
     strengthgrid(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRGRID"), 0, 100, 1, 30))),
     sensi(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 30))),
+    previewcol(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
+    
     structcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL1"), 0, 100, 1, 0))),
     blurcolde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
     softradiuscol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 0.))),
@@ -528,6 +530,8 @@ LocallabColor::LocallabColor():
     LLmaskcolshapewav(static_cast<FlatCurveEditor*>(mask2CurveEditorGwav->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
     csThresholdcol(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 0, 9, 0, 0, 6, 5, 0, false)))
 {
+    auto m = ProcEventMapper::getInstance();
+    Evlocallabpreviewcol = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWCOL");
     
     set_orientation(Gtk::ORIENTATION_VERTICAL);
     
@@ -597,6 +601,11 @@ LocallabColor::LocallabColor():
     angcol->setAdjusterListener(this);
 
     setExpandAlignProperties(expcurvcol, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+    previewcol->set_active(false);
+    previewcolConn = previewcol->signal_clicked().connect(
+                       sigc::mem_fun(
+                           *this, &LocallabColor::previewcolChanged));
 
     qualitycurveMethod->append(M("TP_LOCALLAB_CURVNONE"));
     qualitycurveMethod->append(M("TP_LOCALLAB_CURVCURR"));
@@ -816,6 +825,7 @@ LocallabColor::LocallabColor():
     // Add Color & Light specific widgets to GUI
     pack_start(*reparcol);
     pack_start(*sensi);
+    pack_start(*previewcol);
     
     pack_start(*invers);
     ToolParamBlock* const lumBox = Gtk::manage(new ToolParamBlock());
@@ -951,6 +961,24 @@ LocallabColor::~LocallabColor()
     delete maskHCurveEditorG;
     delete mask2CurveEditorG;
     delete mask2CurveEditorGwav;
+}
+
+void LocallabColor::previewcolChanged()
+{
+   // curvactiv->get_active())
+    if(previewcol->get_active()) {
+        showmaskcolMethod->set_active(5);
+    } else {
+        showmaskcolMethod->set_active(0);
+    }
+    
+    if (isLocActivated) {
+        if (listener) {
+   
+                 listener->panelChanged(Evlocallabpreviewcol,"");
+                           //            M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+        }
+    } 
 }
 
 void LocallabColor::setListener(ToolPanelListener* tpl)
@@ -1602,7 +1630,7 @@ void LocallabColor::setDefaults(const rtengine::procparams::ProcParams* defParam
 void LocallabColor::adjusterChanged(Adjuster* a, double newval)
 {
     if (isLocActivated && exp->getEnabled()) {
-        if (a == lightness) {
+        if (a == lightness) {      
             if (listener) {
                 listener->panelChanged(Evlocallablightness,
                                        lightness->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
@@ -3686,6 +3714,7 @@ void LocallabExposure::convertParamToSimple()
     softradiusexp->setValue(defSpot.softradiusexp);
     enaExpMask->set_active(defSpot.enaExpMask);
     enaExpMaskaft->set_active(defSpot.enaExpMaskaft);
+    showmaskexpMethod->set_active(0);
     gamex->setValue(defSpot.gamex);
  //   CCmaskexpshape->setCurve(defSpot.CCmaskexpcurve);
  //   LLmaskexpshape->setCurve(defSpot.CCmaskexpcurve);
