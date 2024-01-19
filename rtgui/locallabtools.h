@@ -58,6 +58,7 @@ protected:
     rtengine::ProcEvent Evlocallabpreviewcol;
     rtengine::ProcEvent Evlocallabpreviewexe;
     rtengine::ProcEvent Evlocallabpreviewsh;
+    rtengine::ProcEvent Evlocallabpreviewvib;
 
     // LocallabTool parameters
     bool needMode;
@@ -566,6 +567,8 @@ private:
     Gtk::CheckButton* const avoidColorShift;
     Gtk::CheckButton* const pastSatTog;
     Adjuster* const sensiv;
+    Gtk::ToggleButton* const previewvib;
+    
     CurveEditorGroup* const curveEditorGG;
     DiagonalCurveEditor* const skinTonesCurve;
     MyExpander* const exprecovv;
@@ -596,7 +599,7 @@ private:
     CurveEditorGroup* const mask2vibCurveEditorG;
     DiagonalCurveEditor* const Lmaskvibshape;
 
-    sigc::connection pskinsConn, ashiftConn, pastsattogConn, showmaskvibMethodConn, enavibMaskConn;
+    sigc::connection pskinsConn, previewvibConn, ashiftConn, pastsattogConn, showmaskvibMethodConn, enavibMaskConn;
 
 public:
     LocallabVibrance();
@@ -625,6 +628,7 @@ public:
     void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR) override {}; // Not used
     std::vector<double> getCurvePoints(ThresholdSelector* tAdjuster) const override;
     void curveChanged(CurveEditor* ce) override;
+    void previewvibChanged();
 
 private:
     void enabledChanged() override;

@@ -8492,7 +8492,7 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
  
     const bool masshow = ((lp.showmask_met == 1) &&  senstype == 20);
 
-    const bool previewvib = ((lp.showmaskvibmet == 4) &&  senstype == 2);
+    const bool previewvib = ((lp.showmaskvibmet == 4) &&  senstype == 2 && lp.fullim != 3);
     const bool previewexp = ((lp.showmaskexpmet == 5) &&  senstype == 1  && lp.fullim != 3);
     const bool previewcol = ((lp.showmaskcolmet == 5) &&  senstype == 0  && lp.fullim != 3);
     const bool previewSH = ((lp.showmaskSHmet == 4) &&  senstype == 9 && lp.fullim != 3);

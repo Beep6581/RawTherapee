@@ -5351,6 +5351,7 @@ LocallabVibrance::LocallabVibrance():
     avoidColorShift(Gtk::manage(new Gtk::CheckButton(M("TP_VIBRANCE_AVOIDCOLORSHIFT")))),
     pastSatTog(Gtk::manage(new Gtk::CheckButton(M("TP_VIBRANCE_PASTSATTOG")))),
     sensiv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 30))),//reused - unused here, but used for normalize_mean_dt 
+    previewvib(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
     curveEditorGG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL"))),
     skinTonesCurve(static_cast<DiagonalCurveEditor*>(curveEditorGG->addCurve(CT_Diagonal, M("TP_VIBRANCE_CURVEEDITOR_SKINTONES")))),
     exprecovv(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
@@ -5382,6 +5383,9 @@ LocallabVibrance::LocallabVibrance():
     mask2vibCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     Lmaskvibshape(static_cast<DiagonalCurveEditor*>(mask2vibCurveEditorG->addCurve(CT_Diagonal, "L(L)")))
 {
+    auto m = ProcEventMapper::getInstance();
+    Evlocallabpreviewvib = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWVIB");
+    
     set_orientation(Gtk::ORIENTATION_VERTICAL);
     
     float R, G, B;
@@ -5446,6 +5450,11 @@ LocallabVibrance::LocallabVibrance():
     angvib->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
     angvib->setAdjusterListener(this);
 
+    previewvib->set_active(false);
+    previewvibConn = previewvib->signal_clicked().connect(
+                       sigc::mem_fun(
+                           *this, &LocallabVibrance::previewvibChanged));
+
     setExpandAlignProperties(expmaskvib, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     showmaskvibMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
@@ -5498,6 +5507,7 @@ LocallabVibrance::LocallabVibrance():
 
     // Add Vibrance specific widgets to GUI
     pack_start(*sensiv, Gtk::PACK_SHRINK, 0);//reused - nused here, but used for normalize_mean_dt 
+    pack_start(*previewvib, Gtk::PACK_SHRINK, 0);    
     pack_start(*saturated, Gtk::PACK_SHRINK, 0);
     pack_start(*pastels, Gtk::PACK_SHRINK, 0);
     pack_start(*vibgam, Gtk::PACK_SHRINK, 0);
@@ -5575,8 +5585,13 @@ void LocallabVibrance::updateguivib(int spottype)
 
             if(spottype == 3) {
                 sensiv->hide();
+                showmaskvibMethod->set_active(0);
+                previewvib->hide();
+                previewvib->set_active(false);
+                resetMaskView();
             } else {
                 sensiv->show();
+                previewvib->show();
             }
             enableListener();
 
@@ -5585,6 +5600,21 @@ void LocallabVibrance::updateguivib(int spottype)
         );
     }
    
+}
+
+void LocallabVibrance::previewvibChanged()
+{
+    if(previewvib->get_active()) {
+        showmaskvibMethod->set_active(4);
+    } else {
+        showmaskvibMethod->set_active(0);
+    }
+    
+    if (isLocActivated) {
+        if (listener) {
+            listener->panelChanged(Evlocallabpreviewvib,"");
+        }
+    } 
 }
 
 //new function scope
