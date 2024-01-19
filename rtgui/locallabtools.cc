@@ -4158,6 +4158,7 @@ LocallabShadow::LocallabShadow():
     s_tonalwidth(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_SHTONALW"), 10, 100, 1, 30))),
     sh_radius(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_RADIUS"), 0, 100, 1, 40))),
     sensihs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 30))),//reused - unused here, but used for normalize_mean_dt 
+    previewsh(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
     blurSHde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
     exprecovs(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
     maskusables(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
@@ -4195,6 +4196,9 @@ LocallabShadow::LocallabShadow():
     fatanchorSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHOR"), 1., 100., 1., 50., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     EvlocallabTePivot(ProcEventMapper::getInstance()->newEvent(AUTOEXP, "HISTORY_MSG_LOCALLAB_TE_PIVOT"))
 {
+    auto m = ProcEventMapper::getInstance();
+    Evlocallabpreviewsh = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWSH");
+    
     set_orientation(Gtk::ORIENTATION_VERTICAL);
     
     const LocallabParams::LocallabSpot defSpot;
@@ -4250,6 +4254,11 @@ LocallabShadow::LocallabShadow():
     inverssh->set_tooltip_text(M("TP_LOCALLAB_INVERS_TOOLTIP"));
 
     setExpandAlignProperties(expmasksh, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+    previewsh->set_active(false);
+    previewshConn = previewsh->signal_clicked().connect(
+                       sigc::mem_fun(
+                           *this, &LocallabShadow::previewshChanged));
 
     showmaskSHMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
     showmaskSHMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
@@ -4314,6 +4323,7 @@ LocallabShadow::LocallabShadow():
     // Add Shadow highlight specific widgets to GUI
     pack_start(*reparsh);
     pack_start(*sensihs);// reused / unused here, but used for normalize_mean_dt 
+    pack_start(*previewsh);
     
     pack_start(*inverssh);
     pack_start(*shMethod);
@@ -4397,6 +4407,22 @@ void LocallabShadow::resetMaskView()
     showmaskSHMethodConninv.block(false);
 }
 
+void LocallabShadow::previewshChanged()
+{
+    if(previewsh->get_active()) {
+        showmaskSHMethod->set_active(4);
+    } else {
+        showmaskSHMethod->set_active(0);
+    }
+    
+    if (isLocActivated) {
+        if (listener) {
+            listener->panelChanged(Evlocallabpreviewsh,"");
+        }
+    } 
+}
+
+
 //new function Global
 void LocallabShadow::updateguishad(int spottype)
 {
@@ -4411,9 +4437,14 @@ void LocallabShadow::updateguishad(int spottype)
             if(spottype == 3) {
                 inverssh->hide();
                 sensihs->hide();
+                showmaskSHMethod->set_active(0);
+                previewsh->hide();
+                previewsh->set_active(false);
+                resetMaskView();
             } else {
                 sensihs->show();
                 inverssh->show();
+                previewsh->show();
             }
             enableListener();
 

@@ -57,6 +57,7 @@ protected:
     };
     rtengine::ProcEvent Evlocallabpreviewcol;
     rtengine::ProcEvent Evlocallabpreviewexe;
+    rtengine::ProcEvent Evlocallabpreviewsh;
 
     // LocallabTool parameters
     bool needMode;
@@ -466,6 +467,8 @@ private:
     Adjuster* const s_tonalwidth;
     Adjuster* const sh_radius;
     Adjuster* const sensihs;
+    Gtk::ToggleButton* const previewsh;
+    
     Adjuster* const blurSHde;
     MyExpander* const exprecovs;
     Gtk::Label* const maskusables;
@@ -503,7 +506,7 @@ private:
 
     rtengine::ProcEvent EvlocallabTePivot;
 
-    sigc::connection shMethodConn, inversshConn, showmaskSHMethodConn, showmaskSHMethodConninv, enaSHMaskConn;
+    sigc::connection shMethodConn, previewshConn, inversshConn, showmaskSHMethodConn, showmaskSHMethodConninv, enaSHMaskConn;
 
 public:
     LocallabShadow();
@@ -525,6 +528,7 @@ public:
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void adjusterChanged(Adjuster* a, double newval) override;
     void curveChanged(CurveEditor* ce) override;
+    void previewshChanged();
 
 private:
     void enabledChanged() override;
