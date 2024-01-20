@@ -59,6 +59,8 @@ protected:
     rtengine::ProcEvent Evlocallabpreviewexe;
     rtengine::ProcEvent Evlocallabpreviewsh;
     rtengine::ProcEvent Evlocallabpreviewvib;
+    rtengine::ProcEvent Evlocallabpreviewtm;
+    rtengine::ProcEvent Evlocallabpreviewlc;
 
     // LocallabTool parameters
     bool needMode;
@@ -725,6 +727,7 @@ private:
     Adjuster* const lowthres;
     Adjuster* const higthres;
     Adjuster* const sensibn;
+    
     MyComboBoxText* const blurMethod;
     Gtk::CheckButton* const invbl;
     MyComboBoxText* const chroMethod;
@@ -787,6 +790,7 @@ private:
     Adjuster* const nlgam;
     Adjuster* const bilateral;
     Adjuster* const sensiden;
+    
     Adjuster* const reparden;
     Gtk::Button* neutral;
     MyExpander* const expmaskbl;
@@ -891,6 +895,8 @@ private:
     Adjuster* const rewei;
     Adjuster* const softradiustm;
     Adjuster* const sensitm;
+    Gtk::ToggleButton* const previewtm;
+    
     MyExpander* const exprecovt;
     Gtk::Label* const maskusablet;
     Gtk::Label* const maskunusablet;
@@ -915,7 +921,7 @@ private:
     CurveEditorGroup* const mask2tmCurveEditorG;
     DiagonalCurveEditor* const Lmasktmshape;
 
-    sigc::connection equiltmConn, showmasktmMethodConn, enatmMaskConn, enatmMaskaftConn;
+    sigc::connection equiltmConn, previewtmConn, showmasktmMethodConn, enatmMaskConn, enatmMaskaftConn;
 
 public:
     LocallabTone();
@@ -927,7 +933,7 @@ public:
 
     void updateAdviceTooltips(const bool showTooltips) override;
     void updateguitone(int spottype);
-
+    void previewtmChanged();
     void setDefaultExpanderVisibility() override;
     void disableListener() override;
     void enableListener() override;
@@ -1139,6 +1145,8 @@ private:
     Adjuster* const residgam;
     Adjuster* const residslop;
     Adjuster* const sensilc;
+    Gtk::ToggleButton* const previewlc;
+   
     Adjuster* const reparw;
     Gtk::Frame* const clariFrame;
     Adjuster* const clarilres;
@@ -1214,7 +1222,7 @@ private:
     CurveEditorGroup* const mask2lcCurveEditorG;
     DiagonalCurveEditor* const Lmasklcshape;
 
-    sigc::connection localcontMethodConn, origlcConn, wavgradlConn, wavedgConn, localedgMethodConn, waveshowConn, localneiMethodConn, wavblurConn, blurlcConn, wavcontConn, wavcompreConn, wavcompConn, fftwlcConn, showmasklcMethodConn, enalcMaskConn;
+    sigc::connection localcontMethodConn, previewlcConn, origlcConn, wavgradlConn, wavedgConn, localedgMethodConn, waveshowConn, localneiMethodConn, wavblurConn, blurlcConn, wavcontConn, wavcompreConn, wavcompConn, fftwlcConn, showmasklcMethodConn, enalcMaskConn;
 
 public:
     LocallabContrast();
@@ -1240,6 +1248,7 @@ public:
     void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override {}; // Not used
     void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR) override;
     void curveChanged(CurveEditor* ce) override;
+    void previewlcChanged();
 
 private:
     void enabledChanged() override;

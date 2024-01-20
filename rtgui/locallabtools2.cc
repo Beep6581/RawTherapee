@@ -130,6 +130,7 @@ LocallabTone::LocallabTone():
     rewei(Gtk::manage(new Adjuster(M("TP_LOCALLAB_REWEI"), 0, 3, 1, 0))),
     softradiustm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.1, 0.))),//unused here, but used for normalize_mean_dt 
     sensitm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
+    previewtm(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
     exprecovt(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
     maskusablet(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
     maskunusablet(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUNUSABLE")))),
@@ -155,6 +156,9 @@ LocallabTone::LocallabTone():
     mask2tmCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     Lmasktmshape(static_cast<DiagonalCurveEditor*>(mask2tmCurveEditorG->addCurve(CT_Diagonal, "L(L)")))
 {
+    auto m = ProcEventMapper::getInstance();
+    Evlocallabpreviewtm = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWTM");
+    
     set_orientation(Gtk::ORIENTATION_VERTICAL);
     
     const LocallabParams::LocallabSpot defSpot;
@@ -188,6 +192,11 @@ LocallabTone::LocallabTone():
     higthrest->setAdjusterListener(this);
     decayt->setAdjusterListener(this);
     setExpandAlignProperties(exprecovt, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+    previewtm->set_active(false);
+    previewtmConn = previewtm->signal_clicked().connect(
+                       sigc::mem_fun(
+                           *this, &LocallabTone::previewtmChanged));
 
     setExpandAlignProperties(expmasktm, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
@@ -244,6 +253,7 @@ LocallabTone::LocallabTone():
     // Add Tone Mapping specific widgets to GUI
     // pack_start(*amount); // To use if we change transit_shapedetect parameters
     pack_start(*sensitm);
+    pack_start(*previewtm);
     pack_start(*repartm);
     pack_start(*separatortm);
     pack_start(*stren);
@@ -406,8 +416,17 @@ void LocallabTone::updateguitone(int spottype)
 
             if(spottype == 3) {
                 sensitm->hide();
+             //   showmasktmMethodConn.block(true);
+                showmasktmMethod->set_active(0);
+             //   showmasktmMethodConn.block(false);
+                previewtm->hide();
+             //   previewtmConn.block(true);
+                previewtm->set_active(false);
+             //   previewtmConn.block(false);
+                resetMaskView();
             } else {
                 sensitm->show();
+                previewtm->show();
            }
             enableListener();
 
@@ -418,6 +437,23 @@ void LocallabTone::updateguitone(int spottype)
    
 }
 
+void LocallabTone::previewtmChanged()
+{
+   //  showmasktmMethodConn.block(true);
+   
+    if(previewtm->get_active()) {
+        showmasktmMethod->set_active(4);
+    } else {
+        showmasktmMethod->set_active(0);
+    }
+  //   showmasktmMethodConn.block(false);
+    
+    if (isLocActivated) {
+        if (listener) {
+            listener->panelChanged(Evlocallabpreviewtm,"");
+        }
+    } 
+}
 
 void LocallabTone::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
 {
@@ -2470,6 +2506,7 @@ LocallabContrast::LocallabContrast():
     residgam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMSH"), 0.25, 15.0, 0.01, 2.4))),
     residslop(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOSH"), 0.0, 500.0, 0.01, 12.92))),
     sensilc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
+    previewlc(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
     reparw(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
     clariFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CLARIFRA")))),
     clarilres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARILRES"), -20., 100., 0.5, 0.))),
@@ -2547,6 +2584,9 @@ LocallabContrast::LocallabContrast():
     mask2lcCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     Lmasklcshape(static_cast<DiagonalCurveEditor*>(mask2lcCurveEditorG->addCurve(CT_Diagonal, "L(L)")))
 {
+    auto m = ProcEventMapper::getInstance();
+    Evlocallabpreviewlc = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWLC");
+    
     set_orientation(Gtk::ORIENTATION_VERTICAL);
     
     const LocallabParams::LocallabSpot defSpot;
@@ -2793,6 +2833,11 @@ LocallabContrast::LocallabContrast():
 
     setExpandAlignProperties(expmasklc, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
+    previewlc->set_active(false);
+    previewlcConn = previewlc->signal_clicked().connect(
+                       sigc::mem_fun(
+                           *this, &LocallabContrast::previewlcChanged));
+
     showmasklcMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
     showmasklcMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
     showmasklcMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
@@ -2837,6 +2882,7 @@ LocallabContrast::LocallabContrast():
 
     // Add Local contrast specific widgets to GUI
     pack_start(*sensilc);
+    pack_start(*previewlc);
     pack_start(*reparw);
     pack_start(*localcontMethod);
     pack_start(*lcradius);
@@ -3043,8 +3089,14 @@ void LocallabContrast::updateguicont(int spottype)
 
             if(spottype == 3) {
                 sensilc->hide();
+                showmasklcMethod->set_active(0);
+                previewlc->hide();
+                previewlc->set_active(false);
+                resetMaskView();
+                
             } else {
                 sensilc->show();
+                previewlc->show();
             }
             enableListener();
 
@@ -3055,6 +3107,20 @@ void LocallabContrast::updateguicont(int spottype)
    
 }
 
+void LocallabContrast::previewlcChanged()
+{
+    if(previewlc->get_active()) {
+        showmasklcMethod->set_active(4);
+    } else {
+        showmasklcMethod->set_active(0);
+    }
+    
+    if (isLocActivated) {
+        if (listener) {
+            listener->panelChanged(Evlocallabpreviewlc,"");
+        }
+    } 
+}
 
 void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
 {

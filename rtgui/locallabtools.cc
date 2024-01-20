@@ -965,14 +965,12 @@ LocallabColor::~LocallabColor()
 
 void LocallabColor::previewcolChanged()
 {
-     showmaskcolMethodConn.block(true);
    
     if(previewcol->get_active()) {
         showmaskcolMethod->set_active(5);
     } else {
         showmaskcolMethod->set_active(0);
     }
-     showmaskcolMethodConn.block(false);
     
     if (isLocActivated) {
         if (listener) {
@@ -1004,17 +1002,19 @@ void LocallabColor::updateguicolor(int spottype)
             if(spottype == 3) {
                 invers->hide();
                 sensi->hide();
-                showmaskcolMethodConn.block(true);
-                showmaskcolMethod->set_active(0);
-                showmaskcolMethodConn.block(false);
-                
+                showmaskcolMethod->set_active(0);               
                 previewcol->hide();
                 previewcol->set_active(false);
                 resetMaskView();
             } else {
                 invers->show();
                 sensi->show();
-                previewcol->show();
+                if(!invers->get_active()) {
+                    previewcol->show();
+                } else {
+                    previewcol->hide();
+                }
+                
             }
             enableListener();
 
@@ -2982,14 +2982,18 @@ void LocallabExposure::updateguiexpos(int spottype)
                 inversex->hide();
                 sensiex->hide();
                 previewexe->hide();
-                showmaskexpMethodConn.block(true);
+                showmaskexpMethod->set_active(0);
                 previewexe->set_active(false);
-                showmaskexpMethodConn.block(false);
+                
                 resetMaskView();
            } else {
                 inversex->show();
                 sensiex->show();
-                previewexe->show();
+                if(!inversex->get_active()) {
+                    previewexe->show();
+                } else {
+                    previewexe->hide();
+                }
             }
             enableListener();
 
@@ -3002,14 +3006,12 @@ void LocallabExposure::updateguiexpos(int spottype)
 
 void LocallabExposure::previewexeChanged()
 {
-    showmaskexpMethodConn.block(true);
     
     if(previewexe->get_active()) {
         showmaskexpMethod->set_active(5);
     } else {
         showmaskexpMethod->set_active(0);
     }
-    showmaskexpMethodConn.block(false);
     
     if (isLocActivated) {
         if (listener) {
@@ -4420,14 +4422,12 @@ void LocallabShadow::resetMaskView()
 
 void LocallabShadow::previewshChanged()
 {
-    showmaskSHMethodConn.block(true);
     
     if(previewsh->get_active()) {
         showmaskSHMethod->set_active(4);
     } else {
         showmaskSHMethod->set_active(0);
     }
-    showmaskSHMethodConn.block(false);
     
     if (isLocActivated) {
         if (listener) {
@@ -4451,16 +4451,19 @@ void LocallabShadow::updateguishad(int spottype)
             if(spottype == 3) {
                 inverssh->hide();
                 sensihs->hide();
-                showmaskSHMethodConn.block(true);
                 showmaskSHMethod->set_active(0);
-                showmaskSHMethodConn.block(false);
                 previewsh->hide();
                 previewsh->set_active(false);
                 resetMaskView();
             } else {
                 sensihs->show();
                 inverssh->show();
-                previewsh->show();
+                if(!inverssh->get_active()) {
+                    previewsh->show();
+                } else {
+                    previewsh->hide();
+                }
+                
             }
             enableListener();
 
@@ -5601,9 +5604,7 @@ void LocallabVibrance::updateguivib(int spottype)
 
             if(spottype == 3) {
                 sensiv->hide();
-                showmaskvibMethodConn.block(true);
                 showmaskvibMethod->set_active(0);
-                showmaskvibMethodConn.block(false);
                 previewvib->hide();
                 previewvib->set_active(false);
                 resetMaskView();
@@ -5622,14 +5623,12 @@ void LocallabVibrance::updateguivib(int spottype)
 
 void LocallabVibrance::previewvibChanged()
 {
-    showmaskvibMethodConn.block(true);
     
     if(previewvib->get_active()) {
         showmaskvibMethod->set_active(4);
     } else {
         showmaskvibMethod->set_active(0);
     }
-    showmaskvibMethodConn.block(false);
     
     if (isLocActivated) {
         if (listener) {
