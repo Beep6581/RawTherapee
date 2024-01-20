@@ -2870,18 +2870,25 @@ void ControlSpotPanel::deleteControlSpot(const int index)
 }
 
 //new function linked to Global and options 
-void ControlSpotPanel::updateguiset(int spottype)
+void ControlSpotPanel::updateguiset(int spottype, bool iscolor, bool issh, bool isvib, bool isexpos, bool issoft, bool isblur, bool istom, bool isret, bool issharp, bool iscont, bool iscbdl, bool islog, bool ismas, bool iscie)
 {
     {  //with this function we can 1) activate Settings SpotMethod
         // also if need GUI for mask ,  todo...
         idle_register.add(
-        [this, spottype]() -> bool {
+        [this, spottype, iscolor, issh , isvib, isexpos, issoft, isblur, istom, isret, issharp, iscont, iscbdl, islog, ismas, iscie]() -> bool {
             GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
 
             // Update GUI fullimage or main
             disableListener();
             if(spottype >= 2  && options.spotmet >= 2) {//optimize update
                 spotMethodChanged();
+            }
+            
+            if((iscolor || issh || isvib || isexpos || istom || iscont || iscbdl || islog || ismas || iscie)
+                && !issharp && !issoft && !isret && !isblur) {
+                preview_->hide();               
+            } else if (issoft || isblur || isret || issharp) {
+                preview_->show(); 
             }
             enableListener();
 

@@ -2847,7 +2847,7 @@ TP_LOCALLAB_CLARI_TOOLTIP;Levels 0 to 4 (included): 'Sharp mask' is enabled\nLev
 TP_LOCALLAB_CLIPTM;Clip restored data (gain)
 TP_LOCALLAB_COFR;Color & Light
 TP_LOCALLAB_COLORDE;ΔE preview color - intensity
-TP_LOCALLAB_COLORDEPREV_TOOLTIP;Preview ΔE button will only work if you have activated one (and only one) of the tools in 'Add tool to current spot' menu.\nTo be able to preview ΔE with several tools enabled, use Mask and modifications - Preview ΔE.
+TP_LOCALLAB_COLORDEPREV_TOOLTIP;Preview ΔE button in Settings will only work if you have activated 'Sharpening' or 'Soft Light and Original Retinex' or 'Blur/Grain and Denoise' or 'Dehaze and Retinex' or 'Contrast by Detail Levels' in 'Add tool to current spot' menu.\nFor others tools Preview ΔE button is 'in the tool' - to be able to preview ΔE with several tools enabled, use preferably Mask and modifications.
 TP_LOCALLAB_COLORDE_TOOLTIP;Show a blue color preview for ΔE selection if negative and green if positive.\n\nMask and modifications (show modified areas without mask): show actual modifications if positive, show enhanced modifications (luminance only) with blue and yellow if negative.
 TP_LOCALLAB_COLORSCOPE;Scope (color tools)
 TP_LOCALLAB_COLORSCOPE_TOOLTIP;Common Scope slider for Color and Light, Shadows/Highlights, Vibrance.\nOther tools have their own scope controls.

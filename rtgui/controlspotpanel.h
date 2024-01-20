@@ -223,7 +223,7 @@ public:
     /**
      * upadte function to work with Preferences and spotMethod
     */
-    void updateguiset(int spottype);
+    void updateguiset(int spottype, bool iscolor,  bool issh, bool isvib, bool isexpos, bool issoft, bool isblur, bool istom, bool isret, bool issharp, bool iscont, bool iscbdl, bool islog, bool ismas, bool iscie);
     void updateguiscopeset(int scope);
 
 private:

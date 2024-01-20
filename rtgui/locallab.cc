@@ -1235,7 +1235,7 @@ void Locallab::mainChanged(int spottype, int selspot, bool iscolor, bool issh, b
     }
     
     
-    expsettings->updateguiset(spottype);
+    expsettings->updateguiset(spottype, iscolor, issh, isvib, isexpos, issoft, isblur, istom, isret, issharp, iscont, iscbdl, islog, ismas, iscie);
    
 }
 
