@@ -5473,6 +5473,7 @@ LocallabLog::LocallabLog():
     decayl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKDDECAY"), 0.5, 4., 0.1, 2.))),
 
     sensilog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
+    previewlog(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
     gradlogFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADLOGFRA")))),
     strlog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -2.0, 2.0, 0.05, 0.))),
     anglog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
@@ -5492,6 +5493,9 @@ LocallabLog::LocallabLog():
   
     
 {
+    auto m = ProcEventMapper::getInstance();
+    Evlocallabpreviewlog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWLOG");
+    
     set_orientation(Gtk::ORIENTATION_VERTICAL);
     
     // Parameter Log encoding specific widgets
@@ -5592,6 +5596,11 @@ LocallabLog::LocallabLog():
 
     setExpandAlignProperties(expmaskL, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
+    previewlog->set_active(false);
+    previewlogConn = previewlog->signal_clicked().connect(
+                       sigc::mem_fun(
+                           *this, &LocallabLog::previewlogChanged));
+
     showmaskLMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
     showmaskLMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
     showmaskLMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
@@ -5635,6 +5644,8 @@ LocallabLog::LocallabLog():
 
     // Add Log encoding specific widgets to GUI
     pack_start(*sensilog);
+    pack_start(*previewlog);
+    
     pack_start(*repar);
     pack_start(*ciecam);
     logPFrame->set_label_align(0.025, 0.5);
@@ -5748,8 +5759,14 @@ void LocallabLog::updateguilog(int spottype)
 
             if(spottype == 3) {
                 sensilog->hide();
+                showmaskLMethod->set_active(0);               
+                previewlog->hide();
+                previewlog->set_active(false);
+                resetMaskView();
+                
             } else {
                 sensilog->show();
+                previewlog->show();
             }
             enableListener();
 
@@ -5759,6 +5776,23 @@ void LocallabLog::updateguilog(int spottype)
     }
    
 }
+
+void LocallabLog::previewlogChanged()
+{
+   
+    if(previewlog->get_active()) {
+        showmaskLMethod->set_active(4);
+    } else {
+        showmaskLMethod->set_active(0);
+    }
+    
+    if (isLocActivated) {
+        if (listener) {
+            listener->panelChanged(Evlocallabpreviewlog,"");
+        }
+    } 
+}
+
 
 void LocallabLog::updateAdviceTooltips(const bool showTooltips)
 {

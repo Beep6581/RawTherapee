@@ -8499,9 +8499,9 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
     const bool previewtm = ((lp.showmasktmmet == 4) &&  senstype == 8 && lp.fullim != 3);
     const bool previewlc = ((lp.showmasklcmet == 4) &&  senstype == 10 && lp.fullim != 3);
     const bool previeworig = ((lp.showmasksoftmet == 6) &&  senstype == 3 && lp.softmet == 1);
-    const bool previewmas = ((lp.showmask_met == 3) &&  senstype == 20);
-    const bool previewlog = ((lp.showmasklogmet == 4) &&  senstype == 11);
-    const bool previewcie = ((lp.showmaskciemet == 4) &&  senstype == 31);
+    const bool previewmas = ((lp.showmask_met == 3) &&  senstype == 20  && lp.fullim != 3);
+    const bool previewlog = ((lp.showmasklogmet == 4) &&  senstype == 11  && lp.fullim != 3);
+    const bool previewcie = ((lp.showmaskciemet == 4) &&  senstype == 31  && lp.fullim != 3);
 
     float radius = 3.f / sk;
 

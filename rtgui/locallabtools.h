@@ -61,6 +61,7 @@ protected:
     rtengine::ProcEvent Evlocallabpreviewvib;
     rtengine::ProcEvent Evlocallabpreviewtm;
     rtengine::ProcEvent Evlocallabpreviewlc;
+    rtengine::ProcEvent Evlocallabpreviewlog;
 
     // LocallabTool parameters
     bool needMode;
@@ -1409,6 +1410,8 @@ private:
     Adjuster* const decayl;
     
     Adjuster* const sensilog;
+    Gtk::ToggleButton* const previewlog;
+    
     Gtk::Frame* const gradlogFrame;
     Adjuster* const strlog;
     Adjuster* const anglog;
@@ -1427,7 +1430,7 @@ private:
 
     sigc::connection autoconn, ciecamconn, fullimageConn, AutograyConn;
     sigc::connection  surroundconn, sursourconn;
-    sigc::connection showmaskLMethodConn, enaLMaskConn;
+    sigc::connection showmaskLMethodConn, enaLMaskConn, previewlogConn;
 public:
     LocallabLog();
     ~LocallabLog();
@@ -1436,6 +1439,7 @@ public:
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask) override;
     void updateguilog(int spottype);
+    void previewlogChanged();
 
     void updateAdviceTooltips(const bool showTooltips) override;
     void surroundChanged();
