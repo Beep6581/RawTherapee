@@ -7685,6 +7685,8 @@ Locallabcie::Locallabcie():
     LocallabTool(this, M("TP_LOCALLAB_CIE_TOOLNAME"), M("TP_LOCALLAB_CIE"), false),
     // ciecam specific widgets
     sensicie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
+    previewcie(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
+    
     reparcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
     jabcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_JAB")))),
     modecam(Gtk::manage (new MyComboBoxText ())),
@@ -7836,6 +7838,9 @@ Locallabcie::Locallabcie():
    
    
     {
+    auto m = ProcEventMapper::getInstance();
+    Evlocallabpreviewcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWCIE");
+        
     set_orientation(Gtk::ORIENTATION_VERTICAL);
     
     // Parameter Ciecam specific widgets
@@ -7845,6 +7850,7 @@ Locallabcie::Locallabcie():
 
 
     pack_start(*sensicie);
+    pack_start(*previewcie);
     pack_start(*reparcie);
     modeHBoxcam->set_spacing (2);
     //modeHBoxcam->set_tooltip_markup (M ("TP_LOCALLAB_CAMMODE_TOOLTIP"));
@@ -8365,6 +8371,11 @@ Locallabcie::Locallabcie():
 
     setExpandAlignProperties(expmaskcie, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
+    previewcie->set_active(false);
+    previewcieConn = previewcie->signal_clicked().connect(
+                       sigc::mem_fun(
+                           *this, &Locallabcie::previewcieChanged));
+
     showmaskcieMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
     showmaskcieMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
     showmaskcieMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
@@ -8479,8 +8490,13 @@ void Locallabcie::updateguicie(int spottype)
 
             if(spottype == 3) {
                 sensicie->hide();
+                showmaskcieMethod->set_active(0);               
+                previewcie->hide();
+                previewcie->set_active(false);
+                resetMaskView();
             } else {
                 sensicie->show();
+                previewcie->show();
            }
             enableListener();
 
@@ -8491,6 +8507,21 @@ void Locallabcie::updateguicie(int spottype)
    
 }
 
+void Locallabcie::previewcieChanged()
+{
+   
+    if(previewcie->get_active()) {
+        showmaskcieMethod->set_active(4);
+    } else {
+        showmaskcieMethod->set_active(0);
+    }
+    
+    if (isLocActivated) {
+        if (listener) {
+            listener->panelChanged(Evlocallabpreviewcie,"");
+        }
+    } 
+}
 
 void Locallabcie::setDefaultExpanderVisibility()
 {

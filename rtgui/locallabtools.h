@@ -62,6 +62,7 @@ protected:
     rtengine::ProcEvent Evlocallabpreviewtm;
     rtengine::ProcEvent Evlocallabpreviewlc;
     rtengine::ProcEvent Evlocallabpreviewlog;
+    rtengine::ProcEvent Evlocallabpreviewcie;
 
     // LocallabTool parameters
     bool needMode;
@@ -1484,6 +1485,7 @@ class LocallabMask:
 {
 private:
     Adjuster* const sensimask;
+    
     Adjuster* const blendmask;
     Adjuster* const blendmaskab;
     Adjuster* const softradiusmask;
@@ -1572,6 +1574,8 @@ class Locallabcie:
 {
 private:
     Adjuster* const sensicie;
+    Gtk::ToggleButton* const previewcie;
+    
     Adjuster* const reparcie;
     Gtk::CheckButton* const jabcie;
     MyComboBoxText*  const modecam;
@@ -1727,7 +1731,7 @@ private:
     CurveEditorGroup* const mask2cieCurveEditorG;
     DiagonalCurveEditor* const Lmaskcieshape;
     
-    sigc::connection AutograycieConn,  forcejzConn, forcebwConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, sigmoidqjcieconn, logcieconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2;
+    sigc::connection AutograycieConn,  previewcieConn, forcejzConn, forcebwConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, sigmoidqjcieconn, logcieconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2;
 public:
     Locallabcie();
     ~Locallabcie();
@@ -1739,7 +1743,7 @@ public:
     void updateAdviceTooltips(const bool showTooltips) override;
     void setDefaultExpanderVisibility() override;
     void updateguicie(int spottype);
-
+    void previewcieChanged();
     void disableListener() override;
     void enableListener() override;
     void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
