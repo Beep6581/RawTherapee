@@ -6823,6 +6823,7 @@ LocallabMask::LocallabMask():
 
     // Common mask specific widgets
     sensimask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
+    previewmas(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
     blendmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKMASK"), -100., 100., 0.1, -10.))),
     blendmaskab(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKMASKAB"), -100., 100., 0.1, -10.))),
     softradiusmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 1.))),
@@ -6858,6 +6859,9 @@ LocallabMask::LocallabMask():
     str_mask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -2., 2., 0.05, 0.))),
     ang_mask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180., 180., 0.1, 0.)))
 {
+
+    auto m = ProcEventMapper::getInstance();
+    Evlocallabpreviewmas = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWMAS");
     
     set_orientation(Gtk::ORIENTATION_VERTICAL);
     
@@ -6873,6 +6877,11 @@ LocallabMask::LocallabMask():
     blendmaskab->setAdjusterListener(this);
 
     softradiusmask->setAdjusterListener(this);
+
+    previewmas->set_active(false);
+    previewmasConn = previewmas->signal_clicked().connect(
+                       sigc::mem_fun(
+                           *this, &LocallabMask::previewmasChanged));
 
     showmask_Method->append(M("TP_LOCALLAB_SHOWMNONE"));
     showmask_Method->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
@@ -6965,6 +6974,7 @@ LocallabMask::LocallabMask():
 
     // Add Common mask specific widgets to GUI
     pack_start(*sensimask);
+    pack_start(*previewmas);
     pack_start(*blendmask);
     pack_start(*blendmaskab);
     pack_start(*softradiusmask);
@@ -7040,9 +7050,15 @@ void LocallabMask::updateguimask(int spottype)
 
             if(spottype == 3) {
                 sensimask->hide();
+                showmask_Method->set_active(0);               
+                previewmas->hide();
+                previewmas->set_active(false);
+                resetMaskView();
+                
             } else {
                 sensimask->show();
-            }
+                previewmas->show();
+           }
             enableListener();
 
         return false;
@@ -7052,6 +7068,21 @@ void LocallabMask::updateguimask(int spottype)
    
 }
 
+void LocallabMask::previewmasChanged()
+{
+   
+    if(previewmas->get_active()) {
+        showmask_Method->set_active(3);
+    } else {
+        showmask_Method->set_active(0);
+    }
+    
+    if (isLocActivated) {
+        if (listener) {
+            listener->panelChanged(Evlocallabpreviewmas,"");
+        }
+    } 
+}
 
 
 void LocallabMask::updateAdviceTooltips(const bool showTooltips)

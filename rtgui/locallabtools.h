@@ -63,6 +63,7 @@ protected:
     rtengine::ProcEvent Evlocallabpreviewlc;
     rtengine::ProcEvent Evlocallabpreviewlog;
     rtengine::ProcEvent Evlocallabpreviewcie;
+    rtengine::ProcEvent Evlocallabpreviewmas;
 
     // LocallabTool parameters
     bool needMode;
@@ -1485,6 +1486,7 @@ class LocallabMask:
 {
 private:
     Adjuster* const sensimask;
+    Gtk::ToggleButton* const previewmas;
     
     Adjuster* const blendmask;
     Adjuster* const blendmaskab;
@@ -1520,7 +1522,7 @@ private:
     Adjuster* const str_mask;
     Adjuster* const ang_mask;
 
-    sigc::connection showmask_MethodConn, enamaskConn, toolmaskConn, fftmaskConn;
+    sigc::connection showmask_MethodConn, previewmasConn, enamaskConn, toolmaskConn, fftmaskConn;
 
 public:
     LocallabMask();
@@ -1532,6 +1534,7 @@ public:
 
     void updateAdviceTooltips(const bool showTooltips) override;
     void updateguimask(int spottype);
+    void previewmasChanged();
 
     void disableListener() override;
     void enableListener() override;
