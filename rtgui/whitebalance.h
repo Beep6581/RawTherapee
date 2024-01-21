@@ -85,6 +85,7 @@ protected:
     Gtk::CheckButton* itcwb_alg;
     MyComboBoxText* itcwb_prim;
     Adjuster* itcwb_green;
+    std::unique_ptr<Adjuster> compatVersionAdjuster;
     
     bool lastitcwb_alg;
 

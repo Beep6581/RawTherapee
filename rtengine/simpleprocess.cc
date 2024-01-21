@@ -295,11 +295,17 @@ private:
 
         if (!params.wb.enabled) {
             currWB = ColorTemp();
-        } else if (params.wb.method == "Camera" || (params.wb.method == "autitcgreen" && !imgsrc->isRAW() && flush)) {//Use also Camera settings for Temperature correlation and TIF/Jpg
+        } else if (params.wb.method == "Camera" || (params.wb.method == "autitcgreen" && params.wb.compat_version >= 2 && !imgsrc->isRAW() && flush)) {//Use also Camera settings for Temperature correlation and TIF/Jpg
             currWB = imgsrc->getWB();
         } else if (params.wb.method == "autold") {//for Auto RGB
             double rm, gm, bm;
-            imgsrc->getAutoWBMultipliers(rm, gm, bm);
+            if (params.wb.compat_version == 1 && !imgsrc->isRAW()) {
+                // RGB grey compatibility version 1 used the identity
+                // multipliers plus temperature bias for non-raw files.
+                rm = gm = bm = 1.;
+            } else {
+                imgsrc->getAutoWBMultipliers(rm, gm, bm);
+            }
             currWB.update(rm, gm, bm, params.wb.equal, params.wb.observer, params.wb.tempBias);
 
         } else if (autowb) {//for auto Itcwb - flush to enable only when batch only with Raw files
@@ -522,6 +528,14 @@ private:
                 }
 
                 currWB = autoWB;
+        } else if (params.wb.method == "autitcgreen" && params.wb.compat_version == 1 && !imgsrc->isRAW() && flush) {
+            // ITCWB compatibility version 1 used 5000 K and observer 10 degrees
+            // for non-raw files.
+            currWB = ColorTemp(5000., 1., 1., params.wb.method, StandardObserver::TEN_DEGREES);
+            currWB.convertObserver(params.wb.observer);
+            params.wb.temperature = currWB.getTemp();
+            params.wb.green = currWB.getGreen();
+            params.wb.equal = currWB.getEqual();
         }
         //end WB auto
         
