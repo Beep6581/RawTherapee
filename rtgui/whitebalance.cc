@@ -396,8 +396,9 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     itcwb_prim->set_active(1);
     itcwb_primconn = itcwb_prim->signal_changed().connect(sigc::mem_fun(*this, &WhiteBalance::itcwb_prim_changed));
     itcwb_prim ->set_tooltip_markup (M("TP_WBALANCE_ITCWPRIM_TOOLTIP"));
-    
-    
+
+    compatVersionAdjuster.reset(new Adjuster("", 0., procparams::WBParams::CURRENT_COMPAT_VERSION, 1., procparams::WBParams::CURRENT_COMPAT_VERSION));
+
     /*  Gtk::Box* boxgreen = Gtk::manage (new Gtk::Box ());
     boxgreen->show ();
 
@@ -624,6 +625,7 @@ void WhiteBalance::optChanged ()
             equal->setEditedState (UnEdited);
             tempBias->setEditedState (UnEdited);
             observer10->setEdited(false);
+            compatVersionAdjuster->setEditedState(UnEdited);
         } else {
             unsigned int methodId = findWBEntryId (row[methodColumns.colLabel], WBLT_GUI);
             const WBEntry& currMethod = WBParams::getWbEntries()[methodId];
@@ -723,6 +725,17 @@ void WhiteBalance::optChanged ()
 
                 break;
             }
+
+            if (compatVersionAdjuster->getIntValue() == 1 &&
+                (!batchMode || currMethod.type != WBEntry::Type::AUTO)) {
+                // Safe to upgrade version because method changed. In batch
+                // mode, this method may be called even if there is no change,
+                // so it's only safe to upgrade if the new method is not auto.
+                compatVersionAdjuster->setValue(procparams::WBParams::CURRENT_COMPAT_VERSION);
+                if (batchMode) {
+                    compatVersionAdjuster->setEditedState(Edited);
+                }
+            }
         }
 
         if (listener && getEnabled()) {
@@ -768,6 +781,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
     lastitcwb_alg = pp->wb.itcwb_alg;
     itcwb_green->setValue (pp->wb.itcwb_green);
 
+    compatVersionAdjuster->setValue(pp->wb.compat_version);
 
     itcwb_primconn.block (true);
 
@@ -806,6 +820,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         observer10->setEdited(pedited->wb.observer);
         itcwb_alg->set_inconsistent (!pedited->wb.itcwb_alg);
         itcwb_green->setEditedState (pedited->wb.itcwb_green ? Edited : UnEdited);
+        compatVersionAdjuster->setEditedState(pedited->wb.compat_version ? Edited : UnEdited);
     }
 
     if (pedited && !pedited->wb.method) {
@@ -961,6 +976,7 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->wb.enabled = !get_inconsistent();
         pedited->wb.itcwb_prim  = itcwb_prim->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->wb.itcwb_green = itcwb_green->getEditedState ();
+        pedited->wb.compat_version = compatVersionAdjuster->getEditedState();
     }
 
     pp->wb.enabled = getEnabled();
@@ -996,6 +1012,7 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
     pp->wb.itcwb_alg = itcwb_alg->get_active ();
     pp->wb.tempBias = tempBias->getValue ();
     pp->wb.itcwb_green = itcwb_green->getValue ();
+    pp->wb.compat_version = compatVersionAdjuster->getIntValue();
 }
 
 void WhiteBalance::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)
@@ -1044,6 +1061,7 @@ void WhiteBalance::setBatchMode (bool batchMode)
     green->showEditedCB ();
     equal->showEditedCB ();
     tempBias->showEditedCB ();
+    compatVersionAdjuster->showEditedCB();
     Gtk::TreeModel::Row row = *(refTreeModel->append());
     row[methodColumns.colId] = WBParams::getWbEntries().size();
     row[methodColumns.colLabel] = M("GENERAL_UNCHANGED");

@@ -536,14 +536,23 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             currWB = ColorTemp(params->wb.temperature, params->wb.green, params->wb.equal, params->wb.method, params->wb.observer);
             int tempnotisraw = 6501;//D65 with Observer 2° - 6473 with Observer 10°
             double greennotisraw = 1.;//D65 with Observer 2° - 0.967 with Observer 10°
-            
-            if(!imgsrc->isRAW()  && params->wb.method == "autitcgreen") {
-                currWBitc = imgsrc->getWB();//if jpg TIF with another illuminant
-                currWBitc = currWBitc.convertObserver(params->wb.observer);                
-                tempnotisraw = currWBitc.getTemp();
-                greennotisraw = currWBitc.getGreen();
+
+            if (!imgsrc->isRAW() && params->wb.method == "autitcgreen") {
+                if (params->wb.compat_version == 1) {
+                    // ITCWB compatibility version 1 used 5000 K and observer 10
+                    // degrees for non-raw files.
+                    currWBitc = ColorTemp(5000., 1., 1., params->wb.method, StandardObserver::TEN_DEGREES);
+                    currWBitc = currWBitc.convertObserver(params->wb.observer);
+                    tempnotisraw = currWBitc.getTemp();
+                    greennotisraw = currWBitc.getGreen();
+                } else {
+                    currWBitc = imgsrc->getWB();//if jpg TIF with another illuminant
+                    currWBitc = currWBitc.convertObserver(params->wb.observer);
+                    tempnotisraw = currWBitc.getTemp();
+                    greennotisraw = currWBitc.getGreen();
+                }
             }
-            
+
             int dread = 0;
             int bia = 1;
             float studgood = 1000.f;
@@ -569,7 +578,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             } else if (params->wb.method == "autold") {
                  if (lastAwbEqual != params->wb.equal || lastAwbTempBias != params->wb.tempBias || lastAwbauto != params->wb.method) {
                     double rm, gm, bm;
-                    imgsrc->getAutoWBMultipliers(rm, gm, bm);
+                    if (params->wb.compat_version == 1 && !imgsrc->isRAW()) {
+                        // RGB grey compatibility version 1 used the identity
+                        // multipliers plus temperature bias for non-raw files.
+                        rm = gm = bm = 1.;
+                    } else {
+                        imgsrc->getAutoWBMultipliers(rm, gm, bm);
+                    }
 
                     if (rm != -1.) {
                         double bias = params->wb.tempBias;
@@ -768,6 +783,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 } else if(params->wb.method == "autitcgreen"  && !imgsrc->isRAW()){ // Itcwb and no raw
                     params->wb.temperature = tempnotisraw;
                     params->wb.green = greennotisraw;
+                    params->wb.equal = 1.;
                 }
                 float greenitc_low = 1.f;
                 float tempitc_low = 5000.f;

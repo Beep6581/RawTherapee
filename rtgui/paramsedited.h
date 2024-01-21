@@ -255,6 +255,7 @@ struct WBParamsEdited {
     bool itcwb_prim;
     bool itcwb_sampling;
     bool itcwb_green;
+    bool compat_version;
 
 };
 

@@ -1409,7 +1409,8 @@ WBParams::WBParams() :
     itcwb_nopurple(false),//keep for settings
     itcwb_alg(false),//checkbox
     itcwb_prim("beta"),//combobox
-    itcwb_sampling(false)//keep for 5.9 and for settings
+    itcwb_sampling(false),//keep for 5.9 and for settings
+    compat_version(WBParams::CURRENT_COMPAT_VERSION)
 
 {
 }
@@ -1434,6 +1435,7 @@ bool WBParams::isPanningRelatedChange(const WBParams& other) const
                 && itcwb_green == other.itcwb_green
                 && itcwb_prim == other.itcwb_prim
                 && itcwb_alg == other.itcwb_alg
+                && compat_version == other.compat_version
 
             )
         )
@@ -1455,7 +1457,8 @@ bool WBParams::operator ==(const WBParams& other) const
         && itcwb_nopurple == other.itcwb_nopurple
         && itcwb_alg == other.itcwb_alg
         && itcwb_prim == other.itcwb_prim
-        && itcwb_sampling == other.itcwb_sampling;
+        && itcwb_sampling == other.itcwb_sampling
+        && compat_version == other.compat_version;
 
 }
 
@@ -6316,6 +6319,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->wb.itcwb_alg, "White Balance", "Itcwb_alg", wb.itcwb_alg, keyFile);
         saveToKeyfile(!pedited || pedited->wb.itcwb_prim, "White Balance", "Itcwb_prim", wb.itcwb_prim, keyFile);
         saveToKeyfile(!pedited || pedited->wb.itcwb_sampling, "White Balance", "Itcwb_sampling", wb.itcwb_sampling, keyFile);
+        saveToKeyfile(!pedited || pedited->wb.compat_version, "White Balance", "CompatibilityVersion", wb.compat_version, keyFile);
 
 // Colorappearance
         saveToKeyfile(!pedited || pedited->colorappearance.enabled, "Color appearance", "Enabled", colorappearance.enabled, keyFile);
@@ -8318,6 +8322,19 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 }
             }
             assignFromKeyfile(keyFile, "White Balance", "Itcwb_sampling", wb.itcwb_sampling, pedited->wb.itcwb_sampling);
+            if (!assignFromKeyfile(keyFile, "White Balance", "CompatibilityVersion", wb.compat_version, pedited->wb.compat_version)) {
+                bool compat_version_edited = true;
+                if (ppVersion <= 346) { // 5.8 and earlier.
+                    wb.compat_version = 0;
+                } else if (ppVersion <= 349) { // 5.9.
+                    wb.compat_version = 1;
+                } else {
+                    compat_version_edited = false;
+                }
+                if (pedited) {
+                    pedited->wb.compat_version = pedited->wb.compat_version || compat_version_edited;
+                }
+            }
         }
 
         if (keyFile.has_group("Defringing")) {
