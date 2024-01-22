@@ -3999,7 +3999,7 @@ LocallabShadow::LocallabShadow():
 
         if (i == 0) {
             ss += Glib::ustring::compose(" (%1)", M("TP_LOCALLAB_LUMADARKEST"));
-        } else if (i == 4) {
+        } else if (i == 5) {
             ss += Glib::ustring::compose(" (%1)", M("TP_LOCALLAB_LUMAWHITESEST"));
         }
 

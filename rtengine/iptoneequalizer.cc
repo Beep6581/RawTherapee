@@ -98,9 +98,11 @@ void toneEqualizer(
         conv(params.bands[4], 3.f, 2.f), //   2 EV
         conv(params.bands[4], 3.f, 2.f), //   4 EV
         conv(params.bands[4], 3.f, 2.f),  //   6 EV
-        conv(params.bands[5], 3.f, 2.f),  //   8 EV
-        conv(params.bands[5], 3.f, 2.f),  //   10 EV
-        conv(params.bands[5], 3.f, 2.f)  //   12 EV
+        // this settings under are very rarely used...images with very high DR - I add a slider, but it's not the goal: the goal is white distribution (in very rare case)
+        // I have not change "main" Tone Equalizer.
+        conv(params.bands[5], 3.f, 2.f),  //   8 EV  Added for white distribution (Cam16 and Log encode) and images with very high DR
+        conv(params.bands[5], 3.f, 2.f),  //   10 EV Added for white distribution(Cam16 and Log encode) and images with very high DR
+        conv(params.bands[5], 3.f, 2.f)  //   12 EV Added for white distribution(Cam16 and Log encode) and images with very high DR
     };
 
     rtengine::TMatrix ws = rtengine::ICCStore::getInstance()->workingSpaceMatrix(workingProfile);
