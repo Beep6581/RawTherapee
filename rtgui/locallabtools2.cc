@@ -10466,10 +10466,10 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             maskunusablecie->hide();
             decaycie->hide();
             expmaskcie->hide();
-            comprcie->hide();
+            comprcie->show();
             comprcieth->hide();
             comprcieauto->hide();
-            comprBox->hide();
+            comprBox->show();
             if (modecam->get_active_row_number() == 2) {
                 PQFrame->hide();
                 logjzFrame->hide();
