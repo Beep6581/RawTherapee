@@ -716,7 +716,7 @@ struct local_params {
     float noisecf;
     float noisecc;
     float mulloc[6];
-    int mullocsh[5];
+    int mullocsh[6];
     int detailsh;
     int whitescie;
     int midtcie;
@@ -1282,9 +1282,9 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         multi[y] = ((float) locallab.spots.at(sp).mult[y]);
     }
 
-    float multish[5];
+    float multish[6];
 
-    for (int y = 0; y < 5; y++) {
+    for (int y = 0; y < 6; y++) {
         multish[y] = ((float) locallab.spots.at(sp).multsh[y]);
     }
 
@@ -1735,7 +1735,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.mulloc[y] = LIM(multi[y], 0.f, 4.f);//to prevent crash with old pp3 integer
     }
 
-    for (int y = 0; y < 5; y++) {
+    for (int y = 0; y < 6; y++) {
         lp.mullocsh[y] = multish[y];
     }
 
@@ -2406,6 +2406,7 @@ void ImProcFunctions::tone_eqcam2(ImProcFunctions *ipf, Imagefloat *rgb, int whi
     int bla = abs(blacks);
     int threshblawhi = 50;
     int threshblawhi2 = 70;
+    int threshblawhi3 = 40;
     if(bla > threshblawhi) {
         params.bands[1] = sign(blacks) * (bla - threshblawhi);
     }
@@ -2417,6 +2418,9 @@ void ImProcFunctions::tone_eqcam2(ImProcFunctions *ipf, Imagefloat *rgb, int whi
     int whi = abs(whits);
     if(whi > threshblawhi) {
         params.bands[3] = sign(whits) * (whi - threshblawhi);
+    }
+    if(whi > threshblawhi3) {
+        params.bands[5] = sign(whits) * (whi - threshblawhi3);
     }
     
     ipf->toneEqualizer(rgb, params, workingProfile, scale, multithread);
@@ -9280,7 +9284,9 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                     reducdE = ared * varsens + bred;
                     reducdE = LIM(reducdE, 0.1f, 1.f);
                 }
-                
+                if(varsens == 100.f) {
+                    reducdE = 1.f;
+                }
                 float cli = (bufexpfin->L[y][x] - bufexporig->L[y][x]);
                 float cla = (bufexpfin->a[y][x] - bufexporig->a[y][x]);
                 float clb = (bufexpfin->b[y][x] - bufexporig->b[y][x]);
@@ -16553,7 +16559,7 @@ void ImProcFunctions::Lab_Local(
 //shadow highlight
     bool tonequ = false;
 
-    if (lp.mullocsh[0] != 0 || lp.mullocsh[1] != 0 || lp.mullocsh[2] != 0 || lp.mullocsh[3] != 0 || lp.mullocsh[4] != 0) {
+    if (lp.mullocsh[0] != 0 || lp.mullocsh[1] != 0 || lp.mullocsh[2] != 0 || lp.mullocsh[3] != 0 || lp.mullocsh[4] != 0 || lp.mullocsh[5] != 0) {
         tonequ = true;
     }
 

@@ -1280,7 +1280,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).complexshadhigh = locallab.spots.at(j).complexshadhigh && pSpot.complexshadhigh == otherSpot.complexshadhigh;
                 locallab.spots.at(j).shMethod = locallab.spots.at(j).shMethod && pSpot.shMethod == otherSpot.shMethod;
 
-                for (int k = 0; k < 5; k++) {
+                for (int k = 0; k < 6; k++) {
                     locallab.spots.at(j).multsh[k] = locallab.spots.at(j).multsh[k] && pSpot.multsh[k] == otherSpot.multsh[k];
                 }
 
@@ -4205,7 +4205,7 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).shMethod = mods.locallab.spots.at(i).shMethod;
         }
 
-        for (int j = 0; j < 5; j++) {
+        for (int j = 0; j < 6; j++) {
             if (locallab.spots.at(i).multsh[j]) {
                 toEdit.locallab.spots.at(i).multsh[j] = mods.locallab.spots.at(i).multsh[j];
             }
@@ -7955,7 +7955,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     expshadhigh(v),
     complexshadhigh(v),
     shMethod(v),
-    multsh{v, v, v, v, v, v},
+    multsh{v, v, v, v, v, v, v},
     highlights(v),
     h_tonalwidth(v),
     shadows(v),
@@ -8699,7 +8699,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     complexshadhigh = v;
     shMethod = v;
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 6; i++) {
         multsh[i] = v;
     }
 

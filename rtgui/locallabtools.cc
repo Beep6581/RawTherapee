@@ -3990,9 +3990,9 @@ LocallabShadow::LocallabShadow():
     // Shadow highlight specific widgets
     shMethod(Gtk::manage(new MyComboBoxText())),
     reparsh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
-    multipliersh([]() -> std::array<Adjuster *, 5>
+    multipliersh([]() -> std::array<Adjuster *, 6>
     {
-    std::array<Adjuster*, 5> res = {};
+    std::array<Adjuster*, 6> res = {};
 
     for (unsigned int i = 0; i < res.size(); ++i) {
         Glib::ustring ss = Glib::ustring::format(i);
@@ -4392,7 +4392,7 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
             shMethod->set_active(1);
         }
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 6; i++) {
             multipliersh[i]->setValue((double)spot.multsh[i]);
         }
         recothress->setValue((double)spot.recothress);
@@ -4462,7 +4462,7 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
             spot.shMethod = "tone";
         }
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 6; i++) {
             spot.multsh[i] = multipliersh[i]->getIntValue();
         }
 
@@ -4511,7 +4511,7 @@ void LocallabShadow::setDefaults(const rtengine::procparams::ProcParams* defPara
         const LocallabParams::LocallabSpot& defSpot = defParams->locallab.spots.at(index);
 
         // Set default values for adjuster widgets
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 6; i++) {
             multipliersh[i]->setDefault(defSpot.multsh[i]);
         }
 
@@ -4549,15 +4549,16 @@ void LocallabShadow::setDefaults(const rtengine::procparams::ProcParams* defPara
 void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
 {
     if (isLocActivated && exp->getEnabled()) {
-        if (a == multipliersh[0] || a == multipliersh[1] || a == multipliersh[2] || a == multipliersh[3] || a == multipliersh[4]) {
+        if (a == multipliersh[0] || a == multipliersh[1] || a == multipliersh[2] || a == multipliersh[3] || a == multipliersh[4] || a == multipliersh[5]) {
             if (listener) {
                 listener->panelChanged(EvlocallabEqualizersh,
-                                       Glib::ustring::compose("%1, %2, %3, %4, %5",
+                                       Glib::ustring::compose("%1, %2, %3, %4, %5, %6",
                                                Glib::ustring::format(std::fixed, std::setprecision(2), multipliersh[0]->getIntValue()),
                                                Glib::ustring::format(std::fixed, std::setprecision(2), multipliersh[1]->getIntValue()),
                                                Glib::ustring::format(std::fixed, std::setprecision(2), multipliersh[2]->getIntValue()),
                                                Glib::ustring::format(std::fixed, std::setprecision(2), multipliersh[3]->getIntValue()),
-                                               Glib::ustring::format(std::fixed, std::setprecision(2), multipliersh[4]->getIntValue())) + " (" + escapeHtmlChars(getSpotName()) + ")");
+                                               Glib::ustring::format(std::fixed, std::setprecision(2), multipliersh[4]->getIntValue()),
+                                               Glib::ustring::format(std::fixed, std::setprecision(2), multipliersh[5]->getIntValue())) + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 

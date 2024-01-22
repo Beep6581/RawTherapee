@@ -490,7 +490,7 @@ private:
     // Shadow highlight specific widgets
     MyComboBoxText* const shMethod;
     Adjuster* const reparsh;
-    const std::array<Adjuster*, 5> multipliersh;
+    const std::array<Adjuster*, 6> multipliersh;
     Adjuster* const detailSH;
     Adjuster* const tePivot;
     Adjuster* const highlights;

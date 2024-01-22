@@ -1883,7 +1883,7 @@ bool SHParams::operator !=(const SHParams& other) const
 
 ToneEqualizerParams::ToneEqualizerParams() :
     enabled(false),
-    bands{0, 0, 0, 0, 0},
+    bands{0, 0, 0, 0, 0, 0},
     regularization(0),
     show_colormap(false),
     pivot(0)
@@ -3366,7 +3366,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     expshadhigh(false),
     complexshadhigh(0),
     shMethod("tone"),
-    multsh{0, 0, 0, 0, 0},
+    multsh{0, 0, 0, 0, 0, 0},
     highlights(0),
     h_tonalwidth(70),
     shadows(0),
@@ -4923,7 +4923,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && shMethod == other.shMethod
         && [this, &other]() -> bool
             {
-                for (int i = 0; i < 5; ++i) {
+                for (int i = 0; i < 6; ++i) {
                     if (multsh[i] != other.multsh[i]) {
                         return false;
                     }
@@ -6857,7 +6857,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->complexshadhigh, "Locallab", "Complexshadhigh_" + index_str, spot.complexshadhigh, keyFile);
                     saveToKeyfile(!pedited || spot_edited->shMethod, "Locallab", "ShMethod_" + index_str, spot.shMethod, keyFile);
 
-                    for (int j = 0; j < 5; j++) {
+                    for (int j = 0; j < 6; j++) {
                         saveToKeyfile(!pedited || spot_edited->multsh[j], "Locallab", "Multsh" + std::to_string(j) + "_" + index_str, spot.multsh[j], keyFile);
                     }
 
@@ -9111,7 +9111,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Complexshadhigh_" + index_str, spot.complexshadhigh, spotEdited.complexshadhigh);
                 assignFromKeyfile(keyFile, "Locallab", "ShMethod_" + index_str, spot.shMethod, spotEdited.shMethod);
 
-                for (int j = 0; j < 5; j ++) {
+                for (int j = 0; j < 6; j ++) {
                     assignFromKeyfile(keyFile, "Locallab", "Multsh" + std::to_string(j) + "_" + index_str, spot.multsh[j], spotEdited.multsh[j]);
                 }
 

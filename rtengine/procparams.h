@@ -843,7 +843,7 @@ struct SHParams {
  */
 struct ToneEqualizerParams {
     bool enabled;
-    std::array<int, 5> bands;
+    std::array<int, 6> bands;
     int regularization;
     bool show_colormap;
     double pivot;
@@ -1202,7 +1202,7 @@ struct LocallabParams {
         bool expshadhigh;
         int complexshadhigh;
         Glib::ustring shMethod; // std, tone
-        int multsh[5];
+        int multsh[6];
         int highlights;
         int h_tonalwidth;
         int shadows;
