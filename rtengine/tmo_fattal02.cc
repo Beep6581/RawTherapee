@@ -84,7 +84,6 @@ namespace rtengine
 /******************************************************************************
  * RT code
  ******************************************************************************/
-extern const Settings *settings;
 extern MyMutex *fftwMutex;
 
 using namespace std;
@@ -491,7 +490,6 @@ void tmo_fattal02(size_t width,
     #pragma omp parallel if(multithread)
 #endif
     {
- //       const float eps = 1e-4f;
 #ifdef __SSE2__
         const vfloat epsv = F2V(eps);
         const vfloat tempv = F2V(temp);
@@ -1232,11 +1230,9 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb, const FattalToneMappingPa
 #endif
 
     for (int y = 0; y < h; y++) {
-     //   int yy = y * hr + 1;
         int yy = std::min(int(y * hr + 1), h2-1);
 
         for (int x = 0; x < w; x++) {
-          //  int xx = x * wr + 1;
             int xx = std::min(int(x * wr + 1), w2-1);
 
             float Y = std::max(Yr(x, y), epsilon);
