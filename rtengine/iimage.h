@@ -18,6 +18,7 @@
  */
 #pragma once
 
+#include <utility>
 #include <vector>
 
 #include <lcms2.h>
@@ -406,13 +407,10 @@ public:
 
             for (int i = 0; i < height2; i++) {
                 for (int j = 0; j < width; j++) {
-                    T tmp;
                     int x = width - 1 - j;
                     int y = height - 1 - i;
 
-                    tmp = v(i, j);
-                    v(i, j) = v(y, x);
-                    v(y, x) = tmp;
+                    std::swap(v(i, j), v(y, x));
                 }
             }
 
@@ -422,12 +420,9 @@ public:
                 int i = height / 2;
                 int width2 = width / 2;
                 for (int j = 0; j < width2; j++) {
-                    T tmp;
                     int x = width - 1 - j;
 
-                    tmp = v(i, j);
-                    v(i, j) = v(i, x);
-                    v(i, x) = tmp;
+                    std::swap(v(i, j), v(i, x));
                 }
             }
 #ifdef _OPENMP
@@ -853,21 +848,12 @@ public:
 
             for (int i = 0; i < height2; i++) {
                 for (int j = 0; j < width; j++) {
-                    T tmp;
                     int x = width - 1 - j;
                     int y = height - 1 - i;
 
-                    tmp = r(i, j);
-                    r(i, j) = r(y, x);
-                    r(y, x) = tmp;
-
-                    tmp = g(i, j);
-                    g(i, j) = g(y, x);
-                    g(y, x) = tmp;
-
-                    tmp = b(i, j);
-                    b(i, j) = b(y, x);
-                    b(y, x) = tmp;
+                    std::swap(r(i, j), r(y, x));
+                    std::swap(g(i, j), g(y, x));
+                    std::swap(b(i, j), b(y, x));
                 }
             }
 
@@ -877,20 +863,11 @@ public:
                 int i = height / 2;
                 int width2 = width / 2;
                 for (int j = 0; j < width2; j++) {
-                    T tmp;
                     int x = width - 1 - j;
 
-                    tmp = r(i, j);
-                    r(i, j) = r(i, x);
-                    r(i, x) = tmp;
-
-                    tmp = g(i, j);
-                    g(i, j) = g(i, x);
-                    g(i, x) = tmp;
-
-                    tmp = b(i, j);
-                    b(i, j) = b(i, x);
-                    b(i, x) = tmp;
+                    std::swap(r(i, j), r(i, x));
+                    std::swap(g(i, j), g(i, x));
+                    std::swap(b(i, j), b(i, x));
                 }
             }
 #ifdef _OPENMP
@@ -1524,21 +1501,12 @@ public:
             // Maybe not sufficiently optimized, but will do what it has to do
             for (int i = 0; i < height2; i++) {
                 for (int j = 0; j < width; j++) {
-                    T tmp;
                     int x = width - 1 - j;
                     int y = height - 1 - i;
 
-                    tmp = r(i, j);
-                    r(i, j) = r(y, x);
-                    r(y, x) = tmp;
-
-                    tmp = g(i, j);
-                    g(i, j) = g(y, x);
-                    g(y, x) = tmp;
-
-                    tmp = b(i, j);
-                    b(i, j) = b(y, x);
-                    b(y, x) = tmp;
+                    std::swap(r(i, j), r(y, x));
+                    std::swap(g(i, j), g(y, x));
+                    std::swap(b(i, j), b(y, x));
                 }
             }
 
@@ -1548,20 +1516,11 @@ public:
                 int i = height / 2;
                 int width2 = width / 2;
                 for (int j = 0; j < width2; j++) {
-                    T tmp;
                     int x = width - 1 - j;
 
-                    tmp = r(i, j);
-                    r(i, j) = r(i, x);
-                    r(i, x) = tmp;
-
-                    tmp = g(i, j);
-                    g(i, j) = g(i, x);
-                    g(i, x) = tmp;
-
-                    tmp = b(i, j);
-                    b(i, j) = b(i, x);
-                    b(i, x) = tmp;
+                    std::swap(r(i, j), r(i, x));
+                    std::swap(g(i, j), g(i, x));
+                    std::swap(b(i, j), b(i, x));
                 }
             }
         }
