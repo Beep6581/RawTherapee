@@ -24,7 +24,7 @@
 #include "guiutils.h"
 
 class EditorPanel;
-class ExternalEditor;
+struct ExternalEditor;
 class RTWindow;
 
 class EditWindow :
