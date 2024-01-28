@@ -980,7 +980,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             }
 
             ipf.dehaze(orig_prev, params->dehaze);
-            ipf.ToneMapFattal02(orig_prev, params->fattal, 3, 0, nullptr, 0, 0, 0);
+            ipf.ToneMapFattal02(orig_prev, params->fattal, 3, 0, nullptr, 0, 0, 0, false);
 
             if (oprevi != orig_prev) {
                 delete oprevi;
