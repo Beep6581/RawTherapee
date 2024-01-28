@@ -929,7 +929,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.fullim = 1;
     } else if (locallab.spots.at(sp).spotMethod == "full") {
         lp.fullim = 2;
+    } else if (locallab.spots.at(sp).spotMethod == "main") {//new Global
+        lp.fullim = 3;
     }
+        
 
     lp.fftColorMask = locallab.spots.at(sp).fftColorMask;
     lp.prevdE = prevDeltaE;
@@ -1073,7 +1076,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.excmet = 1;
     } else if (locallab.spots.at(sp).spotMethod == "full") {
         lp.excmet = 2;
+    } else if (locallab.spots.at(sp).spotMethod == "main") {
+        lp.excmet = 3;
     }
+
 
     if (locallab.spots.at(sp).merMethod == "mone") {
         lp.mergemet = 0;
@@ -1802,10 +1808,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.blwh = locallab.spots.at(sp).blwh;
     lp.senscolor = (int) locallab.spots.at(sp).colorscope;
     //replace scope color vibrance shadows
-    lp.sens = lp.senscolor;
+/*    lp.sens = lp.senscolor;
     lp.sensv = lp.senscolor;
     lp.senshs = lp.senscolor;
-
+*/
     lp.mLjz = locallab.spots.at(sp).clarilresjz / 100.0;
     lp.mCjz = locallab.spots.at(sp).claricresjz / 100.0;
     lp.softrjz = locallab.spots.at(sp).clarisoftjz;
@@ -5005,7 +5011,10 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp, Lab
     //simple algo , perhaps we can improve as the others, but noise is here and not good for hue detection
     // BENCHFUN
     lumaref *= 327.68f;
-    const float ach = lp.trans / 100.f;
+    float ach = lp.trans / 100.f;
+    if(lp.fullim == 3 ) {//disabled transit
+        ach = 1.f;
+    }
 
     const float factnoise1 = 1.f + (lp.noisecf) / 500.f;
     const float factnoise2 = 1.f + (lp.noisecc) / 500.f;
@@ -5082,6 +5091,9 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp, Lab
                 } else { /*if (lp.shapmet == 1)*/
                     calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                 }
+                if(lp.fullim == 3 ) {//disabled scope
+                    localFactor = 1.f;
+                }
 
                 if (zone == 0) { // outside selection and outside transition zone => no effect, keep original values
                     continue;
@@ -5115,6 +5127,9 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp, Lab
                     difL = tmp1.L[y][x] - original->L[y][x];
                     difa = tmp1.a[y][x] - original->a[y][x];
                     difb = tmp1.b[y][x] - original->b[y][x];
+                }
+                if(lp.fullim == 3 ) {//disable scope
+                    reducdEL = reducdEa = reducdEb = 1.f;
                 }
 
                 difL *= localFactor * reducdEL;
@@ -5161,7 +5176,10 @@ void ImProcFunctions::DeNoise_Local2(const struct local_params& lp, LabImage* or
 
 
     lumaref *= 327.68f;
-    const float ach = lp.trans / 100.f;
+    float ach = lp.trans / 100.f;
+    if(lp.fullim == 3 ) {//disabled transit
+        ach = 1.f;
+    }
 
     const float factnoise1 = 1.f + (lp.noisecf) / 500.f;
     const float factnoise2 = 1.f + (lp.noisecc) / 500.f;
@@ -5238,6 +5256,9 @@ void ImProcFunctions::DeNoise_Local2(const struct local_params& lp, LabImage* or
                 } else { /*if (lp.shapmet == 1)*/
                     calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                 }
+                if(lp.fullim == 3 ) {//disabled scope
+                    localFactor = 1.f;
+                }
 
                 if (zone == 0) { // outside selection and outside transition zone => no effect, keep original values
                     continue;
@@ -5266,6 +5287,9 @@ void ImProcFunctions::DeNoise_Local2(const struct local_params& lp, LabImage* or
                 difL = tmp1.L[y - ystart][x - xstart] - original->L[y][x];
                 difa = tmp1.a[y - ystart][x - xstart] - original->a[y][x];
                 difb = tmp1.b[y - ystart][x - xstart] - original->b[y][x];
+                if(lp.fullim == 3 ) {//disable scope
+                    reducdEL = reducdEa = reducdEb = 1.f;
+                }
 
                 difL *= localFactor * reducdEL;
                 difa *= localFactor * reducdEa;
@@ -5355,7 +5379,10 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
 
                 float rL = origblur->L[y][x] / 327.68f;
                 float dE = std::sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
-                const float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensh);
+                float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensh);
+                if(lp.fullim == 3 ) {//disable scope
+                    reducdE = 1.f;
+                }
 
                 switch (zone) {
                     case 0: { // outside selection and outside transition zone => full effect, no transition
@@ -5504,6 +5531,10 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, const stru
                     float huedelta2 = abdelta2 - chrodelta2;
                     float dE = std::sqrt(kab * (kch * chrodelta2 + kH * huedelta2) + kL * SQR(refL - maskptr->L[y][x]));
                     reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensbn);
+                    if(lp.fullim == 3 ) {//disabled scope
+                        reducdE = 1.f;
+                    }
+                   
                 }
 
                 switch (zone) {
@@ -5850,12 +5881,18 @@ static void blendmask(const local_params& lp, int xstart, int ystart, int cx, in
             int zone;
 
             float localFactor = 1.f;
-            const float achm = lp.trans / 100.f;
+            float achm = lp.trans / 100.f;
+            if(lp.fullim == 3 ) {//disable transit
+                achm = 1.f;
+            }
 
             if (lp.shapmet == 0) {
                 calcTransition(lox, loy, achm, lp, zone, localFactor);
             } else { /*if (lp.shapmet == 1)*/
                 calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
+            }
+            if(lp.fullim == 3 ) {//disable scope
+                localFactor = 1.f;
             }
 
             if (inv == 0) {
@@ -8088,7 +8125,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                                 transformed->L[y][x] = CLIP(12000.f + difL);
                                 transformed->a[y][x] = clipC(difa);
                                 transformed->b[y][x] = clipC(difb);
-                            } else if (previewcb  || previewtm || lp.prevdE) {
+                            } else if (/* previewcb  ||*/ previewtm || lp.prevdE) {
                                 if (std::fabs(difb) < 500.f) {
                                     difb += difL;
                                 }
@@ -8705,7 +8742,7 @@ void optfft(int N_fftwsize, int &bfh, int &bfw, int &bfhr, int &bfwr, struct loc
         }
     }
 
-    if (fulima == 2) { // if full image, the ftsizeH and ftsizeW is a bit larger (about 10 to 200 pixels) than the image dimensions so that it is fully processed (consumes a bit more resources)
+    if(fulima >= 2) {// if full image, the ftsizeH and ftsizeW is a bit larger (about 10 to 200 pixels) than the image dimensions so that it is fully processed (consumes a bit more resources)
         for (int ftfu = 0; ftfu < N_fftwsize; ftfu++) { //find best values
             if (fftw_size[ftfu] <= (H + deltah)) {
                 ftsizeH = fftw_size[ftfu];
@@ -9016,16 +9053,16 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
 
     const bool masshow = ((lp.showmask_met == 1) &&  senstype == 20);
 
-    const bool previewvib = ((lp.showmaskvibmet == 4) &&  senstype == 2);
-    const bool previewexp = ((lp.showmaskexpmet == 5) &&  senstype == 1);
-    const bool previewcol = ((lp.showmaskcolmet == 5) &&  senstype == 0);
-    const bool previewSH = ((lp.showmaskSHmet == 4) &&  senstype == 9);
-    const bool previewtm = ((lp.showmasktmmet == 4) &&  senstype == 8);
-    const bool previewlc = ((lp.showmasklcmet == 4) &&  senstype == 10);
+    const bool previewvib = ((lp.showmaskvibmet == 4) &&  senstype == 2 && lp.fullim != 3);
+    const bool previewexp = ((lp.showmaskexpmet == 5) &&  senstype == 1  && lp.fullim != 3);
+    const bool previewcol = ((lp.showmaskcolmet == 5) &&  senstype == 0  && lp.fullim != 3);
+    const bool previewSH = ((lp.showmaskSHmet == 4) &&  senstype == 9 && lp.fullim != 3);
+    const bool previewtm = ((lp.showmasktmmet == 4) &&  senstype == 8 && lp.fullim != 3);
+    const bool previewlc = ((lp.showmasklcmet == 4) &&  senstype == 10 && lp.fullim != 3);
     const bool previeworig = ((lp.showmasksoftmet == 6) &&  senstype == 3 && lp.softmet == 1);
-    const bool previewmas = ((lp.showmask_met == 3) &&  senstype == 20);
-    const bool previewlog = ((lp.showmasklogmet == 4) &&  senstype == 11);
-    const bool previewcie = ((lp.showmaskciemet == 4) &&  senstype == 31);
+    const bool previewmas = ((lp.showmask_met == 3) &&  senstype == 20  && lp.fullim != 3);
+    const bool previewlog = ((lp.showmasklogmet == 4) &&  senstype == 11  && lp.fullim != 3);
+    const bool previewcie = ((lp.showmaskciemet == 4) &&  senstype == 31  && lp.fullim != 3);
 
     float radius = 3.f / sk;
 
@@ -9230,13 +9267,19 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                 const int lox = x + xstart + cx;
                 int zone;
                 float localFactor = 1.f;
-                const float achm = lp.trans / 100.f;
+                float achm = lp.trans / 100.f;
+                if(lp.fullim == 3 ) {//disable transit
+                    achm = 1.f;
+                }
 
                 //calculate transition
                 if (lp.shapmet == 0) {
                     calcTransition(lox, loy, achm, lp, zone, localFactor);
                 } else { /*if (lp.shapmet == 1)*/
                     calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
+                }
+                if(lp.fullim == 3 ) {//disable scope
+                    localFactor = 1.f;
                 }
 
 //                float hueh = 0;
@@ -9286,6 +9329,10 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                 if(varsens == 100.f) {
                     reducdE = 1.f;
                 }
+                if(lp.fullim == 3 ) {//disable scope
+                    reducdE = 1.f;
+                }
+
                 float cli = (bufexpfin->L[y][x] - bufexporig->L[y][x]);
                 float cla = (bufexpfin->a[y][x] - bufexporig->a[y][x]);
                 float clb = (bufexpfin->b[y][x] - bufexporig->b[y][x]);
@@ -15394,7 +15441,11 @@ void ImProcFunctions::Lab_Local(
             for (int y = 0; y < transformed->H ; y++)
                 for (int x = 0; x < transformed->W; x++) {
                     float dE = std::sqrt(SQR(refa - bufreti->a[y][x] / 327.68f) + SQR(refb - bufreti->b[y][x] / 327.68f) + SQR(static_cast<float>(lumaref) - bufreti->b[y][x] / 327.68f));
-                    const float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sensibefore);
+                    float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sensibefore);
+                    if(lp.fullim == 3 ) {//disable scope
+                        reducdE = 1.f;
+                    }
+                    
                     reducDE[y][x] = clipDE(reducdE);
                 }
 
@@ -15755,7 +15806,11 @@ void ImProcFunctions::Lab_Local(
             for (int y = ystart; y < yend ; y++) {
                 for (int x = xstart; x < xend; x++) {
                     const float dE = std::sqrt(SQR(refa - bufreti->a[y - ystart][x - xstart] / 327.68f) + SQR(refb - bufreti->b[y - ystart][x - xstart] / 327.68f) + SQR(static_cast<float>(lumaref) - bufreti->b[y - ystart][x - xstart] / 327.68f));
-                    const float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sensibefore);
+                    float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sensibefore);
+                    if(lp.fullim == 3 ) {//disable scope
+                        reducdE = 1.f;
+                    }
+                  
                     reducDE[y - ystart][x - xstart] = clipDE(reducdE);
                 }
             }
@@ -17534,8 +17589,7 @@ void ImProcFunctions::Lab_Local(
             int begx = lp.xc - lp.lxL;
             int yEn = lp.yc + lp.ly;
             int xEn = lp.xc + lp.lx;
-
-            if (lp.fullim == 2) { //limit sharpening to image dimension...no more...to avoid a long treatment
+	    if(lp.fullim >= 2) {//full-iamge and global - limit sharpening to image dimension...no more...to avoid a long treatme
                 begy = 0;
                 begx = 0;
                 yEn = original->H;

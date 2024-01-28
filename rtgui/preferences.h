@@ -171,8 +171,10 @@ class Preferences final :
     Gtk::ComboBoxText* cprevdemo;
     Gtk::CheckButton* ctiffserialize;
     Gtk::ComboBoxText* curveBBoxPosC;
+    Gtk::ComboBoxText* curveBBoxPosS;
 
     Gtk::ComboBoxText* complexitylocal;
+    Gtk::ComboBoxText* spotlocal;
 
     Gtk::CheckButton* inspectorWindowCB;
     Gtk::CheckButton* zoomOnScrollCB;
