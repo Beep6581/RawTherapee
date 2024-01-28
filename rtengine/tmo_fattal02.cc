@@ -1064,7 +1064,7 @@ inline int find_fast_dim(int dim)
 } // namespace
 
 
-void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb, const FattalToneMappingParams &fatParams, int detail_level, int Lalone, float **Lum, int WW, int HH, int algo)
+void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb, const FattalToneMappingParams &fatParams, int detail_level, int Lalone, float **Lum, int WW, int HH, int algo, bool sat)
 //algo allows to use ART algorithme algo = 0 RT, algo = 1 ART
 //Lalone allows to use L without RGB values in RT mode
 {
@@ -1224,6 +1224,8 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb, const FattalToneMappingPa
 
 
     }
+    const bool satcontrol = sat;
+
 
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16) if(multiThread)
@@ -1242,15 +1244,33 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb, const FattalToneMappingPa
                 float &r = rgb->r(y, x);
                 float &g = rgb->g(y, x);
                 float &b = rgb->b(y, x);
+                float s = 1.f;
                 if(l > 1.f) {
                     r = max(r * l - offset, r);
                     g = max(g * l - offset, g);
                     b = max(b * l - offset, b);
+                    if (satcontrol) {
+                        s = pow_F(1.f / l, 0.3f);
+                    }
                 } else {
                     r *= l;
                     g *= l;
                     b *= l;
+                    if (satcontrol) {
+                        s = pow_F(l, 0.3f);
+                    }
                 }
+                
+                if (satcontrol && s != 1.f) {
+                    float ll = luminance(r, g, b, ws);
+                    float rl = r - ll;
+                    float gl = g - ll;
+                    float bl = b - ll;
+                    r = ll + s * rl;
+                    g = ll + s * gl;
+                    b = ll + s * bl;
+                }
+                
                 assert(std::isfinite(rgb->r(y, x)));
                 assert(std::isfinite(rgb->g(y, x)));
                 assert(std::isfinite(rgb->b(y, x)));
