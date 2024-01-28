@@ -17028,7 +17028,11 @@ void ImProcFunctions::Lab_Local(
                             if(fatParams.anchor == 50.f) {
                                 alg = 1;
                             }
-                            ToneMapFattal02(tmpImagefat.get(), fatParams, 3, 0, nullptr, 0, 0, alg, true);//last parameter alg = 1 ==>ART algorithm
+                            bool satu = false;
+                            if(params->locallab.spots.at(sp).fatsatur) {
+                                satu = true;
+                            }
+                            ToneMapFattal02(tmpImagefat.get(), fatParams, 3, 0, nullptr, 0, 0, alg, satu);//last parameter alg = 1 ==>ART algorithm
                             rgb2lab(*tmpImagefat, *bufexpfin, params->icm.workingProfile);
                             if (params->locallab.spots.at(sp).expcie && params->locallab.spots.at(sp).modecie == "dr") {
                                 bool HHcurvejz = false, CHcurvejz = false, LHcurvejz = false;
