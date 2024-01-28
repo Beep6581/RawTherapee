@@ -18,6 +18,7 @@
  */
 #include <cstring>
 #include <map>
+#include <string>
 
 #include <glibmm/ustring.h>
 #include <glibmm/fileutils.h>
@@ -51,9 +52,9 @@ namespace
 // Not recursive
 void loadProfiles(
     const Glib::ustring& dirName,
-    std::map<Glib::ustring, cmsHPROFILE>* profiles,
-    std::map<Glib::ustring, rtengine::ProfileContent>* profileContents,
-    std::map<Glib::ustring, Glib::ustring>* profileNames,
+    std::map<std::string, cmsHPROFILE>* profiles,
+    std::map<std::string, rtengine::ProfileContent>* profileContents,
+    std::map<std::string, Glib::ustring>* profileNames,
     bool nameUpper
 )
 {
@@ -114,8 +115,8 @@ void loadProfiles(
 bool loadProfile(
     const Glib::ustring& profile,
     const Glib::ustring& dirName,
-    std::map<Glib::ustring, cmsHPROFILE>* profiles,
-    std::map<Glib::ustring, rtengine::ProfileContent>* profileContents
+    std::map<std::string, cmsHPROFILE>* profiles,
+    std::map<std::string, rtengine::ProfileContent>* profileContents
 )
 {
     if (dirName.empty() || profiles == nullptr) {
@@ -996,10 +997,10 @@ parse_error:
         return false;
     }
 
-    using ProfileMap = std::map<Glib::ustring, cmsHPROFILE>;
-    using MatrixMap = std::map<Glib::ustring, TMatrix>;
-    using ContentMap = std::map<Glib::ustring, ProfileContent>;
-    using NameMap = std::map<Glib::ustring, Glib::ustring>;
+    using ProfileMap = std::map<std::string, cmsHPROFILE>;
+    using MatrixMap = std::map<std::string, TMatrix>;
+    using ContentMap = std::map<std::string, ProfileContent>;
+    using NameMap = std::map<std::string, Glib::ustring>;
 
     ProfileMap wProfiles;
     // ProfileMap wProfilesGamma;
