@@ -529,7 +529,7 @@ void ImProcFunctions::Badpixelscam(CieImage * ncie, double radius, int thresh, i
             }
         }
 
-        std::vector<float> sh_p_orig(width * height);
+        std::vector<float> sh_p_orig(static_cast<std::vector<float>::size_type>(width) * height);
         const auto sh_p_orig_at = [&sh_p_orig, width](int y, int x) {
             return sh_p_orig[y * width + x];
         };
