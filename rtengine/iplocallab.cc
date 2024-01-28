@@ -7122,7 +7122,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
             Imagefloat *tmpImagefat = nullptr;
             tmpImagefat = new Imagefloat(bfw, bfh);
             lab2rgb(*bufmaskblurcol, *tmpImagefat, params->icm.workingProfile);
-            ToneMapFattal02(tmpImagefat, fatParams, nlev, 0, nullptr, 0, 0, 0);
+            ToneMapFattal02(tmpImagefat, fatParams, nlev, 0, nullptr, 0, 0, 0, false);
             rgb2lab(*tmpImagefat, *bufmaskblurcol, params->icm.workingProfile);
             delete tmpImagefat;
         }
@@ -9276,7 +9276,6 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                 const float dE = rsob + std::sqrt(kab * (kch * chrodelta2 + kH * huedelta2) + kL * SQR(refL - maskptr->L[y][x]));
                 //reduction action with deltaE
                 float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens);
-
                 if ((senstype == 11 || ( senstype == 31 && lp.islogcie)) && (varsens >= limvarsens)) {
                     int maxvarsens = 90;//arbitrary value to get maximum incidence  
                     float ared = (1.f - reducdE) / (maxvarsens - limvarsens);
@@ -18048,8 +18047,7 @@ void ImProcFunctions::Lab_Local(
                             if (fatParams.anchor == 50.f) {
                                 alg = 1;
                             }
-
-                            ToneMapFattal02(tmpImagefat.get(), fatParams, 3, 0, nullptr, 0, 0, alg);//last parameter = 1 ==>ART algorithm
+                            ToneMapFattal02(tmpImagefat.get(), fatParams, 3, 0, nullptr, 0, 0, alg, true);//last parameter alg = 1 ==>ART algorithm
                             rgb2lab(*tmpImagefat, *bufexpfin, params->icm.workingProfile);
 
                             if (params->locallab.spots.at(sp).expcie && params->locallab.spots.at(sp).modecie == "dr") {

@@ -386,6 +386,7 @@ private:
     MyExpander* const expfat;
     Adjuster* const fatamount;
     Adjuster* const fatdetail;
+    Gtk::CheckButton* const fatsatur;
     Gtk::CheckButton* const norm;
     Adjuster* const fatlevel;
     Adjuster* const fatanchor;
@@ -436,8 +437,9 @@ private:
     Adjuster* const angmaskexp;
     CurveEditorGroup* const mask2expCurveEditorG;
     DiagonalCurveEditor* const Lmaskexpshape;
+    rtengine::ProcEvent Evlocallabtmosatur;
 
-    sigc::connection expMethodConn, exnoiseMethodConn, inversexConn, normConn, showmaskexpMethodConn, showmaskexpMethodConninv, enaExpMaskConn, enaExpMaskaftConn;
+    sigc::connection expMethodConn, exnoiseMethodConn, inversexConn, normConn, fatsaturConn, showmaskexpMethodConn, showmaskexpMethodConninv, enaExpMaskConn, enaExpMaskaftConn;
 
 public:
     LocallabExposure();
@@ -470,6 +472,7 @@ private:
     void exnoiseMethodChanged();
     void inversexChanged();
     void normChanged();
+    void fatsaturChanged();
     void showmaskexpMethodChanged();
     void showmaskexpMethodChangedinv();
     void enaExpMaskChanged();
