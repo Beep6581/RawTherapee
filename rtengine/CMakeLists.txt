@@ -120,6 +120,7 @@ set(RTENGINESOURCEFILES
     imagedimensions.cc
     imagefloat.cc
     imageio.cc
+    imagesource.cc
     improccoordinator.cc
     improcfun.cc
     impulse_denoise.cc
