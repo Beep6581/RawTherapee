@@ -108,6 +108,14 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
 #endif
 
     odvb->pack_start (*hb3, Gtk::PACK_SHRINK, 4);
+    destinationPreviewLabel = Gtk::manage (new Gtk::Label ());
+    destinationPreviewLabel->set_tooltip_markup (M("QUEUE_DESTPREVIEW_TOOLTIP"));
+    destinationPreviewLabel->set_selectable (true);  // so users can copy the path to the clipboard
+    destinationPreviewLabel->set_halign (Gtk::ALIGN_START);
+    auto destinationPreviewScrolledWindow = Gtk::manage(new Gtk::ScrolledWindow ());
+    destinationPreviewScrolledWindow->set_policy (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+    destinationPreviewScrolledWindow->add (*destinationPreviewLabel);
+    odvb->pack_start (*destinationPreviewScrolledWindow, Gtk::PACK_SHRINK);
     Gtk::RadioButton::Group g = useTemplate->get_group();
     useFolder->set_group (g);
     fdir->add (*odvb);
@@ -122,6 +130,7 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
     outdirTemplate->set_text (options.savePathTemplate);
     useTemplate->set_active (options.saveUsePathTemplate);
     useFolder->set_active (!options.saveUsePathTemplate);
+    destinationPreviewLabel->set_text (M("QUEUE_DESTPREVIEW_TITLE"));
 
     // setup signal handlers
     outdirTemplate->signal_changed().connect (sigc::mem_fun(*this, &BatchQueuePanel::saveOptions));
@@ -329,6 +338,7 @@ void BatchQueuePanel::saveOptions ()
     options.savePathTemplate    = outdirTemplate->get_text();
     options.saveUsePathTemplate = useTemplate->get_active();
     options.procQueueEnabled    = qAutoStart->get_active();
+    batchQueue->updateDestinationPathPreview();
 }
 
 bool BatchQueuePanel::handleShortcutKey (GdkEventKey* event)
@@ -358,6 +368,11 @@ bool BatchQueuePanel::canStartNext ()
     return queueShouldRun;
 }
 
+void BatchQueuePanel::setDestinationPreviewText(const Glib::ustring &destinationPath)
+{
+    destinationPreviewLabel->set_text(destinationPath);
+}
+
 void BatchQueuePanel::pathFolderButtonPressed ()
 {
 
@@ -381,9 +396,11 @@ void BatchQueuePanel::pathFolderButtonPressed ()
 void BatchQueuePanel::pathFolderChanged ()
 {
     options.savePathFolder = outdirFolder->get_filename();
+    batchQueue->updateDestinationPathPreview();
 }
 
 void BatchQueuePanel::formatChanged(const Glib::ustring& format)
 {
     options.saveFormatBatch = saveFormatPanel->getFormat();
+    batchQueue->updateDestinationPathPreview();
 }
