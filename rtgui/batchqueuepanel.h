@@ -42,6 +42,7 @@ class BatchQueuePanel : public Gtk::Box,
     Gtk::CheckButton* qAutoStart;
 
     Gtk::Entry* outdirTemplate;
+    Gtk::Label* destinationPreviewLabel;
     MyFileChooserButton* outdirFolder;
     Gtk::Button* outdirFolderButton;
     Gtk::RadioButton* useTemplate;
@@ -72,6 +73,7 @@ public:
     // batchqueuelistener interface
     void queueSizeChanged(int qsize, bool queueRunning, bool queueError, const Glib::ustring& queueErrorMessage) override;
     bool canStartNext() override;
+    void setDestinationPreviewText(const Glib::ustring& destinationPath) override;
 
 private:
     void startBatchProc ();
