@@ -799,6 +799,7 @@ struct local_params {
     float blackevjz;
     float whiteevjz;
     float detail;
+    float detailcie;
     int sensilog;
     int sensicie;
     int sensimas;
@@ -1452,6 +1453,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.blackevjz = (float) locallab.spots.at(sp).blackEvjz;
     lp.whiteevjz  = (float) locallab.spots.at(sp).whiteEvjz;
     lp.detail = locallab.spots.at(sp).detail;
+    lp.detailcie = 0.01 * locallab.spots.at(sp).detailcie;
     lp.sensilog = locallab.spots.at(sp).sensilog;
     lp.Autogray = locallab.spots.at(sp).Autogray;
     lp.autocompute = locallab.spots.at(sp).autocompute;
@@ -2061,6 +2063,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
         targray = lp.targetgraycie;
     }
     float comprthlog = 1.f;
+    const bool satcontrol = false ;
     const float noise = pow_F(2.f, -16.f);
     const float log2 = xlogf(2.f);
     const float base = targray > 1 && targray < 100 && dynamic_range > 0 ? find_gray(std::abs(shadows_range) / dynamic_range, 0.01f * targray) : 0.f;
@@ -2110,7 +2113,34 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
         }
     };
 
-    const float detail = lp.detail;
+    const auto sf =
+        [=](float s, float c) -> float
+        {
+            if (c > noise) {
+                return 1.f - min(std::abs(s) / c, 1.f);
+            } else {
+                return 0.f;
+            }
+        };
+//added 2024 02 - but not used
+    const auto apply_sat =
+        [&](float &r, float &g, float &b, float f) -> void
+        {
+            float ll = Color::rgbLuminance(r, g, b, ws);
+            float rl = r - ll;
+            float gl = g - ll;
+            float bl = b - ll;
+            float s = intp(max(sf(rl, r), sf(gl, g), sf(bl, b)), pow_F(f, 0.3f) * 0.6f + 0.4f, 1.f);
+            r = ll + s * rl;
+            g = ll + s * gl;
+            b = ll + s * bl;
+        };
+
+
+    float detail = lp.detail;//Log encoding
+    if(lp.cieena) {//Cam16
+        detail = lp.detailcie;
+    }
     const int W = rgb->getWidth(), H = rgb->getHeight();
 
     if (detail == 0.f) {//no local contrast
@@ -2133,6 +2163,11 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
                     r *= f;
                     b *= f;
                     g *= f;
+                    
+                    if (satcontrol && f < 1.f) {
+                        apply_sat(r, g, b, f);
+                    }                    
+                    
                     r = CLIP(r);
                     g = CLIP(g);
                     b = CLIP(b);
@@ -2201,9 +2236,15 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
                     r = CLIP(r);
                     g = CLIP(g);
                     b = CLIP(b);
-                    //     assert(std::isfinite(r));
-                    //     assert(std::isfinite(g));
-                    //     assert(std::isfinite(b));
+                    assert(std::isfinite(r));
+                    assert(std::isfinite(g));
+                    assert(std::isfinite(b));
+                    
+                    if (satcontrol && f < 1.f) {
+                        apply_sat(r, g, b, f);
+                    }
+                    
+                    
                 }
             }
         }

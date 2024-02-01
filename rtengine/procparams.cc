@@ -4652,7 +4652,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     targabscie(16.),
     targetGraycie(18.),
     catadcie(0.),
-    detailcie(0.),
+    detailcie(30.),
     surroundcie("Average"),
     enacieMask(false),
     CCmaskciecurve{

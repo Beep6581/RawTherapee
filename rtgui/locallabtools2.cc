@@ -7649,7 +7649,7 @@ Locallabcie::Locallabcie():
     cie2Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOG2FRA")))),
     targetGraycie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TARGET_GRAY"), 5.0, 80.0, 0.1, 18.0))),
     targabscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_ABS"), 0.01, 16384.0, 0.01, 16.0))),
-    detailcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0., 100., 0.1, 0.))),
+    detailcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0., 100., 0.1, 30.))),
     catadcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CATAD"), -100., 100., 0.5, 0., Gtk::manage(new RTImage("circle-blue-small.png")), Gtk::manage(new RTImage("circle-orange-small.png"))))),
     surroundcie(Gtk::manage(new MyComboBoxText())),
     surrHBoxcie(Gtk::manage(new Gtk::Box())),
