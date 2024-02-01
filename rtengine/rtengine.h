@@ -483,8 +483,15 @@ public:
 class AutoWBListener
 {
 public:
+    enum class AWBMode {
+        NONE,
+        RGB_GREY,
+        TEMP_CORRELATION_NON_RAW,
+        TEMP_CORRELATION_RAW,
+    };
+
     virtual ~AutoWBListener() = default;
-    virtual void WBChanged(int met, double temp, double green, double rw, double gw, double bw, float temp0,  float delta, int bia, int dread, float studgood, float minchrom, int kmin, float histmin, float histmax) = 0;
+    virtual void WBChanged(int met, double temp, double green, double rw, double gw, double bw, float temp0,  float delta, int bia, int dread, float studgood, float minchrom, int kmin, float histmin, float histmax, AWBMode aWBMode) = 0;
 };
 
 class FrameCountListener
