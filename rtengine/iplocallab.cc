@@ -18091,7 +18091,7 @@ void ImProcFunctions::Lab_Local(
                             bool satu = false;
                             if(params->locallab.spots.at(sp).fatsatur) {
                                 satu = true;
-                            }                          
+                            }
                             ToneMapFattal02(tmpImagefat.get(), fatParams, 3, 0, nullptr, 0, 0, alg, satu);//last parameter alg = 1 ==>ART algorithm
                             rgb2lab(*tmpImagefat, *bufexpfin, params->icm.workingProfile);
 
