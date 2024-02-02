@@ -7407,7 +7407,6 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
 
     int precision = 3;//must be 3 5 or 9
     bool oldsampling = wbpar.itcwb_sampling;
-
     if (oldsampling == true) {
         precision = 5;
     }
@@ -7692,12 +7691,7 @@ void RawImageSource::getAutoWBMultipliersitc(bool extra, double & tempref, doubl
         printf("RGB grey AVG: %g %g %g\n", avg_r / std::max(1, rn), avg_g / std::max(1, gn), avg_b / std::max(1, bn));
     }
 
-    if (wbpar.method == "autitcgreen") {
-        //not used
-        redAWBMul = rm = avg_rm * refwb_red;
-        greenAWBMul = gm = avg_gm * refwb_green;
-        blueAWBMul = bm = avg_bm * refwb_blue;
-    } else {
+    if (wbpar.method != "autitcgreen") {
         const double reds = avg_r / std::max(1, rn) * refwb_red;
         const double greens = avg_g / std::max(1, gn) * refwb_green;
         const double blues = avg_b / std::max(1, bn) * refwb_blue;

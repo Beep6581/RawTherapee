@@ -78,7 +78,6 @@ protected:
     ColorTemp autoWB;
     ColorTemp currWBloc;
     ColorTemp autoWBloc;
-    ColorTemp currWBitc;
 
     double lastAwbEqual;
     StandardObserver lastAwbObserver{ColorTemp::DEFAULT_OBSERVER};
