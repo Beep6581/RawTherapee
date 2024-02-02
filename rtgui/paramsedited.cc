@@ -273,6 +273,7 @@ void ParamsEdited::set(bool v)
     wb.itcwb_alg             = v;
     wb.itcwb_prim                = v;
     wb.itcwb_sampling         = v;
+    wb.compat_version          = v;
     //colorShift.a               = v;
     //colorShift.b               = v;
     //lumaDenoise.enabled        = v;
@@ -988,6 +989,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wb.itcwb_alg = wb.itcwb_alg && p.wb.itcwb_alg == other.wb.itcwb_alg;
         wb.itcwb_prim = wb.itcwb_prim && p.wb.itcwb_prim == other.wb.itcwb_prim;
         wb.itcwb_sampling = wb.itcwb_sampling && p.wb.itcwb_sampling == other.wb.itcwb_sampling;
+        wb.compat_version = wb.compat_version && p.wb.compat_version == other.wb.compat_version;
         //colorShift.a = colorShift.a && p.colorShift.a == other.colorShift.a;
         //colorShift.b = colorShift.b && p.colorShift.b == other.colorShift.b;
         //lumaDenoise.enabled = lumaDenoise.enabled && p.lumaDenoise.enabled == other.lumaDenoise.enabled;
@@ -1263,6 +1265,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).gamm = locallab.spots.at(j).gamm && pSpot.gamm == otherSpot.gamm;
                 locallab.spots.at(j).fatamount = locallab.spots.at(j).fatamount && pSpot.fatamount == otherSpot.fatamount;
                 locallab.spots.at(j).fatdetail = locallab.spots.at(j).fatdetail && pSpot.fatdetail == otherSpot.fatdetail;
+                locallab.spots.at(j).fatsatur = locallab.spots.at(j).fatsatur && pSpot.fatsatur == otherSpot.fatsatur;
                 locallab.spots.at(j).fatanchor = locallab.spots.at(j).fatanchor && pSpot.fatanchor == otherSpot.fatanchor;
                 locallab.spots.at(j).fatlevel = locallab.spots.at(j).fatlevel && pSpot.fatlevel == otherSpot.fatlevel;
                 locallab.spots.at(j).recothrese = locallab.spots.at(j).recothrese && pSpot.recothrese == otherSpot.recothrese;
@@ -2897,6 +2900,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.wb.temperature = dontforceSet && options.baBehav[ADDSET_WB_TEMPERATURE] ? toEdit.wb.temperature + mods.wb.temperature : mods.wb.temperature;
     }
 
+    if (wb.compat_version) {
+        toEdit.wb.compat_version = mods.wb.compat_version;
+    }
+
     //if (colorShift.a)                     toEdit.colorShift.a = dontforceSet && options.baBehav[ADDSET_CS_BLUEYELLOW] ? toEdit.colorShift.a + mods.colorShift.a : mods.colorShift.a;
     //if (colorShift.b)                     toEdit.colorShift.b = dontforceSet && options.baBehav[ADDSET_CS_GREENMAGENTA] ? toEdit.colorShift.b + mods.colorShift.b : mods.colorShift.b;
     //if (lumaDenoise.enabled)              toEdit.lumaDenoise.enabled = mods.lumaDenoise.enabled;
@@ -4101,6 +4108,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).fatdetail) {
             toEdit.locallab.spots.at(i).fatdetail = mods.locallab.spots.at(i).fatdetail;
+        }
+
+        if (locallab.spots.at(i).fatsatur) {
+            toEdit.locallab.spots.at(i).fatsatur = mods.locallab.spots.at(i).fatsatur;
         }
 
         if (locallab.spots.at(i).fatanchor) {
@@ -7664,6 +7675,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     fatdetail(v),
     fatanchor(v),
     fatlevel(v),
+    fatsatur(v),
     recothrese(v),
     lowthrese(v),
     higthrese(v),
@@ -8355,6 +8367,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     gamm = v;
     fatamount = v;
     fatdetail = v;
+    fatsatur = v;
     fatanchor = v;
     fatlevel = v;
     recothrese = v;

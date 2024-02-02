@@ -1409,7 +1409,8 @@ WBParams::WBParams() :
     itcwb_nopurple(false),//keep for settings
     itcwb_alg(false),//checkbox
     itcwb_prim("beta"),//combobox
-    itcwb_sampling(false)//keep for 5.9 and for settings
+    itcwb_sampling(false),//keep for 5.9 and for settings
+    compat_version(WBParams::CURRENT_COMPAT_VERSION)
 
 {
 }
@@ -1434,6 +1435,7 @@ bool WBParams::isPanningRelatedChange(const WBParams& other) const
                 && itcwb_green == other.itcwb_green
                 && itcwb_prim == other.itcwb_prim
                 && itcwb_alg == other.itcwb_alg
+                && compat_version == other.compat_version
 
             )
         )
@@ -1455,7 +1457,8 @@ bool WBParams::operator ==(const WBParams& other) const
         && itcwb_nopurple == other.itcwb_nopurple
         && itcwb_alg == other.itcwb_alg
         && itcwb_prim == other.itcwb_prim
-        && itcwb_sampling == other.itcwb_sampling;
+        && itcwb_sampling == other.itcwb_sampling
+        && compat_version == other.compat_version;
 
 }
 
@@ -3345,6 +3348,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     gamm(0.4),
     fatamount(1.0),
     fatdetail(40.0),
+    fatsatur(false),
     fatanchor(50.0),
     fatlevel(1.),
     recothrese(1.),
@@ -4896,6 +4900,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && gamm == other.gamm
         && fatamount == other.fatamount
         && fatdetail == other.fatdetail
+        && fatsatur == other.fatsatur
         && fatanchor == other.fatanchor
         && fatlevel == other.fatlevel
         && recothrese == other.recothrese
@@ -6387,6 +6392,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->wb.itcwb_alg, "White Balance", "Itcwb_alg", wb.itcwb_alg, keyFile);
         saveToKeyfile(!pedited || pedited->wb.itcwb_prim, "White Balance", "Itcwb_prim", wb.itcwb_prim, keyFile);
         saveToKeyfile(!pedited || pedited->wb.itcwb_sampling, "White Balance", "Itcwb_sampling", wb.itcwb_sampling, keyFile);
+        saveToKeyfile(!pedited || pedited->wb.compat_version, "White Balance", "CompatibilityVersion", wb.compat_version, keyFile);
 
 // Colorappearance
         saveToKeyfile(!pedited || pedited->colorappearance.enabled, "Color appearance", "Enabled", colorappearance.enabled, keyFile);
@@ -6781,6 +6787,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->gamm, "Locallab", "Gamm_" + index_str, spot.gamm, keyFile);
                     saveToKeyfile(!pedited || spot_edited->fatamount, "Locallab", "Fatamount_" + index_str, spot.fatamount, keyFile);
                     saveToKeyfile(!pedited || spot_edited->fatdetail, "Locallab", "Fatdetail_" + index_str, spot.fatdetail, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->fatsatur, "Locallab", "Fatsatur_" + index_str, spot.fatsatur, keyFile);
                     saveToKeyfile(!pedited || spot_edited->fatanchor, "Locallab", "Fatanchor_" + index_str, spot.fatanchor, keyFile);
                     saveToKeyfile(!pedited || spot_edited->fatlevel, "Locallab", "Fatlevel_" + index_str, spot.fatlevel, keyFile);
                     saveToKeyfile(!pedited || spot_edited->recothrese, "Locallab", "Recothrese_" + index_str, spot.recothrese, keyFile);
@@ -8364,7 +8371,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "White Balance", "Enabled", wb.enabled, pedited->wb.enabled);
             assignFromKeyfile(keyFile, "White Balance", "Setting", wb.method, pedited->wb.method);
             if (wb.method == "Auto") {
-                wb.method = "autold";
+                wb.method = "autitcgreen"; //"autold";
             }
             assignFromKeyfile(keyFile, "White Balance", "Temperature", wb.temperature, pedited->wb.temperature);
             assignFromKeyfile(keyFile, "White Balance", "Green", wb.green, pedited->wb.green);
@@ -8389,6 +8396,19 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 }
             }
             assignFromKeyfile(keyFile, "White Balance", "Itcwb_sampling", wb.itcwb_sampling, pedited->wb.itcwb_sampling);
+            if (!assignFromKeyfile(keyFile, "White Balance", "CompatibilityVersion", wb.compat_version, pedited->wb.compat_version)) {
+                bool compat_version_edited = true;
+                if (ppVersion <= 346) { // 5.8 and earlier.
+                    wb.compat_version = 0;
+                } else if (ppVersion <= 349) { // 5.9.
+                    wb.compat_version = 1;
+                } else {
+                    compat_version_edited = false;
+                }
+                if (pedited) {
+                    pedited->wb.compat_version = pedited->wb.compat_version || compat_version_edited;
+                }
+            }
         }
 
         if (keyFile.has_group("Defringing")) {
@@ -8961,6 +8981,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Gamm_" + index_str, spot.gamm, spotEdited.gamm);
                 assignFromKeyfile(keyFile, "Locallab", "Fatamount_" + index_str, spot.fatamount, spotEdited.fatamount);
                 assignFromKeyfile(keyFile, "Locallab", "Fatdetail_" + index_str, spot.fatdetail, spotEdited.fatdetail);
+                assignFromKeyfile(keyFile, "Locallab", "Fatsatur_" + index_str, spot.fatsatur, spotEdited.fatsatur);
                 assignFromKeyfile(keyFile, "Locallab", "Fatanchor_" + index_str, spot.fatanchor, spotEdited.fatanchor);
                 assignFromKeyfile(keyFile, "Locallab", "Fatlevel_" + index_str, spot.fatlevel, spotEdited.fatlevel);
                 assignFromKeyfile(keyFile, "Locallab", "Recothrese_" + index_str, spot.recothrese, spotEdited.recothrese);

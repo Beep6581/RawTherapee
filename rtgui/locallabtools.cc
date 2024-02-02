@@ -2656,6 +2656,7 @@ LocallabExposure::LocallabExposure():
     expfat(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_FATFRA")))),
     fatamount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATAMOUNT"), 1., 100., 1., 1.))),
     fatdetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATDETAIL"), -100., 300., 1., 0.))),
+    fatsatur(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FATSAT")))),
     norm(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_EQUIL")))),
     fatlevel(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATLEVEL"), 0.5, 2.0, 0.01, 1.))),
     fatanchor(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHOR"), 0.1, 100.0, 0.01, 50., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
@@ -2707,7 +2708,9 @@ LocallabExposure::LocallabExposure():
     strmaskexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -2., 2., 0.05, 0.))),
     angmaskexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180., 180., 0.1, 0.))),
     mask2expCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
-    Lmaskexpshape(static_cast<DiagonalCurveEditor*>(mask2expCurveEditorG->addCurve(CT_Diagonal, "L(L)")))
+    Lmaskexpshape(static_cast<DiagonalCurveEditor*>(mask2expCurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
+    Evlocallabtmosatur(ProcEventMapper::getInstance()->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_TMO_SATUR"))
+    
 {
     set_orientation(Gtk::ORIENTATION_VERTICAL);
     
@@ -2803,6 +2806,7 @@ LocallabExposure::LocallabExposure():
     
     setExpandAlignProperties(exprecove, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     normConn  = norm->signal_toggled().connect(sigc::mem_fun(*this, &LocallabExposure::normChanged));
+    fatsaturConn  = fatsatur->signal_toggled().connect(sigc::mem_fun(*this, &LocallabExposure::fatsaturChanged));
 
     inversexConn  = inversex->signal_toggled().connect(sigc::mem_fun(*this, &LocallabExposure::inversexChanged));
     inversex->set_tooltip_text(M("TP_LOCALLAB_INVERS_TOOLTIP"));
@@ -2898,6 +2902,7 @@ LocallabExposure::LocallabExposure():
 //    fatBox->pack_start(*norm);
 //    fatBox->pack_start(*fatlevel);
     fatBox->pack_start(*fatanchor);
+    fatBox->pack_start(*fatsatur);
 //    fatFrame->add(*fatBox);
     expfat->add(*fatBox, false);
 //    pack_start(*fatFrame);
@@ -3138,6 +3143,7 @@ void LocallabExposure::disableListener()
     exnoiseMethodConn.block(true);
     inversexConn.block(true);
     normConn.block(true);
+    fatsaturConn.block(true);
     showmaskexpMethodConn.block(true);
     showmaskexpMethodConninv.block(true);
     enaExpMaskConn.block(true);
@@ -3152,6 +3158,7 @@ void LocallabExposure::enableListener()
     exnoiseMethodConn.block(false);
     inversexConn.block(false);
     normConn.block(false);
+    fatsaturConn.block(false);
     showmaskexpMethodConn.block(false);
     showmaskexpMethodConninv.block(false);
     enaExpMaskConn.block(false);
@@ -3237,6 +3244,7 @@ void LocallabExposure::read(const rtengine::procparams::ProcParams* pp, const Pa
         angexp->setValue(spot.angexp);
         softradiusexp->setValue(spot.softradiusexp);
         norm->set_active(spot.norm);
+        fatsatur->set_active(spot.fatsatur);
         inversex->set_active(spot.inversex);
         enaExpMask->set_active(spot.enaExpMask);
         enaExpMaskaft->set_active(spot.enaExpMaskaft);
@@ -3328,6 +3336,7 @@ void LocallabExposure::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         spot.softradiusexp = softradiusexp->getValue();
         spot.inversex = inversex->get_active();
         spot.norm = norm->get_active();
+        spot.fatsatur = fatsatur->get_active();
         spot.enaExpMask = enaExpMask->get_active();
         spot.enaExpMaskaft = enaExpMaskaft->get_active();
         spot.CCmaskexpcurve = CCmaskexpshape->getCurve();
@@ -3934,6 +3943,21 @@ void LocallabExposure::normChanged()
     }
 }
 
+void LocallabExposure::fatsaturChanged()
+{
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (fatsatur->get_active()) {
+                listener->panelChanged(Evlocallabtmosatur,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabtmosatur,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
 
 void LocallabExposure::inversexChanged()
 {

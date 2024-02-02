@@ -1450,6 +1450,7 @@ HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
 HISTORY_MSG_LOCALLAB_TE_PIVOT;Local - Equalizer pivot
 HISTORY_MSG_LOCAL_DEHAZE_BLACK;Local - Dehaze - black
 HISTORY_MSG_LOCAL_GAMUTMUNSEL;Local - SC - Avoid Color Shift
+HISTORY_MSG_LOCAL_TMO_SATUR;Local Exp Fattal Saturation
 HISTORY_MSG_METADATA_MODE;Metadata copy mode
 HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrast threshold
 HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST;CS - Auto threshold
@@ -2041,7 +2042,7 @@ PREFERENCES_USEBUNDLEDPROFILES;Use bundled profiles
 PREFERENCES_WBA;White Balance
 PREFERENCES_WBACORR;White Balance - Automatic temperature correlation
 PREFERENCES_WBACORR_TOOLTIP;These settings allow, depending on the images (type of raw file, colorimetry, etc.), an adaptation of the " Temperature correlation " algorithm in order to obtain the best overall results. There is no absolute rule, linking these parameters to the results obtained.\n\nThe settings are of 3 types: \n* those accessible to the user from the GUI.\n* those accessible only in reading from each pp3 file : Itcwb_minsize=20, Itcwb_delta=4 Itcwb_rgreen=1 Itcwb_nopurple=false (See Rawpedia)\n* those accessible to the user in 'options' (see Rawpedia)\n You can use "Awb temperature bias" and "Green refinement" to adjust the results. Each movement of these commands brings a new calculation of temperature, tint and correlation.\n\nPlease note that the 3 indicators 'Correlation factor', 'Patch chroma' and ΔE are given for information only. It is not because one of these indicators is better that the result will necessarily be better.
-PREFERENCES_WBAENA;Show White Balance auto Temperature correlation Settings
+PREFERENCES_WBAENA;Show White Balance Auto temperature correlation settings
 PREFERENCES_WBAENACUSTOM;Use Custom temperature & tint
 PREFERENCES_WBAFORC;Forces Extra algoritm
 PREFERENCES_WBAGREENDELTA;Delta temperature in green iterate loop (if Force Extra enabled)
@@ -2964,6 +2965,7 @@ TP_LOCALLAB_EXP_TOOLNAME;Dynamic Range & Exposure
 TP_LOCALLAB_FATAMOUNT;Amount
 TP_LOCALLAB_FATANCHOR;Anchor
 TP_LOCALLAB_FATDETAIL;Detail
+TP_LOCALLAB_FATSAT;Saturation control
 TP_LOCALLAB_FATFRA;Dynamic Range Compression ƒ
 TP_LOCALLAB_FATFRAME_TOOLTIP;PDE Fattal – uses the Fattal Tone-mapping algorithm.
 TP_LOCALLAB_FATLEVEL;Sigma
@@ -4172,7 +4174,7 @@ TP_WBALANCE_ITCWB_CUSTOM;Use Custom temperature & tint
 TP_WBALANCE_ITCWB_DELTA;Delta temperature in green loop
 TP_WBALANCE_ITCWB_FGREEN;Find green student
 TP_WBALANCE_ITCWB_FORCED;Close to full CIE diagram
-TP_WBALANCE_ITCWB_FRA;Auto Temperature correlation Settings
+TP_WBALANCE_ITCWB_FRA;Auto temperature correlation settings
 TP_WBALANCE_ITCWB_FRA_TOOLTIP;These settings allow, depending on the images (type of raw, colorimetry, etc.), an adaptation of the 'Temperature correlation' algorithm. There is no absolute rule linking these parameters to the results obtained.
 TP_WBALANCE_ITCWB_MINSIZEPATCH;Patch minimum size
 TP_WBALANCE_ITCWB_NOPURPLE;Filter on purple color

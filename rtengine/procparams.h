@@ -636,6 +636,8 @@ struct WBEntry {
 };
 
 struct WBParams {
+    static constexpr int CURRENT_COMPAT_VERSION = 2;
+
     bool enabled;
     Glib::ustring    method;
     int              temperature;
@@ -649,6 +651,24 @@ struct WBParams {
     bool             itcwb_alg;
     Glib::ustring    itcwb_prim;
     bool             itcwb_sampling;
+    /**
+     * Used to maintain edits from previous versions of RawTherapee where
+     * compatibility cannot be maintained simply by converting the parameters,
+     * for example, when the output depends on the file type.
+     *
+     * Version 0:
+     *  - Base version.
+     * Version 1 (5.9):
+     *  - RGB Gray fixed to (1, 1, 1) RGB multipliers before temperature bias
+     *    for non-raw files.
+     *  - Temperature correlation fixed to temperature 5000, green 1, and equal
+     *    1 or equivalent for non-raw files.
+     * Version 2 (5.10):
+     *  - RGB grey restored to version 0.
+     *  - Temperature correlation equivalent to method "Camera" for non-raw
+     *    files.
+     */
+    int compat_version;
 
     WBParams();
 
@@ -1191,6 +1211,7 @@ struct LocallabParams {
         double gamm;
         double fatamount;
         double fatdetail;
+        bool fatsatur;
         double fatanchor;
         double fatlevel;
         double recothrese;
