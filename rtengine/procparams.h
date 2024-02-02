@@ -1211,6 +1211,7 @@ struct LocallabParams {
         double gamm;
         double fatamount;
         double fatdetail;
+        bool fatsatur;
         double fatanchor;
         double fatlevel;
         double recothrese;

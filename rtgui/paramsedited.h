@@ -567,6 +567,7 @@ public:
         bool fatdetail;
         bool fatanchor;
         bool fatlevel;
+        bool fatsatur;
         bool recothrese;
         bool lowthrese;
         bool higthrese;

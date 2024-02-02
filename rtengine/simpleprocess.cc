@@ -967,7 +967,7 @@ private:
         ipf.firstAnalysis(baseImg, params, hist16);
 
         ipf.dehaze(baseImg, params.dehaze);
-        ipf.ToneMapFattal02(baseImg, params.fattal, 3, 0, nullptr, 0, 0, 0);
+        ipf.ToneMapFattal02(baseImg, params.fattal, 3, 0, nullptr, 0, 0, 0, false);
 
         // perform transform (excepted resizing)
         if (ipf.needsTransform(fw, fh, imgsrc->getRotateDegree(), imgsrc->getMetaData())) {

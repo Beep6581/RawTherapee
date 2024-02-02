@@ -1265,6 +1265,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).gamm = locallab.spots.at(j).gamm && pSpot.gamm == otherSpot.gamm;
                 locallab.spots.at(j).fatamount = locallab.spots.at(j).fatamount && pSpot.fatamount == otherSpot.fatamount;
                 locallab.spots.at(j).fatdetail = locallab.spots.at(j).fatdetail && pSpot.fatdetail == otherSpot.fatdetail;
+                locallab.spots.at(j).fatsatur = locallab.spots.at(j).fatsatur && pSpot.fatsatur == otherSpot.fatsatur;
                 locallab.spots.at(j).fatanchor = locallab.spots.at(j).fatanchor && pSpot.fatanchor == otherSpot.fatanchor;
                 locallab.spots.at(j).fatlevel = locallab.spots.at(j).fatlevel && pSpot.fatlevel == otherSpot.fatlevel;
                 locallab.spots.at(j).recothrese = locallab.spots.at(j).recothrese && pSpot.recothrese == otherSpot.recothrese;
@@ -4107,6 +4108,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).fatdetail) {
             toEdit.locallab.spots.at(i).fatdetail = mods.locallab.spots.at(i).fatdetail;
+        }
+
+        if (locallab.spots.at(i).fatsatur) {
+            toEdit.locallab.spots.at(i).fatsatur = mods.locallab.spots.at(i).fatsatur;
         }
 
         if (locallab.spots.at(i).fatanchor) {
@@ -7670,6 +7675,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     fatdetail(v),
     fatanchor(v),
     fatlevel(v),
+    fatsatur(v),
     recothrese(v),
     lowthrese(v),
     higthrese(v),
@@ -8361,6 +8367,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     gamm = v;
     fatamount = v;
     fatdetail = v;
+    fatsatur = v;
     fatanchor = v;
     fatlevel = v;
     recothrese = v;
