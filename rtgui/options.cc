@@ -466,7 +466,7 @@ void Options::setDefaults()
     histogramTraceBrightness = 1;
     curvebboxpos = 1;
     complexity = 2;
-    spotmet = 3;
+    spotmet = 0;
     
     inspectorWindow = false;
     zoomOnScroll = true;

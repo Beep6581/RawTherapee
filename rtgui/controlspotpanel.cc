@@ -1011,7 +1011,7 @@ void ControlSpotPanel::spotMethodChanged()
 
     } else if (spotMethod_->get_active_row_number() == 0) { // Normal case
         excluFrame->hide();
-        // Reset spot shape only if previous spotMethod is Full image
+        // Reset spot shape only if previous spotMethod is Full image or Global
         if (oldSpotMethod == 2  || oldSpotMethod == 3) {
             disableParamlistener(true);
             locX_->setValue(150.);
