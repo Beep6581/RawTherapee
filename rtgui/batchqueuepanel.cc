@@ -73,7 +73,10 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
     hb2->pack_start (*useTemplate, Gtk::PACK_SHRINK, 4);
     outdirTemplate = Gtk::manage (new Gtk::Entry ());
     hb2->pack_start (*outdirTemplate);
-    odvb->pack_start (*hb2, Gtk::PACK_SHRINK, 4);
+    templateHelpButton = Gtk::manage (new Gtk::ToggleButton("?"));
+    templateHelpButton->set_tooltip_markup (M ("GENERAL_HELP"));    // FIXME: Specific tooltip for this button
+    hb2->pack_start (*templateHelpButton, Gtk::PACK_SHRINK, 0);
+    odvb->pack_start (*hb2, Gtk::PACK_SHRINK, 0);
     outdirTemplate->set_tooltip_markup (M("QUEUE_LOCATION_TEMPLATE_TOOLTIP"));
     useTemplate->set_tooltip_markup (M("QUEUE_LOCATION_TEMPLATE_TOOLTIP"));
     Gtk::Box* hb3 = Gtk::manage (new Gtk::Box ());
@@ -136,6 +139,7 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
     outdirTemplate->signal_changed().connect (sigc::mem_fun(*this, &BatchQueuePanel::saveOptions));
     useTemplate->signal_toggled().connect (sigc::mem_fun(*this, &BatchQueuePanel::saveOptions));
     useFolder->signal_toggled().connect (sigc::mem_fun(*this, &BatchQueuePanel::saveOptions));
+    templateHelpButton->signal_toggled().connect (sigc::mem_fun(*this, &BatchQueuePanel::templateHelpButtonToggled));
     saveFormatPanel->setListener (this);
 
     // setup button bar
@@ -163,6 +167,7 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
     }
     middleSplitPane->pack1 (*scrolledTemplateHelpWindow);
     middleSplitPane->pack2 (*batchQueue);
+    scrolledTemplateHelpWindow->set_visible(false); // initially hidden, templateHelpButton shows it
 
     // add middle browser area
     pack_start (*middleSplitPane);
@@ -339,6 +344,11 @@ void BatchQueuePanel::setGuiFromBatchState(bool queueRunning, int qsize)
     updateTab(qsize);
 }
 
+void BatchQueuePanel::templateHelpButtonToggled()
+{
+    scrolledTemplateHelpWindow->set_visible(templateHelpButton->get_active());
+}
+
 void BatchQueuePanel::addBatchQueueJobs(const std::vector<BatchQueueEntry*>& entries, bool head)
 {
     batchQueue->addEntries(entries, head);
@@ -388,12 +398,6 @@ bool BatchQueuePanel::canStartNext ()
 void BatchQueuePanel::setDestinationPreviewText(const Glib::ustring &destinationPath)
 {
     destinationPreviewLabel->set_text(destinationPath);
-    static bool remove_me = false;
-    remove_me = !remove_me;
-    if(remove_me)
-        scrolledTemplateHelpWindow->hide();   // FIXME: REMOVE TESTING THING
-    else
-        scrolledTemplateHelpWindow->show();   // FIXME: REMOVE TESTING THING
 }
 
 void BatchQueuePanel::pathFolderButtonPressed ()
