@@ -147,8 +147,25 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
     topBox->pack_start (*fdir, Gtk::PACK_EXPAND_WIDGET, 4);
     topBox->pack_start (*fformat, Gtk::PACK_EXPAND_WIDGET, 4);
 
+    // FIXME: THIS IS SO FAR JUST A TEST THING
+    middleSplitPane = Gtk::manage (new Gtk::Paned(Gtk::ORIENTATION_HORIZONTAL));
+    templateHelpTextView = Gtk::manage (new Gtk::TextView());
+    templateHelpTextView->set_editable(false);
+    templateHelpTextView->set_wrap_mode(Gtk::WRAP_WORD);
+    Gtk::ScrolledWindow* scrolledTemplateHelpWindow = Gtk::manage(new Gtk::ScrolledWindow());
+    scrolledTemplateHelpWindow->add(*templateHelpTextView);
+    {
+        auto helptext = M("QUEUE_LOCATION_TEMPLATE_TOOLTIP");
+        auto buffer = templateHelpTextView->get_buffer();
+        buffer->create_tag("bold");
+        buffer->create_tag("italic");
+        buffer->insert_markup(buffer->begin(), helptext);
+    }
+    middleSplitPane->pack1 (*scrolledTemplateHelpWindow);
+    middleSplitPane->pack2 (*batchQueue);
+
     // add middle browser area
-    pack_start (*batchQueue);
+    pack_start (*middleSplitPane);
 
     // lower box with thumbnail zoom
     bottomBox = Gtk::manage (new Gtk::Box ());
@@ -371,6 +388,7 @@ bool BatchQueuePanel::canStartNext ()
 void BatchQueuePanel::setDestinationPreviewText(const Glib::ustring &destinationPath)
 {
     destinationPreviewLabel->set_text(destinationPath);
+    templateHelpTextView->hide();   // FIXME: REMOVE TESTING THING
 }
 
 void BatchQueuePanel::pathFolderButtonPressed ()

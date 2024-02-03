@@ -52,8 +52,10 @@ class BatchQueuePanel : public Gtk::Box,
 
     RTWindow* parent;
     BatchQueue* batchQueue;
+    Gtk::TextView* templateHelpTextView;
     Gtk::Box* bottomBox;
     Gtk::Box* topBox;
+    Gtk::Paned* middleSplitPane;
 
     std::atomic<bool> queueShouldRun;
 
