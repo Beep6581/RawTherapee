@@ -152,7 +152,7 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
     templateHelpTextView = Gtk::manage (new Gtk::TextView());
     templateHelpTextView->set_editable(false);
     templateHelpTextView->set_wrap_mode(Gtk::WRAP_WORD);
-    Gtk::ScrolledWindow* scrolledTemplateHelpWindow = Gtk::manage(new Gtk::ScrolledWindow());
+    scrolledTemplateHelpWindow = Gtk::manage(new Gtk::ScrolledWindow());
     scrolledTemplateHelpWindow->add(*templateHelpTextView);
     {
         auto helptext = M("QUEUE_LOCATION_TEMPLATE_TOOLTIP");
@@ -388,7 +388,12 @@ bool BatchQueuePanel::canStartNext ()
 void BatchQueuePanel::setDestinationPreviewText(const Glib::ustring &destinationPath)
 {
     destinationPreviewLabel->set_text(destinationPath);
-    templateHelpTextView->hide();   // FIXME: REMOVE TESTING THING
+    static bool remove_me = false;
+    remove_me = !remove_me;
+    if(remove_me)
+        scrolledTemplateHelpWindow->hide();   // FIXME: REMOVE TESTING THING
+    else
+        scrolledTemplateHelpWindow->show();   // FIXME: REMOVE TESTING THING
 }
 
 void BatchQueuePanel::pathFolderButtonPressed ()

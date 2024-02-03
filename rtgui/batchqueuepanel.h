@@ -53,6 +53,7 @@ class BatchQueuePanel : public Gtk::Box,
     RTWindow* parent;
     BatchQueue* batchQueue;
     Gtk::TextView* templateHelpTextView;
+    Gtk::ScrolledWindow* scrolledTemplateHelpWindow;
     Gtk::Box* bottomBox;
     Gtk::Box* topBox;
     Gtk::Paned* middleSplitPane;
