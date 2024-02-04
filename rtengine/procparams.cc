@@ -3348,6 +3348,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     gamm(0.4),
     fatamount(1.0),
     fatdetail(40.0),
+    fatsatur(false),
     fatanchor(50.0),
     fatlevel(1.),
     recothrese(1.),
@@ -4827,6 +4828,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && gamm == other.gamm
         && fatamount == other.fatamount
         && fatdetail == other.fatdetail
+        && fatsatur == other.fatsatur
         && fatanchor == other.fatanchor
         && fatlevel == other.fatlevel
         && recothrese == other.recothrese
@@ -6712,6 +6714,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->gamm, "Locallab", "Gamm_" + index_str, spot.gamm, keyFile);
                     saveToKeyfile(!pedited || spot_edited->fatamount, "Locallab", "Fatamount_" + index_str, spot.fatamount, keyFile);
                     saveToKeyfile(!pedited || spot_edited->fatdetail, "Locallab", "Fatdetail_" + index_str, spot.fatdetail, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->fatsatur, "Locallab", "Fatsatur_" + index_str, spot.fatsatur, keyFile);
                     saveToKeyfile(!pedited || spot_edited->fatanchor, "Locallab", "Fatanchor_" + index_str, spot.fatanchor, keyFile);
                     saveToKeyfile(!pedited || spot_edited->fatlevel, "Locallab", "Fatlevel_" + index_str, spot.fatlevel, keyFile);
                     saveToKeyfile(!pedited || spot_edited->recothrese, "Locallab", "Recothrese_" + index_str, spot.recothrese, keyFile);
@@ -8904,6 +8907,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Gamm_" + index_str, spot.gamm, spotEdited.gamm);
                 assignFromKeyfile(keyFile, "Locallab", "Fatamount_" + index_str, spot.fatamount, spotEdited.fatamount);
                 assignFromKeyfile(keyFile, "Locallab", "Fatdetail_" + index_str, spot.fatdetail, spotEdited.fatdetail);
+                assignFromKeyfile(keyFile, "Locallab", "Fatsatur_" + index_str, spot.fatsatur, spotEdited.fatsatur);
                 assignFromKeyfile(keyFile, "Locallab", "Fatanchor_" + index_str, spot.fatanchor, spotEdited.fatanchor);
                 assignFromKeyfile(keyFile, "Locallab", "Fatlevel_" + index_str, spot.fatlevel, spotEdited.fatlevel);
                 assignFromKeyfile(keyFile, "Locallab", "Recothrese_" + index_str, spot.recothrese, spotEdited.recothrese);
