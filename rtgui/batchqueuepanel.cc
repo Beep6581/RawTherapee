@@ -168,6 +168,7 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
     middleSplitPane->pack1 (*scrolledTemplateHelpWindow);
     middleSplitPane->pack2 (*batchQueue);
     scrolledTemplateHelpWindow->set_visible(false); // initially hidden, templateHelpButton shows it
+    scrolledTemplateHelpWindow->set_no_show_all(true);
 
     // add middle browser area
     pack_start (*middleSplitPane);
@@ -346,7 +347,10 @@ void BatchQueuePanel::setGuiFromBatchState(bool queueRunning, int qsize)
 
 void BatchQueuePanel::templateHelpButtonToggled()
 {
-    scrolledTemplateHelpWindow->set_visible(templateHelpButton->get_active());
+    bool visible = templateHelpButton->get_active();
+    //scrolledTemplateHelpWindow->set_no_show_all(!visible);
+    scrolledTemplateHelpWindow->set_visible(visible);
+    templateHelpTextView->set_visible(visible);
 }
 
 void BatchQueuePanel::addBatchQueueJobs(const std::vector<BatchQueueEntry*>& entries, bool head)
