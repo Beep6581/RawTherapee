@@ -393,7 +393,9 @@ Gtk::TreePath DirBrowser::expandToDir (const Glib::ustring& absDirPath)
 
     char* dcpy = strdup (absDirPath.c_str());
     char* dir = strtok (dcpy, "/\\");
+#ifdef _WIN32
     int count = 0;
+#endif
     expandSuccess = true;
 
 #ifndef _WIN32
@@ -436,8 +438,9 @@ Gtk::TreePath DirBrowser::expandToDir (const Glib::ustring& absDirPath)
             ++ix;
             ++i;
         }
-
+#ifdef _WIN32
         count++;
+#endif
         dir = strtok(nullptr, "/\\");
     }
 

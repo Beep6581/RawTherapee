@@ -2990,7 +2990,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     avoidrad(0.),
     transitweak(1.0),
     transitgrad(0.0),
-    hishow(false),
+    hishow(options.complexity != 2),
     activ(true),
     blwh(false),
     recurs(false),
