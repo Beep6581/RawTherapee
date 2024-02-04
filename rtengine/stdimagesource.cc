@@ -315,6 +315,10 @@ void StdImageSource::WBauto(bool extra, double &tempref, double &greenref, array
 {
 }
 
+void StdImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, const procparams::WBParams & wbpar)
+{
+}
+
 void StdImageSource::getAutoWBMultipliersitc(bool extra, double &tempref, double &greenref, double &tempitc, double &greenitc, float &temp0, float &delta, int &bia, int &dread, int &kcam, int &nocam, float &studgood, float &minchrom, int &kmin, float &minhist, float &maxhist, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double &rm, double &gm, double &bm, const WBParams & wbpar, const ColorManagementParams &cmp, const RAWParams &raw, const ToneCurveParams &hrp)
 {
     if (redAWBMul != -1.) {

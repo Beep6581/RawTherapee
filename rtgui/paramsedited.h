@@ -255,6 +255,7 @@ struct WBParamsEdited {
     bool itcwb_prim;
     bool itcwb_sampling;
     bool itcwb_green;
+    bool compat_version;
 
 };
 
@@ -568,6 +569,7 @@ public:
         bool fatdetail;
         bool fatanchor;
         bool fatlevel;
+        bool fatsatur;
         bool recothrese;
         bool lowthrese;
         bool higthrese;

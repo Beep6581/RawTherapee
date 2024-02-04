@@ -38,6 +38,7 @@ public:
     virtual ~BatchQueueListener() = default;
     virtual void queueSizeChanged(int qsize, bool queueRunning, bool queueError, const Glib::ustring& queueErrorMessage) = 0;
     virtual bool canStartNext() = 0;
+    virtual void setDestinationPreviewText(const Glib::ustring& destinationPath) = 0;
 };
 
 class FileCatalog;
@@ -59,6 +60,7 @@ public:
     void selectAll ();
     void openItemInEditor(ThumbBrowserEntryBase* item);
     void openLastSelectedItemInEditor();
+    void updateDestinationPathPreview();
 
     void startProcessing ();
 
@@ -79,6 +81,7 @@ public:
     bool keyPressed (GdkEventKey* event) override;
     void buttonPressed (LWButton* button, int actionCode, void* actionData) override;
     void redrawNeeded  (LWButton* button) override;
+    void selectionChanged () override;
 
     void setBatchQueueListener (BatchQueueListener* l)
     {
