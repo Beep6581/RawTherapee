@@ -740,8 +740,8 @@ HISTORY_MSG_493;L*a*b* Adjustments
 HISTORY_MSG_494;Capture Sharpening
 HISTORY_MSG_496;Local Spot deleted
 HISTORY_MSG_497;Local Spot selected
-HISTORY_MSG_498;--unused--
-HISTORY_MSG_499;--unused--
+HISTORY_MSG_498;Local - Spot name
+HISTORY_MSG_499;Local - Spot visibility
 HISTORY_MSG_500;Local - Spot shape
 HISTORY_MSG_501;Local - Spot method
 HISTORY_MSG_502;Local - SC - Shape method
