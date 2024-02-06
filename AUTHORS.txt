@@ -8,6 +8,7 @@ Development contributors, in last name alphabetical order:
   Harald Aust
   Roel Baars
   Richard E Barber
+  Dániel Battyányi
   Martin Burri
   Pierre Cabrera
   Javier Celaya
