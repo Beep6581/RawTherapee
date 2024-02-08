@@ -2493,6 +2493,79 @@ void ImProcFunctions::tone_eqcam2(ImProcFunctions *ipf, Imagefloat *rgb, int whi
     ipf->toneEqualizer(rgb, params, workingProfile, scale, multithread);
 }
 
+
+// tone mapping from
+//  https://github.com/thatcherfreeman/utility-dctls/
+// Copyright of the original code
+/*
+MIT License
+
+Copyright (c) 2023 Thatcher Freeman
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+/* 
+// I also took some code from Albert Grigio
+// All this code is not used, I preferred to use tone_eqsmooth
+*/
+
+float rolloff_function(float x, float a, float b, float c)
+{
+    return a * (x / (x + b)) + c;
+}
+
+float scene_contrast(float x, float mid_gray_out, float gamma)
+{
+    return mid_gray_out * std::pow(x / mid_gray_out, gamma);
+}
+    
+float do_get(float x, bool rolloff_, float mid_gray_out, float gamma, float a, float b, float c)
+{
+    if (rolloff_ && x <= mid_gray_out) {
+        return x;
+    } else {
+        return rolloff_function(scene_contrast(x, mid_gray_out, gamma), a, b, c);
+    }
+}
+
+
+void tonemapFreeman(float target_slope, float white_point, float black_point, float mid_gray_out, bool rolloff, LUTf& lut)               
+{
+    float a;
+    float b;
+    float c;
+    float gamma;
+    float mid_gray_out_;
+    
+    mid_gray_out_ = mid_gray_out;
+    c = black_point;
+    a = white_point - c;
+    b = (a / (mid_gray_out_ - c)) * (1.f - ((mid_gray_out_ - c) / a)) * mid_gray_out_;
+    gamma = target_slope * (float) std::pow((mid_gray_out_ + b), 2.0) / (a * b);
+        
+    for (int i = 0; i < 65536; ++i) {
+        lut[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_out_, gamma, a, b, c);
+    }
+}
+
+
 void ImProcFunctions::loccont(int bfw, int bfh, LabImage* tmp1, float rad, float stren, int sk)
 {
     if (rad > 0.f) {
@@ -20204,13 +20277,33 @@ void ImProcFunctions::Lab_Local(
                         tone_eqcam(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);
                     }
 
-                    if(lp.issmoothcie) {
-                        tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);
-                    }
-
                     if(params->locallab.spots.at(sp).logcie) {
                         log_encode(tmpImage, lp, multiThread, bfw, bfh);
                     }
+
+                    if(lp.issmoothcie) {
+                        tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);
+                        /*
+                        float white_point = 1.f;
+                        float mid_gray_out = 0.01f * lp.sourcegraycie;
+                        bool rolloff = true;
+                        LUTf lut(65536, LUT_CLIP_OFF);
+                    
+                        tonemapFreeman(1.f, white_point, 1.f/65535.f, mid_gray_out, rolloff, lut);
+
+ #ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+                        for (int y = 0; y < bfh ; ++ y) {
+                            for (int x = 0; x < bfw ; ++x) {
+                                tmpImage->r(y, x) = 65535.f * lut[tmpImage->r(y, x)];
+                                tmpImage->g(y, x) = 65535.f * lut[tmpImage->g(y, x)];
+                                tmpImage->b(y, x) = 65535.f * lut[tmpImage->b(y, x)];           
+                            }
+                        }
+                        */
+                    }
+                    
                    
                     rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
