@@ -700,6 +700,7 @@ struct local_params {
     float blurciemask;
     float contciemask;
     bool islogcie; 
+    bool issmoothcie; 
     int noiselequal;
     float noisechrodetail;
     float bilat;
@@ -954,6 +955,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.showmaskciemet = llcieMask;
     lp.fftcieMask = locallab.spots.at(sp).fftcieMask;
     lp.islogcie = locallab.spots.at(sp).logcie && locallab.spots.at(sp).expprecam;
+    lp.issmoothcie = locallab.spots.at(sp).smoothcie;
     lp.enaColorMask = locallab.spots.at(sp).enaColorMask && llsoftMask == 0 && llColorMaskinv == 0 && llSHMaskinv == 0 && llColorMask == 0 && llExpMaskinv == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
     lp.enaColorMaskinv = locallab.spots.at(sp).enaColorMask && llColorMaskinv == 0 && llSHMaskinv == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
     lp.enaExpMask = locallab.spots.at(sp).enaExpMask && llExpMask == 0 && llExpMaskinv == 0 && llSHMaskinv == 0 && llColorMask == 0 && llColorMaskinv == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
@@ -2426,12 +2428,36 @@ void tone_eqcam(ImProcFunctions *ipf, Imagefloat *rgb, const struct local_params
     params.enabled = true;
     params.regularization = 0.f;
     params.pivot = 0.f;
+    params.bands[0] = 0;
     params.bands[2] = lp.midtcie;
+    params.bands[4] = 0;
+    params.bands[5] = 0;
     int mid = abs(lp.midtcie);
     int threshmid = 50;
     if(mid > threshmid) {
         params.bands[1] = sign(lp.midtcie) * (mid - threshmid);
         params.bands[3] = sign(lp.midtcie) * (mid - threshmid);     
+    }
+   
+    ipf->toneEqualizer(rgb, params, workingProfile, scale, multithread);
+}
+
+void tone_eqsmooth(ImProcFunctions *ipf, Imagefloat *rgb, const struct local_params &lp, const Glib::ustring &workingProfile, double scale, bool multithread)
+{
+    ToneEqualizerParams params;
+    params.enabled = true;
+    params.regularization = 0.f;
+    params.pivot = 0.f;
+    params.bands[0] = 0;
+    params.bands[1] = 0;
+    params.bands[2] = 0;
+    params.bands[3] = 0;
+    params.bands[4] = -58;//arbitrary value to adapt
+    params.bands[5] = -100;
+    
+    if(lp.islogcie) {//with log encoding
+        params.bands[4] = -30;
+        params.bands[5] = -80;
     }
    
     ipf->toneEqualizer(rgb, params, workingProfile, scale, multithread);
@@ -20173,8 +20199,13 @@ void ImProcFunctions::Lab_Local(
 
                     workingtrc(sp, tmpImage, tmpImage, bfw, bfh, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rx, ry, gx, gy, bx, by, mx, my, mxe, mye, dummy, true, false, false, false);
                     workingtrc(sp, tmpImage, tmpImage, bfw, bfh, typ, prof, gamtone, slotone, catx, ill, prim, locprim, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, dummy, false, true, true, gamcie);//with gamut control
+
                     if(lp.midtcie != 0) {
                         tone_eqcam(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);
+                    }
+
+                    if(lp.issmoothcie) {
+                        tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);
                     }
 
                     if(params->locallab.spots.at(sp).logcie) {

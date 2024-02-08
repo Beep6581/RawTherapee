@@ -7565,6 +7565,7 @@ Locallabcie::Locallabcie():
     gamjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGGAMJCIE"), 0.7, 4., 0.01, 2.4))),
     slopjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGSLOPJCIE"), 0., 100., 0.01, 12.923))),
     midtcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MIDTCIE"), -100, 100, 1, 0))),
+    smoothcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SMOOTHCIE")))),
     whitescie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGWHITESCIE"), -100, 100, 1, 0))),
     blackscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGBLACKSSCIE"), -100, 100, 1, 0))),
     willBox(Gtk::manage(new Gtk::Box())),
@@ -7714,6 +7715,7 @@ Locallabcie::Locallabcie():
     Evlocallabgamjcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GAM");
     Evlocallabslopjcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SLOP");
     Evlocallabmidtcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_MIDT");
+    Evlocallabsmoothcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SMOOTH");
     Evlocallabsigcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SIG");
     Evlocallabillcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_ILL");
     Evlocallabprimcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_PRIM");
@@ -7968,6 +7970,7 @@ Locallabcie::Locallabcie():
     trccieBox->pack_start(*gamjcie);
     trccieBox->pack_start(*slopjcie);
     trccieBox->pack_start(*midtcie);
+    trccieBox->pack_start(*smoothcie);
     trcFrame->add(*trccieBox);
     gamcieBox->pack_start(*trcFrame);
     primillBox->pack_start(*willBox);
@@ -8212,6 +8215,7 @@ Locallabcie::Locallabcie():
 
     sigcieconn = sigcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::sigcieChanged));
     logcieconn = logcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::logcieChanged));
+    smoothcieconn = smoothcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::smoothcieChanged));
     logjzconn = logjz->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::logjzChanged));
     sigjzconn = sigjz->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::sigjzChanged));
     sigqconn = sigq->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::sigqChanged));
@@ -8655,6 +8659,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         PQFrame->set_tooltip_text(M("TP_LOCALLAB_JZPQFRA_TOOLTIP"));
         qtoj->set_tooltip_text(M("TP_LOCALLAB_JZQTOJ_TOOLTIP"));
         logcie->set_tooltip_text(M("TP_LOCALLAB_LOGCIE_TOOLTIP"));
+        smoothcie->set_tooltip_text(M("TP_LOCALLAB_SMOOTHCIE_TOOLTIP"));
         modecam->set_tooltip_text(M("TP_LOCALLAB_JZMODECAM_TOOLTIP"));
         adapjzcie->set_tooltip_text(M("TP_LOCALLAB_JABADAP_TOOLTIP"));
         jz100->set_tooltip_text(M("TP_LOCALLAB_JZ100_TOOLTIP"));
@@ -8795,6 +8800,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         slopjcie->set_tooltip_text("");
         trcFrame->set_tooltip_text("");
         midtcie->set_tooltip_text("");
+        smoothcie->set_tooltip_text("");
         whitescie->set_tooltip_text("");
         blackscie->set_tooltip_text("");
         normcie->set_tooltip_text("");
@@ -8827,6 +8833,7 @@ void Locallabcie::disableListener()
     catMethodconn.block(true);
     sigcieconn.block(true);
     logcieconn.block(true);
+    smoothcieconn.block(true);
     logjzconn.block(true);
     sigjzconn.block(true);
     sigqconn.block(true);
@@ -8861,6 +8868,7 @@ void Locallabcie::enableListener()
     catMethodconn.block(false);
     sigcieconn.block(false);
     logcieconn.block(false);
+    smoothcieconn.block(false);
     logjzconn.block(false);
     sigjzconn.block(false);
     sigqconn.block(false);
@@ -9089,6 +9097,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         gamutcie->set_active(spot.gamutcie);
         sigcie->set_active(spot.sigcie);
         logcie->set_active(spot.logcie);
+        smoothcie->set_active(spot.smoothcie);
         logjz->set_active(spot.logjz);
         sigjz->set_active(spot.sigjz);
         sigq->set_active(spot.sigq);
@@ -9106,6 +9115,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         comprcieautoChanged();
         sigqChanged();
         logcieChanged();
+        smoothcieChanged();
         primMethodChanged();
         illMethodChanged();
 
@@ -9354,6 +9364,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.gamutcie = gamutcie->get_active();
         spot.sigcie = sigcie->get_active();
         spot.logcie = logcie->get_active();
+        spot.smoothcie = smoothcie->get_active();
         spot.logjz = logjz->get_active();
         spot.sigjz = sigjz->get_active();
         spot.chjzcie = chjzcie->get_active();
@@ -9944,6 +9955,21 @@ void Locallabcie::logcieChanged()
                                        M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallablogcie,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+void Locallabcie::smoothcieChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (smoothcie->get_active()) {
+                listener->panelChanged(Evlocallabsmoothcie,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabsmoothcie,
                                        M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
