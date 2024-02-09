@@ -2444,6 +2444,7 @@ void tone_eqcam(ImProcFunctions *ipf, Imagefloat *rgb, const struct local_params
 
 void tone_eqsmooth(ImProcFunctions *ipf, Imagefloat *rgb, const struct local_params &lp, const Glib::ustring &workingProfile, double scale, bool multithread)
 {
+    //smooth highlights after TRC 
     ToneEqualizerParams params;
     params.enabled = true;
     params.regularization = 0.f;
@@ -2454,12 +2455,12 @@ void tone_eqsmooth(ImProcFunctions *ipf, Imagefloat *rgb, const struct local_par
     params.bands[3] = 0;
     params.bands[4] = -58;//arbitrary value to adapt with WhiteEvjz - here White Ev # 10
     params.bands[5] = -100;//8 Ev and above
-    if(lp.whiteevjz < 6) {
+    if(lp.whiteevjz < 6) {//EV = 6 majority of images
         params.bands[4] = -40;
     }
     if(lp.islogcie) {//with log encoding Cie
         params.bands[4] = -30;
-        params.bands[5] = -80;
+        params.bands[5] = -70;
         if(lp.whiteevjz < 6) {
             params.bands[4] = -20;
         }
@@ -20289,12 +20290,13 @@ void ImProcFunctions::Lab_Local(
                     if(lp.issmoothcie) {
                         tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);
                         /*
-                        float white_point = 1.f;
-                        float mid_gray_out = 0.01f * lp.sourcegraycie;
+                        //TonemapFreeman - not used but it works..
+                        float mid_gray = 0.01f * lp.sourcegraycie;
+                        float white_point =  pow(2.718281828459, lp.whiteevjz * std::log(2.f) + xlogf(mid_gray_out));  
+                        float black_point =  pow(2.718281828459, lp.blackevjz * std::log(2.f) + xlogf(mid_gray_out));  
                         bool rolloff = true;
-                        LUTf lut(65536, LUT_CLIP_OFF);
-                    
-                        tonemapFreeman(1.f, white_point, 1.f/65535.f, mid_gray_out, rolloff, lut);
+                        LUTf lut(65536, LUT_CLIP_OFF);                   
+                        tonemapFreeman(1.f, white_point, black_point, mid_gray, rolloff, lut);
 
  #ifdef _OPENMP
         #pragma omp parallel for
