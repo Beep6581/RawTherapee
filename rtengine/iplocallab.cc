@@ -2452,14 +2452,19 @@ void tone_eqsmooth(ImProcFunctions *ipf, Imagefloat *rgb, const struct local_par
     params.bands[1] = 0;
     params.bands[2] = 0;
     params.bands[3] = 0;
-    params.bands[4] = -58;//arbitrary value to adapt
-    params.bands[5] = -100;
-    
-    if(lp.islogcie) {//with log encoding
+    params.bands[4] = -58;//arbitrary value to adapt with WhiteEvjz - here White Ev # 10
+    params.bands[5] = -100;//8 Ev and above
+    if(lp.whiteevjz < 6) {
+        params.bands[4] = -40;
+    }
+    if(lp.islogcie) {//with log encoding Cie
         params.bands[4] = -30;
         params.bands[5] = -80;
+        if(lp.whiteevjz < 6) {
+            params.bands[4] = -20;
+        }
     }
-   
+  
     ipf->toneEqualizer(rgb, params, workingProfile, scale, multithread);
 }
 
