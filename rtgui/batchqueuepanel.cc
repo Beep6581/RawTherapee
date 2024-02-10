@@ -23,6 +23,57 @@
 #include "soundman.h"
 #include "rtimage.h"
 
+namespace // helper functions
+{
+
+    // Populate the buffer of a Gtk::TextView with help text for the location template field
+    void populateTemplateHelpBuffer(Glib::RefPtr<Gtk::TextBuffer> buffer)
+    {
+        auto pos = buffer->begin();
+        auto insertHeading1 = [&pos, buffer](const Glib::ustring& text) {
+            pos = buffer->insert_markup(pos, Glib::ustring::format("<big><b>", text, "</b></big>\n"));
+        };
+        auto insertHeading2 = [&pos, buffer](const Glib::ustring& text) {
+            pos = buffer->insert_markup(pos, Glib::ustring::format("\n\n<u><b>", text, "</b></u>\n"));
+        };
+        insertHeading1(M("QUEUE_LOCATION_TEMPLATE_HELP_TITLE"));
+        pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_INTRO"));
+        insertHeading2(M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_TITLE"));
+        printf("[[[%s]]]", M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_INTRO").c_str());
+        pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_INTRO"));
+        pos = buffer->insert(pos, "\n");
+        pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_BODY_1"));
+#ifdef _WIN32
+        auto exampleString = M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_EXAMPLE_WINDOWS");
+#else
+        auto exampleString = M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_EXAMPLE_LINUX");
+#endif
+        pos = buffer->insert_markup(pos, Glib::ustring::format("\n   ", exampleString, "\n"));
+        pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_BODY_2"));
+        pos = buffer->insert(pos, "\n");
+        /* FIXME: Still to do here:
+            Generate text like the original below, but use the actual conversion function to create it:
+                <b>%d4</b> = <b>%d-1</b> = <i>home</i>
+                <b>%d3</b> = <b>%d-2</b> = <i>tom</i>
+                <b>%d2</b> = <b>%d-3</b> = <i>photos</i>
+                <b>%d1</b> = <b>%d-4</b> = <i>2010-10-31</i>
+                <b>%p1</b> = <b>%p-4</b> = <i>/home/tom/photos/2010-10-31/</i>
+                <b>%p2</b> = <b>%p-3</b> = <i>/home/tom/photos/</i>
+                <b>%p3</b> = <b>%p-2</b> = <i>/home/tom/</i>
+                <b>%p4</b> = <b>%p-1</b> = <i>/home/</i>
+                <b>%P1</b> = <b>%P-4</b> = <i>2010-10-31/</i>
+                <b>%P2</b> = <b>%P-3</b> = <i>photos/2010-10-31/</i>
+                <b>%P3</b> = <b>%P-2</b> = <i>tom/photos/2010-10-31/</i>
+                <b>%P4</b> = <b>%P-1</b> = <i>/home/tom/photos/2010-10-31/</i>
+                <b>%f</b> = <i>photo1</i>
+            Insert sections for the remaining specifiers:
+                %r = rank
+                %s# = queue position, with padding
+            Insert an examples section
+        */
+    }
+}
+
 static Glib::ustring makeFolderLabel(Glib::ustring path)
 {
     if (!Glib::file_test (path, Glib::FILE_TEST_IS_DIR)) {
@@ -158,13 +209,6 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
     templateHelpTextView->set_wrap_mode(Gtk::WRAP_WORD);
     scrolledTemplateHelpWindow = Gtk::manage(new Gtk::ScrolledWindow());
     scrolledTemplateHelpWindow->add(*templateHelpTextView);
-    {
-        auto helptext = M("QUEUE_LOCATION_TEMPLATE_TOOLTIP");
-        auto buffer = templateHelpTextView->get_buffer();
-        buffer->create_tag("bold");
-        buffer->create_tag("italic");
-        buffer->insert_markup(buffer->begin(), helptext);
-    }
     middleSplitPane->pack1 (*scrolledTemplateHelpWindow);
     middleSplitPane->pack2 (*batchQueue);
     scrolledTemplateHelpWindow->set_visible(false); // initially hidden, templateHelpButton shows it
@@ -348,7 +392,11 @@ void BatchQueuePanel::setGuiFromBatchState(bool queueRunning, int qsize)
 void BatchQueuePanel::templateHelpButtonToggled()
 {
     bool visible = templateHelpButton->get_active();
-    //scrolledTemplateHelpWindow->set_no_show_all(!visible);
+    auto buffer = templateHelpTextView->get_buffer();
+    if (buffer->get_text().empty()) {
+        // Populate the help text the first time it's shown
+        populateTemplateHelpBuffer(buffer);
+    }
     scrolledTemplateHelpWindow->set_visible(visible);
     templateHelpTextView->set_visible(visible);
 }
