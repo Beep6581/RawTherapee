@@ -85,6 +85,7 @@ private:
     void startOrStopBatchProc();
     void setGuiFromBatchState(bool queueRunning, int qsize);
     void templateHelpButtonToggled();
+    void populateTemplateHelpBuffer(Glib::RefPtr<Gtk::TextBuffer> buffer);
 
     void pathFolderChanged ();
     void pathFolderButtonPressed ();
