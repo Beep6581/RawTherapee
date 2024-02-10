@@ -422,13 +422,27 @@ void ImProcFunctions::preserv(LabImage *nprevl, LabImage *provis, int cw, int ch
         }
 }
 
-void ImProcFunctions::workingtrc(int sp, const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring &profile, double gampos, double slpos, int cat, int &illum, int prim, int locprim,
+void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring &profile, double gampos, double slpos, int cat, int &illum, int prim, int locprim,
                                  float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye,
                                  cmsHTRANSFORM &transform, bool normalizeIn, bool normalizeOut, bool keepTransForm, bool gamutcontrol) const
 {
     const TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 
     double wb2[3][3];
+    float epsilon =  0.000001f;
+     //   if(gamutcontrol) {
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+            for (int i = 0; i < ch; ++i)
+                for (int j = 0; j < cw; ++j) {
+                    src->r(i, j) = rtengine::max(src->r(i, j), epsilon);
+                    src->g(i, j) = rtengine::max(src->g(i, j), epsilon);
+                    src->b(i, j) = rtengine::max(src->b(i, j), epsilon); 
+                }
+    //    }
+
+
 
     if (mul == 5) {//only second pass workingtrc - avoid this code first pass
         for (int r = 0; r < 3; ++r) {
