@@ -406,11 +406,6 @@ void BatchQueuePanel::populateTemplateHelpBuffer(Glib::RefPtr<Gtk::TextBuffer> b
     // number of elements in the path.
     auto insertPathExamples = [&buffer, &pos, pathElementCount, exampleFilePath](char letter, int offset1, int mult1, int offset2, int mult2)
     {
-        Glib::ustring startMonospace("<tt>");
-        Glib::ustring endMonospace("</tt>");
-        auto buildBuffer = Gtk::TextBuffer::create();
-        auto buildpos = buildBuffer->begin();
-        buildpos = buildBuffer->insert(buildpos, startMonospace);
         for (int n=0; n<pathElementCount; n++)
         {
             auto path1 = Glib::ustring::format("%",letter,offset1+n*mult1);
@@ -419,24 +414,25 @@ void BatchQueuePanel::populateTemplateHelpBuffer(Glib::RefPtr<Gtk::TextBuffer> b
             auto result1 = BatchQueue::calcAutoFileNameBase(exampleFilePath);
             options.savePathTemplate = path2;
             auto result2 = BatchQueue::calcAutoFileNameBase(exampleFilePath);
-            buildpos = buildBuffer->insert (buildpos, Glib::ustring::format("\n   <b>", path1, "</b> = <b>", path2, "</b> = <i>", result1, "</i>"));
+            pos = buffer->insert_markup(pos, Glib::ustring::format("\n<tt>   <b>", path1, "</b> = <b>", path2, "</b> = <i>", result1, "</i></tt>"));
             if (result1 != result2)
             {
                 // If this error appears, it indicates a coding error in either BatchQueue::calcAutoFileNameBase
                 // or BatchQueuePanel::populateTemplateHelpBuffer.
-                buildpos = buildBuffer->insert(buildpos, Glib::ustring::format(" ", M("QUEUE_LOCATION_TEMPLATE_HELP_RESULT_MISMATCH"), " ", result2));
+                pos = buffer->insert_markup(pos, Glib::ustring::format(" ", M("QUEUE_LOCATION_TEMPLATE_HELP_RESULT_MISMATCH"), " ", result2));
             }
         }
-        buildpos = buildBuffer->insert(buildpos, endMonospace);
-        pos = buffer->insert_markup(pos, buildBuffer->get_text());
     };
     // Example outputs in comments below are for a 4-element path.
-    //   <b>%d4</b> = <b>%d-1</b> = <i>home</i>
-    insertPathExamples('d', pathElementCount, -1, -1, -1);
-    //   <b>%p1</b> = <b>%p-4</b> = <i>/home/tom/photos/2010-10-31/</i>
-    insertPathExamples('p', 1, 1, -pathElementCount, 1);
-    //   <b>%P1</b> = <b>%P-4</b> = <i>2010-10-31/</i>
-    insertPathExamples('P', 1, 1, -pathElementCount, 1);
+    insertPathExamples('d', pathElementCount, -1, -1, -1);  //   <b>%d4</b> = <b>%d-1</b> = <i>home</i>
+    insertPathExamples('p', 1, 1, -pathElementCount, 1);    //   <b>%p1</b> = <b>%p-4</b> = <i>/home/tom/photos/2010-10-31/</i>
+    insertPathExamples('P', 1, 1, -pathElementCount, 1);    //   <b>%P1</b> = <b>%P-4</b> = <i>2010-10-31/</i>
+    {
+        Glib::ustring fspecifier("%f");
+        options.savePathTemplate = fspecifier;
+        auto result = BatchQueue::calcAutoFileNameBase(exampleFilePath);
+        pos = buffer->insert_markup(pos, Glib::ustring::format("\n<tt>   <b>", fspecifier, "</b> = <i>", result, "</i></tt>"));
+    }
 
     insertTopicHeading(M("QUEUE_LOCATION_TEMPLATE_HELP_RANK_TITLE"));
     pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_RANK_BODY"));
