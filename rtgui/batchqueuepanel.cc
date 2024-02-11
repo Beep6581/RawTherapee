@@ -1,4 +1,3 @@
-#define CHECKPOINT printf("CHECKPOINT: %d\n", __LINE__); // FIXME: REMOVE
 /*
  *  This file is part of RawTherapee.
  *
@@ -365,6 +364,10 @@ void BatchQueuePanel::populateTemplateHelpBuffer(Glib::RefPtr<Gtk::TextBuffer> b
     auto mainTitle = M("QUEUE_LOCATION_TEMPLATE_HELP_TITLE");
     pos = buffer->insert_markup(pos, Glib::ustring::format("<big><b>", mainTitle, "</b></big>\n"));
     pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_INTRO"));
+
+    insertTopicHeading(M("QUEUE_LOCATION_TEMPLATE_HELP_EXAMPLES_TITLE"));
+    pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_EXAMPLES_BODY"));
+
     insertTopicHeading(M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_TITLE"));
     pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_INTRO"));
     pos = buffer->insert(pos, "\n");
@@ -441,12 +444,21 @@ void BatchQueuePanel::populateTemplateHelpBuffer(Glib::RefPtr<Gtk::TextBuffer> b
     insertTopicHeading(M("QUEUE_LOCATION_TEMPLATE_HELP_SEQUENCE_TITLE"));
     pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_SEQUENCE_BODY"));
 
-    insertTopicHeading(M("QUEUE_LOCATION_TEMPLATE_HELP_EXAMPLES_TITLE"));
-    pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_EXAMPLES_BODY"));
-    /* FIXME: Still to do here:
-        Insert section for time/date specifiers
-    */
-   options = savedOptions;
+    insertTopicHeading(M("QUEUE_LOCATION_TEMPLATE_HELP_TIMESTAMP_TITLE"));
+    pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_TIMESTAMP_BODY"));
+    Glib::ustring dateTimeFormatExamples[] = {
+        "%Y-%m-%d",
+        "%Y%m%d_%H%M%S",
+        "%y/%b/%-d/"
+    };
+    auto timeNow = Glib::DateTime::create_now_local();
+    for (auto fmt : dateTimeFormatExamples) {
+        auto result = timeNow.format(fmt);
+        pos = buffer->insert_markup(pos, Glib::ustring::format("\n<tt>  <b>%tE\"", fmt, "\"</b> = <i>", result, "</i></tt>"));
+    }
+
+    pos = buffer->insert(pos, "\n");
+    options = savedOptions; // Do not add any lines in this function below here
 }
 
 void BatchQueuePanel::addBatchQueueJobs(const std::vector<BatchQueueEntry*>& entries, bool head)
