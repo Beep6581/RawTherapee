@@ -356,15 +356,16 @@ void BatchQueuePanel::templateHelpButtonToggled()
 void BatchQueuePanel::populateTemplateHelpBuffer(Glib::RefPtr<Gtk::TextBuffer> buffer)
 {
     auto pos = buffer->begin();
-    auto insertHeading1 = [&pos, buffer](const Glib::ustring& text) {
-        pos = buffer->insert_markup(pos, Glib::ustring::format("<big><b>", text, "</b></big>\n"));
-    };
-    auto insertHeading2 = [&pos, buffer](const Glib::ustring& text) {
+    auto insertTopicHeading = [&pos, buffer](const Glib::ustring& text) {
         pos = buffer->insert_markup(pos, Glib::ustring::format("\n\n<u><b>", text, "</b></u>\n"));
     };
-    insertHeading1(M("QUEUE_LOCATION_TEMPLATE_HELP_TITLE"));
+    auto insertTopicBody = [&pos, buffer](const Glib::ustring& text) {
+        pos = buffer->insert_markup(pos, Glib::ustring::format("\n", text, "\n"));
+    };
+    auto mainTitle = M("QUEUE_LOCATION_TEMPLATE_HELP_TITLE");
+    pos = buffer->insert_markup(pos, Glib::ustring::format("<big><b>", mainTitle, "</b></big>\n"));
     pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_INTRO"));
-    insertHeading2(M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_TITLE"));
+    insertTopicHeading(M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_TITLE"));
     pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_INTRO"));
     pos = buffer->insert(pos, "\n");
 #ifdef _WIN32
@@ -409,8 +410,6 @@ void BatchQueuePanel::populateTemplateHelpBuffer(Glib::RefPtr<Gtk::TextBuffer> b
         buildpos = buildBuffer->insert(buildpos, startMonospace);
         for (int n=0; n<pathElementCount; n++)
         {
-            // Example output, for a 4-element path:
-            //   <b>%d4</b> = <b>%d-1</b> = <i>home</i>
             auto path1 = Glib::ustring::format("%",letter,offset1+n*mult1);
             auto path2 = Glib::ustring::format("%",letter,offset2+n*mult2);
             options.savePathTemplate = path1;
@@ -420,6 +419,8 @@ void BatchQueuePanel::populateTemplateHelpBuffer(Glib::RefPtr<Gtk::TextBuffer> b
             buildpos = buildBuffer->insert (buildpos, Glib::ustring::format("\n   <b>", path1, "</b> = <b>", path2, "</b> = <i>", result1, "</i>"));
             if (result1 != result2)
             {
+                // If this error appears, it indicates a coding error in either BatchQueue::calcAutoFileNameBase
+                // or BatchQueuePanel::populateTemplateHelpBuffer.
                 buildpos = buildBuffer->insert(buildpos, Glib::ustring::format(" ", M("QUEUE_LOCATION_TEMPLATE_HELP_RESULT_MISMATCH"), " ", result2));
             }
         }
@@ -434,11 +435,16 @@ void BatchQueuePanel::populateTemplateHelpBuffer(Glib::RefPtr<Gtk::TextBuffer> b
     //   <b>%P1</b> = <b>%P-4</b> = <i>2010-10-31/</i>
     insertPathExamples('P', 1, 1, -pathElementCount, 1);
 
+    insertTopicHeading(M("QUEUE_LOCATION_TEMPLATE_HELP_RANK_TITLE"));
+    pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_RANK_BODY"));
+
+    insertTopicHeading(M("QUEUE_LOCATION_TEMPLATE_HELP_SEQUENCE_TITLE"));
+    pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_SEQUENCE_BODY"));
+
+    insertTopicHeading(M("QUEUE_LOCATION_TEMPLATE_HELP_EXAMPLES_TITLE"));
+    pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_EXAMPLES_BODY"));
     /* FIXME: Still to do here:
-        Insert sections for the remaining specifiers:
-            %r = rank
-            %s# = queue position, with padding
-        Insert an examples section
+        Insert section for time/date specifiers
     */
    options = savedOptions;
 }
