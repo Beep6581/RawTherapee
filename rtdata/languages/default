@@ -2107,6 +2107,7 @@ QUEUE_FORMAT_TITLE;File Format
 QUEUE_LOCATION_FOLDER;Save to folder
 QUEUE_LOCATION_TEMPLATE;Use template
 QUEUE_LOCATION_TEMPLATE_TOOLTIP;Specify the output location based on characteristics such as the source photo's location, rank, trash status or position in the queue.\n\nThe output template field value can include specifiers beginning with <b>%</b>, which are replaced by those characteristics in the actual destination path.\n\nPress the <b>?</b> button for full instructions.
+QUEUE_LOCATION_TEMPLATE_HELP_BUTTON_TOOLTIP;Show or hide a help panel with instructions for creating location templates
 QUEUE_LOCATION_TEMPLATE_HELP_TITLE;Creating an output template
 QUEUE_LOCATION_TEMPLATE_HELP_INTRO;The output template field allows you to to dynamically customize the destination folder and filename. When you include certain specifiers, which begin with <b>%</b>, they are replaced by the program when each file is being saved.\n\nThe sections below describe each type of specifier.
 QUEUE_LOCATION_TEMPLATE_HELP_PATHS_TITLE;Directories and partial paths

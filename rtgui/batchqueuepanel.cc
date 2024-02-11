@@ -74,7 +74,7 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
     outdirTemplate = Gtk::manage (new Gtk::Entry ());
     hb2->pack_start (*outdirTemplate);
     templateHelpButton = Gtk::manage (new Gtk::ToggleButton("?"));
-    templateHelpButton->set_tooltip_markup (M ("GENERAL_HELP"));    // FIXME: Specific tooltip for this button
+    templateHelpButton->set_tooltip_markup (M ("QUEUE_LOCATION_TEMPLATE_HELP_BUTTON_TOOLTIP"));
     hb2->pack_start (*templateHelpButton, Gtk::PACK_SHRINK, 0);
     odvb->pack_start (*hb2, Gtk::PACK_SHRINK, 0);
     outdirTemplate->set_tooltip_markup (M("QUEUE_LOCATION_TEMPLATE_TOOLTIP"));
