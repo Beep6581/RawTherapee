@@ -1,3 +1,4 @@
+#define CHECKPOINT printf("CHECKPOINT: %d\n", __LINE__); // FIXME: REMOVE
 /*
  *  This file is part of RawTherapee.
  *
@@ -345,6 +346,8 @@ void BatchQueuePanel::templateHelpButtonToggled()
     if (buffer->get_text().empty()) {
         // Populate the help text the first time it's shown
         populateTemplateHelpBuffer(buffer);
+        auto fullWidth = middleSplitPane->get_width();
+        middleSplitPane->set_position(fullWidth / 2);
     }
     scrolledTemplateHelpWindow->set_visible(visible);
     templateHelpTextView->set_visible(visible);
@@ -362,38 +365,82 @@ void BatchQueuePanel::populateTemplateHelpBuffer(Glib::RefPtr<Gtk::TextBuffer> b
     insertHeading1(M("QUEUE_LOCATION_TEMPLATE_HELP_TITLE"));
     pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_INTRO"));
     insertHeading2(M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_TITLE"));
-    printf("[[[%s]]]", M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_INTRO").c_str());
     pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_INTRO"));
+    pos = buffer->insert(pos, "\n");
+#ifdef _WIN32
+    pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_INTRO_WINDOWS"));
+    pos = buffer->insert(pos, "\n");
+#endif
     pos = buffer->insert(pos, "\n");
     pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_BODY_1"));
 #ifdef _WIN32
-    auto exampleString = M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_EXAMPLE_WINDOWS");
+    auto exampleFilePath = M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_EXAMPLE_WINDOWS");
 #else
-    auto exampleString = M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_EXAMPLE_LINUX");
+    auto exampleFilePath = M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_EXAMPLE_LINUX");
 #endif
-    pos = buffer->insert_markup(pos, Glib::ustring::format("\n   ", exampleString, "\n"));
+    pos = buffer->insert_markup(pos, Glib::ustring::format("\n   ", exampleFilePath, "\n"));
     pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_BODY_2"));
-    pos = buffer->insert(pos, "\n");
+    // Examples are generated from exampleFilePath using the actual template processing function
+    Options savedOptions = options; // to be restored after generating example results
+    options.saveUsePathTemplate = true;
+    // Since this code only ever runs once (the first time the help text is presented), no attempt is
+    // made to be efficient. Use a brute-force method to discover the number of elements in exampleFilePath.
+    int pathElementCount = 0;
+    for (int n=9; n>=0; n--)
+    {
+        options.savePathTemplate = Glib::ustring::format("%d",n);
+        auto result = BatchQueue::calcAutoFileNameBase(exampleFilePath);
+        if (!result.empty())
+        {
+            // The 'd' specifier returns an empty string if N exceeds the number of path elements, so
+            // the largest N that does not return an empty string is the number of elements in exampleFilePath.
+            pathElementCount = n;
+            break;
+        }
+    }
+    // Function inserts examples for a particular specifier, with every valid N value for the
+    // number of elements in the path.
+    auto insertPathExamples = [&buffer, &pos, pathElementCount, exampleFilePath](char letter, int offset1, int mult1, int offset2, int mult2)
+    {
+        Glib::ustring startMonospace("<tt>");
+        Glib::ustring endMonospace("</tt>");
+        auto buildBuffer = Gtk::TextBuffer::create();
+        auto buildpos = buildBuffer->begin();
+        buildpos = buildBuffer->insert(buildpos, startMonospace);
+        for (int n=0; n<pathElementCount; n++)
+        {
+            // Example output, for a 4-element path:
+            //   <b>%d4</b> = <b>%d-1</b> = <i>home</i>
+            auto path1 = Glib::ustring::format("%",letter,offset1+n*mult1);
+            auto path2 = Glib::ustring::format("%",letter,offset2+n*mult2);
+            options.savePathTemplate = path1;
+            auto result1 = BatchQueue::calcAutoFileNameBase(exampleFilePath);
+            options.savePathTemplate = path2;
+            auto result2 = BatchQueue::calcAutoFileNameBase(exampleFilePath);
+            buildpos = buildBuffer->insert (buildpos, Glib::ustring::format("\n   <b>", path1, "</b> = <b>", path2, "</b> = <i>", result1, "</i>"));
+            if (result1 != result2)
+            {
+                buildpos = buildBuffer->insert(buildpos, Glib::ustring::format(" ", M("QUEUE_LOCATION_TEMPLATE_HELP_RESULT_MISMATCH"), " ", result2));
+            }
+        }
+        buildpos = buildBuffer->insert(buildpos, endMonospace);
+        pos = buffer->insert_markup(pos, buildBuffer->get_text());
+    };
+    // Example outputs in comments below are for a 4-element path.
+    //   <b>%d4</b> = <b>%d-1</b> = <i>home</i>
+    insertPathExamples('d', pathElementCount, -1, -1, -1);
+    //   <b>%p1</b> = <b>%p-4</b> = <i>/home/tom/photos/2010-10-31/</i>
+    insertPathExamples('p', 1, 1, -pathElementCount, 1);
+    //   <b>%P1</b> = <b>%P-4</b> = <i>2010-10-31/</i>
+    insertPathExamples('P', 1, 1, -pathElementCount, 1);
+
     /* FIXME: Still to do here:
-        Generate text like the original below, but use the actual conversion function to create it:
-            <b>%d4</b> = <b>%d-1</b> = <i>home</i>
-            <b>%d3</b> = <b>%d-2</b> = <i>tom</i>
-            <b>%d2</b> = <b>%d-3</b> = <i>photos</i>
-            <b>%d1</b> = <b>%d-4</b> = <i>2010-10-31</i>
-            <b>%p1</b> = <b>%p-4</b> = <i>/home/tom/photos/2010-10-31/</i>
-            <b>%p2</b> = <b>%p-3</b> = <i>/home/tom/photos/</i>
-            <b>%p3</b> = <b>%p-2</b> = <i>/home/tom/</i>
-            <b>%p4</b> = <b>%p-1</b> = <i>/home/</i>
-            <b>%P1</b> = <b>%P-4</b> = <i>2010-10-31/</i>
-            <b>%P2</b> = <b>%P-3</b> = <i>photos/2010-10-31/</i>
-            <b>%P3</b> = <b>%P-2</b> = <i>tom/photos/2010-10-31/</i>
-            <b>%P4</b> = <b>%P-1</b> = <i>/home/tom/photos/2010-10-31/</i>
-            <b>%f</b> = <i>photo1</i>
         Insert sections for the remaining specifiers:
             %r = rank
             %s# = queue position, with padding
         Insert an examples section
     */
+   options = savedOptions;
 }
 
 void BatchQueuePanel::addBatchQueueJobs(const std::vector<BatchQueueEntry*>& entries, bool head)
