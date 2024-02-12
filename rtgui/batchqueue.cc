@@ -18,8 +18,10 @@
  */
 #include <glibmm/ustring.h>
 #include <glib/gstdio.h>
+#include <sys/stat.h>
 #include <cstring>
 #include <functional>
+#include "../rtengine/imagedata.h"
 #include "../rtengine/rt_math.h"
 #include "../rtengine/procparams.h"
 
@@ -1001,6 +1003,45 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
 
                     seqstr << sequence;
                     path += seqstr.str ();
+                } else if (options.savePathTemplate[ix] == 't') {
+                    // Insert formatted date/time value. Character after 't' defines time source
+                    if (++ix < options.savePathTemplate.size())
+                    {
+                        Glib::DateTime dateTime;
+                        bool dateTimeIsValid = true;
+                        switch(options.savePathTemplate[ix])
+                        {
+                            case 'E':   // (approximate) time when export started
+                                dateTime = Glib::DateTime::create_now_local();
+                                break;
+                            case 'F': // time when file was last saved
+                            {
+                                struct stat fileStat;
+                                if (stat(origFileName.c_str(), &fileStat) == 0) {
+                                    time_t timestamp = fileStat.st_mtime;
+                                    dateTime = Glib::DateTime::create_now_local(timestamp);
+                                } else {
+                                    dateTimeIsValid = false; // file not found, access denied, etc.
+                                }
+                            }
+                                break;
+                            case 'P':   // time when picture was taken
+                            {
+                                auto timestamp = FramesData(origFileName).getDateTimeAsTS();
+                                dateTime = Glib::DateTime::create_now_local(timestamp);
+                            }
+                                break;
+                            default:
+                                dateTimeIsValid = false;
+                                break;
+                        }
+                        if (dateTimeIsValid)
+                        {
+                            // FIXME: Call a function that looks for a double-quoted format string, and
+                            //        format dateTime accordingly, adding it to path. 
+                            printf("Time %s\n", dateTime.format_iso8601().c_str());
+                        }
+                    }
                 }
             }
 
