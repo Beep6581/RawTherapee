@@ -447,9 +447,10 @@ void BatchQueuePanel::populateTemplateHelpBuffer(Glib::RefPtr<Gtk::TextBuffer> b
         "%Y%m%d_%H%M%S",
         "%y/%b/%-d/"
     };
-    auto timeNow = Glib::DateTime::create_now_local();
+    auto timezone = Glib::DateTime::create_now_local().get_timezone();
+    auto timeForExamples = Glib::DateTime::create_from_iso8601("2001-02-03T04:05:06.123456", timezone);
     for (auto fmt : dateTimeFormatExamples) {
-        auto result = timeNow.format(fmt);
+        auto result = timeForExamples.format(fmt);
         pos = buffer->insert_markup(pos, Glib::ustring::format("\n<tt>  <b>%tE\"", fmt, "\"</b> = <i>", result, "</i></tt>"));
     }
 
