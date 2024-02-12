@@ -1492,6 +1492,7 @@ HISTORY_MSG_DEHAZE_ENABLED;(Details - Bildschleier entfernen)
 HISTORY_MSG_DEHAZE_SATURATION;(Details - Bildschleier entfernen)\nSättigung
 HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;(Details - Bildschleier entfernen)\nMaske anzeigen
 HISTORY_MSG_DEHAZE_STRENGTH;(Details - Bildschleier entfernen)\nIntensität
+HISTORY_MSG_DIRPYRDENOISE_GAIN;(Details - Rauschreduzierung)\nHelligkeitskompensation
 HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;(Sensor—Matrix)\nFarbinterpolation\nAuto-Kontrastschwelle
 HISTORY_MSG_DUALDEMOSAIC_CONTRAST;(RAW - Sensor-Matrix)\nFarbinterpolation\nKontrastschwelle
 HISTORY_MSG_EDGEFFECT;(Erweitert - Wavelet)\nKantenschärfung\nDämpfungsreaktion
@@ -2513,6 +2514,8 @@ TP_DIRPYRDENOISE_LUMINANCE_CURVE;Luminanzkurve
 TP_DIRPYRDENOISE_LUMINANCE_DETAIL;Luminanzdetails
 TP_DIRPYRDENOISE_LUMINANCE_FRAME;Luminanz
 TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Luminanz
+TP_DIRPYRDENOISE_MAIN_AUTO_GAIN;Helligkeitskompensation
+TP_DIRPYRDENOISE_MAIN_AUTO_GAIN_TOOLTIP;Stärke der Rauschreduzierung basierend auf der Bildhelligkeit. Bei dunklen Bildern wird die Stärke verringert und bei hellen Bildern erhöht.
 TP_DIRPYRDENOISE_MAIN_COLORSPACE;Farbraum
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_LAB;L*a*b*
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;RGB
@@ -4301,7 +4304,6 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !ERROR_MSG_METADATA_VALUE;Metadata: error setting %1 to %2
-!HISTORY_MSG_DIRPYRDENOISE_GAIN;NR - Compensate for lightness
 !HISTORY_MSG_LOCAL_TMO_SATUR;Local Exp Fattal Saturation
 !HISTORY_MSG_WBITC_DELTA;Itcwb Delta green
 !HISTORY_MSG_WBITC_FGREEN;Itcwb Green - student
@@ -4321,8 +4323,6 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 !PREFERENCES_WBAPRECIS;Precision algorithm - scale used
 !PREFERENCES_WBASIZEREF;Size of reference color compare to size of histogram color
 !PREFERENCES_WBASORT;Sort in chroma order instead of histogram
-!TP_DIRPYRDENOISE_MAIN_AUTO_GAIN;Compensate for lightness
-!TP_DIRPYRDENOISE_MAIN_AUTO_GAIN_TOOLTIP;Alter the noise reduction strength based on the image lightness. Strength is reduced for dark images and increased for bright images.
 !TP_LOCALLAB_FATSAT;Saturation control
 !TP_WBALANCE_ITCWB_PRECIS;Precision algorithm - scale used
 !TP_WBALANCE_ITCWB_SIZE;Size of ref. color compare to histogram
