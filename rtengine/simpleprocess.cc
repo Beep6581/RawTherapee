@@ -289,7 +289,6 @@ private:
         int kmin  = 20;
         float minhist = 1000000000.f;
         float maxhist = -1000.f;
-        double tempitc = 5000.f;
         double greenitc = 1.;
         float temp0 = 5000.f;
         bool extra = false;
