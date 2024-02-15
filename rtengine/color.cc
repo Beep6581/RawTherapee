@@ -34,7 +34,7 @@ namespace {
 
 typedef Vec3f A3;
 
-// D50 <-> D65 adapted from darktable
+// D50 <-> D65 adapted from darktable, thanks to Alberto Griggio
 
 void XYZ_D50_to_D65(float &X, float &Y, float &Z)
 {
@@ -2102,6 +2102,9 @@ float Color::eval_ACEScct_curve(float x, bool forward)
         }
     }
 }
+
+// end code take in ART thanks to Alberto Griggio
+
 
 void Color::primaries_to_xyz(double p[6], double Wx, double Wz, double *pxyz, int cat)
 {
