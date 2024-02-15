@@ -87,17 +87,6 @@ int main (int argc, char **argv)
 {
     setlocale (LC_ALL, "");
     setlocale (LC_NUMERIC, "C"); // to set decimal point to "."
-/*
-    if (argc > 1 && strcmp(argv[1], "--make-icc") == 0) {
-        std::vector<std::string> args;
-        for (int i = 2; i < argc; ++i) {
-            args.push_back(argv[i]);
-        }
-        return RT_makeicc_main(std::cout, args);
-    } else if (argc > 1 && strcmp(argv[1], "--check-lut") == 0) {
-        return check_lut(argc, argv);
-    }
-*/
 
     Gio::init ();
 

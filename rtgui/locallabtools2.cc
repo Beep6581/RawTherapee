@@ -8295,6 +8295,7 @@ Locallabcie::Locallabcie():
     jz100->setAdjusterListener(this);
     pqremap->setAdjusterListener(this);
     pqremapcam16->setAdjusterListener(this);
+    pqremapcam16->setLogScale(500, 100);   
     hljzcie->setAdjusterListener(this);
     hlthjzcie->setAdjusterListener(this);
     shjzcie->setAdjusterListener(this);

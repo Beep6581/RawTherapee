@@ -2852,7 +2852,7 @@ TP_LOCALLAB_BWEVSIG;Activated
 TP_LOCALLAB_BWEVSIGLOG;Sigmoid & Log-Encoding
 TP_LOCALLAB_BWFORCE;Uses Black Ev & White Ev
 TP_LOCALLAB_CAM16PQREMAP;HDR PQ (Peak Luminance)
-TP_LOCALLAB_CAM16PQREMAP_TOOLTIP;PQ (Perceptual Quantizer) adapted to CAM16. Allows you to change the internal PQ function (usually 10000 cd/m2 - default 100 cd/m2 - disabled for 100 cd/m2).\nCan be used to adapt to different devices and images.
+TP_LOCALLAB_CAM16PQREMAP_TOOLTIP;PQ (Perceptual Quantizer) adapted to CAM16 (experimental). Allows you to change the internal PQ function (usually 10000 cd/m2 - default 100 cd/m2 - disabled for 100 cd/m2).\nCan be used to adapt to different devices and images. For example to match Cam16 processing with the maximum monitor brightness of 400cd/m2.
 TP_LOCALLAB_CAM16_FRA;Cam16 Image Adjustments
 TP_LOCALLAB_CAMMODE;CAM model
 TP_LOCALLAB_CAMMODE_CAM16;CAM 16
