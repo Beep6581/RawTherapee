@@ -2285,8 +2285,8 @@ ZOOMPANEL_ZOOMOUT;Menos Zoom\nAtalho: <b>-</b>
 !HISTORY_MSG_494;Capture Sharpening
 !HISTORY_MSG_496;Local Spot deleted
 !HISTORY_MSG_497;Local Spot selected
-!HISTORY_MSG_498;--unused--
-!HISTORY_MSG_499;--unused--
+!HISTORY_MSG_498;Local - Spot name
+!HISTORY_MSG_499;Local - Spot visibility
 !HISTORY_MSG_500;Local - Spot shape
 !HISTORY_MSG_501;Local - Spot method
 !HISTORY_MSG_502;Local - SC - Shape method
@@ -2936,6 +2936,7 @@ ZOOMPANEL_ZOOMOUT;Menos Zoom\nAtalho: <b>-</b>
 !HISTORY_MSG_COMPLEX;Wavelet complexity
 !HISTORY_MSG_COMPLEXRETI;Retinex complexity
 !HISTORY_MSG_DEHAZE_SATURATION;Dehaze - Saturation
+!HISTORY_MSG_DIRPYRDENOISE_GAIN;NR - Compensate for lightness
 !HISTORY_MSG_EDGEFFECT;Edge Attenuation response
 !HISTORY_MSG_FF_FROMMETADATA;Flat-Field - From Metadata
 !HISTORY_MSG_FILMNEGATIVE_BALANCE;FN - Reference output
@@ -2962,6 +2963,7 @@ ZOOMPANEL_ZOOMOUT;Menos Zoom\nAtalho: <b>-</b>
 !HISTORY_MSG_ILLUM;CAL - SC - Illuminant
 !HISTORY_MSG_LOCALLAB_TE_PIVOT;Local - Equalizer pivot
 !HISTORY_MSG_LOCAL_GAMUTMUNSEL;Local - SC - Avoid Color Shift
+!HISTORY_MSG_LOCAL_TMO_SATUR;Local Exp Fattal Saturation
 !HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST;CS - Auto threshold
 !HISTORY_MSG_PDSHARPEN_AUTO_RADIUS;CS - Auto radius
 !HISTORY_MSG_PDSHARPEN_CHECKITER;CS - Auto limit iterations
@@ -3040,7 +3042,7 @@ ZOOMPANEL_ZOOMOUT;Menos Zoom\nAtalho: <b>-</b>
 !HISTORY_MSG_WBITC_DELTA;Itcwb Delta green
 !HISTORY_MSG_WBITC_FGREEN;Itcwb Green - student
 !HISTORY_MSG_WBITC_FORCE;Itcwb Force
-!HISTORY_MSG_WBITC_GREEN;Grren refinement
+!HISTORY_MSG_WBITC_GREEN;Green refinement
 !HISTORY_MSG_WBITC_MINSIZE;Patch min size
 !HISTORY_MSG_WBITC_NOPURPLE;Itcwb Nopurple
 !HISTORY_MSG_WBITC_OBS;Remove algo 2 passes
@@ -3051,7 +3053,7 @@ ZOOMPANEL_ZOOMOUT;Menos Zoom\nAtalho: <b>-</b>
 !HISTORY_MSG_WBITC_SAMPLING;Low sampling
 !HISTORY_MSG_WBITC_SIZE;Itcwb Size
 !HISTORY_MSG_WBITC_SORTED;Itcwb ponderated
-!HISTORY_MSG_WBITC_THRES;Itcwb Theshold
+!HISTORY_MSG_WBITC_THRES;Itcwb Threshold
 !ICCPROFCREATOR_ILL_63;D63 : DCI-P3 Theater
 !ICCPROFCREATOR_PRIM_DCIP3;DCI-P3
 !INSPECTOR_WINDOW_TITLE;Inspector
@@ -3104,7 +3106,7 @@ ZOOMPANEL_ZOOMOUT;Menos Zoom\nAtalho: <b>-</b>
 !PREFERENCES_WBA;White Balance
 !PREFERENCES_WBACORR;White Balance - Automatic temperature correlation
 !PREFERENCES_WBACORR_TOOLTIP;These settings allow, depending on the images (type of raw file, colorimetry, etc.), an adaptation of the " Temperature correlation " algorithm in order to obtain the best overall results. There is no absolute rule, linking these parameters to the results obtained.\n\nThe settings are of 3 types: \n* those accessible to the user from the GUI.\n* those accessible only in reading from each pp3 file : Itcwb_minsize=20, Itcwb_delta=4 Itcwb_rgreen=1 Itcwb_nopurple=false (See Rawpedia)\n* those accessible to the user in 'options' (see Rawpedia)\n You can use "Awb temperature bias" and "Green refinement" to adjust the results. Each movement of these commands brings a new calculation of temperature, tint and correlation.\n\nPlease note that the 3 indicators 'Correlation factor', 'Patch chroma' and ΔE are given for information only. It is not because one of these indicators is better that the result will necessarily be better.
-!PREFERENCES_WBAENA;Show White Balance auto Temperature correlation Settings
+!PREFERENCES_WBAENA;Show White Balance Auto temperature correlation settings
 !PREFERENCES_WBAENACUSTOM;Use Custom temperature & tint
 !PREFERENCES_WBAFORC;Forces Extra algoritm
 !PREFERENCES_WBAGREENDELTA;Delta temperature in green iterate loop (if Force Extra enabled)
@@ -3173,6 +3175,8 @@ ZOOMPANEL_ZOOMOUT;Menos Zoom\nAtalho: <b>-</b>
 !TP_CROP_GTCENTEREDSQUARE;Centered square
 !TP_CROP_PPI;PPI
 !TP_DEHAZE_SATURATION;Saturation
+!TP_DIRPYRDENOISE_MAIN_AUTO_GAIN;Compensate for lightness
+!TP_DIRPYRDENOISE_MAIN_AUTO_GAIN_TOOLTIP;Alter the noise reduction strength based on the image lightness. Strength is reduced for dark images and increased for bright images.
 !TP_FILMNEGATIVE_BLUEBALANCE;Cool/Warm
 !TP_FILMNEGATIVE_COLORSPACE;Inversion color space:
 !TP_FILMNEGATIVE_COLORSPACE_INPUT;Input color space
@@ -3470,6 +3474,7 @@ ZOOMPANEL_ZOOMOUT;Menos Zoom\nAtalho: <b>-</b>
 !TP_LOCALLAB_FATFRA;Dynamic Range Compression ƒ
 !TP_LOCALLAB_FATFRAME_TOOLTIP;PDE Fattal – uses the Fattal Tone-mapping algorithm.
 !TP_LOCALLAB_FATLEVEL;Sigma
+!TP_LOCALLAB_FATSAT;Saturation control
 !TP_LOCALLAB_FATSHFRA;Dynamic Range Compression Mask ƒ
 !TP_LOCALLAB_FEATH_TOOLTIP;Gradient width as a percentage of the Spot diagonal\nUsed by all graduated filters in all tools.\nNo action if a graduated filter hasn't been activated.
 !TP_LOCALLAB_FEATVALUE;Feather gradient (Grad. Filters)
@@ -4203,7 +4208,7 @@ ZOOMPANEL_ZOOMOUT;Menos Zoom\nAtalho: <b>-</b>
 !TP_WBALANCE_ITCWB_DELTA;Delta temperature in green loop
 !TP_WBALANCE_ITCWB_FGREEN;Find green student
 !TP_WBALANCE_ITCWB_FORCED;Close to full CIE diagram
-!TP_WBALANCE_ITCWB_FRA;Auto Temperature correlation Settings
+!TP_WBALANCE_ITCWB_FRA;Auto temperature correlation settings
 !TP_WBALANCE_ITCWB_FRA_TOOLTIP;These settings allow, depending on the images (type of raw, colorimetry, etc.), an adaptation of the 'Temperature correlation' algorithm. There is no absolute rule linking these parameters to the results obtained.
 !TP_WBALANCE_ITCWB_MINSIZEPATCH;Patch minimum size
 !TP_WBALANCE_ITCWB_NOPURPLE;Filter on purple color
@@ -4213,7 +4218,7 @@ ZOOMPANEL_ZOOMOUT;Menos Zoom\nAtalho: <b>-</b>
 !TP_WBALANCE_ITCWB_PRIM_BETA;Medium sampling - near Pointer's gamut
 !TP_WBALANCE_ITCWB_PRIM_JDCMAX;Close to full CIE diagram
 !TP_WBALANCE_ITCWB_PRIM_REC;High sampling
-!TP_WBALANCE_ITCWB_PRIM_SRGB;Low sampling & No use Camera settings
+!TP_WBALANCE_ITCWB_PRIM_SRGB;Low sampling & Ignore Camera settings
 !TP_WBALANCE_ITCWB_PRIM_XYZCAM;Camera XYZ matrix
 !TP_WBALANCE_ITCWB_PRIM_XYZCAM2;JDCmax after Camera XYZ matrix
 !TP_WBALANCE_ITCWB_RGREEN;Green range
@@ -4225,7 +4230,7 @@ ZOOMPANEL_ZOOMOUT;Menos Zoom\nAtalho: <b>-</b>
 !TP_WBALANCE_ITCWFORCED_TOOLTIP;By default (box not checked) the data scanned during sampling is brought back to the sRGB profile, which is the most widespread, both for calibrating DCP or ICC profiles with the Colorchecker24, or used on the web.\n If you have very high gamut images (some flowers, artificial colors), then it may be necessary to use the entire CIExy diagram, the profile used will be ACESP0. In this second case, the number of colors that can be used in internal to the algorithm will be more important.
 !TP_WBALANCE_ITCWGREEN;Green refinement
 !TP_WBALANCE_ITCWGREEN_TOOLTIP;Allows you to change the "tint" (green) which will serve as a reference when starting the algorithm. It has substantially the same role for greens as "AWB temperature bias" for temperature.\nThe whole algorithm is recalculated.
-!TP_WBALANCE_ITCWPRIM_TOOLTIP;Allows you to select the image sampling.\n'Close to full CIE diagram' almost uses the data present on the sensor, possibly including the imaginary colors.\n'Camera XYZ matrix' - uses the matrix directly derived from Color Matrix.\n'Medium sampling' (default) - near Pointer's gamut: corresponds substantially to the most common cases of human vision.\nThe other choice 'Low sampling and No use camera settings' allow you to isolate high gamut parts of the image and forces the algorithm in some cases (tint > 0.8,...) not to use camera settings. This will obviously have an impact on the result.\n\nThis sampling only has an influence on the channel multipliers, it has nothing to do with the "working profile" and does not modify the gamut of the image.
+!TP_WBALANCE_ITCWPRIM_TOOLTIP;Allows you to select the image sampling.\n'Close to full CIE diagram' almost uses the data present on the sensor, possibly including the imaginary colors.\n'Camera XYZ matrix' - uses the matrix directly derived from Color Matrix.\n'Medium sampling' (default) - near Pointer's gamut: corresponds substantially to the most common cases of human vision.\nThe other choice 'Low sampling and Ignore camera settings' allow you to isolate high gamut parts of the image and forces the algorithm in some cases (tint > 0.8,...) to ignore camera settings. This will obviously have an impact on the result.\n\nThis sampling only has an influence on the channel multipliers, it has nothing to do with the "working profile" and does not modify the gamut of the image.
 !TP_WBALANCE_ITCWSAMPLING_TOOLTIP;Allows you to use the old sampling algorithm to ensure better compatibility with 5.9. You must enable Observer 10° (default).
 !TP_WBALANCE_MULLABEL;Multipliers: r=%1 g=%2 b=%3
 !TP_WBALANCE_MULLABEL_TOOLTIP;Values given for information purposes. You cannot change them.
