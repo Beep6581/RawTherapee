@@ -100,7 +100,7 @@ void adjustBlackLevels(float cblack[4], rtengine::eSensorType sensorType, const 
             break;
     }
 
-    for (int i = 0; i < black_adjust.size(); i++) {
+    for (unsigned int i = 0; i < black_adjust.size(); i++) {
         cblack[i] = std::max(0.f, cblack[i] + black_adjust[i]);
     }
 }
@@ -118,7 +118,7 @@ void calculate_scale_mul(float scale_mul[4], const float pre_mul_[4], const floa
 {
     std::array<float, 4> c_white;
 
-    for (int i = 0; i < c_white.size(); ++i) {
+    for (unsigned int i = 0; i < c_white.size(); ++i) {
         c_white[i] = static_cast<float>(ri->get_white(i));
     }
 

@@ -1405,7 +1405,7 @@ WBParams::WBParams() :
     tempBias(0.0),
     observer(ColorTemp::DEFAULT_OBSERVER),
     itcwb_green(0.),//slider
-    itcwb_rgreen(1),//keep for settings 
+    itcwb_rgreen(1),//keep for settings
     itcwb_nopurple(false),//keep for settings
     itcwb_alg(false),//checkbox
     itcwb_prim("beta"),//combobox
