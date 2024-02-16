@@ -10512,6 +10512,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 bevwevFrame->show();
                 sigmoidFrame->show();
                 expprecam->show();
+                primillFrame->hide();
                 expmaskcie->hide();
                 exprecovcie->hide();               
             }
@@ -10632,6 +10633,8 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 bevwevFrame->show();
                 sigmoidFrame->show();
                 expprecam->show();
+                primillFrame->show();
+
             }
 
             if (modecam->get_active_row_number() == 2) {
@@ -10747,6 +10750,8 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             if (modecam->get_active_row_number() == 0) {
                 bevwevFrame->show();
                 expprecam->show();
+                primillFrame->show();
+
                 
             }
 
@@ -10787,6 +10792,8 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     bevwevFrame->show();
                     sigmoidFrame->show();
                     expprecam->show();
+                    primillFrame->show();
+                    
                 }
 
             }
@@ -10888,7 +10895,12 @@ void Locallabcie::updatecieGUI()
         expprecam->show();
         if(mode == Simple) {        
            expmaskcie->hide();
-           exprecovcie->hide();               
+           exprecovcie->hide();
+           primillFrame->hide();
+
+        } else {
+           primillFrame->show();
+
         }
 
 
@@ -11035,8 +11047,10 @@ void Locallabcie::convertParamToSimple()
     pqremapcam16->setValue(defSpot.pqremapcam16);
     showmaskcieMethod->set_active(0);
     enacieMask->set_active(defSpot.enacieMask);
+
     modecie->set_active(0);
-    primMethod->set_active(0);
+    primMethod->set_active(0);//Prophoto
+    illMethod->set_active(1);//D50
     catMethod->set_active(0);
 
     // Enable all listeners
@@ -11077,7 +11091,7 @@ void Locallabcie::convertParamToNormal()
     strsoftjzcie->setValue(defSpot.strsoftjzcie);
     thrhjzcie->setValue(defSpot.thrhjzcie);
     modecie->set_active(0);
-    primMethod->set_active(0);
+    //primMethod->set_active(0);
     catMethod->set_active(0);
     pqremapcam16->setValue(defSpot.pqremapcam16);
     logcieChanged();
