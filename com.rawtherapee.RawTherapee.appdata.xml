@@ -22,7 +22,7 @@
     <url type="translate">https://rawpedia.rawtherapee.com/Main_Page#Localization</url>
     <launchable type="desktop-id">rawtherapee.desktop</launchable>
     <releases>
-        <release version="5.10-rc1" date="2024-02-10" type="development"></release>
+        <release version="5.10" date="2024-02-16" type="stable"></release>
         <release version="5.9" date="2022-11-27" type="stable"></release>
         <release version="5.8" date="2020-02-04" type="stable"></release>
         <release version="5.7" date="2019-09-10" type="stable"></release>
