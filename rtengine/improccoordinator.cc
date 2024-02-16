@@ -1353,7 +1353,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float Lnresi = 0.f;
                 float Lhighresi46 = 0.f;
                 float Lnresi46 = 0.f;
-
+                Glib::ustring prof = params->icm.workingProfile;
+                if(params->locallab.spots.at(sp).complexcie == 2) {
+                    params->locallab.spots.at(sp).primMethod = prof;//in Basic mode set to Working profile
+                }
+                    
                 ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv.get(), savenormtm.get(), savenormreti.get(), lastorigimp.get(), fw, fh, 0, 0, pW, pH, scale, locRETgainCurve, locRETtransCurve,
                               lllocalcurve, locallutili,
                               cllocalcurve, localclutili,

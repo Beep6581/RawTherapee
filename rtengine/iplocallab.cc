@@ -20207,12 +20207,17 @@ void ImProcFunctions::Lab_Local(
                     grx = params->locallab.spots.at(sp).grexl;
                     gry = params->locallab.spots.at(sp).greyl;
                     blx = params->locallab.spots.at(sp).bluxl;
-                    bly = params->locallab.spots.at(sp).bluyl;                     
-
+                    bly = params->locallab.spots.at(sp).bluyl; 
+                    /*
+                    if (params->locallab.spots.at(sp).complexcie == 2) {
+                        printf("Mode complexity=%i Prov=%s\n", params->locallab.spots.at(sp).complexcie, prof.c_str());
+                        printf("prim=%s \n", params->locallab.spots.at(sp).primMethod.c_str());
+                    }
+                    */
                     if (params->locallab.spots.at(sp).primMethod == "beta") {
                         typ = 5;
                         ill = 2;
-                        prim = 10;
+                        prim = 11;
                     } else if (params->locallab.spots.at(sp).primMethod == "srgb") {
                         prim = 1;
                         ill = 5;
@@ -20244,6 +20249,18 @@ void ImProcFunctions::Lab_Local(
                     } else if (params->locallab.spots.at(sp).primMethod == "jdcmaxstdA") {
                         prim = 9;
                         ill = 8;
+                        typ = 5;                     
+                    } else if (params->locallab.spots.at(sp).primMethod == "ac0") {
+                        prim = 7;
+                        ill = 4;
+                        typ = 5;                     
+                    } else if (params->locallab.spots.at(sp).primMethod == "best") {
+                        prim = 12;
+                        ill = 2;
+                        typ = 5;                     
+                    } else if (params->locallab.spots.at(sp).primMethod == "bru") {
+                        prim = 10;
+                        ill = 5;
                         typ = 5;                     
                     } else if (params->locallab.spots.at(sp).primMethod == "free") {
                         prim = 15;

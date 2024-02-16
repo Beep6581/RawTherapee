@@ -903,6 +903,22 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
             gry = p[3];
             blx = p[4];
             bly = p[5];
+        } else if (prim == 7) {
+            p[0] = 0.7347;    //ACESp0 primaries
+            p[1] = 0.2653;
+            p[2] = 0.;
+            p[3] = 1.0;
+            p[4] = 0.0001;
+            p[5] = -0.0770;
+            tempv4 = 6004.;
+            Wx = 0.952646075;
+            Wz = 1.008825184;
+            rdx = p[0];
+            rdy = p[1];
+            grx = p[2];
+            gry = p[3];
+            blx = p[4];
+            bly = p[5];
         } else if (prim == 8) {
             p[0] = 0.734702;    // JDC max primaries
             p[1] = 0.265302;
@@ -934,6 +950,21 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
             blx = p[4];
             bly = p[5];
         } else if (prim == 10) {
+            p[0] = 0.64;    // Bruce primaries
+            p[1] = 0.33;
+            p[2] = 0.28;
+            p[3] = 0.65;
+            p[4] = 0.15;
+            p[5] = 0.06;
+            Wx = 0.95045471;
+            Wz = 1.08905029;
+            rdx = p[0];
+            rdy = p[1];
+            grx = p[2];
+            gry = p[3];
+            blx = p[4];
+            bly = p[5];
+        } else if (prim == 11) {
             p[0] = 0.6888;    // Beta primaries
             p[1] = 0.3112;
             p[2] = 0.1986;
@@ -948,7 +979,22 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
             gry = p[3];
             blx = p[4];
             bly = p[5];
-        } else if (prim == 15) {
+        } else if (prim == 12) {
+            p[0] = 0.7347;    // Best primaries
+            p[1] = 0.2653;
+            p[2] = 0.2150;
+            p[3] = 0.7750;
+            p[4] = 0.13;
+            p[5] = 0.0350;
+            Wx = 0.964295676;
+            Wz = 0.825104603;
+            rdx = p[0];
+            rdy = p[1];
+            grx = p[2];
+            gry = p[3];
+            blx = p[4];
+            bly = p[5];
+       } else if (prim == 15) {
             p[0] = rdx;
             p[1] = rdy;
             p[2] = grx;

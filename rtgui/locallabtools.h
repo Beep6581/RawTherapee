@@ -1676,7 +1676,7 @@ private:
     Gtk::Box* willBox;
     MyComboBoxText* const illMethod;
     Gtk::Box* wprimBox;
-    MyComboBoxText* const primMethod;
+    MyComboBoxText*  const primMethod;
     Gtk::Grid* primCoordGridl;
     Gtk::Frame* trcFrame;
     Gtk::Frame* primillFrame;

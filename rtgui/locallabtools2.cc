@@ -7889,6 +7889,9 @@ Locallabcie::Locallabcie():
     primMethod->append(M("TP_ICM_WORKING_PRIM_SRGB"));
     primMethod->append(M("TP_ICM_WORKING_PRIM_JDCMAX"));
     primMethod->append(M("TP_ICM_WORKING_PRIM_JDCMAXSTDA"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_AC0"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_BST"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_BRU"));
     primMethod->append(M("TP_ICM_WORKING_PRIM_FREE"));
 
     primMethod->set_active(0);
@@ -9076,6 +9079,15 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         } else if (spot.primMethod == "jdcmaxstdA") {
             primMethod->set_active(8);
             illMethod->set_active(6);
+        } else if (spot.primMethod == "ac0") {
+            primMethod->set_active(9);
+            illMethod->set_active(3);
+        } else if (spot.primMethod == "best") {
+            primMethod->set_active(10);
+            illMethod->set_active(1);
+        } else if (spot.primMethod == "bru") {
+            primMethod->set_active(11);
+            illMethod->set_active(4);
         } else if (spot.primMethod == "free") {
             primMethod->set_active(9);
             illMethod->set_sensitive(true);
@@ -9427,6 +9439,12 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         } else if (primMethod->get_active_row_number() == 8) {
             spot.primMethod = "jdcmaxstdA";
         } else if (primMethod->get_active_row_number() == 9) {
+            spot.primMethod = "ac0";
+        } else if (primMethod->get_active_row_number() == 10) {
+            spot.primMethod = "best";
+        } else if (primMethod->get_active_row_number() == 11) {
+            spot.primMethod = "bru";
+        } else if (primMethod->get_active_row_number() == 12) {
             spot.primMethod = "free";
         }
 
@@ -10383,10 +10401,16 @@ void Locallabcie::primMethodChanged()
         illMethod->set_active(1);
     } else if (primMethod->get_active_row_number() == 8) {
         illMethod->set_active(6);
+    } else if (primMethod->get_active_row_number() == 9) {
+        illMethod->set_active(3);
+    } else if (primMethod->get_active_row_number() == 10) {
+        illMethod->set_active(1);
+    } else if (primMethod->get_active_row_number() == 11) {
+        illMethod->set_active(4);
     } 
     illMethod->set_sensitive(false);
 
-    if (primMethod->get_active_row_number() == 9) {
+    if (primMethod->get_active_row_number() == 12) {
         redBox->set_sensitive(true);
         illMethod->set_sensitive(true);
         
