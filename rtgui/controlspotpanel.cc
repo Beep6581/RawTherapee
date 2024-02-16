@@ -412,7 +412,7 @@ ControlSpotPanel::ControlSpotPanel():
     avoidgamutMethod_->append(M("TP_LOCALLAB_GAMUTXYZABSO"));
     avoidgamutMethod_->append(M("TP_LOCALLAB_GAMUTXYZRELA"));
     avoidgamutMethod_->append(M("TP_LOCALLAB_GAMUTMUNSELL"));
-    avoidgamutMethod_->set_active(4);
+    avoidgamutMethod_->set_active(2);
     avoidgamutconn_ = avoidgamutMethod_->signal_changed().connect(
                      sigc::mem_fun(
                          *this, &ControlSpotPanel::avoidgamutMethodChanged));
@@ -664,7 +664,7 @@ void ControlSpotPanel::on_button_delete()
     nbSpotChanged_ = true;
     selSpotChanged_ = true;
     eventType = SpotDeletion;
-    SpotRow* const delSpotRow = getSpot(selIndex);
+    const std::unique_ptr<SpotRow> delSpotRow = getSpot(selIndex);
     listener->panelChanged(EvLocallabSpotDeleted, delSpotRow->name);
 }
 
@@ -686,7 +686,7 @@ void ControlSpotPanel::on_button_duplicate()
     nbSpotChanged_ = true;
     selSpotChanged_ = true;
     eventType = SpotDuplication;
-    SpotRow* const duplSpotRow = getSpot(selIndex);
+    const std::unique_ptr<SpotRow> duplSpotRow = getSpot(selIndex);
     listener->panelChanged(EvLocallabSpotCreated, M("TP_LOCALLAB_EV_DUPL") + " "
                            + duplSpotRow->name);
 }
@@ -783,7 +783,7 @@ bool ControlSpotPanel::on_button_visibility(GdkEventButton* event)
 
             // Raise event
             visibilityChanged_ = true;
-            SpotRow* const spotRow = getSpot(getSelectedSpot());
+            const std::unique_ptr<SpotRow> spotRow = getSpot(getSelectedSpot());
 
             if (row[spots_.isvisible]) {
                 listener->panelChanged(EvLocallabSpotVisibility, M("TP_LOCALLAB_EV_VIS") + " (" + spotRow->name + ")");
@@ -901,7 +901,7 @@ void ControlSpotPanel::controlspotChanged()
 
     selSpotChanged_ = true;
     eventType = SpotSelection;
-    SpotRow* const spotRow = getSpot(selIndex);
+    const std::unique_ptr<SpotRow> spotRow = getSpot(selIndex);
 
     // Image area shall be regenerated if mask or deltaE preview was active when switching spot
     if (maskPrevActive || preview_->get_active()) {
@@ -2644,13 +2644,16 @@ int ControlSpotPanel::getEventType()
     return tmp;
 }
 
-ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(const int index)
+std::unique_ptr<ControlSpotPanel::SpotRow> ControlSpotPanel::getSpot(const int index)
 {
+    // TODO: Return an std::optional<ControlSpotPanel::SpotRow> after upgrading
+    // to C++17.
+
     // printf("getSpot: %d\n", index);
 
     MyMutex::MyLock lock(mTreeview);
 
-    SpotRow* r = new SpotRow();
+    std::unique_ptr<SpotRow> r(new SpotRow());
 
     int i = -1;
 
@@ -2785,58 +2788,58 @@ void ControlSpotPanel::resetDeltaEPreview()
     previewConn_.block(false);
 }
 
-void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
+void ControlSpotPanel::addControlSpot(const SpotRow &newSpot)
 {
-    // printf("addControlSpot: %d\n", newSpot->name);
+    // printf("addControlSpot: %d\n", newSpot.name);
 
     MyMutex::MyLock lock(mTreeview);
 
     disableParamlistener(true);
     Gtk::TreeModel::Row row = *(treemodel_->append());
     row[spots_.mouseover] = false;
-    row[spots_.name] = newSpot->name;
-    row[spots_.isvisible] = newSpot->isvisible;
+    row[spots_.name] = newSpot.name;
+    row[spots_.isvisible] = newSpot.isvisible;
     row[spots_.curveid] = 0; // No associated curve
-    row[spots_.prevMethod] = newSpot->prevMethod;
-    row[spots_.shape] = newSpot->shape;
-    row[spots_.spotMethod] = newSpot->spotMethod;
-    row[spots_.sensiexclu] = newSpot->sensiexclu;
-    row[spots_.structexclu] = newSpot->structexclu;
-    row[spots_.shapeMethod] = newSpot->shapeMethod;
-    row[spots_.locX] = newSpot->locX;
-    row[spots_.locXL] = newSpot->locXL;
-    row[spots_.locY] = newSpot->locY;
-    row[spots_.locYT] = newSpot->locYT;
-    row[spots_.centerX] = newSpot->centerX;
-    row[spots_.centerY] = newSpot->centerY;
-    row[spots_.circrad] = newSpot->circrad;
-    row[spots_.qualityMethod] = newSpot->qualityMethod;
-    row[spots_.transit] = newSpot->transit;
-    row[spots_.transitweak] = newSpot->transitweak;
-    row[spots_.transitgrad] = newSpot->transitgrad;
-    row[spots_.feather] = newSpot->feather;
-    row[spots_.struc] = newSpot->struc;
-    row[spots_.thresh] = newSpot->thresh;
-    row[spots_.iter] = newSpot->iter;
-    row[spots_.balan] = newSpot->balan;
-    row[spots_.balanh] = newSpot->balanh;
-    row[spots_.colorde] = newSpot->colorde;
-    row[spots_.colorscope] = newSpot->colorscope;
-    row[spots_.avoidrad] = newSpot->avoidrad;
-    row[spots_.hishow] = newSpot->hishow;
-    row[spots_.activ] = newSpot->activ;
-    row[spots_.blwh] = newSpot->blwh;
-    row[spots_.recurs] = newSpot->recurs;
-    row[spots_.laplac] = newSpot->laplac;
-    row[spots_.deltae] = newSpot->deltae;
-    row[spots_.scopemask] = newSpot->scopemask;
-    row[spots_.denoichmask] = newSpot->denoichmask;
-    row[spots_.shortc] = newSpot->shortc;
-    row[spots_.lumask] = newSpot->lumask;
-    //row[spots_.savrest] = newSpot->savrest;
-    row[spots_.complexMethod] = newSpot->complexMethod;
-    row[spots_.wavMethod] = newSpot->wavMethod;
-    row[spots_.avoidgamutMethod] = newSpot->avoidgamutMethod;
+    row[spots_.prevMethod] = newSpot.prevMethod;
+    row[spots_.shape] = newSpot.shape;
+    row[spots_.spotMethod] = newSpot.spotMethod;
+    row[spots_.sensiexclu] = newSpot.sensiexclu;
+    row[spots_.structexclu] = newSpot.structexclu;
+    row[spots_.shapeMethod] = newSpot.shapeMethod;
+    row[spots_.locX] = newSpot.locX;
+    row[spots_.locXL] = newSpot.locXL;
+    row[spots_.locY] = newSpot.locY;
+    row[spots_.locYT] = newSpot.locYT;
+    row[spots_.centerX] = newSpot.centerX;
+    row[spots_.centerY] = newSpot.centerY;
+    row[spots_.circrad] = newSpot.circrad;
+    row[spots_.qualityMethod] = newSpot.qualityMethod;
+    row[spots_.transit] = newSpot.transit;
+    row[spots_.transitweak] = newSpot.transitweak;
+    row[spots_.transitgrad] = newSpot.transitgrad;
+    row[spots_.feather] = newSpot.feather;
+    row[spots_.struc] = newSpot.struc;
+    row[spots_.thresh] = newSpot.thresh;
+    row[spots_.iter] = newSpot.iter;
+    row[spots_.balan] = newSpot.balan;
+    row[spots_.balanh] = newSpot.balanh;
+    row[spots_.colorde] = newSpot.colorde;
+    row[spots_.colorscope] = newSpot.colorscope;
+    row[spots_.avoidrad] = newSpot.avoidrad;
+    row[spots_.hishow] = newSpot.hishow;
+    row[spots_.activ] = newSpot.activ;
+    row[spots_.blwh] = newSpot.blwh;
+    row[spots_.recurs] = newSpot.recurs;
+    row[spots_.laplac] = newSpot.laplac;
+    row[spots_.deltae] = newSpot.deltae;
+    row[spots_.scopemask] = newSpot.scopemask;
+    row[spots_.denoichmask] = newSpot.denoichmask;
+    row[spots_.shortc] = newSpot.shortc;
+    row[spots_.lumask] = newSpot.lumask;
+    //row[spots_.savrest] = newSpot.savrest;
+    row[spots_.complexMethod] = newSpot.complexMethod;
+    row[spots_.wavMethod] = newSpot.wavMethod;
+    row[spots_.avoidgamutMethod] = newSpot.avoidgamutMethod;
     updateParamVisibility();
     disableParamlistener(false);
 

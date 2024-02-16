@@ -740,8 +740,8 @@ HISTORY_MSG_493;L*a*b* Adjustments
 HISTORY_MSG_494;Capture Sharpening
 HISTORY_MSG_496;Local Spot deleted
 HISTORY_MSG_497;Local Spot selected
-HISTORY_MSG_498;--unused--
-HISTORY_MSG_499;--unused--
+HISTORY_MSG_498;Local - Spot name
+HISTORY_MSG_499;Local - Spot visibility
 HISTORY_MSG_500;Local - Spot shape
 HISTORY_MSG_501;Local - Spot method
 HISTORY_MSG_502;Local - SC - Shape method
@@ -1545,7 +1545,7 @@ HISTORY_MSG_WBITC_CUSTOM;Itcwb Custom
 HISTORY_MSG_WBITC_DELTA;Itcwb Delta green
 HISTORY_MSG_WBITC_FGREEN;Itcwb Green - student
 HISTORY_MSG_WBITC_FORCE;Itcwb Force
-HISTORY_MSG_WBITC_GREEN;Grren refinement
+HISTORY_MSG_WBITC_GREEN;Green refinement
 HISTORY_MSG_WBITC_MINSIZE;Patch min size
 HISTORY_MSG_WBITC_NOPURPLE;Itcwb Nopurple
 HISTORY_MSG_WBITC_OBS;Remove algo 2 passes
@@ -1556,7 +1556,7 @@ HISTORY_MSG_WBITC_RGREEN;Itcwb Green range
 HISTORY_MSG_WBITC_SAMPLING;Low sampling
 HISTORY_MSG_WBITC_SIZE;Itcwb Size
 HISTORY_MSG_WBITC_SORTED;Itcwb ponderated
-HISTORY_MSG_WBITC_THRES;Itcwb Theshold
+HISTORY_MSG_WBITC_THRES;Itcwb Threshold
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -2969,6 +2969,7 @@ TP_LOCALLAB_FATSAT;Saturation control
 TP_LOCALLAB_FATFRA;Dynamic Range Compression ƒ
 TP_LOCALLAB_FATFRAME_TOOLTIP;PDE Fattal – uses the Fattal Tone-mapping algorithm.
 TP_LOCALLAB_FATLEVEL;Sigma
+TP_LOCALLAB_FATSAT;Saturation control
 TP_LOCALLAB_FATSHFRA;Dynamic Range Compression Mask ƒ
 TP_LOCALLAB_FEATH_TOOLTIP;Gradient width as a percentage of the Spot diagonal\nUsed by all graduated filters in all tools.\nNo action if a graduated filter hasn't been activated.
 TP_LOCALLAB_FEATVALUE;Feather gradient (Grad. Filters)

@@ -364,7 +364,7 @@ enum class BlurType {
                 float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax,
                 float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,
                 float &highresi, float &nresi, float &highresi46, float &nresi46, float &Lhighresi, float &Lnresi, float &Lhighresi46, float &Lnresi46);
-   
+
    void tone_eqdehaz(ImProcFunctions *ipf, Imagefloat *rgb, int whits, int blacks, const Glib::ustring &workingProfile, double scale, bool multithread);
 
     void addGaNoise(LabImage *lab, LabImage *dst, const float mean, const float variance, const int sk);

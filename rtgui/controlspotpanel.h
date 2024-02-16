@@ -21,6 +21,8 @@
 #ifndef _CONTROLSPOTPANEL_H_
 #define _CONTROLSPOTPANEL_H_
 
+#include <memory>
+
 #include "../rtengine/coord.h"
 #include "editcallbacks.h"
 #include "threadutils.h"
@@ -142,7 +144,7 @@ public:
      * @param index The spot index to get params
      * @return A SpotRow structure containing params of associated spot
      */
-    SpotRow* getSpot(const int index);
+    std::unique_ptr<SpotRow> getSpot(const int index);
     /**
      * Getter of spots number
      *
@@ -188,7 +190,7 @@ public:
      *
      * @param newSpot A SpotRow structure containing new spot params
      */
-    void addControlSpot(SpotRow* newSpot);
+    void addControlSpot(const SpotRow &newSpot);
 
     // Control spot delete function
     /**

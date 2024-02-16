@@ -4,11 +4,14 @@ on:
     branches:
       - dev
       - releases
+      - 'release-[0-9]+.*'
     tags:
       - '[0-9]+.*'
   pull_request:
     branches:
       - dev
+      - releases
+      - 'release-[0-9]+.*'
   workflow_dispatch:
 
 env:
@@ -20,7 +23,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        build_type: [release]
+        build_type: [release, debug]
     steps:
       - name: Checkout source
         uses: actions/checkout@v3
@@ -36,7 +39,7 @@ jobs:
 
       - name: Install Exiv2
         run: |
-          EXIV2_VERSION='v0.28.0'
+          EXIV2_VERSION='v0.28.1'
           echo "Cloning Exiv2 $EXIV2_VERSION."
           git clone --depth 1 --branch "$EXIV2_VERSION" https://github.com/Exiv2/exiv2.git ext/exiv2
 

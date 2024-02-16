@@ -18,6 +18,7 @@
  */
 
 #include <atomic>
+#include <memory>
 #include <set>
 
 #include <gtkmm.h>
@@ -83,10 +84,10 @@ public:
         threadCount = omp_get_num_procs();
 #endif
 
-        threadPool_ = new Glib::ThreadPool(threadCount, 0);
+        threadPool_.reset(new Glib::ThreadPool(threadCount, 0));
     }
 
-    Glib::ThreadPool* threadPool_;
+    std::unique_ptr<Glib::ThreadPool> threadPool_;
 
     // Need to be a std::mutex because used in a std::condition_variable object...
     // This is the only exceptions along with GThreadMutex (guiutils.cc), MyMutex is used everywhere else

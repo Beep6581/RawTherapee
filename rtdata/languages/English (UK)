@@ -283,7 +283,7 @@ TP_WBALANCE_ITCWB_SIZE;Size of ref. colour compare to histogram
 TP_WBALANCE_ITCWB_SIZEPATCH;Size of colour patch
 TP_WBALANCE_ITCWB_THRES;Colours used in picture (preset)
 TP_WBALANCE_ITCWFORCED_TOOLTIP;By default (box not checked) the data scanned during sampling is brought back to the sRGB profile, which is the most widespread, both for calibrating DCP or ICC profiles with the Colourchecker24, or used on the web.\n If you have very high gamut images (some flowers, artificial colours), then it may be necessary to use the entire CIExy diagram, the profile used will be ACESP0. In this second case, the number of colours that can be used in internal to the algorithm will be more important.
-TP_WBALANCE_ITCWPRIM_TOOLTIP;Allows you to select the image sampling.\n'Close to full CIE diagram' almost uses the data present on the sensor, possibly including the imaginary colours.\n'Camera XYZ matrix' - uses the matrix directly derived from Colour Matrix.\n'Medium sampling' (default) - near Pointer's gamut: corresponds substantially to the most common cases of human vision.\nThe other choice 'Low sampling and No use camera settings' allow you to isolate high gamut parts of the image and forces the algorithm in some cases (tint > 0.8,...) not to use camera settings. This will obviously have an impact on the result.\n\nThis sampling only has an influence on the channel multipliers, it has nothing to do with the "working profile" and does not modify the gamut of the image.
+TP_WBALANCE_ITCWPRIM_TOOLTIP;Allows you to select the image sampling.\n'Close to full CIE diagram' almost uses the data present on the sensor, possibly including the imaginary colours.\n'Camera XYZ matrix' - uses the matrix directly derived from Colour Matrix.\n'Medium sampling' (default) - near Pointer's gamut: corresponds substantially to the most common cases of human vision.\nThe other choice 'Low sampling and Ignore camera settings' allow you to isolate high gamut parts of the image and forces the algorithm in some cases (tint > 0.8,...) to ignore camera settings. This will obviously have an impact on the result.\n\nThis sampling only has an influence on the channel multipliers, it has nothing to do with the "working profile" and does not modify the gamut of the image.
 TP_WBALANCE_OBSERVER10_TOOLTIP;The colour management in Rawtherapee (White balance, channel multipliers, highlight recovery,...) uses the spectral data of the illuminants and colours. Observer is an important parameter of this management which takes into account the angle of perception of the eye. In 1931 it was fixed at 2° (privileges the use of the cones). In 1964 it was fixed at 10° (privileges the use of the cones, but partially takes into account the rods).\nTo avoid a (rare) drift of the colours due to the choice Observer 10° - probably due to the conversion matrix - Observer 2° must be selected.\nIn a majority of cases Observer 10° (default) will be a more relevant choice.
 TP_WBALANCE_PATCHLABEL;Read colours:%1 Patch: Chroma:%2 Size=%3
 TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colours (max=237).\nDisplay calculated Patch Chroma.\nAWB temperature bias, lets try to reduce this value, a minimum may seem to optimize the algorithm.\n\nPatch size matching chroma optimization.
@@ -1005,8 +1005,8 @@ TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colours (max=237).\nDispla
 !HISTORY_MSG_494;Capture Sharpening
 !HISTORY_MSG_496;Local Spot deleted
 !HISTORY_MSG_497;Local Spot selected
-!HISTORY_MSG_498;--unused--
-!HISTORY_MSG_499;--unused--
+!HISTORY_MSG_498;Local - Spot name
+!HISTORY_MSG_499;Local - Spot visibility
 !HISTORY_MSG_500;Local - Spot shape
 !HISTORY_MSG_501;Local - Spot method
 !HISTORY_MSG_502;Local - SC - Shape method
@@ -1619,6 +1619,7 @@ TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colours (max=237).\nDispla
 !HISTORY_MSG_DEHAZE_SATURATION;Dehaze - Saturation
 !HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;Dehaze - Show depth map
 !HISTORY_MSG_DEHAZE_STRENGTH;Dehaze - Strength
+!HISTORY_MSG_DIRPYRDENOISE_GAIN;NR - Compensate for lightness
 !HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;Dual demosaic - Auto threshold
 !HISTORY_MSG_DUALDEMOSAIC_CONTRAST;Dual demosaic - Contrast threshold
 !HISTORY_MSG_EDGEFFECT;Edge Attenuation response
@@ -1656,6 +1657,7 @@ TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colours (max=237).\nDispla
 !HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Local Contrast - Lightness
 !HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
 !HISTORY_MSG_LOCALLAB_TE_PIVOT;Local - Equalizer pivot
+!HISTORY_MSG_LOCAL_TMO_SATUR;Local Exp Fattal Saturation
 !HISTORY_MSG_METADATA_MODE;Metadata copy mode
 !HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrast threshold
 !HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST;CS - Auto threshold
@@ -1747,7 +1749,7 @@ TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colours (max=237).\nDispla
 !HISTORY_MSG_WBITC_DELTA;Itcwb Delta green
 !HISTORY_MSG_WBITC_FGREEN;Itcwb Green - student
 !HISTORY_MSG_WBITC_FORCE;Itcwb Force
-!HISTORY_MSG_WBITC_GREEN;Grren refinement
+!HISTORY_MSG_WBITC_GREEN;Green refinement
 !HISTORY_MSG_WBITC_MINSIZE;Patch min size
 !HISTORY_MSG_WBITC_NOPURPLE;Itcwb Nopurple
 !HISTORY_MSG_WBITC_OBS;Remove algo 2 passes
@@ -1758,7 +1760,7 @@ TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colours (max=237).\nDispla
 !HISTORY_MSG_WBITC_SAMPLING;Low sampling
 !HISTORY_MSG_WBITC_SIZE;Itcwb Size
 !HISTORY_MSG_WBITC_SORTED;Itcwb ponderated
-!HISTORY_MSG_WBITC_THRES;Itcwb Theshold
+!HISTORY_MSG_WBITC_THRES;Itcwb Threshold
 !HISTORY_NEWSNAPSHOT;Add
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !HISTORY_SNAPSHOT;Snapshot
@@ -2219,7 +2221,7 @@ TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colours (max=237).\nDispla
 !PREFERENCES_USEBUNDLEDPROFILES;Use bundled profiles
 !PREFERENCES_WBA;White Balance
 !PREFERENCES_WBACORR;White Balance - Automatic temperature correlation
-!PREFERENCES_WBAENA;Show White Balance auto Temperature correlation Settings
+!PREFERENCES_WBAENA;Show White Balance Auto temperature correlation settings
 !PREFERENCES_WBAENACUSTOM;Use Custom temperature & tint
 !PREFERENCES_WBAFORC;Forces Extra algoritm
 !PREFERENCES_WBAGREENDELTA;Delta temperature in green iterate loop (if Force Extra enabled)
@@ -2584,6 +2586,8 @@ TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colours (max=237).\nDispla
 !TP_DIRPYRDENOISE_LUMINANCE_DETAIL;Detail recovery
 !TP_DIRPYRDENOISE_LUMINANCE_FRAME;Luminance
 !TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Luminance
+!TP_DIRPYRDENOISE_MAIN_AUTO_GAIN;Compensate for lightness
+!TP_DIRPYRDENOISE_MAIN_AUTO_GAIN_TOOLTIP;Alter the noise reduction strength based on the image lightness. Strength is reduced for dark images and increased for bright images.
 !TP_DIRPYRDENOISE_MAIN_COLORSPACE_LAB;L*a*b*
 !TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;RGB
 !TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP;For raw images either RGB or L*a*b* methods can be used.\n\nFor non-raw images the L*a*b* method will be used, regardless of the selection.
@@ -3046,6 +3050,7 @@ TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colours (max=237).\nDispla
 !TP_LOCALLAB_FATFRA;Dynamic Range Compression ƒ
 !TP_LOCALLAB_FATFRAME_TOOLTIP;PDE Fattal – uses the Fattal Tone-mapping algorithm.
 !TP_LOCALLAB_FATLEVEL;Sigma
+!TP_LOCALLAB_FATSAT;Saturation control
 !TP_LOCALLAB_FATSHFRA;Dynamic Range Compression Mask ƒ
 !TP_LOCALLAB_FEATH_TOOLTIP;Gradient width as a percentage of the Spot diagonal\nUsed by all graduated filters in all tools.\nNo action if a graduated filter hasn't been activated.
 !TP_LOCALLAB_FEATVALUE;Feather gradient (Grad. Filters)
@@ -4175,7 +4180,7 @@ TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colours (max=237).\nDispla
 !TP_WBALANCE_ITCWB_DELTA;Delta temperature in green loop
 !TP_WBALANCE_ITCWB_FGREEN;Find green student
 !TP_WBALANCE_ITCWB_FORCED;Close to full CIE diagram
-!TP_WBALANCE_ITCWB_FRA;Auto Temperature correlation Settings
+!TP_WBALANCE_ITCWB_FRA;Auto temperature correlation settings
 !TP_WBALANCE_ITCWB_MINSIZEPATCH;Patch minimum size
 !TP_WBALANCE_ITCWB_PRECIS;Precision algorithm - scale used
 !TP_WBALANCE_ITCWB_PRIM_ACE;Forces use of the entire CIE diagram
@@ -4183,7 +4188,7 @@ TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colours (max=237).\nDispla
 !TP_WBALANCE_ITCWB_PRIM_BETA;Medium sampling - near Pointer's gamut
 !TP_WBALANCE_ITCWB_PRIM_JDCMAX;Close to full CIE diagram
 !TP_WBALANCE_ITCWB_PRIM_REC;High sampling
-!TP_WBALANCE_ITCWB_PRIM_SRGB;Low sampling & No use Camera settings
+!TP_WBALANCE_ITCWB_PRIM_SRGB;Low sampling & Ignore Camera settings
 !TP_WBALANCE_ITCWB_PRIM_XYZCAM;Camera XYZ matrix
 !TP_WBALANCE_ITCWB_PRIM_XYZCAM2;JDCmax after Camera XYZ matrix
 !TP_WBALANCE_ITCWB_RGREEN;Green range

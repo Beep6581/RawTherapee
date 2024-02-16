@@ -1405,7 +1405,7 @@ WBParams::WBParams() :
     tempBias(0.0),
     observer(ColorTemp::DEFAULT_OBSERVER),
     itcwb_green(0.),//slider
-    itcwb_rgreen(1),//keep for settings 
+    itcwb_rgreen(1),//keep for settings
     itcwb_nopurple(false),//keep for settings
     itcwb_alg(false),//checkbox
     itcwb_prim("beta"),//combobox
@@ -2972,7 +2972,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     structexclu(0),
     struc(4.0),
     shapeMethod("IND"),
-    avoidgamutMethod("MUNS"),
+    avoidgamutMethod("XYZ"),
     loc{150, 150, 150, 150},
     centerX(0),
     centerY(0),

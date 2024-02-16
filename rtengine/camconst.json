@@ -1058,6 +1058,11 @@ Camera constants:
         }
     },
 
+    { // Quality C
+        "make_model": [ "Canon EOS Rebel SL3", "Canon EOS 250D", "Canon EOS Kiss X10" ],
+        "dcraw_matrix": [ 9079, -1923, -1236, -4677, 12454, 2492, -922, 2319, 5565 ]
+    },
+
 // Canon low-range DSLRs
 // Canon EOS 1200D/Rebel T5/Kiss X70" is upper at the same item as 600D/T3i/X5
 
@@ -1222,7 +1227,8 @@ Camera constants:
 
     { // Quality C, only raw crop
         "make_model": [ "Canon EOS M6 Mark II", "Canon EOS 90D" ],
-        "raw_crop": [ 144, 72, 6984, 4660 ]
+        "raw_crop": [ 144, 72, 6984, 4660 ],
+        "masked_areas": [ 76, 40, 4580, 140 ]
     },
 
     { // Quality C, only masked area. Raw crop from metadata ok.
@@ -1368,7 +1374,7 @@ Camera constants:
     },
 
     { // Quality B,
-        "make_model": [ "Canon PowerShot G5 X", "Canon PowerShot G7 X Mark II" ],
+        "make_model": [ "Canon PowerShot G5 X", "Canon PowerShot G9 X", "Canon PowerShot G7 X Mark II" ],
         "dcraw_matrix": [ 9602,-3823,-937,-2984,11495,1675,-407,1414,5049 ], // DNG v13.2
         //"raw_crop": [ 116, 24, 5504, 3680 ], // Sensor size 5632x3710. Largest useful frame 120-5616X28-3702 = 5504x3682, 4pix RTborders, Left Border 120-4, Top border 28-4
         "raw_crop": [ 128, 36, 5480, 3656 ], // Default official 3/2 frame 5472X3648, 4pix borders, Left Border 132-4, Top border 40-4
@@ -1590,7 +1596,10 @@ Camera constants:
     { // Quality A, samples provided by Daniel Catalina (#5839) and pi99y (#5860)
         "make_model": [ "FUJIFILM X-T3", "FUJIFILM X-PRO3" ],
         "dcraw_matrix": [ 13426,-6334,-1177,-4244,12136,2371,-580,1303,5980 ], // DNG_v11, standard_v2 d65
-        "raw_crop": [ 0, 5, 6252, 4176],
+        "raw_crop" : [
+           { "frame" : [6384, 4182], "crop": [ 0, 5, 6252, 4176] },
+           { "frame" : [6384, 3348], "crop": [624, 0, 5004, 3348] }
+        ],
         "white": [ 16170, 16275, 16170 ] // typical safe-margins with LENR
         // negligible aperture scaling effect
     },
@@ -1635,8 +1644,9 @@ Camera constants:
 
     { // Quality B
         "make_model" : "LEICA D-LUX 7",
-        "dcraw_matrix" : [11577, -4230, -1106, -3967, 12211, 1957, -758, 1762, 5610] // DNG
+        "dcraw_matrix" : [11577, -4230, -1106, -3967, 12211, 1957, -758, 1762, 5610], // DNG
         // "dcraw_matrix" : [8585, -3127, -833, -4005, 12250, 1953, -650, 1494, 4862] // DNG alternate
+        "ranges" : { "black" : 15 }
     },
 
     { // Quality B, Matrix from Adobe's dcp D65 instead of the internal in Leica's DNG
@@ -2261,11 +2271,22 @@ Camera constants:
 
     { // Quality C
         "make_model": [ "Panasonic DC-G100", "Panasonic DC-G110" ],
-        "dcraw_matrix": [ 8370, -2869, -710, -3389, 11372, 2298, -640, 1598, 4887 ] // DNG
+        "dcraw_matrix": [ 8370, -2869, -710, -3389, 11372, 2298, -640, 1598, 4887 ], // DNG
+        "ranges": {
+            "white": [ // Measured with DC-G100 (#6913). Levels affected by LENR for ISOs 1600-4000.
+                { "iso": [ 200, 400, 800, 1250 ], "levels": 4095 },
+                { "iso": 1600, "levels": 4050 },
+                { "iso": 2000, "levels": 4040 },
+                { "iso": 2500, "levels": 4025 },
+                { "iso": 3200, "levels": 4010 },
+                { "iso": 4000, "levels": 4000 },
+                { "iso": [ 5000, 6400, 12800, 25600 ], "levels": 4095 }
+            ]
+        }
     },
 
     { // Quality C, only color matrix
-        "make_model" : "Panasonic DC-GF10",
+        "make_model" : [ "Panasonic DC-GF10", "PANASONIC DC-GX880" ],
         "dcraw_matrix": [ 7610, -2781, -576, -4614, 12195, 2733, -1375, 2393, 6490 ], // DNG v13.2
         "raw_crop": [ 0, 0, 4600, 0 ], // SensorWidth=4816 SensorHeight=3464. Width=4600 to match DNG.
         "ranges": { "black": 15 }
