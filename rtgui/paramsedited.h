@@ -1120,6 +1120,9 @@ public:
         bool catadcie;
         bool detailcie;
         bool surroundcie;
+        bool strgradcie;
+        bool anggradcie;
+
         bool enacieMask;
         bool CCmaskciecurve;
         bool LLmaskciecurve;

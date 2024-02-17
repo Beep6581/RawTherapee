@@ -1827,6 +1827,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).catadcie = locallab.spots.at(j).catadcie && pSpot.catadcie == otherSpot.catadcie;
                 locallab.spots.at(j).detailcie = locallab.spots.at(j).detailcie && pSpot.detailcie == otherSpot.detailcie;
                 locallab.spots.at(j).surroundcie = locallab.spots.at(j).surroundcie && pSpot.surroundcie == otherSpot.surroundcie;
+                
+                locallab.spots.at(j).strgradcie = locallab.spots.at(j).strgradcie && pSpot.strgradcie == otherSpot.strgradcie;
+                locallab.spots.at(j).anggradcie = locallab.spots.at(j).anggradcie && pSpot.anggradcie == otherSpot.anggradcie;
+                
 /*
                 locallab.spots.at(j).lightlzcam = locallab.spots.at(j).lightlzcam && pSpot.lightlzcam == otherSpot.lightlzcam;
                 locallab.spots.at(j).lightqzcam = locallab.spots.at(j).lightqzcam && pSpot.lightqzcam == otherSpot.lightqzcam;
@@ -6376,6 +6380,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).surroundcie = mods.locallab.spots.at(i).surroundcie;
         }
 
+        if (locallab.spots.at(i).strgradcie) {
+            toEdit.locallab.spots.at(i).strgradcie = mods.locallab.spots.at(i).strgradcie;
+        }
+
+        if (locallab.spots.at(i).anggradcie) {
+            toEdit.locallab.spots.at(i).anggradcie = mods.locallab.spots.at(i).anggradcie;
+        }
+
         if (locallab.spots.at(i).enacieMask) {
             toEdit.locallab.spots.at(i).enacieMask = mods.locallab.spots.at(i).enacieMask;
         }
@@ -8515,6 +8527,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     catadcie(v),
     detailcie(v),
     surroundcie(v),
+    strgradcie(v),
+    anggradcie(v),
     enacieMask(v),
     CCmaskciecurve(v),
     LLmaskciecurve(v),
@@ -9267,6 +9281,8 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     catadcie = v;
     detailcie = v;
     surroundcie = v;
+    anggradcie =  v;
+    strgradcie =  v;
     enacieMask = v;
     CCmaskciecurve = v;
     LLmaskciecurve = v;

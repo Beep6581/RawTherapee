@@ -7654,6 +7654,10 @@ Locallabcie::Locallabcie():
     catadcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CATAD"), -100., 100., 0.5, 0., Gtk::manage(new RTImage("circle-blue-small.png")), Gtk::manage(new RTImage("circle-orange-small.png"))))),
     surroundcie(Gtk::manage(new MyComboBoxText())),
     surrHBoxcie(Gtk::manage(new Gtk::Box())),
+    expgradcie(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPGRAD")))),
+    strgradcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
+    anggradcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
+    
     exprecovcie(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
     maskusablecie(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
     maskunusablecie(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUNUSABLE")))),
@@ -7736,8 +7740,8 @@ Locallabcie::Locallabcie():
     Evlocallabrefi = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_REFI");
     Evlocallabshiftxl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SHIFTXL");
     Evlocallabshiftyl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SHIFTYL");
-
-
+    Evlocallabanggradcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_ANGGRAD");
+    Evlocallabstrgradcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_STRGRAD");
 
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -8469,6 +8473,9 @@ Locallabcie::Locallabcie():
     lowthrescie->setAdjusterListener(this);
     higthrescie->setAdjusterListener(this);
     decaycie->setAdjusterListener(this);
+
+    setExpandAlignProperties(expgradcie, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
     setExpandAlignProperties(exprecovcie, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
 
@@ -8548,6 +8555,14 @@ Locallabcie::Locallabcie():
     mask2cieCurveEditorGwav->curveListComplete();
     csThresholdcie->setAdjusterListener(this);
 
+
+    strgradcie->setAdjusterListener(this);
+    anggradcie->setAdjusterListener(this);
+    ToolParamBlock* const cieBoxgrad = Gtk::manage(new ToolParamBlock());
+    cieBoxgrad->pack_start(*strgradcie);
+    cieBoxgrad->pack_start(*anggradcie);
+    expgradcie->add(*cieBoxgrad, false);
+    pack_start(*expgradcie, false, false);
 
     ToolParamBlock* const cieBox3 = Gtk::manage(new ToolParamBlock());
     cieBox3->pack_start(*maskusablecie, Gtk::PACK_SHRINK, 0);
@@ -8653,6 +8668,7 @@ void Locallabcie::setDefaultExpanderVisibility()
     expprecam->set_expanded(false);
     expmaskcie->set_expanded(false);
     exprecovcie->set_expanded(false);
+    expgradcie->set_expanded(false);
 }
 void Locallabcie::updateAdviceTooltips(const bool showTooltips)
 {
@@ -8713,6 +8729,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         mask2cieCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP"));
         Lmaskcieshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
         exprecovcie->set_tooltip_markup(M("TP_LOCALLAB_MASKRESH_TOOLTIP"));
+       // expgradcie->set_tooltip_markup(M("TP_LOCALLAB_MASKRESH_TOOLTIP"));
         strumaskcie->set_tooltip_text(M("TP_LOCALLAB_STRUSTRMASK_TOOLTIP"));
         fftcieMask->set_tooltip_text(M("TP_LOCALLAB_FFTMASK_TOOLTIP"));
         contcie->set_tooltip_text(M("TP_LOCALLAB_CONTTHMASK_TOOLTIP"));
@@ -8786,6 +8803,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         mask2cieCurveEditorG->set_tooltip_text("");
         Lmaskcieshape->setTooltip("");
         exprecovcie->set_tooltip_markup("");
+        expgradcie->set_tooltip_markup("");
         sigmalcjz->set_tooltip_text("");
         clarilresjz->set_tooltip_text("");
         claricresjz->set_tooltip_text("");
@@ -9259,6 +9277,9 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
                 saturzcam->setValue(spot.saturzcam);
                 chromzcam->setValue(spot.chromzcam);
         */
+        strgradcie->setValue((double)spot.strgradcie);
+        anggradcie->setValue((double)spot.anggradcie);
+
         enacieMask->set_active(spot.enacieMask);
         CCmaskcieshape->setCurve(spot.CCmaskciecurve);
         LLmaskcieshape->setCurve(spot.LLmaskciecurve);
@@ -9545,6 +9566,9 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
                 spot.saturzcam = saturzcam->getValue();
                 spot.chromzcam = chromzcam->getValue();
         */
+        spot.strgradcie = strgradcie->getValue();
+        spot.anggradcie = anggradcie->getValue();
+
         spot.enacieMask = enacieMask->get_active();
         spot.LLmaskciecurve = LLmaskcieshape->getCurve();
         spot.CCmaskciecurve = CCmaskcieshape->getCurve();
@@ -10136,12 +10160,14 @@ void Locallabcie::modecamChanged()
        // cie2Frame->hide();
         expcamviewing->hide();
         exprecovcie->hide();
+        expgradcie->hide();
         expmaskcie->hide();
         expprecam->hide();
 
         if (mode == Expert) {
             exprecovcie->show();
             expmaskcie->show();
+            expgradcie->show();
         }
 
     }
@@ -10314,12 +10340,14 @@ void Locallabcie::modecieChanged()
         const int mode = complexity->get_active_row_number();
         exprecovcie->show();
         expmaskcie->show();
+        expgradcie->show();
 
         if (modecie->get_active_row_number() > 0) {
             sensicie->hide();
             reparcie->hide();
             exprecovcie->hide();
             expmaskcie->hide();
+            expgradcie->hide();
 
         } else {
             sensicie->show();
@@ -10328,6 +10356,7 @@ void Locallabcie::modecieChanged()
             if (mode == Expert) {
                 exprecovcie->show();
                 expmaskcie->show();
+                expgradcie->show();
             }
         }
         contsigqcie->hide();
@@ -10514,6 +10543,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
           //  cieFrame->show();
             expcamscene->show();
             exprecovcie->hide();
+            expgradcie->hide();
             maskusablecie->hide();
             maskunusablecie->hide();
             decaycie->hide();
@@ -10539,6 +10569,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 primillFrame->hide();
                 expmaskcie->hide();
                 exprecovcie->hide();               
+                expgradcie->hide();
             }
 
             if (modecam->get_active_row_number() == 1) {
@@ -10562,7 +10593,8 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 expmaskcie->hide();
                 expprecam->hide();
                 exprecovcie->hide();               
-                
+                expgradcie->hide();
+               
             }
 
             if (modecam->get_active_row_number() == 3) {
@@ -10581,6 +10613,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             lightsigqcie->hide();
             expmaskcie->hide();
             exprecovcie->hide();               
+            expgradcie->hide();
 
             break;
 
@@ -10630,6 +10663,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             //cieFrame->show();
             expcamscene->show();
             exprecovcie->show();
+            expgradcie->show();
             expmaskcie->show();
             decaycie->hide();
             lapmaskcie->hide();
@@ -10684,6 +10718,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 //cie2Frame->hide();
                 expcamviewing->hide();
                 exprecovcie->hide();
+                expgradcie->hide();
                 expmaskcie->hide();
                 maskusablecie->hide();
                 maskunusablecie->hide();
@@ -10707,6 +10742,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             if (modecie->get_active_row_number() > 0) {
                 exprecovcie->hide();
                 expmaskcie->hide();
+                expgradcie->hide();
             }
             contsigqcie->hide();
             lightsigqcie->hide();
@@ -10749,6 +10785,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
            // cieFrame->show();
             expcamscene->show();
             exprecovcie->show();
+            expgradcie->show();
             decaycie->show();
             lapmaskcie->show();
             gammaskcie->show();
@@ -10757,7 +10794,6 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             shadmaskcie->show();
             maskcieHCurveEditorG->show();
             expmaskcie->show();
-            exprecovcie->show();
             struFramecie->show();
             blurFramecie->show();
             wavFramecie->show();
@@ -10844,6 +10880,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 //cie2Frame->hide();
                 expcamviewing->hide();
                 exprecovcie->show();
+                expgradcie->show();
                 expmaskcie->show();
                 maskusablecie->show();
                 maskunusablecie->show();
@@ -10880,6 +10917,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             if (modecie->get_active_row_number() > 0) {
                 exprecovcie->hide();
                 expmaskcie->hide();
+                expgradcie->hide();
             }
             contsigqcie->hide();
             lightsigqcie->hide();
@@ -10892,6 +10930,7 @@ void Locallabcie::updatecieGUI()
     const int mode = complexity->get_active_row_number();
     expmaskcie->show();
     exprecovcie->show();
+    expgradcie->show();
 
     contsigqcie->hide();
     lightsigqcie->hide();
@@ -10900,11 +10939,13 @@ void Locallabcie::updatecieGUI()
         sensicie->hide();
         reparcie->hide();
         exprecovcie->hide();
+        expgradcie->hide();
         expmaskcie->hide();
     } else {
         sensicie->show();
         reparcie->show();
         exprecovcie->show();
+        expgradcie->show();
         expmaskcie->show();
     }
 
@@ -10921,6 +10962,7 @@ void Locallabcie::updatecieGUI()
            expmaskcie->hide();
            exprecovcie->hide();
            primillFrame->hide();
+           expgradcie->hide();
 
         } else {
            primillFrame->show();
@@ -10987,6 +11029,7 @@ void Locallabcie::updatecieGUI()
             }
 
             exprecovcie->hide();
+            expgradcie->hide();
             expmaskcie->hide();
             maskusablecie->hide();
             maskunusablecie->hide();
@@ -11054,6 +11097,7 @@ void Locallabcie::updatecieGUI()
 
     if (modecie->get_active_row_number() > 0) {
         exprecovcie->hide();
+        expgradcie->hide();
         expmaskcie->hide();
     }
 
@@ -11071,7 +11115,8 @@ void Locallabcie::convertParamToSimple()
     pqremapcam16->setValue(defSpot.pqremapcam16);
     showmaskcieMethod->set_active(0);
     enacieMask->set_active(defSpot.enacieMask);
-
+    strgradcie->setValue(defSpot.strgradcie);
+    anggradcie->setValue(defSpot.anggradcie);
     modecie->set_active(0);
     primMethod->set_active(0);//Prophoto
     illMethod->set_active(1);//D50
@@ -11213,6 +11258,8 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         targetGraycie->setDefault(defSpot.targetGraycie);
         catadcie->setDefault(defSpot.catadcie);
         detailcie->setDefault(defSpot.detailcie);
+        strgradcie->setDefault((double)defSpot.strgradcie);
+        anggradcie->setDefault((double)defSpot.anggradcie);
         blendmaskcie->setDefault((double)defSpot.blendmaskcie);
         radmaskcie->setDefault(defSpot.radmaskcie);
         chromaskcie->setDefault(defSpot.chromaskcie);
@@ -11918,6 +11965,20 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabdetailcie,
                                        detailcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == strgradcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabstrgradcie,
+                                       strgradcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == anggradcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabanggradcie,
+                                       anggradcie->getTextValue() + spName);
             }
         }
 

@@ -16570,7 +16570,6 @@ void ImProcFunctions::Lab_Local(
                     }
 
                     if (lp.strvib != 0.f) {
-                        printf("b\n");
 
                         struct grad_params gp;
                         calclocalGradientParams(lp, gp, ystart, xstart, bfw, bfh, 7);
