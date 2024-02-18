@@ -3068,6 +3068,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !HISTORY_MSG_BLURCWAV;Blur chroma
 !HISTORY_MSG_BLURWAV;Blur luminance
 !HISTORY_MSG_COMPLEXRETI;Retinex complexity
+!HISTORY_MSG_DIRPYRDENOISE_GAIN;NR - Compensate for lightness
 !HISTORY_MSG_EDGEFFECT;Edge Attenuation response
 !HISTORY_MSG_FF_FROMMETADATA;Flat-Field - From Metadata
 !HISTORY_MSG_FILMNEGATIVE_BALANCE;FN - Reference output
@@ -3096,6 +3097,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !HISTORY_MSG_ILLUM;CAL - SC - Illuminant
 !HISTORY_MSG_LOCALLAB_TE_PIVOT;Local - Equalizer pivot
 !HISTORY_MSG_LOCAL_GAMUTMUNSEL;Local - SC - Avoid Color Shift
+!HISTORY_MSG_LOCAL_TMO_SATUR;Local Exp Fattal Saturation
 !HISTORY_MSG_PERSP_CAM_ANGLE;Perspective - Camera
 !HISTORY_MSG_PERSP_CAM_FL;Perspective - Camera
 !HISTORY_MSG_PERSP_CAM_SHIFT;Perspective - Camera
@@ -3159,7 +3161,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !HISTORY_MSG_WBITC_DELTA;Itcwb Delta green
 !HISTORY_MSG_WBITC_FGREEN;Itcwb Green - student
 !HISTORY_MSG_WBITC_FORCE;Itcwb Force
-!HISTORY_MSG_WBITC_GREEN;Grren refinement
+!HISTORY_MSG_WBITC_GREEN;Green refinement
 !HISTORY_MSG_WBITC_MINSIZE;Patch min size
 !HISTORY_MSG_WBITC_NOPURPLE;Itcwb Nopurple
 !HISTORY_MSG_WBITC_OBS;Remove algo 2 passes
@@ -3170,7 +3172,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !HISTORY_MSG_WBITC_SAMPLING;Low sampling
 !HISTORY_MSG_WBITC_SIZE;Itcwb Size
 !HISTORY_MSG_WBITC_SORTED;Itcwb ponderated
-!HISTORY_MSG_WBITC_THRES;Itcwb Theshold
+!HISTORY_MSG_WBITC_THRES;Itcwb Threshold
 !ICCPROFCREATOR_COPYRIGHT_RESET_TOOLTIP;Reset to the default copyright, granted to 'RawTherapee, CC0'.
 !ICCPROFCREATOR_DESCRIPTION_ADDPARAM;Append gamma and slope values to the description
 !ICCPROFCREATOR_DESCRIPTION_TOOLTIP;Leave empty to set the default description.
@@ -3277,7 +3279,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !PREFERENCES_WBA;White Balance
 !PREFERENCES_WBACORR;White Balance - Automatic temperature correlation
 !PREFERENCES_WBACORR_TOOLTIP;These settings allow, depending on the images (type of raw file, colorimetry, etc.), an adaptation of the " Temperature correlation " algorithm in order to obtain the best overall results. There is no absolute rule, linking these parameters to the results obtained.\n\nThe settings are of 3 types: \n* those accessible to the user from the GUI.\n* those accessible only in reading from each pp3 file : Itcwb_minsize=20, Itcwb_delta=4 Itcwb_rgreen=1 Itcwb_nopurple=false (See Rawpedia)\n* those accessible to the user in 'options' (see Rawpedia)\n You can use "Awb temperature bias" and "Green refinement" to adjust the results. Each movement of these commands brings a new calculation of temperature, tint and correlation.\n\nPlease note that the 3 indicators 'Correlation factor', 'Patch chroma' and ΔE are given for information only. It is not because one of these indicators is better that the result will necessarily be better.
-!PREFERENCES_WBAENA;Show White Balance auto Temperature correlation Settings
+!PREFERENCES_WBAENA;Show White Balance Auto temperature correlation settings
 !PREFERENCES_WBAENACUSTOM;Use Custom temperature & tint
 !PREFERENCES_WBAFORC;Forces Extra algoritm
 !PREFERENCES_WBAGREENDELTA;Delta temperature in green iterate loop (if Force Extra enabled)
@@ -3363,6 +3365,8 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_CROP_PPI;PPI
 !TP_DIRPYRDENOISE_CHROMINANCE_METHOD_TOOLTIP;Manual\nActs on the full image.\nYou control the noise reduction settings manually.\n\nAutomatic global\nActs on the full image.\n9 zones are used to calculate a global chrominance noise reduction setting.\n\nAutomatic multi-zones\nNo preview - works only during saving, but using the 'Preview' method by matching the tile size and center to the preview size and center you can get an idea of the expected results.\nThe image is divided into tiles (about 10 to 70 depending on image size) and each tile receives its own chrominance noise reduction settings.\n\nPreview\nActs on the whole image.\nThe part of the image visible in the preview is used to calculate global chrominance noise reduction settings.
 !TP_DIRPYRDENOISE_CHROMINANCE_PMZ;Preview multi-zones
+!TP_DIRPYRDENOISE_MAIN_AUTO_GAIN;Compensate for lightness
+!TP_DIRPYRDENOISE_MAIN_AUTO_GAIN_TOOLTIP;Alter the noise reduction strength based on the image lightness. Strength is reduced for dark images and increased for bright images.
 !TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fine: closer to the colors of the skin, minimizing the action on other colors\nLarge: avoid more artifacts.
 !TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;This pyramid is for the upper part, so far as the algorithm at its maximum efficiency.\nTo the lower part, the transition zones.\nIf you need to move the area significantly to the left or right - or if there are artifacts: the <b>white balance is incorrect</b>\nYou can slightly reduce the zone to prevent the rest of the image is affected.
 !TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts in the transitions between skin colors (hue, chroma, luma) and the rest of the image.
@@ -3573,6 +3577,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_LOCALLAB_EXPSHARP_TOOLTIP;Spot minimum 39*39.\nUse low transition values and high 'Transition decay' and 'Scope' values to simulate smaller spots.
 !TP_LOCALLAB_FATFRAME_TOOLTIP;PDE Fattal – uses the Fattal Tone-mapping algorithm.
 !TP_LOCALLAB_FATLEVEL;Sigma
+!TP_LOCALLAB_FATSAT;Saturation control
 !TP_LOCALLAB_FEATH_TOOLTIP;Gradient width as a percentage of the Spot diagonal\nUsed by all graduated filters in all tools.\nNo action if a graduated filter hasn't been activated.
 !TP_LOCALLAB_FEATVALUE;Feather gradient (Grad. Filters)
 !TP_LOCALLAB_FFTCOL_MASK;FFTW ƒ
@@ -4207,7 +4212,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_WBALANCE_ITCWB_DELTA;Delta temperature in green loop
 !TP_WBALANCE_ITCWB_FGREEN;Find green student
 !TP_WBALANCE_ITCWB_FORCED;Close to full CIE diagram
-!TP_WBALANCE_ITCWB_FRA;Auto Temperature correlation Settings
+!TP_WBALANCE_ITCWB_FRA;Auto temperature correlation settings
 !TP_WBALANCE_ITCWB_FRA_TOOLTIP;These settings allow, depending on the images (type of raw, colorimetry, etc.), an adaptation of the 'Temperature correlation' algorithm. There is no absolute rule linking these parameters to the results obtained.
 !TP_WBALANCE_ITCWB_MINSIZEPATCH;Patch minimum size
 !TP_WBALANCE_ITCWB_NOPURPLE;Filter on purple color
@@ -4217,7 +4222,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_WBALANCE_ITCWB_PRIM_BETA;Medium sampling - near Pointer's gamut
 !TP_WBALANCE_ITCWB_PRIM_JDCMAX;Close to full CIE diagram
 !TP_WBALANCE_ITCWB_PRIM_REC;High sampling
-!TP_WBALANCE_ITCWB_PRIM_SRGB;Low sampling & No use Camera settings
+!TP_WBALANCE_ITCWB_PRIM_SRGB;Low sampling & Ignore Camera settings
 !TP_WBALANCE_ITCWB_PRIM_XYZCAM;Camera XYZ matrix
 !TP_WBALANCE_ITCWB_PRIM_XYZCAM2;JDCmax after Camera XYZ matrix
 !TP_WBALANCE_ITCWB_RGREEN;Green range
@@ -4229,7 +4234,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_WBALANCE_ITCWFORCED_TOOLTIP;By default (box not checked) the data scanned during sampling is brought back to the sRGB profile, which is the most widespread, both for calibrating DCP or ICC profiles with the Colorchecker24, or used on the web.\n If you have very high gamut images (some flowers, artificial colors), then it may be necessary to use the entire CIExy diagram, the profile used will be ACESP0. In this second case, the number of colors that can be used in internal to the algorithm will be more important.
 !TP_WBALANCE_ITCWGREEN;Green refinement
 !TP_WBALANCE_ITCWGREEN_TOOLTIP;Allows you to change the "tint" (green) which will serve as a reference when starting the algorithm. It has substantially the same role for greens as "AWB temperature bias" for temperature.\nThe whole algorithm is recalculated.
-!TP_WBALANCE_ITCWPRIM_TOOLTIP;Allows you to select the image sampling.\n'Close to full CIE diagram' almost uses the data present on the sensor, possibly including the imaginary colors.\n'Camera XYZ matrix' - uses the matrix directly derived from Color Matrix.\n'Medium sampling' (default) - near Pointer's gamut: corresponds substantially to the most common cases of human vision.\nThe other choice 'Low sampling and No use camera settings' allow you to isolate high gamut parts of the image and forces the algorithm in some cases (tint > 0.8,...) not to use camera settings. This will obviously have an impact on the result.\n\nThis sampling only has an influence on the channel multipliers, it has nothing to do with the "working profile" and does not modify the gamut of the image.
+!TP_WBALANCE_ITCWPRIM_TOOLTIP;Allows you to select the image sampling.\n'Close to full CIE diagram' almost uses the data present on the sensor, possibly including the imaginary colors.\n'Camera XYZ matrix' - uses the matrix directly derived from Color Matrix.\n'Medium sampling' (default) - near Pointer's gamut: corresponds substantially to the most common cases of human vision.\nThe other choice 'Low sampling and Ignore camera settings' allow you to isolate high gamut parts of the image and forces the algorithm in some cases (tint > 0.8,...) to ignore camera settings. This will obviously have an impact on the result.\n\nThis sampling only has an influence on the channel multipliers, it has nothing to do with the "working profile" and does not modify the gamut of the image.
 !TP_WBALANCE_ITCWSAMPLING_TOOLTIP;Allows you to use the old sampling algorithm to ensure better compatibility with 5.9. You must enable Observer 10° (default).
 !TP_WBALANCE_JUDGEIII;JudgeIII
 !TP_WBALANCE_LAMP_HEADER;Lamp
