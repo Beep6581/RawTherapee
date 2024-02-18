@@ -151,7 +151,6 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
     topBox->pack_start (*fdir, Gtk::PACK_EXPAND_WIDGET, 4);
     topBox->pack_start (*fformat, Gtk::PACK_EXPAND_WIDGET, 4);
 
-    // FIXME: THIS IS SO FAR JUST A TEST THING
     middleSplitPane = Gtk::manage (new Gtk::Paned(Gtk::ORIENTATION_HORIZONTAL));
     templateHelpTextView = Gtk::manage (new Gtk::TextView());
     templateHelpTextView->set_editable(false);
