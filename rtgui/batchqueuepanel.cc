@@ -389,12 +389,10 @@ void BatchQueuePanel::populateTemplateHelpBuffer(Glib::RefPtr<Gtk::TextBuffer> b
     // Since this code only ever runs once (the first time the help text is presented), no attempt is
     // made to be efficient. Use a brute-force method to discover the number of elements in exampleFilePath.
     int pathElementCount = 0;
-    for (int n=9; n>=0; n--)
-    {
+    for (int n=9; n>=0; n--) {
         options.savePathTemplate = Glib::ustring::format("%d",n);
         auto result = BatchQueue::calcAutoFileNameBase(exampleFilePath);
-        if (!result.empty())
-        {
+        if (!result.empty()) {
             // The 'd' specifier returns an empty string if N exceeds the number of path elements, so
             // the largest N that does not return an empty string is the number of elements in exampleFilePath.
             pathElementCount = n;
@@ -405,8 +403,7 @@ void BatchQueuePanel::populateTemplateHelpBuffer(Glib::RefPtr<Gtk::TextBuffer> b
     // number of elements in the path.
     auto insertPathExamples = [&buffer, &pos, pathElementCount, exampleFilePath](char letter, int offset1, int mult1, int offset2, int mult2)
     {
-        for (int n=0; n<pathElementCount; n++)
-        {
+        for (int n=0; n<pathElementCount; n++) {
             auto path1 = Glib::ustring::format("%",letter,offset1+n*mult1);
             auto path2 = Glib::ustring::format("%",letter,offset2+n*mult2);
             options.savePathTemplate = path1;
@@ -414,8 +411,7 @@ void BatchQueuePanel::populateTemplateHelpBuffer(Glib::RefPtr<Gtk::TextBuffer> b
             options.savePathTemplate = path2;
             auto result2 = BatchQueue::calcAutoFileNameBase(exampleFilePath);
             pos = buffer->insert_markup(pos, Glib::ustring::format("\n<tt>   <b>", path1, "</b> = <b>", path2, "</b> = <i>", result1, "</i></tt>"));
-            if (result1 != result2)
-            {
+            if (result1 != result2) {
                 // If this error appears, it indicates a coding error in either BatchQueue::calcAutoFileNameBase
                 // or BatchQueuePanel::populateTemplateHelpBuffer.
                 pos = buffer->insert_markup(pos, Glib::ustring::format(" ", M("QUEUE_LOCATION_TEMPLATE_HELP_RESULT_MISMATCH"), " ", result2));

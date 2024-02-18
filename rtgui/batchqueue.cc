@@ -1020,8 +1020,7 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
                     path += seqstr.str ();
                 } else if (options.savePathTemplate[ix] == 't') {
                     // Insert formatted date/time value. Character after 't' defines time source
-                    if (++ix < options.savePathTemplate.size())
-                    {
+                    if (++ix < options.savePathTemplate.size()) {
                         Glib::DateTime dateTime;
                         bool dateTimeIsValid = true;
                         switch(options.savePathTemplate[ix++])
@@ -1050,8 +1049,7 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
                                 dateTimeIsValid = false;
                                 break;
                         }
-                        if (dateTimeIsValid)
-                        {
+                        if (dateTimeIsValid) {
                             appendFormattedTime(path, ix, options.savePathTemplate, dateTime);
                         }
                     }
