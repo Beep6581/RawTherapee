@@ -96,6 +96,21 @@ namespace   // local helper functions
             }
         }
     }
+
+    // Look in templateText at index ix for quoted string containing a time format string, and
+    // use that string to format dateTime. Append the formatted time to path.
+    void appendFormattedTime(Glib::ustring& path, unsigned int& ix, Glib::ustring& templateText, const Glib::DateTime& dateTime)
+    {
+        constexpr unsigned int quoteMark = (unsigned int)'"';
+        if ((ix + 1) < templateText.size() && templateText[ix] == quoteMark) {
+            auto endPos = templateText.find_first_of(quoteMark, ++ix);
+            if (endPos != Glib::ustring::npos) {
+                Glib::ustring formatString(templateText, ix, endPos-ix);
+                path += dateTime.format(formatString);
+                ix = endPos;
+            }
+        }
+    }
 }
 
 BatchQueue::BatchQueue (FileCatalog* aFileCatalog) : processing(nullptr), fileCatalog(aFileCatalog), sequence(0), listener(nullptr)
@@ -1009,7 +1024,7 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
                     {
                         Glib::DateTime dateTime;
                         bool dateTimeIsValid = true;
-                        switch(options.savePathTemplate[ix])
+                        switch(options.savePathTemplate[ix++])
                         {
                             case 'E':   // (approximate) time when export started
                                 dateTime = Glib::DateTime::create_now_local();
@@ -1037,9 +1052,7 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
                         }
                         if (dateTimeIsValid)
                         {
-                            // FIXME: Call a function that looks for a double-quoted format string, and
-                            //        format dateTime accordingly, adding it to path. 
-                            printf("Time %s\n", dateTime.format_iso8601().c_str());
+                            appendFormattedTime(path, ix, options.savePathTemplate, dateTime);
                         }
                     }
                 }
