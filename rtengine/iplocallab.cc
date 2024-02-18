@@ -801,6 +801,9 @@ struct local_params {
     float whiteevjz;
     float detail;
     float detailcie;
+    float strgradcie;
+    float anggradcie;
+    
     int sensilog;
     int sensicie;
     int sensimas;
@@ -1467,6 +1470,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float chromaskcie = ((float) locallab.spots.at(sp).chromaskcie);
     float blurciemask = (float) locallab.spots.at(sp).blurcie;
     float contciemask = (float) locallab.spots.at(sp).contcie;
+    float strgradcie = ((float) locallab.spots.at(sp).strgradcie);
+    float anggradcie = ((float) locallab.spots.at(sp).anggradcie);
 
     lp.comprlo = locallab.spots.at(sp).comprlog;
     lp.comprlocie = locallab.spots.at(sp).comprcie;
@@ -1729,6 +1734,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.contma = (float) locallab.spots.at(sp).contmask;
     lp.blurciemask = blurciemask;
     lp.contciemask = 0.01f * contciemask;
+    lp.strgradcie = strgradcie;
+    lp.anggradcie = anggradcie;
 
     lp.blendmacie = blendmaskcie;
     lp.radmacie = radmaskcie;
@@ -5852,6 +5859,9 @@ void calclocalGradientParams(const struct local_params& lp, struct grad_params& 
     } else if (indic == 12) {
         stops = -lp.str_mas;
         angs = lp.ang_mas;
+    } else if (indic == 15) {
+        stops = lp.strgradcie;
+        angs = lp.anggradcie;
     }
 
 
@@ -20337,6 +20347,20 @@ void ImProcFunctions::Lab_Local(
                     ImProcFunctions::ciecamloc_02float(lp, sp, bufexpfin.get(), bfw, bfh, 0, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz, locwavCurvejz, locwavutilijz, maxicam, contsig, lightsig);
                 }
             }
+                if (lp.strgradcie != 0.f) {
+
+                    struct grad_params gp;
+                    calclocalGradientParams(lp, gp, ystart, xstart, bfw, bfh, 15);
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+
+                    for (int ir = 0; ir < bfh; ir++) {
+                        for (int jr = 0; jr < bfw; jr++) {
+                            bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, jr, ir);
+                        }
+                    }
+                }
 
             if (lp.enacieMask && lp.recothrcie != 1.f) {
                 float recoth = lp.recothrcie;
