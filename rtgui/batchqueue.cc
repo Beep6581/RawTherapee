@@ -1021,7 +1021,6 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
                     // Insert formatted date/time value. Character after 't' defines time source
                     if (++ix < options.savePathTemplate.size()) {
                         Glib::DateTime dateTime;
-                        bool dateTimeIsValid = true;
                         switch(options.savePathTemplate[ix++])
                         {
                             case 'E':   // (approximate) time when export started
@@ -1029,15 +1028,11 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
                                 break;
                             case 'F': // time when file was last saved
                             {
-                                dateTimeIsValid = false; // becomes true below if no errors
                                 Glib::RefPtr<Gio::File> file = Gio::File::create_for_path(origFileName);
                                 if (file) {
                                     Glib::RefPtr<Gio::FileInfo> info = file->query_info("time::modified");
                                     if (info) {
                                         dateTime = info->get_modification_date_time();
-                                        if (dateTime) {
-                                            dateTimeIsValid = true;
-                                        }
                                     }
                                 }
                             }
@@ -1049,10 +1044,9 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
                             }
                                 break;
                             default:
-                                dateTimeIsValid = false;
                                 break;
                         }
-                        if (dateTimeIsValid) {
+                        if (dateTime) {
                             appendFormattedTime(path, ix, options.savePathTemplate, dateTime);
                         }
                     }
