@@ -18,7 +18,6 @@
  */
 #include <glibmm/ustring.h>
 #include <glib/gstdio.h>
-#include <sys/stat.h>
 #include <cstring>
 #include <functional>
 #include "../rtengine/imagedata.h"
@@ -99,7 +98,7 @@ namespace   // local helper functions
 
     // Look in templateText at index ix for quoted string containing a time format string, and
     // use that string to format dateTime. Append the formatted time to path.
-    void appendFormattedTime(Glib::ustring& path, unsigned int& ix, Glib::ustring& templateText, const Glib::DateTime& dateTime)
+    void appendFormattedTime(Glib::ustring& path, unsigned int& ix, const Glib::ustring& templateText, const Glib::DateTime& dateTime)
     {
         constexpr unsigned int quoteMark = (unsigned int)'"';
         if ((ix + 1) < templateText.size() && templateText[ix] == quoteMark) {
@@ -1030,12 +1029,16 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
                                 break;
                             case 'F': // time when file was last saved
                             {
-                                struct stat fileStat;
-                                if (stat(origFileName.c_str(), &fileStat) == 0) {
-                                    time_t timestamp = fileStat.st_mtime;
-                                    dateTime = Glib::DateTime::create_now_local(timestamp);
-                                } else {
-                                    dateTimeIsValid = false; // file not found, access denied, etc.
+                                dateTimeIsValid = false; // becomes true below if no errors
+                                Glib::RefPtr<Gio::File> file = Gio::File::create_for_path(origFileName);
+                                if (file) {
+                                    Glib::RefPtr<Gio::FileInfo> info = file->query_info("time::modified");
+                                    if (info) {
+                                        dateTime = info->get_modification_date_time();
+                                        if (dateTime) {
+                                            dateTimeIsValid = true;
+                                        }
+                                    }
                                 }
                             }
                                 break;
