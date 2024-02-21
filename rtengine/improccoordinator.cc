@@ -1444,9 +1444,18 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 } else if(ill == 6) {
                     w_x = 0.293756f;
                     w_y = 0.309185f;
-                } else if(ill == 8) {
+                } else if(ill == 7) {//D120
+                    w_x = 0.269669f;                 
+                    w_y = 0.28078f;
+                } else if(ill == 8) {//stdA
                     w_x = 0.447573f;
                     w_y = 0.407440f;
+                } else if(ill == 9) {//2000K
+                    w_x = 0.526591f;
+                    w_y = 0.41331f;
+                } else if(ill == 10) {//1500K
+                    w_x = 0.585703f;
+                    w_y = 0.393157f;
                 } else if(ill == 20) {
                     w_x = 0.333333f;
                     w_y = 0.333333f;

@@ -653,11 +653,26 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
             Wx = 0.950095542;
             Wz = 1.284213976;
             xyD = {0.293756, 0.309185, 1.0};
+        } else if (params->locallab.spots.at(sp).illMethod == "d120") {
+            illum = 7;
+            Wx = 0.979182;
+            Wz = 1.623623;
+            xyD = {0.269669, 0.28078, 1.0};            
         } else if (params->locallab.spots.at(sp).illMethod == "stda") {
             illum = 8;
             Wx = 1.098500393;
             Wz = 0.355848714;
             xyD = {0.447573, 0.407440, 1.0};
+        } else if (params->locallab.spots.at(sp).illMethod == "T2000") {
+            illum = 9;
+            Wx = 1.274335;
+            Wz = 0.145233;
+            xyD = {0.526591, 0.41331, 1.0};
+        } else if (params->locallab.spots.at(sp).illMethod == "T1500") {
+            illum = 10;
+            Wx = 1.489921;
+            Wz = 0.053826;
+            xyD = {0.585703, 0.393157, 1.0};
         } else if (params->locallab.spots.at(sp).illMethod == "iE") {
             illum = 20;
             Wx = 1.;

@@ -7873,7 +7873,12 @@ Locallabcie::Locallabcie():
     illMethod->append(M("TP_ICM_WORKING_ILLU_D60"));
     illMethod->append(M("TP_ICM_WORKING_ILLU_D65"));
     illMethod->append(M("TP_ICM_WORKING_ILLU_D80"));
+
+    illMethod->append(M("TP_ICM_WORKING_ILLU_D120"));
+
     illMethod->append(M("TP_ICM_WORKING_ILLU_STDA"));
+    illMethod->append(M("TP_ICM_WORKING_ILLU_2000"));
+    illMethod->append(M("TP_ICM_WORKING_ILLU_1500"));
     illMethod->append(M("TP_ICM_WORKING_ILLU_E"));
 
 
@@ -9063,10 +9068,16 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             illMethod->set_active(4);
         } else if (spot.illMethod == "d80") {
             illMethod->set_active(5);
-        } else if (spot.illMethod == "stda") {
+        } else if (spot.illMethod == "d120") {
             illMethod->set_active(6);
-        } else if (spot.illMethod == "iE") {
+        } else if (spot.illMethod == "stda") {
             illMethod->set_active(7);
+        } else if (spot.illMethod == "T2000") {
+            illMethod->set_active(8);
+        } else if (spot.illMethod == "T1500") {
+            illMethod->set_active(9);
+        } else if (spot.illMethod == "iE") {
+            illMethod->set_active(10);
         }
         illMethod->set_sensitive(false);
 
@@ -9096,7 +9107,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             illMethod->set_active(1);
         } else if (spot.primMethod == "jdcmaxstdA") {
             primMethod->set_active(8);
-            illMethod->set_active(6);
+            illMethod->set_active(7);
         } else if (spot.primMethod == "ac0") {
             primMethod->set_active(9);
             illMethod->set_active(3);
@@ -9434,12 +9445,16 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         } else if (illMethod->get_active_row_number() == 5) {
             spot.illMethod = "d80";
         } else if (illMethod->get_active_row_number() == 6) {
-            spot.illMethod = "stda";
+            spot.illMethod = "d120";
         } else if (illMethod->get_active_row_number() == 7) {
+            spot.illMethod = "stda";
+        } else if (illMethod->get_active_row_number() == 8) {
+            spot.illMethod = "T2000";
+        } else if (illMethod->get_active_row_number() == 9) {
+            spot.illMethod = "T1500";
+        } else if (illMethod->get_active_row_number() == 10) {
             spot.illMethod = "iE";
         }
-
-
 
         if (primMethod->get_active_row_number() == 0) {
             spot.primMethod = "pro";
@@ -10429,7 +10444,7 @@ void Locallabcie::primMethodChanged()
     } else if (primMethod->get_active_row_number() == 7) {
         illMethod->set_active(1);
     } else if (primMethod->get_active_row_number() == 8) {
-        illMethod->set_active(6);
+        illMethod->set_active(7);
     } else if (primMethod->get_active_row_number() == 9) {
         illMethod->set_active(3);
     } else if (primMethod->get_active_row_number() == 10) {
