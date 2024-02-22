@@ -7572,7 +7572,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 {ColorManagementParams::Illuminant::D120, "D120"},
                 {ColorManagementParams::Illuminant::STDA, "stda"},
                 {ColorManagementParams::Illuminant::TUNGSTEN_2000K, "2000"},
-                {ColorManagementParams::Illuminant::TUNGSTEN_1500K, "1500"}
+                {ColorManagementParams::Illuminant::TUNGSTEN_1500K, "1500"},
+                {ColorManagementParams::Illuminant::E, "E"}
             },
             icm.will,
             keyFile
@@ -10016,7 +10017,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                         {"D120", ColorManagementParams::Illuminant::D120},
                         {"stda", ColorManagementParams::Illuminant::STDA},
                         {"2000", ColorManagementParams::Illuminant::TUNGSTEN_2000K},
-                        {"1500", ColorManagementParams::Illuminant::TUNGSTEN_1500K}
+                        {"1500", ColorManagementParams::Illuminant::TUNGSTEN_1500K},
+                        {"E", ColorManagementParams::Illuminant::E}
                     },
                     icm.will,
                     pedited->icm.will
