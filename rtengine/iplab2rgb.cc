@@ -1385,6 +1385,8 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
                 meany += params->locallab.spots.at(sp).shiftyl;
             } else if (locprim == 0) {
                 refin = params->icm.refi;
+                meanx += params->icm.shiftx;
+                meany += params->icm.shifty;
             }
 
             double arefi = (xyD.y - meany) / (xyD.x - meanx);

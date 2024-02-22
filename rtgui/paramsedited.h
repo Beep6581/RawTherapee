@@ -1306,6 +1306,8 @@ struct ColorManagementParamsEdited {
     bool blux;
     bool bluy;
     bool refi;
+    bool shiftx;
+    bool shifty;
     bool preser;
     bool fbw;
     bool trcExp;

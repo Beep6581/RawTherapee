@@ -61,6 +61,8 @@ protected:
     Adjuster* bluy;
     Adjuster* preser;
     Adjuster* refi;
+    Adjuster* shiftx;
+    Adjuster* shifty;
 
     Gtk::Label* labmga;
     Gtk::Box* gabox;
@@ -117,6 +119,8 @@ private:
     rtengine::ProcEvent EvICMcat;
     rtengine::ProcEvent EvICMrefi;
     rtengine::ProcEvent EvICMtrcExp;
+    rtengine::ProcEvent EvICMshiftx;
+    rtengine::ProcEvent EvICMshifty;
     LabGrid *labgridcie;
     IdleRegister idle_register;
 

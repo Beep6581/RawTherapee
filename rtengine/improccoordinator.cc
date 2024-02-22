@@ -2117,6 +2117,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                             wy = 0.3932f;
                             break;
                     }
+                    
+                   
                     //move white point in GUI
                     double refin = params->icm.refi;
                     double arefi = (wy - meany) / (wx - meanx);
