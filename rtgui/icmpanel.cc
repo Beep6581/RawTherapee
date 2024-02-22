@@ -335,6 +335,10 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     redFrame->set_label_align(0.025, 0.5);
     redFrame->set_tooltip_text(M("TP_ICM_WORKING_PRIMFRAME_TOOLTIP"));
 
+    colorFramecie = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_COLORFRAME")));
+    colorFramecie->set_label_align(0.025, 0.5);
+    colorFramecie->set_tooltip_text(M("TP_LOCALLAB_PRECAMREFIMAIN_TOOLTIP"));
+
     Gtk::Box *redVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     primCoordGrid = Gtk::manage(new Gtk::Grid());
     primCoordGrid->set_column_homogeneous(true);
@@ -364,6 +368,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
 
     redVBox->pack_start(*labgridcie, Gtk::PACK_EXPAND_WIDGET, 4);
     redVBox->pack_start(*gamut, Gtk::PACK_EXPAND_WIDGET);
+
     refi = Gtk::manage(new Adjuster(M("TC_PRIM_REFI"), -0.5, 1., 0.0001, 0.));
     shiftx = Gtk::manage(new Adjuster(M("TC_LOCALLAB_PRIM_SHIFTX"), -0.2, 0.2, 0.0001, 0.));
     shifty = Gtk::manage(new Adjuster(M("TC_LOCALLAB_PRIM_SHIFTY"), -0.2, 0.2, 0.0001, 0.));
@@ -381,9 +386,14 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wcat->append(M("TP_ICM_WORKING_CAT_XYZ"));
     wcat->set_active(0);
     redVBox->pack_start(*wcatBox, Gtk::PACK_SHRINK); 
-    redVBox->pack_start(*refi, Gtk::PACK_EXPAND_WIDGET);
-    redVBox->pack_start(*shiftx, Gtk::PACK_EXPAND_WIDGET);
-    redVBox->pack_start(*shifty, Gtk::PACK_EXPAND_WIDGET);
+
+    ToolParamBlock* const colorBox = Gtk::manage(new ToolParamBlock());
+    
+    colorBox->pack_start(*refi, Gtk::PACK_EXPAND_WIDGET);
+    colorBox->pack_start(*shiftx, Gtk::PACK_EXPAND_WIDGET);
+    colorBox->pack_start(*shifty, Gtk::PACK_EXPAND_WIDGET);
+    colorFramecie->add(*colorBox); 
+    redVBox->pack_start(*colorFramecie);
     redFrame->add(*redVBox);
 
     wGamma->setAdjusterListener(this);
