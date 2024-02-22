@@ -1247,7 +1247,8 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
                 case ColorManagementParams::Illuminant::DEFAULT:
                 case ColorManagementParams::Illuminant::STDA:
                 case ColorManagementParams::Illuminant::TUNGSTEN_2000K:
-                case ColorManagementParams::Illuminant::TUNGSTEN_1500K: {
+                case ColorManagementParams::Illuminant::TUNGSTEN_1500K:
+                case ColorManagementParams::Illuminant::E:{
                     break;
                 }
 
@@ -1370,6 +1371,15 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
                     ills = "Tungsten 1500K";
                     break;
                 }
+                
+                case ColorManagementParams::Illuminant::E: {
+                    Wx = 1.;
+                    Wz = 1.;
+                    xyD = {0.33333, 0.33333, 1.0};
+                    ills = "E";
+                    break;
+                }
+                
             }
         }
 

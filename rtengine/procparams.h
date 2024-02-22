@@ -2001,7 +2001,8 @@ struct ColorManagementParams {
         D120,
         STDA,
         TUNGSTEN_2000K,
-        TUNGSTEN_1500K
+        TUNGSTEN_1500K,
+        E
     };
 
     enum class Primaries {

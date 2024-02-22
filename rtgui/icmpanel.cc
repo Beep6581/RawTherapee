@@ -264,6 +264,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     will->append(M("TP_ICM_WORKING_ILLU_STDA"));
     will->append(M("TP_ICM_WORKING_ILLU_2000"));
     will->append(M("TP_ICM_WORKING_ILLU_1500"));
+    will->append(M("TP_ICM_WORKING_ILLU_E"));
     will->set_active(0);
     will->set_tooltip_text(M("TP_ICM_ILLUMPRIM_TOOLTIP"));
 
