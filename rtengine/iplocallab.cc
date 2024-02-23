@@ -2429,21 +2429,21 @@ void tone_eq(ImProcFunctions *ipf, Imagefloat *rgb, const struct local_params &l
     ipf->toneEqualizer(rgb, params, workingProfile, scale, multithread);
 }
 
-void tone_eqcam(ImProcFunctions *ipf, Imagefloat *rgb, const struct local_params &lp, const Glib::ustring &workingProfile, double scale, bool multithread)
+void ImProcFunctions::tone_eqcam(ImProcFunctions *ipf, Imagefloat *rgb, int midtone, const Glib::ustring &workingProfile, double scale, bool multithread)
 {
     ToneEqualizerParams params;
     params.enabled = true;
     params.regularization = 0.f;
     params.pivot = 0.f;
     params.bands[0] = 0;
-    params.bands[2] = lp.midtcie;
+    params.bands[2] = midtone;
     params.bands[4] = 0;
     params.bands[5] = 0;
-    int mid = abs(lp.midtcie);
+    int mid = abs(midtone);
     int threshmid = 50;
     if(mid > threshmid) {
-        params.bands[1] = sign(lp.midtcie) * (mid - threshmid);
-        params.bands[3] = sign(lp.midtcie) * (mid - threshmid);     
+        params.bands[1] = sign(midtone) * (mid - threshmid);
+        params.bands[3] = sign(midtone) * (mid - threshmid);     
     }
    
     ipf->toneEqualizer(rgb, params, workingProfile, scale, multithread);
@@ -8319,6 +8319,7 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
 
             if (tonequ) {
                 tone_eq(this, tmpImage.get(), lp, params->icm.workingProfile, sk, multiThread);
+               // tone_eq(tmpImage.get(), lp, params->icm.workingProfile, sk, multiThread);
             }
 
             rgb2lab(*tmpImage, *temp, params->icm.workingProfile);
@@ -16884,6 +16885,7 @@ void ImProcFunctions::Lab_Local(
 
                     if (tonequ) {
                         tone_eq(this, tmpImage, lp, params->icm.workingProfile, scal, multiThread);
+                        //tone_eq(tmpImage, lp, params->icm.workingProfile, scal, multiThread);
                     }
 
                     rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
@@ -20306,7 +20308,7 @@ void ImProcFunctions::Lab_Local(
                     workingtrc(sp, tmpImage, tmpImage, bfw, bfh, typ, prof, gamtone, slotone, catx, ill, prim, locprim, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, dummy, false, true, true, gamcie);//with gamut control
 
                     if(lp.midtcie != 0) {
-                        tone_eqcam(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);
+                        ImProcFunctions::tone_eqcam(this, tmpImage, lp.midtcie, params->icm.workingProfile, sk, multiThread);
                     }
 
                     if(params->locallab.spots.at(sp).logcie) {

@@ -54,6 +54,7 @@ protected:
 
     Adjuster* wGamma;
     Adjuster* wSlope;
+    Adjuster* wmidtcie;
     Adjuster* redx;
     Adjuster* redy;
     Adjuster* grex;
@@ -122,6 +123,7 @@ private:
     rtengine::ProcEvent EvICMtrcExp;
     rtengine::ProcEvent EvICMshiftx;
     rtengine::ProcEvent EvICMshifty;
+    rtengine::ProcEvent EvICMwmidtcie;
     LabGrid *labgridcie;
     IdleRegister idle_register;
 
