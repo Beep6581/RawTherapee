@@ -71,6 +71,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     EvICMshiftx = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_SHIFTX");
     EvICMshifty = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_SHIFTY");
     EvICMwmidtcie = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_MIDTCIE");
+    EvICMwsmoothcie = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_SMOOTHCIE");
     
     isBatchMode = lastToneCurve = lastApplyLookTable = lastApplyBaselineExposureOffset = lastApplyHueSatMap = false;
 
@@ -242,6 +243,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wGamma = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_GAMMA"), 0.40, 15.0, 0.001, 2.222));
     wSlope = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_SLOPE"), 0., 300., 0.01, 4.5));
     wmidtcie = Gtk::manage(new Adjuster(M("TP_LOCALLAB_MIDTCIE"), -100., 100., 1., 0.));
+    wsmoothcie = Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SMOOTHCIE")));
     trcProfVBox->pack_start(*wGamma, Gtk::PACK_SHRINK);
     wGamma->show();
 
@@ -249,6 +251,10 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wSlope->show();
     trcProfVBox->pack_start(*wmidtcie, Gtk::PACK_SHRINK);
     wmidtcie->show();
+    trcProfVBox->pack_start(*wsmoothcie, Gtk::PACK_SHRINK);
+    wsmoothcie->show();
+    wsmoothcieconn = wsmoothcie->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::wsmoothcieChanged));
+    wsmoothcie->set_active(false);
 
     willuBox = Gtk::manage(new Gtk::Box());
     willulab = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_ILLU") + ":"));
@@ -590,6 +596,7 @@ void ICMPanel::neutral_pressed ()
     preser->setValue(defPar.preser);
     fbw->set_active(defPar.fbw);
     gamut->set_active(defPar.gamut);	
+    wsmoothcie->set_active(defPar.wsmoothcie);	
     wTRC->set_active(toUnderlying(ColorManagementParams::WorkingTrc::NONE));//reset to none
     will->set_active(toUnderlying(ColorManagementParams::Illuminant::DEFAULT));//reset to default - after wprim
 }
@@ -847,6 +854,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     ConnectionBlocker obpcconn_(obpcconn);
     ConnectionBlocker fbwconn_(fbwconn);
     ConnectionBlocker gamutconn_(gamutconn);
+    ConnectionBlocker wsmoothcieconn_(wsmoothcieconn);
     ConnectionBlocker ipc_(ipc);
     ConnectionBlocker tcurveconn_(tcurveconn);
     ConnectionBlocker ltableconn_(ltableconn);
@@ -911,6 +919,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     wprimChanged();
     wcatChanged();
     gamutChanged();
+    wsmoothcieChanged();
 
     if (pp->icm.outputProfile == ColorManagementParams::NoICMString) {
         oProfNames->set_active_text(M("TP_ICM_NOICM"));
@@ -929,6 +938,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     fbw->set_active(pp->icm.fbw);
     trcExp->setEnabled(pp->icm.trcExp);
     gamut->set_active(pp->icm.gamut);
+    wsmoothcie->set_active(pp->icm.wsmoothcie);
     ckbToneCurve->set_active(pp->icm.toneCurve);
     lastToneCurve = pp->icm.toneCurve;
     ckbApplyLookTable->set_active(pp->icm.applyLookTable);
@@ -959,6 +969,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         fbw->set_inconsistent(!pedited->icm.fbw);
         trcExp->set_inconsistent(!pedited->icm.trcExp);
         gamut->set_inconsistent(!pedited->icm.gamut);
+        wsmoothcie->set_inconsistent(!pedited->icm.wsmoothcie);
         ckbToneCurve->set_inconsistent(!pedited->icm.toneCurve);
         ckbApplyLookTable->set_inconsistent(!pedited->icm.applyLookTable);
         ckbApplyBaselineExposureOffset->set_inconsistent(!pedited->icm.applyBaselineExposureOffset);
@@ -1030,6 +1041,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             wcatlab->set_sensitive(false);
             fbw->set_sensitive(false);
             gamut->set_sensitive(false);
+            wsmoothcie->set_sensitive(false);
             wprimlab->set_sensitive(false);
             riaHBox->set_sensitive(false);
             redFrame->hide();
@@ -1050,6 +1062,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             
             fbw->set_sensitive(true);
             gamut->set_sensitive(true);
+            wsmoothcie->set_sensitive(true);
             wprimlab->set_sensitive(true);
             if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::DEFAULT) {
                 redFrame->hide();
@@ -1103,6 +1116,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             
             fbw->set_sensitive(true);
             gamut->set_sensitive(true);
+            wsmoothcie->set_sensitive(true);
             wprimlab->set_sensitive(true);
             wGamma->set_sensitive(false);
             wSlope->set_sensitive(false);
@@ -1129,6 +1143,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             }
             fbw->set_sensitive(true);
             gamut->set_sensitive(true);
+            wsmoothcie->set_sensitive(true);
             wprimlab->set_sensitive(true);
             wGamma->set_sensitive(false);
             wSlope->set_sensitive(false);
@@ -1155,6 +1170,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             }
             fbw->set_sensitive(true);
             gamut->set_sensitive(true);
+            wsmoothcie->set_sensitive(true);
             wprimlab->set_sensitive(true);
             redFrame->show();
             wGamma->set_sensitive(false);
@@ -1182,6 +1198,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             }
             fbw->set_sensitive(true);
             gamut->set_sensitive(true);
+            wsmoothcie->set_sensitive(true);
             wprimlab->set_sensitive(true);
             riaHBox->set_sensitive(true);
             if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::DEFAULT) {
@@ -1208,6 +1225,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             }
             fbw->set_sensitive(true);
             gamut->set_sensitive(true);
+            wsmoothcie->set_sensitive(true);
             wprimlab->set_sensitive(true);
             wGamma->set_sensitive(false);
             wSlope->set_sensitive(false);
@@ -1315,6 +1333,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     pp->icm.fbw = fbw->get_active();
     pp->icm.trcExp = trcExp->getEnabled();
     pp->icm.gamut = gamut->get_active();
+    pp->icm.wsmoothcie = wsmoothcie->get_active();
     pp->icm.workingTRCGamma =  wGamma->getValue();
     pp->icm.workingTRCSlope =  wSlope->getValue();
     pp->icm.wmidtcie =  wmidtcie->getValue();
@@ -1340,6 +1359,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->icm.fbw = !fbw->get_inconsistent();
         pedited->icm.trcExp = !trcExp->get_inconsistent();
         pedited->icm.gamut = !gamut->get_inconsistent();
+        pedited->icm.wsmoothcie = !wsmoothcie->get_inconsistent();
         pedited->icm.dcpIlluminant = dcpIll->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.toneCurve = !ckbToneCurve->get_inconsistent();
         pedited->icm.applyLookTable = !ckbApplyLookTable->get_inconsistent();
@@ -1470,6 +1490,7 @@ void ICMPanel::wtrcinChanged()
             wprim->set_sensitive(false);
             fbw->set_sensitive(false);
             gamut->set_sensitive(false);
+            wsmoothcie->set_sensitive(false);
             wprimlab->set_sensitive(false);
             redFrame->hide();
             riaHBox->set_sensitive(false);
@@ -1484,6 +1505,7 @@ void ICMPanel::wtrcinChanged()
             wcatlab->set_sensitive(true);
             fbw->set_sensitive(true);
             gamut->set_sensitive(true);
+            wsmoothcie->set_sensitive(true);
             wprimlab->set_sensitive(true);
             willulab->set_sensitive(true);
             if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::DEFAULT) {
@@ -1521,6 +1543,7 @@ void ICMPanel::wtrcinChanged()
             wcatlab->set_sensitive(true);
             fbw->set_sensitive(true);
             gamut->set_sensitive(true);
+            wsmoothcie->set_sensitive(true);
             wprimlab->set_sensitive(true);
             wGamma->set_sensitive(false);
             wSlope->set_sensitive(false);
@@ -1550,6 +1573,7 @@ void ICMPanel::wtrcinChanged()
             wcatlab->set_sensitive(true);
             fbw->set_sensitive(true);
             gamut->set_sensitive(true);
+            wsmoothcie->set_sensitive(true);
             wGamma->set_sensitive(false);
             wSlope->set_sensitive(false);
             riaHBox->set_sensitive(true);
@@ -1580,6 +1604,7 @@ void ICMPanel::wtrcinChanged()
             wcatlab->set_sensitive(true);
             fbw->set_sensitive(true);
             gamut->set_sensitive(true);
+            wsmoothcie->set_sensitive(true);
             wprimlab->set_sensitive(true);
             wGamma->set_sensitive(false);
             wSlope->set_sensitive(false);
@@ -1611,6 +1636,7 @@ void ICMPanel::wtrcinChanged()
             wcatlab->set_sensitive(true);
             fbw->set_sensitive(true);
             gamut->set_sensitive(true);
+            wsmoothcie->set_sensitive(true);
             wprimlab->set_sensitive(true);
             wGamma->set_sensitive(false);
             wSlope->set_sensitive(false);
@@ -1642,6 +1668,7 @@ void ICMPanel::wtrcinChanged()
             wcatlab->set_sensitive(true);
             fbw->set_sensitive(true);
             gamut->set_sensitive(true);
+            wsmoothcie->set_sensitive(true);
             wprimlab->set_sensitive(true);
             wGamma->set_sensitive(false);
             wSlope->set_sensitive(false);
@@ -2344,6 +2371,33 @@ void ICMPanel::gamutChanged()
             listener->panelChanged(EvICMgamut, M("GENERAL_ENABLED"));
         } else {
             listener->panelChanged(EvICMgamut, M("GENERAL_DISABLED"));
+        }
+    }
+}
+
+void ICMPanel::wsmoothcieChanged()
+{
+    if (multiImage) {
+        if (wsmoothcie->get_inconsistent()) {
+            wsmoothcie->set_inconsistent(false);
+            wsmoothcieconn.block(true);
+            wsmoothcie->set_active(false);
+            wsmoothcieconn.block(false);
+        } else if (lastwsmoothcie) {
+            wsmoothcie->set_inconsistent(true);
+        }
+
+        lastwsmoothcie = wsmoothcie->get_active();
+    }
+    
+    
+    if (listener) {
+        if (wsmoothcie->get_inconsistent()) {
+            listener->panelChanged(EvICMwsmoothcie, M("GENERAL_UNCHANGED"));
+        } else if (wsmoothcie->get_active()) {
+            listener->panelChanged(EvICMwsmoothcie, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged(EvICMwsmoothcie, M("GENERAL_DISABLED"));
         }
     }
 }

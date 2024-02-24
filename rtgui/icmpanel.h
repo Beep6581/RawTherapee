@@ -55,6 +55,7 @@ protected:
     Adjuster* wGamma;
     Adjuster* wSlope;
     Adjuster* wmidtcie;
+    Gtk::CheckButton* wsmoothcie;
     Adjuster* redx;
     Adjuster* redy;
     Adjuster* grex;
@@ -65,7 +66,8 @@ protected:
     Adjuster* refi;
     Adjuster* shiftx;
     Adjuster* shifty;
-
+    sigc::connection wsmoothcieconn;
+    bool lastwsmoothcie;
     Gtk::Label* labmga;
     Gtk::Box* gabox;
     //Gtk::Label* blr;
@@ -124,6 +126,7 @@ private:
     rtengine::ProcEvent EvICMshiftx;
     rtengine::ProcEvent EvICMshifty;
     rtengine::ProcEvent EvICMwmidtcie;
+    rtengine::ProcEvent EvICMwsmoothcie;
     LabGrid *labgridcie;
     IdleRegister idle_register;
 
@@ -228,6 +231,8 @@ public:
     void aiChanged(int n);
     void oBPCChanged();
     void fbwChanged();
+    void wsmoothcieChanged();
+    
     void gamutChanged();
     void ipChanged();
     void ipSelectionChanged();

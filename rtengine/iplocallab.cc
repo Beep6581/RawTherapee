@@ -16879,13 +16879,11 @@ void ImProcFunctions::Lab_Local(
                         float rdx, rdy, grx, gry, blx, bly = 0.f;
                         float meanx, meany, meanxe, meanye = 0.f;
                         workingtrc(0, tmpImage, tmpImage, bfw, bfh, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rdx, rdy, grx, gry, blx, bly , meanx, meany, meanxe, meanye, dummy, true, false, false, false);
-                        //   workingtrc(tmpImage, tmpImage, bfw, bfh, 5, prof, gamtone, slotone, 0, 0, dummy, false, true, true); //to keep if we want improve with illuminant and primaries
                         workingtrc(0, tmpImage, tmpImage, bfw, bfh, 1, prof, gamtone, slotone, 0, ill, 0, locprim, rdx, rdy, grx, gry, blx, bly , meanx, meany, meanxe, meanye, dummy, false, true, true, false);//be careful no gamut control
                     }
 
                     if (tonequ) {
                         tone_eq(this, tmpImage, lp, params->icm.workingProfile, scal, multiThread);
-                        //tone_eq(tmpImage, lp, params->icm.workingProfile, scal, multiThread);
                     }
 
                     rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);

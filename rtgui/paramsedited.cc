@@ -460,6 +460,7 @@ void ParamsEdited::set(bool v)
     icm.workingTRCGamma = v;
     icm.workingTRCSlope = v;
     icm.wmidtcie = v;
+    icm.wsmoothcie = v;
     icm.redx = v;
     icm.redy = v;
     icm.grex = v;
@@ -1955,6 +1956,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         icm.workingTRCGamma = icm.workingTRCGamma && p.icm.workingTRCGamma == other.icm.workingTRCGamma;
         icm.workingTRCSlope = icm.workingTRCSlope && p.icm.workingTRCSlope == other.icm.workingTRCSlope;
         icm.wmidtcie = icm.wmidtcie && p.icm.wmidtcie == other.icm.wmidtcie;
+        icm.wsmoothcie = icm.wsmoothcie && p.icm.wsmoothcie == other.icm.wsmoothcie;
         icm.redx = icm.redx && p.icm.redx == other.icm.redx;
         icm.redy = icm.redy && p.icm.redy == other.icm.redy;
         icm.grex = icm.grex && p.icm.grex == other.icm.grex;
@@ -6748,6 +6750,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (icm.wmidtcie) {
         toEdit.icm.wmidtcie = mods.icm.wmidtcie;
+    }
+
+    if (icm.wsmoothcie) {
+        toEdit.icm.wsmoothcie = mods.icm.wsmoothcie;
     }
 
     if (icm.redx) {

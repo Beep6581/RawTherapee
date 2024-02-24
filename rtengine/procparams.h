@@ -2046,6 +2046,7 @@ struct ColorManagementParams {
     double workingTRCGamma;
     double workingTRCSlope;
     double wmidtcie;
+    bool wsmoothcie;
     double redx;
     double redy;
     double grex;
