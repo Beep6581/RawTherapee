@@ -381,7 +381,7 @@ void BatchQueuePanel::populateTemplateHelpBuffer(Glib::RefPtr<Gtk::TextBuffer> b
 #else
     auto exampleFilePath = M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_EXAMPLE_LINUX");
 #endif
-    pos = buffer->insert_markup(pos, Glib::ustring::format("\n   ", exampleFilePath, "\n"));
+    pos = buffer->insert_markup(pos, Glib::ustring::format("\n   ", exampleFilePath, "\n\n"));
     pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_BODY_2"));
     // Examples are generated from exampleFilePath using the actual template processing function
     Options savedOptions = options; // to be restored after generating example results

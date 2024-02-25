@@ -1030,7 +1030,7 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
                             {
                                 Glib::RefPtr<Gio::File> file = Gio::File::create_for_path(origFileName);
                                 if (file) {
-                                    Glib::RefPtr<Gio::FileInfo> info = file->query_info("time::modified");
+                                    Glib::RefPtr<Gio::FileInfo> info = file->query_info(G_FILE_ATTRIBUTE_TIME_MODIFIED);
                                     if (info) {
                                         dateTime = info->get_modification_date_time();
                                     }
