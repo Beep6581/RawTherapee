@@ -381,7 +381,7 @@ void BatchQueuePanel::populateTemplateHelpBuffer(Glib::RefPtr<Gtk::TextBuffer> b
 #else
     auto exampleFilePath = M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_EXAMPLE_LINUX");
 #endif
-    pos = buffer->insert_markup(pos, Glib::ustring::format("\n   ", exampleFilePath, "\n\n"));
+    pos = buffer->insert_markup(pos, Glib::ustring::format("\n   ", exampleFilePath, "\n"));
     pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_BODY_2"));
     // Examples are generated from exampleFilePath using the actual template processing function
     Options savedOptions = options; // to be restored after generating example results
@@ -410,7 +410,7 @@ void BatchQueuePanel::populateTemplateHelpBuffer(Glib::RefPtr<Gtk::TextBuffer> b
             auto result1 = BatchQueue::calcAutoFileNameBase(exampleFilePath);
             options.savePathTemplate = path2;
             auto result2 = BatchQueue::calcAutoFileNameBase(exampleFilePath);
-            pos = buffer->insert_markup(pos, Glib::ustring::format("\n<tt>   <b>", path1, "</b> = <b>", path2, "</b> = <i>", result1, "</i></tt>"));
+            pos = buffer->insert_markup(pos, Glib::ustring::format("\n  <tt><b>", path1, "</b> = <b>", path2, "</b> = <i>", result1, "</i></tt>"));
             if (result1 != result2) {
                 // If this error appears, it indicates a coding error in either BatchQueue::calcAutoFileNameBase
                 // or BatchQueuePanel::populateTemplateHelpBuffer.
@@ -426,7 +426,7 @@ void BatchQueuePanel::populateTemplateHelpBuffer(Glib::RefPtr<Gtk::TextBuffer> b
         Glib::ustring fspecifier("%f");
         options.savePathTemplate = fspecifier;
         auto result = BatchQueue::calcAutoFileNameBase(exampleFilePath);
-        pos = buffer->insert_markup(pos, Glib::ustring::format("\n<tt>   <b>", fspecifier, "</b> = <i>", result, "</i></tt>"));
+        pos = buffer->insert_markup(pos, Glib::ustring::format("\n  <tt><b>", fspecifier, "</b> = <i>", result, "</i></tt>"));
     }
 
     insertTopicHeading(M("QUEUE_LOCATION_TEMPLATE_HELP_RANK_TITLE"));
@@ -446,7 +446,7 @@ void BatchQueuePanel::populateTemplateHelpBuffer(Glib::RefPtr<Gtk::TextBuffer> b
     auto timeForExamples = Glib::DateTime::create_from_iso8601("2001-02-03T04:05:06.123456", timezone);
     for (auto fmt : dateTimeFormatExamples) {
         auto result = timeForExamples.format(fmt);
-        pos = buffer->insert_markup(pos, Glib::ustring::format("\n<tt>  <b>%tE\"", fmt, "\"</b> = <i>", result, "</i></tt>"));
+        pos = buffer->insert_markup(pos, Glib::ustring::format("\n  <tt><b>%tE\"", fmt, "\"</b> = <i>", result, "</i></tt>"));
     }
 
     pos = buffer->insert(pos, "\n");
