@@ -76,7 +76,8 @@ constexpr double czlim = rtengine::RT_SQRT1_2;// 0.70710678118654752440;
 
 constexpr float clipLoc(float x)
 {
-    return rtengine::LIM(x, 0.f, 32767.f);
+    //return rtengine::LIM(x, 0.f, 32767.f);//remove leads to bad behavior
+    return x;
 }
 
 constexpr float clipDE(float x)
@@ -86,12 +87,12 @@ constexpr float clipDE(float x)
 
 constexpr float clipC(float x)
 {
-    return rtengine::LIM(x, -42000.f, 42000.f);
+    return rtengine::LIM(x, -100000.f, 100000.f);//increase LIM from 42000 to 1000000 to avoid clip and also imaginaries colors
 }
 
 constexpr float clipChro(float x)
 {
-    return rtengine::LIM(x, 0.f, 140.f);
+    return rtengine::LIM(x, 0.f, 300.f);//increase LIM from 140 to 300 to avoid clip and also imaginaries colors
 }
 
 constexpr double clipazbz(double x)
@@ -9468,11 +9469,13 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
 
                 if (zone > 0) {
                     //simplified transformed with deltaE and transition
-                    transformed->L[y + ystart][x + xstart] = clipLoc(original->L[y + ystart][x + xstart] + factorx * realstrdE);
+                    transformed->L[y + ystart][x + xstart] = clipLoc(original->L[y + ystart][x + xstart] + factorx * realstrdE);//clipLoc now do nothing...just keep in ace off
                     float diflc = factorx * realstrdE;
                     transformed->a[y + ystart][x + xstart] = clipC(original->a[y + ystart][x + xstart] + factorx * realstradE);
+                    transformed->a[y + ystart][x + xstart] = (original->a[y + ystart][x + xstart] + factorx * realstradE);
                     const float difa = factorx * realstradE;
                     transformed->b[y + ystart][x + xstart] = clipC(original->b[y + ystart][x + xstart] + factorx * realstrbdE);
+                    transformed->b[y + ystart][x + xstart] = (original->b[y + ystart][x + xstart] + factorx * realstrbdE);
                     const float difb = factorx * realstrbdE;
                     float maxdifab = rtengine::max(std::fabs(difa), std::fabs(difb));
 
