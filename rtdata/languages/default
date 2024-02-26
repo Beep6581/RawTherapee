@@ -2634,8 +2634,8 @@ TP_ICM_INPUTCAMERA_TOOLTIP;Use a simple color matrix from dcraw, an enhanced Raw
 TP_ICM_INPUTCUSTOM;Custom
 TP_ICM_INPUTCUSTOM_TOOLTIP;Select your own DCP/ICC color profile file for the camera.
 TP_ICM_INPUTDLGLABEL;Select Input DCP/ICC Profile...
-TP_ICM_INPUTEMBEDDED;Use embedded, if possible
-TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non-raw files.
+TP_ICM_INPUTEMBEDDED;Use embedded
+TP_ICM_INPUTEMBEDDED_TOOLTIP;Use the color profile embedded in the file.\nIf unavailable, fall back to Camera standard
 TP_ICM_INPUTNONE;No profile
 TP_ICM_INPUTNONE_TOOLTIP;Use no input color profile at all.\nUse only in special cases.
 TP_ICM_INPUTPROFILE;Input Profile
