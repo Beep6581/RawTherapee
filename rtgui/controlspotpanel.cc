@@ -2887,10 +2887,10 @@ void ControlSpotPanel::updateguiset(int spottype, bool iscolor, bool issh, bool 
                 spotMethodChanged();
             }
             
-            if((iscolor || issh || isvib || isexpos || istom || iscont || iscbdl || islog || ismas || iscie)
-                && !issharp && !issoft && !isret && !isblur) {
+            if((iscolor || issh || isvib || isexpos || istom || iscont || islog || ismas || iscie)
+                && !issharp && !issoft && !isret && !isblur  & !iscbdl) {
                 preview_->hide();               
-            } else if (issoft || isblur || isret || issharp) {
+            } else if (issoft || isblur || isret || issharp || iscbdl) {
                 preview_->show(); 
             }
             enableListener();
