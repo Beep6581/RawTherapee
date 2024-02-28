@@ -100,9 +100,9 @@ namespace   // local helper functions
     // use that string to format dateTime. Append the formatted time to path.
     void appendFormattedTime(Glib::ustring& path, unsigned int& ix, const Glib::ustring& templateText, const Glib::DateTime& dateTime)
     {
-        constexpr unsigned int quoteMark = (unsigned int)'"';
+        constexpr gunichar quoteMark('"');
         if ((ix + 1) < templateText.size() && templateText[ix] == quoteMark) {
-            auto endPos = templateText.find_first_of(quoteMark, ++ix);
+            const auto endPos = templateText.find_first_of(quoteMark, ++ix);
             if (endPos != Glib::ustring::npos) {
                 Glib::ustring formatString(templateText, ix, endPos-ix);
                 path += dateTime.format(formatString);
@@ -1024,8 +1024,10 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
                         switch(options.savePathTemplate[ix++])
                         {
                             case 'E':   // (approximate) time when export started
+                            {
                                 dateTime = Glib::DateTime::create_now_local();
                                 break;
+                            }
                             case 'F': // time when file was last saved
                             {
                                 Glib::RefPtr<Gio::File> file = Gio::File::create_for_path(origFileName);
@@ -1035,16 +1037,18 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
                                         dateTime = info->get_modification_date_time();
                                     }
                                 }
-                            }
                                 break;
+                            }
                             case 'P':   // time when picture was taken
                             {
-                                auto timestamp = FramesData(origFileName).getDateTimeAsTS();
+                                const auto timestamp = FramesData(origFileName).getDateTimeAsTS();
                                 dateTime = Glib::DateTime::create_now_local(timestamp);
+                                break;
                             }
-                                break;
                             default:
+                            {
                                 break;
+                            }
                         }
                         if (dateTime) {
                             appendFormattedTime(path, ix, options.savePathTemplate, dateTime);

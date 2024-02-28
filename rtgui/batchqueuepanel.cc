@@ -344,7 +344,7 @@ void BatchQueuePanel::templateHelpButtonToggled()
     if (buffer->get_text().empty()) {
         // Populate the help text the first time it's shown
         populateTemplateHelpBuffer(buffer);
-        auto fullWidth = middleSplitPane->get_width();
+        const auto fullWidth = middleSplitPane->get_width();
         middleSplitPane->set_position(fullWidth / 2);
     }
     scrolledTemplateHelpWindow->set_visible(visible);
@@ -354,13 +354,13 @@ void BatchQueuePanel::templateHelpButtonToggled()
 void BatchQueuePanel::populateTemplateHelpBuffer(Glib::RefPtr<Gtk::TextBuffer> buffer)
 {
     auto pos = buffer->begin();
-    auto insertTopicHeading = [&pos, buffer](const Glib::ustring& text) {
+    const auto insertTopicHeading = [&pos, buffer](const Glib::ustring& text) {
         pos = buffer->insert_markup(pos, Glib::ustring::format("\n\n<u><b>", text, "</b></u>\n"));
     };
-    auto insertTopicBody = [&pos, buffer](const Glib::ustring& text) {
+    const auto insertTopicBody = [&pos, buffer](const Glib::ustring& text) {
         pos = buffer->insert_markup(pos, Glib::ustring::format("\n", text, "\n"));
     };
-    auto mainTitle = M("QUEUE_LOCATION_TEMPLATE_HELP_TITLE");
+    const auto mainTitle = M("QUEUE_LOCATION_TEMPLATE_HELP_TITLE");
     pos = buffer->insert_markup(pos, Glib::ustring::format("<big><b>", mainTitle, "</b></big>\n"));
     pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_INTRO"));
 
@@ -377,21 +377,21 @@ void BatchQueuePanel::populateTemplateHelpBuffer(Glib::RefPtr<Gtk::TextBuffer> b
     pos = buffer->insert(pos, "\n");
     pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_BODY_1"));
 #ifdef _WIN32
-    auto exampleFilePath = M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_EXAMPLE_WINDOWS");
+    const auto exampleFilePath = M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_EXAMPLE_WINDOWS");
 #else
-    auto exampleFilePath = M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_EXAMPLE_LINUX");
+    const auto exampleFilePath = M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_EXAMPLE_LINUX");
 #endif
     pos = buffer->insert_markup(pos, Glib::ustring::format("\n  ", exampleFilePath, "\n"));
     pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_BODY_2"));
     // Examples are generated from exampleFilePath using the actual template processing function
-    Options savedOptions = options; // to be restored after generating example results
+    const Options savedOptions = options; // to be restored after generating example results
     options.saveUsePathTemplate = true;
     // Since this code only ever runs once (the first time the help text is presented), no attempt is
     // made to be efficient. Use a brute-force method to discover the number of elements in exampleFilePath.
     int pathElementCount = 0;
     for (int n=9; n>=0; n--) {
-        options.savePathTemplate = Glib::ustring::format("%d",n);
-        auto result = BatchQueue::calcAutoFileNameBase(exampleFilePath);
+        options.savePathTemplate = Glib::ustring::format("%d", n);
+        const auto result = BatchQueue::calcAutoFileNameBase(exampleFilePath);
         if (!result.empty()) {
             // The 'd' specifier returns an empty string if N exceeds the number of path elements, so
             // the largest N that does not return an empty string is the number of elements in exampleFilePath.
@@ -401,11 +401,11 @@ void BatchQueuePanel::populateTemplateHelpBuffer(Glib::RefPtr<Gtk::TextBuffer> b
     }
     // Function inserts examples for a particular specifier, with every valid N value for the
     // number of elements in the path.
-    auto insertPathExamples = [&buffer, &pos, pathElementCount, exampleFilePath](char letter, int offset1, int mult1, int offset2, int mult2)
+    const auto insertPathExamples = [&buffer, &pos, pathElementCount, exampleFilePath](char letter, int offset1, int mult1, int offset2, int mult2)
     {
         for (int n=0; n<pathElementCount; n++) {
-            auto path1 = Glib::ustring::format("%",letter,offset1+n*mult1);
-            auto path2 = Glib::ustring::format("%",letter,offset2+n*mult2);
+            auto path1 = Glib::ustring::format("%", letter, offset1+n*mult1);
+            auto path2 = Glib::ustring::format("%", letter, offset2+n*mult2);
             options.savePathTemplate = path1;
             auto result1 = BatchQueue::calcAutoFileNameBase(exampleFilePath);
             options.savePathTemplate = path2;
@@ -423,9 +423,9 @@ void BatchQueuePanel::populateTemplateHelpBuffer(Glib::RefPtr<Gtk::TextBuffer> b
     insertPathExamples('p', 1, 1, -pathElementCount, 1);    //   <b>%p1</b> = <b>%p-4</b> = <i>/home/tom/photos/2010-10-31/</i>
     insertPathExamples('P', 1, 1, -pathElementCount, 1);    //   <b>%P1</b> = <b>%P-4</b> = <i>2010-10-31/</i>
     {
-        Glib::ustring fspecifier("%f");
+        const Glib::ustring fspecifier("%f");
         options.savePathTemplate = fspecifier;
-        auto result = BatchQueue::calcAutoFileNameBase(exampleFilePath);
+        const auto result = BatchQueue::calcAutoFileNameBase(exampleFilePath);
         pos = buffer->insert_markup(pos, Glib::ustring::format("\n  <tt><b>", fspecifier, "</b> = <i>", result, "</i></tt>"));
     }
 
@@ -437,15 +437,15 @@ void BatchQueuePanel::populateTemplateHelpBuffer(Glib::RefPtr<Gtk::TextBuffer> b
 
     insertTopicHeading(M("QUEUE_LOCATION_TEMPLATE_HELP_TIMESTAMP_TITLE"));
     pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_TIMESTAMP_BODY"));
-    Glib::ustring dateTimeFormatExamples[] = {
+    const Glib::ustring dateTimeFormatExamples[] = {
         "%Y-%m-%d",
         "%Y%m%d_%H%M%S",
         "%y/%b/%-d/"
     };
-    auto timezone = Glib::DateTime::create_now_local().get_timezone();
-    auto timeForExamples = Glib::DateTime::create_from_iso8601("2001-02-03T04:05:06.123456", timezone);
-    for (auto fmt : dateTimeFormatExamples) {
-        auto result = timeForExamples.format(fmt);
+    const auto timezone = Glib::DateTime::create_now_local().get_timezone();
+    const auto timeForExamples = Glib::DateTime::create_from_iso8601("2001-02-03T04:05:06.123456", timezone);
+    for (auto && fmt : dateTimeFormatExamples) {
+        const auto result = timeForExamples.format(fmt);
         pos = buffer->insert_markup(pos, Glib::ustring::format("\n  <tt><b>%tE\"", fmt, "\"</b> = <i>", result, "</i></tt>"));
     }
 
