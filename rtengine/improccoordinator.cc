@@ -904,9 +904,15 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                                params->toneCurve.black, params->toneCurve.hlcompr, params->toneCurve.hlcomprthresh, params->toneCurve.hrenabled);
             }
 
-            if (params->toneCurve.histmatching) {
+            if (params->toneCurve.histmatching ) {
+                bool exectrcexp = false;//store if Abstract profile enabled
+                exectrcexp = params->icm.trcExp;
                 if (!params->toneCurve.fromHistMatching) {
+                    if(params->icm.trcExp) {
+                        params->icm.trcExp = false;//disabled Abstract profile, if hismatching
+                    }
                     imgsrc->getAutoMatchedToneCurve(params->icm, params->raw, params->wb.observer, params->toneCurve.curve);
+                    params->icm.trcExp = exectrcexp;//restore Abstract profile 
                 }
 
                 if (params->toneCurve.autoexp) {
