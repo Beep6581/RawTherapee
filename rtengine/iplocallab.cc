@@ -3957,7 +3957,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             float sumcamq = 0.f;
             float sumsat = 0.f;
             float sumM = 0.f;
-//            float sumcamq01 = 0.f;
 
             if (lp.logena && !(params->locallab.spots.at(sp).expcie && mocam == 1)) { //Log encoding only, but enable for log encoding if we use Cam16 module both with log encoding
                 plum = 100.f;
@@ -4033,11 +4032,12 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             sumcamq /= nccam;
             sumsat /= nccam;
             sumM /= nccam;
-
-            printf("Cam16 Scene  Lighness_J Brightness_Q- HDR-PQ=%5.1f minJ=%3.1f maxJ=%3.1f meanJ=%3.1f minQ=%3.1f maxQ=%4.1f  meanQ=%4.1f meanQ1=%2.3f\n", (double) plum, (double) minicam, (double) maxicamj, (double) sumcam, (double) minicamq, (double) maxicamq, (double) sumcamq, (double) (sumcamq * coefq));
-            printf("Cam16 Scene  Saturati-s Colorfulln_M- minSat=%3.1f maxSat=%3.1f meanSat=%3.1f minM=%3.1f maxM=%3.1f meanM=%3.1f\n", (double) minisat, (double) maxisat, (double) sumsat, (double) miniM, (double) maxiM, (double) sumM);
+            
+            if (settings->verbose) {
+                printf("Cam16 Scene  Lighness_J Brightness_Q- HDR-PQ=%5.1f minJ=%3.1f maxJ=%3.1f meanJ=%3.1f minQ=%3.1f maxQ=%4.1f  meanQ=%4.1f meanQ1=%2.3f\n", (double) plum, (double) minicam, (double) maxicamj, (double) sumcam, (double) minicamq, (double) maxicamq, (double) sumcamq, (double) (sumcamq * coefq));
+                printf("Cam16 Scene  Saturati-s Colorfulln_M- minSat=%3.1f maxSat=%3.1f meanSat=%3.1f minM=%3.1f maxM=%3.1f meanM=%3.1f\n", (double) minisat, (double) maxisat, (double) sumsat, (double) miniM, (double) maxiM, (double) sumM);
+            }
            // maxicam = maxicamq;//maximum Brightness 
-        //    if((sumcamq + 0.2f * minicamq) < maxicamq) {
             if(sumcamq < maxicamq) {
                 // maxicam = sumcamq + 0.2f * minicamq;//maximum Brightness take into account
                  maxicam = sumcamq;//maximum Brightness take into account
@@ -20302,8 +20302,8 @@ void ImProcFunctions::Lab_Local(
                     params->locallab.spots.at(sp).catMethod;
                     int locprim = 1;
                     bool gamcie = params->locallab.spots.at(sp).gamutcie;
-                    float rx, ry, gx, gy, bx, by;
-                    float mx, my, mxe, mye;
+                    float rx, ry, gx, gy, bx, by = 0.f;
+                    float mx, my, mxe, mye = 0.f;
 
                     workingtrc(sp, tmpImage, tmpImage, bfw, bfh, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rx, ry, gx, gy, bx, by, mx, my, mxe, mye, dummy, true, false, false, false);
                     workingtrc(sp, tmpImage, tmpImage, bfw, bfh, typ, prof, gamtone, slotone, catx, ill, prim, locprim, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, dummy, false, true, true, gamcie);//with gamut control
