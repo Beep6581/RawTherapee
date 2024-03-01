@@ -10088,8 +10088,9 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 )
             )
             
-            assignFromKeyfile(keyFile, "Color Management", "WorkingTRCGamma", icm.workingTRCGamma, pedited->icm.workingTRCGamma);
+            assignFromKeyfile(keyFile, "Color Management", "Gamut", icm.gamut, pedited->icm.gamut);
             assignFromKeyfile(keyFile, "Color Management", "WorkingTRCSlope", icm.workingTRCSlope, pedited->icm.workingTRCSlope);
+            assignFromKeyfile(keyFile, "Color Management", "WorkingTRCGamma", icm.workingTRCGamma, pedited->icm.workingTRCGamma);
             assignFromKeyfile(keyFile, "Color Management", "Wmidtcie", icm.wmidtcie, pedited->icm.wmidtcie);
             assignFromKeyfile(keyFile, "Color Management", "Wsmoothcie", icm.wsmoothcie, pedited->icm.wsmoothcie);
 
@@ -10105,7 +10106,6 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color Management", "Preser", icm.preser, pedited->icm.preser);
             assignFromKeyfile(keyFile, "Color Management", "Fbw", icm.fbw, pedited->icm.fbw);
             assignFromKeyfile(keyFile, "Color Management", "TrcExp", icm.trcExp, pedited->icm.trcExp);
-            assignFromKeyfile(keyFile, "Color Management", "Gamut", icm.gamut, pedited->icm.gamut);
             assignFromKeyfile(keyFile, "Color Management", "LabGridcieALow", icm.labgridcieALow, pedited->icm.labgridcieALow);
             assignFromKeyfile(keyFile, "Color Management", "LabGridcieBLow", icm.labgridcieBLow, pedited->icm.labgridcieBLow);
             assignFromKeyfile(keyFile, "Color Management", "LabGridcieAHigh", icm.labgridcieAHigh, pedited->icm.labgridcieAHigh);
