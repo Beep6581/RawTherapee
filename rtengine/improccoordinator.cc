@@ -1999,7 +1999,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                 const float gamtone = params->icm.workingTRCGamma;
                 const float slotone = params->icm.workingTRCSlope;
-                printf("GAMTONE=%f \n", (double) gamtone);
                 int illum = toUnderlying(params->icm.will);
                 const int prim = toUnderlying(params->icm.wprim);
 
