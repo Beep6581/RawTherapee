@@ -1382,7 +1382,7 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
 {
     wGamma->setDefault(defParams->icm.workingTRCGamma);
     wSlope->setDefault(defParams->icm.workingTRCSlope);
-    wSlope->setDefault(defParams->icm.wmidtcie);
+    wmidtcie->setDefault(defParams->icm.wmidtcie);
     redx->setDefault(defParams->icm.redx);
     redy->setDefault(defParams->icm.redy);
     grex->setDefault(defParams->icm.grex);
