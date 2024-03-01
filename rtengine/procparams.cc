@@ -10086,7 +10086,12 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     icm.wcat,
                     pedited->icm.wcat
                 )
-            )
+            ){
+                icm.wcat = ColorManagementParams::Cat::BRAD;
+                if (pedited) {
+                    pedited->icm.wcat = true;
+                }
+            }
             
             assignFromKeyfile(keyFile, "Color Management", "Gamut", icm.gamut, pedited->icm.gamut);
             assignFromKeyfile(keyFile, "Color Management", "WorkingTRCSlope", icm.workingTRCSlope, pedited->icm.workingTRCSlope);
