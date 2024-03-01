@@ -18996,7 +18996,7 @@ void ImProcFunctions::Lab_Local(
 
                             if (locchCurve && CHcurve && lp.qualcurvemet != 0) {//C=f(H) curve
                                 const float rhue = xatan2f(bufcolcalcb, bufcolcalca);
-                                const float valparam = 2.f * locchCurve[500.f * static_cast<float>(Color::huelab_to_huehsv2(rhue))] - 0.5f;  //get valp=f(H)
+                                const float valparam = locchCurve[500.f * static_cast<float>(Color::huelab_to_huehsv2(rhue))] - 0.5f;  //get valp=f(H)
                                 float chromaChfactor = 1.0f + valparam;
                                 bufcolcalca *= chromaChfactor;//apply C=f(H)
                                 bufcolcalcb *= chromaChfactor;
