@@ -5400,6 +5400,7 @@ LocallabLog::LocallabLog():
     sursour->append(M("TP_COLORAPP_SURROUND_AVER"));
     sursour->append(M("TP_COLORAPP_SURROUND_DIM"));
     sursour->append(M("TP_COLORAPP_SURROUND_DARK"));
+    sursour->append(M("TP_COLORAPP_SURROUND_EXDARK"));
     sursour->set_active(0);
     surHBox->pack_start(*sursour);
     sursourconn = sursour->signal_changed().connect(sigc::mem_fun(*this, &LocallabLog::sursourChanged));
@@ -5755,6 +5756,8 @@ void LocallabLog::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             sursour->set_active(1);
         } else if (spot.sursour == "Dark") {
             sursour->set_active(2);
+        } else if (spot.sursour == "exDark") {
+            sursour->set_active(3);
         }
 
 
@@ -5880,6 +5883,8 @@ void LocallabLog::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.sursour = "Dim";
         } else if (sursour->get_active_row_number() == 2) {
             spot.sursour = "Dark";
+        } else if (sursour->get_active_row_number() == 3) {
+            spot.sursour = "exDark";
         }
 
         if (surround->get_active_row_number() == 0) {
@@ -7786,6 +7791,7 @@ Locallabcie::Locallabcie():
     sursourcie->append(M("TP_COLORAPP_SURROUND_AVER"));
     sursourcie->append(M("TP_COLORAPP_SURROUND_DIM"));
     sursourcie->append(M("TP_COLORAPP_SURROUND_DARK"));
+    sursourcie->append(M("TP_COLORAPP_SURROUND_EXDARK"));
     sursourcie->set_active(0);
     surHBoxcie->pack_start(*sursourcie);
     sursourcieconn = sursourcie->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::sursourcieChanged));
@@ -9176,6 +9182,8 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             sursourcie->set_active(1);
         } else if (spot.sursourcie == "Dark") {
             sursourcie->set_active(2);
+        } else if (spot.sursourcie == "exDark") {
+            sursourcie->set_active(3);
         }
 
 
@@ -9422,6 +9430,8 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.sursourcie = "Dim";
         } else if (sursourcie->get_active_row_number() == 2) {
             spot.sursourcie = "Dark";
+        } else if (sursourcie->get_active_row_number() == 3) {
+            spot.sursourcie = "exDark";
         }
 
         if (bwevMethod->get_active_row_number() == 0) {

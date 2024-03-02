@@ -3003,6 +3003,10 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 f  = 0.8f;
                 c  = 0.525f;
                 nc = 0.8f;
+            } else if (params->locallab.spots.at(sp).sursourcie == "exDark") {
+                f  = 0.8f;
+                c  = 0.41f;
+                nc = 0.8f;
             }
         } else {
             if (params->locallab.spots.at(sp).sursour == "Average") {
@@ -3014,6 +3018,10 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             } else if (params->locallab.spots.at(sp).sursour == "Dark") {
                 f  = 0.8f;
                 c  = 0.525f;
+                nc = 0.8f;
+            } else if (params->locallab.spots.at(sp).sursour == "exDark") {
+                f  = 0.8f;
+                c  = 0.41f;
                 nc = 0.8f;
             }
         }

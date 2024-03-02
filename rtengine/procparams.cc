@@ -8969,11 +8969,11 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "ShapeMethod_" + index_str, spot.shapeMethod, spotEdited.shapeMethod);
                 if (keyFile.has_key("Locallab", "AvoidgamutMethod_" + index_str)) {
                     assignFromKeyfile(keyFile, "Locallab", "AvoidgamutMethod_" + index_str, spot.avoidgamutMethod, spotEdited.avoidgamutMethod);
-                    if (ppVersion < 351) {
+                  /*  if (ppVersion < 351) {
                        if(spot.avoidgamutMethod == "XYZ") {//5.10 default value
                            spot.avoidgamutMethod = "MUNS";//set to Munsell only
                        }
-                    }
+                    } */
                 } else if (keyFile.has_key("Locallab", "Avoid_" + index_str)) {
                     const bool avoid = keyFile.get_boolean("Locallab", "Avoid_" + index_str);
                     const bool munsell = keyFile.has_key("Locallab", "Avoidmun_" + index_str) && keyFile.get_boolean("Locallab", "Avoidmun_" + index_str);
