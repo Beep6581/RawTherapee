@@ -52,8 +52,12 @@ class BatchQueuePanel : public Gtk::Box,
 
     RTWindow* parent;
     BatchQueue* batchQueue;
+    Gtk::TextView* templateHelpTextView;
+    Gtk::ScrolledWindow* scrolledTemplateHelpWindow;
+    Gtk::ToggleButton* templateHelpButton;
     Gtk::Box* bottomBox;
     Gtk::Box* topBox;
+    Gtk::Paned* middleSplitPane;
 
     std::atomic<bool> queueShouldRun;
 
@@ -80,6 +84,8 @@ private:
     void stopBatchProc ();
     void startOrStopBatchProc();
     void setGuiFromBatchState(bool queueRunning, int qsize);
+    void templateHelpButtonToggled();
+    void populateTemplateHelpBuffer(Glib::RefPtr<Gtk::TextBuffer> buffer);
 
     void pathFolderChanged ();
     void pathFolderButtonPressed ();
