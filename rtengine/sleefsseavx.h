@@ -1100,71 +1100,6 @@ static INLINE vfloat2 xsincosf(vfloat d) {
     return r;
 }
 
-static INLINE vfloat xtanf(vfloat d) {
-    vint2 q;
-    vmask m;
-    vfloat u, s, x;
-
-    q = vrint_vi2_vf(vmulf(d, vcast_vf_f((float)(2 * rtengine::RT_1_PI))));
-
-    x = d;
-
-    u = vcast_vf_vi2(q);
-    x = vmlaf(u, vcast_vf_f(-PI4_Af*2), x);
-    x = vmlaf(u, vcast_vf_f(-PI4_Bf*2), x);
-    x = vmlaf(u, vcast_vf_f(-PI4_Cf*2), x);
-    x = vmlaf(u, vcast_vf_f(-PI4_Df*2), x);
-
-    s = vmulf(x, x);
-
-    m = vmaski2_eq(vandi2(q, vcast_vi2_i(1)), vcast_vi2_i(1));
-    x = vself(m, vnegf(x), x);
-
-    u = vcast_vf_f(0.00927245803177356719970703f);
-    u = vmlaf(u, s, vcast_vf_f(0.00331984995864331722259521f));
-    u = vmlaf(u, s, vcast_vf_f(0.0242998078465461730957031f));
-    u = vmlaf(u, s, vcast_vf_f(0.0534495301544666290283203f));
-    u = vmlaf(u, s, vcast_vf_f(0.133383005857467651367188f));
-    u = vmlaf(u, s, vcast_vf_f(0.333331853151321411132812f));
-
-    u = vmlaf(s, vmulf(u, x), x);
-
-    u = vself(m, vrecf(u), u);
-
-    u = vself(vmaskf_isinf(d), vcast_vf_f(NANf), u);
-
-    return u;
-}
-
-static INLINE vfloat xatanf(vfloat s) {
-    vfloat t, u;
-    vint2 q;
-
-    q = vseli2_lt(s, vcast_vf_f(0.0f), vcast_vi2_i(2), vcast_vi2_i(0));
-    s = vabsf(s);
-
-    q = vseli2_lt(vcast_vf_f(1.0f), s, vaddi2(q, vcast_vi2_i(1)), q);
-    s = vself(vmaskf_lt(vcast_vf_f(1.0f), s), vdivf(vcast_vf_f(1.0f), s), s);
-
-    t = vmulf(s, s);
-
-    u = vcast_vf_f(0.00282363896258175373077393f);
-    u = vmlaf(u, t, vcast_vf_f(-0.0159569028764963150024414f));
-    u = vmlaf(u, t, vcast_vf_f(0.0425049886107444763183594f));
-    u = vmlaf(u, t, vcast_vf_f(-0.0748900920152664184570312f));
-    u = vmlaf(u, t, vcast_vf_f(0.106347933411598205566406f));
-    u = vmlaf(u, t, vcast_vf_f(-0.142027363181114196777344f));
-    u = vmlaf(u, t, vcast_vf_f(0.199926957488059997558594f));
-    u = vmlaf(u, t, vcast_vf_f(-0.333331018686294555664062f));
-
-    t = vaddf(s, vmulf(s, vmulf(t, u)));
-
-    t = vself(vmaski2_eq(vandi2(q, vcast_vi2_i(1)), vcast_vi2_i(1)), vsubf(vcast_vf_f((float)(rtengine::RT_PI/2)), t), t);
-    t = vself(vmaski2_eq(vandi2(q, vcast_vi2_i(2)), vcast_vi2_i(2)), vnegf(t), t);
-
-    return t;
-}
-
 static INLINE vfloat atan2kf(vfloat y, vfloat x) {
     vfloat s, t, u;
     vint2 q;
@@ -1205,28 +1140,6 @@ static INLINE vfloat xatan2f(vfloat y, vfloat x) {
     r = vself(vmaskf_eq(y, vcast_vf_f(0.0f)), vselfzero(vmaskf_eq(vsignf(x), vcast_vf_f(-1.0f)), vcast_vf_f((float)rtengine::RT_PI)), r);
 
     return vself(vmaskf_isnan(x, y), vcast_vf_f(NANf), vmulsignf(r, y));
-}
-
-static INLINE vfloat xasinf(vfloat d) {
-    vfloat x, y;
-    x = vaddf(vcast_vf_f(1.0f), d);
-    y = vsubf(vcast_vf_f(1.0f), d);
-    x = vmulf(x, y);
-    x = vsqrtf(x);
-    x = vself(vmaskf_isnan(x), vcast_vf_f(NANf), atan2kf(vabsf(d), x));
-    return vmulsignf(x, d);
-}
-
-static INLINE vfloat xacosf(vfloat d) {
-    vfloat x, y;
-    x = vaddf(vcast_vf_f(1.0f), d);
-    y = vsubf(vcast_vf_f(1.0f), d);
-    x = vmulf(x, y);
-    x = vsqrtf(x);
-    x = vmulsignf(atan2kf(x, vabsf(d)), d);
-    y = (vfloat)vandm(vmaskf_lt(d, vcast_vf_f(0.0f)), (vmask)vcast_vf_f((float)rtengine::RT_PI));
-    x = vaddf(x, y);
-    return x;
 }
 
 static INLINE vfloat xlogf(vfloat d) {
