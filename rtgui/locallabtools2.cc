@@ -9157,6 +9157,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         jabcie->set_active(spot.jabcie);
         jabcieChanged();
         modecamChanged();
+        sursourcieChanged();
         bwevMethodChanged();
         normcieChanged();
         expprecamChanged();        
@@ -10411,6 +10412,14 @@ void Locallabcie::modecieChanged()
 
 void Locallabcie::sursourcieChanged()
 {
+    if(sursourcie->get_active_row_number() == 4) {
+        expcam16->hide();
+        expcamviewing->hide();
+    } else {
+        expcam16->show();
+        expcamviewing->show();
+    }
+    
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(Evlocallabsursourcie,
@@ -10964,6 +10973,7 @@ void Locallabcie::updatecieGUI()
 
     contsigqcie->hide();
     lightsigqcie->hide();
+
     
     if (modecie->get_active_row_number() > 0) {
         sensicie->hide();
@@ -11123,6 +11133,14 @@ void Locallabcie::updatecieGUI()
         modecie->set_active(0);
         sensicie->show();
         reparcie->show();
+    }
+    
+    if(sursourcie->get_active_row_number() == 4) {
+        expcam16->hide();
+        expcamviewing->hide();
+    } else {
+        expcam16->show();
+        expcamviewing->show();
     }
 
     if (modecie->get_active_row_number() > 0) {
