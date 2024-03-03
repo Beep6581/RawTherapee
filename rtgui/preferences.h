@@ -249,6 +249,8 @@ class Preferences final :
     Gtk::ComboBoxText *cropGuidesCombo;
     Gtk::CheckButton *cropAutoFitCB;
 
+    Gtk::ComboBoxText *maxZoomCombo;
+
     Gtk::ComboBoxText *metadataSyncCombo;
     Gtk::ComboBoxText *xmpSidecarCombo;
 
