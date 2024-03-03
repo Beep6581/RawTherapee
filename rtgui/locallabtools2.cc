@@ -7792,6 +7792,7 @@ Locallabcie::Locallabcie():
     sursourcie->append(M("TP_COLORAPP_SURROUND_DIM"));
     sursourcie->append(M("TP_COLORAPP_SURROUND_DARK"));
     sursourcie->append(M("TP_COLORAPP_SURROUND_EXDARK"));
+    sursourcie->append(M("TP_LOCALLAB_DISAB_CIECAM"));
     sursourcie->set_active(0);
     surHBoxcie->pack_start(*sursourcie);
     sursourcieconn = sursourcie->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::sursourcieChanged));
@@ -9184,6 +9185,8 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             sursourcie->set_active(2);
         } else if (spot.sursourcie == "exDark") {
             sursourcie->set_active(3);
+        } else if (spot.sursourcie == "disacie") {
+            sursourcie->set_active(4);
         }
 
 
@@ -9432,6 +9435,8 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.sursourcie = "Dark";
         } else if (sursourcie->get_active_row_number() == 3) {
             spot.sursourcie = "exDark";
+        } else if (sursourcie->get_active_row_number() == 4) {
+            spot.sursourcie = "disacie";
         }
 
         if (bwevMethod->get_active_row_number() == 0) {
