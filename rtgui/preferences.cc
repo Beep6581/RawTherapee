@@ -697,7 +697,7 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     dirgrid->attach_next_to(*cameraProfilesDirLabel, *clutsDirLabel, Gtk::POS_BOTTOM, 1, 1);
     dirgrid->attach_next_to(*cameraProfilesDir, *cameraProfilesDirLabel, Gtk::POS_RIGHT, 1, 1);
 
-	//Lens Profiles Dir
+	  //Lens Profiles Dir
     Gtk::Label *lensProfilesDirLabel = Gtk::manage(new Gtk::Label(M("PREFERENCES_LENSPROFILESDIR") + ":"));
     lensProfilesDirLabel->set_tooltip_text(M("PREFERENCES_LENSPROFILESDIR_TOOLTIP"));
     setExpandAlignProperties(lensProfilesDirLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
@@ -743,6 +743,29 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     cropGrid->attach(*cropAutoFitCB, 0, 1, 2, 1);
     cropFrame->add(*cropGrid);
     vbImageProcessing->pack_start(*cropFrame, Gtk::PACK_SHRINK, 4);
+
+    // Other: max zoom
+    {
+      Gtk::Frame *frame = Gtk::manage(new Gtk::Frame(M("GENERAL_OTHER")));
+      frame->set_label_align (0.025, 0.5);
+      Gtk::Grid *grid = Gtk::manage(new Gtk::Grid());
+
+      Gtk::Label *label = Gtk::manage(new Gtk::Label(M("PREFERENCES_MAX_ZOOM_TITLE") + ": ", Gtk::ALIGN_START));
+      label->set_line_wrap(true);
+      grid->attach(*label, 0, 0);
+
+      maxZoomCombo = Gtk::manage(new Gtk::ComboBoxText());
+
+      // Labels order matches to Options::MaxZoom enum
+      for (int i = 1; i <= 8; ++i) {
+        maxZoomCombo->append(Glib::ustring::compose("%100%%", i));
+      }
+      maxZoomCombo->append("1600%");
+
+      grid->attach(*maxZoomCombo, 1, 0, 1, 1);
+      frame->add(*grid);
+      vbImageProcessing->pack_start(*frame, Gtk::PACK_SHRINK, 4);
+    }
 
     swImageProcessing->add(*vbImageProcessing);
 
@@ -1994,6 +2017,7 @@ void Preferences::storePreferences()
 
     moptions.cropGuides = Options::CropGuidesMode(cropGuidesCombo->get_active_row_number());
     moptions.cropAutoFit = cropAutoFitCB->get_active();
+    moptions.maxZoomLimit = Options::MaxZoom(maxZoomCombo->get_active_row_number());
 
     toolLocationPreference->updateOptions();
 
@@ -2228,6 +2252,7 @@ void Preferences::fillPreferences()
 
     cropGuidesCombo->set_active(moptions.cropGuides);
     cropAutoFitCB->set_active(moptions.cropAutoFit);
+    maxZoomCombo->set_active(static_cast<int>(options.maxZoomLimit));
 
     addc.block(false);
     setc.block(false);
