@@ -100,7 +100,7 @@ void adjustBlackLevels(float cblack[4], rtengine::eSensorType sensorType, const 
             break;
     }
 
-    for (int i = 0; i < black_adjust.size(); i++) {
+    for (unsigned int i = 0; i < black_adjust.size(); i++) {
         cblack[i] = std::max(0.f, cblack[i] + black_adjust[i]);
     }
 }
@@ -118,7 +118,7 @@ void calculate_scale_mul(float scale_mul[4], const float pre_mul_[4], const floa
 {
     std::array<float, 4> c_white;
 
-    for (int i = 0; i < c_white.size(); ++i) {
+    for (unsigned int i = 0; i < c_white.size(); ++i) {
         c_white[i] = static_cast<float>(ri->get_white(i));
     }
 
@@ -1189,7 +1189,19 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         double cam_b = colorMatrix[2][0] * camwbRed + colorMatrix[2][1] * camwbGreen + colorMatrix[2][2] * camwbBlue;
         currWB = ColorTemp (cam_r, cam_g, cam_b, params.wb.equal, params.wb.observer);
     } else if (params.wb.method == "autold") {
-        currWB = ColorTemp (autoWBTemp, autoWBGreen, wbEqual, "Custom", wbObserver);
+        if (params.wb.compat_version == 1 && !isRaw) {
+            // RGB grey compatibility version 1 used the identity multipliers
+            // plus temperature bias for non-raw files.
+            currWB.update(1., 1., 1., params.wb.equal, params.wb.observer, params.wb.tempBias);
+        } else {
+            currWB = ColorTemp(autoWBTemp, autoWBGreen, wbEqual, "Custom", wbObserver);
+        }
+    } else if (params.wb.method == "autitcgreen") {
+        if (params.wb.compat_version == 1 && !isRaw) {
+            currWB = ColorTemp(5000., 1., 1., params.wb.method, StandardObserver::TEN_DEGREES);
+        } else {
+            // TODO: Temperature correlation AWB.
+        }
     }
 
     double rm, gm, bm;
@@ -1318,7 +1330,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     ipf.firstAnalysis (baseImg, params, hist16);
 
     ipf.dehaze(baseImg, params.dehaze);
-    ipf.ToneMapFattal02(baseImg, params.fattal, 3, 0, nullptr, 0, 0, 0);
+    ipf.ToneMapFattal02(baseImg, params.fattal, 3, 0, nullptr, 0, 0, 0, false);
 
     // perform transform
     int origFW;

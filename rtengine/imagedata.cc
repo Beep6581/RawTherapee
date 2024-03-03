@@ -476,8 +476,93 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
             focal_len35mm = pos->toFloat();
         }
 
-        if (find_tag(Exiv2::subjectDistance)) {
-            focus_dist = (0.01 * std::pow(10, pos->toFloat() / 40));
+        // if (find_tag(Exiv2::subjectDistance)) {
+        //     focus_dist = pos->toFloat();
+        // }
+        /*
+         * Get the focus distance in meters.
+         */
+        if (Exiv2::testVersion(0, 27, 4) && find_exif_tag("Exif.NikonLd4.LensID") && to_long(pos) != 0) {
+            // Z lens, need to specifically look for the second instance of
+            // Exif.NikonLd4.FocusDistance unless using Exiv2 0.28.x and later
+            // (also expanded to 2 bytes of precision since 0.28.1).
+#if EXIV2_TEST_VERSION(0, 28, 0)
+            if (find_exif_tag("Exif.NikonLd4.FocusDistance2")) {
+                float value = pos->toFloat();
+                if (Exiv2::testVersion(0, 28, 1)) {
+                    value /= 256.f;
+                }
+#else
+            pos = exif.end();
+            for (auto it = exif.begin(); it != exif.end(); it++) {
+                if (it->key() == "Exif.NikonLd4.FocusDistance") {
+                    pos = it;
+                }
+            }
+            if (pos != exif.end() && pos->size()) {
+                float value = pos->toFloat();
+#endif
+                focus_dist = 0.01 * std::pow(10, value / 40);
+            }
+        } else if (find_exif_tag("Exif.NikonLd2.FocusDistance")
+            || find_exif_tag("Exif.NikonLd3.FocusDistance")
+            || (Exiv2::testVersion(0, 27, 4)
+                && find_exif_tag("Exif.NikonLd4.FocusDistance"))) {
+            float value = pos->toFloat();
+            focus_dist = (0.01 * std::pow(10, value / 40));
+        } else if (find_exif_tag("Exif.OlympusFi.FocusDistance")) {
+            /* the distance is stored as a rational (fraction). according to
+             * http://www.dpreview.com/forums/thread/1173960?page=4
+
+             * some Olympus cameras have a wrong denominator of 10 in there
+             * while the nominator is always in mm.  thus we ignore the
+             * denominator and divide with 1000.
+
+             * "I've checked a number of E-1 and E-300 images, and I agree
+             * that the FocusDistance looks like it is in mm for the
+             * E-1. However, it looks more like cm for the E-300.
+
+             * For both cameras, this value is stored as a rational. With
+             * the E-1, the denominator is always 1, while for the E-300 it
+             * is 10.
+
+             * Therefore, it looks like the numerator in both cases is in mm
+             * (which makes a bit of sense, in an odd sort of way). So I
+             * think what I will do in ExifTool is to take the numerator and
+             * divide by 1000 to display the focus distance in meters."  --
+             * Boardhead, dpreview forums in 2005
+             */
+            int nominator = pos->toRational(0).first;
+            focus_dist = std::max(0.0, (0.001 * nominator));
+        } else if (find_exif_tag("Exif.CanonFi.FocusDistanceUpper")) {
+            const float FocusDistanceUpper = pos->toFloat();
+            if (FocusDistanceUpper <= 0.0f
+                || (int)FocusDistanceUpper >= 0xffff) {
+                focus_dist = 0.0f;
+            } else {
+                focus_dist = FocusDistanceUpper / 100.0;
+                if (find_exif_tag("Exif.CanonFi.FocusDistanceLower")) {
+                    const float FocusDistanceLower = pos->toFloat();
+                    if (FocusDistanceLower > 0.0f && (int)FocusDistanceLower < 0xffff) {
+                        focus_dist += FocusDistanceLower / 100.0;
+                        focus_dist /= 2.0;
+                    }
+                }
+            }
+        } else if (find_exif_tag("Exif.CanonSi.SubjectDistance")) {
+            focus_dist = pos->toFloat() / 100.0;
+        } else if (find_tag(Exiv2::subjectDistance)) {
+            focus_dist = pos->toFloat();
+        } else if (Exiv2::testVersion(0,27,2) && find_exif_tag("Exif.Sony2Fp.FocusPosition2")) {
+            const float focus_position = pos->toFloat();
+
+            if (focus_position && find_exif_tag("Exif.Photo.FocalLengthIn35mmFilm")) {
+                const float focal_length_35mm = pos->toFloat();
+
+                /* http://u88.n24.queensu.ca/exiftool/forum/index.php/topic,3688.msg29653.html#msg29653 */
+                focus_dist =
+                    (std::pow(2, focus_position / 16 - 5) + 1) * focal_length_35mm / 1000;
+            }
         }
 
         if (find_tag(Exiv2::orientation)) {

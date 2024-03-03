@@ -43,6 +43,32 @@
 
 using namespace rtengine;
 
+namespace {
+    inline double zoomLimitToFraction(Options::MaxZoom z) {
+        switch (z) {
+          case Options::MaxZoom::PERCENTS_100:
+            return 1.;
+          case Options::MaxZoom::PERCENTS_200:
+            return 2.;
+          case Options::MaxZoom::PERCENTS_300:
+            return 3.;
+          case Options::MaxZoom::PERCENTS_400:
+            return 4.;
+          case Options::MaxZoom::PERCENTS_500:
+            return 5.;
+          case Options::MaxZoom::PERCENTS_600:
+            return 6.;
+          case Options::MaxZoom::PERCENTS_700:
+            return 7.;
+          case Options::MaxZoom::PERCENTS_800:
+            return 8.;
+          case Options::MaxZoom::PERCENTS_1600:
+          default:
+            return 16.;
+        }
+    }
+}
+
 bool CropWindow::initialized = false;
 
 Glib::ustring CropWindow::zoomOuttt;
@@ -2284,11 +2310,16 @@ void CropWindow::updateHoveredPicker (rtengine::Coord *imgPos)
 }
 void CropWindow::changeZoom (int zoom, bool notify, int centerx, int centery, bool needsRedraw)
 {
-
     if (zoom < 0) {
         zoom = 0;
     } else if (zoom > int(zoomSteps.size())-1) {
         zoom = int(zoomSteps.size())-1;
+    }
+
+    // Limit zoom according to user preferences
+    double zoomLimit = zoomLimitToFraction(options.maxZoomLimit);
+    while(zoomSteps[zoom].zoom > zoomLimit && zoom != 0) {
+        --zoom;
     }
 
     cropZoom = zoom;

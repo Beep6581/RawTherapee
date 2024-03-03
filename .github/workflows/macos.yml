@@ -4,16 +4,19 @@ on:
     branches:
       - dev
       - releases
+      - 'release-[0-9]+.*'
     tags:
       - '[0-9]+.*'
   pull_request:
     branches:
       - dev
+      - releases
+      - 'release-[0-9]+.*'
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: macos-11
+    runs-on: macos-12
     steps:
       - uses: actions/checkout@v3
       - name: Install dependencies

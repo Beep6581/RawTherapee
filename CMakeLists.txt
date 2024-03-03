@@ -546,6 +546,10 @@ pkg_check_modules(LCMS REQUIRED lcms2>=2.6)
 pkg_check_modules(EXPAT REQUIRED expat>=2.1)
 pkg_check_modules(FFTW3F REQUIRED fftw3f)
 
+# By default little-cms2 uses 'register' keyword which is deprecated and removed in c++17
+# This definition forces not to use it
+add_definitions("-DCMS_NO_REGISTER_KEYWORD")
+
 #Set the appropriate FFTW flags on macOS
 if(APPLE AND OPTION_OMP)
         set(EXTRA_LIB "-L${LOCAL_PREFIX}/lib -lfftw3f_omp -lfftw3f -lm")

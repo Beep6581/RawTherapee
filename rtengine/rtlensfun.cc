@@ -435,11 +435,21 @@ std::vector<LFLens> LFDatabase::getLenses() const
 }
 
 
-LFCamera LFDatabase::findCamera(const Glib::ustring &make, const Glib::ustring &model) const
+LFCamera LFDatabase::findCamera(const Glib::ustring &make, const Glib::ustring &model, bool autoMatch) const
 {
     LFCamera ret;
     if (data_ && !make.empty()) {
         MyMutex::MyLock lock(lfDBMutex);
+        if (!autoMatch) {
+            // Try to find exact match by name.
+            for (auto camera_list = data_->GetCameras(); camera_list[0]; camera_list++) {
+                const auto camera = camera_list[0];
+                if (make == camera->Maker && model == camera->Model) {
+                    ret.data_ = camera;
+                    return ret;
+                }
+            }
+        }
         auto found = data_->FindCamerasExt(make.c_str(), model.c_str());
         if (found) {
             ret.data_ = found[0];
@@ -455,6 +465,16 @@ LFLens LFDatabase::findLens(const LFCamera &camera, const Glib::ustring &name) c
     LFLens ret;
     if (data_ && !name.empty()) {
         MyMutex::MyLock lock(lfDBMutex);
+        if (!camera.data_) {
+            // Only the lens name provided. Try to find exact match by name.
+            LFLens candidate;
+            for (auto lens_list = data_->GetLenses(); lens_list[0]; lens_list++) {
+                candidate.data_ = lens_list[0];
+                if (name == candidate.getLens()) {
+                    return candidate;
+                }
+            }
+        }
         auto found = data_->FindLenses(camera.data_, nullptr, name.c_str());
         for (size_t pos = 0; !found && pos < name.size(); ) {
             // try to split the maker from the model of the lens -- we have to
@@ -541,7 +561,7 @@ std::unique_ptr<LFModifier> LFDatabase::findModifier(
         return nullptr;
     }
 
-    const LFCamera c = findCamera(make, model);
+    const LFCamera c = findCamera(make, model, lensProf.lfAutoMatch());
     const LFLens l = findLens(
         lensProf.lfAutoMatch()
             ? c

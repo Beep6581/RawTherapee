@@ -251,6 +251,8 @@ class Preferences final :
 
     Gtk::CheckButton *enableLibRaw;
 
+    Gtk::ComboBoxText *maxZoomCombo;
+
     Gtk::ComboBoxText *metadataSyncCombo;
     Gtk::ComboBoxText *xmpSidecarCombo;
 

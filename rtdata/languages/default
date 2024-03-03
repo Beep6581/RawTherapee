@@ -740,8 +740,8 @@ HISTORY_MSG_493;L*a*b* Adjustments
 HISTORY_MSG_494;Capture Sharpening
 HISTORY_MSG_496;Local Spot deleted
 HISTORY_MSG_497;Local Spot selected
-HISTORY_MSG_498;--unused--
-HISTORY_MSG_499;--unused--
+HISTORY_MSG_498;Local - Spot name
+HISTORY_MSG_499;Local - Spot visibility
 HISTORY_MSG_500;Local - Spot shape
 HISTORY_MSG_501;Local - Spot method
 HISTORY_MSG_502;Local - SC - Shape method
@@ -1408,6 +1408,7 @@ HISTORY_MSG_DEHAZE_ENABLED;Haze Removal
 HISTORY_MSG_DEHAZE_SATURATION;Dehaze - Saturation
 HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;Dehaze - Show depth map
 HISTORY_MSG_DEHAZE_STRENGTH;Dehaze - Strength
+HISTORY_MSG_DIRPYRDENOISE_GAIN;NR - Compensate for lightness
 HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;Dual demosaic - Auto threshold
 HISTORY_MSG_DUALDEMOSAIC_CONTRAST;Dual demosaic - Contrast threshold
 HISTORY_MSG_EDGEFFECT;Edge Attenuation response
@@ -1449,6 +1450,7 @@ HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
 HISTORY_MSG_LOCALLAB_TE_PIVOT;Local - Equalizer pivot
 HISTORY_MSG_LOCAL_DEHAZE_BLACK;Local - Dehaze - black
 HISTORY_MSG_LOCAL_GAMUTMUNSEL;Local - SC - Avoid Color Shift
+HISTORY_MSG_LOCAL_TMO_SATUR;Local Exp Fattal Saturation
 HISTORY_MSG_METADATA_MODE;Metadata copy mode
 HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrast threshold
 HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST;CS - Auto threshold
@@ -1543,7 +1545,7 @@ HISTORY_MSG_WBITC_CUSTOM;Itcwb Custom
 HISTORY_MSG_WBITC_DELTA;Itcwb Delta green
 HISTORY_MSG_WBITC_FGREEN;Itcwb Green - student
 HISTORY_MSG_WBITC_FORCE;Itcwb Force
-HISTORY_MSG_WBITC_GREEN;Grren refinement
+HISTORY_MSG_WBITC_GREEN;Green refinement
 HISTORY_MSG_WBITC_MINSIZE;Patch min size
 HISTORY_MSG_WBITC_NOPURPLE;Itcwb Nopurple
 HISTORY_MSG_WBITC_OBS;Remove algo 2 passes
@@ -1554,7 +1556,7 @@ HISTORY_MSG_WBITC_RGREEN;Itcwb Green range
 HISTORY_MSG_WBITC_SAMPLING;Low sampling
 HISTORY_MSG_WBITC_SIZE;Itcwb Size
 HISTORY_MSG_WBITC_SORTED;Itcwb ponderated
-HISTORY_MSG_WBITC_THRES;Itcwb Theshold
+HISTORY_MSG_WBITC_THRES;Itcwb Threshold
 HISTORY_NEWSNAPSHOT;Add
 HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 HISTORY_SNAPSHOT;Snapshot
@@ -1943,6 +1945,7 @@ PREFERENCES_LENSFUNDBDIR;Lensfun database directory
 PREFERENCES_LENSFUNDBDIR_TOOLTIP;Directory containing the Lensfun database.  Leave empty to use the default directories.
 PREFERENCES_LENSPROFILESDIR;Lens profiles directory
 PREFERENCES_LENSPROFILESDIR_TOOLTIP;Directory containing Adobe Lens Correction Profiles (LCPs)
+PREFERENCES_MAX_ZOOM_TITLE;Maximum zoom
 PREFERENCES_MAXRECENTFOLDERS;Maximum number of recent folders
 PREFERENCES_MENUGROUPEXTPROGS;Group 'Open with'
 PREFERENCES_MENUGROUPFILEOPERATIONS;Group 'File operations'
@@ -2041,7 +2044,7 @@ PREFERENCES_USEBUNDLEDPROFILES;Use bundled profiles
 PREFERENCES_WBA;White Balance
 PREFERENCES_WBACORR;White Balance - Automatic temperature correlation
 PREFERENCES_WBACORR_TOOLTIP;These settings allow, depending on the images (type of raw file, colorimetry, etc.), an adaptation of the " Temperature correlation " algorithm in order to obtain the best overall results. There is no absolute rule, linking these parameters to the results obtained.\n\nThe settings are of 3 types: \n* those accessible to the user from the GUI.\n* those accessible only in reading from each pp3 file : Itcwb_minsize=20, Itcwb_delta=4 Itcwb_rgreen=1 Itcwb_nopurple=false (See Rawpedia)\n* those accessible to the user in 'options' (see Rawpedia)\n You can use "Awb temperature bias" and "Green refinement" to adjust the results. Each movement of these commands brings a new calculation of temperature, tint and correlation.\n\nPlease note that the 3 indicators 'Correlation factor', 'Patch chroma' and ΔE are given for information only. It is not because one of these indicators is better that the result will necessarily be better.
-PREFERENCES_WBAENA;Show White Balance auto Temperature correlation Settings
+PREFERENCES_WBAENA;Show White Balance Auto temperature correlation settings
 PREFERENCES_WBAENACUSTOM;Use Custom temperature & tint
 PREFERENCES_WBAFORC;Forces Extra algoritm
 PREFERENCES_WBAGREENDELTA;Delta temperature in green iterate loop (if Force Extra enabled)
@@ -2102,10 +2105,31 @@ QINFO_PIXELSHIFT;Pixel Shift / %2 frame(s)
 QUEUE_AUTOSTART;Auto-start
 QUEUE_AUTOSTART_TOOLTIP;Start processing automatically when a new job arrives.
 QUEUE_DESTFILENAME;Path and file name
+QUEUE_DESTPREVIEW_TITLE;Select a thumbnail to preview its destination path here
+QUEUE_DESTPREVIEW_TOOLTIP;Destination path for the first selected image appears here
 QUEUE_FORMAT_TITLE;File Format
 QUEUE_LOCATION_FOLDER;Save to folder
 QUEUE_LOCATION_TEMPLATE;Use template
-QUEUE_LOCATION_TEMPLATE_TOOLTIP;Specify the output location based on the source photo's location, rank, trash status or position in the queue.\n\nUsing the following pathname as an example:\n<b>/home/tom/photos/2010-10-31/photo1.raw</b>\nthe meaning of the formatting strings follows:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>photo1</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b> will be replaced by the photo's rank. If the photo is unranked, '<i>0</i>' is used. If the photo is in the trash, '<i>x</i>' is used.\n\n<b>%s1</b>, ..., <b>%s9</b> will be replaced by the photo's initial position in the queue at the time the queue is started. The number specifies the padding, e.g. <b>%s3</b> results in '<i>001</i>'.\n\nIf you want to save the output image alongside the source image, write:\n<b>%p1/%f</b>\n\nIf you want to save the output image in a folder named '<i>converted</i>' located in the source photo's folder, write:\n<b>%p1/converted/%f</b>\n\nIf you want to save the output image in\n'<i>/home/tom/photos/converted/2010-10-31</i>', write:\n<b>%p2/converted/%d1/%f</b>
+QUEUE_LOCATION_TEMPLATE_TOOLTIP;Specify the output location based on characteristics such as the source photo's location, rank, trash status or position in the queue.\n\nThe output template field value can include specifiers beginning with <b>%</b>, which are replaced by those characteristics in the actual destination path.\n\nPress the <b>?</b> button for full instructions.
+QUEUE_LOCATION_TEMPLATE_HELP_BUTTON_TOOLTIP;Show or hide a help panel with instructions for creating location templates
+QUEUE_LOCATION_TEMPLATE_HELP_TITLE;Creating an output template
+QUEUE_LOCATION_TEMPLATE_HELP_INTRO;The output template field allows you to to dynamically customize the destination folder and filename. When you include certain specifiers, which begin with <b>%</b>, they are replaced by the program when each file is being saved.\n\nThe sections below describe each type of specifier.
+QUEUE_LOCATION_TEMPLATE_HELP_PATHS_TITLE;Directories and partial paths
+QUEUE_LOCATION_TEMPLATE_HELP_PATHS_INTRO;The <b>%dN</b>, <b>%d-N</b>, <b>%pN</b>, <b>%p-N</b>, <b>%PN</b> and <b>%P-N</b> (N = 1..9) specifiers will be replaced by elements of the image file's directory path.\nThe format specifiers operate as follows:\n  <b>%dN</b> = Nth directory from the end of the path\n  <b>%d-N</b> = Nth directory from the start of the path\n  <b>%pN</b>  = all directories up to the Nth from the end of the path\n  <b>%p-N</b> = the first N directories in the path\n  <b>%PN</b>  = the last N directories in the path\n  <b>%P-N</b> = all directories from the Nth to the end of the path\n  <b>%f</b> = base filename (no extension)
+QUEUE_LOCATION_TEMPLATE_HELP_PATHS_INTRO_WINDOWS;For Windows paths, <b>%d-1</b> is the drive letter and colon, and <b>%d-2</b> is the base directory on that drive.
+QUEUE_LOCATION_TEMPLATE_HELP_PATHS_BODY_1;Using this pathname as an example:
+QUEUE_LOCATION_TEMPLATE_HELP_PATHS_EXAMPLE_LINUX;/home/tom/photos/2010-10-31/photo1.raw
+QUEUE_LOCATION_TEMPLATE_HELP_PATHS_EXAMPLE_WINDOWS;D:\tom\photos\2010-10-31\photo1.raw
+QUEUE_LOCATION_TEMPLATE_HELP_PATHS_BODY_2;The meanings of the formatting strings are:
+QUEUE_LOCATION_TEMPLATE_HELP_RESULT_MISMATCH;ERROR: 2nd result is different:
+QUEUE_LOCATION_TEMPLATE_HELP_RANK_TITLE;Rank
+QUEUE_LOCATION_TEMPLATE_HELP_RANK_BODY;<b>%r</b> will be replaced by the photo's rank. If the photo is unranked, '<i>0</i>' is used. If the photo is in the trash, '<i>x</i>' is used.
+QUEUE_LOCATION_TEMPLATE_HELP_SEQUENCE_TITLE;Position/sequence in queue
+QUEUE_LOCATION_TEMPLATE_HELP_SEQUENCE_BODY;<b>%s1</b>, ..., <b>%s9</b> will be replaced by the photo's initial position in the queue at the time the queue is started. The number specifies the padding, e.g. <b>%s3</b> results in '<i>001</i>'.
+QUEUE_LOCATION_TEMPLATE_HELP_TIMESTAMP_TITLE;Date and time
+QUEUE_LOCATION_TEMPLATE_HELP_TIMESTAMP_BODY;Three different date/time values may be used in templates:\n  <b>%tE"%Y-%m-%d"</b> = when export started\n  <b>%tF"%Y-%m-%d"</b> = when file was last saved\n  <b>%tP"%Y-%m-%d"</b> = when photo was taken\nThe quoted string defines the format of the resulting date and/or time. The format string <b>%tF"%Y-%m-%d"</b> is just one example. The string can use all conversion specifiers defined for the g_date_time_format function (see https://docs.gtk.org/glib/method.DateTime.format.html).\n\nExample format strings:
+QUEUE_LOCATION_TEMPLATE_HELP_EXAMPLES_TITLE;Common examples
+QUEUE_LOCATION_TEMPLATE_HELP_EXAMPLES_BODY;If you want to save the output image alongside the source image, write:\n<b>%p1/%f</b>\n\nIf you want to save the output image in a folder named '<i>converted</i>' located in the source photo's folder, write:\n<b>%p1/converted/%f</b>\n\nIf you want to save the output image in\n'<i>/home/tom/photos/converted/2010-10-31</i>', write:\n<b>%p-3/converted/%P-4/%f</b>
 QUEUE_LOCATION_TITLE;Output Location
 QUEUE_STARTSTOP_TOOLTIP;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 SAMPLEFORMAT_0;Unknown data format
@@ -2449,6 +2473,8 @@ TP_DIRPYRDENOISE_LUMINANCE_CURVE;Luminance curve
 TP_DIRPYRDENOISE_LUMINANCE_DETAIL;Detail recovery
 TP_DIRPYRDENOISE_LUMINANCE_FRAME;Luminance
 TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Luminance
+TP_DIRPYRDENOISE_MAIN_AUTO_GAIN;Compensate for lightness
+TP_DIRPYRDENOISE_MAIN_AUTO_GAIN_TOOLTIP;Alter the noise reduction strength based on the image lightness. Strength is reduced for dark images and increased for bright images.
 TP_DIRPYRDENOISE_MAIN_COLORSPACE;Color space
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_LAB;L*a*b*
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;RGB
@@ -2959,9 +2985,11 @@ TP_LOCALLAB_EXP_TOOLNAME;Dynamic Range & Exposure
 TP_LOCALLAB_FATAMOUNT;Amount
 TP_LOCALLAB_FATANCHOR;Anchor
 TP_LOCALLAB_FATDETAIL;Detail
+TP_LOCALLAB_FATSAT;Saturation control
 TP_LOCALLAB_FATFRA;Dynamic Range Compression ƒ
 TP_LOCALLAB_FATFRAME_TOOLTIP;PDE Fattal – uses the Fattal Tone-mapping algorithm.
 TP_LOCALLAB_FATLEVEL;Sigma
+TP_LOCALLAB_FATSAT;Saturation control
 TP_LOCALLAB_FATSHFRA;Dynamic Range Compression Mask ƒ
 TP_LOCALLAB_FEATH_TOOLTIP;Gradient width as a percentage of the Spot diagonal\nUsed by all graduated filters in all tools.\nNo action if a graduated filter hasn't been activated.
 TP_LOCALLAB_FEATVALUE;Feather gradient (Grad. Filters)
@@ -4167,7 +4195,7 @@ TP_WBALANCE_ITCWB_CUSTOM;Use Custom temperature & tint
 TP_WBALANCE_ITCWB_DELTA;Delta temperature in green loop
 TP_WBALANCE_ITCWB_FGREEN;Find green student
 TP_WBALANCE_ITCWB_FORCED;Close to full CIE diagram
-TP_WBALANCE_ITCWB_FRA;Auto Temperature correlation Settings
+TP_WBALANCE_ITCWB_FRA;Auto temperature correlation settings
 TP_WBALANCE_ITCWB_FRA_TOOLTIP;These settings allow, depending on the images (type of raw, colorimetry, etc.), an adaptation of the 'Temperature correlation' algorithm. There is no absolute rule linking these parameters to the results obtained.
 TP_WBALANCE_ITCWB_MINSIZEPATCH;Patch minimum size
 TP_WBALANCE_ITCWB_NOPURPLE;Filter on purple color
