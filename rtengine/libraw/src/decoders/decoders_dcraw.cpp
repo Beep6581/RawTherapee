@@ -345,7 +345,10 @@ int LibRaw::ljpeg_start(struct jhead *jh, int info_only)
   if (jh->sraw)
   {
     FORC(4) jh->huff[2 + c] = jh->huff[1];
-    FORC(jh->sraw) jh->huff[1 + c] = jh->huff[0];
+    {
+      int c;
+      FORC(jh->sraw) jh->huff[1 + c] = jh->huff[0];
+    }
   }
   jh->row = (ushort *)calloc(jh->wide * jh->clrs, 16);
   return zero_after_ff = 1;
