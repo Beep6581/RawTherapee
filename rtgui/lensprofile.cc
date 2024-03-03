@@ -242,7 +242,7 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
 
     if (pp->lensProf.lfAutoMatch()) {
         if (metadata) {
-            c = db->findCamera(metadata->getMake(), metadata->getModel());
+            c = db->findCamera(metadata->getMake(), metadata->getModel(), true);
             setLensfunCamera(c.getMake(), c.getModel());
         }
     } else if (pp->lensProf.lfManual()) {
@@ -521,7 +521,7 @@ void LensProfilePanel::onCorrModeChanged(const Gtk::RadioButton* rbChanged)
                 setLensfunLens("");
             } else if (metadata) {
                 const LFDatabase* const db = LFDatabase::getInstance();
-                const LFCamera c = db->findCamera(metadata->getMake(), metadata->getModel());
+                const LFCamera c = db->findCamera(metadata->getMake(), metadata->getModel(), true);
                 const LFLens l = db->findLens(c, metadata->getLens());
                 setLensfunCamera(c.getMake(), c.getModel());
                 setLensfunLens(l.getLens());
@@ -801,7 +801,7 @@ void LensProfilePanel::updateLensfunWarning()
             return;
         }
 
-        const LFCamera c = db->findCamera((*itc)[lf->lensfunModelCam.make], (*itc)[lf->lensfunModelCam.model]);
+        const LFCamera c = db->findCamera((*itc)[lf->lensfunModelCam.make], (*itc)[lf->lensfunModelCam.model], false);
         const auto itl = lensfunLenses->get_active();
 
         if (!itl) {

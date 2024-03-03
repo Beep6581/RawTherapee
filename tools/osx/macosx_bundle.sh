@@ -155,8 +155,9 @@ fi
 
 # In: OSX_CONTINUOUS:BOOL=ON
 # Out: ON
-OSX_CONTINUOUS="$(cmake .. -L -N | grep OSX_CONTINUOUS)"; NIGHTLY="${OSX_CONTINUOUS#*=}" && CONTINUOUS="${OSX_CONTINUOUS#*=}"
+OSX_CONTINUOUS="$(cmake .. -L -N | grep OSX_CONTINUOUS)"; CONTINUOUS="${OSX_CONTINUOUS#*=}"
 if [[ -n $CONTINUOUS ]]; then
+    NIGHTLY="${OSX_CONTINUOUS#*=}"
     echo "Continuous/generically-named zip is ON."
 fi
 
@@ -313,13 +314,17 @@ done
 install_name_tool -delete_rpath RawTherapee.app/Contents/Frameworks "${EXECUTABLE}"-cli 2>/dev/null
 install_name_tool -add_rpath /Applications/"${LIB}" "${EXECUTABLE}"-cli 2>/dev/null
 
+# Link to libomp instead of libgomp
+sudo install_name_tool -change /Applications/RawTherapee.app/Contents/Frameworks/libgomp.1.dylib /Applications/RawTherapee.app/Contents/Frameworks/libomp.dylib RawTherapee.app/Contents/Frameworks/libfftw3f_omp.3.dylib
+rm RawTherapee.app/Contents/Frameworks/libgomp.1.dylib
+
 # Merge the app with the other architecture to create the Universal app.
 if [[ -n $UNIVERSAL_URL ]]; then
     msg "Getting Universal countercomponent."
     curl -L ${UNIVERSAL_URL} -o univ.zip
     msg "Extracting app."
     unzip univ.zip -d univapp
-    hdiutil attach -mountpoint ./RawTherapeeuniv univapp/*dmg
+    hdiutil attach -mountpoint ./RawTherapeeuniv univapp/*folder/*dmg
     if [[ $arch = "arm64" ]]; then
         cp -R RawTherapee.app RawTherapee-arm64.app
         minimum_arm64_version=$(f=$(cat RawTherapee-arm64.app/Contents/Resources/AboutThisBuild.txt | grep mmacosx-version); echo "${f#*min=}" | cut -d ' ' -f1)
@@ -336,6 +341,7 @@ if [[ -n $UNIVERSAL_URL ]]; then
         cat RawTherapee-arm64.app/Contents/Resources/AboutThisBuild.txt >> RawTherapee.app/Contents/Resources/AboutThisBuild.txt
     fi
     cmake -DPROJECT_SOURCE_DATA_DIR=${PROJECT_SOURCE_DATA_DIR} -DCONTENTS=${CONTENTS} -Dversion=${PROJECT_FULL_VERSION} -DshortVersion=${PROJECT_VERSION} -Dminimum_arm64_version=${minimum_arm64_version} -Dminimum_x86_64_version=${minimum_x86_64_version} -Darch=${arch} -P ${PROJECT_SOURCE_DATA_DIR}/info-plist.cmake
+    plutil -convert xml1 ${APP}/Contents/Info.plist
     hdiutil unmount ./RawTherapeeuniv
     rm -r univapp
     # Create the fat main RawTherapee binary and move it into the new bundle
@@ -360,9 +366,26 @@ fi
 if [[ -n $CODESIGNID ]]; then
     msg "Codesigning Application."
     iconv -f UTF-8 -t ASCII "${PROJECT_SOURCE_DATA_DIR}"/rt.entitlements > "${CMAKE_BUILD_TYPE}"/rt.entitlements
-#    mv "${EXECUTABLE}"-cli "${LIB}"
-    codesign --force --deep --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee-cli "${APP}"/Contents/MacOS/rawtherapee-cli
-    codesign --force --deep --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements "${APP}"
+    plutil -convert xml1 "${CMAKE_BUILD_TYPE}"/rt.entitlements
+    for frame in ${APP}/Contents/Frameworks/* ; do
+        echo $frame
+        codesign --preserve-metadata=identifier --digest-algorithm=sha1,sha256 --force --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements $frame
+    done
+    for resource in ${APP}/Contents/Resources/* ; do
+        echo $resource
+        if [ ! -d $resource ]; then
+            codesign --preserve-metadata=identifier --digest-algorithm=sha1,sha256 --force --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements $resource
+        else
+            for subresource in ${APP}/Contents/Resources/$(basename $resource)/* ; do
+                if [ ! -d $subresource ]; then
+                    codesign --preserve-metadata=identifier --digest-algorithm=sha1,sha256 --force --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements $subresource
+                fi
+            done
+        fi
+    done
+    codesign --preserve-metadata=identifier --digest-algorithm=sha1,sha256 --force --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements "${APP}"/Contents/MacOS/rawtherapee-cli
+    codesign --preserve-metadata=identifier --digest-algorithm=sha1,sha256 --force --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements "${APP}"/Contents/MacOS/rawtherapee
+    codesign --preserve-metadata=identifier --digest-algorithm=sha1,sha256 --force --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements "${APP}"
     spctl -a -vvvv "${APP}"
 fi
 
@@ -436,7 +459,7 @@ function CreateDmg {
     # Sign disk image
     if [[ -n $CODESIGNID ]]; then
         msg "Signing disk image"
-        codesign --deep --force -v -s "${CODESIGNID}" --timestamp "${dmg_name}.dmg"
+        codesign  --digest-algorithm=sha1,sha256 --force -v -s "${CODESIGNID}" --timestamp "${dmg_name}.dmg"
     fi
     
     # Notarize the dmg
