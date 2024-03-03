@@ -430,7 +430,7 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
 
     double wb2[3][3];
     float epsilon =  0.000001f;
-     //   if(gamutcontrol) {
+    if(gamutcontrol) {
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
@@ -440,7 +440,7 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
                     src->g(i, j) = rtengine::max(src->g(i, j), epsilon);
                     src->b(i, j) = rtengine::max(src->b(i, j), epsilon); 
                 }
-    //    }
+    }
 
 
 
@@ -497,7 +497,9 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
                 float X_r = xcb;
                 float Y_r = ycb;
                 float Z_r = zcb;
-                Color::gamutmap(X_r, Y_r, Z_r, wb2);//gamut control
+                if(gamutcontrol) {
+                    Color::gamutmap(X_r, Y_r, Z_r, wb2);//gamut control
+                }
                 const float som = X_r + Y_r + Z_r;
                 X_r = X_r / som;
                 Y_r = Y_r / som;
@@ -1234,7 +1236,9 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
         gammaParams[3] = 1. / slpos;
         gammaParams[5] = 0.0;
         gammaParams[6] = 0.0;
-    //    printf("ga0=%f ga1=%f ga2=%f ga3=%f ga4=%f\n", gammaParams[0], gammaParams[1], gammaParams[2], gammaParams[3], gammaParams[4]);
+        if(rtengine::settings->verbose) {         
+            printf("ga0=%f ga1=%f ga2=%f ga3=%f ga4=%f\n", gammaParams[0], gammaParams[1], gammaParams[2], gammaParams[3], gammaParams[4]);
+        }
 
         // 7 parameters for smoother curves
 //        cmsCIExyY xyD;
