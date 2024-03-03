@@ -430,7 +430,7 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
 
     double wb2[3][3];
     float epsilon =  0.000001f;
-    if(gamutcontrol) {
+  //  if(gamutcontrol) {
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
@@ -440,7 +440,7 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
                     src->g(i, j) = rtengine::max(src->g(i, j), epsilon);
                     src->b(i, j) = rtengine::max(src->b(i, j), epsilon); 
                 }
-    }
+  //  }
 
 
 
