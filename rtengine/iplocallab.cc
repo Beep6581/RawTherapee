@@ -9480,10 +9480,8 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                     transformed->L[y + ystart][x + xstart] = clipLoc(original->L[y + ystart][x + xstart] + factorx * realstrdE);//clipLoc now do nothing...just keep in ace off
                     float diflc = factorx * realstrdE;
                     transformed->a[y + ystart][x + xstart] = clipC(original->a[y + ystart][x + xstart] + factorx * realstradE);
-                    transformed->a[y + ystart][x + xstart] = (original->a[y + ystart][x + xstart] + factorx * realstradE);
                     const float difa = factorx * realstradE;
                     transformed->b[y + ystart][x + xstart] = clipC(original->b[y + ystart][x + xstart] + factorx * realstrbdE);
-                    transformed->b[y + ystart][x + xstart] = (original->b[y + ystart][x + xstart] + factorx * realstrbdE);
                     const float difb = factorx * realstrbdE;
                     float maxdifab = rtengine::max(std::fabs(difa), std::fabs(difb));
 
