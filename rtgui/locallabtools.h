@@ -67,6 +67,7 @@ protected:
     rtengine::ProcEvent EvlocallabLLmaskcieshapewav;
     rtengine::ProcEvent EvlocallabcsThresholdcie;
     rtengine::ProcEvent Evlocallabcomprcie;
+    rtengine::ProcEvent Evlocallabstrcielog;
     rtengine::ProcEvent Evlocallabcomprcieth;
     rtengine::ProcEvent EvlocallabHHhmaskcieshape;
     rtengine::ProcEvent EvlocallabbwevMethod;
@@ -1666,6 +1667,7 @@ private:
     Gtk::CheckButton* const logcie;
     ToolParamBlock* const comprBox;
     Adjuster* const comprcie;
+    Adjuster* const strcielog;
     Adjuster* const comprcieth;
     MyExpander* const expprecam;    
     Adjuster* const gamjcie;

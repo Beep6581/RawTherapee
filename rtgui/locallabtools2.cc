@@ -7563,6 +7563,7 @@ Locallabcie::Locallabcie():
     logcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LOGCIE")))),
     comprBox(Gtk::manage(new ToolParamBlock())),
     comprcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIE"), 0., 1., 0.01, 0.6))),
+    strcielog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGTHCIELOG"), 0., 100., 0.5, 80.))),
     comprcieth(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIETH"), 0., 25., 0.01, 6.))),
 
     expprecam(Gtk::manage(new MyExpander(true, Gtk::manage(new Gtk::Box())))),
@@ -7718,6 +7719,7 @@ Locallabcie::Locallabcie():
     EvlocallabLLmaskcieshapewav = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIEMASK_WLC");
     EvlocallabcsThresholdcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIEMASK_WLEV");
     Evlocallabcomprcie = m->newEvent(HDR, "HISTORY_MSG_LOCAL_CIE_BRICOMP");
+    Evlocallabstrcielog = m->newEvent(HDR, "HISTORY_MSG_LOCAL_CIE_STRLOG");
     Evlocallabcomprcieth = m->newEvent(HDR, "HISTORY_MSG_LOCAL_CIE_BRICOMPTH");
     EvlocallabHHhmaskcieshape = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIEMASK_CHH");
     EvlocallabbwevMethod = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SIGMET");
@@ -7979,6 +7981,7 @@ Locallabcie::Locallabcie():
     modeHBoxbwev->pack_start(*bwevMethod);
 
     comprBox->pack_start(*comprcie);
+    comprBox->pack_start(*strcielog);
     logcieFrame->add(*comprBox);
     gamcieBox->pack_start(*logcieFrame);
 
@@ -8332,6 +8335,7 @@ Locallabcie::Locallabcie():
     sigmoidsenscie->setAdjusterListener(this);
     sigmoidblcie->setAdjusterListener(this);
     comprcie->setAdjusterListener(this);
+    strcielog->setAdjusterListener(this);
     comprcieth->setAdjusterListener(this);
     gamjcie->setAdjusterListener(this);
     slopjcie->setAdjusterListener(this);
@@ -9251,6 +9255,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         sigmoidsenscie->setValue(spot.sigmoidsenscie);
         sigmoidblcie->setValue(spot.sigmoidblcie);
         comprcie->setValue(spot.comprcie);
+        strcielog->setValue(spot.strcielog);
         comprcieth->setValue(spot.comprcieth);
         gamjcie->setValue(spot.gamjcie);
         slopjcie->setValue(spot.slopjcie);
@@ -9571,6 +9576,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.sigmoidsenscie = sigmoidsenscie->getValue();
         spot.sigmoidblcie = sigmoidblcie->getValue();
         spot.comprcie = comprcie->getValue();
+        spot.strcielog = strcielog->getValue();
         spot.comprcieth = comprcieth->getValue();
         spot.gamjcie = gamjcie->getValue();
         spot.slopjcie = slopjcie->getValue();
@@ -10588,6 +10594,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             decaycie->hide();
             expmaskcie->hide();
             comprcie->show();
+            strcielog->show();
             comprcieth->hide();
             comprcieauto->hide();
             comprBox->show();
@@ -10685,6 +10692,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             expjz->hide();
             forcejz->hide();
             comprcie->show();
+            strcielog->show();
             comprcieth->show();
             comprcieauto->show();
             comprBox->show();
@@ -10811,6 +10819,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             sigmoidblcie->show();
             pqremapcam16->show();
             comprcie->show();
+            strcielog->show();
             comprcieth->show();
             comprcieauto->show();
             sigmoidsenscie->show();
@@ -11290,6 +11299,7 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         sigmoidsenscie->setDefault(defSpot.sigmoidsenscie);
         sigmoidblcie->setDefault(defSpot.sigmoidblcie);
         comprcie->setDefault(defSpot.comprcie);
+        strcielog->setDefault(defSpot.strcielog);
         comprcieth->setDefault(defSpot.comprcieth);
         gamjcie->setDefault(defSpot.gamjcie);
         whitescie->setDefault(defSpot.whitescie);
@@ -11792,6 +11802,13 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabcomprcie,
                                        comprcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == strcielog) {
+            if (listener) {
+                listener->panelChanged(Evlocallabstrcielog,
+                                       strcielog->getTextValue() + spName);
             }
         }
 

@@ -1071,6 +1071,7 @@ public:
         bool sigmoidsenscie;
         bool sigmoidblcie;
         bool comprcie;
+        bool strcielog;
         bool comprcieth;
         bool gamjcie;
         bool slopjcie;

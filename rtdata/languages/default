@@ -1477,6 +1477,7 @@ HISTORY_MSG_LOCAL_CIE_BLUYL;Local CIECAM - Blue Y
 HISTORY_MSG_LOCAL_CIE_SHIFTXL;Local CIECAM - Shift x
 HISTORY_MSG_LOCAL_CIE_SHIFTYL;Local CIECAM - Shift y
 HISTORY_MSG_LOCAL_CIE_SMOOTH;Local CIECAM - Smooth highlights
+HISTORY_MSG_LOCAL_CIE_STRLOG;Local CIECAM - Log encoding strength
 HISTORY_MSG_LOCAL_CIE_WHITES;Local CIECAM - Whites distribution
 HISTORY_MSG_LOCAL_CIEMASK_BLURCONT;Local Cie mask blur contrast
 HISTORY_MSG_LOCAL_CIEMASK_BLURFFT;Local Cie mask blur fftw
@@ -3551,6 +3552,7 @@ TP_LOCALLAB_STRENG;Strength
 TP_LOCALLAB_STRENGR;Strength
 TP_LOCALLAB_STRENGRID_TOOLTIP;You can adjust the desired effect with 'strength', but you can also use the 'scope' function which allows you to delimit the action (e.g. to isolate a particular color).
 TP_LOCALLAB_STRENGTH;Noise
+TP_LOCALLAB_STRENGTHCIELOG;Strength
 TP_LOCALLAB_STRGRID;Strength
 TP_LOCALLAB_STRUC;Structure
 TP_LOCALLAB_STRUCCOL;Spot structure

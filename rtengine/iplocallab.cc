@@ -20213,6 +20213,8 @@ void ImProcFunctions::Lab_Local(
                 if (params->locallab.spots.at(sp).expprecam && params->locallab.spots.at(sp).modecam == "cam16") {
                     Imagefloat *tmpImage = nullptr;
                     tmpImage = new Imagefloat(bfw, bfh);
+                    Imagefloat *tmpImagelog = nullptr;
+                    tmpImagelog = new Imagefloat(bfw, bfh);
                     
                     lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
                     Glib::ustring prof = params->icm.workingProfile;
@@ -20319,9 +20321,26 @@ void ImProcFunctions::Lab_Local(
                     if(lp.midtcie != 0) {
                         ImProcFunctions::tone_eqcam(this, tmpImage, lp.midtcie, params->icm.workingProfile, sk, multiThread);
                     }
+                    
+                    tmpImage->copyData(tmpImagelog);
 
                     if(params->locallab.spots.at(sp).logcie) {
-                        log_encode(tmpImage, lp, multiThread, bfw, bfh);
+                        log_encode(tmpImagelog, lp, multiThread, bfw, bfh);
+                        float strlog = 0.01f * (float) params->locallab.spots.at(sp).strcielog;
+                    
+
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic, 16)
+#endif
+
+                        for (int y = 0; y < bfh; ++y) {
+                            for (int x = 0; x < bfw; ++x) {
+                                 tmpImage->r(y, x) = intp(strlog, tmpImagelog->r(y, x), tmpImage->r(y, x));
+                                 tmpImage->g(y, x) = intp(strlog, tmpImagelog->g(y, x), tmpImage->g(y, x));
+                                 tmpImage->b(y, x) = intp(strlog, tmpImagelog->b(y, x), tmpImage->b(y, x));
+                           
+                            }
+                        }                    
                     }
 
                     if(lp.issmoothcie) {
@@ -20352,6 +20371,7 @@ void ImProcFunctions::Lab_Local(
                     rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
                     delete tmpImage;
+                    delete tmpImagelog;
                 }
 
                 if (params->locallab.spots.at(sp).expcie) {
