@@ -2058,7 +2058,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
         float dynamic_range = 1.f;
         float targray = 0.1f;
 
-    bool satcontrol = true;
+    bool satcontrol = false;
         
     if(lp.logena) {
         gray = 0.01f * lp.sourcegray;
