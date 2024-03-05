@@ -7564,6 +7564,7 @@ Locallabcie::Locallabcie():
     comprBox(Gtk::manage(new ToolParamBlock())),
     comprcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIE"), 0., 1., 0.01, 0.6))),
     strcielog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGTHCIELOG"), 0., 100., 0.5, 80.))),
+    satcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SATCIE")))),
     comprcieth(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIETH"), 0., 25., 0.01, 6.))),
 
     expprecam(Gtk::manage(new MyExpander(true, Gtk::manage(new Gtk::Box())))),
@@ -7720,6 +7721,7 @@ Locallabcie::Locallabcie():
     EvlocallabcsThresholdcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIEMASK_WLEV");
     Evlocallabcomprcie = m->newEvent(HDR, "HISTORY_MSG_LOCAL_CIE_BRICOMP");
     Evlocallabstrcielog = m->newEvent(HDR, "HISTORY_MSG_LOCAL_CIE_STRLOG");
+    Evlocallabsatcie = m->newEvent(HDR, "HISTORY_MSG_LOCAL_CIE_SATCIE");
     Evlocallabcomprcieth = m->newEvent(HDR, "HISTORY_MSG_LOCAL_CIE_BRICOMPTH");
     EvlocallabHHhmaskcieshape = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIEMASK_CHH");
     EvlocallabbwevMethod = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SIGMET");
@@ -7982,6 +7984,7 @@ Locallabcie::Locallabcie():
 
     comprBox->pack_start(*comprcie);
     comprBox->pack_start(*strcielog);
+    comprBox->pack_start(*satcie);
     logcieFrame->add(*comprBox);
     gamcieBox->pack_start(*logcieFrame);
 
@@ -8237,6 +8240,7 @@ Locallabcie::Locallabcie():
 
     sigcieconn = sigcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::sigcieChanged));
     logcieconn = logcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::logcieChanged));
+    satcieconn = satcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::satcieChanged));
     smoothcieconn = smoothcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::smoothcieChanged));
     logjzconn = logjz->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::logjzChanged));
     sigjzconn = sigjz->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::sigjzChanged));
@@ -8872,6 +8876,7 @@ void Locallabcie::disableListener()
     catMethodconn.block(true);
     sigcieconn.block(true);
     logcieconn.block(true);
+    satcieconn.block(true);
     smoothcieconn.block(true);
     logjzconn.block(true);
     sigjzconn.block(true);
@@ -8907,6 +8912,7 @@ void Locallabcie::enableListener()
     catMethodconn.block(false);
     sigcieconn.block(false);
     logcieconn.block(false);
+    satcieconn.block(false);
     smoothcieconn.block(false);
     logjzconn.block(false);
     sigjzconn.block(false);
@@ -9151,6 +9157,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         gamutcie->set_active(spot.gamutcie);
         sigcie->set_active(spot.sigcie);
         logcie->set_active(spot.logcie);
+        satcie->set_active(spot.satcie);
         smoothcie->set_active(spot.smoothcie);
         logjz->set_active(spot.logjz);
         sigjz->set_active(spot.sigjz);
@@ -9170,6 +9177,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         comprcieautoChanged();
         sigqChanged();
         logcieChanged();
+        satcieChanged();
         smoothcieChanged();
         primMethodChanged();
         illMethodChanged();
@@ -9427,6 +9435,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.gamutcie = gamutcie->get_active();
         spot.sigcie = sigcie->get_active();
         spot.logcie = logcie->get_active();
+        spot.satcie = satcie->get_active();
         spot.smoothcie = smoothcie->get_active();
         spot.logjz = logjz->get_active();
         spot.sigjz = sigjz->get_active();
@@ -10042,6 +10051,22 @@ void Locallabcie::logcieChanged()
     }
 }
 
+void Locallabcie::satcieChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (satcie->get_active()) {
+                listener->panelChanged(Evlocallabsatcie,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabsatcie,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+
 void Locallabcie::smoothcieChanged()
 {
     if (isLocActivated && exp->getEnabled()) {
@@ -10595,6 +10620,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             expmaskcie->hide();
             comprcie->show();
             strcielog->show();
+            satcie->show();
             comprcieth->hide();
             comprcieauto->hide();
             comprBox->show();
@@ -10693,6 +10719,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             forcejz->hide();
             comprcie->show();
             strcielog->show();
+            satcie->show();
             comprcieth->show();
             comprcieauto->show();
             comprBox->show();
@@ -10820,6 +10847,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             pqremapcam16->show();
             comprcie->show();
             strcielog->show();
+            satcie->show();
             comprcieth->show();
             comprcieauto->show();
             sigmoidsenscie->show();
@@ -11221,6 +11249,7 @@ void Locallabcie::convertParamToNormal()
     catMethod->set_active(0);
     pqremapcam16->setValue(defSpot.pqremapcam16);
     logcieChanged();
+    satcieChanged();
 
     if (modecam->get_active_row_number() == 1) {
         showmaskcieMethod->set_active(0);

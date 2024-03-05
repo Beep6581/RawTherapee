@@ -1477,6 +1477,7 @@ HISTORY_MSG_LOCAL_CIE_BLUYL;Local CIECAM - Blue Y
 HISTORY_MSG_LOCAL_CIE_SHIFTXL;Local CIECAM - Shift x
 HISTORY_MSG_LOCAL_CIE_SHIFTYL;Local CIECAM - Shift y
 HISTORY_MSG_LOCAL_CIE_SMOOTH;Local CIECAM - Smooth highlights
+HISTORY_MSG_LOCAL_CIE_SATCIE;Local CIECAM - Saturation control
 HISTORY_MSG_LOCAL_CIE_STRLOG;Local CIECAM - Log encoding strength
 HISTORY_MSG_LOCAL_CIE_WHITES;Local CIECAM - Whites distribution
 HISTORY_MSG_LOCAL_CIEMASK_BLURCONT;Local Cie mask blur contrast
@@ -3437,6 +3438,7 @@ TP_LOCALLAB_RGBCURVE_TOOLTIP;In RGB mode you have 4 choices : Standard, Weighted
 TP_LOCALLAB_ROW_NVIS;Not visible
 TP_LOCALLAB_ROW_VIS;Visible
 TP_LOCALLAB_RSTPROTECT_TOOLTIP;Red and skin-tone protection affects the Saturation, Chroma and Colorfulness sliders.
+TP_LOCALLAB_SATCIE;Saturation control
 TP_LOCALLAB_SATUR;Saturation
 TP_LOCALLAB_SATURV;Saturation (s)
 TP_LOCALLAB_SCALEGR;Scale

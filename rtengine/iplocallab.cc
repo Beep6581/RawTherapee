@@ -16,7 +16,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
- *  2016 - 2022 Jacques Desmis <jdesmis@gmail.com>
+ *  2016 - 2024 Jacques Desmis <jdesmis@gmail.com>
  *  2016 - 2020 Ingo Weyrich <heckflosse@i-weyrich.de>
 
  */
@@ -804,7 +804,7 @@ struct local_params {
     float detailcie;
     float strgradcie;
     float anggradcie;
-    
+    bool satcie;
     int sensilog;
     int sensicie;
     int sensimas;
@@ -1456,6 +1456,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.whiteev  = (float) locallab.spots.at(sp).whiteEv;
     lp.sourcegraycie = (float) locallab.spots.at(sp).sourceGraycie;
     lp.targetgraycie = (float) locallab.spots.at(sp).targetGraycie;
+    lp.satcie = (float) locallab.spots.at(sp).satcie;
     lp.blackevjz = (float) locallab.spots.at(sp).blackEvjz;
     lp.whiteevjz  = (float) locallab.spots.at(sp).whiteEvjz;
     lp.detail = locallab.spots.at(sp).detail;
@@ -2056,6 +2057,8 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
         float comprfactorlog = 0.f;
         float dynamic_range = 1.f;
         float targray = 0.1f;
+
+    bool satcontrol = true;
         
     if(lp.logena) {
         gray = 0.01f * lp.sourcegray;
@@ -2071,9 +2074,10 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
         comprfactorlog = lp.comprlocie;
         dynamic_range = max(lp.whiteevjz - lp.blackevjz, 0.5f);
         targray = lp.targetgraycie;
+        satcontrol = lp.satcie;
     }
     float comprthlog = 1.f;
-    const bool satcontrol = false ;
+    
     const float noise = pow_F(2.f, -16.f);
     const float log2 = xlogf(2.f);
     const float base = targray > 1 && targray < 100 && dynamic_range > 0 ? find_gray(std::abs(shadows_range) / dynamic_range, 0.01f * targray) : 0.f;
