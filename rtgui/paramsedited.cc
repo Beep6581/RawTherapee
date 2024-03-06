@@ -1662,6 +1662,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).Autogray = locallab.spots.at(j).Autogray && pSpot.Autogray == otherSpot.Autogray;
                 locallab.spots.at(j).fullimage = locallab.spots.at(j).fullimage && pSpot.fullimage == otherSpot.fullimage;
                 locallab.spots.at(j).ciecam = locallab.spots.at(j).ciecam && pSpot.ciecam == otherSpot.ciecam;
+                locallab.spots.at(j).satlog = locallab.spots.at(j).satlog && pSpot.satlog == otherSpot.satlog;
                 locallab.spots.at(j).enaLMask = locallab.spots.at(j).enaLMask && pSpot.enaLMask == otherSpot.enaLMask;
                 locallab.spots.at(j).repar = locallab.spots.at(j).repar && pSpot.repar == otherSpot.repar;
                 locallab.spots.at(j).blackEv = locallab.spots.at(j).blackEv && pSpot.blackEv == otherSpot.blackEv;
@@ -1669,6 +1670,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).whiteslog = locallab.spots.at(j).whiteslog && pSpot.whiteslog == otherSpot.whiteslog;
                 locallab.spots.at(j).blackslog = locallab.spots.at(j).blackslog && pSpot.blackslog == otherSpot.blackslog;
                 locallab.spots.at(j).comprlog = locallab.spots.at(j).comprlog && pSpot.comprlog == otherSpot.comprlog;
+                locallab.spots.at(j).strelog = locallab.spots.at(j).strelog && pSpot.strelog == otherSpot.strelog;
                 locallab.spots.at(j).detail = locallab.spots.at(j).detail && pSpot.detail == otherSpot.detail;
                 locallab.spots.at(j).sursour = locallab.spots.at(j).sursour && pSpot.sursour == otherSpot.sursour;
                 locallab.spots.at(j).surround = locallab.spots.at(j).surround && pSpot.surround == otherSpot.surround;
@@ -5682,6 +5684,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).ciecam = mods.locallab.spots.at(i).ciecam;
         }
 
+        if (locallab.spots.at(i).satlog) {
+            toEdit.locallab.spots.at(i).satlog = mods.locallab.spots.at(i).satlog;
+        }
+
         if (locallab.spots.at(i).enaLMask) {
             toEdit.locallab.spots.at(i).enaLMask = mods.locallab.spots.at(i).enaLMask;
         }
@@ -5708,6 +5714,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).comprlog) {
             toEdit.locallab.spots.at(i).comprlog = mods.locallab.spots.at(i).comprlog;
+        }
+
+        if (locallab.spots.at(i).strelog) {
+            toEdit.locallab.spots.at(i).strelog = mods.locallab.spots.at(i).strelog;
         }
 
         if (locallab.spots.at(i).detail) {
@@ -8387,11 +8397,13 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     fullimage(v),
     repar(v),
     ciecam(v),
+    satlog(v),
     blackEv(v),
     whiteEv(v),
     whiteslog(v),
     blackslog(v),
     comprlog(v),
+    strelog(v),
     detail(v),
     sursour(v),
     surround(v),
@@ -9143,11 +9155,13 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     fullimage = v;
     repar = v;
     ciecam = v;
+    satlog = v;
     blackEv = v;
     whiteEv = v;
     whiteslog = v;
     blackslog = v;
     comprlog = v;
+    strelog = v;
     detail = v;
     sursour = v;
     surround = v;

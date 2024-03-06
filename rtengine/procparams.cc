@@ -4245,11 +4245,13 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     fullimage(true),
     repar(100.0),
     ciecam(false),
+    satlog(false),
     blackEv(-5.00),
     whiteEv(10.00),
     whiteslog(0),
     blackslog(0),
     comprlog(0.4),
+    strelog(100.),
     detail(0.6),
     sensilog(60),
     sursour("Average"),
@@ -5324,11 +5326,13 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && fullimage == other.fullimage
         && repar == other.repar
         && ciecam == other.ciecam
+        && satlog == other.satlog
         && blackEv == other.blackEv
         && whiteEv == other.whiteEv
         && whiteslog == other.whiteslog
         && blackslog == other.blackslog
         && comprlog == other.comprlog
+        && strelog == other.strelog
         && detail == other.detail
         && sensilog == other.sensilog
         && baselog == other.baselog
@@ -7266,11 +7270,13 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->fullimage, "Locallab", "Fullimage_" + index_str, spot.fullimage, keyFile);
                     saveToKeyfile(!pedited || spot_edited->repar, "Locallab", "Repart_" + index_str, spot.repar, keyFile);
                     saveToKeyfile(!pedited || spot_edited->ciecam, "Locallab", "Ciecam_" + index_str, spot.ciecam, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->satlog, "Locallab", "Satlog_" + index_str, spot.satlog, keyFile);
                     saveToKeyfile(!pedited || spot_edited->blackEv, "Locallab", "BlackEv_" + index_str, spot.blackEv, keyFile);
                     saveToKeyfile(!pedited || spot_edited->whiteEv, "Locallab", "WhiteEv_" + index_str, spot.whiteEv, keyFile);
                     saveToKeyfile(!pedited || spot_edited->whiteslog, "Locallab", "Whiteslog_" + index_str, spot.whiteslog, keyFile);
                     saveToKeyfile(!pedited || spot_edited->blackslog, "Locallab", "Blackslog_" + index_str, spot.blackslog, keyFile);
                     saveToKeyfile(!pedited || spot_edited->comprlog, "Locallab", "Comprlog_" + index_str, spot.comprlog, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->strelog, "Locallab", "Strelog_" + index_str, spot.strelog, keyFile);
                     saveToKeyfile(!pedited || spot_edited->detail, "Locallab", "Detail_" + index_str, spot.detail, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sensilog, "Locallab", "Sensilog_" + index_str, spot.sensilog, keyFile);
                     saveToKeyfile(!pedited || spot_edited->baselog, "Locallab", "Baselog_" + index_str, spot.baselog, keyFile);
@@ -9608,11 +9614,13 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Fullimage_" + index_str, spot.fullimage, spotEdited.fullimage);
                 assignFromKeyfile(keyFile, "Locallab", "Repart_" + index_str, spot.repar, spotEdited.repar);
                 assignFromKeyfile(keyFile, "Locallab", "Ciecam_" + index_str, spot.ciecam, spotEdited.ciecam);
+                assignFromKeyfile(keyFile, "Locallab", "Satlog_" + index_str, spot.satlog, spotEdited.satlog);
                 assignFromKeyfile(keyFile, "Locallab", "BlackEv_" + index_str, spot.blackEv, spotEdited.blackEv);
                 assignFromKeyfile(keyFile, "Locallab", "WhiteEv_" + index_str, spot.whiteEv, spotEdited.whiteEv);
                 assignFromKeyfile(keyFile, "Locallab", "Whiteslog_" + index_str, spot.whiteslog, spotEdited.whiteslog);
                 assignFromKeyfile(keyFile, "Locallab", "Blackslog_" + index_str, spot.blackslog, spotEdited.blackslog);
                 assignFromKeyfile(keyFile, "Locallab", "Comprlog_" + index_str, spot.comprlog, spotEdited.comprlog);
+                assignFromKeyfile(keyFile, "Locallab", "Strelog_" + index_str, spot.strelog, spotEdited.strelog);
                 assignFromKeyfile(keyFile, "Locallab", "Detail_" + index_str, spot.detail, spotEdited.detail);
                 assignFromKeyfile(keyFile, "Locallab", "Sensilog_" + index_str, spot.sensilog, spotEdited.sensilog);
                 assignFromKeyfile(keyFile, "Locallab", "Baselog_" + index_str, spot.baselog, spotEdited.baselog);

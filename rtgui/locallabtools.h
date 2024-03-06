@@ -85,6 +85,8 @@ protected:
     rtengine::ProcEvent Evlocallabwhiteslog;
     rtengine::ProcEvent Evlocallabblackslog;
     rtengine::ProcEvent Evlocallabcomprlog;
+    rtengine::ProcEvent Evlocallabsatlog;
+    rtengine::ProcEvent Evlocallabstrelog;
     rtengine::ProcEvent Evlocallabredxl;
     rtengine::ProcEvent Evlocallabredyl;
     rtengine::ProcEvent Evlocallabgrexl;
@@ -1384,11 +1386,15 @@ private:
     Gtk::CheckButton* const ciecam;
     Gtk::ToggleButton* const autocompute;
     Gtk::Frame* const logPFrame;
+    Gtk::Frame* const logPFrame2;
     Adjuster* const blackEv;
     Adjuster* const whiteEv;
     Adjuster* const whiteslog;
     Adjuster* const blackslog;
-    Adjuster* const comprlog; 
+    Adjuster* const comprlog;
+    Adjuster* const strelog; 
+    Gtk::CheckButton* const satlog;
+    
     Gtk::CheckButton* const fullimage;
     Gtk::Frame* const logFrame;
     Gtk::CheckButton* const Autogray;
@@ -1443,7 +1449,7 @@ private:
     DiagonalCurveEditor* const LmaskshapeL;
 
     sigc::connection autoconn, ciecamconn, fullimageConn, AutograyConn;
-    sigc::connection  surroundconn, sursourconn;
+    sigc::connection  surroundconn, sursourconn, satlogconn;
     sigc::connection showmaskLMethodConn, enaLMaskConn;
 public:
     LocallabLog();
@@ -1457,6 +1463,7 @@ public:
     void surroundChanged();
     void sursourChanged();
     void setDefaultExpanderVisibility() override;
+    void satlogChanged();
 
     void disableListener() override;
     void enableListener() override;
@@ -1668,6 +1675,7 @@ private:
     Gtk::CheckButton* const logcie;
     ToolParamBlock* const comprBox;
     Adjuster* const comprcie;
+    
     Adjuster* const strcielog;
     Gtk::CheckButton* const satcie;
     Adjuster* const comprcieth;

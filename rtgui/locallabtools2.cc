@@ -5250,11 +5250,15 @@ LocallabLog::LocallabLog():
     ciecam(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_CIEC")))),
     autocompute(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_LOGAUTO")))),
     logPFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGPFRA")))),
+    logPFrame2(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGPFRA2")))),
     blackEv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLACK_EV"), -16.00, 0.00, 0.01, -5.00))),
     whiteEv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WHITE_EV"), 0.00, 32.00, 0.01, 10.00))),
     whiteslog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGWHITESCIE"), -100, 100, 1, 0))),
     blackslog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGBLACKSSCIE"), -100, 100, 1, 0))),
     comprlog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIE"), 0., 1., 0.01, 0.4))),
+    strelog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRCIE"), 0., 100., 0.5, 100.))),
+    satlog(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SATLOG")))),
+    
     fullimage(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FULLIMAGE")))),
     logFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGFRA")))),
     Autogray(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AUTOGRAY")))),
@@ -5314,6 +5318,8 @@ LocallabLog::LocallabLog():
     Evlocallabwhiteslog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_LOG_WHITES");
     Evlocallabblackslog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_LOG_BLACKS");
     Evlocallabcomprlog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_LOG_COMPR");
+    Evlocallabstrelog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_LOG_STRE");
+    Evlocallabsatlog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_LOG_SAT");
    
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -5331,10 +5337,12 @@ LocallabLog::LocallabLog():
     whiteslog->setAdjusterListener(this);
     blackslog->setAdjusterListener(this);
     comprlog->setAdjusterListener(this);
+    strelog->setAdjusterListener(this);
     
     ciecamconn = ciecam->signal_toggled().connect(sigc::mem_fun(*this, &LocallabLog::ciecamChanged));
 
     fullimageConn = fullimage->signal_toggled().connect(sigc::mem_fun(*this, &LocallabLog::fullimageChanged));
+    satlogconn = satlog->signal_toggled().connect(sigc::mem_fun(*this, &LocallabLog::satlogChanged));
 
     AutograyConn = Autogray->signal_toggled().connect(sigc::mem_fun(*this, &LocallabLog::AutograyChanged));
 
@@ -5467,14 +5475,21 @@ LocallabLog::LocallabLog():
     pack_start(*repar);
     pack_start(*ciecam);
     logPFrame->set_label_align(0.025, 0.5);
+    logPFrame2->set_label_align(0.025, 0.5);
     ToolParamBlock* const logPBox = Gtk::manage(new ToolParamBlock());
+    ToolParamBlock* const logPBox2 = Gtk::manage(new ToolParamBlock());
     logPBox->pack_start(*autocompute);
     logPBox->pack_start(*blackEv);
     logPBox->pack_start(*whiteEv);
     logPBox->pack_start(*whiteslog);
     logPBox->pack_start(*blackslog);
-    logPBox->pack_start(*comprlog);
+    logPBox2->pack_start(*comprlog);
+    logPBox2->pack_start(*strelog);
+    logPBox2->pack_start(*satlog);
+    logPFrame2->add(*logPBox2);
+    logPBox->pack_start(*logPFrame2);
     logPBox->pack_start(*fullimage);
+    
     logPFrame->add(*logPBox);
     pack_start(*logPFrame);
 //    Gtk::Frame* const logFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGFRA")));
@@ -5681,6 +5696,7 @@ void LocallabLog::disableListener()
     autoconn.block(true);
     fullimageConn.block(true);
     ciecamconn.block(true);
+    satlogconn.block(true);
     enaLMaskConn.block(true);
     surroundconn.block(true);
     sursourconn.block(true);
@@ -5695,6 +5711,7 @@ void LocallabLog::enableListener()
     autoconn.block(false);
     fullimageConn.block(false);
     ciecamconn.block(false);
+    satlogconn.block(false);
     enaLMaskConn.block(false);
     surroundconn.block(false);
     sursourconn.block(false);
@@ -5745,6 +5762,7 @@ void LocallabLog::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         whiteslog->setValue(spot.whiteslog);
         blackslog->setValue(spot.blackslog);
         comprlog->setValue(spot.comprlog);
+        strelog->setValue(spot.strelog);
 
         /*        if(whiteEv->getValue() < 1.5){
                     whiteEv->setValue(1.5);
@@ -5777,6 +5795,7 @@ void LocallabLog::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         decayl->setValue((double)spot.decayl);
 
         ciecam->set_active(spot.ciecam);
+        satlog->set_active(spot.satlog);
         fullimage->set_active(spot.fullimage);
         Autogray->set_active(spot.Autogray);
         sourceGray->setValue(spot.sourceGray);
@@ -5841,8 +5860,10 @@ void LocallabLog::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.whiteslog = whiteslog->getIntValue();
         spot.blackslog = blackslog->getIntValue();
         spot.comprlog = comprlog->getValue();
+        spot.strelog = strelog->getValue();
         spot.fullimage = fullimage->get_active();
         spot.ciecam = ciecam->get_active();
+        spot.satlog = satlog->get_active();
         spot.Autogray = Autogray->get_active();
         spot.sourceGray = sourceGray->getValue();
         spot.sourceabs = sourceabs->getValue();
@@ -6150,6 +6171,7 @@ void LocallabLog::setDefaults(const rtengine::procparams::ProcParams* defParams,
         whiteslog->setDefault(defSpot.whiteslog);
         blackslog->setDefault(defSpot.blackslog);
         comprlog->setDefault(defSpot.comprlog);
+        strelog->setDefault(defSpot.strelog);
         sourceGray->setDefault(defSpot.sourceGray);
         sourceabs->setDefault(defSpot.sourceabs);
         targabs->setDefault(defSpot.targabs);
@@ -6224,6 +6246,13 @@ void LocallabLog::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged( Evlocallabcomprlog,
                                        comprlog->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == strelog) {
+            if (listener) {
+                listener->panelChanged( Evlocallabstrelog,
+                                       strelog->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
@@ -6522,6 +6551,21 @@ void LocallabLog::ciecamChanged()
                                        M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabciecam,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+void LocallabLog::satlogChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (satlog->get_active()) {
+                listener->panelChanged(Evlocallabsatlog,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabsatlog,
                                        M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }

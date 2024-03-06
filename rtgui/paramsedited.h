@@ -946,11 +946,13 @@ public:
         bool fullimage;
         bool repar;
         bool ciecam;
+        bool satlog;
         bool blackEv;
         bool whiteEv;
         bool whiteslog;
         bool blackslog;
         bool comprlog;
+        bool strelog;
         bool detail;
         bool sursour;
         bool surround;

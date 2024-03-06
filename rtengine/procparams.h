@@ -1592,11 +1592,13 @@ struct LocallabParams {
         bool fullimage;
         double repar;
         bool ciecam;
+        bool satlog;
         double blackEv;
         double whiteEv;
         int whiteslog;
         int blackslog;
         double comprlog;
+        double strelog;
         double detail;
         int sensilog;
         Glib::ustring sursour;

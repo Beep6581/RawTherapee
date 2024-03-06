@@ -2004,6 +2004,7 @@ void ImProcFunctions::mean_sig(const float* const * const savenormL, float &mean
     stdf = std::sqrt(stdd);
     meanf = meand;
 }
+
 // taken from darktable
 inline float power_norm(float r, float g, float b)
 {
@@ -2031,6 +2032,7 @@ inline float gray2ev(float gray)
     return std::log2(0.18f / gray);
 }
 
+// copyright 2018 Alberto Griggio <alberto.griggio@gmail.com>
 
 inline float norm2(float r, float g, float b, TMatrix ws)
 {
@@ -2048,6 +2050,7 @@ inline float norm(float r, float g, float b, TMatrix ws)
 // basic log encoding taken from ACESutil.Lin_to_Log2, from
 // https://github.com/ampas/aces-dev
 // (as seen on pixls.us)
+// copyright 2018 Alberto Griggio <alberto.griggio@gmail.com>
 void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool multiThread, int bfw, int bfh)
 {
     // BENCHFUN
@@ -2136,7 +2139,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
                 return 0.f;
             }
         };
-//added 2024 02 - but not used
+//added 2024 02 
     const auto apply_sat =
         [&](float &r, float &g, float &b, float f) -> void
         {
@@ -2265,6 +2268,8 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
 
     }
 }
+ 
+// Copyright 2018 Alberto Griggio <alberto.griggio@gmail.com>
 
 void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg, float *blackev, float *whiteev, bool *Autogr, float *sourceab,  int *whits,  int *blacks, int *whitslog,  int *blackslog, int fw, int fh, float xsta, float xend, float ysta, float yend, int SCALE)
 {
