@@ -367,6 +367,22 @@ public:
     CropGuidesMode cropGuides;
     bool cropAutoFit;
 
+    // Other options
+
+    // Maximum zoom
+    enum class MaxZoom: int {
+      PERCENTS_100 = 0,
+      PERCENTS_200,
+      PERCENTS_300,
+      PERCENTS_400,
+      PERCENTS_500,
+      PERCENTS_600,
+      PERCENTS_700,
+      PERCENTS_800,
+      PERCENTS_1600,
+    };
+    MaxZoom maxZoomLimit;
+
     // Performance options
     Glib::ustring clutsDir;
     int rgbDenoiseThreadLimit; // maximum number of threads for the denoising tool ; 0 = use the maximum available

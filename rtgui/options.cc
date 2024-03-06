@@ -367,6 +367,7 @@ void Options::setDefaults()
     fbShowDateTime = true;
     fbShowBasicExif = true;
     fbShowExpComp = false;
+    maxZoomLimit = MaxZoom::PERCENTS_1600;
 #ifdef _WIN32
     // use windows setting for visibility of hidden files/folders
     SHELLFLAGSTATE sft = { 0 };
@@ -1724,6 +1725,9 @@ void Options::readFromFile(Glib::ustring fname)
                 if (keyFile.has_key("GUI", "ZoomOnScroll")) {
                     zoomOnScroll = keyFile.get_boolean("GUI", "ZoomOnScroll");
                 }
+                if (keyFile.has_key("GUI", "MaxZoom")) {
+                    maxZoomLimit = static_cast<MaxZoom>(keyFile.get_integer("GUI", "MaxZoom"));
+                }
             }
 
             if (keyFile.has_group("Crop Settings")) {
@@ -2576,6 +2580,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("GUI", "Complexity", complexity);
         keyFile.set_boolean("GUI", "InspectorWindow", inspectorWindow);
         keyFile.set_boolean("GUI", "ZoomOnScroll", zoomOnScroll);
+        keyFile.set_integer("GUI", "MaxZoom", static_cast<int>(maxZoomLimit));
 
         //Glib::ArrayHandle<int> crvopen = crvOpen;
         //keyFile.set_integer_list ("GUI", "CurvePanelsExpanded", crvopen);

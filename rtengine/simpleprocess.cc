@@ -271,16 +271,85 @@ private:
 
         // set the color temperature
         currWB = ColorTemp(params.wb.temperature, params.wb.green, params.wb.equal, params.wb.method, params.wb.observer);
+        ColorTemp currWBitc;
+        if (params.wb.method == "autitcgreen"  && flush) {
+            imgsrc->getrgbloc(0, 0, fh, fw, 0, 0, fh, fw, params.wb);
+        }
+        const bool autowb = (params.wb.method == "autitcgreen" && imgsrc->isRAW() && flush);
+        ColorTemp autoWB;
+        int dread = 0;
+        int bia = 1;
+        float studgood = 1000.f;
+        int nocam = 0;
+        int kcam = 0;
+        float minchrom = 1000.f;
+        float delta = 0.f;
+        int kmin  = 20;
+        float minhist = 1000000000.f;
+        float maxhist = -1000.f;
+        double greenitc = 1.;
+        float temp0 = 5000.f;
+        bool extra = false;
+        bool forcewbgrey = false;
 
         if (!params.wb.enabled) {
             currWB = ColorTemp();
-        } else if (params.wb.method == "Camera") {
+        } else if (params.wb.method == "Camera" || (params.wb.method == "autitcgreen" && params.wb.compat_version >= 2 && !imgsrc->isRAW() && flush)) {//Use also Camera settings for Temperature correlation and TIF/Jpg
             currWB = imgsrc->getWB();
-        } else if (params.wb.method == "autold") {
+        } else if (params.wb.method == "autold") {//for Auto RGB
             double rm, gm, bm;
-            imgsrc->getAutoWBMultipliers(rm, gm, bm);
+            if (params.wb.compat_version == 1 && !imgsrc->isRAW()) {
+                // RGB grey compatibility version 1 used the identity
+                // multipliers plus temperature bias for non-raw files.
+                rm = gm = bm = 1.;
+            } else {
+                imgsrc->getAutoWBMultipliers(rm, gm, bm);
+            }
             currWB.update(rm, gm, bm, params.wb.equal, params.wb.observer, params.wb.tempBias);
+
+        } else if (autowb) {//for auto Itcwb - flush to enable only when batch only with Raw files
+        //code similar to that present in improccoordinator.cc
+                double rm;
+                double gm;
+                double bm;
+                imgsrc->getAutoWBMultipliersItcGreen(
+                    params,
+                    forcewbgrey,
+                    kcam,
+                    greenitc,
+                    extra,
+                    temp0,
+                    delta,
+                    bia,
+                    dread,
+                    nocam,
+                    studgood,
+                    minchrom,
+                    kmin,
+                    minhist,
+                    maxhist,
+                    fh,
+                    fw,
+                    currWB,
+                    0,
+                    0.,
+                    false,
+                    autoWB,
+                    rm,
+                    gm,
+                    bm);
+
+                currWB = autoWB;
+        } else if (params.wb.method == "autitcgreen" && params.wb.compat_version == 1 && !imgsrc->isRAW() && flush) {
+            // ITCWB compatibility version 1 used 5000 K and observer 10 degrees
+            // for non-raw files.
+            currWB = ColorTemp(5000., 1., 1., params.wb.method, StandardObserver::TEN_DEGREES);
+            currWB.convertObserver(params.wb.observer);
+            params.wb.temperature = currWB.getTemp();
+            params.wb.green = currWB.getGreen();
+            params.wb.equal = currWB.getEqual();
         }
+        //end WB auto
 
         calclum = nullptr ;
         params.dirpyrDenoise.getCurves(noiseLCurve, noiseCCurve);
@@ -897,7 +966,7 @@ private:
         ipf.firstAnalysis(baseImg, params, hist16);
 
         ipf.dehaze(baseImg, params.dehaze);
-        ipf.ToneMapFattal02(baseImg, params.fattal, 3, 0, nullptr, 0, 0, 0);
+        ipf.ToneMapFattal02(baseImg, params.fattal, 3, 0, nullptr, 0, 0, 0, false);
 
         // perform transform (excepted resizing)
         if (ipf.needsTransform(fw, fh, imgsrc->getRotateDegree(), imgsrc->getMetaData())) {
@@ -2116,7 +2185,6 @@ IImagefloat* processImage(ProcessingJob* pjob, int& errorCode, ProgressListener*
 
 void batchProcessingThread(ProcessingJob* job, BatchProcessingListener* bpl)
 {
-
     ProcessingJob* currentJob = job;
 
     while (currentJob) {

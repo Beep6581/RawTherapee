@@ -255,6 +255,7 @@ struct WBParamsEdited {
     bool itcwb_prim;
     bool itcwb_sampling;
     bool itcwb_green;
+    bool compat_version;
 
 };
 
@@ -326,6 +327,7 @@ struct DirPyrDenoiseParamsEdited {
     bool chroma;
     bool redchro;
     bool bluechro;
+    bool gain;
     bool gamma;
     bool lcurve;
     bool cccurve;
@@ -565,6 +567,7 @@ public:
         bool fatdetail;
         bool fatanchor;
         bool fatlevel;
+        bool fatsatur;
         bool recothrese;
         bool lowthrese;
         bool higthrese;
