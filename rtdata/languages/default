@@ -1490,9 +1490,10 @@ HISTORY_MSG_LOCAL_CIEMASK_STRU;Local Cie mask structure
 HISTORY_MSG_LOCAL_CIEMASK_STRU_TOOL;Local Cie mask structure as tool
 HISTORY_MSG_LOCAL_CIEMASK_WLC;Local CIECAM mask wavelet Lc
 HISTORY_MSG_LOCAL_CIEMASK_WLEV;Local CIECAM mask wavelet levels
-HISTORY_MSG_LOCAL_LOG_WHITES;Local Log - Whites distribution
 HISTORY_MSG_LOCAL_LOG_BLACKS;Local Log - Blacks distribution
 HISTORY_MSG_LOCAL_LOG_COMPR;Local Log - Compress brightness
+HISTORY_MSG_LOCAL_LOG_SAT;Local Log - Saturation control
+HISTORY_MSG_LOCAL_LOG_WHITES;Local Log - Whites distribution
 HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
 HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
 HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
@@ -3225,6 +3226,7 @@ TP_LOCALLAB_LOGLIGHTQ;Brightness (Q)
 TP_LOCALLAB_LOGLIGHTQ_TOOLTIP;Perceived amount of light emanating from a stimulus.\nIndicator that a stimulus appears to be more or less bright, clear.
 TP_LOCALLAB_LOGLIN;Logarithm mode
 TP_LOCALLAB_LOGPFRA;Relative Exposure Levels
+TP_LOCALLAB_LOGPFRA2;Log Encoding settings
 TP_LOCALLAB_LOGREPART;Overall strength
 TP_LOCALLAB_LOGREPART_TOOLTIP;Allows you to adjust the relative strength of the log-encoded image with respect to the original image.\nDoes not affect the Ciecam component.
 TP_LOCALLAB_LOGSATURL_TOOLTIP;Saturation (s) in CIECAM16 corresponds to the color of a stimulus in relation to its own brightness.\nActs mainly on medium tones and on the highlights.

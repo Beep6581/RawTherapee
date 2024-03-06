@@ -805,6 +805,7 @@ struct local_params {
     float strgradcie;
     float anggradcie;
     bool satcie;
+    bool satlog;
     int sensilog;
     int sensicie;
     int sensimas;
@@ -1457,6 +1458,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.sourcegraycie = (float) locallab.spots.at(sp).sourceGraycie;
     lp.targetgraycie = (float) locallab.spots.at(sp).targetGraycie;
     lp.satcie = (float) locallab.spots.at(sp).satcie;
+    lp.satlog = (float) locallab.spots.at(sp).satlog;
     lp.blackevjz = (float) locallab.spots.at(sp).blackEvjz;
     lp.whiteevjz  = (float) locallab.spots.at(sp).whiteEvjz;
     lp.detail = locallab.spots.at(sp).detail;
@@ -2070,6 +2072,8 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
         comprfactorlog = lp.comprlo;
         dynamic_range = max(lp.whiteev - lp.blackev, 0.5f);
         targray = lp.targetgray;
+        satcontrol = lp.satlog;
+
     } else if (lp.cieena) {
         gray = 0.01f * lp.sourcegraycie;
         shadows_range = lp.blackevjz;
@@ -14252,6 +14256,8 @@ void ImProcFunctions::Lab_Local(
                 }
 
                 log_encode(tmpImage.get(), lp, multiThread, bfw, bfh);
+                
+                
                 const float repart = 1.0 - 0.01 * params->locallab.spots.at(sp).repar;
 
 #ifdef _OPENMP

@@ -5246,7 +5246,7 @@ LocallabLog::LocallabLog():
     LocallabTool(this, M("TP_LOCALLAB_LOG_TOOLNAME"), M("TP_LOCALLAB_LOG"), false),
 
     // Log encoding specific widgets
-    repar(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
+    repar(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 0.5, 100.0))),
     ciecam(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_CIEC")))),
     autocompute(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_LOGAUTO")))),
     logPFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGPFRA")))),
@@ -5256,8 +5256,8 @@ LocallabLog::LocallabLog():
     whiteslog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGWHITESCIE"), -100, 100, 1, 0))),
     blackslog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGBLACKSSCIE"), -100, 100, 1, 0))),
     comprlog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIE"), 0., 1., 0.01, 0.4))),
-    strelog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRCIE"), 0., 100., 0.5, 100.))),
-    satlog(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SATLOG")))),
+    strelog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGTHCIELOG"), 0., 100., 0.5, 100.))),
+    satlog(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SATCIE")))),
     
     fullimage(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FULLIMAGE")))),
     logFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGFRA")))),
@@ -5484,7 +5484,7 @@ LocallabLog::LocallabLog():
     logPBox->pack_start(*whiteslog);
     logPBox->pack_start(*blackslog);
     logPBox2->pack_start(*comprlog);
-    logPBox2->pack_start(*strelog);
+   // logPBox2->pack_start(*strelog);
     logPBox2->pack_start(*satlog);
     logPFrame2->add(*logPBox2);
     logPBox->pack_start(*logPFrame2);
