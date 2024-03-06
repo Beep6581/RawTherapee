@@ -23,7 +23,6 @@
 #include "mydiagonalcurve.h"
 
 #include "editcallbacks.h"
-#include "rtscalable.h"
 
 #include "../rtengine/curves.h"
 
@@ -150,8 +149,7 @@ void MyDiagonalCurve::updateLocallabBackground(double ref)
                  return false;
             }
 
-             mcih->clearPixmap();
-            mcih->myCurve->queue_draw();
+            mcih->clearPixmap();
 
              --mcih->pending;
 
@@ -250,24 +248,18 @@ void MyDiagonalCurve::interpolate ()
     curveIsDirty = false;
 }
 
-void MyDiagonalCurve::draw (int handle)
+void MyDiagonalCurve::updateDrawingArea (const int handle, const ::Cairo::RefPtr< Cairo::Context> &cr)
 {
-    if (!isDirty()) {
+    if (!get_realized()) {
         return;
     }
-
-    if (!surfaceCreated()) {
-        return;
-    }
-
-    const double s = (double)RTScalable::getScale();
 
     // re-calculate curve if dimensions changed
     int currLUTSize = point.getUpperBound();
 
     if (curveIsDirty
-        || (currLUTSize == (GRAPH_SIZE * s) && (graphW > (GRAPH_SIZE * s)))
-        || (currLUTSize >  (GRAPH_SIZE * s) && (graphW <= (GRAPH_SIZE * s) || graphW != currLUTSize)) )
+        || (currLUTSize == GRAPH_SIZE && (graphW > GRAPH_SIZE))
+        || (currLUTSize >  GRAPH_SIZE && (graphW <= GRAPH_SIZE || graphW != currLUTSize)) )
     {
         interpolate ();
     }
@@ -277,20 +269,17 @@ void MyDiagonalCurve::draw (int handle)
     Gtk::StateFlags state = !is_sensitive() ? Gtk::STATE_FLAG_INSENSITIVE : Gtk::STATE_FLAG_NORMAL;
 
     Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
-    Cairo::RefPtr<Cairo::Context> cr = getContext();
-    cr->set_line_cap(Cairo::LINE_CAP_SQUARE);
 
-    // clear background
-    cr->set_source_rgba (0., 0., 0., 0.);
-    cr->set_operator (Cairo::OPERATOR_CLEAR);
-    cr->paint ();
+    // Setup drawing
+    cr->set_line_cap(Cairo::LINE_CAP_SQUARE);
     cr->set_operator (Cairo::OPERATOR_OVER);
 
+    // Render background
     style->render_background(cr, graphX, graphY-graphH, graphW, graphH);
 
     Gdk::RGBA c;
 
-    cr->set_line_width (1.0 * s);
+    cr->set_line_width (1.0);
 
     // Draw Locallab reference value in the background
     if (locallabRef > 0.0) {
@@ -309,28 +298,26 @@ void MyDiagonalCurve::draw (int handle)
     // draw the left colored bar
     if (leftBar) {
         // first the background
-        BackBuffer *bb = this;
-        leftBar->setDrawRectangle(1. * s, graphY - graphH - 0.5, CBAR_WIDTH * s, graphH);
-        leftBar->expose(*this, bb);
+        leftBar->setColoredBarSize(1., graphY - graphH - 0.5, CBAR_WIDTH, graphH);
+        leftBar->updateColoredBar(cr);
 
         // now the border
         c = style->get_border_color(state);
         cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
-        cr->rectangle(0.5 * s, graphY - graphH - 0.5 - 0.5 * s, (CBAR_WIDTH + 1) * s, (double)graphH + 1. + 1. * s);
+        cr->rectangle(0.5, graphY - graphH - 0.5 - 0.5, CBAR_WIDTH + 1, (double)graphH + 1. + 1.);
         cr->stroke();
     }
 
     // draw the bottom colored bar
     if (bottomBar) {
         // first the background
-        BackBuffer *bb = this;
-        bottomBar->setDrawRectangle(graphX - 0.5, graphY + (RADIUS + CBAR_MARGIN + 1.) * s, graphW + 1., CBAR_WIDTH * s);
-        bottomBar->expose(*this, bb);
+        bottomBar->setColoredBarSize(graphX - 0.5, graphY + RADIUS + CBAR_MARGIN + 1., graphW + 1., CBAR_WIDTH);
+        bottomBar->updateColoredBar(cr);
 
         // now the border
         c = style->get_border_color (state);
         cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
-        cr->rectangle(graphX - 0.5 - 0.5 * s, graphY + (RADIUS + CBAR_MARGIN + 0.5) * s, graphW + 1. + 0.5 * s, (CBAR_WIDTH + 1.) * s);
+        cr->rectangle(graphX - 0.5 - 0.5, graphY + CBAR_MARGIN + 0.5, graphW + 1. + 0.5, CBAR_WIDTH + 1.);
         cr->stroke();
     }
 
@@ -345,7 +332,7 @@ void MyDiagonalCurve::draw (int handle)
             }
 
         // draw histogram
-        cr->set_line_width (1.0 * s);
+        cr->set_line_width (1.0);
         double stepSize = graphW / 255.0;
         cr->move_to (graphX, graphY);
         c = style->get_color(state);
@@ -367,18 +354,18 @@ void MyDiagonalCurve::draw (int handle)
     }
 
     // draw the grid lines:
-    cr->set_line_width (1.0 * s);
+    cr->set_line_width (1.0);
     c = style->get_border_color(state);
     cr->set_source_rgba (c.get_red(), c.get_green(), c.get_blue(), 0.3);
     cr->set_antialias (Cairo::ANTIALIAS_NONE);
 
     for (int i = 0; i <= 10; i++) {
         // horizontal lines
-        cr->move_to     (graphX - 0.5 - 0.5 * s, graphY + 0.5 + 0.5 * s - (graphH + 1. + 1. * s) * (double)i / 10.);
-        cr->rel_line_to (graphW + 1. + 1. * s, 0.);
+        cr->move_to     (graphX - 0.5 - 0.5, graphY + 0.5 + 0.5 - (graphH + 1. + 1.) * (double)i / 10.);
+        cr->rel_line_to (graphW + 1. + 1., 0.);
         // vertical lines
-        cr->move_to     (graphX - 0.5 - 0.5 * s + (graphW + 1. + 1. * s) * (double)i / 10., graphY + 0.5 + 0.5 * s);
-        cr->rel_line_to (0., -graphH - 1. - 1. * s);
+        cr->move_to     (graphX - 0.5 - 0.5 + (graphW + 1. + 1.) * (double)i / 10., graphY + 0.5 + 0.5);
+        cr->rel_line_to (0., -graphH - 1. - 1.);
     }
 
     cr->stroke ();
@@ -390,16 +377,15 @@ void MyDiagonalCurve::draw (int handle)
         cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
     }
 
-    std::valarray<double> ds (1);
-    ds[0] = 4 * s;
+    const std::valarray<double> ds = {4.};
     cr->set_dash (ds, 0);
-    cr->move_to (graphX - 0.5 - 0.5 * s, graphY + 0.5 + 0.5 * s);
-    cr->rel_line_to (graphW + 1. + 1. * s, -(graphH + 1. + 1. * s));
+    cr->move_to (graphX - 0.5 - 0.5, graphY + 0.5 + 0.5);
+    cr->rel_line_to (graphW + 1. + 1., -(graphH + 1. + 1.));
     cr->stroke ();
     cr->unset_dash ();
 
     cr->set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
-    cr->set_line_width (1.0 * s);
+    cr->set_line_width (1.0);
 
     // draw upper and lower bounds
     if (curve.type == DCT_Parametric && activeParam > 0 && lpoint.getUpperBound() > 1 && upoint.getUpperBound() > 1) {
@@ -436,34 +422,34 @@ void MyDiagonalCurve::draw (int handle)
         if (n > 1) {
             if (pipetteR > -1.f) {
                 cr->set_source_rgba (1., 0., 0., 0.5); // WARNING: assuming that red values are stored in pipetteR, which might not be the case!
-                cr->move_to (graphX + graphW * static_cast<double>(pipetteR), graphY + 1. * s);
-                cr->rel_line_to (0, -graphH - 1. * s);
+                cr->move_to (graphX + graphW * static_cast<double>(pipetteR), graphY + 1.);
+                cr->rel_line_to (0, -graphH - 1.);
                 cr->stroke ();
             }
 
             if (pipetteG > -1.f) {
                 cr->set_source_rgba (0., 1., 0., 0.5); // WARNING: assuming that green values are stored in pipetteG, which might not be the case!
-                cr->move_to (graphX + graphW * static_cast<double>(pipetteG), graphY + 1. * s);
-                cr->rel_line_to (0, -graphH - 1. * s);
+                cr->move_to (graphX + graphW * static_cast<double>(pipetteG), graphY + 1.);
+                cr->rel_line_to (0, -graphH - 1.);
                 cr->stroke ();
             }
 
             if (pipetteB > -1.f) {
                 cr->set_source_rgba (0., 0., 1., 0.5); // WARNING: assuming that blue values are stored in pipetteB, which might not be the case!
-                cr->move_to (graphX + graphW * static_cast<double>(pipetteB), graphY + 1. * s);
-                cr->rel_line_to (0, -graphH - 1. * s);
+                cr->move_to (graphX + graphW * static_cast<double>(pipetteB), graphY + 1.);
+                cr->rel_line_to (0, -graphH - 1.);
                 cr->stroke ();
             }
         }
 
         if (pipetteVal > -1.f) {
-            cr->set_line_width (2. * s);
+            cr->set_line_width (2.);
             c = style->get_color (state);
             cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
-            cr->move_to (graphX + graphW * static_cast<double>(pipetteVal), graphY + 1. * s);
-            cr->rel_line_to (0, -graphH - 1. * s);
+            cr->move_to (graphX + graphW * static_cast<double>(pipetteVal), graphY + 1.);
+            cr->rel_line_to (0, -graphH - 1.);
             cr->stroke ();
-            cr->set_line_width (1. * s);
+            cr->set_line_width (1.);
         }
     }
 
@@ -472,10 +458,9 @@ void MyDiagonalCurve::draw (int handle)
     // draw the cage of the NURBS curve
     if (curve.type == DCT_NURBS) {
         unsigned int nbPoints;
-        std::valarray<double> ch_ds (1);
-        ch_ds[0] = 2 * s;
+        const std::valarray<double> ch_ds = {2.};
         cr->set_dash (ch_ds, 0);
-        cr->set_line_width (0.75 * s);
+        cr->set_line_width (0.75);
         cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
         std::vector<double> points = getPoints();
         nbPoints = ((int)points.size() - 1) / 2;
@@ -501,7 +486,7 @@ void MyDiagonalCurve::draw (int handle)
         }
 
         cr->unset_dash ();
-        cr->set_line_width (1.0 * s);
+        cr->set_line_width (1.0);
     }
 
     // draw curve
@@ -542,40 +527,26 @@ void MyDiagonalCurve::draw (int handle)
             double x = graphX + graphW * curve.x.at(i); // project (curve.x.at(i), 0, 1, graphW);
             double y = graphY - graphH * curve.y.at(i); // project (curve.y.at(i), 0, 1, graphH);
 
-            cr->arc (x, y, RADIUS * s + 0.5, 0, 2 * rtengine::RT_PI);
+            cr->arc (x, y, RADIUS + 0.5, 0, 2 * rtengine::RT_PI);
             cr->fill ();
 
             if (i == edited_point) {
-                cr->set_line_width(2. * s);
-                cr->arc (x, y, (RADIUS + 2.) * s, 0, 2 * rtengine::RT_PI);
+                cr->set_line_width(2.);
+                cr->arc (x, y, RADIUS + 2., 0, 2 * rtengine::RT_PI);
                 cr->stroke();
-                cr->set_line_width(1. * s);
+                cr->set_line_width(1.);
             }
 
         }
     }
-
-    setDirty(false);
-    queue_draw();
 }
 
 bool MyDiagonalCurve::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 {
-    Gtk::Allocation allocation = get_allocation();
-    allocation.set_x(0);
-    allocation.set_y(0);
+    // Draw drawing area
+    // Note: As drawing area surface is updated inside on_draw function, hidpi is automatically supported
+    updateDrawingArea(lit_point, cr);
 
-    // setDrawRectangle will allocate the backbuffer Surface
-    if (setDrawRectangle(Cairo::FORMAT_ARGB32, allocation)) {
-        setDirty(true);
-
-        if (prevGraphW > GRAPH_SIZE || graphW > GRAPH_SIZE) {
-            curveIsDirty = true;
-        }
-    }
-
-    draw (lit_point);
-    copySurface(cr);
     return false;
 }
 
@@ -594,10 +565,8 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event)
         return false;
     }
 
-    double s = RTScalable::getScale();
-
-    double minDistanceX = double(MIN_DISTANCE) / graphW * s;
-    double minDistanceY = double(MIN_DISTANCE) / graphH * s;
+    double minDistanceX = double(MIN_DISTANCE) / graphW;
+    double minDistanceY = double(MIN_DISTANCE) / graphH;
 
     switch (event->type) {
     case GDK_BUTTON_PRESS:
@@ -644,8 +613,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event)
                         curve.y.at(closest_point) = clampedY;
 
                         curveIsDirty = true;
-                        setDirty(true);
-                        draw (closest_point);
+                        queue_draw();
                         notifyListener ();
                     }
 
@@ -680,8 +648,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event)
                         editedPos.at(1) = curve.y.at(edited_point);
                         coordinateAdjuster->setPos(editedPos);
                         coordinateAdjuster->startNumericalAdjustment(newBoundaries);
-                        setDirty(true);
-                        draw (lit_point);
+                        queue_draw();
                         new_type = CSArrow;
                     }
                 }
@@ -701,8 +668,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event)
                                 if (lit_point != edited_point) {
                                     edited_point = lit_point;
                                     curveIsDirty = true;
-                                    setDirty(true);
-                                    draw (lit_point);
+                                    queue_draw();
                                     std::vector<CoordinateAdjuster::Boundaries> newBoundaries;
                                     newBoundaries.resize(2);
                                     int size = curve.x.size();
@@ -774,8 +740,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event)
                         curve.x.push_back (0);
                         curve.y.push_back (0);
                         curveIsDirty = true;
-                        setDirty(true);
-                        draw (lit_point);
+                        queue_draw();
                     }
                 }
 
@@ -788,8 +753,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event)
                 }
 
                 if (lit_point != previous_lit_point) {
-                    setDirty(true);
-                    draw (lit_point);
+                    queue_draw();
                 }
 
                 grab_point = -1;
@@ -809,8 +773,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event)
                 new_type = CSArrow;
                 lit_point = -1;
                 pipetteR = pipetteG = pipetteB = -1.f;
-                setDirty(true);
-                draw (lit_point);
+                queue_draw();
             }
         }
 
@@ -854,8 +817,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event)
                     }
 
                     if (lit_point != previous_lit_point) {
-                        setDirty(true);
-                        draw (lit_point);
+                        queue_draw();
 
                         if (lit_point > -1) {
                             editedPos.at(0) = curve.x.at(lit_point);
@@ -884,8 +846,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event)
                     }
 
                     if (lit_point != previous_lit_point) {
-                        setDirty(true);
-                        draw (lit_point);
+                        queue_draw();
                     }
                 }
             } else {
@@ -986,8 +947,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event)
                 if (curve.x.at(grab_point) != prevPosX || curve.y.at(grab_point) != prevPosY) {
                     // we recalculate the curve only if we have to
                     curveIsDirty = true;
-                    setDirty(true);
-                    draw (lit_point);
+                    queue_draw();
                     notifyListener ();
 
                     if (coordinateAdjuster->is_visible()) {
@@ -1069,8 +1029,7 @@ void MyDiagonalCurve::pipetteMouseOver (CurveEditor *ce, EditDataProvider *provi
         return;
     }
 
-    double s = (double)RTScalable::getScale();
-    double minDistanceX = MIN_DISTANCE / graphW * s;
+    double minDistanceX = MIN_DISTANCE / graphW;
 
     if (curve.type == DCT_Linear || curve.type == DCT_Spline || curve.type == DCT_NURBS || curve.type == DCT_CatumullRom) {
         // get the pointer position
@@ -1092,12 +1051,11 @@ void MyDiagonalCurve::pipetteMouseOver (CurveEditor *ce, EditDataProvider *provi
                 }
 
                 if (lit_point != previous_lit_point) {
-                    setDirty(true);
-                    draw (lit_point);
+                    queue_draw();
                 }
             }
         } else {
-            draw(lit_point);
+            queue_draw();
         }
 
         if (edited_point == -1) {
@@ -1124,8 +1082,7 @@ bool MyDiagonalCurve::pipetteButton1Pressed(EditDataProvider *provider, int modi
         return false;
     }
 
-    double s = (double)RTScalable::getScale();
-    double minDistanceX = double(MIN_DISTANCE) * s / graphW;
+    double minDistanceX = double(MIN_DISTANCE) / graphW;
 
     snapToElmt = -100;
 
@@ -1172,8 +1129,7 @@ bool MyDiagonalCurve::pipetteButton1Pressed(EditDataProvider *provider, int modi
             }
 
             curveIsDirty = true;
-            setDirty(true);
-            draw (lit_point);
+            queue_draw();
             notifyListener ();
         }
 
@@ -1201,8 +1157,7 @@ void MyDiagonalCurve::pipetteButton1Released(EditDataProvider *provider)
         return;
     }
 
-    double s = (double)RTScalable::getScale();
-    double minDistanceX = double(MIN_DISTANCE) * s / graphW;
+    double minDistanceX = double(MIN_DISTANCE) / graphW;
 
     snapToElmt = -100;
 
@@ -1221,8 +1176,7 @@ void MyDiagonalCurve::pipetteButton1Released(EditDataProvider *provider)
         }
 
         if (lit_point != previous_lit_point) {
-            setDirty(true);
-            draw (lit_point);
+            queue_draw();
         }
 
         grab_point = -1;
@@ -1309,8 +1263,7 @@ void MyDiagonalCurve::pipetteDrag(EditDataProvider *provider, int modifierKey)
     if (curve.x.at(grab_point) != prevPosX || curve.y.at(grab_point) != prevPosY) {
         // we recalculate the curve only if we have to
         curveIsDirty = true;
-        setDirty(true);
-        draw (lit_point);
+        queue_draw();
         notifyListener ();
 
         if (lit_point > -1 && coordinateAdjuster->is_visible()) {
@@ -1505,7 +1458,6 @@ void MyDiagonalCurve::setPoints (const std::vector<double>& p)
     }
 
     curveIsDirty = true;
-    setDirty(true);
     queue_draw ();
 }
 
@@ -1520,8 +1472,7 @@ void MyDiagonalCurve::setPos(double pos, int chanIdx)
     }
 
     curveIsDirty = true;
-    setDirty(true);
-    draw(lit_point);
+    queue_draw();
     notifyListener ();
 }
 
@@ -1530,8 +1481,7 @@ void MyDiagonalCurve::stopNumericalAdjustment()
     if (edited_point > -1) {
         edited_point = grab_point = lit_point = -1;
         coordinateAdjuster->stopNumericalAdjustment();
-        setDirty(true);
-        draw(lit_point);
+        queue_draw();
     }
 }
 
@@ -1539,13 +1489,12 @@ void MyDiagonalCurve::setType (DiagonalCurveType t)
 {
 
     curve.type = t;
-    setDirty(true);
+    queue_draw();
 }
 
 void MyDiagonalCurve::setActiveParam (int ac)
 {
     activeParam = ac;
-    setDirty(true);
     queue_draw ();
 }
 
@@ -1579,7 +1528,6 @@ void MyDiagonalCurve::updateBackgroundHistogram (const LUTu & hist)
             }
 
             mcih->clearPixmap();
-            mcih->myCurve->queue_draw();
 
             --mcih->pending;
 
@@ -1632,6 +1580,5 @@ void MyDiagonalCurve::reset(const std::vector<double> &resetCurve, double identi
         break;
     }
 
-    setDirty(true);
-    draw(-1);
+    queue_draw();
 }

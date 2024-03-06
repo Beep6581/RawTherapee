@@ -1,0 +1,18 @@
+[Icon Theme]
+Name=RawTherapee
+Comment=RawTherapee icon theme
+Inherits=Adwaita
+Directories=24x24/apps,scalable/apps
+
+
+[24x24/apps]
+Size=24
+Context=Applications
+Type=Threshold
+
+[scalable/apps]
+MinSize=16
+Size=128
+MaxSize=256
+Context=Applications
+Type=Scalable

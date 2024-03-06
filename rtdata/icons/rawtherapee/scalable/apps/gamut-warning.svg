@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="24px"
+   height="24px"
+   viewBox="0 0 24 24"
+   version="1.1"
+   id="SVGRoot"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs815" />
+  <metadata
+     id="metadata818">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Maciej Dworak</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title />
+          </cc:Agent>
+        </dc:rights>
+        <dc:description>RawTherapee icon.</dc:description>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1">
+    <path
+       style="opacity:0.7;fill:#cccccc;fill-opacity:1.0;fill-rule:evenodd;stroke:none;stroke-width:0.0483054px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 4.2089844 1.0078125 C 3.767679 0.97424093 3.3189036 1.037588 2.8691406 1.234375 C 1.4391609 2.1584732 1.1147229 4.031753 1.0039062 5.6113281 C 0.93787895 11.42066 1.5537794 17.256802 2.9277344 22.90625 C 2.9363344 22.93695 2.9464581 22.96922 2.9550781 23 L 3.9375 23 C 2.9877271 18.690012 2.5553538 14.262765 2.6054688 9.8535156 C 2.6970151 8.5486023 2.9651537 7.0016947 4.1464844 6.2382812 C 5.6327149 5.5880048 7.0999019 6.7202361 8.2480469 7.5546875 C 9.0027908 8.247407 9.7525627 8.9793864 10.498047 9.7265625 C 10.381733 9.2101094 10.24903 8.5877342 10.148438 8.1757812 A 1.7223988 1.7223988 0 0 1 10.148438 8.1699219 C 9.9561858 7.3705634 9.7793004 6.5899652 9.6171875 5.8300781 A 1.7223988 1.7223988 0 0 1 9.6152344 5.8261719 C 9.4668145 5.1211763 9.3827157 4.5644814 9.359375 4.0234375 C 8.8550749 3.6203203 8.3505668 3.2174596 7.8339844 2.828125 C 6.7916281 2.0705587 5.5329023 1.1085274 4.2089844 1.0078125 z M 17.136719 11.011719 C 17.112058 11.128262 17.095519 11.190115 17.070312 11.310547 A 1.7223988 1.7223988 0 0 0 17.070312 11.3125 C 16.81075 12.543019 16.531322 14.092716 16.236328 15.951172 A 1.7223988 1.7223988 0 0 1 16.224609 16.009766 C 16.485002 16.318485 16.748989 16.625354 17.005859 16.935547 C 17.055739 16.976701 17.113663 17.007345 17.160156 17.052734 C 17.469723 17.348586 17.717926 17.702191 17.933594 18.076172 C 19.275364 19.73097 20.568296 21.388549 21.779297 23 L 23 23 L 23 16.8125 C 21.048946 14.875256 19.105453 12.929301 17.136719 11.011719 z "
+       id="path17362-9" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:30.5257px;line-height:1.25;font-family:Georgia;-inkscape-font-specification:'Georgia Bold';letter-spacing:0px;word-spacing:0px;opacity:0.7;fill:#cccccc;fill-opacity:1;stroke:none;stroke-width:0.95393"
+       x="8.215003"
+       y="22.567751"
+       id="text8360"><tspan
+         id="tspan8358"
+         x="8.215003"
+         y="22.567751"
+         style="fill:#cccccc;fill-opacity:1;stroke-width:0.95393">!</tspan></text>
+    <g
+       aria-label="!"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:30.52574539px;line-height:1.25;font-family:Georgia;-inkscape-font-specification:'Georgia Bold';letter-spacing:0px;word-spacing:0px;opacity:0.7;fill:#cccccc;fill-opacity:1.0;stroke:none;stroke-width:0.95392954"
+       id="text8364" />
+  </g>
+</svg>

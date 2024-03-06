@@ -57,15 +57,16 @@ EditWindow* EditWindow::getInstance(RTWindow* p)
 }
 
 EditWindow::EditWindow (RTWindow* p)
-    : resolution(RTScalable::baseDPI)
-    , parent(p)
+    : parent(p)
     , isFullscreen(false)
     , isClosed(true)
     , isMinimized(false)
 {
+    // For UNIX system, set app icon
+#ifndef _WIN32
+    set_default_icon_name("rawtherapee");
+#endif
 
-    updateResolution();
-    setAppIcon();
     set_title_decorated("");
     set_modal(false);
     set_resizable(true);
@@ -165,56 +166,8 @@ void EditWindow::on_realize ()
     editWindowCursorManager.init (get_window());
 }
 
-bool EditWindow::updateResolution()
-{
-    int scale = get_scale_factor();
-    double res = get_screen()->get_resolution();
-    if (scale == 2) {
-        // from Windows' behavior : if scale==2, resolution = 192. (Gtk shows 96 dpi !?), there's no higher value
-        res = RTScalable::baseHiDPI;
-    }
-    bool retVal = res != resolution;
-    resolution = res;
-    return retVal;
-}
-
-void EditWindow::setAppIcon()
-{
-    Glib::ustring fName;
-    bool downsize = false;
-    // findIconAbsolutePath won't be able to select the image based on resolution with the
-    // storage of the images, we're doing the selection here
-    if (resolution == RTScalable::baseDPI) {
-        fName = "rawtherapee-logo-24.png";
-    } else {
-        fName = "rawtherapee-logo-48.png";
-        if (resolution < RTScalable::baseHiDPI) {
-            downsize = true;
-        }
-    }
-    Glib::ustring icon_path = Glib::build_filename (argv0, "images", fName);
-    const Glib::RefPtr<Gdk::Pixbuf> pixbuf = Gdk::Pixbuf::create_from_file(icon_path);
-    if (!pixbuf) {
-        return;
-    }
-    if (downsize) {
-        int size = int((48. * resolution) / RTScalable::baseHiDPI);
-        pixbuf->scale_simple(size, size, Gdk::InterpType::INTERP_BILINEAR);
-    }
-
-    try {
-        set_default_icon(pixbuf);
-    } catch(Glib::Exception& ex) {
-        printf ("%s\n", ex.what().c_str());
-    }
-}
-
 bool EditWindow::on_configure_event(GdkEventConfigure* event)
 {
-    if (updateResolution()) {
-        setAppIcon();
-    }
-
     if (!options.meowMaximized && !isFullscreen && !isMinimized) {
         get_position(options.meowX, options.meowY);
         get_size(options.meowWidth, options.meowHeight);
@@ -254,11 +207,11 @@ void EditWindow::addEditorPanel (EditorPanel* ep, const std::string &name)
 
     // construct closeable tab for the image
     Gtk::Box* hb = Gtk::manage (new Gtk::Box ());
-    hb->pack_start (*Gtk::manage (new RTImage ("aperture.png")));
+    hb->pack_start (*Gtk::manage (new RTImage ("aperture")));
     hb->pack_start (*Gtk::manage (new Gtk::Label (Glib::path_get_basename (name))));
     hb->set_tooltip_markup (name);
     Gtk::Button* closeb = Gtk::manage (new Gtk::Button ());
-    closeb->set_image (*Gtk::manage(new RTImage ("cancel-small.png")));
+    closeb->set_image (*Gtk::manage(new RTImage ("cancel-small", Gtk::ICON_SIZE_BUTTON)));
     closeb->set_relief (Gtk::RELIEF_NONE);
     closeb->set_focus_on_click (false);
 

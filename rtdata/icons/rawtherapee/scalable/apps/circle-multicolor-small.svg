@@ -1,0 +1,671 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="16"
+   height="16"
+   viewBox="0 0 16 16"
+   version="1.1"
+   id="SVGRoot"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs815">
+    <linearGradient
+       id="linearGradient19">
+      <stop
+         style="stop-color:#ff2a2a;stop-opacity:1;"
+         offset="0"
+         id="stop19" />
+      <stop
+         style="stop-color:#ff2a2a;stop-opacity:0;"
+         offset="1"
+         id="stop20" />
+    </linearGradient>
+    <linearGradient
+       xlink:href="#linearGradient19"
+       id="linearGradient20"
+       x1="7.9999698"
+       y1="5"
+       x2="8.0000302"
+       y2="5"
+       gradientUnits="userSpaceOnUse" />
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath2045">
+      <circle
+         style="fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2.22909;stroke-linecap:round;stroke-linejoin:round"
+         id="circle2045"
+         cx="7.9960938"
+         cy="8.0000448"
+         r="5.5045857" />
+    </clipPath>
+  </defs>
+  <metadata
+     id="metadata818">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Maciej Dworak</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title />
+          </cc:Agent>
+        </dc:rights>
+        <dc:description>RawTherapee icon.</dc:description>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="g1882"
+     transform="matrix(1.0900003,0,0,1.0900003,-0.71574448,-0.72005115)"
+     clip-path="url(#clipPath2045)">
+    <path
+       style="fill:url(#linearGradient20);fill-opacity:1;stroke:none;stroke-width:0.0999397px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 8.0000302,7.9999995 -6.04e-5,-5.999999"
+       id="path17" />
+    <path
+       style="stroke:none;stroke-width:1.79061px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 7.5,1.99997 H 8.5000001 L 8,7.9999995 Z"
+       id="path20" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#ff0000"
+       stroke="#ff0000"
+       id="use1258" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#ff2a00"
+       stroke="#ff2a00"
+       id="use1259" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#ff5500"
+       stroke="#ff5500"
+       id="use1260" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#ff7f00"
+       stroke="#ff7f00"
+       id="use1261" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#ffaa00"
+       stroke="#ffaa00"
+       id="use1262" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#ffd400"
+       stroke="#ffd400"
+       id="use1263" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#ffff00"
+       stroke="#ffff00"
+       id="use1264" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#d5ff00"
+       stroke="#d5ff00"
+       id="use1265" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#aaff00"
+       stroke="#aaff00"
+       id="use1266" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#80ff00"
+       stroke="#80ff00"
+       id="use1267" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#55ff00"
+       stroke="#55ff00"
+       id="use1268" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#2bff00"
+       stroke="#2bff00"
+       id="use1269" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#00ff00"
+       stroke="#00ff00"
+       id="use1270" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#00ff2a"
+       stroke="#00ff2a"
+       id="use1271" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#00ff55"
+       stroke="#00ff55"
+       id="use1272" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#00ff7f"
+       stroke="#00ff7f"
+       id="use1273" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#00ffaa"
+       stroke="#00ffaa"
+       id="use1274" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#00ffd4"
+       stroke="#00ffd4"
+       id="use1275" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#00ffff"
+       stroke="#00ffff"
+       id="use1276" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#00d5ff"
+       stroke="#00d5ff"
+       id="use1277" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#00aaff"
+       stroke="#00aaff"
+       id="use1278" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#0080ff"
+       stroke="#0080ff"
+       id="use1279" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#0055ff"
+       stroke="#0055ff"
+       id="use1280" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#002bff"
+       stroke="#002bff"
+       id="use1281" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#0000ff"
+       stroke="#0000ff"
+       id="use1282" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#2a00ff"
+       stroke="#2a00ff"
+       id="use1283" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#5500ff"
+       stroke="#5500ff"
+       id="use1284" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#7f00ff"
+       stroke="#7f00ff"
+       id="use1285" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#aa00ff"
+       stroke="#aa00ff"
+       id="use1286" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#d400ff"
+       stroke="#d400ff"
+       id="use1287" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#ff00ff"
+       stroke="#ff00ff"
+       id="use1288" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#ff00d5"
+       stroke="#ff00d5"
+       id="use1289" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#ff00aa"
+       stroke="#ff00aa"
+       id="use1290" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#ff0080"
+       stroke="#ff0080"
+       id="use1291" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       fill="#ff0055"
+       stroke="#ff0055"
+       id="use1292" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#path20"
+       stroke="#ff002b"
+       id="use1293"
+       transform="translate(0,3e-5)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       fill="#ff0000"
+       stroke="#ff0000"
+       id="use1612" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(9,7.9960938,8.0000448)"
+       fill="#ff2600"
+       stroke="#ff2600"
+       id="use1613" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(18,7.9960938,8.0000448)"
+       fill="#ff4d00"
+       stroke="#ff4d00"
+       id="use1614" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(27,7.9960938,8.0000448)"
+       fill="#ff7300"
+       stroke="#ff7300"
+       id="use1615" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(36,7.9960938,8.0000448)"
+       fill="#ff9900"
+       stroke="#ff9900"
+       id="use1616" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(45,7.9960938,8.0000448)"
+       fill="#ffbf00"
+       stroke="#ffbf00"
+       id="use1617" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(54,7.9960938,8.0000448)"
+       fill="#ffe600"
+       stroke="#ffe600"
+       id="use1618" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(63,7.9960938,8.0000448)"
+       fill="#f2ff00"
+       stroke="#f2ff00"
+       id="use1619" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(72,7.9960938,8.0000448)"
+       fill="#ccff00"
+       stroke="#ccff00"
+       id="use1620" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(81,7.9960938,8.0000448)"
+       fill="#a6ff00"
+       stroke="#a6ff00"
+       id="use1621" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(90,7.9960938,8.0000448)"
+       fill="#80ff00"
+       stroke="#80ff00"
+       id="use1622" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(99,7.9960938,8.0000448)"
+       fill="#59ff00"
+       stroke="#59ff00"
+       id="use1623" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(108,7.9960938,8.0000448)"
+       fill="#33ff00"
+       stroke="#33ff00"
+       id="use1624" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(117,7.9960938,8.0000448)"
+       fill="#0dff00"
+       stroke="#0dff00"
+       id="use1625" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(126,7.9960938,8.0000448)"
+       fill="#00ff19"
+       stroke="#00ff19"
+       id="use1626" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(135,7.9960938,8.0000448)"
+       fill="#00ff40"
+       stroke="#00ff40"
+       id="use1627" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(144,7.9960938,8.0000448)"
+       fill="#00ff66"
+       stroke="#00ff66"
+       id="use1628" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(153,7.9960938,8.0000448)"
+       fill="#00ff8c"
+       stroke="#00ff8c"
+       id="use1629" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(162,7.9960938,8.0000448)"
+       fill="#00ffb2"
+       stroke="#00ffb2"
+       id="use1630" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(171,7.9960938,8.0000448)"
+       fill="#00ffd9"
+       stroke="#00ffd9"
+       id="use1631" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(180,7.9960938,8.0000448)"
+       fill="#00ffff"
+       stroke="#00ffff"
+       id="use1632" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(-171,7.9960938,8.0000448)"
+       fill="#00d9ff"
+       stroke="#00d9ff"
+       id="use1633" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(-162,7.9960938,8.0000448)"
+       fill="#00b2ff"
+       stroke="#00b2ff"
+       id="use1634" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(-153,7.9960938,8.0000448)"
+       fill="#008cff"
+       stroke="#008cff"
+       id="use1635" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(-144,7.9960938,8.0000448)"
+       fill="#0066ff"
+       stroke="#0066ff"
+       id="use1636" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(-135,7.9960938,8.0000448)"
+       fill="#0040ff"
+       stroke="#0040ff"
+       id="use1637" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(-126,7.9960938,8.0000448)"
+       fill="#001aff"
+       stroke="#001aff"
+       id="use1638" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(-117,7.9960938,8.0000448)"
+       fill="#0d00ff"
+       stroke="#0d00ff"
+       id="use1639" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(-108,7.9960938,8.0000448)"
+       fill="#3300ff"
+       stroke="#3300ff"
+       id="use1640" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(-99,7.9960938,8.0000448)"
+       fill="#5900ff"
+       stroke="#5900ff"
+       id="use1641" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(-90,7.9960938,8.0000448)"
+       fill="#8000ff"
+       stroke="#8000ff"
+       id="use1642" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(-81,7.9960938,8.0000448)"
+       fill="#a600ff"
+       stroke="#a600ff"
+       id="use1643" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(-72,7.9960938,8.0000448)"
+       fill="#cc00ff"
+       stroke="#cc00ff"
+       id="use1644" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(-63,7.9960938,8.0000448)"
+       fill="#f200ff"
+       stroke="#f200ff"
+       id="use1645" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(-54,7.9960938,8.0000448)"
+       fill="#ff00e5"
+       stroke="#ff00e5"
+       id="use1646" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(-45,7.9960938,8.0000448)"
+       fill="#ff00bf"
+       stroke="#ff00bf"
+       id="use1647" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(-36,7.9960938,8.0000448)"
+       fill="#ff0099"
+       stroke="#ff0099"
+       id="use1648" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(-27,7.9960938,8.0000448)"
+       fill="#ff0073"
+       stroke="#ff0073"
+       id="use1649" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(-18,7.9960938,8.0000448)"
+       fill="#ff004d"
+       stroke="#ff004d"
+       id="use1650" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use1293"
+       transform="rotate(-9,7.9960938,8.0000448)"
+       fill="#ff0026"
+       stroke="#ff0026"
+       id="use1651" />
+  </g>
+</svg>

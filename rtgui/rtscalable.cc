@@ -2,6 +2,7 @@
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2018 Jean-Christophe FRISCH <natureh.510@gmail.com>
+ *  Copyright (c) 2022 Pierre CABRERA <pierre.cab@gmail.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,47 +19,235 @@
  */
 
 #include "rtscalable.h"
-#include <glib/gstdio.h>
-#include <regex>
-#include <gtkmm.h>
+
 #include <iostream>
 #include <librsvg/rsvg.h>
 
-#include "../rtengine/rt_math.h"
-#include "options.h"
-
-double RTScalable::dpi = 0.;
-int RTScalable::scale = 0;
+#include "../rtengine/settings.h"
+#include "guiutils.h"
 
 extern Glib::ustring argv0;
-extern unsigned char initialGdkScale;
-extern float fontScale;
-Gtk::TextDirection RTScalable::direction = Gtk::TextDirection::TEXT_DIR_NONE;
+
+// Default static parameter values
+double RTScalable::dpi = 96.;
+int RTScalable::scale = 1;
+
+void RTScalable::getDPInScale(const Gtk::Window* window, double &newDPI, int &newScale)
+{
+    if (window) {
+        const auto screen = window->get_screen();
+        newDPI = screen->get_resolution(); // Get DPI retrieved from the OS
+
+        if (window->get_scale_factor() > 0) {
+             // Get scale factor associated to the window
+            newScale = window->get_scale_factor();
+        } else {
+            newScale = 1; // Default minimum value of 1 as scale is used to scale surface
+        }
+    }
+}
+
+Cairo::RefPtr<Cairo::ImageSurface> RTScalable::loadSurfaceFromIcon(const Glib::ustring &iconName, const Gtk::IconSize iconSize)
+{
+    GThreadLock lock; // All icon theme access or image access on separate thread HAVE to be protected
+
+    Cairo::RefPtr<Cairo::ImageSurface> surf; // Create Cairo::RefPtr<Cairo::ImageSurface> nullptr
+
+    // Get icon theme
+    const auto theme = Gtk::IconTheme::get_default();
+
+    // Get pixel size from Gtk::IconSize
+    int wSize, hSize;
+
+    if (!Gtk::IconSize::lookup(iconSize, wSize, hSize)) { // Size in invalid
+        wSize = hSize = 16; // Set to a default size of 16px (i.e. Gtk::ICON_SIZE_SMALL_TOOLBAR one)
+    }
+
+    // Get scale based on DPI and scale
+    // Note: hSize not used because icon are considered squared
+    const int size = wSize;
+
+    // Looking for corresponding icon (if existing)
+    const auto iconInfo = theme->lookup_icon(iconName, size);
+
+    if (!iconInfo) {
+        std::cerr << "Failed to load icon \"" << iconName << "\" for size " << size << "px" << std::endl;
+
+        return surf;
+    }
+
+    const auto iconPath = iconInfo.get_filename();
+
+    if (iconPath.empty()) {
+        std::cerr << "Failed to load icon \"" << iconName << "\" for size " << size << "px" << std::endl;
+
+        return surf;
+    }
+
+    // Create surface from corresponding icon
+    const auto pos = iconPath.find_last_of('.');
+
+    if (pos >= 0 && pos < iconPath.length()) {
+        const auto fext = iconPath.substr(pos + 1, iconPath.length()).lowercase();
+
+        // Case where iconPath is a PNG file
+        if (fext == "png") {
+            // Create surface from PNG file
+            surf = RTScalable::loadSurfaceFromPNG(iconPath, true);
+        }
+
+        // Case where iconPath is a SVG file
+        if (fext == "svg") {
+            // Create surface from SVG file
+            surf = RTScalable::loadSurfaceFromSVG(iconPath, size, size, true);
+        }
+    }
+
+    return surf;
+}
+
+Cairo::RefPtr<Cairo::ImageSurface> RTScalable::loadSurfaceFromPNG(const Glib::ustring &fname, const bool is_path)
+{
+    GThreadLock lock; // All icon theme access or image access on separate thread HAVE to be protected
+
+    Cairo::RefPtr<Cairo::ImageSurface> surf; // Create Cairo::RefPtr<Cairo::ImageSurface> nullptr
+
+    Glib::ustring path;
+
+    if (is_path) {
+        // Directly use fname as a path
+        path = fname;
+    } else {
+        // Look for PNG file in "images" folder
+        Glib::ustring imagesFolder = Glib::build_filename(argv0, "images");
+        path = Glib::build_filename(imagesFolder, fname);
+    }
+
+    // Create surface from PNG file if file exist
+    if (Glib::file_test(path.c_str(), Glib::FILE_TEST_EXISTS)) {
+        surf = Cairo::ImageSurface::create_from_png(path);
+    } else {
+        std::cerr << "Failed to load PNG file \"" << fname << "\"" << std::endl;
+    }
+
+    return surf;
+}
+
+Cairo::RefPtr<Cairo::ImageSurface> RTScalable::loadSurfaceFromSVG(const Glib::ustring &fname, const int width, const int height, const bool is_path)
+{
+    GThreadLock lock; // All icon theme access or image access on separate thread HAVE to be protected
+
+    Cairo::RefPtr<Cairo::ImageSurface> surf; // Create Cairo::RefPtr<Cairo::ImageSurface> nullptr
+
+    Glib::ustring path;
+
+    if (is_path) {
+        // Directly use fname as a path
+        path = fname;
+    } else {
+        // Look for SVG file in "images" folder
+        Glib::ustring imagesFolder = Glib::build_filename(argv0, "images");
+        path = Glib::build_filename(imagesFolder, fname);
+    }
+
+    // Create surface from SVG file if file exist
+    if (Glib::file_test(path.c_str(), Glib::FILE_TEST_EXISTS)) {
+        // Read content of SVG file
+        std::string svgFile;
+        try {
+            svgFile = Glib::file_get_contents(path);
+        }
+        catch (Glib::FileError &err) {
+            std::cerr << "Failed to load SVG file \"" << fname << "\": " << err.what() << std::endl;
+            return surf;
+        }
+
+        // Create surface with librsvg library
+        GError* error = nullptr;
+        RsvgHandle* handle = rsvg_handle_new_from_data((unsigned const char*)svgFile.c_str(), svgFile.length(), &error);
+
+        if (error) {
+            std::cerr << "Failed to load SVG file \"" << fname << "\": " << std::endl
+                      << Glib::ustring(error->message) << std::endl;
+            free(error);
+            return surf;
+        }
+
+        int w, h;
+
+        if (width == -1 || height == -1) {
+            // Use SVG image natural width and height
+            double _w, _h;
+            const bool has_dim = rsvg_handle_get_intrinsic_size_in_pixels(handle, &_w, &_h); // Get SVG image dimensions
+            if (has_dim) {
+                w = std::ceil(_w);
+                h = std::ceil(_h);
+            } else {
+                w = h = 16; // Set to a default size of 16px (i.e. Gtk::ICON_SIZE_SMALL_TOOLBAR one)
+            }
+        } else {
+            // Use given width and height
+            w = width;
+            h = height;
+        }
+
+        // Create an upscaled surface to avoid blur effect
+        surf = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32,
+            w * RTScalable::getScale(),
+            h * RTScalable::getScale());
+
+        // Render (and erase with) default surface background
+        Cairo::RefPtr<Cairo::Context> c = Cairo::Context::create(surf);
+        c->set_source_rgba (0., 0., 0., 0.);
+        c->set_operator (Cairo::OPERATOR_CLEAR);
+        c->paint();
+
+        // Render upscaled surface based on SVG image
+        error = nullptr;
+        RsvgRectangle rect = {
+            .x = 0.,
+            .y = 0.,
+            .width = static_cast<double>(w * RTScalable::getScale()),
+            .height = static_cast<double>(h * RTScalable::getScale())
+        };
+        c->set_operator (Cairo::OPERATOR_OVER);
+        const bool success = rsvg_handle_render_document(handle, c->cobj(), &rect, &error);
+
+        if (!success && error) {
+            std::cerr << "Failed to load SVG file \"" << fname << "\": " << std::endl
+                      << Glib::ustring(error->message) << std::endl;
+            free(error);
+            return surf;
+        }
+
+        rsvg_handle_free(handle);
+
+        // Set device scale to avoid blur effect
+        cairo_surface_set_device_scale(surf->cobj(),
+            static_cast<double>(RTScalable::getScale()),
+            static_cast<double>(RTScalable::getScale()));
+    } else {
+        std::cerr << "Failed to load SVG file \"" << fname << "\"" << std::endl;
+    }
+
+    return surf;
+}
+
+void RTScalable::init(const Gtk::Window* window)
+{
+    // Retrieve DPI and Scale paremeters from OS
+    getDPInScale(window, dpi, scale);
+}
+
+void RTScalable::setDPInScale (const Gtk::Window* window)
+{
+    getDPInScale(window, dpi, scale);
+}
 
 void RTScalable::setDPInScale (const double newDPI, const int newScale)
 {
-    if (!options.pseudoHiDPISupport) {
-        scale = 1;
-        dpi = baseDPI;
-        return;
-    }
-
-    if (scale != newScale || (scale == 1 && dpi != newDPI)) {
-        // reload all images
-        scale = newScale;
-        // HOMBRE: On windows, if scale = 2, the dpi is non significant, i.e. should be considered = 192 ; don't know for linux/macos
-        dpi = newDPI;
-        if (scale == 1) {
-            if (dpi >= baseHiDPI) {
-                scale = 2;
-            }
-        }
-        else if (scale == 2) {
-            if (dpi < baseHiDPI) {
-                dpi *= 2.;
-            }
-        }
-    }
+    dpi = newDPI;
+    scale = newScale;
 }
 
 double RTScalable::getDPI ()
@@ -66,188 +255,24 @@ double RTScalable::getDPI ()
     return dpi;
 }
 
-double RTScalable::getTweakedDPI ()
-{
-    return dpi * static_cast<double>(fontScale);
-}
-
 int RTScalable::getScale ()
 {
     return scale;
 }
 
-Gtk::TextDirection RTScalable::getDirection()
+double RTScalable::getGlobalScale()
 {
-    return direction;
+    return (RTScalable::getDPI() / RTScalable::baseDPI);
 }
 
-void RTScalable::init(Gtk::Window *window)
+int RTScalable::scalePixelSize(const int pixel_size)
 {
-    dpi = 0.;
-    scale = 0;
-
-    setDPInScale(window->get_screen()->get_resolution(), rtengine::max((int)initialGdkScale, window->get_scale_factor()));
-    direction = window->get_direction();
+    const double s = getGlobalScale();
+    return static_cast<int>(pixel_size * s + 0.5); // Rounded scaled size
 }
 
-void RTScalable::deleteDir(const Glib::ustring& path)
+double RTScalable::scalePixelSize(const double pixel_size)
 {
-    int error = 0;
-    try {
-
-        Glib::Dir dir (path);
-
-        // Removing the directory content
-        for (auto entry = dir.begin(); entry != dir.end(); ++entry) {
-            error |= g_remove (Glib::build_filename (path, *entry).c_str());
-        }
-
-        if (error != 0 && rtengine::settings->verbose) {
-            std::cerr << "Failed to delete all entries in '" << path << "': " << g_strerror(errno) << std::endl;
-        }
-
-    } catch (Glib::Error&) {
-        error = 1;
-    }
-
-    // Removing the directory itself
-    if (!error) {
-        try {
-
-            error = g_remove (path.c_str());
-
-        } catch (Glib::Error&) {}
-    }
-}
-
-void RTScalable::cleanup(bool all)
-{
-    Glib::ustring imagesCacheFolder = Glib::build_filename (options.cacheBaseDir, "svg2png");
-    Glib::ustring sDPI = Glib::ustring::compose("%1", (int)getTweakedDPI());
-
-    try {
-        Glib::Dir dir(imagesCacheFolder);
-
-        for (Glib::DirIterator entry = dir.begin(); entry != dir.end(); ++entry) {
-            const Glib::ustring fileName = *entry;
-            const Glib::ustring filePath = Glib::build_filename(imagesCacheFolder, fileName);
-            if (fileName == "." || fileName == ".." || !Glib::file_test(filePath, Glib::FILE_TEST_IS_DIR)) {
-                continue;
-            }
-
-            if (all || fileName != sDPI) {
-                deleteDir(filePath);
-            }
-        }
-    } catch (Glib::Exception&) {
-    }
-
-}
-
-/*
- * This function try to find the svg file converted to png in a cache and return
- * the Cairo::ImageSurface. If it can't find it, it will generate it.
- *
- * If the provided filename doesn't end with ".svg" (and then we're assuming it's a png file),
- * it will try to load that file directly from the source images folder. Scaling is disabled
- * for anything else than svg files.
- *
- * This function will always return a usable value, but it might be a garbage image
- * if something went wrong.
- */
-Cairo::RefPtr<Cairo::ImageSurface> RTScalable::loadImage(const Glib::ustring &fname, double dpi)
-{
-    // Magic color       : #2a7fff
-    // Dark theme color  : #CCCCCC
-    // Light theme color : #252525  -- not used
-
-    Glib::ustring imagesFolder = Glib::build_filename (argv0, "images");
-    Glib::ustring imagesCacheFolder = Glib::build_filename (options.cacheBaseDir, "svg2png");
-
-    // -------------------- Looking for the cached PNG file first --------------------
-
-    Glib::ustring imagesCacheFolderDPI = Glib::build_filename (imagesCacheFolder, Glib::ustring::compose("%1", (int)dpi));
-    auto path = Glib::build_filename(imagesCacheFolderDPI, fname);
-
-    if (Glib::file_test(path.c_str(), Glib::FILE_TEST_EXISTS)) {
-        return Cairo::ImageSurface::create_from_png(path);
-    } else {
-
-        // -------------------- Looking for the PNG file in install directory --------------------
-
-        path = Glib::build_filename(imagesFolder, fname);
-        if (Glib::file_test(path.c_str(), Glib::FILE_TEST_EXISTS)) {
-            return Cairo::ImageSurface::create_from_png(path);
-        }
-    }
-
-    // Last chance: looking for the svg file and creating the cached image file
-
-    // -------------------- Creating the cache folder for PNGs --------------------
-
-    if (!Glib::file_test(imagesCacheFolderDPI.c_str(), Glib::FILE_TEST_EXISTS)) {
-        auto error = g_mkdir_with_parents (imagesCacheFolderDPI.c_str(), 0777);
-        if (error != 0) {
-            std::cerr << "ERROR: Can't create \"" << imagesCacheFolderDPI << "\" cache folder: " << g_strerror(error)  << std::endl;
-            Cairo::RefPtr<Cairo::ImageSurface> surf = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, 10, 10);
-            return surf;
-        }
-    }
-
-    // -------------------- Loading the SVG file --------------------
-
-    std::string svgFile;
-    Glib::ustring iconNameSVG;
-    if (fname.find(".png") != Glib::ustring::npos) {
-        iconNameSVG = fname.substr(0, fname.length() - 3) + Glib::ustring("svg");
-    }
-    try {
-        path = Glib::build_filename (imagesFolder, iconNameSVG);
-        //printf("Trying to get content of %s\n", path.c_str());
-        svgFile = Glib::file_get_contents(Glib::build_filename (imagesFolder, iconNameSVG));
-    }
-    catch (Glib::FileError &err) {
-        std::cerr << "ERROR: " << err.what() << std::endl;
-        Cairo::RefPtr<Cairo::ImageSurface> surf = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, 10, 10);
-        return surf;
-    }
-
-    // -------------------- Updating the the magic color --------------------
-
-    std::string updatedSVG = std::regex_replace(svgFile, std::regex("#2a7fff"), "#CCCCCC");
-
-    // -------------------- Creating the rsvg handle --------------------
-
-    GError **error = nullptr;
-    RsvgHandle *handle = rsvg_handle_new_from_data((unsigned const char*)updatedSVG.c_str(), updatedSVG.length(), error);
-
-    if (error && !handle) {
-        std::cerr << "ERROR: Can't use the provided data for \"" << fname << "\" to create a RsvgHandle:" << std::endl
-                  << Glib::ustring((*error)->message) << std::endl;
-        Cairo::RefPtr<Cairo::ImageSurface> surf = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, 10, 10);
-        return surf;
-    }
-
-    // -------------------- Drawing the image to a Cairo::ImageSurface --------------------
-
-    RsvgDimensionData dim;
-    rsvg_handle_get_dimensions(handle, &dim);
-    double r = dpi / baseDPI;
-    Cairo::RefPtr<Cairo::ImageSurface> surf = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, (int)(dim.width * r + 0.499), (int)(dim.height * r + 0.499));
-    Cairo::RefPtr<Cairo::Context> c = Cairo::Context::create(surf);
-    c->set_source_rgba (0., 0., 0., 0.);
-    c->set_operator (Cairo::OPERATOR_CLEAR);
-    c->paint ();
-    c->set_operator (Cairo::OPERATOR_OVER);
-    c->scale(r, r);
-    rsvg_handle_render_cairo(handle, c->cobj());
-    rsvg_handle_free(handle);
-
-    // -------------------- Saving the image in cache --------------------
-
-    surf->write_to_png(Glib::build_filename(imagesCacheFolderDPI, fname));
-
-    // -------------------- Finished! Pfeeew ! --------------------
-
-    return surf;
+    const double s = getGlobalScale();
+    return (pixel_size * s);
 }

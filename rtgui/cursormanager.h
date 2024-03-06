@@ -81,7 +81,6 @@ private:
 
 public:
     void init                         (Glib::RefPtr<Gdk::Window> mainWindow);
-    void cleanup                      ();
     static void setWidgetCursor       (Glib::RefPtr<Gdk::Window> window, CursorShape shape);
     static void setCursorOfMainWindow (Glib::RefPtr<Gdk::Window> window, CursorShape shape);
 };

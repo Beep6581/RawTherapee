@@ -25,15 +25,15 @@ ZoomPanel::ZoomPanel (ImageArea* iarea) : iarea(iarea)
 {
     set_name ("EditorZoomPanel");
 
-    Gtk::Image* imageOut = Gtk::manage (new RTImage ("magnifier-minus.png"));
+    Gtk::Image* imageOut = Gtk::manage (new RTImage ("magnifier-minus", Gtk::ICON_SIZE_LARGE_TOOLBAR));
     imageOut->set_padding(0, 0);
-    Gtk::Image* imageIn = Gtk::manage (new RTImage ("magnifier-plus.png"));
+    Gtk::Image* imageIn = Gtk::manage (new RTImage ("magnifier-plus", Gtk::ICON_SIZE_LARGE_TOOLBAR));
     imageIn->set_padding(0, 0);
-    Gtk::Image* image11 = Gtk::manage ( new RTImage ("magnifier-1to1.png"));
+    Gtk::Image* image11 = Gtk::manage ( new RTImage ("magnifier-1to1", Gtk::ICON_SIZE_LARGE_TOOLBAR));
     image11->set_padding(0, 0);
-    Gtk::Image* imageFit = Gtk::manage (new RTImage ("magnifier-fit.png"));
+    Gtk::Image* imageFit = Gtk::manage (new RTImage ("magnifier-fit", Gtk::ICON_SIZE_LARGE_TOOLBAR));
     imageFit->set_padding(0, 0);
-    Gtk::Image* imageFitCrop = Gtk::manage (new RTImage ("magnifier-crop.png"));
+    Gtk::Image* imageFitCrop = Gtk::manage (new RTImage ("magnifier-crop", Gtk::ICON_SIZE_LARGE_TOOLBAR));
     imageFit->set_padding(0, 0);
 
     zoomOut = Gtk::manage (new Gtk::Button());
@@ -67,7 +67,7 @@ ZoomPanel::ZoomPanel (ImageArea* iarea) : iarea(iarea)
     setExpandAlignProperties(zoomLabel, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     attach_next_to (*zoomLabel, Gtk::POS_RIGHT, 1, 1);
 
-    Gtk::Image* imageCrop = Gtk::manage (new RTImage ("window-add.png"));
+    Gtk::Image* imageCrop = Gtk::manage (new RTImage ("window-add", Gtk::ICON_SIZE_LARGE_TOOLBAR));
     imageCrop->set_padding(0, 0);
     newCrop = Gtk::manage (new Gtk::Button());
     newCrop->add (*imageCrop);

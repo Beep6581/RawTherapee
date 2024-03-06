@@ -16,7 +16,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include <favoritbrowser.h>
+#include "favoritbrowser.h"
+
 #include "multilangmgr.h"
 #include "rtimage.h"
 
@@ -57,7 +58,7 @@ FavoritBrowser::FavoritBrowser () : listener (NULL)
     add->set_vexpand(false);
     add->set_halign(Gtk::ALIGN_FILL);
     add->set_valign(Gtk::ALIGN_START);
-    add->set_image (*Gtk::manage (new RTImage ("add-small.png")));
+    add->set_image (*Gtk::manage (new RTImage ("add-small", Gtk::ICON_SIZE_BUTTON)));
     add->get_style_context()->add_class("Left");
     del = Gtk::manage (new Gtk::Button ());
     del->set_tooltip_text(M("MAIN_FRAME_PLACES_DEL"));
@@ -65,7 +66,7 @@ FavoritBrowser::FavoritBrowser () : listener (NULL)
     del->set_vexpand(false);
     del->set_halign(Gtk::ALIGN_FILL);
     del->set_valign(Gtk::ALIGN_START);
-    del->set_image (*Gtk::manage (new RTImage ("remove-small.png")));
+    del->set_image (*Gtk::manage (new RTImage ("remove-small", Gtk::ICON_SIZE_BUTTON)));
     del->get_style_context()->add_class("Right");
     Gtk::Box* buttonBox = Gtk::manage (new Gtk::Box ());
     buttonBox->pack_start (*add);
