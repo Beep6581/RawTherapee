@@ -1691,12 +1691,12 @@ MAIN_TAB_DETAIL;Detail
 MAIN_TAB_DETAIL_TOOLTIP;Shortcut: <b>Alt-d</b>
 MAIN_TAB_DEVELOP; Batch Edit
 MAIN_TAB_EXIF;Exif
-MAIN_TAB_EXPORT; Fast Export 
+MAIN_TAB_EXPORT; Fast Export
 MAIN_TAB_EXPOSURE;Exposure
 MAIN_TAB_EXPOSURE_TOOLTIP;Shortcut: <b>Alt-e</b>
 MAIN_TAB_FAVORITES;Favorites
 MAIN_TAB_FAVORITES_TOOLTIP;Shortcut: <b>Alt-u</b>
-MAIN_TAB_FILTER; Filter 
+MAIN_TAB_FILTER; Filter
 MAIN_TAB_INSPECT; Inspect
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_LOCALLAB;Selective Editing
@@ -1834,7 +1834,6 @@ PREFERENCES_APPEARANCE_COLORPICKERFONT;Color picker font
 PREFERENCES_APPEARANCE_CROPMASKCOLOR;Crop mask color
 PREFERENCES_APPEARANCE_MAINFONT;Main font
 PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Navigator guide color
-PREFERENCES_APPEARANCE_PSEUDOHIDPI;Pseudo-HiDPI mode
 PREFERENCES_APPEARANCE_THEME;Theme
 PREFERENCES_APPLNEXTSTARTUP;restart required
 PREFERENCES_AUTOMONPROFILE;Use operating system's main monitor color profile
@@ -1945,6 +1944,7 @@ PREFERENCES_LENSFUNDBDIR;Lensfun database directory
 PREFERENCES_LENSFUNDBDIR_TOOLTIP;Directory containing the Lensfun database.  Leave empty to use the default directories.
 PREFERENCES_LENSPROFILESDIR;Lens profiles directory
 PREFERENCES_LENSPROFILESDIR_TOOLTIP;Directory containing Adobe Lens Correction Profiles (LCPs)
+PREFERENCES_MAX_ZOOM_TITLE;Maximum zoom
 PREFERENCES_MAXRECENTFOLDERS;Maximum number of recent folders
 PREFERENCES_MENUGROUPEXTPROGS;Group 'Open with'
 PREFERENCES_MENUGROUPFILEOPERATIONS;Group 'File operations'
@@ -2050,7 +2050,7 @@ PREFERENCES_WBANOPURP;No purple color used
 PREFERENCES_WBAPATCH;Number maximum of colors used in picture
 PREFERENCES_WBAPRECIS;Precision algorithm - scale used
 PREFERENCES_WBASIZEREF;Size of reference color compare to size of histogram color
-PREFERENCES_WBASORT;Sort in chroma order instead of histogram 
+PREFERENCES_WBASORT;Sort in chroma order instead of histogram
 PREFERENCES_WORKFLOW;Layout
 PREFERENCES_XMP_SIDECAR_MODE;XMP sidecar style
 PREFERENCES_XMP_SIDECAR_MODE_EXT;darktable-like (FILENAME.ext.xmp for FILENAME.ext)
@@ -2108,7 +2108,26 @@ QUEUE_DESTPREVIEW_TOOLTIP;Destination path for the first selected image appears 
 QUEUE_FORMAT_TITLE;File Format
 QUEUE_LOCATION_FOLDER;Save to folder
 QUEUE_LOCATION_TEMPLATE;Use template
-QUEUE_LOCATION_TEMPLATE_TOOLTIP;Specify the output location based on the source photo's location, rank, trash status or position in the queue.\n\n<b>%dN</b>, <b>%d-N</b>, <b>%pN</b>, <b>%p-N</b>, <b>%PN</b> and <b>%P-N</b> (N = 1..9) will be replaced by elements of the image file's directory path (not including the file name):\n<b>%dN</b> = Nth directory from the end of the path\n<b>%d-N</b> = Nth directory from the start of the path\n<b>%pN</b>  = all directories up to the Nth from the end of the path\n<b>%p-N</b> = the first N directories in the path\n<b>%PN</b>  = the last N directories in the path\n<b>%P-N</b> = all directories from the Nth to the end of the path\n<b>%f</b> = base filename (no extension)\nFor Windows paths, <b>%d-1</b> is the drive letter and colon, and <b>%d-2</b> is the base directory on that drive.\n\nUsing the following pathname as an example:\n<b>/home/tom/photos/2010-10-31/photo1.raw</b>\nthe meaning of the formatting strings follows:\n<b>%d4</b> = <b>%d-1</b> = <i>home</i>\n<b>%d3</b> = <b>%d-2</b> = <i>tom</i>\n<b>%d2</b> = <b>%d-3</b> = <i>photos</i>\n<b>%d1</b> = <b>%d-4</b> = <i>2010-10-31</i>\n<b>%p1</b> = <b>%p-4</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <b>%p-3</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <b>%p-2</b> = <i>/home/tom/</i>\n<b>%p4</b> = <b>%p-1</b> = <i>/home/</i>\n<b>%P1</b> = <b>%P-4</b> = <i>2010-10-31/</i>\n<b>%P2</b> = <b>%P-3</b> = <i>photos/2010-10-31/</i>\n<b>%P3</b> = <b>%P-2</b> = <i>tom/photos/2010-10-31/</i>\n<b>%P4</b> = <b>%P-1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%f</b> = <i>photo1</i>\n\n<b>%r</b> will be replaced by the photo's rank. If the photo is unranked, '<i>0</i>' is used. If the photo is in the trash, '<i>x</i>' is used.\n\n<b>%s1</b>, ..., <b>%s9</b> will be replaced by the photo's initial position in the queue at the time the queue is started. The number specifies the padding, e.g. <b>%s3</b> results in '<i>001</i>'.\n\nIf you want to save the output image alongside the source image, write:\n<b>%p1/%f</b>\n\nIf you want to save the output image in a folder named '<i>converted</i>' located in the source photo's folder, write:\n<b>%p1/converted/%f</b>\n\nIf you want to save the output image in\n'<i>/home/tom/photos/converted/2010-10-31</i>', write:\n<b>%p-3/converted/%P-4/%f</b>
+QUEUE_LOCATION_TEMPLATE_TOOLTIP;Specify the output location based on characteristics such as the source photo's location, rank, trash status or position in the queue.\n\nThe output template field value can include specifiers beginning with <b>%</b>, which are replaced by those characteristics in the actual destination path.\n\nPress the <b>?</b> button for full instructions.
+QUEUE_LOCATION_TEMPLATE_HELP_BUTTON_TOOLTIP;Show or hide a help panel with instructions for creating location templates
+QUEUE_LOCATION_TEMPLATE_HELP_TITLE;Creating an output template
+QUEUE_LOCATION_TEMPLATE_HELP_INTRO;The output template field allows you to to dynamically customize the destination folder and filename. When you include certain specifiers, which begin with <b>%</b>, they are replaced by the program when each file is being saved.\n\nThe sections below describe each type of specifier.
+QUEUE_LOCATION_TEMPLATE_HELP_PATHS_TITLE;Directories and partial paths
+QUEUE_LOCATION_TEMPLATE_HELP_PATHS_INTRO;The <b>%dN</b>, <b>%d-N</b>, <b>%pN</b>, <b>%p-N</b>, <b>%PN</b> and <b>%P-N</b> (N = 1..9) specifiers will be replaced by elements of the image file's directory path.\nThe format specifiers operate as follows:\n  <b>%dN</b> = Nth directory from the end of the path\n  <b>%d-N</b> = Nth directory from the start of the path\n  <b>%pN</b>  = all directories up to the Nth from the end of the path\n  <b>%p-N</b> = the first N directories in the path\n  <b>%PN</b>  = the last N directories in the path\n  <b>%P-N</b> = all directories from the Nth to the end of the path\n  <b>%f</b> = base filename (no extension)
+QUEUE_LOCATION_TEMPLATE_HELP_PATHS_INTRO_WINDOWS;For Windows paths, <b>%d-1</b> is the drive letter and colon, and <b>%d-2</b> is the base directory on that drive.
+QUEUE_LOCATION_TEMPLATE_HELP_PATHS_BODY_1;Using this pathname as an example:
+QUEUE_LOCATION_TEMPLATE_HELP_PATHS_EXAMPLE_LINUX;/home/tom/photos/2010-10-31/photo1.raw
+QUEUE_LOCATION_TEMPLATE_HELP_PATHS_EXAMPLE_WINDOWS;D:\tom\photos\2010-10-31\photo1.raw
+QUEUE_LOCATION_TEMPLATE_HELP_PATHS_BODY_2;The meanings of the formatting strings are:
+QUEUE_LOCATION_TEMPLATE_HELP_RESULT_MISMATCH;ERROR: 2nd result is different:
+QUEUE_LOCATION_TEMPLATE_HELP_RANK_TITLE;Rank
+QUEUE_LOCATION_TEMPLATE_HELP_RANK_BODY;<b>%r</b> will be replaced by the photo's rank. If the photo is unranked, '<i>0</i>' is used. If the photo is in the trash, '<i>x</i>' is used.
+QUEUE_LOCATION_TEMPLATE_HELP_SEQUENCE_TITLE;Position/sequence in queue
+QUEUE_LOCATION_TEMPLATE_HELP_SEQUENCE_BODY;<b>%s1</b>, ..., <b>%s9</b> will be replaced by the photo's initial position in the queue at the time the queue is started. The number specifies the padding, e.g. <b>%s3</b> results in '<i>001</i>'.
+QUEUE_LOCATION_TEMPLATE_HELP_TIMESTAMP_TITLE;Date and time
+QUEUE_LOCATION_TEMPLATE_HELP_TIMESTAMP_BODY;Three different date/time values may be used in templates:\n  <b>%tE"%Y-%m-%d"</b> = when export started\n  <b>%tF"%Y-%m-%d"</b> = when file was last saved\n  <b>%tP"%Y-%m-%d"</b> = when photo was taken\nThe quoted string defines the format of the resulting date and/or time. The format string <b>%tF"%Y-%m-%d"</b> is just one example. The string can use all conversion specifiers defined for the g_date_time_format function (see https://docs.gtk.org/glib/method.DateTime.format.html).\n\nExample format strings:
+QUEUE_LOCATION_TEMPLATE_HELP_EXAMPLES_TITLE;Common examples
+QUEUE_LOCATION_TEMPLATE_HELP_EXAMPLES_BODY;If you want to save the output image alongside the source image, write:\n<b>%p1/%f</b>\n\nIf you want to save the output image in a folder named '<i>converted</i>' located in the source photo's folder, write:\n<b>%p1/converted/%f</b>\n\nIf you want to save the output image in\n'<i>/home/tom/photos/converted/2010-10-31</i>', write:\n<b>%p-3/converted/%P-4/%f</b>
 QUEUE_LOCATION_TITLE;Output Location
 QUEUE_STARTSTOP_TOOLTIP;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
 SAMPLEFORMAT_0;Unknown data format
@@ -3149,7 +3168,7 @@ TP_LOCALLAB_LUMASK;Background color/luma mask
 TP_LOCALLAB_LUMASK_TOOLTIP;Adjusts the shade of gray or color of the mask background in Show Mask (Mask and modifications).
 TP_LOCALLAB_LUMAWHITESEST;Lightest
 TP_LOCALLAB_LUMFRA;L*a*b* standard
-TP_LOCALLAB_LUMLABEL;Luma levels 0123: Mean=%1 High=%2 
+TP_LOCALLAB_LUMLABEL;Luma levels 0123: Mean=%1 High=%2
 TP_LOCALLAB_MASFRAME;Mask and Merge
 TP_LOCALLAB_MASFRAME_TOOLTIP;For all masks.\nTakes into account the ΔE image to avoid modifying the selection area when the following Mask Tools are used: Gamma, Slope, Chroma, Contrast curve, Local contrast (by wavelet level), Blur Mask and Structure Mask (if enabled ).\nDisabled when Inverse mode is used.
 TP_LOCALLAB_MASK;Curves

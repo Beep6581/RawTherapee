@@ -73,7 +73,10 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
     hb2->pack_start (*useTemplate, Gtk::PACK_SHRINK, 4);
     outdirTemplate = Gtk::manage (new Gtk::Entry ());
     hb2->pack_start (*outdirTemplate);
-    odvb->pack_start (*hb2, Gtk::PACK_SHRINK, 4);
+    templateHelpButton = Gtk::manage (new Gtk::ToggleButton("?"));
+    templateHelpButton->set_tooltip_markup (M ("QUEUE_LOCATION_TEMPLATE_HELP_BUTTON_TOOLTIP"));
+    hb2->pack_start (*templateHelpButton, Gtk::PACK_SHRINK, 0);
+    odvb->pack_start (*hb2, Gtk::PACK_SHRINK, 0);
     outdirTemplate->set_tooltip_markup (M("QUEUE_LOCATION_TEMPLATE_TOOLTIP"));
     useTemplate->set_tooltip_markup (M("QUEUE_LOCATION_TEMPLATE_TOOLTIP"));
     Gtk::Box* hb3 = Gtk::manage (new Gtk::Box ());
@@ -89,7 +92,7 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
     hb3->pack_start (*outdirFolderButton);
     outdirFolderButton->signal_pressed().connect( sigc::mem_fun(*this, &BatchQueuePanel::pathFolderButtonPressed) );
     outdirFolderButton->set_label(makeFolderLabel(options.savePathFolder));
-    Gtk::Image* folderImg = Gtk::manage (new RTImage ("folder-closed.png"));
+    Gtk::Image* folderImg = Gtk::manage (new RTImage ("folder-closed", Gtk::ICON_SIZE_LARGE_TOOLBAR));
     folderImg->show ();
     outdirFolderButton->set_image (*folderImg);
     outdirFolder = nullptr;
@@ -136,6 +139,7 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
     outdirTemplate->signal_changed().connect (sigc::mem_fun(*this, &BatchQueuePanel::saveOptions));
     useTemplate->signal_toggled().connect (sigc::mem_fun(*this, &BatchQueuePanel::saveOptions));
     useFolder->signal_toggled().connect (sigc::mem_fun(*this, &BatchQueuePanel::saveOptions));
+    templateHelpButton->signal_toggled().connect (sigc::mem_fun(*this, &BatchQueuePanel::templateHelpButtonToggled));
     saveFormatPanel->setListener (this);
 
     // setup button bar
@@ -147,8 +151,19 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
     topBox->pack_start (*fdir, Gtk::PACK_EXPAND_WIDGET, 4);
     topBox->pack_start (*fformat, Gtk::PACK_EXPAND_WIDGET, 4);
 
+    middleSplitPane = Gtk::manage (new Gtk::Paned(Gtk::ORIENTATION_HORIZONTAL));
+    templateHelpTextView = Gtk::manage (new Gtk::TextView());
+    templateHelpTextView->set_editable(false);
+    templateHelpTextView->set_wrap_mode(Gtk::WRAP_WORD);
+    scrolledTemplateHelpWindow = Gtk::manage(new Gtk::ScrolledWindow());
+    scrolledTemplateHelpWindow->add(*templateHelpTextView);
+    middleSplitPane->pack1 (*scrolledTemplateHelpWindow);
+    middleSplitPane->pack2 (*batchQueue);
+    scrolledTemplateHelpWindow->set_visible(false); // initially hidden, templateHelpButton shows it
+    scrolledTemplateHelpWindow->set_no_show_all(true);
+
     // add middle browser area
-    pack_start (*batchQueue);
+    pack_start (*middleSplitPane);
 
     // lower box with thumbnail zoom
     bottomBox = Gtk::manage (new Gtk::Box ());
@@ -161,13 +176,13 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
     zoomLabel->set_use_markup (true);
     zoomBox->pack_start (*zoomLabel, Gtk::PACK_SHRINK, 4);
     zoomInButton  = Gtk::manage (new Gtk::Button ());
-    zoomInButton->set_image (*Gtk::manage (new RTImage ("magnifier-plus.png")));
+    zoomInButton->set_image (*Gtk::manage (new RTImage ("magnifier-plus", Gtk::ICON_SIZE_LARGE_TOOLBAR)));
     zoomInButton->signal_pressed().connect (sigc::mem_fun(*batchQueue, &BatchQueue::zoomIn));
     zoomInButton->set_relief (Gtk::RELIEF_NONE);
     zoomInButton->set_tooltip_markup (M("FILEBROWSER_ZOOMINHINT"));
     zoomBox->pack_end (*zoomInButton, Gtk::PACK_SHRINK);
     zoomOutButton  = Gtk::manage (new Gtk::Button ());
-    zoomOutButton->set_image (*Gtk::manage (new RTImage ("magnifier-minus.png")));
+    zoomOutButton->set_image (*Gtk::manage (new RTImage ("magnifier-minus", Gtk::ICON_SIZE_LARGE_TOOLBAR)));
     zoomOutButton->signal_pressed().connect (sigc::mem_fun(*batchQueue, &BatchQueue::zoomOut));
     zoomOutButton->set_relief (Gtk::RELIEF_NONE);
     zoomOutButton->set_tooltip_markup (M("FILEBROWSER_ZOOMOUTHINT"));
@@ -217,13 +232,13 @@ void BatchQueuePanel::updateTab (int qsize, int forceOrientation)
         Gtk::Label* l;
 
         if(!qsize ) {
-            grid->attach_next_to(*Gtk::manage (new RTImage ("gears.png")), Gtk::POS_TOP, 1, 1);
+            grid->attach_next_to(*Gtk::manage (new RTImage ("gears", Gtk::ICON_SIZE_LARGE_TOOLBAR)), Gtk::POS_TOP, 1, 1);
             l = Gtk::manage (new Gtk::Label (Glib::ustring(" ") + M("MAIN_FRAME_QUEUE")) );
         } else if (qStartStop->get_active()) {
-            grid->attach_next_to(*Gtk::manage (new RTImage ("gears-play.png")), Gtk::POS_TOP, 1, 1);
+            grid->attach_next_to(*Gtk::manage (new RTImage ("gears-play", Gtk::ICON_SIZE_LARGE_TOOLBAR)), Gtk::POS_TOP, 1, 1);
             l = Gtk::manage (new Gtk::Label (Glib::ustring(" ") + M("MAIN_FRAME_QUEUE") + " [" + Glib::ustring::format( qsize ) + "]"));
         } else {
-            grid->attach_next_to(*Gtk::manage (new RTImage ("gears-pause.png")), Gtk::POS_TOP, 1, 1);
+            grid->attach_next_to(*Gtk::manage (new RTImage ("gears-pause", Gtk::ICON_SIZE_LARGE_TOOLBAR)), Gtk::POS_TOP, 1, 1);
             l = Gtk::manage (new Gtk::Label (Glib::ustring(" ") + M("MAIN_FRAME_QUEUE") + " [" + Glib::ustring::format( qsize ) + "]" ));
         }
 
@@ -237,13 +252,13 @@ void BatchQueuePanel::updateTab (int qsize, int forceOrientation)
         }
     } else {
         if (!qsize ) {
-            grid->attach_next_to(*Gtk::manage (new RTImage ("gears.png")), Gtk::POS_RIGHT, 1, 1);
+            grid->attach_next_to(*Gtk::manage (new RTImage ("gears", Gtk::ICON_SIZE_LARGE_TOOLBAR)), Gtk::POS_RIGHT, 1, 1);
             grid->attach_next_to(*Gtk::manage (new Gtk::Label (M("MAIN_FRAME_QUEUE") )), Gtk::POS_RIGHT, 1, 1);
         } else if (qStartStop->get_active()) {
-            grid->attach_next_to(*Gtk::manage (new RTImage ("gears-play.png")), Gtk::POS_RIGHT, 1, 1);
+            grid->attach_next_to(*Gtk::manage (new RTImage ("gears-play", Gtk::ICON_SIZE_LARGE_TOOLBAR)), Gtk::POS_RIGHT, 1, 1);
             grid->attach_next_to(*Gtk::manage (new Gtk::Label (M("MAIN_FRAME_QUEUE") + " [" + Glib::ustring::format( qsize ) + "]" )), Gtk::POS_RIGHT, 1, 1);
         } else {
-            grid->attach_next_to(*Gtk::manage (new RTImage ("gears-pause.png")), Gtk::POS_RIGHT, 1, 1);
+            grid->attach_next_to(*Gtk::manage (new RTImage ("gears-pause", Gtk::ICON_SIZE_LARGE_TOOLBAR)), Gtk::POS_RIGHT, 1, 1);
             grid->attach_next_to(*Gtk::manage (new Gtk::Label (M("MAIN_FRAME_QUEUE") + " [" + Glib::ustring::format( qsize ) + "]" )), Gtk::POS_RIGHT, 1, 1);
         }
 
@@ -320,6 +335,122 @@ void BatchQueuePanel::setGuiFromBatchState(bool queueRunning, int qsize)
     fformat->set_sensitive (!queueRunning);
 
     updateTab(qsize);
+}
+
+void BatchQueuePanel::templateHelpButtonToggled()
+{
+    bool visible = templateHelpButton->get_active();
+    auto buffer = templateHelpTextView->get_buffer();
+    if (buffer->get_text().empty()) {
+        // Populate the help text the first time it's shown
+        populateTemplateHelpBuffer(buffer);
+        const auto fullWidth = middleSplitPane->get_width();
+        middleSplitPane->set_position(fullWidth / 2);
+    }
+    scrolledTemplateHelpWindow->set_visible(visible);
+    templateHelpTextView->set_visible(visible);
+}
+
+void BatchQueuePanel::populateTemplateHelpBuffer(Glib::RefPtr<Gtk::TextBuffer> buffer)
+{
+    auto pos = buffer->begin();
+    const auto insertTopicHeading = [&pos, buffer](const Glib::ustring& text) {
+        pos = buffer->insert_markup(pos, Glib::ustring::format("\n\n<u><b>", text, "</b></u>\n"));
+    };
+    const auto insertTopicBody = [&pos, buffer](const Glib::ustring& text) {
+        pos = buffer->insert_markup(pos, Glib::ustring::format("\n", text, "\n"));
+    };
+    const auto mainTitle = M("QUEUE_LOCATION_TEMPLATE_HELP_TITLE");
+    pos = buffer->insert_markup(pos, Glib::ustring::format("<big><b>", mainTitle, "</b></big>\n"));
+    pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_INTRO"));
+
+    insertTopicHeading(M("QUEUE_LOCATION_TEMPLATE_HELP_EXAMPLES_TITLE"));
+    pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_EXAMPLES_BODY"));
+
+    insertTopicHeading(M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_TITLE"));
+    pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_INTRO"));
+    pos = buffer->insert(pos, "\n");
+#ifdef _WIN32
+    pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_INTRO_WINDOWS"));
+    pos = buffer->insert(pos, "\n");
+#endif
+    pos = buffer->insert(pos, "\n");
+    pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_BODY_1"));
+#ifdef _WIN32
+    const auto exampleFilePath = M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_EXAMPLE_WINDOWS");
+#else
+    const auto exampleFilePath = M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_EXAMPLE_LINUX");
+#endif
+    pos = buffer->insert_markup(pos, Glib::ustring::format("\n  ", exampleFilePath, "\n"));
+    pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_PATHS_BODY_2"));
+    // Examples are generated from exampleFilePath using the actual template processing function
+    const Options savedOptions = options; // to be restored after generating example results
+    options.saveUsePathTemplate = true;
+    // Since this code only ever runs once (the first time the help text is presented), no attempt is
+    // made to be efficient. Use a brute-force method to discover the number of elements in exampleFilePath.
+    int pathElementCount = 0;
+    for (int n=9; n>=0; n--) {
+        options.savePathTemplate = Glib::ustring::format("%d", n);
+        const auto result = BatchQueue::calcAutoFileNameBase(exampleFilePath);
+        if (!result.empty()) {
+            // The 'd' specifier returns an empty string if N exceeds the number of path elements, so
+            // the largest N that does not return an empty string is the number of elements in exampleFilePath.
+            pathElementCount = n;
+            break;
+        }
+    }
+    // Function inserts examples for a particular specifier, with every valid N value for the
+    // number of elements in the path.
+    const auto insertPathExamples = [&buffer, &pos, pathElementCount, exampleFilePath](char letter, int offset1, int mult1, int offset2, int mult2)
+    {
+        for (int n=0; n<pathElementCount; n++) {
+            auto path1 = Glib::ustring::format("%", letter, offset1+n*mult1);
+            auto path2 = Glib::ustring::format("%", letter, offset2+n*mult2);
+            options.savePathTemplate = path1;
+            auto result1 = BatchQueue::calcAutoFileNameBase(exampleFilePath);
+            options.savePathTemplate = path2;
+            auto result2 = BatchQueue::calcAutoFileNameBase(exampleFilePath);
+            pos = buffer->insert_markup(pos, Glib::ustring::format("\n  <tt><b>", path1, "</b> = <b>", path2, "</b> = <i>", result1, "</i></tt>"));
+            if (result1 != result2) {
+                // If this error appears, it indicates a coding error in either BatchQueue::calcAutoFileNameBase
+                // or BatchQueuePanel::populateTemplateHelpBuffer.
+                pos = buffer->insert_markup(pos, Glib::ustring::format(" ", M("QUEUE_LOCATION_TEMPLATE_HELP_RESULT_MISMATCH"), " ", result2));
+            }
+        }
+    };
+    // Example outputs in comments below are for a 4-element path.
+    insertPathExamples('d', pathElementCount, -1, -1, -1);  //   <b>%d4</b> = <b>%d-1</b> = <i>home</i>
+    insertPathExamples('p', 1, 1, -pathElementCount, 1);    //   <b>%p1</b> = <b>%p-4</b> = <i>/home/tom/photos/2010-10-31/</i>
+    insertPathExamples('P', 1, 1, -pathElementCount, 1);    //   <b>%P1</b> = <b>%P-4</b> = <i>2010-10-31/</i>
+    {
+        const Glib::ustring fspecifier("%f");
+        options.savePathTemplate = fspecifier;
+        const auto result = BatchQueue::calcAutoFileNameBase(exampleFilePath);
+        pos = buffer->insert_markup(pos, Glib::ustring::format("\n  <tt><b>", fspecifier, "</b> = <i>", result, "</i></tt>"));
+    }
+
+    insertTopicHeading(M("QUEUE_LOCATION_TEMPLATE_HELP_RANK_TITLE"));
+    pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_RANK_BODY"));
+
+    insertTopicHeading(M("QUEUE_LOCATION_TEMPLATE_HELP_SEQUENCE_TITLE"));
+    pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_SEQUENCE_BODY"));
+
+    insertTopicHeading(M("QUEUE_LOCATION_TEMPLATE_HELP_TIMESTAMP_TITLE"));
+    pos = buffer->insert_markup(pos, M("QUEUE_LOCATION_TEMPLATE_HELP_TIMESTAMP_BODY"));
+    const Glib::ustring dateTimeFormatExamples[] = {
+        "%Y-%m-%d",
+        "%Y%m%d_%H%M%S",
+        "%y/%b/%-d/"
+    };
+    const auto timezone = Glib::DateTime::create_now_local().get_timezone();
+    const auto timeForExamples = Glib::DateTime::create_from_iso8601("2001-02-03T04:05:06.123456", timezone);
+    for (auto && fmt : dateTimeFormatExamples) {
+        const auto result = timeForExamples.format(fmt);
+        pos = buffer->insert_markup(pos, Glib::ustring::format("\n  <tt><b>%tE\"", fmt, "\"</b> = <i>", result, "</i></tt>"));
+    }
+
+    pos = buffer->insert(pos, "\n");
+    options = savedOptions; // Do not add any lines in this function below here
 }
 
 void BatchQueuePanel::addBatchQueueJobs(const std::vector<BatchQueueEntry*>& entries, bool head)

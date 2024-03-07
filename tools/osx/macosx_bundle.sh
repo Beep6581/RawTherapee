@@ -63,14 +63,14 @@ if [[ -x $(which git) && -d $PROJECT_SOURCE_DIR/.git ]]; then
     # Depending on whether you checked out a branch (dev) or a tag (release),
     # "git describe" will return "5.0-gtk2-2-g12345678" or "5.0-gtk2", respectively.
     gitDescribe="$(git describe --tags --always)"
-    
+
     # Apple requires a numeric version of the form n.n.n
     # https://goo.gl/eWDQv6
-    
+
     # Get number of commits since tagging. This is what gitDescribe uses.
     # Works when checking out branch, tag or commit.
     gitCommitsSinceTag="$(git rev-list --count HEAD --not $(git tag --merged HEAD))"
-    
+
     # Create numeric version.
     # This version is nonsense, either don't use it at all or use it only where you have no other choice, e.g. Inno Setup's VersionInfoVersion.
     # Strip everything after hyphen, e.g. "5.0-gtk2" -> "5.0", "5.1-rc1" -> "5.1" (ergo BS).
@@ -81,7 +81,7 @@ if [[ -x $(which git) && -d $PROJECT_SOURCE_DIR/.git ]]; then
         gitVersionNumericBS="${gitVersionNumericBS}.${gitCommitsSinceTag}" # Remove everything until after first hyphen: 5.0
     fi
     ### Copy end.
-    
+
     PROJECT_FULL_VERSION="$gitDescribe"
     PROJECT_VERSION="$gitVersionNumericBS"
 fi
@@ -155,8 +155,9 @@ fi
 
 # In: OSX_CONTINUOUS:BOOL=ON
 # Out: ON
-OSX_CONTINUOUS="$(cmake .. -L -N | grep OSX_CONTINUOUS)"; NIGHTLY="${OSX_CONTINUOUS#*=}" && CONTINUOUS="${OSX_CONTINUOUS#*=}"
+OSX_CONTINUOUS="$(cmake .. -L -N | grep OSX_CONTINUOUS)"; CONTINUOUS="${OSX_CONTINUOUS#*=}"
 if [[ -n $CONTINUOUS ]]; then
+    NIGHTLY="${OSX_CONTINUOUS#*=}"
     echo "Continuous/generically-named zip is ON."
 fi
 
@@ -251,12 +252,8 @@ ditto {"${LOCAL_PREFIX}","${RESOURCES}"}/share/themes/Default/gtk-3.0/gtk-keys.c
 
 # Adwaita icons
 msg "Copy Adwaita icons"
-iconfolders=("16x16/actions" "16x16/devices" "16x16/mimetypes" "16x16/places" "16x16/status" "16x16/ui" "48x48/devices")
-for f in "${iconfolders[@]}"; do
-    mkdir -p ${RESOURCES}/share/icons/Adwaita/${f}
-    cp -RL ${LOCAL_PREFIX}/share/icons/Adwaita/${f}/* "${RESOURCES}"/share/icons/Adwaita/${f}
-done
-cp -RL {"${LOCAL_PREFIX}","${RESOURCES}"}/share/icons/Adwaita/index.theme
+mkdir -p ${RESOURCES}/share/icons/Adwaita
+cp -RL ${LOCAL_PREFIX}/share/icons/Adwaita/* "${RESOURCES}"/share/icons/Adwaita/
 "${LOCAL_PREFIX}/bin/gtk-update-icon-cache" "${RESOURCES}/share/icons/Adwaita" || "${LOCAL_PREFIX}/bin/gtk-update-icon-cache-3.0" "${RESOURCES}/share/icons/Adwaita"
 cp -RL "${LOCAL_PREFIX}/share/icons/hicolor" "${RESOURCES}/share/icons/hicolor"
 
@@ -313,13 +310,17 @@ done
 install_name_tool -delete_rpath RawTherapee.app/Contents/Frameworks "${EXECUTABLE}"-cli 2>/dev/null
 install_name_tool -add_rpath /Applications/"${LIB}" "${EXECUTABLE}"-cli 2>/dev/null
 
+# Link to libomp instead of libgomp
+sudo install_name_tool -change /Applications/RawTherapee.app/Contents/Frameworks/libgomp.1.dylib /Applications/RawTherapee.app/Contents/Frameworks/libomp.dylib RawTherapee.app/Contents/Frameworks/libfftw3f_omp.3.dylib
+rm RawTherapee.app/Contents/Frameworks/libgomp.1.dylib
+
 # Merge the app with the other architecture to create the Universal app.
 if [[ -n $UNIVERSAL_URL ]]; then
     msg "Getting Universal countercomponent."
     curl -L ${UNIVERSAL_URL} -o univ.zip
     msg "Extracting app."
     unzip univ.zip -d univapp
-    hdiutil attach -mountpoint ./RawTherapeeuniv univapp/*dmg
+    hdiutil attach -mountpoint ./RawTherapeeuniv univapp/*folder/*dmg
     if [[ $arch = "arm64" ]]; then
         cp -R RawTherapee.app RawTherapee-arm64.app
         minimum_arm64_version=$(f=$(cat RawTherapee-arm64.app/Contents/Resources/AboutThisBuild.txt | grep mmacosx-version); echo "${f#*min=}" | cut -d ' ' -f1)
@@ -336,6 +337,7 @@ if [[ -n $UNIVERSAL_URL ]]; then
         cat RawTherapee-arm64.app/Contents/Resources/AboutThisBuild.txt >> RawTherapee.app/Contents/Resources/AboutThisBuild.txt
     fi
     cmake -DPROJECT_SOURCE_DATA_DIR=${PROJECT_SOURCE_DATA_DIR} -DCONTENTS=${CONTENTS} -Dversion=${PROJECT_FULL_VERSION} -DshortVersion=${PROJECT_VERSION} -Dminimum_arm64_version=${minimum_arm64_version} -Dminimum_x86_64_version=${minimum_x86_64_version} -Darch=${arch} -P ${PROJECT_SOURCE_DATA_DIR}/info-plist.cmake
+    plutil -convert xml1 ${APP}/Contents/Info.plist
     hdiutil unmount ./RawTherapeeuniv
     rm -r univapp
     # Create the fat main RawTherapee binary and move it into the new bundle
@@ -360,9 +362,26 @@ fi
 if [[ -n $CODESIGNID ]]; then
     msg "Codesigning Application."
     iconv -f UTF-8 -t ASCII "${PROJECT_SOURCE_DATA_DIR}"/rt.entitlements > "${CMAKE_BUILD_TYPE}"/rt.entitlements
-#    mv "${EXECUTABLE}"-cli "${LIB}"
-    codesign --force --deep --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee-cli "${APP}"/Contents/MacOS/rawtherapee-cli
-    codesign --force --deep --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements "${APP}"
+    plutil -convert xml1 "${CMAKE_BUILD_TYPE}"/rt.entitlements
+    for frame in ${APP}/Contents/Frameworks/* ; do
+        echo $frame
+        codesign --preserve-metadata=identifier --digest-algorithm=sha1,sha256 --force --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements $frame
+    done
+    for resource in ${APP}/Contents/Resources/* ; do
+        echo $resource
+        if [ ! -d $resource ]; then
+            codesign --preserve-metadata=identifier --digest-algorithm=sha1,sha256 --force --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements $resource
+        else
+            for subresource in ${APP}/Contents/Resources/$(basename $resource)/* ; do
+                if [ ! -d $subresource ]; then
+                    codesign --preserve-metadata=identifier --digest-algorithm=sha1,sha256 --force --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements $subresource
+                fi
+            done
+        fi
+    done
+    codesign --preserve-metadata=identifier --digest-algorithm=sha1,sha256 --force --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements "${APP}"/Contents/MacOS/rawtherapee-cli
+    codesign --preserve-metadata=identifier --digest-algorithm=sha1,sha256 --force --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements "${APP}"/Contents/MacOS/rawtherapee
+    codesign --preserve-metadata=identifier --digest-algorithm=sha1,sha256 --force --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements "${APP}"
     spctl -a -vvvv "${APP}"
 fi
 
@@ -376,12 +395,12 @@ fi
 
 function CreateDmg {
     local srcDir="$(mktemp -dt $$.XXXXXXXXXXXX)"
-    
+
     msg "Preparing disk image sources at ${srcDir}:"
     cp -R "${APP}" "${srcDir}"
     cp "${RESOURCES}"/LICENSE "${srcDir}"
     ln -s /Applications "${srcDir}"
-    
+
     # Web bookmarks
     function CreateWebloc {
         defaults write "${srcDir}/$1" URL "$2"
@@ -391,7 +410,7 @@ function CreateDmg {
     CreateWebloc 'Documentation' 'https://rawpedia.rawtherapee.com/'
     CreateWebloc         'Forum' 'https://discuss.pixls.us/c/software/rawtherapee'
     CreateWebloc    'Report Bug' 'https://github.com/Beep6581/RawTherapee/issues/new'
-    
+
     # Disk image name
     if [[ -n $UNIVERSAL_URL ]]; then
         arch="Universal"
@@ -401,7 +420,7 @@ function CreateDmg {
     if [[ $lower_build_type != release ]]; then
         dmg_name="${dmg_name}_${lower_build_type}"
     fi
-    
+
     msg "Creating disk image:"
     if [[ $FANCY_DMG == "ON" ]]; then
         echo "Building Fancy .dmg"
@@ -432,13 +451,13 @@ function CreateDmg {
     else
         hdiutil create -format UDBZ -fs HFS+ -srcdir "${srcDir}" -volname "${PROJECT_NAME}_${PROJECT_FULL_VERSION}" "${dmg_name}.dmg"
     fi
-    
+
     # Sign disk image
     if [[ -n $CODESIGNID ]]; then
         msg "Signing disk image"
-        codesign --deep --force -v -s "${CODESIGNID}" --timestamp "${dmg_name}.dmg"
+        codesign  --digest-algorithm=sha1,sha256 --force -v -s "${CODESIGNID}" --timestamp "${dmg_name}.dmg"
     fi
-    
+
     # Notarize the dmg
     if ! test -z "$NOTARY"; then
         msg "Notarizing the dmg:"
@@ -446,7 +465,7 @@ function CreateDmg {
         echo "Uploading..."
         sudo xcrun notarytool submit "${dmg_name}.dmg.zip" ${NOTARY} --wait
     fi
-    
+
     # Zip disk image for redistribution
     msg "Zipping disk image for redistribution:"
     mkdir "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}_folder"

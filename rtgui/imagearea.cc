@@ -155,7 +155,10 @@ void ImageArea::setInfoText (Glib::ustring text)
 
     // update font
     fontd.set_weight (Pango::WEIGHT_BOLD);
-    fontd.set_size (10 * Pango::SCALE);
+    const int fontSize = 10; // pt
+    // Non-absolute size is defined in "Pango units" and shall be multiplied by
+    // Pango::SCALE from "pt":
+    fontd.set_size (fontSize * Pango::SCALE);
     context->set_font_description (fontd);
 
     // create text layout
@@ -788,14 +791,14 @@ Gtk::SizeRequestMode ImageArea::get_request_mode_vfunc () const
 
 void ImageArea::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
 {
-    minimum_height= 50 * RTScalable::getScale();
-    natural_height = 300 * RTScalable::getScale();
+    minimum_height = RTScalable::scalePixelSize(50);
+    natural_height = RTScalable::scalePixelSize(300);
 }
 
 void ImageArea::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
-    minimum_width = 100 * RTScalable::getScale();
-    natural_width = 400 * RTScalable::getScale();
+    minimum_width = RTScalable::scalePixelSize(100);
+    natural_width = RTScalable::scalePixelSize(400);
 }
 
 void ImageArea::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const

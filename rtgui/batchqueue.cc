@@ -20,6 +20,7 @@
 #include <glib/gstdio.h>
 #include <cstring>
 #include <functional>
+#include "../rtengine/imagedata.h"
 #include "../rtengine/rt_math.h"
 #include "../rtengine/procparams.h"
 
@@ -94,6 +95,21 @@ namespace   // local helper functions
             }
         }
     }
+
+    // Look in templateText at index ix for quoted string containing a time format string, and
+    // use that string to format dateTime. Append the formatted time to path.
+    void appendFormattedTime(Glib::ustring& path, unsigned int& ix, const Glib::ustring& templateText, const Glib::DateTime& dateTime)
+    {
+        constexpr gunichar quoteMark('"');
+        if ((ix + 1) < templateText.size() && templateText[ix] == quoteMark) {
+            const auto endPos = templateText.find_first_of(quoteMark, ++ix);
+            if (endPos != Glib::ustring::npos) {
+                Glib::ustring formatString(templateText, ix, endPos-ix);
+                path += dateTime.format(formatString);
+                ix = endPos;
+            }
+        }
+    }
 }
 
 BatchQueue::BatchQueue (FileCatalog* aFileCatalog) : processing(nullptr), fileCatalog(aFileCatalog), sequence(0), listener(nullptr)
@@ -110,16 +126,16 @@ BatchQueue::BatchQueue (FileCatalog* aFileCatalog) : processing(nullptr), fileCa
     pmenu.attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p + 1);
     p++;
 
-    pmenu.attach (*Gtk::manage(head = new MyImageMenuItem (M("FILEBROWSER_POPUPMOVEHEAD"), "goto-start-small.png")), 0, 1, p, p + 1);
+    pmenu.attach (*Gtk::manage(head = new MyImageMenuItem (M("FILEBROWSER_POPUPMOVEHEAD"), "goto-start-small")), 0, 1, p, p + 1);
     p++;
 
-    pmenu.attach (*Gtk::manage(tail = new MyImageMenuItem (M("FILEBROWSER_POPUPMOVEEND"), "goto-end-small.png")), 0, 1, p, p + 1);
+    pmenu.attach (*Gtk::manage(tail = new MyImageMenuItem (M("FILEBROWSER_POPUPMOVEEND"), "goto-end-small")), 0, 1, p, p + 1);
     p++;
 
     pmenu.attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p + 1);
     p++;
 
-    pmenu.attach (*Gtk::manage(cancel = new MyImageMenuItem (M("FILEBROWSER_POPUPCANCELJOB"), "cancel-small.png")), 0, 1, p, p + 1);
+    pmenu.attach (*Gtk::manage(cancel = new MyImageMenuItem (M("FILEBROWSER_POPUPCANCELJOB"), "cancel-small")), 0, 1, p, p + 1);
 
     pmenu.show_all ();
 
@@ -1001,6 +1017,43 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
 
                     seqstr << sequence;
                     path += seqstr.str ();
+                } else if (options.savePathTemplate[ix] == 't') {
+                    // Insert formatted date/time value. Character after 't' defines time source
+                    if (++ix < options.savePathTemplate.size()) {
+                        Glib::DateTime dateTime;
+                        switch(options.savePathTemplate[ix++])
+                        {
+                            case 'E':   // (approximate) time when export started
+                            {
+                                dateTime = Glib::DateTime::create_now_local();
+                                break;
+                            }
+                            case 'F': // time when file was last saved
+                            {
+                                Glib::RefPtr<Gio::File> file = Gio::File::create_for_path(origFileName);
+                                if (file) {
+                                    Glib::RefPtr<Gio::FileInfo> info = file->query_info(G_FILE_ATTRIBUTE_TIME_MODIFIED);
+                                    if (info) {
+                                        dateTime = info->get_modification_date_time();
+                                    }
+                                }
+                                break;
+                            }
+                            case 'P':   // time when picture was taken
+                            {
+                                const auto timestamp = FramesData(origFileName).getDateTimeAsTS();
+                                dateTime = Glib::DateTime::create_now_local(timestamp);
+                                break;
+                            }
+                            default:
+                            {
+                                break;
+                            }
+                        }
+                        if (dateTime) {
+                            appendFormattedTime(path, ix, options.savePathTemplate, dateTime);
+                        }
+                    }
                 }
             }
 

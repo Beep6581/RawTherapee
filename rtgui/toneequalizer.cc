@@ -44,7 +44,7 @@ ToneEqualizer::ToneEqualizer(): FoldableToolPanel(this, TOOL_NAME, M("TP_TONE_EQ
         "red"
     };
     for (size_t i = 0; i < bands.size(); ++i) {
-        bands[i] = Gtk::manage(new Adjuster(M("TP_TONE_EQUALIZER_BAND_" + std::to_string(i)), -100, 100, 1, 0, Gtk::manage(new RTImage(Glib::ustring("circle-") + images[i] + "-small.png"))));
+        bands[i] = Gtk::manage(new Adjuster(M("TP_TONE_EQUALIZER_BAND_" + std::to_string(i)), -100, 100, 1, 0, Gtk::manage(new RTImage(Glib::ustring("circle-") + images[i] + "-small"))));
         bands[i]->setAdjusterListener(this);
         pack_start(*bands[i]);
         bands[i]->showIcons(false);

@@ -24,6 +24,7 @@
 #include "multilangmgr.h"
 #include "options.h"
 #include "rtimage.h"
+#include "rtscalable.h"
 #include "../rtengine/rt_math.h"
 
 namespace {
@@ -93,7 +94,7 @@ Adjuster::Adjuster(
 
     reset = Gtk::manage(new Gtk::Button());
 
-    reset->add(*Gtk::manage(new RTImage("undo-small.png", "redo-small.png")));
+    reset->add(*Gtk::manage(new RTImage("undo-small", Gtk::ICON_SIZE_BUTTON)));
     setExpandAlignProperties(reset, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     reset->set_relief(Gtk::RELIEF_NONE);
     reset->set_tooltip_markup(M("ADJUSTER_RESET_TO_DEFAULT"));
@@ -105,7 +106,7 @@ Adjuster::Adjuster(
     setExpandAlignProperties(spin, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     spin->set_input_purpose(Gtk::INPUT_PURPOSE_DIGITS);
 
-    reset->set_size_request(-1, spin->get_height() > MIN_RESET_BUTTON_HEIGHT ? spin->get_height() : MIN_RESET_BUTTON_HEIGHT);
+    reset->set_size_request(-1, RTScalable::scalePixelSize(spin->get_height() > MIN_RESET_BUTTON_HEIGHT ? spin->get_height() : MIN_RESET_BUTTON_HEIGHT));
     slider = Gtk::manage(new MyHScale());
     setExpandAlignProperties(slider, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     slider->set_draw_value(false);
@@ -193,7 +194,7 @@ void Adjuster::addAutoButton (const Glib::ustring &tooltip)
 {
     if (!automatic) {
         automatic = Gtk::manage(new Gtk::CheckButton());
-        //automatic->add (*Gtk::manage (new RTImage ("gears.png")));
+        //automatic->add (*Gtk::manage (new RTImage ("gears")));
         automatic->set_tooltip_markup(tooltip.length() ? Glib::ustring::compose("<b>%1</b>\n\n%2", M("GENERAL_AUTO"), tooltip) : M("GENERAL_AUTO"));
         setExpandAlignProperties(automatic, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
         autoChange = automatic->signal_toggled().connect( sigc::mem_fun(*this, &Adjuster::autoToggled) );
@@ -616,7 +617,7 @@ void Adjuster::setLogScale(double base, double pivot, bool anchorMiddle)
     logPivot = pivot;
     logAnchorMiddle = anchorMiddle;
     setSliderValue(cur);
-    
+
     sliderChange.block(false);
     spinChange.block(false);
 }

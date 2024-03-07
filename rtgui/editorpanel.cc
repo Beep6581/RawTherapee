@@ -418,9 +418,9 @@ private:
     void prepareIntentBox ()
     {
         // same order as the enum
-        intentBox.addEntry ("intent-perceptual.png", M ("PREFERENCES_INTENT_PERCEPTUAL"));
-        intentBox.addEntry ("intent-relative.png", M ("PREFERENCES_INTENT_RELATIVE"));
-        intentBox.addEntry ("intent-absolute.png", M ("PREFERENCES_INTENT_ABSOLUTE"));
+        intentBox.addEntry ("intent-perceptual", M ("PREFERENCES_INTENT_PERCEPTUAL"));
+        intentBox.addEntry ("intent-relative", M ("PREFERENCES_INTENT_RELATIVE"));
+        intentBox.addEntry ("intent-absolute", M ("PREFERENCES_INTENT_ABSOLUTE"));
         setExpandAlignProperties (intentBox.buttonGroup, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
         intentBox.setSelected (1);
@@ -429,7 +429,7 @@ private:
 
     void prepareSoftProofingBox ()
     {
-        Gtk::Image *softProofImage = Gtk::manage (new RTImage ("gamut-softproof.png"));
+        Gtk::Image *softProofImage = Gtk::manage (new RTImage ("gamut-softproof", Gtk::ICON_SIZE_LARGE_TOOLBAR));
         softProofImage->set_padding (0, 0);
         softProof.add (*softProofImage);
         softProof.set_relief (Gtk::RELIEF_NONE);
@@ -438,7 +438,7 @@ private:
         softProof.set_active (false);
         softProof.show ();
 
-        Gtk::Image *spGamutCheckImage = Gtk::manage (new RTImage ("gamut-warning.png"));
+        Gtk::Image *spGamutCheckImage = Gtk::manage (new RTImage ("gamut-warning", Gtk::ICON_SIZE_LARGE_TOOLBAR));
         spGamutCheckImage->set_padding (0, 0);
         spGamutCheck.add (*spGamutCheckImage);
         spGamutCheck.set_relief (Gtk::RELIEF_NONE);
@@ -744,7 +744,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     //leftsubpaned->pack_start (*ppframe, Gtk::PACK_SHRINK, 4);
 
     navigator = Gtk::manage(new Navigator());
-    navigator->previewWindow->set_size_request(-1, 150 * RTScalable::getScale());
+    navigator->previewWindow->set_size_request(-1, RTScalable::scalePixelSize(150));
     leftsubpaned->pack1(*navigator, false, false);
 
     history = Gtk::manage(new History());
@@ -760,19 +760,19 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     Gtk::Box* editbox = Gtk::manage (new Gtk::Box (Gtk::ORIENTATION_VERTICAL));
 
     info = Gtk::manage (new Gtk::ToggleButton ());
-    Gtk::Image* infoimg = Gtk::manage (new RTImage ("info.png"));
+    Gtk::Image* infoimg = Gtk::manage (new RTImage ("info", Gtk::ICON_SIZE_LARGE_TOOLBAR));
     info->add (*infoimg);
     info->set_relief (Gtk::RELIEF_NONE);
     info->set_tooltip_markup (M ("MAIN_TOOLTIP_QINFO"));
 
     beforeAfter = Gtk::manage (new Gtk::ToggleButton ());
-    Gtk::Image* beforeAfterIcon = Gtk::manage (new RTImage ("beforeafter.png"));
+    Gtk::Image* beforeAfterIcon = Gtk::manage (new RTImage ("beforeafter", Gtk::ICON_SIZE_LARGE_TOOLBAR));
     beforeAfter->add (*beforeAfterIcon);
     beforeAfter->set_relief (Gtk::RELIEF_NONE);
     beforeAfter->set_tooltip_markup (M ("MAIN_TOOLTIP_TOGGLE"));
 
-    iBeforeLockON = new RTImage ("padlock-locked-small.png");
-    iBeforeLockOFF = new RTImage ("padlock-unlocked-small.png");
+    iBeforeLockON = new RTImage ("padlock-locked-small", Gtk::ICON_SIZE_LARGE_TOOLBAR);
+    iBeforeLockOFF = new RTImage ("padlock-unlocked-small", Gtk::ICON_SIZE_LARGE_TOOLBAR);
 
     Gtk::Separator* vsept = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_VERTICAL));
     Gtk::Separator* vsepz = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_VERTICAL));
@@ -781,8 +781,8 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     hidehp = Gtk::manage (new Gtk::ToggleButton ());
 
-    iHistoryShow = new RTImage ("panel-to-right.png");
-    iHistoryHide = new RTImage ("panel-to-left.png");
+    iHistoryShow = new RTImage ("panel-to-right", Gtk::ICON_SIZE_LARGE_TOOLBAR);
+    iHistoryHide = new RTImage ("panel-to-left", Gtk::ICON_SIZE_LARGE_TOOLBAR);
 
     hidehp->set_relief (Gtk::RELIEF_NONE);
     hidehp->set_active (options.showHistory);
@@ -798,8 +798,8 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     if (!simpleEditor && filePanel) {
         tbTopPanel_1 = new Gtk::ToggleButton ();
-        iTopPanel_1_Show = new RTImage ("panel-to-bottom.png");
-        iTopPanel_1_Hide = new RTImage ("panel-to-top.png");
+        iTopPanel_1_Show = new RTImage ("panel-to-bottom", Gtk::ICON_SIZE_LARGE_TOOLBAR);
+        iTopPanel_1_Hide = new RTImage ("panel-to-top", Gtk::ICON_SIZE_LARGE_TOOLBAR);
         tbTopPanel_1->set_relief (Gtk::RELIEF_NONE);
         tbTopPanel_1->set_active (true);
         tbTopPanel_1->set_tooltip_markup (M ("MAIN_TOOLTIP_SHOWHIDETP1"));
@@ -816,7 +816,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     // Histogram profile toggle controls
     toggleHistogramProfile = Gtk::manage (new Gtk::ToggleButton ());
-    Gtk::Image* histProfImg = Gtk::manage (new RTImage ("gamut-hist.png"));
+    Gtk::Image* histProfImg = Gtk::manage (new RTImage ("gamut-hist", Gtk::ICON_SIZE_LARGE_TOOLBAR));
     toggleHistogramProfile->add (*histProfImg);
     toggleHistogramProfile->set_relief (Gtk::RELIEF_NONE);
     toggleHistogramProfile->set_active (options.rtSettings.HistogramWorking);
@@ -889,14 +889,14 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     iops->set_row_spacing (2);
     iops->set_column_spacing (2);
 
-    Gtk::Image *saveButtonImage =  Gtk::manage (new RTImage ("save.png"));
+    Gtk::Image *saveButtonImage =  Gtk::manage (new RTImage ("save", Gtk::ICON_SIZE_LARGE_TOOLBAR));
     saveimgas = Gtk::manage (new Gtk::Button ());
     saveimgas->set_relief(Gtk::RELIEF_NONE);
     saveimgas->add (*saveButtonImage);
     saveimgas->set_tooltip_markup (M ("MAIN_BUTTON_SAVE_TOOLTIP"));
     setExpandAlignProperties (saveimgas, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
-    Gtk::Image *queueButtonImage = Gtk::manage (new RTImage ("gears.png"));
+    Gtk::Image *queueButtonImage = Gtk::manage (new RTImage ("gears", Gtk::ICON_SIZE_LARGE_TOOLBAR));
     queueimg = Gtk::manage (new Gtk::Button ());
     queueimg->set_relief(Gtk::RELIEF_NONE);
     queueimg->add (*queueButtonImage);
@@ -905,7 +905,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     send_to_external = Gtk::manage(new PopUpButton("", false));
     send_to_external->set_tooltip_text(M("MAIN_BUTTON_SENDTOEDITOR_TOOLTIP"));
-    send_to_external->setEmptyImage("palette-brush.png");
+    send_to_external->setEmptyImage("palette-brush");
     setExpandAlignProperties(send_to_external->buttonGroup, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     updateExternalEditorWidget(
         options.externalEditorIndex >= 0 ? options.externalEditorIndex : options.externalEditors.size(),
@@ -921,8 +921,8 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     // tbRightPanel_1
     tbRightPanel_1 = Gtk::manage(new Gtk::ToggleButton());
-    iRightPanel_1_Show = new RTImage ("panel-to-left.png");
-    iRightPanel_1_Hide = new RTImage ("panel-to-right.png");
+    iRightPanel_1_Show = new RTImage ("panel-to-left", Gtk::ICON_SIZE_LARGE_TOOLBAR);
+    iRightPanel_1_Hide = new RTImage ("panel-to-right", Gtk::ICON_SIZE_LARGE_TOOLBAR);
     tbRightPanel_1->set_relief (Gtk::RELIEF_NONE);
     tbRightPanel_1->set_active (true);
     tbRightPanel_1->set_tooltip_markup (M ("MAIN_TOOLTIP_SHOWHIDERP1"));
@@ -931,8 +931,8 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     // ShowHideSidePanels
     tbShowHideSidePanels = Gtk::manage(new Gtk::ToggleButton());
-    iShowHideSidePanels = new RTImage ("crossed-arrows-out.png");
-    iShowHideSidePanels_exit = new RTImage ("crossed-arrows-in.png");
+    iShowHideSidePanels = new RTImage ("crossed-arrows-out", Gtk::ICON_SIZE_LARGE_TOOLBAR);
+    iShowHideSidePanels_exit = new RTImage ("crossed-arrows-in", Gtk::ICON_SIZE_LARGE_TOOLBAR);
     tbShowHideSidePanels->set_relief (Gtk::RELIEF_NONE);
     tbShowHideSidePanels->set_active (false);
     tbShowHideSidePanels->set_tooltip_markup (M ("MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP"));
@@ -943,7 +943,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     if (!simpleEditor && !options.tabbedUI) {
         // Navigation buttons
-        Gtk::Image *navPrevImage = Gtk::manage (new RTImage ("arrow2-left.png"));
+        Gtk::Image *navPrevImage = Gtk::manage (new RTImage ("arrow2-left", Gtk::ICON_SIZE_LARGE_TOOLBAR));
         navPrevImage->set_padding (0, 0);
         navPrev = Gtk::manage (new Gtk::Button ());
         navPrev->add (*navPrevImage);
@@ -951,7 +951,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
         navPrev->set_tooltip_markup (M ("MAIN_BUTTON_NAVPREV_TOOLTIP"));
         setExpandAlignProperties (navPrev, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
-        Gtk::Image *navNextImage = Gtk::manage (new RTImage ("arrow2-right.png"));
+        Gtk::Image *navNextImage = Gtk::manage (new RTImage ("arrow2-right", Gtk::ICON_SIZE_LARGE_TOOLBAR));
         navNextImage->set_padding (0, 0);
         navNext = Gtk::manage (new Gtk::Button ());
         navNext->add (*navNextImage);
@@ -959,7 +959,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
         navNext->set_tooltip_markup (M ("MAIN_BUTTON_NAVNEXT_TOOLTIP"));
         setExpandAlignProperties (navNext, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
-        Gtk::Image *navSyncImage = Gtk::manage (new RTImage ("arrow-updown.png"));
+        Gtk::Image *navSyncImage = Gtk::manage (new RTImage ("arrow-updown", Gtk::ICON_SIZE_LARGE_TOOLBAR));
         navSyncImage->set_padding (0, 0);
         navSync = Gtk::manage (new Gtk::Button ());
         navSync->add (*navSyncImage);
@@ -2792,11 +2792,12 @@ void EditorPanel::updateExternalEditorWidget(int selectedIndex, const std::vecto
 
             send_to_external->insertEntry(i, gioIcon, name, &send_to_external_radio_group);
         } else {
-            send_to_external->insertEntry(i, "palette-brush.png", name, &send_to_external_radio_group);
+            send_to_external->insertEntry(i, "palette-brush", name, &send_to_external_radio_group);
         }
     }
+
 #ifndef __APPLE__
-    send_to_external->addEntry("palette-brush.png", M("GENERAL_OTHER"), &send_to_external_radio_group);
+    send_to_external->addEntry("palette-brush", M("GENERAL_OTHER"), &send_to_external_radio_group);
 #endif
     send_to_external->set_sensitive(send_to_external->getEntryCount());
     send_to_external->setSelected(selectedIndex);

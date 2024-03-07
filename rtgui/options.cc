@@ -358,7 +358,6 @@ void Options::setDefaults()
     fontSize = 10;
     CPFontFamily = "default";
     CPFontSize = 8;
-    pseudoHiDPISupport = false;
     lastScale = 5;
     lastShowAllExif = false;
     panAccelFactor = 5;
@@ -368,6 +367,7 @@ void Options::setDefaults()
     fbShowDateTime = true;
     fbShowBasicExif = true;
     fbShowExpComp = false;
+    maxZoomLimit = MaxZoom::PERCENTS_1600;
 #ifdef _WIN32
     // use windows setting for visibility of hidden files/folders
     SHELLFLAGSTATE sft = { 0 };
@@ -578,7 +578,7 @@ void Options::setDefaults()
     rtSettings.flatFieldsPath = "";
 	rtSettings.cameraProfilesPath = "";
 	rtSettings.lensProfilesPath = "";
-	
+
 #ifdef _WIN32
     const gchar* sysRoot = g_getenv("SystemRoot");  // Returns e.g. "c:\Windows"
 
@@ -856,7 +856,7 @@ void Options::readFromFile(Glib::ustring fname)
                 if (keyFile.has_key("External Editor", "CustomEditor")) {
                     customEditorProg = keyFile.get_string("External Editor", "CustomEditor");
                 }
-                
+
                 if (keyFile.has_key("External Editor", "OutputDir")) {
                     int v = keyFile.get_integer("External Editor", "OutputDir");
                     if (v < int(EDITOR_OUT_DIR_TEMP) || v > int(EDITOR_OUT_DIR_CUSTOM)) {
@@ -877,7 +877,7 @@ void Options::readFromFile(Glib::ustring fname)
                 if (keyFile.has_key("External Editor", "BypassOutputProfile")) {
                     editor_bypass_output_profile = keyFile.get_boolean("External Editor", "BypassOutputProfile");
                 }
-                
+
             }
 
             if (keyFile.has_group("External Editor")) {
@@ -1555,10 +1555,6 @@ void Options::readFromFile(Glib::ustring fname)
                     CPFontSize = keyFile.get_integer("GUI", "CPFontSize");
                 }
 
-                if (keyFile.has_key("GUI", "PseudoHiDPISupport")) {
-                    pseudoHiDPISupport = keyFile.get_boolean("GUI", "PseudoHiDPISupport");
-                }
-
                 if (keyFile.has_key("GUI", "LastPreviewScale")) {
                     lastScale = keyFile.get_integer("GUI", "LastPreviewScale");
                 }
@@ -1734,6 +1730,9 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("GUI", "ZoomOnScroll")) {
                     zoomOnScroll = keyFile.get_boolean("GUI", "ZoomOnScroll");
+                }
+                if (keyFile.has_key("GUI", "MaxZoom")) {
+                    maxZoomLimit = static_cast<MaxZoom>(keyFile.get_integer("GUI", "MaxZoom"));
                 }
             }
 
@@ -2545,7 +2544,6 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("GUI", "FontSize", fontSize);
         keyFile.set_string("GUI", "CPFontFamily", CPFontFamily);
         keyFile.set_integer("GUI", "CPFontSize", CPFontSize);
-        keyFile.set_boolean("GUI", "PseudoHiDPISupport", pseudoHiDPISupport);
         keyFile.set_integer("GUI", "LastPreviewScale", lastScale);
         keyFile.set_boolean("GUI", "LastShowAllExif", lastShowAllExif);
         keyFile.set_integer("GUI", "PanAccelFactor", panAccelFactor);
@@ -2589,6 +2587,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("GUI", "Spotmet", spotmet);
         keyFile.set_boolean("GUI", "InspectorWindow", inspectorWindow);
         keyFile.set_boolean("GUI", "ZoomOnScroll", zoomOnScroll);
+        keyFile.set_integer("GUI", "MaxZoom", static_cast<int>(maxZoomLimit));
 
         //Glib::ArrayHandle<int> crvopen = crvOpen;
         //keyFile.set_integer_list ("GUI", "CurvePanelsExpanded", crvopen);

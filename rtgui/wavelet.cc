@@ -92,7 +92,7 @@ Wavelet::Wavelet() :
     oldsh(Gtk::manage(new Gtk::CheckButton(M("TP_WAVELET_OLDSH")))),
     neutralchButton(Gtk::manage(new Gtk::Button(M("TP_WAVELET_NEUTRAL")))),
     sigma(Gtk::manage(new Adjuster(M("TP_WAVELET_SIGMA"), 0.05, 2.5, 0.01, 1.))),
-    offset(Gtk::manage(new Adjuster(M("TP_WAVELET_WAVOFFSET"), 0.33, 1.66, 0.01, 1., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
+    offset(Gtk::manage(new Adjuster(M("TP_WAVELET_WAVOFFSET"), 0.33, 1.66, 0.01, 1., Gtk::manage(new RTImage("circle-black-small")), Gtk::manage(new RTImage("circle-white-small"))))),
     lowthr(Gtk::manage(new Adjuster(M("TP_WAVELET_WAVLOWTHR"), 20., 100., 0.5, 40.))),
     rescon(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCON"), -100, 100, 1, 0))),
     resconH(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCONH"), 0, 100, 1, 0))),
@@ -152,8 +152,8 @@ Wavelet::Wavelet() :
     edgedetectthr2(Gtk::manage(new Adjuster(M("TP_WAVELET_EDGEDETECTTHR2"), -10, 100, 1, 0))),
     edgesensi(Gtk::manage(new Adjuster(M("TP_WAVELET_EDGESENSI"), 0, 100, 1, 60))),
     edgeampli(Gtk::manage(new Adjuster(M("TP_WAVELET_EDGEAMPLI"), 0, 100, 1, 10))),
-    ballum(Gtk::manage(new Adjuster(M("TP_WAVELET_BALLUM"), -2., 10., 0.5, 7., Gtk::manage(new RTImage("circle-white-small.png")), Gtk::manage(new RTImage("circle-black-small.png"))))),
-    balchrom(Gtk::manage(new Adjuster(M("TP_WAVELET_BALCHROM"), -100., 100., 1., 0., Gtk::manage(new RTImage("circle-blue-yellow-small.png")), Gtk::manage(new RTImage("circle-red-green-small.png"))))),
+    ballum(Gtk::manage(new Adjuster(M("TP_WAVELET_BALLUM"), -2., 10., 0.5, 7., Gtk::manage(new RTImage("circle-white-small")), Gtk::manage(new RTImage("circle-black-small"))))),
+    balchrom(Gtk::manage(new Adjuster(M("TP_WAVELET_BALCHROM"), -100., 100., 1., 0., Gtk::manage(new RTImage("circle-blue-yellow-small")), Gtk::manage(new RTImage("circle-red-green-small"))))),
     chromfi(Gtk::manage(new Adjuster(M("TP_WAVELET_CHROMFI"), 0.0, 150., 0.01, 0.))),
     chromco(Gtk::manage(new Adjuster(M("TP_WAVELET_CHROMCO"), 0, 100., 0.01, 0.))),
     mergeL(Gtk::manage(new Adjuster(M("TP_WAVELET_MERGEL"), -50, 100, 1, 20))),
@@ -606,7 +606,7 @@ Wavelet::Wavelet() :
     opaCurveEditorG->curveListComplete();
     opaCurveEditorG->show();
     tonBox->pack_start(*sigmaton);
-    
+
     tonFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const ton2Box = Gtk::manage(new ToolParamBlock());
     ton2Box->pack_start(*labgrid, Gtk::PACK_EXPAND_WIDGET, 2);
@@ -716,7 +716,7 @@ Wavelet::Wavelet() :
     CurveEditorwavnoise->curveListComplete();
     CurveEditorwavnoise->show();
     const std::vector<GradientMilestone> milestones4 = makeWholeHueRange();
-    
+
     wavdenoiseh = static_cast<FlatCurveEditor*>(CurveEditorwavnoiseh->addCurve(CT_Flat, "", nullptr, false, false));
     wavdenoiseh->setIdentityValue(0.);
     wavdenoiseh->setResetCurve(FlatCurveType(default_params.wavdenoiseh.at(0)), default_params.wavdenoiseh);
@@ -742,7 +742,7 @@ Wavelet::Wavelet() :
     wavguidf->setBottomBarBgGradient(milestones4);
 
 
-    
+
     levelsigm->set_tooltip_text(M("TP_WAVELET_DENSIGMA_TOOLTIP"));
 //    levden->set_tooltip_text(M("TP_WAVELET_DENLEV_TOOLTIP"));
     thrden->set_tooltip_text(M("TP_WAVELET_THRDEN_TOOLTIP"));
@@ -766,7 +766,7 @@ Wavelet::Wavelet() :
     noiseBox->pack_start(*sigm);
     noiseBox->pack_start(*CurveEditorwavnoise);
 //    noiseBox->pack_start(*CurveEditorwavnoiseh);
-    
+
 
     balchrom->setAdjusterListener(this);
     chromfi->setAdjusterListener(this);
@@ -922,7 +922,7 @@ Wavelet::Wavelet() :
 
 //Blur Wavelet
     ToolParamBlock* const blBox = Gtk::manage(new ToolParamBlock());
-    
+
     curveEditorbl->setCurveListener(this);
 
     blshape = static_cast<FlatCurveEditor*>(curveEditorbl->addCurve(CT_Flat, "", nullptr, false, false));
@@ -937,8 +937,8 @@ Wavelet::Wavelet() :
     blBox->pack_start(*bluwav);
     bluwav->setAdjusterListener(this);
     blBox->pack_start(*curveEditorbl, Gtk::PACK_SHRINK, 4);
-    
-    
+
+
     chrwav->setAdjusterListener(this);
     blBox->pack_start(*chrwav);
 
@@ -1120,20 +1120,20 @@ Wavelet::Wavelet() :
     cbenabConn = cbenab->signal_toggled().connect(sigc::mem_fun(*this, &Wavelet::cbenabToggled));
     cbenab->set_tooltip_text(M("TP_WAVELET_CB_TOOLTIP"));
 
-    Gtk::Image* const iblueR   = Gtk::manage(new RTImage("circle-blue-small.png"));
-    Gtk::Image* const iyelL    = Gtk::manage(new RTImage("circle-yellow-small.png"));
-    Gtk::Image* const imagL    = Gtk::manage(new RTImage("circle-magenta-small.png"));
-    Gtk::Image* const igreenR  = Gtk::manage(new RTImage("circle-green-small.png"));
+    Gtk::Image* const iblueR   = Gtk::manage(new RTImage("circle-blue-small"));
+    Gtk::Image* const iyelL    = Gtk::manage(new RTImage("circle-yellow-small"));
+    Gtk::Image* const imagL    = Gtk::manage(new RTImage("circle-magenta-small"));
+    Gtk::Image* const igreenR  = Gtk::manage(new RTImage("circle-green-small"));
 
-    Gtk::Image* const  iblueRm  = Gtk::manage(new RTImage("circle-blue-small.png"));
-    Gtk::Image* const  iyelLm   = Gtk::manage(new RTImage("circle-yellow-small.png"));
-    Gtk::Image* const  imagLm   = Gtk::manage(new RTImage("circle-magenta-small.png"));
-    Gtk::Image* const  igreenRm = Gtk::manage(new RTImage("circle-green-small.png"));
+    Gtk::Image* const  iblueRm  = Gtk::manage(new RTImage("circle-blue-small"));
+    Gtk::Image* const  iyelLm   = Gtk::manage(new RTImage("circle-yellow-small"));
+    Gtk::Image* const  imagLm   = Gtk::manage(new RTImage("circle-magenta-small"));
+    Gtk::Image* const  igreenRm = Gtk::manage(new RTImage("circle-green-small"));
 
-    Gtk::Image* const iblueRh  = Gtk::manage(new RTImage("circle-blue-small.png"));
-    Gtk::Image* const iyelLh   = Gtk::manage(new RTImage("circle-yellow-small.png"));
-    Gtk::Image* const imagLh   = Gtk::manage(new RTImage("circle-magenta-small.png"));
-    Gtk::Image* const igreenRh = Gtk::manage(new RTImage("circle-green-small.png"));
+    Gtk::Image* const iblueRh  = Gtk::manage(new RTImage("circle-blue-small"));
+    Gtk::Image* const iyelLh   = Gtk::manage(new RTImage("circle-yellow-small"));
+    Gtk::Image* const imagLh   = Gtk::manage(new RTImage("circle-magenta-small"));
+    Gtk::Image* const igreenRh = Gtk::manage(new RTImage("circle-green-small"));
 
     greenhigh = Gtk::manage(new Adjuster("", -100., 100., 1., 0., igreenRh, imagLh));
     bluehigh = Gtk::manage(new Adjuster("", -100., 100., 1., 0., iblueRh, iyelLh));
@@ -1167,8 +1167,6 @@ Wavelet::Wavelet() :
     resBox->pack_start(*chanMixerMidFrame, Gtk::PACK_SHRINK);
     resBox->pack_start(*chanMixerShadowsFrame, Gtk::PACK_SHRINK);
 
-    //RTImage *resetImg = Gtk::manage (new RTImage ("undo-small.png", "redo-small.png"));
-    //neutral->set_image(*resetImg);
     Gtk::Button* const neutral = Gtk::manage(new Gtk::Button(M("TP_COLORTONING_NEUTRAL")));
     neutral->set_tooltip_text(M("TP_COLORTONING_NEUTRAL_TOOLTIP"));
     neutralconn = neutral->signal_pressed().connect(sigc::mem_fun(*this, &Wavelet::neutral_pressed));
@@ -1277,7 +1275,7 @@ Wavelet::Wavelet() :
     guidBox->pack_start(*CurveEditorwavguid);
     guidFrame->add(*guidBox);
     finalBox->pack_start(*guidFrame);
-    
+
 
 //-----------------------------
 
@@ -1584,7 +1582,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     } else if (pp->wavelet.slimethod == "cur") {
         slimethod->set_active(1);
     }
-    
+
     if (pp->wavelet.quamethod == "cons") {
         quamethod->set_active(0);
     } else if (pp->wavelet.quamethod == "agre") {
@@ -2053,7 +2051,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         } else {
             sup->hide();
         }
-        
+
     if (complexmethod->get_active_row_number() == 0) {
         updateGUIToMode(0);
         convertParamToNormal();
@@ -2061,7 +2059,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     } else {
         updateGUIToMode(1);
     }
-        
+
     }
 
     /*****************************************************************************************************
@@ -3288,7 +3286,7 @@ void Wavelet::convertParamToNormal()
     cbenab->set_active(false);
 
     //final touchup
-    BAmethod->set_active(0);    
+    BAmethod->set_active(0);
     sigmafin->setValue(def_params.sigmafin);
     enableListener();
 
@@ -3370,7 +3368,7 @@ void Wavelet::updateGUIToMode(int mode)
 
 
 void Wavelet::complexmethodChanged()
-{    
+{
     if (complexmethod->get_active_row_number() == 0) {
         updateGUIToMode(0);
         convertParamToNormal();
@@ -3385,7 +3383,7 @@ void Wavelet::complexmethodChanged()
 }
 
 //void Wavelet::denmethodChanged()
-//{    
+//{
 //
 //    if (listener && (multiImage || getEnabled())) {
 //        listener->panelChanged(EvWavdenmethod, denmethod->get_active_text());
@@ -3393,7 +3391,7 @@ void Wavelet::complexmethodChanged()
 //}
 
 void Wavelet::mixmethodChanged()
-{    
+{
 
     if (listener && (multiImage || getEnabled())) {
         listener->panelChanged(EvWavmixmethod, mixmethod->get_active_text());
@@ -3401,8 +3399,8 @@ void Wavelet::mixmethodChanged()
 }
 
 void Wavelet::slimethodChanged()
-{ 
-  
+{
+
     if (slimethod->get_active_row_number() == 0 && complexmethod->get_active_row_number() == 0) {
         updateGUIToMode(0);
         convertParamToNormal();
@@ -3418,7 +3416,7 @@ void Wavelet::slimethodChanged()
         CurveEditorwavnoiseh->show();
         CurveEditorwavnoise->show();
     }
-        
+
 
     if (listener && (multiImage || getEnabled())) {
         listener->panelChanged(EvWavslimethod, slimethod->get_active_text());
@@ -3426,7 +3424,7 @@ void Wavelet::slimethodChanged()
 }
 
 void Wavelet::quamethodChanged()
-{    
+{
 
     if (listener && (multiImage || getEnabled())) {
         listener->panelChanged(EvWavquamethod, quamethod->get_active_text());

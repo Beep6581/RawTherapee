@@ -99,7 +99,7 @@ protected:
     enum MouseOverAreas area;
     double locallabRef; // Locallab reference value to display in the background
 
-    void draw ();
+    void updateDrawingArea (const ::Cairo::RefPtr< Cairo::Context> &cr);
     void movePoint(bool moveX, bool moveY, bool pipetteDrag = false);
     void defaultCurve (double iVal = 0.5);
     void interpolate ();

@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="24px"
+   height="24px"
+   viewBox="0 0 24 24"
+   version="1.1"
+   id="SVGRoot"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs815">
+    <marker
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker8803"
+       style="overflow:visible">
+      <path
+         id="path8801"
+         d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1.0;fill:#000000;fill-opacity:1.0"
+         transform="scale(0.4)" />
+    </marker>
+    <marker
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="TriangleOutS"
+       style="overflow:visible">
+      <path
+         id="path8663"
+         d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1.0;fill:#000000;fill-opacity:1.0"
+         transform="scale(0.2)" />
+    </marker>
+    <marker
+       orient="auto-start-reverse"
+       refY="3.0"
+       refX="5.0"
+       id="ExperimentalArrow">
+      <path
+         id="path8768"
+         d="m 10,3 -10,3 0,-6 z"
+         style="fill:context-stroke;stroke:#000000;stroke-opacity:1.0" />
+    </marker>
+    <marker
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="TriangleOutM"
+       style="overflow:visible">
+      <path
+         id="path8660"
+         d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1.0;fill:#000000;fill-opacity:1.0"
+         transform="scale(0.4)" />
+    </marker>
+    <marker
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow2Mend"
+       style="overflow:visible">
+      <path
+         id="path8542"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#000000;stroke-opacity:1.0;fill:#000000;fill-opacity:1.0"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(0.6) rotate(180) translate(0,0)" />
+    </marker>
+    <marker
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker8791"
+       style="overflow:visible">
+      <path
+         id="path8789"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1.0;fill:#000000;fill-opacity:1.0"
+         transform="scale(0.2) translate(6,0)" />
+    </marker>
+    <marker
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="marker8787"
+       style="overflow:visible">
+      <path
+         id="path8785"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1.0;fill:#000000;fill-opacity:1.0"
+         transform="scale(0.2) rotate(180) translate(6,0)" />
+    </marker>
+    <marker
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow2Lstart"
+       style="overflow:visible">
+      <path
+         id="path8533"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round;stroke:#000000;stroke-opacity:1.0;fill:#000000;fill-opacity:1.0"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(1.1) translate(1,0)" />
+    </marker>
+    <marker
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Send"
+       style="overflow:visible">
+      <path
+         id="path8530"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1.0;fill:#000000;fill-opacity:1.0"
+         transform="scale(0.2) rotate(180) translate(6,0)" />
+    </marker>
+    <marker
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Sstart"
+       style="overflow:visible">
+      <path
+         id="path8527"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1.0;fill:#000000;fill-opacity:1.0"
+         transform="scale(0.2) translate(6,0)" />
+    </marker>
+    <marker
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Mend"
+       style="overflow:visible">
+      <path
+         id="path8524"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1.0;fill:#000000;fill-opacity:1.0"
+         transform="scale(0.4) rotate(180) translate(10,0)" />
+    </marker>
+  </defs>
+  <metadata
+     id="metadata818">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Maciej Dworak</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title />
+          </cc:Agent>
+        </dc:rights>
+        <dc:description>RawTherapee icon.</dc:description>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1">
+    <g
+       id="g17063"
+       transform="translate(-22)">
+      <path
+         id="path5310"
+         d="m 3.8691406,7.3085938 v 3.5800782 0.929687 c 0,5.635467 0.024809,8.910964 0.060547,9.115235 0.1489028,0.799058 0.6854636,1.502655 1.4121094,1.86914 L 5.7460938,23 H 12 18.253906 l 0.328125,-0.15625 c 0.673041,-0.32443 1.166633,-0.878188 1.369141,-1.539062 0.119123,-0.38451 0.119141,-0.540285 0.11914,-9.335938 V 10.888672 7.3085938 H 18.646484 L 20,9 h -5 v 7 h -2.023438 v 3.513672 c 0,0.562204 -0.448506,1.015625 -1.005859,1.015625 -0.557353,0 -1.007812,-0.453421 -1.007812,-1.015625 V 16 H 9 V 9 H 4 L 5.3535156,7.3085938 Z m 3.4238282,2.4707031 c 0.5573529,0 1.0078124,0.4514671 1.0078124,1.0136721 v 8.720703 c 0,0.562204 -0.4504594,1.015625 -1.0078124,1.015625 -0.557353,0 -1.0039063,-0.453421 -1.0039063,-1.015625 v -8.720703 c 0,-0.562205 0.4465533,-1.0136721 1.0039063,-1.0136721 z m 9.3535152,0 c 0.557353,0 1.00586,0.4514671 1.00586,1.0136721 v 8.720703 c 0,0.562204 -0.448507,1.015625 -1.00586,1.015625 -0.557353,0 -1.005859,-0.453421 -1.005859,-1.015625 v -8.720703 c 0,-0.562205 0.448506,-1.0136721 1.005859,-1.0136721 z"
+         style="opacity:0.7;fill:#cccccc;stroke:none;stroke-width:1.34910131;fill-opacity:1.0" />
+      <path
+         id="rect1539"
+         d="M 14,15 V 8 h 4 L 12,1 6,8 h 4 v 7 z"
+         style="opacity:1;fill:#008000;fill-opacity:1.0;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal" />
+    </g>
+    <path
+       style="opacity:0.7;fill:#cccccc;stroke:none;stroke-width:2.03374696;fill-opacity:1.0"
+       id="path10"
+       d="M 20.551716,6.2800579 C 20.245041,5.5113706 19.590094,4.8663289 18.801432,4.5424787 18.403538,4.3782733 17.622605,4.2903615 17.270188,4.3661609 L 17,4.4242737 l 1.997606,9.2876033 1.997608,9.287602 0.205577,-0.04422 c 1.233464,-0.265297 2.27384,-1.628329 2.273116,-2.974575 6.52e-4,-0.225556 -0.420075,-2.267378 -1.43164,-6.941943 -0.788636,-3.6380797 -1.46127,-6.6796912 -1.490551,-6.7586861 z" />
+    <path
+       style="opacity:0.7;fill:#cccccc;stroke:none;stroke-width:1.34910131;fill-opacity:1.0"
+       d="m 1.1464844,8 v 3.423828 0.888672 c 0,5.386943 0.023298,8.515676 0.058594,8.710938 0.1470606,0.763819 0.6768747,1.436786 1.3945312,1.787109 L 3,23 h 6.1757813 6.1757807 l 0.324219,-0.148438 c 0.664715,-0.310123 1.153513,-0.838972 1.353515,-1.470703 0.11765,-0.367553 0.117188,-0.518015 0.117188,-8.925781 V 11.423828 8 h -6 v 2 H 7.1464844 V 8 Z m 3.3808594,2.363281 c 0.5504579,0 0.9941406,0.431339 0.9941406,0.96875 v 8.335938 c 0,0.53741 -0.4436827,0.96875 -0.9941406,0.96875 -0.550458,0 -0.9921875,-0.43134 -0.9921875,-0.96875 v -8.335938 c 0,-0.537411 0.4417295,-0.96875 0.9921875,-0.96875 z m 4.6191406,0 c 0.550458,0 0.9941406,0.431339 0.9941406,0.96875 v 8.335938 c 0,0.53741 -0.4436826,0.96875 -0.9941406,0.96875 -0.5504579,0 -0.9941406,-0.43134 -0.9941406,-0.96875 v -8.335938 c 0,-0.537411 0.4436827,-0.96875 0.9941406,-0.96875 z m 4.6191406,0 c 0.550458,0 0.992187,0.431339 0.992187,0.96875 v 8.335938 c 0,0.53741 -0.441729,0.96875 -0.992187,0.96875 -0.550458,0 -0.994141,-0.43134 -0.994141,-0.96875 v -8.335938 c 0,-0.537411 0.443683,-0.96875 0.994141,-0.96875 z"
+       id="path5310-3" />
+    <path
+       style="opacity:1;fill:#008000;fill-opacity:1.0;stroke:none;stroke-width:1.99999988;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+       d="M 10.146484,9 V 5 h 2 L 9.1464839,0.9999999 6.1464844,5 H 8.146484 v 4 z"
+       id="rect1539-6" />
+  </g>
+</svg>
