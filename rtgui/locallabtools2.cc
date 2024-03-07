@@ -7606,7 +7606,7 @@ Locallabcie::Locallabcie():
     logcieFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGCIE")))),
     logcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LOGCIE")))),
     comprBox(Gtk::manage(new ToolParamBlock())),
-    comprcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIE"), 0., 1., 0.01, 0.6))),
+    comprcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIE"), 0., 1., 0.01, 0.4))),
     strcielog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGTHCIELOG"), 0., 100., 0.5, 80.))),
     satcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SATCIE")))),
     comprcieth(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIETH"), 0., 25., 0.01, 6.))),
@@ -10633,7 +10633,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             surHBoxcie->show();
             sourceabscie->show();
             targabscie->show();
-            detailcie->hide();
+            detailcie->show(); //hide
             jabcie->hide();
             modeHBoxcie->hide();
             sensicie->show();
@@ -10739,20 +10739,20 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             catadcie->show();
             saturlcie->show();
             rstprotectcie->show();
-            chromlcie->hide();
-            huecie->hide();
+            chromlcie->show();//hide
+            huecie->show();//hide
             lightlcie->show();
-            lightqcie->hide();
+            lightqcie->show();//hide
             contlcie->show();
             contthrescie->show();
-            contqcie->hide();
+            contqcie->show();//hide
             colorflcie->hide();
             surrHBoxcie->show();
             expLcie->hide();
             surHBoxcie->show();
             sourceabscie->show();
             targabscie->show();
-            detailcie->hide();
+            detailcie->show();//hide
             jabcie->hide();
             modeHBoxcie->hide();
             sensicie->show();
@@ -11267,7 +11267,7 @@ void Locallabcie::convertParamToNormal()
     lightqcie->setValue(defSpot.lightqcie);
     chromlcie->setValue(defSpot.chromlcie);
     huecie->setValue(defSpot.huecie);
-    detailcie->setValue(defSpot.detailcie);
+   // detailcie->setValue(defSpot.detailcie);
     jabcie->set_active(defSpot.jabcie);
     LHshapejz->setCurve(defSpot.LHcurvejz);
     CHshapejz->setCurve(defSpot.CHcurvejz);
@@ -11335,8 +11335,8 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         sourceabscie->setDefault(defSpot.sourceabscie);
         saturlcie->setDefault(defSpot.saturlcie);
         rstprotectcie->setDefault(defSpot.rstprotectcie);
-        chromlcie->setDefault(defSpot.chromlcie);
-        huecie->setDefault(defSpot.huecie);
+       // chromlcie->setDefault(defSpot.chromlcie);
+       // huecie->setDefault(defSpot.huecie);
         chromjzcie->setDefault(defSpot.chromjzcie);
         saturjzcie->setDefault(defSpot.saturjzcie);
         huejzcie->setDefault(defSpot.huejzcie);
@@ -11345,7 +11345,7 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         thrhjzcie->setDefault(defSpot.thrhjzcie);
         lightlcie->setDefault(defSpot.lightlcie);
         lightjzcie->setDefault(defSpot.lightjzcie);
-        lightqcie->setDefault(defSpot.lightqcie);
+        //lightqcie->setDefault(defSpot.lightqcie);
         lightsigqcie->setDefault(defSpot.lightsigqcie);
         contlcie->setDefault(defSpot.contlcie);
         contjzcie->setDefault(defSpot.contjzcie);
@@ -11382,13 +11382,13 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         sigmoidldajzcie->setDefault(defSpot.sigmoidldajzcie);
         sigmoidthjzcie->setDefault(defSpot.sigmoidthjzcie);
         sigmoidbljzcie->setDefault(defSpot.sigmoidbljzcie);
-        contqcie->setDefault(defSpot.contqcie);
+       // contqcie->setDefault(defSpot.contqcie);
         contsigqcie->setDefault(defSpot.contsigqcie);
         colorflcie->setDefault(defSpot.colorflcie);
         targabscie->setDefault(defSpot.targabscie);
         targetGraycie->setDefault(defSpot.targetGraycie);
         catadcie->setDefault(defSpot.catadcie);
-        detailcie->setDefault(defSpot.detailcie);
+       // detailcie->setDefault(defSpot.detailcie);
         strgradcie->setDefault((double)defSpot.strgradcie);
         anggradcie->setDefault((double)defSpot.anggradcie);
         blendmaskcie->setDefault((double)defSpot.blendmaskcie);
