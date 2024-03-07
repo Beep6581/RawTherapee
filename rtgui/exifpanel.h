@@ -50,8 +50,8 @@ private:
     class ExifColumns : public Gtk::TreeModelColumnRecord
     {
     public:
+        Gtk::TreeModelColumn<Glib::ustring> icon;
         // Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf>> expander_icon;
-        Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf>> icon;
         Gtk::TreeModelColumn<std::string> key;
         Gtk::TreeModelColumn<Glib::ustring> label;
         Gtk::TreeModelColumn<Glib::ustring> value;
@@ -75,10 +75,11 @@ private:
             // add(expander_icon);
         }
     };
-    //Glib::RefPtr<Gdk::Pixbuf> keepicon;
-    Glib::RefPtr<Gdk::Pixbuf> editicon;
-    Glib::RefPtr<Gdk::Pixbuf> open_icon_;
-    Glib::RefPtr<Gdk::Pixbuf> closed_icon_;
+
+    //Glib::ustring keepicon;
+    Glib::ustring editicon;
+    Glib::ustring open_icon_;
+    Glib::ustring closed_icon_;
 
     ExifColumns exifColumns;
     Gtk::TreeView* exifTree;
@@ -122,7 +123,7 @@ private:
 
     void setExifTagValue(Gtk::CellRenderer *renderer, const Gtk::TreeModel::iterator &it);
     void onEditExifTagValue(const Glib::ustring &path, const Glib::ustring &value);
-    
+
 public:
     ExifPanel ();
     ~ExifPanel() override;

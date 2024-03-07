@@ -54,7 +54,7 @@ FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::u
 
     CPointsCurve = Gtk::manage (new MyFlatCurve ());
     CPointsCurve->setType (FCT_MinMaxCPoints);
-    
+
     Gtk::Grid* CPointsCurveBox = Gtk::manage (new Gtk::Grid ());
     CPointsCurveBox->get_style_context()->add_class("curve-curvebox");
     CPointsCurveBox->add(*CPointsCurve);
@@ -81,17 +81,17 @@ FlatCurveEditorSubGroup::FlatCurveEditorSubGroup (CurveEditorGroup* prt, Glib::u
     }
 
     editCPoints = Gtk::manage (new Gtk::ToggleButton());
-    initButton(*editCPoints, Glib::ustring("crosshair-node-curve.png"), Gtk::ALIGN_START, false, "EDIT_PIPETTE_TOOLTIP");
+    initButton(*editCPoints, Glib::ustring("crosshair-node-curve"), Gtk::ALIGN_START, false, "EDIT_PIPETTE_TOOLTIP");
     editPointCPoints = Gtk::manage (new Gtk::ToggleButton ());
-    initButton(*editPointCPoints,  Glib::ustring("edit-point.png"), Gtk::ALIGN_START, false, "CURVEEDITOR_EDITPOINT_HINT");
+    initButton(*editPointCPoints,  Glib::ustring("edit-point"), Gtk::ALIGN_START, false, "CURVEEDITOR_EDITPOINT_HINT");
     copyCPoints = Gtk::manage (new Gtk::Button ());
-    initButton(*copyCPoints, Glib::ustring("copy.png"), Gtk::ALIGN_END, true);
+    initButton(*copyCPoints, Glib::ustring("copy"), Gtk::ALIGN_END, true);
     pasteCPoints = Gtk::manage (new Gtk::Button ());
-    initButton(*pasteCPoints,  Glib::ustring("paste.png"), Gtk::ALIGN_END, false);
+    initButton(*pasteCPoints,  Glib::ustring("paste"), Gtk::ALIGN_END, false);
     loadCPoints = Gtk::manage (new Gtk::Button ());
-    initButton(*loadCPoints,  Glib::ustring("folder-open.png"), Gtk::ALIGN_END, false);
+    initButton(*loadCPoints,  Glib::ustring("folder-open"), Gtk::ALIGN_END, false);
     saveCPoints = Gtk::manage (new Gtk::Button ());
-    initButton(*saveCPoints,  Glib::ustring("save.png"), Gtk::ALIGN_END, false);
+    initButton(*saveCPoints,  Glib::ustring("save"), Gtk::ALIGN_END, false);
 
     CPointsbbox->attach_next_to(*editPointCPoints, sideStart, 1, 1);
     CPointsbbox->attach_next_to(*editCPoints,      sideStart, 1, 1);
@@ -206,7 +206,6 @@ void FlatCurveEditorSubGroup::editModeSwitchedOff ()
     bool prevState = editCPointsConn.block(true);
     editCPoints->set_active(false);
     CPointsCurve->pipetteMouseOver(nullptr, nullptr, 0);
-    CPointsCurve->setDirty(true);
 
     if (!prevState) {
         editCPointsConn.block(false);
@@ -220,7 +219,6 @@ void FlatCurveEditorSubGroup::pipetteMouseOver(EditDataProvider *provider, int m
     switch((FlatCurveType)(curveEditor->curveType->getSelected())) {
     case (FCT_MinMaxCPoints):
         CPointsCurve->pipetteMouseOver(curveEditor, provider, modifierKey);
-        CPointsCurve->setDirty(true);
         break;
 
     default:    // (DCT_Linear, DCT_Unchanged)
@@ -238,7 +236,6 @@ bool FlatCurveEditorSubGroup::pipetteButton1Pressed(EditDataProvider *provider, 
     switch((FlatCurveType)(curveEditor->curveType->getSelected())) {
     case (FCT_MinMaxCPoints):
         isDragging = CPointsCurve->pipetteButton1Pressed(provider, modifierKey);
-        CPointsCurve->setDirty(true);
         break;
 
     default:    // (DCT_Linear, DCT_Unchanged)
@@ -256,7 +253,6 @@ void FlatCurveEditorSubGroup::pipetteButton1Released(EditDataProvider *provider)
     switch((FlatCurveType)(curveEditor->curveType->getSelected())) {
     case (FCT_MinMaxCPoints):
         CPointsCurve->pipetteButton1Released(provider);
-        CPointsCurve->setDirty(true);
         break;
 
     default:    // (DCT_Linear, DCT_Unchanged)
@@ -272,7 +268,6 @@ void FlatCurveEditorSubGroup::pipetteDrag(EditDataProvider *provider, int modifi
     switch((FlatCurveType)(curveEditor->curveType->getSelected())) {
     case (FCT_MinMaxCPoints):
         CPointsCurve->pipetteDrag(provider, modifierKey);
-        CPointsCurve->setDirty(true);
         break;
 
     default:    // (DCT_Linear, DCT_Unchanged)
@@ -441,7 +436,6 @@ void FlatCurveEditorSubGroup::loadPressed ()
 
             if (p[0] == (double)(FCT_MinMaxCPoints)) {
                 CPointsCurve->setPoints (p);
-                CPointsCurve->queue_draw ();
                 CPointsCurve->notifyListener ();
             }
         }
@@ -481,7 +475,6 @@ void FlatCurveEditorSubGroup::pastePressed ()
         switch (type) {
         case FCT_MinMaxCPoints:    // min/max control points
             CPointsCurve->setPoints (curve);
-            CPointsCurve->queue_draw ();
             CPointsCurve->notifyListener ();
             break;
 

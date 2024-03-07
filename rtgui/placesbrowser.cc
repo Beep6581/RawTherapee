@@ -32,7 +32,7 @@
 PlacesBrowser::PlacesBrowser ()
 {
     set_orientation(Gtk::ORIENTATION_VERTICAL);
-    
+
     scrollw = Gtk::manage (new Gtk::ScrolledWindow ());
     scrollw->set_policy (Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
     pack_start (*scrollw);
@@ -43,13 +43,13 @@ PlacesBrowser::PlacesBrowser ()
     setExpandAlignProperties(add, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     //add->get_style_context()->set_junction_sides(Gtk::JUNCTION_RIGHT);
     add->get_style_context()->add_class("Left");
-    add->set_image (*Gtk::manage (new RTImage ("add-small.png")));
+    add->set_image (*Gtk::manage (new RTImage ("add-small", Gtk::ICON_SIZE_BUTTON)));
     del = Gtk::manage (new Gtk::Button ());
     del->set_tooltip_text(M("MAIN_FRAME_PLACES_DEL"));
     setExpandAlignProperties(del, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     //del->get_style_context()->set_junction_sides(Gtk::JUNCTION_LEFT);
     del->get_style_context()->add_class("Right");
-    del->set_image (*Gtk::manage (new RTImage ("remove-small.png")));
+    del->set_image (*Gtk::manage (new RTImage ("remove-small", Gtk::ICON_SIZE_BUTTON)));
     Gtk::Grid* buttonBox = Gtk::manage (new Gtk::Grid ());
     buttonBox->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
     buttonBox->attach_next_to(*add, Gtk::POS_LEFT, 1, 1);

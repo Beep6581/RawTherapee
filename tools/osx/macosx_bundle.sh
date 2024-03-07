@@ -63,14 +63,14 @@ if [[ -x $(which git) && -d $PROJECT_SOURCE_DIR/.git ]]; then
     # Depending on whether you checked out a branch (dev) or a tag (release),
     # "git describe" will return "5.0-gtk2-2-g12345678" or "5.0-gtk2", respectively.
     gitDescribe="$(git describe --tags --always)"
-    
+
     # Apple requires a numeric version of the form n.n.n
     # https://goo.gl/eWDQv6
-    
+
     # Get number of commits since tagging. This is what gitDescribe uses.
     # Works when checking out branch, tag or commit.
     gitCommitsSinceTag="$(git rev-list --count HEAD --not $(git tag --merged HEAD))"
-    
+
     # Create numeric version.
     # This version is nonsense, either don't use it at all or use it only where you have no other choice, e.g. Inno Setup's VersionInfoVersion.
     # Strip everything after hyphen, e.g. "5.0-gtk2" -> "5.0", "5.1-rc1" -> "5.1" (ergo BS).
@@ -81,7 +81,7 @@ if [[ -x $(which git) && -d $PROJECT_SOURCE_DIR/.git ]]; then
         gitVersionNumericBS="${gitVersionNumericBS}.${gitCommitsSinceTag}" # Remove everything until after first hyphen: 5.0
     fi
     ### Copy end.
-    
+
     PROJECT_FULL_VERSION="$gitDescribe"
     PROJECT_VERSION="$gitVersionNumericBS"
 fi
@@ -252,12 +252,8 @@ ditto {"${LOCAL_PREFIX}","${RESOURCES}"}/share/themes/Default/gtk-3.0/gtk-keys.c
 
 # Adwaita icons
 msg "Copy Adwaita icons"
-iconfolders=("16x16/actions" "16x16/devices" "16x16/mimetypes" "16x16/places" "16x16/status" "16x16/ui" "48x48/devices")
-for f in "${iconfolders[@]}"; do
-    mkdir -p ${RESOURCES}/share/icons/Adwaita/${f}
-    cp -RL ${LOCAL_PREFIX}/share/icons/Adwaita/${f}/* "${RESOURCES}"/share/icons/Adwaita/${f}
-done
-cp -RL {"${LOCAL_PREFIX}","${RESOURCES}"}/share/icons/Adwaita/index.theme
+mkdir -p ${RESOURCES}/share/icons/Adwaita
+cp -RL ${LOCAL_PREFIX}/share/icons/Adwaita/* "${RESOURCES}"/share/icons/Adwaita/
 "${LOCAL_PREFIX}/bin/gtk-update-icon-cache" "${RESOURCES}/share/icons/Adwaita" || "${LOCAL_PREFIX}/bin/gtk-update-icon-cache-3.0" "${RESOURCES}/share/icons/Adwaita"
 cp -RL "${LOCAL_PREFIX}/share/icons/hicolor" "${RESOURCES}/share/icons/hicolor"
 
@@ -399,12 +395,12 @@ fi
 
 function CreateDmg {
     local srcDir="$(mktemp -dt $$.XXXXXXXXXXXX)"
-    
+
     msg "Preparing disk image sources at ${srcDir}:"
     cp -R "${APP}" "${srcDir}"
     cp "${RESOURCES}"/LICENSE "${srcDir}"
     ln -s /Applications "${srcDir}"
-    
+
     # Web bookmarks
     function CreateWebloc {
         defaults write "${srcDir}/$1" URL "$2"
@@ -414,7 +410,7 @@ function CreateDmg {
     CreateWebloc 'Documentation' 'https://rawpedia.rawtherapee.com/'
     CreateWebloc         'Forum' 'https://discuss.pixls.us/c/software/rawtherapee'
     CreateWebloc    'Report Bug' 'https://github.com/Beep6581/RawTherapee/issues/new'
-    
+
     # Disk image name
     if [[ -n $UNIVERSAL_URL ]]; then
         arch="Universal"
@@ -424,7 +420,7 @@ function CreateDmg {
     if [[ $lower_build_type != release ]]; then
         dmg_name="${dmg_name}_${lower_build_type}"
     fi
-    
+
     msg "Creating disk image:"
     if [[ $FANCY_DMG == "ON" ]]; then
         echo "Building Fancy .dmg"
@@ -455,13 +451,13 @@ function CreateDmg {
     else
         hdiutil create -format UDBZ -fs HFS+ -srcdir "${srcDir}" -volname "${PROJECT_NAME}_${PROJECT_FULL_VERSION}" "${dmg_name}.dmg"
     fi
-    
+
     # Sign disk image
     if [[ -n $CODESIGNID ]]; then
         msg "Signing disk image"
         codesign  --digest-algorithm=sha1,sha256 --force -v -s "${CODESIGNID}" --timestamp "${dmg_name}.dmg"
     fi
-    
+
     # Notarize the dmg
     if ! test -z "$NOTARY"; then
         msg "Notarizing the dmg:"
@@ -469,7 +465,7 @@ function CreateDmg {
         echo "Uploading..."
         sudo xcrun notarytool submit "${dmg_name}.dmg.zip" ${NOTARY} --wait
     fi
-    
+
     # Zip disk image for redistribution
     msg "Zipping disk image for redistribution:"
     mkdir "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}_folder"

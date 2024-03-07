@@ -1,5 +1,5 @@
 /** -*- C++ -*-
- *  
+ *
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2017 Alberto Griggio <alberto.griggio@gmail.com>
@@ -43,11 +43,11 @@
 #include "toolpanel.h"
 
 
-class LabGridArea final : public Gtk::DrawingArea, public BackBuffer {
+class LabGridArea final : public Gtk::DrawingArea {
 private:
     rtengine::ProcEvent evt;
     Glib::ustring evtMsg;
-    
+
     enum State { NONE, HIGH, LOW, GRE};
     State litPoint;
     double low_a;
@@ -60,7 +60,7 @@ private:
     double whi_y;
     double me_x;
     double me_y;
-    
+
     double defaultLow_a;
     double defaultHigh_a;
     double defaultLow_b;
@@ -103,7 +103,7 @@ public:
     bool mousEnabled() const;
     void setmousEnabled(bool yes);
 
-    bool on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf) override;
+    bool on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr) override;
     void on_style_updated () override;
     bool on_button_press_event(GdkEventButton *event) override;
     bool on_button_release_event(GdkEventButton *event) override;
@@ -119,7 +119,7 @@ private:
     LabGridArea grid;
 
     bool resetPressed(GdkEventButton *event);
-    
+
 public:
     LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low=true, bool ciexy=false, bool mous=true);
 

@@ -104,21 +104,6 @@ ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
     setExpandAlignProperties(primariesGrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     primariesGrid->set_column_spacing(5);
 
-    /*
-    Gtk::Image* gamuts0 =  Gtk::manage(new RTImage("rt-logo-tiny.png"));
-    Gtk::Image* gamutl0 =  Gtk::manage(new RTImage("rt-logo-small.png"));
-    Gtk::Image* gamuts1 =  Gtk::manage(new RTImage("rt-logo-tiny.png"));
-    Gtk::Image* gamutl1 =  Gtk::manage(new RTImage("rt-logo-small.png"));
-    Gtk::Image* gamuts2 =  Gtk::manage(new RTImage("rt-logo-tiny.png"));
-    Gtk::Image* gamutl2 =  Gtk::manage(new RTImage("rt-logo-small.png"));
-    Gtk::Image* gamuts3 =  Gtk::manage(new RTImage("rt-logo-tiny.png"));
-    Gtk::Image* gamutl3 =  Gtk::manage(new RTImage("rt-logo-small.png"));
-    Gtk::Image* gamuts4 =  Gtk::manage(new RTImage("rt-logo-tiny.png"));
-    Gtk::Image* gamutl4 =  Gtk::manage(new RTImage("rt-logo-small.png"));
-    Gtk::Image* gamuts5 =  Gtk::manage(new RTImage("rt-logo-tiny.png"));
-    Gtk::Image* gamutl5 =  Gtk::manage(new RTImage("rt-logo-small.png"));
-    */
-
     aPrimariesRedX = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_REDX"), 0.4100, 0.9000, 0.0001, 0.6400/*, gamuts0, gamutl0*/));
     setExpandAlignProperties(aPrimariesRedX, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     aPrimariesRedY = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_REDY"), 0.1000, 0.6000, 0.0001, 0.3300/*, gamutl1, gamuts1*/));
@@ -236,7 +221,7 @@ ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
     setExpandAlignProperties(eCopyright, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     copygrid->attach(*eCopyright, 0, 0, 1, 1);
     resetCopyright = Gtk::manage(new Gtk::Button());
-    resetCopyright->add(*Gtk::manage(new RTImage("undo-small.png", "redo-small.png")));
+    resetCopyright->add(*Gtk::manage(new RTImage("undo-small", Gtk::ICON_SIZE_BUTTON)));
     setExpandAlignProperties(resetCopyright, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     resetCopyright->set_relief(Gtk::RELIEF_NONE);
     resetCopyright->set_tooltip_markup(M("ICCPROFCREATOR_COPYRIGHT_RESET_TOOLTIP"));
@@ -867,7 +852,7 @@ void ICCProfileCreator::savePressed()
         //g5=0.517448
         presetGamma = 2.22;
         presetSlope = 4.5;
-        
+
     } else if (gammaPreset == "linear_g1.0") {
         sGammaPreset = "Linear_g=1.0";
         ga[0] = 1.0;    //gamma=1 linear : for high dynamic images (cf D.Coffin...)

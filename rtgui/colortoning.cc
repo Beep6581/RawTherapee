@@ -128,8 +128,8 @@ ColorToning::ColorToning () : FoldableToolPanel(this, TOOL_NAME, M("TP_COLORTONI
     pack_start( *opacityCurveEditorG, Gtk::PACK_SHRINK, 2);
 
     //---------Chroma curve 1 --------------------
-    iby   = Gtk::manage (new RTImage ("circle-yellow-blue-small.png"));
-    irg   = Gtk::manage (new RTImage ("circle-green-red-small.png"));
+    iby   = Gtk::manage (new RTImage ("circle-yellow-blue-small"));
+    irg   = Gtk::manage (new RTImage ("circle-green-red-small"));
 
     clCurveEditorG = new CurveEditorGroup (options.lastColorToningCurvesDir, M("TP_COLORTONING_CHROMAC"));
     clCurveEditorG->setCurveListener (this);
@@ -170,7 +170,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, TOOL_NAME, M("TP_COLORTONI
     //--------------------- Reset curves -----------------------------
     /*   Each curve can reset to a different curve, so this button only save one click now... so we remove it.
     neutralCurves = Gtk::manage (new Gtk::Button (M("TP_COLORTONING_NEUTRALCUR")));
-    RTImage *resetImgc = Gtk::manage (new RTImage ("undo-small.png", "redo-small.png"));
+    RTImage *resetImgc = Gtk::manage (new RTImage ("undo-small"));
     neutralCurves->set_image(*resetImgc);
     neutralCurves->set_tooltip_text (M("TP_COLORTONING_NEUTRALCUR_TIP"));
     neutralcurvesconn = neutralCurves->signal_pressed().connect( sigc::mem_fun(*this, &ColorToning::neutralCurves_pressed) );
@@ -250,26 +250,26 @@ ColorToning::ColorToning () : FoldableToolPanel(this, TOOL_NAME, M("TP_COLORTONI
     Gtk::Box* chanMixerMidBox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     Gtk::Box* chanMixerShadowsBox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
-    Gtk::Image* iblueR   = Gtk::manage (new RTImage ("circle-blue-small.png"));
-    Gtk::Image* iyelL    = Gtk::manage (new RTImage ("circle-yellow-small.png"));
-    Gtk::Image* imagL    = Gtk::manage (new RTImage ("circle-magenta-small.png"));
-    Gtk::Image* igreenR  = Gtk::manage (new RTImage ("circle-green-small.png"));
-    Gtk::Image* icyanL   = Gtk::manage (new RTImage ("circle-blue-small.png"));
-    Gtk::Image* iredR    = Gtk::manage (new RTImage ("circle-red-small.png"));
+    Gtk::Image* iblueR   = Gtk::manage (new RTImage ("circle-blue-small"));
+    Gtk::Image* iyelL    = Gtk::manage (new RTImage ("circle-yellow-small"));
+    Gtk::Image* imagL    = Gtk::manage (new RTImage ("circle-magenta-small"));
+    Gtk::Image* igreenR  = Gtk::manage (new RTImage ("circle-green-small"));
+    Gtk::Image* icyanL   = Gtk::manage (new RTImage ("circle-blue-small"));
+    Gtk::Image* iredR    = Gtk::manage (new RTImage ("circle-red-small"));
 
-    Gtk::Image* iblueRm  = Gtk::manage (new RTImage ("circle-blue-small.png"));
-    Gtk::Image* iyelLm   = Gtk::manage (new RTImage ("circle-yellow-small.png"));
-    Gtk::Image* imagLm   = Gtk::manage (new RTImage ("circle-magenta-small.png"));
-    Gtk::Image* igreenRm = Gtk::manage (new RTImage ("circle-green-small.png"));
-    Gtk::Image* icyanLm  = Gtk::manage (new RTImage ("circle-blue-small.png"));
-    Gtk::Image* iredRm   = Gtk::manage (new RTImage ("circle-red-small.png"));
+    Gtk::Image* iblueRm  = Gtk::manage (new RTImage ("circle-blue-small"));
+    Gtk::Image* iyelLm   = Gtk::manage (new RTImage ("circle-yellow-small"));
+    Gtk::Image* imagLm   = Gtk::manage (new RTImage ("circle-magenta-small"));
+    Gtk::Image* igreenRm = Gtk::manage (new RTImage ("circle-green-small"));
+    Gtk::Image* icyanLm  = Gtk::manage (new RTImage ("circle-blue-small"));
+    Gtk::Image* iredRm   = Gtk::manage (new RTImage ("circle-red-small"));
 
-    Gtk::Image* iblueRh  = Gtk::manage (new RTImage ("circle-blue-small.png"));
-    Gtk::Image* iyelLh   = Gtk::manage (new RTImage ("circle-yellow-small.png"));
-    Gtk::Image* imagLh   = Gtk::manage (new RTImage ("circle-magenta-small.png"));
-    Gtk::Image* igreenRh = Gtk::manage (new RTImage ("circle-green-small.png"));
-    Gtk::Image* icyanLh  = Gtk::manage (new RTImage ("circle-blue-small.png"));
-    Gtk::Image* iredRh   = Gtk::manage (new RTImage ("circle-red-small.png"));
+    Gtk::Image* iblueRh  = Gtk::manage (new RTImage ("circle-blue-small"));
+    Gtk::Image* iyelLh   = Gtk::manage (new RTImage ("circle-yellow-small"));
+    Gtk::Image* imagLh   = Gtk::manage (new RTImage ("circle-magenta-small"));
+    Gtk::Image* igreenRh = Gtk::manage (new RTImage ("circle-green-small"));
+    Gtk::Image* icyanLh  = Gtk::manage (new RTImage ("circle-blue-small"));
+    Gtk::Image* iredRh   = Gtk::manage (new RTImage ("circle-red-small"));
 
     redhigh   = Gtk::manage (new Adjuster ("", -100., 100., 1., 0., icyanLh, iredRh  ));
     greenhigh = Gtk::manage (new Adjuster ("", -100., 100., 1., 0., imagLh , igreenRh));
@@ -300,7 +300,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, TOOL_NAME, M("TP_COLORTONI
     chanMixerHLFrame->set_label_align (0.025, 0.5);
     chanMixerMidFrame->set_label_align (0.025, 0.5);
     chanMixerShadowsFrame->set_label_align (0.025, 0.5);
-    
+
     chanMixerHLFrame->add(*chanMixerHLBox);
     chanMixerMidFrame->add(*chanMixerMidBox);
     chanMixerShadowsFrame->add(*chanMixerShadowsBox);
@@ -394,23 +394,23 @@ ColorToning::ColorToning () : FoldableToolPanel(this, TOOL_NAME, M("TP_COLORTONI
     hb->pack_start(*labRegionList, Gtk::PACK_EXPAND_WIDGET);
     Gtk::Box* vb = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     labRegionAdd = Gtk::manage(new Gtk::Button());
-    labRegionAdd->add(*Gtk::manage(new RTImage("add-small.png")));
+    labRegionAdd->add(*Gtk::manage(new RTImage("add-small", Gtk::ICON_SIZE_BUTTON)));
     labRegionAdd->signal_clicked().connect(sigc::mem_fun(*this, &ColorToning::labRegionAddPressed));
     add_button(labRegionAdd, vb);
     labRegionRemove = Gtk::manage(new Gtk::Button());
-    labRegionRemove->add(*Gtk::manage(new RTImage("remove-small.png")));
+    labRegionRemove->add(*Gtk::manage(new RTImage("remove-small", Gtk::ICON_SIZE_BUTTON)));
     labRegionRemove->signal_clicked().connect(sigc::mem_fun(*this, &ColorToning::labRegionRemovePressed));
     add_button(labRegionRemove, vb);
     labRegionUp = Gtk::manage(new Gtk::Button());
-    labRegionUp->add(*Gtk::manage(new RTImage("arrow-up-small.png")));
+    labRegionUp->add(*Gtk::manage(new RTImage("arrow-up-small", Gtk::ICON_SIZE_BUTTON)));
     labRegionUp->signal_clicked().connect(sigc::mem_fun(*this, &ColorToning::labRegionUpPressed));
     add_button(labRegionUp, vb);
     labRegionDown = Gtk::manage(new Gtk::Button());
-    labRegionDown->add(*Gtk::manage(new RTImage("arrow-down-small.png")));
+    labRegionDown->add(*Gtk::manage(new RTImage("arrow-down-small", Gtk::ICON_SIZE_BUTTON)));
     labRegionDown->signal_clicked().connect(sigc::mem_fun(*this, &ColorToning::labRegionDownPressed));
     add_button(labRegionDown, vb);
     labRegionCopy = Gtk::manage(new Gtk::Button());
-    labRegionCopy->add(*Gtk::manage(new RTImage("arrow-right-small.png")));
+    labRegionCopy->add(*Gtk::manage(new RTImage("arrow-right-small", Gtk::ICON_SIZE_BUTTON)));
     labRegionCopy->signal_clicked().connect(sigc::mem_fun(*this, &ColorToning::labRegionCopyPressed));
     add_button(labRegionCopy, vb);
     hb->pack_start(*vb, Gtk::PACK_SHRINK);
@@ -718,7 +718,7 @@ void ColorToning::write (ProcParams* pp, ParamsEdited* pedited)
     pp->colorToning.strength               = strength->getIntValue();
     double zerox = 0.;
     double zeroy = 0.;
-    
+
     labgrid->getParams(pp->colorToning.labgridALow, pp->colorToning.labgridBLow, pp->colorToning.labgridAHigh, pp->colorToning.labgridBHigh, zerox, zeroy, zerox, zeroy, zerox, zeroy);
     pp->colorToning.labgridALow *= ColorToningParams::LABGRID_CORR_MAX;
     pp->colorToning.labgridAHigh *= ColorToningParams::LABGRID_CORR_MAX;
@@ -1571,7 +1571,7 @@ void ColorToning::labRegionShow(int idx, bool list_only)
         disableListener();
     }
     rtengine::procparams::ColorToningParams::LabCorrectionRegion dflt;
-    auto &r = labRegionData[idx]; 
+    auto &r = labRegionData[idx];
     if (!list_only) {
         labRegionAB->setParams(0, 0, r.a, r.b,0, 0, 0, 0, 0, 0, false);
         labRegionSaturation->setValue(r.saturation);

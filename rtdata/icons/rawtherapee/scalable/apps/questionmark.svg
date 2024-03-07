@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="24px"
+   height="24px"
+   viewBox="0 0 24 24"
+   version="1.1"
+   id="SVGRoot"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs815" />
+  <metadata
+     id="metadata818">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Maciej Dworak</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title />
+          </cc:Agent>
+        </dc:rights>
+        <dc:description>RawTherapee icon.</dc:description>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:18.522px;line-height:125%;font-family:Georgia;-inkscape-font-specification:'Georgia Bold';letter-spacing:0px;word-spacing:0px;opacity:0.7;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="-11.29845"
+       y="19"
+       id="text821"><tspan
+         id="tspan819"
+         x="-11.29845"
+         y="19"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:18.522px;font-family:Georgia;-inkscape-font-specification:'Georgia Bold';fill:#ffffff;fill-opacity:1;stroke-width:1px">?</tspan></text>
+    <path
+       style="opacity:0.7;fill:#cccccc;fill-opacity:1.0;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 12 1 A 11 11 0 0 0 1 12 A 11 11 0 0 0 12 23 A 11 11 0 0 0 23 12 A 11 11 0 0 0 12 1 z M 11.804688 5.3027344 C 13.125101 5.3027344 14.193859 5.6466458 15.007812 6.3339844 C 15.827796 7.021323 16.236328 7.9291641 16.236328 9.0566406 C 16.236328 10.268527 15.820323 11.250246 14.988281 12.003906 C 14.156239 12.757567 13.046892 13.188348 11.660156 13.296875 L 11.607422 14.527344 L 10.800781 14.527344 L 10.800781 11.009766 C 11.675027 10.937414 12.361067 10.663813 12.855469 10.1875 C 13.349871 9.705157 13.595703 9.0506215 13.595703 8.2246094 C 13.595703 7.5674173 13.421964 7.0422942 13.072266 6.6503906 C 12.728596 6.2524578 12.264528 6.0527344 11.679688 6.0527344 C 11.432487 6.0527344 11.212469 6.0805023 11.019531 6.1347656 C 10.826594 6.1829996 10.639863 6.2625663 10.458984 6.3710938 C 10.519278 6.5640309 10.587635 6.8136002 10.666016 7.1210938 C 10.750426 7.422558 10.792969 7.7016782 10.792969 7.9609375 C 10.792969 8.3829875 10.6543 8.7121235 10.376953 8.9472656 C 10.105635 9.1763785 9.7247003 9.2910156 9.2363281 9.2910156 C 8.7781025 9.2910156 8.4176323 9.1468276 8.1523438 8.8574219 C 7.8930844 8.5680162 7.7636719 8.2130656 7.7636719 7.7910156 C 7.7636719 7.0976478 8.1574292 6.5096866 8.9472656 6.0273438 C 9.737102 5.5450009 10.689269 5.3027344 11.804688 5.3027344 z M 11.244141 15.332031 C 11.708396 15.332031 12.113362 15.502204 12.457031 15.839844 C 12.806729 16.171454 12.980469 16.565212 12.980469 17.023438 C 12.980469 17.481663 12.806729 17.877374 12.457031 18.208984 C 12.113362 18.534566 11.708396 18.697266 11.244141 18.697266 C 10.773857 18.697266 10.365324 18.534566 10.015625 18.208984 C 9.6719557 17.877374 9.5 17.481663 9.5 17.023438 C 9.5 16.565212 9.6719557 16.171454 10.015625 15.839844 C 10.365324 15.502204 10.773857 15.332031 11.244141 15.332031 z "
+       id="path939" />
+    <g
+       aria-label="?"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:18.52196503px;line-height:125%;font-family:Georgia;-inkscape-font-specification:'Georgia Bold';letter-spacing:0px;word-spacing:0px;opacity:0.7;fill:#ffffff;fill-opacity:1.0;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="text943" />
+  </g>
+</svg>

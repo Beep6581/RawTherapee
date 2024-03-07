@@ -25,7 +25,7 @@
 #include "cursormanager.h"
 #include "guiutils.h"
 #include "inspector.h"
-#include "rtimage.h"
+#include "rtsurface.h"
 #include "threadutils.h"
 #include "thumbbrowserbase.h"
 #include "thumbnail.h"
@@ -37,11 +37,11 @@
 
 //extern Glib::Threads::Thread* mainThread;
 
-Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::editedIcon;
-Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::recentlySavedIcon;
-Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::enqueuedIcon;
-Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::hdr;
-Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::ps;
+std::shared_ptr<RTSurface> FileBrowserEntry::editedIcon(std::shared_ptr<RTSurface>(nullptr));
+std::shared_ptr<RTSurface> FileBrowserEntry::recentlySavedIcon(std::shared_ptr<RTSurface>(nullptr));
+std::shared_ptr<RTSurface> FileBrowserEntry::enqueuedIcon(std::shared_ptr<RTSurface>(nullptr));
+std::shared_ptr<RTSurface> FileBrowserEntry::hdr(std::shared_ptr<RTSurface>(nullptr));
+std::shared_ptr<RTSurface> FileBrowserEntry::ps(std::shared_ptr<RTSurface>(nullptr));
 
 FileBrowserEntry::FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname)
     : ThumbBrowserEntryBase (fname, thm), wasInside(false), iatlistener(nullptr), press_x(0), press_y(0), action_x(0), action_y(0), rot_deg(0.0), landscape(true), cropParams(new rtengine::procparams::CropParams), cropgl(nullptr), state(SNormal), crop_custom_ratio(0.f)
@@ -82,11 +82,11 @@ FileBrowserEntry::~FileBrowserEntry ()
 
 void FileBrowserEntry::init ()
 {
-    editedIcon = RTImage::createPixbufFromFile ("tick-small.png");
-    recentlySavedIcon = RTImage::createPixbufFromFile ("save-small.png");
-    enqueuedIcon = RTImage::createPixbufFromFile ("gears-small.png");
-    hdr = RTImage::createPixbufFromFile ("filetype-hdr.png");
-    ps = RTImage::createPixbufFromFile ("filetype-ps.png");
+    editedIcon = std::shared_ptr<RTSurface>(new RTSurface("tick-small", Gtk::ICON_SIZE_SMALL_TOOLBAR));
+    recentlySavedIcon = std::shared_ptr<RTSurface>(new RTSurface("save-small", Gtk::ICON_SIZE_SMALL_TOOLBAR));
+    enqueuedIcon = std::shared_ptr<RTSurface>(new RTSurface("gears-small", Gtk::ICON_SIZE_SMALL_TOOLBAR));
+    hdr = std::shared_ptr<RTSurface>(new RTSurface("filetype-hdr", Gtk::ICON_SIZE_SMALL_TOOLBAR));
+    ps = std::shared_ptr<RTSurface>(new RTSurface("filetype-ps", Gtk::ICON_SIZE_SMALL_TOOLBAR));
 }
 
 void FileBrowserEntry::refreshThumbnailImage(bool upgradeHint)
@@ -127,13 +127,13 @@ void FileBrowserEntry::calcThumbnailSize ()
     }
 }
 
-std::vector<Glib::RefPtr<Gdk::Pixbuf>> FileBrowserEntry::getIconsOnImageArea ()
+std::vector<std::shared_ptr<RTSurface>> FileBrowserEntry::getIconsOnImageArea ()
 {
     if (!thumbnail) {
         return {};
     }
 
-    std::vector<Glib::RefPtr<Gdk::Pixbuf>> ret;
+    std::vector<std::shared_ptr<RTSurface>> ret;
 
     if (thumbnail->hasProcParams() && editedIcon) {
         ret.push_back(editedIcon);
@@ -150,13 +150,13 @@ std::vector<Glib::RefPtr<Gdk::Pixbuf>> FileBrowserEntry::getIconsOnImageArea ()
     return ret;
 }
 
-std::vector<Glib::RefPtr<Gdk::Pixbuf>> FileBrowserEntry::getSpecificityIconsOnImageArea ()
+std::vector<std::shared_ptr<RTSurface>> FileBrowserEntry::getSpecificityIconsOnImageArea ()
 {
     if (!thumbnail) {
         return {};
     }
 
-    std::vector<Glib::RefPtr<Gdk::Pixbuf>> ret;
+    std::vector<std::shared_ptr<RTSurface>> ret;
 
     if (thumbnail->isHDR() && hdr) {
         ret.push_back (hdr);
@@ -197,8 +197,8 @@ void FileBrowserEntry::customBackBufferUpdate (Cairo::RefPtr<Cairo::Context> c)
 void FileBrowserEntry::getIconSize (int& w, int& h) const
 {
 
-    w = editedIcon->get_width ();
-    h = editedIcon->get_height ();
+    w = editedIcon->getWidth ();
+    h = editedIcon->getHeight ();
 }
 
 FileThumbnailButtonSet* FileBrowserEntry::getThumbButtonSet ()
@@ -789,9 +789,12 @@ void FileBrowserEntry::drawStraightenGuide (Cairo::RefPtr<Cairo::Context> cr)
     }
 
     Glib::RefPtr<Pango::Context> context = parent->getDrawingArea()->get_pango_context () ;
-    Pango::FontDescription fontd = context->get_font_description ();
+    Pango::FontDescription fontd = parent->getDrawingArea()->get_style_context()->get_font();
     fontd.set_weight (Pango::WEIGHT_BOLD);
-    fontd.set_size (8 * Pango::SCALE);
+    const int fontSize = 8; // pt
+    // Non-absolute size is defined in "Pango units" and shall be multiplied by
+    // Pango::SCALE from "pt":
+    fontd.set_size (fontSize * Pango::SCALE);
     context->set_font_description (fontd);
     Glib::RefPtr<Pango::Layout> deglayout = parent->getDrawingArea()->create_pango_layout(Glib::ustring::compose ("%1 deg", Glib::ustring::format(std::setprecision(2), rot_deg)));
 

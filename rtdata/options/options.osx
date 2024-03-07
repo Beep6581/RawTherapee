@@ -37,8 +37,3 @@ CustomProfileBuilder=
 
 # Default profile name (without extension) to use for standard (8bits) images
 #ImgDefault=Neutral
-
-[GUI]
-# Set the included font as default
-FontFamily=Droid Sans Mono Slashed
-CPFontFamily=Droid Sans Mono Slashed

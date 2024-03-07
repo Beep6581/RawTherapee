@@ -22,13 +22,19 @@
 #include <gtkmm.h>
 
 class ImageArea;
+class RTImage;
 
 class IndicateClippedPanel :
     public Gtk::Box
 {
 
 protected:
-    Gtk::Image* iFon, *iFoff, *iSon, *iSoff;
+    const Glib::ustring Fon;
+    const Glib::ustring Foff;
+    const Glib::ustring Son;
+    const Glib::ustring Soff;
+    RTImage* const iF;
+    RTImage* const iS;
     Gtk::ToggleButton* previewSharpMask;
     Gtk::ToggleButton* previewFocusMask;
     Gtk::ToggleButton* indClippedH;

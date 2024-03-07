@@ -22,16 +22,17 @@
 
 #include "guiutils.h"
 #include "threadutils.h"
-#include "rtimage.h"
+#include "rtsurface.h"
 #include "multilangmgr.h"
 #include "thumbbrowserbase.h"
 #include "thumbnail.h"
+#include "rtsurface.h"
 
 #include "../rtengine/procparams.h"
 #include "../rtengine/rtengine.h"
 
 bool BatchQueueEntry::iconsLoaded(false);
-Glib::RefPtr<Gdk::Pixbuf> BatchQueueEntry::savedAsIcon;
+std::shared_ptr<RTSurface> BatchQueueEntry::savedAsIcon(std::shared_ptr<RTSurface>(nullptr));
 
 BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine::procparams::ProcParams& pparams, Glib::ustring fname, int prevw, int prevh, Thumbnail* thm, bool overwrite) :
     ThumbBrowserEntryBase(fname, thm),
@@ -59,7 +60,7 @@ BatchQueueEntry::BatchQueueEntry (rtengine::ProcessingJob* pjob, const rtengine:
 #endif
 
     if (!iconsLoaded) {
-        savedAsIcon = RTImage::createPixbufFromFile ("save-small.png");
+        savedAsIcon = std::shared_ptr<RTSurface>(new RTSurface("save-small", Gtk::ICON_SIZE_SMALL_TOOLBAR));
         iconsLoaded = true;
     }
 
@@ -153,10 +154,10 @@ void BatchQueueEntry::removeButtonSet ()
     buttonSet = nullptr;
 }
 
-std::vector<Glib::RefPtr<Gdk::Pixbuf>> BatchQueueEntry::getIconsOnImageArea ()
+std::vector<std::shared_ptr<RTSurface>> BatchQueueEntry::getIconsOnImageArea ()
 {
 
-    std::vector<Glib::RefPtr<Gdk::Pixbuf> > ret;
+    std::vector<std::shared_ptr<RTSurface>> ret;
 
     if (!outFileName.empty()) {
         ret.push_back (savedAsIcon);
@@ -168,8 +169,8 @@ std::vector<Glib::RefPtr<Gdk::Pixbuf>> BatchQueueEntry::getIconsOnImageArea ()
 void BatchQueueEntry::getIconSize (int& w, int& h) const
 {
 
-    w = savedAsIcon->get_width ();
-    h = savedAsIcon->get_height ();
+    w = savedAsIcon->getWidth ();
+    h = savedAsIcon->getHeight ();
 }
 
 
