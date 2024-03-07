@@ -60,7 +60,6 @@ private:
     double whi_y;
     double me_x;
     double me_y;
-
     double defaultLow_a;
     double defaultHigh_a;
     double defaultLow_b;

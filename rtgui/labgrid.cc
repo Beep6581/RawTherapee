@@ -330,7 +330,8 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
 
     // Drawing the connection line
     cr->set_antialias(Cairo::ANTIALIAS_DEFAULT);
-        float loa, hia, lob, hib, grx, gry, whx, why, mex, mey;
+   //     float loa, hia, lob, hib, grx, gry, whx, why, mex, mey;
+    const double loa = .5 * (static_cast<double>(width) + static_cast<double>(width) * low_a);
     const double hia = .5 * (static_cast<double>(width) + static_cast<double>(width) * high_a);
     const double lob = .5 * (static_cast<double>(height) + static_cast<double>(height) * low_b);
     const double hib = .5 * (static_cast<double>(height) + static_cast<double>(height) * high_b);
@@ -338,6 +339,8 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
     const double gry = .5 * (static_cast<double>(height) + static_cast<double>(height) * gre_y);
     const double whx = .5 * (static_cast<double>(width) + static_cast<double>(width) * whi_x);
     const double why = .5 * (static_cast<double>(height) + static_cast<double>(height) * whi_y);
+    double mex = .5 * (static_cast<double>(width) + static_cast<double>(width) * me_x);
+    double mey = .5 * (static_cast<double>(height) + static_cast<double>(height) * me_y);
     cr->set_line_width(1.5);
         mex = .5 * (width + width * me_x);
         mey = .5 * (height + height * me_y);
@@ -424,7 +427,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
 
         if (ciexy_enabled) {//Dominant
             cr->set_source_rgb(0.3, 0.4, 0.3);
-            cr->arc(mex, mey, 3 * s, 0, 2. * rtengine::RT_PI);
+            cr->arc(mex, mey, 3., 0, 2. * rtengine::RT_PI);
             cr->fill();
         }
 
