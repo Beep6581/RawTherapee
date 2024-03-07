@@ -10809,7 +10809,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 bevwevFrame->show();
                 sigmoidFrame->show();
                 expprecam->show();
-                primillFrame->show();
+                primillFrame->hide();//show
 
             }
 
@@ -11085,9 +11085,10 @@ void Locallabcie::updatecieGUI()
            primillFrame->hide();
            expgradcie->hide();
 
+        } else if(mode == Normal){
+           primillFrame->hide();
         } else {
            primillFrame->show();
-
         }
 
 
@@ -11246,6 +11247,7 @@ void Locallabcie::convertParamToSimple()
     enacieMask->set_active(defSpot.enacieMask);
     strgradcie->setValue(defSpot.strgradcie);
     anggradcie->setValue(defSpot.anggradcie);
+    refi->setValue(defSpot.refi);
     modecie->set_active(0);
     primMethod->set_active(0);//Prophoto
     illMethod->set_active(1);//D50
@@ -11291,6 +11293,10 @@ void Locallabcie::convertParamToNormal()
     modecie->set_active(0);
     //primMethod->set_active(0);
     catMethod->set_active(0);
+    primMethod->set_active(0);//Prophoto
+    illMethod->set_active(1);//D50
+    refi->setValue(defSpot.refi);
+  
     pqremapcam16->setValue(defSpot.pqremapcam16);
     logcieChanged();
     satcieChanged();
