@@ -8486,7 +8486,7 @@ Locallabcie::Locallabcie():
     cieP1colorBox->pack_start(*rstprotectcie);
     cie1colorFrame->add(*cieP1colorBox);
     cieP1Box->pack_start(*cie1colorFrame);
- //   cieP1Box->pack_start(*sigmoidFrame);//disable provisory Sigmoid
+    cieP1Box->pack_start(*sigmoidFrame);//disable provisory Sigmoid
 
 
     ToolParamBlock* const cieP11Box = Gtk::manage(new ToolParamBlock());
@@ -10680,7 +10680,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
 
             if (modecam->get_active_row_number() == 0) {
                 bevwevFrame->show();
-                sigmoidFrame->show();
+                sigmoidFrame->hide(); //show
                 expprecam->show();
                 primillFrame->hide();
                 expmaskcie->hide();
@@ -10793,7 +10793,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             blurFramecie->hide();
             wavFramecie->hide();
             maskcieHCurveEditorG->hide();
-            sigmoidnormFrame->show();
+            sigmoidnormFrame->hide();
 
             //  pqremapcam16->show();
             if (enacieMask->get_active()) {
@@ -11241,6 +11241,8 @@ void Locallabcie::convertParamToSimple()
     // Disable all listeners
     disableListener();
     sigmoidblcie->setValue(defSpot.sigmoidblcie);
+    normcie->set_active(defSpot.normcie);
+    sigq->set_active(defSpot.sigq);
     //sigq->set_active(defSpot.sigq);
     pqremapcam16->setValue(defSpot.pqremapcam16);
     showmaskcieMethod->set_active(0);
@@ -11264,6 +11266,9 @@ void Locallabcie::convertParamToNormal()
     // Disable all listeners
     disableListener();
     contqcie->setValue(defSpot.contqcie);
+    sigmoidblcie->setValue(defSpot.sigmoidblcie);
+    normcie->set_active(defSpot.normcie);
+
     //contsigqcie->setValue(defSpot.contsigqcie);
     colorflcie->setValue(defSpot.colorflcie);
     lightqcie->setValue(defSpot.lightqcie);
