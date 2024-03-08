@@ -8486,7 +8486,7 @@ Locallabcie::Locallabcie():
     cieP1colorBox->pack_start(*rstprotectcie);
     cie1colorFrame->add(*cieP1colorBox);
     cieP1Box->pack_start(*cie1colorFrame);
-    cieP1Box->pack_start(*sigmoidFrame);
+ //   cieP1Box->pack_start(*sigmoidFrame);//disable provisory Sigmoid
 
 
     ToolParamBlock* const cieP11Box = Gtk::manage(new ToolParamBlock());
