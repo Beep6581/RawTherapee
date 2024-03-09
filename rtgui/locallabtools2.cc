@@ -10124,9 +10124,11 @@ void Locallabcie::satcieChanged()
 void Locallabcie::logcieqChanged()
 {
     if (logcieq->get_active()) {
-       satcie->hide();
+        satcie->hide();
+        sigmoidnormFrame->hide();
     } else {
         satcie->show();
+        sigmoidnormFrame->show();
     }
 
     if (isLocActivated && exp->getEnabled()) {
@@ -10926,15 +10928,17 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             comprcie->show();
             strcielog->show();
             logcieq->show();
-            if (logcieq->get_active()) {
-                satcie->hide();
-            } else {
-                satcie->show();
-            }
             comprcieth->show();
             comprcieauto->show();
             sigmoidsenscie->show();
             sigmoidnormFrame->show();
+            if (logcieq->get_active()) {
+                satcie->hide();
+                sigmoidnormFrame->hide();
+            } else {
+                satcie->show();
+                sigmoidnormFrame->show();
+            }           
             targetGraycie->show();
             targabscie->show();
             surrHBoxcie->show();

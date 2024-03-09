@@ -2084,7 +2084,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
         satcontrol = lp.satcie;
     }
     float comprthlog = 1.f;
-    
+
     const float noise = pow_F(2.f, -16.f);
     const float log2 = xlogf(2.f);
     const float base = targray > 1 && targray < 100 && dynamic_range > 0 ? find_gray(std::abs(shadows_range) / dynamic_range, 0.01f * targray) : 0.f;
@@ -4083,7 +4083,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
         const bool compr = params->locallab.spots.at(sp).comprcie > 0.;
         float comprfactor = params->locallab.spots.at(sp).comprcie;
-        float comprth = 0.1 +  params->locallab.spots.at(sp).comprcieth;
+        float comprth = 1.f; //0.1 +  params->locallab.spots.at(sp).comprcieth;
 
         double drref = 8.5; //Dynamic Range standard
  
