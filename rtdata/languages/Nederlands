@@ -16,6 +16,7 @@
 #016 2017-04-21 update by wim ter meer
 #017 2020-06-05 update by dheijl 
 #018 2024-02-18	update to RawTherapee 5.10 by Paul Matthijsse
+#019 2024-03-08 update by Paul Matthijsse
 #100
 #101 @LANGUAGE_DISPLAY_NAME=Nederlands
 
@@ -1558,7 +1559,9 @@ TP_DIRPYRDENOISE_LUMINANCE_CURVE;Luminantie-curve
 TP_DIRPYRDENOISE_LUMINANCE_DETAIL;Luminantie-detail
 TP_DIRPYRDENOISE_LUMINANCE_FRAME;Luminantie
 TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Luminantie
-TP_DIRPYRDENOISE_MAIN_COLORSPACE;Methode
+TP_DIRPYRDENOISE_MAIN_AUTO_GAIN;Compenseer lichtheid
+TP_DIRPYRDENOISE_MAIN_AUTO_GAIN_TOOLTIP;Wijzig de kracht van de ruisvermindering gebaseerd op de lichtheid van de afbeelding. De kracht wordt minder bij donkere beelden en meer bij heldere beelden.
+TP_DIRPYRDENOISE_MAIN_COLORSPACE;Kleurruimte
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_LAB;L*a*b*
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;RGB
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP;Voor RAW-afbeeldingen kan de RGB- of Lab-methode worden gebruikt.\n\nVoor niet-RAW-afbeeldingen zal altijd de Lab-methode worden gebruikt, ongeacht de geselecteerde methode.
@@ -1779,9 +1782,9 @@ TP_LENSPROFILE_USE_GEOMETRIC;Geometrische vervorming
 TP_LENSPROFILE_USE_HEADER;Lenscorrecties
 TP_LENSPROFILE_USE_VIGNETTING;Vignettering
 TP_LOCALCONTRAST_AMOUNT;Hoeveelheid
-TP_LOCALCONTRAST_DARKNESS;Donker niveau
+TP_LOCALCONTRAST_DARKNESS;Donkere delen
 TP_LOCALCONTRAST_LABEL;Lokaal contrast
-TP_LOCALCONTRAST_LIGHTNESS;helderheidsniveau
+TP_LOCALCONTRAST_LIGHTNESS;Lichte delen
 TP_LOCALCONTRAST_RADIUS;Straal
 TP_METADATA_EDIT;Pas wijzigingen toe
 TP_METADATA_MODE;Metadata kopieermodus
@@ -2982,13 +2985,14 @@ HISTORY_MSG_1150;LA - Log-codering Q in plaats van Sigmoid Q
 HISTORY_MSG_BLSHAPE;Vervaag per niveau
 HISTORY_MSG_BLURCWAV;Vervaging chroma
 HISTORY_MSG_BLURWAV;Vervaging luminantie
-HISTORY_MSG_BLUWAV;Versterkinsrespons
+HISTORY_MSG_BLUWAV;Versterkingsrespons
 HISTORY_MSG_CATCAT;CAL - Instellingen - Modus
 HISTORY_MSG_CATCOMPLEX;CAL - Instellingen - Complexiteit
 HISTORY_MSG_CATMODEL;CAL - Instellingen - CAM
-HISTORY_MSG_COMPLEX;Wavelet complexiteit
-HISTORY_MSG_COMPLEXRETI;Retinex complexiteit
-HISTORY_MSG_DEHAZE_SATURATION;Ontnevel - Verzadiging
+HISTORY_MSG_COMPLEX;Waveletcomplexiteit
+HISTORY_MSG_COMPLEXRETI;Retinexcomplexiteit
+HISTORY_MSG_DEHAZE_SATURATION;Nevelvermindering - Verzadiging
+HISTORY_MSG_DIRPYRDENOISE_GAIN;NR - Compenseer lichtheid
 HISTORY_MSG_EDGEFFECT;Randversterking respons
 HISTORY_MSG_FF_FROMMETADATA;Flat-Field - Uit metadata
 HISTORY_MSG_FILMNEGATIVE_BALANCE;FN - Referentie-uitvoer
