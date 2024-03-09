@@ -3207,7 +3207,7 @@ TP_LOCALLAB_LOGCATAD_TOOLTIP;Chromatic adaptation allows us to interpret a color
 TP_LOCALLAB_LOGCIE;Log encoding
 TP_LOCALLAB_LOGCIE_TOOLTIP;Allows you tu use Black Ev, White Ev, White and Black distribution, Scene Mean luminance(Yb%) and Viewing Mean luminance(Yb%) for tone-mapping using 'Log encoding' with Brightness compression.
 TP_LOCALLAB_LOGCIEQ;Log Encoding Q (with Ciecam)
-TP_LOCALLAB_LOGCIEQ_TOOLTIP;To do.
+TP_LOCALLAB_LOGCIEQ_TOOLTIP;To do in the next few days, perhaps.
 TP_LOCALLAB_LOGCOLORFL;Colorfulness (M)
 TP_LOCALLAB_LOGCOLORF_TOOLTIP;Perceived amount of hue in relation to gray.\nIndicator that a stimulus appears more or less colored.
 TP_LOCALLAB_LOGCONQL;Contrast (Q)
