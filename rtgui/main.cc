@@ -44,8 +44,9 @@
 #include "extprog.h"
 #include "../rtengine/dynamicprofile.h"
 #include "../rtengine/procparams.h"
+#include "pathutils.h"
 
-#ifndef WIN32
+#ifndef _WIN32
 #include <glibmm/fileutils.h>
 #include <glib.h>
 #include <glib/gstdio.h>
@@ -68,30 +69,9 @@ Glib::ustring argv2;
 bool simpleEditor = false;
 bool gimpPlugin = false;
 bool remote = false;
-unsigned char initialGdkScale = 1;
 //Glib::Threads::Thread* mainThread;
 
-namespace
-{
-
-// For an unknown reason, Glib::filename_to_utf8 doesn't work on reliably Windows,
-// so we're using Glib::filename_to_utf8 for Linux/Apple and Glib::locale_to_utf8 for Windows.
-Glib::ustring fname_to_utf8 (const char* fname)
-{
-#ifdef WIN32
-
-    try {
-        return Glib::locale_to_utf8 (fname);
-    } catch (Glib::Error&) {
-        return Glib::convert_with_fallback (fname, "UTF-8", "ISO-8859-1", "?");
-    }
-
-#else
-
-    return Glib::filename_to_utf8 (fname);
-
-#endif
-}
+namespace {
 
 // This recursive mutex will be used by gdk_threads_enter/leave instead of a simple mutex
 static Glib::Threads::RecMutex myGdkRecMutex;
@@ -140,7 +120,7 @@ int processLineParams ( int argc, char **argv )
                     // GTK --argument, we're skipping it
                     break;
 
-#ifdef WIN32
+#ifdef _WIN32
 
                 case 'w': // This case is handled outside this function
                     break;
@@ -186,7 +166,7 @@ int processLineParams ( int argc, char **argv )
                     printf("  %s <file>             Start Image Editor with file.\n\n",Glib::path_get_basename (argv[0]).c_str());
                     std::cout << std::endl;
                     printf("Options:\n");
-#ifdef WIN32
+#ifdef _WIN32
                     printf("  -w Do not open the Windows console\n");
 #endif
                     printf("  -v Print RawTherapee version number and exit\n");
@@ -229,7 +209,7 @@ bool init_rt()
         TIFFSetWarningHandler (nullptr);   // avoid annoying message boxes
     }
 
-#ifndef WIN32
+#ifndef _WIN32
 
     // Move the old path to the new one if the new does not exist
     if (Glib::file_test (Glib::build_filename (options.rtdir, "cache"), Glib::FILE_TEST_IS_DIR) && !Glib::file_test (options.cacheBaseDir, Glib::FILE_TEST_IS_DIR)) {
@@ -250,7 +230,7 @@ void cleanup_rt()
 
 RTWindow *create_rt_window()
 {
-    Glib::ustring icon_path = Glib::build_filename (argv0, "images");
+    Glib::ustring icon_path = Glib::build_filename (argv0, "icons");
     Glib::RefPtr<Gtk::IconTheme> defaultIconTheme = Gtk::IconTheme::get_default();
     defaultIconTheme->append_search_path (icon_path);
 
@@ -381,7 +361,7 @@ int main (int argc, char **argv)
     Glib::init();  // called by Gtk::Main, but this may be important for thread handling, so we call it ourselves now
     Gio::init ();
 
-#ifdef WIN32
+#ifdef _WIN32
     if (GetFileType (GetStdHandle (STD_OUTPUT_HANDLE)) == 0x0003) {
         // started from msys2 console => do not buffer stdout
         setbuf(stdout, NULL);
@@ -392,7 +372,7 @@ int main (int argc, char **argv)
     char exname[512] = {0};
     Glib::ustring exePath;
     // get the path where the rawtherapee executable is stored
-#ifdef WIN32
+#ifdef _WIN32
     WCHAR exnameU[512] = {0};
     GetModuleFileNameW (NULL, exnameU, 511);
     WideCharToMultiByte (CP_UTF8, 0, exnameU, -1, exname, 511, 0, 0 );
@@ -435,7 +415,7 @@ int main (int argc, char **argv)
     options.rtSettings.lensfunDbBundleDirectory = LENSFUN_DB_PATH;
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
     bool consoleOpened = false;
 
     // suppression of annoying error boxes
@@ -535,16 +515,6 @@ int main (int argc, char **argv)
 
     int ret = 0;
 
-    if (options.pseudoHiDPISupport) {
-        // Reading/updating GDK_SCALE early if it exists
-        const gchar *gscale = g_getenv("GDK_SCALE");
-        if (gscale && gscale[0] == '2') {
-            initialGdkScale = 2;
-        }
-        // HOMBRE: On Windows, if resolution is set to 200%, Gtk internal variables are SCALE=2 and DPI=96
-        g_setenv("GDK_SCALE", "1", true);
-    }
-
     gdk_threads_set_lock_functions (G_CALLBACK (myGdkLockEnter), (G_CALLBACK (myGdkLockLeave)));
     gdk_threads_init();
     gtk_init (&argc, &argv);  // use the "--g-fatal-warnings" command line flag to make warnings fatal
@@ -586,7 +556,7 @@ int main (int argc, char **argv)
         }
     }
 
-#ifdef WIN32
+#ifdef _WIN32
 
     if (consoleOpened) {
         printf ("Press any key to exit RawTherapee\n");

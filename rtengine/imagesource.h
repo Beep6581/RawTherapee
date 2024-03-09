@@ -109,7 +109,7 @@ public:
     virtual void        getWBMults  (const ColorTemp &ctemp, const procparams::RAWParams &raw, std::array<float, 4>& scale_mul, float &autoGainComp, float &rm, float &gm, float &bm) const = 0;
 
     // use right after demosaicing image, add coarse transformation and put the result in the provided Imagefloat*
-    virtual void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const procparams::ToneCurveParams &hlp, const procparams::RAWParams &raw, int opposed) = 0;
+    virtual void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const procparams::ToneCurveParams &hlp, const procparams::RAWParams &raw) = 0;
     virtual eSensorType getSensorType () const = 0;
     virtual bool        isMono () const = 0;
     // true is ready to provide the AutoWB, i.e. when the image has been demosaiced for RawImageSource
@@ -117,10 +117,37 @@ public:
 
     virtual void        convertColorSpace    (Imagefloat* image, const procparams::ColorManagementParams &cmp, const ColorTemp &wb) = 0; // DIRTY HACK: this method is derived in rawimagesource and strimagesource, but (...,RAWParams raw) will be used ONLY for raw images
     virtual void        getAutoWBMultipliers (double &rm, double &gm, double &bm) = 0;
-    virtual void        getAutoWBMultipliersitc(double &tempref, double &greenref, double &tempitc, double & greenitc, float &studgood, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double &rm, double &gm, double &bm, const procparams::WBParams & wbpar, const procparams::ColorManagementParams &cmp, const procparams::RAWParams &raw, const procparams::ToneCurveParams &hrp) = 0;
+    virtual void        getAutoWBMultipliersitc(bool extra, double &tempref, double &greenref, double &tempitc, double & greenitc, float &temp0, float &delta, int &bia, int &dread, int &kcam, int &nocam, float &studgood, float &minchrom, int &kmin, float &minhist, float &maxhist, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double &rm, double &gm, double &bm, const procparams::WBParams & wbpar, const procparams::ColorManagementParams &cmp, const procparams::RAWParams &raw, const procparams::ToneCurveParams &hrp) = 0;
+    virtual void getAutoWBMultipliersItcGreen(
+        procparams::ProcParams &params,
+        bool forcewbgrey,
+        int kcam,
+        double greenitc,
+        bool extra,
+        float &temp0,
+        float &delta,
+        int &bia,
+        int &dread,
+        int nocam,
+        float &studgood,
+        float &minchrom,
+        int &kmin,
+        float &minhist,
+        float &maxhist,
+        int fh,
+        int fw,
+        ColorTemp &currWB,
+        int tempnotisraw,
+        double greennotisraw,
+        bool skipRecalculate,
+        ColorTemp &autoWB,
+        double &rm,
+        double &gm,
+        double &bm
+        );
     virtual ColorTemp   getWB       () const = 0;
     virtual ColorTemp   getSpotWB   (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran, double equal, StandardObserver observer) = 0;
-    virtual void        WBauto(double &tempref, double &greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, double &tempitc, double &greenitc, float &studgood, bool &twotimes, const procparams::WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const procparams::ColorManagementParams &cmp, const procparams::RAWParams &raw, const procparams::ToneCurveParams &hrp) = 0;
+    virtual void        WBauto(bool extra, double &tempref, double &greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, double &tempitc, double &greenitc, float &temp0, float &delta,  int &bia, int &dread, int &kcam, int &nocam, float &studgood, float &minchrom, int &kmin, float &minhist, float &maxhist, bool &twotimes, const procparams::WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const procparams::ColorManagementParams &cmp, const procparams::RAWParams &raw, const procparams::ToneCurveParams &hrp) = 0;
     virtual void        getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, const procparams::WBParams & wbpar) = 0;
 
     virtual double      getDefGain  () const
@@ -167,11 +194,11 @@ public:
     }
 
     // for RAW files, compute a tone curve using histogram matching on the embedded thumbnail
-    virtual void getAutoMatchedToneCurve(const procparams::ColorManagementParams &cp, StandardObserver observer, std::vector<double> &outCurve)
+    virtual void getAutoMatchedToneCurve(const procparams::ColorManagementParams &cp, const procparams::RAWParams &rawParams, StandardObserver observer, std::vector<double> &outCurve)
     {
         outCurve = { 0.0 };
     }
-    
+
     double getDirPyrDenoiseExpComp () const
     {
         return dirpyrdenoiseExpComp;

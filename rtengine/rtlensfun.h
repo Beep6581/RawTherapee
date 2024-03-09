@@ -120,7 +120,7 @@ public:
 
     std::vector<LFCamera> getCameras() const;
     std::vector<LFLens> getLenses() const;
-    LFCamera findCamera(const Glib::ustring &make, const Glib::ustring &model) const;
+    LFCamera findCamera(const Glib::ustring &make, const Glib::ustring &model, bool autoMatch) const;
     LFLens findLens(const LFCamera &camera, const Glib::ustring &name) const;
 
     std::unique_ptr<LFModifier> findModifier(

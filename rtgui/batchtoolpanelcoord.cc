@@ -615,7 +615,7 @@ void BatchToolPanelCoordinator::optionsChanged ()
     initSession ();
 }
 
-void BatchToolPanelCoordinator::procParamsChanged (Thumbnail* thm, int whoChangedIt)
+void BatchToolPanelCoordinator::procParamsChanged (Thumbnail* thm, int whoChangedIt, bool upgradeHint)
 {
 
     if (whoChangedIt != BATCHEDITOR && !blockedUpdate) {

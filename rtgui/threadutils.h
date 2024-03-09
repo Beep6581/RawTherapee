@@ -24,14 +24,15 @@
 //#undef STRICT_MUTEX
 //#define STRICT_MUTEX 1
 
-#include <glibmm/threads.h>
-
+#include <mutex>
+#include <thread>
+#include <condition_variable>
 #include "../rtengine/noncopyable.h"
 
 #if STRICT_MUTEX && NDEBUG
-using MyMutexBase = Glib::Threads::Mutex;
+using MyMutexBase = std::mutex;
 #else
-using MyMutexBase = Glib::Threads::RecMutex;
+using MyMutexBase = std::recursive_mutex;
 #endif
 
 /**
@@ -54,9 +55,11 @@ public:
     void unlock ();
 
 #if STRICT_MUTEX && !NDEBUG
+    MyMutex();
+
 private:
-    bool locked = false;
-    void checkLock ();
+    bool locked;
+    bool checkLock (bool noError = false);
     void checkUnlock ();
 #endif
 };
@@ -66,8 +69,6 @@ class MyMutex::MyLock :
 {
 public:
     explicit MyLock (MyMutex& mutex);
-    MyLock (MyMutex& mutex, Glib::Threads::NotLock);
-    MyLock (MyMutex& mutex, Glib::Threads::TryLock);
 
     ~MyLock ();
 
@@ -90,18 +91,20 @@ public:
     friend class MyReaderLock;
     friend class MyWriterLock;
 
+    MyRWMutex();
+
 private:
-    Glib::Threads::Mutex mutex;
-    Glib::Threads::Cond cond;
-
-    std::size_t writerCount = 0;
-    std::size_t readerCount = 0;
-
 #if TRACE_MYRWMUTEX
-    Glib::Threads::Thread* ownerThread = nullptr;
-    const char* lastWriterFile = "";
-    int lastWriterLine = 0;
+    std::thread::id ownerThread;
+    const char* lastWriterFile;
+    int lastWriterLine;
 #endif
+
+    std::mutex mutex;
+    std::condition_variable cond;
+
+    std::size_t writerCount;
+    std::size_t readerCount;
 };
 
 /**
@@ -167,12 +170,12 @@ inline void MyMutex::lock ()
 
 inline bool MyMutex::trylock ()
 {
-    if (MyMutexBase::trylock ()) {
+    if (MyMutexBase::try_lock ()) {
 #if STRICT_MUTEX && !NDEBUG
-        checkLock ();
-#endif
-
+        return checkLock(true);
+#else
         return true;
+#endif
     }
 
     return false;
@@ -192,18 +195,6 @@ inline MyMutex::MyLock::MyLock (MyMutex& mutex)
     , locked (true)
 {
     mutex.lock();
-}
-
-inline MyMutex::MyLock::MyLock (MyMutex& mutex, Glib::Threads::NotLock)
-    : mutex (mutex)
-    , locked (false)
-{
-}
-
-inline MyMutex::MyLock::MyLock (MyMutex& mutex, Glib::Threads::TryLock)
-    : mutex (mutex)
-    , locked (mutex.trylock ())
-{
 }
 
 inline MyMutex::MyLock::~MyLock ()

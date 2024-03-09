@@ -1,0 +1,1005 @@
+* {
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    margin: 0;
+}
+
+progressbar.vertical {
+    min-width: 0;
+    min-height: 9em;
+}
+progressbar trough {
+    border-width: 0.083333333333333333em;
+    border-radius: 0.3em;
+}
+
+progressbar trough progress {
+    border-width: 0.083333333333333333em;
+    border-radius: 0.3em;
+}
+
+progressbar.vertical trough {
+    min-width: 0.6em;
+}
+progressbar.vertical trough progress {
+    min-width: 0.6em;
+    margin: 0;
+}
+
+progressbar.horizontal trough {
+    min-height: 0.6em;
+    margin-top: 0;
+}
+#IopsPanel progressbar.horizontal trough {
+    margin-top: 0;
+}
+
+progressbar.horizontal trough progress {
+    min-height: 0.6em;
+    margin: 0;
+}
+
+/* #IopsPanel progressbar trough.empty, */
+progressbar trough.empty progress {
+}
+
+/*** Notebook **********************************************************************************/
+notebook,
+notebook header,
+notebook tabs,
+notebook tab,
+notebook stack {
+    border-radius: 0;
+    border: none;
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+    min-height: 0;
+}
+notebook > header {
+    padding: 0 0.416666666666666666em;
+}
+notebook > header.left {
+    padding: 0.416666666666666666em 0;
+}
+notebook > header tab {
+    margin: 0.416666666666666666em 0.25em;
+    padding: 0 0.333333333333333333em;
+}
+notebook > header.left tab {
+    margin: 0.2em;
+    padding: 0.333333333333333333em;
+}
+notebook > header.left tabs {
+    margin: 0;
+    padding: 0;
+}
+notebook > header tab > grid > image {
+    min-height: 2em;
+    min-width: 2em;
+    padding: 0.25em;
+    margin: 0;
+}
+
+notebook > header > tabs > arrow {
+    border-radius: 0.2em;
+    padding: 0 0.166666666666666666em;
+    margin: 0.5em 0;
+}
+notebook > header.left > tabs > arrow {
+    padding: 0.166666666666666666em 0;
+    margin: 0 0.5em;
+}
+
+/*?win*/
+#MainNotebook > stack {
+    padding: 0.25em;
+}
+
+#MainNotebook > stack > :nth-child(2) > box:nth-child(3) {
+    margin-top: 0.416666666666666666em;
+}
+
+
+/* Adds a line on top of the notebook as a separator for the titlebar (only on CSD) */
+dialog.csd #PrefNotebook > header,
+dialog.csd #AboutNotebook > header,
+window.csd:not(.fullscreen) #MainNotebook > header.top {
+    border-top-width: 0.083333333333333333em;
+}
+/**/
+
+
+#RightNotebook > stack > scrolledwindow > viewport > box > box:last-child > image,
+#ToolPanelNotebook > stack > scrolledwindow > viewport > box > box:last-child > image {
+    min-height: 5em;
+}
+
+#ToolPanelNotebook > header {
+    border-bottom-width: 0.083333333333333333em;
+    margin-left: 0.083333333333333333em;
+    margin-right: 0.083333333333333333em;
+    padding: 0 0.19em;
+}
+#ToolPanelNotebook > header tabs {
+    margin: 0;
+}
+#ToolPanelNotebook > header tab {
+    padding: 0;
+}
+#ToolPanelNotebook > header tab image{
+    min-height: 2em;
+    min-width: 2em;
+    margin: 0.19em 0.25em 0.333333333333333333em;
+    padding: 0;
+}
+#ToolPanelNotebook > stack {
+    padding: 0;
+}
+
+#RightNotebook > header {
+    margin: 0 0.2em 0 0;
+}
+#RightNotebook > stack {
+    padding: 0;
+}
+#RightNotebook > header tab label {
+    padding-left: 0.25em;
+    padding-right: 0.25em;
+}
+
+#RightNotebook > stack > :nth-child(1) > * > box,
+#RightNotebook > stack > :nth-child(4) > * > box {
+    padding: 0.5em;
+    border-width: 0.083333333333333333em;
+}
+
+#PrefNotebook > header {
+    margin: -0.666666666666666666em -0.666666666666666666em 0.333333333333333333em;
+}
+#PrefNotebook > stack {
+    margin: 0 -0.666666666666666666em;
+}
+#PrefNotebook > stack > scrolledwindow > viewport {
+    padding: 0 0.333333333333333333em;
+}
+
+#AboutNotebook > header {
+    margin: -0.666666666666666666em -0.666666666666666666em 0.666666666666666666em;
+}
+
+#AboutNotebook > stack text,
+#AboutNotebook > stack textview {
+    padding: 0.75em 0;
+}
+/* Meta panel notebook */
+#MetaPanelNotebook > header {
+    padding: 0.333333333333333333em;
+    margin: 0 0.5em 0;
+}
+#MetaPanelNotebook > header > tabs {
+    padding-left: 0.333333333333333333em;
+}
+#MetaPanelNotebook > stack {
+    padding: 0 0 0.5em 0;
+}
+
+#MetaPanelNotebook > stack > box {
+    border: none;
+    border-radius: 0;
+    border-top-style: none;
+    padding: 0 0.333333333333333333em 0.25em;
+    margin:0 0.5em -0.5em;
+}
+#MetaPanelNotebook > stack > box:nth-child(1) > scrolledwindow {
+    margin: 0 0 0.333333333333333333em;
+    padding: 0;
+}
+
+#MetaPanelNotebook > stack > box:nth-child(2) > scrolledwindow > viewport.frame {
+    padding: 0;
+}
+
+#MetaPanelNotebook entry {
+    padding: 0 0.333333333333333333em;
+    border-radius: 0;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+#MetaPanelNotebook .view {
+    border-width: 0.083333333333333333em;
+    padding: 0.083333333333333333em 0.25em;
+}
+
+#MetaPanelNotebook stack label {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 0;
+}
+
+/*** end ***************************************************************************************/
+
+/*** File Browser ******************************************************************************/
+#FileCatalog {
+    border-width: 0.083333333333333333em;
+}
+
+/*?win*/
+#FileBrowser {
+    padding: 0;
+    margin: 0;
+}
+
+#ToolBarPanelFileBrowser {
+    margin: 0 0 0.416666666666666666em 0;
+    min-height: 0;
+    min-width: 0;
+    padding: 0;
+}
+#FileBrowserQueryToolbar > viewport > box {
+    margin: 0 0 0.416666666666666666em 0;
+    min-height: 0;
+    min-width: 0;
+    padding: 0;
+}
+
+/*** end ***************************************************************************************/
+
+/*** Image Editor ******************************************************************************/
+#EditorRightPaned {
+    margin: 0;
+}
+
+#BeforeAfterContainer {
+    border-width: 0.083333333333333333em;
+    border-radius: 0;
+    padding: 0;
+    margin: calc(0.416666666666666666em - 2px) 0 0.416666666666666666em;
+}
+#BeforeAfterContainer > box:nth-child(2) > box:nth-child(2),
+#BeforeAfterContainer > box:nth-child(1) > box:nth-child(2){
+    border-top: 0.083333333333333333em solid @bg-dark-grey;
+}
+#BeforeAfterContainer > box:nth-child(2){
+    border-left: 0.083333333333333333em solid @bg-dark-grey;
+}
+
+/* !!! Must be same height as "Small Lock Button" */
+#BeforeAfterContainer label {
+    padding: 0 0.5em;
+    min-height: 2em;
+    min-width: 2em;
+    margin: 0.25em 0;
+    border-width: 0.083333333333333333em;
+}
+
+#EditorToolbarTop {
+    margin: 0 -1px 0 -1px;
+    padding: 0;
+    min-height: 0;
+}
+
+#IopsPanel {
+    margin: 0;
+    padding: 0;
+    min-height: 0;
+}
+
+#EditorZoomPanel label {
+    min-width: 4em;
+    margin: 0;
+}
+/*** end ***************************************************************************************/
+
+/*** Toolbox ***********************************************************************************/
+#MyExpander image {
+    min-width: 1.333333333333333333em;
+    min-height: 0;
+    margin: -0.083333333333333333em 0.125em;
+}
+
+#MyExpander .drawingarea:not(.slider) {
+    border-width: 0.083333333333333333em;
+}
+#MyExpander .slider,
+#MyExpander #CurveSHCSelector {
+    border-width: 0.083333333333333333em;
+}
+#MyExpander .drawingarea:disabled {
+}
+#ThresholdAdjuster {
+    margin: 0.083333333333333333em 0 0.166666666666666666em 0;
+}
+
+/*** end ***************************************************************************************/
+
+/*** Context & popups menus *****************************************************************************/
+.csd.popup > decoration {
+    border-radius: 0;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+menu {
+    border-width: 0.083333333333333333em;
+    padding: 0.083333333333333333em;
+    margin: 0;
+    border-radius: 0;
+}
+menu > arrow.top,
+menu > arrow.top:hover,
+menu > arrow.bottom,
+menu > arrow.bottom:hover {
+    border: none;
+    padding: 0.25em;
+    min-height: 1em;
+}
+
+menuitem {
+    padding: 0 0.333333333333333333em;
+    margin: 0.083333333333333333em;
+    min-height: 2em;
+}
+
+menu arrow {
+    min-width: 1.333333333333333333em;
+    margin: 0 -0.19em;
+    padding: 0;
+    margin: 0 -0.25em 0 0;
+}
+
+menu menuitem > radio + * image:not(.dummy),
+#MyExpander menu menuitem > radio + * image:not(.dummy) {
+    margin-left: 1pt;
+}
+
+menu image:not(.dummy),
+#MyExpander menu image:not(.dummy) {
+    min-height: 2em;
+    min-width: 1.5em;
+    padding: 0;
+    margin: 0 0 0 -1.333333333333333333em;
+}
+
+/*** Selection popup list (used in filechooser) ***/
+entry > window > frame:not(.dummy) {
+    padding: 0;
+}
+entry > window > frame > border:not(.dummy) {
+    padding: 0.083333333333333333em;
+    margin: 0.083333333333333333em;
+    border-width: 0.083333333333333333em;
+}
+/* end */
+
+/*** end ***************************************************************************************/
+
+/*** Popover *** Context menu filechooser ******************************************************/
+popover {
+    border-width: 0.083333333333333333em;
+    border-radius: 0;
+    padding: 0;
+    margin: 0;
+}
+popover > box {
+    padding: 0;
+    margin: -9px;
+}
+popover modelbutton {
+    min-height: 2em;
+    padding: 0 0.416666666666666666em;
+    margin: 0;
+    border-radius: 0;
+}
+
+popover label {
+    margin-right: 0.5em;
+}
+/** end ****************************************************************************************/
+
+/*** Switch ***********************************************************************************/
+switch {
+    min-height: 2.333333333333333333em;
+    min-width: 11em;
+    margin: 0 0.19em;
+    padding: 0;
+    border-radius: 0.2em;
+    border-width: 0.083333333333333333em;
+    margin-bottom: 0.5em;
+}
+
+switch slider {
+    border-width: 0.083333333333333333em;
+    border-radius: 0.2em 0 0 0.2em;
+    
+    /* Needed to cover the total switch */
+    margin: -0.083333333333333333em;
+    padding: 0.083333333333333333em;
+}
+switch:checked  slider{
+    border-radius: 0 0.2em 0.2em 0;
+}
+/** end ****************************************************************************************/
+
+/*** Buttons ***********************************************************************************/
+button,
+#BeforeAfterContainer button {
+    min-height: 1.666666666666666666em;
+    min-width: 1.666666666666666666em;/*x*/
+    margin: 0.125em;
+    border-radius: 0.2em;
+    border-width: 0.083333333333333333em;
+}
+button.flat {
+    border-width: 0.083333333333333333em;
+}
+
+/* Combobox */
+button.combo {
+    padding: 0 0 0 0.25em;
+}
+combobox entry.combo + button.combo {
+    min-width: 1em;
+    margin-left: 0;
+    padding: 0;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left: none;
+}
+#WB-Size-Helper button.combo {
+    min-width: 0;
+    margin: 0;
+}
+#WB-Size-Helper {
+    min-width: 3.5em;
+    margin: 0.125em;
+}
+
+combobox arrow {
+    margin-right: 0.083333333333333333em;
+}
+
+combobox entry.combo + button.combo arrow {
+    margin-right: 0;
+}
+
+#PlacesPaned button.combo {
+    margin: 0;
+}
+#PlacesPaned combobox {
+    margin-bottom: calc(0.416666666666666666em - 8px);
+}
+
+#ProfilePanel combobox {
+    margin-right: -0.166666666666666666em;
+}
+
+/* Misc */
+button label {
+    margin: 0 0.416666666666666666em;
+}
+button image:not(.dummy),
+#MyExpander button image:not(.dummy) {
+    margin: 0;
+}
+#MyFileChooserButton label {
+    margin: 0 0 0 0.416666666666666666em;
+}
+#MyFileChooserButton image:not(.dummy):last-child {
+    margin: 0 0.416666666666666666em 0 0;
+    min-width: 1.333333333333333333em;
+}
+#MetaPanelNotebook button + button:last-child {
+    margin-right: 0;
+}
+#MetaPanelNotebook scrolledwindow + grid > button:first-child,
+#MetaPanelNotebook scrolledwindow + grid + grid > button:first-child {
+    margin-left: 0;
+}
+#MetaPanelNotebook scrolledwindow + grid > button:last-child,
+#MetaPanelNotebook scrolledwindow + grid + grid > button:last-child {
+    margin-right: 0;
+}
+
+#ProfilePanel {
+    margin-bottom: 0.35em;
+}
+#ProfilePanel > grid {
+    margin-bottom: 0.2em;
+}
+
+/* Reset button */
+scale + button.flat,
+spinbutton + button.flat,
+scale + image + image + button.flat {
+    min-height: 1.333333333333333333em;
+    margin-top:0.095em;
+    margin-bottom: 0.095em;
+}
+
+/* Color chooser & buttons */
+button.color {
+    min-width: 3.25em;
+}
+
+button.color colorswatch {
+    min-height: 0;
+    min-width: 0;
+    margin: 1px;
+    border-radius: 0.2em;
+}
+
+colorchooser colorswatch {
+    border-width: 1px;
+}
+colorchooser colorswatch#add-color-button:first-child {
+  border-radius: 5.5px 0 0 5.5px;
+}
+
+/* Font chooser button */
+button.font label{
+    min-height: 0;
+    min-width: 0;
+    margin: 0 0.125em;
+}
+
+/* Save, Cancel, OK ... buttons */
+dialog .dialog-action-area button {
+    min-height: 2.166666666666666666em;
+    margin: 0.5em 0 0 0.333333333333333333em;
+    padding: 0;
+}
+messagedialog .dialog-action-area button {
+    min-height: 1.833333333333333333em;
+    margin: 0 0.5em 0.5em;
+    padding: 0;
+}
+messagedialog .dialog-action-area button:not(:only-child):nth-child(1) {
+    margin-right: 0.25em;
+}
+messagedialog .dialog-action-area button:not(:only-child):nth-child(2) {
+    margin-left: 0.25em;
+}
+
+/* Big tool buttons */
+#ToolBarPanelFileBrowser button,
+#EditorTopPanel button,
+#IopsPanel button,
+#ProfilePanel button,
+#MainNotebook > header > grid > button,
+#MyExpander button.independent.toggle:not(.image-button):not(.text-button):first-child:only-child, /* Graduated filter big button */
+.curve-mainbox .curve-buttonbox button.flat,
+#BatchQueueButtonsMainContainer + grid + box button,
+#RightNotebook > stack > scrolledwindow:last-child button.image-button, /* Fast Export */
+#MetaPanelNotebook scrolledwindow + grid > button,
+#MetaPanelNotebook scrolledwindow + grid + grid > button {
+    min-height: 2.333333333333333333em;
+    min-width: 2.333333333333333333em;
+    margin: 0 0.125em;
+}
+#ToolBarPanelFileBrowser > button:first-child,
+#EditorTopPanel > button:first-child,
+#IopsPanel > button:nth-child(6),
+#ProfilePanel > grid > button:first-child {
+    margin-left: 0;
+}
+#ToolBarPanelFileBrowser > button:last-child,
+#ToolBarPanelFileBrowser > box:last-child > button:last-child,
+#EditorTopPanel > button:last-child,
+#EditorTopPanel > box:last-child > button:last-child,
+#IopsPanel > button:last-child,
+#ProfilePanel > grid > button:last-child,
+#BatchQueueButtonsMainContainer + grid + box button {
+    margin-right: 0;
+}
+#MyExpander button.independent.toggle:not(.image-button):not(.text-button):first-child:only-child, /* Graduated filter button */
+#MetaPanelNotebook scrolledwindow + grid > button,
+#MetaPanelNotebook scrolledwindow + grid + grid > button {
+    margin: 0.125em;
+}
+
+#EditorTopPanel button.narrowbutton {
+    min-width: 0.833333333333333333em;
+    padding: 0 0.13em;
+}
+
+/* Image close button */
+#MainNotebook > header tab #CloseButton {
+    padding: 0;
+    margin: 0.333333333333333333em 0 0.416666666666666666em 0.19em;
+    min-width: 1.5em;
+    min-height: 0;
+}
+#MainNotebook > header tab #CloseButton image{
+    min-width: 1.333333333333333333em;
+    min-height: 1.333333333333333333em;
+}
+
+/* Filter buttons*/
+#ToolBarPanelFileBrowser .smallbuttonbox {
+    min-height: 1.166666666666666666em;
+    padding: 0;
+    margin: 0;
+}
+#ToolBarPanelFileBrowser .smallbuttonbox:nth-child(2) {
+    margin-top: 0.166666666666666666em;
+    margin-bottom: -0.166666666666666666em;
+}
+#ToolBarPanelFileBrowser .smallbuttonbox button.smallbutton image {
+    margin: -1em 0;
+    padding: 0;
+    min-width: 0;
+    min-height: 0;
+}
+#ToolBarPanelFileBrowser .smallbuttonbox button.smallbutton {
+    min-height: 0;
+    min-width: 1.166666666666666666em;
+    padding: 0;
+    margin: 0 0.166666666666666666em;
+    border: none;
+    border-radius: 0;
+}
+
+/* Arrow toggle combo button */
+#IopsPanel .image-combo button.Right,
+#MyExpander .image-combo button.Right {
+    border-left: none;
+    margin-left: 0;
+    padding: 0;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    min-width: 1.333333333333333333em;
+}
+#IopsPanel .image-combo button.Right image,
+#MyExpander .image-combo button.Right image {
+    margin: 0 -0.083333333333333333em;
+}
+#IopsPanel .image-combo button.Left,
+#MyExpander .image-combo button.Left {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    min-width: 2.333333333333333333em;
+    margin-right: 0;
+}
+#MyExpander .image-combo button.Left {
+    min-width: 2.75em;
+}
+#MyExpander .image-combo button.Left label {
+    margin-right: 0;
+}
+
+/* Search & Query buttons */
+#FileBrowserQueryToolbar entry + button.flat,
+#FileBrowserIconToolbar entry + button.flat {
+    min-height: 1.666666666666666666em;/*x*/
+    min-width: 1.666666666666666666em;/*x*/
+    margin: 0;
+    border-radius: 0 0.2em 0.2em 0;
+    border-width: 0.083333333333333333em;
+    padding: 0;
+}
+#FileBrowserQueryToolbar entry + button.flat:not(:hover):not(:active),
+#FileBrowserIconToolbar entry + button.flat:not(:hover):not(:active) {
+    border-left: none;
+    padding-left: 0.083333333333333333em;
+}
+#FileBrowserIconToolbar box > entry + button.flat {
+    margin-top: 0.416666666666666666em;
+    margin-bottom: 0.416666666666666666em;
+    min-height: 0;
+}
+
+/* Small Lock Button */
+#BeforeAfterContainer button {
+    min-height: 2em;
+    min-width: 2em;
+    margin: 0.25em 0.25em 0.25em 0;
+    padding: 0;
+    border-radius: 0.2em;
+    border-width: 0.083333333333333333em;
+}
+#BeforeAfterContainer button image{
+    margin: 0 0 0 0.083333333333333333em;
+}
+#BeforeAfterContainer button:checked image{
+    margin: 0.083333333333333333em -0.166666666666666666em 0.083333333333333333em 0.25em;
+}
+
+/* Snapshot & Places buttons */
+#Snapshots button,
+#PlacesPaned > box:nth-child(1) scrolledwindow + grid > button {
+    margin: 0;
+    padding: 0;
+    border-width: 0.083333333333333333em;
+    border-radius: 0;
+    min-height: 0.5em;/*x*/
+}
+/**/
+
+
+/* View & Filechooser Buttons */
+.view button {
+    min-height: 2em;
+    min-width: 1.333333333333333333em;
+    padding: 0 0.19em;
+    margin: 0;
+}
+#pathbarbox button {
+    min-width: 2em;
+    margin: 0;
+    padding: 0;
+ }
+window treeview > header image {
+    min-width: 1.333333333333333333em;
+}
+
+window .view button {
+    border: none;
+    border-bottom-width: 0.083333333333333333em;
+}
+dialog .view button {
+    border-width: 0.083333333333333333em;
+}
+
+.view header button:not(:first-child):not(:only-child),
+.path-bar button:not(:first-child):not(:only-child) {
+    border-left: none;
+}
+.view header button,
+.path-bar button {
+    border-radius: 0;
+}
+
+.path-bar button:first-child {
+    border-top-left-radius: 0.2em;
+    border-bottom-left-radius: 0.2em;
+    margin: 0;
+    padding: 0;
+}
+.path-bar button:last-child {
+    border-top-right-radius: 0.2em;
+    border-bottom-right-radius: 0.2em;
+    margin: 0;
+    padding: 0;
+}
+#pathbarbox button:not(:first-child):not(:last-child) label {
+    margin: 0 0.5em;
+}
+
+#pathbarbox button:not(:first-child):not(:last-child) image {
+    margin: 0 0 0 0.5em;
+    min-width: 1.333333333333333333em;
+}
+/**/
+
+/* Popover Filechooser (Create folder) */
+popover button.text-button {
+    border-width: 0.083333333333333333em;
+}
+popover button.text-button label {
+    padding: 0;
+    margin: 0;
+}
+/* Adds padding around sides of text-buttons */
+button.text-button {
+    padding: 0 0.6666666666666666em;
+}
+/**/
+
+/*** end ***************************************************************************************/
+
+/*** Checkbox & Radio **************************************************************************/
+checkbutton,
+radiobutton {
+    padding: 0.083333333333333333em 0;
+    margin: 0.125em;
+    min-height: 1.666666666666666666em;/*x*/
+}
+
+check,
+radio {
+    border-width: 0.105em;
+    margin: 0;
+    padding: 0;
+    min-height: 1.166666666666666666em;
+    min-width: 1.166666666666666666em;
+}
+check {
+    border-radius: 0.166666666666666666em;
+}
+
+radio{
+    border-radius: 1.166666666666666666em;
+}
+
+radiobutton label,
+checkbutton label {
+    margin: 0 0.583333333333333333em 0 0.416666666666666666em;
+    padding: 0;
+}
+
+frame > checkbutton check{
+    margin-left: 0.5em;
+}
+
+#PartialPaste checkbutton {
+    padding: 0;
+    margin: 0.125em 0 0 0.583333333333333333em;
+}
+#PartialPaste checkbutton:not(#PartialPasteHeader) {
+    margin: 0 0 0 1.166666666666666666em;
+}
+
+/*** end ***************************************************************************************/
+
+/*** Entry & Spinbutton ************************************************************************/
+#MyExpander entry,
+entry,
+spinbutton {
+    margin: 0.125em;
+    padding: 0 0.333333333333333333em;
+    min-height: 1.666666666666666666em;/*x*/
+    min-width: 0;
+    border-width: 0.083333333333333333em;
+}
+#FileBrowserQueryToolbar entry,
+#FileBrowserIconToolbar entry {
+    min-height: 1.666666666666666666em;/*x*/
+    min-width: 0;
+    margin: 0;
+    border-right: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+#FileBrowserIconToolbar box > entry {
+    margin-top: 0.416666666666666666em;
+    margin-bottom: 0.416666666666666666em;
+    margin-left: 0.19em;
+    min-height: 0;
+}
+#FileBrowserQueryToolbar box + box > label + entry {
+    margin-left: 0.19em;
+}
+spinbutton {
+    padding: 0;
+}
+
+#MyExpander spinbutton {
+    margin: 0.125em;
+    padding: 0;
+    min-height: 1.333333333333333333em;
+    min-width: 0;
+    border-width: 0.083333333333333333em;
+}
+/* Needed for Reset & and Auto button height*/
+#MyExpander button + label + spinbutton {
+    margin-top: 0.333333333333333333em;
+    margin-bottom: 0.333333333333333333em;
+}
+#MyExpander checkbutton + label + spinbutton {
+    margin-top: 0.416666666666666666em;
+    margin-bottom: 0.416666666666666666em;
+}
+/**/
+
+#MyExpander spinbutton button,
+spinbutton button {
+    padding: 0;
+    min-height: 1.333333333333333333em;
+    min-width: 1.666666666666666666em;
+    border: none;
+}
+
+#MyExpander spinbutton entry,
+spinbutton entry {
+    padding: 0 0.333333333333333333em;
+    margin: 0;
+    min-height: 0;
+    min-width: 0;
+    border: none;
+}
+#MyExpander spinbutton entry {
+    padding: 0 0.333333333333333333em 0 0.833333333333333333em;
+}
+
+#MyExpander spinbutton button:hover,
+spinbutton button:hover {
+    border: none;
+}
+#MyExpander spinbutton button:active,
+spinbutton button:active {
+    border: none;
+}
+
+/* Text selection */
+.view entry {
+    margin: 0 -2px;
+    border-width: 0.083333333333333333em;
+}
+/* end*/
+
+/*** end ***************************************************************************************/
+
+/* Curves **************************************************************************************/
+.curve-mainbox {
+    margin: 0.19em;
+    border-width: 0.083333333333333333em;
+}
+.curve-mainbox .curve-curvebox {
+    margin: 0;
+    padding: 0.416666666666666666em;
+}
+.curve-mainbox .curve-spinbuttonbox {
+    margin: 0;
+    padding: 0.25em;
+    border-width: 0.083333333333333333em;
+}
+.curve-mainbox .curve-sliderbox {
+    margin: 0;
+    padding: 0.25em;
+    border-width: 0.083333333333333333em;
+}
+.curve-mainbox .curve-buttonbox {
+    padding: 0.25em;
+}
+.curve-mainbox.left .curve-buttonbox {
+    border-width: 0.083333333333333333em;
+}
+.curve-mainbox.right .curve-buttonbox {
+    border-width: 0.083333333333333333em;
+}
+.curve-mainbox.top .curve-buttonbox {
+    border-width: 0.083333333333333333em;
+}
+.curve-mainbox.bottom .curve-buttonbox {
+    border-width: 0.083333333333333333em;
+}
+.curve-mainbox .curve-buttonbox button.flat {
+    margin: 0.095em;
+}
+/*** end ***************************************************************************************/
+
+/*** Window Layout *****************************************************************************/
+.csd:not(.popup):not(tooltip) > decoration {
+    border-radius: 0.416666666666666666em 0.416666666666666666em 0 0;
+    border: none;
+    padding: 0;
+    margin: 0.833333333333333333em;
+}
+headerbar {
+    border-bottom-width: 0.083333333333333333em;
+    border-radius: 0.416666666666666666em 0.416666666666666666em 0 0;
+    min-height: 2em;
+    padding: 0.083333333333333333em 0.416666666666666666em 0;
+    margin: 0;
+}
+
+/* Window state */
+.maximized > headerbar {
+    border-radius: 0;
+}
+/**/
+
+/* Titlebar buttons*/
+
+headerbar button.titlebutton image {
+    padding: 0;
+    margin: 0;
+}
+headerbar button.titlebutton {
+    margin: 0 0 0 0.333333333333333333em;
+    border-width: 0.083333333333333333em;
+    min-width: 1.5em;
+    min-height: 1.5em;
+    padding: 0;
+}
+messagedialog headerbar button.titlebutton {
+    min-width: 1.25em;
+    min-height: 1.25em;
+    margin: 0;
+}
+/*** end ***************************************************************************************/

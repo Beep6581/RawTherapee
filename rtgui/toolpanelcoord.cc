@@ -274,7 +274,7 @@ const ToolPanelCoordinator::ToolLayout PANEL_TOOLS = {
 
 std::unordered_map<std::string, Tool> ToolPanelCoordinator::toolNamesReverseMap;
 
-ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favoritePanelSW(nullptr), hasChanged (false), batch(batch), editDataProvider (nullptr), photoLoadedOnce(false)
+ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favoritePanelSW(nullptr), hasChanged (false), batch(batch), editDataProvider (nullptr), photoLoadedOnce(false), ornamentSurface(new RTSurface("ornament1.svg"))
 {
 
     favoritePanel   = Gtk::manage (new ToolVBox ());
@@ -402,7 +402,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     // load panel endings
     for (int i = 0; i < 8; i++) {
         vbPanelEnd[i] = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
-        imgPanelEnd[i] = Gtk::manage (new RTImage ("ornament1.png"));
+        imgPanelEnd[i] = Gtk::manage (new Gtk::Image (ornamentSurface->get()));
         imgPanelEnd[i]->show();
         vbPanelEnd[i]->get_style_context()->add_class("PanelEnding");
         vbPanelEnd[i]->pack_start(*imgPanelEnd[i], Gtk::PACK_SHRINK);
@@ -460,16 +460,16 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     rawPanelContainer->pack_start(*rawPanel, Gtk::PACK_SHRINK);
     rawPanelContainer->pack_start (*vbPanelEnd[5], Gtk::PACK_SHRINK);
 
-    toiF.reset(new TextOrIcon ("star.png", M ("MAIN_TAB_FAVORITES"), M ("MAIN_TAB_FAVORITES_TOOLTIP")));
-    toiE = Gtk::manage (new TextOrIcon ("exposure.png", M ("MAIN_TAB_EXPOSURE"), M ("MAIN_TAB_EXPOSURE_TOOLTIP")));
-    toiD = Gtk::manage (new TextOrIcon ("detail.png", M ("MAIN_TAB_DETAIL"), M ("MAIN_TAB_DETAIL_TOOLTIP")));
-    toiC = Gtk::manage (new TextOrIcon ("color-circles.png", M ("MAIN_TAB_COLOR"), M ("MAIN_TAB_COLOR_TOOLTIP")));
-    toiW = Gtk::manage (new TextOrIcon ("atom.png", M ("MAIN_TAB_ADVANCED"), M ("MAIN_TAB_ADVANCED_TOOLTIP")));
-    toiL = Gtk::manage(new TextOrIcon("hand-open.png", M("MAIN_TAB_LOCALLAB"), M("MAIN_TAB_LOCALLAB_TOOLTIP")));
+    toiF.reset(new TextOrIcon ("star", M ("MAIN_TAB_FAVORITES"), M ("MAIN_TAB_FAVORITES_TOOLTIP")));
+    toiE = Gtk::manage (new TextOrIcon ("exposure", M ("MAIN_TAB_EXPOSURE"), M ("MAIN_TAB_EXPOSURE_TOOLTIP")));
+    toiD = Gtk::manage (new TextOrIcon ("detail", M ("MAIN_TAB_DETAIL"), M ("MAIN_TAB_DETAIL_TOOLTIP")));
+    toiC = Gtk::manage (new TextOrIcon ("color-circles", M ("MAIN_TAB_COLOR"), M ("MAIN_TAB_COLOR_TOOLTIP")));
+    toiW = Gtk::manage (new TextOrIcon ("atom", M ("MAIN_TAB_ADVANCED"), M ("MAIN_TAB_ADVANCED_TOOLTIP")));
+    toiL = Gtk::manage(new TextOrIcon("hand-open", M("MAIN_TAB_LOCALLAB"), M("MAIN_TAB_LOCALLAB_TOOLTIP")));
 
-    toiT = Gtk::manage (new TextOrIcon ("transform.png", M ("MAIN_TAB_TRANSFORM"), M ("MAIN_TAB_TRANSFORM_TOOLTIP")));
-    toiR = Gtk::manage (new TextOrIcon ("bayer.png", M ("MAIN_TAB_RAW"), M ("MAIN_TAB_RAW_TOOLTIP")));
-    toiM = Gtk::manage (new TextOrIcon ("metadata.png", M ("MAIN_TAB_METADATA"), M ("MAIN_TAB_METADATA_TOOLTIP")));
+    toiT = Gtk::manage (new TextOrIcon ("transform", M ("MAIN_TAB_TRANSFORM"), M ("MAIN_TAB_TRANSFORM_TOOLTIP")));
+    toiR = Gtk::manage (new TextOrIcon ("bayer", M ("MAIN_TAB_RAW"), M ("MAIN_TAB_RAW_TOOLTIP")));
+    toiM = Gtk::manage (new TextOrIcon ("metadata", M ("MAIN_TAB_METADATA"), M ("MAIN_TAB_METADATA_TOOLTIP")));
     toiF->show_all();
     if (options.favorites.size()) {
         toolPanelNotebook->append_page(*favoritePanelSW, *toiF);
@@ -856,10 +856,15 @@ ToolPanelCoordinator::updateToolPanel(
         }
         FoldableToolPanel *tool_panel =
             getFoldableToolPanel(*new_tool_trees_iter);
-        if (tool_panel->getParent()) {
+        const bool reparent = tool_panel->getParent();
+        if (reparent) {
             tool_panel->getParent()->remove(*tool_panel->getExpander());
         }
         addPanel(panelBox, tool_panel, level);
+        if (!reparent) {
+            // If attaching for the first time, update the widget sizes.
+            tool_panel->getExpander()->check_resize();
+        }
     }
 
     // Update the child tools.
@@ -1181,8 +1186,8 @@ void ToolPanelCoordinator::profileChange(
 
     // Reset IPTC values when switching procparams from the History
     if (event == rtengine::EvHistoryBrowsed) {
-        mergedParams->iptc.clear();
-        mergedParams->exif.clear();
+        mergedParams->metadata.iptc.clear();
+        mergedParams->metadata.exif.clear();
     }
 
     // And apply the partial profile nparams to mergedParams
@@ -1904,6 +1909,12 @@ void ToolPanelCoordinator::setEditProvider(EditDataProvider *provider)
 bool ToolPanelCoordinator::getFilmNegativeSpot(rtengine::Coord spot, int spotSize, RGB &refInput, RGB &refOutput)
 {
     return ipc && ipc->getFilmNegativeSpot(spot.x, spot.y, spotSize, refInput, refOutput);
+}
+
+
+void ToolPanelCoordinator::setProgressListener(rtengine::ProgressListener *pl)
+{
+    metadata->setProgressListener(pl);
 }
 
 FoldableToolPanel *ToolPanelCoordinator::getFoldableToolPanel(Tool tool) const

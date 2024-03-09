@@ -2270,7 +2270,7 @@ void ImProcFunctions::Aver(const float* RESTRICT DataList, int datalen, float &a
     int countP = 0, countN = 0;
     double averaP = 0.0, averaN = 0.0; // use double precision for large summations
 
-    constexpr float thres = 32.7f;//different fom zero to take into account only data large enough 32.7 = 0.1 in range 0..100 very low value
+    constexpr float thres = 32.7f;//different from zero to take into account only data large enough 32.7 = 0.1 in range 0..100 very low value
     max = 0.f;
     min = RT_INFINITY_F;
 #ifdef _OPENMP
@@ -2322,7 +2322,7 @@ void ImProcFunctions::Sigma(const float* RESTRICT DataList, int datalen, float a
 {
     int countP = 0, countN = 0;
     double variP = 0.0, variN = 0.0; // use double precision for large summations
-    float thres = 32.7f;//different fom zero to take into account only data large enough 32.7 = 0.1 in range 0..100
+    float thres = 32.7f;//different from zero to take into account only data large enough 32.7 = 0.1 in range 0..100
 
 #ifdef _OPENMP
     #pragma omp parallel for reduction(+:variP,variN,countP,countN) num_threads(numThreads) if (numThreads>1)

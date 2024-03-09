@@ -230,6 +230,7 @@ private:
     EditDataProvider *editDataProvider;
     sigc::connection notebookconn;
     bool photoLoadedOnce; // Used to indicated that a photo has been loaded yet
+    std::shared_ptr<RTSurface> ornamentSurface;
     Gtk::Widget* prevPage;
 
 public:
@@ -460,6 +461,8 @@ public:
     void editModeSwitchedOff () final;
 
     void setEditProvider(EditDataProvider *provider);
+
+    void setProgressListener(rtengine::ProgressListener *pl);
 
 protected:
     static std::unordered_map<std::string, Tool> toolNamesReverseMap;

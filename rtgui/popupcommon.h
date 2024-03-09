@@ -20,12 +20,13 @@
  */
 #pragma once
 
-#include "glibmm/refptr.h"
+#include "threadutils.h"
+
 #include <memory>
 #include <vector>
 
+#include <glibmm/refptr.h>
 #include <glibmm/ustring.h>
-
 #include <sigc++/signal.h>
 
 namespace Gio
@@ -61,9 +62,11 @@ public:
 
     explicit PopUpCommon (Gtk::Button* button, const Glib::ustring& label = "");
     virtual ~PopUpCommon ();
-    bool addEntry (const Glib::ustring& fileName, const Glib::ustring& label, Gtk::RadioButtonGroup* radioGroup = nullptr);
-    bool insertEntry(int position, const Glib::ustring& fileName, const Glib::ustring& label, Gtk::RadioButtonGroup* radioGroup = nullptr);
+    bool addEntry (const Glib::ustring& iconName, const Glib::ustring& label, Gtk::RadioButtonGroup* radioGroup = nullptr);
+    bool insertEntry(int position, const Glib::ustring& iconName, const Glib::ustring& label, Gtk::RadioButtonGroup* radioGroup = nullptr);
     bool insertEntry(int position, const Glib::RefPtr<const Gio::Icon>& gIcon, const Glib::ustring& label, Gtk::RadioButtonGroup* radioGroup = nullptr);
+    /// Sets the button image to show when there are no entries.
+    void setEmptyImage(const Glib::ustring &fileName);
     int getEntryCount () const;
     bool setSelected (int entryNum);
     int  getSelected () const;
@@ -77,8 +80,9 @@ private:
     type_signal_changed messageChanged;
     type_signal_item_selected messageItemSelected;
 
+    Glib::ustring emptyImageFilename;
     std::vector<Glib::RefPtr<const Gio::Icon>> imageIcons;
-    std::vector<Glib::ustring> imageFilenames;
+    std::vector<Glib::ustring> imageIconNames;
     std::vector<const RTImage*> images;
     Glib::ustring buttonHint;
     RTImage* buttonImage;
@@ -88,17 +92,18 @@ private:
     Gtk::Button* arrowButton;
     int selected;
     bool hasMenu;
+    MyMutex entrySelectionMutex;
 
     void changeImage(int position);
-    void changeImage(const Glib::ustring& fileName, const Glib::RefPtr<const Gio::Icon>& gIcon);
+    void changeImage(const Glib::ustring& iconName, const Glib::RefPtr<const Gio::Icon>& gIcon);
     void entrySelected(Gtk::Widget* menuItem);
-    bool insertEntryImpl(int position, const Glib::ustring& fileName, const Glib::RefPtr<const Gio::Icon>& gIcon, RTImage* image, const Glib::ustring& label, Gtk::RadioButtonGroup* radioGroup);
+    bool insertEntryImpl(int position, const Glib::ustring& iconName, const Glib::RefPtr<const Gio::Icon>& gIcon, RTImage* image, const Glib::ustring& label, Gtk::RadioButtonGroup* radioGroup);
     void showMenu(GdkEventButton* event);
 
 protected:
     virtual int posToIndex(int p) const { return p; }
     virtual int indexToPos(int i) const { return i; }
-    
+
     void entrySelected (int i);
 
 };

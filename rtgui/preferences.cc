@@ -16,21 +16,27 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+#include <sstream>
+
+#include <glibmm/miscutils.h>
+#include <glibmm/ustring.h>
 #include <sigc++/slot.h>
-#include "externaleditorpreferences.h"
-#include "preferences.h"
-#include "multilangmgr.h"
-#include "splash.h"
-#include "cachemanager.h"
+
 #include "addsetids.h"
+#include "cachemanager.h"
+#include "externaleditorpreferences.h"
+#include "multilangmgr.h"
+#include "preferences.h"
+#include "rtimage.h"
+#include "rtwindow.h"
+#include "splash.h"
+#include "toollocationpref.h"
+
 #include "../rtengine/dfmanager.h"
 #include "../rtengine/ffmanager.h"
 #include "../rtengine/iccstore.h"
 #include "../rtengine/procparams.h"
-#include <sstream>
-#include "rtimage.h"
-#include "rtwindow.h"
-#include "toollocationpref.h"
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -76,9 +82,20 @@ Preferences::Preferences(RTWindow *rtwindow)
     set_size_request(650, -1);
     set_default_size(options.preferencesWidth, options.preferencesHeight);
 
-    Pango::FontDescription defaultFont = get_style_context()->get_font();
-    initialFontFamily = defaultFont.get_family();
-    initialFontSize = defaultFont.get_size() / Pango::SCALE;
+    // Request default font and size from Gtk::Settings
+    const auto defaultSettings = Gtk::Settings::get_default();
+    Glib::ustring defaultFont;
+    defaultSettings->get_property("gtk-font-name", defaultFont);
+    const Pango::FontDescription defaultFontDesc = Pango::FontDescription(defaultFont);
+    initialFontFamily = defaultFontDesc.get_family();
+#if defined(__APPLE__)
+    // Default MacOS font (i.e. "") is not correctly handled
+    // in Gtk css. Replacing it by "-apple-system" to avoid this
+    if (initialFontFamily == ".AppleSystemUIFont") {
+        initialFontFamily = "-apple-system";
+    }
+#endif
+    initialFontSize = defaultFontDesc.get_size() / Pango::SCALE; // Font size is managed in ()"pt" * Pango::SCALE) by Pango (also refer to notes in rtscalable.h)
 
     Gtk::Box* mainBox = get_content_area();
 //GTK318
@@ -113,7 +130,7 @@ Preferences::Preferences(RTWindow *rtwindow)
     nb->append_page(*getBatchProcPanel(), M("PREFERENCES_BATCH_PROCESSING"));
     nb->append_page(*getPerformancePanel(), M("PREFERENCES_TAB_PERFORMANCE"));
     // Sounds only on Windows and Linux
-#if defined(WIN32) || defined(__linux__)
+#if defined(_WIN32) || defined(__linux__)
     nb->append_page(*getSoundsPanel(), M("PREFERENCES_TAB_SOUND"));
 #endif
     nb->set_current_page(0);
@@ -133,14 +150,11 @@ Preferences::~Preferences()
     get_size(options.preferencesWidth, options.preferencesHeight);
 }
 
-int Preferences::getThemeRowNumber (const Glib::ustring& longThemeFName)
+int Preferences::getThemeRowNumber (const Glib::ustring& name)
 {
-
-    if (regex->match(longThemeFName + ".css", matchInfo)) {
-        for (size_t i = 0 ; i < themeFNames.size(); ++i) {
-            if (themeFNames.at(i).longFName == longThemeFName) {
-                return (int)i;
-            }
+    for (size_t i = 0 ; i < themeNames.size(); ++i) {
+        if (themeNames.at(i) == name) {
+            return (int)i;
         }
     }
 
@@ -553,7 +567,7 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     iprofiles->set_size_request(50, -1);
     setExpandAlignProperties(iprofiles, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
     ipconn = iprofiles->signal_changed().connect(sigc::mem_fun(*this, &Preferences::forImageComboChanged));
-    
+
     Gtk::Grid* defpt = Gtk::manage(new Gtk::Grid());
     defpt->set_row_spacing(2);
     defpt->attach(*drlab, 0, 0, 1, 1);
@@ -561,7 +575,7 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     defpt->attach(*drimg, 0, 1, 1, 1);
     defpt->attach(*iprofiles, 1, 1, 1, 1);
     vbpp->pack_start(*defpt, Gtk::PACK_SHRINK, 4);
-    
+
     useBundledProfiles = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_USEBUNDLEDPROFILES")));
     bpconn = useBundledProfiles->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::bundledProfilesChanged));
     vbpp->pack_start(*useBundledProfiles, Gtk::PACK_SHRINK, 4);
@@ -607,9 +621,36 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     fdp->add(*vbdp);
     vbImageProcessing->pack_start (*fdp, Gtk::PACK_SHRINK, 4);
 
-//    Gtk::Frame* fdf = Gtk::manage (new Gtk::Frame (M ("PREFERENCES_DARKFRAME")) );
-//    Gtk::Box* hb42 = Gtk::manage (new Gtk::Box ());
-//    darkFrameDir = Gtk::manage (new Gtk::FileChooserButton (M ("PREFERENCES_DIRDARKFRAMES"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
+    // Metadata
+    Gtk::Frame *mf = Gtk::manage(new Gtk::Frame(M("PREFERENCES_METADATA")));
+    Gtk::Grid *mtbl = Gtk::manage(new Gtk::Grid());
+    setExpandAlignProperties(mtbl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+
+    metadataSyncCombo = Gtk::manage(new Gtk::ComboBoxText());
+    metadataSyncCombo->set_active(0);
+    metadataSyncCombo->append(M("PREFERENCES_METADATA_SYNC_NONE"));
+    metadataSyncCombo->append(M("PREFERENCES_METADATA_SYNC_READ"));
+    metadataSyncCombo->append(M("PREFERENCES_METADATA_SYNC_READWRITE"));
+    Gtk::Label *mlbl = Gtk::manage(new Gtk::Label(M("PREFERENCES_METADATA_SYNC") + ": "));
+    mtbl->attach(*mlbl, 0, 0, 1, 1);
+    mtbl->attach_next_to(*metadataSyncCombo, *mlbl, Gtk::POS_RIGHT, 1, 1);
+    setExpandAlignProperties(mlbl, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(metadataSyncCombo, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+
+    xmpSidecarCombo = Gtk::manage(new Gtk::ComboBoxText());
+    xmpSidecarCombo->set_active(0);
+    xmpSidecarCombo->append(M("PREFERENCES_XMP_SIDECAR_MODE_STD"));
+    xmpSidecarCombo->append(M("PREFERENCES_XMP_SIDECAR_MODE_EXT"));
+
+    mlbl = Gtk::manage(new Gtk::Label(M("PREFERENCES_XMP_SIDECAR_MODE") + ": "));
+    mtbl->attach(*mlbl, 0, 2, 1, 1);
+    mtbl->attach_next_to(*xmpSidecarCombo, *mlbl, Gtk::POS_RIGHT, 1, 1);
+    setExpandAlignProperties(mlbl, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(xmpSidecarCombo, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+
+    mf->add(*mtbl);
+    vbImageProcessing->pack_start(*mf, Gtk::PACK_SHRINK, 4);
+
     // Directories
     Gtk::Frame* cdf = Gtk::manage(new Gtk::Frame(M("PREFERENCES_DIRECTORIES")));
     Gtk::Grid* dirgrid = Gtk::manage(new Gtk::Grid());
@@ -664,8 +705,9 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     dirgrid->attach_next_to(*cameraProfilesDirLabel, *clutsDirLabel, Gtk::POS_BOTTOM, 1, 1);
     dirgrid->attach_next_to(*cameraProfilesDir, *cameraProfilesDirLabel, Gtk::POS_RIGHT, 1, 1);
 
-	//Lens Profiles Dir
+	  //Lens Profiles Dir
     Gtk::Label *lensProfilesDirLabel = Gtk::manage(new Gtk::Label(M("PREFERENCES_LENSPROFILESDIR") + ":"));
+    lensProfilesDirLabel->set_tooltip_text(M("PREFERENCES_LENSPROFILESDIR_TOOLTIP"));
     setExpandAlignProperties(lensProfilesDirLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     lensProfilesDir = Gtk::manage(new MyFileChooserButton(M("PREFERENCES_LENSPROFILESDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
     setExpandAlignProperties(lensProfilesDir, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
@@ -673,7 +715,21 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     dirgrid->attach_next_to(*lensProfilesDirLabel, *cameraProfilesDirLabel, Gtk::POS_BOTTOM, 1, 1);
     dirgrid->attach_next_to(*lensProfilesDir, *lensProfilesDirLabel, Gtk::POS_RIGHT, 1, 1);
 
-	//Pack directories to Image Processing panel
+    // Lensfun DB dir
+    Gtk::Label *lensfunDbDirLabel = Gtk::manage(new Gtk::Label(M("PREFERENCES_LENSFUNDBDIR") + ":"));
+    lensfunDbDirLabel->set_tooltip_text(M("PREFERENCES_LENSFUNDBDIR_TOOLTIP"));
+    setExpandAlignProperties(lensfunDbDirLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    lensfunDbDir = Gtk::manage(new MyFileChooserEntry(M("PREFERENCES_LENSFUNDBDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
+    lensfunDbDir->set_placeholder_text(Glib::ustring::compose("(%1)", M("GENERAL_AUTO")));
+    setExpandAlignProperties(lensfunDbDir, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    Gtk::Label* lensfunDbDirRestartNeededLabel = Gtk::manage(new Gtk::Label(Glib::ustring(" (") + M("PREFERENCES_APPLNEXTSTARTUP") + ")"));
+    setExpandAlignProperties(lensfunDbDirRestartNeededLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+
+    dirgrid->attach_next_to(*lensfunDbDirLabel, *lensProfilesDirLabel, Gtk::POS_BOTTOM, 1, 1);
+    dirgrid->attach_next_to(*lensfunDbDir, *lensfunDbDirLabel, Gtk::POS_RIGHT, 1, 1);
+    dirgrid->attach_next_to(*lensfunDbDirRestartNeededLabel, *lensfunDbDir, Gtk::POS_RIGHT, 1, 1);
+
+    //Pack directories to Image Processing panel
     cdf->add(*dirgrid);
     vbImageProcessing->pack_start (*cdf, Gtk::PACK_SHRINK, 4 );
 
@@ -695,6 +751,29 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     cropGrid->attach(*cropAutoFitCB, 0, 1, 2, 1);
     cropFrame->add(*cropGrid);
     vbImageProcessing->pack_start(*cropFrame, Gtk::PACK_SHRINK, 4);
+
+    // Other: max zoom
+    {
+      Gtk::Frame *frame = Gtk::manage(new Gtk::Frame(M("GENERAL_OTHER")));
+      frame->set_label_align (0.025, 0.5);
+      Gtk::Grid *grid = Gtk::manage(new Gtk::Grid());
+
+      Gtk::Label *label = Gtk::manage(new Gtk::Label(M("PREFERENCES_MAX_ZOOM_TITLE") + ": ", Gtk::ALIGN_START));
+      label->set_line_wrap(true);
+      grid->attach(*label, 0, 0);
+
+      maxZoomCombo = Gtk::manage(new Gtk::ComboBoxText());
+
+      // Labels order matches to Options::MaxZoom enum
+      for (int i = 1; i <= 8; ++i) {
+        maxZoomCombo->append(Glib::ustring::compose("%100%%", i));
+      }
+      maxZoomCombo->append("1600%");
+
+      grid->attach(*maxZoomCombo, 1, 0, 1, 1);
+      frame->add(*grid);
+      vbImageProcessing->pack_start(*frame, Gtk::PACK_SHRINK, 4);
+    }
 
     swImageProcessing->add(*vbImageProcessing);
 
@@ -825,7 +904,7 @@ Gtk::Widget* Preferences::getColorManPanel ()
 
     vbColorMan->pack_start (*iccdgrid, Gtk::PACK_SHRINK);
 
-    
+
     //------------------------- MONITOR ----------------------
 
     Gtk::Frame* fmonitor = Gtk::manage(new Gtk::Frame(M("PREFERENCES_MONITOR")));
@@ -944,7 +1023,7 @@ Gtk::Widget* Preferences::getColorManPanel ()
     fprinter->add(*gprinter);
 
     vbColorMan->pack_start (*fprinter, Gtk::PACK_SHRINK);
-    
+
     //-------------CIECAM
     Gtk::Frame* fcie = Gtk::manage(new Gtk::Frame(M("PREFERENCES_CIE")));
     Gtk::Grid* gcie = Gtk::manage(new Gtk::Grid());
@@ -959,6 +1038,23 @@ Gtk::Widget* Preferences::getColorManPanel ()
     vbColorMan->pack_start (*fcie, Gtk::PACK_SHRINK);
 
 
+    //------------White-Balance auto temperature correlation
+
+    Gtk::Frame* fwbacorr = Gtk::manage(new Gtk::Frame(M("PREFERENCES_WBACORR")));
+    fwbacorr->set_tooltip_text(M("PREFERENCES_WBACORR_TOOLTIP"));
+    fwbacorr->set_label_align(0.025, 0.5);
+    Gtk::Box* wbaVB = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL) );
+    Gtk::Box* wbah = Gtk::manage ( new Gtk::Box () );
+    wbah->set_spacing (4);
+
+    mwbaena = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_WBAENA")));
+    setExpandAlignProperties(mwbaena, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    mwbaena->set_active(true);
+    wbah->pack_start(*mwbaena, Gtk::PACK_SHRINK, 0);
+    wbaVB->add(*wbah);
+
+    fwbacorr->add (*wbaVB);
+    vbColorMan->pack_start (*fwbacorr, Gtk::PACK_SHRINK);
     //-------------
 
     swColorMan->add(*vbColorMan);
@@ -1095,9 +1191,14 @@ Gtk::Widget* Preferences::getGeneralPanel()
     std::vector<Glib::ustring> langs;
     parseDir(argv0 + "/languages", langs, "");
 
-    for (size_t i = 0; i < langs.size(); i++) {
-        if ("default" != langs[i] && "README" != langs[i] && "LICENSE" != langs[i]) {
-            languages->append(langs[i]);
+    for (const auto &lang : langs) {
+        if ("default" != lang && "README" != lang && "LICENSE" != lang) {
+            auto lang_metadata = langMgr.getMetadata(Glib::build_filename(argv0 + "/languages", lang));
+            const auto &display_name =
+                lang_metadata != nullptr
+                    ? Glib::ustring(lang_metadata->getLanguageName(lang))
+                    : lang;
+            languages->append(lang, display_name);
         }
     }
 
@@ -1126,8 +1227,8 @@ Gtk::Widget* Preferences::getGeneralPanel()
     themeCBT = Gtk::manage(new Gtk::ComboBoxText());
     themeCBT->set_active(0);
     parseThemeDir(Glib::build_filename(argv0, "themes"));
-    for (size_t i = 0; i < themeFNames.size(); i++) {
-        themeCBT->append(themeFNames.at(i).shortFName);
+    for (size_t i = 0; i < themeNames.size(); i++) {
+        themeCBT->append(themeNames.at(i));
     }
 
     Gtk::Label* mainFontLbl = Gtk::manage(new Gtk::Label(M("PREFERENCES_APPEARANCE_MAINFONT")));
@@ -1164,11 +1265,8 @@ Gtk::Widget* Preferences::getGeneralPanel()
     navGuideColorCB = Gtk::manage(new Gtk::ColorButton());
     navGuideColorCB->set_use_alpha(true);
 
-    pseudoHiDPI = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_APPEARANCE_PSEUDOHIDPI") + Glib::ustring (" (") + M ("PREFERENCES_APPLNEXTSTARTUP") + ")"));
-    setExpandAlignProperties(pseudoHiDPI, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
-
     Gtk::Separator *vSep = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_VERTICAL));
-    
+
 
     appearanceGrid->attach(*themeLbl,           0, 0, 1, 1);
     appearanceGrid->attach(*themeCBT,           1, 0, 1, 1);
@@ -1182,7 +1280,6 @@ Gtk::Widget* Preferences::getGeneralPanel()
     appearanceGrid->attach(*colorPickerFontFB,  1, 2, 1, 1);
     appearanceGrid->attach(*navGuideColorLbl,   3, 2, 1, 1);
     appearanceGrid->attach(*navGuideColorCB,    4, 2, 1, 1);
-    appearanceGrid->attach(*pseudoHiDPI,        0, 3, 5, 1);
 
     appearanceFrame->add(*appearanceGrid);
     vbGeneral->attach_next_to(*appearanceFrame, *flang, Gtk::POS_BOTTOM, 2, 1);
@@ -1279,7 +1376,7 @@ Gtk::Widget* Preferences::getGeneralPanel()
         hb->pack_start(*editor_dir_custom_path, Gtk::PACK_EXPAND_WIDGET, 2);
         vb->pack_start(*hb);
         f->add(*vb);
-        
+
         hb = Gtk::manage(new Gtk::Box());
         hb->pack_start(*externalEditors);
         hb->pack_start(*f, Gtk::PACK_EXPAND_WIDGET, 4);
@@ -1296,8 +1393,8 @@ Gtk::Widget* Preferences::getGeneralPanel()
         vb->show();
         fdg->add(*vb);
     }
- 
- 
+
+
     vbGeneral->attach_next_to (*fdg, *fclip, Gtk::POS_BOTTOM, 2, 1);
     langAutoDetectConn = ckbLangAutoDetect->signal_toggled().connect(sigc::mem_fun(*this, &Preferences::langAutoDetectToggled));
     tconn = themeCBT->signal_changed().connect ( sigc::mem_fun (*this, &Preferences::themeChanged) );
@@ -1321,10 +1418,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
     sdlast     = Gtk::manage(new Gtk::RadioButton(M("PREFERENCES_DIRLAST")));
     sdhome     = Gtk::manage(new Gtk::RadioButton(M("PREFERENCES_DIRHOME")));
     sdother    = Gtk::manage(new Gtk::RadioButton(M("PREFERENCES_DIROTHER") + ": "));
-    startupdir = Gtk::manage(new Gtk::Entry());
-
-    Gtk::Button* sdselect = Gtk::manage(new Gtk::Button());
-    sdselect->set_image (*Gtk::manage (new RTImage ("folder-open-small.png")));
+    startupdir = Gtk::manage(new MyFileChooserEntry(M("PREFERENCES_DIRSELECTDLG"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
 
     Gtk::RadioButton::Group opts = sdcurrent->get_group();
     sdlast->set_group(opts);
@@ -1338,13 +1432,10 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
     Gtk::Box* otherbox = Gtk::manage(new Gtk::Box());
     otherbox->pack_start(*sdother, Gtk::PACK_SHRINK);
     otherbox->pack_start(*startupdir);
-    otherbox->pack_end(*sdselect, Gtk::PACK_SHRINK, 4);
     vbsd->pack_start(*otherbox, Gtk::PACK_SHRINK, 0);
 
     fsd->add(*vbsd);
     vbFileBrowser->pack_start (*fsd, Gtk::PACK_SHRINK, 4);
-
-    sdselect->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::selectStartupDir));
 
 //---
 
@@ -1457,10 +1548,10 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
     delExt->set_tooltip_text(M("PREFERENCES_PARSEDEXTDELHINT"));
     moveExtUp->set_tooltip_text(M("PREFERENCES_PARSEDEXTUPHINT"));
     moveExtDown->set_tooltip_text(M("PREFERENCES_PARSEDEXTDOWNHINT"));
-    Gtk::Image* addExtImg = Gtk::manage ( new RTImage ("add-small.png") );
-    Gtk::Image* delExtImg = Gtk::manage ( new RTImage ("remove-small.png") );
-    Gtk::Image* moveExtUpImg = Gtk::manage(new RTImage("arrow-up-small.png"));
-    Gtk::Image* moveExtDownImg = Gtk::manage(new RTImage("arrow-down-small.png"));
+    Gtk::Image* addExtImg = Gtk::manage ( new RTImage ("add-small", Gtk::ICON_SIZE_BUTTON) );
+    Gtk::Image* delExtImg = Gtk::manage ( new RTImage ("remove-small", Gtk::ICON_SIZE_BUTTON) );
+    Gtk::Image* moveExtUpImg = Gtk::manage(new RTImage("arrow-up-small", Gtk::ICON_SIZE_BUTTON));
+    Gtk::Image* moveExtDownImg = Gtk::manage(new RTImage("arrow-down-small", Gtk::ICON_SIZE_BUTTON));
     addExt->add(*addExtImg);
     delExt->add(*delExtImg);
     moveExtUp->set_image(*moveExtUpImg);
@@ -1663,7 +1754,7 @@ void Preferences::parseThemeDir(Glib::ustring dirname)
         return;
     }
 
-    // process directory
+    // Process directory
     Glib::Dir* dir = nullptr;
 
     try {
@@ -1673,40 +1764,17 @@ void Preferences::parseThemeDir(Glib::ustring dirname)
     }
 
     for (Glib::DirIterator i = dir->begin(); i != dir->end(); ++i) {
-        Glib::ustring fname = Glib::build_filename(dirname, *i);
-        Glib::ustring sname = *i;
+        Glib::ustring fname = *i;
 
-        // ignore directories and filter out unsupported theme
-        if (regex->match(sname, matchInfo) && !Glib::file_test(fname, Glib::FILE_TEST_IS_DIR) && sname.size() >= 4) {
-            bool keepIt = false;
-            Glib::ustring fname2 = matchInfo.fetch(1);
-            Glib::ustring minMinor = matchInfo.fetch(2);
-            Glib::ustring maxMinor = matchInfo.fetch(3);
-
-            if (!minMinor.empty()) {
-                guint64 minMinorVal = g_ascii_strtoll(minMinor.c_str(), 0, 0);
-
-                if ((guint64)GTK_MINOR_VERSION >= minMinorVal) {
-                    keepIt = true;
-                }
-            }
-
-            if (!maxMinor.empty()) {
-                guint64 maxMinorVal = g_ascii_strtoll(maxMinor.c_str(), 0, 0);
-
-                if ((guint64)GTK_MINOR_VERSION <= maxMinorVal) {
-                    keepIt = true;
-                }
-            }
-
-            if (keepIt) {
-                themeFNames.push_back(ThemeFilename(matchInfo.fetch(1), sname.substr(0, sname.size() - 4)));
-            }
+        // Ignore directories and filter to keep css files only
+        if (regex->match(fname, matchInfo) && !Glib::file_test(fname, Glib::FILE_TEST_IS_DIR) && fname.size() >= 4) {
+            themeNames.push_back(fname.substr(0, fname.size() - 4));
         }
     }
 
-    std::sort(themeFNames.begin(), themeFNames.end(), [](const ThemeFilename & firstDir, const ThemeFilename & secondDir) {
-        return firstDir.longFName < secondDir.longFName;
+    // Sort theme by names
+    std::sort(themeNames.begin(), themeNames.end(), [](const Glib::ustring & first, const Glib::ustring & second) {
+        return first < second;
     });
 
     delete dir;
@@ -1743,9 +1811,9 @@ void Preferences::storePreferences()
     moptions.menuGroupExtProg = ckbmenuGroupExtProg->get_active();
     moptions.highlightThreshold = (int)hlThresh->get_value();
     moptions.shadowThreshold = (int)shThresh->get_value();
-    moptions.language = languages->get_active_text();
+    moptions.language = languages->get_active_id();
     moptions.languageAutoDetect = ckbLangAutoDetect->get_active();
-    moptions.theme = themeFNames.at (themeCBT->get_active_row_number ()).longFName;
+    moptions.theme = themeNames.at (themeCBT->get_active_row_number ());
 
     Gdk::RGBA cropCol = cropMaskColorCB->get_rgba();
     moptions.cutOverlayBrush[0] = cropCol.get_red();
@@ -1773,11 +1841,14 @@ void Preferences::storePreferences()
         moptions.CPFontSize = cpfd.get_size() / Pango::SCALE;
     }
 
-    moptions.pseudoHiDPISupport = pseudoHiDPI->get_active();
-
     const std::vector<ExternalEditorPreferences::EditorInfo> &editors = externalEditors->getEditors();
     moptions.externalEditors.resize(editors.size());
-    moptions.externalEditorIndex = -1;
+    moptions.externalEditorIndex =
+#ifdef __APPLE__
+        editors.empty() ? -1 : 0;
+#else
+        -1;
+#endif
     for (unsigned i = 0; i < editors.size(); i++) {
         moptions.externalEditors[i] = (ExternalEditor(
             editors[i].name, editors[i].command, editors[i].native_command, editors[i].icon_serialized));
@@ -1851,6 +1922,7 @@ void Preferences::storePreferences()
     moptions.rtSettings.monitorBPC = monBPC->get_active();
     moptions.rtSettings.autoMonitorProfile = cbAutoMonProfile->get_active();
     moptions.rtSettings.autocielab = mcie->get_active();
+    moptions.rtSettings.itcwb_enable = mwbaena->get_active();
 
 #endif
 
@@ -1867,7 +1939,7 @@ void Preferences::storePreferences()
         moptions.startupDir = STARTUPDIR_LAST;
     } else if (sdother->get_active()) {
         moptions.startupDir = STARTUPDIR_CUSTOM;
-        moptions.startupPath = startupdir->get_text();
+        moptions.startupPath = startupdir->get_filename();
     }
 
     moptions.parseExtensions.clear();
@@ -1901,8 +1973,9 @@ void Preferences::storePreferences()
     moptions.rtSettings.darkFramesPath = darkFrameDir->get_filename();
     moptions.rtSettings.flatFieldsPath = flatFieldDir->get_filename();
     moptions.clutsDir = clutsDir->get_filename();
-	moptions.rtSettings.cameraProfilesPath = cameraProfilesDir->get_filename();
-	moptions.rtSettings.lensProfilesPath = lensProfilesDir->get_filename();
+    moptions.rtSettings.cameraProfilesPath = cameraProfilesDir->get_filename();
+    moptions.rtSettings.lensProfilesPath = lensProfilesDir->get_filename();
+    moptions.rtSettings.lensfunDbDirectory = lensfunDbDir->get_filename();
 
     moptions.baBehav.resize(ADDSET_PARAM_NUM);
 
@@ -1941,7 +2014,7 @@ void Preferences::storePreferences()
     moptions.rtSettings.thumbnail_inspector_mode = static_cast<rtengine::Settings::ThumbnailInspectorMode>(thumbnailInspectorMode->get_active_row_number());
 
 // Sounds only on Windows and Linux
-#if defined(WIN32) || defined(__linux__)
+#if defined(_WIN32) || defined(__linux__)
     moptions.sndEnable = ckbSndEnable->get_active();
     moptions.sndBatchQueueDone = txtSndBatchQueueDone->get_text();
     moptions.sndLngEditProcDone = txtSndLngEditProcDone->get_text();
@@ -1950,8 +2023,12 @@ void Preferences::storePreferences()
 
     moptions.cropGuides = Options::CropGuidesMode(cropGuidesCombo->get_active_row_number());
     moptions.cropAutoFit = cropAutoFitCB->get_active();
+    moptions.maxZoomLimit = Options::MaxZoom(maxZoomCombo->get_active_row_number());
 
     toolLocationPreference->updateOptions();
+
+    moptions.rtSettings.metadata_xmp_sync = rtengine::Settings::MetadataXmpSync(metadataSyncCombo->get_active_row_number());
+    moptions.rtSettings.xmp_sidecar_style = rtengine::Settings::XmpSidecarStyle(xmpSidecarCombo->get_active_row_number());
 }
 
 void Preferences::fillPreferences()
@@ -2015,6 +2092,7 @@ void Preferences::fillPreferences()
 
     monBPC->set_active(moptions.rtSettings.monitorBPC);
     mcie->set_active(moptions.rtSettings.autocielab);
+    mwbaena->set_active(moptions.rtSettings.itcwb_enable);
 
     cbAutoMonProfile->set_active(moptions.rtSettings.autoMonitorProfile);
 #endif
@@ -2024,7 +2102,7 @@ void Preferences::fillPreferences()
     }
 
     cprevdemo->set_active (moptions.prevdemo);
-    languages->set_active_text(moptions.language);
+    languages->set_active_id(moptions.language);
     ckbLangAutoDetect->set_active(moptions.languageAutoDetect);
     int themeNbr = getThemeRowNumber(moptions.theme);
     themeCBT->set_active (themeNbr == -1 ? 0 : themeNbr);
@@ -2040,18 +2118,16 @@ void Preferences::fillPreferences()
     navGuideColorCB->set_alpha ( (unsigned short) (moptions.navGuideBrush[3] * 65535.0));
 
     if (options.fontFamily == "default") {
-        mainFontFB->set_font_name (Glib::ustring::compose ("%1 %2", initialFontFamily, initialFontSize));
+        mainFontFB->set_font_name (Glib::ustring::compose ("%1, %2", initialFontFamily, initialFontSize));
     } else {
-        mainFontFB->set_font_name (Glib::ustring::compose ("%1 %2", options.fontFamily, options.fontSize));
+        mainFontFB->set_font_name (Glib::ustring::compose ("%1, %2", options.fontFamily, options.fontSize));
     }
 
     if (options.CPFontFamily == "default") {
-        colorPickerFontFB->set_font_name (Glib::ustring::compose ("%1 %2", initialFontFamily, initialFontSize));
+        colorPickerFontFB->set_font_name (Glib::ustring::compose ("%1, %2", initialFontFamily, initialFontSize));
     } else {
-        colorPickerFontFB->set_font_name (Glib::ustring::compose ("%1 %2", options.CPFontFamily, options.CPFontSize));
+        colorPickerFontFB->set_font_name (Glib::ustring::compose ("%1, %2", options.CPFontFamily, options.CPFontSize));
     }
-
-    pseudoHiDPI->set_active(options.pseudoHiDPISupport);
 
     showDateTime->set_active(moptions.fbShowDateTime);
     showBasicExif->set_active(moptions.fbShowBasicExif);
@@ -2098,7 +2174,7 @@ void Preferences::fillPreferences()
         sdhome->set_active();
     } else if (moptions.startupDir == STARTUPDIR_CUSTOM) {
         sdother->set_active();
-        startupdir->set_text(moptions.startupPath);
+        startupdir->set_current_folder(moptions.startupPath);
     }
 
     extensionModel->clear();
@@ -2134,7 +2210,7 @@ void Preferences::fillPreferences()
     }
 
     curveBBoxPosC->set_active(moptions.curvebboxpos);
-    complexitylocal->set_active(moptions.complexity); 
+    complexitylocal->set_active(moptions.complexity);
     inspectorWindowCB->set_active(moptions.inspectorWindow);
     zoomOnScrollCB->set_active(moptions.zoomOnScroll);
 
@@ -2163,10 +2239,12 @@ void Preferences::fillPreferences()
     flatFieldChanged();
 
     clutsDir->set_current_folder(moptions.clutsDir);
-	
-	cameraProfilesDir->set_current_folder(moptions.rtSettings.cameraProfilesPath);
-	
-	lensProfilesDir->set_current_folder(moptions.rtSettings.lensProfilesPath);
+
+    cameraProfilesDir->set_current_folder(moptions.rtSettings.cameraProfilesPath);
+
+    lensProfilesDir->set_current_folder(moptions.rtSettings.lensProfilesPath);
+
+    lensfunDbDir->set_current_folder(moptions.rtSettings.lensfunDbDirectory);
 
     addc.block(true);
     setc.block(true);
@@ -2183,6 +2261,7 @@ void Preferences::fillPreferences()
 
     cropGuidesCombo->set_active(moptions.cropGuides);
     cropAutoFitCB->set_active(moptions.cropAutoFit);
+    maxZoomCombo->set_active(static_cast<int>(options.maxZoomLimit));
 
     addc.block(false);
     setc.block(false);
@@ -2199,12 +2278,15 @@ void Preferences::fillPreferences()
     chOverwriteOutputFile->set_active(moptions.overwriteOutputFile);
 
     // Sounds only on Windows and Linux
-#if defined(WIN32) || defined(__linux__)
+#if defined(_WIN32) || defined(__linux__)
     ckbSndEnable->set_active(moptions.sndEnable);
     txtSndBatchQueueDone->set_text(moptions.sndBatchQueueDone);
     txtSndLngEditProcDone->set_text(moptions.sndLngEditProcDone);
     spbSndLngEditProcDoneSecs->set_value(moptions.sndLngEditProcDoneSecs);
 #endif
+
+    metadataSyncCombo->set_active(int(moptions.rtSettings.metadata_xmp_sync));
+    xmpSidecarCombo->set_active(int(moptions.rtSettings.xmp_sidecar_style));
 }
 
 /*
@@ -2267,15 +2349,14 @@ void Preferences::okPressed()
 void Preferences::cancelPressed()
 {
     // set the initial theme back
-    if (themeFNames.at (themeCBT->get_active_row_number ()).longFName != options.theme) {
-        RTImage::updateImages();
+    if (themeNames.at (themeCBT->get_active_row_number ()) != options.theme) {
         switchThemeTo(options.theme);
     }
 
     // set the initial font back
     Pango::FontDescription fd (mainFontFB->get_font_name());
 
-    if (fd.get_family() != options.fontFamily && (fd.get_size() / Pango::SCALE) != options.fontSize) {
+    if (fd.get_family() != options.fontFamily || (fd.get_size() / Pango::SCALE) != options.fontSize) {
         if (options.fontFamily == "default") {
             switchFontTo(initialFontFamily, initialFontSize);
         } else {
@@ -2295,23 +2376,6 @@ void Preferences::cancelPressed()
     hide();
 }
 
-void Preferences::selectStartupDir()
-{
-
-    Gtk::FileChooserDialog dialog(getToplevelWindow(this), M("PREFERENCES_DIRSELECTDLG"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER);
-    //dialog.set_transient_for(*this);
-
-    //Add response buttons to the dialog:
-    dialog.add_button(M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
-    dialog.add_button(M("GENERAL_OPEN"), Gtk::RESPONSE_OK);
-
-    int result = dialog.run();
-
-    if (result == Gtk::RESPONSE_OK) {
-        startupdir->set_text(dialog.get_filename());
-    }
-}
-
 void Preferences::aboutPressed()
 {
 
@@ -2324,8 +2388,7 @@ void Preferences::aboutPressed()
 void Preferences::themeChanged()
 {
 
-    moptions.theme = themeFNames.at (themeCBT->get_active_row_number ()).longFName;
-    RTImage::updateImages();
+    moptions.theme = themeNames.at (themeCBT->get_active_row_number ());
     switchThemeTo(moptions.theme);
 }
 
@@ -2490,33 +2553,23 @@ void Preferences::cpFontChanged()
 
 void Preferences::switchFontTo(const Glib::ustring &newFontFamily, const int newFontSize)
 {
+    // Create CssProvider if not existing
+    if (!fontcss) {
+        fontcss = Gtk::CssProvider::create();
+        Glib::RefPtr<Gdk::Screen> screen = Gdk::Screen::get_default();
+        Gtk::StyleContext::add_provider_for_screen(screen, fontcss, GTK_STYLE_PROVIDER_PRIORITY_USER);
+    }
 
-    if (newFontFamily != "default") {
-        if (!fontcss) {
-            fontcss = Gtk::CssProvider::create();
-            Glib::RefPtr<Gdk::Screen> screen = Gdk::Screen::get_default();
-            Gtk::StyleContext::add_provider_for_screen(screen, fontcss, GTK_STYLE_PROVIDER_PRIORITY_USER);
-        }
+    // Create css to load based on new font name and size
+    const auto css = Glib::ustring::compose ("* { font-family: %1; font-size: %2pt }", newFontFamily, newFontSize);
 
-        try {
-            //GTK318
-//#if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
-//            fontcss->load_from_data (Glib::ustring::compose ("* { font-family: %1; font-size: %2px }", newFontFamily, newFontSize * RTScalable::getScale()));
-//#else
-            fontcss->load_from_data (Glib::ustring::compose ("* { font-family: %1; font-size: %2pt }", newFontFamily, newFontSize * RTScalable::getScale()));
-//#endif
-            //GTK318
-        } catch (Glib::Error &err) {
-            printf("Error: \"%s\"\n", err.what().c_str());
-        } catch (...) {
-            printf("Error: Can't find the font named \"%s\"\n", newFontFamily.c_str());
-        }
-    } else {
-        if (fontcss) {
-            fontcss = Gtk::CssProvider::create();
-            Glib::RefPtr<Gdk::Screen> screen = Gdk::Screen::get_default();
-            Gtk::StyleContext::remove_provider_for_screen(screen, fontcss);
-        }
+    // Load css to update font name and size
+    try {
+        fontcss->load_from_data (css);
+    } catch (Glib::Error &err) {
+        printf("Error: \"%s\"\n", err.what().c_str());
+    } catch (...) {
+        printf("Error: Can't load the desired font correctly\n");
     }
 }
 

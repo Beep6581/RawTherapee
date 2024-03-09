@@ -79,7 +79,7 @@ constexpr int mouseOverIdToLineId(int mouse_over_id)
 
 ControlLineManager::ControlLineManager():
     EditSubscriber(ET_OBJECTS),
-    canvas_area(new Rectangle()),
+    canvas_area(new EditRectangle()),
     cursor(CSHandOpen),
     draw_mode(false),
     drawing_line(false),
@@ -92,14 +92,14 @@ ControlLineManager::ControlLineManager():
     canvas_area->topLeft = Coord(0, 0);
     mouseOverGeometry.push_back(canvas_area.get());
 
-    line_icon_h = Cairo::RefPtr<RTSurface>(new RTSurface(
-            "bidirectional-arrow-horizontal-hicontrast.png"));
-    line_icon_v = Cairo::RefPtr<RTSurface>(new RTSurface(
-            "bidirectional-arrow-vertical-hicontrast.png"));
-    line_icon_h_prelight = Cairo::RefPtr<RTSurface>(new RTSurface(
-                               "bidirectional-arrow-horizontal-prelight.png"));
-    line_icon_v_prelight = Cairo::RefPtr<RTSurface>(new RTSurface(
-                               "bidirectional-arrow-vertical-prelight.png"));
+    line_icon_h = std::shared_ptr<RTSurface>(new RTSurface(
+            "bidirectional-arrow-horizontal-hicontrast", Gtk::ICON_SIZE_BUTTON));
+    line_icon_v = std::shared_ptr<RTSurface>(new RTSurface(
+            "bidirectional-arrow-vertical-hicontrast", Gtk::ICON_SIZE_BUTTON));
+    line_icon_h_prelight = std::shared_ptr<RTSurface>(new RTSurface(
+                               "bidirectional-arrow-horizontal-prelight", Gtk::ICON_SIZE_BUTTON));
+    line_icon_v_prelight = std::shared_ptr<RTSurface>(new RTSurface(
+                               "bidirectional-arrow-vertical-prelight", Gtk::ICON_SIZE_BUTTON));
 }
 
 ControlLineManager::~ControlLineManager() = default;
@@ -438,8 +438,8 @@ void ControlLineManager::addLine(Coord begin, Coord end,
     line->begin = begin;
     line->end = end;
 
-    const Cairo::RefPtr<RTSurface> null_surface =
-        Cairo::RefPtr<RTSurface>(nullptr);
+    const std::shared_ptr<RTSurface> null_surface =
+        std::shared_ptr<RTSurface>(nullptr);
 
     icon_h = std::make_shared<OPIcon>(line_icon_h, null_surface,
                                       line_icon_h_prelight,

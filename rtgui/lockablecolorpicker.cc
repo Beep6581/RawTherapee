@@ -20,15 +20,23 @@
 #include "lockablecolorpicker.h"
 #include "options.h"
 #include "../rtengine/color.h"
+#include "../rtengine/improcfun.h"
 #include "../rtengine/rt_math.h"
 #include "../rtengine/utils.h"
 #include "imagearea.h"
 #include "multilangmgr.h"
 #include "navigator.h"
 
-LockableColorPicker::LockableColorPicker (CropWindow* cropWindow, Glib::ustring *oProfile, Glib::ustring *wProfile)
+namespace
+{
+
+const rtengine::procparams::ColorManagementParams DEFAULT_CMP;
+
+}
+
+LockableColorPicker::LockableColorPicker (CropWindow* cropWindow, rtengine::procparams::ColorManagementParams *color_management_params)
 : cropWindow(cropWindow), displayedValues(ColorPickerType::RGB), position(0, 0), size(Size::S15),
-  outputProfile(oProfile), workingProfile(wProfile), validity(Validity::OUTSIDE),
+  color_management_params(color_management_params), validity(Validity::OUTSIDE),
   r(0.f), g(0.f), b(0.f), rpreview(0.f), gpreview(0.f), bpreview(0.f), hue(0.f), sat(0.f), val(0.f), L(0.f), a(0.f), bb(0.f)
 {}
 
@@ -45,10 +53,13 @@ void LockableColorPicker::updateBackBuffer ()
         Gtk::DrawingArea *iArea = cropWindow->getImageArea();
 
         Glib::RefPtr<Pango::Context> pangoContext = iArea->get_pango_context ();
-        Pango::FontDescription fontd = pangoContext->get_font_description();
+        Pango::FontDescription fontd = iArea->get_style_context()->get_font();
         // set font family and size
         fontd.set_family(options.CPFontFamily == "default" ? "sans" : options.CPFontFamily);
-        fontd.set_size((options.CPFontFamily == "default" ? 8 : options.CPFontSize) * Pango::SCALE);
+        const int fontSize = options.CPFontFamily == "default" ? 8 : options.CPFontSize; // pt
+        // Non-absolute size is defined in "Pango units" and shall be multiplied by
+        // Pango::SCALE from "pt":
+        fontd.set_size (fontSize * Pango::SCALE);
         fontd.set_weight(Pango::WEIGHT_NORMAL);
         pangoContext->set_font_description (fontd);
 
@@ -277,7 +288,16 @@ void LockableColorPicker::setRGB (const float R, const float G, const float B, c
     bpreview = previewB;
 
     rtengine::Color::rgb2hsv01(r, g, b, hue, sat, val);
-    rtengine::Color::rgb2lab01(*outputProfile, *workingProfile, r, g, b, L, a, bb, options.rtSettings.HistogramWorking);  // TODO: Really sure this function works?
+    rtengine::ImProcFunctions::rgb2lab(
+        static_cast<std::uint8_t>(255 * r),
+        static_cast<std::uint8_t>(255 * g),
+        static_cast<std::uint8_t>(255 * b),
+        L, a, bb,
+        color_management_params != nullptr ? *color_management_params : DEFAULT_CMP,
+        true);
+    L /= 327.68f;
+    a /= 327.68f;
+    bb /= 327.68f;
 
     if (validity != Validity::OUTSIDE) {
         setDirty(true);

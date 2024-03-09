@@ -1,90 +1,91 @@
-#01 keenonkites; Aktualisierte Version für 2.3 beta2
-#02 phberlin; basiert auf keenonkites' Erstübersetzung
-#03 2007-12-20
-#04 2007-12-22
-#05 2008-01-08
-#06 2008-01-15
-#07 2008-02-20
-#08 2008-12-19 keenonkites, Anpassungen für 2.4beta4
-#09 2008-09-20 keenonkites, Anpassungen für 2.4m2
-#10 2008-04-04 Anpassungen für 2.4
-#11 Leichte Anpassungen (keenonkites/klonk)
-#12 Erweiterung (oduis)
-#13 Erweiterung (oduis)
-#14 Erweiterung (oduis)
-#15 Erweiterung (oduis)
-#16 2012-12-05 3.0 alpha: Erweiterung und Korrekturen (Metex)
-#17 2012-04-29 Erweiterungen und Korrekturen (MaWe)
-#18 Erweiterung (oduis)
-#19 Erweiterung (oduis)
-#20 2013-02-27 Erweiterung (cytrinox)
-#21 2013-12-31 Erweiterung (Ingo)
-#22 2015-09-04 komplette Überarbeitung (TooWaBoo)
-#23 2015-10-24 Retinexübersetzung und Korrekturen (TooWaBoo)
-#24 2015-11-01 Korrekturen (TooWaBoo) RT4.2.450
-#25 2015-11-30 Korrekturen (TooWaBoo) RT4.2.507
-#26 2015-12-13 Korrekturen (TooWaBoo) RT4.2.514
-#26 2015-12-22 Korrekturen (TooWaBoo) RT4.2.536
-#27 2016-02-12 Retinexübersetzung (TooWaBoo) RT4.2.730
-#28 2016-03-19 Erweiterung/Korrekturen (TooWaBoo) RT4.2.880
-#29 2016-05-24 Erweiterung/Korrekturen (TooWaBoo) RT4.2.1005
-#30 2016-09-30 Erweiterung/Korrekturen (TooWaBoo) RT4.2.1234
-#31 2016-12-01 Erweiterung/Korrekturen (TooWaBoo) RT4.2.1408
-#32 2016-12-29 Erweiterung/Korrekturen (TooWaBoo) RT4.2.1464
-#33 2017-01-04 Erweiterung/Korrekturen/Soft-Proofing (TooWaBoo) RT4.2.1477
-#34 2017-01-07 IPTC (TooWaBoo) RT4.2.1492
-#35 2017-02-18 AWB bias (TooWaBoo) RT 5.0 r1
-#36 2017-02-23 Korrekturen (TooWaBoo)  RT 5.0 r1
-#37 2017-03-06 Dynamisches Profil (TooWaBoo) RT 5.0 r1
-#38 2017-03-26 Pixel-Shift (TooWaBoo) RT 5.0 r1
-#39 06.04.2017 Fast Export (TooWaBoo) RT 5.0 r1
-#40 30.04.2017 Erweiterung/Korrekturen (TooWaBoo) RT 5.0 r1
-#41 03.05.2017 Erweiterung/Korrekturen (TooWaBoo) RT 5.0 r1
-#42 13.05.2017 Erweiterung (TooWaBoo) RT 5.0 r1
-#43 21.07.2017 Erweiterung (TooWaBoo) RT 5.1
-#44 21.09.2017 Erweiterung (TooWaBoo) RT 5.2
-#45 15.10.2017 Erweiterung (TooWaBoo) RT 5.3
-#46 18.10.2017 Erweiterung (TooWaBoo) RT 5.3
-#47 19.11.2017 HDR-Dynamikkompression (TooWaBoo) RT 5.3
-#48 13.12.2017 Erweiterung (TooWaBoo) RT 5.3
-#49 21.12.2017 Lokaler Kontrast (TooWaBoo) RT 5.3
-#50 07.01.2018 Crop Settings (TooWaBoo) RT 5.3
-#51 10.02.2018 Erweiterung (TooWaBoo) RT 5.3
-#52 10.02.2018 Korrektur (TooWaBoo) RT 5.3
-#53 26.02.2018 Erweiterung (TooWaBoo) RT 5.3
-#54 30.03.2018 Erweiterung (TooWaBoo) RT 5.4
-#55 06.04.2018 Erweiterung (TooWaBoo) RT 5.4
-#56 27.04.2018 Erweiterung (TooWaBoo) RT 5.4
-#57 17.05.2018 Erweiterung (TooWaBoo) RT 5.4
-#58 19.05.2018 Erweiterung (TooWaBoo) RT 5.4
-#59 29.05.2018 Erweiterung (TooWaBoo) RT 5.4
-#60 14.06.2018 Erweiterung (TooWaBoo) RT 5.4
-#61 14.06.2018 Korrektur (TooWaBoo) RT 5.4
-#62 22.06.2018 Korrektur (TooWaBoo) RT 5.4
-#63 24.06.2018 DCB/RCD+VNG4 (TooWaBoo) RT 5.4
-#64 24.06.2018 Erweiterung/Korrektur (TooWaBoo) RT 5.4
-#65 25.06.2018 Korrekturen (TooWaBoo) RT 5.4
-#66 04.07.2018 Erweiterung (TooWaBoo) RT 5.4
-#67 05.07.2018 Erweiterung (TooWaBoo) RT 5.4
-#68 05.07.2018 Erweiterung (TooWaBoo) RT 5.4
-#69 25.07.2018 Erweiterung (TooWaBoo) RT 5.4
-#70 25.07.2018 Korrekturen (TooWaBoo) RT 5.4
-#71 28.09.2018 Korrekturen (TooWaBoo) RT 5.5
-#72 05.10.2018 Korrekturen (TooWaBoo) RT 5.5
-#73 21.11.2018 Erweiterung (TooWaBoo) RT 5.5
-#74 24.11.2018 Erweiterung (TooWaBoo) RT 5.5
-#75 02.12.2018 Erweiterung (TooWaBoo) RT 5.5
-#76 11.12.2018 Erweiterung (TooWaBoo) RT 5.5
-#77 16.12.2018 Korrektur Farbwähler-Tooltip (TooWaBoo) RT 5.5
-#78 19.01.2019 Erweiterung (TooWaBoo) RT 5.5
-#79 24.02.2019 Erweiterung (TooWaBoo) RT 5.5
-#80 25.03.2019 Erweiterung (TooWaBoo) RT 5.6
-#81 15.04.2019 Erweiterung (TooWaBoo) RT 5.6
-#82 25.05.2019 Erweiterung (TooWaBoo) RT 5.6
-#83 06.07.2019 Erweiterung (TooWaBoo) RT 5.6
-#84 06.10.2019 Erweiterung (TooWaBoo) RT 5.7
-#84 18.07.2019 Erweiterung (TooWaBoo) RT 5.6
-#85 29.07.2022 Erweiterung (marter, mozzihh) RT 5.9 
+#001 keenonkites; Aktualisierte Version für 2.3 beta2
+#002 phberlin; basiert auf keenonkites' Erstübersetzung
+#003 2007-12-20
+#004 2007-12-22
+#005 2008-01-08
+#006 2008-01-15
+#007 2008-02-20
+#008 2008-12-19 keenonkites, Anpassungen für 2.4beta4
+#009 2008-09-20 keenonkites, Anpassungen für 2.4m2
+#010 2008-04-04 Anpassungen für 2.4
+#011 Leichte Anpassungen (keenonkites/klonk)
+#012 Erweiterung (oduis)
+#013 Erweiterung (oduis)
+#014 Erweiterung (oduis)
+#015 Erweiterung (oduis)
+#016 2012-12-05 3.0 alpha: Erweiterung und Korrekturen (Metex)
+#017 2012-04-29 Erweiterungen und Korrekturen (MaWe)
+#018 Erweiterung (oduis)
+#019 Erweiterung (oduis)
+#020 2013-02-27 Erweiterung (cytrinox)
+#021 2013-12-31 Erweiterung (Ingo)
+#022 2015-09-04 komplette Überarbeitung (TooWaBoo)
+#023 2015-10-24 Retinexübersetzung und Korrekturen (TooWaBoo)
+#024 2015-11-01 Korrekturen (TooWaBoo) RT4.2.450
+#025 2015-11-30 Korrekturen (TooWaBoo) RT4.2.507
+#026 2015-12-13 Korrekturen (TooWaBoo) RT4.2.514
+#026 2015-12-22 Korrekturen (TooWaBoo) RT4.2.536
+#027 2016-02-12 Retinexübersetzung (TooWaBoo) RT4.2.730
+#028 2016-03-19 Erweiterung/Korrekturen (TooWaBoo) RT4.2.880
+#029 2016-05-24 Erweiterung/Korrekturen (TooWaBoo) RT4.2.1005
+#030 2016-09-30 Erweiterung/Korrekturen (TooWaBoo) RT4.2.1234
+#031 2016-12-01 Erweiterung/Korrekturen (TooWaBoo) RT4.2.1408
+#032 2016-12-29 Erweiterung/Korrekturen (TooWaBoo) RT4.2.1464
+#033 2017-01-04 Erweiterung/Korrekturen/Soft-Proofing (TooWaBoo) RT4.2.1477
+#034 2017-01-07 IPTC (TooWaBoo) RT4.2.1492
+#035 2017-02-18 AWB bias (TooWaBoo) RT 5.0 r1
+#036 2017-02-23 Korrekturen (TooWaBoo)  RT 5.0 r1
+#037 2017-03-06 Dynamisches Profil (TooWaBoo) RT 5.0 r1
+#038 2017-03-26 Pixel-Shift (TooWaBoo) RT 5.0 r1
+#039 06.04.2017 Fast Export (TooWaBoo) RT 5.0 r1
+#040 30.04.2017 Erweiterung/Korrekturen (TooWaBoo) RT 5.0 r1
+#041 03.05.2017 Erweiterung/Korrekturen (TooWaBoo) RT 5.0 r1
+#042 13.05.2017 Erweiterung (TooWaBoo) RT 5.0 r1
+#043 21.07.2017 Erweiterung (TooWaBoo) RT 5.1
+#044 21.09.2017 Erweiterung (TooWaBoo) RT 5.2
+#045 15.10.2017 Erweiterung (TooWaBoo) RT 5.3
+#046 18.10.2017 Erweiterung (TooWaBoo) RT 5.3
+#047 19.11.2017 HDR-Dynamikkompression (TooWaBoo) RT 5.3
+#048 13.12.2017 Erweiterung (TooWaBoo) RT 5.3
+#049 21.12.2017 Lokaler Kontrast (TooWaBoo) RT 5.3
+#050 07.01.2018 Crop Settings (TooWaBoo) RT 5.3
+#051 10.02.2018 Erweiterung (TooWaBoo) RT 5.3
+#052 10.02.2018 Korrektur (TooWaBoo) RT 5.3
+#053 26.02.2018 Erweiterung (TooWaBoo) RT 5.3
+#054 30.03.2018 Erweiterung (TooWaBoo) RT 5.4
+#055 06.04.2018 Erweiterung (TooWaBoo) RT 5.4
+#056 27.04.2018 Erweiterung (TooWaBoo) RT 5.4
+#057 17.05.2018 Erweiterung (TooWaBoo) RT 5.4
+#058 19.05.2018 Erweiterung (TooWaBoo) RT 5.4
+#059 29.05.2018 Erweiterung (TooWaBoo) RT 5.4
+#060 14.06.2018 Erweiterung (TooWaBoo) RT 5.4
+#061 14.06.2018 Korrektur (TooWaBoo) RT 5.4
+#062 22.06.2018 Korrektur (TooWaBoo) RT 5.4
+#063 24.06.2018 DCB/RCD+VNG4 (TooWaBoo) RT 5.4
+#064 24.06.2018 Erweiterung/Korrektur (TooWaBoo) RT 5.4
+#065 25.06.2018 Korrekturen (TooWaBoo) RT 5.4
+#066 04.07.2018 Erweiterung (TooWaBoo) RT 5.4
+#067 05.07.2018 Erweiterung (TooWaBoo) RT 5.4
+#068 05.07.2018 Erweiterung (TooWaBoo) RT 5.4
+#069 25.07.2018 Erweiterung (TooWaBoo) RT 5.4
+#070 25.07.2018 Korrekturen (TooWaBoo) RT 5.4
+#071 28.09.2018 Korrekturen (TooWaBoo) RT 5.5
+#072 05.10.2018 Korrekturen (TooWaBoo) RT 5.5
+#073 21.11.2018 Erweiterung (TooWaBoo) RT 5.5
+#074 24.11.2018 Erweiterung (TooWaBoo) RT 5.5
+#075 02.12.2018 Erweiterung (TooWaBoo) RT 5.5
+#076 11.12.2018 Erweiterung (TooWaBoo) RT 5.5
+#077 16.12.2018 Korrektur Farbwähler-Tooltip (TooWaBoo) RT 5.5
+#078 19.01.2019 Erweiterung (TooWaBoo) RT 5.5
+#079 24.02.2019 Erweiterung (TooWaBoo) RT 5.5
+#080 25.03.2019 Erweiterung (TooWaBoo) RT 5.6
+#081 15.04.2019 Erweiterung (TooWaBoo) RT 5.6
+#082 25.05.2019 Erweiterung (TooWaBoo) RT 5.6
+#083 06.07.2019 Erweiterung (TooWaBoo) RT 5.6
+#084 06.10.2019 Erweiterung (TooWaBoo) RT 5.7
+#084 18.07.2019 Erweiterung (TooWaBoo) RT 5.6
+#085 29.07.2022 Erweiterung (marter, mozzihh) RT 5.9 
+#086 2023-09, Version RT 5.10 (marter)
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -145,12 +146,16 @@ EXIFFILTER_IMAGETYPE;Bildtyp
 EXIFFILTER_ISO;ISO
 EXIFFILTER_LENS;Objektiv
 EXIFFILTER_METADATAFILTER;Metadatenfilter einschalten
+EXIFFILTER_PATH;Dateipfad
 EXIFFILTER_SHUTTER;Verschlusszeit
+EXIFPANEL_ACTIVATE_ALL_HINT;Alle Attribute auswählen
+EXIFPANEL_ACTIVATE_NONE_HINT;alle Attribute abwählen
 EXIFPANEL_ADDEDIT;Hinzufügen/Ändern
 EXIFPANEL_ADDEDITHINT;Attribut hinzufügen oder ändern
 EXIFPANEL_ADDTAGDLG_ENTERVALUE;Wert eingeben
 EXIFPANEL_ADDTAGDLG_SELECTTAG;Attribut auswählen
 EXIFPANEL_ADDTAGDLG_TITLE;Attribut hinzufügen/ändern
+EXIFPANEL_BASIC_GROUP;Basis
 EXIFPANEL_KEEP;Behalten
 EXIFPANEL_KEEPHINT;Gewählte Attribute beim Erzeugen des Bildes behalten
 EXIFPANEL_REMOVE;Entfernen
@@ -159,8 +164,7 @@ EXIFPANEL_RESET;Zurücksetzen
 EXIFPANEL_RESETALL;Alle zurücksetzen
 EXIFPANEL_RESETALLHINT;Alle Attribute auf die ursprünglichen Werte zurücksetzen
 EXIFPANEL_RESETHINT;Gewählte Attribute auf die ursprünglichen Werte zurücksetzen
-EXIFPANEL_SHOWALL;Alle anzeigen
-EXIFPANEL_SUBDIRECTORY;Unterverzeichnis
+EXIFPANEL_VALUE_NOT_SHOWN;keine Anzeige
 EXPORT_BYPASS;Verarbeitungsschritte überspringen
 EXPORT_BYPASS_ALL;Alle/Keine auswählen
 EXPORT_BYPASS_DEFRINGE;Farbsaum entfernen überspringen
@@ -249,17 +253,18 @@ FILEBROWSER_POPUPREMOVE;Unwiderruflich löschen
 FILEBROWSER_POPUPREMOVEINCLPROC;Unwiderruflich löschen\n(einschl. aller Dateien der Stapelverarbeitung)
 FILEBROWSER_POPUPRENAME;Umbenennen
 FILEBROWSER_POPUPSELECTALL;Alle auswählen
+FILEBROWSER_POPUPSORTBY;Dateien sortieren
 FILEBROWSER_POPUPTRASH;In den Papierkorb verschieben
 FILEBROWSER_POPUPUNRANK;Bewertung entfernen
 FILEBROWSER_POPUPUNTRASH;Aus dem Papierkorb wiederherstellen
 FILEBROWSER_QUERYBUTTONHINT;Suchfilter zurücksetzen.
 FILEBROWSER_QUERYHINT;Nur Dateien anzeigen, deren Namen die angegebene Zeichenkette beinhalten.\n\nTaste:\n<b>Strg</b> + <b>f</b> Setzt den Cursor in das Suchfeld\n<b>Enter</b> Suche starten\n<b>Esc</b> Suchfeld löschen\n<b>Umschalt</b> + <b>Esc</b> Suchfeldfeld verlassen
 FILEBROWSER_QUERYLABEL;Suche:
-FILEBROWSER_RANK1_TOOLTIP;Bewertung 1 *\nTaste: <b>Umschalt</b> + <b>1</b>
-FILEBROWSER_RANK2_TOOLTIP;Bewertung 2 **\nTaste: <b>Umschalt</b> + <b>2</b>
-FILEBROWSER_RANK3_TOOLTIP;Bewertung 3 ***\nTaste: <b>Umschalt</b> + <b>3</b>
-FILEBROWSER_RANK4_TOOLTIP;Bewertung 4 ****\nTaste: <b>Umschalt</b> + <b>4</b>
-FILEBROWSER_RANK5_TOOLTIP;Bewertung 5 *****\nTaste: <b>Umschalt</b> + <b>5</b>
+FILEBROWSER_RANK1_TOOLTIP;Bewertung 1 *\nTaste: <b>1</b>
+FILEBROWSER_RANK2_TOOLTIP;Bewertung 2 **\nTaste: <b>2</b>
+FILEBROWSER_RANK3_TOOLTIP;Bewertung 3 ***\nTaste: <b>3</b>
+FILEBROWSER_RANK4_TOOLTIP;Bewertung 4 ****\nTaste: <b>4</b>
+FILEBROWSER_RANK5_TOOLTIP;Bewertung 5 *****\nTaste: <b>5</b>
 FILEBROWSER_RENAMEDLGLABEL;Datei umbenennen
 FILEBROWSER_RESETDEFAULTPROFILE;Profil auf Vorgabe zurücksetzen
 FILEBROWSER_SELECTDARKFRAME;Dunkelbild wählen...
@@ -270,28 +275,29 @@ FILEBROWSER_SHOWCOLORLABEL3HINT;Nur grün markierte Bilder anzeigen.\nTaste: <b>
 FILEBROWSER_SHOWCOLORLABEL4HINT;Nur blau markierte Bilder anzeigen.\nTaste: <b>Alt</b> + <b>4</b>
 FILEBROWSER_SHOWCOLORLABEL5HINT;Nur violett markierte Bilder anzeigen.\nTaste: <b>Alt</b> + <b>5</b>
 FILEBROWSER_SHOWDIRHINT;Alle Filter zurücksetzen.\nTaste: <b>d</b>
-FILEBROWSER_SHOWEDITEDHINT;Nur bearbeitete Bilder anzeigen.\nTaste: <b>7</b>
-FILEBROWSER_SHOWEDITEDNOTHINT;Nur unbearbeitete Bilder anzeigen.\nTaste: <b>6</b>
+FILEBROWSER_SHOWEDITEDHINT;Nur bearbeitete Bilder anzeigen.\nTaste: <b>Umschalt</b>-<b>7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;Nur unbearbeitete Bilder anzeigen.\nTaste: <b>Umschalt</b>-<b>6</b>
 FILEBROWSER_SHOWEXIFINFO;Bildinformationen ein-/ausblenden.\n\nIm Multi-Reitermodus:\nTaste: <b>i</b>\nIm Ein-Reitermodus:\nTaste: <b>Alt</b> + <b>i</b>
 FILEBROWSER_SHOWNOTTRASHHINT;Nur Bilder außerhalb des Papierkorbs anzeigen.
 FILEBROWSER_SHOWORIGINALHINT;Zeige nur das Originalbild.\n\nWenn mehrere Bilder mit dem gleichen Dateinamen und unterschiedlichen Dateitypen existieren, ist das Originalbild das Bild, welches in der Liste 'Dateitypen anzeigen' unter Einstellungen > Dateiverwaltung als erstes gefunden wird.
-FILEBROWSER_SHOWRANK1HINT;Nur mit 1 Stern bewertete Bilder anzeigen.\nTaste: <b>1</b>
-FILEBROWSER_SHOWRANK2HINT;Nur mit 2 Sternen bewertete Bilder anzeigen.\nTaste: <b>2</b>
-FILEBROWSER_SHOWRANK3HINT;Nur mit 3 Sternen bewertete Bilder anzeigen.\nTaste: <b>3</b>
-FILEBROWSER_SHOWRANK4HINT;Nur mit 4 Sternen bewertete Bilder anzeigen.\nTaste: <b>4</b>
-FILEBROWSER_SHOWRANK5HINT;Nur mit 5 Sternen bewertete Bilder anzeigen.\nTaste: <b>5</b>
+FILEBROWSER_SHOWRANK1HINT;Nur mit 1 Stern bewertete Bilder anzeigen.\nTaste: <b>Umschalt</b>-<b>1</b>
+FILEBROWSER_SHOWRANK2HINT;Nur mit 2 Sternen bewertete Bilder anzeigen.\nTaste: <b>Umschalt</b>-<b>2</b>
+FILEBROWSER_SHOWRANK3HINT;Nur mit 3 Sternen bewertete Bilder anzeigen.\nTaste: <b>Umschalt</b>-<b>3</b>
+FILEBROWSER_SHOWRANK4HINT;Nur mit 4 Sternen bewertete Bilder anzeigen.\nTaste: <b>Umschalt</b>-<b>4</b>
+FILEBROWSER_SHOWRANK5HINT;Nur mit 5 Sternen bewertete Bilder anzeigen.\nTaste: <b>Umschalt</b>-<b>5</b>
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Nur gespeicherte Bilder anzeigen.\nTaste: <b>Alt</b> + <b>7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Nur nicht gespeicherte Bilder anzeigen.\nTaste: <b>Alt</b> + <b>6</b>
 FILEBROWSER_SHOWTRASHHINT;Inhalt des Papierkorbs anzeigen.\nTaste: <b>Strg</b> + <b>t</b>
 FILEBROWSER_SHOWUNCOLORHINT;Nur unmarkierte Bilder anzeigen.\nTaste: <b>Alt</b> + <b>0</b>
-FILEBROWSER_SHOWUNRANKHINT;Nur unbewertete Bilder anzeigen.\nTaste: <b>0</b>
+FILEBROWSER_SHOWUNRANKHINT;Nur unbewertete Bilder anzeigen.\nTaste: <b>Umschalt</b>-<b>0</b>
 FILEBROWSER_THUMBSIZE;Miniaturbildgröße
-FILEBROWSER_UNRANK_TOOLTIP;Bewertung entfernen.\nTaste: <b>Umschalt</b> + <b>0</b>
+FILEBROWSER_UNRANK_TOOLTIP;Bewertung entfernen.\nTaste: <b><b>0</b>
 FILEBROWSER_ZOOMINHINT;Miniaturbilder vergrößern.\n\nIm Multi-Reitermodus:\nTaste: <b>+</b>\nIm Ein-Reitermodus:\nTaste: <b>Alt</b> <b>+</b>
 FILEBROWSER_ZOOMOUTHINT;Miniaturbilder verkleinern.\n\nIm Multi-Reitermodus:\nTaste: <b>-</b>\nIm Ein-Reitermodus:\nTaste: <b>Alt</b> <b>-</b>
 FILECHOOSER_FILTER_ANY;Alle Dateien
 FILECHOOSER_FILTER_COLPROF;Farbprofile
 FILECHOOSER_FILTER_CURVE;Kurvendateien
+FILECHOOSER_FILTER_EXECUTABLE;Ausführbare Dateien
 FILECHOOSER_FILTER_LCP;Objektivkorrekturprofile
 FILECHOOSER_FILTER_PP;Verarbeitungsprofile
 FILECHOOSER_FILTER_SAME;Gleiches Format wie aktuelles Bild
@@ -319,6 +325,7 @@ GENERAL_NO;Nein
 GENERAL_NONE;Keine
 GENERAL_OK;OK
 GENERAL_OPEN;Öffnen
+GENERAL_OTHER;Andere
 GENERAL_PORTRAIT;Portrait
 GENERAL_RESET;Zurücksetzen
 GENERAL_SAVE;Speichern
@@ -329,11 +336,11 @@ GENERAL_WARNING;Warnung
 GIMP_PLUGIN_INFO;Willkommen beim RawTherapee GIMP-Plugin!\nNach den Änderungen bitte das RawTherapee-Fenster schließen.\nDas Bild wird dann automatisch in GIMP importiert.
 HISTOGRAM_TOOLTIP_B;Blau-Histogramm ein-/ausblenden.
 HISTOGRAM_TOOLTIP_BAR;RGB-Anzeigeleiste ein-/ausblenden.
-HISTOGRAM_TOOLTIP_CHRO;Chromatizität-Histogramm ein/ausblenden.
+HISTOGRAM_TOOLTIP_CHRO;Chromatizität-Histogramm ein-/ausblenden.
 HISTOGRAM_TOOLTIP_CROSSHAIR;Fadenkreuz ein-/ ausblenden
 HISTOGRAM_TOOLTIP_G;Grün-Histogramm ein-/ausblenden.
 HISTOGRAM_TOOLTIP_L;CIELab-Luminanz-Histogramm ein-/ausblenden.
-HISTOGRAM_TOOLTIP_MODE;Schaltet zwischen linearer, logarithmisch-linearer und\nlogarithmisch-logarithmischer Skalierung um.
+HISTOGRAM_TOOLTIP_MODE;Schaltet zwischen linearer, logarithmisch-linearer und logarithmisch-logarithmischer Skalierung um.
 HISTOGRAM_TOOLTIP_R;Rot-Histogramm ein-/ausblenden.
 HISTOGRAM_TOOLTIP_SHOW_OPTIONS;Histogrammoptionen ein-/ ausschalten
 HISTOGRAM_TOOLTIP_TRACE_BRIGHTNESS;Helligkeitsbereich anpassen
@@ -817,22 +824,22 @@ HISTORY_MSG_493;(Belichtung - L*a*b*)
 HISTORY_MSG_494;(RAW - Eingangsschärfung)
 HISTORY_MSG_496;(Lokal - Spot)\nGelöscht
 HISTORY_MSG_497;(Lokal - Spot)\nAusgewählt
-HISTORY_MSG_498;(Lokal - Spot)\nName
-HISTORY_MSG_499;(Lokal - Spot)\nSichtbarkeit
+HISTORY_MSG_498;--nicht verwendet--
+HISTORY_MSG_499;--nicht verwendet--
 HISTORY_MSG_500;(Lokal - Spot)\nForm
 HISTORY_MSG_501;(Lokal - Spot)\nMethode
 HISTORY_MSG_502;(Lokal - Spot)\nForm-Methode
-HISTORY_MSG_503;(Lokal - Spot)\nPos X-rechts
-HISTORY_MSG_504;(Lokal - Spot)\nPos X-links
-HISTORY_MSG_505;(Lokal - Spot)\nPos Y-unten
-HISTORY_MSG_506;(Lokal - Spot)\nPos Y-oben
+HISTORY_MSG_503;(Lokal - Spot)\nRechts
+HISTORY_MSG_504;(Lokal - Spot)\nLinks
+HISTORY_MSG_505;(Lokal - Spot)\nUnten
+HISTORY_MSG_506;(Lokal - Spot)\nOben
 HISTORY_MSG_507;(Lokal - Spot)\nMitte
 HISTORY_MSG_508;(Lokal - Spot)\nSpotgröße
 HISTORY_MSG_509;(Lokal - Spot)\nQualitäts-Methode
 HISTORY_MSG_510;(Lokal - Spot)\nÜbergangsgradient\nIntensität
 HISTORY_MSG_511;(Lokal - Spot)\nKantenerkennung\nSchwellenwert
 HISTORY_MSG_512;(Lokal - Spot)\nKantenerkennung\nΔE Zerfall
-HISTORY_MSG_513;(Lokal - Spot)\nBereich
+HISTORY_MSG_513;(Lokal - Spot)\nausschließender Bereich
 HISTORY_MSG_514;(Lokal - Spot)\nStruktur
 HISTORY_MSG_515;(Lokal - Lokale Anpassungen)
 HISTORY_MSG_516;(Lokal - Farbe-Licht)
@@ -963,7 +970,7 @@ HISTORY_MSG_641;(Lokal - Schatten/Lichter)\nMaske
 HISTORY_MSG_642;(Lokal - Schatten/Lichter)\nMaske\nRadius
 HISTORY_MSG_643;(Lokal - Schatten/Lichter)\nUnschärfe Kantenerkennung
 HISTORY_MSG_644;(Lokal - Schatten/Lichter)\nInvertieren
-HISTORY_MSG_645;(Lokal - Spot)\nKantenerkennung\nBalance ab-L (ΔE)
+HISTORY_MSG_645;(Lokal - Spot)\nKantenerkennung\nBalance ab-L
 HISTORY_MSG_646;(Lokal - Dynamik u. Belichtung)\nMaske\nFarbintensität
 HISTORY_MSG_647;(Lokal - Dynamik u. Belichtung)\nMaske\nGamma
 HISTORY_MSG_648;(Lokal - Dynamik u. Belichtung)\nMaske\nSteigung
@@ -994,7 +1001,7 @@ HISTORY_MSG_672;(Lokal - Detailebenen)\nMaske CL
 HISTORY_MSG_673;(Lokal - Detailebenen)\nMaske anwenden
 HISTORY_MSG_674;(Lokal)\nWerkzeug entfernt
 HISTORY_MSG_675;(Lokal - Tonwert)\nRadius
-HISTORY_MSG_676;(Lokal - Spot)\nÜbergangsgradient\nUnterschied XY
+HISTORY_MSG_676;(Lokal - Spot)\nÜbergangsgradient\nUnterschied
 HISTORY_MSG_677;(Lokal - Tonwert)\nIntensität
 HISTORY_MSG_678;(Lokal - Tonwert)\nSättigung
 HISTORY_MSG_679;(Lokal - Retinex)\nMaske C
@@ -1097,14 +1104,14 @@ HISTORY_MSG_781;(Lokal - Wavelet)\nWavelet Ebenen
 HISTORY_MSG_782;(Lokal - Unschärfe)\nMaske\nWavelet Ebenen
 HISTORY_MSG_783;(Lokal - Farbe-Licht)\nWavelet Ebenenauswahl
 HISTORY_MSG_784;(Lokal - Spot)\nMaskieren\nΔE Bildmaske
-HISTORY_MSG_785;(Lokal - Spot)\nMaskieren\nBereich ΔE-Bildmaske
+HISTORY_MSG_785;(Lokal - Spot)\nMaskieren\nBereich Bildmaske
 HISTORY_MSG_786;(Lokal - Schatten/Lichter)\nMethode
-HISTORY_MSG_787;(Lokal - Schatten/Lichter)\nEqualizer Regler
-HISTORY_MSG_788;(Lokal - Schatten/Lichter)\nEqualizer Details
+HISTORY_MSG_787;(Lokal - Schatten/Lichter)\nTonwert-Equalizer\nWerte
+HISTORY_MSG_788;(Lokal - Schatten/Lichter)\nTonwert-Equalizer\nDetails
 HISTORY_MSG_789;(Lokal - Schatten/Lichter)\nMaske\nIntensität
 HISTORY_MSG_790;(Lokal - Schatten/Lichter)\nMaske Ankerpunkt 
 HISTORY_MSG_791;(Lokal - Maske)\nShort L-Kurve
-HISTORY_MSG_792;(Lokal - Spot)\nMaskieren\nHintergrundfarbe Luminanzmaske
+HISTORY_MSG_792;(Lokal - Spot)\nMaskieren\nHintergrund Maske
 HISTORY_MSG_793;(Lokal - Schatten/Lichter)\nGamma Farbtonkennlinie
 HISTORY_MSG_794;(Lokal - Schatten/Lichter)\nSteigung Farbtonkennlinie
 HISTORY_MSG_795;(Lokal - Maske)\nSichern wiederhergestelltes Bild
@@ -1177,7 +1184,7 @@ HISTORY_MSG_863;(Lokal - Wavelet)\nOriginal zusammenführen
 HISTORY_MSG_864;(Lokal - Wavelet)\nDirektionaler Kontrast\nDämpfungsreaktion
 HISTORY_MSG_865;(Lokal - Wavelet)\nDirektionaler Kontrast\nEbenenbalance
 HISTORY_MSG_866;(Lokal - Wavelet)\nDirektionaler Kontrast\nKompression
-HISTORY_MSG_868;(Lokal - Spot)\nKantenerkennung\nC-H Balance (ΔE)
+HISTORY_MSG_868;(Lokal - Spot)\nKantenerkennung\nC-H Balance
 HISTORY_MSG_869;(Lokal - Rauschminderung)\nLuminanzkurve
 HISTORY_MSG_870;(Lokal - Lokaler Kontrast)\nMaske\nKurve H
 HISTORY_MSG_871;(Lokal - Lokaler Kontrast)\nMaske\nKurve C
@@ -1436,7 +1443,7 @@ HISTORY_MSG_1127;(Lokal - CIECAM)\nMaske\nGamma
 HISTORY_MSG_1128;(Lokal - CIECAM)\nMaske\nSteigung
 HISTORY_MSG_1129;(Lokal - CIECAM)\nJz Cz Hz\nRelative Helligkeit
 HISTORY_MSG_1130;(Lokal - CIECAM)\nJz Cz Hz\nSättigung
-HISTORY_MSG_1131;(Lokal - Maske)\nRauschminderung Chroma
+HISTORY_MSG_1131;(Lokal - Maske)\nRauschminderung
 HISTORY_MSG_1132;(Lokal - CIECAM)\nWavelet Jz\nDämpfungsreaktion
 HISTORY_MSG_1133;(Lokal - CIECAM)\nWavelet Jz\nEbenen
 HISTORY_MSG_1134;(Lokal - CIECAM)\nWavelet Jz\nLokaler Kontrast
@@ -1485,21 +1492,26 @@ HISTORY_MSG_DEHAZE_ENABLED;(Details - Bildschleier entfernen)
 HISTORY_MSG_DEHAZE_SATURATION;(Details - Bildschleier entfernen)\nSättigung
 HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;(Details - Bildschleier entfernen)\nMaske anzeigen
 HISTORY_MSG_DEHAZE_STRENGTH;(Details - Bildschleier entfernen)\nIntensität
+HISTORY_MSG_DIRPYRDENOISE_GAIN;(Details - Rauschreduzierung)\nHelligkeitskompensation
 HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;(Sensor—Matrix)\nFarbinterpolation\nAuto-Kontrastschwelle
 HISTORY_MSG_DUALDEMOSAIC_CONTRAST;(RAW - Sensor-Matrix)\nFarbinterpolation\nKontrastschwelle
 HISTORY_MSG_EDGEFFECT;(Erweitert - Wavelet)\nKantenschärfung\nDämpfungsreaktion
+HISTORY_MSG_FF_FROMMETADATA;(RAW- Weißbild)\nFlat-Field - aus den Metadaten
 HISTORY_MSG_FILMNEGATIVE_BALANCE;(Farbe - Negativfilm)\nAusgabestärke
 HISTORY_MSG_FILMNEGATIVE_COLORSPACE;(Farbe - Negativfilm)\nFarbraum
 HISTORY_MSG_FILMNEGATIVE_ENABLED;(Farbe - Negativfilm)
 HISTORY_MSG_FILMNEGATIVE_REF_SPOT;(Farbe - Negativfilm)\nReferenz Eingabe
 HISTORY_MSG_FILMNEGATIVE_VALUES;(Farbe - Negativfilm)\nWerte
+HISTORY_MSG_GAMUTMUNSEL;Gamut-Munsell
 HISTORY_MSG_HISTMATCHING;(Belichtung)\nAuto-Tonwertkurve
-HISTORY_MSG_HLBL;Farbübertragung - Unschärfe
+HISTORY_MSG_HLBL;(Belichtung - Lichterkompression)\nFarbübertragung - Unschärfe
+HISTORY_MSG_HLTH;(Belichtung - Lichterkompression)\nInterpolieren - Schwellenwert
 HISTORY_MSG_ICL_LABGRIDCIEXY;Cie xy-Diagramm
 HISTORY_MSG_ICM_AINTENT;Absicht Abstraktes Profil
 HISTORY_MSG_ICM_BLUX;(Farbe - Farbmanagement)\nAbstraktes Profil\nVorgabe Blau X
 HISTORY_MSG_ICM_BLUY;(Farbe - Farbmanagement)\nAbstraktes Profil\nVorgabe Blau Y
 HISTORY_MSG_ICM_FBW;(Farbe - Farbmanagement)\nAbstraktes Profil\nSchwarz-Weiß
+HISTORY_MSG_ICM_GAMUT;(Farbe - Farbmanagement)\nAbstraktes Profil\nGamut-Kontrolle
 HISTORY_MSG_ICM_GREX;(Farbe - Farbmanagement)\nAbstraktes Profil\nVorgabe Grün X
 HISTORY_MSG_ICM_GREY;(Farbe - Farbmanagement)\nAbstraktes Profil\nVorgabe Grün Y
 HISTORY_MSG_ICM_OUTPUT_PRIMARIES;(Farbe - Farbmanagement)\nAbstraktes Profil\nAusgabeprofil Vorgaben
@@ -1519,6 +1531,9 @@ HISTORY_MSG_LOCALCONTRAST_DARKNESS;(Details - Lokaler Kontrast)\nDunkle Bereiche
 HISTORY_MSG_LOCALCONTRAST_ENABLED;(Details - Lokaler Kontrast)
 HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;(Details - Lokaler Kontrast)\nHelle Bereiche
 HISTORY_MSG_LOCALCONTRAST_RADIUS;(Details - Lokaler Kontrast)\nRadius
+HISTORY_MSG_LOCALLAB_TE_PIVOT;(Lokal - Schatten/Lichter)\nTonwert-Equalizer\nWichtung
+HISTORY_MSG_LOCAL_DEHAZE_BLACK;(Lokal - Dunst entfernen)\nSchwarzpunkt
+HISTORY_MSG_LOCAL_GAMUTMUNSEL;(Lokal - Spot)\nSpeziell\nFarbverschiebung vermeiden
 HISTORY_MSG_METADATA_MODE;(Metadaten)\nKopiermodus
 HISTORY_MSG_MICROCONTRAST_CONTRAST;(Details - Mikrokontrast)\nKontrastschwelle
 HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST;(RAW - Eingangsschärfung)\nAuto-Schwelle
@@ -1564,6 +1579,11 @@ HISTORY_MSG_SPOT_ENTRY;(Details -Flecken entfernen)\nPunkt modifiziert
 HISTORY_MSG_TEMPOUT;CAM02 Temperatur Automatik
 HISTORY_MSG_THRESWAV;(Balance) Schwellenwert
 HISTORY_MSG_TM_FATTAL_ANCHOR;(Belichtung - Dynamikkompression)\nHelligkeitsverschiebung
+HISTORY_MSG_TONE_EQUALIZER_BANDS;(Belichtung - Tonwert-Equalizer)\nWerte
+HISTORY_MSG_TONE_EQUALIZER_ENABLED;(Belichtung - Tonwert-Equalizer)
+HISTORY_MSG_TONE_EQUALIZER_PIVOT;(Belichtung - Tonwert-Equalizer)\nWichtung
+HISTORY_MSG_TONE_EQUALIZER_REGULARIZATION;(Belichtung - Tonwert-Equalizer)\nRegulierung
+HISTORY_MSG_TONE_EQUALIZER_SHOW_COLOR_MAP;(Belichtung - Tonwert-Equalizer)\nFarbmaske
 HISTORY_MSG_TRANS_METHOD;(Transformieren - Objektivkorrektur)\nMethode
 HISTORY_MSG_WAVBALCHROM;(Erweitert - Wavelet)\nRauschreduzierung\nFarb-Equalizer
 HISTORY_MSG_WAVBALLUM;(Erweitert - Wavelet)\nRauschreduzierung\nEqualizer Luminanz
@@ -1603,6 +1623,12 @@ HISTORY_MSG_WAVSTREND;(Erweitert - Wavelet)\nEndretusche - finales Glätten\nInt
 HISTORY_MSG_WAVTHRDEN;(Erweitert - Wavelet)\nRauschreduzierung\nSchwellenwert
 HISTORY_MSG_WAVTHREND;(Erweitert - Wavelet)\nEndretusche - finales Glätten\nSchwellenwert Lokaler Kontrast
 HISTORY_MSG_WAVUSHAMET;(Erweitert - Wavelet)\nSchärfemaske und Klarheit\nMethode
+HISTORY_MSG_WBALANCE_OBSERVER10;(Farbe - Weißabgleich)\nBeobachter 10°
+HISTORY_MSG_WBITC_CUSTOM;(Farbe - Weißabgleich)\nTemperaturbezogen - Benutzerdefiniert
+HISTORY_MSG_WBITC_GREEN;(Farbe - Weißabgleich)\nGrün-Verfeinerung
+HISTORY_MSG_WBITC_MINSIZE;(Farbe-Weißabgleich)\nPatch Mindestgröße
+HISTORY_MSG_WBITC_OBS;(Farbe - Weißabgleich)\n2-Wege-Algorithmus entfernt
+HISTORY_MSG_WBITC_PRIM;(Farbe - Weißabgleich)\nWahl der Abtastung
 HISTORY_NEWSNAPSHOT;Hinzufügen
 HISTORY_NEWSNAPSHOT_TOOLTIP;Taste: <b>Alt</b> + <b>s</b>
 HISTORY_SNAPSHOT;Schnappschuss
@@ -1695,14 +1721,14 @@ IPTCPANEL_TRANSREFERENCE;Verarbeitungs-ID
 IPTCPANEL_TRANSREFERENCEHINT;Geben Sie eine Kennung zur Kontrolle oder Verfolgung des Arbeitsablaufes ein.
 MAIN_BUTTON_FULLSCREEN;Vollbild\nTaste: <b>F11</b>
 MAIN_BUTTON_ICCPROFCREATOR;ICC-Profil erstellen.
-MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigiert zum nächsten Miniaturbild in der\nDateiverwaltung oder Filmstreifen bezogen\nauf das ausgewählte Miniaturbild.\nTaste: <b>F4</b>\n\nNavigiert zum nächsten Miniaturbild in der\nDateiverwaltung oder Filmstreifen bezogen\nauf das im Editor geöffnete Bild.\nTaste: <b>Umschalt</b> + <b>F4 </b>
-MAIN_BUTTON_NAVPREV_TOOLTIP;Navigiert zum vorherigen Miniaturbild in der\nDateiverwaltung oder Filmstreifen bezogen\nauf das ausgewählte Miniaturbild.\nTaste: <b>F3</b>\n\nNavigiert zum vorherigen Miniaturbild in der\nDateiverwaltung oder Filmstreifen bezogen\nauf das im Editor geöffnete Bild.\nTaste: <b>Umschalt</b> + <b>F3 </b>
-MAIN_BUTTON_NAVSYNC_TOOLTIP;Selektiert das Miniaturbild des aktuell geöffneten\nBildes in der Dateiverwaltung und des Filmstreifens.\nEs werden alle aktiven Filter gelöscht.\nTaste: <b>x</b>\n\nWie oben, jedoch ohne Löschung aktiver Filter. Das\nMiniaturbild des geöffneten Bildes wird nicht angezeigt,\nwenn es herausgefiltert wurde.\nTaste: <b>y</b>
+MAIN_BUTTON_NAVNEXT_TOOLTIP;Navigiert zum nächsten Miniaturbild in der Dateiverwaltung oder Filmstreifen bezogen auf das ausgewählte Miniaturbild.\nTaste: <b>F4</b>\n\nNavigiert zum nächsten Miniaturbild in der Dateiverwaltung oder Filmstreifen bezogen auf das im Editor geöffnete Bild.\nTaste: <b>Umschalt</b> + <b>F4 </b>
+MAIN_BUTTON_NAVPREV_TOOLTIP;Navigiert zum vorherigen Miniaturbild in der Dateiverwaltung oder Filmstreifen bezogen auf das ausgewählte Miniaturbild.\nTaste: <b>F3</b>\n\nNavigiert zum vorherigen Miniaturbild in der Dateiverwaltung oder Filmstreifen bezogen auf das im Editor geöffnete Bild.\nTaste: <b>Umschalt</b> + <b>F3 </b>
+MAIN_BUTTON_NAVSYNC_TOOLTIP;Selektiert das Miniaturbild des aktuell geöffneten Bildes in der Dateiverwaltung und des Filmstreifens.\nEs werden alle aktiven Filter gelöscht.\nTaste: <b>x</b>\n\nWie oben, jedoch ohne Löschung aktiver Filter. \nTaste: <b>y</b>\nDas Miniaturbild des geöffneten Bildes wird nicht angezeigt, wenn es herausgefiltert wurde.
 MAIN_BUTTON_PREFERENCES;Einstellungen
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Bild zur Warteschlange hinzufügen.\nTaste: <b>Strg</b> + <b>b</b>
 MAIN_BUTTON_SAVE_TOOLTIP;Bild speichern.\nTaste: <b>Strg</b> + <b>s</b>\nProfil (.pp3) speichern.\nTaste: <b>Strg</b> + <b>Umschalt</b> + <b>s</b>
 MAIN_BUTTON_SENDTOEDITOR;Bild im externen Editor öffnen.
-MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Bild im externen Editor öffnen.\nTaste: <b>Strg</b> + <b>e</b>
+MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Bild im externen Editor öffnen.\nTaste: <b>Strg</b> + <b>e</b>.\nAktueller Editor:
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Alle seitlichen Bedienfelder ein-/ausblenden.\nTaste: <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;Vollbild beenden.\nTaste: <b>F11</b>
 MAIN_FRAME_EDITOR;Editor
@@ -1757,16 +1783,16 @@ MAIN_TOOLTIP_BACKCOLOR0;Hintergrundfarbe der Vorschau basierend auf dem <b>Oberf
 MAIN_TOOLTIP_BACKCOLOR1;Hintergrundfarbe der Vorschau: <b>Schwarz\n</b>Taste: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR2;Hintergrundfarbe der Vorschau: <b>Weiß</b>\nTaste: <b>9</b>
 MAIN_TOOLTIP_BACKCOLOR3;Hintergrundfarbe der Vorschau: <b>Mittleres Grau</b>\nTaste: <b>9</b>
-MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Vorher-Ansicht:</b> Sperren / Entsperren\n\n<b>Gesperrt</b>: Friert die Vorher-Ansicht ein,\nsodass sich die Gesamtwirkung mehrerer\nBearbeitungsschritte beurteilen lässt.\n\n<b>Entsperrt</b>: Die Vorher-Ansicht hinkt dem\naktuellen Bild immer einen Bearbeitungs-\nschritt hinterher.
+MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Vorher-Ansicht:</b> Sperren / Entsperren\n\n<b>Gesperrt</b>: Friert die Vorher-Ansicht ein, sodass sich die Gesamtwirkung mehrerer Bearbeitungsschritte beurteilen lässt.\n\n<b>Entsperrt</b>: Die Vorher-Ansicht hinkt dem aktuellen Bild immer einen Bearbeitungsschritt hinterher.
 MAIN_TOOLTIP_HIDEHP;Linkes Bedienfeld ein-/ausblenden.\nTaste: <b>l</b>
 MAIN_TOOLTIP_INDCLIPPEDH;Anzeige zu heller Bereiche ein-/ausschalten.\nTaste: <b>&gt;</b>
 MAIN_TOOLTIP_INDCLIPPEDS;Anzeige zu dunkler Bereiche ein-/ausschalten.\nTaste: <b>&lt;</b>
 MAIN_TOOLTIP_PREVIEWB;Vorschau Blau-Kanal\nTaste: <b>b</b>
-MAIN_TOOLTIP_PREVIEWFOCUSMASK;Vorschau Fokusmaske\nTaste: <b>Umschalt</b> + <b>f</b>\n\nPräziser bei Bildern mit geringer Tiefenschärfe,\nniedrigem Rauschen und bei hoher Vergrößerung.
+MAIN_TOOLTIP_PREVIEWFOCUSMASK;Vorschau Fokusmaske\nTaste: <b>Umschalt</b> + <b>f</b>\n\nPräziser bei Bildern mit geringer Tiefenschärfe, niedrigem Rauschen und bei hoher Vergrößerung.
 MAIN_TOOLTIP_PREVIEWG;Vorschau Grün-Kanal\nTaste: <b>g</b>
 MAIN_TOOLTIP_PREVIEWL;Vorschau Helligkeit\nTaste: <b>v</b>\n\n0.299·R + 0.587·G + 0.114·B
 MAIN_TOOLTIP_PREVIEWR;Vorschau Rot-Kanal\nTaste: <b>r</b>
-MAIN_TOOLTIP_PREVIEWSHARPMASK;Schärfungs-Kontroll-Maske ein-/ausschalten.\n\nFunktioniert nur bei aktivierter Schärfung\nund Zoom >= 100%.\nTaste: <b>p</b>
+MAIN_TOOLTIP_PREVIEWSHARPMASK;Schärfungs-Kontroll-Maske ein-/ausschalten.\n\nFunktioniert nur bei aktivierter Schärfung und Zoom >= 100%.\nTaste: <b>p</b>
 MAIN_TOOLTIP_QINFO;Bildinformationen ein-/ausblenden.\nTaste: <b>i</b>
 MAIN_TOOLTIP_SHOWHIDELP1;Linkes Bedienfeld ein-/ausblenden.\nTaste: <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Rechtes Bedienfeld ein-/ausblenden.\nTaste: <b>Alt</b> + <b>l</b>
@@ -1822,6 +1848,7 @@ PARTIALPASTE_FLATFIELDBLURRADIUS;Weißbild: Unschärferadius
 PARTIALPASTE_FLATFIELDBLURTYPE;Weißbild: Unschärfetyp
 PARTIALPASTE_FLATFIELDCLIPCONTROL;Weißbild: Kontrolle zu heller Bereiche
 PARTIALPASTE_FLATFIELDFILE;Weißbild: Datei
+PARTIALPASTE_FLATFIELDFROMMETADATA;Weißbild aus den Meta-Daten
 PARTIALPASTE_GRADIENT;Grauverlaufsfilter
 PARTIALPASTE_HSVEQUALIZER;Farbton (H)/Sättigung (S)/Dynamik (V)
 PARTIALPASTE_ICMSETTINGS;ICM-Einstellungen
@@ -1869,6 +1896,7 @@ PARTIALPASTE_SHARPENMICRO;Mikrokontrast
 PARTIALPASTE_SOFTLIGHT;Weiches Licht
 PARTIALPASTE_SPOT;Flecken entfernen
 PARTIALPASTE_TM_FATTAL;Dynamikkompression
+PARTIALPASTE_TONE_EQUALIZER;Tonwert-Equalizer
 PARTIALPASTE_VIBRANCE;Dynamik
 PARTIALPASTE_VIGNETTING;Vignettierungskorrektur
 PARTIALPASTE_WHITEBALANCE;Weißabgleich
@@ -1897,6 +1925,7 @@ PREFERENCES_CACHECLEAR_SAFETY;Nur Dateien im Zwischenspeicher werden gelöscht. 
 PREFERENCES_CACHEMAXENTRIES;Maximale Anzahl der Miniaturbilder im Festplatten-Cache
 PREFERENCES_CACHEOPTS;Einstellungen des Festplatten-Cache für Miniaturbilder
 PREFERENCES_CACHETHUMBHEIGHT;Maximale Höhe der Miniaturbilder
+PREFERENCES_CAMERAPROFILESDIR;Verzeichnis der Kameraprofile
 PREFERENCES_CHUNKSIZES;Kacheln pro Thread
 PREFERENCES_CHUNKSIZE_RAW_AMAZE;AMaZE-Farbinterpolation
 PREFERENCES_CHUNKSIZE_RAW_CA;RAW-CA-Korrektur
@@ -1952,6 +1981,11 @@ PREFERENCES_EXTEDITOR_DIR_CUSTOM;Benutzerdefiniert
 PREFERENCES_EXTEDITOR_DIR_TEMP;Temp-Ordner Betriebssystem
 PREFERENCES_EXTEDITOR_FLOAT32;Ausgabe in 32-bit (float) TIFF
 PREFERENCES_EXTERNALEDITOR;Externer Editor
+PREFERENCES_EXTERNALEDITOR_CHANGE;Anwendung wechseln
+PREFERENCES_EXTERNALEDITOR_CHANGE_FILE;Ausführbare Datei wechseln
+PREFERENCES_EXTERNALEDITOR_COLUMN_COMMAND;Aufruf
+PREFERENCES_EXTERNALEDITOR_COLUMN_NAME;Name
+PREFERENCES_EXTERNALEDITOR_COLUMN_NATIVE_COMMAND;Nativ
 PREFERENCES_FBROWSEROPTS;Bildinformationen und Miniaturbilder
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Einzeilige Toolbar
 PREFERENCES_FLATFIELDFOUND;Gefunden
@@ -1964,7 +1998,7 @@ PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Gleiche Miniaturbildgröße in der Dateiver
 PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;Unterschiedliche Miniaturbildgrößen benötigen mehr Verarbeitungszeit beim Wechsel zwischen der Dateiverwaltung und dem Editor
 PREFERENCES_GIMPPATH;GIMP Installationsverzeichnis
 PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogramm linksseitig
-PREFERENCES_HISTOGRAM_TOOLTIP;Wenn aktiviert, wird das Arbeitsprofil für die Darstellung\ndes Haupthistogramms verwendet, andernfalls das des\ngammakorrigierten Ausgangsprofils.
+PREFERENCES_HISTOGRAM_TOOLTIP;Wenn aktiviert, wird das Arbeitsprofil für die Darstellung des Haupthistogramms verwendet, andernfalls das des gammakorrigierten Ausgangsprofils.
 PREFERENCES_HLTHRESHOLD;Lichter - Schwelle
 PREFERENCES_ICCDIR;ICC-Profile-Verzeichnis
 PREFERENCES_IMPROCPARAMS;Standard-Bearbeitungsprofile
@@ -1979,6 +2013,10 @@ PREFERENCES_INTENT_SATURATION;Sättigung
 PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Zeige das eingebettete JPEG als Miniaturbild, wenn die RAW-Datei noch nicht editiert wurde
 PREFERENCES_LANG;Sprache
 PREFERENCES_LANGAUTODETECT;Systemsprache verwenden
+PREFERENCES_LENSFUNDBDIR;Lensfun Datenbankverzeichnis
+PREFERENCES_LENSFUNDBDIR_TOOLTIP;Verzeichnis, in dem sich die Lensfun Datenbank befindet.  Kann leer bleiben, um das Standardverzeichnis zu verwenden.
+PREFERENCES_LENSPROFILESDIR;Verzeichnis der Objektivprofile
+PREFERENCES_LENSPROFILESDIR_TOOLTIP;Verzeichnis, das die Adobe Lens Correction Profiles (LCPs)  enthält
 PREFERENCES_MAXRECENTFOLDERS;Maximale Anzahl der letzten Dateien
 PREFERENCES_MENUGROUPEXTPROGS;Untermenü 'Öffnen mit'
 PREFERENCES_MENUGROUPFILEOPERATIONS;Untermenü Dateioperationen
@@ -1986,6 +2024,11 @@ PREFERENCES_MENUGROUPLABEL;Untermenü Farbmarkierung
 PREFERENCES_MENUGROUPPROFILEOPERATIONS;Untermenü Profiloperationen
 PREFERENCES_MENUGROUPRANK;Untermenü Bewertung
 PREFERENCES_MENUOPTIONS;Menüoptionen
+PREFERENCES_METADATA;Metadaten
+PREFERENCES_METADATA_SYNC;Metadaten mit XMP-Dateien synchronisieren
+PREFERENCES_METADATA_SYNC_NONE;Aus
+PREFERENCES_METADATA_SYNC_READ;nur lesen
+PREFERENCES_METADATA_SYNC_READWRITE;Bidirektional
 PREFERENCES_MONINTENT;Standard Monitor-Wiedergabe
 PREFERENCES_MONITOR;Monitor
 PREFERENCES_MONPROFILE;Standardfarbprofil
@@ -2049,6 +2092,7 @@ PREFERENCES_STARTUPIMDIR;Bildverzeichnis beim Programmstart
 PREFERENCES_TAB_BROWSER;Dateiverwaltung
 PREFERENCES_TAB_COLORMGR;Farbmanagement
 PREFERENCES_TAB_DYNAMICPROFILE;Dynamisches Profil
+PREFERENCES_TAB_FAVORITES;Favoriten
 PREFERENCES_TAB_GENERAL;Allgemein
 PREFERENCES_TAB_IMPROC;Bildbearbeitung
 PREFERENCES_TAB_PERFORMANCE;Performance
@@ -2057,17 +2101,31 @@ PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Eingebundenes JPEG
 PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Bildanzeige
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutrales RAW-Bild 
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Eingebundenes JPEG wenn in Originalgröße, sonst neutrales RAW-Bild
+PREFERENCES_TOOLPANEL_AVAILABLETOOLS;Verfügbare Werkzeuge
+PREFERENCES_TOOLPANEL_CLONE_FAVORITES;Belasse favorisierte Werkzeuge auch im Original-Tab
+PREFERENCES_TOOLPANEL_CLONE_FAVORITES_TOOLTIP;Wenn aktiviert, werden favorisierte Werkzeuge in beiden Tabs erscheinen, in den Favoriten und im ursprünglichen Tab.\n\nMerke: Die Aktivierung dieser Option könnte zu geringfügigen Verzögerungen während des Tab-Wechsels führen.
+PREFERENCES_TOOLPANEL_FAVORITE;Favorit
+PREFERENCES_TOOLPANEL_FAVORITESPANEL;Favorites Panel
+PREFERENCES_TOOLPANEL_TOOL;Tool
 PREFERENCES_TP_LABEL;Werkzeugbereich:
 PREFERENCES_TP_VSCROLLBAR;Keine vertikale Scrollbar
 PREFERENCES_USEBUNDLEDPROFILES;Standardprofile verwenden
+PREFERENCES_WBA;Weißabgleich
+PREFERENCES_WBACORR;Weissabgleich - automatische Temperaturkorrelation
+PREFERENCES_WBACORR_TOOLTIP;Diese Einstellungen ermöglichen, abhängig von den Bildern (Art der Rohdatei, Farbmetrik usw.), eine Anpassung des Algorithmus "Temperaturkorrelation", um die besten Gesamtergebnisse zu erzielen. Es gibt keine absolute Regel, diese Parameter mit den erhaltenen Ergebnissen zu verknüpfen.\n\nEs gibt drei Arten von Einstellungen: \n* solche, die für den Benutzer über die GUI zugänglich sind.\n* solche, die nur beim Lesen aus jeder pp3-Datei zugänglich sind\n* diejenigen, auf die der Benutzer in "Optionen" zugreifen kann (siehe Rawpedia)\n Sie können "AWB-Temperatur-Bias" und "Grün-Verfeinerung" verwenden, um die Ergebnisse anzupassen. Jede Veränderung führt zu einer Neuberechnung von Temperatur, Farbton und Bezug.\n\nBitte beachten Sie, dass die drei Indikatoren "Bezugsfaktor", "Patch-Chroma" und ΔE nur zur Information dienen. Nur weil einer dieser Indikatoren besser ist, ist das Ergebnis nicht zwangsläufig besser.
+PREFERENCES_WBAENA;Zeige Einstellungen der Temperaturkorrelation bei automatischem Weißabgleich 
+PREFERENCES_WBAENACUSTOM;Benutzerdefinierte Temperatur und Tönung
 PREFERENCES_WORKFLOW;Layout
+PREFERENCES_XMP_SIDECAR_MODE;Datei-Endung für XMP (Sidecar)
+PREFERENCES_XMP_SIDECAR_MODE_EXT;wie Darktable (DATEINAME.ext.xmp für DATEINAME.ext)
+PREFERENCES_XMP_SIDECAR_MODE_STD;Standard (DATEINAME.xmp für DATEINAME.ext)
 PREFERENCES_ZOOMONSCROLL;Bilder zoomen per scrollen
 PROFILEPANEL_COPYPPASTE;Zu kopierende Parameter
 PROFILEPANEL_GLOBALPROFILES;Standardprofile
 PROFILEPANEL_LABEL;Bearbeitungsprofile
 PROFILEPANEL_LOADDLGLABEL;Bearbeitungsparameter laden...
 PROFILEPANEL_LOADPPASTE;Zu ladende Parameter
-PROFILEPANEL_MODE_TOOLTIP;Ist der Button aktiviert, werden Teilprofile\nals vollständige Profile geladen.\nFehlende Parameter werden durch\nStandardwerte aufgefüllt.
+PROFILEPANEL_MODE_TOOLTIP;Ist der Button aktiviert, werden Teilprofile als vollständige Profile geladen.\nFehlende Parameter werden durch Standardwerte aufgefüllt.
 PROFILEPANEL_MYPROFILES;Meine Profile
 PROFILEPANEL_PASTEPPASTE;Einzufügende Parameter
 PROFILEPANEL_PCUSTOM;Benutzerdefiniert
@@ -2077,10 +2135,10 @@ PROFILEPANEL_PINTERNAL;Neutral
 PROFILEPANEL_PLASTSAVED;Zuletzt gespeichert
 PROFILEPANEL_SAVEDLGLABEL;Bearbeitungsprofil speichern...
 PROFILEPANEL_SAVEPPASTE;Zu speichernde Parameter
-PROFILEPANEL_TOOLTIPCOPY;Profil in Zwischenablage kopieren.\n\nStrg-Taste beim Klicken festhalten, um\nzu kopierende Parameter auszuwählen.
-PROFILEPANEL_TOOLTIPLOAD;Profil aus Datei laden.\n\nStrg-Taste beim Klicken festhalten, um\nzu ladende Parameter auszuwählen.
-PROFILEPANEL_TOOLTIPPASTE;Profil aus Zwischenablage einfügen.\n\nStrg-Taste beim Klicken festhalten, um\neinzufügende Parameter auszuwählen.
-PROFILEPANEL_TOOLTIPSAVE;Profil speichern.\n\nStrg-Taste beim Klicken festhalten, um\nzu speichernde Parameter auszuwählen.
+PROFILEPANEL_TOOLTIPCOPY;Profil in Zwischenablage kopieren.\n\nStrg-Taste beim Klicken festhalten, um zu kopierende Parameter auszuwählen.
+PROFILEPANEL_TOOLTIPLOAD;Profil aus Datei laden.\n\nStrg-Taste beim Klicken festhalten, um zu ladende Parameter auszuwählen.
+PROFILEPANEL_TOOLTIPPASTE;Profil aus Zwischenablage einfügen.\n\nStrg-Taste beim Klicken festhalten, um einzufügende Parameter auszuwählen.
+PROFILEPANEL_TOOLTIPSAVE;Profil speichern.\n\nStrg-Taste beim Klicken festhalten, um zu speichernde Parameter auszuwählen.
 PROGRESSBAR_DECODING;Dekodiere...
 PROGRESSBAR_GREENEQUIL;Grün-Balance...
 PROGRESSBAR_HLREC;Lichterrekonstruktion...
@@ -2114,7 +2172,7 @@ QUEUE_LOCATION_FOLDER;In dieses Verzeichnis speichern
 QUEUE_LOCATION_TEMPLATE;Dynamisches Verzeichnis verwenden
 QUEUE_LOCATION_TEMPLATE_TOOLTIP;Die folgenden Variablen können verwendet werden:\n<b>%f</b>, <b>%d1</b>, <b>%d2</b>, ..., <b>%p1</b>, <b>%p2</b>, ..., <b>%r</b>, <b>%s1</b>, <b>%s2</b>, ...\n\nDiese Variablen beinhalten bestimmte Teile des Verzeichnispfades, in welchem sich das Bild befindet, oder Attribute des Bildes.\n\nWenn zum Beispiel <b><i>/home/tom/photos/2010-10-31/dsc0042.nef</i></b> geöffnet wurde, dann haben die Variablen den folgenden Inhalt:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>dsc0042</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31</i>\n<b>%p2</b> = <i>/home/tom/photos</i>\n<b>%p3</b> = <i>/home/tom</i>\n<b>%p4</b> = <i>/home</i>\n\nWenn Sie die Ausgabedatei in dasselbe Verzeichnis wie das Originalbild speichern wollen, dann wählen Sie:\n<b>%p1/%f</b>\n\nWenn Sie die Ausgabedatei in ein Unterverzeichnis mit dem Namen '<i>converted</i>' schreiben wollen, dann wählen Sie:\n<b>%p1/converted/%f</b>\n\nWenn Sie die Ausgabedatei im Verzeichnispfad '<i>/home/tom/photos/converted</i>' speichern wollen, dort jedoch in einem mit dem Namen des Ursprungsverzeichnisses betitelten Unterverzeichnis, dann wählen Sie:\n<b>%p2/converted/%d1/%f</b>\n\nDie Variable <b>%r</b> enthält die Bewertung des Bildes.
 QUEUE_LOCATION_TITLE;Ausgabeverzeichnis
-QUEUE_STARTSTOP_TOOLTIP;Startet/Stoppt die Verarbeitung\nder Warteschlange.\n\nTaste: <b>Strg</b> + <b>s</b>
+QUEUE_STARTSTOP_TOOLTIP;Startet/Stoppt die Verarbeitung der Warteschlange.\n\nTaste: <b>Strg</b> + <b>s</b>
 SAMPLEFORMAT_0;Unbekanntes Datenformat
 SAMPLEFORMAT_1;8 Bit ohne Vorzeichen
 SAMPLEFORMAT_2;16 Bit ohne Vorzeichen
@@ -2124,6 +2182,7 @@ SAMPLEFORMAT_16;16 Bit Gleitkomma
 SAMPLEFORMAT_32;24 Bit Gleitkomma
 SAMPLEFORMAT_64;32 Bit Gleitkomma
 SAVEDLG_AUTOSUFFIX;Suffix anfügen, wenn die Datei bereits existiert
+SAVEDLG_BIGTIFF;BigTIFF (Metadaten werden nicht unterstützt)
 SAVEDLG_FILEFORMAT;Dateiformat
 SAVEDLG_FILEFORMAT_FLOAT;Fließkomma
 SAVEDLG_FORCEFORMATOPTS;Erzwinge Speicheroptionen
@@ -2143,6 +2202,13 @@ SAVEDLG_WARNFILENAME;Die Datei wird gespeichert als
 SHCSELECTOR_TOOLTIP;Um die 3 Regler zurückzusetzen, rechte Maustaste klicken.
 SOFTPROOF_GAMUTCHECK_TOOLTIP;Markiert Pixel, deren Farbe außerhalb des Farbumfangs liegen in Abhängigkeit des:\n- Druckerprofils, wenn eines eingestellt und Soft-Proofing aktiviert ist.\n- Ausgabeprofils, wenn ein Druckerprofil nicht eingestellt und Soft-Proofing aktiviert ist.\n- Monitorprofils, wenn Soft-Proofing deaktiviert ist.
 SOFTPROOF_TOOLTIP;Soft-Proofing simuliert das Aussehen des Bildes:\n- für den Druck, wenn ein Druckerprofil unter Einstellungen > Farbmanagement eingestellt ist.\n- wenn es auf einem Bildschirm dargestellt wird, der das aktuelle Ausgabeprofil verwendet und kein Druckerprofil eingestellt ist.
+SORT_ASCENDING;Aufsteigend
+SORT_BY_DATE;Nach Datum
+SORT_BY_EXIF;Nach EXIF
+SORT_BY_LABEL;Nach Farbmarkierung
+SORT_BY_NAME;Nach Name
+SORT_BY_RANK;Nach Bewertung
+SORT_DESCENDING;Absteigend
 TC_PRIM_BLUX;Bx
 TC_PRIM_BLUY;By
 TC_PRIM_GREX;Gx
@@ -2157,7 +2223,7 @@ THRESHOLDSELECTOR_T;Oben
 THRESHOLDSELECTOR_TL;Oben-Links
 THRESHOLDSELECTOR_TR;Oben-Rechts
 TOOLBAR_TOOLTIP_COLORPICKER;Farbwähler\n\nWenn eingeschaltet:\n- Mit der linken Maustaste können Sie einen Farbwähler setzen.\n- Zum Verschieben, linke Maustaste festhalten.\n- Strg + Umschalttaste + Rechts-Klick entfernt alle Farbwähler.\n- Rechts-Klick auf den Farbwählerbutton blendet die Farbwähler ein/aus\n- Rechts-Klick in einen freien Bereich schaltet auf das Hand-Werkzeug zurück.
-TOOLBAR_TOOLTIP_CROP;Ausschnitt wählen.\nTaste: <b>c</b>\n\nZum Verschieben des Ausschnitts,\nUmschalttaste festhalten.
+TOOLBAR_TOOLTIP_CROP;Ausschnitt wählen.\nTaste: <b>c</b>\n\nZum Verschieben des Ausschnitts, Umschalttaste festhalten.
 TOOLBAR_TOOLTIP_HAND;Hand-Werkzeug\nTaste: <b>h</b>
 TOOLBAR_TOOLTIP_PERSPECTIVE;<b>Perspektivkorrektur</b>\n\nMit dem Editieren der Kontrolllinien können perspektivische Verzerrungen korrigiert werden. Ein erneuter Klick auf diesen Button wendet die Korrektur an.
 TOOLBAR_TOOLTIP_STRAIGHTEN;Ausrichten/Drehen\nTaste: <b>s</b>\n\nRichtet das Bild entlang einer Leitlinie aus.
@@ -2168,12 +2234,12 @@ TP_BWMIX_ALGO_SP;Spezialeffekte
 TP_BWMIX_ALGO_TOOLTIP;<b>Linear</b> liefert ein lineares Ergebnis.\n<b>Spezialeffekte</b> liefert einen speziellen Effekt durch Mischen von Kanälen.
 TP_BWMIX_AUTOCH;Auto
 TP_BWMIX_CC_ENABLED;Komplementärfarbe anpassen.
-TP_BWMIX_CC_TOOLTIP;Aktiviert die automatische Anpassung der\nKomplementärfarbe im ROYGCBPM-Modus.
+TP_BWMIX_CC_TOOLTIP;Aktiviert die automatische Anpassung der Komplementärfarbe im ROYGCBPM-Modus.
 TP_BWMIX_CHANNEL;Luminanzequalizer
 TP_BWMIX_CURVEEDITOR1;'Bevor'-Kurve
 TP_BWMIX_CURVEEDITOR2;'Danach'-Kurve
-TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;Die Tonwertkurve wird NACH der Schwarz/Weiß-\nKonvertierung angewendet.
-TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;Die Tonwertkurve wird VOR der Schwarz/Weiß-\nKonvertierung angewendet.
+TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;Die Tonwertkurve wird NACH der Schwarz/Weiß-Konvertierung angewendet.
+TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;Die Tonwertkurve wird VOR der Schwarz/Weiß-Konvertierung angewendet.
 TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;Luminanz als Funktion des Farbtons L=f(H).\nZu hohe Werte können zu Artefakten führen.
 TP_BWMIX_FILTER;Farbfilter
 TP_BWMIX_FILTER_BLUE;Blau
@@ -2226,7 +2292,7 @@ TP_CACORRECTION_RED;Rot
 TP_CBDL_AFT;Nach Schwarz/Weiß
 TP_CBDL_BEF;Vor Schwarz/Weiß
 TP_CBDL_METHOD;Prozessreihenfolge
-TP_CBDL_METHOD_TOOLTIP;Wählen Sie, ob der Detailebenenkontrast nach\ndem Schwarz/Weiß-Werkzeug abgearbeitet wird\n(ermöglicht das Arbeiten im L*a*b*-Farbraum)\noder vor ihm (ermöglicht das Arbeiten im RGB-\nFarbraum).
+TP_CBDL_METHOD_TOOLTIP;Wählen Sie, ob der Detailebenenkontrast\nnach dem Schwarz/Weiß-Werkzeug abgearbeitet wird (ermöglicht das Arbeiten im L*a*b*-Farbraum)\noder vorher (ermöglicht das Arbeiten im RGB-Farbraum).
 TP_CHMIXER_BLUE;Blau-Kanal
 TP_CHMIXER_GREEN;Grün-Kanal
 TP_CHMIXER_LABEL;RGB-Kanalmixer
@@ -2242,7 +2308,7 @@ TP_COLORAPP_ALGO_ALL;Alle
 TP_COLORAPP_ALGO_JC;Helligkeit + Buntheit (JC)
 TP_COLORAPP_ALGO_JS;Helligkeit + Sättigung (JS)
 TP_COLORAPP_ALGO_QM;Helligkeit + Farbigkeit (QM)
-TP_COLORAPP_ALGO_TOOLTIP;Auswahl zwischen Parameter-Teilmengen\nund allen Parametern.
+TP_COLORAPP_ALGO_TOOLTIP;Auswahl zwischen Parameter-Teilmengen und allen Parametern.
 TP_COLORAPP_BADPIXSL;Hot-/Bad-Pixelfilter
 TP_COLORAPP_BADPIXSL_TOOLTIP;Unterdrückt Hot-/Dead-Pixel (hell gefärbt).\n0 = Kein Effekt\n1 = Median\n2 = Gaussian\nAlternativ kann das Bild angepasst werden, um sehr dunkle Schatten zu vermeiden.\n\nDiese Artefakte sind auf Einschränkungen von CIECAM02 zurückzuführen.
 TP_COLORAPP_BRIGHT;Helligkeit (Q)
@@ -2259,7 +2325,8 @@ TP_COLORAPP_CHROMA_M_TOOLTIP;Die Farbigkeit in CIECAM unterscheidet sich von L*a
 TP_COLORAPP_CHROMA_S;Sättigung (S)
 TP_COLORAPP_CHROMA_S_TOOLTIP;Die Sättigung in CIECAM unterscheidet sich von L*a*b* und RGB-Sättigung.
 TP_COLORAPP_CHROMA_TOOLTIP;Die Buntheit in CIECAM unterscheidet sich von L*a*b* und RGB-Buntheit.
-TP_COLORAPP_CIECAT_DEGREE;Adaptation
+TP_COLORAPP_CIECAT_DEGREE;Adaptation Szene
+TP_COLORAPP_CIECAT_DEGREEOUT;Chromatische Adaptation Wahrnehmung
 TP_COLORAPP_CONTRAST;Kontrast (J)
 TP_COLORAPP_CONTRAST_Q;Kontrast (Q)
 TP_COLORAPP_CONTRAST_Q_TOOLTIP;Kontrast (Q) in CIECAM basiert auf Helligkeit. Er unterscheidet sich vom L*a*b*- und RGB-Kontrast.
@@ -2314,8 +2381,8 @@ TP_COLORAPP_SURROUND_AVER;Durchschnitt
 TP_COLORAPP_SURROUND_DARK;Dunkel
 TP_COLORAPP_SURROUND_DIM;Gedimmt
 TP_COLORAPP_SURROUND_EXDARK;Extrem Dunkel (Cutsheet)
-TP_COLORAPP_SURROUND_TOOLTIP;Ändert Töne und Farben, um die Betrachtungsbedingungen des Ausgabegeräts zu berücksichtigen. Je dunkler die Betrachtungsbedingungen sind, desto dunkler wird das Bild. Die Bildhelligkeit wird nicht geändert, wenn die Betrachtungsbedingungen auf durchschnittlich eingestellt sind.
-TP_COLORAPP_SURSOURCE_TOOLTIP;Ändert Töne und Farben, um die Umgebungsbedingungen der Szenenbeleuchtung zu berücksichtigen. Je dunkler die Umgebungsbedingungen sind, desto heller wird das Bild. Die Bildhelligkeit wird nicht geändert, wenn der Umgebungs-Wert auf Durchschnitt eingestellt ist.
+TP_COLORAPP_SURROUND_TOOLTIP;Ändert Töne und Farben, um die Betrachtungsbedingungen des Ausgabegeräts zu berücksichtigen. Je dunkler die Betrachtungsbedingungen sind, desto dunkler wird das Bild. Die Bildhelligkeit wird nicht geändert, wenn die Betrachtungsbedingungen auf 'Durchschnitt' eingestellt sind.
+TP_COLORAPP_SURSOURCE_TOOLTIP;Ändert Töne und Farben, um die Umgebungsbedingungen der Szenenbeleuchtung zu berücksichtigen. Je dunkler die Umgebungsbedingungen sind, desto heller wird das Bild. Die Bildhelligkeit wird nicht geändert, wenn der Umgebungs-Wert auf 'Durchschnitt' eingestellt ist.
 TP_COLORAPP_TCMODE_BRIGHTNESS;Helligkeit (Q)
 TP_COLORAPP_TCMODE_CHROMA;Buntheit (H)
 TP_COLORAPP_TCMODE_COLORF;Farbigkeit (M)
@@ -2325,6 +2392,7 @@ TP_COLORAPP_TCMODE_LABEL3;Farbkurve Modus
 TP_COLORAPP_TCMODE_LIGHTNESS;Helligkeit (J)
 TP_COLORAPP_TCMODE_SATUR;Sättigung (S)
 TP_COLORAPP_TEMP2_TOOLTIP;Symmetrischer Modus Temp = Weißabgleich.\nBei Auswahl einer Beleuchtung setze Tönung=1.\n\nA Temp=2856\nD41 Temp=4100\nD50 Temp=5003\nD55 Temp=5503\nD60 Temp=6000\nD65 Temp=6504\nD75 Temp=7504
+TP_COLORAPP_TEMPOUT_TOOLTIP;Temperatur und Tönung.\nIn Abhängigkeit von den zuvor gewählten Einstellungen, beträgt die gewählte Temperatur:\nWeißabgleich\nA temp=2856\nD41 temp=4100\nD50 temp=5003\nD55 temp=5503\nD60 temp=6000\nD65 temp=6504\nD75 temp=7504\nFrei.
 TP_COLORAPP_TEMP_TOOLTIP;Um eine Beleuchtungsart auszuwählen, setzen Sie die Tönung immer auf '1'.\nA Temp=2856\nD50 Temp=5003\nD55 Temp=5503\nD65 Temp=6504\nD75 Temp=7504
 TP_COLORAPP_TONECIE;verwende CIECAM für die Tonwertkorrektur
 TP_COLORAPP_TONECIE_TOOLTIP;Wenn diese Option ausgeschaltet ist, wird die Tonwertkorrektur im L*a*b*-Farbraum durchgeführt.\nWenn die Option eingeschaltet ist, wird CIECAM02 für die Tonwertkorrektur verwendet. Das Werkzeug Tonwertkorrektur muss aktiviert sein, damit diese Option berücksichtigt wird.
@@ -2425,16 +2493,16 @@ TP_DIRPYRDENOISE_CHROMINANCE_AMZ;Auto-Multizonen
 TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL;Automatisch Global
 TP_DIRPYRDENOISE_CHROMINANCE_BLUEYELLOW;Chrominanz Blau/Gelb
 TP_DIRPYRDENOISE_CHROMINANCE_CURVE;Chrominanzkurve
-TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Erhöht/Reduziert die Intensität der\nChrominanz-Rauschreduzierung in\nAbhängigkeit der Farbsättigung.
+TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Erhöht/Reduziert die Intensität der Chrominanz-Rauschreduzierung in Abhängigkeit der Farbsättigung.
 TP_DIRPYRDENOISE_CHROMINANCE_FRAME;Chrominanz
 TP_DIRPYRDENOISE_CHROMINANCE_MANUAL;Benutzerdefiniert
 TP_DIRPYRDENOISE_CHROMINANCE_MASTER;Chrominanz (Master)
 TP_DIRPYRDENOISE_CHROMINANCE_METHOD;Methode
-TP_DIRPYRDENOISE_CHROMINANCE_METHODADVANCED_TOOLTIP;<b>Benutzerdefiniert:</b>\nManuelle Anpassung der Chrominanz-Rauschreduzierung.\n\n<b>Automatisch Global:</b>\nEs werden 9 Zonen für die Berechnung der Chrominanz-\nRauschreduzierung verwendet.\n\n<b>Vorschau:</b>\nNur der sichbare Teil des Bildes wird für die Berechnung\nder Chrominanz-Rauschreduzierung verwendet.
+TP_DIRPYRDENOISE_CHROMINANCE_METHODADVANCED_TOOLTIP;<b>Benutzerdefiniert:</b>\nManuelle Anpassung der Chrominanz-Rauschreduzierung.\n\n<b>Automatisch Global:</b>\nEs werden 9 Zonen für die Berechnung der Chrominanz-Rauschreduzierung verwendet.\n\n<b>Vorschau:</b>\nNur der sichbare Teil des Bildes wird für die Berechnung der Chrominanz-Rauschreduzierung verwendet.
 TP_DIRPYRDENOISE_CHROMINANCE_METHOD_TOOLTIP;<b>Benutzerdefiniert:</b>\nManuelle Anpassung der Chrominanz-Rauschreduzierung.\n\n<b>Automatisch Global:</b>\nEs werden 9 Zonen für die Berechnung der Chrominanz-Rauschreduzierung verwendet.\n\n<b>Auto-Multizonen:</b>\nKeine Voransicht - wird erst beim Speichern angewendet.\nIn Abhängigkeit von der Bildgröße, wird das Bild in ca. 10 bis 70 Kacheln aufgeteilt. Für jede Kachel wird die Chrominanz-Rauschreduzierung individuell berechnet.\n\n<b>Vorschau:</b>\nNur der sichtbare Teil des Bildes wird für die Berechnung der Chrominanz-Rauschreduzierung verwendet.
 TP_DIRPYRDENOISE_CHROMINANCE_PMZ;Vorschau
 TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW;Vorschau
-TP_DIRPYRDENOISE_CHROMINANCE_PREVIEWRESIDUAL_INFO_TOOLTIP;Zeigt das Restrauschen des sichtbaren Bildbereichs\nin der 100%-Ansicht an.\n\n<50: Sehr wenig Rauschen\n50 - 100: Wenig Rauschen\n100 - 300: Durchschnittliches Rauschen\n>300: Hohes Rauschen\n\nDie Werte unterscheiden sich im L*a*b*- und RGB-Modus.\nDie RGB-Werte sind ungenauer, da der RGB-Modus\nLuminanz und Chrominanz nicht komplett trennt.
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEWRESIDUAL_INFO_TOOLTIP;Zeigt das Restrauschen des sichtbaren Bildbereichs in der 100%-Ansicht an.\n\n<50: Sehr wenig Rauschen\n50 - 100: Wenig Rauschen\n100 - 300: Durchschnittliches Rauschen\n>300: Hohes Rauschen\n\nDie Werte unterscheiden sich im L*a*b*- und RGB-Modus.\nDie RGB-Werte sind ungenauer, da der RGB-Modus Luminanz und Chrominanz nicht komplett trennt.
 TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_INFO;Vorschaugröße = %1, Zentrum: Px = %2  Py = %2
 TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO;Rauschen: Mittelwert = %1  Hoch = %2
 TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO_EMPTY;Rauschen: Mittelwert = ---  Hoch = ---
@@ -2446,26 +2514,28 @@ TP_DIRPYRDENOISE_LUMINANCE_CURVE;Luminanzkurve
 TP_DIRPYRDENOISE_LUMINANCE_DETAIL;Luminanzdetails
 TP_DIRPYRDENOISE_LUMINANCE_FRAME;Luminanz
 TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Luminanz
+TP_DIRPYRDENOISE_MAIN_AUTO_GAIN;Helligkeitskompensation
+TP_DIRPYRDENOISE_MAIN_AUTO_GAIN_TOOLTIP;Stärke der Rauschreduzierung basierend auf der Bildhelligkeit. Bei dunklen Bildern wird die Stärke verringert und bei hellen Bildern erhöht.
 TP_DIRPYRDENOISE_MAIN_COLORSPACE;Farbraum
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_LAB;L*a*b*
 TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;RGB
-TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP;Für RAW-Bilder kann entweder die RGB-\noder L*a*b*-Methode verwendet werden.\n\nFür andere Bilder wird unabhängig von der\nAuswahl immer die L*a*b*-Methode verwendet.
+TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP;Für RAW-Bilder kann entweder die RGB- oder L*a*b*-Methode verwendet werden.\n\nFür andere Bilder wird unabhängig von der Auswahl immer die L*a*b*-Methode verwendet.
 TP_DIRPYRDENOISE_MAIN_GAMMA;Gamma
-TP_DIRPYRDENOISE_MAIN_GAMMA_TOOLTIP;Mit Gamma kann die Intensität der\nRauschreduzierung über den Farbbereich\nvariiert werden. Bei kleinen Werten sind\nnur dunkle Farbtöne betroffen, bei\ngrößeren Werten wird der Effekt auf\nhellere Töne ausgeweitet.
+TP_DIRPYRDENOISE_MAIN_GAMMA_TOOLTIP;Mit Gamma kann die Intensität der Rauschreduzierung über den Farbbereich variiert werden. Bei kleinen Werten sind nur dunkle Farbtöne betroffen, bei größeren Werten wird der Effekt auf hellere Töne ausgeweitet.
 TP_DIRPYRDENOISE_MAIN_MODE;Modus
 TP_DIRPYRDENOISE_MAIN_MODE_AGGRESSIVE;Aggressiv
 TP_DIRPYRDENOISE_MAIN_MODE_CONSERVATIVE;Konservativ
-TP_DIRPYRDENOISE_MAIN_MODE_TOOLTIP;'Konservativ' bewahrt Tieffrequenz-Chroma-Muster,\nwährend 'Aggressiv' sie entfernt.
+TP_DIRPYRDENOISE_MAIN_MODE_TOOLTIP;'Konservativ' bewahrt Tieffrequenz-Chroma-Muster, während 'Aggressiv' sie entfernt.
 TP_DIRPYRDENOISE_MEDIAN_METHOD;Methode
 TP_DIRPYRDENOISE_MEDIAN_METHOD_CHROMINANCE;Nur Farbe
 TP_DIRPYRDENOISE_MEDIAN_METHOD_LAB;L*a*b*
 TP_DIRPYRDENOISE_MEDIAN_METHOD_LABEL;Medianfilter
 TP_DIRPYRDENOISE_MEDIAN_METHOD_LUMINANCE;Nur Luminanz
 TP_DIRPYRDENOISE_MEDIAN_METHOD_RGB;RGB
-TP_DIRPYRDENOISE_MEDIAN_METHOD_TOOLTIP;Bei der Methode 'Nur Luminanz' und 'L*a*b*',\nwird der Medianfilter nach den Wavelet-Schritten verarbeitet.\nBei RGB wird der Medianfilter am Ende der Rauschreduzierung verarbeitet.
+TP_DIRPYRDENOISE_MEDIAN_METHOD_TOOLTIP;Bei der Methode 'Nur Luminanz' und 'L*a*b*', wird der Medianfilter nach den Wavelet-Schritten verarbeitet.\nBei RGB wird der Medianfilter am Ende der Rauschreduzierung verarbeitet.
 TP_DIRPYRDENOISE_MEDIAN_METHOD_WEIGHTED;Gewichtet L* (wenig) + a*b* (normal)
 TP_DIRPYRDENOISE_MEDIAN_PASSES;Iterationen
-TP_DIRPYRDENOISE_MEDIAN_PASSES_TOOLTIP;Manchmal führt ein kleines 3×3-Fenster mit\nmehreren Iterationen zu besseren Ergebnissen\nals ein 7×7-Fenster mit nur einer Iteration.
+TP_DIRPYRDENOISE_MEDIAN_PASSES_TOOLTIP;Manchmal führt ein kleines 3×3-Fenster mit mehreren Iterationen zu besseren Ergebnissen als ein 7×7-Fenster mit nur einer Iteration.
 TP_DIRPYRDENOISE_MEDIAN_TYPE;Mediantyp
 TP_DIRPYRDENOISE_MEDIAN_TYPE_TOOLTIP;Einen Medianfilter mit der gewünschten Fenstergröße auswählen.\nJe größer das Fenster, desto länger dauert die Verarbeitungszeit.\n\n3×3 weich: Nutzt 5 Pixel in einem 3×3-Pixelfenster.\n3×3: Nutzt 9 Pixel in einem 3×3-Pixelfenster.\n5×5 weich: Nutzt 13 Pixel in einem 5×5-Pixelfenster.\n5×5: Nutzt 25 Pixel in einem 5×5-Pixelfenster.\n7×7: Nutzt 49 Pixel in einem 7×7-Pixelfenster.\n9×9: Nutzt 81 Pixel in einem 9×9-Pixelfenster.\n\nManchmal ist das Ergebnis mit einem kleineren Fenster und mehreren Iterationen besser, als mit einem größeren und nur einer Iteration.
 TP_DIRPYRDENOISE_TYPE_3X3;3×3
@@ -2478,7 +2548,7 @@ TP_DIRPYREQUALIZER_ALGO;Hautfarbtonbereich
 TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fein: Ist näher an den Hautfarbtönen und minimiert den Einfluss auf andere Farben.\n\nGrob: Minimiert Artefakte.
 TP_DIRPYREQUALIZER_ARTIF;Artefakte reduzieren
 TP_DIRPYREQUALIZER_HUESKIN;Hautfarbton
-TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;Wenn Sie den Bereich signifikant nach Links\noder Rechts verschieben müssen, ist der\nWeißabgleich nicht richtig gewählt.\nWählen Sie den eingeschlossenen Bereich so\neng wie möglich, um den Einfluss auf benachbarte\nFarben zu verhindern.
+TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;Wenn Sie den Bereich signifikant nach Links oder Rechts verschieben müssen, ist der Weißabgleich nicht richtig gewählt.\nWählen Sie den eingeschlossenen Bereich so eng wie möglich, um den Einfluss auf benachbarte Farben zu verhindern.
 TP_DIRPYREQUALIZER_LABEL;Detailebenenkontrast
 TP_DIRPYREQUALIZER_LUMACOARSEST;Grob
 TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Kontrast -
@@ -2488,7 +2558,7 @@ TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
 TP_DIRPYREQUALIZER_SKIN;Hautfarbtöne schützen
 TP_DIRPYREQUALIZER_SKIN_TOOLTIP;-100: Nur Farben innerhalb des Bereichs werden verändert.\n0: Alle Farben werden gleich behandelt.\n+100: Nur Farben außerhalb des Bereichs werden verändert.
 TP_DIRPYREQUALIZER_THRESHOLD;Schwelle
-TP_DIRPYREQUALIZER_TOOLTIP;Verringert Artefakte an den Übergängen\nzwischen Hautfarbtönen und dem Rest des Bildes.
+TP_DIRPYREQUALIZER_TOOLTIP;Verringert Artefakte an den Übergängen zwischen Hautfarbtönen und dem Rest des Bildes.
 TP_DISTORTION_AMOUNT;Intensität
 TP_DISTORTION_AUTO_TOOLTIP;Korrigiert die Verzeichnung in RAW-Bildern durch Vergleich mit dem eingebetteten JPEG, falls dieses existiert und die Verzeichnung durch die Kamera korrigiert wurde.
 TP_DISTORTION_LABEL;Verzeichnungskorrektur
@@ -2499,12 +2569,12 @@ TP_EPD_REWEIGHTINGITERATES;Iterationen
 TP_EPD_SCALE;Faktor
 TP_EPD_STRENGTH;Intensität
 TP_EXPOSURE_AUTOLEVELS;Auto
-TP_EXPOSURE_AUTOLEVELS_TOOLTIP;Automatische Belichtungseinstellung\nBasierend auf Bildanalyse.
+TP_EXPOSURE_AUTOLEVELS_TOOLTIP;Automatische Belichtungseinstellung, basierend auf einer Bildanalyse.\nAktiviert 'Lichter rekonstruieren' wenn erforderlich.
 TP_EXPOSURE_BLACKLEVEL;Schwarzwert
 TP_EXPOSURE_BRIGHTNESS;Helligkeit
 TP_EXPOSURE_CLAMPOOG;Farben auf Farbraum beschränken
 TP_EXPOSURE_CLIP;Clip %:
-TP_EXPOSURE_CLIP_TOOLTIP;Anteil der Pixel, die sich bei automatischer\nBelichtungseinstellung im Bereich der\nSpitzlichter und Schatten befinden sollen.
+TP_EXPOSURE_CLIP_TOOLTIP;Anteil der Pixel, die sich bei automatischer Belichtungseinstellung im Bereich der Spitzlichter und Schatten befinden sollen.
 TP_EXPOSURE_COMPRHIGHLIGHTS;Lichterkompression
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Lichterkompression Schwelle
 TP_EXPOSURE_COMPRSHADOWS;Schattenkompression
@@ -2514,7 +2584,7 @@ TP_EXPOSURE_CURVEEDITOR2;Tonwertkurve 2
 TP_EXPOSURE_CURVEEDITOR2_TOOLTIP;Um mit den doppelten Tonwert-Kurven die besten Ergenisse zu erzielen, lesen Sie bitte den Abschnitt im Handbuch unter:\nDer Werkzeugkasten > Reiter Belichtung > Tonwertkurven.
 TP_EXPOSURE_EXPCOMP;Belichtungskorrektur
 TP_EXPOSURE_HISTMATCHING;Auto-Tonwertkurve
-TP_EXPOSURE_HISTMATCHING_TOOLTIP;Passt Regler und Kurven (mit Ausnahme der Belichtungskorrektur)\nautomatisch an, um das eingebettete JPEG-Bild zu simulieren.
+TP_EXPOSURE_HISTMATCHING_TOOLTIP;Passt Regler und Kurven (mit Ausnahme der Belichtungskorrektur) automatisch an, um das eingebettete JPEG-Bild zu simulieren.
 TP_EXPOSURE_LABEL;Belichtung
 TP_EXPOSURE_SATURATION;Sättigung
 TP_EXPOSURE_TCMODE_FILMLIKE;Filmähnlich
@@ -2539,9 +2609,11 @@ TP_FILMNEGATIVE_GUESS_TOOLTIP;Setzt automatisch die Rot- und Blau-Werte, indem m
 TP_FILMNEGATIVE_LABEL;Negativfilm
 TP_FILMNEGATIVE_OUT_LEVEL;Ausgabestärke
 TP_FILMNEGATIVE_PICK;Neutrale Punkte anwählen
+TP_FILMNEGATIVE_PICK_SIZE;Größe:
 TP_FILMNEGATIVE_RED;Rotverhältnis
 TP_FILMNEGATIVE_REF_LABEL;Eingang RGB: %1
 TP_FILMNEGATIVE_REF_PICK;Farbwähler
+TP_FILMNEGATIVE_REF_SIZE;Größe:
 TP_FILMNEGATIVE_REF_TOOLTIP;Auswahl eines Graupunktes, um den Weißabgleich für das Positivbild zu setzen.
 TP_FILMSIMULATION_LABEL;Filmsimulation
 TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee sucht nach Hald-CLUT-Bildern, die für die Filmsimulation benötigt werden, in einem Ordner, der zu viel Zeit zum Laden benötigt.\nGehen Sie zu\n< Einstellungen > Bildbearbeitung > Filmsimulation >\nund prüfen Sie, welcher Order benutzt wird. Wählen Sie den Ordner aus, der nur die Hald-CLUT-Bilder beinhaltet oder einen leeren Ordner, wenn Sie die Filmsimulation nicht verwenden möchten.\n\nWeitere Informationen über die Filmsimulation finden Sie auf RawPedia.\n\nMöchten Sie die Suche beenden?
@@ -2555,7 +2627,8 @@ TP_FLATFIELD_BT_HORIZONTAL;Horizontal
 TP_FLATFIELD_BT_VERTHORIZ;Vertikal + Horizontal
 TP_FLATFIELD_BT_VERTICAL;Vertikal
 TP_FLATFIELD_CLIPCONTROL;Kontrolle zu heller Bereiche
-TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Verhindert das Abschneiden der Lichter. Wenn\nvor dem Anwenden des Weißbildes schon\nabgeschnittene Lichter vorhanden sind, kann\nes zu einem Farbstich kommen.
+TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Verhindert das Abschneiden der Lichter. Wenn vor dem Anwenden des Weißbildes schon abgeschnittene Lichter vorhanden sind, kann es zu einem Farbstich kommen.
+TP_FLATFIELD_FROMMETADATA;Aus den Meta-Daten
 TP_FLATFIELD_LABEL;Weißbild
 TP_GENERAL_11SCALE_TOOLTIP;Der Effekt dieses Werkzeugs ist nur in der 100%-Ansicht akkurat oder sichtbar.
 TP_GRADIENT_CENTER;Rotationsachse
@@ -2573,8 +2646,10 @@ TP_GRADIENT_STRENGTH_TOOLTIP;Filterstärke in Blendenstufen.
 TP_HLREC_BLEND;Überlagerung
 TP_HLREC_CIELAB;CIELab-Überlagerung
 TP_HLREC_COLOR;Farbübertragung
-TP_HLREC_ENA_TOOLTIP;Wird bei Verwendung der automatischen\nBelichtungskorrektur möglicherweise\naktiviert.
+TP_HLREC_COLOROPP;Interpolieren
+TP_HLREC_ENA_TOOLTIP;Wird bei Verwendung der automatischen Belichtungskorrektur möglicherweise aktiviert.
 TP_HLREC_HLBLUR;Unschärfe
+TP_HLREC_HLTH;Schwellenwert
 TP_HLREC_LABEL;Lichter rekonstruieren
 TP_HLREC_LUMINANCE;Luminanz wiederherstellen
 TP_HLREC_METHOD;Methode:
@@ -2584,26 +2659,27 @@ TP_HSVEQUALIZER_LABEL;Farbton (H)/Sättigung (S)/Dynamik (V)
 TP_HSVEQUALIZER_SAT;S
 TP_HSVEQUALIZER_VAL;V
 TP_ICM_APPLYBASELINEEXPOSUREOFFSET;Basisbelichtung
-TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP;Die eingebettete DCP-Basisbelichtung verwenden.\nDie Einstellung ist nur verfügbar wenn sie vom\nEingangsfarbprofil unterstützt wird.
+TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP;Die eingebettete DCP-Basisbelichtung verwenden.\nDie Einstellung ist nur verfügbar wenn sie vom Eingangsfarbprofil unterstützt wird.
 TP_ICM_APPLYHUESATMAP;Basistabelle
-TP_ICM_APPLYHUESATMAP_TOOLTIP;Die eingebettete DCP-Basistabelle verwenden.\nDie Einstellung ist nur verfügbar wenn sie vom\nEingangsfarbprofil unterstützt wird.
+TP_ICM_APPLYHUESATMAP_TOOLTIP;Die eingebettete DCP-Basistabelle verwenden.\nDie Einstellung ist nur verfügbar wenn sie vom Eingangsfarbprofil unterstützt wird.
 TP_ICM_APPLYLOOKTABLE;'Look'-Tabelle
-TP_ICM_APPLYLOOKTABLE_TOOLTIP;Die eingebettete DCP-'Look'-Tabelle verwenden.\nDie Einstellung ist nur verfügbar wenn sie vom\nEingangsfarbprofil unterstützt wird.
+TP_ICM_APPLYLOOKTABLE_TOOLTIP;Die eingebettete DCP-'Look'-Tabelle verwenden.\nDie Einstellung ist nur verfügbar wenn sie vom Eingangsfarbprofil unterstützt wird.
 TP_ICM_BPC;Schwarzpunkt-Kompensation
 TP_ICM_DCPILLUMINANT;Illumination
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpoliert
-TP_ICM_DCPILLUMINANT_TOOLTIP;DCP-Illumination auswählen. Vorgabe ist 'Interpoliert'. Die Einstellung ist nur verfügbar, wenn sie vom Eingangsfarbprofil unterstützt wird.
+TP_ICM_DCPILLUMINANT_TOOLTIP;DCP-Illumination auswählen. Vorgabe ist 'Interpoliert'.\nDie Einstellung ist nur verfügbar, wenn sie vom Eingangsfarbprofil unterstützt wird.
 TP_ICM_FBW;Schwarz-Weiß
+TP_ICM_GAMUT;Gamut-Kontrolle
 TP_ICM_ILLUMPRIM_TOOLTIP;Wählen Sie die Lichtart, die den Aufnahmebedingungen am nächsten kommt.\nÄnderungen können nur vorgenommen werden, wenn die Auswahl 'Ziel-Primärfarben' auf 'Benutzerdefiniert (Schieberegler)' eingestellt ist.
 TP_ICM_INPUTCAMERA;Kamera-Standard
 TP_ICM_INPUTCAMERAICC;Kameraspezifisches Profil
-TP_ICM_INPUTCAMERAICC_TOOLTIP;Verwendet RawTherapees kameraspezifisches\nDCP/ICC-Eingangsfarbprofil, welches präziser als\neine einfache Matrix ist.
-TP_ICM_INPUTCAMERA_TOOLTIP;Benutzt eine einfache Farbmatrix von DCRAW,\neine erweiterte RawTherapee-Version oder eine\naus einem DNG.
+TP_ICM_INPUTCAMERAICC_TOOLTIP;Verwendet RawTherapees kameraspezifisches DCP/ICC-Eingangsfarbprofil, welches präziser als eine einfache Matrix ist.
+TP_ICM_INPUTCAMERA_TOOLTIP;Benutzt eine einfache Farbmatrix von DCRAW, eine erweiterte RawTherapee-Version oder eine aus einem DNG.
 TP_ICM_INPUTCUSTOM;DCP/ICC-Profil
 TP_ICM_INPUTCUSTOM_TOOLTIP;Eigenes DCP/ICC-Farbprofil verwenden.
 TP_ICM_INPUTDLGLABEL;DCP/ICC-Profil wählen...
 TP_ICM_INPUTEMBEDDED;Eingebettetes Profil verwenden
-TP_ICM_INPUTEMBEDDED_TOOLTIP;Farbprofil verwenden, das in Nicht-RAW-Bildern\neingebettet ist.
+TP_ICM_INPUTEMBEDDED_TOOLTIP;Farbprofil verwenden, das in Nicht-RAW-Bildern eingebettet ist.
 TP_ICM_INPUTNONE;Kein Profil
 TP_ICM_INPUTNONE_TOOLTIP;Kein Eingangsfarbprofil verwenden.
 TP_ICM_INPUTPROFILE;Eingangsfarbprofil
@@ -2653,6 +2729,7 @@ TP_ICM_WORKING_PRIM_BRU;BruceRGB
 TP_ICM_WORKING_PRIM_BST;BestRGB
 TP_ICM_WORKING_PRIM_CUS;Benutzerdefiniert (Regler)
 TP_ICM_WORKING_PRIM_CUSGR;Benutzerdefiniert (CIE xy-Diagramm)
+TP_ICM_WORKING_PRIM_JDCMAX;JDC Max
 TP_ICM_WORKING_PRIM_NONE;Standard
 TP_ICM_WORKING_PRIM_PROP;ProPhoto
 TP_ICM_WORKING_PRIM_REC;Rec2020
@@ -2671,8 +2748,6 @@ TP_ICM_WORKING_TRC_SRGB;sRGB g=2.4 s=12.92
 TP_ICM_WORKING_TRC_TOOLTIP;Auswahl der mitgelieferten Profile.
 TP_IMPULSEDENOISE_LABEL;Impulsrauschreduzierung
 TP_IMPULSEDENOISE_THRESH;Schwelle
-TP_LABCURVE_AVOIDCOLORSHIFT;Farbverschiebungen vermeiden
-TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Anpassung der Farben an den Arbeitsfarbraum\nund Anwendung der Munsell-Korrektur.
 TP_LABCURVE_BRIGHTNESS;Helligkeit
 TP_LABCURVE_CHROMATICITY;Chromatizität
 TP_LABCURVE_CHROMA_TOOLTIP;Für Schwarz/Weiß setzen Sie die Chromatizität auf -100.
@@ -2705,9 +2780,9 @@ TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminanz als Funktion des Farbtons L=f(H).
 TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminanz als Funktion der Luminanz L=f(L).
 TP_LABCURVE_LABEL;L*a*b* - Anpassungen
 TP_LABCURVE_LCREDSK;LC-Kurve auf Hautfarbtöne beschränken
-TP_LABCURVE_LCREDSK_TOOLTIP;Wenn aktiviert, wird die LC-Kurve auf\nHautfarbtöne beschränkt.\nWenn deaktiviert, wird die LC-Kurve auf\nalle Farbtöne angewendet.
+TP_LABCURVE_LCREDSK_TOOLTIP;Wenn aktiviert, wird die LC-Kurve auf Hautfarbtöne beschränkt.\nWenn deaktiviert, wird die LC-Kurve auf alle Farbtöne angewendet.
 TP_LABCURVE_RSTPROTECTION;Hautfarbtöne schützen
-TP_LABCURVE_RSTPRO_TOOLTIP;Kann mit dem Chromatizitätsregler und\nder CC-Kurve verwendet werden.
+TP_LABCURVE_RSTPRO_TOOLTIP;Kann mit dem Chromatizitätsregler und der CC-Kurve verwendet werden.
 TP_LENSGEOM_AUTOCROP;Auto-Schneiden
 TP_LENSGEOM_FILL;Auto-Füllen
 TP_LENSGEOM_LABEL;Objektivkorrekturen
@@ -2717,7 +2792,7 @@ TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatisch (Lensfun)
 TP_LENSPROFILE_CORRECTION_LCPFILE;LCP-Datei
 TP_LENSPROFILE_CORRECTION_MANUAL;Benutzerdefiniert (Lensfun)
 TP_LENSPROFILE_LABEL;Objektivkorrekturprofil
-TP_LENSPROFILE_LENS_WARNING;Achtung: Der Crop-Faktor des Profils entspricht\nnicht dem der Kamera.\nDie Ergebnisse sind möglicherweise falsch.
+TP_LENSPROFILE_LENS_WARNING;Achtung: Der Crop-Faktor des Profils entspricht nicht dem der Kamera.\nDie Ergebnisse sind möglicherweise falsch.
 TP_LENSPROFILE_MODE_HEADER;Profilauswahl
 TP_LENSPROFILE_USE_CA;CA
 TP_LENSPROFILE_USE_GEOMETRIC;Verzeichnung
@@ -2737,7 +2812,7 @@ TP_LOCALLAB_ARTIF_TOOLTIP;Schwellenwert Bereich ΔE erhöht den Anwendungsbereic
 TP_LOCALLAB_AUTOGRAY;Automatisch mittlere Luminanz (Yb%)
 TP_LOCALLAB_AUTOGRAYCIE;Automatisch
 TP_LOCALLAB_AVOID;vermeide Farbverschiebungen
-TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Passt Farben an den Arbeitsfarbraum an und wendet die Munsell-Korrektur an (Uniform Perceptual Lab).\nMunsell-Korrektur ist deaktiviert wenn Jz oder CAM16 angewendet wird.
+TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Passt Farben an den Arbeitsfarbraum an und wendet die Munsell-Korrektur an (Uniform Perceptual Lab).\nMunsell-Korrektur ist deaktiviert wenn Jz oder CAM16 oder 'Farberscheinung und Beleuchtung' angewendet wird.\n\nDefault: Munsell.\nMunsell-Korrektur: behebt Farbabweichungen im Lab-Modus aufgrund von Nichtlinearität, wenn die Chromatizität geändert wird (Uniform Perceptual Lab).\nLab: Wendet eine Gamut-Steuerung an, bei relativer Farbmetrik wird dann Munsell angewendet.\nXYZ
 TP_LOCALLAB_AVOIDMUN;Nur Munsell-Korrektur
 TP_LOCALLAB_AVOIDMUN_TOOLTIP;Munsell-Korrektur ist deaktiviert, wenn Jz or CAM16 angewendet wird.
 TP_LOCALLAB_AVOIDRAD;Radius
@@ -2763,7 +2838,7 @@ TP_LOCALLAB_BLMETHOD_TOOLTIP;Normal - direkte Unschärfe und Rauschen mit allen 
 TP_LOCALLAB_BLNOI_EXP;Unschärfe und Rauschen
 TP_LOCALLAB_BLNORM;Normal
 TP_LOCALLAB_BLUFR;Unschärfe und Rauschreduzierung
-TP_LOCALLAB_BLUMETHOD_TOOLTIP;So verwischen Sie den Hintergrund und isolieren Sie den Vordergrund:\n- Verwischen Sie den Hintergrund, indem Sie das Bild vollständig mit einem RT-Spot abdecken (hohe Werte für Umfang und Übergang und 'Normal' oder 'Invertieren' im Kontrollkästchen).\n- Isolieren Sie den Vordergrund durch Verwendung eines oder mehrerer 'Ausschließen'-RT-Spots und Vergrößerung des Bereichs.\n\nDieses Modul (einschließlich 'Median' und 'Anpassbarer Filter') kann zusätzlich zur Rauschreduzierung im Hauptmenü verwendet werden.
+TP_LOCALLAB_BLUMETHOD_TOOLTIP;So verwischen Sie den Hintergrund und isolieren Sie den Vordergrund:\n- Verwischen Sie den Hintergrund, indem Sie das Bild vollständig mit einem Spot abdecken (hohe Werte für Umfang und Übergang und 'Normal' oder 'Invertieren' im Kontrollkästchen).\n- Isolieren Sie den Vordergrund durch Verwendung eines oder mehrerer 'Ausschließen'-Spots und Vergrößerung des Bereichs.\n\nDieses Modul (einschließlich 'Median' und 'Anpassbarer Filter') kann zusätzlich zur Rauschreduzierung im Hauptmenü verwendet werden.
 TP_LOCALLAB_BLUR;Gauß'sche Unschärfe - Rauschen - Körnung
 TP_LOCALLAB_BLURCOL;Radius
 TP_LOCALLAB_BLURCOLDE_TOOLTIP;Zur Berechnung von ΔE wird ein leicht unscharfes Bild verwendet, um isolierte Pixel zu vermeiden.
@@ -2796,6 +2871,8 @@ TP_LOCALLAB_CBDL_TOOLNAME;Detailebenen-Kontrast
 TP_LOCALLAB_CENTER_X;Mitte X
 TP_LOCALLAB_CENTER_Y;Mitte Y
 TP_LOCALLAB_CH;Kurven CL - LC
+TP_LOCALLAB_CHRO46LABEL;Chroma levels 456: Mittel=%1 Hoch=%2
+TP_LOCALLAB_CHROLABEL;Chroma levels 0123: Mittel=%1 Hoch=%2
 TP_LOCALLAB_CHROMA;Chrominanz
 TP_LOCALLAB_CHROMABLU;Chrominanz-Ebenen
 TP_LOCALLAB_CHROMABLU_TOOLTIP;Erhöht oder verringert den Effekt abhängig von den Luma-Einstellungen.\nWerte kleiner 1 verringern den Effekt. Werte größer 1 erhöhen den Effekt.
@@ -2822,7 +2899,7 @@ TP_LOCALLAB_CIEMODE_WAV;Wavelet
 TP_LOCALLAB_CIETOOLEXP;Kurven
 TP_LOCALLAB_CIE_TOOLNAME;Farberscheinung (Cam16 & JzCzHz)
 TP_LOCALLAB_CIRCRADIUS;Spot-Größe
-TP_LOCALLAB_CIRCRAD_TOOLTIP;Die Spot-Größe bestimmt die Referenzen des RT-Spots, die für die Formerkennung nützlich sind (Farbton, Luma, Chroma, Sobel).\nNiedrige Werte können für die Bearbeitung kleiner Flächen und Strukturen nützlich sein.\nHohe Werte können für die Behandlung von größeren Flächen oder auch Haut nützlich sein.
+TP_LOCALLAB_CIRCRAD_TOOLTIP;Die Spot-Größe bestimmt die Referenzen des Spots, die für die Formerkennung nützlich sind (Farbton, Luma, Chroma, Sobel).\nNiedrige Werte können für die Bearbeitung kleiner Flächen und Strukturen nützlich sein.\nHohe Werte können für die Behandlung von größeren Flächen oder auch Haut nützlich sein.
 TP_LOCALLAB_CLARICRES;Chroma zusammenführen
 TP_LOCALLAB_CLARIFRA;Klarheit u. Schärfemaske - Überlagern u. Abschwächen
 TP_LOCALLAB_CLARIJZ_TOOLTIP;Levels 0 bis 4 (einschließlich): ‘Schärfemaske’ ist aktiviert\nLevel 5 und darüber: 'Klarheit' ist aktiviert.
@@ -2885,8 +2962,10 @@ TP_LOCALLAB_DENOIMASK;Maske Farbrauschen reduzieren
 TP_LOCALLAB_DENOIMASK_TOOLTIP;Für alle Werkzeuge, ermöglicht die Kontrolle des chromatischen Rauschens der Maske.\nNützlich für eine bessere Kontrolle der Chrominanz und Vermeidung von Artefakten bei Verwendung der LC(h)-Kurve.
 TP_LOCALLAB_DENOIQUA_TOOLTIP;Im konservativen Modus werden Niedrigfrequenz-Details erhalten. Im aggressiven Modus werden diese entfernt.\nBeide Modi verwenden Wavelets und DCT und können in Verbindung mit 'Nicht-lokales Mittel - Luminanz' verwendet werden.
 TP_LOCALLAB_DENOITHR_TOOLTIP;Korrigiert die Kantenerkennung, um die Rauschreduktion in Bereichen mit geringen Kontrasten zu unterstützen.
+TP_LOCALLAB_DENOIWAVCH;Wavelets: Chrominanz
+TP_LOCALLAB_DENOIWAVLUM;Wavelets: Luminanz
 TP_LOCALLAB_DENOI_EXP;Rauschreduzierung
-TP_LOCALLAB_DENOI_TOOLTIP;Dieses Modul kann zur Rauschreduktion entweder (am Ende der Prozess-Pipeline) selbständig verwendet werden oder in Verbindung mit der Rauschreduzierung im Menureiter 'Detail' (das am Anfang der Prozess-Pipeline arbeitet) .\nBereich ermöglicht eine differenzierte Einstellung basierend auf Farbe (ΔE).\nMinimale RT-Spotgröße: 128x128
+TP_LOCALLAB_DENOI_TOOLTIP;Dieses Modul kann zur Rauschreduktion entweder (am Ende der Prozess-Pipeline) selbständig verwendet werden oder in Verbindung mit der Rauschreduzierung im Menureiter 'Detail' (das am Anfang der Prozess-Pipeline arbeitet) .\nBereich ermöglicht eine differenzierte Einstellung basierend auf Farbe (ΔE).\nMinimale Spotgröße: 128x128
 TP_LOCALLAB_DEPTH;Tiefe
 TP_LOCALLAB_DETAIL;Lokaler Kontrast
 TP_LOCALLAB_DETAILFRA;Kantenerkennung DCT
@@ -2927,7 +3006,7 @@ TP_LOCALLAB_EXPCOMP;Belichtungsausgleich ƒ
 TP_LOCALLAB_EXPCOMPINV;Belichtungsausgleich
 TP_LOCALLAB_EXPCOMP_TOOLTIP;Für Porträts oder Bilder mit geringem Farbverlauf. Sie können 'Formerkennung' unter 'Einstellungen' ändern:\n\nErhöhen Sie den 'ΔE-Bereichsschwellenwert'\nReduzieren Sie 'ΔE-Zerfallrate'\nErhöhen Sie 'ab-L-Balance (ΔE)'.
 TP_LOCALLAB_EXPCONTRASTPYR_TOOLTIP;Siehe Dokumentation für Wavelet Levels.\nEs gibt einige Unterschiede in der Version der lokalen Einstellungen: mehr Werkzeuge und mehr Möglichkeiten an individuellen Detailebenen zu arbeiten.\nz.B. Wavelet-Level-Tonwertkorrektur. 
-TP_LOCALLAB_EXPCONTRAST_TOOLTIP;Vermeiden Sie zu kleine Spots (<32 x 32 Pixel).\nVerwenden Sie niedrige 'Übergangswerte' und hohe Werte für 'Übergangszerfallrate' und 'Bereich,' um kleine RT-Spots zu simulieren und Fehler zu beheben.\nVerwenden Sie 'Klarheit & Schärfemaske und Überlagern & Abschwächen' wenn nötig, indem Sie den 'Radius' anpassen, um Artefakte zu reduzieren.
+TP_LOCALLAB_EXPCONTRAST_TOOLTIP;Vermeiden Sie zu kleine Spots (<32 x 32 Pixel).\nVerwenden Sie niedrige 'Übergangswerte' und hohe Werte für 'Übergangszerfallrate' und 'Bereich,' um kleine Spots zu simulieren und Fehler zu beheben.\nVerwenden Sie 'Klarheit & Schärfemaske und Überlagern & Abschwächen' wenn nötig, indem Sie den 'Radius' anpassen, um Artefakte zu reduzieren.
 TP_LOCALLAB_EXPCURV;Kurven
 TP_LOCALLAB_EXPGRAD;Verlaufsfilter
 TP_LOCALLAB_EXPGRADCOL_TOOLTIP;Verlaufsfilter stehen in den folgenden Werkzeugen zur Verfügung: 'Farbe und Licht (Luminanz, Chrominanz, Farbtonverlauf, und Zusammenführen)', 'Belichtung (Luminanz grad.)', 'Belichtungsmaske (Luminanz grad.)', 'Schatten/Lichter (Luminanz grad.)', 'Dynamik (Luminanz, Chrominanz & Farbton)', 'Lokaler Kontrast & Wavelet Pyramide (lokaler Kontrast grad.)'.\nDer Zerfall wird in den Einstellungen definiert. 
@@ -2935,12 +3014,12 @@ TP_LOCALLAB_EXPLAPBAL_TOOLTIP;Ändert die Mischung von geändertem/ursprünglich
 TP_LOCALLAB_EXPLAPGAMM_TOOLTIP;Verändert das Verhalten des Bildes mit wenig oder zu wenig Kontrast, indem vorher eine Gammakurve und nachher eine Laplace-Transformation hinzugefügt werden.
 TP_LOCALLAB_EXPLAPLIN_TOOLTIP;Verändert das Verhalten unterbelichteter Bilder indem eine lineare Komponente vor Anwendung der Laplace-Transformation hinzugefügt wird.
 TP_LOCALLAB_EXPLAP_TOOLTIP;Regler nach rechts reduziert schrittweise den Kontrast.
-TP_LOCALLAB_EXPMERGEFILE_TOOLTIP;Ermöglicht die Verwendung von GIMP oder Photoshop(c)-Ebenen-Mischmodi wie Differenz, Multiplikation, Weiches Licht, Überlagerung etc., mit Transparenzkontrolle.\nOriginalbild: Führe aktuellen RT-Spot mit Original zusammen.\nVorheriger Spot: Führe aktuellen RT-Spot mit vorherigem zusammen - bei nur einem vorherigen = Original.\nHintergrund: Führe aktuellen RT-Spot mit einem Farb- oder Luminanzhintergrund zusammen (weniger Möglichkeiten). 
+TP_LOCALLAB_EXPMERGEFILE_TOOLTIP;Ermöglicht die Verwendung von GIMP oder Photoshop-Ebenen-Mischmodi wie Differenz, Multiplikation, Weiches Licht, Überlagerung etc., mit Transparenzkontrolle.\nOriginalbild: Führe aktuellen RT-Spot mit Original zusammen.\nVorheriger Spot: Führe aktuellen RT-Spot mit vorherigem zusammen - bei nur einem vorherigen = Original.\nHintergrund: Führe aktuellen RT-Spot mit einem Farb- oder Luminanzhintergrund zusammen (weniger Möglichkeiten). 
 TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP;Wendet einen Median-Filter vor der Laplace-Transformation an, um (Rausch-)Artefakte zu vermeiden.\nAlternativ kann das Werkzeug zur Rauschreduzierung angewendet werden.
 TP_LOCALLAB_EXPOSE;Dynamik und Belichtung
 TP_LOCALLAB_EXPOSURE_TOOLTIP;Anpassung der Belichtung im L*a*b-Raum mittels Laplace PDE-Algorithmus um ΔE zu berücksichtigen und Artefakte zu minimieren.
 TP_LOCALLAB_EXPRETITOOLS;Erweiterte Retinex Werkzeuge
-TP_LOCALLAB_EXPSHARP_TOOLTIP;RT-Spot-Minimum 39 * 39.\nVerwenden Sie niedrige Übergangswerte und hohe Werte für 'Zerfallrate' und 'Bereich', um kleinere RT-Spots zu simulieren.
+TP_LOCALLAB_EXPSHARP_TOOLTIP;Spot-Minimum 39 * 39.\nVerwenden Sie niedrige Übergangswerte und hohe Werte für 'Zerfallrate' und 'Bereich', um kleinere Spots zu simulieren.
 TP_LOCALLAB_EXPTOOL;Belichtungswerkzeuge
 TP_LOCALLAB_EXP_TOOLNAME;Dynamik und Belichtung
 TP_LOCALLAB_FATAMOUNT;Intensität
@@ -2967,6 +3046,11 @@ TP_LOCALLAB_GAMM;Gamma
 TP_LOCALLAB_GAMMASKCOL;Gamma
 TP_LOCALLAB_GAMMASK_TOOLTIP;'Gamma' und 'Bereich' erlauben eine weiche und artefaktfreie Transformation der Maske, indem 'L' schrittweise geändert wird, um Diskontinuitäten zu vermeiden.
 TP_LOCALLAB_GAMSH;Gamma
+TP_LOCALLAB_GAMUTLABRELA;Lab
+TP_LOCALLAB_GAMUTMUNSELL;Nur Munsell
+TP_LOCALLAB_GAMUTNON;Keine
+TP_LOCALLAB_GAMUTXYZABSO;XYZ Absolut
+TP_LOCALLAB_GAMUTXYZRELA;XYZ Relativ
 TP_LOCALLAB_GAMW;Gamma (Wavelet Pyramiden)
 TP_LOCALLAB_GRADANG;Rotationswinkel
 TP_LOCALLAB_GRADANG_TOOLTIP;Rotationswinkel in Grad: -180°   0°  +180°
@@ -3055,6 +3139,8 @@ TP_LOCALLAB_LAPRAD1_TOOLTIP;Erhöht den Kontrast der Maske, indem die Luminanzwe
 TP_LOCALLAB_LAPRAD2_TOOLTIP;'Radius' nutzt einen anpassbaren Filter, um Artefakte zu reduzieren und den Übergang zu glätten.
 TP_LOCALLAB_LAPRAD_TOOLTIP;'Radius' nutzt einen anpassbaren Filter, um Artefakte zu reduzieren und den Übergang zu glätten.
 TP_LOCALLAB_LAP_MASK_TOOLTIP;Löst die PDE für alle Laplace-Masken.\nWenn aktiviert, reduziert die Laplace-Schwellenwertmaske Artefakte und glättet das Ergebnis.\nLinear, wenn deaktiviert.
+TP_LOCALLAB_LCLABELS;verbleibende Rauschebenen
+TP_LOCALLAB_LCLABELS_TOOLTIP;Zeigt die mittleren und oberen Rauschwerte für den im Vorschaufenster angezeigten Bereich an (bei 100 % Zoom). Die Rauschwerte sind nach den Wavelet-Stufen 0,1,2,3 und 4,5,6 gruppiert.\nDie angezeigten Werte sind nur Richtwerte und sollen bei der Rauschunterdrückung helfen. Sie sollten nicht als absolute Geräuschpegel interpretiert werden.\n\n 300: Starkes Rauschen\n 100–300: Rauschen\n 50–100: mäßiges Rauschen\n < 50: Geringes Rauschen\n\nSie ermöglichen es, folgendes zu erkennen:\n*Den Einfluss der Rauschunterdrückung im Detail-Tab des Hauptmenüs.\n*Den Einfluss von nicht-lokalen Mitteln, Wavelets und DCT auf das Luminanzrauschen.\n*Den Einfluss von Wavelets und DCT auf das Chroma-Rauschen.\n*Den Einfluss von Eingangsschärfen und Farbinterpolation.
 TP_LOCALLAB_LC_FFTW_TOOLTIP;Die schnelle Fouriertransformation verbessert die Qualität und ermöglicht die Verwendung großer Radien, erhöht jedoch die Verarbeitungszeit (abhängig vom zu verarbeitenden Bereich). Vorzugsweise nur für große Radien verwenden. Die Größe des Bereichs kann um einige Pixel reduziert werden, um die schnelle Fouriertransformation zu optimieren. Dies kann die Verarbeitungszeit um den Faktor 1,5 bis 10 reduzieren.
 TP_LOCALLAB_LC_TOOLNAME;Lokaler Kontrast u. Wavelets
 TP_LOCALLAB_LEVELBLUR;Maximum
@@ -3115,11 +3201,13 @@ TP_LOCALLAB_LOGSURSOUR_TOOLTIP;Ändert Töne und Farben, um die Szenenbedingunge
 TP_LOCALLAB_LOGVIEWING_TOOLTIP;Passend zum Medium, auf dem das fertige Bild betrachtet wird (Monitor, TV, Projektor, Drucker, etc.), wie auch die Umgebungsbedingungen.
 TP_LOCALLAB_LOG_TOOLNAME;LOG-Kodierung
 TP_LOCALLAB_LUM;Kurven LL - CC
+TP_LOCALLAB_LUM46LABEL;Luminanz Ebenen 456: Mittel=%1 Hoch=%2
 TP_LOCALLAB_LUMADARKEST;Dunkelste
 TP_LOCALLAB_LUMASK;Hintergrundfarbe für Luminanzmaske
 TP_LOCALLAB_LUMASK_TOOLTIP;Passt den Grauton oder die Farbe des Maskenhintergrundes an (Maske und Anpassungen - Maske anzeigen).
 TP_LOCALLAB_LUMAWHITESEST;Hellste
 TP_LOCALLAB_LUMFRA;L*a*b* Standard
+TP_LOCALLAB_LUMLABEL;Luminanz Ebenen 0123: Mittel=%1 Hoch=%2 
 TP_LOCALLAB_MASFRAME;Maskieren und Zusammenführen
 TP_LOCALLAB_MASFRAME_TOOLTIP;Für alle Masken.\nBerücksichtigt das ΔE-Bild, um zu vermeiden, dass der Auswahlbereich geändert wird, wenn die folgenden Maskenwerkzeuge verwendet werden: 'Gamma', 'Steigung', 'Chroma', 'Kontrastkurve', 'Lokaler Kontrast' (nach Wavelet-Ebene), 'Unschärfemaske' und 'Strukturmaske' (falls aktiviert).\nDeaktiviert, wenn der Inverse-Modus verwendet wird.
 TP_LOCALLAB_MASK;Kontrast
@@ -3151,7 +3239,7 @@ TP_LOCALLAB_MASKLCTHRLOW;Schwellenwert dunkle Bereiche
 TP_LOCALLAB_MASKLCTHRLOW2;Schwelle dunkle Bereiche
 TP_LOCALLAB_MASKLCTHRMID;Luminanz Graubereiche 
 TP_LOCALLAB_MASKLCTHRMIDCH;Chrominanz Graubereiche
-TP_LOCALLAB_MASKLC_TOOLTIP;Auf diese Weise können Sie die Rauschreduzierung anhand der in der L(L)- oder LC(H)-Maske (Maske und Anpassungen) enthaltenen Luminanz-Informationen ausrichten.\nDie L(L)-Maske oder die LC(H)-Maske muss aktiviert sein, um diese Funktion verwenden zu können.\n'Luminanzschwelle Dunkle Bereiche': Wenn 'Rauschreduzierung in dunklen und hellen Bereichen verstärken' > 1, wird die Rauschreduzierung schrittweise von 0% bei den Schwellenwerteinstellungen auf 100% beim maximalen Schwarzwert (bestimmt durch die Maske) erhöht.\n'Luminanzschwelle Helle Bereiche': Die Rauschreduzierung wird schrittweise von 100% bei der Schwellenwerteinstellung auf 0% beim maximalen Weißwert (bestimmt durch die Maske) verringert.\nIn dem Bereich zwischen den beiden Schwellenwerten werden die Einstellungen zur Rauschverminderung von der Maske nicht beeinflusst.
+TP_LOCALLAB_MASKLC_TOOLTIP;Wird von der Wavelet-Luminanz verwendet.\nDamit können Sie die Rauschunterdrückung basierend auf den Bildluminanzinformationen festlegen, die in der L(L)- oder LC(H)-Maske (Maske und Modifikationen) enthalten sind.\nDie L(L)-Maske oder die LC(H)-Maske muss aktiviert sein, m diese Funktion nutzen zu können.\n„Schwellenwert für die Luminanz dunkler Bereiche“. Ist „Rauschunterdrückung in dunklen und hellen Bereichen verstärken“ > 1, wird die Rauschunterdrückung schrittweise von 0 % auf 100 % beim maximalen Schwarzwert (bestimmt durch die Maske) erhöht.\n„Schwellenwert für die Luminanz für helle Bereiche“. Die Rauschunterdrückung wird schrittweise von 100 % auf 0 % beim maximalen Weißwert (bestimmt durch die Maske) verringert.\n Im Bereich zwischen den beiden Schwellenwerten werden die Rauschunterdrückungseinstellungen von der Maske nicht beeinflusst.
 TP_LOCALLAB_MASKLNOISELOW;In dunklen und hellen Bereichen verstärken
 TP_LOCALLAB_MASKLOWTHRESCB_TOOLTIP;Dunklere Tonwertgrenze, unterhalb derer die Parameter der Detailebenenkontraste (nur Luminanz) nach und nach auf ihre ursprünglichen Werte zurückgesetzt werden, bevor sie durch die Einstellungen des Detailebenenkontrastes geändert werden.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Glättradius', 'Gamma', 'Steigung' und 'Kontrastkurve'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
 TP_LOCALLAB_MASKLOWTHRESC_TOOLTIP;Dunklere Tonwertgrenze, unterhalb derer die Parameter nach und nach auf ihre ursprünglichen Werte zurückgesetzt werden, bevor sie durch 'Farbe- und Licht'-Einstellungen geändert werden.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Strukturmaske' , 'Unschärfemaske', 'Glättradius', 'Gamma', 'Steigung', 'Kontrastkurve', 'Lokaler Kontrast (Wavelets)'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
@@ -3176,7 +3264,7 @@ TP_LOCALLAB_MASKRESVIB_TOOLTIP;Wird verwendet, um den Effekt der Einstellungen f
 TP_LOCALLAB_MASKRESWAV_TOOLTIP;Wird verwendet, um den Effekt der Einstellungen für lokalen Kontrast und Wavelet basierend auf den in den L(L)- oder LC(H)-Masken (Maske und Anpassungen) enthaltenen Luminanz-Informationen zu modulieren.\nDie L(L)-Maske oder die LC(H)-Maske muss aktiviert sein, um diese Funktion verwenden zu können.\nDie Bereiche 'dunkel' und 'hell' unterhalb und oberhalb der entsprechenden Schwellenwerte werden schrittweise auf ihre ursprünglichen Werte zurückgesetzt, bevor sie durch die Einstellungen für lokalen Kontrast und Wavelet geändert werden. Zwischen diesen beiden Bereichen wird der volle Wert der Einstellungen für lokalen Kontrast und Wavelet angewendet.
 TP_LOCALLAB_MASKUNUSABLE;Maske deaktiviert (siehe Maske u. Anpassungen)
 TP_LOCALLAB_MASKUSABLE;Maske aktiviert (siehe Maske u. Anpassungen)
-TP_LOCALLAB_MASK_TOOLTIP;Sie können mehrere Masken für ein Werkzeug aktivieren, indem Sie ein anderes Werkzeug aktivieren und nur die Maske verwenden (setzen Sie die Werkzeugregler auf 0).\n\nSie können den RT-Spot auch duplizieren und nahe am ersten Punkt platzieren. Die kleinen Abweichungen in den Punktreferenzen ermöglichen Feineinstellungen.
+TP_LOCALLAB_MASK_TOOLTIP;Sie können mehrere Masken für ein Werkzeug aktivieren, indem Sie ein anderes Werkzeug aktivieren und nur die Maske verwenden (setzen Sie die Werkzeugregler auf 0).\n\nSie können den Spot auch duplizieren und nahe am ersten Punkt platzieren. Die kleinen Abweichungen in den Punktreferenzen ermöglichen Feineinstellungen.
 TP_LOCALLAB_MEDIAN;Median niedrig
 TP_LOCALLAB_MEDIANITER_TOOLTIP;Anzahl der aufeinanderfolgenden Iterationen, die vom Medianfilter ausgeführt werden.
 TP_LOCALLAB_MEDIAN_TOOLTIP;Sie können Medianwerte im Bereich von 3 x 3 bis 9 x 9 Pixel auswählen. Höhere Werte erhöhen die Rauschreduzierung und Unschärfe.
@@ -3226,7 +3314,7 @@ TP_LOCALLAB_NLDENOISENLPAT_TOOLTIP;Passt die Intensität der Rauschreduzierung a
 TP_LOCALLAB_NLDENOISENLRAD_TOOLTIP;Höhere Werte erhöhen die Rauschreduzierung auf Kosten der Verarbeitungszeit.
 TP_LOCALLAB_NLDENOISE_TOOLTIP;'Detailwiederherstellung' basiert auf einer Laplace-Transformation, um einheitliche Bereiche und keine Bereiche mit Details zu erfassen.
 TP_LOCALLAB_NLDET;Detailwiederherstellung
-TP_LOCALLAB_NLFRA;Nicht-lokales Mittel - Luminanz
+TP_LOCALLAB_NLFRA;Nicht-lokales Mittel: Luminanz
 TP_LOCALLAB_NLFRAME_TOOLTIP;Nicht-lokales Mittel bedeutet, dass bei der Rauschreduzierung ein Mittelwert aller Pixel im Bild verwendet wird, gewichtet danach, wie ähnlich sie dem Zielpixel sind.\nReduziert den Detailverlust im Vergleich zu lokalen Mittelwertalgorithmen.\nBei dieser Methode wird nur das Luminanz-Rauschen berücksichtigt. Chrominanz-Rauschen wird am besten mit Wavelets und Fourier-Transformationen (DCT) verarbeitet.\nKann in Verbindung mit 'Luminanz-Rauschreduzierung nach Ebenen' oder alleine verwendet werden.
 TP_LOCALLAB_NLGAM;Gamma
 TP_LOCALLAB_NLLUM;Intensität
@@ -3319,7 +3407,7 @@ TP_LOCALLAB_SCOPEMASK_TOOLTIP;Aktiviert, wenn die ΔE-Bildmaske aktiviert ist.\n
 TP_LOCALLAB_SENSI;Bereich
 TP_LOCALLAB_SENSIEXCLU;Intensität
 TP_LOCALLAB_SENSIEXCLU_TOOLTIP;Anpassung der auszuschließenden Farben.
-TP_LOCALLAB_SENSIMASK_TOOLTIP;Bereichsanpassung speziell für das gängige Maskenwerkzeug.\nBezieht sich auf den Unterschied zwischen dem Originalbild und der Maske.\nVerwendet die Luma-, Chroma- und Farbtonreferenzen aus der Mitte des RT-Spots.\n\nAuch das ΔE der Maske selbst kann angepasst werden durch Verwendung von 'Scope (ΔE-Bildmaske)' unter 'Einstellungen' > 'Maskieren und Zusammenführen'.
+TP_LOCALLAB_SENSIMASK_TOOLTIP;Bereichsanpassung speziell für das gängige Maskenwerkzeug.\nBezieht sich auf den Unterschied zwischen dem Originalbild und der Maske.\nVerwendet die Luma-, Chroma- und Farbtonreferenzen aus der Mitte des Spots.\n\nAuch das ΔE der Maske selbst kann angepasst werden durch Verwendung von 'Scope (ΔE-Bildmaske)' unter 'Einstellungen' > 'Maskieren und Zusammenführen'.
 TP_LOCALLAB_SENSI_TOOLTIP;Passt den Anwendungsbereich an:\nKleine Werte beschränken die Anwendung auf Farben ähnlich derer im Spot.\nHohe Werte erweitern den Bereich auf eine größere Bandbreite an Farben
 TP_LOCALLAB_SETTINGS;Einstellungen
 TP_LOCALLAB_SH1;Schatten/Lichter
@@ -3331,7 +3419,7 @@ TP_LOCALLAB_SHADHMASK_TOOLTIP;Reduziert die Lichter der Maske genau so wie der S
 TP_LOCALLAB_SHADMASK_TOOLTIP;Hebt die Lichter der Maske genau so wie der Schatten/Lichter-Algorithmus.
 TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP;Schatten und Lichter können entweder mit den Reglern für Schatten und Lichter oder mit einem Equalizer angepasst werden.\nKann anstelle oder in Verbindung mit dem Belichtungsmodul und auch als Verlaufsfilter verwendet werden.
 TP_LOCALLAB_SHAMASKCOL;Schatten
-TP_LOCALLAB_SHAPETYPE;RT-Spot Form
+TP_LOCALLAB_SHAPETYPE;Spot Form
 TP_LOCALLAB_SHAPE_TOOLTIP;'Ellipse' ist der normale Modus.\n'Rechteck' kann in einigen Fällen hilfreich sein, z.B. um die Trennzeichen im Vollbild-Modus außerhalb des Voransichtsbereiches zu setzen. In diesem Falle ist Transition = 100 zu setzen.\n\nZukünftige Versionen werden auch Polygone und Bezierkurven unterstützen.
 TP_LOCALLAB_SHARAMOUNT;Intensität
 TP_LOCALLAB_SHARBLUR;Unschärferadius 
@@ -3413,13 +3501,14 @@ TP_LOCALLAB_STRUCCOL;Spot-Struktur
 TP_LOCALLAB_STRUCCOL1;Spot-Struktur
 TP_LOCALLAB_STRUCT_TOOLTIP;Verwendet den Sobel-Algorithmus, um die Struktur für die Formerkennung zu berücksichtigen.\nAktivieren Sie 'Maske und Anpassungen' > 'Spot-Struktur anzeigen' (erweiterter Modus), um eine Vorschau der Maske anzuzeigen (ohne Änderungen).\n\nKann in Verbindung verwendet werden mit der Strukturmaske, der Unschärfemaske und 'Lokaler Kontrast' (nach Wavelet-Ebene) zur Verbesserung der Kantenerkennung.\n\nEinflüsse von Anpassungen mit Helligkeit, Kontrast, Chrominanz, Belichtung oder anderen nicht maskenbezogenen Werkzeugen, entweder mit 'Modifiziert anzeigen' oder 'Geänderte Bereiche mit Maske anzeigen' überprüfen.
 TP_LOCALLAB_STRUMASKCOL;Intensität der Strukturmaske
-TP_LOCALLAB_STRUMASK_TOOLTIP;Strukturmaske (Regler) mit deaktiviertem Kontrollkästchen 'Strukturmaske als Werkzeug':\nIn diesem Fall wird eine Maske mit der Struktur generiert, auch wenn keine der 3 Kurven aktiviert ist. Strukturmasken sind für Maske 1 (Unschärfe und Rauschreduzierung') und Maske 11 (Farbe & Licht) möglich.
+TP_LOCALLAB_STRUMASK_TOOLTIP;Strukturmaske (Regler) mit deaktiviertem Kontrollkästchen 'Strukturmaske als Werkzeug':\nIn diesem Fall wird eine Maske mit der Struktur generiert, auch wenn keine der 3 Kurven aktiviert ist. Strukturmasken stehen für Maske 'Unschärfe und Rauschreduzierung' und Maske 'Farbe & Licht' zur Verfügung.
 TP_LOCALLAB_STRUSTRMASK_TOOLTIP;Ein moderater Gebrauch dieses Reglers wird wärmstens empfohlen!
 TP_LOCALLAB_STYPE;Form
 TP_LOCALLAB_STYPE_TOOLTIP;Sie können wählen zwischen:\nSymmetrisch - linkes Handle mit rechts verknüpft, oberes Handle mit unten verbunden.\nUnabhängig - alle Handles sind unabhängig.
 TP_LOCALLAB_SYM;Symmetrisch (Maus)
 TP_LOCALLAB_SYMSL;Symmetrisch (Maus + Regler)
 TP_LOCALLAB_TARGET_GRAY;Mittlere Luminanz (Yb%)
+TP_LOCALLAB_TE_PIVOT;Wichtung (Ev)
 TP_LOCALLAB_THRES;Schwellenwert Struktur
 TP_LOCALLAB_THRESDELTAE;Schwellenwert ΔE-Bereich
 TP_LOCALLAB_THRESRETI;Schwellenwert
@@ -3569,10 +3658,10 @@ TP_PREPROCWB_MODE;Modus
 TP_PREPROCWB_MODE_AUTO;Auto
 TP_PREPROCWB_MODE_CAMERA;Kamera
 TP_PRSHARPENING_LABEL;Nach Skalierung schärfen
-TP_PRSHARPENING_TOOLTIP;Schärft das Bild nach der Größenänderung.\nFunktioniert nur mit der Methode 'Lanczos'.\nDas Ergebnis wird nicht in RawTherapee\nangezeigt.\n\nWeitere Informationen finden Sie auf 'RawPedia'.
+TP_PRSHARPENING_TOOLTIP;Schärft das Bild nach der Größenänderung.\nFunktioniert nur mit der Methode 'Lanczos'.\nDas Ergebnis wird nicht in RawTherapee angezeigt.\n\nWeitere Informationen finden Sie auf 'RawPedia'.
 TP_RAWCACORR_AUTO;Autokorrektur
 TP_RAWCACORR_AUTOIT;Iterationen
-TP_RAWCACORR_AUTOIT_TOOLTIP;Diese Einstellung ist verfügbar, wenn 'Autokorrektur' aktiviert ist.\nDie Autokorrektur ist konservativ, d.h. sie korrigiert häufig nicht alle\nchromatischen Aberrationen. Um die verbleibenden chromatischen\nAberrationen zu korrigieren, können Sie bis zu fünf Iterationen\nverwenden. Jede Iteration verringert die verbleibende chromatische\nAberration auf Kosten zusätzlicher Verarbeitungszeit.
+TP_RAWCACORR_AUTOIT_TOOLTIP;Diese Einstellung ist verfügbar, wenn 'Autokorrektur' aktiviert ist.\nDie Autokorrektur ist konservativ, d.h. sie korrigiert häufig nicht alle chromatischen Aberrationen. Um die verbleibenden chromatischen Aberrationen zu korrigieren, können Sie bis zu fünf Iterationen verwenden. Jede Iteration verringert die verbleibende chromatische Aberration auf Kosten zusätzlicher Verarbeitungszeit.
 TP_RAWCACORR_AVOIDCOLORSHIFT;Farbverschiebungen vermeiden
 TP_RAWCACORR_CABLUE;Blau
 TP_RAWCACORR_CARED;Rot
@@ -3604,24 +3693,24 @@ TP_RAW_DCBVNG4;DCB + VNG4
 TP_RAW_DMETHOD;Methode
 TP_RAW_DMETHOD_PROGRESSBAR;%1 verarbeitet
 TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaik-Optimierung
-TP_RAW_DMETHOD_TOOLTIP;<b>IGV</b> und <b>LMMSE</b> sind speziell für High-ISO-Aufnahmen um die\nRauschreduzierung zu unterstützen ohne zu Maze-Mustern,\nPosterisierung oder einem ausgewaschenen Look zu führen.\n\n<b>Pixel-Shift</b> ist für 'Pentax Pixel-Shift'-Dateien. Für 'Nicht-Pixel-\nShift'-Dateien wird automatisch AMaZE verwendet.
+TP_RAW_DMETHOD_TOOLTIP;<b>IGV</b> und <b>LMMSE</b> sind speziell für High-ISO-Aufnahmen um die Rauschreduzierung zu unterstützen ohne zu Maze-Mustern, Posterisierung oder einem ausgewaschenen Look zu führen.\n\n<b>Pixel-Shift</b> ist für 'Pentax Pixel-Shift'-Dateien. Für 'Nicht-Pixel-Shift'-Dateien wird automatisch AMaZE verwendet.
 TP_RAW_DUALDEMOSAICAUTOCONTRAST;Auto-Kontrastschwelle
-TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;Wenn das Kontrollkästchen aktiviert ist (empfohlen), berechnet\nRawTherapee einen optimalen Wert auf der Grundlage homogener\nBereiche im Bild. Wenn kein homogener Bereich vorhanden ist oder\ndas Bild zu sehr rauscht, wird der Wert auf 0 gesetzt.
+TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;Wenn das Kontrollkästchen aktiviert ist (empfohlen), berechnet RawTherapee einen optimalen Wert auf der Grundlage homogener Bildbereiche. Wenn kein homogener Bereich vorhanden ist oder das Bild zu sehr rauscht, wird der Wert auf 0 gesetzt.
 TP_RAW_DUALDEMOSAICCONTRAST;Kontrastschwelle
 TP_RAW_EAHD;EAHD
 TP_RAW_FALSECOLOR;Falschfarbenreduzierung
 TP_RAW_FAST;Schnell
 TP_RAW_HD;Schwelle
-TP_RAW_HD_TOOLTIP;Je niedriger der Wert, umso empfindlicher reagiert\ndie 'Hot-/Dead-Pixel-Erkennung'.\nIst die Empfindlichkeit zu hoch, können Artefakte\nentstehen. Erhöhen Sie in diesem Fall die Schwelle,\nbis die Artefakte verschwinden.
+TP_RAW_HD_TOOLTIP;Je niedriger der Wert, umso empfindlicher reagiert die 'Hot-/Dead-Pixel-Erkennung'.\nIst die Empfindlichkeit zu hoch, können Artefakte entstehen. Erhöhen Sie in diesem Fall die Schwelle, bis die Artefakte verschwinden.
 TP_RAW_HPHD;HPHD
 TP_RAW_IGV;IGV
 TP_RAW_IMAGENUM;Unterbild
 TP_RAW_IMAGENUM_SN;SN-Modus
-TP_RAW_IMAGENUM_TOOLTIP;Einige RAW-Formate enthalten mehrere Unterbilder (Pentax Pixel-Shift,\nPentax 3-in-1 HDR, Canon Dual Pixel).\n\n> Auswahl des zu verwendenden Unterbildes (nicht bei Pixel-Shift).\n\n> Legt das Unterbild für die Bewegungsbereiche bei Pixel-Shift fest.
+TP_RAW_IMAGENUM_TOOLTIP;Einige RAW-Formate enthalten mehrere Unterbilder (Pentax Pixel-Shift, Pentax 3-in-1 HDR, Canon Dual Pixel).\n\n> Auswahl des zu verwendenden Unterbildes (nicht bei Pixel-Shift).\n\n> Legt das Unterbild für die Bewegungsbereiche bei Pixel-Shift fest.
 TP_RAW_LABEL;Farbinterpolation
 TP_RAW_LMMSE;LMMSE
 TP_RAW_LMMSEITERATIONS;LMMSE-Verbesserungsstufen
-TP_RAW_LMMSE_TOOLTIP;Fügt Gamma (Stufe 1), Median (Stufe 2-4)\nund Optimierung (Stufe 5-6) zur Minimierung\nvon Artefakten hinzu und verbessert das\nSignalrauschverhältnis.
+TP_RAW_LMMSE_TOOLTIP;Fügt Gamma (Stufe 1), Median (Stufe 2-4) und Optimierung (Stufe 5-6) zur Minimierung von Artefakten hinzu und verbessert das Signalrauschverhältnis.
 TP_RAW_MONO;Mono
 TP_RAW_NONE;Keine
 TP_RAW_PIXELSHIFT;Pixel-Shift
@@ -3630,16 +3719,16 @@ TP_RAW_PIXELSHIFTAVERAGE_TOOLTIP;Verwenden Sie den Durchschnitt aller Frames ans
 TP_RAW_PIXELSHIFTBLUR;Unschärfebewegungsmaske
 TP_RAW_PIXELSHIFTDMETHOD;Bewegungsmethode
 TP_RAW_PIXELSHIFTEPERISO;Empfindlichkeit
-TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;Der Standardwert 0 wird für die Basis-ISO empfohlen.\nHöhere Werte erhöhen die Empfindlichkeit der Bewegungserkennung.\nVerändern Sie den Wert in kleinen Schritten und beobachten Sie die\nBewegungsmaske. Erhöhen Sie die Empfindlichkeit für unterbelichtete\noder High-ISO-Bilder.
+TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;Der Standardwert 0 wird für die Basis-ISO empfohlen.\nHöhere Werte erhöhen die Empfindlichkeit der Bewegungserkennung.\nVerändern Sie den Wert in kleinen Schritten und beobachten Sie die Bewegungsmaske. Erhöhen Sie die Empfindlichkeit für unterbelichtete oder High-ISO-Bilder.
 TP_RAW_PIXELSHIFTEQUALBRIGHT;Frame-Helligkeit angleichen
 TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Ausgleich pro Kanal
 TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;EIN: Individueller Ausgleich der RGB-Kanäle.\nAUS: Identischer Ausgleichsfaktor für alle Kanäle.
-TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Gleicht die Helligkeit der Frames an den aktuellen Frame an.\n\nSind überbelichtete Bereiche vorhanden wählen Sie den hellsten Frame aus, um\nMagenta-Farbstiche zu vermeiden oder aktivieren Sie die Bewegungskorrektur.
+TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Gleicht die Helligkeit der Frames an den aktuellen Frame an.\n\nSind überbelichtete Bereiche vorhanden wählen Sie den hellsten Frame aus, um Magenta-Farbstiche zu vermeiden oder aktivieren Sie die Bewegungskorrektur.
 TP_RAW_PIXELSHIFTGREEN;Bewegung im Grün-Kanal erkennen
 TP_RAW_PIXELSHIFTHOLEFILL;Lücken in der Bewegungsmaske erkennen
 TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Lücken in der Bewegungsmaske erkennen.
 TP_RAW_PIXELSHIFTMEDIAN;Median
-TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Verwenden Sie den Median aller Frames anstelle des\nausgewählten Frames für Regionen mit Bewegung.\nEntfernt Objekte, die an verschiedenen Stellen in allen\nFrames vorkommen. Erzeugt einen Bewegungseffekt\nauf langsame (überlappende) Objekte.
+TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Verwenden Sie den Median aller Frames anstelle des ausgewählten Frames für Regionen mit Bewegung.\nEntfernt Objekte, die an verschiedenen Stellen in allen Frames vorkommen. Erzeugt einen Bewegungseffekt auf langsame (überlappende) Objekte.
 TP_RAW_PIXELSHIFTMM_AUTO;Automatisch
 TP_RAW_PIXELSHIFTMM_CUSTOM;Benutzerdefiniert
 TP_RAW_PIXELSHIFTMM_OFF;Aus
@@ -3648,16 +3737,16 @@ TP_RAW_PIXELSHIFTNONGREENCROSS;Bewegung im Rot/Blau-Kanal erkennen
 TP_RAW_PIXELSHIFTSHOWMOTION;Bewegungsmaske anzeigen
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Nur Maske anzeigen
 TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Zeigt die Bewegungsmaske ohne Bild.
-TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Überlagert das Bild mit einer grünen Maske,\num die Bewegungsbereiche hervorzuheben.
+TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Überlagert das Bild mit einer grünen Maske, um die Bewegungsbereiche hervorzuheben.
 TP_RAW_PIXELSHIFTSIGMA;Unschärferadius
-TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;Der Standard-Radius von 1,0 passt in der Regel für die Basis-ISO.\nErhöhen Sie den Wert für High-ISO-Aufnahmen, 5,0 ist ein guter\nAusgangspunkt für High-ISO-Aufnahmen. Achten Sie auf die\nBewegungsmaske, während Sie den Wert ändern.
+TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;Der Standard-Radius von 1,0 passt in der Regel für die Basis-ISO.\nErhöhen Sie den Wert für High-ISO-Aufnahmen, 5,0 ist ein guter Ausgangspunkt für High-ISO-Aufnahmen. Achten Sie auf die Bewegungsmaske, während Sie den Wert ändern.
 TP_RAW_PIXELSHIFTSMOOTH;Weicher Übergang
 TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Weicher Übergang zwischen Bereichen mit und ohne Bewegung.\n0 = Aus\n1 = AMaZE/LMMSE oder Median.
 TP_RAW_RCD;RCD
 TP_RAW_RCDBILINEAR;RCD+Bilinear
 TP_RAW_RCDVNG4;RCD + VNG4
 TP_RAW_SENSOR_BAYER_LABEL;Sensor mit Bayer-Matrix
-TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;Mit '3-Pass' erzielt man die besten Ergebnisse\n(empfohlen bei Bildern mit niedrigen ISO-Werten).\n\nBei hohen ISO-Werten unterscheidet sich '1-Pass'\nkaum gegenüber '3-Pass', ist aber deutlich schneller.\n\n'+ schnell' erzeugt weniger Artefakte in kontrastarmen Bereichen.
+TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;Mit '3-Pass' erzielt man die besten Ergebnisse\n(empfohlen bei Bildern mit niedrigen ISO-Werten).\n\nBei hohen ISO-Werten unterscheidet sich '1-Pass' kaum gegenüber '3-Pass', ist aber deutlich schneller.\n\n'+ schnell' erzeugt weniger Artefakte in kontrastarmen Bereichen.
 TP_RAW_SENSOR_XTRANS_LABEL;Sensor mit X-Trans-Matrix
 TP_RAW_VNG4;VNG4
 TP_RAW_XTRANS;X-Trans
@@ -3729,12 +3818,12 @@ TP_RETINEX_MAP_METHOD_TOOLTIP;<b>Keine:</b> Wendet die Maske, die mit der Gauß'
 TP_RETINEX_MAP_NONE;Keine
 TP_RETINEX_MEDIAN;Medianfilter
 TP_RETINEX_METHOD;Methode
-TP_RETINEX_METHOD_TOOLTIP;<b>Schatten</b> wirkt sich auf dunkle Bereiche aus.\n\n<b>Schatten/Lichter</b> wirkt sich auf dunkle und helle Bereiche aus.\n\n<b>Lichter</b> wirkt sich auf helle Bereiche aus.\n\n<b>Spitzlichter</b> wirkt sich auf sehr helle Bereiche aus und reduziert\nMagenta-Falschfarben.
+TP_RETINEX_METHOD_TOOLTIP;<b>Schatten</b> wirkt sich auf dunkle Bereiche aus.\n\n<b>Schatten/Lichter</b> wirkt sich auf dunkle und helle Bereiche aus.\n\n<b>Lichter</b> wirkt sich auf helle Bereiche aus.\n\n<b>Spitzlichter</b> wirkt sich auf sehr helle Bereiche aus und reduziert Magenta-Falschfarben.
 TP_RETINEX_MLABEL;Schleierred: Min = %1, Max = %2
 TP_RETINEX_MLABEL_TOOLTIP;Sollte nahe bei Min = 0 und Max = 32768 sein aber auch andere Werte sind möglich.
 TP_RETINEX_NEIGHBOR;Radius
 TP_RETINEX_NEUTRAL;Zurücksetzen
-TP_RETINEX_NEUTRAL_TOOLTIP;Setzt alle Regler und Kurven\nauf ihre Standardwerte zurück.
+TP_RETINEX_NEUTRAL_TOOLTIP;Setzt alle Regler und Kurven auf ihre Standardwerte zurück.
 TP_RETINEX_OFFSET;Versatz (Helligkeit)
 TP_RETINEX_SCALES;Gauß'scher Gradient
 TP_RETINEX_SCALES_TOOLTIP;Steht der Regler auf 0 sind alle Iterationen identisch.\nBei > 0 werden Skalierung und Radius reduziert,\nbei &lt; 0 erhöht.
@@ -3752,10 +3841,10 @@ TP_RETINEX_TRANSMISSION;Übertragungzuordnung
 TP_RETINEX_TRANSMISSION_TOOLTIP;Übertragung in Abhängigkeit der Übertragung.\n\n<b>x-Achse:</b> Übertragung negativer Werte (Min),\nMittel und positiver Werte (Max).\n\n<b>y-Achse:</b> Verstärkung oder Abschwächung.
 TP_RETINEX_UNIFORM;Schatten/Lichter
 TP_RETINEX_VARIANCE;Kontrast
-TP_RETINEX_VARIANCE_TOOLTIP;Niedrige Werte erhöhen den lokalen\nKontrast und die Sättigung, können\naber zu Artefakten führen.
+TP_RETINEX_VARIANCE_TOOLTIP;Niedrige Werte erhöhen den lokalen Kontrast und die Sättigung, können aber zu Artefakten führen.
 TP_RETINEX_VIEW;Vorschau
 TP_RETINEX_VIEW_MASK;Maske
-TP_RETINEX_VIEW_METHOD_TOOLTIP;<b>Standard:</b> Normale Anzeige\n\n<b>Maske:</b> Zeigt die Maske an\n\n<b>Unschärfemaske:</b> Zeigt das Bild mit einem großen\nUnschärfemaskenradius an.\n\n<b>Übertragung-Auto / Fest:</b> Zeigt die Übertragungszuordnung\nvor der Anwendung von Kontrast und Helligkeit an.\n\n<b>ACHTUNG:</b> Die Maske zeigt nicht das Endergebnis, sondern\nverstärkt den Effekt um ihn besser beurteilen zu können.
+TP_RETINEX_VIEW_METHOD_TOOLTIP;<b>Standard:</b> Normale Anzeige\n\n<b>Maske:</b> Zeigt die Maske an\n\n<b>Unschärfemaske:</b> Zeigt das Bild mit einem großen Unschärfemaskenradius an.\n\n<b>Übertragung-Auto / Fest:</b> Zeigt die Übertragungszuordnung vor der Anwendung von Kontrast und Helligkeit an.\n\n<b>ACHTUNG:</b> Die Maske zeigt nicht das Endergebnis, sondern verstärkt den Effekt um ihn besser beurteilen zu können.
 TP_RETINEX_VIEW_NONE;Standard
 TP_RETINEX_VIEW_TRAN;Übertragung - Auto
 TP_RETINEX_VIEW_TRAN2;Übertragung - Fest
@@ -3816,6 +3905,16 @@ TP_TM_FATTAL_AMOUNT;Intensität
 TP_TM_FATTAL_ANCHOR;Helligkeitsverschiebung
 TP_TM_FATTAL_LABEL;Dynamikkompression
 TP_TM_FATTAL_THRESHOLD;Details
+TP_TONE_EQUALIZER_BANDS;Werte
+TP_TONE_EQUALIZER_BAND_0;Schwarz
+TP_TONE_EQUALIZER_BAND_1;Schatten
+TP_TONE_EQUALIZER_BAND_2;Mitteltöne
+TP_TONE_EQUALIZER_BAND_3;Lichter
+TP_TONE_EQUALIZER_BAND_4;Weiß
+TP_TONE_EQUALIZER_DETAIL;Regulierung
+TP_TONE_EQUALIZER_LABEL;Tonwert-Equalizer
+TP_TONE_EQUALIZER_PIVOT;Wichtung (Ev)
+TP_TONE_EQUALIZER_SHOW_COLOR_MAP;Zeige Farbmaske
 TP_VIBRANCE_AVOIDCOLORSHIFT;Farbverschiebungen vermeiden
 TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Hautfarbtöne
@@ -3893,7 +3992,7 @@ TP_WAVELET_COLORT;Deckkraft Rot/Grün
 TP_WAVELET_COMPCONT;Kontrast
 TP_WAVELET_COMPEXPERT;Erweitert
 TP_WAVELET_COMPGAMMA;Gamma-Kompression
-TP_WAVELET_COMPGAMMA_TOOLTIP;Das Anpassen des Gammawerts des\nRestbildes ermöglicht das Angleichen\nder Daten und des Histogramms.
+TP_WAVELET_COMPGAMMA_TOOLTIP;Das Anpassen des Gammawerts des Restbildes ermöglicht das Angleichen der Daten und des Histogramms.
 TP_WAVELET_COMPLEXLAB;Komplexität
 TP_WAVELET_COMPLEX_TOOLTIP;Standard: zeigt eine verringerte Anzahl an Werkzeugen, ausreichend für die meisten Fälle.\nErweitert: zeigt alle Werkzeuge für komplexe Fälle.
 TP_WAVELET_COMPNORMAL;Standard
@@ -3909,9 +4008,9 @@ TP_WAVELET_CTYPE;Chrominanz-Kontrolle
 TP_WAVELET_CURVEEDITOR_BL_TOOLTIP;Deaktiviert wenn Zoom ungefähr > 300%
 TP_WAVELET_CURVEEDITOR_CC_TOOLTIP;Lokaler Kontrast als Funktion des ursprünglichen Kontrasts.\n\n<b>Niedrige Werte:</b> Wenig lokaler Kontrast (Werte zwischen 10 - 20)\n<b>50%:</b> Durchschnittlicher lokaler Kontrast (Werte zwischen 100 - 300)\n<b>66%:</b> Standardabweichung des Lokalen Kontrasts (Werte zwischen 300 - 800)\n<b>100%:</b> Maximaler lokaler Kontrast (Werte zwischen 3000 - 8000)\n
 TP_WAVELET_CURVEEDITOR_CH;Kontrast = f(H)
-TP_WAVELET_CURVEEDITOR_CH_TOOLTIP;Kontrast als Funktion des Farbtons.\nAchten Sie darauf, dass Sie die Werte beim\nGamut-Farbton nicht überschreiben\n\nDie Kurve hat nur Auswirkung, wenn die Wavelet-\nKontrastregler nicht auf '0' stehen.
+TP_WAVELET_CURVEEDITOR_CH_TOOLTIP;Kontrast als Funktion des Farbtons.\nAchten Sie darauf, dass Sie die Werte beim Gamut-Farbton nicht überschreiben.\n\nDie Kurve hat nur Auswirkung, wenn die Wavelet-Kontrastregler nicht auf '0' stehen.
 TP_WAVELET_CURVEEDITOR_CL;L
-TP_WAVELET_CURVEEDITOR_CL_TOOLTIP;Wendet eine Kontrasthelligkeitskurve\nam Ende der Wavelet-Verarbeitung an.
+TP_WAVELET_CURVEEDITOR_CL_TOOLTIP;Wendet eine Kontrasthelligkeitskurve am Ende der Wavelet-Verarbeitung an.
 TP_WAVELET_CURVEEDITOR_HH;HH
 TP_WAVELET_CURVEEDITOR_HH_TOOLTIP;Farbton als Funktion des Farbtons H=f(H).
 TP_WAVELET_DALL;Alle Richtungen
@@ -3922,7 +4021,7 @@ TP_WAVELET_DAUB6;D6 - Standard Plus
 TP_WAVELET_DAUB10;D10 - Mittel
 TP_WAVELET_DAUB14;D14 - Hoch
 TP_WAVELET_DAUBLOCAL;Wavelet Kantenperformance
-TP_WAVELET_DAUB_TOOLTIP;Ändert den Daubechies-Koeffizienten:\nD4 = Standard\nD14 = Häufig bestes Ergebnis auf Kosten\nvon ca. 10% längerer Verarbeitungszeit.\n\nVerbessert die Kantenerkennung sowie die Qualität\nder ersten Waveletebene. Jedoch hängt die Qualität\nnicht ausschließlich mit diesem Koeffizienten zusammen\nund kann je nach Bild und Einsatz variieren.
+TP_WAVELET_DAUB_TOOLTIP;Ändert den Daubechies-Koeffizienten:\nD4 = Standard\nD14 = Häufig bestes Ergebnis auf Kosten von ca. 10% längerer Verarbeitungszeit.\n\nVerbessert die Kantenerkennung sowie die Qualität der ersten Waveletebene. Jedoch hängt die Qualität nicht ausschließlich mit diesem Koeffizienten zusammen und kann je nach Bild und Einsatz variieren.
 TP_WAVELET_DEN5THR;Schwellenwert
 TP_WAVELET_DENCURV;Kurve
 TP_WAVELET_DENL;Korrektur Struktur 
@@ -3955,13 +4054,13 @@ TP_WAVELET_EDGEDETECT;Verlaufsempfindlichkeit
 TP_WAVELET_EDGEDETECTTHR;Schwelle niedrig (Rauschen)
 TP_WAVELET_EDGEDETECTTHR2;Schwelle hoch (Erkennung)
 TP_WAVELET_EDGEDETECTTHR_TOOLTIP;Schwelle der Kantenerkennung für feine Details.\nVerhindert die Schärfung von Rauschen.
-TP_WAVELET_EDGEDETECT_TOOLTIP;Verschieben des Reglers nach rechts erhöht die\nKantenempfindlichkeit. Die Einstellung wirkt sich\nauf den lokalen Kontrast, Kanteneinstellungen und\nRauschen aus.
+TP_WAVELET_EDGEDETECT_TOOLTIP;Verschieben des Reglers nach rechts erhöht die Kantenempfindlichkeit.\nDie Einstellung wirkt sich auf den lokalen Kontrast, Kanteneinstellungen und Rauschen aus.
 TP_WAVELET_EDGESENSI;Kantenempfindlichkeit
-TP_WAVELET_EDGREINF_TOOLTIP;Reduziert oder verstärkt die Kantenschärfung der\nersten Ebene. Wird die Schärfung verstärkt, wird\nbei der zweiten Ebene die Schärfung reduziert und\numgekehrt. Alle anderen Ebenen werden nicht\nbeeinflusst.
+TP_WAVELET_EDGREINF_TOOLTIP;Reduziert oder verstärkt die Kantenschärfung der ersten Ebene.\nWird die Schärfung verstärkt, wird bei der zweiten Ebene die Schärfung reduziert und umgekehrt. Alle anderen Ebenen werden nicht beeinflusst.
 TP_WAVELET_EDGTHRESH;Details
-TP_WAVELET_EDGTHRESH_TOOLTIP;Verschieben des Reglers nach rechts verstärkt\ndie Kantenschärfung der ersten Waveletebene\nund reduziert sie für die anderen Ebenen.\n\nNegative Werte können zu Artefakten führen.
+TP_WAVELET_EDGTHRESH_TOOLTIP;Verschieben des Reglers nach rechts verstärkt die Kantenschärfung der ersten Waveletebene und reduziert sie für die anderen Ebenen.\n\nNegative Werte können zu Artefakten führen.
 TP_WAVELET_EDRAD;Radius
-TP_WAVELET_EDRAD_TOOLTIP;Der Radius unterscheidet sich von dem in\nden üblichen Schärfungswerkzeugen. Der\nWert wird mit jeder Ebene über eine komplexe\nFunktion verglichen. Ein Wert von '0' zeigt\ndeshalb immer noch eine Auswirkung.
+TP_WAVELET_EDRAD_TOOLTIP;Der Radius unterscheidet sich von dem in den üblichen Schärfungswerkzeugen.\nDer Wert wird mit jeder Ebene über eine komplexe Funktion verglichen. Ein Wert von '0' zeigt deshalb immer noch eine Auswirkung.
 TP_WAVELET_EDSL;Regler
 TP_WAVELET_EDTYPE;Lokale Kontrastmethode
 TP_WAVELET_EDVAL;Intensität
@@ -3974,9 +4073,9 @@ TP_WAVELET_HIGHLIGHT;Lichter-Luminanz-Bereich
 TP_WAVELET_HS1;Gesamter Luminanz-Bereich
 TP_WAVELET_HS2;Schatten/Lichter
 TP_WAVELET_HUESKIN;Hautfarbton
-TP_WAVELET_HUESKIN_TOOLTIP;Wenn Sie den Bereich signifikant nach Links\noder Rechts verschieben müssen, ist der\nWeißabgleich nicht richtig gewählt.\nWählen Sie den eingeschlossenen Bereich so\neng wie möglich, um den Einfluss auf benachbarte\nFarben zu verhindern.
+TP_WAVELET_HUESKIN_TOOLTIP;Wenn Sie den Bereich signifikant nach Links oder Rechts verschieben müssen, ist der Weißabgleich nicht richtig gewählt.\nWählen Sie den eingeschlossenen Bereich so eng wie möglich, um den Einfluss auf benachbarte Farben zu verhindern.
 TP_WAVELET_HUESKY;Himmelsfarbton
-TP_WAVELET_HUESKY_TOOLTIP;Wenn Sie den Bereich signifikant nach Links oder Rechts verschieben müssen, oder Artefakte entstehen, ist der Weißabgleich nicht richtig gewählt.\nWählen Sie den eingeschlossenen Bereich so\neng wie möglich, um den Einfluss auf benachbarte\nFarben zu verhindern.
+TP_WAVELET_HUESKY_TOOLTIP;Wenn Sie den Bereich signifikant nach Links oder Rechts verschieben müssen, oder Artefakte entstehen, ist der Weißabgleich nicht richtig gewählt.\nWählen Sie den eingeschlossenen Bereich so eng wie möglich, um den Einfluss auf benachbarte Farben zu verhindern.
 TP_WAVELET_ITER;Delta-Kontrastausgleich
 TP_WAVELET_ITER_TOOLTIP;Links: Erhöht die niedrigen und reduziert die hohen Ebenen.\nRechts: Reduziert die niedrigen und erhöht die hohen Ebenen.
 TP_WAVELET_LABEL;Wavelet
@@ -4008,7 +4107,7 @@ TP_WAVELET_LOWTHR_TOOLTIP;Verhindert die Verstärkung feiner Texturen und Rausch
 TP_WAVELET_MEDGREINF;Erste Ebene
 TP_WAVELET_MEDI;Artefakte in blauem Himmel reduzieren
 TP_WAVELET_MEDILEV;Kantenerkennung
-TP_WAVELET_MEDILEV_TOOLTIP;Wenn Sie die Kantenerkennung aktivieren, sollten Sie folgende\nEinstellungen anpassen:\n\n1. Niedrige Kontrastebenen deaktivieren, um Artefakte zu vermeiden.\n2. Hohe Werte bei der Verlaufsempfindlichkeit einstellen.\n\nSie können die Intensität mit der Wavelet-Rauschreduzierung anpassen.
+TP_WAVELET_MEDILEV_TOOLTIP;Wenn Sie die Kantenerkennung aktivieren, sollten Sie folgende Einstellungen anpassen:\n\n1. Niedrige Kontrastebenen deaktivieren, um Artefakte zu vermeiden.\n2. Hohe Werte bei der Verlaufsempfindlichkeit einstellen.\n\nSie können die Intensität mit der Wavelet-Rauschreduzierung anpassen.
 TP_WAVELET_MERGEC;Chroma zusammenführen
 TP_WAVELET_MERGEL;Luma zusammenführen
 TP_WAVELET_MIXCONTRAST;Referenz
@@ -4023,13 +4122,13 @@ TP_WAVELET_NPHIGH;Hoch
 TP_WAVELET_NPLOW;Niedrig
 TP_WAVELET_NPNONE;Keine
 TP_WAVELET_NPTYPE;Benachbarte Pixel
-TP_WAVELET_NPTYPE_TOOLTIP;Dieser Algorithmus verwendet ein Pixel und acht\nseiner Nachbarn. Sind die Unterschiede gering,\nwerden die Kanten geschärft.
+TP_WAVELET_NPTYPE_TOOLTIP;Dieser Algorithmus verwendet ein Pixel und acht seiner Nachbarn.\nSind die Unterschiede gering, werden die Kanten geschärft.
 TP_WAVELET_OFFSET_TOOLTIP;Offset ändert das Gleichgewicht zwischen niedrigen und hohen Kontrastdetails.\nHohe Werte verstärken Kontraständerungen zu Details mit höherem Kontrast, während niedrige Werte Kontraständerungen zu Details mit niedrigem Kontrast verstärken.\nDurch Verwendung eines niedrigen Dämpfungsreaktionswerts können Sie auswählen, welche Kontrastwerte aufgewertet werden.
 TP_WAVELET_OLDSH;Algorithmus verwendet negative Werte
 TP_WAVELET_OPACITY;Deckkraft Blau/Gelb
 TP_WAVELET_OPACITYW;Kontrastausgleichskurve
 TP_WAVELET_OPACITYWL;Lokale Kontrastkurve
-TP_WAVELET_OPACITYWL_TOOLTIP;Wendet eine lokale Kontrastkurve am\nEnde der Wavelet-Verarbeitung an.\n\nLinks stellt den niedrigsten, rechts den\nhöchsten Kontrast dar.
+TP_WAVELET_OPACITYWL_TOOLTIP;Wendet eine lokale Kontrastkurve am Ende der Wavelet-Verarbeitung an.\n\nLinks stellt den niedrigsten, rechts den höchsten Kontrast dar.
 TP_WAVELET_PASTEL;Pastellfarben
 TP_WAVELET_PROC;Verarbeitung
 TP_WAVELET_PROTAB;Schutz
@@ -4070,8 +4169,8 @@ TP_WAVELET_THRDEN_TOOLTIP;Erzeugt eine abgestufte Kurve, die verwendet wird, um 
 TP_WAVELET_THREND;Schwellenwert Lokaler Kontrast
 TP_WAVELET_THRESHOLD;Lichterebenen
 TP_WAVELET_THRESHOLD2;Schattenebenen
-TP_WAVELET_THRESHOLD2_TOOLTIP;Legt die Ebene der Untergrenze (9 minus Wert)\nfür den Schatten-Luminanz-Bereich fest. Der\nmaximal mögliche Wert wird vom Wert der Lichter-\nebenen begrenzt.\n\nBeeinflussbare Ebenen: Untergrenze bis Ebene 9
-TP_WAVELET_THRESHOLD_TOOLTIP;Legt die Ebene der Obergrenze für den\nLichter-Luminanz-Bereich fest. Der Wert begrenzt die\nmaximal möglichen Schattenebenen.\n\nBeeinflussbare Ebenen: Ebene 1 bis Obergrenze
+TP_WAVELET_THRESHOLD2_TOOLTIP;Legt die Ebene der Untergrenze (9 minus Wert) für den Schatten-Luminanz-Bereich fest. Der maximal mögliche Wert wird vom Wert der Lichterebenen begrenzt.\n\nBeeinflussbare Ebenen: Untergrenze bis Ebene 9
+TP_WAVELET_THRESHOLD_TOOLTIP;Legt die Ebene der Obergrenze für den Lichter-Luminanz-Bereich fest. Der Wert begrenzt die maximal möglichen Schattenebenen.\n\nBeeinflussbare Ebenen: Ebene 1 bis Obergrenze
 TP_WAVELET_THRH;Schwelle Lichter
 TP_WAVELET_TILESBIG;Große Kacheln
 TP_WAVELET_TILESFULL;Ganzes Bild
@@ -4080,7 +4179,7 @@ TP_WAVELET_TILES_TOOLTIP;'Ganzes Bild' (empfohlen) liefert eine bessere Qualitä
 TP_WAVELET_TMEDGS;Kantenschutz
 TP_WAVELET_TMSCALE;Skalieren
 TP_WAVELET_TMSTRENGTH;Intensität
-TP_WAVELET_TMSTRENGTH_TOOLTIP;Kontrolliert die Intensität der Dynamik- oder\nKontrastkompression des Restbildes. Ist der\nWert ungleich 0, werden die Intensitäts- und\nGammaregler des Tonwertkorrektur-\nWerkzeugs im Belichtungsreiter deaktiviert.
+TP_WAVELET_TMSTRENGTH_TOOLTIP;Kontrolliert die Intensität der Dynamik- oder Kontrastkompression des Restbildes. Ist der\nWert ungleich 0, werden die Intensitäts- und Gammaregler des Tonwertkorrektur-Werkzeugs im Belichtungsreiter deaktiviert.
 TP_WAVELET_TMTYPE;Kompression
 TP_WAVELET_TON;Tönung
 TP_WAVELET_TONFRAME;Ausgeschlossene Farben
@@ -4092,7 +4191,7 @@ TP_WAVELET_WAVOFFSET;Versatz
 TP_WBALANCE_AUTO;Automatisch
 TP_WBALANCE_AUTOITCGREEN;Temperaturbezogen
 TP_WBALANCE_AUTOOLD;RGB grau
-TP_WBALANCE_AUTO_HEADER;Automatisch
+TP_WBALANCE_AUTO_HEADER;Automatisch & Verfeinern
 TP_WBALANCE_CAMERA;Kamera
 TP_WBALANCE_CLOUDY;Bewölkt
 TP_WBALANCE_CUSTOM;Benutzerdefiniert
@@ -4119,6 +4218,43 @@ TP_WBALANCE_FLUO_HEADER;Leuchtstofflampe
 TP_WBALANCE_GREEN;Tönung
 TP_WBALANCE_GTI;GTI
 TP_WBALANCE_HMI;HMI
+TP_WBALANCE_ITCWALG_TOOLTIP;Ermöglicht Ihnen, wenn möglich, zur anderen alternativen Temperatur (Alt_temp) zu wechseln.\nInaktiv im Fall der "Einzelauswahl".
+TP_WBALANCE_ITCWBDELTA_TOOLTIP;Für jede versuchte "grüne" Iteration wurde der zu berücksichtigende Temperaturunterschied festgelegt.
+TP_WBALANCE_ITCWBFGREEN_TOOLTIP;Finden Sie den  besten Kompromiss zwischen Kandidat und Grün.
+TP_WBALANCE_ITCWBMINSIZEPATCH_TOOLTIP;Ermöglicht Ihnen, den minimalen Patch-Wert festzulegen. Zu niedrige Werte können zu einer fehlenden Korrelation führen.
+TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP;Ermöglicht das Filtern von Magenta-/Lila-Daten aus dem Bild. Wenn das Kontrollkästchen aktiviert ist, wird ein Filter angewendet, der den Wert von Y begrenzt. Standardmäßig beträgt dieser Wert 0,4. Sie können es in "Optionen" Itcwb_Ypurple ändern (maximal 1).
+TP_WBALANCE_ITCWBPRECIS_TOOLTIP;Je niedriger der Wert, desto relevanter sind die Daten, aber desto länger dauert die Verarbeitung. Da die Verarbeitungszeit gering ist, sollte dieser Parameter grundsätzlich auf dem Standardwert bleiben können.
+TP_WBALANCE_ITCWBRGREEN_TOOLTIP;Legt die Amplitude der Grünwertüberprüfung in Iterationen fest, von der niedrigen Amplitude 0,82 bis 1,25 bis zur maximalen Amplitude 0,4 bis 4.
+TP_WBALANCE_ITCWBSIZEPATCH_TOOLTIP;Definiert die Anzahl der Farben die vom Algorithmus verwendet werden.
+TP_WBALANCE_ITCWBSIZE_TOOLTIP;Diese Einstellung legt die Anzahl der Iterationen fest, um die beste Übereinstimmung zwischen den Referenzspektralfarben und denen im xyY-Wert des Bildes zu finden. Ein Wert von 3 scheint ein guter Kompromiss zu sein.
+TP_WBALANCE_ITCWBTHRES_TOOLTIP;Beschränkt die Vergleichsabtastung zwischen Spektraldaten und Bilddaten.
+TP_WBALANCE_ITCWB_ALG;Entfernt den 2-Wege-Algorithmus
+TP_WBALANCE_ITCWB_CUSTOM;Benutzerdefinierte Temperatur und Tönung
+TP_WBALANCE_ITCWB_DELTA;Delta-Temperatur in der Grün-Schleife
+TP_WBALANCE_ITCWB_FGREEN;Ermittle den Grün-Kandidaten
+TP_WBALANCE_ITCWB_FORCED;Annähernd vollständiges CIE-Diagramm
+TP_WBALANCE_ITCWB_FRA;Einstellungen Auto-Temperatur-Korrelation
+TP_WBALANCE_ITCWB_FRA_TOOLTIP;Diese Einstellungen ermöglichen je nach Bildart (Rohtyp, Farbmetrik usw.) eine Anpassung des Algorithmus "Temperaturkorrelation". Es gibt keine absolute Regel, die diese Parameter mit den erzielten Ergebnissen verknüpft.
+TP_WBALANCE_ITCWB_MINSIZEPATCH;Patch Minimalgröße
+TP_WBALANCE_ITCWB_NOPURPLE;Filter auf Violett
+TP_WBALANCE_ITCWB_PRIM_ACE;Erzwingt die Verwendung des vollständiigen CIE-Diagrammes
+TP_WBALANCE_ITCWB_PRIM_ADOB;Mittlere Abttastung
+TP_WBALANCE_ITCWB_PRIM_BETA;Mittlere Abtastung (Standard) - nahe der Farbskala des Zeigers
+TP_WBALANCE_ITCWB_PRIM_JDCMAX;Annähernd vollständiges CIE-Diagramm
+TP_WBALANCE_ITCWB_PRIM_REC;Hohe Abtastung
+TP_WBALANCE_ITCWB_PRIM_SRGB;Geringe Abtastung und Kameraeinstellungen ignorieren
+TP_WBALANCE_ITCWB_PRIM_XYZCAM;Kamera-XYZ-Matrix
+TP_WBALANCE_ITCWB_PRIM_XYZCAM2;JDCmax nach Kamera XYZ-Matrix
+TP_WBALANCE_ITCWB_RGREEN;Grün-Bereich
+TP_WBALANCE_ITCWB_SAMPLING;Niedrige Abtastung 5.9
+TP_WBALANCE_ITCWB_SIZEPATCH;Größe des Farb-Patches
+TP_WBALANCE_ITCWB_THRES;Verwendete Farben (Voreingestellt)
+TP_WBALANCE_ITCWCUSTOM_TOOLTIP;Ermöglicht Ihnen die Verwendung benutzerdefinierter Einstellungen für Temperatur und Grün (Tönung).\n\nNutzungstipps:\n1) Starten Sie Itcwb und aktivieren Sie "Benutzerdefinierte Temperatur und Tönung verwenden".\n2) Stellen Sie "Temperatur und Tönung" nach Ihren Wünschen ein: frei, auswählen ,...(Benutzerdefiniert)\n3) Gehen Sie zurück zu "Temperaturkorrelation".\n\nSie können nicht verwenden: 2 Durchgänge, AWB-Temperatur-Bias, Grün-Verfeinerung.
+TP_WBALANCE_ITCWFORCED_TOOLTIP;Standardmäßig (Kontrollkästchen nicht aktiviert) werden die während der Abtastung gescannten Daten auf das sRGB-Profil zurückgeführt, das am weitesten verbreitet ist, sowohl für die Kalibrierung von DCP- oder ICC-Profilen mit dem Colorchecker24 als auch für die Verwendung im Internet.\nWenn Sie Bilder mit sehr hohem Farbumfang haben (einige Blumen, künstliche Farben), kann es erforderlich sein, das gesamte CIExy-Diagramm zu verwenden. Das verwendete Profil ist ACESP0. In diesem zweiten Fall ist die Anzahl der Farben, die innerhalb des Algorithmus verwendet werden können, wichtiger.
+TP_WBALANCE_ITCWGREEN;Grün-Verfeinerung
+TP_WBALANCE_ITCWGREEN_TOOLTIP;Verändert die Grün-Tönung als Referenz für den Algorithmus. Es hat im Wesentlichen die gleiche Rolle für Grün wie die "AWB-Temperaturabweichung" für die Temperatur.\nDer gesamte Algorithmus wird neu berechnet.
+TP_WBALANCE_ITCWPRIM_TOOLTIP;Ermöglicht die Auswahl der Bildabtastung.\n'Annähernd vollständiges CIE-Diagramm' verwendet fast die auf dem Sensor vorhandenen Daten, möglicherweise einschließlich der imaginären Farben.\n'Kamera-XYZ-Matrix' – verwendet die direkt von der Farbmatrix abgeleitete Matrix.\n'Mittlere Abtastung (Standard) - nahe der Farbskala des Zeigers' entspricht im Wesentlichen den häufigsten Fällen des menschlichen Sehens.\nMit 'Geringe Abtastung und keine Kameraeinstellungen verwenden' können Sie Teile des Bildes mit hoher Farbskala isolieren und den Algorithmus zwingen, die Kameraeinstellungen in einigen Fällen (Tönung > 0,8,...) zu ignorieren. Dies wird sich natürlich auf das Ergebnis auswirken.\n\nDieses Sampling hat nur einen Einfluss auf die Kanalmultiplikatoren, es hat nichts mit dem "Arbeitsprofil" zu tun und verändert nicht die Farbskala des Bildes.
+TP_WBALANCE_ITCWSAMPLING_TOOLTIP;Ermöglicht die Verwendung des alten Sampling-Algorithmus, um eine bessere Kompatibilität mit 5.9 sicherzustellen. Dazu muss Beobachter 10° (Standard) aktiviert sein.
 TP_WBALANCE_JUDGEIII;JudgeIII
 TP_WBALANCE_LABEL;Weißabgleich
 TP_WBALANCE_LAMP_HEADER;Lampe
@@ -4126,6 +4262,14 @@ TP_WBALANCE_LED_CRS;CRS SP12 WWMR16
 TP_WBALANCE_LED_HEADER;LED
 TP_WBALANCE_LED_LSI;LSI Lumelex 2040
 TP_WBALANCE_METHOD;Methode
+TP_WBALANCE_MULLABEL;Multiplikatoren: r=%1 g=%2 b=%3
+TP_WBALANCE_MULLABEL_TOOLTIP;Die Werte dienen der Information, sie können nicht geändert werden.
+TP_WBALANCE_OBSERVER10;Beobachter 10° anstatt Beobachter 2°
+TP_WBALANCE_OBSERVER10_TOOLTIP;Das Farbmanagement in Rawtherapee (Weißabgleich, Kanalmultiplikatoren, Lichter-Rekonstruktion,...) nutzt die Spektraldaten der Leuchtmittel und Farben. Der Beobachter ist ein wichtiger Parameter dieses Managements, der den Wahrnehmungswinkel des Auges berücksichtigt. Im Jahr 1931 wurde er auf 2° festgelegt (privilegiert die Verwendung der Kegel). Im Jahr 1964 wurde er auf 10° festgelegt (privilegiert die Verwendung der Zapfen, berücksichtigt jedoch teilweise die Stäbchen).\nIm Falle einer (seltenen) Drift der Farben aufgrund des Beobachters 10° – wahrscheinlich aufgrund der Konvertierungsmatrix – muss Beobachter 2° ausgewählt werden.\nIn den meisten Fällen ist Beobachter 10° (Standard) die bessere Wahl.
+TP_WBALANCE_PATCHLABEL;Gelesene Farben: %1 Patch Chroma: %2 Größe= %3
+TP_WBALANCE_PATCHLABEL_TOOLTIP;Zeigt die Anzahl der gelesenen Farben an (max. = 237).\nZeigt die berechnete Patch-Chroma an.\nAWB-Temperaturabweichung. Versuchen Sie, diesen Wert zu reduzieren. Ein Minimum scheint den Algorithmus zu optimieren.\n\nPatch-Größe passt zur Chroma-Optimierung.
+TP_WBALANCE_PATCHLEVELLABEL;Patch: ΔE= %1 - Daten x 9 Min: %2 Max= %3
+TP_WBALANCE_PATCHLEVELLABEL_TOOLTIP;Zeigt den ΔE-Patch zwischen Bild und Spektraldaten an (dies setzt voraus, dass genügend Spektraldaten vorhanden sind).\nZeigt die gefundenen gelesenen Daten an. Die beiden Werte entsprechen den berücksichtigten minimalen und maximalen Datenwerten. Um die Anzahl der betroffenen Pixel im Bild zu ermitteln, muss der Koeffizient x9 berücksichtigt werden.
 TP_WBALANCE_PICKER;Farbwähler
 TP_WBALANCE_SHADE;Schatten
 TP_WBALANCE_SIZE;Größe:
@@ -4135,9 +4279,11 @@ TP_WBALANCE_SOLUX47;Solux 4700K (Vendor)
 TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Gallery)
 TP_WBALANCE_SPOTWB;Manuell setzen
 TP_WBALANCE_STUDLABEL;Bezugsfaktor: %1
-TP_WBALANCE_STUDLABEL_TOOLTIP;Anzeige des berechneten Bezugsfaktors.\nNiedrigere Werte sind besser, wobei <0,005 ausgezeichnet,\n<0,01 gut und> 0,5 schlecht ist.\nNiedrige Werte bedeuten jedoch nicht automatisch, dass der Weißabgleich gut ist:\nwenn die Lichtquelle nicht eindeutig ist können die Ergebnisse fehlerhaft sein.\nEin Wert von 1000 bedeutet, dass frühere Berechnungen verwendet werden und\ndie Ergebnisse wahrscheinlich gut sind.
+TP_WBALANCE_STUDLABEL0;Bezugsfaktor: %1 Durchgänge: %2 Alt=%3
+TP_WBALANCE_STUDLABEL1;Bezugsfaktor: %1 Durchgänge: %2 Beste_Alt=%3
+TP_WBALANCE_STUDLABEL_TOOLTIP;Anzeige des berechneten Bezugsfaktors.\nNiedrigere Werte sind besser, wobei <0,005 ausgezeichnet,\n<0,01 gut und> 0,5 schlecht ist.\nNiedrige Werte bedeuten jedoch nicht automatisch, dass der Weißabgleich gut ist:\nwenn die Lichtquelle nicht eindeutig ist können die Ergebnisse fehlerhaft sein.\nEin Wert von 1000 bedeutet, dass frühere Berechnungen verwendet werden und die Ergebnisse wahrscheinlich gut sind. Durchgänge: Anzahl der Berechnungen, (beste) Alt: Alternative Temperatur.
 TP_WBALANCE_TEMPBIAS;AWB-Temperatur-Korrektur
-TP_WBALANCE_TEMPBIAS_TOOLTIP;Prozentuale Korrektur der Farbtemperatur des automatischen\nWeißabgleichs in Richtung wärmer oder kälter.\nDer Korrekturwert berechnet sich aus:\nAWB-Temperatur + AWB-Temperatur * AWB-Temperatur-Korrektur
+TP_WBALANCE_TEMPBIAS_TOOLTIP;Ermöglicht die Korrektur der Farbtemperatur des automatischen Weißabgleichs in Richtung wärmer oder kälter.\nDer Korrekturwert wird prozentual angegeben und berechnet sich aus:\nAWB-Temperatur + AWB-Temperatur * AWB-Temperatur-Korrektur.\n\nMit "AWB Temperatur Korrektur" können die Ergebnisse der "Temperaturbezugsfaktoren" angepasst werden. Jede Änderung erzeugt eine Neuberechnung von Temperatur, Tönung und Bezugsfaktor.
 TP_WBALANCE_TEMPERATURE;Farbtemperatur
 TP_WBALANCE_TUNGSTEN;Glühlampe
 TP_WBALANCE_WATER1;Unterwasser 1
@@ -4150,3 +4296,33 @@ ZOOMPANEL_ZOOMFITCROPSCREEN;Ausschnitt an Bildschirm anpassen.\nTaste: <b>f</b>
 ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen.\nTaste: <b>Alt</b> + <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
+//TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP;By default when "Inpaint opposed" is activated, purple colors are not taken into account. However, if the image does not need highlight reconstruction, or if this image naturally contains purple tints (flowers, etc.), it may be necessary to deactivate, to take into account all the colors.
+//TP_WBALANCE_ITCWB_FORCED;Forces use of the entire CIE diagram
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!ERROR_MSG_METADATA_VALUE;Metadata: error setting %1 to %2
+!HISTORY_MSG_LOCAL_TMO_SATUR;Local Exp Fattal Saturation
+!HISTORY_MSG_WBITC_DELTA;Itcwb Delta green
+!HISTORY_MSG_WBITC_FGREEN;Itcwb Green - student
+!HISTORY_MSG_WBITC_FORCE;Itcwb Force
+!HISTORY_MSG_WBITC_NOPURPLE;Itcwb Nopurple
+!HISTORY_MSG_WBITC_PONDER;Itcwb ponderated
+!HISTORY_MSG_WBITC_PRECIS;Itcwb Precision
+!HISTORY_MSG_WBITC_RGREEN;Itcwb Green range
+!HISTORY_MSG_WBITC_SAMPLING;Low sampling
+!HISTORY_MSG_WBITC_SIZE;Itcwb Size
+!HISTORY_MSG_WBITC_SORTED;Itcwb ponderated
+!HISTORY_MSG_WBITC_THRES;Itcwb Threshold
+!PREFERENCES_WBAFORC;Forces Extra algoritm
+!PREFERENCES_WBAGREENDELTA;Delta temperature in green iterate loop (if Force Extra enabled)
+!PREFERENCES_WBANOPURP;No purple color used
+!PREFERENCES_WBAPATCH;Number maximum of colors used in picture
+!PREFERENCES_WBAPRECIS;Precision algorithm - scale used
+!PREFERENCES_WBASIZEREF;Size of reference color compare to size of histogram color
+!PREFERENCES_WBASORT;Sort in chroma order instead of histogram
+!TP_LOCALLAB_FATSAT;Saturation control
+!TP_WBALANCE_ITCWB_PRECIS;Precision algorithm - scale used
+!TP_WBALANCE_ITCWB_SIZE;Size of ref. color compare to histogram

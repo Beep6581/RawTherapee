@@ -33,7 +33,7 @@ public:
 	typedef unsigned short ushort;
 	typedef unsigned char uchar;
 	typedef unsigned short (*dcrawImage_t)[4];
-#ifdef WIN32
+#ifdef _WIN32
 	typedef __int64 INT64;
 	typedef unsigned __int64 UINT64;
 #else
@@ -76,6 +76,20 @@ public:
     }
 
 protected:
+    enum class CropMode : std::uint_fast16_t {                                   // RT
+        NA = 0,                                                                  // RT
+        FullFrameOnGfx = 1,                                                      // RT
+        SportsFinderMode = 2,                                                    // RT
+        ElectronicShutter1_25xCrop = 4                                           // RT
+    };                                                                           // RT
+    // stores the cropdata read from the file                                       RT
+    struct CropData {                                                            // RT
+        std::uint_fast16_t  width,                                               // RT
+                            height,                                              // RT
+                            top_margin,                                          // RT
+                            left_margin;                                         // RT
+        CropMode crop_mode = CropMode::NA;                                       // RT
+    } read_crop;                                                                 // RT
     int exif_base, ciff_base, ciff_len;
     rtengine::IMFILE *ifp;
     FILE *ofp;

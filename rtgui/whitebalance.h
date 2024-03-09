@@ -46,13 +46,15 @@ class WhiteBalance final : public ToolParamBlock, public AdjusterListener, publi
 
 private:
     Gtk::Label*  StudLabel;
+    Gtk::Label*  PatchLabel;
+    Gtk::Label*  PatchlevelLabel;
     Gtk::Label*  mulLabel;
 
 protected:
     class MethodColumns : public Gtk::TreeModel::ColumnRecord
     {
     public:
-        Gtk::TreeModelColumn< Glib::RefPtr<Gdk::Pixbuf> > colIcon;
+        Gtk::TreeModelColumn<Glib::ustring> colIcon;
         Gtk::TreeModelColumn<Glib::ustring> colLabel;
         Gtk::TreeModelColumn<int> colId;
         MethodColumns()
@@ -64,8 +66,11 @@ protected:
     };
     
     rtengine::ProcEvent EvWBObserver10;
+    rtengine::ProcEvent EvWBitcwbprim;
+    rtengine::ProcEvent EvWBitcwbalg;
+    rtengine::ProcEvent EvWBitcwgreen;
 
-    static Glib::RefPtr<Gdk::Pixbuf> wbPixbufs[rtengine::toUnderlying(rtengine::procparams::WBEntry::Type::CUSTOM) + 1];
+    Glib::ustring wbIcons[rtengine::toUnderlying(rtengine::procparams::WBEntry::Type::CUSTOM) + 1];
     Glib::RefPtr<Gtk::TreeStore> refTreeModel;
     MethodColumns methodColumns;
     MyComboBox* method;
@@ -76,6 +81,13 @@ protected:
     Adjuster* equal;
     Adjuster* tempBias;
     CheckBox* observer10;
+    Gtk::Frame* itcwbFrame;
+    Gtk::CheckButton* itcwb_alg;
+    MyComboBoxText* itcwb_prim;
+    Adjuster* itcwb_green;
+    std::unique_ptr<Adjuster> compatVersionAdjuster;
+    
+    bool lastitcwb_alg;
 
     Gtk::Button* spotbutton;
     int opt;
@@ -83,7 +95,7 @@ protected:
     double nextGreen;
     WBProvider *wbp;  // pointer to a ToolPanelCoordinator object, or its subclass BatchToolPanelCoordinator
     SpotWBListener* wblistener;
-    sigc::connection methconn;
+    sigc::connection methconn, itcwb_algconn, itcwb_primconn;
     int custom_temp;
     double custom_green;
     double custom_equal;
@@ -108,8 +120,6 @@ public:
     WhiteBalance ();
     ~WhiteBalance () override;
 
-    static void init    ();
-    static void cleanup ();
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
@@ -131,8 +141,9 @@ public:
     }
     void setWB (int temp, double green);
     void resetWB ();
-    void WBChanged           (double temp, double green, double rw, double gw, double bw, float studgood) override;
-
+    void WBChanged           (int met, double temp, double green, double rw, double gw, double bw, float temp0, float delta, int bia, int dread, float studgood, float minchrom, int kmin, float histmin, float histmax, AWBMode aWBMode) override;
+    void itcwb_alg_toggled ();
+    void itcwb_prim_changed ();
     void setAdjusterBehavior (bool tempadd, bool greenadd, bool equaladd, bool tempbiasadd);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
     void enabledChanged() override;

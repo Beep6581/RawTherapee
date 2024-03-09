@@ -43,7 +43,7 @@ FlatField::FlatField () : FoldableToolPanel(this, TOOL_NAME, M("TP_FLATFIELD_LAB
     bindCurrentFolder (*flatFieldFile, options.lastFlatfieldDir);
     ffLabel = Gtk::manage(new Gtk::Label(M("GENERAL_FILE")));
     flatFieldFileReset = Gtk::manage(new Gtk::Button());
-    flatFieldFileReset->set_image (*Gtk::manage(new RTImage ("cancel-small.png")));
+    flatFieldFileReset->set_image (*Gtk::manage(new RTImage ("cancel-small", Gtk::ICON_SIZE_BUTTON)));
     hbff->pack_start(*ffLabel, Gtk::PACK_SHRINK);
     hbff->pack_start(*flatFieldFile);
     hbff->pack_start(*flatFieldFileReset, Gtk::PACK_SHRINK);
@@ -445,7 +445,7 @@ void FlatField::setGainMap(bool enabled) {
     flatFieldFromMetaData->set_sensitive(enabled);
     if (!enabled) {
         idle_register.add(
-            [this, enabled]() -> bool
+            [this]() -> bool
             {
                 disableListener();
                 flatFieldFromMetaData->setValue(false);

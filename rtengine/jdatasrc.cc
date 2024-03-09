@@ -240,7 +240,7 @@ my_error_exit (j_common_ptr cinfo)
 
     j_decompress_ptr dinfo = (j_decompress_ptr)cinfo;
 //  longjmp (((rt_jpeg_error_mgr*)(dinfo->src))->error_jmp_buf, 1);
-#if defined( WIN32 ) && defined( __x86_64__ ) && !defined(__clang__)
+#if defined( _WIN32 ) && defined( __x86_64__ ) && !defined(__clang__)
     __builtin_longjmp ((reinterpret_cast<rt_jpeg_error_mgr*>(dinfo->src))  ->error_jmp_buf, 1);
 #else
     longjmp ((reinterpret_cast<rt_jpeg_error_mgr*>(dinfo->src))  ->error_jmp_buf, 1);
@@ -248,7 +248,7 @@ my_error_exit (j_common_ptr cinfo)
 }
 
 
-#ifdef WIN32
+#ifdef _WIN32
 #define JVERSION	"6b  27-Mar-1998"
 #define JCOPYRIGHT_SHORT	"(C) 1998, Thomas G. Lane"
 #define JMESSAGE(code,string)	string ,

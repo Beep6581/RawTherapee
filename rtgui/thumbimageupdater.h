@@ -78,7 +78,7 @@ public:
      * @param priority if \c true then run as soon as possible
      * @param l listener waiting on update
      */
-    void add(ThumbBrowserEntryBase* tbe, bool* priority, bool upgrade, ThumbImageUpdateListener* l);
+    void add(ThumbBrowserEntryBase* tbe, bool* priority, bool upgrade, bool forceUpgrade, ThumbImageUpdateListener* l);
 
     /**
      * @brief Remove jobs associated with listener \c l.

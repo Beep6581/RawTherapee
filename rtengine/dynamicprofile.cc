@@ -24,6 +24,7 @@
 #include <glibmm/fileutils.h>
 #include <glibmm/miscutils.h>
 #include <glibmm/keyfile.h>
+#include <glibmm/fileutils.h>
 
 #include "rtengine.h"
 #include "../rtgui/options.h"
@@ -88,7 +89,7 @@ bool DynamicProfileRule::matches (const rtengine::FramesMetaData *im,  const Gli
             && camera (im->getCamera())
             && lens (im->getLens())
             && path (filename)
-            && imagetype(im->getImageType(0)));
+            && imagetype(im->getImageType()));
 }
 
 namespace
@@ -174,9 +175,10 @@ bool DynamicProfileRules::loadRules()
 {
     dynamicRules.clear();
     Glib::KeyFile kf;
+    const Glib::ustring fileName = Glib::build_filename (Options::rtdir, "dynamicprofile.cfg");
 
     try {
-        if (!kf.load_from_file (Glib::build_filename (Options::rtdir, "dynamicprofile.cfg"))) {
+        if (!(Glib::file_test(fileName, Glib::FILE_TEST_EXISTS) && kf.load_from_file (fileName))) {
             return false;
         }
     } catch (Glib::Error &e) {
@@ -221,7 +223,7 @@ bool DynamicProfileRules::loadRules()
 
         try {
             rule.profilepath = kf.get_string (group, "profilepath");
-			#if defined (WIN32)
+			#if defined (_WIN32)
 			// if this is Windows, replace any "/" in the path with "\\"
 			size_t pos = rule.profilepath.find("/");
 			while (pos != Glib::ustring::npos) {
@@ -229,7 +231,7 @@ bool DynamicProfileRules::loadRules()
 				pos = rule.profilepath.find("/", pos);
 			}
 			#endif
-			#if !defined (WIN32)
+			#if !defined (_WIN32)
 			// if this is not Windows, replace any "\\" in the path with "/"
 			size_t pos = rule.profilepath.find("\\");
 			while (pos != Glib::ustring::npos) {

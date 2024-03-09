@@ -86,7 +86,7 @@
 #ifdef __CYGWIN__
 #include <io.h>
 #endif
-#ifdef WIN32
+#ifdef _WIN32
 #include <sys/utime.h>
 #include <winsock2.h>
 #ifndef strcasecmp
@@ -4516,7 +4516,7 @@ mask_set:
 //      free (fname);
 //      if (errno != ERANGE) return;
 //    }
-//#if defined(WIN32) || defined(DJGPP)
+//#if defined(_WIN32) || defined(DJGPP)
 //    if (fname[1] == ':')
 //      memmove (fname, fname+2, len-2);
 //    for (cp=fname; *cp; cp++)
@@ -5775,6 +5775,8 @@ nf: order = 0x4949;
       cam_mul[0] = get2() / 256.0;
     if (tag == 0x1018 || tag == 0x20400100)
       cam_mul[2] = get2() / 256.0;
+    if (tag == 0x104D)
+        read_crop.crop_mode = (CropMode)get2();
     if (tag == 0x2011 && len == 2) {
 get2_256:
       order = 0x4d4d;
@@ -7652,15 +7654,27 @@ void CLASS parse_fuji (int offset)
     tag = get2();
     len = get2();
     save = ftell(ifp);
+    // tag 0x100 = 256 RawImageFullSize                                    RT
     if (tag == 0x100) {
       raw_height = get2();
       raw_width  = get2();
+    // RawImageCroppedSize 0x111 = 273 	(including borders)                RT
+    } else if (tag == 0x111) {                                          // RT
+      read_crop.height = get2();                                        // RT
+      read_crop.width = get2();                                         // RT
+      // RawImageTopLeft 0x110 = 272 (top margin first, then left margin)  RT
+    } else if (tag == 0x110){                                           // RT
+      read_crop.top_margin = get2();                                    // RT
+      read_crop.left_margin = get2();                                   // RT
+    // 0x115 = 277 RawImageAspectRatio                                     RT
     } else if (tag == 0x121) {
       height = get2();
       if ((width = get2()) == 4284) width += 3;
+      // tag 0x130 = 304 FujiLayout                                        RT
     } else if (tag == 0x130) {
       fuji_layout = fgetc(ifp) >> 7;
       fuji_width = !(fgetc(ifp) & 8);
+      // tag 0x131 = 305 XTransLayout                                      RT
     } else if (tag == 0x131) {
       filters = 9;
       FORC(36) xtrans_abs[0][35-c] = fgetc(ifp) & 3;
@@ -7674,8 +7688,18 @@ void CLASS parse_fuji (int offset)
       height = get4();
       order = c;
     }
+    // 0x9650 = 38480 RawExposureBias                                      RT
+
     fseek (ifp, save+len, SEEK_SET);
   }
+
+  if (read_crop.crop_mode != CropMode::NA) {      // RT
+    height = read_crop.height;                    // RT
+    width = read_crop.width;                      // RT
+    top_margin = read_crop.top_margin;            // RT
+    left_margin = read_crop.left_margin;          // RT
+  }                                               // RT
+
   height <<= fuji_layout;
   width  >>= fuji_layout;
 }
@@ -8675,7 +8699,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
     { "Olympus E-M5MarkII", 0, 0,
 	{ 9422,-3258,-711,-2655,10898,2015,-512,1354,5512 } },
     { "Olympus E-M5", 0, 0xfe1,
-	{ 8380,-2630,-639,-2887,10725,2496,-627,1427,5438 } },
+	{ 8380,-2630,-639,-2887,10725,2496,-627,1427,5438 } },//D65
+//	{ 9033,-3597, 26,-2351, 9700, 3111, -181, 807, 5838} },//stDA
     { "Olympus PEN-F", 0, 0,
 	{ 9476,-3182,-765,-2613,10958,1893,-449,1315,5268 } },
     { "Olympus SH-2", 0, 0,
@@ -9807,9 +9832,9 @@ void CLASS identify()
   if (!strncasecmp (model, make, i) && model[i++] == ' ')
     memmove (model, model+i, 64-i);
   if (!strncmp (model,"FinePix ",8))
-    strcpy (model, model+8);
+/* RT */    memmove (model, model+8, 64-8);
   if (!strncmp (model,"Digital Camera ",15))
-    strcpy (model, model+15);
+/* RT */    memmove (model, model+15, 64-15);
   desc[511] = artist[63] = make[63] = model[63] = model2[63] = 0;
   if (!is_raw) goto notraw;
 
@@ -10132,8 +10157,12 @@ canon_a5:
         width = raw_width = 6016;
         height = raw_height = 4014;
     } else if (!strcmp(model, "X-Pro3") || !strcmp(model, "X-T3") || !strcmp(model, "X-T30") || !strcmp(model, "X-T4") || !strcmp(model, "X100V") || !strcmp(model, "X-S10")) {
-        width = raw_width = 6384;
-        height = raw_height = 4182;
+        raw_width = 6384;           // RT
+        raw_height = 4182;          // RT
+        if (read_crop.crop_mode == CropMode::NA) {      // RT
+            width = raw_width;                          // RT
+            height = raw_height;                        // RT
+        }                                               // RT
     } else if (!strcmp(model, "DBP for GX680")) { // Special case for #4204
         width = raw_width = 5504;
         height = raw_height = 3856;

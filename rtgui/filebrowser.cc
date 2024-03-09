@@ -157,7 +157,7 @@ FileBrowser::FileBrowser () :
         pmenu->attach (*Gtk::manage(inspect = new Gtk::MenuItem (M("FILEBROWSER_POPUPINSPECT"))), 0, 1, p, p + 1);
         p++;
     }
-    pmenu->attach (*Gtk::manage(develop = new MyImageMenuItem (M("FILEBROWSER_POPUPPROCESS"), "gears.png")), 0, 1, p, p + 1);
+    pmenu->attach (*Gtk::manage(develop = new MyImageMenuItem (M("FILEBROWSER_POPUPPROCESS"), "gears")), 0, 1, p, p + 1);
     p++;
     pmenu->attach (*Gtk::manage(developfast = new Gtk::MenuItem (M("FILEBROWSER_POPUPPROCESSFAST"))), 0, 1, p, p + 1);
     p++;
@@ -244,8 +244,8 @@ FileBrowser::FileBrowser () :
 
     // Thumbnail context menu
     // Similar image arrays in filecatalog.cc
-    std::array<std::string, 6> clabelActiveIcons = {"circle-empty-gray-small.png", "circle-red-small.png", "circle-yellow-small.png", "circle-green-small.png", "circle-blue-small.png", "circle-purple-small.png"};
-    std::array<std::string, 6> clabelInactiveIcons = {"circle-empty-darkgray-small.png", "circle-empty-red-small.png", "circle-empty-yellow-small.png", "circle-empty-green-small.png", "circle-empty-blue-small.png", "circle-empty-purple-small.png"};
+    std::array<std::string, 6> clabelActiveIcons = {"circle-empty-gray-small", "circle-red-small", "circle-yellow-small", "circle-green-small", "circle-blue-small", "circle-purple-small"};
+    std::array<std::string, 6> clabelInactiveIcons = {"circle-empty-darkgray-small", "circle-empty-red-small", "circle-empty-yellow-small", "circle-empty-green-small", "circle-empty-blue-small", "circle-empty-purple-small"};
 
     if (options.menuGroupLabel) {
         pmenu->attach (*Gtk::manage(menuLabel = new Gtk::MenuItem (M("FILEBROWSER_POPUPCOLORLABEL"))), 0, 1, p, p + 1);
@@ -272,7 +272,7 @@ FileBrowser::FileBrowser () :
     /***********************
      * external programs
      * *********************/
-#if defined(WIN32)
+#if defined(_WIN32)
     Gtk::manage(miOpenDefaultViewer = new Gtk::MenuItem (M("FILEBROWSER_OPENDEFAULTVIEWER")));
 #endif
 
@@ -296,7 +296,7 @@ FileBrowser::FileBrowser () :
             p++;
             Gtk::Menu* submenuExtProg = Gtk::manage (new Gtk::Menu());
 
-#ifdef WIN32
+#ifdef _WIN32
             if (miOpenDefaultViewer) {
                 submenuExtProg->attach (*miOpenDefaultViewer, 0, 1, p, p + 1);
                 p++;
@@ -310,7 +310,7 @@ FileBrowser::FileBrowser () :
             submenuExtProg->show_all ();
             menuExtProg->set_submenu (*submenuExtProg);
         } else {
-#ifdef WIN32
+#ifdef _WIN32
             if (miOpenDefaultViewer) {
                 pmenu->attach (*miOpenDefaultViewer, 0, 1, p, p + 1);
                 p++;
@@ -482,7 +482,7 @@ FileBrowser::FileBrowser () :
         amiExtProg[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), amiExtProg[i]));
     }
 
-#ifdef WIN32
+#ifdef _WIN32
     if (miOpenDefaultViewer) {
         miOpenDefaultViewer->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), miOpenDefaultViewer));
     }
@@ -1046,7 +1046,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
         tbl->clearFromCacheRequested (mselected, true);
 
         //queue_draw ();
-#ifdef WIN32
+#ifdef _WIN32
     } else if (miOpenDefaultViewer && m == miOpenDefaultViewer) {
         openDefaultViewer(1);
 #endif
@@ -1157,7 +1157,7 @@ void FileBrowser::partPasteProfile ()
     }
 }
 
-#ifdef WIN32
+#ifdef _WIN32
 void FileBrowser::openDefaultViewer (int destination)
 {
     bool success = true;
@@ -1254,7 +1254,7 @@ bool FileBrowser::keyPressed (GdkEventKey* event)
         }
 
         openRequested(mselected);
-#ifdef WIN32
+#ifdef _WIN32
     } else if (event->keyval == GDK_KEY_F5) {
         int dest = 1;
 
@@ -1276,7 +1276,7 @@ bool FileBrowser::keyPressed (GdkEventKey* event)
     }
 
 #ifdef __WIN32__
-    else if (shift && !ctrl && !alt && !altgr) { // rank
+    else if (!shift && !ctrl && !alt && !altgr) { // rank
         switch(event->hardware_keycode) {
         case 0x30:  // 0-key
             requestRanking (0);
@@ -1331,7 +1331,7 @@ bool FileBrowser::keyPressed (GdkEventKey* event)
     }
 
 #else
-    else if (shift && !ctrl && !alt) { // rank
+    else if (!shift && !ctrl && !alt) { // rank
         switch(event->hardware_keycode) {
         case 0x13:
             requestRanking (0);

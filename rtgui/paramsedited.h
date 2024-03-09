@@ -249,16 +249,13 @@ struct WBParamsEdited {
     bool equal;
     bool observer;
     bool tempBias;
-    bool itcwb_thres;
-    bool itcwb_precis;
-    bool itcwb_size;
-    bool itcwb_delta;
-    bool itcwb_fgreen;
     bool itcwb_rgreen;
     bool itcwb_nopurple;
-    bool itcwb_sorted;
-    bool itcwb_forceextra;
+    bool itcwb_alg;
+    bool itcwb_prim;
     bool itcwb_sampling;
+    bool itcwb_green;
+    bool compat_version;
 
 };
 
@@ -330,6 +327,7 @@ struct DirPyrDenoiseParamsEdited {
     bool chroma;
     bool redchro;
     bool bluechro;
+    bool gain;
     bool gamma;
     bool lcurve;
     bool cccurve;
@@ -569,6 +567,7 @@ public:
         bool fatdetail;
         bool fatanchor;
         bool fatlevel;
+        bool fatsatur;
         bool recothrese;
         bool lowthrese;
         bool higthrese;
@@ -780,6 +779,7 @@ public:
         bool equilret;
         bool loglin;
         bool dehazeSaturation;
+        bool dehazeblack;
         bool softradiusret;
         bool CCmaskreticurve;
         bool LLmaskreticurve;
@@ -1532,6 +1532,7 @@ struct RAWParamsEdited {
 
 struct MetaDataParamsEdited {
     bool mode;
+    bool exifKeys;
 };
 
 struct FilmNegativeParamsEdited {

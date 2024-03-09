@@ -35,20 +35,6 @@
 #include "../rtengine/LUT.h"
 #include "../rtengine/noncopyable.h"
 
-class HistogramArea;
-
-struct HistogramAreaIdleHelper {
-    HistogramArea* harea;
-    bool destroyed;
-    int pending;
-};
-
-class HistogramRGBArea;
-struct HistogramRGBAreaIdleHelper {
-    HistogramRGBArea* harea;
-    bool destroyed;
-    int pending;
-};
 
 class HistogramScaling
 {
@@ -58,38 +44,39 @@ public:
     double log (double vsize, double val);
 };
 
-class HistogramRGBArea : public Gtk::DrawingArea, public BackBuffer, protected HistogramScaling, public rtengine::NonCopyable
+class HistogramRGBArea : public Gtk::DrawingArea, protected HistogramScaling, public rtengine::NonCopyable
 {
-private:
-    typedef const double (*TMatrix)[3];
-
-    IdleRegister idle_register;
-
 protected:
-    int val;
+    // Saved pointer parameters
     int r;
     int g;
     int b;
+    float lab_L;
+    float lab_a;
+    float lab_b;
+    bool pointerValid;
 
-    bool valid;
-
+    // Drawing options
     bool needRed;
     bool needGreen;
     bool needBlue;
     bool needLuma;
     bool needChroma;
-    bool showMode;
-    bool barDisplayed;
+    Options::ScopeType scopeType;
+    int scaleMode;
+    bool showBar;
 
-    Gtk::Grid* parent;
-    
-    double padding = 5.0;
+    const double padding = 5.0;
 
-    HistogramRGBAreaIdleHelper* harih;
+    // Internal drawing functions
+    void updateDrawingArea (const ::Cairo::RefPtr< Cairo::Context> &cc);
+    virtual void drawBar(const Cairo::RefPtr<Cairo::Context> &cc, const double value, const double max_value, const int winw, const int winh) = 0;
 
-    /** Draw an indicator bar for the value. */
-    virtual void drawBar(Cairo::RefPtr<Cairo::Context> cc, double value, double max_value, int winw, int winh, double scale) = 0;
+    // GtkDrawingArea override functions
+    void on_realize() override;
+    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
 
+    // Widget size management functions
     void getPreferredThickness(int& min_thickness, int& natural_length) const;
     void getPreferredLength(int& min_length, int& natural_length) const;
     void getPreferredThicknessForLength(int length, int& min_thickness, int& natural_length) const;
@@ -99,29 +86,23 @@ public:
     HistogramRGBArea();
     ~HistogramRGBArea() override;
 
-    void updateBackBuffer (int r, int g, int b, const Glib::ustring &profile = "", const Glib::ustring &profileW = "");
-    bool getShow ();
-    void setShow(bool show);
-    void setParent (Gtk::Grid* p)
-    {
-        parent = p;
-    };
+    // Update pointer values: returns true if widget needs redrawing
+    bool updatePointer (const int new_r, const int new_g, const int new_b, const rtengine::procparams::ColorManagementParams *cmp = nullptr);
+    // Update internal parameters from options
+    void updateFromOptions ();
 
-    void update (int val, int rh, int gh, int bh);
-    void updateOptions (bool r, bool g, bool b, bool l, bool c, bool show);
-
-    void on_realize() override;
-    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
+    // Event management functions
     bool on_button_press_event (GdkEventButton* event) override;
     void factorChanged (double newFactor);
-
 };
 
 class HistogramRGBAreaHori final : public HistogramRGBArea
 {
 private:
-    void drawBar(Cairo::RefPtr<Cairo::Context> cc, double value, double max_value, int winw, int winh, double scale) override;
+    // Internal drawing function
+    void drawBar(const Cairo::RefPtr<Cairo::Context> &cc, const double value, const double max_value, const int winw, const int winh) override;
 
+    // Widget size management functions
     Gtk::SizeRequestMode get_request_mode_vfunc () const override;
     void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const override;
     void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
@@ -132,8 +113,10 @@ private:
 class HistogramRGBAreaVert final : public HistogramRGBArea
 {
 private:
-    void drawBar(Cairo::RefPtr<Cairo::Context> cc, double value, double max_value, int winw, int winh, double scale) override;
+    // Internal drawing function
+    void drawBar(const Cairo::RefPtr<Cairo::Context> &cc, const double value, const double max_value, const int winw, const int winh) override;
 
+    // Widget size management functions
     Gtk::SizeRequestMode get_request_mode_vfunc () const override;
     void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const override;
     void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
@@ -148,7 +131,7 @@ public:
     virtual void toggleButtonMode() = 0;
 };
 
-class HistogramArea final : public Gtk::DrawingArea, public BackBuffer, private HistogramScaling, public rtengine::NonCopyable
+class HistogramArea final : public Gtk::DrawingArea, private HistogramScaling, public rtengine::NonCopyable
 {
 public:
     typedef sigc::signal<void, double> type_signal_factor_changed;
@@ -161,8 +144,9 @@ private:
     type_signal_factor_changed sigFactorChanged;
 
 protected:
+    // Histogram parameters
     LUTu rhist, ghist, bhist, lhist, chist;
-    LUTu rhistRaw, ghistRaw, bhistRaw, lhistRaw; //lhistRaw is unused?
+    LUTu rhistRaw, ghistRaw, bhistRaw;
     int vectorscope_scale;
     array2D<int> vect_hc, vect_hs;
     std::vector<unsigned char> vect_hc_buffer, vect_hs_buffer;
@@ -177,36 +161,44 @@ protected:
     std::vector<unsigned char> wave_buffer;
     std::vector<unsigned char> wave_buffer_luma;
     bool wave_buffer_dirty, wave_buffer_luma_dirty;
+    bool LUT_valid;
 
-    bool valid;
+    // Intensity of waveform and vectorscope trace
+    float trace_brightness;
+    SignalBrightnessChanged signal_brightness_changed;
+
+    // Saved pointer parameters
+    int pointer_red;
+    int pointer_green;
+    int pointer_blue;
+    float pointer_a;
+    float pointer_b;
+    bool pointer_valid;
+
+    // Drawing options
+    bool needRed;
+    bool needGreen;
+    bool needBlue;
+    bool needLuma;
+    bool needChroma;
+    bool needPointer;
+    Options::ScopeType scopeType;
     int drawMode;
     DrawModeListener *myDrawModeListener;
-    Options::ScopeType scopeType;
-    int oldwidth, oldheight;
-    /// Intensity of waveform and vectorscope trace.
-    float trace_brightness;
 
-    bool needRed, needGreen, needBlue, needLuma, needChroma;
+    // Motion event management
     bool isPressed;
     double movingPosition;
-    bool needPointer;
-    
+
     double padding = 5.0;
-
-    HistogramAreaIdleHelper* haih;
-
-    int pointer_red, pointer_green, pointer_blue;
-    float pointer_a, pointer_b;
-
-    SignalBrightnessChanged signal_brightness_changed;
 
 public:
     explicit HistogramArea(DrawModeListener *fml = nullptr);
     ~HistogramArea() override;
 
-    void updateBackBuffer ();
-    /// Update pointer values. Returns true if widget needs redrawing.
-    bool updatePointer(int r, int g, int b, const Glib::ustring &profile = "", const Glib::ustring &profileW = "");
+    // Update pointer values: returns true if widget needs redrawing
+    bool updatePointer(const int r, const int g, const int b, const rtengine::procparams::ColorManagementParams *cmp = nullptr);
+    // Update histogram data
     void update(
         const LUTu& histRed,
         const LUTu& histGreen,
@@ -225,25 +217,36 @@ public:
         const array2D<int>& waveformBlue,
         const array2D<int>& waveformLuma
     );
-    void updateOptions (bool r, bool g, bool b, bool l, bool c, int mode, Options::ScopeType type, bool pointer);
-    bool updatePending();
-    void on_realize() override;
-    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
+    // Update internal parameters from options
+    void updateFromOptions();
+
+    // Event management functions
     bool on_button_press_event (GdkEventButton* event) override;
     bool on_button_release_event (GdkEventButton* event) override;
     bool on_motion_notify_event (GdkEventMotion* event) override;
+
+    // Brightness management functions (nominal = 1)
     float getBrightness(void);
-    /** Set the trace brightness, with 1 being normal. */
     void setBrightness(float brightness);
     SignalBrightnessChanged getBrighnessChangedSignal(void);
+
+    // Factor management function
     type_signal_factor_changed signal_factor_changed();
 
 private:
-    void drawCurve(Cairo::RefPtr<Cairo::Context> &cr, const LUTu & data, double scale, int hsize, int vsize);
-    void drawMarks(Cairo::RefPtr<Cairo::Context> &cr, const LUTu & data, double scale, int hsize, int & ui, int & oi);
-    void drawParade(Cairo::RefPtr<Cairo::Context> &cr, int hsize, int vsize);
-    void drawVectorscope(Cairo::RefPtr<Cairo::Context> &cr, int hsize, int vsize);
-    void drawWaveform(Cairo::RefPtr<Cairo::Context> &cr, int hsize, int vsize);
+    // GtkDrawingArea override functions
+    void on_realize() override;
+    bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
+
+    // Internal drawing functions
+    void updateDrawingArea (const ::Cairo::RefPtr< Cairo::Context> &cr);
+    void drawCurve(const Cairo::RefPtr<Cairo::Context> &cr, const LUTu & data, const double scale, const int hsize, const int vsize);
+    void drawMarks(const Cairo::RefPtr<Cairo::Context> &cr, const LUTu & data, const double scale, const int wsize, int & ui, int & oi);
+    void drawParade(const Cairo::RefPtr<Cairo::Context> &cr, const int hsize, const int vsize);
+    void drawVectorscope(const Cairo::RefPtr<Cairo::Context> &cr, const int hsize, const int vsize);
+    void drawWaveform(const Cairo::RefPtr<Cairo::Context> &cr, const int hsize, const int vsize);
+
+    // Widget size management functions
     Gtk::SizeRequestMode get_request_mode_vfunc () const override;
     void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const override;
     void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
@@ -260,7 +263,7 @@ public:
 class HistogramPanel final : public Gtk::Grid, public PointerMotionListener, public DrawModeListener, public rtengine::NonCopyable
 {
 private:
-    DelayedCall<bool, Glib::ustring, Glib::ustring, int, int, int> pointer_moved_delayed_call;
+    DelayedCall<bool, const rtengine::procparams::ColorManagementParams *, int, int, int> pointer_moved_delayed_call;
 
 protected:
 
@@ -311,10 +314,9 @@ protected:
 
     sigc::connection brightness_changed_connection;
     sigc::connection rconn;
+
     void setHistInvalid ();
     void showRGBBar();
-    void updateHistAreaOptions();
-    void updateHistRGBAreaOptions();
 
 public:
 
@@ -343,10 +345,7 @@ public:
         histogramArea->update(histRed, histGreen, histBlue, histLuma, histChroma, histRedRaw, histGreenRaw, histBlueRaw, vectorscopeScale, vectorscopeHC, vectorscopeHS, waveformScale, waveformRed, waveformGreen, waveformBlue, waveformLuma);
     }
     // pointermotionlistener interface
-    void pointerMoved (bool validPos, const Glib::ustring &profile, const Glib::ustring &profileW, int x, int y, int r, int g, int b, bool isRaw = false) override;
-
-    // TODO should be protected
-    void setHistRGBInvalid ();
+    void pointerMoved (bool validPos, const rtengine::procparams::ColorManagementParams &cmp, int x, int y, int r, int g, int b, bool isRaw = false) override;
 
     void reorder (Gtk::PositionType position);
     void red_toggled ();

@@ -74,10 +74,10 @@ protected:
     ImageSource* imgsrc;
 
     ColorTemp currWB;
+    ColorTemp currWBcust;
     ColorTemp autoWB;
     ColorTemp currWBloc;
     ColorTemp autoWBloc;
-    ColorTemp currWBitc;
 
     double lastAwbEqual;
     StandardObserver lastAwbObserver{ColorTemp::DEFAULT_OBSERVER};

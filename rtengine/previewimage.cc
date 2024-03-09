@@ -61,9 +61,8 @@ PreviewImage::PreviewImage (const Glib::ustring &fname, const Glib::ustring &ext
                 data = tpp->getImage8Data();
             }
         } else {
-            rtengine::RawMetaDataLocation ri;
             eSensorType sensorType = rtengine::ST_NONE;
-            tpp = rtengine::Thumbnail::loadQuickFromRaw (fname, ri, sensorType, width, height, 1, true, true);
+            tpp = rtengine::Thumbnail::loadQuickFromRaw (fname, sensorType, width, height, 1, true, true);
 
             if (tpp) {
                 data = tpp->getImage8Data();
@@ -121,7 +120,7 @@ PreviewImage::PreviewImage (const Glib::ustring &fname, const Glib::ustring &ext
             double contrastThresholdDummy = 0.0;
             rawImage.demosaic(params.raw, false, contrastThresholdDummy);
             Imagefloat image(fw, fh);
-            rawImage.getImage (wb, TR_NONE, &image, pp, params.toneCurve, params.raw, 0);
+            rawImage.getImage (wb, TR_NONE, &image, pp, params.toneCurve, params.raw);
             rtengine::Image8 output(fw, fh);
             rawImage.convertColorSpace(&image, params.icm, wb);
 #ifdef _OPENMP

@@ -37,10 +37,10 @@
 #define STARTUPDIR_CUSTOM  2
 #define STARTUPDIR_LAST    3
 
-#define THEMEREGEXSTR      "^(.+)-GTK3-(\\d{1,2})?_(\\d{1,2})?\\.css$"
+#define THEMEREGEXSTR      "^(.+)\\.css$"
 
 // Default bundled profile name to use for Raw images
-#ifdef WIN32
+#ifdef _WIN32
 #define DEFPROFILE_RAW      "${G}\\Auto-Matched Curve - ISO Low"
 #else
 #define DEFPROFILE_RAW      "${G}/Auto-Matched Curve - ISO Low"
@@ -254,7 +254,6 @@ public:
     int fontSize;                // RT's main font size (units: pt)
     Glib::ustring CPFontFamily;  // ColorPicker font family
     int CPFontSize;              // ColorPicker font size (units: pt)
-    bool pseudoHiDPISupport;
     bool fbOnlyRaw;
     bool fbShowDateTime;
     bool fbShowBasicExif;
@@ -306,7 +305,7 @@ public:
     Glib::ustring editor_custom_out_dir;
     bool editor_float32;
     bool editor_bypass_output_profile;
-    
+
     int maxThumbnailHeight;
     int maxThumbnailWidth;
     std::size_t maxCacheEntries;
@@ -331,7 +330,7 @@ public:
     bool internalThumbIfUntouched;
     bool overwriteOutputFile;
     int complexity;
-    bool inspectorWindow; // open inspector in spearate window
+    bool inspectorWindow; // open inspector in separate window
     bool zoomOnScroll;    // translate scroll events to zoom
 
     std::vector<double> thumbnailZoomRatios;
@@ -371,6 +370,22 @@ public:
     enum CropGuidesMode { CROP_GUIDE_NONE, CROP_GUIDE_FRAME, CROP_GUIDE_FULL };
     CropGuidesMode cropGuides;
     bool cropAutoFit;
+
+    // Other options
+
+    // Maximum zoom
+    enum class MaxZoom: int {
+      PERCENTS_100 = 0,
+      PERCENTS_200,
+      PERCENTS_300,
+      PERCENTS_400,
+      PERCENTS_500,
+      PERCENTS_600,
+      PERCENTS_700,
+      PERCENTS_800,
+      PERCENTS_1600,
+    };
+    MaxZoom maxZoomLimit;
 
     // Performance options
     Glib::ustring clutsDir;

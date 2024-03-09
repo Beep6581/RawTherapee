@@ -34,7 +34,7 @@ ThumbBrowserBase::ThumbBrowserBase ()
 {
     inW = -1;
     inH = -1;
-    
+
     hscroll.set_orientation(Gtk::ORIENTATION_HORIZONTAL);
     vscroll.set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -781,6 +781,11 @@ void ThumbBrowserBase::arrangeFiles(ThumbBrowserEntryBase* entry)
 
             for (int i = 0; ct < fd.size() && i < numOfCols; ++i, ++ct) {
                 for (; ct < fd.size() && fd[ct]->filtered; ++ct) {
+                    // Thumbs that are not going be drawn should also have a minimum height and width. Cause
+                    // the properties might be used in other parts of the code. The position is just set to be
+                    // zero as a default.
+                    fd[ct]->setPosition(0, 0, colWidths[i], rowHeight);
+
                     fd[ct]->drawable = false;
                 }
 
@@ -1026,14 +1031,14 @@ Gtk::SizeRequestMode ThumbBrowserBase::Internal::get_request_mode_vfunc () const
 
 void ThumbBrowserBase::Internal::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
 {
-    minimum_height = 20 * RTScalable::getScale();
-    natural_height = 80 * RTScalable::getScale();
+    minimum_height = RTScalable::scalePixelSize(20);
+    natural_height = RTScalable::scalePixelSize(80);
 }
 
 void ThumbBrowserBase::Internal::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
-    minimum_width = 200 * RTScalable::getScale();
-    natural_width = 1000 * RTScalable::getScale();
+    minimum_width = RTScalable::scalePixelSize(200);
+    natural_width = RTScalable::scalePixelSize(1000);
 }
 
 void ThumbBrowserBase::Internal::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const

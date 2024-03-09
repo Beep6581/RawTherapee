@@ -84,15 +84,20 @@ class Thumbnail
     void            _loadThumbnail (bool firstTrial = true);
     void            _saveThumbnail ();
     void            _generateThumbnailImage ();
-    int             infoFromImage (const Glib::ustring& fname, std::unique_ptr<rtengine::RawMetaDataLocation> rml = nullptr);
+    int             infoFromImage (const Glib::ustring& fname);
     void            generateExifDateTimeStrings ();
 
     Glib::ustring    getCacheFileName (const Glib::ustring& subdir, const Glib::ustring& fext) const;
 
+    void saveMetadata();
+
 public:
     Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf);
-    Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5);
+    Thumbnail (CacheManager* cm, const Glib::ustring& fname, const std::string& md5, const std::string &xmpSidecarMd5);
     ~Thumbnail ();
+
+    static int infoFromImage(const Glib::ustring &fname, CacheImageData &cfs);
+    static Glib::ustring xmpSidecarPath(const Glib::ustring &imagePath);
 
     bool              hasProcParams () const;
     const rtengine::procparams::ProcParams& getProcParams ();
@@ -119,7 +124,7 @@ public:
 
 //        unsigned char*  getThumbnailImage (int &w, int &h, int fixwh=1); // fixwh = 0: fix w and calculate h, =1: fix h and calculate w
     rtengine::IImage8* processThumbImage    (const rtengine::procparams::ProcParams& pparams, int h, double& scale);
-    rtengine::IImage8* upgradeThumbImage    (const rtengine::procparams::ProcParams& pparams, int h, double& scale);
+    rtengine::IImage8* upgradeThumbImage    (const rtengine::procparams::ProcParams& pparams, int h, double& scale, bool forceUpgrade);
     void            getThumbnailSize        (int &w, int &h, const rtengine::procparams::ProcParams *pparams = nullptr);
     void            getFinalSize            (const rtengine::procparams::ProcParams& pparams, int& w, int& h);
     void            getOriginalSize         (int& w, int& h) const;

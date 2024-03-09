@@ -1985,7 +1985,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
 
     Imagefloat* editImgFloat = nullptr;
     PlanarWhateverData<float>* editWhatever = nullptr;
-    EditUniqueID editID = pipetteBuffer ? pipetteBuffer->getEditID() : EUID_None;
+    EditUniqueID editID = pipetteBuffer && pipetteBuffer->bufferCreated() ? pipetteBuffer->getEditID() : EUID_None;
 
     if (editID != EUID_None) {
         switch (pipetteBuffer->getDataProvider()->getCurrSubscriber()->getPipetteBufferType()) {
@@ -4232,9 +4232,6 @@ void ImProcFunctions::chromiLuminanceCurve(PipetteBuffer *pipetteBuffer, int pW,
     }
 
 
-    const float histLFactor = pW != 1 ? histLCurve.getSize() / 100.f : 1.f;
-    const float histCFactor = pW != 1 ? histCCurve.getSize() / 48000.f : 1.f;
-
     float adjustr = 1.0f;
 
 //  if(params->labCurve.avoidclip ){
@@ -4255,6 +4252,9 @@ void ImProcFunctions::chromiLuminanceCurve(PipetteBuffer *pipetteBuffer, int pW,
     } else if (params->icm.workingProfile == "BruceRGB")   {
         adjustr = 1.8f;
     }
+
+    const float histLFactor = pW != 1 ? histLCurve.getSize() / 100.f : 1.f;
+    const float histCFactor = pW != 1 ? histCCurve.getSize() * adjustr / 65536.f : 1.f;
 
     // reference to the params structure has to be done outside of the parallelization to avoid CPU cache problem
     const bool highlight = params->toneCurve.hrenabled; //Get the value if "highlight reconstruction" is activated
@@ -4415,11 +4415,11 @@ void ImProcFunctions::chromiLuminanceCurve(PipetteBuffer *pipetteBuffer, int pW,
 
                 if (editPipette) {
                     if (editID == EUID_Lab_aCurve) { // Lab a pipette
-                        float chromapipa = lold->a[i][j] + (32768.f * 1.28f);
-                        editWhatever->v(i, j) = LIM01<float> ((chromapipa) / (65536.f * 1.28f));
+                        float chromapipa = lold->a[i][j] + 32768.f;
+                        editWhatever->v(i, j) = LIM01<float> ((chromapipa) / (65536.f));
                     } else if (editID == EUID_Lab_bCurve) { //Lab b pipette
-                        float chromapipb = lold->b[i][j] + (32768.f * 1.28f);
-                        editWhatever->v(i, j) = LIM01<float> ((chromapipb) / (65536.f * 1.28f));
+                        float chromapipb = lold->b[i][j] + 32768.f;
+                        editWhatever->v(i, j) = LIM01<float> ((chromapipb) / (65536.f));
                     }
                 }
 
@@ -4658,7 +4658,7 @@ void ImProcFunctions::chromiLuminanceCurve(PipetteBuffer *pipetteBuffer, int pW,
                     // I have placed C=f(C) after all C treatments to assure maximum amplitude of "C"
                     if (editPipette && editID == EUID_Lab_CCurve) {
                         float chromapip = sqrt(SQR(atmp) + SQR(btmp) + 0.001f);
-                        editWhatever->v(i, j) = LIM01<float> ((chromapip) / (48000.f));
+                        editWhatever->v(i, j) = LIM01<float> ((chromapip) / (65536.f / adjustr));
                     }//Lab C=f(C) pipette
 
                     if (ccut) {
@@ -4725,7 +4725,7 @@ void ImProcFunctions::chromiLuminanceCurve(PipetteBuffer *pipetteBuffer, int pW,
 
                 if (editPipette && editID == EUID_Lab_LCCurve) {
                     float chromapiplc = sqrt(SQR(atmp) + SQR(btmp) + 0.001f);
-                    editWhatever->v(i, j) = LIM01<float> ((chromapiplc) / (48000.f));
+                    editWhatever->v(i, j) = LIM01<float> ((chromapiplc) / (65536.f / adjustr));
                 }//Lab L=f(C) pipette
 
 
@@ -5634,18 +5634,18 @@ void ImProcFunctions::getAutoExp(const LUTu &histogram, int histcompr, double cl
 double ImProcFunctions::getAutoDistor(const Glib::ustring &fname, int thumb_size)
 {
     if (!fname.empty()) {
-        rtengine::RawMetaDataLocation ri;
+    	// TODO: std::unique_ptr<> to the rescue
         int w_raw = -1, h_raw = thumb_size;
         int w_thumb = -1, h_thumb = thumb_size;
 
         eSensorType sensorType = rtengine::ST_NONE;
-        Thumbnail* thumb = rtengine::Thumbnail::loadQuickFromRaw(fname, ri, sensorType, w_thumb, h_thumb, 1, FALSE);
+        Thumbnail* thumb = rtengine::Thumbnail::loadQuickFromRaw(fname, sensorType, w_thumb, h_thumb, 1, FALSE);
 
         if (!thumb) {
             return 0.0;
         }
 
-        Thumbnail* raw =   rtengine::Thumbnail::loadFromRaw(fname, ri, sensorType, w_raw, h_raw, 1, 1.0, ColorTemp::DEFAULT_OBSERVER, FALSE);
+        Thumbnail* raw =   rtengine::Thumbnail::loadFromRaw(fname, sensorType, w_raw, h_raw, 1, 1.0, ColorTemp::DEFAULT_OBSERVER, FALSE, nullptr);
 
         if (!raw) {
             delete thumb;
@@ -5723,6 +5723,11 @@ void ImProcFunctions::rgb2lab(const Imagefloat &src, LabImage &dst, const Glib::
 }
 
 void ImProcFunctions::rgb2lab(const Image8 &src, int x, int y, int w, int h, float L[], float a[], float b[], const procparams::ColorManagementParams &icm, bool consider_histogram_settings) const
+{
+    rgb2lab(src, x, y, w, h, L, a, b, icm, consider_histogram_settings, multiThread);
+}
+
+void ImProcFunctions::rgb2lab(const Image8 &src, int x, int y, int w, int h, float L[], float a[], float b[], const procparams::ColorManagementParams &icm, bool consider_histogram_settings, bool multiThread)
 {
     // Adapted from ImProcFunctions::lab2rgb
     const int src_width = src.getWidth();
@@ -5833,6 +5838,21 @@ void ImProcFunctions::rgb2lab(const Image8 &src, int x, int y, int w, int h, flo
             }
         }
     }
+}
+
+void ImProcFunctions::rgb2lab(std::uint8_t red, std::uint8_t green, std::uint8_t blue, float &L, float &a, float &b, const procparams::ColorManagementParams &icm, bool consider_histogram_settings)
+{
+    float l_channel[1];
+    float a_channel[1];
+    float b_channel[1];
+    rtengine::Image8 buf(1, 1);
+    buf.r(0, 0) = red;
+    buf.g(0, 0) = green;
+    buf.b(0, 0) = blue;
+    ImProcFunctions::rgb2lab(buf, 0, 0, 1, 1, l_channel, a_channel, b_channel, icm, consider_histogram_settings, false);
+    L = l_channel[0];
+    a = a_channel[0];
+    b = b_channel[0];
 }
 
 void ImProcFunctions::lab2rgb(const LabImage &src, Imagefloat &dst, const Glib::ustring &workingSpace)

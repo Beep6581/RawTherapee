@@ -42,7 +42,7 @@
 
 
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
 // for GCC32
 #ifndef _WIN32_IE
@@ -358,7 +358,6 @@ void Options::setDefaults()
     fontSize = 10;
     CPFontFamily = "default";
     CPFontSize = 8;
-    pseudoHiDPISupport = false;
     lastScale = 5;
     lastShowAllExif = false;
     panAccelFactor = 5;
@@ -368,7 +367,8 @@ void Options::setDefaults()
     fbShowDateTime = true;
     fbShowBasicExif = true;
     fbShowExpComp = false;
-#ifdef WIN32
+    maxZoomLimit = MaxZoom::PERCENTS_1600;
+#ifdef _WIN32
     // use windows setting for visibility of hidden files/folders
     SHELLFLAGSTATE sft = { 0 };
     SHGetSettings(&sft, SSF_SHOWALLOBJECTS);
@@ -580,8 +580,8 @@ void Options::setDefaults()
     rtSettings.flatFieldsPath = "";
 	rtSettings.cameraProfilesPath = "";
 	rtSettings.lensProfilesPath = "";
-	
-#ifdef WIN32
+
+#ifdef _WIN32
     const gchar* sysRoot = g_getenv("SystemRoot");  // Returns e.g. "c:\Windows"
 
     if (sysRoot != NULL) {
@@ -635,12 +635,13 @@ void Options::setDefaults()
     rtSettings.fftwsigma = true; //choice between sigma^2 or empirical formula
 // end locallab
     rtSettings.itcwb_enable = true;
-
+    rtSettings.itcwb_deltaspec = 0.075;
+    rtSettings.itcwb_powponder = 0.15;//max 0.2
 //wavelet
     rtSettings.edghi = 3.0;//1.1 and 5.
     rtSettings.edglo = 0.5;//0.1 and 0.95
     rtSettings.limrad = 20.;//1 and 60
-    
+
 
     rtSettings.protectred = 60;
     rtSettings.protectredh = 0.3;
@@ -700,6 +701,9 @@ void Options::setDefaults()
     cropAutoFit = false;
 
     rtSettings.thumbnail_inspector_mode = rtengine::Settings::ThumbnailInspectorMode::JPEG;
+
+    rtSettings.xmp_sidecar_style = rtengine::Settings::XmpSidecarStyle::STD;
+    rtSettings.metadata_xmp_sync = rtengine::Settings::MetadataXmpSync::NONE;
 }
 
 Options* Options::copyFrom(Options* other)
@@ -854,7 +858,7 @@ void Options::readFromFile(Glib::ustring fname)
                 if (keyFile.has_key("External Editor", "CustomEditor")) {
                     customEditorProg = keyFile.get_string("External Editor", "CustomEditor");
                 }
-                
+
                 if (keyFile.has_key("External Editor", "OutputDir")) {
                     int v = keyFile.get_integer("External Editor", "OutputDir");
                     if (v < int(EDITOR_OUT_DIR_TEMP) || v > int(EDITOR_OUT_DIR_CUSTOM)) {
@@ -875,7 +879,7 @@ void Options::readFromFile(Glib::ustring fname)
                 if (keyFile.has_key("External Editor", "BypassOutputProfile")) {
                     editor_bypass_output_profile = keyFile.get_boolean("External Editor", "BypassOutputProfile");
                 }
-                
+
             }
 
             if (keyFile.has_group("External Editor")) {
@@ -933,7 +937,7 @@ void Options::readFromFile(Glib::ustring fname)
                     // GIMP == 1, Photoshop == 2, Custom == 3.
                     editorToSendTo = keyFile.get_integer("External Editor", "EditorKind");
 
-#ifdef WIN32
+#ifdef _WIN32
                     auto getIconSerialized = [](const Glib::ustring &executable) {
                         // Backslashes and quotes must be escaped in the text representation of GVariant strings.
                         // See https://www.freedesktop.org/software/gstreamer-sdk/data/docs/2012.5/glib/gvariant-text.html#gvariant-text-strings
@@ -1228,7 +1232,7 @@ void Options::readFromFile(Glib::ustring fname)
                     fbShowExpComp = keyFile.get_boolean("File Browser", "BrowserShowsExpComp");
                 }
 
-#ifndef WIN32
+#ifndef _WIN32
                 if (keyFile.has_key("File Browser", "BrowserShowsHidden")) {
                     fbShowHidden = keyFile.get_boolean("File Browser", "BrowserShowsHidden");
                 }
@@ -1569,10 +1573,6 @@ void Options::readFromFile(Glib::ustring fname)
                     CPFontSize = keyFile.get_integer("GUI", "CPFontSize");
                 }
 
-                if (keyFile.has_key("GUI", "PseudoHiDPISupport")) {
-                    pseudoHiDPISupport = keyFile.get_boolean("GUI", "PseudoHiDPISupport");
-                }
-
                 if (keyFile.has_key("GUI", "LastPreviewScale")) {
                     lastScale = keyFile.get_integer("GUI", "LastPreviewScale");
                 }
@@ -1733,17 +1733,20 @@ void Options::readFromFile(Glib::ustring fname)
                 if (keyFile.has_key("GUI", "CurveBBoxPosition")) {
                     curvebboxpos = keyFile.get_integer("GUI", "CurveBBoxPosition");
                 }
-                
+
                 if (keyFile.has_key("GUI", "Complexity")) {
                     complexity = keyFile.get_integer("GUI", "Complexity");
                 }
-                
+
                 if (keyFile.has_key("GUI", "InspectorWindow")) {
                     inspectorWindow = keyFile.get_boolean("GUI", "InspectorWindow");
                 }
 
                 if (keyFile.has_key("GUI", "ZoomOnScroll")) {
                     zoomOnScroll = keyFile.get_boolean("GUI", "ZoomOnScroll");
+                }
+                if (keyFile.has_key("GUI", "MaxZoom")) {
+                    maxZoomLimit = static_cast<MaxZoom>(keyFile.get_integer("GUI", "MaxZoom"));
                 }
             }
 
@@ -1836,6 +1839,16 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("Color Management", "Itcwb_enable")) {
                     rtSettings.itcwb_enable = keyFile.get_boolean("Color Management", "Itcwb_enable");
+                }
+
+
+                if (keyFile.has_key("Color Management", "Itcwb_deltaspec")) {
+                    rtSettings.itcwb_deltaspec = keyFile.get_double("Color Management", "Itcwb_deltaspec");
+                }
+
+
+                if (keyFile.has_key("Color Management", "Itcwb_powponder")) {
+                    rtSettings.itcwb_powponder = keyFile.get_double("Color Management", "Itcwb_powponder");
                 }
 
 
@@ -1981,8 +1994,8 @@ void Options::readFromFile(Glib::ustring fname)
                 }
 
             }
-            
-            
+
+
             if (keyFile.has_group("ICC Profile Creator")) {
                 if (keyFile.has_key("ICC Profile Creator", "PimariesPreset")) {
                     ICCPC_primariesPreset = keyFile.get_string("ICC Profile Creator", "PimariesPreset");
@@ -2266,6 +2279,27 @@ void Options::readFromFile(Glib::ustring fname)
                 }
             }
 
+            if (keyFile.has_group("Metadata")) {
+                if (keyFile.has_key("Metadata", "XMPSidecarStyle")) {
+                    std::string val = keyFile.get_string("Metadata", "XMPSidecarStyle");
+                    if (val == "ext") {
+                        rtSettings.xmp_sidecar_style = rtengine::Settings::XmpSidecarStyle::EXT;
+                    } else {
+                        rtSettings.xmp_sidecar_style = rtengine::Settings::XmpSidecarStyle::STD;
+                    }
+                }
+                if (keyFile.has_key("Metadata", "XMPSynchronization")) {
+                    std::string val = keyFile.get_string("Metadata", "XMPSynchronization");
+                    if (val == "read") {
+                        rtSettings.metadata_xmp_sync = rtengine::Settings::MetadataXmpSync::READ;
+                    } else if (val == "readwrite") {
+                        rtSettings.metadata_xmp_sync = rtengine::Settings::MetadataXmpSync::READ_WRITE;
+                    } else {
+                        rtSettings.metadata_xmp_sync = rtengine::Settings::MetadataXmpSync::NONE;
+                    }
+                }
+            }
+
 // --------------------------------------------------------------------------------------------------------
 
             filterOutParsedExtensions();
@@ -2384,7 +2418,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_boolean("File Browser", "BrowserShowsDate", fbShowDateTime);
         keyFile.set_boolean("File Browser", "BrowserShowsExif", fbShowBasicExif);
         keyFile.set_boolean("File Browser", "BrowserShowsExpComp", fbShowExpComp);
-#ifndef WIN32
+#ifndef _WIN32
         keyFile.set_boolean("File Browser", "BrowserShowsHidden", fbShowHidden);
 #endif
         keyFile.set_integer("File Browser", "ThumbnailSize", thumbSize);
@@ -2528,7 +2562,6 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("GUI", "FontSize", fontSize);
         keyFile.set_string("GUI", "CPFontFamily", CPFontFamily);
         keyFile.set_integer("GUI", "CPFontSize", CPFontSize);
-        keyFile.set_boolean("GUI", "PseudoHiDPISupport", pseudoHiDPISupport);
         keyFile.set_integer("GUI", "LastPreviewScale", lastScale);
         keyFile.set_boolean("GUI", "LastShowAllExif", lastShowAllExif);
         keyFile.set_integer("GUI", "PanAccelFactor", panAccelFactor);
@@ -2571,6 +2604,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("GUI", "Complexity", complexity);
         keyFile.set_boolean("GUI", "InspectorWindow", inspectorWindow);
         keyFile.set_boolean("GUI", "ZoomOnScroll", zoomOnScroll);
+        keyFile.set_integer("GUI", "MaxZoom", static_cast<int>(maxZoomLimit));
 
         //Glib::ArrayHandle<int> crvopen = crvOpen;
         //keyFile.set_integer_list ("GUI", "CurvePanelsExpanded", crvopen);
@@ -2620,6 +2654,8 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_double("Color Management", "CBDLlevel0", rtSettings.level0_cbdl);
         keyFile.set_double("Color Management", "CBDLlevel123", rtSettings.level123_cbdl);
         keyFile.set_boolean("Color Management", "Itcwb_enable", rtSettings.itcwb_enable);
+        keyFile.set_double("Color Management", "Itcwb_deltaspec", rtSettings.itcwb_deltaspec);
+        keyFile.set_double("Color Management", "Itcwb_powponder", rtSettings.itcwb_powponder);
 
         //keyFile.set_double  ("Color Management", "Colortoningab", rtSettings.colortoningab);
         //keyFile.set_double  ("Color Management", "Decaction", rtSettings.decaction);
@@ -2719,6 +2755,25 @@ void Options::saveToFile(Glib::ustring fname)
 
         keyFile.set_string("Lensfun", "DBDirectory", rtSettings.lensfunDbDirectory);
 
+        switch (rtSettings.xmp_sidecar_style) {
+        case rtengine::Settings::XmpSidecarStyle::EXT:
+            keyFile.set_string("Metadata", "XMPSidecarStyle", "ext");
+            break;
+        default:
+            keyFile.set_string("Metadata", "XMPSidecarStyle", "std");
+        }
+
+        switch (rtSettings.metadata_xmp_sync) {
+        case rtengine::Settings::MetadataXmpSync::READ:
+            keyFile.set_string("Metadata", "XMPSynchronization", "read");
+            break;
+        case rtengine::Settings::MetadataXmpSync::READ_WRITE:
+            keyFile.set_string("Metadata", "XMPSynchronization", "readwrite");
+            break;
+        default:
+            keyFile.set_string("Metadata", "XMPSynchronization", "none");
+        }
+
         keyData = keyFile.to_data();
 
     } catch (Glib::KeyFileError &e) {
@@ -2756,7 +2811,7 @@ void Options::load(bool lightweight)
         }
     } else {
 
-#ifdef WIN32
+#ifdef _WIN32
         WCHAR pathW[MAX_PATH] = {0};
 
         if (SHGetSpecialFolderPathW(NULL, pathW, CSIDL_LOCAL_APPDATA, false)) {
@@ -2806,7 +2861,7 @@ void Options::load(bool lightweight)
 
     // No environment variable provided, so falling back to the multi user mode, if enabled
     else if (options.multiUser) {
-#ifdef WIN32
+#ifdef _WIN32
         cacheBaseDir = Glib::build_filename(rtdir, "cache");
 #else
     #ifdef __APPLE__

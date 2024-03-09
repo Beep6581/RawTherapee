@@ -18,6 +18,7 @@
  */
 #pragma once
 
+#include <utility>
 #include <vector>
 
 #include <lcms2.h>
@@ -111,7 +112,7 @@ public:
     {
         rm = gm = bm = 1.0;
     }
-    virtual void getAutoWBMultipliersitc(double &tempref, double &greenref, double &tempitc, double &greenitc, float &studgood,  int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double &rm, double &gm, double &bm, const procparams::WBParams & wbpar, const procparams::ColorManagementParams &cmp, const procparams::RAWParams &raw, const procparams::ToneCurveParams &hrp)
+    virtual void getAutoWBMultipliersitc(bool extra, double &tempref, double &greenref, double &tempitc, double &greenitc, float &temp0, float &delta, int &bia, int &dread, int &kcam,  int &nocam, float &studgood,  float &minchrom, int &kmin, float &minhist, float &maxhist, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double &rm, double &gm, double &bm, const procparams::WBParams & wbpar, const procparams::ColorManagementParams &cmp, const procparams::RAWParams &raw, const procparams::ToneCurveParams &hrp)
     {
         rm = gm = bm = 1.0;
     }
@@ -396,7 +397,7 @@ public:
 
             swap(rotatedImg);
         } else if (deg == 180) {
-            int height2 = height / 2 + (height & 1);
+            int height2 = height / 2;
 
 #ifdef _OPENMP
             // difficult to find a cutoff value where parallelization is counter productive because of processor's data cache collision...
@@ -406,13 +407,22 @@ public:
 
             for (int i = 0; i < height2; i++) {
                 for (int j = 0; j < width; j++) {
-                    T tmp;
                     int x = width - 1 - j;
                     int y = height - 1 - i;
 
-                    tmp = v(i, j);
-                    v(i, j) = v(y, x);
-                    v(y, x) = tmp;
+                    std::swap(v(i, j), v(y, x));
+                }
+            }
+
+            // Middle row of odd-height images: only go half way otherwise the
+            // pixels will be swapped twice.
+            if (height & 1) {
+                int i = height / 2;
+                int width2 = width / 2;
+                for (int j = 0; j < width2; j++) {
+                    int x = width - 1 - j;
+
+                    std::swap(v(i, j), v(i, x));
                 }
             }
 #ifdef _OPENMP
@@ -828,7 +838,7 @@ public:
 
             swap(rotatedImg);
         } else if (deg == 180) {
-            int height2 = height / 2 + (height & 1);
+            int height2 = height / 2;
 
 #ifdef _OPENMP
             // difficult to find a cutoff value where parallelization is counter productive because of processor's data cache collision...
@@ -838,21 +848,26 @@ public:
 
             for (int i = 0; i < height2; i++) {
                 for (int j = 0; j < width; j++) {
-                    T tmp;
                     int x = width - 1 - j;
                     int y = height - 1 - i;
 
-                    tmp = r(i, j);
-                    r(i, j) = r(y, x);
-                    r(y, x) = tmp;
+                    std::swap(r(i, j), r(y, x));
+                    std::swap(g(i, j), g(y, x));
+                    std::swap(b(i, j), b(y, x));
+                }
+            }
 
-                    tmp = g(i, j);
-                    g(i, j) = g(y, x);
-                    g(y, x) = tmp;
+            // Middle row of odd-height images: only go half way otherwise the
+            // pixels will be swapped twice.
+            if (height & 1) {
+                int i = height / 2;
+                int width2 = width / 2;
+                for (int j = 0; j < width2; j++) {
+                    int x = width - 1 - j;
 
-                    tmp = b(i, j);
-                    b(i, j) = b(y, x);
-                    b(y, x) = tmp;
+                    std::swap(r(i, j), r(i, x));
+                    std::swap(g(i, j), g(i, x));
+                    std::swap(b(i, j), b(i, x));
                 }
             }
 #ifdef _OPENMP
@@ -1481,26 +1496,31 @@ public:
 
             swap(rotatedImg);
         } else if (deg == 180) {
-            int height2 = height / 2 + (height & 1);
+            int height2 = height / 2;
 
             // Maybe not sufficiently optimized, but will do what it has to do
             for (int i = 0; i < height2; i++) {
                 for (int j = 0; j < width; j++) {
-                    T tmp;
                     int x = width - 1 - j;
                     int y = height - 1 - i;
 
-                    tmp = r(i, j);
-                    r(i, j) = r(y, x);
-                    r(y, x) = tmp;
+                    std::swap(r(i, j), r(y, x));
+                    std::swap(g(i, j), g(y, x));
+                    std::swap(b(i, j), b(y, x));
+                }
+            }
 
-                    tmp = g(i, j);
-                    g(i, j) = g(y, x);
-                    g(y, x) = tmp;
+            // Middle row of odd-height images: only go half way otherwise the
+            // pixels will be swapped twice.
+            if (height & 1) {
+                int i = height / 2;
+                int width2 = width / 2;
+                for (int j = 0; j < width2; j++) {
+                    int x = width - 1 - j;
 
-                    tmp = b(i, j);
-                    b(i, j) = b(y, x);
-                    b(y, x) = tmp;
+                    std::swap(r(i, j), r(i, x));
+                    std::swap(g(i, j), g(i, x));
+                    std::swap(b(i, j), b(i, x));
                 }
             }
         }
@@ -1858,7 +1878,7 @@ class IImage : virtual public ImageDimensions
 public:
 
     virtual ~IImage() {}
-    /** @brief Returns a mutex that can is useful in many situations. No image operations shuold be performed without locking this mutex.
+    /** @brief Returns a mutex that can is useful in many situations. No image operations should be performed without locking this mutex.
       * @return The mutex */
     virtual MyMutex& getMutex () = 0;
     virtual cmsHPROFILE getProfile () const = 0;

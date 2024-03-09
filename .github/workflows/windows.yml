@@ -4,17 +4,22 @@ on:
     branches:
       - dev
       - releases
+      - 'release-[0-9]+.*'
     tags:
       - '[0-9]+.*'
   pull_request:
     branches:
       - dev
+      - releases
+      - 'release-[0-9]+.*'
   workflow_dispatch:
+
 env:
-  publish_pre_dev_labels: '["Beep6581:ladenoise_improv"]'
+  publish_pre_dev_labels: '[]'
+
 jobs:
   build:
-    runs-on: windows-2022
+    runs-on: windows-latest
     defaults:
       run:
         shell: msys2 {0}
@@ -24,7 +29,7 @@ jobs:
         build_type: [release, debug]
     steps:
       - name: Checkout source
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -33,25 +38,26 @@ jobs:
         with:
           location: C:\msys2
           update: true
+          msystem: MINGW64
           install: |
-            gzip
             git
             intltool
-            mingw-w64-x86_64-gcc
-            mingw-w64-x86_64-make
-            mingw-w64-x86_64-pkg-config
-            mingw-w64-x86_64-cmake
-            mingw-w64-x86_64-ninja
-            mingw-w64-x86_64-gtkmm3
-            mingw-w64-x86_64-lcms2
-            mingw-w64-x86_64-fftw
-            mingw-w64-x86_64-lensfun
-            mingw-w64-x86_64-libiptcdata
+          pacboy: |
+            cc:p
+            pkgconf:p
+            cmake:p
+            ninja:p
+            gtkmm3:p
+            lcms2:p
+            fftw:p
+            lensfun:p
+            libiptcdata:p
+            exiv2:p
 
       - name: Configure build
         run: |
           export REF_NAME_FILTERED="$(echo '${{github.ref_name}}' | sed 's/[^A-z0-9_.-]//g')"
-          
+
           if [ '${{github.ref_type}}' == 'tag' ]; then
             export CACHE_SUFFIX=""
           else
@@ -60,11 +66,6 @@ jobs:
             echo "Cache suffix is '$CACHE_SUFFIX'."
           fi
 
-          echo "Making build directory."
-          mkdir build
-          echo "Changing working directory to the build directory."
-          cd build
-
           echo "Running CMake configure."
           cmake \
             -G "Ninja" \
@@ -72,21 +73,18 @@ jobs:
             -DCACHE_NAME_SUFFIX="$CACHE_SUFFIX" \
             -DPROC_TARGET_NUMBER="1" \
             -DLENSFUNDBDIR="share/lensfun" \
-            ..
+            -S . -B build
 
           echo "Recording filtered ref name."
           echo "REF_NAME_FILTERED=$REF_NAME_FILTERED" >> "$(cygpath -u $GITHUB_ENV)"
 
       - name: Build RawTherapee
-        working-directory: ./build
         run: |
           echo "Running CMake install."
-          cmake --build . --target install
+          cmake --build build --target install
 
       - name: Include Lensfun
         run: |
-          echo "Patching lensfun-update-data script."
-          sed -i 's/HTTPError\(, ValueError\)/URLError\1/' $(which lensfun-update-data)
           echo "Updating Lensfun database."
           lensfun-update-data
           echo "Creating Lensfun directory in the build directory."
@@ -98,6 +96,10 @@ jobs:
         run: |
           echo "Listing shared library dependencies."
           ldd "./build/${{matrix.build_type}}/rawtherapee.exe"
+          echo "Finding DLLs to include."
+          DLLS=($(ldd "./build/${{matrix.build_type}}/rawtherapee.exe" | grep '/mingw64/bin/' | awk '{print($1)'}))
+          echo "Required DLLs are: ${DLLS[*]}"
+
           echo "Getting workspace path."
           export BUILD_DIR="$(pwd)/build/${{matrix.build_type}}"
           echo "Build directory is '$BUILD_DIR'."
@@ -110,68 +112,7 @@ jobs:
             "gdbus.exe" \
             "gspawn-win64-helper.exe" \
             "gspawn-win64-helper-console.exe" \
-            "libatk-1.0-0.dll" \
-            "libatkmm-1.6-1.dll" \
-            "libbrotlicommon.dll" \
-            "libbrotlidec.dll" \
-            "libbz2-1.dll" \
-            "libcairo-2.dll" \
-            "libcairo-gobject-2.dll" \
-            "libcairomm-1.0-1.dll" \
-            "libdatrie-1.dll" \
-            "libdeflate.dll" \
-            "libepoxy-0.dll" \
-            "libexpat-1.dll" \
-            libffi-*.dll \
-            "libfftw3f-3.dll" \
-            "libfftw3f_omp-3.dll" \
-            "libfontconfig-1.dll" \
-            "libfreetype-6.dll" \
-            "libfribidi-0.dll" \
-            "libgcc_s_seh-1.dll" \
-            "libgdk_pixbuf-2.0-0.dll" \
-            "libgdk-3-0.dll" \
-            "libgdkmm-3.0-1.dll" \
-            "libgio-2.0-0.dll" \
-            "libgiomm-2.4-1.dll" \
-            "libglib-2.0-0.dll" \
-            "libglibmm-2.4-1.dll" \
-            "libgmodule-2.0-0.dll" \
-            "libgobject-2.0-0.dll" \
-            "libgomp-1.dll" \
-            "libgraphite2.dll" \
-            "libgtk-3-0.dll" \
-            "libgtkmm-3.0-1.dll" \
-            "libharfbuzz-0.dll" \
-            "libiconv-2.dll" \
-            "libintl-8.dll" \
-            "libjbig-0.dll" \
-            "libjpeg-8.dll" \
-            "liblcms2-2.dll" \
-            "liblensfun.dll" \
-            "libLerc.dll" \
-            "liblzma-5.dll" \
-            "libpango-1.0-0.dll" \
-            "libpangocairo-1.0-0.dll" \
-            "libpangoft2-1.0-0.dll" \
-            "libpangomm-1.4-1.dll" \
-            "libpangowin32-1.0-0.dll" \
-            "libpcre2-8-0.dll" \
-            "libpixman-1-0.dll" \
-            "libpng16-16.dll" \
-            "librsvg-2-2.dll" \
-            "libsharpyuv-0.dll" \
-            "libsigc-2.0-0.dll" \
-            "libstdc++-6.dll" \
-            "libsystre-0.dll" \
-            "libthai-0.dll" \
-            "libtiff-6.dll" \
-            "libtre-5.dll" \
-            "libwebp-7.dll" \
-            "libwinpthread-1.dll" \
-            "libxml2-2.dll" \
-            "libzstd.dll" \
-            "zlib1.dll" \
+            ${DLLS[*]} \
             "$BUILD_DIR"
           cd -
 
@@ -255,14 +196,14 @@ jobs:
           7z a -tzip "%ARTIFACT_NAME%.zip" "./%ARTIFACT_NAME%"
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ${{env.ARTIFACT_NAME}}
           path: build\${{env.ARTIFACT_NAME}}
 
       - name: Upload installer
         if: ${{matrix.build_type == 'release' && (github.ref_type == 'tag' || github.ref_name == 'dev')}}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ${{env.ARTIFACT_NAME}}.exe
           path: build\${{env.ARTIFACT_NAME}}.exe

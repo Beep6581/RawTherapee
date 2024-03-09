@@ -23,77 +23,20 @@
 ColoredBar::ColoredBar (eRTOrientation orient)
 {
     orientation = orient;
-    dirty = true;
     this->x = this->y = this->w = this->h = 0;
 }
 
-bool ColoredBar::setDrawRectangle(int newX, int newY, int newW, int newH, bool updateBackBufferSize)
+void ColoredBar::setColoredBarSize(const int newX, const int newY, const int newW, const int newH)
 {
-    return BackBuffer::setDrawRectangle(Cairo::FORMAT_ARGB32, newX, newY, newW, newH, updateBackBufferSize);
+    this->x = newX;
+    this->y = newY;
+    this->w = newW;
+    this->h = newH;
 }
 
-/*
- * Redraw the bar to a Cairo::ImageSurface
- */
-void ColoredBar::expose(Gtk::DrawingArea &drawingArea, Cairo::RefPtr<Cairo::ImageSurface> destSurface)
+void ColoredBar::updateColoredBar(const Cairo::RefPtr< Cairo::Context> &cr)
 {
-    // look out if the Surface has to be redrawn
-    if (!surfaceCreated() || !destSurface) {
-        return;
-    }
-
-    updateBackBuffer(drawingArea);
-    Gdk::Rectangle rect(x, y, w, h);
-    copySurface(destSurface, &rect);
-}
-
-/*
- * Redraw the bar to a Gdk::Window
- */
-void ColoredBar::expose(Gtk::DrawingArea &drawingArea, Glib::RefPtr<Gdk::Window> destWindow)
-{
-    // look out if the Surface has to be redrawn
-    if (!surfaceCreated() || !destWindow) {
-        return;
-    }
-
-    updateBackBuffer(drawingArea);
-    Gdk::Rectangle rect(x, y, w, h);
-    copySurface(destWindow, &rect);
-}
-
-void ColoredBar::expose(Gtk::DrawingArea &drawingArea, const Cairo::RefPtr< Cairo::Context> &cr)
-{
-    // look out if the Surface has to be redrawn
-    if (!surfaceCreated()) {
-        return;
-    }
-
-    updateBackBuffer(drawingArea);
-    Gdk::Rectangle rect(x, y, w, h);
-    copySurface(cr, &rect);
-}
-
-/*
- * Redraw the bar to a Gdk::Window
- */
-void ColoredBar::expose(Gtk::DrawingArea &drawingArea, BackBuffer *backBuffer)
-{
-    // look out if the Surface has to be redrawn
-    if (!surfaceCreated() || !backBuffer) {
-        return;
-    }
-
-    updateBackBuffer(drawingArea);
-    Gdk::Rectangle rect(x, y, w, h);
-    copySurface(backBuffer, &rect);
-}
-
-void ColoredBar::updateBackBuffer(Gtk::DrawingArea &drawingArea)
-{
-    if (isDirty()) {
-        Cairo::RefPtr<Cairo::Context> cr = getContext();
-
+    if (w > 0 && h > 0) {
         // the bar has to be drawn to the Surface first
         if (!bgGradient.empty()) {
             // a gradient has been set, we use it
@@ -104,20 +47,20 @@ void ColoredBar::updateBackBuffer(Gtk::DrawingArea &drawingArea)
 
             switch (orientation) {
             case (RTO_Left2Right):
-                bggradient = Cairo::LinearGradient::create (0., 0., double(w), 0.);
+                bggradient = Cairo::LinearGradient::create (0., 0., static_cast<double>(w), 0.);
                 break;
 
             case (RTO_Right2Left):
-                bggradient = Cairo::LinearGradient::create (double(w), 0., 0., 0.);
+                bggradient = Cairo::LinearGradient::create (static_cast<double>(w), 0., 0., 0.);
                 break;
 
             case (RTO_Bottom2Top):
-                bggradient = Cairo::LinearGradient::create (0., double(h), 0., 0.);
+                bggradient = Cairo::LinearGradient::create (0., static_cast<double>(h), 0., 0.);
                 break;
 
             case (RTO_Top2Bottom):
             default:
-                bggradient = Cairo::LinearGradient::create (0., 0., 0., double(h));
+                bggradient = Cairo::LinearGradient::create (0., 0., 0., static_cast<double>(h));
                 break;
             }
 
@@ -126,13 +69,13 @@ void ColoredBar::updateBackBuffer(Gtk::DrawingArea &drawingArea)
             }
 
             cr->set_source (bggradient);
-            cr->rectangle(0, 0, w, h);
+            cr->rectangle(static_cast<double>(x), static_cast<double>(y), static_cast<double>(w), static_cast<double>(h));
             cr->fill();
         } else {
             // ask the ColorProvider to provide colors :) for each pixels
             if (colorProvider) {
-                surface->flush();
-                
+                // Create surface
+                const auto surface = Cairo::ImageSurface::create(Cairo::FORMAT_RGB24, w, h);
                 unsigned char *surfaceData = surface->get_data();
 
                 cr->set_antialias(Cairo::ANTIALIAS_NONE);
@@ -205,25 +148,22 @@ void ColoredBar::updateBackBuffer(Gtk::DrawingArea &drawingArea)
                     break;
                 }
 
-                surface->mark_dirty();
+                cr->set_source(surface, 0., 0.);
+                cr->rectangle(static_cast<double>(x), static_cast<double>(y), static_cast<double>(w), static_cast<double>(h));
+                cr->fill();
             }
         }
-
-        // has it been updated or not, we assume that the Surface has been correctly set (we don't handle allocation error)
-        setDirty(false);
     }
 }
 
 void ColoredBar::setBgGradient (const std::vector<GradientMilestone> &milestones)
 {
     bgGradient = milestones;
-    setDirty(true);
 }
 
 void ColoredBar::clearBgGradient ()
 {
     bgGradient.clear();
-    setDirty(true);
 }
 
 bool ColoredBar::canGetColors()

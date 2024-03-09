@@ -25,7 +25,6 @@
 
 #include "externaleditorpreferences.h"
 #include "multilangmgr.h"
-#include "rtimage.h"
 
 
 ExternalEditorPreferences::ExternalEditorPreferences():
@@ -37,7 +36,9 @@ ExternalEditorPreferences::ExternalEditorPreferences():
     list_view = Gtk::manage(new Gtk::TreeView());
     list_view->set_model(list_model);
     list_view->append_column(*Gtk::manage(makeAppColumn()));
+#ifndef __APPLE__
     list_view->append_column(*Gtk::manage(makeNativeCommandColumn()));
+#endif
     list_view->append_column(*Gtk::manage(makeCommandColumn()));
 
     for (auto &&column : list_view->get_columns()) {
@@ -53,17 +54,22 @@ ExternalEditorPreferences::ExternalEditorPreferences():
     list_scroll_area.add(*list_view);
 
     // Toolbar buttons.
-    auto add_image = Gtk::manage(new RTImage("add-small.png"));
-    auto remove_image = Gtk::manage(new RTImage("remove-small.png"));
     button_add = Gtk::manage(new Gtk::Button());
     button_remove = Gtk::manage(new Gtk::Button());
-    button_add->set_image(*add_image);
-    button_remove->set_image(*remove_image);
-    button_app_chooser = Gtk::manage(new Gtk::Button(M("PREFERENCES_EXTERNALEDITOR_CHANGE")));
+    button_add->set_image_from_icon_name("add-small");
+    button_remove->set_image_from_icon_name("remove-small");
+    button_app_chooser =
+#ifdef __APPLE__
+        nullptr;
+#else
+        Gtk::manage(new Gtk::Button(M("PREFERENCES_EXTERNALEDITOR_CHANGE")));
+#endif
     button_file_chooser = Gtk::manage(new Gtk::Button(M("PREFERENCES_EXTERNALEDITOR_CHANGE_FILE")));
 
-    button_app_chooser->signal_pressed().connect(sigc::mem_fun(
-                *this, &ExternalEditorPreferences::openAppChooserDialog));
+    if (button_app_chooser) {
+        button_app_chooser->signal_pressed().connect(sigc::mem_fun(
+                    *this, &ExternalEditorPreferences::openAppChooserDialog));
+    }
     button_add->signal_pressed().connect(sigc::mem_fun(
             *this, &ExternalEditorPreferences::addEditor));
     button_file_chooser->signal_pressed().connect(sigc::mem_fun(
@@ -77,7 +83,9 @@ ExternalEditorPreferences::ExternalEditorPreferences():
 
     // Toolbar.
     toolbar.set_halign(Gtk::Align::ALIGN_END);
-    toolbar.add(*button_app_chooser);
+    if (button_app_chooser) {
+        toolbar.add(*button_app_chooser);
+    }
     toolbar.add(*button_file_chooser);
     toolbar.add(*button_add);
     toolbar.add(*button_remove);
@@ -96,8 +104,8 @@ ExternalEditorPreferences::getEditors() const
     auto children = list_model->children();
 
     for (auto rowIter = children.begin(); rowIter != children.end(); rowIter++) {
-        const Gio::Icon *const icon = rowIter->get_value(model_columns.icon).get();
-        const auto &icon_serialized = icon == nullptr ? "" : icon->serialize().print();
+        const auto icon = rowIter->get_value(model_columns.icon);
+        const auto &icon_serialized = !icon ? "" : icon->serialize().print();
         editors.emplace_back(
             rowIter->get_value(model_columns.name),
             rowIter->get_value(model_columns.command),
@@ -156,6 +164,9 @@ void ExternalEditorPreferences::addEditor()
     }
 
     row[model_columns.name] = "-";
+#ifdef __APPLE__
+    row[model_columns.native_command] = true;
+#endif
     list_view->get_selection()->select(row);
 }
 
@@ -244,9 +255,14 @@ void ExternalEditorPreferences::onFileChooserDialogResponse(
             for (const auto &selected : selection) {
                 auto row = *list_model->get_iter(selected);
                 row[model_columns.icon] = Glib::RefPtr<Gio::Icon>(nullptr);
-                row[model_columns.native_command] = false;
+                row[model_columns.native_command] =
+#ifdef __APPLE__
+                    true;
+#else
+                    false;
+#endif
                 row[model_columns.command] =
-#ifdef WIN32
+#ifdef _WIN32
                     '"' + dialog->get_filename() + '"';
 #else
                     Glib::shell_quote(dialog->get_filename());
@@ -295,7 +311,7 @@ void ExternalEditorPreferences::openFileChooserDialog()
     const auto exe_filter = Gtk::FileFilter::create();
     exe_filter->set_name(M("FILECHOOSER_FILTER_EXECUTABLE"));
     exe_filter->add_custom(Gtk::FILE_FILTER_MIME_TYPE, [](const Gtk::FileFilter::Info &info) {
-#ifdef WIN32
+#ifdef _WIN32
         return info.mime_type == "application/x-msdownload";
 #else
         return Gio::content_type_can_be_executable(info.mime_type);
@@ -360,7 +376,9 @@ void ExternalEditorPreferences::setAppName(
 void ExternalEditorPreferences::updateToolbarSensitivity()
 {
     bool selected = list_view->get_selection()->count_selected_rows();
-    button_app_chooser->set_sensitive(selected);
+    if (button_app_chooser) {
+        button_app_chooser->set_sensitive(selected);
+    }
     button_file_chooser->set_sensitive(selected);
     button_remove->set_sensitive(selected);
 }

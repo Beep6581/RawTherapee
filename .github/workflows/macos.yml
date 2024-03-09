@@ -4,15 +4,19 @@ on:
     branches:
       - dev
       - releases
+      - 'release-[0-9]+.*'
     tags:
       - '[0-9]+.*'
   pull_request:
     branches:
       - dev
+      - releases
+      - 'release-[0-9]+.*'
   workflow_dispatch:
+
 jobs:
   build:
-    runs-on: macos-11
+    runs-on: macos-12
     steps:
       - uses: actions/checkout@v3
       - name: Install dependencies
@@ -21,7 +25,7 @@ jobs:
            mkdir build
            date +%s > build/stamp
            brew uninstall --ignore-dependencies libtiff
-           brew install libtiff gtk+3 gtkmm3 gtk-mac-integration adwaita-icon-theme libsigc++@2 little-cms2 libiptcdata fftw lensfun expat pkgconfig llvm shared-mime-info | tee -a depslog
+           brew install libtiff gtk+3 gtkmm3 gtk-mac-integration adwaita-icon-theme libsigc++@2 little-cms2 libiptcdata fftw lensfun expat pkgconfig llvm shared-mime-info exiv2 | tee -a depslog
            date -u
            echo "----====Pourage====----"
            cat depslog | grep Pouring

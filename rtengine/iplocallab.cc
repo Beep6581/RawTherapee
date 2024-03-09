@@ -76,7 +76,8 @@ constexpr double czlim = rtengine::RT_SQRT1_2;// 0.70710678118654752440;
 
 constexpr float clipLoc(float x)
 {
-    return rtengine::LIM(x, 0.f, 32767.f);
+    //return rtengine::LIM(x, 0.f, 32767.f);//remove leads to bad behavior
+    return x;
 }
 
 constexpr float clipDE(float x)
@@ -86,12 +87,12 @@ constexpr float clipDE(float x)
 
 constexpr float clipC(float x)
 {
-    return rtengine::LIM(x, -42000.f, 42000.f);
+    return rtengine::LIM(x, -100000.f, 100000.f);//increase LIM from 42000 to 1000000 to avoid clip and also imaginaries colors
 }
 
 constexpr float clipChro(float x)
 {
-    return rtengine::LIM(x, 0.f, 140.f);
+    return rtengine::LIM(x, 0.f, 300.f);//increase LIM from 140 to 300 to avoid clip and also imaginaries colors
 }
 
 constexpr double clipazbz(double x)
@@ -2130,7 +2131,7 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
     Imagefloat img(int(fw / SCALE + 0.5), int(fh / SCALE + 0.5));
     const ProcParams neutral;
 
-    imgsrc->getImage(imgsrc->getWB(), TR_NONE, &img, pp, params->toneCurve, neutral.raw, 0);
+    imgsrc->getImage(imgsrc->getWB(), TR_NONE, &img, pp, params->toneCurve, neutral.raw);
     imgsrc->convertColorSpace(&img, params->icm, imgsrc->getWB());
     float minVal = RT_INFINITY;
     float maxVal = -RT_INFINITY;
@@ -2237,20 +2238,11 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
         //calculate La - Absolute luminance shooting
 
         const FramesMetaData* metaData = imgsrc->getMetaData();
-        int imgNum = 0;
-
-        if (imgsrc->isRAW()) {
-            if (imgsrc->getSensorType() == ST_BAYER) {
-                imgNum = rtengine::LIM<unsigned int>(params->raw.bayersensor.imageNum, 0, metaData->getFrameCount() - 1);
-            } else if (imgsrc->getSensorType() == ST_FUJI_XTRANS) {
-                        //imgNum = rtengine::LIM<unsigned int>(params->raw.xtranssensor.imageNum, 0, metaData->getFrameCount() - 1);
-            }
-        }
         
-        float fnum = metaData->getFNumber(imgNum);          // F number
-        float fiso = metaData->getISOSpeed(imgNum) ;        // ISO
-        float fspeed = metaData->getShutterSpeed(imgNum) ;  // Speed
-        double fcomp = metaData->getExpComp(imgNum);        // Compensation +/-
+        float fnum = metaData->getFNumber();          // F number
+        float fiso = metaData->getISOSpeed() ;        // ISO
+        float fspeed = metaData->getShutterSpeed() ;  // Speed
+        double fcomp = metaData->getExpComp();        // Compensation +/-
         double adap;
 
         if (fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f) { //if no exif data or wrong
@@ -2311,6 +2303,34 @@ void ImProcFunctions::loccont(int bfw, int bfh, LabImage* tmp1, float rad, float
         }
     }
 }
+
+void ImProcFunctions::tone_eqdehaz(ImProcFunctions *ipf, Imagefloat *rgb, int whits, int blacks, const Glib::ustring &workingProfile, double scale, bool multithread)
+{
+    ToneEqualizerParams params;
+    params.enabled = true;
+    params.regularization = 0.f;
+    params.pivot = 0.f;
+    double blred = 0.4;
+    params.bands[0] = blred * blacks;
+    int bla = abs(blacks);
+    int threshblawhi = 50;
+    int threshblawhi2 = 85;
+    if(bla > threshblawhi) {
+        params.bands[1] = blred * sign(blacks) * (bla - threshblawhi);
+    }
+    if(bla > threshblawhi2) {
+        params.bands[2] = blred * sign(blacks) * (bla - threshblawhi2);
+    }
+    
+    params.bands[4] = whits;
+    int whi = abs(whits);
+    if(whi > threshblawhi) {
+        params.bands[3] = sign(whits) * (whi - threshblawhi);
+    }
+    
+    ipf->toneEqualizer(rgb, params, workingProfile, scale, multithread);
+}
+
 
 void sigmoidla (float &valj, float thresj, float lambda) 
 {
@@ -5342,6 +5362,7 @@ void ImProcFunctions::blendstruc(int bfw, int bfh, LabImage* bufcolorig, float r
 
 static void blendmask(const local_params& lp, int xstart, int ystart, int cx, int cy, int bfw, int bfh, LabImage* bufexporig, LabImage* original, LabImage* bufmaskor, LabImage* originalmas, float bl, float blab, int inv)
 {
+    bl /= 10.f;
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -6570,7 +6591,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
             Imagefloat *tmpImagefat = nullptr;
             tmpImagefat = new Imagefloat(bfw, bfh);
             lab2rgb(*bufmaskblurcol, *tmpImagefat, params->icm.workingProfile);
-            ToneMapFattal02(tmpImagefat, fatParams, nlev, 0, nullptr, 0, 0, 0);
+            ToneMapFattal02(tmpImagefat, fatParams, nlev, 0, nullptr, 0, 0, 0, false);
             rgb2lab(*tmpImagefat, *bufmaskblurcol, params->icm.workingProfile);
             delete tmpImagefat;
         }
@@ -8679,8 +8700,10 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
 
                 const float dE = rsob + std::sqrt(kab * (kch * chrodelta2 + kH * huedelta2) + kL * SQR(refL - maskptr->L[y][x]));
                 //reduction action with deltaE
-                const float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens);
-
+                float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens);
+                if(varsens == 100.f) {
+                    reducdE = 1.f;
+                }
                 float cli = (bufexpfin->L[y][x] - bufexporig->L[y][x]);
                 float cla = (bufexpfin->a[y][x] - bufexporig->a[y][x]);
                 float clb = (bufexpfin->b[y][x] - bufexporig->b[y][x]);
@@ -14420,7 +14443,7 @@ void ImProcFunctions::Lab_Local(
             dehazeParams.saturation = lp.dehazeSaturation;
             dehazeParams.depth = lp.depth;
             lab2rgb(*bufexpfin, *tmpImage.get(), params->icm.workingProfile);
-            dehazeloc(tmpImage.get(), dehazeParams);
+            dehazeloc(tmpImage.get(), dehazeParams, sk, sp);
             rgb2lab(*tmpImage.get(), *bufexpfin, params->icm.workingProfile);
 
             transit_shapedetect2(sp, 0.f, 0.f, call, 30, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
@@ -17034,7 +17057,11 @@ void ImProcFunctions::Lab_Local(
                             if(fatParams.anchor == 50.f) {
                                 alg = 1;
                             }
-                            ToneMapFattal02(tmpImagefat.get(), fatParams, 3, 0, nullptr, 0, 0, alg);//last parameter = 1 ==>ART algorithm
+                            bool satu = false;
+                            if(params->locallab.spots.at(sp).fatsatur) {
+                                satu = true;
+                            }
+                            ToneMapFattal02(tmpImagefat.get(), fatParams, 3, 0, nullptr, 0, 0, alg, satu);//last parameter alg = 1 ==>ART algorithm
                             rgb2lab(*tmpImagefat, *bufexpfin, params->icm.workingProfile);
                             if (params->locallab.spots.at(sp).expcie && params->locallab.spots.at(sp).modecie == "dr") {
                                 bool HHcurvejz = false, CHcurvejz = false, LHcurvejz = false;
@@ -17787,7 +17814,7 @@ void ImProcFunctions::Lab_Local(
                             }
                             if (locchCurve && CHcurve && lp.qualcurvemet != 0) {//C=f(H) curve
                                 const float rhue = xatan2f(bufcolcalcb, bufcolcalca);
-                                const float valparam = 2.f * locchCurve[500.f * static_cast<float>(Color::huelab_to_huehsv2(rhue))] - 0.5f;  //get valp=f(H)
+                                const float valparam = locchCurve[500.f * static_cast<float>(Color::huelab_to_huehsv2(rhue))] - 0.5f;  //get valp=f(H)
                                 float chromaChfactor = 1.0f + valparam;
                                 bufcolcalca *= chromaChfactor;//apply C=f(H)
                                 bufcolcalcb *= chromaChfactor;
@@ -18245,9 +18272,9 @@ void ImProcFunctions::Lab_Local(
 #endif
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
-                                        tmpImageorig->r(y, x) = intp(lp.opacol, screen(tmpImageorig->r(y, x), tmpImagereserv->r(y, x), maxR), tmpImageorig->r(y, x));
-                                        tmpImageorig->g(y, x) = intp(lp.opacol, screen(tmpImageorig->g(y, x), tmpImagereserv->g(y, x), maxG), tmpImageorig->g(y, x));
-                                        tmpImageorig->b(y, x) = intp(lp.opacol, screen(tmpImageorig->b(y, x), tmpImagereserv->b(y, x), maxB), tmpImageorig->b(y, x));
+                                        tmpImageorig->r(y, x) = intp(lp.opacol, screen(tmpImageorig->r(y, x), tmpImagereserv->r(y, x), 1.f), tmpImageorig->r(y, x));
+                                        tmpImageorig->g(y, x) = intp(lp.opacol, screen(tmpImageorig->g(y, x), tmpImagereserv->g(y, x), 1.f), tmpImageorig->g(y, x));
+                                        tmpImageorig->b(y, x) = intp(lp.opacol, screen(tmpImageorig->b(y, x), tmpImagereserv->b(y, x), 1.f), tmpImageorig->b(y, x));
                                     }
                                 }
                             } else if (lp.mergecolMethod == 12) { //darken only
@@ -18658,7 +18685,7 @@ void ImProcFunctions::Lab_Local(
                 const float rad = params->locallab.spots.at(sp).radmask; 
                 const float gamma = params->locallab.spots.at(sp).gammask; 
                 const float slope =  params->locallab.spots.at(sp).slopmask;
-                float blendm =  params->locallab.spots.at(sp).blendmask;
+                float blendm =  0.1 * params->locallab.spots.at(sp).blendmask;
                 float blendmab =  params->locallab.spots.at(sp).blendmaskab;
                 if (lp.showmask_met == 2) {
                     blendm = 0.f;//normalize behavior mask with others no action of blend

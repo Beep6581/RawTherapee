@@ -267,16 +267,13 @@ void ParamsEdited::set(bool v)
     wb.equal                   = v;
     wb.tempBias                = v;
     wb.observer                = v;
-    wb.itcwb_thres                = v;
-    wb.itcwb_precis                = v;
-    wb.itcwb_size                = v;
-    wb.itcwb_delta                = v;
-    wb.itcwb_fgreen                = v;
+    wb.itcwb_green                = v;
     wb.itcwb_rgreen                = v;
     wb.itcwb_nopurple             = v;
-    wb.itcwb_sorted             = v;
-    wb.itcwb_forceextra         = v;
+    wb.itcwb_alg             = v;
+    wb.itcwb_prim                = v;
     wb.itcwb_sampling         = v;
+    wb.compat_version          = v;
     //colorShift.a               = v;
     //colorShift.b               = v;
     //lumaDenoise.enabled        = v;
@@ -301,6 +298,7 @@ void ParamsEdited::set(bool v)
     dirpyrDenoise.chroma       = v;
     dirpyrDenoise.redchro      = v;
     dirpyrDenoise.bluechro     = v;
+    dirpyrDenoise.gain = v;
     dirpyrDenoise.gamma        = v;
     dirpyrDenoise.passes        = v;
     dirpyrDenoise.dmethod      = v;
@@ -719,6 +717,7 @@ void ParamsEdited::set(bool v)
     dehaze.depth = v;
     dehaze.saturation = v;
     metadata.mode = v;
+    metadata.exifKeys = v;
     filmNegative.enabled = v;
     filmNegative.redRatio = v;
     filmNegative.greenExp = v;
@@ -984,16 +983,13 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         wb.temperature = wb.temperature && p.wb.temperature == other.wb.temperature;
         wb.tempBias = wb.tempBias && p.wb.tempBias == other.wb.tempBias;
         wb.observer = wb.observer && p.wb.observer == other.wb.observer;
-        wb.itcwb_thres = wb.itcwb_thres && p.wb.itcwb_thres == other.wb.itcwb_thres;
-        wb.itcwb_precis = wb.itcwb_precis && p.wb.itcwb_precis == other.wb.itcwb_precis;
-        wb.itcwb_size = wb.itcwb_size && p.wb.itcwb_size == other.wb.itcwb_size;
-        wb.itcwb_delta = wb.itcwb_delta && p.wb.itcwb_delta == other.wb.itcwb_delta;
-        wb.itcwb_fgreen = wb.itcwb_fgreen && p.wb.itcwb_fgreen == other.wb.itcwb_fgreen;
+        wb.itcwb_green = wb.itcwb_green && p.wb.itcwb_green == other.wb.itcwb_green;
         wb.itcwb_rgreen = wb.itcwb_rgreen && p.wb.itcwb_rgreen == other.wb.itcwb_rgreen;
         wb.itcwb_nopurple = wb.itcwb_nopurple && p.wb.itcwb_nopurple == other.wb.itcwb_nopurple;
-        wb.itcwb_sorted = wb.itcwb_sorted && p.wb.itcwb_sorted == other.wb.itcwb_sorted;
-        wb.itcwb_forceextra = wb.itcwb_forceextra && p.wb.itcwb_forceextra == other.wb.itcwb_forceextra;
+        wb.itcwb_alg = wb.itcwb_alg && p.wb.itcwb_alg == other.wb.itcwb_alg;
+        wb.itcwb_prim = wb.itcwb_prim && p.wb.itcwb_prim == other.wb.itcwb_prim;
         wb.itcwb_sampling = wb.itcwb_sampling && p.wb.itcwb_sampling == other.wb.itcwb_sampling;
+        wb.compat_version = wb.compat_version && p.wb.compat_version == other.wb.compat_version;
         //colorShift.a = colorShift.a && p.colorShift.a == other.colorShift.a;
         //colorShift.b = colorShift.b && p.colorShift.b == other.colorShift.b;
         //lumaDenoise.enabled = lumaDenoise.enabled && p.lumaDenoise.enabled == other.lumaDenoise.enabled;
@@ -1020,6 +1016,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         dirpyrDenoise.chroma = dirpyrDenoise.chroma && p.dirpyrDenoise.chroma == other.dirpyrDenoise.chroma;
         dirpyrDenoise.redchro = dirpyrDenoise.redchro && p.dirpyrDenoise.redchro == other.dirpyrDenoise.redchro;
         dirpyrDenoise.bluechro = dirpyrDenoise.bluechro && p.dirpyrDenoise.bluechro == other.dirpyrDenoise.bluechro;
+        dirpyrDenoise.gain = dirpyrDenoise.gain && p.dirpyrDenoise.autoGain == other.dirpyrDenoise.autoGain;
         dirpyrDenoise.gamma = dirpyrDenoise.gamma && p.dirpyrDenoise.gamma == other.dirpyrDenoise.gamma;
         dirpyrDenoise.passes = dirpyrDenoise.passes && p.dirpyrDenoise.passes == other.dirpyrDenoise.passes;
         dirpyrDenoise.dmethod = dirpyrDenoise.dmethod && p.dirpyrDenoise.dmethod == other.dirpyrDenoise.dmethod;
@@ -1268,6 +1265,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).gamm = locallab.spots.at(j).gamm && pSpot.gamm == otherSpot.gamm;
                 locallab.spots.at(j).fatamount = locallab.spots.at(j).fatamount && pSpot.fatamount == otherSpot.fatamount;
                 locallab.spots.at(j).fatdetail = locallab.spots.at(j).fatdetail && pSpot.fatdetail == otherSpot.fatdetail;
+                locallab.spots.at(j).fatsatur = locallab.spots.at(j).fatsatur && pSpot.fatsatur == otherSpot.fatsatur;
                 locallab.spots.at(j).fatanchor = locallab.spots.at(j).fatanchor && pSpot.fatanchor == otherSpot.fatanchor;
                 locallab.spots.at(j).fatlevel = locallab.spots.at(j).fatlevel && pSpot.fatlevel == otherSpot.fatlevel;
                 locallab.spots.at(j).recothrese = locallab.spots.at(j).recothrese && pSpot.recothrese == otherSpot.recothrese;
@@ -1485,6 +1483,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).equilret = locallab.spots.at(j).equilret && pSpot.equilret == otherSpot.equilret;
                 locallab.spots.at(j).loglin = locallab.spots.at(j).loglin && pSpot.loglin == otherSpot.loglin;
                 locallab.spots.at(j).dehazeSaturation = locallab.spots.at(j).dehazeSaturation && pSpot.dehazeSaturation == otherSpot.dehazeSaturation;
+                locallab.spots.at(j).dehazeblack = locallab.spots.at(j).dehazeblack && pSpot.dehazeblack == otherSpot.dehazeblack;
                 locallab.spots.at(j).softradiusret = locallab.spots.at(j).softradiusret && pSpot.softradiusret == otherSpot.softradiusret;
                 locallab.spots.at(j).CCmaskreticurve = locallab.spots.at(j).CCmaskreticurve && pSpot.CCmaskreticurve == otherSpot.CCmaskreticurve;
                 locallab.spots.at(j).LLmaskreticurve = locallab.spots.at(j).LLmaskreticurve && pSpot.LLmaskreticurve == otherSpot.LLmaskreticurve;
@@ -2141,6 +2140,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         dehaze.depth = dehaze.depth && p.dehaze.depth == other.dehaze.depth;
         dehaze.saturation = dehaze.saturation && p.dehaze.saturation == other.dehaze.saturation;
         metadata.mode = metadata.mode && p.metadata.mode == other.metadata.mode;
+        metadata.exifKeys = metadata.exifKeys && p.metadata.exifKeys == other.metadata.exifKeys;
         filmNegative.enabled = filmNegative.enabled && p.filmNegative.enabled == other.filmNegative.enabled;
         filmNegative.redRatio = filmNegative.redRatio && p.filmNegative.redRatio == other.filmNegative.redRatio;
         filmNegative.greenExp = filmNegative.greenExp && p.filmNegative.greenExp == other.filmNegative.greenExp;
@@ -2868,24 +2868,8 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.wb.observer = mods.wb.observer;
     }
 
-    if (wb.itcwb_thres) {
-        toEdit.wb.itcwb_thres = mods.wb.itcwb_thres;
-    }
-
-    if (wb.itcwb_precis) {
-        toEdit.wb.itcwb_precis = mods.wb.itcwb_precis;
-    }
-
-    if (wb.itcwb_size) {
-        toEdit.wb.itcwb_size = mods.wb.itcwb_size;
-    }
-
-    if (wb.itcwb_delta) {
-        toEdit.wb.itcwb_delta = mods.wb.itcwb_delta;
-    }
-
-    if (wb.itcwb_fgreen) {
-        toEdit.wb.itcwb_fgreen = mods.wb.itcwb_fgreen;
+    if (wb.itcwb_green) {
+        toEdit.wb.itcwb_green = mods.wb.itcwb_green;
     }
 
     if (wb.itcwb_rgreen) {
@@ -2896,12 +2880,12 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.wb.itcwb_nopurple = mods.wb.itcwb_nopurple;
     }
 
-    if (wb.itcwb_sorted) {
-        toEdit.wb.itcwb_sorted = mods.wb.itcwb_sorted;
+    if (wb.itcwb_alg) {
+        toEdit.wb.itcwb_alg = mods.wb.itcwb_alg;
     }
 
-    if (wb.itcwb_forceextra) {
-        toEdit.wb.itcwb_forceextra = mods.wb.itcwb_forceextra;
+    if (wb.itcwb_prim) {
+        toEdit.wb.itcwb_prim = mods.wb.itcwb_prim;
     }
 
     if (wb.itcwb_sampling) {
@@ -2914,6 +2898,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (wb.temperature) {
         toEdit.wb.temperature = dontforceSet && options.baBehav[ADDSET_WB_TEMPERATURE] ? toEdit.wb.temperature + mods.wb.temperature : mods.wb.temperature;
+    }
+
+    if (wb.compat_version) {
+        toEdit.wb.compat_version = mods.wb.compat_version;
     }
 
     //if (colorShift.a)                     toEdit.colorShift.a = dontforceSet && options.baBehav[ADDSET_CS_BLUEYELLOW] ? toEdit.colorShift.a + mods.colorShift.a : mods.colorShift.a;
@@ -3165,6 +3153,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (dirpyrDenoise.bluechro) {
         toEdit.dirpyrDenoise.bluechro = dontforceSet && options.baBehav[ADDSET_DIRPYRDN_CHROMABLUE] ? toEdit.dirpyrDenoise.bluechro + mods.dirpyrDenoise.bluechro : mods.dirpyrDenoise.bluechro;
+    }
+
+    if (dirpyrDenoise.gain) {
+        toEdit.dirpyrDenoise.autoGain = mods.dirpyrDenoise.autoGain;
     }
 
     if (dirpyrDenoise.gamma) {
@@ -4118,6 +4110,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).fatdetail = mods.locallab.spots.at(i).fatdetail;
         }
 
+        if (locallab.spots.at(i).fatsatur) {
+            toEdit.locallab.spots.at(i).fatsatur = mods.locallab.spots.at(i).fatsatur;
+        }
+
         if (locallab.spots.at(i).fatanchor) {
             toEdit.locallab.spots.at(i).fatanchor = mods.locallab.spots.at(i).fatanchor;
         }
@@ -4953,6 +4949,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).dehazeSaturation) {
             toEdit.locallab.spots.at(i).dehazeSaturation = mods.locallab.spots.at(i).dehazeSaturation;
+        }
+
+        if (locallab.spots.at(i).dehazeblack) {
+            toEdit.locallab.spots.at(i).dehazeblack = mods.locallab.spots.at(i).dehazeblack;
         }
 
         if (locallab.spots.at(i).softradiusret) {
@@ -7430,6 +7430,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.metadata.mode = mods.metadata.mode;
     }
 
+    if (metadata.exifKeys) {
+        toEdit.metadata.exifKeys = mods.metadata.exifKeys;
+    }
+
     if (filmNegative.enabled) {
         toEdit.filmNegative.enabled = mods.filmNegative.enabled;
     }
@@ -7467,15 +7471,15 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     // Exif changes are added to the existing ones
     if (exif) {
-        for (procparams::ExifPairs::const_iterator i = mods.exif.begin(); i != mods.exif.end(); ++i) {
-            toEdit.exif[i->first] = i->second;
+        for (procparams::ExifPairs::const_iterator i = mods.metadata.exif.begin(); i != mods.metadata.exif.end(); ++i) {
+            toEdit.metadata.exif[i->first] = i->second;
         }
     }
 
     // IPTC changes are added to the existing ones
     if (iptc) {
-        for (procparams::IPTCPairs::const_iterator i = mods.iptc.begin(); i != mods.iptc.end(); ++i) {
-            toEdit.iptc[i->first] = i->second;
+        for (procparams::IPTCPairs::const_iterator i = mods.metadata.iptc.begin(); i != mods.metadata.iptc.end(); ++i) {
+            toEdit.metadata.iptc[i->first] = i->second;
         }
     }
 }
@@ -7671,6 +7675,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     fatdetail(v),
     fatanchor(v),
     fatlevel(v),
+    fatsatur(v),
     recothrese(v),
     lowthrese(v),
     higthrese(v),
@@ -7882,6 +7887,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     equilret(v),
     loglin(v),
     dehazeSaturation(v),
+    dehazeblack(v),
     softradiusret(v),
     CCmaskreticurve(v),
     LLmaskreticurve(v),
@@ -8361,6 +8367,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     gamm = v;
     fatamount = v;
     fatdetail = v;
+    fatsatur = v;
     fatanchor = v;
     fatlevel = v;
     recothrese = v;
@@ -8577,6 +8584,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     equilret = v;
     loglin = v;
     dehazeSaturation = v;
+    dehazeblack = v;
     softradiusret = v;
     CCmaskreticurve = v;
     LLmaskreticurve = v;

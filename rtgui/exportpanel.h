@@ -23,6 +23,7 @@
 
 #include "guiutils.h"
 
+class RTSurface;
 class ExportPanelListener
 {
 public:
@@ -102,6 +103,8 @@ protected:
 
 
     ExportPanelListener* listener;
+
+    std::shared_ptr<RTSurface> ornamentSurface;
 
     void bypassALL_Toggled();
     void use_fast_pipeline_toggled();

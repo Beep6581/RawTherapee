@@ -70,18 +70,9 @@ class Preferences final :
         }
     };
 
-    class ThemeFilename
-    {
-    public:
-        Glib::ustring shortFName;
-        Glib::ustring longFName;
-
-        ThemeFilename (Glib::ustring sfname, Glib::ustring lfname) : shortFName (sfname), longFName (lfname) {}
-    };
-
     Glib::RefPtr<Gtk::TreeStore> behModel;
     BehavColumns behavColumns;
-    std::vector<ThemeFilename> themeFNames;
+    std::vector<Glib::ustring> themeNames;
     Glib::RefPtr<Glib::Regex> regex;
     Glib::MatchInfo matchInfo;
     Splash* splash;
@@ -92,7 +83,7 @@ class Preferences final :
     Gtk::ComboBoxText* languages;
     Gtk::CheckButton* ckbLangAutoDetect;
     Gtk::Entry* dateformat;
-    Gtk::Entry* startupdir;
+    MyFileChooserEntry* startupdir;
     Gtk::RadioButton* sdcurrent;
     Gtk::RadioButton* sdlast;
     Gtk::RadioButton* sdhome;
@@ -104,19 +95,20 @@ class Preferences final :
     Gtk::RadioButton* edPS;
     Gtk::RadioButton* edOther;
     ExternalEditorPreferences *externalEditors;
-    
+
     Gtk::RadioButton *editor_dir_temp;
     Gtk::RadioButton *editor_dir_current;
     Gtk::RadioButton *editor_dir_custom;
     MyFileChooserButton *editor_dir_custom_path;
     Gtk::CheckButton *editor_float32;
     Gtk::CheckButton *editor_bypass_output_profile;
-    
+
     MyFileChooserButton* darkFrameDir;
     MyFileChooserButton* flatFieldDir;
     MyFileChooserButton* clutsDir;
-	MyFileChooserButton* cameraProfilesDir;
-	MyFileChooserButton* lensProfilesDir;
+    MyFileChooserButton* cameraProfilesDir;
+    MyFileChooserButton* lensProfilesDir;
+    MyFileChooserEntry* lensfunDbDir;
     Gtk::Label *dfLabel;
     Gtk::Label *ffLabel;
 
@@ -137,9 +129,11 @@ class Preferences final :
     Gtk::CheckButton* cbdaubech;
     Gtk::SpinButton*  hlThresh;
     Gtk::SpinButton*  shThresh;
-//    Gtk::CheckButton* mwbacorr;
+    Gtk::CheckButton* mwbacorr;
  //   Gtk::CheckButton* mwbaforc;
  //   Gtk::CheckButton* mwbanopurp;
+    Gtk::CheckButton* mwbaena;
+//    Gtk::CheckButton* mwbaenacustom;
 
 //    Gtk::CheckButton* mwbasort;
 //    Gtk::SpinButton*  wbacorrnb;
@@ -179,8 +173,6 @@ class Preferences final :
     Gtk::FontButton* colorPickerFontFB;
     Gtk::ColorButton* cropMaskColorCB;
     Gtk::ColorButton* navGuideColorCB;
-    Gtk::CheckButton* pseudoHiDPI;
-
 
     Gtk::SpinButton*   maxRecentFolders;
     Gtk::SpinButton*   maxThumbHeightSB;
@@ -249,6 +241,11 @@ class Preferences final :
     Gtk::ComboBoxText *cropGuidesCombo;
     Gtk::CheckButton *cropAutoFitCB;
 
+    Gtk::ComboBoxText *maxZoomCombo;
+
+    Gtk::ComboBoxText *metadataSyncCombo;
+    Gtk::ComboBoxText *xmpSidecarCombo;
+
     Glib::ustring storedValueRaw;
     Glib::ustring storedValueImg;
 
@@ -282,7 +279,7 @@ class Preferences final :
     void switchFontTo  (const Glib::ustring &newFontFamily, const int newFontSize);
     bool splashClosed (GdkEventAny* event);
 
-    int getThemeRowNumber (const Glib::ustring& longThemeFName);
+    int getThemeRowNumber (const Glib::ustring& name);
 
     void appendBehavList (Gtk::TreeModel::iterator& parent, Glib::ustring label, int id, bool set);
 
@@ -319,7 +316,7 @@ public:
     void sndEnableToggled ();
     void langAutoDetectToggled ();
     void autocielabToggled ();
-    void observer10Toggled (); 
+    void observer10Toggled ();
 
     void selectStartupDir ();
     void addExtPressed ();

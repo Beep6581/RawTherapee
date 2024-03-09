@@ -21,10 +21,18 @@
 #include "previewwindow.h"
 #include "toolpanel.h"
 #include "../rtengine/color.h"
+#include "../rtengine/improcfun.h"
 #include "../rtengine/rt_math.h"
 #include "options.h"
 
 using namespace rtengine;
+
+namespace
+{
+
+const rtengine::procparams::ColorManagementParams DEFAULT_CMP;
+
+}
 
 Navigator::Navigator() :
     pointer_moved_delayed_call(50, 100),
@@ -32,7 +40,7 @@ Navigator::Navigator() :
     currentHSVUnit(options.navHSVUnit)
 {
     pointer_moved_delayed_call.setFunction(
-        [this](bool validPos, Glib::ustring profile, Glib::ustring profileW, int x, int y, int r, int g, int b, bool isRaw)
+        [this](bool validPos, const rtengine::procparams::ColorManagementParams *cmp, int x, int y, int r, int g, int b, bool isRaw)
         {
             if (!validPos) {
                 setInvalid (x, y);
@@ -61,7 +69,16 @@ Navigator::Navigator() :
                     S->set_text (s2);
                     V->set_text (s3);
 
-                    Color::rgb2lab01(profile, profileW, r / 255.f, g / 255.f, b / 255.f, LAB_l, LAB_a, LAB_b, options.rtSettings.HistogramWorking);  // TODO: Really sure this function works?
+                    ImProcFunctions::rgb2lab(
+                        static_cast<std::uint8_t>(r),
+                        static_cast<std::uint8_t>(g),
+                        static_cast<std::uint8_t>(b),
+                        LAB_l, LAB_a, LAB_b,
+                        cmp != nullptr ? *cmp : DEFAULT_CMP,
+                        true);
+                    LAB_l /= 327.68f;
+                    LAB_a /= 327.68f;
+                    LAB_b /= 327.68f;
                     getLABText (LAB_l, LAB_a, LAB_b, s1, s2, s3);
                     LAB_L->set_text (s1);
                     LAB_A->set_text (s2);
@@ -140,7 +157,7 @@ Navigator::Navigator() :
     /*
     Glib::ustring fontname;
 
-#ifdef WIN32
+#ifdef _WIN32
     fontname = "Droid Sans Mono Slashed"; // font file is provided in the source tree in rtdata/fonts to be installed by the windows installer
 #endif
 
@@ -328,9 +345,9 @@ void Navigator::getLABText (float l, float a, float b, Glib::ustring &sL, Glib::
 }
 
 // if !validPos then x/y contain the full image size
-void Navigator::pointerMoved (bool validPos, const Glib::ustring &profile, const Glib::ustring &profileW, int x, int y, int r, int g, int b, bool isRaw)
+void Navigator::pointerMoved (bool validPos, const rtengine::procparams::ColorManagementParams &cmp, int x, int y, int r, int g, int b, bool isRaw)
 {
-    pointer_moved_delayed_call(validPos, profile, profileW, x, y, r, g, b, isRaw);
+    pointer_moved_delayed_call(validPos, &cmp, x, y, r, g, b, isRaw);
 }
 
 void Navigator::cycleUnitsRGB (GdkEventButton *event) {

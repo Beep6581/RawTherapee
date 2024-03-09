@@ -636,6 +636,8 @@ struct WBEntry {
 };
 
 struct WBParams {
+    static constexpr int CURRENT_COMPAT_VERSION = 2;
+
     bool enabled;
     Glib::ustring    method;
     int              temperature;
@@ -643,16 +645,30 @@ struct WBParams {
     double           equal;
     double           tempBias;
     StandardObserver observer;
-    int              itcwb_thres;
-    int              itcwb_precis;
-    int              itcwb_size;
-    int              itcwb_delta;
-    int              itcwb_fgreen;
+    double           itcwb_green;
     int              itcwb_rgreen;
     bool             itcwb_nopurple;
-    bool             itcwb_sorted;
-    bool             itcwb_forceextra;
+    bool             itcwb_alg;
+    Glib::ustring    itcwb_prim;
     bool             itcwb_sampling;
+    /**
+     * Used to maintain edits from previous versions of RawTherapee where
+     * compatibility cannot be maintained simply by converting the parameters,
+     * for example, when the output depends on the file type.
+     *
+     * Version 0:
+     *  - Base version.
+     * Version 1 (5.9):
+     *  - RGB Gray fixed to (1, 1, 1) RGB multipliers before temperature bias
+     *    for non-raw files.
+     *  - Temperature correlation fixed to temperature 5000, green 1, and equal
+     *    1 or equivalent for non-raw files.
+     * Version 2 (5.10):
+     *  - RGB grey restored to version 0.
+     *  - Temperature correlation equivalent to method "Camera" for non-raw
+     *    files.
+     */
+    int compat_version;
 
     WBParams();
 
@@ -776,6 +792,7 @@ struct DirPyrDenoiseParams {
     double  chroma;
     double  redchro;
     double  bluechro;
+    bool autoGain;
     double  gamma;
     Glib::ustring dmethod;
     Glib::ustring Lmethod;
@@ -1194,6 +1211,7 @@ struct LocallabParams {
         double gamm;
         double fatamount;
         double fatdetail;
+        bool fatsatur;
         double fatanchor;
         double fatlevel;
         double recothrese;
@@ -1407,6 +1425,7 @@ struct LocallabParams {
         bool equilret;
         bool loglin;
         double dehazeSaturation;
+        double dehazeblack;
         double softradiusret;
         std::vector<double> CCmaskreticurve;
         std::vector<double> LLmaskreticurve;
@@ -1940,6 +1959,7 @@ struct ColorManagementParams {
         ACES_P1,
         WIDE_GAMUT,
         ACES_P0,
+        JDC_MAX,
         BRUCE_RGB,
         BETA_RGB,
         BEST_RGB,
@@ -1993,30 +2013,21 @@ struct ColorManagementParams {
 };
 
 /**
-  * Parameters for metadata handling
-  */
-struct MetaDataParams {
-    enum Mode {
-        TUNNEL,
-        EDIT,
-        STRIP
-    };
-    Mode mode;
-
-    MetaDataParams();
-
-    bool operator ==(const MetaDataParams &other) const;
-    bool operator !=(const MetaDataParams &other) const;
-};
-
-
-/**
   * Minimal wrapper allowing forward declaration for representing a key/value for the exif metadata information
   */
 class ExifPairs final
 {
+private:
+    using Pairs = std::map<Glib::ustring, Glib::ustring>;
+
 public:
-    using const_iterator = std::map<Glib::ustring, Glib::ustring>::const_iterator;
+    using const_iterator = Pairs::const_iterator;
+    using size_type = Pairs::size_type;
+
+    const_iterator find(const Glib::ustring& key) const
+    {
+        return pairs.find(key);
+    }
 
     const_iterator begin() const
     {
@@ -2033,6 +2044,16 @@ public:
         pairs.clear();
     }
 
+    size_type erase(const Glib::ustring& key)
+    {
+        return pairs.erase(key);
+    }
+
+    bool empty() const
+    {
+        return pairs.empty();
+    }
+
     Glib::ustring& operator[](const Glib::ustring& key)
     {
         return pairs[key];
@@ -2044,7 +2065,7 @@ public:
     }
 
 private:
-    std::map<Glib::ustring, Glib::ustring> pairs;
+    Pairs pairs;
 };
 
 /**
@@ -2076,6 +2097,11 @@ public:
         return pairs.empty();
     }
 
+    iterator erase(const const_iterator& key)
+    {
+        return pairs.erase(key);
+    }
+
     void clear()
     {
         pairs.clear();
@@ -2094,6 +2120,29 @@ public:
 private:
     std::map<Glib::ustring, std::vector<Glib::ustring>> pairs;
 };
+
+/**
+  * Parameters for metadata handling
+  */
+struct MetaDataParams {
+    enum Mode {
+        TUNNEL,
+        EDIT,
+        STRIP
+    };
+    Mode mode;
+    std::vector<std::string> exifKeys;
+    ExifPairs exif;
+    IPTCPairs iptc;
+
+    MetaDataParams();
+
+    bool operator ==(const MetaDataParams &other) const;
+    bool operator !=(const MetaDataParams &other) const;
+
+    static std::vector<std::string> basicExifKeys;
+};
+
 
 struct WaveletParams {
     std::vector<double> ccwcurve;
@@ -2613,8 +2662,8 @@ public:
     int                     ppVersion;       ///< Version of the PP file from which the parameters have been read
 
     MetaDataParams          metadata;        ///< Metadata parameters
-    ExifPairs               exif;            ///< List of modifications appplied on the exif tags of the input image
-    IPTCPairs               iptc;            ///< The IPTC tags and values to be saved to the output image
+    // ExifPairs               exif;            ///< List of modifications appplied on the exif tags of the input image
+    // IPTCPairs               iptc;            ///< The IPTC tags and values to be saved to the output image
 
     /**
       * The constructor only sets the hand-wired defaults.
