@@ -1195,9 +1195,9 @@ void Locallab::refChanged2(float *huerefp, float *chromarefp, float *lumarefp, f
 void Locallab::maxcam(float *maxicamp, bool *autocam, int selspot)
 {
         const float maxicam = maxicamp[selspot];
-		if(autocam) {
-			expcie.updateAutocam(maxicam, autocam);
-		}
+        if(autocam) {
+            expcie.updateAutocam(maxicam, autocam);
+        }
 
 }
 

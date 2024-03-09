@@ -2120,6 +2120,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
         x = rtengine::max((xlogf(x) / log2 - shadows_range) / dynamic_range, noise);
         assert(x == x);
 
+
         if (linbase > 0.f)
         {
             x = xlog2lin(x, linbase);
@@ -2801,7 +2802,11 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     float sila = pow_F(sigmoidlambda, senssig);
     sila = LIM01(sila);
     const float sigm = 3.3f + 7.1f * (1.f - sila); //e^10.4 = 32860 => sigm vary from 3.3 to 10.4
-    const float bl = std::min(sigmoidbl, 1.f);//reused old slider
+    float bl = std::min(sigmoidbl, 1.f);//reused old slider
+    if(params->locallab.spots.at(sp).logcieq) {
+        bl = 0.01f * (float) params->locallab.spots.at(sp).strcielog;
+        bl = std::min(bl, 1.f);
+    }
     //end sigmoid
 
     int width = lab->W, height = lab->H;
@@ -3280,7 +3285,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     double dynamic_range = std::max(params->locallab.spots.at(sp).whiteEvjz - shadows_range, 0.5);
     const double noise = pow(2., -16.6);//16.6 instead of 16 a little less than others, but we work in double
     const double log2 = xlog(2.);
-  //  const float log2f = xlogf(2.f);
+    const float log2f = xlogf(2.f);
 
     if ((mocam == 0 || mocam == 2)  && call == 0) { //Jz az bz ==> Jz Cz Hz before Ciecam16
         double mini = 1000.;
@@ -4070,7 +4075,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             sumcamq01 = sumcamq * coefq;
 
         }
-/*
+
         float base = 10.f;
         float linbaseor = 10.f;
         float linbase = 10.f;
@@ -4079,23 +4084,17 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         const bool compr = params->locallab.spots.at(sp).comprcie > 0.;
         float comprfactor = params->locallab.spots.at(sp).comprcie;
         float comprth = 0.1 +  params->locallab.spots.at(sp).comprcieth;
-*/ 
+
         double drref = 8.5; //Dynamic Range standard
  
         double drd = ((double) dynamic_range - drref) / drref;
- /*
+ 
         double dratt = (double) dynamic_range / drref;
         comprfactor = 0.4f * comprfactor * (float) dratt;//adapt comprfactor to Dynamic Range
         float newgray = 0.18f;
 
-        if (islogq  || mobwev != 0) {//increase Dyn Range when log encod and sigmoid 
-          //  if(issig && issigq && iscie && !islogq && mobwev == 2) {
-            if(issig && issigq && iscie && !islogq && mobwev == 2) {
-                dynamic_range += 0.6;//empirical value
-            } else if (islogq && issigq && iscie) {
-                dynamic_range += 0.1;//empirical value
-            }
-                
+        if ((params->locallab.spots.at(sp).logcie && params->locallab.spots.at(sp).logcieq) || mobwev != 0) {//increase Dyn Range when log encoding
+            dynamic_range += 0.2;//empirical value
             gray = 0.01f * (float) params->locallab.spots.at(sp).sourceGraycie;
             const float targetgraycie = params->locallab.spots.at(sp).targetGraycie;
             float targetgraycor = 0.01f * targetgraycie;
@@ -4108,7 +4107,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
             float corlog = xlogf(maxicam)/log2;//correction base logarithme
             linbase = linbaseor / corlog;
-            newgray = gray - 0.022f * (6.f - maxicam);//empirical formula to take into account Q in DR. 6.f  =>approach to mean overall images
+            newgray = gray; //gray - 0.022f * (6.f - maxicam);//empirical formula to take into account Q in DR. 6.f  =>approach to mean overall images
 
             if (settings->verbose) {
                 printf("Gray=%1.3f newgray=%1.3f MaxicamQ=%3.2f Base log encode corrected Q=%5.1f Base log encode origig Q=%5.1f\n", (double) gray, (double) newgray, (double) maxicam, (double) linbase, (double) linbaseor);
@@ -4126,7 +4125,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             {
                 x = intp(comprfactor, (std::tanh((x - comprth) / comprth) + 1.f) * comprth, x); //as sigmoid... but tanh (tg hyperbolic), inspired by the work of alberto Grigio
             }
-
+        
             x = rtengine::max((xlogf(x) / log2f - (float) shadows_range) / (float) dynamic_range, (float) noise);//x in range EV
             assert(x == x);
 
@@ -4137,14 +4136,14 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
             return x;
         };
-*/
+
         //prepare Normalize luminance
         float *datain = nullptr;
         float *data = nullptr;
         float *datanorm = nullptr;
 
-        if (sigmoidnorm  && issigq) {
-            datain = new float[width * height];
+        if ((sigmoidnorm  && issigq)  || params->locallab.spots.at(sp).logcieq) {
+            datain = new float[width* height];
             data = new float[width * height];
             datanorm = new float[width * height];
 #ifdef _OPENMP
@@ -4269,8 +4268,8 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
                     if (ciec) {
                         bool jp = false;
-/*
-                        if (islogq && issigq && iscie) {//log encoding Q
+
+                        if (params->locallab.spots.at(sp).logcie && params->locallab.spots.at(sp).logcieq && iscie) {//log encoding Q
                             float val =  Qpro *  coefq;
 
                             if (val > (float) noise) {
@@ -4279,7 +4278,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                                 Qpro *=  f;
                             }
                         }
-
+/*
                         if (issig && issigq && iscie && !islogq && mobwev == 2) { //sigmoid Q and Log encode
                             float val = Qpro * coefq;
 
@@ -4501,7 +4500,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             }
         }
 
-        if (sigmoidnorm && issigq) { //Normalize luminance
+        if ((sigmoidnorm && issigq) || params->locallab.spots.at(sp).logcieq) { //Normalize luminance
 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic, 16)
@@ -4517,12 +4516,12 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
             double nbs = 1.;
             drd = std::max(drd, 1.); 
-
             if (bl > 0.5f) {
                 nbs = (1.7 * (double) bl * drd);//take into account DR to increase variance in image source
             }
-
-            normalize_mean_dt(datanorm, datain, height * width, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f, nbs);//normalize luminance
+            if(!params->locallab.spots.at(sp).logcieq) {// not with log encoding Q
+                normalize_mean_dt(datanorm, datain, height * width, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f, nbs);//normalize luminance
+            }
 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic, 16)
@@ -4530,7 +4529,11 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
             for (int ir = 0; ir < height; ir++) {
                 for (int jr = 0; jr < width; jr++) {
-                    data[ir * width + jr] = intp(bl, data[ir * width + jr], datanorm[ir * width + jr]);//blend with original
+                    if(!params->locallab.spots.at(sp).logcieq) {// if not Log encoding ciecam
+                        data[ir * width + jr] = intp(bl, data[ir * width + jr], datanorm[ir * width + jr]);//blend with original
+                    } else {
+                        data[ir * width + jr] = intp(bl, data[ir * width + jr], datain[ir * width + jr]);//blend with original
+                    }
                     lab->L[ir][jr] = data[ir * width + jr];
                 }
             }
@@ -20338,7 +20341,7 @@ void ImProcFunctions::Lab_Local(
                     
                     tmpImage->copyData(tmpImagelog);
 
-                    if(params->locallab.spots.at(sp).logcie) {
+                    if(params->locallab.spots.at(sp).logcie  && !params->locallab.spots.at(sp).logcieq) {
                         log_encode(tmpImagelog, lp, multiThread, bfw, bfh);
                         float strlog = 0.01f * (float) params->locallab.spots.at(sp).strcielog;
                     
@@ -20357,7 +20360,7 @@ void ImProcFunctions::Lab_Local(
                         }                    
                     }
 
-                    if(lp.issmoothcie) {
+                    if(lp.issmoothcie) {//à modifier
                         tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);
                         /*
                         //TonemapFreeman - not used but it works..

@@ -69,6 +69,7 @@ protected:
     rtengine::ProcEvent Evlocallabcomprcie;
     rtengine::ProcEvent Evlocallabstrcielog;
     rtengine::ProcEvent Evlocallabsatcie;
+    rtengine::ProcEvent Evlocallablogcieq;
     rtengine::ProcEvent Evlocallabcomprcieth;
     rtengine::ProcEvent EvlocallabHHhmaskcieshape;
     rtengine::ProcEvent EvlocallabbwevMethod;
@@ -1678,6 +1679,7 @@ private:
     
     Adjuster* const strcielog;
     Gtk::CheckButton* const satcie;
+    Gtk::CheckButton* const logcieq;
     Adjuster* const comprcieth;
     MyExpander* const expprecam;    
     Adjuster* const gamjcie;
@@ -1821,7 +1823,7 @@ private:
     ThresholdAdjuster* const csThresholdcie;
     int nextcomprciecount = 0;
    
-    sigc::connection AutograycieConn, primMethodconn, illMethodconn, catMethodconn, forcejzConn, forcebwConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, comprcieautoconn, normcieconn, logcieconn, satcieconn, smoothcieconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethodConn, fftcieMaskConn, gamutcieconn, expprecamconn, sigcieconn;
+    sigc::connection AutograycieConn, primMethodconn, illMethodconn, catMethodconn, forcejzConn, forcebwConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, comprcieautoconn, normcieconn, logcieconn, satcieconn, logcieqconn,smoothcieconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethodConn, fftcieMaskConn, gamutcieconn, expprecamconn, sigcieconn;
 public:
     Locallabcie();
     ~Locallabcie();
@@ -1880,6 +1882,7 @@ private:
     void catMethodChanged();
     void logcieChanged();
     void satcieChanged();
+    void logcieqChanged();
     void smoothcieChanged();
     void sigcieChanged();
     void logjzChanged();

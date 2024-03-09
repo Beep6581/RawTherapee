@@ -1156,7 +1156,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     savenormreti.reset(new LabImage(*oprevl, true));
                 }
                 
-                autocam[sp] = params->locallab.spots.at(sp).comprcieauto;
+                autocam[sp] = false;//disable //params->locallab.spots.at(sp).comprcieauto;
                 // Set local curves of current spot to LUT
                 locRETgainCurve.Set(params->locallab.spots.at(sp).localTgaincurve);
                 locRETtransCurve.Set(params->locallab.spots.at(sp).localTtranscurve);

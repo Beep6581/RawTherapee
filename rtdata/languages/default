@@ -1457,6 +1457,7 @@ HISTORY_MSG_LOCAL_CIE_EXPPRECAM;Local CIECAM Pre-Cam
 HISTORY_MSG_LOCAL_CIE_GAM;Local CIECAM Gamma
 HISTORY_MSG_LOCAL_CIE_GAMUTCIE;Local CIECAM Gamut
 HISTORY_MSG_LOCAL_CIE_ILL;Local CIECAM TRC Illuminant
+HISTORY_MSG_LOCAL_CIE_LOGCIEQ;Local CIECAM Log encoding Q
 HISTORY_MSG_LOCAL_CIE_MIDT;Local CIECAM Mid Tones
 HISTORY_MSG_LOCAL_CIE_NORM;Local CIECAM Normalize L
 HISTORY_MSG_LOCAL_CIE_PRIM;Local CIECAM TRC Primaries
@@ -3205,6 +3206,8 @@ TP_LOCALLAB_LOGBASE_TOOLTIP;Default = 2.\nValues less than 2 reduce the action o
 TP_LOCALLAB_LOGCATAD_TOOLTIP;Chromatic adaptation allows us to interpret a color according to its spatio-temporal environment.\nUseful when the white balance deviates significantly from the D50 reference.\nAdapts colors to the illuminant of the output device.
 TP_LOCALLAB_LOGCIE;Log encoding
 TP_LOCALLAB_LOGCIE_TOOLTIP;Allows you tu use Black Ev, White Ev, White and Black distribution, Scene Mean luminance(Yb%) and Viewing Mean luminance(Yb%) for tone-mapping using 'Log encoding' with Brightness compression.
+TP_LOCALLAB_LOGCIEQ;Log Encoding Q (with Ciecam)
+TP_LOCALLAB_LOGCIEQ_TOOLTIP;To do.
 TP_LOCALLAB_LOGCOLORFL;Colorfulness (M)
 TP_LOCALLAB_LOGCOLORF_TOOLTIP;Perceived amount of hue in relation to gray.\nIndicator that a stimulus appears more or less colored.
 TP_LOCALLAB_LOGCONQL;Contrast (Q)
