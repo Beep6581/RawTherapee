@@ -350,7 +350,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     bOriginal->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event), false);
 
     bRecursive = Gtk::manage(new Gtk::ToggleButton());
-    bRecursive->set_image(*Gtk::manage(new RTImage("folder-subfolder.png")));
+    bRecursive->set_image(*Gtk::manage(new RTImage("folder-subfolder", Gtk::ICON_SIZE_LARGE_TOOLBAR)));
     bRecursive->set_tooltip_text(M("FILEBROWSER_SHOWRECURSIVE"));
     bRecursive->set_relief(Gtk::RELIEF_NONE);
     bRecursive->set_active(options.browseRecursive);
