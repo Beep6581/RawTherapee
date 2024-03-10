@@ -10700,6 +10700,11 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             strcielog->show();
             satcie->show();
             logcieq->hide();
+            blackEvjz->hide();
+            whiteEvjz->hide();
+            whitescie->hide();
+            blackscie->hide();
+            logcieFrame->hide();
             comprcieth->hide();
             comprcieauto->hide();
             comprBox->show();
@@ -10800,6 +10805,12 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             strcielog->show();
             satcie->show();
             logcieq->hide();
+            blackEvjz->show();
+            whiteEvjz->show();
+            whitescie->show();
+            blackscie->show();
+            
+            logcieFrame->hide();
             comprcieth->show();
             comprcieauto->show();
             comprBox->show();
@@ -10928,6 +10939,11 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             comprcie->show();
             strcielog->show();
             logcieq->show();
+            blackEvjz->show();
+            whiteEvjz->show();
+            whitescie->show();
+            blackscie->show();
+            logcieFrame->show();
             comprcieth->show();
             comprcieauto->show();
             sigmoidsenscie->show();
@@ -11199,9 +11215,30 @@ void Locallabcie::updatecieGUI()
             maskusablecie->hide();
             maskunusablecie->hide();
             logcieq->hide();
+            logcieFrame->hide();
+            blackEvjz->hide();
+            whiteEvjz->hide();
+            whitescie->hide();
+            blackscie->hide();
+            
         }
 
+        if (mode == Normal) {
+            blackEvjz->show();
+            whiteEvjz->show();
+            whitescie->show();
+            blackscie->show();
+        }
+
+
         if (mode == Expert) {
+            logcieFrame->show();
+            blackEvjz->show();
+            whiteEvjz->show();
+            whitescie->show();
+            blackscie->show();
+            
+            
             if (logcieq->get_active()) {
                 satcie->hide();
             } else {
@@ -11295,6 +11332,12 @@ void Locallabcie::convertParamToSimple()
     sigmoidblcie->setValue(defSpot.sigmoidblcie);
     normcie->set_active(defSpot.normcie);
     logcieq->set_active(defSpot.logcieq);
+    logcie->set_active(defSpot.logcie);
+    blackEvjz->setValue(defSpot.blackEvjz);
+    whiteEvjz->setValue(defSpot.whiteEvjz);
+    whitescie->setValue(defSpot.whitescie);
+    blackscie->setValue(defSpot.blackscie);
+    
     sigq->set_active(defSpot.sigq);
     //sigq->set_active(defSpot.sigq);
     pqremapcam16->setValue(defSpot.pqremapcam16);
@@ -11322,6 +11365,7 @@ void Locallabcie::convertParamToNormal()
     sigmoidblcie->setValue(defSpot.sigmoidblcie);
     normcie->set_active(defSpot.normcie);
     logcieq->set_active(defSpot.logcieq);
+    logcie->set_active(defSpot.logcie);
 
     //contsigqcie->setValue(defSpot.contsigqcie);
     colorflcie->setValue(defSpot.colorflcie);
