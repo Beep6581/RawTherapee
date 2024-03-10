@@ -3967,7 +3967,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         }
     }
 
-    if (mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) { //call=2 vibrance warm-cool - call = 10 take into account "mean luminance Yb for Jz
+    if (mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) { //CAM16 call=2 vibrance warm-cool - call = 10 take into account "mean luminance Yb for Jz
 //begin ciecam
         if (settings->verbose && (mocam == 0 || mocam == 1  || call == 1)) {//display only if choice cam16
             //information on Cam16 scene conditions - allows user to see choices's incidences

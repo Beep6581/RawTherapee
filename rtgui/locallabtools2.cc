@@ -10249,6 +10249,9 @@ void Locallabcie::modecamChanged()
         sigmoidFrame->hide();
         forcejz->hide();
         expprecam->hide();
+        expcam16->hide();
+        expcamviewing->hide();
+
     } else {
         expjz->hide();
         jzFrame->hide();
@@ -10287,7 +10290,7 @@ void Locallabcie::modecamChanged()
  //   cieFrame->show();
     expcamscene->show();
 
-    if (modecam->get_active_row_number() == 1) {
+    if (modecam->get_active_row_number() == 1  && mode == Expert) {
         surHBoxcie->show();
         cie1Frame->hide();
         expcam16->hide();
@@ -10303,11 +10306,11 @@ void Locallabcie::modecamChanged()
         expgradcie->hide();
         expmaskcie->hide();
         expprecam->hide();
-
+        expcam16->hide();
         if (mode == Expert) {
             exprecovcie->show();
             expmaskcie->show();
-            expgradcie->show();
+            expgradcie->hide();
         }
 
     }
@@ -10381,6 +10384,8 @@ void Locallabcie::modecamChanged()
             expcam16->hide();
             expcamviewing->hide();
             catadcie->hide();
+            expgradcie->hide();
+            expcam16->hide();
            // cie2Frame->hide();
         }
     } else {
@@ -10397,7 +10402,7 @@ void Locallabcie::modecamChanged()
 
         }
 
-        if (modecam->get_active_row_number() == 1) {
+        if (modecam->get_active_row_number() == 1  && mode == Expert) {
             targetGraycie->hide();
             targabscie->hide();
             surrHBoxcie->hide();
@@ -10411,6 +10416,8 @@ void Locallabcie::modecamChanged()
             catadcie->hide();
            // cie2Frame->hide();
             expcamviewing->hide();
+            expgradcie->hide();
+            expcam16->hide();
 
             if (chjzcie->get_active()) {
                 thrhjzcie->set_sensitive(true);
@@ -10482,11 +10489,11 @@ void Locallabcie::modecieChanged()
         expmaskcie->show();
         expgradcie->show();
 
-        if (modecie->get_active_row_number() > 0) {
+        if (modecie->get_active_row_number() > 0  && mode == Expert) {
             sensicie->hide();
             reparcie->hide();
-            exprecovcie->hide();
-            expmaskcie->hide();
+            exprecovcie->show();
+            expmaskcie->show();
             expgradcie->hide();
 
         } else {
@@ -10750,6 +10757,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 expprecam->hide();
                 exprecovcie->hide();               
                 expgradcie->hide();
+                expcam16->hide();
                
             }
 
@@ -10888,6 +10896,8 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 maskusablecie->hide();
                 maskunusablecie->hide();
                 expprecam->hide();
+                expgradcie->hide();
+                expcam16->hide();
 
             }
 
@@ -11008,7 +11018,10 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 sigmoidFrame->hide();
                 forcejz->hide();
                 expprecam->hide();
-
+                expgradcie->hide();
+                expcam16->hide();
+                exprecovcie->show();
+                expmaskcie->show();
 
             }
 
@@ -11064,6 +11077,8 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 maskusablecie->show();
                 maskunusablecie->show();
                 expprecam->hide();
+                expgradcie->hide();
+                expcam16->hide();
 
                 if (chjzcie->get_active()) {
                     thrhjzcie->set_sensitive(true);
@@ -11173,7 +11188,7 @@ void Locallabcie::updatecieGUI()
         maskunusablecie->show();
     }
 
-    if (modecam->get_active_row_number() == 1) {
+    if (modecam->get_active_row_number() == 1  && mode == Expert) {
         surHBoxcie->show();
         cie1Frame->hide();
         expcam16->hide();
@@ -11190,7 +11205,12 @@ void Locallabcie::updatecieGUI()
       //  cie2Frame->hide();
         expprecam->hide();
         expcamviewing->hide();
-
+        expgradcie->hide();
+        expcam16->hide();
+        exprecovcie->show();
+        expmaskcie->show();
+        
+/*
         if (mode != Expert) {
             //cieFrame->hide();
             expcamscene->hide();
@@ -11245,7 +11265,7 @@ void Locallabcie::updatecieGUI()
                 satcie->show();
             }
         }
-
+*/
     }
 
     if (modecam->get_active_row_number() == 3) {
