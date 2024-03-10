@@ -88,9 +88,12 @@ CropWindow::CropWindow (ImageArea* parent, bool isLowUpdatePriority_, bool isDet
     initZoomSteps();
 
     Glib::RefPtr<Pango::Context> context = parent->get_pango_context () ;
-    Pango::FontDescription fontd = context->get_font_description ();
+    Pango::FontDescription fontd = parent->get_style_context()->get_font();
     fontd.set_weight (Pango::WEIGHT_BOLD);
-    fontd.set_size(8 * Pango::SCALE);
+    const int fontSize = 8; // pt
+    // Non-absolute size is defined in "Pango units" and shall be multiplied by
+    // Pango::SCALE from "pt":
+    fontd.set_size (fontSize * Pango::SCALE);
     context->set_font_description (fontd);
     Glib::RefPtr<Pango::Layout> cllayout = parent->create_pango_layout("1000%");
 
@@ -106,11 +109,11 @@ CropWindow::CropWindow (ImageArea* parent, bool isLowUpdatePriority_, bool isDet
         closett = "Close";
         initialized = true;
     }
-    bZoomOut = new LWButton(Cairo::RefPtr<RTSurface>(new RTSurface("magnifier-minus-small.png")), 0, nullptr, LWButton::Left, LWButton::Center, &zoomOuttt);
-    bZoomIn  = new LWButton(Cairo::RefPtr<RTSurface>(new RTSurface("magnifier-plus-small.png")), 1, nullptr, LWButton::Left, LWButton::Center, &zoomIntt);
-    bZoom100 = new LWButton(Cairo::RefPtr<RTSurface>(new RTSurface("magnifier-1to1-small.png")), 2, nullptr, LWButton::Left, LWButton::Center, &zoom100tt);
-     //bZoomFit = new LWButton (Cairo::RefPtr<RTSurface>(new RTSurface("magnifier-fit.png")), 3, NULL, LWButton::Left, LWButton::Center, "Zoom Fit");
-    bClose   = new LWButton(Cairo::RefPtr<RTSurface>(new RTSurface("cancel-small.png")), 4, nullptr, LWButton::Right, LWButton::Center, &closett);
+    bZoomOut = new LWButton(std::shared_ptr<RTSurface>(new RTSurface("magnifier-minus-small", Gtk::ICON_SIZE_BUTTON)), 0, nullptr, LWButton::Left, LWButton::Center, &zoomOuttt);
+    bZoomIn  = new LWButton(std::shared_ptr<RTSurface>(new RTSurface("magnifier-plus-small", Gtk::ICON_SIZE_BUTTON)), 1, nullptr, LWButton::Left, LWButton::Center, &zoomIntt);
+    bZoom100 = new LWButton(std::shared_ptr<RTSurface>(new RTSurface("magnifier-1to1-small", Gtk::ICON_SIZE_BUTTON)), 2, nullptr, LWButton::Left, LWButton::Center, &zoom100tt);
+     //bZoomFit = new LWButton (std::shared_ptr<RTSurface>(new RTSurface("magnifier-fit", Gtk::ICON_SIZE_BUTTON)), 3, NULL, LWButton::Left, LWButton::Center, "Zoom Fit");
+    bClose   = new LWButton(std::shared_ptr<RTSurface>(new RTSurface("cancel-small", Gtk::ICON_SIZE_BUTTON)), 4, nullptr, LWButton::Right, LWButton::Center, &closett);
 
     buttonSet.add (bZoomOut);
     buttonSet.add (bZoomIn);
@@ -2480,9 +2483,12 @@ void CropWindow::drawDecoration (Cairo::RefPtr<Cairo::Context> cr)
     int x = xpos, y = ypos;
     // prepare label
     Glib::RefPtr<Pango::Context> context = iarea->get_pango_context () ;
-    Pango::FontDescription fontd = context->get_font_description ();
+    Pango::FontDescription fontd = iarea->get_style_context()->get_font();
     fontd.set_weight (Pango::WEIGHT_BOLD);
-    fontd.set_size(8 * Pango::SCALE);
+    const int fontSize = 8; // pt
+    // Non-absolute size is defined in "Pango units" and shall be multiplied by
+    // Pango::SCALE from "pt":
+    fontd.set_size (fontSize * Pango::SCALE);
     context->set_font_description (fontd);
     Glib::RefPtr<Pango::Layout> cllayout = iarea->create_pango_layout(cropLabel);
     int iw, ih;
@@ -2544,9 +2550,12 @@ void CropWindow::drawStraightenGuide (Cairo::RefPtr<Cairo::Context> cr)
     }
 
     Glib::RefPtr<Pango::Context> context = iarea->get_pango_context () ;
-    Pango::FontDescription fontd = context->get_font_description ();
+    Pango::FontDescription fontd = iarea->get_style_context()->get_font();
     fontd.set_weight (Pango::WEIGHT_BOLD);
-    fontd.set_size (8 * Pango::SCALE);
+    const int fontSize = 8; // pt
+    // Non-absolute size is defined in "Pango units" and shall be multiplied by
+    // Pango::SCALE from "pt":
+    fontd.set_size (fontSize * Pango::SCALE);
     context->set_font_description (fontd);
     Glib::RefPtr<Pango::Layout> deglayout = iarea->create_pango_layout(Glib::ustring::compose ("%1 deg", Glib::ustring::format(std::setprecision(2), rot_deg)));
 

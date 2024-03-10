@@ -115,29 +115,29 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, TOOL_NAME, M("TP_P
     panel_listener = nullptr;
     metadata = nullptr;
 
-    Gtk::Image* ipers_draw(new RTImage ("draw.png"));
-    Gtk::Image* ipers_trash = Gtk::manage (new RTImage ("trash-empty.png"));
-    Gtk::Image* ipers_apply = Gtk::manage (new RTImage ("tick.png"));
+    RTImage* const ipers_draw = Gtk::manage (new RTImage ("draw", Gtk::ICON_SIZE_BUTTON));
+    RTImage* const ipers_trash = Gtk::manage (new RTImage ("trash-empty", Gtk::ICON_SIZE_BUTTON));
+    RTImage* const ipers_apply = Gtk::manage (new RTImage ("tick", Gtk::ICON_SIZE_BUTTON));
 
-    Gtk::Image* ipersHL =   Gtk::manage (new RTImage ("perspective-horizontal-left-small.png"));
-    Gtk::Image* ipersHR =   Gtk::manage (new RTImage ("perspective-horizontal-right-small.png"));
-    Gtk::Image* ipersVL =   Gtk::manage (new RTImage ("perspective-vertical-bottom-small.png"));
-    Gtk::Image* ipersVR =   Gtk::manage (new RTImage ("perspective-vertical-top-small.png"));
+    RTImage* const ipersHL = Gtk::manage (new RTImage ("perspective-horizontal-left-small"));
+    RTImage* const ipersHR = Gtk::manage (new RTImage ("perspective-horizontal-right-small"));
+    RTImage* const ipersVL = Gtk::manage (new RTImage ("perspective-vertical-bottom-small"));
+    RTImage* const ipersVR = Gtk::manage (new RTImage ("perspective-vertical-top-small"));
 
-    Gtk::Image* ipers_auto_pitch = Gtk::manage (new RTImage ("perspective-vertical-bottom.png"));
-    Gtk::Image* ipers_auto_yaw = Gtk::manage (new RTImage ("perspective-horizontal-left.png"));
-    Gtk::Image* ipers_auto_pitch_yaw = Gtk::manage (new RTImage ("perspective-horizontal-vertical.png"));
+    RTImage* const ipers_auto_pitch = Gtk::manage (new RTImage ("perspective-vertical-bottom", Gtk::ICON_SIZE_BUTTON));
+    RTImage* const ipers_auto_yaw = Gtk::manage (new RTImage ("perspective-horizontal-left", Gtk::ICON_SIZE_BUTTON));
+    RTImage* const ipers_auto_pitch_yaw = Gtk::manage (new RTImage ("perspective-horizontal-vertical", Gtk::ICON_SIZE_BUTTON));
 
-    Gtk::Image* ipers_cam_yaw_left = Gtk::manage (new RTImage ("perspective-horizontal-left-small.png"));
-    Gtk::Image* ipers_cam_yaw_right = Gtk::manage (new RTImage ("perspective-horizontal-right-small.png"));
-    Gtk::Image* ipers_cam_pitch_left = Gtk::manage (new RTImage ("perspective-vertical-bottom-small.png"));
-    Gtk::Image* ipers_cam_pitch_right = Gtk::manage (new RTImage ("perspective-vertical-top-small.png"));
-    Gtk::Image* ipers_proj_yaw_left = Gtk::manage (new RTImage ("perspective-horizontal-left-small.png"));
-    Gtk::Image* ipers_proj_yaw_right = Gtk::manage (new RTImage ("perspective-horizontal-right-small.png"));
-    Gtk::Image* ipers_proj_pitch_left = Gtk::manage (new RTImage ("perspective-vertical-bottom-small.png"));
-    Gtk::Image* ipers_proj_pitch_right = Gtk::manage (new RTImage ("perspective-vertical-top-small.png"));
-    Gtk::Image* ipers_rotate_left = Gtk::manage(new RTImage("rotate-right-small.png"));
-    Gtk::Image* ipers_rotate_right = Gtk::manage(new RTImage("rotate-left-small.png"));
+    RTImage* const ipers_cam_yaw_left = Gtk::manage (new RTImage ("perspective-horizontal-left-small"));
+    RTImage* const ipers_cam_yaw_right = Gtk::manage (new RTImage ("perspective-horizontal-right-small"));
+    RTImage* const ipers_cam_pitch_left = Gtk::manage (new RTImage ("perspective-vertical-bottom-small"));
+    RTImage* const ipers_cam_pitch_right = Gtk::manage (new RTImage ("perspective-vertical-top-small"));
+    RTImage* const ipers_proj_yaw_left = Gtk::manage (new RTImage ("perspective-horizontal-left-small"));
+    RTImage* const ipers_proj_yaw_right = Gtk::manage (new RTImage ("perspective-horizontal-right-small"));
+    RTImage* const ipers_proj_pitch_left = Gtk::manage (new RTImage ("perspective-vertical-bottom-small"));
+    RTImage* const ipers_proj_pitch_right = Gtk::manage (new RTImage ("perspective-vertical-top-small"));
+    RTImage* const ipers_rotate_left = Gtk::manage(new RTImage("rotate-right-small"));
+    RTImage* const ipers_rotate_right = Gtk::manage(new RTImage("rotate-left-small"));
 
     Gtk::Box* method_hbox = Gtk::manage (new Gtk::Box());
     Gtk::Label* method_label = Gtk::manage (new Gtk::Label (M("TP_PERSPECTIVE_METHOD") + ": "));

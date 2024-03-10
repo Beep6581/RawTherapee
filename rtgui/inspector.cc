@@ -590,7 +590,7 @@ void Inspector::switchImage (const Glib::ustring &fullPath)
 bool Inspector::doSwitchImage()
 {
     Glib::ustring fullPath = next_image_path;
-    
+
     // we first check the size of the list, it may have been changed in Preference
     if (images.size() > size_t(options.maxInspectorBuffers)) {
         // deleting the last entries
@@ -688,14 +688,14 @@ Gtk::SizeRequestMode Inspector::get_request_mode_vfunc () const
 
 void Inspector::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
 {
-    minimum_height= 50 * RTScalable::getScale();
-    natural_height = 300 * RTScalable::getScale();
+    minimum_height = RTScalable::scalePixelSize(50);
+    natural_height = RTScalable::scalePixelSize(300);
 }
 
 void Inspector::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
-    minimum_width = 50 * RTScalable::getScale();
-    natural_width = 200 * RTScalable::getScale();
+    minimum_width = RTScalable::scalePixelSize(50);
+    natural_width = RTScalable::scalePixelSize(200);
 }
 
 void Inspector::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const

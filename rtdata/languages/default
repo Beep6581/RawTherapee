@@ -1692,12 +1692,12 @@ MAIN_TAB_DETAIL;Detail
 MAIN_TAB_DETAIL_TOOLTIP;Shortcut: <b>Alt-d</b>
 MAIN_TAB_DEVELOP; Batch Edit
 MAIN_TAB_EXIF;Exif
-MAIN_TAB_EXPORT; Fast Export 
+MAIN_TAB_EXPORT; Fast Export
 MAIN_TAB_EXPOSURE;Exposure
 MAIN_TAB_EXPOSURE_TOOLTIP;Shortcut: <b>Alt-e</b>
 MAIN_TAB_FAVORITES;Favorites
 MAIN_TAB_FAVORITES_TOOLTIP;Shortcut: <b>Alt-u</b>
-MAIN_TAB_FILTER; Filter 
+MAIN_TAB_FILTER; Filter
 MAIN_TAB_INSPECT; Inspect
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_LOCALLAB;Local
@@ -1835,7 +1835,6 @@ PREFERENCES_APPEARANCE_COLORPICKERFONT;Color picker font
 PREFERENCES_APPEARANCE_CROPMASKCOLOR;Crop mask color
 PREFERENCES_APPEARANCE_MAINFONT;Main font
 PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Navigator guide color
-PREFERENCES_APPEARANCE_PSEUDOHIDPI;Pseudo-HiDPI mode
 PREFERENCES_APPEARANCE_THEME;Theme
 PREFERENCES_APPLNEXTSTARTUP;restart required
 PREFERENCES_AUTOMONPROFILE;Use operating system's main monitor color profile
@@ -2051,7 +2050,7 @@ PREFERENCES_WBANOPURP;No purple color used
 PREFERENCES_WBAPATCH;Number maximum of colors used in picture
 PREFERENCES_WBAPRECIS;Precision algorithm - scale used
 PREFERENCES_WBASIZEREF;Size of reference color compare to size of histogram color
-PREFERENCES_WBASORT;Sort in chroma order instead of histogram 
+PREFERENCES_WBASORT;Sort in chroma order instead of histogram
 PREFERENCES_WORKFLOW;Layout
 PREFERENCES_XMP_SIDECAR_MODE;XMP sidecar style
 PREFERENCES_XMP_SIDECAR_MODE_EXT;darktable-like (FILENAME.ext.xmp for FILENAME.ext)
@@ -3170,7 +3169,7 @@ TP_LOCALLAB_LUMASK;Background color/luma mask
 TP_LOCALLAB_LUMASK_TOOLTIP;Adjusts the shade of gray or color of the mask background in Show Mask (Mask and modifications).
 TP_LOCALLAB_LUMAWHITESEST;Lightest
 TP_LOCALLAB_LUMFRA;L*a*b* standard
-TP_LOCALLAB_LUMLABEL;Luma levels 0123: Mean=%1 High=%2 
+TP_LOCALLAB_LUMLABEL;Luma levels 0123: Mean=%1 High=%2
 TP_LOCALLAB_MASFRAME;Mask and Merge
 TP_LOCALLAB_MASFRAME_TOOLTIP;For all masks.\nTakes into account the ΔE image to avoid modifying the selection area when the following Mask Tools are used: Gamma, Slope, Chroma, Contrast curve, Local contrast (by wavelet level), Blur Mask and Structure Mask (if enabled ).\nDisabled when Inverse mode is used.
 TP_LOCALLAB_MASK;Curves
@@ -4232,7 +4231,7 @@ TP_WBALANCE_METHOD;Method
 TP_WBALANCE_MULLABEL;Multipliers: r=%1 g=%2 b=%3
 TP_WBALANCE_MULLABEL_TOOLTIP;Values given for information purposes. You cannot change them.
 TP_WBALANCE_OBSERVER10;Observer 10° instead of Observer 2°
-TP_WBALANCE_OBSERVER10_TOOLTIP;The color management in Rawtherapee (White balance, channel multipliers, highlight recovery,...) uses the spectral data of the illuminants and colors. Observer is an important parameter of this management which takes into account the angle of perception of the eye. In 1931 it was fixed at 2° (privileges the use of the cones). In 1964 it was fixed at 10° (privileges the use of the cones, but partially takes into account the rods).\nTo avoid a (rare) drift of the colors due to the choice Observer 10° - probably due to the conversion matrix - Observer 2° must be selected.\nIn a majority of cases Observer 10° (default) will be a more relevant choice.
+TP_WBALANCE_OBSERVER10_TOOLTIP;The color management in Rawtherapee (White balance, channel multipliers, highlight recovery,...) uses the spectral data of the illuminants and colors. Observer is an important parameter of this management which takes into account the angle of perception of the eye. In 1931 it was fixed at 2° (privileges the use of the cones). In 1964 it was fixed at 10° (privileges the use of the cones, but partially takes into account the rods).\nIn the rare case of a color drift with "Observer 2°" (probably due to the conversion matrix) “Observer 10°” must be selected.
 TP_WBALANCE_PATCHLABEL;Read colors:%1 Patch: Chroma:%2 Size=%3
 TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colors (max=237).\nDisplay calculated Patch Chroma.\nAWB temperature bias, lets try to reduce this value, a minimum may seem to optimize the algorithm.\n\nPatch size matching chroma optimization.
 TP_WBALANCE_PATCHLEVELLABEL;Patch: ΔE=%1 - datas x 9 Min:%2 Max=%3

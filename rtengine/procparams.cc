@@ -2971,7 +2971,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     structexclu(0),
     struc(4.0),
     shapeMethod("IND"),
-    avoidgamutMethod("XYZ"),
+    avoidgamutMethod("MUNS"),
     loc{150, 150, 150, 150},
     centerX(0),
     centerY(0),

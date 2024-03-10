@@ -37,6 +37,10 @@ ExifPanel::ExifPanel() :
     idata(nullptr),
     changeList(new rtengine::procparams::ExifPairs),
     defChangeList(new rtengine::procparams::ExifPairs),
+    //keepicon("tick-small"),
+    editicon("edit-small"),
+    open_icon_("expander-open-small"),
+    closed_icon_("expander-closed-small"),
     pl_(nullptr)
 {
     for (auto &k : MetaDataParams::basicExifKeys) {
@@ -64,11 +68,6 @@ ExifPanel::ExifPanel() :
     exifTree->set_tooltip_column(0);
     exifTree->set_enable_search(false);
 
-    //keepicon = RTImage::createPixbufFromFile("tick-small.png");
-    editicon = RTImage::createPixbufFromFile("edit-small.png");
-    open_icon_ = RTImage::createPixbufFromFile("expander-open-small.png");
-    closed_icon_ = RTImage::createPixbufFromFile("expander-closed-small.png");
-
     exif_active_renderer_.property_mode() = Gtk::CELL_RENDERER_MODE_ACTIVATABLE;
     exif_active_renderer_.signal_toggled().connect(sigc::mem_fun(this, &ExifPanel::onKeyActiveToggled));
     exif_active_column_.pack_start(exif_active_renderer_);
@@ -77,12 +76,13 @@ ExifPanel::ExifPanel() :
     exifTree->append_column(exif_active_column_);
 
     Gtk::TreeView::Column *viewcol = Gtk::manage (new Gtk::TreeView::Column ("Field Name"));
-    Gtk::CellRendererPixbuf* render_pb = Gtk::manage (new Gtk::CellRendererPixbuf ());
+    Gtk::CellRendererPixbuf* render_pb = Gtk::manage (new Gtk::CellRendererPixbuf());
+    render_pb->property_stock_size() = Gtk::ICON_SIZE_SMALL_TOOLBAR;
     Gtk::CellRendererText *render_txt = Gtk::manage (new Gtk::CellRendererText());
     render_txt->property_ellipsize() = Pango::ELLIPSIZE_END;
     viewcol->pack_start(*render_pb, false);
     viewcol->pack_start(*render_txt, true);
-    viewcol->add_attribute(*render_pb, "pixbuf", exifColumns.icon);
+    viewcol->add_attribute(*render_pb, "icon-name", exifColumns.icon);
     viewcol->add_attribute(*render_txt, "markup", exifColumns.label);
     viewcol->set_expand(true);
     viewcol->set_resizable(true);
@@ -123,10 +123,10 @@ ExifPanel::ExifPanel() :
     setExpandAlignProperties (buttons1, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
     const auto addbtn =
-        [&](const Glib::ustring &tip, const Glib::ustring &icon1, const Glib::ustring &icon2=Glib::ustring()) -> Gtk::Button *
+        [&](const Glib::ustring &tip, const Glib::ustring &icon) -> Gtk::Button *
         {
             Gtk::Button *b = Gtk::manage(new Gtk::Button());
-            b->set_image(*Gtk::manage(new RTImage(icon1, icon2)));
+            b->set_image(*Gtk::manage(new RTImage(icon, Gtk::ICON_SIZE_BUTTON)));
             b->set_tooltip_text(M(tip));
             b->get_style_context()->add_class("Right");
             setExpandAlignProperties(b, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
@@ -134,11 +134,11 @@ ExifPanel::ExifPanel() :
             return b;
         };
 
-    activate_all_ = addbtn("EXIFPANEL_ACTIVATE_ALL_HINT", "tick.png");
-    activate_none_ = addbtn("EXIFPANEL_ACTIVATE_NONE_HINT", "box.png");
-    add = addbtn("EXIFPANEL_ADDEDIT", "edit.png");
-    reset = addbtn("EXIFPANEL_RESETHINT", "undo.png", "redo.png");
-    resetAll = addbtn("EXIFPANEL_RESETALLHINT", "undo-all.png", "redo-all.png");
+    activate_all_ = addbtn("EXIFPANEL_ACTIVATE_ALL_HINT", "tick");
+    activate_none_ = addbtn("EXIFPANEL_ACTIVATE_NONE_HINT", "box");
+    add = addbtn("EXIFPANEL_ADDEDIT", "edit");
+    reset = addbtn("EXIFPANEL_RESETHINT", "undo");
+    resetAll = addbtn("EXIFPANEL_RESETALLHINT", "undo-all");
 
     pack_end (*buttons1, Gtk::PACK_SHRINK);
 

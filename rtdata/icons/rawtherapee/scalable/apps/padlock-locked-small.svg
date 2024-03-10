@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="16"
+   height="16"
+   viewBox="0 0 16 16"
+   version="1.1"
+   id="SVGRoot"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs815" />
+  <metadata
+     id="metadata818">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Maciej Dworak</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title />
+          </cc:Agent>
+        </dc:rights>
+        <dc:description>RawTherapee icon.</dc:description>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     transform="translate(0,-8)">
+    <path
+       style="opacity:0.7;fill:#cccccc;fill-opacity:1.0;stroke:none;stroke-width:0.17045528;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 2.4011244,13.827807 C 1.6248731,13.827807 1,14.54498 1,15.435751 V 21.39206 C 1,22.28283 1.6248731,23 2.4011244,23 H 9.000911 c 0.776247,0 1.401307,-0.71717 1.401307,-1.60794 v -5.956309 c 0,-0.890771 -0.62506,-1.607944 -1.401307,-1.607944 z m 3.2999866,1.93302 a 1.5963236,1.5963236 0 0 1 1.5962459,1.596433 1.5963236,1.5963236 0 0 1 -0.7934815,1.377546 v 2.844763 c 0,0.05704 -0.04851,0.103037 -0.1087951,0.103037 H 5.0069542 c -0.060286,0 -0.108795,-0.046 -0.108795,-0.103037 v -2.84458 A 1.5963236,1.5963236 0 0 1 4.104865,17.35726 1.5963236,1.5963236 0 0 1 5.701111,15.760827 Z"
+       id="path185" />
+    <path
+       style="opacity:0.7;fill:#cccccc;fill-opacity:1.0;stroke:none;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 5.7011719,9 C 3.635691,9 1.9335938,10.593706 1.9335938,12.587891 v 1.3125 A 0.47174083,0.47174083 0 0 0 1.9453125,14 h 1.9316406 a 0.47174083,0.47174083 0 0 0 0.011719,-0.09961 v -1.019532 c 0,-0.928894 0.8366765,-1.890625 1.8125,-1.890625 0.9758209,0 1.8125,0.961735 1.8125,1.890625 V 14 H 9.46875 V 12.587891 C 9.46875,10.593702 7.7666502,9 5.7011719,9 Z"
+       id="path187" />
+    <path
+       id="path1468"
+       d="M -16.598876,13.827807 C -17.375127,13.827807 -18,14.54498 -18,15.435751 V 21.39206 C -18,22.28283 -17.375127,23 -16.598876,23 h 6.599787 c 0.776247,0 1.401307,-0.71717 1.401307,-1.60794 v -5.956309 c 0,-0.890771 -0.62506,-1.607944 -1.401307,-1.607944 z m 3.299987,1.93302 a 1.5963236,1.5963236 0 0 1 1.596246,1.596433 1.5963236,1.5963236 0 0 1 -0.793482,1.377546 v 2.844763 c 0,0.05704 -0.04851,0.103037 -0.108795,0.103037 h -1.388126 c -0.06029,0 -0.108795,-0.046 -0.108795,-0.103037 v -2.84458 a 1.5963236,1.5963236 0 0 1 -0.793294,-1.377729 1.5963236,1.5963236 0 0 1 1.596246,-1.596433 z"
+       style="opacity:0.7;fill:#cccccc;fill-opacity:1.0;stroke:none;stroke-width:0.17045528;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <path
+       d="m -84.964844,437.23047 c -5.749245,0 -10.486328,4.43747 -10.486328,9.98828 v 7.01563 a 1.3130874,1.3130874 0 0 0 1.369141,1.3125 c 0.146957,-0.006 0.216026,-0.0137 0.21875,-0.0137 h 2.539062 a 1.3130874,1.3130874 0 0 0 1.3125,-1.3125 v -6.1875 c 0,-2.58556 2.330684,-5.26562 5.046875,-5.26562 2.716198,0 5.046875,2.68005 5.046875,5.26562 v 2.83985 a 1.3130874,1.3130874 0 0 0 1.3125,1.3125 h 2.814453 a 1.3130874,1.3130874 0 0 0 1.3125,-1.3125 v -3.6543 c 0,-5.5508 -4.737076,-9.98828 -10.486328,-9.98828 z"
+       id="path1470"
+       style="opacity:0.7;fill:#cccccc;fill-opacity:1.0;stroke:none;stroke-width:0.7735216;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       transform="matrix(-0.3592608,0,0,0.3592608,-43.823425,-148.07977)" />
+  </g>
+</svg>

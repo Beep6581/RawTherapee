@@ -76,7 +76,8 @@ constexpr double czlim = rtengine::RT_SQRT1_2;// 0.70710678118654752440;
 
 constexpr float clipLoc(float x)
 {
-    return rtengine::LIM(x, 0.f, 32767.f);
+    //return rtengine::LIM(x, 0.f, 32767.f);//remove leads to bad behavior
+    return x;
 }
 
 constexpr float clipDE(float x)
@@ -86,12 +87,12 @@ constexpr float clipDE(float x)
 
 constexpr float clipC(float x)
 {
-    return rtengine::LIM(x, -42000.f, 42000.f);
+    return rtengine::LIM(x, -100000.f, 100000.f);//increase LIM from 42000 to 1000000 to avoid clip and also imaginaries colors
 }
 
 constexpr float clipChro(float x)
 {
-    return rtengine::LIM(x, 0.f, 140.f);
+    return rtengine::LIM(x, 0.f, 300.f);//increase LIM from 140 to 300 to avoid clip and also imaginaries colors
 }
 
 constexpr double clipazbz(double x)

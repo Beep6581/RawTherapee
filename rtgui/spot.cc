@@ -60,18 +60,18 @@ Spot::Spot() :
     draggedSide(DraggedSide::NONE),
     lastObject(-1),
     activeSpot(-1),
-    sourceIcon("spot-normal.png", "spot-active.png", "spot-prelight.png", "", "", Geometry::DP_CENTERCENTER),
+    sourceIcon("spot-normal", "spot-active", "spot-prelight", "", "", Geometry::DP_CENTERCENTER),
     editedCheckBox(nullptr)
 {
     countLabel = Gtk::manage (new Gtk::Label (Glib::ustring::compose (M ("TP_SPOT_COUNTLABEL"), 0)));
 
     edit = Gtk::manage (new Gtk::ToggleButton());
-    edit->add (*Gtk::manage (new RTImage ("edit-point.png")));
+    edit->add (*Gtk::manage (new RTImage ("edit-point")));
     editConn = edit->signal_toggled().connect ( sigc::mem_fun (*this, &Spot::editToggled) );
     edit->set_tooltip_text(M("TP_SPOT_HINT"));
 
     reset = Gtk::manage (new Gtk::Button ());
-    reset->add (*Gtk::manage (new RTImage ("undo-small.png")));
+    reset->add (*Gtk::manage (new RTImage ("undo-small")));
     reset->set_relief (Gtk::RELIEF_NONE);
     reset->set_border_width (0);
     reset->signal_clicked().connect ( sigc::mem_fun (*this, &Spot::resetPressed) );
@@ -85,7 +85,7 @@ Spot::Spot() :
     labelBox->pack_end (*reset, false, false, 0);
     labelBox->pack_end (*spotSize, false, false, 0);
     pack_start (*labelBox);
-    
+
     sourceIcon.datum = Geometry::IMAGE;
     sourceIcon.setActive (false);
     sourceIcon.state = Geometry::ACTIVE;
@@ -346,12 +346,12 @@ void Spot::createGeometry ()
     EditSubscriber::mouseOverGeometry.at (i++) = &sourceFeatherCircle; // MO_OBJECT_COUNT + 5
 
     // recreate all spots geometry
-    Cairo::RefPtr<RTSurface> normalImg   = sourceIcon.getNormalImg();
-    Cairo::RefPtr<RTSurface> prelightImg = sourceIcon.getPrelightImg();
-    Cairo::RefPtr<RTSurface> activeImg   = sourceIcon.getActiveImg();
+    std::shared_ptr<RTSurface> normalImg   = sourceIcon.getNormalImg();
+    std::shared_ptr<RTSurface> prelightImg = sourceIcon.getPrelightImg();
+    std::shared_ptr<RTSurface> activeImg   = sourceIcon.getActiveImg();
 
     for (; j < EditSubscriber::visibleGeometry.size() - VISIBLE_OBJECT_COUNT; ++i, ++j) {
-        EditSubscriber::mouseOverGeometry.at (i) = EditSubscriber::visibleGeometry.at (j) = new OPIcon (normalImg, activeImg, prelightImg, Cairo::RefPtr<RTSurface> (nullptr), Cairo::RefPtr<RTSurface> (nullptr), Geometry::DP_CENTERCENTER);
+        EditSubscriber::mouseOverGeometry.at (i) = EditSubscriber::visibleGeometry.at (j) = new OPIcon (normalImg, activeImg, prelightImg, nullptr, nullptr, Geometry::DP_CENTERCENTER);
         EditSubscriber::visibleGeometry.at (j)->setActive (true);
         EditSubscriber::visibleGeometry.at (j)->datum = Geometry::IMAGE;
         EditSubscriber::visibleGeometry.at (j)->state = Geometry::NORMAL;

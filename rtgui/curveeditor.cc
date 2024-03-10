@@ -75,11 +75,11 @@ bool CurveEditor::reset()
 DiagonalCurveEditor::DiagonalCurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup, CurveEditorSubGroup* ceSubGroup) : CurveEditor::CurveEditor(text, static_cast<CurveEditorGroup*>(ceGroup), ceSubGroup)
 {
 
-    curveType->addEntry("curve-linear-small.png", M("CURVEEDITOR_LINEAR")); // 0 Linear
-    curveType->addEntry("curve-spline-small.png", M("CURVEEDITOR_CUSTOM")); // 1 Spline
-    curveType->addEntry("curve-catmullrom-small.png", M("CURVEEDITOR_CATMULLROM")); // 4 CatmullRom
-    curveType->addEntry("curve-parametric-small.png", M("CURVEEDITOR_PARAMETRIC")); // 2 Parametric
-    curveType->addEntry("curve-nurbs-small.png", M("CURVEEDITOR_NURBS")); // 3 NURBS
+    curveType->addEntry("curve-linear-small", M("CURVEEDITOR_LINEAR")); // 0 Linear
+    curveType->addEntry("curve-spline-small", M("CURVEEDITOR_CUSTOM")); // 1 Spline
+    curveType->addEntry("curve-catmullrom-small", M("CURVEEDITOR_CATMULLROM")); // 4 CatmullRom
+    curveType->addEntry("curve-parametric-small", M("CURVEEDITOR_PARAMETRIC")); // 2 Parametric
+    curveType->addEntry("curve-nurbs-small", M("CURVEEDITOR_NURBS")); // 3 NURBS
     static_cast<CurveTypePopUpButton *>(curveType)->setPosIndexMap({ 0, 1, 4, 2, 3 });
     curveType->setSelected(DCT_Linear);
 
@@ -199,8 +199,8 @@ FlatCurveEditor::FlatCurveEditor (Glib::ustring text, CurveEditorGroup* ceGroup,
     identityValue = 0.5;
 
     // Order set in the same order than "enum FlatCurveType". Shouldn't change, for compatibility reason
-    curveType->addEntry("curve-flat-small.png", M("CURVEEDITOR_LINEAR")); // 0 Linear
-    curveType->addEntry("curve-controlpoints-small.png", M("CURVEEDITOR_MINMAXCPOINTS")); // 1 Min/Max ControlPoints
+    curveType->addEntry("curve-flat-small", M("CURVEEDITOR_LINEAR")); // 0 Linear
+    curveType->addEntry("curve-controlpoints-small", M("CURVEEDITOR_MINMAXCPOINTS")); // 1 Min/Max ControlPoints
     curveType->setSelected(FCT_Linear);
     curveType->show();
 }

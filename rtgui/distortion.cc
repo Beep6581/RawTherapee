@@ -40,7 +40,7 @@ Distortion::Distortion (): FoldableToolPanel(this, TOOL_NAME, M("TP_DISTORTION_L
 
     rlistener = nullptr;
     autoDistor = Gtk::manage (new Gtk::Button (M("GENERAL_AUTO")));
-    autoDistor->set_image (*Gtk::manage (new RTImage ("distortion-auto-small.png")));
+    autoDistor->set_image (*Gtk::manage (new RTImage ("distortion-auto-small", Gtk::ICON_SIZE_BUTTON)));
     autoDistor->get_style_context()->add_class("independent");
     autoDistor->set_alignment(0.5f, 0.5f);
     autoDistor->set_tooltip_text (M("TP_DISTORTION_AUTO_TOOLTIP"));
@@ -48,8 +48,8 @@ Distortion::Distortion (): FoldableToolPanel(this, TOOL_NAME, M("TP_DISTORTION_L
     autoDistor->show();
     pack_start (*autoDistor);
 
-    Gtk::Image* idistL =   Gtk::manage (new RTImage ("distortion-pincushion-small.png"));
-    Gtk::Image* idistR =   Gtk::manage (new RTImage ("distortion-barrel-small.png"));
+    Gtk::Image* idistL =   Gtk::manage (new RTImage ("distortion-pincushion-small"));
+    Gtk::Image* idistR =   Gtk::manage (new RTImage ("distortion-barrel-small"));
 
     distor = Gtk::manage (new Adjuster (M("TP_DISTORTION_AMOUNT"), -0.5, 0.5, 0.001, 0, idistL, idistR));
     distor->setAdjusterListener (this);

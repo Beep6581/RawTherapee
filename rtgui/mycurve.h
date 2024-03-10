@@ -57,7 +57,7 @@ class MyCurveIdleHelper;
 class CurveEditor;
 class EditDataProvider;
 
-class MyCurve : public Gtk::DrawingArea, public BackBuffer, public ColorCaller, public CoordinateProvider, public rtengine::NonCopyable
+class MyCurve : public Gtk::DrawingArea, public ColorCaller, public CoordinateProvider, public rtengine::NonCopyable
 {
     friend class MyCurveIdleHelper;
 
@@ -150,6 +150,6 @@ public:
 
     void clearPixmap ()
     {
-        myCurve->setDirty(true);
+        myCurve->queue_draw();
     }
 };

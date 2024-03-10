@@ -37,7 +37,7 @@
 #define STARTUPDIR_CUSTOM  2
 #define STARTUPDIR_LAST    3
 
-#define THEMEREGEXSTR      "^(.+)-GTK3-(\\d{1,2})?_(\\d{1,2})?\\.css$"
+#define THEMEREGEXSTR      "^(.+)\\.css$"
 
 // Default bundled profile name to use for Raw images
 #ifdef _WIN32
@@ -254,7 +254,6 @@ public:
     int fontSize;                // RT's main font size (units: pt)
     Glib::ustring CPFontFamily;  // ColorPicker font family
     int CPFontSize;              // ColorPicker font size (units: pt)
-    bool pseudoHiDPISupport;
     bool fbOnlyRaw;
     bool fbShowDateTime;
     bool fbShowBasicExif;
@@ -306,7 +305,7 @@ public:
     Glib::ustring editor_custom_out_dir;
     bool editor_float32;
     bool editor_bypass_output_profile;
-    
+
     int maxThumbnailHeight;
     int maxThumbnailWidth;
     std::size_t maxCacheEntries;
