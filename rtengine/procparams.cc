@@ -4653,16 +4653,6 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     contqcie(0.),
     contsigqcie(0.),
     colorflcie(0.),
-/*
-    lightlzcam(0.),
-    lightqzcam(0.),
-    contlzcam(0.),
-    contqzcam(0.), 
-    contthreszcam(0.),
-    colorflzcam(0.),
-    saturzcam(0.),
-    chromzcam(0.),
-*/
     targabscie(16.),
     targetGraycie(18.),
     catadcie(0.),
@@ -5498,15 +5488,6 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && contqcie == other.contqcie
         && contsigqcie == other.contsigqcie
         && colorflcie == other.colorflcie
-/*        && lightlzcam == other.lightlzcam
-        && lightqzcam == other.lightqzcam
-        && contlzcam == other.contlzcam
-        && contqzcam == other.contqzcam
-        && contthreszcam == other.contthreszcam
-        && colorflzcam == other.colorflzcam
-        && saturzcam == other.saturzcam
-        && chromzcam == other.chromzcam
-*/
         && targabscie == other.targabscie
         && targetGraycie == other.targetGraycie
         && catadcie == other.catadcie
@@ -7447,16 +7428,6 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->contqcie, "Locallab", "Contqcie_" + index_str, spot.contqcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->contsigqcie, "Locallab", "Contsigqcie_" + index_str, spot.contsigqcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->colorflcie, "Locallab", "Colorflcie_" + index_str, spot.colorflcie, keyFile);
-/*
-                    saveToKeyfile(!pedited || spot_edited->lightlzcam, "Locallab", "Lightlzcam_" + index_str, spot.lightlzcam, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->lightqzcam, "Locallab", "Lightqzcam_" + index_str, spot.lightqzcam, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->contlzcam, "Locallab", "Contlzcam_" + index_str, spot.contlzcam, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->contqzcam, "Locallab", "Contqzcam_" + index_str, spot.contqzcam, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->contthreszcam, "Locallab", "Contthreszcam_" + index_str, spot.contthreszcam, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->colorflzcam, "Locallab", "Colorflzcam_" + index_str, spot.colorflzcam, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->saturzcam, "Locallab", "Saturzcam_" + index_str, spot.saturzcam, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->chromzcam, "Locallab", "Chromzcam_" + index_str, spot.chromzcam, keyFile);
-*/
                     saveToKeyfile(!pedited || spot_edited->targabscie, "Locallab", "Targabscie_" + index_str, spot.targabscie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->targetGraycie, "Locallab", "TargetGraycie_" + index_str, spot.targetGraycie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->catadcie, "Locallab", "Catadcie_" + index_str, spot.catadcie, keyFile);
@@ -9814,13 +9785,6 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Contqcie_" + index_str, spot.contqcie, spotEdited.contqcie);
                 assignFromKeyfile(keyFile, "Locallab", "Contsigqcie_" + index_str, spot.contsigqcie, spotEdited.contsigqcie);
                 assignFromKeyfile(keyFile, "Locallab", "Colorflcie_" + index_str, spot.colorflcie, spotEdited.colorflcie);
-/*
-                assignFromKeyfile(keyFile, "Locallab", "Lightlzcam_" + index_str, spot.lightlzcam, spotEdited.lightlzcam);
-                assignFromKeyfile(keyFile, "Locallab", "Lightqzcam_" + index_str, spot.lightqzcam, spotEdited.lightqzcam);
-                assignFromKeyfile(keyFile, "Locallab", "Contlzcam_" + index_str, spot.contlzcam, spotEdited.contlzcam);
-                assignFromKeyfile(keyFile, "Locallab", "Contqzcam_" + index_str, spot.contqzcam, spotEdited.contqzcam);
-                assignFromKeyfile(keyFile, "Locallab", "Contthreszcam_" + index_str, spot.contthreszcam, spotEdited.contthreszcam);
-*/
                 assignFromKeyfile(keyFile, "Locallab", "Targabscie_" + index_str, spot.targabscie, spotEdited.targabscie);
                 assignFromKeyfile(keyFile, "Locallab", "TargetGraycie_" + index_str, spot.targetGraycie, spotEdited.targetGraycie);
                 assignFromKeyfile(keyFile, "Locallab", "Catadcie_" + index_str, spot.catadcie, spotEdited.catadcie);
@@ -9829,11 +9793,6 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Strgradcie_" + index_str, spot.strgradcie, spotEdited.strgradcie);
                 assignFromKeyfile(keyFile, "Locallab", "Anggradcie_" + index_str, spot.anggradcie, spotEdited.anggradcie);
                
-/*
-                assignFromKeyfile(keyFile, "Locallab", "Colorflzcam_" + index_str, spot.colorflzcam, spotEdited.colorflzcam);
-                assignFromKeyfile(keyFile, "Locallab", "Saturzcam_" + index_str, spot.saturzcam, spotEdited.saturzcam);
-                assignFromKeyfile(keyFile, "Locallab", "Chromzcam_" + index_str, spot.chromzcam, spotEdited.chromzcam);
-*/
                 assignFromKeyfile(keyFile, "Locallab", "EnacieMask_" + index_str,  spot.enacieMask, spotEdited.enacieMask);
                 assignFromKeyfile(keyFile, "Locallab", "CCmaskcieCurve_" + index_str, spot.CCmaskciecurve, spotEdited.CCmaskciecurve);
                 assignFromKeyfile(keyFile, "Locallab", "LLmaskcieCurve_" + index_str, spot.LLmaskciecurve, spotEdited.LLmaskciecurve);

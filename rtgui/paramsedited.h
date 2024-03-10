@@ -1110,16 +1110,7 @@ public:
         bool contqcie;
         bool contsigqcie;
         bool colorflcie;
-/*
-        bool lightlzcam;
-        bool lightqzcam;
-        bool contlzcam;
-        bool contqzcam; 
-        bool contthreszcam;
-        bool colorflzcam;
-        bool saturzcam;
-        bool chromzcam;
-*/
+
         bool targabscie;
         bool targetGraycie;
         bool catadcie;

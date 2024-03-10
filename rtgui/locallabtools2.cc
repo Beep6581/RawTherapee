@@ -7686,18 +7686,6 @@ Locallabcie::Locallabcie():
     chjzcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_JZCH")))),
     strsoftjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZSTRSOFTCIE"), 0, 100., 0.5, 100.))),
 
-    /*
-        ciezFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_ZCAMFRA")))),
-
-        lightlzcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGLIGHTL"), -100., 100., 0.5, 0.))),
-        lightqzcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGLIGHTQ"), -100., 100., 0.05, 0.))),
-        contlzcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONTL"), -100., 100., 0.5, 0.))),
-        contqzcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONQL"), -100., 100., 0.5, 0.))),
-        contthreszcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ZCAMTHRES"), 0., 1., 0.01, 0.))),
-        colorflzcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCOLORFL"), -100., 100., 0.5, 0.))),
-        saturzcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATURV"), -100., 100., 0.5, 0.))),
-        chromzcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROML"), -100., 100., 0.5, 0.))),
-    */
     expLcie(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_CIETOOLEXP")))),
     cie2Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOG2FRA")))),
     targetGraycie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TARGET_GRAY"), 5.0, 80.0, 0.1, 18.0))),
@@ -7814,8 +7802,6 @@ Locallabcie::Locallabcie():
     modeHBoxcam->pack_start(*modeLabelcam, Gtk::PACK_SHRINK);
     modecam->append(M("TP_LOCALLAB_CAMMODE_CAM16"));
     modecam->append(M("TP_LOCALLAB_CAMMODE_JZ"));
-//   modecam->append (M ("TP_LOCALLAB_CAMMODE_ALL"));
-//    modecam->append (M ("TP_LOCALLAB_CAMMODE_ZCAM"));
     modecam->set_active(0);
     modeHBoxcam->pack_start(*modecam);
     modecamconn = modecam->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::modecamChanged));
@@ -8402,16 +8388,6 @@ Locallabcie::Locallabcie():
     contqcie->setAdjusterListener(this);
     contsigqcie->setAdjusterListener(this);
     colorflcie->setAdjusterListener(this);
-    /*
-        lightlzcam->setAdjusterListener(this);
-        lightqzcam->setAdjusterListener(this);
-        contlzcam->setAdjusterListener(this);
-        contqzcam->setAdjusterListener(this);
-        contthreszcam->setAdjusterListener(this);
-        colorflzcam->setAdjusterListener(this);
-        saturzcam->setAdjusterListener(this);
-        chromzcam->setAdjusterListener(this);
-    */
     targetGraycie->setAdjusterListener(this);
     targetGraycie->setLogScale(10, 18, true);
     targabscie->setLogScale(500, 0);
@@ -8505,20 +8481,6 @@ Locallabcie::Locallabcie():
     pack_start(*expcam16, false, false);
 
     pack_start(*expjz, false, false);
-    /*
-        ciezFrame->set_label_align(0.025, 0.5);
-        ToolParamBlock* const ciePzBox = Gtk::manage(new ToolParamBlock());
-        ciePzBox->pack_start(*lightlzcam);
-        ciePzBox->pack_start(*lightqzcam);
-        ciePzBox->pack_start(*contlzcam);
-        ciePzBox->pack_start(*contqzcam);
-    //    ciePzBox->pack_start(*contthreszcam);
-        ciePzBox->pack_start(*colorflzcam);
-        ciePzBox->pack_start(*saturzcam);
-        ciePzBox->pack_start(*chromzcam);
-        ciezFrame->add(*ciePzBox);
-        pack_start(*ciezFrame);
-    */
 
     cie2Frame->set_label_align(0.025, 0.5);
     ToolParamBlock* const cieP2Box = Gtk::manage(new ToolParamBlock());
@@ -9082,10 +9044,6 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             modecam->set_active(0);
         } else if (spot.modecam == "jz") {
             modecam->set_active(1);
-//        } else if (spot.modecam == "all") {
-//            modecam->set_active (2);
-//        } else if (spot.modecam == "zcam") {
-//            modecam->set_active (3);
         }
 
         if (spot.modecie == "com") {
@@ -9358,16 +9316,6 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
                               spot.labgridcieMy,
                               false);
 
-        /*
-                lightlzcam->setValue(spot.lightlzcam);
-                lightqzcam->setValue(spot.lightqzcam);
-                contlzcam->setValue(spot.contlzcam);
-                contqzcam->setValue(spot.contqzcam);
-                contthreszcam->setValue(spot.contthreszcam);
-                colorflzcam->setValue(spot.colorflzcam);
-                saturzcam->setValue(spot.saturzcam);
-                chromzcam->setValue(spot.chromzcam);
-        */
         strgradcie->setValue((double)spot.strgradcie);
         anggradcie->setValue((double)spot.anggradcie);
 
@@ -9426,10 +9374,6 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.modecam = "cam16";
         } else if (modecam->get_active_row_number() == 1) {
             spot.modecam = "jz";
-//        } else if (modecam->get_active_row_number() == 2) {
-//            spot.modecam = "all";
-//        } else if (modecam->get_active_row_number() == 3) {
-//            spot.modecam = "zcam";
         }
 
         if (modecie->get_active_row_number() == 0) {
@@ -9658,16 +9602,6 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.targetGraycie = targetGraycie->getValue();
         spot.catadcie = catadcie->getValue();
         spot.detailcie = detailcie->getValue();
-        /*
-                spot.lightlzcam = lightlzcam->getValue();
-                spot.lightqzcam = lightqzcam->getValue();
-                spot.contlzcam = contlzcam->getValue();
-                spot.contqzcam = contqzcam->getValue();
-                spot.contthreszcam = contthreszcam->getValue();
-                spot.colorflzcam = colorflzcam->getValue();
-                spot.saturzcam = saturzcam->getValue();
-                spot.chromzcam = chromzcam->getValue();
-        */
         spot.strgradcie = strgradcie->getValue();
         spot.anggradcie = anggradcie->getValue();
 
@@ -10234,7 +10168,7 @@ void Locallabcie::modecamChanged()
     contsigqcie->hide();
     lightsigqcie->hide();
 
-    if (modecam->get_active_row_number() == 1 || modecam->get_active_row_number() == 2) {
+    if (modecam->get_active_row_number() == 1) {
         expjz->show();
         jzFrame->show();
         adapjzcie->show();
@@ -10315,38 +10249,6 @@ void Locallabcie::modecamChanged()
 
     }
 
-    if (modecam->get_active_row_number() == 3) {
-        if (mode == Expert) {
-            // cieFrame->show();
-            expcamscene->show();
-            cie1Frame->hide();
-            expcam16->hide();
-            // cie2Frame->show();
-            targetGraycie->show();
-            targabscie->show();
-            surrHBoxcie->show();
-            PQFrame->show();
-            logjzFrame->show();
-            adapjzcie->hide();
-            jz100->hide();
-            forcejz->hide();
-            pqremap->show();
-            pqremapcam16->hide();
-            catadcie->hide();
-            // cie2Frame->hide();
-            expcamviewing->hide();
-
-        } else {
-            // cieFrame->hide();
-            expcamscene->hide();
-            cie1Frame->hide();
-            expcam16->hide();
-            catadcie->hide();
-            // cie2Frame->hide();
-            expcamviewing->hide();
-
-        }
-    }
 
     if (mode != Expert) {
         expjz->hide();
@@ -10377,7 +10279,7 @@ void Locallabcie::modecamChanged()
         catadcie->show();
         sourceGraycie->show();
 
-        if (modecam->get_active_row_number() == 1  || modecam->get_active_row_number() == 3) {
+        if (modecam->get_active_row_number() == 1) {
             pqremapcam16->hide();
             // cieFrame->hide();
             expcamscene->hide();
@@ -10429,27 +10331,10 @@ void Locallabcie::modecamChanged()
 
         }
 
-        if (modecam->get_active_row_number() == 3) {
-            // cieFrame->show();
-            expcamscene->show();
-            //   cie2Frame->show();
-            expcamviewing->hide();
-            targetGraycie->show();
-            targabscie->show();
-            surrHBoxcie->show();
-            PQFrame->show();
-            logjzFrame->show();
-            adapjzcie->hide();
-            jz100->hide();
-            forcejz->hide();
-            pqremap->show();
-            pqremapcam16->hide();
-            catadcie->hide();
-        }
 
     }
 
-    if (modecam->get_active_row_number() == 0 || modecam->get_active_row_number() == 2) {
+    if (modecam->get_active_row_number() == 0) {
         targetGraycie->show();
         targabscie->show();
         surrHBoxcie->show();
@@ -10718,15 +10603,6 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             comprcieauto->hide();
             comprBox->show();
 
-            if (modecam->get_active_row_number() == 2) {
-                PQFrame->hide();
-                logjzFrame->hide();
-                sigmoidjzFrame->hide();
-                bevwevFrame->hide();
-                sigmoidFrame->hide();
-                expprecam->hide();
-
-            }
 
             if (modecam->get_active_row_number() == 0) {
                 bevwevFrame->show();
@@ -10764,18 +10640,6 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
 
             }
 
-            if (modecam->get_active_row_number() == 3) {
-                //cieFrame->hide();
-                expcamscene->hide();
-                cie1Frame->hide();
-                expcam16->hide();
-                //  cie2Frame->hide();
-                expcamviewing->hide();
-                pqremapcam16->hide();
-                PQFrame->hide();
-                logjzFrame->hide();
-                catadcie->hide();
-            }
 
             contsigqcie->hide();
             lightsigqcie->hide();
@@ -10872,12 +10736,6 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
 
             }
 
-            if (modecam->get_active_row_number() == 2) {
-                PQFrame->hide();
-                logjzFrame->hide();
-                sigmoidjzFrame->hide();
-                bevwevFrame->hide();
-            }
 
             if (modecam->get_active_row_number() == 1) {
                 //cieFrame->hide();
@@ -10905,18 +10763,6 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
 
             }
 
-            if (modecam->get_active_row_number() == 3) {
-                // cieFrame->hide();
-                expcamscene->hide();
-                cie1Frame->hide();
-                expcam16->hide();
-                // cie2Frame->hide();
-                expcamviewing->hide();
-                pqremapcam16->hide();
-                PQFrame->hide();
-                catadcie->hide();
-                logjzFrame->hide();
-            }
 
             if (modecie->get_active_row_number() > 0) {
                 exprecovcie->hide();
@@ -11012,7 +10858,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
 
             }
 
-            if (modecam->get_active_row_number() == 1 || modecam->get_active_row_number() == 2) {
+            if (modecam->get_active_row_number() == 1) {
                 jabcie->show();
                 expjz->show();
                 jzFrame->show();
@@ -11038,7 +10884,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             //  cie2Frame->show();
             expcamviewing->show();
 
-            if (modecam->get_active_row_number() == 0 || modecam->get_active_row_number() == 2) {
+            if (modecam->get_active_row_number() == 0) {
                 targetGraycie->show();
                 targabscie->show();
                 surrHBoxcie->show();
@@ -11058,12 +10904,6 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
 
             }
 
-            if (modecam->get_active_row_number() == 2) {
-                PQFrame->show();
-                logjzFrame->hide();
-                sigmoidjzFrame->hide();
-                bevwevFrame->hide();
-            }
 
             if (modecam->get_active_row_number() == 1) {
                 surHBoxcie->show();
@@ -11096,25 +10936,6 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
 
             }
 
-            if (modecam->get_active_row_number() == 3) {
-                //  cieFrame->show();
-                expcamscene->show();
-                cie1Frame->hide();
-                expcam16->hide();
-                expcamviewing->show();
-                //cie2Frame->show();
-                targetGraycie->show();
-                targabscie->show();
-                surrHBoxcie->show();
-                PQFrame->show();
-                logjzFrame->show();
-                adapjzcie->hide();
-                jz100->hide();
-                forcejz->hide();
-                pqremap->show();
-                pqremapcam16->hide();
-                catadcie->hide();
-            }
 
             if (modecie->get_active_row_number() > 0) {
                 exprecovcie->hide();
@@ -11178,12 +10999,6 @@ void Locallabcie::updatecieGUI()
 
     }
 
-    if (modecam->get_active_row_number() == 2  && mode == Expert) {
-        PQFrame->show();
-        logjzFrame->show();
-        sigmoidjzFrame->show();
-        bevwevFrame->show();
-    }
 
     sourceGraycie->show();
     //cieFrame->show();
@@ -11220,93 +11035,8 @@ void Locallabcie::updatecieGUI()
         exprecovcie->show();
         expmaskcie->show();
 
-        /*
-                if (mode != Expert) {
-                    //cieFrame->hide();
-                    expcamscene->hide();
-                    cie1Frame->hide();
-                    expcam16->hide();
-                   // cie2Frame->hide();
-                    expcamviewing->hide();
-                    PQFrame->hide();
-                    logjzFrame->hide();
-                    sigmoidjzFrame->hide();
-                    sigmoidFrame->hide();
-                    bevwevFrame->hide();
-
-                    if (modecam->get_active_row_number() == 0) {
-                        bevwevFrame->show();
-                        sigmoidFrame->show();
-                    }
-
-                    exprecovcie->hide();
-                    expgradcie->hide();
-                    expmaskcie->hide();
-                    maskusablecie->hide();
-                    maskunusablecie->hide();
-                    logcieq->hide();
-                    logcieFrame->hide();
-                    blackEvjz->hide();
-                    whiteEvjz->hide();
-                    whitescie->hide();
-                    blackscie->hide();
-
-                }
-
-                if (mode == Normal) {
-                    blackEvjz->show();
-                    whiteEvjz->show();
-                    whitescie->show();
-                    blackscie->show();
-                }
-
-
-                if (mode == Expert) {
-                    logcieFrame->show();
-                    blackEvjz->show();
-                    whiteEvjz->show();
-                    whitescie->show();
-                    blackscie->show();
-
-
-                    if (logcieq->get_active()) {
-                        satcie->hide();
-                    } else {
-                        satcie->show();
-                    }
-                }
-        */
     }
 
-    if (modecam->get_active_row_number() == 3) {
-        if (mode == Expert) {
-            cie1Frame->hide();
-            expcam16->hide();
-            // cie2Frame->show();
-            expcamviewing->show();
-            targetGraycie->show();
-            targabscie->show();
-            surrHBoxcie->show();
-            //   cieFrame->show();
-            expcamscene->show();
-            PQFrame->show();
-            logjzFrame->show();
-            adapjzcie->hide();
-            jz100->hide();
-            forcejz->hide();
-            pqremap->show();
-            pqremapcam16->hide();
-            PQFrame->show();
-            catadcie->hide();
-        } else {
-            cie1Frame->hide();
-            expcam16->hide();
-            //cie2Frame->hide();
-            expcamviewing->hide();
-            PQFrame->hide();
-            logjzFrame->hide();
-        }
-    }
 
     if (Autograycie->get_active()) {
         sourceGraycie->set_sensitive(false);
@@ -12161,63 +11891,6 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             }
         }
 
-        /*
-                if (a == lightlzcam) {
-                    if (listener) {
-                        listener->panelChanged(Evlocallablightlzcam,
-                                               lightlzcam->getTextValue()+ spName );
-                    }
-                }
-
-                if (a == lightqzcam) {
-                    if (listener) {
-                        listener->panelChanged(Evlocallablightqzcam,
-                                               lightqzcam->getTextValue()+ spName );
-                    }
-                }
-
-                if (a == contlzcam) {
-                    if (listener) {
-                        listener->panelChanged(Evlocallabcontlzcam,
-                                               contlzcam->getTextValue()+ spName );
-                    }
-                }
-
-                if (a == contqzcam) {
-                    if (listener) {
-                        listener->panelChanged(Evlocallabcontqzcam,
-                                               contqzcam->getTextValue()+ spName );
-                    }
-                }
-
-                if (a == contthreszcam) {
-                    if (listener) {
-                        listener->panelChanged(Evlocallabcontthreszcam,
-                                               contthreszcam->getTextValue()+ spName );
-                    }
-                }
-
-                if (a == colorflzcam) {
-                    if (listener) {
-                        listener->panelChanged(Evlocallabcolorflzcam,
-                                               colorflzcam->getTextValue()+ spName );
-                    }
-                }
-
-                if (a == saturzcam) {
-                    if (listener) {
-                        listener->panelChanged(Evlocallabsaturzcam,
-                                               saturzcam->getTextValue()+ spName );
-                    }
-                }
-
-                if (a == chromzcam) {
-                    if (listener) {
-                        listener->panelChanged(Evlocallabchromzcam,
-                                               chromzcam->getTextValue()+ spName );
-                    }
-                }
-        */
         if (a == targabscie) {
             if (listener) {
                 listener->panelChanged(Evlocallabtargabscie,

@@ -1756,17 +1756,6 @@ private:
     Gtk::CheckButton* const chjzcie;
     Adjuster* const strsoftjzcie;
    
-/*
-    Gtk::Frame* const ciezFrame;
-    Adjuster* const lightlzcam;
-    Adjuster* const lightqzcam;
-    Adjuster* const contlzcam;
-    Adjuster* const contqzcam;
-    Adjuster* const contthreszcam;
-    Adjuster* const colorflzcam;
-    Adjuster* const saturzcam;
-    Adjuster* const chromzcam;
-*/
     MyExpander* const expLcie;
     Gtk::Frame* const cie2Frame;
     Adjuster* const targetGraycie;
