@@ -11013,30 +11013,6 @@ void Locallabcie::updatecieGUI()
         maskunusablecie->show();
     }
 
-    if (modecam->get_active_row_number() == 1  && mode == Expert) {
-        surHBoxcie->show();
-        cie1Frame->hide();
-        expcam16->hide();
-        targetGraycie->hide();
-        targabscie->hide();
-        surrHBoxcie->hide();
-        pqremapcam16->hide();
-        PQFrame->show();
-        logjzFrame->show();
-        sigmoidjzFrame->show();
-        bevwevFrame->show();
-        sigmoidFrame->hide();
-        catadcie->hide();
-        //  cie2Frame->hide();
-        expprecam->hide();
-        expcamviewing->hide();
-        expgradcie->hide();
-        expcam16->hide();
-        exprecovcie->show();
-        expmaskcie->show();
-
-    }
-
 
     if (Autograycie->get_active()) {
         sourceGraycie->set_sensitive(false);
@@ -11079,6 +11055,30 @@ void Locallabcie::updatecieGUI()
         expgradcie->hide();
         expmaskcie->hide();
     }
+
+    if (modecam->get_active_row_number() == 1) {
+        surHBoxcie->show();
+        cie1Frame->hide();
+        expcam16->hide();
+        targetGraycie->hide();
+        targabscie->hide();
+        surrHBoxcie->hide();
+        pqremapcam16->hide();
+        PQFrame->show();
+        logjzFrame->show();
+        sigmoidjzFrame->show();
+        bevwevFrame->show();
+        sigmoidFrame->hide();
+        catadcie->hide();
+        //  cie2Frame->hide();
+        expprecam->hide();
+        expcamviewing->hide();
+        expgradcie->hide();
+        expcam16->hide();
+        exprecovcie->show();
+        expmaskcie->show();
+    }
+
 
 }
 
