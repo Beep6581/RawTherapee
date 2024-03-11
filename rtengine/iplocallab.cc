@@ -472,7 +472,7 @@ struct local_params {
     float balance;
     float balanceh;
     int colorde;
-    int cir;
+    float cir;
     bool recur;
     float thr;
     float stru;
@@ -853,7 +853,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
 {
     int w = oW;
     int h = oH;
-    int circr = locallab.spots.at(sp).circrad;
+    float circr = locallab.spots.at(sp).circrad;
     bool recur = locallab.spots.at(sp).recurs;
     float streng = ((float)locallab.spots.at(sp).stren);
     float gam = ((float)locallab.spots.at(sp).gamma);
@@ -8377,7 +8377,7 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
         int nsb = 0;
 // single precision for the result
         float avA, avB, avL;
-        int spotSize = 0.88623f * rtengine::max(1,  lp.cir / sk);  //18
+        int spotSize = 0.88623f * rtengine::max(1.f,  lp.cir / sk);  //18
         //O.88623 = std::sqrt(PI / 4) ==> square equal to circle
         int spotSise2; // = 0.88623f * max (1,  lp.cir / sk); //18
 
@@ -8388,7 +8388,7 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
         LabImage *origblur = nullptr;
         LabImage *blurorig = nullptr;
 
-        int spotSi = 1 + 2 * rtengine::max(1,  lp.cir / sk);
+        int spotSi = 1 + 2 * rtengine::max(1.f,  lp.cir / sk);
 
         if (spotSi < 5) {
             spotSi = 5;
@@ -17746,7 +17746,7 @@ void ImProcFunctions::Lab_Local(
                     }
                 }
 
-                const int spotSi = rtengine::max(1 + 2 * rtengine::max(1, lp.cir / sk), 5);
+                const int spotSi = rtengine::max(1 + 2 * rtengine::max(1.f, lp.cir / sk), 5.f);
 
                 if (bfw > 2 * spotSi && bfh > 2 * spotSi && lp.struexp > 0.f) {
                     blend2(bfw, bfh);
@@ -18337,7 +18337,7 @@ void ImProcFunctions::Lab_Local(
                     }
                 }
 
-                const int spotSi = rtengine::max(1 + 2 * rtengine::max(1,  lp.cir / sk), 5);
+                const int spotSi = rtengine::max(1 + 2 * rtengine::max(1.f,  lp.cir / sk), 5.f);
                 const bool blends = bfw > 2 * spotSi && bfh > 2 * spotSi && lp.struco > 0.f;
 
                 if (blends) {

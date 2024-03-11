@@ -2994,7 +2994,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     loc{150, 150, 150, 150},
     centerX(0),
     centerY(0),
-    circrad(18),
+    circrad(18.),
     qualityMethod("enh"),
     complexMethod("mod"),
     transit(60.),
