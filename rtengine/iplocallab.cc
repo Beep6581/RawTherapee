@@ -2765,9 +2765,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
     int mocam = 1;
 
-    if (params->locallab.spots.at(sp).modecam == "all") {
-        mocam = 10;//à remettre à 0 si modecam = "all"
-    } else if (params->locallab.spots.at(sp).modecam == "cam16") {
+    if (params->locallab.spots.at(sp).modecam == "cam16") {
         mocam = 1;
     } else if (params->locallab.spots.at(sp).modecam == "jz") {
         mocam = 2;
@@ -3144,11 +3142,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     float rstprotection = 0.f;
     float hue = 0.f;
 
-    /*
-        float mchrz = 0.f;
-        float schrz = 0.f;
-        float cchrz = 0.f;
-    */
     if (ciec) {
         if (iscie) {
             rstprotection =  params->locallab.spots.at(sp).rstprotectcie;
@@ -3180,11 +3173,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 mchr = 99.9f;
             }
 
-            /*
-                        mchrz = 0.5f * (float) params->locallab.spots.at(sp).colorflzcam;
-                        schrz = 0.5f * (float) params->locallab.spots.at(sp).saturzcam;
-                        cchrz = 0.5f * (float) params->locallab.spots.at(sp).chromzcam;
-            */
         } else {
             cchr = params->locallab.spots.at(sp).chroml;
 
@@ -3285,7 +3273,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     const double log2 = xlog(2.);
     const float log2f = xlogf(2.f);
 
-    if ((mocam == 0 || mocam == 2)  && call == 0) { //Jz az bz ==> Jz Cz Hz before Ciecam16
+    if ((mocam == 2)  && call == 0) { //Jz az bz ==> Jz Cz Hz before Ciecam16
         double mini = 1000.;
         double maxi = -1000.;
         double sum = 0.;
@@ -3965,9 +3953,9 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         }
     }
 
-    if (mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) { //CAM16 call=2 vibrance warm-cool - call = 10 take into account "mean luminance Yb for Jz
+    if (mocam == 1  || call == 1  || call == 2 || call == 10) { //CAM16 call=2 vibrance warm-cool - call = 10 take into account "mean luminance Yb for Jz
 //begin ciecam
-        if (settings->verbose && (mocam == 0 || mocam == 1  || call == 1)) {//display only if choice cam16
+        if (settings->verbose && (mocam == 1  || call == 1)) {//display only if choice cam16
             //information on Cam16 scene conditions - allows user to see choices's incidences
             float maxicamq = -1000.f;
             float maxicamj = -1000.f;
@@ -12900,7 +12888,7 @@ void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImag
         const float ach = lp.trans / 100.f;
         bool execmunsell = true;
 
-        if (params->locallab.spots.at(sp).expcie && (params->locallab.spots.at(sp).modecam == "all" || params->locallab.spots.at(sp).modecam == "jz" || params->locallab.spots.at(sp).modecam == "cam16")) {
+        if (params->locallab.spots.at(sp).expcie && (params->locallab.spots.at(sp).modecam == "jz" || params->locallab.spots.at(sp).modecam == "cam16")) {
             execmunsell = false;
         }
 
