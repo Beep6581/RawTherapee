@@ -141,7 +141,7 @@ Thumbnail::Thumbnail(CacheManager* cm, const Glib::ustring& fname, CacheImageDat
         // TODO? should we call notifylisterners_procParamsChanged here?
 
         setRank(cfs.rankOld);
-        setStage(cfs.inTrashOld);
+        setTrashed(cfs.inTrashOld);
     }
 
     delete tpp;
@@ -444,7 +444,7 @@ void Thumbnail::clearProcParams (int whoClearedIt)
         // preserve rank, colorlabel and inTrash across clear
         int rank = getRank();
         int colorlabel = getColorLabel();
-        int inTrash = getStage();
+        int inTrash = getTrashed();
 
 
         cfs.recentlySaved = false;
@@ -460,7 +460,7 @@ void Thumbnail::clearProcParams (int whoClearedIt)
         setRank(rank);
         pparamsValid = cfs.rating != rank;
         setColorLabel(colorlabel);
-        setStage(inTrash);
+        setTrashed(inTrash);
 
         // params could get validated by rank/inTrash values restored above
         if (pparamsValid) {
@@ -563,7 +563,7 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
         // do not update rank, colorlabel and inTrash
         const int rank = getRank();
         const int colorlabel = getColorLabel();
-        const int inTrash = getStage();
+        const int inTrash = getTrashed();
 
         if (pe) {
             pe->combine(*pparams, pp, true);
@@ -575,7 +575,7 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
 
         setRank(rank);
         setColorLabel(colorlabel);
-        setStage(inTrash);
+        setTrashed(inTrash);
 
         if (updateCacheNow) {
             updateCache();
@@ -1115,15 +1115,15 @@ void Thumbnail::setColorLabel  (int colorlabel)
     }
 }
 
-int Thumbnail::getStage () const
+bool Thumbnail::getTrashed () const
 {
     return pparams->inTrash;
 }
 
-void Thumbnail::setStage (bool stage)
+void Thumbnail::setTrashed (bool trashed)
 {
-    if (pparams->inTrash != stage) {
-        pparams->inTrash = stage;
+    if (pparams->inTrash != trashed) {
+        pparams->inTrash = trashed;
         pparamsValid = true;
     }
 }
