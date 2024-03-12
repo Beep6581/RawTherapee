@@ -155,8 +155,8 @@ public:
     int             getColorLabel  () const;
     void            setColorLabel  (int colorlabel);
 
-    int             getStage () const;
-    void            setStage (bool stage);
+    bool            getTrashed () const;
+    void            setTrashed (bool trashed);
 
     void            addThumbnailListener (ThumbnailListener* tnl);
     void            removeThumbnailListener (ThumbnailListener* tnl);
