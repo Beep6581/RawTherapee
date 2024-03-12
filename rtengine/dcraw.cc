@@ -6124,7 +6124,7 @@ get2_256:
       // imCanon.ColorDataVer = 11;
       imCanon.ColorDataSubVer = get2();
 
-      fseek(ifp, save1 + ((0x0069+0x0064) << 1), SEEK_SET);
+      fseek(ifp, save1 + (0x0069 << 1), SEEK_SET);
       FORC4 cam_mul[c ^ (c >> 1)] = (float)get2();
 
       offsetChannelBlackLevel2 = save1 + ((0x0069+0x0102) << 1);
