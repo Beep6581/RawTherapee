@@ -116,6 +116,7 @@ class Thumbnail
     void saveMetadata();
     void loadProperties();
     void updateProcParamsProperties();
+    void saveXMPSidecarProperties();
 
 public:
     Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf);
