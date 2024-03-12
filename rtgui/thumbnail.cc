@@ -105,6 +105,46 @@ bool CPBDump(
     return true;
 }
 
+struct ColorMapper {
+    std::map<int, std::string> indexLabelMap;
+    std::map<std::string, int> labelIndexMap;
+
+    ColorMapper(std::map<int, std::string> colors) {
+        for (const auto& color: colors) {
+            indexLabelMap.insert({color.first, color.second});
+            labelIndexMap.insert({color.second, color.first});
+        }
+    }
+
+    int index(const std::string &label) const
+    {
+        auto it = labelIndexMap.find(label);
+        if (it != labelIndexMap.end()) {
+            return it->second;
+        }
+        return 0;
+    }
+
+    std::string label(int index) const
+    {
+        auto it = indexLabelMap.find(index);
+        if (it != indexLabelMap.end()) {
+            return it->second;
+        }
+        return "";
+    }
+};
+
+const std::map<int, std::string> defaultColors = {
+    {1, "Red"},
+    {2, "Yellow"},
+    {3, "Green"},
+    {4, "Blue"},
+    {5, "Purple"}
+};
+
+auto defaultColorMapper = ColorMapper(defaultColors);
+
 } // namespace
 
 using namespace rtengine::procparams;
@@ -1034,6 +1074,8 @@ void Thumbnail::saveThumbnail ()
  */
 void Thumbnail::updateCache (bool updatePParams, bool updateCacheImageData)
 {
+    updateProcParamsProperties();
+
     if (updatePParams && pparamsValid) {
         pparams->save (
             options.saveParamsFile  ? fname + paramFileExtension : "",
@@ -1049,6 +1091,8 @@ void Thumbnail::updateCache (bool updatePParams, bool updateCacheImageData)
     if (updatePParams && pparamsValid) {
         saveMetadata();
     }
+
+    saveXMPSidecarProperties();
 }
 
 Thumbnail::~Thumbnail ()
@@ -1227,13 +1271,37 @@ void Thumbnail::loadProperties()
         }
     }
 
-    // update rank and load color, trash from procparams
+    // update rank and color from procparams or xmp sidecar
+    // load trash from procparams
     if (pparamsValid) {
-        if (pparams->rank >= 0) {
-            properties.rank.value = pparams->rank;
+        if (options.thumbnailRankColorMode == Options::ThumbnailPropertyMode::PROCPARAMS) {
+            if (pparams->rank >= 0) {
+                properties.rank.value = pparams->rank;
+            }
         }
-        properties.color.value = pparams->colorlabel;
+
         properties.trashed.value = pparams->inTrash;
+        properties.color.value = pparams->colorlabel;
+    }
+
+    if (options.thumbnailRankColorMode == Options::ThumbnailPropertyMode::XMP) {
+        try {
+            auto xmp = rtengine::Exiv2Metadata::getXmpSidecar(fname);
+            auto pos = xmp.findKey(Exiv2::XmpKey("Xmp.xmp.Rating"));
+            if (pos != xmp.end()) {
+                int r = rtengine::to_long(pos);
+                properties.rank.value = rtengine::LIM(r, 0, 5);
+            }
+
+            pos = xmp.findKey(Exiv2::XmpKey("Xmp.xmp.Label"));
+            if (pos != xmp.end()) {
+                properties.color.value = defaultColorMapper.index(pos->toString());
+            }
+        } catch (std::exception &exc) {
+            std::cerr << "ERROR loading thumbnail properties data from "
+                      << rtengine::Exiv2Metadata::xmpSidecarPath(fname)
+                      << ": " << exc.what() << std::endl;
+        }
     }
 }
 
@@ -1248,6 +1316,8 @@ void Thumbnail::updateProcParamsProperties()
         pparamsValid = true;
     }
 
+    // save procparams rank and color also when options.thumbnailRankColorMode == Options::ThumbnailPropertyMode::XMP
+    // so they'll be kept in sync
     if (properties.rank.edited && properties.rank != pparams->rank) {
         pparams->rank = properties.rank;
         pparamsValid = true;
@@ -1256,6 +1326,35 @@ void Thumbnail::updateProcParamsProperties()
     if (properties.color.edited && properties.color != pparams->colorlabel) {
         pparams->colorlabel = properties.color;
         pparamsValid = true;
+    }
+}
+
+void Thumbnail::saveXMPSidecarProperties()
+{
+    if (!properties.edited()) {
+        return;
+    }
+
+    if (options.thumbnailRankColorMode != Options::ThumbnailPropertyMode::XMP) {
+        return;
+    }
+
+    auto fn = rtengine::Exiv2Metadata::xmpSidecarPath(fname);
+    try {
+        auto xmp = rtengine::Exiv2Metadata::getXmpSidecar(fname);
+        if (properties.rank.edited) {
+            xmp["Xmp.xmp.Rating"] = std::to_string(properties.rank);
+        }
+        if (properties.color.edited) {
+            xmp["Xmp.xmp.Label"] = defaultColorMapper.label(properties.color);
+        }
+
+        rtengine::Exiv2Metadata meta;
+        meta.xmpData() = std::move(xmp);
+        meta.saveToXmp(fn);
+    } catch (std::exception &exc) {
+        std::cerr << "ERROR saving thumbnail properties data to " << fn
+                  << ": " << exc.what() << std::endl;
     }
 }
 

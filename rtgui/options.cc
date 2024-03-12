@@ -694,6 +694,7 @@ void Options::setDefaults()
     lastICCProfCreatorDir = "";
     gimpPluginShowInfoDialog = true;
     maxRecentFolders = 15;
+    thumbnailRankColorMode = Options::ThumbnailPropertyMode::PROCPARAMS;
     sortMethod = SORT_BY_NAME;
     sortDescending = false;
     rtSettings.lensfunDbDirectory = ""; // set also in main.cc and main-cli.cc
@@ -1365,6 +1366,15 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("File Browser", "BrowseRecursiveFollowLinks")) {
                     browseRecursiveFollowLinks = keyFile.get_boolean("File Browser", "BrowseRecursiveFollowLinks");
+                }
+
+                if (keyFile.has_key("File Browser", "ThumbnailRankColorMode")) {
+                    std::string val = keyFile.get_string("File Browser", "ThumbnailRankColorMode");
+                    if (val == "xmp") {
+                        thumbnailRankColorMode = ThumbnailPropertyMode::XMP;
+                    } else {
+                        thumbnailRankColorMode = ThumbnailPropertyMode::PROCPARAMS;
+                    }
                 }
             }
 
@@ -2461,6 +2471,14 @@ void Options::saveToFile(Glib::ustring fname)
             }
 
             keyFile.set_string_list("File Browser", "RecentFolders", temp);
+        }
+        switch (thumbnailRankColorMode) {
+        case ThumbnailPropertyMode::XMP:
+            keyFile.set_string("File Browser", "ThumbnailRankColorMode", "xmp");
+            break;
+        default: // ThumbnailPropertyMode::PROCPARAMS
+            keyFile.set_string("File Browser", "ThumbnailRankColorMode", "procparams");
+            break;
         }
         keyFile.set_integer("File Browser", "SortMethod", sortMethod);
         keyFile.set_boolean("File Browser", "SortDescending", sortDescending);
