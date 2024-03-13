@@ -10420,6 +10420,10 @@ void Locallabcie::sursourcieChanged()
     } else {
         expcam16->show();
         expcamviewing->show();
+        if(modecam->get_active_row_number() == 1) {
+            expcam16->hide();
+            expcamviewing->hide();
+        }
     }
 
     if (isLocActivated && exp->getEnabled()) {
@@ -11048,7 +11052,12 @@ void Locallabcie::updatecieGUI()
     } else {
         expcam16->show();
         expcamviewing->show();
+        if(modecam->get_active_row_number() == 1) {
+            expcam16->hide();
+            expcamviewing->hide();
+        }
     }
+
 
     if (modecie->get_active_row_number() > 0) {
         exprecovcie->hide();

@@ -3122,7 +3122,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     if (params->locallab.spots.at(sp).expcie && call == 10 && params->locallab.spots.at(sp).modecam == "jz") {
         yb = params->locallab.spots.at(sp).sourceGraycie;//for Jz calculate Yb and surround in Lab and cam16 before process Jz
         la = params->locallab.spots.at(sp).sourceabscie;
-
         if (params->locallab.spots.at(sp).sursourcie == "Average") {
             f = 1.0f, c = 0.69f, nc = 1.0f;
         } else if (params->locallab.spots.at(sp).sursourcie == "Dim") {
@@ -3132,6 +3131,10 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         } else if (params->locallab.spots.at(sp).sursourcie == "Dark") {
             f  = 0.8f;
             c  = 0.525f;
+            nc = 0.8f;
+        } else if (params->locallab.spots.at(sp).sursourcie == "exDark") {
+            f  = 0.8f;
+            c  = 0.41f;
             nc = 0.8f;
         }
     }
@@ -3289,7 +3292,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
         bool Qtoj = params->locallab.spots.at(sp).qtoj;//betwwen lightness to brightness
         const bool logjz =  params->locallab.spots.at(sp).logjz;//log encoding
-
 //calculate min, max, mean for Jz
 #ifdef _OPENMP
         #pragma omp parallel for reduction(min:mini) reduction(max:maxi) reduction(+:sum) if(multiThread)
@@ -3953,7 +3955,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         }
     }
 
-    if (mocam == 1  || call == 1  || call == 2 || call == 10) { //CAM16 call=2 vibrance warm-cool - call = 10 take into account "mean luminance Yb for Jz
+    if (mocam == 1 || mocam ==2 || call == 1  || call == 2 || call == 10) { //CAM16 call=2 vibrance warm-cool - call = 10 take into account "mean luminance Yb for Jz
 //begin ciecam
         if (settings->verbose && (mocam == 1  || call == 1)) {//display only if choice cam16
             //information on Cam16 scene conditions - allows user to see choices's incidences
@@ -4252,7 +4254,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                     Mpro = M;
                     spro = s;
 
-                    if (ciec) {
+                    if (ciec  && mocam == 1) {//only Cam16
                         bool jp = false;
 
                         if (params->locallab.spots.at(sp).logcie && params->locallab.spots.at(sp).logcieq && iscie) {//log encoding Q
@@ -4264,27 +4266,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                                 Qpro *=  f;
                             }
                         }
-/*
-                        if (issig && issigq && iscie && !islogq && mobwev == 2) { //sigmoid Q and Log encode
-                            float val = Qpro * coefq;
-
-                            if (val > (float) noise) {
-                                float mm = applytoq(val);
-                                float f = mm / val;
-                                Qpro *=  f;
-                                val = Qpro * coefq;
-                            }
-                            
-                            if (sigmoidth >= 1.f) {
-                                th = ath * val + bth;
-                            } else {
-                                th = at * val + bt;
-                            }
-                            
-                            sigmoidla(val, th, sigm);
-                            Qpro = std::max(Qpro + val / coefq, 0.f);
-                        }
-*/
                       //  if (issig && issigq && iscie && !islogq && mobwev != 2) { //sigmoid Q only and black Ev & white Ev
                         if (issig && issigq && iscie && mobwev != 2) { //sigmoid Q only and black Ev & white Ev
                             float val = Qpro * coefq;
@@ -4486,7 +4467,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             }
         }
 
-        if ((sigmoidnorm && issigq) || params->locallab.spots.at(sp).logcieq) { //Normalize luminance
+        if ((mocam == 1 && (sigmoidnorm && issigq)) || params->locallab.spots.at(sp).logcieq) { //Normalize luminance
 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic, 16)
