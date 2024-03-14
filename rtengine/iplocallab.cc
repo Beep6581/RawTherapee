@@ -846,6 +846,8 @@ struct local_params {
     bool fftcieMask;
     float comprlo;
     float comprlocie;
+    int moka;
+    int sursouci;
 
 };
 
@@ -1457,6 +1459,25 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.whiteev  = (float) locallab.spots.at(sp).whiteEv;
     lp.sourcegraycie = (float) locallab.spots.at(sp).sourceGraycie;
     lp.targetgraycie = (float) locallab.spots.at(sp).targetGraycie;
+    
+    if (locallab.spots.at(sp).modecam == "cam16") {
+        lp.moka = 1;
+    } else if (locallab.spots.at(sp).modecam == "jz") {
+        lp.moka = 2;
+    }
+
+    if (locallab.spots.at(sp).sursourcie == "Average") {
+        lp.sursouci = 0;
+    } else if (locallab.spots.at(sp).sursourcie == "Dim") {
+        lp.sursouci = 1;
+    } else if (locallab.spots.at(sp).sursourcie == "Dark") {
+        lp.sursouci = 2;
+    } else if (locallab.spots.at(sp).sursourcie == "exDark") {
+        lp.sursouci = 3;
+    } else if (locallab.spots.at(sp).sursourcie == "disacie") {
+        lp.sursouci = 4;
+    }
+
     lp.satcie = (float) locallab.spots.at(sp).satcie;
     lp.satlog = (float) locallab.spots.at(sp).satlog;
     lp.blackevjz = (float) locallab.spots.at(sp).blackEvjz;
@@ -2707,13 +2728,12 @@ void gamutjz(double &Jz, double &az, double &bz, double pl, const double wip[3][
     } while (!inGamut);
 }
 
-void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, LabImage* lab, int bfw, int bfh, int call, int sk, const LUTf& cielocalcurve, bool localcieutili, const LUTf& cielocalcurve2, bool localcieutili2,
+void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImage* lab, int bfw, int bfh, int call, int sk, const LUTf& cielocalcurve, bool localcieutili, const LUTf& cielocalcurve2, bool localcieutili2,
                                         const LUTf& jzlocalcurve, bool localjzutili, const LUTf& czlocalcurve, bool localczutili, const LUTf& czjzlocalcurve, bool localczjzutili, const LocCHCurve& locchCurvejz, const LocHHCurve& lochhCurvejz, const LocLHCurve& loclhCurvejz, bool HHcurvejz, bool CHcurvejz, bool LHcurvejz,
                                         const LocwavCurve& locwavCurvejz, bool locwavutilijz, float &maxicam, float &contsig, float &lightsig
                                        )
 {
 //    BENCHFUN
-//possibility to reenable Zcam
     if (!params->locallab.spots.at(sp).activ) { //disable all ciecam functions
         return;
     }
@@ -2764,10 +2784,10 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     float plum = (float) params->locallab.spots.at(sp).pqremapcam16;
 
     int mocam = 1;
-
-    if (params->locallab.spots.at(sp).modecam == "cam16") {
+ 
+    if(lp.moka == 1) {
         mocam = 1;
-    } else if (params->locallab.spots.at(sp).modecam == "jz") {
+    } else if (lp.moka == 2) {
         mocam = 2;
     }
 
@@ -3008,20 +3028,22 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     if (ciec) {
         if (iscie) {
             //surround source with only 2 choices (because Log encoding before)
-            if (params->locallab.spots.at(sp).sursourcie == "Average") {
+            if(lp.sursouci == 0) {
                 f = 1.0f, c = 0.69f, nc = 1.0f;
-            } else if (params->locallab.spots.at(sp).sursourcie == "Dim") {
+            } else if (lp.sursouci == 1){
                 f  = 0.9f;
                 c  = 0.59f;
                 nc = 0.9f;
-            } else if (params->locallab.spots.at(sp).sursourcie == "Dark") {
+            } else if (lp.sursouci == 2) {
                 f  = 0.8f;
                 c  = 0.525f;
                 nc = 0.8f;
-            } else if (params->locallab.spots.at(sp).sursourcie == "exDark") {
+            } else if (lp.sursouci == 3) {
                 f  = 0.8f;
                 c  = 0.41f;
                 nc = 0.8f;
+            } else if (lp.sursouci == 4) {
+                f = 1.0f, c = 0.702f, nc = 1.0f;//very small surround effect for Jz - Also disable Ciecam further
             }
         } else {
             if (params->locallab.spots.at(sp).sursour == "Average") {
@@ -3122,21 +3144,25 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     if (params->locallab.spots.at(sp).expcie && call == 10 && params->locallab.spots.at(sp).modecam == "jz") {
         yb = params->locallab.spots.at(sp).sourceGraycie;//for Jz calculate Yb and surround in Lab and cam16 before process Jz
         la = params->locallab.spots.at(sp).sourceabscie;
-        if (params->locallab.spots.at(sp).sursourcie == "Average") {
-            f = 1.0f, c = 0.69f, nc = 1.0f;
-        } else if (params->locallab.spots.at(sp).sursourcie == "Dim") {
-            f  = 0.9f;
-            c  = 0.59f;
-            nc = 0.9f;
-        } else if (params->locallab.spots.at(sp).sursourcie == "Dark") {
-            f  = 0.8f;
-            c  = 0.525f;
-            nc = 0.8f;
-        } else if (params->locallab.spots.at(sp).sursourcie == "exDark") {
-            f  = 0.8f;
-            c  = 0.41f;
-            nc = 0.8f;
-        }
+        printf("JZ CALL=10\n");
+            if(lp.sursouci == 0) {
+                f = 1.0f, c = 0.69f, nc = 1.0f;
+            } else if (lp.sursouci == 1){
+                f  = 0.9f;
+                c  = 0.59f;
+                nc = 0.9f;
+            } else if (lp.sursouci == 2) {
+                f  = 0.8f;
+                c  = 0.525f;
+                nc = 0.8f;
+            } else if (lp.sursouci == 3) {
+                f  = 0.8f;
+                c  = 0.41f;
+                nc = 0.8f;
+            } else if (lp.sursouci == 4) {
+                f = 1.0f, c = 0.702f, nc = 1.0f;//very small surround effect for Jz
+            }
+       
     }
 
     float schr = 0.f;
@@ -3954,8 +3980,8 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             }
         }
     }
-
-    if (mocam == 1 || mocam ==2 || call == 1  || call == 2 || call == 10) { //CAM16 call=2 vibrance warm-cool - call = 10 take into account "mean luminance Yb for Jz
+                    //lp.sursouci==4 disable ciecam
+    if ((mocam == 1 && lp.sursouci!= 4)|| mocam ==2 || call == 1  || call == 2 || call == 10) { //CAM16 call=2 vibrance warm-cool - call = 10 take into account "mean luminance Yb for Jz
 //begin ciecam
         if (settings->verbose && (mocam == 1  || call == 1)) {//display only if choice cam16
             //information on Cam16 scene conditions - allows user to see choices's incidences
@@ -8830,7 +8856,6 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
     } else if (senstype == 31) { //ciecam
         varsens = lp.sensicie;
     }
-
     int bfhr = bfh;
     int bfwr = bfw;
 
@@ -20068,9 +20093,7 @@ void ImProcFunctions::Lab_Local(
                 }
 
                 if (params->locallab.spots.at(sp).expcie) {
-                    if(params->locallab.spots.at(sp).sursourcie != "disacie") {
                         ImProcFunctions::ciecamloc_02float(lp, sp, bufexpfin.get(), bfw, bfh, 0, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz, locwavCurvejz, locwavutilijz, maxicam, contsig, lightsig);
-                    }
                 }
             }
                 if (lp.strgradcie != 0.f) {

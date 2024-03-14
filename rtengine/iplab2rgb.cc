@@ -430,15 +430,17 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
 
     double wb2[3][3];
     float epsilon =  0.000001f;
+  //  double epsilon =  0.00000001;
+    
   //  if(gamutcontrol) {
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
             for (int i = 0; i < ch; ++i)
                 for (int j = 0; j < cw; ++j) {
-                    src->r(i, j) = rtengine::max(src->r(i, j), epsilon);
-                    src->g(i, j) = rtengine::max(src->g(i, j), epsilon);
-                    src->b(i, j) = rtengine::max(src->b(i, j), epsilon); 
+                    src->r(i, j) = (float) rtengine::max(src->r(i, j), epsilon);
+                    src->g(i, j) = (float) rtengine::max(src->g(i, j), epsilon);
+                    src->b(i, j) = (float) rtengine::max(src->b(i, j), epsilon); 
                 }
   //  }
 
@@ -552,21 +554,22 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
 
     if (mul == -5 &&  gampos == 2.4 && slpos == 12.92310) {//must be change if we change settings RT sRGB
         //only in this case we can shortcut..all process..no gamut control..because we reduce...leads to very small differences, but big speedup
+        printf("OK inverse\n");
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic, 16) if (multiThread)
 #endif
 
         for (int i = 0; i < ch; ++i)
             for (int j = 0; j < cw; ++j) {
-                float r = src->r(i, j);
-                float g = src->g(i, j);
-                float b = src->b(i, j);
-                r = (Color::igammatab_srgb[r]) / 65535.f;
-                g = (Color::igammatab_srgb[g]) / 65535.f;
-                b = (Color::igammatab_srgb[b]) / 65535.f;
-                dst->r(i, j) = r;
-                dst->g(i, j) = g;
-                dst->b(i, j) = b;
+                double r = (double) src->r(i, j);
+                double g = (double) src->g(i, j);
+                double b = (double) src->b(i, j);
+                r = (Color::igammatab_srgb[r]) / 65535.;
+                g = (Color::igammatab_srgb[g]) / 65535.;
+                b = (Color::igammatab_srgb[b]) / 65535.;
+                dst->r(i, j) =  r;
+                dst->g(i, j) =  g;
+                dst->b(i, j) =  b;
             }
 
         return;
