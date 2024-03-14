@@ -2635,7 +2635,7 @@ void ImProcFunctions::loccont(int bfw, int bfh, LabImage* tmp1, float rad, float
         array2D<float> iL(bfw, bfh, LL, 0);
         float gu = stren * rad;
         int r = rtengine::max(int(gu / sk), 1);
-        const double epsil = 0.001 * std::pow(2.f, -10);
+        const double epsil = 0.0001 * std::pow(2.f, -10);
         float st = 0.01f * rad;
         rtengine::guidedFilterLog(guide, 10.f, LL, r, epsil, false);
 
@@ -20129,12 +20129,16 @@ void ImProcFunctions::Lab_Local(
 
 
             float radcie = 0.30f;
+            bool exec_lc = true;
+            if(lp.moka == 1  && lp.sursouci == 4) {//disable local contrast if user do not want to use ciecam and Cam16 (I make this choice)
+                exec_lc = false;
+            }
             if(lp.moka == 1) { //cam16
                 radcie = 0.01 * params->locallab.spots.at(sp).detailcie;
             } else if(lp.moka == 2) { //Jz
                 radcie = 0.01 * params->locallab.spots.at(sp).detailciejz;
             }
-            if(radcie > 0.f) {
+            if(radcie > 0.f && exec_lc) {
             //local contrast 
                     //ampirical ponderation, to verify
                     float surrsour_ampl_str = 1.f;//amount
@@ -20169,6 +20173,7 @@ void ImProcFunctions::Lab_Local(
 
                     ImProcFunctions::localContrast(bufexpfin.get(), bufexpfin->L, localContrastParams, fftwlc, sk);
             }
+
             const float repart = 1.0 - 0.01 * params->locallab.spots.at(sp).reparcie;
             int bw = bufexporig->W;
             int bh = bufexporig->H;
