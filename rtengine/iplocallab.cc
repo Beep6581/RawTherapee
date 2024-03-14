@@ -20160,7 +20160,10 @@ void ImProcFunctions::Lab_Local(
                         surrsour_ampl_str = 1.6f;
                         surrsour_ampl_radius = 1.3f;
                         surrsour_ampl_dark = 1.6f;
-                        surrsour_ampl_radius = 1.35f;
+                    } else  if(lp.sursouci == 4 && lp.moka == 2) {//less than average for Jz
+                        surrsour_ampl_str = 0.9f;
+                        surrsour_ampl_radius = 0.8f;
+                        surrsour_ampl_dark = 1.f;
                     }
                     LocalContrastParams localContrastParams;
                     LocallabParams locallabparams;
