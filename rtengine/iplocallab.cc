@@ -2635,7 +2635,7 @@ void ImProcFunctions::loccont(int bfw, int bfh, LabImage* tmp1, float rad, float
         array2D<float> iL(bfw, bfh, LL, 0);
         float gu = stren * rad;
         int r = rtengine::max(int(gu / sk), 1);
-        const double epsil = 0.0001 * std::pow(2.f, -10);
+        const double epsil = 0.001 * std::pow(2.f, -10);
         float st = 0.01f * rad;
         rtengine::guidedFilterLog(guide, 10.f, LL, r, epsil, false);
 
