@@ -64,8 +64,7 @@ void MetaDataPanel::setBatchMode(bool batchMode)
 {
     ToolPanel::setBatchMode(batchMode);
     metadataMode->append(M("GENERAL_UNCHANGED"));
-    tagsNotebook->remove_page(-1);
-    tagsNotebook->remove_page(-1);
+    tagsNotebook->remove_page(0);	// remove EXIF page
 }
 
 

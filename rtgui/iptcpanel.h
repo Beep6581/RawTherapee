@@ -94,3 +94,23 @@ public:
     void copyClicked    ();
     void pasteClicked   ();
 };
+
+const std::string CAPTION("Iptc.Application2.Caption");
+const std::string CAPTION_WRITER("Iptc.Application2.Writer");
+const std::string CATEGORY("Iptc.Application2.Category");
+const std::string CITY("Iptc.Application2.City");
+const std::string COPYRIGHT("Iptc.Application2.Copyright");
+const std::string COUNTRY("Iptc.Application2.CountryName");
+const std::string CREATOR("Iptc.Application2.Byline");
+const std::string CREATOR_JOB_TITLE("Iptc.Application2.BylineTitle");
+const std::string CREDIT("Iptc.Application2.Credit");
+const std::string DATE_CREATED("Iptc.Application2.DateCreated");
+const std::string HEADLINE("Iptc.Application2.Headline");
+const std::string INSTRUCTIONS("Iptc.Application2.SpecialInstructions");
+const std::string KEYWORDS("Iptc.Application2.Keywords");
+const std::string PROVINCE("Iptc.Application2.ProvinceState");
+const std::string SOURCE("Iptc.Application2.Source");
+const std::string SUPPLEMENTAL_CATEGORIES("Iptc.Application2.SuppCategory");
+const std::string TITLE("Iptc.Application2.ObjectName");
+const std::string TRANS_REFERENCE("Iptc.Application2.TransmissionReference");
+
