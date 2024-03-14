@@ -20096,7 +20096,8 @@ void ImProcFunctions::Lab_Local(
                         ImProcFunctions::ciecamloc_02float(lp, sp, bufexpfin.get(), bfw, bfh, 0, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz, locwavCurvejz, locwavutilijz, maxicam, contsig, lightsig);
                 }
             }
-                if (lp.strgradcie != 0.f) {
+            
+            if (lp.strgradcie != 0.f) {
 
                     struct grad_params gp;
                     calclocalGradientParams(lp, gp, ystart, xstart, bfw, bfh, 15);
@@ -20109,7 +20110,7 @@ void ImProcFunctions::Lab_Local(
                             bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gp, jr, ir);
                         }
                     }
-                }
+            }
 
             if (lp.enacieMask && lp.recothrcie != 1.f) {
                 float recoth = lp.recothrcie;
@@ -20127,9 +20128,47 @@ void ImProcFunctions::Lab_Local(
             }
 
 
-            float radcie = params->locallab.spots.at(sp).detailcie;
-            loccont(bfw, bfh, bufexpfin.get(), radcie, 15.f, sk);
+            float radcie = 0.30f;
+            if(lp.moka == 1) { //cam16
+                radcie = 0.01 * params->locallab.spots.at(sp).detailcie;
+            } else if(lp.moka == 2) { //Jz
+                radcie = 0.01 * params->locallab.spots.at(sp).detailciejz;
+            }
+            if(radcie > 0.f) {
+            //local contrast 
+                    //ampirical ponderation, to verify
+                    float surrsour_ampl_str = 1.f;//amount
+                    float surrsour_ampl_dark = 1.f;//dark
+                    float surrsour_ampl_radius = 1.f;//radius
+                    if(lp.sursouci == 0) {//Average
+                        surrsour_ampl_str = 1.f;
+                        surrsour_ampl_dark = 1.f;
+                        surrsour_ampl_radius = 1.f;
+                    } else  if(lp.sursouci == 1) {//Dim
+                        surrsour_ampl_str = 1.1f;
+                        surrsour_ampl_dark = 1.1f;
+                        surrsour_ampl_radius = 1.1f;
+                    } else  if(lp.sursouci == 2) {//Dark
+                        surrsour_ampl_str = 1.3f;
+                        surrsour_ampl_dark = 1.3f;
+                        surrsour_ampl_radius = 1.3f;
+                    } else  if(lp.sursouci == 3) {//Ex Dark
+                        surrsour_ampl_str = 1.6f;
+                        surrsour_ampl_radius = 1.3f;
+                        surrsour_ampl_dark = 1.6f;
+                        surrsour_ampl_radius = 1.35f;
+                    }
+                    LocalContrastParams localContrastParams;
+                    LocallabParams locallabparams;
+                    localContrastParams.enabled = true;
+                    localContrastParams.radius = rtengine::min((double) surrsour_ampl_radius * 70., 100.);
+                    localContrastParams.amount = rtengine::min(radcie * surrsour_ampl_str, 1.f);
+                    localContrastParams.darkness = rtengine::min((double) surrsour_ampl_dark * 1., 3.);
+                    localContrastParams.lightness = 1.;
+                    bool fftwlc = false;
 
+                    ImProcFunctions::localContrast(bufexpfin.get(), bufexpfin->L, localContrastParams, fftwlc, sk);
+            }
             const float repart = 1.0 - 0.01 * params->locallab.spots.at(sp).reparcie;
             int bw = bufexporig->W;
             int bh = bufexporig->H;

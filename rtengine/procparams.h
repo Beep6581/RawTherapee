@@ -1704,6 +1704,7 @@ struct LocallabParams {
         double lightsigqcie;
         double contlcie;
         double contjzcie;
+        double detailciejz;
         double adapjzcie;
         double jz100;
         double pqremap;

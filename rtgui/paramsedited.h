@@ -1057,6 +1057,7 @@ public:
         bool lightsigqcie;
         bool contlcie;
         bool contjzcie;
+        bool detailciejz;
         bool adapjzcie;
         bool jz100;
         bool pqremap;

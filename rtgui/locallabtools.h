@@ -104,6 +104,7 @@ protected:
     rtengine::ProcEvent Evlocallabshiftyl;
     rtengine::ProcEvent Evlocallabanggradcie;
     rtengine::ProcEvent Evlocallabstrgradcie;
+    rtengine::ProcEvent Evlocallabdetailciejz;
     // LocallabTool parameters
     bool needMode;
     bool isLocActivated;
@@ -1761,6 +1762,7 @@ private:
     Adjuster* const targetGraycie;
     Adjuster* const targabscie;
     Adjuster* const detailcie;
+    Adjuster* const detailciejz;
     Adjuster* const catadcie;
     MyComboBoxText*  const surroundcie;
     Gtk::Box* const surrHBoxcie;

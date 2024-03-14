@@ -7691,6 +7691,7 @@ Locallabcie::Locallabcie():
     targetGraycie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TARGET_GRAY"), 5.0, 80.0, 0.1, 18.0))),
     targabscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_ABS"), 0.01, 16384.0, 0.01, 16.0))),
     detailcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0., 100., 0.1, 30.))),
+    detailciejz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0., 100., 0.1, 40.))),
     catadcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CATAD"), -100., 100., 0.5, 0., Gtk::manage(new RTImage("circle-blue-small")), Gtk::manage(new RTImage("circle-orange-small"))))),
     surroundcie(Gtk::manage(new MyComboBoxText())),
     surrHBoxcie(Gtk::manage(new Gtk::Box())),
@@ -7785,6 +7786,7 @@ Locallabcie::Locallabcie():
     Evlocallabshiftyl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SHIFTYL");
     Evlocallabanggradcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_ANGGRAD");
     Evlocallabstrgradcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_STRGRAD");
+    Evlocallabdetailciejz = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_DETAILJZ");
 
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -8190,6 +8192,7 @@ Locallabcie::Locallabcie():
     ToolParamBlock* const ciePzlightBox = Gtk::manage(new ToolParamBlock());
     ciePzlightBox->pack_start(*lightjzcie);
     ciePzlightBox->pack_start(*contjzcie);
+    ciePzlightBox->pack_start(*detailciejz);
     czlightFrame->add(*ciePzlightBox);
     jzBox->pack_start(*czlightFrame);
 
@@ -8395,6 +8398,7 @@ Locallabcie::Locallabcie():
     targabscie->setAdjusterListener(this);
 
     detailcie->setAdjusterListener(this);
+    detailciejz->setAdjusterListener(this);
 
     catadcie->setAdjusterListener(this);
 
@@ -9252,6 +9256,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         lightsigqcie->setValue(spot.lightsigqcie);
         contlcie->setValue(spot.contlcie);
         contjzcie->setValue(spot.contjzcie);
+        detailciejz->setValue(spot.detailciejz);
         adapjzcie->setValue(spot.adapjzcie);
         jz100->setValue(spot.jz100);
         pqremap->setValue(spot.pqremap);
@@ -9560,6 +9565,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.lightqcie = lightqcie->getValue();
         spot.lightsigqcie = lightsigqcie->getValue();
         spot.contlcie = contlcie->getValue();
+        spot.detailciejz = detailciejz->getValue();
         spot.contjzcie = contjzcie->getValue();
         spot.adapjzcie = adapjzcie->getValue();
         spot.jz100 = jz100->getValue();
@@ -10184,7 +10190,6 @@ void Locallabcie::modecamChanged()
         expprecam->hide();
         expcam16->hide();
         expcamviewing->hide();
-
     } else {
         expjz->hide();
         jzFrame->hide();
@@ -11153,6 +11158,7 @@ void Locallabcie::convertParamToNormal()
     shapecie2->setCurve(defSpot.ciecurve2);
     lightjzcie->setValue(defSpot.lightjzcie);
     contjzcie->setValue(defSpot.contjzcie);
+    detailciejz->setValue(defSpot.detailciejz);
     sigmoidldajzcie->setValue(defSpot.sigmoidldajzcie);
     hljzcie->setValue(defSpot.hljzcie);
     shjzcie->setValue(defSpot.shjzcie);
@@ -11228,6 +11234,7 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         lightsigqcie->setDefault(defSpot.lightsigqcie);
         contlcie->setDefault(defSpot.contlcie);
         contjzcie->setDefault(defSpot.contjzcie);
+        detailciejz->setDefault(defSpot.detailciejz);
         adapjzcie->setDefault(defSpot.adapjzcie);
         jz100->setDefault(defSpot.jz100);
         pqremap->setDefault(defSpot.pqremap);
@@ -11586,6 +11593,13 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabcontjzcie,
                                        contjzcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == detailciejz) {
+            if (listener) {
+                listener->panelChanged(Evlocallabdetailciejz,
+                                        detailciejz->getTextValue() + spName);
             }
         }
 
