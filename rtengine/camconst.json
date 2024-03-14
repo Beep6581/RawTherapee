@@ -2032,7 +2032,7 @@ Camera constants:
     },
 
     { // Quality C
-        "make_model" : "Nikon Z 6_2",
+        "make_model" : [ "Nikon Z 6_2", "Nikon Z f" ],
         "dcraw_matrix" : [9943, -3270, -839, -5323, 13269, 2259, -1198, 2083, 7557] // DNG
     },
 
