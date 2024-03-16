@@ -4584,7 +4584,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     lightsigqcie(0.),
     contlcie(0.),
     contjzcie(0.),
-    detailciejz(40.),
+    detailciejz(30.),
     adapjzcie(4.0),
     jz100(0.25),
     pqremap(120.),

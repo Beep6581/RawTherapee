@@ -430,7 +430,6 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
 
     double wb2[3][3];
     float epsilon =  0.000001f;
-  //  double epsilon =  0.00000001;
     
   //  if(gamutcontrol) {
 #ifdef _OPENMP

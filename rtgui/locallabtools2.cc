@@ -7691,7 +7691,7 @@ Locallabcie::Locallabcie():
     targetGraycie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TARGET_GRAY"), 5.0, 80.0, 0.1, 18.0))),
     targabscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_ABS"), 0.01, 16384.0, 0.01, 16.0))),
     detailcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0., 100., 0.1, 30.))),
-    detailciejz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0., 100., 0.1, 40.))),
+    detailciejz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0., 100., 0.1, 30.))),
     catadcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CATAD"), -100., 100., 0.5, 0., Gtk::manage(new RTImage("circle-blue-small")), Gtk::manage(new RTImage("circle-orange-small"))))),
     surroundcie(Gtk::manage(new MyComboBoxText())),
     surrHBoxcie(Gtk::manage(new Gtk::Box())),
@@ -7866,17 +7866,11 @@ Locallabcie::Locallabcie():
     PQFBox->pack_start(*adapjzcie);
     PQFBox->pack_start(*jz100);
     PQFBox->pack_start(*pqremap);
-//    PQFBox->pack_start(*forcejz);
-//    PQFBox->pack_start(*contthreszcam);
     PQFrame->add(*PQFBox);
     cieFBox->pack_start(*PQFrame);
     logjzFrame->set_label_align(0.025, 0.5);
     logjzFrame->set_label_widget(*logjz);
-    //  Gtk::Separator* const separatorjz = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     ToolParamBlock* const logjzBox = Gtk::manage(new ToolParamBlock());
-    //logjzBox->pack_start(*blackEvjz);
-    // logjzBox->pack_start(*whiteEvjz);
-    // logjzBox->pack_start(*separatorjz);
     logjzBox->pack_start(*targetjz);
     logjzFrame->add(*logjzBox);
     cieFBox->pack_start(*logjzFrame);
@@ -8080,10 +8074,6 @@ Locallabcie::Locallabcie():
     cieFBox->pack_start(*sigmoidjzFrame);
 
     cieFBox->pack_start(*surHBoxcie);
-    //cieFBox->pack_start(*expprecam, false, false);
-
-//    cieFrame->add(*cieFBox);
-//    pack_start(*cieFrame);
 
 
     expcamscene->add(*cieFBox, false);
@@ -8149,16 +8139,7 @@ Locallabcie::Locallabcie():
 
 
     jz1CurveEditorG->curveListComplete();
-    /*
-        jz2CurveEditorG->setCurveListener(this);
-        shapeczjz->setLeftBarColorProvider (this, 1);
-        shapeczjz->setRangeDefaultMilestones (0.05, 0.2, 0.58);
-        shapeczjz->setResetCurve(DiagonalCurveType(defSpot.czjzcurve.at(0)), defSpot.czjzcurve);
-        shapeczjz->setBottomBarBgGradient (milestone);
-        shapeczjz->setLeftBarBgGradient (shapeczMilestones);
-        shapeczjz->setRangeDefaultMilestones (0.05, 0.2, 0.58);
-        jz2CurveEditorG->curveListComplete();
-    */
+
     jz2CurveEditorG->setCurveListener(this);
     LHshapejz->setIdentityValue(0.);
     LHshapejz->setResetCurve(FlatCurveType(defSpot.LHcurvejz.at(0)), defSpot.LHcurvejz);
@@ -8171,13 +8152,11 @@ Locallabcie::Locallabcie():
 
     CHshapejz->setIdentityValue(0.);
     CHshapejz->setResetCurve(FlatCurveType(defSpot.CHcurvejz.at(0)), defSpot.CHcurvejz);
-    //  CHshapejz->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
     CHshapejz->setCurveColorProvider(this, 3);
     CHshapejz->setBottomBarBgGradient(six_shape);
 
     HHshapejz->setIdentityValue(0.);
     HHshapejz->setResetCurve(FlatCurveType(defSpot.HHcurvejz.at(0)), defSpot.HHcurvejz);
-    //  HHshapejz->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
     HHshapejz->setCurveColorProvider(this, 3);
     HHshapejz->setBottomBarBgGradient(six_shape);
 
@@ -8434,7 +8413,6 @@ Locallabcie::Locallabcie():
     surroundcie->append(M("TP_COLORAPP_SURROUND_AVER"));
     surroundcie->append(M("TP_COLORAPP_SURROUND_DIM"));
     surroundcie->append(M("TP_COLORAPP_SURROUND_DARK"));
-//    surroundcie->append (M ("TP_COLORAPP_SURROUND_EXDARK"));
     surroundcie->set_active(0);
     surrHBoxcie->pack_start(*surroundcie);
     surroundcieconn = surroundcie->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::surroundcieChanged));
@@ -8478,8 +8456,6 @@ Locallabcie::Locallabcie():
     cieP11Box->pack_start(*cieCurveEditorG2);
     expLcie->add(*cieP11Box, false);
     cieP1Box->pack_start(*expLcie, false, false);
-    // cie1Frame->add(*cieP1Box);
-    // expcam16->pack_start(*cie1Frame);
     expcam16->add(*cieP1Box, false);
 
     pack_start(*expcam16, false, false);
@@ -8492,11 +8468,6 @@ Locallabcie::Locallabcie():
     cieP2Box->pack_start(*targabscie);
     cieP2Box->pack_start(*catadcie);
     cieP2Box->pack_start(*surrHBoxcie);
-//    cieP2Box->pack_start(*detailcie);
-//    cieP2Box->pack_start(*jabcie);
-
-//   cie2Frame->add(*cieP2Box);
-//   pack_start(*cie2Frame);
 
     expcamviewing->add(*cieP2Box, false);
 
@@ -9178,7 +9149,6 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         logjz->set_active(spot.logjz);
         sigjz->set_active(spot.sigjz);
         sigq->set_active(spot.sigq);
-        // chjzcie->set_active(spot.chjzcie);
         chjzcie->set_active(true);//force to true to avoid other mode
         sourceabscie->setValue(spot.sourceabscie);
         jabcie->set_active(spot.jabcie);
@@ -9203,8 +9173,6 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             bwevMethod->set_active(0);
         } else if (spot.bwevMethod == "sig") {
             bwevMethod->set_active(1);
-            // } else if (spot.bwevMethod == "logsig") {
-            //     bwevMethod->set_active(2);
         }
 
         if (spot.sursourcie == "Average") {
@@ -9226,8 +9194,6 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             surroundcie->set_active(1);
         } else if (spot.surroundcie == "Dark") {
             surroundcie->set_active(2);
-//        } else if (spot.surroundcie == "ExtremelyDark") {
-//            surroundcie->set_active (3);
         }
 
         shapecie->setCurve(spot.ciecurve);
@@ -9463,8 +9429,6 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.bwevMethod = "none";
         } else if (bwevMethod->get_active_row_number() == 1) {
             spot.bwevMethod = "sig";
-            // } else if (bwevMethod->get_active_row_number() == 2) {
-            //     spot.bwevMethod = "logsig";
         }
 
         if (illMethod->get_active_row_number() == 0) {
@@ -9537,8 +9501,6 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.surroundcie = "Dim";
         } else if (surroundcie->get_active_row_number() == 2) {
             spot.surroundcie = "Dark";
-//        } else if (surroundcie->get_active_row_number() == 3) {
-//            spot.surroundcie = "ExtremelyDark";
         }
 
         spot.jzcurve = shapejz->getCurve();
@@ -9851,8 +9813,6 @@ void Locallabcie::AutograycieChanged()
         whiteEvjz->set_sensitive(true);
         whitescie->set_sensitive(false);
         blackscie->set_sensitive(false);
-        //  adapjzcie->set_sensitive(false);
-        //  jz100->set_sensitive(false);
     }
 
     if (isLocActivated && exp->getEnabled()) {
@@ -10223,9 +10183,7 @@ void Locallabcie::modecamChanged()
     cie1Frame->show();
     expcam16->show();
     expcamviewing->show();
-    //  cie2Frame->show();
     sourceGraycie->show();
-//   cieFrame->show();
     expcamscene->show();
 
     if (modecam->get_active_row_number() == 1) {
@@ -10238,7 +10196,6 @@ void Locallabcie::modecamChanged()
         forcejz->hide();
         pqremapcam16->hide();
         catadcie->hide();
-        // cie2Frame->hide();
         expcamviewing->hide();
         exprecovcie->hide();
         expgradcie->hide();
@@ -10286,7 +10243,6 @@ void Locallabcie::modecamChanged()
 
         if (modecam->get_active_row_number() == 1) {
             pqremapcam16->hide();
-            // cieFrame->hide();
             expcamscene->hide();
             cie1Frame->hide();
             expcam16->hide();
@@ -10294,12 +10250,9 @@ void Locallabcie::modecamChanged()
             catadcie->hide();
             expgradcie->hide();
             expcam16->hide();
-            // cie2Frame->hide();
         }
     } else {
-        //cieFrame->show();
         expcamscene->show();
-        //  cie2Frame->show();
         expcamviewing->show();
 
         if (modecam->get_active_row_number() == 0) {
@@ -10322,7 +10275,6 @@ void Locallabcie::modecamChanged()
             sigmoidFrame->hide();
             bevwevFrame->show();
             catadcie->hide();
-            // cie2Frame->hide();
             expcamviewing->hide();
             expgradcie->hide();
             expcam16->hide();
@@ -10343,7 +10295,6 @@ void Locallabcie::modecamChanged()
         targetGraycie->show();
         targabscie->show();
         surrHBoxcie->show();
-        //  cie2Frame->show();
         expprecam->show();
         expcamviewing->show();
 
@@ -10516,13 +10467,11 @@ void Locallabcie::bwevMethodChanged()
         comprcieauto->set_active(true);
 
         if (mode == Simple) {
-            //    comprcie->set_sensitive(false);
             comprcieth->set_sensitive(false);
             comprcieauto->set_sensitive(false);
         }
 
     } else {
-        // comprcie->set_sensitive(false);
         comprcieth->set_sensitive(false);
         comprcieauto->set_sensitive(false);
     }
@@ -10575,7 +10524,6 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             modeHBoxcie->hide();
             sensicie->show();
             reparcie->show();
-            //     sigmoidblcie->hide();
             sigmoidsenscie->hide();
             sigmoidnormFrame->hide();
             pqremapcam16->hide();
@@ -10584,14 +10532,12 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             adapjzcie->hide();
             jz100->hide();
             pqremap->show();
-            //   pqremapcam16->show();
             jabcie->hide();
             targetGraycie->show();
             targabscie->show();
             surrHBoxcie->show();
             forcejz->hide();
             sourceGraycie->show();
-            //  cieFrame->show();
             expcamscene->show();
             exprecovcie->hide();
             expgradcie->hide();
@@ -10636,7 +10582,6 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 sigmoidjzFrame->hide();
                 sigmoidFrame->hide();
                 catadcie->hide();
-                //  cie2Frame->hide();
                 expcamviewing->hide();
                 maskusablecie->hide();
                 maskunusablecie->hide();
@@ -10710,7 +10655,6 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             surrHBoxcie->show();
             pqremapcam16->hide();
             sourceGraycie->show();
-            //cieFrame->show();
             expcamscene->show();
             exprecovcie->show();
             expgradcie->show();
@@ -10727,7 +10671,6 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             maskcieHCurveEditorG->hide();
             sigmoidnormFrame->hide();
 
-            //  pqremapcam16->show();
             if (enacieMask->get_active()) {
                 maskusablecie->show();
                 maskunusablecie->hide();
@@ -10747,7 +10690,6 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
 
 
             if (modecam->get_active_row_number() == 1) {
-                //cieFrame->hide();
                 expcamscene->hide();
                 cie1Frame->hide();
                 expcam16->hide();
@@ -10759,7 +10701,6 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 bevwevFrame->hide();
                 sigmoidFrame->hide();
                 catadcie->hide();
-                //cie2Frame->hide();
                 expcamviewing->hide();
                 exprecovcie->hide();
                 expgradcie->hide();
@@ -10831,9 +10772,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             targabscie->show();
             surrHBoxcie->show();
             forcejz->hide();
-            // pqremapcam16->show();
             sourceGraycie->show();
-            // cieFrame->show();
             expcamscene->show();
             exprecovcie->show();
             expgradcie->show();
@@ -10888,9 +10827,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
 
             }
 
-            //   cieFrame->show();
             expcamscene->show();
-            //  cie2Frame->show();
             expcamviewing->show();
 
             if (modecam->get_active_row_number() == 0) {
@@ -10926,7 +10863,6 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 sigmoidFrame->hide();
                 bevwevFrame->show();
                 catadcie->hide();
-                //cie2Frame->hide();
                 expcamviewing->hide();
                 exprecovcie->show();
                 expgradcie->show();
@@ -10985,7 +10921,6 @@ void Locallabcie::updatecieGUI()
 
     surHBoxcie->show();
     cie1Frame->show();
-    //  cie2Frame->show();
     expcam16->show();
     expcamviewing->show();
 
@@ -11010,7 +10945,6 @@ void Locallabcie::updatecieGUI()
 
 
     sourceGraycie->show();
-    //cieFrame->show();
     expcamscene->show();
 
     if (enacieMask->get_active() && mode != Simple) {
@@ -11084,7 +11018,6 @@ void Locallabcie::updatecieGUI()
         bevwevFrame->show();
         sigmoidFrame->hide();
         catadcie->hide();
-        //  cie2Frame->hide();
         expprecam->hide();
         expcamviewing->hide();
         expgradcie->hide();

@@ -20145,30 +20145,30 @@ void ImProcFunctions::Lab_Local(
                     float surrsour_ampl_dark = 1.f;//dark
                     float surrsour_ampl_radius = 1.f;//radius
                     if(lp.sursouci == 0) {//Average
-                        surrsour_ampl_str = 1.f;
+                        surrsour_ampl_str = 0.9f;
                         surrsour_ampl_dark = 1.f;
                         surrsour_ampl_radius = 1.f;
                     } else  if(lp.sursouci == 1) {//Dim
-                        surrsour_ampl_str = 1.1f;
+                        surrsour_ampl_str = 1.f;
                         surrsour_ampl_dark = 1.1f;
-                        surrsour_ampl_radius = 1.1f;
+                        surrsour_ampl_radius = 1.05f;
                     } else  if(lp.sursouci == 2) {//Dark
-                        surrsour_ampl_str = 1.3f;
-                        surrsour_ampl_dark = 1.3f;
-                        surrsour_ampl_radius = 1.3f;
+                        surrsour_ampl_str = 1.2f;
+                        surrsour_ampl_dark = 1.2f;
+                        surrsour_ampl_radius = 1.1f;
                     } else  if(lp.sursouci == 3) {//Ex Dark
-                        surrsour_ampl_str = 1.6f;
-                        surrsour_ampl_radius = 1.3f;
-                        surrsour_ampl_dark = 1.6f;
+                        surrsour_ampl_str = 1.4f;
+                        surrsour_ampl_radius = 1.2f;
+                        surrsour_ampl_dark = 1.5f;
                     } else  if(lp.sursouci == 4 && lp.moka == 2) {//less than average for Jz
                         surrsour_ampl_str = 0.9f;
-                        surrsour_ampl_radius = 0.8f;
+                        surrsour_ampl_radius = 0.9f;
                         surrsour_ampl_dark = 1.f;
                     }
                     LocalContrastParams localContrastParams;
                     LocallabParams locallabparams;
                     localContrastParams.enabled = true;
-                    localContrastParams.radius = rtengine::min((double) surrsour_ampl_radius * 70., 100.);
+                    localContrastParams.radius = rtengine::min((double) surrsour_ampl_radius * 80., 100.);
                     localContrastParams.amount = rtengine::min(radcie * surrsour_ampl_str, 1.f);
                     localContrastParams.darkness = rtengine::min((double) surrsour_ampl_dark * 1., 3.);
                     localContrastParams.lightness = 1.;
