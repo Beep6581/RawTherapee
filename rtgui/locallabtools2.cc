@@ -8597,7 +8597,7 @@ Locallabcie::Locallabcie():
 
     maskcieBox->pack_start(*blendmaskcie, Gtk::PACK_SHRINK, 0);
     maskcieBox->pack_start(*radmaskcie, Gtk::PACK_SHRINK, 0);
-    maskcieBox->pack_start(*lapmaskcie, Gtk::PACK_SHRINK, 0);
+    //maskcieBox->pack_start(*lapmaskcie, Gtk::PACK_SHRINK, 0);
     maskcieBox->pack_start(*chromaskcie, Gtk::PACK_SHRINK, 0);
     maskcieBox->pack_start(*gammaskcie, Gtk::PACK_SHRINK, 0);
     maskcieBox->pack_start(*slomaskcie, Gtk::PACK_SHRINK, 0);
@@ -10133,6 +10133,7 @@ void Locallabcie::modecamChanged()
     const int mode = complexity->get_active_row_number();
     contsigqcie->hide();
     lightsigqcie->hide();
+    const LocallabParams::LocallabSpot defSpot;
 
     if (modecam->get_active_row_number() == 1) {
         expjz->show();
@@ -10150,8 +10151,13 @@ void Locallabcie::modecamChanged()
         expprecam->hide();
         expcam16->hide();
         expcamviewing->hide();
+        lapmaskcie->hide();
+        lapmaskcie->setValue(defSpot.lapmaskcie);
+
     } else {
         expjz->hide();
+        lapmaskcie->show();
+        
         jzFrame->hide();
         adapjzcie->hide();
         jz100->hide();
@@ -10202,11 +10208,16 @@ void Locallabcie::modecamChanged()
         expmaskcie->hide();
         expprecam->hide();
         expcam16->hide();
+        lapmaskcie->hide();
+        lapmaskcie->setValue(defSpot.lapmaskcie);
 
         if (mode == Expert) {
             exprecovcie->show();
             expmaskcie->show();
             expgradcie->hide();
+            lapmaskcie->hide();
+            lapmaskcie->setValue(defSpot.lapmaskcie);
+            
         }
 
     }
@@ -10250,6 +10261,9 @@ void Locallabcie::modecamChanged()
             catadcie->hide();
             expgradcie->hide();
             expcam16->hide();
+            lapmaskcie->hide();
+            lapmaskcie->setValue(defSpot.lapmaskcie);
+
         }
     } else {
         expcamscene->show();
@@ -10259,6 +10273,7 @@ void Locallabcie::modecamChanged()
             bevwevFrame->show();
             sigmoidjzFrame->hide();
             expprecam->show();
+            lapmaskcie->show();
 
 
         }
@@ -10278,6 +10293,8 @@ void Locallabcie::modecamChanged()
             expcamviewing->hide();
             expgradcie->hide();
             expcam16->hide();
+            lapmaskcie->hide();
+            lapmaskcie->setValue(defSpot.lapmaskcie);
 
             if (chjzcie->get_active()) {
                 thrhjzcie->set_sensitive(true);
@@ -10370,6 +10387,8 @@ void Locallabcie::modecieChanged()
 
 void Locallabcie::sursourcieChanged()
 {
+    const LocallabParams::LocallabSpot defSpot;
+
     if (sursourcie->get_active_row_number() == 4) {
         expcam16->hide();
         expcamviewing->hide();
@@ -10379,6 +10398,9 @@ void Locallabcie::sursourcieChanged()
         if(modecam->get_active_row_number() == 1) {
             expcam16->hide();
             expcamviewing->hide();
+        lapmaskcie->hide();
+        lapmaskcie->setValue(defSpot.lapmaskcie);
+            
         }
     }
 
@@ -10501,6 +10523,8 @@ void Locallabcie::surroundcieChanged()
 
 void Locallabcie::updateGUIToMode(const modeType new_type)
 {
+    const LocallabParams::LocallabSpot defSpot;
+
     switch (new_type) {
         case Simple:
             catadcie->show();
@@ -10591,6 +10615,8 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 exprecovcie->hide();
                 expgradcie->hide();
                 expcam16->hide();
+                lapmaskcie->hide();
+                lapmaskcie->setValue(defSpot.lapmaskcie);
 
             }
 
@@ -10710,6 +10736,8 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 expprecam->hide();
                 expgradcie->hide();
                 expcam16->hide();
+                lapmaskcie->hide();
+                lapmaskcie->setValue(defSpot.lapmaskcie);
 
             }
 
@@ -10824,6 +10852,8 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 expcam16->hide();
                 exprecovcie->show();
                 expmaskcie->show();
+                lapmaskcie->hide();
+                lapmaskcie->setValue(defSpot.lapmaskcie);
 
             }
 
@@ -10872,6 +10902,8 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 expprecam->hide();
                 expgradcie->hide();
                 expcam16->hide();
+                lapmaskcie->hide();
+                lapmaskcie->setValue(defSpot.lapmaskcie);
 
                 if (chjzcie->get_active()) {
                     thrhjzcie->set_sensitive(true);
@@ -10896,6 +10928,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
 
 void Locallabcie::updatecieGUI()
 {
+    const LocallabParams::LocallabSpot defSpot;
     const int mode = complexity->get_active_row_number();
     expmaskcie->show();
     exprecovcie->show();
@@ -10994,6 +11027,8 @@ void Locallabcie::updatecieGUI()
         if(modecam->get_active_row_number() == 1) {
             expcam16->hide();
             expcamviewing->hide();
+            lapmaskcie->hide();
+            lapmaskcie->setValue(defSpot.lapmaskcie);
         }
     }
 
@@ -11024,6 +11059,9 @@ void Locallabcie::updatecieGUI()
         expcam16->hide();
         exprecovcie->show();
         expmaskcie->show();
+        lapmaskcie->hide();
+        lapmaskcie->setValue(defSpot.lapmaskcie);
+
     }
 
 
@@ -11118,6 +11156,8 @@ void Locallabcie::convertParamToNormal()
         enacieMask->set_active(defSpot.enacieMask);
         logjz->set_active(defSpot.logjz);
         sigjz->set_active(defSpot.sigjz);
+        lapmaskcie->setValue(defSpot.lapmaskcie);
+        
     }
 
     lapmaskcie->setValue(defSpot.lapmaskcie);
