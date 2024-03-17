@@ -742,9 +742,19 @@ void RawImageSource::getWBMults(const ColorTemp &ctemp, const RAWParams &raw, st
     autoGainComp = camInitialGain / initialGain;
 }
 
+bool checkRawDataDimensions(const array2D<float> &rawData, const RawImage &rawImage, int width, int height)
+{
+    const int colors = (rawImage.getSensorType() == rtengine::ST_BAYER ||
+                           rawImage.getSensorType() == rtengine::ST_FUJI_XTRANS ||
+                           rawImage.get_colors() == 1)
+                           ? 1
+                           : 3;
+    return rawData.getHeight() == height && rawData.getWidth() == colors * width;
+}
+
 void RawImageSource::getImage(const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const RAWParams &raw)
 {
-    assert(rawData.getHeight() == H && rawData.getWidth() == W);
+    assert(checkRawDataDimensions(rawData, *ri, W, H));
 
     MyMutex::MyLock lock(getImageMutex);
 
@@ -1747,7 +1757,7 @@ void RawImageSource::preprocess(const RAWParams &raw, const LensProfParams &lens
 
 void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &contrastThreshold, bool cache)
 {
-    assert(rawData.getHeight() == H && rawData.getWidth() == W);
+    assert(checkRawDataDimensions(rawData, *ri, W, H));
 
     MyTime t1, t2;
     t1.set();
@@ -3842,7 +3852,7 @@ void RawImageSource::hlRecovery(const std::string &method, float* red, float* gr
 
 void RawImageSource::getAutoExpHistogram(LUTu & histogram, int& histcompr)
 {
-    assert(rawData.getHeight() == H && rawData.getWidth() == W);
+    assert(checkRawDataDimensions(rawData, *ri, W, H));
 
 //    BENCHFUN
     histcompr = 3;
@@ -7487,7 +7497,7 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
 
 void RawImageSource::getAutoWBMultipliersitc(bool extra, double & tempref, double & greenref, double & tempitc, double & greenitc, float &temp0, float &delta,  int &bia, int &dread, int &kcam, int &nocam, float &studgood, float &minchrom, int &kmin,  float &minhist, float &maxhist, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double & rm, double & gm, double & bm, const WBParams & wbpar, const ColorManagementParams & cmp, const RAWParams & raw, const ToneCurveParams &hrp)
 {
-    assert(rawData.getHeight() == H && rawData.getWidth() == W);
+    assert(checkRawDataDimensions(rawData, *ri, W, H));
 
 //    BENCHFUN
     constexpr double clipHigh = 64000.0;
@@ -7713,7 +7723,7 @@ void RawImageSource::getAutoWBMultipliersitc(bool extra, double & tempref, doubl
 
 void RawImageSource::getAutoWBMultipliers(double &rm, double &gm, double &bm)
 {
-    assert(rawData.getHeight() == H && rawData.getWidth() == W);
+    assert(checkRawDataDimensions(rawData, *ri, W, H));
 
 //    BENCHFUN
     constexpr double clipHigh = 64000.0;
@@ -7931,7 +7941,7 @@ void RawImageSource::getAutoWBMultipliers(double &rm, double &gm, double &bm)
 
 ColorTemp RawImageSource::getSpotWB(std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran, double equal, StandardObserver observer)
 {
-    assert(rawData.getHeight() == H && rawData.getWidth() == W);
+    assert(checkRawDataDimensions(rawData, *ri, W, H));
 
     int x;
     int y;
@@ -8271,7 +8281,7 @@ void RawImageSource::init()
 
 void RawImageSource::getRawValues(int x, int y, int rotate, int &R, int &G, int &B)
 {
-    if (rawData.getWidth() != W || rawData.getHeight() != H || d1x) { // Nikon D1x has special sensor. We just skip it
+    if (!checkRawDataDimensions(rawData, *ri, W, H) || d1x) { // Nikon D1x has special sensor. We just skip it
         R = G = B = 0;
         return;
     }
@@ -8319,7 +8329,7 @@ bool RawImageSource::isGainMapSupported() const
 
 void RawImageSource::applyDngGainMap(const float black[4], const std::vector<GainMap> &gainMaps)
 {
-    assert(rawData.getHeight() == H && rawData.getWidth() == W);
+    assert(checkRawDataDimensions(rawData, *ri, W, H));
 
     // now we can apply each gain map to raw_data
     array2D<float> mvals[2][2];
