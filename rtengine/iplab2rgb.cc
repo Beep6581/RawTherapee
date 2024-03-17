@@ -553,7 +553,6 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
 
     if (mul == -5 &&  gampos == 2.4 && slpos == 12.92310) {//must be change if we change settings RT sRGB
         //only in this case we can shortcut..all process..no gamut control..because we reduce...leads to very small differences, but big speedup
-        printf("OK inverse\n");
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic, 16) if (multiThread)
 #endif

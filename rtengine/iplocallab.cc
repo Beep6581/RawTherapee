@@ -3144,7 +3144,6 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
     if (params->locallab.spots.at(sp).expcie && call == 10 && params->locallab.spots.at(sp).modecam == "jz") {
         yb = params->locallab.spots.at(sp).sourceGraycie;//for Jz calculate Yb and surround in Lab and cam16 before process Jz
         la = params->locallab.spots.at(sp).sourceabscie;
-        printf("JZ CALL=10\n");
             if(lp.sursouci == 0) {
                 f = 1.0f, c = 0.69f, nc = 1.0f;
             } else if (lp.sursouci == 1){
