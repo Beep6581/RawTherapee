@@ -55,7 +55,7 @@ public:
         bool isvisible;
         int prevMethod; // 0 = Normal, 1 = Excluding
         int shape; // 0 = Ellipse, 1 = Rectangle
-        int spotMethod; // 0 = Normal, 1 = Excluding
+        int spotMethod; // 0 = Normal, 1 = Excluding  2 = fullimage 3 = main
         int sensiexclu;
         int structexclu;
         int shapeMethod; // 0 = Independent (mouse), 1 = Symmetrical (mouse), 2 = Independent (mouse + sliders), 3 = Symmetrical (mouse + sliders)
@@ -106,6 +106,7 @@ public:
         SpotDuplication = 4,
         SpotAllVisibilityChanged = 5
     };
+    IdleRegister idle_register;
 
     // Constructor and management functions
     /**
@@ -220,6 +221,12 @@ public:
 
     // Batch mode management
     // Note: Batch mode is deactivated for Locallab
+    
+    /**
+     * upadte function to work with Preferences and spotMethod
+    */
+    void updateguiset(int spottype, bool iscolor,  bool issh, bool isvib, bool isexpos, bool issoft, bool isblur, bool istom, bool isret, bool issharp, bool iscont, bool iscbdl, bool islog, bool ismas, bool iscie);
+    void updateguiscopeset(int scope);
 
 private:
     // Cell renderer
@@ -435,8 +442,12 @@ private:
     sigc::connection previewConn_;
 
     Gtk::Box* const ctboxshape;
+    Gtk::Box* const ctboxactivmethod;
+    Gtk::Box* const ctboxspotmethod;
+    
     Gtk::Box* const ctboxshapemethod;
     Gtk::Box* const ctboxgamut;
+    ToolParamBlock* const artifBox2;
 
     // Internal variables
     ControlPanelListener* controlPanelListener;

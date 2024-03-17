@@ -249,7 +249,7 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
 
         if (pp->locallab.spots.at(i).shape == "ELI") {
             r.shape = 0;
-        } else {
+        } else if (pp->locallab.spots.at(i).shape == "RECT")  {
             r.shape = 1;
         }
 
@@ -265,8 +265,10 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
             r.spotMethod = 1;
         } else if (pp->locallab.spots.at(i).spotMethod == "full"){
             r.spotMethod = 2;
+        } else if (pp->locallab.spots.at(i).spotMethod == "main"){
+            r.spotMethod = 3;
         }
-
+        
         r.sensiexclu = pp->locallab.spots.at(i).sensiexclu;
         r.structexclu = pp->locallab.spots.at(i).structexclu;
 
@@ -420,7 +422,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
 
             if (newSpot->shape == "ELI") {
                 r.shape = 0;
-            } else {
+            } else if (newSpot->shape == "RECT"){
                 r.shape = 1;
             }
 
@@ -437,6 +439,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 r.spotMethod = 1;
             } else if(newSpot->spotMethod == "full") {
                 r.spotMethod = 2;
+            } else if(newSpot->spotMethod == "main") {
+                r.spotMethod = 3;
             }
 
             r.sensiexclu = newSpot->sensiexclu;
@@ -746,7 +750,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
 
             if (newSpot->shape == "ELI") {
                 r.shape = 0;
-            } else {
+            } else if (newSpot->shape == "RECT"){
                 r.shape = 1;
             }
 
@@ -762,8 +766,10 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 r.spotMethod = 1;
             } else if (newSpot->spotMethod == "full") {
                 r.spotMethod = 2;
+            } else if (newSpot->spotMethod == "main") {
+                r.spotMethod = 3;
             }
-
+            
             r.sensiexclu = newSpot->sensiexclu;
             r.structexclu = newSpot->structexclu;
 
@@ -810,7 +816,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 }
             }
 
-            if(r.spotMethod != 2) {
+            if(r.spotMethod == 0 || r.spotMethod == 1 ) {
                 r.locX = newSpot->loc.at(0);
                 r.locXL = newSpot->loc.at(1);
                 r.locY = newSpot->loc.at(2);
@@ -960,6 +966,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pp->locallab.spots.at(pp->locallab.selspot).spotMethod = "exc";
                     } else if (r->spotMethod == 2) {
                         pp->locallab.spots.at(pp->locallab.selspot).spotMethod = "full";
+                    } else if (r->spotMethod == 3) {
+                        pp->locallab.spots.at(pp->locallab.selspot).spotMethod = "main";
                     }
 
                     pp->locallab.spots.at(pp->locallab.selspot).sensiexclu = r->sensiexclu;
@@ -1129,6 +1137,108 @@ void Locallab::denChanged(const std::vector<locallabDenoiseLC> &denlc, int selsp
         expblur.updatedenlc(highres, nres, highres46, nres46, Lhighres, Lnres, Lhighres46, Lnres46);
     }
     
+}
+// New fonctions to change Scope color 
+void Locallab::scopeChangedcol(int scope, int selspot, bool enab)
+{
+    if(enab) {
+        expcolor.updateguiscopecolor(scope);
+    }
+   
+}
+// New fonctions to change Scope Shadows Highlight
+
+void Locallab::scopeChangedsh(int scope, int selspot, bool enab)
+{
+    if(enab) {
+        expshadhigh.updateguiscopesahd(scope); 
+    }
+   
+}
+
+// New fonctions to change Scope Vibrance
+
+void Locallab::scopeChangedvib(int scope, int selspot, bool enab)
+{
+    if(enab) {
+        expvibrance.updateguiscopevib(scope); 
+    }
+   
+}
+
+//reinit expsettings
+void Locallab::scopeChangedset(int scope, int selspot, bool enab)
+{
+    if(enab) {
+        expsettings->updateguiscopeset(30);//30 defaut value..perhaps possible to pass default value ??
+    }
+   
+}
+
+//main new fonction global to hide show and activated or not some functions - inverse, scope...
+void Locallab::mainChanged(int spottype, int selspot, bool iscolor, bool issh, bool isvib, bool isexpos, bool issoft, bool isblur, bool istom, bool isret, bool issharp, bool iscont, bool iscbdl, bool islog, bool ismas, bool iscie )
+{
+    
+
+    if(iscolor) {
+        expcolor.updateguicolor(spottype);
+    }
+    
+    if(issh) {
+        expshadhigh.updateguishad(spottype);
+    }
+    
+    if(isvib) {   
+        expvibrance.updateguivib(spottype);
+    }
+    
+    if(isexpos) {     
+        expexpose.updateguiexpos(spottype);
+    }
+    
+    if(issoft) {         
+        expsoft.updateguisoft(spottype);
+    }
+    
+    if(isblur) {        
+        expblur.updateguiblur(spottype);
+    }
+    
+    if(istom) {         
+        exptonemap.updateguitone(spottype);
+    }
+    
+    if(isret) {        
+        expreti.updateguireti(spottype);
+    }
+    
+    if(issharp) {        
+        expsharp.updateguisharp(spottype);
+    }
+    
+    if(iscont) {         
+        expcontrast.updateguicont(spottype);
+    }
+    
+    if(iscbdl) {       
+        expcbdl.updateguicbdl(spottype);
+    }
+    
+    if(islog) {     
+        explog.updateguilog(spottype);
+    }
+    
+    if(ismas) {     
+        expmask.updateguimask(spottype);
+    }
+    
+    if(iscie) {        
+        expcie.updateguicie(spottype);
+    }
+    
+    
+    expsettings->updateguiset(spottype, iscolor, issh, isvib, isexpos, issoft, isblur, istom, isret, issharp, iscont, iscbdl, islog, ismas, iscie);
+   
 }
 
 
