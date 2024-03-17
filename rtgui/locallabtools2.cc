@@ -10272,22 +10272,8 @@ void Locallabcie::modecamChanged()
     expcamscene->show();
 
     if (modecam->get_active_row_number() == 1) {
+        guijzczhz();
         surHBoxcie->show();
-        cie1Frame->hide();
-        expcam16->hide();
-        targetGraycie->hide();
-        targabscie->hide();
-        surrHBoxcie->hide();
-        forcejz->hide();
-        pqremapcam16->hide();
-        catadcie->hide();
-        expcamviewing->hide();
-        exprecovcie->hide();
-        expgradcie->hide();
-        expmaskcie->hide();
-        expprecam->hide();
-        expcam16->hide();
-        lapmaskcie->hide();
         lapmaskcie->setValue(defSpot.lapmaskcie);
         enacieMaskallChanged2();
 
@@ -10495,8 +10481,6 @@ void Locallabcie::sursourcieChanged()
             expcamviewing->hide();
             lapmaskcie->hide();
             lapmaskcie->setValue(defSpot.lapmaskcie);
-            //enacieMaskallChanged2();
-            
         }
     }
 
@@ -10617,6 +10601,33 @@ void Locallabcie::surroundcieChanged()
     }
 }
 
+void Locallabcie::guijzczhz()
+{
+    expcamscene->hide();
+    cie1Frame->hide();
+    expcam16->hide();
+    forcejz->hide();
+    pqremapcam16->hide();
+    PQFrame->hide();
+    logjzFrame->hide();
+    bevwevFrame->hide();
+    sigmoidjzFrame->hide();
+    sigmoidFrame->hide();
+    catadcie->hide();
+    expcamviewing->hide();
+    maskusablecie->hide();
+    maskunusablecie->hide();
+    decaycie->hide();
+    expmaskcie->hide();
+    expprecam->hide();
+    exprecovcie->hide();
+    expgradcie->hide();
+    lapmaskcie->hide();
+}
+
+
+
+
 void Locallabcie::updateGUIToMode(const modeType new_type)
 {
     const LocallabParams::LocallabSpot defSpot;
@@ -10691,27 +10702,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
 
             if (modecam->get_active_row_number() == 1) {
                 //  cieFrame->hide();
-                expcamscene->hide();
-                cie1Frame->hide();
-                expcam16->hide();
-                forcejz->hide();
-                pqremapcam16->hide();
-                PQFrame->hide();
-                logjzFrame->hide();
-                bevwevFrame->hide();
-                sigmoidjzFrame->hide();
-                sigmoidFrame->hide();
-                catadcie->hide();
-                expcamviewing->hide();
-                maskusablecie->hide();
-                maskunusablecie->hide();
-                decaycie->hide();
-                expmaskcie->hide();
-                expprecam->hide();
-                exprecovcie->hide();
-                expgradcie->hide();
-                expcam16->hide();
-                lapmaskcie->hide();
+                guijzczhz();
                 lapmaskcie->setValue(defSpot.lapmaskcie);
                 enacieMaskallChanged2();
                 enacieMaskall->hide();
@@ -10814,27 +10805,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
 
 
             if (modecam->get_active_row_number() == 1) {
-                expcamscene->hide();
-                cie1Frame->hide();
-                expcam16->hide();
-                forcejz->hide();
-                pqremapcam16->hide();
-                PQFrame->hide();
-                logjzFrame->hide();
-                sigmoidjzFrame->hide();
-                bevwevFrame->hide();
-                sigmoidFrame->hide();
-                catadcie->hide();
-                expcamviewing->hide();
-                exprecovcie->hide();
-                expgradcie->hide();
-                expmaskcie->hide();
-                maskusablecie->hide();
-                maskunusablecie->hide();
-                expprecam->hide();
-                expgradcie->hide();
-                expcam16->hide();
-                lapmaskcie->hide();
+                guijzczhz();
                 lapmaskcie->setValue(defSpot.lapmaskcie);
                 enacieMaskallChanged2();
                 enacieMaskall->hide();
@@ -11140,7 +11111,6 @@ void Locallabcie::updatecieGUI()
             lapmaskcie->hide();
             lapmaskcie->setValue(defSpot.lapmaskcie);
             enacieMaskallChanged2();
-
         }
     }
 

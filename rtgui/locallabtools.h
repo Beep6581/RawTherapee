@@ -1888,6 +1888,7 @@ private:
     void enacieMaskChanged();
     void enacieMaskallChanged();
     void enacieMaskallChanged2();
+    void guijzczhz();
     void toolcieChanged();
     void fftcieMaskChanged();
     void expprecamChanged();
