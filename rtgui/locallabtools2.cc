@@ -10300,6 +10300,10 @@ void Locallabcie::modecamChanged()
             
         }
 
+    } else if (mode != Simple){
+        exprecovcie->show();
+        expgradcie->show();
+        expmaskcie->show();
     }
 
 
@@ -10345,6 +10349,10 @@ void Locallabcie::modecamChanged()
             lapmaskcie->setValue(defSpot.lapmaskcie);
             enacieMaskallChanged2();
 
+        } else if (mode != Simple){
+            exprecovcie->show();
+            expgradcie->show();
+            expmaskcie->show();     
         }
     } else {
         expcamscene->show();
@@ -10359,7 +10367,7 @@ void Locallabcie::modecamChanged()
 
         }
 
-        if (modecam->get_active_row_number() == 1  && mode == Expert) {
+        if (modecam->get_active_row_number() == 1) {
             targetGraycie->hide();
             targabscie->hide();
             surrHBoxcie->hide();
@@ -10396,6 +10404,11 @@ void Locallabcie::modecamChanged()
         surrHBoxcie->show();
         expprecam->show();
         expcamviewing->show();
+        if (mode != Simple){
+            exprecovcie->show();
+            expgradcie->show();
+            expmaskcie->show();
+        }
 
 
 
@@ -10826,6 +10839,10 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 enacieMaskallChanged2();
                 enacieMaskall->hide();
 
+            } else {
+                exprecovcie->show();
+                expgradcie->show();
+                expmaskcie->show();
             }
 
 
