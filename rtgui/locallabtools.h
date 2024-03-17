@@ -105,6 +105,7 @@ protected:
     rtengine::ProcEvent Evlocallabanggradcie;
     rtengine::ProcEvent Evlocallabstrgradcie;
     rtengine::ProcEvent Evlocallabdetailciejz;
+    rtengine::ProcEvent EvlocallabenacieMaskall;
     // LocallabTool parameters
     bool needMode;
     bool isLocActivated;
@@ -1782,6 +1783,7 @@ private:
     MyExpander* const expmaskcie;
     MyComboBoxText* const showmaskcieMethod;
     Gtk::CheckButton* const enacieMask;
+    Gtk::CheckButton* const enacieMaskall;
     CurveEditorGroup* const maskcieCurveEditorG;
     FlatCurveEditor* const CCmaskcieshape;
     FlatCurveEditor* const LLmaskcieshape;
@@ -1814,7 +1816,7 @@ private:
     ThresholdAdjuster* const csThresholdcie;
     int nextcomprciecount = 0;
    
-    sigc::connection AutograycieConn, primMethodconn, illMethodconn, catMethodconn, forcejzConn, forcebwConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, comprcieautoconn, normcieconn, logcieconn, satcieconn, logcieqconn,smoothcieconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethodConn, fftcieMaskConn, gamutcieconn, expprecamconn, sigcieconn;
+    sigc::connection AutograycieConn, primMethodconn, illMethodconn, catMethodconn, forcejzConn, forcebwConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, enacieMaskallConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, comprcieautoconn, normcieconn, logcieconn, satcieconn, logcieqconn,smoothcieconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethodConn, fftcieMaskConn, gamutcieconn, expprecamconn, sigcieconn;
 public:
     Locallabcie();
     ~Locallabcie();
@@ -1884,6 +1886,8 @@ private:
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
     void showmaskcieMethodChanged();
     void enacieMaskChanged();
+    void enacieMaskallChanged();
+    void enacieMaskallChanged2();
     void toolcieChanged();
     void fftcieMaskChanged();
     void expprecamChanged();

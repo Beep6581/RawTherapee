@@ -1121,6 +1121,7 @@ public:
         bool anggradcie;
 
         bool enacieMask;
+        bool enacieMaskall;
         bool CCmaskciecurve;
         bool LLmaskciecurve;
         bool HHmaskciecurve;

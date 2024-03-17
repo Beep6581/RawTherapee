@@ -1773,6 +1773,7 @@ struct LocallabParams {
         double strgradcie;
         double anggradcie;
         bool enacieMask;
+        bool enacieMaskall;
         std::vector<double> CCmaskciecurve;
         std::vector<double> LLmaskciecurve;
         std::vector<double> HHmaskciecurve;

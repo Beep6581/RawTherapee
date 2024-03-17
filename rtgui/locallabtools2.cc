@@ -7709,6 +7709,7 @@ Locallabcie::Locallabcie():
     expmaskcie(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWS")))),
     showmaskcieMethod(Gtk::manage(new MyComboBoxText())),
     enacieMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
+    enacieMaskall(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASKALL")))),
 //    maskSHCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
     maskcieCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
     CCmaskcieshape(static_cast<FlatCurveEditor*>(maskcieCurveEditorG->addCurve(CT_Flat, "C", nullptr, false, false))),
@@ -7787,6 +7788,7 @@ Locallabcie::Locallabcie():
     Evlocallabanggradcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_ANGGRAD");
     Evlocallabstrgradcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_STRGRAD");
     Evlocallabdetailciejz = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_DETAILJZ");
+    EvlocallabenacieMaskall = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_ENAMASKALL");
 
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -8496,6 +8498,7 @@ Locallabcie::Locallabcie():
     showmaskcieMethodConn = showmaskcieMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::showmaskcieMethodChanged));
 
     enacieMaskConn = enacieMask->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::enacieMaskChanged));
+    enacieMaskallConn = enacieMaskall->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::enacieMaskallChanged));
 
     maskcieCurveEditorG->setCurveListener(this);
     CCmaskcieshape->setIdentityValue(0.);
@@ -8582,6 +8585,7 @@ Locallabcie::Locallabcie():
     ToolParamBlock* const maskcieBox = Gtk::manage(new ToolParamBlock());
     maskcieBox->pack_start(*showmaskcieMethod, Gtk::PACK_SHRINK, 4);
     maskcieBox->pack_start(*enacieMask, Gtk::PACK_SHRINK, 0);
+    maskcieBox->pack_start(*enacieMaskall, Gtk::PACK_SHRINK, 0);
     maskcieBox->pack_start(*maskcieCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     ToolParamBlock* const strumBoxcie = Gtk::manage(new ToolParamBlock());
     strumBoxcie->pack_start(*strumaskcie);
@@ -8880,6 +8884,7 @@ void Locallabcie::disableListener()
     showmaskcieMethodConn.block(true);
     toolcieConn.block(true);
     enacieMaskConn.block(true);
+    enacieMaskallConn.block(true);
     fftcieMaskConn.block(true);
 }
 
@@ -8917,6 +8922,7 @@ void Locallabcie::enableListener()
     showmaskcieMethodConn.block(false);
     toolcieConn.block(false);
     enacieMaskConn.block(false);
+    enacieMaskallConn.block(false);
     fftcieMaskConn.block(false);
 }
 
@@ -8961,6 +8967,76 @@ void Locallabcie::enacieMaskChanged()
         }
     }
 }
+
+
+void Locallabcie::enacieMaskallChanged2()
+{
+    const LocallabParams::LocallabSpot defSpot;
+
+    if (modecam->get_active_row_number() == 1) {
+        if(!enacieMaskall->get_active()) {
+            lapmaskcie->setValue(defSpot.lapmaskcie);
+            gammaskcie->setValue(defSpot.gammaskcie);
+            slomaskcie->setValue(defSpot.slomaskcie);
+            highmaskcie->setValue(defSpot.highmaskcie);
+            shadmaskcie->setValue(defSpot.shadmaskcie);
+            HHhmaskcieshape->setCurve(defSpot.HHhmaskciecurve);
+            strumaskcie->setValue(defSpot.strumaskcie);
+            toolcie->set_active(defSpot.toolcie);
+            fftcieMask->set_active(defSpot.fftcieMask);
+            LLmaskcieshapewav->setCurve(defSpot.LLmaskciecurvewav);
+            lapmaskcie->hide();
+            gammaskcie->hide();
+            slomaskcie->hide();
+            highmaskcie->hide();
+            shadmaskcie->hide();
+            maskcieHCurveEditorG->hide();
+            struFramecie->hide();
+            blurFramecie->hide();
+            strumaskcie->hide();
+            contcie->setValue(defSpot.contcie);
+            blurcie->setValue(defSpot.blurcie);
+            
+            toolcie->hide();
+            fftcieMask->hide();
+            mask2cieCurveEditorGwav->hide();
+            wavFramecie->hide();
+        } else {
+            lapmaskcie->show();
+            gammaskcie->show();
+            slomaskcie->show();
+            highmaskcie->show();
+            shadmaskcie->show();
+            maskcieHCurveEditorG->show();
+            struFramecie->show();
+            blurFramecie->show();
+            strumaskcie->show();
+            toolcie->show();
+            fftcieMask->show();
+            mask2cieCurveEditorGwav->show();
+            wavFramecie->show();
+        }
+    }
+}
+
+void Locallabcie::enacieMaskallChanged()
+{
+    
+    enacieMaskallChanged2();
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (enacieMaskall->get_active()) {
+                listener->panelChanged(EvlocallabenacieMaskall,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(EvlocallabenacieMaskall,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+
 
 void Locallabcie::toolcieChanged()
 {
@@ -9291,6 +9367,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         anggradcie->setValue((double)spot.anggradcie);
 
         enacieMask->set_active(spot.enacieMask);
+        enacieMaskall->set_active(spot.enacieMaskall);
         CCmaskcieshape->setCurve(spot.CCmaskciecurve);
         LLmaskcieshape->setCurve(spot.LLmaskciecurve);
         HHmaskcieshape->setCurve(spot.HHmaskciecurve);
@@ -9574,6 +9651,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.anggradcie = anggradcie->getValue();
 
         spot.enacieMask = enacieMask->get_active();
+        spot.enacieMaskall = enacieMaskall->get_active();
         spot.LLmaskciecurve = LLmaskcieshape->getCurve();
         spot.CCmaskciecurve = CCmaskcieshape->getCurve();
         spot.HHmaskciecurve = HHmaskcieshape->getCurve();
@@ -10153,6 +10231,7 @@ void Locallabcie::modecamChanged()
         expcamviewing->hide();
         lapmaskcie->hide();
         lapmaskcie->setValue(defSpot.lapmaskcie);
+        enacieMaskallChanged2();
 
     } else {
         expjz->hide();
@@ -10210,6 +10289,7 @@ void Locallabcie::modecamChanged()
         expcam16->hide();
         lapmaskcie->hide();
         lapmaskcie->setValue(defSpot.lapmaskcie);
+        enacieMaskallChanged2();
 
         if (mode == Expert) {
             exprecovcie->show();
@@ -10263,6 +10343,7 @@ void Locallabcie::modecamChanged()
             expcam16->hide();
             lapmaskcie->hide();
             lapmaskcie->setValue(defSpot.lapmaskcie);
+            enacieMaskallChanged2();
 
         }
     } else {
@@ -10295,6 +10376,7 @@ void Locallabcie::modecamChanged()
             expcam16->hide();
             lapmaskcie->hide();
             lapmaskcie->setValue(defSpot.lapmaskcie);
+            enacieMaskallChanged2();
 
             if (chjzcie->get_active()) {
                 thrhjzcie->set_sensitive(true);
@@ -10400,6 +10482,7 @@ void Locallabcie::sursourcieChanged()
             expcamviewing->hide();
         lapmaskcie->hide();
         lapmaskcie->setValue(defSpot.lapmaskcie);
+    enacieMaskallChanged2();
             
         }
     }
@@ -10617,6 +10700,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 expcam16->hide();
                 lapmaskcie->hide();
                 lapmaskcie->setValue(defSpot.lapmaskcie);
+                enacieMaskallChanged2();
 
             }
 
@@ -10738,6 +10822,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 expcam16->hide();
                 lapmaskcie->hide();
                 lapmaskcie->setValue(defSpot.lapmaskcie);
+                enacieMaskallChanged2();
 
             }
 
@@ -10854,6 +10939,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 expmaskcie->show();
                 lapmaskcie->hide();
                 lapmaskcie->setValue(defSpot.lapmaskcie);
+                enacieMaskallChanged2();
 
             }
 
@@ -10904,6 +10990,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 expcam16->hide();
                 lapmaskcie->hide();
                 lapmaskcie->setValue(defSpot.lapmaskcie);
+                enacieMaskallChanged2();
 
                 if (chjzcie->get_active()) {
                     thrhjzcie->set_sensitive(true);
@@ -11029,6 +11116,8 @@ void Locallabcie::updatecieGUI()
             expcamviewing->hide();
             lapmaskcie->hide();
             lapmaskcie->setValue(defSpot.lapmaskcie);
+            enacieMaskallChanged2();
+
         }
     }
 
@@ -11061,6 +11150,7 @@ void Locallabcie::updatecieGUI()
         expmaskcie->show();
         lapmaskcie->hide();
         lapmaskcie->setValue(defSpot.lapmaskcie);
+        enacieMaskallChanged2();
 
     }
 
@@ -11088,6 +11178,7 @@ void Locallabcie::convertParamToSimple()
     pqremapcam16->setValue(defSpot.pqremapcam16);
     showmaskcieMethod->set_active(0);
     enacieMask->set_active(defSpot.enacieMask);
+    enacieMaskall->set_active(defSpot.enacieMaskall);
     strgradcie->setValue(defSpot.strgradcie);
     anggradcie->setValue(defSpot.anggradcie);
     refi->setValue(defSpot.refi);
@@ -11157,7 +11248,8 @@ void Locallabcie::convertParamToNormal()
         logjz->set_active(defSpot.logjz);
         sigjz->set_active(defSpot.sigjz);
         lapmaskcie->setValue(defSpot.lapmaskcie);
-        
+        enacieMaskallChanged2();
+
     }
 
     lapmaskcie->setValue(defSpot.lapmaskcie);

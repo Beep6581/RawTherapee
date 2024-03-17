@@ -1841,7 +1841,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).strgradcie = locallab.spots.at(j).strgradcie && pSpot.strgradcie == otherSpot.strgradcie;
                 locallab.spots.at(j).anggradcie = locallab.spots.at(j).anggradcie && pSpot.anggradcie == otherSpot.anggradcie;
                 
-                locallab.spots.at(j).enacieMask = locallab.spots.at(j).enaSHMask && pSpot.enaSHMask == otherSpot.enaSHMask;
+                locallab.spots.at(j).enacieMask = locallab.spots.at(j).enacieMask && pSpot.enacieMask == otherSpot.enacieMask;
+                locallab.spots.at(j).enacieMaskall = locallab.spots.at(j).enacieMaskall && pSpot.enacieMaskall == otherSpot.enacieMaskall;
                 locallab.spots.at(j).CCmaskciecurve = locallab.spots.at(j).CCmaskciecurve && pSpot.CCmaskciecurve == otherSpot.CCmaskciecurve;
                 locallab.spots.at(j).LLmaskciecurve = locallab.spots.at(j).LLmaskciecurve && pSpot.LLmaskciecurve == otherSpot.LLmaskciecurve;
                 locallab.spots.at(j).HHmaskciecurve = locallab.spots.at(j).HHmaskciecurve && pSpot.HHmaskciecurve == otherSpot.HHmaskciecurve;
@@ -6387,6 +6388,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).enacieMask = mods.locallab.spots.at(i).enacieMask;
         }
 
+        if (locallab.spots.at(i).enacieMaskall) {
+            toEdit.locallab.spots.at(i).enacieMaskall = mods.locallab.spots.at(i).enacieMaskall;
+        }
+
         if (locallab.spots.at(i).CCmaskciecurve) {
             toEdit.locallab.spots.at(i).CCmaskciecurve = mods.locallab.spots.at(i).CCmaskciecurve;
         }
@@ -8537,6 +8542,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     strgradcie(v),
     anggradcie(v),
     enacieMask(v),
+    enacieMaskall(v),
     CCmaskciecurve(v),
     LLmaskciecurve(v),
     HHmaskciecurve(v),
@@ -9287,6 +9293,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     anggradcie =  v;
     strgradcie =  v;
     enacieMask = v;
+    enacieMaskall = v;
     CCmaskciecurve = v;
     LLmaskciecurve = v;
     HHmaskciecurve = v;
