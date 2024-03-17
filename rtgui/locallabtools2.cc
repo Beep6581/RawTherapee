@@ -8973,7 +8973,7 @@ void Locallabcie::enacieMaskallChanged2()
 {
     const LocallabParams::LocallabSpot defSpot;
 
-    if (modecam->get_active_row_number() == 1) {
+   // if (modecam->get_active_row_number() == 1) {
         if(!enacieMaskall->get_active()) {
             lapmaskcie->setValue(defSpot.lapmaskcie);
             gammaskcie->setValue(defSpot.gammaskcie);
@@ -9016,7 +9016,7 @@ void Locallabcie::enacieMaskallChanged2()
             mask2cieCurveEditorGwav->show();
             wavFramecie->show();
         }
-    }
+  //  }
 }
 
 void Locallabcie::enacieMaskallChanged()
@@ -10480,9 +10480,9 @@ void Locallabcie::sursourcieChanged()
         if(modecam->get_active_row_number() == 1) {
             expcam16->hide();
             expcamviewing->hide();
-        lapmaskcie->hide();
-        lapmaskcie->setValue(defSpot.lapmaskcie);
-    enacieMaskallChanged2();
+            lapmaskcie->hide();
+            lapmaskcie->setValue(defSpot.lapmaskcie);
+            //enacieMaskallChanged2();
             
         }
     }
@@ -10701,7 +10701,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 lapmaskcie->hide();
                 lapmaskcie->setValue(defSpot.lapmaskcie);
                 enacieMaskallChanged2();
-
+                enacieMaskall->hide();
             }
 
 
@@ -10795,6 +10795,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 sigmoidFrame->show();
                 expprecam->show();
                 primillFrame->hide();//show
+                enacieMaskall->hide();
 
             }
 
@@ -10823,6 +10824,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 lapmaskcie->hide();
                 lapmaskcie->setValue(defSpot.lapmaskcie);
                 enacieMaskallChanged2();
+                enacieMaskall->hide();
 
             }
 
@@ -10915,6 +10917,8 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 bevwevFrame->show();
                 expprecam->show();
                 primillFrame->show();
+                enacieMaskallChanged2();
+                enacieMaskall->show();
 
 
             }
@@ -10940,6 +10944,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 lapmaskcie->hide();
                 lapmaskcie->setValue(defSpot.lapmaskcie);
                 enacieMaskallChanged2();
+                enacieMaskall->show();
 
             }
 
@@ -10956,13 +10961,13 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 sigmoidjzFrame->hide();
                 bevwevFrame->hide();
 
-                if (modecam->get_active_row_number() == 0) {
-                    bevwevFrame->show();
-                    sigmoidFrame->show();
-                    expprecam->show();
-                    primillFrame->show();
+                bevwevFrame->show();
+                sigmoidFrame->show();
+                expprecam->show();
+                primillFrame->show();
+                enacieMaskallChanged2();
+                enacieMaskall->show();
 
-                }
 
             }
 
@@ -10991,6 +10996,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 lapmaskcie->hide();
                 lapmaskcie->setValue(defSpot.lapmaskcie);
                 enacieMaskallChanged2();
+                enacieMaskall->show();
 
                 if (chjzcie->get_active()) {
                     thrhjzcie->set_sensitive(true);
@@ -11128,7 +11134,7 @@ void Locallabcie::updatecieGUI()
         expmaskcie->hide();
     }
 
-    if (modecam->get_active_row_number() == 1) {
+    if (modecam->get_active_row_number() == 1  && (mode == Expert)) {
         surHBoxcie->show();
         cie1Frame->hide();
         expcam16->hide();
@@ -11151,6 +11157,7 @@ void Locallabcie::updatecieGUI()
         lapmaskcie->hide();
         lapmaskcie->setValue(defSpot.lapmaskcie);
         enacieMaskallChanged2();
+        enacieMaskall->show();
 
     }
 
