@@ -7618,6 +7618,8 @@ Locallabcie::Locallabcie():
     slopjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGSLOPJCIE"), 0., 500., 0.01, 12.923))),
     midtcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MIDTCIE"), -100, 100, 1, 0))),
     smoothcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SMOOTHCIE")))),
+    smoothBox(Gtk::manage(new Gtk::Box())),
+    smoothciemet(Gtk::manage(new MyComboBoxText())),
     whitescie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGWHITESCIE"), -100, 100, 1, 0))),
     blackscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGBLACKSSCIE"), -100, 100, 1, 0))),
     willBox(Gtk::manage(new Gtk::Box())),
@@ -7789,7 +7791,8 @@ Locallabcie::Locallabcie():
     Evlocallabstrgradcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_STRGRAD");
     Evlocallabdetailciejz = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_DETAILJZ");
     EvlocallabenacieMaskall = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_ENAMASKALL");
-
+    Evlocallabsmoothciemet = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SMOOTHMET");
+    
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     // Parameter Ciecam specific widgets
@@ -8027,6 +8030,7 @@ Locallabcie::Locallabcie():
     trccieBox->pack_start(*slopjcie);
     trccieBox->pack_start(*midtcie);
     trccieBox->pack_start(*smoothcie);
+    trccieBox->pack_start(*smoothBox);
     trcFrame->add(*trccieBox);
     gamcieBox->pack_start(*trcFrame);
     primillBox->pack_start(*willBox);
@@ -8382,6 +8386,16 @@ Locallabcie::Locallabcie():
     detailciejz->setAdjusterListener(this);
 
     catadcie->setAdjusterListener(this);
+
+
+    Gtk::Label* smoothLabel = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_SMOOTHCIE") + ":"));
+    smoothBox->pack_start(*smoothLabel, Gtk::PACK_SHRINK);
+    smoothBox->pack_start(*smoothciemet, Gtk::PACK_EXPAND_WIDGET);
+    smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_NONE"));
+    smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_EV"));
+    smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_GAMMA"));
+    smoothciemet->set_active(0);
+    smoothciemetconn = smoothciemet->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::smoothciemetChanged));
 
     Gtk::Box *TittleVBoxcam16;
     TittleVBoxcam16 = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
@@ -8864,6 +8878,7 @@ void Locallabcie::disableListener()
     gamutcieconn.block(true);
     primMethodconn.block(true);
     illMethodconn.block(true);
+    smoothciemetconn.block(true);
     catMethodconn.block(true);
     sigcieconn.block(true);
     logcieconn.block(true);
@@ -8902,6 +8917,7 @@ void Locallabcie::enableListener()
     gamutcieconn.block(false);
     primMethodconn.block(false);
     illMethodconn.block(false);
+    smoothciemetconn.block(false);
     catMethodconn.block(false);
     sigcieconn.block(false);
     logcieconn.block(false);
@@ -9134,6 +9150,15 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             comprcieauto->set_active(true);
         }
 
+        if (spot.smoothciemet == "none") {
+            smoothciemet->set_active(0);
+        } else if (spot.smoothciemet == "Ev") {
+            smoothciemet->set_active(1);
+        } else if (spot.smoothciemet == "gam") {
+            smoothciemet->set_active(2);
+        }
+
+
         if (spot.illMethod == "d41") {
             illMethod->set_active(0);
         } else if (spot.illMethod == "d50") {
@@ -9244,6 +9269,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         smoothcieChanged();
         primMethodChanged();
         illMethodChanged();
+        smoothciemetChanged();
 
         if (spot.bwevMethod == "none") {
             bwevMethod->set_active(0);
@@ -9506,6 +9532,14 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.bwevMethod = "none";
         } else if (bwevMethod->get_active_row_number() == 1) {
             spot.bwevMethod = "sig";
+        }
+
+        if (smoothciemet->get_active_row_number() == 0) {
+            spot.smoothciemet = "none";
+        } else if (smoothciemet->get_active_row_number() == 1) {
+            spot.smoothciemet = "Ev";
+        } else if (smoothciemet->get_active_row_number() == 2) {
+            spot.smoothciemet = "gam";
         }
 
         if (illMethod->get_active_row_number() == 0) {
@@ -10510,6 +10544,14 @@ void Locallabcie::illMethodChanged()
 
 }
 
+void Locallabcie::smoothciemetChanged()
+{
+
+    if (listener) {
+        listener->panelChanged(Evlocallabsmoothciemet, smoothciemet->get_active_text());
+    }
+
+}
 
 
 void Locallabcie::primMethodChanged()

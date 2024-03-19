@@ -1103,6 +1103,7 @@ public:
         bool whitescie;
         bool blackscie;
         bool illMethod;
+        bool smoothciemet;
         bool primMethod;
         bool catMethod;
         bool sigmoidldajzcie;

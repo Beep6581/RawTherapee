@@ -1757,6 +1757,7 @@ struct LocallabParams {
         int whitescie;
         int blackscie;
         Glib::ustring illMethod;
+        Glib::ustring smoothciemet;
         Glib::ustring primMethod;
         Glib::ustring catMethod;
         double sigmoidldajzcie;
