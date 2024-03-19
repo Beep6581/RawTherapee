@@ -8029,7 +8029,7 @@ Locallabcie::Locallabcie():
     trccieBox->pack_start(*gamjcie);
     trccieBox->pack_start(*slopjcie);
     trccieBox->pack_start(*midtcie);
-    trccieBox->pack_start(*smoothcie);
+   // trccieBox->pack_start(*smoothcie);
     trccieBox->pack_start(*smoothBox);
     trcFrame->add(*trccieBox);
     gamcieBox->pack_start(*trcFrame);
@@ -8705,6 +8705,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         logcie->set_tooltip_text(M("TP_LOCALLAB_LOGCIE_TOOLTIP"));
         logcieq->set_tooltip_text(M("TP_LOCALLAB_LOGCIEQ_TOOLTIP"));
         smoothcie->set_tooltip_text(M("TP_LOCALLAB_SMOOTHCIE_TOOLTIP"));
+        smoothciemet->set_tooltip_text(M("TP_LOCALLAB_SMOOTHCIE_TOOLTIP"));
         modecam->set_tooltip_text(M("TP_LOCALLAB_JZMODECAM_TOOLTIP"));
         adapjzcie->set_tooltip_text(M("TP_LOCALLAB_JABADAP_TOOLTIP"));
         jz100->set_tooltip_text(M("TP_LOCALLAB_JZ100_TOOLTIP"));
@@ -8849,6 +8850,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         trcFrame->set_tooltip_text("");
         midtcie->set_tooltip_text("");
         smoothcie->set_tooltip_text("");
+        smoothciemet->set_tooltip_text("");
         whitescie->set_tooltip_text("");
         blackscie->set_tooltip_text("");
         normcie->set_tooltip_text("");

@@ -848,6 +848,7 @@ struct local_params {
     float comprlocie;
     int moka;
     int sursouci;
+    int smoothciem;
 
 };
 
@@ -932,7 +933,15 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.balanexp = locallab.spots.at(sp).balanexp;
     lp.linear = locallab.spots.at(sp).linear;
 
-    if (locallab.spots.at(sp).spotMethod == "norm") {
+    if (locallab.spots.at(sp).smoothciemet == "norm") {
+        lp.smoothciem = 1;
+    } else if (locallab.spots.at(sp).smoothciemet == "Ev") {
+        lp.smoothciem = 1;
+    } else if (locallab.spots.at(sp).smoothciemet == "gam") {
+        lp.smoothciem = 2;
+    }
+
+    if (locallab.spots.at(sp).smoothciemet == "none") {
         lp.fullim = 0;
     } else if (locallab.spots.at(sp).spotMethod == "exc") {
         lp.fullim = 1;
@@ -20060,13 +20069,15 @@ void ImProcFunctions::Lab_Local(
                         }                    
                     }
 
-                    if(lp.issmoothcie) {//à modifier
+                  //  if(lp.issmoothcie) {//à modifier si checkbox only
+                    if(lp.smoothciem == 1) {
                         tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);
-                        /*
+                    } else if(lp.smoothciem == 2) {
+                       
                         //TonemapFreeman - not used but it works..
                         float mid_gray = 0.01f * lp.sourcegraycie;
-                        float white_point =  pow(2.718281828459, lp.whiteevjz * std::log(2.f) + xlogf(mid_gray_out));  
-                        float black_point =  pow(2.718281828459, lp.blackevjz * std::log(2.f) + xlogf(mid_gray_out));  
+                        float white_point =  pow(2.718281828459, lp.whiteevjz * std::log(2.f) + xlogf(mid_gray));
+                        float black_point =  pow(2.718281828459, lp.blackevjz * std::log(2.f) + xlogf(mid_gray));
                         bool rolloff = true;
                         LUTf lut(65536, LUT_CLIP_OFF);                   
                         tonemapFreeman(1.f, white_point, black_point, mid_gray, rolloff, lut);
@@ -20081,7 +20092,7 @@ void ImProcFunctions::Lab_Local(
                                 tmpImage->b(y, x) = 65535.f * lut[tmpImage->b(y, x)];           
                             }
                         }
-                        */
+                       
                     }
                     
                    
