@@ -2264,6 +2264,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
 
                 double tempsym = 5003.;
+                double greensym = 1.;
                 int wmodel = 0;//wmodel allows - arbitrary - choice of illuminant and temp with choice
 
                 if (params->colorappearance.wbmodel == "RawT") {
@@ -2276,28 +2277,37 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                 if (params->colorappearance.catmethod == "symg" && wmodel == 2) {
                     tempsym = params->wb.temperature;//force white balance in symmetric
-                } else {
+                } else if(params->colorappearance.autotempout) {
                     if (params->colorappearance.illum == "iA") {//otherwise force illuminant source
                         tempsym = 2856.;
+                        greensym = 1.;
                     } else if (params->colorappearance.illum == "i41") {
                         tempsym = 4100.;
+                        greensym = 1.;
                     } else if (params->colorappearance.illum == "i50") {
                         tempsym = 5003.;
+                        greensym = 1.;
                     } else if (params->colorappearance.illum == "i55") {
                         tempsym = 5503.;
                     } else if (params->colorappearance.illum == "i60") {
                         tempsym = 6000. ;
+                        greensym = 1.;
                     } else if (params->colorappearance.illum == "i65") {
                         tempsym = 6504.;
+                        greensym = 1.;
                     } else if (params->colorappearance.illum == "i75") {
                         tempsym = 7504.;
+                        greensym = 1.;
                     } else if (params->colorappearance.illum == "ifree") {
                         tempsym = params->wb.temperature;//force white balance in symmetric
+                        greensym = 1.;
                     }
+                } else {
+                    tempsym = params->colorappearance.tempout;
+                    greensym = params->colorappearance.greenout;
                 }
-
-                if (params->colorappearance.enabled  && params->colorappearance.autotempout) {
-                    acListener->wbCamChanged(tempsym, 1.f);    //real temp and tint = 1.
+                if (params->colorappearance.enabled) {
+                    acListener->wbCamChanged(tempsym, greensym);    //real temp and tint.
                 }
 
             } else {
