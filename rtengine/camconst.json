@@ -1456,6 +1456,17 @@ Camera constants:
         ]
     },
 
+    { // Quality C
+        "make_model": [ "FUJIFILM GFX100 II" ],
+        "dcraw_matrix" : [ 12806, -5779, -1110, -3546, 11507, 2318, -177, 996, 5715 ], // adobe dcp d65
+        "raw_crop": [
+            // multi-aspect crop to account for 16-shot pixel shift images
+            { "frame" : [11808, 8754], "crop" : [ 0, 0, 11664, 8750 ] },
+            // this crop has been copied from the GFX 100 one, no sample pixel shift images are available
+            { "frame" : [23616, 17508], "crop" : [ 0, 4, 23328, 17468 ] }
+        ]
+    },
+
     { // Quality B
         "make_model": [ "FUJIFILM GFX 50R", "FUJIFILM GFX 50S", "FUJIFILM GFX50S II" ],
         "dcraw_matrix": [ 11756,-4754,-874,-3056,11045,2305,-381,1457,6006 ], // DNGv9.9 D65

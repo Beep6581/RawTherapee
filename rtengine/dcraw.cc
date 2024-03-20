@@ -9676,7 +9676,7 @@ void CLASS identify()
     apply_tiff();
     if (!strcmp(model, "X-T3")) {
         height = raw_height - 2;
-    } else if (!strcmp(model, "GFX 100") || !strcmp(model, "GFX100S")) {
+    } else if (!strcmp(model, "GFX 100") || !strcmp(model, "GFX100S") || !strcmp(model, "GFX100 II")) {
         load_flags = 0;
     }
     if (!load_raw) {
