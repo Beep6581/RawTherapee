@@ -939,6 +939,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.smoothciem = 1;
     } else if (locallab.spots.at(sp).smoothciemet == "gam") {
         lp.smoothciem = 2;
+    } else if (locallab.spots.at(sp).smoothciemet == "gamnorol") {
+        lp.smoothciem = 3;
     }
 
     if (locallab.spots.at(sp).smoothciemet == "none") {
@@ -20072,14 +20074,17 @@ void ImProcFunctions::Lab_Local(
                   //  if(lp.issmoothcie) {//à modifier si checkbox only
                     if(lp.smoothciem == 1) {
                         tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);
-                    } else if(lp.smoothciem == 2) {
+                    } else if(lp.smoothciem == 2  || lp.smoothciem == 3) {
                        
                         //TonemapFreeman - not used but it works..
                         float mid_gray = 0.01f * lp.sourcegraycie;
                         float white_point =  pow(2.718281828459, lp.whiteevjz * std::log(2.f) + xlogf(mid_gray));
                         float black_point =  pow(2.718281828459, lp.blackevjz * std::log(2.f) + xlogf(mid_gray));
                         bool rolloff = true;
-                        LUTf lut(65536, LUT_CLIP_OFF);                   
+                        if(lp.smoothciem == 3) {
+                            rolloff = false;
+                        }
+                        LUTf lut(65536, LUT_CLIP_OFF);
                         tonemapFreeman(1.f, white_point, black_point, mid_gray, rolloff, lut);
 
  #ifdef _OPENMP

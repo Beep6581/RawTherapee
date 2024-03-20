@@ -8393,6 +8393,7 @@ Locallabcie::Locallabcie():
     smoothBox->pack_start(*smoothciemet, Gtk::PACK_EXPAND_WIDGET);
     smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_NONE"));
     smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_EV"));
+    smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_GAMMA ROLLOFF"));
     smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_GAMMA"));
     smoothciemet->set_active(0);
     smoothciemetconn = smoothciemet->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::smoothciemetChanged));
@@ -9158,6 +9159,8 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             smoothciemet->set_active(1);
         } else if (spot.smoothciemet == "gam") {
             smoothciemet->set_active(2);
+        } else if (spot.smoothciemet == "gamnorol") {
+            smoothciemet->set_active(3);
         }
 
 
@@ -9542,6 +9545,8 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.smoothciemet = "Ev";
         } else if (smoothciemet->get_active_row_number() == 2) {
             spot.smoothciemet = "gam";
+        } else if (smoothciemet->get_active_row_number() == 3) {
+            spot.smoothciemet = "gamnorol";
         }
 
         if (illMethod->get_active_row_number() == 0) {
