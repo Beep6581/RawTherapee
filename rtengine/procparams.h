@@ -952,7 +952,10 @@ struct RotateParams {
   * Parameters of the distortion correction
   */
 struct DistortionParams {
-    double  amount;
+    static constexpr double DEFAULT_FOCAL_LENGTH = 12;
+    double amount = 0.0;
+    bool defish = false;
+    double focal_length = DEFAULT_FOCAL_LENGTH;
 
     DistortionParams();
 
@@ -1020,6 +1023,7 @@ struct PerspectiveParams {
     double  camera_yaw;
     double  projection_pitch;
     double  projection_rotate;
+    double  camera_scale;
     double  projection_shift_horiz;
     double  projection_shift_vert;
     double  projection_yaw;

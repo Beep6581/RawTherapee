@@ -471,6 +471,10 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
             ((params->perspective.camera_focal_length > 0) ? params->perspective.camera_focal_length : PerspectiveParams::DEFAULT_CAMERA_FOCAL_LENGTH)
             * ((params->perspective.camera_crop_factor > 0) ? params->perspective.camera_crop_factor : PerspectiveParams::DEFAULT_CAMERA_CROP_FACTOR)
             * (maxRadius / sqrt(18.0*18.0 + 12.0*12.0));
+    const double f_defish =
+            ((params->distortion.focal_length > 0) ? params->distortion.focal_length : DistortionParams::DEFAULT_FOCAL_LENGTH)
+            * ((params->perspective.camera_crop_factor > 0) ? params->perspective.camera_crop_factor : PerspectiveParams::DEFAULT_CAMERA_CROP_FACTOR)
+            * (maxRadius / sqrt(18.0*18.0 + 12.0*12.0));
     const double p_camera_yaw = params->perspective.camera_yaw / 180.0 * rtengine::RT_PI;
     const double p_camera_pitch = params->perspective.camera_pitch / 180.0 * rtengine::RT_PI;
     const double p_camera_roll = params->perspective.camera_roll * rtengine::RT_PI_180;
@@ -513,6 +517,20 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
                 x_d = xw / w;
                 y_d = yw / w;
                 break;
+        }
+
+        x_d /= params->perspective.camera_scale;
+        y_d /= params->perspective.camera_scale;
+        if (params->distortion.defish) {
+            x_d /= f_defish;
+            y_d /= f_defish;
+
+            const double r = std::sqrt(x_d * x_d + y_d * y_d);
+
+            const double factor = f_defish * std::atan(r) / r;
+
+            x_d *= factor;
+            y_d *= factor;
         }
 
         if (pLCPMap && params->lensProf.useDist) {
@@ -1165,6 +1183,10 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
             ((params->perspective.camera_focal_length > 0) ? params->perspective.camera_focal_length : PerspectiveParams::DEFAULT_CAMERA_FOCAL_LENGTH)
             * ((params->perspective.camera_crop_factor > 0) ? params->perspective.camera_crop_factor : PerspectiveParams::DEFAULT_CAMERA_CROP_FACTOR)
             * (maxRadius / sqrt(18.0*18.0 + 12.0*12.0));
+    const double f_defish =
+            ((params->distortion.focal_length > 0) ? params->distortion.focal_length : DistortionParams::DEFAULT_FOCAL_LENGTH)
+            * ((params->perspective.camera_crop_factor > 0) ? params->perspective.camera_crop_factor : PerspectiveParams::DEFAULT_CAMERA_CROP_FACTOR)
+            * (maxRadius / sqrt(18.0*18.0 + 12.0*12.0));
     const double p_camera_yaw = params->perspective.camera_yaw / 180.0 * rtengine::RT_PI;
     const double p_camera_pitch = params->perspective.camera_pitch / 180.0 * rtengine::RT_PI;
     const double p_camera_roll = params->perspective.camera_roll * rtengine::RT_PI_180;
@@ -1238,6 +1260,19 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
                     x_d = xw / w;
                     y_d = yw / w;
                     break;
+            }
+
+            x_d /= params->perspective.camera_scale;
+            y_d /= params->perspective.camera_scale;
+            if (params->distortion.defish) {
+                x_d /= f_defish;
+                y_d /= f_defish;
+
+                const double r = std::sqrt(x_d * x_d + y_d * y_d);
+                const double factor = f_defish * std::atan(r) / r;
+
+                x_d *= factor;
+                y_d *= factor;
             }
 
             if (enableLCPDist) {
@@ -1459,7 +1494,9 @@ bool ImProcFunctions::needsCA () const
 
 bool ImProcFunctions::needsDistortion () const
 {
-    return fabs (params->distortion.amount) > 1e-15;
+    return
+            params->distortion.defish ||
+            fabs (params->distortion.amount) > 1e-15;
 }
 
 bool ImProcFunctions::needsRotation () const
@@ -1482,7 +1519,9 @@ bool ImProcFunctions::needsPerspective () const
                     params->perspective.projection_rotate ||
                     params->perspective.projection_shift_horiz ||
                     params->perspective.projection_shift_vert ||
-                    params->perspective.projection_yaw) );
+                    params->perspective.projection_yaw ||
+                    params->perspective.camera_scale > 1.0 + 1e-6 ||
+                    params->perspective.camera_scale < 1.0 - 1e-6 ));
 }
 
 bool ImProcFunctions::needsGradient () const
@@ -1517,7 +1556,15 @@ bool ImProcFunctions::needsTransform (int oW, int oH, int rawRotationDeg, const 
         std::unique_ptr<const LensCorrection> pLCPMap = LFDatabase::getInstance()->findModifier(params->lensProf, metadata, oW, oH, params->coarse, rawRotationDeg);
         needsLf = pLCPMap.get();
     }
-    return needsCA () || needsDistortion () || needsRotation () || needsPerspective () || needsGradient () || needsPCVignetting () || needsVignetting () || needsLCP() || needsLf;
+    return needsCA () ||
+            needsDistortion () ||
+            needsRotation () ||
+            needsPerspective () ||
+            needsGradient () ||
+            needsPCVignetting () ||
+            needsVignetting () ||
+            needsLCP() ||
+            needsLf;
 }
 
 
