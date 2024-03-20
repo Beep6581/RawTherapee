@@ -9875,34 +9875,6 @@ void Locallabcie::updateAutocompute(const float blackev, const float whiteev, co
     }
 }
 
-void Locallabcie::updateAutocam(const float maxicam, const bool autocam)
-{
-    if (comprcieauto->get_active()) {
-        idle_register.add(
-        [this, maxicam, autocam]() -> bool {
-            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
-            disableListener();
-            comprcieth->setValue(maxicam);
-            nextcomprciecount++;
-            adjusterChanged(comprcieth, comprcieth->getValue());
-            comprcieautoconn.block(true);
-            comprcieauto->set_active(false);
-            comprcieautoconn.block(false);
-            enableListener();
-
-            if (listener  && nextcomprciecount <= 1) {
-                listener->panelChanged(Evlocallabcomprcieauto, M("GENERAL_ENABLED"));
-            }
-            return false;
-        }
-
-                     );
-    }
-
-}
-
-
-
 void Locallabcie::AutograycieChanged()
 {
 

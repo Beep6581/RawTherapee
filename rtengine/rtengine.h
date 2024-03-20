@@ -453,8 +453,7 @@ public:
 
     virtual void logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const bool autocomput, const bool autocie, const float jz1) = 0;
     virtual void refChanged2(float *huerefp, float *chromarefp, float *lumarefp, float *fabrefp, int selspot) = 0;
-    virtual void maxcam(float *maxicamp, bool *autocam, int selspot) = 0;
-	
+
 };
 
 class AutoColorTonListener
