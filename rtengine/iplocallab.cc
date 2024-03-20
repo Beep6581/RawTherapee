@@ -20077,15 +20077,20 @@ void ImProcFunctions::Lab_Local(
                     } else if(lp.smoothciem == 2  || lp.smoothciem == 3) {
                        
                         //TonemapFreeman - not used but it works..
-                        float mid_gray = 0.01f * lp.sourcegraycie;
-                        float white_point =  pow(2.718281828459, lp.whiteevjz * std::log(2.f) + xlogf(mid_gray));
-                        float black_point =  pow(2.718281828459, lp.blackevjz * std::log(2.f) + xlogf(mid_gray));
+                        float mid_gray = 0.01f * lp.sourcegraycie;//xexpf
+                        //  float white_point =  pow(2.718281828459, lp.whiteevjz * std::log(2.f) + xlogf(mid_gray));
+                        //  float black_point =  pow(2.718281828459, lp.blackevjz * std::log(2.f) + xlogf(mid_gray));
+                        float white_point =  xexpf(lp.whiteevjz * std::log(2.f) + xlogf(mid_gray));
+                        float black_point =  xexpf(lp.blackevjz * std::log(2.f) + xlogf(mid_gray));
                         bool rolloff = true;
+                        float slopegray = 1.f;
+                        float slopsmoot = (float) params->locallab.spots.at(sp).slopesmo;
                         if(lp.smoothciem == 3) {
                             rolloff = false;
+                            slopegray = slopsmoot;
                         }
                         LUTf lut(65536, LUT_CLIP_OFF);
-                        tonemapFreeman(1.f, white_point, black_point, mid_gray, rolloff, lut);
+                        tonemapFreeman(slopegray, white_point, black_point, mid_gray, rolloff, lut);
 
  #ifdef _OPENMP
         #pragma omp parallel for

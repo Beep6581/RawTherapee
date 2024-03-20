@@ -76,6 +76,7 @@ protected:
     rtengine::ProcEvent Evlocallabgamjcie;
     rtengine::ProcEvent Evlocallabslopjcie;
     rtengine::ProcEvent Evlocallabmidtcie;
+    rtengine::ProcEvent Evlocallabslopesmo;
     rtengine::ProcEvent Evlocallabsmoothcie;
     rtengine::ProcEvent Evlocallabsmoothciemet;
     rtengine::ProcEvent Evlocallabsigcie;
@@ -1689,8 +1690,10 @@ private:
     Adjuster* const slopjcie;
     Adjuster* const midtcie;
     Gtk::CheckButton* const smoothcie;
+    ToolParamBlock* const ciesmoothBox;
     Gtk::Box* smoothBox;
     MyComboBoxText* const smoothciemet;
+    Adjuster* const slopesmo;
 
     Adjuster* const whitescie;
     Adjuster* const blackscie;

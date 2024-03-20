@@ -1468,7 +1468,8 @@ HISTORY_MSG_LOCAL_CIE_SIG;Sigmoid
 HISTORY_MSG_LOCAL_CIE_SIGADAP;Local CIECAM Sigmoid adaptability
 HISTORY_MSG_LOCAL_CIE_SIGMET;Local CIECAM - Sigmoid method
 HISTORY_MSG_LOCAL_CIE_SLOP;Local CIECAM - Slope
-HISTORY_MSG_LOCAL_CIE_SMOOTHMET;Local CIECAM - Smooth highlights method
+HISTORY_MSG_LOCAL_CIE_SLOPESMO;Local CIECAM - Gray balance
+HISTORY_MSG_LOCAL_CIE_SMOOTHMET;Local CIECAM - Smooth lights method
 HISTORY_MSG_LOCAL_CIE_STRGRAD;Local CIECAM - gradient strength L
 HISTORY_MSG_LOCAL_CIE_TRC;Local CIECAM - TRC
 HISTORY_MSG_LOCAL_CIE_REDXL;Local CIECAM - Red X
@@ -3543,9 +3544,10 @@ TP_LOCALLAB_SIGWHITESCIE;Whites distribution
 TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP;Allows you, in Automatic, when the dynamic range of the image is high, to change the distribution of lights in whites and deep blacks.\nCan be used with Log encoding or Sigmoid with Black Ev and White Ev enabled.\n\nThe algorithm does not change the basic data, but acts on the components necessary to calculate the Dynamic range, Black Ev, White Ev and the Gray point.
 TP_LOCALLAB_SLOMASKCOL;Slope
 TP_LOCALLAB_SLOMASK_TOOLTIP;Adjusting Gamma and Slope can provide a soft and artifact-free transformation of the mask by progressively modifying 'L' to avoid any discontinuities.
+TP_LOCALLAB_SLOPESMOOTH;Gray balance
 TP_LOCALLAB_SLOSH;Slope
-TP_LOCALLAB_SMOOTHCIE;Smooth highlights
-TP_LOCALLAB_SMOOTHCIE_TOOLTIP;Completes the processing carried out by gamma, slope and midtones by causing a slight lowering of highlights. Please note this does not replace Highlight reconstruction.
+TP_LOCALLAB_SMOOTHCIE;Smooth lights
+TP_LOCALLAB_SMOOTHCIE_TOOLTIP;Completes the processing carried out by gamma, slope and midtones by causing a slight lowering of lights. Please note this does not replace Highlight reconstruction.
 TP_LOCALLAB_SOFT;Soft Light & Original Retinex
 TP_LOCALLAB_SOFTM;Soft Light
 TP_LOCALLAB_SOFTMETHOD_TOOLTIP;Apply a Soft-light blend (identical to the global adjustment). Carry out dodge and burn using the original Retinex algorithm.

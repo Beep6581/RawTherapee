@@ -1080,6 +1080,7 @@ public:
         bool comprcieth;
         bool gamjcie;
         bool slopjcie;
+        bool slopesmo;
         bool midtcie;
         bool redxl;
         bool redyl;
