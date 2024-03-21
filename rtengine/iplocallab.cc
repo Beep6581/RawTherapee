@@ -2583,12 +2583,11 @@ SOFTWARE.
 
 /* 
 // I also took some code from Albert Grigio
-// All this code is not used, I preferred to use tone_eqsmooth
 */
 
-float rolloff_function(float x, float a, float b, float c)
+float rolloff_function(float x, float a, float b, float c, float kmid)
 {
-    return a * (x / (x + b)) + c;
+    return (a * (x / (x + b)) + c) * kmid;
 }
 
 float scene_contrast(float x, float mid_gray_out, float gamma)
@@ -2596,17 +2595,17 @@ float scene_contrast(float x, float mid_gray_out, float gamma)
     return mid_gray_out * std::pow(x / mid_gray_out, gamma);
 }
     
-float do_get(float x, bool rolloff_, float mid_gray_out, float gamma, float a, float b, float c)
+float do_get(float x, bool rolloff_, float mid_gray_out, float gamma, float a, float b, float c, float kmid)
 {
     if (rolloff_ && x <= mid_gray_out) {
         return x;
     } else {
-        return rolloff_function(scene_contrast(x, mid_gray_out, gamma), a, b, c);
+        return rolloff_function(scene_contrast(x, mid_gray_out, gamma), a, b, c, kmid);
     }
 }
 
 
-void tonemapFreeman(float target_slope, float white_point, float black_point, float mid_gray_out, bool rolloff, LUTf& lut)               
+void tonemapFreeman(float target_slope, float white_point, float black_point, float mid_gray_out, float mid_gray_view, bool rolloff, LUTf& lut, int mode)
 {
     float a;
     float b;
@@ -2617,11 +2616,21 @@ void tonemapFreeman(float target_slope, float white_point, float black_point, fl
     mid_gray_out_ = mid_gray_out;
     c = black_point;
     a = white_point - c;
+    
     b = (a / (mid_gray_out_ - c)) * (1.f - ((mid_gray_out_ - c) / a)) * mid_gray_out_;
     gamma = target_slope * (float) std::pow((mid_gray_out_ + b), 2.0) / (a * b);
-        
+    float kmid = 1.f;//general case
+    if(mode == 3 && target_slope != 1.f) {
+        float midutil = mid_gray_view / mid_gray_out;
+        float midk = 1.f;
+        if(target_slope >= 1.f) {
+            midk = pow_F(midutil, 2.f * (target_slope - 1.f));
+        }
+        kmid = midk;
+    }
+
     for (int i = 0; i < 65536; ++i) {
-        lut[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_out_, gamma, a, b, c);
+        lut[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_out_, gamma, a, b, c, kmid);
     }
 }
 
@@ -20078,19 +20087,20 @@ void ImProcFunctions::Lab_Local(
                        
                         //TonemapFreeman - not used but it works..
                         float mid_gray = 0.01f * lp.sourcegraycie;//xexpf
-                        //  float white_point =  pow(2.718281828459, lp.whiteevjz * std::log(2.f) + xlogf(mid_gray));
-                        //  float black_point =  pow(2.718281828459, lp.blackevjz * std::log(2.f) + xlogf(mid_gray));
+                        float mid_gray_view = 0.01f * lp.targetgraycie;
                         float white_point =  xexpf(lp.whiteevjz * std::log(2.f) + xlogf(mid_gray));
                         float black_point =  xexpf(lp.blackevjz * std::log(2.f) + xlogf(mid_gray));
                         bool rolloff = true;
                         float slopegray = 1.f;
-                        float slopsmoot = (float) params->locallab.spots.at(sp).slopesmo;
+                        int mode = 1;
+                        float slopsmoot = 1.f - ((float) params->locallab.spots.at(sp).slopesmo - 1.f);
                         if(lp.smoothciem == 3) {
                             rolloff = false;
                             slopegray = slopsmoot;
+                            mode = 3;
                         }
                         LUTf lut(65536, LUT_CLIP_OFF);
-                        tonemapFreeman(slopegray, white_point, black_point, mid_gray, rolloff, lut);
+                        tonemapFreeman(slopegray, white_point, black_point, mid_gray, mid_gray_view, rolloff, lut, mode);
 
  #ifdef _OPENMP
         #pragma omp parallel for
