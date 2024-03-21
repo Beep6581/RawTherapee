@@ -2582,55 +2582,59 @@ SOFTWARE.
 */
 
 /* 
-// I also took some code from Albert Grigio
+// I also took some code from Alberto Grigio
 */
-
-float rolloff_function(float x, float a, float b, float c, float kmid)
+//Copyright (c) 2023 Thatcher Freeman
+// Adapted to Rawtherapee Jacques Desmis 21 mars 2024
+float rolloff_function(float x, float dr, float b, float c, float kmid)
 {
-    return (a * (x / (x + b)) + c) * kmid;
+    return (dr * (x / (x + b)) + c) * kmid;//Sigmoid ponderate with kmid - take into account if need Mean Yb scene and Mean Yb viewing and slope value
 }
+//Copyright (c) 2023 Thatcher Freeman
 
 float scene_contrast(float x, float mid_gray_out, float gamma)
 {
     return mid_gray_out * std::pow(x / mid_gray_out, gamma);
 }
-    
-float do_get(float x, bool rolloff_, float mid_gray_out, float gamma, float a, float b, float c, float kmid)
+//Copyright (c) 2023 Thatcher Freeman
+
+float do_get(float x, bool rolloff_, float mid_gray_out, float gamma, float dr, float b, float c, float kmid)
 {
-    if (rolloff_ && x <= mid_gray_out) {
+    if (rolloff_ && x <= mid_gray_out) {//general smooth
         return x;
     } else {
-        return rolloff_function(scene_contrast(x, mid_gray_out, gamma), a, b, c, kmid);
+        return rolloff_function(scene_contrast(x, mid_gray_out, gamma), dr, b, c, kmid);//simulate sigmoid with a slope to begin
     }
 }
 
-
+//Copyright (c) 2023 Thatcher Freeman
+// Adapted to Rawtherapee Jacques Desmis 21 mars 2024
 void tonemapFreeman(float target_slope, float white_point, float black_point, float mid_gray_out, float mid_gray_view, bool rolloff, LUTf& lut, int mode)
 {
-    float a;
+    float dr;//Dynamic Range
     float b;
-    float c;
+    float c;//black point
     float gamma;
-    float mid_gray_out_;
-    
+    float mid_gray_out_;//Mean luminance - Scene conditions
+    // mid_gray_view //Mean luminance - Viewing conditions
     mid_gray_out_ = mid_gray_out;
     c = black_point;
-    a = white_point - c;
+    dr = white_point - c;
     
-    b = (a / (mid_gray_out_ - c)) * (1.f - ((mid_gray_out_ - c) / a)) * mid_gray_out_;
-    gamma = target_slope * (float) std::pow((mid_gray_out_ + b), 2.0) / (a * b);
+    b = (dr / (mid_gray_out_ - c)) * (1.f - ((mid_gray_out_ - c) / dr)) * mid_gray_out_;
+    gamma = target_slope * (float) std::pow((mid_gray_out_ + b), 2.0) / (dr * b);
     float kmid = 1.f;//general case
     if(mode == 3 && target_slope != 1.f) {
         float midutil = mid_gray_view / mid_gray_out;
         float midk = 1.f;
         if(target_slope >= 1.f) {
-            midk = pow_F(midutil, 2.f * (target_slope - 1.f));
+            midk = pow_F(midutil, 2.f * (target_slope - 1.f));//ponderation in function target_slope
         }
         kmid = midk;
     }
 
-    for (int i = 0; i < 65536; ++i) {
-        lut[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_out_, gamma, a, b, c, kmid);
+    for (int i = 0; i < 65536; ++i) {//lut - take from Alberto Griggio
+        lut[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_out_, gamma, dr, b, c, kmid);
     }
 }
 
@@ -19781,8 +19785,6 @@ void ImProcFunctions::Lab_Local(
     gry = params->locallab.spots.at(sp).greyl;
     blx = params->locallab.spots.at(sp).bluxl;
     bly = params->locallab.spots.at(sp).bluyl;
-    //contsig = params->locallab.spots.at(sp).contsigqcie;
-    //lightsig = params->locallab.spots.at(sp).lightsigqcie;
 
     if (params->locallab.spots.at(sp).expcie   && params->locallab.spots.at(sp).modecie == "com"  && lp.activspot) { //ciecam
         int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
@@ -20004,23 +20006,23 @@ void ImProcFunctions::Lab_Local(
                     } else if (params->locallab.spots.at(sp).primMethod == "jdcmax") {
                         prim = 8;
                         ill = 2;
-                        typ = 5;                     
+                        typ = 5;
                     } else if (params->locallab.spots.at(sp).primMethod == "jdcmaxstdA") {
                         prim = 9;
                         ill = 8;
-                        typ = 5;                     
+                        typ = 5;
                     } else if (params->locallab.spots.at(sp).primMethod == "ac0") {
                         prim = 7;
                         ill = 4;
-                        typ = 5;                     
+                        typ = 5;
                     } else if (params->locallab.spots.at(sp).primMethod == "best") {
                         prim = 12;
                         ill = 2;
-                        typ = 5;                     
+                        typ = 5;
                     } else if (params->locallab.spots.at(sp).primMethod == "bru") {
                         prim = 10;
                         ill = 5;
-                        typ = 5;                     
+                        typ = 5;
                     } else if (params->locallab.spots.at(sp).primMethod == "free") {
                         prim = 15;
                         typ = 5;
@@ -20064,7 +20066,7 @@ void ImProcFunctions::Lab_Local(
                     if(params->locallab.spots.at(sp).logcie  && !params->locallab.spots.at(sp).logcieq) {
                         log_encode(tmpImagelog, lp, multiThread, bfw, bfh);
                         float strlog = 0.01f * (float) params->locallab.spots.at(sp).strcielog;
-                    
+
 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic, 16)
@@ -20077,45 +20079,44 @@ void ImProcFunctions::Lab_Local(
                                  tmpImage->b(y, x) = intp(strlog, tmpImagelog->b(y, x), tmpImage->b(y, x));
                            
                             }
-                        }                    
+                        }
                     }
 
-                  //  if(lp.issmoothcie) {//à modifier si checkbox only
                     if(lp.smoothciem == 1) {
-                        tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);
+                        tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
                     } else if(lp.smoothciem == 2  || lp.smoothciem == 3) {
-                       
-                        //TonemapFreeman - not used but it works..
-                        float mid_gray = 0.01f * lp.sourcegraycie;//xexpf
-                        float mid_gray_view = 0.01f * lp.targetgraycie;
-                        float white_point =  xexpf(lp.whiteevjz * std::log(2.f) + xlogf(mid_gray));
-                        float black_point =  xexpf(lp.blackevjz * std::log(2.f) + xlogf(mid_gray));
-                        bool rolloff = true;
-                        float slopegray = 1.f;
+
+                        //TonemapFreeman - Copyright (c) 2023 Thatcher Freeman
+                        float mid_gray = 0.01f * lp.sourcegraycie;//Mean luminance Yb Scene
+                        float mid_gray_view = 0.01f * lp.targetgraycie;//Mean luminance Yb Viewing
+                        float white_point =  xexpf(lp.whiteevjz * std::log(2.f) + xlogf(mid_gray));//lp.whiteevjz  White_Ev
+                        float black_point =  xexpf(lp.blackevjz * std::log(2.f) + xlogf(mid_gray));//lp.blackevjz  Black_Ev
+                        bool rolloff = true;//only soften highlights
+                        float slopegray = 1.f;//slopegray between 0.8 and 1.5
                         int mode = 1;
-                        float slopsmoot = 1.f - ((float) params->locallab.spots.at(sp).slopesmo - 1.f);
-                        if(lp.smoothciem == 3) {
-                            rolloff = false;
+                        float slopsmoot = 1.f - ((float) params->locallab.spots.at(sp).slopesmo - 1.f);//modify response so when increase slope the grays are becoming lighter
+                        if(lp.smoothciem == 3) {//slope activ, only with choice gamma - slope - based
+                            rolloff = false;//allows tone-mapping
                             slopegray = slopsmoot;
                             mode = 3;
                         }
-                        LUTf lut(65536, LUT_CLIP_OFF);
+                        LUTf lut(65536, LUT_CLIP_OFF);//take from Alberto Griggio
                         tonemapFreeman(slopegray, white_point, black_point, mid_gray, mid_gray_view, rolloff, lut, mode);
 
  #ifdef _OPENMP
         #pragma omp parallel for
 #endif
-                        for (int y = 0; y < bfh ; ++ y) {
+                        for (int y = 0; y < bfh ; ++ y) {//apply Lut tone-mapping
                             for (int x = 0; x < bfw ; ++x) {
                                 tmpImage->r(y, x) = 65535.f * lut[tmpImage->r(y, x)];
                                 tmpImage->g(y, x) = 65535.f * lut[tmpImage->g(y, x)];
-                                tmpImage->b(y, x) = 65535.f * lut[tmpImage->b(y, x)];           
+                                tmpImage->b(y, x) = 65535.f * lut[tmpImage->b(y, x)];
                             }
                         }
-                       
+
                     }
-                    
-                   
+
+
                     rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
                     delete tmpImage;
@@ -20151,7 +20152,6 @@ void ImProcFunctions::Lab_Local(
 
                 float hig = lp.higthrcie;
                 float low = lp.lowthrcie;
-                //float recoth = lp.recothrcie;
                 float decay = lp.decaycie;
                 bool invmask = false;
                 maskrecov(bufexpfin.get(), original, bufmaskorigcie.get(), bfh, bfw, ystart, xstart, hig, low, recoth, decay, invmask, sk, multiThread);
