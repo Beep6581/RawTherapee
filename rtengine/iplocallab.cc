@@ -2507,16 +2507,16 @@ void tone_eqsmooth(ImProcFunctions *ipf, Imagefloat *rgb, const struct local_par
     params.bands[1] = 0;
     params.bands[2] = 0;
     params.bands[3] = 0;
-    params.bands[4] = -58;//arbitrary value to adapt with WhiteEvjz - here White Ev # 10
+    params.bands[4] = -30;//arbitrary value to adapt with WhiteEvjz - here White Ev # 10
     params.bands[5] = -100;//8 Ev and above
     if(lp.whiteevjz < 6) {//EV = 6 majority of images
-        params.bands[4] = -40;
+        params.bands[4] = -15;
     }
     if(lp.islogcie) {//with log encoding Cie
-        params.bands[4] = -30;
-        params.bands[5] = -70;
+        params.bands[4] = -15;
+        params.bands[5] = -50;
         if(lp.whiteevjz < 6) {
-            params.bands[4] = -20;
+            params.bands[4] = -10;
         }
     }
   
