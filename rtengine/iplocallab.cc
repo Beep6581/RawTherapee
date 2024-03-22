@@ -2609,7 +2609,7 @@ float do_get(float x, bool rolloff_, float mid_gray_out, float gamma, float dr, 
 
 //Copyright (c) 2023 Thatcher Freeman
 // Adapted to Rawtherapee Jacques Desmis 21 mars 2024
-void tonemapFreeman(float target_slope, float white_point, float black_point, float mid_gray_out, float mid_gray_view, bool rolloff, LUTf& lut, int mode)
+void tonemapFreeman(float target_slope, float white_point, float black_point, float mid_gray_out, float mid_gray_view, bool rolloff, LUTf& lut, int mode, bool scale)
 {
     float dr;//Dynamic Range
     float b;
@@ -2617,10 +2617,16 @@ void tonemapFreeman(float target_slope, float white_point, float black_point, fl
     float gamma;
     float mid_gray_out_;//Mean luminance - Scene conditions
     // mid_gray_view //Mean luminance - Viewing conditions
-    mid_gray_out_ = mid_gray_out;
+    
     c = black_point;
     dr = white_point - c;
     
+    if(scale) {//scale Yb mean luminance scene with dr and black
+        mid_gray_out_ = mid_gray_out * dr + c;
+    } else {
+        mid_gray_out_ = mid_gray_out;
+    }
+
     b = (dr / (mid_gray_out_ - c)) * (1.f - ((mid_gray_out_ - c) / dr)) * mid_gray_out_;
     gamma = target_slope * (float) std::pow((mid_gray_out_ + b), 2.0) / (dr * b);
     float kmid = 1.f;//general case
@@ -20101,7 +20107,8 @@ void ImProcFunctions::Lab_Local(
                             mode = 3;
                         }
                         LUTf lut(65536, LUT_CLIP_OFF);//take from Alberto Griggio
-                        tonemapFreeman(slopegray, white_point, black_point, mid_gray, mid_gray_view, rolloff, lut, mode);
+                        bool scale = lp.issmoothcie;
+                        tonemapFreeman(slopegray, white_point, black_point, mid_gray, mid_gray_view, rolloff, lut, mode, scale);
 
  #ifdef _OPENMP
         #pragma omp parallel for
