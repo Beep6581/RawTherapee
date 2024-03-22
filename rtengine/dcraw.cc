@@ -10434,7 +10434,7 @@ konica_400z:
     filters = 0x16161616;
     load_raw = &CLASS packed_load_raw;
     load_flags = 30;
-  } else if (!strcmp(make,"Olympus")) {
+  } else if (!strcmp(make,"Olympus") || !strncmp(make, "OM Digi", 7)) {
     height += height & 1;
     if (exif_cfa) filters = exif_cfa;
     if (width == 4100) width -= 4;
