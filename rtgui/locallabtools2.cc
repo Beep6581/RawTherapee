@@ -11130,7 +11130,7 @@ void Locallabcie::updatecieGUI()
                 smoothcie->show();
             } else {
                 slopesmo->hide();
-                smoothcie->show();
+                smoothcie->hide();
             }
         }
 
