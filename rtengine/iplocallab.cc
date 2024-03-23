@@ -2585,62 +2585,63 @@ SOFTWARE.
 // I also took some code from Alberto Grigio
 */
 //Copyright (c) 2023 Thatcher Freeman
-// Adapted to Rawtherapee Jacques Desmis 21 mars 2024
+// Adapted to Rawtherapee Jacques Desmis mars 2024  jdesmis@gmail.com
+
 float rolloff_function(float x, float dr, float b, float c, float kmid)
 {
-    return (dr * (x / (x + b)) + c) * kmid;//Sigmoid ponderate with kmid - take into account if need Mean Yb scene and Mean Yb viewing and slope value
+    return (dr * (x / (x + b)) + c) * kmid;//Simple sigmoid (rather a polynomial power function) ponderate with kmid - take into account if need Mean Yb scene and Mean Yb viewing and slope value
 }
 //Copyright (c) 2023 Thatcher Freeman
 
-float scene_contrast(float x, float mid_gray_out, float gamma)
+float scene_contrast(float x, float mid_gray_scene, float gamma)
 {
-    return mid_gray_out * std::pow(x / mid_gray_out, gamma);
+    return mid_gray_scene * std::pow(x / mid_gray_scene, gamma);//apply gamma
 }
 //Copyright (c) 2023 Thatcher Freeman
 
-float do_get(float x, bool rolloff_, float mid_gray_out, float gamma, float dr, float b, float c, float kmid)
+float do_get(float x, bool rolloff_, float mid_gray_scene, float gamma, float dr, float b, float c, float kmid)
 {
-    if (rolloff_ && x <= mid_gray_out) {//general smooth
+    if (rolloff_ && x <= mid_gray_scene) {//general smooth
         return x;
     } else {
-        return rolloff_function(scene_contrast(x, mid_gray_out, gamma), dr, b, c, kmid);//simulate sigmoid with a slope to begin
+        return rolloff_function(scene_contrast(x, mid_gray_scene, gamma), dr, b, c, kmid);//simulate pseudo sigmoid with a slope to begin
     }
 }
 
 //Copyright (c) 2023 Thatcher Freeman
 // Adapted to Rawtherapee Jacques Desmis 21 mars 2024
-void tonemapFreeman(float target_slope, float white_point, float black_point, float mid_gray_out, float mid_gray_view, bool rolloff, LUTf& lut, int mode, bool scale)
+void tonemapFreeman(float target_slope, float white_point, float black_point, float mid_gray_scene, float mid_gray_view, bool rolloff, LUTf& lut, int mode, bool scale)
 {
     float dr;//Dynamic Range
     float b;
     float c;//black point
     float gamma;
-    float mid_gray_out_;//Mean luminance - Scene conditions
-    // mid_gray_view //Mean luminance - Viewing conditions
+    float mid_gray_scene_;//Mean luminance - Scene conditions
+                          // mid_gray_view //Mean luminance - Viewing conditions
     
     c = black_point;
     dr = white_point - c;
-    
-    if(scale) {//scale Yb mean luminance scene with dr and black
-        mid_gray_out_ = mid_gray_out * dr + c;
+
+    if(scale) {//scale Yb mean luminance scene with white : dr and black
+        mid_gray_scene_ = mid_gray_scene * dr + c;
     } else {
-        mid_gray_out_ = mid_gray_out;
+        mid_gray_scene_ = mid_gray_scene;
     }
 
-    b = (dr / (mid_gray_out_ - c)) * (1.f - ((mid_gray_out_ - c) / dr)) * mid_gray_out_;
-    gamma = target_slope * (float) std::pow((mid_gray_out_ + b), 2.0) / (dr * b);
+    b = (dr / (mid_gray_scene_ - c)) * (1.f - ((mid_gray_scene_ - c) / dr)) * mid_gray_scene_;//b - ponderate mid_gray_scene taking into account the total DR, and the dark part below the mid_gray_scene
+    gamma = target_slope * (float) std::pow((mid_gray_scene_ + b), 2.0) / (dr * b);//Caculate gamma with slope and mid_gray_scene 
     float kmid = 1.f;//general case
-    if(mode == 3 && target_slope != 1.f) {
-        float midutil = mid_gray_view / mid_gray_out;
+    if(mode == 3 && target_slope != 1.f) {//case tone-mapping
+        float midutil = mid_gray_view / mid_gray_scene;//take into account ratio between Yb source and Yb viewing
         float midk = 1.f;
         if(target_slope >= 1.f) {
             midk = pow_F(midutil, 2.f * (target_slope - 1.f));//ponderation in function target_slope
         }
         kmid = midk;
     }
-
-    for (int i = 0; i < 65536; ++i) {//lut - take from Alberto Griggio
-        lut[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_out_, gamma, dr, b, c, kmid);
+    //lut - take from Alberto Griggio
+    for (int i = 0; i < 65536; ++i) {// i - value image RGB
+        lut[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_scene_, gamma, dr, b, c, kmid);//call main function
     }
 }
 
@@ -20090,7 +20091,7 @@ void ImProcFunctions::Lab_Local(
 
                     if(lp.smoothciem == 1) {
                         tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
-                    } else if(lp.smoothciem == 2  || lp.smoothciem == 3) {
+                    } else if(lp.smoothciem == 2  || lp.smoothciem == 3) {//  2 - only smmoth highlightd  - 3 - Tone mapping
 
                         //TonemapFreeman - Copyright (c) 2023 Thatcher Freeman
                         float mid_gray = 0.01f * lp.sourcegraycie;//Mean luminance Yb Scene
@@ -20098,7 +20099,7 @@ void ImProcFunctions::Lab_Local(
                         float white_point =  xexpf(lp.whiteevjz * std::log(2.f) + xlogf(mid_gray));//lp.whiteevjz  White_Ev
                         float black_point =  xexpf(lp.blackevjz * std::log(2.f) + xlogf(mid_gray));//lp.blackevjz  Black_Ev
                         bool rolloff = true;//only soften highlights
-                        float slopegray = 1.f;//slopegray between 0.8 and 1.5
+                        float slopegray = 1.f;//slopegray between 0.8 and 1.5 - lineary light the shadows by the user - the gamma is calculated according to slope and the characteristics of the image DR, White, Black
                         int mode = 1;
                         float slopsmoot = 1.f - ((float) params->locallab.spots.at(sp).slopesmo - 1.f);//modify response so when increase slope the grays are becoming lighter
                         if(lp.smoothciem == 3) {//slope activ, only with choice gamma - slope - based
@@ -20107,13 +20108,13 @@ void ImProcFunctions::Lab_Local(
                             mode = 3;
                         }
                         LUTf lut(65536, LUT_CLIP_OFF);//take from Alberto Griggio
-                        bool scale = lp.issmoothcie;
+                        bool scale = lp.issmoothcie;//scale Yb mid_gray - WhiteEv and BlavkEv
                         tonemapFreeman(slopegray, white_point, black_point, mid_gray, mid_gray_view, rolloff, lut, mode, scale);
 
  #ifdef _OPENMP
         #pragma omp parallel for
 #endif
-                        for (int y = 0; y < bfh ; ++ y) {//apply Lut tone-mapping
+                        for (int y = 0; y < bfh ; ++ y) {//apply Lut tone-mapping or somooth
                             for (int x = 0; x < bfw ; ++x) {
                                 tmpImage->r(y, x) = 65535.f * lut[tmpImage->r(y, x)];
                                 tmpImage->g(y, x) = 65535.f * lut[tmpImage->g(y, x)];
