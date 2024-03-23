@@ -2914,9 +2914,10 @@ TP_LOCALLAB_CHROML;Chroma (C)
 TP_LOCALLAB_CHRRT;Chroma
 TP_LOCALLAB_CIE;Color appearance (Cam16 & JzCzHz)
 TP_LOCALLAB_CIE_SMOOTH_NONE;None
-TP_LOCALLAB_CIE_SMOOTH_EV;Ev based
-TP_LOCALLAB_CIE_SMOOTH_GAMMA;Gamma - Slope - based
-TP_LOCALLAB_CIE_SMOOTH_GAMMA ROLLOFF;Gamma based rolloff
+TP_LOCALLAB_CIE_SMOOTH_EV;Smooth highlights - Ev based
+TP_LOCALLAB_CIE_SMOOTHFRAME;Smooth highlights & Tone Mapping
+TP_LOCALLAB_CIE_SMOOTH_GAMMA;Gamma Slope Tone Mapping
+TP_LOCALLAB_CIE_SMOOTH_GAMMA ROLLOFF;Smooth hilights rolloff
 TP_LOCALLAB_CIEC;Use Ciecam environment parameters
 TP_LOCALLAB_CIECAMLOG_TOOLTIP;This module is based on the CIECAM color appearance model which was designed to better simulate how human vision perceives colors under different lighting conditions.\nThe first Ciecam process 'Scene conditions' is carried out by Log encoding, it also uses 'Absolute luminance' at the time of shooting.\nThe second Ciecam process 'Image adjustments' is simplified and uses only 3 variables (local contrast, contrast J, saturation s).\nThe third Ciecam process 'Viewing conditions' adapts the output to the intended viewing conditions (monitor, TV, projector, printer, etc.) so that the chromatic and contrast appearance is preserved across the display environment.
 TP_LOCALLAB_CIECOLORFRA;Color
@@ -3546,7 +3547,7 @@ TP_LOCALLAB_SLOMASKCOL;Slope
 TP_LOCALLAB_SLOMASK_TOOLTIP;Adjusting Gamma and Slope can provide a soft and artifact-free transformation of the mask by progressively modifying 'L' to avoid any discontinuities.
 TP_LOCALLAB_SLOPESMOOTH;Gray balance (Slope)
 TP_LOCALLAB_SLOSH;Slope
-TP_LOCALLAB_SMOOTHCIE;Smooth lights
+TP_LOCALLAB_SMOOTHCIE;Smooth & Tone-Mapping
 TP_LOCALLAB_SMOOTHCIE_SCA;Scale Yb Scene
 TP_LOCALLAB_SMOOTHCIE_TOOLTIP;Completes the processing carried out by gamma, slope and midtones by causing a slight lowering of lights. Please note this does not replace Highlight reconstruction.\n\nGamma - Slope - based: choice (Standard and Advanced) allows you to simulate a "Tone mapping" using: a) Scene conditions: Black-Ev, White-Ev, Mean luminance (Yb%); b) Viewing conditions: Mean luminance (Yb%).
 TP_LOCALLAB_SOFT;Soft Light & Original Retinex

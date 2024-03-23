@@ -1703,6 +1703,7 @@ private:
     MyComboBoxText*  const primMethod;
     Gtk::Grid* primCoordGridl;
     Gtk::Frame* trcFrame;
+    Gtk::Frame* smoothFrame;
     Gtk::Frame* primillFrame;
     ToolParamBlock* const redBox;  
     Adjuster* const redxl;

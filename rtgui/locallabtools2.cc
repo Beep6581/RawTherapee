@@ -7630,6 +7630,7 @@ Locallabcie::Locallabcie():
     primMethod(Gtk::manage(new MyComboBoxText())),
     primCoordGridl(Gtk::manage(new Gtk::Grid())),
     trcFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TRCFRAME")))),
+    smoothFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIE_SMOOTHFRAME")))),
     primillFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_PRIMILLFRAME")))),
     redBox(Gtk::manage(new ToolParamBlock())),
     redxl(Gtk::manage(new Adjuster(M("TC_PRIM_REDX"), 0.41, 1.0, 0.0001, 0.7347))),
@@ -7953,6 +7954,7 @@ Locallabcie::Locallabcie():
     primMethod->set_active(0);
     primMethodconn = primMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::primMethodChanged));
     trcFrame->set_label_align(0.025, 0.5);
+    smoothFrame->set_label_align(0.025, 0.5);
 
     primillFrame->set_label_align(0.025, 0.5);
     setExpandAlignProperties(grexl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
@@ -8026,14 +8028,17 @@ Locallabcie::Locallabcie():
     gamcieBox->pack_start(*logcieFrame);
 
     ToolParamBlock* const trccieBox = Gtk::manage(new ToolParamBlock());
+    ToolParamBlock* const smoothcieBox = Gtk::manage(new ToolParamBlock());
     ToolParamBlock* const primillBox = Gtk::manage(new ToolParamBlock());
     ToolParamBlock* const colorBox = Gtk::manage(new ToolParamBlock());
 
     trccieBox->pack_start(*gamjcie);
     trccieBox->pack_start(*slopjcie);
     trccieBox->pack_start(*midtcie);
-//    trccieBox->pack_start(*smoothcie);
-    trccieBox->pack_start(*ciesmoothBox);//smoothBox
+
+    smoothcieBox->pack_start(*ciesmoothBox);//smoothBox
+    smoothFrame->add(*smoothcieBox);
+    trccieBox->pack_start(*smoothFrame);
     trcFrame->add(*trccieBox);
     gamcieBox->pack_start(*trcFrame);
     primillBox->pack_start(*willBox);
@@ -8393,8 +8398,8 @@ Locallabcie::Locallabcie():
 
     //ToolParamBlock* const ciesmoothBox = Gtk::manage(new ToolParamBlock());
 
-    Gtk::Label* smoothLabel = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_SMOOTHCIE") + ":"));
-    smoothBox->pack_start(*smoothLabel, Gtk::PACK_SHRINK);
+ //   Gtk::Label* smoothLabel = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_SMOOTHCIE") + ":"));
+ //   smoothBox->pack_start(*smoothLabel, Gtk::PACK_SHRINK);
     smoothBox->pack_start(*smoothciemet, Gtk::PACK_EXPAND_WIDGET);
     smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_NONE"));
     smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_EV"));
@@ -10537,8 +10542,9 @@ void Locallabcie::illMethodChanged()
 
 void Locallabcie::smoothciemetChanged()
 {
-    const int mode = complexity->get_active_row_number();
-    if(mode != Simple) {
+//    const int mode = complexity->get_active_row_number();
+    
+  //  if(mode != Simple) {
         if(smoothciemet->get_active_row_number() == 3) {
             slopesmo->show();
             smoothcie->show();
@@ -10546,11 +10552,13 @@ void Locallabcie::smoothciemetChanged()
             slopesmo->hide();
             smoothcie->hide();
         }
+        /*
     } else {
         slopesmo->hide();
         smoothcie->hide();
 
     }
+   */
     if (listener) {
         listener->panelChanged(Evlocallabsmoothciemet, smoothciemet->get_active_text());
     }
@@ -10745,6 +10753,16 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 expmaskcie->hide();
                 exprecovcie->hide();
                 expgradcie->hide();
+                if(smoothciemet->get_active_row_number() == 3) {
+                    slopesmo->show();
+                    smoothcie->show();
+
+                } else {
+                    slopesmo->hide();
+                    smoothcie->hide();
+
+                }
+                
             }
 
             if (modecam->get_active_row_number() == 1) {
@@ -10847,6 +10865,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 expprecam->show();
                 primillFrame->hide();//show
                 enacieMaskall->hide();
+               
                 if(smoothciemet->get_active_row_number() == 3) {
                     slopesmo->show();
                     smoothcie->show();
@@ -10856,7 +10875,6 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcie->hide();
 
                 }
-
             }
 
 
@@ -10963,6 +10981,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 primillFrame->show();
                 enacieMaskallChanged2();
                 enacieMaskall->show();
+                
                 if(smoothciemet->get_active_row_number() == 3) {
                     slopesmo->show();
                     smoothcie->show();
@@ -10970,7 +10989,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     slopesmo->hide();
                     smoothcie->hide();
                 }
-
+                
 
             }
 
@@ -11018,6 +11037,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 primillFrame->show();
                 enacieMaskallChanged2();
                 enacieMaskall->show();
+                
                 if(smoothciemet->get_active_row_number() == 3) {
                     slopesmo->show();
                     smoothcie->show();
@@ -11026,7 +11046,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     slopesmo->hide();
                     smoothcie->hide();
                 }
-
+               
 
             }
 
@@ -11124,7 +11144,8 @@ void Locallabcie::updatecieGUI()
         } else {
             primillFrame->show();
         }
-        if (mode != Simple) {
+
+   //     if (mode != Simple) {
             if(smoothciemet->get_active_row_number() == 3) {
                 slopesmo->show();
                 smoothcie->show();
@@ -11132,9 +11153,7 @@ void Locallabcie::updatecieGUI()
                 slopesmo->hide();
                 smoothcie->hide();
             }
-        }
-
-
+ //  }
     }
 
 
@@ -11246,8 +11265,8 @@ void Locallabcie::convertParamToSimple()
     whiteEvjz->setValue(defSpot.whiteEvjz);
     whitescie->setValue(defSpot.whitescie);
     blackscie->setValue(defSpot.blackscie);
-    slopesmo->setValue(defSpot.slopesmo);
-    smoothcie->set_active(defSpot.smoothcie);
+  //  slopesmo->setValue(defSpot.slopesmo);
+  //  smoothcie->set_active(defSpot.smoothcie);
 
     sigq->set_active(defSpot.sigq);
     //sigq->set_active(defSpot.sigq);
