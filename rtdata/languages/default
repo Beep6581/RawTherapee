@@ -3549,7 +3549,7 @@ TP_LOCALLAB_SLOPESMOOTH;Gray balance (Slope)
 TP_LOCALLAB_SLOSH;Slope
 TP_LOCALLAB_SMOOTHCIE;Smooth & Tone-Mapping
 TP_LOCALLAB_SMOOTHCIE_SCA;Scale Yb Scene
-TP_LOCALLAB_SMOOTHCIE_TOOLTIP;Completes the processing carried out by gamma, slope and midtones by causing a slight lowering of lights. Please note this does not replace Highlight reconstruction.\n\nGamma - Slope - based: choice (Standard and Advanced) allows you to simulate a "Tone mapping" using: a) Scene conditions: Black-Ev, White-Ev, Mean luminance (Yb%); b) Viewing conditions: Mean luminance (Yb%).
+TP_LOCALLAB_SMOOTHCIE_TOOLTIP;Completes the processing carried out by gamma, slope and midtones by causing a slight lowering of lights. Please note this does not replace Highlight reconstruction.\n\nGamma - Slope - based: choice (Standard and Advanced) allows you to simulate a "Tone mapping" using: a) Scene conditions: Black-Ev, White-Ev, Mean luminance (Yb%); b) Viewing conditions: Mean luminance (Yb%).\nScale Yb Scene is function of White-Ev.
 TP_LOCALLAB_SOFT;Soft Light & Original Retinex
 TP_LOCALLAB_SOFTM;Soft Light
 TP_LOCALLAB_SOFTMETHOD_TOOLTIP;Apply a Soft-light blend (identical to the global adjustment). Carry out dodge and burn using the original Retinex algorithm.
