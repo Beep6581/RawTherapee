@@ -203,6 +203,7 @@ FILEBROWSER_SHOWRANK4HINT;Show images ranked as 4-star.\nShortcut: <b>Shift-4</b
 FILEBROWSER_SHOWRANK5HINT;Show images ranked as 5-star.\nShortcut: <b>Shift-5</b>
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Show saved images.\nShortcut: <b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Show unsaved images.\nShortcut: <b>Alt-6</b>
+FILEBROWSER_SHOWRECURSIVE;Show images in sub-folders recursively.
 FILEBROWSER_SHOWTRASHHINT;Show contents of trash.\nShortcut: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;Show images without a color label.\nShortcut: <b>Alt-0</b>
 FILEBROWSER_SHOWUNRANKHINT;Show unranked images.\nShortcut: <b>Shift-0</b>
@@ -1844,6 +1845,9 @@ PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustment
 PREFERENCES_BEHAVIOR;Behavior
 PREFERENCES_BEHSETALL;All to 'Set'
 PREFERENCES_BEHSETALLHINT;Set all parameters to the <b>Set</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>absolute</b>, the actual values will be displayed.
+PREFERENCES_BROWSERECURSIVEDEPTH;Browse sub-folders depth
+PREFERENCES_BROWSERECURSIVEFOLLOWLINKS;Follow symbolic links when browsing sub-folders
+PREFERENCES_BROWSERECURSIVEMAXDIRS;Maximum sub-folders
 PREFERENCES_CACHECLEAR;Clear
 PREFERENCES_CACHECLEAR_ALL;Clear all cached files:
 PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Clear all cached files except for cached processing profiles:
