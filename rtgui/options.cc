@@ -1364,7 +1364,7 @@ void Options::readFromFile(Glib::ustring fname)
                 }
 
                 if (keyFile.has_key("File Browser", "BrowseRecursiveFollowLinks")) {
-                    browseRecursiveFollowLinks = keyFile.get_integer("File Browser", "BrowseRecursiveFollowLinks");
+                    browseRecursiveFollowLinks = keyFile.get_boolean("File Browser", "BrowseRecursiveFollowLinks");
                 }
             }
 
