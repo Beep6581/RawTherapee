@@ -633,6 +633,7 @@ void Options::setDefaults()
     rtSettings.previewselection = 5;//between 1 to 40
     rtSettings.cbdlsensi = 1.0;//between 0.001 to 1
     rtSettings.fftwsigma = true; //choice between sigma^2 or empirical formula
+    rtSettings.basecorlog = 0.12;//reduction max Q in Cam16 sigmoid Log encoding between 0.05 and 0.5
 // end locallab
     rtSettings.itcwb_enable = true;
     rtSettings.itcwb_deltaspec = 0.075;
@@ -1977,6 +1978,10 @@ void Options::readFromFile(Glib::ustring fname)
                     rtSettings.cbdlsensi = keyFile.get_double("Color Management", "Cbdlsensi");
                 }
 
+                if (keyFile.has_key("Color Management", "Besecorlog")) {//sensi base log for Q
+                    rtSettings.basecorlog = keyFile.get_double("Color Management", "Basecorlog");
+                }
+
 
             }
 
@@ -2662,6 +2667,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_string("Color Management", "ClutsDirectory", clutsDir);
         keyFile.set_integer("Color Management", "Previewselection", rtSettings.previewselection);
         keyFile.set_double("Color Management", "Cbdlsensi", rtSettings.cbdlsensi);
+        keyFile.set_double("Color Management", "Basecorlog", rtSettings.basecorlog);
 
         keyFile.set_double("Wavelet", "Edghi", rtSettings.edghi);
         keyFile.set_double("Wavelet", "Edglo", rtSettings.edglo);

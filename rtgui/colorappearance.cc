@@ -888,7 +888,8 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     curveMode3Changed(); // This will set the correct sensitive state of depending Adjusters
 
     nexttemp = pp->wb.temperature;
-    nextgreen = 1.; //pp->wb.green;
+    //nextgreen = 1.; //pp->wb.green;
+    nextgreen = pp->wb.green;
 
     if (pedited) {
         degree->setEditedState        (pedited->colorappearance.degree ? Edited : UnEdited);
@@ -1519,7 +1520,7 @@ void ColorAppearance::catmethodChanged()
         ybout->resetValue (false);
         tempout->resetValue (false);
         tempout->setAutoValue (true);
-        greenout->resetValue (false);
+        greenout->resetValue (true);
         enableListener();
     }  else if (catmethod->get_active_row_number() == 2) {
         disableListener();
@@ -1887,8 +1888,10 @@ void ColorAppearance::wbCamChanged (double temp, double tin)
         {
             disableListener();
             tempout->setValue(temp);
-			greenout->setValue(tin);
+            greenout->setValue(tin);
             enableListener();
+            listener->panelChanged (EvCATgreenout, greenout->getTextValue());
+            listener->panelChanged (EvCATtempout, tempout->getTextValue());
             return false;
         }
     );
