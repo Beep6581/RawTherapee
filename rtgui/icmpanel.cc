@@ -768,6 +768,8 @@ void ICMPanel::updateDCP(int dcpIlluminant, Glib::ustring dcp_name)
 
     if (dcp_name == "(cameraICC)") {
         dcp = DCPStore::getInstance()->getStdProfile(camName);
+    } else if (dcp_name == "(embedded)") {
+        dcp = DCPStore::getInstance()->getProfile(filename);
     } else if (ifromfile->get_active() && DCPStore::getInstance()->isValidDCPFileName(dcp_name)) {
         dcp = DCPStore::getInstance()->getProfile(dcp_name);
     }
@@ -873,8 +875,8 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     
     trcExp->set_expanded(false);
 
-    if (pp->icm.inputProfile.substr(0, 5) != "file:") {
-        ipDialog->set_filename(" ");
+    if (pp->icm.inputProfile.substr(0, 5) != "file:" && !ipDialog->get_filename().empty()) {
+        ipDialog->set_filename(pp->icm.inputProfile);
     }
 
     if (pp->icm.inputProfile == "(none)") {
@@ -882,7 +884,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         updateDCP(pp->icm.dcpIlluminant, "");
     } else if (pp->icm.inputProfile == "(embedded)" || ((pp->icm.inputProfile == "(camera)" || pp->icm.inputProfile.empty()) && icamera->get_state() == Gtk::STATE_INSENSITIVE)) {
         iembedded->set_active(true);
-        updateDCP(pp->icm.dcpIlluminant, "");
+        updateDCP(pp->icm.dcpIlluminant, "(embedded)");
     } else if ((pp->icm.inputProfile == "(cameraICC)") && icameraICC->get_state() != Gtk::STATE_INSENSITIVE) {
         icameraICC->set_active(true);
         updateDCP(pp->icm.dcpIlluminant, "(cameraICC)");
@@ -2412,8 +2414,9 @@ void ICMPanel::setRawMeta(bool raw, const rtengine::FramesData* pMeta)
     iembedded->set_active(!raw);
     icamera->set_sensitive(raw);
     camName = pMeta->getCamera();
+    filename = pMeta->getFileName();
     icameraICC->set_sensitive(raw && (ICCStore::getInstance()->getStdProfile(pMeta->getCamera()) != nullptr || DCPStore::getInstance()->getStdProfile(pMeta->getCamera()) != nullptr));
-    iembedded->set_sensitive(!raw);
+    iembedded->set_sensitive(!raw || DCPStore::getInstance()->getProfile(filename));
 
     enableListener();
 }

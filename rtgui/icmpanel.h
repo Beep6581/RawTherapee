@@ -190,6 +190,7 @@ private:
     double dcpTemperatures[2];
     Glib::ustring lastRefFilename;
     Glib::ustring camName;
+    Glib::ustring filename;
     void updateDCP(int dcpIlluminant, Glib::ustring dcp_name);
     void updateRenderingIntent(const Glib::ustring &profile);
     void foldAllButMe (GdkEventButton* event, MyExpander *expander);

@@ -2206,7 +2206,7 @@ Camera constants:
     },
 
     { // Quality B
-        "make_model": "OLYMPUS TG-6",
+        "make_model": [ "OLYMPUS TG-6", "OM Digital Solutions TG-7" ],
         "dcraw_matrix" : [10899, -3833, -1082, -2112, 10736, 1575, -267, 1452, 5269], // DNG v13.2
         "raw_crop": [ 0, 0, -24, 0 ] // 24 pixels at right are garbage
     },

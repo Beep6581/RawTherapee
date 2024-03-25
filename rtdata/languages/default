@@ -203,6 +203,7 @@ FILEBROWSER_SHOWRANK4HINT;Show images ranked as 4-star.\nShortcut: <b>Shift-4</b
 FILEBROWSER_SHOWRANK5HINT;Show images ranked as 5-star.\nShortcut: <b>Shift-5</b>
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Show saved images.\nShortcut: <b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Show unsaved images.\nShortcut: <b>Alt-6</b>
+FILEBROWSER_SHOWRECURSIVE;Show images in sub-folders recursively.
 FILEBROWSER_SHOWTRASHHINT;Show contents of trash.\nShortcut: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;Show images without a color label.\nShortcut: <b>Alt-0</b>
 FILEBROWSER_SHOWUNRANKHINT;Show unranked images.\nShortcut: <b>Shift-0</b>
@@ -1901,6 +1902,9 @@ PREFERENCES_BEHADDALLHINT;Set all parameters to the <b>Add</b> mode.\nAdjustment
 PREFERENCES_BEHAVIOR;Behavior
 PREFERENCES_BEHSETALL;All to 'Set'
 PREFERENCES_BEHSETALLHINT;Set all parameters to the <b>Set</b> mode.\nAdjustments of parameters in the batch tool panel will be <b>absolute</b>, the actual values will be displayed.
+PREFERENCES_BROWSERECURSIVEDEPTH;Browse sub-folders depth
+PREFERENCES_BROWSERECURSIVEFOLLOWLINKS;Follow symbolic links when browsing sub-folders
+PREFERENCES_BROWSERECURSIVEMAXDIRS;Maximum sub-folders
 PREFERENCES_CACHECLEAR;Clear
 PREFERENCES_CACHECLEAR_ALL;Clear all cached files:
 PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Clear all cached files except for cached processing profiles:
@@ -2692,8 +2696,8 @@ TP_ICM_INPUTCAMERA_TOOLTIP;Use a simple color matrix from dcraw, an enhanced Raw
 TP_ICM_INPUTCUSTOM;Custom
 TP_ICM_INPUTCUSTOM_TOOLTIP;Select your own DCP/ICC color profile file for the camera.
 TP_ICM_INPUTDLGLABEL;Select Input DCP/ICC Profile...
-TP_ICM_INPUTEMBEDDED;Use embedded, if possible
-TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non-raw files.
+TP_ICM_INPUTEMBEDDED;Use embedded
+TP_ICM_INPUTEMBEDDED_TOOLTIP;Use the color profile embedded in the file.\nIf unavailable, fall back to Camera standard
 TP_ICM_INPUTNONE;No profile
 TP_ICM_INPUTNONE_TOOLTIP;Use no input color profile at all.\nUse only in special cases.
 TP_ICM_INPUTPROFILE;Input Profile
@@ -4345,7 +4349,7 @@ TP_WBALANCE_METHOD;Method
 TP_WBALANCE_MULLABEL;Multipliers: r=%1 g=%2 b=%3
 TP_WBALANCE_MULLABEL_TOOLTIP;Values given for information purposes. You cannot change them.
 TP_WBALANCE_OBSERVER10;Observer 10° instead of Observer 2°
-TP_WBALANCE_OBSERVER10_TOOLTIP;The color management in Rawtherapee (White balance, channel multipliers, highlight recovery,...) uses the spectral data of the illuminants and colors. Observer is an important parameter of this management which takes into account the angle of perception of the eye. In 1931 it was fixed at 2° (privileges the use of the cones). In 1964 it was fixed at 10° (privileges the use of the cones, but partially takes into account the rods).\nTo avoid a (rare) drift of the colors due to the choice Observer 10° - probably due to the conversion matrix - Observer 2° must be selected.\nIn a majority of cases Observer 10° (default) will be a more relevant choice.
+TP_WBALANCE_OBSERVER10_TOOLTIP;The color management in Rawtherapee (White balance, channel multipliers, highlight recovery,...) uses the spectral data of the illuminants and colors. Observer is an important parameter of this management which takes into account the angle of perception of the eye. In 1931 it was fixed at 2° (privileges the use of the cones). In 1964 it was fixed at 10° (privileges the use of the cones, but partially takes into account the rods).\nIn the rare case of a color drift with "Observer 2°" (probably due to the conversion matrix) “Observer 10°” must be selected.
 TP_WBALANCE_PATCHLABEL;Read colors:%1 Patch: Chroma:%2 Size=%3
 TP_WBALANCE_PATCHLABEL_TOOLTIP;Display number of read colors (max=237).\nDisplay calculated Patch Chroma.\nAWB temperature bias, lets try to reduce this value, a minimum may seem to optimize the algorithm.\n\nPatch size matching chroma optimization.
 TP_WBALANCE_PATCHLEVELLABEL;Patch: ΔE=%1 - datas x 9 Min:%2 Max=%3

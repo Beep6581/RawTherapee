@@ -358,6 +358,7 @@ Imagefloat* ImProcFunctions::lab2rgbOut(LabImage* lab, int cx, int cy, int cw, i
 
         image->ExecCMSTransform(hTransform, *lab, cx, cy);
         cmsDeleteTransform(hTransform);
+        cmsCloseProfile(iprof);
         image->normalizeFloatTo65535();
     } else {
 
