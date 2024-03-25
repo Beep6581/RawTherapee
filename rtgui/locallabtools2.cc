@@ -7621,7 +7621,7 @@ Locallabcie::Locallabcie():
     ciesmoothBox(Gtk::manage(new ToolParamBlock())),
     smoothBox(Gtk::manage(new Gtk::Box())),
     smoothciemet(Gtk::manage(new MyComboBoxText())),
-    slopesmo(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOPESMOOTH"), 0.9, 1.55, 0.01, 1.))),
+    slopesmo(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOPESMOOTH"), 0.8, 1.6, 0.01, 1.))),
     whitescie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGWHITESCIE"), -100, 100, 1, 0))),
     blackscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGBLACKSSCIE"), -100, 100, 1, 0))),
     willBox(Gtk::manage(new Gtk::Box())),
