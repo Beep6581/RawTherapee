@@ -1,0 +1,15 @@
+diff --git a/gpr_sdk/private/gpr_read_image.cpp b/gpr_sdk/private/gpr_read_image.cpp
+index c611b3f..9200a5b 100644
+--- a/gpr_sdk/private/gpr_read_image.cpp
++++ b/gpr_sdk/private/gpr_read_image.cpp
+@@ -68,8 +68,10 @@ gpr_read_image::gpr_read_image( gpr_buffer_auto* vc5_buffer ) : _vc5_buffer(vc5_
+ }
+ 
+ #if GPR_WRITING || GPR_READING
++#ifndef qDNG_1_6
+ const int ccVc5 = 9;             // Vc5 compression type
+ #endif
++#endif
+ 
+ void gpr_read_image::ReadTile (dng_host &host,
+                                    const dng_ifd &ifd,

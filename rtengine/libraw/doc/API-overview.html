@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Overview of LibRaw API (C++)</title>
+  </head>
+
+  <body>
+    <a href=index.html>[back to Index]</a>
+    <h1>Overview of LibRaw API (C++)</h1>
+    <h2>General Remarks</h2>
+    <ol>
+      <li>The entire processing is carried out by an instance of the LibRaw class, which is an image processor.</li>
+      <li>One image processor can simultaneously process only one data source file, but consecutive processing of any number of files
+is possible.</li>
+      <li>There may be several simultaneously working image processors in a software program (e.g., in different threads), although one
+should remember that each image processor may require much memory.</li>
+      <li>Reading of source data from the RAW file requires virtually no customization (see <a
+          href="API-notes.html">API Notes</a> for exceptions to this rule).</li>
+      <li>All data extracted from the RAW file are accessible through data fields of the image processor (LibRaw class instance).</li>
+      <li>Although LibRaw <b>is not intended for RAW data postprocessing</b>, the library includes calls that enable complete
+emulation of the <b>dcraw</b> utility.
+      <li>All customization for the processing is performed via data fields of the LibRaw class.</li>
+    </ol>
+        
+    <h2>Brief Demonstration</h2>
+    <p> 
+      The example below contains no error processing for the sake of brevity.
+    </p>
+    <pre>
+#include "libraw/libraw.h"
+int process_image(char *file)
+{
+        // Let us create an image processor
+        LibRaw iProcessor;
+
+        // Open the file and read the metadata
+        iProcessor.open_file(file);
+
+        // The metadata are accessible through <a href="API-datastruct.html">data fields of the class</a>
+        printf("Image size: %d x %d\n",iProcessor.imgdata.sizes.width,iProcessor.imgdata.sizes.height);
+
+        // Let us unpack the image
+        iProcessor.unpack();
+
+        // Convert from imgdata.rawdata to imgdata.image:
+        iProcessor.raw2image();
+
+        // And let us print its dump; the data are accessible through <a href="API-datastruct.html">data fields of the class</a>
+        for(i = 0;i lt; iProcessor.imgdata.sizes.iwidth *  iProcessor.imgdata.sizes.iheight; i++)
+           printf("i=%d R=%d G=%d B=%d G2=%d\n",
+                        i,
+                        iProcessor.imgdata.image[i][0],
+                        iProcessor.imgdata.image[i][1],
+                        iProcessor.imgdata.image[i][2],
+                        iProcessor.imgdata.image[i][3]
+                );
+
+        // Finally, let us free the image processor for work with the next image
+        iProcessor.recycle();
+}
+</pre>
+
+
+    <a href=index.html>[back to Index]</a>
+  </body>
+</html>

@@ -1,0 +1,12 @@
+--- gpr_read_image.h.orig	2019-08-30 12:20:00.326653300 +0300
++++ gpr_read_image.h	2019-08-30 20:56:11.138246800 +0300
+@@ -56,7 +56,8 @@
+                    uint32 tileByteCount,
+                    AutoPtr<dng_memory_block> &compressedBuffer,
+                    AutoPtr<dng_memory_block> &uncompressedBuffer,
+-                   AutoPtr<dng_memory_block> &subTileBlockBuffer);
++                   AutoPtr<dng_memory_block> &subTileBlockBuffer,
++				   bool usingMultipleThreads  );
+ };
+ 
+ #endif // GPR_READING

@@ -1,0 +1,227 @@
+all: library all_samples
+
+CC=clang
+CXX=clang++
+
+#CC=gcc
+#CXX=g++
+
+LDADD+=-lz
+
+CFLAGS=-DLIBRAW_USE_AUTOPTR
+CFLAGS+= -g -I. -pedantic -Wno-long-long -Wno-overflow -O3
+
+# RawSpeed Support
+# CFLAGS+=-DUSE_RAWSPEED -I../RawSpeed -I/opt/local/include/libxml2
+# LDADD+=-L../RawSpeed/RawSpeed/release -lrawspeed -L/opt/local/include -ljpeg -lxml2
+# RAWSPEED_DATA=../RawSpeed/data/cameras.xml
+
+# DNG SDK Support
+# CFLAGS+=-DUSE_DNGSDK -I../dng_sdk/source
+# LDADDD+=-L../dng_sdk/release -ldng -ljpeg -lz
+
+# LCMS support
+# For lcms2 set -DUSE_LCMS2
+#CFLAGS+=-DUSE_LCMS2 -I/opt/local/include
+#LDADD+=-L/opt/local/lib -llcms
+
+# Jasper support for RedCine
+#CFLAGS+=-DUSE_JASPER -I/opt/local/include
+#LDADD+=-L/opt/local/lib -ljasper
+
+# JPEG support for DNG and Kodak
+CFLAGS+=-DUSE_JPEG -I/usr/local/include
+LDADD+=-L/usr/local/lib -ljpeg
+
+# LIBJPEG8:
+CFLAGS+=-DUSE_JPEG8
+
+CSTFLAGS=$(CFLAGS) -DLIBRAW_NOTHREADS
+
+LIB_OBJECTS= object/libraw_datastream.o \
+  object/cameralist.o object/fuji_compressed.o \
+  object/crx.o object/fp_dng.o object/decoders_libraw.o \
+  object/unpack.o object/unpack_thumb.o \
+  object/rawspeed_glue.o object/dngsdk_glue.o \
+  object/colorconst.o object/utils_libraw.o object/init_close_utils.o \
+  object/decoder_info.o object/open.o object/phaseone_processing.o \
+  object/thumb_utils.o \
+  object/x3f_utils_patched.o object/x3f_parse_process.o \
+  object/read_utils.o object/curves.o object/utils_dcraw.o \
+  object/colordata.o \
+  object/canon_600.o  object/decoders_dcraw.o \
+  object/decoders_libraw_dcrdefs.o  object/generic.o \
+  object/kodak_decoders.o object/dng.o object/smal.o \
+  object/load_mfbacks.o \
+  object/sony.o object/nikon.o object/samsung.o object/cr3_parser.o \
+  object/canon.o  object/epson.o object/olympus.o object/leica.o \
+  object/fuji.o object/adobepano.o object/pentax.o object/p1.o \
+  object/makernotes.o object/exif_gps.o object/kodak.o \
+  object/tiff.o object/ciff.o object/mediumformat.o object/minolta.o \
+  object/identify_tools.o \
+  object/hasselblad_model.o object/normalize_model.o object/identify.o \
+  object/misc_parsers.o object/wblists.o \
+  object/write_ph.o \
+  object/postprocessing_ph.o \
+  object/preprocessing_ph.o \
+
+
+
+LR_INCLUDES=libraw/libraw.h libraw/libraw_alloc.h \
+  libraw/libraw_const.h libraw/libraw_datastream.h \
+  libraw/libraw_internal.h libraw/libraw_types.h \
+  libraw/libraw_version.h
+
+LRLIB=lib/libraw_noppr2i.a
+
+library: $(LRLIB)
+
+all_samples: bin/raw-identify
+
+## Samples ##
+bin/raw-identify: $(LRLIB) samples/raw-identify.cpp
+	$(CXX) ${CFLAGS} -o bin/raw-identify samples/raw-identify.cpp -L./lib -lraw_noppr2i  -lm  ${LDADD}
+
+$(LRLIB): ${LIB_OBJECTS}
+	rm -f $(LRLIB)
+	ar crv $(LRLIB) ${LIB_OBJECTS}
+	ranlib $(LRLIB)
+
+clean:
+	rm -fr bin/*.dSYM
+	rm -f *.o *~ src/*~ samples/*~ internal/*~ libraw/*~ lib/lib*.a bin/[4a-z]* object/*.o  dcraw/*~ doc/*~ bin/*~ src/*/*~
+
+## script-created rules
+object/libraw_c_api.o: src/libraw_c_api.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/libraw_c_api.o src/libraw_c_api.cpp
+object/libraw_datastream.o: src/libraw_datastream.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/libraw_datastream.o src/libraw_datastream.cpp
+object/canon_600.o: src/decoders/canon_600.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/canon_600.o src/decoders/canon_600.cpp
+object/crx.o: src/decoders/crx.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/crx.o src/decoders/crx.cpp
+object/decoders_dcraw.o: src/decoders/decoders_dcraw.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/decoders_dcraw.o src/decoders/decoders_dcraw.cpp
+object/decoders_libraw_dcrdefs.o: src/decoders/decoders_libraw_dcrdefs.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/decoders_libraw_dcrdefs.o src/decoders/decoders_libraw_dcrdefs.cpp
+object/decoders_libraw.o: src/decoders/decoders_libraw.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/decoders_libraw.o src/decoders/decoders_libraw.cpp
+object/dng.o: src/decoders/dng.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/dng.o src/decoders/dng.cpp
+object/fp_dng.o: src/decoders/fp_dng.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/fp_dng.o src/decoders/fp_dng.cpp
+object/fuji_compressed.o: src/decoders/fuji_compressed.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/fuji_compressed.o src/decoders/fuji_compressed.cpp
+object/generic.o: src/decoders/generic.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/generic.o src/decoders/generic.cpp
+object/kodak_decoders.o: src/decoders/kodak_decoders.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/kodak_decoders.o src/decoders/kodak_decoders.cpp
+object/load_mfbacks.o: src/decoders/load_mfbacks.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/load_mfbacks.o src/decoders/load_mfbacks.cpp
+object/smal.o: src/decoders/smal.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/smal.o src/decoders/smal.cpp
+object/unpack_thumb.o: src/decoders/unpack_thumb.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/unpack_thumb.o src/decoders/unpack_thumb.cpp
+object/unpack.o: src/decoders/unpack.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/unpack.o src/decoders/unpack.cpp
+object/dngsdk_glue.o: src/integration/dngsdk_glue.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/dngsdk_glue.o src/integration/dngsdk_glue.cpp
+object/rawspeed_glue.o: src/integration/rawspeed_glue.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/rawspeed_glue.o src/integration/rawspeed_glue.cpp
+object/adobepano.o: src/metadata/adobepano.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/adobepano.o src/metadata/adobepano.cpp
+object/canon.o: src/metadata/canon.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/canon.o src/metadata/canon.cpp
+object/ciff.o: src/metadata/ciff.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/ciff.o src/metadata/ciff.cpp
+object/cr3_parser.o: src/metadata/cr3_parser.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/cr3_parser.o src/metadata/cr3_parser.cpp
+object/epson.o: src/metadata/epson.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/epson.o src/metadata/epson.cpp
+object/exif_gps.o: src/metadata/exif_gps.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/exif_gps.o src/metadata/exif_gps.cpp
+object/fuji.o: src/metadata/fuji.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/fuji.o src/metadata/fuji.cpp
+object/identify_tools.o: src/metadata/identify_tools.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/identify_tools.o src/metadata/identify_tools.cpp
+object/identify.o: src/metadata/identify.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/identify.o src/metadata/identify.cpp
+object/kodak.o: src/metadata/kodak.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/kodak.o src/metadata/kodak.cpp
+object/leica.o: src/metadata/leica.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/leica.o src/metadata/leica.cpp
+object/makernotes.o: src/metadata/makernotes.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/makernotes.o src/metadata/makernotes.cpp
+object/mediumformat.o: src/metadata/mediumformat.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/mediumformat.o src/metadata/mediumformat.cpp
+object/minolta.o: src/metadata/minolta.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/minolta.o src/metadata/minolta.cpp
+object/misc_parsers.o: src/metadata/misc_parsers.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/misc_parsers.o src/metadata/misc_parsers.cpp
+object/nikon.o: src/metadata/nikon.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/nikon.o src/metadata/nikon.cpp
+object/hasselblad_model.o: src/metadata/hasselblad_model.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/hasselblad_model.o src/metadata/hasselblad_model.cpp
+object/normalize_model.o: src/metadata/normalize_model.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/normalize_model.o src/metadata/normalize_model.cpp
+object/olympus.o: src/metadata/olympus.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/olympus.o src/metadata/olympus.cpp
+object/p1.o: src/metadata/p1.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/p1.o src/metadata/p1.cpp
+object/pentax.o: src/metadata/pentax.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/pentax.o src/metadata/pentax.cpp
+object/samsung.o: src/metadata/samsung.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/samsung.o src/metadata/samsung.cpp
+object/sony.o: src/metadata/sony.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/sony.o src/metadata/sony.cpp
+object/tiff.o: src/metadata/tiff.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/tiff.o src/metadata/tiff.cpp
+
+object/preprocessing_ph.o: src/preprocessing/preprocessing_ph.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/preprocessing_ph.o src/preprocessing/preprocessing_ph.cpp
+
+object/postprocessing_ph.o: src/postprocessing/postprocessing_ph.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/postprocessing_ph.o src/postprocessing/postprocessing_ph.cpp
+
+object/raw2image.o: src/preprocessing/raw2image.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/raw2image.o src/preprocessing/raw2image.cpp
+object/ext_preprocess.o: src/preprocessing/ext_preprocess.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/ext_preprocess.o src/preprocessing/ext_preprocess.cpp
+object/subtract_black.o: src/preprocessing/subtract_black.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/subtract_black.o src/preprocessing/subtract_black.cpp
+object/cameralist.o: src/tables/cameralist.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/cameralist.o src/tables/cameralist.cpp
+object/colorconst.o: src/tables/colorconst.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/colorconst.o src/tables/colorconst.cpp
+object/colordata.o: src/tables/colordata.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/colordata.o src/tables/colordata.cpp
+object/wblists.o: src/tables/wblists.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/wblists.o src/tables/wblists.cpp
+object/curves.o: src/utils/curves.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/curves.o src/utils/curves.cpp
+object/decoder_info.o: src/utils/decoder_info.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/decoder_info.o src/utils/decoder_info.cpp
+object/init_close_utils.o: src/utils/init_close_utils.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/init_close_utils.o src/utils/init_close_utils.cpp
+object/open.o: src/utils/open.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/open.o src/utils/open.cpp
+object/phaseone_processing.o: src/utils/phaseone_processing.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/phaseone_processing.o src/utils/phaseone_processing.cpp
+object/read_utils.o: src/utils/read_utils.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/read_utils.o src/utils/read_utils.cpp
+object/thumb_utils.o: src/utils/thumb_utils.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/thumb_utils.o src/utils/thumb_utils.cpp
+object/utils_dcraw.o: src/utils/utils_dcraw.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/utils_dcraw.o src/utils/utils_dcraw.cpp
+object/utils_libraw.o: src/utils/utils_libraw.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/utils_libraw.o src/utils/utils_libraw.cpp
+object/write_ph.o: src/write/write_ph.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/write_ph.o src/write/write_ph.cpp
+object/file_write.o: src/write/file_write.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/file_write.o src/write/file_write.cpp
+object/tiff_writer.o: src/write/tiff_writer.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/tiff_writer.o src/write/tiff_writer.cpp
+object/x3f_parse_process.o: src/x3f/x3f_parse_process.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/x3f_parse_process.o src/x3f/x3f_parse_process.cpp
+object/x3f_utils_patched.o: src/x3f/x3f_utils_patched.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/x3f_utils_patched.o src/x3f/x3f_utils_patched.cpp

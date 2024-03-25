@@ -1,0 +1,15 @@
+diff --git a/RawSpeed/Common.cpp b/RawSpeed/Common.cpp
+index abec232..6990c04 100644
+--- a/RawSpeed/Common.cpp
++++ b/RawSpeed/Common.cpp
+@@ -31,5 +31,10 @@ void* _aligned_malloc(size_t bytes, size_t alignment) {
+   else
+     return NULL;
+ }
++#include <unistd.h>
++int rawspeed_get_number_of_processor_cores()
++{
++  return sysconf( _SC_NPROCESSORS_ONLN );
++}
+ 
+ #endif

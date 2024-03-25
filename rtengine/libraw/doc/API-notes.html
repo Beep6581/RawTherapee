@@ -1,0 +1,305 @@
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=windows-1252">
+  </head>
+  <body>
+    <p>LibRaw: General Notes on API<a href="index.html">[back to Index]</a></p>
+    <h1>LibRaw: General Notes on API</h1>
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#versions">LibRaw editions</a></li>
+      <li><a href="#errors">Error Code Conventions and Error Handling</a></li>
+      <li><a href="#warnings">Nonstandard Situations That Are Not Errors</a></li>
+      <li><a href="#io">Input Layer Abstraction</a></li>
+      <li><a href="threads">Thread Safety</a></li>
+      <li><a href="#CXX">The Use of C++</a></li>
+      <li><a href="#imgdata_params">Parameters of the LibRaw::imgdata.params
+          Structure Affecting the Behavior of open_file/unpack/unpack_thumb</a></li>
+      <li><a href="#memory">Memory Usage</a>
+        <ol>
+          <li><a href="#stack">Stack Usage</a></li>
+          <li><a href="#memmgr">Dynamic Memory Management</a></li>
+          <li><a href="#memuse">Dynamic Memory Usage</a>
+            <ol>
+              <li><a href="#memraw">Memory Buffer for the RAW Image</a></li>
+              <li><a href="#memimage">Memory for the Postprocessed Image</a></li>
+              <li><a href="#memthumb">Memory for the Decoded Thumbnail</a></li>
+              <li><a href="#memraw">Memory for RAW Unpacking</a></li>
+              <li><a href="#mempostproces">Memory for Postprocessing</a></li>
+              <li><a href="#memwrite">Memory for File Writing</a></li>
+              <li><a href="#memunpack">Unpacking into memory buffer</a></li>
+            </ol>
+          </li>
+        </ol>
+      </li>
+      <li><a href="#incompat">Incompatibilities with dcraw</a>
+        <ol>
+          <li><a href="#incompat_max">Automatic maximum search/brightness
+              adjustment</a></li>
+          <li><a href="#incompat_kodak">Processing of Thumbnails from Kodak
+              cameras</a></li>
+        </ol>
+      </li>
+    </ol>
+    <p><a name="versions"></a></p>
+    <h2>LibRaw Versions</h2>
+    <p>Since version 0.9, there is only one LibRaw variants. Older versions have
+      three separate editions (normal, -Lite and -Commercial versions).</p>
+    <p><a name="errors"></a></p>
+    <h2>Error Code Conventions and Error Handling</h2>
+    <p>The following conventions concern the returned errors:</p>
+    <ol>
+      <li>All functions that can return an error code have integer type of
+        return data.</li>
+      <li>If there is no error, the return value is 0 (LIBRAW_SUCCESS).</li>
+      <li>If an error has happened in a system call, the return value is errno
+        (a positive number), which can be analyzed using strerror() or similar
+        means.</li>
+      <li>All LibRaw's own error codes are negative; each of these errors
+        belongs to one of two types:
+        <dl>
+          <dt><strong>Non-fatal errors</strong></dt>
+          <dd>Non-fatal errors do not forbid execution of other functions in the
+            processing succession (e.g., <a href="API-CXX.html#unpack_thumb">unpack_thumb()</a>
+            can easily return the code corresponding to "preview is absent" but
+            this does not prevent further call of <a href="API-CXX.html#unpack">unpack()</a>.</dd>
+          <dt><strong>Fatal errors</strong></dt>
+          <dd>In the case of fatal errors (memory shortage, input data error,
+            data unpacking failure), the current stage of processing is
+            terminated and all allocated resources are freed.<br>
+            If an attempt to continue processing is made, all subsequent API
+            calls will return the LIBRAW_OUT_OF_ORDER_CALL error.<br>
+            At the same time, the LibRaw instance in which a fatal error has
+            occurred can process the next RAW files in the usual way (by calling
+            <a href="API-CXX.html#open_file">open_file()</a> (or other input
+            methods), then <a href="API-CXX.html#unpack">unpack()</a>, etc.).</dd>
+        </dl>
+      </li>
+      <li>The macro LIBRAW_FATAL_ERROR(error code) checks if an error is fatal
+        or not.</li>
+      <li>The error codes are <a href="API-datastruct.html#errors">listed and
+          deciphered here</a>.</li>
+    </ol>
+    <p><a name="warnings"></a></p>
+    <h2>Nonstandard Situations That Are Not Errors</h2>
+    <p>If the program has encountered a nonstandard situation that does not
+      prevent retrieval of some data from a file, it sends a signal by setting
+      the corresponding bit in <a href="API-datastruct.html#libraw_data_t">imgdata.process_warnings</a>.
+      The possible types of warnings are <a href="API-datastruct.html#warnings">listed
+        and deciphered here</a>.</p>
+    <p><a name="io"></a></p>
+    <h2>Input Layer Abstraction</h2>
+    <p>LibRaw uses objects derived from <a href="API-CXX.html#datastream">LibRaw_abstract_datastream</a>
+      for data input. Semantics of these objects is similar to 'file with
+      arbitrary seek' object: both read and seek operations are used.</p>
+    <p>Some RAW formats requires temporary switch to another data stream created
+      on top on memory buffer for metadata read. Methods for doing so are
+      implemented in base class <a href="API-CXX.html#datastream">LibRaw_abstract_datastream</a>
+      by internal data field <strong>substream</strong>. Look into source code
+      of <a href="API-CXX.html#file_datastream">LibRaw_file_datastream</a>
+      class in <strong>libraw/libraw_datastream.h</strong> file for more
+      details. <br>
+      When implementing own datastream classes, you need to take <strong>substream</strong>
+      into account and pass control to methods of this field if it is active
+      (not NULL).</p>
+    <p>If datastream implementation knows name of input file, it should provide
+      fname() call. This name will be used in <a href="API-CXX.html#callbacks">error
+        callbacks</a> and in guessing name of JPEG file with metadata (for RAW
+      files with external metadata).</p>
+    <p>For external metadata support input class should implement <strong>subfile_open()/subfile_close()</strong>
+      methods. âîçâðàøàþò êîä îøèáêè. <br>
+      Sample of these methods implementation may be found in <a href="API-CXX.html#file_datastream">LibRaw_file_datastream</a>
+      class (look into <strong>libraw/libraw_datastream.h</strong> file for
+      details).</p>
+    <p><a name="threads"></a></p>
+    <h2>Thread safety</h2>
+    <p>Thread safety is ensured if a LibRaw object is created and used within
+      one thread. At the same time, the number of threads (each with its own
+      LibRaw object) is not limited in any way (except by memory requirements).</p>
+    <p>If a LibRaw object is created in one execution thread and used in
+      another, external synchronization is necessary.</p>
+    <p>There is two libraries under Unix environment (Linux/FreeBSD/MacOS):
+      libraw_r.a (thread-safe) and libraw.a (single-threaded, slightly faster).</p>
+    <p>Thread-safe library version stores intermediate unpacker data into LibRaw
+      class data. So, several copies of LibRaw, working in parallel, is
+      possible.</p>
+    <p>Not thread-safe library uses global variable for intermediate data store
+      which is faster but not reenterant. This non-thread-safe library still may
+      be used in multi-threaded apps, but only if exactly one LibRaw class copy
+      exists in program.</p>
+    <p>Windows version is similar to multi-threaded Unix one.</p>
+    <p><a name="CXX"></a></p>
+    <h2>The Use of C++</h2>
+    <p>Exception situations within LibRaw are handled using the C++ exception
+      mechanism. All exceptions are caught inside the library functions and
+      should not penetrate outside.</p>
+    <p>Memory is allocated/freed using functions malloc(calloc)/free rather than
+      new/delete.</p>
+    <p>If C API is used, references to C++ calls new/delete still remain, and so
+      linking with libstdc++(Unix)/....(Windows) is necessary.</p>
+    <p><a name="imgdata_params"></a></p>
+    <h2>Parameters of the LibRaw::imgdata.params Structure Affecting the
+      Behavior of open_file/unpack/unpack_thumb</h2>
+    <p>Most data fields of structure LibRaw::imgdata.params affect only <a href="API-CXX.html#dcrawemu">data
+        postprocessing</a>, but there are some exceptions, which have been
+      inherited by the current version of LibRaw from/ dcraw source texts (these
+      dependences will be gradually removed).</p>
+    <dl>
+      <dt><strong>imgdata.params.use_camera_matrix and
+          imgdata.params.use_camera_wb</strong></dt>
+      <dd>These fields affect loading of RAW data for cameras with a color
+        matrix.<br>
+        <strong>Attention!</strong> If parameter <strong>imgdata.params.use_camera_matrix</strong>
+        is not set by the user, it is copied from <strong>imgdata.params.use_camera_wb</strong>
+        at the stage of file opening.</dd>
+      <dt><strong>imgdata.params.user_flip</strong></dt>
+      <dd>If this parameter is greater than or equal to zero, assignment <code>imgdata.sizes.flip
+          = imgdata.params.user_flip</code> is performed at the <a href="API-CXX.html#open_file">open_file()</a>
+        stage.</dd>
+      <dt><strong>imgdata.params.shot_select</strong></dt>
+      <dd>This parameter makes it possible to select the number of the extracted
+        image for data formats in which storage of several RAW images in one
+        data file is possible.</dd>
+      <dt><strong>imgdata.params.half_size</strong></dt>
+      <dd>Affects RAW data loading for Phase One and Sinar backs. Also, it this
+        parameter is set then image bitmap will be reduced by half in each
+        dimension. In later case, all 4 components of bitmap will be filled
+        during data extraction phase.</dd>
+      <dt><strong>imgdata.params.threshold, imgdata.params.aber</strong></dt>
+      <dd>If these parameters used, then half-sized bitmap will be used for data
+        unpacking. See above for details.</dd>
+      <dt><strong>imgdata.params.use_camera_wb</strong></dt>
+      <dd>Affects loading of white balance matrix for Leaf backs.</dd>
+    </dl>
+    <p><a name="memory"></a></p>
+    <h2>Memory Usage</h2>
+    <p><a name="stack"></a></p>
+    <h3>Stack Usage</h3>
+    <p>An instance of the LibRaw class has its own size about <strong>800 Kb</strong>;
+      if constructions like <code>LibRaw imageProcessor;</code> are used, this
+      memory is stack-allocated.</p>
+    <p>Methods of class LibRaw (and C API calls) may allocate up to 130-140 Kb
+      of data on the stack (to place auto variables) during their work.</p>
+    <p>Thus, the work of one LibRaw instance may require about <strong>1MB</strong>
+      of stack memory. This is not a problem for most contemporary
+      architectures. However, when working in a multithreaded environment, one
+      should not forget to allocate a sufficient amount of memory for the thread
+      stack.</p>
+    <p>In the case of dynamic allocation (<code>LibRaw *iProcessor = new LibRaw;</code>),
+      the requirements to stack memory will decrease by ~800 Kb, which is the
+      size of a class instance). If <a href="API-C.html">C API</a> is used, the
+      LibRaw instance is allocated dynamically.</p>
+    <p><a name="memmgr"></a></p>
+    <h3>Dynamic Memory Management</h3>
+    <p>LibRaw keeps record of all allocated dynamic memory blocks; in the case
+      of an exceptional situation (fatal error), they are all freed. The code
+      for keeping this record is fairly primitive and not designed to consider
+      allocation of many blocks (in the normal situation, allocation takes place
+      from 2 to 6 times during file processing); this fact should be taken into
+      account by developers trying to add new methods to LibRaw.</p>
+    <p><a name="memuse"></a></p>
+    <h3>Dynamic Memory Usage</h3>
+    <p>LibRaw uses dynamic memory</p>
+    <ul>
+      <li>for the decoded image;</li>
+      <li>for the decoded thumbnail;</li>
+      <li>for the postprocessed image;</li>
+      <li>for the ICC profile retrieved from the RAW file (if available);</li>
+      <li>for temporary data at the stage of RAW file unpacking;</li>
+      <li>for temporary data at the stage of postprocessing and result output;</li>
+      <li>for reading of the RAW source file (only under Win32).</li>
+    </ul>
+    <p><a name="memraw"></a></p>
+    <h4>Memory buffer for the RAW image</h4>
+    <p>Decoded RAW data are stored:</p>
+    <ul>
+      <li>one 16-bit value per pixel for "bayer" images. The masked pixels
+        (black or dark or masked frame) are stored with image data.</li>
+      <li>Free or four 16-bit values for full-color images (Foveon, Linear DNG,
+        Canon sRAW etc.).</li>
+      <li>one,three, or four 32-bit floating point values per pixel for
+        floating-point data.</li>
+    </ul>
+    <p>The buffer for RAW data is allocated by <a href="API-CXX.html#unpack">unpack()</a>
+      call and freed upon calling <a href="API-CXX.html#recycle">recycle()</a>.</p>
+    <p><a name="memimage"></a></p>
+    <h4>Memory for the Postprocessed Image</h4>
+    <p>On postprocessing stage each pixel contains four 16-bit values, one for
+      each possible color channel (some sensors are actually 4-color).</p>
+    <p>The buffer for the decoded image is allocated upon calling <a href="API-CXX.html#raw2image">raw2image()</a>
+      or <a href="API-CXX.html#dcraw_process">dcraw_process()</a></p>
+    <p>The buffer freed upon calling <a href="API-CXX.html#recycle">recycle()</a>
+      or <a href="API-CXX.html#free_image">free_image()</a> calls.</p>
+    <p><a name="memthumb"></a></p>
+    <h4>Memory for the Decoded Thumbnail</h4>
+    <p>Memory for the thumbmail is allocated upon calling <a href="API-CXX.html#unpack_thumb">unpack_thumb()</a>
+      and freed upon calling <a href="API-CXX.html#recycle">recycle()</a>. The
+      size of the allocated buffer is precisely adjusted to the thumbnail size,
+      i.e., up to several Mb.</p>
+    <p><a name="memprofile"></a></p>
+    <p><a name="memraw"></a></p>
+    <h4>Memory for RAW Unpacking</h4>
+    <p>Memory for temporary buffer needed during RAW data unpacking may be
+      allocated during the work of <a href="API-CXX.html#unpack">unpack()</a>
+      and freed before completion of this function. The sizes of the allocated
+      buffers are small, up to tens of Kb.</p>
+    <p><a name="mempostproces"></a></p>
+    <h4>Memory for Postprocessing</h4>
+    <p>During image postprocessing (inherited from dcraw), memory for the
+      histogram (128 Kb) is allocated. This memory is allocated upon calling <a
+        href="API-CXX.html#dcraw_process">dcraw_process()</a> and freed upon
+      calling <a href="API-CXX.html#recycle">recycle()</a>.</p>
+    <p>In addition, during the work of <a href="API-CXX.html#dcraw_process">dcraw_process()</a>
+      and during the usage of some available possibilities, like</p>
+    <ul>
+      <li>rotation of images from FUJI cameras;</li>
+      <li>correction of chromatic aberrations;</li>
+      <li>image size changes (including correction of non-square pixels);</li>
+      <li>highlight recovery;</li>
+    </ul>
+    <p>a temporary buffer with the size equal to the size of the resultant image
+      (6-8 bytes per pixel for various processing stages) will be allocated. As
+      soon as the intermediate substage of processing is completed, the buffer
+      with the previous copy of the image will be freed.<br>
+      If postprocessing is not used, then temporary buffers are not allocated.</p>
+    <p><a name="memwrite"></a></p>
+    <h4>Memory for File Writing</h4>
+    <p>Upon calling <a href="API-CXX.html#dcraw_ppm_tiff_writer">dcraw_ppm_tiff_writer()</a>,
+      memory for a single row of the output image is allocated. The allocated
+      memory is freed before the end of this call.</p>
+    <p><a name="memunpack"></a></p>
+    <h4>Unpacking into memory buffer</h4>
+    <p>Functions <a href="API-CXX.html#dcraw_make_mem_image">dcraw_make_mem_image()</a>
+      <a href="API-CXX.html#dcraw_make_mem_thumb">dcraw_make_mem_thumb()</a>
+      (and complementary calls in C-API) allocates memory for entire output
+      datasets (full RGB bitmap and thumbnail, respectively).To free allocated
+      memory use <a href="API-CXX.html#dcraw_clear_mem">dcraw_clear_mem()</a>
+      function.</p>
+    <p><a name="incompat"></a></p>
+    <h2>Incompatibilities with dcraw</h2>
+    <p><a name="incompat_max"></a></p>
+    <h3>Automatic maximum search/brightness adjustment</h3>
+    <p>Many camera formats really use less data range, than possible by format
+      nature (bit count). If data maximum estimated incorrectly (too low) this
+      may resuls in colored highlights ('pink clouds') because of data cut at
+      wrong level.</p>
+    <p>To prevent this, LibRaw uses real data maximum from current file if this
+      maximum is larger than format maximum multiplied by
+      imdata.params.adjust_maximum_thr value (default is 0.75).</p>
+    <p>To turn off this feature (and repeat dcraw.c pink clouds) set
+      imdata.params.adjust_maximum_thr to 0.0</p>
+    <p><a name="incompat_kodak"></a></p>
+    <h3>Processing of Thumbnails from Kodak cameras</h3>
+    <p>In some Kodak cameras, the preview (thumbnail) is stored in the form of
+      uncorrected image. During its extraction using <strong>dcraw -e</strong>,
+      the white balance, color conversion, and other settings are the same as
+      those used for extraction of the main RAW data (including defect removal
+      and dark frame subtraction, which is erroneous, since the image size is
+      different). <br>
+      In LibRaw::unpack_thumb() calls, the white balance taken from the camera
+      ("as shot") is used and no settings from imgdata.params are considered.</p>
+    <p>For all other cameras, thumbnails are extracted "as is," without any
+      color conversions, both in dcraw and in LibRaw.</p>
+    <p><a href="index.html">[back to Index]</a></p>
+  </body>
+</html>

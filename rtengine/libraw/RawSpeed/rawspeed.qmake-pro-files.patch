@@ -1,0 +1,84 @@
+diff --git a/RawSpeed/rawspeed-lib.pro b/RawSpeed/rawspeed-lib.pro
+new file mode 100644
+index 0000000..1599ddf
+--- /dev/null
++++ b/RawSpeed/rawspeed-lib.pro
+@@ -0,0 +1,42 @@
++TEMPLATE=lib
++TARGET=rawspeed
++
++win32:INCLUDEPATH+=d:/Qt/iconv/include d:/Qt/libxml2/include/libxml2 d:/Qt/pthreads/include d:/Qt/libjpeg-turbo/include
++win32:LIBS+=-Ld:/Qt/iconv/lib/x86 -liconv -Ld:/Qt/libxml2/lib/x86 -llibxml2 -Ld:/Qt/pthreads/lib/x86 -lpthreadVC2 -Ld:/Qt/libjpeg-turbo/lib/x86 -ljpeg8
++
++unix:INCLUDEPATH+=/usr/local/include /usr/local/include/libxml2
++unix:CONFIG+=staticlib
++
++INCLUDEPATH+=.
++
++HEADERS = ArwDecoder.h BitPumpJPEG.h BitPumpMSB.h BitPumpMSB32.h \
++	BitPumpPlain.h BlackArea.h ByteStream.h ByteStreamSwap.h \
++	Camera.h CameraMetaData.h CameraMetadataException.h   \
++	CameraSensorInfo.h ColorFilterArray.h Common.h Cr2Decoder.h \
++	DngDecoder.h DngDecoderSlices.h DngOpcodes.h  FileIOException.h \
++	FileMap.h FileReader.h IOException.h LJpegDecompressor.h \
++	LJpegPlain.h NefDecoder.h NikonDecompressor.h OrfDecoder.h \
++	PefDecoder.h PentaxDecompressor.h Point.h RawDecoder.h \
++	RawDecoderException.h RawImage.h RawParser.h Rw2Decoder.h SrwDecoder.h \
++	StdAfx.h TiffEntry.h TiffEntryBE.h TiffIFD.h TiffIFDBE.h TiffParser.h \
++	TiffParserException.h TiffParserHeaderless.h TiffParserOlympus.h \
++	TiffTag.h dlldef.h
++
++SOURCES = \
++	ArwDecoder.cpp BitPumpJPEG.cpp BitPumpMSB.cpp BitPumpMSB32.cpp \
++	BitPumpPlain.cpp BlackArea.cpp ByteStream.cpp ByteStreamSwap.cpp \
++	Camera.cpp CameraMetaData.cpp CameraMetadataException.cpp   \
++	CameraSensorInfo.cpp ColorFilterArray.cpp Common.cpp Cr2Decoder.cpp \
++	DngDecoder.cpp DngDecoderSlices.cpp DngOpcodes.cpp  \
++	FileIOException.cpp FileMap.cpp FileReader.cpp IOException.cpp \
++	LJpegDecompressor.cpp LJpegPlain.cpp NefDecoder.cpp \
++	NikonDecompressor.cpp OrfDecoder.cpp PefDecoder.cpp \
++	PentaxDecompressor.cpp RawDecoder.cpp RawDecoderException.cpp   \
++	RawImage.cpp RawImageDataFloat.cpp RawImageDataU16.cpp RawParser.cpp \
++	Rw2Decoder.cpp SrwDecoder.cpp TiffEntry.cpp TiffEntryBE.cpp\
++	TiffIFD.cpp TiffIFDBE.cpp TiffParser.cpp TiffParserException.cpp \
++	TiffParserHeaderless.cpp TiffParserOlympus.cpp         
++
++DEFINES+=RAWSPEED_BUILDLIB
++CONFIG-=qt
++win32:QMAKE_CXXFLAGS+=/O2 /arch:SSE2 /fp:fast /MP
+diff --git a/RawSpeed/rawspeed-test.pro b/RawSpeed/rawspeed-test.pro
+new file mode 100644
+index 0000000..518aa98
+--- /dev/null
++++ b/RawSpeed/rawspeed-test.pro
+@@ -0,0 +1,21 @@
++TEMPLATE=app
++TARGET=rawspeed-test
++
++SOURCES=RawSpeed.cpp
++
++win32:CONFIG(debug,debug|release) {
++	LIBDIR =  debug
++} else {
++	LIBDIR = release
++}
++
++
++INCLUDEPATH+=../
++
++unix:INCLUDEPATH+=/usr/local/include /usr/local/include/libxml2
++unix:LIBS+=-L. -lrawspeed -L/usr/local/lib -lxml2 -ljpeg
++win32:LIBS+=-L$$LIBDIR -llibrawspeed
++win32:LIBS+=-Ld:/Qt/iconv/lib/x86 -liconv -Ld:/Qt/libxml2/lib/x86 -llibxml2a -Ld:/Qt/pthreads/lib/x86 -lpthreadVC2 -Ld:/Qt/libjpeg-turbo/lib/x86 -ljpeg8
++win32:INCLUDEPATH+=d:/Qt/iconv/include d:/Qt/libxml2/include/libxml2 d:/Qt/pthreads/include d:/Qt/libjpeg-turbo/include
++CONFIG-=qt
++CONFIG+=console
+diff --git a/RawSpeed/rawspeed.pro b/RawSpeed/rawspeed.pro
+new file mode 100644
+index 0000000..df2a0b9
+--- /dev/null
++++ b/RawSpeed/rawspeed.pro
+@@ -0,0 +1,3 @@
++TEMPLATE=subdirs
++SUBDIRS=rawspeed-lib.pro rawspeed-test.pro
++

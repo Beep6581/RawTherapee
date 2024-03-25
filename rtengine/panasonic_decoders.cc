@@ -58,6 +58,9 @@ unsigned DCraw::pana_bits_t::operator() (int nbits, unsigned *bytes)
     }
 }
 
+namespace
+{
+
 class pana_cs6_page_decoder
 {
     unsigned int pixelbuffer[14], lastoffset, maxoffset;
@@ -98,6 +101,8 @@ void pana_cs6_page_decoder::read_page()
     lastoffset += 16;
 }
 #undef wbuffer
+
+}
 
 void DCraw::panasonic_load_raw()
 {

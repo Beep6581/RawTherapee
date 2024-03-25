@@ -1,0 +1,245 @@
+diff --git a/src/librawspeed/common/Common.cpp b/src/librawspeed/common/Common.cpp
+index 8c8c5663..d9b5e463 100644
+--- a/src/librawspeed/common/Common.cpp
++++ b/src/librawspeed/common/Common.cpp
+@@ -36,6 +36,7 @@ writeLog(DEBUG_PRIO priority, const char* format, ...) {
+ #else
+ 
+ void writeLog(DEBUG_PRIO priority, const char* format, ...) {
++#if 0
+ #ifndef _DEBUG
+   if (priority < DEBUG_PRIO_INFO)
+ #endif // _DEBUG
+@@ -55,6 +56,7 @@ void writeLog(DEBUG_PRIO priority, const char* format, ...) {
+   if (priority < DEBUG_PRIO_INFO)
+ #endif // _DEBUG
+     fprintf(stdout, "%s", "\n");
++#endif
+ }
+ 
+ #endif
+diff --git a/src/librawspeed/common/RawspeedException.h b/src/librawspeed/common/RawspeedException.h
+index 33b9cc29..a9f503a7 100644
+--- a/src/librawspeed/common/RawspeedException.h
++++ b/src/librawspeed/common/RawspeedException.h
+@@ -45,12 +45,13 @@ template <typename T>
+     "Don't have thread-local-storage! Exception text may be garbled if used multithreaded"
+   static char buf[bufSize];
+ #endif
+-
++#if 0
+   va_list val;
+   va_start(val, fmt);
+   vsnprintf(buf.data(), sizeof(buf), fmt, val);
+   va_end(val);
+   writeLog(DEBUG_PRIO_EXTRA, "EXCEPTION: %s", buf.data());
++#endif
+   throw T(buf.data());
+ }
+ 
+diff --git a/src/librawspeed/decoders/ArwDecoder.cpp b/src/librawspeed/decoders/ArwDecoder.cpp
+index f1d5a63c..2025d260 100644
+--- a/src/librawspeed/decoders/ArwDecoder.cpp
++++ b/src/librawspeed/decoders/ArwDecoder.cpp
+@@ -186,8 +186,8 @@ RawImage ArwDecoder::decodeRawInternal() {
+     }
+   }
+ 
+-  if (width == 0 || height == 0 || height % 2 != 0 || width > 9600 ||
+-      height > 6376)
++  if (width == 0 || height == 0 || height % 2 != 0 /* || width > 9600 ||
++      height > 6376 */)
+     ThrowRDE("Unexpected image dimensions found: (%u; %u)", width, height);
+ 
+   bool arw1 = uint64_t(counts->getU32()) * 8 != width * height * bitPerPixel;
+@@ -241,7 +241,7 @@ void ArwDecoder::DecodeUncompressed(const TiffIFD* raw) {
+ 
+   mRaw->dim = iPoint2D(width, height);
+ 
+-  if (width == 0 || height == 0 || width > 9600 || height > 6376)
++  if (width == 0 || height == 0 /* || width > 9600 || height > 6376 */)
+     ThrowRDE("Unexpected image dimensions found: (%u; %u)", width, height);
+ 
+   if (c2 == 0)
+diff --git a/src/librawspeed/decoders/IiqDecoder.cpp b/src/librawspeed/decoders/IiqDecoder.cpp
+index 31c460d9..61b04e1a 100644
+--- a/src/librawspeed/decoders/IiqDecoder.cpp
++++ b/src/librawspeed/decoders/IiqDecoder.cpp
+@@ -185,7 +185,7 @@ RawImage IiqDecoder::decodeRawInternal() {
+   }
+ 
+   // FIXME: could be wrong. max "active pixels" in "Sensor+" mode - "101 MP"
+-  if (width == 0 || height == 0 || width > 11976 || height > 8854)
++  if (width == 0 || height == 0 /* || width > 11976 || height > 8854 */)
+     ThrowRDE("Unexpected image dimensions found: (%u; %u)", width, height);
+ 
+   if (split_col > width || split_row > height)
+diff --git a/src/librawspeed/decoders/MosDecoder.cpp b/src/librawspeed/decoders/MosDecoder.cpp
+index 9f01a11c..db4b8f50 100644
+--- a/src/librawspeed/decoders/MosDecoder.cpp
++++ b/src/librawspeed/decoders/MosDecoder.cpp
+@@ -113,7 +113,7 @@ RawImage MosDecoder::decodeRawInternal() {
+   uint32_t height = raw->getEntry(IMAGELENGTH)->getU32();
+ 
+   // FIXME: could be wrong. max "active pixels" - "80 MP"
+-  if (width == 0 || height == 0 || width > 10328 || height > 7760)
++  if (width == 0 || height == 0 /* || width > 10328 || height > 7760 */)
+     ThrowRDE("Unexpected image dimensions found: (%u; %u)", width, height);
+ 
+   mRaw->dim = iPoint2D(width, height);
+diff --git a/src/librawspeed/decoders/NefDecoder.cpp b/src/librawspeed/decoders/NefDecoder.cpp
+index 222c62f0..7314ca15 100644
+--- a/src/librawspeed/decoders/NefDecoder.cpp
++++ b/src/librawspeed/decoders/NefDecoder.cpp
+@@ -214,7 +214,7 @@ void NefDecoder::DecodeUncompressed() {
+ 
+   mRaw->dim = iPoint2D(width, height);
+ 
+-  if (width == 0 || height == 0 || width > 8288 || height > 5520)
++  if (width == 0 || height == 0 /* || width > 8288 || height > 5520 */)
+     ThrowRDE("Unexpected image dimensions found: (%u; %u)", width, height);
+ 
+   if (counts->count != offsets->count) {
+@@ -370,8 +370,8 @@ void NefDecoder::DecodeSNefUncompressed() {
+   uint32_t width = raw->getEntry(IMAGEWIDTH)->getU32();
+   uint32_t height = raw->getEntry(IMAGELENGTH)->getU32();
+ 
+-  if (width == 0 || height == 0 || width % 2 != 0 || width > 3680 ||
+-      height > 2456)
++  if (width == 0 || height == 0 || width % 2 != 0 /* || width > 3680 ||
++      height > 2456 */)
+     ThrowRDE("Unexpected image dimensions found: (%u; %u)", width, height);
+ 
+   mRaw->dim = iPoint2D(width, height);
+diff --git a/src/librawspeed/decoders/OrfDecoder.cpp b/src/librawspeed/decoders/OrfDecoder.cpp
+index 7eb1a901..de557d5f 100644
+--- a/src/librawspeed/decoders/OrfDecoder.cpp
++++ b/src/librawspeed/decoders/OrfDecoder.cpp
+@@ -109,7 +109,7 @@ RawImage OrfDecoder::decodeRawInternal() {
+   uint32_t width = raw->getEntry(IMAGEWIDTH)->getU32();
+   uint32_t height = raw->getEntry(IMAGELENGTH)->getU32();
+ 
+-  if (!width || !height || width % 2 != 0 || width > 10400 || height > 7796)
++  if (!width || !height || width % 2 != 0 /* || width > 10400 || height > 7796 */ )
+     ThrowRDE("Unexpected image dimensions found: (%u; %u)", width, height);
+ 
+   mRaw->dim = iPoint2D(width, height);
+diff --git a/src/librawspeed/decoders/RafDecoder.cpp b/src/librawspeed/decoders/RafDecoder.cpp
+index 5baf02b9..27e67e7a 100644
+--- a/src/librawspeed/decoders/RafDecoder.cpp
++++ b/src/librawspeed/decoders/RafDecoder.cpp
+@@ -79,7 +79,7 @@ RawImage RafDecoder::decodeRawInternal() {
+   } else
+     ThrowRDE("Unable to locate image size");
+ 
+-  if (width == 0 || height == 0 || width > 11808 || height > 8754)
++  if (width == 0 || height == 0 /* || width > 11808 || height > 8754 */ )
+     ThrowRDE("Unexpected image dimensions found: (%u; %u)", width, height);
+ 
+   if (raw->hasEntry(FUJI_LAYOUT)) {
+@@ -334,7 +334,7 @@ int RafDecoder::isCompressed() {
+   } else
+     ThrowRDE("Unable to locate image size");
+ 
+-  if (width == 0 || height == 0 || width > 11808 || height > 8754)
++  if (width == 0 || height == 0 /* || width > 11808 || height > 8754 */)
+     ThrowRDE("Unexpected image dimensions found: (%u; %u)", width, height);
+ 
+   uint32_t count = raw->getEntry(FUJI_STRIPBYTECOUNTS)->getU32();
+diff --git a/src/librawspeed/decoders/RawDecoder.cpp b/src/librawspeed/decoders/RawDecoder.cpp
+index a69727f6..e5315a42 100644
+--- a/src/librawspeed/decoders/RawDecoder.cpp
++++ b/src/librawspeed/decoders/RawDecoder.cpp
+@@ -62,7 +62,7 @@ void RawDecoder::decodeUncompressed(const TiffIFD *rawIFD, BitOrder order) {
+   uint32_t height = rawIFD->getEntry(IMAGELENGTH)->getU32();
+   uint32_t bitPerPixel = rawIFD->getEntry(BITSPERSAMPLE)->getU32();
+ 
+-  if (width == 0 || height == 0 || width > 5632 || height > 3720)
++  if (width == 0 || height == 0 /* || width > 5632 || height > 3720 */)
+     ThrowRDE("Unexpected image dimensions found: (%u; %u)", width, height);
+ 
+   mRaw->dim = iPoint2D(width, height);
+diff --git a/src/librawspeed/decoders/Rw2Decoder.cpp b/src/librawspeed/decoders/Rw2Decoder.cpp
+index 0e9d111d..a54de998 100644
+--- a/src/librawspeed/decoders/Rw2Decoder.cpp
++++ b/src/librawspeed/decoders/Rw2Decoder.cpp
+@@ -72,7 +72,7 @@ RawImage Rw2Decoder::decodeRawInternal() {
+   uint32_t width = raw->getEntry(static_cast<TiffTag>(2))->getU16();
+ 
+   if (isOldPanasonic) {
+-    if (width == 0 || height == 0 || width > 4330 || height > 2751)
++    if (width == 0 || height == 0 /* || width > 4330 || height > 2751 */)
+       ThrowRDE("Unexpected image dimensions found: (%u; %u)", width, height);
+ 
+     TiffEntry *offsets = raw->getEntry(STRIPOFFSETS);
+diff --git a/src/librawspeed/decompressors/HasselbladDecompressor.cpp b/src/librawspeed/decompressors/HasselbladDecompressor.cpp
+index 0d650065..aaa70fb5 100644
+--- a/src/librawspeed/decompressors/HasselbladDecompressor.cpp
++++ b/src/librawspeed/decompressors/HasselbladDecompressor.cpp
+@@ -41,8 +41,8 @@ HasselbladDecompressor::HasselbladDecompressor(const ByteStream& bs,
+     ThrowRDE("Unexpected component count / data type");
+ 
+   // FIXME: could be wrong. max "active pixels" - "100 MP"
+-  if (mRaw->dim.x == 0 || mRaw->dim.y == 0 || mRaw->dim.x % 2 != 0 ||
+-      mRaw->dim.x > 12000 || mRaw->dim.y > 8816) {
++  if (mRaw->dim.x == 0 || mRaw->dim.y == 0 || mRaw->dim.x % 2 != 0 /* ||
++      mRaw->dim.x > 12000 || mRaw->dim.y > 8816 */) {
+     ThrowRDE("Unexpected image dimensions found: (%u; %u)", mRaw->dim.x,
+              mRaw->dim.y);
+   }
+diff --git a/src/librawspeed/decompressors/NikonDecompressor.cpp b/src/librawspeed/decompressors/NikonDecompressor.cpp
+index ca39cd0a..54568243 100644
+--- a/src/librawspeed/decompressors/NikonDecompressor.cpp
++++ b/src/librawspeed/decompressors/NikonDecompressor.cpp
+@@ -442,8 +442,8 @@ NikonDecompressor::NikonDecompressor(const RawImage& raw, ByteStream metadata,
+       mRaw->getBpp() != sizeof(uint16_t))
+     ThrowRDE("Unexpected component count / data type");
+ 
+-  if (mRaw->dim.x == 0 || mRaw->dim.y == 0 || mRaw->dim.x % 2 != 0 ||
+-      mRaw->dim.x > 8288 || mRaw->dim.y > 5520)
++  if (mRaw->dim.x == 0 || mRaw->dim.y == 0 || mRaw->dim.x % 2 != 0 /* ||
++      mRaw->dim.x > 8288 || mRaw->dim.y > 5520 */)
+     ThrowRDE("Unexpected image dimensions found: (%u; %u)", mRaw->dim.x,
+              mRaw->dim.y);
+ 
+diff --git a/src/librawspeed/decompressors/OlympusDecompressor.cpp b/src/librawspeed/decompressors/OlympusDecompressor.cpp
+index b859b562..dc8aa0bc 100644
+--- a/src/librawspeed/decompressors/OlympusDecompressor.cpp
++++ b/src/librawspeed/decompressors/OlympusDecompressor.cpp
+@@ -56,7 +56,7 @@ OlympusDecompressor::OlympusDecompressor(const RawImage& img) : mRaw(img) {
+   const uint32_t w = mRaw->dim.x;
+   const uint32_t h = mRaw->dim.y;
+ 
+-  if (w == 0 || h == 0 || w % 2 != 0 || w > 10400 || h > 7792)
++  if (w == 0 || h == 0 || w % 2 != 0 /* || w > 10400 || h > 7792 */)
+     ThrowRDE("Unexpected image dimensions found: (%u; %u)", w, h);
+ }
+ 
+diff --git a/src/librawspeed/decompressors/PentaxDecompressor.cpp b/src/librawspeed/decompressors/PentaxDecompressor.cpp
+index 11b1d677..c2adc2e6 100644
+--- a/src/librawspeed/decompressors/PentaxDecompressor.cpp
++++ b/src/librawspeed/decompressors/PentaxDecompressor.cpp
+@@ -49,8 +49,8 @@ PentaxDecompressor::PentaxDecompressor(const RawImage& img,
+       mRaw->getBpp() != sizeof(uint16_t))
+     ThrowRDE("Unexpected component count / data type");
+ 
+-  if (!mRaw->dim.x || !mRaw->dim.y || mRaw->dim.x % 2 != 0 ||
+-      mRaw->dim.x > 8384 || mRaw->dim.y > 6208) {
++  if (!mRaw->dim.x || !mRaw->dim.y || mRaw->dim.x % 2 != 0 /* ||
++      mRaw->dim.x > 8384 || mRaw->dim.y > 6208 */) {
+     ThrowRDE("Unexpected image dimensions found: (%u; %u)", mRaw->dim.x,
+              mRaw->dim.y);
+   }
+diff --git a/src/librawspeed/decompressors/SonyArw2Decompressor.cpp b/src/librawspeed/decompressors/SonyArw2Decompressor.cpp
+index 8f935d9c..3cbc7e26 100644
+--- a/src/librawspeed/decompressors/SonyArw2Decompressor.cpp
++++ b/src/librawspeed/decompressors/SonyArw2Decompressor.cpp
+@@ -45,7 +45,7 @@ SonyArw2Decompressor::SonyArw2Decompressor(const RawImage& img,
+   const uint32_t w = mRaw->dim.x;
+   const uint32_t h = mRaw->dim.y;
+ 
+-  if (w == 0 || h == 0 || w % 32 != 0 || w > 9600 || h > 6376)
++  if (w == 0 || h == 0 || w % 32 != 0 /* || w > 9600 || h > 6376 */)
+     ThrowRDE("Unexpected image dimensions found: (%u; %u)", w, h);
+ 
+   // 1 byte per pixel
