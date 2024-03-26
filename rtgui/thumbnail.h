@@ -78,6 +78,30 @@ class Thumbnail
 
     bool            initial_;
 
+    // Properties holds values and edited states for rank, color and trashed
+    struct Properties {
+        template <class T> struct Property {
+            T value;
+            bool edited;
+            Property(T v): value(v), edited(false) {}
+            Property& operator=(T v)
+            {
+                value = v;
+                edited = true;
+                return *this;
+            }
+            operator T() const { return value; }
+        };
+        Property<int> rank;
+        Property<int> color;
+        Property<bool> trashed;
+
+        explicit Properties(int r=0, int c=0, bool t=false):
+            rank(r), color(c), trashed(t) {}
+        bool edited() const { return rank.edited || color.edited || trashed.edited; }
+    };
+    Properties properties;
+
     // vector of listeners
     std::vector<ThumbnailListener*> listeners;
 
@@ -90,6 +114,9 @@ class Thumbnail
     Glib::ustring    getCacheFileName (const Glib::ustring& subdir, const Glib::ustring& fext) const;
 
     void saveMetadata();
+    void loadProperties();
+    void updateProcParamsProperties();
+    void saveXMPSidecarProperties();
 
 public:
     Thumbnail (CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf);
@@ -155,8 +182,8 @@ public:
     int             getColorLabel  () const;
     void            setColorLabel  (int colorlabel);
 
-    int             getStage () const;
-    void            setStage (bool stage);
+    bool            getTrashed () const;
+    void            setTrashed (bool trashed);
 
     void            addThumbnailListener (ThumbnailListener* tnl);
     void            removeThumbnailListener (ThumbnailListener* tnl);
