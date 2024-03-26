@@ -936,6 +936,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             if (params->locallab.enabled && !params->locallab.spots.empty()) {
                 const int sizespot = (int)params->locallab.spots.size();
                 const LocallabParams::LocallabSpot defSpot;
+                std::vector<LocallabListener::locallabcieBEF> locallciebef;
 
                 float *sourceg = nullptr;
                 sourceg = new float[sizespot];
@@ -1029,7 +1030,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                             xsta = 0.f;
                             xend = 1.f;
                         }
-
                         ipf.getAutoLogloc(sp, imgsrc, sourceg, blackev, whiteev, Autogr, sourceab, whits, blacks, whitslog, blackslog, fw, fh, xsta, xend, ysta, yend, SCALE);
                         params->locallab.spots.at(sp).blackEv = blackev[sp];
                         params->locallab.spots.at(sp).whiteEv = whiteev[sp];
@@ -1044,9 +1044,20 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         params->locallab.spots.at(sp).whiteslog = whitslog[sp];
                         params->locallab.spots.at(sp).blackslog = blackslog[sp];
                         float jz1 = defSpot.jz100;
+ 
+                        LocallabListener::locallabcieBEF locciebef;
+                        locciebef.blackevbef = blackev[sp];
+                        locciebef.whiteevbef = whiteev[sp];
+                        locciebef.sourcegbef = sourceg[sp];
+                        locciebef.sourceabbef = sourceab[sp];
+                        locciebef.targetgbef = targetg[sp];
+                        locciebef.autocomputbef = autocomput[sp];
+                        locciebef.autociebef = autocie[sp];
+                        locciebef.jz1bef = jz1;
+                        locallciebef.push_back(locciebef);
 
                         if (locallListener) {
-                            locallListener->logencodChanged(blackev[sp], whiteev[sp], sourceg[sp], sourceab[sp], targetg[sp], autocomput[sp], autocie[sp], jz1);
+                            locallListener->ciebefChanged(locallciebef,params->locallab.selspot); 
                         }
                     }
                 }
@@ -1516,7 +1527,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 loccielc.meanxlc = meanx;
                 loccielc.meanylc = meany;
                 loccielc.meanxelc = meanxe;
-                loccielc.meanyelc = meanye;        
+                loccielc.meanyelc = meanye;
                 locallcielc.push_back(loccielc);
 
                 LocallabListener::locallabcieSIG locciesig;

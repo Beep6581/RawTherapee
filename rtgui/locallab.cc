@@ -1144,6 +1144,30 @@ void Locallab::sigChanged(const std::vector<locallabcieSIG> &ciesig, int selspot
      
 }
 
+void Locallab::ciebefChanged(const std::vector<locallabcieBEF> &ciebef, int selspot)
+{
+    cie_bef = ciebef;
+    if (selspot < (int) cie_bef.size()) {
+        const double blackev = cie_bef.at(selspot).blackevbef;
+        const double whiteev = cie_bef.at(selspot).whiteevbef;
+        const double sourceg = cie_bef.at(selspot).sourcegbef;
+        const double sourceab = cie_bef.at(selspot).sourceabbef;
+        const double targetg = cie_bef.at(selspot).targetgbef;
+        const double jz1 = cie_bef.at(selspot).jz1bef;
+        const bool autocomput = cie_bef.at(selspot).autocomputbef;
+        const bool autocie = cie_bef.at(selspot).autociebef;
+
+        if(autocomput) {
+            explog.updateAutocompute(blackev, whiteev, sourceg, sourceab, targetg, jz1);
+        }
+        if(autocie) {
+            expcie.updateAutocompute(blackev, whiteev, sourceg, sourceab, targetg, jz1);
+        }
+
+    }
+
+}
+
 void Locallab::cieChanged(const std::vector<locallabcieLC> &cielc, int selspot)
 {
     // Saving transmitted min/max data

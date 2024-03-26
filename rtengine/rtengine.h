@@ -423,7 +423,18 @@ public:
         double Lhighres46; 
         double Lnres46;
     };
-    
+
+    struct locallabcieBEF {
+        double blackevbef;
+        double whiteevbef;
+        double sourcegbef;
+        double sourceabbef;
+        double targetgbef;
+        bool autocomputbef;
+        bool autociebef;
+        double jz1bef;
+    };
+
     struct locallabcieLC {
         double redxlc;
         double redylc;
@@ -450,6 +461,7 @@ public:
     virtual void denChanged(const std::vector<locallabDenoiseLC> &denlc, int selspot) = 0;
     virtual void cieChanged(const std::vector<locallabcieLC> &cielc, int selspot) = 0;
     virtual void sigChanged(const std::vector<locallabcieSIG> &ciesig, int selspot) = 0;
+    virtual void ciebefChanged(const std::vector<locallabcieBEF> &ciebef, int selspot) = 0;
 
     virtual void logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const bool autocomput, const bool autocie, const float jz1) = 0;
     virtual void refChanged2(float *huerefp, float *chromarefp, float *lumarefp, float *fabrefp, int selspot) = 0;

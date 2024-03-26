@@ -126,6 +126,9 @@ private:
     // Locallab tools mask background management data
     std::vector<locallabDenoiseLC> denoiselc;
 
+
+    std::vector<locallabcieBEF> cie_bef;
+
     std::vector<locallabcieLC> cie_lc;
 
     std::vector<locallabcieSIG> cie_sig;
@@ -158,6 +161,8 @@ public:
     
     // Locallab CIE tool primaries function
     void cieChanged(const std::vector<locallabcieLC> &cielc, int selspot) override;
+
+    void ciebefChanged(const std::vector<locallabcieBEF> &ciebef, int selspot) override;
 
     void sigChanged(const std::vector<locallabcieSIG> &ciesig, int selspot) override;
    
