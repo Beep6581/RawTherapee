@@ -1131,18 +1131,69 @@ void Locallab::denChanged(const std::vector<locallabDenoiseLC> &denlc, int selsp
     
 }
 
-
-void Locallab::logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const bool autocomput, const bool autocie, const float jz1)
+void Locallab::sigChanged(const std::vector<locallabcieSIG> &ciesig, int selspot)
 {
-    // Update Locallab Log Encoding and Ciecam accordingly
-    if(autocomput) {
-        explog.updateAutocompute(blackev, whiteev, sourceg, sourceab, targetg, jz1);
+     cie_sig = ciesig;
+
+    if (selspot < (int) cie_sig.size()) {
+        const double s1 = cie_sig.at(selspot).contsigq;
+        const double s2 = cie_sig.at(selspot).lightsigq;
+        
+        expcie.updatesigloc(s1, s2);
     }
-    if(autocie) {
-        expcie.updateAutocompute(blackev, whiteev, sourceg, sourceab, targetg, jz1);
+     
+}
+
+void Locallab::ciebefChanged(const std::vector<locallabcieBEF> &ciebef, int selspot)
+{
+    cie_bef = ciebef;
+    if (selspot < (int) cie_bef.size()) {
+        const double blackev = cie_bef.at(selspot).blackevbef;
+        const double whiteev = cie_bef.at(selspot).whiteevbef;
+        const double sourceg = cie_bef.at(selspot).sourcegbef;
+        const double sourceab = cie_bef.at(selspot).sourceabbef;
+        const double targetg = cie_bef.at(selspot).targetgbef;
+        const double jz1 = cie_bef.at(selspot).jz1bef;
+        const bool autocomput = cie_bef.at(selspot).autocomputbef;
+        const bool autocie = cie_bef.at(selspot).autociebef;
+
+        if(autocomput) {
+            explog.updateAutocompute(blackev, whiteev, sourceg, sourceab, targetg, jz1);
+        }
+        if(autocie) {
+            expcie.updateAutocompute(blackev, whiteev, sourceg, sourceab, targetg, jz1);
+        }
+
     }
 
 }
+
+void Locallab::cieChanged(const std::vector<locallabcieLC> &cielc, int selspot)
+{
+    // Saving transmitted min/max data
+    cie_lc = cielc;
+    
+    //Update Locallab Denoise tool lum chro
+    if (selspot < (int) cie_lc.size()) {
+        const double r1 = cie_lc.at(selspot).redxlc;
+        const double r2 = cie_lc.at(selspot).redylc;
+        const double g1 = cie_lc.at(selspot).grexlc;
+        const double g2 = cie_lc.at(selspot).greylc;
+        const  double b1 = cie_lc.at(selspot).bluxlc;
+        const double b2 = cie_lc.at(selspot).bluylc;
+        const double w1 = cie_lc.at(selspot).wxlc;
+        const double w2 = cie_lc.at(selspot).wylc;
+        const double m1 = cie_lc.at(selspot).meanxlc;
+        const double m2 = cie_lc.at(selspot).meanylc;
+        const double me1 = cie_lc.at(selspot).meanxelc;
+        const double me2 = cie_lc.at(selspot).meanyelc;
+
+        expcie.updateiPrimloc(r1, r2, g1, g2, b1, b2, w1, w2, m1, m2, me1, me2);
+    }
+    
+}
+
+
 void Locallab::refChanged2(float *huerefp, float *chromarefp, float *lumarefp, float *fabrefp, int selspot)
 {
         const double huer = huerefp[selspot];

@@ -32,7 +32,24 @@
 #include "rtimage.h"
 #include "rtwindow.h"
 
-const char* sTRCPreset[] = {"BT709_g2.2_s4.5", "sRGB_g2.4_s12.92", "linear_g1.0", "standard_g2.2", "standard_g1.8", "High_g1.3_s3.35", "Low_g2.6_s6.9", "Lab_g3.0s9.03296"}; //gamma free
+const char* sTRCPreset[] = {"BT709_g2.2_s4.5", "sRGB_g2.4_s12.92", "linear_g1.0", "standard_g2.2", "standard_g1.8", "High_g1.3_s3.35", "Low_g2.6_s6.9", "Lab_g3.0s9.03296" /*, "PQ", "HLG" */}; //gamma free
+
+
+// code take in ART thanks to Alberto Griggio
+cmsToneCurve *make_trc(size_t size, float (*trcFunc)(float, bool))
+{
+    std::vector<float> values(size);
+
+    for (size_t i = 0; i < size; ++i) {
+        float x = float(i) / (size - 1);
+        float y = trcFunc(x, false); //, 1.0f);
+        values[i] = y;
+    }
+
+    cmsToneCurve *result = cmsBuildTabulatedToneCurveFloat(NULL, size, &values[0]);
+    return result;
+}
+///
 
 ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
     : Gtk::Dialog(M("MAIN_BUTTON_ICCPROFCREATOR"), *rtwindow, true)
@@ -1305,6 +1322,10 @@ void ICCProfileCreator::savePressed()
         GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildGamma(NULL, 1.0);
     } else if(gammaPreset == "Custom" && slope == 0.0) {
         GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildGamma(NULL, gamma);
+//    } else if(gammaPreset == "PQ") {
+//       GammaTRC[0] = GammaTRC[1] = GammaTRC[2]  = make_trc(4096, &rtengine::Color::eval_PQ_curve);    //thanks to Alberto Griggio
+//    } else if(gammaPreset == "HLG") {
+//       GammaTRC[0] = GammaTRC[1] = GammaTRC[2]  = make_trc(4096, &rtengine::Color::eval_HLG_curve);   //thanks to Alberto Griggio 
     } else {
         GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(nullptr, 5, ga);
     }

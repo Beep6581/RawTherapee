@@ -5290,7 +5290,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     itcwb_nopurple : false default - allow to bypass highlight recovery and inpait opposed when need flowers and not purple due to highlights...
     itcwb_green - adjust green refinement
     */
-    BENCHFUN
+   // BENCHFUN
     MyTime t1, t2, t3, t4, t5, t6, t7, t8;
     t1.set();
 
