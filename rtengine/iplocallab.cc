@@ -2640,6 +2640,9 @@ void tonemapFreeman(float target_slope, float white_point, float black_point, fl
         }
         kmid = midk;
     }
+    if (settings->verbose) {
+        printf("b=%f gamma=%f slope=%f DR=%f kmid=%f black=%f\n", (double) b, (double) gamma, (double) target_slope, (double) dr, (double) kmid, (double) c);
+    }
     //lut - take from Alberto Griggio
     for (int i = 0; i < 65536; ++i) {// i - value image RGB
         lut[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_scene_, gamma, dr, b, c, kmid);//call main function
@@ -11272,7 +11275,7 @@ void ImProcFunctions::fftw_denoise(int sk, int GW, int GH, int max_numblox_W, in
 void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct local_params & lp, LabImage * originalmaskbl, LabImage *  bufmaskblurbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage * original, LabImage * transformed,
     int cx, int cy, int sk, const LocwavCurve& locwavCurvehue, bool locwavhueutili, float& highresi, float& nresi, float& highresi46, float& nresi46, float& Lhighresi, float& Lnresi, float& Lhighresi46, float& Lnresi46)
 {
-    BENCHFUN
+   // BENCHFUN
 //local denoise
     //all these variables are to prevent use of denoise when non necessary
     // but with qualmet = 2 (default for best quality) we must denoise chroma with little values to prevent artifacts due to variations of Hue
@@ -13399,7 +13402,7 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
     if (scale > 5.f) { //avoid to small values - leads to crash - but enough to evaluate noise
         return;
     }
-    BENCHFUN
+   // BENCHFUN
     const int W = bfw;
     const int H = bfh;
 //    printf("W=%i H=%i\n", W, H);
@@ -20097,7 +20100,9 @@ void ImProcFunctions::Lab_Local(
                         //TonemapFreeman - Copyright (c) 2023 Thatcher Freeman
                         float mid_gray = 0.01f * lp.sourcegraycie;//Mean luminance Yb Scene
                         float mid_gray_view = 0.01f * lp.targetgraycie;//Mean luminance Yb Viewing
+                        lp.whiteevjz = LIM(lp.whiteevjz, 0.1f, 25.f);
                         float white_point =  xexpf(lp.whiteevjz * std::log(2.f) + xlogf(mid_gray));//lp.whiteevjz  White_Ev
+                        lp.blackevjz = LIM(lp.blackevjz, -15.f, -0.2f);
                         float black_point =  xexpf(lp.blackevjz * std::log(2.f) + xlogf(mid_gray));//lp.blackevjz  Black_Ev
                         bool rolloff = true;//only soften highlights
                         float slopegray = 1.f;//slopegray between 0.8 and 1.6 - lineary light the shadows by the user - the gamma is calculated according to slope and the characteristics of the image DR, White, Black
