@@ -1194,17 +1194,6 @@ void Locallab::cieChanged(const std::vector<locallabcieLC> &cielc, int selspot)
 }
 
 
-void Locallab::logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const bool autocomput, const bool autocie, const float jz1)
-{
-    // Update Locallab Log Encoding and Ciecam accordingly
-    if(autocomput) {
-        explog.updateAutocompute(blackev, whiteev, sourceg, sourceab, targetg, jz1);
-    }
-    if(autocie) {
-        expcie.updateAutocompute(blackev, whiteev, sourceg, sourceab, targetg, jz1);
-    }
-
-}
 void Locallab::refChanged2(float *huerefp, float *chromarefp, float *lumarefp, float *fabrefp, int selspot)
 {
         const double huer = huerefp[selspot];

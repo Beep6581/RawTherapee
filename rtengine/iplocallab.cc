@@ -2307,7 +2307,6 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
 }
  
 // Copyright 2018 Alberto Griggio <alberto.griggio@gmail.com>
-
 void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg, float *blackev, float *whiteev, bool *Autogr, float *sourceab,  int *whits,  int *blacks, int *whitslog,  int *blackslog, int fw, int fh, float xsta, float xend, float ysta, float yend, int SCALE)
 {
     //BENCHFUN
@@ -2341,6 +2340,7 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
 
     int whit = -whits[sp];
     int blac = -blacks[sp];
+
     if(params->locallab.spots.at(sp).expcie && params->locallab.spots.at(sp).Autograycie) {
         ImProcFunctions::tone_eqcam2(this, &img, whit, blac, params->icm.workingProfile, SCALE, multiThread);
     }
@@ -2415,15 +2415,16 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
             if (n > 0) {
                 sourceg[sp] = tot / n * 100.0;
 
-            if (settings->verbose) {
+                if (settings->verbose) {
                     std::cout << "         computed gray point from " << n << " samples: " << sourceg[sp] << std::endl;
-            }
+                }
             } else {//I change slightly this part of algo - more progressivity...best response in very low exposure images
                 mean /= (nc * 65535.0);
                 float yb;
                 yb = 1.5f + 100.f * pow_F(mean, 1.8f);//empirical formula for Jz and log encode for low exposure images
 
                 sourceg[sp] = yb;
+
                 if (settings->verbose) {
                     std::cout << "         no samples found in range, resorting to Yb gray point value " << sourceg[sp]  << std::endl;
                 }
@@ -2432,7 +2433,6 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
 
         constexpr float MIN_WHITE = 2.f;
         constexpr float MAX_BLACK = -3.5f;
-        //printf("sourceg=%f sp=%i\n", (double) sourceg[sp], sp);
 
         const float gray = sourceg[sp] / 100.f;
         whiteev[sp] = rtengine::max(xlogf(maxVal / gray) / log2, MIN_WHITE);
@@ -2463,6 +2463,7 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
 
     }
 }
+
 
 void tone_eq(ImProcFunctions *ipf, Imagefloat *rgb, const struct local_params &lp, const Glib::ustring &workingProfile, double scale, bool multithread)
 {
