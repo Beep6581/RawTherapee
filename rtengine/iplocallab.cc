@@ -2636,12 +2636,12 @@ void tonemapFreeman(float target_slope, float white_point, float black_point, fl
         float midk = 1.f;
         float k_slope = 2.2f;
         if(target_slope >= 1.f) {
-            midk = pow_F(midutil, k_slope * (target_slope - 1.f));//ponderation in function target_slope
+            midk = pow_F(midutil, k_slope * (target_slope - 1.f));//ponderation in function target_slope when "slope user" < 1.f
         }
         kmid = midk;
     }
     if (settings->verbose) {
-        printf("b=%f gamma=%f slope=%f DR=%f kmid=%f black=%f\n", (double) b, (double) gamma, (double) target_slope, (double) dr, (double) kmid, (double) c);
+        printf("b=%f gamma=%f slope=%f DynRange=%f kmid=%f black=%f Yb-scale=%f\n", (double) b, (double) gamma, (double) target_slope, (double) dr, (double) kmid, (double) c, (double) mid_gray_scene_);
     }
     //lut - take from Alberto Griggio
     for (int i = 0; i < 65536; ++i) {// i - value image RGB
@@ -11295,7 +11295,7 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
    if (((lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.nlstr > 0 || lp.wavcurvedenoi || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f
             || execmaskden || aut == 1 || aut == 2) && lp.denoiena && lp.quamet != 3) || execdenoi) {  // sk == 1 ??
 
-        StopWatch Stop1("locallab Denoise called");
+        //StopWatch Stop1("locallab Denoise called");
 
         if (aut == 0) {
             MyMutex::MyLock lock(*fftwMutex);
