@@ -1328,7 +1328,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
     if (isRaw) {
         double pre_mul[3] = { redMultiplier, greenMultiplier, blueMultiplier };
-        RawImageSource::colorSpaceConversion (baseImg, params.icm, currWB, pre_mul, embProfile, camProfile, cam2xyz, camName );
+        RawImageSource::colorSpaceConversion (baseImg, params.icm, currWB, pre_mul, embProfile, camProfile, cam2xyz, camName, metadata->getFileName());
     } else {
         StdImageSource::colorSpaceConversion (baseImg, params.icm, embProfile, thumbImg->getSampleFormat());
     }
@@ -1467,7 +1467,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
     if (isRaw) {
         cmsHPROFILE dummy;
-        RawImageSource::findInputProfile (params.icm.inputProfile, nullptr, camName, &dcpProf, dummy);
+        RawImageSource::findInputProfile (params.icm.inputProfile, nullptr, camName, metadata->getFileName(), &dcpProf, dummy);
 
         if (dcpProf) {
             dcpProf->setStep2ApplyState (params.icm.workingProfile, params.icm.toneCurve, params.icm.applyLookTable, params.icm.applyBaselineExposureOffset, as);

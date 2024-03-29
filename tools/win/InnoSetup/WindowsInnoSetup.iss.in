@@ -119,7 +119,7 @@ Source: "{#MyBuildBasePath}\*.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#MyBuildBasePath}\gspawn-win{#MyBitDepth}-helper.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#MyBuildBasePath}\gspawn-win{#MyBitDepth}-helper-console.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#MyBuildBasePath}\gdb.exe"; DestDir: "{app}"; Flags: skipifsourcedoesntexist ignoreversion
-Source: "{#MyBuildBasePath}\fonts\DroidSansMonoSlashed.ttf"; DestDir: "{fonts}"; FontInstall: "Droid Sans Mono Slashed"; Flags: onlyifdoesntexist uninsneveruninstall
+;Source: "{#MyBuildBasePath}\fonts\DroidSansMonoSlashed.ttf"; DestDir: "{fonts}"; FontInstall: "Droid Sans Mono Slashed"; Flags: onlyifdoesntexist uninsneveruninstall
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

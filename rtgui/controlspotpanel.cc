@@ -412,7 +412,7 @@ ControlSpotPanel::ControlSpotPanel():
     avoidgamutMethod_->append(M("TP_LOCALLAB_GAMUTXYZABSO"));
     avoidgamutMethod_->append(M("TP_LOCALLAB_GAMUTXYZRELA"));
     avoidgamutMethod_->append(M("TP_LOCALLAB_GAMUTMUNSELL"));
-    avoidgamutMethod_->set_active(2);
+    avoidgamutMethod_->set_active(4);
     avoidgamutconn_ = avoidgamutMethod_->signal_changed().connect(
                      sigc::mem_fun(
                          *this, &ControlSpotPanel::avoidgamutMethodChanged));

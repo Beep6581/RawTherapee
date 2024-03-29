@@ -54,6 +54,13 @@ public:
     typedef sigc::slot<void, const Glib::ustring&> DirSelectionSlot;
 
 private:
+    struct FileMonitorInfo {
+        FileMonitorInfo(const Glib::RefPtr<Gio::FileMonitor> &file_monitor, const Glib::ustring &file_path) :
+            fileMonitor(file_monitor), filePath(file_path) {}
+        Glib::RefPtr<Gio::FileMonitor> fileMonitor;
+        Glib::ustring filePath;
+    };
+
     FilePanel* filepanel;
     Gtk::Box* hBox;
     Glib::ustring selectedDirectory;
@@ -95,6 +102,7 @@ private:
     Gtk::ToggleButton* bTrash;
     Gtk::ToggleButton* bNotTrash;
     Gtk::ToggleButton* bOriginal;
+    Gtk::ToggleButton* bRecursive;
     Gtk::ToggleButton* categoryButtons[20];
     Gtk::ToggleButton* exifInfo;
     sigc::connection bCateg[20];
@@ -143,14 +151,15 @@ private:
     std::set<Glib::ustring> editedFiles;
     guint modifierKey; // any modifiers held when rank button was pressed
 
-    Glib::RefPtr<Gio::FileMonitor> dirMonitor;
+    std::vector<FileMonitorInfo> dirMonitors;
 
     IdleRegister idle_register;
 
     void addAndOpenFile (const Glib::ustring& fname);
     void addFile (const Glib::ustring& fName);
-    std::vector<Glib::ustring> getFileList ();
+    std::vector<Glib::ustring> getFileList(std::vector<Glib::RefPtr<Gio::File>> *dirs_explored = nullptr);
     BrowserFilter getFilter ();
+    void refreshDirectoryMonitors(const std::vector<Glib::RefPtr<Gio::File>> &dirs_to_monitor);
     void trashChanged ();
 
 public:
@@ -240,6 +249,7 @@ public:
     void setExportPanel (ExportPanel* expanel);
     void exifInfoButtonToggled();
     void categoryButtonToggled (Gtk::ToggleButton* b, bool isMouseClick);
+    void showRecursiveToggled();
     bool capture_event(GdkEventButton* event);
     void filterChanged ();
     void runFilterDialog ();

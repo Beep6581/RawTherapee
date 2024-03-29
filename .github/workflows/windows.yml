@@ -129,14 +129,6 @@ jobs:
             "symbolic/ui" \
             "$BUILD_DIR/share/icons/Adwaita/symbolic"
           cp 'index.theme' "$BUILD_DIR/share/icons/Adwaita"
-          mkdir -p "$BUILD_DIR/share/icons/Adwaita/cursors"
-          cp -r \
-            "cursors/plus.cur" \
-            "cursors/sb_h_double_arrow.cur" \
-            "cursors/sb_left_arrow.cur" \
-            "cursors/sb_right_arrow.cur" \
-            "cursors/sb_v_double_arrow.cur" \
-            "$BUILD_DIR/share/icons/Adwaita/cursors"
           cd -
 
           echo "Copying GDK pixbuf."
