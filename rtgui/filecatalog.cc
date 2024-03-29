@@ -19,6 +19,8 @@
  */
 #include "filecatalog.h"
 
+#include <algorithm>
+#include <iterator>
 #include <iostream>
 #include <iomanip>
 
@@ -347,9 +349,17 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     bCateg[19] = bOriginal->signal_toggled().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::categoryButtonToggled), bOriginal, true));
     bOriginal->signal_button_press_event().connect (sigc::mem_fun(*this, &FileCatalog::capture_event), false);
 
+    bRecursive = Gtk::manage(new Gtk::ToggleButton());
+    bRecursive->set_image(*Gtk::manage(new RTImage("folder-subfolder", Gtk::ICON_SIZE_LARGE_TOOLBAR)));
+    bRecursive->set_tooltip_text(M("FILEBROWSER_SHOWRECURSIVE"));
+    bRecursive->set_relief(Gtk::RELIEF_NONE);
+    bRecursive->set_active(options.browseRecursive);
+    bRecursive->signal_toggled().connect(sigc::mem_fun(*this, &FileCatalog::showRecursiveToggled));
+
     buttonBar->pack_start (*bTrash, Gtk::PACK_SHRINK);
     buttonBar->pack_start (*bNotTrash, Gtk::PACK_SHRINK);
     buttonBar->pack_start (*bOriginal, Gtk::PACK_SHRINK);
+    buttonBar->pack_start(*bRecursive, Gtk::PACK_SHRINK);
     buttonBar->pack_start (*Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_VERTICAL)), Gtk::PACK_SHRINK);
     fileBrowser->trash_changed().connect( sigc::mem_fun(*this, &FileCatalog::trashChanged) );
 
@@ -541,9 +551,7 @@ void FileCatalog::closeDir ()
         exportPanel->set_sensitive (false);
     }
 
-    if (dirMonitor) {
-        dirMonitor->cancel ();
-    }
+    dirMonitors.clear();
 
     // ignore old requests
     ++selectedDirectoryId;
@@ -567,60 +575,82 @@ void FileCatalog::closeDir ()
     redrawAll ();
 }
 
-std::vector<Glib::ustring> FileCatalog::getFileList()
+std::vector<Glib::ustring> FileCatalog::getFileList(std::vector<Glib::RefPtr<Gio::File>> *dirs_explored)
 {
 
     std::vector<Glib::ustring> names;
 
     const std::set<std::string>& extensions = options.parsedExtensionsSet;
 
-    try {
+    static void (*getFilesRecursively)(const Glib::ustring &, int, int &, std::vector<Glib::ustring> &, std::vector<Glib::RefPtr<Gio::File>> *) = [](const Glib::ustring &dir_path, int max_depth, int &dir_quota, std::vector<Glib::ustring> &file_names, std::vector<Glib::RefPtr<Gio::File>> * directories_explored) {
+        try {
 
-        const auto dir = Gio::File::create_for_path(selectedDirectory);
+            const auto dir = Gio::File::create_for_path(dir_path);
 
-        auto enumerator = dir->enumerate_children("standard::name,standard::type,standard::is-hidden");
+            static const auto enumerate_attrs =
+                std::string(G_FILE_ATTRIBUTE_STANDARD_NAME) + "," +
+                G_FILE_ATTRIBUTE_STANDARD_TYPE + "," +
+                G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN + "," +
+                G_FILE_ATTRIBUTE_STANDARD_SYMLINK_TARGET;
+            auto enumerator = dir->enumerate_children(
+                enumerate_attrs,
+                options.browseRecursiveFollowLinks
+                    ? Gio::FileQueryInfoFlags::FILE_QUERY_INFO_NONE
+                    : Gio::FileQueryInfoFlags::FILE_QUERY_INFO_NOFOLLOW_SYMLINKS);
 
-        while (true) {
-            try {
-                const auto file = enumerator->next_file();
-                if (!file) {
-                    break;
-                }
+            if (directories_explored) {
+                directories_explored->push_back(dir);
+            }
 
-                if (file->get_file_type() == Gio::FILE_TYPE_DIRECTORY) {
-                    continue;
-                }
+            while (true) {
+                try {
+                    const auto file = enumerator->next_file();
+                    if (!file) {
+                        break;
+                    }
 
-                if (!options.fbShowHidden && file->is_hidden()) {
-                    continue;
-                }
+                    if (!options.fbShowHidden && file->is_hidden()) {
+                        continue;
+                    }
 
-                const Glib::ustring fname = file->get_name();
-                const auto lastdot = fname.find_last_of('.');
+                    if (file->get_file_type() == Gio::FILE_TYPE_DIRECTORY) {
+                        if (max_depth > 0 && dir_quota > 0) {
+                            const Glib::ustring child_dir_path = Glib::build_filename(dir_path, file->get_name());
+                            getFilesRecursively(child_dir_path, max_depth - 1, --dir_quota, file_names, directories_explored);
+                        }
+                        continue;
+                    }
 
-                if (lastdot >= fname.length() - 1) {
-                    continue;
-                }
+                    const Glib::ustring fname = file->get_name();
+                    const auto lastdot = fname.find_last_of('.');
 
-                if (extensions.find(fname.substr(lastdot + 1).lowercase()) == extensions.end()) {
-                    continue;
-                }
+                    if (lastdot >= fname.length() - 1) {
+                        continue;
+                    }
 
-                names.push_back(Glib::build_filename(selectedDirectory, fname));
-            } catch (Glib::Exception& exception) {
-                if (rtengine::settings->verbose) {
-                    std::cerr << exception.what() << std::endl;
+                    if (extensions.find(fname.substr(lastdot + 1).lowercase()) == extensions.end()) {
+                        continue;
+                    }
+
+                    file_names.emplace_back(Glib::build_filename(dir_path, fname));
+                } catch (Glib::Exception& exception) {
+                    if (rtengine::settings->verbose) {
+                        std::cerr << exception.what() << std::endl;
+                    }
                 }
             }
+
+        } catch (Glib::Exception& exception) {
+
+            if (rtengine::settings->verbose) {
+                std::cerr << "Failed to list directory \"" << dir_path << "\": " << exception.what() << std::endl;
+            }
+
         }
+    };
 
-    } catch (Glib::Exception& exception) {
-
-        if (rtengine::settings->verbose) {
-            std::cerr << "Failed to list directory \"" << selectedDirectory << "\": " << exception.what() << std::endl;
-        }
-
-    }
+    int dirs_left = options.browseRecursive ? options.browseRecursiveMaxDirs : 0;
+    getFilesRecursively(selectedDirectory, options.browseRecursiveDepth, dirs_left, names, dirs_explored);
 
     return names;
 }
@@ -646,9 +676,10 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
 
         selectedDirectory = dir->get_parse_name();
 
+        std::vector<Glib::RefPtr<Gio::File>> allDirs;
         BrowsePath->set_text(selectedDirectory);
         buttonBrowsePath->set_image(*iRefreshWhite);
-        fileNameList = getFileList();
+        fileNameList = getFileList(&allDirs);
 
         for (unsigned int i = 0; i < fileNameList.size(); i++) {
             if (openfile.empty() || fileNameList[i] != openfile) { // if we opened a file at the beginning don't add it again
@@ -664,10 +695,42 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
             filepanel->loadingThumbs(M("PROGRESSBAR_LOADINGTHUMBS"), 0);
         }
 
-        dirMonitor = dir->monitor_directory ();
-        dirMonitor->signal_changed().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::on_dir_changed), false));
+        refreshDirectoryMonitors(allDirs);
     } catch (Glib::Exception& ex) {
         std::cout << ex.what();
+    }
+}
+
+void FileCatalog::refreshDirectoryMonitors(const std::vector<Glib::RefPtr<Gio::File>> &dirs_to_monitor)
+{
+    std::vector<Glib::ustring> updated_dir_names;
+    std::transform(
+        dirs_to_monitor.cbegin(), dirs_to_monitor.cend(),
+        std::back_inserter(updated_dir_names),
+        [](const Glib::RefPtr<Gio::File> &updated_dir) { return updated_dir->get_path(); });
+
+    // Remove monitors on directories that are no longer shown.
+    dirMonitors.erase(
+        std::remove_if(dirMonitors.begin(), dirMonitors.end(),
+            [&updated_dir_names](const FileMonitorInfo &fileMonitorInfo) {
+                return std::find(updated_dir_names.cbegin(), updated_dir_names.cend(), fileMonitorInfo.filePath) == updated_dir_names.cend();
+            }),
+        dirMonitors.end());
+
+    // Add monitors that do not exist yet.
+    std::vector<Glib::ustring> monitored_dir_names;
+    std::transform(
+        dirMonitors.cbegin(), dirMonitors.cend(),
+        std::back_inserter(monitored_dir_names),
+        [](const FileMonitorInfo &dir_monitor) { return dir_monitor.filePath; });
+    for (const auto &dir_to_monitor : dirs_to_monitor) {
+        const auto dir_path = dir_to_monitor->get_path();
+        if (std::find(monitored_dir_names.cbegin(), monitored_dir_names.cend(), dir_path) != monitored_dir_names.cend()) {
+            continue; // A monitor exists already.
+        }
+        auto dir_monitor = dir_to_monitor->monitor_directory();
+        dir_monitor->signal_changed().connect(sigc::bind(sigc::mem_fun(*this, &FileCatalog::on_dir_changed), false));
+        dirMonitors.emplace_back(dir_monitor, dir_path);
     }
 }
 
@@ -1579,6 +1642,12 @@ void FileCatalog::categoryButtonToggled (Gtk::ToggleButton* b, bool isMouseClick
     }
 }
 
+void FileCatalog::showRecursiveToggled()
+{
+    options.browseRecursive = bRecursive->get_active();
+    reparseDirectory();
+}
+
 BrowserFilter FileCatalog::getFilter ()
 {
 
@@ -1712,20 +1781,27 @@ void FileCatalog::reparseDirectory ()
         return;
     }
 
-    // check if a thumbnailed file has been deleted
+    // check if a thumbnailed file has been deleted or is not in a directory of interest
     const std::vector<ThumbBrowserEntryBase*>& t = fileBrowser->getEntries();
     std::vector<Glib::ustring> fileNamesToDel;
+    std::vector<Glib::ustring> fileNamesToRemove;
 
     for (const auto& entry : t) {
         if (!Glib::file_test(entry->filename, Glib::FILE_TEST_EXISTS)) {
             fileNamesToDel.push_back(entry->filename);
+            fileNamesToRemove.push_back(entry->filename);
+        }
+        else if (!options.browseRecursive && Glib::path_get_dirname(entry->filename) != selectedDirectory) {
+            fileNamesToRemove.push_back(entry->filename);
         }
     }
 
-    for (const auto& toDelete : fileNamesToDel) {
-        delete fileBrowser->delEntry(toDelete);
-        cacheMgr->deleteEntry(toDelete);
+    for (const auto& toRemove : fileNamesToRemove) {
+        delete fileBrowser->delEntry(toRemove);
         --previewsLoaded;
+    }
+    for (const auto& toDelete : fileNamesToDel) {
+        cacheMgr->deleteEntry(toDelete);
     }
 
     if (!fileNamesToDel.empty()) {
@@ -1739,7 +1815,8 @@ void FileCatalog::reparseDirectory ()
         oldNames.insert(oldName.collate_key());
     }
 
-    fileNameList = getFileList();
+    std::vector<Glib::RefPtr<Gio::File>> allDirs;
+    fileNameList = getFileList(&allDirs);
     for (const auto& newName : fileNameList) {
         if (oldNames.find(newName.collate_key()) == oldNames.end()) {
             addFile(newName);
@@ -1747,13 +1824,16 @@ void FileCatalog::reparseDirectory ()
         }
     }
 
+    refreshDirectoryMonitors(allDirs);
 }
 
 void FileCatalog::on_dir_changed (const Glib::RefPtr<Gio::File>& file, const Glib::RefPtr<Gio::File>& other_file, Gio::FileMonitorEvent event_type, bool internal)
 {
 
-    if (options.has_retained_extention(file->get_parse_name())
-            && (event_type == Gio::FILE_MONITOR_EVENT_CREATED || event_type == Gio::FILE_MONITOR_EVENT_DELETED || event_type == Gio::FILE_MONITOR_EVENT_CHANGED)) {
+    if ((options.has_retained_extention(file->get_parse_name())
+            && (event_type == Gio::FILE_MONITOR_EVENT_CREATED || event_type == Gio::FILE_MONITOR_EVENT_DELETED || event_type == Gio::FILE_MONITOR_EVENT_CHANGED))
+             || (event_type == Gio::FILE_MONITOR_EVENT_CREATED && Glib::file_test(file->get_path(), Glib::FileTest::FILE_TEST_IS_DIR))
+             || (event_type == Gio::FILE_MONITOR_EVENT_DELETED && std::find_if(dirMonitors.cbegin(), dirMonitors.cend(), [&file](const FileMonitorInfo &monitor) { return monitor.filePath == file->get_path(); }) != dirMonitors.cend())) {
         if (!internal) {
             GThreadLock lock;
             reparseDirectory ();
