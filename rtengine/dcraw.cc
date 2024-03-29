@@ -6931,11 +6931,13 @@ it under the terms of the one of two licenses as you choose:
 	left_margin = getint(type);
 	height = getint(type) - top_margin;
 	width = getint(type) - left_margin;
+	RT_raw_crop_mask_from_constant = ThreeValBool::F;
 	break;
       case 50830:			/* MaskedAreas */
         for (i=0; i < len && i < 32; i++)
 	  ((int *)mask)[i] = getint(type);
 	black = 0;
+	RT_raw_crop_mask_from_constant = ThreeValBool::F;
 	break;
       case 51008:           /* OpcodeList1 */
         {
@@ -9167,6 +9169,9 @@ void CLASS adobe_coeff (const char *make, const char *model)
   }
   if (RT_blacklevel_from_constant == ThreeValBool::X || is_pentax_dng) {
     RT_blacklevel_from_constant = ThreeValBool::T;
+  }
+  if (RT_raw_crop_mask_from_constant == ThreeValBool::X || is_pentax_dng) {
+    RT_raw_crop_mask_from_constant = ThreeValBool::T;
   }
   if (RT_matrix_from_constant == ThreeValBool::X) {
     RT_matrix_from_constant = ThreeValBool::T;

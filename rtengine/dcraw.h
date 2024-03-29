@@ -173,6 +173,7 @@ protected:
     enum class ThreeValBool { X = -1, F, T };
     ThreeValBool RT_whitelevel_from_constant;
     ThreeValBool RT_blacklevel_from_constant;
+    ThreeValBool RT_raw_crop_mask_from_constant;
     ThreeValBool RT_matrix_from_constant;
     std::string RT_software;
     double RT_baseline_exposure;
