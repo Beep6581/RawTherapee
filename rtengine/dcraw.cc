@@ -6458,16 +6458,123 @@ int CLASS parse_tiff_ifd (int base)
 	FORC3 cam_mul[c] = get2();
 	break;
       case 45:
-          if (pana_raw && len == 1 && type == 3)
-          {
-              RT_pana_info.encoding = get2();
-          }
-          break;
+        if (pana_raw && len == 1 && type == 3) {
+            RT_pana_info.encoding = get2();
+        }
+        break;
       case 46:
-	if (type != 7 || fgetc(ifp) != 0xff || fgetc(ifp) != 0xd8) break;
-	thumb_offset = ftell(ifp) - 2;
-	thumb_length = len;
-	break;
+      	if (type != 7 || fgetc(ifp) != 0xff || fgetc(ifp) != 0xd8) break;
+        thumb_offset = ftell(ifp) - 2;
+        thumb_length = len;
+        break;
+      case 57:
+        if (pana_raw && len == 26 && type == 7) {
+          ushort cnt = get2();
+          if (cnt > 6) cnt = 6;
+          for (i = 0; i < cnt; i++)
+            RT_pana_info.v8tags.tag39[i] = get4();
+        }
+        break;
+      case 58:
+        if (pana_raw && type == 7 && len == 26) {
+          ushort cnt = get2();
+          if (cnt > 6) cnt = 6;
+          for (i = 0; i < cnt; i++) {
+            get2();
+            RT_pana_info.v8tags.tag3A[i] = get2();
+          }
+        }
+        break;
+      case 59:
+        if (pana_raw && type == 3 && len == 1)
+          RT_pana_info.v8tags.tag3B = get2();
+        break;
+      case 60:
+      case 61:
+      case 62:
+      case 63:
+        if (pana_raw && type == 3 && len == 1)
+          RT_pana_info.v8tags.initial[tag - 0x3c] = get2();
+        break;
+      case 64:
+        if (pana_raw && type == 7 && len == 70) {
+          ushort count = get2();
+          if (count > 17) count = 17;
+          for (i = 0; i < count; i++) {
+            ushort v1 = get2();
+            if (v1 > 16u) v1 = 16u;
+            RT_pana_info.v8tags.tag40a[i] = v1;
+            ushort v2 = get2();
+            if (v2 > 0xfffu) v2 = 0xfffu;
+            RT_pana_info.v8tags.tag40b[i] = v2;
+          }
+        }
+        break;
+      case 65:
+        if (pana_raw && type == 7 && len == 36) {
+          ushort count = get2();
+          if (count > 17) count = 17;
+          for (i = 0; i < count; i++) {
+            ushort v1 = get2();
+            if (v1 > 0x40u) v1 = 64;
+            RT_pana_info.v8tags.tag41[i] = v1;
+          }
+        }
+        break;
+      case 66:
+        if (pana_raw && type == 3 && len == 1) {
+          ushort val = get2();
+          if (val > 5) val = 5;
+          RT_pana_info.v8tags.stripe_count = val;
+        }
+        break;
+      case 67:
+        if (pana_raw && type == 3 && len == 1) {
+          ushort val = get2();
+          if (val > 5) val = 5;
+          RT_pana_info.v8tags.tag43 = val;
+        }
+        break;
+      case 68:
+        if (pana_raw && type == 7 && len == 50) {
+          ushort count = get2();
+          if (count > 5) count = 5;
+          for (i = 0; i < count; i++)
+            RT_pana_info.v8tags.stripe_offsets[i] = get4();
+        }
+        break;
+      case 69:
+        if (pana_raw && type == 7 && len == 50) {
+          ushort count = get2();
+          if (count > 5) count = 5;
+          for (i = 0; i < count; i++)
+            RT_pana_info.v8tags.stripe_left[i] = get4();
+        }
+        break;
+      case 70:
+        if (pana_raw && type == 7 && len == 50) {
+          ushort count = get2();
+          if (count > 5) count = 5;
+          for (i = 0; i < count; i++)
+            RT_pana_info.v8tags.stripe_compressed_size[i] = get4();
+        }
+        break;
+      case 71:
+        if (pana_raw && type == 7 && len == 26) {
+          ushort count = get2();
+          if (count > 5) count = 5;
+          for (i = 0; i < count; i++)
+            RT_pana_info.v8tags.stripe_width[i] = get2();
+        }
+        break;
+      case 72:
+        if (pana_raw && type == 7 && len == 26) {
+          ushort count = get2();
+          if (count > 5) count = 5;
+          for (i = 0; i < count; i++)
+            RT_pana_info.v8tags.stripe_height[i] = get2();
+        }
+        break;
       case 61440:			/* Fuji HS10 table */
 	fseek (ifp, get4()+base, SEEK_SET);
 	parse_tiff_ifd (base);
