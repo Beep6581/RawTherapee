@@ -6124,7 +6124,7 @@ get2_256:
       // imCanon.ColorDataVer = 11;
       imCanon.ColorDataSubVer = get2();
 
-      fseek(ifp, save1 + ((0x0069+0x0064) << 1), SEEK_SET);
+      fseek(ifp, save1 + (0x0069 << 1), SEEK_SET);
       FORC4 cam_mul[c ^ (c >> 1)] = (float)get2();
 
       offsetChannelBlackLevel2 = save1 + ((0x0069+0x0102) << 1);
@@ -10434,7 +10434,7 @@ konica_400z:
     filters = 0x16161616;
     load_raw = &CLASS packed_load_raw;
     load_flags = 30;
-  } else if (!strcmp(make,"Olympus")) {
+  } else if (!strcmp(make,"Olympus") || !strncmp(make, "OM Digi", 7)) {
     height += height & 1;
     if (exif_cfa) filters = exif_cfa;
     if (width == 4100) width -= 4;

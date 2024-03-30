@@ -1481,6 +1481,28 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
     maxRecentFolders->set_range(1, 25);
     vbro->pack_start(*hbrecent, Gtk::PACK_SHRINK, 4);
 
+    // Recursive browsing options.
+    Gtk::Box *hbBrowseRecursive = Gtk::manage(new Gtk::Box());
+    Gtk::Label *labBrowseRecursiveDepth = Gtk::manage(new Gtk::Label(M("PREFERENCES_BROWSERECURSIVEDEPTH") + ":"));
+    browseRecursiveDepth = Gtk::manage(new Gtk::SpinButton());
+    browseRecursiveDepth->set_digits(0);
+    browseRecursiveDepth->set_increments(1, 5);
+    browseRecursiveDepth->set_range(1, 999);
+    Gtk::Label *labBrowseRecursiveMaxDirs = Gtk::manage(new Gtk::Label(M("PREFERENCES_BROWSERECURSIVEMAXDIRS") + ":"));
+    browseRecursiveMaxDirs = Gtk::manage(new Gtk::SpinButton());
+    browseRecursiveMaxDirs->set_digits(0);
+    browseRecursiveMaxDirs->set_increments(1, 5);
+    browseRecursiveMaxDirs->set_range(1, 999);
+    hbBrowseRecursive->pack_start(*labBrowseRecursiveDepth, Gtk::PACK_SHRINK, 4);
+    hbBrowseRecursive->pack_start(*browseRecursiveDepth, Gtk::PACK_SHRINK, 4);
+    hbBrowseRecursive->pack_start(*labBrowseRecursiveMaxDirs, Gtk::PACK_SHRINK, 4);
+    hbBrowseRecursive->pack_start(*browseRecursiveMaxDirs, Gtk::PACK_SHRINK, 4);
+    vbro->pack_start(*hbBrowseRecursive, Gtk::PACK_SHRINK, 0);
+#ifndef _WIN32
+    browseRecursiveFollowLinks = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_BROWSERECURSIVEFOLLOWLINKS")));
+    vbro->pack_start(*browseRecursiveFollowLinks, Gtk::PACK_SHRINK, 0);
+#endif
+
     fro->add(*vbro);
 
 
@@ -1937,6 +1959,11 @@ void Preferences::storePreferences()
     moptions.filmStripOverlayedFileNames = filmStripOverlayedFileNames->get_active();
     moptions.sameThumbSize = sameThumbSize->get_active();
     moptions.internalThumbIfUntouched = ckbInternalThumbIfUntouched->get_active();
+    moptions.browseRecursiveDepth = static_cast<int>(browseRecursiveDepth->get_value());
+    moptions.browseRecursiveMaxDirs = static_cast<int>(browseRecursiveMaxDirs->get_value());
+    if (browseRecursiveFollowLinks) {
+        moptions.browseRecursiveFollowLinks = browseRecursiveFollowLinks->get_active();
+    }
 
     auto save_where = saveParamsPreference->get_active_row_number();
     moptions.saveParamsFile = save_where == 0 || save_where == 2;
@@ -2166,6 +2193,11 @@ void Preferences::fillPreferences()
     filmStripOverlayedFileNames->set_active(moptions.filmStripOverlayedFileNames);
     sameThumbSize->set_active(moptions.sameThumbSize);
     ckbInternalThumbIfUntouched->set_active(moptions.internalThumbIfUntouched);
+    browseRecursiveDepth->set_value(moptions.browseRecursiveDepth);
+    browseRecursiveMaxDirs->set_value(moptions.browseRecursiveMaxDirs);
+    if (browseRecursiveFollowLinks) {
+        browseRecursiveFollowLinks->set_active(moptions.browseRecursiveFollowLinks);
+    }
 
     saveParamsPreference->set_active(moptions.saveParamsFile ? (moptions.saveParamsCache ? 2 : 0) : 1);
 
