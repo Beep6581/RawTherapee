@@ -860,7 +860,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         bool needstransform = ipf.needsTransform(fw, fh, imgsrc->getRotateDegree(), imgsrc->getMetaData());
 
 
-        if ((needstransform || ((todo & (M_TRANSFORM | M_RGBCURVE))  && params->dirpyrequalizer.cbdlMethod == "bef" && params->dirpyrequalizer.enabled && !params->colorappearance.enabled))) {
+      //  if ((needstransform || ((todo & (M_TRANSFORM | M_RGBCURVE))  && params->dirpyrequalizer.cbdlMethod == "bef" && params->dirpyrequalizer.enabled && !params->colorappearance.enabled))) {
+        if ((needstransform || ((todo & (M_TRANSFORM | M_RGBCURVE))  && params->dirpyrequalizer.cbdlMethod == "bef" && params->dirpyrequalizer.enabled && params->colorappearance.modelmethod != "02"))) {
             // Forking the image
             assert(oprevi);
             Imagefloat *op = oprevi;
@@ -882,7 +883,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             }
         }
 
-        if ((todo & (M_TRANSFORM | M_RGBCURVE))  && params->dirpyrequalizer.cbdlMethod == "bef" && params->dirpyrequalizer.enabled && !params->colorappearance.enabled) {
+     //   if ((todo & (M_TRANSFORM | M_RGBCURVE))  && params->dirpyrequalizer.cbdlMethod == "bef" && params->dirpyrequalizer.enabled && !params->colorappearance.enabled) {
+        if ((todo & (M_TRANSFORM | M_RGBCURVE))  && params->dirpyrequalizer.cbdlMethod == "bef" && params->dirpyrequalizer.enabled && params->colorappearance.modelmethod != "02") {
             const int W = oprevi->getWidth();
             const int H = oprevi->getHeight();
             LabImage labcbdl(W, H);
@@ -1661,12 +1663,14 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             ipf.vibrance(nprevl, params->vibrance, params->toneCurve.hrenabled, params->icm.workingProfile);
             ipf.labColorCorrectionRegions(nprevl);
 
-            if ((params->colorappearance.enabled && !params->colorappearance.tonecie) || (!params->colorappearance.enabled)) {
+         //   if ((params->colorappearance.enabled && !params->colorappearance.tonecie) || (!params->colorappearance.enabled)) {
+            if ((params->colorappearance.enabled && !params->colorappearance.tonecie) || (params->colorappearance.modelmethod != "02")) {
                 ipf.EPDToneMap(nprevl, 0, scale);
             }
 
             if (params->dirpyrequalizer.cbdlMethod == "aft") {
-                if (((params->colorappearance.enabled && !settings->autocielab) || (!params->colorappearance.enabled))) {
+              //  if (((params->colorappearance.enabled && !settings->autocielab) || (!params->colorappearance.enabled))) {
+                if (((params->colorappearance.enabled && !settings->autocielab) || (params->colorappearance.modelmethod != "02"))) {
                     ipf.dirpyrequalizer(nprevl, scale);
                 }
             }
