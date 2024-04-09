@@ -13101,10 +13101,10 @@ void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImag
 
                         Color::gamutmap(xg, yg, zg, wp);
 
-                        if (avoidgamut == 3) {//0.5f arbitrary coeff
-                            xg = xg + 0.5f * (x0 - xg);
-                            yg = yg + 0.5f * (y0 - yg);
-                            zg = zg + 0.5f * (z0 - zg);
+                        if (avoidgamut == 3) {//-0.3f arbitrary coeff, 04-2024 change mistake where 0.5f => -0.3f
+                            xg = xg - 0.3f * (x0 - xg);
+                            yg = yg - 0.3f * (y0 - yg);
+                            zg = zg - 0.3f * (z0 - zg);
                         }
 
 
