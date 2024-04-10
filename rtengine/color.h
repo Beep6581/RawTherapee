@@ -127,8 +127,8 @@ public:
 
     constexpr static float D50x = 0.9642f; //0.96422;
     constexpr static float D50z = 0.8249f; //0.82521;
-    constexpr static double u0 = 4.0 * static_cast<double>(D50x) / (static_cast<double>(D50x) + 15 + 3 * static_cast<double>(D50z));
-    constexpr static double v0 = 9.0 / (static_cast<double>(D50x) + 15 + 3 * static_cast<double>(D50z));
+    constexpr static double u0 = 4.0 * static_cast<double>(D50x) / (static_cast<double>(D50x) + 15.0 + 3.0 * static_cast<double>(D50z));
+    constexpr static double v0 = 9.0 / (static_cast<double>(D50x) + 15.0 + 3.0 * static_cast<double>(D50z));
     constexpr static double epskap = 8.0;
     constexpr static float epskapf = epskap;
 

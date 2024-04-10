@@ -13102,9 +13102,9 @@ void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImag
                         Color::gamutmap(xg, yg, zg, wp);
 
                         if (avoidgamut == 3) {//-0.3f arbitrary coeff, 04-2024 change mistake where 0.5f => -0.3f
-                            xg = xg - 0.3f * (x0 - xg);
-                            yg = yg - 0.3f * (y0 - yg);
-                            zg = zg - 0.3f * (z0 - zg);
+                            xg = rtengine::LIM(xg - 0.3f * (x0 - xg), 0.f, 65535.f);
+                            yg = rtengine::LIM(yg - 0.3f * (y0 - yg), 0.f, 65535.f);
+                            zg = rtengine::LIM(zg - 0.3f * (z0 - zg), 0.f, 65535.f);
                         }
 
 
