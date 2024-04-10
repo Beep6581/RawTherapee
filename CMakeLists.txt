@@ -222,7 +222,6 @@ option(USE_EXPERIMENTAL_LANG_VERSIONS "Build with -std=c++0x" OFF)
 option(BUILD_SHARED "Build with shared libraries" OFF)
 option(WITH_BENCHMARK "Build with benchmark code" OFF)
 option(WITH_MYFILE_MMAP "Build using memory mapped file" ON)
-option(WITH_JXL "Build with JPEG XL import support" OFF)
 option(WITH_LTO "Build with link-time optimizations" OFF)
 option(WITH_SAN "Build with run-time sanitizer" OFF)
 option(WITH_PROF "Build with profiling instrumentation" OFF)
@@ -247,6 +246,9 @@ option(ENABLE_TCMALLOC "Use the tcmalloc library if available" OFF)
 set(TCMALLOC_LIB_DIR
     ""
     CACHE PATH "Custom path for the tcmalloc library")
+
+set(WITH_JXL AUTO CACHE STRING "Build with JPEG XL support")
+set_property(CACHE WITH_JXL PROPERTY STRINGS AUTO ON OFF)
 
 # Set installation directories:
 if(WIN32 OR APPLE)
@@ -560,7 +562,13 @@ else()
     pkg_check_modules(JXL IMPORTED_TARGET ${JXL_LIBS})
 endif()
 if(JXL_FOUND)
-    add_definitions(-DLIBJXL)    
+    if(WITH_JXL OR WITH_JXL STREQUAL AUTO)
+        add_definitions(-DLIBJXL)
+    else()
+        message(STATUS "  JXL support disabled by WITH_JXL = ${WITH_JXL}")
+        set(JXL_INCLUDE_DIRS "")
+        set(JXL_LIBRARIES "")
+    endif()
 endif()
 
 # Check for libcanberra-gtk3 (sound events on Linux):
