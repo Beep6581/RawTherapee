@@ -859,7 +859,6 @@ int ImageIO::loadJxl(const Glib::ustring &fname)
         std::istreambuf_iterator<char>());
     instream.close();
 
-
     // multi-threaded parallel runner.
     auto runner = JxlResizableParallelRunnerMake(nullptr);
 
@@ -886,15 +885,14 @@ int ImageIO::loadJxl(const Glib::ustring &fname)
         JxlDecoderStatus status = JxlDecoderProcessInput(dec.get());
 
         if (status == JXL_DEC_BASIC_INFO) {
-            if (JXL_DEC_SUCCESS !=
-                JxlDecoderGetBasicInfo(dec.get(), &info)) {
+            if (JXL_DEC_SUCCESS != JxlDecoderGetBasicInfo(dec.get(), &info)) {
                 g_printerr("Error: JxlDecoderGetBasicInfo failed\n");
                 return IMIO_HEADERERROR;
             }
 
             JxlResizableParallelRunnerSetThreads(
-                runner.get(), JxlResizableParallelRunnerSuggestThreads(
-                                  info.xsize, info.ysize));
+                runner.get(),
+                JxlResizableParallelRunnerSuggestThreads(info.xsize, info.ysize));
         } else if (status == JXL_DEC_COLOR_ENCODING) {
             // check for ICC profile
             deleteLoadedProfileData();
@@ -902,8 +900,7 @@ int ImageIO::loadJxl(const Glib::ustring &fname)
             size_t icc_size = 0;
 
             if (JXL_DEC_SUCCESS !=
-                JxlDecoderGetICCProfileSize(dec.get(), &format,
-                                            _PROFILE_, &icc_size)) {
+                JxlDecoderGetICCProfileSize(dec.get(), _PROFILE_, &icc_size)) {
                 g_printerr("Warning: JxlDecoderGetICCProfileSize failed\n");
             }
 
@@ -911,7 +908,7 @@ int ImageIO::loadJxl(const Glib::ustring &fname)
                 icc_profile.resize(icc_size);
                 if (JXL_DEC_SUCCESS !=
                     JxlDecoderGetColorAsICCProfile(
-                        dec.get(), &format, _PROFILE_,
+                        dec.get(), _PROFILE_,
                         icc_profile.data(), icc_profile.size())) {
                     g_printerr(
                         "Warning: JxlDecoderGetColorAsICCProfile failed\n");
@@ -924,14 +921,15 @@ int ImageIO::loadJxl(const Glib::ustring &fname)
             }
         } else if (status == JXL_DEC_NEED_IMAGE_OUT_BUFFER) {
             format.data_type = JXL_TYPE_FLOAT;
-            if (JXL_DEC_SUCCESS != JxlDecoderImageOutBufferSize(
-                                       dec.get(), &format, &buffer_size)) {
+
+            if (JXL_DEC_SUCCESS !=
+                    JxlDecoderImageOutBufferSize(dec.get(), &format, &buffer_size)) {
                 g_printerr("Error: JxlDecoderImageOutBufferSize failed\n");
                 return IMIO_READERROR;
             }
+
             buffer = g_malloc(buffer_size);
-            if (JXL_DEC_SUCCESS != JxlDecoderSetImageOutBuffer(dec.get(), &format,
-                                            buffer, buffer_size)) {
+            if (JXL_DEC_SUCCESS != JxlDecoderSetImageOutBuffer(dec.get(), &format, buffer, buffer_size)) {
                 g_printerr("Error: JxlDecoderSetImageOutBuffer failed\n");
                 g_free(buffer);
                 return IMIO_READERROR;
