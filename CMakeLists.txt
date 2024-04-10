@@ -247,7 +247,7 @@ set(TCMALLOC_LIB_DIR
     ""
     CACHE PATH "Custom path for the tcmalloc library")
 
-set(WITH_JXL AUTO CACHE STRING "Build with JPEG XL support")
+set(WITH_JXL "AUTO" CACHE STRING "Build with JPEG XL support")
 set_property(CACHE WITH_JXL PROPERTY STRINGS AUTO ON OFF)
 
 # Set installation directories:
@@ -556,13 +556,13 @@ if(WITH_SYSTEM_KLT)
 endif()
 
 set(JXL_LIBS "libjxl libjxl_threads")
-if(WITH_JXL)
+if(WITH_JXL AND NOT WITH_JXL STREQUAL "AUTO")
     pkg_check_modules(JXL REQUIRED IMPORTED_TARGET ${JXL_LIBS})
 else()
     pkg_check_modules(JXL IMPORTED_TARGET ${JXL_LIBS})
 endif()
 if(JXL_FOUND)
-    if(WITH_JXL OR WITH_JXL STREQUAL AUTO)
+    if(WITH_JXL OR WITH_JXL STREQUAL "AUTO")
         add_definitions(-DLIBJXL)
     else()
         message(STATUS "  JXL support disabled by WITH_JXL = ${WITH_JXL}")
