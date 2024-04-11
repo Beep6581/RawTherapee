@@ -900,16 +900,28 @@ int ImageIO::loadJxl(const Glib::ustring &fname)
             size_t icc_size = 0;
 
             if (JXL_DEC_SUCCESS !=
-                JxlDecoderGetICCProfileSize(dec.get(), _PROFILE_, &icc_size)) {
+#if JPEGXL_NUMERIC_VERSION < JPEGXL_COMPUTE_NUMERIC_VERSION(0,8,0)
+                JxlDecoderGetICCProfileSize(dec.get(), &format, _PROFILE_, &icc_size)
+#else
+                JxlDecoderGetICCProfileSize(dec.get(), _PROFILE_, &icc_size)
+#endif
+            ) {
                 g_printerr("Warning: JxlDecoderGetICCProfileSize failed\n");
             }
 
             if (icc_size > 0) {
                 icc_profile.resize(icc_size);
                 if (JXL_DEC_SUCCESS !=
+#if JPEGXL_NUMERIC_VERSION < JPEGXL_COMPUTE_NUMERIC_VERSION(0,8,0)
+                    JxlDecoderGetColorAsICCProfile(
+                        dec.get(), &format, _PROFILE_,
+                        icc_profile.data(), icc_profile.size())
+#else
                     JxlDecoderGetColorAsICCProfile(
                         dec.get(), _PROFILE_,
-                        icc_profile.data(), icc_profile.size())) {
+                        icc_profile.data(), icc_profile.size())
+#endif
+                ) {
                     g_printerr(
                         "Warning: JxlDecoderGetColorAsICCProfile failed\n");
                 } else {
