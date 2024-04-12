@@ -7,6 +7,7 @@
 #007 2014-02-12 Kostia (Kildor) Romanov <kromanov@gmail.com>
 #008 2018-02-10 Kostia (Kildor) Romanov <kromanov@gmail.com>
 #009 2018-12-13 Kostia (Kildor) Romanov <kromanov@gmail.com>
+#010 2024-04-12 Ilya <nifed5002@rambler.ru>
 #100
 #101 @LANGUAGE_DISPLAY_NAME=Русский
 
@@ -1432,223 +1433,223 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 
 !CURVEEDITOR_AXIS_LEFT_TAN;LT:
 !CURVEEDITOR_AXIS_RIGHT_TAN;RT:
-!CURVEEDITOR_CATMULLROM;Flexible
-!CURVEEDITOR_EDITPOINT_HINT;Enable edition of node in/out values.\n\nRight-click on a node to select it.\nRight-click on empty space to de-select the node.
-!EDIT_OBJECT_TOOLTIP;Displays a widget on the preview window which lets you adjust this tool.
-!EDIT_PIPETTE_TOOLTIP;To add an adjustment point to the curve, hold the Ctrl key while left-clicking the desired spot in the image preview.\nTo adjust the point, hold the Ctrl key while left-clicking the corresponding area in the preview, then let go of Ctrl (unless you desire fine control) and while still holding the left mouse button move the mouse up or down to move that point up or down in the curve.
-!ERROR_MSG_METADATA_VALUE;Metadata: error setting %1 to %2
-!EXIFFILTER_PATH;File path
-!EXIFPANEL_ACTIVATE_ALL_HINT;Select all tags
-!EXIFPANEL_ACTIVATE_NONE_HINT;Unselect all tags
-!EXIFPANEL_BASIC_GROUP;Basic
-!EXIFPANEL_VALUE_NOT_SHOWN;Not shown
-!EXPORT_BYPASS;Processing steps to bypass
-!EXPORT_BYPASS_EQUALIZER;Bypass Wavelet Levels
-!EXPORT_PIPELINE;Processing pipeline
-!EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
-!EXPORT_USE_FAST_PIPELINE_TOOLTIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
-!EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
-!FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply 'find' keywords.
-!FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
-!FILEBROWSER_CACHECLEARFROMPARTIAL;Clear all except cached profiles
-!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to <b>permanently</b> delete all <b>%1</b> files in trash?
-!FILEBROWSER_DELETEDIALOG_SELECTED;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files?
-!FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files, <b>including</b> a queue-processed version?
-!FILEBROWSER_EMPTYTRASHHINT;<b>Permanently</b> delete all files in trash.
-!FILEBROWSER_POPUPINSPECT;Inspect
-!FILEBROWSER_POPUPREMOVE;Delete permanently
-!FILEBROWSER_POPUPREMOVEINCLPROC;Delete permanently, including queue-processed version
-!FILEBROWSER_POPUPSORTBY;Sort Files
-!FILEBROWSER_SHOWNOTTRASHHINT;Show only images not in trash.
-!FILEBROWSER_SHOWORIGINALHINT;Show only original images.\n\nWhen several images exist with the same filename but different extensions, the one considered original is the one whose extension is nearest the top of the parsed extensions list in Preferences > File Browser > Parsed Extensions.
-!FILECHOOSER_FILTER_EXECUTABLE;Executable files
-!FILECHOOSER_FILTER_PP;Processing profiles
-!FILECHOOSER_FILTER_SAME;Same format as current photo
-!GENERAL_DELETE_ALL;Delete all
-!GENERAL_EDIT;Edit
-!GENERAL_HELP;Help
-!GENERAL_OTHER;Other
-!GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
-!HISTOGRAM_TOOLTIP_CROSSHAIR;Show/Hide indicator crosshair.
-!HISTOGRAM_TOOLTIP_MODE;Toggle between linear, log-linear and log-log scaling of the histogram.
-!HISTOGRAM_TOOLTIP_SHOW_OPTIONS;Toggle visibility of the scope option buttons.
-!HISTOGRAM_TOOLTIP_TRACE_BRIGHTNESS;Adjust scope brightness.
-!HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM;Histogram
-!HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM_RAW;Raw Histogram
-!HISTOGRAM_TOOLTIP_TYPE_PARADE;RGB Parade
-!HISTOGRAM_TOOLTIP_TYPE_VECTORSCOPE_HC;Hue-Chroma Vectorscope
-!HISTOGRAM_TOOLTIP_TYPE_VECTORSCOPE_HS;Hue-Saturation Vectorscope
-!HISTOGRAM_TOOLTIP_TYPE_WAVEFORM;Waveform
+CURVEEDITOR_CATMULLROM;Гибкость
+CURVEEDITOR_EDITPOINT_HINT;Включить редактирование значений входа/выхода значений.\n\nЩелкните правой кнопкой мыши узел, чтобы выбрать его.\nЩелкните правой кнопкой мыши пустое место, чтобы отменить выбор значения.
+EDIT_OBJECT_TOOLTIP;Отображает виджет в окне предварительного просмотра, который позволяет настроить этот инструмент.
+EDIT_PIPETTE_TOOLTIP;Чтобы добавить точку корректировки к кривой, удерживайте клавишу Ctrl, щелкнув левой кнопкой мыши нужное место в предварительном просмотре изображения.\nЧтобы отрегулировать точку, удерживайте клавишу Ctrl, щелкнув левой кнопкой мыши соответствующую область в предварительном просмотре, затем отпустите кнопку Ctrl (если вам не нужен точный контроль) и, удерживая левую кнопку мыши, переместите мышь вверх или вниз, чтобы переместить эту точку вверх или вниз по кривой.
+ERROR_MSG_METADATA_VALUE;Метаданные: ошибки настройки %1 на %2
+EXIFFILTER_PATH;Путь к файлу
+EXIFPANEL_ACTIVATE_ALL_HINT;Выбрать все тэги
+EXIFPANEL_ACTIVATE_NONE_HINT;Отменить все тэги
+EXIFPANEL_BASIC_GROUP;Основа
+EXIFPANEL_VALUE_NOT_SHOWN;Не показывать
+EXPORT_BYPASS;Этапы обработки для обхода
+EXPORT_BYPASS_EQUALIZER;Обход уровней вейвлета
+EXPORT_PIPELINE;Конвейер обработки
+EXPORT_USE_FAST_PIPELINE;Выделенный (полная обработка изображения с измененным размером)
+EXPORT_USE_FAST_PIPELINE_TOOLTIP;Используйте специальный конвейер обработки изображений в режиме быстрого экспорта, в котором скорость сочетается с качеством. Изменение размера изображения выполняется как можно раньше, а не в конце, как в обычном конвейере. Ускорение может быть значительным, но будьте готовы увидеть артефакты и общее ухудшение качества вывода.
+EXPORT_USE_NORMAL_PIPELINE;Стандартный (пропустить некоторые шаги, изменить размер в конце)
+FILEBROWSER_BROWSEPATHBUTTONHINT;Нажмите, чтобы открыть указанный путь, перезагрузить папку и применить ключевые слова «найти».
+FILEBROWSER_CACHECLEARFROMFULL;Очистить все включенные кэшированные профили
+FILEBROWSER_CACHECLEARFROMPARTIAL;Очистить все кроме кэшированных профилей
+FILEBROWSER_DELETEDIALOG_ALL;Вы уверены, что хотите <b>навсегда</b> удалить все файлы <b>%1</b> из корзины?
+FILEBROWSER_DELETEDIALOG_SELECTED;Вы уверены, что хотите <b>навсегда</b> удалить выбранные файлы <b>%1</b>?
+FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Вы уверены, что хотите <b>навсегда</b> удалить выбранные файлы <b>%1</b>, <b>включая</b> версию, обработанную в очереди?
+FILEBROWSER_EMPTYTRASHHINT;<b>Навсегда</b> удалить все файлы из корзины.
+FILEBROWSER_POPUPINSPECT;Осмотреть
+FILEBROWSER_POPUPREMOVE;Удалить навсегда
+FILEBROWSER_POPUPREMOVEINCLPROC;Удалить навсегда, включая версию, обработанную в очереди
+FILEBROWSER_POPUPSORTBY;Сортировать файлы
+FILEBROWSER_SHOWNOTTRASHHINT;Показывать только изоброжения не в корзине
+FILEBROWSER_SHOWORIGINALHINT;Показывать только исходные изображения.\n\nЕсли существует несколько изображений с одинаковым именем файла, но с разными расширениями, оригинальным считается то, расширение которого находится ближе всего к началу списка проанализированных расширений в разделе «Настройки» > «Браузер файлов» > «Проанализированные расширения».
+FILECHOOSER_FILTER_EXECUTABLE;Исполнямые файлы
+FILECHOOSER_FILTER_PP;Обработка профилей
+FILECHOOSER_FILTER_SAME;Тот же формат, как на этом изоброжении
+GENERAL_DELETE_ALL;Удалить все
+GENERAL_EDIT;Редактировать
+GENERAL_HELP;Справка
+GENERAL_OTHER;Прочее
+GIMP_PLUGIN_INFO;Добро пожаловать в плагин RawTherapee GIMP!\nПосле завершения редактирования просто закройте главное окно RawTherapee, и изображение будет автоматически импортировано в GIMP.
+HISTOGRAM_TOOLTIP_CROSSHAIR;Показать/Скрыть перекрестие индикатора.
+HISTOGRAM_TOOLTIP_MODE;Переключение между линейным, лог-линейным и лог-логарифмическим масштабированием гистограммы.
+HISTOGRAM_TOOLTIP_SHOW_OPTIONS;Переключить видимость кнопок выбора области.
+HISTOGRAM_TOOLTIP_TRACE_BRIGHTNESS;Отрегулируйте яркость прицела.
+HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM;Гистограмма
+HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM_RAW;Необработанная гистограмма
+HISTOGRAM_TOOLTIP_TYPE_PARADE;RGB-парад
+HISTOGRAM_TOOLTIP_TYPE_VECTORSCOPE_HC;Вектороскоп Hue-Chroma
+HISTOGRAM_TOOLTIP_TYPE_VECTORSCOPE_HS;Вектороскоп Hue-Saturation
+HISTOGRAM_TOOLTIP_TYPE_WAVEFORM;Волна
 !HISTORY_MSG_235;B&amp;W - CM - Auto
 !HISTORY_MSG_237;B&amp;W - CM
-!HISTORY_MSG_252;CbDL - Skin tar/prot
-!HISTORY_MSG_253;CbDL - Reduce artifacts
-!HISTORY_MSG_254;CbDL - Skin hue
-!HISTORY_MSG_255;NR - Median filter
-!HISTORY_MSG_256;NR - Median - Type
-!HISTORY_MSG_257;Color Toning
-!HISTORY_MSG_258;CT - Color curve
-!HISTORY_MSG_259;CT - Opacity curve
-!HISTORY_MSG_260;CT - a*[b*] opacity
-!HISTORY_MSG_261;CT - Method
-!HISTORY_MSG_262;CT - b* opacity
-!HISTORY_MSG_263;CT - Shadows - Red
-!HISTORY_MSG_264;CT - Shadows - Green
-!HISTORY_MSG_265;CT - Shadows - Blue
-!HISTORY_MSG_266;CT - Mid - Red
-!HISTORY_MSG_267;CT - Mid - Green
-!HISTORY_MSG_268;CT - Mid - Blue
-!HISTORY_MSG_269;CT - High - Red
-!HISTORY_MSG_270;CT - High - Green
-!HISTORY_MSG_271;CT - High - Blue
-!HISTORY_MSG_272;CT - Balance
-!HISTORY_MSG_273;CT - Color Balance SMH
-!HISTORY_MSG_276;CT - Opacity
-!HISTORY_MSG_278;CT - Preserve luminance
-!HISTORY_MSG_279;CT - Shadows
-!HISTORY_MSG_280;CT - Highlights
+HISTORY_MSG_252;CbDL - Кожа смола/защита
+HISTORY_MSG_253;CbDL - Устранить дефекты
+HISTORY_MSG_254;CbDL - Тон кожи
+HISTORY_MSG_255;NR - Фильтр медианы
+HISTORY_MSG_256;NR - Тип - Медиана
+HISTORY_MSG_257;Цветное тонирование
+HISTORY_MSG_258;CT - Цветовая кривая
+HISTORY_MSG_259;CT - Кривая непрозрачности
+HISTORY_MSG_260;CT - a*[b*] кривая
+HISTORY_MSG_261;CT - Метод
+HISTORY_MSG_262;CT - b* кривая
+HISTORY_MSG_263;CT - Тени - Красные
+HISTORY_MSG_264;CT - Тени - Зеленые
+HISTORY_MSG_265;CT - Тени - Синие
+HISTORY_MSG_266;CT - Средний – Красный
+HISTORY_MSG_267;CT - Средний – Зеленый
+HISTORY_MSG_268;CT - Средний – Синий
+HISTORY_MSG_269;CT - Высокий - Красный
+HISTORY_MSG_270;CT - Высокий - Зеленый
+HISTORY_MSG_271;CT - Высокий - Синий
+HISTORY_MSG_272;CT - Баланс
+HISTORY_MSG_273;CT - Цветовой Баланс SMH
+HISTORY_MSG_276;CT - Кривая
+HISTORY_MSG_278;CT - Сохранение яркости
+HISTORY_MSG_279;CT - Тени
+HISTORY_MSG_280;CT - Высокие
 !HISTORY_MSG_281;CT - Sat. strength
 !HISTORY_MSG_282;CT - Sat. threshold
-!HISTORY_MSG_283;CT - Strength
-!HISTORY_MSG_284;CT - Auto sat. protection
-!HISTORY_MSG_285;NR - Median - Method
-!HISTORY_MSG_286;NR - Median - Type
-!HISTORY_MSG_287;NR - Median - Iterations
-!HISTORY_MSG_288;Flat-Field - Clip control
-!HISTORY_MSG_289;Flat-Field - Clip control - Auto
-!HISTORY_MSG_290;Black Level - Red
-!HISTORY_MSG_291;Black Level - Green
-!HISTORY_MSG_292;Black Level - Blue
-!HISTORY_MSG_296;NR - Luminance curve
-!HISTORY_MSG_297;NR - Mode
-!HISTORY_MSG_299;NR - Chrominance curve
-!HISTORY_MSG_301;NR - Luma control
-!HISTORY_MSG_302;NR - Chroma method
-!HISTORY_MSG_303;NR - Chroma method
-!HISTORY_MSG_304;W - Contrast levels
-!HISTORY_MSG_305;Wavelet Levels
-!HISTORY_MSG_306;W - Process
-!HISTORY_MSG_307;W - Process
-!HISTORY_MSG_308;W - Process direction
-!HISTORY_MSG_309;W - ES - Detail
-!HISTORY_MSG_310;W - Residual - Sky tar/prot
-!HISTORY_MSG_311;W - Wavelet levels
-!HISTORY_MSG_312;W - Residual - Shadows threshold
-!HISTORY_MSG_313;W - Chroma - Sat/past
-!HISTORY_MSG_314;W - Gamut - Reduce artifacts
-!HISTORY_MSG_315;W - Residual - Contrast
-!HISTORY_MSG_316;W - Gamut - Skin tar/prot
-!HISTORY_MSG_317;W - Gamut - Skin hue
-!HISTORY_MSG_318;W - Contrast - Finer levels
-!HISTORY_MSG_319;W - Contrast - Finer range
-!HISTORY_MSG_320;W - Contrast - Coarser range
-!HISTORY_MSG_321;W - Contrast - Coarser levels
-!HISTORY_MSG_322;W - Gamut - Avoid color shift
-!HISTORY_MSG_323;W - ES - Local contrast
-!HISTORY_MSG_324;W - Chroma - Pastel
-!HISTORY_MSG_325;W - Chroma - Saturated
-!HISTORY_MSG_326;W - Chroma - Method
-!HISTORY_MSG_327;W - Contrast - Apply to
-!HISTORY_MSG_328;W - Chroma - Link strength
-!HISTORY_MSG_329;W - Toning - Opacity RG
-!HISTORY_MSG_330;W - Toning - Opacity BY
-!HISTORY_MSG_331;W - Contrast levels - Extra
-!HISTORY_MSG_332;W - Tiling method
-!HISTORY_MSG_333;W - Residual - Shadows
-!HISTORY_MSG_334;W - Residual - Chroma
-!HISTORY_MSG_335;W - Residual - Highlights
-!HISTORY_MSG_336;W - Residual - Highlights threshold
-!HISTORY_MSG_337;W - Residual - Sky hue
-!HISTORY_MSG_338;W - ES - Radius
-!HISTORY_MSG_339;W - ES - Strength
-!HISTORY_MSG_340;W - Strength
-!HISTORY_MSG_341;W - Edge performance
-!HISTORY_MSG_342;W - ES - First level
-!HISTORY_MSG_343;W - Chroma levels
-!HISTORY_MSG_344;W - Meth chroma sl/cur
-!HISTORY_MSG_345;W - ES - Local contrast
-!HISTORY_MSG_346;W - ES - Local contrast method
-!HISTORY_MSG_347;W - Denoise - Level 1
-!HISTORY_MSG_348;W - Denoise - Level 2
-!HISTORY_MSG_349;W - Denoise - Level 3
-!HISTORY_MSG_350;W - ES - Edge detection
-!HISTORY_MSG_351;W - Residual - HH curve
-!HISTORY_MSG_352;W - Background
-!HISTORY_MSG_353;W - ES - Gradient sensitivity
-!HISTORY_MSG_354;W - ES - Enhanced
-!HISTORY_MSG_355;W - ES - Threshold low
-!HISTORY_MSG_356;W - ES - Threshold high
-!HISTORY_MSG_357;W - Denoise - Link with ES
-!HISTORY_MSG_358;W - Gamut - CH
-!HISTORY_MSG_359;Hot/Dead - Threshold
-!HISTORY_MSG_360;TM - Gamma
-!HISTORY_MSG_361;W - Final - Chroma balance
-!HISTORY_MSG_362;W - Residual - Compression method
-!HISTORY_MSG_363;W - Residual - Compression strength
-!HISTORY_MSG_364;W - Final - Contrast balance
-!HISTORY_MSG_365;W - Final - Delta balance
-!HISTORY_MSG_366;W - Residual - Compression gamma
-!HISTORY_MSG_367;W - Final - 'After' contrast curve
-!HISTORY_MSG_368;W - Final - Contrast balance
-!HISTORY_MSG_369;W - Final - Balance method
-!HISTORY_MSG_370;W - Final - Local contrast curve
-!HISTORY_MSG_371;Post-Resize Sharpening
-!HISTORY_MSG_372;PRS USM - Radius
-!HISTORY_MSG_373;PRS USM - Amount
-!HISTORY_MSG_374;PRS USM - Threshold
-!HISTORY_MSG_375;PRS USM - Sharpen only edges
-!HISTORY_MSG_376;PRS USM - Edge detection radius
-!HISTORY_MSG_377;PRS USM - Edge tolerance
-!HISTORY_MSG_378;PRS USM - Halo control
-!HISTORY_MSG_379;PRS USM - Halo control amount
-!HISTORY_MSG_380;PRS - Method
-!HISTORY_MSG_381;PRS RLD - Radius
-!HISTORY_MSG_382;PRS RLD - Amount
-!HISTORY_MSG_383;PRS RLD - Damping
-!HISTORY_MSG_384;PRS RLD - Iterations
-!HISTORY_MSG_385;W - Residual - Color balance
-!HISTORY_MSG_386;W - Residual - CB green high
-!HISTORY_MSG_387;W - Residual - CB blue high
-!HISTORY_MSG_388;W - Residual - CB green mid
-!HISTORY_MSG_389;W - Residual - CB blue mid
-!HISTORY_MSG_390;W - Residual - CB green low
-!HISTORY_MSG_391;W - Residual - CB blue low
-!HISTORY_MSG_392;W - Residual - Color balance
-!HISTORY_MSG_393;DCP - Look table
-!HISTORY_MSG_394;DCP - Baseline exposure
-!HISTORY_MSG_395;DCP - Base table
-!HISTORY_MSG_396;W - Contrast sub-tool
-!HISTORY_MSG_397;W - Chroma sub-tool
-!HISTORY_MSG_398;W - ES sub-tool
-!HISTORY_MSG_399;W - Residual sub-tool
-!HISTORY_MSG_400;W - Final sub-tool
-!HISTORY_MSG_401;W - Toning sub-tool
-!HISTORY_MSG_402;W - Denoise sub-tool
-!HISTORY_MSG_403;W - ES - Edge sensitivity
-!HISTORY_MSG_404;W - ES - Base amplification
-!HISTORY_MSG_405;W - Denoise - Level 4
-!HISTORY_MSG_406;W - ES - Neighboring pixels
-!HISTORY_MSG_407;Retinex - Method
-!HISTORY_MSG_408;Retinex - Radius
-!HISTORY_MSG_410;Retinex - Offset
-!HISTORY_MSG_411;Retinex - Strength
-!HISTORY_MSG_412;Retinex - Gaussian gradient
-!HISTORY_MSG_413;Retinex - Contrast
-!HISTORY_MSG_414;Retinex - Histogram - Lab
-!HISTORY_MSG_415;Retinex - Transmission
-!HISTORY_MSG_416;Retinex
-!HISTORY_MSG_417;Retinex - Transmission median
-!HISTORY_MSG_418;Retinex - Threshold
-!HISTORY_MSG_419;Retinex - Color space
-!HISTORY_MSG_420;Retinex - Histogram - HSL
-!HISTORY_MSG_421;Retinex - Gamma
-!HISTORY_MSG_422;Retinex - Gamma
-!HISTORY_MSG_423;Retinex - Gamma slope
-!HISTORY_MSG_424;Retinex - HL threshold
+HISTORY_MSG_283;CT - Сила
+HISTORY_MSG_284;CT - Авто sat. защита
+HISTORY_MSG_285;NR - Медиана — Метод
+HISTORY_MSG_286;NR - Медиана - Тип
+HISTORY_MSG_287;NR - Медиана - Итерации
+HISTORY_MSG_288;Flat-Field — управление клипом
+HISTORY_MSG_289;Flat-Field - Управление клипом — Авто
+HISTORY_MSG_290;Уровень Черного — Красный
+HISTORY_MSG_291;Уровень Черного — Зеленый
+HISTORY_MSG_292;Уровень Черного — Синий
+HISTORY_MSG_296;NR - Кривая яркости
+HISTORY_MSG_297;NR - Режим
+HISTORY_MSG_299;NR - Кривая цветности
+HISTORY_MSG_301;NR - Управление яркостью
+HISTORY_MSG_302;NR - Метод цветности
+HISTORY_MSG_303;NR - Метод цветности
+HISTORY_MSG_304;W - Уровни контрастности
+HISTORY_MSG_305;Вейвлет-уровни
+HISTORY_MSG_306;W - Прогресс
+HISTORY_MSG_307;W - Прогресс
+HISTORY_MSG_308;W - Направление процесса
+HISTORY_MSG_309;W - ES - Детали
+HISTORY_MSG_310;W - Остаток - Небесная смола/защита
+HISTORY_MSG_311;W - Вейвлет-уровни
+HISTORY_MSG_312;W - Остаток — порог теней
+HISTORY_MSG_313;W - Цветность - Sat/past
+HISTORY_MSG_314;W - Гамма — уменьшение артефактов
+HISTORY_MSG_315;W - Остаток - Контраст
+HISTORY_MSG_316;W - Гамма - Skin tar/prot
+HISTORY_MSG_317;W - Гамма - Тон кожи
+HISTORY_MSG_318;W - Контрастность — более тонкие уровни
+HISTORY_MSG_319;W - Контрастность — более тонкий диапазон
+HISTORY_MSG_320;W - Контрастность — более грубый диапазон
+HISTORY_MSG_321;W - Контрастность — более грубые уровни
+HISTORY_MSG_322;W - Гамма – Избегайте смещения цвета
+HISTORY_MSG_323;W - ES - Локальный контраст
+HISTORY_MSG_324;W - Цветность - Пастель
+HISTORY_MSG_325;W - Цветность – Насыщенная
+HISTORY_MSG_326;W - Цветность — Метод
+HISTORY_MSG_327;W - Контраст – Применить к
+HISTORY_MSG_328;W - Цветность – сила связи
+HISTORY_MSG_329;W - Тонирование - Непрозрачность RG
+HISTORY_MSG_330;W - Тонирование - Непрозрачность BY
+HISTORY_MSG_331;W - Уровни контрастности – Экстра
+HISTORY_MSG_332;W - Метод укладки плитки
+HISTORY_MSG_333;W - Остаток – Тени
+HISTORY_MSG_334;W - Остаток – цветность
+HISTORY_MSG_335;W - Остаток – Высокие
+HISTORY_MSG_336;W - Остаток — порог высоких
+HISTORY_MSG_337;W - Остаток – Небесный оттенок
+HISTORY_MSG_338;W - ES - Радиус
+HISTORY_MSG_339;W - ES - Длина
+HISTORY_MSG_340;W - Длина
+HISTORY_MSG_341;W - Пограничная производительность
+HISTORY_MSG_342;W - ES - Первый уроень
+HISTORY_MSG_343;W - Уровни цветности
+HISTORY_MSG_344;W - Мет цветность sl/cur
+HISTORY_MSG_345;W - ES - Локальный контраст
+HISTORY_MSG_346;W - ES - Локальный контрастный метод
+HISTORY_MSG_347;W - Шумоподавление - Уровень 1
+HISTORY_MSG_348;W - Шумоподавление - Уровень 2
+HISTORY_MSG_349;W - Шумоподавление - Уровень 3
+HISTORY_MSG_350;W - ES - Обнаружение краёв
+HISTORY_MSG_351;W - Остаток - кривая HH
+HISTORY_MSG_352;W - Фон
+HISTORY_MSG_353;W - ES - Градиентная чувствительность
+HISTORY_MSG_354;W - ES - Повышенная
+HISTORY_MSG_355;W - ES - Порг низких
+HISTORY_MSG_356;W - ES - Порог высоких
+HISTORY_MSG_357;W - Denoise - Связь с ES
+HISTORY_MSG_358;W - Гамма – CH
+HISTORY_MSG_359;Горячий/Мертвый – Порог
+HISTORY_MSG_360;TM - Гамма
+HISTORY_MSG_361;W - Финал – баланс цветности
+HISTORY_MSG_362;W - Остаток — метод сжатия
+HISTORY_MSG_363;W - Остаток - прочность на сжатие
+HISTORY_MSG_364;W - Финал - Баланс контраста
+HISTORY_MSG_365;W - Финал - Баланс Дельты
+HISTORY_MSG_366;W - Остаток – Гамма сжатия
+HISTORY_MSG_367;W - Финал – кривая контрастности «После»
+HISTORY_MSG_368;W - Финал — контрастный баланс
+HISTORY_MSG_369;W - Финал — метод баланса
+HISTORY_MSG_370;W - Финал – кривая локального контраста
+HISTORY_MSG_371;Повышение резкости после изменения размера
+HISTORY_MSG_372;PRS USM - Радиус
+HISTORY_MSG_373;PRS USM - Количесво
+HISTORY_MSG_374;PRS USM - Порг
+HISTORY_MSG_375;PRS USM - Заточить только края
+HISTORY_MSG_376;PRS USM - Радиус обнаружения края
+HISTORY_MSG_377;PRS USM - Допуск кромки
+HISTORY_MSG_378;PRS USM - Гало-контроль
+HISTORY_MSG_379;PRS USM - Контрольная сумма Halo
+HISTORY_MSG_380;PRS - Метод
+HISTORY_MSG_381;PRS RLD - Радиус
+HISTORY_MSG_382;PRS RLD - Количесво
+HISTORY_MSG_383;PRS RLD - Демпфирование
+HISTORY_MSG_384;PRS RLD - Итерации
+HISTORY_MSG_385;W - Остаток — Цветовой баланс
+HISTORY_MSG_386;W - Остаток - CB зеленый максимум
+HISTORY_MSG_387;W - Остаток - CB синий максимум
+HISTORY_MSG_388;W - Остаток - CB зеленый средний
+HISTORY_MSG_389;W - Остаток - CB синий средний
+HISTORY_MSG_390;W - Остаток – зеленый минимум CB
+HISTORY_MSG_391;W - Остаток - CB синий низкий
+HISTORY_MSG_392;W - Остаток — Цветовой баланс
+HISTORY_MSG_393;DCP - Просмотр таблицы
+HISTORY_MSG_394;DCP - Базовое воздействие
+HISTORY_MSG_395;DCP - Базовая таблица
+HISTORY_MSG_396;W - Дополнительный инструмент «Контраст»
+HISTORY_MSG_397;W - Дополнительный инструмент «Цветность»
+HISTORY_MSG_398;W - Дополнительный инструмент ES
+HISTORY_MSG_399;W - Остаточный вспомогательный инструмент
+HISTORY_MSG_400;W - Последний подинструмент
+HISTORY_MSG_401;W - Дополнительный инструмент для тонирования
+HISTORY_MSG_402;W - Дополнительный инструмент шумоподавления
+HISTORY_MSG_403;W - ES - Краевая чувствительность
+HISTORY_MSG_404;W - ES - Базовое усиление
+HISTORY_MSG_405;W - Шумоподавление - Уровень 4
+HISTORY_MSG_406;W - ES - Соседние пиксели
+HISTORY_MSG_407;Ретинекс – Метод
+HISTORY_MSG_408;Ретинекс - Радиус
+HISTORY_MSG_410;Ретинекс - Смещение
+HISTORY_MSG_411;Ретинекс - Сила
+HISTORY_MSG_412;Ретинекс - Гауссов градиент
+HISTORY_MSG_413;Ретинекс - Контраст
+HISTORY_MSG_414;Ретинекс - Гистограмма - Лаборатория
+HISTORY_MSG_415;Ретинекс - Трансмиссия
+HISTORY_MSG_416;Ретинекс
+HISTORY_MSG_417;Ретинекс – Медиана передачи
+HISTORY_MSG_418;Ретинекс - Порог
+HISTORY_MSG_419;Retinex — Цветовое пространство
+HISTORY_MSG_420;Retinex - Гистограмма - HSL
+HISTORY_MSG_421;Ретинекс - Гамма
+HISTORY_MSG_422;Ретинекс - Гамма
+HISTORY_MSG_423;Ретинекс - Гамма-наклон
+HISTORY_MSG_424;Ретинекс - порог HL
 !HISTORY_MSG_425;--unused--
-!HISTORY_MSG_426;Retinex - Hue equalizer
-!HISTORY_MSG_427;Output rendering intent
-!HISTORY_MSG_428;Monitor rendering intent
+HISTORY_MSG_426;Retinex — эквалайзер оттенков
+HISTORY_MSG_427;Цель рендеринга вывода
+HISTORY_MSG_428;Мониторинг намерения рендеринга
 !HISTORY_MSG_429;Retinex - Iterations
 !HISTORY_MSG_430;Retinex - Transmission gradient
 !HISTORY_MSG_431;Retinex - Strength gradient
