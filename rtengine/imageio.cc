@@ -285,6 +285,7 @@ int ImageIO::loadPNG  (const Glib::ustring &fname)
 
     if (png_get_valid(png, info, PNG_INFO_tRNS)) {
         png_set_tRNS_to_alpha(png);
+        png_set_strip_alpha(png);
     }
 
     if (color_type & PNG_COLOR_MASK_ALPHA) {
