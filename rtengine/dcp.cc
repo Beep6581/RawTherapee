@@ -1173,7 +1173,9 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
 
     // Color Matrix (one is always there)
     if (!md.find(TAG_KEY_COLOR_MATRIX_1)) {
-        std::cerr << "DCP '" << filename << "' is missing 'ColorMatrix1'. Skipped." << std::endl;
+        if (settings->verbose) {
+            std::cerr << "DCP '" << filename.c_str() << "' is missing 'ColorMatrix1'. Skipped." << std::endl;
+        }
         fclose(file);
         return;
     }
