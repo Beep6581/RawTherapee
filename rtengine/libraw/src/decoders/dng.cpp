@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2021 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
  *
  LibRaw uses code from dcraw.c -- Dave Coffin's raw photo decoder,
  dcraw.c is copyright 1997-2018 by Dave Coffin, dcoffin a cybercom o net.
@@ -22,6 +22,11 @@ void LibRaw::vc5_dng_load_raw_placeholder()
 {
     // placeholder only, real decoding implemented in GPR SDK
     throw LIBRAW_EXCEPTION_DECODE_RAW;
+}
+void LibRaw::jxl_dng_load_raw_placeholder()
+{
+  // placeholder only, real decoding implemented in DNG SDK
+  throw LIBRAW_EXCEPTION_DECODE_RAW;
 }
 
 void LibRaw::adobe_copy_pixel(unsigned row, unsigned col, ushort **rp)

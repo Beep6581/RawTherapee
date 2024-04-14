@@ -1,6 +1,6 @@
 /* -*- C++ -*-
  * File: libraw_internal.h
- * Copyright 2008-2021 LibRaw LLC (info@libraw.org)
+ * Copyright 2008-2024 LibRaw LLC (info@libraw.org)
  * Created: Sat Mar  8 , 2008
  *
  * LibRaw internal data structures (not visible outside)
@@ -150,6 +150,22 @@ typedef struct
   INT64  *chunk_offsets;
 } crx_data_header_t;
 
+typedef struct 
+{
+	uint32_t tag39[6];
+	uint16_t tag3A[6];
+	uint16_t tag3B;
+	uint16_t initial[4];
+	uint16_t tag40a[17], tag40b[17], tag41[17];
+	uint16_t stripe_count; // 0x42
+	uint16_t tag43;
+	INT64	 stripe_offsets[5]; //0x44
+	uint16_t stripe_left[5]; // 0x45
+	uint32_t stripe_compressed_size[5]; //0x46
+	uint16_t stripe_width[5]; //0x47
+	uint16_t stripe_height[5];
+} pana8_tags_t;
+
 typedef struct
 {
   short order;
@@ -177,6 +193,7 @@ typedef struct
   int fuji_total_lines, fuji_total_blocks, fuji_block_width, fuji_bits,
       fuji_raw_type, fuji_lossless;
   int pana_encoding, pana_bpp;
+  pana8_tags_t pana8;
   crx_data_header_t crx_header[LIBRAW_CRXTRACKS_MAXCOUNT];
   int crx_track_selected;
   int crx_track_count;

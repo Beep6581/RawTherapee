@@ -15,8 +15,14 @@ To build LibRaw with DNG SDK specify USE_DNGSDK in defines and adjust
 include/linker path settings to point to DNG SDK's include and library folders.
 
 DNG SDK Version compatibility:
- - Since LibRaw 0.20, DNG SDK 1.4 is required (DNG SDK 1.5 may work too, but 
-   have not tested w/ LibRaw).
+
+ - DNG SDK 1.6 and 1.7 are tested with LibRaw newer then 0.21
+   If you want to use LibRaw with Modern DNG files please use:
+     -- DNG SDK 1.7 for JpegXL compressed files
+     -- DNG SDK 1.6+ to access Enhanced DNG frames
+
+ - DNG SDK 1.5 may work too, but  have not tested w/ LibRaw.
+ - Since LibRaw 0.20, DNG SDK 1.4 or newer is required 
  - There are several DNG SDK 1.4 versions circulated, the oldest known is 
    dated May 2012, you'll need the last one (dated June 2015).
  - This version is available from Adobe site: 

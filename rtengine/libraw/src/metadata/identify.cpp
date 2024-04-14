@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2021 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
  *
  LibRaw uses code from dcraw.c -- Dave Coffin's raw photo decoder,
  dcraw.c is copyright 1997-2018 by Dave Coffin, dcoffin a cybercom o net.
@@ -42,8 +42,8 @@ static const struct
     {LIBRAW_CAMERAMAKER_Nikon,          "Nikon"},
     {LIBRAW_CAMERAMAKER_Nokia,          "Nokia"},
     {LIBRAW_CAMERAMAKER_Olympus,        "Olympus"},
-    {LIBRAW_CAMERAMAKER_OmDigital,		"OM Digital"},
-    {LIBRAW_CAMERAMAKER_Ricoh,			"Ricoh"},
+    {LIBRAW_CAMERAMAKER_OmDigital,      "OM Digital"},
+    {LIBRAW_CAMERAMAKER_Ricoh,          "Ricoh"},
     {LIBRAW_CAMERAMAKER_Pentax,         "Pentax"},
     {LIBRAW_CAMERAMAKER_PhaseOne,       "Phase One"},
     {LIBRAW_CAMERAMAKER_PhaseOne,       "PhaseOne"},
@@ -130,50 +130,6 @@ const char *LibRaw::cameramakeridx2maker(unsigned maker)
 }
 
 
-#ifdef LIBRAW_OLD_VIDEO_SUPPORT
-void LibRaw::fixupArri()
-{
-    struct alist_t
-    {
-        const char *a_model;
-        const char *a_software;
-        ushort a_width,a_height;
-        int a_black;
-        unsigned a_filters;
-        float a_aspect;
-    }
-    alist[] =
-    {
-        {"ALEXA65", "Alexa65  XT", 6560 ,3100, 256,0x49494949,1.f},
-
-        {"ALEXALF", "Alexa LF Plus W", 3840 ,2160, 256,0x49494949,1.0f },
-        {"ALEXALF", "Alexa LF Plus W", 4448 ,1856, 256,0x49494949,0.75f },
-        {"ALEXALF", "Alexa LF Plus W", 4448 ,3096, 256,0x49494949,1.f },
-
-        {"ALEXA", "Alexa Plus 4:3 SXT", 2880 ,1620, 256,0x61616161,.75f},
-        {"ALEXA", "Alexa Plus 4:3 SXT", 3168 ,1782, 256,0x61616161,0.75f},
-        {"ALEXA", "Alexa Plus 4:3 SXT", 3424 ,2202, 256,0x61616161,1.f},
-        {"ALEXA", "Alexa Plus 4:3 SXT", 2592 ,2160, 256,0x61616161,1.12f},
-
-        {"ALEXA", "Alexa Plus 4:3 XT", 2592 ,2160, 256,0x61616161,1.12f},
-        {"ALEXA", "Alexa Plus 4:3 XT", 2880 ,2160, 256,0x61616161,1.f},
-        {"ALEXA", "Alexa Plus 4:3 XT", 2880 ,1620, 256,0x61616161,0.75f},
-        {"ALEXA", "Alexa Plus 4:3 XT", 3424 ,2202, 256,0x61616161,1.f},
-    };
-    for(int i = 0; i < int(sizeof(alist)/sizeof(alist[0])); i++)
-        if(!strncasecmp(model,alist[i].a_model,strlen(alist[i].a_model)) && software
-            && !strncasecmp(software,alist[i].a_software,strlen(alist[i].a_software))
-            && width == alist[i].a_width && height == alist[i].a_height)
-        {
-            filters = alist[i].a_filters;
-            black = alist[i].a_black;
-            pixel_aspect = alist[i].a_aspect;
-            strcpy(model,software);
-            software[0]=0;
-            return;
-        }
-}
-#endif
 /*
    Identify which camera created this file, and set global variables
    accordingly.
@@ -208,7 +164,7 @@ void LibRaw::identify()
 	  { 4176, 3062, 96, 17, 8, 0, 0, 16, 0, 7, 0x49 }, // 19 "PowerShot SX50 HS"
 	  { 4192, 3062, 96, 17, 24, 0, 0, 16, 0, 0, 0x49 }, // 20 "PowerShot G16", "PowerShot S120"
 	  { 4312, 2876, 22, 18, 0, 2 }, // 21 "EOS 450D"
-	  { 4352, 2850, 144, 46, 0, 0 }, // 22 APS-C crop mode: "EOS R"
+	  { 4352, 2850, 144, 46, 0, 0 }, // 22 APS-C crop mode: "EOS R", "EOS Ra"
 	  { 4352, 2874, 62, 18, 0, 0 }, // 23 "EOS 1100D"
 	  { 4476, 2954, 90, 34, 0, 0 }, // 24 "EOS 5D"
 	  { 4480, 3348, 12, 10, 36, 12, 0, 0, 0, 18, 0x49 }, // 25 "PowerShot G10"
@@ -231,174 +187,175 @@ void LibRaw::identify()
 	  { 5920, 3950, 122, 80, 2, 0 }, // 42 "EOS 5D Mark III"
 	  { 6096, 4051, 76, 35, 0, 0 }, // 43 "EOS 1500D"
 	  { 6096, 4056, 72, 34, 0, 0 }, // 44 "EOS M3", "EOS 760D", "EOS 750D"
-	  { 6288, 4056, 264, 36, 0, 0 }, // 45 "EOS M5", "EOS M100", "EOS M6", "PowerShot G1 X Mark III", "EOS 80D", "EOS 800D", "EOS 77D", "EOS 200D", "EOS 250D", "EOS M50"
+	  { 6288, 4056, 264, 36, 0, 0 }, // 45 "EOS M5", "EOS M100", "EOS M6", "PowerShot G1 X Mark III", "EOS 80D", "EOS 800D", "EOS 77D", "EOS 200D", "EOS 250D", "EOS M50", "EOS R100"
 	  { 6384, 4224, 120, 44, 0, 0 }, // 46 "EOS 6D Mark II", "EOS RP"
 	  { 6880, 4544, 136, 42, 0, 0 }, // 47 "EOS 5D Mark IV"
-	  { 6888, 4546, 146, 48, 0, 0 }, // 48 "EOS R"
+	  { 6888, 4546, 146, 48, 0, 0 }, // 48 "EOS R", "EOS Ra"
 	  { 7128, 4732, 144, 72, 0, 0 }, // 49 "EOS M6 II", "EOS 90D"
 	  { 8896, 5920, 160, 64, 0, 0 }, // 50 "EOS 5DS", "EOS 5DS R"
-      { 6192, 4152, 160, 120, 0, 0}, // EOS R3
-	  { 6192, 4060, 168, 52, 24, 8, 16,48,32,0,} // EOS R10
+	  { 6192, 4152, 160, 120, 0, 0}, // EOS R3
+	  { 6192, 4060, 168, 52, 24, 8, 16,48,32,0}, // EOS R10
+	  { 6188, 4120, 154, 96, 12, 0, 16, 48, 32, 0}, // EOS R6mk2
   };
 
   static const libraw_custom_camera_t const_table[] = {
-	  { 786432, 1024, 768, 0, 0, 0, 0, 0, 0x94, 0, 0, "AVT", "F-080C" },
-	  { 1447680, 1392, 1040, 0, 0, 0, 0, 0, 0x94, 0, 0, "AVT", "F-145C" },
-	  { 1920000, 1600, 1200, 0, 0, 0, 0, 0, 0x94, 0, 0, "AVT", "F-201C" },
-	  { 5067304, 2588, 1958, 0, 0, 0, 0, 0, 0x94, 0, 0, "AVT", "F-510C" },
-	  { 5067316, 2588, 1958, 0, 0, 0, 0, 0, 0x94, 0, 0, "AVT", "F-510C", 12 },
-	  { 10134608, 2588, 1958, 0, 0, 0, 0, 9, 0x94, 0, 0, "AVT", "F-510C" },
-	  { 10134620, 2588, 1958, 0, 0, 0, 0, 9, 0x94, 0, 0, "AVT", "F-510C", 12 },
-	  { 16157136, 3272, 2469, 0, 0, 0, 0, 9, 0x94, 0, 0, "AVT", "F-810C" },
-      { 3995136, 1632, 1224, 0, 0, 0, 0, 8, 0x61, 0, 1, "AgfaPhoto", "DC-833m" },
-      { 15980544, 3264, 2448, 0, 0, 0, 0, 8, 0x61, 0, 1, "AgfaPhoto", "DC-833m" },
-	  { 9631728, 2532, 1902, 0, 0, 0, 0, 96, 0x61, 0, 0, "Alcatel", "5035D" },
-	  { 31850496, 4608, 3456, 0, 0, 0, 0, 0, 0x94, 0, 0, "GITUP", "GIT2 4:3" },
-	  { 23887872, 4608, 2592, 0, 0, 0, 0, 0, 0x94, 0, 0, "GITUP", "GIT2 16:9" },
-	  { 32257024, 4624, 3488, 8, 2, 16, 2, 0, 0x94, 0, 0, "GITUP", "GIT2P 4:3" },
-	  { 24192768, 4624, 2616, 8, 2, 16, 2, 0, 0x94, 0, 0, "GITUP", "GIT2P 16:9" },
-	  { 18016000, 4000, 2252, 0, 0, 0, 0, 0, 0x94, 0, 0, "GITUP", "G3DUO 16:9" },
+	  { 786432,   1024,  768, 0, 0,  0, 0,  0, 0x94, 0, 0, "AVT", "F-080C" },
+	  { 1447680,  1392, 1040, 0, 0,  0, 0,  0, 0x94, 0, 0, "AVT", "F-145C" },
+	  { 1920000,  1600, 1200, 0, 0,  0, 0,  0, 0x94, 0, 0, "AVT", "F-201C" },
+	  { 5067304,  2588, 1958, 0, 0,  0, 0,  0, 0x94, 0, 0, "AVT", "F-510C" },
+	  { 5067316,  2588, 1958, 0, 0,  0, 0,  0, 0x94, 0, 0, "AVT", "F-510C", 12 },
+	  { 10134608, 2588, 1958, 0, 0,  0, 0,  9, 0x94, 0, 0, "AVT", "F-510C" },
+	  { 10134620, 2588, 1958, 0, 0,  0, 0,  9, 0x94, 0, 0, "AVT", "F-510C", 12 },
+	  { 16157136, 3272, 2469, 0, 0,  0, 0,  9, 0x94, 0, 0, "AVT", "F-810C" },
+	  { 3995136,  1632, 1224, 0, 0,  0, 0,  8, 0x61, 0, 1, "AgfaPhoto", "DC-833m" },
+	  { 15980544, 3264, 2448, 0, 0,  0, 0,  8, 0x61, 0, 1, "AgfaPhoto", "DC-833m" },
+	  { 9631728,  2532, 1902, 0, 0,  0, 0, 96, 0x61, 0, 0, "Alcatel", "5035D" },
+	  { 31850496, 4608, 3456, 0, 0,  0, 0,  0, 0x94, 0, 0, "GITUP", "GIT2 4:3" },
+	  { 23887872, 4608, 2592, 0, 0,  0, 0,  0, 0x94, 0, 0, "GITUP", "GIT2 16:9" },
+	  { 32257024, 4624, 3488, 8, 2, 16, 2,  0, 0x94, 0, 0, "GITUP", "GIT2P 4:3" },
+	  { 24192768, 4624, 2616, 8, 2, 16, 2,  0, 0x94, 0, 0, "GITUP", "GIT2P 16:9" },
+	  { 18016000, 4000, 2252, 0, 0,  0, 0,  0, 0x94, 0, 0, "GITUP", "G3DUO 16:9" },
 	  //          {24000000, 4000, 3000, 0, 0, 0, 0, 0, 0x94, 0, 0, "GITUP",
       //          "G3DUO 4:3"}, // Conflict w/ Samsung WB550
 
       //   Android Raw dumps id start
       //   File Size in bytes Horizontal Res Vertical Flag then bayer order eg
       //   0x16 bbgr 0x94 rggb
-	  { 1540857, 2688, 1520, 0, 0, 0, 0, 1, 0x61, 0, 0, "Samsung", "S3" },
-	  { 2658304, 1212, 1096, 0, 0, 0, 0, 1, 0x16, 0, 0, "LG", "G3FrontMipi" },
-	  { 2842624, 1296, 1096, 0, 0, 0, 0, 1, 0x16, 0, 0, "LG", "G3FrontQCOM" },
-	  { 2969600, 1976, 1200, 0, 0, 0, 0, 1, 0x16, 0, 0, "Xiaomi", "MI3wMipi" },
-	  { 3170304, 1976, 1200, 0, 0, 0, 0, 1, 0x16, 0, 0, "Xiaomi", "MI3wQCOM" },
-	  { 3763584, 1584, 1184, 0, 0, 0, 0, 96, 0x61, 0, 0, "I_Mobile", "I_StyleQ6" },
-	  { 5107712, 2688, 1520, 0, 0, 0, 0, 1, 0x61, 0, 0, "OmniVisi", "UltraPixel1" },
-	  { 5382640, 2688, 1520, 0, 0, 0, 0, 1, 0x61, 0, 0, "OmniVisi", "UltraPixel2" },
-	  { 5664912, 2688, 1520, 0, 0, 0, 0, 1, 0x61, 0, 0, "OmniVisi", "4688" },
-	  { 5664912, 2688, 1520, 0, 0, 0, 0, 1, 0x61, 0, 0, "OmniVisi", "4688" },
-	  { 5364240, 2688, 1520, 0, 0, 0, 0, 1, 0x61, 0, 0, "OmniVisi", "4688" },
-	  { 6299648, 2592, 1944, 0, 0, 0, 0, 1, 0x16, 0, 0, "OmniVisi", "OV5648" },
-	  { 6721536, 2592, 1944, 0, 0, 0, 0, 0, 0x16, 0, 0, "OmniVisi", "OV56482" },
-	  { 6746112, 2592, 1944, 0, 0, 0, 0, 0, 0x16, 0, 0, "HTC", "OneSV" },
-	  { 9631728, 2532, 1902, 0, 0, 0, 0, 96, 0x61, 0, 0, "Sony", "5mp" },
-	  { 9830400, 2560, 1920, 0, 0, 0, 0, 96, 0x61, 0, 0, "NGM", "ForwardArt" },
-	  { 10186752, 3264, 2448, 0, 0, 0, 0, 1, 0x94, 0, 0, "Sony", "IMX219-mipi 8mp" },
-	  { 10223360, 2608, 1944, 0, 0, 0, 0, 96, 0x16, 0, 0, "Sony", "IMX" },
-	  { 10782464, 3282, 2448, 0, 0, 0, 0, 0, 0x16, 0, 0, "HTC", "MyTouch4GSlide" },
-	  { 10788864, 3282, 2448, 0, 0, 0, 0, 0, 0x16, 0, 0, "Xperia", "L" },
-	  { 15967488, 3264, 2446, 0, 0, 0, 0, 96, 0x16, 0, 0, "OmniVison", "OV8850" },
-	  { 16224256, 4208, 3082, 0, 0, 0, 0, 1, 0x16, 0, 0, "LG", "G3MipiL" },
-	  { 16424960, 4208, 3120, 0, 0, 0, 0, 1, 0x16, 0, 0, "IMX135", "MipiL" },
-	  { 17326080, 4164, 3120, 0, 0, 0, 0, 1, 0x16, 0, 0, "LG", "G3LQCom" },
-	  { 17522688, 4212, 3120, 0, 0, 0, 0, 0, 0x16, 0, 0, "Sony", "IMX135-QCOM" },
-	  { 19906560, 4608, 3456, 0, 0, 0, 0, 1, 0x16, 0, 0, "Gione", "E7mipi" },
-	  { 19976192, 5312, 2988, 0, 0, 0, 0, 1, 0x16, 0, 0, "LG", "G4" },
-	  { 20389888, 4632, 3480, 0, 0, 0, 0, 1, 0x16, 0, 0, "Xiaomi", "RedmiNote3Pro" },
-	  { 20500480, 4656, 3496, 0, 0, 0, 0, 1, 0x94, 0, 0, "Sony", "IMX298-mipi 16mp" },
-	  { 21233664, 4608, 3456, 0, 0, 0, 0, 1, 0x16, 0, 0, "Gione", "E7qcom" },
-	  { 26023936, 4192, 3104, 0, 0, 0, 0, 96, 0x94, 0, 0, "THL", "5000" },
-	  { 26257920, 4208, 3120, 0, 0, 0, 0, 96, 0x94, 0, 0, "Sony", "IMX214" },
-	  { 26357760, 4224, 3120, 0, 0, 0, 0, 96, 0x61, 0, 0, "OV", "13860" },
-	  { 41312256, 5248, 3936, 0, 0, 0, 0, 96, 0x61, 0, 0, "Meizu", "MX4" },
-	  { 42923008, 5344, 4016, 0, 0, 0, 0, 96, 0x61, 0, 0, "Sony", "IMX230" },
+	  {  1540857, 2688, 1520,   0, 0, 0, 0,  1, 0x61, 0, 0, "Samsung", "S3" },
+	  {  2658304, 1212, 1096,   0, 0, 0, 0,  1, 0x16, 0, 0, "LG", "G3FrontMipi" },
+	  {  2842624, 1296, 1096,   0, 0, 0, 0,  1, 0x16, 0, 0, "LG", "G3FrontQCOM" },
+	  {  2969600, 1976, 1200,   0, 0, 0, 0,  1, 0x16, 0, 0, "Xiaomi", "MI3wMipi" },
+	  {  3170304, 1976, 1200,   0, 0, 0, 0,  1, 0x16, 0, 0, "Xiaomi", "MI3wQCOM" },
+	  {  3763584, 1584, 1184,   0, 0, 0, 0, 96, 0x61, 0, 0, "I_Mobile", "I_StyleQ6" },
+	  {  5107712, 2688, 1520,   0, 0, 0, 0,  1, 0x61, 0, 0, "OmniVisi", "UltraPixel1" },
+	  {  5382640, 2688, 1520,   0, 0, 0, 0,  1, 0x61, 0, 0, "OmniVisi", "UltraPixel2" },
+	  {  5664912, 2688, 1520,   0, 0, 0, 0,  1, 0x61, 0, 0, "OmniVisi", "4688" },
+	  {  5664912, 2688, 1520,   0, 0, 0, 0,  1, 0x61, 0, 0, "OmniVisi", "4688" },
+	  {  5364240, 2688, 1520,   0, 0, 0, 0,  1, 0x61, 0, 0, "OmniVisi", "4688" },
+	  {  6299648, 2592, 1944,   0, 0, 0, 0,  1, 0x16, 0, 0, "OmniVisi", "OV5648" },
+	  {  6721536, 2592, 1944,   0, 0, 0, 0,  0, 0x16, 0, 0, "OmniVisi", "OV56482" },
+	  {  6746112, 2592, 1944,   0, 0, 0, 0,  0, 0x16, 0, 0, "HTC", "OneSV" },
+	  {  9631728, 2532, 1902,   0, 0, 0, 0, 96, 0x61, 0, 0, "Sony", "5mp" },
+	  {  9830400, 2560, 1920,   0, 0, 0, 0, 96, 0x61, 0, 0, "NGM", "ForwardArt" },
+	  { 10186752, 3264, 2448,   0, 0, 0, 0,  1, 0x94, 0, 0, "Sony", "IMX219-mipi 8mp" },
+	  { 10223360, 2608, 1944,   0, 0, 0, 0, 96, 0x16, 0, 0, "Sony", "IMX" },
+	  { 10782464, 3282, 2448,   0, 0, 0, 0,  0, 0x16, 0, 0, "HTC", "MyTouch4GSlide" },
+	  { 10788864, 3282, 2448,   0, 0, 0, 0,  0, 0x16, 0, 0, "Xperia", "L" },
+	  { 15967488, 3264, 2446,   0, 0, 0, 0, 96, 0x16, 0, 0, "OmniVison", "OV8850" },
+	  { 16224256, 4208, 3082,   0, 0, 0, 0,  1, 0x16, 0, 0, "LG", "G3MipiL" },
+	  { 16424960, 4208, 3120,   0, 0, 0, 0,  1, 0x16, 0, 0, "IMX135", "MipiL" },
+	  { 17326080, 4164, 3120,   0, 0, 0, 0,  1, 0x16, 0, 0, "LG", "G3LQCom" },
+	  { 17522688, 4212, 3120,   0, 0, 0, 0,  0, 0x16, 0, 0, "Sony", "IMX135-QCOM" },
+	  { 19906560, 4608, 3456,   0, 0, 0, 0,  1, 0x16, 0, 0, "Gione", "E7mipi" },
+	  { 19976192, 5312, 2988,   0, 0, 0, 0,  1, 0x16, 0, 0, "LG", "G4" },
+	  { 20389888, 4632, 3480,   0, 0, 0, 0,  1, 0x16, 0, 0, "Xiaomi", "RedmiNote3Pro" },
+	  { 20500480, 4656, 3496,   0, 0, 0, 0,  1, 0x94, 0, 0, "Sony", "IMX298-mipi 16mp" },
+	  { 21233664, 4608, 3456,   0, 0, 0, 0,  1, 0x16, 0, 0, "Gione", "E7qcom" },
+	  { 26023936, 4192, 3104,   0, 0, 0, 0, 96, 0x94, 0, 0, "THL", "5000" },
+	  { 26257920, 4208, 3120,   0, 0, 0, 0, 96, 0x94, 0, 0, "Sony", "IMX214" },
+	  { 26357760, 4224, 3120,   0, 0, 0, 0, 96, 0x61, 0, 0, "OV", "13860" },
+	  { 41312256, 5248, 3936,   0, 0, 0, 0, 96, 0x61, 0, 0, "Meizu", "MX4" },
+	  { 42923008, 5344, 4016,   0, 0, 0, 0, 96, 0x61, 0, 0, "Sony", "IMX230" },
       //   Android Raw dumps id end
-	  { 20137344, 3664, 2748, 0, 0, 0, 0, 0x40, 0x49, 0, 0, "Aptina", "MT9J003", 0xffff },
-	  { 2868726, 1384, 1036, 0, 0, 0, 0, 64, 0x49, 0, 8, "Baumer", "TXG14", 1078 },
-	  { 6553440, 2664, 1968, 4, 4, 44, 4, 40, 0x94, 0, 2, "Canon", "PowerShot A460" }, // chdk hack
-	  { 9243240, 3152, 2346, 12, 7, 44, 13, 40, 0x49, 0, 2, "Canon", "PowerShot A470" }, // chdk hack
-	  { 6653280, 2672, 1992, 10, 6, 42, 2, 40, 0x94, 0, 2, "Canon", "PowerShot A530" }, // chdk hack
-	  { 6573120, 2672, 1968, 12, 8, 44, 0, 40, 0x94, 0, 2, "Canon", "PowerShot A610" }, // chdk hack
-	  { 9219600, 3152, 2340, 36, 12, 4, 0, 40, 0x94, 0, 2, "Canon", "PowerShot A620" }, // chdk hack
-	  { 10383120, 3344, 2484, 12, 6, 44, 6, 40, 0x94, 0, 2, "Canon", "PowerShot A630" }, // chdk hack
-	  { 12945240, 3736, 2772, 12, 6, 52, 6, 40, 0x94, 0, 2, "Canon", "PowerShot A640" }, // chdk hack
-	  { 15636240, 4104, 3048, 48, 12, 24, 12, 40, 0x94, 0, 2, "Canon", "PowerShot A650 IS" }, // chdk hack
-	  { 10341600, 3336, 2480, 6, 5, 32, 3, 40, 0x94, 0, 2, "Canon", "PowerShot A720 IS" }, // chdk hack
-	  { 24724224, 4704, 3504, 8, 16, 56, 8, 40, 0x49, 0, 2, "Canon", "PowerShot A3300 IS" }, // chdk hack
-	  { 18763488, 4104, 3048, 10, 22, 82, 22, 8, 0x49, 0, 0, "Canon", "PowerShot D10" }, // ? chdk hack ?
-	  { 19493760, 4160, 3124, 104, 12, 8, 66, 40, 0x49, 0, 2,  "Canon", "PowerShot S100" }, // chdk hack CRW
-	  { 7710960, 2888, 2136, 44, 8, 4, 0, 40, 0x94, 0, 2, "Canon", "PowerShot S3 IS" }, // chdk hack
-	  { 5298000, 2400, 1766, 12, 12, 44, 2, 40, 0x94, 0, 2, "Canon", "PowerShot SD300" }, // chdk hack
-	  { 18653760, 4080, 3048, 24, 12, 24, 12, 40, 0x94, 0, 2, "Canon", "PowerShot SX20 IS" }, // chdk hack
-	  { 21936096, 4464, 3276, 25, 10, 73, 12, 40, 0x16, 0, 2, "Canon", "PowerShot SX30 IS" }, // chdk hack
-	  { 19167840, 4176, 3060, 96, 16, 8, 0,  40, 0x94, 0, 2, "Canon", "PowerShot SX40 HS" }, // chdk hack CR2
-	  { 15467760, 3720, 2772, 6, 12, 30, 0, 40, 0x94, 0, 2, "Canon", "PowerShot SX110 IS" }, // chdk hack
-	  { 15534576, 3728, 2778, 12, 9, 44, 9, 40, 0x94, 0, 2, "Canon", "PowerShot SX120 IS" }, // chdk hack
-	  { 19131120, 4168, 3060, 92, 16, 4, 1, 40, 0x94, 0, 2, "Canon", "PowerShot SX220 HS" }, // chdk hack
-	  { 31663200, 5344, 3950, 96, 18, 0, 0, 40, 0x94, 0, 2, "Canon", "PowerShot SX710 HS" }, // chdk hack
-	  { 30858240, 5248, 3920, 8, 16, 56, 16, 40, 0x94, 0, 2, "Canon", "IXUS 160" }, // chdk hack
-	  { 1976352, 1632, 1211, 0, 2, 0, 1, 0, 0x94, 0, 1, "Casio", "QV-2000UX" },
-	  { 3217760, 2080, 1547, 0, 0, 10, 1, 0, 0x94, 0, 1, "Casio", "QV-3*00EX" },
-	  { 6218368, 2585, 1924, 0, 0, 9, 0, 0, 0x94, 0, 1, "Casio", "QV-5700" },
-	  { 7816704, 2867, 2181, 0, 0, 34, 36, 0, 0x16, 0, 1, "Casio", "EX-Z60" },
-	  { 2937856, 1621, 1208, 0, 0, 1, 0, 0, 0x94, 7, 13, "Casio", "EX-S20" },
-	  { 4948608, 2090, 1578, 0, 0, 32, 34, 0, 0x94, 7, 1, "Casio", "EX-S100" },
-	  { 6054400, 2346, 1720, 2, 0, 32, 0, 0, 0x94, 7, 1, "Casio", "QV-R41" },
-	  { 7426656, 2568, 1928, 0, 0, 0, 0, 0, 0x94, 0, 1, "Casio", "EX-P505" },
-	  { 7530816, 2602, 1929, 0, 0, 22, 0, 0, 0x94, 7, 1, "Casio", "QV-R51" },
-	  { 7542528, 2602, 1932, 0, 0, 32, 0, 0, 0x94, 7, 1, "Casio", "EX-Z50" },
-	  { 7562048, 2602, 1937, 0, 0, 25, 0, 0, 0x16, 7, 1, "Casio", "EX-Z500" },
-	  { 7753344, 2602, 1986, 0, 0, 32, 26, 0, 0x94, 7, 1, "Casio", "EX-Z55" },
-	  { 9313536, 2858, 2172, 0, 0, 14, 30, 0, 0x94, 7, 1, "Casio", "EX-P600" },
-	  { 10834368, 3114, 2319, 0, 0, 27, 0, 0, 0x94, 0, 1, "Casio", "EX-Z750" },
-	  { 10843712, 3114, 2321, 0, 0, 25, 0, 0, 0x94, 0, 1, "Casio", "EX-Z75" },
-	  { 10979200, 3114, 2350, 0, 0, 32, 32, 0, 0x94, 7, 1, "Casio", "EX-P700" },
-	  { 12310144, 3285, 2498, 0, 0, 6, 30, 0, 0x94, 0, 1, "Casio", "EX-Z850" },
-	  { 12489984, 3328, 2502, 0, 0, 47, 35, 0, 0x94, 0, 1, "Casio", "EX-Z8" },
-	  { 15499264, 3754, 2752, 0, 0, 82, 0, 0, 0x94, 0, 1, "Casio", "EX-Z1050" },
-	  { 18702336, 4096, 3044, 0, 0, 24, 0, 80, 0x94, 7, 1, "Casio", "EX-ZR100" },
-	  { 7684000, 2260, 1700, 0, 0, 0, 0, 13, 0x94, 0, 1, "Casio", "QV-4000" },
-	  { 787456, 1024, 769, 0, 1, 0, 0, 0, 0x49, 0, 0, "Creative", "PC-CAM 600" },
-	  { 28829184, 4384, 3288, 0, 0, 0, 0, 36, 0x61, 0, 0, "DJI" },
-	  { 15151104, 4608, 3288, 0, 0, 0, 0, 0, 0x94, 0, 0, "Matrix" },
-	  { 3840000, 1600, 1200, 0, 0, 0, 0, 65, 0x49, 0, 0, "Foculus", "531C" },
-	  { 307200, 640, 480, 0, 0, 0, 0, 0, 0x94, 0, 0, "Generic" },
-	  { 62464, 256, 244, 1, 1, 6, 1, 0, 0x8d, 0, 0, "Kodak", "DC20" },
-	  { 124928, 512, 244, 1, 1, 10, 1, 0, 0x8d, 0, 0, "Kodak", "DC20" },
-	  { 1652736, 1536, 1076, 0, 52, 0, 0, 0, 0x61, 0, 0, "Kodak", "DCS200" },
-	  { 4159302, 2338, 1779, 1, 33, 1, 2, 0, 0x94, 0, 0, "Kodak", "C330" },
-	  { 4162462, 2338, 1779, 1, 33, 1, 2, 0, 0x94, 0, 0, "Kodak", "C330", 3160 },
-	  { 2247168, 1232, 912, 0, 0, 16, 0, 0, 0x00, 0, 0, "Kodak", "C330" },
-	  { 3370752, 1232, 912, 0, 0, 16, 0, 0, 0x00, 0, 0, "Kodak", "C330" },
-	  { 6163328, 2864, 2152, 0, 0, 0, 0, 0, 0x94, 0, 0, "Kodak", "C603" },
-	  { 6166488, 2864, 2152, 0, 0, 0, 0, 0, 0x94, 0, 0, "Kodak", "C603", 3160 },
-	  { 460800, 640, 480, 0, 0, 0, 0, 0, 0x00, 0, 0, "Kodak", "C603" },
-	  { 9116448, 2848, 2134, 0, 0, 0, 0, 0, 0x00, 0, 0, "Kodak", "C603" },
-	  { 12241200, 4040, 3030, 2, 0, 0, 13, 0, 0x49, 0, 0, "Kodak", "12MP" },
-	  { 12272756, 4040, 3030, 2, 0, 0, 13, 0, 0x49, 0, 0, "Kodak", "12MP", 31556 },
-	  { 18000000, 4000, 3000, 0, 0, 0, 0, 0, 0x00, 0, 0, "Kodak", "12MP" },
-	  { 614400, 640, 480, 0, 3, 0, 0, 64, 0x94, 0, 0, "Kodak", "KAI-0340" },
-	  { 15360000, 3200, 2400, 0, 0, 0, 0, 96, 0x16, 0, 0, "Lenovo", "A820" },
-	  { 3884928, 1608, 1207, 0, 0, 0, 0, 96, 0x16, 0, 0, "Micron", "2010", 3212 },
-	  { 1138688, 1534, 986, 0, 0, 0, 0, 0, 0x61, 0, 0, "Minolta", "RD175", 513 },
-	  { 1581060, 1305, 969, 0, 0, 18, 6, 6, 0x1e, 4, 1, "Nikon", "E900" }, // "diag raw" hack
-	  { 2465792, 1638, 1204, 0, 0, 22, 1, 6, 0x4b, 5, 1, "Nikon", "E950" }, // "diag raw" hack; possibly also Nikon E700, E800, E775;
+	  { 20137344, 3664, 2748,   0,  0,  0,  0, 64, 0x49, 0, 0, "Aptina", "MT9J003", 0xffff },
+	  {  2868726, 1384, 1036,   0,  0,  0,  0, 64, 0x49, 0, 8, "Baumer", "TXG14", 1078 },
+	  {  6553440, 2664, 1968,   4,  4, 44,  4, 40, 0x94, 0, 2, "Canon", "PowerShot A460" }, // chdk hack
+	  {  9243240, 3152, 2346,  12,  7, 44, 13, 40, 0x49, 0, 2, "Canon", "PowerShot A470" }, // chdk hack
+	  {  6653280, 2672, 1992,  10,  6, 42,  2, 40, 0x94, 0, 2, "Canon", "PowerShot A530" }, // chdk hack
+	  {  6573120, 2672, 1968,  12,  8, 44,  0, 40, 0x94, 0, 2, "Canon", "PowerShot A610" }, // chdk hack
+	  {  9219600, 3152, 2340,  36, 12,  4,  0, 40, 0x94, 0, 2, "Canon", "PowerShot A620" }, // chdk hack
+	  { 10383120, 3344, 2484,  12,  6, 44,  6, 40, 0x94, 0, 2, "Canon", "PowerShot A630" }, // chdk hack
+	  { 12945240, 3736, 2772,  12,  6, 52,  6, 40, 0x94, 0, 2, "Canon", "PowerShot A640" }, // chdk hack
+	  { 15636240, 4104, 3048,  48, 12, 24, 12, 40, 0x94, 0, 2, "Canon", "PowerShot A650 IS" }, // chdk hack
+	  { 10341600, 3336, 2480,   6,  5, 32,  3, 40, 0x94, 0, 2, "Canon", "PowerShot A720 IS" }, // chdk hack
+	  { 24724224, 4704, 3504,   8, 16, 56,  8, 40, 0x49, 0, 2, "Canon", "PowerShot A3300 IS" }, // chdk hack
+	  { 18763488, 4104, 3048,  10, 22, 82, 22,  8, 0x49, 0, 0, "Canon", "PowerShot D10" }, // ? chdk hack ?
+	  { 19493760, 4160, 3124, 104, 12,  8, 66, 40, 0x49, 0, 2,  "Canon", "PowerShot S100" }, // chdk hack CRW
+	  {  7710960, 2888, 2136,  44,  8,  4,  0, 40, 0x94, 0, 2, "Canon", "PowerShot S3 IS" }, // chdk hack
+	  {  5298000, 2400, 1766,  12, 12, 44,  2, 40, 0x94, 0, 2, "Canon", "PowerShot SD300" }, // chdk hack
+	  { 18653760, 4080, 3048,  24, 12, 24, 12, 40, 0x94, 0, 2, "Canon", "PowerShot SX20 IS" }, // chdk hack
+	  { 21936096, 4464, 3276,  25, 10, 73, 12, 40, 0x16, 0, 2, "Canon", "PowerShot SX30 IS" }, // chdk hack
+	  { 19167840, 4176, 3060,  96, 16,  8,  0, 40, 0x94, 0, 2, "Canon", "PowerShot SX40 HS" }, // chdk hack CR2
+	  { 15467760, 3720, 2772,   6, 12, 30,  0, 40, 0x94, 0, 2, "Canon", "PowerShot SX110 IS" }, // chdk hack
+	  { 15534576, 3728, 2778,  12,  9, 44,  9, 40, 0x94, 0, 2, "Canon", "PowerShot SX120 IS" }, // chdk hack
+	  { 19131120, 4168, 3060,  92, 16,  4,  1, 40, 0x94, 0, 2, "Canon", "PowerShot SX220 HS" }, // chdk hack
+	  { 31663200, 5344, 3950,  96, 18,  0,  0, 40, 0x94, 0, 2, "Canon", "PowerShot SX710 HS" }, // chdk hack
+	  { 30858240, 5248, 3920,   8, 16, 56, 16, 40, 0x94, 0, 2, "Canon", "IXUS 160" }, // chdk hack
+	  {  1976352, 1632, 1211,   0,  2,  0,  1,  0, 0x94, 0, 1, "Casio", "QV-2000UX" },
+	  {  3217760, 2080, 1547,   0,  0, 10,  1,  0, 0x94, 0, 1, "Casio", "QV-3*00EX" },
+	  {  6218368, 2585, 1924,   0,  0,  9,  0,  0, 0x94, 0, 1, "Casio", "QV-5700" },
+	  {  7816704, 2867, 2181,   0,  0, 34, 36,  0, 0x16, 0, 1, "Casio", "EX-Z60" },
+	  {  2937856, 1621, 1208,   0,  0,  1,  0,  0, 0x94, 7, 13, "Casio", "EX-S20" },
+	  {  4948608, 2090, 1578,   0,  0, 32, 34,  0, 0x94, 7, 1, "Casio", "EX-S100" },
+	  {  6054400, 2346, 1720,   2,  0, 32,  0,  0, 0x94, 7, 1, "Casio", "QV-R41" },
+	  {  7426656, 2568, 1928,   0,  0,  0,  0,  0, 0x94, 0, 1, "Casio", "EX-P505" },
+	  {  7530816, 2602, 1929,   0,  0, 22,  0,  0, 0x94, 7, 1, "Casio", "QV-R51" },
+	  {  7542528, 2602, 1932,   0,  0, 32,  0,  0, 0x94, 7, 1, "Casio", "EX-Z50" },
+	  {  7562048, 2602, 1937,   0,  0, 25,  0,  0, 0x16, 7, 1, "Casio", "EX-Z500" },
+	  {  7753344, 2602, 1986,   0,  0, 32, 26,  0, 0x94, 7, 1, "Casio", "EX-Z55" },
+	  {  9313536, 2858, 2172,   0,  0, 14, 30,  0, 0x94, 7, 1, "Casio", "EX-P600" },
+	  { 10834368, 3114, 2319,   0,  0, 27,  0,  0, 0x94, 0, 1, "Casio", "EX-Z750" },
+	  { 10843712, 3114, 2321,   0,  0, 25,  0,  0, 0x94, 0, 1, "Casio", "EX-Z75" },
+	  { 10979200, 3114, 2350,   0,  0, 32, 32,  0, 0x94, 7, 1, "Casio", "EX-P700" },
+	  { 12310144, 3285, 2498,   0,  0,  6, 30,  0, 0x94, 0, 1, "Casio", "EX-Z850" },
+	  { 12489984, 3328, 2502,   0,  0, 47, 35,  0, 0x94, 0, 1, "Casio", "EX-Z8" },
+	  { 15499264, 3754, 2752,   0,  0, 82,  0,  0, 0x94, 0, 1, "Casio", "EX-Z1050" },
+	  { 18702336, 4096, 3044,   0,  0, 24,  0, 80, 0x94, 7, 1, "Casio", "EX-ZR100" },
+	  {  7684000, 2260, 1700,   0,  0,  0,  0, 13, 0x94, 0, 1, "Casio", "QV-4000" },
+	  {   787456, 1024,  769,   0,  1,  0,  0,  0, 0x49, 0, 0, "Creative", "PC-CAM 600" },
+	  { 28829184, 4384, 3288,   0,  0,  0,  0, 36, 0x61, 0, 0, "DJI" },
+	  { 15151104, 4608, 3288,   0,  0,  0,  0,  0, 0x94, 0, 0, "Matrix" },
+	  {  3840000, 1600, 1200,   0,  0,  0,  0, 65, 0x49, 0, 0, "Foculus", "531C" },
+	  {   307200,  640,  480,   0,  0,  0,  0,  0, 0x94, 0, 0, "Generic" },
+	  {    62464,  256,  244,   1,  1,  6,  1,  0, 0x8d, 0, 0, "Kodak", "DC20" },
+	  {   124928,  512,  244,   1,  1, 10,  1,  0, 0x8d, 0, 0, "Kodak", "DC20" },
+	  {  1652736, 1536, 1076,   0, 52,  0,  0,  0, 0x61, 0, 0, "Kodak", "DCS200" },
+	  {  4159302, 2338, 1779,   1, 33,  1,  2,  0, 0x94, 0, 0, "Kodak", "C330" },
+	  {  4162462, 2338, 1779,   1, 33,  1,  2,  0, 0x94, 0, 0, "Kodak", "C330", 3160 },
+	  {  2247168, 1232,  912,   0,  0, 16,  0,  0, 0x00, 0, 0, "Kodak", "C330" },
+	  {  3370752, 1232,  912,   0,  0, 16,  0,  0, 0x00, 0, 0, "Kodak", "C330" },
+	  {  6163328, 2864, 2152,   0,  0,  0,  0,  0, 0x94, 0, 0, "Kodak", "C603" },
+	  {  6166488, 2864, 2152,   0,  0,  0,  0,  0, 0x94, 0, 0, "Kodak", "C603", 3160 },
+	  {   460800,  640,  480,   0,  0,  0,  0,  0, 0x00, 0, 0, "Kodak", "C603" },
+	  {  9116448, 2848, 2134,   0,  0,  0,  0,  0, 0x00, 0, 0, "Kodak", "C603" },
+	  { 12241200, 4040, 3030,   2,  0,  0, 13,  0, 0x49, 0, 0, "Kodak", "12MP" },
+	  { 12272756, 4040, 3030,   2,  0,  0, 13,  0, 0x49, 0, 0, "Kodak", "12MP", 31556 },
+	  { 18000000, 4000, 3000,   0,  0,  0,  0,  0, 0x00, 0, 0, "Kodak", "12MP" },
+	  {   614400,  640,  480,   0,  3,  0,  0, 64, 0x94, 0, 0, "Kodak", "KAI-0340" },
+	  { 15360000, 3200, 2400,   0,  0,  0,  0, 96, 0x16, 0, 0, "Lenovo", "A820" },
+	  {  3884928, 1608, 1207,   0,  0,  0,  0, 96, 0x16, 0, 0, "Micron", "2010", 3212 },
+	  {  1138688, 1534,  986,   0,  0,  0,  0,  0, 0x61, 0, 0, "Minolta", "RD175", 513 },
+	  {  1581060, 1305,  969,   0,  0, 18,  6,  6, 0x1e, 4, 1, "Nikon", "E900" }, // "diag raw" hack
+	  {  2465792, 1638, 1204,   0,  0, 22,  1,  6, 0x4b, 5, 1, "Nikon", "E950" }, // "diag raw" hack; possibly also Nikon E700, E800, E775;
 	                                                                        // Olympus C-2020Z
-	  { 2940928, 1616, 1213, 0, 0, 0, 7, 30, 0x94, 0, 1, "Nikon", "E2100" }, // "diag raw" hack; also Nikon E2500
-	  { 4771840, 2064, 1541, 0, 0, 0, 1, 6, 0xe1, 0, 1, "Nikon", "E990" }, // "diag raw" hack; possibly also Nikon E880, E885, E995;
+	  {  2940928, 1616, 1213,   0,  0,  0,  7, 30, 0x94, 0, 1, "Nikon", "E2100" }, // "diag raw" hack; also Nikon E2500
+	  {  4771840, 2064, 1541,   0,  0,  0,  1,  6, 0xe1, 0, 1, "Nikon", "E990" }, // "diag raw" hack; possibly also Nikon E880, E885, E995;
 	                                                                       // Olympus C-3030Z
-	  { 4775936, 2064, 1542, 0, 0, 0, 0, 30, 0x94, 0, 1, "Nikon", "E3700" }, // "diag raw" hack; Nikon E3100, E3200, E3500;
+	  {  4775936, 2064, 1542,   0,  0,  0,  0, 30, 0x94, 0, 1, "Nikon", "E3700" }, // "diag raw" hack; Nikon E3100, E3200, E3500;
 	                                                                         // Pentax "Optio 33WR"; possibly also Olympus C-740UZ
-	  { 5865472, 2288, 1709, 0, 0, 0, 1, 6, 0xb4, 0, 1, "Nikon", "E4500" }, // "diag raw" hack; possibly also Olympus C-4040Z
-	  { 5869568, 2288, 1710, 0, 0, 0, 0, 6, 0x16, 0, 1, "Nikon", "E4300" }, // "diag raw" hack; also Minolta "DiMAGE Z2"
-	  { 7438336, 2576, 1925, 0, 0, 0, 1, 6, 0xb4, 0, 1, "Nikon", "E5000" }, // also Nikon E5700
-	  { 8998912, 2832, 2118, 0, 0, 0, 0, 30, 0x94, 7, 1, "Nikon", "COOLPIX S6" }, // "diag raw" hack
-	  { 5939200, 2304, 1718, 0, 0, 0, 0, 30, 0x16, 0, 0, "Olympus", "C-770UZ" }, // possibly also Olympus C-4100Z, C-765UZ
-	  { 3178560, 2064, 1540, 0, 0, 0, 0, 0, 0x94, 0, 1, "Pentax", "Optio S V1.01" },
-	  { 4841984, 2090, 1544, 0, 0, 22, 0, 0, 0x94, 7, 1, "Pentax", "Optio S" },
-	  { 6114240, 2346, 1737, 0, 0, 22, 0, 0, 0x94, 7, 1, "Pentax", "Optio S4" },
-	  { 10702848, 3072, 2322, 0, 0, 0, 21, 30, 0x94, 0, 1, "Pentax", "Optio 750Z" },
-	  { 4147200, 1920, 1080, 0, 0, 0, 0, 0, 0x49, 0, 0, "Photron", "BC2-HD" },
-	  { 4151666, 1920, 1080, 0, 0, 0, 0, 0, 0x49, 0, 0, "Photron", "BC2-HD", 8 },
-	  { 13248000, 2208, 3000, 0, 0, 0, 0, 13, 0x61, 0, 0, "Pixelink", "A782" },
-	  { 6291456, 2048, 1536, 0, 0, 0, 0, 96, 0x61, 0, 0, "RoverShot", "3320AF" },
-	  { 311696, 644, 484, 0, 0, 0, 0, 0, 0x16, 0, 8, "ST Micro", "STV680 VGA" },
-	  { 16098048, 3288, 2448, 0, 0, 24, 0, 9, 0x94, 0, 1, "Samsung", "S85" }, // hack
-	  { 16215552, 3312, 2448, 0, 0, 48, 0, 9, 0x94, 0, 1, "Samsung", "S85" }, // hack
-	  { 20487168, 3648, 2808, 0, 0, 0, 0, 13, 0x94, 5, 1, "Samsung", "WB550" },
-	  { 24000000, 4000, 3000, 0, 0, 0, 0, 13, 0x94, 5, 1, "Samsung", "WB550" },
-	  { 12582980, 3072, 2048, 0, 0, 0, 0, 33, 0x61, 0, 0, "Sinar", "", 68 }, // Sinarback 23; same res. as Leaf Volare & Cantare
-	  { 33292868, 4080, 4080, 0, 0, 0, 0, 33, 0x61, 0, 0, "Sinar", "", 68 }, // Sinarback 44
-	  { 44390468, 4080, 5440, 0, 0, 0, 0, 33, 0x61, 0, 0, "Sinar", "", 68 }, // Sinarback 54
-	  { 1409024, 1376, 1024, 0, 0, 1, 0, 0, 0x49, 0, 0, "Sony", "XCD-SX910CR" },
-	  { 2818048, 1376, 1024, 0, 0, 1, 0, 97, 0x49, 0, 0, "Sony", "XCD-SX910CR" },
+	  {  5865472, 2288, 1709,   0,  0,  0,  1,  6, 0xb4, 0, 1, "Nikon", "E4500" }, // "diag raw" hack; possibly also Olympus C-4040Z
+	  {  5869568, 2288, 1710,   0,  0,  0,  0,  6, 0x16, 0, 1, "Nikon", "E4300" }, // "diag raw" hack; also Minolta "DiMAGE Z2"
+	  {  7438336, 2576, 1925,   0,  0,  0,  1,  6, 0xb4, 0, 1, "Nikon", "E5000" }, // also Nikon E5700
+	  {  8998912, 2832, 2118,   0,  0,  0,  0, 30, 0x94, 7, 1, "Nikon", "COOLPIX S6" }, // "diag raw" hack
+	  {  5939200, 2304, 1718,   0,  0,  0,  0, 30, 0x16, 0, 0, "Olympus", "C-770UZ" }, // possibly also Olympus C-4100Z, C-765UZ
+	  {  3178560, 2064, 1540,   0,  0,  0,  0,  0, 0x94, 0, 1, "Pentax", "Optio S V1.01" },
+	  {  4841984, 2090, 1544,   0,  0, 22,  0,  0, 0x94, 7, 1, "Pentax", "Optio S" },
+	  {  6114240, 2346, 1737,   0,  0, 22,  0,  0, 0x94, 7, 1, "Pentax", "Optio S4" },
+	  { 10702848, 3072, 2322,   0,  0,  0, 21, 30, 0x94, 0, 1, "Pentax", "Optio 750Z" },
+	  {  4147200, 1920, 1080,   0,  0,  0,  0,  0, 0x49, 0, 0, "Photron", "BC2-HD" },
+	  {  4151666, 1920, 1080,   0,  0,  0,  0,  0, 0x49, 0, 0, "Photron", "BC2-HD", 8 },
+	  { 13248000, 2208, 3000,   0,  0,  0,  0, 13, 0x61, 0, 0, "Pixelink", "A782" },
+	  {  6291456, 2048, 1536,   0,  0,  0,  0, 96, 0x61, 0, 0, "RoverShot", "3320AF" },
+	  {   311696,  644,  484,   0,  0,  0,  0,  0, 0x16, 0, 8, "ST Micro", "STV680 VGA" },
+	  { 16098048, 3288, 2448,   0,  0, 24,  0,  9, 0x94, 0, 1, "Samsung", "S85" }, // hack
+	  { 16215552, 3312, 2448,   0,  0, 48,  0,  9, 0x94, 0, 1, "Samsung", "S85" }, // hack
+	  { 20487168, 3648, 2808,   0,  0,  0,  0, 13, 0x94, 5, 1, "Samsung", "WB550" },
+	  { 24000000, 4000, 3000,   0,  0,  0,  0, 13, 0x94, 5, 1, "Samsung", "WB550" },
+	  { 12582980, 3072, 2048,   0,  0,  0,  0, 33, 0x61, 0, 0, "Sinar", "", 68 }, // Sinarback 23; same res. as Leaf Volare & Cantare
+	  { 33292868, 4080, 4080,   0,  0,  0,  0, 33, 0x61, 0, 0, "Sinar", "", 68 }, // Sinarback 44
+	  { 44390468, 4080, 5440,   0,  0,  0,  0, 33, 0x61, 0, 0, "Sinar", "", 68 }, // Sinarback 54
+	  {  1409024, 1376, 1024,   0,  0,  1,  0,  0, 0x49, 0, 0, "Sony", "XCD-SX910CR" },
+	  {  2818048, 1376, 1024,   0,  0,  1,  0, 97, 0x49, 0, 0, "Sony", "XCD-SX910CR" },
   };
 
   libraw_custom_camera_t
@@ -638,50 +595,6 @@ void LibRaw::identify()
     mask[0][3] = 1;
     filters = 0x61616161;
   }
-#ifdef LIBRAW_OLD_VIDEO_SUPPORT
-  else if (!memcmp(head, "ARRI", 4))
-  {
-    order = 0x4949;
-    fseek(ifp, 20, SEEK_SET);
-    width = get4();
-    height = get4();
-    strcpy(make, "ARRI");
-    fseek(ifp, 668, SEEK_SET);
-    fread(model, 1, 64, ifp);
-    model[63] = 0;
-    fseek(ifp, 760, SEEK_SET);
-    fread(software, 1, 64, ifp);
-    if((unsigned char)software[0] == 0xff) software[0] = 0;
-    software[63] = 0;
-    data_offset = 4096;
-    load_raw = &LibRaw::packed_load_raw;
-    load_flags = 88;
-    filters = 0x61616161;
-    fixupArri();
-  }
-  else if (!memcmp(head, "XPDS", 4))
-  {
-    order = 0x4949;
-    fseek(ifp, 0x800, SEEK_SET);
-    fread(make, 1, 41, ifp);
-    raw_height = get2();
-    raw_width = get2();
-    fseek(ifp, 56, SEEK_CUR);
-    fread(model, 1, 30, ifp);
-    data_offset = 0x10000;
-    load_raw = &LibRaw::canon_rmf_load_raw;
-    gamma_curve(0, 12.25, 1, 1023);
-  }
-  else if (!memcmp(head + 4, "RED1", 4))
-  {
-    strcpy(make, "Red");
-    strcpy(model, "One");
-    parse_redcine();
-    load_raw = &LibRaw::redcine_load_raw;
-    gamma_curve(1 / 2.4, 12.92, 1, 4095);
-    filters = 0x49494949;
-  }
-#endif
   else if (!memcmp(head, "DSC-Image", 9))
     parse_rollei();
   else if (!memcmp(head, "PWAD", 4))
@@ -1009,6 +922,11 @@ void LibRaw::identify()
         load_raw = &LibRaw::vc5_dng_load_raw_placeholder;
         break;
 #endif
+#ifdef USE_DNGSDK
+    case 52546:
+      load_raw = &LibRaw::jxl_dng_load_raw_placeholder;
+      break;
+#endif
     case 34892:
       load_raw = &LibRaw::lossy_dng_load_raw;
       break;
@@ -1250,15 +1168,6 @@ dng_skip:
    if (dng_version && (tiff_samples < 1 || tiff_samples > 4))
        is_raw = 0; // we do not handle DNGs with more than 4 values per pixel
 
-#ifdef LIBRAW_OLD_VIDEO_SUPPORT
-#ifdef NO_JASPER
-  if (load_raw == &LibRaw::redcine_load_raw)
-  {
-    is_raw = 0;
-    imgdata.process_warnings |= LIBRAW_WARN_NO_JASPER;
-  }
-#endif
-#endif
 #ifdef NO_JPEG
   if (load_raw == &LibRaw::kodak_jpeg_load_raw ||
       load_raw == &LibRaw::lossy_dng_load_raw)
@@ -2342,11 +2251,59 @@ void LibRaw::identify_finetune_dcr(char head[64], int fsize, int flen)
       case 4992:                // X-E2S, X-E2, X-T10, X-T1, X100S, X100T, X70
         left_margin = 4;
         break;
+	  case 7872: // X-H2, full image
+		  switch (FujiCropMode)
+		  {
+		  case 0: // no crop
+			  top_margin = 6;
+			  left_margin = 0;
+			  width = 7752;
+			  height = 5178;
+			  break;
+          default:
+            /* try to guess from crop inset*/
+            if (imgdata.sizes.raw_inset_crops[0].cwidth > 0 && imgdata.sizes.raw_inset_crops[0].cwidth <= raw_width &&
+                imgdata.sizes.raw_inset_crops[0].cheight > 0 && imgdata.sizes.raw_inset_crops[0].cheight <= raw_height)
+            {
+              top_margin = imgdata.sizes.raw_inset_crops[0].ctop;
+              left_margin = imgdata.sizes.raw_inset_crops[0].cleft;
+              width = imgdata.sizes.raw_inset_crops[0].cwidth;
+              height = imgdata.sizes.raw_inset_crops[0].cheight;
+            }
+            break;
+		  }
+		  break;
       case 6336: // X-H2S
-		  top_margin = 6;
-		  left_margin = 0;
-		  width = 6264;
-		  height = 4176;
+		  switch (FujiCropMode)
+		  {
+          case 0: // no crop
+            top_margin = 6;
+            left_margin = 0;
+			if(!strcasecmp(model,"X-S20"))
+              width = 6252;
+			else
+				width = 6264;
+            height = 4176;
+			break;
+		  case 2: /* sports finder*/
+		  case 4: /* Electronic shutter crop */
+			  left_margin = 630;
+			  top_margin = 0;
+			  height = 3348;
+			  width = 5004;
+			  break;
+		  default:
+			  /* try to guess from crop inset*/
+			  if (imgdata.sizes.raw_inset_crops[0].cwidth > 0 && imgdata.sizes.raw_inset_crops[0].cwidth <= raw_width
+				  && imgdata.sizes.raw_inset_crops[0].cheight > 0 && imgdata.sizes.raw_inset_crops[0].cheight <= raw_height)
+			  {
+                top_margin = imgdata.sizes.raw_inset_crops[0].ctop;
+                left_margin = imgdata.sizes.raw_inset_crops[0].cleft;
+				width = imgdata.sizes.raw_inset_crops[0].cwidth;
+				height = imgdata.sizes.raw_inset_crops[0].cheight;
+			  }
+			  break;
+		  }
 		  break;
       case 6384:                // X-T3, X-T4, X100V, X-S10, X-T30, X-Pro3
         top_margin = 0;
@@ -2363,7 +2320,7 @@ void LibRaw::identify_finetune_dcr(char head[64], int fsize, int flen)
 				  height = raw_height;
 				  break;
 				case 4:        // electronic shutter, high speed mode (1.25x crop)
-          left_margin = 624;
+				  left_margin = 624;
 				  width = 5004;
 				  break;
         }
@@ -2382,7 +2339,8 @@ void LibRaw::identify_finetune_dcr(char head[64], int fsize, int flen)
       case 11808:               // GFX 100; no crop
 			  left_margin = 0;
 			  width = raw_width - 146;
-			  height = raw_height - (top_margin = 2);
+			  height = raw_height - 8;
+			  top_margin = 2;
 			  if (tiff_bps == 16)
 				  maximum = 0xffff;
       default:
@@ -2429,7 +2387,17 @@ void LibRaw::identify_finetune_dcr(char head[64], int fsize, int flen)
         flip = 6;
         break;
       default:
-      /* insert model name-based width/height/margins/etc. assignments */
+        /* insert model name-based width/height/margins/etc. assignments */
+
+		  /* raw_inset_crops default*/
+        if (imgdata.sizes.raw_inset_crops[0].cwidth > 0 && imgdata.sizes.raw_inset_crops[0].cwidth <= raw_width &&
+            imgdata.sizes.raw_inset_crops[0].cheight > 0 && imgdata.sizes.raw_inset_crops[0].cheight <= raw_height)
+        {
+          top_margin = imgdata.sizes.raw_inset_crops[0].ctop;
+          left_margin = imgdata.sizes.raw_inset_crops[0].cleft;
+          width = imgdata.sizes.raw_inset_crops[0].cwidth;
+          height = imgdata.sizes.raw_inset_crops[0].cheight;
+        }
         break;
       }
     }
@@ -2690,6 +2658,13 @@ void LibRaw::identify_finetune_dcr(char head[64], int fsize, int flen)
 			top_margin = 108;
 			height = raw_height - top_margin;
 		}
+        else if ((imHassy.SensorCode == 20) && imHassy.uncropped)
+        { // Hasselblad X2D-100c
+			left_margin = 124;
+			width = 11664;
+			top_margin = 92;
+			height = raw_height - top_margin;
+        }
 
 		if (tiff_samples > 1)
 		{
@@ -2855,7 +2830,40 @@ void LibRaw::identify_finetune_dcr(char head[64], int fsize, int flen)
 			load_raw = &LibRaw::sony_load_raw;
 
 		}
-		else if (raw_width == 3984) { // Sony DSC-R1;
+        else if ((unique_id == SonyID_ILCE_7RM5) || (unique_id == SonyID_ILCE_7CR))
+        {
+          if (raw_width == 6304)
+          {
+            /* nothing: APS-C Uncompressed, handled in open_datastream*/
+          }
+          else if (raw_width == 6656) /* 7RM5 Lossy compressed, medium */
+          {
+            width = 6272;
+            height = 4180;
+          }
+          else if (raw_width == 9728) // FF, Lossless compresssed
+          {
+            width = 9566;
+            height = 6374;
+          }
+          else if (raw_width == 5120) // APS-C??/Lossy-Small?
+          {
+            width = 4776;
+            height = 3180;
+          }
+		  else if (raw_width == 9600)
+		  {
+			  width = raw_width - 36;
+		  }
+          else
+          {
+            width = raw_width - 32; // fallback
+			imgdata.process_warnings |= LIBRAW_WARN_VENDOR_CROP_SUGGESTED;
+
+          }
+        }
+		else if (raw_width == 3984) 
+		{ // Sony DSC-R1;
 			width = 3925;
 			order = 0x4d4d;
 
@@ -2870,7 +2878,7 @@ void LibRaw::identify_finetune_dcr(char head[64], int fsize, int flen)
 
 		}
 		else if (raw_width == 4928) {
-			// Sony DSLR-A580, NEX-C3, SLT-A35, DSC-HX99, SLT-A55,
+			// Sony DSLR-A580, NEX-C3, SLT-A35, DSC-HX99, DSC-HX95, SLT-A55,
 			// NEX-5N, SLT-A37, SLT-A57, NEX-F3, NEX-6, NEX-5R, NEX-3N, NEX-5T;
 			if (height < 3280)
 				width -= 8;
@@ -2904,10 +2912,18 @@ void LibRaw::identify_finetune_dcr(char head[64], int fsize, int flen)
 			width -= 32;
 
 		}
-		else if (raw_width == 9600) { // Sony ILCE-7RM4
+		else if (raw_width == 9600) { // Sony ILCE-7RM4 && 7RM5
 			width -= 32;
 
 		}
+        else if (unique_id == SonyID_ZV_E1)
+        {
+          if (raw_width == 4608 && raw_height == 3072) // SonyID_ZV_E1
+          {
+            width  = 4256;
+            height = 2846;
+          }
+        }
         else if(unique_id == SonyID_ILCE_1)
         {
           if (raw_width == 8704 && raw_height == 6144) // ILCE-1 FF@Compressed
@@ -2928,20 +2944,62 @@ void LibRaw::identify_finetune_dcr(char head[64], int fsize, int flen)
           {
               width -= 28;
           }
+          else if (raw_width == 5632) // Lossy/Medium
+          {
+            width -= 4;
+			height = 3756;
+          }
+          else if (raw_width == 4608) // Lossy/small
+          {
+            width = 4332;
+            height = 2892;
+          }
+		  else
+            imgdata.process_warnings |= LIBRAW_WARN_VENDOR_CROP_SUGGESTED;
+
+		  /* need samples for lossy small/medium w/ APC crop*/
         }
-        else if (unique_id == SonyID_ILCE_7M4)
+        else if ((unique_id == SonyID_ILCE_7M4)|| (unique_id == SonyID_ILCE_7CM2))
         {
-          if (raw_width == 7168 && raw_height == 5120) // ILCE-1 FF@Compressed
+          if (raw_width == 7168 && raw_height == 5120) 
           {
             width = 7028;
             height = 4688;
+          }
+          else if (raw_width == 5120) // Lossy/Medium
+          {
+            width = 4624;
+            height = 3080;
+          }
+          else if (raw_width == 3584) // Lossy/Small
+          {
+            width = 3516;
+            height = 2344;
           }
           else if (raw_width == 7040) // FF uncompressed/lossy
           {
             width -= 12;
           }
+		  else
+            imgdata.process_warnings |= LIBRAW_WARN_VENDOR_CROP_SUGGESTED;
           /* FIXME: need APS-C samples, both losslesscompressed and uncompressed or lossy */
         }
+		else if (unique_id == SonyID_ILCE_6700)
+		{
+			if (raw_width == 6656)
+			{
+				width = 6272;
+				height = 4168;
+			}
+            else if (raw_width == 6272) // APS-C uncompressed
+            {
+              width = raw_width - 32;
+            }
+			else // fallback
+			{
+				width = raw_width - 32;
+			}
+		}
 
         else if (!strcmp(model, "DSLR-A100")) {
 			if (width == 3880) {

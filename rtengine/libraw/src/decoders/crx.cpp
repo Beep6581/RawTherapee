@@ -2032,7 +2032,7 @@ int crxMakeQStep(CrxImage *img, CrxTile *tile, int32_t *qpTable, uint32_t /*tota
         // not sure about this nonsense - why is it not just avg like with 2 levels?
         quantVal = ((quantVal < 0) * 3 + quantVal) >> 2;
         if (quantVal / 6 >= 6)
-          *qStepTbl = q_step_tbl[quantVal % 6] * (1 << (quantVal / 6 + 26));
+          *qStepTbl = q_step_tbl[quantVal % 6] * (1 << ((quantVal / 6 - 6 ) & 0x1f));
         else
           *qStepTbl = q_step_tbl[quantVal % 6] >> (6 - quantVal / 6);
       }
@@ -2052,7 +2052,7 @@ int crxMakeQStep(CrxImage *img, CrxTile *tile, int32_t *qpTable, uint32_t /*tota
       {
         int32_t quantVal = (qpTable[row0Idx++] + qpTable[row1Idx++]) / 2;
         if (quantVal / 6 >= 6)
-          *qStepTbl = q_step_tbl[quantVal % 6] * (1 << (quantVal / 6 + 26));
+          *qStepTbl = q_step_tbl[quantVal % 6] * (1 << ((quantVal / 6 - 6) & 0x1f));
         else
           *qStepTbl = q_step_tbl[quantVal % 6] >> (6 - quantVal / 6);
       }
@@ -2066,7 +2066,7 @@ int crxMakeQStep(CrxImage *img, CrxTile *tile, int32_t *qpTable, uint32_t /*tota
     for (int qpRow = 0; qpRow < qpHeight; ++qpRow)
       for (int qpCol = 0; qpCol < qpWidth; ++qpCol, ++qStepTbl, ++qpTable)
         if (*qpTable / 6 >= 6)
-          *qStepTbl = q_step_tbl[*qpTable % 6] * (1 << (*qpTable / 6 + 26));
+          *qStepTbl = q_step_tbl[*qpTable % 6] * (1 << ((*qpTable / 6 - 6) & 0x1f));
         else
           *qStepTbl = q_step_tbl[*qpTable % 6] >> (6 - *qpTable / 6);
 

@@ -41,7 +41,8 @@ $(LIBDLL): $(DLL)
 
 LIB_OBJECTS= object\libraw_datastream_st.obj object\libraw_c_api_st.obj \
   object\cameralist_st.obj object\fuji_compressed_st.obj \
-  object\crx_st.obj object\fp_dng_st.obj object\decoders_libraw_st.obj \
+  object\crx_st.obj object\pana8_st.obj object\fp_dng_st.obj object\decoders_libraw_st.obj \
+  object\sonycc_st.obj object\losslessjpeg_st.obj \
   object\unpack_st.obj object\unpack_thumb_st.obj \
   object\rawspeed_glue_st.obj object\dngsdk_glue_st.obj \
   object\colorconst_st.obj object\utils_libraw_st.obj object\init_close_utils_st.obj \
@@ -74,7 +75,8 @@ LIB_OBJECTS= object\libraw_datastream_st.obj object\libraw_c_api_st.obj \
 
 DLL_OBJECTS= object\libraw_datastream.obj object\libraw_c_api.obj \
   object\cameralist.obj object\fuji_compressed.obj \
-  object\crx.obj object\fp_dng.obj object\decoders_libraw.obj \
+  object\crx.obj object\pana8.obj object\fp_dng.obj object\decoders_libraw.obj \
+  object\sonycc.obj object\losslessjpeg.obj \
   object\unpack.obj object\unpack_thumb.obj \
   object\rawspeed_glue.obj object\dngsdk_glue.obj \
   object\colorconst.obj object\utils_libraw.obj \
@@ -187,6 +189,24 @@ object\crx_st.obj: src\decoders\crx.cpp
 
 object\crx.obj: src\decoders\crx.cpp
 	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\crx.obj" /c src\decoders\crx.cpp
+
+object\pana8_st.obj: src\decoders\pana8.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\pana8_st.obj" /c src\decoders\pana8.cpp
+
+object\pana8.obj: src\decoders\pana8.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\pana8.obj" /c src\decoders\pana8.cpp
+
+object\sonycc_st.obj: src\decoders\sonycc.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\sonycc_st.obj" /c src\decoders\sonycc.cpp
+
+object\sonycc.obj: src\decoders\sonycc.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\sonycc.obj" /c src\decoders\sonycc.cpp
+
+object\losslessjpeg_st.obj: src\decompressors\losslessjpeg.cpp
+	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\losslessjpeg_st.obj" /c src\decompressors\losslessjpeg.cpp
+
+object\losslessjpeg.obj: src\decompressors\losslessjpeg.cpp
+	$(CC) $(COPT) /DLIBRAW_BUILDLIB /Fo"object\\losslessjpeg.obj" /c src\decompressors\losslessjpeg.cpp
 
 object\decoders_dcraw_st.obj: src\decoders\decoders_dcraw.cpp
 	$(CC) $(COPT) /DLIBRAW_NODLL /DLIBRAW_BUILDLIB /Fo"object\\decoders_dcraw_st.obj" /c src\decoders\decoders_dcraw.cpp

@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2021 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
  *
  LibRaw is free software; you can redistribute it and/or modify
  it under the terms of the one of two licenses as you choose:
@@ -19,9 +19,10 @@ void LibRaw::setOlympusBodyFeatures(unsigned long long id)
 {
   ilm.CamID = id;
 
-  if ((id == OlyID_E_1)   ||
-      (id == OlyID_E_300) ||
-      ((id & 0x00ffff0000ULL) == 0x0030300000ULL))
+  if ((id == OlyID_E_1)      ||
+      (id == OlyID_E_300)    ||
+      (id == OlyID_AIR_A01)  ||
+      ((id & 0xffff000000ULL) == 0x5330000000ULL))
   {
     ilm.CameraFormat = LIBRAW_FORMAT_FT;
 

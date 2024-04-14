@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2021 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
  *
  LibRaw is free software; you can redistribute it and/or modify
  it under the terms of the one of two licenses as you choose:
@@ -128,7 +128,7 @@ void LibRaw::processNikonLensData(uchar *LensData, unsigned len)
       i = 8;
       break;
     case  58: // "Z 6", "Z 6 II", "Z 7", "Z 7 II", "Z 50", D780, "Z 5", "Z fc"
-    case 108: // "Z 9"
+    case 108: // "Z 9", "Z 30", "Z 8"
       if (model[6] == 'Z')
         ilm.CameraMount = LIBRAW_MOUNT_Nikon_Z;
       if (imNikon.HighSpeedCropFormat != 12)
@@ -144,6 +144,8 @@ void LibRaw::processNikonLensData(uchar *LensData, unsigned len)
                (ilm.LensID == 11)
             || (ilm.LensID == 12)
             || (ilm.LensID == 26)
+            || (ilm.LensID == 41)
+            || (ilm.LensID == 43)
            ) ilm.LensFormat = LIBRAW_FORMAT_APSC;
         else ilm.LensFormat = LIBRAW_FORMAT_FF;
         if (ilm.MaxAp4CurFocal < 0.7f)
@@ -519,6 +521,9 @@ uchar *cj_block, *ck_block;
       case 2:
         imCommon.ColorSpace = LIBRAW_COLORSPACE_AdobeRGB;
         break;
+      case 4:
+        imCommon.ColorSpace = LIBRAW_COLORSPACE_Rec2020;
+        break;
       default:
         imCommon.ColorSpace = LIBRAW_COLORSPACE_Unknown;
         break;
@@ -534,6 +539,22 @@ uchar *cj_block, *ck_block;
     else if (tag == 0x0022)
     {
       imNikon.Active_D_Lighting = get2();
+    }
+    else if (tag == 0x0023)
+    {
+      FORC4 imNikon.PictureControlVersion =
+          imNikon.PictureControlVersion * 10 + fgetc(ifp) - '0';
+      if ((imNikon.PictureControlVersion >= 300) &&
+          (imNikon.PictureControlVersion <= 399))
+      {
+        fseek(ifp, 4, SEEK_CUR);
+      }
+      stmread (imNikon.PictureControlName, 20, ifp);
+      stmread (imNikon.PictureControlBase, 20, ifp);
+      if (!strncmp(imNikon.PictureControlBase, "STANDARD(HLG)", 13))
+      {
+        imCommon.ExposureCalibrationShift -= 2;
+      }
     }
     else if (tag == 0x003b)
     { // WB for multi-exposure (ME); all 1s for regular exposures
@@ -849,16 +870,18 @@ free(ck_block);
           OrientationOffset = sget4_order(morder, ShotInfo_buf+0x9c);
           break;
 
-        case 800: // Z 6, Z 7,     ShotInfoZ7II, Roll/Pitch/Yaw
-        case 801: // Z 50,         ShotInfoZ7II, Roll/Pitch/Yaw
-        case 802: // Z 5,          ShotInfoZ7II, Roll/Pitch/Yaw
-        case 803: // Z 6_2, Z 7_2, ShotInfoZ7II, Roll/Pitch/Yaw
-        case 804: // Z fc          ShotInfoZ7II, Roll/Pitch/Yaw
+        case 800: // "Z 6", "Z 7",     ShotInfoZ7II, Roll/Pitch/Yaw
+        case 801: // "Z 50",           ShotInfoZ7II, Roll/Pitch/Yaw
+        case 802: // "Z 5",            ShotInfoZ7II, Roll/Pitch/Yaw
+        case 803: // "Z 6_2", "Z 7_2", ShotInfoZ7II, Roll/Pitch/Yaw
+        case 804: // "Z fc"            ShotInfoZ7II, Roll/Pitch/Yaw
           OrientationOffset = sget4_order(morder, ShotInfo_buf+0x98);
           break;
 
-        case 805: // Z 9,          ShotInfoZ9, Roll/Pitch/Yaw
+        case 805: // "Z 9",            ShotInfoZ9, Roll/Pitch/Yaw
           OrientationOffset = sget4_order(morder, ShotInfo_buf+0x84);
+          break;
+        case 807: // "Z 30"
           break;
         }
 

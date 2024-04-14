@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2021 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
  *
 
  LibRaw is free software; you can redistribute it and/or modify
@@ -488,6 +488,56 @@ int LibRaw::open_datastream(LibRaw_abstract_datastream *stream)
 			)
           return LIBRAW_FILE_UNSUPPORTED;
 	  }
+	  // Remove unsupported Nikon thumbnails
+	  if (makeIs(LIBRAW_CAMERAMAKER_Nikon) && !strncasecmp(imgdata.idata.model, "Z 8",3) &&
+          imgdata.thumbs_list.thumbcount > 1)
+	  {
+		  int tgtidx = 0;
+		  for (int idx = 0; idx < imgdata.thumbs_list.thumbcount && idx < LIBRAW_THUMBNAIL_MAXCOUNT; idx++)
+		  {
+			  int bps = imgdata.thumbs_list.thumblist[idx].tmisc & 0x1f;
+			  if (bps > 8) // remove high-bit thumbs
+			  {
+				  // nothing: just skip this item
+			  }
+			  else
+			  {
+				  if (tgtidx < idx)
+				  {
+					  memmove(&imgdata.thumbs_list.thumblist[tgtidx], &imgdata.thumbs_list.thumblist[idx],
+						  sizeof(imgdata.thumbs_list.thumblist[idx]));
+					  tgtidx++;
+				  }
+				  else // same index, just assign next tgtidx
+					  tgtidx = idx + 1;
+			  }
+		  }
+		  if (tgtidx > 0 && tgtidx < imgdata.thumbs_list.thumbcount)
+		  {
+			  int selidx = 0;
+			  INT64 maximgbits = INT64(imgdata.thumbs_list.thumblist[0].twidth) *
+				  INT64(imgdata.thumbs_list.thumblist[0].theight) * INT64(imgdata.thumbs_list.thumblist[0].tmisc & 0x1f);
+			  for (int i = 1; i < tgtidx; i++)
+			  {
+                INT64 imgbits = INT64(imgdata.thumbs_list.thumblist[i].twidth) *
+                                   INT64(imgdata.thumbs_list.thumblist[i].theight) *
+                                   INT64(imgdata.thumbs_list.thumblist[i].tmisc & 0x1f);
+				if (imgbits > maximgbits)
+				{
+					selidx = i;
+					maximgbits = imgbits;
+				}
+			  }
+              libraw_internal_data.internal_data.toffset = imgdata.thumbs_list.thumblist[selidx].toffset;
+              imgdata.thumbnail.tlength = imgdata.thumbs_list.thumblist[selidx].tlength;
+              libraw_internal_data.unpacker_data.thumb_format = imgdata.thumbs_list.thumblist[selidx].tformat;
+              imgdata.thumbnail.twidth = imgdata.thumbs_list.thumblist[selidx].twidth;
+              imgdata.thumbnail.theight = imgdata.thumbs_list.thumblist[selidx].theight;
+              libraw_internal_data.unpacker_data.thumb_misc = imgdata.thumbs_list.thumblist[selidx].tmisc;
+		  // find another largest thumb and copy it to single thumbnail data
+		  }
+		  imgdata.thumbs_list.thumbcount = tgtidx > 0 ? tgtidx : 1;
+	  }
 
 	  // promote the old single thumbnail to the thumbs_list if not present already
 	  if (imgdata.thumbs_list.thumbcount < LIBRAW_THUMBNAIL_MAXCOUNT)
@@ -571,7 +621,8 @@ int LibRaw::open_datastream(LibRaw_abstract_datastream *stream)
 	  if (load_raw == &LibRaw::panasonic_load_raw)
 	  {
 		  if (libraw_internal_data.unpacker_data.pana_encoding == 6 ||
-			  libraw_internal_data.unpacker_data.pana_encoding == 7)
+			  libraw_internal_data.unpacker_data.pana_encoding == 7 ||
+              libraw_internal_data.unpacker_data.pana_encoding == 8)
 		  {
 			  for (int i = 0; i < 3; i++)
 				  imgdata.color.cblack[i] =
@@ -611,6 +662,13 @@ int LibRaw::open_datastream(LibRaw_abstract_datastream *stream)
 				  load_raw = &LibRaw::panasonicC7_load_raw;
 			  else
 				  imgdata.idata.raw_count = 0; // incorrect size
+		  }
+		  else if (libraw_internal_data.unpacker_data.pana_encoding == 8)
+		  {
+            if (libraw_internal_data.unpacker_data.pana8.stripe_count > 0)
+			  load_raw = &LibRaw::panasonicC8_load_raw;
+			else
+              imgdata.idata.raw_count = 0; // incorrect stripes count
 		  }
 	  }
 
@@ -1087,6 +1145,8 @@ int LibRaw::open_datastream(LibRaw_abstract_datastream *stream)
              ((MN.pentax.MultiExposure & 0x01) == 1))
       imgdata.color.as_shot_wb_applied =
           LIBRAW_ASWB_APPLIED | LIBRAW_ASWB_PENTAX;
+	else if (makeIs(LIBRAW_CAMERAMAKER_Sony) && load_raw == &LibRaw::sony_ycbcr_load_raw)
+		imgdata.color.as_shot_wb_applied = LIBRAW_ASWB_APPLIED | LIBRAW_ASWB_SONY;
     else
       imgdata.color.as_shot_wb_applied = 0;
 

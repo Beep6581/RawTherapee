@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2021 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
  *
  LibRaw uses code from dcraw.c -- Dave Coffin's raw photo decoder,
  dcraw.c is copyright 1997-2018 by Dave Coffin, dcoffin a cybercom o net.
@@ -91,40 +91,6 @@ int LibRaw::canon_s2is()
   }
   return 0;
 }
-
-#ifdef LIBRAW_OLD_VIDEO_SUPPORT
-void LibRaw::parse_redcine()
-{
-  unsigned i, len, rdvo;
-
-  order = 0x4d4d;
-  is_raw = 0;
-  fseek(ifp, 52, SEEK_SET);
-  width = get4();
-  height = get4();
-  fseek(ifp, 0, SEEK_END);
-  fseek(ifp, -(i = ftello(ifp) & 511), SEEK_CUR);
-  if (get4() != i || get4() != 0x52454f42)
-  {
-    fseek(ifp, 0, SEEK_SET);
-    while ((len = get4()) != (unsigned)EOF)
-    {
-      if (get4() == 0x52454456)
-        if (is_raw++ == shot_select)
-          data_offset = ftello(ifp) - 8;
-      fseek(ifp, len - 8, SEEK_CUR);
-    }
-  }
-  else
-  {
-    rdvo = get4();
-    fseek(ifp, 12, SEEK_CUR);
-    is_raw = get4();
-    fseeko(ifp, rdvo + 8 + shot_select * 4, SEEK_SET);
-    data_offset = get4();
-  }
-}
-#endif
 
 void LibRaw::parse_cine()
 {

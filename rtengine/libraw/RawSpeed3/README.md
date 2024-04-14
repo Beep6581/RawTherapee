@@ -19,6 +19,7 @@ They are extremely reluctant to accept 3rd-party patches to this library, theref
   * **02.Makernotes-processing.patch** - fixes an error in processing the Makernotes tag.
   * **03.remove-limits-and-logging.patch** - removes debug printing and file size limits. This patch is optional, but if you are going to decode files from cameras that were not available at the time a particular version of RawSpeed was created, then this patch can be useful.
   * **04.clang-cl-compatibility.patch -** fixes for compatibility with Microsoft C++ library.
+  * **05.no-phase-one-correction.patch -** disables RawSpeed's PhaseOne flat field correction because LibRaw implements own
 
 ## Building the RawSpeed-v3 library
 

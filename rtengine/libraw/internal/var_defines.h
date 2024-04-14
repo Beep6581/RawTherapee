@@ -1,6 +1,6 @@
 /* -*- C++ -*-
  * File: var_defines.h
- * Copyright 2008-2021 LibRaw LLC (info@libraw.org)
+ * Copyright 2008-2024 LibRaw LLC (info@libraw.org)
  * Created: Sat Mar  8, 2008
  *
  * LibRaw redefinitions of dcraw internal variables
@@ -184,6 +184,7 @@ it under the terms of the one of two licenses as you choose:
 #define tile_length       (libraw_internal_data.unpacker_data.tile_length)
 #define load_flags        (libraw_internal_data.unpacker_data.load_flags)
 #define pana_encoding     (libraw_internal_data.unpacker_data.pana_encoding)
+#define pana8			  (libraw_internal_data.unpacker_data.pana8)
 #define pana_bpp          (libraw_internal_data.unpacker_data.pana_bpp)
 #define CM_found          (libraw_internal_data.unpacker_data.CM_found)
 

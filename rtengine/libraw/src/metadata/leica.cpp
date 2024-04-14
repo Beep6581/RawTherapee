@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2021 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
  *
  LibRaw is free software; you can redistribute it and/or modify
  it under the terms of the one of two licenses as you choose:
@@ -48,7 +48,7 @@ void LibRaw::setLeicaBodyFeatures(int LeicaMakernoteSignature)
     ilm.FocalType = LIBRAW_FT_ZOOM_LENS;
   }
   else if ((LeicaMakernoteSignature ==
-            0x0200) || // M10, M10-D, M10-R, "S (Typ 007)", M11
+            0x0200) || // M10, M10-D, M10-R, "S (Typ 007)", M11, "M11 Monochrom"
            (LeicaMakernoteSignature ==
             0x02ff) || // "M (Typ 240)", "M (Typ 262)", "M-D (Typ 262)",
                        // "M Monochrom (Typ 246)", "S (Typ 006)", "S-E (Typ 006)", S2, S3
@@ -68,6 +68,7 @@ void LibRaw::setLeicaBodyFeatures(int LeicaMakernoteSignature)
   }
   else if ((LeicaMakernoteSignature == 0x0600) || // "T (Typ 701)", TL
            (LeicaMakernoteSignature == 0x0900) || // SL2, "SL2-S", "SL (Typ 601)", CL, Q2, "Q2 MONO"
+           (LeicaMakernoteSignature == 0x0a00) || // Q3
            (LeicaMakernoteSignature == 0x1a00))   // TL2
   {
     if ((model[0] == 'S') || (model[6] == 'S'))
@@ -82,7 +83,8 @@ void LibRaw::setLeicaBodyFeatures(int LeicaMakernoteSignature)
       ilm.CameraMount = LIBRAW_MOUNT_LPS_L;
     }
     else if (((model[0] == 'Q') || (model[6] == 'Q')) &&
-             ((model[1] == '2') || (model[7] == '2')))
+             (((model[1] == '2') || (model[7] == '2')) ||
+              ((model[1] == '3') || (model[7] == '3'))))
     {
       ilm.CameraFormat = ilm.LensFormat = LIBRAW_FORMAT_FF;
       ilm.CameraMount = ilm.LensMount = LIBRAW_MOUNT_FixedLens;
@@ -206,6 +208,7 @@ void LibRaw::parseLeicaMakernote(int base, int uptag, unsigned MakernoteTagType)
         (LeicaMakernoteSignature != 0x0200) &&
         (LeicaMakernoteSignature != 0x0800) &&
         (LeicaMakernoteSignature != 0x0900) &&
+        (LeicaMakernoteSignature != 0x0a00) &&
         (LeicaMakernoteSignature != 0x02ff))
       base = ftell(ifp) - 8;
   }
@@ -297,7 +300,7 @@ void LibRaw::parseLeicaMakernote(int base, int uptag, unsigned MakernoteTagType)
         parseLeicaLensName(len);
       }
     }
-    else if (LeicaMakernoteSignature == 0x0200) // M10, M10-D, M10-R, "S (Typ 007)", M11
+    else if (LeicaMakernoteSignature == 0x0200) // M10, M10-D, M10-R, "S (Typ 007)", M11, "M11 Monochrom"
     {
       if ((tag == 0x035a) && (fabs(ilm.CurAp) < 0.17f))
       {
@@ -331,8 +334,10 @@ void LibRaw::parseLeicaMakernote(int base, int uptag, unsigned MakernoteTagType)
       }
     }
     else if ((LeicaMakernoteSignature == 0x0800) || // "Q (Typ 116)"
-             (LeicaMakernoteSignature == 0x0900))   // SL2, "SL2-S", "SL (Typ 601)",
+             (LeicaMakernoteSignature == 0x0900) || // SL2, "SL2-S", "SL (Typ 601)",
                                                     // CL, Q2, "Q2 MONO"
+             (LeicaMakernoteSignature == 0x0a00)    // Q3
+            )
     {
       if ((tag == 0x0304) && (len == 1) && ((c = fgetc(ifp)) != 0) &&
           (ilm.CameraMount == LIBRAW_MOUNT_LPS_L))
