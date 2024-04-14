@@ -35,21 +35,20 @@ jobs:
           echo "Running apt update."
           sudo apt update
           echo "Installing dependencies with apt."
-          DEBIAN_FRONTEND=noninteractive sudo apt install -y cmake libgtk-3-dev libgtkmm-3.0-dev liblensfun-dev librsvg2-dev liblcms2-dev libfftw3-dev libiptcdata0-dev libtiff5-dev libcanberra-gtk3-dev liblensfun-bin libexpat1-dev libbrotli-dev zlib1g-dev libinih-dev adwaita-icon-theme-full libtcmalloc-minimal4
+          DEBIAN_FRONTEND=noninteractive sudo apt install -y cmake libgtk-3-dev libgtkmm-3.0-dev liblensfun-dev librsvg2-dev liblcms2-dev libfftw3-dev libiptcdata0-dev libtiff5-dev libcanberra-gtk3-dev liblensfun-bin libexpat1-dev libbrotli-dev zlib1g-dev libinih-dev adwaita-icon-theme-full gettext libarchive-tools zstd libgif-dev libwebp-dev libwebpdemux2
+
+      - name: Install makedeb
+        run: |
+          echo "Installing makedeb..."
+          curl -Ss -qgb "" -fLC - --retry 3 --retry-delay 3 -o makedeb.deb \
+            "https://github.com/makedeb/makedeb/releases/download/v16.1.0-beta1/makedeb-beta_16.1.0-beta1_amd64_focal.deb"
+          DEBIAN_FRONTEND=noninteractive sudo dpkg -i makedeb.deb
 
       - name: Install libjxl
+        working-directory: tools/makedeb
         run: |
-          echo "Downloading and installing libhwy and libjxl..."
-          VERSION_UBUNTU=20.04
-          VERSION_JXL=0.10.2
-          DEB_URL_HWYDEV="https://launchpad.net/~ubuntuhandbook1/+archive/ubuntu/apps/+files/libhwy-dev_0.16.0-0focal1_amd64.deb"
-          DEB_URL_HWY="https://launchpad.net/~ubuntuhandbook1/+archive/ubuntu/apps/+files/libhwy0_0.16.0-0focal1_amd64.deb"
-          curl -Ss -qgb "" -fLC - --retry 3 --retry-delay 3 -o libhwy-dev.deb "$DEB_URL_HWYDEV"
-          curl -Ss -qgb "" -fLC - --retry 3 --retry-delay 3 -o libhwy.deb    "$DEB_URL_HWY"
-          curl -Ss -qgb "" -fLC - --retry 3 --retry-delay 3 -o libjxl-debs.tar.gz \
-            "https://github.com/libjxl/libjxl/releases/download/v${VERSION_JXL}/jxl-debs-amd64-ubuntu-${VERSION_UBUNTU}-v${VERSION_JXL}.tar.gz"
-          tar xf libjxl-debs.tar.gz
-          DEBIAN_FRONTEND=noninteractive sudo dpkg -i libhwy-dev.deb libhwy.deb jxl_${VERSION_JXL}_amd64.deb libjxl-dev_${VERSION_JXL}_amd64.deb libjxl_${VERSION_JXL}_amd64.deb
+          echo "Building and installing libjxl..."
+          makedeb -si --no-confirm -p PKGBUILD.libjxl
 
       - name: Install Exiv2
         run: |
