@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2021 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
  *
 
  LibRaw is free software; you can redistribute it and/or modify
@@ -46,10 +46,7 @@ LibRaw::LibRaw(unsigned int flags) : memmgr(1024)
   _x3f_data = NULL;
 
 #ifdef USE_RAWSPEED
-  CameraMetaDataLR *camerameta =
-      make_camera_metadata(); // May be NULL in case of exception in
-                              // make_camera_metadata()
-  _rawspeed_camerameta = static_cast<void *>(camerameta);
+  _rawspeed_camerameta = make_camera_metadata();
 #endif
   callbacks.data_cb = (flags & LIBRAW_OPTIONS_NO_DATAERR_CALLBACK)
                           ? NULL
@@ -79,6 +76,7 @@ LibRaw::LibRaw(unsigned int flags) : memmgr(1024)
   imgdata.params.output_color = 1;
   imgdata.params.output_bps = 8;
   imgdata.params.use_fuji_rotate = 1;
+  imgdata.params.use_p1_correction = 1;
   imgdata.params.exp_shift = 1.0;
   imgdata.params.auto_bright_thr = LIBRAW_DEFAULT_AUTO_BRIGHTNESS_THRESHOLD;
   imgdata.params.adjust_maximum_thr = LIBRAW_DEFAULT_ADJUST_MAXIMUM_THRESHOLD;
@@ -118,9 +116,7 @@ LibRaw::~LibRaw()
 #ifdef USE_RAWSPEED
   if (_rawspeed_camerameta)
   {
-    CameraMetaDataLR *cmeta =
-        static_cast<CameraMetaDataLR *>(_rawspeed_camerameta);
-    delete cmeta;
+	  clear_camera_metadata(_rawspeed_camerameta);
     _rawspeed_camerameta = NULL;
   }
 #endif
@@ -292,14 +288,13 @@ void LibRaw::recycle()
   MN.sony.AFMicroAdjValue = 0x7f;
   MN.sony.AFMicroAdjOn = -1;
   MN.sony.AFMicroAdjRegisteredLenses = 0xff;
+  MN.sony.AspectRatio = -999.f;
 
   _exitflag = 0;
 #ifdef USE_RAWSPEED
   if (_rawspeed_decoder)
   {
-    RawSpeed::RawDecoder *d =
-        static_cast<RawSpeed::RawDecoder *>(_rawspeed_decoder);
-    delete d;
+	  clear_rawspeed_decoder(_rawspeed_decoder);
   }
   _rawspeed_decoder = 0;
 #endif

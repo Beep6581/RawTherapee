@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2021 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
  *
 
  LibRaw is free software; you can redistribute it and/or modify
@@ -14,6 +14,7 @@
  */
 
 #include "../../internal/libraw_cxx_defs.h"
+#include "../../internal/libraw_checked_buffer.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -229,7 +230,8 @@ unsigned LibRaw::capabilities()
 int LibRaw::is_sraw()
 {
   return load_raw == &LibRaw::canon_sraw_load_raw ||
-         load_raw == &LibRaw::nikon_load_sraw;
+         load_raw == &LibRaw::nikon_load_sraw ||
+		  load_raw == &LibRaw::sony_ycbcr_load_raw;
 }
 int LibRaw::is_coolscan_nef()
 {
@@ -245,6 +247,8 @@ int LibRaw::sraw_midpoint()
 {
   if (load_raw == &LibRaw::canon_sraw_load_raw)
     return 8192;
+  else if (load_raw == &LibRaw::sony_ycbcr_load_raw)
+    return 8192; // adjusted as in canon sRAW
   else if (load_raw == &LibRaw::nikon_load_sraw)
     return 2048;
   else
@@ -671,3 +675,68 @@ void 	LibRaw::libraw_swab(void *arr, size_t len)
 #endif
 
 }
+
+checked_buffer_t::checked_buffer_t(short ord, int size) : _order(ord), storage(size + 64)
+{
+  _data = storage.data();
+  _len = size;
+}
+checked_buffer_t::checked_buffer_t(short ord, unsigned char *dd, int ss) : _order(ord), _data(dd), _len(ss) {}
+
+ushort checked_buffer_t::sget2(int offset)
+{
+  checkoffset(offset + 2);
+  return libraw_sget2_static(_order, _data + offset);
+}
+void checked_buffer_t::checkoffset(int off)
+{
+  if (off >= _len)
+    throw LIBRAW_EXCEPTION_IO_EOF;
+}
+unsigned char checked_buffer_t::operator[](int idx)
+{
+  checkoffset(idx);
+  return _data[idx];
+}
+unsigned checked_buffer_t::sget4(int offset)
+{
+  checkoffset(offset + 4);
+  return libraw_sget4_static(_order, _data + offset);
+}
+
+double checked_buffer_t::sgetreal(int type, int offset)
+{
+  int sz = libraw_tagtype_dataunit_bytes(type);
+  checkoffset(offset + sz);
+  return libraw_sgetreal_static(_order, type, _data + offset);
+}
+
+int checked_buffer_t::tiff_sget(unsigned save, INT64 *tag_offset, unsigned *tag_id, unsigned *tag_type, INT64 *tag_dataoffset,
+              unsigned *tag_datalen, int *tag_dataunitlen)
+{
+  if ((((*tag_offset) + 12) > _len) || (*tag_offset < 0))
+  { // abnormal, tag buffer overrun
+    return -1;
+  }
+  int pos = *tag_offset;
+  *tag_id = sget2(pos);
+  pos += 2;
+  *tag_type = sget2(pos);
+  pos += 2;
+  *tag_datalen = sget4(pos);
+  pos += 4;
+  *tag_dataunitlen = libraw_tagtype_dataunit_bytes(*tag_type);
+  if ((*tag_datalen * (*tag_dataunitlen)) > 4)
+  {
+    *tag_dataoffset = sget4(pos) - save;
+    if ((*tag_dataoffset + *tag_datalen) > _len)
+    { // abnormal, tag data buffer overrun
+      return -2;
+    }
+  }
+  else
+    *tag_dataoffset = *tag_offset + 8;
+  *tag_offset += 12;
+  return 0;
+}
+

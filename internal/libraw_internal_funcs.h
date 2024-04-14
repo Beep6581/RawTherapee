@@ -1,6 +1,6 @@
 /* -*- C++ -*-
  * File: libraw_internal_funcs.h
- * Copyright 2008-2021 LibRaw LLC (info@libraw.org)
+ * Copyright 2008-2024 LibRaw LLC (info@libraw.org)
  * Created: Sat Mar  14, 2008
 
 LibRaw is free software; you can redistribute it and/or modify
@@ -88,9 +88,6 @@ it under the terms of the one of two licenses as you choose:
 	void	parsePentaxMakernotes(int base, unsigned tag, unsigned type, unsigned len, unsigned dng_writer);
 	void	parseRicohMakernotes(int base, unsigned tag, unsigned type, unsigned len, unsigned dng_writer);
 	void	parseSamsungMakernotes(int base, unsigned tag, unsigned type, unsigned len, unsigned dng_writer);
-#ifdef LIBRAW_OLD_VIDEO_SUPPORT
-	void	fixupArri();
-#endif
 	void	setSonyBodyFeatures (unsigned long long id);
 	void	parseSonyLensType2 (uchar a, uchar b);
 	void	parseSonyLensFeatures (uchar a, uchar b);
@@ -204,11 +201,6 @@ it under the terms of the one of two licenses as you choose:
 	int         guess_RAFDataGeneration (uchar *RAFData_start);
 	void        parse_fuji (int offset);
     void        parse_fuji_thumbnail(int offset);
-#ifdef LIBRAW_OLD_VIDEO_SUPPORT
-// RedCine
-	void        parse_redcine();
-	void        redcine_load_raw();
-#endif
 
 // Rollei
 	void        rollei_load_raw();
@@ -248,9 +240,6 @@ it under the terms of the one of two licenses as you choose:
 	void        nokia_load_raw();
 	void        android_loose_load_raw();
 	void        android_tight_load_raw();
-#ifdef LIBRAW_OLD_VIDEO_SUPPORT
-    void        canon_rmf_load_raw();
-#endif
 	unsigned    pana_data (int nb, unsigned *bytes);
 	void        panasonic_load_raw();
 //	void        panasonic_16x10_load_raw();
@@ -286,6 +275,7 @@ it under the terms of the one of two licenses as you choose:
 	void        kodak_rgb_load_thumb();
 	void        kodak_ycbcr_load_thumb();
 	void        vc5_dng_load_raw_placeholder();
+	void        jxl_dng_load_raw_placeholder();
 // It's a Sony (and K&M)
 	void        sony_decrypt (unsigned *data, int len, int start, int key);
 	void        sony_load_raw();
@@ -293,6 +283,7 @@ it under the terms of the one of two licenses as you choose:
 	void        sony_arw2_load_raw();
 	void        sony_arq_load_raw();
 	void        sony_ljpeg_load_raw();
+	void        sony_ycbcr_load_raw();
 	void        samsung_load_raw();
 	void        samsung2_load_raw();
 	void        samsung3_load_raw();
@@ -317,6 +308,14 @@ it under the terms of the one of two licenses as you choose:
 	void		rpi_load_raw16();
 	void		parse_raspberrypi();
 #endif
+
+	void kodak_thumb_loader();
+	void dng_ycbcr_thumb_loader();
+#ifdef USE_X3FTOOLS
+    void x3f_thumb_loader();
+    INT64 x3f_thumb_size();
+#endif
+
 
 // CAM/RGB
 	void        pseudoinverse (double (*in)[3], double (*out)[3], int size);
@@ -383,6 +382,7 @@ it under the terms of the one of two licenses as you choose:
 	int  crxParseImageHeader(uchar *cmp1TagData, int nTrack, int size);
 	void panasonicC6_load_raw();
 	void panasonicC7_load_raw();
+	void panasonicC8_load_raw();
 
 	void nikon_14bit_load_raw();
 

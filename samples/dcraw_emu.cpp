@@ -1,6 +1,6 @@
 /* -*- C++ -*-
  * File: dcraw_emu.cpp
- * Copyright 2008-2021 LibRaw LLC (info@libraw.org)
+ * Copyright 2008-2024 LibRaw LLC (info@libraw.org)
  * Created: Sun Mar 23,   2008
  *
  * LibRaw simple C++ API sample: almost complete dcraw emulator

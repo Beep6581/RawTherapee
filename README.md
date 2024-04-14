@@ -16,13 +16,13 @@ The library is intended for use with programs that work with RAW files, such as:
 
 Using the LibRaw library allows one to focus on the substantive part of processing the data contained in RAW files, without getting distracted by the wide variety of RAW file and metadata formats, compression algorithms, etc.
 
-The library’s development is focused on:
+The libraryï¿½s development is focused on:
 
 * Support for new cameras and formats
 * Improving extraction of metadata necessary for RAW processing
 * Providing an interface for reading other types of metadata.
 
-Additionally, the LibRaw library offers some basic RAW conversion, intended for cases when such conversion is not the main function of the LibRaw-using application _(for example: a viewer for 500+ graphic file formats, including RAW)._ These methods are inherited from the Dave Coffin’s dcraw.c utility _(see below the “Project history” section);_ their further development is not currently planned, because we do not consider production-quality rendering to be in the scope of LibRaw’s functionality _(the methods are retained for compatibility with prior versions and for rapid-fire testing of RAW support and other aspects)._
+Additionally, the LibRaw library offers some basic RAW conversion, intended for cases when such conversion is not the main function of the LibRaw-using application _(for example: a viewer for 500+ graphic file formats, including RAW)._ These methods are inherited from the Dave Coffinï¿½s dcraw.c utility _(see below the ï¿½Project historyï¿½ section);_ their further development is not currently planned, because we do not consider production-quality rendering to be in the scope of LibRawï¿½s functionality _(the methods are retained for compatibility with prior versions and for rapid-fire testing of RAW support and other aspects)._
 
 ## Licensing
 
@@ -35,7 +35,7 @@ The LibRaw library is distributed free of charge and with open-source code subje
 
 To use the LibRaw library in an application, you can choose the license that better suits your needs.
 
-If you modify/add/improve the LibRaw source code, then your patches can only be included into the library’s official source code if you agree to it being distributed under both of the above licenses.
+If you modify/add/improve the LibRaw source code, then your patches can only be included into the libraryï¿½s official source code if you agree to it being distributed under both of the above licenses.
 
 We do not guarantee that the licensing will not change in future versions of LibRaw.
 
@@ -47,7 +47,7 @@ We do not guarantee that the licensing will not change in future versions of Lib
 * Major releases _(for example, 0.20)_ are published once every year and a half to two years.
 * When the first public beta version of a major release is published, the list of supported cameras and formats is frozen; we try (but do not guarantee) to freeze the API/ABI as well.
 * The public major release contains only that code which has been sufficiently tested on a wide user base (including in our commercial products). Something very new may not be included in it (but it will probably be included in a public snapshot, see below).
-* Minor updates _(0.20.1, 0.20.2…)_ do not change the API/ABI and new cameras are not added; generally they are just bugfixes.
+* Minor updates _(0.20.1, 0.20.2ï¿½)_ do not change the API/ABI and new cameras are not added; generally they are just bugfixes.
 * Bugfixes are published as soon as possible in the [public GitHub repository](https://github.com/LibRaw/LibRaw).
 * Minor version increments: these are generally published if a serious error has been fixed, one that potentially affects many library users (for example, a possible stack overflow).
 
@@ -55,7 +55,7 @@ We do not guarantee that the licensing will not change in future versions of Lib
 
 * Public snapshots are published every 7-9 months in the [public GitHub repository](https://github.com/LibRaw/LibRaw).
 * These versions contain support for new cameras that was added after the previous major release. The API/ABI of public snapshots is not frozen, and may change.
-* Public snapshots are always tested on a fairly large user base, and may be considered suitable for use in programs that work with files with known origins (that is, recorded directly by users’ digital cameras). However, public snapshots should not be considered sufficiently reliable for processing files that are specially constructed for vulnerability testing; that is, they should not be used in public services that allow for anonymous processing of files of unknown provenance
+* Public snapshots are always tested on a fairly large user base, and may be considered suitable for use in programs that work with files with known origins (that is, recorded directly by usersï¿½ digital cameras). However, public snapshots should not be considered sufficiently reliable for processing files that are specially constructed for vulnerability testing; that is, they should not be used in public services that allow for anonymous processing of files of unknown provenance
 
 ## Support and feedback
 
@@ -85,15 +85,15 @@ The code that implements rendering of RAW to RGB is inherited from dcraw.c, with
 
 In the early-to-mid 2010s, we gladly expanded post-processing implemented in LibRaw, and readily accepted the input of outside developers (new/improved methods for debayerization/demosaicing, systematic noise reduction etc.).
 
-Experience has shown that the LibRaw team cannot support this added code on their own, while contributors do not provide support and development of the code they suggest and it ends up abandoned. As such, the majority of the modifications that are implemented by people outside the LibRaw team was moved to the [LibRaw-demosaic-pack-….](https://github.com/LibRaw?tab=repositories), where they remain in their original form (but these projects are still present in our GitHub).
+Experience has shown that the LibRaw team cannot support this added code on their own, while contributors do not provide support and development of the code they suggest and it ends up abandoned. As such, the majority of the modifications that are implemented by people outside the LibRaw team was moved to the [LibRaw-demosaic-pack-ï¿½.](https://github.com/LibRaw?tab=repositories), where they remain in their original form (but these projects are still present in our GitHub).
 
 Thus, we arrive at our current status, described in the first part of this text.
 
 ## Copyrights and Acknowledgements
 
-Copyright (C) 2008-2021 LibRaw LLC
+Copyright (C) 2008-2024 LibRaw LLC
 
-LibRaw uses code from Dave Coffin’s dcraw.c utility (without RESTRICTED/GPL2 code):
+LibRaw uses code from Dave Coffinï¿½s dcraw.c utility (without RESTRICTED/GPL2 code):
 
 Copyright 1997-2018 by Dave Coffin, dcoffin a cybercom o net
 
@@ -101,6 +101,6 @@ LibRaw uses DCB demosaic code by Jaceck Gozdz distributed under BSD license:
 
 Copyright (C) 2010, Jacek Gozdz (mailto:cuniek@kft.umcs.lublin.pl)
 
-LibRaw uses Roland Karlsson’s X3F tools source code, licensed under BSD license:
+LibRaw uses Roland Karlssonï¿½s X3F tools source code, licensed under BSD license:
 
 Copyright (c) 2010, Roland Karlsson (roland@proxel.se)

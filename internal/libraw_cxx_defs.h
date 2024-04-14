@@ -1,6 +1,6 @@
 /* -*- C++ -*-
  * File: internal/libraw_cxx_defs.h
- * Copyright 2008-2021 LibRaw LLC (info@libraw.org)
+ * Copyright 2008-2024 LibRaw LLC (info@libraw.org)
  * Created: Sat Aug  17, 2020
 
 LibRaw is free software; you can redistribute it and/or modify
@@ -39,43 +39,25 @@ it under the terms of the one of two licenses as you choose:
 #endif
 #include <io.h>
 #endif
-
 #ifdef USE_RAWSPEED
-#include <RawSpeed/StdAfx.h>
-#include <RawSpeed/FileMap.h>
-#include <RawSpeed/RawParser.h>
-#include <RawSpeed/RawDecoder.h>
-#include <RawSpeed/CameraMetaData.h>
-#include <RawSpeed/ColorFilterArray.h>
-extern const char *_rawspeed_data_xml[];
-extern const int RAWSPEED_DATA_COUNT;
-class CameraMetaDataLR : public RawSpeed::CameraMetaData
-{
-public:
-  CameraMetaDataLR() : CameraMetaData() {}
-  CameraMetaDataLR(char *filename) : RawSpeed::CameraMetaData(filename) {}
-  CameraMetaDataLR(char *data, int sz);
-};
-
-CameraMetaDataLR *make_camera_metadata();
-
+void *make_camera_metadata();
+void clear_camera_metadata(void*);
+void clear_rawspeed_decoder(void*);
 #endif
 
-#ifdef USE_DNGSDK
-#include "dng_host.h"
-#include "dng_negative.h"
-#include "dng_simple_image.h"
-#include "dng_info.h"
-#endif
 
 #define P1 imgdata.idata
 #define S  imgdata.sizes
+#ifndef LIBRAW_DNGSDK_CONFLICT
 #define O  imgdata.params
 #define C  imgdata.color
 #define T  imgdata.thumbnail
 #define MN imgdata.makernotes
+#ifndef LIBRAW_EXPAT_CONFLICT
 #define IO libraw_internal_data.internal_output_params
 #define ID libraw_internal_data.internal_data
+#endif
+#endif
 
 #define makeIs(idx) (imgdata.idata.maker_index == idx)
 #define mnCamID imgdata.lens.makernotes.CamID

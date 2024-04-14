@@ -16,10 +16,6 @@ CXX=g++
 # CFLAGS+=-DUSE_DNGSDK -I../dng_sdk/source
 # LDADDD+=-L../dng_sdk/release -ldng -lXMPCore -ljpeg -lz
 
-# Jasper support for RedCine
-#CFLAGS+=-DUSE_JASPER -I/usr/local/include
-#LDADD+=-L/usr/local/lib -ljasper
-
 # JPEG support for lossy DNG
 #CFLAGS+=-DUSE_JPEG -I/usr/local/include
 #LDADD+=-L/usr/local/lib -ljpeg
@@ -38,7 +34,8 @@ CSTFLAGS=$(CFLAGS) -DLIBRAW_NOTHREADS
 
 LIB_OBJECTS= object/libraw_datastream.o object/libraw_c_api.o \
   object/cameralist.o object/fuji_compressed.o \
-  object/crx.o object/fp_dng.o object/decoders_libraw.o \
+  object/crx.o object/pana8.o object/fp_dng.o object/decoders_libraw.o \
+  object/losslessjpeg.o object/sonycc.o \
   object/unpack.o object/unpack_thumb.o \
   object/rawspeed_glue.o object/dngsdk_glue.o \
   object/colorconst.o object/utils_libraw.o object/init_close_utils.o \
@@ -153,6 +150,12 @@ object/canon_600.o: src/decoders/canon_600.cpp
 	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/canon_600.o src/decoders/canon_600.cpp
 object/crx.o: src/decoders/crx.cpp
 	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/crx.o src/decoders/crx.cpp
+object/pana8.o: src/decoders/pana8.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/pana8.o src/decoders/pana8.cpp
+object/sonycc.o: src/decoders/sonycc.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/sonycc.o src/decoders/sonycc.cpp
+object/losslessjpeg.o: src/decompressors/losslessjpeg.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/losslessjpeg.o src/decompressors/losslessjpeg.cpp
 object/decoders_dcraw.o: src/decoders/decoders_dcraw.cpp
 	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/decoders_dcraw.o src/decoders/decoders_dcraw.cpp
 object/decoders_libraw_dcrdefs.o: src/decoders/decoders_libraw_dcrdefs.cpp

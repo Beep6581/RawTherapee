@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2021 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
  *
 
  LibRaw is free software; you can redistribute it and/or modify
@@ -61,12 +61,14 @@ int LibRaw::raw2image(void)
   {
     raw2image_start();
 
-    if (is_phaseone_compressed() && imgdata.rawdata.raw_alloc)
+	bool free_p1_buffer = false;
+    if (is_phaseone_compressed() && (imgdata.rawdata.raw_alloc || (imgdata.process_warnings & LIBRAW_WARN_RAWSPEED3_PROCESSED)))
     {
       phase_one_allocate_tempbuffer();
+	  free_p1_buffer = true;
       int rc = phase_one_subtract_black((ushort *)imgdata.rawdata.raw_alloc,
                                         imgdata.rawdata.raw_image);
-      if (rc == 0)
+      if (rc == 0 && imgdata.params.use_p1_correction)
         rc = phase_one_correct();
       if (rc != 0)
       {
@@ -180,7 +182,7 @@ int LibRaw::raw2image(void)
     }
 
     // Free PhaseOne separate copy allocated at function start
-    if (is_phaseone_compressed())
+    if (free_p1_buffer)
     {
       phase_one_free_tempbuffer();
     }
@@ -306,14 +308,16 @@ int LibRaw::raw2image_ex(int do_subtract_black)
   try
   {
     raw2image_start();
+	bool free_p1_buffer = false;
 
     // Compressed P1 files with bl data!
-    if (is_phaseone_compressed() && imgdata.rawdata.raw_alloc)
+    if (is_phaseone_compressed() && (imgdata.rawdata.raw_alloc || (imgdata.process_warnings & LIBRAW_WARN_RAWSPEED3_PROCESSED)))
     {
       phase_one_allocate_tempbuffer();
+	  free_p1_buffer = true;
       int rc = phase_one_subtract_black((ushort *)imgdata.rawdata.raw_alloc,
                                         imgdata.rawdata.raw_image);
-      if (rc == 0)
+      if (rc == 0 && imgdata.params.use_p1_correction)
         rc = phase_one_correct();
       if (rc != 0)
       {
@@ -528,7 +532,7 @@ int LibRaw::raw2image_ex(int do_subtract_black)
     }
 
     // Free PhaseOne separate copy allocated at function start
-    if (is_phaseone_compressed())
+    if (free_p1_buffer)
     {
       phase_one_free_tempbuffer();
     }

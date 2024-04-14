@@ -1,6 +1,6 @@
 /* -*- C++ -*-
  * File: openvayer_sample.cpp
- * Copyright 2008-2021 LibRaw LLC (info@libraw.org)
+ * Copyright 2008-2024 LibRaw LLC (info@libraw.org)
  * Created: Feb 11, 2020
  *
  * LibRaw simple C++ API:  opens bayer data (Kodak KAI-0340 sensor) from buffer,

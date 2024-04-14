@@ -19,7 +19,7 @@ I. GPR SDK comes with (patched) Adobe DNG SDK source (v1.4 but outdated).
 II. So, you need to patch latest Adobe DNG SDK v1.4 (dated 2015), this version
    is available from Adobe:
    http://download.adobe.com/pub/adobe/dng/dng_sdk_1_4.zip
-   or use Adobe DNG SDK v1.6   
+   or use Adobe DNG SDK v1.6 or v1.7
   
   (most likely, this apply for v1.5 too, but not tested/checked):
 
@@ -29,17 +29,27 @@ II. So, you need to patch latest Adobe DNG SDK v1.4 (dated 2015), this version
       (it may not apply to any Adobe DNG SDK version, if so apply it by hands).
 
       This compression type is already handled (passed via validation)
-      in Adobe DNG SDK v1.6
+      in Adobe DNG SDK v1.6/1.7
 
-   b) Adobe DNG SDK v1.6 defines the ccVc5 constant in dng_tag_values.h
+   b) Adobe DNG SDK v1.6/1.7 defines the ccVc5 constant in dng_tag_values.h
       so GPR SDK's gpr_read_image.cpp will not compile due to constant redefinition
-      so use provided patch:   LibRaw/GoPro/dng-sdk-1_6-hide-ccVc5-definitiion.diff
+      so use provided patch:   
+
+      For Adobe DNG SDK 1.6 (only): LibRaw/GoPro/dng-sdk-1_6-hide-ccVc5-definitiion.diff
+      For Adobe DNG SDK 1.6 or 1.7: LibRaw/GoPro/dng-sdk-1_6-1_7-hide-ccVc5-definitiion.diff
+
       to use Adobe's definitiion     
 
    c) Newer (than supplied w/ GPR SDK) Adobe SDK versions changes 
      dng_read_image::ReadTile interface, please apply patches 
-     LibRaw/GoPro/gpr_read_image.cpp.diff 
-     and  LibRaw/GoPro/gpr_read_image.h.diff to your GPR SDK code
+     * For all versions of Adobe DNG SDK:
+
+        LibRaw/GoPro/gpr_read_image.cpp-dng16.diff 
+        and  LibRaw/GoPro/gpr_read_image.h-dng16.diff to your GPR SDK code
+
+     * For Adone DNG SDK 1.7 (in addition to two -dng16.diff patches listed in previous section):
+        LibRaw/GoPro/gpr_read_image.h-dng16.diff 
+        LibRaw/GoPro/gpr_read_image.h-dng17.diff
 
    d) GPR SDK's gpr_sdk/private/gpr.cpp uses own (added) dng_host method 
       GetGPMFPayload so it will not compile with Adobes (not patched) 
@@ -49,6 +59,8 @@ II. So, you need to patch latest Adobe DNG SDK v1.4 (dated 2015), this version
        - either compile GPR SDK without gpr_sdk/private/gpr.cpp file
        - or provide GPR's dng_host.h while building GPR SDK.
      (in our software we use 1st method).       
+
+
 
    See Note VII below for detailed GPR SDK build instructions w/ Cmake
 

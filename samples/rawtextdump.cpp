@@ -1,6 +1,6 @@
 /* -*- C++ -*-
  * File: raw2text.cpp
- * Copyright 2008-2021 LibRaw LLC (info@libraw.org)
+ * Copyright 2008-2024 LibRaw LLC (info@libraw.org)
  * Created: Sun Sept 01, 2020
  *
  * LibRaw sample

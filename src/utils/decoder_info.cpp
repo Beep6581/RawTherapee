@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2021 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
  *
 
  LibRaw is free software; you can redistribute it and/or modify
@@ -45,6 +45,13 @@ int LibRaw::get_decoder_info(libraw_decoder_info_t *d_info)
   {
       d_info->decoder_name = "vc5_dng_load_raw_placeholder()";
 #ifndef USE_GPRSDK
+    d_info->decoder_flags = LIBRAW_DECODER_UNSUPPORTED_FORMAT;
+#endif
+  }
+  else if (load_raw == &LibRaw::jxl_dng_load_raw_placeholder)
+  {
+    d_info->decoder_name = "jxl_dng_load_raw_placeholder()";
+#ifndef USE_DNGSDK
     d_info->decoder_flags = LIBRAW_DECODER_UNSUPPORTED_FORMAT;
 #endif
   }
@@ -138,7 +145,7 @@ int LibRaw::get_decoder_info(libraw_decoder_info_t *d_info)
   else if (load_raw == &LibRaw::phase_one_load_raw_c)
   {
     d_info->decoder_name = "phase_one_load_raw_c()";
-    d_info->decoder_flags = LIBRAW_DECODER_TRYRAWSPEED3; /* FIXME: need to make sure correction not applied*/
+    d_info->decoder_flags = imgdata.color.phase_one_data.format == 5 ? 0: LIBRAW_DECODER_TRYRAWSPEED3; /* Use only with patched RawSpeed3;  */
   }
   else if (load_raw == &LibRaw::phase_one_load_raw_s)
   {
@@ -194,13 +201,6 @@ int LibRaw::get_decoder_info(libraw_decoder_info_t *d_info)
     d_info->decoder_name = "nokia_load_raw()";
     d_info->decoder_flags = LIBRAW_DECODER_FIXEDMAXC;
   }
-#ifdef LIBRAW_OLD_VIDEO_SUPPORT
-  else if (load_raw == &LibRaw::canon_rmf_load_raw)
-  {
-    // UNTESTED
-    d_info->decoder_name = "canon_rmf_load_raw()";
-  }
-#endif
   else if (load_raw == &LibRaw::panasonic_load_raw)
   {
     d_info->decoder_name = "panasonic_load_raw()";
@@ -214,6 +214,10 @@ int LibRaw::get_decoder_info(libraw_decoder_info_t *d_info)
   else if (load_raw == &LibRaw::panasonicC7_load_raw)
   {
     d_info->decoder_name = "panasonicC7_load_raw()";
+  }
+  else if (load_raw == &LibRaw::panasonicC8_load_raw)
+  {
+    d_info->decoder_name = "panasonicC8_load_raw()";
   }
   else if (load_raw == &LibRaw::olympus_load_raw)
   {
@@ -295,6 +299,12 @@ int LibRaw::get_decoder_info(libraw_decoder_info_t *d_info)
   {
     d_info->decoder_name = "sony_ljpeg_load_raw()";
   }
+  else if (load_raw == &LibRaw::sony_ycbcr_load_raw)
+  {
+    d_info->decoder_name = "sony_ycbcr_load_raw()";
+    d_info->decoder_flags = LIBRAW_DECODER_LEGACY_WITH_MARGINS;
+
+  }
   else if (load_raw == &LibRaw::sony_arw_load_raw)
   {
     d_info->decoder_name = "sony_arw_load_raw()";
@@ -337,13 +347,6 @@ int LibRaw::get_decoder_info(libraw_decoder_info_t *d_info)
     d_info->decoder_name = "smal_v9_load_raw()";
     d_info->decoder_flags = LIBRAW_DECODER_FIXEDMAXC;
   }
-#ifdef LIBRAW_OLD_VIDEO_SUPPORT
-  else if (load_raw == &LibRaw::redcine_load_raw)
-  {
-    d_info->decoder_name = "redcine_load_raw()";
-    d_info->decoder_flags = LIBRAW_DECODER_HASCURVE;
-  }
-#endif
   else if (load_raw == &LibRaw::x3f_load_raw)
   {
     d_info->decoder_name = "x3f_load_raw()";

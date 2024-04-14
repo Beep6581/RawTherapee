@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2021 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
  *
 
  LibRaw is free software; you can redistribute it and/or modify
@@ -108,11 +108,15 @@ void LibRaw::setCanonBodyFeatures(unsigned long long id)
     ilm.CameraFormat = LIBRAW_FORMAT_APSC;
     ilm.CameraMount = LIBRAW_MOUNT_Canon_EF_M;
   }
-  else if ((id == CanonID_EOS_R)  ||
-           (id == CanonID_EOS_RP) ||
-           (id == CanonID_EOS_R3) ||
-           (id == CanonID_EOS_R5) ||
-           (id == CanonID_EOS_R6))
+  else if (
+              (id == CanonID_EOS_R)
+           || (id == CanonID_EOS_RP)
+           || (id == CanonID_EOS_R3)
+           || (id == CanonID_EOS_R5)
+           || (id == CanonID_EOS_R6)
+           || (id == CanonID_EOS_R6m2)
+           || (id == CanonID_EOS_R8)
+          )
   {
     ilm.CameraFormat = LIBRAW_FORMAT_FF;
     ilm.CameraMount = LIBRAW_MOUNT_Canon_RF;
@@ -120,8 +124,12 @@ void LibRaw::setCanonBodyFeatures(unsigned long long id)
     ilm.LensMount = LIBRAW_MOUNT_Canon_EF;
   }
 
-  else if ((id == CanonID_EOS_R7)  ||
-           (id == CanonID_EOS_R10))
+  else if (
+              (id == CanonID_EOS_R7)
+           || (id == CanonID_EOS_R10)
+           || (id == CanonID_EOS_R50)
+           || (id == CanonID_EOS_R100)
+          )
   {
     ilm.CameraFormat = LIBRAW_FORMAT_APSC;
     ilm.CameraMount = LIBRAW_MOUNT_Canon_RF;
@@ -955,6 +963,7 @@ void LibRaw::parseCanonMakernotes(unsigned tag, unsigned /*type*/, unsigned len,
       imgdata.sizes.raw_aspect = LIBRAW_IMAGE_ASPECT_1to1;
       break;
     case 2:
+    case 0x102:
       imgdata.sizes.raw_aspect = LIBRAW_IMAGE_ASPECT_4to3;
       break;
     case 7:
@@ -1234,9 +1243,9 @@ void LibRaw::parseCanonMakernotes(unsigned tag, unsigned /*type*/, unsigned len,
       break;
 
     case 1820: // M50; ColorDataSubVer: 16
-    case 1824: // R; ColorDataSubVer: 17
+    case 1824: // R, Ra; ColorDataSubVer: 17
     case 1816: // RP, 250D, SX70 HS; ColorDataSubVer: 18
-               // M6 Mark II, M200, 90D, G5 X Mark II, G7 X Mark III, 850D; ColorDataSubVer: 19
+               // R100, M6 Mark II, M200, 90D, G5 X Mark II, G7 X Mark III, 850D; ColorDataSubVer: 19
       imCanon.ColorDataVer = 9;
       AsShot_Auto_MeasuredWB(0x0047);
       CR3_ColorData(0x0047);
@@ -1244,14 +1253,14 @@ void LibRaw::parseCanonMakernotes(unsigned tag, unsigned /*type*/, unsigned len,
 
     case 1770: // R5 CRM
     case 2024: // -1D X Mark III; ColorDataSubVer: 32
-    case 3656: // R5, R6; ColorDataSubVer: 33 
+    case 3656: // R5, R6; ColorDataSubVer: 33
       imCanon.ColorDataVer = 10;
       AsShot_Auto_MeasuredWB(0x0055);
       CR3_ColorData(0x0055);
       break;
 
     case 3973: // R3; ColorDataSubVer: 34
-    case 3778: // R7, R10; ColorDataSubVer: 48
+    case 3778: // R6 Mark II, R7, R8, R10, R50; ColorDataSubVer: 48
       imCanon.ColorDataVer = 11;
       AsShot_Auto_MeasuredWB(0x0069);
 

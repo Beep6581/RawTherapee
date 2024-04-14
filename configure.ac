@@ -64,28 +64,6 @@ if test x$jpeg = xtrue; then
         )
 fi
 
-# check for Jasper (JPEG2000) support
-AC_ARG_ENABLE([jasper],
-	[  --enable-jasper    Enable Jasper (JPEG2000) support for RedCine files],
-	[case "${enableval}" in
-		yes)	jasper=true ;;
-		no)	jasper=false ;;
-		*)	AC_MSG_ERROR([bad value ${enableval} for --enable-jasper]) ;;
-	esac],[jasper=true])
-
-if test x$jasper = xtrue; then
-        AC_CHECK_LIB([jasper], [jas_init],
-                [
-                        AC_CHECK_HEADERS([jasper/jasper.h], [
-                                CPPFLAGS="$CPPFLAGS -DUSE_JASPER"
-                                LIBS="$LIBS -ljasper"
-                                AC_SUBST([PACKAGE_LIBS_PRIVATE],"-ljasper $PACKAGE_LIBS_PRIVATE")
-                        ], AC_MSG_WARN([no jasper headers found]))
-                ],
-                AC_MSG_WARN([libjasper not found])
-        )
-fi
-
 # check if we want zlib support
 AC_ARG_ENABLE([zlib],
 	[  --enable-zlib    Enable zlib support for deflate compressed DNG files],

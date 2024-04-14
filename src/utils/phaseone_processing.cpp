@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2021 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
  *
  LibRaw uses code from dcraw.c -- Dave Coffin's raw photo decoder,
  dcraw.c is copyright 1997-2018 by Dave Coffin, dcoffin a cybercom o net.
@@ -18,15 +18,23 @@
 
 #include "../../internal/libraw_cxx_defs.h"
 
+
 void LibRaw::phase_one_allocate_tempbuffer()
 {
   // Allocate temp raw_image buffer
-  imgdata.rawdata.raw_image = (ushort *)malloc(S.raw_pitch * S.raw_height);
+	if (imgdata.process_warnings & LIBRAW_WARN_RAWSPEED3_PROCESSED)
+	{
+		// Processed by RawSpeed, raw_image contains ptr to rawspeed internals
+		imgdata.rawdata.raw_alloc = imgdata.rawdata.raw_image; // save for data processing and future reuse
+	}
+    imgdata.rawdata.raw_image = (ushort *)malloc(S.raw_pitch * S.raw_height);
 }
 void LibRaw::phase_one_free_tempbuffer()
 {
-  free(imgdata.rawdata.raw_image);
-  imgdata.rawdata.raw_image = (ushort *)imgdata.rawdata.raw_alloc;
+	free(imgdata.rawdata.raw_image);
+    imgdata.rawdata.raw_image = (ushort *)imgdata.rawdata.raw_alloc;
+	if (imgdata.process_warnings & LIBRAW_WARN_RAWSPEED3_PROCESSED)
+		imgdata.rawdata.raw_alloc = 0;
 }
 
 int LibRaw::phase_one_subtract_black(ushort *src, ushort *dest)

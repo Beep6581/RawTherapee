@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2021 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
  *
  LibRaw uses code from dcraw.c -- Dave Coffin's raw photo decoder,
  dcraw.c is copyright 1997-2018 by Dave Coffin, dcoffin a cybercom o net.
@@ -65,7 +65,6 @@ int LibRaw::parse_tiff_ifd(int base)
                         len, order, ifp, base);
       fseek(ifp, savepos, SEEK_SET);
     }
-
     if (!is_pana_raw)
     { /* processing of EXIF tags that collide w/ PanasonicRaw tags */
       switch (tag)
@@ -113,6 +112,13 @@ int LibRaw::parse_tiff_ifd(int base)
               tiff_ifd[ifd].comp = 6;
               tiff_ifd[ifd].bps = jh.bits;
               tiff_ifd[ifd].samples = 1;
+            }
+            else if (!dng_version && !strcasecmp(make, "SONY") && tiff_ifd[ifd].phint == 6 &&
+                tiff_ifd[ifd].comp == 7 && tiff_ifd[ifd].samples == 3) // Sony/lossless YCbCr
+            {
+              tiff_ifd[ifd].comp = 6;
+              tiff_ifd[ifd].bps = jh.bits;
+              // tiff_ifd[ifd].samples = 3; // no change
             }
             else
             {
@@ -189,16 +195,15 @@ int LibRaw::parse_tiff_ifd(int base)
         pana_black[tag - 0x001c] = get2();
         break;
       case 0x002d: /*  45, RawFormat */
-                   /* pana_encoding: tag 0x002d (45dec)
-                        not used - DMC-LX1/FZ30/FZ50/L1/LX1/LX2
+                   /* pana_encoding: tag 0x002d (45dec) not used - DMC-LX1/FZ30/FZ50/L1/LX1/LX2
                         2 - RAW DMC-FZ8/FZ18
                         3 - RAW DMC-L10
-                        4 - RW2 for most other models, including G9 in "pixel shift off"
-                      mode and YUNEEC CGO4            (must add 15 to black levels for
-                      RawFormat == 4)            5 - RW2 DC-GH5s; G9 in "pixel shift on"
-                      mode            6 - RW2            DC-S1, DC-S1R in "pixel shift off"
-                      mode            7 -            RW2 DC-S1R (probably            DC-S1 too) in
-                      "pixel shift on" mode
+                        4 - RW2 for most other models, including G9 in "pixel shift off" mode and YUNEEC CGO4
+                            (must add 15 to black levels for RawFormat == 4)
+                        5 - RW2 DC-GH5s; G9 in "pixel shift on" mode
+                        6 - RW2 DC-S1, DC-S1R in "pixel shift off" mode
+                        7 - RW2 DC-S1R (probably DC-S1 too) in "pixel shift on" mode
+                        8 - RW2 DC-GH6, DC-S5M2
                    */
         pana_encoding = get2();
         break;
@@ -220,7 +225,140 @@ int LibRaw::parse_tiff_ifd(int base)
         if (iso_speed == 65535)
           iso_speed = get4();
         break;
-      case 0x011c: /* 284, Gamma */
+	  case 0x0039:
+        if (type == LIBRAW_EXIFTAG_TYPE_UNDEFINED && len == 26)
+        {
+          ushort cnt = get2();
+          if (cnt > 6)
+            cnt = 6;
+          for (i = 0; i < cnt; i++)
+            pana8.tag39[i] = get4();
+        }
+        break;
+      case 0x003A:
+        if (type == LIBRAW_EXIFTAG_TYPE_UNDEFINED && len == 26)
+        {
+          ushort cnt = get2();
+          if (cnt > 6)
+            cnt = 6;
+		  for (i = 0; i < cnt; i++)
+		  {
+			  get2();
+			  pana8.tag3A[i] = get2();
+		  }
+        }
+        break;
+      case 0x003B:
+        if (type == LIBRAW_EXIFTAG_TYPE_SHORT && len == 1)
+            pana8.tag3B = get2();
+        break;
+      case 0x003C:
+      case 0x003D:
+      case 0x003E:
+      case 0x003F:
+        if (type == LIBRAW_EXIFTAG_TYPE_SHORT && len == 1)
+          pana8.initial[tag - 0x3c] = get2();
+        break;
+      case 0x0040:
+        if (type == LIBRAW_EXIFTAG_TYPE_UNDEFINED && len == 70)
+        {
+			ushort count = get2();
+			if (count > 17) count = 17;
+			for (i = 0; i < count; i++)
+			{
+				ushort v1 = get2();
+				if (v1 > 16u) v1 = 16u;
+				pana8.tag40a[i] = v1;
+				ushort v2 = get2();
+				if (v2 > 0xfffu)
+					v2 = 0xfffu;
+				pana8.tag40b[i] = v2;
+			}
+        }
+        break;
+      case 0x0041:
+        if (type == LIBRAW_EXIFTAG_TYPE_UNDEFINED && len == 36)
+        {
+          ushort count = get2();
+          if (count > 17)
+            count = 17;
+          for (i = 0; i < count; i++)
+          {
+            ushort v1 = get2();
+			if (v1 > 0x40u) v1 = 64;
+            pana8.tag41[i] = v1;
+          }
+        }
+        break;
+      case 0x0042:
+        if (type == LIBRAW_EXIFTAG_TYPE_SHORT && len == 1)
+        {
+          ushort val = get2();
+          if (val > 5)
+            val = 5;
+          pana8.stripe_count = val;
+        }
+        break;
+      case 0x0043:
+        if (type == LIBRAW_EXIFTAG_TYPE_SHORT && len == 1)
+        {
+          ushort val = get2();
+          if (val > 5)
+            val = 5;
+          pana8.tag43 = val;
+        }
+        break;
+      case 0x0044:
+        if (type == LIBRAW_EXIFTAG_TYPE_UNDEFINED && len == 50)
+        {
+          ushort count = get2();
+          if (count > 5)
+            count = 5;
+          for (i = 0; i < count; i++)
+            pana8.stripe_offsets[i] = get4();
+        }
+        break;
+      case 0x0045:
+        if (type == LIBRAW_EXIFTAG_TYPE_UNDEFINED && len == 50)
+        {
+          ushort count = get2();
+          if (count > 5)
+            count = 5;
+          for (i = 0; i < count; i++)
+            pana8.stripe_left[i] = get4();
+        }
+        break;
+      case 0x0046:
+        if (type == LIBRAW_EXIFTAG_TYPE_UNDEFINED && len == 50)
+        {
+          ushort count = get2();
+          if (count > 5)
+            count = 5;
+          for (i = 0; i < count; i++)
+            pana8.stripe_compressed_size[i] = get4();
+        }
+        break;
+      case 0x0047:
+        if (type == LIBRAW_EXIFTAG_TYPE_UNDEFINED && len == 26)
+        {
+          ushort count = get2();
+          if (count > 5)
+            count = 5;
+          for (i = 0; i < count; i++)
+            pana8.stripe_width[i] = get2();
+        }
+        break;
+      case 0x0048:
+        if (type == LIBRAW_EXIFTAG_TYPE_UNDEFINED && len == 26)
+        {
+          ushort count = get2();
+          if (count > 5)
+            count = 5;
+          for (i = 0; i < count; i++)
+            pana8.stripe_height[i] = get2();
+        }
+        break;
+	  case 0x011c: /* 284, Gamma */
       {
         int n = get2();
         if (n >= 1024)
@@ -1008,20 +1146,23 @@ int LibRaw::parse_tiff_ifd(int base)
                 (imFuji.RAFDataVersion == 0x0261) || // X100V, GFX 50S II
                 (imFuji.RAFDataVersion == 0x0262) || // X-T4
                 (imFuji.RAFDataVersion == 0x0263) || // X-H2S
-                (imFuji.RAFDataVersion == 0x0264) || // X-S10
-                (imFuji.RAFDataVersion == 0x0265) || // X-E4
-                (imFuji.RAFDataVersion == 0x0266) || // X-T30 II
+                (imFuji.RAFDataVersion == 0x0264) || // X-S10, X-H2
+                (imFuji.RAFDataVersion == 0x0265) || // X-E4, X-T5
+                (imFuji.RAFDataVersion == 0x0266) || // X-T30 II, X-S20
+                (imFuji.RAFDataVersion == 0x0267) || // GFX 100 II
                 !strcmp(model, "X-Pro3")     ||
-                !strcmp(model, "GFX 100S")   ||
-                !strcmp(model, "GFX100S")    ||
-                !strcmp(model, "GFX 50S II") ||
-                !strcmp(model, "GFX50S II")  ||
+                !strcmp(model, "GFX100 II")  || !strcmp(model, "GFX 100 II") ||
+                !strcmp(model, "GFX100S")    || !strcmp(model, "GFX 100S")   ||
+                !strcmp(model, "GFX50S II")  || !strcmp(model, "GFX 50S II") ||
                 !strcmp(model, "X100V")      ||
                 !strcmp(model, "X-T4")       ||
                 !strcmp(model, "X-H2S")      ||
+                !strcmp(model, "X-H2")       ||
                 !strcmp(model, "X-E4")       ||
+                !strcmp(model, "X-T5")       ||
                 !strcmp(model, "X-T30 II")   ||
-                !strcmp(model, "X-S10"))
+                !strcmp(model, "X-S10")      ||
+                !strcmp(model, "X-S20"))
 // is34 cameras have 34 CCT values instead of 31, manual still claims 2500 to 10000 K
 // aligned 3000 K to Incandescent, as it is usual w/ other Fujifilm cameras
               is34 = 1;
@@ -1055,7 +1196,7 @@ int LibRaw::parse_tiff_ifd(int base)
                     fj -= 93;
                     if (is34)
                       fj -= 9;
-// printf ("wb start in DNG: 0x%04x\n", fj*2-0x4e);
+//printf ("wb start in DNG: 0x%04x\n", fj*2-0x4e);
                     for (int iCCT = 0, ofst = fj; iCCT < 31;
                          iCCT++, ofst += 3)
                     {
@@ -1386,7 +1527,13 @@ int LibRaw::parse_tiff_ifd(int base)
 
               if (!strncmp(mbuf, "RAF ", 4))
               { // Fujifilm Raw, AdobeRAF
-                parseAdobeRAFMakernote();
+				  try {
+                    parseAdobeRAFMakernote(); // May raise exception for out-of buffer reads
+				  }
+				  catch (...)
+				  {
+					  // just ignore it
+				  }
               }
 
               if (!strncmp(mbuf, "SR2 ", 4))
@@ -1579,7 +1726,7 @@ int ifd_size_t_cmp(const void *a, const void *b)
                                      : (bi->databits < ai->databits ? -1 : 0);
 }
 
-static LibRaw_internal_thumbnail_formats tiff2thumbformat(int _comp, int _phint, int _bps, const char *_make);
+static LibRaw_internal_thumbnail_formats tiff2thumbformat(int _comp, int _phint, int _bps, const char *_make, bool isDNG);
 
 void LibRaw::apply_tiff()
 {
@@ -1640,7 +1787,7 @@ void LibRaw::apply_tiff()
           // Preview: 0x1 or 0x10001
           || ((tiff_ifd[i].newsubfiletype & 0xffff) == 1 &&
               (imgdata.rawparams.options & LIBRAW_RAWOPTIONS_DNG_ADD_PREVIEWS))
-        // Transparency mask: 0x4 
+        // Transparency mask: 0x4
           || ((tiff_ifd[i].newsubfiletype & 0xffff) == 4 &&
           (imgdata.rawparams.options & LIBRAW_RAWOPTIONS_DNG_ADD_MASKS)))
       {
@@ -1676,7 +1823,7 @@ void LibRaw::apply_tiff()
                (arr[q].ifdi & 0xff)); // add inverted frame # to ensure same
                                       // sort order for similar sized frames.
           if (tiff_ifd[ifdidx].phint == 4)
-              arr[q].databits /= 4; // Force lower bit count for Transp. mask images 
+              arr[q].databits /= 4; // Force lower bit count for Transp. mask images
         }
         qsort(arr, MIN(ifdc, LIBRAW_IFD_MAXCOUNT * 2), sizeof(arr[0]),
               ifd_size_t_cmp);
@@ -1773,7 +1920,13 @@ void LibRaw::apply_tiff()
       if (tiff_ifd[i].phint == 2 && tiff_ifd[i].extrasamples > 0 && tiff_ifd[i].samples > 3)
           continue; // SKIP RGB+Alpha IFDs
 
-      if ((tiff_ifd[i].comp != 6 || tiff_ifd[i].samples != 3) &&
+	  if (!strncasecmp(make, "Sony", 4) && tiff_ifd[i].bps == 8 && tiff_ifd[i].phint == 6 && tiff_ifd[i].comp == 7 &&
+          tiff_ifd[i].samples == 3 && tiff_ifd[i].newsubfiletype == 1)
+        continue; // Sony RGB preview
+
+      if ((tiff_ifd[i].comp != 6 || tiff_ifd[i].samples != 3 ||
+		  (tiff_ifd[i].comp == 6 && tiff_ifd[i].samples == 3 && !strncasecmp(make, "Sony", 4) && tiff_ifd[i].bps >=12)
+		  ) &&
             unsigned(tiff_ifd[i].t_width | tiff_ifd[i].t_height) < 0x10000 &&
             (unsigned)tiff_ifd[i].bps < 33 &&
             (unsigned)tiff_ifd[i].samples < 13 && ns &&
@@ -1952,9 +2105,25 @@ void LibRaw::apply_tiff()
     case 6:
     case 7:
     case 99:
-      if (!dng_version && tiff_compress == 6 && !strcasecmp(make, "SONY"))
-        load_raw = &LibRaw::sony_ljpeg_load_raw;
-      else
+		if (!dng_version && tiff_compress == 6 && !strcasecmp(make, "SONY"))
+		{
+			if (tiff_ifd[raw].phint == 6 && tiff_ifd[raw].bps >= 12 && tiff_ifd[raw].samples == 3)
+			{
+				load_raw = &LibRaw::sony_ycbcr_load_raw;
+				filters = 0;
+				colors = 3;
+			}
+			else
+				load_raw = &LibRaw::sony_ljpeg_load_raw;
+	    }
+		// Allow A1/Compression=7
+		else if(!dng_version && tiff_compress == 7 && !strcasecmp(make, "SONY") &&
+			(!strcasecmp(model,"ILCE-1") || !strncasecmp(model, "ILCE-7",6)
+				|| !strncasecmp(model, "ILCE-9", 6) // Most likely ILCE-9 will use tiff_compr=7 this w/ updated FW
+				) &&
+			tiff_bps == 14 && tiff_samples == 1)
+          load_raw = &LibRaw::sony_ljpeg_load_raw;
+        else
         load_raw = &LibRaw::lossless_jpeg_load_raw;
       break;
     case 262:
@@ -2024,7 +2193,7 @@ void LibRaw::apply_tiff()
         load_flags = (((INT64(raw_width) * 3ULL / 2ULL) + 15ULL) / 16ULL) *
                      16ULL; // bytes per row
       }
-      else if (!strncmp(model, "NIKON Z 9", 9) && tiff_ifd[raw].offset)
+      else if ((!strncmp(model, "NIKON Z 9", 9) || !strncmp(model, "NIKON Z 8", 9)) && tiff_ifd[raw].offset)
       {
           INT64 pos = ftell(ifp);
           unsigned char cmp[] = "CONTACT_INTOPIX"; // 15
@@ -2062,6 +2231,12 @@ void LibRaw::apply_tiff()
       break;
     case 8:
       break;
+#ifdef USE_DNGSDK
+    case 52546:
+      if (dng_version)
+        break; /* Compression=9 supported for dng if we compiled with GPR SDK */
+               /* Else: fallthrough */
+#endif
 #ifdef USE_GPRSDK
     case 9:
       if (dng_version)
@@ -2076,6 +2251,7 @@ void LibRaw::apply_tiff()
       if (((tiff_samples == 3 && tiff_ifd[raw].bytes &&
           !(tiff_bps == 16 &&
               !strncmp(make, "Leaf", 4)) && // Allow Leaf/16bit/3color files
+		  !(tiff_ifd[raw].comp == 6 && tiff_ifd[raw].phint == 6 && tiff_bps >= 12 && !strncasecmp(make,"Sony",4)) && // Sony YCbCr
           tiff_bps != 14 &&
           (tiff_compress & -16) != 32768) ||
           (tiff_bps == 8 && strncmp(make, "Phase", 5) &&
@@ -2093,8 +2269,8 @@ void LibRaw::apply_tiff()
 
   if (imgdata.rawparams.options & LIBRAW_RAWOPTIONS_CHECK_THUMBNAILS_ALL_VENDORS)
       fsizecheck = ifp->size();
-  else if ((imgdata.rawparams.options & LIBRAW_RAWOPTIONS_CHECK_THUMBNAILS_KNOWN_VENDORS)
-      && !strncasecmp(make,"Ricoh",5))
+  else if ((imgdata.rawparams.options & LIBRAW_RAWOPTIONS_CHECK_THUMBNAILS_KNOWN_VENDORS) &&
+           (!strncasecmp(make, "Ricoh", 5) || (dng_version && !strncasecmp(make, "Samsung", 7))))
       fsizecheck = ifp->size();
 
   for (i = 0; i < (int)tiff_nifds; i++)
@@ -2104,6 +2280,7 @@ void LibRaw::apply_tiff()
           tiff_ifd[i].samples == 1)) /* Allow 1-bps JPEGs */
         && tiff_ifd[i].bps > 0 && tiff_ifd[i].bps < 33 &&
         tiff_ifd[i].phint != 32803 && tiff_ifd[i].phint != 34892 &&
+		(tiff_ifd[i].comp != 52546 || (imgdata.rawparams.options & LIBRAW_RAWOPTIONS_ALLOW_JPEGXL_PREVIEWS)) &&
         unsigned(tiff_ifd[i].t_width | tiff_ifd[i].t_height) < 0x10000 &&
         tiff_ifd[i].comp != 34892)
     {
@@ -2150,7 +2327,7 @@ void LibRaw::apply_tiff()
 			{
 				int idx = imgdata.thumbs_list.thumbcount;
 				imgdata.thumbs_list.thumblist[idx].tformat = tiff2thumbformat(tiff_ifd[i].comp, tiff_ifd[i].phint,
-					tiff_ifd[i].bps, make);
+					tiff_ifd[i].bps, make, dng_version);
 				imgdata.thumbs_list.thumblist[idx].twidth = tiff_ifd[i].t_width;
 				imgdata.thumbs_list.thumblist[idx].theight = tiff_ifd[i].t_height;
 				imgdata.thumbs_list.thumblist[idx].tflip = tiff_ifd[i].t_flip;
@@ -2164,23 +2341,27 @@ void LibRaw::apply_tiff()
   if (thm >= 0)
   {
     thumb_misc |= tiff_ifd[thm].samples << 5;
-	thumb_format = tiff2thumbformat(tiff_ifd[thm].comp, tiff_ifd[thm].phint, tiff_ifd[thm].bps, make);
+	thumb_format = tiff2thumbformat(tiff_ifd[thm].comp, tiff_ifd[thm].phint, tiff_ifd[thm].bps, make, dng_version);
   }
 }
 
-static LibRaw_internal_thumbnail_formats tiff2thumbformat(int _comp, int _phint, int _bps, const char *_make)
+static LibRaw_internal_thumbnail_formats tiff2thumbformat(int _comp, int _phint, int _bps, const char *_make, bool isDNG)
 {
   switch (_comp)
   {
   case 0:
     return LIBRAW_INTERNAL_THUMBNAIL_LAYER;
   case 1:
-    if (_bps <= 8)
-      return LIBRAW_INTERNAL_THUMBNAIL_PPM;
-    else if (!strncmp(_make, "Imacon", 6))
-      return LIBRAW_INTERNAL_THUMBNAIL_PPM16;
+	  if (_bps <= 8)
+		  return LIBRAW_INTERNAL_THUMBNAIL_PPM;
+	  else if (!strncmp(_make, "Imacon", 6))
+		  return LIBRAW_INTERNAL_THUMBNAIL_PPM16;
+	  else if (isDNG &&  _phint == 6 && _bps == 12)
+		  return LIBRAW_INTERNAL_THUMBNAIL_DNG_YCBCR;
     else
       return LIBRAW_INTERNAL_THUMBNAIL_KODAK_THUMB;
+  case 52546:
+	  return LIBRAW_INTERNAL_THUMBNAIL_JPEGXL;
   case 65000:
     return _phint == 6 ? LIBRAW_INTERNAL_THUMBNAIL_KODAK_YCBCR : LIBRAW_INTERNAL_THUMBNAIL_KODAK_RGB;
   }

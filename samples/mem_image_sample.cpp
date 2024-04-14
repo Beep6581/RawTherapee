@@ -1,6 +1,6 @@
 /* -*- C++ -*-
  * File: mem_image.cpp
- * Copyright 2008-2021 LibRaw LLC (info@libraw.org)
+ * Copyright 2008-2024 LibRaw LLC (info@libraw.org)
  *
  * LibRaw mem_image/mem_thumb API test. Results should be same (bitwise) to
 dcraw [-4] [-6] [-e]

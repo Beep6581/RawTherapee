@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2021 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
  *
 
  LibRaw is free software; you can redistribute it and/or modify
@@ -104,6 +104,10 @@ void LibRaw::GetNormalizedModel()
       { CanonID_EOS_R7,            "EOS R7"},
       { CanonID_EOS_R10,           "EOS R10"},
       { CanonID_EOS_M50_Mark_II,   "EOS M50 Mark II"}, // M50m2, Kiss M2
+      { CanonID_EOS_R50,           "EOS R50"},
+      { CanonID_EOS_R6m2,          "EOS R6 Mark II"},
+      { CanonID_EOS_R8,            "EOS R8"},
+      { CanonID_EOS_R100,          "EOS R100"}
     },
 #if 0
     olyque[] = {
@@ -356,6 +360,7 @@ void LibRaw::GetNormalizedModel()
       { SonyID_DSC_RX100M5A,   "DSC-RX100M5A"},
       { SonyID_ILCE_6400,      "ILCE-6400"},
       { SonyID_DSC_RX0M2,      "DSC-RX0M2"},
+      { SonyID_DSC_HX95,       "DSC-HX95"},
       { SonyID_DSC_RX100M7,    "DSC-RX100M7"},
       { SonyID_ILCE_7RM4,      "ILCE-7RM4"},
       { SonyID_ILCE_9M2,       "ILCE-9M2"},
@@ -370,6 +375,17 @@ void LibRaw::GetNormalizedModel()
       { SonyID_ILCE_7RM3A,     "ILCE-7RM3A"},
       { SonyID_ILCE_7RM4A,     "ILCE-7RM4A"},
       { SonyID_ILCE_7M4,       "ILCE-7M4"},
+
+// Sony ZV-1F doesn't save raw
+//      { SonyID_ZV_1F,          "ZV-1F"},
+
+      { SonyID_ILCE_7RM5,      "ILCE-7RM5"},
+      { SonyID_ILME_FX30,      "ILME-FX30"},
+      { SonyID_ZV_E1,          "ZV-E1"},
+      { SonyID_ILCE_6700,      "ILCE-6700"},
+      { SonyID_ZV_1M2,         "ZV-1M2"},
+      { SonyID_ILCE_7CR,       "ILCE-7CR"},
+      { SonyID_ILCE_7CM2,      "ILCE-7CM2"},
     };
 
   static const char *orig;
@@ -389,6 +405,7 @@ void LibRaw::GetNormalizedModel()
     "@S9100", "S9600",
     "@S200EXR", "S205EXR",
     "@X-T1 IR", "X-T1IR",
+    "@GFX 100 II", "GFX100 II",
     "@GFX 100S", "GFX100S",
     "@GFX 50S II", "GFX50S II"
   };
@@ -518,7 +535,7 @@ void LibRaw::GetNormalizedModel()
     "@DMC-LX7", "D-LUX 6",
     "@DMC-LX9", "DMC-LX10", "DMC-LX15",
     "@DMC-ZS100", "DMC-ZS110", "DMC-TZ100", "DMC-TZ101", "DMC-TZ110", "DMC-TX1",
-    "@DC-ZS200", "DC-ZS220", "DC-TZ200", "DC-TZ202", "DC-TZ220", "DC-TX2", "C-Lux", "CAM-DC25",
+    "@DC-ZS200", "DC-ZS220", "DC-TZ200", "DC-TZ202", "DC-TZ220", "DC-TZ200D", "DC-TZ202D", "DC-TZ220D", "DC-ZS200D", "DC-ZS220D" "DC-TX2", "C-Lux", "CAM-DC25",
     "@DMC-ZS40", "DMC-TZ60", "DMC-TZ61",
     "@DMC-ZS50", "DMC-TZ70", "DMC-TZ71",
     "@DMC-ZS60", "DMC-TZ80", "DMC-TZ81", "DMC-TZ82", "DMC-TZ85",
@@ -729,8 +746,12 @@ void LibRaw::GetNormalizedModel()
         {
           if (unique_id == unique[i].id)
           {
-            strcpy(model, unique[i].t_model);
-            strcpy(normalized_model, unique[i].t_model);
+            if (!strcmp(model, "EOS Ra")) {
+              strcpy(normalized_model, model);
+            } else {
+              strcpy(model, unique[i].t_model);
+              strcpy(normalized_model, unique[i].t_model);
+            }
             break;
           }
         }
@@ -742,14 +763,20 @@ void LibRaw::GetNormalizedModel()
           (strlen(imgdata.color.UniqueCameraModel) > 6) &&
           strncmp(imgdata.color.UniqueCameraModel+6, "PowerShot", 9))
       {
-        for (i = 0; i < int(sizeof unique / sizeof *unique); i++)
-        {
-          if (!strcmp(unique[i].t_model, imgdata.color.UniqueCameraModel+6))
+        if (!strcmp(model, "EOS Ra")) {
+          ilm.CamID = unique_id = CanonID_EOS_R;
+          strcpy(normalized_model, model);
+          // try_xml = 1; // ??
+        } else {
+          for (i = 0; i < int(sizeof unique / sizeof *unique); i++)
           {
-            ilm.CamID = unique_id = unique[i].id;
-            strcpy(normalized_model, unique[i].t_model);
-            try_xml = 1;
-            break;
+            if (!strcmp(unique[i].t_model, imgdata.color.UniqueCameraModel+6))
+            {
+              ilm.CamID = unique_id = unique[i].id;
+              strcpy(normalized_model, unique[i].t_model);
+              try_xml = 1;
+              break;
+            }
           }
         }
       }
@@ -1017,6 +1044,35 @@ void LibRaw::GetNormalizedModel()
       }
     }
 
+/*
+char pgroup9050 = '-';
+char cameratype[16] = "unknown";
+switch (imSony.CameraType) {
+  case LIBRAW_SONY_DSC:  strcpy(cameratype, "DSC");  break;
+  case LIBRAW_SONY_DSLR: strcpy(cameratype, "DSLR"); break;
+  case LIBRAW_SONY_NEX:  strcpy(cameratype, "NEX");  break;
+  case LIBRAW_SONY_SLT:  strcpy(cameratype, "SLT");  break;
+  case LIBRAW_SONY_ILCE: strcpy(cameratype, "ILCE"); break;
+  case LIBRAW_SONY_ILCA: strcpy(cameratype, "ILCA"); break;
+}
+switch (imSony.group9050) {
+ case LIBRAW_SONY_Tag9050a:
+  pgroup9050 = 'a';
+  break;
+ case LIBRAW_SONY_Tag9050b:
+  pgroup9050 = 'b';
+  break;
+ case LIBRAW_SONY_Tag9050c:
+  pgroup9050 = 'c';
+  break;
+ case LIBRAW_SONY_Tag9050d:
+  pgroup9050 = 'd';
+  break;
+}
+printf("catchme\t%s\t%s\t%s\t9050%c\t%d\t%d\n",
+	model, normalized_model, cameratype, pgroup9050, imSony.len_group9050, imSony.FileFormat);
+*/
+
   } else if (makeIs(LIBRAW_CAMERAMAKER_Kodak)) {
     remove_caseSubstr (normalized_model, (char *)"EasyShare");
     remove_caseSubstr (normalized_model, (char *)"ZOOM");
@@ -1191,7 +1247,9 @@ void LibRaw::GetNormalizedModel()
         ilm.CameraMount = LIBRAW_MOUNT_Fuji_GF;
       }
       else if (!strncmp(normalized_model, "X-", 2) &&
-               (strncmp(normalized_model, "X-S1", 4) || !strncmp(normalized_model, "X-S10", 5)))
+               (strncmp(normalized_model, "X-S1", 4)  ||
+               !strncmp(normalized_model, "X-S10", 5) ||
+               !strncmp(normalized_model, "X-S20", 5)))
       {
         ilm.CameraFormat = LIBRAW_FORMAT_APSC;
         ilm.CameraMount = LIBRAW_MOUNT_Fuji_X;

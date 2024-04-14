@@ -1,6 +1,6 @@
 /* -*- C++ -*-
  * File: libraw_types.h
- * Copyright 2008-2021 LibRaw LLC (info@libraw.org)
+ * Copyright 2008-2024 LibRaw LLC (info@libraw.org)
  * Created: Sat Mar  8 , 2008
  *
  * LibRaw C data structures
@@ -370,6 +370,8 @@ typedef unsigned long long UINT64;
     ushort DRangePriority;
     ushort DRangePriorityAuto;
     ushort DRangePriorityFixed;
+    char   FujiModel[32 + 1];
+    char   FujiModel2[32 + 1];
 
     /*
     tag 0x9200, converted to BrightnessCompensation
@@ -509,6 +511,9 @@ typedef unsigned long long UINT64;
     ushort SensorWidth;
     ushort SensorHeight;
     ushort Active_D_Lighting;
+    unsigned PictureControlVersion;
+    char PictureControlName [20];
+    char PictureControlBase [20];
     unsigned ShotInfoVersion;
     short MakernotesFlip;
     double RollAngle;  // positive is clockwise, CW
@@ -675,6 +680,9 @@ typedef unsigned long long UINT64;
     ushort   HDR[2];
     ushort   group2010;
     ushort   group9050;
+    
+    ushort   len_group9050; // currently, for debugging only
+    
     ushort   real_iso_offset;                 // init in 0xffff
     ushort   MeteringMode_offset;
     ushort   ExposureProgram_offset;
@@ -731,8 +739,10 @@ typedef unsigned long long UINT64;
                                 3330 ARW 2.3.3
                                 3350 ARW 2.3.5
                                 4000 ARW 4.0
+                                4010 ARW 4.0.1
                              */
     char MetaVersion [16];
+    float AspectRatio;
   } libraw_sony_info_t;
 
   typedef struct
@@ -915,6 +925,7 @@ typedef unsigned long long UINT64;
     float adjust_maximum_thr;
     int no_auto_bright;    /* -W */
     int use_fuji_rotate;   /* -j */
+	int use_p1_correction;
     int green_matching;
     /* DCB parameters */
     int dcb_iterations;

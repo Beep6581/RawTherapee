@@ -1,6 +1,6 @@
 /* -*- C++ -*-
  * File: libraw_datastream.cpp
- * Copyright 2008-2021 LibRaw LLC (info@libraw.org)
+ * Copyright 2008-2024 LibRaw LLC (info@libraw.org)
  *
  * LibRaw C++ interface (implementation)
 
@@ -27,11 +27,6 @@
 #include "libraw/libraw_types.h"
 #include "libraw/libraw_datastream.h"
 #include <sys/stat.h>
-#ifdef USE_JASPER
-#include <jasper/jasper.h> /* Decode RED camera movies */
-#else
-#define NO_JASPER
-#endif
 #ifdef USE_JPEG
 #include <jpeglib.h>
 #include <jerror.h>
@@ -156,20 +151,12 @@ int LibRaw_abstract_datastream::jpeg_src(void *jpegdata)
 #ifndef LIBRAW_NO_IOSTREAMS_DATASTREAM
 // == LibRaw_file_datastream ==
 
-LibRaw_file_datastream::~LibRaw_file_datastream()
-{
-  if (jas_file)
-    fclose(jas_file);
-}
-
 LibRaw_file_datastream::LibRaw_file_datastream(const char *fname)
     : filename(fname), _fsize(0)
 #ifdef LIBRAW_WIN32_UNICODEPATHS
       ,
       wfilename()
 #endif
-      ,
-      jas_file(NULL)
 {
   if (filename.size() > 0)
   {
@@ -200,7 +187,7 @@ LibRaw_file_datastream::LibRaw_file_datastream(const char *fname)
 }
 #ifdef LIBRAW_WIN32_UNICODEPATHS
 LibRaw_file_datastream::LibRaw_file_datastream(const wchar_t *fname)
-    : filename(), wfilename(fname), jas_file(NULL), _fsize(0)
+    : filename(), wfilename(fname), _fsize(0)
 {
   if (wfilename.size() > 0)
   {
@@ -330,26 +317,6 @@ const char *LibRaw_file_datastream::fname()
 
 #undef LR_STREAM_CHK
 
-#ifdef LIBRAW_OLD_VIDEO_SUPPORT
-void *LibRaw_file_datastream::make_jas_stream()
-{
-#ifdef NO_JASPER
-  return NULL;
-#else
-#ifdef LIBRAW_WIN32_UNICODEPATHS
-  if (wfname())
-  {
-    jas_file = _wfopen(wfname(), L"rb");
-    return jas_stream_fdopen(fileno(jas_file), "rb");
-  }
-  else
-#endif
-  {
-    return jas_stream_fopen(fname(), "rb");
-  }
-#endif
-}
-#endif
 #endif
 
 // == LibRaw_buffer_datastream
@@ -478,16 +445,6 @@ int LibRaw_buffer_datastream::eof()
 }
 int LibRaw_buffer_datastream::valid() { return buf ? 1 : 0; }
 
-#ifdef LIBRAW_OLD_VIDEO_SUPPORT
-void *LibRaw_buffer_datastream::make_jas_stream()
-{
-#ifdef NO_JASPER
-  return NULL;
-#else
-  return jas_stream_memopen((char *)buf + streampos, streamsize - streampos);
-#endif
-}
-#endif
 
 int LibRaw_buffer_datastream::jpeg_src(void *jpegdata)
 {
@@ -641,17 +598,6 @@ const char *LibRaw_bigfile_datastream::fname()
 {
   return filename.size() > 0 ? filename.c_str() : NULL;
 }
-
-#ifdef LIBRAW_OLD_VIDEO_SUPPORT
-void *LibRaw_bigfile_datastream::make_jas_stream()
-{
-#ifdef NO_JASPER
-  return NULL;
-#else
-  return jas_stream_fdopen(fileno(f), "rb");
-#endif
-}
-#endif
 
 // == LibRaw_windows_datastream
 #ifdef LIBRAW_WIN32_CALLS
@@ -820,16 +766,6 @@ const char *LibRaw_bigfile_buffered_datastream::fname()
     return filename.size() > 0 ? filename.c_str() : NULL;
 }
 
-#ifdef LIBRAW_OLD_VIDEO_SUPPORT
-void *LibRaw_bigfile_buffered_datastream::make_jas_stream()
-{
-#ifdef NO_JASPER
-    return NULL;
-#else
-    return NULL;
-#endif
-}
-#endif
 
 INT64 LibRaw_bigfile_buffered_datastream::readAt(void *ptr, size_t size, INT64 off)
 {

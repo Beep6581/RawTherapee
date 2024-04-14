@@ -33,10 +33,6 @@ CFLAGS+= -g -I. -pedantic -Wno-long-long -Wno-overflow -O3
 #CFLAGS+=-DUSE_LCMS2 -I/opt/local/include
 #LDADD+=-L/opt/local/lib -llcms
 
-# Jasper support for RedCine
-#CFLAGS+=-DUSE_JASPER -I/opt/local/include
-#LDADD+=-L/opt/local/lib -ljasper
-
 # ZLIB support (FP dng)
 CFLAGS+=-DUSE_ZLIB
 LDADD+=-lz
@@ -58,7 +54,8 @@ HEADERS=libraw/libraw.h libraw/libraw_alloc.h libraw/libraw_const.h \
 
 LIB_OBJECTS= object/libraw_datastream.o object/libraw_c_api.o \
   object/cameralist.o object/fuji_compressed.o \
-  object/crx.o object/fp_dng.o object/decoders_libraw.o \
+  object/crx.o object/pana8.o object/fp_dng.o object/decoders_libraw.o \
+  object/sonycc.o object/losslessjpeg.o \
   object/unpack.o object/unpack_thumb.o \
   object/rawspeed_glue.o object/dngsdk_glue.o \
   object/colorconst.o object/utils_libraw.o object/init_close_utils.o \
@@ -91,7 +88,9 @@ LIB_OBJECTS= object/libraw_datastream.o object/libraw_c_api.o \
 
 LIB_MT_OBJECTS= object/libraw_datastream.mt.o object/libraw_c_api.mt.o \
   object/cameralist.mt.o object/fuji_compressed.mt.o \
-  object/crx.mt.o object/fp_dng.mt.o object/decoders_libraw.mt.o \
+  object/crx.mt.o object/pana8.mt.o object/fp_dng.mt.o \
+  object/sonycc.mt.o object/losslessjpeg.mt.o \
+  object/decoders_libraw.mt.o \
   object/unpack.mt.o object/unpack_thumb.mt.o \
   object/rawspeed_glue.mt.o object/dngsdk_glue.mt.o \
   object/colorconst.mt.o object/utils_libraw.mt.o \
@@ -210,6 +209,18 @@ object/crx.o: src/decoders/crx.cpp
 	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/crx.o src/decoders/crx.cpp
 object/crx.mt.o: src/decoders/crx.cpp $(HEADERS)
 	${CXX} -c ${CFLAGS} -o object/crx.mt.o src/decoders/crx.cpp
+object/pana8.o: src/decoders/pana8.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/pana8.o src/decoders/pana8.cpp
+object/pana8.mt.o: src/decoders/pana8.cpp $(HEADERS)
+	${CXX} -c ${CFLAGS} -o object/pana8.mt.o src/decoders/pana8.cpp
+object/sonycc.o: src/decoders/sonycc.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/sonycc.o src/decoders/sonycc.cpp
+object/sonycc.mt.o: src/decoders/sonycc.cpp $(HEADERS)
+	${CXX} -c ${CFLAGS} -o object/sonycc.mt.o src/decoders/sonycc.cpp
+object/losslessjpeg.o: src/decompressors/losslessjpeg.cpp
+	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/losslessjpeg.o src/decompressors/losslessjpeg.cpp
+object/losslessjpeg.mt.o: src/decompressors/losslessjpeg.cpp $(HEADERS)
+	${CXX} -c ${CFLAGS} -o object/losslessjpeg.mt.o src/decompressors/losslessjpeg.cpp
 object/decoders_dcraw.o: src/decoders/decoders_dcraw.cpp
 	${CXX} -c -DLIBRAW_NOTHREADS  ${CFLAGS} -o object/decoders_dcraw.o src/decoders/decoders_dcraw.cpp
 object/decoders_dcraw.mt.o: src/decoders/decoders_dcraw.cpp $(HEADERS)

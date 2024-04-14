@@ -1,5 +1,5 @@
 /*
-  Copyright 2008-2021 LibRaw LLC (info@libraw.org)
+  Copyright 2008-2024 LibRaw LLC (info@libraw.org)
 
 LibRaw is free software; you can redistribute it and/or modify
 it under the terms of the one of two licenses as you choose:
@@ -23,9 +23,7 @@ it under the terms of the one of two licenses as you choose:
 #ifndef USE_JPEG
 #define NO_JPEG
 #endif
-#ifndef USE_JASPER
-#define NO_JASPER
-#endif
+
 #define DCRAW_VERSION "9.26"
 
 #ifndef _GNU_SOURCE
@@ -65,12 +63,8 @@ typedef unsigned long long UINT64;
 #endif
 
 #ifdef NODEPS
-#define NO_JASPER
 #define NO_JPEG
 #define NO_LCMS
-#endif
-#ifndef NO_JASPER
-#include <jasper/jasper.h> /* Decode Red camera movies */
 #endif
 #ifndef NO_JPEG
 #include <jpeglib.h> /* Decode compressed Kodak DC120 photos */

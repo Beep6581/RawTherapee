@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2021 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
  *
 
  LibRaw is free software; you can redistribute it and/or modify
@@ -14,6 +14,13 @@
  */
 
 #include "../../internal/libraw_cxx_defs.h"
+#include <vector>
+
+void LibRaw::dng_ycbcr_thumb_loader()
+{
+	// Placeholder: the only known camera w/ YCC previews in DNG provides broken files
+	throw LIBRAW_EXCEPTION_UNSUPPORTED_FORMAT;
+}
 
 void LibRaw::kodak_thumb_loader()
 {
@@ -267,7 +274,9 @@ int LibRaw::thumbOK(INT64 maxsz)
     return 0; // No thumb for raw > 4Gb-1
   int tsize = 0;
   int tcol = (T.tcolors > 0 && T.tcolors < 4) ? T.tcolors : 3;
-  if (Tformat == LIBRAW_INTERNAL_THUMBNAIL_JPEG)
+  if (Tformat == LIBRAW_INTERNAL_THUMBNAIL_DNG_YCBCR)
+	  return 0; // Temp: unless we get correct DNG w/ YCBCR preview
+  else if (Tformat == LIBRAW_INTERNAL_THUMBNAIL_JPEG)
     tsize = T.tlength;
   else if (Tformat == LIBRAW_INTERNAL_THUMBNAIL_PPM)
     tsize = tcol * T.twidth * T.theight;

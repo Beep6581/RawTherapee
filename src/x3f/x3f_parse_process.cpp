@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- * Copyright 2019-2021 LibRaw LLC (info@libraw.org)
+ * Copyright 2019-2024 LibRaw LLC (info@libraw.org)
  *
 
  LibRaw is free software; you can redistribute it and/or modify
@@ -223,10 +223,15 @@ void LibRaw::parse_x3f()
   else
   {
     // No property list
-    if (imgdata.sizes.raw_width == 5888 || imgdata.sizes.raw_width == 2944 ||
-        imgdata.sizes.raw_width == 6656 || imgdata.sizes.raw_width == 3328 ||
-        imgdata.sizes.raw_width == 5504 ||
-        imgdata.sizes.raw_width == 2752) // Quattro
+     // sd Quattro H: 6656x4480, 3328x2240, 5504x3680, 2752x1840
+    // dpN Quattro:  5888x3672, 2944x1836
+    // sd Quattro:   5888x3776, 2944x1888
+    if ((imgdata.sizes.raw_width == 5888) || // Quattro: dp0, dp1, dp2, sd
+        (imgdata.sizes.raw_width == 2944) || // Quattro: dp0, dp1, dp2, sd
+        (imgdata.sizes.raw_width == 6656) || // sd Quattro H
+        (imgdata.sizes.raw_width == 3328) || // sd Quattro H
+        (imgdata.sizes.raw_width == 5504) || // sd Quattro H APS-C
+        (imgdata.sizes.raw_width == 2752))   // sd Quattro H APS-C
     {
       imgdata.idata.raw_count = 1;
       load_raw = &LibRaw::x3f_load_raw;
@@ -254,15 +259,24 @@ void LibRaw::parse_x3f()
       }
       else if (fndsd)
       {
-        snprintf(imgdata.idata.model, 64, "%s", fndsd);
-      }
+        unsigned char *fndsdQH = (unsigned char *)lr_memmem(fndsd, 20, "sd Quattro H", 12);
+        if (fndsdQH)
+            snprintf(imgdata.idata.model, 64, "%s", fndsdQH);
+        else
+            snprintf(imgdata.idata.model, 64, "%s", fndsd);
+    }
       else
 #endif
-          if (imgdata.sizes.raw_width == 6656 ||
-              imgdata.sizes.raw_width == 3328)
-        strcpy(imgdata.idata.model, "sd Quattro H");
-      else
-        strcpy(imgdata.idata.model, "dp2 Quattro");
+        if ((imgdata.sizes.raw_width == 6656) ||
+            (imgdata.sizes.raw_width == 3328) ||
+            (imgdata.sizes.raw_width == 5504) ||
+            (imgdata.sizes.raw_width == 2752))
+            strcpy(imgdata.idata.model, "sd Quattro H");
+        else if ((imgdata.sizes.raw_height == 3776) ||
+                 (imgdata.sizes.raw_height == 1888))
+            strcpy(imgdata.idata.model, "sd Quattro");
+        else // defaulting to dp2 Quattro
+            strcpy(imgdata.idata.model, "dp2 Quattro");
     }
     // else
   }

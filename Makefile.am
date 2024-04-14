@@ -30,7 +30,8 @@ lib_LTLIBRARIES = lib/libraw.la lib/libraw_r.la
 lib_libraw_a_CPPFLAGS = -DLIBRAW_NOTHREADS -w
 lib_libraw_a_SOURCES = src/libraw_c_api.cpp \
 	src/libraw_datastream.cpp src/decoders/canon_600.cpp \
-	src/decoders/crx.cpp src/decoders/decoders_dcraw.cpp \
+	src/decoders/crx.cpp src/decoders/pana8.cpp src/decoders/decoders_dcraw.cpp \
+	src/decoders/sonycc.cpp src/decompressors/losslessjpeg.cpp  \
 	src/decoders/decoders_libraw_dcrdefs.cpp \
 	src/decoders/decoders_libraw.cpp src/decoders/dng.cpp \
 	src/decoders/fp_dng.cpp src/decoders/fuji_compressed.cpp \
