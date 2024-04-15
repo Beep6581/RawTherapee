@@ -952,7 +952,6 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     } else if (locallab.spots.at(sp).spotMethod == "main") {//new Global
         lp.fullim = 3;
     }
-        
 
     lp.fftColorMask = locallab.spots.at(sp).fftColorMask;
     lp.prevdE = prevDeltaE;
@@ -1100,7 +1099,6 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     } else if (locallab.spots.at(sp).spotMethod == "main") {
         lp.excmet = 3;
     }
-
 
     if (locallab.spots.at(sp).merMethod == "mone") {
         lp.mergemet = 0;

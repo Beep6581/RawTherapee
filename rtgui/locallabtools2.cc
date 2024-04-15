@@ -9028,7 +9028,7 @@ void Locallabcie::updateguicie(int spottype)
 
             if(spottype == 3) {
                 sensicie->hide();
-                showmaskcieMethod->set_active(0);               
+                showmaskcieMethod->set_active(0);
                 previewcie->hide();
                 previewcie->set_active(false);
                 resetMaskView();

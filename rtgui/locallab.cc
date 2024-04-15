@@ -1174,7 +1174,7 @@ void Locallab::scopeChangedset(int scope, int selspot, bool enab)
     }
    
 }
-
+/*
 //main new fonction global to hide show and activated or not some functions - inverse, scope...
 void Locallab::mainChanged(int spottype, int selspot, bool iscolor, bool issh, bool isvib, bool isexpos, bool issoft, bool isblur, bool istom, bool isret, bool issharp, bool iscont, bool iscbdl, bool islog, bool ismas, bool iscie )
 {
@@ -1235,12 +1235,11 @@ void Locallab::mainChanged(int spottype, int selspot, bool iscolor, bool issh, b
     if(iscie) {        
         expcie.updateguicie(spottype);
     }
-    
-    
-    expsettings->updateguiset(spottype, iscolor, issh, isvib, isexpos, issoft, isblur, istom, isret, issharp, iscont, iscbdl, islog, ismas, iscie);
-   
-}
 
+    expsettings->updateguiset(spottype, iscolor, issh, isvib, isexpos, issoft, isblur, istom, isret, issharp, iscont, iscbdl, islog, ismas, iscie);
+
+}
+*/
 void Locallab::sigChanged(const std::vector<locallabcieSIG> &ciesig, int selspot)
 {
      cie_sig = ciesig;
@@ -1276,6 +1275,86 @@ void Locallab::ciebefChanged(const std::vector<locallabcieBEF> &ciebef, int sels
 
     }
 
+}
+
+void Locallab::maiChanged(const std::vector<locallabsetLC> &setlc, int selspot)
+{
+    set_lc = setlc;
+    if (selspot < (int) set_lc.size()) {
+        const int spottype = set_lc.at(selspot).mainf;
+        const bool iscolor = set_lc.at(selspot).iscolo;
+        const bool issh = set_lc.at(selspot).iss;
+        const bool isvib = set_lc.at(selspot).isvi;
+        const bool isexpos = set_lc.at(selspot).isexpo;
+        const bool issoft = set_lc.at(selspot).issof;
+        const bool isblur = set_lc.at(selspot).isblu;
+        const bool istom = set_lc.at(selspot).isto;
+        const bool isret = set_lc.at(selspot).isre;
+        const bool issharp = set_lc.at(selspot).isshar;
+        const bool iscont = set_lc.at(selspot).iscon;
+        const bool iscbdl = set_lc.at(selspot).iscbd;
+        const bool islog = set_lc.at(selspot).islo;
+        const bool ismas = set_lc.at(selspot).isma;
+        const bool iscie = set_lc.at(selspot).isci;
+
+        if(iscolor) {
+            expcolor.updateguicolor(spottype);
+        }
+
+        if(issh) {
+            expshadhigh.updateguishad(spottype);
+        }
+
+        if(isvib) {
+            expvibrance.updateguivib(spottype);
+        }
+
+        if(isexpos) {
+            expexpose.updateguiexpos(spottype);
+        }
+
+        if(issoft) {
+            expsoft.updateguisoft(spottype);
+        }
+
+        if(isblur) {
+            expblur.updateguiblur(spottype);
+        }
+
+        if(istom) {
+            exptonemap.updateguitone(spottype);
+        }
+
+        if(isret) {
+            expreti.updateguireti(spottype);
+        }
+
+        if(issharp) {
+            expsharp.updateguisharp(spottype);
+        }
+
+        if(iscont) {
+            expcontrast.updateguicont(spottype);
+        }
+
+        if(iscbdl) {
+            expcbdl.updateguicbdl(spottype);
+        }
+
+        if(islog) {
+            explog.updateguilog(spottype);
+        }
+
+        if(ismas) {
+            expmask.updateguimask(spottype);
+        }
+
+        if(iscie) {
+            expcie.updateguicie(spottype);
+        }
+
+        expsettings->updateguiset(spottype, iscolor, issh, isvib, isexpos, issoft, isblur, istom, isret, issharp, iscont, iscbdl, islog, ismas, iscie);
+    }
 }
 
 void Locallab::cieChanged(const std::vector<locallabcieLC> &cielc, int selspot)

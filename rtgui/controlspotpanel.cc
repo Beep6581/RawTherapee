@@ -1068,9 +1068,9 @@ void ControlSpotPanel::spotMethodChanged()
         transit_->setValue(100.);
         row[spots_.transit] = transit_->getValue();
         
-        if(spotMethod_->get_active_row_number() == 3) { //global       
+        if(spotMethod_->get_active_row_number() == 3) { //global
             ctboxshape->hide();
-            artifBox2->hide();           
+            artifBox2->hide();
             hishow_->hide();
             expTransGrad_->hide();
             expShapeDetect_->hide();
@@ -1091,8 +1091,7 @@ void ControlSpotPanel::spotMethodChanged()
                 expSpecCases_->show();
                 expMaskMerge_->show();
             }
-        }    
-        
+        }
     }
 
     // Raise event

@@ -1129,6 +1129,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             //std::vector<LocallabListener::locallabRef> locallref;
             std::vector<LocallabListener::locallabRetiMinMax> locallretiminmax;
             std::vector<LocallabListener::locallabcieLC> locallcielc;
+            std::vector<LocallabListener::locallabsetLC> locallsetlc;
             std::vector<LocallabListener::locallabcieSIG> locallciesig;
             huerefs.resize(params->locallab.spots.size());
             huerefblurs.resize(params->locallab.spots.size());
@@ -1541,7 +1542,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 locciesig.contsigq = contsig;
                 locciesig.lightsigq = lightsig;
                 locallciesig.push_back(locciesig);
-              
+
+
                 // Recalculate references after
                 if (params->locallab.spots.at(sp).spotMethod == "exc") {
                     ipf.calc_ref(sp, reserv.get(), reserv.get(), 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huer, chromar, lumar, sobeler, avg, locwavCurveden, locwavdenutili);
@@ -1561,7 +1563,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                 
                 // new used linked to global and scope 
-                mainfp[sp] = 0;        
+                mainfp[sp] = 0;
                 if (params->locallab.spots.at(sp).spotMethod == "main") {
                     mainfp[sp] = 3;
                 } else if (params->locallab.spots.at(sp).spotMethod == "full") {
@@ -1582,15 +1584,30 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 bool islog = params->locallab.spots.at(sp).explog;
                 bool ismas = params->locallab.spots.at(sp).expmask;
                 bool iscie = params->locallab.spots.at(sp).expcie;
-                             
                 bool isset = iscolor || issh || isvib;
+                
+                //set select spot settings 
+                LocallabListener::locallabsetLC locsetlc;
+                locsetlc.mainf = mainfp[sp];
+                locsetlc.iscolo = iscolor;
+                locsetlc.iss = issh;
+                locsetlc.isvi = isvib;
+                locsetlc.isexpo = isexpos;
+                locsetlc.issof = issoft;
+                locsetlc.isblu = isblur;
+                locsetlc.isto = istom;
+                locsetlc.isre = isret;
+                locsetlc.isshar = issharp;
+                locsetlc.iscon = iscont;
+                locsetlc.iscbd = iscbdl;
+                locsetlc.islo = islog;
+                locsetlc.isma = ismas;
+                locsetlc.isci = iscie;
+                locallsetlc.push_back(locsetlc);
+                
                 if (locallListener) {
                     locallListener->refChanged2(huerefp, chromarefp, lumarefp, fabrefp, params->locallab.selspot);
                     locallListener->minmaxChanged(locallretiminmax, params->locallab.selspot);
-                    if (mainfp[sp] >= 0) {//minimize call to idle register 
-                        //used by Global fullimage.
-                        locallListener->mainChanged(mainfp[sp], params->locallab.selspot, iscolor, issh, isvib, isexpos, issoft, isblur, istom, isret, issharp, iscont, iscbdl, islog, ismas, iscie);
-                    }
                     if (params->locallab.spots.at(sp).expprecam) {
                         locallListener->cieChanged(locallcielc,params->locallab.selspot); 
                     }
@@ -1600,8 +1617,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                             locallListener->scopeChangedsh(scopefp[sp], params->locallab.selspot, issh);
                             locallListener->scopeChangedvib(scopefp[sp], params->locallab.selspot, isvib);
                             locallListener->scopeChangedset(scopefp[sp], params->locallab.selspot, isset);
-                        params->locallab.spots.at(sp).colorscope = 30;
+                            params->locallab.spots.at(sp).colorscope = 30;
                     }
+                   // if (mainfp[sp] >= 0) {//minimize call to idle register 
+                        //used by Global fullimage.
+                    locallListener->maiChanged(locallsetlc,params->locallab.selspot); 
+                   // }
 
                 }
                 
