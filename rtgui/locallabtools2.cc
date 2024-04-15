@@ -25,6 +25,8 @@
 #include "locallab.h"
 #include "rtimage.h"
 #include "../rtengine/color.h"
+#include "eventmapper.h"
+#include "../rtengine/utils.h"
 
 #define MINNEIGH 0.1
 #define MAXNEIGH 1500
@@ -142,7 +144,7 @@ LocallabTone::LocallabTone():
     showmasktmMethod(Gtk::manage(new MyComboBoxText())),
     enatmMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
     enatmMaskaft(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_AFTER_MASK")))),
- //   masktmCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
+//   masktmCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
     masktmCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
     CCmasktmshape(static_cast<FlatCurveEditor*>(masktmCurveEditorG->addCurve(CT_Flat, "C", nullptr, false, false))),
     LLmasktmshape(static_cast<FlatCurveEditor*>(masktmCurveEditorG->addCurve(CT_Flat, "L", nullptr, false, false))),
@@ -272,7 +274,7 @@ LocallabTone::LocallabTone():
     tmBox3->pack_start(*lowthrest);
     tmBox3->pack_start(*higthrest);
     tmBox3->pack_start(*decayt);
-   // colBox3->pack_start(*invmaskc);
+    // colBox3->pack_start(*invmaskc);
     exprecovt->add(*tmBox3, false);
     pack_start(*exprecovt, false, false);
 
@@ -630,6 +632,7 @@ void LocallabTone::adjusterChanged(Adjuster* a, double newval)
         } else if (a == decayt) {
             listener->panelChanged(Evlocallabdecayt, decayt->getTextValue() + spName);
         }
+
     }
 }
 
@@ -732,6 +735,7 @@ void LocallabTone::updateGUIToMode(const modeType new_type)
             expmasktm->show();
             exprecovt->show();
             decayt->hide();
+
             if (enatmMask->get_active()) {
                 maskusablet->show();
                 maskunusablet->hide();
@@ -754,6 +758,7 @@ void LocallabTone::updateGUIToMode(const modeType new_type)
             slomasktm->show();
             exprecovt->show();
             decayt->show();
+
             if (enatmMask->get_active()) {
                 maskusablet->show();
                 maskunusablet->hide();
@@ -779,7 +784,7 @@ void LocallabTone::updateMaskBackground(const double normChromar, const double n
 
         return false;
     }
-    );
+                 );
 }
 
 void LocallabTone::equiltmChanged()
@@ -804,7 +809,7 @@ void LocallabTone::showmasktmMethodChanged()
         locToolListener->resetOtherMaskView(this);
     }
 
-    if(exp->getEnabled()) {
+    if (exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabshowmaskMethod, "");
         }
@@ -896,7 +901,7 @@ LocallabRetinex::LocallabRetinex():
     showmaskretiMethod(Gtk::manage(new MyComboBoxText())),
     enaretiMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
     enaretiMasktmap(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_TM_MASK")))),
- //   maskretiCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
+//   maskretiCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
     maskretiCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
     CCmaskretishape(static_cast<FlatCurveEditor*>(maskretiCurveEditorG->addCurve(CT_Flat, "C", nullptr, false, false))),
     LLmaskretishape(static_cast<FlatCurveEditor*>(maskretiCurveEditorG->addCurve(CT_Flat, "L", nullptr, false, false))),
@@ -911,10 +916,10 @@ LocallabRetinex::LocallabRetinex():
     Lmaskretishape(static_cast<DiagonalCurveEditor*>(mask2retiCurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
     inversret(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS"))))
 {
-    
+
     auto m = ProcEventMapper::getInstance();
     Evlocallabdehazeblack = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_DEHAZE_BLACK");
-   
+
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     const LocallabParams::LocallabSpot defSpot;
@@ -1067,9 +1072,9 @@ LocallabRetinex::LocallabRetinex():
     deharetiBox->pack_start(*loglin);
     retiFrame->add(*deharetiBox);
     auxBox->add(*retiFrame);
- //   ToolParamBlock* const scopeBox = Gtk::manage(new ToolParamBlock());
- //   scopeBox->pack_start(*sensih);
- //   auxBox->add(*scopeBox);
+//   ToolParamBlock* const scopeBox = Gtk::manage(new ToolParamBlock());
+//   scopeBox->pack_start(*sensih);
+//   auxBox->add(*scopeBox);
     pack_start(*auxBox);
     ToolParamBlock* const retiBox = Gtk::manage(new ToolParamBlock());
     retiBox->pack_start(*retinexMethod);
@@ -1081,7 +1086,7 @@ LocallabRetinex::LocallabRetinex():
     retiBox->pack_start(*limd);
     retiBox->pack_start(*offs);
     ToolParamBlock* const toolretiBox = Gtk::manage(new ToolParamBlock());
-  //  toolretiBox->pack_start(*chrrt);
+    //  toolretiBox->pack_start(*chrrt);
     toolretiBox->pack_start(*darkness);
     toolretiBox->pack_start(*lightnessreti);
     toolretiBox->pack_start(*cliptm);
@@ -1100,7 +1105,7 @@ LocallabRetinex::LocallabRetinex():
     reBox3->pack_start(*lowthresr);
     reBox3->pack_start(*higthresr);
     reBox3->pack_start(*decayr);
-   // colBox3->pack_start(*invmaskc);
+    // colBox3->pack_start(*invmaskc);
     exprecovr->add(*reBox3, false);
 
     ToolParamBlock* const maskretiBox = Gtk::manage(new ToolParamBlock());
@@ -1157,7 +1162,7 @@ void LocallabRetinex::updateMinMax(const double cdma, const double cdmin, const 
 
         return false;
     }
-    );
+                 );
 }
 
 //new function Global
@@ -1363,7 +1368,7 @@ void LocallabRetinex::read(const rtengine::procparams::ProcParams* pp, const Par
         limd->setValue(spot.limd);
         offs->setValue(spot.offs);
         chrrt->setValue(0.);
-       // chrrt->setValue(spot.chrrt);
+        // chrrt->setValue(spot.chrrt);
         darkness->setValue(spot.darkness);
         lightnessreti->setValue(spot.lightnessreti);
         cliptm->setValue(spot.cliptm);
@@ -1880,6 +1885,7 @@ void LocallabRetinex::updateGUIToMode(const modeType new_type)
             retitoolFrame->show();
             exprecovr->show();
             decayr->show();
+
             if (enaretiMask->get_active()) {
                 maskusabler->show();
                 maskunusabler->hide();
@@ -1905,7 +1911,7 @@ void LocallabRetinex::updateMaskBackground(const double normChromar, const doubl
 
         return false;
     }
-    );
+                 );
 }
 
 void LocallabRetinex::loglinChanged()
@@ -1970,7 +1976,7 @@ void LocallabRetinex::showmaskretiMethodChanged()
         locToolListener->resetOtherMaskView(this);
     }
 
-    if(exp->getEnabled()) {
+    if (exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabshowmaskMethod, "");
         }
@@ -2472,7 +2478,7 @@ void LocallabSharp::showmasksharMethodChanged()
         locToolListener->resetOtherMaskView(this);
     }
 
-    if(exp->getEnabled()) {
+    if (exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabshowmaskMethod, "");
         }
@@ -2893,7 +2899,7 @@ LocallabContrast::LocallabContrast():
     ToolParamBlock* const coBox = Gtk::manage(new ToolParamBlock());
     coBox->pack_start(*sigmalc);
     coBox->pack_start(*LocalcurveEditorwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-   // coBox->pack_start(*csThreshold);
+    // coBox->pack_start(*csThreshold);
     contFrame->add(*coBox);
     pack_start(*contFrame);
     // pack_start(*levelwav);
@@ -3031,7 +3037,7 @@ LocallabContrast::LocallabContrast():
     wwBox3->pack_start(*lowthresw);
     wwBox3->pack_start(*higthresw);
     wwBox3->pack_start(*decayw);
-   // colBox3->pack_start(*invmaskc);
+    // colBox3->pack_start(*invmaskc);
     exprecovw->add(*wwBox3, false);
     pack_start(*exprecovw, false, false);
 
@@ -4251,6 +4257,7 @@ void LocallabContrast::updateGUIToMode(const modeType new_type)
             expmasklc->show();
             exprecovw->show();
             decayw->hide();
+
             if (enalcMask->get_active()) {
                 maskusablew->show();
                 maskunusablew->hide();
@@ -4259,6 +4266,7 @@ void LocallabContrast::updateGUIToMode(const modeType new_type)
                 maskusablew->hide();
                 maskunusablew->show();
             }
+
             gamlc->hide();
 
             break;
@@ -4281,6 +4289,7 @@ void LocallabContrast::updateGUIToMode(const modeType new_type)
             expmasklc->show();
             exprecovw->show();
             decayw->show();
+
             if (enalcMask->get_active()) {
                 maskusablew->show();
                 maskunusablew->hide();
@@ -4307,7 +4316,7 @@ void LocallabContrast::updateMaskBackground(const double normChromar, const doub
 
         return false;
     }
-    );
+                 );
 }
 
 void LocallabContrast::localcontMethodChanged()
@@ -4506,7 +4515,7 @@ void LocallabContrast::showmasklcMethodChanged()
         locToolListener->resetOtherMaskView(this);
     }
 
-    if(exp->getEnabled()) {
+    if (exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabshowmaskMethod, "");
         }
@@ -4555,6 +4564,7 @@ void LocallabContrast::updateContrastGUI1()
         expcontrastpyr->hide();
         expcontrastpyr2->hide();
         gamlc->hide();
+
         if (mode == Expert) { // Keep widget hidden in Normal and Simple mode
             fftwlc->show();
         }
@@ -4609,7 +4619,7 @@ LocallabCBDL::LocallabCBDL():
     // CBDL specific widgets
     levFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LEVFRA")))),
     multiplier([]() -> std::array<Adjuster *, 6>
-    {
+{
     std::array<Adjuster*, 6> res = {};
 
     for (unsigned int i = 0; i < res.size(); ++i) {
@@ -4625,41 +4635,41 @@ LocallabCBDL::LocallabCBDL():
     }
 
     return res;
-    }
-    ()),
-    chromacbdl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMACBDL"), 0., 1.5, 0.01, 0.))),
-    threshold(Gtk::manage(new Adjuster(M("TP_DIRPYREQUALIZER_THRESHOLD"), 0, 1., 0.01, 0.2))),
-    clarityml(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARITYML"), 0.1, 100., 0.1, 0.1))),
-    contresid(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTRESID"), -100, 100, 1, 0))),
-    softradiuscb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 0.))),
-    sensicb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
-    exprecovcb(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
-    maskusablecb(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
-    maskunusablecb(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUNUSABLE")))),
-    recothrescb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 1., 2., 0.01, 1.))),
-    lowthrescb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 1., 80., 0.5, 12.))),
-    higthrescb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 20., 99., 0.5, 85.))),
-    decaycb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKDDECAY"), 0.5, 4., 0.1, 2.))),
-    expmaskcb(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWCB")))),
-    showmaskcbMethod(Gtk::manage(new MyComboBoxText())),
-    enacbMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
-  //  maskcbCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
-    maskcbCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
-    CCmaskcbshape(static_cast<FlatCurveEditor*>(maskcbCurveEditorG->addCurve(CT_Flat, "C", nullptr, false, false))),
-    LLmaskcbshape(static_cast<FlatCurveEditor*>(maskcbCurveEditorG->addCurve(CT_Flat, "L", nullptr, false, false))),
-    HHmaskcbshape(static_cast<FlatCurveEditor *>(maskcbCurveEditorG->addCurve(CT_Flat, "LC(h)", nullptr, false, true))),
-    blendmaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
-    radmaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
-    lapmaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
-    chromaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
-    gammaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.25, 4.0, 0.01, 1.))),
-    slomaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
-    mask2cbCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
-    Lmaskcbshape(static_cast<DiagonalCurveEditor*>(mask2cbCurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
+}
+()),
+chromacbdl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMACBDL"), 0., 1.5, 0.01, 0.))),
+threshold(Gtk::manage(new Adjuster(M("TP_DIRPYREQUALIZER_THRESHOLD"), 0, 1., 0.01, 0.2))),
+clarityml(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARITYML"), 0.1, 100., 0.1, 0.1))),
+contresid(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTRESID"), -100, 100, 1, 0))),
+softradiuscb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 0.))),
+sensicb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
+exprecovcb(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
+maskusablecb(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
+maskunusablecb(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUNUSABLE")))),
+recothrescb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 1., 2., 0.01, 1.))),
+lowthrescb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 1., 80., 0.5, 12.))),
+higthrescb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 20., 99., 0.5, 85.))),
+decaycb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKDDECAY"), 0.5, 4., 0.1, 2.))),
+expmaskcb(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWCB")))),
+showmaskcbMethod(Gtk::manage(new MyComboBoxText())),
+enacbMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
+//  maskcbCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
+maskcbCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
+CCmaskcbshape(static_cast<FlatCurveEditor*>(maskcbCurveEditorG->addCurve(CT_Flat, "C", nullptr, false, false))),
+LLmaskcbshape(static_cast<FlatCurveEditor*>(maskcbCurveEditorG->addCurve(CT_Flat, "L", nullptr, false, false))),
+HHmaskcbshape(static_cast<FlatCurveEditor *>(maskcbCurveEditorG->addCurve(CT_Flat, "LC(h)", nullptr, false, true))),
+blendmaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
+radmaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
+lapmaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
+chromaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
+gammaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.25, 4.0, 0.01, 1.))),
+slomaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
+mask2cbCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
+Lmaskcbshape(static_cast<DiagonalCurveEditor*>(mask2cbCurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
 
-    lumacontrastMinusButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS")))),
-    lumaneutralButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMANEUTRAL")))),
-    lumacontrastPlusButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS"))))
+lumacontrastMinusButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS")))),
+lumaneutralButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMANEUTRAL")))),
+lumacontrastPlusButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS"))))
 {
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -4780,7 +4790,7 @@ LocallabCBDL::LocallabCBDL():
     cbBox3->pack_start(*lowthrescb);
     cbBox3->pack_start(*higthrescb);
     cbBox3->pack_start(*decaycb);
-   // colBox3->pack_start(*invmaskc);
+    // colBox3->pack_start(*invmaskc);
     exprecovcb->add(*cbBox3, false);
     pack_start(*exprecovcb, false, false);
 
@@ -5311,6 +5321,7 @@ void LocallabCBDL::updateGUIToMode(const modeType new_type)
             expmaskcb->show();
             exprecovcb->show();
             decaycb->hide();
+
             if (enacbMask->get_active()) {
                 maskusablecb->show();
                 maskunusablecb->hide();
@@ -5329,6 +5340,7 @@ void LocallabCBDL::updateGUIToMode(const modeType new_type)
             lapmaskcb->show();
             exprecovcb->show();
             decaycb->show();
+
             if (enacbMask->get_active()) {
                 maskusablecb->show();
                 maskunusablecb->hide();
@@ -5354,7 +5366,7 @@ void LocallabCBDL::updateMaskBackground(const double normChromar, const double n
 
         return false;
     }
-    );
+                 );
 }
 
 void LocallabCBDL::showmaskcbMethodChanged()
@@ -5364,7 +5376,7 @@ void LocallabCBDL::showmaskcbMethodChanged()
         locToolListener->resetOtherMaskView(this);
     }
 
-    if(exp->getEnabled()) {
+    if (exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabshowmaskMethod, "");
         }
@@ -5431,18 +5443,25 @@ LocallabLog::LocallabLog():
     LocallabTool(this, M("TP_LOCALLAB_LOG_TOOLNAME"), M("TP_LOCALLAB_LOG"), false),
 
     // Log encoding specific widgets
-    repar(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
+    repar(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 0.5, 100.0))),
     ciecam(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_CIEC")))),
     autocompute(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_LOGAUTO")))),
     logPFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGPFRA")))),
-    blackEv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLACK_EV"), -16.0, 0.0, 0.1, -5.0))),
-    whiteEv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WHITE_EV"), 0., 32.0, 0.1, 10.0))),
+    logPFrame2(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGPFRA2")))),
+    blackEv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLACK_EV"), -16.00, 0.00, 0.01, -5.00))),
+    whiteEv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WHITE_EV"), 0.00, 32.00, 0.01, 10.00))),
+    whiteslog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGWHITESCIE"), -100, 100, 1, 0))),
+    blackslog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGBLACKSSCIE"), -100, 100, 1, 0))),
+    comprlog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIE"), 0., 1., 0.01, 0.4))),
+    strelog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGTHCIELOG"), 0., 100., 0.5, 100.))),
+    satlog(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SATCIE")))),
+
     fullimage(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FULLIMAGE")))),
     logFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGFRA")))),
     Autogray(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AUTOGRAY")))),
     sourceGray(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_GRAY"), 1.0, 100.0, 0.1, 10.0))),
     sourceabs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_ABS"), 0.01, 16384.0, 0.01, 2000.0))),
-    sursour(Gtk::manage (new MyComboBoxText ())),
+    sursour(Gtk::manage(new MyComboBoxText())),
     surHBox(Gtk::manage(new Gtk::Box())),
     log1Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOG1FRA")))),
     log2Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOG2FRA")))),
@@ -5461,7 +5480,7 @@ LocallabLog::LocallabLog():
     //CurveEditorL(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_LOGCONTQ"))),
     //LshapeL(static_cast<DiagonalCurveEditor*>(CurveEditorL->addCurve(CT_Diagonal, "Q(Q)"))),
     targabs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_ABS"), 0.01, 16384.0, 0.01, 16.0))),
-    surround(Gtk::manage (new MyComboBoxText ())),
+    surround(Gtk::manage(new MyComboBoxText())),
     surrHBox(Gtk::manage(new Gtk::Box())),
     baselog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BASELOG"), 1.3, 3., 0.05, 2.))),//, Gtk::manage(new RTImage("circle-black-small")), Gtk::manage(new RTImage("circle-white-small"))))),
     exprecovl(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
@@ -5480,7 +5499,7 @@ LocallabLog::LocallabLog():
     expmaskL(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWC")))),
     showmaskLMethod(Gtk::manage(new MyComboBoxText())),
     enaLMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
- //   maskCurveEditorL(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASKCOL"))),
+//   maskCurveEditorL(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASKCOL"))),
     maskCurveEditorL(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
     CCmaskshapeL(static_cast<FlatCurveEditor*>(maskCurveEditorL->addCurve(CT_Flat, "C", nullptr, false, false))),
     LLmaskshapeL(static_cast<FlatCurveEditor*>(maskCurveEditorL->addCurve(CT_Flat, "L", nullptr, false, false))),
@@ -5495,7 +5514,12 @@ LocallabLog::LocallabLog():
 {
     auto m = ProcEventMapper::getInstance();
     Evlocallabpreviewlog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWLOG");
-    
+    Evlocallabwhiteslog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_LOG_WHITES");
+    Evlocallabblackslog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_LOG_BLACKS");
+    Evlocallabcomprlog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_LOG_COMPR");
+    Evlocallabstrelog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_LOG_STRE");
+    Evlocallabsatlog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_LOG_SAT");
+
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     // Parameter Log encoding specific widgets
@@ -5508,9 +5532,16 @@ LocallabLog::LocallabLog():
 
     whiteEv->setLogScale(16, 0);
     whiteEv->setAdjusterListener(this);
+
+    whiteslog->setAdjusterListener(this);
+    blackslog->setAdjusterListener(this);
+    comprlog->setAdjusterListener(this);
+    strelog->setAdjusterListener(this);
+
     ciecamconn = ciecam->signal_toggled().connect(sigc::mem_fun(*this, &LocallabLog::ciecamChanged));
 
     fullimageConn = fullimage->signal_toggled().connect(sigc::mem_fun(*this, &LocallabLog::fullimageChanged));
+    satlogconn = satlog->signal_toggled().connect(sigc::mem_fun(*this, &LocallabLog::satlogChanged));
 
     AutograyConn = Autogray->signal_toggled().connect(sigc::mem_fun(*this, &LocallabLog::AutograyChanged));
 
@@ -5569,30 +5600,31 @@ LocallabLog::LocallabLog():
 
     anglog->setAdjusterListener(this);
 
-    surHBox->set_spacing (2);
-    surHBox->set_tooltip_markup (M ("TP_LOCALLAB_LOGSURSOUR_TOOLTIP"));
-    Gtk::Label* surLabel = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_SURROUND") + ":"));
-    surHBox->pack_start (*surLabel, Gtk::PACK_SHRINK);
-    sursour->append (M ("TP_COLORAPP_SURROUND_AVER"));
-    sursour->append (M ("TP_COLORAPP_SURROUND_DIM"));
-    sursour->append (M ("TP_COLORAPP_SURROUND_DARK"));
-    sursour->set_active (0);
-    surHBox->pack_start (*sursour);
-    sursourconn = sursour->signal_changed().connect ( sigc::mem_fun (*this, &LocallabLog::sursourChanged) );
+    surHBox->set_spacing(2);
+    surHBox->set_tooltip_markup(M("TP_LOCALLAB_LOGSURSOUR_TOOLTIP"));
+    Gtk::Label* surLabel = Gtk::manage(new Gtk::Label(M("TP_COLORAPP_SURROUND") + ":"));
+    surHBox->pack_start(*surLabel, Gtk::PACK_SHRINK);
+    sursour->append(M("TP_COLORAPP_SURROUND_AVER"));
+    sursour->append(M("TP_COLORAPP_SURROUND_DIM"));
+    sursour->append(M("TP_COLORAPP_SURROUND_DARK"));
+    sursour->append(M("TP_COLORAPP_SURROUND_EXDARK"));
+    sursour->set_active(0);
+    surHBox->pack_start(*sursour);
+    sursourconn = sursour->signal_changed().connect(sigc::mem_fun(*this, &LocallabLog::sursourChanged));
 
 
 
-    surrHBox->set_spacing (2);
-    surrHBox->set_tooltip_markup (M ("TP_COLORAPP_SURROUND_TOOLTIP"));
-    Gtk::Label* surrLabel = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_SURROUND") + ":"));
-    surrHBox->pack_start (*surrLabel, Gtk::PACK_SHRINK);
-    surround->append (M ("TP_COLORAPP_SURROUND_AVER"));
-    surround->append (M ("TP_COLORAPP_SURROUND_DIM"));
-    surround->append (M ("TP_COLORAPP_SURROUND_DARK"));
-    surround->append (M ("TP_COLORAPP_SURROUND_EXDARK"));
-    surround->set_active (0);
-    surrHBox->pack_start (*surround);
-    surroundconn = surround->signal_changed().connect ( sigc::mem_fun (*this, &LocallabLog::surroundChanged) );
+    surrHBox->set_spacing(2);
+    surrHBox->set_tooltip_markup(M("TP_COLORAPP_SURROUND_TOOLTIP"));
+    Gtk::Label* surrLabel = Gtk::manage(new Gtk::Label(M("TP_COLORAPP_SURROUND") + ":"));
+    surrHBox->pack_start(*surrLabel, Gtk::PACK_SHRINK);
+    surround->append(M("TP_COLORAPP_SURROUND_AVER"));
+    surround->append(M("TP_COLORAPP_SURROUND_DIM"));
+    surround->append(M("TP_COLORAPP_SURROUND_DARK"));
+    surround->append(M("TP_COLORAPP_SURROUND_EXDARK"));
+    surround->set_active(0);
+    surrHBox->pack_start(*surround);
+    surroundconn = surround->signal_changed().connect(sigc::mem_fun(*this, &LocallabLog::surroundChanged));
 
     setExpandAlignProperties(expmaskL, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
@@ -5649,11 +5681,21 @@ LocallabLog::LocallabLog():
     pack_start(*repar);
     pack_start(*ciecam);
     logPFrame->set_label_align(0.025, 0.5);
+    logPFrame2->set_label_align(0.025, 0.5);
     ToolParamBlock* const logPBox = Gtk::manage(new ToolParamBlock());
+    ToolParamBlock* const logPBox2 = Gtk::manage(new ToolParamBlock());
     logPBox->pack_start(*autocompute);
     logPBox->pack_start(*blackEv);
     logPBox->pack_start(*whiteEv);
+    logPBox->pack_start(*whiteslog);
+    logPBox->pack_start(*blackslog);
+    logPBox2->pack_start(*comprlog);
+    // logPBox2->pack_start(*strelog);
+    logPBox2->pack_start(*satlog);
+    logPFrame2->add(*logPBox2);
+    logPBox->pack_start(*logPFrame2);
     logPBox->pack_start(*fullimage);
+
     logPFrame->add(*logPBox);
     pack_start(*logPFrame);
 //    Gtk::Frame* const logFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGFRA")));
@@ -5662,7 +5704,7 @@ LocallabLog::LocallabLog():
     logFBox->pack_start(*Autogray);
     logFBox->pack_start(*sourceGray);
     logFBox->pack_start(*sourceabs);
-    logFBox->pack_start (*surHBox);
+    logFBox->pack_start(*surHBox);
 //    logFBox->pack_start(*baselog);
     logFrame->add(*logFBox);
     pack_start(*logFrame);
@@ -5691,7 +5733,7 @@ LocallabLog::LocallabLog():
     logP2Box->pack_start(*targetGray);
     logP2Box->pack_start(*targabs);
     logP2Box->pack_start(*catad);
-    logP2Box->pack_start (*surrHBox);
+    logP2Box->pack_start(*surrHBox);
     ToolParamBlock* const logBox3 = Gtk::manage(new ToolParamBlock());
     logBox3->pack_start(*maskusablel, Gtk::PACK_SHRINK, 0);
     logBox3->pack_start(*maskunusablel, Gtk::PACK_SHRINK, 0);
@@ -5699,7 +5741,7 @@ LocallabLog::LocallabLog():
     logBox3->pack_start(*lowthresl);
     logBox3->pack_start(*higthresl);
     logBox3->pack_start(*decayl);
-   // colBox3->pack_start(*invmaskc);
+    // colBox3->pack_start(*invmaskc);
     exprecovl->add(*logBox3, false);
 
     ToolParamBlock* const logP3Box = Gtk::manage(new ToolParamBlock());
@@ -5721,7 +5763,7 @@ LocallabLog::LocallabLog():
 //    pack_start(*sensilog);
     pack_start(*expmaskL, false, false);
 
- //   Gtk::Frame* const gradlogFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADLOGFRA")));
+//   Gtk::Frame* const gradlogFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADLOGFRA")));
     gradlogFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const gradlogBox = Gtk::manage(new ToolParamBlock());
     gradlogBox->pack_start(*strlog);
@@ -5806,11 +5848,15 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
         log2Frame->set_tooltip_text(M("TP_LOCALLAB_LOGVIEWING_TOOLTIP"));
         autocompute->set_tooltip_text(M("TP_LOCALLAB_LOGAUTO_TOOLTIP"));
         Autogray->set_tooltip_text(M("TP_LOCALLAB_LOGAUTOGRAY_TOOLTIP"));
-    //    blackEv->set_tooltip_text(M("TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP"));
-    //    whiteEv->set_tooltip_text(M("TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP"));
+        //    blackEv->set_tooltip_text(M("TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP"));
+        //    whiteEv->set_tooltip_text(M("TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP"));
         exprecovl->set_tooltip_markup(M("TP_LOCALLAB_MASKRELOG_TOOLTIP"));
         blackEv->set_tooltip_text("");
         whiteEv->set_tooltip_text("");
+        whiteslog->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP"));
+        blackslog->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP"));
+        comprlog->set_tooltip_text(M("TP_LOCALLAB_COMPRLOG_TOOLTIP"));
+
         sourceGray->set_tooltip_text(M("TP_LOCALLAB_JZLOGYBOUT_TOOLTIP"));
         sourceabs->set_tooltip_text(M("TP_COLORAPP_ADAPSCEN_TOOLTIP"));
         targabs->set_tooltip_text(M("TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP"));
@@ -5890,6 +5936,9 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
         decayl->set_tooltip_text("");
         lowthresl->set_tooltip_text("");
         higthresl->set_tooltip_text("");
+        whiteslog->set_tooltip_text("");
+        blackslog->set_tooltip_text("");
+        comprlog->set_tooltip_text("");
 
     }
 }
@@ -5901,9 +5950,10 @@ void LocallabLog::disableListener()
     autoconn.block(true);
     fullimageConn.block(true);
     ciecamconn.block(true);
+    satlogconn.block(true);
     enaLMaskConn.block(true);
-    surroundconn.block (true);
-    sursourconn.block (true);
+    surroundconn.block(true);
+    sursourconn.block(true);
     AutograyConn.block(true);
     showmaskLMethodConn.block(true);
 }
@@ -5915,9 +5965,10 @@ void LocallabLog::enableListener()
     autoconn.block(false);
     fullimageConn.block(false);
     ciecamconn.block(false);
+    satlogconn.block(false);
     enaLMaskConn.block(false);
-    surroundconn.block (false);
-    sursourconn.block (false);
+    surroundconn.block(false);
+    sursourconn.block(false);
     AutograyConn.block(false);
     showmaskLMethodConn.block(false);
 }
@@ -5962,34 +6013,43 @@ void LocallabLog::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         repar->setValue(spot.repar);
 
         whiteEv->setValue(spot.whiteEv);
-/*        if(whiteEv->getValue() < 1.5){
-            whiteEv->setValue(1.5);
-        }
-*/
+        whiteslog->setValue(spot.whiteslog);
+        blackslog->setValue(spot.blackslog);
+        comprlog->setValue(spot.comprlog);
+        strelog->setValue(spot.strelog);
+
+        /*        if(whiteEv->getValue() < 1.5){
+                    whiteEv->setValue(1.5);
+                }
+        */
         if (spot.sursour == "Average") {
-            sursour->set_active (0);
+            sursour->set_active(0);
         } else if (spot.sursour == "Dim") {
-            sursour->set_active (1);
+            sursour->set_active(1);
         } else if (spot.sursour == "Dark") {
-            sursour->set_active (2);
+            sursour->set_active(2);
+        } else if (spot.sursour == "exDark") {
+            sursour->set_active(3);
         }
 
 
         if (spot.surround == "Average") {
-            surround->set_active (0);
+            surround->set_active(0);
         } else if (spot.surround == "Dim") {
-            surround->set_active (1);
+            surround->set_active(1);
         } else if (spot.surround == "Dark") {
-            surround->set_active (2);
+            surround->set_active(2);
         } else if (spot.surround == "ExtremelyDark") {
-            surround->set_active (3);
+            surround->set_active(3);
         }
+
         recothresl->setValue((double)spot.recothresl);
         lowthresl->setValue((double)spot.lowthresl);
         higthresl->setValue((double)spot.higthresl);
         decayl->setValue((double)spot.decayl);
 
         ciecam->set_active(spot.ciecam);
+        satlog->set_active(spot.satlog);
         fullimage->set_active(spot.fullimage);
         Autogray->set_active(spot.Autogray);
         sourceGray->setValue(spot.sourceGray);
@@ -6051,8 +6111,13 @@ void LocallabLog::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.repar = repar->getValue();
         spot.blackEv = blackEv->getValue();
         spot.whiteEv = whiteEv->getValue();
+        spot.whiteslog = whiteslog->getIntValue();
+        spot.blackslog = blackslog->getIntValue();
+        spot.comprlog = comprlog->getValue();
+        spot.strelog = strelog->getValue();
         spot.fullimage = fullimage->get_active();
         spot.ciecam = ciecam->get_active();
+        spot.satlog = satlog->get_active();
         spot.Autogray = Autogray->get_active();
         spot.sourceGray = sourceGray->getValue();
         spot.sourceabs = sourceabs->getValue();
@@ -6093,6 +6158,8 @@ void LocallabLog::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.sursour = "Dim";
         } else if (sursour->get_active_row_number() == 2) {
             spot.sursour = "Dark";
+        } else if (sursour->get_active_row_number() == 3) {
+            spot.sursour = "exDark";
         }
 
         if (surround->get_active_row_number() == 0) {
@@ -6143,12 +6210,12 @@ void LocallabLog::updateGUIToMode(const modeType new_type)
         case Simple:
             // Expert and Normal mode widgets are hidden in Simple mode
             ciecam->hide();
-            ciecam->set_active(false);
+            ciecam->set_active(true);
             sourceabs->hide();
             targabs->hide();
             saturl->hide();
             chroml->hide();
-            contl->hide();
+            contl->show();
             contthres->hide();
             lightl->hide();
             lightq->hide();
@@ -6181,13 +6248,14 @@ void LocallabLog::updateGUIToMode(const modeType new_type)
             lightq->show();
             contl->show();
             contthres->show();
-            contq->show();
+            contq->hide();
             colorfl->show();
             surrHBox->show();
             expL->hide();
             surHBox->hide();
             expmaskL->show();
             gradlogFrame->show();
+
             if (enaLMask->get_active()) {
                 maskusablel->show();
                 maskunusablel->hide();
@@ -6222,6 +6290,7 @@ void LocallabLog::updateGUIToMode(const modeType new_type)
             expmaskL->show();
             gradlogFrame->show();
             surHBox->show();
+
             if (enaLMask->get_active()) {
                 maskusablel->show();
                 maskunusablel->hide();
@@ -6230,6 +6299,7 @@ void LocallabLog::updateGUIToMode(const modeType new_type)
                 maskusablel->hide();
                 maskunusablel->show();
             }
+
             exprecovl->show();
             decayl->show();
 
@@ -6294,7 +6364,7 @@ void LocallabLog::showmaskLMethodChanged()
         locToolListener->resetOtherMaskView(this);
     }
 
-    if(exp->getEnabled()) {
+    if (exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabshowmaskMethod, "");
         }
@@ -6354,6 +6424,10 @@ void LocallabLog::setDefaults(const rtengine::procparams::ProcParams* defParams,
         repar->setDefault(defSpot.repar);
         blackEv->setDefault(defSpot.blackEv);
         whiteEv->setDefault(defSpot.whiteEv);
+        whiteslog->setDefault(defSpot.whiteslog);
+        blackslog->setDefault(defSpot.blackslog);
+        comprlog->setDefault(defSpot.comprlog);
+        strelog->setDefault(defSpot.strelog);
         sourceGray->setDefault(defSpot.sourceGray);
         sourceabs->setDefault(defSpot.sourceabs);
         targabs->setDefault(defSpot.targabs);
@@ -6407,6 +6481,34 @@ void LocallabLog::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(EvlocallabwhiteEv,
                                        whiteEv->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == whiteslog) {
+            if (listener) {
+                listener->panelChanged(Evlocallabwhiteslog,
+                                       whiteslog->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == blackslog) {
+            if (listener) {
+                listener->panelChanged(Evlocallabblackslog,
+                                       blackslog->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == comprlog) {
+            if (listener) {
+                listener->panelChanged(Evlocallabcomprlog,
+                                       comprlog->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == strelog) {
+            if (listener) {
+                listener->panelChanged(Evlocallabstrelog,
+                                       strelog->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
@@ -6610,9 +6712,9 @@ void LocallabLog::updateAutocompute(const float blackev, const float whiteev, co
 
             enableListener();
 
-        return false;
+            return false;
         }
-        );
+                     );
     }
 }
 
@@ -6697,7 +6799,7 @@ void LocallabLog::ciecamChanged()
         catad->hide();
         surrHBox->hide();
     }
-*/
+    */
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (ciecam->get_active()) {
@@ -6705,6 +6807,21 @@ void LocallabLog::ciecamChanged()
                                        M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabciecam,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+void LocallabLog::satlogChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (satlog->get_active()) {
+                listener->panelChanged(Evlocallabsatlog,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabsatlog,
                                        M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
@@ -6741,7 +6858,7 @@ void LocallabLog::updateMaskBackground(const double normChromar, const double no
 
         return false;
     }
-    );
+                 );
 }
 
 
@@ -6795,6 +6912,9 @@ void LocallabLog::updateLogGUI()
         blackEv->set_sensitive(false);
         whiteEv->set_sensitive(false);
         sourceGray->set_sensitive(false);
+        blackslog->set_sensitive(true);
+        whiteslog->set_sensitive(true);
+
         if (mode == Expert || mode == Normal) {
             sourceabs->set_sensitive(false);
         } else {
@@ -6804,15 +6924,19 @@ void LocallabLog::updateLogGUI()
         blackEv->set_sensitive(true);
         whiteEv->set_sensitive(true);
         sourceGray->set_sensitive(true);
-        if (mode == Expert || mode == Normal){
+        blackslog->set_sensitive(false);
+        whiteslog->set_sensitive(false);
+
+        if (mode == Expert || mode == Normal) {
             sourceabs->set_sensitive(true);
         } else {
             sourceabs->hide();
         }
     }
-        if (mode == Expert || mode == Normal) { // Keep widget hidden in Simple mode
-            exprecovl->show();
-        }
+
+    if (mode == Expert || mode == Normal) { // Keep widget hidden in Simple mode
+        exprecovl->show();
+    }
 
 }
 
@@ -7633,7 +7757,7 @@ void LocallabMask::updateMaskBackground(const double normChromar, const double n
 
         return false;
     }
-    );
+                 );
 }
 
 void LocallabMask::showmask_MethodChanged()
@@ -7643,7 +7767,7 @@ void LocallabMask::showmask_MethodChanged()
         locToolListener->resetOtherMaskView(this);
     }
 
-    if(exp->getEnabled()) {
+    if (exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabshowmaskMethod, "");
         }
@@ -7720,16 +7844,17 @@ Locallabcie::Locallabcie():
     
     reparcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
     jabcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_JAB")))),
-    modecam(Gtk::manage (new MyComboBoxText ())),
-    modecie(Gtk::manage (new MyComboBoxText ())),
+    modecam(Gtk::manage(new MyComboBoxText())),
+    modecie(Gtk::manage(new MyComboBoxText())),
     jzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_JZFRA")))),
     modeHBoxcam(Gtk::manage(new Gtk::Box())),
     modeHBoxcie(Gtk::manage(new Gtk::Box())),
     cieFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGFRA")))),
+    expcamscene(Gtk::manage(new MyExpander(false, Gtk::manage(new Gtk::Box())))),
     Autograycie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AUTOGRAYCIE")))),
     sourceGraycie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_GRAY"), 1.0, 100.0, 0.1, 18.0))),
     sourceabscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_ABS"), 0.01, 16384.0, 0.01, 2000.0))),
-    sursourcie(Gtk::manage (new MyComboBoxText ())),
+    sursourcie(Gtk::manage(new MyComboBoxText())),
     surHBoxcie(Gtk::manage(new Gtk::Box())),
     cie1Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOG1FRA")))),
     cie1lightFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIELIGHTFRA")))),
@@ -7745,7 +7870,7 @@ Locallabcie::Locallabcie():
     adapjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZADAP"), 1., 10., 0.05, 4.))),
     jz100(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZ100"), 0.10, 0.90, 0.01, 0.25))),
     pqremap(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZPQREMAP"), 100., 10000., 0.1, 120.))),
-    pqremapcam16(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CAM16PQREMAP"), 100., 10000., 0.1, 100.))),
+    pqremapcam16(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CAM16PQREMAP"), 100., 10000., 1., 100.))),
     forcejz(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_JZFORCE")))),
     expjz(Gtk::manage(new MyExpander(false, Gtk::manage(new Gtk::Box())))),
     jzshFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_JZSHFRA")))),
@@ -7766,27 +7891,87 @@ Locallabcie::Locallabcie():
     clarisoftjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 0.))),
 
     expcam16(Gtk::manage(new MyExpander(false, Gtk::manage(new Gtk::Box())))),
+    expcamviewing(Gtk::manage(new MyExpander(false, Gtk::manage(new Gtk::Box())))),
     lightqcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGLIGHTQ"), -100., 100., 0.05, 0.))),
     contlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONTL"), -100., 100., 0.5, 0.))),
     contqcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONQL"), -100., 100., 0.5, 0.))),
+    lightsigqcie(Gtk::manage(new Adjuster(M(""), -100., 100., 0.5, 0.))),
+    contsigqcie(Gtk::manage(new Adjuster(M(""), -100., 100., 0.5, 0.))),
+
     contthrescie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONTHRES"), -1., 1., 0.01, 0.))),
 
     logjzFrame(Gtk::manage(new Gtk::Frame())),
     logjz(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_JZLOG")))),
-    blackEvjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLACK_EV"), -16.0, 0.0, 0.1, -5.0))),
-    whiteEvjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WHITE_EV"), 0., 32.0, 0.1, 10.0))),
+    blackEvjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLACK_EV"), -16.00, 0.00, 0.01, -5.00))),
+    whiteEvjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WHITE_EV"), 0.00, 32.000, 0.01, 10.00))),
     targetjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZTARGET_EV"), 4., 80.0, 0.1, 18.0))),
     bevwevFrame(Gtk::manage(new Gtk::Frame())),
     forcebw(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_BWFORCE")))),
-
+    sigBox(Gtk::manage(new ToolParamBlock())),
     sigmoidFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGFRA")))),
+    sigmoidnormFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGNORM")))),
     sigq(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGFRA")))),
     sigmoidldacie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0.0, 1., 0.01, 0.5))),
-    sigmoidthcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDTH"), 0.1, 4., 0.01, 1., Gtk::manage(new RTImage("circle-black-small")), Gtk::manage(new RTImage("circle-white-small"))))),
-    sigmoidblcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDBL"), 0.5, 1.5, 0.01, 1.))),
-    sigmoidqjcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGMOIDQJ")))),
+    sigmoidthcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDTH"), 0.1, 4., 0.01, 1.2, Gtk::manage(new RTImage("circle-black-small")), Gtk::manage(new RTImage("circle-white-small"))))),
+    sigmoidsenscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDSENSI"), 0.1, 1.5, 0.01, 0.9))),
+    sigmoidblcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDBL"), 0.05, 1., 0.01, 0.75))),
+    autocomprHBox(Gtk::manage(new Gtk::Box())),
+    comprcieauto(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_SIGMOIDLOGAUTO")))),
+    normcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGMOIDNORMCIE")))),
+    modeHBoxbwev(Gtk::manage(new Gtk::Box())),
+    bwevMethod(Gtk::manage(new MyComboBoxText())),
+    logcieFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGCIE")))),
     logcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LOGCIE")))),
+    comprBox(Gtk::manage(new ToolParamBlock())),
+    comprcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIE"), 0., 1., 0.01, 0.4))),
+    strcielog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGTHCIELOG"), 0., 100., 0.5, 80.))),
+    satcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SATCIE")))),
+    logcieq(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LOGCIEQ")))),
+    comprcieth(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIETH"), 0., 25., 0.01, 6.))),
+
+    expprecam(Gtk::manage(new MyExpander(true, Gtk::manage(new Gtk::Box())))),
+
+    gamjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGGAMJCIE"), 0.7, 10., 0.01, 2.4))),
+    slopjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGSLOPJCIE"), 0., 500., 0.01, 12.923))),
+    midtcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MIDTCIE"), -100, 100, 1, 0))),
+    smoothcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SMOOTHCIE_SCA")))),
+    ciesmoothBox(Gtk::manage(new ToolParamBlock())),
+    smoothBox(Gtk::manage(new Gtk::Box())),
+    smoothciemet(Gtk::manage(new MyComboBoxText())),
+    slopesmo(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOPESMOOTH"), 0.6, 1.6, 0.01, 1.))),
+    whitescie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGWHITESCIE"), -100, 100, 1, 0))),
+    blackscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGBLACKSSCIE"), -100, 100, 1, 0))),
+    willBox(Gtk::manage(new Gtk::Box())),
+    illMethod(Gtk::manage(new MyComboBoxText())),
+    wprimBox(Gtk::manage(new Gtk::Box())),
+    primMethod(Gtk::manage(new MyComboBoxText())),
+    primCoordGridl(Gtk::manage(new Gtk::Grid())),
+    trcFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TRCFRAME")))),
+    smoothFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIE_SMOOTHFRAME")))),
+    primillFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_PRIMILLFRAME")))),
+    redBox(Gtk::manage(new ToolParamBlock())),
+    redxl(Gtk::manage(new Adjuster(M("TC_PRIM_REDX"), 0.41, 1.0, 0.0001, 0.7347))),
+    redyl(Gtk::manage(new Adjuster(M("TC_PRIM_REDY"), 0.0, 0.70, 0.0001, 0.2653))),
+    grexl(Gtk::manage(new Adjuster(M("TC_PRIM_GREX"), -0.1, 0.4, 0.0001, 0.1596))),
+    greyl(Gtk::manage(new Adjuster(M("TC_PRIM_GREY"), 0.50, 1.0, 0.0001, 0.8404))),
+    bluxl(Gtk::manage(new Adjuster(M("TC_PRIM_BLUX"), -0.1, 0.4, 0.0001, 0.0366))),
+    bluyl(Gtk::manage(new Adjuster(M("TC_PRIM_BLUY"), -0.1, 0.49, 0.0001, 0.0001))),
+    refi(Gtk::manage(new Adjuster(M("TC_PRIM_REFI"), -0.5, 1., 0.0001, 0.))),
+
+    gridFramecie(Gtk::manage(new Gtk::Frame(M("TP_ICM_WORKING_CIEDIAG")))),
+    labgridcie(Gtk::manage(new LabGrid(EvlocallabGridciexy, M("TP_ICM_LABGRID_CIEXY"), true, true, false))),
+    colorFramecie(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_COLORFRAME")))),
+
+    catBox(Gtk::manage(new Gtk::Box())),
+    catMethod(Gtk::manage(new MyComboBoxText())),
+    gamutcieBox(Gtk::manage(new Gtk::Box())),
+    gamutcie(Gtk::manage(new Gtk::CheckButton(M("TP_ICM_GAMUT")))),
+    shiftxl(Gtk::manage(new Adjuster(M("TC_LOCALLAB_PRIM_SHIFTX"), -0.20, 0.20, 0.0001, 0.))),
+    shiftyl(Gtk::manage(new Adjuster(M("TC_LOCALLAB_PRIM_SHIFTY"), -0.20, 0.20, 0.0001, 0.))),
+
     sigmoidjzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGJZFRA")))),
+    sigmoid2Frame(Gtk::manage(new Gtk::Frame(M("")))),
+    sigcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGCIE")))),
     sigjz(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGJZFRA")))),
     sigmoidldajzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0., 1.0, 0.01, 0.5))),
     sigmoidthjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDTH"), 0.1, 4., 0.01, 1., Gtk::manage(new RTImage("circle-black-small")), Gtk::manage(new RTImage("circle-white-small"))))),
@@ -7823,26 +8008,19 @@ Locallabcie::Locallabcie():
     chjzcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_JZCH")))),
     strsoftjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZSTRSOFTCIE"), 0, 100., 0.5, 100.))),
 
-/*
-    ciezFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_ZCAMFRA")))),
-
-    lightlzcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGLIGHTL"), -100., 100., 0.5, 0.))),
-    lightqzcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGLIGHTQ"), -100., 100., 0.05, 0.))),
-    contlzcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONTL"), -100., 100., 0.5, 0.))),
-    contqzcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONQL"), -100., 100., 0.5, 0.))),
-    contthreszcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ZCAMTHRES"), 0., 1., 0.01, 0.))),
-    colorflzcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCOLORFL"), -100., 100., 0.5, 0.))),
-    saturzcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATURV"), -100., 100., 0.5, 0.))),
-    chromzcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROML"), -100., 100., 0.5, 0.))),
-*/
     expLcie(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_CIETOOLEXP")))),
     cie2Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOG2FRA")))),
     targetGraycie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TARGET_GRAY"), 5.0, 80.0, 0.1, 18.0))),
     targabscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_ABS"), 0.01, 16384.0, 0.01, 16.0))),
-    detailcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0., 100., 0.1, 0.))),
+    detailcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0., 100., 0.1, 30.))),
+    detailciejz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0., 100., 0.1, 30.))),
     catadcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CATAD"), -100., 100., 0.5, 0., Gtk::manage(new RTImage("circle-blue-small")), Gtk::manage(new RTImage("circle-orange-small"))))),
-    surroundcie(Gtk::manage (new MyComboBoxText ())),
+    surroundcie(Gtk::manage(new MyComboBoxText())),
     surrHBoxcie(Gtk::manage(new Gtk::Box())),
+    expgradcie(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPGRAD")))),
+    strgradcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
+    anggradcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
+
     exprecovcie(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
     maskusablecie(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
     maskunusablecie(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUNUSABLE")))),
@@ -7853,25 +8031,90 @@ Locallabcie::Locallabcie():
     expmaskcie(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWS")))),
     showmaskcieMethod(Gtk::manage(new MyComboBoxText())),
     enacieMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
+    enacieMaskall(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASKALL")))),
 //    maskSHCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
     maskcieCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
     CCmaskcieshape(static_cast<FlatCurveEditor*>(maskcieCurveEditorG->addCurve(CT_Flat, "C", nullptr, false, false))),
     LLmaskcieshape(static_cast<FlatCurveEditor*>(maskcieCurveEditorG->addCurve(CT_Flat, "L", nullptr, false, false))),
     HHmaskcieshape(static_cast<FlatCurveEditor*>(maskcieCurveEditorG->addCurve(CT_Flat, "LC(h)", nullptr, false, true))),
+    struFramecie(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LABSTRUM")))),
+    strumaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUMASKCOL"), 0., 200., 0.1, 0.))),
+    toolcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_TOOLCOL")))),
+    blurFramecie(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LABBLURM")))),
+    fftcieMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTCOL_MASK")))),
+    contcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTCOL"), 0., 200., 0.5, 0.))),
+    blurcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURCOL"), 0.2, 100., 0.5, 0.2))),
     blendmaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
     radmaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
     lapmaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
     chromaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
     gammaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.25, 4.0, 0.01, 1.))),
     slomaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
+    highmaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_HIGHMASKCOL"), 0, 100, 1, 0))),
+    shadmaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHAMASKCOL"), 0, 100, 1, 0))),
+    maskcieHCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "")),
+    HHhmaskcieshape(static_cast<FlatCurveEditor *>(maskcieHCurveEditorG->addCurve(CT_Flat, "h(h)", nullptr, false, true))),
     mask2cieCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
-    Lmaskcieshape(static_cast<DiagonalCurveEditor*>(mask2cieCurveEditorG->addCurve(CT_Diagonal, "L(L)")))
+    Lmaskcieshape(static_cast<DiagonalCurveEditor*>(mask2cieCurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
+    wavFramecie(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TOOLMASK_2")))),
+    mask2cieCurveEditorGwav(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVMASK"))),
+    LLmaskcieshapewav(static_cast<FlatCurveEditor*>(mask2cieCurveEditorGwav->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
+    quaHcieBox(Gtk::manage(new Gtk::Box())),
+    csThresholdcie(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 0, 9, 0, 0, 6, 5, 0, false)))
 
 
-    {
+{
     auto m = ProcEventMapper::getInstance();
     Evlocallabpreviewcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWCIE");
-        
+    Evlocallabnormcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_NORM");
+    Evlocallabstrumaskcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIEMASK_STRU");
+    EvLocallabtoolcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIEMASK_STRU_TOOL");
+    EvLocallabfftcieMask = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIEMASK_BLURFFT");
+    Evlocallabcontcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIEMASK_BLURCONT");
+    Evlocallabblurcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIEMASK_BLURRAD");
+    Evlocallabhighmaskcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIEMASK_HIGH");
+    Evlocallabshadmaskcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIEMASK_SHAD");
+    Evlocallabsigmoidsenscie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SIGADAP");
+    EvlocallabLLmaskcieshapewav = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIEMASK_WLC");
+    EvlocallabcsThresholdcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIEMASK_WLEV");
+    Evlocallabcomprcie = m->newEvent(HDR, "HISTORY_MSG_LOCAL_CIE_BRICOMP");
+    Evlocallabstrcielog = m->newEvent(HDR, "HISTORY_MSG_LOCAL_CIE_STRLOG");
+    Evlocallabsatcie = m->newEvent(HDR, "HISTORY_MSG_LOCAL_CIE_SATCIE");
+    Evlocallablogcieq = m->newEvent(HDR, "HISTORY_MSG_LOCAL_CIE_LOGCIEQ");
+    Evlocallabcomprcieth = m->newEvent(HDR, "HISTORY_MSG_LOCAL_CIE_BRICOMPTH");
+    EvlocallabHHhmaskcieshape = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIEMASK_CHH");
+    EvlocallabbwevMethod = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SIGMET");
+    Evlocallabgamjcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GAM");
+    Evlocallabslopjcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SLOP");
+    Evlocallabmidtcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_MIDT");
+    Evlocallabslopesmo = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SLOPESMO");
+    Evlocallabsmoothcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SMOOTH");
+    Evlocallabsigcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SIG");
+    Evlocallabillcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_ILL");
+    Evlocallabprimcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_PRIM");
+    Evlocallabcatcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_CAT");
+    Evlocallabwhitescie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_WHITES");
+    Evlocallabblackscie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_BLACKS");
+    Evlocallabredxl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_REDXL");
+    Evlocallabredyl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_REDYL");
+    Evlocallabgrexl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GREXL");
+    Evlocallabgreyl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GREYL");
+    Evlocallabbluxl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_BLUXL");
+    Evlocallabbluyl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_BLUYL");
+    EvlocallabGridciexy = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_LABGRIDCIE");
+    Evlocallabgamutcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GAMUTCIE");
+    Evlocallabexpprecam = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_EXPPRECAM");
+    Evlocallablightsigqcie = m->newEvent(AUTOEXP, "");
+    Evlocallabcontsigqcie = m->newEvent(AUTOEXP, "");
+    Evlocallabrefi = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_REFI");
+    Evlocallabshiftxl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SHIFTXL");
+    Evlocallabshiftyl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SHIFTYL");
+    Evlocallabanggradcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_ANGGRAD");
+    Evlocallabstrgradcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_STRGRAD");
+    Evlocallabdetailciejz = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_DETAILJZ");
+    EvlocallabenacieMaskall = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_ENAMASKALL");
+    Evlocallabsmoothciemet = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SMOOTHMET");
+    
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     // Parameter Ciecam specific widgets
@@ -7883,89 +8126,285 @@ Locallabcie::Locallabcie():
     pack_start(*sensicie);
     pack_start(*previewcie);
     pack_start(*reparcie);
-    modeHBoxcam->set_spacing (2);
+    modeHBoxcam->set_spacing(2);
     //modeHBoxcam->set_tooltip_markup (M ("TP_LOCALLAB_CAMMODE_TOOLTIP"));
-    Gtk::Label* modeLabelcam = Gtk::manage (new Gtk::Label (M ("TP_LOCALLAB_CAMMODE") + ":"));
-    modeHBoxcam->pack_start (*modeLabelcam, Gtk::PACK_SHRINK);
-    modecam->append (M ("TP_LOCALLAB_CAMMODE_CAM16"));
-    modecam->append (M ("TP_LOCALLAB_CAMMODE_JZ"));
- //   modecam->append (M ("TP_LOCALLAB_CAMMODE_ALL"));
-//    modecam->append (M ("TP_LOCALLAB_CAMMODE_ZCAM"));
-    modecam->set_active (0);
-    modeHBoxcam->pack_start (*modecam);
-    modecamconn = modecam->signal_changed().connect ( sigc::mem_fun (*this, &Locallabcie::modecamChanged) );
+    Gtk::Label* modeLabelcam = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_CAMMODE") + ":"));
+    modeHBoxcam->pack_start(*modeLabelcam, Gtk::PACK_SHRINK);
+    modecam->append(M("TP_LOCALLAB_CAMMODE_CAM16"));
+    modecam->append(M("TP_LOCALLAB_CAMMODE_JZ"));
+    modecam->set_active(0);
+    modeHBoxcam->pack_start(*modecam);
+    modecamconn = modecam->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::modecamChanged));
     pack_start(*modeHBoxcam);
 
-    modeHBoxcie->set_spacing (2);
-    modeHBoxcie->set_tooltip_markup (M ("TP_LOCALLAB_CIEMODE_TOOLTIP"));
-    Gtk::Label* modeLabel = Gtk::manage (new Gtk::Label (M ("TP_LOCALLAB_CIEMODE") + ":"));
-    modeHBoxcie->pack_start (*modeLabel, Gtk::PACK_SHRINK);
-    modecie->append (M ("TP_LOCALLAB_CIEMODE_COM"));
-    modecie->append (M ("TP_LOCALLAB_CIEMODE_TM"));
-    modecie->append (M ("TP_LOCALLAB_CIEMODE_WAV"));
-    modecie->append (M ("TP_LOCALLAB_CIEMODE_DR"));
-//    modecie->append (M ("TP_LOCALLAB_CIEMODE_LOG"));
-    modecie->set_active (0);
-    modeHBoxcie->pack_start (*modecie);
-    modecieconn = modecie->signal_changed().connect ( sigc::mem_fun (*this, &Locallabcie::modecieChanged) );
+    modeHBoxcie->set_spacing(2);
+    modeHBoxcie->set_tooltip_markup(M("TP_LOCALLAB_CIEMODE_TOOLTIP"));
+    Gtk::Label* modeLabel = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_CIEMODE") + ":"));
+    modeHBoxcie->pack_start(*modeLabel, Gtk::PACK_SHRINK);
+    modecie->append(M("TP_LOCALLAB_CIEMODE_COM"));
+    modecie->append(M("TP_LOCALLAB_CIEMODE_TM"));
+    modecie->append(M("TP_LOCALLAB_CIEMODE_WAV"));
+    modecie->append(M("TP_LOCALLAB_CIEMODE_DR"));
+    modecie->set_active(0);
+    modeHBoxcie->pack_start(*modecie);
+    modecieconn = modecie->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::modecieChanged));
     pack_start(*modeHBoxcie);
 
-    surHBoxcie->set_spacing (2);
-    surHBoxcie->set_tooltip_markup (M ("TP_LOCALLAB_LOGSURSOUR_TOOLTIP"));
-    Gtk::Label* surLabel = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_SURROUND") + ":"));
-    surHBoxcie->pack_start (*surLabel, Gtk::PACK_SHRINK);
-    sursourcie->append (M ("TP_COLORAPP_SURROUND_AVER"));
-    sursourcie->append (M ("TP_COLORAPP_SURROUND_DIM"));
-    sursourcie->append (M ("TP_COLORAPP_SURROUND_DARK"));
-    sursourcie->set_active (0);
-    surHBoxcie->pack_start (*sursourcie);
-    sursourcieconn = sursourcie->signal_changed().connect ( sigc::mem_fun (*this, &Locallabcie::sursourcieChanged) );
+    surHBoxcie->set_spacing(2);
+    surHBoxcie->set_tooltip_markup(M("TP_LOCALLAB_LOGSURSOUR_TOOLTIP"));
+    Gtk::Label* surLabel = Gtk::manage(new Gtk::Label(M("TP_COLORAPP_SURROUND") + ":"));
+    surHBoxcie->pack_start(*surLabel, Gtk::PACK_SHRINK);
+    sursourcie->append(M("TP_COLORAPP_SURROUND_AVER"));
+    sursourcie->append(M("TP_COLORAPP_SURROUND_DIM"));
+    sursourcie->append(M("TP_COLORAPP_SURROUND_DARK"));
+    sursourcie->append(M("TP_COLORAPP_SURROUND_EXDARK"));
+    sursourcie->append(M("TP_LOCALLAB_DISAB_CIECAM"));
+    sursourcie->set_active(0);
+    surHBoxcie->pack_start(*sursourcie);
+    sursourcieconn = sursourcie->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::sursourcieChanged));
 
     cieFrame->set_label_align(0.025, 0.5);
+
+    Gtk::Box *TittleVBoxcamscene;
+    TittleVBoxcamscene = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    TittleVBoxcamscene->set_spacing(2);
+    Gtk::Box* const LCTitleHBoxcamscene = Gtk::manage(new Gtk::Box());
+    Gtk::Label* const LCLabelcamscene = Gtk::manage(new Gtk::Label());
+    LCLabelcamscene->set_markup(Glib::ustring("<b>") + (M("TP_LOCALLAB_LOGFRA")) + Glib::ustring("</b>"));
+    LCTitleHBoxcamscene->pack_start(*LCLabelcamscene, Gtk::PACK_SHRINK);
+    TittleVBoxcamscene->pack_start(*LCTitleHBoxcamscene, Gtk::PACK_SHRINK);
+    expcamscene->setLabel(TittleVBoxcamscene);
+
+    setExpandAlignProperties(expcamscene, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+
+
+
+
     ToolParamBlock* const cieFBox = Gtk::manage(new ToolParamBlock());
     cieFBox->pack_start(*Autograycie);
     cieFBox->pack_start(*sourceGraycie);
     cieFBox->pack_start(*sourceabscie);
     cieFBox->pack_start(*pqremapcam16);
+    cieFBox->pack_start(*whitescie);
+    cieFBox->pack_start(*blackscie);
+
     PQFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const PQFBox = Gtk::manage(new ToolParamBlock());
     PQFBox->pack_start(*adapjzcie);
     PQFBox->pack_start(*jz100);
     PQFBox->pack_start(*pqremap);
-//    PQFBox->pack_start(*forcejz);
-//    PQFBox->pack_start(*contthreszcam);
     PQFrame->add(*PQFBox);
-    cieFBox->pack_start (*PQFrame);
+    cieFBox->pack_start(*PQFrame);
     logjzFrame->set_label_align(0.025, 0.5);
     logjzFrame->set_label_widget(*logjz);
-  //  Gtk::Separator* const separatorjz = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     ToolParamBlock* const logjzBox = Gtk::manage(new ToolParamBlock());
-    //logjzBox->pack_start(*blackEvjz);
-   // logjzBox->pack_start(*whiteEvjz);
-   // logjzBox->pack_start(*separatorjz);
     logjzBox->pack_start(*targetjz);
     logjzFrame->add(*logjzBox);
-    cieFBox->pack_start (*logjzFrame);
+    cieFBox->pack_start(*logjzFrame);
     bevwevFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const bevwevBox = Gtk::manage(new ToolParamBlock());
     bevwevBox->pack_start(*blackEvjz);
     bevwevBox->pack_start(*whiteEvjz);
     bevwevFrame->add(*bevwevBox);
-    cieFBox->pack_start (*bevwevFrame);
+    cieFBox->pack_start(*bevwevFrame);
 
     sigmoidFrame->set_label_align(0.025, 0.5);
     sigmoidFrame->set_label_widget(*sigq);
-    ToolParamBlock* const sigBox = Gtk::manage(new ToolParamBlock());
-    Gtk::Separator* const separatorsig = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
+    sigmoidnormFrame->set_label_align(0.025, 0.5);
+    sigmoidnormFrame->set_label_widget(*normcie);
 
-    sigBox->pack_start(*sigmoidldacie);
-    sigBox->pack_start(*sigmoidthcie);
-    sigBox->pack_start(*sigmoidblcie);
-    sigBox->pack_start(*sigmoidqjcie);
-    sigBox->pack_start(*separatorsig);
-    sigBox->pack_start(*logcie);
+
+    Gtk::Box *TittleVBoxprecam;
+    TittleVBoxprecam = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    TittleVBoxprecam->set_spacing(2);
+    Gtk::Box* const LCTitleHBoxprecam = Gtk::manage(new Gtk::Box());
+    Gtk::Label* const LCLabelprecam = Gtk::manage(new Gtk::Label());
+    LCLabelprecam->set_markup(Glib::ustring("<b>") + (M("TP_LOCALLAB_SIGTRCCIE")) + Glib::ustring("</b>"));
+    LCTitleHBoxprecam->pack_start(*LCLabelprecam, Gtk::PACK_SHRINK);
+    TittleVBoxprecam->pack_start(*LCTitleHBoxprecam, Gtk::PACK_SHRINK);
+    expprecam->setLabel(TittleVBoxprecam);
+
+    setExpandAlignProperties(expprecam, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+    sigmoid2Frame->set_label_align(0.025, 0.5);
+    //sigmoid2Frame->set_label_widget(*sigcie);
+    logcieFrame->set_label_align(0.025, 0.5);
+    logcieFrame->set_label_widget(*logcie);
+    Gtk::Label* illLabel = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_ILLU") + ":"));
+    willBox->pack_start(*illLabel, Gtk::PACK_SHRINK);
+    willBox->pack_start(*illMethod, Gtk::PACK_EXPAND_WIDGET);
+    illMethod->append(M("TP_ICM_WORKING_ILLU_D41"));
+    illMethod->append(M("TP_ICM_WORKING_ILLU_D50"));
+    illMethod->append(M("TP_ICM_WORKING_ILLU_D55"));
+    illMethod->append(M("TP_ICM_WORKING_ILLU_D60"));
+    illMethod->append(M("TP_ICM_WORKING_ILLU_D65"));
+    illMethod->append(M("TP_ICM_WORKING_ILLU_D80"));
+
+    illMethod->append(M("TP_ICM_WORKING_ILLU_D120"));
+
+    illMethod->append(M("TP_ICM_WORKING_ILLU_STDA"));
+    illMethod->append(M("TP_ICM_WORKING_ILLU_2000"));
+    illMethod->append(M("TP_ICM_WORKING_ILLU_1500"));
+    illMethod->append(M("TP_ICM_WORKING_ILLU_E"));
+
+
+    illMethod->set_active(1);
+    illMethodconn = illMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::illMethodChanged));
+
+
+    Gtk::Label* primLabel = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_PRIM") + ":"));
+    wprimBox->pack_start(*primLabel, Gtk::PACK_SHRINK);
+    wprimBox->pack_start(*primMethod, Gtk::PACK_EXPAND_WIDGET);
+    primMethod->append(M("TP_ICM_WORKING_PRIM_PROP"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_BET"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_WID"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_ACE"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_REC"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_ADOB"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_SRGB"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_JDCMAX"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_JDCMAXSTDA"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_AC0"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_BST"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_BRU"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_FREE"));
+
+    primMethod->set_active(0);
+    primMethodconn = primMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::primMethodChanged));
+    trcFrame->set_label_align(0.025, 0.5);
+    smoothFrame->set_label_align(0.025, 0.5);
+
+    primillFrame->set_label_align(0.025, 0.5);
+    setExpandAlignProperties(grexl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(greyl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(bluxl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(bluyl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(redxl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(redyl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+
+
+    primCoordGridl->set_column_homogeneous(true);
+    primCoordGridl->attach(*redxl, 0, 0, 1, 1);
+    primCoordGridl->attach_next_to(*redyl, *redxl, Gtk::PositionType::POS_RIGHT, 1, 1);
+    primCoordGridl->attach_next_to(*grexl, *redxl, Gtk::PositionType::POS_BOTTOM, 1, 1);
+    primCoordGridl->attach_next_to(*greyl, *grexl, Gtk::PositionType::POS_RIGHT, 1, 1);
+    primCoordGridl->attach_next_to(*bluxl, *grexl, Gtk::PositionType::POS_BOTTOM, 1, 1);
+    primCoordGridl->attach_next_to(*bluyl, *bluxl, Gtk::PositionType::POS_RIGHT, 1, 1);
+
+    redBox->pack_start(*primCoordGridl, Gtk::PACK_EXPAND_WIDGET);
+
+
+    redxl->setAdjusterListener(this);
+    redyl->setAdjusterListener(this);
+    grexl->setAdjusterListener(this);
+    greyl->setAdjusterListener(this);
+    bluxl->setAdjusterListener(this);
+    bluyl->setAdjusterListener(this);
+    refi->setAdjusterListener(this);
+    shiftxl->setAdjusterListener(this);
+    shiftyl->setAdjusterListener(this);
+
+
+    gridFramecie->set_label_align(0.025, 0.5);
+    ToolParamBlock* const gridBox = Gtk::manage(new ToolParamBlock());
+    gridBox->pack_start(*labgridcie);
+    gridFramecie->add(*gridBox);
+
+    Gtk::Label* catLabel = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_CAT") + ":"));
+    catBox->pack_start(*catLabel, Gtk::PACK_SHRINK);
+    catBox->pack_start(*catMethod, Gtk::PACK_EXPAND_WIDGET);
+    catMethod->append(M("TP_ICM_WORKING_CAT_BRAD"));
+    catMethod->append(M("TP_ICM_WORKING_CAT_CAT16"));
+    catMethod->append(M("TP_ICM_WORKING_CAT_CAT02"));
+    catMethod->append(M("TP_ICM_WORKING_CAT_VK"));
+    catMethod->append(M("TP_ICM_WORKING_CAT_XYZ"));
+    catMethod->set_active(0);
+    catMethodconn = catMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::catMethodChanged));
+    gamutcieBox->pack_start(*gamutcie, Gtk::PACK_EXPAND_WIDGET);
+
+    gamutcieconn = gamutcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::gamutcieChanged));
+
+    ToolParamBlock* const signormBox = Gtk::manage(new ToolParamBlock());
+    ToolParamBlock* const sigfraBox = Gtk::manage(new ToolParamBlock());
+
+    modeHBoxbwev->set_spacing(2);
+    ToolParamBlock* const gamcieBox = Gtk::manage(new ToolParamBlock());
+    Gtk::Label* modeLabelbwev = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_SIGMOIDQJ") + ":"));
+    modeHBoxbwev->pack_start(*modeLabelbwev, Gtk::PACK_SHRINK);
+
+    bwevMethod->append(M("TP_LOCALLAB_BWEVNONE"));
+    bwevMethod->append(M("TP_LOCALLAB_BWEVSIG"));
+    bwevMethod->set_active(1);
+    bwevMethodConn = bwevMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::bwevMethodChanged));
+    modeHBoxbwev->pack_start(*bwevMethod);
+
+    comprBox->pack_start(*comprcie);
+    comprBox->pack_start(*strcielog);
+    comprBox->pack_start(*satcie);
+    comprBox->pack_start(*logcieq);
+    logcieFrame->add(*comprBox);
+    gamcieBox->pack_start(*logcieFrame);
+
+    ToolParamBlock* const trccieBox = Gtk::manage(new ToolParamBlock());
+    ToolParamBlock* const smoothcieBox = Gtk::manage(new ToolParamBlock());
+    ToolParamBlock* const primillBox = Gtk::manage(new ToolParamBlock());
+    ToolParamBlock* const colorBox = Gtk::manage(new ToolParamBlock());
+
+    trccieBox->pack_start(*gamjcie);
+    trccieBox->pack_start(*slopjcie);
+    trccieBox->pack_start(*midtcie);
+
+    smoothBox->pack_start(*smoothciemet, Gtk::PACK_EXPAND_WIDGET);
+    smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_NONE"));
+    smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_EV"));
+    smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_GAMMA ROLLOFF"));
+    smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_GAMMA"));
+    smoothciemet->set_active(0);
+    ciesmoothBox->pack_start(*smoothBox);
+    ciesmoothBox->pack_start(*slopesmo);
+    ciesmoothBox->pack_start(*smoothcie);
+
+    smoothciemetconn = smoothciemet->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::smoothciemetChanged));
+
+    smoothcieBox->pack_start(*ciesmoothBox);
+    smoothFrame->add(*smoothcieBox);
+    trccieBox->pack_start(*smoothFrame);
+    trcFrame->add(*trccieBox);
+    gamcieBox->pack_start(*trcFrame);
+    primillBox->pack_start(*willBox);
+    colorFramecie->set_label_align(0.025, 0.5);
+
+    primillBox->pack_start(*wprimBox);
+    primillBox->pack_start(*redBox);
+    primillBox->pack_start(*gridFramecie);
+    primillBox->pack_start(*gamutcieBox);
+    primillBox->pack_start(*catBox);
+    colorBox->pack_start(*refi);
+    colorBox->pack_start(*shiftxl);
+    colorBox->pack_start(*shiftyl);
+    colorFramecie->add(*colorBox);
+    primillBox->pack_start(*colorFramecie);
+    primillFrame->add(*primillBox);
+    gamcieBox->pack_start(*primillFrame);
+
+
+
+    expprecam->add(*gamcieBox, false);
+
+
+    sigfraBox->pack_start(*sigmoidldacie);
+    sigfraBox->pack_start(*sigmoidthcie);
+    sigfraBox->pack_start(*sigmoidsenscie);
+    sigfraBox->pack_start(*modeHBoxbwev);
+    sigmoid2Frame->add(*sigfraBox);
+    sigBox->pack_start(*sigmoid2Frame);
+
+    signormBox->pack_start(*sigmoidblcie);
+    sigmoidnormFrame->add(*signormBox);
+    sigBox->pack_start(*sigmoidnormFrame);
+
     sigmoidFrame->add(*sigBox);
-    cieFBox->pack_start(*sigmoidFrame);
 
 
     sigmoidjzFrame->set_label_align(0.025, 0.5);
@@ -7977,12 +8416,16 @@ Locallabcie::Locallabcie():
     sigjzBox->pack_start(*forcebw);
     sigmoidjzFrame->add(*sigjzBox);
 
-  //  jzBox->pack_start(*sigmoidjzFrame);
     cieFBox->pack_start(*sigmoidjzFrame);
 
-    cieFBox->pack_start (*surHBoxcie);
-    cieFrame->add(*cieFBox);
-    pack_start(*cieFrame);
+    cieFBox->pack_start(*surHBoxcie);
+
+
+    expcamscene->add(*cieFBox, false);
+
+    pack_start(*expcamscene, false, false);
+    pack_start(*expprecam, false, false);
+
 
     ToolParamBlock* const jzallBox = Gtk::manage(new ToolParamBlock());
     Gtk::Box *TittleVBoxjz;
@@ -7999,61 +8442,53 @@ Locallabcie::Locallabcie():
 
     float R, G, B;
     std::vector<GradientMilestone> six_shape;
+
     for (int i = 0; i < 6; i++) {
         const float x = static_cast<float>(i) * (1.f / 6.f);
         Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
         six_shape.emplace_back(x, R, G, B);
     }
+
     std::vector<GradientMilestone> milestone;
-    milestone.push_back ( GradientMilestone (0., 0., 0., 0.) );
-    milestone.push_back ( GradientMilestone (1., 1., 1., 1.) );
+    milestone.push_back(GradientMilestone(0., 0., 0., 0.));
+    milestone.push_back(GradientMilestone(1., 1., 1., 1.));
 
     jz1CurveEditorG->setCurveListener(this);
     shapejz->setResetCurve(DiagonalCurveType(defSpot.jzcurve.at(0)), defSpot.jzcurve);
-    shapejz->setBottomBarBgGradient (milestone);
-    shapejz->setLeftBarBgGradient (milestone);
+    shapejz->setBottomBarBgGradient(milestone);
+    shapejz->setLeftBarBgGradient(milestone);
 
     shapecz->setResetCurve(DiagonalCurveType(defSpot.czcurve.at(0)), defSpot.czcurve);
 
     std::vector<GradientMilestone> shapeczMilestones;
-//    float R, G, B;
-    shapecz->setBottomBarColorProvider (this, 1);
-    shapecz->setLeftBarColorProvider (this, 1);
-    shapecz->setRangeDefaultMilestones (0.05, 0.2, 0.58);
+    shapecz->setBottomBarColorProvider(this, 1);
+    shapecz->setLeftBarColorProvider(this, 1);
+    shapecz->setRangeDefaultMilestones(0.05, 0.2, 0.58);
 
     for (int i = 0; i < 7; i++) {
         float x = float (i) * (1.0f / 6.f);
-        Color::hsv2rgb01 (x, 0.5f, 0.5f, R, G, B);
-        shapeczMilestones.push_back ( GradientMilestone (double (x), double (R), double (G), double (B)) );
+        Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
+        shapeczMilestones.push_back(GradientMilestone(double (x), double (R), double (G), double (B)));
     }
 
-    shapecz->setBottomBarBgGradient (shapeczMilestones);
-    shapecz->setLeftBarBgGradient (shapeczMilestones);
-    shapecz->setRangeDefaultMilestones (0.05, 0.2, 0.58);
+    shapecz->setBottomBarBgGradient(shapeczMilestones);
+    shapecz->setLeftBarBgGradient(shapeczMilestones);
+    shapecz->setRangeDefaultMilestones(0.05, 0.2, 0.58);
 
-    shapeczjz->setLeftBarColorProvider (this, 1);
-    shapeczjz->setRangeDefaultMilestones (0.05, 0.2, 0.58);
+    shapeczjz->setLeftBarColorProvider(this, 1);
+    shapeczjz->setRangeDefaultMilestones(0.05, 0.2, 0.58);
     shapeczjz->setResetCurve(DiagonalCurveType(defSpot.czjzcurve.at(0)), defSpot.czjzcurve);
-    shapeczjz->setBottomBarBgGradient (milestone);
-    shapeczjz->setLeftBarBgGradient (shapeczMilestones);
-    shapeczjz->setRangeDefaultMilestones (0.05, 0.2, 0.58);
+    shapeczjz->setBottomBarBgGradient(milestone);
+    shapeczjz->setLeftBarBgGradient(shapeczMilestones);
+    shapeczjz->setRangeDefaultMilestones(0.05, 0.2, 0.58);
 
 
     jz1CurveEditorG->curveListComplete();
-/*
-    jz2CurveEditorG->setCurveListener(this);
-    shapeczjz->setLeftBarColorProvider (this, 1);
-    shapeczjz->setRangeDefaultMilestones (0.05, 0.2, 0.58);
-    shapeczjz->setResetCurve(DiagonalCurveType(defSpot.czjzcurve.at(0)), defSpot.czjzcurve);
-    shapeczjz->setBottomBarBgGradient (milestone);
-    shapeczjz->setLeftBarBgGradient (shapeczMilestones);
-    shapeczjz->setRangeDefaultMilestones (0.05, 0.2, 0.58);
-    jz2CurveEditorG->curveListComplete();
-*/
+
     jz2CurveEditorG->setCurveListener(this);
     LHshapejz->setIdentityValue(0.);
     LHshapejz->setResetCurve(FlatCurveType(defSpot.LHcurvejz.at(0)), defSpot.LHcurvejz);
-  //  LHshapejz->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
+    //  LHshapejz->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
     LHshapejz->setCurveColorProvider(this, 3);
     LHshapejz->setBottomBarBgGradient(six_shape);
     jz2CurveEditorG->curveListComplete();
@@ -8062,13 +8497,11 @@ Locallabcie::Locallabcie():
 
     CHshapejz->setIdentityValue(0.);
     CHshapejz->setResetCurve(FlatCurveType(defSpot.CHcurvejz.at(0)), defSpot.CHcurvejz);
-  //  CHshapejz->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
     CHshapejz->setCurveColorProvider(this, 3);
     CHshapejz->setBottomBarBgGradient(six_shape);
 
     HHshapejz->setIdentityValue(0.);
     HHshapejz->setResetCurve(FlatCurveType(defSpot.HHcurvejz.at(0)), defSpot.HHcurvejz);
-  //  HHshapejz->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
     HHshapejz->setCurveColorProvider(this, 3);
     HHshapejz->setBottomBarBgGradient(six_shape);
 
@@ -8083,6 +8516,7 @@ Locallabcie::Locallabcie():
     ToolParamBlock* const ciePzlightBox = Gtk::manage(new ToolParamBlock());
     ciePzlightBox->pack_start(*lightjzcie);
     ciePzlightBox->pack_start(*contjzcie);
+    ciePzlightBox->pack_start(*detailciejz);
     czlightFrame->add(*ciePzlightBox);
     jzBox->pack_start(*czlightFrame);
 
@@ -8108,17 +8542,7 @@ Locallabcie::Locallabcie():
     jzHHBox->pack_start(*softjzcie);
     HFramejz->add(*jzHHBox);
     jzBox->pack_start(*HFramejz);
-    /*
-    sigmoidjzFrame->set_label_align(0.025, 0.5);
-    ToolParamBlock* const sigjzBox = Gtk::manage(new ToolParamBlock());
-    sigjzBox->pack_start(*sigmoidldajzcie);
-    sigjzBox->pack_start(*sigmoidthjzcie);
-    sigjzBox->pack_start(*sigmoidbljzcie);
-    sigjzBox->pack_start(*jabcie);
-    sigmoidjzFrame->add(*sigjzBox);
 
-  //  jzBox->pack_start(*sigmoidjzFrame);
- */
     jzshFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const jzshBox = Gtk::manage(new ToolParamBlock());
     jzshBox->pack_start(*hljzcie);
@@ -8170,8 +8594,15 @@ Locallabcie::Locallabcie():
 
     jabcieConn = jabcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::jabcieChanged));
     AutograycieConn = Autograycie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::AutograycieChanged));
-    sigmoidqjcieconn = sigmoidqjcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::sigmoidqjcieChanged));
+    comprcieautoconn = comprcieauto->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::comprcieautoChanged));
+    normcieconn = normcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::normcieChanged));
+    expprecamconn = expprecam->signal_enabled_toggled().connect(sigc::mem_fun(*this, &Locallabcie::expprecamChanged));
+
+    sigcieconn = sigcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::sigcieChanged));
     logcieconn = logcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::logcieChanged));
+    satcieconn = satcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::satcieChanged));
+    logcieqconn = logcieq->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::logcieqChanged));
+    smoothcieconn = smoothcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::smoothcieChanged));
     logjzconn = logjz->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::logjzChanged));
     sigjzconn = sigjz->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::sigjzChanged));
     sigqconn = sigq->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::sigqChanged));
@@ -8197,39 +8628,38 @@ Locallabcie::Locallabcie():
 
 
     cieCurveEditorG->setCurveListener(this);
-    toneMethodcie->append (M ("TP_COLORAPP_TCMODE_LIGHTNESS"));
-    toneMethodcie->append (M ("TP_COLORAPP_TCMODE_BRIGHTNESS"));
-    toneMethodcie->set_active (0);
+    toneMethodcie->append(M("TP_COLORAPP_TCMODE_LIGHTNESS"));
+    toneMethodcie->append(M("TP_COLORAPP_TCMODE_BRIGHTNESS"));
+    toneMethodcie->set_active(0);
     toneMethodcieConn = toneMethodcie->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::toneMethodcieChanged));
     shapecie->setResetCurve(DiagonalCurveType(defSpot.ciecurve.at(0)), defSpot.ciecurve);
-    shapecie->setBottomBarBgGradient (milestone);
-    shapecie->setLeftBarBgGradient (milestone);
+    shapecie->setBottomBarBgGradient(milestone);
+    shapecie->setLeftBarBgGradient(milestone);
     cieCurveEditorG->curveListComplete();
 
     cieCurveEditorG2->setCurveListener(this);
-    toneMethodcie2->append (M ("TP_COLORAPP_TCMODE_CHROMA"));
-    toneMethodcie2->append (M ("TP_COLORAPP_TCMODE_SATUR"));
-    toneMethodcie2->append (M ("TP_COLORAPP_TCMODE_COLORF"));
-    toneMethodcie2->set_active (0);
+    toneMethodcie2->append(M("TP_COLORAPP_TCMODE_CHROMA"));
+    toneMethodcie2->append(M("TP_COLORAPP_TCMODE_SATUR"));
+    toneMethodcie2->append(M("TP_COLORAPP_TCMODE_COLORF"));
+    toneMethodcie2->set_active(0);
     toneMethodcieConn2 = toneMethodcie2->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::toneMethodcie2Changed));
     shapecie2->setResetCurve(DiagonalCurveType(defSpot.ciecurve2.at(0)), defSpot.ciecurve2);
-    shapecie2->setBottomBarColorProvider (this, 1);
-    shapecie2->setLeftBarColorProvider (this, 1);
-    shapecie2->setRangeDefaultMilestones (0.05, 0.2, 0.58);
+    shapecie2->setBottomBarColorProvider(this, 1);
+    shapecie2->setLeftBarColorProvider(this, 1);
+    shapecie2->setRangeDefaultMilestones(0.05, 0.2, 0.58);
 
     std::vector<GradientMilestone> shape2Milestones;
-//    float R, G, B;
 
     for (int i = 0; i < 7; i++) {
         float x = float (i) * (1.0f / 6.f);
-        Color::hsv2rgb01 (x, 0.5f, 0.5f, R, G, B);
-        shape2Milestones.push_back ( GradientMilestone (double (x), double (R), double (G), double (B)) );
+        Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
+        shape2Milestones.push_back(GradientMilestone(double (x), double (R), double (G), double (B)));
     }
 
-    shapecie2->setBottomBarBgGradient (shape2Milestones);
-    shapecie2->setLeftBarBgGradient (shape2Milestones);
+    shapecie2->setBottomBarBgGradient(shape2Milestones);
+    shapecie2->setLeftBarBgGradient(shape2Milestones);
 
-    shapecie2->setRangeDefaultMilestones (0.05, 0.2, 0.58);
+    shapecie2->setRangeDefaultMilestones(0.05, 0.2, 0.58);
 
     cieCurveEditorG2->curveListComplete();
 
@@ -8245,12 +8675,14 @@ Locallabcie::Locallabcie():
     lightjzcie->setAdjusterListener(this);
 
     lightqcie->setAdjusterListener(this);
+    lightsigqcie->setAdjusterListener(this);
     contlcie->setAdjusterListener(this);
     contjzcie->setAdjusterListener(this);
     adapjzcie->setAdjusterListener(this);
     jz100->setAdjusterListener(this);
     pqremap->setAdjusterListener(this);
     pqremapcam16->setAdjusterListener(this);
+    pqremapcam16->setLogScale(500, 100);
     hljzcie->setAdjusterListener(this);
     hlthjzcie->setAdjusterListener(this);
     shjzcie->setAdjusterListener(this);
@@ -8265,23 +8697,24 @@ Locallabcie::Locallabcie():
     targetjz->setLogScale(10, 18, true);
     sigmoidldacie->setAdjusterListener(this);
     sigmoidthcie->setAdjusterListener(this);
+    sigmoidsenscie->setAdjusterListener(this);
     sigmoidblcie->setAdjusterListener(this);
+    comprcie->setAdjusterListener(this);
+    strcielog->setAdjusterListener(this);
+    comprcieth->setAdjusterListener(this);
+    gamjcie->setAdjusterListener(this);
+    slopjcie->setAdjusterListener(this);
+    slopjcie->setLogScale(100, 1);
+    midtcie->setAdjusterListener(this);
+    whitescie->setAdjusterListener(this);
+    blackscie->setAdjusterListener(this);
     sigmoidldajzcie->setAdjusterListener(this);
     sigmoidthjzcie->setAdjusterListener(this);
     sigmoidbljzcie->setAdjusterListener(this);
 
     contqcie->setAdjusterListener(this);
+    contsigqcie->setAdjusterListener(this);
     colorflcie->setAdjusterListener(this);
-/*
-    lightlzcam->setAdjusterListener(this);
-    lightqzcam->setAdjusterListener(this);
-    contlzcam->setAdjusterListener(this);
-    contqzcam->setAdjusterListener(this);
-    contthreszcam->setAdjusterListener(this);
-    colorflzcam->setAdjusterListener(this);
-    saturzcam->setAdjusterListener(this);
-    chromzcam->setAdjusterListener(this);
-*/
     targetGraycie->setAdjusterListener(this);
     targetGraycie->setLogScale(10, 18, true);
     targabscie->setLogScale(500, 0);
@@ -8289,8 +8722,10 @@ Locallabcie::Locallabcie():
     targabscie->setAdjusterListener(this);
 
     detailcie->setAdjusterListener(this);
+    detailciejz->setAdjusterListener(this);
 
     catadcie->setAdjusterListener(this);
+    slopesmo->setAdjusterListener(this);
 
     Gtk::Box *TittleVBoxcam16;
     TittleVBoxcam16 = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
@@ -8304,17 +8739,29 @@ Locallabcie::Locallabcie():
 
     setExpandAlignProperties(expcam16, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
-    surrHBoxcie->set_spacing (2);
-    surrHBoxcie->set_tooltip_markup (M ("TP_COLORAPP_SURROUND_TOOLTIP"));
-    Gtk::Label* surrLabelcie = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_SURROUND") + ":"));
-    surrHBoxcie->pack_start (*surrLabelcie, Gtk::PACK_SHRINK);
-    surroundcie->append (M ("TP_COLORAPP_SURROUND_AVER"));
-    surroundcie->append (M ("TP_COLORAPP_SURROUND_DIM"));
-    surroundcie->append (M ("TP_COLORAPP_SURROUND_DARK"));
-//    surroundcie->append (M ("TP_COLORAPP_SURROUND_EXDARK"));
-    surroundcie->set_active (0);
-    surrHBoxcie->pack_start (*surroundcie);
-    surroundcieconn = surroundcie->signal_changed().connect ( sigc::mem_fun (*this, &Locallabcie::surroundcieChanged) );
+
+    Gtk::Box *TittleVBoxcamviewing;
+    TittleVBoxcamviewing = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    TittleVBoxcamviewing->set_spacing(2);
+    Gtk::Box* const LCTitleHBoxcamviewing = Gtk::manage(new Gtk::Box());
+    Gtk::Label* const LCLabelcamviewing = Gtk::manage(new Gtk::Label());
+    LCLabelcamviewing->set_markup(Glib::ustring("<b>") + (M("TP_LOCALLAB_LOG2FRA")) + Glib::ustring("</b>"));
+    LCTitleHBoxcamviewing->pack_start(*LCLabelcamviewing, Gtk::PACK_SHRINK);
+    TittleVBoxcamviewing->pack_start(*LCTitleHBoxcamviewing, Gtk::PACK_SHRINK);
+    expcamviewing->setLabel(TittleVBoxcamviewing);
+
+    setExpandAlignProperties(expcamviewing, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+    surrHBoxcie->set_spacing(2);
+    surrHBoxcie->set_tooltip_markup(M("TP_COLORAPP_SURROUND_TOOLTIP"));
+    Gtk::Label* surrLabelcie = Gtk::manage(new Gtk::Label(M("TP_COLORAPP_SURROUND") + ":"));
+    surrHBoxcie->pack_start(*surrLabelcie, Gtk::PACK_SHRINK);
+    surroundcie->append(M("TP_COLORAPP_SURROUND_AVER"));
+    surroundcie->append(M("TP_COLORAPP_SURROUND_DIM"));
+    surroundcie->append(M("TP_COLORAPP_SURROUND_DARK"));
+    surroundcie->set_active(0);
+    surrHBoxcie->pack_start(*surroundcie);
+    surroundcieconn = surroundcie->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::surroundcieChanged));
 
     cie1Frame->set_label_align(0.025, 0.5);
     cie1lightFrame->set_label_align(0.025, 0.5);
@@ -8324,13 +8771,19 @@ Locallabcie::Locallabcie():
     ToolParamBlock* const cieP1lightBox = Gtk::manage(new ToolParamBlock());
     cieP1lightBox->pack_start(*lightlcie);
     cieP1lightBox->pack_start(*lightqcie);
+    cieP1lightBox->pack_start(*lightsigqcie);
     cie1lightFrame->add(*cieP1lightBox);
     cieP1Box->pack_start(*cie1lightFrame);
     ToolParamBlock* const cieP1contBox = Gtk::manage(new ToolParamBlock());
     cieP1contBox->pack_start(*detailcie);
     cieP1contBox->pack_start(*contlcie);
     cieP1contBox->pack_start(*contqcie);
+    cieP1contBox->pack_start(*contsigqcie);
     cieP1contBox->pack_start(*contthrescie);
+
+    contsigqcie->hide();
+    lightsigqcie->hide();
+
     cie1contFrame->add(*cieP1contBox);
     cieP1Box->pack_start(*cie1contFrame);
     ToolParamBlock* const cieP1colorBox = Gtk::manage(new ToolParamBlock());
@@ -8341,45 +8794,19 @@ Locallabcie::Locallabcie():
     cieP1colorBox->pack_start(*rstprotectcie);
     cie1colorFrame->add(*cieP1colorBox);
     cieP1Box->pack_start(*cie1colorFrame);
- //   pack_start(*blackEvjz);
- //   pack_start(*whiteEvjz);
-/*
-    sigmoidFrame->set_label_align(0.025, 0.5);
-    ToolParamBlock* const sigBox = Gtk::manage(new ToolParamBlock());
+    cieP1Box->pack_start(*sigmoidFrame);//disable provisory Sigmoid
 
-    sigBox->pack_start(*sigmoidldacie);
-    sigBox->pack_start(*sigmoidthcie);
-    sigBox->pack_start(*sigmoidblcie);
-    sigBox->pack_start(*sigmoidqjcie);
-    sigmoidFrame->add(*sigBox);
-    cieP1Box->pack_start(*sigmoidFrame);
-    */
+
     ToolParamBlock* const cieP11Box = Gtk::manage(new ToolParamBlock());
     cieP11Box->pack_start(*cieCurveEditorG);
     cieP11Box->pack_start(*cieCurveEditorG2);
     expLcie->add(*cieP11Box, false);
     cieP1Box->pack_start(*expLcie, false, false);
-   // cie1Frame->add(*cieP1Box);
-   // expcam16->pack_start(*cie1Frame);
     expcam16->add(*cieP1Box, false);
 
     pack_start(*expcam16, false, false);
 
     pack_start(*expjz, false, false);
-/*
-    ciezFrame->set_label_align(0.025, 0.5);
-    ToolParamBlock* const ciePzBox = Gtk::manage(new ToolParamBlock());
-    ciePzBox->pack_start(*lightlzcam);
-    ciePzBox->pack_start(*lightqzcam);
-    ciePzBox->pack_start(*contlzcam);
-    ciePzBox->pack_start(*contqzcam);
-//    ciePzBox->pack_start(*contthreszcam);
-    ciePzBox->pack_start(*colorflzcam);
-    ciePzBox->pack_start(*saturzcam);
-    ciePzBox->pack_start(*chromzcam);
-    ciezFrame->add(*ciePzBox);
-    pack_start(*ciezFrame);
-*/
 
     cie2Frame->set_label_align(0.025, 0.5);
     ToolParamBlock* const cieP2Box = Gtk::manage(new ToolParamBlock());
@@ -8387,16 +8814,19 @@ Locallabcie::Locallabcie():
     cieP2Box->pack_start(*targabscie);
     cieP2Box->pack_start(*catadcie);
     cieP2Box->pack_start(*surrHBoxcie);
-//    cieP2Box->pack_start(*detailcie);
-//    cieP2Box->pack_start(*jabcie);
 
-    cie2Frame->add(*cieP2Box);
-    pack_start(*cie2Frame);
+    expcamviewing->add(*cieP2Box, false);
+
+    pack_start(*expcamviewing, false, false);
+
 
     recothrescie->setAdjusterListener(this);
     lowthrescie->setAdjusterListener(this);
     higthrescie->setAdjusterListener(this);
     decaycie->setAdjusterListener(this);
+
+    setExpandAlignProperties(expgradcie, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
     setExpandAlignProperties(exprecovcie, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
 
@@ -8417,6 +8847,7 @@ Locallabcie::Locallabcie():
     showmaskcieMethodConn = showmaskcieMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::showmaskcieMethodChanged));
 
     enacieMaskConn = enacieMask->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::enacieMaskChanged));
+    enacieMaskallConn = enacieMaskall->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::enacieMaskallChanged));
 
     maskcieCurveEditorG->setCurveListener(this);
     CCmaskcieshape->setIdentityValue(0.);
@@ -8433,12 +8864,35 @@ Locallabcie::Locallabcie():
     HHmaskcieshape->setBottomBarColorProvider(this, 2);
 
     maskcieCurveEditorG->curveListComplete();
+
+    struFramecie->set_label_align(0.025, 0.5);
+
+    strumaskcie->setAdjusterListener(this);
+
+    toolcieConn  = toolcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::toolcieChanged));
+
+    blurFramecie->set_label_align(0.025, 0.5);
+
+    fftcieMaskConn = fftcieMask->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::fftcieMaskChanged));
+
+    contcie->setAdjusterListener(this);
+
+    blurcie->setAdjusterListener(this);
+
     blendmaskcie->setAdjusterListener(this);
 
     radmaskcie->setAdjusterListener(this);
     lapmaskcie->setAdjusterListener(this);
     gammaskcie->setAdjusterListener(this);
     slomaskcie->setAdjusterListener(this);
+    highmaskcie->setAdjusterListener(this);
+    shadmaskcie->setAdjusterListener(this);
+    maskcieHCurveEditorG->setCurveListener(this);
+    HHhmaskcieshape->setIdentityValue(0.);
+    HHhmaskcieshape->setResetCurve(FlatCurveType(defSpot.HHhmaskciecurve.at(0)), defSpot.HHhmaskciecurve);
+    HHhmaskcieshape->setCurveColorProvider(this, 2);
+    HHhmaskcieshape->setBottomBarColorProvider(this, 2);
+    maskcieHCurveEditorG->curveListComplete();
 
     chromaskcie->setAdjusterListener(this);
     mask2cieCurveEditorG->setCurveListener(this);
@@ -8448,6 +8902,24 @@ Locallabcie::Locallabcie():
     Lmaskcieshape->setLeftBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
 
     mask2cieCurveEditorG->curveListComplete();
+
+    mask2cieCurveEditorGwav->setCurveListener(this);
+
+    LLmaskcieshapewav->setIdentityValue(0.);
+    LLmaskcieshapewav->setResetCurve(FlatCurveType(defSpot.LLmaskciecurvewav.at(0)), defSpot.LLmaskciecurvewav);
+    LLmaskcieshapewav->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
+
+    mask2cieCurveEditorGwav->curveListComplete();
+    csThresholdcie->setAdjusterListener(this);
+
+
+    strgradcie->setAdjusterListener(this);
+    anggradcie->setAdjusterListener(this);
+    ToolParamBlock* const cieBoxgrad = Gtk::manage(new ToolParamBlock());
+    cieBoxgrad->pack_start(*strgradcie);
+    cieBoxgrad->pack_start(*anggradcie);
+    expgradcie->add(*cieBoxgrad, false);
+    pack_start(*expgradcie, false, false);
 
     ToolParamBlock* const cieBox3 = Gtk::manage(new ToolParamBlock());
     cieBox3->pack_start(*maskusablecie, Gtk::PACK_SHRINK, 0);
@@ -8462,20 +8934,54 @@ Locallabcie::Locallabcie():
     ToolParamBlock* const maskcieBox = Gtk::manage(new ToolParamBlock());
     maskcieBox->pack_start(*showmaskcieMethod, Gtk::PACK_SHRINK, 4);
     maskcieBox->pack_start(*enacieMask, Gtk::PACK_SHRINK, 0);
+    maskcieBox->pack_start(*enacieMaskall, Gtk::PACK_SHRINK, 0);
     maskcieBox->pack_start(*maskcieCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    ToolParamBlock* const strumBoxcie = Gtk::manage(new ToolParamBlock());
+    strumBoxcie->pack_start(*strumaskcie);
+    strumBoxcie->pack_start(*toolcie);
+    struFramecie->add(*strumBoxcie);
+    maskcieBox->pack_start(*struFramecie, Gtk::PACK_SHRINK, 0);
+    ToolParamBlock* const blurcieBox = Gtk::manage(new ToolParamBlock());
+    blurcieBox->pack_start(*fftcieMask, Gtk::PACK_SHRINK, 0);
+    blurcieBox->pack_start(*contcie);
+    blurcieBox->pack_start(*blurcie);
+    blurFramecie->add(*blurcieBox);
+    maskcieBox->pack_start(*blurFramecie, Gtk::PACK_SHRINK, 0);
+
     maskcieBox->pack_start(*blendmaskcie, Gtk::PACK_SHRINK, 0);
     maskcieBox->pack_start(*radmaskcie, Gtk::PACK_SHRINK, 0);
-    maskcieBox->pack_start(*lapmaskcie, Gtk::PACK_SHRINK, 0);
+    //maskcieBox->pack_start(*lapmaskcie, Gtk::PACK_SHRINK, 0);
     maskcieBox->pack_start(*chromaskcie, Gtk::PACK_SHRINK, 0);
     maskcieBox->pack_start(*gammaskcie, Gtk::PACK_SHRINK, 0);
     maskcieBox->pack_start(*slomaskcie, Gtk::PACK_SHRINK, 0);
+    maskcieBox->pack_start(*highmaskcie, Gtk::PACK_SHRINK, 0);
+    maskcieBox->pack_start(*shadmaskcie, Gtk::PACK_SHRINK, 0);
+    maskcieBox->pack_start(*maskcieHCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+
     maskcieBox->pack_start(*mask2cieCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    wavFramecie->set_label_align(0.025, 0.5);
+    ToolParamBlock* const toolcieBox2 = Gtk::manage(new ToolParamBlock());
+    toolcieBox2->pack_start(*mask2cieCurveEditorGwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    toolcieBox2->pack_start(*csThresholdcie, Gtk::PACK_SHRINK, 0);
+    wavFramecie->add(*toolcieBox2);
+    maskcieBox->pack_start(*wavFramecie);
+
+
     expmaskcie->add(*maskcieBox, false);
     pack_start(*expmaskcie, false, false);
 
 
 
-    }
+}
+
+void Locallabcie::setListener(ToolPanelListener* tpl)
+{
+    LocallabTool::setListener(tpl);
+
+    // labgridcie->setListener(tpl);
+}
+
+
 Locallabcie::~Locallabcie()
 {
     delete jz1CurveEditorG;
@@ -8484,9 +8990,10 @@ Locallabcie::~Locallabcie()
     delete cieCurveEditorG;
     delete cieCurveEditorG2;
     delete maskcieCurveEditorG;
+    delete maskcieHCurveEditorG;
     delete mask2cieCurveEditorG;
     delete LocalcurveEditorwavjz;
-
+    delete mask2cieCurveEditorGwav;
 }
 
 bool Locallabcie::isMaskViewActive()
@@ -8505,7 +9012,7 @@ void Locallabcie::resetMaskView()
 
 void Locallabcie::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask)
 {
-   cieMask = showmaskcieMethod->get_active_row_number();
+    cieMask = showmaskcieMethod->get_active_row_number();
 }
 
 //new function Global
@@ -8559,19 +9066,28 @@ void Locallabcie::setDefaultExpanderVisibility()
     expLcie->set_expanded(false);
     expjz->set_expanded(false);
     expwavjz->set_expanded(false);
+    expcamscene->set_expanded(false);
     expcam16->set_expanded(false);
+    expcamviewing->set_expanded(false);
+    expprecam->set_expanded(false);
     expmaskcie->set_expanded(false);
     exprecovcie->set_expanded(false);
+    expgradcie->set_expanded(false);
 }
 void Locallabcie::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
         recothrescie->set_tooltip_text(M("TP_LOCALLAB_RECOTHRES02_TOOLTIP"));
         reparcie->set_tooltip_text(M("TP_LOCALLAB_LOGREPART_TOOLTIP"));
-        cieFrame->set_tooltip_text(M("TP_LOCALLAB_LOGSCENE_TOOLTIP"));
+        // cieFrame->set_tooltip_text(M("TP_LOCALLAB_LOGSCENE_TOOLTIP"));
+        expcamscene->set_tooltip_text(M("TP_LOCALLAB_LOGSCENE_TOOLTIP"));
         PQFrame->set_tooltip_text(M("TP_LOCALLAB_JZPQFRA_TOOLTIP"));
         qtoj->set_tooltip_text(M("TP_LOCALLAB_JZQTOJ_TOOLTIP"));
         logcie->set_tooltip_text(M("TP_LOCALLAB_LOGCIE_TOOLTIP"));
+        logcieq->set_tooltip_text(M("TP_LOCALLAB_LOGCIEQ_TOOLTIP"));
+        smoothcie->set_tooltip_text(M("TP_LOCALLAB_SMOOTHCIE_TOOLTIP"));
+        slopesmo->set_tooltip_text(M("TP_LOCALLAB_SMOOTHCIE_TOOLTIP"));
+        smoothciemet->set_tooltip_text(M("TP_LOCALLAB_SMOOTHCIE_TOOLTIP"));
         modecam->set_tooltip_text(M("TP_LOCALLAB_JZMODECAM_TOOLTIP"));
         adapjzcie->set_tooltip_text(M("TP_LOCALLAB_JABADAP_TOOLTIP"));
         jz100->set_tooltip_text(M("TP_LOCALLAB_JZ100_TOOLTIP"));
@@ -8593,7 +9109,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         sourceGraycie->set_tooltip_text(M("TP_LOCALLAB_JZLOGYBOUT_TOOLTIP"));
         sourceabscie->set_tooltip_text(M("TP_COLORAPP_ADAPSCEN_TOOLTIP"));
         cie1Frame->set_tooltip_text(M("TP_LOCALLAB_LOGIMAGE_TOOLTIP"));
-        sigmoidFrame->set_tooltip_text(M("TP_LOCALLAB_SIGMOID_TOOLTIP"));
+        sigmoidFrame->set_tooltip_text(M("TP_LOCALLAB_SIGMOID16_TOOLTIP"));
         sigmoidjzFrame->set_tooltip_text(M("TP_LOCALLAB_SIGMOID_TOOLTIP"));
         contlcie->set_tooltip_text(M("TP_LOCALLAB_LOGCONTL_TOOLTIP"));
         contqcie->set_tooltip_text(M("TP_LOCALLAB_LOGCONTQ_TOOLTIP"));
@@ -8608,7 +9124,8 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         targetGraycie->set_tooltip_text(M("TP_COLORAPP_YBOUT_TOOLTIP"));
         detailcie->set_tooltip_text(M("TP_LOCALLAB_LOGDETAIL_TOOLTIP"));
         catadcie->set_tooltip_text(M("TP_LOCALLAB_LOGCATAD_TOOLTIP"));
-        cie2Frame->set_tooltip_text(M("TP_LOCALLAB_LOGVIEWING_TOOLTIP"));
+        // cie2Frame->set_tooltip_text(M("TP_LOCALLAB_LOGVIEWING_TOOLTIP"));
+        expcamviewing->set_tooltip_text(M("TP_LOCALLAB_LOGVIEWING_TOOLTIP"));
         sensicie->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
         CCmaskcieshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
         LLmaskcieshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
@@ -8619,16 +9136,41 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         mask2cieCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP"));
         Lmaskcieshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
         exprecovcie->set_tooltip_markup(M("TP_LOCALLAB_MASKRESH_TOOLTIP"));
-
+        // expgradcie->set_tooltip_markup(M("TP_LOCALLAB_MASKRESH_TOOLTIP"));
+        strumaskcie->set_tooltip_text(M("TP_LOCALLAB_STRUSTRMASK_TOOLTIP"));
+        fftcieMask->set_tooltip_text(M("TP_LOCALLAB_FFTMASK_TOOLTIP"));
+        contcie->set_tooltip_text(M("TP_LOCALLAB_CONTTHMASK_TOOLTIP"));
+        blurcie->set_tooltip_text(M("TP_LOCALLAB_BLURRMASK_TOOLTIP"));
+        LLmaskcieshapewav->setTooltip(M("TP_LOCALLAB_LMASK_LEVEL_TOOLTIP"));
+        maskcieHCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_HHMASK_TOOLTIP"));
+        comprcieth->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDQJCOMPRCIE_TOOLTIP"));
+        gamjcie->set_tooltip_text(M("TP_LOCALLAB_PRECAM_TOOLTIP"));
+        slopjcie->set_tooltip_text(M("TP_LOCALLAB_PRECAM_TOOLTIP"));
+        trcFrame->set_tooltip_text(M("TP_LOCALLAB_PRECAM_TOOLTIP"));
+        midtcie->set_tooltip_text(M("TP_LOCALLAB_PRECAM_TOOLTIP"));
+        whitescie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP"));
+        blackscie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP"));
+        normcie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDNORMCIE_TOOLTIP"));
+        sigmoidblcie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDNORMCIEBLEND_TOOLTIP"));
+        catBox->set_tooltip_text(M("TP_ICM_WORKING_CAT_TOOLTIP"));
+        wprimBox->set_tooltip_text(M("TP_ICM_WORKING_PRIM_TOOLTIP"));
+        expprecam->set_tooltip_text(M("TP_LOCALLAB_PRECAM_TOOLTIP"));
+        refi->set_tooltip_text(M("TP_LOCALLAB_PRECAMREFI_TOOLTIP"));
+        colorFramecie->set_tooltip_text(M("TP_LOCALLAB_PRECAMREFIMAIN_TOOLTIP"));
+        gamutcie->set_tooltip_text(M("TP_LOCALLAB_PRECAMGAMUT_TOOLTIP"));
+        shiftxl->set_tooltip_text(M("TC_LOCALLAB_PRIM_SHIFTX_TOOLTIP"));
+        shiftyl->set_tooltip_text(M("TC_LOCALLAB_PRIM_SHIFTX_TOOLTIP"));
 
     } else {
         reparcie->set_tooltip_text("");
         recothrescie->set_tooltip_text("");
-        cieFrame->set_tooltip_text("");
+        //  cieFrame->set_tooltip_text("");
+        expcamscene->set_tooltip_text("");
         PQFrame->set_tooltip_text("");
         modecam->set_tooltip_text("");
         qtoj->set_tooltip_text("");
         logcie->set_tooltip_text("");
+        logcieq->set_tooltip_text("");
         jabcie->set_tooltip_text("");
         adapjzcie->set_tooltip_text("");
         jz100->set_tooltip_text("");
@@ -8657,7 +9199,8 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         targetGraycie->set_tooltip_text("");
         detailcie->set_tooltip_text("");
         catadcie->set_tooltip_text("");
-        cie2Frame->set_tooltip_text("");
+        // cie2Frame->set_tooltip_text("");
+        expcamviewing->set_tooltip_text("");
         sensicie->set_tooltip_text("");
         CCmaskcieshape->setTooltip("");
         LLmaskcieshape->setTooltip("");
@@ -8668,6 +9211,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         mask2cieCurveEditorG->set_tooltip_text("");
         Lmaskcieshape->setTooltip("");
         exprecovcie->set_tooltip_markup("");
+        expgradcie->set_tooltip_markup("");
         sigmalcjz->set_tooltip_text("");
         clarilresjz->set_tooltip_text("");
         claricresjz->set_tooltip_text("");
@@ -8676,6 +9220,32 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         wavshapejz->setTooltip("");
         LocalcurveEditorwavjz->set_tooltip_markup("");
         csThresholdjz->set_tooltip_markup("");
+        strumaskcie->set_tooltip_text("");
+        fftcieMask->set_tooltip_text("");
+        contcie->set_tooltip_text("");
+        blurcie->set_tooltip_text("");
+        LLmaskcieshapewav->setTooltip("");
+        maskcieHCurveEditorG->set_tooltip_text("");
+        comprcieth->set_tooltip_text("");
+        gamjcie->set_tooltip_text("");
+        slopjcie->set_tooltip_text("");
+        trcFrame->set_tooltip_text("");
+        midtcie->set_tooltip_text("");
+        smoothcie->set_tooltip_text("");
+        slopesmo->set_tooltip_text("");
+        smoothciemet->set_tooltip_text("");
+        whitescie->set_tooltip_text("");
+        blackscie->set_tooltip_text("");
+        normcie->set_tooltip_text("");
+        sigmoidblcie->set_tooltip_text("");
+        catBox->set_tooltip_text("");
+        expprecam->set_tooltip_text("");
+        wprimBox->set_tooltip_text("");
+        refi->set_tooltip_text("");
+        gamutcie->set_tooltip_text("");
+        colorFramecie->set_tooltip_text("");
+        shiftxl->set_tooltip_text("");
+        shiftyl->set_tooltip_text("");
 
     }
 }
@@ -8687,20 +9257,35 @@ void Locallabcie::disableListener()
     forcebwConn.block(true);
     qtojConn.block(true);
     jabcieConn.block(true);
-    sigmoidqjcieconn.block(true);
+    comprcieautoconn.block(true);
+    normcieconn.block(true);
+    expprecamconn.block(true);
+    gamutcieconn.block(true);
+    primMethodconn.block(true);
+    illMethodconn.block(true);
+    smoothciemetconn.block(true);
+    catMethodconn.block(true);
+    sigcieconn.block(true);
     logcieconn.block(true);
+    satcieconn.block(true);
+    logcieqconn.block(true);
+    smoothcieconn.block(true);
     logjzconn.block(true);
     sigjzconn.block(true);
     sigqconn.block(true);
     chjzcieconn.block(true);
-    sursourcieconn.block (true);
-    surroundcieconn.block (true);
-    modecieconn.block (true);
-    modecamconn.block (true);
+    sursourcieconn.block(true);
+    surroundcieconn.block(true);
+    modecieconn.block(true);
+    modecamconn.block(true);
+    bwevMethodConn.block(true);
     toneMethodcieConn.block(true);
     toneMethodcieConn2.block(true);
     showmaskcieMethodConn.block(true);
+    toolcieConn.block(true);
     enacieMaskConn.block(true);
+    enacieMaskallConn.block(true);
+    fftcieMaskConn.block(true);
 }
 
 void Locallabcie::enableListener()
@@ -8711,20 +9296,35 @@ void Locallabcie::enableListener()
     forcebwConn.block(false);
     qtojConn.block(false);
     jabcieConn.block(false);
-    sigmoidqjcieconn.block(false);
+    comprcieautoconn.block(false);
+    normcieconn.block(false);
+    expprecamconn.block(false);
+    gamutcieconn.block(false);
+    primMethodconn.block(false);
+    illMethodconn.block(false);
+    smoothciemetconn.block(false);
+    catMethodconn.block(false);
+    sigcieconn.block(false);
     logcieconn.block(false);
+    satcieconn.block(false);
+    logcieqconn.block(false);
+    smoothcieconn.block(false);
     logjzconn.block(false);
     sigjzconn.block(false);
     sigqconn.block(false);
     chjzcieconn.block(false);
-    sursourcieconn.block (false);
-    surroundcieconn.block (false);
-    modecieconn.block (false);
-    modecamconn.block (false);
+    sursourcieconn.block(false);
+    surroundcieconn.block(false);
+    modecieconn.block(false);
+    modecamconn.block(false);
+    bwevMethodConn.block(false);
     toneMethodcieConn.block(false);
     toneMethodcieConn2.block(false);
     showmaskcieMethodConn.block(false);
+    toolcieConn.block(false);
     enacieMaskConn.block(false);
+    enacieMaskallConn.block(false);
+    fftcieMaskConn.block(false);
 }
 
 void Locallabcie::showmaskcieMethodChanged()
@@ -8736,7 +9336,7 @@ void Locallabcie::showmaskcieMethodChanged()
         locToolListener->resetOtherMaskView(this);
     }
 
-    if(exp->getEnabled()) {
+    if (exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabshowmaskMethod, "");
         }
@@ -8769,12 +9369,117 @@ void Locallabcie::enacieMaskChanged()
     }
 }
 
+
+void Locallabcie::enacieMaskallChanged2()
+{
+    const LocallabParams::LocallabSpot defSpot;
+
+   // if (modecam->get_active_row_number() == 1) {
+        if(!enacieMaskall->get_active()) {
+            lapmaskcie->setValue(defSpot.lapmaskcie);
+            gammaskcie->setValue(defSpot.gammaskcie);
+            slomaskcie->setValue(defSpot.slomaskcie);
+            highmaskcie->setValue(defSpot.highmaskcie);
+            shadmaskcie->setValue(defSpot.shadmaskcie);
+            HHhmaskcieshape->setCurve(defSpot.HHhmaskciecurve);
+            strumaskcie->setValue(defSpot.strumaskcie);
+            toolcie->set_active(defSpot.toolcie);
+            fftcieMask->set_active(defSpot.fftcieMask);
+            LLmaskcieshapewav->setCurve(defSpot.LLmaskciecurvewav);
+            lapmaskcie->hide();
+            gammaskcie->hide();
+            slomaskcie->hide();
+            highmaskcie->hide();
+            shadmaskcie->hide();
+            maskcieHCurveEditorG->hide();
+            struFramecie->hide();
+            blurFramecie->hide();
+            strumaskcie->hide();
+            contcie->setValue(defSpot.contcie);
+            blurcie->setValue(defSpot.blurcie);
+            
+            toolcie->hide();
+            fftcieMask->hide();
+            mask2cieCurveEditorGwav->hide();
+            wavFramecie->hide();
+        } else {
+            lapmaskcie->show();
+            gammaskcie->show();
+            slomaskcie->show();
+            highmaskcie->show();
+            shadmaskcie->show();
+            maskcieHCurveEditorG->show();
+            struFramecie->show();
+            blurFramecie->show();
+            strumaskcie->show();
+            toolcie->show();
+            fftcieMask->show();
+            mask2cieCurveEditorGwav->show();
+            wavFramecie->show();
+        }
+  //  }
+}
+
+void Locallabcie::enacieMaskallChanged()
+{
+    
+    enacieMaskallChanged2();
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (enacieMaskall->get_active()) {
+                listener->panelChanged(EvlocallabenacieMaskall,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(EvlocallabenacieMaskall,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+
+
+void Locallabcie::toolcieChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (toolcie->get_active()) {
+                listener->panelChanged(EvLocallabtoolcie,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(EvLocallabtoolcie,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+
+void Locallabcie::fftcieMaskChanged()
+{
+    // updateColorGUI3(); // Update GUI according to fftColorMash button state
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (fftcieMask->get_active()) {
+                listener->panelChanged(EvLocallabfftcieMask,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(EvLocallabfftcieMask,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+
 void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
 {
     disableListener();
 
     // Update GUI to selected spot value
     const int index = pp->locallab.selspot;
+    Glib::ustring prof = pp->icm.workingProfile;
 
     if (index < (int)pp->locallab.spots.size()) {
         const LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
@@ -8782,28 +9487,25 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         exp->set_visible(spot.visicie);
         exp->setEnabled(spot.expcie);
         complexity->set_active(spot.complexcie);
+        expprecam->setEnabled(spot.expprecam);
 
         reparcie->setValue(spot.reparcie);
         sensicie->setValue(spot.sensicie);
 
         if (spot.modecam == "cam16") {
-            modecam->set_active (0);
+            modecam->set_active(0);
         } else if (spot.modecam == "jz") {
-            modecam->set_active (1);
-//        } else if (spot.modecam == "all") {
-//            modecam->set_active (2);
-//        } else if (spot.modecam == "zcam") {
-//            modecam->set_active (3);
+            modecam->set_active(1);
         }
 
         if (spot.modecie == "com") {
-            modecie->set_active (0);
+            modecie->set_active(0);
         } else if (spot.modecie == "tm") {
-            modecie->set_active (1);
+            modecie->set_active(1);
         } else if (spot.modecie == "wav") {
-            modecie->set_active (2);
+            modecie->set_active(2);
         } else if (spot.modecie == "dr") {
-            modecie->set_active (3);
+            modecie->set_active(3);
 //        } else if (spot.modecie == "log") {
 //            modecie->set_active (4);
         }
@@ -8827,47 +9529,162 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         forcebw->set_active(spot.forcebw);
         qtoj->set_active(spot.qtoj);
         sourceGraycie->setValue(spot.sourceGraycie);
-        sigmoidqjcie->set_active(spot.sigmoidqjcie);
+        comprcieauto->set_active(spot.comprcieauto);
+
+        if (Autograycie->get_active()) {
+            comprcieauto->set_active(true);
+        }
+
+        if (spot.smoothciemet == "none") {
+            smoothciemet->set_active(0);
+        } else if (spot.smoothciemet == "Ev") {
+            smoothciemet->set_active(1);
+        } else if (spot.smoothciemet == "gam") {
+            smoothciemet->set_active(2);
+        } else if (spot.smoothciemet == "gamnorol") {
+            smoothciemet->set_active(3);
+        }
+
+
+        if (spot.illMethod == "d41") {
+            illMethod->set_active(0);
+        } else if (spot.illMethod == "d50") {
+            illMethod->set_active(1);
+        } else if (spot.illMethod == "d55") {
+            illMethod->set_active(2);
+        } else if (spot.illMethod == "d60") {
+            illMethod->set_active(3);
+        } else if (spot.illMethod == "d65") {
+            illMethod->set_active(4);
+        } else if (spot.illMethod == "d80") {
+            illMethod->set_active(5);
+        } else if (spot.illMethod == "d120") {
+            illMethod->set_active(6);
+        } else if (spot.illMethod == "stda") {
+            illMethod->set_active(7);
+        } else if (spot.illMethod == "T2000") {
+            illMethod->set_active(8);
+        } else if (spot.illMethod == "T1500") {
+            illMethod->set_active(9);
+        } else if (spot.illMethod == "iE") {
+            illMethod->set_active(10);
+        }
+
+        illMethod->set_sensitive(false);
+
+        if (spot.primMethod == "pro") {
+            primMethod->set_active(0);
+            illMethod->set_active(1);
+        } else if (spot.primMethod == "beta") {
+            primMethod->set_active(1);
+            illMethod->set_active(1);
+        } else if (spot.primMethod == "wid") {
+            primMethod->set_active(2);
+            illMethod->set_active(1);
+        } else if (spot.primMethod == "ac1") {
+            primMethod->set_active(3);
+            illMethod->set_active(3);
+        } else if (spot.primMethod == "rec") {
+            primMethod->set_active(4);
+            illMethod->set_active(4);
+        } else if (spot.primMethod == "ado") {
+            primMethod->set_active(5);
+            illMethod->set_active(4);
+        } else if (spot.primMethod == "srgb") {
+            primMethod->set_active(6);
+            illMethod->set_active(4);
+        } else if (spot.primMethod == "jdcmax") {
+            primMethod->set_active(7);
+            illMethod->set_active(1);
+        } else if (spot.primMethod == "jdcmaxstdA") {
+            primMethod->set_active(8);
+            illMethod->set_active(7);
+        } else if (spot.primMethod == "ac0") {
+            primMethod->set_active(9);
+            illMethod->set_active(3);
+        } else if (spot.primMethod == "best") {
+            primMethod->set_active(10);
+            illMethod->set_active(1);
+        } else if (spot.primMethod == "bru") {
+            primMethod->set_active(11);
+            illMethod->set_active(4);
+        } else if (spot.primMethod == "free") {
+            primMethod->set_active(9);
+            illMethod->set_sensitive(true);
+
+        }
+
+        if (spot.catMethod == "brad") {
+            catMethod->set_active(0);
+        } else if (spot.catMethod == "cat16") {
+            catMethod->set_active(1);
+        } else if (spot.catMethod == "cat02") {
+            catMethod->set_active(2);
+        } else if (spot.catMethod == "vky") {
+            catMethod->set_active(3);
+        } else if (spot.catMethod == "xyz") {
+            catMethod->set_active(4);
+        }
+
+
+        normcie->set_active(spot.normcie);
+        gamutcie->set_active(spot.gamutcie);
+        sigcie->set_active(spot.sigcie);
         logcie->set_active(spot.logcie);
+        satcie->set_active(spot.satcie);
+        logcieq->set_active(spot.logcieq);
+        smoothcie->set_active(spot.smoothcie);
         logjz->set_active(spot.logjz);
         sigjz->set_active(spot.sigjz);
         sigq->set_active(spot.sigq);
-       // chjzcie->set_active(spot.chjzcie);
         chjzcie->set_active(true);//force to true to avoid other mode
         sourceabscie->setValue(spot.sourceabscie);
         jabcie->set_active(spot.jabcie);
         jabcieChanged();
         modecamChanged();
+        sursourcieChanged();
+        bwevMethodChanged();
+        normcieChanged();
+        expprecamChanged();
+        gamutcieChanged();
+        sigcieChanged();
+        comprcieautoChanged();
+        sigqChanged();
+        logcieChanged();
+        satcieChanged();
+        logcieqChanged();
+        smoothcieChanged();
+        primMethodChanged();
+        illMethodChanged();
+        smoothciemetChanged();
 
-        if(logcie->get_active()) {
-            sigmoidldacie->set_sensitive(false);
-            sigmoidthcie->set_sensitive(false);
-            sigmoidblcie->set_sensitive(false);
-            sigmoidqjcie->set_sensitive(false);
-        } else {
-            sigmoidldacie->set_sensitive(true);
-            sigmoidthcie->set_sensitive(true);
-            sigmoidblcie->set_sensitive(true);
-            sigmoidqjcie->set_sensitive(true);
+        if (spot.bwevMethod == "none") {
+            bwevMethod->set_active(0);
+        } else if (spot.bwevMethod == "sig") {
+            bwevMethod->set_active(1);
         }
 
         if (spot.sursourcie == "Average") {
-            sursourcie->set_active (0);
+            sursourcie->set_active(0);
         } else if (spot.sursourcie == "Dim") {
-            sursourcie->set_active (1);
+            sursourcie->set_active(1);
         } else if (spot.sursourcie == "Dark") {
-            sursourcie->set_active (2);
+            sursourcie->set_active(2);
+        } else if (spot.sursourcie == "exDark") {
+            sursourcie->set_active(3);
+        } else if (spot.sursourcie == "disacie") {
+            sursourcie->set_active(4);
         }
 
+
         if (spot.surroundcie == "Average") {
-            surroundcie->set_active (0);
+            surroundcie->set_active(0);
         } else if (spot.surroundcie == "Dim") {
-            surroundcie->set_active (1);
+            surroundcie->set_active(1);
         } else if (spot.surroundcie == "Dark") {
-            surroundcie->set_active (2);
-//        } else if (spot.surroundcie == "ExtremelyDark") {
-//            surroundcie->set_active (3);
+            surroundcie->set_active(2);
         }
+
         shapecie->setCurve(spot.ciecurve);
         shapecie2->setCurve(spot.ciecurve2);
 
@@ -8891,8 +9708,10 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         lightlcie->setValue(spot.lightlcie);
         lightjzcie->setValue(spot.lightjzcie);
         lightqcie->setValue(spot.lightqcie);
+        lightsigqcie->setValue(spot.lightsigqcie);
         contlcie->setValue(spot.contlcie);
         contjzcie->setValue(spot.contjzcie);
+        detailciejz->setValue(spot.detailciejz);
         adapjzcie->setValue(spot.adapjzcie);
         jz100->setValue(spot.jz100);
         pqremap->setValue(spot.pqremap);
@@ -8914,27 +9733,55 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         targetjz->setValue(spot.targetjz);
         sigmoidldacie->setValue(spot.sigmoidldacie);
         sigmoidthcie->setValue(spot.sigmoidthcie);
+        sigmoidsenscie->setValue(spot.sigmoidsenscie);
         sigmoidblcie->setValue(spot.sigmoidblcie);
+        comprcie->setValue(spot.comprcie);
+        strcielog->setValue(spot.strcielog);
+        comprcieth->setValue(spot.comprcieth);
+        gamjcie->setValue(spot.gamjcie);
+        slopjcie->setValue(spot.slopjcie);
+        slopesmo->setValue(spot.slopesmo);
+        midtcie->setValue(spot.midtcie);
+        whitescie->setValue(spot.whitescie);
+        blackscie->setValue(spot.blackscie);
         sigmoidldajzcie->setValue(spot.sigmoidldajzcie);
         sigmoidthjzcie->setValue(spot.sigmoidthjzcie);
         sigmoidbljzcie->setValue(spot.sigmoidbljzcie);
         contqcie->setValue(spot.contqcie);
+        contsigqcie->setValue(spot.contsigqcie);
         colorflcie->setValue(spot.colorflcie);
         targabscie->setValue(spot.targabscie);
         targetGraycie->setValue(spot.targetGraycie);
         detailcie->setValue(spot.detailcie);
         catadcie->setValue(spot.catadcie);
-/*
-        lightlzcam->setValue(spot.lightlzcam);
-        lightqzcam->setValue(spot.lightqzcam);
-        contlzcam->setValue(spot.contlzcam);
-        contqzcam->setValue(spot.contqzcam);
-        contthreszcam->setValue(spot.contthreszcam);
-        colorflzcam->setValue(spot.colorflzcam);
-        saturzcam->setValue(spot.saturzcam);
-        chromzcam->setValue(spot.chromzcam);
-*/
+
+        grexl->setValue(spot.grexl);
+        greyl->setValue(spot.greyl);
+        bluxl->setValue(spot.bluxl);
+        bluyl->setValue(spot.bluyl);
+        redxl->setValue(spot.redxl);
+        redyl->setValue(spot.redyl);
+        refi->setValue(spot.refi);
+        shiftxl->setValue(spot.shiftxl);
+        shiftyl->setValue(spot.shiftyl);
+
+        labgridcie->setParams(spot.labgridcieALow,
+                              spot.labgridcieBLow,
+                              spot.labgridcieAHigh,
+                              spot.labgridcieBHigh,
+                              spot.labgridcieGx,
+                              spot.labgridcieGy,
+                              spot.labgridcieWx,
+                              spot.labgridcieWy,
+                              spot.labgridcieMx,
+                              spot.labgridcieMy,
+                              false);
+
+        strgradcie->setValue((double)spot.strgradcie);
+        anggradcie->setValue((double)spot.anggradcie);
+
         enacieMask->set_active(spot.enacieMask);
+        enacieMaskall->set_active(spot.enacieMaskall);
         CCmaskcieshape->setCurve(spot.CCmaskciecurve);
         LLmaskcieshape->setCurve(spot.LLmaskciecurve);
         HHmaskcieshape->setCurve(spot.HHmaskciecurve);
@@ -8944,14 +9791,26 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         lapmaskcie->setValue(spot.lapmaskcie);
         gammaskcie->setValue(spot.gammaskcie);
         slomaskcie->setValue(spot.slomaskcie);
+        highmaskcie->setValue(spot.highmaskcie);
+        shadmaskcie->setValue(spot.shadmaskcie);
+        HHhmaskcieshape->setCurve(spot.HHhmaskciecurve);
         Lmaskcieshape->setCurve(spot.Lmaskciecurve);
         recothrescie->setValue((double)spot.recothrescie);
         lowthrescie->setValue((double)spot.lowthrescie);
         higthrescie->setValue((double)spot.higthrescie);
         decaycie->setValue((double)spot.decaycie);
+        strumaskcie->setValue(spot.strumaskcie);
+        toolcie->set_active(spot.toolcie);
+        fftcieMask->set_active(spot.fftcieMask);
+        contcie->setValue(spot.contcie);
+//        updateColorGUI3();
+        blurcie->setValue(spot.blurcie);
+        LLmaskcieshapewav->setCurve(spot.LLmaskciecurvewav);
+        csThresholdcie->setValue<int>(spot.csthresholdcie);
 
 
     }
+
     enableListener();
     // Update GUI according to complexity mode
     updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
@@ -8961,13 +9820,14 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
 
 void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
 {
-     const int index = pp->locallab.selspot;
+    const int index = pp->locallab.selspot;
 
     if (index < (int)pp->locallab.spots.size()) {
         LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
         spot.expcie = exp->getEnabled();
         spot.visicie = exp->get_visible();
         spot.complexcie = complexity->get_active_row_number();
+        spot.expprecam = expprecam->getEnabled();
 
         spot.reparcie = reparcie->getValue();
         spot.sensicie = sensicie->getIntValue();
@@ -8976,10 +9836,6 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.modecam = "cam16";
         } else if (modecam->get_active_row_number() == 1) {
             spot.modecam = "jz";
-//        } else if (modecam->get_active_row_number() == 2) {
-//            spot.modecam = "all";
-//        } else if (modecam->get_active_row_number() == 3) {
-//            spot.modecam = "zcam";
         }
 
         if (modecie->get_active_row_number() == 0) {
@@ -9008,6 +9864,26 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.toneMethodcie2 = "thrc";
         }
 
+        spot.redxl =  redxl->getValue();
+        spot.redyl =  redyl->getValue();
+        spot.grexl =  grexl->getValue();
+        spot.greyl =  greyl->getValue();
+        spot.bluxl =  bluxl->getValue();
+        spot.bluyl =  bluyl->getValue();
+        spot.refi =  refi->getValue();
+        spot.shiftxl =  shiftxl->getValue();
+        spot.shiftyl =  shiftyl->getValue();
+        labgridcie->getParams(spot.labgridcieALow,
+                              spot.labgridcieBLow,
+                              spot.labgridcieAHigh,
+                              spot.labgridcieBHigh,
+                              spot.labgridcieGx,
+                              spot.labgridcieGy,
+                              spot.labgridcieWx,
+                              spot.labgridcieWy,
+                              spot.labgridcieMx,
+                              spot.labgridcieMy);
+
         spot.Autograycie = Autograycie->get_active();
         spot.forcejz = forcejz->get_active();
         spot.forcebw = forcebw->get_active();
@@ -9015,19 +9891,109 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.jabcie = jabcie->get_active();
         spot.sourceGraycie = sourceGraycie->getValue();
         spot.sourceabscie = sourceabscie->getValue();
-        spot.sigmoidqjcie = sigmoidqjcie->get_active();
+        spot.comprcieauto = comprcieauto->get_active();
+        spot.normcie = normcie->get_active();
+        spot.gamutcie = gamutcie->get_active();
+        spot.sigcie = sigcie->get_active();
         spot.logcie = logcie->get_active();
+        spot.satcie = satcie->get_active();
+        spot.logcieq = logcieq->get_active();
+        spot.smoothcie = smoothcie->get_active();
         spot.logjz = logjz->get_active();
         spot.sigjz = sigjz->get_active();
         spot.chjzcie = chjzcie->get_active();
         spot.sigq = sigq->get_active();
 
-        if(sursourcie->get_active_row_number() == 0) {
+        if (sursourcie->get_active_row_number() == 0) {
             spot.sursourcie = "Average";
         } else if (sursourcie->get_active_row_number() == 1) {
             spot.sursourcie = "Dim";
         } else if (sursourcie->get_active_row_number() == 2) {
             spot.sursourcie = "Dark";
+        } else if (sursourcie->get_active_row_number() == 3) {
+            spot.sursourcie = "exDark";
+        } else if (sursourcie->get_active_row_number() == 4) {
+            spot.sursourcie = "disacie";
+        }
+
+        if (bwevMethod->get_active_row_number() == 0) {
+            spot.bwevMethod = "none";
+        } else if (bwevMethod->get_active_row_number() == 1) {
+            spot.bwevMethod = "sig";
+        }
+
+        if (smoothciemet->get_active_row_number() == 0) {
+            spot.smoothciemet = "none";
+        } else if (smoothciemet->get_active_row_number() == 1) {
+            spot.smoothciemet = "Ev";
+        } else if (smoothciemet->get_active_row_number() == 2) {
+            spot.smoothciemet = "gam";
+        } else if (smoothciemet->get_active_row_number() == 3) {
+            spot.smoothciemet = "gamnorol";
+        }
+
+        if (illMethod->get_active_row_number() == 0) {
+            spot.illMethod = "d41";
+        } else if (illMethod->get_active_row_number() == 1) {
+            spot.illMethod = "d50";
+        } else if (illMethod->get_active_row_number() == 2) {
+            spot.illMethod = "d55";
+        } else if (illMethod->get_active_row_number() == 3) {
+            spot.illMethod = "d60";
+        } else if (illMethod->get_active_row_number() == 4) {
+            spot.illMethod = "d65";
+        } else if (illMethod->get_active_row_number() == 5) {
+            spot.illMethod = "d80";
+        } else if (illMethod->get_active_row_number() == 6) {
+            spot.illMethod = "d120";
+        } else if (illMethod->get_active_row_number() == 7) {
+            spot.illMethod = "stda";
+        } else if (illMethod->get_active_row_number() == 8) {
+            spot.illMethod = "T2000";
+        } else if (illMethod->get_active_row_number() == 9) {
+            spot.illMethod = "T1500";
+        } else if (illMethod->get_active_row_number() == 10) {
+            spot.illMethod = "iE";
+        }
+
+        if (primMethod->get_active_row_number() == 0) {
+            spot.primMethod = "pro";
+        } else if (primMethod->get_active_row_number() == 1) {
+            spot.primMethod = "beta";
+        } else if (primMethod->get_active_row_number() == 2) {
+            spot.primMethod = "wid";
+        } else if (primMethod->get_active_row_number() == 3) {
+            spot.primMethod = "ac1";
+        } else if (primMethod->get_active_row_number() == 4) {
+            spot.primMethod = "rec";
+        } else if (primMethod->get_active_row_number() == 5) {
+            spot.primMethod = "ado";
+        } else if (primMethod->get_active_row_number() == 6) {
+            spot.primMethod = "srgb";
+        } else if (primMethod->get_active_row_number() == 7) {
+            spot.primMethod = "jdcmax";
+        } else if (primMethod->get_active_row_number() == 8) {
+            spot.primMethod = "jdcmaxstdA";
+        } else if (primMethod->get_active_row_number() == 9) {
+            spot.primMethod = "ac0";
+        } else if (primMethod->get_active_row_number() == 10) {
+            spot.primMethod = "best";
+        } else if (primMethod->get_active_row_number() == 11) {
+            spot.primMethod = "bru";
+        } else if (primMethod->get_active_row_number() == 12) {
+            spot.primMethod = "free";
+        }
+
+        if (catMethod->get_active_row_number() == 0) {
+            spot.catMethod = "brad";
+        } else if (catMethod->get_active_row_number() == 1) {
+            spot.catMethod = "cat16";
+        } else if (catMethod->get_active_row_number() == 2) {
+            spot.catMethod = "cat02";
+        } else if (catMethod->get_active_row_number() == 3) {
+            spot.catMethod = "vky";
+        } else if (catMethod->get_active_row_number() == 4) {
+            spot.catMethod = "xyz";
         }
 
         if (surroundcie->get_active_row_number() == 0) {
@@ -9036,9 +10002,8 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.surroundcie = "Dim";
         } else if (surroundcie->get_active_row_number() == 2) {
             spot.surroundcie = "Dark";
-//        } else if (surroundcie->get_active_row_number() == 3) {
-//            spot.surroundcie = "ExtremelyDark";
         }
+
         spot.jzcurve = shapejz->getCurve();
         spot.czcurve = shapecz->getCurve();
         spot.czjzcurve = shapeczjz->getCurve();
@@ -9061,7 +10026,9 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.lightlcie = lightlcie->getValue();
         spot.lightjzcie = lightjzcie->getValue();
         spot.lightqcie = lightqcie->getValue();
+        spot.lightsigqcie = lightsigqcie->getValue();
         spot.contlcie = contlcie->getValue();
+        spot.detailciejz = detailciejz->getValue();
         spot.contjzcie = contjzcie->getValue();
         spot.adapjzcie = adapjzcie->getValue();
         spot.jz100 = jz100->getValue();
@@ -9084,27 +10051,32 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.targetjz = targetjz->getValue();
         spot.sigmoidldacie = sigmoidldacie->getValue();
         spot.sigmoidthcie = sigmoidthcie->getValue();
+        spot.sigmoidsenscie = sigmoidsenscie->getValue();
         spot.sigmoidblcie = sigmoidblcie->getValue();
+        spot.comprcie = comprcie->getValue();
+        spot.strcielog = strcielog->getValue();
+        spot.comprcieth = comprcieth->getValue();
+        spot.gamjcie = gamjcie->getValue();
+        spot.slopjcie = slopjcie->getValue();
+        spot.slopesmo = slopesmo->getValue();
+        spot.midtcie = midtcie->getIntValue();
+        spot.whitescie = whitescie->getIntValue();
+        spot.blackscie = blackscie->getIntValue();
         spot.sigmoidldajzcie = sigmoidldajzcie->getValue();
         spot.sigmoidthjzcie = sigmoidthjzcie->getValue();
         spot.sigmoidbljzcie = sigmoidbljzcie->getValue();
         spot.contqcie = contqcie->getValue();
+        spot.contsigqcie = contsigqcie->getValue();
         spot.colorflcie = colorflcie->getValue();
         spot.targabscie = targabscie->getValue();
         spot.targetGraycie = targetGraycie->getValue();
         spot.catadcie = catadcie->getValue();
         spot.detailcie = detailcie->getValue();
-/*
-        spot.lightlzcam = lightlzcam->getValue();
-        spot.lightqzcam = lightqzcam->getValue();
-        spot.contlzcam = contlzcam->getValue();
-        spot.contqzcam = contqzcam->getValue();
-        spot.contthreszcam = contthreszcam->getValue();
-        spot.colorflzcam = colorflzcam->getValue();
-        spot.saturzcam = saturzcam->getValue();
-        spot.chromzcam = chromzcam->getValue();
-*/
+        spot.strgradcie = strgradcie->getValue();
+        spot.anggradcie = anggradcie->getValue();
+
         spot.enacieMask = enacieMask->get_active();
+        spot.enacieMaskall = enacieMaskall->get_active();
         spot.LLmaskciecurve = LLmaskcieshape->getCurve();
         spot.CCmaskciecurve = CCmaskcieshape->getCurve();
         spot.HHmaskciecurve = HHmaskcieshape->getCurve();
@@ -9114,11 +10086,21 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.lapmaskcie = lapmaskcie->getValue();
         spot.gammaskcie = gammaskcie->getValue();
         spot.slomaskcie = slomaskcie->getValue();
+        spot.highmaskcie = highmaskcie->getValue();
+        spot.shadmaskcie = shadmaskcie->getValue();
+        spot.HHhmaskciecurve = HHhmaskcieshape->getCurve();
         spot.Lmaskciecurve = Lmaskcieshape->getCurve();
         spot.recothrescie = recothrescie->getValue();
         spot.lowthrescie = lowthrescie->getValue();
         spot.higthrescie = higthrescie->getValue();
         spot.decaycie = decaycie->getValue();
+        spot.strumaskcie = strumaskcie->getValue();
+        spot.toolcie = toolcie->get_active();
+        spot.fftcieMask = fftcieMask->get_active();
+        spot.contcie = contcie->getValue();
+        spot.blurcie = blurcie->getValue();
+        spot.LLmaskciecurvewav = LLmaskcieshapewav->getCurve();
+        spot.csthresholdcie = csThresholdcie->getValue<int>();
 
     }
 }
@@ -9163,10 +10145,96 @@ void Locallabcie::updateMaskBackground(const double normChromar, const double no
         LLmaskcieshape->updateLocallabBackground(normLumar);
         HHmaskcieshape->updateLocallabBackground(normHuer);
         Lmaskcieshape->updateLocallabBackground(normLumar);
+        HHhmaskcieshape->updateLocallabBackground(normHuer);
+        return false;
+    }
+                 );
+}
+
+void Locallabcie::updatePrimloc(const float redx, const float redy, const float grex, const float grey, const float blux, const float bluy)
+{
+    idle_register.add(
+    [this, redx, redy, grex, grey, blux, bluy]() -> bool {
+        GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+        // Update adjuster values according to autocomputed ones
+        disableListener();
+        redxl->setValue(redx);
+        redyl->setValue(redy);
+        grexl->setValue(grex);
+        greyl->setValue(grey);
+        bluxl->setValue(blux);
+        bluyl->setValue(bluy);
+
+        enableListener();
 
         return false;
     }
-    );
+                 );
+
+}
+
+void Locallabcie::updatesigloc(const float cont_sig, const float light_sig)
+{
+    idle_register.add(
+    [this, cont_sig, light_sig]() -> bool {
+        GThreadLock lock;
+        disableListener();
+
+        contsigqcie->setValue(cont_sig);
+        lightsigqcie->setValue(light_sig);
+
+        enableListener();
+        return false;
+    }
+                 );
+
+}
+
+
+
+void Locallabcie::updateiPrimloc(const float r_x, const float r_y, const float g_x, const float g_y, const float b_x, const float b_y, const float w_x, const float w_y, const float m_x, const float m_y,  const float me_x, const float me_y)
+{
+    nextrx = r_x;
+    nextry = r_y;
+    nextbx = b_x;
+    nextby = b_y;
+    nextgx = g_x;
+    nextgy = g_y;
+    nextwx = w_x;
+    nextwy = w_y;
+    nextmx = m_x;
+    nextmy = m_y;
+
+    //convert xy datas in datas for labgrid areas
+    nextrx = 1.81818f * (nextrx + 0.1f) - 1.f;
+    nextry = 1.81818f * (nextry + 0.1f) - 1.f;
+    nextbx = 1.81818f * (nextbx + 0.1f) - 1.f;
+    nextby = 1.81818f * (nextby + 0.1f) - 1.f;
+    nextgx = 1.81818f * (nextgx + 0.1f) - 1.f;
+    nextgy = 1.81818f * (nextgy + 0.1f) - 1.f;
+    nextwx = 1.81818f * (nextwx + 0.1f) - 1.f;
+    nextwy = 1.81818f * (nextwy + 0.1f) - 1.f;
+    nextmx = 1.81818f * (nextmx + 0.1f) - 1.f;
+    nextmy = 1.81818f * (nextmy + 0.1f) - 1.f;
+
+    idle_register.add(
+    [this, r_x, r_y, g_x, g_y, b_x, b_y]() -> bool {
+        GThreadLock lock;
+        disableListener();
+
+        redxl->setValue(r_x);
+        redyl->setValue(r_y);
+        grexl->setValue(g_x);
+        greyl->setValue(g_y);
+        bluxl->setValue(b_x);
+        bluyl->setValue(b_y);
+        labgridcie->setParams(nextrx, nextry, nextbx, nextby, nextgx, nextgy, nextwx, nextwy, nextmx, nextmy, false);
+        enableListener();
+        return false;
+    }
+                 );
+
 }
 
 
@@ -9192,11 +10260,9 @@ void Locallabcie::updateAutocompute(const float blackev, const float whiteev, co
 
             return false;
         }
-        );
+                     );
     }
 }
-
-
 
 void Locallabcie::AutograycieChanged()
 {
@@ -9208,6 +10274,11 @@ void Locallabcie::AutograycieChanged()
         jz100->set_sensitive(false);
         blackEvjz->set_sensitive(false);
         whiteEvjz->set_sensitive(false);
+
+        comprcieauto->set_active(true);
+        whitescie->set_sensitive(true);
+        blackscie->set_sensitive(true);
+
     } else {
         sourceGraycie->set_sensitive(true);
         sourceabscie->set_sensitive(true);
@@ -9215,9 +10286,10 @@ void Locallabcie::AutograycieChanged()
         jz100->set_sensitive(true);
         blackEvjz->set_sensitive(true);
         whiteEvjz->set_sensitive(true);
-      //  adapjzcie->set_sensitive(false);
-      //  jz100->set_sensitive(false);
+        whitescie->set_sensitive(false);
+        blackscie->set_sensitive(false);
     }
+
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (Autograycie->get_active()) {
@@ -9294,36 +10366,107 @@ void Locallabcie::jabcieChanged()
     }
 }
 
-void Locallabcie::sigmoidqjcieChanged()
+void Locallabcie::comprcieautoChanged()
 {
+
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
-            if (sigmoidqjcie->get_active()) {
-                listener->panelChanged(Evlocallabsigmoidqjcie,
+            if (comprcieauto->get_active()) {
+                listener->panelChanged(Evlocallabcomprcieauto,
                                        M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
-                listener->panelChanged(Evlocallabsigmoidqjcie,
+                listener->panelChanged(Evlocallabcomprcieauto,
                                        M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
 }
 
-void Locallabcie::logcieChanged()
+void Locallabcie::normcieChanged()
 {
 
-    if(logcie->get_active()) {
-        sigmoidldacie->set_sensitive(false);
-        sigmoidthcie->set_sensitive(false);
-        sigmoidblcie->set_sensitive(false);
-        sigmoidqjcie->set_sensitive(false);
-    } else {
-        sigmoidldacie->set_sensitive(true);
-        sigmoidthcie->set_sensitive(true);
+    if (normcie->get_active()) {
         sigmoidblcie->set_sensitive(true);
-        sigmoidqjcie->set_sensitive(true);
+    } else {
+        sigmoidblcie->set_sensitive(false);
     }
 
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (normcie->get_active()) {
+                listener->panelChanged(Evlocallabnormcie,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabnormcie,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+
+}
+
+
+void Locallabcie::gamutcieChanged()
+{
+    if (gamutcie->get_active()) {
+        catBox->set_sensitive(true);
+    } else {
+        catBox->set_sensitive(false);
+    }
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (gamutcie->get_active()) {
+                listener->panelChanged(Evlocallabgamutcie,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabgamutcie,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+
+}
+
+void Locallabcie::expprecamChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (expprecam->getEnabled()) {
+                listener->panelChanged(Evlocallabexpprecam,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabexpprecam,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+
+}
+
+
+void Locallabcie::sigcieChanged()
+{
+    contsigqcie->hide();
+    lightsigqcie->hide();
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (sigcie->get_active()) {
+                listener->panelChanged(Evlocallabsigcie,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabsigcie,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+
+}
+
+
+void Locallabcie::logcieChanged()
+{
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (logcie->get_active()) {
@@ -9331,6 +10474,60 @@ void Locallabcie::logcieChanged()
                                        M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallablogcie,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+void Locallabcie::satcieChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (satcie->get_active()) {
+                listener->panelChanged(Evlocallabsatcie,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabsatcie,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+void Locallabcie::logcieqChanged()
+{
+    if (logcieq->get_active()) {
+        satcie->hide();
+        sigmoidnormFrame->hide();
+    } else {
+        satcie->show();
+        sigmoidnormFrame->show();
+    }
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (logcieq->get_active()) {
+                listener->panelChanged(Evlocallablogcieq,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallablogcieq,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+
+void Locallabcie::smoothcieChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (smoothcie->get_active()) {
+                listener->panelChanged(Evlocallabsmoothcie,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabsmoothcie,
                                        M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
@@ -9369,6 +10566,9 @@ void Locallabcie::sigjzChanged()
 
 void Locallabcie::sigqChanged()
 {
+    contsigqcie->hide();
+    lightsigqcie->hide();
+
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (sigq->get_active()) {
@@ -9389,6 +10589,7 @@ void Locallabcie::chjzcieChanged()
     } else {
         thrhjzcie->set_sensitive(false);
     }
+
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (chjzcie->get_active()) {
@@ -9405,8 +10606,11 @@ void Locallabcie::chjzcieChanged()
 void Locallabcie::modecamChanged()
 {
     const int mode = complexity->get_active_row_number();
+    contsigqcie->hide();
+    lightsigqcie->hide();
+    const LocallabParams::LocallabSpot defSpot;
 
-    if (modecam->get_active_row_number() == 1 || modecam->get_active_row_number() == 2) {
+    if (modecam->get_active_row_number() == 1) {
         expjz->show();
         jzFrame->show();
         adapjzcie->show();
@@ -9419,82 +10623,74 @@ void Locallabcie::modecamChanged()
         sigmoidjzFrame->show();
         sigmoidFrame->hide();
         forcejz->hide();
+        expprecam->hide();
+        expcam16->hide();
+        expcamviewing->hide();
+        lapmaskcie->hide();
+        lapmaskcie->setValue(defSpot.lapmaskcie);
+        enacieMaskallChanged2();
 
     } else {
         expjz->hide();
+        lapmaskcie->show();
+        
         jzFrame->hide();
         adapjzcie->hide();
         jz100->hide();
         pqremap->hide();
-        pqremapcam16->show();
+
+        if (mode == Expert) {
+            pqremapcam16->show();
+        } else {
+            pqremapcam16->hide();
+        }
+
         jabcie->hide();
         PQFrame->hide();
         logjzFrame->hide();
-        if (modecam->get_active_row_number() == 0){
+
+        if (modecam->get_active_row_number() == 0) {
             bevwevFrame->show();
             sigmoidFrame->show();
+            expprecam->show();
+
         }
+
         sigmoidjzFrame->hide();
         forcejz->hide();
         catadcie->show();
     }
+
     surHBoxcie->show();
     cie1Frame->show();
     expcam16->show();
-    cie2Frame->show();
+    expcamviewing->show();
     sourceGraycie->show();
-    cieFrame->show();
+    expcamscene->show();
 
     if (modecam->get_active_row_number() == 1) {
+        guijzczhz();
         surHBoxcie->show();
-        cie1Frame->hide();
-        expcam16->hide();
-        targetGraycie->hide();
-        targabscie->hide();
-        surrHBoxcie->hide();
-        forcejz->hide();
-        pqremapcam16->hide();
-        catadcie->hide();
-        cie2Frame->hide();
-        exprecovcie->hide();
-        expmaskcie->hide();
-        if(mode == Expert) {
+        lapmaskcie->setValue(defSpot.lapmaskcie);
+        enacieMaskallChanged2();
+
+        if (mode == Expert) {
             exprecovcie->show();
             expmaskcie->show();
+            expgradcie->hide();
+            lapmaskcie->hide();
+            lapmaskcie->setValue(defSpot.lapmaskcie);
+            
         }
 
-        }
-    if (modecam->get_active_row_number() == 3) {
-        if(mode == Expert) {
-            cieFrame->show();
-            cie1Frame->hide();
-            expcam16->hide();
-            cie2Frame->show();
-            targetGraycie->show();
-            targabscie->show();
-            surrHBoxcie->show();
-            PQFrame->show();
-            logjzFrame->show();
-            adapjzcie->hide();
-            jz100->hide();
-            forcejz->hide();
-            pqremap->show();
-            pqremapcam16->hide();
-            catadcie->hide();
-            cie2Frame->hide();
-
-        } else {
-            cieFrame->hide();
-            cie1Frame->hide();
-            expcam16->hide();
-            cie2Frame->hide();
-            catadcie->hide();
-            cie2Frame->hide();
-
-        }
+    } else if (mode != Simple){
+        exprecovcie->show();
+        expgradcie->show();
+        expmaskcie->show();
     }
 
-    if(mode != Expert) {
+
+    if (mode != Expert) {
         expjz->hide();
         jzFrame->hide();
         adapjzcie->hide();
@@ -9506,33 +10702,54 @@ void Locallabcie::modecamChanged()
         sigmoidjzFrame->hide();
         sigmoidFrame->hide();
         bevwevFrame->hide();
-        if (modecam->get_active_row_number() == 0){
+
+        if (modecam->get_active_row_number() == 0) {
             bevwevFrame->show();
             sigmoidFrame->show();
         }
 
         forcejz->hide();
-        pqremapcam16->show();
+
+        if (mode == Expert) {
+            pqremapcam16->show();
+        } else {
+            pqremapcam16->hide();
+        }
+
         catadcie->show();
         sourceGraycie->show();
 
-        if (modecam->get_active_row_number() == 1  || modecam->get_active_row_number() == 3) {
+        if (modecam->get_active_row_number() == 1) {
             pqremapcam16->hide();
-            cieFrame->hide();
+            expcamscene->hide();
             cie1Frame->hide();
             expcam16->hide();
-            cie2Frame->hide();
+            expcamviewing->hide();
             catadcie->hide();
-            cie2Frame->hide();
+            expgradcie->hide();
+            expcam16->hide();
+            lapmaskcie->hide();
+            lapmaskcie->setValue(defSpot.lapmaskcie);
+            enacieMaskallChanged2();
+
+        } else if (mode != Simple){
+            exprecovcie->show();
+            expgradcie->show();
+            expmaskcie->show();     
         }
     } else {
-        cieFrame->show();
-        cie2Frame->show();
-        if (modecam->get_active_row_number() == 0){
+        expcamscene->show();
+        expcamviewing->show();
+
+        if (modecam->get_active_row_number() == 0) {
             bevwevFrame->show();
             sigmoidjzFrame->hide();
+            expprecam->show();
+            lapmaskcie->show();
+
 
         }
+
         if (modecam->get_active_row_number() == 1) {
             targetGraycie->hide();
             targabscie->hide();
@@ -9545,7 +10762,13 @@ void Locallabcie::modecamChanged()
             sigmoidFrame->hide();
             bevwevFrame->show();
             catadcie->hide();
-            cie2Frame->hide();
+            expcamviewing->hide();
+            expgradcie->hide();
+            expcam16->hide();
+            lapmaskcie->hide();
+            lapmaskcie->setValue(defSpot.lapmaskcie);
+            enacieMaskallChanged2();
+
             if (chjzcie->get_active()) {
                 thrhjzcie->set_sensitive(true);
             } else {
@@ -9554,32 +10777,33 @@ void Locallabcie::modecamChanged()
 
 
         }
-        if (modecam->get_active_row_number() == 3) {
-            cieFrame->show();
-            cie2Frame->show();
-            targetGraycie->show();
-            targabscie->show();
-            surrHBoxcie->show();
-            PQFrame->show();
-            logjzFrame->show();
-            adapjzcie->hide();
-            jz100->hide();
-            forcejz->hide();
-            pqremap->show();
-            pqremapcam16->hide();
-            catadcie->hide();
-            cie2Frame->hide();
-        }
+
 
     }
-        if (modecam->get_active_row_number() == 0 || modecam->get_active_row_number() == 2) {
-            targetGraycie->show();
-            targabscie->show();
-            surrHBoxcie->show();
-            cie2Frame->show();
-            pqremapcam16->show();
+
+    if (modecam->get_active_row_number() == 0) {
+        targetGraycie->show();
+        targabscie->show();
+        surrHBoxcie->show();
+        expprecam->show();
+        expcamviewing->show();
+        if (mode != Simple){
+            exprecovcie->show();
+            expgradcie->show();
+            expmaskcie->show();
         }
 
+
+
+        if (mode == Expert) {
+            pqremapcam16->show();
+        } else {
+            pqremapcam16->hide();
+        }
+    }
+
+    contsigqcie->hide();
+    lightsigqcie->hide();
 
 
     if (isLocActivated && exp->getEnabled()) {
@@ -9597,26 +10821,34 @@ void Locallabcie::modecieChanged()
     if (isLocActivated && exp->getEnabled()) {
 
         const int mode = complexity->get_active_row_number();
-                exprecovcie->show();
-                expmaskcie->show();
+        exprecovcie->show();
+        expmaskcie->show();
+        expgradcie->show();
 
-        if (modecie->get_active_row_number() > 0) {
+        if (modecie->get_active_row_number() > 0  && mode == Expert) {
             sensicie->hide();
             reparcie->hide();
-            exprecovcie->hide();
-            expmaskcie->hide();
+            exprecovcie->show();
+            expmaskcie->show();
+            expgradcie->hide();
 
         } else {
             sensicie->show();
             reparcie->show();
-            if(mode == Expert) {
+
+            if (mode == Expert) {
                 exprecovcie->show();
                 expmaskcie->show();
+                expgradcie->show();
             }
         }
+
+        contsigqcie->hide();
+        lightsigqcie->hide();
+
         if (mode == Simple || mode == Normal) { // Keep widget hidden in Normal and Simple mode
 
-            modecie->set_active (0);
+            modecie->set_active(0);
             sensicie->show();
             reparcie->show();
 
@@ -9633,6 +10865,22 @@ void Locallabcie::modecieChanged()
 
 void Locallabcie::sursourcieChanged()
 {
+    const LocallabParams::LocallabSpot defSpot;
+
+    if (sursourcie->get_active_row_number() == 4) {
+        expcam16->hide();
+        expcamviewing->hide();
+    } else {
+        expcam16->show();
+        expcamviewing->show();
+        if(modecam->get_active_row_number() == 1) {
+            expcam16->hide();
+            expcamviewing->hide();
+            lapmaskcie->hide();
+            lapmaskcie->setValue(defSpot.lapmaskcie);
+        }
+    }
+
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(Evlocallabsursourcie,
@@ -9640,6 +10888,120 @@ void Locallabcie::sursourcieChanged()
         }
     }
 }
+
+void Locallabcie::catMethodChanged()
+{
+
+    if (listener) {
+        listener->panelChanged(Evlocallabcatcie, catMethod->get_active_text());
+    }
+
+}
+
+void Locallabcie::illMethodChanged()
+{
+
+    if (listener) {
+        listener->panelChanged(Evlocallabillcie, illMethod->get_active_text());
+    }
+
+}
+
+void Locallabcie::smoothciemetChanged()
+{
+    if(smoothciemet->get_active_row_number() == 3) {
+       slopesmo->show();
+       smoothcie->show();
+    } else {
+       slopesmo->hide();
+       smoothcie->hide();
+    }
+
+    if (listener) {
+        listener->panelChanged(Evlocallabsmoothciemet, smoothciemet->get_active_text());
+    }
+
+}
+
+
+void Locallabcie::primMethodChanged()
+{
+
+    if (primMethod->get_active_row_number() == 0) {
+        illMethod->set_active(1);
+    } else if (primMethod->get_active_row_number() == 1) {
+        illMethod->set_active(1);
+    } else if (primMethod->get_active_row_number() == 2) {
+        illMethod->set_active(1);
+    } else if (primMethod->get_active_row_number() == 3) {
+        illMethod->set_active(3);
+    } else if (primMethod->get_active_row_number() == 4) {
+        illMethod->set_active(4);
+    } else if (primMethod->get_active_row_number() == 5) {
+        illMethod->set_active(4);
+    } else if (primMethod->get_active_row_number() == 6) {
+        illMethod->set_active(4);
+    } else if (primMethod->get_active_row_number() == 7) {
+        illMethod->set_active(1);
+    } else if (primMethod->get_active_row_number() == 8) {
+        illMethod->set_active(7);
+    } else if (primMethod->get_active_row_number() == 9) {
+        illMethod->set_active(3);
+    } else if (primMethod->get_active_row_number() == 10) {
+        illMethod->set_active(1);
+    } else if (primMethod->get_active_row_number() == 11) {
+        illMethod->set_active(4);
+    }
+
+    illMethod->set_sensitive(false);
+
+    if (primMethod->get_active_row_number() == 12) {
+        redBox->set_sensitive(true);
+        illMethod->set_sensitive(true);
+
+    } else {
+        redBox->set_sensitive(false);
+    }
+
+    if (listener) {
+        listener->panelChanged(Evlocallabprimcie, primMethod->get_active_text());
+    }
+
+}
+
+void Locallabcie::bwevMethodChanged()
+{
+    const LocallabParams::LocallabSpot defSpot;
+    const int mode = complexity->get_active_row_number();
+
+    if (bwevMethod->get_active_row_number() == 2) {//  && sigcie->get_active()) {
+        comprcie->set_sensitive(true);
+        comprcieth->set_sensitive(true);
+        comprcieauto->set_sensitive(true);
+        comprcieauto->set_active(true);
+
+        if (mode == Simple) {
+            comprcieth->set_sensitive(false);
+            comprcieauto->set_sensitive(false);
+        }
+
+    } else {
+        comprcieth->set_sensitive(false);
+        comprcieauto->set_sensitive(false);
+    }
+
+    if (bwevMethod->get_active_row_number() == 2) {
+        comprcie->setValue(defSpot.comprcie);//to test
+    }
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvlocallabbwevMethod,
+                                   bwevMethod->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
+        }
+    }
+}
+
 
 void Locallabcie::surroundcieChanged()
 {
@@ -9651,8 +11013,37 @@ void Locallabcie::surroundcieChanged()
     }
 }
 
+void Locallabcie::guijzczhz()
+{
+    expcamscene->hide();
+    cie1Frame->hide();
+    expcam16->hide();
+    forcejz->hide();
+    pqremapcam16->hide();
+    PQFrame->hide();
+    logjzFrame->hide();
+    bevwevFrame->hide();
+    sigmoidjzFrame->hide();
+    sigmoidFrame->hide();
+    catadcie->hide();
+    expcamviewing->hide();
+    maskusablecie->hide();
+    maskunusablecie->hide();
+    decaycie->hide();
+    expmaskcie->hide();
+    expprecam->hide();
+    exprecovcie->hide();
+    expgradcie->hide();
+    lapmaskcie->hide();
+}
+
+
+
+
 void Locallabcie::updateGUIToMode(const modeType new_type)
 {
+    const LocallabParams::LocallabSpot defSpot;
+
     switch (new_type) {
         case Simple:
             catadcie->show();
@@ -9671,102 +11062,122 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             surHBoxcie->show();
             sourceabscie->show();
             targabscie->show();
-            detailcie->hide();
+            detailcie->show(); //hide
             jabcie->hide();
             modeHBoxcie->hide();
             sensicie->show();
             reparcie->show();
-            sigmoidblcie->hide();
-
+            sigmoidsenscie->hide();
+            sigmoidnormFrame->hide();
+            pqremapcam16->hide();
             expjz->hide();
             jzFrame->hide();
             adapjzcie->hide();
             jz100->hide();
             pqremap->show();
-            pqremapcam16->show();
             jabcie->hide();
             targetGraycie->show();
             targabscie->show();
             surrHBoxcie->show();
             forcejz->hide();
             sourceGraycie->show();
-            cieFrame->show();
+            expcamscene->show();
             exprecovcie->hide();
+            expgradcie->hide();
             maskusablecie->hide();
             maskunusablecie->hide();
             decaycie->hide();
             expmaskcie->hide();
-            expmaskcie->hide();
+            comprcie->show();
+            strcielog->show();
+            satcie->show();
+            logcieq->hide();
+            blackEvjz->hide();
+            whiteEvjz->hide();
+            whitescie->hide();
+            blackscie->hide();
+            logcieFrame->hide();
+            comprcieth->hide();
+            comprcieauto->hide();
+            comprBox->show();
+            slopesmo->hide();
+            smoothcie->hide();
 
-            if (modecam->get_active_row_number() == 2) {
-                PQFrame->hide();
-                logjzFrame->hide();
-                sigmoidjzFrame->hide();
-                bevwevFrame->hide();
-                sigmoidFrame->hide();
-            }
-            if (modecam->get_active_row_number() == 0){
+            if (modecam->get_active_row_number() == 0) {
                 bevwevFrame->show();
-                sigmoidFrame->show();
+                sigmoidFrame->hide(); //show
+                expprecam->show();
+                primillFrame->hide();
+                expmaskcie->hide();
+                exprecovcie->hide();
+                expgradcie->hide();
+                if(smoothciemet->get_active_row_number() == 3) {
+                    slopesmo->show();
+                    smoothcie->show();
+                } else {
+                    slopesmo->hide();
+                    smoothcie->hide();
+                }
             }
 
             if (modecam->get_active_row_number() == 1) {
-                cieFrame->hide();
-                cie1Frame->hide();
-                expcam16->hide();
-                forcejz->hide();
-                pqremapcam16->hide();
-                PQFrame->hide();
-                logjzFrame->hide();
-                bevwevFrame->hide();
-                sigmoidjzFrame->hide();
-                sigmoidFrame->hide();
-                catadcie->hide();
-                cie2Frame->hide();
-                maskusablecie->hide();
-                maskunusablecie->hide();
-                decaycie->hide();
-                expmaskcie->hide();
-            }
-            if (modecam->get_active_row_number() == 3) {
-                cieFrame->hide();
-                cie1Frame->hide();
-                expcam16->hide();
-                cie2Frame->hide();
-                pqremapcam16->hide();
-                PQFrame->hide();
-                logjzFrame->hide();
-                catadcie->hide();
+                //  cieFrame->hide();
+                guijzczhz();
+                lapmaskcie->setValue(defSpot.lapmaskcie);
+                enacieMaskallChanged2();
+                enacieMaskall->hide();
             }
 
+
+            contsigqcie->hide();
+            lightsigqcie->hide();
+            expmaskcie->hide();
+            exprecovcie->hide();
+            expgradcie->hide();
+
             break;
+
         case Normal:
             // Expert mode widgets are hidden in Normal mode
 
             catadcie->show();
             saturlcie->show();
             rstprotectcie->show();
-            chromlcie->hide();
-            huecie->hide();
+            chromlcie->show();//hide
+            huecie->show();//hide
             lightlcie->show();
-            lightqcie->hide();
+            lightqcie->show();//hide
             contlcie->show();
             contthrescie->show();
-            contqcie->hide();
+            contqcie->show();//hide
             colorflcie->hide();
             surrHBoxcie->show();
             expLcie->hide();
             surHBoxcie->show();
             sourceabscie->show();
             targabscie->show();
-            detailcie->hide();
+            detailcie->show();//hide
             jabcie->hide();
             modeHBoxcie->hide();
             sensicie->show();
             reparcie->show();
             sigmoidblcie->show();
+            sigmoidsenscie->hide();
             expjz->hide();
             forcejz->hide();
+            comprcie->show();
+            strcielog->show();
+            satcie->show();
+            logcieq->hide();
+            blackEvjz->show();
+            whiteEvjz->show();
+            whitescie->show();
+            blackscie->show();
+
+            logcieFrame->hide();
+            comprcieth->show();
+            comprcieauto->show();
+            comprBox->show();
 
             jzFrame->hide();
             adapjzcie->hide();
@@ -9776,15 +11187,24 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             targetGraycie->show();
             targabscie->show();
             surrHBoxcie->show();
-            pqremapcam16->show();
+            pqremapcam16->hide();
             sourceGraycie->show();
-            cieFrame->show();
+            expcamscene->show();
             exprecovcie->show();
+            expgradcie->show();
             expmaskcie->show();
             decaycie->hide();
             lapmaskcie->hide();
             gammaskcie->hide();
             slomaskcie->hide();
+            highmaskcie->hide();
+            shadmaskcie->hide();
+            struFramecie->hide();
+            blurFramecie->hide();
+            wavFramecie->hide();
+            maskcieHCurveEditorG->hide();
+            sigmoidnormFrame->hide();
+
             if (enacieMask->get_active()) {
                 maskusablecie->show();
                 maskunusablecie->hide();
@@ -9793,51 +11213,45 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 maskusablecie->hide();
                 maskunusablecie->show();
             }
-            if (modecam->get_active_row_number() == 0){
+
+            if (modecam->get_active_row_number() == 0) {
                 bevwevFrame->show();
                 sigmoidFrame->show();
+                expprecam->show();
+                primillFrame->hide();//show
+                enacieMaskall->hide();
+
+                if(smoothciemet->get_active_row_number() == 3) {
+                    slopesmo->show();
+                    smoothcie->show();
+                } else {
+                    slopesmo->hide();
+                    smoothcie->hide();
+                }
             }
 
-            if (modecam->get_active_row_number() == 2) {
-                PQFrame->hide();
-                logjzFrame->hide();
-                sigmoidjzFrame->hide();
-                bevwevFrame->hide();
-            }
 
             if (modecam->get_active_row_number() == 1) {
-                cieFrame->hide();
-                cie1Frame->hide();
-                expcam16->hide();
-                forcejz->hide();
-                pqremapcam16->hide();
-                PQFrame->hide();
-                logjzFrame->hide();
-                sigmoidjzFrame->hide();
-                bevwevFrame->hide();
-                sigmoidFrame->hide();
-                catadcie->hide();
-                cie2Frame->hide();
-                exprecovcie->hide();
-                expmaskcie->hide();
-                maskusablecie->hide();
-                maskunusablecie->hide();
+                guijzczhz();
+                lapmaskcie->setValue(defSpot.lapmaskcie);
+                enacieMaskallChanged2();
+                enacieMaskall->hide();
 
+            } else {
+                exprecovcie->show();
+                expgradcie->show();
+                expmaskcie->show();
             }
-            if (modecam->get_active_row_number() == 3) {
-                cieFrame->hide();
-                cie1Frame->hide();
-                expcam16->hide();
-                cie2Frame->hide();
-                pqremapcam16->hide();
-                PQFrame->hide();
-                catadcie->hide();
-                logjzFrame->hide();
-            }
+
+
             if (modecie->get_active_row_number() > 0) {
                 exprecovcie->hide();
                 expmaskcie->hide();
+                expgradcie->hide();
             }
+
+            contsigqcie->hide();
+            lightsigqcie->hide();
 
             break;
 
@@ -9862,20 +11276,48 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             detailcie->show();
             modeHBoxcie->show();
             sigmoidblcie->show();
+            pqremapcam16->show();
+            comprcie->show();
+            strcielog->show();
+            logcieq->show();
+            blackEvjz->show();
+            whiteEvjz->show();
+            whitescie->show();
+            blackscie->show();
+            logcieFrame->show();
+            comprcieth->show();
+            comprcieauto->show();
+            sigmoidsenscie->show();
+            sigmoidnormFrame->show();
+
+            if (logcieq->get_active()) {
+                satcie->hide();
+                sigmoidnormFrame->hide();
+            } else {
+                satcie->show();
+                sigmoidnormFrame->show();
+            }
+
             targetGraycie->show();
             targabscie->show();
             surrHBoxcie->show();
             forcejz->hide();
-            pqremapcam16->show();
             sourceGraycie->show();
-            cieFrame->show();
+            expcamscene->show();
             exprecovcie->show();
+            expgradcie->show();
             decaycie->show();
             lapmaskcie->show();
             gammaskcie->show();
             slomaskcie->show();
+            highmaskcie->show();
+            shadmaskcie->show();
+            maskcieHCurveEditorG->show();
             expmaskcie->show();
-            exprecovcie->show();
+            struFramecie->show();
+            blurFramecie->show();
+            wavFramecie->show();
+            comprBox->show();
 
             if (enacieMask->get_active()) {
                 maskusablecie->show();
@@ -9885,11 +11327,24 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 maskusablecie->hide();
                 maskunusablecie->show();
             }
-            if (modecam->get_active_row_number() == 0){
+
+            if (modecam->get_active_row_number() == 0) {
                 bevwevFrame->show();
+                expprecam->show();
+                primillFrame->show();
+                enacieMaskallChanged2();
+                enacieMaskall->show();
+
+                if(smoothciemet->get_active_row_number() == 3) {
+                    slopesmo->show();
+                    smoothcie->show();
+                } else {
+                    slopesmo->hide();
+                    smoothcie->hide();
+                }
             }
 
-            if (modecam->get_active_row_number() == 1 || modecam->get_active_row_number() == 2) {
+            if (modecam->get_active_row_number() == 1) {
                 jabcie->show();
                 expjz->show();
                 jzFrame->show();
@@ -9902,12 +11357,22 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 sigmoidjzFrame->show();
                 sigmoidFrame->hide();
                 forcejz->hide();
+                expprecam->hide();
+                expgradcie->hide();
+                expcam16->hide();
+                exprecovcie->show();
+                expmaskcie->show();
+                lapmaskcie->hide();
+                lapmaskcie->setValue(defSpot.lapmaskcie);
+                enacieMaskallChanged2();
+                enacieMaskall->show();
 
             }
-                cieFrame->show();
-                cie2Frame->show();
 
-            if (modecam->get_active_row_number() == 0 || modecam->get_active_row_number() == 2) {
+            expcamscene->show();
+            expcamviewing->show();
+
+            if (modecam->get_active_row_number() == 0) {
                 targetGraycie->show();
                 targabscie->show();
                 surrHBoxcie->show();
@@ -9916,18 +11381,23 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 logjzFrame->hide();
                 sigmoidjzFrame->hide();
                 bevwevFrame->hide();
-                if (modecam->get_active_row_number() == 0){
-                    bevwevFrame->show();
-                    sigmoidFrame->show();
-                }
 
+                bevwevFrame->show();
+                sigmoidFrame->show();
+                expprecam->show();
+                primillFrame->show();
+                enacieMaskallChanged2();
+                enacieMaskall->show();
+
+                if(smoothciemet->get_active_row_number() == 3) {
+                    slopesmo->show();
+                    smoothcie->show();
+                } else {
+                    slopesmo->hide();
+                    smoothcie->hide();
+                }
             }
-            if (modecam->get_active_row_number() == 2) {
-                PQFrame->show();
-                logjzFrame->hide();
-                sigmoidjzFrame->hide();
-                bevwevFrame->hide();
-            }
+
 
             if (modecam->get_active_row_number() == 1) {
                 surHBoxcie->show();
@@ -9941,76 +11411,100 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 sigmoidFrame->hide();
                 bevwevFrame->show();
                 catadcie->hide();
-                cie2Frame->hide();
+                expcamviewing->hide();
                 exprecovcie->show();
+                expgradcie->show();
                 expmaskcie->show();
                 maskusablecie->show();
                 maskunusablecie->show();
+                expprecam->hide();
+                expgradcie->hide();
+                expcam16->hide();
+                lapmaskcie->hide();
+                lapmaskcie->setValue(defSpot.lapmaskcie);
+                enacieMaskallChanged2();
+                enacieMaskall->show();
+
                 if (chjzcie->get_active()) {
                     thrhjzcie->set_sensitive(true);
                 } else {
                     thrhjzcie->set_sensitive(false);
                 }
 
-           }
-
-            if (modecam->get_active_row_number() == 3) {
-                cieFrame->show();
-                cie1Frame->hide();
-                expcam16->hide();
-                cie2Frame->show();
-                targetGraycie->show();
-                targabscie->show();
-                surrHBoxcie->show();
-                PQFrame->show();
-                logjzFrame->show();
-                adapjzcie->hide();
-                jz100->hide();
-                forcejz->hide();
-                pqremap->show();
-                pqremapcam16->hide();
-                catadcie->hide();
             }
+
+
             if (modecie->get_active_row_number() > 0) {
                 exprecovcie->hide();
                 expmaskcie->hide();
+                expgradcie->hide();
             }
+
+            contsigqcie->hide();
+            lightsigqcie->hide();
 
     }
 }
 
 void Locallabcie::updatecieGUI()
 {
+    const LocallabParams::LocallabSpot defSpot;
     const int mode = complexity->get_active_row_number();
     expmaskcie->show();
     exprecovcie->show();
+    expgradcie->show();
+
+    contsigqcie->hide();
+    lightsigqcie->hide();
+
+
     if (modecie->get_active_row_number() > 0) {
         sensicie->hide();
         reparcie->hide();
         exprecovcie->hide();
+        expgradcie->hide();
         expmaskcie->hide();
     } else {
         sensicie->show();
         reparcie->show();
         exprecovcie->show();
+        expgradcie->show();
         expmaskcie->show();
     }
-        surHBoxcie->show();
-        cie1Frame->show();
-        cie2Frame->show();
-        expcam16->show();
-    if (modecam->get_active_row_number() == 0){
-       bevwevFrame->show();
+
+    surHBoxcie->show();
+    cie1Frame->show();
+    expcam16->show();
+    expcamviewing->show();
+
+    if (modecam->get_active_row_number() == 0) {
+        bevwevFrame->show();
+        expprecam->show();
+
+        if (mode == Simple) {
+            expmaskcie->hide();
+            exprecovcie->hide();
+            primillFrame->hide();
+            expgradcie->hide();
+
+        } else if (mode == Normal) {
+            primillFrame->hide();
+        } else {
+            primillFrame->show();
+        }
+
+        if(smoothciemet->get_active_row_number() == 3) {
+            slopesmo->show();
+            smoothcie->show();
+        } else {
+            slopesmo->hide();
+            smoothcie->hide();
+        }
     }
 
-    if (modecam->get_active_row_number() == 2  && mode == Expert) {
-        PQFrame->show();
-        logjzFrame->show();
-        sigmoidjzFrame->show();
-        bevwevFrame->show();
-    }
-        sourceGraycie->show();
-        cieFrame->show();
+
+    sourceGraycie->show();
+    expcamscene->show();
 
     if (enacieMask->get_active() && mode != Simple) {
         maskusablecie->show();
@@ -10021,7 +11515,58 @@ void Locallabcie::updatecieGUI()
         maskunusablecie->show();
     }
 
-    if (modecam->get_active_row_number() == 1) {
+
+    if (Autograycie->get_active()) {
+        sourceGraycie->set_sensitive(false);
+        sourceabscie->set_sensitive(false);
+        adapjzcie->set_sensitive(false);
+        jz100->set_sensitive(false);
+        blackEvjz->set_sensitive(false);
+        whiteEvjz->set_sensitive(false);
+        whitescie->set_sensitive(true);
+        blackscie->set_sensitive(true);
+        comprcieauto->set_active(true);
+
+    } else {
+        sourceGraycie->set_sensitive(true);
+        sourceabscie->set_sensitive(true);
+        adapjzcie->set_sensitive(true);
+        blackEvjz->set_sensitive(true);
+        whiteEvjz->set_sensitive(true);
+        whitescie->set_sensitive(false);
+        blackscie->set_sensitive(false);
+        jz100->set_sensitive(true);
+    }
+
+    if (mode == Simple || mode == Normal) { // Keep widget hidden in Normal and Simple mode
+        modecie->set_active(0);
+        sensicie->show();
+        reparcie->show();
+    }
+
+    if (sursourcie->get_active_row_number() == 4) {
+        expcam16->hide();
+        expcamviewing->hide();
+    } else {
+        expcam16->show();
+        expcamviewing->show();
+        if(modecam->get_active_row_number() == 1) {
+            expcam16->hide();
+            expcamviewing->hide();
+            lapmaskcie->hide();
+            lapmaskcie->setValue(defSpot.lapmaskcie);
+            enacieMaskallChanged2();
+        }
+    }
+
+
+    if (modecie->get_active_row_number() > 0) {
+        exprecovcie->hide();
+        expgradcie->hide();
+        expmaskcie->hide();
+    }
+
+    if (modecam->get_active_row_number() == 1  && (mode == Expert)) {
         surHBoxcie->show();
         cie1Frame->hide();
         expcam16->hide();
@@ -10035,80 +11580,19 @@ void Locallabcie::updatecieGUI()
         bevwevFrame->show();
         sigmoidFrame->hide();
         catadcie->hide();
-        cie2Frame->hide();
-        if(mode != Expert) {
-            cieFrame->hide();
-            cie1Frame->hide();
-            expcam16->hide();
-            cie2Frame->hide();
-            PQFrame->hide();
-            logjzFrame->hide();
-            sigmoidjzFrame->hide();
-            sigmoidFrame->hide();
-            bevwevFrame->hide();
-            if (modecam->get_active_row_number() == 0){
-                bevwevFrame->show();
-                sigmoidFrame->show();
-            }
-            exprecovcie->hide();
-            expmaskcie->hide();
-            maskusablecie->hide();
-            maskunusablecie->hide();
-        }
+        expprecam->hide();
+        expcamviewing->hide();
+        expgradcie->hide();
+        expcam16->hide();
+        exprecovcie->show();
+        expmaskcie->show();
+        lapmaskcie->hide();
+        lapmaskcie->setValue(defSpot.lapmaskcie);
+        enacieMaskallChanged2();
+        enacieMaskall->show();
 
     }
-    if (modecam->get_active_row_number() == 3) {
-        if(mode == Expert) {
-            cie1Frame->hide();
-            expcam16->hide();
-            cie2Frame->show();
-            targetGraycie->show();
-            targabscie->show();
-            surrHBoxcie->show();
-            cieFrame->show();
-            PQFrame->show();
-            logjzFrame->show();
-            adapjzcie->hide();
-            jz100->hide();
-            forcejz->hide();
-            pqremap->show();
-            pqremapcam16->hide();
-            PQFrame->show();
-            catadcie->hide();
-        } else {
-            cie1Frame->hide();
-            expcam16->hide();
-            cie2Frame->hide();
-            PQFrame->hide();
-            logjzFrame->hide();
-        }
-    }
 
-    if (Autograycie->get_active()) {
-        sourceGraycie->set_sensitive(false);
-        sourceabscie->set_sensitive(false);
-        adapjzcie->set_sensitive(false);
-        jz100->set_sensitive(false);
-        blackEvjz->set_sensitive(false);
-        whiteEvjz->set_sensitive(false);
-    } else {
-        sourceGraycie->set_sensitive(true);
-        sourceabscie->set_sensitive(true);
-        adapjzcie->set_sensitive(true);
-        blackEvjz->set_sensitive(true);
-        whiteEvjz->set_sensitive(true);
-        jz100->set_sensitive(true);
-    }
-
-    if (mode == Simple || mode == Normal) { // Keep widget hidden in Normal and Simple mode
-        modecie->set_active (0);
-        sensicie->show();
-        reparcie->show();
-    }
-    if (modecie->get_active_row_number() > 0) {
-        exprecovcie->hide();
-        expmaskcie->hide();
-    }
 
 }
 
@@ -10120,9 +11604,28 @@ void Locallabcie::convertParamToSimple()
     // Disable all listeners
     disableListener();
     sigmoidblcie->setValue(defSpot.sigmoidblcie);
+    normcie->set_active(defSpot.normcie);
+    logcieq->set_active(defSpot.logcieq);
+    logcie->set_active(defSpot.logcie);
+    blackEvjz->setValue(defSpot.blackEvjz);
+    whiteEvjz->setValue(defSpot.whiteEvjz);
+    whitescie->setValue(defSpot.whitescie);
+    blackscie->setValue(defSpot.blackscie);
+
+    sigq->set_active(defSpot.sigq);
+    //sigq->set_active(defSpot.sigq);
+    pqremapcam16->setValue(defSpot.pqremapcam16);
     showmaskcieMethod->set_active(0);
     enacieMask->set_active(defSpot.enacieMask);
+    enacieMaskall->set_active(defSpot.enacieMaskall);
+    strgradcie->setValue(defSpot.strgradcie);
+    anggradcie->setValue(defSpot.anggradcie);
+    refi->setValue(defSpot.refi);
     modecie->set_active(0);
+    primMethod->set_active(0);//Prophoto
+    illMethod->set_active(1);//D50
+    catMethod->set_active(0);
+
     // Enable all listeners
     enableListener();
 }
@@ -10134,11 +11637,17 @@ void Locallabcie::convertParamToNormal()
     // Disable all listeners
     disableListener();
     contqcie->setValue(defSpot.contqcie);
+    sigmoidblcie->setValue(defSpot.sigmoidblcie);
+    normcie->set_active(defSpot.normcie);
+    logcieq->set_active(defSpot.logcieq);
+    logcie->set_active(defSpot.logcie);
+
+    //contsigqcie->setValue(defSpot.contsigqcie);
     colorflcie->setValue(defSpot.colorflcie);
     lightqcie->setValue(defSpot.lightqcie);
     chromlcie->setValue(defSpot.chromlcie);
     huecie->setValue(defSpot.huecie);
-    detailcie->setValue(defSpot.detailcie);
+    // detailcie->setValue(defSpot.detailcie);
     jabcie->set_active(defSpot.jabcie);
     LHshapejz->setCurve(defSpot.LHcurvejz);
     CHshapejz->setCurve(defSpot.CHcurvejz);
@@ -10150,6 +11659,7 @@ void Locallabcie::convertParamToNormal()
     shapecie2->setCurve(defSpot.ciecurve2);
     lightjzcie->setValue(defSpot.lightjzcie);
     contjzcie->setValue(defSpot.contjzcie);
+    detailciejz->setValue(defSpot.detailciejz);
     sigmoidldajzcie->setValue(defSpot.sigmoidldajzcie);
     hljzcie->setValue(defSpot.hljzcie);
     shjzcie->setValue(defSpot.shjzcie);
@@ -10160,15 +11670,41 @@ void Locallabcie::convertParamToNormal()
     strsoftjzcie->setValue(defSpot.strsoftjzcie);
     thrhjzcie->setValue(defSpot.thrhjzcie);
     modecie->set_active(0);
+    //primMethod->set_active(0);
+    catMethod->set_active(0);
+    primMethod->set_active(0);//Prophoto
+    illMethod->set_active(1);//D50
+    refi->setValue(defSpot.refi);
+
+    pqremapcam16->setValue(defSpot.pqremapcam16);
+    logcieChanged();
+    satcieChanged();
+    logcieqChanged();
+
     if (modecam->get_active_row_number() == 1) {
         showmaskcieMethod->set_active(0);
         enacieMask->set_active(defSpot.enacieMask);
         logjz->set_active(defSpot.logjz);
         sigjz->set_active(defSpot.sigjz);
+        lapmaskcie->setValue(defSpot.lapmaskcie);
+        enacieMaskallChanged2();
+
     }
+
     lapmaskcie->setValue(defSpot.lapmaskcie);
     gammaskcie->setValue(defSpot.gammaskcie);
     slomaskcie->setValue(defSpot.slomaskcie);
+    highmaskcie->setValue(defSpot.highmaskcie);
+    shadmaskcie->setValue(defSpot.shadmaskcie);
+    HHhmaskcieshape->setCurve(defSpot.HHhmaskciecurve);
+    strumaskcie->setValue(defSpot.strumaskcie);
+    toolcie->set_active(defSpot.toolcie);
+    fftcieMask->set_active(defSpot.fftcieMask);
+    contcie->setValue(defSpot.contcie);
+    blurcie->setValue(defSpot.blurcie);
+    sigmoidsenscie->setValue(defSpot.sigmoidsenscie);
+    LLmaskcieshapewav->setCurve(defSpot.LLmaskciecurvewav);
+    csThresholdcie->setValue<int>(defSpot.csthresholdcie);
 
     // Enable all listeners
     enableListener();
@@ -10188,8 +11724,8 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         sourceabscie->setDefault(defSpot.sourceabscie);
         saturlcie->setDefault(defSpot.saturlcie);
         rstprotectcie->setDefault(defSpot.rstprotectcie);
-        chromlcie->setDefault(defSpot.chromlcie);
-        huecie->setDefault(defSpot.huecie);
+        // chromlcie->setDefault(defSpot.chromlcie);
+        // huecie->setDefault(defSpot.huecie);
         chromjzcie->setDefault(defSpot.chromjzcie);
         saturjzcie->setDefault(defSpot.saturjzcie);
         huejzcie->setDefault(defSpot.huejzcie);
@@ -10198,9 +11734,11 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         thrhjzcie->setDefault(defSpot.thrhjzcie);
         lightlcie->setDefault(defSpot.lightlcie);
         lightjzcie->setDefault(defSpot.lightjzcie);
-        lightqcie->setDefault(defSpot.lightqcie);
+        //lightqcie->setDefault(defSpot.lightqcie);
+        lightsigqcie->setDefault(defSpot.lightsigqcie);
         contlcie->setDefault(defSpot.contlcie);
         contjzcie->setDefault(defSpot.contjzcie);
+        detailciejz->setDefault(defSpot.detailciejz);
         adapjzcie->setDefault(defSpot.adapjzcie);
         jz100->setDefault(defSpot.jz100);
         pqremap->setDefault(defSpot.pqremap);
@@ -10221,53 +11759,94 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         targetjz->setDefault(defSpot.targetjz);
         sigmoidldacie->setDefault(defSpot.sigmoidldacie);
         sigmoidthcie->setDefault(defSpot.sigmoidthcie);
+        sigmoidsenscie->setDefault(defSpot.sigmoidsenscie);
         sigmoidblcie->setDefault(defSpot.sigmoidblcie);
+        comprcie->setDefault(defSpot.comprcie);
+        strcielog->setDefault(defSpot.strcielog);
+        comprcieth->setDefault(defSpot.comprcieth);
+        gamjcie->setDefault(defSpot.gamjcie);
+        whitescie->setDefault(defSpot.whitescie);
+        blackscie->setDefault(defSpot.blackscie);
+        slopjcie->setDefault(defSpot.slopjcie);
+        slopesmo->setDefault(defSpot.slopesmo);
+        midtcie->setDefault(defSpot.midtcie);
         sigmoidldajzcie->setDefault(defSpot.sigmoidldajzcie);
         sigmoidthjzcie->setDefault(defSpot.sigmoidthjzcie);
         sigmoidbljzcie->setDefault(defSpot.sigmoidbljzcie);
-        contqcie->setDefault(defSpot.contqcie);
+        // contqcie->setDefault(defSpot.contqcie);
+        contsigqcie->setDefault(defSpot.contsigqcie);
         colorflcie->setDefault(defSpot.colorflcie);
         targabscie->setDefault(defSpot.targabscie);
         targetGraycie->setDefault(defSpot.targetGraycie);
         catadcie->setDefault(defSpot.catadcie);
-        detailcie->setDefault(defSpot.detailcie);
+        // detailcie->setDefault(defSpot.detailcie);
+        strgradcie->setDefault((double)defSpot.strgradcie);
+        anggradcie->setDefault((double)defSpot.anggradcie);
         blendmaskcie->setDefault((double)defSpot.blendmaskcie);
         radmaskcie->setDefault(defSpot.radmaskcie);
         chromaskcie->setDefault(defSpot.chromaskcie);
         lapmaskcie->setDefault(defSpot.lapmaskcie);
         gammaskcie->setDefault(defSpot.gammaskcie);
         slomaskcie->setDefault(defSpot.slomaskcie);
+        highmaskcie->setDefault(defSpot.highmaskcie);
+        shadmaskcie->setDefault(defSpot.shadmaskcie);
         recothrescie->setDefault((double)defSpot.recothrescie);
         lowthrescie->setDefault((double)defSpot.lowthrescie);
         higthrescie->setDefault((double)defSpot.higthrescie);
         decaycie->setDefault((double)defSpot.decaycie);
+        strumaskcie->setDefault(defSpot.strumaskcie);
+        contcie->setDefault(defSpot.contcie);
+        blurcie->setDefault(defSpot.blurcie);
+        csThresholdcie->setDefault<int>(defSpot.csthresholdcie);
+        redxl->setDefault(defSpot.redxl);
+        redyl->setDefault(defSpot.redyl);
+        grexl->setDefault(defSpot.grexl);
+        greyl->setDefault(defSpot.greyl);
+        bluxl->setDefault(defSpot.bluxl);
+        bluyl->setDefault(defSpot.bluyl);
+        shiftxl->setDefault(defSpot.shiftxl);
+        shiftyl->setDefault(defSpot.shiftyl);
+        refi->setDefault(defSpot.refi);
+        labgridcie->setDefault(defSpot.labgridcieALow,
+                               defSpot.labgridcieBLow,
+                               defSpot.labgridcieAHigh,
+                               defSpot.labgridcieBHigh,
+                               defSpot.labgridcieGx,
+                               defSpot.labgridcieGy,
+                               defSpot.labgridcieWx,
+                               defSpot.labgridcieWy,
+                               defSpot.labgridcieMx,
+                               defSpot.labgridcieMy);
 
     }
 }
 
+
+
 void Locallabcie::curveChanged(CurveEditor* ce)
 {
     if (isLocActivated && exp->getEnabled()) {
-       const auto spName = M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")";
-       if (ce == shapejz) {
+        const auto spName = M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")";
+
+        if (ce == shapejz) {
             if (listener) {
                 listener->panelChanged(Evlocallabshapejz, spName);
             }
         }
 
-       if (ce == shapecz) {
+        if (ce == shapecz) {
             if (listener) {
                 listener->panelChanged(Evlocallabshapecz, spName);
             }
         }
 
-       if (ce == shapeczjz) {
+        if (ce == shapeczjz) {
             if (listener) {
                 listener->panelChanged(Evlocallabshapeczjz, spName);
             }
         }
 
-       if (ce == HHshapejz) {
+        if (ce == HHshapejz) {
             if (listener) {
                 listener->panelChanged(EvlocallabHHshapejz, spName);
             }
@@ -10318,6 +11897,13 @@ void Locallabcie::curveChanged(CurveEditor* ce)
             }
         }
 
+        if (ce == HHhmaskcieshape) {
+            if (listener) {
+                listener->panelChanged(EvlocallabHHhmaskcieshape,
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
         if (ce == Lmaskcieshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabLmaskcieshape,
@@ -10332,6 +11918,12 @@ void Locallabcie::curveChanged(CurveEditor* ce)
             }
         }
 
+        if (ce == LLmaskcieshapewav) {
+            if (listener) {
+                listener->panelChanged(EvlocallabLLmaskcieshapewav,
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
 
     }
 }
@@ -10345,6 +11937,14 @@ void Locallabcie::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int new
                                    csThresholdjz->getHistoryString() + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     }
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvlocallabcsThresholdcie,
+                                   csThresholdcie->getHistoryString() + " (" + escapeHtmlChars(getSpotName()) + ")");
+        }
+    }
+
 }
 
 
@@ -10354,6 +11954,7 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
 
     if (isLocActivated && exp->getEnabled()) {
         const auto spName = " (" + escapeHtmlChars(getSpotName()) + ")";
+
         if (a == reparcie) {
             if (listener) {
                 listener->panelChanged(Evlocallabreparcie,
@@ -10383,7 +11984,7 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
 
             if (listener) {
                 listener->panelChanged(Evlocallabsourceabscie,
-                                       sourceabscie->getTextValue() + spName );
+                                       sourceabscie->getTextValue() + spName);
             }
         }
 
@@ -10478,11 +12079,18 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             }
         }
 
+        if (a == lightsigqcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallablightsigqcie,
+                                       lightsigqcie->getTextValue() + spName);
+            }
+        }
+
 
         if (a == contlcie) {
             if (listener) {
                 listener->panelChanged(Evlocallabcontlcie,
-                                       contlcie->getTextValue()+ spName);
+                                       contlcie->getTextValue() + spName);
             }
         }
 
@@ -10490,6 +12098,13 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabcontjzcie,
                                        contjzcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == detailciejz) {
+            if (listener) {
+                listener->panelChanged(Evlocallabdetailciejz,
+                                        detailciejz->getTextValue() + spName);
             }
         }
 
@@ -10510,14 +12125,14 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
         if (a == pqremap) {
             if (listener) {
                 listener->panelChanged(Evlocallabpqremap,
-                                       pqremap->getTextValue()+ spName );
+                                       pqremap->getTextValue() + spName);
             }
         }
 
         if (a == pqremapcam16) {
             if (listener) {
                 listener->panelChanged(Evlocallabpqremapcam16,
-                                       pqremapcam16->getTextValue()+ spName );
+                                       pqremapcam16->getTextValue() + spName);
             }
         }
 
@@ -10538,7 +12153,7 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
         if (a == shjzcie) {
             if (listener) {
                 listener->panelChanged(Evlocallabshjzcie,
-                                       shjzcie->getTextValue()+ spName );
+                                       shjzcie->getTextValue() + spName);
             }
         }
 
@@ -10633,10 +12248,17 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             }
         }
 
+        if (a == sigmoidsenscie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsigmoidsenscie,
+                                       sigmoidsenscie->getTextValue() + spName);
+            }
+        }
+
         if (a == sigmoidthjzcie) {
             if (listener) {
                 listener->panelChanged(Evlocallabsigmoidthjzcie,
-                                       sigmoidthjzcie->getTextValue()+ spName );
+                                       sigmoidthjzcie->getTextValue() + spName);
             }
         }
 
@@ -10644,6 +12266,135 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabsigmoidblcie,
                                        sigmoidblcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == comprcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabcomprcie,
+                                       comprcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == strcielog) {
+            if (listener) {
+                listener->panelChanged(Evlocallabstrcielog,
+                                       strcielog->getTextValue() + spName);
+            }
+        }
+
+        if (a == comprcieth) {
+            nextcomprciecount = 0;
+
+            if (listener) {
+                listener->panelChanged(Evlocallabcomprcieth,
+                                       comprcieth->getTextValue() + spName);
+            }
+        }
+
+        if (a == gamjcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabgamjcie,
+                                       gamjcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == slopjcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabslopjcie,
+                                       slopjcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == slopesmo) {
+            if (listener) {
+                listener->panelChanged(Evlocallabslopesmo,
+                                       slopesmo->getTextValue() + spName);
+            }
+        }
+
+        if (a == midtcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabmidtcie,
+                                       midtcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == redxl) {
+            if (listener) {
+                listener->panelChanged(Evlocallabredxl,
+                                       redxl->getTextValue() + spName);
+            }
+        }
+
+        if (a == redyl) {
+            if (listener) {
+                listener->panelChanged(Evlocallabredyl,
+                                       redyl->getTextValue() + spName);
+            }
+        }
+
+
+        if (a == grexl) {
+            if (listener) {
+                listener->panelChanged(Evlocallabgrexl,
+                                       grexl->getTextValue() + spName);
+            }
+        }
+
+        if (a == greyl) {
+            if (listener) {
+                listener->panelChanged(Evlocallabgreyl,
+                                       greyl->getTextValue() + spName);
+            }
+        }
+
+        if (a == bluxl) {
+            if (listener) {
+                listener->panelChanged(Evlocallabbluxl,
+                                       bluxl->getTextValue() + spName);
+            }
+        }
+
+        if (a == bluyl) {
+            if (listener) {
+                listener->panelChanged(Evlocallabbluyl,
+                                       bluyl->getTextValue() + spName);
+            }
+        }
+
+        if (a == refi) {
+            if (listener) {
+                listener->panelChanged(Evlocallabrefi,
+                                       refi->getTextValue() + spName);
+            }
+        }
+
+        if (a == shiftxl) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshiftxl,
+                                       shiftxl->getTextValue() + spName);
+            }
+        }
+
+        if (a == shiftyl) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshiftyl,
+                                       shiftyl->getTextValue() + spName);
+            }
+        }
+
+        if (a == whitescie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabwhitescie,
+                                       whitescie->getTextValue() + spName);
+            }
+        }
+
+        if (a == blackscie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabblackscie,
+                                       blackscie->getTextValue() + spName);
             }
         }
 
@@ -10661,70 +12412,20 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             }
         }
 
+        if (a == contsigqcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabcontsigqcie,
+                                       contsigqcie->getTextValue() + spName);
+            }
+        }
+
         if (a == colorflcie) {
             if (listener) {
                 listener->panelChanged(Evlocallabcolorflcie,
-                                       colorflcie->getTextValue()+ spName );
+                                       colorflcie->getTextValue() + spName);
             }
         }
 
-/*
-        if (a == lightlzcam) {
-            if (listener) {
-                listener->panelChanged(Evlocallablightlzcam,
-                                       lightlzcam->getTextValue()+ spName );
-            }
-        }
-
-        if (a == lightqzcam) {
-            if (listener) {
-                listener->panelChanged(Evlocallablightqzcam,
-                                       lightqzcam->getTextValue()+ spName );
-            }
-        }
-
-        if (a == contlzcam) {
-            if (listener) {
-                listener->panelChanged(Evlocallabcontlzcam,
-                                       contlzcam->getTextValue()+ spName );
-            }
-        }
-
-        if (a == contqzcam) {
-            if (listener) {
-                listener->panelChanged(Evlocallabcontqzcam,
-                                       contqzcam->getTextValue()+ spName );
-            }
-        }
-
-        if (a == contthreszcam) {
-            if (listener) {
-                listener->panelChanged(Evlocallabcontthreszcam,
-                                       contthreszcam->getTextValue()+ spName );
-            }
-        }
-
-        if (a == colorflzcam) {
-            if (listener) {
-                listener->panelChanged(Evlocallabcolorflzcam,
-                                       colorflzcam->getTextValue()+ spName );
-            }
-        }
-
-        if (a == saturzcam) {
-            if (listener) {
-                listener->panelChanged(Evlocallabsaturzcam,
-                                       saturzcam->getTextValue()+ spName );
-            }
-        }
-
-        if (a == chromzcam) {
-            if (listener) {
-                listener->panelChanged(Evlocallabchromzcam,
-                                       chromzcam->getTextValue()+ spName );
-            }
-        }
-*/
         if (a == targabscie) {
             if (listener) {
                 listener->panelChanged(Evlocallabtargabscie,
@@ -10750,6 +12451,20 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabdetailcie,
                                        detailcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == strgradcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabstrgradcie,
+                                       strgradcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == anggradcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabanggradcie,
+                                       anggradcie->getTextValue() + spName);
             }
         }
 
@@ -10795,6 +12510,20 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             }
         }
 
+        if (a == highmaskcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabhighmaskcie,
+                                       highmaskcie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == shadmaskcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshadmaskcie,
+                                       shadmaskcie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
         if (a == recothrescie) {
 
             if (listener) {
@@ -10824,12 +12553,33 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             }
         }
 
+        if (a == strumaskcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabstrumaskcie,
+                                       strumaskcie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == contcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabcontcie,
+                                       contcie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == blurcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabblurcie,
+                                       blurcie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
     }
 }
 
 void Locallabcie::enabledChanged()
 {
-     if (isLocActivated) {
+    if (isLocActivated) {
         if (listener) {
             if (exp->getEnabled()) {
                 listener->panelChanged(EvLocenacie,

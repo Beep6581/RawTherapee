@@ -424,11 +424,44 @@ public:
         double Lnres46;
     };
 
+    struct locallabcieBEF {
+        double blackevbef;
+        double whiteevbef;
+        double sourcegbef;
+        double sourceabbef;
+        double targetgbef;
+        bool autocomputbef;
+        bool autociebef;
+        double jz1bef;
+    };
+
+    struct locallabcieLC {
+        double redxlc;
+        double redylc;
+        double grexlc;
+        double greylc;
+        double bluxlc;
+        double bluylc; 
+        double wxlc;
+        double wylc;
+        double meanxlc;
+        double meanylc;
+        double meanxelc;
+        double meanyelc;
+    };
+
+    struct locallabcieSIG {
+        double contsigq;
+        double lightsigq;
+    };
+
     virtual ~LocallabListener() = default;
 //    virtual void refChanged(const std::vector<locallabRef> &ref, int selspot) = 0;
     virtual void minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int selspot) = 0;
     virtual void denChanged(const std::vector<locallabDenoiseLC> &denlc, int selspot) = 0;
-    virtual void logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const bool autocomput, const bool autocie, const float jz1) = 0;
+    virtual void cieChanged(const std::vector<locallabcieLC> &cielc, int selspot) = 0;
+    virtual void sigChanged(const std::vector<locallabcieSIG> &ciesig, int selspot) = 0;
+    virtual void ciebefChanged(const std::vector<locallabcieBEF> &ciebef, int selspot) = 0;
     virtual void refChanged2(float *huerefp, float *chromarefp, float *lumarefp, float *fabrefp, int selspot) = 0;
     virtual void mainChanged(int spottype, int selspot, bool iscolor, bool issh, bool isvib, bool isexpos, bool issoft, bool isblur, bool istom, bool isret, bool issharp, bool iscont, bool iscbdl, bool islog, bool ismas, bool iscie) = 0;
     virtual void scopeChangedcol(int scope, int selspot, bool enab) = 0;
@@ -450,7 +483,7 @@ class AutoprimListener
 public:
     virtual ~AutoprimListener() = default;
     virtual void primChanged(float rx, float ry, float bx, float by, float gx, float gy) = 0;
-    virtual void iprimChanged(float r_x, float r_y, float b_x, float b_y, float g_x, float g_y, float w_x, float w_y) = 0;
+    virtual void iprimChanged(float r_x, float r_y, float b_x, float b_y, float g_x, float g_y, float w_x, float w_y, float m_x, float m_y) = 0;
 };
 
 

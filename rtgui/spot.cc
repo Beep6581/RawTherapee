@@ -893,4 +893,7 @@ void Spot::tweakParams(procparams::ProcParams& pparams)
     pparams.gradient.enabled = false;
     pparams.pcvignette.enabled = false;
     pparams.colorappearance.enabled = false;
+    pparams.locallab.enabled = false;
+   // pparams.toneCurve.hrenabled = false;  // not sure for this one, it could be useful for ExpComp w/o performance penalty
+    pparams.toneCurve.histmatching = false;
 }
