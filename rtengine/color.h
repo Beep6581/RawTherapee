@@ -127,8 +127,8 @@ public:
 
     constexpr static float D50x = 0.9642f; //0.96422;
     constexpr static float D50z = 0.8249f; //0.82521;
-    constexpr static double u0 = 4.0 * static_cast<double>(D50x) / (static_cast<double>(D50x) + 15 + 3 * static_cast<double>(D50z));
-    constexpr static double v0 = 9.0 / (static_cast<double>(D50x) + 15 + 3 * static_cast<double>(D50z));
+    constexpr static double u0 = 4.0 * static_cast<double>(D50x) / (static_cast<double>(D50x) + 15.0 + 3.0 * static_cast<double>(D50z));
+    constexpr static double v0 = 9.0 / (static_cast<double>(D50x) + 15.0 + 3.0 * static_cast<double>(D50z));
     constexpr static double epskap = 8.0;
     constexpr static float epskapf = epskap;
 
@@ -1399,7 +1399,36 @@ static inline void Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, v
     //static inline float  gamma            (double x) { return gammatab[x]; }
     //static inline float  igamma_srgb      (double x) { return igammatab_srgb[x]; }
 
+    // code take in ART thanks to Alberto Griggio
+    // Rec.2100 PQ curve
+    // https://www.itu.int/dms_pubrec/itu-r/rec/bt/R-REC-BT.2100-2-201807-I!!PDF-F.pdf
+    // Perceptual Quantization / SMPTE standard ST.2084
+    static float eval_PQ_curve(float x, bool oetf);
 
+    // Hybrid-log gamma curve
+    // https://www.itu.int/dms_pubrec/itu-r/rec/bt/R-REC-BT.2100-2-201807-I!!PDF-F.pdf
+    static float eval_HLG_curve(float x, bool oetf);
+
+    static float eval_ACEScct_curve(float x, bool inverse);
+
+    static void xyz2oklab(float X, float Y, float Z, float &L, float &a, float &b);
+    static void oklab2xyz(float L, float a, float b, float &X, float &Y, float &Z);
+
+    template <class T>
+    static void rgb2oklab(float R, float G, float B, float &L, float &a, float &b, const T ws[3][3])
+    {
+        float X, Y, Z;
+        rgbxyz(R, G, B, X, Y, Z, ws);
+        xyz2oklab(X, Y, Z, L, a, b);
+    }
+
+    template <class T>
+    static void oklab2rgb(float L, float a, float b, float &R, float &G, float &B, const T iws[3][3])
+    {
+        float X, Y, Z;
+        oklab2xyz(L, a, b, X, Y, Z);
+        xyz2rgb(X, Y, Z, R, G, B, iws);
+    }
 
     // --------------------------------  Jacques's Munsell correction
 
@@ -1847,13 +1876,13 @@ static inline void Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, v
     */
     static void gamutmap(float &X, float Y, float &Z, const double p[3][3]);
 
-	/**
-	* @brief Convert primaries in XYZ values in function of illuminant
-	* @param p primaries red, gree, blue
-	* @param Wx Wy white for illuminant 
-	* @param pxyz return matrix XYZ 
-	*/
-	static void primaries_to_xyz (double p[6], double Wx, double Wz, double *pxyz);
+    /**
+    * @brief Convert primaries in XYZ values in function of illuminant
+    * @param p primaries red, gree, blue
+    * @param Wx Wy white for illuminant 
+    * @param pxyz return matrix XYZ 
+    */
+    static void primaries_to_xyz (double p[6], double Wx, double Wz, double *pxyz, int cat);
 
     /**
     * @brief Get HSV's hue from the Lab's hue
