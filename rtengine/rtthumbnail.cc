@@ -1535,7 +1535,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
     ipf.softLight(labView, params.softlight);
 
-    if (params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE) {
+    if (params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE && params.icm.trcExp) {
         const int GW = labView->W;
         const int GH = labView->H;
         std::unique_ptr<LabImage> provis;
@@ -1559,8 +1559,49 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
         cmsHTRANSFORM dummy = nullptr;
         int ill = 0;
-        ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, ill, 0, dummy, true, false, false);
-        ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, illum, prim, dummy, false, true, true);
+        int locprim = 0;
+        float rdx, rdy, grx, gry, blx, bly = 0.f;
+        float meanx, meany, meanxe, meanye = 0.f;
+        ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, ill, 0, 0, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, dummy, true, false, false);
+        ipf.workingtrc(0, tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone,0, illum, prim, locprim, rdx, rdy, grx, gry, blx, bly,meanx, meany, meanxe, meanye, dummy, false, true, true);
+        const int midton = params.icm.wmidtcie;
+           if(midton != 0) {
+                ToneEqualizerParams params;
+                params.enabled = true;
+                params.regularization = 0.f;
+                params.pivot = 0.f;
+                params.bands[0] = 0;
+                params.bands[2] = midton;
+                params.bands[4] = 0;
+                params.bands[5] = 0;
+                int mid = abs(midton);
+                int threshmid = 50;
+                if(mid > threshmid) {
+                    params.bands[1] = sign(midton) * (mid - threshmid);
+                    params.bands[3] = sign(midton) * (mid - threshmid);     
+                }
+                ipf.toneEqualizer(tmpImage1.get(), params, prof, 1, false);
+                }
+
+        const bool smoothi = params.icm.wsmoothcie;
+            if(smoothi) {
+                ToneEqualizerParams params;
+                params.enabled = true;
+                params.regularization = 0.f;
+                params.pivot = 0.f;
+                params.bands[0] = 0;
+                params.bands[1] = 0;
+                params.bands[2] = 0;
+                params.bands[3] = 0;
+                params.bands[4] = -40;//arbitrary value to adapt with WhiteEvjz - here White Ev # 10
+                params.bands[5] = -80;//8 Ev and above
+                bool Evsix = true;
+                if(Evsix) {//EV = 6 majority of images
+                    params.bands[4] = -15;
+                }
+                
+                ipf.toneEqualizer(tmpImage1.get(), params, prof, 1, false);
+            }
 
         ipf.rgb2lab(*tmpImage1, *labView, params.icm.workingProfile);
         // labView and provis
