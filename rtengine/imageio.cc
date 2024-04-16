@@ -24,6 +24,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+
 #include <fcntl.h>
 #include <glib/gstdio.h>
 #include <png.h>
@@ -31,10 +32,7 @@
 #include <tiffio.h>
 
 #ifdef LIBJXL
-#include <fstream>
-#include "jxl/decode.h"
 #include "jxl/decode_cxx.h"
-#include "jxl/resizable_parallel_runner.h"
 #include "jxl/resizable_parallel_runner_cxx.h"
 #endif
 
@@ -832,17 +830,16 @@ int ImageIO::loadTIFF (const Glib::ustring &fname)
 #ifdef LIBJXL
 #define _PROFILE_ JXL_COLOR_PROFILE_TARGET_ORIGINAL
 // adapted from libjxl
-int ImageIO::loadJxl(const Glib::ustring &fname)
+int ImageIO::loadJXL(const Glib::ustring &fname)
 {
     if (pl) {
         pl->setProgressStr("PROGRESSBAR_LOADJXL");
         pl->setProgress(0.0);
     }
 
-    std::vector<uint8_t> icc_profile;
-
-    gpointer buffer = nullptr;
-    size_t buffer_size = 0;
+    std::vector<std::uint8_t> icc_profile;
+    std::vector<std::uint8_t> buffer;
+    std::size_t buffer_size = 0;
 
     JxlBasicInfo info = {};
     JxlPixelFormat format = {};
@@ -852,28 +849,25 @@ int ImageIO::loadJxl(const Glib::ustring &fname)
     format.endianness = JXL_NATIVE_ENDIAN;
     format.align = 0;
 
-    // get file contents
-    std::ifstream instream(fname.c_str(), std::ios::in | std::ios::binary);
-    std::vector<uint8_t> compressed(
-        (std::istreambuf_iterator<char>(instream)),
-        std::istreambuf_iterator<char>());
-    instream.close();
+    std::string const contents = Glib::file_get_contents(fname);
+    std::vector<std::uint8_t> const compressed(contents.begin(), contents.end());
 
     // multi-threaded parallel runner.
     auto runner = JxlResizableParallelRunnerMake(nullptr);
 
     auto dec = JxlDecoderMake(nullptr);
+
     if (JXL_DEC_SUCCESS !=
-        JxlDecoderSubscribeEvents(dec.get(), JXL_DEC_BASIC_INFO |
-                                                 JXL_DEC_COLOR_ENCODING |
-                                                 JXL_DEC_FULL_IMAGE)) {
+            JxlDecoderSubscribeEvents(dec.get(), JXL_DEC_BASIC_INFO |
+                                      JXL_DEC_COLOR_ENCODING |
+                                      JXL_DEC_FULL_IMAGE)) {
         g_printerr("Error: JxlDecoderSubscribeEvents failed\n");
         return IMIO_HEADERERROR;
     }
 
     if (JXL_DEC_SUCCESS !=
-        JxlDecoderSetParallelRunner(dec.get(), JxlResizableParallelRunner,
-                                    runner.get())) {
+            JxlDecoderSetParallelRunner(dec.get(), JxlResizableParallelRunner,
+                                        runner.get())) {
         g_printerr("Error: JxlDecoderSetParallelRunner failed\n");
         return IMIO_HEADERERROR;
     }
@@ -897,31 +891,32 @@ int ImageIO::loadJxl(const Glib::ustring &fname)
             // check for ICC profile
             deleteLoadedProfileData();
             embProfile = nullptr;
-            size_t icc_size = 0;
+            std::size_t icc_size = 0;
 
             if (JXL_DEC_SUCCESS !=
 #if JPEGXL_NUMERIC_VERSION < JPEGXL_COMPUTE_NUMERIC_VERSION(0,8,0)
-                JxlDecoderGetICCProfileSize(dec.get(), &format, _PROFILE_, &icc_size)
+                    JxlDecoderGetICCProfileSize(dec.get(), &format, _PROFILE_, &icc_size)
 #else
-                JxlDecoderGetICCProfileSize(dec.get(), _PROFILE_, &icc_size)
+                    JxlDecoderGetICCProfileSize(dec.get(), _PROFILE_, &icc_size)
 #endif
-            ) {
+               ) {
                 g_printerr("Warning: JxlDecoderGetICCProfileSize failed\n");
             }
 
             if (icc_size > 0) {
                 icc_profile.resize(icc_size);
+
                 if (JXL_DEC_SUCCESS !=
 #if JPEGXL_NUMERIC_VERSION < JPEGXL_COMPUTE_NUMERIC_VERSION(0,8,0)
-                    JxlDecoderGetColorAsICCProfile(
-                        dec.get(), &format, _PROFILE_,
-                        icc_profile.data(), icc_profile.size())
+                        JxlDecoderGetColorAsICCProfile(
+                            dec.get(), &format, _PROFILE_,
+                            icc_profile.data(), icc_profile.size())
 #else
-                    JxlDecoderGetColorAsICCProfile(
-                        dec.get(), _PROFILE_,
-                        icc_profile.data(), icc_profile.size())
+                        JxlDecoderGetColorAsICCProfile(
+                            dec.get(), _PROFILE_,
+                            icc_profile.data(), icc_profile.size())
 #endif
-                ) {
+                   ) {
                     g_printerr(
                         "Warning: JxlDecoderGetColorAsICCProfile failed\n");
                 } else {
@@ -932,7 +927,10 @@ int ImageIO::loadJxl(const Glib::ustring &fname)
                 g_printerr("Warning: Empty ICC data.\n");
             }
         } else if (status == JXL_DEC_NEED_IMAGE_OUT_BUFFER) {
-            format.data_type = JXL_TYPE_FLOAT;
+            // Note: If this assert is ever triggered, it should be changed
+            // to an assignment.  We want the maximum bit depth the decoder
+            // can provide regardless of the original encoding intent.
+            assert(format.data_type == JXL_TYPE_FLOAT);
 
             if (JXL_DEC_SUCCESS !=
                     JxlDecoderImageOutBufferSize(dec.get(), &format, &buffer_size)) {
@@ -940,20 +938,19 @@ int ImageIO::loadJxl(const Glib::ustring &fname)
                 return IMIO_READERROR;
             }
 
-            buffer = g_malloc(buffer_size);
-            if (JXL_DEC_SUCCESS != JxlDecoderSetImageOutBuffer(dec.get(), &format, buffer, buffer_size)) {
+            buffer.resize(buffer_size);
+
+            if (JXL_DEC_SUCCESS != JxlDecoderSetImageOutBuffer(dec.get(), &format, buffer.data(), buffer.size())) {
                 g_printerr("Error: JxlDecoderSetImageOutBuffer failed\n");
-                g_free(buffer);
                 return IMIO_READERROR;
             }
         } else if (status == JXL_DEC_FULL_IMAGE ||
                    status == JXL_DEC_FRAME) {
             // Nothing to do. If the image is an animation, more full frames
             // may be decoded. This example only keeps the first one.
+            break;
         } else if (status == JXL_DEC_SUCCESS) {
-            // All decoding successfully finished.
-            // It's not required to call JxlDecoderReleaseInput(dec.get())
-            // since the decoder will be destroyed.
+            // Decoding complete.  Decoder will be released automatically.
             break;
         } else if (status == JXL_DEC_NEED_MORE_INPUT) {
             g_printerr("Error: Already provided all input\n");
@@ -967,26 +964,24 @@ int ImageIO::loadJxl(const Glib::ustring &fname)
         }
     }  // end grand decode loop
 
-    unsigned int width = info.xsize;
-    unsigned int height = info.ysize;
+    std::size_t width = info.xsize;
+    std::size_t height = info.ysize;
 
     allocate(width, height);
 
-    int line_length = width * 3 * 4;
+    std::size_t line_length = width * 3 * 4;
 
-    for (size_t row = 0; row < height; ++row) {
-        setScanline (row, ((const unsigned char*)buffer) + (row * line_length), 32);
+    for (std::size_t row = 0; row < height; ++row) {
+        setScanline(row, ((const unsigned char*)buffer.data()) + (row * line_length), 32);
 
         if (pl && !(row % 100)) {
-            pl->setProgress ((double)(row) / height);
+            pl->setProgress((double)(row) / height);
         }
     }
 
-    g_free(buffer);
-
     if (pl) {
-        pl->setProgressStr ("PROGRESSBAR_READY");
-        pl->setProgress (1.0);
+        pl->setProgressStr("PROGRESSBAR_READY");
+        pl->setProgress(1.0);
     }
 
     return IMIO_SUCCESS;
@@ -1484,7 +1479,7 @@ int ImageIO::load (const Glib::ustring &fname)
         return loadJPEG (fname);
 #ifdef LIBJXL
     } else if (hasJxlExtension(fname)) {
-        return loadJxl(fname);
+        return loadJXL(fname);
 #endif
     } else if (hasTiffExtension(fname)) {
         return loadTIFF (fname);

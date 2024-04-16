@@ -240,8 +240,7 @@ bool hasJpegExtension(const Glib::ustring& filename)
 #ifdef LIBJXL
 bool hasJxlExtension(const Glib::ustring& filename)
 {
-   const Glib::ustring extension = getFileExtension(filename);
-   return extension == "jxl";
+   return getFileExtension(filename) == "jxl";
 }
 #endif
 

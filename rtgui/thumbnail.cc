@@ -182,12 +182,12 @@ Glib::ustring Thumbnail::xmpSidecarPath(const Glib::ustring &imagePath)
     return rtengine::Exiv2Metadata::xmpSidecarPath(imagePath);
 }
 
-void Thumbnail::_generateThumbnailImage ()
+void Thumbnail::_generateThumbnailImage()
 {
     //  delete everything loaded into memory
     delete tpp;
     tpp = nullptr;
-    delete [] lastImg;
+    delete[] lastImg;
     lastImg = nullptr;
     tw = options.maxThumbnailWidth;
     th = options.maxThumbnailHeight;
@@ -211,21 +211,24 @@ void Thumbnail::_generateThumbnailImage ()
     bool quick = false;
 
     rtengine::eSensorType sensorType = rtengine::ST_NONE;
-    if ( initial_ && options.internalThumbIfUntouched) {
+
+    if (initial_ && options.internalThumbIfUntouched) {
         quick = true;
-        tpp = rtengine::Thumbnail::loadQuickFromRaw (fname, sensorType, tw, th, 1, TRUE);
+        tpp = rtengine::Thumbnail::loadQuickFromRaw(fname, sensorType, tw, th, 1, TRUE);
     }
 
-    if ( tpp == nullptr ) {
+    if (!tpp) {
         quick = false;
-        tpp = rtengine::Thumbnail::loadFromRaw (fname, sensorType, tw, th, 1, pparams->wb.equal, pparams->wb.observer, TRUE, &(pparams->raw));
+        tpp = rtengine::Thumbnail::loadFromRaw(fname, sensorType, tw, th, 1, pparams->wb.equal, pparams->wb.observer, TRUE, &(pparams->raw));
     }
 
     cfs.sensortype = sensorType;
+
     if (tpp) {
         cfs.format = FT_Raw;
         cfs.thumbImgType = quick ? CacheImageData::QUICK_THUMBNAIL : CacheImageData::FULL_THUMBNAIL;
-        infoFromImage (fname);
+        infoFromImage(fname);
+
         if (!quick) {
             cfs.width = tpp->full_width;
             cfs.height = tpp->full_height;
@@ -234,7 +237,8 @@ void Thumbnail::_generateThumbnailImage ()
 
     if (!tpp) {
         // this will load formats supported by imagio (jpg, png, jxl, and tiff)
-        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, -1, pparams->wb.equal, pparams->wb.observer);
+        tpp = rtengine::Thumbnail::loadFromImage(fname, tw, th, -1, pparams->wb.equal, pparams->wb.observer);
+
         if (tpp) {
             cfs.format = FT_Custom;
             infoFromImage(fname);
@@ -243,12 +247,12 @@ void Thumbnail::_generateThumbnailImage ()
 
     if (tpp) {
         tpp->getAutoWBMultipliers(cfs.redAWBMul, cfs.greenAWBMul, cfs.blueAWBMul);
-        _saveThumbnail ();
+        _saveThumbnail();
         cfs.supported = true;
 
-        cfs.save (getCacheFileName ("data", ".txt"));
+        cfs.save(getCacheFileName("data", ".txt"));
 
-        generateExifDateTimeStrings ();
+        generateExifDateTimeStrings();
     }
 }
 
@@ -718,10 +722,10 @@ rtengine::IImage8* Thumbnail::processThumbImage (const rtengine::procparams::Pro
 
     MyMutex::MyLock lock(mutex);
 
-    if ( tpp == nullptr ) {
+    if (!tpp) {
         _loadThumbnail();
 
-        if ( tpp == nullptr ) {
+        if (!tpp) {
             return nullptr;
         }
     }
@@ -755,7 +759,7 @@ rtengine::IImage8* Thumbnail::upgradeThumbImage (const rtengine::procparams::Pro
 
     _generateThumbnailImage();
 
-    if ( tpp == nullptr ) {
+    if (!tpp) {
         return nullptr;
     }
 
@@ -961,7 +965,7 @@ void Thumbnail::_loadThumbnail(bool firstTrial)
             _loadThumbnail (false);
         }
 
-        if (tpp == nullptr) {
+        if (!tpp) {
             return;
         }
     } else if (!succ) {

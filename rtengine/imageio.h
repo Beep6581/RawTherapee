@@ -91,7 +91,7 @@ public:
     int save (const Glib::ustring &fname) const;
 
 #ifdef LIBJXL
-    int loadJxl (const Glib::ustring &fname);
+    int loadJXL (const Glib::ustring &fname);
 #endif
 
     int loadPNG (const Glib::ustring &fname);
