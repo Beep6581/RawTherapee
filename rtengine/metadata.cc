@@ -317,7 +317,7 @@ void Exiv2Metadata::saveToImage(const Glib::ustring &path, bool preserve_all_tag
     std::time_t t = std::time(nullptr);
     char mbstr[100];
     if (std::strftime(mbstr, sizeof(mbstr), "%Y:%m:%d %H:%M:%S", std::localtime(&t))) {
-    dst->exifData()["Exif.Image.ModifyDate"] = mbstr;
+    dst->exifData()["Exif.Image.DateTime"] = mbstr;
     }
     
     import_exif_pairs(dst->exifData());
