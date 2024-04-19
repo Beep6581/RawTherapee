@@ -31,7 +31,7 @@
 #define MAXTEMP 60000  //12000
 #define CENTERTEMP 4750
 #define MINGREEN 0.02
-#define MAXGREEN 40.0
+#define MAXGREEN 60.0
 #define MINEQUAL 0.8
 #define MAXEQUAL 1.5
 
