@@ -396,8 +396,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     pack_start(*StudLabel);
     pack_start(*PatchLabel);
     pack_start(*PatchlevelLabel);
-    green->setLogScale(100, 0.);
-
+    green->setLogScale(MAXGREEN / MINGREEN, MINGREEN);
     pack_start (*temp);
     //pack_start (*boxgreen);
     pack_start (*green);
