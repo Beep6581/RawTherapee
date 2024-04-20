@@ -31,9 +31,9 @@
 #define MAXTEMP 60000  //12000
 #define CENTERTEMP 4750
 #define MINGREEN 0.02
-#define MAXGREEN 1000.0
-#define MINEQUAL 0.4
-#define MAXEQUAL 2.5
+#define MAXGREEN 100.0
+#define MINEQUAL 0.5
+#define MAXEQUAL 2.
 
 using namespace rtengine;
 using namespace rtengine::procparams;

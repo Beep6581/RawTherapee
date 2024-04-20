@@ -15,7 +15,8 @@ on:
   workflow_dispatch:
 
 env:
-  publish_pre_dev_labels: '["Beep6581:uvgreen"]'
+  publish_pre_dev_labels: '[]'
+
 
 jobs:
   build:
