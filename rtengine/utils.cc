@@ -19,6 +19,8 @@
 #include <cmath>
 #include <cstring>
 #include <cstdio>
+#include <fstream>
+#include <glibmm/convert.h>
 #include "rt_math.h"
 
 #include "utils.h"
@@ -219,6 +221,23 @@ void vflip(unsigned char* img, int w, int h)
 
         memcpy(img, flipped, 3 * w * h);
         delete[] flipped;
+    }
+}
+
+std::vector<std::uint8_t> getFileData(const Glib::ustring &filename)
+{
+    try {
+        const std::string fn = Glib::filename_from_utf8(filename);
+        std::ifstream instream(fn, std::ios::in | std::ios::binary);
+
+        std::vector<std::uint8_t> contents(
+            (std::istreambuf_iterator<char>(instream)),
+            std::istreambuf_iterator<char>());
+
+        instream.close();
+        return contents;
+    } catch (...) {
+        return {};
     }
 }
 

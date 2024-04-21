@@ -18,6 +18,8 @@
  */
 #pragma once
 
+#include <vector>
+
 #include <type_traits>
 #include <glibmm/ustring.h>
 
@@ -42,6 +44,8 @@ constexpr typename std::underlying_type<ENUM>::type toUnderlying(ENUM value)
 {
     return static_cast<typename std::underlying_type<ENUM>::type>(value);
 }
+
+std::vector<std::uint8_t> getFileData(const Glib::ustring &filename);
 
 // Return lower case extension without the "." or "" if the given name contains no "."
 Glib::ustring getFileExtension(const Glib::ustring& filename);

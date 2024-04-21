@@ -25,16 +25,16 @@
 #include <utility>
 #include <vector>
 
+#ifdef LIBJXL
+#include "jxl/decode_cxx.h"
+#include "jxl/resizable_parallel_runner_cxx.h"
+#endif
+
 #include <fcntl.h>
 #include <glib/gstdio.h>
 #include <png.h>
 #include <tiff.h>
 #include <tiffio.h>
-
-#ifdef LIBJXL
-#include "jxl/decode_cxx.h"
-#include "jxl/resizable_parallel_runner_cxx.h"
-#endif
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -849,8 +849,12 @@ int ImageIO::loadJXL(const Glib::ustring &fname)
     format.endianness = JXL_NATIVE_ENDIAN;
     format.align = 0;
 
-    std::string const contents = Glib::file_get_contents(fname);
-    std::vector<std::uint8_t> const compressed(contents.begin(), contents.end());
+    std::vector<std::uint8_t> const compressed = getFileData(fname);
+
+    if (compressed.empty()) {
+        g_printerr("Error: loadJXL failed to get data from file\n");
+        return IMIO_READERROR;
+    }
 
     // multi-threaded parallel runner.
     auto runner = JxlResizableParallelRunnerMake(nullptr);
@@ -894,7 +898,7 @@ int ImageIO::loadJXL(const Glib::ustring &fname)
             std::size_t icc_size = 0;
 
             if (JXL_DEC_SUCCESS !=
-#if JPEGXL_NUMERIC_VERSION < JPEGXL_COMPUTE_NUMERIC_VERSION(0,8,0)
+#if JPEGXL_NUMERIC_VERSION < JPEGXL_COMPUTE_NUMERIC_VERSION(0, 8, 0)
                     JxlDecoderGetICCProfileSize(dec.get(), &format, _PROFILE_, &icc_size)
 #else
                     JxlDecoderGetICCProfileSize(dec.get(), _PROFILE_, &icc_size)
@@ -907,7 +911,7 @@ int ImageIO::loadJXL(const Glib::ustring &fname)
                 icc_profile.resize(icc_size);
 
                 if (JXL_DEC_SUCCESS !=
-#if JPEGXL_NUMERIC_VERSION < JPEGXL_COMPUTE_NUMERIC_VERSION(0,8,0)
+#if JPEGXL_NUMERIC_VERSION < JPEGXL_COMPUTE_NUMERIC_VERSION(0, 8, 0)
                         JxlDecoderGetColorAsICCProfile(
                             dec.get(), &format, _PROFILE_,
                             icc_profile.data(), icc_profile.size())
@@ -927,9 +931,9 @@ int ImageIO::loadJXL(const Glib::ustring &fname)
                 g_printerr("Warning: Empty ICC data.\n");
             }
         } else if (status == JXL_DEC_NEED_IMAGE_OUT_BUFFER) {
-            // Note: If this assert is ever triggered, it should be changed
-            // to an assignment.  We want the maximum bit depth the decoder
-            // can provide regardless of the original encoding intent.
+            // Note: If assert is triggered, change to assignment.
+            // We want maximum bit depth from the decoder,
+            // regardless of the original encoding intent.
             assert(format.data_type == JXL_TYPE_FLOAT);
 
             if (JXL_DEC_SUCCESS !=
@@ -953,7 +957,7 @@ int ImageIO::loadJXL(const Glib::ustring &fname)
             // Decoding complete.  Decoder will be released automatically.
             break;
         } else if (status == JXL_DEC_NEED_MORE_INPUT) {
-            g_printerr("Error: Already provided all input\n");
+            g_printerr("Error: Decoder needs more input data\n");
             return IMIO_READERROR;
         } else if (status == JXL_DEC_ERROR) {
             g_printerr("Error: Decoder error\n");
@@ -962,7 +966,7 @@ int ImageIO::loadJXL(const Glib::ustring &fname)
             g_printerr("Error: Unknown decoder status\n");
             return IMIO_READERROR;
         }
-    }  // end grand decode loop
+    } // end grand decode loop
 
     std::size_t width = info.xsize;
     std::size_t height = info.ysize;
@@ -972,10 +976,10 @@ int ImageIO::loadJXL(const Glib::ustring &fname)
     std::size_t line_length = width * 3 * 4;
 
     for (std::size_t row = 0; row < height; ++row) {
-        setScanline(row, ((const unsigned char*)buffer.data()) + (row * line_length), 32);
+        setScanline(row, buffer.data() + (row * line_length), 32);
 
         if (pl && !(row % 100)) {
-            pl->setProgress((double)(row) / height);
+            pl->setProgress((double)(row + 1) / height);
         }
     }
 
