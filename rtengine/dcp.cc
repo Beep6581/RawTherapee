@@ -1134,6 +1134,7 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
     DCPMetadata md(file);
     if (!md.parse()) {
         printf ("Unable to load DCP profile '%s'.", filename.c_str());
+        fclose(file);
         return;
     }
 
