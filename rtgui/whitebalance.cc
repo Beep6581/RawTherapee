@@ -31,9 +31,9 @@
 #define MAXTEMP 60000  //12000
 #define CENTERTEMP 4750
 #define MINGREEN 0.02
-#define MAXGREEN 10.0
-#define MINEQUAL 0.8
-#define MAXEQUAL 1.5
+#define MAXGREEN 100.0
+#define MINEQUAL 0.5
+#define MAXEQUAL 2.
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -396,7 +396,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANC
     pack_start(*StudLabel);
     pack_start(*PatchLabel);
     pack_start(*PatchlevelLabel);
-
+    green->setLogScale(MAXGREEN / MINGREEN, MINGREEN);
     pack_start (*temp);
     //pack_start (*boxgreen);
     pack_start (*green);
