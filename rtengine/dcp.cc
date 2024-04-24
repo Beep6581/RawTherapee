@@ -1124,17 +1124,20 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
         1.00000f
     };
 
-    FILE* const file = g_fopen(filename.c_str(), "rb");
+    const std::unique_ptr<std::FILE, std::function<void(std::FILE *)>> file(
+        g_fopen(filename.c_str(), "rb"),
+        [](std::FILE *file) {
+            std::fclose(file);
+        });
 
     if (file == nullptr) {
         printf ("Unable to load DCP profile '%s' !", filename.c_str());
         return;
     }
 
-    DCPMetadata md(file);
+    DCPMetadata md(file.get());
     if (!md.parse()) {
         printf ("Unable to load DCP profile '%s'.", filename.c_str());
-        fclose(file);
         return;
     }
 
@@ -1175,7 +1178,6 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
     // Color Matrix (one is always there)
     if (!md.find(TAG_KEY_COLOR_MATRIX_1)) {
         std::cerr << "DCP '" << filename << "' is missing 'ColorMatrix1'. Skipped." << std::endl;
-        fclose(file);
         return;
     }
 
@@ -1350,10 +1352,6 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
         if (!deltas_1.empty() && !deltas_2.empty()) {
             will_interpolate = true;
         }
-    }
-
-    if (file) {
-        fclose(file);
     }
 
     valid = true;
