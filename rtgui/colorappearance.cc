@@ -1880,18 +1880,22 @@ void ColorAppearance::adapCamChanged (double cadap)
 }
 
 
-void ColorAppearance::wbCamChanged (double temp, double tin)
+void ColorAppearance::wbCamChanged (double temp, double tin, bool autotemp)
 {//reactivate this function
 
     idle_register.add(
-        [this, temp, tin]() -> bool
+        [this, temp, tin, autotemp]() -> bool
         {
             disableListener();
             tempout->setValue(temp);
             greenout->setValue(tin);
             enableListener();
-            listener->panelChanged (EvCATgreenout, greenout->getTextValue());
-            listener->panelChanged (EvCATtempout, tempout->getTextValue());
+            /*
+            if(!autotemp) {
+                listener->panelChanged (EvCATgreenout, greenout->getTextValue());
+                listener->panelChanged (EvCATtempout, tempout->getTextValue());
+            }
+            */
             return false;
         }
     );
