@@ -1890,12 +1890,12 @@ void ColorAppearance::wbCamChanged (double temp, double tin, bool autotemp)
             tempout->setValue(temp);
             greenout->setValue(tin);
             enableListener();
-            /*
+
             if(!autotemp) {
-                listener->panelChanged (EvCATgreenout, greenout->getTextValue());
-                listener->panelChanged (EvCATtempout, tempout->getTextValue());
+                listener->panelChanged (EvCATgreenout, "");//greenout->getTextValue());
+                listener->panelChanged (EvCATtempout, "");//tempout->getTextValue());
             }
-            */
+
             return false;
         }
     );
