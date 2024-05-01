@@ -933,8 +933,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.balanexp = locallab.spots.at(sp).balanexp;
     lp.linear = locallab.spots.at(sp).linear;
 
-    if (locallab.spots.at(sp).smoothciemet == "norm") {
-        lp.smoothciem = 1;
+    if (locallab.spots.at(sp).smoothciemet == "none") {
+        lp.smoothciem = 0;
     } else if (locallab.spots.at(sp).smoothciemet == "Ev") {
         lp.smoothciem = 1;
     } else if (locallab.spots.at(sp).smoothciemet == "gam") {
@@ -943,7 +943,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.smoothciem = 3;
     }
 
-    if (locallab.spots.at(sp).smoothciemet == "none") {
+    if (locallab.spots.at(sp).spotMethod == "norm") {
         lp.fullim = 0;
     } else if (locallab.spots.at(sp).spotMethod == "exc") {
         lp.fullim = 1;
