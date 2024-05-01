@@ -19978,10 +19978,41 @@ void ImProcFunctions::Lab_Local(
                 }
 
                 if (params->locallab.spots.at(sp).expprecam && params->locallab.spots.at(sp).modecam == "cam16") {
+                TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
+                TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
+
+                float toxyz[3][3] = {
+                {
+                static_cast<float>(wprof[0][0] / static_cast<double>(Color::D50x)),
+                static_cast<float>(wprof[0][1] / static_cast<double>(Color::D50x)),
+                static_cast<float>(wprof[0][2] / static_cast<double>(Color::D50x))
+                }, {
+                static_cast<float>(wprof[1][0]),
+                static_cast<float>(wprof[1][1]),
+                static_cast<float>(wprof[1][2])
+                }, {
+                static_cast<float>(wprof[2][0] / static_cast<double>(Color::D50z)),
+                static_cast<float>(wprof[2][1] / static_cast<double>(Color::D50z)),
+                static_cast<float>(wprof[2][2] / static_cast<double>(Color::D50z))
+                }
+                };
+                float maxFactorToxyz = max(toxyz[1][0], toxyz[1][1], toxyz[1][2]);
+                float equalR = maxFactorToxyz / toxyz[1][0];
+                float equalG = maxFactorToxyz / toxyz[1][1];
+                float equalB = maxFactorToxyz / toxyz[1][2];
+                //inverse matrix user select
+                double wip[3][3] = {
+                    {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
+                    {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
+                    {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
+                };
+    
                     Imagefloat *tmpImage = nullptr;
                     tmpImage = new Imagefloat(bfw, bfh);
                     Imagefloat *tmpImagelog = nullptr;
                     tmpImagelog = new Imagefloat(bfw, bfh);
+                    Imagefloat *tmpImage2 = nullptr;
+                    tmpImage2 = new Imagefloat(bfw, bfh);
                     
                     lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
                     Glib::ustring prof = params->icm.workingProfile;
@@ -20131,6 +20162,7 @@ void ImProcFunctions::Lab_Local(
                         float slopsmootr = 1.f - ((float) params->locallab.spots.at(sp).slopesmor - 1.f);//modify response so when increase slope the grays are becoming lighter
                         float slopsmootg = 1.f - ((float) params->locallab.spots.at(sp).slopesmog - 1.f);//modify response so when increase slope the grays are becoming lighter
                         float slopsmootb = 1.f - ((float) params->locallab.spots.at(sp).slopesmob - 1.f);//modify response so when increase slope the grays are becoming lighter
+                        bool lummod = params->locallab.spots.at(sp).smoothcielum;
                         if(lp.smoothciem == 3) {//slope activ, only with choice gamma - slope - based
                             rolloff = false;//allows tone-mapping slope
                             slopegray = slopsmoot;
@@ -20154,14 +20186,53 @@ void ImProcFunctions::Lab_Local(
                         bool scale = lp.issmoothcie;//scale Yb mid_gray - WhiteEv and BlavkEv
                         tonemapFreeman(slopegray, slopegrayr, slopegrayg, slopegrayb, white_point, black_point, mid_gray, mid_gray_view, rolloff, lut, lutr, lutg, lutb, mode, scale);
                         if(lp.smoothciem == 4) {
+                            if(lummod) {
  #ifdef _OPENMP
         #pragma omp parallel for
 #endif
-                            for (int y = 0; y < bfh ; ++ y) {//apply Lut tone-mapping or smooth: thanks to Alberto - gain time.
-                                for (int x = 0; x < bfw ; ++x) {
-                                    tmpImage->r(y, x) = 65535.f * lutr[tmpImage->r(y, x)];
-                                    tmpImage->g(y, x) = 65535.f * lutg[tmpImage->g(y, x)];
-                                    tmpImage->b(y, x) = 65535.f * lutb[tmpImage->b(y, x)];
+                                for (int y = 0; y < bfh ; ++ y) {
+                                    for (int x = 0; x < bfw ; ++x) {
+                                        float r = tmpImage->r(y, x);
+                                        float g = tmpImage->g(y, x);
+                                        float b = tmpImage->b(y, x);
+                                    //convert to Lab to get a&b before RGB
+                                        float xx = toxyz[0][0] * r + toxyz[0][1] * g + toxyz[0][2] * b;
+                                        float yy = toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b;
+                                        float zz = toxyz[2][0] * r + toxyz[2][1] * g + toxyz[2][2] * b;
+
+                                        float fx = xx < MAXVALF ? Color::cachef[xx] : 327.68f * std::cbrt(xx / MAXVALF);
+                                        float fy = yy < MAXVALF ? Color::cachef[yy] : 327.68f * std::cbrt(yy / MAXVALF);
+                                        float fz = zz < MAXVALF ? Color::cachef[zz] : 327.68f * std::cbrt(zz / MAXVALF);
+
+                                        float a_1 = 500.0f * (fx - fy);
+                                        float b_1 = 200.0f * (fy - fz);
+                                        float rNew = 65535.f * lutr[tmpImage->r(y, x)];
+                                        float gNew = 65535.f * lutg[tmpImage->g(y, x)];
+                                        float bNew = 65535.f * lutb[tmpImage->b(y, x)];
+                                        r += (rNew - r) * equalR;
+                                        g += (gNew - g) * equalG;
+                                        b += (bNew - b) * equalB;
+                                        float newy = toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b;
+                                        float L_2 = newy <= MAXVALF ? Color::cachefy[newy] : 327.68f * (116.f * xcbrtf(newy / MAXVALF) - 16.f);
+                                        float x_, y_, z_;
+                                        //calculate RGB with L_2 and old value of a and b
+                                        Color::Lab2XYZ(L_2, a_1, b_1, x_, y_, z_) ;
+                                        Color::xyz2rgb(x_, y_, z_, r, g, b, wip);
+                                        tmpImage->r(y, x) = r;
+                                        tmpImage->g(y, x) = g;
+                                        tmpImage->b(y, x) = b;
+                                    }
+                                }
+                            } else {
+ #ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+                                for (int y = 0; y < bfh ; ++ y) {//apply Lut tone-mapping or smooth: thanks to Alberto - gain time.
+                                    for (int x = 0; x < bfw ; ++x) {
+                                        tmpImage->r(y, x) = 65535.f * lutr[tmpImage->r(y, x)];
+                                        tmpImage->g(y, x) = 65535.f * lutg[tmpImage->g(y, x)];
+                                        tmpImage->b(y, x) = 65535.f * lutb[tmpImage->b(y, x)];
+                                    }
                                 }
                             }
                         } else {
@@ -20183,6 +20254,7 @@ void ImProcFunctions::Lab_Local(
                     rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
                     delete tmpImage;
+                    delete tmpImage2;
                     delete tmpImagelog;
                 }
 
