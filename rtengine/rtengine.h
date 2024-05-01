@@ -372,7 +372,7 @@ public :
     virtual void autoCamChanged(double ccam, double ccamout) = 0;
     virtual void adapCamChanged(double cadap) = 0;
     virtual void ybCamChanged(int yb) = 0;
-    virtual void wbCamChanged(double tem, double tin) = 0;
+    virtual void wbCamChanged(double tem, double tin, bool autotemp) = 0;
 
 };
 

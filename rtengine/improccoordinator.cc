@@ -2308,8 +2308,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     tempsym = params->colorappearance.tempout;
                     greensym = params->colorappearance.greenout;
                 }
-                if (params->colorappearance.enabled) {
-                    acListener->wbCamChanged(tempsym, greensym);    //real temp and tint.
+                if (params->colorappearance.enabled  && acListener) {
+                    acListener->wbCamChanged(tempsym, greensym, params->colorappearance.autotempout);    //real temp and tint.
                 }
 
             } else {
