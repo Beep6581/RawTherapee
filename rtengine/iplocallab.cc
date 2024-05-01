@@ -19978,41 +19978,40 @@ void ImProcFunctions::Lab_Local(
                 }
 
                 if (params->locallab.spots.at(sp).expprecam && params->locallab.spots.at(sp).modecam == "cam16") {
-                TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
-                TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
+                    TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
+                    TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
 
-                float toxyz[3][3] = {
-                {
-                static_cast<float>(wprof[0][0] / static_cast<double>(Color::D50x)),
-                static_cast<float>(wprof[0][1] / static_cast<double>(Color::D50x)),
-                static_cast<float>(wprof[0][2] / static_cast<double>(Color::D50x))
-                }, {
-                static_cast<float>(wprof[1][0]),
-                static_cast<float>(wprof[1][1]),
-                static_cast<float>(wprof[1][2])
-                }, {
-                static_cast<float>(wprof[2][0] / static_cast<double>(Color::D50z)),
-                static_cast<float>(wprof[2][1] / static_cast<double>(Color::D50z)),
-                static_cast<float>(wprof[2][2] / static_cast<double>(Color::D50z))
-                }
-                };
-                float maxFactorToxyz = max(toxyz[1][0], toxyz[1][1], toxyz[1][2]);
-                float equalR = maxFactorToxyz / toxyz[1][0];
-                float equalG = maxFactorToxyz / toxyz[1][1];
-                float equalB = maxFactorToxyz / toxyz[1][2];
-                //inverse matrix user select
-                double wip[3][3] = {
-                    {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
-                    {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
-                    {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
-                };
+                    float toxyz[3][3] = {
+                        {
+                        static_cast<float>(wprof[0][0] / static_cast<double>(Color::D50x)),
+                        static_cast<float>(wprof[0][1] / static_cast<double>(Color::D50x)),
+                        static_cast<float>(wprof[0][2] / static_cast<double>(Color::D50x))
+                        }, {
+                        static_cast<float>(wprof[1][0]),
+                        static_cast<float>(wprof[1][1]),
+                        static_cast<float>(wprof[1][2])
+                        }, {
+                        static_cast<float>(wprof[2][0] / static_cast<double>(Color::D50z)),
+                        static_cast<float>(wprof[2][1] / static_cast<double>(Color::D50z)),
+                        static_cast<float>(wprof[2][2] / static_cast<double>(Color::D50z))
+                        }
+                    };
+
+                    float maxFactorToxyz = max(toxyz[1][0], toxyz[1][1], toxyz[1][2]);
+                    float equalR = maxFactorToxyz / toxyz[1][0];
+                    float equalG = maxFactorToxyz / toxyz[1][1];
+                    float equalB = maxFactorToxyz / toxyz[1][2];
+                    //inverse matrix user select
+                    double wip[3][3] = {
+                        {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
+                        {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
+                        {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
+                    };
     
                     Imagefloat *tmpImage = nullptr;
                     tmpImage = new Imagefloat(bfw, bfh);
                     Imagefloat *tmpImagelog = nullptr;
                     tmpImagelog = new Imagefloat(bfw, bfh);
-                    Imagefloat *tmpImage2 = nullptr;
-                    tmpImage2 = new Imagefloat(bfw, bfh);
                     
                     lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
                     Glib::ustring prof = params->icm.workingProfile;
@@ -20154,15 +20153,16 @@ void ImProcFunctions::Lab_Local(
                         float black_point =  xexpf(lp.blackevjz * std::log(2.f) + xlogf(mid_gray));//lp.blackevjz  Black_Ev
                         bool rolloff = true;//only soften highlights
                         float slopegray = 1.f;//slopegray between 0.8 and 1.6 - lineary light the shadows by the user - the gamma is calculated according to slope and the characteristics of the image DR, White, Black
-                        float slopegrayr = 1.f;//slopegray between 0.8 and 1.6 - lineary light the shadows by the user - the gamma is calculated according to slope and the characteristics of the image DR, White, Black
-                        float slopegrayg = 1.f;//slopegray between 0.8 and 1.6 - lineary light the shadows by the user - the gamma is calculated according to slope and the characteristics of the image DR, White, Black
-                        float slopegrayb = 1.f;//slopegray between 0.8 and 1.6 - lineary light the shadows by the user - the gamma is calculated according to slope and the characteristics of the image DR, White, Black
+                        float slopegrayr = 1.f;
+                        float slopegrayg = 1.f;
+                        float slopegrayb = 1.f;
                         int mode = 1;
                         float slopsmoot = 1.f - ((float) params->locallab.spots.at(sp).slopesmo - 1.f);//modify response so when increase slope the grays are becoming lighter
-                        float slopsmootr = 1.f - ((float) params->locallab.spots.at(sp).slopesmor - 1.f);//modify response so when increase slope the grays are becoming lighter
-                        float slopsmootg = 1.f - ((float) params->locallab.spots.at(sp).slopesmog - 1.f);//modify response so when increase slope the grays are becoming lighter
-                        float slopsmootb = 1.f - ((float) params->locallab.spots.at(sp).slopesmob - 1.f);//modify response so when increase slope the grays are becoming lighter
+                        float slopsmootr = 1.f - ((float) params->locallab.spots.at(sp).slopesmor - 1.f);
+                        float slopsmootg = 1.f - ((float) params->locallab.spots.at(sp).slopesmog - 1.f);
+                        float slopsmootb = 1.f - ((float) params->locallab.spots.at(sp).slopesmob - 1.f);
                         bool lummod = params->locallab.spots.at(sp).smoothcielum;
+                        
                         if(lp.smoothciem == 3) {//slope activ, only with choice gamma - slope - based
                             rolloff = false;//allows tone-mapping slope
                             slopegray = slopsmoot;
@@ -20180,13 +20180,15 @@ void ImProcFunctions::Lab_Local(
                         }
                         
                         LUTf lut(65536, LUT_CLIP_OFF);//take from Alberto Griggio
-                        LUTf lutr(65536, LUT_CLIP_OFF);//take from Alberto Griggio
-                        LUTf lutg(65536, LUT_CLIP_OFF);//take from Alberto Griggio
-                        LUTf lutb(65536, LUT_CLIP_OFF);//take from Alberto Griggio
+                        LUTf lutr(65536, LUT_CLIP_OFF);
+                        LUTf lutg(65536, LUT_CLIP_OFF);
+                        LUTf lutb(65536, LUT_CLIP_OFF);
                         bool scale = lp.issmoothcie;//scale Yb mid_gray - WhiteEv and BlavkEv
+                        
                         tonemapFreeman(slopegray, slopegrayr, slopegrayg, slopegrayb, white_point, black_point, mid_gray, mid_gray_view, rolloff, lut, lutr, lutg, lutb, mode, scale);
+
                         if(lp.smoothciem == 4) {
-                            if(lummod) {
+                            if(lummod) {//luminosity mode by Lab conversion
  #ifdef _OPENMP
         #pragma omp parallel for
 #endif
@@ -20195,7 +20197,7 @@ void ImProcFunctions::Lab_Local(
                                         float r = tmpImage->r(y, x);
                                         float g = tmpImage->g(y, x);
                                         float b = tmpImage->b(y, x);
-                                    //convert to Lab to get a&b before RGB
+                                        //convert to Lab to get a&b before RGB
                                         float xx = toxyz[0][0] * r + toxyz[0][1] * g + toxyz[0][2] * b;
                                         float yy = toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b;
                                         float zz = toxyz[2][0] * r + toxyz[2][1] * g + toxyz[2][2] * b;
@@ -20223,7 +20225,7 @@ void ImProcFunctions::Lab_Local(
                                         tmpImage->b(y, x) = b;
                                     }
                                 }
-                            } else {
+                            } else {//RGG case
  #ifdef _OPENMP
         #pragma omp parallel for
 #endif
@@ -20235,7 +20237,7 @@ void ImProcFunctions::Lab_Local(
                                     }
                                 }
                             }
-                        } else {
+                        } else {//Slope case
  #ifdef _OPENMP
         #pragma omp parallel for
 #endif
@@ -20247,14 +20249,11 @@ void ImProcFunctions::Lab_Local(
                                 }
                             }
                         }
-
                     }
-
 
                     rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
                     delete tmpImage;
-                    delete tmpImage2;
                     delete tmpImagelog;
                 }
 
