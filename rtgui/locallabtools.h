@@ -77,6 +77,9 @@ protected:
     rtengine::ProcEvent Evlocallabslopjcie;
     rtengine::ProcEvent Evlocallabmidtcie;
     rtengine::ProcEvent Evlocallabslopesmo;
+    rtengine::ProcEvent Evlocallabslopesmor;
+    rtengine::ProcEvent Evlocallabslopesmog;
+    rtengine::ProcEvent Evlocallabslopesmob;
     rtengine::ProcEvent Evlocallabsmoothcie;
     rtengine::ProcEvent Evlocallabsmoothciemet;
     rtengine::ProcEvent Evlocallabsigcie;
@@ -1694,6 +1697,9 @@ private:
     Gtk::Box* smoothBox;
     MyComboBoxText* const smoothciemet;
     Adjuster* const slopesmo;
+    Adjuster* const slopesmor;
+    Adjuster* const slopesmog;
+    Adjuster* const slopesmob;
 
     Adjuster* const whitescie;
     Adjuster* const blackscie;

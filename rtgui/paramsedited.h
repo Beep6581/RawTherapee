@@ -1081,6 +1081,9 @@ public:
         bool gamjcie;
         bool slopjcie;
         bool slopesmo;
+        bool slopesmor;
+        bool slopesmog;
+        bool slopesmob;
         bool midtcie;
         bool redxl;
         bool redyl;

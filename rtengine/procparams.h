@@ -1734,6 +1734,9 @@ struct LocallabParams {
         double gamjcie;
         double slopjcie;
         double slopesmo;
+        double slopesmor;
+        double slopesmog;
+        double slopesmob;
         int midtcie;
         double grexl;
         double greyl;
