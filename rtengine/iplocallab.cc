@@ -20007,6 +20007,12 @@ void ImProcFunctions::Lab_Local(
                         {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
                         {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
                     };
+                    double wp[3][3] = {
+                        {wprof[0][0], wprof[0][1], wprof[0][2]},
+                        {wprof[1][0], wprof[1][1], wprof[1][2]},
+                        {wprof[2][0], wprof[2][1], wprof[2][2]}
+                    };
+    
     
                     Imagefloat *tmpImage = nullptr;
                     tmpImage = new Imagefloat(bfw, bfh);
@@ -20219,6 +20225,7 @@ void ImProcFunctions::Lab_Local(
                                         float x_, y_, z_;
                                         //calculate RGB with L_2 and old value of a and b
                                         Color::Lab2XYZ(L_2, a_1, b_1, x_, y_, z_) ;
+                                        Color::gamutmap(x_, y_, z_, wp);
                                         Color::xyz2rgb(x_, y_, z_, r, g, b, wip);
                                         tmpImage->r(y, x) = r;
                                         tmpImage->g(y, x) = g;
