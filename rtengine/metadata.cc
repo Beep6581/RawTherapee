@@ -315,9 +315,9 @@ void Exiv2Metadata::saveToImage(const Glib::ustring &path, bool preserve_all_tag
     dst->exifData()["Exif.Image.Software"] = "RawTherapee " RTVERSION;
 
     std::time_t t = std::time(nullptr);
-    char mbstr[100];
+    char mbstr[20];
     if (std::strftime(mbstr, sizeof(mbstr), "%Y:%m:%d %H:%M:%S", std::localtime(&t))) {
-    dst->exifData()["Exif.Image.DateTime"] = mbstr;
+        dst->exifData()["Exif.Image.DateTime"] = mbstr;
     }
     
     import_exif_pairs(dst->exifData());
