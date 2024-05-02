@@ -20179,8 +20179,21 @@ void ImProcFunctions::Lab_Local(
                         }
                         if(lp.smoothciem == 4) {//levels
                             rolloff = false;//allows tone-mapping slope
+                            float maxsl= 4.f;//maximum real slope
+                            float minslider = 0.01f;//minimum slider value > 0.f
+                            float aa = (1.9f - maxsl) / (0.1f - minslider);//interpolation : 1.9f slope value for slider = 0.1f
+                            float bb = 1.9f - 0.1f * aa;
+                            if(slopsmootr < 0.1f) {
+                                slopsmootr = aa * slopsmootr + bb;
+                            }
                             slopegrayr = slopsmootr;
+                            if(slopsmootg < 0.1f) {
+                                slopsmootg = aa * slopsmootg + bb;
+                            }
                             slopegrayg = slopsmootg;
+                            if(slopsmootb < 0.1f) {
+                                slopsmootb = aa * slopsmootb + bb;
+                            }
                             slopegrayb = slopsmootb;
                             mode = 4;
                         }
