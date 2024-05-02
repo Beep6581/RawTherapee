@@ -2641,13 +2641,15 @@ void tonemapFreeman(float target_slope, float target_sloper, float target_slopeg
     gammab = target_slopeb * (float) std::pow((mid_gray_scene_ + b), 2.0) / (dr * b);//Caculate gamma with slope and mid_gray_scene 
     float kmid = 1.f;//general case
     if(mode == 3 && target_slope != 1.f) {//case tone-mapping
+        /*
         float midutil = mid_gray_view / mid_gray_scene;//take into account ratio between Yb source and Yb viewing
         float midk = 1.f;
         float k_slope = 2.2f;
         if(target_slope >= 1.f) {
             midk = pow_F(midutil, k_slope * (target_slope - 1.f));//ponderation in function target_slope when "slope user" < 1.f
         }
-        kmid = 1.f; //midk;
+        kmid = midk;
+        */
     }
     if (mode == 3 && settings->verbose) {
         printf("b=%f gamma=%f slope=%f DynRange=%f kmid=%f black=%f Yb-scale=%f\n", (double) b, (double) gamma, (double) target_slope, (double) dr, (double) kmid, (double) c, (double) mid_gray_scene_);
