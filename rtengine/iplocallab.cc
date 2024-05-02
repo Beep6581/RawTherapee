@@ -20225,7 +20225,9 @@ void ImProcFunctions::Lab_Local(
                                         float x_, y_, z_;
                                         //calculate RGB with L_2 and old value of a and b
                                         Color::Lab2XYZ(L_2, a_1, b_1, x_, y_, z_) ;
-                                        Color::gamutmap(x_, y_, z_, wp);
+                                        if (params->locallab.spots.at(sp).avoidgamutMethod != "NONE") {//possibility of deactivating to see usefulness. is it necessary? 
+                                            Color::gamutmap(x_, y_, z_, wp);//if none disabled
+                                        }
                                         Color::xyz2rgb(x_, y_, z_, r, g, b, wip);
                                         tmpImage->r(y, x) = r;
                                         tmpImage->g(y, x) = g;
