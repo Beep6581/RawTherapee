@@ -2647,9 +2647,9 @@ void tonemapFreeman(float target_slope, float target_sloper, float target_slopeg
         if(target_slope >= 1.f) {
             midk = pow_F(midutil, k_slope * (target_slope - 1.f));//ponderation in function target_slope when "slope user" < 1.f
         }
-        kmid = midk;
+        kmid = 1.f; //midk;
     }
-    if (settings->verbose) {
+    if (mode == 3 && settings->verbose) {
         printf("b=%f gamma=%f slope=%f DynRange=%f kmid=%f black=%f Yb-scale=%f\n", (double) b, (double) gamma, (double) target_slope, (double) dr, (double) kmid, (double) c, (double) mid_gray_scene_);
     }
     //lut - take from Alberto Griggio
@@ -20168,9 +20168,16 @@ void ImProcFunctions::Lab_Local(
                         float slopsmootg = 1.f - ((float) params->locallab.spots.at(sp).slopesmog - 1.f);
                         float slopsmootb = 1.f - ((float) params->locallab.spots.at(sp).slopesmob - 1.f);
                         bool lummod = params->locallab.spots.at(sp).smoothcielum;
+                        float maxsl= 4.f;//maximum real slope
+                        float minslider = 0.01f;//minimum slider value > 0.f
+                        float aa = (1.9f - maxsl) / (0.1f - minslider);//interpolation : 1.9f slope value for slider = 0.1f
+                        float bb = 1.9f - 0.1f * aa;
                         
                         if(lp.smoothciem == 3) {//slope activ, only with choice gamma - slope - based
                             rolloff = false;//allows tone-mapping slope
+                            if(slopsmoot < 0.1f) {
+                                slopsmoot = aa * slopsmoot + bb;
+                            }
                             slopegray = slopsmoot;
                             slopegrayr = slopsmoot;
                             slopegrayg = slopsmoot;
@@ -20179,10 +20186,6 @@ void ImProcFunctions::Lab_Local(
                         }
                         if(lp.smoothciem == 4) {//levels
                             rolloff = false;//allows tone-mapping slope
-                            float maxsl= 4.f;//maximum real slope
-                            float minslider = 0.01f;//minimum slider value > 0.f
-                            float aa = (1.9f - maxsl) / (0.1f - minslider);//interpolation : 1.9f slope value for slider = 0.1f
-                            float bb = 1.9f - 0.1f * aa;
                             if(slopsmootr < 0.1f) {
                                 slopsmootr = aa * slopsmootr + bb;
                             }
