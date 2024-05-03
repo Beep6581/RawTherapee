@@ -2613,7 +2613,7 @@ float do_get(float x, bool rolloff_, float mid_gray_scene, float gamma, float dr
 
 //Copyright (c) 2023 Thatcher Freeman
 // Adapted to Rawtherapee Jacques Desmis 25 mars 2024
-void tonemapFreeman(float target_slope, float target_sloper, float target_slopeg , float target_slopeb, float white_point, float black_point, float mid_gray_scene, float mid_gray_view, bool rolloff, LUTf& lut, LUTf& lutr, LUTf& lutg, LUTf& lutb, int mode, bool scale)
+void tonemapFreeman(float target_slope, float target_sloper, float target_slopeg , float target_slopeb, float white_point, float black_point, float mid_gray_scene, float mid_gray_view, bool rolloff, LUTf& lut, LUTf& lutr, LUTf& lutg, LUTf& lutb, int mode, bool scale, bool takeyb)
 {
     float dr;//Dynamic Range
     float b;
@@ -2640,8 +2640,14 @@ void tonemapFreeman(float target_slope, float target_sloper, float target_slopeg
     gammag = target_slopeg * (float) std::pow((mid_gray_scene_ + b), 2.0) / (dr * b);//Caculate gamma with slope and mid_gray_scene 
     gammab = target_slopeb * (float) std::pow((mid_gray_scene_ + b), 2.0) / (dr * b);//Caculate gamma with slope and mid_gray_scene 
     float kmid = 1.f;//general case
-    if(mode == 3 && target_slope != 1.f) {//case tone-mapping
-        /*
+    //float kyb = 1.f;
+    if(takeyb){
+        kmid = mid_gray_scene / mid_gray_view;
+        kmid = cbrt(kmid);
+    }
+   // if(mode == 3 && target_slope != 1.f ) {//case tone-mapping
+/*
+         
         float midutil = mid_gray_view / mid_gray_scene;//take into account ratio between Yb source and Yb viewing
         float midk = 1.f;
         float k_slope = 2.2f;
@@ -2649,8 +2655,9 @@ void tonemapFreeman(float target_slope, float target_sloper, float target_slopeg
             midk = pow_F(midutil, k_slope * (target_slope - 1.f));//ponderation in function target_slope when "slope user" < 1.f
         }
         kmid = midk;
-        */
+        
     }
+*/    
     if (mode == 3 && settings->verbose) {
         printf("b=%f gamma=%f slope=%f DynRange=%f kmid=%f black=%f Yb-scale=%f\n", (double) b, (double) gamma, (double) target_slope, (double) dr, (double) kmid, (double) c, (double) mid_gray_scene_);
     }
@@ -2662,6 +2669,7 @@ void tonemapFreeman(float target_slope, float target_sloper, float target_slopeg
             lutb[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_scene_, gammab, dr, b, c, kmid);//call main function
         }
     } else {
+        kmid = 1.f;
         for (int i = 0; i < 65536; ++i) {// i - value image RGB
             lut[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_scene_, gamma, dr, b, c, kmid);//call main function
         }
@@ -20155,6 +20163,18 @@ void ImProcFunctions::Lab_Local(
                         //TonemapFreeman - Copyright (c) 2023 Thatcher Freeman
                         float mid_gray = 0.01f * lp.sourcegraycie;//Mean luminance Yb Scene
                         float mid_gray_view = 0.01f * lp.targetgraycie;//Mean luminance Yb Viewing
+                           // if(mode == 3 && target_slope != 1.f ) {//case tone-mapping
+/*        if(params->locallab.spots.at(sp).{   
+        float midutil = mid_gray_view / mid_gray_scene;//take into account ratio between Yb source and Yb viewing
+        float midk = 1.f;
+        float k_slope = 2.2f;
+        if(target_slope >= 1.f) {
+            midk = pow_F(midutil, k_slope * (target_slope - 1.f));//ponderation in function target_slope when "slope user" < 1.f
+        }
+        kmid = midk;
+        
+    }
+*/
                         lp.whiteevjz = LIM(lp.whiteevjz, 0.1f, 31.5f);//limit whiteEv to avoid crash
                         float white_point =  xexpf(lp.whiteevjz * std::log(2.f) + xlogf(mid_gray));//lp.whiteevjz  White_Ev
                         lp.blackevjz = LIM(lp.blackevjz, -15.5f, -0.2f);//limit BlackEv to avoid crash
@@ -20169,6 +20189,7 @@ void ImProcFunctions::Lab_Local(
                         float slopsmootr = 1.f - ((float) params->locallab.spots.at(sp).slopesmor - 1.f);
                         float slopsmootg = 1.f - ((float) params->locallab.spots.at(sp).slopesmog - 1.f);
                         float slopsmootb = 1.f - ((float) params->locallab.spots.at(sp).slopesmob - 1.f);
+                        bool takeyb = params->locallab.spots.at(sp).smoothcieyb;
                         bool lummod = params->locallab.spots.at(sp).smoothcielum;
                         float maxsl= 4.f;//maximum real slope
                         float minslider = 0.01f;//minimum slider value > 0.f
@@ -20209,7 +20230,7 @@ void ImProcFunctions::Lab_Local(
                         LUTf lutb(65536, LUT_CLIP_OFF);
                         bool scale = lp.issmoothcie;//scale Yb mid_gray - WhiteEv and BlavkEv
                         
-                        tonemapFreeman(slopegray, slopegrayr, slopegrayg, slopegrayb, white_point, black_point, mid_gray, mid_gray_view, rolloff, lut, lutr, lutg, lutb, mode, scale);
+                        tonemapFreeman(slopegray, slopegrayr, slopegrayg, slopegrayb, white_point, black_point, mid_gray, mid_gray_view, rolloff, lut, lutr, lutg, lutb, mode, scale, takeyb);
 
                         if(lp.smoothciem == 4) {
                             if(lummod) {//luminosity mode by Lab conversion
