@@ -20206,7 +20206,7 @@ void ImProcFunctions::Lab_Local(
                             slopegrayg = slopsmoot;
                             slopegrayb = slopsmoot;
                             mode = 3;
-                        }
+                        }//modify slope
                         if(lp.smoothciem == 4) {//levels
                             rolloff = false;//allows tone-mapping slope
                             if(slopsmootr < 0.1f) {
