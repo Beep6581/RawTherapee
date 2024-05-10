@@ -13796,7 +13796,7 @@ void ImProcFunctions::Lab_Local(
     double& huerefblur, double& chromarefblur, double& lumarefblur, double& hueref, double& chromaref, double& lumaref, double& sobelref, int &lastsav,
     bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, int llcieMask,
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax,
-    float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, int &ill, float &contsig, float &lightsig,
+    float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, int &prim, int &ill, float &contsig, float &lightsig,
     float& highresi, float& nresi, float& highresi46, float& nresi46, float& Lhighresi, float& Lnresi, float& Lhighresi46, float& Lnresi46
 
     )
@@ -20035,7 +20035,7 @@ void ImProcFunctions::Lab_Local(
                     float gamtone = params->locallab.spots.at(sp).gamjcie;
                     float slotone = params->locallab.spots.at(sp).slopjcie;
                     cmsHTRANSFORM dummy = nullptr;
-                    int prim = 3;
+                    //int prim = 3;
                     int typ = 1;
                     rdx = params->locallab.spots.at(sp).redxl;
                     rdy = params->locallab.spots.at(sp).redyl;
@@ -20324,19 +20324,6 @@ void ImProcFunctions::Lab_Local(
                         }
                     }
             }
-            if (params->locallab.spots.at(sp).bwcie) {
-#ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16) if (multiThread)
-#endif
-
-                    for (int ir = 0; ir < bfh; ir++) {
-                        for (int jr = 0; jr < bfw; jr++) {
-                            bufexpfin->a[ir][jr] = 0.f;
-                            bufexpfin->b[ir][jr] = 0.f;
-                        }
-                    }
-            }
-            
 
             if (lp.enacieMask && lp.recothrcie != 1.f) {
                 float recoth = lp.recothrcie;
@@ -20401,6 +20388,19 @@ void ImProcFunctions::Lab_Local(
 
                     ImProcFunctions::localContrast(bufexpfin.get(), bufexpfin->L, localContrastParams, fftwlc, sk);
             }
+            if (params->locallab.spots.at(sp).bwcie) {
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+
+                    for (int ir = 0; ir < bfh; ir++) {
+                        for (int jr = 0; jr < bfw; jr++) {
+                            bufexpfin->a[ir][jr] = 0.f;
+                            bufexpfin->b[ir][jr] = 0.f;
+                        }
+                    }
+            }
+            
 
             const float repart = 1.0 - 0.01 * params->locallab.spots.at(sp).reparcie;
             int bw = bufexporig->W;

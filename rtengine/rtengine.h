@@ -448,6 +448,7 @@ public:
         double meanylc;
         double meanxelc;
         double meanyelc;
+        int primlc;
     };
 
     struct locallabcieSIG {
