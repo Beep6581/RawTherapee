@@ -437,7 +437,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
     if (params->wavelet.CHmethod == "without") {
         cp.CHmet = 0;
-    else if (params->wavelet.CHmethod == "with") {
+    } else if (params->wavelet.CHmethod == "with") {
         cp.CHmet = 1;
     } else if (params->wavelet.CHmethod == "link") {
         cp.CHmet = 2;
