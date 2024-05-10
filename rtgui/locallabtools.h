@@ -103,6 +103,7 @@ protected:
     rtengine::ProcEvent Evlocallabbluyl;
     rtengine::ProcEvent EvlocallabGridciexy;
     rtengine::ProcEvent Evlocallabgamutcie;
+    rtengine::ProcEvent Evlocallabbwcie;
     rtengine::ProcEvent Evlocallabexpprecam;
     rtengine::ProcEvent Evlocallablightsigqcie;
     rtengine::ProcEvent Evlocallabcontsigqcie;
@@ -1734,6 +1735,8 @@ private:
     Gtk::CheckButton* const gamutcie;
     Adjuster* const shiftxl;
     Adjuster* const shiftyl;
+    Gtk::Box* bwcieBox;
+    Gtk::CheckButton* const bwcie;
 
     Gtk::Frame* const sigmoidjzFrame;
     Gtk::Frame* const sigmoid2Frame;
@@ -1834,7 +1837,7 @@ private:
     ThresholdAdjuster* const csThresholdcie;
     int nextcomprciecount = 0;
    
-    sigc::connection AutograycieConn, primMethodconn, illMethodconn, smoothciemetconn, catMethodconn, forcejzConn, forcebwConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, enacieMaskallConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, comprcieautoconn, normcieconn, logcieconn, satcieconn, logcieqconn,smoothcieconn, smoothcieybconn,smoothcielumconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethodConn, fftcieMaskConn, gamutcieconn, expprecamconn, sigcieconn;
+    sigc::connection AutograycieConn, primMethodconn, illMethodconn, smoothciemetconn, catMethodconn, forcejzConn, forcebwConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, enacieMaskallConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, comprcieautoconn, normcieconn, logcieconn, satcieconn, logcieqconn,smoothcieconn, smoothcieybconn,smoothcielumconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethodConn, fftcieMaskConn, gamutcieconn, bwcieconn, expprecamconn, sigcieconn;
 public:
     Locallabcie();
     ~Locallabcie();
@@ -1887,6 +1890,7 @@ private:
     void comprcieautoChanged();
     void normcieChanged();
     void gamutcieChanged();
+    void bwcieChanged();
     void illMethodChanged();
     void smoothciemetChanged();
     void primMethodChanged();

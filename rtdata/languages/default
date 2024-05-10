@@ -1453,6 +1453,7 @@ HISTORY_MSG_ILLUM;CAL - SC - Illuminant
 HISTORY_MSG_LOCAL_CIE_ANGGRAD;Local CIECAM - gradient angle
 HISTORY_MSG_LOCAL_CIE_BRICOMP;Local CIECAM Brightness compression
 HISTORY_MSG_LOCAL_CIE_BRICOMPTH;Local CIECAM Brightness compression threshold
+HISTORY_MSG_LOCAL_CIE_BWCIE;Local CIECAM - black and white
 HISTORY_MSG_LOCAL_CIE_CAT;Matrix adaptation
 HISTORY_MSG_LOCAL_CIE_DETAILJZ;Local JzCzHz Local contrast
 HISTORY_MSG_LOCAL_CIE_ENAMASKALL;Local CIECAM All mask tools
@@ -2688,6 +2689,7 @@ TP_ICM_APPLYHUESATMAP_TOOLTIP;Employ the embedded DCP base table (HueSatMap). Th
 TP_ICM_APPLYLOOKTABLE;Look table
 TP_ICM_APPLYLOOKTABLE_TOOLTIP;Employ the embedded DCP look table. The setting is only available if the selected DCP has one.
 TP_ICM_BPC;Black Point Compensation
+TP_ICM_BW;Black and White
 TP_ICM_DCPILLUMINANT;Illuminant
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
 TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is 'interpolated' which is a mix between the two based on white balance. The setting is only available if a dual-illuminant DCP with interpolation support is selected.

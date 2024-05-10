@@ -7656,6 +7656,8 @@ Locallabcie::Locallabcie():
     gamutcie(Gtk::manage(new Gtk::CheckButton(M("TP_ICM_GAMUT")))),
     shiftxl(Gtk::manage(new Adjuster(M("TC_LOCALLAB_PRIM_SHIFTX"), -0.20, 0.20, 0.0001, 0.))),
     shiftyl(Gtk::manage(new Adjuster(M("TC_LOCALLAB_PRIM_SHIFTY"), -0.20, 0.20, 0.0001, 0.))),
+    bwcieBox(Gtk::manage(new Gtk::Box())),
+    bwcie(Gtk::manage(new Gtk::CheckButton(M("TP_ICM_BW")))),
 
     sigmoidjzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGJZFRA")))),
     sigmoid2Frame(Gtk::manage(new Gtk::Frame(M("")))),
@@ -7795,6 +7797,7 @@ Locallabcie::Locallabcie():
     Evlocallabbluyl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_BLUYL");
     EvlocallabGridciexy = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_LABGRIDCIE");
     Evlocallabgamutcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GAMUTCIE");
+    Evlocallabbwcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_BWCIE");
     Evlocallabexpprecam = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_EXPPRECAM");
     Evlocallablightsigqcie = m->newEvent(AUTOEXP, "");
     Evlocallabcontsigqcie = m->newEvent(AUTOEXP, "");
@@ -8019,6 +8022,10 @@ Locallabcie::Locallabcie():
     ToolParamBlock* const signormBox = Gtk::manage(new ToolParamBlock());
     ToolParamBlock* const sigfraBox = Gtk::manage(new ToolParamBlock());
 
+    bwcieBox->pack_start(*bwcie, Gtk::PACK_EXPAND_WIDGET);
+
+    bwcieconn = bwcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::bwcieChanged));
+
     modeHBoxbwev->set_spacing(2);
     ToolParamBlock* const gamcieBox = Gtk::manage(new ToolParamBlock());
     Gtk::Label* modeLabelbwev = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_SIGMOIDQJ") + ":"));
@@ -8081,6 +8088,7 @@ Locallabcie::Locallabcie():
     colorBox->pack_start(*shiftxl);
     colorBox->pack_start(*shiftyl);
     colorFramecie->add(*colorBox);
+    primillBox->pack_start(*bwcieBox);
     primillBox->pack_start(*colorFramecie);
     primillFrame->add(*primillBox);
     gamcieBox->pack_start(*primillFrame);
@@ -8912,6 +8920,7 @@ void Locallabcie::disableListener()
     normcieconn.block(true);
     expprecamconn.block(true);
     gamutcieconn.block(true);
+    bwcieconn.block(true);
     primMethodconn.block(true);
     illMethodconn.block(true);
     smoothciemetconn.block(true);
@@ -8953,6 +8962,7 @@ void Locallabcie::enableListener()
     normcieconn.block(false);
     expprecamconn.block(false);
     gamutcieconn.block(false);
+    bwcieconn.block(false);
     primMethodconn.block(false);
     illMethodconn.block(false);
     smoothciemetconn.block(false);
@@ -9286,6 +9296,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
 
         normcie->set_active(spot.normcie);
         gamutcie->set_active(spot.gamutcie);
+        bwcie->set_active(spot.bwcie);
         sigcie->set_active(spot.sigcie);
         logcie->set_active(spot.logcie);
         satcie->set_active(spot.satcie);
@@ -9306,6 +9317,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         normcieChanged();
         expprecamChanged();
         gamutcieChanged();
+        bwcieChanged();
         sigcieChanged();
         comprcieautoChanged();
         sigqChanged();
@@ -9558,6 +9570,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.comprcieauto = comprcieauto->get_active();
         spot.normcie = normcie->get_active();
         spot.gamutcie = gamutcie->get_active();
+        spot.bwcie = bwcie->get_active();
         spot.sigcie = sigcie->get_active();
         spot.logcie = logcie->get_active();
         spot.satcie = satcie->get_active();
@@ -10098,6 +10111,24 @@ void Locallabcie::gamutcieChanged()
     }
 
 }
+
+void Locallabcie::bwcieChanged()
+{
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (bwcie->get_active()) {
+                listener->panelChanged(Evlocallabbwcie,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabbwcie,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+
+}
+
 
 void Locallabcie::expprecamChanged()
 {

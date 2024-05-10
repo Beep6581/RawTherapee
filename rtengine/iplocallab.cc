@@ -20324,6 +20324,19 @@ void ImProcFunctions::Lab_Local(
                         }
                     }
             }
+            if (params->locallab.spots.at(sp).bwcie) {
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+
+                    for (int ir = 0; ir < bfh; ir++) {
+                        for (int jr = 0; jr < bfw; jr++) {
+                            bufexpfin->a[ir][jr] = 0.f;
+                            bufexpfin->b[ir][jr] = 0.f;
+                        }
+                    }
+            }
+            
 
             if (lp.enacieMask && lp.recothrcie != 1.f) {
                 float recoth = lp.recothrcie;

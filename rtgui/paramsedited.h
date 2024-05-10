@@ -1016,6 +1016,7 @@ public:
         bool comprcieauto;
         bool normcie;
         bool gamutcie;
+        bool bwcie;
         bool sigcie;
         bool logcie;
         bool satcie;
