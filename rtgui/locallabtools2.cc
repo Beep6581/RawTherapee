@@ -11456,6 +11456,7 @@ void Locallabcie::convertParamToSimple()
     whiteEvjz->setValue(defSpot.whiteEvjz);
     whitescie->setValue(defSpot.whitescie);
     blackscie->setValue(defSpot.blackscie);
+    bwcie->set_active(defSpot.bwcie);
 
     sigq->set_active(defSpot.sigq);
     //sigq->set_active(defSpot.sigq);
@@ -11486,7 +11487,7 @@ void Locallabcie::convertParamToNormal()
     normcie->set_active(defSpot.normcie);
     logcieq->set_active(defSpot.logcieq);
     logcie->set_active(defSpot.logcie);
-
+    bwcie->set_active(defSpot.bwcie);
     //contsigqcie->setValue(defSpot.contsigqcie);
     colorflcie->setValue(defSpot.colorflcie);
     lightqcie->setValue(defSpot.lightqcie);
