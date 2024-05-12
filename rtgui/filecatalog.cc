@@ -1910,7 +1910,7 @@ void FileCatalog::emptyTrash ()
     std::vector<FileBrowserEntry*> toDel;
 
     for (const auto entry : t) {
-        if ((static_cast<FileBrowserEntry*>(entry))->thumbnail->getStage() == 1) {
+        if ((static_cast<FileBrowserEntry*>(entry))->thumbnail->getTrashed()) {
             toDel.push_back(static_cast<FileBrowserEntry*>(entry));
         }
     }
@@ -1926,7 +1926,7 @@ bool FileCatalog::trashIsEmpty ()
     const auto& t = fileBrowser->getEntries();
 
     for (const auto entry : t) {
-        if ((static_cast<FileBrowserEntry*>(entry))->thumbnail->getStage() == 1) {
+        if ((static_cast<FileBrowserEntry*>(entry))->thumbnail->getTrashed()) {
             return false;
         }
     }
