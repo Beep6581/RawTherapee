@@ -494,6 +494,12 @@ public:
     size_t maxRecentFolders;                   // max. number of recent folders stored in options file
     std::vector<Glib::ustring> recentFolders;  // List containing all recent folders
 
+    enum class ThumbnailPropertyMode {
+        PROCPARAMS, // store rank and color in procparams sidecars
+        XMP // store rank and color xmp sidecar
+    };
+    ThumbnailPropertyMode thumbnailRankColorMode;
+
     enum SortMethod {
         SORT_BY_NAME,
         SORT_BY_DATE,

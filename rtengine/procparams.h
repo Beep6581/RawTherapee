@@ -1663,11 +1663,14 @@ struct LocallabParams {
         bool comprcieauto;
         bool normcie;
         bool gamutcie;
+        bool bwcie;
         bool sigcie;
         bool logcie;
         bool satcie;
         bool logcieq;
         bool smoothcie;
+        bool smoothcieyb;
+        bool smoothcielum;
         bool logjz;
         bool sigjz;
         bool sigq;
@@ -1734,6 +1737,9 @@ struct LocallabParams {
         double gamjcie;
         double slopjcie;
         double slopesmo;
+        double slopesmor;
+        double slopesmog;
+        double slopesmob;
         int midtcie;
         double grexl;
         double greyl;

@@ -2323,6 +2323,13 @@ Camera constants:
         "ranges": { "black": 15, "white": 4050 } // 15 is BL offset. dcraw/RT read the base offset from Exif and calculates total BL = BLbase+BLoffset
     },
 
+    { // Quality C
+        "make_model": "Panasonic DMC-FX150",
+        "raw_crop": [
+            { "frame": [ 4508, 2498 ], "crop": [ 0, 0, 4429, 2496] } // 16:9 ratio needs to shave a few extra pixels from dcraw's crop.
+        ]
+    },
+
     { // Quality A, replicated from rawimage.cc
         "make_model": "Panasonic DMC-FZ150",
         "dcraw_matrix": [ 10435,-3208,-72,-2293,10506,2067,-486,1725,4682 ], // RT, copy from custom dcp d55

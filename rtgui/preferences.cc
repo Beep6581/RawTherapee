@@ -1489,6 +1489,9 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
     vbro->pack_start(*sameThumbSize, Gtk::PACK_SHRINK, 0);
     vbro->pack_start(*ckbInternalThumbIfUntouched, Gtk::PACK_SHRINK, 0);
 
+    thumbnailRankColorMode = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_THUMBNAIL_RANK_COLOR_MODE")));
+    vbro->pack_start(*thumbnailRankColorMode, Gtk::PACK_SHRINK, 0);
+
     Gtk::Box* hbrecent = Gtk::manage(new Gtk::Box());
     Gtk::Label* labrecent = Gtk::manage (new Gtk::Label (M("PREFERENCES_MAXRECENTFOLDERS") + ":", Gtk::ALIGN_START));
     maxRecentFolders = Gtk::manage(new Gtk::SpinButton());
@@ -2050,6 +2053,8 @@ void Preferences::storePreferences()
 
     moptions.rtSettings.metadata_xmp_sync = rtengine::Settings::MetadataXmpSync(metadataSyncCombo->get_active_row_number());
     moptions.rtSettings.xmp_sidecar_style = rtengine::Settings::XmpSidecarStyle(xmpSidecarCombo->get_active_row_number());
+
+    moptions.thumbnailRankColorMode = thumbnailRankColorMode->get_active() ? Options::ThumbnailPropertyMode::XMP : Options::ThumbnailPropertyMode::PROCPARAMS;
 }
 
 void Preferences::fillPreferences()
@@ -2309,6 +2314,8 @@ void Preferences::fillPreferences()
 
     metadataSyncCombo->set_active(int(moptions.rtSettings.metadata_xmp_sync));
     xmpSidecarCombo->set_active(int(moptions.rtSettings.xmp_sidecar_style));
+
+    thumbnailRankColorMode->set_active(moptions.thumbnailRankColorMode == Options::ThumbnailPropertyMode::XMP);
 }
 
 /*

@@ -372,7 +372,7 @@ public :
     virtual void autoCamChanged(double ccam, double ccamout) = 0;
     virtual void adapCamChanged(double cadap) = 0;
     virtual void ybCamChanged(int yb) = 0;
-    virtual void wbCamChanged(double tem, double tin) = 0;
+    virtual void wbCamChanged(double tem, double tin, bool autotemp) = 0;
 
 };
 
@@ -448,6 +448,7 @@ public:
         double meanylc;
         double meanxelc;
         double meanyelc;
+        int primlc;
     };
 
 //select spot settings 

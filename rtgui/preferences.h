@@ -226,6 +226,8 @@ class Preferences final :
 
     Gtk::CheckButton* ckbInternalThumbIfUntouched;
 
+    Gtk::CheckButton *thumbnailRankColorMode;
+
     Gtk::Entry* txtCustProfBuilderPath;
     Gtk::ComboBoxText* custProfBuilderLabelType;
 
