@@ -1453,6 +1453,7 @@ HISTORY_MSG_ILLUM;CAL - SC - Illuminant
 HISTORY_MSG_LOCAL_CIE_ANGGRAD;Local CIECAM - gradient angle
 HISTORY_MSG_LOCAL_CIE_BRICOMP;Local CIECAM Brightness compression
 HISTORY_MSG_LOCAL_CIE_BRICOMPTH;Local CIECAM Brightness compression threshold
+HISTORY_MSG_LOCAL_CIE_BWCIE;Local CIECAM - black and white
 HISTORY_MSG_LOCAL_CIE_CAT;Matrix adaptation
 HISTORY_MSG_LOCAL_CIE_DETAILJZ;Local JzCzHz Local contrast
 HISTORY_MSG_LOCAL_CIE_ENAMASKALL;Local CIECAM All mask tools
@@ -1470,6 +1471,9 @@ HISTORY_MSG_LOCAL_CIE_SIGADAP;Local CIECAM Sigmoid adaptability
 HISTORY_MSG_LOCAL_CIE_SIGMET;Local CIECAM - Sigmoid method
 HISTORY_MSG_LOCAL_CIE_SLOP;Local CIECAM - Slope
 HISTORY_MSG_LOCAL_CIE_SLOPESMO;Local CIECAM - Gray balance
+HISTORY_MSG_LOCAL_CIE_SLOPESMOR;Local CIECAM - Red balance
+HISTORY_MSG_LOCAL_CIE_SLOPESMOG;Local CIECAM - Green balance
+HISTORY_MSG_LOCAL_CIE_SLOPESMOB;Local CIECAM - Blue balance
 HISTORY_MSG_LOCAL_CIE_SMOOTHMET;Local CIECAM - Smooth lights method
 HISTORY_MSG_LOCAL_CIE_STRGRAD;Local CIECAM - gradient strength L
 HISTORY_MSG_LOCAL_CIE_TRC;Local CIECAM - TRC
@@ -1483,6 +1487,8 @@ HISTORY_MSG_LOCAL_CIE_BLUYL;Local CIECAM - Blue Y
 HISTORY_MSG_LOCAL_CIE_SHIFTXL;Local CIECAM - Shift x
 HISTORY_MSG_LOCAL_CIE_SHIFTYL;Local CIECAM - Shift y
 HISTORY_MSG_LOCAL_CIE_SMOOTH;Local CIECAM - Scale Yb Scene
+HISTORY_MSG_LOCAL_CIE_SMOOTHYB;Local CIECAM - Scale Yb Viewing
+HISTORY_MSG_LOCAL_CIE_SMOOTH_LUM;Local CIECAM - levels - luminosity mode
 HISTORY_MSG_LOCAL_CIE_SATCIE;Local CIECAM - Saturation control
 HISTORY_MSG_LOCAL_CIE_STRLOG;Local CIECAM - Log encoding strength
 HISTORY_MSG_LOCAL_CIE_WHITES;Local CIECAM - Whites distribution
@@ -2684,6 +2690,7 @@ TP_ICM_APPLYHUESATMAP_TOOLTIP;Employ the embedded DCP base table (HueSatMap). Th
 TP_ICM_APPLYLOOKTABLE;Look table
 TP_ICM_APPLYLOOKTABLE_TOOLTIP;Employ the embedded DCP look table. The setting is only available if the selected DCP has one.
 TP_ICM_BPC;Black Point Compensation
+TP_ICM_BW;Black and White
 TP_ICM_DCPILLUMINANT;Illuminant
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
 TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is 'interpolated' which is a mix between the two based on white balance. The setting is only available if a dual-illuminant DCP with interpolation support is selected.
@@ -2843,7 +2850,7 @@ TP_LOCALLAB_ARTIF_TOOLTIP;ΔE scope threshold increases the range of ΔE scope. 
 TP_LOCALLAB_AUTOGRAY;Auto mean luminance (Yb%)
 TP_LOCALLAB_AUTOGRAYCIE;Automatic
 TP_LOCALLAB_AVOID;Avoid color shift
-TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction (Uniform Perceptual Lab).\n\nDefault: Munsell only.\nMunsell only, fixes Lab mode hue drifts due to non-linearity, when chromaticity is changed (Uniform Perceptual Lab).\nLab, applies a gamut control, in relative colorimetric, Munsell is then applied.\nXYZ Absolute, applies gamut control, in absolute colorimetric, Munsell is then applied.\nXYZ Relative, applies gamut control, in relative colorimetric, Munsell is then applied.
+TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction (Uniform Perceptual Lab).\n\nDefault: Munsell only.\nMunsell only, fixes Lab mode hue drifts due to non-linearity, when chromaticity is changed (Uniform Perceptual Lab).\nLab, applies a gamut control, in relative colorimetric, Munsell is then applied.\nXYZ Absolute, applies gamut control, in absolute colorimetric, Munsell is then applied.\nXYZ Relative, applies gamut control, in relative colorimetric, Munsell is then applied. The result is not the same as Lab.
 TP_LOCALLAB_AVOIDMUN;Munsell correction only
 TP_LOCALLAB_AVOIDMUN_TOOLTIP;Munsell correction always disabled when Jz or CAM16 is used.
 TP_LOCALLAB_AVOIDRAD;Soft radius
@@ -2920,9 +2927,10 @@ TP_LOCALLAB_CHRRT;Chroma
 TP_LOCALLAB_CIE;Color appearance (Cam16 & JzCzHz)
 TP_LOCALLAB_CIE_SMOOTH_NONE;None
 TP_LOCALLAB_CIE_SMOOTH_EV;Ev based
-TP_LOCALLAB_CIE_SMOOTHFRAME;Highlight attenuation
+TP_LOCALLAB_CIE_SMOOTHFRAME;Highlight attenuation & Levels
 TP_LOCALLAB_CIE_SMOOTH_GAMMA;Slope based
 TP_LOCALLAB_CIE_SMOOTH_GAMMA ROLLOFF;Gamma based
+TP_LOCALLAB_CIE_SMOOTH_LEVELS;Levels
 TP_LOCALLAB_CIEC;Use Ciecam environment parameters
 TP_LOCALLAB_CIECAMLOG_TOOLTIP;This module is based on the CIECAM color appearance model which was designed to better simulate how human vision perceives colors under different lighting conditions.\nThe first Ciecam process 'Scene conditions' is carried out by Log encoding, it also uses 'Absolute luminance' at the time of shooting.\nThe second Ciecam process 'Image adjustments' is simplified and uses only 3 variables (local contrast, contrast J, saturation s).\nThe third Ciecam process 'Viewing conditions' adapts the output to the intended viewing conditions (monitor, TV, projector, printer, etc.) so that the chromatic and contrast appearance is preserved across the display environment.
 TP_LOCALLAB_CIECOLORFRA;Color
@@ -3551,9 +3559,14 @@ TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP;Allows you, in Automatic, when the dynamic 
 TP_LOCALLAB_SLOMASKCOL;Slope
 TP_LOCALLAB_SLOMASK_TOOLTIP;Adjusting Gamma and Slope can provide a soft and artifact-free transformation of the mask by progressively modifying 'L' to avoid any discontinuities.
 TP_LOCALLAB_SLOPESMOOTH;Gray balance (Slope)
+TP_LOCALLAB_SLOPESMOOTHR;Red balance (Slope)
+TP_LOCALLAB_SLOPESMOOTHG;Green balance (Slope)
+TP_LOCALLAB_SLOPESMOOTHB;Blue balance (Slope)
 TP_LOCALLAB_SLOSH;Slope
 TP_LOCALLAB_SMOOTHCIE;Smooth & Tone-Mapping
+TP_LOCALLAB_SMOOTHCIE_LUM;Luminosity mode
 TP_LOCALLAB_SMOOTHCIE_SCA;Scale Yb Scene
+TP_LOCALLAB_SMOOTHCIE_YB;Scale Yb Viewing
 TP_LOCALLAB_SMOOTHCIE_TOOLTIP;Completes the processing carried out by gamma, slope and midtones by causing a slight lowering of lights. Please note this does not replace Highlight reconstruction.\n\nGamma - Slope - based: choice (Standard and Advanced) allows you to simulate a "Tone mapping" using: a) Scene conditions: Black-Ev, White-Ev, Mean luminance (Yb%); b) Viewing conditions: Mean luminance (Yb%).\nScale Yb Scene is function of White-Ev.
 TP_LOCALLAB_SOFT;Soft Light & Original Retinex
 TP_LOCALLAB_SOFTM;Soft Light

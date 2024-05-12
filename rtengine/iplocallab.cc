@@ -941,7 +941,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.smoothciem = 2;
     } else if (locallab.spots.at(sp).smoothciemet == "gamnorol") {
         lp.smoothciem = 3;
+    } else if (locallab.spots.at(sp).smoothciemet == "level") {
+        lp.smoothciem = 4;
     }
+
 
     if (locallab.spots.at(sp).spotMethod == "norm") {
         lp.fullim = 0;
@@ -2610,12 +2613,15 @@ float do_get(float x, bool rolloff_, float mid_gray_scene, float gamma, float dr
 
 //Copyright (c) 2023 Thatcher Freeman
 // Adapted to Rawtherapee Jacques Desmis 25 mars 2024
-void tonemapFreeman(float target_slope, float white_point, float black_point, float mid_gray_scene, float mid_gray_view, bool rolloff, LUTf& lut, int mode, bool scale)
+void tonemapFreeman(float target_slope, float target_sloper, float target_slopeg , float target_slopeb, float white_point, float black_point, float mid_gray_scene, float mid_gray_view, bool rolloff, LUTf& lut, LUTf& lutr, LUTf& lutg, LUTf& lutb, int mode, bool scale, bool takeyb)
 {
     float dr;//Dynamic Range
     float b;
     float c;//black point
     float gamma;
+    float gammar;
+    float gammag;
+    float gammab;
     float mid_gray_scene_;//Mean luminance - Scene conditions
                           // mid_gray_view //Mean luminance - Viewing conditions
     
@@ -2630,8 +2636,18 @@ void tonemapFreeman(float target_slope, float white_point, float black_point, fl
 
     b = (dr / (mid_gray_scene_ - c)) * (1.f - ((mid_gray_scene_ - c) / dr)) * mid_gray_scene_;//b - ponderate mid_gray_scene taking into account the total DR, and the dark part below the mid_gray_scene
     gamma = target_slope * (float) std::pow((mid_gray_scene_ + b), 2.0) / (dr * b);//Caculate gamma with slope and mid_gray_scene 
+    gammar = target_sloper * (float) std::pow((mid_gray_scene_ + b), 2.0) / (dr * b);//Caculate gamma with slope and mid_gray_scene 
+    gammag = target_slopeg * (float) std::pow((mid_gray_scene_ + b), 2.0) / (dr * b);//Caculate gamma with slope and mid_gray_scene 
+    gammab = target_slopeb * (float) std::pow((mid_gray_scene_ + b), 2.0) / (dr * b);//Caculate gamma with slope and mid_gray_scene 
     float kmid = 1.f;//general case
-    if(mode == 3 && target_slope != 1.f) {//case tone-mapping
+    //float kyb = 1.f;
+    if(takeyb){
+        kmid = mid_gray_scene / mid_gray_view;
+        kmid = cbrt(kmid);
+    }
+   // if(mode == 3 && target_slope != 1.f ) {//case tone-mapping
+/*
+         
         float midutil = mid_gray_view / mid_gray_scene;//take into account ratio between Yb source and Yb viewing
         float midk = 1.f;
         float k_slope = 2.2f;
@@ -2639,13 +2655,24 @@ void tonemapFreeman(float target_slope, float white_point, float black_point, fl
             midk = pow_F(midutil, k_slope * (target_slope - 1.f));//ponderation in function target_slope when "slope user" < 1.f
         }
         kmid = midk;
+        
     }
-    if (settings->verbose) {
+*/    
+    if (mode == 3 && settings->verbose) {
         printf("b=%f gamma=%f slope=%f DynRange=%f kmid=%f black=%f Yb-scale=%f\n", (double) b, (double) gamma, (double) target_slope, (double) dr, (double) kmid, (double) c, (double) mid_gray_scene_);
     }
     //lut - take from Alberto Griggio
-    for (int i = 0; i < 65536; ++i) {// i - value image RGB
-        lut[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_scene_, gamma, dr, b, c, kmid);//call main function
+    if(mode == 4) {
+        for (int i = 0; i < 65536; ++i) {// i - value image RGB
+            lutr[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_scene_, gammar, dr, b, c, kmid);//call main function
+            lutg[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_scene_, gammag, dr, b, c, kmid);//call main function
+            lutb[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_scene_, gammab, dr, b, c, kmid);//call main function
+        }
+    } else {
+        kmid = 1.f;
+        for (int i = 0; i < 65536; ++i) {// i - value image RGB
+            lut[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_scene_, gamma, dr, b, c, kmid);//call main function
+        }
     }
 }
 
@@ -13769,7 +13796,7 @@ void ImProcFunctions::Lab_Local(
     double& huerefblur, double& chromarefblur, double& lumarefblur, double& hueref, double& chromaref, double& lumaref, double& sobelref, int &lastsav,
     bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, int llcieMask,
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax,
-    float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, int &ill, float &contsig, float &lightsig,
+    float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, int &prim, int &ill, float &contsig, float &lightsig,
     float& highresi, float& nresi, float& highresi46, float& nresi46, float& Lhighresi, float& Lnresi, float& Lhighresi46, float& Lnresi46
 
     )
@@ -19961,6 +19988,42 @@ void ImProcFunctions::Lab_Local(
                 }
 
                 if (params->locallab.spots.at(sp).expprecam && params->locallab.spots.at(sp).modecam == "cam16") {
+                    TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
+                    TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
+
+                    float toxyz[3][3] = {
+                        {
+                        static_cast<float>(wprof[0][0] / static_cast<double>(Color::D50x)),
+                        static_cast<float>(wprof[0][1] / static_cast<double>(Color::D50x)),
+                        static_cast<float>(wprof[0][2] / static_cast<double>(Color::D50x))
+                        }, {
+                        static_cast<float>(wprof[1][0]),
+                        static_cast<float>(wprof[1][1]),
+                        static_cast<float>(wprof[1][2])
+                        }, {
+                        static_cast<float>(wprof[2][0] / static_cast<double>(Color::D50z)),
+                        static_cast<float>(wprof[2][1] / static_cast<double>(Color::D50z)),
+                        static_cast<float>(wprof[2][2] / static_cast<double>(Color::D50z))
+                        }
+                    };
+
+                    float maxFactorToxyz = max(toxyz[1][0], toxyz[1][1], toxyz[1][2]);
+                    float equalR = maxFactorToxyz / toxyz[1][0];
+                    float equalG = maxFactorToxyz / toxyz[1][1];
+                    float equalB = maxFactorToxyz / toxyz[1][2];
+                    //inverse matrix user select
+                    double wip[3][3] = {
+                        {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
+                        {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
+                        {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
+                    };
+                    double wp[3][3] = {
+                        {wprof[0][0], wprof[0][1], wprof[0][2]},
+                        {wprof[1][0], wprof[1][1], wprof[1][2]},
+                        {wprof[2][0], wprof[2][1], wprof[2][2]}
+                    };
+    
+    
                     Imagefloat *tmpImage = nullptr;
                     tmpImage = new Imagefloat(bfw, bfh);
                     Imagefloat *tmpImagelog = nullptr;
@@ -19972,7 +20035,7 @@ void ImProcFunctions::Lab_Local(
                     float gamtone = params->locallab.spots.at(sp).gamjcie;
                     float slotone = params->locallab.spots.at(sp).slopjcie;
                     cmsHTRANSFORM dummy = nullptr;
-                    int prim = 3;
+                    //int prim = 3;
                     int typ = 1;
                     rdx = params->locallab.spots.at(sp).redxl;
                     rdy = params->locallab.spots.at(sp).redyl;
@@ -20095,41 +20158,146 @@ void ImProcFunctions::Lab_Local(
 
                     if(lp.smoothciem == 1) {
                         tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
-                    } else if(lp.smoothciem == 2  || lp.smoothciem == 3) {//  2 - only smmoth highlightd  - 3 - Tone mapping with slope and mid_grey
+                    } else if(lp.smoothciem == 2  || lp.smoothciem == 3 || lp.smoothciem == 4) {//  2 - only smmoth highlightd  - 3 - Tone mapping with slope and mid_grey
 
                         //TonemapFreeman - Copyright (c) 2023 Thatcher Freeman
                         float mid_gray = 0.01f * lp.sourcegraycie;//Mean luminance Yb Scene
                         float mid_gray_view = 0.01f * lp.targetgraycie;//Mean luminance Yb Viewing
+                           // if(mode == 3 && target_slope != 1.f ) {//case tone-mapping
+/*        if(params->locallab.spots.at(sp).{   
+        float midutil = mid_gray_view / mid_gray_scene;//take into account ratio between Yb source and Yb viewing
+        float midk = 1.f;
+        float k_slope = 2.2f;
+        if(target_slope >= 1.f) {
+            midk = pow_F(midutil, k_slope * (target_slope - 1.f));//ponderation in function target_slope when "slope user" < 1.f
+        }
+        kmid = midk;
+        
+    }
+*/
                         lp.whiteevjz = LIM(lp.whiteevjz, 0.1f, 31.5f);//limit whiteEv to avoid crash
                         float white_point =  xexpf(lp.whiteevjz * std::log(2.f) + xlogf(mid_gray));//lp.whiteevjz  White_Ev
                         lp.blackevjz = LIM(lp.blackevjz, -15.5f, -0.2f);//limit BlackEv to avoid crash
                         float black_point =  xexpf(lp.blackevjz * std::log(2.f) + xlogf(mid_gray));//lp.blackevjz  Black_Ev
                         bool rolloff = true;//only soften highlights
                         float slopegray = 1.f;//slopegray between 0.8 and 1.6 - lineary light the shadows by the user - the gamma is calculated according to slope and the characteristics of the image DR, White, Black
+                        float slopegrayr = 1.f;
+                        float slopegrayg = 1.f;
+                        float slopegrayb = 1.f;
                         int mode = 1;
                         float slopsmoot = 1.f - ((float) params->locallab.spots.at(sp).slopesmo - 1.f);//modify response so when increase slope the grays are becoming lighter
+                        float slopsmootr = 1.f - ((float) params->locallab.spots.at(sp).slopesmor - 1.f);
+                        float slopsmootg = 1.f - ((float) params->locallab.spots.at(sp).slopesmog - 1.f);
+                        float slopsmootb = 1.f - ((float) params->locallab.spots.at(sp).slopesmob - 1.f);
+                        bool takeyb = params->locallab.spots.at(sp).smoothcieyb;
+                        bool lummod = params->locallab.spots.at(sp).smoothcielum;
+                        float maxsl= 4.f;//maximum real slope
+                        float minslider = 0.01f;//minimum slider value > 0.f
+                        float aa = (1.9f - maxsl) / (0.1f - minslider);//interpolation : 1.9f slope value for slider = 0.1f
+                        float bb = 1.9f - 0.1f * aa;
+                        
                         if(lp.smoothciem == 3) {//slope activ, only with choice gamma - slope - based
                             rolloff = false;//allows tone-mapping slope
+                            if(slopsmoot < 0.1f) {
+                                slopsmoot = aa * slopsmoot + bb;
+                            }
                             slopegray = slopsmoot;
+                            slopegrayr = slopsmoot;
+                            slopegrayg = slopsmoot;
+                            slopegrayb = slopsmoot;
                             mode = 3;
+                        }//modify slope
+                        if(lp.smoothciem == 4) {//levels
+                            rolloff = false;//allows tone-mapping slope
+                            if(slopsmootr < 0.1f) {
+                                slopsmootr = aa * slopsmootr + bb;
+                            }
+                            slopegrayr = slopsmootr;
+                            if(slopsmootg < 0.1f) {
+                                slopsmootg = aa * slopsmootg + bb;
+                            }
+                            slopegrayg = slopsmootg;
+                            if(slopsmootb < 0.1f) {
+                                slopsmootb = aa * slopsmootb + bb;
+                            }
+                            slopegrayb = slopsmootb;
+                            mode = 4;
                         }
+                        
                         LUTf lut(65536, LUT_CLIP_OFF);//take from Alberto Griggio
+                        LUTf lutr(65536, LUT_CLIP_OFF);
+                        LUTf lutg(65536, LUT_CLIP_OFF);
+                        LUTf lutb(65536, LUT_CLIP_OFF);
                         bool scale = lp.issmoothcie;//scale Yb mid_gray - WhiteEv and BlavkEv
-                        tonemapFreeman(slopegray, white_point, black_point, mid_gray, mid_gray_view, rolloff, lut, mode, scale);
+                        
+                        tonemapFreeman(slopegray, slopegrayr, slopegrayg, slopegrayb, white_point, black_point, mid_gray, mid_gray_view, rolloff, lut, lutr, lutg, lutb, mode, scale, takeyb);
 
+                        if(lp.smoothciem == 4) {
+                            if(lummod) {//luminosity mode by Lab conversion
  #ifdef _OPENMP
         #pragma omp parallel for
 #endif
-                        for (int y = 0; y < bfh ; ++ y) {//apply Lut tone-mapping or smooth: thanks to Alberto - gain time.
-                            for (int x = 0; x < bfw ; ++x) {
-                                tmpImage->r(y, x) = 65535.f * lut[tmpImage->r(y, x)];
-                                tmpImage->g(y, x) = 65535.f * lut[tmpImage->g(y, x)];
-                                tmpImage->b(y, x) = 65535.f * lut[tmpImage->b(y, x)];
+                                for (int y = 0; y < bfh ; ++ y) {
+                                    for (int x = 0; x < bfw ; ++x) {
+                                        float r = tmpImage->r(y, x);
+                                        float g = tmpImage->g(y, x);
+                                        float b = tmpImage->b(y, x);
+                                        //convert to Lab to get a&b before RGB
+                                        float xx = toxyz[0][0] * r + toxyz[0][1] * g + toxyz[0][2] * b;
+                                        float yy = toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b;
+                                        float zz = toxyz[2][0] * r + toxyz[2][1] * g + toxyz[2][2] * b;
+
+                                        float fx = xx < MAXVALF ? Color::cachef[xx] : 327.68f * std::cbrt(xx / MAXVALF);
+                                        float fy = yy < MAXVALF ? Color::cachef[yy] : 327.68f * std::cbrt(yy / MAXVALF);
+                                        float fz = zz < MAXVALF ? Color::cachef[zz] : 327.68f * std::cbrt(zz / MAXVALF);
+
+                                        float a_1 = 500.0f * (fx - fy);
+                                        float b_1 = 200.0f * (fy - fz);
+                                        float rNew = 65535.f * lutr[tmpImage->r(y, x)];
+                                        float gNew = 65535.f * lutg[tmpImage->g(y, x)];
+                                        float bNew = 65535.f * lutb[tmpImage->b(y, x)];
+                                        r += (rNew - r) * equalR;
+                                        g += (gNew - g) * equalG;
+                                        b += (bNew - b) * equalB;
+                                        float newy = toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b;
+                                        float L_2 = newy <= MAXVALF ? Color::cachefy[newy] : 327.68f * (116.f * xcbrtf(newy / MAXVALF) - 16.f);
+                                        float x_, y_, z_;
+                                        //calculate RGB with L_2 and old value of a and b
+                                        Color::Lab2XYZ(L_2, a_1, b_1, x_, y_, z_) ;
+                                        if (params->locallab.spots.at(sp).avoidgamutMethod != "NONE") {//possibility of deactivating to see usefulness. is it necessary? 
+                                            Color::gamutmap(x_, y_, z_, wp);//if none disabled
+                                        }
+                                        Color::xyz2rgb(x_, y_, z_, r, g, b, wip);
+                                        tmpImage->r(y, x) = r;
+                                        tmpImage->g(y, x) = g;
+                                        tmpImage->b(y, x) = b;
+                                    }
+                                }
+                            } else {//RGG case
+ #ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+                                for (int y = 0; y < bfh ; ++ y) {//apply Lut tone-mapping or smooth: thanks to Alberto - gain time.
+                                    for (int x = 0; x < bfw ; ++x) {
+                                        tmpImage->r(y, x) = 65535.f * lutr[tmpImage->r(y, x)];
+                                        tmpImage->g(y, x) = 65535.f * lutg[tmpImage->g(y, x)];
+                                        tmpImage->b(y, x) = 65535.f * lutb[tmpImage->b(y, x)];
+                                    }
+                                }
+                            }
+                        } else {//Slope case
+ #ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+                            for (int y = 0; y < bfh ; ++ y) {//apply Lut tone-mapping or smooth: thanks to Alberto - gain time.
+                                for (int x = 0; x < bfw ; ++x) {
+                                    tmpImage->r(y, x) = 65535.f * lut[tmpImage->r(y, x)];
+                                    tmpImage->g(y, x) = 65535.f * lut[tmpImage->g(y, x)];
+                                    tmpImage->b(y, x) = 65535.f * lut[tmpImage->b(y, x)];
+                                }
                             }
                         }
-
                     }
-
 
                     rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
@@ -20220,6 +20388,19 @@ void ImProcFunctions::Lab_Local(
 
                     ImProcFunctions::localContrast(bufexpfin.get(), bufexpfin->L, localContrastParams, fftwlc, sk);
             }
+            if (params->locallab.spots.at(sp).bwcie) {
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+
+                    for (int ir = 0; ir < bfh; ir++) {
+                        for (int jr = 0; jr < bfw; jr++) {
+                            bufexpfin->a[ir][jr] = 0.f;
+                            bufexpfin->b[ir][jr] = 0.f;
+                        }
+                    }
+            }
+            
 
             const float repart = 1.0 - 0.01 * params->locallab.spots.at(sp).reparcie;
             int bw = bufexporig->W;

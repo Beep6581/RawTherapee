@@ -1736,11 +1736,14 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).comprcieauto = locallab.spots.at(j).comprcieauto && pSpot.comprcieauto == otherSpot.comprcieauto;
                 locallab.spots.at(j).normcie = locallab.spots.at(j).normcie && pSpot.normcie == otherSpot.normcie;
                 locallab.spots.at(j).gamutcie = locallab.spots.at(j).gamutcie && pSpot.gamutcie == otherSpot.gamutcie;
+                locallab.spots.at(j).bwcie = locallab.spots.at(j).bwcie && pSpot.bwcie == otherSpot.bwcie;
                 locallab.spots.at(j).sigcie = locallab.spots.at(j).sigcie && pSpot.sigcie == otherSpot.sigcie;
                 locallab.spots.at(j).logcie = locallab.spots.at(j).logcie && pSpot.logcie == otherSpot.logcie;
                 locallab.spots.at(j).satcie = locallab.spots.at(j).satcie && pSpot.satcie == otherSpot.satcie;
                 locallab.spots.at(j).logcieq = locallab.spots.at(j).logcieq && pSpot.logcieq == otherSpot.logcieq;
                 locallab.spots.at(j).smoothcie = locallab.spots.at(j).smoothcie && pSpot.smoothcie == otherSpot.smoothcie;
+                locallab.spots.at(j).smoothcieyb = locallab.spots.at(j).smoothcieyb && pSpot.smoothcieyb == otherSpot.smoothcieyb;
+                locallab.spots.at(j).smoothcielum = locallab.spots.at(j).smoothcielum && pSpot.smoothcielum == otherSpot.smoothcielum;
                 locallab.spots.at(j).logjz = locallab.spots.at(j).logjz && pSpot.logjz == otherSpot.logjz;
                 locallab.spots.at(j).sigjz = locallab.spots.at(j).sigjz && pSpot.sigjz == otherSpot.sigjz;
                 locallab.spots.at(j).sigq = locallab.spots.at(j).sigq && pSpot.sigq == otherSpot.sigq;
@@ -1801,6 +1804,9 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).gamjcie = locallab.spots.at(j).gamjcie && pSpot.gamjcie == otherSpot.gamjcie;
                 locallab.spots.at(j).slopjcie = locallab.spots.at(j).slopjcie && pSpot.slopjcie == otherSpot.slopjcie;
                 locallab.spots.at(j).slopesmo = locallab.spots.at(j).slopesmo && pSpot.slopesmo == otherSpot.slopesmo;
+                locallab.spots.at(j).slopesmor = locallab.spots.at(j).slopesmor && pSpot.slopesmor == otherSpot.slopesmor;
+                locallab.spots.at(j).slopesmog = locallab.spots.at(j).slopesmog && pSpot.slopesmog == otherSpot.slopesmog;
+                locallab.spots.at(j).slopesmob = locallab.spots.at(j).slopesmob && pSpot.slopesmob == otherSpot.slopesmob;
                 locallab.spots.at(j).midtcie = locallab.spots.at(j).midtcie && pSpot.midtcie == otherSpot.midtcie;
                 locallab.spots.at(j).grexl = locallab.spots.at(j).grexl && pSpot.grexl == otherSpot.grexl;
                 locallab.spots.at(j).greyl = locallab.spots.at(j).greyl && pSpot.greyl == otherSpot.greyl;
@@ -5953,9 +5959,12 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).normcie = mods.locallab.spots.at(i).normcie;
         }
 
-
         if (locallab.spots.at(i).gamutcie) {
             toEdit.locallab.spots.at(i).gamutcie = mods.locallab.spots.at(i).gamutcie;
+        }
+
+        if (locallab.spots.at(i).bwcie) {
+            toEdit.locallab.spots.at(i).bwcie = mods.locallab.spots.at(i).bwcie;
         }
 
         if (locallab.spots.at(i).sigcie) {
@@ -5976,6 +5985,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).smoothcie) {
             toEdit.locallab.spots.at(i).smoothcie = mods.locallab.spots.at(i).smoothcie;
+        }
+
+        if (locallab.spots.at(i).smoothcieyb) {
+            toEdit.locallab.spots.at(i).smoothcieyb = mods.locallab.spots.at(i).smoothcieyb;
+        }
+
+        if (locallab.spots.at(i).smoothcielum) {
+            toEdit.locallab.spots.at(i).smoothcielum = mods.locallab.spots.at(i).smoothcielum;
         }
 
         if (locallab.spots.at(i).logjz) {
@@ -6212,6 +6229,18 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).slopesmo) {
             toEdit.locallab.spots.at(i).slopesmo = mods.locallab.spots.at(i).slopesmo;
+        }
+
+        if (locallab.spots.at(i).slopesmor) {
+            toEdit.locallab.spots.at(i).slopesmor = mods.locallab.spots.at(i).slopesmor;
+        }
+
+        if (locallab.spots.at(i).slopesmog) {
+            toEdit.locallab.spots.at(i).slopesmog = mods.locallab.spots.at(i).slopesmog;
+        }
+
+        if (locallab.spots.at(i).slopesmob) {
+            toEdit.locallab.spots.at(i).slopesmob = mods.locallab.spots.at(i).slopesmob;
         }
 
         if (locallab.spots.at(i).midtcie) {
@@ -8449,11 +8478,14 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     comprcieauto(v),
     normcie(v),
     gamutcie(v),
+    bwcie(v),
     sigcie(v),
     logcie(v),
     satcie(v),
     logcieq(v),
     smoothcie(v),
+    smoothcieyb(v),
+    smoothcielum(v),
     logjz(v),
     sigjz(v),
     sigq(v),
@@ -8514,6 +8546,9 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     gamjcie(v),
     slopjcie(v),
     slopesmo(v),
+    slopesmor(v),
+    slopesmog(v),
+    slopesmob(v),
     midtcie(v),
     redxl(v),
     redyl(v),
@@ -9202,11 +9237,14 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     comprcieauto = v;
     normcie = v;
     gamutcie = v;
+    bwcie = v;
     sigcie = v;
     logcie = v;
     satcie = v;
     logcieq = v;
     smoothcie = v;
+    smoothcieyb = v;
+    smoothcielum = v;
     logjz = v;
     sigjz = v;
     sigq = v;
@@ -9267,6 +9305,9 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     gamjcie = v;
     slopjcie = v;
     slopesmo = v;
+    slopesmor = v;
+    slopesmog = v;
+    slopesmob = v;
     midtcie = v;
     redxl = v;
     redyl = v;

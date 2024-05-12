@@ -77,7 +77,12 @@ protected:
     rtengine::ProcEvent Evlocallabslopjcie;
     rtengine::ProcEvent Evlocallabmidtcie;
     rtengine::ProcEvent Evlocallabslopesmo;
+    rtengine::ProcEvent Evlocallabslopesmor;
+    rtengine::ProcEvent Evlocallabslopesmog;
+    rtengine::ProcEvent Evlocallabslopesmob;
     rtengine::ProcEvent Evlocallabsmoothcie;
+    rtengine::ProcEvent Evlocallabsmoothcieyb;
+    rtengine::ProcEvent Evlocallabsmoothcielum;
     rtengine::ProcEvent Evlocallabsmoothciemet;
     rtengine::ProcEvent Evlocallabsigcie;
     rtengine::ProcEvent Evlocallabillcie;
@@ -98,6 +103,7 @@ protected:
     rtengine::ProcEvent Evlocallabbluyl;
     rtengine::ProcEvent EvlocallabGridciexy;
     rtengine::ProcEvent Evlocallabgamutcie;
+    rtengine::ProcEvent Evlocallabbwcie;
     rtengine::ProcEvent Evlocallabexpprecam;
     rtengine::ProcEvent Evlocallablightsigqcie;
     rtengine::ProcEvent Evlocallabcontsigqcie;
@@ -1690,10 +1696,15 @@ private:
     Adjuster* const slopjcie;
     Adjuster* const midtcie;
     Gtk::CheckButton* const smoothcie;
+    Gtk::CheckButton* const smoothcieyb;
+    Gtk::CheckButton* const smoothcielum;
     ToolParamBlock* const ciesmoothBox;
     Gtk::Box* smoothBox;
     MyComboBoxText* const smoothciemet;
     Adjuster* const slopesmo;
+    Adjuster* const slopesmor;
+    Adjuster* const slopesmog;
+    Adjuster* const slopesmob;
 
     Adjuster* const whitescie;
     Adjuster* const blackscie;
@@ -1724,6 +1735,8 @@ private:
     Gtk::CheckButton* const gamutcie;
     Adjuster* const shiftxl;
     Adjuster* const shiftyl;
+    Gtk::Box* bwcieBox;
+    Gtk::CheckButton* const bwcie;
 
     Gtk::Frame* const sigmoidjzFrame;
     Gtk::Frame* const sigmoid2Frame;
@@ -1824,7 +1837,7 @@ private:
     ThresholdAdjuster* const csThresholdcie;
     int nextcomprciecount = 0;
    
-    sigc::connection AutograycieConn, primMethodconn, illMethodconn, smoothciemetconn, catMethodconn, forcejzConn, forcebwConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, enacieMaskallConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, comprcieautoconn, normcieconn, logcieconn, satcieconn, logcieqconn,smoothcieconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethodConn, fftcieMaskConn, gamutcieconn, expprecamconn, sigcieconn;
+    sigc::connection AutograycieConn, primMethodconn, illMethodconn, smoothciemetconn, catMethodconn, forcejzConn, forcebwConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, enacieMaskallConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, comprcieautoconn, normcieconn, logcieconn, satcieconn, logcieqconn,smoothcieconn, smoothcieybconn,smoothcielumconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethodConn, fftcieMaskConn, gamutcieconn, bwcieconn, expprecamconn, sigcieconn;
 public:
     Locallabcie();
     ~Locallabcie();
@@ -1860,7 +1873,7 @@ public:
     void bwevMethodChanged();
     void updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const float jz1);
     void updatePrimloc(const float redx, const float redy, const float grex, const float grey, const float blux, const float bluy);
-    void updateiPrimloc(const float r_x, const float r_y, const float g_x, const float g_y, const float b_x, const float b_y, const float w_x, const float w_y, const float m_x, const float m_y,  const float me_x, const float me_y);
+    void updateiPrimloc(const float r_x, const float r_y, const float g_x, const float g_y, const float b_x, const float b_y, const float w_x, const float w_y, const float m_x, const float m_y,  const float me_x, const float me_y, const int pri_);
     void updatesigloc(const float cont_sig, const float light_sig);
 
 private:
@@ -1877,6 +1890,7 @@ private:
     void comprcieautoChanged();
     void normcieChanged();
     void gamutcieChanged();
+    void bwcieChanged();
     void illMethodChanged();
     void smoothciemetChanged();
     void primMethodChanged();
@@ -1885,6 +1899,8 @@ private:
     void satcieChanged();
     void logcieqChanged();
     void smoothcieChanged();
+    void smoothcieybChanged();
+    void smoothcielumChanged();
     void sigcieChanged();
     void logjzChanged();
     void sigjzChanged();

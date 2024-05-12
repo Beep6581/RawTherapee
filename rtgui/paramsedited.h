@@ -1016,11 +1016,14 @@ public:
         bool comprcieauto;
         bool normcie;
         bool gamutcie;
+        bool bwcie;
         bool sigcie;
         bool logcie;
         bool satcie;
         bool logcieq;
         bool smoothcie;
+        bool smoothcieyb;
+        bool smoothcielum;
         bool logjz;
         bool sigjz;
         bool sigq;
@@ -1081,6 +1084,9 @@ public:
         bool gamjcie;
         bool slopjcie;
         bool slopesmo;
+        bool slopesmor;
+        bool slopesmog;
+        bool slopesmob;
         bool midtcie;
         bool redxl;
         bool redyl;

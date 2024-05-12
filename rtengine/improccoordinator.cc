@@ -1280,6 +1280,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float rdx, rdy, grx, gry, blx, bly = 0.f;
                 float meanx, meany, meanxe, meanye = 0.f;
                 int ill = 2;
+                int prim = 3;
                 bool istm = params->locallab.spots.at(sp).equiltm  && params->locallab.spots.at(sp).exptonemap;
                 bool isreti = params->locallab.spots.at(sp).equilret  && params->locallab.spots.at(sp).expreti;
                 //preparation for mean and sigma on current RT-spot
@@ -1426,7 +1427,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               LHutili, HHutili, CHutili, HHutilijz, CHutilijz, LHutilijz, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                               huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
-                              meantm, stdtm, meanreti, stdreti, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye,  ill, contsig, lightsig,
+                              meantm, stdtm, meanreti, stdreti, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig,
                               highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46);
 
 
