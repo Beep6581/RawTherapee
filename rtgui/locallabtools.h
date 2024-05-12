@@ -195,6 +195,8 @@ public:
     virtual void resetMaskView() {};
     virtual void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask) {};
 
+    virtual Gtk::ToggleButton *getPreviewDeltaEButton() const;
+
     // Advice tooltips management function
     virtual void updateAdviceTooltips(const bool showTooltips) {};
 
@@ -348,6 +350,8 @@ public:
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask) override;
 
+    Gtk::ToggleButton *getPreviewDeltaEButton() const override;
+
     void updateAdviceTooltips(const bool showTooltips) override;
 
     void setDefaultExpanderVisibility() override;
@@ -479,6 +483,8 @@ public:
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask) override;
 
+    Gtk::ToggleButton *getPreviewDeltaEButton() const override;
+
     void updateAdviceTooltips(const bool showTooltips) override;
 
     void setDefaultExpanderVisibility() override;
@@ -583,6 +589,8 @@ public:
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask) override;
 
+    Gtk::ToggleButton *getPreviewDeltaEButton() const override;
+
     void updateAdviceTooltips(const bool showTooltips) override;
     void updateguishad(int spottype);
     void updateguiscopesahd(int scope);
@@ -674,6 +682,8 @@ public:
     bool isMaskViewActive() override;
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask) override;
+
+    Gtk::ToggleButton *getPreviewDeltaEButton() const override;
 
     void updateAdviceTooltips(const bool showTooltips) override;
     void updateguivib(int spottype);
@@ -995,6 +1005,8 @@ public:
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask) override;
 
+    Gtk::ToggleButton *getPreviewDeltaEButton() const override;
+
     void updateAdviceTooltips(const bool showTooltips) override;
     void updateguitone(int spottype);
     void previewtmChanged();
@@ -1296,6 +1308,8 @@ public:
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask) override;
 
+    Gtk::ToggleButton *getPreviewDeltaEButton() const override;
+
     void updateAdviceTooltips(const bool showTooltips) override;
     void updateguicont(int spottype);
     void setDefaultExpanderVisibility() override;
@@ -1511,6 +1525,8 @@ public:
     void updateguilog(int spottype);
     void previewlogChanged();
 
+    Gtk::ToggleButton *getPreviewDeltaEButton() const override;
+
     void updateAdviceTooltips(const bool showTooltips) override;
     void surroundChanged();
     void sursourChanged();
@@ -1600,6 +1616,8 @@ public:
     bool isMaskViewActive() override;
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask) override;
+
+    Gtk::ToggleButton *getPreviewDeltaEButton() const override;
 
     void updateAdviceTooltips(const bool showTooltips) override;
     void updateguimask(int spottype);
@@ -1895,6 +1913,8 @@ public:
     bool isMaskViewActive() override;
     void resetMaskView() override;
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask) override;
+
+    Gtk::ToggleButton *getPreviewDeltaEButton() const override;
 
     void updateAdviceTooltips(const bool showTooltips) override;
     void setDefaultExpanderVisibility() override;

@@ -175,6 +175,28 @@ Locallab::Locallab():
     toollist->setLocallabToolListListener(this);
     panel->pack_start(*toollist, false, false);
 
+    // Add all the tools' preview delta E buttons to one group.
+    for (auto button : {
+             expcolor.getPreviewDeltaEButton(),
+             expexpose.getPreviewDeltaEButton(),
+             expshadhigh.getPreviewDeltaEButton(),
+             expvibrance.getPreviewDeltaEButton(),
+             expsoft.getPreviewDeltaEButton(),
+             expblur.getPreviewDeltaEButton(),
+             exptonemap.getPreviewDeltaEButton(),
+             expreti.getPreviewDeltaEButton(),
+             expsharp.getPreviewDeltaEButton(),
+             expcontrast.getPreviewDeltaEButton(),
+             expcbdl.getPreviewDeltaEButton(),
+             explog.getPreviewDeltaEButton(),
+             expmask.getPreviewDeltaEButton(),
+             expcie.getPreviewDeltaEButton(),
+         }) {
+        if (button) {
+            delta_e_preview_button_group.register_button(*button);
+        }
+    }
+
     // Add Locallab tools to panel widget
     ToolVBox* const toolpanel = Gtk::manage(new ToolVBox());
     toolpanel->set_name("LocallabToolPanel");
@@ -1558,6 +1580,12 @@ void Locallab::resetToolMaskView()
     // Reset mask view GUI for all other Locallab tools
     for (auto tool : locallabTools) {
         tool->resetMaskView();
+    }
+
+    // Deactivate any preview delta E toggle button.
+    auto active_preview_button = delta_e_preview_button_group.getActiveButton();
+    if (active_preview_button) {
+        active_preview_button->set_active(false);
     }
 }
 

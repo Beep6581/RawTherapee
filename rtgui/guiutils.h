@@ -756,6 +756,30 @@ class SpotPicker : public Gtk::Grid
         void spotSizeChanged();
 };
 
+/**
+ * Enforces the rule that zero or one registered toggle button is enabled at any
+ * given time.
+ */
+class OptionalRadioButtonGroup
+{
+    Gtk::ToggleButton *active_button{nullptr};
+
+    void onButtonToggled(Gtk::ToggleButton *button);
+
+public:
+    /**
+     * Returns the toggle button that is active, or null if none are active.
+     */
+    Gtk::ToggleButton *getActiveButton() const;
+    /**
+     * Adds a toggle button to this group.
+     *
+     * If the provided button is active, any existing active button in this
+     * group will be deactivated.
+     */
+    void register_button(Gtk::ToggleButton &button);
+};
+
 inline void setActiveTextOrIndex(Gtk::ComboBoxText &comboBox, const Glib::ustring &text, int index)
 {
     bool valueSet = false;

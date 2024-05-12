@@ -317,6 +317,11 @@ void LocallabTone::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, 
     tmMask = showmasktmMethod->get_active_row_number();
 }
 
+Gtk::ToggleButton *LocallabTone::getPreviewDeltaEButton() const
+{
+    return previewtm;
+}
+
 void LocallabTone::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
@@ -3080,6 +3085,11 @@ void LocallabContrast::resetMaskView()
 void LocallabContrast::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask)
 {
     lcMask = showmasklcMethod->get_active_row_number();
+}
+
+Gtk::ToggleButton *LocallabContrast::getPreviewDeltaEButton() const
+{
+    return previewlc;
 }
 
 //new function Global
@@ -5992,6 +6002,11 @@ void LocallabLog::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, i
     logMask = showmaskLMethod->get_active_row_number();
 }
 
+Gtk::ToggleButton *LocallabLog::getPreviewDeltaEButton() const
+{
+    return previewlog;
+}
+
 
 void LocallabLog::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
 {
@@ -7159,6 +7174,11 @@ void LocallabMask::resetMaskView()
 void LocallabMask::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask)
 {
     maskMask = showmask_Method->get_active_row_number();
+}
+
+Gtk::ToggleButton *LocallabMask::getPreviewDeltaEButton() const
+{
+    return previewmas;
 }
 
 //new function Global
@@ -9042,6 +9062,11 @@ void Locallabcie::resetMaskView()
 void Locallabcie::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask)
 {
     cieMask = showmaskcieMethod->get_active_row_number();
+}
+
+Gtk::ToggleButton *Locallabcie::getPreviewDeltaEButton() const
+{
+    return previewcie;
 }
 
 //new function Global

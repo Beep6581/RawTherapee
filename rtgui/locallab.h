@@ -25,6 +25,7 @@
 #pragma once
 
 #include "controlspotpanel.h"
+#include "guiutils.h"
 #include "locallabtools.h"
 
 /* ==== LocallabToolListListener ==== */
@@ -117,6 +118,8 @@ private:
     LocallabLog explog;
     LocallabMask expmask;
     Locallabcie expcie;
+
+    OptionalRadioButtonGroup delta_e_preview_button_group;
 
     std::vector<LocallabTool*> locallabTools;
 
