@@ -15,7 +15,7 @@ on:
   workflow_dispatch:
 
 env:
-  publish_pre_dev_labels: '["Beep6581:levels"]'
+  publish_pre_dev_labels: '[]'
 
 
 jobs:
