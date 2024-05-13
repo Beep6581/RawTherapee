@@ -475,18 +475,19 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
         toolPanelNotebook->append_page(*favoritePanelSW, *toiF);
     }
     toolPanelNotebook->append_page (*exposurePanelSW,  *toiE);
+/*
     if (!batch) {
         toolPanelNotebook->append_page(*locallabPanelSW,   *toiL);
     }
-    
+*/    
     toolPanelNotebook->append_page (*detailsPanelSW,   *toiD);
     toolPanelNotebook->append_page (*colorPanelSW,     *toiC);
     toolPanelNotebook->append_page (*advancedPanelSW,   *toiW);
 
     // Locallab notebook is hidden in batch mode
-//    if (!batch) {
-//        toolPanelNotebook->append_page(*locallabPanelSW,   *toiL);
-//    }
+    if (!batch) {
+        toolPanelNotebook->append_page(*locallabPanelSW,   *toiL);
+    }
 
     toolPanelNotebook->append_page (*transformPanelSW, *toiT);
     toolPanelNotebook->append_page (*rawPanelSW,       *toiR);
