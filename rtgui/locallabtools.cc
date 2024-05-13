@@ -305,6 +305,11 @@ Gtk::ToggleButton *LocallabTool::getPreviewDeltaEButton() const
     return nullptr;
 }
 
+sigc::connection *LocallabTool::getPreviewDeltaEButtonConnection()
+{
+    return nullptr;
+}
+
 void LocallabTool::colorForValue(double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller)
 {
     float R = 0.f;
@@ -1076,6 +1081,11 @@ void LocallabColor::getMaskView(int &colorMask, int &colorMaskinv, int &expMask,
 Gtk::ToggleButton *LocallabColor::getPreviewDeltaEButton() const
 {
     return previewcol;
+}
+
+sigc::connection *LocallabColor::getPreviewDeltaEButtonConnection()
+{
+    return &previewcolConn;
 }
 
 void LocallabColor::updateAdviceTooltips(const bool showTooltips)
@@ -3059,6 +3069,11 @@ Gtk::ToggleButton *LocallabExposure::getPreviewDeltaEButton() const
     return previewexe;
 }
 
+sigc::connection *LocallabExposure::getPreviewDeltaEButtonConnection()
+{
+    return &previewexeConn;
+}
+
 void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
@@ -4464,6 +4479,11 @@ Gtk::ToggleButton *LocallabShadow::getPreviewDeltaEButton() const
     return previewsh;
 }
 
+sigc::connection *LocallabShadow::getPreviewDeltaEButtonConnection()
+{
+    return &previewshConn;
+}
+
 void LocallabShadow::previewshChanged()
 {
     
@@ -5639,6 +5659,11 @@ void LocallabVibrance::resetMaskView()
 Gtk::ToggleButton *LocallabVibrance::getPreviewDeltaEButton() const
 {
     return previewvib;
+}
+
+sigc::connection *LocallabVibrance::getPreviewDeltaEButtonConnection()
+{
+    return &previewvibConn;
 }
 
 //new function Global

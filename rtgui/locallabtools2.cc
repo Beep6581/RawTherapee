@@ -322,6 +322,11 @@ Gtk::ToggleButton *LocallabTone::getPreviewDeltaEButton() const
     return previewtm;
 }
 
+sigc::connection *LocallabTone::getPreviewDeltaEButtonConnection()
+{
+    return &previewtmConn;
+}
+
 void LocallabTone::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
@@ -3090,6 +3095,11 @@ void LocallabContrast::getMaskView(int &colorMask, int &colorMaskinv, int &expMa
 Gtk::ToggleButton *LocallabContrast::getPreviewDeltaEButton() const
 {
     return previewlc;
+}
+
+sigc::connection *LocallabContrast::getPreviewDeltaEButtonConnection()
+{
+    return &previewlcConn;
 }
 
 //new function Global
@@ -6007,6 +6017,11 @@ Gtk::ToggleButton *LocallabLog::getPreviewDeltaEButton() const
     return previewlog;
 }
 
+sigc::connection *LocallabLog::getPreviewDeltaEButtonConnection()
+{
+    return &previewlogConn;
+}
+
 
 void LocallabLog::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
 {
@@ -7179,6 +7194,11 @@ void LocallabMask::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, 
 Gtk::ToggleButton *LocallabMask::getPreviewDeltaEButton() const
 {
     return previewmas;
+}
+
+sigc::connection *LocallabMask::getPreviewDeltaEButtonConnection()
+{
+    return &previewmasConn;
 }
 
 //new function Global
@@ -9067,6 +9087,11 @@ void Locallabcie::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, i
 Gtk::ToggleButton *Locallabcie::getPreviewDeltaEButton() const
 {
     return previewcie;
+}
+
+sigc::connection *Locallabcie::getPreviewDeltaEButtonConnection()
+{
+    return &previewcieConn;
 }
 
 //new function Global

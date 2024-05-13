@@ -1442,6 +1442,30 @@ void Locallab::resetMaskVisibility()
 
     // Reset deltaE preview
     expsettings->resetDeltaEPreview();
+    for (auto tool : std::initializer_list<LocallabTool *>{
+             &expcolor,
+             &expexpose,
+             &expshadhigh,
+             &expvibrance,
+             &expsoft,
+             &expblur,
+             &exptonemap,
+             &expreti,
+             &expsharp,
+             &expcontrast,
+             &expcbdl,
+             &explog,
+             &expmask,
+             &expcie,
+         }) {
+        auto button = tool->getPreviewDeltaEButton();
+        auto connection = tool->getPreviewDeltaEButtonConnection();
+        if (button && connection) {
+            connection->block();
+            button->set_active(false);
+            connection->unblock();
+        }
+    }
 
     // Reset mask preview for all Locallab tools
     for (auto tool : locallabTools) {
