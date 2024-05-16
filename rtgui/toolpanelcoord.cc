@@ -475,6 +475,11 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
         toolPanelNotebook->append_page(*favoritePanelSW, *toiF);
     }
     toolPanelNotebook->append_page (*exposurePanelSW,  *toiE);
+/*
+    if (!batch) {
+        toolPanelNotebook->append_page(*locallabPanelSW,   *toiL);
+    }
+*/    
     toolPanelNotebook->append_page (*detailsPanelSW,   *toiD);
     toolPanelNotebook->append_page (*colorPanelSW,     *toiC);
     toolPanelNotebook->append_page (*advancedPanelSW,   *toiW);

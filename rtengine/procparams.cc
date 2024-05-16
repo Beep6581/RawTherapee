@@ -3038,7 +3038,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     labgridAHighmerg(-3500.0),
     labgridBHighmerg(-4600.0),
     strengthgrid(30),
-    sensi(15),
+    sensi(30),
     structcol(0),
     strcol(0.),
     strcolab(0.),
@@ -3384,7 +3384,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     shadows(0),
     s_tonalwidth(30),
     sh_radius(40),
-    sensihs(15),
+    sensihs(30),
     enaSHMask(false),
     CCmaskSHcurve{
         static_cast<double>(FCT_MinMaxCPoints),
@@ -3471,7 +3471,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     protectskins(false),
     avoidcolorshift(true),
     pastsattog(true),
-    sensiv(15),
+    sensiv(30),
     skintonescurve{
         static_cast<double>(DCT_Linear)
     },
@@ -4768,9 +4768,80 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         0.35
     },
     csthresholdcie(0, 0, 6, 5, false)
-
+   
 
 {
+  // init settings with Preferences / options : must be followed by call to spotMethodChanged in controlspotpanel.cc  (idle_register)
+  // new values default with different SpotMethod.
+
+    if(options.spotmet == 3) {//global
+        spotMethod = "main";
+        loc = {3000, 3000, 3000, 3000};
+        transit =100.;
+        shape = "RECT";
+
+    } else if(options.spotmet == 2) {//full image
+        spotMethod = "full";
+        loc = {3000, 3000, 3000, 3000};
+        transit =100.;
+        shape = "RECT";       
+        sensi = 30;
+        sensiex = 60;
+        sensihs = 30;
+        sensiv = 30;
+        sensisf = 30; 
+        sensibn = 40;
+        sensiden = 60;
+        sensitm = 60;
+        sensih = 60;
+        sensisha = 40;
+        sensilc = 60;
+        sensicb = 60; 
+        sensilog = 60;
+        sensimask = 60;
+        sensicie = 60;
+        
+    } else if(options.spotmet == 1) {//exclude
+        spotMethod = "exc";
+        shape = "ELI";
+        loc = {150, 150, 150, 150};
+        transit= 60.;
+        sensi = 30;
+        sensiex = 60;
+        sensihs = 30;
+        sensiv = 30;
+        sensibn = 40;
+        sensiden = 60;
+        sensitm = 60;
+        sensih = 60;
+        sensisha = 40;       
+        sensilc = 60;        
+        sensicb = 60; 
+        sensilog = 60;
+        sensimask = 60;
+        sensicie = 60;
+        
+    } else if(options.spotmet == 0) {//normal
+        spotMethod = "norm";
+        shape = "ELI";
+        loc = {150, 150, 150, 150};
+        transit= 60.;
+        sensi = 30;
+        sensiex = 60;
+        sensihs = 30;
+        sensiv = 30;
+        sensibn = 40;
+        sensiden = 60;
+        sensitm = 60;
+        sensih = 60;
+        sensisha = 40;       
+        sensilc = 60;        
+        sensicb = 60; 
+        sensilog = 60;
+        sensimask = 60;
+        sensicie = 60;  
+    }
+
 }
 
 bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const

@@ -1131,6 +1131,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             //std::vector<LocallabListener::locallabRef> locallref;
             std::vector<LocallabListener::locallabRetiMinMax> locallretiminmax;
             std::vector<LocallabListener::locallabcieLC> locallcielc;
+            std::vector<LocallabListener::locallabsetLC> locallsetlc;
             std::vector<LocallabListener::locallabcieSIG> locallciesig;
             huerefs.resize(params->locallab.spots.size());
             huerefblurs.resize(params->locallab.spots.size());
@@ -1154,6 +1155,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             lumarefp = new float[sizespot];
             float *fabrefp = nullptr;
             fabrefp = new float[sizespot];
+            //new controls mainfp and scopefp with multi spots
+            int *mainfp = nullptr;
+            mainfp = new int[sizespot];
+            int *scopefp = nullptr;
+            scopefp = new int[sizespot];
 
             for (int sp = 0; sp < (int)params->locallab.spots.size(); sp++) {
 
@@ -1164,7 +1170,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 if (params->locallab.spots.at(sp).equilret  && params->locallab.spots.at(sp).expreti) {
                     savenormreti.reset(new LabImage(*oprevl, true));
                 }
-                
+                if(params->locallab.spots.at(sp).colorscope != 30) {//compatibility with old method in controlspotpanel to change scope - default value 30
+                    scopefp[sp]= params->locallab.spots.at(sp).colorscope;
+                }
                 // Set local curves of current spot to LUT
                 locRETgainCurve.Set(params->locallab.spots.at(sp).localTgaincurve);
                 locRETtransCurve.Set(params->locallab.spots.at(sp).localTtranscurve);
@@ -1537,7 +1545,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 locciesig.contsigq = contsig;
                 locciesig.lightsigq = lightsig;
                 locallciesig.push_back(locciesig);
-              
+
+
                 // Recalculate references after
                 if (params->locallab.spots.at(sp).spotMethod == "exc") {
                     ipf.calc_ref(sp, reserv.get(), reserv.get(), 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huer, chromar, lumar, sobeler, avg, locwavCurveden, locwavdenutili);
@@ -1555,6 +1564,50 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
              
 
+                
+                // new used linked to global and scope 
+                mainfp[sp] = 0;
+                if (params->locallab.spots.at(sp).spotMethod == "main") {
+                    mainfp[sp] = 3;
+                } else if (params->locallab.spots.at(sp).spotMethod == "full") {
+                    mainfp[sp] = 2;
+                }
+                //keep using tools
+                bool iscolor = params->locallab.spots.at(sp).expcolor;
+                bool issh = params->locallab.spots.at(sp).expshadhigh;
+                bool isvib = params->locallab.spots.at(sp).expvibrance;
+                bool isexpos = params->locallab.spots.at(sp).expexpose;
+                bool issoft = params->locallab.spots.at(sp).expsoft;
+                bool isblur = params->locallab.spots.at(sp).expblur;
+                bool istom = params->locallab.spots.at(sp).exptonemap;
+                bool isret = params->locallab.spots.at(sp).expreti;
+                bool issharp = params->locallab.spots.at(sp).expsharp;
+                bool iscont = params->locallab.spots.at(sp).expcontrast;
+                bool iscbdl = params->locallab.spots.at(sp).expcbdl;
+                bool islog = params->locallab.spots.at(sp).explog;
+                bool ismas = params->locallab.spots.at(sp).expmask;
+                bool iscie = params->locallab.spots.at(sp).expcie;
+                bool isset = iscolor || issh || isvib;
+                
+                //set select spot settings 
+                LocallabListener::locallabsetLC locsetlc;
+                locsetlc.mainf = mainfp[sp];
+                locsetlc.iscolo = iscolor;
+                locsetlc.iss = issh;
+                locsetlc.isvi = isvib;
+                locsetlc.isexpo = isexpos;
+                locsetlc.issof = issoft;
+                locsetlc.isblu = isblur;
+                locsetlc.isto = istom;
+                locsetlc.isre = isret;
+                locsetlc.isshar = issharp;
+                locsetlc.iscon = iscont;
+                locsetlc.iscbd = iscbdl;
+                locsetlc.islo = islog;
+                locsetlc.isma = ismas;
+                locsetlc.isci = iscie;
+                locallsetlc.push_back(locsetlc);
+                
                 if (locallListener) {
                     locallListener->refChanged2(huerefp, chromarefp, lumarefp, fabrefp, params->locallab.selspot);
                     locallListener->minmaxChanged(locallretiminmax, params->locallab.selspot);
@@ -1562,6 +1615,18 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         locallListener->cieChanged(locallcielc,params->locallab.selspot); 
                     }
                     locallListener->sigChanged(locallciesig,params->locallab.selspot);
+                    if(params->locallab.spots.at(sp).colorscope != 30) {//compatibility with old method in controlspotpanel
+                            locallListener->scopeChangedcol(scopefp[sp], params->locallab.selspot, iscolor);
+                            locallListener->scopeChangedsh(scopefp[sp], params->locallab.selspot, issh);
+                            locallListener->scopeChangedvib(scopefp[sp], params->locallab.selspot, isvib);
+                            locallListener->scopeChangedset(scopefp[sp], params->locallab.selspot, isset);
+                            params->locallab.spots.at(sp).colorscope = 30;
+                    }
+                   // if (mainfp[sp] >= 0) {//minimize call to idle register 
+                        //used by Global fullimage.
+                    locallListener->maiChanged(locallsetlc,params->locallab.selspot); 
+                   // }
+
                 }
                 
             }
@@ -1570,7 +1635,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             delete [] chromarefp;
             delete [] lumarefp;
             delete [] fabrefp;
-
+            delete [] mainfp;
+            delete [] scopefp;
             ipf.lab2rgb(*nprevl, *oprevi, params->icm.workingProfile);
             //*************************************************************
             // end locallab

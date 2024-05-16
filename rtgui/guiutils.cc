@@ -2028,3 +2028,42 @@ void SpotPicker::spotSizeChanged()
 {
     _spotHalfWidth = atoi(_spotSizeSetter.get_active_text().c_str());
 }
+
+// OptionalRadioButtonGroup class
+
+void OptionalRadioButtonGroup::onButtonToggled(Gtk::ToggleButton *button)
+{
+    if (!button) {
+        return;
+    }
+
+    if (button->get_active()) {
+        if (active_button == button) {
+            // Same button, noting to do.
+        } else if (active_button) {
+            // Deactivate the other button.
+            active_button->set_active(false);
+        }
+        active_button = button;
+    } else {
+        if (active_button == button) {
+            // Active button got deactivated.
+            active_button = nullptr;
+        } else {
+            // No effect on other buttons.
+        }
+    }
+}
+
+Gtk::ToggleButton *OptionalRadioButtonGroup::getActiveButton() const
+{
+    return active_button;
+}
+
+void OptionalRadioButtonGroup::register_button(Gtk::ToggleButton &button)
+{
+    button.signal_toggled().connect(sigc::bind(
+        sigc::mem_fun(this, &OptionalRadioButtonGroup::onButtonToggled),
+        &button));
+    onButtonToggled(&button);
+}

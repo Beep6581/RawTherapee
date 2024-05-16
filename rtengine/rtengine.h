@@ -451,6 +451,25 @@ public:
         int primlc;
     };
 
+//select spot settings 
+    struct locallabsetLC {
+        int mainf;
+        bool iscolo;
+        bool iss;
+        bool isvi;
+        bool isexpo;
+        bool issof;
+        bool isblu;
+        bool isto;
+        bool isre;
+        bool isshar;
+        bool iscon;
+        bool iscbd;
+        bool islo;
+        bool isma;
+        bool isci;
+    };
+
     struct locallabcieSIG {
         double contsigq;
         double lightsigq;
@@ -461,9 +480,15 @@ public:
     virtual void minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int selspot) = 0;
     virtual void denChanged(const std::vector<locallabDenoiseLC> &denlc, int selspot) = 0;
     virtual void cieChanged(const std::vector<locallabcieLC> &cielc, int selspot) = 0;
+    virtual void maiChanged(const std::vector<locallabsetLC> &csetlc, int selspot) = 0;
     virtual void sigChanged(const std::vector<locallabcieSIG> &ciesig, int selspot) = 0;
     virtual void ciebefChanged(const std::vector<locallabcieBEF> &ciebef, int selspot) = 0;
     virtual void refChanged2(float *huerefp, float *chromarefp, float *lumarefp, float *fabrefp, int selspot) = 0;
+//    virtual void mainChanged(int spottype, int selspot, bool iscolor, bool issh, bool isvib, bool isexpos, bool issoft, bool isblur, bool istom, bool isret, bool issharp, bool iscont, bool iscbdl, bool islog, bool ismas, bool iscie) = 0;
+    virtual void scopeChangedcol(int scope, int selspot, bool enab) = 0;
+    virtual void scopeChangedsh(int scope, int selspot, bool enab) = 0;
+    virtual void scopeChangedvib(int scope, int selspot, bool enab) = 0;
+    virtual void scopeChangedset(int scope, int selspot, bool enab) = 0;
 
 };
 

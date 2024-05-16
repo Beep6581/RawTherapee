@@ -132,6 +132,7 @@ LocallabTone::LocallabTone():
     rewei(Gtk::manage(new Adjuster(M("TP_LOCALLAB_REWEI"), 0, 3, 1, 0))),
     softradiustm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.1, 0.))),//unused here, but used for normalize_mean_dt
     sensitm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
+    previewtm(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
     exprecovt(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
     maskusablet(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
     maskunusablet(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUNUSABLE")))),
@@ -157,6 +158,9 @@ LocallabTone::LocallabTone():
     mask2tmCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     Lmasktmshape(static_cast<DiagonalCurveEditor*>(mask2tmCurveEditorG->addCurve(CT_Diagonal, "L(L)")))
 {
+    auto m = ProcEventMapper::getInstance();
+    Evlocallabpreviewtm = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWTM");
+    
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     const LocallabParams::LocallabSpot defSpot;
@@ -190,6 +194,11 @@ LocallabTone::LocallabTone():
     higthrest->setAdjusterListener(this);
     decayt->setAdjusterListener(this);
     setExpandAlignProperties(exprecovt, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+    previewtm->set_active(false);
+    previewtmConn = previewtm->signal_clicked().connect(
+                       sigc::mem_fun(
+                           *this, &LocallabTone::previewtmChanged));
 
     setExpandAlignProperties(expmasktm, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
@@ -246,6 +255,7 @@ LocallabTone::LocallabTone():
     // Add Tone Mapping specific widgets to GUI
     // pack_start(*amount); // To use if we change transit_shapedetect parameters
     pack_start(*sensitm);
+    pack_start(*previewtm);
     pack_start(*repartm);
     pack_start(*separatortm);
     pack_start(*stren);
@@ -305,6 +315,16 @@ void LocallabTone::resetMaskView()
 void LocallabTone::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask)
 {
     tmMask = showmasktmMethod->get_active_row_number();
+}
+
+Gtk::ToggleButton *LocallabTone::getPreviewDeltaEButton() const
+{
+    return previewtm;
+}
+
+sigc::connection *LocallabTone::getPreviewDeltaEButtonConnection()
+{
+    return &previewtmConn;
 }
 
 void LocallabTone::updateAdviceTooltips(const bool showTooltips)
@@ -393,6 +413,58 @@ void LocallabTone::enableListener()
     showmasktmMethodConn.block(false);
     enatmMaskConn.block(false);
     enatmMaskaftConn.block(false);
+}
+
+//new function Global
+void LocallabTone::updateguitone(int spottype)
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype == 3) {
+                sensitm->hide();
+             //   showmasktmMethodConn.block(true);
+                showmasktmMethod->set_active(0);
+             //   showmasktmMethodConn.block(false);
+                previewtm->hide();
+             //   previewtmConn.block(true);
+                previewtm->set_active(false);
+             //   previewtmConn.block(false);
+                resetMaskView();
+            } else {
+                sensitm->show();
+                previewtm->show();
+           }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
+void LocallabTone::previewtmChanged()
+{
+   //  showmasktmMethodConn.block(true);
+   
+    if(previewtm->get_active()) {
+        showmasktmMethod->set_active(4);
+    } else {
+        showmasktmMethod->set_active(0);
+    }
+  //   showmasktmMethodConn.block(false);
+    
+    if (isLocActivated) {
+        if (listener) {
+            listener->panelChanged(Evlocallabpreviewtm,"");
+        }
+    } 
 }
 
 void LocallabTone::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
@@ -945,7 +1017,7 @@ LocallabRetinex::LocallabRetinex():
     showmaskretiMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
     showmaskretiMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
     showmaskretiMethod->append(M("TP_LOCALLAB_SHOWMASK"));
-    showmaskretiMethod->append(M("TP_LOCALLAB_SHOWREF"));
+ //   showmaskretiMethod->append(M("TP_LOCALLAB_SHOWREF"));
     showmaskretiMethod->set_active(0);
     showmaskretiMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
     showmaskretiMethodConn = showmaskretiMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabRetinex::showmaskretiMethodChanged));
@@ -1102,6 +1174,32 @@ void LocallabRetinex::updateMinMax(const double cdma, const double cdmin, const 
     }
                  );
 }
+
+//new function Global
+void LocallabRetinex::updateguireti(int spottype)
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype == 3) {
+                sensih->hide();
+            } else {
+                sensih->show();
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
 
 bool LocallabRetinex::isMaskViewActive()
 {
@@ -2109,6 +2207,33 @@ void LocallabSharp::enableListener()
     showmasksharMethodConn.block(false);
 }
 
+//new function Global
+void LocallabSharp::updateguisharp(int spottype)
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype == 3) {
+                sensisha->hide();
+                inverssha->hide();
+            } else {
+                sensisha->show();
+                inverssha->show();
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
 void LocallabSharp::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
 {
     // Disable all listeners
@@ -2397,6 +2522,7 @@ LocallabContrast::LocallabContrast():
     residgam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMSH"), 0.25, 15.0, 0.01, 2.4))),
     residslop(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOSH"), 0.0, 500.0, 0.01, 12.92))),
     sensilc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
+    previewlc(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
     reparw(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
     clariFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CLARIFRA")))),
     clarilres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARILRES"), -20., 100., 0.5, 0.))),
@@ -2474,6 +2600,9 @@ LocallabContrast::LocallabContrast():
     mask2lcCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     Lmasklcshape(static_cast<DiagonalCurveEditor*>(mask2lcCurveEditorG->addCurve(CT_Diagonal, "L(L)")))
 {
+    auto m = ProcEventMapper::getInstance();
+    Evlocallabpreviewlc = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWLC");
+    
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     const LocallabParams::LocallabSpot defSpot;
@@ -2720,6 +2849,11 @@ LocallabContrast::LocallabContrast():
 
     setExpandAlignProperties(expmasklc, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
+    previewlc->set_active(false);
+    previewlcConn = previewlc->signal_clicked().connect(
+                       sigc::mem_fun(
+                           *this, &LocallabContrast::previewlcChanged));
+
     showmasklcMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
     showmasklcMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
     showmasklcMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
@@ -2764,6 +2898,7 @@ LocallabContrast::LocallabContrast():
 
     // Add Local contrast specific widgets to GUI
     pack_start(*sensilc);
+    pack_start(*previewlc);
     pack_start(*reparw);
     pack_start(*localcontMethod);
     pack_start(*lcradius);
@@ -2955,6 +3090,62 @@ void LocallabContrast::resetMaskView()
 void LocallabContrast::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask)
 {
     lcMask = showmasklcMethod->get_active_row_number();
+}
+
+Gtk::ToggleButton *LocallabContrast::getPreviewDeltaEButton() const
+{
+    return previewlc;
+}
+
+sigc::connection *LocallabContrast::getPreviewDeltaEButtonConnection()
+{
+    return &previewlcConn;
+}
+
+//new function Global
+void LocallabContrast::updateguicont(int spottype)
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype == 3) {
+                sensilc->hide();
+                showmasklcMethod->set_active(0);
+                previewlc->hide();
+                previewlc->set_active(false);
+                resetMaskView();
+                
+            } else {
+                sensilc->show();
+                previewlc->show();
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
+void LocallabContrast::previewlcChanged()
+{
+    if(previewlc->get_active()) {
+        showmasklcMethod->set_active(4);
+    } else {
+        showmasklcMethod->set_active(0);
+    }
+    
+    if (isLocActivated) {
+        if (listener) {
+            listener->panelChanged(Evlocallabpreviewlc,"");
+        }
+    } 
 }
 
 void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
@@ -4532,7 +4723,7 @@ lumacontrastPlusButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACON
     showmaskcbMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
     showmaskcbMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
     showmaskcbMethod->append(M("TP_LOCALLAB_SHOWMASK"));
-    showmaskcbMethod->append(M("TP_LOCALLAB_SHOWREF"));
+//    showmaskcbMethod->append(M("TP_LOCALLAB_SHOWREF"));
     showmaskcbMethod->set_active(0);
     showmaskcbMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
     showmaskcbMethodConn = showmaskcbMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabCBDL::showmaskcbMethodChanged));
@@ -4661,6 +4852,32 @@ void LocallabCBDL::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, 
 {
     cbMask = showmaskcbMethod->get_active_row_number();
 }
+
+//new function Global
+void LocallabCBDL::updateguicbdl(int spottype)
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype == 3) {
+                sensicb->hide();
+            } else {
+                sensicb->show();
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
 
 void LocallabCBDL::updateAdviceTooltips(const bool showTooltips)
 {
@@ -5295,6 +5512,7 @@ LocallabLog::LocallabLog():
     decayl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKDDECAY"), 0.5, 4., 0.1, 2.))),
 
     sensilog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
+    previewlog(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
     gradlogFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADLOGFRA")))),
     strlog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -2.0, 2.0, 0.05, 0.))),
     anglog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
@@ -5315,6 +5533,7 @@ LocallabLog::LocallabLog():
 
 {
     auto m = ProcEventMapper::getInstance();
+    Evlocallabpreviewlog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWLOG");
     Evlocallabwhiteslog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_LOG_WHITES");
     Evlocallabblackslog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_LOG_BLACKS");
     Evlocallabcomprlog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_LOG_COMPR");
@@ -5429,6 +5648,11 @@ LocallabLog::LocallabLog():
 
     setExpandAlignProperties(expmaskL, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
+    previewlog->set_active(false);
+    previewlogConn = previewlog->signal_clicked().connect(
+                       sigc::mem_fun(
+                           *this, &LocallabLog::previewlogChanged));
+
     showmaskLMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
     showmaskLMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
     showmaskLMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
@@ -5472,6 +5696,8 @@ LocallabLog::LocallabLog():
 
     // Add Log encoding specific widgets to GUI
     pack_start(*sensilog);
+    pack_start(*previewlog);
+    
     pack_start(*repar);
     pack_start(*ciecam);
     logPFrame->set_label_align(0.025, 0.5);
@@ -5581,6 +5807,54 @@ void LocallabLog::setDefaultExpanderVisibility()
     expL->set_expanded(false);
 
 }
+
+//new function Global
+void LocallabLog::updateguilog(int spottype)
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype == 3) {
+                sensilog->hide();
+                showmaskLMethod->set_active(0);               
+                previewlog->hide();
+                previewlog->set_active(false);
+                resetMaskView();
+                
+            } else {
+                sensilog->show();
+                previewlog->show();
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
+void LocallabLog::previewlogChanged()
+{
+   
+    if(previewlog->get_active()) {
+        showmaskLMethod->set_active(4);
+    } else {
+        showmaskLMethod->set_active(0);
+    }
+    
+    if (isLocActivated) {
+        if (listener) {
+            listener->panelChanged(Evlocallabpreviewlog,"");
+        }
+    } 
+}
+
 
 void LocallabLog::updateAdviceTooltips(const bool showTooltips)
 {
@@ -5736,6 +6010,16 @@ void LocallabLog::resetMaskView()
 void LocallabLog::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask)
 {
     logMask = showmaskLMethod->get_active_row_number();
+}
+
+Gtk::ToggleButton *LocallabLog::getPreviewDeltaEButton() const
+{
+    return previewlog;
+}
+
+sigc::connection *LocallabLog::getPreviewDeltaEButtonConnection()
+{
+    return &previewlogConn;
 }
 
 
@@ -5977,6 +6261,7 @@ void LocallabLog::updateGUIToMode(const modeType new_type)
             maskusablel->hide();
             maskunusablel->hide();
             decayl->hide();
+           
             break;
 
         case Normal:
@@ -6070,6 +6355,7 @@ void LocallabLog::convertParamToSimple()
     strlog->setValue(defSpot.strlog);
     anglog->setValue(defSpot.anglog);
     enaLMask->set_active(false);
+    showmaskLMethod->set_active(0);
     recothresl->setValue(defSpot.recothresl);
     lowthresl->setValue(defSpot.lowthresl);
     higthresl->setValue(defSpot.higthresl);
@@ -6691,6 +6977,7 @@ LocallabMask::LocallabMask():
 
     // Common mask specific widgets
     sensimask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
+    previewmas(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
     blendmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKMASK"), -100., 100., 0.1, -10.))),
     blendmaskab(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKMASKAB"), -100., 100., 0.1, -10.))),
     softradiusmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 1.))),
@@ -6727,6 +7014,9 @@ LocallabMask::LocallabMask():
     ang_mask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180., 180., 0.1, 0.)))
 {
 
+    auto m = ProcEventMapper::getInstance();
+    Evlocallabpreviewmas = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWMAS");
+    
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     const LocallabParams::LocallabSpot defSpot;
@@ -6741,6 +7031,11 @@ LocallabMask::LocallabMask():
     blendmaskab->setAdjusterListener(this);
 
     softradiusmask->setAdjusterListener(this);
+
+    previewmas->set_active(false);
+    previewmasConn = previewmas->signal_clicked().connect(
+                       sigc::mem_fun(
+                           *this, &LocallabMask::previewmasChanged));
 
     showmask_Method->append(M("TP_LOCALLAB_SHOWMNONE"));
     showmask_Method->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
@@ -6833,6 +7128,7 @@ LocallabMask::LocallabMask():
 
     // Add Common mask specific widgets to GUI
     pack_start(*sensimask);
+    pack_start(*previewmas);
     pack_start(*blendmask);
     pack_start(*blendmaskab);
     pack_start(*softradiusmask);
@@ -6894,6 +7190,64 @@ void LocallabMask::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, 
 {
     maskMask = showmask_Method->get_active_row_number();
 }
+
+Gtk::ToggleButton *LocallabMask::getPreviewDeltaEButton() const
+{
+    return previewmas;
+}
+
+sigc::connection *LocallabMask::getPreviewDeltaEButtonConnection()
+{
+    return &previewmasConn;
+}
+
+//new function Global
+void LocallabMask::updateguimask(int spottype)
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype == 3) {
+                sensimask->hide();
+                showmask_Method->set_active(0);               
+                previewmas->hide();
+                previewmas->set_active(false);
+                resetMaskView();
+                
+            } else {
+                sensimask->show();
+                previewmas->show();
+           }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
+void LocallabMask::previewmasChanged()
+{
+   
+    if(previewmas->get_active()) {
+        showmask_Method->set_active(3);
+    } else {
+        showmask_Method->set_active(0);
+    }
+    
+    if (isLocActivated) {
+        if (listener) {
+            listener->panelChanged(Evlocallabpreviewmas,"");
+        }
+    } 
+}
+
 
 void LocallabMask::updateAdviceTooltips(const bool showTooltips)
 {
@@ -7365,6 +7719,7 @@ void LocallabMask::convertParamToSimple()
     // Set hidden specific GUI widgets in Simple mode to default spot values
     gammask->setValue(defSpot.gammask);
     slopmask->setValue(defSpot.slopmask);
+    
     //Lmask_shape->setCurve(defSpot.Lmask_curve);
 
     // Enable all listeners
@@ -7525,6 +7880,8 @@ Locallabcie::Locallabcie():
     LocallabTool(this, M("TP_LOCALLAB_CIE_TOOLNAME"), M("TP_LOCALLAB_CIE"), false),
     // ciecam specific widgets
     sensicie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
+    previewcie(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
+    
     reparcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
     jabcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_JAB")))),
     modecam(Gtk::manage(new MyComboBoxText())),
@@ -7755,6 +8112,7 @@ Locallabcie::Locallabcie():
 
 {
     auto m = ProcEventMapper::getInstance();
+    Evlocallabpreviewcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWCIE");
     Evlocallabnormcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_NORM");
     Evlocallabstrumaskcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIEMASK_STRU");
     EvLocallabtoolcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIEMASK_STRU_TOOL");
@@ -7819,6 +8177,7 @@ Locallabcie::Locallabcie():
 
 
     pack_start(*sensicie);
+    pack_start(*previewcie);
     pack_start(*reparcie);
     modeHBoxcam->set_spacing(2);
     //modeHBoxcam->set_tooltip_markup (M ("TP_LOCALLAB_CAMMODE_TOOLTIP"));
@@ -8542,6 +8901,11 @@ Locallabcie::Locallabcie():
 
     setExpandAlignProperties(expmaskcie, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
+    previewcie->set_active(false);
+    previewcieConn = previewcie->signal_clicked().connect(
+                       sigc::mem_fun(
+                           *this, &Locallabcie::previewcieChanged));
+
     showmaskcieMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
     showmaskcieMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
     showmaskcieMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
@@ -8718,6 +9082,62 @@ void Locallabcie::resetMaskView()
 void Locallabcie::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask)
 {
     cieMask = showmaskcieMethod->get_active_row_number();
+}
+
+Gtk::ToggleButton *Locallabcie::getPreviewDeltaEButton() const
+{
+    return previewcie;
+}
+
+sigc::connection *Locallabcie::getPreviewDeltaEButtonConnection()
+{
+    return &previewcieConn;
+}
+
+//new function Global
+void Locallabcie::updateguicie(int spottype)
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype == 3) {
+                sensicie->hide();
+                showmaskcieMethod->set_active(0);
+                previewcie->hide();
+                previewcie->set_active(false);
+                resetMaskView();
+            } else {
+                sensicie->show();
+                previewcie->show();
+           }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
+void Locallabcie::previewcieChanged()
+{
+   
+    if(previewcie->get_active()) {
+        showmaskcieMethod->set_active(4);
+    } else {
+        showmaskcieMethod->set_active(0);
+    }
+    
+    if (isLocActivated) {
+        if (listener) {
+            listener->panelChanged(Evlocallabpreviewcie,"");
+        }
+    } 
 }
 
 void Locallabcie::setDefaultExpanderVisibility()
