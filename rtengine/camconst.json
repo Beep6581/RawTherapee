@@ -3029,6 +3029,11 @@ Camera constants:
     },
 
     { // Quality C
+        "make_model": [ "Sony ILCE-6700" ],
+        "raw_crop": [ 0, 0, 6244, 4168 ]
+    },
+
+    { // Quality C
         "make_model": "Sony ILCE-7C",
         "dcraw_matrix": [ 7374, -2389, -551, -5435, 13162, 2519, -1006, 1795, 6552 ]
     },
