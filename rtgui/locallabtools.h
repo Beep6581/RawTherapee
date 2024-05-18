@@ -125,6 +125,7 @@ protected:
     rtengine::ProcEvent EvlocallabenacieMaskall;
     rtengine::ProcEvent Evlocallabfeathercol;
     rtengine::ProcEvent Evlocallabfeathervib;
+    rtengine::ProcEvent Evlocallabfeatherexp;
     // LocallabTool parameters
     bool needMode;
     bool isLocActivated;
@@ -454,6 +455,7 @@ private:
     MyExpander* const expgradexp;
     Adjuster* const strexp;
     Adjuster* const angexp;
+    Adjuster* const featherexp;
     Adjuster* const softradiusexp;
     Gtk::CheckButton* const inversex;
     MyExpander* const expmaskexp;

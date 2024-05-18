@@ -3287,6 +3287,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     gamex(1.),
     strexp(0.),
     angexp(0.),
+    featherexp(25.),
     excurve{
         static_cast<double>(DCT_NURBS),
         0.0,
@@ -4977,6 +4978,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && gamex == other.gamex
         && strexp == other.strexp
         && angexp == other.angexp
+        && featherexp == other.featherexp
         && excurve == other.excurve
         && norm == other.norm
         && inversex == other.inversex
@@ -6924,6 +6926,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->gamex, "Locallab", "Gamex_" + index_str, spot.gamex, keyFile);
                     saveToKeyfile(!pedited || spot_edited->strexp, "Locallab", "Strexp_" + index_str, spot.strexp, keyFile);
                     saveToKeyfile(!pedited || spot_edited->angexp, "Locallab", "Angexp_" + index_str, spot.angexp, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->featherexp, "Locallab", "Featherexp_" + index_str, spot.featherexp, keyFile);
                     saveToKeyfile(!pedited || spot_edited->excurve, "Locallab", "ExCurve_" + index_str, spot.excurve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->norm, "Locallab", "Norm_" + index_str, spot.norm, keyFile);
                     saveToKeyfile(!pedited || spot_edited->inversex, "Locallab", "Inversex_" + index_str, spot.inversex, keyFile);
@@ -9209,6 +9212,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Gamex_" + index_str, spot.gamex, spotEdited.gamex);
                 assignFromKeyfile(keyFile, "Locallab", "Strexp_" + index_str, spot.strexp, spotEdited.strexp);
                 assignFromKeyfile(keyFile, "Locallab", "Angexp_" + index_str, spot.angexp, spotEdited.angexp);
+                assignFromKeyfile(keyFile, "Locallab", "Featherexp_" + index_str, spot.featherexp, spotEdited.featherexp);
                 assignFromKeyfile(keyFile, "Locallab", "ExCurve_" + index_str, spot.excurve, spotEdited.excurve);
                 assignFromKeyfile(keyFile, "Locallab", "Norm_" + index_str, spot.norm, spotEdited.norm);
                 assignFromKeyfile(keyFile, "Locallab", "Inversex_" + index_str, spot.inversex, spotEdited.inversex);

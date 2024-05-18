@@ -2721,6 +2721,7 @@ LocallabExposure::LocallabExposure():
     expgradexp(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPGRAD")))),
     strexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
     angexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
+    featherexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FEATVALUE"), 10., 100., 0.1, 25.))),
     softradiusexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 0.))),
     inversex(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
     expmaskexp(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWE")))),
@@ -2752,6 +2753,7 @@ LocallabExposure::LocallabExposure():
     const LocallabParams::LocallabSpot defSpot;
     auto m = ProcEventMapper::getInstance();
     Evlocallabpreviewexe = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWEXE");
+    Evlocallabfeatherexp = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_FEATHEREXE");
 
     // Parameter Exposure specific widgets
     expMethod->append(M("TP_LOCALLAB_STD"));
@@ -2826,6 +2828,7 @@ LocallabExposure::LocallabExposure():
 
     angexp->setAdjusterListener(this);
     angexp->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
+    featherexp->setAdjusterListener(this);
 
     softradiusexp->setLogScale(10, 0);
     softradiusexp->setAdjusterListener(this);
@@ -2969,6 +2972,7 @@ LocallabExposure::LocallabExposure():
     ToolParamBlock* const gradBox = Gtk::manage(new ToolParamBlock());
     gradBox->pack_start(*strexp);
     gradBox->pack_start(*angexp);
+    gradBox->pack_start(*featherexp);
     expgradexp->add(*gradBox, false);
     pack_start(*expgradexp);
     pack_start(*softradiusexp);
@@ -3287,6 +3291,7 @@ void LocallabExposure::read(const rtengine::procparams::ProcParams* pp, const Pa
         shapeexpos->setCurve(spot.excurve);
         strexp->setValue(spot.strexp);
         angexp->setValue(spot.angexp);
+        featherexp->setValue(spot.featherexp);
         softradiusexp->setValue(spot.softradiusexp);
         norm->set_active(spot.norm);
         fatsatur->set_active(spot.fatsatur);
@@ -3378,6 +3383,7 @@ void LocallabExposure::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         spot.excurve = shapeexpos->getCurve();
         spot.strexp = strexp->getValue();
         spot.angexp = angexp->getValue();
+        spot.featherexp = featherexp->getValue();
         spot.softradiusexp = softradiusexp->getValue();
         spot.inversex = inversex->get_active();
         spot.norm = norm->get_active();
@@ -3431,6 +3437,7 @@ void LocallabExposure::setDefaults(const rtengine::procparams::ProcParams* defPa
         expchroma->setDefault((double)defSpot.expchroma);
         strexp->setDefault(defSpot.strexp);
         angexp->setDefault(defSpot.angexp);
+        featherexp->setDefault(defSpot.featherexp);
         softradiusexp->setDefault(defSpot.softradiusexp);
         blendmaskexp->setDefault((double)defSpot.blendmaskexp);
         radmaskexp->setDefault(defSpot.radmaskexp);
@@ -3655,6 +3662,13 @@ void LocallabExposure::adjusterChanged(Adjuster* a, double newval)
             }
         }
 
+        if (a == featherexp) {
+            if (listener) {
+                listener->panelChanged(Evlocallabfeatherexp,
+                                       featherexp->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
         if (a == softradiusexp) {
             if (listener) {
                 listener->panelChanged(Evlocallabsoftradiusexp,
@@ -3811,6 +3825,7 @@ void LocallabExposure::convertParamToSimple()
     // Set hidden specific GUI widgets in Simple mode to default spot values
     strexp->setValue(defSpot.strexp);
     angexp->setValue(defSpot.angexp);
+    featherexp->setValue(defSpot.featherexp);
     softradiusexp->setValue(defSpot.softradiusexp);
     enaExpMask->set_active(defSpot.enaExpMask);
     enaExpMaskaft->set_active(defSpot.enaExpMaskaft);

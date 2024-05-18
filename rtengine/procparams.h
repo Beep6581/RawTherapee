@@ -1185,6 +1185,7 @@ struct LocallabParams {
         double gamex;
         double strexp;
         double angexp;
+        double featherexp;
         std::vector<double> excurve;
         bool norm;
         bool inversex;

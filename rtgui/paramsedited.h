@@ -539,6 +539,7 @@ public:
         bool blurexpde;
         bool strexp;
         bool angexp;
+        bool featherexp;
         bool excurve;
         bool norm;
         bool inversex;
