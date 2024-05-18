@@ -126,6 +126,7 @@ protected:
     rtengine::ProcEvent Evlocallabfeathercol;
     rtengine::ProcEvent Evlocallabfeathervib;
     rtengine::ProcEvent Evlocallabfeatherexp;
+    rtengine::ProcEvent Evlocallabfeatherwav;
     // LocallabTool parameters
     bool needMode;
     bool isLocActivated;
@@ -1246,6 +1247,7 @@ private:
     Adjuster* const sigmalc2;
     Adjuster* const strwav;
     Adjuster* const angwav;
+    Adjuster* const featherwav;
     Gtk::CheckButton* const wavedg;
     Adjuster* const strengthw;
     Adjuster* const sigmaed;

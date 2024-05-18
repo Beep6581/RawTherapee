@@ -857,6 +857,7 @@ public:
         bool sigmalc2;
         bool strwav;
         bool angwav;
+        bool featherwav;
         bool strengthw;
         bool sigmaed;
         bool radiusw;

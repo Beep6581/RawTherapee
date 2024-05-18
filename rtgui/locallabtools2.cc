@@ -2534,6 +2534,7 @@ LocallabContrast::LocallabContrast():
     sigmalc2(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 2.5, 0.01, 1.))),
     strwav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4.0, 4.0, 0.05, 0.))),
     angwav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
+    featherwav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FEATVALUE"), 10., 100., 0.1, 25.))),
     wavedg(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_EDGFRA")))),
     strengthw(Gtk::manage(new Adjuster(M("TP_WAVELET_EDVAL"), 0., 100.0, 0.5, 0.))),
     sigmaed(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 2.5, 0.01, 1.))),
@@ -2602,6 +2603,7 @@ LocallabContrast::LocallabContrast():
 {
     auto m = ProcEventMapper::getInstance();
     Evlocallabpreviewlc = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWLC");
+    Evlocallabfeatherwav = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_FEATHERWAV");
     
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -2708,6 +2710,7 @@ LocallabContrast::LocallabContrast():
     strwav->setAdjusterListener(this);
 
     angwav->setAdjusterListener(this);
+    featherwav->setAdjusterListener(this);
 
     wavedgConn = wavedg->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::wavedgChanged));
 
@@ -2949,6 +2952,7 @@ LocallabContrast::LocallabContrast():
     gradwavBox->pack_start(*sigmalc2);
     gradwavBox->pack_start(*strwav);
     gradwavBox->pack_start(*angwav);
+    gradwavBox->pack_start(*featherwav);
     gradwavFrame->add(*gradwavBox);
     blurcontBox->pack_start(*gradwavFrame);
     Gtk::Frame* const edgFrame = Gtk::manage(new Gtk::Frame());
@@ -3400,6 +3404,7 @@ void LocallabContrast::read(const rtengine::procparams::ProcParams* pp, const Pa
         sigmalc2->setValue(spot.sigmalc2);
         strwav->setValue(spot.strwav);
         angwav->setValue(spot.angwav);
+        featherwav->setValue(spot.featherwav);
         wavedg->set_active(spot.wavedg);
         strengthw->setValue(spot.strengthw);
         sigmaed->setValue(spot.sigmaed);
@@ -3525,6 +3530,7 @@ void LocallabContrast::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         spot.sigmalc2 = sigmalc2->getValue();
         spot.strwav = strwav->getValue();
         spot.angwav = angwav->getValue();
+        spot.featherwav = featherwav->getValue();
         spot.wavedg = wavedg->get_active();
         spot.strengthw = strengthw->getValue();
         spot.sigmaed = sigmaed->getValue();
@@ -3627,6 +3633,7 @@ void LocallabContrast::setDefaults(const rtengine::procparams::ProcParams* defPa
         sigmalc2->setDefault(defSpot.sigmalc2);
         strwav->setDefault(defSpot.strwav);
         angwav->setDefault(defSpot.angwav);
+        featherwav->setDefault(defSpot.featherwav);
         strengthw->setDefault(defSpot.strengthw);
         sigmaed->setDefault(defSpot.sigmaed);
         gradw->setDefault(defSpot.gradw);
@@ -3822,6 +3829,13 @@ void LocallabContrast::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabangwav,
                                        angwav->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == featherwav) {
+            if (listener) {
+                listener->panelChanged(Evlocallabfeatherwav,
+                                       featherwav->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
@@ -4146,6 +4160,7 @@ void LocallabContrast::convertParamToNormal()
     sigmalc2->setValue(defSpot.sigmalc2);
     strwav->setValue(defSpot.strwav);
     angwav->setValue(defSpot.angwav);
+    featherwav->setValue(defSpot.featherwav);
     wavedg->set_active(defSpot.wavedg);
     strengthw->setValue(defSpot.strengthw);
     sigmaed->setValue(defSpot.sigmaed);

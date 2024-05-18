@@ -1570,6 +1570,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).sigmalc2 = locallab.spots.at(j).sigmalc2 && pSpot.sigmalc2 == otherSpot.sigmalc2;
                 locallab.spots.at(j).strwav = locallab.spots.at(j).strwav && pSpot.strwav == otherSpot.strwav;
                 locallab.spots.at(j).angwav = locallab.spots.at(j).angwav && pSpot.angwav == otherSpot.angwav;
+                locallab.spots.at(j).featherwav = locallab.spots.at(j).featherwav && pSpot.featherwav == otherSpot.featherwav;
                 locallab.spots.at(j).strengthw = locallab.spots.at(j).strengthw && pSpot.strengthw == otherSpot.strengthw;
                 locallab.spots.at(j).sigmaed = locallab.spots.at(j).sigmaed && pSpot.sigmaed == otherSpot.sigmaed;
                 locallab.spots.at(j).radiusw = locallab.spots.at(j).radiusw && pSpot.radiusw == otherSpot.radiusw;
@@ -5340,6 +5341,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).angwav   = mods.locallab.spots.at(i).angwav;
         }
 
+        if (locallab.spots.at(i).featherwav) {
+            toEdit.locallab.spots.at(i).featherwav   = mods.locallab.spots.at(i).featherwav;
+        }
+
         if (locallab.spots.at(i).strengthw) {
             toEdit.locallab.spots.at(i).strengthw   = mods.locallab.spots.at(i).strengthw;
         }
@@ -8334,6 +8339,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     sigmalc2(v),
     strwav(v),
     angwav(v),
+    featherwav(v),
     strengthw(v),
     sigmaed(v),
     radiusw(v),
@@ -9092,6 +9098,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     sigmalc2 = v;
     strwav = v;
     angwav = v;
+    featherwav = v;
     strengthw = v;
     sigmaed = v;
     radiusw = v;
