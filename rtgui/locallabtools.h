@@ -128,6 +128,7 @@ protected:
     rtengine::ProcEvent Evlocallabfeatherexp;
     rtengine::ProcEvent Evlocallabfeatherwav;
     rtengine::ProcEvent Evlocallabfeatherlog;
+    rtengine::ProcEvent Evlocallabfeathercie;
     // LocallabTool parameters
     bool needMode;
     bool isLocActivated;
@@ -1876,6 +1877,7 @@ private:
     MyExpander* const expgradcie;
     Adjuster* const strgradcie;
     Adjuster* const anggradcie;
+    Adjuster* const feathercie;
 
     MyExpander* const exprecovcie;
     Gtk::Label* const maskusablecie;

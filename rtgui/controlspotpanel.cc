@@ -351,7 +351,7 @@ ControlSpotPanel::ControlSpotPanel():
     transitBox->pack_start(*transit_);
     transitBox->pack_start(*transitweak_);
     transitBox->pack_start(*transitgrad_);
-    transitBox->pack_start(*feather_);
+    //transitBox->pack_start(*feather_);
     expTransGrad_->add(*transitBox, false);
     pack_start(*expTransGrad_, false, false);
 

@@ -1853,7 +1853,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 
                 locallab.spots.at(j).strgradcie = locallab.spots.at(j).strgradcie && pSpot.strgradcie == otherSpot.strgradcie;
                 locallab.spots.at(j).anggradcie = locallab.spots.at(j).anggradcie && pSpot.anggradcie == otherSpot.anggradcie;
-                
+                locallab.spots.at(j).feathercie = locallab.spots.at(j).feathercie && pSpot.feathercie == otherSpot.feathercie;
+
                 locallab.spots.at(j).enacieMask = locallab.spots.at(j).enacieMask && pSpot.enacieMask == otherSpot.enacieMask;
                 locallab.spots.at(j).enacieMaskall = locallab.spots.at(j).enacieMaskall && pSpot.enacieMaskall == otherSpot.enacieMaskall;
                 locallab.spots.at(j).CCmaskciecurve = locallab.spots.at(j).CCmaskciecurve && pSpot.CCmaskciecurve == otherSpot.CCmaskciecurve;
@@ -6448,6 +6449,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).anggradcie = mods.locallab.spots.at(i).anggradcie;
         }
 
+        if (locallab.spots.at(i).feathercie) {
+            toEdit.locallab.spots.at(i).feathercie = mods.locallab.spots.at(i).feathercie;
+        }
+
         if (locallab.spots.at(i).enacieMask) {
             toEdit.locallab.spots.at(i).enacieMask = mods.locallab.spots.at(i).enacieMask;
         }
@@ -8618,6 +8623,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     surroundcie(v),
     strgradcie(v),
     anggradcie(v),
+    feathercie(v),
     enacieMask(v),
     enacieMaskall(v),
     CCmaskciecurve(v),
@@ -9381,6 +9387,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     detailcie = v;
     surroundcie = v;
     anggradcie =  v;
+    feathercie =  v;
     strgradcie =  v;
     enacieMask = v;
     enacieMaskall = v;

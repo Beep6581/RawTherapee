@@ -4674,6 +4674,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     surroundcie("Average"),
     strgradcie(0.),
     anggradcie(0.),
+    feathercie(25.),
     enacieMask(false),
     enacieMaskall(false),
     CCmaskciecurve{
@@ -5594,6 +5595,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && detailcie == other.detailcie
         && strgradcie == other.strgradcie
         && anggradcie == other.anggradcie
+        && feathercie == other.feathercie
         && surroundcie == other.surroundcie
         && enacieMask == other.enacieMask
         && enacieMaskall == other.enacieMaskall
@@ -7549,6 +7551,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->detailcie, "Locallab", "Detailcie_" + index_str, spot.detailcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->strgradcie, "Locallab", "Strgradcie_" + index_str, spot.strgradcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->anggradcie, "Locallab", "Anggradcie_" + index_str, spot.anggradcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->feathercie, "Locallab", "Feathercie_" + index_str, spot.feathercie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->surroundcie, "Locallab", "Surroundcie_" + index_str, spot.surroundcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->enacieMask, "Locallab", "EnacieMask_" + index_str, spot.enacieMask, keyFile);
                     saveToKeyfile(!pedited || spot_edited->enacieMaskall, "Locallab", "EnacieMaskall_" + index_str, spot.enacieMaskall, keyFile);
@@ -9922,7 +9925,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Surroundcie_" + index_str, spot.surroundcie, spotEdited.surroundcie);
                 assignFromKeyfile(keyFile, "Locallab", "Strgradcie_" + index_str, spot.strgradcie, spotEdited.strgradcie);
                 assignFromKeyfile(keyFile, "Locallab", "Anggradcie_" + index_str, spot.anggradcie, spotEdited.anggradcie);
-               
+                assignFromKeyfile(keyFile, "Locallab", "Feathercie_" + index_str, spot.feathercie, spotEdited.feathercie);
+
                 assignFromKeyfile(keyFile, "Locallab", "EnacieMask_" + index_str,  spot.enacieMask, spotEdited.enacieMask);
                 assignFromKeyfile(keyFile, "Locallab", "EnacieMaskall_" + index_str,  spot.enacieMaskall, spotEdited.enacieMaskall);
                 assignFromKeyfile(keyFile, "Locallab", "CCmaskcieCurve_" + index_str, spot.CCmaskciecurve, spotEdited.CCmaskciecurve);

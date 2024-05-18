@@ -8097,6 +8097,7 @@ Locallabcie::Locallabcie():
     expgradcie(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPGRAD")))),
     strgradcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
     anggradcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
+    feathercie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FEATVALUE"), 10., 100., 0.1, 25.))),
 
     exprecovcie(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
     maskusablecie(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
@@ -8197,6 +8198,7 @@ Locallabcie::Locallabcie():
     Evlocallabdetailciejz = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_DETAILJZ");
     EvlocallabenacieMaskall = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_ENAMASKALL");
     Evlocallabsmoothciemet = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SMOOTHMET");
+    Evlocallabfeathercie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_FEATHERCIE");
     
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -9014,9 +9016,11 @@ Locallabcie::Locallabcie():
 
     strgradcie->setAdjusterListener(this);
     anggradcie->setAdjusterListener(this);
+    feathercie->setAdjusterListener(this);
     ToolParamBlock* const cieBoxgrad = Gtk::manage(new ToolParamBlock());
     cieBoxgrad->pack_start(*strgradcie);
     cieBoxgrad->pack_start(*anggradcie);
+    cieBoxgrad->pack_start(*feathercie);
     expgradcie->add(*cieBoxgrad, false);
     pack_start(*expgradcie, false, false);
 
@@ -9905,6 +9909,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
 
         strgradcie->setValue((double)spot.strgradcie);
         anggradcie->setValue((double)spot.anggradcie);
+        feathercie->setValue((double)spot.feathercie);
 
         enacieMask->set_active(spot.enacieMask);
         enacieMaskall->set_active(spot.enacieMaskall);
@@ -10208,6 +10213,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.detailcie = detailcie->getValue();
         spot.strgradcie = strgradcie->getValue();
         spot.anggradcie = anggradcie->getValue();
+        spot.feathercie = feathercie->getValue();
 
         spot.enacieMask = enacieMask->get_active();
         spot.enacieMaskall = enacieMaskall->get_active();
@@ -11916,6 +11922,7 @@ void Locallabcie::convertParamToSimple()
     enacieMaskall->set_active(defSpot.enacieMaskall);
     strgradcie->setValue(defSpot.strgradcie);
     anggradcie->setValue(defSpot.anggradcie);
+    feathercie->setValue(defSpot.feathercie);
     refi->setValue(defSpot.refi);
     modecie->set_active(0);
     primMethod->set_active(0);//Prophoto
@@ -12080,6 +12087,7 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         // detailcie->setDefault(defSpot.detailcie);
         strgradcie->setDefault((double)defSpot.strgradcie);
         anggradcie->setDefault((double)defSpot.anggradcie);
+        feathercie->setDefault((double)defSpot.feathercie);
         blendmaskcie->setDefault((double)defSpot.blendmaskcie);
         radmaskcie->setDefault(defSpot.radmaskcie);
         chromaskcie->setDefault(defSpot.chromaskcie);
@@ -12785,6 +12793,13 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabanggradcie,
                                        anggradcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == feathercie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabfeathercie,
+                                       feathercie->getTextValue() + spName);
             }
         }
 

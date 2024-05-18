@@ -809,6 +809,7 @@ struct local_params {
     float detailcie;
     float strgradcie;
     float anggradcie;
+    float feathercie;
     bool satcie;
     bool satlog;
     int sensilog;
@@ -1525,6 +1526,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float contciemask = (float) locallab.spots.at(sp).contcie;
     float strgradcie = ((float) locallab.spots.at(sp).strgradcie);
     float anggradcie = ((float) locallab.spots.at(sp).anggradcie);
+    float feathercie = ((float) locallab.spots.at(sp).feathercie);
 
     lp.comprlo = locallab.spots.at(sp).comprlog;
     lp.comprlocie = locallab.spots.at(sp).comprcie;
@@ -1794,6 +1796,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.contciemask = 0.01f * contciemask;
     lp.strgradcie = strgradcie;
     lp.anggradcie = anggradcie;
+    lp.feathercie = feathercie;
 
     lp.blendmacie = blendmaskcie;
     lp.radmacie = radmaskcie;
@@ -5706,6 +5709,7 @@ void calclocalGradientParams(const struct local_params& lp, struct grad_params& 
     } else if (indic == 15) {
         stops = lp.strgradcie;
         angs = lp.anggradcie;
+        varfeath = 0.01f * lp.feathercie;
     }
 
 

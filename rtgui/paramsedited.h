@@ -1132,6 +1132,7 @@ public:
         bool surroundcie;
         bool strgradcie;
         bool anggradcie;
+        bool feathercie;
 
         bool enacieMask;
         bool enacieMaskall;
