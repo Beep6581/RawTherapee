@@ -476,6 +476,7 @@ public:
         bool strcolab;
         bool strcolh;
         bool angcol;
+        bool feathercol;
         bool blurcolde;
         bool blurcol;
         bool contcol;
@@ -638,6 +639,7 @@ public:
         bool strvibab;
         bool strvibh;
         bool angvib;
+        bool feathervib;
         bool Lmaskvibcurve;
         bool recothresv;
         bool lowthresv;

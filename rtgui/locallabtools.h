@@ -123,6 +123,8 @@ protected:
     rtengine::ProcEvent Evlocallabstrgradcie;
     rtengine::ProcEvent Evlocallabdetailciejz;
     rtengine::ProcEvent EvlocallabenacieMaskall;
+    rtengine::ProcEvent Evlocallabfeathercol;
+    rtengine::ProcEvent Evlocallabfeathervib;
     // LocallabTool parameters
     bool needMode;
     bool isLocActivated;
@@ -278,6 +280,7 @@ private:
     Adjuster* const strcolab;
     Adjuster* const strcolh;
     Adjuster* const angcol;
+    Adjuster* const feathercol;
     MyExpander* const expcurvcol;
     Gtk::Label* const labqualcurv;
     MyComboBoxText* const qualitycurveMethod;
@@ -661,6 +664,7 @@ private:
     Adjuster* const strvibab;
     Adjuster* const strvibh;
     Adjuster* const angvib;
+    Adjuster* const feathervib;
     MyExpander* const expmaskvib;
     MyComboBoxText* const showmaskvibMethod;
     Gtk::CheckButton* const enavibMask;

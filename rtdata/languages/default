@@ -1502,6 +1502,8 @@ HISTORY_MSG_LOCAL_CIEMASK_STRU;Local Cie mask structure
 HISTORY_MSG_LOCAL_CIEMASK_STRU_TOOL;Local Cie mask structure as tool
 HISTORY_MSG_LOCAL_CIEMASK_WLC;Local CIECAM mask wavelet Lc
 HISTORY_MSG_LOCAL_CIEMASK_WLEV;Local CIECAM mask wavelet levels
+HISTORY_MSG_LOCAL_FEATHERCOL;Local Color and Light Feather
+HISTORY_MSG_LOCAL_FEATHERVIB;Local Vibrance Feather
 HISTORY_MSG_LOCAL_LOG_BLACKS;Local Log - Blacks distribution
 HISTORY_MSG_LOCAL_LOG_COMPR;Local Log - Compress brightness
 HISTORY_MSG_LOCAL_LOG_SAT;Local Log - Saturation control

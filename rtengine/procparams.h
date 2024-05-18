@@ -1122,6 +1122,7 @@ struct LocallabParams {
         double strcolab;
         double strcolh;
         double angcol;
+        double feathercol;
         int blurcolde;
         double blurcol;
         double contcol;
@@ -1284,6 +1285,7 @@ struct LocallabParams {
         double strvibab;
         double strvibh;
         double angvib;
+        double feathervib;
         std::vector<double> Lmaskvibcurve;
         double recothresv;
         double lowthresv;

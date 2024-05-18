@@ -509,10 +509,12 @@ struct local_params {
     float strcolab;
     float strcolh;
     float angcol;
+    float feathcol;
     float strvib;
     float strvibab;
     float strvibh;
     float angvib;
+    float feathervib;
     float angwav;
     float strwav;
     float blendmaL;
@@ -1375,10 +1377,12 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float strcolab = ((float) locallab.spots.at(sp).strcolab);
     float strcolh = ((float) locallab.spots.at(sp).strcolh);
     float angcol = ((float) locallab.spots.at(sp).angcol);
+    float feathcol = ((float) locallab.spots.at(sp).feathercol);
     float strvib = ((float) locallab.spots.at(sp).strvib);
     float strvibab = ((float) locallab.spots.at(sp).strvibab);
     float strvibh = ((float) locallab.spots.at(sp).strvibh);
     float angvib = ((float) locallab.spots.at(sp).angvib);
+    float feathervib = ((float) locallab.spots.at(sp).feathervib);
     float strwav = ((float) locallab.spots.at(sp).strwav);
     float angwav = ((float) locallab.spots.at(sp).angwav);
     float strlog = ((float) locallab.spots.at(sp).strlog);
@@ -1559,10 +1563,12 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.strcolab = strcolab;
     lp.strcolh = strcolh;
     lp.angcol = angcol;
+    lp.feathcol = feathcol;
     lp.strvib = strvib;
     lp.strvibab = strvibab;
     lp.strvibh = strvibh;
     lp.angvib = angvib;
+    lp.feathervib = feathervib;
     lp.strwav = strwav;
     lp.angwav = angwav;
     lp.strlog = strlog;
@@ -5621,6 +5627,7 @@ void calclocalGradientParams(const struct local_params& lp, struct grad_params& 
     int h = bfh;
     float stops = 0.f;
     float angs = 0.f;
+    double varfeath = 0.25; //0.01f * lp.feath;
 
     if (indic == 0) {
         stops = -lp.strmaexp;
@@ -5634,6 +5641,7 @@ void calclocalGradientParams(const struct local_params& lp, struct grad_params& 
     } else if (indic == 3) {
         stops = lp.strcol;
         angs = lp.angcol;
+        varfeath = 0.01f * lp.feathcol;
     } else if (indic == 4) {
         float redu = 1.f;
 
@@ -5645,15 +5653,19 @@ void calclocalGradientParams(const struct local_params& lp, struct grad_params& 
 
         stops = redu * lp.strcolab;
         angs = lp.angcol;
+        varfeath = 0.01f * lp.feathcol;
     } else if (indic == 5) {
         stops = lp.strcolab;
         angs = lp.angcol;
+        varfeath = 0.01f * lp.feathcol;
     } else if (indic == 6) {
         stops = lp.strcolh;
         angs = lp.angcol;
+        varfeath = 0.01f * lp.feathcol;
     } else if (indic == 7) {
         stops = lp.strvib;
         angs = lp.angvib;
+        varfeath = 0.01f * lp.feathervib;
     } else if (indic == 8) {
         float redu = 1.f;
 
@@ -5665,9 +5677,11 @@ void calclocalGradientParams(const struct local_params& lp, struct grad_params& 
 
         stops = redu * lp.strvibab;
         angs = lp.angvib;
+        varfeath = 0.01f * lp.feathervib;
     } else if (indic == 9) {
         stops = lp.strvibh;
         angs = lp.angvib;
+        varfeath = 0.01f * lp.feathervib;
     } else if (indic == 10) {
         stops = std::fabs(lp.strwav);
         angs = lp.angwav;
@@ -5687,7 +5701,7 @@ void calclocalGradientParams(const struct local_params& lp, struct grad_params& 
     double gradient_center_x = LIM01((lp.xc - xstart) / bfw);
     double gradient_center_y = LIM01((lp.yc - ystart) / bfh);
     double gradient_angle = static_cast<double>(angs) / 180.0 * rtengine::RT_PI;
-    double varfeath = 0.01f * lp.feath;
+ //   double varfeath = 0.01f * lp.feath;
 
     //printf("xstart=%f ysta=%f lpxc=%f lpyc=%f stop=%f bb=%f cc=%f ang=%f ff=%d gg=%d\n", xstart, ystart, lp.xc, lp.yc, gradient_stops, gradient_center_x, gradient_center_y, gradient_angle, w, h);
 

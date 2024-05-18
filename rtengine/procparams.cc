@@ -3044,6 +3044,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     strcolab(0.),
     strcolh(0.),
     angcol(0.),
+    feathercol(25.),
     blurcolde(5),
     blurcol(0.2),
     contcol(0.),
@@ -3531,6 +3532,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     strvibab(0.0),
     strvibh(0.0),
     angvib(0.0),
+    feathervib(25.0),
     Lmaskvibcurve{
         static_cast<double>(DCT_NURBS),
         0.0,
@@ -4912,6 +4914,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && strcolab == other.strcolab
         && strcolh == other.strcolh
         && angcol == other.angcol
+        && feathercol == other.feathercol
         && blurcolde == other.blurcolde
         && blurcol == other.blurcol
         && contcol == other.contcol
@@ -5082,6 +5085,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && strvibab == other.strvibab
         && strvibh == other.strvibh
         && angvib == other.angvib
+        && feathervib == other.feathervib
         && Lmaskvibcurve == other.Lmaskvibcurve
         && recothresv == other.recothresv
         && lowthresv == other.lowthresv
@@ -6856,6 +6860,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->strcolab, "Locallab", "Strcolab_" + index_str, spot.strcolab, keyFile);
                     saveToKeyfile(!pedited || spot_edited->strcolh, "Locallab", "Strcolh_" + index_str, spot.strcolh, keyFile);
                     saveToKeyfile(!pedited || spot_edited->angcol, "Locallab", "Angcol_" + index_str, spot.angcol, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->feathercol, "Locallab", "Feathercol_" + index_str, spot.feathercol, keyFile);
                     saveToKeyfile(!pedited || spot_edited->blurcolde, "Locallab", "Blurcolde_" + index_str, spot.blurcolde, keyFile);
                     saveToKeyfile(!pedited || spot_edited->blurcol, "Locallab", "Blurcol_" + index_str, spot.blurcol, keyFile);
                     saveToKeyfile(!pedited || spot_edited->contcol, "Locallab", "Contcol_" + index_str, spot.contcol, keyFile);
@@ -7024,6 +7029,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->strvibab, "Locallab", "Strvibab_" + index_str, spot.strvibab, keyFile);
                     saveToKeyfile(!pedited || spot_edited->strvibh, "Locallab", "Strvibh_" + index_str, spot.strvibh, keyFile);
                     saveToKeyfile(!pedited || spot_edited->angvib, "Locallab", "Angvib_" + index_str, spot.angvib, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->angvib, "Locallab", "Feathervib_" + index_str, spot.feathervib, keyFile);
                     saveToKeyfile(!pedited || spot_edited->Lmaskvibcurve, "Locallab", "LmaskvibCurve_" + index_str, spot.Lmaskvibcurve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->recothresv, "Locallab", "Recothresv_" + index_str, spot.recothresv, keyFile);
                     saveToKeyfile(!pedited || spot_edited->lowthresv, "Locallab", "Lowthresv_" + index_str, spot.lowthresv, keyFile);
@@ -9126,6 +9132,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Strcolab_" + index_str, spot.strcolab, spotEdited.strcolab);
                 assignFromKeyfile(keyFile, "Locallab", "Strcolh_" + index_str, spot.strcolh, spotEdited.strcolh);
                 assignFromKeyfile(keyFile, "Locallab", "Angcol_" + index_str, spot.angcol, spotEdited.angcol);
+                assignFromKeyfile(keyFile, "Locallab", "Fetahercol_" + index_str, spot.feathercol, spotEdited.feathercol);
                 assignFromKeyfile(keyFile, "Locallab", "Blurcolde_" + index_str, spot.blurcolde, spotEdited.blurcolde);
                 assignFromKeyfile(keyFile, "Locallab", "Blurcol_" + index_str, spot.blurcol, spotEdited.blurcol);
                 assignFromKeyfile(keyFile, "Locallab", "Contcol_" + index_str, spot.contcol, spotEdited.contcol);
@@ -9325,6 +9332,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Strvibab_" + index_str, spot.strvibab, spotEdited.strvibab);
                 assignFromKeyfile(keyFile, "Locallab", "Strvibh_" + index_str, spot.strvibh, spotEdited.strvibh);
                 assignFromKeyfile(keyFile, "Locallab", "Angvib_" + index_str, spot.angvib, spotEdited.angvib);
+                assignFromKeyfile(keyFile, "Locallab", "Feathervib_" + index_str, spot.feathervib, spotEdited.feathervib);
                 assignFromKeyfile(keyFile, "Locallab", "LmaskvibCurve_" + index_str, spot.Lmaskvibcurve, spotEdited.Lmaskvibcurve);
                 assignFromKeyfile(keyFile, "Locallab", "Recothresv_" + index_str, spot.recothresv, spotEdited.recothresv);
                 assignFromKeyfile(keyFile, "Locallab", "Lowthresv_" + index_str, spot.lowthresv, spotEdited.lowthresv);

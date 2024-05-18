@@ -1185,6 +1185,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).strcolab = locallab.spots.at(j).strcolab && pSpot.strcolab == otherSpot.strcolab;
                 locallab.spots.at(j).strcolh = locallab.spots.at(j).strcolh && pSpot.strcolh == otherSpot.strcolh;
                 locallab.spots.at(j).angcol = locallab.spots.at(j).angcol && pSpot.angcol == otherSpot.angcol;
+                locallab.spots.at(j).feathercol = locallab.spots.at(j).feathercol && pSpot.feathercol == otherSpot.feathercol;
                 locallab.spots.at(j).blurcolde = locallab.spots.at(j).blurcolde && pSpot.blurcolde == otherSpot.blurcolde;
                 locallab.spots.at(j).blurcol = locallab.spots.at(j).blurcol && pSpot.blurcol == otherSpot.blurcol;
                 locallab.spots.at(j).contcol = locallab.spots.at(j).contcol && pSpot.contcol == otherSpot.contcol;
@@ -1351,6 +1352,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).strvibab = locallab.spots.at(j).strvibab && pSpot.strvibab == otherSpot.strvibab;
                 locallab.spots.at(j).strvibh = locallab.spots.at(j).strvibh && pSpot.strvibh == otherSpot.strvibh;
                 locallab.spots.at(j).angvib = locallab.spots.at(j).angvib && pSpot.angvib == otherSpot.angvib;
+                locallab.spots.at(j).feathervib = locallab.spots.at(j).feathervib && pSpot.feathervib == otherSpot.feathervib;
                 locallab.spots.at(j).Lmaskvibcurve = locallab.spots.at(j).Lmaskvibcurve && pSpot.Lmaskvibcurve == otherSpot.Lmaskvibcurve;
                 locallab.spots.at(j).recothresv = locallab.spots.at(j).recothresv && pSpot.recothresv == otherSpot.recothresv;
                 locallab.spots.at(j).lowthresv = locallab.spots.at(j).lowthresv && pSpot.lowthresv == otherSpot.lowthresv;
@@ -3832,6 +3834,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).angcol = mods.locallab.spots.at(i).angcol;
         }
 
+        if (locallab.spots.at(i).feathercol) {
+            toEdit.locallab.spots.at(i).feathercol = mods.locallab.spots.at(i).feathercol;
+        }
+
         if (locallab.spots.at(i).blurcolde) {
             toEdit.locallab.spots.at(i).blurcolde = mods.locallab.spots.at(i).blurcolde;
         }
@@ -4475,6 +4481,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).angvib) {
             toEdit.locallab.spots.at(i).angvib = mods.locallab.spots.at(i).angvib;
+        }
+
+        if (locallab.spots.at(i).feathervib) {
+            toEdit.locallab.spots.at(i).feathervib = mods.locallab.spots.at(i).feathervib;
         }
 
         if (locallab.spots.at(i).Lmaskvibcurve) {
@@ -7938,6 +7948,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     strcolab(v),
     strcolh(v),
     angcol(v),
+    feathercol(v),
     blurcolde(v),
     blurcol(v),
     contcol(v),
@@ -8100,6 +8111,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     strvibab(v),
     strvibh(v),
     angvib(v),
+    feathervib(v),
     Lmaskvibcurve(v),
     recothresv(v),
     lowthresv(v),
@@ -8690,6 +8702,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     strcolab = v;
     strcolh = v;
     angcol = v;
+    feathercol = v;
     blurcolde = v;
     blurcol = v;
     contcol = v;
@@ -8856,6 +8869,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     strvibab = v;
     strvibh = v;
     angvib = v;
+    feathervib = v;
     Lmaskvibcurve = v;
     recothresv = v;
     lowthresv = v;
