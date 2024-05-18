@@ -964,6 +964,7 @@ public:
         bool baselog;
         bool strlog;
         bool anglog;
+        bool featherlog;
         bool CCmaskcurveL;
         bool LLmaskcurveL;
         bool HHmaskcurveL;

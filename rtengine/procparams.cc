@@ -4263,6 +4263,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     baselog(2.),
     strlog(0.0),
     anglog(0.0),
+    featherlog(25.0),
     CCmaskcurveL{
         static_cast<double>(FCT_MinMaxCPoints),
         0.0,
@@ -5420,6 +5421,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && surround == other.surround
         && strlog == other.strlog
         && anglog == other.anglog
+        && featherlog == other.featherlog
         && CCmaskcurveL == other.CCmaskcurveL
         && LLmaskcurveL == other.LLmaskcurveL
         && HHmaskcurveL == other.HHmaskcurveL
@@ -7370,6 +7372,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->surround, "Locallab", "Surround_" + index_str, spot.surround, keyFile);
                     saveToKeyfile(!pedited || spot_edited->strlog, "Locallab", "Strlog_" + index_str, spot.strlog, keyFile);
                     saveToKeyfile(!pedited || spot_edited->anglog, "Locallab", "Anglog_" + index_str, spot.anglog, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->featherlog, "Locallab", "Featherlog_" + index_str, spot.featherlog, keyFile);
                     saveToKeyfile(!pedited || spot_edited->CCmaskcurveL, "Locallab", "CCmaskCurveL_" + index_str, spot.CCmaskcurveL, keyFile);
                     saveToKeyfile(!pedited || spot_edited->LLmaskcurveL, "Locallab", "LLmaskCurveL_" + index_str, spot.LLmaskcurveL, keyFile);
                     saveToKeyfile(!pedited || spot_edited->HHmaskcurveL, "Locallab", "HHmaskCurveL_" + index_str, spot.HHmaskcurveL, keyFile);
@@ -9719,6 +9722,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Surround_" + index_str, spot.surround, spotEdited.surround);
                 assignFromKeyfile(keyFile, "Locallab", "Strlog_" + index_str, spot.strlog, spotEdited.strlog);
                 assignFromKeyfile(keyFile, "Locallab", "Anglog_" + index_str, spot.anglog, spotEdited.anglog);
+                assignFromKeyfile(keyFile, "Locallab", "Featherlog_" + index_str, spot.featherlog, spotEdited.featherlog);
                 assignFromKeyfile(keyFile, "Locallab", "CCmaskCurveL_" + index_str, spot.CCmaskcurveL, spotEdited.CCmaskcurveL);
                 assignFromKeyfile(keyFile, "Locallab", "LLmaskCurveL_" + index_str, spot.LLmaskcurveL, spotEdited.LLmaskcurveL);
                 assignFromKeyfile(keyFile, "Locallab", "HHmaskCurveL_" + index_str, spot.HHmaskcurveL, spotEdited.HHmaskcurveL);

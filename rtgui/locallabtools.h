@@ -127,6 +127,7 @@ protected:
     rtengine::ProcEvent Evlocallabfeathervib;
     rtengine::ProcEvent Evlocallabfeatherexp;
     rtengine::ProcEvent Evlocallabfeatherwav;
+    rtengine::ProcEvent Evlocallabfeatherlog;
     // LocallabTool parameters
     bool needMode;
     bool isLocActivated;
@@ -1514,6 +1515,7 @@ private:
     Gtk::Frame* const gradlogFrame;
     Adjuster* const strlog;
     Adjuster* const anglog;
+    Adjuster* const featherlog;
     MyExpander* const expmaskL;
     MyComboBoxText* const showmaskLMethod;
     Gtk::CheckButton* const enaLMask;

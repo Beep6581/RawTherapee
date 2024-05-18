@@ -1610,6 +1610,7 @@ struct LocallabParams {
         double baselog;
         double strlog;
         double anglog;
+        double featherlog;
         std::vector<double> CCmaskcurveL;
         std::vector<double> LLmaskcurveL;
         std::vector<double> HHmaskcurveL;

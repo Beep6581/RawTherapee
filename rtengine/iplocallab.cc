@@ -533,6 +533,7 @@ struct local_params {
     float basew;
 
     float anglog;
+    float featherlog;
     float strlog;
     float softradiusexp;
     float softradiuscol;
@@ -1391,6 +1392,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float featherwav = ((float) locallab.spots.at(sp).featherwav);
     float strlog = ((float) locallab.spots.at(sp).strlog);
     float anglog = ((float) locallab.spots.at(sp).anglog);
+    float featherlog = ((float) locallab.spots.at(sp).featherlog);
     float softradiusexpo = ((float) locallab.spots.at(sp).softradiusexp);
     float softradiuscolor = ((float) locallab.spots.at(sp).softradiuscol);
     float softradiusreti = ((float) locallab.spots.at(sp).softradiusret);
@@ -1579,6 +1581,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.featherwav = featherwav;
     lp.strlog = strlog;
     lp.anglog = anglog;
+    lp.featherlog = featherlog;
     lp.softradiusexp = softradiusexpo;
     lp.softradiuscol = softradiuscolor;
     lp.softradiusret = softradiusreti;
@@ -5696,6 +5699,7 @@ void calclocalGradientParams(const struct local_params& lp, struct grad_params& 
     } else if (indic == 11) {
         stops = lp.strlog;
         angs = lp.anglog;
+        varfeath = 0.01f * lp.featherlog;
     } else if (indic == 12) {
         stops = -lp.str_mas;
         angs = lp.ang_mas;
