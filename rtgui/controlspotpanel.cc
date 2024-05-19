@@ -70,7 +70,7 @@ ControlSpotPanel::ControlSpotPanel():
     transit_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TRANSITVALUE"), 2., 100., 0.1, 60.))),
     transitweak_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TRANSITWEAK"), 0.5, 25.0, 0.1, 1.0))),
     transitgrad_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TRANSITGRAD"), -1.0, 1.0, 0.01, 0.0))),
-    feather_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FEATVALUE"), 10., 100., 0.1, 25.))),
+    feather_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FEATVALUE_MASK"), 10., 100., 0.1, 25.))),
     struc_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRES"), 1.0, 12.0, 0.1, 4.0))),
     thresh_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRESDELTAE"), 0.0, 15.0, 0.1, 2.0))),
     iter_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_PROXI"), 0.2, 10.0, 0.1, 2.0))),
@@ -504,6 +504,7 @@ ControlSpotPanel::ControlSpotPanel():
     maskBox->pack_start(*deltae_);
     maskBox->pack_start(*scopemask_);
     maskBox->pack_start(*denoichmask_);
+    maskBox->pack_start(*feather_);
     // maskBox->pack_start(*shortc_);
     maskBox->pack_start(*lumask_);
     // maskBox->pack_start(*savrest_);

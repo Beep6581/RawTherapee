@@ -5650,6 +5650,7 @@ void calclocalGradientParams(const struct local_params& lp, struct grad_params& 
     if (indic == 0) {
         stops = -lp.strmaexp;
         angs = lp.angmaexp;
+        varfeath = 0.01f * lp.feath;//for all masks when present
     } else if (indic == 1) {
         stops = lp.strexp;
         angs = lp.angexp;

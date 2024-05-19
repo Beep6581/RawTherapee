@@ -1068,7 +1068,7 @@ HISTORY_MSG_829;Local - SH gradient angle
 HISTORY_MSG_830;Local - Color gradient strength L
 HISTORY_MSG_831;Local - Color gradient angle
 HISTORY_MSG_832;Local - Color gradient strength C
-HISTORY_MSG_833;Local - TG - Feather gradient
+HISTORY_MSG_833;Local - Mask - Feather gradient
 HISTORY_MSG_834;Local - Color gradient strength H
 HISTORY_MSG_835;Local - Vib gradient strength L
 HISTORY_MSG_836;Local - Vib gradient angle
@@ -3098,6 +3098,7 @@ TP_LOCALLAB_FATSAT;Saturation control
 TP_LOCALLAB_FATSHFRA;Dynamic Range Compression Mask ƒ
 TP_LOCALLAB_FEATH_TOOLTIP;Gradient width as a percentage of the Spot diagonal\nUsed by all graduated filters in all tools.\nNo action if a graduated filter hasn't been activated.
 TP_LOCALLAB_FEATVALUE;Feather gradient (Grad. Filters)
+TP_LOCALLAB_FEATVALUE_MASK;Feather gradient (Grad. Filters Mask)
 TP_LOCALLAB_FFTCOL_MASK;FFTW ƒ
 TP_LOCALLAB_FFTMASK_TOOLTIP;Use a Fourier transform for better quality (increased processing time and memory requirements).
 TP_LOCALLAB_FFTW;ƒ - Use Fast Fourier Transform
