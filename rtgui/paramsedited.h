@@ -595,6 +595,7 @@ public:
         bool blurSHde;
         bool strSH;
         bool angSH;
+        bool featherSH;
         bool inverssh;
         bool chromaskSH;
         bool gammaskSH;

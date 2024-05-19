@@ -1508,6 +1508,7 @@ HISTORY_MSG_LOCAL_FEATHERVIB;Local Vib gradient feather
 HISTORY_MSG_LOCAL_FEATHERWAV;Local Wav gradient feather
 HISTORY_MSG_LOCAL_FEATHERLOG;Local Log gradient feather
 HISTORY_MSG_LOCAL_FEATHERCIE;Local CIECAM gradient feather
+HISTORY_MSG_LOCAL_FEATHERSH;Local SH gradient feather
 
 HISTORY_MSG_LOCAL_LOG_BLACKS;Local Log - Blacks distribution
 HISTORY_MSG_LOCAL_LOG_COMPR;Local Log - Compress brightness

@@ -129,6 +129,7 @@ protected:
     rtengine::ProcEvent Evlocallabfeatherwav;
     rtengine::ProcEvent Evlocallabfeatherlog;
     rtengine::ProcEvent Evlocallabfeathercie;
+    rtengine::ProcEvent EvlocallabfeatherSH;
     // LocallabTool parameters
     bool needMode;
     bool isLocActivated;
@@ -567,6 +568,7 @@ private:
     MyExpander* const expgradsh;
     Adjuster* const strSH;
     Adjuster* const angSH;
+    Adjuster* const featherSH;
     Gtk::CheckButton* const inverssh;
     MyExpander* const expmasksh;
     MyComboBoxText* const showmaskSHMethod;

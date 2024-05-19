@@ -506,6 +506,7 @@ struct local_params {
     float featherexp;
     float strSH;
     float angSH;
+    float featherSH;
     float strcol;
     float strcolab;
     float strcolh;
@@ -1378,6 +1379,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float featherexpo = ((float) locallab.spots.at(sp).featherexp);
     float strSH = ((float) locallab.spots.at(sp).strSH);
     float angSH = ((float) locallab.spots.at(sp).angSH);
+    float featherSH = ((float) locallab.spots.at(sp).featherSH);
     float strcol = ((float) locallab.spots.at(sp).strcol);
     float strcolab = ((float) locallab.spots.at(sp).strcolab);
     float strcolh = ((float) locallab.spots.at(sp).strcolh);
@@ -1568,6 +1570,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.featherexp = featherexpo;
     lp.strSH = strSH;
     lp.angSH = angSH;
+    lp.featherSH = featherSH;
     lp.strcol = strcol;
     lp.strcolab = strcolab;
     lp.strcolh = strcolh;
@@ -5651,6 +5654,7 @@ void calclocalGradientParams(const struct local_params& lp, struct grad_params& 
     } else if (indic == 2) {
         stops = lp.strSH;
         angs = lp.angSH;
+        varfeath = 0.01f * lp.featherSH;
     } else if (indic == 3) {
         stops = lp.strcol;
         angs = lp.angcol;
@@ -5681,13 +5685,11 @@ void calclocalGradientParams(const struct local_params& lp, struct grad_params& 
         varfeath = 0.01f * lp.feathervib;
     } else if (indic == 8) {
         float redu = 1.f;
-
         if (lp.strvibab > 0.f) {
             redu = 0.7f;
         } else {
             redu = 0.5f;
         }
-
         stops = redu * lp.strvibab;
         angs = lp.angvib;
         varfeath = 0.01f * lp.feathervib;

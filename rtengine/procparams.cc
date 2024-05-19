@@ -3438,6 +3438,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     blurSHde(5),
     strSH(0.),
     angSH(0.),
+    featherSH(25.),
     inverssh(false),
     chromaskSH(0.0),
     gammaskSH(1.0),
@@ -5045,6 +5046,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && blurSHde == other.blurSHde
         && strSH == other.strSH
         && angSH == other.angSH
+        && featherSH == other.featherSH
         && inverssh == other.inverssh
         && chromaskSH == other.chromaskSH
         && gammaskSH == other.gammaskSH
@@ -6993,6 +6995,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->blurSHde, "Locallab", "BlurSHde_" + index_str, spot.blurSHde, keyFile);
                     saveToKeyfile(!pedited || spot_edited->strSH, "Locallab", "StrSH_" + index_str, spot.strSH, keyFile);
                     saveToKeyfile(!pedited || spot_edited->angSH, "Locallab", "AngSH_" + index_str, spot.angSH, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->featherSH, "Locallab", "FeatherSH_" + index_str, spot.featherSH, keyFile);
                     saveToKeyfile(!pedited || spot_edited->inverssh, "Locallab", "Inverssh_" + index_str, spot.inverssh, keyFile);
                     saveToKeyfile(!pedited || spot_edited->chromaskSH, "Locallab", "ChromaskSH_" + index_str, spot.chromaskSH, keyFile);
                     saveToKeyfile(!pedited || spot_edited->gammaskSH, "Locallab", "GammaskSH_" + index_str, spot.gammaskSH, keyFile);
@@ -9286,6 +9289,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "BlurSHde_" + index_str, spot.blurSHde, spotEdited.blurSHde);
                 assignFromKeyfile(keyFile, "Locallab", "StrSH_" + index_str, spot.strSH, spotEdited.strSH);
                 assignFromKeyfile(keyFile, "Locallab", "AngSH_" + index_str, spot.angSH, spotEdited.angSH);
+                assignFromKeyfile(keyFile, "Locallab", "FeatherSH_" + index_str, spot.featherSH, spotEdited.featherSH);
                 assignFromKeyfile(keyFile, "Locallab", "Inverssh_" + index_str, spot.inverssh, spotEdited.inverssh);
                 assignFromKeyfile(keyFile, "Locallab", "ChromaskSH_" + index_str, spot.chromaskSH, spotEdited.chromaskSH);
                 assignFromKeyfile(keyFile, "Locallab", "GammaskSH_" + index_str, spot.gammaskSH, spotEdited.gammaskSH);

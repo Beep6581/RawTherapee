@@ -4270,6 +4270,7 @@ LocallabShadow::LocallabShadow():
     expgradsh(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPGRAD")))),
     strSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
     angSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
+    featherSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FEATVALUE"), 10., 100., 0.1, 25.))),
     inverssh(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
     expmasksh(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWS")))),
     showmaskSHMethod(Gtk::manage(new MyComboBoxText())),
@@ -4295,6 +4296,7 @@ LocallabShadow::LocallabShadow():
 {
     auto m = ProcEventMapper::getInstance();
     Evlocallabpreviewsh = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWSH");
+    EvlocallabfeatherSH = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_FEATHERSH");
     
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -4346,6 +4348,7 @@ LocallabShadow::LocallabShadow():
 
     angSH->setAdjusterListener(this);
     angSH->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
+    featherSH->setAdjusterListener(this);
 
     inversshConn = inverssh->signal_toggled().connect(sigc::mem_fun(*this, &LocallabShadow::inversshChanged));
     inverssh->set_tooltip_text(M("TP_LOCALLAB_INVERS_TOOLTIP"));
@@ -4457,6 +4460,7 @@ LocallabShadow::LocallabShadow():
     ToolParamBlock* const gradSHBox = Gtk::manage(new ToolParamBlock());
     gradSHBox->pack_start(*strSH);
     gradSHBox->pack_start(*angSH);
+    gradSHBox->pack_start(*featherSH);
     expgradsh->add(*gradSHBox, false);
     pack_start(*expgradsh);
 //    pack_start(*inverssh);
@@ -4748,6 +4752,7 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         sloSH->setValue(spot.sloSH);
         strSH->setValue(spot.strSH);
         angSH->setValue(spot.angSH);
+        featherSH->setValue(spot.featherSH);
         inverssh->set_active(spot.inverssh);
         enaSHMask->set_active(spot.enaSHMask);
         CCmaskSHshape->setCurve(spot.CCmaskSHcurve);
@@ -4814,6 +4819,7 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
         spot.sloSH = sloSH->getValue();
         spot.strSH = strSH->getValue();
         spot.angSH = angSH->getValue();
+        spot.featherSH = featherSH->getValue();
         spot.inverssh = inverssh->get_active();
         spot.enaSHMask = enaSHMask->get_active();
         spot.LLmaskSHcurve = LLmaskSHshape->getCurve();
@@ -4863,6 +4869,7 @@ void LocallabShadow::setDefaults(const rtengine::procparams::ProcParams* defPara
         sloSH->setDefault(defSpot.sloSH);
         strSH->setDefault(defSpot.strSH);
         angSH->setDefault(defSpot.angSH);
+        featherSH->setDefault(defSpot.featherSH);
         blendmaskSH->setDefault((double)defSpot.blendmaskSH);
         radmaskSH->setDefault(defSpot.radmaskSH);
         lapmaskSH->setDefault(defSpot.lapmaskSH);
@@ -5024,6 +5031,13 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
             }
         }
 
+        if (a == featherSH) {
+            if (listener) {
+                listener->panelChanged(EvlocallabfeatherSH,
+                                       featherSH->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
         if (a == blendmaskSH) {
             if (listener) {
                 listener->panelChanged(EvlocallabblendmaskSH,
@@ -5163,6 +5177,7 @@ void LocallabShadow::convertParamToSimple()
     sloSH->setValue(defSpot.sloSH);
     strSH->setValue(defSpot.strSH);
     angSH->setValue(defSpot.angSH);
+    featherSH->setValue(defSpot.featherSH);
     showmaskSHMethod->set_active(0);
     showmaskSHMethodinv->set_active(0);
     enaSHMask->set_active(defSpot.enaSHMask);

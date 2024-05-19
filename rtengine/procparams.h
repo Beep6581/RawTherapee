@@ -1241,6 +1241,7 @@ struct LocallabParams {
         int blurSHde;
         double strSH;
         double angSH;
+        double featherSH;
         bool inverssh;
         double chromaskSH;
         double gammaskSH;
