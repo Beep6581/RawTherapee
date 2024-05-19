@@ -3097,7 +3097,7 @@ TP_LOCALLAB_FATLEVEL;Sigma
 TP_LOCALLAB_FATSAT;Saturation control
 TP_LOCALLAB_FATSHFRA;Dynamic Range Compression Mask ƒ
 TP_LOCALLAB_FEATH_TOOLTIP;Gradient width as a percentage of the Spot diagonal\nUsed by all graduated filters in all tools.\nNo action if a graduated filter hasn't been activated.
-TP_LOCALLAB_FEATVALUE;Feather gradient (Grad. Filters)
+TP_LOCALLAB_FEATVALUE;Feather gradient
 TP_LOCALLAB_FEATVALUE_MASK;Feather gradient (Grad. Filters Mask)
 TP_LOCALLAB_FFTCOL_MASK;FFTW ƒ
 TP_LOCALLAB_FFTMASK_TOOLTIP;Use a Fourier transform for better quality (increased processing time and memory requirements).
