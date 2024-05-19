@@ -130,6 +130,7 @@ protected:
     rtengine::ProcEvent Evlocallabfeatherlog;
     rtengine::ProcEvent Evlocallabfeathercie;
     rtengine::ProcEvent EvlocallabfeatherSH;
+    rtengine::ProcEvent Evlocallabfeather_mask;
     // LocallabTool parameters
     bool needMode;
     bool isLocActivated;
@@ -1626,6 +1627,7 @@ private:
     ThresholdAdjuster* const csThresholdmask;
     Gtk::Frame* const gradFramemask;
     Adjuster* const str_mask;
+    Adjuster* const feather_mask;
     Adjuster* const ang_mask;
 
     sigc::connection showmask_MethodConn, previewmasConn, enamaskConn, toolmaskConn, fftmaskConn;

@@ -7041,11 +7041,13 @@ LocallabMask::LocallabMask():
     csThresholdmask(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 0, 9, 0, 0, 6, 5, 0, false))),
     gradFramemask(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADFRA")))),
     str_mask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -2., 2., 0.05, 0.))),
+    feather_mask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FEATVALUE"), 10., 100., 0.1, 25.))),
     ang_mask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180., 180., 0.1, 0.)))
 {
 
     auto m = ProcEventMapper::getInstance();
     Evlocallabpreviewmas = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWMAS");
+    Evlocallabfeather_mask = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_FEATHERMAS");
     
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -7155,6 +7157,7 @@ LocallabMask::LocallabMask():
 
     ang_mask->setAdjusterListener(this);
     ang_mask->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
+    feather_mask->setAdjusterListener(this);
 
     // Add Common mask specific widgets to GUI
     pack_start(*sensimask);
@@ -7190,6 +7193,7 @@ LocallabMask::LocallabMask():
     ToolParamBlock* const gradmaskBox = Gtk::manage(new ToolParamBlock());
     gradmaskBox->pack_start(*str_mask);
     gradmaskBox->pack_start(*ang_mask);
+    gradmaskBox->pack_start(*feather_mask);
     gradFramemask->add(*gradmaskBox);
     toolmaskBox->pack_start(*gradFramemask, Gtk::PACK_SHRINK, 0);
     toolmaskFrame->add(*toolmaskBox);
@@ -7405,6 +7409,7 @@ void LocallabMask::read(const rtengine::procparams::ProcParams* pp, const Params
         csThresholdmask->setValue<int>(spot.csthresholdmask);
         str_mask->setValue((double)spot.str_mask);
         ang_mask->setValue((double)spot.ang_mask);
+        feather_mask->setValue((double)spot.feather_mask);
     }
 
     // Enable all listeners
@@ -7452,6 +7457,7 @@ void LocallabMask::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.csthresholdmask = csThresholdmask->getValue<int>();
         spot.str_mask = str_mask->getIntValue();
         spot.ang_mask = ang_mask->getIntValue();
+        spot.feather_mask = feather_mask->getIntValue();
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -7481,6 +7487,7 @@ void LocallabMask::setDefaults(const rtengine::procparams::ProcParams* defParams
         csThresholdmask->setDefault<int>(defSpot.csthresholdmask);
         str_mask->setDefault((double)defSpot.str_mask);
         ang_mask->setDefault((double)defSpot.ang_mask);
+        feather_mask->setDefault((double)defSpot.feather_mask);
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -7592,6 +7599,13 @@ void LocallabMask::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabang_mask,
                                        ang_mask->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == feather_mask) {
+            if (listener) {
+                listener->panelChanged(Evlocallabfeather_mask,
+                                       feather_mask->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
@@ -7730,6 +7744,7 @@ void LocallabMask::convertParamToNormal()
     csThresholdmask->setValue<int>(defSpot.csthresholdmask);
     str_mask->setValue((double)defSpot.str_mask);
     ang_mask->setValue((double)defSpot.ang_mask);
+    feather_mask->setValue((double)defSpot.feather_mask);
 
     // Enable all listeners
     enableListener();
