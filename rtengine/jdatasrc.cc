@@ -399,10 +399,6 @@ my_jpeg_std_error (struct jpeg_error_mgr * err)
 
     /* override these functions */
     err->error_exit = my_error_exit;
-    err->emit_message = emit_message;
-    err->output_message = output_message;
-    err->format_message = format_message;
-    err->reset_error_mgr = reset_error_mgr;
 
     return err;
 }
