@@ -898,7 +898,7 @@ int ImageIO::loadJXL(const Glib::ustring &fname)
             std::size_t icc_size = 0;
 
             if (JXL_DEC_SUCCESS !=
-#if JPEGXL_NUMERIC_VERSION < JPEGXL_COMPUTE_NUMERIC_VERSION(0, 8, 0)
+#if JPEGXL_NUMERIC_VERSION < JPEGXL_COMPUTE_NUMERIC_VERSION(0, 9, 0)
                     JxlDecoderGetICCProfileSize(dec.get(), &format, _PROFILE_, &icc_size)
 #else
                     JxlDecoderGetICCProfileSize(dec.get(), _PROFILE_, &icc_size)
@@ -911,7 +911,7 @@ int ImageIO::loadJXL(const Glib::ustring &fname)
                 icc_profile.resize(icc_size);
 
                 if (JXL_DEC_SUCCESS !=
-#if JPEGXL_NUMERIC_VERSION < JPEGXL_COMPUTE_NUMERIC_VERSION(0, 8, 0)
+#if JPEGXL_NUMERIC_VERSION < JPEGXL_COMPUTE_NUMERIC_VERSION(0, 9, 0)
                         JxlDecoderGetColorAsICCProfile(
                             dec.get(), &format, _PROFILE_,
                             icc_profile.data(), icc_profile.size())
