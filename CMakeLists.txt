@@ -560,14 +560,19 @@ if(WITH_JXL AND NOT WITH_JXL STREQUAL "AUTO")
 else()
     set(JXL_REQUIRED "")
 endif()
-pkg_check_modules(JXL ${JXL_REQUIRED} IMPORTED_TARGET libjxl libjxl_threads)
+pkg_check_modules(JXL ${JXL_REQUIRED} IMPORTED_TARGET libjxl)
+pkg_check_modules(JXLTHREADS ${JXL_REQUIRED} IMPORTED_TARGET libjxl_threads)
 if(JXL_FOUND)
     if(WITH_JXL OR WITH_JXL STREQUAL "AUTO")
         add_definitions(-DLIBJXL)
+        list(APPEND JXL_INCLUDE_DIRS ${JXLTHREADS_INCLUDE_DIRS})
+        list(APPEND JXL_LIBRARIES ${JXLTHREADS_LIBRARIES})
     else()
         message(STATUS "  JXL support disabled by WITH_JXL = ${WITH_JXL}")
         set(JXL_INCLUDE_DIRS "")
         set(JXL_LIBRARIES "")
+        set(JXLTHREADS_INCLUDE_DIRS "")
+        set(JXLTHREADS_LIBRARIES "")
     endif()
 endif()
 
@@ -751,6 +756,7 @@ if(NOT APPLE)
         -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
         -DOPTION_OMP:STRING=${OPTION_OMP}
         -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP}
+        -DJXL_VERSION:STRING=${JXL_VERSION}
         -DLENSFUN_VERSION:STRING=${LENSFUN_VERSION})
 endif()
 
@@ -780,6 +786,7 @@ elseif(APPLE)
              -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
              -DOPTION_OMP:STRING=${OPTION_OMP}
              -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP}
+             -DJXL_VERSION:STRING=${JXL_VERSION}
              -DLENSFUN_VERSION:STRING=${LENSFUN_VERSION}
              -P ${PROJECT_SOURCE_DIR}/UpdateInfo.cmake)
 else()
