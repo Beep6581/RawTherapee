@@ -852,7 +852,7 @@ int ImageIO::loadJXL(const Glib::ustring &fname)
     std::vector<std::uint8_t> const compressed = getFileData(fname);
 
     if (compressed.empty()) {
-        g_printerr("Error: loadJXL failed to get data from file\n");
+        std::cerr << "Error: loadJXL failed to get data from file" << std::endl;
         return IMIO_READERROR;
     }
 
@@ -865,14 +865,14 @@ int ImageIO::loadJXL(const Glib::ustring &fname)
             JxlDecoderSubscribeEvents(dec.get(), JXL_DEC_BASIC_INFO |
                                       JXL_DEC_COLOR_ENCODING |
                                       JXL_DEC_FULL_IMAGE)) {
-        g_printerr("Error: JxlDecoderSubscribeEvents failed\n");
+        std::cerr << "Error: JxlDecoderSubscribeEvents failed" << std::endl;
         return IMIO_HEADERERROR;
     }
 
     if (JXL_DEC_SUCCESS !=
             JxlDecoderSetParallelRunner(dec.get(), JxlResizableParallelRunner,
                                         runner.get())) {
-        g_printerr("Error: JxlDecoderSetParallelRunner failed\n");
+        std::cerr << "Error: JxlDecoderSetParallelRunner failed" << std::endl;
         return IMIO_HEADERERROR;
     }
 
@@ -884,7 +884,7 @@ int ImageIO::loadJXL(const Glib::ustring &fname)
 
         if (status == JXL_DEC_BASIC_INFO) {
             if (JXL_DEC_SUCCESS != JxlDecoderGetBasicInfo(dec.get(), &info)) {
-                g_printerr("Error: JxlDecoderGetBasicInfo failed\n");
+                std::cerr << "Error: JxlDecoderGetBasicInfo failed" << std::endl;
                 return IMIO_HEADERERROR;
             }
 
@@ -904,7 +904,7 @@ int ImageIO::loadJXL(const Glib::ustring &fname)
                     JxlDecoderGetICCProfileSize(dec.get(), _PROFILE_, &icc_size)
 #endif
                ) {
-                g_printerr("Warning: JxlDecoderGetICCProfileSize failed\n");
+                std::cerr << "Warning: JxlDecoderGetICCProfileSize failed" << std::endl;
             }
 
             if (icc_size > 0) {
@@ -921,14 +921,13 @@ int ImageIO::loadJXL(const Glib::ustring &fname)
                             icc_profile.data(), icc_profile.size())
 #endif
                    ) {
-                    g_printerr(
-                        "Warning: JxlDecoderGetColorAsICCProfile failed\n");
+                    std::cerr << "Warning: JxlDecoderGetColorAsICCProfile failed" << std::endl;
                 } else {
                     embProfile = cmsOpenProfileFromMem(icc_profile.data(),
                                                        icc_profile.size());
                 }
             } else {
-                g_printerr("Warning: Empty ICC data.\n");
+                std::cerr << "Warning: Empty ICC data." << std::endl;
             }
         } else if (status == JXL_DEC_NEED_IMAGE_OUT_BUFFER) {
             // Note: If assert is triggered, change to assignment.
@@ -938,14 +937,14 @@ int ImageIO::loadJXL(const Glib::ustring &fname)
 
             if (JXL_DEC_SUCCESS !=
                     JxlDecoderImageOutBufferSize(dec.get(), &format, &buffer_size)) {
-                g_printerr("Error: JxlDecoderImageOutBufferSize failed\n");
+                std::cerr << "Error: JxlDecoderImageOutBufferSize failed" << std::endl;
                 return IMIO_READERROR;
             }
 
             buffer.resize(buffer_size);
 
             if (JXL_DEC_SUCCESS != JxlDecoderSetImageOutBuffer(dec.get(), &format, buffer.data(), buffer.size())) {
-                g_printerr("Error: JxlDecoderSetImageOutBuffer failed\n");
+                std::cerr << "Error: JxlDecoderSetImageOutBuffer failed" << std::endl;
                 return IMIO_READERROR;
             }
         } else if (status == JXL_DEC_FULL_IMAGE ||
@@ -957,13 +956,13 @@ int ImageIO::loadJXL(const Glib::ustring &fname)
             // Decoding complete.  Decoder will be released automatically.
             break;
         } else if (status == JXL_DEC_NEED_MORE_INPUT) {
-            g_printerr("Error: Decoder needs more input data\n");
+            std::cerr << "Error: Decoder needs more input data" << std::endl;
             return IMIO_READERROR;
         } else if (status == JXL_DEC_ERROR) {
-            g_printerr("Error: Decoder error\n");
+            std::cerr << "Error: Decoder error" << std::endl;
             return IMIO_READERROR;
         } else {
-            g_printerr("Error: Unknown decoder status\n");
+            std::cerr << "Error: Unknown decoder status" << std::endl;
             return IMIO_READERROR;
         }
     } // end grand decode loop
