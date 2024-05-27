@@ -29,6 +29,7 @@
 #include "imagedata.h"
 #include "../rtgui/version.h"
 #include "../rtgui/pathutils.h"
+#include <ctime>
 
 
 #if EXIV2_TEST_VERSION(0,28,0)
@@ -299,6 +300,13 @@ void Exiv2Metadata::saveToImage(const Glib::ustring &path, bool preserve_all_tag
     }
 
     dst->exifData()["Exif.Image.Software"] = "RawTherapee " RTVERSION;
+
+    std::time_t t = std::time(nullptr);
+    char mbstr[20];
+    if (std::strftime(mbstr, sizeof(mbstr), "%Y:%m:%d %H:%M:%S", std::localtime(&t))) {
+        dst->exifData()["Exif.Image.DateTime"] = mbstr;
+    }
+    
     import_exif_pairs(dst->exifData());
     import_iptc_pairs(dst->iptcData());
     bool xmp_tried = false;
