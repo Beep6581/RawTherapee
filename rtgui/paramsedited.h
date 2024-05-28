@@ -371,7 +371,7 @@ struct SHParamsEdited {
 
 struct ToneEqualizerParamsEdited {
     bool enabled;
-    std::array<bool, 5> bands;
+    std::array<bool, 6> bands;
     bool regularization;
     bool show_colormap;
     bool pivot;
