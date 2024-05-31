@@ -1740,6 +1740,9 @@ struct LocallabParams {
         double slopesmor;
         double slopesmog;
         double slopesmob;
+        double kslopesmor;
+        double kslopesmog;
+        double kslopesmob;
         int midtcie;
         double grexl;
         double greyl;

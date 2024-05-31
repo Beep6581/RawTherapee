@@ -1087,6 +1087,9 @@ public:
         bool slopesmor;
         bool slopesmog;
         bool slopesmob;
+        bool kslopesmor;
+        bool kslopesmog;
+        bool kslopesmob;
         bool midtcie;
         bool redxl;
         bool redyl;

@@ -7984,6 +7984,9 @@ Locallabcie::Locallabcie():
     slopesmor(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOPESMOOTHR"), 0.01, 1.6, 0.01, 1.))),
     slopesmog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOPESMOOTHG"), 0.01, 1.6, 0.01, 1.))),
     slopesmob(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOPESMOOTHB"), 0.01, 1.6, 0.01, 1.))),
+    kslopesmor(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOPESMOOTRCR"), 0.75, 1.5, 0.01, 1.))),
+    kslopesmog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOPESMOOTRCG"), 0.75, 1.5, 0.01, 1.))),
+    kslopesmob(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOPESMOOTRCB"), 0.75, 1.5, 0.01, 1.))),
     whitescie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGWHITESCIE"), -100, 100, 1, 0))),
     blackscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGBLACKSSCIE"), -100, 100, 1, 0))),
     willBox(Gtk::manage(new Gtk::Box())),
@@ -8138,6 +8141,9 @@ Locallabcie::Locallabcie():
     Evlocallabslopesmor = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SLOPESMOR");
     Evlocallabslopesmog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SLOPESMOG");
     Evlocallabslopesmob = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SLOPESMOB");
+    Evlocallabkslopesmor = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_KSLOPESMOR");
+    Evlocallabkslopesmog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_KSLOPESMOG");
+    Evlocallabkslopesmob = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_KSLOPESMOB");
     Evlocallabsmoothcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SMOOTH");
     Evlocallabsmoothcieyb = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SMOOTHYB");
     Evlocallabsmoothcielum = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SMOOTH_LUM");
@@ -8418,12 +8424,16 @@ Locallabcie::Locallabcie():
     smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_GAMMA ROLLOFF"));
     smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_GAMMA"));
     smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_LEVELS"));
+    smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_LEVELSTRC"));
     smoothciemet->set_active(0);
     ciesmoothBox->pack_start(*smoothBox);
     ciesmoothBox->pack_start(*slopesmo);
     ciesmoothBox->pack_start(*slopesmor);
     ciesmoothBox->pack_start(*slopesmog);
     ciesmoothBox->pack_start(*slopesmob);
+    ciesmoothBox->pack_start(*kslopesmor);
+    ciesmoothBox->pack_start(*kslopesmog);
+    ciesmoothBox->pack_start(*kslopesmob);
     ciesmoothBox->pack_start(*smoothcielum);
     ciesmoothBox->pack_start(*smoothcieyb);
     ciesmoothBox->pack_start(*smoothcie);
@@ -8795,6 +8805,9 @@ Locallabcie::Locallabcie():
     slopesmor->setAdjusterListener(this);
     slopesmog->setAdjusterListener(this);
     slopesmob->setAdjusterListener(this);
+    kslopesmor->setAdjusterListener(this);
+    kslopesmog->setAdjusterListener(this);
+    kslopesmob->setAdjusterListener(this);
 
     Gtk::Box *TittleVBoxcam16;
     TittleVBoxcam16 = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
@@ -9630,6 +9643,8 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             smoothciemet->set_active(3);
         } else if (spot.smoothciemet == "level") {
             smoothciemet->set_active(4);
+        } else if (spot.smoothciemet == "leveltrc") {
+            smoothciemet->set_active(5);
         }
 
 
@@ -9837,6 +9852,9 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         slopesmor->setValue(spot.slopesmor);
         slopesmog->setValue(spot.slopesmog);
         slopesmob->setValue(spot.slopesmob);
+        kslopesmor->setValue(spot.kslopesmor);
+        kslopesmog->setValue(spot.kslopesmog);
+        kslopesmob->setValue(spot.kslopesmob);
         midtcie->setValue(spot.midtcie);
         whitescie->setValue(spot.whitescie);
         blackscie->setValue(spot.blackscie);
@@ -10031,6 +10049,8 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.smoothciemet = "gamnorol";
         } else if (smoothciemet->get_active_row_number() == 4) {
             spot.smoothciemet = "level";
+        } else if (smoothciemet->get_active_row_number() == 5) {
+            spot.smoothciemet = "leveltrc";
         }
 
         if (illMethod->get_active_row_number() == 0) {
@@ -10163,6 +10183,9 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.slopesmor = slopesmor->getValue();
         spot.slopesmog = slopesmog->getValue();
         spot.slopesmob = slopesmob->getValue();
+        spot.kslopesmor = kslopesmor->getValue();
+        spot.kslopesmog = kslopesmog->getValue();
+        spot.kslopesmob = kslopesmob->getValue();
         spot.midtcie = midtcie->getIntValue();
         spot.whitescie = whitescie->getIntValue();
         spot.blackscie = blackscie->getIntValue();
@@ -11066,6 +11089,9 @@ void Locallabcie::smoothciemetChanged()
        slopesmor->hide();
        slopesmog->hide();
        slopesmob->hide();
+       kslopesmor->hide();
+       kslopesmog->hide();
+       kslopesmob->hide();
        smoothcie->show();
        smoothcieyb->hide();
        smoothcielum->hide();
@@ -11074,10 +11100,27 @@ void Locallabcie::smoothciemetChanged()
        slopesmor->show();
        slopesmog->show();
        slopesmob->show();
+       kslopesmor->hide();
+       kslopesmog->hide();
+       kslopesmob->hide();
        smoothcie->show();
        smoothcielum->show();
        smoothcieyb->show();
+    } else if(smoothciemet->get_active_row_number() == 5) {
+       kslopesmor->show();
+       kslopesmog->show();
+       kslopesmob->show();
+       slopesmo->hide();
+       slopesmor->hide();
+       slopesmog->hide();
+       slopesmob->hide();
+       smoothcie->hide();
+       smoothcielum->hide();
+       smoothcieyb->hide();
     } else {
+       kslopesmor->hide();
+       kslopesmog->hide();
+       kslopesmob->hide();
        slopesmo->hide();
        slopesmor->hide();
        slopesmog->hide();
@@ -11274,6 +11317,9 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             slopesmor->hide();
             slopesmog->hide();
             slopesmob->hide();
+            kslopesmor->hide();
+            kslopesmog->hide();
+            kslopesmob->hide();
             smoothcie->hide();
             smoothcielum->hide();
             smoothcieyb->hide();
@@ -11291,6 +11337,9 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     slopesmor->hide();
                     slopesmog->hide();
                     slopesmob->hide();
+                    kslopesmor->hide();
+                    kslopesmog->hide();
+                    kslopesmob->hide();
                     smoothcie->show();
                     smoothcielum->hide();
                     smoothcieyb->hide();
@@ -11299,10 +11348,27 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     slopesmor->show();
                     slopesmog->show();
                     slopesmob->show();
+                    kslopesmor->hide();
+                    kslopesmog->hide();
+                    kslopesmob->hide();
                     smoothcie->show();
                     smoothcielum->show();
                     smoothcieyb->show();
+                } else if(smoothciemet->get_active_row_number() == 5) {
+                    kslopesmor->show();
+                    kslopesmog->show();
+                    kslopesmob->show();
+                    slopesmo->hide();
+                    slopesmor->hide();
+                    slopesmog->hide();
+                    slopesmob->hide();
+                    smoothcie->hide();
+                    smoothcielum->hide();
+                    smoothcieyb->hide();
                 } else {
+                    kslopesmor->hide();
+                    kslopesmog->hide();
+                    kslopesmob->hide();
                     slopesmo->hide();
                     slopesmor->hide();
                     slopesmog->hide();
@@ -11419,6 +11485,9 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     slopesmor->hide();
                     slopesmog->hide();
                     slopesmob->hide();
+                    kslopesmor->hide();
+                    kslopesmog->hide();
+                    kslopesmob->hide();
                     smoothcie->show();
                     smoothcielum->hide();
                     smoothcieyb->hide();
@@ -11427,10 +11496,27 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     slopesmor->show();
                     slopesmog->show();
                     slopesmob->show();
+                    kslopesmor->hide();
+                    kslopesmog->hide();
+                    kslopesmob->hide();
                     smoothcie->show();
                     smoothcielum->show();
                     smoothcieyb->show();
+                } else if(smoothciemet->get_active_row_number() == 5) {
+                    kslopesmor->show();
+                    kslopesmog->show();
+                    kslopesmob->show();
+                    slopesmo->hide();
+                    slopesmor->hide();
+                    slopesmog->hide();
+                    slopesmob->hide();
+                    smoothcie->hide();
+                    smoothcielum->hide();
+                    smoothcieyb->hide();
                 } else {
+                    kslopesmor->hide();
+                    kslopesmog->hide();
+                    kslopesmob->hide();
                     slopesmo->hide();
                     slopesmor->hide();
                     slopesmog->hide();
@@ -11551,6 +11637,9 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     slopesmor->hide();
                     slopesmog->hide();
                     slopesmob->hide();
+                    kslopesmor->hide();
+                    kslopesmog->hide();
+                    kslopesmob->hide();
                     smoothcie->show();
                     smoothcielum->hide();
                     smoothcieyb->hide();
@@ -11559,14 +11648,31 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     slopesmor->show();
                     slopesmog->show();
                     slopesmob->show();
+                    kslopesmor->hide();
+                    kslopesmog->hide();
+                    kslopesmob->hide();
                     smoothcie->show();
                     smoothcielum->show();
                     smoothcieyb->show();
+                } else if(smoothciemet->get_active_row_number() == 5) {
+                    kslopesmor->show();
+                    kslopesmog->show();
+                    kslopesmob->show();
+                    slopesmo->hide();
+                    slopesmor->hide();
+                    slopesmog->hide();
+                    slopesmob->hide();
+                    smoothcie->hide();
+                    smoothcielum->hide();
+                    smoothcieyb->hide();
                 } else {
                     slopesmo->hide();
                     slopesmor->hide();
                     slopesmog->hide();
                     slopesmob->hide();
+                    kslopesmor->hide();
+                    kslopesmog->hide();
+                    kslopesmob->hide();
                     smoothcie->hide();
                     smoothcielum->hide();
                     smoothcieyb->hide();
@@ -11623,6 +11729,9 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     slopesmor->hide();
                     slopesmog->hide();
                     slopesmob->hide();
+                    kslopesmor->hide();
+                    kslopesmog->hide();
+                    kslopesmob->hide();
                     smoothcie->show();
                     smoothcielum->hide();
                     smoothcieyb->hide();
@@ -11631,10 +11740,27 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     slopesmor->show();
                     slopesmog->show();
                     slopesmob->show();
+                    kslopesmor->hide();
+                    kslopesmog->hide();
+                    kslopesmob->hide();
                     smoothcie->show();
                     smoothcielum->show();
                     smoothcieyb->show();
+                } else if(smoothciemet->get_active_row_number() == 5) {
+                    kslopesmor->show();
+                    kslopesmog->show();
+                    kslopesmob->show();
+                    slopesmo->hide();
+                    slopesmor->hide();
+                    slopesmog->hide();
+                    slopesmob->hide();
+                    smoothcie->hide();
+                    smoothcielum->hide();
+                    smoothcieyb->hide();
                 } else {
+                    kslopesmor->hide();
+                    kslopesmog->hide();
+                    kslopesmob->hide();
                     slopesmo->hide();
                     slopesmor->hide();
                     slopesmog->hide();
@@ -11745,18 +11871,38 @@ void Locallabcie::updatecieGUI()
             slopesmor->hide();
             slopesmog->hide();
             slopesmob->hide();
+            kslopesmor->hide();
+            kslopesmog->hide();
+            kslopesmob->hide();
             smoothcie->show();
             smoothcielum->hide();
             smoothcieyb->hide();
         } else if(smoothciemet->get_active_row_number() == 4) {
             slopesmo->hide();
+            kslopesmor->hide();
+            kslopesmog->hide();
+            kslopesmob->hide();
             slopesmor->show();
             slopesmog->show();
             slopesmob->show();
             smoothcie->show();
             smoothcielum->show();
             smoothcieyb->show();
+        } else if(smoothciemet->get_active_row_number() == 5) {
+            kslopesmor->show();
+            kslopesmog->show();
+            kslopesmob->show();
+            slopesmo->hide();
+            slopesmor->hide();
+            slopesmog->hide();
+            slopesmob->hide();
+            smoothcie->hide();
+            smoothcielum->hide();
+            smoothcieyb->hide();
         } else {
+            kslopesmor->hide();
+            kslopesmog->hide();
+            kslopesmob->hide();
             slopesmo->hide();
             slopesmor->hide();
             slopesmog->hide();
@@ -12035,9 +12181,12 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         blackscie->setDefault(defSpot.blackscie);
         slopjcie->setDefault(defSpot.slopjcie);
         slopesmo->setDefault(defSpot.slopesmo);
-        slopesmor->setDefault(defSpot.slopesmo);
+        slopesmor->setDefault(defSpot.slopesmor);
         slopesmog->setDefault(defSpot.slopesmog);
         slopesmob->setDefault(defSpot.slopesmob);
+        kslopesmor->setDefault(defSpot.kslopesmor);
+        kslopesmog->setDefault(defSpot.kslopesmog);
+        kslopesmob->setDefault(defSpot.kslopesmob);
         sigmoidldajzcie->setDefault(defSpot.sigmoidldajzcie);
         sigmoidthjzcie->setDefault(defSpot.sigmoidthjzcie);
         sigmoidbljzcie->setDefault(defSpot.sigmoidbljzcie);
@@ -12600,6 +12749,28 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabslopesmob,
                                        slopesmob->getTextValue() + spName);
+            }
+        }
+
+        if (a == kslopesmor) {
+            if (listener) {
+                listener->panelChanged(Evlocallabkslopesmor,
+                                       kslopesmor->getTextValue() + spName);
+            }
+        }
+
+
+        if (a == kslopesmog) {
+            if (listener) {
+                listener->panelChanged(Evlocallabkslopesmog,
+                                       kslopesmog->getTextValue() + spName);
+            }
+        }
+
+        if (a == kslopesmob) {
+            if (listener) {
+                listener->panelChanged(Evlocallabkslopesmob,
+                                       kslopesmob->getTextValue() + spName);
             }
         }
 
