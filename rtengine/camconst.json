@@ -1556,7 +1556,7 @@ Camera constants:
     },
 
     { // Quality C
-        "make_model": [ "FUJIFILM X-T100" ],
+        "make_model": [ "FUJIFILM X-T100", "FUJIFILM X-T200" ],
         "dcraw_matrix" : [11673, -4760, -1041, -3988, 12058, 2166, -771, 1417, 5568], // taken from ART
         "ranges": { "white": 16100 }
     },
