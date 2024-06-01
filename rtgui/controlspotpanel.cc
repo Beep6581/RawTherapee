@@ -66,15 +66,16 @@ ControlSpotPanel::ControlSpotPanel():
     locYT_(Gtk::manage(new Adjuster(M("TP_LOCAL_HEIGHT_T"), 2, 3000, 1, 150))),
     centerX_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CENTER_X"), -1000, 1000, 1, 0))),
     centerY_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CENTER_Y"), -1000, 1000, 1, 0))),
-    circrad_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CIRCRADIUS"), 2, 150, 1, 18))),
+    circrad_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CIRCRADIUS"), 1.5, 150., 0.5, 18.))),
     transit_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TRANSITVALUE"), 2., 100., 0.1, 60.))),
     transitweak_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TRANSITWEAK"), 0.5, 25.0, 0.1, 1.0))),
     transitgrad_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TRANSITGRAD"), -1.0, 1.0, 0.01, 0.0))),
     feather_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FEATVALUE"), 10., 100., 0.1, 25.))),
     struc_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRES"), 1.0, 12.0, 0.1, 4.0))),
-    thresh_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRESDELTAE"), 0.0, 10.0, 0.1, 2.0))),
+    thresh_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRESDELTAE"), 0.0, 15.0, 0.1, 2.0))),
     iter_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_PROXI"), 0.2, 10.0, 0.1, 2.0))),
-    balan_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALAN"), 0.2, 2.5, 0.1, 1.0, Gtk::manage(new RTImage("circle-multicolor-small")),  Gtk::manage(new RTImage("circle-white-small"))))),
+   // balan_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALAN"), 0.05, 2.5, 0.05, 1.0, Gtk::manage(new RTImage("rawtherapee-logo-16")),  Gtk::manage(new RTImage("circle-white-small"))))),
+    balan_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALAN"), 0.05, 2.5, 0.05, 1.0, Gtk::manage(new RTImage("circle-yellow-small")),  Gtk::manage(new RTImage("circle-white-small"))))),
     balanh_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALANH"), 0.2, 2.5, 0.1, 1.0, Gtk::manage(new RTImage("circle-multicolor-small")), Gtk::manage(new RTImage("circle-red-green-small"))))),
     colorde_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COLORDE"), -15, 15, 2, 5, Gtk::manage(new RTImage("circle-blue-yellow-small")), Gtk::manage(new RTImage("circle-gray-green-small"))))),
     colorscope_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COLORSCOPE"), 0., 100.0, 1., 30.))),
@@ -99,8 +100,11 @@ ControlSpotPanel::ControlSpotPanel():
 
     preview_(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
     ctboxshape(Gtk::manage(new Gtk::Box())),
+    ctboxactivmethod(Gtk::manage(new Gtk::Box())),
+    ctboxspotmethod(Gtk::manage(new Gtk::Box())),    
     ctboxshapemethod(Gtk::manage(new Gtk::Box())),
     ctboxgamut(Gtk::manage(new Gtk::Box())),
+    artifBox2(Gtk::manage(new ToolParamBlock())),
 
     controlPanelListener(nullptr),
     lastObject_(-1),
@@ -115,7 +119,7 @@ ControlSpotPanel::ControlSpotPanel():
     auto m = ProcEventMapper::getInstance();
     EvLocallabavoidgamutMethod = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_GAMUTMUNSEL");
     const bool showtooltip = options.showtooltip;
-    pack_start(*hishow_);
+//    pack_start(*hishow_);
 
     Gtk::Box* const ctboxprevmethod = Gtk::manage(new Gtk::Box());
     prevMethod_->append(M("TP_LOCALLAB_PREVHIDE"));
@@ -203,8 +207,9 @@ ControlSpotPanel::ControlSpotPanel():
     scrolledwindow_->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
     scrolledwindow_->set_min_content_height(150);
     pack_start(*scrolledwindow_);
+    pack_start(*hishow_);
 
-    Gtk::Box* const ctboxactivmethod = Gtk::manage(new Gtk::Box());
+   // Gtk::Box* const ctboxactivmethod = Gtk::manage(new Gtk::Box());
     ctboxactivmethod->pack_start(*activ_);
     pack_start(*ctboxactivmethod);
 
@@ -222,7 +227,6 @@ ControlSpotPanel::ControlSpotPanel():
         shape_->set_tooltip_text(M("TP_LOCALLAB_SHAPE_TOOLTIP"));
     }
 
-    Gtk::Box* const ctboxspotmethod = Gtk::manage(new Gtk::Box());
     Gtk::Label* const labelspotmethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_EXCLUTYPE") + ":"));
     ctboxspotmethod->pack_start(*labelspotmethod, Gtk::PACK_SHRINK, 4);
 
@@ -233,6 +237,7 @@ ControlSpotPanel::ControlSpotPanel():
     spotMethod_->append(M("TP_LOCALLAB_EXNORM"));
     spotMethod_->append(M("TP_LOCALLAB_EXECLU"));
     spotMethod_->append(M("TP_LOCALLAB_EXFULL"));
+    spotMethod_->append(M("TP_LOCALLAB_EXMAIN"));//new choice Global
     spotMethod_->set_active(0);
     spotMethodconn_ = spotMethod_->signal_changed().connect(
                           sigc::mem_fun(
@@ -387,10 +392,11 @@ ControlSpotPanel::ControlSpotPanel():
 //    artifBox->pack_start(*colorscope_);
     expShapeDetect_->add(*artifBox, false);
     pack_start(*expShapeDetect_, false, false);
-    ToolParamBlock* const artifBox2 = Gtk::manage(new ToolParamBlock());
+//    ToolParamBlock* const artifBox2 = Gtk::manage(new ToolParamBlock());
 
     artifBox2->pack_start(*preview_);
-    artifBox2->pack_start(*colorscope_);
+    artifBox2->pack_start(*colorscope_);//unused with contrlspotpanel since 17 / 01 : 2024 but data used in color, vibrance, sh
+    colorscope_->hide();
     pack_start(*artifBox2);
     ToolParamBlock* const specCaseBox = Gtk::manage(new ToolParamBlock());
 
@@ -551,7 +557,6 @@ ControlSpotPanel::ControlSpotPanel():
     pack_start(*ctboxwavmethod);
 */
     show_all();
-
     // Define row background color
     // Mouseovered spot (opaque orange)
     colorMouseover.set_red(1.);
@@ -794,6 +799,7 @@ bool ControlSpotPanel::on_button_visibility(GdkEventButton* event)
     return false;
 }
 
+
 bool ControlSpotPanel::blockTreeviewSearch(GdkEventKey* event)
 {
     // printf("blockTreeviewSearch\n");
@@ -981,7 +987,7 @@ void ControlSpotPanel::prevMethodChanged()
 
 void ControlSpotPanel::spotMethodChanged()
 {
-
+    //01 2024 take into account new problems linked to Global spotmethod
     // Get selected control spot
     const auto s = treeview_->get_selection();
 
@@ -994,15 +1000,20 @@ void ControlSpotPanel::spotMethodChanged()
 
     const int oldSpotMethod = row[spots_.spotMethod];
     row[spots_.spotMethod] = spotMethod_->get_active_row_number();
+    //ctboxspotmethod->show();
+    hishow_->show();
+    ctboxshape->show();
+    artifBox2->show();
+    colorscope_->hide();
 
     // Update Control Spot GUI according to spotMethod_ combobox state (to be compliant with updateParamVisibility function)
     if (multiImage && spotMethod_->get_active_text() == M("GENERAL_UNCHANGED")) {
         excluFrame->show();
+
     } else if (spotMethod_->get_active_row_number() == 0) { // Normal case
         excluFrame->hide();
-
-        // Reset spot shape only if previous spotMethod is Full image
-        if (oldSpotMethod == 2) {
+        // Reset spot shape only if previous spotMethod is Full image or Global
+        if (oldSpotMethod == 2  || oldSpotMethod == 3) {
             disableParamlistener(true);
             locX_->setValue(150.);
             row[spots_.locX] = locX_->getIntValue();
@@ -1022,8 +1033,8 @@ void ControlSpotPanel::spotMethodChanged()
     } else if (spotMethod_->get_active_row_number() == 1) { // Excluding case
         excluFrame->show();
 
-        // Reset spot shape only if previous spotMethod is Full image
-        if (oldSpotMethod == 2) {
+        // Reset spot shape only if previous spotMethod is Full image or Global
+        if (oldSpotMethod == 2 || oldSpotMethod == 3) {
             disableParamlistener(true);
             locX_->setValue(150.);
             row[spots_.locX] = locX_->getIntValue();
@@ -1040,7 +1051,7 @@ void ControlSpotPanel::spotMethodChanged()
             disableParamlistener(false);
             updateControlSpotCurve(row);
         }
-    } else if (spotMethod_->get_active_row_number() == 2) { // Full image case
+    } else if (spotMethod_->get_active_row_number() == 2  || spotMethod_->get_active_row_number() == 3) { // Full image or Global case
         excluFrame->hide();
         shape_->set_active(0);
 
@@ -1056,6 +1067,31 @@ void ControlSpotPanel::spotMethodChanged()
         row[spots_.shape] = shape_->get_active_row_number();
         transit_->setValue(100.);
         row[spots_.transit] = transit_->getValue();
+        
+        if(spotMethod_->get_active_row_number() == 3) { //global
+            ctboxshape->hide();
+            artifBox2->hide();
+            hishow_->hide();
+            expTransGrad_->hide();
+            expShapeDetect_->hide();
+            expSpecCases_->hide();
+            expMaskMerge_->hide();
+            circrad_->hide();
+            ctboxshape->hide();
+        } else {
+            ctboxshape->show();
+            circrad_->show();    
+            artifBox2->show();
+            colorscope_->hide();
+           
+            hishow_->show();
+            if(hishow_->get_active()) {
+                expTransGrad_->show();
+                expShapeDetect_->show();
+                expSpecCases_->show();
+                expMaskMerge_->show();
+            }
+        }
     }
 
     // Raise event
@@ -1303,7 +1339,12 @@ void ControlSpotPanel::updateParamVisibility()
     } else {
         avoidrad_->hide();
 }
-
+   // ctboxspotmethod->show();
+    hishow_->show();
+    artifBox2->show();
+    ctboxshape->show();
+    colorscope_->hide();
+    
     // Update Control Spot GUI according to spotMethod_ combobox state (to be compliant with spotMethodChanged function)
     if (multiImage && spotMethod_->get_active_text() == M("GENERAL_UNCHANGED")) {
         excluFrame->show();
@@ -1311,8 +1352,35 @@ void ControlSpotPanel::updateParamVisibility()
         excluFrame->hide();
     } else if (spotMethod_->get_active_row_number() == 1) { // Excluding case
         excluFrame->show();
-    } else if (spotMethod_->get_active_row_number() == 2) {//full image
+    } else if (spotMethod_->get_active_row_number() == 2 || spotMethod_->get_active_row_number() == 3) {//full image or global
         excluFrame->hide();
+        
+        if(spotMethod_->get_active_row_number() == 3) {        
+            artifBox2->hide();
+            hishow_->hide();
+            hishow_->set_active(false);           
+            ctboxshape->hide();
+            circrad_->hide();
+            expTransGrad_->hide();
+            expShapeDetect_->hide();
+            expSpecCases_->hide();
+            expMaskMerge_->hide();
+
+        } else {
+            artifBox2->show();
+            colorscope_->hide();
+            hishow_->show();
+            ctboxshape->show();
+            circrad_->show();
+            if(hishow_->get_active()) {
+                expTransGrad_->show();
+                expShapeDetect_->show();
+                expSpecCases_->show();
+                expMaskMerge_->show();
+            }
+            
+        }    
+
     }
 
 /*
@@ -1325,13 +1393,35 @@ void ControlSpotPanel::updateParamVisibility()
         ctboxshape->show();
     } else if (prevMethod_->get_active_row_number() == 0) { // Normal case
     */
-    if (!hishow_->get_active()) { // Normal case
+    //ctboxshape->show();
+   // artifBox2->show();
+   
+    if (!hishow_->get_active()  || spotMethod_->get_active_row_number() == 3) { // Normal case or Global 
         expTransGrad_->hide();
         expShapeDetect_->hide();
         expSpecCases_->hide();
         expMaskMerge_->hide();
         circrad_->hide();
         ctboxshape->hide();
+        if(spotMethod_->get_active_row_number() == 3) {
+            artifBox2->hide();
+            hishow_->hide();
+            ctboxshape->hide();
+            circrad_->hide();
+            expTransGrad_->hide();
+            expShapeDetect_->hide();
+            expSpecCases_->hide();
+            expMaskMerge_->hide();
+            
+        } else {
+            hishow_->show();
+            artifBox2->show();
+            colorscope_->hide();
+            hishow_->show();
+            ctboxshape->show();
+            circrad_->show();
+        }
+        
     } else { // Excluding case
         expTransGrad_->show();
         expShapeDetect_->show();
@@ -1339,6 +1429,8 @@ void ControlSpotPanel::updateParamVisibility()
         expMaskMerge_->show();
         circrad_->show();
         ctboxshape->show();
+        hishow_->show();
+        
     }
 
 
@@ -1456,7 +1548,7 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
     }
 
     if (a == circrad_) {
-        row[spots_.circrad] = circrad_->getIntValue();
+        row[spots_.circrad] = circrad_->getValue();
 
         updateControlSpotCurve(row);
 
@@ -1602,8 +1694,9 @@ void ControlSpotPanel::hishowChanged()
     row[spots_.hishow] = hishow_->get_active();
 
 
+    ctboxshape->show();
 
-    if (!hishow_->get_active()) { // Normal case
+    if (!hishow_->get_active()  || spotMethod_->get_active_row_number() == 3) { // Normal case or Global
         expTransGrad_->hide();
         expShapeDetect_->hide();
         expSpecCases_->hide();
@@ -1611,6 +1704,20 @@ void ControlSpotPanel::hishowChanged()
         circrad_->hide();
         ctboxshape->hide();
         shapeMethod_->set_active(0);
+        if(spotMethod_->get_active_row_number() == 3) {
+            hishow_->hide();
+            hishow_->set_active(false);           
+            circrad_->hide();
+            expTransGrad_->hide();
+            expShapeDetect_->hide();
+            expSpecCases_->hide();
+            expMaskMerge_->hide();
+            
+        } else {
+            hishow_->show();
+            circrad_->show();
+            
+        }
 
     } else { // Excluding case
         expTransGrad_->show();
@@ -1619,7 +1726,9 @@ void ControlSpotPanel::hishowChanged()
         expMaskMerge_->show();
         circrad_->show();
         ctboxshape->show();
-    }
+        hishow_->show();
+        
+   }
 
     // Raise event
     if (listener) {
@@ -2762,6 +2871,56 @@ void ControlSpotPanel::deleteControlSpot(const int index)
 
     disableParamlistener(false);
 }
+
+//new function linked to Global and options 
+void ControlSpotPanel::updateguiset(int spottype, bool iscolor, bool issh, bool isvib, bool isexpos, bool issoft, bool isblur, bool istom, bool isret, bool issharp, bool iscont, bool iscbdl, bool islog, bool ismas, bool iscie)
+{
+    {  //with this function we can 1) activate Settings SpotMethod
+        // also if need GUI for mask ,  todo...
+        idle_register.add(
+        [this, spottype, iscolor, issh , isvib, isexpos, issoft, isblur, istom, isret, issharp, iscont, iscbdl, islog, ismas, iscie]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+            if(spottype >= 2  && options.spotmet >= 2) {//optimize update
+                spotMethodChanged();
+            }
+            
+            if((iscolor || issh || isvib || isexpos || istom || iscont || islog || ismas || iscie)
+                && !issharp && !issoft && !isret && !isblur  & !iscbdl) {
+                preview_->hide();               
+            } else if (issoft || isblur || isret || issharp || iscbdl) {
+                preview_->show(); 
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+//new function linked to change scope
+void ControlSpotPanel::updateguiscopeset(int scope)
+{
+    {  //with this function we can disabled old values scope 
+        idle_register.add(
+        [this, scope]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            disableListener();
+            colorscope_->setValue(scope);
+            adjusterChanged(colorscope_, 0.);
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
 
 void ControlSpotPanel::setDefaults(const rtengine::procparams::ProcParams * defParams, const ParamsEdited * pedited)
 {

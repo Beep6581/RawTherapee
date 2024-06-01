@@ -31,9 +31,9 @@ using color_match_type = double [97][3];
 constexpr double MINTEMP = 1500.0;
 constexpr double MAXTEMP = 60000.0;
 constexpr double MINGREEN = 0.02;
-constexpr double MAXGREEN = 10.0;
-constexpr double MINEQUAL = 0.8;
-constexpr double MAXEQUAL = 1.5;
+constexpr double MAXGREEN = 100.0;
+constexpr double MINEQUAL = 0.5;
+constexpr double MAXEQUAL = 2.;
 constexpr double INITIALBLACKBODY = 4000.0;
 
 enum class StandardObserver {

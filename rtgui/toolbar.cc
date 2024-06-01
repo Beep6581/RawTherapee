@@ -27,8 +27,8 @@ ToolBar::ToolBar () : showColPickers(true), listener (nullptr), pickerListener(n
 {
 
     editingMode = false;
-
-    handimg.reset(new RTImage("hand-open", Gtk::ICON_SIZE_LARGE_TOOLBAR));
+   //handimg.reset(new RTImage("hand-open", Gtk::ICON_SIZE_LARGE_TOOLBAR));
+    handimg.reset(new RTImage("hand-open-hicontrast", Gtk::ICON_SIZE_LARGE_TOOLBAR));
     editinghandimg.reset(new RTImage("crosshair-adjust", Gtk::ICON_SIZE_LARGE_TOOLBAR));
 
     handTool = Gtk::manage (new Gtk::ToggleButton ());

@@ -76,17 +76,19 @@ bool LabGridArea::notifyListener()
 }
 
 
-LabGridArea::LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low, bool ciexy):
+LabGridArea::LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low, bool ciexy, bool mous):
     Gtk::DrawingArea(),
     evt(evt), evtMsg(msg),
     litPoint(NONE),
-    low_a(0.f), high_a(0.f), low_b(0.f), high_b(0.f), gre_x(0.f), gre_y(0.f), whi_x(0.f), whi_y(0.f),//these variables are used as xy in Ciexy - no change labels
-    defaultLow_a(0.f), defaultHigh_a(0.f), defaultLow_b(0.f), defaultHigh_b(0.f), defaultgre_x(0.f), defaultgre_y(0.f), defaultwhi_x(0.f), defaultwhi_y(0.f),
+    low_a(0.f), high_a(0.f), low_b(0.f), high_b(0.f), gre_x(0.f), gre_y(0.f), whi_x(0.f), whi_y(0.f), me_x(0.f), me_y(0.f),//these variables are used as xy in Ciexy - no change labels
+    defaultLow_a(0.f), defaultHigh_a(0.f), defaultLow_b(0.f), defaultHigh_b(0.f), defaultgre_x(0.f), defaultgre_y(0.f), defaultwhi_x(0.f), defaultwhi_y(0.f), defaultme_x(0.f), defaultme_y(0.f),
     listener(nullptr),
     edited(false),
     isDragged(false),
     low_enabled(enable_low),
-    ciexy_enabled(ciexy)
+    ciexy_enabled(ciexy),
+    mous_enabled(mous)
+    
 
 {
     set_can_focus(false); // prevent moving the grid while you're moving a point
@@ -95,7 +97,7 @@ LabGridArea::LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool
     get_style_context()->add_class("drawingarea");
 }
 
-void LabGridArea::getParams(double &la, double &lb, double &ha, double &hb, double &gx, double &gy, double &wx, double &wy) const
+void LabGridArea::getParams(double &la, double &lb, double &ha, double &hb, double &gx, double &gy, double &wx, double &wy, double &mx, double &my) const
 {
     la = low_a;
     ha = high_a;
@@ -105,11 +107,13 @@ void LabGridArea::getParams(double &la, double &lb, double &ha, double &hb, doub
     gy = gre_y;
     wx = whi_x;
     wy = whi_y;
+    mx = me_x;
+    my = me_y;
  //  printf("la=%f ha=%f lb=%f hb=%f gx=%f gy=%f\n", la, ha, lb, hb, gx, gy);
 }
 
 
-void LabGridArea::setParams(double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, bool notify)
+void LabGridArea::setParams(double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my, bool notify)
 {
     const double lo = -1.0;
     const double hi = 1.0;
@@ -121,6 +125,8 @@ void LabGridArea::setParams(double la, double lb, double ha, double hb, double g
     gre_y = rtengine::LIM(gy, lo, hi);
     whi_x = rtengine::LIM(wx, lo, hi);
     whi_y = rtengine::LIM(wy, lo, hi);
+    me_x = rtengine::LIM(mx, lo, hi);
+    me_y = rtengine::LIM(my, lo, hi);
 
     queue_draw();
     if (notify) {
@@ -128,7 +134,7 @@ void LabGridArea::setParams(double la, double lb, double ha, double hb, double g
     }
 }
 
-void LabGridArea::setDefault (double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy)
+void LabGridArea::setDefault (double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my)
 {
     defaultLow_a = la;
     defaultLow_b = lb;
@@ -138,16 +144,18 @@ void LabGridArea::setDefault (double la, double lb, double ha, double hb, double
     defaultgre_y = gy;
     defaultwhi_x = wx;
     defaultwhi_y = wy;
+    defaultme_x = mx;
+    defaultme_y = my;
 }
 
 
 void LabGridArea::reset(bool toInitial)
 {
     if (toInitial) {
-        setParams(defaultLow_a, defaultLow_b, defaultHigh_a, defaultHigh_b, defaultgre_x, defaultgre_y, defaultwhi_x, defaultwhi_y, true);
+        setParams(defaultLow_a, defaultLow_b, defaultHigh_a, defaultHigh_b, defaultgre_x, defaultgre_y, defaultwhi_x, defaultwhi_y, defaultme_x, defaultme_y, true);
     } else {
    //     printf("RESET \n");
-        setParams(0., 0., 0., 0., 0., 0., 0., 0., true);
+        setParams(0., 0., 0., 0., 0., 0., 0., 0., 0., 0., true);
     }
 }
 
@@ -322,6 +330,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
 
     // Drawing the connection line
     cr->set_antialias(Cairo::ANTIALIAS_DEFAULT);
+   //     float loa, hia, lob, hib, grx, gry, whx, why, mex, mey;
     const double loa = .5 * (static_cast<double>(width) + static_cast<double>(width) * low_a);
     const double hia = .5 * (static_cast<double>(width) + static_cast<double>(width) * high_a);
     const double lob = .5 * (static_cast<double>(height) + static_cast<double>(height) * low_b);
@@ -330,7 +339,11 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
     const double gry = .5 * (static_cast<double>(height) + static_cast<double>(height) * gre_y);
     const double whx = .5 * (static_cast<double>(width) + static_cast<double>(width) * whi_x);
     const double why = .5 * (static_cast<double>(height) + static_cast<double>(height) * whi_y);
+    double mex = .5 * (static_cast<double>(width) + static_cast<double>(width) * me_x);
+    double mey = .5 * (static_cast<double>(height) + static_cast<double>(height) * me_y);
     cr->set_line_width(1.5);
+        mex = .5 * (width + width * me_x);
+        mey = .5 * (height + height * me_y);
     cr->set_source_rgb(0.6, 0.6, 0.6);
     cr->move_to(loa, lob);
     cr->line_to(hia, hib);
@@ -412,6 +425,12 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
         cr->fill();
     }
 
+        if (ciexy_enabled) {//Dominant
+            cr->set_source_rgb(0.3, 0.4, 0.3);
+            cr->arc(mex, mey, 3., 0, 2. * rtengine::RT_PI);
+            cr->fill();
+        }
+
     cr->set_source_rgb(0.9, 0.9, 0.9);//white for blue en Ciexy
     if (litPoint == HIGH) {
         cr->arc(hia, hib, 5., 0., 2. * rtengine::RT_PI);
@@ -426,7 +445,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr)
 
 bool LabGridArea::on_button_press_event(GdkEventButton *event)
 {
-    if (event->button == 1) {
+    if (event->button == 1  && mous_enabled) {
       if (!ciexy_enabled) {
         if (event->type == GDK_2BUTTON_PRESS) {
             switch (litPoint) {
@@ -450,14 +469,15 @@ bool LabGridArea::on_button_press_event(GdkEventButton *event)
             isDragged = true;
         }
       } else {
-        if (event->type == GDK_2BUTTON_PRESS) {
-            edited = true;
-            notifyListener();
-            queue_draw();
-        } else if (event->type == GDK_BUTTON_PRESS && litPoint != NONE) {
-            isDragged = true;
+        if(mous_enabled) {
+            if (event->type == GDK_2BUTTON_PRESS) {
+                edited = true;
+                notifyListener();
+                queue_draw();
+            } else if (event->type == GDK_BUTTON_PRESS && litPoint != NONE) {
+                isDragged = true;
+            }
         }
-
       }
         return false;
     }
@@ -467,7 +487,7 @@ bool LabGridArea::on_button_press_event(GdkEventButton *event)
 
 bool LabGridArea::on_button_release_event(GdkEventButton *event)
 {
-    if (event->button == 1) {
+    if (event->button == 1  && mous_enabled) {
         isDragged = false;
         return false;
     }
@@ -591,12 +611,21 @@ void LabGridArea::setciexyEnabled(bool yes)
     }
 }
 
+void LabGridArea::setmousEnabled(bool yes)
+{
+    if (mous_enabled != yes) {
+        mous_enabled = yes;
+        queue_draw();
+    }
+}
+
+
 //-----------------------------------------------------------------------------
 // LabGrid
 //-----------------------------------------------------------------------------
 
-LabGrid::LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low, bool ciexy):
-    grid(evt, msg, enable_low, ciexy)
+LabGrid::LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low, bool ciexy, bool mous):
+    grid(evt, msg, enable_low, ciexy, mous)
 {
     Gtk::Button *reset = Gtk::manage(new Gtk::Button());
     reset->set_tooltip_markup(M("ADJUSTER_RESET_TO_DEFAULT"));
@@ -611,7 +640,7 @@ LabGrid::LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_
     reset->set_can_focus(false);
     reset->set_size_request(-1, 20);
 
-    pack_start(grid, true, true);
+    pack_start(grid, true, true, true);
     pack_start(*reset, false, false);
     show_all_children();
 }

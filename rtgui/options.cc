@@ -470,6 +470,8 @@ void Options::setDefaults()
     histogramTraceBrightness = 1;
     curvebboxpos = 1;
     complexity = 2;
+    spotmet = 0;
+    
     inspectorWindow = false;
     zoomOnScroll = true;
     prevdemo = PD_Sidecar;
@@ -633,6 +635,7 @@ void Options::setDefaults()
     rtSettings.previewselection = 5;//between 1 to 40
     rtSettings.cbdlsensi = 1.0;//between 0.001 to 1
     rtSettings.fftwsigma = true; //choice between sigma^2 or empirical formula
+    rtSettings.basecorlog = 0.12;//reduction max Q in Cam16 sigmoid Log encoding between 0.05 and 0.5
 // end locallab
     rtSettings.itcwb_enable = true;
     rtSettings.itcwb_deltaspec = 0.075;
@@ -694,6 +697,7 @@ void Options::setDefaults()
     lastICCProfCreatorDir = "";
     gimpPluginShowInfoDialog = true;
     maxRecentFolders = 15;
+    thumbnailRankColorMode = Options::ThumbnailPropertyMode::PROCPARAMS;
     sortMethod = SORT_BY_NAME;
     sortDescending = false;
     rtSettings.lensfunDbDirectory = ""; // set also in main.cc and main-cli.cc
@@ -1366,6 +1370,15 @@ void Options::readFromFile(Glib::ustring fname)
                 if (keyFile.has_key("File Browser", "BrowseRecursiveFollowLinks")) {
                     browseRecursiveFollowLinks = keyFile.get_boolean("File Browser", "BrowseRecursiveFollowLinks");
                 }
+
+                if (keyFile.has_key("File Browser", "ThumbnailRankColorMode")) {
+                    std::string val = keyFile.get_string("File Browser", "ThumbnailRankColorMode");
+                    if (val == "xmp") {
+                        thumbnailRankColorMode = ThumbnailPropertyMode::XMP;
+                    } else {
+                        thumbnailRankColorMode = ThumbnailPropertyMode::PROCPARAMS;
+                    }
+                }
             }
 
             if (keyFile.has_group("Clipping Indication")) {
@@ -1738,6 +1751,10 @@ void Options::readFromFile(Glib::ustring fname)
                     complexity = keyFile.get_integer("GUI", "Complexity");
                 }
 
+                if (keyFile.has_key("GUI", "Spotmet")) {
+                    spotmet = keyFile.get_integer("GUI", "Spotmet");
+                }
+
                 if (keyFile.has_key("GUI", "InspectorWindow")) {
                     inspectorWindow = keyFile.get_boolean("GUI", "InspectorWindow");
                 }
@@ -1975,6 +1992,10 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("Color Management", "Cbdlsensi")) {//sensibility to crash for cbdl
                     rtSettings.cbdlsensi = keyFile.get_double("Color Management", "Cbdlsensi");
+                }
+
+                if (keyFile.has_key("Color Management", "Besecorlog")) {//sensi base log for Q
+                    rtSettings.basecorlog = keyFile.get_double("Color Management", "Basecorlog");
                 }
 
 
@@ -2462,6 +2483,14 @@ void Options::saveToFile(Glib::ustring fname)
 
             keyFile.set_string_list("File Browser", "RecentFolders", temp);
         }
+        switch (thumbnailRankColorMode) {
+        case ThumbnailPropertyMode::XMP:
+            keyFile.set_string("File Browser", "ThumbnailRankColorMode", "xmp");
+            break;
+        default: // ThumbnailPropertyMode::PROCPARAMS
+            keyFile.set_string("File Browser", "ThumbnailRankColorMode", "procparams");
+            break;
+        }
         keyFile.set_integer("File Browser", "SortMethod", sortMethod);
         keyFile.set_boolean("File Browser", "SortDescending", sortDescending);
         keyFile.set_boolean("File Browser", "BrowseRecursive", browseRecursive);
@@ -2602,6 +2631,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("GUI", "CurveBBoxPosition", curvebboxpos);
         keyFile.set_boolean("GUI", "Showtooltip", showtooltip);
         keyFile.set_integer("GUI", "Complexity", complexity);
+        keyFile.set_integer("GUI", "Spotmet", spotmet);
         keyFile.set_boolean("GUI", "InspectorWindow", inspectorWindow);
         keyFile.set_boolean("GUI", "ZoomOnScroll", zoomOnScroll);
         keyFile.set_integer("GUI", "MaxZoom", static_cast<int>(maxZoomLimit));
@@ -2662,6 +2692,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_string("Color Management", "ClutsDirectory", clutsDir);
         keyFile.set_integer("Color Management", "Previewselection", rtSettings.previewselection);
         keyFile.set_double("Color Management", "Cbdlsensi", rtSettings.cbdlsensi);
+        keyFile.set_double("Color Management", "Basecorlog", rtSettings.basecorlog);
 
         keyFile.set_double("Wavelet", "Edghi", rtSettings.edghi);
         keyFile.set_double("Wavelet", "Edglo", rtSettings.edglo);

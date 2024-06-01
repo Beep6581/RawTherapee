@@ -300,6 +300,16 @@ void LocallabTool::refChanged(const double huer, const double lumar, const doubl
     updateMaskBackground(normChromar, normLumar, normHuer, normHuerjz);
 }
 
+Gtk::ToggleButton *LocallabTool::getPreviewDeltaEButton() const
+{
+    return nullptr;
+}
+
+sigc::connection *LocallabTool::getPreviewDeltaEButtonConnection()
+{
+    return nullptr;
+}
+
 void LocallabTool::colorForValue(double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller)
 {
     float R = 0.f;
@@ -366,6 +376,8 @@ void LocallabTool::enableListener()
         complexityConn.block(false);
     }
 }
+
+
 
 bool LocallabTool::on_remove_change(GdkEventButton* event)
 {
@@ -445,7 +457,9 @@ LocallabColor::LocallabColor():
     labgrid(Gtk::manage(new LabGrid(EvLocallabLabGridValue, M("TP_LOCALLAB_LABGRID_VALUES"), true, false))),
     gridMethod(Gtk::manage(new MyComboBoxText())),
     strengthgrid(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRGRID"), 0, 100, 1, 30))),
-    sensi(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),
+    sensi(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 30))),
+    previewcol(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
+    
     structcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL1"), 0, 100, 1, 0))),
     blurcolde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
     softradiuscol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 0.))),
@@ -526,6 +540,8 @@ LocallabColor::LocallabColor():
     LLmaskcolshapewav(static_cast<FlatCurveEditor*>(mask2CurveEditorGwav->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
     csThresholdcol(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 0, 9, 0, 0, 6, 5, 0, false)))
 {
+    auto m = ProcEventMapper::getInstance();
+    Evlocallabpreviewcol = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWCOL");
 
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -595,6 +611,11 @@ LocallabColor::LocallabColor():
     angcol->setAdjusterListener(this);
 
     setExpandAlignProperties(expcurvcol, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+    previewcol->set_active(false);
+    previewcolConn = previewcol->signal_clicked().connect(
+                       sigc::mem_fun(
+                           *this, &LocallabColor::previewcolChanged));
 
     qualitycurveMethod->append(M("TP_LOCALLAB_CURVNONE"));
     qualitycurveMethod->append(M("TP_LOCALLAB_CURVCURR"));
@@ -813,6 +834,9 @@ LocallabColor::LocallabColor():
 
     // Add Color & Light specific widgets to GUI
     pack_start(*reparcol);
+    pack_start(*sensi);
+    pack_start(*previewcol);
+    
     pack_start(*invers);
     ToolParamBlock* const lumBox = Gtk::manage(new ToolParamBlock());
     lumBox->pack_start(*lightness);
@@ -833,7 +857,7 @@ LocallabColor::LocallabColor():
     superBox->pack_start(*gridFrame);
     superFrame->add(*superBox);
     pack_start(*superFrame);
-    // pack_start(*sensi);
+ //   pack_start(*sensi);
     pack_start(*structcol);
     pack_start(*blurcolde);
     pack_start(*softradiuscol);
@@ -949,6 +973,22 @@ LocallabColor::~LocallabColor()
     delete mask2CurveEditorGwav;
 }
 
+void LocallabColor::previewcolChanged()
+{
+   
+    if(previewcol->get_active()) {
+        showmaskcolMethod->set_active(5);
+    } else {
+        showmaskcolMethod->set_active(0);
+    }
+    
+    if (isLocActivated) {
+        if (listener) {
+            listener->panelChanged(Evlocallabpreviewcol,"");
+        }
+    } 
+}
+
 void LocallabColor::setListener(ToolPanelListener* tpl)
 {
     LocallabTool::setListener(tpl);
@@ -956,6 +996,64 @@ void LocallabColor::setListener(ToolPanelListener* tpl)
     labgrid->setListener(tpl);
     labgridmerg->setListener(tpl);
 }
+
+//new function Global
+void LocallabColor::updateguicolor(int spottype)
+{
+    {
+    // Disable all listeners
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype == 3) {
+                invers->hide();
+                sensi->hide();
+                showmaskcolMethod->set_active(0);               
+                previewcol->hide();
+                previewcol->set_active(false);
+                resetMaskView();
+            } else {
+                invers->show();
+                sensi->show();
+                if(!invers->get_active()) {
+                    previewcol->show();
+                } else {
+                    previewcol->hide();
+                }
+                
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
+//new function scope
+void LocallabColor::updateguiscopecolor(int scope)
+{
+    {
+        idle_register.add(
+        [this, scope]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            disableListener();
+            sensi->setValue(scope);
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
 
 bool LocallabColor::isMaskViewActive()
 {
@@ -978,6 +1076,16 @@ void LocallabColor::getMaskView(int &colorMask, int &colorMaskinv, int &expMask,
 {
     colorMask = showmaskcolMethod->get_active_row_number();
     colorMaskinv = showmaskcolMethodinv->get_active_row_number();
+}
+
+Gtk::ToggleButton *LocallabColor::getPreviewDeltaEButton() const
+{
+    return previewcol;
+}
+
+sigc::connection *LocallabColor::getPreviewDeltaEButtonConnection()
+{
+    return &previewcolConn;
 }
 
 void LocallabColor::updateAdviceTooltips(const bool showTooltips)
@@ -1165,7 +1273,7 @@ void LocallabColor::read(const rtengine::procparams::ProcParams* pp, const Param
                            spot.labgridBLow / LocallabParams::LABGRIDL_CORR_MAX,
                            spot.labgridAHigh / LocallabParams::LABGRIDL_CORR_MAX,
                            spot.labgridBHigh / LocallabParams::LABGRIDL_CORR_MAX,
-                           0, 0, 0, 0, false);
+                           0, 0, 0, 0, 0, 0, false);
        // printf("labgridlow=%f \n", spot.labgridALow);
         if (spot.gridMethod == "one") {
             gridMethod->set_active(0);
@@ -1278,7 +1386,7 @@ void LocallabColor::read(const rtengine::procparams::ProcParams* pp, const Param
         labgridmerg->setParams(0, 0,
                                spot.labgridAHighmerg / LocallabParams::LABGRIDL_CORR_MAX,
                                spot.labgridBHighmerg / LocallabParams::LABGRIDL_CORR_MAX,
-                               0, 0, 0, 0,  false);
+                               0, 0, 0, 0, 0, 0,  false);
         merlucol->setValue(spot.merlucol);
         enaColorMask->set_active(spot.enaColorMask);
         CCmaskshape->setCurve(spot.CCmaskcurve);
@@ -1342,7 +1450,7 @@ void LocallabColor::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         labgrid->getParams(spot.labgridALow,
                            spot.labgridBLow,
                            spot.labgridAHigh,
-                           spot.labgridBHigh, zerox, zeroy, zerox, zeroy);
+                           spot.labgridBHigh, zerox, zeroy, zerox, zeroy, zerox, zeroy);
         spot.labgridALow *= LocallabParams::LABGRIDL_CORR_MAX;
         spot.labgridAHigh *= LocallabParams::LABGRIDL_CORR_MAX;
         spot.labgridBLow *= LocallabParams::LABGRIDL_CORR_MAX;
@@ -1461,7 +1569,7 @@ void LocallabColor::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         labgridmerg->getParams(spot.labgridALowmerg,
                                spot.labgridBLowmerg,
                                spot.labgridAHighmerg,
-                               spot.labgridBHighmerg, zerox1, zeroy1, zerox1, zeroy1);
+                               spot.labgridBHighmerg, zerox1, zeroy1, zerox1, zeroy1, zerox1, zeroy1);
         spot.labgridALowmerg *= LocallabParams::LABGRIDL_CORR_MAX;
         spot.labgridAHighmerg *= LocallabParams::LABGRIDL_CORR_MAX;
         spot.labgridBLowmerg *= LocallabParams::LABGRIDL_CORR_MAX;
@@ -1508,7 +1616,7 @@ void LocallabColor::setDefaults(const rtengine::procparams::ProcParams* defParam
         labgrid->setDefault(defSpot.labgridALow / LocallabParams::LABGRIDL_CORR_MAX,
                             defSpot.labgridBLow / LocallabParams::LABGRIDL_CORR_MAX,
                             defSpot.labgridAHigh / LocallabParams::LABGRIDL_CORR_MAX,
-                            defSpot.labgridBHigh / LocallabParams::LABGRIDL_CORR_MAX, 0, 0, 0, 0);
+                            defSpot.labgridBHigh / LocallabParams::LABGRIDL_CORR_MAX, 0, 0, 0, 0, 0, 0);
         strengthgrid->setDefault((double) defSpot.strengthgrid);
         sensi->setDefault((double)defSpot.sensi);
         structcol->setDefault((double)defSpot.structcol);
@@ -1524,7 +1632,7 @@ void LocallabColor::setDefaults(const rtengine::procparams::ProcParams* defParam
         labgridmerg->setDefault(defSpot.labgridALowmerg / LocallabParams::LABGRIDL_CORR_MAX,
                                 defSpot.labgridBLowmerg / LocallabParams::LABGRIDL_CORR_MAX,
                                 defSpot.labgridAHighmerg / LocallabParams::LABGRIDL_CORR_MAX,
-                                defSpot.labgridBHighmerg / LocallabParams::LABGRIDL_CORR_MAX, 0, 0, 0, 0);
+                                defSpot.labgridBHighmerg / LocallabParams::LABGRIDL_CORR_MAX, 0, 0, 0, 0, 0, 0);
         merlucol->setDefault(defSpot.merlucol);
         strumaskcol->setDefault(defSpot.strumaskcol);
         contcol->setDefault(defSpot.contcol);
@@ -1550,7 +1658,7 @@ void LocallabColor::setDefaults(const rtengine::procparams::ProcParams* defParam
 void LocallabColor::adjusterChanged(Adjuster* a, double newval)
 {
     if (isLocActivated && exp->getEnabled()) {
-        if (a == lightness) {
+        if (a == lightness) {      
             if (listener) {
                 listener->panelChanged(Evlocallablightness,
                                        lightness->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
@@ -1595,7 +1703,7 @@ void LocallabColor::adjusterChanged(Adjuster* a, double newval)
         if (a == sensi) {
             if (listener) {
                 listener->panelChanged(Evlocallabsensi,
-                                       sensi->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+                                       sensi->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");                                      
             }
         }
 
@@ -2002,7 +2110,7 @@ void LocallabColor::convertParamToNormal()
     labgridmerg->setParams(0, 0,
                            defSpot.labgridAHighmerg / LocallabParams::LABGRIDL_CORR_MAX,
                            defSpot.labgridBHighmerg / LocallabParams::LABGRIDL_CORR_MAX,
-                           0, 0, 0, 0, false);
+                           0, 0, 0, 0, 0, 0, false);
     merlucol->setValue(defSpot.merlucol);
     strumaskcol->setValue(defSpot.strumaskcol);
     toolcol->set_active(defSpot.toolcol);
@@ -2574,6 +2682,8 @@ LocallabExposure::LocallabExposure():
     fatanchor(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHOR"), 0.1, 100.0, 0.01, 50., Gtk::manage(new RTImage("circle-black-small")), Gtk::manage(new RTImage("circle-white-small"))))),
     gamex(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMC"), 0.5, 3.0, 0.05, 1.))),
     sensiex(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
+    previewexe(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
+    
     structexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL"), 0, 100, 1, 0))),
     blurexpde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
     exptoolexp(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPTOOL")))),
@@ -2625,6 +2735,8 @@ LocallabExposure::LocallabExposure():
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     const LocallabParams::LocallabSpot defSpot;
+    auto m = ProcEventMapper::getInstance();
+    Evlocallabpreviewexe = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWEXE");
 
     // Parameter Exposure specific widgets
     expMethod->append(M("TP_LOCALLAB_STD"));
@@ -2706,6 +2818,12 @@ LocallabExposure::LocallabExposure():
     lowthrese->setAdjusterListener(this);
     higthrese->setAdjusterListener(this);
     decaye->setAdjusterListener(this);
+    
+    previewexe->set_active(false);
+    previewexeConn = previewexe->signal_clicked().connect(
+                       sigc::mem_fun(
+                           *this, &LocallabExposure::previewexeChanged));
+    
     setExpandAlignProperties(exprecove, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     normConn  = norm->signal_toggled().connect(sigc::mem_fun(*this, &LocallabExposure::normChanged));
     fatsaturConn  = fatsatur->signal_toggled().connect(sigc::mem_fun(*this, &LocallabExposure::fatsaturChanged));
@@ -2781,6 +2899,7 @@ LocallabExposure::LocallabExposure():
 
     // Add Color & Light specific widgets to GUI
     pack_start(*sensiex);
+    pack_start(*previewexe);
     pack_start(*reparexp);
     pack_start(*inversex);
     ToolParamBlock* const pdeBox = Gtk::manage(new ToolParamBlock());
@@ -2873,6 +2992,60 @@ bool LocallabExposure::isMaskViewActive()
     return ((showmaskexpMethod->get_active_row_number() != 0) || (showmaskexpMethodinv->get_active_row_number() != 0));
 }
 
+//new function Global
+void LocallabExposure::updateguiexpos(int spottype) 
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype == 3) {
+                inversex->hide();
+                sensiex->hide();
+                previewexe->hide();
+                showmaskexpMethod->set_active(0);
+                previewexe->set_active(false);
+                
+                resetMaskView();
+           } else {
+                inversex->show();
+                sensiex->show();
+                if(!inversex->get_active()) {
+                    previewexe->show();
+                } else {
+                    previewexe->hide();
+                }
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
+void LocallabExposure::previewexeChanged()
+{
+    
+    if(previewexe->get_active()) {
+        showmaskexpMethod->set_active(5);
+    } else {
+        showmaskexpMethod->set_active(0);
+    }
+    
+    if (isLocActivated) {
+        if (listener) {
+            listener->panelChanged(Evlocallabpreviewexe,"");
+        }
+    } 
+}
+
+
 void LocallabExposure::resetMaskView()
 {
     showmaskexpMethodConn.block(true);
@@ -2889,6 +3062,16 @@ void LocallabExposure::getMaskView(int &colorMask, int &colorMaskinv, int &expMa
 {
     expMask = showmaskexpMethod->get_active_row_number();
     expMaskinv = showmaskexpMethodinv->get_active_row_number();
+}
+
+Gtk::ToggleButton *LocallabExposure::getPreviewDeltaEButton() const
+{
+    return previewexe;
+}
+
+sigc::connection *LocallabExposure::getPreviewDeltaEButtonConnection()
+{
+    return &previewexeConn;
 }
 
 void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
@@ -3616,6 +3799,7 @@ void LocallabExposure::convertParamToSimple()
     softradiusexp->setValue(defSpot.softradiusexp);
     enaExpMask->set_active(defSpot.enaExpMask);
     enaExpMaskaft->set_active(defSpot.enaExpMaskaft);
+    showmaskexpMethod->set_active(0);
     gamex->setValue(defSpot.gamex);
  //   CCmaskexpshape->setCurve(defSpot.CCmaskexpcurve);
  //   LLmaskexpshape->setCurve(defSpot.CCmaskexpcurve);
@@ -4014,16 +4198,16 @@ LocallabShadow::LocallabShadow():
     // Shadow highlight specific widgets
     shMethod(Gtk::manage(new MyComboBoxText())),
     reparsh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
-    multipliersh([]() -> std::array<Adjuster *, 5>
+    multipliersh([]() -> std::array<Adjuster *, 6>
     {
-    std::array<Adjuster*, 5> res = {};
+    std::array<Adjuster*, 6> res = {};
 
     for (unsigned int i = 0; i < res.size(); ++i) {
         Glib::ustring ss = Glib::ustring::format(i);
 
         if (i == 0) {
             ss += Glib::ustring::compose(" (%1)", M("TP_LOCALLAB_LUMADARKEST"));
-        } else if (i == 4) {
+        } else if (i == 5) {
             ss += Glib::ustring::compose(" (%1)", M("TP_LOCALLAB_LUMAWHITESEST"));
         }
 
@@ -4040,7 +4224,8 @@ LocallabShadow::LocallabShadow():
     shadows(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_SHADOWS"), 0, 100, 1, 0))),
     s_tonalwidth(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_SHTONALW"), 10, 100, 1, 30))),
     sh_radius(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_RADIUS"), 0, 100, 1, 40))),
-    sensihs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),//unused here, but used for normalize_mean_dt
+    sensihs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 30))),//reused - unused here, but used for normalize_mean_dt 
+    previewsh(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
     blurSHde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
     exprecovs(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
     maskusables(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
@@ -4078,6 +4263,9 @@ LocallabShadow::LocallabShadow():
     fatanchorSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHOR"), 1., 100., 1., 50., Gtk::manage(new RTImage("circle-black-small")), Gtk::manage(new RTImage("circle-white-small"))))),
     EvlocallabTePivot(ProcEventMapper::getInstance()->newEvent(AUTOEXP, "HISTORY_MSG_LOCALLAB_TE_PIVOT"))
 {
+    auto m = ProcEventMapper::getInstance();
+    Evlocallabpreviewsh = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWSH");
+    
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     const LocallabParams::LocallabSpot defSpot;
@@ -4133,6 +4321,11 @@ LocallabShadow::LocallabShadow():
     inverssh->set_tooltip_text(M("TP_LOCALLAB_INVERS_TOOLTIP"));
 
     setExpandAlignProperties(expmasksh, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+    previewsh->set_active(false);
+    previewshConn = previewsh->signal_clicked().connect(
+                       sigc::mem_fun(
+                           *this, &LocallabShadow::previewshChanged));
 
     showmaskSHMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
     showmaskSHMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
@@ -4196,6 +4389,9 @@ LocallabShadow::LocallabShadow():
 
     // Add Shadow highlight specific widgets to GUI
     pack_start(*reparsh);
+    pack_start(*sensihs);// reused / unused here, but used for normalize_mean_dt 
+    pack_start(*previewsh);
+    
     pack_start(*inverssh);
     pack_start(*shMethod);
 
@@ -4210,7 +4406,7 @@ LocallabShadow::LocallabShadow():
     pack_start(*shadows);
     pack_start(*s_tonalwidth);
     pack_start(*sh_radius);
-    // pack_start(*sensihs);//unused here, but used for normalize_mean_dt
+//    pack_start(*sensihs);// reused / unused here, but used for normalize_mean_dt 
     pack_start(*blurSHde);
     ToolParamBlock* const shBox3 = Gtk::manage(new ToolParamBlock());
     shBox3->pack_start(*maskusables, Gtk::PACK_SHRINK, 0);
@@ -4277,6 +4473,90 @@ void LocallabShadow::resetMaskView()
     showmaskSHMethodConn.block(false);
     showmaskSHMethodConninv.block(false);
 }
+
+Gtk::ToggleButton *LocallabShadow::getPreviewDeltaEButton() const
+{
+    return previewsh;
+}
+
+sigc::connection *LocallabShadow::getPreviewDeltaEButtonConnection()
+{
+    return &previewshConn;
+}
+
+void LocallabShadow::previewshChanged()
+{
+    
+    if(previewsh->get_active()) {
+        showmaskSHMethod->set_active(4);
+    } else {
+        showmaskSHMethod->set_active(0);
+    }
+    
+    if (isLocActivated) {
+        if (listener) {
+            listener->panelChanged(Evlocallabpreviewsh,"");
+        }
+    } 
+}
+
+
+//new function Global
+void LocallabShadow::updateguishad(int spottype)
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype == 3) {
+                inverssh->hide();
+                sensihs->hide();
+                showmaskSHMethod->set_active(0);
+                previewsh->hide();
+                previewsh->set_active(false);
+                resetMaskView();
+            } else {
+                sensihs->show();
+                inverssh->show();
+                if(!inverssh->get_active()) {
+                    previewsh->show();
+                } else {
+                    previewsh->hide();
+                }
+                
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
+void LocallabShadow::updateguiscopesahd(int scope)
+{
+    {
+        idle_register.add(
+        [this, scope]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            disableListener();
+            sensihs->setValue(scope);
+           
+            enableListener();
+        return false;
+        }
+        );
+    }
+   
+}
+
+
 
 void LocallabShadow::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask)
 {
@@ -4416,7 +4696,7 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
             shMethod->set_active(1);
         }
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 6; i++) {
             multipliersh[i]->setValue((double)spot.multsh[i]);
         }
         recothress->setValue((double)spot.recothress);
@@ -4486,7 +4766,7 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
             spot.shMethod = "tone";
         }
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 6; i++) {
             spot.multsh[i] = multipliersh[i]->getIntValue();
         }
 
@@ -4535,7 +4815,7 @@ void LocallabShadow::setDefaults(const rtengine::procparams::ProcParams* defPara
         const LocallabParams::LocallabSpot& defSpot = defParams->locallab.spots.at(index);
 
         // Set default values for adjuster widgets
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 6; i++) {
             multipliersh[i]->setDefault(defSpot.multsh[i]);
         }
 
@@ -4573,15 +4853,16 @@ void LocallabShadow::setDefaults(const rtengine::procparams::ProcParams* defPara
 void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
 {
     if (isLocActivated && exp->getEnabled()) {
-        if (a == multipliersh[0] || a == multipliersh[1] || a == multipliersh[2] || a == multipliersh[3] || a == multipliersh[4]) {
+        if (a == multipliersh[0] || a == multipliersh[1] || a == multipliersh[2] || a == multipliersh[3] || a == multipliersh[4] || a == multipliersh[5]) {
             if (listener) {
                 listener->panelChanged(EvlocallabEqualizersh,
-                                       Glib::ustring::compose("%1, %2, %3, %4, %5",
+                                       Glib::ustring::compose("%1, %2, %3, %4, %5, %6",
                                                Glib::ustring::format(std::fixed, std::setprecision(2), multipliersh[0]->getIntValue()),
                                                Glib::ustring::format(std::fixed, std::setprecision(2), multipliersh[1]->getIntValue()),
                                                Glib::ustring::format(std::fixed, std::setprecision(2), multipliersh[2]->getIntValue()),
                                                Glib::ustring::format(std::fixed, std::setprecision(2), multipliersh[3]->getIntValue()),
-                                               Glib::ustring::format(std::fixed, std::setprecision(2), multipliersh[4]->getIntValue())) + " (" + escapeHtmlChars(getSpotName()) + ")");
+                                               Glib::ustring::format(std::fixed, std::setprecision(2), multipliersh[4]->getIntValue()),
+                                               Glib::ustring::format(std::fixed, std::setprecision(2), multipliersh[5]->getIntValue())) + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
@@ -5153,7 +5434,8 @@ LocallabVibrance::LocallabVibrance():
     protectSkins(Gtk::manage(new Gtk::CheckButton(M("TP_VIBRANCE_PROTECTSKINS")))),
     avoidColorShift(Gtk::manage(new Gtk::CheckButton(M("TP_VIBRANCE_AVOIDCOLORSHIFT")))),
     pastSatTog(Gtk::manage(new Gtk::CheckButton(M("TP_VIBRANCE_PASTSATTOG")))),
-    sensiv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),//unused here, but used for normalize_mean_dt
+    sensiv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 30))),//reused - unused here, but used for normalize_mean_dt 
+    previewvib(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
     curveEditorGG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL"))),
     skinTonesCurve(static_cast<DiagonalCurveEditor*>(curveEditorGG->addCurve(CT_Diagonal, M("TP_VIBRANCE_CURVEEDITOR_SKINTONES")))),
     exprecovv(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
@@ -5185,6 +5467,9 @@ LocallabVibrance::LocallabVibrance():
     mask2vibCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     Lmaskvibshape(static_cast<DiagonalCurveEditor*>(mask2vibCurveEditorG->addCurve(CT_Diagonal, "L(L)")))
 {
+    auto m = ProcEventMapper::getInstance();
+    Evlocallabpreviewvib = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWVIB");
+    
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     float R, G, B;
@@ -5249,6 +5534,11 @@ LocallabVibrance::LocallabVibrance():
     angvib->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
     angvib->setAdjusterListener(this);
 
+    previewvib->set_active(false);
+    previewvibConn = previewvib->signal_clicked().connect(
+                       sigc::mem_fun(
+                           *this, &LocallabVibrance::previewvibChanged));
+
     setExpandAlignProperties(expmaskvib, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     showmaskvibMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
@@ -5300,6 +5590,8 @@ LocallabVibrance::LocallabVibrance():
     mask2vibCurveEditorG->curveListComplete();
 
     // Add Vibrance specific widgets to GUI
+    pack_start(*sensiv, Gtk::PACK_SHRINK, 0);//reused - nused here, but used for normalize_mean_dt 
+    pack_start(*previewvib, Gtk::PACK_SHRINK, 0);    
     pack_start(*saturated, Gtk::PACK_SHRINK, 0);
     pack_start(*pastels, Gtk::PACK_SHRINK, 0);
     pack_start(*vibgam, Gtk::PACK_SHRINK, 0);
@@ -5310,7 +5602,7 @@ LocallabVibrance::LocallabVibrance():
     pack_start(*protectSkins, Gtk::PACK_SHRINK, 0);
     pack_start(*avoidColorShift, Gtk::PACK_SHRINK, 0);
     pack_start(*pastSatTog, Gtk::PACK_SHRINK, 0);
-    // pack_start(*sensiv, Gtk::PACK_SHRINK, 0);//unused here, but used for normalize_mean_dt
+//    pack_start(*sensiv, Gtk::PACK_SHRINK, 0);//reused - nused here, but used for normalize_mean_dt 
     pack_start(*curveEditorGG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     ToolParamBlock* const vibBox3 = Gtk::manage(new ToolParamBlock());
     vibBox3->pack_start(*maskusablev, Gtk::PACK_SHRINK, 0);
@@ -5362,6 +5654,81 @@ void LocallabVibrance::resetMaskView()
     showmaskvibMethodConn.block(true);
     showmaskvibMethod->set_active(0);
     showmaskvibMethodConn.block(false);
+}
+
+Gtk::ToggleButton *LocallabVibrance::getPreviewDeltaEButton() const
+{
+    return previewvib;
+}
+
+sigc::connection *LocallabVibrance::getPreviewDeltaEButtonConnection()
+{
+    return &previewvibConn;
+}
+
+//new function Global
+void LocallabVibrance::updateguivib(int spottype)
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype == 3) {
+                sensiv->hide();
+                showmaskvibMethod->set_active(0);
+                previewvib->hide();
+                previewvib->set_active(false);
+                resetMaskView();
+            } else {
+                sensiv->show();
+                previewvib->show();
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
+void LocallabVibrance::previewvibChanged()
+{
+    
+    if(previewvib->get_active()) {
+        showmaskvibMethod->set_active(4);
+    } else {
+        showmaskvibMethod->set_active(0);
+    }
+    
+    if (isLocActivated) {
+        if (listener) {
+            listener->panelChanged(Evlocallabpreviewvib,"");
+        }
+    } 
+}
+
+//new function scope
+void LocallabVibrance::updateguiscopevib(int scope)
+{
+    {
+        idle_register.add(
+        [this, scope]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            disableListener();
+            sensiv->setValue(scope);
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
 }
 
 void LocallabVibrance::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask)
@@ -6186,6 +6553,32 @@ void LocallabSoft::resetMaskView()
     showmasksoftMethod->set_active(0);
     showmasksoftMethodConn.block(false);
 }
+
+//new function Global
+void LocallabSoft::updateguisoft(int spottype) 
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype == 3) {
+                sensisf->hide();
+            } else {
+                sensisf->show();
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
 
 void LocallabSoft::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask)
 {
@@ -7060,6 +7453,39 @@ void LocallabBlur::resetMaskView()
     showmaskblMethod->set_active(0);
     showmaskblMethodConn.block(false);
 }
+
+//new function Global
+void LocallabBlur::updateguiblur(int spottype) 
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype == 3) {
+                sensibn->hide();
+                sensiden->hide();
+                invbl->hide();
+
+            } else {
+                sensibn->show();
+                sensiden->show();
+                invbl->show();
+
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
+
 
 void LocallabBlur::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask)
 {

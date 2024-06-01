@@ -1456,6 +1456,17 @@ Camera constants:
         ]
     },
 
+    { // Quality C
+        "make_model": [ "FUJIFILM GFX100 II" ],
+        "dcraw_matrix" : [ 12806, -5779, -1110, -3546, 11507, 2318, -177, 996, 5715 ], // adobe dcp d65
+        "raw_crop": [
+            // multi-aspect crop to account for 16-shot pixel shift images
+            { "frame" : [11808, 8754], "crop" : [ 0, 0, 11664, 8750 ] },
+            // this crop has been copied from the GFX 100 one, no sample pixel shift images are available
+            { "frame" : [23616, 17508], "crop" : [ 0, 4, 23328, 17468 ] }
+        ]
+    },
+
     { // Quality B
         "make_model": [ "FUJIFILM GFX 50R", "FUJIFILM GFX 50S", "FUJIFILM GFX50S II" ],
         "dcraw_matrix": [ 11756,-4754,-874,-3056,11045,2305,-381,1457,6006 ], // DNGv9.9 D65
@@ -2312,6 +2323,13 @@ Camera constants:
         "ranges": { "black": 15, "white": 4050 } // 15 is BL offset. dcraw/RT read the base offset from Exif and calculates total BL = BLbase+BLoffset
     },
 
+    { // Quality C
+        "make_model": "Panasonic DMC-FX150",
+        "raw_crop": [
+            { "frame": [ 4508, 2498 ], "crop": [ 0, 0, 4429, 2496] } // 16:9 ratio needs to shave a few extra pixels from dcraw's crop.
+        ]
+    },
+
     { // Quality A, replicated from rawimage.cc
         "make_model": "Panasonic DMC-FZ150",
         "dcraw_matrix": [ 10435,-3208,-72,-2293,10506,2067,-486,1725,4682 ], // RT, copy from custom dcp d55
@@ -3008,6 +3026,11 @@ Camera constants:
         // contributed by Horshak from https://www.dpreview.com/forums/post/60873077
         "pdaf_pattern" : [ 0,12,36,54,72,90,114,126,144,162,180,204,216,240,252,270,294,306,324,342,366,384,396,414,432,450,474,492,504,522,540,564,576,594,606,630 ],
         "pdaf_offset" : 3
+    },
+
+    { // Quality C
+        "make_model": [ "Sony ILCE-6700" ],
+        "raw_crop": [ 0, 0, 6244, 4168 ]
     },
 
     { // Quality C

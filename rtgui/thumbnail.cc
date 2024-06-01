@@ -105,6 +105,46 @@ bool CPBDump(
     return true;
 }
 
+struct ColorMapper {
+    std::map<int, std::string> indexLabelMap;
+    std::map<std::string, int> labelIndexMap;
+
+    ColorMapper(std::map<int, std::string> colors) {
+        for (const auto& color: colors) {
+            indexLabelMap.insert({color.first, color.second});
+            labelIndexMap.insert({color.second, color.first});
+        }
+    }
+
+    int index(const std::string &label) const
+    {
+        auto it = labelIndexMap.find(label);
+        if (it != labelIndexMap.end()) {
+            return it->second;
+        }
+        return 0;
+    }
+
+    std::string label(int index) const
+    {
+        auto it = indexLabelMap.find(index);
+        if (it != indexLabelMap.end()) {
+            return it->second;
+        }
+        return "";
+    }
+};
+
+const std::map<int, std::string> defaultColors = {
+    {1, "Red"},
+    {2, "Yellow"},
+    {3, "Green"},
+    {4, "Blue"},
+    {5, "Purple"}
+};
+
+auto defaultColorMapper = ColorMapper(defaultColors);
+
 } // namespace
 
 using namespace rtengine::procparams;
@@ -133,7 +173,7 @@ Thumbnail::Thumbnail(CacheManager* cm, const Glib::ustring& fname, CacheImageDat
     generateExifDateTimeStrings ();
 
     if (cfs.rankOld >= 0) {
-        // rank and inTrash were found in cache (old style), move them over to pparams
+        // rank and inTrash were found in cache (old style), move them over to pparams or xmp sidecar
 
         // try to load the last saved parameters from the cache or from the paramfile file
         createProcParamsForUpdate(false, false); // this can execute customprofilebuilder to generate param file
@@ -141,8 +181,10 @@ Thumbnail::Thumbnail(CacheManager* cm, const Glib::ustring& fname, CacheImageDat
         // TODO? should we call notifylisterners_procParamsChanged here?
 
         setRank(cfs.rankOld);
-        setStage(cfs.inTrashOld);
+        setTrashed(cfs.inTrashOld);
     }
+
+    loadProperties();
 
     delete tpp;
     tpp = nullptr;
@@ -172,6 +214,8 @@ Thumbnail::Thumbnail(CacheManager* cm, const Glib::ustring& fname, const std::st
     cfs.recentlySaved = false;
 
     initial_ = false;
+
+    loadProperties();
 
     delete tpp;
     tpp = nullptr;
@@ -306,7 +350,7 @@ const ProcParams& Thumbnail::getProcParamsU ()
  *  @param returnParams Ask to return a pointer to a ProcParams object if true
  *  @param force True if the profile has to be re-generated even if it already exists
  *  @param flaggingMode True if the ProcParams will be created because the file browser is being flagging an image
- *                      (rang, to trash, color labels). This parameter is passed to the CPB.
+ *                      (rank, to trash, color labels). This parameter is passed to the CPB.
  *
  *  @return Return a pointer to a ProcPamas structure to be updated if returnParams is true and if everything went fine, NULL otherwise.
  */
@@ -441,12 +485,6 @@ void Thumbnail::clearProcParams (int whoClearedIt)
     {
         MyMutex::MyLock lock(mutex);
 
-        // preserve rank, colorlabel and inTrash across clear
-        int rank = getRank();
-        int colorlabel = getColorLabel();
-        int inTrash = getStage();
-
-
         cfs.recentlySaved = false;
         pparamsValid = false;
 
@@ -456,13 +494,10 @@ void Thumbnail::clearProcParams (int whoClearedIt)
         // reset the params to defaults
         pparams->setDefaults();
 
-        // and restore rank and inTrash
-        setRank(rank);
-        pparamsValid = cfs.rating != rank;
-        setColorLabel(colorlabel);
-        setStage(inTrash);
+        // preserve rank, colorlabel and inTrash across clear
+        updateProcParamsProperties();
 
-        // params could get validated by rank/inTrash values restored above
+        // params could get validated by updateProcParamsProperties
         if (pparamsValid) {
             updateCache();
         } else {
@@ -560,11 +595,6 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
             return;
         }
 
-        // do not update rank, colorlabel and inTrash
-        const int rank = getRank();
-        const int colorlabel = getColorLabel();
-        const int inTrash = getStage();
-
         if (pe) {
             pe->combine(*pparams, pp, true);
         } else {
@@ -573,9 +603,8 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
 
         pparamsValid = true;
 
-        setRank(rank);
-        setColorLabel(colorlabel);
-        setStage(inTrash);
+        // do not update rank, colorlabel and inTrash
+        updateProcParamsProperties();
 
         if (updateCacheNow) {
             updateCache();
@@ -1045,6 +1074,7 @@ void Thumbnail::saveThumbnail ()
  */
 void Thumbnail::updateCache (bool updatePParams, bool updateCacheImageData)
 {
+    updateProcParamsProperties();
 
     if (updatePParams && pparamsValid) {
         pparams->save (
@@ -1061,6 +1091,8 @@ void Thumbnail::updateCache (bool updatePParams, bool updateCacheImageData)
     if (updatePParams && pparamsValid) {
         saveMetadata();
     }
+
+    saveXMPSidecarProperties();
 }
 
 Thumbnail::~Thumbnail ()
@@ -1084,48 +1116,34 @@ void Thumbnail::setFileName (const Glib::ustring &fn)
     cfs.md5 = ::getMD5 (fname);
 }
 
-int Thumbnail::getRank  () const
+int Thumbnail::getRank() const
 {
-    // prefer the user-set rank over the embedded Rating
-    // pparams->rank == -1 means that there is no saved rank yet, so we should
-    // next look for the embedded Rating metadata.
-    if (pparams->rank != -1) {
-        return pparams->rank;
-    } else {
-        return cfs.rating;
-    }
+    return properties.rank;
 }
 
-void Thumbnail::setRank  (int rank)
+void Thumbnail::setRank(int rank)
 {
-    pparams->rank = rank;
-    pparamsValid = true;
+    properties.rank = rank;
 }
 
-int Thumbnail::getColorLabel  () const
+int Thumbnail::getColorLabel() const
 {
-    return pparams->colorlabel;
+    return properties.color;
 }
 
-void Thumbnail::setColorLabel  (int colorlabel)
+void Thumbnail::setColorLabel(int colorlabel)
 {
-    if (pparams->colorlabel != colorlabel) {
-        pparams->colorlabel = colorlabel;
-        pparamsValid = true;
-    }
+    properties.color = colorlabel;
 }
 
-int Thumbnail::getStage () const
+bool Thumbnail::getTrashed() const
 {
-    return pparams->inTrash;
+    return properties.trashed;
 }
 
-void Thumbnail::setStage (bool stage)
+void Thumbnail::setTrashed(bool trashed)
 {
-    if (pparams->inTrash != stage) {
-        pparams->inTrash = stage;
-        pparamsValid = true;
-    }
+    properties.trashed = trashed;
 }
 
 void Thumbnail::addThumbnailListener (ThumbnailListener* tnl)
@@ -1236,6 +1254,107 @@ void Thumbnail::getCamWB(double& temp, double& green, rtengine::StandardObserver
         tpp->getCamWB  (temp, green, observer);
     } else {
         temp = green = -1.0;
+    }
+}
+
+void Thumbnail::loadProperties()
+{
+    properties = Properties();
+
+    // get initial rank from cache or image metadata
+    if (cfs.exifValid) {
+        properties.rank.value = rtengine::LIM(cfs.getRating(), 0, 5);
+    } else {
+        const std::unique_ptr<const rtengine::FramesMetaData> md(rtengine::FramesMetaData::fromFile(fname));
+        if (md && md->hasExif()) {
+            properties.rank.value = rtengine::LIM(md->getRating(), 0, 5);
+        }
+    }
+
+    // update rank and color from procparams or xmp sidecar
+    // load trash from procparams
+    if (pparamsValid) {
+        if (options.thumbnailRankColorMode == Options::ThumbnailPropertyMode::PROCPARAMS) {
+            if (pparams->rank >= 0) {
+                properties.rank.value = pparams->rank;
+            }
+        }
+
+        properties.trashed.value = pparams->inTrash;
+        properties.color.value = pparams->colorlabel;
+    }
+
+    if (options.thumbnailRankColorMode == Options::ThumbnailPropertyMode::XMP) {
+        try {
+            auto xmp = rtengine::Exiv2Metadata::getXmpSidecar(fname);
+            auto pos = xmp.findKey(Exiv2::XmpKey("Xmp.xmp.Rating"));
+            if (pos != xmp.end()) {
+                int r = rtengine::to_long(pos);
+                properties.rank.value = rtengine::LIM(r, 0, 5);
+            }
+
+            pos = xmp.findKey(Exiv2::XmpKey("Xmp.xmp.Label"));
+            if (pos != xmp.end()) {
+                properties.color.value = defaultColorMapper.index(pos->toString());
+            }
+        } catch (std::exception &exc) {
+            std::cerr << "ERROR loading thumbnail properties data from "
+                      << rtengine::Exiv2Metadata::xmpSidecarPath(fname)
+                      << ": " << exc.what() << std::endl;
+        }
+    }
+}
+
+void Thumbnail::updateProcParamsProperties()
+{
+    if (!properties.edited()) {
+        return;
+    }
+
+    if (properties.trashed.edited && properties.trashed != pparams->inTrash) {
+        pparams->inTrash = properties.trashed;
+        pparamsValid = true;
+    }
+
+    // save procparams rank and color also when options.thumbnailRankColorMode == Options::ThumbnailPropertyMode::XMP
+    // so they'll be kept in sync
+    if (properties.rank.edited && properties.rank != pparams->rank) {
+        pparams->rank = properties.rank;
+        pparamsValid = true;
+    }
+
+    if (properties.color.edited && properties.color != pparams->colorlabel) {
+        pparams->colorlabel = properties.color;
+        pparamsValid = true;
+    }
+}
+
+void Thumbnail::saveXMPSidecarProperties()
+{
+    if (!properties.edited()) {
+        return;
+    }
+
+    if (options.thumbnailRankColorMode != Options::ThumbnailPropertyMode::XMP) {
+        return;
+    }
+
+    auto fn = rtengine::Exiv2Metadata::xmpSidecarPath(fname);
+    try {
+        auto xmp = rtengine::Exiv2Metadata::getXmpSidecar(fname);
+        if (properties.rank.edited) {
+            xmp["Xmp.xmp.Rating"] = std::to_string(properties.rank);
+        }
+        if (properties.color.edited) {
+            xmp["Xmp.xmp.Label"] = defaultColorMapper.label(properties.color);
+        }
+
+        rtengine::Exiv2Metadata meta;
+        meta.xmpData() = std::move(xmp);
+        meta.saveToXmp(fn);
+    } catch (std::exception &exc) {
+        std::cerr << "ERROR saving thumbnail properties data to " << fn
+                  << ": " << exc.what() << std::endl;
     }
 }
 
