@@ -192,12 +192,6 @@ protected:
     std::string RT_software;
     double RT_baseline_exposure;
 
-    struct PanasonicRW2Info {
-        ushort bpp;
-        ushort encoding;
-        PanasonicRW2Info(): bpp(0), encoding(0) {}
-    };
-    PanasonicRW2Info RT_pana_info;
     std::vector<GainMap> gainMaps;
 
 public:
@@ -229,6 +223,29 @@ public:
         short CR3_CTMDtag;
     };
 
+    struct PanasonicRW2Info {
+        struct v8_tags_t
+        {
+            uint32_t tag39[6];
+            uint16_t tag3A[6];
+            uint16_t tag3B;
+            uint16_t initial[4];
+            uint16_t tag40a[17], tag40b[17], tag41[17];
+            uint16_t stripe_count; // 0x42
+            uint16_t tag43;
+            int64_t  stripe_offsets[5]; //0x44
+            uint16_t stripe_left[5]; // 0x45
+            uint32_t stripe_compressed_size[5]; //0x46
+            uint16_t stripe_width[5]; //0x47
+            uint16_t stripe_height[5];
+        };
+
+        ushort bpp;
+        ushort encoding;
+        v8_tags_t v8tags;
+        PanasonicRW2Info(): bpp(0), encoding(0), v8tags{} {}
+    };
+
     bool isBayer() const
     {
         return (filters != 0 && filters != 9);
@@ -250,8 +267,10 @@ public:
 
 protected:
     CanonCR3Data RT_canon_CR3_data;
-    
+
     CanonLevelsData RT_canon_levels_data;
+
+    PanasonicRW2Info RT_pana_info;
 
     float cam_mul[4], pre_mul[4], cmatrix[3][4], rgb_cam[3][4];
 
@@ -411,7 +430,9 @@ void fuji_decode_strip (fuji_compressed_params* params, int cur_block, INT64 raw
 void fuji_compressed_load_raw();
 void fuji_decode_loop(fuji_compressed_params* common_info, int count, INT64* raw_block_offsets, unsigned *block_sizes, uchar *q_bases);
 void parse_fuji_compressed_header();
-void fuji_14bit_load_raw();    
+void fuji_14bit_load_raw();
+void pana8_decode_loop(void *data);
+bool pana8_decode_strip(void* data, int stream);
 void pentax_load_raw();
 void nikon_load_raw();
 int nikon_is_compressed();
@@ -503,6 +524,7 @@ private:
 
 void panasonicC6_load_raw();
 void panasonicC7_load_raw();
+void panasonicC8_load_raw();
 
 void canon_rmf_load_raw();
 void panasonic_load_raw();
