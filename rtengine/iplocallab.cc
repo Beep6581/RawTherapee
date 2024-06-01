@@ -20083,6 +20083,8 @@ void ImProcFunctions::Lab_Local(
                     tmpImage = new Imagefloat(bfw, bfh);
                     Imagefloat *tmpImagelog = nullptr;
                     tmpImagelog = new Imagefloat(bfw, bfh);
+                    Imagefloat *srcp = nullptr;
+                    srcp = new Imagefloat(bfw, bfh);
                     
                     lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
                     Glib::ustring prof = params->icm.workingProfile;
@@ -20369,6 +20371,9 @@ void ImProcFunctions::Lab_Local(
                         } else if (gamr < 3.6f) {
                             slr = 13.8888f * gamr - 20.f;
                         }
+                        GammaValues g_ar; //gamma parameters
+                        double pwrr = 1.0 / static_cast<double>(gamr);
+                        Color::calcGamma(pwrr, slr, g_ar); // call to calcGamma with selected gamma and slope
 
                         float ksg = params->locallab.spots.at(sp).kslopesmog;
                         float gamg = 2.4f * ksg;
@@ -20386,6 +20391,9 @@ void ImProcFunctions::Lab_Local(
                         } else if (gamg < 3.6f) {
                             slg = 13.8888f * gamg - 20.f;
                         }
+                        GammaValues g_ag; //gamma parameters
+                        double pwrg = 1.0 / static_cast<double>(gamg);
+                        Color::calcGamma(pwrg, slg, g_ag); // call to calcGamma with selected gamma and slope
 
                         float ksb = params->locallab.spots.at(sp).kslopesmob;
                         float gamb = 2.4f * ksb;
@@ -20403,11 +20411,58 @@ void ImProcFunctions::Lab_Local(
                         } else if (gamb < 3.6f) {
                             slb = 13.8888f * gamb - 20.f;
                         }
+                        GammaValues g_ab; //gamma parameters
+                        double pwrb = 1.0 / static_cast<double>(gamb);
+                        Color::calcGamma(pwrb, slb, g_ab); // call to calcGamma with selected gamma and slope
+                        
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic, 16) if (multiThread)
+#endif
+
+                        for (int i = 0; i < bfh; ++i)
+                            for (int j = 0; j < bfw; ++j) {
+                                float r = (double) tmpImage->r(i, j);
+                                float g = (double) tmpImage->g(i, j);
+                                float b = (double) tmpImage->b(i, j);
+                                r = (Color::igammatab_srgb[r]) / 65535.f;
+                                g = (Color::igammatab_srgb[g]) / 65535.f;
+                                b = (Color::igammatab_srgb[b]) / 65535.f;
+                                srcp->r(i, j) =  r;
+                                srcp->g(i, j) =  g;
+                                srcp->b(i, j) =  b;
+                            }
+            
+#ifdef _OPENMP
+        #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+
+                    for (int y = 0; y < bfh; ++y) {
+                            int x = 0;
+#ifdef __SSE2__
+
+                        for (; x < bfw - 3; x += 4) {
+                            STVFU(tmpImage->r(y, x), F2V(65536.f) * gammalog(LVFU(srcp->r(y, x)), F2V(gamr), F2V(slr), F2V(g_ar[3]), F2V(g_ar[4])));
+                            STVFU(tmpImage->g(y, x), F2V(65536.f) * gammalog(LVFU(srcp->g(y, x)), F2V(gamg), F2V(slg), F2V(g_ag[3]), F2V(g_ag[4])));
+                            STVFU(tmpImage->b(y, x), F2V(65536.f) * gammalog(LVFU(srcp->b(y, x)), F2V(gamb), F2V(slb), F2V(g_ab[3]), F2V(g_ab[4])));
+                        }
+
+#endif
+
+                        for (; x < bfw; ++x) {
+                            tmpImage->r(y, x) = 65536.f * gammalog(srcp->r(y, x), gamr, slr, g_ar[3], g_ar[4]);
+                            tmpImage->g(y, x) = 65536.f * gammalog(srcp->g(y, x), gamg, slg, g_ag[3], g_ag[4]);
+                            tmpImage->b(y, x) = 65536.f * gammalog(srcp->b(y, x), gamb, slb, g_ab[3], g_ab[4]);
+                        }
+                    }
+
+                    tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
+            
 
                     }
 
                     rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
+                    delete srcp;
                     delete tmpImage;
                     delete tmpImagelog;
                 }
