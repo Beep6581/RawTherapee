@@ -60,7 +60,7 @@ unsigned DCraw::pana_bits_t::operator() (int nbits, unsigned *bytes)
 
 class pana_cs6_page_decoder
 {
-    unsigned int pixelbuffer[14], lastoffset, maxoffset;
+    unsigned int pixelbuffer[18], lastoffset, maxoffset;
     unsigned char current, *buffer;
 public:
     pana_cs6_page_decoder(unsigned char *_buffer, unsigned int bsize)
@@ -68,9 +68,14 @@ public:
     {
     }
     void read_page(); // will throw IO error if not enough space in buffer
+    void read_page12(); // 12-bit variant
     unsigned int nextpixel()
     {
         return current < 14 ? pixelbuffer[current++] : 0;
+    }
+    unsigned int nextpixel12()
+    {
+        return current < 18 ? pixelbuffer[current++] : 0;
     }
 };
 
@@ -97,6 +102,37 @@ void pana_cs6_page_decoder::read_page()
     current = 0;
     lastoffset += 16;
 }
+
+void pana_cs6_page_decoder::read_page12()
+{
+    if (!buffer || (maxoffset - lastoffset < 16))
+        ;
+    pixelbuffer[0] = (wbuffer(0) << 4) | (wbuffer(1) >> 4);              // 12 bit: 8/0 + 4 upper bits of /1
+    pixelbuffer[1] = (((wbuffer(1) & 0xf) << 8) | (wbuffer(2))) & 0xfff; // 12 bit: 4l/1 + 8/2
+
+    pixelbuffer[2] = (wbuffer(3) >> 6) & 0x3;                            // 2; 2u/3, 6 low bits remains in wbuffer(3)
+    pixelbuffer[3] = ((wbuffer(3) & 0x3f) << 2) | (wbuffer(4) >> 6);     // 8; 6l/3 + 2u/4; 6 low bits remains in wbuffer(4)
+    pixelbuffer[4] = ((wbuffer(4) & 0x3f) << 2) | (wbuffer(5) >> 6);     // 8: 6l/4 + 2u/5; 6 low bits remains in wbuffer(5)
+    pixelbuffer[5] = ((wbuffer(5) & 0x3f) << 2) | (wbuffer(6) >> 6);     // 8: 6l/5 + 2u/6, 6 low bits remains in wbuffer(6)
+
+    pixelbuffer[6] = (wbuffer(6) >> 4) & 0x3;                            // 2, 4 low bits remains in wbuffer(6)
+    pixelbuffer[7] = ((wbuffer(6) & 0xf) << 4) | (wbuffer(7) >> 4);      // 8: 4 low bits from wbuffer(6), 4 upper bits from wbuffer(7)
+    pixelbuffer[8] = ((wbuffer(7) & 0xf) << 4) | (wbuffer(8) >> 4);      // 8: 4 low bits from wbuffer(7), 4 upper bits from wbuffer(8)
+    pixelbuffer[9] = ((wbuffer(8) & 0xf) << 4) | (wbuffer(9) >> 4);      // 8: 4 low bits from wbuffer(8), 4 upper bits from wbuffer(9)
+
+    pixelbuffer[10] = (wbuffer(9) >> 2) & 0x3;                           // 2: bits 2-3 from wbuffer(9), two low bits remain in wbuffer(9)
+    pixelbuffer[11] = ((wbuffer(9) & 0x3) << 6) | (wbuffer(10) >> 2);    // 8: 2 bits from wbuffer(9), 6 bits from wbuffer(10)
+    pixelbuffer[12] = ((wbuffer(10) & 0x3) << 6) | (wbuffer(11) >> 2);   // 8: 2 bits from wbuffer(10), 6 bits from wbuffer(11)
+    pixelbuffer[13] = ((wbuffer(11) & 0x3) << 6) | (wbuffer(12) >> 2);   // 8: 2 bits from wbuffer(11), 6 bits from wbuffer(12)
+
+    pixelbuffer[14] = wbuffer(12) & 0x3;                                 // 2: low bits from wbuffer(12)
+    pixelbuffer[15] = wbuffer(13);
+    pixelbuffer[16] = wbuffer(14);
+    pixelbuffer[17] = wbuffer(15);
+    current = 0;
+    lastoffset += 16;
+}
+
 #undef wbuffer
 
 void DCraw::panasonic_load_raw()
@@ -176,8 +212,14 @@ void DCraw::panasonic_load_raw()
 void DCraw::panasonicC6_load_raw()
 {
     constexpr int rowstep = 16;
-    const int blocksperrow = raw_width / 11;
+    const bool _12bit = RT_pana_info.bpp == 12;
+    const int pixperblock = _12bit ? 14 : 11;
+    const int blocksperrow = raw_width / pixperblock;
     const int rowbytes = blocksperrow * 16;
+    const unsigned pixelbase0 = _12bit ? 0x80 : 0x200;
+    const unsigned pixelbase_compare = _12bit ? 0x800 : 0x2000;
+    const unsigned spix_compare = _12bit ? 0x3fff : 0xffff;
+    const unsigned pixel_mask = _12bit ? 0xfff : 0x3fff;
     unsigned char *iobuf = (unsigned char *)malloc(rowbytes * rowstep);
     merror(iobuf, "panasonicC6_load_raw()");
 
@@ -188,25 +230,28 @@ void DCraw::panasonicC6_load_raw()
         for (int crow = 0, col = 0; crow < rowstoread; ++crow, col = 0) {
             unsigned short *rowptr = &raw_image[(row + crow) * raw_width];
             for (int rblock = 0; rblock < blocksperrow; rblock++) {
-                page.read_page();
+                if (_12bit)
+                    page.read_page12();
+                else
+                    page.read_page();
                 unsigned oddeven[2] = {0, 0}, nonzero[2] = {0, 0};
                 unsigned pmul = 0, pixel_base = 0;
-                for (int pix = 0; pix < 11; ++pix) {
+                for (int pix = 0; pix < pixperblock; ++pix) {
                     if (pix % 3 == 2) {
-                        unsigned base = page.nextpixel();
+                        unsigned base = _12bit ? page.nextpixel12(): page.nextpixel();
                         if (base > 3) {
                             derror();
                         }
                         if (base == 3) {
                             base = 4;
                         }
-                        pixel_base = 0x200 << base;
+                        pixel_base = pixelbase0 << base;
                         pmul = 1 << base;
                     }
-                    unsigned epixel = page.nextpixel();
+                    unsigned epixel = _12bit ? page.nextpixel12() : page.nextpixel();
                     if (oddeven[pix % 2]) {
                         epixel *= pmul;
-                        if (pixel_base < 0x2000 && nonzero[pix % 2] > pixel_base) {
+                        if (pixel_base < pixelbase_compare && nonzero[pix % 2] > pixel_base) {
                             epixel += nonzero[pix % 2] - pixel_base;
                         }
                         nonzero[pix % 2] = epixel;
@@ -219,11 +264,11 @@ void DCraw::panasonicC6_load_raw()
                         }
                     }
                     const unsigned spix = epixel - 0xf;
-                    if (spix <= 0xffff) {
-                        rowptr[col++] = spix & 0xffff;
+                    if (spix <= spix_compare) {
+                        rowptr[col++] = spix & spix_compare;
                     } else {
                         epixel = (((signed int)(epixel + 0x7ffffff1)) >> 0x1f);
-                        rowptr[col++] = epixel & 0x3fff;
+                        rowptr[col++] = epixel & pixel_mask;
                     }
                 }
             }
