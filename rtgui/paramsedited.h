@@ -1022,6 +1022,7 @@ public:
         bool satcie;
         bool logcieq;
         bool smoothcie;
+        bool smoothcietrc;
         bool smoothcieyb;
         bool smoothcielum;
         bool logjz;

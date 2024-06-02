@@ -20083,8 +20083,6 @@ void ImProcFunctions::Lab_Local(
                     tmpImage = new Imagefloat(bfw, bfh);
                     Imagefloat *tmpImagelog = nullptr;
                     tmpImagelog = new Imagefloat(bfw, bfh);
-                    Imagefloat *srcp = nullptr;
-                    srcp = new Imagefloat(bfw, bfh);
                     
                     lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
                     Glib::ustring prof = params->icm.workingProfile;
@@ -20212,26 +20210,128 @@ void ImProcFunctions::Lab_Local(
                             }
                         }
                     }
+                   bool gambas = false;
+                   gambas = (lp.smoothciem == 2);
+                   if(lp.smoothciem == 5) {
+                        float ksr = params->locallab.spots.at(sp).kslopesmor;
+                        float gamr = 2.4f * ksr;
+                        float slr = 12.92f;
+                        if(gamr < 2.f) {
+                            slr = 2.5f * gamr - 2.f;
+                        } else if (gamr < 2.2f) {
+                            slr = 7.5f * gamr - 12.f;
+                        } else if (gamr < 2.4f) {
+                            slr = 42.1f * gamr - 88.12f;
+                        } else if (gamr < 2.6f) {
+                            slr = 25.4f * gamr - 48.04f;
+                        } else if (gamr < 2.88f) {
+                            slr = 7.142857f * gamr - 0.571428f;
+                        } else if (gamr < 3.6f) {
+                            slr = 13.8888f * gamr - 20.f;
+                        }
+                        GammaValues g_ar; //gamma parameters
+                        double pwrr = 1.0 / static_cast<double>(gamr);
+                        Color::calcGamma(pwrr, slr, g_ar); // call to calcGamma with selected gamma and slope
 
+                        float ksg = params->locallab.spots.at(sp).kslopesmog;
+                        float gamg = 2.4f * ksg;
+                        float slg = 12.92f;
+                        if(gamg < 2.f) {
+                            slg = 2.5f * gamg - 2.f;
+                        } else if (gamg < 2.2f) {
+                            slg = 7.5f * gamg - 12.f;
+                        } else if (gamr < 2.4f) {
+                            slg = 42.1f * gamg - 88.12f;
+                        } else if (gamg < 2.6f) {
+                            slg = 25.4f * gamg - 48.04f;
+                        } else if (gamg < 2.88f) {
+                            slg = 7.142857f * gamg - 0.571428f;
+                        } else if (gamg < 3.6f) {
+                            slg = 13.8888f * gamg - 20.f;
+                        }
+                        GammaValues g_ag; //gamma parameters
+                        double pwrg = 1.0 / static_cast<double>(gamg);
+                        Color::calcGamma(pwrg, slg, g_ag); // call to calcGamma with selected gamma and slope
+
+                        float ksb = params->locallab.spots.at(sp).kslopesmob;
+                        float gamb = 2.4f * ksb;
+                        float slb = 12.92f;
+                        if(gamb < 2.f) {
+                            slb = 2.5f * gamb - 2.f;
+                        } else if (gamb < 2.2f) {
+                            slb = 7.5f * gamb - 12.f;
+                        } else if (gamb < 2.4f) {
+                            slb = 42.1f * gamb - 88.12f;
+                        } else if (gamb < 2.6f) {
+                            slb = 25.4f * gamb - 48.04f;
+                        } else if (gamb < 2.88f) {
+                            slb = 7.142857f * gamb - 0.571428f;
+                        } else if (gamb < 3.6f) {
+                            slb = 13.8888f * gamb - 20.f;
+                        }
+                        GammaValues g_ab; //gamma parameters
+                        double pwrb = 1.0 / static_cast<double>(gamb);
+                        Color::calcGamma(pwrb, slb, g_ab); // call to calcGamma with selected gamma and slope
+                        Imagefloat *srcp = nullptr;
+                        srcp = new Imagefloat(bfw, bfh);
+
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic, 16) if (multiThread)
+#endif
+
+                        for (int i = 0; i < bfh; ++i)
+                            for (int j = 0; j < bfw; ++j) {
+                                float r = (double) tmpImage->r(i, j);
+                                float g = (double) tmpImage->g(i, j);
+                                float b = (double) tmpImage->b(i, j);
+                                r = (Color::igammatab_srgb[r]) / 65535.f;
+                                g = (Color::igammatab_srgb[g]) / 65535.f;
+                                b = (Color::igammatab_srgb[b]) / 65535.f;
+                                srcp->r(i, j) =  r;
+                                srcp->g(i, j) =  g;
+                                srcp->b(i, j) =  b;
+                            }
+            
+#ifdef _OPENMP
+        #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+
+                        for (int y = 0; y < bfh; ++y) {
+                                int x = 0;
+#ifdef __SSE2__
+
+                            for (; x < bfw - 3; x += 4) {
+                                STVFU(tmpImage->r(y, x), F2V(65536.f) * gammalog(LVFU(srcp->r(y, x)), F2V(gamr), F2V(slr), F2V(g_ar[3]), F2V(g_ar[4])));
+                                STVFU(tmpImage->g(y, x), F2V(65536.f) * gammalog(LVFU(srcp->g(y, x)), F2V(gamg), F2V(slg), F2V(g_ag[3]), F2V(g_ag[4])));
+                                STVFU(tmpImage->b(y, x), F2V(65536.f) * gammalog(LVFU(srcp->b(y, x)), F2V(gamb), F2V(slb), F2V(g_ab[3]), F2V(g_ab[4])));
+                            }
+
+#endif
+
+                            for (; x < bfw; ++x) {
+                                tmpImage->r(y, x) = 65536.f * gammalog(srcp->r(y, x), gamr, slr, g_ar[3], g_ar[4]);
+                                tmpImage->g(y, x) = 65536.f * gammalog(srcp->g(y, x), gamg, slg, g_ag[3], g_ag[4]);
+                                tmpImage->b(y, x) = 65536.f * gammalog(srcp->b(y, x), gamb, slb, g_ab[3], g_ab[4]);
+                            }
+                        }
+                        delete srcp;
+
+                        tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
+                        if(params->locallab.spots.at(sp).smoothcietrc) {//add more control on highlights with gamma based 
+                            gambas = true;
+                        }
+
+                    }
+
+                   
+                    
                     if(lp.smoothciem == 1) {
                         tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
-                    } else if(lp.smoothciem == 2  || lp.smoothciem == 3 || lp.smoothciem == 4) {//  2 - only smmoth highlightd  - 3 - Tone mapping with slope and mid_grey
+                    } else if(gambas  || lp.smoothciem == 3 || lp.smoothciem == 4 ) {//  2 - only smmoth highlightd  - 3 - Tone mapping with slope and mid_grey
 
                         //TonemapFreeman - Copyright (c) 2023 Thatcher Freeman
                         float mid_gray = 0.01f * lp.sourcegraycie;//Mean luminance Yb Scene
                         float mid_gray_view = 0.01f * lp.targetgraycie;//Mean luminance Yb Viewing
-                           // if(mode == 3 && target_slope != 1.f ) {//case tone-mapping
-/*        if(params->locallab.spots.at(sp).{   
-        float midutil = mid_gray_view / mid_gray_scene;//take into account ratio between Yb source and Yb viewing
-        float midk = 1.f;
-        float k_slope = 2.2f;
-        if(target_slope >= 1.f) {
-            midk = pow_F(midutil, k_slope * (target_slope - 1.f));//ponderation in function target_slope when "slope user" < 1.f
-        }
-        kmid = midk;
-        
-    }
-*/
                         lp.whiteevjz = LIM(lp.whiteevjz, 0.1f, 31.5f);//limit whiteEv to avoid crash
                         float white_point =  xexpf(lp.whiteevjz * std::log(2.f) + xlogf(mid_gray));//lp.whiteevjz  White_Ev
                         lp.blackevjz = LIM(lp.blackevjz, -15.5f, -0.2f);//limit BlackEv to avoid crash
@@ -20241,6 +20341,7 @@ void ImProcFunctions::Lab_Local(
                         float slopegrayr = 1.f;
                         float slopegrayg = 1.f;
                         float slopegrayb = 1.f;
+                        
                         int mode = 1;
                         float slopsmoot = 1.f - ((float) params->locallab.spots.at(sp).slopesmo - 1.f);//modify response so when increase slope the grays are becoming lighter
                         float slopsmootr = 1.f - ((float) params->locallab.spots.at(sp).slopesmor - 1.f);
@@ -20285,6 +20386,7 @@ void ImProcFunctions::Lab_Local(
                         LUTf lutr(65536, LUT_CLIP_OFF);
                         LUTf lutg(65536, LUT_CLIP_OFF);
                         LUTf lutb(65536, LUT_CLIP_OFF);
+                        
                         bool scale = lp.issmoothcie;//scale Yb mid_gray - WhiteEv and BlavkEv
                         
                         tonemapFreeman(slopegray, slopegrayr, slopegrayg, slopegrayb, white_point, black_point, mid_gray, mid_gray_view, rolloff, lut, lutr, lutg, lutb, mode, scale, takeyb);
@@ -20354,115 +20456,9 @@ void ImProcFunctions::Lab_Local(
                                 }
                             }
                         }
-                    } else if(lp.smoothciem == 5) {
-                        float ksr = params->locallab.spots.at(sp).kslopesmor;
-                        float gamr = 2.4f * ksr;
-                        float slr = 12.92f;
-                        if(gamr < 2.f) {
-                            slr = 2.5f * gamr - 2.f;
-                        } else if (gamr < 2.2f) {
-                            slr = 7.5f * gamr - 12.f;
-                        } else if (gamr < 2.4f) {
-                            slr = 42.1f * gamr - 88.12f;
-                        } else if (gamr < 2.6f) {
-                            slr = 25.4f * gamr - 48.04f;
-                        } else if (gamr < 2.88f) {
-                            slr = 7.142857f * gamr - 0.571428f;
-                        } else if (gamr < 3.6f) {
-                            slr = 13.8888f * gamr - 20.f;
-                        }
-                        GammaValues g_ar; //gamma parameters
-                        double pwrr = 1.0 / static_cast<double>(gamr);
-                        Color::calcGamma(pwrr, slr, g_ar); // call to calcGamma with selected gamma and slope
-
-                        float ksg = params->locallab.spots.at(sp).kslopesmog;
-                        float gamg = 2.4f * ksg;
-                        float slg = 12.92f;
-                        if(gamg < 2.f) {
-                            slg = 2.5f * gamg - 2.f;
-                        } else if (gamg < 2.2f) {
-                            slg = 7.5f * gamg - 12.f;
-                        } else if (gamr < 2.4f) {
-                            slg = 42.1f * gamg - 88.12f;
-                        } else if (gamg < 2.6f) {
-                            slg = 25.4f * gamg - 48.04f;
-                        } else if (gamg < 2.88f) {
-                            slg = 7.142857f * gamg - 0.571428f;
-                        } else if (gamg < 3.6f) {
-                            slg = 13.8888f * gamg - 20.f;
-                        }
-                        GammaValues g_ag; //gamma parameters
-                        double pwrg = 1.0 / static_cast<double>(gamg);
-                        Color::calcGamma(pwrg, slg, g_ag); // call to calcGamma with selected gamma and slope
-
-                        float ksb = params->locallab.spots.at(sp).kslopesmob;
-                        float gamb = 2.4f * ksb;
-                        float slb = 12.92f;
-                        if(gamb < 2.f) {
-                            slb = 2.5f * gamb - 2.f;
-                        } else if (gamb < 2.2f) {
-                            slb = 7.5f * gamb - 12.f;
-                        } else if (gamb < 2.4f) {
-                            slb = 42.1f * gamb - 88.12f;
-                        } else if (gamb < 2.6f) {
-                            slb = 25.4f * gamb - 48.04f;
-                        } else if (gamb < 2.88f) {
-                            slb = 7.142857f * gamb - 0.571428f;
-                        } else if (gamb < 3.6f) {
-                            slb = 13.8888f * gamb - 20.f;
-                        }
-                        GammaValues g_ab; //gamma parameters
-                        double pwrb = 1.0 / static_cast<double>(gamb);
-                        Color::calcGamma(pwrb, slb, g_ab); // call to calcGamma with selected gamma and slope
-                        
-#ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic, 16) if (multiThread)
-#endif
-
-                        for (int i = 0; i < bfh; ++i)
-                            for (int j = 0; j < bfw; ++j) {
-                                float r = (double) tmpImage->r(i, j);
-                                float g = (double) tmpImage->g(i, j);
-                                float b = (double) tmpImage->b(i, j);
-                                r = (Color::igammatab_srgb[r]) / 65535.f;
-                                g = (Color::igammatab_srgb[g]) / 65535.f;
-                                b = (Color::igammatab_srgb[b]) / 65535.f;
-                                srcp->r(i, j) =  r;
-                                srcp->g(i, j) =  g;
-                                srcp->b(i, j) =  b;
-                            }
-            
-#ifdef _OPENMP
-        #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
-#endif
-
-                    for (int y = 0; y < bfh; ++y) {
-                            int x = 0;
-#ifdef __SSE2__
-
-                        for (; x < bfw - 3; x += 4) {
-                            STVFU(tmpImage->r(y, x), F2V(65536.f) * gammalog(LVFU(srcp->r(y, x)), F2V(gamr), F2V(slr), F2V(g_ar[3]), F2V(g_ar[4])));
-                            STVFU(tmpImage->g(y, x), F2V(65536.f) * gammalog(LVFU(srcp->g(y, x)), F2V(gamg), F2V(slg), F2V(g_ag[3]), F2V(g_ag[4])));
-                            STVFU(tmpImage->b(y, x), F2V(65536.f) * gammalog(LVFU(srcp->b(y, x)), F2V(gamb), F2V(slb), F2V(g_ab[3]), F2V(g_ab[4])));
-                        }
-
-#endif
-
-                        for (; x < bfw; ++x) {
-                            tmpImage->r(y, x) = 65536.f * gammalog(srcp->r(y, x), gamr, slr, g_ar[3], g_ar[4]);
-                            tmpImage->g(y, x) = 65536.f * gammalog(srcp->g(y, x), gamg, slg, g_ag[3], g_ag[4]);
-                            tmpImage->b(y, x) = 65536.f * gammalog(srcp->b(y, x), gamb, slb, g_ab[3], g_ab[4]);
-                        }
-                    }
-
-                    tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
-            
-
-                    }
-
+                    } 
                     rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
-                    delete srcp;
                     delete tmpImage;
                     delete tmpImagelog;
                 }

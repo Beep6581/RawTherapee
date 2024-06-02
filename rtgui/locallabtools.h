@@ -93,6 +93,7 @@ protected:
     rtengine::ProcEvent Evlocallabkslopesmog;
     rtengine::ProcEvent Evlocallabkslopesmob;
     rtengine::ProcEvent Evlocallabsmoothcie;
+    rtengine::ProcEvent Evlocallabsmoothcietrc;
     rtengine::ProcEvent Evlocallabsmoothcieyb;
     rtengine::ProcEvent Evlocallabsmoothcielum;
     rtengine::ProcEvent Evlocallabsmoothciemet;
@@ -1773,6 +1774,7 @@ private:
     Adjuster* const slopjcie;
     Adjuster* const midtcie;
     Gtk::CheckButton* const smoothcie;
+    Gtk::CheckButton* const smoothcietrc;
     Gtk::CheckButton* const smoothcieyb;
     Gtk::CheckButton* const smoothcielum;
     ToolParamBlock* const ciesmoothBox;
@@ -1917,7 +1919,7 @@ private:
     ThresholdAdjuster* const csThresholdcie;
     int nextcomprciecount = 0;
    
-    sigc::connection AutograycieConn, primMethodconn, illMethodconn, smoothciemetconn, catMethodconn, forcejzConn, forcebwConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, enacieMaskallConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, comprcieautoconn, normcieconn, logcieconn, satcieconn, logcieqconn,smoothcieconn, smoothcieybconn,smoothcielumconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethodConn, fftcieMaskConn, gamutcieconn, bwcieconn, expprecamconn, sigcieconn;
+    sigc::connection AutograycieConn, primMethodconn, illMethodconn, smoothciemetconn, catMethodconn, forcejzConn, forcebwConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, enacieMaskallConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, comprcieautoconn, normcieconn, logcieconn, satcieconn, logcieqconn,smoothcieconn, smoothcietrcconn, smoothcieybconn,smoothcielumconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethodConn, fftcieMaskConn, gamutcieconn, bwcieconn, expprecamconn, sigcieconn;
     sigc::connection previewcieConn, sigmoidqjcieconn;
 public:
     Locallabcie();
@@ -1984,6 +1986,7 @@ private:
     void satcieChanged();
     void logcieqChanged();
     void smoothcieChanged();
+    void smoothcietrcChanged();
     void smoothcieybChanged();
     void smoothcielumChanged();
     void sigcieChanged();
