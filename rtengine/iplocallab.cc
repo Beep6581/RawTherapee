@@ -20220,9 +20220,12 @@ void ImProcFunctions::Lab_Local(
                         }
                     }
                    bool gambas = false;
-                   gambas = (lp.smoothciem == 2);
+                   //gambas = (lp.smoothciem == 4);
+                   float ksr = 1.f;
+                   float ksb = 1.f;
+                   float ksg = 1.f;
                    if(lp.smoothciem == 5) {
-                        float ksr = params->locallab.spots.at(sp).kslopesmor;
+                        ksr = params->locallab.spots.at(sp).kslopesmor;
                         float gamr = 2.4f * ksr;
                         float slr = 12.92f;
                         if(gamr < 2.f) {
@@ -20242,7 +20245,7 @@ void ImProcFunctions::Lab_Local(
                         double pwrr = 1.0 / static_cast<double>(gamr);
                         Color::calcGamma(pwrr, slr, g_ar); // call to calcGamma with selected gamma and slope
 
-                        float ksg = params->locallab.spots.at(sp).kslopesmog;
+                        ksg = params->locallab.spots.at(sp).kslopesmog;
                         float gamg = 2.4f * ksg;
                         float slg = 12.92f;
                         if(gamg < 2.f) {
@@ -20262,7 +20265,7 @@ void ImProcFunctions::Lab_Local(
                         double pwrg = 1.0 / static_cast<double>(gamg);
                         Color::calcGamma(pwrg, slg, g_ag); // call to calcGamma with selected gamma and slope
 
-                        float ksb = params->locallab.spots.at(sp).kslopesmob;
+                        ksb = params->locallab.spots.at(sp).kslopesmob;
                         float gamb = 2.4f * ksb;
                         float slb = 12.92f;
                         if(gamb < 2.f) {
@@ -20336,7 +20339,7 @@ void ImProcFunctions::Lab_Local(
                     
                     if(lp.smoothciem == 1) {
                         tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
-                    } else if(gambas  || lp.smoothciem == 3 || lp.smoothciem == 4 ) {//  2 - only smmoth highlightd  - 3 - Tone mapping with slope and mid_grey
+                    } else if(lp.smoothciem == 2  || lp.smoothciem == 3 || lp.smoothciem == 4 || (gambas && lp.smoothciem == 5)) {//  2 - only smmoth highlightd  - 3 - Tone mapping with slope and mid_grey
 
                         //TonemapFreeman - Copyright (c) 2023 Thatcher Freeman
                         float mid_gray = 0.01f * lp.sourcegraycie;//Mean luminance Yb Scene
@@ -20356,6 +20359,12 @@ void ImProcFunctions::Lab_Local(
                         float slopsmootr = 1.f - ((float) params->locallab.spots.at(sp).slopesmor - 1.f);
                         float slopsmootg = 1.f - ((float) params->locallab.spots.at(sp).slopesmog - 1.f);
                         float slopsmootb = 1.f - ((float) params->locallab.spots.at(sp).slopesmob - 1.f);
+                        if(gambas  && lp.smoothciem == 5) {
+                            slopsmootr = 1.f - (ksr - 1.f);
+                            slopsmootg = 1.f - (ksg - 1.f);
+                            slopsmootb = 1.f - (ksb - 1.f);
+                        }
+                        
                         bool takeyb = params->locallab.spots.at(sp).smoothcieyb;
                         bool lummod = params->locallab.spots.at(sp).smoothcielum;
                         bool lumhigh = params->locallab.spots.at(sp).smoothciehigh;
@@ -20375,8 +20384,11 @@ void ImProcFunctions::Lab_Local(
                             slopegrayb = slopsmoot;
                             mode = 3;
                         }//modify slope
-                        if(lp.smoothciem == 4) {//levels
+                        if(lp.smoothciem == 4 || (gambas && lp.smoothciem == 5)) {//levels
                             rolloff = false;//allows tone-mapping slope
+                            if(gambas && lp.smoothciem == 5) {
+                                rolloff = true;
+                            }
                             if(slopsmootr < 0.1f) {
                                 slopsmootr = aa * slopsmootr + bb;
                             }
@@ -20399,9 +20411,12 @@ void ImProcFunctions::Lab_Local(
                         
                         bool scale = lp.issmoothcie;//scale Yb mid_gray - WhiteEv and BlavkEv
                         bool limslope = lumhigh;
+                        if(gambas && lp.smoothciem == 5) {
+                           limslope = true;
+                        }
                         tonemapFreeman(slopegray, slopegrayr, slopegrayg, slopegrayb, white_point, black_point, mid_gray, mid_gray_view, rolloff, limslope, lut, lutr, lutg, lutb, mode, scale, takeyb);
-                        if(lp.smoothciem == 4) {
-                            if(lummod) {//luminosity mode by Lab conversion
+                        if(lp.smoothciem == 4 || (gambas && lp.smoothciem == 5)) {
+                            if(lummod  && lp.smoothciem == 4) {//luminosity mode by Lab conversion
  #ifdef _OPENMP
         #pragma omp parallel for
 #endif
