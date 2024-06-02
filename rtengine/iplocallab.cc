@@ -2608,9 +2608,9 @@ float scene_contrast(float x, float mid_gray_scene, float gamma)
 }
 //Copyright (c) 2023 Thatcher Freeman
 // Adapted to Rawtherapee Jacques Desmis mars 2024  jdesmis@gmail.com
-float do_get(float x, bool rolloff_, float mid_gray_scene, float gamma, float dr, float b, float c, float kmid)
+float do_get(float x, bool rolloff_, float mid_gray_scene, float gamma, float slopelim, float dr, float b, float c, float kmid)
 {
-    if (rolloff_ && x <= mid_gray_scene) {//general smooth - till Yb scene
+    if (rolloff_ && x <= mid_gray_scene * slopelim) {//general smooth - till Yb scene
         return x;
     } else {
         return rolloff_function(scene_contrast(x, mid_gray_scene, gamma), dr, b, c, kmid);//simulate polynomial power function with a slope to begin
@@ -2619,7 +2619,7 @@ float do_get(float x, bool rolloff_, float mid_gray_scene, float gamma, float dr
 
 //Copyright (c) 2023 Thatcher Freeman
 // Adapted to Rawtherapee Jacques Desmis 25 mars 2024
-void tonemapFreeman(float target_slope, float target_sloper, float target_slopeg , float target_slopeb, float white_point, float black_point, float mid_gray_scene, float mid_gray_view, bool rolloff, LUTf& lut, LUTf& lutr, LUTf& lutg, LUTf& lutb, int mode, bool scale, bool takeyb)
+void tonemapFreeman(float target_slope, float target_sloper, float target_slopeg , float target_slopeb, float white_point, float black_point, float mid_gray_scene, float mid_gray_view, bool rolloff, bool limslope, LUTf& lut, LUTf& lutr, LUTf& lutg, LUTf& lutb, int mode, bool scale, bool takeyb)
 {
     float dr;//Dynamic Range
     float b;
@@ -2669,15 +2669,24 @@ void tonemapFreeman(float target_slope, float target_sloper, float target_slopeg
     }
     //lut - take from Alberto Griggio
     if(mode == 4) {
+        float sloplimr = 1.f;
+        float sloplimg = 1.f;
+        float sloplimb = 1.f;
+        if(limslope) {
+            rolloff = true;
+            sloplimr *= target_sloper;
+            sloplimg *= target_slopeg;
+            sloplimb *= target_slopeb;
+        }
         for (int i = 0; i < 65536; ++i) {// i - value image RGB
-            lutr[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_scene_, gammar, dr, b, c, kmid);//call main function
-            lutg[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_scene_, gammag, dr, b, c, kmid);//call main function
-            lutb[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_scene_, gammab, dr, b, c, kmid);//call main function
+            lutr[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_scene_, gammar, sloplimr, dr, b, c, kmid);//call main function
+            lutg[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_scene_, gammag, sloplimg, dr, b, c, kmid);//call main function
+            lutb[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_scene_, gammab, sloplimb, dr, b, c, kmid);//call main function
         }
     } else {
         kmid = 1.f;
         for (int i = 0; i < 65536; ++i) {// i - value image RGB
-            lut[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_scene_, gamma, dr, b, c, kmid);//call main function
+            lut[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_scene_, gamma, 1.f, dr, b, c, kmid);//call main function
         }
     }
 }
@@ -20349,6 +20358,7 @@ void ImProcFunctions::Lab_Local(
                         float slopsmootb = 1.f - ((float) params->locallab.spots.at(sp).slopesmob - 1.f);
                         bool takeyb = params->locallab.spots.at(sp).smoothcieyb;
                         bool lummod = params->locallab.spots.at(sp).smoothcielum;
+                        bool lumhigh = params->locallab.spots.at(sp).smoothciehigh;
                         float maxsl= 4.f;//maximum real slope
                         float minslider = 0.01f;//minimum slider value > 0.f
                         float aa = (1.9f - maxsl) / (0.1f - minslider);//interpolation : 1.9f slope value for slider = 0.1f
@@ -20388,9 +20398,8 @@ void ImProcFunctions::Lab_Local(
                         LUTf lutb(65536, LUT_CLIP_OFF);
                         
                         bool scale = lp.issmoothcie;//scale Yb mid_gray - WhiteEv and BlavkEv
-                        
-                        tonemapFreeman(slopegray, slopegrayr, slopegrayg, slopegrayb, white_point, black_point, mid_gray, mid_gray_view, rolloff, lut, lutr, lutg, lutb, mode, scale, takeyb);
-
+                        bool limslope = lumhigh;
+                        tonemapFreeman(slopegray, slopegrayr, slopegrayg, slopegrayb, white_point, black_point, mid_gray, mid_gray_view, rolloff, limslope, lut, lutr, lutg, lutb, mode, scale, takeyb);
                         if(lp.smoothciem == 4) {
                             if(lummod) {//luminosity mode by Lab conversion
  #ifdef _OPENMP
