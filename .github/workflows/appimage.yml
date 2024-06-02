@@ -26,7 +26,7 @@ jobs:
         build_type: [release, debug]
     steps:
       - name: Checkout source
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -150,7 +150,7 @@ jobs:
 
       - name: Restore AppImage tools from cache
         id: appimage-tools-cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           key: appimage-tools-1
           path: |
@@ -203,7 +203,7 @@ jobs:
           echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> $GITHUB_ENV
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{env.ARTIFACT_NAME}}.AppImage
           path: ${{github.workspace}}/build/${{env.ARTIFACT_NAME}}.AppImage
@@ -225,7 +225,7 @@ jobs:
           echo "PUBLISH_NAME=$PUBLISH_NAME" >> $GITHUB_ENV
 
       - name: Publish artifacts
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: ${{github.ref_type == 'tag' || github.ref_name == 'dev'}}
         with:
           tag_name: nightly-github-actions
@@ -255,7 +255,7 @@ jobs:
           echo "PUBLISH_NAME=$PUBLISH_NAME" >> $GITHUB_ENV
 
       - name: Publish pre-dev artifacts
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: ${{steps.prepare-publish-pre-dev.outcome == 'success'}}
         with:
           tag_name: pre-dev-github-actions
