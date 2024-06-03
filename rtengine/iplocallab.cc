@@ -2678,6 +2678,15 @@ void tonemapFreeman(float target_slope, float target_sloper, float target_slopeg
             sloplimr *= target_sloper;
             sloplimg *= target_slopeg;
             sloplimb *= target_slopeb;
+            if(sloplimr > 1.f) {
+                sloplimr = 1.f;
+            }
+            if(sloplimg > 1.f) {
+                sloplimg = 1.f;
+            }
+            if(sloplimb > 1.f) {
+                sloplimb = 1.f;
+            }
         }
         for (int i = 0; i < 65536; ++i) {// i - value image RGB
             lutr[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_scene_, gammar, sloplimr, dr, b, c, kmid);//call main function
