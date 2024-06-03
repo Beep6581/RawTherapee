@@ -1540,6 +1540,11 @@ Camera constants:
     },
 
     { // Quality B
+        "make_model": [ "Fujifilm X-H2S" ],
+        "raw_crop": [ 0, 5, 6264, 4176 ]
+    },
+
+    { // Quality B
         "make_model": [ "FUJIFILM X-T10", "FUJIFILM X-E2" ],
         "dcraw_matrix": [ 8458,-2451,-855,-4597,12447,2407,-1475,2482,6526 ], // DNG D65
         //"dcraw_matrix": [ 9289,-3279,-632,-3539,11137,2758,-1049,1950,6544 ], // X-RITE D55
