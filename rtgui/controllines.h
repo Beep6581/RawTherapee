@@ -61,8 +61,8 @@ protected:
     bool drawing_line;
     bool edited;
     std::size_t horizontalCount, verticalCount;
-    Cairo::RefPtr<RTSurface> line_icon_h, line_icon_v;
-    Cairo::RefPtr<RTSurface> line_icon_h_prelight, line_icon_v_prelight;
+    std::shared_ptr<RTSurface> line_icon_h, line_icon_v;
+    std::shared_ptr<RTSurface> line_icon_h_prelight, line_icon_v_prelight;
     int prev_obj;
     int selected_object;
 

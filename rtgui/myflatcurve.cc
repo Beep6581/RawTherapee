@@ -23,7 +23,6 @@
 #include "myflatcurve.h"
 
 #include "editcallbacks.h"
-#include "rtscalable.h"
 
 #include "../rtengine/curves.h"
 
@@ -130,24 +129,18 @@ void MyFlatCurve::interpolate ()
     curveIsDirty = false;
 }
 
-void MyFlatCurve::draw ()
+void MyFlatCurve::updateDrawingArea (const ::Cairo::RefPtr< Cairo::Context> &cr)
 {
-    if (!isDirty()) {
+    if (!get_realized()) {
         return;
     }
-
-    if (!surfaceCreated()) {
-        return;
-    }
-
-    double s = (double)RTScalable::getScale();
 
     // re-calculate curve if dimensions changed
     int currLUTSize = point.getUpperBound();
 
     if (curveIsDirty
-        || (currLUTSize == (GRAPH_SIZE * s) && (graphW > (GRAPH_SIZE * s)))
-        || (currLUTSize >  (GRAPH_SIZE * s) && (graphW <= (GRAPH_SIZE * s) || graphW != currLUTSize)) )
+        || (currLUTSize == GRAPH_SIZE && (graphW > GRAPH_SIZE))
+        || (currLUTSize >  GRAPH_SIZE && (graphW <= GRAPH_SIZE || graphW != currLUTSize)) )
     {
         interpolate ();
     }
@@ -155,20 +148,17 @@ void MyFlatCurve::draw ()
     Gtk::StateFlags state = !is_sensitive() ? Gtk::STATE_FLAG_INSENSITIVE : Gtk::STATE_FLAG_NORMAL;
 
     Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
-    Cairo::RefPtr<Cairo::Context> cr = getContext();
-    cr->set_line_cap(Cairo::LINE_CAP_SQUARE);
 
-    // clear background
-    cr->set_source_rgba (0., 0., 0., 0.);
-    cr->set_operator (Cairo::OPERATOR_CLEAR);
-    cr->paint ();
+    // Setup drawing
+    cr->set_line_cap(Cairo::LINE_CAP_SQUARE);
     cr->set_operator (Cairo::OPERATOR_OVER);
 
+    // Render background
     style->render_background(cr, graphX, graphY-graphH, graphW, graphH);
 
     Gdk::RGBA c;
 
-    cr->set_line_width (1.0 * s);
+    cr->set_line_width (1.0);
 
     // Draw Locallab reference value in the background
     if (locallabRef > 0.0) {
@@ -187,49 +177,46 @@ void MyFlatCurve::draw ()
     // draw the left colored bar
     if (leftBar) {
         // first the background
-        BackBuffer *bb = this;
-        leftBar->setDrawRectangle(1. * s, graphY - graphH - 0.5, CBAR_WIDTH * s, graphH);
-        leftBar->expose(*this, bb);
+        leftBar->setColoredBarSize(1., graphY - graphH - 0.5, CBAR_WIDTH, graphH);
+        leftBar->updateColoredBar(cr);
 
         // now the border
         c = style->get_border_color(state);
         cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
-        cr->rectangle(0.5 * s, graphY - graphH - 0.5 - 0.5 * s, (CBAR_WIDTH + 1) * s, (double)graphH + 1. + 1. * s);
+        cr->rectangle(0.5, graphY - graphH - 0.5 - 0.5, CBAR_WIDTH + 1, (double)graphH + 1.);
         cr->stroke();
     }
 
     // draw the bottom colored bar
     if (bottomBar) {
         // first the background
-        BackBuffer *bb = this;
-        bottomBar->setDrawRectangle(graphX - 0.5, graphY + (RADIUS + CBAR_MARGIN + 1.) * s, graphW + 1., CBAR_WIDTH * s);
-        bottomBar->expose(*this, bb);
+        bottomBar->setColoredBarSize(graphX - 0.5, graphY + RADIUS + CBAR_MARGIN + 1., graphW + 1., CBAR_WIDTH);
+        bottomBar->updateColoredBar(cr);
 
         // now the border
         c = style->get_border_color(state);
         cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
-        cr->rectangle(graphX - 0.5 - 0.5 * s, graphY + (RADIUS + CBAR_MARGIN + 0.5) * s, graphW + 1. + 0.5 * s, (CBAR_WIDTH + 1.) * s);
+        cr->rectangle(graphX - 0.5 - 0.5, graphY + RADIUS + CBAR_MARGIN + 0.5, graphW + 1. + 1., CBAR_WIDTH + 1.);
         cr->stroke();
     }
 
     // draw f(x)=0.5 line
     c = style->get_border_color(state);
     cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
-    std::valarray<double> ds (1);
-    ds[0] = 4 * s;
+    const std::valarray<double> ds = {4.};
     cr->set_dash (ds, 0);
-    cr->move_to (graphX - 1. * s, graphY - graphH / 2.);
-    cr->rel_line_to (graphW + 2 * s, 0.);
+    cr->move_to (graphX - 1., graphY - graphH / 2.);
+    cr->rel_line_to (graphW + 2, 0.);
     cr->stroke ();
 
     cr->unset_dash ();
     cr->set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
-    cr->set_line_width (1.0 * s);
+    cr->set_line_width (1.0);
     cr->set_line_cap(Cairo::LINE_CAP_BUTT);
 
     // draw the pipette values
     if (pipetteR > -1.f || pipetteG > -1.f || pipetteB > -1.f) {
-        cr->set_line_width (0.75 * s);
+        cr->set_line_width (0.75);
         cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
         int n = 0;
 
@@ -248,34 +235,34 @@ void MyFlatCurve::draw ()
         if (n > 1) {
             if (pipetteR > -1.f) {
                 cr->set_source_rgba (1., 0., 0., 0.5); // WARNING: assuming that red values are stored in pipetteR, which might not be the case!
-                cr->move_to (graphX + graphW * static_cast<double>(pipetteR), graphY + 1. * s);
-                cr->rel_line_to (0, -graphH - 1. * s);
+                cr->move_to (graphX + graphW * static_cast<double>(pipetteR), graphY + 1.);
+                cr->rel_line_to (0, -graphH - 1.);
                 cr->stroke ();
             }
 
             if (pipetteG > -1.f) {
                 cr->set_source_rgba (0., 1., 0., 0.5); // WARNING: assuming that green values are stored in pipetteG, which might not be the case!
-                cr->move_to (graphX + graphW * static_cast<double>(pipetteG), graphY + 1. * s);
-                cr->rel_line_to (0, -graphH - 1. * s);
+                cr->move_to (graphX + graphW * static_cast<double>(pipetteG), graphY + 1.);
+                cr->rel_line_to (0, -graphH - 1.);
                 cr->stroke ();
             }
 
             if (pipetteB > -1.f) {
                 cr->set_source_rgba (0., 0., 1., 0.5); // WARNING: assuming that blue values are stored in pipetteB, which might not be the case!
-                cr->move_to (graphX + graphW * static_cast<double>(pipetteB), graphY + 1. * s);
-                cr->rel_line_to (0, -graphH - 1. * s);
+                cr->move_to (graphX + graphW * static_cast<double>(pipetteB), graphY + 1.);
+                cr->rel_line_to (0, -graphH - 1.);
                 cr->stroke ();
             }
         }
 
         if (pipetteVal > -1.f) {
-            cr->set_line_width (2. * s);
+            cr->set_line_width (2.);
             c = style->get_color (state);
             cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
-            cr->move_to (graphX + graphW * static_cast<double>(pipetteVal), graphY + 1. * s);
-            cr->rel_line_to (0, -graphH - 1. * s);
+            cr->move_to (graphX + graphW * static_cast<double>(pipetteVal), graphY + 1.);
+            cr->rel_line_to (0, -graphH - 1.);
             cr->stroke ();
-            cr->set_line_width (1. * s);
+            cr->set_line_width (1.);
         }
     }
 
@@ -286,7 +273,7 @@ void MyFlatCurve::draw ()
         for (int i = 0; i < (int)curve.x.size(); ++i) {
 
             if (curve.x.at(i) != -1.) {
-                double coloredLineWidth = rtengine::min<double>( rtengine::max<double>(75. * s, graphW) / (75. * s), 8. * s);
+                double coloredLineWidth = rtengine::min<double>( rtengine::max<double>(75., graphW) / 75., 8.);
 
                 cr->set_line_width (coloredLineWidth);
                 colorProvider->colorForValue(curve.x.at(i), curve.y.at(i), CCET_VERTICAL_BAR, colorCallerId, this);
@@ -296,8 +283,8 @@ void MyFlatCurve::draw ()
                     cr->set_line_width (2 * coloredLineWidth);
                 }
 
-                cr->move_to (graphX + graphW * curve.x.at(i), graphY + 0.5 + 0.5 * s );
-                cr->rel_line_to (0., -graphH - 1. - s);
+                cr->move_to (graphX + graphW * curve.x.at(i), graphY + 0.5 + 0.5);
+                cr->rel_line_to (0., -graphH - 1. - 1.);
                 cr->stroke ();
                 cr->set_line_width (coloredLineWidth);
 
@@ -323,39 +310,39 @@ void MyFlatCurve::draw ()
                     colorProvider->colorForValue(curve.x.at(i), curve.y.at(i), CCET_HORIZONTAL_BAR, colorCallerId, this);
                     cr->set_source_rgb (ccRed, ccGreen, ccBlue);
 
-                    cr->move_to (graphX - 0.5 - 0.5 * s , graphY - graphH * curve.y.at(point));
-                    cr->rel_line_to (graphW + 1. + s, 0.);
+                    cr->move_to (graphX - 0.5 - 0.5 , graphY - graphH * curve.y.at(point));
+                    cr->rel_line_to (graphW + 1. + 1., 0.);
                     cr->stroke ();
                 }
             }
         }
 
         // endif
-        cr->set_line_width (1.0 * s);
+        cr->set_line_width (1.0);
     } else {
         cr->set_source_rgb (0.5, 0.0, 0.0);
 
         if (edited_point > -1 || ((lit_point > -1) && ((area & (FCT_Area_H | FCT_Area_V | FCT_Area_Point)) || editedHandle == FCT_EditedHandle_CPointUD)) ) {
             // draw the lit_point's vertical line
             if (edited_point > -1 || (editedHandle & (FCT_EditedHandle_CPointUD | FCT_EditedHandle_CPoint | FCT_EditedHandle_CPointY))) {
-                cr->set_line_width (2.0 * s);
+                cr->set_line_width (2.0);
             }
 
             int point = edited_point > -1 ? edited_point : lit_point;
-            cr->move_to (graphX + graphW * curve.x.at(point), graphY + 0.5 + 0.5 * s );
-            cr->rel_line_to (0., -graphH - 1. - s);
+            cr->move_to (graphX + graphW * curve.x.at(point), graphY + 0.5 + 0.5);
+            cr->rel_line_to (0., -graphH - 1. - 1.);
             cr->stroke ();
-            cr->set_line_width (1.0 * s);
+            cr->set_line_width (1.0);
 
             // draw the lit_point's horizontal line
             if (editedHandle & (FCT_EditedHandle_CPointUD | FCT_EditedHandle_CPoint | FCT_EditedHandle_CPointY)) {
-                cr->set_line_width (2.0 * s);
+                cr->set_line_width (2.0);
             }
 
-            cr->move_to (graphX - 0.5 - 0.5 * s , graphY - graphH * curve.y.at(point));
-            cr->rel_line_to (graphW + 1. + s, 0.);
+            cr->move_to (graphX - 0.5 - 0.5 , graphY - graphH * curve.y.at(point));
+            cr->rel_line_to (graphW + 1. + 1., 0.);
             cr->stroke ();
-            cr->set_line_width (1.0 * s);
+            cr->set_line_width (1.0);
         }
     }
 
@@ -364,10 +351,10 @@ void MyFlatCurve::draw ()
     // draw the graph's borders:
     c = style->get_border_color(state);
     cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
-    cr->rectangle(graphX - 0.5 - 0.5 * s, graphY + 0.5 + 0.5 * s, graphW + 1. + 1. * s, -(graphH + 1. + 1. * s));
+    cr->rectangle(graphX - 0.5 - 0.5, graphY + 0.5 + 0.5, graphW + 1. + 1., -(graphH + 1. + 1.));
     cr->stroke ();
 
-    double lineMinLength = 1. / graphW * (double)(SQUARE) * 0.9 * s;
+    double lineMinLength = 1. / graphW * (double)(SQUARE) * 0.9;
 
     if (tanHandlesDisplayed && lit_point != -1 && getHandles(lit_point) && curve.x.at(lit_point) != -1.) {
         double x = graphX + graphW * curve.x.at(lit_point);
@@ -398,9 +385,9 @@ void MyFlatCurve::draw ()
             cr->move_to (x, y);
 
             if (crossingTheFrame) {
-                cr->line_to (graphX - 0.5 - 0.5 * s, y);
+                cr->line_to (graphX - 0.5 - 0.5, y);
                 cr->stroke ();
-                cr->move_to (graphX + graphW + 0.5 + 0.5 * s, y);
+                cr->move_to (graphX + graphW + 0.5 + 0.5, y);
             }
 
             cr->line_to (x2, y);
@@ -408,7 +395,7 @@ void MyFlatCurve::draw ()
         }
 
         // draw tangential knot
-        square = (area == FCT_Area_LeftTan ? SQUARE * 2. : SQUARE) * s;
+        square = (area == FCT_Area_LeftTan ? SQUARE * 2. : SQUARE);
         cr->rectangle(x2 - square, y - square, 2.*square, 2.*square);
         cr->fill();
 
@@ -434,9 +421,9 @@ void MyFlatCurve::draw ()
             cr->move_to (x, y);
 
             if (crossingTheFrame) {
-                cr->line_to (graphX + graphW + 0.5 + 0.5 * s, y);
+                cr->line_to (graphX + graphW + 0.5 + 0.5, y);
                 cr->stroke ();
-                cr->move_to (graphX - 0.5 - 0.5 * s, y);
+                cr->move_to (graphX - 0.5 - 0.5, y);
             }
 
             cr->line_to (x2, y);
@@ -444,7 +431,7 @@ void MyFlatCurve::draw ()
         }
 
         // draw tangential knot
-        square = (area == FCT_Area_RightTan ? SQUARE * 2. : SQUARE) * s;
+        square = (area == FCT_Area_RightTan ? SQUARE * 2. : SQUARE);
         cr->rectangle(x2 - square, y - square, 2.*square, 2.*square);
         cr->fill();
     }
@@ -483,15 +470,15 @@ void MyFlatCurve::draw ()
             double x = graphX + graphW * curve.x.at(i); // project (curve.x.at(i), 0, 1, graphW);
             double y = graphY - graphH * curve.y.at(i); // project (curve.y.at(i), 0, 1, graphH);
 
-            cr->arc (x, y, RADIUS * s + 0.5, 0, 2 * rtengine::RT_PI);
+            cr->arc (x, y, RADIUS + 0.5, 0, 2 * rtengine::RT_PI);
             cr->fill ();
 
             if (i == edited_point) {
                 cr->set_source_rgb (1.0, 0.0, 0.0);
-                cr->set_line_width(2. * s);
-                cr->arc (x, y, (RADIUS + 2.) * s, 0, 2 * rtengine::RT_PI);
+                cr->set_line_width(2.);
+                cr->arc (x, y, RADIUS + 2., 0, 2 * rtengine::RT_PI);
                 cr->stroke();
-                cr->set_line_width(1. * s);
+                cr->set_line_width(1.);
             }
 
         }
@@ -524,30 +511,14 @@ void MyFlatCurve::draw ()
                       graphW * minDistanceY);
         cr->fill();
     }
-
-    setDirty(false);
-    queue_draw();
 }
 
 bool MyFlatCurve::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 {
-    Gtk::Allocation allocation = get_allocation();
-    allocation.set_x(0);
-    allocation.set_y(0);
+    // Draw drawing area
+    // Note: As drawing area surface is updated inside on_draw function, hidpi is automatically supported
+    updateDrawingArea(cr);
 
-    int s = RTScalable::getScale();
-
-    // setDrawRectangle will allocate the backbuffer Surface
-    if (setDrawRectangle(Cairo::FORMAT_ARGB32, allocation)) {
-        setDirty(true);
-
-        if (prevGraphW > (GRAPH_SIZE * s) || graphW > (GRAPH_SIZE * s)) {
-            curveIsDirty = true;
-        }
-    }
-
-    draw ();
-    copySurface(cr);
     return false;
 }
 
@@ -619,10 +590,8 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
         return false;
     }
 
-    double s = RTScalable::getScale();
-
-    minDistanceX = double(MIN_DISTANCE) / graphW * s;
-    minDistanceY = double(MIN_DISTANCE) / graphH * s;
+    minDistanceX = double(MIN_DISTANCE) / graphW;
+    minDistanceY = double(MIN_DISTANCE) / graphH;
 
     switch (event->type) {
 
@@ -680,8 +649,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
                     curve.rightTangent.at(closest_point) = 0.35;
 
                     curveIsDirty = true;
-                    setDirty(true);
-                    draw ();
+                    queue_draw();
                     notifyListener ();
 
                     lit_point = closest_point;
@@ -738,8 +706,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
                             new_type = CSArrow;
                             tanHandlesDisplayed = false;
                             edited_point = lit_point;
-                            setDirty(true);
-                            draw ();
+                            queue_draw();
                             std::vector<CoordinateAdjuster::Boundaries> newBoundaries(4);
                             int size = curve.x.size();
 
@@ -787,8 +754,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
                     // the cursor is close to an existing point
                     if (lit_point != edited_point) {
                         edited_point = lit_point;
-                        setDirty(true);
-                        draw ();
+                        queue_draw();
                         std::vector<CoordinateAdjuster::Boundaries> newBoundaries(4);
                         int size = curve.x.size();
 
@@ -910,8 +876,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
                     break;
                 }
 
-                setDirty(true);
-                draw ();
+                queue_draw();
                 retval = true;
                 //notifyListener ();
             }
@@ -1042,8 +1007,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
                 }
 
                 if ((lit_point != previous_lit_point) || (prevArea != area)) {
-                    setDirty(true);
-                    draw ();
+                    queue_draw();
                 }
 
                 if (coordinateAdjuster->is_visible() && edited_point == -1) {
@@ -1121,8 +1085,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
 
                 if (curve.leftTangent.at(lit_point) != prevValue) {
                     curveIsDirty = true;
-                    setDirty(true);
-                    draw ();
+                    queue_draw();
                     notifyListener ();
 
                     if (coordinateAdjuster->is_visible()) {
@@ -1153,8 +1116,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
 
                 if (curve.rightTangent.at(lit_point) != prevValue) {
                     curveIsDirty = true;
-                    setDirty(true);
-                    draw ();
+                    queue_draw();
                     notifyListener ();
                     editedPos.at(3) = curve.rightTangent.at(lit_point);
                     coordinateAdjuster->setPos(editedPos);
@@ -1198,8 +1160,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
             lit_point = -1;
             tanHandlesDisplayed = false;
             pipetteR = pipetteG = pipetteB = -1.f;
-            setDirty(true);
-            draw ();
+            queue_draw();
         }
 
         retval = true;
@@ -1290,11 +1251,10 @@ void MyFlatCurve::pipetteMouseOver (CurveEditor *ce, EditDataProvider *provider,
 
     if (edited_point == -1) {
         if (editedHandle == FCT_EditedHandle_None && lit_point != previous_lit_point) {
-            setDirty(true);
-            draw ();
+            queue_draw();
         }
     } else {
-        draw();
+        queue_draw();
     }
 
     if (edited_point == -1) {
@@ -1321,13 +1281,11 @@ bool MyFlatCurve::pipetteButton1Pressed(EditDataProvider *provider, int modifier
     // hide the tangent handles
     tanHandlesDisplayed = false;
 
-    int s = RTScalable::getScale();
-
     // Action on BUTTON_PRESS and no edited point
     switch (area) {
 
     case (FCT_Area_Insertion): {
-        rtengine::FlatCurve rtCurve(getPoints(), true, GRAPH_SIZE * s);
+        rtengine::FlatCurve rtCurve(getPoints(), true, GRAPH_SIZE);
 
         std::vector<double>::iterator itx, ity, itlt, itrt;
         int num = (int)curve.x.size();
@@ -1364,8 +1322,7 @@ bool MyFlatCurve::pipetteButton1Pressed(EditDataProvider *provider, int modifier
         curve.rightTangent.at(closest_point) = 0.35;
 
         curveIsDirty = true;
-        setDirty(true);
-        draw ();
+        queue_draw();
         notifyListener ();
 
         lit_point = closest_point;
@@ -1407,8 +1364,7 @@ void MyFlatCurve::pipetteButton1Released(EditDataProvider *provider)
     getCursorPosition(Gdk::EventType(Gdk::BUTTON_PRESS), false, px, graphY, Gdk::ModifierType(0));
     getMouseOverArea();
 
-    setDirty(true);
-    draw ();
+    queue_draw();
     //notifyListener ();
 }
 
@@ -1633,8 +1589,7 @@ void MyFlatCurve::movePoint(bool moveX, bool moveY, bool pipetteDrag)
     if (curve.x.at(lit_point) != prevPosX || curve.y.at(lit_point) != prevPosY) {
         // we recompute the curve only if we have to
         curveIsDirty = true;
-        setDirty(true);
-        draw ();
+        queue_draw();
         notifyListener ();
     }
 }
@@ -1842,7 +1797,6 @@ void MyFlatCurve::setPoints (const std::vector<double>& p)
     }
 
     curveIsDirty = true;
-    setDirty(true);
     queue_draw ();
 }
 
@@ -1869,8 +1823,7 @@ void MyFlatCurve::setPos(double pos, int chanIdx)
     }
 
     curveIsDirty = true;
-    setDirty(true);
-    draw();
+    queue_draw();
     notifyListener ();
 }
 
@@ -1880,8 +1833,7 @@ void MyFlatCurve::stopNumericalAdjustment()
         edited_point = lit_point = -1;
         area = FCT_Area_None;
         coordinateAdjuster->stopNumericalAdjustment();
-        setDirty(true);
-        draw();
+        queue_draw();
     }
 }
 
@@ -1904,8 +1856,7 @@ void MyFlatCurve::updateLocallabBackground(double ref)
                  return false;
             }
 
-             mcih->clearPixmap();
-            mcih->myCurve->queue_draw();
+            mcih->clearPixmap();
 
              --mcih->pending;
 
@@ -1918,7 +1869,7 @@ void MyFlatCurve::setType (FlatCurveType t)
 {
 
     curve.type = t;
-    setDirty(true);
+    queue_draw();
 }
 
 void MyFlatCurve::reset(const std::vector<double> &resetCurve, double identityValue)
@@ -1946,8 +1897,7 @@ void MyFlatCurve::reset(const std::vector<double> &resetCurve, double identityVa
         break;
     }
 
-    setDirty(true);
-    draw();
+    queue_draw();
 }
 
 void MyFlatCurve::defaultCurve (double iVal)

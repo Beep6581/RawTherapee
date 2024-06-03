@@ -19,6 +19,7 @@
  */
 
 #include <iostream>
+#include <regex>
 
 #include "imagedata.h"
 #include "procparams.h"
@@ -475,23 +476,36 @@ LFLens LFDatabase::findLens(const LFCamera &camera, const Glib::ustring &name) c
                 }
             }
         }
-        auto found = data_->FindLenses(camera.data_, nullptr, name.c_str());
-        for (size_t pos = 0; !found && pos < name.size(); ) {
-            // try to split the maker from the model of the lens -- we have to
-            // guess a bit here, since there are makers with a multi-word name
-            // (e.g. "Leica Camera AG")
-            if (name.find("f/", pos) == 0) {
-                break; // no need to search further
+        const auto find_lens_from_name = [](const lfDatabase *database, const lfCamera *cam, const Glib::ustring &lens_name) {
+            auto found = database->FindLenses(cam, nullptr, lens_name.c_str());
+            for (size_t pos = 0; !found && pos < lens_name.size(); ) {
+                // try to split the maker from the model of the lens -- we have to
+                // guess a bit here, since there are makers with a multi-word name
+                // (e.g. "Leica Camera AG")
+                if (lens_name.find("f/", pos) == 0) {
+                    break; // no need to search further
+                }
+                Glib::ustring make, model;
+                auto i = lens_name.find(' ', pos);
+                if (i != Glib::ustring::npos) {
+                    make = lens_name.substr(0, i);
+                    model = lens_name.substr(i+1);
+                    found = database->FindLenses(cam, make.c_str(), model.c_str());
+                    pos = i+1;
+                } else {
+                    break;
+                }
             }
-            Glib::ustring make, model;
-            auto i = name.find(' ', pos);
-            if (i != Glib::ustring::npos) {
-                make = name.substr(0, i);
-                model = name.substr(i+1);
-                found = data_->FindLenses(camera.data_, make.c_str(), model.c_str());
-                pos = i+1;
-            } else {
-                break;
+            return found;
+        };
+        auto found = find_lens_from_name(data_, camera.data_, name);
+        if (!found) {
+            // Some names have white-space around the dash(s) while Lensfun does
+            // not have any.
+            const std::regex pattern("\\s*-\\s*");
+            const auto formatted_name = std::regex_replace(name.raw(), pattern, "-");
+            if (name != formatted_name) {
+                found = find_lens_from_name(data_, camera.data_, formatted_name);
             }
         }
         if (!found && camera && camera.isFixedLens()) {

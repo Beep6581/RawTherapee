@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="24px"
+   height="24px"
+   viewBox="0 0 24 24"
+   version="1.1"
+   id="SVGRoot"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs815" />
+  <metadata
+     id="metadata818">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Maciej Dworak</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title />
+          </cc:Agent>
+        </dc:rights>
+        <dc:description>RawTherapee icon.</dc:description>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1">
+    <path
+       style="opacity:0.7;fill:#cccccc;fill-opacity:1.0;fill-rule:nonzero;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+       d="M 12 1 A 11 11 0 0 0 1 12 A 11 11 0 0 0 12 23 A 11 11 0 0 0 23 12 A 11 11 0 0 0 12 1 z M 11.839844 5 C 12.328216 5 12.747958 5.1626998 13.097656 5.4882812 C 13.447355 5.8138627 13.621094 6.2058368 13.621094 6.6640625 C 13.621094 7.1222882 13.443618 7.5142623 13.087891 7.8398438 C 12.738192 8.1593959 12.322187 8.3183594 11.839844 8.3183594 C 11.351472 8.3183594 10.929947 8.1593959 10.574219 7.8398438 C 10.22452 7.5142623 10.048828 7.1222882 10.048828 6.6640625 C 10.048828 6.2058368 10.22452 5.8138627 10.574219 5.4882812 C 10.929947 5.1626998 11.351472 5 11.839844 5 z M 13.431641 9.9199219 L 13.566406 10.054688 L 13.566406 17.236328 C 13.566406 17.447353 13.612686 17.628565 13.703125 17.779297 C 13.793564 17.924 13.922977 18.033117 14.091797 18.105469 C 14.212383 18.159732 14.345532 18.207795 14.490234 18.25 C 14.634937 18.292205 14.784645 18.321756 14.941406 18.339844 L 14.941406 19 L 9.2265625 19 L 9.2265625 18.339844 C 9.3833239 18.327785 9.5367679 18.31301 9.6875 18.294922 C 9.8382321 18.276834 9.9676447 18.247283 10.076172 18.205078 C 10.269109 18.132727 10.404041 18.029129 10.482422 17.896484 C 10.560803 17.757811 10.601562 17.576599 10.601562 17.353516 L 10.601562 12.089844 C 10.601562 11.878819 10.5535 11.695824 10.457031 11.539062 C 10.360563 11.376272 10.238453 11.246859 10.09375 11.150391 C 9.9852229 11.078039 9.8207398 11.007728 9.5976562 10.941406 C 9.380602 10.875084 9.1808786 10.832541 9 10.814453 L 9 10.154297 L 13.431641 9.9199219 z "
+       id="path944" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:18.522px;line-height:125%;font-family:Georgia;-inkscape-font-specification:'Georgia Bold';letter-spacing:0px;word-spacing:0px;opacity:0.7;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="-11.29845"
+       y="19"
+       id="text821"><tspan
+         id="tspan819"
+         x="-11.29845"
+         y="19"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:18.522px;font-family:Georgia;-inkscape-font-specification:'Georgia Bold';fill:#ffffff;fill-opacity:1;stroke-width:1px">i</tspan></text>
+  </g>
+</svg>

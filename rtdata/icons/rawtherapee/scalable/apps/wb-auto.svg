@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="24px"
+   height="24px"
+   viewBox="0 0 24 24"
+   version="1.1"
+   id="SVGRoot"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs815" />
+  <metadata
+     id="metadata818">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Maciej Dworak</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title />
+          </cc:Agent>
+        </dc:rights>
+        <dc:description>RawTherapee icon.</dc:description>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1">
+    <path
+       style="opacity:0.7;fill:#cccccc;fill-opacity:1.0;fill-rule:nonzero;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:4, 4;stroke-dashoffset:4;stroke-opacity:1;paint-order:normal"
+       d="M 3 5 C 1.892 5 1 5.892 1 7 L 1 17 C 1 18.108 1.892 19 3 19 L 21 19 C 22.108 19 23 18.108 23 17 L 23 7 C 23 5.892 22.108 5 21 5 L 3 5 z M 4.0742188 9.1367188 L 6.0039062 9.1367188 L 8.15625 14.863281 L 6.3046875 14.863281 L 6.0234375 13.917969 L 4.0078125 13.917969 L 3.7304688 14.863281 L 1.921875 14.863281 L 4.0742188 9.1367188 z M 8.1914062 9.1367188 L 9.8710938 9.1367188 L 10.476562 12.335938 L 11.359375 9.1367188 L 13.035156 9.1367188 L 13.921875 12.335938 L 14.527344 9.1367188 L 16.199219 9.1367188 L 14.9375 14.863281 L 13.203125 14.863281 L 12.199219 11.257812 L 11.199219 14.863281 L 9.4648438 14.863281 L 8.1914062 9.1367188 z M 16.785156 9.1367188 L 20.097656 9.1367188 C 20.64974 9.1367188 21.072917 9.2734375 21.367188 9.546875 C 21.664062 9.8203125 21.8125 10.158854 21.8125 10.5625 C 21.8125 10.901042 21.707031 11.191406 21.496094 11.433594 C 21.355468 11.595052 21.14974 11.722656 20.878906 11.816406 C 21.290365 11.915365 21.592448 12.085938 21.785156 12.328125 C 21.980469 12.567708 22.078125 12.869792 22.078125 13.234375 C 22.078125 13.53125 22.009114 13.798178 21.871094 14.035156 C 21.733072 14.272136 21.54427 14.459636 21.304688 14.597656 C 21.15625 14.683594 20.932292 14.746094 20.632812 14.785156 C 20.234375 14.837243 19.970052 14.863281 19.839844 14.863281 L 16.785156 14.863281 L 16.785156 9.1367188 z M 18.570312 10.296875 L 18.570312 11.382812 L 19.339844 11.382812 C 19.615885 11.382812 19.807292 11.335936 19.914062 11.242188 C 20.023438 11.145831 20.078125 11.007812 20.078125 10.828125 C 20.078125 10.661458 20.023438 10.53125 19.914062 10.4375 C 19.807292 10.34375 19.619792 10.296875 19.351562 10.296875 L 18.570312 10.296875 z M 5.0195312 10.621094 L 4.390625 12.679688 L 5.6523438 12.679688 L 5.0195312 10.621094 z M 18.570312 12.472656 L 18.570312 13.632812 L 19.472656 13.632812 C 19.777344 13.632812 19.992188 13.579428 20.117188 13.472656 C 20.242188 13.363282 20.304688 13.217448 20.304688 13.035156 C 20.304688 12.865886 20.242188 12.730469 20.117188 12.628906 C 19.994792 12.52474 19.778646 12.472656 19.46875 12.472656 L 18.570312 12.472656 z "
+       id="rect827" />
+    <g
+       aria-label="AWB"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8px;line-height:125%;font-family:'Arial Black';-inkscape-font-specification:'Arial Black, ';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1.0;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="text831" />
+  </g>
+</svg>

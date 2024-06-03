@@ -40,7 +40,7 @@ DarkFrame::DarkFrame () : FoldableToolPanel(this, TOOL_NAME, M("TP_DARKFRAME_LAB
     bindCurrentFolder (*darkFrameFile, options.lastDarkframeDir);
     dfLabel = Gtk::manage(new Gtk::Label(M("GENERAL_FILE")));
     btnReset = Gtk::manage(new Gtk::Button());
-    btnReset->set_image (*Gtk::manage(new RTImage ("cancel-small.png")));
+    btnReset->set_image (*Gtk::manage(new RTImage ("cancel-small", Gtk::ICON_SIZE_BUTTON)));
     hbdf->pack_start(*dfLabel, Gtk::PACK_SHRINK, 0);
     hbdf->pack_start(*darkFrameFile);
     hbdf->pack_start(*btnReset, Gtk::PACK_SHRINK, 0);

@@ -434,7 +434,10 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     cp.CHmet = 0;
     cp.HSmet = false;
 
-    if (params->wavelet.CHmethod == "with") {
+
+    if (params->wavelet.CHmethod == "without") {
+        cp.CHmet = 0;
+    } else if (params->wavelet.CHmethod == "with") {
         cp.CHmet = 1;
     } else if (params->wavelet.CHmethod == "link") {
         cp.CHmet = 2;
@@ -4139,8 +4142,8 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float maxkoeLi, bool lipschitz,
             float diagacc = 1.f;
             float alpha = (1024.f + 15.f * (float) cpMul * scale * scale2 * lbeta * diagacc) / 1024.f ;
 
- //           if (cp.HSmet  && cp.contena) {
-            if (cp.HSmet  && cp.contena  && waOpacityCurveSH) {
+            if (cp.HSmet  && cp.contena) {
+           // if (cp.HSmet  && cp.contena  && waOpacityCurveSH) {//waOpacityCurveSH no long use
                 float aaal = (1.f - alpha) / ((cp.b_lhl - cp.t_lhl) * kH[level]);
                 float bbal = 1.f - aaal * cp.b_lhl * kH[level];
                 float aaar = (alpha - 1.f) / (cp.t_rhl - cp.b_rhl) * kH[level];

@@ -1,5 +1,5 @@
 /** -*- C++ -*-
- *  
+ *
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2017 Alberto Griggio <alberto.griggio@gmail.com>
@@ -43,11 +43,11 @@
 #include "toolpanel.h"
 
 
-class LabGridArea final : public Gtk::DrawingArea, public BackBuffer {
+class LabGridArea final : public Gtk::DrawingArea {
 private:
     rtengine::ProcEvent evt;
     Glib::ustring evtMsg;
-    
+
     enum State { NONE, HIGH, LOW, GRE};
     State litPoint;
     double low_a;
@@ -58,7 +58,8 @@ private:
     double gre_y;
     double whi_x;
     double whi_y;
-    
+    double me_x;
+    double me_y;
     double defaultLow_a;
     double defaultHigh_a;
     double defaultLow_b;
@@ -67,6 +68,8 @@ private:
     double defaultgre_y;
     double defaultwhi_x;
     double defaultwhi_y;
+    double defaultme_x;
+    double defaultme_y;
 
     ToolPanelListener *listener;
     bool edited;
@@ -76,16 +79,17 @@ private:
 
     bool low_enabled;
     bool ciexy_enabled;
+    bool mous_enabled;
 
     bool notifyListener();
     void getLitPoint();
 
 public:
-    LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low=true, bool ciexy=false);
+    LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low=true, bool ciexy=false, bool mous=false);
 
-    void getParams(double &la, double &lb, double &ha, double &hb, double &gx, double &gy, double &wx, double &wy) const;
-    void setParams(double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy,  bool notify);
-    void setDefault (double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy);
+    void getParams(double &la, double &lb, double &ha, double &hb, double &gx, double &gy, double &wx, double &wy, double &mx, double &my) const;
+    void setParams(double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my,  bool notify);
+    void setDefault (double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my);
     void setEdited(bool yes);
     bool getEdited() const;
     void reset(bool toInitial);
@@ -95,8 +99,10 @@ public:
     void setLowEnabled(bool yes);
     bool ciexyEnabled() const;
     void setciexyEnabled(bool yes);
+    bool mousEnabled() const;
+    void setmousEnabled(bool yes);
 
-    bool on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf) override;
+    bool on_draw(const ::Cairo::RefPtr<Cairo::Context> &cr) override;
     void on_style_updated () override;
     bool on_button_press_event(GdkEventButton *event) override;
     bool on_button_release_event(GdkEventButton *event) override;
@@ -112,13 +118,13 @@ private:
     LabGridArea grid;
 
     bool resetPressed(GdkEventButton *event);
-    
-public:
-    LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low=true, bool ciexy=false);
 
-    void getParams(double &la, double &lb, double &ha, double &hb, double &gx, double &gy, double &wx, double &wy) const { return grid.getParams(la, lb, ha, hb, gx, gy, wx, wy); }
-    void setParams(double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, bool notify) { grid.setParams(la, lb, ha, hb, gx, gy, wx, wy, notify); }
-    void setDefault (double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy) { grid.setDefault(la, lb, ha, hb, gx, gy, wx, wy); }
+public:
+    LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low=true, bool ciexy=false, bool mous=true);
+
+    void getParams(double &la, double &lb, double &ha, double &hb, double &gx, double &gy, double &wx, double &wy, double &mx, double &my) const { return grid.getParams(la, lb, ha, hb, gx, gy, wx, wy, mx, my); }
+    void setParams(double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my, bool notify) { grid.setParams(la, lb, ha, hb, gx, gy, wx, wy, mx, my, notify); }
+    void setDefault (double la, double lb, double ha, double hb, double gx, double gy, double wx, double wy, double mx, double my) { grid.setDefault(la, lb, ha, hb, gx, gy, wx, wy, mx, my); }
     void setEdited(bool yes) { grid.setEdited(yes); }
     bool getEdited() const { return grid.getEdited(); }
     void reset(bool toInitial) { grid.reset(toInitial); }
@@ -127,5 +133,8 @@ public:
     void setLowEnabled(bool yes) { grid.setLowEnabled(yes); }
     bool ciexyEnabled() const { return grid.ciexyEnabled(); }
     void setciexyEnabled(bool yes) { grid.setciexyEnabled(yes); }
+    bool mousEnabled() const { return grid.mousEnabled(); }
+    void setmousEnabled(bool yes) { grid.setmousEnabled(yes); }
+
 };
 

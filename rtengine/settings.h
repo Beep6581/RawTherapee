@@ -100,7 +100,7 @@ public:
     bool            itcwb_enable;
     double          itcwb_deltaspec;
     double          itcwb_powponder;
-
+    double basecorlog;
 //wavelet levels
     double          edghi;
     double          edglo;

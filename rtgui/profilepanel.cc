@@ -45,16 +45,16 @@ void ProfilePanel::cleanup ()
     delete partialProfileDlg;
 }
 
-ProfilePanel::ProfilePanel () : storedPProfile(nullptr), lastSavedPSE(nullptr), customPSE(nullptr)
+ProfilePanel::ProfilePanel () : storedPProfile(nullptr),
+    modeOn("profile-filled"), modeOff("profile-partial"),
+    profileFillImage(Gtk::manage(new RTImage(options.filledProfile ? modeOn : modeOff, Gtk::ICON_SIZE_LARGE_TOOLBAR))),
+    lastSavedPSE(nullptr), customPSE(nullptr)
 {
-
     tpc = nullptr;
 
-    profileFillModeOnImage  = new RTImage("profile-filled.png");
-    profileFillModeOffImage = new RTImage("profile-partial.png");
     fillMode = Gtk::manage (new Gtk::ToggleButton());
     fillMode->set_active(options.filledProfile);
-    fillMode->add( options.filledProfile ? *profileFillModeOnImage : *profileFillModeOffImage );
+    fillMode->add(*profileFillImage);
     fillMode->signal_toggled().connect ( sigc::mem_fun(*this, &ProfilePanel::profileFillModeToggled) );
     fillMode->set_tooltip_text(M("PROFILEPANEL_MODE_TOOLTIP"));
 //GTK318
@@ -69,20 +69,20 @@ ProfilePanel::ProfilePanel () : storedPProfile(nullptr), lastSavedPSE(nullptr), 
     setExpandAlignProperties(profiles, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
     load = Gtk::manage (new Gtk::Button ());
-    load->add (*Gtk::manage (new RTImage ("folder-open.png")));
+    load->add (*Gtk::manage (new RTImage ("folder-open", Gtk::ICON_SIZE_LARGE_TOOLBAR)));
     load->get_style_context()->add_class("Left");
     load->set_margin_left(2);
     setExpandAlignProperties(load, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     save = Gtk::manage (new Gtk::Button ());
-    save->add (*Gtk::manage (new RTImage ("save.png")));
+    save->add (*Gtk::manage (new RTImage ("save", Gtk::ICON_SIZE_LARGE_TOOLBAR)));
     save->get_style_context()->add_class("MiddleH");
     setExpandAlignProperties(save, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     copy = Gtk::manage (new Gtk::Button ());
-    copy->add (*Gtk::manage (new RTImage ("copy.png")));
+    copy->add (*Gtk::manage (new RTImage ("copy", Gtk::ICON_SIZE_LARGE_TOOLBAR)));
     copy->get_style_context()->add_class("MiddleH");
     setExpandAlignProperties(copy, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     paste = Gtk::manage (new Gtk::Button ());
-    paste->add (*Gtk::manage (new RTImage ("paste.png")));
+    paste->add (*Gtk::manage (new RTImage ("paste", Gtk::ICON_SIZE_LARGE_TOOLBAR)));
     paste->get_style_context()->add_class("Right");
     setExpandAlignProperties(paste, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
@@ -132,8 +132,6 @@ ProfilePanel::~ProfilePanel ()
         delete lastsaved;
     }
 
-    delete profileFillModeOnImage;
-    delete profileFillModeOffImage;
     delete lastSavedPSE;
     delete customPSE;
 }
@@ -913,10 +911,10 @@ void ProfilePanel::profileFillModeToggled()
 {
     if (fillMode->get_active()) {
         // The button is pressed, we'll use the profileFillModeOnImage
-        fillMode->set_image(*profileFillModeOnImage);
+        profileFillImage->set_from_icon_name(modeOn);
     } else {
         // The button is released, we'll use the profileFillModeOffImage
-        fillMode->set_image(*profileFillModeOffImage);
+        profileFillImage->set_from_icon_name(modeOff);
     }
 }
 

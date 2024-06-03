@@ -30,11 +30,15 @@
  *          the bar itself, i.e. use render_background (depending on its Gtk::StyleContext)
  *
  */
-class ColoredBar final : private BackBuffer, public ColorCaller
+class ColoredBar final : public ColorCaller
 {
 
 private:
-    void updateBackBuffer(Gtk::DrawingArea &drawingArea);
+    // ColoredBar position and size parameters
+    int x;
+    int y;
+    int w;
+    int h;
 
 protected:
     eRTOrientation orientation;
@@ -42,12 +46,9 @@ protected:
 
 public:
     explicit ColoredBar (eRTOrientation orient);
-    bool setDrawRectangle(int newX, int newY, int newW, int newH, bool updateBackBufferSize = true);
+    void setColoredBarSize(const int newX, const int newY, const int newW, const int newH); // Note: updateColoredBar shall be called after to update the bar
 
-    void expose(Gtk::DrawingArea &drawingArea, Glib::RefPtr<Gdk::Window> destWindow);
-    void expose(Gtk::DrawingArea &drawingArea, Cairo::RefPtr<Cairo::ImageSurface> destSurface);
-    void expose(Gtk::DrawingArea &drawingArea, BackBuffer *backBuffer);
-    void expose(Gtk::DrawingArea &drawingArea, const Cairo::RefPtr< Cairo::Context> &cr);
+    void updateColoredBar(const Cairo::RefPtr< Cairo::Context> &cr);
 
     bool canGetColors();
 
@@ -56,8 +57,4 @@ public:
     // by clearing the gradient, the ColorProvider will have to provide colors on a per pixel basis if a ColorProvider
     // has been set, through ColorProvider::colorForValue on next ColoredBar::expose
     void clearBgGradient ();
-
-    void setDirty(bool isDirty) {
-        BackBuffer::setDirty(isDirty);
-    }
 };

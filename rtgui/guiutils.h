@@ -203,11 +203,11 @@ public:
     typedef sigc::signal<void> type_signal_enabled_toggled;
 private:
     type_signal_enabled_toggled message;
-    static Glib::RefPtr<RTImage> inconsistentImage; /// "inconsistent" image, displayed when useEnabled is true ; in this case, nothing will tell that an expander is opened/closed
-    static Glib::RefPtr<RTImage> enabledImage;      ///      "enabled" image, displayed when useEnabled is true ; in this case, nothing will tell that an expander is opened/closed
-    static Glib::RefPtr<RTImage> disabledImage;     ///     "disabled" image, displayed when useEnabled is true ; in this case, nothing will tell that an expander is opened/closed
-    static Glib::RefPtr<RTImage> openedImage;       ///       "opened" image, displayed when useEnabled is false
-    static Glib::RefPtr<RTImage> closedImage;       ///       "closed" image, displayed when useEnabled is false
+    const Glib::ustring inconsistentImage; /// "inconsistent" image, displayed when useEnabled is true ; in this case, nothing will tell that an expander is opened/closed
+    const Glib::ustring enabledImage;      ///      "enabled" image, displayed when useEnabled is true ; in this case, nothing will tell that an expander is opened/closed
+    const Glib::ustring disabledImage;     ///     "disabled" image, displayed when useEnabled is true ; in this case, nothing will tell that an expander is opened/closed
+    const Glib::ustring openedImage;       ///       "opened" image, displayed when useEnabled is false
+    const Glib::ustring closedImage;       ///       "closed" image, displayed when useEnabled is false
     bool enabled;               /// Enabled feature (default to true)
     bool inconsistent;          /// True if the enabled button is inconsistent
     Gtk::EventBox *titleEvBox;  /// EventBox of the title, to get a connector from it
@@ -249,10 +249,6 @@ public:
      * @param titleWidget A widget to display in the header. Warning: you won't be able to switch to a string label.
      */
     MyExpander(bool useEnabled, Gtk::Widget* titleWidget);
-
-    /// Initialize the class by loading the images
-    static void init();
-    static void cleanup();
 
     Glib::SignalProxy1< bool, GdkEventButton* > signal_button_release_event()
     {
@@ -518,7 +514,7 @@ class TextOrIcon final : public Gtk::Box
 {
 
 public:
-    TextOrIcon (const Glib::ustring &filename, const Glib::ustring &labelTx, const Glib::ustring &tooltipTx);
+    TextOrIcon (const Glib::ustring &icon_name, const Glib::ustring &labelTx, const Glib::ustring &tooltipTx);
 };
 
 /**
@@ -530,7 +526,7 @@ class ImageAndLabel final : public Gtk::Box
     std::unique_ptr<Impl> pimpl;
 
 public:
-    ImageAndLabel(const Glib::ustring& label, const Glib::ustring& imageFileName);
+    ImageAndLabel(const Glib::ustring& label, const Glib::ustring& iconName);
     ImageAndLabel(const Glib::ustring& label, RTImage* image);
     const RTImage* getImage() const;
     const Gtk::Label* getLabel() const;
@@ -554,7 +550,7 @@ class MyImageMenuItem final : public Gtk::MenuItem, public MyImageMenuItemInterf
     std::unique_ptr<Impl> pimpl;
 
 public:
-    MyImageMenuItem (const Glib::ustring& label, const Glib::ustring& imageFileName);
+    MyImageMenuItem (const Glib::ustring& label, const Glib::ustring& iconName);
     MyImageMenuItem (const Glib::ustring& label, RTImage* image);
     const RTImage *getImage () const;
     const Gtk::Label* getLabel() const override;
@@ -758,6 +754,30 @@ class SpotPicker : public Gtk::Grid
         MyComboBoxText selecterSetup() const;
         Gtk::ToggleButton spotButtonTemplate(Glib::ustring const &key, const Glib::ustring &tooltip) const;
         void spotSizeChanged();
+};
+
+/**
+ * Enforces the rule that zero or one registered toggle button is enabled at any
+ * given time.
+ */
+class OptionalRadioButtonGroup
+{
+    Gtk::ToggleButton *active_button{nullptr};
+
+    void onButtonToggled(Gtk::ToggleButton *button);
+
+public:
+    /**
+     * Returns the toggle button that is active, or null if none are active.
+     */
+    Gtk::ToggleButton *getActiveButton() const;
+    /**
+     * Adds a toggle button to this group.
+     *
+     * If the provided button is active, any existing active button in this
+     * group will be deactivated.
+     */
+    void register_button(Gtk::ToggleButton &button);
 };
 
 inline void setActiveTextOrIndex(Gtk::ComboBoxText &comboBox, const Glib::ustring &text, int index)

@@ -463,13 +463,9 @@ endif()
 # Check for libraries:
 find_package(PkgConfig)
 
-if(WIN32)
-    pkg_check_modules(GTK REQUIRED gtk+-3.0>=3.22.24)
-    pkg_check_modules(GTKMM REQUIRED gtkmm-3.0>=3.22)
-else()
-    pkg_check_modules(GTK REQUIRED gtk+-3.0>=3.16)
-    pkg_check_modules(GTKMM REQUIRED gtkmm-3.0>=3.16)
-endif()
+# Gtk version shall be greater than 3.24.3 for fixed Hi-DPI support
+pkg_check_modules(GTK REQUIRED gtk+-3.0>=3.24.3)
+pkg_check_modules(GTKMM REQUIRED gtkmm-3.0>=3.24)
 
 if(GTK_VERSION VERSION_GREATER "3.24.1" AND GTK_VERSION VERSION_LESS "3.24.7")
     if(GTK_VERSION VERSION_EQUAL "3.24.5")
@@ -496,7 +492,7 @@ pkg_check_modules(GTHREAD REQUIRED gthread-2.0>=2.48)
 pkg_check_modules(GOBJECT REQUIRED gobject-2.0>=2.48)
 pkg_check_modules(SIGC REQUIRED sigc++-2.0>=2.3.1)
 pkg_check_modules(LENSFUN REQUIRED lensfun>=0.2)
-pkg_check_modules(RSVG REQUIRED librsvg-2.0>=2.40)
+pkg_check_modules(RSVG REQUIRED librsvg-2.0>=2.52)
 
 # Require exiv2 >= 0.24 to make sure everything we need is available
 #find_package(Exiv2 0.24 REQUIRED)

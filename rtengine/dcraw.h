@@ -109,16 +109,24 @@ protected:
     unsigned black, cblack[4102], maximum, mix_green, raw_color, zero_is_bad;
     unsigned zero_after_ff, is_raw, dng_version, is_foveon, data_error;
     unsigned tile_width, tile_length, gpsdata[32], load_flags, row_padding;
-    bool xtransCompressed = false;
+
+    struct fuji_q_table
+    {
+      int8_t *q_table; /* quantization table */
+      int    raw_bits;
+      int    total_values;
+      int    max_grad;    // sdp val
+      int    q_grad_mult; // quant_gradient multiplier
+      int    q_base;
+    };
+
     struct fuji_compressed_params
     {
-        char        *q_table;        /* quantization table */
-        int         q_point[5];      /* quantization points */
+        struct      fuji_q_table qt[4];
+        void        *buf;
         int         max_bits;
         int         min_value;
-        int         raw_bits;
-        int         total_values;
-        int			maxDiff;
+        int         max_value;
         ushort      line_width;
     };
 
@@ -135,6 +143,13 @@ protected:
         _ltotal
     };
 
+    // tables of gradients for single sample level
+    struct fuji_grads
+    {
+      int_pair grads[41];
+      int_pair lossy_grads[3][5];
+    };
+
     struct fuji_compressed_block {
         int         cur_bit;         // current bit being read (from left to right)
         int         cur_pos;         // current position in a buffer
@@ -144,8 +159,8 @@ protected:
         uchar       *cur_buf;        // currently read block
         int         fillbytes;          // Counter to add extra byte for block size N*16
         rtengine::IMFILE      *input;
-        struct int_pair grad_even[3][41];    // tables of gradients
-        struct int_pair grad_odd[3][41];
+        fuji_grads even[3]; // tables of even gradients
+        fuji_grads odd[3];  // tables of odd gradients
         ushort		*linealloc;
         ushort      *linebuf[_ltotal];
     };
@@ -159,7 +174,7 @@ protected:
         unsigned sub_frame_shot_select;
     };
 
-    int fuji_total_lines, fuji_total_blocks, fuji_block_width, fuji_bits, fuji_raw_type;
+    int fuji_total_lines, fuji_total_blocks, fuji_block_width, fuji_bits, fuji_raw_type, fuji_lossless;
 
     ushort raw_height, raw_width, height, width, top_margin, left_margin;
     ushort shrink, iheight, iwidth, fuji_width, thumb_width, thumb_height;
@@ -186,13 +201,6 @@ protected:
     std::string RT_software;
     double RT_baseline_exposure;
     struct MergedPixelshift merged_pixelshift;
-
-    struct PanasonicRW2Info {
-        ushort bpp;
-        ushort encoding;
-        PanasonicRW2Info(): bpp(0), encoding(0) {}
-    };
-    PanasonicRW2Info RT_pana_info;
 
 public:
     struct CanonCR3Data {
@@ -223,6 +231,29 @@ public:
         short CR3_CTMDtag;
     };
 
+    struct PanasonicRW2Info {
+        struct v8_tags_t
+        {
+            uint32_t tag39[6];
+            uint16_t tag3A[6];
+            uint16_t tag3B;
+            uint16_t initial[4];
+            uint16_t tag40a[17], tag40b[17], tag41[17];
+            uint16_t stripe_count; // 0x42
+            uint16_t tag43;
+            int64_t  stripe_offsets[5]; //0x44
+            uint16_t stripe_left[5]; // 0x45
+            uint32_t stripe_compressed_size[5]; //0x46
+            uint16_t stripe_width[5]; //0x47
+            uint16_t stripe_height[5];
+        };
+
+        ushort bpp;
+        ushort encoding;
+        v8_tags_t v8tags;
+        PanasonicRW2Info(): bpp(0), encoding(0), v8tags{} {}
+    };
+
     bool isBayer() const
     {
         return (filters != 0 && filters != 9);
@@ -238,8 +269,10 @@ public:
 
 protected:
     CanonCR3Data RT_canon_CR3_data;
-    
+
     CanonLevelsData RT_canon_levels_data;
+
+    PanasonicRW2Info RT_pana_info;
 
     float cam_mul[4], pre_mul[4], cmatrix[3][4], rgb_cam[3][4];
 
@@ -377,6 +410,8 @@ void adobe_copy_pixel (unsigned row, unsigned col, ushort **rp);
 void lossless_dng_load_raw();
 void packed_dng_load_raw();
 void deflate_dng_load_raw();
+void init_fuji_main_qtable(fuji_compressed_params *params, uchar q_base);
+void init_fuji_main_grads(const fuji_compressed_params *params, fuji_compressed_block *info);
 void init_fuji_compr(struct fuji_compressed_params* info);
 void fuji_fill_buffer(struct fuji_compressed_block *info);
 void init_fuji_block(struct fuji_compressed_block* info, const struct fuji_compressed_params *params, INT64 raw_offset, unsigned dsize);
@@ -384,8 +419,8 @@ void copy_line_to_xtrans(struct fuji_compressed_block* info, int cur_line, int c
 void copy_line_to_bayer(struct fuji_compressed_block* info, int cur_line, int cur_block, int cur_block_width);
 void fuji_zerobits(struct fuji_compressed_block* info, int *count);
 void fuji_read_code(struct fuji_compressed_block* info, int *data, int bits_to_read);
-int fuji_decode_sample_even(struct fuji_compressed_block* info, const struct fuji_compressed_params * params, ushort* line_buf, int pos, struct int_pair* grads);
-int fuji_decode_sample_odd(struct fuji_compressed_block* info, const struct fuji_compressed_params * params, ushort* line_buf, int pos, struct int_pair* grads);
+int fuji_decode_sample_even(struct fuji_compressed_block* info, const struct fuji_compressed_params* params, ushort* line_buf, int pos, struct fuji_grads* grad_params);
+int fuji_decode_sample_odd(struct fuji_compressed_block* info, const struct fuji_compressed_params* params, ushort* line_buf, int pos, struct fuji_grads* grad_params);
 void fuji_decode_interpolation_even(int line_width, ushort* line_buf, int pos);
 void fuji_extend_generic(ushort *linebuf[_ltotal], int line_width, int start, int end);
 void fuji_extend_red(ushort *linebuf[_ltotal], int line_width);
@@ -393,11 +428,13 @@ void fuji_extend_green(ushort *linebuf[_ltotal], int line_width);
 void fuji_extend_blue(ushort *linebuf[_ltotal], int line_width);
 void xtrans_decode_block(struct fuji_compressed_block* info, const struct fuji_compressed_params *params);
 void fuji_bayer_decode_block(struct fuji_compressed_block* info, const struct fuji_compressed_params *params);
-void fuji_decode_strip(const struct fuji_compressed_params* info_common, int cur_block, INT64 raw_offset, unsigned dsize);
+void fuji_decode_strip (fuji_compressed_params* params, int cur_block, INT64 raw_offset, unsigned dsize, uchar *q_bases);
 void fuji_compressed_load_raw();
-void fuji_decode_loop(const struct fuji_compressed_params* common_info, int count, INT64* raw_block_offsets, unsigned *block_sizes);
+void fuji_decode_loop(fuji_compressed_params* common_info, int count, INT64* raw_block_offsets, unsigned *block_sizes, uchar *q_bases);
 void parse_fuji_compressed_header();
-void fuji_14bit_load_raw();    
+void fuji_14bit_load_raw();
+void pana8_decode_loop(void *data);
+bool pana8_decode_strip(void* data, int stream);
 void pentax_load_raw();
 void nikon_load_raw();
 int nikon_is_compressed();
@@ -489,6 +526,7 @@ private:
 
 void panasonicC6_load_raw();
 void panasonicC7_load_raw();
+void panasonicC8_load_raw();
 
 void canon_rmf_load_raw();
 void panasonic_load_raw();
