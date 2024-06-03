@@ -259,6 +259,7 @@ jobs:
         if: ${{steps.prepare-publish-pre-dev.outcome == 'success'}}
         with:
           tag_name: pre-dev-github-actions
+          repository: Beep6581/RawTherapee
           files: |
             ${{env.PUBLISH_NAME}}.AppImage
             ${{env.PUBLISH_NAME}}-AppImage-AboutThisBuild.txt

@@ -268,6 +268,7 @@ jobs:
         if: ${{steps.prepare-publish-pre-dev.outcome == 'success'}}
         with:
           tag_name: pre-dev-github-actions
+          repository: Beep6581/RawTherapee
           files: |
             build/${{env.PUBLISH_NAME}}.zip
             build/${{env.PUBLISH_NAME}}-AboutThisBuild.txt
@@ -277,4 +278,5 @@ jobs:
         if: ${{steps.prepare-publish-pre-dev.outcome == 'success' && matrix.build_type == 'release'}}
         with:
           tag_name: pre-dev-github-actions
+          repository: Beep6581/RawTherapee
           files: build/${{env.PUBLISH_NAME}}.exe
