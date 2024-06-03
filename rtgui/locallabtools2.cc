@@ -11413,9 +11413,9 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     kslopesmob->hide();
                     smoothcietrc->hide();
                     smoothcie->show();
-                    smoothcielum->show();
+                    smoothcielum->hide();//show
                     smoothciehigh->show();
-                    smoothcieyb->show();
+                    smoothcieyb->hide();//show
                 } else if(smoothciemet->get_active_row_number() == 5) {
                     kslopesmor->show();
                     kslopesmog->show();
@@ -11569,9 +11569,9 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     kslopesmob->hide();
                     smoothcietrc->hide();
                     smoothcie->show();
-                    smoothcielum->show();
+                    smoothcielum->hide();//show
                     smoothciehigh->show();
-                    smoothcieyb->show();
+                    smoothcieyb->hide();//show
                 } else if(smoothciemet->get_active_row_number() == 5) {
                     kslopesmor->show();
                     kslopesmog->show();
@@ -11979,9 +11979,16 @@ void Locallabcie::updatecieGUI()
             slopesmog->show();
             slopesmob->show();
             smoothcie->show();
-            smoothcielum->show();
+            if (mode == Expert) {
+                smoothcielum->show();
+                smoothcieyb->show();
+            } else {
+                smoothcielum->hide();
+                smoothcieyb->hide();
+            }
+
             smoothciehigh->show();
-            smoothcieyb->show();
+       
         } else if(smoothciemet->get_active_row_number() == 5) {
             kslopesmor->show();
             kslopesmog->show();
@@ -12121,7 +12128,8 @@ void Locallabcie::convertParamToSimple()
     whitescie->setValue(defSpot.whitescie);
     blackscie->setValue(defSpot.blackscie);
     bwcie->set_active(defSpot.bwcie);
-
+    smoothcielum->set_active(defSpot.smoothcielum);
+    smoothcieyb->set_active(defSpot.smoothcieyb);
     sigq->set_active(defSpot.sigq);
     //sigq->set_active(defSpot.sigq);
     pqremapcam16->setValue(defSpot.pqremapcam16);
@@ -12152,6 +12160,8 @@ void Locallabcie::convertParamToNormal()
     logcieq->set_active(defSpot.logcieq);
     logcie->set_active(defSpot.logcie);
     bwcie->set_active(defSpot.bwcie);
+    smoothcielum->set_active(defSpot.smoothcielum);
+    smoothcieyb->set_active(defSpot.smoothcieyb);
     //contsigqcie->setValue(defSpot.contsigqcie);
     colorflcie->setValue(defSpot.colorflcie);
     lightqcie->setValue(defSpot.lightqcie);

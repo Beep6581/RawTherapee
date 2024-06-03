@@ -20220,7 +20220,6 @@ void ImProcFunctions::Lab_Local(
                         }
                     }
                    bool gambas = false;
-                   //gambas = (lp.smoothciem == 4);
                    float ksr = 1.f;
                    float ksb = 1.f;
                    float ksg = 1.f;
