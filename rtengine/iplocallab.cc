@@ -2610,7 +2610,7 @@ float scene_contrast(float x, float mid_gray_scene, float gamma)
 // Adapted to Rawtherapee Jacques Desmis mars 2024  jdesmis@gmail.com
 float do_get(float x, bool rolloff_, float mid_gray_scene, float gamma, float slopelim, float dr, float b, float c, float kmid)
 {
-    if (rolloff_ && x <= mid_gray_scene * slopelim) {//general smooth - till Yb scene
+    if (rolloff_ && x <= mid_gray_scene / slopelim) {//general smooth - till Yb scene
         return x;
     } else {
         return rolloff_function(scene_contrast(x, mid_gray_scene, gamma), dr, b, c, kmid);//simulate polynomial power function with a slope to begin
@@ -2674,6 +2674,7 @@ void tonemapFreeman(float target_slope, float target_sloper, float target_slopeg
         float sloplimb = 1.f;
         if(limslope) {
             rolloff = true;
+            
             sloplimr *= target_sloper;
             sloplimg *= target_slopeg;
             sloplimb *= target_slopeb;
