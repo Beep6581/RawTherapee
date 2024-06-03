@@ -1023,6 +1023,7 @@ public:
         bool logcieq;
         bool smoothcie;
         bool smoothcietrc;
+        bool smoothcietrcrel;
         bool smoothcieyb;
         bool smoothcielum;
         bool smoothciehigh;

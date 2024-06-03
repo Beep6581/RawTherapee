@@ -20223,22 +20223,28 @@ void ImProcFunctions::Lab_Local(
                    float ksr = 1.f;
                    float ksb = 1.f;
                    float ksg = 1.f;
+                   //gamtone, slotone
+                   
                    if(lp.smoothciem == 5) {
                         ksr = params->locallab.spots.at(sp).kslopesmor;
                         float gamr = 2.4f * ksr;
                         float slr = 12.92f;
-                        if(gamr < 2.f) {
-                            slr = 2.5f * gamr - 2.f;
-                        } else if (gamr < 2.2f) {
-                            slr = 7.5f * gamr - 12.f;
-                        } else if (gamr < 2.4f) {
-                            slr = 42.1f * gamr - 88.12f;
-                        } else if (gamr < 2.6f) {
-                            slr = 25.4f * gamr - 48.04f;
-                        } else if (gamr < 2.88f) {
-                            slr = 7.142857f * gamr - 0.571428f;
-                        } else if (gamr < 3.6f) {
-                            slr = 13.8888f * gamr - 20.f;
+                        if(!params->locallab.spots.at(sp).smoothcietrcrel) {
+                            gamr = 2.4f * ksr;
+                            slr = 12.92f;
+                            if(gamr < 2.f) {
+                                slr = 2.5f * gamr - 2.f;
+                            } else if (gamr < 2.2f) {
+                                slr = 7.5f * gamr - 12.f;
+                            } else if (gamr < 2.4f) {
+                                slr = 42.1f * gamr - 88.12f;
+                            } else if (gamr < 2.6f) {
+                                slr = 25.4f * gamr - 48.04f;
+                            } else if (gamr < 2.88f) {
+                                slr = 7.142857f * gamr - 0.571428f;
+                            } else if (gamr < 3.6f) {
+                                slr = 13.8888f * gamr - 20.f;
+                            }
                         }
                         GammaValues g_ar; //gamma parameters
                         double pwrr = 1.0 / static_cast<double>(gamr);
@@ -20247,18 +20253,22 @@ void ImProcFunctions::Lab_Local(
                         ksg = params->locallab.spots.at(sp).kslopesmog;
                         float gamg = 2.4f * ksg;
                         float slg = 12.92f;
-                        if(gamg < 2.f) {
-                            slg = 2.5f * gamg - 2.f;
-                        } else if (gamg < 2.2f) {
-                            slg = 7.5f * gamg - 12.f;
-                        } else if (gamr < 2.4f) {
-                            slg = 42.1f * gamg - 88.12f;
-                        } else if (gamg < 2.6f) {
-                            slg = 25.4f * gamg - 48.04f;
-                        } else if (gamg < 2.88f) {
-                            slg = 7.142857f * gamg - 0.571428f;
-                        } else if (gamg < 3.6f) {
+                        if(!params->locallab.spots.at(sp).smoothcietrcrel) {
+                            gamg = 2.4f * ksg;
+                            slg = 12.92f;
+                            if(gamg < 2.f) {
+                                slg = 2.5f * gamg - 2.f;
+                            } else if (gamg < 2.2f) {
+                                slg = 7.5f * gamg - 12.f;
+                            } else if (gamr < 2.4f) {
+                                slg = 42.1f * gamg - 88.12f;
+                            } else if (gamg < 2.6f) {
+                                slg = 25.4f * gamg - 48.04f;
+                            } else if (gamg < 2.88f) {
+                                slg = 7.142857f * gamg - 0.571428f;
+                            } else if (gamg < 3.6f) {
                             slg = 13.8888f * gamg - 20.f;
+                            }
                         }
                         GammaValues g_ag; //gamma parameters
                         double pwrg = 1.0 / static_cast<double>(gamg);
@@ -20267,18 +20277,23 @@ void ImProcFunctions::Lab_Local(
                         ksb = params->locallab.spots.at(sp).kslopesmob;
                         float gamb = 2.4f * ksb;
                         float slb = 12.92f;
-                        if(gamb < 2.f) {
-                            slb = 2.5f * gamb - 2.f;
-                        } else if (gamb < 2.2f) {
-                            slb = 7.5f * gamb - 12.f;
-                        } else if (gamb < 2.4f) {
-                            slb = 42.1f * gamb - 88.12f;
-                        } else if (gamb < 2.6f) {
-                            slb = 25.4f * gamb - 48.04f;
-                        } else if (gamb < 2.88f) {
-                            slb = 7.142857f * gamb - 0.571428f;
-                        } else if (gamb < 3.6f) {
-                            slb = 13.8888f * gamb - 20.f;
+                        if(!params->locallab.spots.at(sp).smoothcietrcrel) {
+
+                            gamb = 2.4f * ksb;
+                            slb = 12.92f;
+                            if(gamb < 2.f) {
+                                slb = 2.5f * gamb - 2.f;
+                            } else if (gamb < 2.2f) {
+                                slb = 7.5f * gamb - 12.f;
+                            } else if (gamb < 2.4f) {
+                                slb = 42.1f * gamb - 88.12f;
+                            } else if (gamb < 2.6f) {
+                                slb = 25.4f * gamb - 48.04f;
+                            } else if (gamb < 2.88f) {
+                                slb = 7.142857f * gamb - 0.571428f;
+                            } else if (gamb < 3.6f) {
+                                slb = 13.8888f * gamb - 20.f;
+                            }
                         }
                         GammaValues g_ab; //gamma parameters
                         double pwrb = 1.0 / static_cast<double>(gamb);

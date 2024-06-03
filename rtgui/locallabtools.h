@@ -94,6 +94,7 @@ protected:
     rtengine::ProcEvent Evlocallabkslopesmob;
     rtengine::ProcEvent Evlocallabsmoothcie;
     rtengine::ProcEvent Evlocallabsmoothcietrc;
+    rtengine::ProcEvent Evlocallabsmoothcietrcrel;
     rtengine::ProcEvent Evlocallabsmoothcieyb;
     rtengine::ProcEvent Evlocallabsmoothcielum;
     rtengine::ProcEvent Evlocallabsmoothciehigh;
@@ -1776,6 +1777,7 @@ private:
     Adjuster* const midtcie;
     Gtk::CheckButton* const smoothcie;
     Gtk::CheckButton* const smoothcietrc;
+    Gtk::CheckButton* const smoothcietrcrel;
     Gtk::CheckButton* const smoothcieyb;
     Gtk::CheckButton* const smoothcielum;
     Gtk::CheckButton* const smoothciehigh;
@@ -1921,7 +1923,7 @@ private:
     ThresholdAdjuster* const csThresholdcie;
     int nextcomprciecount = 0;
    
-    sigc::connection AutograycieConn, primMethodconn, illMethodconn, smoothciemetconn, catMethodconn, forcejzConn, forcebwConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, enacieMaskallConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, comprcieautoconn, normcieconn, logcieconn, satcieconn, logcieqconn,smoothcieconn, smoothciehighconn, smoothcietrcconn, smoothcieybconn,smoothcielumconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethodConn, fftcieMaskConn, gamutcieconn, bwcieconn, expprecamconn, sigcieconn;
+    sigc::connection AutograycieConn, primMethodconn, illMethodconn, smoothciemetconn, catMethodconn, forcejzConn, forcebwConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, enacieMaskallConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, comprcieautoconn, normcieconn, logcieconn, satcieconn, logcieqconn,smoothcieconn, smoothciehighconn, smoothcietrcconn, smoothcietrcrelconn, smoothcieybconn,smoothcielumconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethodConn, fftcieMaskConn, gamutcieconn, bwcieconn, expprecamconn, sigcieconn;
     sigc::connection previewcieConn, sigmoidqjcieconn;
 public:
     Locallabcie();
@@ -1990,6 +1992,7 @@ private:
     void smoothcieChanged();
     void smoothciehighChanged();
     void smoothcietrcChanged();
+    void smoothcietrcrelChanged();
     void smoothcieybChanged();
     void smoothcielumChanged();
     void sigcieChanged();

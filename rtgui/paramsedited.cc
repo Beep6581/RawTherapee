@@ -1743,6 +1743,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).logcieq = locallab.spots.at(j).logcieq && pSpot.logcieq == otherSpot.logcieq;
                 locallab.spots.at(j).smoothcie = locallab.spots.at(j).smoothcie && pSpot.smoothcie == otherSpot.smoothcie;
                 locallab.spots.at(j).smoothcietrc = locallab.spots.at(j).smoothcietrc && pSpot.smoothcietrc == otherSpot.smoothcietrc;
+                locallab.spots.at(j).smoothcietrcrel = locallab.spots.at(j).smoothcietrcrel && pSpot.smoothcietrcrel == otherSpot.smoothcietrcrel;
                 locallab.spots.at(j).smoothcieyb = locallab.spots.at(j).smoothcieyb && pSpot.smoothcieyb == otherSpot.smoothcieyb;
                 locallab.spots.at(j).smoothcielum = locallab.spots.at(j).smoothcielum && pSpot.smoothcielum == otherSpot.smoothcielum;
                 locallab.spots.at(j).smoothciehigh = locallab.spots.at(j).smoothciehigh && pSpot.smoothciehigh == otherSpot.smoothciehigh;
@@ -5997,6 +5998,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).smoothcietrc = mods.locallab.spots.at(i).smoothcietrc;
         }
 
+        if (locallab.spots.at(i).smoothcietrcrel) {
+            toEdit.locallab.spots.at(i).smoothcietrcrel = mods.locallab.spots.at(i).smoothcietrcrel;
+        }
+
         if (locallab.spots.at(i).smoothcieyb) {
             toEdit.locallab.spots.at(i).smoothcieyb = mods.locallab.spots.at(i).smoothcieyb;
         }
@@ -8511,6 +8516,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     logcieq(v),
     smoothcie(v),
     smoothcietrc(v),
+    smoothcietrcrel(v),
     smoothcieyb(v),
     smoothcielum(v),
     smoothciehigh(v),
@@ -9275,6 +9281,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     logcieq = v;
     smoothcie = v;
     smoothcietrc = v;
+    smoothcietrcrel = v;
     smoothcieyb = v;
     smoothcielum = v;
     smoothciehigh = v;
