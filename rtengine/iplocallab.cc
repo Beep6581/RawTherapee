@@ -2613,7 +2613,7 @@ float do_get(float x, bool rolloff_, float mid_gray_scene, float gamma, float sl
     if (rolloff_ && x <= mid_gray_scene / slopelim) {//general smooth - till Yb scene
         return x;
     } else {
-        return rolloff_function(scene_contrast(x, mid_gray_scene, gamma), dr, b, c, kmid);//simulate polynomial power function with a slope to begin
+        return rolloff_function(scene_contrast(x, mid_gray_scene / slopelim, gamma), dr, b, c, kmid);//simulate polynomial power function with a slope to begin
     }
 }
 

@@ -3577,7 +3577,7 @@ TP_LOCALLAB_SLOPESMOOTRCG;Green balance (TRC)
 TP_LOCALLAB_SLOPESMOOTRCB;Blue balance (TRC)
 TP_LOCALLAB_SLOSH;Slope
 TP_LOCALLAB_SMOOTHCIE;Highlight attenuation
-TP_LOCALLAB_SMOOTHCIETH;Highlight attenuation threshold
+TP_LOCALLAB_SMOOTHCIETH;Attenuation threshold
 TP_LOCALLAB_SMOOTHCIE_HIGH;Highlight attenuation only
 TP_LOCALLAB_SMOOTHCIE_TRC;Increase gamma-based attenuation
 TP_LOCALLAB_SMOOTHCIE_TRCREL;Relative gamma mode
