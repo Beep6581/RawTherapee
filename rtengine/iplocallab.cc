@@ -2619,7 +2619,7 @@ float do_get(float x, bool rolloff_, float mid_gray_scene, float gamma, float sl
 
 //Copyright (c) 2023 Thatcher Freeman
 // Adapted to Rawtherapee Jacques Desmis 25 mars 2024
-void tonemapFreeman(float target_slope, float target_sloper, float target_slopeg , float target_slopeb, float white_point, float black_point, float mid_gray_scene, float mid_gray_view, bool rolloff, bool limslope, LUTf& lut, LUTf& lutr, LUTf& lutg, LUTf& lutb, int mode, bool scale, bool takeyb)
+void tonemapFreeman(float target_slope, float target_sloper, float target_slopeg , float target_slopeb, float white_point, float black_point, float mid_gray_scene, float mid_gray_view, bool rolloff, float smooththreshold, bool limslope, LUTf& lut, LUTf& lutr, LUTf& lutg, LUTf& lutb, int mode, bool scale, bool takeyb)
 {
     float dr;//Dynamic Range
     float b;
@@ -2675,9 +2675,10 @@ void tonemapFreeman(float target_slope, float target_sloper, float target_slopeg
         if(limslope) {
             rolloff = true;
             
-            sloplimr *= target_sloper;
-            sloplimg *= target_slopeg;
-            sloplimb *= target_slopeb;
+            sloplimr *= smooththreshold;
+            sloplimg *= smooththreshold;
+            sloplimb *= smooththreshold;
+            /*
             if(sloplimr > 1.f) {
                 sloplimr = 1.f;
             }
@@ -2687,6 +2688,7 @@ void tonemapFreeman(float target_slope, float target_sloper, float target_slopeg
             if(sloplimb > 1.f) {
                 sloplimb = 1.f;
             }
+            */
         }
         for (int i = 0; i < 65536; ++i) {// i - value image RGB
             lutr[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_scene_, gammar, sloplimr, dr, b, c, kmid);//call main function
@@ -20388,7 +20390,7 @@ void ImProcFunctions::Lab_Local(
                             slopsmootg = 1.f - (ksg - 1.f);
                             slopsmootb = 1.f - (ksb - 1.f);
                         }
-                        
+                        float smooththreshold = params->locallab.spots.at(sp).smoothcieth;
                         bool takeyb = params->locallab.spots.at(sp).smoothcieyb;
                         bool lummod = params->locallab.spots.at(sp).smoothcielum;
                         bool lumhigh = params->locallab.spots.at(sp).smoothciehigh;
@@ -20438,7 +20440,7 @@ void ImProcFunctions::Lab_Local(
                         if(gambas && lp.smoothciem == 5) {
                            limslope = true;
                         }
-                        tonemapFreeman(slopegray, slopegrayr, slopegrayg, slopegrayb, white_point, black_point, mid_gray, mid_gray_view, rolloff, limslope, lut, lutr, lutg, lutb, mode, scale, takeyb);
+                        tonemapFreeman(slopegray, slopegrayr, slopegrayg, slopegrayb, white_point, black_point, mid_gray, mid_gray_view, rolloff, smooththreshold, limslope, lut, lutr, lutg, lutb, mode, scale, takeyb);
                         if(lp.smoothciem == 4 || (gambas && lp.smoothciem == 5)) {
                             if(lummod  && lp.smoothciem == 4) {//luminosity mode by Lab conversion
  #ifdef _OPENMP

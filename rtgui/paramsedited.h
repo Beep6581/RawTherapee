@@ -1085,6 +1085,7 @@ public:
         bool strcielog;
         bool comprcieth;
         bool gamjcie;
+        bool smoothcieth;
         bool slopjcie;
         bool slopesmo;
         bool slopesmor;
