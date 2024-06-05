@@ -10361,7 +10361,7 @@ void Locallabcie::updatesigloc(const float cont_sig, const float light_sig)
 
 
 
-void Locallabcie::updateiPrimloc(const float r_x, const float r_y, const float g_x, const float g_y, const float b_x, const float b_y, const float w_x, const float w_y, const float m_x, const float m_y,  const float me_x, const float me_y, const int pri_)
+void Locallabcie::updateiPrimloc(const float r_x, const float r_y, const float g_x, const float g_y, const float b_x, const float b_y, const float w_x, const float w_y, const float m_x, const float m_y,  const float me_x, const float me_y, const int pri_, const float slg, const bool lkg)
 {
     nextrx = r_x;
     nextry = r_y;
@@ -10387,7 +10387,7 @@ void Locallabcie::updateiPrimloc(const float r_x, const float r_y, const float g
     nextmy = 1.81818f * (nextmy + 0.1f) - 1.f;
 
     idle_register.add(
-    [this, r_x, r_y, g_x, g_y, b_x, b_y]() -> bool {
+    [this, r_x, r_y, g_x, g_y, b_x, b_y, slg, lkg]() -> bool {
         GThreadLock lock;
         disableListener();
 
@@ -10398,6 +10398,13 @@ void Locallabcie::updateiPrimloc(const float r_x, const float r_y, const float g
         bluxl->setValue(b_x);
         bluyl->setValue(b_y);
         labgridcie->setParams(nextrx, nextry, nextbx, nextby, nextgx, nextgy, nextwx, nextwy, nextmx, nextmy, false);
+        if(lkg) {
+            slopesmor->setValue(slg);
+            slopesmob->setValue(slg);
+            adjusterChanged(slopesmor, 0.);
+            adjusterChanged(slopesmob, 0.);
+
+        }
         enableListener();
         return false;
     }

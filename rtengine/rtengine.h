@@ -449,6 +449,8 @@ public:
         double meanxelc;
         double meanyelc;
         int primlc;
+        double slopeglc;
+        bool linkrgblc;
     };
 
 //select spot settings 

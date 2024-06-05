@@ -1380,7 +1380,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 if(params->locallab.spots.at(sp).complexcie == 2) {
                     params->locallab.spots.at(sp).primMethod = prof;//in Basic mode set to Working profile
                 }
-                    
+                float slopeg = 1.f;
+                bool linkrgb = true;
                 ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv.get(), savenormtm.get(), savenormreti.get(), lastorigimp.get(), fw, fh, 0, 0, pW, pH, scale, locRETgainCurve, locRETtransCurve,
                               lllocalcurve, locallutili,
                               cllocalcurve, localclutili,
@@ -1436,7 +1437,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                               meantm, stdtm, meanreti, stdreti, fab, maxicam, rdx, rdy, grx, gry, blx, bly, meanx, meany, meanxe, meanye, prim, ill, contsig, lightsig,
-                              highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46);
+                              highresi, nresi, highresi46, nresi46, Lhighresi, Lnresi, Lhighresi46, Lnresi46, slopeg, linkrgb);
 
 
                 fabrefp[sp] = fab;
@@ -1539,6 +1540,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 loccielc.meanylc = meany;
                 loccielc.meanxelc = meanxe;
                 loccielc.meanyelc = meanye;
+                loccielc.slopeglc = slopeg;
+                loccielc.linkrgblc = linkrgb;
                 locallcielc.push_back(loccielc);
 
                 LocallabListener::locallabcieSIG locciesig;

@@ -13865,7 +13865,7 @@ void ImProcFunctions::Lab_Local(
     bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, int llcieMask,
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax,
     float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, int &prim, int &ill, float &contsig, float &lightsig,
-    float& highresi, float& nresi, float& highresi46, float& nresi46, float& Lhighresi, float& Lnresi, float& Lhighresi46, float& Lnresi46
+    float& highresi, float& nresi, float& highresi46, float& nresi46, float& Lhighresi, float& Lnresi, float& Lhighresi46, float& Lnresi46, float &slopeg, bool &linkrgb
 
     )
 {
@@ -20385,6 +20385,8 @@ void ImProcFunctions::Lab_Local(
                         float slopsmootr = 1.f - ((float) params->locallab.spots.at(sp).slopesmor - 1.f);
                         float slopsmootg = 1.f - ((float) params->locallab.spots.at(sp).slopesmog - 1.f);
                         float slopsmootb = 1.f - ((float) params->locallab.spots.at(sp).slopesmob - 1.f);
+                        slopeg = params->locallab.spots.at(sp).slopesmog; 
+                        linkrgb = params->locallab.spots.at(sp).smoothcielnk;
                         if(gambas  && lp.smoothciem == 5) {
                             slopsmootr = 1.f - (ksr - 1.f);
                             slopsmootg = 1.f - (ksg - 1.f);
