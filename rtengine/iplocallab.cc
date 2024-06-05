@@ -2594,21 +2594,21 @@ SOFTWARE.
 // I also took some code from Alberto Grigio
 */
 //Copyright (c) 2023 Thatcher Freeman
-// Adapted to Rawtherapee Jacques Desmis mars 2024  jdesmis@gmail.com
+// Adapted to Rawtherapee Jacques Desmis mars / june 2024  jdesmis@gmail.com
 
-float rolloff_function(float x, float dr, float b, float c, float kmid)
+float ImProcFunctions::rolloff_function(float x, float dr, float b, float c, float kmid)
 {
     return (dr * (x / (x + b)) + c) * kmid;//Simple sigmoid (rather a polynomial asymptotic power function) ponderate with kmid - take into account if need Mean Yb scene and Mean Yb viewing and slope value
 }
 //Copyright (c) 2023 Thatcher Freeman
 // Adapted to Rawtherapee Jacques Desmis mars 2024  jdesmis@gmail.com
-float scene_contrast(float x, float mid_gray_scene, float gamma)
+float ImProcFunctions::scene_contrast(float x, float mid_gray_scene, float gamma)
 {
     return mid_gray_scene * std::pow(x / mid_gray_scene, gamma);//apply gamma
 }
 //Copyright (c) 2023 Thatcher Freeman
 // Adapted to Rawtherapee Jacques Desmis mars 2024  jdesmis@gmail.com
-float do_get(float x, bool rolloff_, float mid_gray_scene, float gamma, float slopelim, float dr, float b, float c, float kmid)
+float ImProcFunctions::do_get(float x, bool rolloff_, float mid_gray_scene, float gamma, float slopelim, float dr, float b, float c, float kmid)
 {
     if (rolloff_ && x <= mid_gray_scene / slopelim) {//general smooth - till Yb scene
         return x;
@@ -2618,8 +2618,8 @@ float do_get(float x, bool rolloff_, float mid_gray_scene, float gamma, float sl
 }
 
 //Copyright (c) 2023 Thatcher Freeman
-// Adapted to Rawtherapee Jacques Desmis 25 mars 2024
-void tonemapFreeman(float target_slope, float target_sloper, float target_slopeg , float target_slopeb, float white_point, float black_point, float mid_gray_scene, float mid_gray_view, bool rolloff, float smooththreshold, bool limslope, LUTf& lut, LUTf& lutr, LUTf& lutg, LUTf& lutb, int mode, bool scale, bool takeyb)
+// Adapted to Rawtherapee Jacques Desmis 25 mars  - 5 june 2024
+void ImProcFunctions::tonemapFreeman(float target_slope, float target_sloper, float target_slopeg , float target_slopeb, float white_point, float black_point, float mid_gray_scene, float mid_gray_view, bool rolloff, float smooththreshold, bool limslope, LUTf& lut, LUTf& lutr, LUTf& lutg, LUTf& lutb, int mode, bool scale, bool takeyb)
 {
     float dr;//Dynamic Range
     float b;
