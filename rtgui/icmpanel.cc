@@ -257,12 +257,19 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wsmoothcieconn = wsmoothcie->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::wsmoothcieChanged));
     wsmoothcie->set_active(false);
 
+    smoothFramecie = Gtk::manage(new Gtk::Frame(M("TP_ICM_SMOOTHFRAME")));
+    smoothFramecie->set_label_align(0.025, 0.5);
+    Gtk::Box *smoothVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+
     wsmoothBox = Gtk::manage(new Gtk::Box());
-    wsmoothlab = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_SMOOTH") + ":"));
-    wsmoothBox->pack_start(*wsmoothlab, Gtk::PACK_SHRINK);
+   // wsmoothlab = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_SMOOTH") + ":"));
+   // wsmoothBox->pack_start(*wsmoothlab, Gtk::PACK_SHRINK);
     wsmooth = Gtk::manage(new MyComboBoxText());
     wsmoothBox->pack_start(*wsmooth, Gtk::PACK_EXPAND_WIDGET);
-    trcProfVBox->pack_start(*wsmoothBox, Gtk::PACK_EXPAND_WIDGET);
+    smoothVBox->pack_start(*wsmoothBox);
+    smoothFramecie->add(*smoothVBox);
+    
+    trcProfVBox->pack_start(*smoothFramecie, Gtk::PACK_EXPAND_WIDGET);
     wsmooth->append(M("TP_LOCALLAB_CIE_SMOOTH_NONE"));
     wsmooth->append(M("TP_LOCALLAB_CIE_SMOOTH_EV"));
     wsmooth->append(M("TP_LOCALLAB_CIE_SMOOTH_GAMMA ROLLOFF"));

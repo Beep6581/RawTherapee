@@ -49,7 +49,8 @@ protected:
     Gtk::Frame* dcpFrame;
     Gtk::Frame* coipFrame;
     Gtk::Frame* redFrame;
-    Gtk::Frame* colorFramecie;    
+    Gtk::Frame* colorFramecie;
+    Gtk::Frame* smoothFramecie;
     MyExpander* trcExp;
 
     Adjuster* wGamma;
