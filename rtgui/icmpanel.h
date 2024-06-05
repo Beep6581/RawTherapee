@@ -108,6 +108,7 @@ private:
     rtengine::ProcEvent EvICMslop;
     rtengine::ProcEvent EvICMtrcinMethod;
     rtengine::ProcEvent EvICMwillMethod;
+    rtengine::ProcEvent EvICMwsmoothMethod;
     rtengine::ProcEvent EvICMwprimMethod;
     rtengine::ProcEvent EvICMredx;
     rtengine::ProcEvent EvICMredy;
@@ -129,6 +130,10 @@ private:
     rtengine::ProcEvent EvICMwsmoothcie;
     LabGrid *labgridcie;
     IdleRegister idle_register;
+
+    Gtk::Box* wsmoothBox;
+    Gtk::Label* wsmoothlab;
+
 
     Gtk::Box* willuBox;
     Gtk::Label* willulab;
@@ -165,6 +170,8 @@ private:
     sigc::connection wprofnamesconn;
     MyComboBoxText* wTRC;
     sigc::connection wtrcconn;
+    MyComboBoxText* wsmooth;
+    sigc::connection wsmoothconn;
     MyComboBoxText* will;
     sigc::connection willconn;
     MyComboBoxText* wprim;
@@ -223,6 +230,7 @@ public:
 
     void wpChanged();
     void wtrcinChanged();
+    void wsmoothChanged();
     void willChanged();
     void wprimChanged();
     void wcatChanged();
