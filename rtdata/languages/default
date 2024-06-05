@@ -1479,6 +1479,7 @@ HISTORY_MSG_LOCAL_CIE_KSLOPESMOG;Local CIECAM - Green TRC balance
 HISTORY_MSG_LOCAL_CIE_KSLOPESMOB;Local CIECAM - Blue TRCb balance
 HISTORY_MSG_LOCAL_CIE_SMOOTHMET;Local CIECAM - Smooth lights method
 HISTORY_MSG_LOCAL_CIE_SMOOTHTH;Local CIECAM - Attenation threshold
+HISTORY_MSG_LOCAL_CIE_SMOOTHLNK;Local CIECAM - Link R G B
 HISTORY_MSG_LOCAL_CIE_STRGRAD;Local CIECAM - gradient strength L
 HISTORY_MSG_LOCAL_CIE_TRC;Local CIECAM - TRC
 HISTORY_MSG_LOCAL_CIE_REDXL;Local CIECAM - Red X
@@ -3569,14 +3570,16 @@ TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP;Allows you, in Automatic, when the dynamic 
 TP_LOCALLAB_SLOMASKCOL;Slope
 TP_LOCALLAB_SLOMASK_TOOLTIP;Adjusting Gamma and Slope can provide a soft and artifact-free transformation of the mask by progressively modifying 'L' to avoid any discontinuities.
 TP_LOCALLAB_SLOPESMOOTH;Gray balance (Slope)
-TP_LOCALLAB_SLOPESMOOTHR;Red balance (Slope)
-TP_LOCALLAB_SLOPESMOOTHG;Green balance (Slope)
-TP_LOCALLAB_SLOPESMOOTHB;Blue balance (Slope)
+TP_LOCALLAB_SLOPESMOOTHR;Red Slope
+TP_LOCALLAB_SLOPESMOOTHG;Green Slope (lead)
+TP_LOCALLAB_SLOPESMOOTHB;Blue Slope
 TP_LOCALLAB_SLOPESMOOTRCR;Red balance (TRC)
 TP_LOCALLAB_SLOPESMOOTRCG;Green balance (TRC)
 TP_LOCALLAB_SLOPESMOOTRCB;Blue balance (TRC)
 TP_LOCALLAB_SLOSH;Slope
 TP_LOCALLAB_SMOOTHCIE;Highlight attenuation
+TP_LOCALLAB_SMOOTHCIE_LNK;Link R & G & B
+
 TP_LOCALLAB_SMOOTHCIETH;Attenuation threshold
 TP_LOCALLAB_SMOOTHCIE_HIGH;Highlight attenuation only
 TP_LOCALLAB_SMOOTHCIE_TRC;Increase gamma-based attenuation
