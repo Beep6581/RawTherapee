@@ -26,6 +26,8 @@
 #include "options.h"
 #include "pathutils.h"
 #include "rtimage.h"
+#include "curveeditor.h"
+#include "curveeditorgroup.h"
 
 #include "../rtengine/dcp.h"
 #include "../rtengine/iccstore.h"
@@ -250,6 +252,19 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     trcProfVBox->pack_start(*wGamma, Gtk::PACK_SHRINK);
     wGamma->show();
     sigmatrc = Gtk::manage(new Adjuster(M("TP_WAVELET_SIGMAFIN"), 0.025, 2.5, 0.01, 1.));
+    opacityCurveEditorWL = new CurveEditorGroup(options.lastWaveletCurvesDir, M("TP_WAVELET_OPACITYWL"));
+    opacityCurveEditorWL->setCurveListener(this);
+
+    opacityShapeWL = static_cast<FlatCurveEditor*>(opacityCurveEditorWL->addCurve(CT_Flat, "", nullptr, false, false));
+    opacityShapeWL->setIdentityValue(0.);
+  //  opacityShapeWL->setResetCurve(FlatCurveType(default_params.opacityCurveWL.at(0)), default_params.opacityCurveWL);
+   // opacityShapeWL->setTooltip(M("TP_WAVELET_OPACITYWL_TOOLTIP"));
+   // opacityShapeWL->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
+
+    // This will add the reset button at the end of the curveType buttons
+    opacityCurveEditorWL->curveListComplete();
+    opacityCurveEditorWL->show();
+
     trcProfVBox->pack_start(*wSlope, Gtk::PACK_SHRINK);
     wSlope->show();
     trcProfVBox->pack_start(*wmidtcie, Gtk::PACK_SHRINK);
@@ -262,6 +277,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wavExp = Gtk::manage(new MyExpander(false, M("TP_ICM_WAVFRAME")));
     setExpandAlignProperties(wavExp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     trcWavVBox->pack_start(*sigmatrc, Gtk::PACK_SHRINK);
+    trcWavVBox->pack_start(*opacityCurveEditorWL, Gtk::PACK_SHRINK, 2);
 
     primExp = Gtk::manage(new MyExpander(false, M("TP_ICM_PRIMFRAME")));
     setExpandAlignProperties(primExp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);

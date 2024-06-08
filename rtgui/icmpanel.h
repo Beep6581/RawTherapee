@@ -26,6 +26,7 @@
 #include "guiutils.h"
 #include "popupbutton.h"
 #include "toolpanel.h"
+#include "curvelistener.h"
 
 #include "../rtengine/imagedata.h"
 
@@ -38,11 +39,18 @@ public:
 
 class LabGrid;
 
+class CurveEditor;
+class CurveEditorGroup;
+class DiagonalCurveEditor;
+class EditDataProvider;
+class FlatCurveEditor;
+
 class ICMPanel final :
     public ToolParamBlock,
     public FoldableToolPanel,
     public rtengine::AutoprimListener,
-    public AdjusterListener
+    public AdjusterListener,
+    public CurveListener
 {
 
 protected:
@@ -59,6 +67,8 @@ protected:
     Adjuster* wmidtcie;
     Gtk::CheckButton* wsmoothcie;
     Adjuster* sigmatrc;
+    CurveEditorGroup* opacityCurveEditorWL;
+    FlatCurveEditor* opacityShapeWL;
 
     Adjuster* redx;
     Adjuster* redy;
