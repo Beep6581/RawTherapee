@@ -220,6 +220,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     trcExp->set_tooltip_text(M("TP_ICM_TRCFRAME_TOOLTIP"));
     trcExp->signal_button_release_event().connect_notify ( sigc::bind ( sigc::mem_fun (this, &ICMPanel::foldAllButMe), trcExp) );
     trcExpconn = trcExp->signal_enabled_toggled().connect(sigc::mem_fun(*this, &ICMPanel::trcExpChanged));
+    Gtk::Box *trcPrimVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     wTRCBox = Gtk::manage(new Gtk::Box());
 
@@ -256,13 +257,16 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wsmoothcieconn = wsmoothcie->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::wsmoothcieChanged));
     wsmoothcie->set_active(false);
 
+    primExp = Gtk::manage(new MyExpander(false, M("TP_ICM_PRIMFRAME")));
+    setExpandAlignProperties(primExp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
     willuBox = Gtk::manage(new Gtk::Box());
     willulab = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_ILLU") + ":"));
 
     willuBox->pack_start(*willulab, Gtk::PACK_SHRINK);
     will = Gtk::manage(new MyComboBoxText());
     willuBox->pack_start(*will, Gtk::PACK_EXPAND_WIDGET);
-    trcProfVBox->pack_start(*willuBox, Gtk::PACK_EXPAND_WIDGET);
+    trcPrimVBox->pack_start(*willuBox, Gtk::PACK_EXPAND_WIDGET);
     will->append(M("TP_ICM_WORKING_ILLU_NONE"));
     will->append(M("TP_ICM_WORKING_ILLU_D41"));
     will->append(M("TP_ICM_WORKING_ILLU_D50"));
@@ -290,8 +294,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     gamut = Gtk::manage(new Gtk::CheckButton((M("TP_ICM_GAMUT"))));
     gamut->set_active(true);
 
-    trcProfVBox->pack_start(*wprimBox, Gtk::PACK_EXPAND_WIDGET);
-    trcProfVBox->pack_start(*fbw, Gtk::PACK_EXPAND_WIDGET);
+    trcPrimVBox->pack_start(*wprimBox, Gtk::PACK_EXPAND_WIDGET);
+    trcPrimVBox->pack_start(*fbw, Gtk::PACK_EXPAND_WIDGET);
 //    trcProfVBox->pack_start(*gamut, Gtk::PACK_EXPAND_WIDGET);
 
     neutral = Gtk::manage (new Gtk::Button (M ("TP_ICM_NEUTRAL")));
@@ -302,7 +306,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     neutralconn = neutral->signal_pressed().connect ( sigc::mem_fun (*this, &ICMPanel::neutral_pressed) );
     neutral->show();
 
-    trcProfVBox->pack_start (*neutral);
+    trcPrimVBox->pack_start (*neutral);
 
 
     wprim->append(M("TP_ICM_WORKING_PRIM_NONE"));
@@ -438,10 +442,15 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     aRendIntent->setSelected(1);
     aRendIntent->show();
     riaHBox->pack_start(*aRendIntent->buttonGroup, Gtk::PACK_EXPAND_PADDING);
+    trcPrimVBox->pack_start(*redFrame, Gtk::PACK_EXPAND_WIDGET);
 
+    primExp->add(*trcPrimVBox, false);
+    primExp->set_expanded(false);
+    primExp->setLevel (2);
+    
+    trcProfVBox->pack_start(*primExp, false, false);
 
     pack_start(*wFrame, Gtk::PACK_EXPAND_WIDGET);
-    trcProfVBox->pack_start(*redFrame, Gtk::PACK_EXPAND_WIDGET);
     trcExp->add(*trcProfVBox, false);
     trcExp->setLevel (2);
     pack_start(*trcExp, Gtk::PACK_EXPAND_WIDGET);
@@ -558,6 +567,7 @@ void ICMPanel::foldAllButMe (GdkEventButton* event, MyExpander *expander)
 {
     if (event->button == 3) {
         trcExp->set_expanded (trcExp == expander);
+       // primExp->set_expanded (primExp == expander);
     }
 }
 
@@ -874,6 +884,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     ConnectionBlocker trcExpconn_(trcExpconn);
     
     trcExp->set_expanded(false);
+    primExp->set_expanded(false);
 
     if (pp->icm.inputProfile.substr(0, 5) != "file:" && !ipDialog->get_filename().empty()) {
         ipDialog->set_filename(pp->icm.inputProfile);
