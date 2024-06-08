@@ -197,6 +197,10 @@ void Options::updatePaths()
         lastToneCurvesDir = preferredPath;
     }
 
+    if (lastIcmCurvesDir.empty() || !Glib::file_test(lastIcmCurvesDir, Glib::FILE_TEST_EXISTS) || !Glib::file_test(lastIcmCurvesDir, Glib::FILE_TEST_IS_DIR)) {
+        lastIcmCurvesDir = preferredPath;
+    }
+
     if (lastProfilingReferenceDir.empty() || !Glib::file_test(lastProfilingReferenceDir, Glib::FILE_TEST_EXISTS) || !Glib::file_test(lastProfilingReferenceDir, Glib::FILE_TEST_IS_DIR)) {
         lastProfilingReferenceDir = preferredPath;
     }
@@ -690,6 +694,7 @@ void Options::setDefaults()
     lastPFCurvesDir = "";
     lastHsvCurvesDir = "";
     lastToneCurvesDir = "";
+    lastIcmCurvesDir = "";
     lastVibranceCurvesDir = "";
     lastProfilingReferenceDir = "";
     lastBWCurvesDir = "";
@@ -2283,6 +2288,7 @@ void Options::readFromFile(Glib::ustring fname)
                 safeDirGet(keyFile, "Dialogs", "LastBWCurvesDir", lastBWCurvesDir);
 
                 safeDirGet(keyFile, "Dialogs", "LastToneCurvesDir", lastToneCurvesDir);
+                safeDirGet(keyFile, "Dialogs", "LastIcmCurvesDir", lastIcmCurvesDir);
                 safeDirGet(keyFile, "Dialogs", "LastVibranceCurvesDir", lastVibranceCurvesDir);
                 safeDirGet(keyFile, "Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);
                 safeDirGet(keyFile, "Dialogs", "LastLensProfileDir", lastLensProfileDir);
@@ -2777,6 +2783,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_string("Dialogs", "LastHsvCurvesDir", lastHsvCurvesDir);
         keyFile.set_string("Dialogs", "LastBWCurvesDir", lastBWCurvesDir);
         keyFile.set_string("Dialogs", "LastToneCurvesDir", lastToneCurvesDir);
+        keyFile.set_string("Dialogs", "LastIcmCurvesDir", lastIcmCurvesDir);
         keyFile.set_string("Dialogs", "LastVibranceCurvesDir", lastVibranceCurvesDir);
         keyFile.set_string("Dialogs", "LastProfilingReferenceDir", lastProfilingReferenceDir);
         keyFile.set_string("Dialogs", "LastLensProfileDir", lastLensProfileDir);

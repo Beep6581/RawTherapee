@@ -67,8 +67,8 @@ protected:
     Adjuster* wmidtcie;
     Gtk::CheckButton* wsmoothcie;
     Adjuster* sigmatrc;
-    CurveEditorGroup* opacityCurveEditorWL;
-    FlatCurveEditor* opacityShapeWL;
+    CurveEditorGroup* opacityCurveEditorWLI;
+    FlatCurveEditor* opacityShapeWLI;
 
     Adjuster* redx;
     Adjuster* redy;

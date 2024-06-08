@@ -2395,6 +2395,17 @@ ColorManagementParams::ColorManagementParams() :
     workingTRCSlope(12.92),
     wmidtcie(0.),
     sigmatrc(1.),
+    opacityCurveWLI{
+        static_cast<double>(FCT_MinMaxCPoints),
+        0.0,
+        0.50,
+        0.35,
+        0.35,
+        1.00,
+        0.50,
+        0.35,
+        0.35
+    },
     wsmoothcie(false),
     redx(0.7347),
     redy(0.2653),
