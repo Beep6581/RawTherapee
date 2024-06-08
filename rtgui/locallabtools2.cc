@@ -8434,7 +8434,7 @@ Locallabcie::Locallabcie():
     smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_GAMMA ROLLOFF"));
     smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_GAMMA"));
     smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_LEVELS"));
-    smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_LEVELSTRC"));
+   // smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_LEVELSTRC"));
     smoothciemet->set_active(0);
     ciesmoothBox->pack_start(*smoothBox);
     ciesmoothBox->pack_start(*slopesmo);
@@ -9670,8 +9670,8 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             smoothciemet->set_active(3);
         } else if (spot.smoothciemet == "level") {
             smoothciemet->set_active(4);
-        } else if (spot.smoothciemet == "leveltrc") {
-            smoothciemet->set_active(5);
+     //   } else if (spot.smoothciemet == "leveltrc") {
+     //       smoothciemet->set_active(5);
         }
 
 
@@ -10089,8 +10089,8 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.smoothciemet = "gamnorol";
         } else if (smoothciemet->get_active_row_number() == 4) {
             spot.smoothciemet = "level";
-        } else if (smoothciemet->get_active_row_number() == 5) {
-            spot.smoothciemet = "leveltrc";
+       // } else if (smoothciemet->get_active_row_number() == 5) {
+       //     spot.smoothciemet = "leveltrc";
         }
 
         if (illMethod->get_active_row_number() == 0) {
