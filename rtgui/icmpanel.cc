@@ -221,6 +221,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     trcExp->signal_button_release_event().connect_notify ( sigc::bind ( sigc::mem_fun (this, &ICMPanel::foldAllButMe), trcExp) );
     trcExpconn = trcExp->signal_enabled_toggled().connect(sigc::mem_fun(*this, &ICMPanel::trcExpChanged));
     Gtk::Box *trcPrimVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    Gtk::Box *trcWavVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     wTRCBox = Gtk::manage(new Gtk::Box());
 
@@ -256,6 +257,9 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wsmoothcie->show();
     wsmoothcieconn = wsmoothcie->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::wsmoothcieChanged));
     wsmoothcie->set_active(false);
+
+    wavExp = Gtk::manage(new MyExpander(false, M("TP_ICM_WAVFRAME")));
+    setExpandAlignProperties(wavExp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     primExp = Gtk::manage(new MyExpander(false, M("TP_ICM_PRIMFRAME")));
     setExpandAlignProperties(primExp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
@@ -429,6 +433,13 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
 
     wSlope->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
     wmidtcie->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+
+    wavExp->add(*trcWavVBox, false);
+    wavExp->set_expanded(false);
+    wavExp->setLevel (2);
+    trcProfVBox->pack_start(*wavExp, false, false);
+    
+    trcProfVBox->pack_start(*primExp, false, false);
 
     // Rendering intent
     riaHBox = Gtk::manage(new Gtk::Box());
@@ -885,6 +896,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     
     trcExp->set_expanded(false);
     primExp->set_expanded(false);
+    wavExp->set_expanded(false);
 
     if (pp->icm.inputProfile.substr(0, 5) != "file:" && !ipDialog->get_filename().empty()) {
         ipDialog->set_filename(pp->icm.inputProfile);
