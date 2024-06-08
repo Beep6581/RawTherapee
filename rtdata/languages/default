@@ -1440,6 +1440,7 @@ HISTORY_MSG_ICM_PRESER;Preserve neutral
 HISTORY_MSG_ICM_REDX;Primaries Red X
 HISTORY_MSG_ICM_REDY;Primaries Red Y
 HISTORY_MSG_ICM_REFI;Refinement Colors
+HISTORY_MSG_ICM_SIGMATRC;Local contrast Attenation response
 HISTORY_MSG_ICM_SHIFTX;Refinement Colors - shift x
 HISTORY_MSG_ICM_SHIFTY;Refinement Colors - shift y
 HISTORY_MSG_ICM_SMOOTHCIE;Smooth highlights

@@ -58,6 +58,8 @@ protected:
     Adjuster* wSlope;
     Adjuster* wmidtcie;
     Gtk::CheckButton* wsmoothcie;
+    Adjuster* sigmatrc;
+
     Adjuster* redx;
     Adjuster* redy;
     Adjuster* grex;
@@ -129,6 +131,7 @@ private:
     rtengine::ProcEvent EvICMshifty;
     rtengine::ProcEvent EvICMwmidtcie;
     rtengine::ProcEvent EvICMwsmoothcie;
+    rtengine::ProcEvent EvICMsigmatrc;
     LabGrid *labgridcie;
     IdleRegister idle_register;
 
