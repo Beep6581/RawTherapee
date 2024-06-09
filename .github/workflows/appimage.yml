@@ -35,7 +35,20 @@ jobs:
           echo "Running apt update."
           sudo apt update
           echo "Installing dependencies with apt."
-          DEBIAN_FRONTEND=noninteractive sudo apt install -y cmake libgtk-3-dev libgtkmm-3.0-dev liblensfun-dev librsvg2-dev liblcms2-dev libfftw3-dev libiptcdata0-dev libtiff5-dev libcanberra-gtk3-dev liblensfun-bin libexpat1-dev libbrotli-dev zlib1g-dev libinih-dev adwaita-icon-theme-full
+          DEBIAN_FRONTEND=noninteractive sudo apt install -y cmake libgtk-3-dev libgtkmm-3.0-dev liblensfun-dev librsvg2-dev liblcms2-dev libfftw3-dev libiptcdata0-dev libtiff5-dev libcanberra-gtk3-dev liblensfun-bin libexpat1-dev libbrotli-dev zlib1g-dev libinih-dev adwaita-icon-theme-full gettext libarchive-tools zstd libgif-dev libwebp-dev libwebpdemux2
+
+      - name: Install makedeb
+        run: |
+          echo "Installing makedeb..."
+          curl -Ss -qgb "" -fLC - --retry 3 --retry-delay 3 -o makedeb.deb \
+            "https://github.com/makedeb/makedeb/releases/download/v16.1.0-beta1/makedeb-beta_16.1.0-beta1_amd64_focal.deb"
+          DEBIAN_FRONTEND=noninteractive sudo dpkg -i makedeb.deb
+
+      - name: Install libjxl
+        working-directory: tools/makedeb
+        run: |
+          echo "Building and installing libjxl..."
+          makedeb -si --no-confirm -p PKGBUILD.libjxl
 
       - name: Install Exiv2
         run: |

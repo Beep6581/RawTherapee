@@ -41,7 +41,17 @@ jobs:
           echo "Running apt update."
           sudo apt update
           echo "Installing dependencies with apt."
-          DEBIAN_FRONTEND=noninteractive sudo apt install -y cmake libgtk-3-dev libgtkmm-3.0-dev liblensfun-dev librsvg2-dev liblcms2-dev libfftw3-dev libiptcdata0-dev libtiff5-dev libcanberra-gtk3-dev liblensfun-bin libexiv2-dev
+          DEBIAN_FRONTEND=noninteractive sudo apt install -y cmake libgtk-3-dev libgtkmm-3.0-dev liblensfun-dev librsvg2-dev liblcms2-dev libfftw3-dev libiptcdata0-dev libtiff5-dev libcanberra-gtk3-dev liblensfun-bin libexiv2-dev libtcmalloc-minimal4 libhwy0 libhwy-dev
+
+      - name: Install libjxl
+        run: |
+          echo "Downloading and installing libjxl..."
+          VERSION_UBUNTU=22.04
+          VERSION_JXL=0.10.2
+          curl -Ss -qgb "" -fLC - --retry 3 --retry-delay 3 -o libjxl-debs.tar.gz \
+            "https://github.com/libjxl/libjxl/releases/download/v${VERSION_JXL}/jxl-debs-amd64-ubuntu-${VERSION_UBUNTU}-v${VERSION_JXL}.tar.gz"
+          tar xf libjxl-debs.tar.gz
+          DEBIAN_FRONTEND=noninteractive sudo dpkg -i jxl_${VERSION_JXL}_amd64.deb libjxl-dev_${VERSION_JXL}_amd64.deb libjxl_${VERSION_JXL}_amd64.deb
 
       - name: Configure build
         run: |

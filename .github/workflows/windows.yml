@@ -53,6 +53,7 @@ jobs:
             fftw:p
             lensfun:p
             libiptcdata:p
+            libjxl:p
             exiv2:p
 
       - name: Configure build
