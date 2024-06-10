@@ -1269,30 +1269,24 @@ void Options::readFromFile(Glib::ustring fname)
                 }
 
                 // check and add extensions that are missing from config
-                static const std::vector<std::string> extensions_known = {
-                    "3fr", "arw", "arq", "cr2",  "cr3", "crf", "crw",  "dcr", "dng",
-                    "fff", "iiq", "jpg", "jpeg", "jxl", "kdc", "mef",  "mos", "mrw",
-                    "nef", "nrw", "orf", "ori",  "pef", "png", "raf",  "raw", "rw2",
-                    "rwl", "rwz", "sr2", "srf",  "srw", "tif", "tiff", "x3f"};
-
-                std::map<std::string, int> extensions_checked;
+                std::map<std::string, int> checkedExtensions;
 
                 if (parseExtensions.size() == parseExtensionsEnabled.size()) {
                     for (auto i = 0; i < parseExtensions.size(); ++i) {
-                        extensions_checked[parseExtensions[i]] = parseExtensionsEnabled[i];
+                        checkedExtensions[parseExtensions[i]] = parseExtensionsEnabled[i];
                     }
                 }
 
                 parseExtensions.clear();
                 parseExtensionsEnabled.clear();
 
-                for (auto const &i : extensions_known) {
-                    if (extensions_checked.count(i) == 0) {
-                        extensions_checked[i] = 1;
+                for (auto const &i : knownExtensions) {
+                    if (checkedExtensions.count(i) == 0) {
+                        checkedExtensions[i] = 1;
                     }
                 }
 
-                for (auto const &x : extensions_checked) {
+                for (auto const &x : checkedExtensions) {
                     parseExtensions.emplace_back(x.first);
                     parseExtensionsEnabled.emplace_back(x.second);
                 }

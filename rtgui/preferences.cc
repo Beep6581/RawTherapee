@@ -2687,8 +2687,29 @@ void Preferences::addExtPressed()
 
 void Preferences::delExtPressed()
 {
+    const Glib::RefPtr<Gtk::TreeSelection> selection = extensions->get_selection();
 
-    extensionModel->erase(extensions->get_selection()->get_selected());
+    if (!selection) {
+        return;
+    }
+
+    const Gtk::TreeModel::iterator selected = selection->get_selected();
+
+    if (!selected) {
+        return;
+    }
+
+    bool delOkay = true;
+    for (auto const &x : moptions.knownExtensions) {
+        if (x == (*selected)[extensionColumns.ext]) {
+            delOkay = false;
+            break;
+        }
+    }
+
+    if (delOkay) {
+        extensionModel->erase(selected);
+    }
 }
 
 void Preferences::moveExtUpPressed()

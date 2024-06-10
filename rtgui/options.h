@@ -310,6 +310,13 @@ public:
     int maxThumbnailWidth;
     std::size_t maxCacheEntries;
     int thumbInterp; // 0: nearest, 1: bilinear
+
+    std::vector<std::string> knownExtensions = {
+        "3fr", "arw", "arq", "cr2",  "cr3", "crf", "crw",  "dcr", "dng",
+        "fff", "iiq", "jpg", "jpeg", "jxl", "kdc", "mef",  "mos", "mrw",
+        "nef", "nrw", "orf", "ori",  "pef", "png", "raf",  "raw", "rw2",
+        "rwl", "rwz", "sr2", "srf",  "srw", "tif", "tiff", "x3f"};
+
     std::vector<Glib::ustring> parseExtensions;   // List containing all extensions type
     std::vector<int> parseExtensionsEnabled;      // List of bool to retain extension or not
     std::vector<Glib::ustring> parsedExtensions;  // List containing all retained extensions (lowercase)
