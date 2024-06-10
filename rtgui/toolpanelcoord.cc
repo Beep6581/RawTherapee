@@ -102,6 +102,9 @@ const std::vector<ToolTree> COLOR_PANEL_TOOLS = {
         .id = Tool::WHITE_BALANCE,
     },
     {
+        .id = Tool::ICM,
+    },
+    {
         .id = Tool::VIBRANCE,
     },
     {
@@ -128,9 +131,9 @@ const std::vector<ToolTree> COLOR_PANEL_TOOLS = {
     {
         .id = Tool::COLOR_TONING,
     },
-    {
-        .id = Tool::ICM,
-    },
+//    {
+//        .id = Tool::ICM,
+//    },
 };
 
 const std::vector<ToolTree> ADVANCED_PANEL_TOOLS = {

@@ -70,7 +70,6 @@ protected:
     Adjuster* sigmatrc;
     CurveEditorGroup* opacityCurveEditorWLI;
     FlatCurveEditor* opacityShapeWLI;
-//    FlatCurveEditor* opacityShapeWLI2;
 
     Adjuster* redx;
     Adjuster* redy;
@@ -145,7 +144,6 @@ private:
     rtengine::ProcEvent EvICMwsmoothcie;
     rtengine::ProcEvent EvICMsigmatrc;
     rtengine::ProcEvent EvICMopacityWLI;
-    rtengine::ProcEvent EvICMopacityWLI2;
 
     LabGrid *labgridcie;
     IdleRegister idle_register;

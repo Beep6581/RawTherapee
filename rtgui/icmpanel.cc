@@ -79,7 +79,6 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     EvICMwsmoothcie = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_SMOOTHCIE");
     EvICMsigmatrc = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_SIGMATRC");
     EvICMopacityWLI  = m->newEvent(GAMMA, "HISTORY_MSG_ICM_OPACITYW");
-    EvICMopacityWLI2  = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_OPACITYW2");
 
     isBatchMode = lastToneCurve = lastApplyLookTable = lastApplyBaselineExposureOffset = lastApplyHueSatMap = false;
 
@@ -195,7 +194,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     iVBox->pack_start(*saveRef, Gtk::PACK_SHRINK);
 
     iFrame->add(*iVBox);
-    pack_start(*iFrame, Gtk::PACK_EXPAND_WIDGET);
+//    pack_start(*iFrame, Gtk::PACK_EXPAND_WIDGET);
 
 
     // ---------------------------- Working profile
@@ -264,11 +263,6 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     opacityShapeWLI = static_cast<FlatCurveEditor*>(opacityCurveEditorWLI->addCurve(CT_Flat, "", nullptr, false, false));
     opacityShapeWLI->setIdentityValue(0.);
     opacityShapeWLI->setResetCurve(FlatCurveType(default_params.opacityCurveWLI.at(0)), default_params.opacityCurveWLI);
-   // opacityShapeWL->setTooltip(M("TP_WAVELET_OPACITYWL_TOOLTIP"));
-   // opacityShapeWL->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
-  //  opacityShapeWLI2 = static_cast<FlatCurveEditor*>(opacityCurveEditorWLI->addCurve(CT_Flat, "", nullptr, false, false));
-  //  opacityShapeWLI2->setIdentityValue(0.);
-   // opacityShapeWLI2->setResetCurve(FlatCurveType(default_params.opacityCurveWLI.at(0)), default_params.opacityCurveWLI);
 
     // This will add the reset button at the end of the curveType buttons
     opacityCurveEditorWLI->curveListComplete();
@@ -489,12 +483,14 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     
     trcProfVBox->pack_start(*primExp, false, false);
 
-    pack_start(*wFrame, Gtk::PACK_EXPAND_WIDGET);
+//    pack_start(*wFrame, Gtk::PACK_EXPAND_WIDGET);
     trcExp->add(*trcProfVBox, false);
     trcExp->setLevel (2);
     pack_start(*trcExp, Gtk::PACK_EXPAND_WIDGET);
     trcExp->set_expanded(false);
 
+    pack_start(*wFrame, Gtk::PACK_EXPAND_WIDGET);
+    pack_start(*iFrame, Gtk::PACK_EXPAND_WIDGET);
 
     // ---------------------------- Output profile
 
