@@ -471,7 +471,7 @@ void Options::setDefaults()
     curvebboxpos = 1;
     complexity = 2;
     spotmet = 0;
-    
+
     inspectorWindow = false;
     zoomOnScroll = true;
     prevdemo = PD_Sidecar;
@@ -580,8 +580,8 @@ void Options::setDefaults()
 
     rtSettings.darkFramesPath = "";
     rtSettings.flatFieldsPath = "";
-	rtSettings.cameraProfilesPath = "";
-	rtSettings.lensProfilesPath = "";
+    rtSettings.cameraProfilesPath = "";
+    rtSettings.lensProfilesPath = "";
 
 #ifdef _WIN32
     const gchar* sysRoot = g_getenv("SystemRoot");  // Returns e.g. "c:\Windows"
@@ -673,8 +673,8 @@ void Options::setDefaults()
     lastIccDir = rtSettings.iccDirectory;
     lastDarkframeDir = rtSettings.darkFramesPath;
     lastFlatfieldDir = rtSettings.flatFieldsPath;
-	lastCameraProfilesDir = rtSettings.cameraProfilesPath;
-	lastLensProfilesDir = rtSettings.lensProfilesPath;
+    lastCameraProfilesDir = rtSettings.cameraProfilesPath;
+    lastLensProfilesDir = rtSettings.lensProfilesPath;
 //  rtSettings.bw_complementary = true;
     // There is no reasonable default for curves. We can still suppose that they will take place
     // in a subdirectory of the user's own ProcParams presets, i.e. in a subdirectory
@@ -816,7 +816,7 @@ void Options::readFromFile(Glib::ustring fname)
                     rtSettings.cameraProfilesPath = keyFile.get_string("General", "CameraProfilesPath");
                 }
 
-				if (keyFile.has_key("General", "LensProfilesPath")) {
+                if (keyFile.has_key("General", "LensProfilesPath")) {
                     rtSettings.lensProfilesPath = keyFile.get_string("General", "LensProfilesPath");
                 }
 
@@ -2424,8 +2424,8 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_string("General", "Version", RTVERSION);
         keyFile.set_string("General", "DarkFramesPath", rtSettings.darkFramesPath);
         keyFile.set_string("General", "FlatFieldsPath", rtSettings.flatFieldsPath);
-		keyFile.set_string("General", "CameraProfilesPath", rtSettings.cameraProfilesPath);
-		keyFile.set_string("General", "LensProfilesPath", rtSettings.lensProfilesPath);
+        keyFile.set_string("General", "CameraProfilesPath", rtSettings.cameraProfilesPath);
+        keyFile.set_string("General", "LensProfilesPath", rtSettings.lensProfilesPath);
         keyFile.set_boolean("General", "Verbose", rtSettings.verbose);
         keyFile.set_integer("General", "Cropsleep", rtSettings.cropsleep);
         keyFile.set_double("General", "Reduchigh", rtSettings.reduchigh);

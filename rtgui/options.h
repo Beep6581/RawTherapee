@@ -331,7 +331,7 @@ public:
     bool overwriteOutputFile;
     int complexity;
     int spotmet;
-    
+
     bool inspectorWindow; // open inspector in separate window
     bool zoomOnScroll;    // translate scroll events to zoom
 
@@ -472,8 +472,8 @@ public:
     Glib::ustring lastIccDir;
     Glib::ustring lastDarkframeDir;
     Glib::ustring lastFlatfieldDir;
-	Glib::ustring lastCameraProfilesDir;
-	Glib::ustring lastLensProfilesDir;
+    Glib::ustring lastCameraProfilesDir;
+    Glib::ustring lastLensProfilesDir;
     Glib::ustring lastRgbCurvesDir;
     Glib::ustring lastLabCurvesDir;
     Glib::ustring lastRetinexDir;

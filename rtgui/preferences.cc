@@ -656,7 +656,7 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     Gtk::Grid* dirgrid = Gtk::manage(new Gtk::Grid());
     setExpandAlignProperties(dirgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
-	// Dark Frames Dir
+    // Dark Frames Dir
     Gtk::Label *dfLab = Gtk::manage(new Gtk::Label(M("PREFERENCES_DIRDARKFRAMES") + ":"));
     setExpandAlignProperties(dfLab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     darkFrameDir = Gtk::manage(new MyFileChooserButton(M("PREFERENCES_DIRDARKFRAMES"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
@@ -705,7 +705,7 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     dirgrid->attach_next_to(*cameraProfilesDirLabel, *clutsDirLabel, Gtk::POS_BOTTOM, 1, 1);
     dirgrid->attach_next_to(*cameraProfilesDir, *cameraProfilesDirLabel, Gtk::POS_RIGHT, 1, 1);
 
-	  //Lens Profiles Dir
+    //Lens Profiles Dir
     Gtk::Label *lensProfilesDirLabel = Gtk::manage(new Gtk::Label(M("PREFERENCES_LENSPROFILESDIR") + ":"));
     lensProfilesDirLabel->set_tooltip_text(M("PREFERENCES_LENSPROFILESDIR_TOOLTIP"));
     setExpandAlignProperties(lensProfilesDirLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
@@ -1111,7 +1111,7 @@ Gtk::Widget* Preferences::getGeneralPanel()
     workflowGrid->attach_next_to(*curveBBoxPosL, *flayoutlab, Gtk::POS_BOTTOM, 1, 1);
     workflowGrid->attach_next_to(*curveBBoxPosC, *editorLayout, Gtk::POS_BOTTOM, 1, 1);
     workflowGrid->attach_next_to(*curveBBoxPosRestartL, *lNextStart, Gtk::POS_BOTTOM, 1, 1);
-    
+
     curveBBoxPosS = Gtk::manage(new Gtk::ComboBoxText());
     setExpandAlignProperties(curveBBoxPosS, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
 
@@ -2013,8 +2013,8 @@ void Preferences::storePreferences()
 
     moptions.curvebboxpos = curveBBoxPosC->get_active_row_number();
     moptions.complexity = complexitylocal->get_active_row_number();
-    moptions.spotmet = spotlocal->get_active_row_number(); 
-    
+    moptions.spotmet = spotlocal->get_active_row_number();
+
     moptions.inspectorWindow = inspectorWindowCB->get_active();
     moptions.zoomOnScroll = zoomOnScrollCB->get_active();
     moptions.histogramPosition = ckbHistogramPositionLeft->get_active() ? 1 : 2;
@@ -2673,10 +2673,11 @@ void Preferences::addExtPressed()
 
     Gtk::TreeNodeChildren c = extensionModel->children();
 
-    for (size_t i = 0; i < c.size(); i++)
+    for (size_t i = 0; i < c.size(); i++) {
         if (c[i][extensionColumns.ext] == extension->get_text()) {
             return;
         }
+    }
 
     Gtk::TreeRow row = * (extensionModel->append());
 
