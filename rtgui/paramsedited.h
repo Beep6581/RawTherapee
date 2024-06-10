@@ -1312,6 +1312,8 @@ struct ColorManagementParamsEdited {
     bool workingTRCSlope;
     bool wmidtcie;
     bool sigmatrc;
+    bool opacityCurveWLI;
+    
     bool wsmoothcie;
     bool will;
     bool wprim;

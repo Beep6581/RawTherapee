@@ -2455,6 +2455,7 @@ bool ColorManagementParams::operator ==(const ColorManagementParams& other) cons
         && workingTRCSlope == other.workingTRCSlope
         && wmidtcie == other.wmidtcie
         && sigmatrc == other.sigmatrc
+        && opacityCurveWLI == other.opacityCurveWLI
         && wsmoothcie == other.wsmoothcie
         && redx == other.redx
         && redy == other.redy
@@ -2483,6 +2484,13 @@ bool ColorManagementParams::operator ==(const ColorManagementParams& other) cons
         && outputProfile == other.outputProfile
         && outputIntent == other.outputIntent
         && outputBPC == other.outputBPC;
+}
+
+void ColorManagementParams::getCurves(
+    WavOpacityCurveWL& opacityCurveLUTWL
+) const
+{
+    opacityCurveLUTWL.Set(this->opacityCurveWLI);
 }
 
 bool ColorManagementParams::operator !=(const ColorManagementParams& other) const
@@ -7746,6 +7754,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
             keyFile
         );
         
+        saveToKeyfile(!pedited || pedited->icm.opacityCurveWLI, "Color Management", "OpacityCurveWLI", icm.opacityCurveWLI, keyFile);
+        
         saveToKeyfile(!pedited || pedited->icm.workingTRCGamma, "Color Management", "WorkingTRCGamma", icm.workingTRCGamma, keyFile);
         saveToKeyfile(!pedited || pedited->icm.workingTRCSlope, "Color Management", "WorkingTRCSlope", icm.workingTRCSlope, keyFile);
         saveToKeyfile(!pedited || pedited->icm.wmidtcie, "Color Management", "Wmidtcie", icm.wmidtcie, keyFile);
@@ -10127,6 +10137,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color Management", "ApplyHueSatMap", icm.applyHueSatMap, pedited->icm.applyHueSatMap);
             assignFromKeyfile(keyFile, "Color Management", "DCPIlluminant", icm.dcpIlluminant, pedited->icm.dcpIlluminant);
             assignFromKeyfile(keyFile, "Color Management", "WorkingProfile", icm.workingProfile, pedited->icm.workingProfile);
+            assignFromKeyfile(keyFile, "Color Management", "OpacityCurveWLI", icm.opacityCurveWLI, pedited->icm.opacityCurveWLI);
+
             if (
                 !assignFromKeyfile(
                     keyFile,

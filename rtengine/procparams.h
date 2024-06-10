@@ -2099,6 +2099,11 @@ struct ColorManagementParams {
 
     bool operator ==(const ColorManagementParams& other) const;
     bool operator !=(const ColorManagementParams& other) const;
+    
+    void getCurves(
+    WavOpacityCurveWL& opacityCurveLUTWL
+    ) const;
+
 };
 
 /**

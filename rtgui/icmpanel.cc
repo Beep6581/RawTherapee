@@ -28,6 +28,8 @@
 #include "rtimage.h"
 #include "curveeditor.h"
 #include "curveeditorgroup.h"
+#include "editcallbacks.h"
+#include <unistd.h>
 
 #include "../rtengine/dcp.h"
 #include "../rtengine/iccstore.h"
@@ -40,7 +42,8 @@ using namespace rtengine::procparams;
 const Glib::ustring ICMPanel::TOOL_NAME = "icm";
 
 ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iunchanged(nullptr), icmplistener(nullptr)
-{
+{    
+    CurveListener::setMulti(true);
     auto m = ProcEventMapper::getInstance();
     EvICMprimariMethod = m->newEvent(GAMMA, "HISTORY_MSG_ICM_OUTPUT_PRIMARIES");
     EvICMprofileMethod = m->newEvent(GAMMA, "HISTORY_MSG_ICM_OUTPUT_TYPE");
@@ -75,7 +78,9 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     EvICMwmidtcie = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_MIDTCIE");
     EvICMwsmoothcie = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_SMOOTHCIE");
     EvICMsigmatrc = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_SIGMATRC");
-    
+    EvICMopacityWLI  = m->newEvent(GAMMA, "HISTORY_MSG_ICM_OPACITYW");
+    EvICMopacityWLI2  = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_OPACITYW2");
+
     isBatchMode = lastToneCurve = lastApplyLookTable = lastApplyBaselineExposureOffset = lastApplyHueSatMap = false;
 
     ipDialog = Gtk::manage(new MyFileChooserButton(M("TP_ICM_INPUTDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
@@ -254,12 +259,16 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     sigmatrc = Gtk::manage(new Adjuster(M("TP_WAVELET_SIGMAFIN"), 0.025, 2.5, 0.01, 1.));
     opacityCurveEditorWLI = new CurveEditorGroup(options.lastIcmCurvesDir, M("TP_ICM_OPACITYWLI"));
     opacityCurveEditorWLI->setCurveListener(this);
+    const ColorManagementParams default_params;
 
     opacityShapeWLI = static_cast<FlatCurveEditor*>(opacityCurveEditorWLI->addCurve(CT_Flat, "", nullptr, false, false));
     opacityShapeWLI->setIdentityValue(0.);
-  //  opacityShapeWL->setResetCurve(FlatCurveType(default_params.opacityCurveWL.at(0)), default_params.opacityCurveWL);
+    opacityShapeWLI->setResetCurve(FlatCurveType(default_params.opacityCurveWLI.at(0)), default_params.opacityCurveWLI);
    // opacityShapeWL->setTooltip(M("TP_WAVELET_OPACITYWL_TOOLTIP"));
    // opacityShapeWL->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
+  //  opacityShapeWLI2 = static_cast<FlatCurveEditor*>(opacityCurveEditorWLI->addCurve(CT_Flat, "", nullptr, false, false));
+  //  opacityShapeWLI2->setIdentityValue(0.);
+   // opacityShapeWLI2->setResetCurve(FlatCurveType(default_params.opacityCurveWLI.at(0)), default_params.opacityCurveWLI);
 
     // This will add the reset button at the end of the curveType buttons
     opacityCurveEditorWLI->curveListComplete();
@@ -686,6 +695,8 @@ void ICMPanel::updateRenderingIntent(const Glib::ustring &profile)
 ICMPanel::~ICMPanel()
 {
     idle_register.destroy();
+    delete opacityCurveEditorWLI;
+
 }
 
 void ICMPanel::primChanged (float rx, float ry, float bx, float by, float gx, float gy)
@@ -752,7 +763,8 @@ void ICMPanel::iprimChanged (float r_x, float r_y, float b_x, float b_y, float g
 
 void ICMPanel::setEditProvider(EditDataProvider *provider)
 {
-    //in case of
+    opacityShapeWLI->setEditProvider(provider);
+
 }
 
 void ICMPanel::setListener(ToolPanelListener *tpl)
@@ -978,6 +990,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
 
     oRendIntent->setSelected(pp->icm.outputIntent);
     aRendIntent->setSelected(pp->icm.aRendIntent);
+    opacityShapeWLI->setCurve(pp->icm.opacityCurveWLI);
 
     obpc->set_active(pp->icm.outputBPC);
     fbw->set_active(pp->icm.fbw);
@@ -1058,6 +1071,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         }
         
         labgridcie->setEdited(pedited->icm.labgridcieALow || pedited->icm.labgridcieBLow || pedited->icm.labgridcieAHigh || pedited->icm.labgridcieBHigh  || pedited->icm.labgridcieGx  || pedited->icm.labgridcieGy || pedited->icm.labgridcieWx  || pedited->icm.labgridcieWy || pedited->icm.labgridcieMx || pedited->icm.labgridcieMy);
+        opacityShapeWLI->setCurve(pp->icm.opacityCurveWLI);
 
         wGamma->setEditedState(pedited->icm.workingTRCGamma ? Edited : UnEdited);
         wSlope->setEditedState(pedited->icm.workingTRCSlope  ? Edited : UnEdited);
@@ -1402,6 +1416,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     pp->icm.shifty =  shifty->getValue();
     pp->toneCurve.fromHistMatching = false;
     pp->icm.preser =  preser->getValue();
+    pp->icm.opacityCurveWLI = opacityShapeWLI->getCurve();
 
     if (pedited) {
         pedited->icm.inputProfile = !iunchanged->get_active();
@@ -1430,9 +1445,22 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->icm.redx = redx->getEditedState();
         pedited->icm.redy = redy->getEditedState();
         pedited->icm.labgridcieALow = pedited->icm.labgridcieBLow = pedited->icm.labgridcieAHigh = pedited->icm.labgridcieBHigh = pedited->icm.labgridcieGx = pedited->icm.labgridcieGy = pedited->icm.labgridcieWx = pedited->icm.labgridcieWy = pedited->icm.labgridcieMx = pedited->icm.labgridcieMy = labgridcie->getEdited();
+        pedited->icm.opacityCurveWLI  = !opacityShapeWLI->isUnChanged();
+
    }
 }
 
+void ICMPanel::curveChanged(CurveEditor* ce)
+{
+
+    if (listener) {
+        if (ce == opacityShapeWLI) {
+            listener->panelChanged(EvICMopacityWLI, M("HISTORY_CUSTOMCURVE"));
+        } //else if (ce == opacityShapeWLI2) {
+          //  listener->panelChanged(EvICMopacityWLI2, M("HISTORY_CUSTOMCURVE"));
+        //}
+    }
+}
 void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedited)
 {
     wGamma->setDefault(defParams->icm.workingTRCGamma);
@@ -2568,6 +2596,8 @@ void ICMPanel::setBatchMode(bool batchMode)
     iunchanged->set_group(opts);
     iVBox->pack_start(*iunchanged, Gtk::PACK_SHRINK, 4);
     iVBox->reorder_child(*iunchanged, 5);
+    opacityCurveEditorWLI->setBatchMode(batchMode);
+
     removeIfThere(this, saveRef);
     oProfNames->append(M("GENERAL_UNCHANGED"));
     oRendIntent->addEntry("template-24", M("GENERAL_UNCHANGED"));

@@ -27,6 +27,7 @@
 #include "popupbutton.h"
 #include "toolpanel.h"
 #include "curvelistener.h"
+#include "thresholdadjuster.h"
 
 #include "../rtengine/imagedata.h"
 
@@ -47,10 +48,10 @@ class FlatCurveEditor;
 
 class ICMPanel final :
     public ToolParamBlock,
+    public CurveListener,
     public FoldableToolPanel,
     public rtengine::AutoprimListener,
-    public AdjusterListener,
-    public CurveListener
+    public AdjusterListener
 {
 
 protected:
@@ -69,6 +70,7 @@ protected:
     Adjuster* sigmatrc;
     CurveEditorGroup* opacityCurveEditorWLI;
     FlatCurveEditor* opacityShapeWLI;
+//    FlatCurveEditor* opacityShapeWLI2;
 
     Adjuster* redx;
     Adjuster* redy;
@@ -142,6 +144,9 @@ private:
     rtengine::ProcEvent EvICMwmidtcie;
     rtengine::ProcEvent EvICMwsmoothcie;
     rtengine::ProcEvent EvICMsigmatrc;
+    rtengine::ProcEvent EvICMopacityWLI;
+    rtengine::ProcEvent EvICMopacityWLI2;
+
     LabGrid *labgridcie;
     IdleRegister idle_register;
 
@@ -235,6 +240,7 @@ public:
     void primChanged (float rx, float ry, float bx, float by, float gx, float gy) override;
     void iprimChanged (float r_x, float r_y, float b_x, float b_y, float g_x, float g_y, float w_x, float w_y, float m_x, float m_y) override;
     void neutral_pressed();
+    void curveChanged(CurveEditor* ce) override;
 
     void wpChanged();
     void wtrcinChanged();
