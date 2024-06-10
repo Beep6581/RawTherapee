@@ -994,6 +994,13 @@ int ImageIO::loadJXL(const Glib::ustring &fname)
 
     return IMIO_SUCCESS;
 }
+
+// adapted from libjxl
+int ImageIO::saveJXL(const Glib::ustring &fname, float quality) const
+{
+    return IMIO_SUCCESS;
+}
+
 #undef _PROFILE_
 #endif // LIBJXL
 
@@ -1502,6 +1509,10 @@ int ImageIO::save (const Glib::ustring &fname) const
         return savePNG (fname);
     } else if (hasJpegExtension(fname)) {
         return saveJPEG (fname);
+#ifdef LIBJXL
+    } else if (hasJxlExtension(fname)) {
+        return saveJXL(fname);
+#endif
     } else if (hasTiffExtension(fname)) {
         return saveTIFF (fname);
     } else {

@@ -198,6 +198,8 @@ std::tuple<Glib::ustring, bool> BatchQueueEntry::getToolTip (int x, int y) const
                                                   saveFormat.jpegSubSamp == 1 ? M("SAVEDLG_SUBSAMP_1") :
                                                   saveFormat.jpegSubSamp == 2 ? M("SAVEDLG_SUBSAMP_2") :
                                                   M("SAVEDLG_SUBSAMP_3"));
+            } else if (saveFormat.format == "jxl") {
+                tooltip += Glib::ustring::compose("\n%1: %2", M("SAVEDLG_JXLQUAL"), saveFormat.jxlQuality);
             } else if (saveFormat.format == "tif") {
                 if (saveFormat.tiffUncompressed) {
                     tooltip += Glib::ustring::compose("\n%1", M("SAVEDLG_TIFFUNCOMPRESSED"));
