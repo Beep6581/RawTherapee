@@ -3400,7 +3400,7 @@ void ImProcFunctions::calckoe (const float* WavCoeffs, float gradw, float tloww,
 void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparams::WaveletParams & waparams, const procparams::ColorManagementParams & cmparams, const WavOpacityCurveWL & cmOpacityCurveWL, int skip)
 {
     bool wavcurvemask = false;
-
+    float sigmafin = cmparams.sigmatrc;
     if (cmOpacityCurveWL) {
         for (int i = 0; i < 500; i++) {
             if (cmOpacityCurveWL[i] != 0.5f) {
@@ -3412,15 +3412,15 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
     
     if(wavcurvemask) {
 #ifdef _OPENMP
-            const int numThreads = omp_get_max_threads();
+        const int numThreads = omp_get_max_threads();
 #else
-            const int numThreads = 1;
+        const int numThreads = 1;
 
 #endif
             int width = lab->W;
             int height = lab->H;
-            int wavelet_level = 8;
-            //int sk = 1;
+            int wavelet_level = 8;//to adapt if necessary
+
             int minwin = rtengine::min(width, height);
             int maxlevelspot = 10;//maximum possible
 
@@ -3446,13 +3446,13 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
             Evaluate2(*wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN, numThreads);
             float alow = 1.f;
             float blow = 0.f;
-            int level_bl = 0;
-            int level_hl = 0;
-            int level_br = maxlvl;
-            int level_hr = maxlvl;
+            int level_bl = 0;//to adapt if necessary
+            int level_hl = 0;//to adapt if necessary
+            int level_br = maxlvl;//to adapt if necessary
+            int level_hr = maxlvl;//to adapt if necessary
 
 
-            if (level_hl != level_bl) {
+            if (level_hl != level_bl) {//transitions low levels
                 alow = 1.f / (level_hl - level_bl);
                 blow = -alow * level_bl;
             }
@@ -3460,7 +3460,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
             float ahigh = 1.f;
             float bhigh = 0.f;
 
-            if (level_hr != level_br) {
+            if (level_hr != level_br) {//trnsitions high levels
                 ahigh = 1.f / (level_hr - level_br);
                 bhigh =  -ahigh * level_br;
             }
@@ -3474,11 +3474,11 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                     if (MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) {
                         float insigma = 0.666f; //SD
                         float logmax = log(MaxP[level]); //log Max
-                        float rapX = (mean[level] + sigma[level]) / MaxP[level]; //rapport between sD / max
+                        float rapX = (mean[level] + sigmafin * sigma[level]) / MaxP[level]; //rapport between sD / max
                         float inx = log(insigma);
                         float iny = log(rapX);
                         float rap = inx / iny; //koef
-                        float asig = 0.166f / (sigma[level]);
+                        float asig = 0.166f / (sigma[level] * sigmafin);
                         float bsig = 0.5f - asig * mean[level];
                         float amean = 0.5f / mean[level];
 
@@ -3491,7 +3491,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                                 float absciss;
                                 float &val = wav_L[dir][i];
 
-                                if (fabsf(val) >= (mean[level] + sigma[level])) { //for max
+                                if (fabsf(val) >= (mean[level] + sigmafin * sigma[level])) { //for max
                                     float valcour = xlogf(fabsf(val));
                                     float valc = valcour - logmax;
                                     float vald = valc * rap;
