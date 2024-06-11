@@ -2245,6 +2245,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         primListener->iprimChanged(r_x, r_y, b_x, b_y, g_x, g_y, wx, wy, meanx, meany);
                     }
                 }
+                
+                //code Wavelet nprevl->L, pW, pH));
             }
 
             if (params->colorappearance.enabled) {
