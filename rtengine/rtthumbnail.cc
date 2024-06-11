@@ -1618,6 +1618,14 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
                 labView->b[x][y] = 0.f;
             }
         }
+        if(params.icm.trcExp) {//local contrast
+            WaveletParams WaveParams = params.wavelet;
+            ColorManagementParams Colparams = params.icm;
+            IcmOpacityCurveWL icmOpacityCurveWL;
+
+            Colparams.getCurves(icmOpacityCurveWL);
+            ipf.localCont (labView, labView, WaveParams,Colparams, icmOpacityCurveWL, 1);
+        }
 
     }
 

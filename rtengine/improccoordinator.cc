@@ -2245,10 +2245,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         primListener->iprimChanged(r_x, r_y, b_x, b_y, g_x, g_y, wx, wy, meanx, meany);
                     }
                 }
-                WaveletParams WaveParams = params->wavelet;
-                ColorManagementParams Colparams = params->icm;
-                Colparams.getCurves(icmOpacityCurveWL);
-                ipf.localCont (nprevl, nprevl, WaveParams,Colparams, icmOpacityCurveWL, scale);
+                
+                if(params->icm.trcExp) {//local contrast
+                    WaveletParams WaveParams = params->wavelet;
+                    ColorManagementParams Colparams = params->icm;
+                    Colparams.getCurves(icmOpacityCurveWL);
+                    ipf.localCont (nprevl, nprevl, WaveParams,Colparams, icmOpacityCurveWL, scale);
+                }
 
                 //code Wavelet nprevl->L, pW, pH));
             }
