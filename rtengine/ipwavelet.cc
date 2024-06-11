@@ -3397,7 +3397,7 @@ void ImProcFunctions::calckoe (const float* WavCoeffs, float gradw, float tloww,
     }
 }
 
-void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparams::WaveletParams & waparams, const procparams::ColorManagementParams & cmparams, const WavOpacityCurveWL & cmOpacityCurveWL, int skip)
+void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparams::WaveletParams & waparams, const procparams::ColorManagementParams & cmparams, const IcmOpacityCurveWL & cmOpacityCurveWL, int skip)
 {
     bool wavcurvemask = false;
     float sigmafin = cmparams.sigmatrc;
@@ -3521,7 +3521,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                                 }
 
                                 float kc = klev * (cmOpacityCurveWL[absciss * 500.f] - 0.5f);
-                                float amplieffect = kc <= 0.f ? 1.f : 4.f;
+                                float amplieffect = kc <= 0.f ? 1.f : 1.5f;
 
                                 float kinterm = 1.f + amplieffect * kc;
                                 kinterm = kinterm <= 0.f ? 0.01f : kinterm;
@@ -3539,7 +3539,6 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
             delete wdspot;
 
     }
-
 
 }
 

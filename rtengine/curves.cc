@@ -2885,6 +2885,43 @@ void WavOpacityCurveWL::Set(const std::vector<double> &curvePoints)
     }
 }
 
+////
+IcmOpacityCurveWL::IcmOpacityCurveWL() {}
+
+void IcmOpacityCurveWL::Reset()
+{
+    lutIcmOpacityCurveWL.reset();
+}
+
+void IcmOpacityCurveWL::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        lutIcmOpacityCurveWL.reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutIcmOpacityCurveWL(501);  // raise this value if the quality suffers from this number of samples
+
+    for (int i = 0; i < 501; i++) {
+        lutIcmOpacityCurveWL[i] = pCurve.getVal(double (i) / 500.);
+    }
+}
+
+void IcmOpacityCurveWL::Set(const std::vector<double> &curvePoints)
+{
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        tcurve.setIdentityValue(0.);
+        Set(tcurve);
+    } else {
+        Reset();
+    }
+}
+
+
+
+
+////
 
 NoiseCurve::NoiseCurve() : sum(0.f) {}
 

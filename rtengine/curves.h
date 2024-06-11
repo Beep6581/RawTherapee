@@ -1611,6 +1611,31 @@ public:
     }
 };
 
+class IcmOpacityCurveWL
+{
+private:
+    LUTf lutIcmOpacityCurveWL;  // 0xffff range
+    void Set(const Curve &pCurve);
+
+public:
+    virtual ~IcmOpacityCurveWL() {};
+    IcmOpacityCurveWL();
+
+    void Reset();
+    void Set(const Curve *pCurve);
+    void Set(const std::vector<double> &curvePoints);
+    float operator[](float index) const
+    {
+        return lutIcmOpacityCurveWL[index];
+    }
+
+    operator bool (void) const
+    {
+        return lutIcmOpacityCurveWL;
+    }
+};
+
+
 class NoiseCurve
 {
 private:

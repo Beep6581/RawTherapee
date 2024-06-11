@@ -2487,10 +2487,10 @@ bool ColorManagementParams::operator ==(const ColorManagementParams& other) cons
 }
 
 void ColorManagementParams::getCurves(
-    WavOpacityCurveWL& opacityCurveLUTWL
+    IcmOpacityCurveWL& opacityCurveLUTWLI
 ) const
 {
-    opacityCurveLUTWL.Set(this->opacityCurveWLI);
+    opacityCurveLUTWLI.Set(this->opacityCurveWLI);
 }
 
 bool ColorManagementParams::operator !=(const ColorManagementParams& other) const
