@@ -46,6 +46,7 @@ constexpr typename std::underlying_type<ENUM>::type toUnderlying(ENUM value)
 }
 
 std::vector<std::uint8_t> getFileData(const Glib::ustring &filename);
+bool saveFileData(const Glib::ustring &filename, const std::vector<std::uint8_t> & data);
 
 // Return lower case extension without the "." or "" if the given name contains no "."
 Glib::ustring getFileExtension(const Glib::ustring& filename);

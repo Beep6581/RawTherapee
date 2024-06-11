@@ -27,7 +27,9 @@
 
 #ifdef LIBJXL
 #include "jxl/decode_cxx.h"
+#include "jxl/encode_cxx.h"
 #include "jxl/resizable_parallel_runner_cxx.h"
+#include <jxl/thread_parallel_runner_cxx.h>
 #endif
 
 #include <fcntl.h>
@@ -994,14 +996,129 @@ int ImageIO::loadJXL(const Glib::ustring &fname)
 
     return IMIO_SUCCESS;
 }
+#undef _PROFILE_
 
 // adapted from libjxl
 int ImageIO::saveJXL(const Glib::ustring &fname, float quality) const
 {
-    return IMIO_SUCCESS;
-}
+    if (getWidth() < 1 || getHeight() < 1) {
+        return IMIO_HEADERERROR;
+    }
 
-#undef _PROFILE_
+    if (pl) {
+        pl->setProgressStr("PROGRESSBAR_SAVEJXL");
+        pl->setProgress(0.0);
+    }
+
+    auto enc = JxlEncoderMake(nullptr);
+    JxlEncoderUseContainer(enc.get(), true);
+
+    auto runner =
+        JxlThreadParallelRunnerMake(nullptr, JxlThreadParallelRunnerDefaultNumWorkerThreads());
+
+    if (JxlEncoderSetParallelRunner(enc.get(), JxlThreadParallelRunner, runner.get()) !=
+            JXL_ENC_SUCCESS) {
+        std::cerr << "Error: JxlEncoderSetParallelRunner failed" << std::endl;
+        return IMIO_CANNOTWRITEFILE;
+    }
+
+    JxlBasicInfo basic_info;
+    JxlEncoderInitBasicInfo(&basic_info);
+    basic_info.uses_original_profile = false;
+    basic_info.xsize = width;
+    basic_info.ysize = height;
+
+    JxlPixelFormat pixel_format;
+    std::size_t size = 0;
+
+    pixel_format = JxlPixelFormat{3, JXL_TYPE_FLOAT, JXL_NATIVE_ENDIAN, 0};
+    basic_info.bits_per_sample = 32;
+    basic_info.exponent_bits_per_sample = 8;
+    size = 3 * 4 * width * height;
+
+    JxlBitDepth bitdepth = {
+        JXL_BIT_DEPTH_FROM_PIXEL_FORMAT, basic_info.bits_per_sample,
+        basic_info.exponent_bits_per_sample
+    };
+
+    JxlEncoderFrameSettings * frame_settings = JxlEncoderFrameSettingsCreate(enc.get(), nullptr);
+    JxlEncoderSetFrameLossless(frame_settings, false);
+
+    const float distance = JxlEncoderDistanceFromQuality(quality);
+    JxlEncoderSetFrameDistance(frame_settings, distance);
+    JxlEncoderSetFrameBitDepth(frame_settings, &bitdepth);
+
+    if (JxlEncoderSetBasicInfo(enc.get(), &basic_info) != JXL_ENC_SUCCESS) {
+        std::cerr << "Error: JxlEncoderSetBasicInfo failed" << std::endl;
+        return IMIO_CANNOTWRITEFILE;
+    }
+
+    // Always use sRGB for JXL.
+    // ICC doesn't work as desired/expected.
+    JxlColorEncoding color_encoding = {};
+    JxlColorEncodingSetToSRGB(&color_encoding, false);
+
+    if (JxlEncoderSetColorEncoding(enc.get(), &color_encoding) != JXL_ENC_SUCCESS) {
+        std::cerr << "Error: JxlEncoderSetColorEncoding failed" << std::endl;
+        return IMIO_CANNOTWRITEFILE;
+    }
+
+    std::vector<std::uint8_t> imagebuffer(4 * 3 * width * height);
+
+    for (int row = 0; row < height; row++) {
+        unsigned char *linebuffer = imagebuffer.data() + row * 4 * 3 * width;
+        getScanline(row, linebuffer, 32, true);
+
+        if (pl && !(row % 100)) {
+            pl->setProgress((double)(row + 1) / height);
+        }
+    }
+
+    if (JxlEncoderAddImageFrame(
+                frame_settings, &pixel_format, static_cast<const void *>(imagebuffer.data()), imagebuffer.size()
+            ) != JXL_ENC_SUCCESS
+       ) {
+        std::cerr << "Error: JxlEncoderAddImageFrame failed" << std::endl;
+        return IMIO_CANNOTWRITEFILE;
+    }
+
+    // TODO: Save Exif data
+    // JxlEncoderAddBox(enc.get(), "Exif", exif.data(), exif.size(), true);
+
+    JxlEncoderCloseInput(enc.get());
+
+    std::vector<std::uint8_t> output(1024 * 1024);
+
+    std::uint8_t * next_out = output.data();
+    std::size_t avail_out = output.size();
+
+    JxlEncoderStatus process_result = JXL_ENC_NEED_MORE_OUTPUT;
+
+    while (process_result == JXL_ENC_NEED_MORE_OUTPUT) {
+        process_result = JxlEncoderProcessOutput(enc.get(), &next_out, &avail_out);
+
+        if (process_result == JXL_ENC_NEED_MORE_OUTPUT) {
+            std::size_t offset = next_out - output.data();
+            output.resize(output.size() * 2);
+            next_out = output.data() + offset;
+            avail_out = output.size() - offset;
+        }
+    }
+
+    output.resize(next_out - output.data());
+
+    if (pl) {
+        pl->setProgressStr("PROGRESSBAR_READY");
+        pl->setProgress(1.0);
+    }
+
+    if (saveFileData(fname, output)) {
+        return IMIO_SUCCESS;
+    } else {
+        std::cerr << "Error: saveFileData failed" << std::endl;
+        return IMIO_CANNOTWRITEFILE;
+    }
+}
 #endif // LIBJXL
 
 int ImageIO::loadPPMFromMemory(const char* buffer, int width, int height, bool swap, int bps)

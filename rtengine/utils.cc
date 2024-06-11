@@ -241,6 +241,18 @@ std::vector<std::uint8_t> getFileData(const Glib::ustring &filename)
     }
 }
 
+bool saveFileData(const Glib::ustring &filename, const std::vector<std::uint8_t> & data) {
+  try {
+    const std::string fn = Glib::filename_from_utf8(filename);
+    std::ofstream outstream(fn, std::ios::out | std::ios::binary);
+    outstream.write(reinterpret_cast<const char *>(data.data()), sizeof(std::uint8_t) * data.size());
+    outstream.close();
+    return true;
+  } catch (...) {
+    return false;
+  }
+}
+
 Glib::ustring getFileExtension(const Glib::ustring& filename)
 {
     const Glib::ustring::size_type lastdot_pos = filename.find_last_of('.');
