@@ -2395,6 +2395,7 @@ ColorManagementParams::ColorManagementParams() :
     workingTRCSlope(12.92),
     wmidtcie(0.),
     sigmatrc(1.),
+    pyrwavtrc(1),
     opacityCurveWLI{
         static_cast<double>(FCT_MinMaxCPoints),
         0.0,
@@ -2455,6 +2456,7 @@ bool ColorManagementParams::operator ==(const ColorManagementParams& other) cons
         && workingTRCSlope == other.workingTRCSlope
         && wmidtcie == other.wmidtcie
         && sigmatrc == other.sigmatrc
+        && pyrwavtrc == other.pyrwavtrc
         && opacityCurveWLI == other.opacityCurveWLI
         && wsmoothcie == other.wsmoothcie
         && redx == other.redx
@@ -7760,6 +7762,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->icm.workingTRCSlope, "Color Management", "WorkingTRCSlope", icm.workingTRCSlope, keyFile);
         saveToKeyfile(!pedited || pedited->icm.wmidtcie, "Color Management", "Wmidtcie", icm.wmidtcie, keyFile);
         saveToKeyfile(!pedited || pedited->icm.sigmatrc, "Color Management", "Sigmatrc", icm.sigmatrc, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.pyrwavtrc, "Color Management", "Pyrwavtrc", icm.pyrwavtrc, keyFile);
         saveToKeyfile(!pedited || pedited->icm.wsmoothcie, "Color Management", "Wsmoothcie", icm.wsmoothcie, keyFile);
         saveToKeyfile(!pedited || pedited->icm.redx, "Color Management", "Redx", icm.redx, keyFile);
         saveToKeyfile(!pedited || pedited->icm.redy, "Color Management", "Redy", icm.redy, keyFile);
@@ -10249,6 +10252,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color Management", "Wmidtcie", icm.wmidtcie, pedited->icm.wmidtcie);
             assignFromKeyfile(keyFile, "Color Management", "Wsmoothcie", icm.wsmoothcie, pedited->icm.wsmoothcie);
             assignFromKeyfile(keyFile, "Color Management", "Sigmatrc", icm.sigmatrc, pedited->icm.sigmatrc);
+            assignFromKeyfile(keyFile, "Color Management", "Pyrwavtrc", icm.pyrwavtrc, pedited->icm.pyrwavtrc);
 
             assignFromKeyfile(keyFile, "Color Management", "Redx", icm.redx, pedited->icm.redx);
             assignFromKeyfile(keyFile, "Color Management", "Redy", icm.redy, pedited->icm.redy);

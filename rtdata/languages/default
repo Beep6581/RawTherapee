@@ -1438,6 +1438,7 @@ HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Output - Primaries
 HISTORY_MSG_ICM_OUTPUT_TEMP;Output - ICC-v4 illuminant D
 HISTORY_MSG_ICM_OUTPUT_TYPE;Output - Type
 HISTORY_MSG_ICM_PRESER;Preserve neutral
+HISTORY_MSG_ICM_PYRWAVTRC;Detail Levels
 HISTORY_MSG_ICM_REDX;Primaries Red X
 HISTORY_MSG_ICM_REDY;Primaries Red Y
 HISTORY_MSG_ICM_REFI;Refinement Colors
@@ -4256,6 +4257,7 @@ TP_WAVELET_OPACITYWL_TOOLTIP;Modify the final local contrast at the end of the w
 TP_WAVELET_PASTEL;Pastel chroma
 TP_WAVELET_PROC;Process
 TP_WAVELET_PROTAB;Protection
+TP_WAVELET_PYRWAVTRC;Detail Levels Pyramid
 TP_WAVELET_QUAAGRES;Aggressive
 TP_WAVELET_QUACONSER;Conservative
 TP_WAVELET_RADIUS;Radius shadows - highlight

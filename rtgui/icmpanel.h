@@ -68,6 +68,8 @@ protected:
     Adjuster* wmidtcie;
     Gtk::CheckButton* wsmoothcie;
     Adjuster* sigmatrc;
+    Adjuster* pyrwavtrc;
+    
     CurveEditorGroup* opacityCurveEditorWLI;
     FlatCurveEditor* opacityShapeWLI;
 
@@ -144,6 +146,7 @@ private:
     rtengine::ProcEvent EvICMwsmoothcie;
     rtengine::ProcEvent EvICMsigmatrc;
     rtengine::ProcEvent EvICMopacityWLI;
+    rtengine::ProcEvent EvICMpyrwavtrc;
 
     LabGrid *labgridcie;
     IdleRegister idle_register;

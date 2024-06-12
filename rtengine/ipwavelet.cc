@@ -3400,7 +3400,6 @@ void ImProcFunctions::calckoe (const float* WavCoeffs, float gradw, float tloww,
 void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparams::WaveletParams & waparams, const procparams::ColorManagementParams & cmparams, const IcmOpacityCurveWL & cmOpacityCurveWL, int skip)
 {
     bool wavcurvemask = false;
-    float sigmafin = cmparams.sigmatrc;
     if (cmOpacityCurveWL) {
         for (int i = 0; i < 500; i++) {
             if (cmOpacityCurveWL[i] != 0.5f) {
@@ -3409,7 +3408,6 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
             }
         }
     }
-    
     if(wavcurvemask) {
 #ifdef _OPENMP
         const int numThreads = omp_get_max_threads();
@@ -3419,8 +3417,52 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
 #endif
             int width = lab->W;
             int height = lab->H;
-            int wavelet_level = 8;//to adapt if necessary
-
+            int wavelet_lev = waparams.thres;
+            int DaubLen = 4;
+            if (waparams.daubcoeffmethod == "2_") {
+                DaubLen = 4;
+            } else if (waparams.daubcoeffmethod == "4_") {
+                DaubLen = 6;
+            } else if (waparams.daubcoeffmethod == "6_") {
+                DaubLen = 8;
+            } else if (waparams.daubcoeffmethod == "10_") {
+                DaubLen = 12;
+            } else { /* if (params->wavelet.daubcoeffmethod == "14_") */
+                DaubLen = 16;
+            }
+            float sigmafin = cmparams.sigmatrc;
+            int pyrwav = cmparams.pyrwavtrc;
+            int level_bl = 0;//to adapt if necessary
+            int level_hl = 1;//to adapt if necessary
+            int level_br = wavelet_lev;//to adapt if necessary
+            int level_hr = wavelet_lev;//to adapt if necessary
+            
+            if(pyrwav == -1) {
+                level_bl = 0;
+                level_hl = 1;
+                level_br = wavelet_lev -1;
+                level_hr = wavelet_lev -1;
+            } else if( pyrwav == 0) {
+                level_bl = 0;
+                level_hl = 0;
+                level_br = wavelet_lev;
+                level_hr = wavelet_lev;
+            } else if( pyrwav == 1) {
+                level_bl = 0;
+                level_hl = 1;
+                level_br = wavelet_lev - 1;
+                level_hr = wavelet_lev;
+            } else if( pyrwav == 2) {
+                level_bl = 0;
+                level_hl = 1;
+                level_br = wavelet_lev - 1;
+                level_hr = wavelet_lev + 1;
+            } else if( pyrwav == 3) {
+                level_bl = 0;
+                level_hl = 1;
+                level_br = wavelet_lev - 1;
+                level_hr = wavelet_lev + 2;
+            }
             int minwin = rtengine::min(width, height);
             int maxlevelspot = 10;//maximum possible
 
@@ -3429,10 +3471,10 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                 --maxlevelspot ;
             }
 
-            wavelet_level = rtengine::min(wavelet_level, maxlevelspot);
+            int wavelet_level = rtengine::min(level_hr, maxlevelspot);
             int maxlvl = wavelet_level;
             
-            wavelet_decomposition *wdspot = new wavelet_decomposition(lab->L[0], width, height, maxlvl, 1, skip, numThreads, 4);
+            wavelet_decomposition *wdspot = new wavelet_decomposition(lab->L[0], width, height, maxlvl, 1, skip, numThreads, DaubLen);
 
             if (wdspot->memory_allocation_failed()) {
                 return;
@@ -3446,11 +3488,12 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
             Evaluate2(*wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN, numThreads);
             float alow = 1.f;
             float blow = 0.f;
+            /*
             int level_bl = 0;//to adapt if necessary
-            int level_hl = 0;//to adapt if necessary
+            int level_hl = 1;//to adapt if necessary
             int level_br = maxlvl;//to adapt if necessary
             int level_hr = maxlvl;//to adapt if necessary
-
+            */
 
             if (level_hl != level_bl) {//transitions low levels
                 alow = 1.f / (level_hl - level_bl);
