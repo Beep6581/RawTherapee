@@ -835,8 +835,22 @@ int ImageIO::loadTIFF (const Glib::ustring &fname)
 }
 
 #ifdef LIBJXL
+#if JPEGXL_NUMERIC_VERSION < JPEGXL_COMPUTE_NUMERIC_VERSION(0, 9, 0)
+namespace
+{
+// from libjxl 0.10.0 encoder.cc
+float JxlEncoderDistanceFromQuality(float quality)
+{
+    return quality >= 100.0 ? 0.0
+           : quality >= 30
+           ? 0.1 + (100 - quality) * 0.09
+           : 53.0 / 3000.0 * quality * quality - 23.0 / 20.0 * quality + 25.0;
+}
+} // namespace
+#endif
+
 #define _PROFILE_ JXL_COLOR_PROFILE_TARGET_ORIGINAL
-// adapted from libjxl
+// adapted from libjxl examples
 int ImageIO::loadJXL(const Glib::ustring &fname)
 {
     if (pl) {
@@ -998,7 +1012,7 @@ int ImageIO::loadJXL(const Glib::ustring &fname)
 }
 #undef _PROFILE_
 
-// adapted from libjxl
+// adapted from libjxl examples
 int ImageIO::saveJXL(const Glib::ustring &fname, float quality) const
 {
     if (getWidth() < 1 || getHeight() < 1) {
@@ -1029,44 +1043,48 @@ int ImageIO::saveJXL(const Glib::ustring &fname, float quality) const
     basic_info.ysize = height;
 
     JxlPixelFormat pixel_format;
-    std::size_t size = 0;
 
     pixel_format = JxlPixelFormat{3, JXL_TYPE_FLOAT, JXL_NATIVE_ENDIAN, 0};
     basic_info.bits_per_sample = 32;
     basic_info.exponent_bits_per_sample = 8;
-    size = 3 * 4 * width * height;
-
-    JxlBitDepth bitdepth = {
-        JXL_BIT_DEPTH_FROM_PIXEL_FORMAT, basic_info.bits_per_sample,
-        basic_info.exponent_bits_per_sample
-    };
 
     JxlEncoderFrameSettings * frame_settings = JxlEncoderFrameSettingsCreate(enc.get(), nullptr);
     JxlEncoderSetFrameLossless(frame_settings, false);
 
     const float distance = JxlEncoderDistanceFromQuality(quality);
     JxlEncoderSetFrameDistance(frame_settings, distance);
+
+#if JPEGXL_NUMERIC_VERSION >= JPEGXL_COMPUTE_NUMERIC_VERSION(0, 8, 0)
+    JxlBitDepth bitdepth = {
+        JXL_BIT_DEPTH_FROM_PIXEL_FORMAT, basic_info.bits_per_sample,
+        basic_info.exponent_bits_per_sample
+    };
     JxlEncoderSetFrameBitDepth(frame_settings, &bitdepth);
+#endif
 
     if (JxlEncoderSetBasicInfo(enc.get(), &basic_info) != JXL_ENC_SUCCESS) {
         std::cerr << "Error: JxlEncoderSetBasicInfo failed" << std::endl;
         return IMIO_CANNOTWRITEFILE;
     }
 
-    // Always use sRGB for JXL.
-    // ICC doesn't work as desired/expected.
     JxlColorEncoding color_encoding = {};
     JxlColorEncodingSetToSRGB(&color_encoding, false);
 
-    if (JxlEncoderSetColorEncoding(enc.get(), &color_encoding) != JXL_ENC_SUCCESS) {
-        std::cerr << "Error: JxlEncoderSetColorEncoding failed" << std::endl;
-        return IMIO_CANNOTWRITEFILE;
-    }
+#if JPEGXL_NUMERIC_VERSION >= JPEGXL_COMPUTE_NUMERIC_VERSION(0, 10, 0)
 
-    std::vector<std::uint8_t> imagebuffer(4 * 3 * width * height);
+    if (!profileData.empty()) {
+        JxlEncoderSetICCProfile(enc.get(), reinterpret_cast<const unsigned char *>(profileData.data()), profileData.size());
+    } else
+#endif
+        if (JxlEncoderSetColorEncoding(enc.get(), &color_encoding) != JXL_ENC_SUCCESS) {
+            std::cerr << "Warning: JxlEncoderSetColorEncoding failed" << std::endl;
+        }
+
+    const std::size_t stride = sizeof(float) * 3 * width;
+    std::vector<std::uint8_t> imagebuffer(stride * height);
 
     for (int row = 0; row < height; row++) {
-        unsigned char *linebuffer = imagebuffer.data() + row * 4 * 3 * width;
+        unsigned char *linebuffer = imagebuffer.data() + stride * row;
         getScanline(row, linebuffer, 32, true);
 
         if (pl && !(row % 100)) {
