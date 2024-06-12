@@ -3475,10 +3475,91 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
             int maxlvl = wavelet_level;
             
             wavelet_decomposition *wdspot = new wavelet_decomposition(lab->L[0], width, height, maxlvl, 1, skip, numThreads, DaubLen);
-
             if (wdspot->memory_allocation_failed()) {
                 return;
             }
+            //residual contrast
+            const float contrast = 0.f; //cmparams.contrast;
+
+            if (contrast != 0) {
+                int W_L = wdspot->level_W(0);
+                int H_L = wdspot->level_H(0);
+                float *wav_L0 = wdspot->get_coeff0();
+
+
+                float maxh = 2.5f; //amplification contrast above mean
+                float maxl = 2.5f; //reduction contrast under mean
+                float multL = contrast * (maxl - 1.f) / 100.f + 1.f;
+                float multH = contrast * (maxh - 1.f) / 100.f + 1.f;
+                double avedbl = 0.0; // use double precision for large summations
+                float max0 = 0.f;
+                float min0 = FLT_MAX;
+
+#ifdef _OPENMP
+#       pragma omp parallel for reduction(+:avedbl) if (multiThread)
+#endif
+                for (int i = 0; i < W_L * H_L; i++) {
+                    avedbl += wav_L0[i];
+                }
+
+#ifdef _OPENMP
+#       pragma omp parallel if (multiThread)
+#endif
+        {
+                float lminL = FLT_MAX;
+                float lmaxL = 0.f;
+
+#ifdef _OPENMP
+#           pragma omp for
+#endif
+                for (int i = 0; i < W_L * H_L; i++) {
+                    lminL = min(lminL, wav_L0[i]);
+                    lmaxL = max(lmaxL, wav_L0[i]);
+                }
+
+#ifdef _OPENMP
+#           pragma omp critical
+#endif
+            {
+                    min0 = min(min0, lminL);
+                    max0 = max(max0, lmaxL);
+            }
+        }
+
+                max0 /= 327.68f;
+                min0 /= 327.68f;
+                float ave = avedbl / double(W_L * H_L);
+                float av = ave / 327.68f;
+                float ah = (multH - 1.f) / (av - max0);
+                float bh = 1.f - max0 * ah;
+                float al = (multL - 1.f) / (av - min0);
+                float bl = 1.f - min0 * al;
+
+                if (max0 > 0.0) { 
+#ifdef _OPENMP
+#           pragma omp parallel for if (multiThread)
+#endif
+                    for (int i = 0; i < W_L * H_L; i++) {
+                        if (wav_L0[i] < 32768.f) {
+                            float prov;
+
+                            if (wav_L0[i] > ave) {
+                                float kh = ah * (wav_L0[i] / 327.68f) + bh;
+                                prov = wav_L0[i];
+                                wav_L0[i] = ave + kh * (wav_L0[i] - ave);
+                            } else {
+                                float kl = al * (wav_L0[i] / 327.68f) + bl;
+                                prov = wav_L0[i];
+                                wav_L0[i] = ave - kl * (ave - wav_L0[i]);
+                            }
+
+                            float diflc = wav_L0[i] - prov;
+                            wav_L0[i] =  prov + diflc;
+                        }
+                    }
+                }
+            }
+            //end residual contrast
             float mean[10];
             float meanN[10];
             float sigma[10];
@@ -3488,12 +3569,6 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
             Evaluate2(*wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN, numThreads);
             float alow = 1.f;
             float blow = 0.f;
-            /*
-            int level_bl = 0;//to adapt if necessary
-            int level_hl = 1;//to adapt if necessary
-            int level_br = maxlvl;//to adapt if necessary
-            int level_hr = maxlvl;//to adapt if necessary
-            */
 
             if (level_hl != level_bl) {//transitions low levels
                 alow = 1.f / (level_hl - level_bl);
