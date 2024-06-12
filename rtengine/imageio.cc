@@ -849,7 +849,7 @@ float JxlEncoderDistanceFromQuality(float quality)
 } // namespace
 #endif
 
-#define _PROFILE_ JXL_COLOR_PROFILE_TARGET_ORIGINAL
+#define _PROFILE_ JXL_COLOR_PROFILE_TARGET_DATA
 // adapted from libjxl examples
 int ImageIO::loadJXL(const Glib::ustring &fname)
 {
