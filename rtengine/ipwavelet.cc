@@ -3444,13 +3444,13 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                 level_hr = wavelet_lev -1;
             } else if( pyrwav == 0) {
                 level_bl = 0;
-                level_hl = 0;
-                level_br = wavelet_lev;
+                level_hl = 1;
+                level_br = wavelet_lev - 1;
                 level_hr = wavelet_lev;
             } else if( pyrwav == 1) {
                 level_bl = 0;
-                level_hl = 1;
-                level_br = wavelet_lev - 1;
+                level_hl = 0;
+                level_br = wavelet_lev;
                 level_hr = wavelet_lev;
             } else if( pyrwav == 2) {
                 level_bl = 0;
@@ -3478,10 +3478,11 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
             if (wdspot->memory_allocation_failed()) {
                 return;
             }
+            
             //residual contrast
-            const float contrast = 0.f; //cmparams.contrast;
+            const float contresid = cmparams.residtrc;
 
-            if (contrast != 0) {
+            if (contresid != 0) {
                 int W_L = wdspot->level_W(0);
                 int H_L = wdspot->level_H(0);
                 float *wav_L0 = wdspot->get_coeff0();
@@ -3489,8 +3490,8 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
 
                 float maxh = 2.5f; //amplification contrast above mean
                 float maxl = 2.5f; //reduction contrast under mean
-                float multL = contrast * (maxl - 1.f) / 100.f + 1.f;
-                float multH = contrast * (maxh - 1.f) / 100.f + 1.f;
+                float multL = contresid * (maxl - 1.f) / 100.f + 1.f;
+                float multH = contresid * (maxh - 1.f) / 100.f + 1.f;
                 double avedbl = 0.0; // use double precision for large summations
                 float max0 = 0.f;
                 float min0 = FLT_MAX;

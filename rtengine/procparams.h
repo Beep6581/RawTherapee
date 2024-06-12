@@ -2061,6 +2061,7 @@ struct ColorManagementParams {
     double workingTRCSlope;
     double wmidtcie;
     double sigmatrc;
+    double residtrc;
     int pyrwavtrc;
     std::vector<double> opacityCurveWLI;
     

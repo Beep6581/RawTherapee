@@ -1442,6 +1442,7 @@ HISTORY_MSG_ICM_PYRWAVTRC;Detail Levels
 HISTORY_MSG_ICM_REDX;Primaries Red X
 HISTORY_MSG_ICM_REDY;Primaries Red Y
 HISTORY_MSG_ICM_REFI;Refinement Colors
+HISTORY_MSG_ICM_RESIDTRC;Residual contrast
 HISTORY_MSG_ICM_SIGMATRC;Local contrast Attenation response
 HISTORY_MSG_ICM_SHIFTX;Refinement Colors - shift x
 HISTORY_MSG_ICM_SHIFTY;Refinement Colors - shift y
@@ -4257,7 +4258,7 @@ TP_WAVELET_OPACITYWL_TOOLTIP;Modify the final local contrast at the end of the w
 TP_WAVELET_PASTEL;Pastel chroma
 TP_WAVELET_PROC;Process
 TP_WAVELET_PROTAB;Protection
-TP_WAVELET_PYRWAVTRC;Detail Levels Pyramid
+TP_WAVELET_PYRWAVTRC;Detail Levels
 TP_WAVELET_QUAAGRES;Aggressive
 TP_WAVELET_QUACONSER;Conservative
 TP_WAVELET_RADIUS;Radius shadows - highlight
@@ -4272,6 +4273,7 @@ TP_WAVELET_RESCHRO;Strength
 TP_WAVELET_RESCON;Shadows
 TP_WAVELET_RESCONH;Highlights
 TP_WAVELET_RESID;Residual Image
+TP_WAVELET_RESIDTRC;Residual contrast
 TP_WAVELET_SAT;Saturated chroma
 TP_WAVELET_SETTINGS;Wavelet Settings
 TP_WAVELET_SHA;Sharp mask

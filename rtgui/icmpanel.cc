@@ -80,6 +80,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     EvICMsigmatrc = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_SIGMATRC");
     EvICMopacityWLI  = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_OPACITYW");
     EvICMpyrwavtrc = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_PYRWAVTRC");
+    EvICMresidtrc = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_RESIDTRC");
 
     isBatchMode = lastToneCurve = lastApplyLookTable = lastApplyBaselineExposureOffset = lastApplyHueSatMap = false;
 
@@ -257,7 +258,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     trcProfVBox->pack_start(*wGamma, Gtk::PACK_SHRINK);
     wGamma->show();
     sigmatrc = Gtk::manage(new Adjuster(M("TP_WAVELET_SIGMAFIN"), 0.025, 2.5, 0.01, 1.));
-    pyrwavtrc = Gtk::manage(new Adjuster(M("TP_WAVELET_PYRWAVTRC"), -1, 3, 1, 1));
+    pyrwavtrc = Gtk::manage(new Adjuster(M("TP_WAVELET_PYRWAVTRC"), -1, 3, 1, 0));
+    residtrc = Gtk::manage(new Adjuster(M("TP_WAVELET_RESIDTRC"), -100., 100., 1., 0.));
     opacityCurveEditorWLI = new CurveEditorGroup(options.lastIcmCurvesDir, M("TP_ICM_OPACITYWLI"));
     opacityCurveEditorWLI->setCurveListener(this);
     const ColorManagementParams default_params;
@@ -281,9 +283,10 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
 
     wavExp = Gtk::manage(new MyExpander(false, M("TP_ICM_WAVFRAME")));
     setExpandAlignProperties(wavExp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    trcWavVBox->pack_start(*pyrwavtrc, Gtk::PACK_SHRINK);
     trcWavVBox->pack_start(*opacityCurveEditorWLI, Gtk::PACK_SHRINK, 2);
     trcWavVBox->pack_start(*sigmatrc, Gtk::PACK_SHRINK);
-    trcWavVBox->pack_start(*pyrwavtrc, Gtk::PACK_SHRINK);
+    trcWavVBox->pack_start(*residtrc, Gtk::PACK_SHRINK);
 
     primExp = Gtk::manage(new MyExpander(false, M("TP_ICM_PRIMFRAME")));
     setExpandAlignProperties(primExp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
@@ -454,6 +457,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     shifty->setAdjusterListener(this);
     sigmatrc->setAdjusterListener(this);
     pyrwavtrc->setAdjusterListener(this);
+    residtrc->setAdjusterListener(this);
 
     wGamma->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
@@ -643,6 +647,7 @@ void ICMPanel::neutral_pressed ()
     wSlope->setValue(defPar.workingTRCSlope);//12.92
     wmidtcie->setValue(defPar.wmidtcie);
     sigmatrc->setValue(defPar.sigmatrc);
+    residtrc->setValue(defPar.residtrc);
     pyrwavtrc->setValue(defPar.pyrwavtrc);
     preser->setValue(defPar.preser);
     fbw->set_active(defPar.fbw);
@@ -1011,6 +1016,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     wSlope->setValue(pp->icm.workingTRCSlope);
     wmidtcie->setValue(pp->icm.wmidtcie);
     sigmatrc->setValue(pp->icm.sigmatrc);
+    residtrc->setValue(pp->icm.residtrc);
     pyrwavtrc->setValue(pp->icm.pyrwavtrc);
     redx->setValue(pp->icm.redx);
     redy->setValue(pp->icm.redy);
@@ -1079,6 +1085,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wSlope->setEditedState(pedited->icm.workingTRCSlope  ? Edited : UnEdited);
         wmidtcie->setEditedState(pedited->icm.wmidtcie  ? Edited : UnEdited);
         sigmatrc->setEditedState(pedited->icm.sigmatrc  ? Edited : UnEdited);
+        residtrc->setEditedState(pedited->icm.residtrc  ? Edited : UnEdited);
         pyrwavtrc->setEditedState(pedited->icm.pyrwavtrc  ? Edited : UnEdited);
         redx->setEditedState(pedited->icm.redx  ? Edited : UnEdited);
         redy->setEditedState(pedited->icm.redy  ? Edited : UnEdited);
@@ -1099,6 +1106,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             wGamma->set_sensitive(false);
             wmidtcie->set_sensitive(false);
             sigmatrc->set_sensitive(false);
+            residtrc->set_sensitive(false);
             pyrwavtrc->set_sensitive(false);
             will->set_sensitive(false);
             willulab->set_sensitive(false);
@@ -1188,6 +1196,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             wSlope->set_sensitive(false);
             wmidtcie->set_sensitive(true);
             sigmatrc->set_sensitive(true);
+            residtrc->set_sensitive(true);
             pyrwavtrc->set_sensitive(true);
             if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::DEFAULT) {
                 redFrame->hide();
@@ -1217,6 +1226,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             wSlope->set_sensitive(false);
             wmidtcie->set_sensitive(true);
             sigmatrc->set_sensitive(true);
+            residtrc->set_sensitive(true);
             pyrwavtrc->set_sensitive(true);
             riaHBox->set_sensitive(true);
             if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::DEFAULT) {
@@ -1247,6 +1257,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             wSlope->set_sensitive(false);
             wmidtcie->set_sensitive(true);
             sigmatrc->set_sensitive(true);
+            residtrc->set_sensitive(true);
             pyrwavtrc->set_sensitive(true);
             riaHBox->set_sensitive(true);
             if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::DEFAULT) {
@@ -1282,6 +1293,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             wSlope->set_sensitive(false);
             wmidtcie->set_sensitive(true);
             sigmatrc->set_sensitive(true);
+            residtrc->set_sensitive(true);
             pyrwavtrc->set_sensitive(true);
             break;
         case ColorManagementParams::WorkingTrc::LINEAR:
@@ -1305,6 +1317,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             wSlope->set_sensitive(false);
             wmidtcie->set_sensitive(true);
             sigmatrc->set_sensitive(true);
+            residtrc->set_sensitive(true);
             pyrwavtrc->set_sensitive(true);
             riaHBox->set_sensitive(true);
             if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::DEFAULT) {
@@ -1414,6 +1427,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     pp->icm.workingTRCSlope =  wSlope->getValue();
     pp->icm.wmidtcie =  wmidtcie->getValue();
     pp->icm.sigmatrc =  sigmatrc->getValue();
+    pp->icm.residtrc =  residtrc->getValue();
     pp->icm.pyrwavtrc =  pyrwavtrc->getIntValue();
     pp->icm.redx =  redx->getValue();
     pp->icm.redy =  redy->getValue();
@@ -1448,6 +1462,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->icm.workingTRCSlope = wSlope->getEditedState();
         pedited->icm.wmidtcie = wmidtcie->getEditedState();
         pedited->icm.sigmatrc = sigmatrc->getEditedState();
+        pedited->icm.residtrc = residtrc->getEditedState();
         pedited->icm.pyrwavtrc = pyrwavtrc->getEditedState();
         pedited->icm.workingTRC = wTRC->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.will = will->get_active_text() != M("GENERAL_UNCHANGED");
@@ -1478,6 +1493,7 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
     wSlope->setDefault(defParams->icm.workingTRCSlope);
     wmidtcie->setDefault(defParams->icm.wmidtcie);
     sigmatrc->setDefault(defParams->icm.sigmatrc);
+    residtrc->setDefault(defParams->icm.residtrc);
     pyrwavtrc->setDefault(defParams->icm.pyrwavtrc);
     redx->setDefault(defParams->icm.redx);
     redy->setDefault(defParams->icm.redy);
@@ -1496,6 +1512,7 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
         wSlope->setDefaultEditedState(pedited->icm.workingTRCSlope ? Edited : UnEdited);
         wmidtcie->setDefaultEditedState(pedited->icm.wmidtcie ? Edited : UnEdited);
         sigmatrc->setDefaultEditedState(pedited->icm.sigmatrc ? Edited : UnEdited);
+        residtrc->setDefaultEditedState(pedited->icm.residtrc ? Edited : UnEdited);
         pyrwavtrc->setDefaultEditedState(pedited->icm.pyrwavtrc ? Edited : UnEdited);
         redx->setDefaultEditedState(pedited->icm.redx ? Edited : UnEdited);
         redy->setDefaultEditedState(pedited->icm.redy ? Edited : UnEdited);
@@ -1514,6 +1531,7 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
         wSlope->setDefaultEditedState(Irrelevant);
         wmidtcie->setDefaultEditedState(Irrelevant);
         sigmatrc->setDefaultEditedState(Irrelevant);
+        residtrc->setDefaultEditedState(Irrelevant);
         pyrwavtrc->setDefaultEditedState(Irrelevant);
         redx->setDefaultEditedState(Irrelevant);
         redy->setDefaultEditedState(Irrelevant);
@@ -1548,6 +1566,8 @@ void ICMPanel::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(EvICMwmidtcie, costr2);
         } else if (a == sigmatrc) {
             listener->panelChanged(EvICMsigmatrc, costr2);
+        } else if (a == residtrc) {
+            listener->panelChanged(EvICMresidtrc, costr2);
         } else if (a == pyrwavtrc) {
             listener->panelChanged(EvICMpyrwavtrc, costr2);
         } else if (a == redx) {
@@ -1590,6 +1610,7 @@ void ICMPanel::wtrcinChanged()
             wSlope->set_sensitive(false);
             wmidtcie->set_sensitive(false);
             sigmatrc->set_sensitive(false);
+            residtrc->set_sensitive(false);
             pyrwavtrc->set_sensitive(false);
             will->set_sensitive(false);
             willulab->set_sensitive(false);
@@ -1608,6 +1629,7 @@ void ICMPanel::wtrcinChanged()
             wprim->set_sensitive(true);
             wmidtcie->set_sensitive(true);
             sigmatrc->set_sensitive(true);
+            residtrc->set_sensitive(true);
             pyrwavtrc->set_sensitive(true);
             wcat->set_sensitive(true);
             wcatlab->set_sensitive(true);
@@ -1645,6 +1667,7 @@ void ICMPanel::wtrcinChanged()
             wSlope->setValue(4.5);
             wmidtcie->set_sensitive(true);
             sigmatrc->set_sensitive(true);
+            residtrc->set_sensitive(true);
             pyrwavtrc->set_sensitive(true);
             will->set_sensitive(false);
             willulab->set_sensitive(true);
@@ -1677,6 +1700,7 @@ void ICMPanel::wtrcinChanged()
             wSlope->setValue(12.92);
             wmidtcie->set_sensitive(true);
             sigmatrc->set_sensitive(true);
+            residtrc->set_sensitive(true);
             pyrwavtrc->set_sensitive(true);
             will->set_sensitive(false);
             willulab->set_sensitive(true);
@@ -1710,6 +1734,7 @@ void ICMPanel::wtrcinChanged()
             wSlope->setValue(0.);
             wmidtcie->set_sensitive(true);
             sigmatrc->set_sensitive(true);
+            residtrc->set_sensitive(true);
             pyrwavtrc->set_sensitive(true);
             will->set_sensitive(false);
             willulab->set_sensitive(true);
@@ -1744,6 +1769,7 @@ void ICMPanel::wtrcinChanged()
             wSlope->setValue(0.);
             wmidtcie->set_sensitive(true);
             sigmatrc->set_sensitive(true);
+            residtrc->set_sensitive(true);
             pyrwavtrc->set_sensitive(true);
             will->set_sensitive(false);
             willulab->set_sensitive(true);
@@ -1778,6 +1804,7 @@ void ICMPanel::wtrcinChanged()
             wSlope->setValue(1.);
             wmidtcie->set_sensitive(true);
             sigmatrc->set_sensitive(true);
+            residtrc->set_sensitive(true);
             pyrwavtrc->set_sensitive(true);
             will->set_sensitive(false);
             willulab->set_sensitive(true);
@@ -2636,6 +2663,7 @@ void ICMPanel::setBatchMode(bool batchMode)
     wSlope->showEditedCB();
     wmidtcie->showEditedCB();
     sigmatrc->showEditedCB();
+    residtrc->showEditedCB();
     pyrwavtrc->showEditedCB();
     redx->showEditedCB();
     redy->showEditedCB();

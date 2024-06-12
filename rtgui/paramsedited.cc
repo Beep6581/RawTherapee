@@ -461,6 +461,7 @@ void ParamsEdited::set(bool v)
     icm.workingTRCSlope = v;
     icm.wmidtcie = v;
     icm.sigmatrc = v;
+    icm.residtrc = v;
     icm.pyrwavtrc = v;
     icm.opacityCurveWLI = v;
     icm.wsmoothcie = v;
@@ -1974,6 +1975,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         icm.workingTRCSlope = icm.workingTRCSlope && p.icm.workingTRCSlope == other.icm.workingTRCSlope;
         icm.wmidtcie = icm.wmidtcie && p.icm.wmidtcie == other.icm.wmidtcie;
         icm.sigmatrc = icm.sigmatrc && p.icm.sigmatrc == other.icm.sigmatrc;
+        icm.residtrc = icm.residtrc && p.icm.residtrc == other.icm.residtrc;
         icm.pyrwavtrc = icm.pyrwavtrc && p.icm.pyrwavtrc == other.icm.pyrwavtrc;
         icm.opacityCurveWLI = icm.opacityCurveWLI && p.icm.opacityCurveWLI == other.icm.opacityCurveWLI;
         icm.wsmoothcie = icm.wsmoothcie && p.icm.wsmoothcie == other.icm.wsmoothcie;
@@ -6832,6 +6834,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (icm.sigmatrc) {
         toEdit.icm.sigmatrc = mods.icm.sigmatrc;
+    }
+
+    if (icm.residtrc) {
+        toEdit.icm.residtrc = mods.icm.residtrc;
     }
 
     if (icm.pyrwavtrc) {
