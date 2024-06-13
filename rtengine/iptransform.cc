@@ -420,7 +420,6 @@ homogeneous::Matrix<double> perspectiveMatrix(double camera_focal_length, double
 bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue, double ascaleDef,
                                   const LensCorrection *pLCPMap) const
 {
-
     enum PerspType { NONE, SIMPLE, CAMERA_BASED };
     const PerspType perspectiveType = needsPerspective() ? (
             (params->perspective.method == "camera_based") ?
@@ -686,24 +685,8 @@ void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, 
             highQuality = false;
         } else {
             highQuality = true;
-            // agriggio: CA correction via the lens profile has to be
-            // performed before separately from the the other transformations
-            // (except for the coarse rotation/flipping). In order to not
-            // change the code too much, I simply introduced a new mode
-            // TRANSFORM_HIGH_QUALITY_CA, which applies *only* profile-based
-            // CA correction. So, the correction in this case occurs in two
-            // steps, using an intermediate temporary image. There's room for
-            // optimization of course...
-            if (pLCPMap && params->lensProf.useCA && pLCPMap->isCACorrectionAvailable()) {
-                tmpimg.reset(new Imagefloat(transformed->getWidth(), transformed->getHeight()));
-                dest = tmpimg.get();
-            }
         }
         transformGeneral(highQuality, original, dest, cx, cy, sx, sy, oW, oH, fW, fH, pLCPMap.get(), useOriginalBuffer);
-
-        if (highQuality && dest != transformed) {
-            transformLCPCAOnly(dest, transformed, cx, cy, pLCPMap.get(), useOriginalBuffer);
-        }
     }
 }
 
@@ -1095,7 +1078,9 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
     // set up stuff, depending on the mode we are
     enum PerspType { NONE, SIMPLE, CAMERA_BASED };
     const bool enableLCPDist = pLCPMap && params->lensProf.useDist;
+    const bool enableLCPCA = pLCPMap && params->lensProf.useCA && pLCPMap->isCACorrectionAvailable();
     const bool enableCA = highQuality && needsCA();
+    const bool doCACorrection = enableCA || enableLCPCA;
     const bool enableGradient = needsGradient();
     const bool enablePCVignetting = needsPCVignetting();
     const bool enableVignetting = needsVignetting();
@@ -1241,24 +1226,32 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
             }
 
             // rotate
-            double Dxr = x_d * cost - y_d * sint;
-            double Dyr = x_d * sint + y_d * cost;
+            const double Dxr = x_d * cost - y_d * sint;
+            const double Dyr = x_d * sint + y_d * cost;
 
-            if (enableLCPDist) {
-                pLCPMap->correctDistortion(Dxr, Dyr, w2, h2);
-            }
+            for (int c = 0; c < (doCACorrection ? 3 : 1); ++c) {
+                double Dx = Dxr;
+                double Dy = Dyr;
 
-            // distortion correction
-            double s = 1.0;
+                if (enableLCPCA) {
+                    pLCPMap->correctCA(Dx, Dy, w2, h2, c);
+                }
 
-            if (enableDistortion) {
-                const double r = sqrt(Dxr * Dxr + Dyr * Dyr) / maxRadius;
-                s = 1.0 - distAmount + distAmount * r;
-            }
+                if (enableLCPDist) {
+                    pLCPMap->correctDistortion(Dx, Dy, w2, h2);
+                }
 
-            for (int c = 0; c < (enableCA ? 3 : 1); ++c) {
-                double Dx = Dxr * (s + chDist[c]);
-                double Dy = Dyr * (s + chDist[c]);
+                // distortion correction
+                double s = 1.0;
+
+                if (enableDistortion) {
+                    const double r = sqrt(Dx * Dx + Dy * Dy) / maxRadius;
+                    s = 1.0 - distAmount + distAmount * r;
+                }
+
+                // CA correction
+                Dx *= s + chDist[c];
+                Dy *= s + chDist[c];
 
                 // de-center
                 Dx += w2;
@@ -1305,13 +1298,13 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
                             transformed->g(y, x) = vignmul * (original->g(yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->g(yc, xc + 1) * Dx * (1.0 - Dy) + original->g(yc + 1, xc) * (1.0 - Dx) * Dy + original->g(yc + 1, xc + 1) * Dx * Dy);
                             transformed->b(y, x) = vignmul * (original->b(yc, xc) * (1.0 - Dx) * (1.0 - Dy) + original->b(yc, xc + 1) * Dx * (1.0 - Dy) + original->b(yc + 1, xc) * (1.0 - Dx) * Dy + original->b(yc + 1, xc + 1) * Dx * Dy);
                         } else if (!useLog) {
-                            if (enableCA) {
+                            if (doCACorrection) {
                                 interpolateTransformChannelsCubic(chOrig[c], xc - 1, yc - 1, Dx, Dy, chTrans[c][y][x], vignmul);
                             } else {
                                 interpolateTransformCubic(original, xc - 1, yc - 1, Dx, Dy, transformed->r(y, x), transformed->g(y, x), transformed->b(y, x), vignmul);
                             }
                         } else {
-                            if (enableCA) {
+                            if (doCACorrection) {
                                 interpolateTransformChannelsCubicLog(chOrig[c], xc - 1, yc - 1, Dx, Dy, chTrans[c][y][x], vignmul);
                             } else {
                                 interpolateTransformCubicLog(original, xc - 1, yc - 1, Dx, Dy, transformed->r(y, x), transformed->g(y, x), transformed->b(y, x), vignmul);
@@ -1325,7 +1318,7 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
                         const int x2 = LIM(xc + 1, 0, original->getWidth() - 1);
 
                         if (useLog) {
-                            if (enableCA) {
+                            if (doCACorrection) {
                                 chTrans[c][y][x] = vignmul * xexpf(chOrig[c][y1][x1] * (1.0 - Dx) * (1.0 - Dy) + chOrig[c][y1][x2] * Dx * (1.0 - Dy) + chOrig[c][y2][x1] * (1.0 - Dx) * Dy + chOrig[c][y2][x2] * Dx * Dy);
                             } else {
                                 transformed->r(y, x) = vignmul * xexpf(original->r(y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->r(y1, x2) * Dx * (1.0 - Dy) + original->r(y2, x1) * (1.0 - Dx) * Dy + original->r(y2, x2) * Dx * Dy);
@@ -1333,7 +1326,7 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
                                 transformed->b(y, x) = vignmul * xexpf(original->b(y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->b(y1, x2) * Dx * (1.0 - Dy) + original->b(y2, x1) * (1.0 - Dx) * Dy + original->b(y2, x2) * Dx * Dy);
                             }
                         } else {
-                            if (enableCA) {
+                            if (doCACorrection) {
                                 chTrans[c][y][x] = vignmul * (chOrig[c][y1][x1] * (1.0 - Dx) * (1.0 - Dy) + chOrig[c][y1][x2] * Dx * (1.0 - Dy) + chOrig[c][y2][x1] * (1.0 - Dx) * Dy + chOrig[c][y2][x2] * Dx * Dy);
                             } else {
                                 transformed->r(y, x) = vignmul * (original->r(y1, x1) * (1.0 - Dx) * (1.0 - Dy) + original->r(y1, x2) * Dx * (1.0 - Dy) + original->r(y2, x1) * (1.0 - Dx) * Dy + original->r(y2, x2) * Dx * Dy);
@@ -1343,7 +1336,7 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
                         }
                     }
                 } else {
-                    if (enableCA) {
+                    if (doCACorrection) {
                         // not valid (source pixel x,y not inside source image, etc.)
                         chTrans[c][y][x] = 0;
                     } else {
@@ -1356,77 +1349,6 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
         }
     }
 }
-
-
-void ImProcFunctions::transformLCPCAOnly(Imagefloat *original, Imagefloat *transformed, int cx, int cy, const LensCorrection *pLCPMap, bool useOriginalBuffer)
-{
-    assert(pLCPMap && params->lensProf.useCA && pLCPMap->isCACorrectionAvailable());
-    const bool useLog = params->commonTrans.method == "log";
-
-    float** chTrans[3] = {transformed->r.ptrs, transformed->g.ptrs, transformed->b.ptrs};
-
-    std::unique_ptr<Imagefloat> tempLog;
-    if (useLog) {
-        if (!useOriginalBuffer) {
-            tempLog.reset(new Imagefloat(original->getWidth(), original->getHeight()));
-            logEncode(original, tempLog.get(), multiThread);
-            original = tempLog.get();
-        } else {
-            logEncode(original, original, multiThread);
-        }
-    }
-    float** chOrig[3] = {original->r.ptrs, original->g.ptrs, original->b.ptrs};
-
-#ifdef _OPENMP
-    #pragma omp parallel for if (multiThread)
-#endif
-
-    for (int y = 0; y < transformed->getHeight(); y++) {
-        for (int x = 0; x < transformed->getWidth(); x++) {
-            for (int c = 0; c < 3; c++) {
-                double Dx = x;
-                double Dy = y;
-
-                pLCPMap->correctCA(Dx, Dy, cx, cy, c);
-
-                // Extract integer and fractions of coordinates
-                int xc = (int)Dx;
-                Dx -= (double)xc;
-                int yc = (int)Dy;
-                Dy -= (double)yc;
-
-                // Convert only valid pixels
-                if (yc >= 0 && yc < original->getHeight() && xc >= 0 && xc < original->getWidth()) {
-
-                    // multiplier for vignetting correction
-                    if (yc > 0 && yc < original->getHeight() - 2 && xc > 0 && xc < original->getWidth() - 2) {
-                        // all interpolation pixels inside image
-                        if (!useLog) {
-                            interpolateTransformChannelsCubic(chOrig[c], xc - 1, yc - 1, Dx, Dy, chTrans[c][y][x], 1.0);
-                        } else {
-                            interpolateTransformChannelsCubicLog(chOrig[c], xc - 1, yc - 1, Dx, Dy, chTrans[c][y][x], 1.0);
-                        }
-                    } else {
-                        // edge pixels
-                        int y1 = LIM (yc,   0, original->getHeight() - 1);
-                        int y2 = LIM (yc + 1, 0, original->getHeight() - 1);
-                        int x1 = LIM (xc,   0, original->getWidth() - 1);
-                        int x2 = LIM (xc + 1, 0, original->getWidth() - 1);
-                        if (!useLog) {
-                            chTrans[c][y][x] = (chOrig[c][y1][x1] * (1.0 - Dx) * (1.0 - Dy) + chOrig[c][y1][x2] * Dx * (1.0 - Dy) + chOrig[c][y2][x1] * (1.0 - Dx) * Dy + chOrig[c][y2][x2] * Dx * Dy);
-                        } else {
-                            chTrans[c][y][x] = xexpf(chOrig[c][y1][x1] * (1.0 - Dx) * (1.0 - Dy) + chOrig[c][y1][x2] * Dx * (1.0 - Dy) + chOrig[c][y2][x1] * (1.0 - Dx) * Dy + chOrig[c][y2][x2] * Dx * Dy);
-                        }
-                    }
-                } else {
-                    // not valid (source pixel x,y not inside source image, etc.)
-                    chTrans[c][y][x] = 0;
-                }
-            }
-        }
-    }
-}
-
 
 double ImProcFunctions::getTransformAutoFill (int oW, int oH, const LensCorrection *pLCPMap) const
 {
