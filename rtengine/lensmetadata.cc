@@ -483,11 +483,140 @@ private:
     bool hasCACorrection() const override { return true; }
 };
 
+class OlympusMetadataLensCorrection : public CenterRadiusMetadataLensCorrection
+{
+public:
+    OlympusMetadataLensCorrection(const FramesMetaData *meta) :
+        CenterRadiusMetadataLensCorrection(meta), has_dist(false), has_ca(false)
+    {
+        parse();
+    }
+
+private:
+    bool has_dist, has_ca;
+
+    double drs;
+    double dk2;
+    double dk4;
+    double dk6;
+
+    double car0;
+    double car2;
+    double car4;
+    double cab0;
+    double cab2;
+    double cab4;
+
+    void parse()
+    {
+        if (Exiv2::versionNumber() < EXIV2_MAKE_VERSION(0, 27, 4)) {
+            throw std::runtime_error("cannot get Olympus correction data, too old exiv2 version " + Exiv2::versionString());
+        }
+
+        auto &exif = metadata.exifData();
+
+        std::array<double, 4> distortion;
+        std::array<double, 6> cacorr;
+
+        auto it = exif.findKey(Exiv2::ExifKey("Exif.OlympusIp.0x150a"));
+        if (it != exif.end() && it->count() == 4) {
+            for (int i = 0; i < 4; ++i) {
+                distortion[i] = it->toFloat(i);
+            }
+            has_dist = true;
+        }
+
+        it = exif.findKey(Exiv2::ExifKey("Exif.OlympusIp.0x150c"));
+        if (it != exif.end() && it->count() == 6) {
+            for (int i = 0; i < 6; ++i) {
+                cacorr[i] = it->toFloat(i);
+            }
+            has_ca = true;
+        }
+
+        if (has_dist) {
+            drs = distortion[3];
+            dk2 = distortion[0];
+            dk4 = distortion[1];
+            dk6 = distortion[2];
+        }
+
+        if (has_ca) {
+            car0 = cacorr[0];
+            car2 = cacorr[1];
+            car4 = cacorr[2];
+            cab0 = cacorr[3];
+            cab2 = cacorr[4];
+            cab4 = cacorr[5];
+        }
+
+        if (!has_dist && !has_ca) {
+            throw std::runtime_error("no Olympus correction data");
+        }
+    }
+
+    double distortionCorrectionFactor(double rout) const override
+    {
+        // The distortion polynomial maps a radius Rout in the output
+        // (undistorted) image, where the corner is defined as Rout=1, to a
+        // radius in the input (distorted) image, where the corner is defined
+        // as Rin=1.
+        // Rin = Rout*drs * (1 + dk2 * (Rout*drs)^2 + dk4 * (Rout*drs)^4 + dk6 * (Rout*drs)^6)
+        //
+        // cf is Rin / Rout.
+
+        const double rs2 = std::pow(rout * drs, 2);
+        const double cf = drs * (1 + rs2 * (dk2 + rs2 * (dk4 + rs2 * dk6)));
+
+        return cf;
+    }
+
+    double caCorrectionFactor(double rout, int channel) const override
+    {
+        // ca corrects only red and blue channel
+        if (channel != 0 && channel != 2) return 1;
+
+        // CA correction is applied as:
+        // Rin = Rout * ((1 + car0) + car2 * Rout^2 + car4 * Rout^4)
+        //
+        // cf is Rin / Rout.
+
+        const double r2 = powf(rout, 2);
+        if (channel == 0) {
+            return 1 + (car0 + r2 * (car2 + r2 * car4));
+        } else if (channel == 2) {
+            return 1 + (cab0 + r2 * (cab2 + r2 * cab4));
+        }
+
+        return 1;
+    }
+
+    double distortionAndCACorrectionFactor(double rout, int channel) const override
+    {
+        return distortionCorrectionFactor(rout) * caCorrectionFactor(rout, channel);
+    }
+
+    double vignettingCorrectionFactor(double r) const override
+    {
+        return 1;
+    }
+
+    bool hasDistortionCorrection() const override { return has_dist; }
+    // Olympus cameras have a shading correction option that fixes vignetting
+    // already in the raw file. Looks like they don't report vignetting
+    // correction parameters inside metadata even if shading correction is
+    // disabled.
+    bool hasVignettingCorrection() const override { return false; }
+    bool hasCACorrection() const override { return has_ca; }
+};
+
 std::unique_ptr<MetadataLensCorrection> MetadataLensCorrectionFinder::findCorrection(const FramesMetaData *meta)
 {
     static const std::unordered_set<std::string> makers = {
         "SONY",
         "FUJIFILM",
+        "OLYMPUS",
+        "OM DIGITAL SOLUTIONS",
     };
 
     std::string make = Glib::ustring(meta->getMake()).uppercase();
@@ -503,6 +632,8 @@ std::unique_ptr<MetadataLensCorrection> MetadataLensCorrectionFinder::findCorrec
             correction.reset(new SonyMetadataLensCorrection(meta));
         } else if (make == "FUJIFILM") {
             correction.reset(new FujiMetadataLensCorrection(meta));
+        } else if (make == "OLYMPUS" || make == "OM DIGITAL SOLUTIONS") {
+            correction.reset(new OlympusMetadataLensCorrection(meta));
         }
     } catch (std::exception &exc) {
         if (settings->verbose) {
