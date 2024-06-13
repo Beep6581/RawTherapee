@@ -699,6 +699,306 @@ private:
     bool hasCACorrection() const override { return false; }
 };
 
+// Class DNGMetadatalensCorrection handles OpcodeList3 operations: operations to
+// be done after demosaicing.
+// OpcodeList1 is already handled by rawimagesource.cc. OpcodeList2 is not yet
+// handled by rawtherapee.
+// TODO(sgotti): dng spec provides clear rules on how and when to process the
+// various opcodeList1/2/3 and the order of the various operations that should
+// be done.
+// Currently we only handle a subset of all the available opcodes and only one
+// WarpRectilinar for distortion and FixVignetteRadial for vignetting (that's
+// usually the case with Leica DNGs and ADC generated DNGs).
+// This should be extended to support more exotic operations lists (i.e.
+// multiple WarpRectilinear)
+class DNGMetadataLensCorrection : public MetadataLensCorrection
+{
+public:
+    DNGMetadataLensCorrection(const FramesMetaData *meta) :
+        MetadataLensCorrection(), swap_xy(false)
+    {
+        metadata = Exiv2Metadata(meta->getFileName());
+        metadata.load();
+
+        parse();
+    }
+
+private:
+    Exiv2Metadata metadata;
+
+    bool swap_xy;
+    int width, height;
+
+    double crx_d;
+    double cry_d;
+    double crx_v;
+    double cry_v;
+
+    double cx_d;
+    double cy_d;
+    double m_v;
+
+    double cx_v;
+    double cy_v;
+    double m_d;
+
+    int planes;
+
+    bool has_dist, has_ca, has_vign;
+    std::array<std::array<double, 6>, 3> warp_rectilinear;
+    std::array<double, 5> vignette_radial;
+
+    void initCorrections(int width, int height, const procparams::CoarseTransformParams &coarse, int rawRotationDeg) override
+    {
+        if (rawRotationDeg >= 0) {
+            int rot = (coarse.rotate + rawRotationDeg) % 360;
+            swap_xy = (rot == 90 || rot == 270);
+            if (swap_xy) {
+                std::swap(width, height);
+            }
+        }
+
+        this->width = width;
+        this->height = height;
+
+        setup();
+    }
+
+    void parse()
+    {
+        std::set<int> processed_opcodes;
+
+        has_dist = has_ca = has_vign = false;
+
+        auto &exif = metadata.exifData();
+
+        auto it = exif.findKey(Exiv2::ExifKey("Exif.SubImage1.OpcodeList3"));
+
+        if (it != exif.end()) {
+            std::vector<Exiv2::byte> buf;
+            buf.resize(it->value().size());
+            it->value().copy(buf.data(), Exiv2::invalidByteOrder);
+
+            const Exiv2::byte *data = buf.data();
+            uint32_t num_entries = Exiv2::getULong(data, Exiv2::bigEndian);
+            size_t idx = 4;
+
+            for (size_t i = 0; i < num_entries && idx < buf.size(); ++i) {
+                uint32_t opcodeID = Exiv2::getULong(data + idx, Exiv2::bigEndian);
+                idx += 4;
+                idx += 4; // version
+                uint32_t flags = Exiv2::getULong(data + idx, Exiv2::bigEndian);
+                idx += 4;
+                size_t paramSize = Exiv2::getULong(data + idx, Exiv2::bigEndian);
+                idx += 4;
+
+                if (idx + paramSize > buf.size()) {
+                    throw std::runtime_error("error parsing DNG OpcodeList3");
+                }
+
+                if (processed_opcodes.find(opcodeID) != processed_opcodes.end()) {
+                    // we currently handle only one opcode per type and ignore next ones if provided.
+                    if (settings->verbose) {
+                        std::printf("DNG OpcodeList3 %s opcode %d already processed\n", flags & 1 ? "optional" : "mandatory", opcodeID);
+                    }
+
+                    idx += paramSize;
+                    continue;
+                }
+
+                processed_opcodes.insert(opcodeID);
+
+                // we currently handle only one dist correction
+                if (opcodeID == 1 && !has_dist) { // WarpRectilinear
+
+                    planes = Exiv2::getULong(data + idx, Exiv2::bigEndian);
+
+                    if ((planes != 1) && (planes != 3)) {
+                        throw std::runtime_error("cannot parse DNG WarpRectilinear");
+                    }
+
+                    for (int p = 0; p < planes; p++) {
+                        for (int i = 0; i < 6; i++) {
+                            warp_rectilinear[p][i] = Exiv2::getDouble(data + idx + 4 + 8 * (i + p * 6), Exiv2::bigEndian);
+                        }
+                    }
+
+                    crx_d = Exiv2::getDouble(data + idx + 4 + 8 * (0 + planes * 6), Exiv2::bigEndian);
+                    cry_d = Exiv2::getDouble(data + idx + 4 + 8 * (1 + planes * 6), Exiv2::bigEndian);
+
+                    has_dist = true;
+                    if (planes == 3) {
+                        has_ca = true;
+                    }
+
+                    // we currently handle only one vignetting correction
+                } else if (opcodeID == 3 && !has_vign) { // FixVignetteRadial
+                    size_t start = idx;
+                    size_t end = idx + 7 * 8;
+                    if (end > buf.size()) {
+                        throw std::runtime_error("cannot parse DNG FixVignetteRadial");
+                    }
+                    for (int j = 0; j < 5; j++) {
+                        vignette_radial[j] = Exiv2::getDouble(data + start, Exiv2::bigEndian);
+                        start += 8;
+                    }
+                    crx_v = Exiv2::getDouble(data + start, Exiv2::bigEndian);
+                    start += 8;
+                    cry_v = Exiv2::getDouble(data + start, Exiv2::bigEndian);
+                    has_vign = true;
+
+                } else {
+                    if (settings->verbose) {
+                        std::printf("DNG OpcodeList3 has unsupported %s opcode %d\n", flags & 1 ? "optional" : "mandatory", opcodeID);
+                    }
+                }
+
+                idx += paramSize;
+            }
+        }
+
+        if (!has_dist && !has_vign) {
+            throw std::runtime_error("no known DNG correction data");
+        }
+    }
+
+    void setup()
+    {
+        cx_d = crx_d * width;
+        cy_d = cry_d * height;
+        cx_v = crx_v * width;
+        cy_v = cry_v * height;
+        double mx_d = std::max(cx_d, width - cx_d);
+        double my_d = std::max(cy_d, height - cy_d);
+        m_d = std::sqrt(SQR(mx_d) + SQR(my_d));
+        double mx_v = std::max(cx_v, width - cx_v);
+        double my_v = std::max(cy_v, height - cy_v);
+        m_v = std::sqrt(SQR(mx_v) + SQR(my_v));
+    }
+
+    void correctPlaneDistortion(double &x, double &y, int cx, int cy, int plane) const
+    {
+        if (plane < 0 || plane > 2 || plane > planes) {
+            return;
+        }
+
+        double xx = x + cx;
+        double yy = y + cy;
+        if (swap_xy) {
+            std::swap(xx, yy);
+        }
+
+        const double cx1 = cx_d;
+        const double cy1 = cy_d;
+        const double m = m_d;
+
+        const double dx = (xx - cx1) / m;
+        const double dy = (yy - cy1) / m;
+        const double dx2 = SQR(dx);
+        const double dy2 = SQR(dy);
+        const double r2 = dx2 + dy2;
+        const double f = warp_rectilinear[plane][0] + r2 * (warp_rectilinear[plane][1] + r2 * (warp_rectilinear[plane][2] + r2 * warp_rectilinear[plane][3]));
+        const double dx_r = f * dx;
+        const double dy_r = f * dy;
+        const double dxdy2 = 2 * dx * dy;
+        const double dx_t = warp_rectilinear[plane][4] * dxdy2 + warp_rectilinear[plane][5] * (r2 + 2 * dx2);
+        const double dy_t = warp_rectilinear[plane][5] * dxdy2 + warp_rectilinear[plane][4] * (r2 + 2 * dy2);
+
+        x = cx1 + m * (dx_r + dx_t);
+        y = cy1 + m * (dy_r + dy_t);
+
+        if (swap_xy) {
+            std::swap(x, y);
+        }
+        x -= cx;
+        y -= cy;
+    }
+
+    void correctDistortionAndCA(double &x, double &y, int cx, int cy, int channel) const override
+    {
+        if (!hasDistortionCorrection() || !hasCACorrection()) {
+            return;
+        }
+
+        correctPlaneDistortion(x, y, cx, cy, channel);
+    }
+
+    void correctDistortion(double &x, double &y, int cx, int cy) const override
+    {
+        if (!hasDistortionCorrection()) {
+            return;
+        }
+
+        int plane = 1; // 3 planes correction, use plane 1 (green)
+        if (planes == 1) {
+            plane = 0; // 1 single plane correction
+        }
+
+        correctPlaneDistortion(x, y, cx, cy, plane);
+    }
+
+    void correctCA(double &x, double &y, int cx, int cy, int channel) const override
+    {
+        if (!hasCACorrection()) {
+            return;
+        }
+
+        // we use plane 0 (red) and plane 2 (blue) for ca correction
+        if (channel != 0 && channel != 2) return;
+        if (planes != 3) return;
+
+        double xgreen = x, ygreen = y;
+        correctPlaneDistortion(xgreen, ygreen, cx, cy, 1);
+
+        double xch = x, ych = y;
+        correctPlaneDistortion(xch, ych, cx, cy, channel);
+
+        // Calculate diff from green plane
+        x += xch - xgreen;
+        y += ych - ygreen;
+    }
+
+    void processVignetteNChannels(int width, int height, float **rawData, int channels) const
+    {
+        if (!hasVignettingCorrection()) {
+            return;
+        }
+
+        const double cx = cx_v;
+        const double cy = cy_v;
+        const double m2 = 1.f / SQR(m_v);
+
+        for (int y = 0; y < height; ++y) {
+            for (int x = 0; x < width; ++x) {
+                const double r2 = m2 * (SQR(x - cx) + SQR(y - cy));
+                const double g = 1.f + r2 * (vignette_radial[0] + r2 * (vignette_radial[1] + r2 * (vignette_radial[2] + r2 * (vignette_radial[3] + r2 * vignette_radial[4]))));
+                for (int c = 0; c < channels; ++c) {
+                    rawData[y][x*channels + c] *= g;
+                }
+            }
+        }
+    }
+
+    void processVignette(int width, int height, float **rawData) const override
+    {
+        return processVignetteNChannels(width, height, rawData, 1);
+    }
+
+    void processVignette3Channels(int width, int height, float **rawData) const override
+    {
+        return processVignetteNChannels(width, height, rawData, 3);
+    }
+
+    bool isCACorrectionAvailable() const
+    {
+        return hasCACorrection();
+    }
+
+    bool hasDistortionCorrection() const override { return has_dist; }
+    bool hasVignettingCorrection() const override { return has_vign; }
+    bool hasCACorrection() const override { return has_ca; }
+};
+
 std::unique_ptr<MetadataLensCorrection> MetadataLensCorrectionFinder::findCorrection(const FramesMetaData *meta)
 {
     static const std::unordered_set<std::string> makers = {
@@ -711,14 +1011,16 @@ std::unique_ptr<MetadataLensCorrection> MetadataLensCorrectionFinder::findCorrec
 
     std::string make = Glib::ustring(meta->getMake()).uppercase();
 
-    if (makers.find(make) == makers.end()) {
+    if (!meta->getDNG() && makers.find(make) == makers.end()) {
         return nullptr;
     }
 
     std::unique_ptr<MetadataLensCorrection> correction;
 
     try {
-        if (make == "SONY") {
+        if (meta->getDNG()) {
+            correction.reset(new DNGMetadataLensCorrection(meta));
+        } else if (make == "SONY") {
             correction.reset(new SonyMetadataLensCorrection(meta));
         } else if (make == "FUJIFILM") {
             correction.reset(new FujiMetadataLensCorrection(meta));
