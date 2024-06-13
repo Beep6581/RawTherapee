@@ -26,6 +26,7 @@
 #include "rt_math.h"
 #include "rtengine.h"
 #include "rtlensfun.h"
+#include "lensmetadata.h"
 #include "sleef.h"
 
 using namespace std;
@@ -659,7 +660,13 @@ void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, 
 
     std::unique_ptr<const LensCorrection> pLCPMap;
 
-    if (needsLensfun()) {
+    if (needsMetadata()) {
+        auto corr = MetadataLensCorrectionFinder::findCorrection(metadata);
+        if (corr) {
+            corr->initCorrections(oW, oH, params->coarse, rawRotationDeg);
+            pLCPMap = std::move(corr);
+        }
+    } else if (needsLensfun()) {
         pLCPMap = LFDatabase::getInstance()->findModifier(params->lensProf, metadata, oW, oH, params->coarse, rawRotationDeg);
     } else if (needsLCP()) { // don't check focal length to allow distortion correction for lenses without chip
         const std::shared_ptr<LCPProfile> pLCPProf = LCPStore::getInstance()->getProfile (params->lensProf.lcpFile);
@@ -675,7 +682,7 @@ void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, 
         }
     }
 
-    if (! (needsCA() || needsDistortion() || needsRotation() || needsPerspective() || needsLCP() || needsLensfun()) && (needsVignetting() || needsPCVignetting() || needsGradient())) {
+    if (! (needsCA() || needsDistortion() || needsRotation() || needsPerspective() || needsLCP() || needsMetadata() || needsLensfun()) && (needsVignetting() || needsPCVignetting() || needsGradient())) {
         transformLuminanceOnly (original, transformed, cx, cy, oW, oH, fW, fH);
     } else {
         bool highQuality;
@@ -1422,6 +1429,11 @@ bool ImProcFunctions::needsVignetting () const
     return params->vignetting.amount;
 }
 
+bool ImProcFunctions::needsMetadata () const
+{
+    return params->lensProf.useMetadata();
+}
+
 bool ImProcFunctions::needsLCP () const
 {
     return params->lensProf.useLcp();
@@ -1439,7 +1451,7 @@ bool ImProcFunctions::needsTransform (int oW, int oH, int rawRotationDeg, const 
         std::unique_ptr<const LensCorrection> pLCPMap = LFDatabase::getInstance()->findModifier(params->lensProf, metadata, oW, oH, params->coarse, rawRotationDeg);
         needsLf = pLCPMap.get();
     }
-    return needsCA () || needsDistortion () || needsRotation () || needsPerspective () || needsGradient () || needsPCVignetting () || needsVignetting () || needsLCP() || needsLf;
+    return needsCA () || needsDistortion () || needsRotation () || needsPerspective () || needsGradient () || needsPCVignetting () || needsVignetting () || needsLCP() || needsMetadata() || needsLf;
 }
 
 

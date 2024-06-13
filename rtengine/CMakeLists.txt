@@ -148,6 +148,7 @@ set(RTENGINESOURCEFILES
     jpeg_ijg/jpeg_memsrc.cc
     labimage.cc
     lcp.cc
+    lensmetadata.cc
     lmmse_demosaic.cc
     loadinitial.cc
     metadata.cc
