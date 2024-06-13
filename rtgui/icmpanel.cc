@@ -499,10 +499,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     primExp->add(*trcPrimVBox, false);
     primExp->set_expanded(false);
     primExp->setLevel (2);
-    
-    trcProfVBox->pack_start(*primExp, false, false);
 
-//    pack_start(*wFrame, Gtk::PACK_EXPAND_WIDGET);
     trcExp->add(*trcProfVBox, false);
     trcExp->setLevel (2);
     pack_start(*trcExp, Gtk::PACK_EXPAND_WIDGET);
