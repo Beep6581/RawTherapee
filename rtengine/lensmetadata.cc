@@ -610,6 +610,95 @@ private:
     bool hasCACorrection() const override { return has_ca; }
 };
 
+/* Panasonic metadata lens correction
+ * Currently disabled since the algorithm is not stable and works well with only some lenses.
+ *
+ * Data extraction and distortion correction formula from:
+ * https://web.archive.org/web/20120701131817/https://syscall.eu/#pana
+ *
+ * TODO(sgotti)
+ * * CA corrections not yet reverse engineered.
+ * * From a post on the exiftool forum:
+ * https://exiftool.org/forum/index.php?topic=9366.0
+ * looks like there's another additional tag that provides similar data and it's
+ * used by newer cameras.
+ */
+class PanasonicMetadataLensCorrection : public CenterRadiusMetadataLensCorrection
+{
+public:
+    PanasonicMetadataLensCorrection(const FramesMetaData *meta) :
+        CenterRadiusMetadataLensCorrection(meta), has_dist(false), a(0), b(0), c(0)
+    {
+        // Currently disabled since the algorithm is not stable and works well with only some lenses.
+        throw std::runtime_error("panasonic correction disabled as it's not yet working properly");
+
+        // parse();
+    }
+
+private:
+    bool has_dist;
+    double scale, a, b, c;
+
+    void parse()
+    {
+        if (Exiv2::versionNumber() < EXIV2_MAKE_VERSION(0, 27, 4)) {
+            throw std::runtime_error("cannot get Panasonic correction data, too old exiv2 version " + Exiv2::versionString());
+        }
+
+        auto &exif = metadata.exifData();
+
+        auto it = exif.findKey(Exiv2::ExifKey("Exif.PanasonicRaw.0x0119"));
+        if (it != exif.end()) {
+            std::vector<Exiv2::byte> buf;
+            buf.resize(it->value().size());
+            it->value().copy(buf.data(), Exiv2::littleEndian);
+
+            const Exiv2::byte *data = buf.data();
+            // n is currently unused
+            // uint32_t n = Exiv2::getShort(data + 24, Exiv2::littleEndian);
+            scale = 1.0f / (1.0f + Exiv2::getShort(data + 10, Exiv2::littleEndian) / 32768.0f);
+            a = Exiv2::getShort(data + 16, Exiv2::littleEndian) / 32768.0f;
+            b = Exiv2::getShort(data + 8, Exiv2::littleEndian) / 32768.0f;
+            c = Exiv2::getShort(data + 22, Exiv2::littleEndian) / 32768.0f;
+
+            has_dist = true;
+        }
+    }
+
+    double distortionCorrectionFactor(double rout) const override
+    {
+        const double rs2 = std::pow(rout, 2);
+
+        const double rin = scale * rout * (1 + rs2 * (a + rs2 * (b + rs2 * c)));
+        const double cf = rout / rin;
+
+        return cf;
+    }
+
+    double caCorrectionFactor(double rout, int channel) const override
+    {
+        return 1;
+    }
+
+    double distortionAndCACorrectionFactor(double rout, int channel) const override
+    {
+        return distortionCorrectionFactor(rout);
+    }
+
+    double vignettingCorrectionFactor(double r) const override
+    {
+        return 1;
+    }
+
+    bool hasDistortionCorrection() const override { return has_dist; }
+    // Panasonic cameras have a shading correction option that fixes vignetting
+    // already in the raw file. Looks like they don't report vignetting
+    // correction parameters inside metadata even if shading correction is
+    // disabled.
+    bool hasVignettingCorrection() const override { return false; }
+    bool hasCACorrection() const override { return false; }
+};
+
 std::unique_ptr<MetadataLensCorrection> MetadataLensCorrectionFinder::findCorrection(const FramesMetaData *meta)
 {
     static const std::unordered_set<std::string> makers = {
@@ -617,6 +706,7 @@ std::unique_ptr<MetadataLensCorrection> MetadataLensCorrectionFinder::findCorrec
         "FUJIFILM",
         "OLYMPUS",
         "OM DIGITAL SOLUTIONS",
+        "PANASONIC",
     };
 
     std::string make = Glib::ustring(meta->getMake()).uppercase();
@@ -634,6 +724,8 @@ std::unique_ptr<MetadataLensCorrection> MetadataLensCorrectionFinder::findCorrec
             correction.reset(new FujiMetadataLensCorrection(meta));
         } else if (make == "OLYMPUS" || make == "OM DIGITAL SOLUTIONS") {
             correction.reset(new OlympusMetadataLensCorrection(meta));
+        } else if (make == "PANASONIC") {
+            correction.reset(new PanasonicMetadataLensCorrection(meta));
         }
     } catch (std::exception &exc) {
         if (settings->verbose) {
