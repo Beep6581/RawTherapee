@@ -279,10 +279,215 @@ private:
     bool hasCACorrection() const override { return true; }
 };
 
+class FujiMetadataLensCorrection : public CenterRadiusMetadataLensCorrection
+{
+public:
+    FujiMetadataLensCorrection(const FramesMetaData *meta) :
+        CenterRadiusMetadataLensCorrection(meta)
+    {
+        parse();
+        setup();
+    }
+
+private:
+    const static int MAXKNOTS = 16;
+
+    int nc;
+    double cropf;
+
+    std::array<float, MAXKNOTS> fuji_knots;
+    std::array<float, MAXKNOTS> fuji_distortion;
+    std::array<float, MAXKNOTS> fuji_ca_r;
+    std::array<float, MAXKNOTS> fuji_ca_b;
+    std::array<float, MAXKNOTS> fuji_vignetting;
+
+    std::vector<double> knots_dist;
+    std::vector<double> dist;
+    std::array<std::vector<double>, 3> ca;
+    std::vector<double> knots_vig;
+    std::vector<double> vig;
+
+    void parse()
+    {
+        if (Exiv2::versionNumber() < EXIV2_MAKE_VERSION(0, 27, 4)) {
+            throw std::runtime_error("cannot get Fuji correction data, too old exiv2 version " + Exiv2::versionString());
+        }
+
+        auto &exif = metadata.exifData();
+
+        /* FujiFilm metadata corrections parameters define some splines with N knots */
+        auto posd = exif.findKey(Exiv2::ExifKey("Exif.Fujifilm.GeometricDistortionParams"));
+        auto posc = exif.findKey(Exiv2::ExifKey("Exif.Fujifilm.ChromaticAberrationParams"));
+        auto posv = exif.findKey(Exiv2::ExifKey("Exif.Fujifilm.VignettingParams"));
+
+        // X-Trans IV/V
+        if (posd != exif.end() && posc != exif.end() && posv != exif.end() &&
+            posd->count() == 19 && posc->count() == 29 && posv->count() == 19) {
+            const int nc = 9;
+            this->nc = nc;
+
+            for (int i = 0; i < nc; i++) {
+                const float kd = posd->toFloat(i + 1);
+                const float kc = posc->toFloat(i + 1);
+                const float kv = posv->toFloat(i + 1);
+
+                // Check that the knots position is the same for distortion, ca and vignetting,
+                if (kd != kc || kd != kv) {
+                    throw std::runtime_error("cannot get Fuji correction data: unexpected data");
+                }
+
+                fuji_knots[i] = kd;
+                fuji_distortion[i] = posd->toFloat(i + 10);
+                fuji_ca_r[i] = posc->toFloat(i + 10);
+                fuji_ca_b[i] = posc->toFloat(i + 19);
+                fuji_vignetting[i] = posv->toFloat(i + 10);
+            }
+
+            // Account for the 1.25x crop modes in some Fuji cameras
+            auto it = exif.findKey(Exiv2::ExifKey("Exif.Fujifilm.CropMode"));
+
+            if (it != exif.end() && (to_long(it) == 2 || to_long(it) == 4)) {
+                cropf = 1.25f;
+            } else {
+                cropf = 1;
+            }
+        }
+        // X-Trans I/II/III
+        else if (posd != exif.end() && posc != exif.end() && posv != exif.end() &&
+                 posd->count() == 23 && posc->count() == 31 && posv->count() == 23) {
+            const int nc = 11;
+            this->nc = nc;
+
+            for (int i = 0; i < nc; i++) {
+                const float kd = posd->toFloat(i + 1);
+                float kc = 0;
+                // ca data doesn't provide first knot (0)
+                if (i != 0) kc = posc->toFloat(i);
+                const float kv = posv->toFloat(i + 1);
+                // check that the knots position is the same for distortion, ca and vignetting,
+                if (kd != kc || kd != kv) {
+                    throw std::runtime_error("cannot get Fuji correction data: unexpected data");
+                }
+
+                fuji_knots[i] = kd;
+                fuji_distortion[i] = posd->toFloat(i + 12);
+
+                // ca data doesn't provide first knot (0)
+                if (i == 0) {
+                    fuji_ca_r[i] = 0;
+                    fuji_ca_b[i] = 0;
+                } else {
+                    fuji_ca_r[i] = posc->toFloat(i + 10);
+                    fuji_ca_b[i] = posc->toFloat(i + 20);
+                }
+                fuji_vignetting[i] = posv->toFloat(i + 12);
+            }
+
+            // Account for the 1.25x crop modes in some Fuji cameras
+            auto it = exif.findKey(Exiv2::ExifKey("Exif.Fujifilm.CropMode"));
+
+            if (it != exif.end() && (to_long(it) == 2 || to_long(it) == 4)) {
+                cropf = 1.25f;
+            } else {
+                cropf = 1;
+            }
+        } else {
+            throw std::runtime_error("cannot get Fuji correction data");
+        }
+    }
+
+    void setup()
+    {
+        std::vector<double> knots_in;
+        std::vector<double> distortion_in;
+        std::vector<double> ca_r_in;
+        std::vector<double> ca_b_in;
+
+        // add a knot with no corrections at 0 value if not existing
+        int size = nc;
+        if (fuji_knots[0] > 0.f) {
+            knots_in.push_back(0);
+            distortion_in.push_back(1);
+            ca_r_in.push_back(0);
+            ca_b_in.push_back(0);
+
+            knots_vig.push_back(0);
+            vig.push_back(1);
+
+            size++;
+        }
+
+        knots_in.reserve(size);
+        vig.reserve(size);
+
+        for (int i = 0; i < nc; i++) {
+            knots_in.push_back(cropf * fuji_knots[i]);
+            distortion_in.push_back(fuji_distortion[i] / 100 + 1);
+            ca_r_in.push_back(fuji_ca_r[i]);
+            ca_b_in.push_back(fuji_ca_b[i]);
+
+            // vignetting correction is applied before distortion correction. So the
+            // spline is related to the source image before distortion.
+            knots_vig.push_back(cropf * fuji_knots[i]);
+
+            vig.push_back(100 / fuji_vignetting[i]);
+        }
+
+        knots_dist.resize(MAXKNOTS);
+        dist.resize(MAXKNOTS);
+        for (int i = 0; i < 3; ++i) {
+            ca[i].resize(MAXKNOTS);
+        }
+
+        // convert from spline related to source image (input is source image
+        // radius) to spline related to dest image (input is dest image radius)
+        for (int i = 0; i < MAXKNOTS; i++) {
+            const double rin = static_cast<double>(i) / static_cast<double>(nc - 1);
+            const double m = interpolateLinearSpline(knots_in, distortion_in, rin);
+            const double r = rin / m;
+            knots_dist[i] = r;
+
+            dist[i] = m;
+
+            const double mcar = interpolateLinearSpline(knots_in, ca_r_in, rin);
+            const double mcab = interpolateLinearSpline(knots_in, ca_b_in, rin);
+
+            ca[0][i] = ca[1][i] = ca[2][i] = 1.f;
+            ca[0][i] *= mcar + 1;
+            ca[2][i] *= mcab + 1;
+        }
+    }
+
+    double distortionCorrectionFactor(double rout) const override
+    {
+        return interpolateLinearSpline(knots_dist, dist, rout);
+    }
+
+    double caCorrectionFactor(double rout, int channel) const override
+    {
+        return interpolateLinearSpline(knots_dist, ca[channel], rout);
+    }
+
+    double distortionAndCACorrectionFactor(double rout, int channel) const override
+    {
+        return distortionCorrectionFactor(rout) * caCorrectionFactor(rout, channel);
+    }
+
+    double vignettingCorrectionFactor(double r) const override
+    {
+        return interpolateLinearSpline(knots_vig, vig, r);
+    }
+
+    bool hasDistortionCorrection() const override { return true; }
+    bool hasVignettingCorrection() const override { return true; }
+    bool hasCACorrection() const override { return true; }
+};
+
 std::unique_ptr<MetadataLensCorrection> MetadataLensCorrectionFinder::findCorrection(const FramesMetaData *meta)
 {
     static const std::unordered_set<std::string> makers = {
         "SONY",
+        "FUJIFILM",
     };
 
     std::string make = Glib::ustring(meta->getMake()).uppercase();
@@ -296,6 +501,8 @@ std::unique_ptr<MetadataLensCorrection> MetadataLensCorrectionFinder::findCorrec
     try {
         if (make == "SONY") {
             correction.reset(new SonyMetadataLensCorrection(meta));
+        } else if (make == "FUJIFILM") {
+            correction.reset(new FujiMetadataLensCorrection(meta));
         }
     } catch (std::exception &exc) {
         if (settings->verbose) {
