@@ -3488,8 +3488,8 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                 float *wav_L0 = wdspot->get_coeff0();
 
 
-                float maxh = 2.5f; //amplification contrast above mean
-                float maxl = 2.5f; //reduction contrast under mean
+                float maxh = 1.5f; //amplification contrast above mean
+                float maxl = 1.5f; //reduction contrast under mean
                 float multL = contresid * (maxl - 1.f) / 100.f + 1.f;
                 float multH = contresid * (maxh - 1.f) / 100.f + 1.f;
                 double avedbl = 0.0; // use double precision for large summations

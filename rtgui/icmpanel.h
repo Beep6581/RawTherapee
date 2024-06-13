@@ -61,6 +61,7 @@ protected:
     Gtk::Frame* colorFramecie;    
     MyExpander* trcExp;
     MyExpander* wavExp;
+    MyExpander* wav2Exp;
     MyExpander* primExp;
 
     Adjuster* wGamma;

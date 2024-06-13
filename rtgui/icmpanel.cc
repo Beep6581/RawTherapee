@@ -231,6 +231,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     trcExpconn = trcExp->signal_enabled_toggled().connect(sigc::mem_fun(*this, &ICMPanel::trcExpChanged));
     Gtk::Box *trcPrimVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     Gtk::Box *trcWavVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    Gtk::Box *trcWav2VBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     wTRCBox = Gtk::manage(new Gtk::Box());
 
@@ -267,7 +268,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     opacityShapeWLI = static_cast<FlatCurveEditor*>(opacityCurveEditorWLI->addCurve(CT_Flat, "", nullptr, false, false));
     opacityShapeWLI->setIdentityValue(0.);
     opacityShapeWLI->setResetCurve(FlatCurveType(default_params.opacityCurveWLI.at(0)), default_params.opacityCurveWLI);
-
+    opacityShapeWLI->setTooltip(M("TP_LOCALLAB_WAT_LEVELLOCCONTRAST_TOOLTIP"));
+    opacityCurveEditorWLI->setTooltip(M("TP_LOCALLAB_WAT_LEVELLOCCONTRAST_TOOLTIP"));
     // This will add the reset button at the end of the curveType buttons
     opacityCurveEditorWLI->curveListComplete();
     opacityCurveEditorWLI->show();
@@ -283,10 +285,15 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
 
     wavExp = Gtk::manage(new MyExpander(false, M("TP_ICM_WAVFRAME")));
     setExpandAlignProperties(wavExp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    wav2Exp = Gtk::manage(new MyExpander(false, M("TP_ICM_WAVREFI")));
+    setExpandAlignProperties(wav2Exp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     trcWavVBox->pack_start(*pyrwavtrc, Gtk::PACK_SHRINK);
+    pyrwavtrc->set_tooltip_text(M("TP_LOCALLAB_WAT_PYRWAV_TOOLTIP"));
     trcWavVBox->pack_start(*opacityCurveEditorWLI, Gtk::PACK_SHRINK, 2);
-    trcWavVBox->pack_start(*sigmatrc, Gtk::PACK_SHRINK);
-    trcWavVBox->pack_start(*residtrc, Gtk::PACK_SHRINK);
+    trcWav2VBox->pack_start(*sigmatrc, Gtk::PACK_SHRINK);
+    trcWav2VBox->pack_start(*residtrc, Gtk::PACK_SHRINK);
+    sigmatrc->set_tooltip_text(M("TP_LOCALLAB_WAT_SIGMALC_TOOLTIP"));
+    residtrc->set_tooltip_text(M("TP_LOCALLAB_WAT_EXPRESID_TOOLTIP"));
 
     primExp = Gtk::manage(new MyExpander(false, M("TP_ICM_PRIMFRAME")));
     setExpandAlignProperties(primExp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
@@ -463,7 +470,11 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
 
     wSlope->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
     wmidtcie->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
-
+    wav2Exp->add(*trcWav2VBox, false);
+    wav2Exp->set_expanded(false);
+    wav2Exp->setLevel (2);
+    trcWavVBox->pack_start(*wav2Exp, false, false);
+    
     wavExp->add(*trcWavVBox, false);
     wavExp->set_expanded(false);
     wavExp->setLevel (2);
@@ -935,6 +946,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     trcExp->set_expanded(false);
     primExp->set_expanded(false);
     wavExp->set_expanded(false);
+    wav2Exp->set_expanded(false);
 
     if (pp->icm.inputProfile.substr(0, 5) != "file:" && !ipDialog->get_filename().empty()) {
         ipDialog->set_filename(pp->icm.inputProfile);
