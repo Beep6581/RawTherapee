@@ -1438,7 +1438,7 @@ HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Output - Primaries
 HISTORY_MSG_ICM_OUTPUT_TEMP;Output - ICC-v4 illuminant D
 HISTORY_MSG_ICM_OUTPUT_TYPE;Output - Type
 HISTORY_MSG_ICM_PRESER;Preserve neutral
-HISTORY_MSG_ICM_PYRWAVTRC;Detail Levels
+HISTORY_MSG_ICM_PYRWAVTRC;Contrast profile
 HISTORY_MSG_ICM_REDX;Primaries Red X
 HISTORY_MSG_ICM_REDY;Primaries Red Y
 HISTORY_MSG_ICM_REFI;Refinement Colors
@@ -2726,7 +2726,7 @@ TP_ICM_LABEL;Color Management
 TP_ICM_LABGRID_CIEXY;R(x)=%1 R(y)=%2\nG(x)=%3 G(y)=%4\nB(x)=%5 B(y)=%6
 TP_ICM_NEUTRAL;Reset
 TP_ICM_NOICM;No ICM: sRGB Output
-TP_ICM_OPACITYWLI;Variable Contrast
+TP_ICM_OPACITYWLI;Variable contrast
 TP_ICM_OUTPUTPROFILE;Output Profile
 TP_ICM_OUTPUTPROFILE_TOOLTIP;By default all RTv4 or RTv2 profiles are with TRC - sRGB: g=2.4 s=12.92\n\nWith 'ICC Profile Creator' you can generate v4 or v2 profiles with the following choices;\n-Primaries: Aces AP0, Aces AP1, AdobeRGB, Prophoto, Rec2020, sRGB, Widegamut, BestRGB, BetaRGB, BruceRGB, Custom\n-TRC: BT709, sRGB, linear, standard g=2.2, standard g=1.8, Custom\n-Illuminant: D41, D50, D55, D60, D65, D80, stdA 2856K
 TP_ICM_PRIMBLU_TOOLTIP;Primaries Blue:\nsRGB x=0.15 y=0.06\nAdobe x=0.15 y=0.06\nWidegamut x=0.157 y=0.018\nRec2020 x=0.131 y=0.046\nACES P1 x=0.128 y= 0.044\nACES P0 x=0.0001 y=-0.077\nProphoto x=0.0366 y=0.0001\nBruceRGB x=0.15 y=0.06\nBeta RGB x=0.1265 y=0.0352\nBestRGB x=0.131 y=0.046
@@ -2747,7 +2747,7 @@ TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only
 TP_ICM_TRCFRAME;Abstract Profile
 TP_ICM_TRCFRAME_TOOLTIP;Also known as 'synthetic' or 'virtual' profiles, which are applied at the end of the processing pipeline (prior to ciecam) allowing you to create custom image effects.\nYou can make changes to the:\n 'Tone response curve', which modifies the tones of the image.\n 'Illuminant' : which allows you to change the profile primaries to adapt them to the shooting conditions.\n 'Destination primaries': which allows you to change the destination primaries with three main uses - channel mixer, restore image color (saturation), calibration.\nNote: Abstract profiles take into account the built-in Working profiles without modifying them. They do not work with custom Working profiles.
 TP_ICM_TRC_TOOLTIP;Allows you to change the default sRGB 'Tone response curve' in RT (g=2.4 s=12.92).\nThis TRC modifies the tones of the image. The RGB and Lab values, histogram and output (screen, TIF, JPG) are changed:\n-Gamma acts mainly on light tones -Slope acts mainly on dark tones.\nYou can choose any pair of 'gamma and slope' (values >1) and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.\nA selection other than 'none' activates the 'Illuminant' and 'Destination primaries' menus.
-TP_ICM_WAVFRAME;Contrast
+TP_ICM_WAVFRAME;Contrast Enhancement
 TP_ICM_WAVREFI;Refinement
 TP_ICM_WORKINGPROFILE;Working Profile
 TP_ICM_WORKING_CAT;Matrix adaptation
@@ -4259,7 +4259,7 @@ TP_WAVELET_OPACITYWL_TOOLTIP;Modify the final local contrast at the end of the w
 TP_WAVELET_PASTEL;Pastel chroma
 TP_WAVELET_PROC;Process
 TP_WAVELET_PROTAB;Protection
-TP_WAVELET_PYRWAVTRC;Detail Levels
+TP_WAVELET_PYRWAVTRC;Contrast profile
 TP_WAVELET_QUAAGRES;Aggressive
 TP_WAVELET_QUACONSER;Conservative
 TP_WAVELET_RADIUS;Radius shadows - highlight

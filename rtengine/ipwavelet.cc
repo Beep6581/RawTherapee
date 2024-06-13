@@ -3399,16 +3399,17 @@ void ImProcFunctions::calckoe (const float* WavCoeffs, float gradw, float tloww,
 
 void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparams::WaveletParams & waparams, const procparams::ColorManagementParams & cmparams, const IcmOpacityCurveWL & cmOpacityCurveWL, int skip)
 {
-    bool wavcurvemask = false;
-    if (cmOpacityCurveWL) {
+    bool wavcurvecont = false;
+    if (cmOpacityCurveWL) {//activate only if one value not equal to 0.5
         for (int i = 0; i < 500; i++) {
             if (cmOpacityCurveWL[i] != 0.5f) {
-               wavcurvemask = true;
+               wavcurvecont = true;
                break;
             }
         }
     }
-    if(wavcurvemask) {
+
+    if(wavcurvecont) {//enable curve
 #ifdef _OPENMP
         const int numThreads = omp_get_max_threads();
 #else
@@ -3418,7 +3419,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
             int width = lab->W;
             int height = lab->H;
             int wavelet_lev = 7; //waparams.thres;
-            int DaubLen = 4;
+            int DaubLen = 4;//type of wave
             if (waparams.daubcoeffmethod == "2_") {
                 DaubLen = 4;
             } else if (waparams.daubcoeffmethod == "4_") {
@@ -3430,39 +3431,47 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
             } else { /* if (params->wavelet.daubcoeffmethod == "14_") */
                 DaubLen = 16;
             }
-            float sigmafin = cmparams.sigmatrc;
-            int pyrwav = cmparams.pyrwavtrc;
-            int level_bl = 0;//to adapt if necessary
-            int level_hl = 1;//to adapt if necessary
-            int level_br = wavelet_lev;//to adapt if necessary
+            float sigmafin = cmparams.sigmatrc;//attenuation response
+            int pyrwav = cmparams.pyrwavtrc;//levels contrast profiles
+
+            int level_bl = 0;//adapted to each levels profile 
+            int level_hl = 1;//adapted to each levels profile 
+            int level_br = wavelet_lev;
             int level_hr = wavelet_lev;//to adapt if necessary
-            
-            if(pyrwav == -1) {
+
+            //6 profiles to change range levels and rolloff for high levels
+            if(pyrwav == 0) {
                 level_bl = 0;
                 level_hl = 1;
-                level_br = wavelet_lev -1;
-                level_hr = wavelet_lev -1;
-            } else if( pyrwav == 0) {
+                level_br = wavelet_lev - 2;
+                level_hr = wavelet_lev - 2;
+            } else if(pyrwav == 1) {
                 level_bl = 0;
-                level_hl = 0;
+                level_hl = 1;
                 level_br = wavelet_lev - 1;
-                level_hr = wavelet_lev;
-            } else if( pyrwav == 1) {
-                level_bl = 0;
-                level_hl = 0;
-                level_br = wavelet_lev;
-                level_hr = wavelet_lev;
+                level_hr = wavelet_lev - 1;
             } else if( pyrwav == 2) {
                 level_bl = 0;
                 level_hl = 0;
                 level_br = wavelet_lev - 1;
-                level_hr = wavelet_lev + 1;
+                level_hr = wavelet_lev;
             } else if( pyrwav == 3) {
                 level_bl = 0;
                 level_hl = 0;
+                level_br = wavelet_lev;
+                level_hr = wavelet_lev;
+            } else if( pyrwav == 4) {
+                level_bl = 0;
+                level_hl = 0;
                 level_br = wavelet_lev - 1;
-                level_hr = wavelet_lev + 2;
+                level_hr = wavelet_lev + 1;
+            } else if( pyrwav == 5) {
+                level_bl = 0;
+                level_hl = 0;
+                level_br = wavelet_lev - 1;
+                level_hr = wavelet_lev + 2;//here maximum
             }
+
             int minwin = rtengine::min(width, height);
             int maxlevelspot = 10;//maximum possible
 
@@ -3473,7 +3482,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
 
             int wavelet_level = rtengine::min(level_hr, maxlevelspot);
             int maxlvl = wavelet_level;
-            
+            //decomposition wavelet 
             wavelet_decomposition *wdspot = new wavelet_decomposition(lab->L[0], width, height, maxlvl, 1, skip, numThreads, DaubLen);
             if (wdspot->memory_allocation_failed()) {
                 return;
@@ -3485,11 +3494,11 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
             if (contresid != 0) {
                 int W_L = wdspot->level_W(0);
                 int H_L = wdspot->level_H(0);
-                float *wav_L0 = wdspot->get_coeff0();
+                float *wav_L0 = wdspot->get_coeff0();//residual image
 
 
-                float maxh = 1.5f; //amplification contrast above mean
-                float maxl = 1.5f; //reduction contrast under mean
+                float maxh = 1.25f; //amplification contrast above mean
+                float maxl = 1.25f; //reduction contrast under mean
                 float multL = contresid * (maxl - 1.f) / 100.f + 1.f;
                 float multH = contresid * (maxh - 1.f) / 100.f + 1.f;
                 double avedbl = 0.0; // use double precision for large summations
@@ -3561,13 +3570,15 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                 }
             }
             //end residual contrast
+
+            //begin variable contrast
             float mean[10];
             float meanN[10];
             float sigma[10];
             float sigmaN[10];
             float MaxP[10];
             float MaxN[10];
-            Evaluate2(*wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN, numThreads);
+            Evaluate2(*wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN, numThreads);//calculate mean sigma Max for each levels
             float alow = 1.f;
             float blow = 0.f;
 
@@ -3579,7 +3590,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
             float ahigh = 1.f;
             float bhigh = 0.f;
 
-            if (level_hr != level_br) {//trnsitions high levels
+            if (level_hr != level_br) {//transitions high levels
                 ahigh = 1.f / (level_hr - level_br);
                 bhigh =  -ahigh * level_br;
             }
@@ -3589,11 +3600,11 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                     int W_L = wdspot->level_W(level);
                     int H_L = wdspot->level_H(level);
                     float* const* wav_L = wdspot->level_coeffs(level);
-
+                    //sigmafin = attenuation response
                     if (MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) {
                         float insigma = 0.666f; //SD
                         float logmax = log(MaxP[level]); //log Max
-                        float rapX = (mean[level] + sigmafin * sigma[level]) / MaxP[level]; //rapport between sD / max
+                        float rapX = (mean[level] + sigmafin * sigma[level]) / MaxP[level]; //rapport between SD / max
                         float inx = log(insigma);
                         float iny = log(rapX);
                         float rap = inx / iny; //koef
@@ -3653,7 +3664,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
 
                 }
             }
-
+            //reconstruct lab
             wdspot->reconstruct(lab->L[0], 1.f);
             delete wdspot;
 
