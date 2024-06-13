@@ -1233,12 +1233,12 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
                 double Dx = Dxr;
                 double Dy = Dyr;
 
-                if (enableLCPCA) {
-                    pLCPMap->correctCA(Dx, Dy, w2, h2, c);
-                }
-
-                if (enableLCPDist) {
+                if (enableLCPDist && enableLCPCA) {
+                    pLCPMap->correctDistortionAndCA(Dx, Dy, w2, h2, c);
+                } else if (enableLCPDist) {
                     pLCPMap->correctDistortion(Dx, Dy, w2, h2);
+                } else if (enableLCPCA) {
+                    pLCPMap->correctCA(Dx, Dy, w2, h2, c);
                 }
 
                 // distortion correction

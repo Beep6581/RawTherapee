@@ -990,6 +990,12 @@ bool rtengine::LCPMapper::isCACorrectionAvailable() const
     return enableCA;
 }
 
+void rtengine::LCPMapper::correctDistortionAndCA(double &x, double &y, int cx, int cy, int channel) const
+{
+    correctDistortion(x, y, cx, cy);
+    correctCA(x, y, cx, cy, channel);
+}
+
 void rtengine::LCPMapper::correctDistortion(double &x, double &y, int cx, int cy) const
 {
     x += cx;

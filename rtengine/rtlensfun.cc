@@ -125,7 +125,6 @@ void LFModifier::correctDistortion(double &x, double &y, int cx, int cy) const
     }
 }
 
-
 bool LFModifier::isCACorrectionAvailable() const
 {
     return (flags_ & LF_MODIFY_TCA);
@@ -141,12 +140,37 @@ void LFModifier::correctCA(double &x, double &y, int cx, int cy, int channel) co
     // channels. We could consider caching the info to speed this up
     x += cx;
     y += cy;
-    
+
     float pos[6];
     if (swap_xy_) {
         std::swap(x, y);
     }
     data_->ApplySubpixelDistortion(x, y, 1, 1, pos);  // This is thread-safe
+    x = pos[2*channel];
+    y = pos[2*channel+1];
+    if (swap_xy_) {
+        std::swap(x, y);
+    }
+    x -= cx;
+    y -= cy;
+}
+
+void LFModifier::correctDistortionAndCA(double &x, double &y, int cx, int cy, int channel) const
+{
+    assert(channel >= 0 && channel <= 2);
+
+    // RT currently applies the CA correction per channel, whereas
+    // lensfun applies it to all the three channels simultaneously. This means
+    // we do the work 3 times, because each time we discard 2 of the 3
+    // channels. We could consider caching the info to speed this up
+    x += cx;
+    y += cy;
+
+    float pos[6];
+    if (swap_xy_) {
+        std::swap(x, y);
+    }
+    data_->ApplySubpixelGeometryDistortion(x, y, 1, 1, pos);  // This is thread-safe
     x = pos[2*channel];
     y = pos[2*channel+1];
     if (swap_xy_) {
@@ -396,7 +420,7 @@ bool LFDatabase::init(const Glib::ustring &dbdir)
     if (settings->verbose) {
         std::cout << (ok ? "OK" : "FAIL") << std::endl;
     }
-    
+
     return ok;
 }
 

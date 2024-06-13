@@ -166,6 +166,8 @@ private:
 class LensCorrection {
 public:
     virtual ~LensCorrection() {}
+
+    virtual void correctDistortionAndCA(double &x, double &y, int cx, int cy, int channel) const = 0;
     virtual void correctDistortion(double &x, double &y, int cx, int cy) const = 0;
     virtual bool isCACorrectionAvailable() const = 0;
     virtual void correctCA(double &x, double &y, int cx, int cy, int channel) const = 0;
@@ -194,6 +196,7 @@ public:
     );
 
 
+    void correctDistortionAndCA(double &x, double &y, int cx, int cy, int channel) const override;
     void correctDistortion(double &x, double &y, int cx, int cy) const override;
     bool isCACorrectionAvailable() const override;
     void correctCA(double& x, double& y, int cx, int cy, int channel) const override;

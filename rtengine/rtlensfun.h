@@ -53,6 +53,7 @@ public:
 
     explicit operator bool() const;
 
+    void correctDistortionAndCA(double &x, double &y, int cx, int cy, int channel) const override;
     void correctDistortion(double &x, double &y, int cx, int cy) const override;
     bool isCACorrectionAvailable() const override;
     void correctCA(double &x, double &y, int cx, int cy, int channel) const override;
