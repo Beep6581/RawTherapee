@@ -518,7 +518,7 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
         double Dx = x_d * cost - y_d * sint;
         double Dy = x_d * sint + y_d * cost;
 
-        if (pLCPMap && params->lensProf.useDist) {
+        if (pLCPMap && params->lensProf.useDist && pLCPMap->hasDistortionCorrection()) {
             pLCPMap->correctDistortion(Dx, Dy, w2, h2);
         }
 
@@ -1077,8 +1077,8 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
 
     // set up stuff, depending on the mode we are
     enum PerspType { NONE, SIMPLE, CAMERA_BASED };
-    const bool enableLCPDist = pLCPMap && params->lensProf.useDist;
-    const bool enableLCPCA = pLCPMap && params->lensProf.useCA && pLCPMap->isCACorrectionAvailable();
+    const bool enableLCPDist = pLCPMap && params->lensProf.useDist && pLCPMap->hasDistortionCorrection();
+    const bool enableLCPCA = pLCPMap && params->lensProf.useCA && pLCPMap->hasCACorrection();
     const bool enableCA = highQuality && needsCA();
     const bool doCACorrection = enableCA || enableLCPCA;
     const bool enableGradient = needsGradient();

@@ -102,6 +102,21 @@ LFModifier::operator bool() const
 }
 
 
+bool LFModifier::hasDistortionCorrection() const
+{
+    return (flags_ & LF_MODIFY_DISTORTION);
+}
+
+bool LFModifier::hasCACorrection() const
+{
+    return (flags_ & LF_MODIFY_TCA);
+}
+
+bool LFModifier::hasVignettingCorrection() const
+{
+    return (flags_ & LF_MODIFY_VIGNETTING);
+}
+
 void LFModifier::correctDistortion(double &x, double &y, int cx, int cy) const
 {
     if (!data_) {
@@ -123,11 +138,6 @@ void LFModifier::correctDistortion(double &x, double &y, int cx, int cy) const
         x -= cx;
         y -= cy;
     }
-}
-
-bool LFModifier::isCACorrectionAvailable() const
-{
-    return (flags_ & LF_MODIFY_TCA);
 }
 
 void LFModifier::correctCA(double &x, double &y, int cx, int cy, int channel) const
