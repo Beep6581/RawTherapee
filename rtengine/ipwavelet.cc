@@ -3417,7 +3417,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
 #endif
             int width = lab->W;
             int height = lab->H;
-            int wavelet_lev = waparams.thres;
+            int wavelet_lev = 7; //waparams.thres;
             int DaubLen = 4;
             if (waparams.daubcoeffmethod == "2_") {
                 DaubLen = 4;
@@ -3444,7 +3444,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                 level_hr = wavelet_lev -1;
             } else if( pyrwav == 0) {
                 level_bl = 0;
-                level_hl = 1;
+                level_hl = 0;
                 level_br = wavelet_lev - 1;
                 level_hr = wavelet_lev;
             } else if( pyrwav == 1) {
@@ -3454,12 +3454,12 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                 level_hr = wavelet_lev;
             } else if( pyrwav == 2) {
                 level_bl = 0;
-                level_hl = 1;
+                level_hl = 0;
                 level_br = wavelet_lev - 1;
                 level_hr = wavelet_lev + 1;
             } else if( pyrwav == 3) {
                 level_bl = 0;
-                level_hl = 1;
+                level_hl = 0;
                 level_br = wavelet_lev - 1;
                 level_hr = wavelet_lev + 2;
             }
