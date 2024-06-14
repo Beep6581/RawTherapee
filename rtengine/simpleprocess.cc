@@ -1826,6 +1826,8 @@ private:
                 IcmOpacityCurveWL icmOpacityCurveWL;
                 Colparams.getCurves(icmOpacityCurveWL);
                 ipf.localCont (labView, labView, WaveParams, Colparams, icmOpacityCurveWL, 1);
+              // ipf.gamutCont (labView, labView, WaveParams, Colparams, 1);
+
             }
 
         }

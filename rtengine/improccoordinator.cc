@@ -2251,9 +2251,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     ColorManagementParams Colparams = params->icm;
                     Colparams.getCurves(icmOpacityCurveWL);
                     ipf.localCont (nprevl, nprevl, WaveParams,Colparams, icmOpacityCurveWL, scale);
+                //    ipf.gamutCont (nprevl,nprevl, WaveParams,Colparams, scale);
+
                 }
 
-                //code Wavelet nprevl->L, pW, pH));
             }
 
             if (params->colorappearance.enabled) {

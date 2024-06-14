@@ -445,6 +445,7 @@ enum class BlurType {
     void Evaluate2(const wavelet_decomposition &WaveletCoeffs_L, float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN, int numThreads);
     void Eval2(const float* const* WavCoeffs_L, int level, int W_L, int H_L, float *mean, float *meanN, float *sigma, float *sigmaN, float *MaxP, float *MaxN, int numThreads);
     void localCont (LabImage * lab, LabImage * dst, const procparams::WaveletParams & waparams, const procparams::ColorManagementParams & cmparams, const IcmOpacityCurveWL & cmOpacityCurveWL, int skip);
+    void gamutCont (LabImage * lab, LabImage * dst, const procparams::WaveletParams & waparams, const procparams::ColorManagementParams & cmparams, int skip);
 
     void calceffect(int level, float *mean, float *sigma, float *mea, float effect, float offs);
     std::unique_ptr<LUTf> buildMeaLut(const float inVals[11], const float mea[10], float& lutFactor);

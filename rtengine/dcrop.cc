@@ -1712,6 +1712,8 @@ void Crop::update(int todo)
                 IcmOpacityCurveWL icmOpacityCurveWL;
                 Colparams.getCurves(icmOpacityCurveWL);
                 parent->ipf.localCont (labnCrop, labnCrop, WaveParams, Colparams, icmOpacityCurveWL, skip);
+            //    parent->ipf.gamutCont (labnCrop, labnCrop, WaveParams, Colparams, skip);
+
             }
         }
 
