@@ -515,13 +515,13 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
                 break;
         }
 
-        if (pLCPMap && params->lensProf.useDist) {
-            pLCPMap->correctDistortion(x_d, y_d, w2, h2);
-        }
-
         // rotate
         double Dx = x_d * cost - y_d * sint;
         double Dy = x_d * sint + y_d * cost;
+
+        if (pLCPMap && params->lensProf.useDist) {
+            pLCPMap->correctDistortion(Dx, Dy, w2, h2);
+        }
 
         // distortion correction
         double s = 1;
@@ -700,7 +700,7 @@ void ImProcFunctions::transform (Imagefloat* original, Imagefloat* transformed, 
             }
         }
         transformGeneral(highQuality, original, dest, cx, cy, sx, sy, oW, oH, fW, fH, pLCPMap.get(), useOriginalBuffer);
-        
+
         if (highQuality && dest != transformed) {
             transformLCPCAOnly(dest, transformed, cx, cy, pLCPMap.get(), useOriginalBuffer);
         }
@@ -1240,25 +1240,25 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
                     break;
             }
 
-            if (enableLCPDist) {
-                pLCPMap->correctDistortion(x_d, y_d, w2, h2);
-            }
-
             // rotate
-            const double Dxc = x_d * cost - y_d * sint;
-            const double Dyc = x_d * sint + y_d * cost;
+            double Dxr = x_d * cost - y_d * sint;
+            double Dyr = x_d * sint + y_d * cost;
+
+            if (enableLCPDist) {
+                pLCPMap->correctDistortion(Dxr, Dyr, w2, h2);
+            }
 
             // distortion correction
             double s = 1.0;
 
             if (enableDistortion) {
-                const double r = sqrt(Dxc * Dxc + Dyc * Dyc) / maxRadius;
+                const double r = sqrt(Dxr * Dxr + Dyr * Dyr) / maxRadius;
                 s = 1.0 - distAmount + distAmount * r;
             }
 
             for (int c = 0; c < (enableCA ? 3 : 1); ++c) {
-                double Dx = Dxc * (s + chDist[c]);
-                double Dy = Dyc * (s + chDist[c]);
+                double Dx = Dxr * (s + chDist[c]);
+                double Dy = Dyr * (s + chDist[c]);
 
                 // de-center
                 Dx += w2;
@@ -1386,7 +1386,7 @@ void ImProcFunctions::transformLCPCAOnly(Imagefloat *original, Imagefloat *trans
             for (int c = 0; c < 3; c++) {
                 double Dx = x;
                 double Dy = y;
-                
+
                 pLCPMap->correctCA(Dx, Dy, cx, cy, c);
 
                 // Extract integer and fractions of coordinates
@@ -1522,4 +1522,3 @@ bool ImProcFunctions::needsTransform (int oW, int oH, int rawRotationDeg, const 
 
 
 }
-
