@@ -3664,57 +3664,71 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                         float asig = 0.166f / (sigma[level] * sigmafin);
                         float bsig = 0.5f - asig * mean[level];
                         float amean = 0.5f / mean[level];
+                        const float effect = sigmafin;
+                        constexpr float offset = 1.f;
+                        float mea[10];
+                        calceffect(level, mean, sigma, mea, effect, offset);
+                        float klev = 1.f;
+                        if (level >= level_hl && level <= level_hr) {
+                           klev = 1.f;
+                        }
+
+                        if (level_hl != level_bl) {
+                            if (level >= level_bl && level < level_hl) {
+                                klev = alow * level + blow;
+                            }
+                        }
+
+                        if (level_hr != level_br) {
+                            if (level > level_hr && level <= level_br) {
+                               klev = ahigh * level + bhigh;
+                            }
+                        }
+                        klev *= 0.8f;
+                        const float threshold = mean[level] + sigmafin * sigma[level];
+                        float lutFactor;
+                        const float inVals[] = {0.05f, 0.2f, 0.7f, 1.f, 1.f, 0.8f, 0.6f, 0.5f, 0.4f, 0.3f, 0.1f};
+                        const auto meaLut = buildMeaLut(inVals, mea, lutFactor);
+                        
 
 #ifdef _OPENMP
                         #pragma omp parallel for if (multiThread)
 #endif
 
-                        for (int i = 0; i < W_L * H_L; i++) {
-                            if(cmOpacityCurveWL) {
-                                float absciss;
-                                float &val = wav_L[dir][i];
+                        for (int y = 0; y < H_L; y++) {
+                            for (int x = 0; x < W_L; x++) {
+                                if(cmOpacityCurveWL) {
+                                    float absciss;
+                                    float &val = wav_L[dir][y * W_L + x];
+                                    const float WavCL = std::fabs(wav_L[dir][y * W_L + x]);
 
-                                if (fabsf(val) >= (mean[level] + sigmafin * sigma[level])) { //for max
-                                    float valcour = xlogf(fabsf(val));
-                                    float valc = valcour - logmax;
-                                    float vald = valc * rap;
-                                    absciss = xexpf(vald);
-                                } else if (fabsf(val) >= mean[level]) {
-                                    absciss = asig * fabsf(val) + bsig;
-                                } else {
-                                    absciss = amean * fabsf(val);
-                                }
-
-                                float klev = 1.f;
-
-                                if (level >= level_hl && level <= level_hr) {
-                                    klev = 1.f;
-                                }
-
-                                if (level_hl != level_bl) {
-                                    if (level >= level_bl && level < level_hl) {
-                                        klev = alow * level + blow;
+                                    if (WavCL >= threshold) { //for max
+                                        float valcour = xlogf(fabsf(val));
+                                        float valc = valcour - logmax;
+                                        float vald = valc * rap;
+                                        absciss = xexpf(vald);
+                                    } else if (WavCL >= mean[level]) {
+                                        absciss = asig * WavCL + bsig;
+                                    } else {
+                                        absciss = amean * WavCL;
                                     }
+/*
+*/
+                                    float kc = klev * (cmOpacityCurveWL[absciss * 500.f] - 0.5f);
+                                    float amplieffect = kc <= 0.f ? 1.f : 1.5f;
+
+                                    float kinterm = 1.f + amplieffect * kc;
+                                    kinterm = kinterm <= 0.f ? 0.01f : kinterm;
+                                  //  if(sigmafin != 1.f) {
+                                        val *= (1.f + (kinterm - 1.f) * (*meaLut)[WavCL * lutFactor]);
+                                  //  } else {
+                                  //      val *=  kinterm;
+                                  //  }
+
                                 }
-
-                                if (level_hr != level_br) {
-                                    if (level > level_hr && level <= level_br) {
-                                        klev = ahigh * level + bhigh;
-                                    }
-                                }
-
-                                float kc = klev * (cmOpacityCurveWL[absciss * 500.f] - 0.5f);
-                                float amplieffect = kc <= 0.f ? 1.f : 1.5f;
-
-                                float kinterm = 1.f + amplieffect * kc;
-                                kinterm = kinterm <= 0.f ? 0.01f : kinterm;
-
-                                val *=  kinterm;
-
                             }
                         }
                     }
-
                 }
             }
             //reconstruct lab
