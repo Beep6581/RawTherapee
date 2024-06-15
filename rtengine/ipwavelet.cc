@@ -2948,6 +2948,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
                         calceffect(lvl, mean, sigma, mea, effect, offs);
                         float lutFactor;
                         const float inVals[] = {0.05f, 0.2f, 0.7f, 1.f, 1.f, 0.8f, 0.6f, 0.4f, 0.2f, 0.1f, 0.01f};
+
                         const auto meaLut = buildMeaLut(inVals, mea, lutFactor);
                         if (!aft.get()) {
                             aft.reset(new float[Wlvl_L * Hlvl_L]);
@@ -3687,7 +3688,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                         klev *= 0.8f;
                         const float threshold = mean[level] + sigmafin * sigma[level];
                         float lutFactor;
-                        const float inVals[] = {0.05f, 0.2f, 0.7f, 1.f, 1.f, 0.8f, 0.6f, 0.5f, 0.4f, 0.3f, 0.1f};
+                        const float inVals[] = {0.05f, 0.2f, 0.7f, 1.f, 1.f, 0.8f, 0.7f, 0.5f, 0.4f, 0.3f, 0.1f};
                         const auto meaLut = buildMeaLut(inVals, mea, lutFactor);
                         
 
@@ -3719,11 +3720,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
 
                                     float kinterm = 1.f + amplieffect * kc;
                                     kinterm = kinterm <= 0.f ? 0.01f : kinterm;
-                                  //  if(sigmafin != 1.f) {
-                                        val *= (1.f + (kinterm - 1.f) * (*meaLut)[WavCL * lutFactor]);
-                                  //  } else {
-                                  //      val *=  kinterm;
-                                  //  }
+                                    val *= (1.f + (kinterm - 1.f) * (*meaLut)[WavCL * lutFactor]);
 
                                 }
                             }
