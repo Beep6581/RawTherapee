@@ -54,7 +54,7 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSI
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ffp-contract=off")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffp-contract=off")
 endif()
-#    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-dec")
+
 # We might want to build using the old C++ ABI, even when using a new GCC
 # version:
 if(USE_OLD_CXX_ABI)
