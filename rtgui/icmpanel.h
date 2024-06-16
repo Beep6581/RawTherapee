@@ -69,6 +69,7 @@ protected:
     Adjuster* wmidtcie;
     Gtk::CheckButton* wsmoothcie;
     Adjuster* sigmatrc;
+    Adjuster* offstrc;
     Adjuster* pyrwavtrc;
     Adjuster* residtrc;
     
@@ -147,6 +148,7 @@ private:
     rtengine::ProcEvent EvICMwmidtcie;
     rtengine::ProcEvent EvICMwsmoothcie;
     rtengine::ProcEvent EvICMsigmatrc;
+    rtengine::ProcEvent EvICMoffstrc;
     rtengine::ProcEvent EvICMopacityWLI;
     rtengine::ProcEvent EvICMpyrwavtrc;
     rtengine::ProcEvent EvICMresidtrc;

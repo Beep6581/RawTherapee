@@ -3487,7 +3487,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
             }
             float sigmafin = cmparams.sigmatrc;//attenuation response
             int pyrwav = cmparams.pyrwavtrc;//levels contrast profiles
-
+            float offset = cmparams.offstrc;
             int level_bl = 0;//adapted to each levels profile 
             int level_hl = 1;//adapted to each levels profile 
             int level_br = wavelet_lev;
@@ -3658,15 +3658,15 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                     if (MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) {
                         float insigma = 0.666f; //SD
                         float logmax = log(MaxP[level]); //log Max
-                        float rapX = (mean[level] + sigmafin * sigma[level]) / MaxP[level]; //rapport between SD / max
+                        float rapX = (offset * mean[level] + sigmafin * sigma[level]) / MaxP[level]; //rapport between SD / max
                         float inx = log(insigma);
                         float iny = log(rapX);
                         float rap = inx / iny; //koef
                         float asig = 0.166f / (sigma[level] * sigmafin);
-                        float bsig = 0.5f - asig * mean[level];
-                        float amean = 0.5f / mean[level];
+                        float bsig = 0.5f - asig * (mean[level] * offset);
+                        float amean = 0.5f / (mean[level] * offset);
                         const float effect = sigmafin;
-                        constexpr float offset = 1.f;
+                        //constexpr float offs = 1.f;
                         float mea[10];
                         calceffect(level, mean, sigma, mea, effect, offset);
                         float klev = 1.f;
@@ -3686,7 +3686,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                             }
                         }
                         klev *= 0.8f;
-                        const float threshold = mean[level] + sigmafin * sigma[level];
+                        const float threshold = offset * mean[level] + sigmafin * sigma[level];
                         float lutFactor;
                         const float inVals[] = {0.05f, 0.2f, 0.7f, 1.f, 1.f, 0.8f, 0.7f, 0.5f, 0.4f, 0.3f, 0.1f};
                         const auto meaLut = buildMeaLut(inVals, mea, lutFactor);
@@ -3708,7 +3708,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                                         float valc = valcour - logmax;
                                         float vald = valc * rap;
                                         absciss = xexpf(vald);
-                                    } else if (WavCL >= mean[level]) {
+                                    } else if (WavCL >= offset * mean[level]) {
                                         absciss = asig * WavCL + bsig;
                                     } else {
                                         absciss = amean * WavCL;

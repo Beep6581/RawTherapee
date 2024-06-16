@@ -1433,7 +1433,8 @@ HISTORY_MSG_ICM_GAMUT;Gamut control
 HISTORY_MSG_ICM_GREX;Primaries Green X
 HISTORY_MSG_ICM_GREY;Primaries Green Y
 HISTORY_MSG_ICM_MIDTCIE;Midtones
-HISTORY_MSG_ICM_OPACITYW;Variable contrast
+HISTORY_MSG_ICM_OFFSTRC;Offset
+HISTORY_MSG_ICM_OPACITYW;Offset
 HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Output - Primaries
 HISTORY_MSG_ICM_OUTPUT_TEMP;Output - ICC-v4 illuminant D
 HISTORY_MSG_ICM_OUTPUT_TYPE;Output - Type
@@ -4262,6 +4263,7 @@ TP_WAVELET_NPNONE;None
 TP_WAVELET_NPTYPE;Neighboring pixels
 TP_WAVELET_NPTYPE_TOOLTIP;This algorithm uses the proximity of a pixel and eight of its neighbors. If less difference, edges are reinforced.
 TP_WAVELET_OFFSET_TOOLTIP;Offset modifies the balance between low contrast and high contrast details.\nHigh values will amplify contrast changes to the higher contrast details, whereas low values will amplify contrast changes to low contrast details.\nBy using a low Attenuation response value you can select which contrast values will be enhanced.
+TP_WAVELET_OFFSFIN;Offset
 TP_WAVELET_OLDSH;Algorithm using negatives values
 TP_WAVELET_OPACITY;Opacity blue-yellow
 TP_WAVELET_OPACITYW;Contrast balance d/v-h curve
