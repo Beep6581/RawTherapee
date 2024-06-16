@@ -123,6 +123,14 @@ protected:
     rtengine::ProcEvent Evlocallabstrgradcie;
     rtengine::ProcEvent Evlocallabdetailciejz;
     rtengine::ProcEvent EvlocallabenacieMaskall;
+    rtengine::ProcEvent Evlocallabfeathercol;
+    rtengine::ProcEvent Evlocallabfeathervib;
+    rtengine::ProcEvent Evlocallabfeatherexp;
+    rtengine::ProcEvent Evlocallabfeatherwav;
+    rtengine::ProcEvent Evlocallabfeatherlog;
+    rtengine::ProcEvent Evlocallabfeathercie;
+    rtengine::ProcEvent EvlocallabfeatherSH;
+    rtengine::ProcEvent Evlocallabfeather_mask;
     // LocallabTool parameters
     bool needMode;
     bool isLocActivated;
@@ -278,6 +286,7 @@ private:
     Adjuster* const strcolab;
     Adjuster* const strcolh;
     Adjuster* const angcol;
+    Adjuster* const feathercol;
     MyExpander* const expcurvcol;
     Gtk::Label* const labqualcurv;
     MyComboBoxText* const qualitycurveMethod;
@@ -451,6 +460,7 @@ private:
     MyExpander* const expgradexp;
     Adjuster* const strexp;
     Adjuster* const angexp;
+    Adjuster* const featherexp;
     Adjuster* const softradiusexp;
     Gtk::CheckButton* const inversex;
     MyExpander* const expmaskexp;
@@ -559,6 +569,7 @@ private:
     MyExpander* const expgradsh;
     Adjuster* const strSH;
     Adjuster* const angSH;
+    Adjuster* const featherSH;
     Gtk::CheckButton* const inverssh;
     MyExpander* const expmasksh;
     MyComboBoxText* const showmaskSHMethod;
@@ -661,6 +672,7 @@ private:
     Adjuster* const strvibab;
     Adjuster* const strvibh;
     Adjuster* const angvib;
+    Adjuster* const feathervib;
     MyExpander* const expmaskvib;
     MyComboBoxText* const showmaskvibMethod;
     Gtk::CheckButton* const enavibMask;
@@ -1240,6 +1252,7 @@ private:
     Adjuster* const sigmalc2;
     Adjuster* const strwav;
     Adjuster* const angwav;
+    Adjuster* const featherwav;
     Gtk::CheckButton* const wavedg;
     Adjuster* const strengthw;
     Adjuster* const sigmaed;
@@ -1506,6 +1519,7 @@ private:
     Gtk::Frame* const gradlogFrame;
     Adjuster* const strlog;
     Adjuster* const anglog;
+    Adjuster* const featherlog;
     MyExpander* const expmaskL;
     MyComboBoxText* const showmaskLMethod;
     Gtk::CheckButton* const enaLMask;
@@ -1613,6 +1627,7 @@ private:
     ThresholdAdjuster* const csThresholdmask;
     Gtk::Frame* const gradFramemask;
     Adjuster* const str_mask;
+    Adjuster* const feather_mask;
     Adjuster* const ang_mask;
 
     sigc::connection showmask_MethodConn, previewmasConn, enamaskConn, toolmaskConn, fftmaskConn;
@@ -1866,6 +1881,7 @@ private:
     MyExpander* const expgradcie;
     Adjuster* const strgradcie;
     Adjuster* const anggradcie;
+    Adjuster* const feathercie;
 
     MyExpander* const exprecovcie;
     Gtk::Label* const maskusablecie;

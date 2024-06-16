@@ -2534,6 +2534,7 @@ LocallabContrast::LocallabContrast():
     sigmalc2(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 2.5, 0.01, 1.))),
     strwav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4.0, 4.0, 0.05, 0.))),
     angwav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
+    featherwav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FEATVALUE"), 10., 100., 0.1, 25.))),
     wavedg(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_EDGFRA")))),
     strengthw(Gtk::manage(new Adjuster(M("TP_WAVELET_EDVAL"), 0., 100.0, 0.5, 0.))),
     sigmaed(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 2.5, 0.01, 1.))),
@@ -2602,6 +2603,7 @@ LocallabContrast::LocallabContrast():
 {
     auto m = ProcEventMapper::getInstance();
     Evlocallabpreviewlc = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWLC");
+    Evlocallabfeatherwav = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_FEATHERWAV");
     
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -2708,6 +2710,7 @@ LocallabContrast::LocallabContrast():
     strwav->setAdjusterListener(this);
 
     angwav->setAdjusterListener(this);
+    featherwav->setAdjusterListener(this);
 
     wavedgConn = wavedg->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::wavedgChanged));
 
@@ -2949,6 +2952,7 @@ LocallabContrast::LocallabContrast():
     gradwavBox->pack_start(*sigmalc2);
     gradwavBox->pack_start(*strwav);
     gradwavBox->pack_start(*angwav);
+    gradwavBox->pack_start(*featherwav);
     gradwavFrame->add(*gradwavBox);
     blurcontBox->pack_start(*gradwavFrame);
     Gtk::Frame* const edgFrame = Gtk::manage(new Gtk::Frame());
@@ -3400,6 +3404,7 @@ void LocallabContrast::read(const rtengine::procparams::ProcParams* pp, const Pa
         sigmalc2->setValue(spot.sigmalc2);
         strwav->setValue(spot.strwav);
         angwav->setValue(spot.angwav);
+        featherwav->setValue(spot.featherwav);
         wavedg->set_active(spot.wavedg);
         strengthw->setValue(spot.strengthw);
         sigmaed->setValue(spot.sigmaed);
@@ -3525,6 +3530,7 @@ void LocallabContrast::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         spot.sigmalc2 = sigmalc2->getValue();
         spot.strwav = strwav->getValue();
         spot.angwav = angwav->getValue();
+        spot.featherwav = featherwav->getValue();
         spot.wavedg = wavedg->get_active();
         spot.strengthw = strengthw->getValue();
         spot.sigmaed = sigmaed->getValue();
@@ -3627,6 +3633,7 @@ void LocallabContrast::setDefaults(const rtengine::procparams::ProcParams* defPa
         sigmalc2->setDefault(defSpot.sigmalc2);
         strwav->setDefault(defSpot.strwav);
         angwav->setDefault(defSpot.angwav);
+        featherwav->setDefault(defSpot.featherwav);
         strengthw->setDefault(defSpot.strengthw);
         sigmaed->setDefault(defSpot.sigmaed);
         gradw->setDefault(defSpot.gradw);
@@ -3822,6 +3829,13 @@ void LocallabContrast::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabangwav,
                                        angwav->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == featherwav) {
+            if (listener) {
+                listener->panelChanged(Evlocallabfeatherwav,
+                                       featherwav->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
@@ -4146,6 +4160,7 @@ void LocallabContrast::convertParamToNormal()
     sigmalc2->setValue(defSpot.sigmalc2);
     strwav->setValue(defSpot.strwav);
     angwav->setValue(defSpot.angwav);
+    featherwav->setValue(defSpot.featherwav);
     wavedg->set_active(defSpot.wavedg);
     strengthw->setValue(defSpot.strengthw);
     sigmaed->setValue(defSpot.sigmaed);
@@ -5516,6 +5531,7 @@ LocallabLog::LocallabLog():
     gradlogFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADLOGFRA")))),
     strlog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -2.0, 2.0, 0.05, 0.))),
     anglog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
+    featherlog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FEATVALUE"), 10., 100., 0.1, 25.))),
     expmaskL(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWC")))),
     showmaskLMethod(Gtk::manage(new MyComboBoxText())),
     enaLMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
@@ -5539,6 +5555,7 @@ LocallabLog::LocallabLog():
     Evlocallabcomprlog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_LOG_COMPR");
     Evlocallabstrelog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_LOG_STRE");
     Evlocallabsatlog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_LOG_SAT");
+    Evlocallabfeatherlog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_FEATHERLOG");
 
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -5619,6 +5636,7 @@ LocallabLog::LocallabLog():
     strlog->setAdjusterListener(this);
 
     anglog->setAdjusterListener(this);
+    featherlog->setAdjusterListener(this);
 
     surHBox->set_spacing(2);
     surHBox->set_tooltip_markup(M("TP_LOCALLAB_LOGSURSOUR_TOOLTIP"));
@@ -5788,6 +5806,7 @@ LocallabLog::LocallabLog():
     ToolParamBlock* const gradlogBox = Gtk::manage(new ToolParamBlock());
     gradlogBox->pack_start(*strlog);
     gradlogBox->pack_start(*anglog);
+    gradlogBox->pack_start(*featherlog);
     gradlogFrame->add(*gradlogBox);
     pack_start(*gradlogFrame);
 }
@@ -6101,6 +6120,7 @@ void LocallabLog::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         sensilog->setValue((double)spot.sensilog);
         strlog->setValue(spot.strlog);
         anglog->setValue(spot.anglog);
+        featherlog->setValue(spot.featherlog);
         CCmaskshapeL->setCurve(spot.CCmaskcurveL);
         LLmaskshapeL->setCurve(spot.LLmaskcurveL);
         HHmaskshapeL->setCurve(spot.HHmaskcurveL);
@@ -6168,6 +6188,7 @@ void LocallabLog::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.sensilog = sensilog->getIntValue();
         spot.strlog = strlog->getValue();
         spot.anglog = anglog->getValue();
+        spot.featherlog = featherlog->getValue();
         spot.CCmaskcurveL = CCmaskshapeL->getCurve();
         spot.LLmaskcurveL = LLmaskshapeL->getCurve();
         spot.HHmaskcurveL = HHmaskshapeL->getCurve();
@@ -6354,6 +6375,7 @@ void LocallabLog::convertParamToSimple()
     sursour->set_active(0);
     strlog->setValue(defSpot.strlog);
     anglog->setValue(defSpot.anglog);
+    featherlog->setValue(defSpot.featherlog);
     enaLMask->set_active(false);
     showmaskLMethod->set_active(0);
     recothresl->setValue(defSpot.recothresl);
@@ -6476,6 +6498,7 @@ void LocallabLog::setDefaults(const rtengine::procparams::ProcParams* defParams,
         sensilog->setDefault((double)defSpot.sensilog);
         strlog->setDefault(defSpot.strlog);
         anglog->setDefault(defSpot.anglog);
+        featherlog->setDefault(defSpot.featherlog);
         blendmaskL->setDefault(defSpot.blendmaskL);
         radmaskL->setDefault(defSpot.radmaskL);
         chromaskL->setDefault(defSpot.chromaskL);
@@ -6696,6 +6719,13 @@ void LocallabLog::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabanglog,
                                        anglog->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == featherlog) {
+            if (listener) {
+                listener->panelChanged(Evlocallabfeatherlog,
+                                       featherlog->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
@@ -7011,11 +7041,13 @@ LocallabMask::LocallabMask():
     csThresholdmask(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 0, 9, 0, 0, 6, 5, 0, false))),
     gradFramemask(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADFRA")))),
     str_mask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -2., 2., 0.05, 0.))),
+    feather_mask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FEATVALUE"), 10., 100., 0.1, 25.))),
     ang_mask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180., 180., 0.1, 0.)))
 {
 
     auto m = ProcEventMapper::getInstance();
     Evlocallabpreviewmas = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWMAS");
+    Evlocallabfeather_mask = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_FEATHERMAS");
     
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -7125,6 +7157,7 @@ LocallabMask::LocallabMask():
 
     ang_mask->setAdjusterListener(this);
     ang_mask->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
+    feather_mask->setAdjusterListener(this);
 
     // Add Common mask specific widgets to GUI
     pack_start(*sensimask);
@@ -7160,6 +7193,7 @@ LocallabMask::LocallabMask():
     ToolParamBlock* const gradmaskBox = Gtk::manage(new ToolParamBlock());
     gradmaskBox->pack_start(*str_mask);
     gradmaskBox->pack_start(*ang_mask);
+    gradmaskBox->pack_start(*feather_mask);
     gradFramemask->add(*gradmaskBox);
     toolmaskBox->pack_start(*gradFramemask, Gtk::PACK_SHRINK, 0);
     toolmaskFrame->add(*toolmaskBox);
@@ -7375,6 +7409,7 @@ void LocallabMask::read(const rtengine::procparams::ProcParams* pp, const Params
         csThresholdmask->setValue<int>(spot.csthresholdmask);
         str_mask->setValue((double)spot.str_mask);
         ang_mask->setValue((double)spot.ang_mask);
+        feather_mask->setValue((double)spot.feather_mask);
     }
 
     // Enable all listeners
@@ -7422,6 +7457,7 @@ void LocallabMask::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.csthresholdmask = csThresholdmask->getValue<int>();
         spot.str_mask = str_mask->getIntValue();
         spot.ang_mask = ang_mask->getIntValue();
+        spot.feather_mask = feather_mask->getIntValue();
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -7451,6 +7487,7 @@ void LocallabMask::setDefaults(const rtengine::procparams::ProcParams* defParams
         csThresholdmask->setDefault<int>(defSpot.csthresholdmask);
         str_mask->setDefault((double)defSpot.str_mask);
         ang_mask->setDefault((double)defSpot.ang_mask);
+        feather_mask->setDefault((double)defSpot.feather_mask);
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -7562,6 +7599,13 @@ void LocallabMask::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabang_mask,
                                        ang_mask->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == feather_mask) {
+            if (listener) {
+                listener->panelChanged(Evlocallabfeather_mask,
+                                       feather_mask->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
@@ -7700,6 +7744,7 @@ void LocallabMask::convertParamToNormal()
     csThresholdmask->setValue<int>(defSpot.csthresholdmask);
     str_mask->setValue((double)defSpot.str_mask);
     ang_mask->setValue((double)defSpot.ang_mask);
+    feather_mask->setValue((double)defSpot.feather_mask);
 
     // Enable all listeners
     enableListener();
@@ -8067,6 +8112,7 @@ Locallabcie::Locallabcie():
     expgradcie(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPGRAD")))),
     strgradcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
     anggradcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
+    feathercie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FEATVALUE"), 10., 100., 0.1, 25.))),
 
     exprecovcie(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
     maskusablecie(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
@@ -8167,6 +8213,7 @@ Locallabcie::Locallabcie():
     Evlocallabdetailciejz = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_DETAILJZ");
     EvlocallabenacieMaskall = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_ENAMASKALL");
     Evlocallabsmoothciemet = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SMOOTHMET");
+    Evlocallabfeathercie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_FEATHERCIE");
     
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -8984,9 +9031,11 @@ Locallabcie::Locallabcie():
 
     strgradcie->setAdjusterListener(this);
     anggradcie->setAdjusterListener(this);
+    feathercie->setAdjusterListener(this);
     ToolParamBlock* const cieBoxgrad = Gtk::manage(new ToolParamBlock());
     cieBoxgrad->pack_start(*strgradcie);
     cieBoxgrad->pack_start(*anggradcie);
+    cieBoxgrad->pack_start(*feathercie);
     expgradcie->add(*cieBoxgrad, false);
     pack_start(*expgradcie, false, false);
 
@@ -9875,6 +9924,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
 
         strgradcie->setValue((double)spot.strgradcie);
         anggradcie->setValue((double)spot.anggradcie);
+        feathercie->setValue((double)spot.feathercie);
 
         enacieMask->set_active(spot.enacieMask);
         enacieMaskall->set_active(spot.enacieMaskall);
@@ -10178,6 +10228,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.detailcie = detailcie->getValue();
         spot.strgradcie = strgradcie->getValue();
         spot.anggradcie = anggradcie->getValue();
+        spot.feathercie = feathercie->getValue();
 
         spot.enacieMask = enacieMask->get_active();
         spot.enacieMaskall = enacieMaskall->get_active();
@@ -11886,6 +11937,7 @@ void Locallabcie::convertParamToSimple()
     enacieMaskall->set_active(defSpot.enacieMaskall);
     strgradcie->setValue(defSpot.strgradcie);
     anggradcie->setValue(defSpot.anggradcie);
+    feathercie->setValue(defSpot.feathercie);
     refi->setValue(defSpot.refi);
     modecie->set_active(0);
     primMethod->set_active(0);//Prophoto
@@ -12050,6 +12102,7 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         // detailcie->setDefault(defSpot.detailcie);
         strgradcie->setDefault((double)defSpot.strgradcie);
         anggradcie->setDefault((double)defSpot.anggradcie);
+        feathercie->setDefault((double)defSpot.feathercie);
         blendmaskcie->setDefault((double)defSpot.blendmaskcie);
         radmaskcie->setDefault(defSpot.radmaskcie);
         chromaskcie->setDefault(defSpot.chromaskcie);
@@ -12755,6 +12808,13 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabanggradcie,
                                        anggradcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == feathercie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabfeathercie,
+                                       feathercie->getTextValue() + spName);
             }
         }
 
