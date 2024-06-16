@@ -18,14 +18,14 @@ jobs:
   build:
     runs-on: macos-12
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install dependencies
         run: |
            date -u
            mkdir build
            date +%s > build/stamp
            brew uninstall --ignore-dependencies libtiff
-           brew install libtiff gtk+3 gtkmm3 gtk-mac-integration adwaita-icon-theme libsigc++@2 little-cms2 libiptcdata fftw lensfun expat pkgconfig llvm shared-mime-info exiv2 automake | tee -a depslog
+           brew install libtiff gtk+3 gtkmm3 gtk-mac-integration adwaita-icon-theme libsigc++@2 little-cms2 libiptcdata fftw lensfun expat pkgconfig llvm shared-mime-info exiv2 jpeg-xl automake | tee -a depslog
            date -u
            echo "----====Pourage====----"
            cat depslog | grep Pouring
@@ -97,7 +97,7 @@ jobs:
             "ARTIFACT_FILE: ${ARTIFACT_FILE}" \
             "PUBLISH_NAME: ${PUBLISH_NAME}"
           exit
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: ${{env.ARTIFACT_FILE}}
           path: ${{env.ARTIFACT_PATH}}
@@ -107,7 +107,7 @@ jobs:
           zsh -c 'echo "Build completed in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"'
 
       - name: Publish artifacts
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: ${{github.ref_type == 'tag' || github.ref_name == 'dev'}}
         with:
           tag_name: nightly-github-actions
