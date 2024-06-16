@@ -3494,6 +3494,13 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
             int level_hr = wavelet_lev;//to adapt if necessary
 
             //6 profiles to change range levels and rolloff for high levels
+            float inva5 =0.8f;
+            float inva6 = 0.7f;
+            float inva7 = 0.5f;
+            float inva8 = 0.4f;
+            float inva9 = 0.3f;
+            float inva10 = 0.1f;
+
             if(pyrwav == 0) {
                 level_bl = 0;
                 level_hl = 1;
@@ -3504,11 +3511,23 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                 level_hl = 1;
                 level_br = wavelet_lev - 1;
                 level_hr = wavelet_lev - 1;
+                inva5 = 1.f;
+                inva6 = 0.9f;
+                inva7 = 0.7f;
+                inva8 = 0.6f;
+                inva9 = 0.4f;
+                inva10 = 0.2f;
             } else if( pyrwav == 2) {
                 level_bl = 0;
                 level_hl = 0;
                 level_br = wavelet_lev - 1;
                 level_hr = wavelet_lev;
+                inva5 = 1.f;
+                inva6 = 0.9f;
+                inva7 = 0.7f;
+                inva8 = 0.6f;
+                inva9 = 0.4f;
+                inva10 = 0.2f;
             } else if( pyrwav == 3) {
                 level_bl = 0;
                 level_hl = 0;
@@ -3689,7 +3708,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                         klev *= 0.8f;
                         const float threshold = offset * mean[level] + sigmafin * sigma[level];
                         float lutFactor;
-                        const float inVals[] = {0.05f, 0.2f, 0.7f, 1.f, 1.f, 0.8f, 0.7f, 0.5f, 0.4f, 0.3f, 0.1f};
+                        float inVals[] = {0.05f, 0.2f, 0.7f, 1.f, 1.f, inva5, inva6, inva7, inva8, inva9, inva10};//0.4f, 0.3f, 0.1f
                         const auto meaLut = buildMeaLut(inVals, mea, lutFactor);
                         
 

@@ -72,7 +72,7 @@ protected:
     Adjuster* offstrc;
     Adjuster* pyrwavtrc;
     Adjuster* residtrc;
-    
+
     CurveEditorGroup* opacityCurveEditorWLI;
     FlatCurveEditor* opacityShapeWLI;
 

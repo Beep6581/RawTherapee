@@ -1324,7 +1324,7 @@ struct ColorManagementParamsEdited {
     bool residtrc;
     bool pyrwavtrc;
     bool opacityCurveWLI;
-    
+
     bool wsmoothcie;
     bool will;
     bool wprim;
