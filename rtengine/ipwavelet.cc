@@ -3659,6 +3659,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                         float insigma = 0.666f; //SD
                         float logmax = log(MaxP[level]); //log Max
                         float rapX = (offset * mean[level] + sigmafin * sigma[level]) / MaxP[level]; //rapport between SD / max
+                        //offset move mean location in signal
                         float inx = log(insigma);
                         float iny = log(rapX);
                         float rap = inx / iny; //koef
