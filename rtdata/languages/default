@@ -1068,7 +1068,7 @@ HISTORY_MSG_829;Local - SH gradient angle
 HISTORY_MSG_830;Local - Color gradient strength L
 HISTORY_MSG_831;Local - Color gradient angle
 HISTORY_MSG_832;Local - Color gradient strength C
-HISTORY_MSG_833;Local - TG - Feather gradient
+HISTORY_MSG_833;Local - Mask gradient feather
 HISTORY_MSG_834;Local - Color gradient strength H
 HISTORY_MSG_835;Local - Vib gradient strength L
 HISTORY_MSG_836;Local - Vib gradient angle
@@ -1514,6 +1514,15 @@ HISTORY_MSG_LOCAL_CIEMASK_STRU;Local Cie mask structure
 HISTORY_MSG_LOCAL_CIEMASK_STRU_TOOL;Local Cie mask structure as tool
 HISTORY_MSG_LOCAL_CIEMASK_WLC;Local CIECAM mask wavelet Lc
 HISTORY_MSG_LOCAL_CIEMASK_WLEV;Local CIECAM mask wavelet levels
+HISTORY_MSG_LOCAL_FEATHERCOL;Local Color gradient feather
+HISTORY_MSG_LOCAL_FEATHEREXE;Local Exp gradient feather
+HISTORY_MSG_LOCAL_FEATHERVIB;Local Vib gradient feather
+HISTORY_MSG_LOCAL_FEATHERWAV;Local Wav gradient feather
+HISTORY_MSG_LOCAL_FEATHERLOG;Local Log gradient feather
+HISTORY_MSG_LOCAL_FEATHERCIE;Local CIECAM gradient feather
+HISTORY_MSG_LOCAL_FEATHERSH;Local SH gradient feather
+HISTORY_MSG_LOCAL_FEATHERMAS;Local Mask common gradient feather
+
 HISTORY_MSG_LOCAL_LOG_BLACKS;Local Log - Blacks distribution
 HISTORY_MSG_LOCAL_LOG_COMPR;Local Log - Compress brightness
 HISTORY_MSG_LOCAL_LOG_SAT;Local Log - Saturation control
@@ -2163,6 +2172,7 @@ PROGRESSBAR_LINEDENOISE;Line noise filter...
 PROGRESSBAR_LOADING;Loading image...
 PROGRESSBAR_LOADINGTHUMBS;Loading thumbnails...
 PROGRESSBAR_LOADJPEG;Loading JPEG file...
+PROGRESSBAR_LOADJXL;Loading JXL file...
 PROGRESSBAR_LOADPNG;Loading PNG file...
 PROGRESSBAR_LOADTIFF;Loading TIFF file...
 PROGRESSBAR_NOIMAGES;No images found
@@ -3108,7 +3118,8 @@ TP_LOCALLAB_FATLEVEL;Sigma
 TP_LOCALLAB_FATSAT;Saturation control
 TP_LOCALLAB_FATSHFRA;Dynamic Range Compression Mask ƒ
 TP_LOCALLAB_FEATH_TOOLTIP;Gradient width as a percentage of the Spot diagonal\nUsed by all graduated filters in all tools.\nNo action if a graduated filter hasn't been activated.
-TP_LOCALLAB_FEATVALUE;Feather gradient (Grad. Filters)
+TP_LOCALLAB_FEATVALUE;Feather gradient
+TP_LOCALLAB_FEATVALUE_MASK;Feather gradient (Grad. Filters Mask)
 TP_LOCALLAB_FFTCOL_MASK;FFTW ƒ
 TP_LOCALLAB_FFTMASK_TOOLTIP;Use a Fourier transform for better quality (increased processing time and memory requirements).
 TP_LOCALLAB_FFTW;ƒ - Use Fast Fourier Transform
@@ -3588,7 +3599,7 @@ TP_LOCALLAB_SLOPESMOOTRCR;Red balance (TRC)
 TP_LOCALLAB_SLOPESMOOTRCG;Green balance (TRC)
 TP_LOCALLAB_SLOPESMOOTRCB;Blue balance (TRC)
 TP_LOCALLAB_SLOSH;Slope
-TP_LOCALLAB_SMOOTHCIE;Highlight attenuation
+TP_LOCALLAB_SMOOTHCIE;Highlight Attenuation
 TP_LOCALLAB_SMOOTHCIE_LNK;Link R & G & B
 
 TP_LOCALLAB_SMOOTHCIETH;Attenuation threshold

@@ -476,6 +476,7 @@ public:
         bool strcolab;
         bool strcolh;
         bool angcol;
+        bool feathercol;
         bool blurcolde;
         bool blurcol;
         bool contcol;
@@ -538,6 +539,7 @@ public:
         bool blurexpde;
         bool strexp;
         bool angexp;
+        bool featherexp;
         bool excurve;
         bool norm;
         bool inversex;
@@ -593,6 +595,7 @@ public:
         bool blurSHde;
         bool strSH;
         bool angSH;
+        bool featherSH;
         bool inverssh;
         bool chromaskSH;
         bool gammaskSH;
@@ -638,6 +641,7 @@ public:
         bool strvibab;
         bool strvibh;
         bool angvib;
+        bool feathervib;
         bool Lmaskvibcurve;
         bool recothresv;
         bool lowthresv;
@@ -854,6 +858,7 @@ public:
         bool sigmalc2;
         bool strwav;
         bool angwav;
+        bool featherwav;
         bool strengthw;
         bool sigmaed;
         bool radiusw;
@@ -960,6 +965,7 @@ public:
         bool baselog;
         bool strlog;
         bool anglog;
+        bool featherlog;
         bool CCmaskcurveL;
         bool LLmaskcurveL;
         bool HHmaskcurveL;
@@ -997,6 +1003,7 @@ public:
         bool shadmask;
         bool str_mask;
         bool ang_mask;
+        bool feather_mask;
         bool HHhmask_curve;
         bool Lmask_curve;
         bool LLmask_curvewav;
@@ -1135,6 +1142,7 @@ public:
         bool surroundcie;
         bool strgradcie;
         bool anggradcie;
+        bool feathercie;
 
         bool enacieMask;
         bool enacieMaskall;

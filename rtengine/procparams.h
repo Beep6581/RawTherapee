@@ -1123,6 +1123,7 @@ struct LocallabParams {
         double strcolab;
         double strcolh;
         double angcol;
+        double feathercol;
         int blurcolde;
         double blurcol;
         double contcol;
@@ -1185,6 +1186,7 @@ struct LocallabParams {
         double gamex;
         double strexp;
         double angexp;
+        double featherexp;
         std::vector<double> excurve;
         bool norm;
         bool inversex;
@@ -1240,6 +1242,7 @@ struct LocallabParams {
         int blurSHde;
         double strSH;
         double angSH;
+        double featherSH;
         bool inverssh;
         double chromaskSH;
         double gammaskSH;
@@ -1285,6 +1288,7 @@ struct LocallabParams {
         double strvibab;
         double strvibh;
         double angvib;
+        double feathervib;
         std::vector<double> Lmaskvibcurve;
         double recothresv;
         double lowthresv;
@@ -1501,6 +1505,7 @@ struct LocallabParams {
         double sigmalc2;
         double strwav;
         double angwav;
+        double featherwav;
         double strengthw;
         double sigmaed;
         double radiusw;
@@ -1607,6 +1612,7 @@ struct LocallabParams {
         double baselog;
         double strlog;
         double anglog;
+        double featherlog;
         std::vector<double> CCmaskcurveL;
         std::vector<double> LLmaskcurveL;
         std::vector<double> HHmaskcurveL;
@@ -1645,6 +1651,7 @@ struct LocallabParams {
         double shadmask;
         int str_mask;
         int ang_mask;
+        int feather_mask;
         std::vector<double> HHhmask_curve;
         std::vector<double> Lmask_curve;
         std::vector<double> LLmask_curvewav;
@@ -1789,6 +1796,7 @@ struct LocallabParams {
         Glib::ustring surroundcie;
         double strgradcie;
         double anggradcie;
+        double feathercie;
         bool enacieMask;
         bool enacieMaskall;
         std::vector<double> CCmaskciecurve;

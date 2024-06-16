@@ -501,19 +501,25 @@ struct local_params {
     float angmaexp;
     float str_mas;
     float ang_mas;
+    float feather_mas;
     float strexp;
     float angexp;
+    float featherexp;
     float strSH;
     float angSH;
+    float featherSH;
     float strcol;
     float strcolab;
     float strcolh;
     float angcol;
+    float feathcol;
     float strvib;
     float strvibab;
     float strvibh;
     float angvib;
+    float feathervib;
     float angwav;
+    float featherwav;
     float strwav;
     float blendmaL;
     float radmaL;
@@ -529,6 +535,7 @@ struct local_params {
     float basew;
 
     float anglog;
+    float featherlog;
     float strlog;
     float softradiusexp;
     float softradiuscol;
@@ -804,6 +811,7 @@ struct local_params {
     float detailcie;
     float strgradcie;
     float anggradcie;
+    float feathercie;
     bool satcie;
     bool satlog;
     int sensilog;
@@ -1369,22 +1377,29 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float angmaskexpo = ((float) locallab.spots.at(sp).angmaskexp);
     float strmask = ((float) locallab.spots.at(sp).str_mask);
     float angmask = ((float) locallab.spots.at(sp).ang_mask);
+    float feathermask = ((float) locallab.spots.at(sp).feather_mask);
     float strexpo = ((float) locallab.spots.at(sp).strexp);
     float angexpo = ((float) locallab.spots.at(sp).angexp);
+    float featherexpo = ((float) locallab.spots.at(sp).featherexp);
     float strSH = ((float) locallab.spots.at(sp).strSH);
     float angSH = ((float) locallab.spots.at(sp).angSH);
+    float featherSH = ((float) locallab.spots.at(sp).featherSH);
     float strcol = ((float) locallab.spots.at(sp).strcol);
     float strcolab = ((float) locallab.spots.at(sp).strcolab);
     float strcolh = ((float) locallab.spots.at(sp).strcolh);
     float angcol = ((float) locallab.spots.at(sp).angcol);
+    float feathcol = ((float) locallab.spots.at(sp).feathercol);
     float strvib = ((float) locallab.spots.at(sp).strvib);
     float strvibab = ((float) locallab.spots.at(sp).strvibab);
     float strvibh = ((float) locallab.spots.at(sp).strvibh);
     float angvib = ((float) locallab.spots.at(sp).angvib);
+    float feathervib = ((float) locallab.spots.at(sp).feathervib);
     float strwav = ((float) locallab.spots.at(sp).strwav);
     float angwav = ((float) locallab.spots.at(sp).angwav);
+    float featherwav = ((float) locallab.spots.at(sp).featherwav);
     float strlog = ((float) locallab.spots.at(sp).strlog);
     float anglog = ((float) locallab.spots.at(sp).anglog);
+    float featherlog = ((float) locallab.spots.at(sp).featherlog);
     float softradiusexpo = ((float) locallab.spots.at(sp).softradiusexp);
     float softradiuscolor = ((float) locallab.spots.at(sp).softradiuscol);
     float softradiusreti = ((float) locallab.spots.at(sp).softradiusret);
@@ -1517,6 +1532,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float contciemask = (float) locallab.spots.at(sp).contcie;
     float strgradcie = ((float) locallab.spots.at(sp).strgradcie);
     float anggradcie = ((float) locallab.spots.at(sp).anggradcie);
+    float feathercie = ((float) locallab.spots.at(sp).feathercie);
 
     lp.comprlo = locallab.spots.at(sp).comprlog;
     lp.comprlocie = locallab.spots.at(sp).comprcie;
@@ -1552,23 +1568,30 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.angmaexp = angmaskexpo;
     lp.str_mas = strmask;
     lp.ang_mas = angmask;
+    lp.feather_mas = feathermask;
 
     lp.strexp = strexpo;
     lp.angexp = angexpo;
+    lp.featherexp = featherexpo;
     lp.strSH = strSH;
     lp.angSH = angSH;
+    lp.featherSH = featherSH;
     lp.strcol = strcol;
     lp.strcolab = strcolab;
     lp.strcolh = strcolh;
     lp.angcol = angcol;
+    lp.feathcol = feathcol;
     lp.strvib = strvib;
     lp.strvibab = strvibab;
     lp.strvibh = strvibh;
     lp.angvib = angvib;
+    lp.feathervib = feathervib;
     lp.strwav = strwav;
     lp.angwav = angwav;
+    lp.featherwav = featherwav;
     lp.strlog = strlog;
     lp.anglog = anglog;
+    lp.featherlog = featherlog;
     lp.softradiusexp = softradiusexpo;
     lp.softradiuscol = softradiuscolor;
     lp.softradiusret = softradiusreti;
@@ -1781,6 +1804,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.contciemask = 0.01f * contciemask;
     lp.strgradcie = strgradcie;
     lp.anggradcie = anggradcie;
+    lp.feathercie = feathercie;
 
     lp.blendmacie = blendmaskcie;
     lp.radmacie = radmaskcie;
@@ -5644,19 +5668,24 @@ void calclocalGradientParams(const struct local_params& lp, struct grad_params& 
     int h = bfh;
     float stops = 0.f;
     float angs = 0.f;
+    double varfeath = 0.25; //0.01f * lp.feath;
 
     if (indic == 0) {
         stops = -lp.strmaexp;
         angs = lp.angmaexp;
+        varfeath = 0.01f * lp.feath;//for all masks when present
     } else if (indic == 1) {
         stops = lp.strexp;
         angs = lp.angexp;
+        varfeath = 0.01f * lp.featherexp;
     } else if (indic == 2) {
         stops = lp.strSH;
         angs = lp.angSH;
+        varfeath = 0.01f * lp.featherSH;
     } else if (indic == 3) {
         stops = lp.strcol;
         angs = lp.angcol;
+        varfeath = 0.01f * lp.feathcol;
     } else if (indic == 4) {
         float redu = 1.f;
 
@@ -5668,41 +5697,49 @@ void calclocalGradientParams(const struct local_params& lp, struct grad_params& 
 
         stops = redu * lp.strcolab;
         angs = lp.angcol;
+        varfeath = 0.01f * lp.feathcol;
     } else if (indic == 5) {
         stops = lp.strcolab;
         angs = lp.angcol;
+        varfeath = 0.01f * lp.feathcol;
     } else if (indic == 6) {
         stops = lp.strcolh;
         angs = lp.angcol;
+        varfeath = 0.01f * lp.feathcol;
     } else if (indic == 7) {
         stops = lp.strvib;
         angs = lp.angvib;
+        varfeath = 0.01f * lp.feathervib;
     } else if (indic == 8) {
         float redu = 1.f;
-
         if (lp.strvibab > 0.f) {
             redu = 0.7f;
         } else {
             redu = 0.5f;
         }
-
         stops = redu * lp.strvibab;
         angs = lp.angvib;
+        varfeath = 0.01f * lp.feathervib;
     } else if (indic == 9) {
         stops = lp.strvibh;
         angs = lp.angvib;
+        varfeath = 0.01f * lp.feathervib;
     } else if (indic == 10) {
         stops = std::fabs(lp.strwav);
         angs = lp.angwav;
+        varfeath = 0.01f * lp.featherwav;
     } else if (indic == 11) {
         stops = lp.strlog;
         angs = lp.anglog;
+        varfeath = 0.01f * lp.featherlog;
     } else if (indic == 12) {
         stops = -lp.str_mas;
         angs = lp.ang_mas;
+        varfeath = 0.01f * lp.feather_mas;
     } else if (indic == 15) {
         stops = lp.strgradcie;
         angs = lp.anggradcie;
+        varfeath = 0.01f * lp.feathercie;
     }
 
 
@@ -5710,7 +5747,7 @@ void calclocalGradientParams(const struct local_params& lp, struct grad_params& 
     double gradient_center_x = LIM01((lp.xc - xstart) / bfw);
     double gradient_center_y = LIM01((lp.yc - ystart) / bfh);
     double gradient_angle = static_cast<double>(angs) / 180.0 * rtengine::RT_PI;
-    double varfeath = 0.01f * lp.feath;
+ //   double varfeath = 0.01f * lp.feath;
 
     //printf("xstart=%f ysta=%f lpxc=%f lpyc=%f stop=%f bb=%f cc=%f ang=%f ff=%d gg=%d\n", xstart, ystart, lp.xc, lp.yc, gradient_stops, gradient_center_x, gradient_center_y, gradient_angle, w, h);
 
