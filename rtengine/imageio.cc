@@ -485,7 +485,11 @@ int ImageIO::loadJPEGFromMemory (const char* buffer, int bufsize)
 
 int ImageIO::loadJPEG (const Glib::ustring &fname)
 {
-    FILE *file = g_fopen(fname.c_str (), "rb");
+    std::unique_ptr<FILE, void (*)(FILE *)> file(
+        g_fopen(fname.c_str(), "rb"),
+        [](FILE *f) {
+            fclose(f);
+        });
 
     if (!file) {
         return IMIO_CANNOTREADFILE;
@@ -496,7 +500,7 @@ int ImageIO::loadJPEG (const Glib::ustring &fname)
     cinfo.err = my_jpeg_std_error(&jerr);
     jpeg_create_decompress(&cinfo);
 
-    my_jpeg_stdio_src (&cinfo, file);
+    my_jpeg_stdio_src (&cinfo, file.get());
 
 #if defined( _WIN32 ) && defined( __x86_64__ ) && !defined(__clang__)
     if ( __builtin_setjmp((reinterpret_cast<rt_jpeg_error_mgr*>(cinfo.src))->error_jmp_buf) == 0 ) {
@@ -558,7 +562,7 @@ int ImageIO::loadJPEG (const Glib::ustring &fname)
 
         jpeg_finish_decompress(&cinfo);
         jpeg_destroy_decompress(&cinfo);
-        fclose(file);
+        file.reset();
 
         if (pl) {
             pl->setProgressStr ("PROGRESSBAR_READY");
