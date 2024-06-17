@@ -3493,7 +3493,8 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
             int level_br = wavelet_lev;
             int level_hr = wavelet_lev;//to adapt if necessary
 
-            //6 profiles to change range levels and rolloff for high contrast positive and negative
+            //6 contrast profiles to change range levels and rolloff for high contrast positive and negative
+            //I change only values for LUT for high contrast values
             float inva5 = 0.8f;
             float inva6 = 0.7f;
             float inva7 = 0.5f;
@@ -3501,7 +3502,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
             float inva9 = 0.3f;
             float inva10 = 0.1f;
 
-            if(pyrwav == 0) {
+            if(pyrwav == 0) {//low contrast
                 level_bl = 0;
                 level_hl = 1;
                 level_br = wavelet_lev - 2;
@@ -3517,7 +3518,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                 inva8 = 0.6f;
                 inva9 = 0.4f;
                 inva10 = 0.2f;
-            } else if( pyrwav == 2) {
+            } else if( pyrwav == 2) {//default
                 level_bl = 0;
                 level_hl = 0;
                 level_br = wavelet_lev - 1;
@@ -3550,13 +3551,14 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                 inva8 = 0.45f;
                 inva9 = 0.3f;
                 inva10 = 0.1f;
-            } else if( pyrwav == 5) {
+            } else if( pyrwav == 5) {//maximum - in this case LUT are minimal to avoid artifacts.
                 level_bl = 0;
                 level_hl = 0;
                 level_br = wavelet_lev - 1;
                 level_hr = wavelet_lev + 2;//here maximum
             }
 
+            //find possible max levels in function of windows preview size.
             int minwin = rtengine::min(width, height);
             int maxlevelspot = 10;//maximum possible
 
@@ -3567,12 +3569,13 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
 
             int wavelet_level = rtengine::min(level_hr, maxlevelspot);
             int maxlvl = wavelet_level;
-            //decomposition wavelet 
+
+            //decomposition wavelet , we can change Daublen (moment wavelet) in Tab - Wavelet Levels 
             wavelet_decomposition *wdspot = new wavelet_decomposition(lab->L[0], width, height, maxlvl, 1, skip, numThreads, DaubLen);
-            if (wdspot->memory_allocation_failed()) {
+            if (wdspot->memory_allocation_failed()) {//probably if not enough memory.
                 return;
             }
-            
+
             //residual contrast
             const float contresid = cmparams.residtrc;
 
@@ -3582,7 +3585,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                 float *wav_L0 = wdspot->get_coeff0();//residual image
 
 
-                float maxh = 1.25f; //amplification contrast above mean
+                float maxh = 1.25f; //amplification contrast above mean, we can change 1.25f
                 float maxl = 1.25f; //reduction contrast under mean
                 float multL = contresid * (maxl - 1.f) / 100.f + 1.f;
                 float multH = contresid * (maxh - 1.f) / 100.f + 1.f;
@@ -3624,6 +3627,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                 max0 /= 327.68f;
                 min0 /= 327.68f;
                 float ave = avedbl / double(W_L * H_L);
+                //transitions
                 float av = ave / 327.68f;
                 float ah = (multH - 1.f) / (av - max0);
                 float bh = 1.f - max0 * ah;
@@ -3657,6 +3661,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
             //end residual contrast
 
             //begin variable contrast
+            // declaration with 10 levels to calculate mean , mean negative, sigma, sigma negative, Max et Max negative for each level 
             float mean[10];
             float meanN[10];
             float sigma[10];
@@ -3685,7 +3690,8 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                     int W_L = wdspot->level_W(level);
                     int H_L = wdspot->level_H(level);
                     float* const* wav_L = wdspot->level_coeffs(level);
-                    //sigmafin = attenuation response
+                    //sigmafin = attenuation response to change signal shape
+                    // i use only positives values to simplify calculations... possible improvment.
                     if (MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) {
                         float insigma = 0.666f; //SD
                         float logmax = log(MaxP[level]); //log Max
@@ -3694,34 +3700,35 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                         float inx = log(insigma);
                         float iny = log(rapX);
                         float rap = inx / iny; //koef
+                        //transitions
                         float asig = 0.166f / (sigma[level] * sigmafin);
                         float bsig = 0.5f - asig * (mean[level] * offset);
                         float amean = 0.5f / (mean[level] * offset);
                         const float effect = sigmafin;
-                        //constexpr float offs = 1.f;
-                        float mea[10];
+                        float mea[10];//simulation using mean and sigma, to evaluate signal 
                         calceffect(level, mean, sigma, mea, effect, offset);
                         float klev = 1.f;
                         if (level >= level_hl && level <= level_hr) {
                            klev = 1.f;
                         }
-
+                        //change klev with real change in levels - see contrast profiles
+                        //transition in beginning
                         if (level_hl != level_bl) {
                             if (level >= level_bl && level < level_hl) {
                                 klev = alow * level + blow;
                             }
                         }
-
+                        //transition in max levels
                         if (level_hr != level_br) {
                             if (level > level_hr && level <= level_br) {
                                klev = ahigh * level + bhigh;
                             }
                         }
                         klev *= 0.8f;
-                        const float threshold = offset * mean[level] + sigmafin * sigma[level];
-                        float lutFactor;
-                        float inVals[] = {0.05f, 0.2f, 0.7f, 1.f, 1.f, inva5, inva6, inva7, inva8, inva9, inva10};//0.4f, 0.3f, 0.1f
-                        const auto meaLut = buildMeaLut(inVals, mea, lutFactor);
+                        const float threshold = offset * mean[level] + sigmafin * sigma[level];//base signal calculation.
+                        float lutFactor;//inva5, inva6, inva7, inva8, inva9, inva10 are define in Contrast profiles.
+                        float inVals[] = {0.05f, 0.2f, 0.7f, 1.f, 1.f, inva5, inva6, inva7, inva8, inva9, inva10};//values to give for calculate LUT along signal : minimal near 0 or MaxP
+                        const auto meaLut = buildMeaLut(inVals, mea, lutFactor);//build LUT
                         
 
 #ifdef _OPENMP
@@ -3730,17 +3737,17 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
 
                         for (int y = 0; y < H_L; y++) {
                             for (int x = 0; x < W_L; x++) {
-                                if(cmOpacityCurveWL) {
+                                if(cmOpacityCurveWL) {//if curve enable
                                     float absciss;
                                     float &val = wav_L[dir][y * W_L + x];
                                     const float WavCL = std::fabs(wav_L[dir][y * W_L + x]);
 
-                                    if (WavCL >= threshold) { //for max
+                                    if (WavCL >= threshold) { //for max take into account attenuation response and offset
                                         float valcour = xlogf(fabsf(val));
                                         float valc = valcour - logmax;
                                         float vald = valc * rap;
                                         absciss = xexpf(vald);
-                                    } else if (WavCL >= offset * mean[level]) {
+                                    } else if (WavCL >= offset * mean[level]) {//offset only
                                         absciss = asig * WavCL + bsig;
                                     } else {
                                         absciss = amean * WavCL;
@@ -3748,11 +3755,11 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
 /*
 */
                                     float kc = klev * (cmOpacityCurveWL[absciss * 500.f] - 0.5f);
-                                    float amplieffect = kc <= 0.f ? 1.f : 1.5f;
+                                    float amplieffect = kc <= 0.f ? 1.f : 1.5f;//we can change 1.5
 
                                     float kinterm = 1.f + amplieffect * kc;
                                     kinterm = kinterm <= 0.f ? 0.01f : kinterm;
-                                    val *= (1.f + (kinterm - 1.f) * (*meaLut)[WavCL * lutFactor]);
+                                    val *= (1.f + (kinterm - 1.f) * (*meaLut)[WavCL * lutFactor]);//change signal (contrast) for each level, direction, with LUT.
 
                                 }
                             }
