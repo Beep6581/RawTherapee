@@ -3493,8 +3493,8 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
             int level_br = wavelet_lev;
             int level_hr = wavelet_lev;//to adapt if necessary
 
-            //6 profiles to change range levels and rolloff for high levels
-            float inva5 =0.8f;
+            //6 profiles to change range levels and rolloff for high contrast positive and negative
+            float inva5 = 0.8f;
             float inva6 = 0.7f;
             float inva7 = 0.5f;
             float inva8 = 0.4f;
@@ -3533,11 +3533,23 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                 level_hl = 0;
                 level_br = wavelet_lev;
                 level_hr = wavelet_lev;
+                inva5 = 0.9f;
+                inva6 = 0.8f;
+                inva7 = 0.6f;
+                inva8 = 0.5f;
+                inva9 = 0.3f;
+                inva10 = 0.1f;
             } else if( pyrwav == 4) {
                 level_bl = 0;
                 level_hl = 0;
                 level_br = wavelet_lev - 1;
                 level_hr = wavelet_lev + 1;
+                inva5 = 0.85f;
+                inva6 = 0.75f;
+                inva7 = 0.55f;
+                inva8 = 0.45f;
+                inva9 = 0.3f;
+                inva10 = 0.1f;
             } else if( pyrwav == 5) {
                 level_bl = 0;
                 level_hl = 0;
