@@ -393,7 +393,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     constexpr float atten123 = 0.90f;
 
     //int DaubLen = settings->daubech ? 8 : 6;
-    int DaubLen;
+    int DaubLen = 6;
 
     if (params->wavelet.daubcoeffmethod == "2_") {
         DaubLen = 4;
@@ -403,8 +403,10 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
         DaubLen = 8;
     } else if (params->wavelet.daubcoeffmethod == "10_") {
         DaubLen = 12;
-    } else { /* if (params->wavelet.daubcoeffmethod == "14_") */
+    } else if (params->wavelet.daubcoeffmethod == "14_") {
         DaubLen = 16;
+    } else if (params->wavelet.daubcoeffmethod == "20_"){
+        DaubLen = 22;
     }
 
     cp.CHSLmet = 1;
@@ -3482,8 +3484,10 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                 DaubLen = 8;
             } else if (waparams.daubcoeffmethod == "10_") {
                 DaubLen = 12;
-            } else { /* if (params->wavelet.daubcoeffmethod == "14_") */
+            } else if (params->wavelet.daubcoeffmethod == "14_") {
                 DaubLen = 16;
+            } else if (params->wavelet.daubcoeffmethod == "14_") {
+                DaubLen = 22;
             }
             float sigmafin = cmparams.sigmatrc;//attenuation response
             int pyrwav = cmparams.pyrwavtrc;//levels contrast profiles

@@ -4159,6 +4159,7 @@ TP_WAVELET_DAUB4;D4 - standard
 TP_WAVELET_DAUB6;D6 - standard plus
 TP_WAVELET_DAUB10;D10 - medium
 TP_WAVELET_DAUB14;D14 - high
+TP_WAVELET_DAUB20;D20 - high plus
 TP_WAVELET_DAUBLOCAL;Wavelet Edge performance
 TP_WAVELET_DAUB_TOOLTIP;Changes Daubechies coefficients:\nD4 = Standard,\nD14 = Often best performance, 10% more time-intensive.\n\nAffects edge detection as well as the general quality of the first levels. However the quality is not strictly related to this coefficient and can vary depending on image and use.
 TP_WAVELET_DEN5THR;Guided threshold
