@@ -1552,9 +1552,9 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
 
     frmnu->add (*menuGrid);
 
-
     Gtk::Frame* fre = Gtk::manage(new Gtk::Frame(M("PREFERENCES_PARSEDEXT")));
     Gtk::Box* vbre = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+
     Gtk::Box* hb0 = Gtk::manage(new Gtk::Box());
     Gtk::Label* elab = Gtk::manage (new Gtk::Label (M("PREFERENCES_PARSEDEXTADD") + ":", Gtk::ALIGN_START));
     hb0->pack_start(*elab, Gtk::PACK_SHRINK, 4);
@@ -1582,6 +1582,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
     hb0->pack_end(*moveExtUp, Gtk::PACK_SHRINK, 4);
     hb0->pack_end(*delExt, Gtk::PACK_SHRINK, 4);
     hb0->pack_end(*addExt, Gtk::PACK_SHRINK, 4);
+
     extensions = Gtk::manage(new Gtk::TreeView());
     Gtk::ScrolledWindow* hscrollw = Gtk::manage(new Gtk::ScrolledWindow());
     hscrollw->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
@@ -1591,8 +1592,9 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
     extensions->append_column_editable("Enabled", extensionColumns.enabled);
     extensions->append_column("Extension", extensionColumns.ext);
     extensions->set_headers_visible(false);
-    vbre->pack_start(*hscrollw);
+
     vbre->pack_start(*hb0, Gtk::PACK_SHRINK, 4);
+    vbre->pack_start(*hscrollw);
 
     fre->add(*vbre);
 
@@ -2679,7 +2681,7 @@ void Preferences::addExtPressed()
         }
     }
 
-    Gtk::TreeRow row = * (extensionModel->append());
+    Gtk::TreeRow row = * (extensionModel->prepend());
 
     row[extensionColumns.enabled] = true;
     row[extensionColumns.ext]     = extension->get_text();
