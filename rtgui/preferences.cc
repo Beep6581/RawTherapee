@@ -1566,8 +1566,10 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
     delExt = Gtk::manage(new Gtk::Button());
     moveExtUp = Gtk::manage(new Gtk::Button());
     moveExtDown = Gtk::manage(new Gtk::Button());
-    addExt->set_tooltip_text(M("PREFERENCES_PARSEDEXTADDHINT"));
-    delExt->set_tooltip_text(M("PREFERENCES_PARSEDEXTDELHINT"));
+    addExt->set_sensitive(false);
+    delExt->set_sensitive(false);
+    addExt->set_tooltip_markup(M("PREFERENCES_PARSEDEXTADDHINT"));
+    delExt->set_tooltip_markup(M("PREFERENCES_PARSEDEXTDELHINT"));
     moveExtUp->set_tooltip_text(M("PREFERENCES_PARSEDEXTUPHINT"));
     moveExtDown->set_tooltip_text(M("PREFERENCES_PARSEDEXTDOWNHINT"));
     Gtk::Image* addExtImg = Gtk::manage ( new RTImage ("add-small", Gtk::ICON_SIZE_BUTTON) );
@@ -1672,11 +1674,14 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
 
     vbFileBrowser->pack_start (*hb6, Gtk::PACK_SHRINK, 4);
 
+    extensions->signal_cursor_changed().connect(sigc::mem_fun(*this, &Preferences::extensionsChanged));
+    extension->signal_changed().connect(sigc::mem_fun(*this, &Preferences::extensionChanged));
+
     addExt->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::addExtPressed));
     delExt->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::delExtPressed));
     moveExtUp->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::moveExtUpPressed));
     moveExtDown->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::moveExtDownPressed));
-    extension->signal_activate().connect(sigc::mem_fun(*this, &Preferences::addExtPressed));
+
     clearThumbsBtn->signal_clicked().connect ( sigc::mem_fun (*this, &Preferences::clearThumbImagesPressed) );
     if (moptions.saveParamsCache) {
         clearProfilesBtn->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::clearProfilesPressed));
@@ -2670,9 +2675,50 @@ void Preferences::workflowUpdate()
     }
 }
 
+void Preferences::extensionsChanged()
+{
+    const Glib::RefPtr<Gtk::TreeSelection> selection = extensions->get_selection();
+    if (!selection) {
+        delExt->set_sensitive(false);
+        return;
+    }
+
+    const Gtk::TreeModel::iterator selected = selection->get_selected();
+    if (!selected) {
+        delExt->set_sensitive(false);
+        return;
+    }
+
+    bool delOkay = true;
+    for (auto const &x : moptions.knownExtensions) {
+        if (x == (*selected)[extensionColumns.ext]) {
+            delOkay = false;
+            break;
+        }
+    }
+    delExt->set_sensitive(delOkay);
+}
+
+void Preferences::extensionChanged()
+{
+    if (extension->get_text()[0] == '\0') {
+        addExt->set_sensitive(false);
+        return;
+    }
+
+    Gtk::TreeNodeChildren c = extensionModel->children();
+    for (size_t i = 0; i < c.size(); i++) {
+        if (c[i][extensionColumns.ext] == extension->get_text()) {
+            addExt->set_sensitive(false);
+            return;
+        }
+    }
+
+    addExt->set_sensitive(true);
+}
+
 void Preferences::addExtPressed()
 {
-
     Gtk::TreeNodeChildren c = extensionModel->children();
 
     for (size_t i = 0; i < c.size(); i++) {
@@ -2685,33 +2731,14 @@ void Preferences::addExtPressed()
 
     row[extensionColumns.enabled] = true;
     row[extensionColumns.ext]     = extension->get_text();
+
+    extension->set_text("");
+    addExt->set_sensitive(false);
 }
 
 void Preferences::delExtPressed()
 {
-    const Glib::RefPtr<Gtk::TreeSelection> selection = extensions->get_selection();
-
-    if (!selection) {
-        return;
-    }
-
-    const Gtk::TreeModel::iterator selected = selection->get_selected();
-
-    if (!selected) {
-        return;
-    }
-
-    bool delOkay = true;
-    for (auto const &x : moptions.knownExtensions) {
-        if (x == (*selected)[extensionColumns.ext]) {
-            delOkay = false;
-            break;
-        }
-    }
-
-    if (delOkay) {
-        extensionModel->erase(selected);
-    }
+    extensionModel->erase(extensions->get_selection()->get_selected());
 }
 
 void Preferences::moveExtUpPressed()
