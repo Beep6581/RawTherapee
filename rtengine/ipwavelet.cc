@@ -3574,7 +3574,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
             int wavelet_level = rtengine::min(level_hr, maxlevelspot);
             int maxlvl = wavelet_level;
 
-            //decomposition wavelet , we can change Daublen (moment wavelet) in Tab - Wavelet Levels 
+            //decomposition wavelet , we can change Daublen (moment wavelet) in Tab - Wavelet Levels with subsampling = 1
             wavelet_decomposition *wdspot = new wavelet_decomposition(lab->L[0], width, height, maxlvl, 1, skip, numThreads, DaubLen);
             if (wdspot->memory_allocation_failed()) {//probably if not enough memory.
                 return;
@@ -3689,15 +3689,15 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                 bhigh =  -ahigh * level_br;
             }
             
-            for (int dir = 1; dir < 4; dir++) {
-                for (int level = level_bl; level < maxlvl; ++level) {
+            for (int dir = 1; dir < 4; dir++) {//for each direction
+                for (int level = level_bl; level < maxlvl; ++level) {//for each levels
                     int W_L = wdspot->level_W(level);
                     int H_L = wdspot->level_H(level);
                     float* const* wav_L = wdspot->level_coeffs(level);
                     //sigmafin = attenuation response to change signal shape
-                    // i use only positives values to simplify calculations... possible improvment.
+                    // I use only positives values to simplify calculations... possible improvment.
                     if (MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) {
-                        float insigma = 0.666f; //SD
+                        float insigma = 0.666f; //SD standard deviation (modelisation)
                         float logmax = log(MaxP[level]); //log Max
                         float rapX = (offset * mean[level] + sigmafin * sigma[level]) / MaxP[level]; //rapport between SD / max
                         //offset move mean location in signal
@@ -3716,7 +3716,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                            klev = 1.f;
                         }
                         //change klev with real change in levels - see contrast profiles
-                        //transition in beginning
+                        //transition in beginning low levels
                         if (level_hl != level_bl) {
                             if (level >= level_bl && level < level_hl) {
                                 klev = alow * level + blow;
@@ -3739,9 +3739,9 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
 #endif
 
                         for (int y = 0; y < H_L; y++) {
-                            for (int x = 0; x < W_L; x++) {
+                            for (int x = 0; x < W_L; x++) {//for each pixel
                                 if(cmOpacityCurveWL) {//if curve enable
-                                    float absciss;
+                                    float absciss;//position in curve and signal
                                     float &val = wav_L[dir][y * W_L + x];
                                     const float WavCL = std::fabs(wav_L[dir][y * W_L + x]);
 
@@ -3758,7 +3758,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
 /*
 */
                                     float kc = klev * (cmOpacityCurveWL[absciss * 500.f] - 0.5f);
-                                    float amplieffect = kc <= 0.f ? 1.f : 1.7f;//we can change 1.5 - to 1.7
+                                    float amplieffect = kc <= 0.f ? 1.f : 1.7f;//we can change 1.5 - to 1.7 or more or less
 
                                     float kinterm = 1.f + amplieffect * kc;
                                     kinterm = kinterm <= 0.f ? 0.01f : kinterm;
