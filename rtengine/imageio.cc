@@ -1070,15 +1070,11 @@ int ImageIO::saveJXL(const Glib::ustring &fname, float quality) const
     JxlColorEncoding color_encoding = {};
     JxlColorEncodingSetToSRGB(&color_encoding, false);
 
-#if JPEGXL_NUMERIC_VERSION >= JPEGXL_COMPUTE_NUMERIC_VERSION(0, 10, 0)
-
     if (!profileData.empty()) {
         JxlEncoderSetICCProfile(enc.get(), reinterpret_cast<const unsigned char *>(profileData.data()), profileData.size());
-    } else
-#endif
-        if (JxlEncoderSetColorEncoding(enc.get(), &color_encoding) != JXL_ENC_SUCCESS) {
-            std::cerr << "Warning: JxlEncoderSetColorEncoding failed" << std::endl;
-        }
+    } else if (JxlEncoderSetColorEncoding(enc.get(), &color_encoding) != JXL_ENC_SUCCESS) {
+        std::cerr << "Warning: JxlEncoderSetColorEncoding failed" << std::endl;
+    }
 
     const std::size_t stride = sizeof(float) * 3 * width;
     std::vector<std::uint8_t> imagebuffer(stride * height);
