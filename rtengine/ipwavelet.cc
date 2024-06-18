@@ -17,7 +17,7 @@
 //
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <https://www.gnu.org/licenses/>.
-// *  2014 - 2019  2020 - Jacques Desmis <jdesmis@gmail.com>
+// *  2014 - 2019  2020 2024 - Jacques Desmis <jdesmis@gmail.com>
 // *  2014 Ingo Weyrich <heckflosse@i-weyrich.de>
 
 //
@@ -3452,7 +3452,7 @@ void ImProcFunctions::gamutCont (LabImage * lab, LabImage * dst, const procparam
 
 
 
-
+// Copyright 6-2024 - Jacques Desmis <jdesmis@gmail.com>
 void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparams::WaveletParams & waparams, const procparams::ColorManagementParams & cmparams, const IcmOpacityCurveWL & cmOpacityCurveWL, int skip)
 {
     bool wavcurvecont = false;
@@ -3486,7 +3486,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                 DaubLen = 12;
             } else if (params->wavelet.daubcoeffmethod == "14_") {
                 DaubLen = 16;
-            } else if (params->wavelet.daubcoeffmethod == "14_") {
+            } else if (params->wavelet.daubcoeffmethod == "20_") {
                 DaubLen = 22;
             }
             float sigmafin = cmparams.sigmatrc;//attenuation response
@@ -3728,7 +3728,6 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                                klev = ahigh * level + bhigh;
                             }
                         }
-                        //klev *= 0.8f;
                         const float threshold = offset * mean[level] + sigmafin * sigma[level];//base signal calculation.
                         float lutFactor;//inva5, inva6, inva7, inva8, inva9, inva10 are define in Contrast profiles.
                         float inVals[] = {0.05f, 0.2f, 0.7f, 1.f, 1.f, inva5, inva6, inva7, inva8, inva9, inva10};//values to give for calculate LUT along signal : minimal near 0 or MaxP
