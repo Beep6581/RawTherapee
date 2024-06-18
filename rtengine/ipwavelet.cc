@@ -3728,7 +3728,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                                klev = ahigh * level + bhigh;
                             }
                         }
-                        klev *= 0.8f;
+                        //klev *= 0.8f;
                         const float threshold = offset * mean[level] + sigmafin * sigma[level];//base signal calculation.
                         float lutFactor;//inva5, inva6, inva7, inva8, inva9, inva10 are define in Contrast profiles.
                         float inVals[] = {0.05f, 0.2f, 0.7f, 1.f, 1.f, inva5, inva6, inva7, inva8, inva9, inva10};//values to give for calculate LUT along signal : minimal near 0 or MaxP
@@ -3759,7 +3759,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
 /*
 */
                                     float kc = klev * (cmOpacityCurveWL[absciss * 500.f] - 0.5f);
-                                    float amplieffect = kc <= 0.f ? 1.f : 1.5f;//we can change 1.5
+                                    float amplieffect = kc <= 0.f ? 1.f : 1.7f;//we can change 1.5 - to 1.7
 
                                     float kinterm = 1.f + amplieffect * kc;
                                     kinterm = kinterm <= 0.f ? 0.01f : kinterm;
