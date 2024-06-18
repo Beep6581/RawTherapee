@@ -3516,45 +3516,53 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                 level_hl = 1;
                 level_br = wavelet_lev - 1;
                 level_hr = wavelet_lev - 1;
-                inva5 = 1.f;
-                inva6 = 0.9f;
-                inva7 = 0.7f;
-                inva8 = 0.6f;
-                inva9 = 0.4f;
-                inva10 = 0.2f;
+                if(!cmparams.wsmoothcie) {
+                    inva5 = 1.f;
+                    inva6 = 0.9f;
+                    inva7 = 0.7f;
+                    inva8 = 0.6f;
+                    inva9 = 0.4f;
+                    inva10 = 0.2f;
+                }
             } else if( pyrwav == 2) {//default
                 level_bl = 0;
                 level_hl = 0;
                 level_br = wavelet_lev - 1;
                 level_hr = wavelet_lev;
-                inva5 = 1.f;
-                inva6 = 0.9f;
-                inva7 = 0.7f;
-                inva8 = 0.6f;
-                inva9 = 0.4f;
-                inva10 = 0.2f;
+                if(!cmparams.wsmoothcie) {
+                    inva5 = 1.f;
+                    inva6 = 0.9f;
+                    inva7 = 0.7f;
+                    inva8 = 0.6f;
+                    inva9 = 0.4f;
+                    inva10 = 0.2f;
+                }
             } else if( pyrwav == 3) {
                 level_bl = 0;
                 level_hl = 0;
                 level_br = wavelet_lev;
                 level_hr = wavelet_lev;
-                inva5 = 0.9f;
-                inva6 = 0.8f;
-                inva7 = 0.6f;
-                inva8 = 0.5f;
-                inva9 = 0.3f;
-                inva10 = 0.1f;
+                if(!cmparams.wsmoothcie) {
+                    inva5 = 0.9f;
+                    inva6 = 0.8f;
+                    inva7 = 0.6f;
+                    inva8 = 0.5f;
+                    inva9 = 0.3f;
+                    inva10 = 0.1f;
+                }
             } else if( pyrwav == 4) {
                 level_bl = 0;
                 level_hl = 0;
                 level_br = wavelet_lev - 1;
                 level_hr = wavelet_lev + 1;
-                inva5 = 0.85f;
-                inva6 = 0.75f;
-                inva7 = 0.55f;
-                inva8 = 0.45f;
-                inva9 = 0.3f;
-                inva10 = 0.1f;
+                if(!cmparams.wsmoothcie) {
+                    inva5 = 0.85f;
+                    inva6 = 0.75f;
+                    inva7 = 0.55f;
+                    inva8 = 0.45f;
+                    inva9 = 0.3f;
+                    inva10 = 0.1f;
+                }
             } else if( pyrwav == 5) {//maximum - in this case LUT are minimal to avoid artifacts.
                 level_bl = 0;
                 level_hl = 0;

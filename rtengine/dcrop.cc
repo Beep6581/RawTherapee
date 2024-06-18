@@ -1622,6 +1622,15 @@ void Crop::update(int todo)
         if (params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE && params.icm.trcExp) {
             const int GW = labnCrop->W;
             const int GH = labnCrop->H;
+            if(params.icm.trcExp) {//local contrast
+                WaveletParams WaveParams = params.wavelet;
+                ColorManagementParams Colparams = params.icm;
+                IcmOpacityCurveWL icmOpacityCurveWL;
+                Colparams.getCurves(icmOpacityCurveWL);
+                parent->ipf.localCont (labnCrop, labnCrop, WaveParams, Colparams, icmOpacityCurveWL, skip);
+            //    parent->ipf.gamutCont (labnCrop, labnCrop, WaveParams, Colparams, skip);
+            }
+            
             std::unique_ptr<LabImage> provis;
             const float pres = 0.01f * params.icm.preser;
             if (pres > 0.f && params.icm.wprim != ColorManagementParams::Primaries::DEFAULT) {
@@ -1704,16 +1713,6 @@ void Crop::update(int todo)
                     labnCrop->a[x][y] = 0.f;
                     labnCrop->b[x][y] = 0.f;
                 }
-            }
-
-            if(params.icm.trcExp) {//local contrast
-                WaveletParams WaveParams = params.wavelet;
-                ColorManagementParams Colparams = params.icm;
-                IcmOpacityCurveWL icmOpacityCurveWL;
-                Colparams.getCurves(icmOpacityCurveWL);
-                parent->ipf.localCont (labnCrop, labnCrop, WaveParams, Colparams, icmOpacityCurveWL, skip);
-            //    parent->ipf.gamutCont (labnCrop, labnCrop, WaveParams, Colparams, skip);
-
             }
         }
 

@@ -2059,6 +2059,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 const int GH = nprevl->H;
                 std::unique_ptr<LabImage> provis;
                 const float pres = 0.01f * params->icm.preser;
+                if(params->icm.trcExp) {//local contrast
+                    WaveletParams WaveParams = params->wavelet;
+                    ColorManagementParams Colparams = params->icm;
+                    Colparams.getCurves(icmOpacityCurveWL);
+                    ipf.localCont (nprevl, nprevl, WaveParams,Colparams, icmOpacityCurveWL, scale);
+                //    ipf.gamutCont (nprevl,nprevl, WaveParams,Colparams, scale);
+                }
 
                 if (pres > 0.f && params->icm.wprim != ColorManagementParams::Primaries::DEFAULT) {
                     provis.reset(new LabImage(GW, GH));
@@ -2245,16 +2252,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         primListener->iprimChanged(r_x, r_y, b_x, b_y, g_x, g_y, wx, wy, meanx, meany);
                     }
                 }
-                
-                if(params->icm.trcExp) {//local contrast
-                    WaveletParams WaveParams = params->wavelet;
-                    ColorManagementParams Colparams = params->icm;
-                    Colparams.getCurves(icmOpacityCurveWL);
-                    ipf.localCont (nprevl, nprevl, WaveParams,Colparams, icmOpacityCurveWL, scale);
-                //    ipf.gamutCont (nprevl,nprevl, WaveParams,Colparams, scale);
-
-                }
-
             }
 
             if (params->colorappearance.enabled) {

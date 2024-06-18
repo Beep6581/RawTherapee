@@ -1736,6 +1736,15 @@ private:
             const int GH = labView->H;
             std::unique_ptr<LabImage> provis;
             const float pres = 0.01f * params.icm.preser;
+            if(params.icm.trcExp) {//local contrast
+                WaveletParams WaveParams = params.wavelet;
+                ColorManagementParams Colparams = params.icm;
+                IcmOpacityCurveWL icmOpacityCurveWL;
+                Colparams.getCurves(icmOpacityCurveWL);
+                ipf.localCont (labView, labView, WaveParams, Colparams, icmOpacityCurveWL, 1);
+              // ipf.gamutCont (labView, labView, WaveParams, Colparams, 1);
+
+            }
 
             if (pres > 0.f && params.icm.wprim != ColorManagementParams::Primaries::DEFAULT) {
                 provis.reset(new LabImage(GW, GH));
@@ -1820,16 +1829,6 @@ private:
                         labView->b[x][y] = 0.f;
                     }
             }
-            if(params.icm.trcExp) {//local contrast
-                WaveletParams WaveParams = params.wavelet;
-                ColorManagementParams Colparams = params.icm;
-                IcmOpacityCurveWL icmOpacityCurveWL;
-                Colparams.getCurves(icmOpacityCurveWL);
-                ipf.localCont (labView, labView, WaveParams, Colparams, icmOpacityCurveWL, 1);
-              // ipf.gamutCont (labView, labView, WaveParams, Colparams, 1);
-
-            }
-
         }
 
         //Colorappearance and tone-mapping associated
