@@ -233,6 +233,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     Gtk::Box *trcPrimVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     Gtk::Box *trcWavVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     Gtk::Box *trcWav2VBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+   // wavLabels(Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER))),
+    wavlocLabels = Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER));
 
     wTRCBox = Gtk::manage(new Gtk::Box());
 
@@ -295,6 +297,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     trcWav2VBox->pack_start(*sigmatrc, Gtk::PACK_SHRINK);
     trcWav2VBox->pack_start(*offstrc, Gtk::PACK_SHRINK);
     trcWav2VBox->pack_start(*residtrc, Gtk::PACK_SHRINK);
+    trcWav2VBox->pack_start(*wavlocLabels,  Gtk::PACK_SHRINK);
     sigmatrc->set_tooltip_text(M("TP_LOCALLAB_WAT_SIGMALC_TOOLTIP"));
     residtrc->set_tooltip_text(M("TP_LOCALLAB_WAT_EXPRESID_TOOLTIP"));
     offstrc->set_tooltip_text(M("TP_WAVELET_OFFSET_TOOLTIP"));
@@ -626,6 +629,24 @@ void ICMPanel::foldAllButMe (GdkEventButton* event, MyExpander *expander)
     }
 }
 
+void ICMPanel::wavlocChanged(double nlevel, double nmax)
+{
+    if (!batchMode) {
+        idle_register.add(
+        [this, nlevel, nmax]() -> bool {
+            wavlocLabels->set_text(
+                Glib::ustring::compose(
+                    M("TP_WAVELET_LEVLOCLABEL"),
+                    Glib::ustring::format(std::fixed, std::setprecision(0), nlevel),
+                    Glib::ustring::format(std::fixed, std::setprecision (0), nmax)
+                    
+                )
+            );
+            return false;
+        }
+        );
+    }
+}
 
 void ICMPanel::neutral_pressed ()
 {   //find working profile and set the same destination proile

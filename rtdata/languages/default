@@ -4235,6 +4235,7 @@ TP_WAVELET_LEVELS_TOOLTIP;Choose the number of wavelet decomposition levels for 
 TP_WAVELET_LEVF;Contrast
 TP_WAVELET_LEVFOUR;Level 5-6 denoise and guided threshold
 TP_WAVELET_LEVLABEL;Preview maximum possible levels = %1
+TP_WAVELET_LEVLOCLABEL;Preview maximum levels=%1 - Preset=%2
 TP_WAVELET_LEVONE;Level 2
 TP_WAVELET_LEVTHRE;Level 4
 TP_WAVELET_LEVTWO;Level 3

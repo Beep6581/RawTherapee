@@ -1623,12 +1623,20 @@ void Crop::update(int todo)
             const int GW = labnCrop->W;
             const int GH = labnCrop->H;
             if(params.icm.trcExp) {//local contrast
+                int level_hr = 7;
+                int maxlevpo = 9;
+
                 WaveletParams WaveParams = params.wavelet;
                 ColorManagementParams Colparams = params.icm;
                 IcmOpacityCurveWL icmOpacityCurveWL;
                 Colparams.getCurves(icmOpacityCurveWL);
-                parent->ipf.localCont (labnCrop, labnCrop, WaveParams, Colparams, icmOpacityCurveWL, skip);
+                parent->ipf.localCont (labnCrop, labnCrop, WaveParams, Colparams, icmOpacityCurveWL, skip, level_hr, maxlevpo);
             //    parent->ipf.gamutCont (labnCrop, labnCrop, WaveParams, Colparams, skip);
+
+                if (parent->primListener) {
+                    parent->primListener->wavlocChanged(float (maxlevpo), float (level_hr));
+                }
+
             }
             
             std::unique_ptr<LabImage> provis;

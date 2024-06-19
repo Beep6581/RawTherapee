@@ -1540,11 +1540,14 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         const int GH = labView->H;
         std::unique_ptr<LabImage> provis;
         if(params.icm.trcExp) {//local contrast
+            int level_hr = 7;
+            int maxlevpo = 9;
+
             WaveletParams WaveParams = params.wavelet;
             ColorManagementParams Colparams = params.icm;
             IcmOpacityCurveWL icmOpacityCurveWL;
             Colparams.getCurves(icmOpacityCurveWL);
-            ipf.localCont (labView, labView, WaveParams, Colparams, icmOpacityCurveWL, 1);
+            ipf.localCont (labView, labView, WaveParams, Colparams, icmOpacityCurveWL, 1, level_hr, maxlevpo);
         //    ipf.gamutCont (labView, labView, WaveParams, Colparams, 1);
         }
         

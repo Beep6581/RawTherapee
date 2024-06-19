@@ -2060,10 +2060,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 std::unique_ptr<LabImage> provis;
                 const float pres = 0.01f * params->icm.preser;
                 if(params->icm.trcExp) {//local contrast
+                    int level_hr = 7;
+                    int maxlevpo = 9;
                     WaveletParams WaveParams = params->wavelet;
                     ColorManagementParams Colparams = params->icm;
                     Colparams.getCurves(icmOpacityCurveWL);
-                    ipf.localCont (nprevl, nprevl, WaveParams,Colparams, icmOpacityCurveWL, scale);
+                    ipf.localCont (nprevl, nprevl, WaveParams,Colparams, icmOpacityCurveWL, scale, level_hr, maxlevpo);
                 //    ipf.gamutCont (nprevl,nprevl, WaveParams,Colparams, scale);
                 }
 

@@ -3453,7 +3453,7 @@ void ImProcFunctions::gamutCont (LabImage * lab, LabImage * dst, const procparam
 
 
 // Copyright 6-2024 - Jacques Desmis <jdesmis@gmail.com>
-void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparams::WaveletParams & waparams, const procparams::ColorManagementParams & cmparams, const IcmOpacityCurveWL & cmOpacityCurveWL, int skip)
+void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparams::WaveletParams & waparams, const procparams::ColorManagementParams & cmparams, const IcmOpacityCurveWL & cmOpacityCurveWL, int skip, int &level_hr, int &maxlevpo)
 {
     bool wavcurvecont = false;
     if (cmOpacityCurveWL) {//activate only if one value not equal to 0.5
@@ -3495,7 +3495,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
             int level_bl = 0;//adapted to each levels profile 
             int level_hl = 1;//adapted to each levels profile 
             int level_br = wavelet_lev;
-            int level_hr = wavelet_lev;//to adapt if necessary
+            level_hr = wavelet_lev;//to adapt if necessary
 
             //6 contrast profiles to change range levels and rolloff for high contrast positive and negative
             //I change only values for LUT for high contrast values
@@ -3572,16 +3572,18 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
 
             //find possible max levels in function of windows preview size.
             int minwin = rtengine::min(width, height);
-            int maxlevelspot = 10;//maximum possible
+            int maxlevelspot = 9;//maximum possible
 
             // adapt maximum level wavelet to size of crop
-            while ((1 << maxlevelspot) >= (minwin * skip) && maxlevelspot  > 1) {
+           // while ((1 << maxlevelspot) >= (minwin * skip) && maxlevelspot  > 1) {
+            while ((1 << maxlevelspot) >= minwin && maxlevelspot  > 1) {
                 --maxlevelspot ;
             }
 
             int wavelet_level = rtengine::min(level_hr, maxlevelspot);
             int maxlvl = wavelet_level;
-
+            maxlevpo = maxlvl;
+            // printf("maxlv=%i Levehr=%i maxlevspot=%i\n", maxlvl, level_hr,  maxlevelspot);
             //decomposition wavelet , we can change Daublen (moment wavelet) in Tab - Wavelet Levels with subsampling = 1
             wavelet_decomposition *wdspot = new wavelet_decomposition(lab->L[0], width, height, maxlvl, 1, skip, numThreads, DaubLen);
             if (wdspot->memory_allocation_failed()) {//probably if not enough memory.

@@ -1737,11 +1737,14 @@ private:
             std::unique_ptr<LabImage> provis;
             const float pres = 0.01f * params.icm.preser;
             if(params.icm.trcExp) {//local contrast
+                int level_hr = 7;
+                int maxlevpo = 9;
+
                 WaveletParams WaveParams = params.wavelet;
                 ColorManagementParams Colparams = params.icm;
                 IcmOpacityCurveWL icmOpacityCurveWL;
                 Colparams.getCurves(icmOpacityCurveWL);
-                ipf.localCont (labView, labView, WaveParams, Colparams, icmOpacityCurveWL, 1);
+                ipf.localCont (labView, labView, WaveParams, Colparams, icmOpacityCurveWL, 1, level_hr, maxlevpo);
               // ipf.gamutCont (labView, labView, WaveParams, Colparams, 1);
 
             }
