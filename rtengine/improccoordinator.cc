@@ -1170,9 +1170,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 if (params->locallab.spots.at(sp).equilret  && params->locallab.spots.at(sp).expreti) {
                     savenormreti.reset(new LabImage(*oprevl, true));
                 }
+                /*
                 if(params->locallab.spots.at(sp).colorscope != 30) {//compatibility with old method in controlspotpanel to change scope - default value 30
                     scopefp[sp]= params->locallab.spots.at(sp).colorscope;
                 }
+                */
                 // Set local curves of current spot to LUT
                 locRETgainCurve.Set(params->locallab.spots.at(sp).localTgaincurve);
                 locRETtransCurve.Set(params->locallab.spots.at(sp).localTtranscurve);
@@ -1587,7 +1589,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 bool islog = params->locallab.spots.at(sp).explog;
                 bool ismas = params->locallab.spots.at(sp).expmask;
                 bool iscie = params->locallab.spots.at(sp).expcie;
-                bool isset = iscolor || issh || isvib;
+                //bool isset = iscolor || issh || isvib;
                 
                 //set select spot settings 
                 LocallabListener::locallabsetLC locsetlc;
@@ -1615,6 +1617,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         locallListener->cieChanged(locallcielc,params->locallab.selspot); 
                     }
                     locallListener->sigChanged(locallciesig,params->locallab.selspot);
+                    /*
                     if(params->locallab.spots.at(sp).colorscope != 30) {//compatibility with old method in controlspotpanel
                             locallListener->scopeChangedcol(scopefp[sp], params->locallab.selspot, iscolor);
                             locallListener->scopeChangedsh(scopefp[sp], params->locallab.selspot, issh);
@@ -1622,6 +1625,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                             locallListener->scopeChangedset(scopefp[sp], params->locallab.selspot, isset);
                             params->locallab.spots.at(sp).colorscope = 30;
                     }
+                    */
                    // if (mainfp[sp] >= 0) {//minimize call to idle register 
                         //used by Global fullimage.
                     locallListener->maiChanged(locallsetlc,params->locallab.selspot); 
