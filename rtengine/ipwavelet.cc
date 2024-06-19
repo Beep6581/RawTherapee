@@ -3583,7 +3583,6 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
             int wavelet_level = rtengine::min(level_hr, maxlevelspot);
             int maxlvl = wavelet_level;
             maxlevpo = maxlvl;
-            // printf("maxlv=%i Levehr=%i maxlevspot=%i\n", maxlvl, level_hr,  maxlevelspot);
             //decomposition wavelet , we can change Daublen (moment wavelet) in Tab - Wavelet Levels with subsampling = 1
             wavelet_decomposition *wdspot = new wavelet_decomposition(lab->L[0], width, height, maxlvl, 1, skip, numThreads, DaubLen);
             if (wdspot->memory_allocation_failed()) {//probably if not enough memory.
