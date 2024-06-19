@@ -3701,10 +3701,10 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
             // adap maximum level wavelet to size of RT-spot
             int wavelet_level = 1 + params->locallab.spots.at(sp).csthresholdjz.getBottomRight();//retrieve with +1 maximum wavelet_level
             int minwin = rtengine::min(width, height);
-            int maxlevelspot = 10;//maximum possible
+            int maxlevelspot = 9;//maximum possible
 
             // adapt maximum level wavelet to size of crop
-            while ((1 << maxlevelspot) >= (minwin * sk) && maxlevelspot  > 1) {
+            while ((1 << maxlevelspot) >= (minwin) && maxlevelspot  > 1) {
                 --maxlevelspot ;
             }
 
@@ -6659,7 +6659,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
             int minwin1 = rtengine::min(bfw, bfh);
             int maxlevelspot1 = 9;
 
-            while ((1 << maxlevelspot1) >= (minwin1 * sk) && maxlevelspot1  > 1) {
+            while ((1 << maxlevelspot1) >= (minwin1) && maxlevelspot1  > 1) {
                 --maxlevelspot1 ;
             }
 
@@ -6984,7 +6984,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
         int minwin = rtengine::min(bfw, bfh);
         int maxlevelspot = 9;
 
-        while ((1 << maxlevelspot) >= (minwin * sk) && maxlevelspot  > 1) {
+        while ((1 << maxlevelspot) >= (minwin) && maxlevelspot  > 1) {
             --maxlevelspot ;
         }
 
@@ -11461,11 +11461,11 @@ void ImProcFunctions::DeNoise(int call, int aut,  bool noiscfactiv, const struct
 
 #endif
         int minwin = rtengine::min(GW, GH);
-        int maxlevelspot = 10;//maximum possible
+        int maxlevelspot = 9;//maximum possible
         bool isnois = true;
 
         // adap maximum level wavelet to size of crop
-        while ((1 << maxlevelspot) >= (minwin * sk) && maxlevelspot  > 1) {
+        while ((1 << maxlevelspot) >= (minwin) && maxlevelspot  > 1) {
             --maxlevelspot ;
         }
 
@@ -17248,10 +17248,10 @@ void ImProcFunctions::Lab_Local(
 #endif
                     // adap maximum level wavelet to size of RT-spot
                     int minwin = rtengine::min(bfw, bfh);
-                    int maxlevelspot = 10;//maximum possible
+                    int maxlevelspot = 9;//maximum possible
 
                     // adap maximum level wavelet to size of crop
-                    while ((1 << maxlevelspot) >= (minwin * sk) && maxlevelspot  > 1) {
+                    while ((1 << maxlevelspot) >= (minwin) && maxlevelspot  > 1) {
                         --maxlevelspot ;
                     }
 
