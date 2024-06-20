@@ -2756,7 +2756,7 @@ TP_ICM_SMOOTHFRAME;Highlight Attenuation
 TP_ICM_TONECURVE;Tone curve
 TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only available if the selected DCP has a tone curve.
 TP_ICM_TRCFRAME;Abstract Profile
-TP_ICM_TRCFRAME_TOOLTIP;Also known as 'synthetic' or 'virtual' profiles, which are applied at the end of the processing pipeline (prior to ciecam) allowing you to create custom image effects.\nYou can make changes to the:\n 'Tone response curve', which modifies the tones of the image.\n 'Illuminant' : which allows you to change the profile primaries to adapt them to the shooting conditions.\n 'Destination primaries': which allows you to change the destination primaries with three main uses - channel mixer, restore image color (saturation), calibration.\nNote: Abstract profiles take into account the built-in Working profiles without modifying them. They do not work with custom Working profiles.
+TP_ICM_TRCFRAME_TOOLTIP;Also known as 'synthetic' or 'virtual' profiles, which are applied at the end of the processing pipeline (prior to ciecam) allowing you to create custom image effects.\nYou can make changes to the:\n 'Tone response curve and Midtones', which modifies the tones of the image.\n 'Contrast Enhancement', which contains a series of presets to modify the contrast.\n 'Illuminant' : which allows you to change the profile primaries to adapt them to the shooting conditions.\n 'Destination primaries': which allows you to change the destination primaries with three main uses - channel mixer, restore image color (saturation), calibration.\nNote: Abstract profiles take into account the built-in Working profiles without modifying them. They do not work with custom Working profiles.
 TP_ICM_TRC_TOOLTIP;Allows you to change the default sRGB 'Tone response curve' in RT (g=2.4 s=12.92).\nThis TRC modifies the tones of the image. The RGB and Lab values, histogram and output (screen, TIF, JPG) are changed:\n-Gamma acts mainly on light tones -Slope acts mainly on dark tones.\nYou can choose any pair of 'gamma and slope' (values >1) and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.\nA selection other than 'none' activates the 'Illuminant' and 'Destination primaries' menus.
 TP_ICM_WAVFRAME;Contrast Enhancement
 TP_ICM_WAVREFI;Refinement
@@ -4275,6 +4275,10 @@ TP_WAVELET_PASTEL;Pastel chroma
 TP_WAVELET_PROC;Process
 TP_WAVELET_PROTAB;Protection
 TP_WAVELET_PYRWAVTRC;Contrast profile
+TP_WAVELET_PYRWAVTRC_TOOLTIP;The 'Contrast profile' slider lets you select a series of presets that will significantly modify the effect of the “Variable contrast” curve. The presets range from least to most aggressive in ascending order.
+TP_WAVELET_PYRWAVTRC_CURVE_TOOLTIP;The Variable contrast curve takes into account the information provided by the presets. The mid-point of the x-axis corresponds to the predominant contrast value, irrespective of the detail level and the selected preset. The maximum point, to the right of the x-axis, corresponds to the maximum contrast value. It is recommended to reduce the variable contrast beyond the mid-point.
+TP_WAVELET_PYRWAVTRC_RESID_TOOLTIP;Residual contrast, adjusts the residual image after decomposition to compensate for excessive effects linked to the action of the curve and the presets (relief effect, contrast differences between structure and uniform areas).
+TP_WAVELET_PYRWAVTRC_SIGMA_TOOLTIP;Attenuation response, distributes the action between the low, medium and high values of the “Variable contrast” curve by widening or narrowing the width of the curve.
 TP_WAVELET_QUAAGRES;Aggressive
 TP_WAVELET_QUACONSER;Conservative
 TP_WAVELET_RADIUS;Radius shadows - highlight

@@ -273,7 +273,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     opacityShapeWLI->setIdentityValue(0.);
     opacityShapeWLI->setResetCurve(FlatCurveType(default_params.opacityCurveWLI.at(0)), default_params.opacityCurveWLI);
     opacityShapeWLI->setTooltip(M("TP_LOCALLAB_WAT_LEVELLOCCONTRAST_TOOLTIP"));
-    opacityCurveEditorWLI->setTooltip(M("TP_LOCALLAB_WAT_LEVELLOCCONTRAST_TOOLTIP"));
+    opacityCurveEditorWLI->setTooltip(M("TP_WAVELET_PYRWAVTRC_CURVE_TOOLTIP"));
     // This will add the reset button at the end of the curveType buttons
     opacityCurveEditorWLI->curveListComplete();
     opacityCurveEditorWLI->show();
@@ -292,14 +292,14 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wav2Exp = Gtk::manage(new MyExpander(false, M("TP_ICM_WAVREFI")));
     setExpandAlignProperties(wav2Exp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     trcWavVBox->pack_start(*pyrwavtrc, Gtk::PACK_SHRINK);
-    pyrwavtrc->set_tooltip_text(M("TP_LOCALLAB_WAT_PYRWAV_TOOLTIP"));
+    pyrwavtrc->set_tooltip_text(M("TP_WAVELET_PYRWAVTRC_TOOLTIP"));
     trcWavVBox->pack_start(*opacityCurveEditorWLI, Gtk::PACK_SHRINK, 2);
     trcWav2VBox->pack_start(*sigmatrc, Gtk::PACK_SHRINK);
     trcWav2VBox->pack_start(*offstrc, Gtk::PACK_SHRINK);
     trcWav2VBox->pack_start(*residtrc, Gtk::PACK_SHRINK);
     trcWav2VBox->pack_start(*wavlocLabels,  Gtk::PACK_SHRINK);
-    sigmatrc->set_tooltip_text(M("TP_LOCALLAB_WAT_SIGMALC_TOOLTIP"));
-    residtrc->set_tooltip_text(M("TP_LOCALLAB_WAT_EXPRESID_TOOLTIP"));
+    sigmatrc->set_tooltip_text(M("TP_WAVELET_PYRWAVTRC_SIGMA_TOOLTIP"));
+    residtrc->set_tooltip_text(M("TP_WAVELET_PYRWAVTRC_RESID_TOOLTIP"));
     offstrc->set_tooltip_text(M("TP_WAVELET_OFFSET_TOOLTIP"));
     primExp = Gtk::manage(new MyExpander(false, M("TP_ICM_PRIMFRAME")));
     setExpandAlignProperties(primExp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
