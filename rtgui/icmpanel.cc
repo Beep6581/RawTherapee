@@ -297,7 +297,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     trcWav2VBox->pack_start(*sigmatrc, Gtk::PACK_SHRINK);
     trcWav2VBox->pack_start(*offstrc, Gtk::PACK_SHRINK);
     trcWav2VBox->pack_start(*residtrc, Gtk::PACK_SHRINK);
-    trcWav2VBox->pack_start(*wavlocLabels,  Gtk::PACK_SHRINK);
+    // trcWav2VBox->pack_start(*wavlocLabels,  Gtk::PACK_SHRINK);
     sigmatrc->set_tooltip_text(M("TP_WAVELET_PYRWAVTRC_SIGMA_TOOLTIP"));
     residtrc->set_tooltip_text(M("TP_WAVELET_PYRWAVTRC_RESID_TOOLTIP"));
     offstrc->set_tooltip_text(M("TP_WAVELET_OFFSET_TOOLTIP"));
