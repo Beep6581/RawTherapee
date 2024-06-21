@@ -1625,16 +1625,16 @@ void Crop::update(int todo)
             if(params.icm.trcExp) {//local contrast
                 int level_hr = 7;
                 int maxlevpo = 9;
-
+                bool wavcurvecont = false; 
                 WaveletParams WaveParams = params.wavelet;
                 ColorManagementParams Colparams = params.icm;
                 IcmOpacityCurveWL icmOpacityCurveWL;
                 Colparams.getCurves(icmOpacityCurveWL);
-                parent->ipf.localCont (labnCrop, labnCrop, WaveParams, Colparams, icmOpacityCurveWL, skip, level_hr, maxlevpo);
+                parent->ipf.localCont (labnCrop, labnCrop, WaveParams, Colparams, icmOpacityCurveWL, skip, level_hr, maxlevpo, wavcurvecont);
             //    parent->ipf.gamutCont (labnCrop, labnCrop, WaveParams, Colparams, skip);
 
                 if (parent->primListener) {
-                    parent->primListener->wavlocChanged(float (maxlevpo), float (level_hr));
+                    parent->primListener->wavlocChanged(float (maxlevpo), float (level_hr), wavcurvecont);
                 }
 
             }

@@ -1739,12 +1739,12 @@ private:
             if(params.icm.trcExp) {//local contrast
                 int level_hr = 7;
                 int maxlevpo = 9;
-
+                bool wavcurvecont = false;
                 WaveletParams WaveParams = params.wavelet;
                 ColorManagementParams Colparams = params.icm;
                 IcmOpacityCurveWL icmOpacityCurveWL;
                 Colparams.getCurves(icmOpacityCurveWL);
-                ipf.localCont (labView, labView, WaveParams, Colparams, icmOpacityCurveWL, 1, level_hr, maxlevpo);
+                ipf.localCont (labView, labView, WaveParams, Colparams, icmOpacityCurveWL, 1, level_hr, maxlevpo, wavcurvecont);
               // ipf.gamutCont (labView, labView, WaveParams, Colparams, 1);
 
             }

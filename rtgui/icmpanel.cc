@@ -292,12 +292,12 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wav2Exp = Gtk::manage(new MyExpander(false, M("TP_ICM_WAVREFI")));
     setExpandAlignProperties(wav2Exp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     trcWavVBox->pack_start(*pyrwavtrc, Gtk::PACK_SHRINK);
+    trcWavVBox->pack_start(*wavlocLabels,  Gtk::PACK_SHRINK);
     pyrwavtrc->set_tooltip_text(M("TP_WAVELET_PYRWAVTRC_TOOLTIP"));
     trcWavVBox->pack_start(*opacityCurveEditorWLI, Gtk::PACK_SHRINK, 2);
     trcWav2VBox->pack_start(*sigmatrc, Gtk::PACK_SHRINK);
     trcWav2VBox->pack_start(*offstrc, Gtk::PACK_SHRINK);
     trcWav2VBox->pack_start(*residtrc, Gtk::PACK_SHRINK);
-    // trcWav2VBox->pack_start(*wavlocLabels,  Gtk::PACK_SHRINK);
     sigmatrc->set_tooltip_text(M("TP_WAVELET_PYRWAVTRC_SIGMA_TOOLTIP"));
     residtrc->set_tooltip_text(M("TP_WAVELET_PYRWAVTRC_RESID_TOOLTIP"));
     offstrc->set_tooltip_text(M("TP_WAVELET_OFFSET_TOOLTIP"));
@@ -629,19 +629,23 @@ void ICMPanel::foldAllButMe (GdkEventButton* event, MyExpander *expander)
     }
 }
 
-void ICMPanel::wavlocChanged(double nlevel, double nmax)
+void ICMPanel::wavlocChanged(double nlevel, double nmax, bool curveloc)
 {
     if (!batchMode) {
         idle_register.add(
-        [this, nlevel, nmax]() -> bool {
-            wavlocLabels->set_text(
-                Glib::ustring::compose(
-                    M("TP_WAVELET_LEVLOCLABEL"),
-                    Glib::ustring::format(std::fixed, std::setprecision(0), nlevel),
-                    Glib::ustring::format(std::fixed, std::setprecision (0), nmax)
-                    
-                )
-            );
+        [this, nlevel, nmax, curveloc]() -> bool {
+            if(nlevel != nmax && curveloc) {
+                wavlocLabels->show();
+                wavlocLabels->set_text(
+                    Glib::ustring::compose(
+                        M("TP_WAVELET_LEVLOCLABEL"),
+                        Glib::ustring::format(std::fixed, std::setprecision(0), nlevel)
+                     //   Glib::ustring::format(std::fixed, std::setprecision (0), nmax)
+                    )
+                );
+            } else {
+                wavlocLabels->hide();
+            }
             return false;
         }
         );

@@ -2062,10 +2062,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 if(params->icm.trcExp) {//local contrast
                     int level_hr = 7;
                     int maxlevpo = 9;
+                    bool wavcurvecont = false;
                     WaveletParams WaveParams = params->wavelet;
                     ColorManagementParams Colparams = params->icm;
                     Colparams.getCurves(icmOpacityCurveWL);
-                    ipf.localCont (nprevl, nprevl, WaveParams,Colparams, icmOpacityCurveWL, scale, level_hr, maxlevpo);
+                    ipf.localCont (nprevl, nprevl, WaveParams,Colparams, icmOpacityCurveWL, scale, level_hr, maxlevpo, wavcurvecont);
                 //    ipf.gamutCont (nprevl,nprevl, WaveParams,Colparams, scale);
                 }
 

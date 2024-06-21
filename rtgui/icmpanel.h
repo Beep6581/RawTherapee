@@ -248,7 +248,7 @@ public:
     void iprimChanged (float r_x, float r_y, float b_x, float b_y, float g_x, float g_y, float w_x, float w_y, float m_x, float m_y) override;
     void neutral_pressed();
     void curveChanged(CurveEditor* ce) override;
-    void wavlocChanged(double nlevel, double nmax) override;
+    void wavlocChanged(double nlevel, double nmax, bool curveloc) override;
 
     void wpChanged();
     void wtrcinChanged();

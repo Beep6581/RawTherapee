@@ -3453,9 +3453,9 @@ void ImProcFunctions::gamutCont (LabImage * lab, LabImage * dst, const procparam
 
 
 // Copyright 6-2024 - Jacques Desmis <jdesmis@gmail.com>
-void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparams::WaveletParams & waparams, const procparams::ColorManagementParams & cmparams, const IcmOpacityCurveWL & cmOpacityCurveWL, int skip, int &level_hr, int &maxlevpo)
+void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparams::WaveletParams & waparams, const procparams::ColorManagementParams & cmparams, const IcmOpacityCurveWL & cmOpacityCurveWL, int skip, int &level_hr, int &maxlevpo, bool &wavcurvecont)
 {
-    bool wavcurvecont = false;
+    wavcurvecont = false;
     if (cmOpacityCurveWL) {//activate only if one value not equal to 0.5
         for (int i = 0; i < 500; i++) {
             if (cmOpacityCurveWL[i] != 0.5f) {
