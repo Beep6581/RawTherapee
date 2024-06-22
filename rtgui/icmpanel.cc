@@ -255,8 +255,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wFrame->set_tooltip_text(M("TP_ICM_WORKING_TRC_TOOLTIP"));
 
 
-    wGamma = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_GAMMA"), 0.40, 15.0, 0.001, 2.222));
-    wSlope = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_SLOPE"), 0., 300., 0.01, 4.5));
+    wGamma = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_GAMMA"), 0.40, 20.0, 0.001, 2.4));
+    wSlope = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_SLOPE"), 0., 300., 0.01, 12.92));
     wmidtcie = Gtk::manage(new Adjuster(M("TP_LOCALLAB_MIDTCIE"), -100., 100., 1., 0.));
     wsmoothcie = Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SMOOTHCIE")));
     trcProfVBox->pack_start(*wGamma, Gtk::PACK_SHRINK);
