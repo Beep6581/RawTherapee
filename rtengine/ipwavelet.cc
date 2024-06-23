@@ -3474,12 +3474,12 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
 #endif
             int width = lab->W;
             int height = lab->H;
-            int wavelet_lev = 7; //waparams.thres;
+            int wavelet_lev = 7;//default
             int DaubLen = 4;//type of wave
             if (waparams.daubcoeffmethod == "2_") {
                 DaubLen = 4;
             } else if (waparams.daubcoeffmethod == "4_") {
-                DaubLen = 6;
+                DaubLen = 6;//default
             } else if (waparams.daubcoeffmethod == "6_") {
                 DaubLen = 8;
             } else if (waparams.daubcoeffmethod == "10_") {
@@ -3489,16 +3489,16 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
             } else if (params->wavelet.daubcoeffmethod == "20_") {
                 DaubLen = 22;
             }
-            float sigmafin = cmparams.sigmatrc;//attenuation response
+            float sigmafin = cmparams.sigmatrc;//attenuation response signal
             int pyrwav = cmparams.pyrwavtrc;//levels contrast profiles
-            float offset = cmparams.offstrc;
+            float offset = cmparams.offstrc;//offset signal
             int level_bl = 0;//adapted to each levels profile 
             int level_hl = 1;//adapted to each levels profile 
             int level_br = wavelet_lev;
             level_hr = wavelet_lev;//to adapt if necessary
 
-            //6 contrast profiles to change range levels and rolloff for high contrast positive and negative
-            //I change only values for LUT for high contrast values
+            //6 contrast profiles to change range levels and rolloff for high contrast positive and negative - of course we can add anothers
+            //I change only values for LUT for high contrast values and not for low levels, but we can...
             float inva5 = 0.8f;
             float inva6 = 0.7f;
             float inva7 = 0.5f;
@@ -3575,7 +3575,6 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
             int maxlevelspot = 9;//maximum possible
 
             // adapt maximum level wavelet to size of crop
-           // while ((1 << maxlevelspot) >= (minwin * skip) && maxlevelspot  > 1) {
             while ((1 << maxlevelspot) >= minwin && maxlevelspot  > 1) {
                 --maxlevelspot ;
             }
