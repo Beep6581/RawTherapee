@@ -247,6 +247,9 @@ set(TCMALLOC_LIB_DIR
     ""
     CACHE PATH "Custom path for the tcmalloc library")
 
+set(WITH_JXL "AUTO" CACHE STRING "Build with JPEG XL support")
+set_property(CACHE WITH_JXL PROPERTY STRINGS AUTO ON OFF)
+
 # Set installation directories:
 if(WIN32 OR APPLE)
     if(BUILD_BUNDLE)
@@ -552,6 +555,32 @@ if(WITH_SYSTEM_KLT)
     find_package(KLT REQUIRED)
 endif()
 
+if(WITH_JXL AND NOT WITH_JXL STREQUAL "AUTO")
+    set(JXL_REQUIRED "REQUIRED")
+else()
+    set(JXL_REQUIRED "")
+endif()
+pkg_check_modules(JXL ${JXL_REQUIRED} IMPORTED_TARGET libjxl)
+pkg_check_modules(JXLTHREADS ${JXL_REQUIRED} IMPORTED_TARGET libjxl_threads)
+if(JXL_FOUND)
+    if(WITH_JXL OR WITH_JXL STREQUAL "AUTO")
+        add_definitions(-DLIBJXL)
+        list(APPEND JXL_INCLUDE_DIRS ${JXLTHREADS_INCLUDE_DIRS})
+        list(APPEND JXL_LIBRARIES ${JXLTHREADS_LIBRARIES})
+    else()
+        message(STATUS "  JXL support disabled by WITH_JXL = ${WITH_JXL}")
+        string(APPEND JXL_VERSION " - Disabled")
+        set(JXL_INCLUDE_DIRS "")
+        set(JXL_LIBRARIES "")
+        set(JXLTHREADS_INCLUDE_DIRS "")
+        set(JXLTHREADS_LIBRARIES "")
+    endif()
+elseif(WITH_JXL STREQUAL "AUTO")
+    set(JXL_VERSION "Disabled, Auto")
+else()
+    set(JXL_VERSION "Disabled")
+endif()
+
 # Check for libcanberra-gtk3 (sound events on Linux):
 if(UNIX AND (NOT APPLE))
     option(USE_LIBCANBERRA "Build with libcanberra" ON)
@@ -732,6 +761,7 @@ if(NOT APPLE)
         -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
         -DOPTION_OMP:STRING=${OPTION_OMP}
         -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP}
+        -DJXL_VERSION:STRING=${JXL_VERSION}
         -DLENSFUN_VERSION:STRING=${LENSFUN_VERSION})
 endif()
 
@@ -761,6 +791,7 @@ elseif(APPLE)
              -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
              -DOPTION_OMP:STRING=${OPTION_OMP}
              -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP}
+             -DJXL_VERSION:STRING=${JXL_VERSION}
              -DLENSFUN_VERSION:STRING=${LENSFUN_VERSION}
              -P ${PROJECT_SOURCE_DIR}/UpdateInfo.cmake)
 else()

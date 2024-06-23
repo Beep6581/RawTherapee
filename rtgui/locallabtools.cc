@@ -476,6 +476,7 @@ LocallabColor::LocallabColor():
     strcolab(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTRCHRO"), -6., 6., 0.05, 0.))),
     strcolh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTRHUE"), -6., 6., 0.05, 0.))),
     angcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
+    feathercol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FEATVALUE"), 10., 100., 0.1, 25.))),
     expcurvcol(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPCURV")))),
     labqualcurv(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_QUALCURV_METHOD") + ":"))),
     qualitycurveMethod(Gtk::manage(new MyComboBoxText())),
@@ -541,8 +542,9 @@ LocallabColor::LocallabColor():
     csThresholdcol(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 0, 9, 0, 0, 6, 5, 0, false)))
 {
     auto m = ProcEventMapper::getInstance();
+    //rtengine::ProcEvent EvlocallabenacieMaskall;
+    Evlocallabfeathercol = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_FEATHERCOL");
     Evlocallabpreviewcol = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWCOL");
-
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     float R, G, B;
@@ -609,6 +611,7 @@ LocallabColor::LocallabColor():
     strcolh->set_tooltip_text(M("TP_LOCALLAB_GRADSTRHUE_TOOLTIP"));
 
     angcol->setAdjusterListener(this);
+    feathercol->setAdjusterListener(this);
 
     setExpandAlignProperties(expcurvcol, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
@@ -879,6 +882,7 @@ LocallabColor::LocallabColor():
     gradcolBox->pack_start(*strcolab);
     gradcolBox->pack_start(*strcolh);
     gradcolBox->pack_start(*angcol);
+    gradcolBox->pack_start(*feathercol);
     expgradcol->add(*gradcolBox, false);
     pack_start(*expgradcol, false, false);
     ToolParamBlock* const curvBox = Gtk::manage(new ToolParamBlock());
@@ -1291,6 +1295,7 @@ void LocallabColor::read(const rtengine::procparams::ProcParams* pp, const Param
         strcolab->setValue(spot.strcolab);
         strcolh->setValue(spot.strcolh);
         angcol->setValue(spot.angcol);
+        feathercol->setValue(spot.feathercol);
 
         if (spot.qualitycurveMethod == "none") {
             qualitycurveMethod->set_active(0);
@@ -1472,6 +1477,7 @@ void LocallabColor::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         spot.strcolab = strcolab->getValue();
         spot.strcolh = strcolh->getValue();
         spot.angcol = angcol->getValue();
+        spot.feathercol = feathercol->getValue();
 
         spot.recothresc = recothresc->getValue();
         spot.lowthresc = lowthresc->getValue();
@@ -1626,6 +1632,7 @@ void LocallabColor::setDefaults(const rtengine::procparams::ProcParams* defParam
         strcolab->setDefault(defSpot.strcolab);
         strcolh->setDefault(defSpot.strcolh);
         angcol->setDefault(defSpot.angcol);
+        feathercol->setDefault(defSpot.feathercol);
         mercol->setDefault(defSpot.mercol);
         opacol->setDefault(defSpot.opacol);
         conthrcol->setDefault(defSpot.conthrcol);
@@ -1783,6 +1790,13 @@ void LocallabColor::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabangcol,
                                        angcol->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == feathercol) {
+            if (listener) {
+                listener->panelChanged(Evlocallabfeathercol,
+                                       feathercol->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
@@ -2147,6 +2161,7 @@ void LocallabColor::convertParamToSimple()
     softradiuscol->setValue(defSpot.softradiuscol);
     strcol->setValue(defSpot.strcol);
     angcol->setValue(defSpot.angcol);
+    feathercol->setValue(defSpot.feathercol);
     gamc->setValue(defSpot.gamc);
 
     if (defSpot.qualitycurveMethod == "none") {
@@ -2706,6 +2721,7 @@ LocallabExposure::LocallabExposure():
     expgradexp(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPGRAD")))),
     strexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
     angexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
+    featherexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FEATVALUE"), 10., 100., 0.1, 25.))),
     softradiusexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 0.))),
     inversex(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
     expmaskexp(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWE")))),
@@ -2737,6 +2753,7 @@ LocallabExposure::LocallabExposure():
     const LocallabParams::LocallabSpot defSpot;
     auto m = ProcEventMapper::getInstance();
     Evlocallabpreviewexe = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWEXE");
+    Evlocallabfeatherexp = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_FEATHEREXE");
 
     // Parameter Exposure specific widgets
     expMethod->append(M("TP_LOCALLAB_STD"));
@@ -2811,6 +2828,7 @@ LocallabExposure::LocallabExposure():
 
     angexp->setAdjusterListener(this);
     angexp->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
+    featherexp->setAdjusterListener(this);
 
     softradiusexp->setLogScale(10, 0);
     softradiusexp->setAdjusterListener(this);
@@ -2954,6 +2972,7 @@ LocallabExposure::LocallabExposure():
     ToolParamBlock* const gradBox = Gtk::manage(new ToolParamBlock());
     gradBox->pack_start(*strexp);
     gradBox->pack_start(*angexp);
+    gradBox->pack_start(*featherexp);
     expgradexp->add(*gradBox, false);
     pack_start(*expgradexp);
     pack_start(*softradiusexp);
@@ -3272,6 +3291,7 @@ void LocallabExposure::read(const rtengine::procparams::ProcParams* pp, const Pa
         shapeexpos->setCurve(spot.excurve);
         strexp->setValue(spot.strexp);
         angexp->setValue(spot.angexp);
+        featherexp->setValue(spot.featherexp);
         softradiusexp->setValue(spot.softradiusexp);
         norm->set_active(spot.norm);
         fatsatur->set_active(spot.fatsatur);
@@ -3363,6 +3383,7 @@ void LocallabExposure::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         spot.excurve = shapeexpos->getCurve();
         spot.strexp = strexp->getValue();
         spot.angexp = angexp->getValue();
+        spot.featherexp = featherexp->getValue();
         spot.softradiusexp = softradiusexp->getValue();
         spot.inversex = inversex->get_active();
         spot.norm = norm->get_active();
@@ -3416,6 +3437,7 @@ void LocallabExposure::setDefaults(const rtengine::procparams::ProcParams* defPa
         expchroma->setDefault((double)defSpot.expchroma);
         strexp->setDefault(defSpot.strexp);
         angexp->setDefault(defSpot.angexp);
+        featherexp->setDefault(defSpot.featherexp);
         softradiusexp->setDefault(defSpot.softradiusexp);
         blendmaskexp->setDefault((double)defSpot.blendmaskexp);
         radmaskexp->setDefault(defSpot.radmaskexp);
@@ -3640,6 +3662,13 @@ void LocallabExposure::adjusterChanged(Adjuster* a, double newval)
             }
         }
 
+        if (a == featherexp) {
+            if (listener) {
+                listener->panelChanged(Evlocallabfeatherexp,
+                                       featherexp->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
         if (a == softradiusexp) {
             if (listener) {
                 listener->panelChanged(Evlocallabsoftradiusexp,
@@ -3796,6 +3825,7 @@ void LocallabExposure::convertParamToSimple()
     // Set hidden specific GUI widgets in Simple mode to default spot values
     strexp->setValue(defSpot.strexp);
     angexp->setValue(defSpot.angexp);
+    featherexp->setValue(defSpot.featherexp);
     softradiusexp->setValue(defSpot.softradiusexp);
     enaExpMask->set_active(defSpot.enaExpMask);
     enaExpMaskaft->set_active(defSpot.enaExpMaskaft);
@@ -4240,6 +4270,7 @@ LocallabShadow::LocallabShadow():
     expgradsh(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPGRAD")))),
     strSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
     angSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
+    featherSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FEATVALUE"), 10., 100., 0.1, 25.))),
     inverssh(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
     expmasksh(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWS")))),
     showmaskSHMethod(Gtk::manage(new MyComboBoxText())),
@@ -4265,6 +4296,7 @@ LocallabShadow::LocallabShadow():
 {
     auto m = ProcEventMapper::getInstance();
     Evlocallabpreviewsh = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWSH");
+    EvlocallabfeatherSH = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_FEATHERSH");
     
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -4316,6 +4348,7 @@ LocallabShadow::LocallabShadow():
 
     angSH->setAdjusterListener(this);
     angSH->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
+    featherSH->setAdjusterListener(this);
 
     inversshConn = inverssh->signal_toggled().connect(sigc::mem_fun(*this, &LocallabShadow::inversshChanged));
     inverssh->set_tooltip_text(M("TP_LOCALLAB_INVERS_TOOLTIP"));
@@ -4427,6 +4460,7 @@ LocallabShadow::LocallabShadow():
     ToolParamBlock* const gradSHBox = Gtk::manage(new ToolParamBlock());
     gradSHBox->pack_start(*strSH);
     gradSHBox->pack_start(*angSH);
+    gradSHBox->pack_start(*featherSH);
     expgradsh->add(*gradSHBox, false);
     pack_start(*expgradsh);
 //    pack_start(*inverssh);
@@ -4718,6 +4752,7 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         sloSH->setValue(spot.sloSH);
         strSH->setValue(spot.strSH);
         angSH->setValue(spot.angSH);
+        featherSH->setValue(spot.featherSH);
         inverssh->set_active(spot.inverssh);
         enaSHMask->set_active(spot.enaSHMask);
         CCmaskSHshape->setCurve(spot.CCmaskSHcurve);
@@ -4784,6 +4819,7 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
         spot.sloSH = sloSH->getValue();
         spot.strSH = strSH->getValue();
         spot.angSH = angSH->getValue();
+        spot.featherSH = featherSH->getValue();
         spot.inverssh = inverssh->get_active();
         spot.enaSHMask = enaSHMask->get_active();
         spot.LLmaskSHcurve = LLmaskSHshape->getCurve();
@@ -4833,6 +4869,7 @@ void LocallabShadow::setDefaults(const rtengine::procparams::ProcParams* defPara
         sloSH->setDefault(defSpot.sloSH);
         strSH->setDefault(defSpot.strSH);
         angSH->setDefault(defSpot.angSH);
+        featherSH->setDefault(defSpot.featherSH);
         blendmaskSH->setDefault((double)defSpot.blendmaskSH);
         radmaskSH->setDefault(defSpot.radmaskSH);
         lapmaskSH->setDefault(defSpot.lapmaskSH);
@@ -4994,6 +5031,13 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
             }
         }
 
+        if (a == featherSH) {
+            if (listener) {
+                listener->panelChanged(EvlocallabfeatherSH,
+                                       featherSH->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
         if (a == blendmaskSH) {
             if (listener) {
                 listener->panelChanged(EvlocallabblendmaskSH,
@@ -5133,6 +5177,7 @@ void LocallabShadow::convertParamToSimple()
     sloSH->setValue(defSpot.sloSH);
     strSH->setValue(defSpot.strSH);
     angSH->setValue(defSpot.angSH);
+    featherSH->setValue(defSpot.featherSH);
     showmaskSHMethod->set_active(0);
     showmaskSHMethodinv->set_active(0);
     enaSHMask->set_active(defSpot.enaSHMask);
@@ -5450,6 +5495,7 @@ LocallabVibrance::LocallabVibrance():
     strvibab(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTRCHRO"), -4., 4., 0.05, 0.))),
     strvibh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTRHUE2"), -6., 6., 0.05, 0.))),
     angvib(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
+    feathervib(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FEATVALUE"), 10., 100., 0.1, 25.))),
     expmaskvib(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWVI")))),
     showmaskvibMethod(Gtk::manage(new MyComboBoxText())),
     enavibMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
@@ -5469,7 +5515,7 @@ LocallabVibrance::LocallabVibrance():
 {
     auto m = ProcEventMapper::getInstance();
     Evlocallabpreviewvib = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWVIB");
-    
+    Evlocallabfeathervib = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_FEATHERVIB");
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     float R, G, B;
@@ -5533,6 +5579,7 @@ LocallabVibrance::LocallabVibrance():
 
     angvib->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
     angvib->setAdjusterListener(this);
+    feathervib->setAdjusterListener(this);
 
     previewvib->set_active(false);
     previewvibConn = previewvib->signal_clicked().connect(
@@ -5620,6 +5667,7 @@ LocallabVibrance::LocallabVibrance():
     gradvibBox->pack_start(*strvibab);
     gradvibBox->pack_start(*strvibh);
     gradvibBox->pack_start(*angvib);
+    gradvibBox->pack_start(*feathervib);
     expgradvib->add(*gradvibBox, false);
     pack_start(*expgradvib);
     ToolParamBlock* const maskvibBox = Gtk::manage(new ToolParamBlock());
@@ -5872,6 +5920,7 @@ void LocallabVibrance::read(const rtengine::procparams::ProcParams* pp, const Pa
         strvibab->setValue(spot.strvibab);
         strvibh->setValue(spot.strvibh);
         angvib->setValue(spot.angvib);
+        feathervib->setValue(spot.feathervib);
         enavibMask->set_active(spot.enavibMask);
         CCmaskvibshape->setCurve(spot.CCmaskvibcurve);
         LLmaskvibshape->setCurve(spot.LLmaskvibcurve);
@@ -5926,6 +5975,7 @@ void LocallabVibrance::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         spot.strvibab = strvibab->getValue();
         spot.strvibh = strvibh->getValue();
         spot.angvib = angvib->getValue();
+        spot.feathervib = feathervib->getValue();
         spot.enavibMask = enavibMask->get_active();
         spot.CCmaskvibcurve = CCmaskvibshape->getCurve();
         spot.LLmaskvibcurve = LLmaskvibshape->getCurve();
@@ -5964,6 +6014,7 @@ void LocallabVibrance::setDefaults(const rtengine::procparams::ProcParams* defPa
         strvibab->setDefault(defSpot.strvibab);
         strvibh->setDefault(defSpot.strvibh);
         angvib->setDefault(defSpot.angvib);
+        feathervib->setDefault(defSpot.feathervib);
         blendmaskvib->setDefault((double)defSpot.blendmaskvib);
         radmaskvib->setDefault(defSpot.radmaskvib);
         lapmaskvib->setDefault(defSpot.lapmaskvib);
@@ -6076,6 +6127,13 @@ void LocallabVibrance::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabangvib,
                                        angvib->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == feathervib) {
+            if (listener) {
+                listener->panelChanged(Evlocallabfeathervib,
+                                       feathervib->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
@@ -6277,6 +6335,7 @@ void LocallabVibrance::convertParamToSimple()
     // Set hidden specific GUI widgets in Simple mode to default spot values
     strvib->setValue(defSpot.strvib);
     angvib->setValue(defSpot.angvib);
+    feathervib->setValue(defSpot.feathervib);
     showmaskvibMethod->set_active(0);
     enavibMask->set_active(defSpot.enavibMask);
   //  CCmaskvibshape->setCurve(defSpot.CCmaskvibcurve);

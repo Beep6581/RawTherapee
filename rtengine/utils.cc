@@ -19,6 +19,8 @@
 #include <cmath>
 #include <cstring>
 #include <cstdio>
+#include <fstream>
+#include <glibmm/convert.h>
 #include "rt_math.h"
 
 #include "utils.h"
@@ -222,6 +224,23 @@ void vflip(unsigned char* img, int w, int h)
     }
 }
 
+std::vector<std::uint8_t> getFileData(const Glib::ustring &filename)
+{
+    try {
+        const std::string fn = Glib::filename_from_utf8(filename);
+        std::ifstream instream(fn, std::ios::in | std::ios::binary);
+
+        std::vector<std::uint8_t> contents(
+            (std::istreambuf_iterator<char>(instream)),
+            std::istreambuf_iterator<char>());
+
+        instream.close();
+        return contents;
+    } catch (...) {
+        return {};
+    }
+}
+
 Glib::ustring getFileExtension(const Glib::ustring& filename)
 {
     const Glib::ustring::size_type lastdot_pos = filename.find_last_of('.');
@@ -236,6 +255,13 @@ bool hasJpegExtension(const Glib::ustring& filename)
    const Glib::ustring extension = getFileExtension(filename);
    return extension == "jpg" || extension == "jpeg";
 }
+
+#ifdef LIBJXL
+bool hasJxlExtension(const Glib::ustring& filename)
+{
+   return getFileExtension(filename) == "jxl";
+}
+#endif
 
 bool hasTiffExtension(const Glib::ustring& filename)
 {

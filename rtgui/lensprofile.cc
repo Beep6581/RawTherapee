@@ -251,7 +251,7 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
 
     if (pp->lensProf.lfAutoMatch()) {
         if (metadata) {
-            const LFLens l = db->findLens(c, metadata->getLens());
+            const LFLens l = db->findLens(c, metadata->getLens(), true);
             setLensfunLens(l.getLens());
         }
     } else if (pp->lensProf.lfManual()) {
@@ -522,7 +522,7 @@ void LensProfilePanel::onCorrModeChanged(const Gtk::RadioButton* rbChanged)
             } else if (metadata) {
                 const LFDatabase* const db = LFDatabase::getInstance();
                 const LFCamera c = db->findCamera(metadata->getMake(), metadata->getModel(), true);
-                const LFLens l = db->findLens(c, metadata->getLens());
+                const LFLens l = db->findLens(c, metadata->getLens(), true);
                 setLensfunCamera(c.getMake(), c.getModel());
                 setLensfunLens(l.getLens());
             }
@@ -808,7 +808,7 @@ void LensProfilePanel::updateLensfunWarning()
             return;
         }
 
-        const LFLens l = db->findLens(LFCamera(), (*itl)[lf->lensfunModelLens.lens]);
+        const LFLens l = db->findLens(c, (*itl)[lf->lensfunModelLens.lens], false);
         const float lenscrop = l.getCropFactor();
         const float camcrop = c.getCropFactor();
 

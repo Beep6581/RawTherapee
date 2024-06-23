@@ -45,6 +45,9 @@ endif()
 if(EXIV2_INCLUDE_DIRS)
     include_directories("${EXIV2_INCLUDE_DIRS}")
 endif()
+if(JXL_INCLUDE_DIRS)
+    include_directories("${JXL_INCLUDE_DIRS}")
+endif()
 
 link_directories(
     "${EXPAT_LIBRARY_DIRS}"
@@ -246,6 +249,7 @@ target_link_libraries(rtengine
     ${RSVG_LIBRARIES}
     ${KLT_LIBRARIES}
     ${EXIV2_LIBRARIES}
+    ${JXL_LIBRARIES}
     )
 
 if(OpenMP_FOUND)
