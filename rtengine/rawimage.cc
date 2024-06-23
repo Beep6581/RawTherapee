@@ -1211,15 +1211,18 @@ float** RawImage::compress_image(unsigned int frameNum, bool freeImage)
             height -= top_margin;
             width -= left_margin;
         }
+
+        const auto image_width = get_maker() == "Sigma" ? raw_width : iwidth; // Foveon: Image has all raw data.
+
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
 
         for (int row = 0; row < height; row++)
             for (int col = 0; col < width; col++) {
-                this->data[row][3 * col + 0] = image[(row + top_margin) * iwidth + col + left_margin][0];
-                this->data[row][3 * col + 1] = image[(row + top_margin) * iwidth + col + left_margin][1];
-                this->data[row][3 * col + 2] = image[(row + top_margin) * iwidth + col + left_margin][2];
+                this->data[row][3 * col + 0] = image[(row + top_margin) * image_width + col + left_margin][0];
+                this->data[row][3 * col + 1] = image[(row + top_margin) * image_width + col + left_margin][1];
+                this->data[row][3 * col + 2] = image[(row + top_margin) * image_width + col + left_margin][2];
             }
     }
 
