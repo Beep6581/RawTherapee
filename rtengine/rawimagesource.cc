@@ -420,6 +420,16 @@ void transLineD1x(const float* const red, const float* const green, const float*
     }
 }
 
+bool checkRawDataDimensions(const array2D<float> &rawData, const rtengine::RawImage &rawImage, int width, int height)
+{
+    const int colors = (rawImage.getSensorType() == rtengine::ST_BAYER ||
+                           rawImage.getSensorType() == rtengine::ST_FUJI_XTRANS ||
+                           rawImage.get_colors() == 1)
+                           ? 1
+                           : 3;
+    return rawData.getHeight() == height && rawData.getWidth() == colors * width;
+}
+
 }
 
 
@@ -740,16 +750,6 @@ void RawImageSource::getWBMults(const ColorTemp &ctemp, const RAWParams &raw, st
     out_scale_mul[3] = scale_mul[3];
 
     autoGainComp = camInitialGain / initialGain;
-}
-
-bool checkRawDataDimensions(const array2D<float> &rawData, const RawImage &rawImage, int width, int height)
-{
-    const int colors = (rawImage.getSensorType() == rtengine::ST_BAYER ||
-                           rawImage.getSensorType() == rtengine::ST_FUJI_XTRANS ||
-                           rawImage.get_colors() == 1)
-                           ? 1
-                           : 3;
-    return rawData.getHeight() == height && rawData.getWidth() == colors * width;
 }
 
 void RawImageSource::getImage(const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const RAWParams &raw)
