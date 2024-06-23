@@ -222,10 +222,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wFrame->add(*wProfVBox);
 
     //-----------------gamma TRC working
-//    Gtk::Frame *trcFrame = Gtk::manage(new Gtk::Frame(M("TP_ICM_TRCFRAME")));
     trcExp = Gtk::manage(new MyExpander(true, M("TP_ICM_TRCFRAME")));
     setExpandAlignProperties(trcExp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-//    trcFrame->set_label_align(0.025, 0.5);
     Gtk::Box *trcProfVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     trcExp->set_tooltip_text(M("TP_ICM_TRCFRAME_TOOLTIP"));
     trcExp->signal_button_release_event().connect_notify ( sigc::bind ( sigc::mem_fun (this, &ICMPanel::foldAllButMe), trcExp) );
@@ -233,7 +231,6 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     Gtk::Box *trcPrimVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     Gtk::Box *trcWavVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     Gtk::Box *trcWav2VBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
-   // wavLabels(Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER))),
     wavlocLabels = Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER));
 
     wTRCBox = Gtk::manage(new Gtk::Box());
@@ -255,8 +252,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wFrame->set_tooltip_text(M("TP_ICM_WORKING_TRC_TOOLTIP"));
 
 
-    wGamma = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_GAMMA"), 0.40, 20.0, 0.001, 2.4));
-    wSlope = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_SLOPE"), 0., 300., 0.01, 12.92));
+    wGamma = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_GAMMA"), 0.40, 20.0, 0.001, 2.4));//default sRGB
+    wSlope = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_SLOPE"), 0., 300., 0.01, 12.92));//defautl sRGB
     wmidtcie = Gtk::manage(new Adjuster(M("TP_LOCALLAB_MIDTCIE"), -100., 100., 1., 0.));
     wsmoothcie = Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SMOOTHCIE")));
     trcProfVBox->pack_start(*wGamma, Gtk::PACK_SHRINK);
@@ -625,7 +622,6 @@ void ICMPanel::foldAllButMe (GdkEventButton* event, MyExpander *expander)
 {
     if (event->button == 3) {
         trcExp->set_expanded (trcExp == expander);
-       // primExp->set_expanded (primExp == expander);
     }
 }
 
@@ -639,8 +635,7 @@ void ICMPanel::wavlocChanged(double nlevel, double nmax, bool curveloc)
                 wavlocLabels->set_text(
                     Glib::ustring::compose(
                         M("TP_WAVELET_LEVLOCLABEL"),
-                        Glib::ustring::format(std::fixed, std::setprecision(0), nlevel)
-                     //   Glib::ustring::format(std::fixed, std::setprecision (0), nmax)
+                        Glib::ustring::format(std::fixed, std::setprecision(0), nlevel)//keep in case of
                     )
                 );
             } else {
@@ -1531,9 +1526,7 @@ void ICMPanel::curveChanged(CurveEditor* ce)
     if (listener) {
         if (ce == opacityShapeWLI) {
             listener->panelChanged(EvICMopacityWLI, M("HISTORY_CUSTOMCURVE"));
-        } //else if (ce == opacityShapeWLI2) {
-          //  listener->panelChanged(EvICMopacityWLI2, M("HISTORY_CUSTOMCURVE"));
-        //}
+        } 
     }
 }
 void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedited)
