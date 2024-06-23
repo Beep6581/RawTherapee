@@ -248,44 +248,44 @@ void Thumbnail::_generateThumbnailImage()
     cfs.exifValid = false;
     cfs.timeValid = false;
 
-    // RAW works like this:
-    //  1. if we are here it's because we aren't in the cache so load the JPG
-    //     image out of the RAW. Mark as "quick".
-    //  2. if we don't find that then just grab the real image.
-    bool quick = false;
-
-    rtengine::eSensorType sensorType = rtengine::ST_NONE;
-
-    if (initial_ && options.internalThumbIfUntouched) {
-        quick = true;
-        tpp = rtengine::Thumbnail::loadQuickFromRaw(fname, sensorType, tw, th, 1, TRUE);
-    }
-
-    if (!tpp) {
-        quick = false;
-        tpp = rtengine::Thumbnail::loadFromRaw(fname, sensorType, tw, th, 1, pparams->wb.equal, pparams->wb.observer, TRUE, &(pparams->raw));
-    }
-
-    cfs.sensortype = sensorType;
+    // this will load formats supported by imagio (jpg, png, jxl, and tiff)
+    tpp = rtengine::Thumbnail::loadFromImage(fname, tw, th, -1, pparams->wb.equal, pparams->wb.observer);
 
     if (tpp) {
-        cfs.format = FT_Raw;
-        cfs.thumbImgType = quick ? CacheImageData::QUICK_THUMBNAIL : CacheImageData::FULL_THUMBNAIL;
+        cfs.format = FT_Custom;
         infoFromImage(fname);
-
-        if (!quick) {
-            cfs.width = tpp->full_width;
-            cfs.height = tpp->full_height;
-        }
     }
 
     if (!tpp) {
-        // this will load formats supported by imagio (jpg, png, jxl, and tiff)
-        tpp = rtengine::Thumbnail::loadFromImage(fname, tw, th, -1, pparams->wb.equal, pparams->wb.observer);
+        // RAW works like this:
+        //  1. if we are here it's because we aren't in the cache so load the JPG
+        //     image out of the RAW. Mark as "quick".
+        //  2. if we don't find that then just grab the real image.
+        bool quick = false;
+
+        rtengine::eSensorType sensorType = rtengine::ST_NONE;
+
+        if (initial_ && options.internalThumbIfUntouched) {
+            quick = true;
+            tpp = rtengine::Thumbnail::loadQuickFromRaw(fname, sensorType, tw, th, 1, TRUE);
+        }
+
+        if (!tpp) {
+            quick = false;
+            tpp = rtengine::Thumbnail::loadFromRaw(fname, sensorType, tw, th, 1, pparams->wb.equal, pparams->wb.observer, TRUE, &(pparams->raw));
+        }
+
+        cfs.sensortype = sensorType;
 
         if (tpp) {
-            cfs.format = FT_Custom;
+            cfs.format = FT_Raw;
+            cfs.thumbImgType = quick ? CacheImageData::QUICK_THUMBNAIL : CacheImageData::FULL_THUMBNAIL;
             infoFromImage(fname);
+
+            if (!quick) {
+                cfs.width = tpp->full_width;
+                cfs.height = tpp->full_height;
+            }
         }
     }
 
