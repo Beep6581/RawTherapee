@@ -395,7 +395,7 @@ ControlSpotPanel::ControlSpotPanel():
 //    ToolParamBlock* const artifBox2 = Gtk::manage(new ToolParamBlock());
 
     artifBox2->pack_start(*preview_);
-   // artifBox2->pack_start(*colorscope_);//unused with contrlspotpanel since 17 / 01 : 2024 but data used in color, vibrance, sh
+    artifBox2->pack_start(*colorscope_);//unused with contrlspotpanel since 17 / 01 : 2024 but data used in color, vibrance, sh
     colorscope_->hide();
     pack_start(*artifBox2);
     ToolParamBlock* const specCaseBox = Gtk::manage(new ToolParamBlock());
