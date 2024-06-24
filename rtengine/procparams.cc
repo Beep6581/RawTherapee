@@ -9144,8 +9144,13 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "labgridAHighmerg_" + index_str, spot.labgridAHighmerg, spotEdited.labgridAHighmerg);
                 assignFromKeyfile(keyFile, "Locallab", "labgridBHighmerg_" + index_str, spot.labgridBHighmerg, spotEdited.labgridBHighmerg);
                 assignFromKeyfile(keyFile, "Locallab", "Strengthgrid_" + index_str, spot.strengthgrid, spotEdited.strengthgrid);
+                assignFromKeyfile(keyFile, "Locallab", "Colorscope_" + index_str, spot.colorscope, spotEdited.colorscope);
+
                 if (ppVersion <= 350) {
-                    assignFromKeyfile(keyFile, "Locallab", "Sensi_" + index_str,  spot.colorscope, spotEdited.sensi);
+                    if (keyFile.has_key("Locallab", "Colorscope_" + index_str)) {
+                        spot.sensi = keyFile.get_integer("Locallab", "Colorscope_" + index_str);
+                        spotEdited.sensi = true;
+                    }
                 } else {
                     assignFromKeyfile(keyFile, "Locallab", "Sensi_" + index_str, spot.sensi, spotEdited.sensi);
                 }
@@ -9287,7 +9292,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "s_tonalwidth_" + index_str, spot.s_tonalwidth, spotEdited.s_tonalwidth);
                 assignFromKeyfile(keyFile, "Locallab", "sh_radius_" + index_str, spot.sh_radius, spotEdited.sh_radius);
                 if (ppVersion <= 350) {
-                    assignFromKeyfile(keyFile, "Locallab", "sensihs_" + index_str, spot.colorscope, spotEdited.sensihs);
+                    if (keyFile.has_key("Locallab", "Colorscope_" + index_str)) {
+                        spot.sensihs = keyFile.get_integer("Locallab", "Colorscope_" + index_str);
+                        spotEdited.sensihs = true;
+                    }
                 } else {
                     assignFromKeyfile(keyFile, "Locallab", "sensihs_" + index_str, spot.sensihs, spotEdited.sensihs);
                 }
@@ -9345,7 +9353,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "AvoidColorShift_" + index_str, spot.avoidcolorshift, spotEdited.avoidcolorshift);
                 assignFromKeyfile(keyFile, "Locallab", "PastSatTog_" + index_str, spot.pastsattog, spotEdited.pastsattog);
                 if (ppVersion <= 350) {
-                    assignFromKeyfile(keyFile, "Locallab", "Sensiv_" + index_str, spot.colorscope, spotEdited.sensiv);
+                    if (keyFile.has_key("Locallab", "Colorscope_" + index_str)) {
+                        spot.sensiv = keyFile.get_integer("Locallab", "Colorscope_" + index_str);
+                        spotEdited.sensiv = true;
+                    }
                 } else {
                     assignFromKeyfile(keyFile, "Locallab", "Sensiv_" + index_str, spot.sensiv, spotEdited.sensiv);
                 }
