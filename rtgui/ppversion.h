@@ -7,7 +7,7 @@
 /*
   Log of version changes
    351  2024-06-19
-        take into account Global in selectibe editing
+        take into account Global in selective editing
    350  2023-03-05
         introduced white balance standard observer
    349  2020-10-29
