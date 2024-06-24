@@ -3976,6 +3976,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     lcdarkness(1.0),
     lclightness(1.0),
     sigmalc(1.0),
+    offslc(1.0),
     levelwav(4),
     residcont(0.0),
     residsha(0.0),
@@ -5315,6 +5316,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && lcdarkness == other.lcdarkness
         && lclightness == other.lclightness
         && sigmalc == other.sigmalc
+        && offslc == other.offslc
         && levelwav == other.levelwav
         && residcont == other.residcont
         && residsha == other.residsha
@@ -7279,6 +7281,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->lcdarkness, "Locallab", "Lcdarkness_" + index_str, spot.lcdarkness, keyFile);
                     saveToKeyfile(!pedited || spot_edited->lclightness, "Locallab", "Lclightness_" + index_str, spot.lclightness, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sigmalc, "Locallab", "Sigmalc_" + index_str, spot.sigmalc, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->offslc, "Locallab", "Offslc_" + index_str, spot.offslc, keyFile);
                     saveToKeyfile(!pedited || spot_edited->levelwav, "Locallab", "Levelwav_" + index_str, spot.levelwav, keyFile);
                     saveToKeyfile(!pedited || spot_edited->residcont, "Locallab", "Residcont_" + index_str, spot.residcont, keyFile);
                     saveToKeyfile(!pedited || spot_edited->residsha, "Locallab", "Residsha_" + index_str, spot.residsha, keyFile);
@@ -9630,6 +9633,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Lcdarkness_" + index_str, spot.lcdarkness, spotEdited.lcdarkness);
                 assignFromKeyfile(keyFile, "Locallab", "Lclightness_" + index_str, spot.lclightness, spotEdited.lclightness);
                 assignFromKeyfile(keyFile, "Locallab", "Sigmalc_" + index_str, spot.sigmalc, spotEdited.sigmalc);
+                assignFromKeyfile(keyFile, "Locallab", "Offslc_" + index_str, spot.offslc, spotEdited.offslc);
                 assignFromKeyfile(keyFile, "Locallab", "Levelwav_" + index_str, spot.levelwav, spotEdited.levelwav);
                 assignFromKeyfile(keyFile, "Locallab", "Residcont_" + index_str, spot.residcont, spotEdited.residcont);
                 assignFromKeyfile(keyFile, "Locallab", "Residsha_" + index_str, spot.residsha, spotEdited.residsha);

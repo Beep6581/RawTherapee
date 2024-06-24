@@ -1528,6 +1528,7 @@ HISTORY_MSG_LOCAL_LOG_BLACKS;Local Log - Blacks distribution
 HISTORY_MSG_LOCAL_LOG_COMPR;Local Log - Compress brightness
 HISTORY_MSG_LOCAL_LOG_SAT;Local Log - Saturation control
 HISTORY_MSG_LOCAL_LOG_WHITES;Local Log - Whites distribution
+HISTORY_MSG_LOCAL_OFFSETWAV;Local Wav offset
 HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
 HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
 HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast

@@ -2507,6 +2507,7 @@ LocallabContrast::LocallabContrast():
     lclightness(Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_LIGHTNESS"), 0, 3.0, 0.01, 1.0))),
     contFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CONTWFRA")))),
     sigmalc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 2.5, 0.01, 1.))),
+    offslc(Gtk::manage(new Adjuster(M("TP_WAVELET_WAVOFFSET"), 0.33, 1.6, 0.01, 1.))),
     LocalcurveEditorwav(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAV"))),
     wavshape(static_cast<FlatCurveEditor*>(LocalcurveEditorwav->addCurve(CT_Flat, "", nullptr, false, false))),
     csThreshold(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLD"), 0, 9, 0, 0, 7, 5, 0, false))),
@@ -2604,6 +2605,7 @@ LocallabContrast::LocallabContrast():
     auto m = ProcEventMapper::getInstance();
     Evlocallabpreviewlc = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWLC");
     Evlocallabfeatherwav = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_FEATHERWAV");
+    Evlocallaboffslc = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_OFFSETWAV");
     
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -2626,6 +2628,7 @@ LocallabContrast::LocallabContrast():
     contFrame->set_label_align(0.025, 0.5);
 
     sigmalc->setAdjusterListener(this);
+    offslc->setAdjusterListener(this);
 
     LocalcurveEditorwav->setCurveListener(this);
 
@@ -2911,6 +2914,7 @@ LocallabContrast::LocallabContrast():
     pack_start(*csThreshold);
     ToolParamBlock* const coBox = Gtk::manage(new ToolParamBlock());
     coBox->pack_start(*sigmalc);
+    coBox->pack_start(*offslc);
     coBox->pack_start(*LocalcurveEditorwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     // coBox->pack_start(*csThreshold);
     contFrame->add(*coBox);
@@ -3382,6 +3386,7 @@ void LocallabContrast::read(const rtengine::procparams::ProcParams* pp, const Pa
         lcdarkness->setValue(spot.lcdarkness);
         lclightness->setValue(spot.lclightness);
         sigmalc->setValue(spot.sigmalc);
+        offslc->setValue(spot.offslc);
         wavshape->setCurve(spot.locwavcurve);
         csThreshold->setValue<int>(spot.csthreshold);
         levelwav->setValue((double)spot.levelwav);
@@ -3508,6 +3513,7 @@ void LocallabContrast::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         spot.lcdarkness = lcdarkness->getValue();
         spot.lclightness = lclightness->getValue();
         spot.sigmalc = sigmalc->getValue();
+        spot.offslc = offslc->getValue();
         spot.locwavcurve = wavshape->getCurve();
         spot.csthreshold = csThreshold->getValue<int>();
         spot.levelwav = levelwav->getIntValue();
@@ -3614,6 +3620,7 @@ void LocallabContrast::setDefaults(const rtengine::procparams::ProcParams* defPa
         lcdarkness->setDefault(defSpot.lcdarkness);
         lclightness->setDefault(defSpot.lclightness);
         sigmalc->setDefault(defSpot.sigmalc);
+        offslc->setDefault(defSpot.offslc);
         levelwav->setDefault((double)defSpot.levelwav);
         csThreshold->setDefault<int>(defSpot.csthreshold);
         residcont->setDefault(defSpot.residcont);
@@ -3703,6 +3710,13 @@ void LocallabContrast::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabsigmalc,
                                        sigmalc->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == offslc) {
+            if (listener) {
+                listener->panelChanged(Evlocallaboffslc,
+                                       offslc->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 

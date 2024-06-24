@@ -1476,6 +1476,7 @@ struct LocallabParams {
         double lcdarkness;
         double lclightness;
         double sigmalc;
+        double offslc;
         int levelwav;
         double residcont;
         double residsha;

@@ -829,6 +829,7 @@ public:
         bool lcdarkness;
         bool lclightness;
         bool sigmalc;
+        bool offslc;
         bool levelwav;
         bool residcont;
         bool residsha;

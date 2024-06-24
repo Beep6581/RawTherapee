@@ -139,6 +139,7 @@ protected:
     rtengine::ProcEvent Evlocallabfeathercie;
     rtengine::ProcEvent EvlocallabfeatherSH;
     rtengine::ProcEvent Evlocallabfeather_mask;
+    rtengine::ProcEvent Evlocallaboffslc;
     // LocallabTool parameters
     bool needMode;
     bool isLocActivated;
@@ -1232,6 +1233,7 @@ private:
     Adjuster* const lclightness;
     Gtk::Frame* const contFrame;
     Adjuster* const sigmalc;
+    Adjuster* const offslc;
     CurveEditorGroup* const LocalcurveEditorwav;
     FlatCurveEditor* const wavshape;
     ThresholdAdjuster* const csThreshold;
