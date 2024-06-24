@@ -3714,7 +3714,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
 
             //simple local contrast in function luminance
             if (locwavCurvejz && locwavutilijz && wavcurvejz) {
-                float strengthjz = 1.2;
+                float strengthjz = 1.3f;
                 std::unique_ptr<wavelet_decomposition> wdspot(new wavelet_decomposition(temp->L[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen));//lp.daubLen
 
                 if (wdspot->memory_allocation_failed()) {
@@ -10109,6 +10109,12 @@ void ImProcFunctions::wavlc(wavelet_decomposition& wdspot, int level_bl, int lev
     float sigmaN[10];
     float MaxP[10];
     float MaxN[10];
+    float inva5 = 0.8f;
+    float inva6 = 0.7f;
+    float inva7 = 0.5f;
+    float inva8 = 0.4f;
+    float inva9 = 0.3f;
+    float inva10 = 0.1f;
 
     Evaluate2(wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN, numThreads);
 
@@ -10133,9 +10139,17 @@ void ImProcFunctions::wavlc(wavelet_decomposition& wdspot, int level_bl, int lev
                     klev = ahigh * level + bhigh;
                 }
             }
+            if(level_hr < 6) {//low attenuation for low levels
+                inva5 = 1.f;
+                inva6 = 0.9f;
+                inva7 = 0.7f;
+                inva8 = 0.6f;
+                inva9 = 0.4f;
+                inva10 = 0.2f;
 
+            }
             float* const* wav_L = wdspot.level_coeffs(level);
-
+            float offset = 1.f;
             if (MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) {
                 constexpr float insigma = 0.666f; //SD
                 const float logmax = log(MaxP[level]); //log Max
@@ -10146,33 +10160,49 @@ void ImProcFunctions::wavlc(wavelet_decomposition& wdspot, int level_bl, int lev
                 const float asig = 0.166f / (sigma[level] * sigmalc);
                 const float bsig = 0.5f - asig * mean[level];
                 const float amean = 0.5f / mean[level];
-                const float limit1 = mean[level] + sigmalc * sigma[level];
-                const float limit2 = mean[level];
+               // const float limit1 = mean[level] + sigmalc * sigma[level];
+               // const float limit2 = mean[level];
+                const float effect = sigmalc;
+                float mea[10];//simulation using mean and sigma, to evaluate signal 
+                calceffect(level, mean, sigma, mea, effect, offset);
+                float lutFactor;//inva5, inva6, inva7, inva8, inva9, inva10 are define in Contrast profiles.
+                float inVals[] = {0.05f, 0.2f, 0.7f, 1.f, 1.f, inva5, inva6, inva7, inva8, inva9, inva10};//values to give for calculate LUT along signal : minimal near 0 or MaxP
+                const auto meaLut = buildMeaLut(inVals, mea, lutFactor);//build LUT
+                const float threshold = offset * mean[level] + sigmalc * sigma[level];//base signal calculation.
+                
 #ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic, 16 * W_L) if (multiThread)
+              //  #pragma omp parallel for schedule(dynamic, 16 * W_L) if (multiThread)
+                #pragma omp parallel for if (multiThread)
+
 #endif
 
-                for (int i = 0; i < W_L * H_L; i++) {
-                    const float val = std::fabs(wav_L[dir][i]);
+                for (int y = 0; y < H_L; y++) {
+                    for (int x = 0; x < W_L; x++) {//for each pixel
+                        float &val = wav_L[dir][y * W_L + x];
+                        const float WavCL = std::fabs(wav_L[dir][y * W_L + x]);
 
-                    float absciss;
 
-                    if (val >= limit1) { //for max
-                        const float valcour = xlogf(val);
-                        absciss = xexpf((valcour - logmax) * rap);
-                    } else if (val >= limit2) {
-                        absciss = asig * val + bsig;
-                    } else {
-                        absciss = amean * val;
+                        float absciss;
+                        if (WavCL >= threshold) { //for max take into account attenuation response and offset
+                            float valcour = xlogf(fabsf(val));
+                            float valc = valcour - logmax;
+                            float vald = valc * rap;
+                                absciss = xexpf(vald);
+                        } else if (WavCL >= offset * mean[level]) {//offset only
+                            absciss = asig * WavCL + bsig;
+                        } else {
+                            absciss = amean * WavCL;
+                        }
+                        const float kc = klev * (locwavCurve[absciss * 500.f] - 0.5f);
+                        const float reduceeffect = kc <= 0.f ? 1.f : strength;
+
+                        float kinterm = 1.f + reduceeffect * kc;
+                        kinterm = kinterm <= 0.f ? 0.01f : kinterm;
+
+                    //   wav_L[dir][i] *= kinterm <= 0.f ? 0.01f : kinterm;
+                        val *= (1.f + (kinterm - 1.f) * (*meaLut)[WavCL * lutFactor]);//change signal (contrast) for each level, direction, with LUT.
+
                     }
-
-                    const float kc = klev * (locwavCurve[absciss * 500.f] - 0.5f);
-                    const float reduceeffect = kc <= 0.f ? 1.f : strength;
-
-                    float kinterm = 1.f + reduceeffect * kc;
-                    kinterm = kinterm <= 0.f ? 0.01f : kinterm;
-
-                    wav_L[dir][i] *= kinterm <= 0.f ? 0.01f : kinterm;
                 }
             }
         }
@@ -10980,7 +11010,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
 //edge sharpness end
 
     if (locwavCurve && locwavutili && wavcurve) {//simple local contrast in function luminance
-        float strengthlc = 1.5f;
+        float strengthlc = 1.7f;
         wavlc(*wdspot, level_bl, level_hl, maxlvl, level_hr, level_br, ahigh, bhigh, alow, blow, lp.sigmalc, strengthlc, locwavCurve, numThreads);
     }
 

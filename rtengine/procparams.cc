@@ -4041,7 +4041,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         0.35,
         0.35
     },
-    csthreshold(0, 0, 6, 6, false),
+    csthreshold(0, 0, 7, 5, false),
     loclevwavcurve{
         static_cast<double>(FCT_MinMaxCPoints),
         0.0,
