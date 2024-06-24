@@ -1200,6 +1200,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.daubLen = 12;
     } else if (locallab.spots.at(sp).wavMethod == "D14") {
         lp.daubLen = 16;
+    } else if (locallab.spots.at(sp).wavMethod == "D20") {
+        lp.daubLen = 22;
     }
 
 
