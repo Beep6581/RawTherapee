@@ -4183,6 +4183,7 @@ void LocallabContrast::convertParamToNormal()
     waveshow->set_active(defSpot.waveshow);
     radiusw->setValue(defSpot.radiusw);
     detailw->setValue(defSpot.detailw);
+    offslc->setValue(defSpot.offslc);
 
     if (defSpot.localedgMethod == "fir") {
         localedgMethod->set_active(0);
@@ -4306,7 +4307,7 @@ void LocallabContrast::updateGUIToMode(const modeType new_type)
             expmasklc->show();
             exprecovw->show();
             decayw->hide();
-
+            offslc->hide();
             if (enalcMask->get_active()) {
                 maskusablew->show();
                 maskunusablew->hide();
@@ -4334,6 +4335,7 @@ void LocallabContrast::updateGUIToMode(const modeType new_type)
             if (localcontMethod->get_active_row_number() != 1) { // Keep widget hidden when localcontMethod is equal to 1
                 fftwlc->show();
             }
+            offslc->show();
 
             expmasklc->show();
             exprecovw->show();
@@ -4627,11 +4629,14 @@ void LocallabContrast::updateContrastGUI1()
         levelwav->show();
         expresidpyr->show();
         clariFrame->show();
+        offslc->hide();
 
         if (mode == Expert) { // Keep widget hidden in Normal and Simple mode
             expcontrastpyr->show();
             expcontrastpyr2->show();
             gamlc->show();
+            offslc->show();
+            
         }
 
         fftwlc->hide();
