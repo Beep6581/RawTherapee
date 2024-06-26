@@ -63,7 +63,7 @@ jobs:
             -DOpenMP_CXX_FLAGS="${C_FLAGS}" \
             -DOpenMP_C_LIB_NAMES=libomp \
             -DOpenMP_CXX_LIB_NAMES=libomp \
-            -DOpenMP_libomp_LIBRARY=/usr/local/lib/libomp.dylib \
+            -DOpenMP_libomp_LIBRARY=/usr/local/opt/libomp/lib/libomp.dylib \
             -DCMAKE_AR=/usr/bin/ar \
             -DCMAKE_RANLIB=/usr/bin/ranlib \
             -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \
