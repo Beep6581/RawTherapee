@@ -12,7 +12,7 @@
 //
 ////////////////////////////////////////////////////////////////
 
-#ifndef __SSE2__
+#if ! defined(__SSE2__) && ! defined(RT_SIMDE)
 #error Please specify -msse2.
 #endif
 
@@ -22,7 +22,12 @@
 #define INLINE inline
 #endif
 
+#ifdef RT_SIMDE
+#include <simde/x86/sse2.h>
+#include <simde/x86/avx.h>
+#else
 #include <x86intrin.h>
+#endif
 
 #include <stdint.h>
 
@@ -40,7 +45,7 @@ typedef __m128i vint2;
 #define STVFU(x,y) _mm_storeu_ps(&x,y)
 #define LVI(x) _mm_load_si128((__m128i*)&x)
 
-#ifdef __AVX__
+#if defined(__AVX__) || defined(RT_SIMDE)
 #define PERMUTEPS(a,mask) _mm_permute_ps(a,mask)
 #else
 #define PERMUTEPS(a,mask) _mm_shuffle_ps(a,a,mask)
@@ -56,7 +61,7 @@ static INLINE vfloat LC2VFU(float &a)
 
 
 // Store a vector of 4 floats in a[0],a[2],a[4] and a[6]
-#ifdef __SSE4_1__
+#if defined(__SSE4_1__) || defined(RT_SIMDE)
 // SSE4.1 => use _mm_blend_ps instead of _mm_set_epi32 and vself
 #define STC2VFU(a,v) {\
                          __m128 TST1V = _mm_loadu_ps(&a);\

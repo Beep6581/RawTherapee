@@ -97,7 +97,7 @@ void cfaboxblur(const float* const * riFlatFile, float* cfablur, int boxH, int b
 
         if (boxH > 0) {
             //vertical blur
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
             const vfloat leninitv = F2V(boxH / 2 + 1);
             const vfloat onev = F2V(1.f);
 #ifdef _OPENMP
@@ -364,7 +364,7 @@ void RawImageSource::processFlatField(const procparams::RAWParams &raw, RawImage
 
         constexpr float minValue = 1.f; // if the pixel value in the flat field is less or equal this value, no correction will be applied.
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         const vfloat refcolorv[2] = {_mm_set_ps(refcolor[0][1], refcolor[0][0], refcolor[0][1], refcolor[0][0]),
                                      _mm_set_ps(refcolor[1][1], refcolor[1][0], refcolor[1][1], refcolor[1][0])
                                     };
@@ -384,7 +384,7 @@ void RawImageSource::processFlatField(const procparams::RAWParams &raw, RawImage
 
         for (int row = 0; row < H; ++row) {
             int col = 0;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
             const vfloat rowBlackv = blackv[row & 1];
             const vfloat ffrowBlackv = ffblackv[row & 1];
             const vfloat rowRefcolorv = refcolorv[row & 1];
@@ -498,7 +498,7 @@ void RawImageSource::processFlatField(const procparams::RAWParams &raw, RawImage
                 c4[1][1] = c[1][1];
             }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
             const vfloat blackv[2] = {_mm_set_ps(black[c4[0][1]], black[c4[0][0]], black[c4[0][1]], black[c4[0][0]]),
                                       _mm_set_ps(black[c4[1][1]], black[c4[1][0]], black[c4[1][1]], black[c4[1][0]])
                                      };
@@ -515,7 +515,7 @@ void RawImageSource::processFlatField(const procparams::RAWParams &raw, RawImage
 
             for (int row = 0; row < H; ++row) {
                 int col = 0;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                 const vfloat rowBlackv = blackv[row & 1];
                 const vfloat ffrowBlackv = ffblackv[row & 1];
 

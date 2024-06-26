@@ -254,7 +254,7 @@ bool doProcess(Imagefloat *input, Imagefloat *output,
     float bmult = refOut.b / pow_F(rtengine::max(refIn.b, 1.f), bexp);
 
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     const vfloat clipv = F2V(MAXVALF);
     const vfloat rexpv = F2V(rexp);
     const vfloat gexpv = F2V(gexp);
@@ -275,7 +275,7 @@ bool doProcess(Imagefloat *input, Imagefloat *output,
         float *glineout = output->g(i);
         float *blineout = output->b(i);
         int j = 0;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
         for (; j < rwidth - 3; j += 4) {
             STVFU(rlineout[j], vminf(rmultv * pow_F(LVFU(rlinein[j]), rexpv), clipv));
@@ -497,7 +497,7 @@ void rtengine::Thumbnail::processFilmNegative(
         printf("FilmNeg legacy V1 :: Thumbnail computed multipliers: %g %g %g\n", static_cast<double>(rmult), static_cast<double>(gmult), static_cast<double>(bmult));
     }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     const vfloat clipv = F2V(MAXVALF);
     const vfloat rexpv = F2V(rexp);
     const vfloat gexpv = F2V(gexp);
@@ -512,7 +512,7 @@ void rtengine::Thumbnail::processFilmNegative(
         float *gline = baseImg->g(i);
         float *bline = baseImg->b(i);
         int j = 0;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
         for (; j < rwidth - 3; j += 4) {
             STVFU(rline[j], vminf(rmultv * pow_F(LVFU(rline[j]), rexpv), clipv));
@@ -629,7 +629,7 @@ void rtengine::Thumbnail::processFilmNegativeV2(
     }
 
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     const vfloat clipv = F2V(MAXVALF);
     const vfloat rexpv = F2V(rexp);
     const vfloat gexpv = F2V(gexp);
@@ -644,7 +644,7 @@ void rtengine::Thumbnail::processFilmNegativeV2(
         float *gline = baseImg->g(i);
         float *bline = baseImg->b(i);
         int j = 0;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
         for (; j < rwidth - 3; j += 4) {
             STVFU(rline[j], vminf(rmultv * pow_F(LVFU(rline[j]), rexpv), clipv));

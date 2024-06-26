@@ -443,7 +443,7 @@ template<class T> void gaussHorizontal3 (T** src, T** dst, int W, int H, const f
     }
 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 template<class T> void gaussVertical3 (T** src, T** dst, int W, int H, const float c0, const float c1)
 {
     vfloat Tv = F2V(0.f), Tm1v, Tp1v;
@@ -527,7 +527,7 @@ template<class T> void gaussVertical3 (T** src, T** dst, int W, int H, const flo
 }
 #endif
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 // fast gaussian approximation if the support window is large
 template<class T> void gaussHorizontalSse (T** src, T** dst, const int W, const int H, const float sigma)
 {
@@ -688,7 +688,7 @@ template<class T> void gaussHorizontal (T** src, T** dst, const int W, const int
     }
 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 template<class T> void gaussVerticalSse (T** src, T** dst, const int W, const int H, const float sigma)
 {
     double b1, b2, b3, B, M[3][3];
@@ -831,7 +831,7 @@ template<class T> void gaussVerticalSse (T** src, T** dst, const int W, const in
 }
 #endif
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 template<class T> void gaussVerticalSsemult (T** RESTRICT src, T** RESTRICT dst, const int W, const int H, const float sigma)
 {
     double b1, b2, b3, B, M[3][3];
@@ -1201,7 +1201,7 @@ template<class T> void gaussVertical (T** src, T** dst, const int W, const int H
     }
 }
 
-#ifndef __SSE2__
+#if ! defined(__SSE2__) && ! defined(RT_SIMDE)
 template<class T> void gaussVerticaldiv (T** src, T** dst, T** divBuffer, const int W, const int H, const double sigma)
 {
     double b1, b2, b3, B, M[3][3];
@@ -1470,7 +1470,7 @@ template<class T> void gaussianBlurImpl(T** src, T** dst, const int W, const int
                 gaussVertical3<T>   (dst, dst, W, H, c0, c1);
             }
         } else {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
             if (sigma < GAUSS_DOUBLE) {
                 switch (gausstype) {

@@ -284,7 +284,7 @@ void Ciecam02::xyz_to_cat02float ( float &r, float &g, float &b, float x, float 
 
 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 void Ciecam02::xyz_to_cat02float ( vfloat &r, vfloat &g, vfloat &b, vfloat x, vfloat y, vfloat z, int c16, vfloat plum)
 {   //I use isnan() because I have tested others solutions with std::max(xxx,0) and in some cases crash
     //gamut correction M.H.Brill S.Susstrunk
@@ -409,7 +409,7 @@ void Ciecam02::cat02_to_xyzfloat ( float &x, float &y, float &z, float r, float 
     }
 
 }
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 void Ciecam02::cat02_to_xyzfloat ( vfloat &x, vfloat &y, vfloat &z, vfloat r, vfloat g, vfloat b, int c16, vfloat plum )
 {   //I use isnan() because I have tested others solutions with std::max(xxx,0) and in some cases crash
     vfloat plv = plum;
@@ -488,7 +488,7 @@ void Ciecam02::hpe_to_xyzfloat ( float &x, float &y, float &z, float r, float g,
         y = (0.370950f * r) + (0.629054f * g) - (0.000008f * b);
         z = b;
 }
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 void Ciecam02::hpe_to_xyzfloat ( vfloat &x, vfloat &y, vfloat &z, vfloat r, vfloat g, vfloat b, int c16)
 {
         x = (F2V (1.910197f) * r) - (F2V (1.112124f) * g) + (F2V (0.201908f) * b);
@@ -515,7 +515,7 @@ void Ciecam02::cat02_to_hpefloat ( float &rh, float &gh, float &bh, float r, flo
 
 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 void Ciecam02::cat02_to_hpefloat ( vfloat &rh, vfloat &gh, vfloat &bh, vfloat r, vfloat g, vfloat b, int c16)
 {
     if(c16 == 1) {
@@ -543,7 +543,7 @@ void Ciecam02::Aab_to_rgbfloat ( float &r, float &g, float &b, float A, float aa
     /*       c1              c6               c7       */
     b = (0.32787f * x) - (0.15681f * aa) - (4.49038f * bb);
 }
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 void Ciecam02::Aab_to_rgbfloat ( vfloat &r, vfloat &g, vfloat &b, vfloat A, vfloat aa, vfloat bb, vfloat nbb )
 {
     vfloat c1 = F2V (0.32787f) * ((A / nbb) + F2V (0.305f));
@@ -594,7 +594,7 @@ void Ciecam02::calculate_abfloat ( float &aa, float &bb, float h, float e, float
         std::swap(aa, bb);
     }
 }
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 void Ciecam02::calculate_abfloat ( vfloat &aa, vfloat &bb, vfloat h, vfloat e, vfloat t, vfloat nbb, vfloat a )
 {
     vfloat2 sincosval = xsincosf ((h * F2V (rtengine::RT_PI)) / F2V (180.0f));
@@ -848,7 +848,7 @@ void Ciecam02::xyz2jchqms_ciecam02float ( float &J, float &C, float &h, float &Q
     s = 100.0f * sqrtf ( M / Q );
     h = (myh * 180.f) / (float)rtengine::RT_PI;
 }
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 void Ciecam02::xyz2jchqms_ciecam02float ( vfloat &J, vfloat &C, vfloat &h, vfloat &Q, vfloat &M, vfloat &s, vfloat aw, vfloat fl, vfloat wh,
         vfloat x, vfloat y, vfloat z, vfloat xw, vfloat yw, vfloat zw,
         vfloat c, vfloat nc, vfloat pow1, vfloat nbb, vfloat ncb, vfloat pfl, vfloat cz, vfloat d, int c16, vfloat plum)
@@ -946,7 +946,7 @@ void Ciecam02::xyz2jch_ciecam02float ( float &J, float &C, float &h, float aw, f
     }
 
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     vfloat pv = _mm_setr_ps(rp, gp, bp, 1.f);
     vfloat fv = F2V(fl);
     vfloat outv = nonlinear_adaptationfloat(pv, fv);
@@ -997,7 +997,7 @@ void Ciecam02::jch2xyz_ciecam02float ( float &x, float &y, float &z, float J, fl
     xyz_to_cat02float(rw, gw, bw, xw, yw, zw, c16, plum);
     e = ((961.53846f) * nc * ncb) * (xcosf(h * rtengine::RT_PI_F_180 + 2.0f) + 3.8f);
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     vfloat powinv1 = _mm_setr_ps(J / 100.0f, 10.f * C / (sqrtf(J) * pow1), 1.f, 1.f);
     vfloat powinv2 = _mm_setr_ps(1.0f / (c * cz), 1.1111111f, 1.f, 1.f);
     vfloat powoutv = pow_F(powinv1, powinv2);
@@ -1011,7 +1011,7 @@ void Ciecam02::jch2xyz_ciecam02float ( float &x, float &y, float &z, float J, fl
     calculate_abfloat(ca, cb, h, e, t, nbb, a);
     Aab_to_rgbfloat(rpa, gpa, bpa, a, ca, cb, nbb);
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     vfloat pav = _mm_setr_ps(rpa, gpa, bpa, 1.f);
     vfloat fv = F2V(fl);
     vfloat outv = inverse_nonlinear_adaptationfloat(pav, fv);
@@ -1040,7 +1040,7 @@ void Ciecam02::jch2xyz_ciecam02float ( float &x, float &y, float &z, float J, fl
     cat02_to_xyzfloat(x, y, z, r, g, b, c16, plum);
 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 void Ciecam02::jch2xyz_ciecam02float ( vfloat &x, vfloat &y, vfloat &z, vfloat J, vfloat C, vfloat h,
                                        vfloat xw, vfloat yw, vfloat zw,
                                        vfloat nc, vfloat pow1, vfloat nbb, vfloat ncb, vfloat fl, vfloat d, vfloat aw, vfloat reccmcz, int c16, vfloat plum)
@@ -1094,7 +1094,7 @@ float Ciecam02::nonlinear_adaptationfloat ( float c, float fl )
     }
 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 vfloat Ciecam02::nonlinear_adaptationfloat ( vfloat c, vfloat fl )
 {
     vfloat c100 = F2V (100.f);
@@ -1125,7 +1125,7 @@ float Ciecam02::inverse_nonlinear_adaptationfloat ( float c, float fl )
     return (100.0f / fl) * pow_F ( (27.13f * fabsf ( c )) / (400.0f - fabsf ( c )), 2.38095238f );
 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 vfloat Ciecam02::inverse_nonlinear_adaptationfloat ( vfloat c, vfloat fl )
 {
     c -= F2V (0.1f);

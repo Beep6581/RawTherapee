@@ -53,7 +53,7 @@ LUTf RawImageSource::initInvGrad()
 }
 */
 #define INVGRAD(i) (16.0f/SQR(4.0f+i))
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 #define INVGRADV(i) (c16v*_mm_rcp_ps(SQRV(fourv+i)))
 #endif
 //LUTf RawImageSource::invGrad = RawImageSource::initInvGrad();
@@ -280,7 +280,7 @@ void RawImageSource::fast_demosaic()
                 int bottom = min(top + TS, H - bord + 2);
                 int right  = min(left + TS, W - bord + 2);
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                 __m128 wtuv, wtdv, wtlv, wtrv;
                 __m128 greenv, tempv, absv, abs2v;
                 __m128 c16v = _mm_set1_ps( 16.0f );
@@ -299,7 +299,7 @@ void RawImageSource::fast_demosaic()
                 // interpolate G using gradient weights
                 for (int i = top, rr = 0; i < bottom; i++, rr++) {
                     float   wtu, wtd, wtl, wtr;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                     selmask = (vmask)_mm_andnot_ps( (__m128)selmask, (__m128)andmask);
                     int j, cc;
                     for (j = left, cc = 0; j < right - 3; j += 4, cc += 4) {
@@ -359,14 +359,14 @@ void RawImageSource::fast_demosaic()
 #endif
                 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                 __m128 zd25v = _mm_set1_ps(0.25f);
                 __m128 clip_ptv = _mm_set1_ps( clip_pt );
 #endif
 
                 for (int i = top + 1, rr = 1; i < bottom - 1; i++, rr++) {
                     if (fc(cfarray, i, left + (fc(cfarray, i, 2) & 1) + 1) == 0)
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                         for (int j = left + 1, cc = 1; j < right - 1; j += 4, cc += 4) {
                             //interpolate B/R colors at R/B sites
                             _mm_storeu_ps(&bluetile[rr * TS + cc], LVFU(greentile[rr * TS + cc]) - zd25v * ((LVFU(greentile[(rr - 1)*TS + (cc - 1)]) + LVFU(greentile[(rr - 1)*TS + (cc + 1)]) + LVFU(greentile[(rr + 1)*TS + cc + 1]) + LVFU(greentile[(rr + 1)*TS + cc - 1])) -
@@ -383,7 +383,7 @@ void RawImageSource::fast_demosaic()
 
 #endif
                     else
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                         for (int j = left + 1, cc = 1; j < right - 1; j += 4, cc += 4) {
                             //interpolate B/R colors at R/B sites
                             _mm_storeu_ps(&redtile[rr * TS + cc], LVFU(greentile[rr * TS + cc]) - zd25v * ((LVFU(greentile[(rr - 1)*TS + cc - 1]) + LVFU(greentile[(rr - 1)*TS + cc + 1]) + LVFU(greentile[(rr + 1)*TS + cc + 1]) + LVFU(greentile[(rr + 1)*TS + cc - 1])) -
@@ -402,14 +402,14 @@ void RawImageSource::fast_demosaic()
                 }
 
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                 __m128 temp1v, temp2v, greensumv;
                 selmask = _mm_set_epi32( 0xffffffff, 0, 0xffffffff, 0 );
 #endif
 
                 // interpolate R/B using color differences
                 for (int i = top + 2, rr = 2; i < bottom - 2; i++, rr++) {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
                     for (int cc = 2 + (fc(cfarray, i, 2) & 1), j = left + cc; j < right - 2; j += 4, cc += 4) {
                         // no need to take care about the borders of the tile. There's enough free space.
@@ -444,7 +444,7 @@ void RawImageSource::fast_demosaic()
 
 
                 for (int i = top + 2, rr = 2; i < bottom - 2; i++, rr++) {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                     int j, cc;
                     for (j = left + 2, cc = 2; j < right - 5; j += 4, cc += 4) {
                         _mm_storeu_ps(&red[i][j], vmaxf(LVFU(redtile[rr * TS + cc]), ZEROV));

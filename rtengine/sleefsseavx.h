@@ -14,7 +14,7 @@
 #pragma once
 
 #include "rt_math.h"
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 #include "helpersse2.h"
 
 #ifdef ENABLE_AVX

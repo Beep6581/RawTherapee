@@ -58,7 +58,7 @@ inline void copyAndClamp(const LabImage *src, unsigned char *dst, const double r
         }
     }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     vfloat rgb_xyzv[3][3];
 
     for (int i = 0; i < 3; i++) {
@@ -78,7 +78,7 @@ inline void copyAndClamp(const LabImage *src, unsigned char *dst, const double r
         float* rb = src->b[i];
         int ix = i * 3 * W;
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         float rbuffer[W] ALIGNED16;
         float gbuffer[W] ALIGNED16;
         float bbuffer[W] ALIGNED16;
@@ -135,7 +135,7 @@ float gammalog(float x, float p, float s, float g3, float g4)
     return x <= g3 ? x * s : (1.f + g4) * xexpf(xlogf(x) / p) - g4;//continuous
 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 vfloat gammalog(vfloat x, vfloat p, vfloat s, vfloat g3, vfloat g4)
 {
     return vself(vmaskf_le(x, g3), x * s, (F2V(1.f) + g4) * xexpf(xlogf(x) / p) - g4);//continuous
@@ -586,7 +586,7 @@ void ImProcFunctions::workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int c
 
         for (int y = 0; y < ch; ++y) {
             int x = 0;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
             for (; x < cw - 3; x += 4) {
                 STVFU(dst->r(y, x), F2V(65536.f) * gammalog(LVFU(src->r(y, x)), F2V(gampos), F2V(slpos), F2V(g_a[3]), F2V(g_a[4])));

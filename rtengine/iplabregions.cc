@@ -33,7 +33,7 @@
 
 namespace {
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 void fastlin2log(float *x, float factor, float base, int w)
 {
     float baseLog = 1.f / xlogf(base);
@@ -103,7 +103,7 @@ BENCHFUN
     #pragma omp parallel if (multiThread)
 #endif
     {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         float cBuffer[lab->W];
         float hBuffer[lab->W];
 #endif
@@ -111,7 +111,7 @@ BENCHFUN
         #pragma omp for schedule(dynamic, 16)
 #endif
         for (int y = 0; y < lab->H; ++y) {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
             // vectorized precalculation
             Color::Lab2Lch(lab->a[y], lab->b[y], cBuffer, hBuffer, lab->W);
             fastlin2log(cBuffer, c_factor, 10.f, lab->W);
@@ -119,7 +119,7 @@ BENCHFUN
             for (int x = 0; x < lab->W; ++x) {
                 const float l = lab->L[y][x] / 32768.f;
                 guide[y][x] = LIM01(l);
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                 // use precalculated values
                 const float c = cBuffer[x];
                 float h = hBuffer[x];
@@ -237,7 +237,7 @@ BENCHFUN
             }
         };
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     const auto CDL_v =
         [=](vfloat &l, vfloat &a, vfloat &b, float slope, float offset, float power, float saturation) -> void
         {
@@ -287,7 +287,7 @@ BENCHFUN
     #pragma omp parallel if (multiThread)
 #endif
     {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         vfloat c42000v = F2V(42000.f);
         vfloat cm42000v = F2V(-42000.f);
 #endif
@@ -296,7 +296,7 @@ BENCHFUN
 #endif
         for (int y = 0; y < lab->H; ++y) {
             int x = 0;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
             for (; x < lab->W - 3; x += 4) {
                 vfloat lv = LVFU(lab->L[y][x]);
                 vfloat av = LVFU(lab->a[y][x]);

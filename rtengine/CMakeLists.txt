@@ -48,6 +48,9 @@ endif()
 if(JXL_INCLUDE_DIRS)
     include_directories("${JXL_INCLUDE_DIRS}")
 endif()
+if(SIMDE_INCLUDE_DIRS)
+    include_directories("${SIMDE_INCLUDE_DIRS}")
+endif()
 
 link_directories(
     "${EXPAT_LIBRARY_DIRS}"

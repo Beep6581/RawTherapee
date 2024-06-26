@@ -56,7 +56,7 @@ class wavelet_level
 
     void AnalysisFilterSubsampHorizontal (T * srcbuffer, T * dstLo, T * dstHi, float *filterLo, float *filterHi,
                                           const int taps, const int offset, const int srcwidth, const int dstwidth, const int row);
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     void AnalysisFilterSubsampVertical (T * srcbuffer, T * dstLo, T * dstHi, float (*filterLo)[4], float (*filterHi)[4],
                                         const int taps, const int offset, const int width, const int height, const int row);
 #else
@@ -65,7 +65,7 @@ class wavelet_level
 #endif
     void SynthesisFilterSubsampHorizontal (T * srcLo, T * srcHi, T * dst,
                                            float *filterLo, float *filterHi, const int taps, const int offset, const int scrwidth, const int dstwidth, const int height);
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     void SynthesisFilterSubsampVertical (T * srcLo, T * srcHi, T * dst, float (*filterLo)[4], float (*filterHi)[4], const int taps, const int offset, const int width, const int srcheight, const int dstheight, const float blend);
 #else
     void SynthesisFilterSubsampVertical (T * srcLo, T * srcHi, T * dst, float *filterLo, float *filterHi, const int taps, const int offset, const int width, const int srcheight, const int dstheight, const float blend);
@@ -325,7 +325,7 @@ void wavelet_level<T>::AnalysisFilterSubsampHorizontal (T * RESTRICT srcbuffer, 
     }
 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 template<typename T> void wavelet_level<T>::AnalysisFilterSubsampVertical (T * RESTRICT srcbuffer, T * RESTRICT dstLo, T * RESTRICT dstHi, float (* RESTRICT filterLo)[4], float (* RESTRICT filterHi)[4],
         const int taps, const int offset, const int width, const int height, const int row)
 {
@@ -503,7 +503,7 @@ template<typename T> void wavelet_level<T>::SynthesisFilterSubsampHorizontal (T 
     }
 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 template<typename T> void wavelet_level<T>::SynthesisFilterSubsampVertical (T * RESTRICT srcLo, T * RESTRICT srcHi, T * RESTRICT dst, float (* RESTRICT filterLo)[4], float (* RESTRICT filterHi)[4], const int taps, const int offset, const int width, const int srcheight, const int dstheight, const float blend)
 {
 
@@ -627,7 +627,7 @@ template<typename T> void wavelet_level<T>::SynthesisFilterSubsampVertical (T * 
 }
 #endif
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 template<typename T> template<typename E> void wavelet_level<T>::decompose_level(E *src, E *dst, float *filterV, float *filterH, int taps, int offset)
 {
 
@@ -710,7 +710,7 @@ template<typename T> template<typename E> void wavelet_level<T>::decompose_level
 }
 #endif
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
 template<typename T> template<typename E> void wavelet_level<T>::reconstruct_level(E* tmpLo, E* tmpHi, E * src, E *dst, float *filterV, float *filterH, int taps, int offset, const float blend)
 {

@@ -9,7 +9,7 @@
 //          http://www.boost.org/LICENSE_1_0.txt)
 //
 ////////////////////////////////////////////////////////////////
-#ifndef __AVX__
+#if ! defined(__AVX__) && ! defined(RT_SIMDE)
 #error Please specify -mavx.
 #endif
 
@@ -19,7 +19,12 @@
 #define INLINE inline
 #endif
 
+#ifdef RT_SIMDE
+#include <simde/x86/avx.h>
+#else
 #include <immintrin.h>
+#endif
+
 #include <stdint.h>
 
 typedef __m256d vdouble;

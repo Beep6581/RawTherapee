@@ -262,7 +262,7 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, const array2D<flo
 
         for (int rr = 4; rr < rr1 - 4; rr++) {
             int cc = 4 + (FC(rr, 4) & 1);
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
             vfloat p1v, p2v, p3v, p4v, p5v, p6v, p7v, p8v, p9v, muv, vxv, vnv, xhv, vhv, xvv, vvv;
             vfloat epsv = F2V(1e-7);
             vfloat ninev = F2V(9.f);
@@ -493,7 +493,7 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, const array2D<flo
             for (int c = 0; c < 3; c += 2) {
                 int d = c + 3 - (c == 0 ? 0 : 1);
                 int cc = 1;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
                 for (; cc < cc1 - 4; cc += 4) {
                     rix[d] = qix[d] + rr * cc1 + cc;
@@ -699,7 +699,7 @@ void RawImageSource::refinement(int PassCount)
             for (int row = 2; row < height - 2; row++) {
                 int col = 2 + (FC(row, 2) & 1);
                 int c = FC(row, col);
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                 vfloat dLv, dRv, dUv, dDv, v0v;
                 vfloat onev = F2V(1.f);
                 vfloat zd5v = F2V(0.5f);
@@ -739,7 +739,7 @@ void RawImageSource::refinement(int PassCount)
             for (int row = 2; row < height - 2; row++) {
                 int col = 2 + (FC(row, 3) & 1);
                 int c = FC(row, col + 1);
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                 vfloat dLv, dRv, dUv, dDv, v0v;
                 vfloat onev = F2V(1.f);
                 vfloat zd5v = F2V(0.5f);
@@ -785,7 +785,7 @@ void RawImageSource::refinement(int PassCount)
             for (int row = 2; row < height - 2; row++) {
                 int col = 2 + (FC(row, 2) & 1);
                 int c = 2 - FC(row, col);
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                 vfloat dLv, dRv, dUv, dDv, v0v;
                 vfloat onev = F2V(1.f);
                 vfloat zd5v = F2V(0.5f);
@@ -823,7 +823,7 @@ void RawImageSource::refinement(int PassCount)
         } // end parallel
     }
 }
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 #undef CLIPV
 #endif
 

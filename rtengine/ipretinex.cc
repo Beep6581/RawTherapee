@@ -518,7 +518,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
             for (int i = 0; i < H_L; i++) {
                 int j = 0;
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                 const vfloat pondv = F2V(pond);
                 const vfloat limMinv = F2V(ilimdx);
                 const vfloat limMaxv = F2V(limdx);
@@ -1350,7 +1350,7 @@ void ImProcFunctions::MSRLocal(int call, int sp, bool fftw, int lum, float** red
         for (int i = 0; i < H_L; i++) {
             int j = 0;
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
             const vfloat pondv = F2V(pond);
             const vfloat limMinv = F2V(ilimD);
             const vfloat limMaxv = F2V(limD);

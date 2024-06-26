@@ -271,7 +271,7 @@ void ImProcFunctions::Lanczos (const LabImage* src, LabImage* dst, float scale)
 
             // Do vertical interpolation. Store results.
             int j = 0;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
             __m128 Lv, av, bv, wkv;
 
             for (j = 0; j < src->W - 3; j += 4) {
