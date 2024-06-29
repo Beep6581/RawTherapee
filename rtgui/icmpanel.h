@@ -96,6 +96,8 @@ protected:
     Gtk::Button* neutral;
     sigc::connection trcExpconn;
     bool lasttrcExp;
+    sigc::connection wavExpconn;
+    bool lastwavExp;
 
     sigc::connection neutralconn;
     bool lastToneCurve;
@@ -152,6 +154,7 @@ private:
     rtengine::ProcEvent EvICMopacityWLI;
     rtengine::ProcEvent EvICMpyrwavtrc;
     rtengine::ProcEvent EvICMresidtrc;
+    rtengine::ProcEvent EvICMwavExp;
 
     LabGrid *labgridcie;
     IdleRegister idle_register;
@@ -256,6 +259,7 @@ public:
     void wprimChanged();
     void wcatChanged();
     void trcExpChanged();
+    void wavExpChanged();
     void opChanged();
     void oiChanged(int n);
     void aiChanged(int n);

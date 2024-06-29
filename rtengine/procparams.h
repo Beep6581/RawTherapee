@@ -2088,6 +2088,7 @@ struct ColorManagementParams {
     double preser;
     bool fbw;
     bool trcExp;
+    bool wavExp;
     bool gamut;
     double labgridcieALow;
     double labgridcieBLow;

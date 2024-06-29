@@ -3465,7 +3465,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
         }
     }
 
-    if(wavcurvecont) {//enable curve
+    if(wavcurvecont && cmparams.wavExp) {//enable curve and expander
 #ifdef _OPENMP
         const int numThreads = omp_get_max_threads();
 #else
@@ -3506,12 +3506,12 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
             float inva9 = 0.3f;
             float inva10 = 0.1f;
 
-            if(pyrwav == 0) {//low contrast
+            if(pyrwav == 1) {//low contrast
                 level_bl = 0;
                 level_hl = 1;
                 level_br = wavelet_lev - 2;
                 level_hr = wavelet_lev - 2;
-            } else if(pyrwav == 1) {
+            } else if(pyrwav == 2) {
                 level_bl = 0;
                 level_hl = 1;
                 level_br = wavelet_lev - 1;
@@ -3524,7 +3524,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                     inva9 = 0.4f;
                     inva10 = 0.2f;
                 }
-            } else if( pyrwav == 2) {//default
+            } else if( pyrwav == 3) {//default
                 level_bl = 0;
                 level_hl = 0;
                 level_br = wavelet_lev - 1;
@@ -3537,7 +3537,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                     inva9 = 0.4f;
                     inva10 = 0.2f;
                 }
-            } else if( pyrwav == 3) {
+            } else if( pyrwav == 4) {
                 level_bl = 0;
                 level_hl = 0;
                 level_br = wavelet_lev;
@@ -3550,7 +3550,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                     inva9 = 0.3f;
                     inva10 = 0.1f;
                 }
-            } else if( pyrwav == 4) {
+            } else if( pyrwav == 5) {
                 level_bl = 0;
                 level_hl = 0;
                 level_br = wavelet_lev - 1;
@@ -3563,7 +3563,7 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
                     inva9 = 0.3f;
                     inva10 = 0.1f;
                 }
-            } else if( pyrwav == 5) {//maximum - in this case LUT are minimal to avoid artifacts.
+            } else if( pyrwav == 6) {//maximum - in this case LUT are minimal to avoid artifacts.
                 level_bl = 0;
                 level_hl = 0;
                 level_br = wavelet_lev - 1;

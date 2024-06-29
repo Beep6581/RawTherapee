@@ -82,6 +82,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     EvICMopacityWLI  = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_OPACITYW");
     EvICMpyrwavtrc = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_PYRWAVTRC");
     EvICMresidtrc = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_RESIDTRC");
+    EvICMwavExp = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_WAVEXP");
 
     isBatchMode = lastToneCurve = lastApplyLookTable = lastApplyBaselineExposureOffset = lastApplyHueSatMap = false;
 
@@ -260,7 +261,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wGamma->show();
     sigmatrc = Gtk::manage(new Adjuster(M("TP_WAVELET_SIGMAFIN"), 0.025, 2.5, 0.01, 1.));
     offstrc = Gtk::manage(new Adjuster(M("TP_WAVELET_OFFSFIN"), 0.33, 1.66, 0.01, 1.));
-    pyrwavtrc = Gtk::manage(new Adjuster(M("TP_WAVELET_PYRWAVTRC"), 0, 5, 1, 2));
+    pyrwavtrc = Gtk::manage(new Adjuster(M("TP_WAVELET_PYRWAVTRC"), 1, 6, 1, 3));
     residtrc = Gtk::manage(new Adjuster(M("TP_WAVELET_RESIDTRC"), -100., 100., 1., 0.));
     opacityCurveEditorWLI = new CurveEditorGroup(options.lastIcmCurvesDir, M("TP_ICM_OPACITYWLI"));
     opacityCurveEditorWLI->setCurveListener(this);
@@ -284,8 +285,10 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wsmoothcieconn = wsmoothcie->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::wsmoothcieChanged));
     wsmoothcie->set_active(false);
 
-    wavExp = Gtk::manage(new MyExpander(false, M("TP_ICM_WAVFRAME")));
+    wavExp = Gtk::manage(new MyExpander(true, M("TP_ICM_WAVFRAME")));
     setExpandAlignProperties(wavExp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    wavExp->signal_button_release_event().connect_notify ( sigc::bind ( sigc::mem_fun (this, &ICMPanel::foldAllButMe), wavExp) );
+    wavExpconn = wavExp->signal_enabled_toggled().connect(sigc::mem_fun(*this, &ICMPanel::wavExpChanged));
     wav2Exp = Gtk::manage(new MyExpander(false, M("TP_ICM_WAVREFI")));
     setExpandAlignProperties(wav2Exp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     trcWavVBox->pack_start(*pyrwavtrc, Gtk::PACK_SHRINK);
@@ -622,6 +625,7 @@ void ICMPanel::foldAllButMe (GdkEventButton* event, MyExpander *expander)
 {
     if (event->button == 3) {
         trcExp->set_expanded (trcExp == expander);
+        wavExp->set_expanded (wavExp == expander);
     }
 }
 
@@ -964,6 +968,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     ConnectionBlocker wprimconn_(wprimconn);
     ConnectionBlocker wcatconn_(wcatconn);
     ConnectionBlocker trcExpconn_(trcExpconn);
+    ConnectionBlocker wavExpconn_(wavExpconn);
     
     trcExp->set_expanded(false);
     primExp->set_expanded(false);
@@ -1035,6 +1040,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     obpc->set_active(pp->icm.outputBPC);
     fbw->set_active(pp->icm.fbw);
     trcExp->setEnabled(pp->icm.trcExp);
+    wavExp->setEnabled(pp->icm.wavExp);
     gamut->set_active(pp->icm.gamut);
     wsmoothcie->set_active(pp->icm.wsmoothcie);
     ckbToneCurve->set_active(pp->icm.toneCurve);
@@ -1070,6 +1076,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         obpc->set_inconsistent(!pedited->icm.outputBPC);
         fbw->set_inconsistent(!pedited->icm.fbw);
         trcExp->set_inconsistent(!pedited->icm.trcExp);
+        wavExp->set_inconsistent(!pedited->icm.wavExp);
         gamut->set_inconsistent(!pedited->icm.gamut);
         wsmoothcie->set_inconsistent(!pedited->icm.wsmoothcie);
         ckbToneCurve->set_inconsistent(!pedited->icm.toneCurve);
@@ -1463,6 +1470,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     pp->icm.outputBPC = obpc->get_active();
     pp->icm.fbw = fbw->get_active();
     pp->icm.trcExp = trcExp->getEnabled();
+    pp->icm.wavExp = wavExp->getEnabled();
     pp->icm.gamut = gamut->get_active();
     pp->icm.wsmoothcie = wsmoothcie->get_active();
     pp->icm.workingTRCGamma =  wGamma->getValue();
@@ -1494,6 +1502,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->icm.outputBPC = !obpc->get_inconsistent();
         pedited->icm.fbw = !fbw->get_inconsistent();
         pedited->icm.trcExp = !trcExp->get_inconsistent();
+        pedited->icm.wavExp = !wavExp->get_inconsistent();
         pedited->icm.gamut = !gamut->get_inconsistent();
         pedited->icm.wsmoothcie = !wsmoothcie->get_inconsistent();
         pedited->icm.dcpIlluminant = dcpIll->get_active_text() != M("GENERAL_UNCHANGED");
@@ -2514,6 +2523,17 @@ void ICMPanel::trcExpChanged()
     }
 }
 
+void ICMPanel::wavExpChanged()
+{
+
+    if (listener) {
+        if (wavExp->getEnabled()) {
+            listener->panelChanged(EvICMwavExp, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged(EvICMwavExp, M("GENERAL_DISABLED"));
+        }
+    }
+}
 
 
 void ICMPanel::fbwChanged()

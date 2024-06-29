@@ -478,6 +478,7 @@ void ParamsEdited::set(bool v)
     icm.preser = v;
     icm.fbw = v;
     icm.trcExp = v;
+    icm.wavExp = v;
     icm.gamut = v;
     icm.labgridcieALow = v;
     icm.labgridcieBLow = v;
@@ -2012,6 +2013,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         icm.preser = icm.preser && p.icm.preser == other.icm.preser;
         icm.fbw = icm.fbw && p.icm.fbw == other.icm.fbw;
         icm.trcExp = icm.trcExp && p.icm.trcExp == other.icm.trcExp;
+        icm.wavExp = icm.wavExp && p.icm.wavExp == other.icm.wavExp;
         icm.gamut = icm.gamut && p.icm.gamut == other.icm.gamut;
         icm.aRendIntent = icm.aRendIntent && p.icm.aRendIntent == other.icm.aRendIntent;
         icm.workingTRC = icm.workingTRC && p.icm.workingTRC == other.icm.workingTRC;
@@ -6949,6 +6951,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (icm.trcExp) {
         toEdit.icm.trcExp = mods.icm.trcExp;
+    }
+
+    if (icm.wavExp) {
+        toEdit.icm.wavExp = mods.icm.wavExp;
     }
 
     if (icm.gamut) {
