@@ -222,8 +222,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
 
     wFrame->add(*wProfVBox);
 
-    //-----------------gamma TRC working
-    trcExp = Gtk::manage(new MyExpander(true, M("TP_ICM_TRCFRAME")));
+    //-----------------gamma TRC working - Abstract Profile
+    trcExp = Gtk::manage(new MyExpander(true, M("TP_ICM_TRCFRAME")));//expander Abstract Profile
     setExpandAlignProperties(trcExp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     Gtk::Box *trcProfVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     trcExp->set_tooltip_text(M("TP_ICM_TRCFRAME_TOOLTIP"));
@@ -236,6 +236,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
 
     wTRCBox = Gtk::manage(new Gtk::Box());
 
+    //TRC gamma and slope
     wTRC = Gtk::manage(new MyComboBoxText());
     wTRCBox->pack_start(*wTRC, Gtk::PACK_EXPAND_WIDGET);
     trcProfVBox->pack_start(*wTRCBox, Gtk::PACK_EXPAND_WIDGET);
@@ -256,9 +257,11 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wGamma = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_GAMMA"), 0.40, 20.0, 0.001, 2.4));//default sRGB
     wSlope = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_SLOPE"), 0., 300., 0.01, 12.92));//defautl sRGB
     wmidtcie = Gtk::manage(new Adjuster(M("TP_LOCALLAB_MIDTCIE"), -100., 100., 1., 0.));
-    wsmoothcie = Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SMOOTHCIE")));
+    wsmoothcie = Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SMOOTHCIE")));//highlights
     trcProfVBox->pack_start(*wGamma, Gtk::PACK_SHRINK);
     wGamma->show();
+
+    //wavelets variables
     sigmatrc = Gtk::manage(new Adjuster(M("TP_WAVELET_SIGMAFIN"), 0.025, 2.5, 0.01, 1.));
     offstrc = Gtk::manage(new Adjuster(M("TP_WAVELET_OFFSFIN"), 0.33, 1.66, 0.01, 1.));
     pyrwavtrc = Gtk::manage(new Adjuster(M("TP_WAVELET_PYRWAVTRC"), 1, 6, 1, 3));
@@ -285,11 +288,12 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wsmoothcieconn = wsmoothcie->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::wsmoothcieChanged));
     wsmoothcie->set_active(false);
 
-    wavExp = Gtk::manage(new MyExpander(true, M("TP_ICM_WAVFRAME")));
+    wavExp = Gtk::manage(new MyExpander(true, M("TP_ICM_WAVFRAME")));//expander Contrast Enhancement
     setExpandAlignProperties(wavExp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     wavExp->signal_button_release_event().connect_notify ( sigc::bind ( sigc::mem_fun (this, &ICMPanel::foldAllButMe), wavExp) );
     wavExpconn = wavExp->signal_enabled_toggled().connect(sigc::mem_fun(*this, &ICMPanel::wavExpChanged));
-    wav2Exp = Gtk::manage(new MyExpander(false, M("TP_ICM_WAVREFI")));
+
+    wav2Exp = Gtk::manage(new MyExpander(false, M("TP_ICM_WAVREFI")));//expander Refinement wavelet
     setExpandAlignProperties(wav2Exp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     trcWavVBox->pack_start(*pyrwavtrc, Gtk::PACK_SHRINK);
     trcWavVBox->pack_start(*wavlocLabels,  Gtk::PACK_SHRINK);
@@ -304,6 +308,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     primExp = Gtk::manage(new MyExpander(false, M("TP_ICM_PRIMFRAME")));
     setExpandAlignProperties(primExp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
+    //Illuminants and Primaries
     willuBox = Gtk::manage(new Gtk::Box());
     willulab = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_ILLU") + ":"));
 
@@ -372,7 +377,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
 
     wprim->set_tooltip_text(M("TP_ICM_PRIMILLUM_TOOLTIP"));
 
-
+    //Primaries as sliders
     redx = Gtk::manage(new Adjuster(M("TC_PRIM_REDX"), 0.41, 1.0, 0.0001, 0.7347));
     setExpandAlignProperties(redx, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     redy = Gtk::manage(new Adjuster(M("TC_PRIM_REDY"), 0.0, 0.70, 0.0001, 0.2653));
@@ -428,10 +433,12 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     redVBox->pack_start(*labgridcie, Gtk::PACK_EXPAND_WIDGET, 4);
     redVBox->pack_start(*gamut, Gtk::PACK_EXPAND_WIDGET);
 
+    //Shift and refine color in CIE xy
     refi = Gtk::manage(new Adjuster(M("TC_PRIM_REFI"), -0.5, 1., 0.0001, 0.));
     shiftx = Gtk::manage(new Adjuster(M("TC_LOCALLAB_PRIM_SHIFTX"), -0.2, 0.2, 0.0001, 0.));
     shifty = Gtk::manage(new Adjuster(M("TC_LOCALLAB_PRIM_SHIFTY"), -0.2, 0.2, 0.0001, 0.));
 
+    //Chromatic adaptation
     wcatBox = Gtk::manage(new Gtk::Box());
     wcatlab = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_CAT") + ":"));
     wcatBox->pack_start(*wcatlab, Gtk::PACK_SHRINK);
@@ -639,7 +646,7 @@ void ICMPanel::wavlocChanged(double nlevel, double nmax, bool curveloc)
                 wavlocLabels->set_text(
                     Glib::ustring::compose(
                         M("TP_WAVELET_LEVLOCLABEL"),
-                        Glib::ustring::format(std::fixed, std::setprecision(0), nlevel)//keep in case of
+                        Glib::ustring::format(std::fixed, std::setprecision(0), nlevel)//not use but keep in case of
                     )
                 );
             } else {

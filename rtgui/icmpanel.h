@@ -95,9 +95,7 @@ protected:
     //Gtk::Label* blb;
     Gtk::Button* neutral;
     sigc::connection trcExpconn;
-    bool lasttrcExp;
     sigc::connection wavExpconn;
-    bool lastwavExp;
 
     sigc::connection neutralconn;
     bool lastToneCurve;
@@ -200,7 +198,7 @@ private:
     sigc::connection wprimconn;
     MyComboBoxText* wcat;
     sigc::connection wcatconn;
-    
+
     std::unique_ptr<PopUpButton> aRendIntent;
     sigc::connection arendintentconn;
 
@@ -215,7 +213,7 @@ private:
     sigc::connection ipc;
     Glib::ustring oldip;
     ICMPanelListener* icmplistener;
-    
+
     double dcpTemperatures[2];
     Glib::ustring lastRefFilename;
     Glib::ustring camName;

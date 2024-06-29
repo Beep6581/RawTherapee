@@ -1633,7 +1633,7 @@ void Crop::update(int todo)
                 parent->ipf.localCont (labnCrop, labnCrop, WaveParams, Colparams, icmOpacityCurveWL, skip, level_hr, maxlevpo, wavcurvecont);
             //    parent->ipf.gamutCont (labnCrop, labnCrop, WaveParams, Colparams, skip);
                 bool enall = false;
-                enall = wavcurvecont && Colparams.wavExp;
+                enall = wavcurvecont && Colparams.wavExp;//enable message only if curve enable and Expander on
                 if (parent->primListener) {
                     parent->primListener->wavlocChanged(float (maxlevpo), float (level_hr), enall);
                 }
