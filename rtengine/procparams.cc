@@ -9661,7 +9661,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                         spotEdited.featherwav = true;
                     }
                 } else {
-                    assignFromKeyfile(keyFile, "Locallab", "Fetaherwav_" + index_str, spot.featherwav, spotEdited.featherwav);
+                    assignFromKeyfile(keyFile, "Locallab", "Featherwav_" + index_str, spot.featherwav, spotEdited.featherwav);
                 }
 
                 assignFromKeyfile(keyFile, "Locallab", "Strengthw_" + index_str, spot.strengthw, spotEdited.strengthw);
