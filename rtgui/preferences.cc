@@ -2701,7 +2701,7 @@ void Preferences::extensionsChanged()
 
 void Preferences::extensionChanged()
 {
-    if (extension->get_text()[0] == '\0') {
+    if (extension->get_text().empty()) {
         addExt->set_sensitive(false);
         return;
     }
