@@ -9808,7 +9808,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                         spotEdited.featherlog = true;
                     }
                 } else {
-                    assignFromKeyfile(keyFile, "Locallab", "Fetaherlog_" + index_str, spot.featherlog, spotEdited.featherlog);
+                    assignFromKeyfile(keyFile, "Locallab", "Featherlog_" + index_str, spot.featherlog, spotEdited.featherlog);
                 }
                 assignFromKeyfile(keyFile, "Locallab", "CCmaskCurveL_" + index_str, spot.CCmaskcurveL, spotEdited.CCmaskcurveL);
                 assignFromKeyfile(keyFile, "Locallab", "LLmaskCurveL_" + index_str, spot.LLmaskcurveL, spotEdited.LLmaskcurveL);
