@@ -9778,7 +9778,6 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "AutoGray_" + index_str, spot.Autogray, spotEdited.Autogray);
                 assignFromKeyfile(keyFile, "Locallab", "Fullimage_" + index_str, spot.fullimage, spotEdited.fullimage);
                 assignFromKeyfile(keyFile, "Locallab", "Repart_" + index_str, spot.repar, spotEdited.repar);
-                assignFromKeyfile(keyFile, "Locallab", "Ciecam_" + index_str, spot.ciecam, spotEdited.ciecam);
                 if (ppVersion <= 350) {//issue 7114
                     if (keyFile.has_key("Locallab", "Ciecam_" + index_str)) {
                         spot.ciecam = true;
