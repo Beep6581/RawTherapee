@@ -9211,7 +9211,16 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "labgridAHighmerg_" + index_str, spot.labgridAHighmerg, spotEdited.labgridAHighmerg);
                 assignFromKeyfile(keyFile, "Locallab", "labgridBHighmerg_" + index_str, spot.labgridBHighmerg, spotEdited.labgridBHighmerg);
                 assignFromKeyfile(keyFile, "Locallab", "Strengthgrid_" + index_str, spot.strengthgrid, spotEdited.strengthgrid);
-                assignFromKeyfile(keyFile, "Locallab", "Sensi_" + index_str, spot.sensi, spotEdited.sensi);
+                assignFromKeyfile(keyFile, "Locallab", "Colorscope_" + index_str, spot.colorscope, spotEdited.colorscope);
+
+                if (ppVersion <= 350) {
+                    if (keyFile.has_key("Locallab", "Colorscope_" + index_str)) {
+                        spot.sensi = keyFile.get_integer("Locallab", "Colorscope_" + index_str);
+                        spotEdited.sensi = true;
+                    }
+                } else {
+                    assignFromKeyfile(keyFile, "Locallab", "Sensi_" + index_str, spot.sensi, spotEdited.sensi);
+                }
                 assignFromKeyfile(keyFile, "Locallab", "Structcol_" + index_str, spot.structcol, spotEdited.structcol);
                 assignFromKeyfile(keyFile, "Locallab", "Strcol_" + index_str, spot.strcol, spotEdited.strcol);
                 assignFromKeyfile(keyFile, "Locallab", "Strcolab_" + index_str, spot.strcolab, spotEdited.strcolab);
@@ -9349,7 +9358,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "shadows_" + index_str, spot.shadows, spotEdited.shadows);
                 assignFromKeyfile(keyFile, "Locallab", "s_tonalwidth_" + index_str, spot.s_tonalwidth, spotEdited.s_tonalwidth);
                 assignFromKeyfile(keyFile, "Locallab", "sh_radius_" + index_str, spot.sh_radius, spotEdited.sh_radius);
-                assignFromKeyfile(keyFile, "Locallab", "sensihs_" + index_str, spot.sensihs, spotEdited.sensihs);
+                if (ppVersion <= 350) {
+                    if (keyFile.has_key("Locallab", "Colorscope_" + index_str)) {
+                        spot.sensihs = keyFile.get_integer("Locallab", "Colorscope_" + index_str);
+                        spotEdited.sensihs = true;
+                    }
+                } else {
+                    assignFromKeyfile(keyFile, "Locallab", "sensihs_" + index_str, spot.sensihs, spotEdited.sensihs);
+                }
                 assignFromKeyfile(keyFile, "Locallab", "EnaSHMask_" + index_str, spot.enaSHMask, spotEdited.enaSHMask);
                 assignFromKeyfile(keyFile, "Locallab", "CCmaskSHCurve_" + index_str, spot.CCmaskSHcurve, spotEdited.CCmaskSHcurve);
                 assignFromKeyfile(keyFile, "Locallab", "LLmaskSHCurve_" + index_str, spot.LLmaskSHcurve, spotEdited.LLmaskSHcurve);
@@ -9403,7 +9419,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "ProtectSkins_" + index_str, spot.protectskins, spotEdited.protectskins);
                 assignFromKeyfile(keyFile, "Locallab", "AvoidColorShift_" + index_str, spot.avoidcolorshift, spotEdited.avoidcolorshift);
                 assignFromKeyfile(keyFile, "Locallab", "PastSatTog_" + index_str, spot.pastsattog, spotEdited.pastsattog);
-                assignFromKeyfile(keyFile, "Locallab", "Sensiv_" + index_str, spot.sensiv, spotEdited.sensiv);
+                if (ppVersion <= 350) {
+                    if (keyFile.has_key("Locallab", "Colorscope_" + index_str)) {
+                        spot.sensiv = keyFile.get_integer("Locallab", "Colorscope_" + index_str);
+                        spotEdited.sensiv = true;
+                    }
+                } else {
+                    assignFromKeyfile(keyFile, "Locallab", "Sensiv_" + index_str, spot.sensiv, spotEdited.sensiv);
+                }
                 assignFromKeyfile(keyFile, "Locallab", "SkinTonesCurve_" + index_str, spot.skintonescurve, spotEdited.skintonescurve);
                 assignFromKeyfile(keyFile, "Locallab", "CCmaskvibCurve_" + index_str, spot.CCmaskvibcurve, spotEdited.CCmaskvibcurve);
                 assignFromKeyfile(keyFile, "Locallab", "LLmaskvibCurve_" + index_str, spot.LLmaskvibcurve, spotEdited.LLmaskvibcurve);
