@@ -18000,6 +18000,13 @@ void ImProcFunctions::Lab_Local(
                         }
                     }
 
+                    bool execlaplace = true;//verify if others spot use dehaze
+                    const int sizespot = (int)params->locallab.spots.size();
+                    for (int sp = 0; sp < sizespot; sp++) {
+                        if(params->locallab.spots.at(sp).dehaz){//if true desable Laplace
+                            execlaplace = false;
+                        }
+                    }
 
 
                     if (exlocalcurve && localexutili) {// L=f(L) curve enhanced
@@ -18030,7 +18037,9 @@ void ImProcFunctions::Lab_Local(
                             if (lp.laplacexp <= 0.1f) {
                                 lp.laplacexp = 0.2f;  //force to use Laplacian with very small values
                             }
-
+                            if(!execlaplace) {
+                                lp.laplacexp = 0.f;
+                            }
                             ImProcFunctions::exlabLocal(lp, 1.f, bfh, bfw, bfhr, bfwr, bufexporig.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, hueref, lumaref, chromaref);
                         }
                     }
@@ -18104,7 +18113,7 @@ void ImProcFunctions::Lab_Local(
 
                         }
 
-                        if (lp.laplacexp > 0.1f) {
+                        if (lp.laplacexp > 0.1f  &&  execlaplace) {//don't use if an other spot use Dehaze.
 
                             MyMutex::MyLock lock(*fftwMutex);
                             std::unique_ptr<float[]> datain(new float[bfwr * bfhr]);
