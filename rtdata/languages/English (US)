@@ -1971,7 +1971,7 @@
 !PREFERENCES_PARSEDEXT;Parsed Extensions
 !PREFERENCES_PARSEDEXTADD;Add extension
 !PREFERENCES_PARSEDEXTADDHINT;Add entered extension to the list.
-!PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list.
+!PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list.\nPredefined extensions cannot be deleted.
 !PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
 !PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
 !PREFERENCES_PERFORMANCE_MEASURE;Measure

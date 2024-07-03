@@ -471,7 +471,7 @@ void Options::setDefaults()
     curvebboxpos = 1;
     complexity = 2;
     spotmet = 0;
-    
+
     inspectorWindow = false;
     zoomOnScroll = true;
     prevdemo = PD_Sidecar;
@@ -580,8 +580,8 @@ void Options::setDefaults()
 
     rtSettings.darkFramesPath = "";
     rtSettings.flatFieldsPath = "";
-	rtSettings.cameraProfilesPath = "";
-	rtSettings.lensProfilesPath = "";
+    rtSettings.cameraProfilesPath = "";
+    rtSettings.lensProfilesPath = "";
 
 #ifdef _WIN32
     const gchar* sysRoot = g_getenv("SystemRoot");  // Returns e.g. "c:\Windows"
@@ -673,8 +673,8 @@ void Options::setDefaults()
     lastIccDir = rtSettings.iccDirectory;
     lastDarkframeDir = rtSettings.darkFramesPath;
     lastFlatfieldDir = rtSettings.flatFieldsPath;
-	lastCameraProfilesDir = rtSettings.cameraProfilesPath;
-	lastLensProfilesDir = rtSettings.lensProfilesPath;
+    lastCameraProfilesDir = rtSettings.cameraProfilesPath;
+    lastLensProfilesDir = rtSettings.lensProfilesPath;
 //  rtSettings.bw_complementary = true;
     // There is no reasonable default for curves. We can still suppose that they will take place
     // in a subdirectory of the user's own ProcParams presets, i.e. in a subdirectory
@@ -816,7 +816,7 @@ void Options::readFromFile(Glib::ustring fname)
                     rtSettings.cameraProfilesPath = keyFile.get_string("General", "CameraProfilesPath");
                 }
 
-				if (keyFile.has_key("General", "LensProfilesPath")) {
+                if (keyFile.has_key("General", "LensProfilesPath")) {
                     rtSettings.lensProfilesPath = keyFile.get_string("General", "LensProfilesPath");
                 }
 
@@ -1266,6 +1266,29 @@ void Options::readFromFile(Glib::ustring fname)
                     if (!l.empty()) {
                         parseExtensionsEnabled = l;
                     }
+                }
+
+                // check and add extensions that are missing from config
+                std::map<std::string, int> checkedExtensions;
+
+                if (parseExtensions.size() == parseExtensionsEnabled.size()) {
+                    for (auto i = 0; i < parseExtensions.size(); ++i) {
+                        checkedExtensions[parseExtensions[i]] = parseExtensionsEnabled[i];
+                    }
+                }
+
+                parseExtensions.clear();
+                parseExtensionsEnabled.clear();
+
+                for (auto const &i : knownExtensions) {
+                    if (checkedExtensions.count(i) == 0) {
+                        checkedExtensions[i] = 1;
+                    }
+                }
+
+                for (auto const &x : checkedExtensions) {
+                    parseExtensions.emplace_back(x.first);
+                    parseExtensionsEnabled.emplace_back(x.second);
                 }
 
                 if (keyFile.has_key("File Browser", "ThumbnailArrangement")) {
@@ -2395,8 +2418,8 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_string("General", "Version", RTVERSION);
         keyFile.set_string("General", "DarkFramesPath", rtSettings.darkFramesPath);
         keyFile.set_string("General", "FlatFieldsPath", rtSettings.flatFieldsPath);
-		keyFile.set_string("General", "CameraProfilesPath", rtSettings.cameraProfilesPath);
-		keyFile.set_string("General", "LensProfilesPath", rtSettings.lensProfilesPath);
+        keyFile.set_string("General", "CameraProfilesPath", rtSettings.cameraProfilesPath);
+        keyFile.set_string("General", "LensProfilesPath", rtSettings.lensProfilesPath);
         keyFile.set_boolean("General", "Verbose", rtSettings.verbose);
         keyFile.set_integer("General", "Cropsleep", rtSettings.cropsleep);
         keyFile.set_double("General", "Reduchigh", rtSettings.reduchigh);
