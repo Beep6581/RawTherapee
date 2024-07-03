@@ -3796,7 +3796,7 @@ void LocallabExposure::convertParamToNormal()
     // Disable all listeners
     disableListener();
     gamex->setValue(defSpot.gamex);
-
+    laplacexp->setValue(defSpot.laplacexp);
     // Set hidden GUI widgets in Normal mode to default spot values
     structexp->setValue((double)defSpot.structexp);
     blurexpde->setValue((double)defSpot.blurexpde);
@@ -3819,6 +3819,7 @@ void LocallabExposure::convertParamToSimple()
 
     // Disable all listeners
     disableListener();
+    laplacexp->setValue(defSpot.laplacexp);
     fatlevel->setValue(defSpot.fatlevel);
     fatanchor->setValue(defSpot.fatanchor);
     norm->set_active(false);
