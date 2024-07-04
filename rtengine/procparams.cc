@@ -9229,7 +9229,22 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     spotEdited.visiexpose = true;
                 }
 
-                assignFromKeyfile(keyFile, "Locallab", "Complexexpose_" + index_str, spot.complexexpose, spotEdited.complexexpose);
+                if (ppVersion <= 350) {//keep value in 5.10 and before if Contrast attenuator enable. Set complexity to "adavanced" which is now the choce for Contrast attenuator
+                        if (keyFile.has_key("Locallab", "Laplacexp_" + index_str)) {
+                            spot.laplacexp = keyFile.get_double("Locallab", "Laplacexp_" + index_str);
+                            if(spot.laplacexp > 0.f) {//is enable ?
+                                spotEdited.laplacexp = true;
+                                if (keyFile.has_key("Locallab", "Complexexpose_" + index_str)) {
+                                    spot.complexexpose = 0;//set to Advanced
+                                    spotEdited.complexexpose = true;
+                                }
+                            }
+                        }
+                } else {
+                    assignFromKeyfile(keyFile, "Locallab", "Laplacexp_" + index_str, spot.laplacexp, spotEdited.laplacexp);
+                    assignFromKeyfile(keyFile, "Locallab", "Complexexpose_" + index_str, spot.complexexpose, spotEdited.complexexpose);
+                }
+
                 assignFromKeyfile(keyFile, "Locallab", "Expcomp_" + index_str, spot.expcomp, spotEdited.expcomp);
                 assignFromKeyfile(keyFile, "Locallab", "Hlcompr_" + index_str, spot.hlcompr, spotEdited.hlcompr);
                 assignFromKeyfile(keyFile, "Locallab", "Hlcomprthresh_" + index_str, spot.hlcomprthresh, spotEdited.hlcomprthresh);
@@ -9271,7 +9286,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "LmaskexpCurve_" + index_str, spot.Lmaskexpcurve, spotEdited.Lmaskexpcurve);
                 assignFromKeyfile(keyFile, "Locallab", "ExpMethod_" + index_str, spot.expMethod, spotEdited.expMethod);
                 assignFromKeyfile(keyFile, "Locallab", "ExnoiseMethod_" + index_str, spot.exnoiseMethod, spotEdited.exnoiseMethod);
-                assignFromKeyfile(keyFile, "Locallab", "Laplacexp_" + index_str, spot.laplacexp, spotEdited.laplacexp);
+            //    assignFromKeyfile(keyFile, "Locallab", "Laplacexp_" + index_str, spot.laplacexp, spotEdited.laplacexp);
                 assignFromKeyfile(keyFile, "Locallab", "Reparexp_" + index_str, spot.reparexp, spotEdited.reparexp);
                 assignFromKeyfile(keyFile, "Locallab", "Balanexp_" + index_str, spot.balanexp, spotEdited.balanexp);
                 assignFromKeyfile(keyFile, "Locallab", "Linearexp_" + index_str, spot.linear, spotEdited.linear);
