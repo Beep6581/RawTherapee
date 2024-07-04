@@ -20549,7 +20549,7 @@ void ImProcFunctions::Lab_Local(
 #endif
             for (int i = 0; i < bh; ++i)
                 for (int j = 0; j < bw; ++j) {
-                    prov1->r(i, j) = clipR((float) rtengine::max(prov1->r(i, j), epsi));
+                    prov1->r(i, j) = clipR((float) rtengine::max(prov
                     prov1->g(i, j) = clipR((float) rtengine::max(prov1->g(i, j), epsi));
                     prov1->b(i, j) = clipR((float) rtengine::max(prov1->b(i, j), epsi)); 
                 }
