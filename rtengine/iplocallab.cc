@@ -87,7 +87,7 @@ constexpr float clipDE(float x)
 
 constexpr float clipR(float x)
 {
-    return rtengine::LIM(x, 0.f, 65535.f);//increase LIM from 42000 to 1000000 to avoid clip and also imaginaries colors
+    return rtengine::LIM(x, 0.f, 65535.f);//used when Laplacian Contrast attenuator
 }
 
 
@@ -20543,7 +20543,7 @@ void ImProcFunctions::Lab_Local(
     lab2rgb(*transformed, *prov1, params->icm.workingProfile);
 
     float epsi = 0.000001f;
-    if(lp.laplacexp > 1.f) {//clip value above 65535.f and > epsilon
+    if(lp.laplacexp > 1.f) {//clip value above 65535.f and > epsilon when Contrsat attenuator with high values Laplacian 
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
