@@ -20543,13 +20543,13 @@ void ImProcFunctions::Lab_Local(
     lab2rgb(*transformed, *prov1, params->icm.workingProfile);
 
     float epsi = 0.000001f;
-    if(lp.laplacexp > 1.f) {//clip value above 65535.f and > epsilon when Contrsat attenuator with high values Laplacian 
+    if(lp.laplacexp > 1.f) {//clip value above 65535.f and > epsilon when Contrast attenuator with high values Laplacian 
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
             for (int i = 0; i < bh; ++i)
                 for (int j = 0; j < bw; ++j) {
-                    prov1->r(i, j) = clipR((float) rtengine::max(prov
+                    prov1->r(i, j) = clipR((float) rtengine::max(prov1->r(i, j), epsi));
                     prov1->g(i, j) = clipR((float) rtengine::max(prov1->g(i, j), epsi));
                     prov1->b(i, j) = clipR((float) rtengine::max(prov1->b(i, j), epsi)); 
                 }
