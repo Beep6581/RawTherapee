@@ -85,6 +85,12 @@ constexpr float clipDE(float x)
     return rtengine::LIM(x, 0.3f, 1.f);
 }
 
+constexpr float clipR(float x)
+{
+    return rtengine::LIM(x, 0.f, 65535.f);//increase LIM from 42000 to 1000000 to avoid clip and also imaginaries colors
+}
+
+
 constexpr float clipC(float x)
 {
     return rtengine::LIM(x, -100000.f, 100000.f);//increase LIM from 42000 to 1000000 to avoid clip and also imaginaries colors
@@ -18001,14 +18007,14 @@ void ImProcFunctions::Lab_Local(
                     }
 
                     bool execlaplace = true;//verify if others spot use dehaze
+                    /*
                     const int sizespot = (int)params->locallab.spots.size();
                     for (int sp = 0; sp < sizespot; sp++) {
                         if(params->locallab.spots.at(sp).dehaz){//if true desable Laplace
                             execlaplace = false;
                         }
                     }
-
-
+                    */
                     if (exlocalcurve && localexutili) {// L=f(L) curve enhanced
 
 #ifdef _OPENMP
@@ -18114,7 +18120,7 @@ void ImProcFunctions::Lab_Local(
                         }
 
                         if (lp.laplacexp > 0.1f  &&  execlaplace) {//don't use if an other spot use Dehaze.
-
+                            //printf("EXEC ATTENUATOR\n");
                             MyMutex::MyLock lock(*fftwMutex);
                             std::unique_ptr<float[]> datain(new float[bfwr * bfhr]);
                             std::unique_ptr<float[]> dataout(new float[bfwr * bfhr]);
@@ -20530,6 +20536,37 @@ void ImProcFunctions::Lab_Local(
             }
         }
     }
+    //verify that RGB values are > 0.f issue 7121 to avoid crash
+    int bw = transformed->W;
+    int bh = transformed->H;
+    const std::unique_ptr<Imagefloat> prov1(new Imagefloat(bw, bh));
+    lab2rgb(*transformed, *prov1, params->icm.workingProfile);
+
+    float epsi = 0.000001f;
+    if(lp.laplacexp > 1.f) {//clip value above 65535.f and > epsilon
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+            for (int i = 0; i < bh; ++i)
+                for (int j = 0; j < bw; ++j) {
+                    prov1->r(i, j) = clipR((float) rtengine::max(prov1->r(i, j), epsi));
+                    prov1->g(i, j) = clipR((float) rtengine::max(prov1->g(i, j), epsi));
+                    prov1->b(i, j) = clipR((float) rtengine::max(prov1->b(i, j), epsi)); 
+                }
+    } else {//standard case only with small values Laplace no clip
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+            for (int i = 0; i < bh; ++i)
+                for (int j = 0; j < bw; ++j) {
+                    prov1->r(i, j) = (float) rtengine::max(prov1->r(i, j), epsi);
+                    prov1->g(i, j) = (float) rtengine::max(prov1->g(i, j), epsi);
+                    prov1->b(i, j) = (float) rtengine::max(prov1->b(i, j), epsi); 
+                }
+        
+    }
+    rgb2lab(*prov1, *transformed, params->icm.workingProfile);
+
 
 
 // Gamut and Munsell control - very important do not deactivated to avoid crash
