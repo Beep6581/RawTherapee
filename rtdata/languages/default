@@ -3423,7 +3423,7 @@ TP_LOCALLAB_PRECAMGAMUT_TOOLTIP;If checked ensures a gamut control just after pr
 TP_LOCALLAB_PRECAMREFI_TOOLTIP;Allows you to move the white-point in such a way that it approaches the dominant color. This action modifies the purity.
 TP_LOCALLAB_PRECAMREFIMAIN_TOOLTIP;Allows you to move the white-point in such a way that it approaches the dominant color. This action modifies the purity. In combination with "Shift x" and "Shift y" allows you to carry out moderate Color Toning.
 TP_LOCALLAB_PDEFRA;Contrast Attenuator ƒ
-TP_LOCALLAB_PDEFRAME_TOOLTIP;PDE IPOL algorithm adapted for Rawtherapee : gives different results and requires different settings compared to main-menu 'Exposure'.\nMay be useful for under-exposed or high dynamic range images.\nCannot be used if another Spot uses Dehaze.
+TP_LOCALLAB_PDEFRAME_TOOLTIP;PDE IPOL algorithm adapted for Rawtherapee : gives different results and requires different settings compared to main-menu 'Exposure'.\nMay be useful for under-exposed or high dynamic range images.
 TP_LOCALLAB_PREVHIDE;Hide additional settings
 TP_LOCALLAB_PREVIEW;Preview ΔE
 TP_LOCALLAB_PREVSHOW;Show additional settings
