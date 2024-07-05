@@ -20543,7 +20543,7 @@ void ImProcFunctions::Lab_Local(
     lab2rgb(*transformed, *prov1, params->icm.workingProfile);
 
     float epsi = 0.000001f;
-    if(lp.laplacexp > 1.f) {//clip value above 65535.f and > epsilon when Contrast attenuator with high values Laplacian 
+    if(lp.laplacexp > 1.f  || lp.strng > 2.f) {//clip value above 65535.f and > epsilon when Contrast attenuator with high values Laplacian or Original Retinex 
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
