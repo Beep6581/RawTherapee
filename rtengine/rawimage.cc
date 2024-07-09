@@ -29,9 +29,10 @@ RawImage::RawImage(const Glib::ustring &name)
     , allocation(nullptr)
 {
     memset(maximum_c4, 0, sizeof(maximum_c4));
-    RT_matrix_from_constant = ThreeValBool::X;
-    RT_blacklevel_from_constant = ThreeValBool::X;
     RT_whitelevel_from_constant = ThreeValBool::X;
+    RT_blacklevel_from_constant = ThreeValBool::X;
+    RT_raw_crop_mask_from_constant = ThreeValBool::X;
+    RT_matrix_from_constant = ThreeValBool::X;
 }
 
 RawImage::~RawImage()
@@ -556,7 +557,7 @@ int RawImage::loadRaw(bool loadData, unsigned int imageNum, bool closeFile, Prog
             orig_raw_width = raw_width;
             orig_raw_height = raw_height;
 
-            if (cc && cc->has_rawCrop(raw_width, raw_height)) {
+            if (RT_raw_crop_mask_from_constant == ThreeValBool::T && cc && cc->has_rawCrop(raw_width, raw_height)) {
                 raw_crop_cc = true;
                 int lm, tm, w, h;
                 cc->get_rawCrop(raw_width, raw_height, lm, tm, w, h);
@@ -591,7 +592,7 @@ int RawImage::loadRaw(bool loadData, unsigned int imageNum, bool closeFile, Prog
                 }
             }
 
-            if (cc && cc->has_rawMask(orig_raw_width, orig_raw_height, 0)) {
+            if (RT_raw_crop_mask_from_constant == ThreeValBool::T && cc && cc->has_rawMask(orig_raw_width, orig_raw_height, 0)) {
                 for (int i = 0; i < 2 && cc->has_rawMask(orig_raw_width, orig_raw_height, i); i++) {
                     cc->get_rawMask(orig_raw_width, orig_raw_height, i, mask[i][0], mask[i][1], mask[i][2], mask[i][3]);
                 }
