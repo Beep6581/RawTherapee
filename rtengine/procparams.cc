@@ -9229,22 +9229,13 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     spotEdited.visiexpose = true;
                 }
 
-                if (ppVersion <= 350) {//keep value in 5.10 and before if Contrast attenuator enable. Set complexity to "adavanced" which is now the choce for Contrast attenuator
-                        if (keyFile.has_key("Locallab", "Laplacexp_" + index_str)) {
-                            spot.laplacexp = keyFile.get_double("Locallab", "Laplacexp_" + index_str);
-                            if(spot.laplacexp > 0.f) {//is enable ?
-                                spotEdited.laplacexp = true;
-                                if (keyFile.has_key("Locallab", "Complexexpose_" + index_str)) {
-                                    spot.complexexpose = 0;//set to Advanced
-                                    spotEdited.complexexpose = true;
-                                }
-                            }
-                        }
-                } else {
-                    assignFromKeyfile(keyFile, "Locallab", "Laplacexp_" + index_str, spot.laplacexp, spotEdited.laplacexp);
-                    assignFromKeyfile(keyFile, "Locallab", "Complexexpose_" + index_str, spot.complexexpose, spotEdited.complexexpose);
+                assignFromKeyfile(keyFile, "Locallab", "Laplacexp_" + index_str, spot.laplacexp, spotEdited.laplacexp);
+                assignFromKeyfile(keyFile, "Locallab", "Complexexpose_" + index_str, spot.complexexpose, spotEdited.complexexpose);
+                if (ppVersion <= 350 && spot.laplacexp > 0.f) { // Contrast attenuator moved to "advanced" after 5.10. Set complexity to "advanced" if Contrast attenuator is in use.
+                    spot.complexexpose = 0;
+                    spotEdited.complexexpose = true;
                 }
-
+                
                 assignFromKeyfile(keyFile, "Locallab", "Expcomp_" + index_str, spot.expcomp, spotEdited.expcomp);
                 assignFromKeyfile(keyFile, "Locallab", "Hlcompr_" + index_str, spot.hlcompr, spotEdited.hlcompr);
                 assignFromKeyfile(keyFile, "Locallab", "Hlcomprthresh_" + index_str, spot.hlcomprthresh, spotEdited.hlcomprthresh);
