@@ -20538,8 +20538,17 @@ void ImProcFunctions::Lab_Local(
     if(((lp.laplacexp > 0.f && lp.laplacexp <= 1.f) && lp.exposena)) { // use Laplacian with very small values
         notzero = true;
     }
+    ToneCurveMode curveMode = params->toneCurve.curveMode;//Tone curve does not allow negative values
+    if((curveMode == ToneCurveMode::PERCEPTUAL) || (curveMode == ToneCurveMode::STD) || (curveMode == ToneCurveMode::WEIGHTEDSTD)  || (curveMode == ToneCurveMode::FILMLIKE) || (curveMode == ToneCurveMode::SATANDVALBLENDING) || (curveMode == ToneCurveMode::LUMINANCE)) {
+        notzero = true;
+    }
 
-    if(params->rgbCurves.enabled) {//rgb curves does not allow negative values. Perhaps others cases ?
+    ToneCurveMode curveMode2 = params->toneCurve.curveMode2;//Tone curve does not allow negative values
+    if((curveMode2 == ToneCurveMode::PERCEPTUAL) || (curveMode2 == ToneCurveMode::STD) || (curveMode2 == ToneCurveMode::WEIGHTEDSTD)  || (curveMode2 == ToneCurveMode::FILMLIKE) || (curveMode2 == ToneCurveMode::SATANDVALBLENDING) || (curveMode2 == ToneCurveMode::LUMINANCE)) {
+        notzero = true;
+    }
+    
+    if(params->rgbCurves.enabled || params->hsvequalizer.enabled  || params->chmixer.enabled  || params->colorToning.enabled ) {//rgb curves, HSV, Channel mixer, Color Toning does not allow negative values. Perhaps others cases ?
         notzero = true;
     }
 
