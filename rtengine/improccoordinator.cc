@@ -384,16 +384,21 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         }
 
         // raw auto CA is bypassed if no high detail is needed, so we have to compute it when high detail is needed
-        if ((todo & M_PREPROC) || (!highDetailPreprocessComputed && highDetailNeeded)) {
+        float reddeha = 0.f;
+        float greendeha = 0.f;
+        float bluedeha = 0.f;
+        int nb = 1;
+        if ((todo & M_PREPROC) || rp.bayersensor.Dehablack || (!highDetailPreprocessComputed && highDetailNeeded)) {
             imgsrc->setCurrentFrame(params->raw.bayersensor.imageNum);
-            float reddeha = 0.f;
-            float greendeha = 0.f;
-            float bluedeha = 0.f;
             imgsrc->preprocess(rp, params->lensProf, params->coarse, reddeha, greendeha, bluedeha, true);
-        if (ablListener) {
-            ablListener->autoBlackChanged(reddeha, greendeha, bluedeha);
-        }
-
+            if (ablListener) {
+                if(rp.bayersensor.Dehablack) {
+                    ablListener->autoBlackChanged(reddeha, greendeha, bluedeha, nb);
+                } else {
+                    ablListener->autoBlackChanged(0.f, 0.f, 0.f, nb);
+               }
+            }
+            nb = 0;
             if (flatFieldAutoClipListener && rp.ff_AutoClipControl) {
                 flatFieldAutoClipListener->flatFieldAutoClipValueChanged(imgsrc->getFlatFieldAutoClipValue());
             }

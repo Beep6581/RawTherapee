@@ -2515,6 +2515,7 @@ struct RAWParams {
         double black2;
         double black3;
         bool twogreen;
+        bool Dehablack;
         int linenoise;
         enum class LineNoiseDirection {
             HORIZONTAL = 1,

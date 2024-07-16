@@ -30,6 +30,9 @@ const Glib::ustring BayerRAWExposure::TOOL_NAME = "bayerrawexposure";
 
 BayerRAWExposure::BayerRAWExposure () : FoldableToolPanel(this, TOOL_NAME, M("TP_EXPOS_BLACKPOINT_LABEL"), options.prevdemo != PD_Sidecar)
 {
+    auto m = ProcEventMapper::getInstance();
+    EvDehablack = m->newEvent(DARKFRAME, "HISTORY_MSG_DEHABLACK");
+
     PexBlack1 = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACK_1"), -2048, 2048, 1.0, 0)); //black level
     PexBlack1->setAdjusterListener (this);
 
@@ -58,11 +61,16 @@ BayerRAWExposure::BayerRAWExposure () : FoldableToolPanel(this, TOOL_NAME, M("TP
     PextwoGreen->set_active (true);
     PextwoGreen->setCheckBoxListener (this);
 
+    Dehablack = Gtk::manage(new CheckBox(M("TP_RAWEXPOS_DEHA"), multiImage));// Black dehaze
+    Dehablack->set_active (false);
+    Dehablack->setCheckBoxListener (this);
+
     pack_start( *PexBlack1, Gtk::PACK_SHRINK, 0);//black R
     pack_start( *PexBlack0, Gtk::PACK_SHRINK, 0);//black G1
     pack_start( *PexBlack3, Gtk::PACK_SHRINK, 0);//black G2
     pack_start( *PexBlack2, Gtk::PACK_SHRINK, 0);//black B
     pack_start( *PextwoGreen, Gtk::PACK_SHRINK, 0);//black 2 green
+    pack_start( *Dehablack, Gtk::PACK_SHRINK, 0);//black Dehaze
 
     PexBlack0->setLogScale(100, 0);
     PexBlack1->setLogScale(100, 0);
@@ -73,7 +81,7 @@ BayerRAWExposure::BayerRAWExposure () : FoldableToolPanel(this, TOOL_NAME, M("TP
 void BayerRAWExposure::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
 {
     disableListener ();
-
+    nbcount = 0;
     if(pedited ) {
         PexBlack0->setEditedState( pedited->raw.bayersensor.exBlack0 ? Edited : UnEdited );
         PexBlack1->setEditedState( pedited->raw.bayersensor.exBlack1 ? Edited : UnEdited );
@@ -82,6 +90,7 @@ void BayerRAWExposure::read(const rtengine::procparams::ProcParams* pp, const Pa
     }
 
     PextwoGreen->setValue (pp->raw.bayersensor.twogreen);
+    Dehablack->setValue (pp->raw.bayersensor.Dehablack);
 
     PexBlack0->setValue (pp->raw.bayersensor.black0);//black
     PexBlack1->setValue (pp->raw.bayersensor.black1);//black
@@ -102,6 +111,7 @@ void BayerRAWExposure::write( rtengine::procparams::ProcParams* pp, ParamsEdited
     pp->raw.bayersensor.black1 = PexBlack1->getValue();// black
     pp->raw.bayersensor.black2 = PexBlack2->getValue();// black
     pp->raw.bayersensor.twogreen = PextwoGreen->getLastActive();
+    pp->raw.bayersensor.Dehablack = Dehablack->getLastActive();
 
     if(PextwoGreen->getLastActive()) {
         pp->raw.bayersensor.black3 = pp->raw.bayersensor.black0;   // active or desactive 2 green together
@@ -115,6 +125,7 @@ void BayerRAWExposure::write( rtengine::procparams::ProcParams* pp, ParamsEdited
         pedited->raw.bayersensor.exBlack2 = PexBlack2->getEditedState ();//black
         pedited->raw.bayersensor.exBlack3 = PexBlack3->getEditedState ();//black
         pedited->raw.bayersensor.exTwoGreen = !PextwoGreen->get_inconsistent();
+        pedited->raw.bayersensor.Dehablack = !Dehablack->get_inconsistent();
     }
 
 }
@@ -122,14 +133,14 @@ void BayerRAWExposure::write( rtengine::procparams::ProcParams* pp, ParamsEdited
 BayerRAWExposure::~BayerRAWExposure()
 {
     idle_register.destroy();
-
 }
 
 
-void BayerRAWExposure::autoBlackChanged (double reddeha, double greendeha, double bluedeha)
+void BayerRAWExposure::autoBlackChanged (double reddeha, double greendeha, double bluedeha, int nb)
 {
+    
     idle_register.add(
-        [this, reddeha, greendeha, bluedeha]() -> bool
+        [this, reddeha, greendeha, bluedeha, nb]() -> bool
         {
             disableListener();
             PexBlack1->setValue(reddeha);
@@ -155,6 +166,9 @@ void BayerRAWExposure::adjusterChanged(Adjuster* a, double newval)
                 listener->panelChanged (EvPreProcessExpBlackzero,  value );
                 PexBlack3->setValue (PexBlack0->getValue());
             }
+       //     if(!Dehablack->getLastActive()) {
+       //         listener->panelChanged (EvDehablack,  M("GENERAL_DISABLED"));
+       //     }
         } else if (a == PexBlack1) {
             listener->panelChanged (EvPreProcessExpBlackone,  value );
         } else if (a == PexBlack2) {
@@ -179,8 +193,13 @@ void BayerRAWExposure::checkBoxToggled (CheckBox* c, CheckValue newval)
                 PexBlack3->setValue (PexBlack0->getValue());//two green together
             }
         }
+    } else if(c == Dehablack) {
+        if (listener) {
+            listener->panelChanged (EvDehablack, Dehablack->getLastActive() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+        }
     }
 }
+
 
 void BayerRAWExposure::setBatchMode(bool batchMode)
 {

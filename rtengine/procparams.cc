@@ -5804,6 +5804,7 @@ RAWParams::BayerSensor::BayerSensor() :
     black2(0.0),
     black3(0.0),
     twogreen(true),
+    Dehablack(false),
     linenoise(0),
     linenoiseDirection(LineNoiseDirection::BOTH),
     greenthresh(0),
@@ -5843,6 +5844,7 @@ bool RAWParams::BayerSensor::operator ==(const BayerSensor& other) const
         && black2 == other.black2
         && black3 == other.black3
         && twogreen == other.twogreen
+        && Dehablack == other.Dehablack
         && linenoise == other.linenoise
         && linenoiseDirection == other.linenoiseDirection
         && greenthresh == other.greenthresh
@@ -8074,6 +8076,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->raw.bayersensor.exBlack2, "RAW Bayer", "PreBlack2", raw.bayersensor.black2, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.exBlack3, "RAW Bayer", "PreBlack3", raw.bayersensor.black3, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.exTwoGreen, "RAW Bayer", "PreTwoGreen", raw.bayersensor.twogreen, keyFile);
+        saveToKeyfile(!pedited || pedited->raw.bayersensor.Dehablack, "RAW Bayer", "Dehablack", raw.bayersensor.Dehablack, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.linenoise, "RAW Bayer", "LineDenoise", raw.bayersensor.linenoise, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.linenoise, "RAW Bayer", "LineDenoiseDirection", toUnderlying(raw.bayersensor.linenoiseDirection), keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.greenEq, "RAW Bayer", "GreenEqThreshold", raw.bayersensor.greenthresh, keyFile);
@@ -11087,6 +11090,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "RAW Bayer", "PreBlack2", raw.bayersensor.black2, pedited->raw.bayersensor.exBlack2);
             assignFromKeyfile(keyFile, "RAW Bayer", "PreBlack3", raw.bayersensor.black3, pedited->raw.bayersensor.exBlack3);
             assignFromKeyfile(keyFile, "RAW Bayer", "PreTwoGreen", raw.bayersensor.twogreen, pedited->raw.bayersensor.exTwoGreen);
+            assignFromKeyfile(keyFile, "RAW Bayer", "Dehablack", raw.bayersensor.Dehablack, pedited->raw.bayersensor.Dehablack);
             assignFromKeyfile(keyFile, "RAW Bayer", "LineDenoise", raw.bayersensor.linenoise, pedited->raw.bayersensor.linenoise);
 
             if (keyFile.has_key("RAW Bayer", "LineDenoiseDirection")) {

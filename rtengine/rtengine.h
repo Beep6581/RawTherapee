@@ -380,7 +380,7 @@ class AutoBlackListener
 {
 public :
     virtual ~AutoBlackListener() = default;
-    virtual void autoBlackChanged(double reddeha, double greendeha, double bluedeha) = 0;
+    virtual void autoBlackChanged(double reddeha, double greendeha, double bluedeha, int nb) = 0;
 
 };
 

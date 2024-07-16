@@ -498,6 +498,7 @@ void ParamsEdited::set(bool v)
     raw.bayersensor.exBlack2 = v;
     raw.bayersensor.exBlack3 = v;
     raw.bayersensor.exTwoGreen = v;
+    raw.bayersensor.Dehablack = v;
     raw.bayersensor.dcbIterations = v;
     raw.bayersensor.dcbEnhance = v;
     //raw.bayersensor.allEnhance = v;
@@ -2007,6 +2008,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         raw.bayersensor.exBlack2 = raw.bayersensor.exBlack2 && p.raw.bayersensor.black2 == other.raw.bayersensor.black2;
         raw.bayersensor.exBlack3 = raw.bayersensor.exBlack3 && p.raw.bayersensor.black3 == other.raw.bayersensor.black3;
         raw.bayersensor.exTwoGreen = raw.bayersensor.exTwoGreen && p.raw.bayersensor.twogreen == other.raw.bayersensor.twogreen;
+        raw.bayersensor.Dehablack = raw.bayersensor.Dehablack && p.raw.bayersensor.Dehablack == other.raw.bayersensor.Dehablack;
         raw.bayersensor.dcbIterations = raw.bayersensor.dcbIterations && p.raw.bayersensor.dcb_iterations == other.raw.bayersensor.dcb_iterations;
         raw.bayersensor.dcbEnhance = raw.bayersensor.dcbEnhance && p.raw.bayersensor.dcb_enhance == other.raw.bayersensor.dcb_enhance;
         //raw.bayersensor.allEnhance = raw.bayersensor.allEnhance && p.raw.bayersensor.all_enhance == other.raw.bayersensor.all_enhance;
@@ -6975,6 +6977,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.raw.bayersensor.twogreen = mods.raw.bayersensor.twogreen;
     }
 
+    if (raw.bayersensor.Dehablack) {
+        toEdit.raw.bayersensor.Dehablack = mods.raw.bayersensor.Dehablack;
+    }
+
     if (raw.bayersensor.dcbIterations) {
         toEdit.raw.bayersensor.dcb_iterations = mods.raw.bayersensor.dcb_iterations;
     }
@@ -7883,7 +7889,7 @@ bool RAWParamsEdited::BayerSensor::isUnchanged() const
     return  method && border && imageNum && dcbIterations && dcbEnhance && lmmseIterations && dualDemosaicAutoContrast && dualDemosaicContrast /*&& allEnhance*/ &&  greenEq
             && pixelShiftMotionCorrectionMethod && pixelShiftEperIso && pixelShiftSigma && pixelShiftShowMotion && pixelShiftShowMotionMaskOnly
             && pixelShiftHoleFill && pixelShiftMedian && pixelShiftAverage && pixelShiftNonGreenCross && pixelShiftDemosaicMethod && pixelShiftGreen && pixelShiftBlur && pixelShiftSmooth && pixelShiftEqualBright && pixelShiftEqualBrightChannel
-            && linenoise && linenoiseDirection && pdafLinesFilter && exBlack0 && exBlack1 && exBlack2 && exBlack3 && exTwoGreen;
+            && linenoise && linenoiseDirection && pdafLinesFilter && exBlack0 && exBlack1 && exBlack2 && exBlack3 && exTwoGreen && Dehablack;
 }
 
 bool RAWParamsEdited::XTransSensor::isUnchanged() const
