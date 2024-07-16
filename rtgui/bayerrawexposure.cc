@@ -81,7 +81,6 @@ BayerRAWExposure::BayerRAWExposure () : FoldableToolPanel(this, TOOL_NAME, M("TP
 void BayerRAWExposure::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
 {
     disableListener ();
-    nbcount = 0;
     if(pedited ) {
         PexBlack0->setEditedState( pedited->raw.bayersensor.exBlack0 ? Edited : UnEdited );
         PexBlack1->setEditedState( pedited->raw.bayersensor.exBlack1 ? Edited : UnEdited );
@@ -136,11 +135,11 @@ BayerRAWExposure::~BayerRAWExposure()
 }
 
 
-void BayerRAWExposure::autoBlackChanged (double reddeha, double greendeha, double bluedeha, int nb)
+void BayerRAWExposure::autoBlackChanged (double reddeha, double greendeha, double bluedeha)
 {
     
     idle_register.add(
-        [this, reddeha, greendeha, bluedeha, nb]() -> bool
+        [this, reddeha, greendeha, bluedeha]() -> bool
         {
             if (reddeha != PexBlack1->getValue()) {
                 disableListener();

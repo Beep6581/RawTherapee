@@ -46,8 +46,8 @@ public:
     void checkBoxToggled     (CheckBox* c, CheckValue newval) override;
     void setAdjusterBehavior (bool pexblackadd);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
-    void autoBlackChanged (double reddeha, double greendeha, double bluedeha, int nb) override;
-    int nbcount;
+    void autoBlackChanged (double reddeha, double greendeha, double bluedeha) override;
+
 
 protected:
     Adjuster* PexBlack0;

@@ -388,20 +388,17 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         float reddeha = 0.f;
         float greendeha = 0.f;
         float bluedeha = 0.f;
-        int nb = 1;
         if ((todo & M_PREPROC)|| (!computeblack && rp.bayersensor.Dehablack) || (!highDetailPreprocessComputed && highDetailNeeded)) {
             imgsrc->setCurrentFrame(params->raw.bayersensor.imageNum);
             imgsrc->preprocess(rp, params->lensProf, params->coarse, reddeha, greendeha, bluedeha, true);
             if (ablListener) {
                 if(rp.bayersensor.Dehablack) {
-                    ablListener->autoBlackChanged(reddeha, greendeha, bluedeha, nb);
+                    ablListener->autoBlackChanged(reddeha, greendeha, bluedeha);
                 } else {
-                    ablListener->autoBlackChanged(0.f, 0.f, 0.f, nb);
+                    ablListener->autoBlackChanged(0.f, 0.f, 0.f);
                }
             }
-
             computeblack = true;
-            nb = 0;
             if (flatFieldAutoClipListener && rp.ff_AutoClipControl) {
                 flatFieldAutoClipListener->flatFieldAutoClipValueChanged(imgsrc->getFlatFieldAutoClipValue());
             }
