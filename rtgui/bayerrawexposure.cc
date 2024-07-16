@@ -142,12 +142,31 @@ void BayerRAWExposure::autoBlackChanged (double reddeha, double greendeha, doubl
     idle_register.add(
         [this, reddeha, greendeha, bluedeha, nb]() -> bool
         {
-            disableListener();
-            PexBlack1->setValue(reddeha);
-            PexBlack0->setValue(greendeha);
-            PexBlack3->setValue(greendeha);
-            PexBlack2->setValue(bluedeha);
-            enableListener();
+            if (reddeha != PexBlack1->getValue()) {
+                disableListener();
+                PexBlack1->setValue(reddeha);
+                enableListener();
+                adjusterChanged(PexBlack1, 0.);
+            }
+            if (greendeha != PexBlack0->getValue()) {
+                disableListener();
+                PexBlack0->setValue(greendeha);
+                enableListener();
+                adjusterChanged(PexBlack0, 0.);
+            }
+            if (greendeha != PexBlack3->getValue()) {
+                disableListener();
+                PexBlack3->setValue(greendeha);
+                enableListener();
+                adjusterChanged(PexBlack3, 0.);
+            }
+            if (bluedeha != PexBlack2->getValue()) {
+                disableListener();
+                PexBlack2->setValue(bluedeha);
+                enableListener();
+                adjusterChanged(PexBlack2, 0.);
+            }
+
             return false;
         }
     );
@@ -166,9 +185,6 @@ void BayerRAWExposure::adjusterChanged(Adjuster* a, double newval)
                 listener->panelChanged (EvPreProcessExpBlackzero,  value );
                 PexBlack3->setValue (PexBlack0->getValue());
             }
-       //     if(!Dehablack->getLastActive()) {
-       //         listener->panelChanged (EvDehablack,  M("GENERAL_DISABLED"));
-       //     }
         } else if (a == PexBlack1) {
             listener->panelChanged (EvPreProcessExpBlackone,  value );
         } else if (a == PexBlack2) {

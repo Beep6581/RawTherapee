@@ -92,6 +92,7 @@ protected:
     bool sharpMaskChanged;
     int scale;
     bool highDetailPreprocessComputed;
+    bool computeblack;
     bool highDetailRawComputed;
     bool allocated;
 
