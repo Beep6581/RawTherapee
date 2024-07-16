@@ -475,31 +475,31 @@ void Polyline::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned shor
     }
 }
 
-void Rectangle::setXYWH(int left, int top, int width, int height)
+void EditRectangle::setXYWH(int left, int top, int width, int height)
 {
     topLeft.set(left, top);
     bottomRight.set(left + width, top + height);
 }
 
-void Rectangle::setXYXY(int left, int top, int right, int bottom)
+void EditRectangle::setXYXY(int left, int top, int right, int bottom)
 {
     topLeft.set(left, top);
     bottomRight.set(right, bottom);
 }
 
-void Rectangle::setXYWH(rtengine::Coord topLeft, rtengine::Coord widthHeight)
+void EditRectangle::setXYWH(rtengine::Coord topLeft, rtengine::Coord widthHeight)
 {
     this->topLeft = topLeft;
     this->bottomRight = topLeft + widthHeight;
 }
 
-void Rectangle::setXYXY(rtengine::Coord topLeft, rtengine::Coord bottomRight)
+void EditRectangle::setXYXY(rtengine::Coord topLeft, rtengine::Coord bottomRight)
 {
     this->topLeft = topLeft;
     this->bottomRight = bottomRight;
 }
 
-void Rectangle::drawOuterGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
+void EditRectangle::drawOuterGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
 {
     double lineWidth = getOuterLineWidth();
     if ((flags & F_VISIBLE) && state != INSENSITIVE && lineWidth > 0. && innerLineWidth > 0.) {
@@ -544,7 +544,7 @@ void Rectangle::drawOuterGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuf
     }
 }
 
-void Rectangle::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
+void EditRectangle::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
 {
     if (flags & F_VISIBLE) {
         if (state != INSENSITIVE) {
@@ -604,7 +604,7 @@ void Rectangle::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuf
     }
 }
 
-void Rectangle::drawToMOChannel(Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
+void EditRectangle::drawToMOChannel(Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
 {
     if (flags & F_HOVERABLE) {
         cr->set_line_width( getMouseOverLineWidth() );
@@ -989,11 +989,11 @@ void OPIcon::drivenPointToRectangle(const rtengine::Coord &pos,
     bottomRight.y = topLeft.y + H - 1;
 }
 
-OPIcon::OPIcon(const Cairo::RefPtr<RTSurface> &normal,
-               const Cairo::RefPtr<RTSurface> &active,
-               const Cairo::RefPtr<RTSurface> &prelight,
-               const Cairo::RefPtr<RTSurface> &dragged,
-               const Cairo::RefPtr<RTSurface> &insensitive,
+OPIcon::OPIcon(const std::shared_ptr<RTSurface> &normal,
+               const std::shared_ptr<RTSurface> &active,
+               const std::shared_ptr<RTSurface> &prelight,
+               const std::shared_ptr<RTSurface> &dragged,
+               const std::shared_ptr<RTSurface>&insensitive,
                DrivenPoint drivenPoint) :
     drivenPoint(drivenPoint)
 {
@@ -1022,48 +1022,48 @@ OPIcon::OPIcon(Glib::ustring normalImage, Glib::ustring activeImage, Glib::ustri
                Glib::ustring  draggedImage, Glib::ustring insensitiveImage, DrivenPoint drivenPoint) : drivenPoint(drivenPoint)
 {
     if (!normalImage.empty()) {
-        normalImg = Cairo::RefPtr<RTSurface>(new RTSurface(normalImage));
+        normalImg = std::shared_ptr<RTSurface>(new RTSurface(normalImage, Gtk::ICON_SIZE_MENU));
     }
 
     if (!prelightImage.empty()) {
-        prelightImg = Cairo::RefPtr<RTSurface>(new RTSurface(prelightImage));
+        prelightImg = std::shared_ptr<RTSurface>(new RTSurface(prelightImage, Gtk::ICON_SIZE_MENU));
     }
 
     if (!activeImage.empty()) {
-        activeImg = Cairo::RefPtr<RTSurface>(new RTSurface(activeImage));
+        activeImg = std::shared_ptr<RTSurface>(new RTSurface(activeImage, Gtk::ICON_SIZE_MENU));
     }
 
     if (!draggedImage.empty()) {
-        draggedImg = Cairo::RefPtr<RTSurface>(new RTSurface(draggedImage));
+        draggedImg = std::shared_ptr<RTSurface>(new RTSurface(draggedImage, Gtk::ICON_SIZE_MENU));
     }
 
     if (!insensitiveImage.empty()) {
-        insensitiveImg = Cairo::RefPtr<RTSurface>(new RTSurface(insensitiveImage));
+        insensitiveImg = std::shared_ptr<RTSurface>(new RTSurface(insensitiveImage, Gtk::ICON_SIZE_MENU));
     }
 }
 
-const Cairo::RefPtr<RTSurface> OPIcon::getNormalImg()
+const std::shared_ptr<RTSurface> OPIcon::getNormalImg()
 {
     return normalImg;
 }
-const Cairo::RefPtr<RTSurface> OPIcon::getPrelightImg()
+const std::shared_ptr<RTSurface> OPIcon::getPrelightImg()
 {
     return prelightImg;
 }
-const Cairo::RefPtr<RTSurface> OPIcon::getActiveImg()
+const std::shared_ptr<RTSurface> OPIcon::getActiveImg()
 {
     return activeImg;
 }
-const Cairo::RefPtr<RTSurface> OPIcon::getDraggedImg()
+const std::shared_ptr<RTSurface> OPIcon::getDraggedImg()
 {
     return draggedImg;
 }
-const Cairo::RefPtr<RTSurface> OPIcon::getInsensitiveImg()
+const std::shared_ptr<RTSurface> OPIcon::getInsensitiveImg()
 {
     return insensitiveImg;
 }
 
-void OPIcon::drawImage(Cairo::RefPtr<RTSurface> &img,
+void OPIcon::drawImage(std::shared_ptr<RTSurface> &img,
                        Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer,
                        EditCoordSystem &coordSystem)
 {
@@ -1089,7 +1089,7 @@ void OPIcon::drawImage(Cairo::RefPtr<RTSurface> &img,
     cr->fill();
 }
 
-void OPIcon::drawMOImage(Cairo::RefPtr<RTSurface> &img, Cairo::RefPtr<Cairo::Context> &cr,
+void OPIcon::drawMOImage(std::shared_ptr<RTSurface> &img, Cairo::RefPtr<Cairo::Context> &cr,
                          unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
 {
     // test of F_HOVERABLE has already been done

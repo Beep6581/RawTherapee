@@ -23,6 +23,7 @@
 #include "../rtengine/utils.h"
 #include "../rtengine/procparams.h"
 #include "rtimage.h"
+#include "rtscalable.h"
 #include "multilangmgr.h"
 
 #include <assert.h>
@@ -30,12 +31,6 @@
 //extern Glib::Threads::Thread* mainThread;
 
 using namespace std;
-
-Glib::RefPtr<RTImage> MyExpander::inconsistentImage;
-Glib::RefPtr<RTImage> MyExpander::enabledImage;
-Glib::RefPtr<RTImage> MyExpander::disabledImage;
-Glib::RefPtr<RTImage> MyExpander::openedImage;
-Glib::RefPtr<RTImage> MyExpander::closedImage;
 
 IdleRegister::~IdleRegister()
 {
@@ -81,59 +76,6 @@ void IdleRegister::destroy()
     ids.clear();
     mutex.unlock();
 }
-
-/*
-gboolean giveMeAGo(void* data) {
-    GThreadLock *threadMutex = static_cast<GThreadLock*>(data);
-    printf("A\n");
-    Glib::Threads::Mutex::Lock GUILock(threadMutex->GUI);
-    printf("B\n");
-    {
-    Glib::Threads::Mutex::Lock operationLock(threadMutex->operation);
-    printf("C\n");
-
-    threadMutex->operationCond.signal();
-    printf("D\n");
-    operationLock.release();  // because we're not sure that "lock" destructor happens here...
-    }
-    threadMutex->GUICond.wait(threadMutex->GUI);
-    printf("E\n");
-
-    GUILock.release();
-
-    return false;
-}
-
-GThreadLock::GThreadLock() : sameThread(false) {
-    if (Glib::Threads::Thread::self() == mainThread) {
-        sameThread = true;
-        return;
-    }
-
-    printf("10\n");
-    {
-    Glib::Threads::Mutex::Lock operationLock(operation);
-
-    printf("20\n");
-    gdk_threads_add_idle(giveMeAGo, this);
-
-    printf("30\n");
-    operationCond.wait(operation);
-    printf("40\n");
-    operationLock.release();
-    }
-}
-
-GThreadLock::~GThreadLock() {
-    if (!sameThread) {
-        printf("50\n");
-        Glib::Threads::Mutex::Lock lock(GUI);
-        printf("60\n");
-        GUICond.signal();
-        printf("Fin\n");
-    }
-}
-*/
 
 Glib::ustring escapeHtmlChars(const Glib::ustring &src)
 {
@@ -184,13 +126,14 @@ Gtk::Border getPadding(const Glib::RefPtr<Gtk::StyleContext> style)
         return padding;
     }
 
-    int s = (double)RTScalable::getScale();
     padding = style->get_padding();
-    if (s > 1) {
-        padding.set_left(padding.get_left() * s);
-        padding.set_right(padding.get_right() * s);
-        padding.set_top(padding.get_top() * s);
-        padding.set_bottom(padding.get_bottom() * s);
+
+    if (RTScalable::getGlobalScale() > 1.0) {
+        // Scale pixel border size based on DPI and Scale
+        padding.set_left(RTScalable::scalePixelSize(padding.get_left()));
+        padding.set_right(RTScalable::scalePixelSize(padding.get_right()));
+        padding.set_top(RTScalable::scalePixelSize(padding.get_top()));
+        padding.set_bottom(RTScalable::scalePixelSize(padding.get_bottom()));
     }
 
     return padding;
@@ -221,7 +164,7 @@ bool confirmOverwrite (Gtk::Window& parent, const std::string& filename)
     bool safe = true;
 
     if (Glib::file_test (filename, Glib::FILE_TEST_EXISTS)) {
-        Glib::ustring msg_ = Glib::ustring ("<b>\"") + Glib::path_get_basename (filename) + "\": "
+        Glib::ustring msg_ = Glib::ustring ("<b>\"") + escapeHtmlChars(Glib::path_get_basename (filename)) + "\": "
                              + M("MAIN_MSG_ALREADYEXISTS") + "</b>\n" + M("MAIN_MSG_QOVERWRITE");
         Gtk::MessageDialog msgd (parent, msg_, true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
         safe = (msgd.run () == Gtk::RESPONSE_YES);
@@ -232,7 +175,7 @@ bool confirmOverwrite (Gtk::Window& parent, const std::string& filename)
 
 void writeFailed (Gtk::Window& parent, const std::string& filename)
 {
-    Glib::ustring msg_ = Glib::ustring::compose(M("MAIN_MSG_WRITEFAILED"), filename);
+    Glib::ustring msg_ = Glib::ustring::compose(M("MAIN_MSG_WRITEFAILED"), escapeHtmlChars(filename));
     Gtk::MessageDialog msgd (parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
     msgd.run ();
 }
@@ -267,7 +210,7 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
     cr->fill ();
 
     // rectangle around the cropped area and guides
-    if (cparams.guide != "None" && drawGuide) {
+    if (cparams.guide != rtengine::procparams::CropParams::Guide::NONE && drawGuide) {
         double rectx1 = round(c1x) + imx + 0.5;
         double recty1 = round(c1y) + imy + 0.5;
         double rectx2 = round(c2x) + imx + 0.5;
@@ -296,60 +239,98 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
         cr->stroke ();
         cr->set_dash (std::valarray<double>(), 0);
 
-        if (cparams.guide != "Rule of diagonals" && cparams.guide != "Golden Triangle 1" && cparams.guide != "Golden Triangle 2") {
+        if (
+            cparams.guide != rtengine::procparams::CropParams::Guide::RULE_OF_DIAGONALS
+            && cparams.guide != rtengine::procparams::CropParams::Guide::GOLDEN_TRIANGLE_1
+            && cparams.guide != rtengine::procparams::CropParams::Guide::GOLDEN_TRIANGLE_2
+        ) {
             // draw guide lines
             std::vector<double> horiz_ratios;
             std::vector<double> vert_ratios;
 
-            if (cparams.guide == "Rule of thirds") {
-                horiz_ratios.push_back (1.0 / 3.0);
-                horiz_ratios.push_back (2.0 / 3.0);
-                vert_ratios.push_back (1.0 / 3.0);
-                vert_ratios.push_back (2.0 / 3.0);
-            } else if (!strncmp(cparams.guide.data(), "Harmonic means", 14)) {
-                horiz_ratios.push_back (1.0 - 0.618);
-                horiz_ratios.push_back (0.618);
-                vert_ratios.push_back (0.618);
-                vert_ratios.push_back (1.0 - 0.618);
-            } else if (cparams.guide == "Grid") {
-                // To have even distribution, normalize it a bit
-                const int longSideNumLines = 10;
+            switch (cparams.guide) {
+                case rtengine::procparams::CropParams::Guide::NONE:
+                case rtengine::procparams::CropParams::Guide::FRAME:
+                case rtengine::procparams::CropParams::Guide::RULE_OF_DIAGONALS:
+                case rtengine::procparams::CropParams::Guide::GOLDEN_TRIANGLE_1:
+                case rtengine::procparams::CropParams::Guide::GOLDEN_TRIANGLE_2: {
+                    break;
+                }
 
-                int w = rectx2 - rectx1, h = recty2 - recty1;
+                case rtengine::procparams::CropParams::Guide::RULE_OF_THIRDS: {
+                    horiz_ratios.push_back (1.0 / 3.0);
+                    horiz_ratios.push_back (2.0 / 3.0);
+                    vert_ratios.push_back (1.0 / 3.0);
+                    vert_ratios.push_back (2.0 / 3.0);
+                    break;
+                }
 
-                if (w > longSideNumLines && h > longSideNumLines) {
-                    if (w > h) {
-                        for (int i = 1; i < longSideNumLines; i++) {
-                            vert_ratios.push_back ((double)i / longSideNumLines);
-                        }
+                case rtengine::procparams::CropParams::Guide::HARMONIC_MEANS: {
+                    horiz_ratios.push_back (1.0 - 0.618);
+                    horiz_ratios.push_back (0.618);
+                    vert_ratios.push_back (0.618);
+                    vert_ratios.push_back (1.0 - 0.618);
+                    break;
+                }
 
-                        int shortSideNumLines = (int)round(h * (double)longSideNumLines / w);
+                case rtengine::procparams::CropParams::Guide::GRID: {
+                    // To have even distribution, normalize it a bit
+                    const int longSideNumLines = 10;
 
-                        for (int i = 1; i < shortSideNumLines; i++) {
-                            horiz_ratios.push_back ((double)i / shortSideNumLines);
-                        }
-                    } else {
-                        for (int i = 1; i < longSideNumLines; i++) {
-                            horiz_ratios.push_back ((double)i / longSideNumLines);
-                        }
+                    int w = rectx2 - rectx1, h = recty2 - recty1;
 
-                        int shortSideNumLines = (int)round(w * (double)longSideNumLines / h);
+                    if (w > longSideNumLines && h > longSideNumLines) {
+                        if (w > h) {
+                            for (int i = 1; i < longSideNumLines; i++) {
+                                vert_ratios.push_back ((double)i / longSideNumLines);
+                            }
 
-                        for (int i = 1; i < shortSideNumLines; i++) {
-                            vert_ratios.push_back ((double)i / shortSideNumLines);
+                            int shortSideNumLines = (int)round(h * (double)longSideNumLines / w);
+
+                            for (int i = 1; i < shortSideNumLines; i++) {
+                                horiz_ratios.push_back ((double)i / shortSideNumLines);
+                            }
+                        } else {
+                            for (int i = 1; i < longSideNumLines; i++) {
+                                horiz_ratios.push_back ((double)i / longSideNumLines);
+                            }
+
+                            int shortSideNumLines = (int)round(w * (double)longSideNumLines / h);
+
+                            for (int i = 1; i < shortSideNumLines; i++) {
+                                vert_ratios.push_back ((double)i / shortSideNumLines);
+                            }
                         }
                     }
+                    break;
                 }
-            } else if (cparams.guide == "ePassport") {
-                /* Official measurements do not specify exact ratios, just min/max measurements within which the eyes and chin-crown distance must lie. I averaged those measurements to produce these guides.
-                 * The first horizontal guide is for the crown, the second is roughly for the nostrils, the third is for the chin.
-                 * http://www.homeoffice.gov.uk/agencies-public-bodies/ips/passports/information-photographers/
-                 * "(...) the measurement of the face from the bottom of the chin to the crown (ie the top of the head, not the top of the hair) is between 29mm and 34mm."
-                 */
-                horiz_ratios.push_back (7.0 / 45.0);
-                horiz_ratios.push_back (26.0 / 45.0);
-                horiz_ratios.push_back (37.0 / 45.0);
-                vert_ratios.push_back (0.5);
+
+                case rtengine::procparams::CropParams::Guide::EPASSPORT: {
+                    /* Official measurements do not specify exact ratios, just min/max measurements within which the eyes and chin-crown distance must lie. I averaged those measurements to produce these guides.
+                     * The first horizontal guide is for the crown, the second is roughly for the nostrils, the third is for the chin.
+                     * http://www.homeoffice.gov.uk/agencies-public-bodies/ips/passports/information-photographers/
+                     * "(...) the measurement of the face from the bottom of the chin to the crown (ie the top of the head, not the top of the hair) is between 29mm and 34mm."
+                     */
+                    horiz_ratios.push_back (7.0 / 45.0);
+                    horiz_ratios.push_back (26.0 / 45.0);
+                    horiz_ratios.push_back (37.0 / 45.0);
+                    vert_ratios.push_back (0.5);
+                    break;
+                }
+
+                case rtengine::procparams::CropParams::Guide::CENTERED_SQUARE: {
+                    const double w = rectx2 - rectx1, h = recty2 - recty1;
+                    double ratio = w / h;
+                    if (ratio < 1.0) {
+                        ratio = 1.0 / ratio;
+                        horiz_ratios.push_back((ratio - 1.0) / (2.0 * ratio));
+                        horiz_ratios.push_back(1.0 - (ratio - 1.0) / (2.0 * ratio));
+                    } else {
+                        vert_ratios.push_back((ratio - 1.0) / (2.0 * ratio));
+                        vert_ratios.push_back(1.0 - (ratio - 1.0) / (2.0 * ratio));
+                    }
+                    break;
+                }
             }
 
             // Horizontals
@@ -385,7 +366,7 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
                 ds.resize (0);
                 cr->set_dash (ds, 0);
             }
-        } else if (cparams.guide == "Rule of diagonals") {
+        } else if (cparams.guide == rtengine::procparams::CropParams::Guide::RULE_OF_DIAGONALS) {
             double corners_from[4][2];
             double corners_to[4][2];
             int mindim = min(rectx2 - rectx1, recty2 - recty1);
@@ -421,9 +402,12 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
                 ds.resize (0);
                 cr->set_dash (ds, 0);
             }
-        } else if (cparams.guide == "Golden Triangle 1" || cparams.guide == "Golden Triangle 2") {
+        } else if (
+            cparams.guide == rtengine::procparams::CropParams::Guide::GOLDEN_TRIANGLE_1
+            || cparams.guide == rtengine::procparams::CropParams::Guide::GOLDEN_TRIANGLE_2
+        ) {
             // main diagonal
-            if(cparams.guide == "Golden Triangle 2") {
+            if(cparams.guide == rtengine::procparams::CropParams::Guide::GOLDEN_TRIANGLE_2) {
                 std::swap(rectx1, rectx2);
             }
 
@@ -548,27 +532,12 @@ void ExpanderBox::hideBox()
     Gtk::EventBox::hide();
 }
 
-void MyExpander::init()
-{
-    if (!inconsistentImage) {  // if one is null, all are null
-        inconsistentImage = Glib::RefPtr<RTImage>(new RTImage("power-inconsistent-small.png"));
-        enabledImage = Glib::RefPtr<RTImage>(new RTImage("power-on-small.png"));
-        disabledImage = Glib::RefPtr<RTImage>(new RTImage("power-off-small.png"));
-        openedImage = Glib::RefPtr<RTImage>(new RTImage("expander-open-small.png"));
-        closedImage = Glib::RefPtr<RTImage>(new RTImage("expander-closed-small.png"));
-    }
-}
-
-void MyExpander::cleanup()
-{
-    inconsistentImage.reset();
-    enabledImage.reset();
-    disabledImage.reset();
-    openedImage.reset();
-    closedImage.reset();
-}
-
 MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
+    inconsistentImage("power-inconsistent-small"),
+    enabledImage("power-on-small"),
+    disabledImage("power-off-small"),
+    openedImage("expander-open-small"),
+    closedImage("expander-closed-small"),
     enabled(false), inconsistent(false), flushEvent(false), expBox(nullptr),
     child(nullptr), headerWidget(nullptr), statusImage(nullptr),
     label(nullptr), useEnabled(useEnabled)
@@ -625,6 +594,11 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
 }
 
 MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
+    inconsistentImage("power-inconsistent-small"),
+    enabledImage("power-on-small"),
+    disabledImage("power-off-small"),
+    openedImage("expander-open-small"),
+    closedImage("expander-closed-small"),
     enabled(false), inconsistent(false), flushEvent(false), expBox(nullptr),
     child(nullptr), headerWidget(nullptr),
     label(nullptr), useEnabled(useEnabled)
@@ -766,13 +740,13 @@ void MyExpander::set_inconsistent(bool isInconsistent)
 
         if (useEnabled) {
             if (isInconsistent) {
-                statusImage->set(inconsistentImage->get_surface());
+                statusImage->set_from_icon_name(inconsistentImage);
             } else {
                 if (enabled) {
-                    statusImage->set(enabledImage->get_surface());
+                    statusImage->set_from_icon_name(enabledImage);
                     get_style_context()->add_class("enabledTool");
                 } else {
-                    statusImage->set(disabledImage->get_surface());
+                    statusImage->set_from_icon_name(disabledImage);
                     get_style_context()->remove_class("enabledTool");
                 }
             }
@@ -799,7 +773,7 @@ void MyExpander::setEnabled(bool isEnabled)
                 enabled = false;
 
                 if (!inconsistent) {
-                    statusImage->set(disabledImage->get_surface());
+                    statusImage->set_from_icon_name(disabledImage);
                     get_style_context()->remove_class("enabledTool");
                     message.emit();
                 }
@@ -807,7 +781,7 @@ void MyExpander::setEnabled(bool isEnabled)
                 enabled = true;
 
                 if (!inconsistent) {
-                    statusImage->set(enabledImage->get_surface());
+                    statusImage->set_from_icon_name(enabledImage);
                     get_style_context()->add_class("enabledTool");
                     message.emit();
                 }
@@ -838,9 +812,9 @@ void MyExpander::set_expanded( bool expanded )
 
     if (!useEnabled) {
         if (expanded ) {
-            statusImage->set(openedImage->get_surface());
+            statusImage->set_from_icon_name(openedImage);
         } else {
-            statusImage->set(closedImage->get_surface());
+            statusImage->set_from_icon_name(closedImage);
         }
     }
 
@@ -883,9 +857,9 @@ bool MyExpander::on_toggle(GdkEventButton* event)
 
     if (!useEnabled) {
         if (isVisible) {
-            statusImage->set(closedImage->get_surface());
+            statusImage->set_from_icon_name(closedImage);
         } else {
-            statusImage->set(openedImage->get_surface());
+            statusImage->set_from_icon_name(openedImage);
         }
     }
 
@@ -910,11 +884,11 @@ bool MyExpander::on_enabled_change(GdkEventButton* event)
     if (event->button == 1) {
         if (enabled) {
             enabled = false;
-            statusImage->set(disabledImage->get_surface());
+            statusImage->set_from_icon_name(disabledImage);
             get_style_context()->remove_class("enabledTool");
         } else {
             enabled = true;
-            statusImage->set(enabledImage->get_surface());
+            statusImage->set_from_icon_name(enabledImage);
             get_style_context()->add_class("enabledTool");
         }
 
@@ -978,17 +952,17 @@ bool MyScrolledWindow::on_scroll_event (GdkEventScroll* event)
 
 void MyScrolledWindow::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
-    natural_width = minimum_width = 100 * RTScalable::getScale();
+    natural_width = minimum_width = RTScalable::scalePixelSize(100);
 }
 
 void MyScrolledWindow::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
 {
-    natural_height = minimum_height = 50 * RTScalable::getScale();
+    natural_height = minimum_height = RTScalable::scalePixelSize(50);
 }
 
 void MyScrolledWindow::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
 {
-    natural_height = minimum_height = 50 * RTScalable::getScale();
+    natural_height = minimum_height = RTScalable::scalePixelSize(50);
 }
 
 /*
@@ -1003,7 +977,7 @@ MyScrolledToolbar::MyScrolledToolbar ()
     set_policy (Gtk::POLICY_EXTERNAL, Gtk::POLICY_NEVER);
     get_style_context()->add_class("scrollableToolbar");
 
-    // Works fine with Gtk 3.22, but a a custom made get_preferred_height had to be created as a workaround
+    // Works fine with Gtk 3.22, but a custom made get_preferred_height had to be created as a workaround
     // taken from the official Gtk3.22 source code
     //set_propagate_natural_height(true);
 }
@@ -1067,7 +1041,7 @@ void MyScrolledToolbar::get_preferred_height_vfunc (int &minimumHeight, int &nat
 
 MyComboBoxText::MyComboBoxText (bool has_entry) : Gtk::ComboBoxText(has_entry)
 {
-    minimumWidth = naturalWidth = 70;
+    minimumWidth = naturalWidth = RTScalable::scalePixelSize(70);
     Gtk::CellRendererText* cellRenderer = dynamic_cast<Gtk::CellRendererText*>(get_first_cell());
     cellRenderer->property_ellipsize() = Pango::ELLIPSIZE_MIDDLE;
     add_events(Gdk::SCROLL_MASK|Gdk::SMOOTH_SCROLL_MASK);
@@ -1091,12 +1065,12 @@ bool MyComboBoxText::on_scroll_event (GdkEventScroll* event)
 void MyComboBoxText::setPreferredWidth (int minimum_width, int natural_width)
 {
     if (natural_width == -1 && minimum_width == -1) {
-        naturalWidth = minimumWidth = 70 * RTScalable::getScale();
+        naturalWidth = minimumWidth = RTScalable::scalePixelSize(70);
     } else if (natural_width == -1) {
         naturalWidth =  minimumWidth = minimum_width;
     } else if (minimum_width == -1) {
         naturalWidth = natural_width;
-        minimumWidth = rtengine::max(naturalWidth / 2, 20);
+        minimumWidth = rtengine::max(naturalWidth / 2, RTScalable::scalePixelSize(20));
         minimumWidth = rtengine::min(naturalWidth, minimumWidth);
     } else {
         naturalWidth = natural_width;
@@ -1106,19 +1080,20 @@ void MyComboBoxText::setPreferredWidth (int minimum_width, int natural_width)
 
 void MyComboBoxText::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
-    natural_width = rtengine::max(naturalWidth, 10 * RTScalable::getScale());
-    minimum_width = rtengine::max(minimumWidth, 10 * RTScalable::getScale());
+    natural_width = rtengine::max(naturalWidth, RTScalable::scalePixelSize(10));
+    minimum_width = rtengine::max(minimumWidth, RTScalable::scalePixelSize(10));
 }
+
 void MyComboBoxText::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
 {
-    natural_width = rtengine::max(naturalWidth, 10 * RTScalable::getScale());
-    minimum_width = rtengine::max(minimumWidth, 10 * RTScalable::getScale());
+    natural_width = rtengine::max(naturalWidth, RTScalable::scalePixelSize(10));
+    minimum_width = rtengine::max(minimumWidth, RTScalable::scalePixelSize(10));
 }
 
 
 MyComboBox::MyComboBox ()
 {
-    minimumWidth = naturalWidth = 70 * RTScalable::getScale();
+    minimumWidth = naturalWidth = RTScalable::scalePixelSize(70);
 }
 
 bool MyComboBox::on_scroll_event (GdkEventScroll* event)
@@ -1137,12 +1112,12 @@ bool MyComboBox::on_scroll_event (GdkEventScroll* event)
 void MyComboBox::setPreferredWidth (int minimum_width, int natural_width)
 {
     if (natural_width == -1 && minimum_width == -1) {
-        naturalWidth = minimumWidth = 70 * RTScalable::getScale();
+        naturalWidth = minimumWidth = RTScalable::scalePixelSize(70);
     } else if (natural_width == -1) {
         naturalWidth =  minimumWidth = minimum_width;
     } else if (minimum_width == -1) {
         naturalWidth = natural_width;
-        minimumWidth = rtengine::max(naturalWidth / 2, 20);
+        minimumWidth = rtengine::max(naturalWidth / 2, RTScalable::scalePixelSize(20));
         minimumWidth = rtengine::min(naturalWidth, minimumWidth);
     } else {
         naturalWidth = natural_width;
@@ -1152,13 +1127,14 @@ void MyComboBox::setPreferredWidth (int minimum_width, int natural_width)
 
 void MyComboBox::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
-    natural_width = rtengine::max(naturalWidth, 10 * RTScalable::getScale());
-    minimum_width = rtengine::max(minimumWidth, 10 * RTScalable::getScale());
+    natural_width = rtengine::max(naturalWidth, RTScalable::scalePixelSize(10));
+    minimum_width = rtengine::max(minimumWidth, RTScalable::scalePixelSize(10));
 }
+
 void MyComboBox::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
 {
-    natural_width = rtengine::max(naturalWidth, 10 * RTScalable::getScale());
-    minimum_width = rtengine::max(minimumWidth, 10 * RTScalable::getScale());
+    natural_width = rtengine::max(naturalWidth, RTScalable::scalePixelSize(10));
+    minimum_width = rtengine::max(minimumWidth, RTScalable::scalePixelSize(10));
 }
 
 MySpinButton::MySpinButton ()
@@ -1213,7 +1189,7 @@ bool MySpinButton::on_key_press_event (GdkEventKey* event)
     } else {
         if (event->keyval == GDK_KEY_comma || event->keyval == GDK_KEY_KP_Decimal) {
             set_text(get_text() + ".");
-            set_position(get_text().length()); // When setting text, cursor position is reseted at text start. Avoiding this with this code
+            set_position(get_text().length()); // When setting text, cursor position is reset at text start. Avoiding this with this code
             return true; // Event is not propagated further
         }
 
@@ -1258,23 +1234,201 @@ bool MyHScale::on_key_press_event (GdkEventKey* event)
     }
 }
 
-MyFileChooserButton::MyFileChooserButton(const Glib::ustring &title, Gtk::FileChooserAction action):
-    title_(title),
-    action_(action),
-    lbl_("", Gtk::ALIGN_START),
-    show_hidden_(false)
+class MyFileChooserWidget::Impl
 {
-    lbl_.set_ellipsize(Pango::ELLIPSIZE_MIDDLE);
-    lbl_.set_justify(Gtk::JUSTIFY_LEFT);
-    set_none();
-    box_.pack_start(lbl_, true, true);
-    Gtk::Image *img = Gtk::manage(new Gtk::Image());
-    img->set_from_icon_name("folder-open", Gtk::ICON_SIZE_BUTTON);
-    box_.pack_start(*Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_VERTICAL)), false, false, 5);
-    box_.pack_start(*img, false, false);
-    box_.show_all_children();
-    add(box_);
-    signal_clicked().connect(sigc::mem_fun(*this, &MyFileChooserButton::show_chooser));
+public:
+    Impl(const Glib::ustring &title, Gtk::FileChooserAction action) :
+        title_(title),
+        action_(action)
+    {
+    }
+
+    Glib::ustring title_;
+    Gtk::FileChooserAction action_;
+    std::string filename_;
+    std::string current_folder_;
+    std::vector<Glib::RefPtr<Gtk::FileFilter>> file_filters_;
+    Glib::RefPtr<Gtk::FileFilter> cur_filter_;
+    std::vector<std::string> shortcut_folders_;
+    bool show_hidden_{false};
+    sigc::signal<void> selection_changed_;
+};
+
+
+MyFileChooserWidget::MyFileChooserWidget(const Glib::ustring &title, Gtk::FileChooserAction action) :
+    pimpl(new Impl(title, action))
+{
+}
+
+
+std::unique_ptr<Gtk::Image> MyFileChooserWidget::make_folder_image()
+{
+    return std::unique_ptr<Gtk::Image>(new RTImage("folder-open-small", Gtk::ICON_SIZE_BUTTON));
+}
+
+void MyFileChooserWidget::show_chooser(Gtk::Widget *parent)
+{
+    Gtk::FileChooserDialog dlg(getToplevelWindow(parent), pimpl->title_, pimpl->action_);
+    dlg.add_button(M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
+    dlg.add_button(M(pimpl->action_ == Gtk::FILE_CHOOSER_ACTION_SAVE ? "GENERAL_SAVE" : "GENERAL_OPEN"), Gtk::RESPONSE_OK);
+    dlg.set_filename(pimpl->filename_);
+    for (auto &f : pimpl->file_filters_) {
+        dlg.add_filter(f);
+    }
+    if (pimpl->cur_filter_) {
+        dlg.set_filter(pimpl->cur_filter_);
+    }
+    for (auto &f : pimpl->shortcut_folders_) {
+        dlg.add_shortcut_folder(f);
+    }
+    if (!pimpl->current_folder_.empty()) {
+        dlg.set_current_folder(pimpl->current_folder_);
+    }
+    dlg.set_show_hidden(pimpl->show_hidden_);
+    int res = dlg.run();
+    if (res == Gtk::RESPONSE_OK) {
+        pimpl->filename_ = dlg.get_filename();
+        pimpl->current_folder_ = dlg.get_current_folder();
+        on_filename_set();
+        pimpl->selection_changed_.emit();
+    }
+}
+
+
+void MyFileChooserWidget::on_filename_set()
+{
+    // Sub-classes decide if anything needs to be done.
+}
+
+
+sigc::signal<void> &MyFileChooserWidget::signal_selection_changed()
+{
+    return pimpl->selection_changed_;
+}
+
+
+sigc::signal<void> &MyFileChooserWidget::signal_file_set()
+{
+    return pimpl->selection_changed_;
+}
+
+
+std::string MyFileChooserWidget::get_filename() const
+{
+    return pimpl->filename_;
+}
+
+
+bool MyFileChooserWidget::set_filename(const std::string &filename)
+{
+    pimpl->filename_ = filename;
+    on_filename_set();
+    return true;
+}
+
+
+void MyFileChooserWidget::add_filter(const Glib::RefPtr<Gtk::FileFilter> &filter)
+{
+    pimpl->file_filters_.push_back(filter);
+}
+
+
+void MyFileChooserWidget::remove_filter(const Glib::RefPtr<Gtk::FileFilter> &filter)
+{
+    auto it = std::find(pimpl->file_filters_.begin(), pimpl->file_filters_.end(), filter);
+    if (it != pimpl->file_filters_.end()) {
+        pimpl->file_filters_.erase(it);
+    }
+}
+
+
+void MyFileChooserWidget::set_filter(const Glib::RefPtr<Gtk::FileFilter> &filter)
+{
+    pimpl->cur_filter_ = filter;
+}
+
+
+std::vector<Glib::RefPtr<Gtk::FileFilter>> MyFileChooserWidget::list_filters() const
+{
+    return pimpl->file_filters_;
+}
+
+
+bool MyFileChooserWidget::set_current_folder(const std::string &filename)
+{
+    pimpl->current_folder_ = filename;
+    if (pimpl->action_ == Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER) {
+        set_filename(filename);
+    }
+    return true;
+}
+
+std::string MyFileChooserWidget::get_current_folder() const
+{
+    return pimpl->current_folder_;
+}
+
+
+bool MyFileChooserWidget::add_shortcut_folder(const std::string &folder)
+{
+    pimpl->shortcut_folders_.push_back(folder);
+    return true;
+}
+
+
+bool MyFileChooserWidget::remove_shortcut_folder(const std::string &folder)
+{
+    auto it = std::find(pimpl->shortcut_folders_.begin(), pimpl->shortcut_folders_.end(), folder);
+    if (it != pimpl->shortcut_folders_.end()) {
+        pimpl->shortcut_folders_.erase(it);
+    }
+    return true;
+}
+
+
+void MyFileChooserWidget::unselect_all()
+{
+    pimpl->filename_ = "";
+    on_filename_set();
+}
+
+
+void MyFileChooserWidget::unselect_filename(const std::string &filename)
+{
+    if (pimpl->filename_ == filename) {
+        unselect_all();
+    }
+}
+
+
+void MyFileChooserWidget::set_show_hidden(bool yes)
+{
+    pimpl->show_hidden_ = yes;
+}
+
+
+class MyFileChooserButton::Impl
+{
+public:
+    Gtk::Box box_;
+    Gtk::Label lbl_{"", Gtk::ALIGN_START};
+};
+
+MyFileChooserButton::MyFileChooserButton(const Glib::ustring &title, Gtk::FileChooserAction action):
+    MyFileChooserWidget(title, action),
+    pimpl(new Impl())
+{
+    pimpl->lbl_.set_ellipsize(Pango::ELLIPSIZE_MIDDLE);
+    pimpl->lbl_.set_justify(Gtk::JUSTIFY_LEFT);
+    on_filename_set();
+    pimpl->box_.pack_start(pimpl->lbl_, true, true);
+    pimpl->box_.pack_start(*Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_VERTICAL)), false, false, 5);
+    pimpl->box_.pack_start(*Gtk::manage(make_folder_image().release()), false, false);
+    pimpl->box_.show_all_children();
+    add(pimpl->box_);
+    signal_clicked().connect([this]() {
+        show_chooser(this);
+    });
 
     if (GTK_MINOR_VERSION < 20) {
         set_border_width(2); // margin doesn't work on GTK < 3.20
@@ -1283,150 +1437,15 @@ MyFileChooserButton::MyFileChooserButton(const Glib::ustring &title, Gtk::FileCh
     set_name("MyFileChooserButton");
 }
 
-
-void MyFileChooserButton::show_chooser()
+void MyFileChooserButton::on_filename_set()
 {
-    Gtk::FileChooserDialog dlg(getToplevelWindow(this), title_, action_);
-    dlg.add_button(M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
-    dlg.add_button(M(action_ == Gtk::FILE_CHOOSER_ACTION_SAVE ? "GENERAL_SAVE" : "GENERAL_OPEN"), Gtk::RESPONSE_OK);
-    dlg.set_filename(filename_);
-    for (auto &f : file_filters_) {
-        dlg.add_filter(f);
-    }
-    if (cur_filter_) {
-        dlg.set_filter(cur_filter_);
-    }
-    for (auto &f : shortcut_folders_) {
-        dlg.add_shortcut_folder(f);
-    }
-    if (!current_folder_.empty()) {
-        dlg.set_current_folder(current_folder_);
-    }
-    dlg.set_show_hidden(show_hidden_);
-    int res = dlg.run();
-    if (res == Gtk::RESPONSE_OK) {
-        filename_ = dlg.get_filename();
-        current_folder_ = dlg.get_current_folder();
-        lbl_.set_label(Glib::path_get_basename(filename_));
-        selection_changed_.emit();
-    }
-}
-
-
-sigc::signal<void> &MyFileChooserButton::signal_selection_changed()
-{
-    return selection_changed_;
-}
-
-
-sigc::signal<void> &MyFileChooserButton::signal_file_set()
-{
-    return selection_changed_;
-}
-
-
-std::string MyFileChooserButton::get_filename() const
-{
-    return filename_;
-}
-
-
-bool MyFileChooserButton::set_filename(const std::string &filename)
-{
-    filename_ = filename;
-    if (Glib::file_test(filename_, Glib::FILE_TEST_EXISTS)) {
-        lbl_.set_label(Glib::path_get_basename(filename_));
+    if (Glib::file_test(get_filename(), Glib::FILE_TEST_EXISTS)) {
+        pimpl->lbl_.set_label(Glib::path_get_basename(get_filename()));
     } else {
-        set_none();
-    }
-    return true;
-}
-
-
-void MyFileChooserButton::add_filter(const Glib::RefPtr<Gtk::FileFilter> &filter)
-{
-    file_filters_.push_back(filter);
-}
-
-
-void MyFileChooserButton::remove_filter(const Glib::RefPtr<Gtk::FileFilter> &filter)
-{
-    auto it = std::find(file_filters_.begin(), file_filters_.end(), filter);
-    if (it != file_filters_.end()) {
-        file_filters_.erase(it);
+        pimpl->lbl_.set_label(Glib::ustring("(") + M("GENERAL_NONE") + ")");
     }
 }
 
-
-void MyFileChooserButton::set_filter(const Glib::RefPtr<Gtk::FileFilter> &filter)
-{
-    cur_filter_ = filter;
-}
-
-
-std::vector<Glib::RefPtr<Gtk::FileFilter>> MyFileChooserButton::list_filters()
-{
-    return file_filters_;
-}
-
-
-bool MyFileChooserButton::set_current_folder(const std::string &filename)
-{
-    current_folder_ = filename;
-    if (action_ == Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER) {
-        set_filename(filename);
-    }
-    return true;
-}
-
-std::string MyFileChooserButton::get_current_folder() const
-{
-    return current_folder_;
-}
-
-
-bool MyFileChooserButton::add_shortcut_folder(const std::string &folder)
-{
-    shortcut_folders_.push_back(folder);
-    return true;
-}
-
-
-bool MyFileChooserButton::remove_shortcut_folder(const std::string &folder)
-{
-    auto it = std::find(shortcut_folders_.begin(), shortcut_folders_.end(), folder);
-    if (it != shortcut_folders_.end()) {
-        shortcut_folders_.erase(it);
-    }
-    return true;
-}
-
-
-void MyFileChooserButton::unselect_all()
-{
-    filename_ = "";
-    set_none();
-}
-
-
-void MyFileChooserButton::unselect_filename(const std::string &filename)
-{
-    if (filename_ == filename) {
-        unselect_all();
-    }
-}
-
-
-void MyFileChooserButton::set_show_hidden(bool yes)
-{
-    show_hidden_ = yes;
-}
-
-
-void MyFileChooserButton::set_none()
-{
-    lbl_.set_label(Glib::ustring("(") + M("GENERAL_NONE") + ")");
-}
 
 // For an unknown reason (a bug ?), it doesn't work when action = FILE_CHOOSER_ACTION_SELECT_FOLDER !
 bool MyFileChooserButton::on_scroll_event (GdkEventScroll* event)
@@ -1444,19 +1463,71 @@ bool MyFileChooserButton::on_scroll_event (GdkEventScroll* event)
 
 void MyFileChooserButton::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
-    minimum_width = natural_width = 35 * RTScalable::getScale();
+    minimum_width = natural_width = RTScalable::scalePixelSize(35);
 }
+
 void MyFileChooserButton::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
 {
-    minimum_width = natural_width = 35 * RTScalable::getScale();
+    minimum_width = natural_width = RTScalable::scalePixelSize(35);
 }
 
 
+class MyFileChooserEntry::Impl
+{
+public:
+    Gtk::Entry entry;
+    Gtk::Button file_chooser_button;
+};
 
-TextOrIcon::TextOrIcon (const Glib::ustring &fname, const Glib::ustring &labelTx, const Glib::ustring &tooltipTx)
+
+MyFileChooserEntry::MyFileChooserEntry(const Glib::ustring &title, Gtk::FileChooserAction action) :
+    MyFileChooserWidget(title, action),
+    pimpl(new Impl())
+{
+    const auto on_text_changed = [this]() {
+        set_filename(pimpl->entry.get_text());
+    };
+    pimpl->entry.get_buffer()->signal_deleted_text().connect([on_text_changed](guint, guint) { on_text_changed(); });
+    pimpl->entry.get_buffer()->signal_inserted_text().connect([on_text_changed](guint, const gchar *, guint) { on_text_changed(); });
+
+    pimpl->file_chooser_button.set_image(*Gtk::manage(make_folder_image().release()));
+    pimpl->file_chooser_button.signal_clicked().connect([this]() {
+        const auto &filename = get_filename();
+        if (Glib::file_test(filename, Glib::FILE_TEST_IS_DIR)) {
+            set_current_folder(filename);
+        }
+        show_chooser(this);
+    });
+
+    pack_start(pimpl->entry, true, true);
+    pack_start(pimpl->file_chooser_button, false, false);
+}
+
+
+Glib::ustring MyFileChooserEntry::get_placeholder_text() const
+{
+    return pimpl->entry.get_placeholder_text();
+}
+
+
+void MyFileChooserEntry::set_placeholder_text(const Glib::ustring &text)
+{
+    pimpl->entry.set_placeholder_text(text);
+}
+
+
+void MyFileChooserEntry::on_filename_set()
+{
+    if (pimpl->entry.get_text() != get_filename()) {
+        pimpl->entry.set_text(get_filename());
+    }
+}
+
+
+TextOrIcon::TextOrIcon (const Glib::ustring &icon_name, const Glib::ustring &labelTx, const Glib::ustring &tooltipTx)
 {
 
-    RTImage *img = Gtk::manage(new RTImage(fname));
+    RTImage *img = Gtk::manage(new RTImage(icon_name, Gtk::ICON_SIZE_LARGE_TOOLBAR));
     pack_start(*img, Gtk::PACK_SHRINK, 0);
     set_tooltip_markup("<span font_size=\"large\" font_weight=\"bold\">" + labelTx  + "</span>\n" + tooltipTx);
 
@@ -1465,47 +1536,124 @@ TextOrIcon::TextOrIcon (const Glib::ustring &fname, const Glib::ustring &labelTx
 
 }
 
-MyImageMenuItem::MyImageMenuItem(Glib::ustring label, Glib::ustring imageFileName)
+class ImageAndLabel::Impl
 {
-    box = Gtk::manage (new Gtk::Grid());
-    this->label = Gtk::manage( new Gtk::Label(label));
-    box->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
+public:
+    RTImage* image;
+    Gtk::Label* label;
 
-    if (!imageFileName.empty()) {
-        image = Gtk::manage( new RTImage(imageFileName) );
-        box->attach_next_to(*image, Gtk::POS_LEFT, 1, 1);
-    } else {
-        image = nullptr;
+    Impl(RTImage* image, Gtk::Label* label) : image(image), label(label) {}
+    static std::unique_ptr<RTImage> createImage(const Glib::ustring& iconName);
+};
+
+std::unique_ptr<RTImage> ImageAndLabel::Impl::createImage(const Glib::ustring& iconName)
+{
+    if (iconName.empty()) {
+        return nullptr;
+    }
+    return std::unique_ptr<RTImage>(new RTImage(iconName, Gtk::ICON_SIZE_LARGE_TOOLBAR));
+}
+
+ImageAndLabel::ImageAndLabel(const Glib::ustring& label, const Glib::ustring& iconName) :
+    ImageAndLabel(label, Gtk::manage(Impl::createImage(iconName).release()))
+{
+}
+
+ImageAndLabel::ImageAndLabel(const Glib::ustring& label, RTImage *image) :
+    pimpl(new Impl(image, Gtk::manage(new Gtk::Label(label))))
+{
+    Gtk::Grid* grid = Gtk::manage(new Gtk::Grid());
+    grid->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
+
+    if (image) {
+        grid->attach_next_to(*image, Gtk::POS_LEFT, 1, 1);
     }
 
-    box->attach_next_to(*this->label, Gtk::POS_RIGHT, 1, 1);
-    box->set_column_spacing(4);
-    box->set_row_spacing(0);
-    add(*box);
+    grid->attach_next_to(*(pimpl->label), Gtk::POS_RIGHT, 1, 1);
+    grid->set_column_spacing(4);
+    grid->set_row_spacing(0);
+    pack_start(*grid, Gtk::PACK_SHRINK, 0);
+}
+
+const RTImage* ImageAndLabel::getImage() const
+{
+    return pimpl->image;
+}
+
+const Gtk::Label* ImageAndLabel::getLabel() const
+{
+    return pimpl->label;
+}
+
+class MyImageMenuItem::Impl
+{
+private:
+    std::unique_ptr<ImageAndLabel> widget;
+
+public:
+    Impl(const Glib::ustring &label, const Glib::ustring &iconName) :
+        widget(new ImageAndLabel(label, iconName)) {}
+    Impl(const Glib::ustring &label, RTImage *itemImage) :
+        widget(new ImageAndLabel(label, itemImage)) {}
+    ImageAndLabel* getWidget() const { return widget.get(); }
+};
+
+MyImageMenuItem::MyImageMenuItem(const Glib::ustring& label, const Glib::ustring& iconName) :
+    pimpl(new Impl(label, iconName))
+{
+    add(*(pimpl->getWidget()));
+}
+
+MyImageMenuItem::MyImageMenuItem(const Glib::ustring& label, RTImage* itemImage) :
+    pimpl(new Impl(label, itemImage))
+{
+    add(*(pimpl->getWidget()));
 }
 
 const RTImage *MyImageMenuItem::getImage () const
 {
-    return image;
+    return pimpl->getWidget()->getImage();
 }
 
 const Gtk::Label* MyImageMenuItem::getLabel () const
 {
-    return label;
+    return pimpl->getWidget()->getLabel();
 }
 
-MyProgressBar::MyProgressBar(int width) : w(rtengine::max(width, 10 * RTScalable::getScale())) {}
-MyProgressBar::MyProgressBar() : w(200 * RTScalable::getScale()) {}
+class MyRadioImageMenuItem::Impl
+{
+    std::unique_ptr<ImageAndLabel> widget;
+
+public:
+    Impl(const Glib::ustring &label, RTImage *image) :
+        widget(new ImageAndLabel(label, image)) {}
+    ImageAndLabel* getWidget() const { return widget.get(); }
+};
+
+MyRadioImageMenuItem::MyRadioImageMenuItem(const Glib::ustring& label, RTImage *image, Gtk::RadioButton::Group& group) :
+    Gtk::RadioMenuItem(group),
+    pimpl(new Impl(label, image))
+{
+    add(*(pimpl->getWidget()));
+}
+
+const Gtk::Label* MyRadioImageMenuItem::getLabel() const
+{
+    return pimpl->getWidget()->getLabel();
+}
+
+MyProgressBar::MyProgressBar(int width) : w(rtengine::max(width, RTScalable::scalePixelSize(10))) {}
+MyProgressBar::MyProgressBar() : w(RTScalable::scalePixelSize(200)) {}
 
 void MyProgressBar::setPreferredWidth(int width)
 {
-    w = rtengine::max(width, 10 * RTScalable::getScale());
+    w = rtengine::max(width, RTScalable::scalePixelSize(10));
 }
 
 void MyProgressBar::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
-    minimum_width = rtengine::max(w / 2, 50 * RTScalable::getScale());
-    natural_width = rtengine::max(w, 50 * RTScalable::getScale());
+    minimum_width = rtengine::max(w / 2, RTScalable::scalePixelSize(50));
+    natural_width = rtengine::max(w, RTScalable::scalePixelSize(50));
 }
 
 void MyProgressBar::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
@@ -1804,4 +1952,118 @@ void BackBuffer::copySurface(Cairo::RefPtr<Cairo::Context> crDest, Gdk::Rectangl
 
         crDest->fill();
     }
+}
+
+SpotPicker::SpotPicker(int const defaultValue, Glib::ustring const &buttonKey, Glib::ustring const &buttonTooltip, Glib::ustring const &labelKey) :
+    Gtk::Grid(),
+    _spotHalfWidth(defaultValue),
+    _spotLabel(labelSetup(labelKey)),
+    _spotSizeSetter(MyComboBoxText(selecterSetup())),
+    _spotButton(spotButtonTemplate(buttonKey, buttonTooltip))
+
+{
+    this->get_style_context()->add_class("grid-spacing");
+    setExpandAlignProperties(this, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+
+    this->attach (_spotButton, 0, 0, 1, 1);
+    this->attach (_spotLabel, 1, 0, 1, 1);
+    this->attach (_spotSizeSetter, 2, 0, 1, 1);
+    _spotSizeSetter.signal_changed().connect( sigc::mem_fun(*this, &SpotPicker::spotSizeChanged));
+}
+
+Gtk::Label SpotPicker::labelSetup(Glib::ustring const &key) const
+{
+    Gtk::Label label(key);
+    setExpandAlignProperties(&label, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    return label;
+}
+
+MyComboBoxText SpotPicker::selecterSetup() const
+{
+    MyComboBoxText spotSize = MyComboBoxText();
+    setExpandAlignProperties(&spotSize, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+
+    spotSize.append ("2");
+    if (_spotHalfWidth == 2) {
+        spotSize.set_active(0);
+    }
+
+    spotSize.append ("4");
+
+    if (_spotHalfWidth == 4) {
+        spotSize.set_active(1);
+    }
+
+    spotSize.append ("8");
+
+    if (_spotHalfWidth == 8) {
+        spotSize.set_active(2);
+    }
+
+    spotSize.append ("16");
+
+    if (_spotHalfWidth == 16) {
+        spotSize.set_active(3);
+    }
+
+    spotSize.append ("32");
+
+    if (_spotHalfWidth == 32) {
+        spotSize.set_active(4);
+    }
+    return spotSize;
+}
+
+Gtk::ToggleButton SpotPicker::spotButtonTemplate(Glib::ustring const &key, const Glib::ustring &tooltip) const
+{
+    Gtk::ToggleButton spotButton = Gtk::ToggleButton(key);
+    setExpandAlignProperties(&spotButton, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    spotButton.get_style_context()->add_class("independent");
+    spotButton.set_tooltip_text(tooltip);
+    spotButton.set_image_from_icon_name("color-picker-small");
+    return spotButton;
+}
+
+void SpotPicker::spotSizeChanged()
+{
+    _spotHalfWidth = atoi(_spotSizeSetter.get_active_text().c_str());
+}
+
+// OptionalRadioButtonGroup class
+
+void OptionalRadioButtonGroup::onButtonToggled(Gtk::ToggleButton *button)
+{
+    if (!button) {
+        return;
+    }
+
+    if (button->get_active()) {
+        if (active_button == button) {
+            // Same button, noting to do.
+        } else if (active_button) {
+            // Deactivate the other button.
+            active_button->set_active(false);
+        }
+        active_button = button;
+    } else {
+        if (active_button == button) {
+            // Active button got deactivated.
+            active_button = nullptr;
+        } else {
+            // No effect on other buttons.
+        }
+    }
+}
+
+Gtk::ToggleButton *OptionalRadioButtonGroup::getActiveButton() const
+{
+    return active_button;
+}
+
+void OptionalRadioButtonGroup::register_button(Gtk::ToggleButton &button)
+{
+    button.signal_toggled().connect(sigc::bind(
+        sigc::mem_fun(this, &OptionalRadioButtonGroup::onButtonToggled),
+        &button));
+    onButtonToggled(&button);
 }

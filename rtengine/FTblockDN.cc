@@ -665,7 +665,7 @@ BENCHFUN
             Color::gammanf2lut(igamcurve, igam, 32768.f, 65535.f);
         }
 
-        const float gain = std::pow(2.0, expcomp);
+        const float gain = dnparams.autoGain ? static_cast<float>(std::pow(2.0, expcomp)) : 1.f;
         const double params_Ldetail = std::min(dnparams.Ldetail, 99.9); // max out to avoid div by zero when using noisevar_Ldetail as divisor
         const float noisevar_Ldetail = SQR((SQR(100. - params_Ldetail) + 50.0 * (100.0 - params_Ldetail)) * TS * 0.5);
 
@@ -1203,7 +1203,7 @@ BENCHFUN
 
                             if (!memoryAllocationFailed) {
                                 if (kall == 0) {
-                                    Noise_residualAB(*adecomp, chresid, chmaxresid, denoiseMethodRgb);
+                                    Noise_residualAB(*adecomp, chresid, chmaxresid, denoiseMethodRgb, 0, levwav);
                                     chresidtemp = chresid;
                                     chmaxresidtemp = chmaxresid;
                                 }
@@ -1240,12 +1240,15 @@ BENCHFUN
 
                                 if (!memoryAllocationFailed) {
                                     if (kall == 0) {
-                                        Noise_residualAB(*bdecomp, chresid, chmaxresid, denoiseMethodRgb);
+                                        Noise_residualAB(*bdecomp, chresid, chmaxresid, denoiseMethodRgb, 0, levwav);
                                         chresid += chresidtemp;
                                         chmaxresid += chmaxresidtemp;
                                         chresid = sqrt(chresid / (6 * (levwav)));
                                         highresi = chresid + 0.66f * (sqrt(chmaxresid) - chresid); //evaluate sigma
                                         nresi = chresid;
+                                        if (settings->verbose) {
+                                            printf("Nresi=%f Highresi=%f lev=%i\n", (double) nresi, (double) highresi, levwav);
+                                        }
                                     }
 
                                     bdecomp->reconstruct(labdn->b[0]);
@@ -1772,7 +1775,6 @@ BENCHFUN
 
 //median 3x3 in complement on RGB
     if (dnparams.methodmed == "RGB" && dnparams.median) {
-//printf("RGB den\n");
         int wid = dst->getWidth(), hei = dst->getHeight();
         float** tm;
         tm = new float*[hei];
@@ -2105,7 +2107,7 @@ float ImProcFunctions::Mad(const float * DataList, const int datalen)
 
     //calculate histogram of absolute values of wavelet coeffs
     for (int i = 0; i < datalen; ++i) {
-        histo[static_cast<int>(rtengine::min(32768.f, fabsf(DataList[i])))]++;
+        histo[static_cast<int>(rtengine::min(32767.f, fabsf(DataList[i])))]++;
     }
 
     //find median of histogram
@@ -2158,16 +2160,18 @@ float ImProcFunctions::MadRgb(const float * DataList, const int datalen)
 
 
 
-void ImProcFunctions::Noise_residualAB(const wavelet_decomposition &WaveletCoeffs_ab, float &chresid, float &chmaxresid, bool denoiseMethodRgb)
+void ImProcFunctions::Noise_residualAB(const wavelet_decomposition &WaveletCoeffs_ab, float &chresid, float &chmaxresid, bool denoiseMethodRgb, int beg, int end)
 {
 
     float resid = 0.f;
     float maxresid = 0.f;
-
+//    int maxlev = WaveletCoeffs_ab.maxlevel();
+   // end = maxlev;
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic) collapse(2) reduction(+:resid) reduction(max:maxresid) num_threads(denoiseNestedLevels) if (denoiseNestedLevels>1)
 #endif
-    for (int lvl = 0; lvl < WaveletCoeffs_ab.maxlevel(); ++lvl) {
+ //   for (int lvl = 0; lvl < WaveletCoeffs_ab.maxlevel(); ++lvl) {
+    for (int lvl = beg; lvl < end; ++lvl) {
         // compute median absolute deviation (MAD) of detail coefficients as robust noise estimator
         for (int dir = 1; dir < 4; ++dir) {
             const int Wlvl_ab = WaveletCoeffs_ab.level_W(lvl);
@@ -2378,7 +2382,10 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposition& Wavelet
 bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposition& WaveletCoeffs_L, wavelet_decomposition& WaveletCoeffs_ab, float *noisevarchrom, float madL[8][3], float *variC, int local, float noisevar_ab, const bool useNoiseCCurve,  bool autoch, bool denoiseMethodRgb, int denoiseNestedLevels)
 {
     int maxlvl = WaveletCoeffs_L.maxlevel();
-    printf("Ftblockdn ab bishrink\n");
+    
+    if (settings->verbose) {
+        printf("Ftblockdn ab bishrink\n");
+    }
 
     if (local == 1) {
         maxlvl = 6;    //for local denoise
@@ -2460,7 +2467,6 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposition& Wavele
                     float* const* WavCoeffs_ab = WaveletCoeffs_ab.level_coeffs(lvl);
 
                     if (lvl == maxlvl - 1) {
-                        //printf("Shrink ab bis\n");
                         ShrinkAllAB(WaveletCoeffs_L, WaveletCoeffs_ab, buffer, lvl, dir, noisevarchrom, noisevar_ab, useNoiseCCurve, autoch, denoiseMethodRgb, madL[lvl], nullptr, 0, madab[lvl], true);
                     } else {
                         //simple wavelet shrinkage
@@ -3284,7 +3290,7 @@ void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat * provicalc,
 
     bool denoiseMethodRgb = (dnparams.dmethod == "RGB");
 
-    const float gain = pow(2.0f, float(expcomp));
+    const float gain = dnparams.autoGain ? pow(2.0f, float(expcomp)) : 1.f;
 
     int tilesize = 0;
     int overlap = 0;

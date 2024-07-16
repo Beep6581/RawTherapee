@@ -97,6 +97,7 @@ struct LocalContrastParams;
 struct LocallabParams;
 struct SharpeningParams;
 struct SoftLightParams;
+struct ToneEqualizerParams;
 struct VibranceParams;
 struct VignettingParams;
 struct WaveletParams;
@@ -116,6 +117,7 @@ class ImProcFunctions
     bool multiThread;
 
     void calcVignettingParams(int oW, int oH, const procparams::VignettingParams& vignetting, double &w2, double &h2, double& maxRadius, double &v, double &b, double &mul);
+    static void rgb2lab(const Image8 &src, int x, int y, int w, int h, float L[], float a[], float b[], const procparams::ColorManagementParams &icm, bool consider_histogram_settings, bool multithread);
 
     void transformLuminanceOnly(Imagefloat* original, Imagefloat* transformed, int cx, int cy, int oW, int oH, int fW, int fH);
     void transformGeneral(bool highQuality, Imagefloat *original, Imagefloat *transformed, int cx, int cy, int sx, int sy, int oW, int oH, int fW, int fH, const LensCorrection *pLCPMap, bool useOriginalBuffer);
@@ -191,12 +193,15 @@ enum class BlurType {
     void moyeqt(Imagefloat* working, float &moyS, float &eqty);
 
     void luminanceCurve(LabImage* lold, LabImage* lnew, const LUTf &curve);
-    void ciecamloc_02float(int sp, LabImage* lab, int call);
+    void ciecamloc_02float(struct local_params& lp, int sp, LabImage* lab, int bfw, int bfh, int call, int sk, const LUTf& cielocalcurve, bool localcieutili, const LUTf& cielocalcurve2, bool localcieutili2, const LUTf& jzlocalcurve, bool localjzutili, const LUTf& czlocalcurve, bool localczutili, const LUTf& czjzlocalcurve, bool localczjzutili, const LocCHCurve& locchCurvejz, const LocHHCurve& lochhCurve, const LocLHCurve& loclhCurve, bool HHcurvejz, bool CHcurvejz, bool LHcurvejz, 
+		const LocwavCurve& locwavCurvejz, bool locwavutilijz, float &maxicam, float &comtsig, float &lightsig);
 
     void ciecam_02float(CieImage* ncie, float adap, int pW, int pwb, LabImage* lab, const procparams::ProcParams* params,
                         const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve, const ColorAppearance & customColCurve3,
                         LUTu &histLCAM, LUTu &histCCAM, LUTf & CAMBrightCurveJ, LUTf & CAMBrightCurveQ, float &mean, int Iterates, int scale, bool execsharp, float &d, float &dj, float &yb, int rtt,
                         bool showSharpMask = false);
+    void clarimerge(const struct local_params& lp, float &mL, float &mC, bool &exec, LabImage *tmpresid, int wavelet_level, int sk, int numThreads);
+
     void chromiLuminanceCurve(PipetteBuffer *pipetteBuffer, int pW, LabImage* lold, LabImage* lnew, const LUTf& acurve, const LUTf& bcurve, const LUTf& satcurve, const LUTf& satclcurve, const LUTf& clcurve, LUTf &curve, bool utili, bool autili, bool butili, bool ccutili, bool cclutili, bool clcutili, LUTu &histCCurve, LUTu &histLurve);
     void vibrance(LabImage* lab, const procparams::VibranceParams &vibranceParams, bool highlight, const Glib::ustring &workingProfile);         //Jacques' vibrance
     void softprocess(const LabImage* bufcolorig, array2D<float> &buflight, /* float ** bufchro, float ** buf_a, float ** buf_b, */ float rad, int bfh, int bfw, double epsilmax, double epsilmin,  float thres, int sk, bool multiThread);
@@ -248,14 +253,14 @@ enum class BlurType {
                  float strumask, bool astool,
                  const LocCCmaskCurve & locccmasCurve, bool lcmasutili, 
                  const LocLLmaskCurve & locllmasCurve, bool llmasutili, 
-                 const LocHHmaskCurve & lochhmasCurve, bool lhmasutili, const LocHHmaskCurve & lochhhmasCurve, bool lhhmasutili, 
+                 const LocHHmaskCurve & lochhmasCurve, bool lhmasutili, const LocHHmaskCurve & lochhhmasCurve, bool lhhmasutili,
                  bool multiThread, bool enaMask, bool showmaske, bool deltaE, bool modmask, bool zero, bool modif, float chrom, float rad, float lap, float gamma, float slope, float blendm, float blendmab, int shado, int highl, float amountcd, float anchorcd,
                  const LUTf& lmasklocalcurve, bool localmaskutili,
                  const LocwavCurve & loclmasCurvecolwav, bool lmasutilicolwav, int level_bl, int level_hl, int level_br, int level_hr,
                  int shortcu, bool delt, const float hueref, const float chromaref, const float lumaref,
-                 float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, bool fftt, float blu_ma, float cont_ma, int indic);
+                 float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, bool fftt, float blu_ma, float cont_ma, int indic, float &fab);
 
-    void avoidcolshi(const struct local_params& lp, int sp, LabImage * original, LabImage *transformed, int cy, int cx, int sk);
+    void avoidcolshi(const struct local_params& lp, int sp, LabImage *transformed, LabImage *reserved, int cy, int cx, int sk);
 
     void deltaEforMask(float **rdE, int bfw, int bfh, LabImage* bufcolorig, const float hueref, const float chromaref, const float lumaref,
                           float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, float balance, float balanceh);
@@ -263,12 +268,13 @@ enum class BlurType {
     void laplacian(const array2D<float> &src, array2D<float> &dst, int bfw, int bfh, float threshold, float ceiling, float factor, bool multiThread);
     void detail_mask(const array2D<float> &src, array2D<float> &mask,  int bfw, int bfh, float scaling, float threshold, float ceiling, float factor, BlurType blur_type, float blur, bool multithread);
     void NLMeans(float **img, int strength, int detail_thresh, int patch, int radius, float gam, int bfw, int bfh, float scale, bool multithread);
+    void loccont(int bfw, int bfh, LabImage* tmp1, float rad, float stren, int sk);
 
     void rex_poisson_dct(float * data, size_t nx, size_t ny, double m);
-    void mean_dt(const float * data, size_t size, double& mean_p, double& dt_p);
+    void mean_dt(const float * data, int size, double& mean_p, double& dt_p, double nbstd);
     float *cos_table(size_t size);
 
-    void normalize_mean_dt(float *data, const float *ref, size_t size, float mod, float sigm, float mdef, float sdef, float mdef2, float sdef2);
+    void normalize_mean_dt(float *data, const float *ref, int size, float mod, float sigm, float mdef, float sdef, float mdef2, float sdef2, double nbstd);
     void retinex_pde(const float *datain, float * dataout, int bfw, int bfh, float thresh, float multy, float *dE, int show, int dEenable, int normalize);
     void exposure_pde(float *dataor, float *datain, float * dataout, int bfw, int bfh, float thresh, float mod);
     void fftw_convol_blur(float *input, float *output, int bfw, int bfh, float radius, int fftkern, int algo);
@@ -284,9 +290,9 @@ enum class BlurType {
          float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, float balance, float balanceh, float lumask);
 
     //3 functions from Alberto Griggio, adapted J.Desmis 2019
-    void filmGrain(Imagefloat *rgb, int isogr, int strengr, int scalegr,float divgr, int bfw, int bfh);
+    void filmGrain(Imagefloat *rgb, int isogr, int strengr, int scalegr,float divgr, int bfw, int bfh, int call, int fw, int fh);
     void log_encode(Imagefloat *rgb, struct local_params & lp, bool multiThread, int bfw, int bfh);
-    void getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg, float *blackev, float *whiteev, bool *Autogr, float *sourceab, int fw, int fh, float xsta, float xend, float ysta, float yend, int SCALE);
+    void getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg, float *blackev, float *whiteev, bool *Autogr, float *sourceab, int *whits, int *blacks, int *whitslog, int *blackslog, int fw, int fh, float xsta, float xend, float ysta, float yend, int SCALE);
 
     void MSRLocal(int call, int sp, bool fftw, int lum, float** reducDE, LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, LabImage * bufmaskorigreti, float** luminance, const float* const *originalLuminance,
         const int width, const int height, int bfwr, int bfhr, const procparams::LocallabParams &loc, const int skip, const LocretigainCurve &locRETgainCcurve, const LocretitransCurve &locRETtransCcurve,
@@ -302,11 +308,12 @@ enum class BlurType {
     void calc_ref(int sp, LabImage* original, LabImage* transformed, int cx, int cy, int oW, int oH, int sk, double &huerefblur, double &chromarefblur, double &lumarefblur, double &hueref, double &chromaref, double &lumaref, double &sobelref, float &avg, const LocwavCurve & locwavCurveden, bool locwavdenutili);
     void copy_ref(LabImage* spotbuffer, LabImage* original, LabImage* transformed, int cx, int cy, int sk, const struct local_params & lp, double &huerefspot, double &chromarefspot, double &lumarefspot);
     void paste_ref(LabImage* spotbuffer, LabImage* transformed, int cx, int cy, int sk, const struct local_params & lp);
-    void Lab_Local(int call, int sp, float** shbuffer, LabImage* original, LabImage* transformed, LabImage* reserved, LabImage * savenormtm, LabImage * savenormreti, LabImage* lastorig, int cx, int cy, int oW, int oH, int sk, const LocretigainCurve& locRETgainCcurve, const LocretitransCurve &locRETtransCcurve,
+    void Lab_Local(int call, int sp, float** shbuffer, LabImage* original, LabImage* transformed, LabImage* reserved, LabImage * savenormtm, LabImage * savenormreti, LabImage* lastorig, int fw, int fh,  int cx, int cy, int oW, int oH, int sk, const LocretigainCurve& locRETgainCcurve, const LocretitransCurve &locRETtransCcurve,
                 const LUTf& lllocalcurve, bool locallutili, 
                 const LUTf& cllocalcurve, bool localclutili,
                 const LUTf& lclocalcurve, bool locallcutili,
                 const LocLHCurve& loclhCurve, const LocHHCurve& lochhCurve, const LocCHCurve& locchCurve,
+                const LocHHCurve& lochhCurvejz, const LocCHCurve& locchCurvejz, const LocLHCurve& loclhCurvejz,
                 const LUTf& lmasklocalcurve, bool localmaskutili,
                 const LUTf& lmaskexplocalcurve, bool localmaskexputili,
                 const LUTf& lmaskSHlocalcurve, bool localmaskSHutili,
@@ -318,8 +325,14 @@ enum class BlurType {
                 const LUTf& lmasklclocalcurve, bool localmasklcutili,
                 const LUTf& lmaskloglocalcurve, bool localmasklogutili,
                 const LUTf& lmasklocal_curve, bool localmask_utili,
+                const LUTf& lmaskcielocalcurve, bool localmaskcieutili,
+                const LUTf& cielocalcurve, bool localcieutili, 
+                const LUTf& cielocalcurve2, bool localcieutili2, 
+                const LUTf& jzlocalcurve, bool localjzutili, 
+                const LUTf& czlocalcurve, bool localczutili, 
+                const LUTf& czjzlocalcurve, bool localczjzutili, 
                 
-                const LocCCmaskCurve& locccmasCurve, bool lcmasutili, const LocLLmaskCurve& locllmasCurve, bool llmasutili, const LocHHmaskCurve& lochhmasCurve, bool lhmasutili, const LocHHmaskCurve& llochhhmasCurve, bool lhhmasutili,
+                const LocCCmaskCurve& locccmasCurve, bool lcmasutili, const LocLLmaskCurve& locllmasCurve, bool llmasutili, const LocHHmaskCurve& lochhmasCurve, bool lhmasutili, const LocHHmaskCurve& llochhhmasCurve, bool lhhmasutili, const LocHHmaskCurve& llochhhmascieCurve, bool lhhmascieutili,
                 const LocCCmaskCurve& locccmasexpCurve, bool lcmasexputili, const LocLLmaskCurve& locllmasexpCurve, bool llmasexputili, const LocHHmaskCurve& lochhmasexpCurve, bool lhmasexputili, 
                 const LocCCmaskCurve& locccmasSHCurve, bool lcmasSHutili, const LocLLmaskCurve& locllmasSHCurve, bool llmasSHutili, const LocHHmaskCurve& lochhmasSHCurve, bool lhmasSHutili,
                 const LocCCmaskCurve& locccmasvibCurve, bool lcmasvibutili, const LocLLmaskCurve& locllmasvibCurve, bool llmasvibutili, const LocHHmaskCurve& lochhmasvibCurve, bool lhmasvibutili,
@@ -330,11 +343,15 @@ enum class BlurType {
                 const LocCCmaskCurve& locccmaslcCurve, bool lcmaslcutili, const LocLLmaskCurve& locllmaslcCurve, bool llmaslcutili, const LocHHmaskCurve& lochhmaslcCurve, bool lhmaslcutili,
                 const LocCCmaskCurve& locccmaslogCurve, bool lcmaslogutili, const LocLLmaskCurve& locllmaslogCurve, bool llmaslogutili, const LocHHmaskCurve& lochhmaslogCurve, bool lhmaslogutili,
                 const LocCCmaskCurve& locccmas_Curve, bool lcmas_utili, const LocLLmaskCurve& locllmas_Curve, bool llmas_utili, const LocHHmaskCurve& lochhmas_Curve, bool lhmas_utili,
+                const LocCCmaskCurve& locccmascieCurve, bool lcmascieutili, const LocLLmaskCurve& locllmascieCurve, bool llmascieutili, const LocHHmaskCurve& lochhmascieCurve, bool lhmascieutili,
+
                 const LocHHmaskCurve& lochhhmas_Curve, bool lhhmas_utili,
 
                 const LocwavCurve& loclmasCurveblwav, bool lmasutiliblwav,
                 const LocwavCurve& loclmasCurvecolwav, bool lmasutilicolwav,
+                const LocwavCurve& loclmasCurveciewav, bool lmasutiliciewav,
                 const LocwavCurve& locwavCurve, bool locwavutili,
+                const LocwavCurve& locwavCurvejz, bool locwavutilijz,
                 const LocwavCurve& loclevwavCurve, bool loclevwavutili,
                 const LocwavCurve& locconwavCurve, bool locconwavutili,
                 const LocwavCurve& loccompwavCurve, bool loccompwavutili,
@@ -343,11 +360,16 @@ enum class BlurType {
                 const LocwavCurve& locwavCurveden, bool locwavdenutili,
                 const LocwavCurve& locedgwavCurve, bool locedgwavutili,
                 const LocwavCurve& loclmasCurve_wav, bool lmasutili_wav,
-                bool LHutili, bool HHutili, bool CHutili, const LUTf& cclocalcurve, bool localcutili, const LUTf& rgblocalcurve, bool localrgbutili, bool localexutili, const LUTf& exlocalcurve, const LUTf& hltonecurveloc, const LUTf& shtonecurveloc, const LUTf& tonecurveloc, const LUTf& lightCurveloc,
+                bool LHutili, bool HHutili, bool CHutili, bool HHutilijz, bool CHutilijz, bool LHutilijz, const LUTf& cclocalcurve, bool localcutili, const LUTf& rgblocalcurve, bool localrgbutili, bool localexutili, const LUTf& exlocalcurve, const LUTf& hltonecurveloc, const LUTf& shtonecurveloc, const LUTf& tonecurveloc, const LUTf& lightCurveloc,
                 double& huerefblur, double &chromarefblur, double& lumarefblur, double &hueref, double &chromaref, double &lumaref, double &sobelref, int &lastsav,
-                bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask,
+                bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, int llcieMask,
                 float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax,
-                float& meantm, float& stdtm, float& meanreti, float& stdreti);
+                float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab, float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, int &prim, int &ill, float &contsig, float &lightsig,
+                float &highresi, float &nresi, float &highresi46, float &nresi46, float &Lhighresi, float &Lnresi, float &Lhighresi46, float &Lnresi46);
+    
+    void tone_eqcam2(ImProcFunctions *ipf, Imagefloat *rgb, int whits, int blacks, const Glib::ustring &workingProfile, double scale, bool multithread);
+    void tone_eqdehaz(ImProcFunctions *ipf, Imagefloat *rgb, int whits, int blacks, const Glib::ustring &workingProfile, double scale, bool multithread);
+    void tone_eqcam(ImProcFunctions *ipf, Imagefloat *rgb, int midtone, const Glib::ustring &workingProfile, double scale, bool multithread);
 
     void addGaNoise(LabImage *lab, LabImage *dst, const float mean, const float variance, const int sk);
     void BlurNoise_Localold(int call, const struct local_params& lp, LabImage* original, LabImage* transformed, const LabImage* const tmp1, int cx, int cy);
@@ -371,6 +393,8 @@ enum class BlurType {
                 const LocwavCurve & loccomprewavCurve, bool loccomprewavutili,
                 float radlevblur, int process, float chromablu, float thres, float sigmadc, float deltad);
 
+    void wavlc(wavelet_decomposition& wdspot, int level_bl, int level_hl, int maxlvl, int level_hr, int level_br, float ahigh, float bhigh, float alow, float blow, float sigmalc, float strength, const LocwavCurve & locwavCurve, int numThreads);
+
     void wavcbd(wavelet_decomposition &wdspot, int level_bl, int maxlvl,
                 const LocwavCurve& locconwavCurve, bool locconwavutili, float sigm, float offs, float chromalev, int sk);
 
@@ -384,7 +408,8 @@ enum class BlurType {
     void DeNoise_Local(int call, const struct local_params& lp, LabImage* originalmask, int levred, float hueref, float lumaref, float chromaref, LabImage* original, LabImage* transformed, const LabImage &tmp1, int cx, int cy, int sk);
     void DeNoise_Local2(const struct local_params& lp, LabImage* originalmask, int levred, float hueref, float lumaref, float chromaref, LabImage* original, LabImage* transformed, const LabImage &tmp1, int cx, int cy, int sk);
 
-    void DeNoise(int call, float * slidL, float * slida, float * slidb, int aut, bool noiscfactiv, const struct local_params& lp, LabImage* originalmaskbl, LabImage *  bufmaskblurbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage* original, LabImage* transformed, int cx, int cy, int sk, const LocwavCurve& locwavCurvehue, bool locwavhueutili);
+    void DeNoise(int call, int aut, bool noiscfactiv, const struct local_params& lp, LabImage* originalmaskbl, LabImage *  bufmaskblurbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage* original, LabImage* transformed, 
+        int cx, int cy, int sk, const LocwavCurve& locwavCurvehue, bool locwavhueutili, float& highresi, float& nresi, float& highresi46, float& nresi46, float& Lhighresi, float& Lnresi, float& Lhighresi46, float& Lnresi46);
 
 
     void fftw_denoise(int sk, int GW, int GH, int max_numblox_W, int min_numblox_W, float **tmp1, array2D<float> *Lin,  int numThreads, const struct local_params & lp, int chrom);
@@ -421,7 +446,7 @@ enum class BlurType {
     void Sigma(const float* HH_Coeffs, int datalen, float averagePlus, float averageNeg, float &sigmaPlus, float &sigmaNeg, int numThreads);
     void calckoe(const float* WavCoeffs_LL, float gradw, float tloww, float *koeLi, int level, int W_L, int H_L, float edd, float &maxkoeLi, float **tmC, bool multiThread = false);
 
-    void Median_Denoise(float **src, float **dst, int width, int height, Median medianType, int iterations, int numThreads, float **buffer = nullptr);
+    static void Median_Denoise(float **src, float **dst, int width, int height, Median medianType, int iterations, int numThreads, float **buffer = nullptr);
     void Median_Denoise(float **src, float **dst, float upperBound, int width, int height, Median medianType, int iterations, int numThreads, float **buffer = nullptr);
     void RGB_denoise(int kall, Imagefloat * src, Imagefloat * dst, Imagefloat * calclum, float * ch_M, float *max_r, float *max_b, bool isRAW, const procparams::DirPyrDenoiseParams & dnparams, const double expcomp, const NoiseCurve & noiseLCurve, const NoiseCurve & noiseCCurve, float &nresi, float &highresi);
     void RGB_denoise_infoGamCurve(const procparams::DirPyrDenoiseParams & dnparams, const bool isRAW, LUTf &gamcurve, float &gam, float &gamthresh, float &gamslope);
@@ -447,7 +472,7 @@ enum class BlurType {
     void ShrinkAll_info(const float* const* WavCoeffs_a, const float* const* WavCoeffs_b,
                         int W_ab, int H_ab, float **noisevarlum, float **noisevarchrom, float **noisevarhue, float &chaut, int &Nb, float &redaut, float &blueaut, float &maxredaut, float &maxblueaut, float &minredaut, float &minblueaut, int schoice, int lvl, float &chromina, float &sigma, float &lumema, float &sigma_L, float &redyel, float &skinc, float &nsknc,
                         float &maxchred, float &maxchblue, float &minchred, float &minchblue, int &nb, float &chau, float &chred, float &chblue, bool denoiseMethodRgb);
-    void Noise_residualAB(const wavelet_decomposition &WaveletCoeffs_ab, float &chresid, float &chmaxresid, bool denoiseMethodRgb);
+    void Noise_residualAB(const wavelet_decomposition &WaveletCoeffs_ab, float &chresid, float &chmaxresid, bool denoiseMethodRgb, int beg, int end);
     void calcautodn_info(float &chaut, float &delta, int Nb, int levaut, float maxmax, float lumema, float chromina, int mode, int lissage, float redyel, float skinc, float nsknc);
     float Mad(const float * DataList, int datalen);
     float MadRgb(const float * DataList, int datalen);
@@ -470,21 +495,25 @@ enum class BlurType {
     void BadpixelsLab(LabImage * lab, double radius, int thresh, float chrom);
 
     void dehaze(Imagefloat *rgb, const procparams::DehazeParams &dehazeParams);
-    void dehazeloc(Imagefloat *rgb, const procparams::DehazeParams &dehazeParams);
-    void ToneMapFattal02(Imagefloat *rgb, const procparams::FattalToneMappingParams &fatParams, int detail_level, int Lalone, float **Lum, int WW, int HH, int algo);
+    void dehazeloc(Imagefloat *rgb, const procparams::DehazeParams &dehazeParams, int sk, int sp);
+    void ToneMapFattal02(Imagefloat *rgb, const procparams::FattalToneMappingParams &fatParams, int detail_level, int Lalone, float **Lum, int WW, int HH, int algo, bool sat);
     void localContrast(LabImage *lab, float **destination, const procparams::LocalContrastParams &localContrastParams, bool fftwlc, double scale);
     void colorToningLabGrid(LabImage *lab, int xstart, int xend, int ystart, int yend, bool MultiThread);
     //void shadowsHighlights(LabImage *lab);
     void shadowsHighlights(LabImage *lab, bool ena, int labmode, int hightli, int shado, int rad, int scal, int hltonal, int shtonal);
-    
+    void toneEqualizer(Imagefloat *rgb);
+    void toneEqualizer(Imagefloat *rgb, const procparams::ToneEqualizerParams &params, const Glib::ustring &workingProfile, double scale, bool multiThread);
     void softLight(LabImage *lab, const procparams::SoftLightParams &softLightParams);
     void labColorCorrectionRegions(LabImage *lab);
 
     Image8*     lab2rgb(LabImage* lab, int cx, int cy, int cw, int ch, const procparams::ColorManagementParams &icm, bool consider_histogram_settings = true);
     void rgb2lab(const Image8 &src, int x, int y, int w, int h, float L[], float a[], float b[], const procparams::ColorManagementParams &icm, bool consider_histogram_settings = true) const;
+    static void rgb2lab(std::uint8_t red, std::uint8_t green, std::uint8_t blue, float &L, float &a, float &b, const procparams::ColorManagementParams &icm, bool consider_histogram_settings = true);
     Imagefloat*    lab2rgbOut(LabImage* lab, int cx, int cy, int cw, int ch, const procparams::ColorManagementParams &icm);
     // CieImage *ciec;
-    void workingtrc(const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring &profile, double gampos, double slpos, int &illum, int prim, cmsHTRANSFORM &transform, bool normalizeIn = true, bool normalizeOut = true, bool keepTransForm = false) const;
+    void workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring &profile, double gampos, double slpos, int cat, int &illum, int prim, int locprim, 
+        float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye,
+        cmsHTRANSFORM &transform, bool normalizeIn = true, bool normalizeOut = true, bool keepTransForm = false, bool gamutcontrol = false) const;
     void preserv(LabImage *nprevl, LabImage *provis, int cw, int ch);
 
     bool transCoord(int W, int H, int x, int y, int w, int h, int& xv, int& yv, int& wv, int& hv, double ascaleDef = -1, const LensCorrection *pLCPMap = nullptr) const;

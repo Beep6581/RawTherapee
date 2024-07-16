@@ -35,6 +35,7 @@
 
 class FileBrowserEntry;
 class Thumbnail;
+class RTSurface;
 
 struct FileBrowserEntryIdleHelper {
     FileBrowserEntry* fbentry;
@@ -50,7 +51,6 @@ class FileBrowserEntry final : public ThumbBrowserEntryBase,
 {
 
     double scale;
-    static bool iconsLoaded;
     bool wasInside;
     ImageAreaToolListener* iatlistener;
     int press_x, press_y, action_x, action_y;
@@ -69,17 +69,19 @@ class FileBrowserEntry final : public ThumbBrowserEntryBase,
     void updateCursor (int x, int y);
     void drawStraightenGuide (Cairo::RefPtr<Cairo::Context> c);
     void customBackBufferUpdate (Cairo::RefPtr<Cairo::Context> c) override;
+    void refreshThumbnailImage(bool upgradeHint);
 
 public:
 
-    static Glib::RefPtr<Gdk::Pixbuf> editedIcon;
-    static Glib::RefPtr<Gdk::Pixbuf> recentlySavedIcon;
-    static Glib::RefPtr<Gdk::Pixbuf> enqueuedIcon;
-    static Glib::RefPtr<Gdk::Pixbuf> hdr;
-    static Glib::RefPtr<Gdk::Pixbuf> ps;
+    static std::shared_ptr<RTSurface> editedIcon;
+    static std::shared_ptr<RTSurface> recentlySavedIcon;
+    static std::shared_ptr<RTSurface> enqueuedIcon;
+    static std::shared_ptr<RTSurface> hdr;
+    static std::shared_ptr<RTSurface> ps;
 
     FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname);
     ~FileBrowserEntry () override;
+    static void init ();
     void draw (Cairo::RefPtr<Cairo::Context> cc) override;
 
     void setImageAreaToolListener (ImageAreaToolListener* l)
@@ -93,12 +95,12 @@ public:
     void refreshQuickThumbnailImage () override;
     void calcThumbnailSize () override;
 
-    std::vector<Glib::RefPtr<Gdk::Pixbuf>> getIconsOnImageArea () override;
-    std::vector<Glib::RefPtr<Gdk::Pixbuf>> getSpecificityIconsOnImageArea () override;
+    std::vector<std::shared_ptr<RTSurface>> getIconsOnImageArea () override;
+    std::vector<std::shared_ptr<RTSurface>> getSpecificityIconsOnImageArea () override;
     void getIconSize (int& w, int& h) const override;
 
     // thumbnaillistener interface
-    void procParamsChanged (Thumbnail* thm, int whoChangedIt) override;
+    void procParamsChanged (Thumbnail* thm, int whoChangedIt, bool upgradeHint) override;
     // thumbimageupdatelistener interface
     void updateImage(rtengine::IImage8* img, double scale, const rtengine::procparams::CropParams& cropParams) override;
     void _updateImage(rtengine::IImage8* img, double scale, const rtengine::procparams::CropParams& cropParams); // inside gtk thread

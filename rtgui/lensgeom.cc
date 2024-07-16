@@ -27,7 +27,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-LensGeometry::LensGeometry () : FoldableToolPanel(this, "lensgeom", M("TP_LENSGEOM_LABEL")), rlistener(nullptr), lastFill(false)
+const Glib::ustring LensGeometry::TOOL_NAME = "lensgeom";
+
+LensGeometry::LensGeometry () : FoldableToolPanel(this, TOOL_NAME, M("TP_LENSGEOM_LABEL")), rlistener(nullptr), lastFill(false)
 {
 
     auto m = ProcEventMapper::getInstance();
@@ -46,12 +48,9 @@ LensGeometry::LensGeometry () : FoldableToolPanel(this, "lensgeom", M("TP_LENSGE
     pack_start (*fill);
 
     autoCrop = Gtk::manage (new Gtk::Button (M("TP_LENSGEOM_AUTOCROP")));
-    autoCrop->set_image (*Gtk::manage (new RTImage ("crop-auto-small.png")));
+    autoCrop->set_image (*Gtk::manage (new RTImage ("crop-auto-small", Gtk::ICON_SIZE_BUTTON)));
     autoCrop->get_style_context()->add_class("independent");
     pack_start (*autoCrop, Gtk::PACK_SHRINK, 2);
-
-    packBox = Gtk::manage (new ToolParamBlock ());
-    pack_start (*packBox);
 
     method->connect(method->signal_changed().connect(sigc::mem_fun(*this, &LensGeometry::methodChanged)));
     autoCrop->signal_pressed().connect(sigc::mem_fun(*this, &LensGeometry::autoCropPressed));

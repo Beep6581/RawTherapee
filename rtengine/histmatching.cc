@@ -229,7 +229,7 @@ void mappingToCurve(const std::vector<int> &mapping, std::vector<double> &curve)
 } // namespace
 
 
-void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, std::vector<double> &outCurve)
+void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, const procparams::RAWParams &rawParams, StandardObserver observer, std::vector<double> &outCurve)
 {
     BENCHFUN
 
@@ -277,10 +277,9 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
 
     std::unique_ptr<IImage8> source;
     {
-        RawMetaDataLocation rml;
         eSensorType sensor_type;
         int w = 0, h = 0;
-        std::unique_ptr<Thumbnail> thumb(Thumbnail::loadQuickFromRaw(getFileName(), rml, sensor_type, w, h, 1, false, true, true));
+        const std::unique_ptr<Thumbnail> thumb(Thumbnail::loadQuickFromRaw(getFileName(), sensor_type, w, h, 1, false, true, true));
         if (!thumb) {
             if (settings->verbose) {
                 std::cout << "histogram matching: no thumbnail found, generating a neutral curve" << std::endl;
@@ -309,11 +308,10 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
 
     std::unique_ptr<IImage8> target;
     {
-        RawMetaDataLocation rml;
         eSensorType sensor_type;
         double scale;
         int w = fw / skip, h = fh / skip;
-        std::unique_ptr<Thumbnail> thumb(Thumbnail::loadFromRaw(getFileName(), rml, sensor_type, w, h, 1, false, false, true));
+        const std::unique_ptr<Thumbnail> thumb(Thumbnail::loadFromRaw(getFileName(), sensor_type, w, h, 1, false, observer, false, &rawParams, true));
         if (!thumb) {
             if (settings->verbose) {
                 std::cout << "histogram matching: raw decoding failed, generating a neutral curve" << std::endl;

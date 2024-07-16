@@ -24,6 +24,7 @@
 #include "multilangmgr.h"
 #include "options.h"
 #include "rtimage.h"
+#include "rtscalable.h"
 #include "../rtengine/rt_math.h"
 
 namespace {
@@ -51,6 +52,7 @@ Adjuster::Adjuster(
     grid(nullptr),
     label(nullptr),
     imageIcon1(imgIcon1),
+    imageIcon2(imgIcon2),
     automatic(nullptr),
     adjusterListener(nullptr),
     spinChange(options.adjusterMinDelay, options.adjusterMaxDelay),
@@ -76,8 +78,8 @@ Adjuster::Adjuster(
         setExpandAlignProperties(imageIcon1, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     }
 
-    if (imgIcon2) {
-        setExpandAlignProperties(imgIcon2, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+    if (imageIcon2) {
+        setExpandAlignProperties(imageIcon2, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     }
 
     set_column_spacing(0);
@@ -92,7 +94,7 @@ Adjuster::Adjuster(
 
     reset = Gtk::manage(new Gtk::Button());
 
-    reset->add(*Gtk::manage(new RTImage("undo-small.png", "redo-small.png")));
+    reset->add(*Gtk::manage(new RTImage("undo-small", Gtk::ICON_SIZE_BUTTON)));
     setExpandAlignProperties(reset, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     reset->set_relief(Gtk::RELIEF_NONE);
     reset->set_tooltip_markup(M("ADJUSTER_RESET_TO_DEFAULT"));
@@ -104,7 +106,7 @@ Adjuster::Adjuster(
     setExpandAlignProperties(spin, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     spin->set_input_purpose(Gtk::INPUT_PURPOSE_DIGITS);
 
-    reset->set_size_request(-1, spin->get_height() > MIN_RESET_BUTTON_HEIGHT ? spin->get_height() : MIN_RESET_BUTTON_HEIGHT);
+    reset->set_size_request(-1, RTScalable::scalePixelSize(spin->get_height() > MIN_RESET_BUTTON_HEIGHT ? spin->get_height() : MIN_RESET_BUTTON_HEIGHT));
     slider = Gtk::manage(new MyHScale());
     setExpandAlignProperties(slider, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     slider->set_draw_value(false);
@@ -120,9 +122,9 @@ Adjuster::Adjuster(
             attach_next_to(*imageIcon1, *slider, Gtk::POS_LEFT, 1, 1);
         }
 
-        if (imgIcon2) {
-            attach_next_to(*imgIcon2, *slider, Gtk::POS_RIGHT, 1, 1);
-            attach_next_to(*spin, *imgIcon2, Gtk::POS_RIGHT, 1, 1);
+        if (imageIcon2) {
+            attach_next_to(*imageIcon2, *slider, Gtk::POS_RIGHT, 1, 1);
+            attach_next_to(*spin, *imageIcon2, Gtk::POS_RIGHT, 1, 1);
         } else {
             attach_next_to(*spin, *slider, Gtk::POS_RIGHT, 1, 1);
         }
@@ -140,9 +142,9 @@ Adjuster::Adjuster(
             grid->attach_next_to(*imageIcon1, *slider, Gtk::POS_LEFT, 1, 1);
         }
 
-        if (imgIcon2) {
-            grid->attach_next_to(*imgIcon2, Gtk::POS_RIGHT, 1, 1);
-            grid->attach_next_to(*reset, *imgIcon2, Gtk::POS_RIGHT, 1, 1);
+        if (imageIcon2) {
+            grid->attach_next_to(*imageIcon2, Gtk::POS_RIGHT, 1, 1);
+            grid->attach_next_to(*reset, *imageIcon2, Gtk::POS_RIGHT, 1, 1);
         } else {
             grid->attach_next_to(*reset, *slider, Gtk::POS_RIGHT, 1, 1);
         }
@@ -192,13 +194,13 @@ void Adjuster::addAutoButton (const Glib::ustring &tooltip)
 {
     if (!automatic) {
         automatic = Gtk::manage(new Gtk::CheckButton());
-        //automatic->add (*Gtk::manage (new RTImage ("gears.png")));
+        //automatic->add (*Gtk::manage (new RTImage ("gears")));
         automatic->set_tooltip_markup(tooltip.length() ? Glib::ustring::compose("<b>%1</b>\n\n%2", M("GENERAL_AUTO"), tooltip) : M("GENERAL_AUTO"));
         setExpandAlignProperties(automatic, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
         autoChange = automatic->signal_toggled().connect( sigc::mem_fun(*this, &Adjuster::autoToggled) );
 
         if (grid) {
-            // Hombre, adding the checbox next to the reset button because adding it next to the spin button (as before)
+            // Hombre, adding the checkbox next to the reset button because adding it next to the spin button (as before)
             // would diminish the available size for the label and would require a much heavier reorganization of the grid !
             grid->attach_next_to(*automatic, *reset, Gtk::POS_RIGHT, 1, 1);
         } else {
@@ -615,7 +617,7 @@ void Adjuster::setLogScale(double base, double pivot, bool anchorMiddle)
     logPivot = pivot;
     logAnchorMiddle = anchorMiddle;
     setSliderValue(cur);
-    
+
     sliderChange.block(false);
     spinChange.block(false);
 }
@@ -682,4 +684,16 @@ void Adjuster::setDelay(unsigned int min_delay_ms, unsigned int max_delay_ms)
 {
     spinChange.setDelay(min_delay_ms, max_delay_ms);
     sliderChange.setDelay(min_delay_ms, max_delay_ms);
+}
+
+void Adjuster::showIcons(bool yes)
+{
+    if (imageIcon1) {
+        imageIcon1->set_visible(yes);
+        imageIcon1->set_no_show_all(!yes);
+    }
+    if (imageIcon2) {
+        imageIcon2->set_visible(yes);
+        imageIcon2->set_no_show_all(!yes);
+    }
 }

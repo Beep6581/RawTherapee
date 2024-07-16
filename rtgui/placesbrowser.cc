@@ -18,7 +18,7 @@
  */
 #include "placesbrowser.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
 #include <shlobj.h>
 #include <Shlwapi.h>
@@ -32,7 +32,7 @@
 PlacesBrowser::PlacesBrowser ()
 {
     set_orientation(Gtk::ORIENTATION_VERTICAL);
-    
+
     scrollw = Gtk::manage (new Gtk::ScrolledWindow ());
     scrollw->set_policy (Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
     pack_start (*scrollw);
@@ -43,13 +43,13 @@ PlacesBrowser::PlacesBrowser ()
     setExpandAlignProperties(add, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     //add->get_style_context()->set_junction_sides(Gtk::JUNCTION_RIGHT);
     add->get_style_context()->add_class("Left");
-    add->set_image (*Gtk::manage (new RTImage ("add-small.png")));
+    add->set_image (*Gtk::manage (new RTImage ("add-small", Gtk::ICON_SIZE_BUTTON)));
     del = Gtk::manage (new Gtk::Button ());
     del->set_tooltip_text(M("MAIN_FRAME_PLACES_DEL"));
     setExpandAlignProperties(del, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     //del->get_style_context()->set_junction_sides(Gtk::JUNCTION_LEFT);
     del->get_style_context()->add_class("Right");
-    del->set_image (*Gtk::manage (new RTImage ("remove-small.png")));
+    del->set_image (*Gtk::manage (new RTImage ("remove-small", Gtk::ICON_SIZE_BUTTON)));
     Gtk::Grid* buttonBox = Gtk::manage (new Gtk::Grid ());
     buttonBox->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
     buttonBox->attach_next_to(*add, Gtk::POS_LEFT, 1, 1);
@@ -106,8 +106,31 @@ void PlacesBrowser::refreshPlacesList ()
 {
     placesModel->clear ();
 
+    // append favorites
+    for (size_t i = 0; i < options.favoriteDirs.size(); i++) {
+        Glib::RefPtr<Gio::File> fav = Gio::File::create_for_path (options.favoriteDirs[i]);
+
+        if (fav && fav->query_exists()) {
+            try {
+                if (auto info = fav->query_info ()) {
+                    Gtk::TreeModel::Row newrow = *(placesModel->append());
+                    newrow[placesColumns.label] = info->get_display_name ();
+                    newrow[placesColumns.icon]  = info->get_icon ();
+                    newrow[placesColumns.root]  = fav->get_parse_name ();
+                    newrow[placesColumns.type]  = 5;
+                    newrow[placesColumns.rowSeparator] = false;
+                }
+            } catch(Gio::Error&) {}
+        }
+    }
+
     // append home directory
     Glib::RefPtr<Gio::File> hfile = Gio::File::create_for_path (userHomeDir());  // Will send back "My documents" on Windows now, which has no restricted access
+
+    if (!placesModel->children().empty()) {
+        Gtk::TreeModel::Row newrow = *(placesModel->append());
+        newrow[placesColumns.rowSeparator] = true;
+    }
 
     if (hfile && hfile->query_exists()) {
         try {
@@ -208,7 +231,7 @@ void PlacesBrowser::refreshPlacesList ()
     // (Drives in Windows)
     std::vector<Glib::RefPtr<Gio::Mount> > mounts = vm->get_mounts ();
 
-#ifdef WIN32
+#ifdef _WIN32
     // on Windows, it's usual to sort by drive letter, not by name
     std::sort (mounts.begin(), mounts.end(), compareMountByRoot);
 #endif
@@ -221,29 +244,6 @@ void PlacesBrowser::refreshPlacesList ()
             newrow[placesColumns.root]  = mounts[i]->get_root ()->get_parse_name ();
             newrow[placesColumns.type]  = 1;
             newrow[placesColumns.rowSeparator] = false;
-        }
-    }
-
-    // append favorites
-    if (!placesModel->children().empty()) {
-        Gtk::TreeModel::Row newrow = *(placesModel->append());
-        newrow[placesColumns.rowSeparator] = true;
-    }
-
-    for (size_t i = 0; i < options.favoriteDirs.size(); i++) {
-        Glib::RefPtr<Gio::File> fav = Gio::File::create_for_path (options.favoriteDirs[i]);
-
-        if (fav && fav->query_exists()) {
-            try {
-                if (auto info = fav->query_info ()) {
-                    Gtk::TreeModel::Row newrow = *(placesModel->append());
-                    newrow[placesColumns.label] = info->get_display_name ();
-                    newrow[placesColumns.icon]  = info->get_icon ();
-                    newrow[placesColumns.root]  = fav->get_parse_name ();
-                    newrow[placesColumns.type]  = 5;
-                    newrow[placesColumns.rowSeparator] = false;
-                }
-            } catch(Gio::Error&) {}
         }
     }
 }
@@ -353,7 +353,7 @@ void PlacesBrowser::delPressed ()
 
 Glib::ustring PlacesBrowser::userHomeDir ()
 {
-#ifdef WIN32
+#ifdef _WIN32
 
     // get_home_dir crashes on some Windows configurations,
     // so we rather use the safe native functions here.
@@ -378,7 +378,7 @@ Glib::ustring PlacesBrowser::userHomeDir ()
 
 Glib::ustring PlacesBrowser::userPicturesDir ()
 {
-#ifdef WIN32
+#ifdef _WIN32
 
     // get_user_special_dir crashes on some Windows configurations,
     // so we rather use the safe native functions here.

@@ -41,7 +41,7 @@
 #include "extprog.h"
 #include "pathutils.h"
 
-#ifndef WIN32
+#ifndef _WIN32
 #include <glibmm/fileutils.h>
 #include <glib.h>
 #include <glib/gstdio.h>
@@ -66,25 +66,6 @@ Glib::ustring argv1;
 
 namespace
 {
-
-// For an unknown reason, Glib::filename_to_utf8 doesn't work on reliably Windows,
-// so we're using Glib::filename_to_utf8 for Linux/Apple and Glib::locale_to_utf8 for Windows.
-Glib::ustring fname_to_utf8 (const char* fname)
-{
-#ifdef WIN32
-
-    try {
-        return Glib::locale_to_utf8 (fname);
-    } catch (Glib::Error&) {
-        return Glib::convert_with_fallback (fname, "UTF-8", "ISO-8859-1", "?");
-    }
-
-#else
-
-    return Glib::filename_to_utf8 (fname);
-
-#endif
-}
 
 bool fast_export = false;
 
@@ -115,7 +96,7 @@ int main (int argc, char **argv)
     char exname[512] = {0};
     Glib::ustring exePath;
     // get the path where the rawtherapee executable is stored
-#ifdef WIN32
+#ifdef _WIN32
     WCHAR exnameU[512] = {0};
     GetModuleFileNameW (NULL, exnameU, 511);
     WideCharToMultiByte (CP_UTF8, 0, exnameU, -1, exname, 511, 0, 0 );
@@ -148,12 +129,14 @@ int main (int argc, char **argv)
     }
 
     options.rtSettings.lensfunDbDirectory = LENSFUN_DB_PATH;
+    options.rtSettings.lensfunDbBundleDirectory = LENSFUN_DB_PATH;
 
 #else
     argv0 = DATA_SEARCH_PATH;
     creditsPath = CREDITS_SEARCH_PATH;
     licensePath = LICENCE_SEARCH_PATH;
     options.rtSettings.lensfunDbDirectory = LENSFUN_DB_PATH;
+    options.rtSettings.lensfunDbBundleDirectory = LENSFUN_DB_PATH;
 #endif
 
     bool quickstart = dontLoadCache (argc, argv);
@@ -199,7 +182,7 @@ int main (int argc, char **argv)
 
     TIFFSetWarningHandler (nullptr);   // avoid annoying message boxes
 
-#ifndef WIN32
+#ifndef _WIN32
 
     // Move the old path to the new one if the new does not exist
     if (Glib::file_test (Glib::build_filename (options.rtdir, "cache"), Glib::FILE_TEST_IS_DIR) && !Glib::file_test (options.cacheBaseDir, Glib::FILE_TEST_IS_DIR)) {
@@ -741,7 +724,7 @@ int processLineParams ( int argc, char **argv )
                 if (options.defProfRaw == DEFPROFILE_DYNAMIC) {
                     rawParams->deleteInstance();
                     delete rawParams;
-                    rawParams = ProfileStore::getInstance()->loadDynamicProfile (ii->getMetaData());
+                    rawParams = ProfileStore::getInstance()->loadDynamicProfile (ii->getMetaData(), inputFile);
                 }
 
                 std::cout << "  Merging default raw processing profile." << std::endl;
@@ -750,7 +733,7 @@ int processLineParams ( int argc, char **argv )
                 if (options.defProfImg == DEFPROFILE_DYNAMIC) {
                     imgParams->deleteInstance();
                     delete imgParams;
-                    imgParams = ProfileStore::getInstance()->loadDynamicProfile (ii->getMetaData());
+                    imgParams = ProfileStore::getInstance()->loadDynamicProfile (ii->getMetaData(), inputFile);
                 }
 
                 std::cout << "  Merging default non-raw processing profile." << std::endl;

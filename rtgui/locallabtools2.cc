@@ -24,6 +24,9 @@
 #include "../rtengine/procparams.h"
 #include "locallab.h"
 #include "rtimage.h"
+#include "../rtengine/color.h"
+#include "eventmapper.h"
+#include "../rtengine/utils.h"
 
 #define MINNEIGH 0.1
 #define MAXNEIGH 1500
@@ -127,12 +130,13 @@ LocallabTone::LocallabTone():
     estop(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ESTOP"), 0.1, 4., 0.01, 1.4))),
     scaltm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALTM"), 0.1, 10.0, 0.01, 1.0))),
     rewei(Gtk::manage(new Adjuster(M("TP_LOCALLAB_REWEI"), 0, 3, 1, 0))),
-    softradiustm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.1, 0.))),//unused here, but used for normalize_mean_dt 
+    softradiustm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.1, 0.))),//unused here, but used for normalize_mean_dt
     sensitm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
+    previewtm(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
     exprecovt(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
     maskusablet(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
     maskunusablet(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUNUSABLE")))),
-    recothrest(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 1., 2., 0.01, 1.))),
+    recothrest(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 0., 2., 0.01, 1.))),
     lowthrest(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 1., 80., 0.5, 12.))),
     higthrest(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 20., 99., 0.5, 85.))),
     decayt(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKDDECAY"), 0.5, 4., 0.1, 2.))),
@@ -140,7 +144,7 @@ LocallabTone::LocallabTone():
     showmasktmMethod(Gtk::manage(new MyComboBoxText())),
     enatmMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
     enatmMaskaft(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_AFTER_MASK")))),
- //   masktmCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
+//   masktmCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
     masktmCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
     CCmasktmshape(static_cast<FlatCurveEditor*>(masktmCurveEditorG->addCurve(CT_Flat, "C", nullptr, false, false))),
     LLmasktmshape(static_cast<FlatCurveEditor*>(masktmCurveEditorG->addCurve(CT_Flat, "L", nullptr, false, false))),
@@ -154,8 +158,11 @@ LocallabTone::LocallabTone():
     mask2tmCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     Lmasktmshape(static_cast<DiagonalCurveEditor*>(mask2tmCurveEditorG->addCurve(CT_Diagonal, "L(L)")))
 {
-    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    auto m = ProcEventMapper::getInstance();
+    Evlocallabpreviewtm = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWTM");
     
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+
     const LocallabParams::LocallabSpot defSpot;
 
     // Parameter Tone Mapping specific widgets
@@ -187,6 +194,11 @@ LocallabTone::LocallabTone():
     higthrest->setAdjusterListener(this);
     decayt->setAdjusterListener(this);
     setExpandAlignProperties(exprecovt, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+    previewtm->set_active(false);
+    previewtmConn = previewtm->signal_clicked().connect(
+                       sigc::mem_fun(
+                           *this, &LocallabTone::previewtmChanged));
 
     setExpandAlignProperties(expmasktm, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
@@ -243,6 +255,7 @@ LocallabTone::LocallabTone():
     // Add Tone Mapping specific widgets to GUI
     // pack_start(*amount); // To use if we change transit_shapedetect parameters
     pack_start(*sensitm);
+    pack_start(*previewtm);
     pack_start(*repartm);
     pack_start(*separatortm);
     pack_start(*stren);
@@ -252,7 +265,7 @@ LocallabTone::LocallabTone():
     pack_start(*estop);
     pack_start(*scaltm);
     pack_start(*rewei);
-    // pack_start(*softradiustm); //unused here, but used for normalize_mean_dt 
+    // pack_start(*softradiustm); //unused here, but used for normalize_mean_dt
 //    pack_start(*sensitm);
     ToolParamBlock* const tmBox3 = Gtk::manage(new ToolParamBlock());
     tmBox3->pack_start(*maskusablet, Gtk::PACK_SHRINK, 0);
@@ -261,10 +274,10 @@ LocallabTone::LocallabTone():
     tmBox3->pack_start(*lowthrest);
     tmBox3->pack_start(*higthrest);
     tmBox3->pack_start(*decayt);
-   // colBox3->pack_start(*invmaskc);
+    // colBox3->pack_start(*invmaskc);
     exprecovt->add(*tmBox3, false);
     pack_start(*exprecovt, false, false);
-    
+
     ToolParamBlock* const masktmBox = Gtk::manage(new ToolParamBlock());
     masktmBox->pack_start(*showmasktmMethod, Gtk::PACK_SHRINK, 4);
     masktmBox->pack_start(*enatmMask, Gtk::PACK_SHRINK, 0);
@@ -299,15 +312,26 @@ void LocallabTone::resetMaskView()
     showmasktmMethodConn.block(false);
 }
 
-void LocallabTone::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask)
+void LocallabTone::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask)
 {
     tmMask = showmasktmMethod->get_active_row_number();
+}
+
+Gtk::ToggleButton *LocallabTone::getPreviewDeltaEButton() const
+{
+    return previewtm;
+}
+
+sigc::connection *LocallabTone::getPreviewDeltaEButtonConnection()
+{
+    return &previewtmConn;
 }
 
 void LocallabTone::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
         exp->set_tooltip_text(M("TP_LOCALLAB_TONEMAP_TOOLTIP"));
+        recothrest->set_tooltip_text(M("TP_LOCALLAB_RECOTHRES02_TOOLTIP"));
         exprecovt->set_tooltip_markup(M("TP_LOCALLAB_MASKRESTM_TOOLTIP"));
         equiltm->set_tooltip_text(M("TP_LOCALLAB_EQUILTM_TOOLTIP"));
         repartm->set_tooltip_text(M("TP_LOCALLAB_REPARTM_TOOLTIP"));
@@ -336,6 +360,7 @@ void LocallabTone::updateAdviceTooltips(const bool showTooltips)
     } else {
         exp->set_tooltip_text("");
         equiltm->set_tooltip_text("");
+        recothrest->set_tooltip_text("");
         repartm->set_tooltip_text("");
         gamma->set_tooltip_text("");
         estop->set_tooltip_text("");
@@ -390,6 +415,58 @@ void LocallabTone::enableListener()
     enatmMaskaftConn.block(false);
 }
 
+//new function Global
+void LocallabTone::updateguitone(int spottype)
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype == 3) {
+                sensitm->hide();
+             //   showmasktmMethodConn.block(true);
+                showmasktmMethod->set_active(0);
+             //   showmasktmMethodConn.block(false);
+                previewtm->hide();
+             //   previewtmConn.block(true);
+                previewtm->set_active(false);
+             //   previewtmConn.block(false);
+                resetMaskView();
+            } else {
+                sensitm->show();
+                previewtm->show();
+           }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
+void LocallabTone::previewtmChanged()
+{
+   //  showmasktmMethodConn.block(true);
+   
+    if(previewtm->get_active()) {
+        showmasktmMethod->set_active(4);
+    } else {
+        showmasktmMethod->set_active(0);
+    }
+  //   showmasktmMethodConn.block(false);
+    
+    if (isLocActivated) {
+        if (listener) {
+            listener->panelChanged(Evlocallabpreviewtm,"");
+        }
+    } 
+}
+
 void LocallabTone::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
 {
     // Disable all listeners
@@ -400,8 +477,6 @@ void LocallabTone::read(const rtengine::procparams::ProcParams* pp, const Params
 
     if (index < (int)pp->locallab.spots.size()) {
         const LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
-
-        spotName = spot.name; // Update spot name according to selected spot
 
         exp->set_visible(spot.visitonemap);
         exp->setEnabled(spot.exptonemap);
@@ -524,7 +599,7 @@ void LocallabTone::setDefaults(const rtengine::procparams::ProcParams* defParams
 void LocallabTone::adjusterChanged(Adjuster* a, double newval)
 {
     if (isLocActivated && exp->getEnabled() && listener) {
-        const auto spName = " (" + escapeHtmlChars(spotName) + ")";
+        const auto spName = " (" + escapeHtmlChars(getSpotName()) + ")";
 
         if (a == amount) {
             listener->panelChanged(Evlocallabamount, amount->getTextValue() + spName);
@@ -567,13 +642,14 @@ void LocallabTone::adjusterChanged(Adjuster* a, double newval)
         } else if (a == decayt) {
             listener->panelChanged(Evlocallabdecayt, decayt->getTextValue() + spName);
         }
+
     }
 }
 
 void LocallabTone::curveChanged(CurveEditor* ce)
 {
     if (isLocActivated && exp->getEnabled() && listener) {
-        const auto spName = M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")";
+        const auto spName = M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")";
 
         if (ce == CCmasktmshape) {
             listener->panelChanged(EvlocallabCCmasktmshape, spName);
@@ -591,7 +667,7 @@ void LocallabTone::enabledChanged()
 {
     if (isLocActivated && listener) {
         listener->panelChanged(EvLocenatonemap, (exp->getEnabled() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"))
-                               + " (" + escapeHtmlChars(spotName) + ")");
+                               + " (" + escapeHtmlChars(getSpotName()) + ")");
     }
 }
 
@@ -669,10 +745,11 @@ void LocallabTone::updateGUIToMode(const modeType new_type)
             expmasktm->show();
             exprecovt->show();
             decayt->hide();
+
             if (enatmMask->get_active()) {
                 maskusablet->show();
                 maskunusablet->hide();
-                
+
             } else {
                 maskusablet->hide();
                 maskunusablet->show();
@@ -691,10 +768,11 @@ void LocallabTone::updateGUIToMode(const modeType new_type)
             slomasktm->show();
             exprecovt->show();
             decayt->show();
+
             if (enatmMask->get_active()) {
                 maskusablet->show();
                 maskunusablet->hide();
-                
+
             } else {
                 maskusablet->hide();
                 maskunusablet->show();
@@ -702,7 +780,7 @@ void LocallabTone::updateGUIToMode(const modeType new_type)
     }
 }
 
-void LocallabTone::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer)
+void LocallabTone::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
 {
     idle_register.add(
     [this, normHuer, normLumar, normChromar]() -> bool {
@@ -716,7 +794,7 @@ void LocallabTone::updateMaskBackground(const double normChromar, const double n
 
         return false;
     }
-    );
+                 );
 }
 
 void LocallabTone::equiltmChanged()
@@ -725,10 +803,10 @@ void LocallabTone::equiltmChanged()
         if (listener) {
             if (equiltm->get_active()) {
                 listener->panelChanged(Evlocallabequiltm,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabequiltm,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -741,7 +819,7 @@ void LocallabTone::showmasktmMethodChanged()
         locToolListener->resetOtherMaskView(this);
     }
 
-    if(exp->getEnabled()) {
+    if (exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabshowmaskMethod, "");
         }
@@ -757,15 +835,15 @@ void LocallabTone::enatmMaskChanged()
         maskusablet->hide();
         maskunusablet->show();
     }
-    
+
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (enatmMask->get_active()) {
                 listener->panelChanged(EvLocallabEnatmMask,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvLocallabEnatmMask,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -777,10 +855,10 @@ void LocallabTone::enatmMaskaftChanged()
         if (listener) {
             if (enatmMaskaft->get_active()) {
                 listener->panelChanged(EvLocallabEnatmMaskaft,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvLocallabEnatmMaskaft,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -795,6 +873,7 @@ LocallabRetinex::LocallabRetinex():
     dehaz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEHAZ"), -100, 100, 1, 0))),
     depth(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEPTH"), 0, 100, 1, 25))),
     dehazeSaturation(Gtk::manage(new Adjuster(M("TP_DEHAZE_SATURATION"), 0, 100, 1, 50))),
+    dehazeblack(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEHAZE_BLACK"), -65., 100., 1., 0.))),
     retiFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RETIFRA")))),
     str(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STR"), 0., 100., 0.2, 0.))),
     loglin(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LOGLIN")))),
@@ -832,7 +911,7 @@ LocallabRetinex::LocallabRetinex():
     showmaskretiMethod(Gtk::manage(new MyComboBoxText())),
     enaretiMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
     enaretiMasktmap(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_TM_MASK")))),
- //   maskretiCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
+//   maskretiCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
     maskretiCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
     CCmaskretishape(static_cast<FlatCurveEditor*>(maskretiCurveEditorG->addCurve(CT_Flat, "C", nullptr, false, false))),
     LLmaskretishape(static_cast<FlatCurveEditor*>(maskretiCurveEditorG->addCurve(CT_Flat, "L", nullptr, false, false))),
@@ -847,8 +926,12 @@ LocallabRetinex::LocallabRetinex():
     Lmaskretishape(static_cast<DiagonalCurveEditor*>(mask2retiCurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
     inversret(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS"))))
 {
+
+    auto m = ProcEventMapper::getInstance();
+    Evlocallabdehazeblack = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_DEHAZE_BLACK");
+
     set_orientation(Gtk::ORIENTATION_VERTICAL);
-    
+
     const LocallabParams::LocallabSpot defSpot;
 
     // Parameter Retinex specific widgets
@@ -856,6 +939,7 @@ LocallabRetinex::LocallabRetinex():
 
     dehazeSaturation->setAdjusterListener(this);
     depth->setAdjusterListener(this);
+    dehazeblack->setAdjusterListener(this);
 
     retiFrame->set_label_align(0.025, 0.5);
 
@@ -933,7 +1017,7 @@ LocallabRetinex::LocallabRetinex():
     showmaskretiMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
     showmaskretiMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
     showmaskretiMethod->append(M("TP_LOCALLAB_SHOWMASK"));
-    showmaskretiMethod->append(M("TP_LOCALLAB_SHOWREF"));
+ //   showmaskretiMethod->append(M("TP_LOCALLAB_SHOWREF"));
     showmaskretiMethod->set_active(0);
     showmaskretiMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
     showmaskretiMethodConn = showmaskretiMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabRetinex::showmaskretiMethodChanged));
@@ -990,6 +1074,7 @@ LocallabRetinex::LocallabRetinex():
     dehaBox->pack_start(*dehaz);
     dehaBox->pack_start(*depth);
     dehaBox->pack_start(*dehazeSaturation);
+    dehaBox->pack_start(*dehazeblack);
     dehaFrame->add(*dehaBox);
     auxBox->add(*dehaFrame);
     ToolParamBlock* const deharetiBox = Gtk::manage(new ToolParamBlock());
@@ -997,9 +1082,9 @@ LocallabRetinex::LocallabRetinex():
     deharetiBox->pack_start(*loglin);
     retiFrame->add(*deharetiBox);
     auxBox->add(*retiFrame);
- //   ToolParamBlock* const scopeBox = Gtk::manage(new ToolParamBlock());
- //   scopeBox->pack_start(*sensih);
- //   auxBox->add(*scopeBox);
+//   ToolParamBlock* const scopeBox = Gtk::manage(new ToolParamBlock());
+//   scopeBox->pack_start(*sensih);
+//   auxBox->add(*scopeBox);
     pack_start(*auxBox);
     ToolParamBlock* const retiBox = Gtk::manage(new ToolParamBlock());
     retiBox->pack_start(*retinexMethod);
@@ -1011,7 +1096,7 @@ LocallabRetinex::LocallabRetinex():
     retiBox->pack_start(*limd);
     retiBox->pack_start(*offs);
     ToolParamBlock* const toolretiBox = Gtk::manage(new ToolParamBlock());
-  //  toolretiBox->pack_start(*chrrt);
+    //  toolretiBox->pack_start(*chrrt);
     toolretiBox->pack_start(*darkness);
     toolretiBox->pack_start(*lightnessreti);
     toolretiBox->pack_start(*cliptm);
@@ -1030,7 +1115,7 @@ LocallabRetinex::LocallabRetinex():
     reBox3->pack_start(*lowthresr);
     reBox3->pack_start(*higthresr);
     reBox3->pack_start(*decayr);
-   // colBox3->pack_start(*invmaskc);
+    // colBox3->pack_start(*invmaskc);
     exprecovr->add(*reBox3, false);
 
     ToolParamBlock* const maskretiBox = Gtk::manage(new ToolParamBlock());
@@ -1087,8 +1172,34 @@ void LocallabRetinex::updateMinMax(const double cdma, const double cdmin, const 
 
         return false;
     }
-    );
+                 );
 }
+
+//new function Global
+void LocallabRetinex::updateguireti(int spottype)
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype == 3) {
+                sensih->hide();
+            } else {
+                sensih->show();
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
 
 bool LocallabRetinex::isMaskViewActive()
 {
@@ -1102,7 +1213,7 @@ void LocallabRetinex::resetMaskView()
     showmaskretiMethodConn.block(false);
 }
 
-void LocallabRetinex::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask)
+void LocallabRetinex::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask)
 {
     retiMask = showmaskretiMethod->get_active_row_number();
 }
@@ -1239,8 +1350,6 @@ void LocallabRetinex::read(const rtengine::procparams::ProcParams* pp, const Par
     if (index < (int)pp->locallab.spots.size()) {
         const LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
 
-        spotName = spot.name; // Update spot name according to selected spot
-
         exp->set_visible(spot.visireti);
         exp->setEnabled(spot.expreti);
         complexity->set_active(spot.complexreti);
@@ -1248,6 +1357,7 @@ void LocallabRetinex::read(const rtengine::procparams::ProcParams* pp, const Par
         dehaz->setValue((double)spot.dehaz);
         depth->setValue((double)spot.depth);
         dehazeSaturation->setValue((double)spot.dehazeSaturation);
+        dehazeblack->setValue((double)spot.dehazeblack);
         str->setValue(spot.str);
         loglin->set_active(spot.loglin);
         sensih->setValue((double)spot.sensih);
@@ -1268,7 +1378,7 @@ void LocallabRetinex::read(const rtengine::procparams::ProcParams* pp, const Par
         limd->setValue(spot.limd);
         offs->setValue(spot.offs);
         chrrt->setValue(0.);
-       // chrrt->setValue(spot.chrrt);
+        // chrrt->setValue(spot.chrrt);
         darkness->setValue(spot.darkness);
         lightnessreti->setValue(spot.lightnessreti);
         cliptm->setValue(spot.cliptm);
@@ -1326,6 +1436,7 @@ void LocallabRetinex::write(rtengine::procparams::ProcParams* pp, ParamsEdited* 
         spot.dehaz = dehaz->getIntValue();
         spot.depth = depth->getIntValue();
         spot.dehazeSaturation = dehazeSaturation->getIntValue();
+        spot.dehazeblack = dehazeblack->getValue();
         spot.str = str->getValue();
         spot.loglin = loglin->get_active();
         spot.sensih = sensih->getIntValue();
@@ -1384,6 +1495,7 @@ void LocallabRetinex::setDefaults(const rtengine::procparams::ProcParams* defPar
         // Set default values for adjuster widgets
         dehaz->setDefault((double)defSpot.dehaz);
         dehazeSaturation->setDefault((double)defSpot.dehazeSaturation);
+        dehazeblack->setDefault((double)defSpot.dehazeblack);
         depth->setDefault((double)defSpot.depth);
         str->setDefault(defSpot.str);
         sensih->setDefault((double)defSpot.sensih);
@@ -1428,176 +1540,183 @@ void LocallabRetinex::adjusterChanged(Adjuster* a, double newval)
         if (a == dehaz) {
             if (listener) {
                 listener->panelChanged(Evlocallabdehaz,
-                                       dehaz->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       dehaz->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == dehazeSaturation) {
             if (listener) {
                 listener->panelChanged(EvlocallabdehazeSaturation,
-                                       dehazeSaturation->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       dehazeSaturation->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == dehazeblack) {
+            if (listener) {
+                listener->panelChanged(Evlocallabdehazeblack,
+                                       dehazeblack->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == depth) {
             if (listener) {
                 listener->panelChanged(Evlocallabdepth,
-                                       depth->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       depth->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == str) {
             if (listener) {
                 listener->panelChanged(Evlocallabstr,
-                                       str->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       str->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == sensih) {
             if (listener) {
                 listener->panelChanged(Evlocallabsensih,
-                                       sensih->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       sensih->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == neigh) {
             if (listener) {
                 listener->panelChanged(Evlocallabneigh,
-                                       neigh->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       neigh->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == vart) {
             if (listener) {
                 listener->panelChanged(Evlocallabvart,
-                                       vart->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       vart->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == scalereti) {
             if (listener) {
                 listener->panelChanged(Evlocallabscalereti,
-                                       scalereti->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       scalereti->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == limd) {
             if (listener) {
                 listener->panelChanged(Evlocallablimd,
-                                       limd->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       limd->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == offs) {
             if (listener) {
                 listener->panelChanged(Evlocallaboffs,
-                                       offs->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       offs->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == chrrt) {
             if (listener) {
                 listener->panelChanged(Evlocallabchrrt,
-                                       chrrt->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       chrrt->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == darkness) {
             if (listener) {
                 listener->panelChanged(Evlocallabdarkness,
-                                       darkness->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       darkness->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == lightnessreti) {
             if (listener) {
                 listener->panelChanged(Evlocallablightnessreti,
-                                       lightnessreti->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       lightnessreti->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == cliptm) {
             if (listener) {
                 listener->panelChanged(Evlocallabcliptm,
-                                       cliptm->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       cliptm->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == softradiusret) {
             if (listener) {
                 listener->panelChanged(Evlocallabsoftradiusret,
-                                       softradiusret->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       softradiusret->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == recothresr) {
-            
+
             if (listener) {
                 listener->panelChanged(Evlocallabrecothresr,
-                                       recothresr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       recothresr->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == lowthresr) {
             if (listener) {
                 listener->panelChanged(Evlocallablowthresr,
-                                       lowthresr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       lowthresr->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == higthresr) {
             if (listener) {
                 listener->panelChanged(Evlocallabhigthresr,
-                                       higthresr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       higthresr->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == decayr) {
             if (listener) {
                 listener->panelChanged(Evlocallabdecayr,
-                                       decayr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       decayr->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == blendmaskreti) {
             if (listener) {
                 listener->panelChanged(Evlocallabblendmaskreti,
-                                       blendmaskreti->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       blendmaskreti->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == radmaskreti) {
             if (listener) {
                 listener->panelChanged(Evlocallabradmaskreti,
-                                       radmaskreti->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       radmaskreti->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == lapmaskreti) {
             if (listener) {
                 listener->panelChanged(Evlocallablapmaskreti,
-                                       lapmaskreti->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       lapmaskreti->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == chromaskreti) {
             if (listener) {
                 listener->panelChanged(Evlocallabchromaskreti,
-                                       chromaskreti->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       chromaskreti->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == gammaskreti) {
             if (listener) {
                 listener->panelChanged(Evlocallabgammaskreti,
-                                       gammaskreti->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       gammaskreti->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == slomaskreti) {
             if (listener) {
                 listener->panelChanged(Evlocallabslomaskreti,
-                                       slomaskreti->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       slomaskreti->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -1609,42 +1728,42 @@ void LocallabRetinex::curveChanged(CurveEditor* ce)
         if (ce == cTtransshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabCTtransCurve,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == cTgainshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabCTgainCurve,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == CCmaskretishape) {
             if (listener) {
                 listener->panelChanged(EvlocallabCCmaskretishape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == LLmaskretishape) {
             if (listener) {
                 listener->panelChanged(EvlocallabLLmaskretishape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == HHmaskretishape) {
             if (listener) {
                 listener->panelChanged(EvlocallabHHmaskretishape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == Lmaskretishape) {
             if (listener) {
                 listener->panelChanged(EvlocallabLmaskretishape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -1656,10 +1775,10 @@ void LocallabRetinex::enabledChanged()
         if (listener) {
             if (exp->getEnabled()) {
                 listener->panelChanged(EvLocenareti,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvLocenareti,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -1741,7 +1860,7 @@ void LocallabRetinex::convertParamToSimple()
     higthresr->setValue(defSpot.higthresr);
     decayr->setValue(defSpot.decayr);
     enableListener();
-    
+
 }
 
 void LocallabRetinex::updateGUIToMode(const modeType new_type)
@@ -1776,10 +1895,11 @@ void LocallabRetinex::updateGUIToMode(const modeType new_type)
             retitoolFrame->show();
             exprecovr->show();
             decayr->show();
+
             if (enaretiMask->get_active()) {
                 maskusabler->show();
                 maskunusabler->hide();
-                
+
             } else {
                 maskusabler->hide();
                 maskunusabler->show();
@@ -1787,7 +1907,7 @@ void LocallabRetinex::updateGUIToMode(const modeType new_type)
     }
 }
 
-void LocallabRetinex::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer)
+void LocallabRetinex::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
 {
     idle_register.add(
     [this, normHuer, normLumar, normChromar]() -> bool {
@@ -1801,7 +1921,7 @@ void LocallabRetinex::updateMaskBackground(const double normChromar, const doubl
 
         return false;
     }
-    );
+                 );
 }
 
 void LocallabRetinex::loglinChanged()
@@ -1810,10 +1930,10 @@ void LocallabRetinex::loglinChanged()
         if (listener) {
             if (loglin->get_active()) {
                 listener->panelChanged(Evlocallabloglin,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabloglin,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -1824,7 +1944,7 @@ void LocallabRetinex::retinexMethodChanged()
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabretinexMethod,
-                                   retinexMethod->get_active_text() + " (" + escapeHtmlChars(spotName) + ")");
+                                   retinexMethod->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     }
 }
@@ -1835,10 +1955,10 @@ void LocallabRetinex::fftwretiChanged()
         if (listener) {
             if (fftwreti->get_active()) {
                 listener->panelChanged(Evlocallabfftwreti,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabfftwreti,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -1850,10 +1970,10 @@ void LocallabRetinex::equilretChanged()
         if (listener) {
             if (inversret->get_active()) {
                 listener->panelChanged(Evlocallabequilret,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabequilret,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -1866,7 +1986,7 @@ void LocallabRetinex::showmaskretiMethodChanged()
         locToolListener->resetOtherMaskView(this);
     }
 
-    if(exp->getEnabled()) {
+    if (exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabshowmaskMethod, "");
         }
@@ -1883,15 +2003,15 @@ void LocallabRetinex::enaretiMaskChanged()
         maskusabler->hide();
         maskunusabler->show();
     }
-    
+
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (enaretiMask->get_active()) {
                 listener->panelChanged(EvLocallabEnaretiMask,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvLocallabEnaretiMask,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -1903,10 +2023,10 @@ void LocallabRetinex::enaretiMasktmapChanged()
         if (listener) {
             if (enaretiMasktmap->get_active()) {
                 listener->panelChanged(EvLocallabEnaretiMasktmap,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvLocallabEnaretiMasktmap,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -1930,10 +2050,10 @@ void LocallabRetinex::inversretChanged()
         if (listener) {
             if (inversret->get_active()) {
                 listener->panelChanged(Evlocallabinversret,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabinversret,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -1984,6 +2104,7 @@ LocallabSharp::LocallabSharp():
     // Sharpening specific widgets
     sharcontrast(Gtk::manage(new Adjuster(M("TP_SHARPENING_CONTRAST"), 0, 200, 1, 20))),
     sharblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARBLUR"), 0.2, 2.0, 0.05, 0.2))),
+    shargam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMC"), 0.5, 3.0, 0.05, 1.))),
     sharamount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARAMOUNT"), 0, 100, 1, 100))),
     shardamping(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARDAMPING"), 0, 100, 1, 0))),
     shariter(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARITER"), 5, 100, 1, 30))),
@@ -1994,7 +2115,7 @@ LocallabSharp::LocallabSharp():
     showmasksharMethod(Gtk::manage(new MyComboBoxText()))
 {
     set_orientation(Gtk::ORIENTATION_VERTICAL);
-    
+
     // Parameter Sharpening specific widgets
     sharcontrast->setAdjusterListener(this);
 
@@ -2007,6 +2128,8 @@ LocallabSharp::LocallabSharp():
     shariter->setAdjusterListener(this);
 
     sharblur->setAdjusterListener(this);
+
+    shargam->setAdjusterListener(this);
 
     sensisha->setAdjusterListener(this);
 
@@ -2023,6 +2146,7 @@ LocallabSharp::LocallabSharp():
     pack_start(*sensisha);
     pack_start(*sharcontrast);
     pack_start(*sharblur);
+    pack_start(*shargam);
     pack_start(*sharradius);
     pack_start(*sharamount);
     pack_start(*shardamping);
@@ -2048,7 +2172,7 @@ void LocallabSharp::resetMaskView()
     showmasksharMethodConn.block(false);
 }
 
-void LocallabSharp::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask)
+void LocallabSharp::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask)
 {
     sharMask = showmasksharMethod->get_active_row_number();
 }
@@ -2058,9 +2182,12 @@ void LocallabSharp::updateAdviceTooltips(const bool showTooltips)
     if (showTooltips) {
         exp->set_tooltip_text(M("TP_LOCALLAB_EXPSHARP_TOOLTIP"));
         sensisha->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
+        shargam->set_tooltip_text(M("TP_LOCALLAB_GAMCOL_TOOLTIP"));
+
     } else {
         exp->set_tooltip_text("");
         sensisha->set_tooltip_text("");
+        shargam->set_tooltip_text("");
     }
 }
 
@@ -2080,6 +2207,33 @@ void LocallabSharp::enableListener()
     showmasksharMethodConn.block(false);
 }
 
+//new function Global
+void LocallabSharp::updateguisharp(int spottype)
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype == 3) {
+                sensisha->hide();
+                inverssha->hide();
+            } else {
+                sensisha->show();
+                inverssha->show();
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
 void LocallabSharp::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
 {
     // Disable all listeners
@@ -2091,8 +2245,6 @@ void LocallabSharp::read(const rtengine::procparams::ProcParams* pp, const Param
     if (index < (int)pp->locallab.spots.size()) {
         const LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
 
-        spotName = spot.name; // Update spot name according to selected spot
-
         exp->set_visible(spot.visisharp);
         exp->setEnabled(spot.expsharp);
         complexity->set_active(spot.complexsharp);
@@ -2103,6 +2255,7 @@ void LocallabSharp::read(const rtengine::procparams::ProcParams* pp, const Param
         shardamping->setValue((double)spot.shardamping);
         shariter->setValue((double)spot.shariter);
         sharblur->setValue(spot.sharblur);
+        shargam->setValue(spot.shargam);
         sensisha->setValue((double)spot.sensisha);
         inverssha->set_active(spot.inverssha);
     }
@@ -2133,6 +2286,7 @@ void LocallabSharp::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         spot.shardamping = shardamping->getIntValue();
         spot.shariter = shariter->getIntValue();
         spot.sharblur = sharblur->getValue();
+        spot.shargam = shargam->getValue();
         spot.sensisha = sensisha->getIntValue();
         spot.inverssha = inverssha->get_active();
     }
@@ -2154,6 +2308,7 @@ void LocallabSharp::setDefaults(const rtengine::procparams::ProcParams* defParam
         shardamping->setDefault((double)defSpot.shardamping);
         shariter->setDefault((double)defSpot.shariter);
         sharblur->setDefault(defSpot.sharblur);
+        shargam->setDefault(defSpot.shargam);
         sensisha->setDefault((double)defSpot.sensisha);
     }
 
@@ -2166,49 +2321,56 @@ void LocallabSharp::adjusterChanged(Adjuster* a, double newval)
         if (a == sharcontrast) {
             if (listener) {
                 listener->panelChanged(Evlocallabsharcontrast,
-                                       sharcontrast->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       sharcontrast->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == sharradius) {
             if (listener) {
                 listener->panelChanged(Evlocallabsharradius,
-                                       sharradius->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       sharradius->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == sharamount) {
             if (listener) {
                 listener->panelChanged(Evlocallabsharamount,
-                                       sharamount->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       sharamount->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == shardamping) {
             if (listener) {
                 listener->panelChanged(Evlocallabshardamping,
-                                       shardamping->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       shardamping->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == shariter) {
             if (listener) {
                 listener->panelChanged(Evlocallabshariter,
-                                       shariter->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       shariter->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == sharblur) {
             if (listener) {
                 listener->panelChanged(Evlocallabsharblur,
-                                       sharblur->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       sharblur->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == shargam) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshargam,
+                                       shargam->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == sensisha) {
             if (listener) {
                 listener->panelChanged(Evlocallabsensis,
-                                       sensisha->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       sensisha->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -2220,10 +2382,10 @@ void LocallabSharp::enabledChanged()
         if (listener) {
             if (exp->getEnabled()) {
                 listener->panelChanged(EvLocenasharp,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvLocenasharp,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -2242,6 +2404,7 @@ void LocallabSharp::convertParamToNormal()
     sharamount->setValue(defSpot.sharamount);
     shardamping->setValue((double)defSpot.shardamping);
     shariter->setValue((double)defSpot.shariter);
+    shargam->setValue(defSpot.shargam);
 
     // Enable all listeners
     enableListener();
@@ -2274,6 +2437,7 @@ void LocallabSharp::updateGUIToMode(const modeType new_type)
             shardamping->hide();
             shariter->hide();
             sharFrame->hide();
+            shargam->hide();
 
             break;
 
@@ -2281,6 +2445,7 @@ void LocallabSharp::updateGUIToMode(const modeType new_type)
             // Expert mode widgets are hidden in Normal mode
             sharcontrast->hide();
             sharblur->hide();
+            shargam->hide();
             sharamount->hide();
             shardamping->hide();
             shariter->hide();
@@ -2293,6 +2458,7 @@ void LocallabSharp::updateGUIToMode(const modeType new_type)
             // Show widgets hidden in Normal and Simple mode
             sharcontrast->show();
             sharblur->show();
+            shargam->show();
             sharamount->show();
             shardamping->show();
             shariter->show();
@@ -2306,10 +2472,10 @@ void LocallabSharp::inversshaChanged()
         if (listener) {
             if (inverssha->get_active()) {
                 listener->panelChanged(Evlocallabinverssha,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabinverssha,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -2322,7 +2488,7 @@ void LocallabSharp::showmasksharMethodChanged()
         locToolListener->resetOtherMaskView(this);
     }
 
-    if(exp->getEnabled()) {
+    if (exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabshowmaskMethod, "");
         }
@@ -2352,7 +2518,11 @@ LocallabContrast::LocallabContrast():
     residshathr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDSHATHR"), 0., 100., 1., 30.))),
     residhi(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDHI"), -100., 100., 1., 0.))),
     residhithr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDHITHR"), 0., 100., 1., 70.))),
+    gamlc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMW"), 0.5, 3., 0.01, 1.))),
+    residgam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMSH"), 0.25, 15.0, 0.01, 2.4))),
+    residslop(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOSH"), 0.0, 500.0, 0.01, 12.92))),
     sensilc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
+    previewlc(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
     reparw(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
     clariFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CLARIFRA")))),
     clarilres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARILRES"), -20., 100., 0.5, 0.))),
@@ -2364,6 +2534,7 @@ LocallabContrast::LocallabContrast():
     sigmalc2(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 2.5, 0.01, 1.))),
     strwav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4.0, 4.0, 0.05, 0.))),
     angwav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
+    featherwav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FEATVALUE"), 10., 100., 0.1, 25.))),
     wavedg(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_EDGFRA")))),
     strengthw(Gtk::manage(new Adjuster(M("TP_WAVELET_EDVAL"), 0., 100.0, 0.5, 0.))),
     sigmaed(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 2.5, 0.01, 1.))),
@@ -2391,7 +2562,7 @@ LocallabContrast::LocallabContrast():
     expcontrastpyr2(Gtk::manage(new MyExpander(false, Gtk::manage(new Gtk::Box())))),
     wavcont(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_CONTFRA")))),
     sigma(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 2.5, 0.01, 1.))),
-    offset(Gtk::manage(new Adjuster(M("TP_LOCALLAB_OFFSETWAV"), 0.33, 1.66, 0.01, 1., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
+    offset(Gtk::manage(new Adjuster(M("TP_LOCALLAB_OFFSETWAV"), 0.33, 1.66, 0.01, 1., Gtk::manage(new RTImage("circle-black-small")), Gtk::manage(new RTImage("circle-white-small"))))),
     chromalev(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMALEV"), 0.1, 5., 0.1, 1.))),
     LocalcurveEditorwavcon(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVCON"))),
     wavshapecon(static_cast<FlatCurveEditor*>(LocalcurveEditorwavcon->addCurve(CT_Flat, "", nullptr, false, false))),
@@ -2403,15 +2574,15 @@ LocallabContrast::LocallabContrast():
     residcomp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDCOMP"), -1., 1., 0.01, 0.))),
     wavcomp(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_COMPFRA")))),
     sigmadc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 3., 0.01, 1.))),
-    deltad(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DELTAD"), -3., 3., 0.1, 0.))),//, Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
+    deltad(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DELTAD"), -3., 3., 0.1, 0.))),//, Gtk::manage(new RTImage("circle-black-small")), Gtk::manage(new RTImage("circle-white-small"))))),
     LocalcurveEditorwavcomp(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVCOMP"))),
     wavshapecomp(static_cast<FlatCurveEditor*>(LocalcurveEditorwavcomp->addCurve(CT_Flat, "", nullptr, false, false))),
-    fatres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATRES"), 0., 100., 1., 0.))),
+    //fatres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATRES"), 0., 100., 1., 0.))),
     fftwlc(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTW")))),
     exprecovw(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
     maskusablew(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
     maskunusablew(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUNUSABLE")))),
-    recothresw(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 1., 2., 0.01, 1.))),
+    recothresw(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 0., 2., 0.01, 1.))),
     lowthresw(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 1., 80., 0.5, 12.))),
     higthresw(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 20., 99., 0.5, 85.))),
     decayw(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKDDECAY"), 0.5, 4., 0.1, 2.))),
@@ -2430,8 +2601,12 @@ LocallabContrast::LocallabContrast():
     mask2lcCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     Lmasklcshape(static_cast<DiagonalCurveEditor*>(mask2lcCurveEditorG->addCurve(CT_Diagonal, "L(L)")))
 {
-    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    auto m = ProcEventMapper::getInstance();
+    Evlocallabpreviewlc = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWLC");
+    Evlocallabfeatherwav = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_FEATHERWAV");
     
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+
     const LocallabParams::LocallabSpot defSpot;
 
     // Parameter Local contrast specific widgets
@@ -2484,6 +2659,14 @@ LocallabContrast::LocallabContrast():
 
     residhithr->setAdjusterListener(this);
 
+    gamlc->setAdjusterListener(this);
+
+
+    residgam->setAdjusterListener(this);
+
+    residslop->setAdjusterListener(this);
+    residslop->setLogScale(16, 0);
+
     sensilc->setAdjusterListener(this);
 
     reparw->setAdjusterListener(this);
@@ -2527,6 +2710,7 @@ LocallabContrast::LocallabContrast():
     strwav->setAdjusterListener(this);
 
     angwav->setAdjusterListener(this);
+    featherwav->setAdjusterListener(this);
 
     wavedgConn = wavedg->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::wavedgChanged));
 
@@ -2607,7 +2791,7 @@ LocallabContrast::LocallabContrast():
     TittleVBox2->pack_start(*LCTitleHBox2, Gtk::PACK_SHRINK);
     TittleVBox2->pack_start(*LCTitleHBox22, Gtk::PACK_SHRINK);
     expcontrastpyr2->setLabel(TittleVBox2);
-    
+
     setExpandAlignProperties(expcontrastpyr2, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     wavcontConn = wavcont->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::wavcontChanged));
@@ -2655,7 +2839,7 @@ LocallabContrast::LocallabContrast():
 
     LocalcurveEditorwavcomp->curveListComplete();
 
-    fatres->setAdjusterListener(this);
+    //fatres->setAdjusterListener(this);
 
     fftwlcConn = fftwlc->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::fftwlcChanged));
 
@@ -2667,6 +2851,11 @@ LocallabContrast::LocallabContrast():
 
 
     setExpandAlignProperties(expmasklc, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+    previewlc->set_active(false);
+    previewlcConn = previewlc->signal_clicked().connect(
+                       sigc::mem_fun(
+                           *this, &LocallabContrast::previewlcChanged));
 
     showmasklcMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
     showmasklcMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
@@ -2712,6 +2901,7 @@ LocallabContrast::LocallabContrast():
 
     // Add Local contrast specific widgets to GUI
     pack_start(*sensilc);
+    pack_start(*previewlc);
     pack_start(*reparw);
     pack_start(*localcontMethod);
     pack_start(*lcradius);
@@ -2722,7 +2912,7 @@ LocallabContrast::LocallabContrast():
     ToolParamBlock* const coBox = Gtk::manage(new ToolParamBlock());
     coBox->pack_start(*sigmalc);
     coBox->pack_start(*LocalcurveEditorwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-   // coBox->pack_start(*csThreshold);
+    // coBox->pack_start(*csThreshold);
     contFrame->add(*coBox);
     pack_start(*contFrame);
     // pack_start(*levelwav);
@@ -2732,10 +2922,14 @@ LocallabContrast::LocallabContrast():
     Gtk::Frame* const shresFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHRESFRA")));
     shresFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const shresBox = Gtk::manage(new ToolParamBlock());
+    Gtk::Separator* const separatorsh = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     shresBox->pack_start(*residsha);
     shresBox->pack_start(*residshathr);
     shresBox->pack_start(*residhi);
     shresBox->pack_start(*residhithr);
+    shresBox->pack_start(*separatorsh);
+    shresBox->pack_start(*residgam);
+    shresBox->pack_start(*residslop);
     shresFrame->add(*shresBox);
     resiBox->pack_start(*shresFrame);
     expresidpyr->add(*resiBox, false);
@@ -2751,16 +2945,17 @@ LocallabContrast::LocallabContrast():
     clariFrame->add(*clariBox);
     pack_start(*clariFrame);
     ToolParamBlock* const blurcontBox = Gtk::manage(new ToolParamBlock());
-    Gtk::Frame* const gradwavFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADWAVFRA")));
+    Gtk::Frame* const gradwavFrame = Gtk::manage(new Gtk::Frame());
     gradwavFrame->set_label_align(0.025, 0.5);
     gradwavFrame->set_label_widget(*wavgradl);
     ToolParamBlock* const gradwavBox = Gtk::manage(new ToolParamBlock());
     gradwavBox->pack_start(*sigmalc2);
     gradwavBox->pack_start(*strwav);
     gradwavBox->pack_start(*angwav);
+    gradwavBox->pack_start(*featherwav);
     gradwavFrame->add(*gradwavBox);
     blurcontBox->pack_start(*gradwavFrame);
-    Gtk::Frame* const edgFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_EDGSHARPFRA")));
+    Gtk::Frame* const edgFrame = Gtk::manage(new Gtk::Frame());
     edgFrame->set_label_align(0.025, 0.5);
     edgFrame->set_label_widget(*wavedg);
     ToolParamBlock* const edgsBox = Gtk::manage(new ToolParamBlock());
@@ -2808,6 +3003,7 @@ LocallabContrast::LocallabContrast():
     blurlevelFrame->add(*blurlevcontBox);
     blurcontBox->pack_start(*blurlevelFrame);
     expcontrastpyr->add(*blurcontBox, false);
+    pack_start(*gamlc);
     pack_start(*expcontrastpyr);
     ToolParamBlock* const blurcontBox2 = Gtk::manage(new ToolParamBlock());
     Gtk::Frame* const contFrame2 = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CONTFRA")));
@@ -2855,7 +3051,7 @@ LocallabContrast::LocallabContrast():
     wwBox3->pack_start(*lowthresw);
     wwBox3->pack_start(*higthresw);
     wwBox3->pack_start(*decayw);
-   // colBox3->pack_start(*invmaskc);
+    // colBox3->pack_start(*invmaskc);
     exprecovw->add(*wwBox3, false);
     pack_start(*exprecovw, false, false);
 
@@ -2895,22 +3091,79 @@ void LocallabContrast::resetMaskView()
     showmasklcMethodConn.block(false);
 }
 
-void LocallabContrast::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask)
+void LocallabContrast::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask)
 {
     lcMask = showmasklcMethod->get_active_row_number();
+}
+
+Gtk::ToggleButton *LocallabContrast::getPreviewDeltaEButton() const
+{
+    return previewlc;
+}
+
+sigc::connection *LocallabContrast::getPreviewDeltaEButtonConnection()
+{
+    return &previewlcConn;
+}
+
+//new function Global
+void LocallabContrast::updateguicont(int spottype)
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype == 3) {
+                sensilc->hide();
+                showmasklcMethod->set_active(0);
+                previewlc->hide();
+                previewlc->set_active(false);
+                resetMaskView();
+                
+            } else {
+                sensilc->show();
+                previewlc->show();
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
+void LocallabContrast::previewlcChanged()
+{
+    if(previewlc->get_active()) {
+        showmasklcMethod->set_active(4);
+    } else {
+        showmasklcMethod->set_active(0);
+    }
+    
+    if (isLocActivated) {
+        if (listener) {
+            listener->panelChanged(Evlocallabpreviewlc,"");
+        }
+    } 
 }
 
 void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
         contFrame->set_tooltip_text(M("TP_LOCALLAB_EXPCONTRAST_TOOLTIP"));
+        recothresw->set_tooltip_text(M("TP_LOCALLAB_RECOTHRES02_TOOLTIP"));
         LocalcurveEditorwav->set_tooltip_markup(M("TP_LOCALLAB_WAT_LEVELLOCCONTRAST_TOOLTIP"));
         csThreshold->set_tooltip_markup(M("TP_LOCALLAB_WAT_THRESHOLDWAV_TOOLTIP"));
         levelwav->set_tooltip_markup(M("TP_LOCALLAB_LEVELWAV_TOOLTIP"));
         clariFrame->set_tooltip_markup(M("TP_LOCALLAB_CLARI_TOOLTIP"));
         clarisoft->set_tooltip_markup(M("TP_LOCALLAB_CLARISOFT_TOOLTIP"));
         exprecovw->set_tooltip_markup(M("TP_LOCALLAB_MASKRESWAV_TOOLTIP"));
-
+        gamlc->set_tooltip_text(M("TP_LOCALLAB_GAMC_TOOLTIP"));
         wavshape->setTooltip(M("TP_LOCALLAB_WAT_WAVSHAPE_TOOLTIP"));
         clarilres->set_tooltip_text(M("TP_LOCALLAB_WAT_CLARIL_TOOLTIP"));
         claricres->set_tooltip_text(M("TP_LOCALLAB_WAT_CLARIC_TOOLTIP"));
@@ -2946,7 +3199,7 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
         threswav->set_tooltip_text(M("TP_LOCALLAB_WAT_BALTHRES_TOOLTIP"));
         residcomp->set_tooltip_text(M("TP_LOCALLAB_WAT_RESIDCOMP_TOOLTIP"));
 
-        
+
         expresidpyr->set_tooltip_text(M("TP_LOCALLAB_WAT_EXPRESID_TOOLTIP"));
         expcontrastpyr->set_tooltip_text(M("TP_LOCALLAB_EXPCONTRASTPYR_TOOLTIP"));
         wavgradl->set_tooltip_text(M("TP_LOCALLAB_WAVGRAD_TOOLTIP"));
@@ -2975,6 +3228,7 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
         higthresw->set_tooltip_text(M("TP_LOCALLAB_MASKHIGTHRESWAV_TOOLTIP"));
     } else {
         contFrame->set_tooltip_text("");
+        recothresw->set_tooltip_text("");
         LocalcurveEditorwav->set_tooltip_markup("");
         csThreshold->set_tooltip_markup("");
         expresidpyr->set_tooltip_text("");
@@ -3003,6 +3257,7 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
         chromasklc->set_tooltip_text("");
         sensilc->set_tooltip_text("");
         reparw->set_tooltip_text("");
+        gamlc->set_tooltip_text("");
 
         wavshape->setTooltip("");
         clarilres->set_tooltip_text("");
@@ -3108,8 +3363,6 @@ void LocallabContrast::read(const rtengine::procparams::ProcParams* pp, const Pa
     if (index < (int)pp->locallab.spots.size()) {
         const LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
 
-        spotName = spot.name; // Update spot name according to selected spot
-
         exp->set_visible(spot.visicontrast);
         exp->setEnabled(spot.expcontrast);
         complexity->set_active(spot.complexcontrast);
@@ -3138,6 +3391,9 @@ void LocallabContrast::read(const rtengine::procparams::ProcParams* pp, const Pa
         residshathr->setValue(spot.residshathr);
         residhi->setValue(spot.residhi);
         residhithr->setValue(spot.residhithr);
+        gamlc->setValue((double)spot.gamlc);
+        residgam->setValue(spot.residgam);
+        residslop->setValue(spot.residslop);
         sensilc->setValue((double)spot.sensilc);
         reparw->setValue(spot.reparw);
         clarilres->setValue(spot.clarilres);
@@ -3148,6 +3404,7 @@ void LocallabContrast::read(const rtengine::procparams::ProcParams* pp, const Pa
         sigmalc2->setValue(spot.sigmalc2);
         strwav->setValue(spot.strwav);
         angwav->setValue(spot.angwav);
+        featherwav->setValue(spot.featherwav);
         wavedg->set_active(spot.wavedg);
         strengthw->setValue(spot.strengthw);
         sigmaed->setValue(spot.sigmaed);
@@ -3199,7 +3456,7 @@ void LocallabContrast::read(const rtengine::procparams::ProcParams* pp, const Pa
         sigmadc->setValue(spot.sigmadc);
         deltad->setValue(spot.deltad);
         wavshapecomp->setCurve(spot.loccompwavcurve);
-        fatres->setValue(spot.fatres);
+        //fatres->setValue(spot.fatres);
         enalcMask->set_active(spot.enalcMask);
         CCmasklcshape->setCurve(spot.CCmasklccurve);
         LLmasklcshape->setCurve(spot.LLmasklccurve);
@@ -3260,6 +3517,9 @@ void LocallabContrast::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         spot.residshathr = residshathr->getValue();
         spot.residhi = residhi->getValue();
         spot.residhithr = residhithr->getValue();
+        spot.gamlc = gamlc->getValue();
+        spot.residgam = residgam->getValue();
+        spot.residslop = residslop->getValue();
         spot.sensilc = sensilc->getIntValue();
         spot.reparw = reparw->getValue();
         spot.clarilres = clarilres->getValue();
@@ -3270,6 +3530,7 @@ void LocallabContrast::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         spot.sigmalc2 = sigmalc2->getValue();
         spot.strwav = strwav->getValue();
         spot.angwav = angwav->getValue();
+        spot.featherwav = featherwav->getValue();
         spot.wavedg = wavedg->get_active();
         spot.strengthw = strengthw->getValue();
         spot.sigmaed = sigmaed->getValue();
@@ -3321,7 +3582,7 @@ void LocallabContrast::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         spot.sigmadc = sigmadc->getValue();
         spot.deltad = deltad->getValue();
         spot.loccompwavcurve = wavshapecomp->getCurve();
-        spot.fatres = fatres->getValue();
+        //spot.fatres = fatres->getValue();
         spot.fftwlc = fftwlc->get_active();
         spot.enalcMask = enalcMask->get_active();
         spot.CCmasklccurve = CCmasklcshape->getCurve();
@@ -3361,6 +3622,9 @@ void LocallabContrast::setDefaults(const rtengine::procparams::ProcParams* defPa
         residshathr->setDefault(defSpot.residshathr);
         residhi->setDefault(defSpot.residhi);
         residhithr->setDefault(defSpot.residhithr);
+        gamlc->setDefault((double)defSpot.gamlc);
+        residgam->setDefault(defSpot.residgam);
+        residslop->setDefault(defSpot.residslop);
         sensilc->setDefault((double)defSpot.sensilc);
         reparw->setDefault(defSpot.reparw);
         clarilres->setDefault(defSpot.clarilres);
@@ -3369,6 +3633,7 @@ void LocallabContrast::setDefaults(const rtengine::procparams::ProcParams* defPa
         sigmalc2->setDefault(defSpot.sigmalc2);
         strwav->setDefault(defSpot.strwav);
         angwav->setDefault(defSpot.angwav);
+        featherwav->setDefault(defSpot.featherwav);
         strengthw->setDefault(defSpot.strengthw);
         sigmaed->setDefault(defSpot.sigmaed);
         gradw->setDefault(defSpot.gradw);
@@ -3390,7 +3655,7 @@ void LocallabContrast::setDefaults(const rtengine::procparams::ProcParams* defPa
         residcomp->setDefault(defSpot.residcomp);
         sigmadc->setDefault(defSpot.sigmadc);
         deltad->setDefault(defSpot.deltad);
-        fatres->setDefault(defSpot.fatres);
+        //fatres->setDefault(defSpot.fatres);
         blendmasklc->setDefault((double)defSpot.blendmasklc);
         radmasklc->setDefault(defSpot.radmasklc);
         chromasklc->setDefault(defSpot.chromasklc);
@@ -3409,259 +3674,287 @@ void LocallabContrast::adjusterChanged(Adjuster* a, double newval)
         if (a == lcradius) {
             if (listener) {
                 listener->panelChanged(Evlocallablcradius,
-                                       lcradius->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       lcradius->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == lcamount) {
             if (listener) {
                 listener->panelChanged(Evlocallablcamount,
-                                       lcamount->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       lcamount->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == lcdarkness) {
             if (listener) {
                 listener->panelChanged(Evlocallablcdarkness,
-                                       lcdarkness->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       lcdarkness->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == lclightness) {
             if (listener) {
                 listener->panelChanged(Evlocallablclightness,
-                                       lclightness->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       lclightness->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == sigmalc) {
             if (listener) {
                 listener->panelChanged(Evlocallabsigmalc,
-                                       sigmalc->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       sigmalc->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == levelwav) {
             if (listener) {
                 listener->panelChanged(Evlocallablevelwav,
-                                       levelwav->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       levelwav->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == residcont) {
             if (listener) {
                 listener->panelChanged(Evlocallabresidcont,
-                                       residcont->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       residcont->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == residchro) {
             if (listener) {
                 listener->panelChanged(Evlocallabresidchro,
-                                       residchro->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       residchro->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == residsha) {
             if (listener) {
                 listener->panelChanged(Evlocallabresidsha,
-                                       residsha->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       residsha->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == residshathr) {
             if (listener) {
                 listener->panelChanged(Evlocallabresidshathr,
-                                       residshathr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       residshathr->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == residhi) {
             if (listener) {
                 listener->panelChanged(Evlocallabresidhi,
-                                       residhi->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       residhi->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == residhithr) {
             if (listener) {
                 listener->panelChanged(Evlocallabresidhithr,
-                                       residhithr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       residhithr->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == gamlc) {
+            if (listener) {
+                listener->panelChanged(Evlocallabgamlc,
+                                       gamlc->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == residgam) {
+            if (listener) {
+                listener->panelChanged(Evlocallabresidgam,
+                                       residgam->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == residslop) {
+            if (listener) {
+                listener->panelChanged(Evlocallabresidslop,
+                                       residslop->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == sensilc) {
             if (listener) {
                 listener->panelChanged(Evlocallabsensilc,
-                                       sensilc->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       sensilc->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == reparw) {
             if (listener) {
                 listener->panelChanged(Evlocallabreparw,
-                                       reparw->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       reparw->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == clarilres) {
             if (listener) {
                 listener->panelChanged(Evlocallabclarilres,
-                                       clarilres->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       clarilres->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == claricres) {
             if (listener) {
                 listener->panelChanged(Evlocallabclaricres,
-                                       claricres->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       claricres->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == clarisoft) {
             if (listener) {
                 listener->panelChanged(Evlocallabclarisoft,
-                                       clarisoft->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       clarisoft->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == sigmalc2) {
             if (listener) {
                 listener->panelChanged(Evlocallabsigmalc2,
-                                       sigmalc2->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       sigmalc2->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == strwav) {
             if (listener) {
                 listener->panelChanged(Evlocallabstrwav,
-                                       strwav->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       strwav->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == angwav) {
             if (listener) {
                 listener->panelChanged(Evlocallabangwav,
-                                       angwav->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       angwav->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == featherwav) {
+            if (listener) {
+                listener->panelChanged(Evlocallabfeatherwav,
+                                       featherwav->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == strengthw) {
             if (listener) {
                 listener->panelChanged(Evlocallabstrengthw,
-                                       strengthw->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       strengthw->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == sigmaed) {
             if (listener) {
                 listener->panelChanged(Evlocallabsigmaed,
-                                       sigmaed->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       sigmaed->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == gradw) {
             if (listener) {
                 listener->panelChanged(Evlocallabgradw,
-                                       gradw->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       gradw->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == radiusw) {
             if (listener) {
                 listener->panelChanged(Evlocallabradiusw,
-                                       radiusw->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       radiusw->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == detailw) {
             if (listener) {
                 listener->panelChanged(Evlocallabdetailw,
-                                       detailw->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       detailw->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == tloww) {
             if (listener) {
                 listener->panelChanged(Evlocallabtloww,
-                                       tloww->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       tloww->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == thigw) {
             if (listener) {
                 listener->panelChanged(Evlocallabthigw,
-                                       thigw->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       thigw->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == edgw) {
             if (listener) {
                 listener->panelChanged(Evlocallabedgw,
-                                       edgw->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       edgw->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == basew) {
             if (listener) {
                 listener->panelChanged(Evlocallabbasew,
-                                       basew->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       basew->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == levelblur) {
             if (listener) {
                 listener->panelChanged(Evlocallablevelblur,
-                                       levelblur->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       levelblur->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == sigmabl) {
             if (listener) {
                 listener->panelChanged(Evlocallabsigmabl,
-                                       sigmabl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       sigmabl->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == chromablu) {
             if (listener) {
                 listener->panelChanged(Evlocallabchromablu,
-                                       chromablu->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       chromablu->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == residblur) {
             if (listener) {
                 listener->panelChanged(Evlocallabresidblur,
-                                       residblur->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       residblur->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == sigma) {
             if (listener) {
                 listener->panelChanged(Evlocallabsigma,
-                                       sigma->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       sigma->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == offset) {
             if (listener) {
                 listener->panelChanged(Evlocallaboffset,
-                                       offset->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       offset->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == chromalev) {
             if (listener) {
                 listener->panelChanged(Evlocallabchromalev,
-                                       chromalev->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       chromalev->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == sigmadr) {
             if (listener) {
                 listener->panelChanged(Evlocallabsigmadr,
-                                       sigmadr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       sigmadr->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
@@ -3669,85 +3962,85 @@ void LocallabContrast::adjusterChanged(Adjuster* a, double newval)
         if (a == threswav) {
             if (listener) {
                 listener->panelChanged(Evlocallabthreswav,
-                                       threswav->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       threswav->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == residcomp) {
             if (listener) {
                 listener->panelChanged(Evlocallabresidcomp,
-                                       residcomp->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       residcomp->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == sigmadc) {
             if (listener) {
                 listener->panelChanged(Evlocallabsigmadc,
-                                       sigmadc->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       sigmadc->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == deltad) {
             if (listener) {
                 listener->panelChanged(Evlocallabdeltad,
-                                       deltad->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       deltad->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
-        if (a == fatres) {
-            if (listener) {
-                listener->panelChanged(Evlocallabfatres,
-                                       fatres->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
-            }
-        }
+        //if (a == fatres) {
+        //    if (listener) {
+        //        listener->panelChanged(Evlocallabfatres,
+        //                               fatres->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+        //    }
+        //}
 
         if (a == recothresw) {
-            
+
             if (listener) {
                 listener->panelChanged(Evlocallabrecothresw,
-                                       recothresw->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       recothresw->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == lowthresw) {
             if (listener) {
                 listener->panelChanged(Evlocallablowthresw,
-                                       lowthresw->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       lowthresw->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == higthresw) {
             if (listener) {
                 listener->panelChanged(Evlocallabhigthresw,
-                                       higthresw->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       higthresw->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == decayw) {
             if (listener) {
                 listener->panelChanged(Evlocallabdecayw,
-                                       decayw->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       decayw->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == blendmasklc) {
             if (listener) {
                 listener->panelChanged(Evlocallabblendmasklc,
-                                       blendmasklc->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       blendmasklc->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == radmasklc) {
             if (listener) {
                 listener->panelChanged(Evlocallabradmasklc,
-                                       radmasklc->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       radmasklc->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == chromasklc) {
             if (listener) {
                 listener->panelChanged(Evlocallabchromasklc,
-                                       chromasklc->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       chromasklc->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -3758,7 +4051,7 @@ void LocallabContrast::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, in
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabcsThreshold,
-                                   csThreshold->getHistoryString() + " (" + escapeHtmlChars(spotName) + ")");
+                                   csThreshold->getHistoryString() + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     }
 }
@@ -3769,70 +4062,70 @@ void LocallabContrast::curveChanged(CurveEditor* ce)
         if (ce == wavshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabwavCurve,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == wavshapeedg) {
             if (listener) {
                 listener->panelChanged(EvlocallabwavCurveedg,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == wavshapelev) {
             if (listener) {
                 listener->panelChanged(EvlocallabwavCurvelev,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == wavshapecon) {
             if (listener) {
                 listener->panelChanged(EvlocallabwavCurvecon,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == wavshapecompre) {
             if (listener) {
                 listener->panelChanged(EvlocallabwavCurvecompre,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == wavshapecomp) {
             if (listener) {
                 listener->panelChanged(EvlocallabwavCurvecomp,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == CCmasklcshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabCCmasklcshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == LLmasklcshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabLLmasklcshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == HHmasklcshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabHHmasklcshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == Lmasklcshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabLmasklcshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -3844,10 +4137,10 @@ void LocallabContrast::enabledChanged()
         if (listener) {
             if (exp->getEnabled()) {
                 listener->panelChanged(EvLocenacontrast,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvLocenacontrast,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -3859,6 +4152,7 @@ void LocallabContrast::convertParamToNormal()
 
     // Disable all listeners
     disableListener();
+    gamlc->setValue(defSpot.gamlc);
 
     // Set hidden GUI widgets in Normal mode to default spot values
     origlc->set_active(defSpot.origlc);
@@ -3866,6 +4160,7 @@ void LocallabContrast::convertParamToNormal()
     sigmalc2->setValue(defSpot.sigmalc2);
     strwav->setValue(defSpot.strwav);
     angwav->setValue(defSpot.angwav);
+    featherwav->setValue(defSpot.featherwav);
     wavedg->set_active(defSpot.wavedg);
     strengthw->setValue(defSpot.strengthw);
     sigmaed->setValue(defSpot.sigmaed);
@@ -3917,7 +4212,7 @@ void LocallabContrast::convertParamToNormal()
     sigmadc->setValue(defSpot.sigmadc);
     deltad->setValue(defSpot.deltad);
     wavshapecomp->setCurve(defSpot.loccompwavcurve);
-    fatres->setValue(defSpot.fatres);
+    //fatres->setValue(defSpot.fatres);
     fftwlc->set_active(defSpot.fftwlc);
     decayw->setValue(defSpot.decayw);
 
@@ -3935,6 +4230,7 @@ void LocallabContrast::convertParamToSimple()
 
     // Disable all listeners
     disableListener();
+    gamlc->setValue(defSpot.gamlc);
 
     // Set hidden specific GUI widgets in Simple mode to default spot values
     if (defSpot.localcontMethod == "loc") {
@@ -3958,7 +4254,7 @@ void LocallabContrast::convertParamToSimple()
     lowthresw->setValue(defSpot.lowthresw);
     higthresw->setValue(defSpot.higthresw);
     decayw->setValue(defSpot.decayw);
-    
+
     enableListener();
 
     // Update GUI based on converted widget parameters:
@@ -3981,6 +4277,7 @@ void LocallabContrast::updateGUIToMode(const modeType new_type)
             decayw->hide();
             maskusablew->hide();
             maskunusablew->hide();
+            gamlc->hide();
 
             break;
 
@@ -3995,14 +4292,17 @@ void LocallabContrast::updateGUIToMode(const modeType new_type)
             expmasklc->show();
             exprecovw->show();
             decayw->hide();
+
             if (enalcMask->get_active()) {
                 maskusablew->show();
                 maskunusablew->hide();
-                
+
             } else {
                 maskusablew->hide();
                 maskunusablew->show();
             }
+
+            gamlc->hide();
 
             break;
 
@@ -4014,6 +4314,7 @@ void LocallabContrast::updateGUIToMode(const modeType new_type)
             if (localcontMethod->get_active_row_number() != 0) { // Keep widgets hidden when localcontMethod is equal to 0
                 expcontrastpyr->show();
                 expcontrastpyr2->show();
+                gamlc->show();
             }
 
             if (localcontMethod->get_active_row_number() != 1) { // Keep widget hidden when localcontMethod is equal to 1
@@ -4023,19 +4324,20 @@ void LocallabContrast::updateGUIToMode(const modeType new_type)
             expmasklc->show();
             exprecovw->show();
             decayw->show();
+
             if (enalcMask->get_active()) {
                 maskusablew->show();
                 maskunusablew->hide();
-                
+
             } else {
                 maskusablew->hide();
                 maskunusablew->show();
             }
-            
+
     }
 }
 
-void LocallabContrast::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer)
+void LocallabContrast::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
 {
     idle_register.add(
     [this, normHuer, normLumar, normChromar]() -> bool {
@@ -4049,7 +4351,7 @@ void LocallabContrast::updateMaskBackground(const double normChromar, const doub
 
         return false;
     }
-    );
+                 );
 }
 
 void LocallabContrast::localcontMethodChanged()
@@ -4060,7 +4362,7 @@ void LocallabContrast::localcontMethodChanged()
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallablocalcontMethod,
-                                   localcontMethod->get_active_text() + " (" + escapeHtmlChars(spotName) + ")");
+                                   localcontMethod->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     }
 }
@@ -4071,10 +4373,10 @@ void LocallabContrast::origlcChanged()
         if (listener) {
             if (origlc->get_active()) {
                 listener->panelChanged(Evlocallaboriglc,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallaboriglc,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -4086,10 +4388,10 @@ void LocallabContrast::wavgradlChanged()
         if (listener) {
             if (wavgradl->get_active()) {
                 listener->panelChanged(Evlocallabwavgradl,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabwavgradl,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -4101,10 +4403,10 @@ void LocallabContrast::wavedgChanged()
         if (listener) {
             if (wavedg->get_active()) {
                 listener->panelChanged(Evlocallabwavedg,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabwavedg,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -4115,7 +4417,7 @@ void LocallabContrast::localedgMethodChanged()
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallablocaledgMethod,
-                                   localedgMethod->get_active_text() + " (" + escapeHtmlChars(spotName) + ")");
+                                   localedgMethod->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     }
 }
@@ -4129,10 +4431,10 @@ void LocallabContrast::waveshowChanged()
         if (listener) {
             if (waveshow->get_active()) {
                 listener->panelChanged(Evlocallabwaveshow,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabwaveshow,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -4143,7 +4445,7 @@ void LocallabContrast::localneiMethodChanged()
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallablocalneiMethod,
-                                   localneiMethod->get_active_text() + " (" + escapeHtmlChars(spotName) + ")");
+                                   localneiMethod->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     }
 }
@@ -4154,10 +4456,10 @@ void LocallabContrast::wavblurChanged()
         if (listener) {
             if (wavblur->get_active()) {
                 listener->panelChanged(Evlocallabwavblur,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabwavblur,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -4169,10 +4471,10 @@ void LocallabContrast::blurlcChanged()
         if (listener) {
             if (blurlc->get_active()) {
                 listener->panelChanged(Evlocallabblurlc,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabblurlc,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -4184,10 +4486,10 @@ void LocallabContrast::wavcontChanged()
         if (listener) {
             if (wavcont->get_active()) {
                 listener->panelChanged(Evlocallabwavcont,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabwavcont,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -4199,10 +4501,10 @@ void LocallabContrast::wavcompreChanged()
         if (listener) {
             if (wavcompre->get_active()) {
                 listener->panelChanged(Evlocallabwavcompre,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabwavcompre,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -4214,10 +4516,10 @@ void LocallabContrast::wavcompChanged()
         if (listener) {
             if (wavcomp->get_active()) {
                 listener->panelChanged(Evlocallabwavcomp,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabwavcomp,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -4232,10 +4534,10 @@ void LocallabContrast::fftwlcChanged()
         if (listener) {
             if (fftwlc->get_active()) {
                 listener->panelChanged(Evlocallabfftwlc,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabfftwlc,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -4248,7 +4550,7 @@ void LocallabContrast::showmasklcMethodChanged()
         locToolListener->resetOtherMaskView(this);
     }
 
-    if(exp->getEnabled()) {
+    if (exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabshowmaskMethod, "");
         }
@@ -4265,15 +4567,15 @@ void LocallabContrast::enalcMaskChanged()
         maskusablew->hide();
         maskunusablew->show();
     }
-    
+
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (enalcMask->get_active()) {
                 listener->panelChanged(EvLocallabEnalcMask,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvLocallabEnalcMask,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -4296,6 +4598,7 @@ void LocallabContrast::updateContrastGUI1()
         clariFrame->hide();
         expcontrastpyr->hide();
         expcontrastpyr2->hide();
+        gamlc->hide();
 
         if (mode == Expert) { // Keep widget hidden in Normal and Simple mode
             fftwlc->show();
@@ -4314,6 +4617,7 @@ void LocallabContrast::updateContrastGUI1()
         if (mode == Expert) { // Keep widget hidden in Normal and Simple mode
             expcontrastpyr->show();
             expcontrastpyr2->show();
+            gamlc->show();
         }
 
         fftwlc->hide();
@@ -4350,7 +4654,7 @@ LocallabCBDL::LocallabCBDL():
     // CBDL specific widgets
     levFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LEVFRA")))),
     multiplier([]() -> std::array<Adjuster *, 6>
-    {
+{
     std::array<Adjuster*, 6> res = {};
 
     for (unsigned int i = 0; i < res.size(); ++i) {
@@ -4366,44 +4670,44 @@ LocallabCBDL::LocallabCBDL():
     }
 
     return res;
-    }
-    ()),
-    chromacbdl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMACBDL"), 0., 1.5, 0.01, 0.))),
-    threshold(Gtk::manage(new Adjuster(M("TP_DIRPYREQUALIZER_THRESHOLD"), 0, 1., 0.01, 0.2))),
-    clarityml(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARITYML"), 0.1, 100., 0.1, 0.1))),
-    contresid(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTRESID"), -100, 100, 1, 0))),
-    softradiuscb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 0.))),
-    sensicb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
-    exprecovcb(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
-    maskusablecb(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
-    maskunusablecb(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUNUSABLE")))),
-    recothrescb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 1., 2., 0.01, 1.))),
-    lowthrescb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 1., 80., 0.5, 12.))),
-    higthrescb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 20., 99., 0.5, 85.))),
-    decaycb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKDDECAY"), 0.5, 4., 0.1, 2.))),
-    expmaskcb(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWCB")))),
-    showmaskcbMethod(Gtk::manage(new MyComboBoxText())),
-    enacbMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
-  //  maskcbCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
-    maskcbCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
-    CCmaskcbshape(static_cast<FlatCurveEditor*>(maskcbCurveEditorG->addCurve(CT_Flat, "C", nullptr, false, false))),
-    LLmaskcbshape(static_cast<FlatCurveEditor*>(maskcbCurveEditorG->addCurve(CT_Flat, "L", nullptr, false, false))),
-    HHmaskcbshape(static_cast<FlatCurveEditor *>(maskcbCurveEditorG->addCurve(CT_Flat, "LC(h)", nullptr, false, true))),
-    blendmaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
-    radmaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
-    lapmaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
-    chromaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
-    gammaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.25, 4.0, 0.01, 1.))),
-    slomaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
-    mask2cbCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
-    Lmaskcbshape(static_cast<DiagonalCurveEditor*>(mask2cbCurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
+}
+()),
+chromacbdl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMACBDL"), 0., 1.5, 0.01, 0.))),
+threshold(Gtk::manage(new Adjuster(M("TP_DIRPYREQUALIZER_THRESHOLD"), 0, 1., 0.01, 0.2))),
+clarityml(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARITYML"), 0.1, 100., 0.1, 0.1))),
+contresid(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTRESID"), -100, 100, 1, 0))),
+softradiuscb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 0.))),
+sensicb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
+exprecovcb(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
+maskusablecb(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
+maskunusablecb(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUNUSABLE")))),
+recothrescb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 1., 2., 0.01, 1.))),
+lowthrescb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 1., 80., 0.5, 12.))),
+higthrescb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 20., 99., 0.5, 85.))),
+decaycb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKDDECAY"), 0.5, 4., 0.1, 2.))),
+expmaskcb(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWCB")))),
+showmaskcbMethod(Gtk::manage(new MyComboBoxText())),
+enacbMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
+//  maskcbCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
+maskcbCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
+CCmaskcbshape(static_cast<FlatCurveEditor*>(maskcbCurveEditorG->addCurve(CT_Flat, "C", nullptr, false, false))),
+LLmaskcbshape(static_cast<FlatCurveEditor*>(maskcbCurveEditorG->addCurve(CT_Flat, "L", nullptr, false, false))),
+HHmaskcbshape(static_cast<FlatCurveEditor *>(maskcbCurveEditorG->addCurve(CT_Flat, "LC(h)", nullptr, false, true))),
+blendmaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
+radmaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
+lapmaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
+chromaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
+gammaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.25, 4.0, 0.01, 1.))),
+slomaskcb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
+mask2cbCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
+Lmaskcbshape(static_cast<DiagonalCurveEditor*>(mask2cbCurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
 
-    lumacontrastMinusButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS")))),
-    lumaneutralButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMANEUTRAL")))),
-    lumacontrastPlusButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS"))))
+lumacontrastMinusButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS")))),
+lumaneutralButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMANEUTRAL")))),
+lumacontrastPlusButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS"))))
 {
     set_orientation(Gtk::ORIENTATION_VERTICAL);
-    
+
     const LocallabParams::LocallabSpot defSpot;
 
     // Parameter CBDL specific widgets
@@ -4434,7 +4738,7 @@ LocallabCBDL::LocallabCBDL():
     showmaskcbMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
     showmaskcbMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
     showmaskcbMethod->append(M("TP_LOCALLAB_SHOWMASK"));
-    showmaskcbMethod->append(M("TP_LOCALLAB_SHOWREF"));
+//    showmaskcbMethod->append(M("TP_LOCALLAB_SHOWREF"));
     showmaskcbMethod->set_active(0);
     showmaskcbMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
     showmaskcbMethodConn = showmaskcbMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabCBDL::showmaskcbMethodChanged));
@@ -4521,7 +4825,7 @@ LocallabCBDL::LocallabCBDL():
     cbBox3->pack_start(*lowthrescb);
     cbBox3->pack_start(*higthrescb);
     cbBox3->pack_start(*decaycb);
-   // colBox3->pack_start(*invmaskc);
+    // colBox3->pack_start(*invmaskc);
     exprecovcb->add(*cbBox3, false);
     pack_start(*exprecovcb, false, false);
 
@@ -4559,10 +4863,36 @@ void LocallabCBDL::resetMaskView()
     showmaskcbMethodConn.block(false);
 }
 
-void LocallabCBDL::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask)
+void LocallabCBDL::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask)
 {
     cbMask = showmaskcbMethod->get_active_row_number();
 }
+
+//new function Global
+void LocallabCBDL::updateguicbdl(int spottype)
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype == 3) {
+                sensicb->hide();
+            } else {
+                sensicb->show();
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
 
 void LocallabCBDL::updateAdviceTooltips(const bool showTooltips)
 {
@@ -4665,8 +4995,6 @@ void LocallabCBDL::read(const rtengine::procparams::ProcParams* pp, const Params
 
     if (index < (int)pp->locallab.spots.size()) {
         const LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
-
-        spotName = spot.name; // Update spot name according to selected spot
 
         exp->set_visible(spot.visicbdl);
         exp->setEnabled(spot.expcbdl);
@@ -4795,120 +5123,120 @@ void LocallabCBDL::adjusterChanged(Adjuster* a, double newval)
                                                Glib::ustring::format(std::fixed, std::setprecision(2), multiplier[3]->getValue()),
                                                Glib::ustring::format(std::fixed, std::setprecision(2), multiplier[4]->getValue()),
                                                Glib::ustring::format(std::fixed, std::setprecision(2), multiplier[5]->getValue()))
-                                       + " (" + escapeHtmlChars(spotName) + ")");
+                                       + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == chromacbdl) {
             if (listener) {
                 listener->panelChanged(Evlocallabchromacbdl,
-                                       chromacbdl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       chromacbdl->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == threshold) {
             if (listener) {
                 listener->panelChanged(EvlocallabThresho,
-                                       threshold->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       threshold->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == clarityml) {
             if (listener) {
                 listener->panelChanged(EvLocallabclarityml,
-                                       clarityml->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       clarityml->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == contresid) {
             if (listener) {
                 listener->panelChanged(EvLocallabcontresid,
-                                       contresid->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       contresid->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == softradiuscb) {
             if (listener) {
                 listener->panelChanged(Evlocallabsoftradiuscb,
-                                       softradiuscb->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       softradiuscb->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == sensicb) {
             if (listener) {
                 listener->panelChanged(Evlocallabsensicb,
-                                       sensicb->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       sensicb->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == recothrescb) {
-            
+
             if (listener) {
                 listener->panelChanged(Evlocallabrecothrescb,
-                                       recothrescb->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       recothrescb->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == lowthrescb) {
             if (listener) {
                 listener->panelChanged(Evlocallablowthrescb,
-                                       lowthrescb->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       lowthrescb->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == higthrescb) {
             if (listener) {
                 listener->panelChanged(Evlocallabhigthrescb,
-                                       higthrescb->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       higthrescb->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == decaycb) {
             if (listener) {
                 listener->panelChanged(Evlocallabdecaycb,
-                                       decaycb->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       decaycb->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == blendmaskcb) {
             if (listener) {
                 listener->panelChanged(Evlocallabblendmaskcb,
-                                       blendmaskcb->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       blendmaskcb->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == radmaskcb) {
             if (listener) {
                 listener->panelChanged(Evlocallabradmaskcb,
-                                       radmaskcb->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       radmaskcb->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == lapmaskcb) {
             if (listener) {
                 listener->panelChanged(Evlocallablapmaskcb,
-                                       lapmaskcb->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       lapmaskcb->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == chromaskcb) {
             if (listener) {
                 listener->panelChanged(Evlocallabchromaskcb,
-                                       chromaskcb->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       chromaskcb->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == gammaskcb) {
             if (listener) {
                 listener->panelChanged(Evlocallabgammaskcb,
-                                       gammaskcb->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       gammaskcb->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == slomaskcb) {
             if (listener) {
                 listener->panelChanged(Evlocallabslomaskcb,
-                                       slomaskcb->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       slomaskcb->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -4920,28 +5248,28 @@ void LocallabCBDL::curveChanged(CurveEditor* ce)
         if (ce == CCmaskcbshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabCCmaskcbshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == LLmaskcbshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabLLmaskcbshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == HHmaskcbshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabHHmaskcbshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == Lmaskcbshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabLmaskcbshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -4953,10 +5281,10 @@ void LocallabCBDL::enabledChanged()
         if (listener) {
             if (exp->getEnabled()) {
                 listener->panelChanged(EvLocenacbdl,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvLocenacbdl,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -5028,10 +5356,11 @@ void LocallabCBDL::updateGUIToMode(const modeType new_type)
             expmaskcb->show();
             exprecovcb->show();
             decaycb->hide();
+
             if (enacbMask->get_active()) {
                 maskusablecb->show();
                 maskunusablecb->hide();
-                
+
             } else {
                 maskusablecb->hide();
                 maskunusablecb->show();
@@ -5046,10 +5375,11 @@ void LocallabCBDL::updateGUIToMode(const modeType new_type)
             lapmaskcb->show();
             exprecovcb->show();
             decaycb->show();
+
             if (enacbMask->get_active()) {
                 maskusablecb->show();
                 maskunusablecb->hide();
-                
+
             } else {
                 maskusablecb->hide();
                 maskunusablecb->show();
@@ -5057,7 +5387,7 @@ void LocallabCBDL::updateGUIToMode(const modeType new_type)
     }
 }
 
-void LocallabCBDL::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer)
+void LocallabCBDL::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
 {
     idle_register.add(
     [this, normHuer, normLumar, normChromar]() -> bool {
@@ -5071,7 +5401,7 @@ void LocallabCBDL::updateMaskBackground(const double normChromar, const double n
 
         return false;
     }
-    );
+                 );
 }
 
 void LocallabCBDL::showmaskcbMethodChanged()
@@ -5081,7 +5411,7 @@ void LocallabCBDL::showmaskcbMethodChanged()
         locToolListener->resetOtherMaskView(this);
     }
 
-    if(exp->getEnabled()) {
+    if (exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabshowmaskMethod, "");
         }
@@ -5097,15 +5427,15 @@ void LocallabCBDL::enacbMaskChanged()
         maskusablecb->hide();
         maskunusablecb->show();
     }
-    
+
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (enacbMask->get_active()) {
                 listener->panelChanged(EvLocallabEnacbMask,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvLocallabEnacbMask,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -5148,24 +5478,31 @@ LocallabLog::LocallabLog():
     LocallabTool(this, M("TP_LOCALLAB_LOG_TOOLNAME"), M("TP_LOCALLAB_LOG"), false),
 
     // Log encoding specific widgets
-    repar(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
+    repar(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 0.5, 100.0))),
     ciecam(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_CIEC")))),
     autocompute(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_LOGAUTO")))),
     logPFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGPFRA")))),
-    blackEv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLACK_EV"), -16.0, 0.0, 0.1, -5.0))),
-    whiteEv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WHITE_EV"), 0., 32.0, 0.1, 10.0))),
+    logPFrame2(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGPFRA2")))),
+    blackEv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLACK_EV"), -16.00, 0.00, 0.01, -5.00))),
+    whiteEv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WHITE_EV"), 0.00, 32.00, 0.01, 10.00))),
+    whiteslog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGWHITESCIE"), -100, 100, 1, 0))),
+    blackslog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGBLACKSSCIE"), -100, 100, 1, 0))),
+    comprlog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIE"), 0., 1., 0.01, 0.4))),
+    strelog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGTHCIELOG"), 0., 100., 0.5, 100.))),
+    satlog(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SATCIE")))),
+
     fullimage(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FULLIMAGE")))),
     logFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGFRA")))),
     Autogray(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AUTOGRAY")))),
     sourceGray(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_GRAY"), 1.0, 100.0, 0.1, 10.0))),
     sourceabs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_ABS"), 0.01, 16384.0, 0.01, 2000.0))),
-    sursour(Gtk::manage (new MyComboBoxText ())),
+    sursour(Gtk::manage(new MyComboBoxText())),
     surHBox(Gtk::manage(new Gtk::Box())),
     log1Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOG1FRA")))),
     log2Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOG2FRA")))),
-    targetGray(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TARGET_GRAY"), 5.0, 80.0, 0.1, 18.0))),
+    targetGray(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TARGET_GRAY"), 4.0, 80.0, 0.1, 18.0))),
     detail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0., 1., 0.01, 0.6))),
-    catad(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CATAD"), -100., 100., 0.5, 0., Gtk::manage(new RTImage("circle-blue-small.png")), Gtk::manage(new RTImage("circle-orange-small.png"))))),
+    catad(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CATAD"), -100., 100., 0.5, 0., Gtk::manage(new RTImage("circle-blue-small")), Gtk::manage(new RTImage("circle-orange-small"))))),
     lightl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGLIGHTL"), -100., 100., 0.5, 0.))),
     lightq(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGLIGHTQ"), -100., 100., 0.5, 0.))),
     contl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONTL"), -100., 100., 0.5, 0.))),
@@ -5175,28 +5512,30 @@ LocallabLog::LocallabLog():
     saturl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATURV"), -100., 100., 0.5, 0.))),
     chroml(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROML"), -100., 100., 0.5, 0.))),
     expL(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_LOGEXP")))),
-    CurveEditorL(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_LOGCONTQ"))),
-    LshapeL(static_cast<DiagonalCurveEditor*>(CurveEditorL->addCurve(CT_Diagonal, "Q(Q)"))),
+    //CurveEditorL(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_LOGCONTQ"))),
+    //LshapeL(static_cast<DiagonalCurveEditor*>(CurveEditorL->addCurve(CT_Diagonal, "Q(Q)"))),
     targabs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_ABS"), 0.01, 16384.0, 0.01, 16.0))),
-    surround(Gtk::manage (new MyComboBoxText ())),
+    surround(Gtk::manage(new MyComboBoxText())),
     surrHBox(Gtk::manage(new Gtk::Box())),
-    baselog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BASELOG"), 1.3, 3., 0.05, 2.))),//, Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
+    baselog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BASELOG"), 1.3, 3., 0.05, 2.))),//, Gtk::manage(new RTImage("circle-black-small")), Gtk::manage(new RTImage("circle-white-small"))))),
     exprecovl(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
     maskusablel(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
     maskunusablel(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUNUSABLE")))),
-    recothresl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 1., 2., 0.01, 1.))),
+    recothresl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 0., 2., 0.01, 1.))),
     lowthresl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 1., 80., 0.5, 12.))),
     higthresl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 20., 99., 0.5, 85.))),
     decayl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKDDECAY"), 0.5, 4., 0.1, 2.))),
 
     sensilog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
+    previewlog(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
     gradlogFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADLOGFRA")))),
     strlog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -2.0, 2.0, 0.05, 0.))),
     anglog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
+    featherlog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FEATVALUE"), 10., 100., 0.1, 25.))),
     expmaskL(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWC")))),
     showmaskLMethod(Gtk::manage(new MyComboBoxText())),
     enaLMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
- //   maskCurveEditorL(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASKCOL"))),
+//   maskCurveEditorL(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASKCOL"))),
     maskCurveEditorL(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
     CCmaskshapeL(static_cast<FlatCurveEditor*>(maskCurveEditorL->addCurve(CT_Flat, "C", nullptr, false, false))),
     LLmaskshapeL(static_cast<FlatCurveEditor*>(maskCurveEditorL->addCurve(CT_Flat, "L", nullptr, false, false))),
@@ -5206,11 +5545,20 @@ LocallabLog::LocallabLog():
     chromaskL(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
     mask2CurveEditorL(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     LmaskshapeL(static_cast<DiagonalCurveEditor*>(mask2CurveEditorL->addCurve(CT_Diagonal, "L(L)")))
-  
-    
+
+
 {
+    auto m = ProcEventMapper::getInstance();
+    Evlocallabpreviewlog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWLOG");
+    Evlocallabwhiteslog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_LOG_WHITES");
+    Evlocallabblackslog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_LOG_BLACKS");
+    Evlocallabcomprlog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_LOG_COMPR");
+    Evlocallabstrelog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_LOG_STRE");
+    Evlocallabsatlog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_LOG_SAT");
+    Evlocallabfeatherlog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_FEATHERLOG");
+
     set_orientation(Gtk::ORIENTATION_VERTICAL);
-    
+
     // Parameter Log encoding specific widgets
     autoconn = autocompute->signal_toggled().connect(sigc::mem_fun(*this, &LocallabLog::autocomputeToggled));
     const LocallabParams::LocallabSpot defSpot;
@@ -5221,19 +5569,28 @@ LocallabLog::LocallabLog():
 
     whiteEv->setLogScale(16, 0);
     whiteEv->setAdjusterListener(this);
+
+    whiteslog->setAdjusterListener(this);
+    blackslog->setAdjusterListener(this);
+    comprlog->setAdjusterListener(this);
+    strelog->setAdjusterListener(this);
+
     ciecamconn = ciecam->signal_toggled().connect(sigc::mem_fun(*this, &LocallabLog::ciecamChanged));
 
     fullimageConn = fullimage->signal_toggled().connect(sigc::mem_fun(*this, &LocallabLog::fullimageChanged));
+    satlogconn = satlog->signal_toggled().connect(sigc::mem_fun(*this, &LocallabLog::satlogChanged));
 
     AutograyConn = Autogray->signal_toggled().connect(sigc::mem_fun(*this, &LocallabLog::AutograyChanged));
 
     sourceGray->setAdjusterListener(this);
+    sourceGray->setLogScale(10, 18, true);
 
     sourceabs->setLogScale(500, 0);
 
     sourceabs->setAdjusterListener(this);
 
     targetGray->setAdjusterListener(this);
+    targetGray->setLogScale(10, 18, true);
 
     detail->setAdjusterListener(this);
 
@@ -5254,13 +5611,13 @@ LocallabLog::LocallabLog():
     contq->setAdjusterListener(this);
     colorfl->setAdjusterListener(this);
 
-    CurveEditorL->setCurveListener(this);
+    //CurveEditorL->setCurveListener(this);
 
-    LshapeL->setResetCurve(DiagonalCurveType(defSpot.LcurveL.at(0)), defSpot.LcurveL);
-    LshapeL->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
-    LshapeL->setLeftBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
+    //LshapeL->setResetCurve(DiagonalCurveType(defSpot.LcurveL.at(0)), defSpot.LcurveL);
+    //LshapeL->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
+    //LshapeL->setLeftBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
 
-    CurveEditorL->curveListComplete();
+    //CurveEditorL->curveListComplete();
 
 
     targabs->setLogScale(500, 0);
@@ -5279,33 +5636,40 @@ LocallabLog::LocallabLog():
     strlog->setAdjusterListener(this);
 
     anglog->setAdjusterListener(this);
-    
-    surHBox->set_spacing (2);
-    surHBox->set_tooltip_markup (M ("TP_LOCALLAB_LOGSURSOUR_TOOLTIP"));
-    Gtk::Label* surLabel = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_SURROUND") + ":"));
-    surHBox->pack_start (*surLabel, Gtk::PACK_SHRINK);
-    sursour->append (M ("TP_COLORAPP_SURROUND_AVER"));
-    sursour->append (M ("TP_COLORAPP_SURROUND_DIM"));
-    sursour->append (M ("TP_COLORAPP_SURROUND_DARK"));
-    sursour->set_active (0);
-    surHBox->pack_start (*sursour);
-    sursourconn = sursour->signal_changed().connect ( sigc::mem_fun (*this, &LocallabLog::sursourChanged) );
+    featherlog->setAdjusterListener(this);
+
+    surHBox->set_spacing(2);
+    surHBox->set_tooltip_markup(M("TP_LOCALLAB_LOGSURSOUR_TOOLTIP"));
+    Gtk::Label* surLabel = Gtk::manage(new Gtk::Label(M("TP_COLORAPP_SURROUND") + ":"));
+    surHBox->pack_start(*surLabel, Gtk::PACK_SHRINK);
+    sursour->append(M("TP_COLORAPP_SURROUND_AVER"));
+    sursour->append(M("TP_COLORAPP_SURROUND_DIM"));
+    sursour->append(M("TP_COLORAPP_SURROUND_DARK"));
+    sursour->append(M("TP_COLORAPP_SURROUND_EXDARK"));
+    sursour->set_active(0);
+    surHBox->pack_start(*sursour);
+    sursourconn = sursour->signal_changed().connect(sigc::mem_fun(*this, &LocallabLog::sursourChanged));
 
 
 
-    surrHBox->set_spacing (2);
-    surrHBox->set_tooltip_markup (M ("TP_COLORAPP_SURROUND_TOOLTIP"));
-    Gtk::Label* surrLabel = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_SURROUND") + ":"));
-    surrHBox->pack_start (*surrLabel, Gtk::PACK_SHRINK);
-    surround->append (M ("TP_COLORAPP_SURROUND_AVER"));
-    surround->append (M ("TP_COLORAPP_SURROUND_DIM"));
-    surround->append (M ("TP_COLORAPP_SURROUND_DARK"));
-    surround->append (M ("TP_COLORAPP_SURROUND_EXDARK"));
-    surround->set_active (0);
-    surrHBox->pack_start (*surround);
-    surroundconn = surround->signal_changed().connect ( sigc::mem_fun (*this, &LocallabLog::surroundChanged) );
+    surrHBox->set_spacing(2);
+    surrHBox->set_tooltip_markup(M("TP_COLORAPP_SURROUND_TOOLTIP"));
+    Gtk::Label* surrLabel = Gtk::manage(new Gtk::Label(M("TP_COLORAPP_SURROUND") + ":"));
+    surrHBox->pack_start(*surrLabel, Gtk::PACK_SHRINK);
+    surround->append(M("TP_COLORAPP_SURROUND_AVER"));
+    surround->append(M("TP_COLORAPP_SURROUND_DIM"));
+    surround->append(M("TP_COLORAPP_SURROUND_DARK"));
+    surround->append(M("TP_COLORAPP_SURROUND_EXDARK"));
+    surround->set_active(0);
+    surrHBox->pack_start(*surround);
+    surroundconn = surround->signal_changed().connect(sigc::mem_fun(*this, &LocallabLog::surroundChanged));
 
     setExpandAlignProperties(expmaskL, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+    previewlog->set_active(false);
+    previewlogConn = previewlog->signal_clicked().connect(
+                       sigc::mem_fun(
+                           *this, &LocallabLog::previewlogChanged));
 
     showmaskLMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
     showmaskLMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
@@ -5350,14 +5714,26 @@ LocallabLog::LocallabLog():
 
     // Add Log encoding specific widgets to GUI
     pack_start(*sensilog);
+    pack_start(*previewlog);
+    
     pack_start(*repar);
     pack_start(*ciecam);
     logPFrame->set_label_align(0.025, 0.5);
+    logPFrame2->set_label_align(0.025, 0.5);
     ToolParamBlock* const logPBox = Gtk::manage(new ToolParamBlock());
+    ToolParamBlock* const logPBox2 = Gtk::manage(new ToolParamBlock());
     logPBox->pack_start(*autocompute);
     logPBox->pack_start(*blackEv);
     logPBox->pack_start(*whiteEv);
+    logPBox->pack_start(*whiteslog);
+    logPBox->pack_start(*blackslog);
+    logPBox2->pack_start(*comprlog);
+    // logPBox2->pack_start(*strelog);
+    logPBox2->pack_start(*satlog);
+    logPFrame2->add(*logPBox2);
+    logPBox->pack_start(*logPFrame2);
     logPBox->pack_start(*fullimage);
+
     logPFrame->add(*logPBox);
     pack_start(*logPFrame);
 //    Gtk::Frame* const logFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGFRA")));
@@ -5366,7 +5742,7 @@ LocallabLog::LocallabLog():
     logFBox->pack_start(*Autogray);
     logFBox->pack_start(*sourceGray);
     logFBox->pack_start(*sourceabs);
-    logFBox->pack_start (*surHBox);
+    logFBox->pack_start(*surHBox);
 //    logFBox->pack_start(*baselog);
     logFrame->add(*logFBox);
     pack_start(*logFrame);
@@ -5386,16 +5762,16 @@ LocallabLog::LocallabLog():
     logP11Box->pack_start(*colorfl);
     expL->add(*logP11Box, false);
     logP1Box->pack_start(*expL, false, false);
-    
+
 //    logP1Box->pack_start(*CurveEditorL, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     log1Frame->add(*logP1Box);
     pack_start(*log1Frame);
-    log2Frame->set_label_align(0.025, 0.5);    
+    log2Frame->set_label_align(0.025, 0.5);
     ToolParamBlock* const logP2Box = Gtk::manage(new ToolParamBlock());
     logP2Box->pack_start(*targetGray);
     logP2Box->pack_start(*targabs);
     logP2Box->pack_start(*catad);
-    logP2Box->pack_start (*surrHBox);
+    logP2Box->pack_start(*surrHBox);
     ToolParamBlock* const logBox3 = Gtk::manage(new ToolParamBlock());
     logBox3->pack_start(*maskusablel, Gtk::PACK_SHRINK, 0);
     logBox3->pack_start(*maskunusablel, Gtk::PACK_SHRINK, 0);
@@ -5403,9 +5779,9 @@ LocallabLog::LocallabLog():
     logBox3->pack_start(*lowthresl);
     logBox3->pack_start(*higthresl);
     logBox3->pack_start(*decayl);
-   // colBox3->pack_start(*invmaskc);
+    // colBox3->pack_start(*invmaskc);
     exprecovl->add(*logBox3, false);
-    
+
     ToolParamBlock* const logP3Box = Gtk::manage(new ToolParamBlock());
     logP3Box->pack_start(*showmaskLMethod, Gtk::PACK_SHRINK, 4);
     logP3Box->pack_start(*enaLMask, Gtk::PACK_SHRINK, 0);
@@ -5420,16 +5796,17 @@ LocallabLog::LocallabLog():
     log2Frame->add(*logP2Box);
     pack_start(*log2Frame);
     pack_start(*exprecovl, false, false);
-    
+
 //    pack_start(*baselog);
 //    pack_start(*sensilog);
     pack_start(*expmaskL, false, false);
-    
- //   Gtk::Frame* const gradlogFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADLOGFRA")));
+
+//   Gtk::Frame* const gradlogFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADLOGFRA")));
     gradlogFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const gradlogBox = Gtk::manage(new ToolParamBlock());
     gradlogBox->pack_start(*strlog);
     gradlogBox->pack_start(*anglog);
+    gradlogBox->pack_start(*featherlog);
     gradlogFrame->add(*gradlogBox);
     pack_start(*gradlogFrame);
 }
@@ -5438,8 +5815,8 @@ LocallabLog::~LocallabLog()
 {
     delete maskCurveEditorL;
     delete mask2CurveEditorL;
-    delete CurveEditorL;
-    
+    //delete CurveEditorL;
+
 }
 
 void LocallabLog::setDefaultExpanderVisibility()
@@ -5450,23 +5827,76 @@ void LocallabLog::setDefaultExpanderVisibility()
 
 }
 
+//new function Global
+void LocallabLog::updateguilog(int spottype)
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype == 3) {
+                sensilog->hide();
+                showmaskLMethod->set_active(0);               
+                previewlog->hide();
+                previewlog->set_active(false);
+                resetMaskView();
+                
+            } else {
+                sensilog->show();
+                previewlog->show();
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
+void LocallabLog::previewlogChanged()
+{
+   
+    if(previewlog->get_active()) {
+        showmaskLMethod->set_active(4);
+    } else {
+        showmaskLMethod->set_active(0);
+    }
+    
+    if (isLocActivated) {
+        if (listener) {
+            listener->panelChanged(Evlocallabpreviewlog,"");
+        }
+    } 
+}
+
+
 void LocallabLog::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
         exp->set_tooltip_text(M("TP_LOCALLAB_LOGENCOD_TOOLTIP"));
         repar->set_tooltip_text(M("TP_LOCALLAB_LOGREPART_TOOLTIP"));
+        recothresl->set_tooltip_text(M("TP_LOCALLAB_RECOTHRES02_TOOLTIP"));
         logPFrame->set_tooltip_text(M("TP_LOCALLAB_LOGFRAME_TOOLTIP"));
         logFrame->set_tooltip_text(M("TP_LOCALLAB_LOGSCENE_TOOLTIP"));
         log1Frame->set_tooltip_text(M("TP_LOCALLAB_LOGIMAGE_TOOLTIP"));
         log2Frame->set_tooltip_text(M("TP_LOCALLAB_LOGVIEWING_TOOLTIP"));
         autocompute->set_tooltip_text(M("TP_LOCALLAB_LOGAUTO_TOOLTIP"));
         Autogray->set_tooltip_text(M("TP_LOCALLAB_LOGAUTOGRAY_TOOLTIP"));
-    //    blackEv->set_tooltip_text(M("TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP"));
-    //    whiteEv->set_tooltip_text(M("TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP"));
+        //    blackEv->set_tooltip_text(M("TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP"));
+        //    whiteEv->set_tooltip_text(M("TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP"));
         exprecovl->set_tooltip_markup(M("TP_LOCALLAB_MASKRELOG_TOOLTIP"));
         blackEv->set_tooltip_text("");
         whiteEv->set_tooltip_text("");
-        sourceGray->set_tooltip_text("");
+        whiteslog->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP"));
+        blackslog->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP"));
+        comprlog->set_tooltip_text(M("TP_LOCALLAB_COMPRLOG_TOOLTIP"));
+
+        sourceGray->set_tooltip_text(M("TP_LOCALLAB_JZLOGYBOUT_TOOLTIP"));
         sourceabs->set_tooltip_text(M("TP_COLORAPP_ADAPSCEN_TOOLTIP"));
         targabs->set_tooltip_text(M("TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP"));
         targetGray->set_tooltip_text(M("TP_COLORAPP_YBOUT_TOOLTIP"));
@@ -5477,8 +5907,8 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
         contq->set_tooltip_text(M("TP_LOCALLAB_LOGCONTQ_TOOLTIP"));
         contthres->set_tooltip_text(M("TP_LOCALLAB_LOGCONTTHRES_TOOLTIP"));
         colorfl->set_tooltip_text(M("TP_LOCALLAB_LOGCOLORF_TOOLTIP"));
-        lightl->set_tooltip_text(M("TP_LOCALLAB_LOGLIGHTL_TOOLTIP"));        
-        lightq->set_tooltip_text(M("TP_LOCALLAB_LOGLIGHTQ_TOOLTIP"));        
+        lightl->set_tooltip_text(M("TP_LOCALLAB_LOGLIGHTL_TOOLTIP"));
+        lightq->set_tooltip_text(M("TP_LOCALLAB_LOGLIGHTQ_TOOLTIP"));
         saturl->set_tooltip_text(M("TP_LOCALLAB_LOGSATURL_TOOLTIP"));
         chroml->set_tooltip_text(M("TP_COLORAPP_CHROMA_TOOLTIP"));
         detail->set_tooltip_text(M("TP_LOCALLAB_LOGDETAIL_TOOLTIP"));
@@ -5503,6 +5933,7 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
     } else {
         exp->set_tooltip_text("");
         repar->set_tooltip_text("");
+        recothresl->set_tooltip_text("");
         logPFrame->set_tooltip_text("");
         logFrame->set_tooltip_text("");
         log1Frame->set_tooltip_text("");
@@ -5544,6 +5975,9 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
         decayl->set_tooltip_text("");
         lowthresl->set_tooltip_text("");
         higthresl->set_tooltip_text("");
+        whiteslog->set_tooltip_text("");
+        blackslog->set_tooltip_text("");
+        comprlog->set_tooltip_text("");
 
     }
 }
@@ -5555,9 +5989,10 @@ void LocallabLog::disableListener()
     autoconn.block(true);
     fullimageConn.block(true);
     ciecamconn.block(true);
+    satlogconn.block(true);
     enaLMaskConn.block(true);
-    surroundconn.block (true);
-    sursourconn.block (true);
+    surroundconn.block(true);
+    sursourconn.block(true);
     AutograyConn.block(true);
     showmaskLMethodConn.block(true);
 }
@@ -5569,9 +6004,10 @@ void LocallabLog::enableListener()
     autoconn.block(false);
     fullimageConn.block(false);
     ciecamconn.block(false);
+    satlogconn.block(false);
     enaLMaskConn.block(false);
-    surroundconn.block (false);
-    sursourconn.block (false);
+    surroundconn.block(false);
+    sursourconn.block(false);
     AutograyConn.block(false);
     showmaskLMethodConn.block(false);
 }
@@ -5590,9 +6026,19 @@ void LocallabLog::resetMaskView()
     showmaskLMethodConn.block(false);
 }
 
-void LocallabLog::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask)
+void LocallabLog::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask)
 {
     logMask = showmaskLMethod->get_active_row_number();
+}
+
+Gtk::ToggleButton *LocallabLog::getPreviewDeltaEButton() const
+{
+    return previewlog;
+}
+
+sigc::connection *LocallabLog::getPreviewDeltaEButtonConnection()
+{
+    return &previewlogConn;
 }
 
 
@@ -5607,8 +6053,6 @@ void LocallabLog::read(const rtengine::procparams::ProcParams* pp, const ParamsE
     if (index < (int)pp->locallab.spots.size()) {
         const LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
 
-        spotName = spot.name; // Update spot name according to selected spot
-
         exp->set_visible(spot.visilog);
         exp->setEnabled(spot.explog);
         complexity->set_active(spot.complexlog);
@@ -5618,34 +6062,43 @@ void LocallabLog::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         repar->setValue(spot.repar);
 
         whiteEv->setValue(spot.whiteEv);
-/*        if(whiteEv->getValue() < 1.5){
-            whiteEv->setValue(1.5);
-        }
-*/
+        whiteslog->setValue(spot.whiteslog);
+        blackslog->setValue(spot.blackslog);
+        comprlog->setValue(spot.comprlog);
+        strelog->setValue(spot.strelog);
+
+        /*        if(whiteEv->getValue() < 1.5){
+                    whiteEv->setValue(1.5);
+                }
+        */
         if (spot.sursour == "Average") {
-            sursour->set_active (0);
+            sursour->set_active(0);
         } else if (spot.sursour == "Dim") {
-            sursour->set_active (1);
+            sursour->set_active(1);
         } else if (spot.sursour == "Dark") {
-            sursour->set_active (2);
+            sursour->set_active(2);
+        } else if (spot.sursour == "exDark") {
+            sursour->set_active(3);
         }
 
 
         if (spot.surround == "Average") {
-            surround->set_active (0);
+            surround->set_active(0);
         } else if (spot.surround == "Dim") {
-            surround->set_active (1);
+            surround->set_active(1);
         } else if (spot.surround == "Dark") {
-            surround->set_active (2);
+            surround->set_active(2);
         } else if (spot.surround == "ExtremelyDark") {
-            surround->set_active (3);
+            surround->set_active(3);
         }
+
         recothresl->setValue((double)spot.recothresl);
         lowthresl->setValue((double)spot.lowthresl);
         higthresl->setValue((double)spot.higthresl);
         decayl->setValue((double)spot.decayl);
 
         ciecam->set_active(spot.ciecam);
+        satlog->set_active(spot.satlog);
         fullimage->set_active(spot.fullimage);
         Autogray->set_active(spot.Autogray);
         sourceGray->setValue(spot.sourceGray);
@@ -5659,7 +6112,7 @@ void LocallabLog::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         contthres->setValue(spot.contthres);
         contq->setValue(spot.contq);
         colorfl->setValue(spot.colorfl);
-        LshapeL->setCurve(spot.LcurveL);
+        //LshapeL->setCurve(spot.LcurveL);
         targabs->setValue(spot.targabs);
         targetGray->setValue(spot.targetGray);
         detail->setValue(spot.detail);
@@ -5667,6 +6120,7 @@ void LocallabLog::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         sensilog->setValue((double)spot.sensilog);
         strlog->setValue(spot.strlog);
         anglog->setValue(spot.anglog);
+        featherlog->setValue(spot.featherlog);
         CCmaskshapeL->setCurve(spot.CCmaskcurveL);
         LLmaskshapeL->setCurve(spot.LLmaskcurveL);
         HHmaskshapeL->setCurve(spot.HHmaskcurveL);
@@ -5676,7 +6130,7 @@ void LocallabLog::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         chromaskL->setValue(spot.chromaskL);
         LmaskshapeL->setCurve(spot.LmaskcurveL);
 
-        
+
     }
 
     // Enable all listeners
@@ -5707,8 +6161,13 @@ void LocallabLog::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.repar = repar->getValue();
         spot.blackEv = blackEv->getValue();
         spot.whiteEv = whiteEv->getValue();
+        spot.whiteslog = whiteslog->getIntValue();
+        spot.blackslog = blackslog->getIntValue();
+        spot.comprlog = comprlog->getValue();
+        spot.strelog = strelog->getValue();
         spot.fullimage = fullimage->get_active();
         spot.ciecam = ciecam->get_active();
+        spot.satlog = satlog->get_active();
         spot.Autogray = Autogray->get_active();
         spot.sourceGray = sourceGray->getValue();
         spot.sourceabs = sourceabs->getValue();
@@ -5723,12 +6182,13 @@ void LocallabLog::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.contthres = contthres->getValue();
         spot.contq = contq->getValue();
         spot.colorfl = colorfl->getValue();
-        spot.LcurveL = LshapeL->getCurve();
+        //spot.LcurveL = LshapeL->getCurve();
         spot.detail = detail->getValue();
         spot.baselog = baselog->getValue();
         spot.sensilog = sensilog->getIntValue();
         spot.strlog = strlog->getValue();
         spot.anglog = anglog->getValue();
+        spot.featherlog = featherlog->getValue();
         spot.CCmaskcurveL = CCmaskshapeL->getCurve();
         spot.LLmaskcurveL = LLmaskshapeL->getCurve();
         spot.HHmaskcurveL = HHmaskshapeL->getCurve();
@@ -5749,6 +6209,8 @@ void LocallabLog::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.sursour = "Dim";
         } else if (sursour->get_active_row_number() == 2) {
             spot.sursour = "Dark";
+        } else if (sursour->get_active_row_number() == 3) {
+            spot.sursour = "exDark";
         }
 
         if (surround->get_active_row_number() == 0) {
@@ -5760,7 +6222,7 @@ void LocallabLog::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         } else if (surround->get_active_row_number() == 3) {
             spot.surround = "ExtremelyDark";
         }
-        
+
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -5776,15 +6238,15 @@ void LocallabLog::enaLMaskChanged()
         maskusablel->hide();
         maskunusablel->show();
     }
-    
+
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (enaLMask->get_active()) {
                 listener->panelChanged(EvLocallabEnaLMask,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvLocallabEnaLMask,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -5799,12 +6261,12 @@ void LocallabLog::updateGUIToMode(const modeType new_type)
         case Simple:
             // Expert and Normal mode widgets are hidden in Simple mode
             ciecam->hide();
-            ciecam->set_active(false);
+            ciecam->set_active(true);
             sourceabs->hide();
             targabs->hide();
             saturl->hide();
             chroml->hide();
-            contl->hide();
+            contl->show();
             contthres->hide();
             lightl->hide();
             lightq->hide();
@@ -5820,6 +6282,7 @@ void LocallabLog::updateGUIToMode(const modeType new_type)
             maskusablel->hide();
             maskunusablel->hide();
             decayl->hide();
+           
             break;
 
         case Normal:
@@ -5836,22 +6299,23 @@ void LocallabLog::updateGUIToMode(const modeType new_type)
             lightq->show();
             contl->show();
             contthres->show();
-            contq->show();
+            contq->hide();
             colorfl->show();
             surrHBox->show();
             expL->hide();
             surHBox->hide();
             expmaskL->show();
             gradlogFrame->show();
+
             if (enaLMask->get_active()) {
                 maskusablel->show();
                 maskunusablel->hide();
-                
+
             } else {
                 maskusablel->hide();
                 maskunusablel->show();
             }
-            
+
             exprecovl->show();
             decayl->hide();
 
@@ -5877,14 +6341,16 @@ void LocallabLog::updateGUIToMode(const modeType new_type)
             expmaskL->show();
             gradlogFrame->show();
             surHBox->show();
+
             if (enaLMask->get_active()) {
                 maskusablel->show();
                 maskunusablel->hide();
-                
+
             } else {
                 maskusablel->hide();
                 maskunusablel->show();
             }
+
             exprecovl->show();
             decayl->show();
 
@@ -5909,7 +6375,9 @@ void LocallabLog::convertParamToSimple()
     sursour->set_active(0);
     strlog->setValue(defSpot.strlog);
     anglog->setValue(defSpot.anglog);
+    featherlog->setValue(defSpot.featherlog);
     enaLMask->set_active(false);
+    showmaskLMethod->set_active(0);
     recothresl->setValue(defSpot.recothresl);
     lowthresl->setValue(defSpot.lowthresl);
     higthresl->setValue(defSpot.higthresl);
@@ -5948,7 +6416,7 @@ void LocallabLog::showmaskLMethodChanged()
         locToolListener->resetOtherMaskView(this);
     }
 
-    if(exp->getEnabled()) {
+    if (exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabshowmaskMethod, "");
         }
@@ -5961,37 +6429,37 @@ void LocallabLog::curveChanged(CurveEditor* ce)
         if (ce == HHmaskshapeL) {
             if (listener) {
                 listener->panelChanged(EvlocallabHHmaskshapeL,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == LLmaskshapeL) {
             if (listener) {
                 listener->panelChanged(EvlocallabLLmaskshapeL,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == CCmaskshapeL) {
             if (listener) {
                 listener->panelChanged(EvlocallabCCmaskshapeL,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == LmaskshapeL) {
             if (listener) {
                 listener->panelChanged(EvlocallabLmaskshapeL,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
-        if (ce == LshapeL) {
-            if (listener) {
-                listener->panelChanged(EvlocallabLshapeL,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
-            }
-        }
+        //if (ce == LshapeL) {
+        //    if (listener) {
+        //        listener->panelChanged(EvlocallabLshapeL,
+        //                               M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
+        //    }
+        //}
 
     }
 }
@@ -6008,6 +6476,10 @@ void LocallabLog::setDefaults(const rtengine::procparams::ProcParams* defParams,
         repar->setDefault(defSpot.repar);
         blackEv->setDefault(defSpot.blackEv);
         whiteEv->setDefault(defSpot.whiteEv);
+        whiteslog->setDefault(defSpot.whiteslog);
+        blackslog->setDefault(defSpot.blackslog);
+        comprlog->setDefault(defSpot.comprlog);
+        strelog->setDefault(defSpot.strelog);
         sourceGray->setDefault(defSpot.sourceGray);
         sourceabs->setDefault(defSpot.sourceabs);
         targabs->setDefault(defSpot.targabs);
@@ -6026,6 +6498,7 @@ void LocallabLog::setDefaults(const rtengine::procparams::ProcParams* defParams,
         sensilog->setDefault((double)defSpot.sensilog);
         strlog->setDefault(defSpot.strlog);
         anglog->setDefault(defSpot.anglog);
+        featherlog->setDefault(defSpot.featherlog);
         blendmaskL->setDefault(defSpot.blendmaskL);
         radmaskL->setDefault(defSpot.radmaskL);
         chromaskL->setDefault(defSpot.chromaskL);
@@ -6046,84 +6519,112 @@ void LocallabLog::adjusterChanged(Adjuster* a, double newval)
         if (a == repar) {
             if (listener) {
                 listener->panelChanged(Evlocallabrepar,
-                                       repar->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       repar->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == blackEv) {
             if (listener) {
                 listener->panelChanged(EvlocallabblackEv,
-                                       blackEv->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       blackEv->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == whiteEv) {
             if (listener) {
                 listener->panelChanged(EvlocallabwhiteEv,
-                                       whiteEv->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       whiteEv->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == whiteslog) {
+            if (listener) {
+                listener->panelChanged(Evlocallabwhiteslog,
+                                       whiteslog->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == blackslog) {
+            if (listener) {
+                listener->panelChanged(Evlocallabblackslog,
+                                       blackslog->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == comprlog) {
+            if (listener) {
+                listener->panelChanged(Evlocallabcomprlog,
+                                       comprlog->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == strelog) {
+            if (listener) {
+                listener->panelChanged(Evlocallabstrelog,
+                                       strelog->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == sourceGray) {
             if (listener) {
                 listener->panelChanged(EvlocallabsourceGray,
-                                       sourceGray->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       sourceGray->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == sourceabs) {
             if (listener) {
                 listener->panelChanged(Evlocallabsourceabs,
-                                       sourceabs->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       sourceabs->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == targabs) {
             if (listener) {
                 listener->panelChanged(Evlocallabtargabs,
-                                       targabs->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       targabs->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == targetGray) {
             if (listener) {
                 listener->panelChanged(EvlocallabtargetGray,
-                                       targetGray->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       targetGray->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == catad) {
             if (listener) {
                 listener->panelChanged(Evlocallabcatad,
-                                       catad->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       catad->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == saturl) {
             if (listener) {
                 listener->panelChanged(Evlocallabsaturl,
-                                       saturl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       saturl->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == chroml) {
             if (listener) {
                 listener->panelChanged(Evlocallabchroml,
-                                       chroml->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       chroml->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == lightl) {
             if (listener) {
                 listener->panelChanged(Evlocallablightl,
-                                       lightl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       lightl->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == lightq) {
             if (listener) {
                 listener->panelChanged(Evlocallablightq,
-                                       lightq->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       lightq->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
@@ -6131,71 +6632,71 @@ void LocallabLog::adjusterChanged(Adjuster* a, double newval)
         if (a == contl) {
             if (listener) {
                 listener->panelChanged(Evlocallabcontl,
-                                       contl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       contl->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == contthres) {
             if (listener) {
                 listener->panelChanged(Evlocallabcontthres,
-                                       contthres->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       contthres->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == contq) {
             if (listener) {
                 listener->panelChanged(Evlocallabcontq,
-                                       contq->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       contq->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == colorfl) {
             if (listener) {
                 listener->panelChanged(Evlocallabcolorfl,
-                                       colorfl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       colorfl->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == detail) {
             if (listener) {
                 listener->panelChanged(Evlocallabdetail,
-                                       detail->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       detail->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == baselog) {
             if (listener) {
                 listener->panelChanged(Evlocallabbaselog,
-                                       baselog->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       baselog->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == recothresl) {
-            
+
             if (listener) {
                 listener->panelChanged(Evlocallabrecothresl,
-                                       recothresl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       recothresl->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == lowthresl) {
             if (listener) {
                 listener->panelChanged(Evlocallablowthresl,
-                                       lowthresl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       lowthresl->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == higthresl) {
             if (listener) {
                 listener->panelChanged(Evlocallabhigthresl,
-                                       higthresl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       higthresl->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == decayl) {
             if (listener) {
                 listener->panelChanged(Evlocallabdecayl,
-                                       decayl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       decayl->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
@@ -6203,69 +6704,78 @@ void LocallabLog::adjusterChanged(Adjuster* a, double newval)
         if (a == sensilog) {
             if (listener) {
                 listener->panelChanged(Evlocallabsensilog,
-                                       sensilog->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       sensilog->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == strlog) {
             if (listener) {
                 listener->panelChanged(Evlocallabstrlog,
-                                       strlog->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       strlog->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == anglog) {
             if (listener) {
                 listener->panelChanged(Evlocallabanglog,
-                                       anglog->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       anglog->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
-        
+
+        if (a == featherlog) {
+            if (listener) {
+                listener->panelChanged(Evlocallabfeatherlog,
+                                       featherlog->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
         if (a == blendmaskL) {
             if (listener) {
                 listener->panelChanged(EvLocallabblendmaskL,
-                                       blendmaskL->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       blendmaskL->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == radmaskL) {
             if (listener) {
                 listener->panelChanged(EvLocallabradmaskL,
-                                       radmaskL->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       radmaskL->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == chromaskL) {
             if (listener) {
                 listener->panelChanged(EvLocallabchromaskL,
-                                       chromaskL->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       chromaskL->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
-        
+
     }
 }
 
-void LocallabLog::updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg)
+void LocallabLog::updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const float jz1)
 {
-    idle_register.add(
-    [this, blackev, whiteev, sourceg, sourceab, targetg]() -> bool {
-        GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+    if (autocompute->get_active()) {
+        idle_register.add(
+        [this, blackev, whiteev, sourceg, sourceab, targetg]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
 
-        // Update adjuster values according to autocomputed ones
-        disableListener();
+            // Update adjuster values according to autocomputed ones
+            disableListener();
 
-        blackEv->setValue(blackev);
-        whiteEv->setValue(whiteev);
-        sourceGray->setValue(sourceg);
-        sourceabs->setValue(sourceab);
-        targetGray->setValue(targetg);
+            blackEv->setValue(blackev);
+            whiteEv->setValue(whiteev);
+            sourceGray->setValue(sourceg);
+            sourceabs->setValue(sourceab);
+            targetGray->setValue(targetg);
 
-        enableListener();
+            enableListener();
 
-        return false;
+            return false;
+        }
+                     );
     }
-    );
 }
 
 void LocallabLog::enabledChanged()
@@ -6274,10 +6784,10 @@ void LocallabLog::enabledChanged()
         if (listener) {
             if (exp->getEnabled()) {
                 listener->panelChanged(EvLocenalog,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvLocenalog,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -6288,7 +6798,7 @@ void LocallabLog::sursourChanged()
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(Evlocallabsursour,
-                                   sursour->get_active_text() + " (" + escapeHtmlChars(spotName) + ")");
+                                   sursour->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     }
 }
@@ -6299,7 +6809,7 @@ void LocallabLog::surroundChanged()
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(Evlocallabsurround,
-                                   surround->get_active_text() + " (" + escapeHtmlChars(spotName) + ")");
+                                   surround->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     }
 }
@@ -6313,10 +6823,10 @@ void LocallabLog::autocomputeToggled()
         if (listener) {
             if (autocompute->get_active()) {
                 listener->panelChanged(EvLocallabAuto,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvLocallabAuto,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -6330,7 +6840,7 @@ void LocallabLog::ciecamChanged()
         targabs->set_sensitive(true);
         catad->set_sensitive(true);
         surrHBox->set_sensitive(true);
-        
+
         sourceabs->show();
         targabs->show();
         catad->show();
@@ -6349,15 +6859,30 @@ void LocallabLog::ciecamChanged()
         catad->hide();
         surrHBox->hide();
     }
-*/
+    */
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (ciecam->get_active()) {
                 listener->panelChanged(Evlocallabciecam,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabciecam,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+void LocallabLog::satlogChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (satlog->get_active()) {
+                listener->panelChanged(Evlocallabsatlog,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabsatlog,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -6370,16 +6895,16 @@ void LocallabLog::fullimageChanged()
         if (listener) {
             if (fullimage->get_active()) {
                 listener->panelChanged(Evlocallabfullimage,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabfullimage,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
 }
 
-void LocallabLog::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer)
+void LocallabLog::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
 {
     idle_register.add(
     [this, normHuer, normLumar, normChromar]() -> bool {
@@ -6393,7 +6918,7 @@ void LocallabLog::updateMaskBackground(const double normChromar, const double no
 
         return false;
     }
-    );
+                 );
 }
 
 
@@ -6404,10 +6929,10 @@ void LocallabLog::AutograyChanged()
         if (listener) {
             if (Autogray->get_active()) {
                 listener->panelChanged(EvlocallabAutogray,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvlocallabAutogray,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -6442,11 +6967,14 @@ void LocallabLog::updateLogGUI2()
 void LocallabLog::updateLogGUI()
 {
     const int mode = complexity->get_active_row_number();
-    
+
     if (autocompute->get_active()) {
         blackEv->set_sensitive(false);
         whiteEv->set_sensitive(false);
         sourceGray->set_sensitive(false);
+        blackslog->set_sensitive(true);
+        whiteslog->set_sensitive(true);
+
         if (mode == Expert || mode == Normal) {
             sourceabs->set_sensitive(false);
         } else {
@@ -6456,16 +6984,20 @@ void LocallabLog::updateLogGUI()
         blackEv->set_sensitive(true);
         whiteEv->set_sensitive(true);
         sourceGray->set_sensitive(true);
-        if (mode == Expert || mode == Normal){
+        blackslog->set_sensitive(false);
+        whiteslog->set_sensitive(false);
+
+        if (mode == Expert || mode == Normal) {
             sourceabs->set_sensitive(true);
         } else {
             sourceabs->hide();
         }
     }
-        if (mode == Expert || mode == Normal) { // Keep widget hidden in Simple mode
-            exprecovl->show();
-        }
-    
+
+    if (mode == Expert || mode == Normal) { // Keep widget hidden in Simple mode
+        exprecovl->show();
+    }
+
 }
 
 
@@ -6475,6 +7007,7 @@ LocallabMask::LocallabMask():
 
     // Common mask specific widgets
     sensimask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
+    previewmas(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
     blendmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKMASK"), -100., 100., 0.1, -10.))),
     blendmaskab(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKMASKAB"), -100., 100., 0.1, -10.))),
     softradiusmask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 1.))),
@@ -6508,11 +7041,16 @@ LocallabMask::LocallabMask():
     csThresholdmask(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 0, 9, 0, 0, 6, 5, 0, false))),
     gradFramemask(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADFRA")))),
     str_mask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -2., 2., 0.05, 0.))),
+    feather_mask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FEATVALUE"), 10., 100., 0.1, 25.))),
     ang_mask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180., 180., 0.1, 0.)))
 {
+
+    auto m = ProcEventMapper::getInstance();
+    Evlocallabpreviewmas = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWMAS");
+    Evlocallabfeather_mask = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_FEATHERMAS");
     
     set_orientation(Gtk::ORIENTATION_VERTICAL);
-    
+
     const LocallabParams::LocallabSpot defSpot;
 
     // Parameter Mask common specific widgets
@@ -6525,6 +7063,11 @@ LocallabMask::LocallabMask():
     blendmaskab->setAdjusterListener(this);
 
     softradiusmask->setAdjusterListener(this);
+
+    previewmas->set_active(false);
+    previewmasConn = previewmas->signal_clicked().connect(
+                       sigc::mem_fun(
+                           *this, &LocallabMask::previewmasChanged));
 
     showmask_Method->append(M("TP_LOCALLAB_SHOWMNONE"));
     showmask_Method->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
@@ -6614,9 +7157,11 @@ LocallabMask::LocallabMask():
 
     ang_mask->setAdjusterListener(this);
     ang_mask->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
+    feather_mask->setAdjusterListener(this);
 
     // Add Common mask specific widgets to GUI
     pack_start(*sensimask);
+    pack_start(*previewmas);
     pack_start(*blendmask);
     pack_start(*blendmaskab);
     pack_start(*softradiusmask);
@@ -6648,6 +7193,7 @@ LocallabMask::LocallabMask():
     ToolParamBlock* const gradmaskBox = Gtk::manage(new ToolParamBlock());
     gradmaskBox->pack_start(*str_mask);
     gradmaskBox->pack_start(*ang_mask);
+    gradmaskBox->pack_start(*feather_mask);
     gradFramemask->add(*gradmaskBox);
     toolmaskBox->pack_start(*gradFramemask, Gtk::PACK_SHRINK, 0);
     toolmaskFrame->add(*toolmaskBox);
@@ -6674,10 +7220,68 @@ void LocallabMask::resetMaskView()
     showmask_MethodConn.block(false);
 }
 
-void LocallabMask::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask)
+void LocallabMask::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask)
 {
     maskMask = showmask_Method->get_active_row_number();
 }
+
+Gtk::ToggleButton *LocallabMask::getPreviewDeltaEButton() const
+{
+    return previewmas;
+}
+
+sigc::connection *LocallabMask::getPreviewDeltaEButtonConnection()
+{
+    return &previewmasConn;
+}
+
+//new function Global
+void LocallabMask::updateguimask(int spottype)
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype == 3) {
+                sensimask->hide();
+                showmask_Method->set_active(0);               
+                previewmas->hide();
+                previewmas->set_active(false);
+                resetMaskView();
+                
+            } else {
+                sensimask->show();
+                previewmas->show();
+           }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
+void LocallabMask::previewmasChanged()
+{
+   
+    if(previewmas->get_active()) {
+        showmask_Method->set_active(3);
+    } else {
+        showmask_Method->set_active(0);
+    }
+    
+    if (isLocActivated) {
+        if (listener) {
+            listener->panelChanged(Evlocallabpreviewmas,"");
+        }
+    } 
+}
+
 
 void LocallabMask::updateAdviceTooltips(const bool showTooltips)
 {
@@ -6773,8 +7377,6 @@ void LocallabMask::read(const rtengine::procparams::ProcParams* pp, const Params
     if (index < (int)pp->locallab.spots.size()) {
         const LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
 
-        spotName = spot.name; // Update spot name according to selected spot
-
         exp->set_visible(spot.visimask);
         exp->setEnabled(spot.expmask);
         complexity->set_active(spot.complexmask);
@@ -6807,6 +7409,7 @@ void LocallabMask::read(const rtengine::procparams::ProcParams* pp, const Params
         csThresholdmask->setValue<int>(spot.csthresholdmask);
         str_mask->setValue((double)spot.str_mask);
         ang_mask->setValue((double)spot.ang_mask);
+        feather_mask->setValue((double)spot.feather_mask);
     }
 
     // Enable all listeners
@@ -6854,6 +7457,7 @@ void LocallabMask::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.csthresholdmask = csThresholdmask->getValue<int>();
         spot.str_mask = str_mask->getIntValue();
         spot.ang_mask = ang_mask->getIntValue();
+        spot.feather_mask = feather_mask->getIntValue();
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -6883,6 +7487,7 @@ void LocallabMask::setDefaults(const rtengine::procparams::ProcParams* defParams
         csThresholdmask->setDefault<int>(defSpot.csthresholdmask);
         str_mask->setDefault((double)defSpot.str_mask);
         ang_mask->setDefault((double)defSpot.ang_mask);
+        feather_mask->setDefault((double)defSpot.feather_mask);
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -6895,105 +7500,112 @@ void LocallabMask::adjusterChanged(Adjuster* a, double newval)
         if (a == sensimask) {
             if (listener) {
                 listener->panelChanged(Evlocallabsensimask,
-                                       sensimask->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       sensimask->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == blendmask) {
             if (listener) {
                 listener->panelChanged(Evlocallabblendmask,
-                                       blendmask->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       blendmask->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == blendmaskab) {
             if (listener) {
                 listener->panelChanged(Evlocallabblendmaskab,
-                                       blendmaskab->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       blendmaskab->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == softradiusmask) {
             if (listener) {
                 listener->panelChanged(Evlocallabsoftradiusmask,
-                                       softradiusmask->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       softradiusmask->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == strumaskmask) {
             if (listener) {
                 listener->panelChanged(Evlocallabstrumaskmask,
-                                       strumaskmask->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       strumaskmask->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == contmask) {
             if (listener) {
                 listener->panelChanged(Evlocallabcontmask,
-                                       contmask->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       contmask->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == blurmask) {
             if (listener) {
                 listener->panelChanged(Evlocallabblurmask,
-                                       blurmask->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       blurmask->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == radmask) {
             if (listener) {
                 listener->panelChanged(Evlocallabradmask,
-                                       radmask->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       radmask->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == lapmask) {
             if (listener) {
                 listener->panelChanged(Evlocallablapmask,
-                                       lapmask->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       lapmask->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == chromask) {
             if (listener) {
                 listener->panelChanged(Evlocallabchromask,
-                                       chromask->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       chromask->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == gammask) {
             if (listener) {
                 listener->panelChanged(Evlocallabgammask,
-                                       gammask->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       gammask->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == slopmask) {
             if (listener) {
                 listener->panelChanged(Evlocallabslopmask,
-                                       slopmask->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       slopmask->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == shadmask) {
             if (listener) {
                 listener->panelChanged(Evlocallabshadmask,
-                                       shadmask->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       shadmask->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == str_mask) {
             if (listener) {
                 listener->panelChanged(Evlocallabstr_mask,
-                                       str_mask->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       str_mask->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == ang_mask) {
             if (listener) {
                 listener->panelChanged(Evlocallabang_mask,
-                                       ang_mask->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       ang_mask->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == feather_mask) {
+            if (listener) {
+                listener->panelChanged(Evlocallabfeather_mask,
+                                       feather_mask->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
@@ -7006,7 +7618,7 @@ void LocallabMask::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int ne
         if (a == csThresholdmask) {
             if (listener) {
                 listener->panelChanged(EvlocallabcsThresholdmask,
-                                       csThresholdmask->getHistoryString() + " (" + escapeHtmlChars(spotName) + ")");
+                                       csThresholdmask->getHistoryString() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -7018,42 +7630,42 @@ void LocallabMask::curveChanged(CurveEditor* ce)
         if (ce == CCmask_shape) {
             if (listener) {
                 listener->panelChanged(EvlocallabCCmask_shape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == LLmask_shape) {
             if (listener) {
                 listener->panelChanged(EvlocallabLLmask_shape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == HHmask_shape) {
             if (listener) {
                 listener->panelChanged(EvlocallabHHmask_shape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == HHhmask_shape) {
             if (listener) {
                 listener->panelChanged(EvlocallabHHhmask_shape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == Lmask_shape) {
             if (listener) {
                 listener->panelChanged(EvlocallabLmask_shape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == LLmask_shapewav) {
             if (listener) {
                 listener->panelChanged(EvlocallabLLmask_shapewav,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
@@ -7071,7 +7683,7 @@ void LocallabMask::complexityModeChanged()
 
         if (listener && isLocActivated) {
             listener->panelChanged(EvlocallabcomplexityWithRefresh,
-                                   M("TP_LOCALLAB_MODE_SIMPLE") + " (" + escapeHtmlChars(spotName) + ")");
+                                   M("TP_LOCALLAB_MODE_SIMPLE") + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     } else if (complexity->get_active_row_number() == Normal) { // New selected mode is Normal one
         // Convert tool widget parameters
@@ -7081,7 +7693,7 @@ void LocallabMask::complexityModeChanged()
 
         if (listener && isLocActivated) {
             listener->panelChanged(EvlocallabcomplexityWithRefresh,
-                                   M("TP_LOCALLAB_MODE_NORMAL") + " (" + escapeHtmlChars(spotName) + ")");
+                                   M("TP_LOCALLAB_MODE_NORMAL") + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     } else if (complexity->get_active_row_number() == Expert) { // New selected mode is Expert one
         // Update GUI based on new mode
@@ -7089,7 +7701,7 @@ void LocallabMask::complexityModeChanged()
 
         if (listener && isLocActivated) {
             listener->panelChanged(EvlocallabcomplexityWithRefresh,
-                                   M("TP_LOCALLAB_MODE_EXPERT") + " (" + escapeHtmlChars(spotName) + ")");
+                                   M("TP_LOCALLAB_MODE_EXPERT") + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     }
 }
@@ -7100,10 +7712,10 @@ void LocallabMask::enabledChanged()
         if (listener) {
             if (exp->getEnabled()) {
                 listener->panelChanged(EvLocena_mask,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvLocena_mask,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -7132,6 +7744,7 @@ void LocallabMask::convertParamToNormal()
     csThresholdmask->setValue<int>(defSpot.csthresholdmask);
     str_mask->setValue((double)defSpot.str_mask);
     ang_mask->setValue((double)defSpot.ang_mask);
+    feather_mask->setValue((double)defSpot.feather_mask);
 
     // Enable all listeners
     enableListener();
@@ -7151,6 +7764,7 @@ void LocallabMask::convertParamToSimple()
     // Set hidden specific GUI widgets in Simple mode to default spot values
     gammask->setValue(defSpot.gammask);
     slopmask->setValue(defSpot.slopmask);
+    
     //Lmask_shape->setCurve(defSpot.Lmask_curve);
 
     // Enable all listeners
@@ -7210,10 +7824,10 @@ void LocallabMask::updateGUIToMode(const modeType new_type)
             csThresholdmask->show();
             gradFramemask->show();
     }
-    
+
 }
 
-void LocallabMask::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer)
+void LocallabMask::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
 {
     idle_register.add(
     [this, normHuer, normLumar, normChromar]() -> bool {
@@ -7228,7 +7842,7 @@ void LocallabMask::updateMaskBackground(const double normChromar, const double n
 
         return false;
     }
-    );
+                 );
 }
 
 void LocallabMask::showmask_MethodChanged()
@@ -7238,7 +7852,7 @@ void LocallabMask::showmask_MethodChanged()
         locToolListener->resetOtherMaskView(this);
     }
 
-    if(exp->getEnabled()) {
+    if (exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabshowmaskMethod, "");
         }
@@ -7251,10 +7865,10 @@ void LocallabMask::enamaskChanged()
         if (listener) {
             if (enamask->get_active()) {
                 listener->panelChanged(EvLocallabEnaMask,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvLocallabEnaMask,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -7266,10 +7880,10 @@ void LocallabMask::toolmaskChanged()
         if (listener) {
             if (toolmask->get_active()) {
                 listener->panelChanged(EvLocallabtoolmask,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvLocallabtoolmask,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -7284,10 +7898,10 @@ void LocallabMask::fftmaskChanged()
         if (listener) {
             if (fftmask->get_active()) {
                 listener->panelChanged(EvLocallabfftmask,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvLocallabfftmask,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -7304,4 +7918,5026 @@ void LocallabMask::updateMaskGUI()
     }
 
     blurmask->setValue(temp);
+}
+
+/*==== Locallabcie ====*/
+Locallabcie::Locallabcie():
+    LocallabTool(this, M("TP_LOCALLAB_CIE_TOOLNAME"), M("TP_LOCALLAB_CIE"), false),
+    // ciecam specific widgets
+    sensicie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
+    previewcie(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
+    
+    reparcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
+    jabcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_JAB")))),
+    modecam(Gtk::manage(new MyComboBoxText())),
+    modecie(Gtk::manage(new MyComboBoxText())),
+    jzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_JZFRA")))),
+    modeHBoxcam(Gtk::manage(new Gtk::Box())),
+    modeHBoxcie(Gtk::manage(new Gtk::Box())),
+    cieFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGFRA")))),
+    expcamscene(Gtk::manage(new MyExpander(false, Gtk::manage(new Gtk::Box())))),
+    Autograycie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AUTOGRAYCIE")))),
+    sourceGraycie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_GRAY"), 1.0, 100.0, 0.1, 18.0))),
+    sourceabscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_ABS"), 0.01, 16384.0, 0.01, 2000.0))),
+    sursourcie(Gtk::manage(new MyComboBoxText())),
+    surHBoxcie(Gtk::manage(new Gtk::Box())),
+    cie1Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOG1FRA")))),
+    cie1lightFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIELIGHTFRA")))),
+    cie1contFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIECONTFRA")))),
+    cie1colorFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIECOLORFRA")))),
+    czlightFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIELIGHTCONTFRA")))),
+    czcolorFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIECOLORFRA")))),
+    PQFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_JZPQFRA")))),
+    qtoj(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_JZQTOJ")))),
+    lightlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGLIGHTL"), -100., 100., 0.01, 0.))),
+    lightjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZLIGHT"), -100., 100., 0.01, 0.))),
+    contjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZCONT"), -100., 100., 0.5, 0.))),
+    adapjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZADAP"), 1., 10., 0.05, 4.))),
+    jz100(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZ100"), 0.10, 0.90, 0.01, 0.25))),
+    pqremap(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZPQREMAP"), 100., 10000., 0.1, 120.))),
+    pqremapcam16(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CAM16PQREMAP"), 100., 10000., 1., 100.))),
+    forcejz(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_JZFORCE")))),
+    expjz(Gtk::manage(new MyExpander(false, Gtk::manage(new Gtk::Box())))),
+    jzshFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_JZSHFRA")))),
+    hljzcie(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_HIGHLIGHTS"), 0., 100., 1., 0.))),
+    hlthjzcie(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_HLTONALW"), 20., 100., 1., 70.))),
+    shjzcie(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_SHADOWS"), 0., 100., 1., 0.))),
+    shthjzcie(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_SHTONALW"), 20., 100., 1., 40.))),
+    radjzcie(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_RADIUS"), 0., 100., 1., 40.))),
+    expwavjz(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_JZWAVEXP")))),
+    contFramejz(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CONTWFRA")))),
+    sigmalcjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 2.5, 0.01, 1.))),
+    LocalcurveEditorwavjz(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAV"))),
+    wavshapejz(static_cast<FlatCurveEditor*>(LocalcurveEditorwavjz->addCurve(CT_Flat, "", nullptr, false, false))),
+    csThresholdjz(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLD"), 0, 9, 0, 0, 7, 4, 0, false))),
+    clariFramejz(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CLARIFRA")))),
+    clarilresjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZCLARILRES"), -20., 100., 0.5, 0.))),
+    claricresjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZCLARICRES"), -20., 100., 0.5, 0.))),
+    clarisoftjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 0.))),
+
+    expcam16(Gtk::manage(new MyExpander(false, Gtk::manage(new Gtk::Box())))),
+    expcamviewing(Gtk::manage(new MyExpander(false, Gtk::manage(new Gtk::Box())))),
+    lightqcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGLIGHTQ"), -100., 100., 0.05, 0.))),
+    contlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONTL"), -100., 100., 0.5, 0.))),
+    contqcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONQL"), -100., 100., 0.5, 0.))),
+    lightsigqcie(Gtk::manage(new Adjuster(M(""), -100., 100., 0.5, 0.))),
+    contsigqcie(Gtk::manage(new Adjuster(M(""), -100., 100., 0.5, 0.))),
+
+    contthrescie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONTHRES"), -1., 1., 0.01, 0.))),
+
+    logjzFrame(Gtk::manage(new Gtk::Frame())),
+    logjz(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_JZLOG")))),
+    blackEvjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLACK_EV"), -16.00, 0.00, 0.01, -5.00))),
+    whiteEvjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WHITE_EV"), 0.00, 32.000, 0.01, 10.00))),
+    targetjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZTARGET_EV"), 4., 80.0, 0.1, 18.0))),
+    bevwevFrame(Gtk::manage(new Gtk::Frame())),
+    forcebw(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_BWFORCE")))),
+    sigBox(Gtk::manage(new ToolParamBlock())),
+    sigmoidFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGFRA")))),
+    sigmoidnormFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGNORM")))),
+    sigq(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGFRA")))),
+    sigmoidldacie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0.0, 1., 0.01, 0.5))),
+    sigmoidthcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDTH"), 0.1, 4., 0.01, 1.2, Gtk::manage(new RTImage("circle-black-small")), Gtk::manage(new RTImage("circle-white-small"))))),
+    sigmoidsenscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDSENSI"), 0.1, 1.5, 0.01, 0.9))),
+    sigmoidblcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDBL"), 0.05, 1., 0.01, 0.75))),
+    autocomprHBox(Gtk::manage(new Gtk::Box())),
+    comprcieauto(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_SIGMOIDLOGAUTO")))),
+    normcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGMOIDNORMCIE")))),
+    modeHBoxbwev(Gtk::manage(new Gtk::Box())),
+    bwevMethod(Gtk::manage(new MyComboBoxText())),
+    logcieFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGCIE")))),
+    logcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LOGCIE")))),
+    comprBox(Gtk::manage(new ToolParamBlock())),
+    comprcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIE"), 0., 1., 0.01, 0.4))),
+    strcielog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGTHCIELOG"), 0., 100., 0.5, 80.))),
+    satcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SATCIE")))),
+    logcieq(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LOGCIEQ")))),
+    comprcieth(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIETH"), 0., 25., 0.01, 6.))),
+
+    expprecam(Gtk::manage(new MyExpander(true, Gtk::manage(new Gtk::Box())))),
+
+    gamjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGGAMJCIE"), 0.7, 10., 0.01, 2.4))),
+    slopjcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGSLOPJCIE"), 0., 500., 0.01, 12.923))),
+    midtcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MIDTCIE"), -100, 100, 1, 0))),
+    smoothcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SMOOTHCIE_SCA")))),
+    smoothcieyb(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SMOOTHCIE_YB")))),
+    smoothcielum(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SMOOTHCIE_LUM")))),
+    ciesmoothBox(Gtk::manage(new ToolParamBlock())),
+    smoothBox(Gtk::manage(new Gtk::Box())),
+    smoothciemet(Gtk::manage(new MyComboBoxText())),
+    slopesmo(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOPESMOOTH"), 0.01, 1.6, 0.01, 1.))),
+    slopesmor(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOPESMOOTHR"), 0.01, 1.6, 0.01, 1.))),
+    slopesmog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOPESMOOTHG"), 0.01, 1.6, 0.01, 1.))),
+    slopesmob(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOPESMOOTHB"), 0.01, 1.6, 0.01, 1.))),
+    whitescie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGWHITESCIE"), -100, 100, 1, 0))),
+    blackscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGBLACKSSCIE"), -100, 100, 1, 0))),
+    willBox(Gtk::manage(new Gtk::Box())),
+    illMethod(Gtk::manage(new MyComboBoxText())),
+    wprimBox(Gtk::manage(new Gtk::Box())),
+    primMethod(Gtk::manage(new MyComboBoxText())),
+    primCoordGridl(Gtk::manage(new Gtk::Grid())),
+    trcFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TRCFRAME")))),
+    smoothFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIE_SMOOTHFRAME")))),
+    primillFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_PRIMILLFRAME")))),
+    redBox(Gtk::manage(new ToolParamBlock())),
+    redxl(Gtk::manage(new Adjuster(M("TC_PRIM_REDX"), 0.41, 1.0, 0.0001, 0.7347))),
+    redyl(Gtk::manage(new Adjuster(M("TC_PRIM_REDY"), 0.0, 0.70, 0.0001, 0.2653))),
+    grexl(Gtk::manage(new Adjuster(M("TC_PRIM_GREX"), -0.1, 0.4, 0.0001, 0.1596))),
+    greyl(Gtk::manage(new Adjuster(M("TC_PRIM_GREY"), 0.50, 1.0, 0.0001, 0.8404))),
+    bluxl(Gtk::manage(new Adjuster(M("TC_PRIM_BLUX"), -0.1, 0.4, 0.0001, 0.0366))),
+    bluyl(Gtk::manage(new Adjuster(M("TC_PRIM_BLUY"), -0.1, 0.49, 0.0001, 0.0001))),
+    refi(Gtk::manage(new Adjuster(M("TC_PRIM_REFI"), -0.5, 1., 0.0001, 0.))),
+
+    gridFramecie(Gtk::manage(new Gtk::Frame(M("TP_ICM_WORKING_CIEDIAG")))),
+    labgridcie(Gtk::manage(new LabGrid(EvlocallabGridciexy, M("TP_ICM_LABGRID_CIEXY"), true, true, false))),
+    colorFramecie(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_COLORFRAME")))),
+
+    catBox(Gtk::manage(new Gtk::Box())),
+    catMethod(Gtk::manage(new MyComboBoxText())),
+    gamutcieBox(Gtk::manage(new Gtk::Box())),
+    gamutcie(Gtk::manage(new Gtk::CheckButton(M("TP_ICM_GAMUT")))),
+    shiftxl(Gtk::manage(new Adjuster(M("TC_LOCALLAB_PRIM_SHIFTX"), -0.20, 0.20, 0.0001, 0.))),
+    shiftyl(Gtk::manage(new Adjuster(M("TC_LOCALLAB_PRIM_SHIFTY"), -0.20, 0.20, 0.0001, 0.))),
+    bwcieBox(Gtk::manage(new Gtk::Box())),
+    bwcie(Gtk::manage(new Gtk::CheckButton(M("TP_ICM_BW")))),
+
+    sigmoidjzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGJZFRA")))),
+    sigmoid2Frame(Gtk::manage(new Gtk::Frame(M("")))),
+    sigcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGCIE")))),
+    sigjz(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGJZFRA")))),
+    sigmoidldajzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0., 1.0, 0.01, 0.5))),
+    sigmoidthjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDTH"), 0.1, 4., 0.01, 1., Gtk::manage(new RTImage("circle-black-small")), Gtk::manage(new RTImage("circle-white-small"))))),
+    sigmoidbljzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDBL"), 0.5, 1.5, 0.01, 1.))),
+    colorflcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCOLORFL"), -100., 100., 0.5, 0.))),
+    saturlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATURV"), -100., 100., 0.5, 0.))),
+    rstprotectcie(Gtk::manage(new Adjuster(M("TP_COLORAPP_RSTPRO"), 0., 100., 0.1, 0.))),
+    chromlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROML"), -100., 100., 0.5, 0.))),
+    huecie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_HUECIE"), -100., 100., 0.1, 0.))),
+    cieCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_CURVES_CIE"))),
+    toneMethodcie(Gtk::manage(new MyComboBoxText())),
+    shapecie(static_cast<DiagonalCurveEditor*>(cieCurveEditorG->addCurve(CT_Diagonal, "", toneMethodcie))),
+    cieCurveEditorG2(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_COLOR_CIE"))),
+    toneMethodcie2(Gtk::manage(new MyComboBoxText())),
+    shapecie2(static_cast<DiagonalCurveEditor*>(cieCurveEditorG2->addCurve(CT_Diagonal, "", toneMethodcie2))),
+
+    chromjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZCHROM"), -100., 100., 0.5, 0.))),
+    saturjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZSAT"), -100., 100., 0.5, 0.))),
+    huejzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZHUECIE"), -100., 100., 0.1, 0.))),
+    jz1CurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
+    shapejz(static_cast<DiagonalCurveEditor*>(jz1CurveEditorG->addCurve(CT_Diagonal, "Jz(J)"))),
+    shapecz(static_cast<DiagonalCurveEditor*>(jz1CurveEditorG->addCurve(CT_Diagonal, "Cz(C)"))),
+
+    HFramejz(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_JZHFRA")))),
+    JzHFramejz(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_JZHJZFRA")))),
+    jz2CurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
+    jz3CurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
+    shapeczjz(static_cast<DiagonalCurveEditor*>(jz1CurveEditorG->addCurve(CT_Diagonal, "Cz(J)"))),
+    HHshapejz(static_cast<FlatCurveEditor*>(jz3CurveEditorG->addCurve(CT_Flat, "Hz(Hz)", nullptr, false, true))),
+    CHshapejz(static_cast<FlatCurveEditor*>(jz3CurveEditorG->addCurve(CT_Flat, "Cz(Hz)", nullptr, false, true))),
+    LHshapejz(static_cast<FlatCurveEditor*>(jz2CurveEditorG->addCurve(CT_Flat, "Jz(Hz)", nullptr, false, true))),
+    softjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZSOFTCIE"), 0., 100., 0.1, 0.))),
+    thrhjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZTHRHCIE"), 40., 150., 0.5, 60.))),
+    chjzcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_JZCH")))),
+    strsoftjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZSTRSOFTCIE"), 0, 100., 0.5, 100.))),
+
+    expLcie(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_CIETOOLEXP")))),
+    cie2Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOG2FRA")))),
+    targetGraycie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TARGET_GRAY"), 5.0, 80.0, 0.1, 18.0))),
+    targabscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_ABS"), 0.01, 16384.0, 0.01, 16.0))),
+    detailcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0., 100., 0.1, 30.))),
+    detailciejz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0., 100., 0.1, 30.))),
+    catadcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CATAD"), -100., 100., 0.5, 0., Gtk::manage(new RTImage("circle-blue-small")), Gtk::manage(new RTImage("circle-orange-small"))))),
+    surroundcie(Gtk::manage(new MyComboBoxText())),
+    surrHBoxcie(Gtk::manage(new Gtk::Box())),
+    expgradcie(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPGRAD")))),
+    strgradcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
+    anggradcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
+    feathercie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FEATVALUE"), 10., 100., 0.1, 25.))),
+
+    exprecovcie(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
+    maskusablecie(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
+    maskunusablecie(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUNUSABLE")))),
+    recothrescie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 0., 2., 0.01, 1.))),
+    lowthrescie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 1., 80., 0.5, 12.))),
+    higthrescie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 20., 99., 0.5, 85.))),
+    decaycie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKDDECAY"), 0.5, 4., 0.1, 2.))),
+    expmaskcie(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWS")))),
+    showmaskcieMethod(Gtk::manage(new MyComboBoxText())),
+    enacieMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
+    enacieMaskall(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASKALL")))),
+//    maskSHCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
+    maskcieCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
+    CCmaskcieshape(static_cast<FlatCurveEditor*>(maskcieCurveEditorG->addCurve(CT_Flat, "C", nullptr, false, false))),
+    LLmaskcieshape(static_cast<FlatCurveEditor*>(maskcieCurveEditorG->addCurve(CT_Flat, "L", nullptr, false, false))),
+    HHmaskcieshape(static_cast<FlatCurveEditor*>(maskcieCurveEditorG->addCurve(CT_Flat, "LC(h)", nullptr, false, true))),
+    struFramecie(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LABSTRUM")))),
+    strumaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUMASKCOL"), 0., 200., 0.1, 0.))),
+    toolcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_TOOLCOL")))),
+    blurFramecie(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LABBLURM")))),
+    fftcieMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTCOL_MASK")))),
+    contcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTCOL"), 0., 200., 0.5, 0.))),
+    blurcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURCOL"), 0.2, 100., 0.5, 0.2))),
+    blendmaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
+    radmaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
+    lapmaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
+    chromaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
+    gammaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.25, 4.0, 0.01, 1.))),
+    slomaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
+    highmaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_HIGHMASKCOL"), 0, 100, 1, 0))),
+    shadmaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHAMASKCOL"), 0, 100, 1, 0))),
+    maskcieHCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "")),
+    HHhmaskcieshape(static_cast<FlatCurveEditor *>(maskcieHCurveEditorG->addCurve(CT_Flat, "h(h)", nullptr, false, true))),
+    mask2cieCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
+    Lmaskcieshape(static_cast<DiagonalCurveEditor*>(mask2cieCurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
+    wavFramecie(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TOOLMASK_2")))),
+    mask2cieCurveEditorGwav(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVMASK"))),
+    LLmaskcieshapewav(static_cast<FlatCurveEditor*>(mask2cieCurveEditorGwav->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
+    quaHcieBox(Gtk::manage(new Gtk::Box())),
+    csThresholdcie(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 0, 9, 0, 0, 6, 5, 0, false)))
+
+
+{
+    auto m = ProcEventMapper::getInstance();
+    Evlocallabpreviewcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWCIE");
+    Evlocallabnormcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_NORM");
+    Evlocallabstrumaskcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIEMASK_STRU");
+    EvLocallabtoolcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIEMASK_STRU_TOOL");
+    EvLocallabfftcieMask = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIEMASK_BLURFFT");
+    Evlocallabcontcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIEMASK_BLURCONT");
+    Evlocallabblurcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIEMASK_BLURRAD");
+    Evlocallabhighmaskcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIEMASK_HIGH");
+    Evlocallabshadmaskcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIEMASK_SHAD");
+    Evlocallabsigmoidsenscie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SIGADAP");
+    EvlocallabLLmaskcieshapewav = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIEMASK_WLC");
+    EvlocallabcsThresholdcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIEMASK_WLEV");
+    Evlocallabcomprcie = m->newEvent(HDR, "HISTORY_MSG_LOCAL_CIE_BRICOMP");
+    Evlocallabstrcielog = m->newEvent(HDR, "HISTORY_MSG_LOCAL_CIE_STRLOG");
+    Evlocallabsatcie = m->newEvent(HDR, "HISTORY_MSG_LOCAL_CIE_SATCIE");
+    Evlocallablogcieq = m->newEvent(HDR, "HISTORY_MSG_LOCAL_CIE_LOGCIEQ");
+    Evlocallabcomprcieth = m->newEvent(HDR, "HISTORY_MSG_LOCAL_CIE_BRICOMPTH");
+    EvlocallabHHhmaskcieshape = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIEMASK_CHH");
+    EvlocallabbwevMethod = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SIGMET");
+    Evlocallabgamjcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GAM");
+    Evlocallabslopjcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SLOP");
+    Evlocallabmidtcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_MIDT");
+    Evlocallabslopesmo = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SLOPESMO");
+    Evlocallabslopesmor = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SLOPESMOR");
+    Evlocallabslopesmog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SLOPESMOG");
+    Evlocallabslopesmob = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SLOPESMOB");
+    Evlocallabsmoothcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SMOOTH");
+    Evlocallabsmoothcieyb = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SMOOTHYB");
+    Evlocallabsmoothcielum = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SMOOTH_LUM");
+    Evlocallabsigcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SIG");
+    Evlocallabillcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_ILL");
+    Evlocallabprimcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_PRIM");
+    Evlocallabcatcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_CAT");
+    Evlocallabwhitescie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_WHITES");
+    Evlocallabblackscie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_BLACKS");
+    Evlocallabredxl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_REDXL");
+    Evlocallabredyl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_REDYL");
+    Evlocallabgrexl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GREXL");
+    Evlocallabgreyl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GREYL");
+    Evlocallabbluxl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_BLUXL");
+    Evlocallabbluyl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_BLUYL");
+    EvlocallabGridciexy = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_LABGRIDCIE");
+    Evlocallabgamutcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_GAMUTCIE");
+    Evlocallabbwcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_BWCIE");
+    Evlocallabexpprecam = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_EXPPRECAM");
+    Evlocallablightsigqcie = m->newEvent(AUTOEXP, "");
+    Evlocallabcontsigqcie = m->newEvent(AUTOEXP, "");
+    Evlocallabrefi = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_REFI");
+    Evlocallabshiftxl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SHIFTXL");
+    Evlocallabshiftyl = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SHIFTYL");
+    Evlocallabanggradcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_ANGGRAD");
+    Evlocallabstrgradcie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_STRGRAD");
+    Evlocallabdetailciejz = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_DETAILJZ");
+    EvlocallabenacieMaskall = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_ENAMASKALL");
+    Evlocallabsmoothciemet = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SMOOTHMET");
+    Evlocallabfeathercie = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_FEATHERCIE");
+    
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+
+    // Parameter Ciecam specific widgets
+    const LocallabParams::LocallabSpot defSpot;
+    reparcie->setAdjusterListener(this);
+    sensicie->setAdjusterListener(this);
+
+
+    pack_start(*sensicie);
+    pack_start(*previewcie);
+    pack_start(*reparcie);
+    modeHBoxcam->set_spacing(2);
+    //modeHBoxcam->set_tooltip_markup (M ("TP_LOCALLAB_CAMMODE_TOOLTIP"));
+    Gtk::Label* modeLabelcam = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_CAMMODE") + ":"));
+    modeHBoxcam->pack_start(*modeLabelcam, Gtk::PACK_SHRINK);
+    modecam->append(M("TP_LOCALLAB_CAMMODE_CAM16"));
+    modecam->append(M("TP_LOCALLAB_CAMMODE_JZ"));
+    modecam->set_active(0);
+    modeHBoxcam->pack_start(*modecam);
+    modecamconn = modecam->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::modecamChanged));
+    pack_start(*modeHBoxcam);
+
+    modeHBoxcie->set_spacing(2);
+    modeHBoxcie->set_tooltip_markup(M("TP_LOCALLAB_CIEMODE_TOOLTIP"));
+    Gtk::Label* modeLabel = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_CIEMODE") + ":"));
+    modeHBoxcie->pack_start(*modeLabel, Gtk::PACK_SHRINK);
+    modecie->append(M("TP_LOCALLAB_CIEMODE_COM"));
+    modecie->append(M("TP_LOCALLAB_CIEMODE_TM"));
+    modecie->append(M("TP_LOCALLAB_CIEMODE_WAV"));
+    modecie->append(M("TP_LOCALLAB_CIEMODE_DR"));
+    modecie->set_active(0);
+    modeHBoxcie->pack_start(*modecie);
+    modecieconn = modecie->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::modecieChanged));
+    pack_start(*modeHBoxcie);
+
+    surHBoxcie->set_spacing(2);
+    surHBoxcie->set_tooltip_markup(M("TP_LOCALLAB_LOGSURSOUR_TOOLTIP"));
+    Gtk::Label* surLabel = Gtk::manage(new Gtk::Label(M("TP_COLORAPP_SURROUND") + ":"));
+    surHBoxcie->pack_start(*surLabel, Gtk::PACK_SHRINK);
+    sursourcie->append(M("TP_COLORAPP_SURROUND_AVER"));
+    sursourcie->append(M("TP_COLORAPP_SURROUND_DIM"));
+    sursourcie->append(M("TP_COLORAPP_SURROUND_DARK"));
+    sursourcie->append(M("TP_COLORAPP_SURROUND_EXDARK"));
+    sursourcie->append(M("TP_LOCALLAB_DISAB_CIECAM"));
+    sursourcie->set_active(0);
+    surHBoxcie->pack_start(*sursourcie);
+    sursourcieconn = sursourcie->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::sursourcieChanged));
+
+    cieFrame->set_label_align(0.025, 0.5);
+
+    Gtk::Box *TittleVBoxcamscene;
+    TittleVBoxcamscene = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    TittleVBoxcamscene->set_spacing(2);
+    Gtk::Box* const LCTitleHBoxcamscene = Gtk::manage(new Gtk::Box());
+    Gtk::Label* const LCLabelcamscene = Gtk::manage(new Gtk::Label());
+    LCLabelcamscene->set_markup(Glib::ustring("<b>") + (M("TP_LOCALLAB_LOGFRA")) + Glib::ustring("</b>"));
+    LCTitleHBoxcamscene->pack_start(*LCLabelcamscene, Gtk::PACK_SHRINK);
+    TittleVBoxcamscene->pack_start(*LCTitleHBoxcamscene, Gtk::PACK_SHRINK);
+    expcamscene->setLabel(TittleVBoxcamscene);
+
+    setExpandAlignProperties(expcamscene, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+
+
+
+
+    ToolParamBlock* const cieFBox = Gtk::manage(new ToolParamBlock());
+    cieFBox->pack_start(*Autograycie);
+    cieFBox->pack_start(*sourceGraycie);
+    cieFBox->pack_start(*sourceabscie);
+    cieFBox->pack_start(*pqremapcam16);
+    cieFBox->pack_start(*whitescie);
+    cieFBox->pack_start(*blackscie);
+
+    PQFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const PQFBox = Gtk::manage(new ToolParamBlock());
+    PQFBox->pack_start(*adapjzcie);
+    PQFBox->pack_start(*jz100);
+    PQFBox->pack_start(*pqremap);
+    PQFrame->add(*PQFBox);
+    cieFBox->pack_start(*PQFrame);
+    logjzFrame->set_label_align(0.025, 0.5);
+    logjzFrame->set_label_widget(*logjz);
+    ToolParamBlock* const logjzBox = Gtk::manage(new ToolParamBlock());
+    logjzBox->pack_start(*targetjz);
+    logjzFrame->add(*logjzBox);
+    cieFBox->pack_start(*logjzFrame);
+    bevwevFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const bevwevBox = Gtk::manage(new ToolParamBlock());
+    bevwevBox->pack_start(*blackEvjz);
+    bevwevBox->pack_start(*whiteEvjz);
+    bevwevFrame->add(*bevwevBox);
+    cieFBox->pack_start(*bevwevFrame);
+
+    sigmoidFrame->set_label_align(0.025, 0.5);
+    sigmoidFrame->set_label_widget(*sigq);
+    sigmoidnormFrame->set_label_align(0.025, 0.5);
+    sigmoidnormFrame->set_label_widget(*normcie);
+
+
+    Gtk::Box *TittleVBoxprecam;
+    TittleVBoxprecam = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    TittleVBoxprecam->set_spacing(2);
+    Gtk::Box* const LCTitleHBoxprecam = Gtk::manage(new Gtk::Box());
+    Gtk::Label* const LCLabelprecam = Gtk::manage(new Gtk::Label());
+    LCLabelprecam->set_markup(Glib::ustring("<b>") + (M("TP_LOCALLAB_SIGTRCCIE")) + Glib::ustring("</b>"));
+    LCTitleHBoxprecam->pack_start(*LCLabelprecam, Gtk::PACK_SHRINK);
+    TittleVBoxprecam->pack_start(*LCTitleHBoxprecam, Gtk::PACK_SHRINK);
+    expprecam->setLabel(TittleVBoxprecam);
+
+    setExpandAlignProperties(expprecam, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+    sigmoid2Frame->set_label_align(0.025, 0.5);
+    //sigmoid2Frame->set_label_widget(*sigcie);
+    logcieFrame->set_label_align(0.025, 0.5);
+    logcieFrame->set_label_widget(*logcie);
+    Gtk::Label* illLabel = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_ILLU") + ":"));
+    willBox->pack_start(*illLabel, Gtk::PACK_SHRINK);
+    willBox->pack_start(*illMethod, Gtk::PACK_EXPAND_WIDGET);
+    illMethod->append(M("TP_ICM_WORKING_ILLU_D41"));
+    illMethod->append(M("TP_ICM_WORKING_ILLU_D50"));
+    illMethod->append(M("TP_ICM_WORKING_ILLU_D55"));
+    illMethod->append(M("TP_ICM_WORKING_ILLU_D60"));
+    illMethod->append(M("TP_ICM_WORKING_ILLU_D65"));
+    illMethod->append(M("TP_ICM_WORKING_ILLU_D80"));
+
+    illMethod->append(M("TP_ICM_WORKING_ILLU_D120"));
+
+    illMethod->append(M("TP_ICM_WORKING_ILLU_STDA"));
+    illMethod->append(M("TP_ICM_WORKING_ILLU_2000"));
+    illMethod->append(M("TP_ICM_WORKING_ILLU_1500"));
+    illMethod->append(M("TP_ICM_WORKING_ILLU_E"));
+
+
+    illMethod->set_active(1);
+    illMethodconn = illMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::illMethodChanged));
+
+
+    Gtk::Label* primLabel = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_PRIM") + ":"));
+    wprimBox->pack_start(*primLabel, Gtk::PACK_SHRINK);
+    wprimBox->pack_start(*primMethod, Gtk::PACK_EXPAND_WIDGET);
+    primMethod->append(M("TP_ICM_WORKING_PRIM_PROP"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_BET"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_WID"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_ACE"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_REC"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_ADOB"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_SRGB"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_JDCMAX"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_JDCMAXSTDA"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_AC0"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_BST"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_BRU"));
+    primMethod->append(M("TP_ICM_WORKING_PRIM_FREE"));
+
+    primMethod->set_active(0);
+    primMethodconn = primMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::primMethodChanged));
+    trcFrame->set_label_align(0.025, 0.5);
+    smoothFrame->set_label_align(0.025, 0.5);
+
+    primillFrame->set_label_align(0.025, 0.5);
+    setExpandAlignProperties(grexl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(greyl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(bluxl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(bluyl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(redxl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(redyl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+
+
+    primCoordGridl->set_column_homogeneous(true);
+    primCoordGridl->attach(*redxl, 0, 0, 1, 1);
+    primCoordGridl->attach_next_to(*redyl, *redxl, Gtk::PositionType::POS_RIGHT, 1, 1);
+    primCoordGridl->attach_next_to(*grexl, *redxl, Gtk::PositionType::POS_BOTTOM, 1, 1);
+    primCoordGridl->attach_next_to(*greyl, *grexl, Gtk::PositionType::POS_RIGHT, 1, 1);
+    primCoordGridl->attach_next_to(*bluxl, *grexl, Gtk::PositionType::POS_BOTTOM, 1, 1);
+    primCoordGridl->attach_next_to(*bluyl, *bluxl, Gtk::PositionType::POS_RIGHT, 1, 1);
+
+    redBox->pack_start(*primCoordGridl, Gtk::PACK_EXPAND_WIDGET);
+
+
+    redxl->setAdjusterListener(this);
+    redyl->setAdjusterListener(this);
+    grexl->setAdjusterListener(this);
+    greyl->setAdjusterListener(this);
+    bluxl->setAdjusterListener(this);
+    bluyl->setAdjusterListener(this);
+    refi->setAdjusterListener(this);
+    shiftxl->setAdjusterListener(this);
+    shiftyl->setAdjusterListener(this);
+
+
+    gridFramecie->set_label_align(0.025, 0.5);
+    ToolParamBlock* const gridBox = Gtk::manage(new ToolParamBlock());
+    gridBox->pack_start(*labgridcie);
+    gridFramecie->add(*gridBox);
+
+    Gtk::Label* catLabel = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_CAT") + ":"));
+    catBox->pack_start(*catLabel, Gtk::PACK_SHRINK);
+    catBox->pack_start(*catMethod, Gtk::PACK_EXPAND_WIDGET);
+    catMethod->append(M("TP_ICM_WORKING_CAT_BRAD"));
+    catMethod->append(M("TP_ICM_WORKING_CAT_CAT16"));
+    catMethod->append(M("TP_ICM_WORKING_CAT_CAT02"));
+    catMethod->append(M("TP_ICM_WORKING_CAT_VK"));
+    catMethod->append(M("TP_ICM_WORKING_CAT_XYZ"));
+    catMethod->set_active(0);
+    catMethodconn = catMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::catMethodChanged));
+    gamutcieBox->pack_start(*gamutcie, Gtk::PACK_EXPAND_WIDGET);
+
+    gamutcieconn = gamutcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::gamutcieChanged));
+
+    ToolParamBlock* const signormBox = Gtk::manage(new ToolParamBlock());
+    ToolParamBlock* const sigfraBox = Gtk::manage(new ToolParamBlock());
+
+    bwcieBox->pack_start(*bwcie, Gtk::PACK_EXPAND_WIDGET);
+
+    bwcieconn = bwcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::bwcieChanged));
+
+    modeHBoxbwev->set_spacing(2);
+    ToolParamBlock* const gamcieBox = Gtk::manage(new ToolParamBlock());
+    Gtk::Label* modeLabelbwev = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_SIGMOIDQJ") + ":"));
+    modeHBoxbwev->pack_start(*modeLabelbwev, Gtk::PACK_SHRINK);
+
+    bwevMethod->append(M("TP_LOCALLAB_BWEVNONE"));
+    bwevMethod->append(M("TP_LOCALLAB_BWEVSIG"));
+    bwevMethod->set_active(1);
+    bwevMethodConn = bwevMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::bwevMethodChanged));
+    modeHBoxbwev->pack_start(*bwevMethod);
+
+    comprBox->pack_start(*comprcie);
+    comprBox->pack_start(*strcielog);
+    comprBox->pack_start(*satcie);
+    comprBox->pack_start(*logcieq);
+    logcieFrame->add(*comprBox);
+    gamcieBox->pack_start(*logcieFrame);
+
+    ToolParamBlock* const trccieBox = Gtk::manage(new ToolParamBlock());
+    ToolParamBlock* const smoothcieBox = Gtk::manage(new ToolParamBlock());
+    ToolParamBlock* const primillBox = Gtk::manage(new ToolParamBlock());
+    ToolParamBlock* const colorBox = Gtk::manage(new ToolParamBlock());
+
+    trccieBox->pack_start(*gamjcie);
+    trccieBox->pack_start(*slopjcie);
+    trccieBox->pack_start(*midtcie);
+
+    smoothBox->pack_start(*smoothciemet, Gtk::PACK_EXPAND_WIDGET);
+    smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_NONE"));
+    smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_EV"));
+    smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_GAMMA ROLLOFF"));
+    smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_GAMMA"));
+    smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_LEVELS"));
+    smoothciemet->set_active(0);
+    ciesmoothBox->pack_start(*smoothBox);
+    ciesmoothBox->pack_start(*slopesmo);
+    ciesmoothBox->pack_start(*slopesmor);
+    ciesmoothBox->pack_start(*slopesmog);
+    ciesmoothBox->pack_start(*slopesmob);
+    ciesmoothBox->pack_start(*smoothcielum);
+    ciesmoothBox->pack_start(*smoothcieyb);
+    ciesmoothBox->pack_start(*smoothcie);
+
+    smoothciemetconn = smoothciemet->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::smoothciemetChanged));
+
+    smoothcieBox->pack_start(*ciesmoothBox);
+    smoothFrame->add(*smoothcieBox);
+    trccieBox->pack_start(*smoothFrame);
+    trcFrame->add(*trccieBox);
+    gamcieBox->pack_start(*trcFrame);
+    primillBox->pack_start(*willBox);
+    colorFramecie->set_label_align(0.025, 0.5);
+
+    primillBox->pack_start(*wprimBox);
+    primillBox->pack_start(*redBox);
+    primillBox->pack_start(*gridFramecie);
+    primillBox->pack_start(*gamutcieBox);
+    primillBox->pack_start(*catBox);
+    colorBox->pack_start(*refi);
+    colorBox->pack_start(*shiftxl);
+    colorBox->pack_start(*shiftyl);
+    colorFramecie->add(*colorBox);
+    primillBox->pack_start(*bwcieBox);
+    primillBox->pack_start(*colorFramecie);
+    primillFrame->add(*primillBox);
+    gamcieBox->pack_start(*primillFrame);
+
+
+
+    expprecam->add(*gamcieBox, false);
+
+
+    sigfraBox->pack_start(*sigmoidldacie);
+    sigfraBox->pack_start(*sigmoidthcie);
+    sigfraBox->pack_start(*sigmoidsenscie);
+    sigfraBox->pack_start(*modeHBoxbwev);
+    sigmoid2Frame->add(*sigfraBox);
+    sigBox->pack_start(*sigmoid2Frame);
+
+    signormBox->pack_start(*sigmoidblcie);
+    sigmoidnormFrame->add(*signormBox);
+    sigBox->pack_start(*sigmoidnormFrame);
+
+    sigmoidFrame->add(*sigBox);
+
+
+    sigmoidjzFrame->set_label_align(0.025, 0.5);
+    sigmoidjzFrame->set_label_widget(*sigjz);
+    ToolParamBlock* const sigjzBox = Gtk::manage(new ToolParamBlock());
+    sigjzBox->pack_start(*sigmoidldajzcie);
+    sigjzBox->pack_start(*sigmoidthjzcie);
+    sigjzBox->pack_start(*sigmoidbljzcie);
+    sigjzBox->pack_start(*forcebw);
+    sigmoidjzFrame->add(*sigjzBox);
+
+    cieFBox->pack_start(*sigmoidjzFrame);
+
+    cieFBox->pack_start(*surHBoxcie);
+
+
+    expcamscene->add(*cieFBox, false);
+
+    pack_start(*expcamscene, false, false);
+    pack_start(*expprecam, false, false);
+
+
+    ToolParamBlock* const jzallBox = Gtk::manage(new ToolParamBlock());
+    Gtk::Box *TittleVBoxjz;
+    TittleVBoxjz = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    TittleVBoxjz->set_spacing(2);
+    Gtk::Box* const LCTitleHBoxjz = Gtk::manage(new Gtk::Box());
+    Gtk::Label* const LCLabeljz = Gtk::manage(new Gtk::Label());
+    LCLabeljz->set_markup(Glib::ustring("<b>") + (M("TP_LOCALLAB_JZFRA")) + Glib::ustring("</b>"));
+    LCTitleHBoxjz->pack_start(*LCLabeljz, Gtk::PACK_SHRINK);
+    TittleVBoxjz->pack_start(*LCTitleHBoxjz, Gtk::PACK_SHRINK);
+    expjz->setLabel(TittleVBoxjz);
+
+    setExpandAlignProperties(expjz, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+    float R, G, B;
+    std::vector<GradientMilestone> six_shape;
+
+    for (int i = 0; i < 6; i++) {
+        const float x = static_cast<float>(i) * (1.f / 6.f);
+        Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
+        six_shape.emplace_back(x, R, G, B);
+    }
+
+    std::vector<GradientMilestone> milestone;
+    milestone.push_back(GradientMilestone(0., 0., 0., 0.));
+    milestone.push_back(GradientMilestone(1., 1., 1., 1.));
+
+    jz1CurveEditorG->setCurveListener(this);
+    shapejz->setResetCurve(DiagonalCurveType(defSpot.jzcurve.at(0)), defSpot.jzcurve);
+    shapejz->setBottomBarBgGradient(milestone);
+    shapejz->setLeftBarBgGradient(milestone);
+
+    shapecz->setResetCurve(DiagonalCurveType(defSpot.czcurve.at(0)), defSpot.czcurve);
+
+    std::vector<GradientMilestone> shapeczMilestones;
+    shapecz->setBottomBarColorProvider(this, 1);
+    shapecz->setLeftBarColorProvider(this, 1);
+    shapecz->setRangeDefaultMilestones(0.05, 0.2, 0.58);
+
+    for (int i = 0; i < 7; i++) {
+        float x = float (i) * (1.0f / 6.f);
+        Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
+        shapeczMilestones.push_back(GradientMilestone(double (x), double (R), double (G), double (B)));
+    }
+
+    shapecz->setBottomBarBgGradient(shapeczMilestones);
+    shapecz->setLeftBarBgGradient(shapeczMilestones);
+    shapecz->setRangeDefaultMilestones(0.05, 0.2, 0.58);
+
+    shapeczjz->setLeftBarColorProvider(this, 1);
+    shapeczjz->setRangeDefaultMilestones(0.05, 0.2, 0.58);
+    shapeczjz->setResetCurve(DiagonalCurveType(defSpot.czjzcurve.at(0)), defSpot.czjzcurve);
+    shapeczjz->setBottomBarBgGradient(milestone);
+    shapeczjz->setLeftBarBgGradient(shapeczMilestones);
+    shapeczjz->setRangeDefaultMilestones(0.05, 0.2, 0.58);
+
+
+    jz1CurveEditorG->curveListComplete();
+
+    jz2CurveEditorG->setCurveListener(this);
+    LHshapejz->setIdentityValue(0.);
+    LHshapejz->setResetCurve(FlatCurveType(defSpot.LHcurvejz.at(0)), defSpot.LHcurvejz);
+    //  LHshapejz->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
+    LHshapejz->setCurveColorProvider(this, 3);
+    LHshapejz->setBottomBarBgGradient(six_shape);
+    jz2CurveEditorG->curveListComplete();
+
+    jz3CurveEditorG->setCurveListener(this);
+
+    CHshapejz->setIdentityValue(0.);
+    CHshapejz->setResetCurve(FlatCurveType(defSpot.CHcurvejz.at(0)), defSpot.CHcurvejz);
+    CHshapejz->setCurveColorProvider(this, 3);
+    CHshapejz->setBottomBarBgGradient(six_shape);
+
+    HHshapejz->setIdentityValue(0.);
+    HHshapejz->setResetCurve(FlatCurveType(defSpot.HHcurvejz.at(0)), defSpot.HHcurvejz);
+    HHshapejz->setCurveColorProvider(this, 3);
+    HHshapejz->setBottomBarBgGradient(six_shape);
+
+
+    jz3CurveEditorG->curveListComplete();
+
+    jzFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const jzBox = Gtk::manage(new ToolParamBlock());
+    jzBox->pack_start(*qtoj);
+    czlightFrame->set_label_align(0.025, 0.5);
+    czcolorFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const ciePzlightBox = Gtk::manage(new ToolParamBlock());
+    ciePzlightBox->pack_start(*lightjzcie);
+    ciePzlightBox->pack_start(*contjzcie);
+    ciePzlightBox->pack_start(*detailciejz);
+    czlightFrame->add(*ciePzlightBox);
+    jzBox->pack_start(*czlightFrame);
+
+    ToolParamBlock* const ciePzcolorBox = Gtk::manage(new ToolParamBlock());
+    ciePzcolorBox->pack_start(*chromjzcie);
+    ciePzcolorBox->pack_start(*saturjzcie);
+    ciePzcolorBox->pack_start(*huejzcie);
+    czcolorFrame->add(*ciePzcolorBox);
+    jzBox->pack_start(*czcolorFrame);
+
+    jzBox->pack_start(*jz1CurveEditorG, Gtk::PACK_SHRINK, 4);
+    HFramejz->set_label_align(0.025, 0.5);
+    ToolParamBlock* const jzHHBox = Gtk::manage(new ToolParamBlock());
+    JzHFramejz->set_label_align(0.025, 0.5);
+    ToolParamBlock* const jzHBox = Gtk::manage(new ToolParamBlock());
+
+    jzHBox->pack_start(*jz2CurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    jzHBox->pack_start(*thrhjzcie);
+    JzHFramejz->add(*jzHBox);
+    jzHHBox->pack_start(*JzHFramejz);
+
+    jzHHBox->pack_start(*jz3CurveEditorG, Gtk::PACK_SHRINK, 4); //   jzBox->pack_start(*adapjzcie);
+    jzHHBox->pack_start(*softjzcie);
+    HFramejz->add(*jzHHBox);
+    jzBox->pack_start(*HFramejz);
+
+    jzshFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const jzshBox = Gtk::manage(new ToolParamBlock());
+    jzshBox->pack_start(*hljzcie);
+    jzshBox->pack_start(*hlthjzcie);
+    jzshBox->pack_start(*shjzcie);
+    jzshBox->pack_start(*shthjzcie);
+    jzshBox->pack_start(*radjzcie);
+    jzshFrame->add(*jzshBox);
+    jzBox->pack_start(*jzshFrame);
+
+    setExpandAlignProperties(expwavjz, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+    contFramejz->set_label_align(0.025, 0.5);
+
+    sigmalcjz->setAdjusterListener(this);
+
+    LocalcurveEditorwavjz->setCurveListener(this);
+    wavshapejz->setIdentityValue(0.);
+    wavshapejz->setResetCurve(FlatCurveType(defSpot.locwavcurvejz.at(0)), defSpot.locwavcurvejz);
+    LocalcurveEditorwavjz->curveListComplete();
+    csThresholdjz->setAdjusterListener(this);
+
+    ToolParamBlock* const coBox2jz = Gtk::manage(new ToolParamBlock());
+    coBox2jz->pack_start(*csThresholdjz);
+    ToolParamBlock* const coBoxjz = Gtk::manage(new ToolParamBlock());
+    coBoxjz->pack_start(*sigmalcjz);
+    coBoxjz->pack_start(*LocalcurveEditorwavjz, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    contFramejz->add(*coBoxjz);
+    coBox2jz->pack_start(*contFramejz);
+
+    clarilresjz->setAdjusterListener(this);
+    claricresjz->setAdjusterListener(this);
+    clarisoftjz->setAdjusterListener(this);
+
+    clariFramejz->set_label_align(0.025, 0.5);
+    ToolParamBlock* const coBox3jz = Gtk::manage(new ToolParamBlock());
+    coBox3jz->pack_start(*clarilresjz);
+    coBox3jz->pack_start(*claricresjz);
+    coBox3jz->pack_start(*clarisoftjz);
+    clariFramejz->add(*coBox3jz);
+    coBox2jz->pack_start(*clariFramejz);
+    expwavjz->add(*coBox2jz, false);
+
+    jzBox->pack_start(*expwavjz, false, false);
+
+    jzallBox->add(*jzBox);
+
+    expjz->add(*jzallBox, false);
+
+    jabcieConn = jabcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::jabcieChanged));
+    AutograycieConn = Autograycie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::AutograycieChanged));
+    comprcieautoconn = comprcieauto->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::comprcieautoChanged));
+    normcieconn = normcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::normcieChanged));
+    expprecamconn = expprecam->signal_enabled_toggled().connect(sigc::mem_fun(*this, &Locallabcie::expprecamChanged));
+
+    sigcieconn = sigcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::sigcieChanged));
+    logcieconn = logcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::logcieChanged));
+    satcieconn = satcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::satcieChanged));
+    logcieqconn = logcieq->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::logcieqChanged));
+    smoothcieconn = smoothcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::smoothcieChanged));
+    smoothcieybconn = smoothcieyb->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::smoothcieybChanged));
+    smoothcielumconn = smoothcielum->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::smoothcielumChanged));
+    logjzconn = logjz->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::logjzChanged));
+    sigjzconn = sigjz->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::sigjzChanged));
+    sigqconn = sigq->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::sigqChanged));
+    forcejzConn = forcejz->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::forcejzChanged));
+    qtojConn = qtoj->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::qtojChanged));
+    chjzcieconn = chjzcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::chjzcieChanged));
+    forcebwConn = forcebw->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::forcebwChanged));
+
+    sourceGraycie->setAdjusterListener(this);
+    sourceGraycie->setLogScale(10, 18, true);
+
+    sourceabscie->setLogScale(500, 0);
+
+    sourceabscie->setAdjusterListener(this);
+    setExpandAlignProperties(expLcie, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+    saturlcie->setAdjusterListener(this);
+
+    rstprotectcie->setAdjusterListener(this);
+
+    chromlcie->setAdjusterListener(this);
+    huecie->setAdjusterListener(this);
+
+
+    cieCurveEditorG->setCurveListener(this);
+    toneMethodcie->append(M("TP_COLORAPP_TCMODE_LIGHTNESS"));
+    toneMethodcie->append(M("TP_COLORAPP_TCMODE_BRIGHTNESS"));
+    toneMethodcie->set_active(0);
+    toneMethodcieConn = toneMethodcie->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::toneMethodcieChanged));
+    shapecie->setResetCurve(DiagonalCurveType(defSpot.ciecurve.at(0)), defSpot.ciecurve);
+    shapecie->setBottomBarBgGradient(milestone);
+    shapecie->setLeftBarBgGradient(milestone);
+    cieCurveEditorG->curveListComplete();
+
+    cieCurveEditorG2->setCurveListener(this);
+    toneMethodcie2->append(M("TP_COLORAPP_TCMODE_CHROMA"));
+    toneMethodcie2->append(M("TP_COLORAPP_TCMODE_SATUR"));
+    toneMethodcie2->append(M("TP_COLORAPP_TCMODE_COLORF"));
+    toneMethodcie2->set_active(0);
+    toneMethodcieConn2 = toneMethodcie2->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::toneMethodcie2Changed));
+    shapecie2->setResetCurve(DiagonalCurveType(defSpot.ciecurve2.at(0)), defSpot.ciecurve2);
+    shapecie2->setBottomBarColorProvider(this, 1);
+    shapecie2->setLeftBarColorProvider(this, 1);
+    shapecie2->setRangeDefaultMilestones(0.05, 0.2, 0.58);
+
+    std::vector<GradientMilestone> shape2Milestones;
+
+    for (int i = 0; i < 7; i++) {
+        float x = float (i) * (1.0f / 6.f);
+        Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
+        shape2Milestones.push_back(GradientMilestone(double (x), double (R), double (G), double (B)));
+    }
+
+    shapecie2->setBottomBarBgGradient(shape2Milestones);
+    shapecie2->setLeftBarBgGradient(shape2Milestones);
+
+    shapecie2->setRangeDefaultMilestones(0.05, 0.2, 0.58);
+
+    cieCurveEditorG2->curveListComplete();
+
+
+    chromjzcie->setAdjusterListener(this);
+    saturjzcie->setAdjusterListener(this);
+    huejzcie->setAdjusterListener(this);
+    softjzcie->setAdjusterListener(this);
+    thrhjzcie->setAdjusterListener(this);
+    strsoftjzcie->setAdjusterListener(this);
+
+    lightlcie->setAdjusterListener(this);
+    lightjzcie->setAdjusterListener(this);
+
+    lightqcie->setAdjusterListener(this);
+    lightsigqcie->setAdjusterListener(this);
+    contlcie->setAdjusterListener(this);
+    contjzcie->setAdjusterListener(this);
+    adapjzcie->setAdjusterListener(this);
+    jz100->setAdjusterListener(this);
+    pqremap->setAdjusterListener(this);
+    pqremapcam16->setAdjusterListener(this);
+    pqremapcam16->setLogScale(500, 100);
+    hljzcie->setAdjusterListener(this);
+    hlthjzcie->setAdjusterListener(this);
+    shjzcie->setAdjusterListener(this);
+    shthjzcie->setAdjusterListener(this);
+    radjzcie->setAdjusterListener(this);
+    contthrescie->setAdjusterListener(this);
+    blackEvjz->setLogScale(2, -8);
+    blackEvjz->setAdjusterListener(this);
+    whiteEvjz->setLogScale(16, 0);
+    whiteEvjz->setAdjusterListener(this);
+    targetjz->setAdjusterListener(this);
+    targetjz->setLogScale(10, 18, true);
+    sigmoidldacie->setAdjusterListener(this);
+    sigmoidthcie->setAdjusterListener(this);
+    sigmoidsenscie->setAdjusterListener(this);
+    sigmoidblcie->setAdjusterListener(this);
+    comprcie->setAdjusterListener(this);
+    strcielog->setAdjusterListener(this);
+    comprcieth->setAdjusterListener(this);
+    gamjcie->setAdjusterListener(this);
+    slopjcie->setAdjusterListener(this);
+    slopjcie->setLogScale(100, 1);
+    midtcie->setAdjusterListener(this);
+    whitescie->setAdjusterListener(this);
+    blackscie->setAdjusterListener(this);
+    sigmoidldajzcie->setAdjusterListener(this);
+    sigmoidthjzcie->setAdjusterListener(this);
+    sigmoidbljzcie->setAdjusterListener(this);
+
+    contqcie->setAdjusterListener(this);
+    contsigqcie->setAdjusterListener(this);
+    colorflcie->setAdjusterListener(this);
+    targetGraycie->setAdjusterListener(this);
+    targetGraycie->setLogScale(10, 18, true);
+    targabscie->setLogScale(500, 0);
+
+    targabscie->setAdjusterListener(this);
+
+    detailcie->setAdjusterListener(this);
+    detailciejz->setAdjusterListener(this);
+
+    catadcie->setAdjusterListener(this);
+    slopesmo->setAdjusterListener(this);
+    slopesmor->setAdjusterListener(this);
+    slopesmog->setAdjusterListener(this);
+    slopesmob->setAdjusterListener(this);
+
+    Gtk::Box *TittleVBoxcam16;
+    TittleVBoxcam16 = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    TittleVBoxcam16->set_spacing(2);
+    Gtk::Box* const LCTitleHBoxcam16 = Gtk::manage(new Gtk::Box());
+    Gtk::Label* const LCLabelcam16 = Gtk::manage(new Gtk::Label());
+    LCLabelcam16->set_markup(Glib::ustring("<b>") + (M("TP_LOCALLAB_CAM16_FRA")) + Glib::ustring("</b>"));
+    LCTitleHBoxcam16->pack_start(*LCLabelcam16, Gtk::PACK_SHRINK);
+    TittleVBoxcam16->pack_start(*LCTitleHBoxcam16, Gtk::PACK_SHRINK);
+    expcam16->setLabel(TittleVBoxcam16);
+
+    setExpandAlignProperties(expcam16, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+
+    Gtk::Box *TittleVBoxcamviewing;
+    TittleVBoxcamviewing = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    TittleVBoxcamviewing->set_spacing(2);
+    Gtk::Box* const LCTitleHBoxcamviewing = Gtk::manage(new Gtk::Box());
+    Gtk::Label* const LCLabelcamviewing = Gtk::manage(new Gtk::Label());
+    LCLabelcamviewing->set_markup(Glib::ustring("<b>") + (M("TP_LOCALLAB_LOG2FRA")) + Glib::ustring("</b>"));
+    LCTitleHBoxcamviewing->pack_start(*LCLabelcamviewing, Gtk::PACK_SHRINK);
+    TittleVBoxcamviewing->pack_start(*LCTitleHBoxcamviewing, Gtk::PACK_SHRINK);
+    expcamviewing->setLabel(TittleVBoxcamviewing);
+
+    setExpandAlignProperties(expcamviewing, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+    surrHBoxcie->set_spacing(2);
+    surrHBoxcie->set_tooltip_markup(M("TP_COLORAPP_SURROUND_TOOLTIP"));
+    Gtk::Label* surrLabelcie = Gtk::manage(new Gtk::Label(M("TP_COLORAPP_SURROUND") + ":"));
+    surrHBoxcie->pack_start(*surrLabelcie, Gtk::PACK_SHRINK);
+    surroundcie->append(M("TP_COLORAPP_SURROUND_AVER"));
+    surroundcie->append(M("TP_COLORAPP_SURROUND_DIM"));
+    surroundcie->append(M("TP_COLORAPP_SURROUND_DARK"));
+    surroundcie->set_active(0);
+    surrHBoxcie->pack_start(*surroundcie);
+    surroundcieconn = surroundcie->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::surroundcieChanged));
+
+    cie1Frame->set_label_align(0.025, 0.5);
+    cie1lightFrame->set_label_align(0.025, 0.5);
+    cie1contFrame->set_label_align(0.025, 0.5);
+    cie1colorFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const cieP1Box = Gtk::manage(new ToolParamBlock());
+    ToolParamBlock* const cieP1lightBox = Gtk::manage(new ToolParamBlock());
+    cieP1lightBox->pack_start(*lightlcie);
+    cieP1lightBox->pack_start(*lightqcie);
+    cieP1lightBox->pack_start(*lightsigqcie);
+    cie1lightFrame->add(*cieP1lightBox);
+    cieP1Box->pack_start(*cie1lightFrame);
+    ToolParamBlock* const cieP1contBox = Gtk::manage(new ToolParamBlock());
+    cieP1contBox->pack_start(*detailcie);
+    cieP1contBox->pack_start(*contlcie);
+    cieP1contBox->pack_start(*contqcie);
+    cieP1contBox->pack_start(*contsigqcie);
+    cieP1contBox->pack_start(*contthrescie);
+
+    contsigqcie->hide();
+    lightsigqcie->hide();
+
+    cie1contFrame->add(*cieP1contBox);
+    cieP1Box->pack_start(*cie1contFrame);
+    ToolParamBlock* const cieP1colorBox = Gtk::manage(new ToolParamBlock());
+    cieP1colorBox->pack_start(*chromlcie);
+    cieP1colorBox->pack_start(*saturlcie);
+    cieP1colorBox->pack_start(*colorflcie);
+    cieP1colorBox->pack_start(*huecie);
+    cieP1colorBox->pack_start(*rstprotectcie);
+    cie1colorFrame->add(*cieP1colorBox);
+    cieP1Box->pack_start(*cie1colorFrame);
+    cieP1Box->pack_start(*sigmoidFrame);//disable provisory Sigmoid
+
+
+    ToolParamBlock* const cieP11Box = Gtk::manage(new ToolParamBlock());
+    cieP11Box->pack_start(*cieCurveEditorG);
+    cieP11Box->pack_start(*cieCurveEditorG2);
+    expLcie->add(*cieP11Box, false);
+    cieP1Box->pack_start(*expLcie, false, false);
+    expcam16->add(*cieP1Box, false);
+
+    pack_start(*expcam16, false, false);
+
+    pack_start(*expjz, false, false);
+
+    cie2Frame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const cieP2Box = Gtk::manage(new ToolParamBlock());
+    cieP2Box->pack_start(*targetGraycie);
+    cieP2Box->pack_start(*targabscie);
+    cieP2Box->pack_start(*catadcie);
+    cieP2Box->pack_start(*surrHBoxcie);
+
+    expcamviewing->add(*cieP2Box, false);
+
+    pack_start(*expcamviewing, false, false);
+
+
+    recothrescie->setAdjusterListener(this);
+    lowthrescie->setAdjusterListener(this);
+    higthrescie->setAdjusterListener(this);
+    decaycie->setAdjusterListener(this);
+
+    setExpandAlignProperties(expgradcie, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+    setExpandAlignProperties(exprecovcie, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+
+    setExpandAlignProperties(expmaskcie, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+    previewcie->set_active(false);
+    previewcieConn = previewcie->signal_clicked().connect(
+                       sigc::mem_fun(
+                           *this, &Locallabcie::previewcieChanged));
+
+    showmaskcieMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
+    showmaskcieMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
+    showmaskcieMethod->append(M("TP_LOCALLAB_SHOWMODIFMASK"));
+    showmaskcieMethod->append(M("TP_LOCALLAB_SHOWMASK"));
+    showmaskcieMethod->append(M("TP_LOCALLAB_SHOWREF"));
+    showmaskcieMethod->set_active(0);
+    showmaskcieMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKCOL_TOOLTIP"));
+    showmaskcieMethodConn = showmaskcieMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::showmaskcieMethodChanged));
+
+    enacieMaskConn = enacieMask->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::enacieMaskChanged));
+    enacieMaskallConn = enacieMaskall->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::enacieMaskallChanged));
+
+    maskcieCurveEditorG->setCurveListener(this);
+    CCmaskcieshape->setIdentityValue(0.);
+    CCmaskcieshape->setResetCurve(FlatCurveType(defSpot.CCmaskciecurve.at(0)), defSpot.CCmaskciecurve);
+    CCmaskcieshape->setBottomBarColorProvider(this, 1);
+
+    LLmaskcieshape->setIdentityValue(0.);
+    LLmaskcieshape->setResetCurve(FlatCurveType(defSpot.LLmaskciecurve.at(0)), defSpot.LLmaskciecurve);
+    LLmaskcieshape->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
+
+    HHmaskcieshape->setIdentityValue(0.);
+    HHmaskcieshape->setResetCurve(FlatCurveType(defSpot.HHmaskciecurve.at(0)), defSpot.HHmaskciecurve);
+    HHmaskcieshape->setCurveColorProvider(this, 2);
+    HHmaskcieshape->setBottomBarColorProvider(this, 2);
+
+    maskcieCurveEditorG->curveListComplete();
+
+    struFramecie->set_label_align(0.025, 0.5);
+
+    strumaskcie->setAdjusterListener(this);
+
+    toolcieConn  = toolcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::toolcieChanged));
+
+    blurFramecie->set_label_align(0.025, 0.5);
+
+    fftcieMaskConn = fftcieMask->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::fftcieMaskChanged));
+
+    contcie->setAdjusterListener(this);
+
+    blurcie->setAdjusterListener(this);
+
+    blendmaskcie->setAdjusterListener(this);
+
+    radmaskcie->setAdjusterListener(this);
+    lapmaskcie->setAdjusterListener(this);
+    gammaskcie->setAdjusterListener(this);
+    slomaskcie->setAdjusterListener(this);
+    highmaskcie->setAdjusterListener(this);
+    shadmaskcie->setAdjusterListener(this);
+    maskcieHCurveEditorG->setCurveListener(this);
+    HHhmaskcieshape->setIdentityValue(0.);
+    HHhmaskcieshape->setResetCurve(FlatCurveType(defSpot.HHhmaskciecurve.at(0)), defSpot.HHhmaskciecurve);
+    HHhmaskcieshape->setCurveColorProvider(this, 2);
+    HHhmaskcieshape->setBottomBarColorProvider(this, 2);
+    maskcieHCurveEditorG->curveListComplete();
+
+    chromaskcie->setAdjusterListener(this);
+    mask2cieCurveEditorG->setCurveListener(this);
+
+    Lmaskcieshape->setResetCurve(DiagonalCurveType(defSpot.Lmaskciecurve.at(0)), defSpot.Lmaskciecurve);
+    Lmaskcieshape->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
+    Lmaskcieshape->setLeftBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
+
+    mask2cieCurveEditorG->curveListComplete();
+
+    mask2cieCurveEditorGwav->setCurveListener(this);
+
+    LLmaskcieshapewav->setIdentityValue(0.);
+    LLmaskcieshapewav->setResetCurve(FlatCurveType(defSpot.LLmaskciecurvewav.at(0)), defSpot.LLmaskciecurvewav);
+    LLmaskcieshapewav->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
+
+    mask2cieCurveEditorGwav->curveListComplete();
+    csThresholdcie->setAdjusterListener(this);
+
+
+    strgradcie->setAdjusterListener(this);
+    anggradcie->setAdjusterListener(this);
+    feathercie->setAdjusterListener(this);
+    ToolParamBlock* const cieBoxgrad = Gtk::manage(new ToolParamBlock());
+    cieBoxgrad->pack_start(*strgradcie);
+    cieBoxgrad->pack_start(*anggradcie);
+    cieBoxgrad->pack_start(*feathercie);
+    expgradcie->add(*cieBoxgrad, false);
+    pack_start(*expgradcie, false, false);
+
+    ToolParamBlock* const cieBox3 = Gtk::manage(new ToolParamBlock());
+    cieBox3->pack_start(*maskusablecie, Gtk::PACK_SHRINK, 0);
+    cieBox3->pack_start(*maskunusablecie, Gtk::PACK_SHRINK, 0);
+    cieBox3->pack_start(*recothrescie);
+    cieBox3->pack_start(*lowthrescie);
+    cieBox3->pack_start(*higthrescie);
+    cieBox3->pack_start(*decaycie);
+    exprecovcie->add(*cieBox3, false);
+    pack_start(*exprecovcie, false, false);
+
+    ToolParamBlock* const maskcieBox = Gtk::manage(new ToolParamBlock());
+    maskcieBox->pack_start(*showmaskcieMethod, Gtk::PACK_SHRINK, 4);
+    maskcieBox->pack_start(*enacieMask, Gtk::PACK_SHRINK, 0);
+    maskcieBox->pack_start(*enacieMaskall, Gtk::PACK_SHRINK, 0);
+    maskcieBox->pack_start(*maskcieCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    ToolParamBlock* const strumBoxcie = Gtk::manage(new ToolParamBlock());
+    strumBoxcie->pack_start(*strumaskcie);
+    strumBoxcie->pack_start(*toolcie);
+    struFramecie->add(*strumBoxcie);
+    maskcieBox->pack_start(*struFramecie, Gtk::PACK_SHRINK, 0);
+    ToolParamBlock* const blurcieBox = Gtk::manage(new ToolParamBlock());
+    blurcieBox->pack_start(*fftcieMask, Gtk::PACK_SHRINK, 0);
+    blurcieBox->pack_start(*contcie);
+    blurcieBox->pack_start(*blurcie);
+    blurFramecie->add(*blurcieBox);
+    maskcieBox->pack_start(*blurFramecie, Gtk::PACK_SHRINK, 0);
+
+    maskcieBox->pack_start(*blendmaskcie, Gtk::PACK_SHRINK, 0);
+    maskcieBox->pack_start(*radmaskcie, Gtk::PACK_SHRINK, 0);
+    //maskcieBox->pack_start(*lapmaskcie, Gtk::PACK_SHRINK, 0);
+    maskcieBox->pack_start(*chromaskcie, Gtk::PACK_SHRINK, 0);
+    maskcieBox->pack_start(*gammaskcie, Gtk::PACK_SHRINK, 0);
+    maskcieBox->pack_start(*slomaskcie, Gtk::PACK_SHRINK, 0);
+    maskcieBox->pack_start(*highmaskcie, Gtk::PACK_SHRINK, 0);
+    maskcieBox->pack_start(*shadmaskcie, Gtk::PACK_SHRINK, 0);
+    maskcieBox->pack_start(*maskcieHCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+
+    maskcieBox->pack_start(*mask2cieCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    wavFramecie->set_label_align(0.025, 0.5);
+    ToolParamBlock* const toolcieBox2 = Gtk::manage(new ToolParamBlock());
+    toolcieBox2->pack_start(*mask2cieCurveEditorGwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    toolcieBox2->pack_start(*csThresholdcie, Gtk::PACK_SHRINK, 0);
+    wavFramecie->add(*toolcieBox2);
+    maskcieBox->pack_start(*wavFramecie);
+
+
+    expmaskcie->add(*maskcieBox, false);
+    pack_start(*expmaskcie, false, false);
+
+
+
+}
+
+void Locallabcie::setListener(ToolPanelListener* tpl)
+{
+    LocallabTool::setListener(tpl);
+
+    // labgridcie->setListener(tpl);
+}
+
+
+Locallabcie::~Locallabcie()
+{
+    delete jz1CurveEditorG;
+    delete jz2CurveEditorG;
+    delete jz3CurveEditorG;
+    delete cieCurveEditorG;
+    delete cieCurveEditorG2;
+    delete maskcieCurveEditorG;
+    delete maskcieHCurveEditorG;
+    delete mask2cieCurveEditorG;
+    delete LocalcurveEditorwavjz;
+    delete mask2cieCurveEditorGwav;
+}
+
+bool Locallabcie::isMaskViewActive()
+{
+    return ((showmaskcieMethod->get_active_row_number() != 0));
+}
+
+void Locallabcie::resetMaskView()
+{
+    showmaskcieMethodConn.block(true);
+
+    showmaskcieMethod->set_active(0);
+
+    showmaskcieMethodConn.block(false);
+}
+
+void Locallabcie::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask)
+{
+    cieMask = showmaskcieMethod->get_active_row_number();
+}
+
+Gtk::ToggleButton *Locallabcie::getPreviewDeltaEButton() const
+{
+    return previewcie;
+}
+
+sigc::connection *Locallabcie::getPreviewDeltaEButtonConnection()
+{
+    return &previewcieConn;
+}
+
+//new function Global
+void Locallabcie::updateguicie(int spottype)
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype == 3) {
+                sensicie->hide();
+                showmaskcieMethod->set_active(0);
+                previewcie->hide();
+                previewcie->set_active(false);
+                resetMaskView();
+            } else {
+                sensicie->show();
+                previewcie->show();
+           }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
+void Locallabcie::previewcieChanged()
+{
+   
+    if(previewcie->get_active()) {
+        showmaskcieMethod->set_active(4);
+    } else {
+        showmaskcieMethod->set_active(0);
+    }
+    
+    if (isLocActivated) {
+        if (listener) {
+            listener->panelChanged(Evlocallabpreviewcie,"");
+        }
+    } 
+}
+
+void Locallabcie::setDefaultExpanderVisibility()
+{
+    expLcie->set_expanded(false);
+    expjz->set_expanded(false);
+    expwavjz->set_expanded(false);
+    expcamscene->set_expanded(false);
+    expcam16->set_expanded(false);
+    expcamviewing->set_expanded(false);
+    expprecam->set_expanded(false);
+    expmaskcie->set_expanded(false);
+    exprecovcie->set_expanded(false);
+    expgradcie->set_expanded(false);
+}
+void Locallabcie::updateAdviceTooltips(const bool showTooltips)
+{
+    if (showTooltips) {
+        recothrescie->set_tooltip_text(M("TP_LOCALLAB_RECOTHRES02_TOOLTIP"));
+        reparcie->set_tooltip_text(M("TP_LOCALLAB_LOGREPART_TOOLTIP"));
+        // cieFrame->set_tooltip_text(M("TP_LOCALLAB_LOGSCENE_TOOLTIP"));
+        expcamscene->set_tooltip_text(M("TP_LOCALLAB_LOGSCENE_TOOLTIP"));
+        PQFrame->set_tooltip_text(M("TP_LOCALLAB_JZPQFRA_TOOLTIP"));
+        qtoj->set_tooltip_text(M("TP_LOCALLAB_JZQTOJ_TOOLTIP"));
+        logcie->set_tooltip_text(M("TP_LOCALLAB_LOGCIE_TOOLTIP"));
+        logcieq->set_tooltip_text(M("TP_LOCALLAB_LOGCIEQ_TOOLTIP"));
+        smoothcie->set_tooltip_text(M("TP_LOCALLAB_SMOOTHCIE_TOOLTIP"));
+        slopesmo->set_tooltip_text(M("TP_LOCALLAB_SMOOTHCIE_TOOLTIP"));
+        smoothciemet->set_tooltip_text(M("TP_LOCALLAB_SMOOTHCIE_TOOLTIP"));
+        modecam->set_tooltip_text(M("TP_LOCALLAB_JZMODECAM_TOOLTIP"));
+        adapjzcie->set_tooltip_text(M("TP_LOCALLAB_JABADAP_TOOLTIP"));
+        jz100->set_tooltip_text(M("TP_LOCALLAB_JZ100_TOOLTIP"));
+        pqremap->set_tooltip_text(M("TP_LOCALLAB_JZPQREMAP_TOOLTIP"));
+        pqremapcam16->set_tooltip_text(M("TP_LOCALLAB_CAM16PQREMAP_TOOLTIP"));
+        Autograycie->set_tooltip_text(M("TP_LOCALLAB_LOGAUTOGRAYJZ_TOOLTIP"));
+        sigmalcjz->set_tooltip_text(M("TP_LOCALLAB_WAT_SIGMALC_TOOLTIP"));
+        logjzFrame->set_tooltip_text(M("TP_LOCALLAB_JZLOGWB_TOOLTIP"));
+        blackEvjz->set_tooltip_text(M("TP_LOCALLAB_JZLOGWBS_TOOLTIP"));
+        whiteEvjz->set_tooltip_text(M("TP_LOCALLAB_JZLOGWBS_TOOLTIP"));
+        clariFramejz->set_tooltip_markup(M("TP_LOCALLAB_CLARIJZ_TOOLTIP"));
+        clarilresjz->set_tooltip_text(M("TP_LOCALLAB_WAT_CLARIL_TOOLTIP"));
+        claricresjz->set_tooltip_text(M("TP_LOCALLAB_WAT_CLARIC_TOOLTIP"));
+        clarisoftjz->set_tooltip_markup(M("TP_LOCALLAB_CLARISOFTJZ_TOOLTIP"));
+        wavshapejz->setTooltip(M("TP_LOCALLAB_WAT_WAVSHAPE_TOOLTIP"));
+        LocalcurveEditorwavjz->set_tooltip_markup(M("TP_LOCALLAB_WAT_LEVELLOCCONTRAST_TOOLTIP"));
+        csThresholdjz->set_tooltip_markup(M("TP_LOCALLAB_WAT_THRESHOLDWAV_TOOLTIP"));
+        forcejz->set_tooltip_text(M("TP_LOCALLAB_JZFORCE_TOOLTIP"));
+        sourceGraycie->set_tooltip_text(M("TP_LOCALLAB_JZLOGYBOUT_TOOLTIP"));
+        sourceabscie->set_tooltip_text(M("TP_COLORAPP_ADAPSCEN_TOOLTIP"));
+        cie1Frame->set_tooltip_text(M("TP_LOCALLAB_LOGIMAGE_TOOLTIP"));
+        sigmoidFrame->set_tooltip_text(M("TP_LOCALLAB_SIGMOID16_TOOLTIP"));
+        sigmoidjzFrame->set_tooltip_text(M("TP_LOCALLAB_SIGMOID_TOOLTIP"));
+        contlcie->set_tooltip_text(M("TP_LOCALLAB_LOGCONTL_TOOLTIP"));
+        contqcie->set_tooltip_text(M("TP_LOCALLAB_LOGCONTQ_TOOLTIP"));
+        contthrescie->set_tooltip_text(M("TP_LOCALLAB_LOGCONTTHRES_TOOLTIP"));
+        colorflcie->set_tooltip_text(M("TP_LOCALLAB_LOGCOLORF_TOOLTIP"));
+        lightlcie->set_tooltip_text(M("TP_LOCALLAB_LOGLIGHTL_TOOLTIP"));
+        lightqcie->set_tooltip_text(M("TP_LOCALLAB_LOGLIGHTQ_TOOLTIP"));
+        saturlcie->set_tooltip_text(M("TP_LOCALLAB_LOGSATURL_TOOLTIP"));
+        rstprotectcie->set_tooltip_text(M("TP_LOCALLAB_RSTPROTECT_TOOLTIP"));
+        chromlcie->set_tooltip_text(M("TP_COLORAPP_CHROMA_TOOLTIP"));
+        targabscie->set_tooltip_text(M("TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP"));
+        targetGraycie->set_tooltip_text(M("TP_COLORAPP_YBOUT_TOOLTIP"));
+        detailcie->set_tooltip_text(M("TP_LOCALLAB_LOGDETAIL_TOOLTIP"));
+        catadcie->set_tooltip_text(M("TP_LOCALLAB_LOGCATAD_TOOLTIP"));
+        // cie2Frame->set_tooltip_text(M("TP_LOCALLAB_LOGVIEWING_TOOLTIP"));
+        expcamviewing->set_tooltip_text(M("TP_LOCALLAB_LOGVIEWING_TOOLTIP"));
+        sensicie->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
+        CCmaskcieshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
+        LLmaskcieshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
+        HHmaskcieshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
+        expmaskcie->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
+        blendmaskcie->set_tooltip_text(M("TP_LOCALLAB_BLENDMASK_TOOLTIP"));
+        radmaskcie->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
+        mask2cieCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP"));
+        Lmaskcieshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
+        exprecovcie->set_tooltip_markup(M("TP_LOCALLAB_MASKRESH_TOOLTIP"));
+        // expgradcie->set_tooltip_markup(M("TP_LOCALLAB_MASKRESH_TOOLTIP"));
+        strumaskcie->set_tooltip_text(M("TP_LOCALLAB_STRUSTRMASK_TOOLTIP"));
+        fftcieMask->set_tooltip_text(M("TP_LOCALLAB_FFTMASK_TOOLTIP"));
+        contcie->set_tooltip_text(M("TP_LOCALLAB_CONTTHMASK_TOOLTIP"));
+        blurcie->set_tooltip_text(M("TP_LOCALLAB_BLURRMASK_TOOLTIP"));
+        LLmaskcieshapewav->setTooltip(M("TP_LOCALLAB_LMASK_LEVEL_TOOLTIP"));
+        maskcieHCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_HHMASK_TOOLTIP"));
+        comprcieth->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDQJCOMPRCIE_TOOLTIP"));
+        gamjcie->set_tooltip_text(M("TP_LOCALLAB_PRECAM_TOOLTIP"));
+        slopjcie->set_tooltip_text(M("TP_LOCALLAB_PRECAM_TOOLTIP"));
+        trcFrame->set_tooltip_text(M("TP_LOCALLAB_PRECAM_TOOLTIP"));
+        midtcie->set_tooltip_text(M("TP_LOCALLAB_PRECAM_TOOLTIP"));
+        whitescie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP"));
+        blackscie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP"));
+        normcie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDNORMCIE_TOOLTIP"));
+        sigmoidblcie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDNORMCIEBLEND_TOOLTIP"));
+        catBox->set_tooltip_text(M("TP_ICM_WORKING_CAT_TOOLTIP"));
+        wprimBox->set_tooltip_text(M("TP_ICM_WORKING_PRIM_TOOLTIP"));
+        expprecam->set_tooltip_text(M("TP_LOCALLAB_PRECAM_TOOLTIP"));
+        refi->set_tooltip_text(M("TP_LOCALLAB_PRECAMREFI_TOOLTIP"));
+        colorFramecie->set_tooltip_text(M("TP_LOCALLAB_PRECAMREFIMAIN_TOOLTIP"));
+        gamutcie->set_tooltip_text(M("TP_LOCALLAB_PRECAMGAMUT_TOOLTIP"));
+        shiftxl->set_tooltip_text(M("TC_LOCALLAB_PRIM_SHIFTX_TOOLTIP"));
+        shiftyl->set_tooltip_text(M("TC_LOCALLAB_PRIM_SHIFTX_TOOLTIP"));
+
+    } else {
+        reparcie->set_tooltip_text("");
+        recothrescie->set_tooltip_text("");
+        //  cieFrame->set_tooltip_text("");
+        expcamscene->set_tooltip_text("");
+        PQFrame->set_tooltip_text("");
+        modecam->set_tooltip_text("");
+        qtoj->set_tooltip_text("");
+        logcie->set_tooltip_text("");
+        logcieq->set_tooltip_text("");
+        jabcie->set_tooltip_text("");
+        adapjzcie->set_tooltip_text("");
+        jz100->set_tooltip_text("");
+        logjzFrame->set_tooltip_text("");
+        blackEvjz->set_tooltip_text("");
+        whiteEvjz->set_tooltip_text("");
+        pqremap->set_tooltip_text("");
+        pqremapcam16->set_tooltip_text("");
+        Autograycie->set_tooltip_text("");
+        forcejz->set_tooltip_text("");
+        sourceGraycie->set_tooltip_text("");
+        sourceabscie->set_tooltip_text("");
+        cie1Frame->set_tooltip_text("");
+        sigmoidFrame->set_tooltip_text("");
+        sigmoidjzFrame->set_tooltip_text("");
+        contlcie->set_tooltip_text("");
+        contqcie->set_tooltip_text("");
+        contthrescie->set_tooltip_text("");
+        colorflcie->set_tooltip_text("");
+        lightlcie->set_tooltip_text("");
+        lightqcie->set_tooltip_text("");
+        saturlcie->set_tooltip_text("");
+        rstprotectcie->set_tooltip_text("");
+        chromlcie->set_tooltip_text("");
+        targabscie->set_tooltip_text("");
+        targetGraycie->set_tooltip_text("");
+        detailcie->set_tooltip_text("");
+        catadcie->set_tooltip_text("");
+        // cie2Frame->set_tooltip_text("");
+        expcamviewing->set_tooltip_text("");
+        sensicie->set_tooltip_text("");
+        CCmaskcieshape->setTooltip("");
+        LLmaskcieshape->setTooltip("");
+        HHmaskcieshape->setTooltip("");
+        expmaskcie->set_tooltip_markup("");
+        blendmaskcie->set_tooltip_text("");
+        radmaskcie->set_tooltip_text("");
+        mask2cieCurveEditorG->set_tooltip_text("");
+        Lmaskcieshape->setTooltip("");
+        exprecovcie->set_tooltip_markup("");
+        expgradcie->set_tooltip_markup("");
+        sigmalcjz->set_tooltip_text("");
+        clarilresjz->set_tooltip_text("");
+        claricresjz->set_tooltip_text("");
+        clarisoftjz->set_tooltip_markup("");
+        clariFramejz->set_tooltip_markup("");
+        wavshapejz->setTooltip("");
+        LocalcurveEditorwavjz->set_tooltip_markup("");
+        csThresholdjz->set_tooltip_markup("");
+        strumaskcie->set_tooltip_text("");
+        fftcieMask->set_tooltip_text("");
+        contcie->set_tooltip_text("");
+        blurcie->set_tooltip_text("");
+        LLmaskcieshapewav->setTooltip("");
+        maskcieHCurveEditorG->set_tooltip_text("");
+        comprcieth->set_tooltip_text("");
+        gamjcie->set_tooltip_text("");
+        slopjcie->set_tooltip_text("");
+        trcFrame->set_tooltip_text("");
+        midtcie->set_tooltip_text("");
+        smoothcie->set_tooltip_text("");
+        slopesmo->set_tooltip_text("");
+        smoothciemet->set_tooltip_text("");
+        whitescie->set_tooltip_text("");
+        blackscie->set_tooltip_text("");
+        normcie->set_tooltip_text("");
+        sigmoidblcie->set_tooltip_text("");
+        catBox->set_tooltip_text("");
+        expprecam->set_tooltip_text("");
+        wprimBox->set_tooltip_text("");
+        refi->set_tooltip_text("");
+        gamutcie->set_tooltip_text("");
+        colorFramecie->set_tooltip_text("");
+        shiftxl->set_tooltip_text("");
+        shiftyl->set_tooltip_text("");
+
+    }
+}
+void Locallabcie::disableListener()
+{
+    LocallabTool::disableListener();
+    AutograycieConn.block(true);
+    forcejzConn.block(true);
+    forcebwConn.block(true);
+    qtojConn.block(true);
+    jabcieConn.block(true);
+    comprcieautoconn.block(true);
+    normcieconn.block(true);
+    expprecamconn.block(true);
+    gamutcieconn.block(true);
+    bwcieconn.block(true);
+    primMethodconn.block(true);
+    illMethodconn.block(true);
+    smoothciemetconn.block(true);
+    catMethodconn.block(true);
+    sigcieconn.block(true);
+    logcieconn.block(true);
+    satcieconn.block(true);
+    logcieqconn.block(true);
+    smoothcieconn.block(true);
+    smoothcieybconn.block(true);
+    smoothcielumconn.block(true);
+    logjzconn.block(true);
+    sigjzconn.block(true);
+    sigqconn.block(true);
+    chjzcieconn.block(true);
+    sursourcieconn.block(true);
+    surroundcieconn.block(true);
+    modecieconn.block(true);
+    modecamconn.block(true);
+    bwevMethodConn.block(true);
+    toneMethodcieConn.block(true);
+    toneMethodcieConn2.block(true);
+    showmaskcieMethodConn.block(true);
+    toolcieConn.block(true);
+    enacieMaskConn.block(true);
+    enacieMaskallConn.block(true);
+    fftcieMaskConn.block(true);
+}
+
+void Locallabcie::enableListener()
+{
+    LocallabTool::enableListener();
+    AutograycieConn.block(false);
+    forcejzConn.block(false);
+    forcebwConn.block(false);
+    qtojConn.block(false);
+    jabcieConn.block(false);
+    comprcieautoconn.block(false);
+    normcieconn.block(false);
+    expprecamconn.block(false);
+    gamutcieconn.block(false);
+    bwcieconn.block(false);
+    primMethodconn.block(false);
+    illMethodconn.block(false);
+    smoothciemetconn.block(false);
+    catMethodconn.block(false);
+    sigcieconn.block(false);
+    logcieconn.block(false);
+    satcieconn.block(false);
+    logcieqconn.block(false);
+    smoothcieconn.block(false);
+    smoothcieybconn.block(false);
+    smoothcielumconn.block(false);
+    logjzconn.block(false);
+    sigjzconn.block(false);
+    sigqconn.block(false);
+    chjzcieconn.block(false);
+    sursourcieconn.block(false);
+    surroundcieconn.block(false);
+    modecieconn.block(false);
+    modecamconn.block(false);
+    bwevMethodConn.block(false);
+    toneMethodcieConn.block(false);
+    toneMethodcieConn2.block(false);
+    showmaskcieMethodConn.block(false);
+    toolcieConn.block(false);
+    enacieMaskConn.block(false);
+    enacieMaskallConn.block(false);
+    fftcieMaskConn.block(false);
+}
+
+void Locallabcie::showmaskcieMethodChanged()
+{
+    // If mask preview is activated, deactivate other Shadow highlight mask preview
+
+    // If mask preview is activated, deactivate all other tool mask preview
+    if (locToolListener) {
+        locToolListener->resetOtherMaskView(this);
+    }
+
+    if (exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvlocallabshowmaskMethod, "");
+        }
+    }
+}
+
+
+
+void Locallabcie::enacieMaskChanged()
+{
+    if (enacieMask->get_active()) {
+        maskusablecie->show();
+        maskunusablecie->hide();
+
+    } else {
+        maskusablecie->hide();
+        maskunusablecie->show();
+    }
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (enacieMask->get_active()) {
+                listener->panelChanged(EvLocallabEnacieMask,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(EvLocallabEnacieMask,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+
+void Locallabcie::enacieMaskallChanged2()
+{
+    const LocallabParams::LocallabSpot defSpot;
+
+   // if (modecam->get_active_row_number() == 1) {
+        if(!enacieMaskall->get_active()) {
+            lapmaskcie->setValue(defSpot.lapmaskcie);
+            gammaskcie->setValue(defSpot.gammaskcie);
+            slomaskcie->setValue(defSpot.slomaskcie);
+            highmaskcie->setValue(defSpot.highmaskcie);
+            shadmaskcie->setValue(defSpot.shadmaskcie);
+            HHhmaskcieshape->setCurve(defSpot.HHhmaskciecurve);
+            strumaskcie->setValue(defSpot.strumaskcie);
+            toolcie->set_active(defSpot.toolcie);
+            fftcieMask->set_active(defSpot.fftcieMask);
+            LLmaskcieshapewav->setCurve(defSpot.LLmaskciecurvewav);
+            lapmaskcie->hide();
+            gammaskcie->hide();
+            slomaskcie->hide();
+            highmaskcie->hide();
+            shadmaskcie->hide();
+            maskcieHCurveEditorG->hide();
+            struFramecie->hide();
+            blurFramecie->hide();
+            strumaskcie->hide();
+            contcie->setValue(defSpot.contcie);
+            blurcie->setValue(defSpot.blurcie);
+            
+            toolcie->hide();
+            fftcieMask->hide();
+            mask2cieCurveEditorGwav->hide();
+            wavFramecie->hide();
+        } else {
+            lapmaskcie->show();
+            gammaskcie->show();
+            slomaskcie->show();
+            highmaskcie->show();
+            shadmaskcie->show();
+            maskcieHCurveEditorG->show();
+            struFramecie->show();
+            blurFramecie->show();
+            strumaskcie->show();
+            toolcie->show();
+            fftcieMask->show();
+            mask2cieCurveEditorGwav->show();
+            wavFramecie->show();
+        }
+  //  }
+}
+
+void Locallabcie::enacieMaskallChanged()
+{
+    
+    enacieMaskallChanged2();
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (enacieMaskall->get_active()) {
+                listener->panelChanged(EvlocallabenacieMaskall,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(EvlocallabenacieMaskall,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+
+
+void Locallabcie::toolcieChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (toolcie->get_active()) {
+                listener->panelChanged(EvLocallabtoolcie,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(EvLocallabtoolcie,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+
+void Locallabcie::fftcieMaskChanged()
+{
+    // updateColorGUI3(); // Update GUI according to fftColorMash button state
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (fftcieMask->get_active()) {
+                listener->panelChanged(EvLocallabfftcieMask,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(EvLocallabfftcieMask,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+
+void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
+{
+    disableListener();
+
+    // Update GUI to selected spot value
+    const int index = pp->locallab.selspot;
+    Glib::ustring prof = pp->icm.workingProfile;
+
+    if (index < (int)pp->locallab.spots.size()) {
+        const LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
+
+        exp->set_visible(spot.visicie);
+        exp->setEnabled(spot.expcie);
+        complexity->set_active(spot.complexcie);
+        expprecam->setEnabled(spot.expprecam);
+
+        reparcie->setValue(spot.reparcie);
+        sensicie->setValue(spot.sensicie);
+
+        if (spot.modecam == "cam16") {
+            modecam->set_active(0);
+        } else if (spot.modecam == "jz") {
+            modecam->set_active(1);
+        }
+
+        if (spot.modecie == "com") {
+            modecie->set_active(0);
+        } else if (spot.modecie == "tm") {
+            modecie->set_active(1);
+        } else if (spot.modecie == "wav") {
+            modecie->set_active(2);
+        } else if (spot.modecie == "dr") {
+            modecie->set_active(3);
+//        } else if (spot.modecie == "log") {
+//            modecie->set_active (4);
+        }
+
+        if (spot.toneMethodcie == "one") {
+            toneMethodcie->set_active(0);
+        } else if (spot.toneMethodcie == "two") {
+            toneMethodcie->set_active(1);
+        }
+
+        if (spot.toneMethodcie2 == "onec") {
+            toneMethodcie2->set_active(0);
+        } else if (spot.toneMethodcie2 == "twoc") {
+            toneMethodcie2->set_active(1);
+        } else if (spot.toneMethodcie2 == "thrc") {
+            toneMethodcie2->set_active(2);
+        }
+
+        Autograycie->set_active(spot.Autograycie);
+        forcejz->set_active(spot.forcejz);
+        forcebw->set_active(spot.forcebw);
+        qtoj->set_active(spot.qtoj);
+        sourceGraycie->setValue(spot.sourceGraycie);
+        comprcieauto->set_active(spot.comprcieauto);
+
+        if (Autograycie->get_active()) {
+            comprcieauto->set_active(true);
+        }
+
+        if (spot.smoothciemet == "none") {
+            smoothciemet->set_active(0);
+        } else if (spot.smoothciemet == "Ev") {
+            smoothciemet->set_active(1);
+        } else if (spot.smoothciemet == "gam") {
+            smoothciemet->set_active(2);
+        } else if (spot.smoothciemet == "gamnorol") {
+            smoothciemet->set_active(3);
+        } else if (spot.smoothciemet == "level") {
+            smoothciemet->set_active(4);
+        }
+
+
+        if (spot.illMethod == "d41") {
+            illMethod->set_active(0);
+        } else if (spot.illMethod == "d50") {
+            illMethod->set_active(1);
+        } else if (spot.illMethod == "d55") {
+            illMethod->set_active(2);
+        } else if (spot.illMethod == "d60") {
+            illMethod->set_active(3);
+        } else if (spot.illMethod == "d65") {
+            illMethod->set_active(4);
+        } else if (spot.illMethod == "d80") {
+            illMethod->set_active(5);
+        } else if (spot.illMethod == "d120") {
+            illMethod->set_active(6);
+        } else if (spot.illMethod == "stda") {
+            illMethod->set_active(7);
+        } else if (spot.illMethod == "T2000") {
+            illMethod->set_active(8);
+        } else if (spot.illMethod == "T1500") {
+            illMethod->set_active(9);
+        } else if (spot.illMethod == "iE") {
+            illMethod->set_active(10);
+        }
+
+        illMethod->set_sensitive(false);
+
+        if (spot.primMethod == "pro") {
+            primMethod->set_active(0);
+            illMethod->set_active(1);
+        } else if (spot.primMethod == "beta") {
+            primMethod->set_active(1);
+            illMethod->set_active(1);
+        } else if (spot.primMethod == "wid") {
+            primMethod->set_active(2);
+            illMethod->set_active(1);
+        } else if (spot.primMethod == "ac1") {
+            primMethod->set_active(3);
+            illMethod->set_active(3);
+        } else if (spot.primMethod == "rec") {
+            primMethod->set_active(4);
+            illMethod->set_active(4);
+        } else if (spot.primMethod == "ado") {
+            primMethod->set_active(5);
+            illMethod->set_active(4);
+        } else if (spot.primMethod == "srgb") {
+            primMethod->set_active(6);
+            illMethod->set_active(4);
+        } else if (spot.primMethod == "jdcmax") {
+            primMethod->set_active(7);
+            illMethod->set_active(1);
+        } else if (spot.primMethod == "jdcmaxstdA") {
+            primMethod->set_active(8);
+            illMethod->set_active(7);
+        } else if (spot.primMethod == "ac0") {
+            primMethod->set_active(9);
+            illMethod->set_active(3);
+        } else if (spot.primMethod == "best") {
+            primMethod->set_active(10);
+            illMethod->set_active(1);
+        } else if (spot.primMethod == "bru") {
+            primMethod->set_active(11);
+            illMethod->set_active(4);
+        } else if (spot.primMethod == "free") {
+            primMethod->set_active(12);
+            illMethod->set_sensitive(true);
+
+        }
+
+        if (spot.catMethod == "brad") {
+            catMethod->set_active(0);
+        } else if (spot.catMethod == "cat16") {
+            catMethod->set_active(1);
+        } else if (spot.catMethod == "cat02") {
+            catMethod->set_active(2);
+        } else if (spot.catMethod == "vky") {
+            catMethod->set_active(3);
+        } else if (spot.catMethod == "xyz") {
+            catMethod->set_active(4);
+        }
+
+
+        normcie->set_active(spot.normcie);
+        gamutcie->set_active(spot.gamutcie);
+        bwcie->set_active(spot.bwcie);
+        sigcie->set_active(spot.sigcie);
+        logcie->set_active(spot.logcie);
+        satcie->set_active(spot.satcie);
+        logcieq->set_active(spot.logcieq);
+        smoothcie->set_active(spot.smoothcie);
+        smoothcieyb->set_active(spot.smoothcieyb);
+        smoothcielum->set_active(spot.smoothcielum);
+        logjz->set_active(spot.logjz);
+        sigjz->set_active(spot.sigjz);
+        sigq->set_active(spot.sigq);
+        chjzcie->set_active(true);//force to true to avoid other mode
+        sourceabscie->setValue(spot.sourceabscie);
+        jabcie->set_active(spot.jabcie);
+        jabcieChanged();
+        modecamChanged();
+        sursourcieChanged();
+        bwevMethodChanged();
+        normcieChanged();
+        expprecamChanged();
+        gamutcieChanged();
+        bwcieChanged();
+        sigcieChanged();
+        comprcieautoChanged();
+        sigqChanged();
+        logcieChanged();
+        satcieChanged();
+        logcieqChanged();
+        smoothcieChanged();
+        smoothcieybChanged();
+        smoothcielumChanged();
+        primMethodChanged();
+        illMethodChanged();
+        smoothciemetChanged();
+
+        if (spot.bwevMethod == "none") {
+            bwevMethod->set_active(0);
+        } else if (spot.bwevMethod == "sig") {
+            bwevMethod->set_active(1);
+        }
+
+        if (spot.sursourcie == "Average") {
+            sursourcie->set_active(0);
+        } else if (spot.sursourcie == "Dim") {
+            sursourcie->set_active(1);
+        } else if (spot.sursourcie == "Dark") {
+            sursourcie->set_active(2);
+        } else if (spot.sursourcie == "exDark") {
+            sursourcie->set_active(3);
+        } else if (spot.sursourcie == "disacie") {
+            sursourcie->set_active(4);
+        }
+
+
+        if (spot.surroundcie == "Average") {
+            surroundcie->set_active(0);
+        } else if (spot.surroundcie == "Dim") {
+            surroundcie->set_active(1);
+        } else if (spot.surroundcie == "Dark") {
+            surroundcie->set_active(2);
+        }
+
+        shapecie->setCurve(spot.ciecurve);
+        shapecie2->setCurve(spot.ciecurve2);
+
+        shapejz->setCurve(spot.jzcurve);
+        shapecz->setCurve(spot.czcurve);
+        shapeczjz->setCurve(spot.czjzcurve);
+        HHshapejz->setCurve(spot.HHcurvejz);
+        CHshapejz->setCurve(spot.CHcurvejz);
+        LHshapejz->setCurve(spot.LHcurvejz);
+
+        saturlcie->setValue(spot.saturlcie);
+        rstprotectcie->setValue(spot.rstprotectcie);
+        chromlcie->setValue(spot.chromlcie);
+        huecie->setValue(spot.huecie);
+        chromjzcie->setValue(spot.chromjzcie);
+        saturjzcie->setValue(spot.saturjzcie);
+        huejzcie->setValue(spot.huejzcie);
+        softjzcie->setValue(spot.softjzcie);
+        strsoftjzcie->setValue(spot.strsoftjzcie);
+        thrhjzcie->setValue(spot.thrhjzcie);
+        lightlcie->setValue(spot.lightlcie);
+        lightjzcie->setValue(spot.lightjzcie);
+        lightqcie->setValue(spot.lightqcie);
+        lightsigqcie->setValue(spot.lightsigqcie);
+        contlcie->setValue(spot.contlcie);
+        contjzcie->setValue(spot.contjzcie);
+        detailciejz->setValue(spot.detailciejz);
+        adapjzcie->setValue(spot.adapjzcie);
+        jz100->setValue(spot.jz100);
+        pqremap->setValue(spot.pqremap);
+        pqremapcam16->setValue(spot.pqremapcam16);
+        hljzcie->setValue(spot.hljzcie);
+        hlthjzcie->setValue(spot.hlthjzcie);
+        shjzcie->setValue(spot.shjzcie);
+        shthjzcie->setValue(spot.shthjzcie);
+        radjzcie->setValue(spot.radjzcie);
+        sigmalcjz->setValue(spot.sigmalcjz);
+        wavshapejz->setCurve(spot.locwavcurvejz);
+        csThresholdjz->setValue<int>(spot.csthresholdjz);
+        clarilresjz->setValue(spot.clarilresjz);
+        claricresjz->setValue(spot.claricresjz);
+        clarisoftjz->setValue(spot.clarisoftjz);
+        contthrescie->setValue(spot.contthrescie);
+        blackEvjz->setValue(spot.blackEvjz);
+        whiteEvjz->setValue(spot.whiteEvjz);
+        targetjz->setValue(spot.targetjz);
+        sigmoidldacie->setValue(spot.sigmoidldacie);
+        sigmoidthcie->setValue(spot.sigmoidthcie);
+        sigmoidsenscie->setValue(spot.sigmoidsenscie);
+        sigmoidblcie->setValue(spot.sigmoidblcie);
+        comprcie->setValue(spot.comprcie);
+        strcielog->setValue(spot.strcielog);
+        comprcieth->setValue(spot.comprcieth);
+        gamjcie->setValue(spot.gamjcie);
+        slopjcie->setValue(spot.slopjcie);
+        slopesmo->setValue(spot.slopesmo);
+        slopesmor->setValue(spot.slopesmor);
+        slopesmog->setValue(spot.slopesmog);
+        slopesmob->setValue(spot.slopesmob);
+        midtcie->setValue(spot.midtcie);
+        whitescie->setValue(spot.whitescie);
+        blackscie->setValue(spot.blackscie);
+        sigmoidldajzcie->setValue(spot.sigmoidldajzcie);
+        sigmoidthjzcie->setValue(spot.sigmoidthjzcie);
+        sigmoidbljzcie->setValue(spot.sigmoidbljzcie);
+        contqcie->setValue(spot.contqcie);
+        contsigqcie->setValue(spot.contsigqcie);
+        colorflcie->setValue(spot.colorflcie);
+        targabscie->setValue(spot.targabscie);
+        targetGraycie->setValue(spot.targetGraycie);
+        detailcie->setValue(spot.detailcie);
+        catadcie->setValue(spot.catadcie);
+
+        grexl->setValue(spot.grexl);
+        greyl->setValue(spot.greyl);
+        bluxl->setValue(spot.bluxl);
+        bluyl->setValue(spot.bluyl);
+        redxl->setValue(spot.redxl);
+        redyl->setValue(spot.redyl);
+        refi->setValue(spot.refi);
+        shiftxl->setValue(spot.shiftxl);
+        shiftyl->setValue(spot.shiftyl);
+
+        labgridcie->setParams(spot.labgridcieALow,
+                              spot.labgridcieBLow,
+                              spot.labgridcieAHigh,
+                              spot.labgridcieBHigh,
+                              spot.labgridcieGx,
+                              spot.labgridcieGy,
+                              spot.labgridcieWx,
+                              spot.labgridcieWy,
+                              spot.labgridcieMx,
+                              spot.labgridcieMy,
+                              false);
+
+        strgradcie->setValue((double)spot.strgradcie);
+        anggradcie->setValue((double)spot.anggradcie);
+        feathercie->setValue((double)spot.feathercie);
+
+        enacieMask->set_active(spot.enacieMask);
+        enacieMaskall->set_active(spot.enacieMaskall);
+        CCmaskcieshape->setCurve(spot.CCmaskciecurve);
+        LLmaskcieshape->setCurve(spot.LLmaskciecurve);
+        HHmaskcieshape->setCurve(spot.HHmaskciecurve);
+        blendmaskcie->setValue((double)spot.blendmaskcie);
+        radmaskcie->setValue(spot.radmaskcie);
+        chromaskcie->setValue(spot.chromaskcie);
+        lapmaskcie->setValue(spot.lapmaskcie);
+        gammaskcie->setValue(spot.gammaskcie);
+        slomaskcie->setValue(spot.slomaskcie);
+        highmaskcie->setValue(spot.highmaskcie);
+        shadmaskcie->setValue(spot.shadmaskcie);
+        HHhmaskcieshape->setCurve(spot.HHhmaskciecurve);
+        Lmaskcieshape->setCurve(spot.Lmaskciecurve);
+        recothrescie->setValue((double)spot.recothrescie);
+        lowthrescie->setValue((double)spot.lowthrescie);
+        higthrescie->setValue((double)spot.higthrescie);
+        decaycie->setValue((double)spot.decaycie);
+        strumaskcie->setValue(spot.strumaskcie);
+        toolcie->set_active(spot.toolcie);
+        fftcieMask->set_active(spot.fftcieMask);
+        contcie->setValue(spot.contcie);
+//        updateColorGUI3();
+        blurcie->setValue(spot.blurcie);
+        LLmaskcieshapewav->setCurve(spot.LLmaskciecurvewav);
+        csThresholdcie->setValue<int>(spot.csthresholdcie);
+
+
+    }
+
+    enableListener();
+    // Update GUI according to complexity mode
+    updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
+    // Update Ciecam GUI
+    updatecieGUI();
+}
+
+void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
+{
+    const int index = pp->locallab.selspot;
+
+    if (index < (int)pp->locallab.spots.size()) {
+        LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
+        spot.expcie = exp->getEnabled();
+        spot.visicie = exp->get_visible();
+        spot.complexcie = complexity->get_active_row_number();
+        spot.expprecam = expprecam->getEnabled();
+
+        spot.reparcie = reparcie->getValue();
+        spot.sensicie = sensicie->getIntValue();
+
+        if (modecam->get_active_row_number() == 0) {
+            spot.modecam = "cam16";
+        } else if (modecam->get_active_row_number() == 1) {
+            spot.modecam = "jz";
+        }
+
+        if (modecie->get_active_row_number() == 0) {
+            spot.modecie = "com";
+        } else if (modecie->get_active_row_number() == 1) {
+            spot.modecie = "tm";
+        } else if (modecie->get_active_row_number() == 2) {
+            spot.modecie = "wav";
+        } else if (modecie->get_active_row_number() == 3) {
+            spot.modecie = "dr";
+//        } else if (modecie->get_active_row_number() == 4) {
+//            spot.modecie = "log";
+        }
+
+        if (toneMethodcie->get_active_row_number() == 0) {
+            spot.toneMethodcie = "one";
+        } else if (toneMethodcie->get_active_row_number() == 1) {
+            spot.toneMethodcie = "two";
+        }
+
+        if (toneMethodcie2->get_active_row_number() == 0) {
+            spot.toneMethodcie2 = "onec";
+        } else if (toneMethodcie2->get_active_row_number() == 1) {
+            spot.toneMethodcie2 = "twoc";
+        } else if (toneMethodcie2->get_active_row_number() == 2) {
+            spot.toneMethodcie2 = "thrc";
+        }
+
+        spot.redxl =  redxl->getValue();
+        spot.redyl =  redyl->getValue();
+        spot.grexl =  grexl->getValue();
+        spot.greyl =  greyl->getValue();
+        spot.bluxl =  bluxl->getValue();
+        spot.bluyl =  bluyl->getValue();
+        spot.refi =  refi->getValue();
+        spot.shiftxl =  shiftxl->getValue();
+        spot.shiftyl =  shiftyl->getValue();
+        labgridcie->getParams(spot.labgridcieALow,
+                              spot.labgridcieBLow,
+                              spot.labgridcieAHigh,
+                              spot.labgridcieBHigh,
+                              spot.labgridcieGx,
+                              spot.labgridcieGy,
+                              spot.labgridcieWx,
+                              spot.labgridcieWy,
+                              spot.labgridcieMx,
+                              spot.labgridcieMy);
+
+        spot.Autograycie = Autograycie->get_active();
+        spot.forcejz = forcejz->get_active();
+        spot.forcebw = forcebw->get_active();
+        spot.qtoj = qtoj->get_active();
+        spot.jabcie = jabcie->get_active();
+        spot.sourceGraycie = sourceGraycie->getValue();
+        spot.sourceabscie = sourceabscie->getValue();
+        spot.comprcieauto = comprcieauto->get_active();
+        spot.normcie = normcie->get_active();
+        spot.gamutcie = gamutcie->get_active();
+        spot.bwcie = bwcie->get_active();
+        spot.sigcie = sigcie->get_active();
+        spot.logcie = logcie->get_active();
+        spot.satcie = satcie->get_active();
+        spot.logcieq = logcieq->get_active();
+        spot.smoothcie = smoothcie->get_active();
+        spot.smoothcieyb = smoothcieyb->get_active();
+        spot.smoothcielum = smoothcielum->get_active();
+        spot.logjz = logjz->get_active();
+        spot.sigjz = sigjz->get_active();
+        spot.chjzcie = chjzcie->get_active();
+        spot.sigq = sigq->get_active();
+
+        if (sursourcie->get_active_row_number() == 0) {
+            spot.sursourcie = "Average";
+        } else if (sursourcie->get_active_row_number() == 1) {
+            spot.sursourcie = "Dim";
+        } else if (sursourcie->get_active_row_number() == 2) {
+            spot.sursourcie = "Dark";
+        } else if (sursourcie->get_active_row_number() == 3) {
+            spot.sursourcie = "exDark";
+        } else if (sursourcie->get_active_row_number() == 4) {
+            spot.sursourcie = "disacie";
+        }
+
+        if (bwevMethod->get_active_row_number() == 0) {
+            spot.bwevMethod = "none";
+        } else if (bwevMethod->get_active_row_number() == 1) {
+            spot.bwevMethod = "sig";
+        }
+
+        if (smoothciemet->get_active_row_number() == 0) {
+            spot.smoothciemet = "none";
+        } else if (smoothciemet->get_active_row_number() == 1) {
+            spot.smoothciemet = "Ev";
+        } else if (smoothciemet->get_active_row_number() == 2) {
+            spot.smoothciemet = "gam";
+        } else if (smoothciemet->get_active_row_number() == 3) {
+            spot.smoothciemet = "gamnorol";
+        } else if (smoothciemet->get_active_row_number() == 4) {
+            spot.smoothciemet = "level";
+        }
+
+        if (illMethod->get_active_row_number() == 0) {
+            spot.illMethod = "d41";
+        } else if (illMethod->get_active_row_number() == 1) {
+            spot.illMethod = "d50";
+        } else if (illMethod->get_active_row_number() == 2) {
+            spot.illMethod = "d55";
+        } else if (illMethod->get_active_row_number() == 3) {
+            spot.illMethod = "d60";
+        } else if (illMethod->get_active_row_number() == 4) {
+            spot.illMethod = "d65";
+        } else if (illMethod->get_active_row_number() == 5) {
+            spot.illMethod = "d80";
+        } else if (illMethod->get_active_row_number() == 6) {
+            spot.illMethod = "d120";
+        } else if (illMethod->get_active_row_number() == 7) {
+            spot.illMethod = "stda";
+        } else if (illMethod->get_active_row_number() == 8) {
+            spot.illMethod = "T2000";
+        } else if (illMethod->get_active_row_number() == 9) {
+            spot.illMethod = "T1500";
+        } else if (illMethod->get_active_row_number() == 10) {
+            spot.illMethod = "iE";
+        }
+
+        if (primMethod->get_active_row_number() == 0) {
+            spot.primMethod = "pro";
+        } else if (primMethod->get_active_row_number() == 1) {
+            spot.primMethod = "beta";
+        } else if (primMethod->get_active_row_number() == 2) {
+            spot.primMethod = "wid";
+        } else if (primMethod->get_active_row_number() == 3) {
+            spot.primMethod = "ac1";
+        } else if (primMethod->get_active_row_number() == 4) {
+            spot.primMethod = "rec";
+        } else if (primMethod->get_active_row_number() == 5) {
+            spot.primMethod = "ado";
+        } else if (primMethod->get_active_row_number() == 6) {
+            spot.primMethod = "srgb";
+        } else if (primMethod->get_active_row_number() == 7) {
+            spot.primMethod = "jdcmax";
+        } else if (primMethod->get_active_row_number() == 8) {
+            spot.primMethod = "jdcmaxstdA";
+        } else if (primMethod->get_active_row_number() == 9) {
+            spot.primMethod = "ac0";
+        } else if (primMethod->get_active_row_number() == 10) {
+            spot.primMethod = "best";
+        } else if (primMethod->get_active_row_number() == 11) {
+            spot.primMethod = "bru";
+        } else if (primMethod->get_active_row_number() == 12) {
+            spot.primMethod = "free";
+        }
+
+        if (catMethod->get_active_row_number() == 0) {
+            spot.catMethod = "brad";
+        } else if (catMethod->get_active_row_number() == 1) {
+            spot.catMethod = "cat16";
+        } else if (catMethod->get_active_row_number() == 2) {
+            spot.catMethod = "cat02";
+        } else if (catMethod->get_active_row_number() == 3) {
+            spot.catMethod = "vky";
+        } else if (catMethod->get_active_row_number() == 4) {
+            spot.catMethod = "xyz";
+        }
+
+        if (surroundcie->get_active_row_number() == 0) {
+            spot.surroundcie = "Average";
+        } else if (surroundcie->get_active_row_number() == 1) {
+            spot.surroundcie = "Dim";
+        } else if (surroundcie->get_active_row_number() == 2) {
+            spot.surroundcie = "Dark";
+        }
+
+        spot.jzcurve = shapejz->getCurve();
+        spot.czcurve = shapecz->getCurve();
+        spot.czjzcurve = shapeczjz->getCurve();
+        spot.HHcurvejz = HHshapejz->getCurve();
+        spot.CHcurvejz = CHshapejz->getCurve();
+        spot.LHcurvejz = LHshapejz->getCurve();
+        spot.ciecurve = shapecie->getCurve();
+        spot.ciecurve2 = shapecie2->getCurve();
+
+        spot.saturlcie = saturlcie->getValue();
+        spot.rstprotectcie = rstprotectcie->getValue();
+        spot.chromlcie = chromlcie->getValue();
+        spot.huejzcie = huejzcie->getValue();
+        spot.softjzcie = softjzcie->getValue();
+        spot.strsoftjzcie = strsoftjzcie->getValue();
+        spot.thrhjzcie = thrhjzcie->getValue();
+        spot.chromjzcie = chromjzcie->getValue();
+        spot.saturjzcie = saturjzcie->getValue();
+        spot.huecie = huecie->getValue();
+        spot.lightlcie = lightlcie->getValue();
+        spot.lightjzcie = lightjzcie->getValue();
+        spot.lightqcie = lightqcie->getValue();
+        spot.lightsigqcie = lightsigqcie->getValue();
+        spot.contlcie = contlcie->getValue();
+        spot.detailciejz = detailciejz->getValue();
+        spot.contjzcie = contjzcie->getValue();
+        spot.adapjzcie = adapjzcie->getValue();
+        spot.jz100 = jz100->getValue();
+        spot.pqremap = pqremap->getValue();
+        spot.pqremapcam16 = pqremapcam16->getValue();
+        spot.hljzcie = hljzcie->getValue();
+        spot.hlthjzcie = hlthjzcie->getValue();
+        spot.shjzcie = shjzcie->getValue();
+        spot.shthjzcie = shthjzcie->getValue();
+        spot.radjzcie = radjzcie->getValue();
+        spot.sigmalcjz = sigmalcjz->getValue();
+        spot.locwavcurvejz = wavshapejz->getCurve();
+        spot.csthresholdjz = csThresholdjz->getValue<int>();
+        spot.clarilresjz = clarilresjz->getValue();
+        spot.claricresjz = claricresjz->getValue();
+        spot.clarisoftjz = clarisoftjz->getValue();
+        spot.contthrescie = contthrescie->getValue();
+        spot.blackEvjz = blackEvjz->getValue();
+        spot.whiteEvjz = whiteEvjz->getValue();
+        spot.targetjz = targetjz->getValue();
+        spot.sigmoidldacie = sigmoidldacie->getValue();
+        spot.sigmoidthcie = sigmoidthcie->getValue();
+        spot.sigmoidsenscie = sigmoidsenscie->getValue();
+        spot.sigmoidblcie = sigmoidblcie->getValue();
+        spot.comprcie = comprcie->getValue();
+        spot.strcielog = strcielog->getValue();
+        spot.comprcieth = comprcieth->getValue();
+        spot.gamjcie = gamjcie->getValue();
+        spot.slopjcie = slopjcie->getValue();
+        spot.slopesmo = slopesmo->getValue();
+        spot.slopesmor = slopesmor->getValue();
+        spot.slopesmog = slopesmog->getValue();
+        spot.slopesmob = slopesmob->getValue();
+        spot.midtcie = midtcie->getIntValue();
+        spot.whitescie = whitescie->getIntValue();
+        spot.blackscie = blackscie->getIntValue();
+        spot.sigmoidldajzcie = sigmoidldajzcie->getValue();
+        spot.sigmoidthjzcie = sigmoidthjzcie->getValue();
+        spot.sigmoidbljzcie = sigmoidbljzcie->getValue();
+        spot.contqcie = contqcie->getValue();
+        spot.contsigqcie = contsigqcie->getValue();
+        spot.colorflcie = colorflcie->getValue();
+        spot.targabscie = targabscie->getValue();
+        spot.targetGraycie = targetGraycie->getValue();
+        spot.catadcie = catadcie->getValue();
+        spot.detailcie = detailcie->getValue();
+        spot.strgradcie = strgradcie->getValue();
+        spot.anggradcie = anggradcie->getValue();
+        spot.feathercie = feathercie->getValue();
+
+        spot.enacieMask = enacieMask->get_active();
+        spot.enacieMaskall = enacieMaskall->get_active();
+        spot.LLmaskciecurve = LLmaskcieshape->getCurve();
+        spot.CCmaskciecurve = CCmaskcieshape->getCurve();
+        spot.HHmaskciecurve = HHmaskcieshape->getCurve();
+        spot.blendmaskcie = blendmaskcie->getIntValue();
+        spot.radmaskcie = radmaskcie->getValue();
+        spot.chromaskcie = chromaskcie->getValue();
+        spot.lapmaskcie = lapmaskcie->getValue();
+        spot.gammaskcie = gammaskcie->getValue();
+        spot.slomaskcie = slomaskcie->getValue();
+        spot.highmaskcie = highmaskcie->getValue();
+        spot.shadmaskcie = shadmaskcie->getValue();
+        spot.HHhmaskciecurve = HHhmaskcieshape->getCurve();
+        spot.Lmaskciecurve = Lmaskcieshape->getCurve();
+        spot.recothrescie = recothrescie->getValue();
+        spot.lowthrescie = lowthrescie->getValue();
+        spot.higthrescie = higthrescie->getValue();
+        spot.decaycie = decaycie->getValue();
+        spot.strumaskcie = strumaskcie->getValue();
+        spot.toolcie = toolcie->get_active();
+        spot.fftcieMask = fftcieMask->get_active();
+        spot.contcie = contcie->getValue();
+        spot.blurcie = blurcie->getValue();
+        spot.LLmaskciecurvewav = LLmaskcieshapewav->getCurve();
+        spot.csthresholdcie = csThresholdcie->getValue<int>();
+
+    }
+}
+
+void Locallabcie::toneMethodcieChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvLocallabtoneMethodcie,
+                                   toneMethodcie->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
+        }
+    }
+}
+
+void Locallabcie::toneMethodcie2Changed()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvLocallabtoneMethodcie2,
+                                   toneMethodcie2->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
+        }
+    }
+}
+
+
+void Locallabcie::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
+{
+    idle_register.add(
+    [this, normHuerjz, normHuer, normLumar, normChromar]() -> bool {
+        GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+        // Update mask background
+        HHshapejz->updateLocallabBackground(normHuerjz);
+        CHshapejz->updateLocallabBackground(normHuerjz);
+        LHshapejz->updateLocallabBackground(normHuerjz);
+        shapejz->updateLocallabBackground(normLumar);
+        shapecz->updateLocallabBackground(normChromar);
+        shapeczjz->updateLocallabBackground(normLumar);
+        shapecie->updateLocallabBackground(normLumar);
+        shapecie2->updateLocallabBackground(normChromar);
+        CCmaskcieshape->updateLocallabBackground(normChromar);
+        LLmaskcieshape->updateLocallabBackground(normLumar);
+        HHmaskcieshape->updateLocallabBackground(normHuer);
+        Lmaskcieshape->updateLocallabBackground(normLumar);
+        HHhmaskcieshape->updateLocallabBackground(normHuer);
+        return false;
+    }
+                 );
+}
+
+void Locallabcie::updatePrimloc(const float redx, const float redy, const float grex, const float grey, const float blux, const float bluy)
+{
+    idle_register.add(
+    [this, redx, redy, grex, grey, blux, bluy]() -> bool {
+        GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+        // Update adjuster values according to autocomputed ones
+        disableListener();
+        redxl->setValue(redx);
+        redyl->setValue(redy);
+        grexl->setValue(grex);
+        greyl->setValue(grey);
+        bluxl->setValue(blux);
+        bluyl->setValue(bluy);
+
+        enableListener();
+
+        return false;
+    }
+                 );
+
+}
+
+void Locallabcie::updatesigloc(const float cont_sig, const float light_sig)
+{
+    idle_register.add(
+    [this, cont_sig, light_sig]() -> bool {
+        GThreadLock lock;
+        disableListener();
+
+        contsigqcie->setValue(cont_sig);
+        lightsigqcie->setValue(light_sig);
+
+        enableListener();
+        return false;
+    }
+                 );
+
+}
+
+
+
+void Locallabcie::updateiPrimloc(const float r_x, const float r_y, const float g_x, const float g_y, const float b_x, const float b_y, const float w_x, const float w_y, const float m_x, const float m_y,  const float me_x, const float me_y, const int pri_)
+{
+    nextrx = r_x;
+    nextry = r_y;
+    nextbx = b_x;
+    nextby = b_y;
+    nextgx = g_x;
+    nextgy = g_y;
+    nextwx = w_x;
+    nextwy = w_y;
+    nextmx = m_x;
+    nextmy = m_y;
+
+    //convert xy datas in datas for labgrid areas
+    nextrx = 1.81818f * (nextrx + 0.1f) - 1.f;
+    nextry = 1.81818f * (nextry + 0.1f) - 1.f;
+    nextbx = 1.81818f * (nextbx + 0.1f) - 1.f;
+    nextby = 1.81818f * (nextby + 0.1f) - 1.f;
+    nextgx = 1.81818f * (nextgx + 0.1f) - 1.f;
+    nextgy = 1.81818f * (nextgy + 0.1f) - 1.f;
+    nextwx = 1.81818f * (nextwx + 0.1f) - 1.f;
+    nextwy = 1.81818f * (nextwy + 0.1f) - 1.f;
+    nextmx = 1.81818f * (nextmx + 0.1f) - 1.f;
+    nextmy = 1.81818f * (nextmy + 0.1f) - 1.f;
+
+    idle_register.add(
+    [this, r_x, r_y, g_x, g_y, b_x, b_y]() -> bool {
+        GThreadLock lock;
+        disableListener();
+
+        redxl->setValue(r_x);
+        redyl->setValue(r_y);
+        grexl->setValue(g_x);
+        greyl->setValue(g_y);
+        bluxl->setValue(b_x);
+        bluyl->setValue(b_y);
+        labgridcie->setParams(nextrx, nextry, nextbx, nextby, nextgx, nextgy, nextwx, nextwy, nextmx, nextmy, false);
+        enableListener();
+        return false;
+    }
+                 );
+
+}
+
+
+void Locallabcie::updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const float jz1)
+{
+
+    if (Autograycie->get_active()) {
+        idle_register.add(
+        [this, blackev, whiteev, sourceg, sourceab, jz1]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update adjuster values according to autocomputed ones
+            disableListener();
+            blackEvjz->setValue(blackev);
+            whiteEvjz->setValue(whiteev);
+            sourceGraycie->setValue(sourceg);
+            sourceabscie->setValue(sourceab);
+            float sour = std::min((double) sourceab, 10000.) / 10000.f;
+            float pal = std::max(10. * (double) sqrt(sour), 1.5);
+            adapjzcie->setValue(pal);//max = 10 and min 1.5
+            jz100->setValue(jz1);
+            enableListener();
+
+            return false;
+        }
+                     );
+    }
+}
+
+void Locallabcie::AutograycieChanged()
+{
+
+    if (Autograycie->get_active()) {
+        sourceGraycie->set_sensitive(false);
+        sourceabscie->set_sensitive(false);
+        adapjzcie->set_sensitive(false);
+        jz100->set_sensitive(false);
+        blackEvjz->set_sensitive(false);
+        whiteEvjz->set_sensitive(false);
+
+        comprcieauto->set_active(true);
+        whitescie->set_sensitive(true);
+        blackscie->set_sensitive(true);
+
+    } else {
+        sourceGraycie->set_sensitive(true);
+        sourceabscie->set_sensitive(true);
+        adapjzcie->set_sensitive(true);
+        jz100->set_sensitive(true);
+        blackEvjz->set_sensitive(true);
+        whiteEvjz->set_sensitive(true);
+        whitescie->set_sensitive(false);
+        blackscie->set_sensitive(false);
+    }
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (Autograycie->get_active()) {
+                listener->panelChanged(EvlocallabAutograycie,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(EvlocallabAutograycie,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+void Locallabcie::forcejzChanged()
+{
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (forcejz->get_active()) {
+                listener->panelChanged(Evlocallabforcejz,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabforcejz,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+void Locallabcie::forcebwChanged()
+{
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (forcebw->get_active()) {
+                listener->panelChanged(Evlocallabforcebw,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabforcebw,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+void Locallabcie::qtojChanged()
+{
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (qtoj->get_active()) {
+                listener->panelChanged(Evlocallabqtoj,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabqtoj,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+void Locallabcie::jabcieChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (jabcie->get_active()) {
+                listener->panelChanged(Evlocallabjabcie,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabjabcie,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+void Locallabcie::comprcieautoChanged()
+{
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (comprcieauto->get_active()) {
+                listener->panelChanged(Evlocallabcomprcieauto,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabcomprcieauto,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+void Locallabcie::normcieChanged()
+{
+
+    if (normcie->get_active()) {
+        sigmoidblcie->set_sensitive(true);
+    } else {
+        sigmoidblcie->set_sensitive(false);
+    }
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (normcie->get_active()) {
+                listener->panelChanged(Evlocallabnormcie,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabnormcie,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+
+}
+
+
+void Locallabcie::gamutcieChanged()
+{
+    if (gamutcie->get_active()) {
+        catBox->set_sensitive(true);
+    } else {
+        catBox->set_sensitive(false);
+    }
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (gamutcie->get_active()) {
+                listener->panelChanged(Evlocallabgamutcie,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabgamutcie,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+
+}
+
+void Locallabcie::bwcieChanged()
+{
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (bwcie->get_active()) {
+                listener->panelChanged(Evlocallabbwcie,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabbwcie,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+
+}
+
+
+void Locallabcie::expprecamChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (expprecam->getEnabled()) {
+                listener->panelChanged(Evlocallabexpprecam,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabexpprecam,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+
+}
+
+
+void Locallabcie::sigcieChanged()
+{
+    contsigqcie->hide();
+    lightsigqcie->hide();
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (sigcie->get_active()) {
+                listener->panelChanged(Evlocallabsigcie,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabsigcie,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+
+}
+
+
+void Locallabcie::logcieChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (logcie->get_active()) {
+                listener->panelChanged(Evlocallablogcie,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallablogcie,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+void Locallabcie::satcieChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (satcie->get_active()) {
+                listener->panelChanged(Evlocallabsatcie,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabsatcie,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+void Locallabcie::logcieqChanged()
+{
+    if (logcieq->get_active()) {
+        satcie->hide();
+        sigmoidnormFrame->hide();
+    } else {
+        satcie->show();
+        sigmoidnormFrame->show();
+    }
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (logcieq->get_active()) {
+                listener->panelChanged(Evlocallablogcieq,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallablogcieq,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+
+void Locallabcie::smoothcieChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (smoothcie->get_active()) {
+                listener->panelChanged(Evlocallabsmoothcie,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabsmoothcie,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+void Locallabcie::smoothcieybChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (smoothcieyb->get_active()) {
+                listener->panelChanged(Evlocallabsmoothcieyb,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabsmoothcieyb,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+void Locallabcie::smoothcielumChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (smoothcielum->get_active()) {
+                listener->panelChanged(Evlocallabsmoothcielum,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabsmoothcielum,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+void Locallabcie::logjzChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (logjz->get_active()) {
+                listener->panelChanged(Evlocallablogjz,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallablogjz,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+void Locallabcie::sigjzChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (sigjz->get_active()) {
+                listener->panelChanged(Evlocallabsigjz,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabsigjz,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+void Locallabcie::sigqChanged()
+{
+    contsigqcie->hide();
+    lightsigqcie->hide();
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (sigq->get_active()) {
+                listener->panelChanged(Evlocallabsigq,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabsigq,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+void Locallabcie::chjzcieChanged()
+{
+    if (chjzcie->get_active()) {
+        thrhjzcie->set_sensitive(true);
+    } else {
+        thrhjzcie->set_sensitive(false);
+    }
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (chjzcie->get_active()) {
+                listener->panelChanged(Evlocallabchjzcie,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabchjzcie,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+void Locallabcie::modecamChanged()
+{
+    const int mode = complexity->get_active_row_number();
+    contsigqcie->hide();
+    lightsigqcie->hide();
+    const LocallabParams::LocallabSpot defSpot;
+
+    if (modecam->get_active_row_number() == 1) {
+        expjz->show();
+        jzFrame->show();
+        adapjzcie->show();
+        jz100->show();
+        pqremap->show();
+        jabcie->show();
+        PQFrame->show();
+        logjzFrame->show();
+        bevwevFrame->show();
+        sigmoidjzFrame->show();
+        sigmoidFrame->hide();
+        forcejz->hide();
+        expprecam->hide();
+        expcam16->hide();
+        expcamviewing->hide();
+        lapmaskcie->hide();
+        lapmaskcie->setValue(defSpot.lapmaskcie);
+        enacieMaskallChanged2();
+
+    } else {
+        expjz->hide();
+        lapmaskcie->show();
+        
+        jzFrame->hide();
+        adapjzcie->hide();
+        jz100->hide();
+        pqremap->hide();
+
+        if (mode == Expert) {
+            pqremapcam16->show();
+        } else {
+            pqremapcam16->hide();
+        }
+
+        jabcie->hide();
+        PQFrame->hide();
+        logjzFrame->hide();
+
+        if (modecam->get_active_row_number() == 0) {
+            bevwevFrame->show();
+            sigmoidFrame->show();
+            expprecam->show();
+
+        }
+
+        sigmoidjzFrame->hide();
+        forcejz->hide();
+        catadcie->show();
+    }
+
+    surHBoxcie->show();
+    cie1Frame->show();
+    expcam16->show();
+    expcamviewing->show();
+    sourceGraycie->show();
+    expcamscene->show();
+
+    if (modecam->get_active_row_number() == 1) {
+        guijzczhz();
+        surHBoxcie->show();
+        lapmaskcie->setValue(defSpot.lapmaskcie);
+        enacieMaskallChanged2();
+
+        if (mode == Expert) {
+            exprecovcie->show();
+            expmaskcie->show();
+            expgradcie->hide();
+            lapmaskcie->hide();
+            lapmaskcie->setValue(defSpot.lapmaskcie);
+            
+        }
+
+    } else if (mode != Simple){
+        exprecovcie->show();
+        expgradcie->show();
+        expmaskcie->show();
+    }
+
+
+    if (mode != Expert) {
+        expjz->hide();
+        jzFrame->hide();
+        adapjzcie->hide();
+        jz100->hide();
+        pqremap->show();
+        jabcie->hide();
+        PQFrame->hide();
+        logjzFrame->hide();
+        sigmoidjzFrame->hide();
+        sigmoidFrame->hide();
+        bevwevFrame->hide();
+
+        if (modecam->get_active_row_number() == 0) {
+            bevwevFrame->show();
+            sigmoidFrame->show();
+        }
+
+        forcejz->hide();
+
+        if (mode == Expert) {
+            pqremapcam16->show();
+        } else {
+            pqremapcam16->hide();
+        }
+
+        catadcie->show();
+        sourceGraycie->show();
+
+        if (modecam->get_active_row_number() == 1) {
+            pqremapcam16->hide();
+            expcamscene->hide();
+            cie1Frame->hide();
+            expcam16->hide();
+            expcamviewing->hide();
+            catadcie->hide();
+            expgradcie->hide();
+            expcam16->hide();
+            lapmaskcie->hide();
+            lapmaskcie->setValue(defSpot.lapmaskcie);
+            enacieMaskallChanged2();
+
+        } else if (mode != Simple){
+            exprecovcie->show();
+            expgradcie->show();
+            expmaskcie->show();     
+        }
+    } else {
+        expcamscene->show();
+        expcamviewing->show();
+
+        if (modecam->get_active_row_number() == 0) {
+            bevwevFrame->show();
+            sigmoidjzFrame->hide();
+            expprecam->show();
+            lapmaskcie->show();
+
+
+        }
+
+        if (modecam->get_active_row_number() == 1) {
+            targetGraycie->hide();
+            targabscie->hide();
+            surrHBoxcie->hide();
+            forcejz->hide();
+            pqremapcam16->hide();
+            PQFrame->show();
+            logjzFrame->show();
+            sigmoidjzFrame->show();
+            sigmoidFrame->hide();
+            bevwevFrame->show();
+            catadcie->hide();
+            expcamviewing->hide();
+            expgradcie->hide();
+            expcam16->hide();
+            lapmaskcie->hide();
+            lapmaskcie->setValue(defSpot.lapmaskcie);
+            enacieMaskallChanged2();
+
+            if (chjzcie->get_active()) {
+                thrhjzcie->set_sensitive(true);
+            } else {
+                thrhjzcie->set_sensitive(false);
+            }
+
+
+        }
+
+
+    }
+
+    if (modecam->get_active_row_number() == 0) {
+        targetGraycie->show();
+        targabscie->show();
+        surrHBoxcie->show();
+        expprecam->show();
+        expcamviewing->show();
+        if (mode != Simple){
+            exprecovcie->show();
+            expgradcie->show();
+            expmaskcie->show();
+        }
+
+
+
+        if (mode == Expert) {
+            pqremapcam16->show();
+        } else {
+            pqremapcam16->hide();
+        }
+    }
+
+    contsigqcie->hide();
+    lightsigqcie->hide();
+
+
+    if (isLocActivated && exp->getEnabled()) {
+
+        if (listener) {
+            listener->panelChanged(Evlocallabmodecam,
+                                   modecam->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
+        }
+    }
+}
+
+
+void Locallabcie::modecieChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+
+        const int mode = complexity->get_active_row_number();
+        exprecovcie->show();
+        expmaskcie->show();
+        expgradcie->show();
+
+        if (modecie->get_active_row_number() > 0  && mode == Expert) {
+            sensicie->hide();
+            reparcie->hide();
+            exprecovcie->show();
+            expmaskcie->show();
+            expgradcie->hide();
+
+        } else {
+            sensicie->show();
+            reparcie->show();
+
+            if (mode == Expert) {
+                exprecovcie->show();
+                expmaskcie->show();
+                expgradcie->show();
+            }
+        }
+
+        contsigqcie->hide();
+        lightsigqcie->hide();
+
+        if (mode == Simple || mode == Normal) { // Keep widget hidden in Normal and Simple mode
+
+            modecie->set_active(0);
+            sensicie->show();
+            reparcie->show();
+
+        }
+
+        if (listener) {
+            listener->panelChanged(Evlocallabmodecie,
+                                   modecie->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
+        }
+    }
+}
+
+
+
+void Locallabcie::sursourcieChanged()
+{
+    const LocallabParams::LocallabSpot defSpot;
+
+    if (sursourcie->get_active_row_number() == 4) {
+        expcam16->hide();
+        expcamviewing->hide();
+    } else {
+        expcam16->show();
+        expcamviewing->show();
+        if(modecam->get_active_row_number() == 1) {
+            expcam16->hide();
+            expcamviewing->hide();
+            lapmaskcie->hide();
+            lapmaskcie->setValue(defSpot.lapmaskcie);
+        }
+    }
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(Evlocallabsursourcie,
+                                   sursourcie->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
+        }
+    }
+}
+
+void Locallabcie::catMethodChanged()
+{
+
+    if (listener) {
+        listener->panelChanged(Evlocallabcatcie, catMethod->get_active_text());
+    }
+
+}
+
+void Locallabcie::illMethodChanged()
+{
+
+    if (listener) {
+        listener->panelChanged(Evlocallabillcie, illMethod->get_active_text());
+    }
+
+}
+
+void Locallabcie::smoothciemetChanged()
+{
+    if(smoothciemet->get_active_row_number() == 3) {
+       slopesmo->show();
+       slopesmor->hide();
+       slopesmog->hide();
+       slopesmob->hide();
+       smoothcie->show();
+       smoothcieyb->hide();
+       smoothcielum->hide();
+    } else if(smoothciemet->get_active_row_number() == 4) {
+       slopesmo->hide();
+       slopesmor->show();
+       slopesmog->show();
+       slopesmob->show();
+       smoothcie->show();
+       smoothcielum->show();
+       smoothcieyb->show();
+    } else {
+       slopesmo->hide();
+       slopesmor->hide();
+       slopesmog->hide();
+       slopesmob->hide();
+       smoothcie->hide();
+       smoothcielum->hide();
+       smoothcieyb->hide();
+    }
+
+    if (listener) {
+        listener->panelChanged(Evlocallabsmoothciemet, smoothciemet->get_active_text());
+    }
+
+}
+
+
+void Locallabcie::primMethodChanged()
+{
+
+    if (primMethod->get_active_row_number() == 0) {
+        illMethod->set_active(1);
+    } else if (primMethod->get_active_row_number() == 1) {
+        illMethod->set_active(1);
+    } else if (primMethod->get_active_row_number() == 2) {
+        illMethod->set_active(1);
+    } else if (primMethod->get_active_row_number() == 3) {
+        illMethod->set_active(3);
+    } else if (primMethod->get_active_row_number() == 4) {
+        illMethod->set_active(4);
+    } else if (primMethod->get_active_row_number() == 5) {
+        illMethod->set_active(4);
+    } else if (primMethod->get_active_row_number() == 6) {
+        illMethod->set_active(4);
+    } else if (primMethod->get_active_row_number() == 7) {
+        illMethod->set_active(1);
+    } else if (primMethod->get_active_row_number() == 8) {
+        illMethod->set_active(7);
+    } else if (primMethod->get_active_row_number() == 9) {
+        illMethod->set_active(3);
+    } else if (primMethod->get_active_row_number() == 10) {
+        illMethod->set_active(1);
+    } else if (primMethod->get_active_row_number() == 11) {
+        illMethod->set_active(4);
+    }
+
+    illMethod->set_sensitive(false);
+
+    if (primMethod->get_active_row_number() == 12) {
+        redBox->set_sensitive(true);
+        illMethod->set_sensitive(true);
+
+    } else {
+        redBox->set_sensitive(false);
+    }
+
+    if (listener) {
+        listener->panelChanged(Evlocallabprimcie, primMethod->get_active_text());
+    }
+
+}
+
+void Locallabcie::bwevMethodChanged()
+{
+    const LocallabParams::LocallabSpot defSpot;
+    const int mode = complexity->get_active_row_number();
+
+    if (bwevMethod->get_active_row_number() == 2) {//  && sigcie->get_active()) {
+        comprcie->set_sensitive(true);
+        comprcieth->set_sensitive(true);
+        comprcieauto->set_sensitive(true);
+        comprcieauto->set_active(true);
+
+        if (mode == Simple) {
+            comprcieth->set_sensitive(false);
+            comprcieauto->set_sensitive(false);
+        }
+
+    } else {
+        comprcieth->set_sensitive(false);
+        comprcieauto->set_sensitive(false);
+    }
+
+    if (bwevMethod->get_active_row_number() == 2) {
+        comprcie->setValue(defSpot.comprcie);//to test
+    }
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvlocallabbwevMethod,
+                                   bwevMethod->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
+        }
+    }
+}
+
+
+void Locallabcie::surroundcieChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(Evlocallabsurroundcie,
+                                   surroundcie->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
+        }
+    }
+}
+
+void Locallabcie::guijzczhz()
+{
+    expcamscene->hide();
+    cie1Frame->hide();
+    expcam16->hide();
+    forcejz->hide();
+    pqremapcam16->hide();
+    PQFrame->hide();
+    logjzFrame->hide();
+    bevwevFrame->hide();
+    sigmoidjzFrame->hide();
+    sigmoidFrame->hide();
+    catadcie->hide();
+    expcamviewing->hide();
+    maskusablecie->hide();
+    maskunusablecie->hide();
+    decaycie->hide();
+    expmaskcie->hide();
+    expprecam->hide();
+    exprecovcie->hide();
+    expgradcie->hide();
+    lapmaskcie->hide();
+}
+
+
+
+
+void Locallabcie::updateGUIToMode(const modeType new_type)
+{
+    const LocallabParams::LocallabSpot defSpot;
+
+    switch (new_type) {
+        case Simple:
+            catadcie->show();
+            saturlcie->show();
+            rstprotectcie->show();
+            chromlcie->hide();
+            huecie->hide();
+            lightlcie->show();
+            lightqcie->hide();
+            contlcie->show();
+            contthrescie->show();
+            contqcie->hide();
+            colorflcie->hide();
+            surrHBoxcie->show();
+            expLcie->hide();
+            surHBoxcie->show();
+            sourceabscie->show();
+            targabscie->show();
+            detailcie->show(); //hide
+            jabcie->hide();
+            modeHBoxcie->hide();
+            sensicie->show();
+            reparcie->show();
+            sigmoidsenscie->hide();
+            sigmoidnormFrame->hide();
+            pqremapcam16->hide();
+            expjz->hide();
+            jzFrame->hide();
+            adapjzcie->hide();
+            jz100->hide();
+            pqremap->show();
+            jabcie->hide();
+            targetGraycie->show();
+            targabscie->show();
+            surrHBoxcie->show();
+            forcejz->hide();
+            sourceGraycie->show();
+            expcamscene->show();
+            exprecovcie->hide();
+            expgradcie->hide();
+            maskusablecie->hide();
+            maskunusablecie->hide();
+            decaycie->hide();
+            expmaskcie->hide();
+            comprcie->show();
+            strcielog->show();
+            satcie->show();
+            logcieq->hide();
+            blackEvjz->hide();
+            whiteEvjz->hide();
+            whitescie->hide();
+            blackscie->hide();
+            logcieFrame->hide();
+            comprcieth->hide();
+            comprcieauto->hide();
+            comprBox->show();
+            slopesmo->hide();
+            slopesmor->hide();
+            slopesmog->hide();
+            slopesmob->hide();
+            smoothcie->hide();
+            smoothcielum->hide();
+            smoothcieyb->hide();
+
+            if (modecam->get_active_row_number() == 0) {
+                bevwevFrame->show();
+                sigmoidFrame->hide(); //show
+                expprecam->show();
+                primillFrame->hide();
+                expmaskcie->hide();
+                exprecovcie->hide();
+                expgradcie->hide();
+                if(smoothciemet->get_active_row_number() == 3) {
+                    slopesmo->show();
+                    slopesmor->hide();
+                    slopesmog->hide();
+                    slopesmob->hide();
+                    smoothcie->show();
+                    smoothcielum->hide();
+                    smoothcieyb->hide();
+                } else if(smoothciemet->get_active_row_number() == 4) {
+                    slopesmo->hide();
+                    slopesmor->show();
+                    slopesmog->show();
+                    slopesmob->show();
+                    smoothcie->show();
+                    smoothcielum->show();
+                    smoothcieyb->show();
+                } else {
+                    slopesmo->hide();
+                    slopesmor->hide();
+                    slopesmog->hide();
+                    slopesmob->hide();
+                    smoothcie->hide();
+                    smoothcielum->hide();
+                    smoothcieyb->hide();
+                }
+            }
+
+            if (modecam->get_active_row_number() == 1) {
+                //  cieFrame->hide();
+                guijzczhz();
+                lapmaskcie->setValue(defSpot.lapmaskcie);
+                enacieMaskallChanged2();
+                enacieMaskall->hide();
+            }
+
+
+            contsigqcie->hide();
+            lightsigqcie->hide();
+            expmaskcie->hide();
+            exprecovcie->hide();
+            expgradcie->hide();
+
+            break;
+
+        case Normal:
+            // Expert mode widgets are hidden in Normal mode
+
+            catadcie->show();
+            saturlcie->show();
+            rstprotectcie->show();
+            chromlcie->show();//hide
+            huecie->show();//hide
+            lightlcie->show();
+            lightqcie->show();//hide
+            contlcie->show();
+            contthrescie->show();
+            contqcie->show();//hide
+            colorflcie->hide();
+            surrHBoxcie->show();
+            expLcie->hide();
+            surHBoxcie->show();
+            sourceabscie->show();
+            targabscie->show();
+            detailcie->show();//hide
+            jabcie->hide();
+            modeHBoxcie->hide();
+            sensicie->show();
+            reparcie->show();
+            sigmoidblcie->show();
+            sigmoidsenscie->hide();
+            expjz->hide();
+            forcejz->hide();
+            comprcie->show();
+            strcielog->show();
+            satcie->show();
+            logcieq->hide();
+            blackEvjz->show();
+            whiteEvjz->show();
+            whitescie->show();
+            blackscie->show();
+
+            logcieFrame->hide();
+            comprcieth->show();
+            comprcieauto->show();
+            comprBox->show();
+
+            jzFrame->hide();
+            adapjzcie->hide();
+            jz100->hide();
+            pqremap->show();
+            jabcie->hide();
+            targetGraycie->show();
+            targabscie->show();
+            surrHBoxcie->show();
+            pqremapcam16->hide();
+            sourceGraycie->show();
+            expcamscene->show();
+            exprecovcie->show();
+            expgradcie->show();
+            expmaskcie->show();
+            decaycie->hide();
+            lapmaskcie->hide();
+            gammaskcie->hide();
+            slomaskcie->hide();
+            highmaskcie->hide();
+            shadmaskcie->hide();
+            struFramecie->hide();
+            blurFramecie->hide();
+            wavFramecie->hide();
+            maskcieHCurveEditorG->hide();
+            sigmoidnormFrame->hide();
+
+            if (enacieMask->get_active()) {
+                maskusablecie->show();
+                maskunusablecie->hide();
+
+            } else {
+                maskusablecie->hide();
+                maskunusablecie->show();
+            }
+
+            if (modecam->get_active_row_number() == 0) {
+                bevwevFrame->show();
+                sigmoidFrame->show();
+                expprecam->show();
+                primillFrame->hide();//show
+                enacieMaskall->hide();
+
+                if(smoothciemet->get_active_row_number() == 3) {
+                    slopesmo->show();
+                    slopesmor->hide();
+                    slopesmog->hide();
+                    slopesmob->hide();
+                    smoothcie->show();
+                    smoothcielum->hide();
+                    smoothcieyb->hide();
+                } else if(smoothciemet->get_active_row_number() == 4) {
+                    slopesmo->hide();
+                    slopesmor->show();
+                    slopesmog->show();
+                    slopesmob->show();
+                    smoothcie->show();
+                    smoothcielum->show();
+                    smoothcieyb->show();
+                } else {
+                    slopesmo->hide();
+                    slopesmor->hide();
+                    slopesmog->hide();
+                    slopesmob->hide();
+                    smoothcie->hide();
+                    smoothcielum->hide();
+                    smoothcieyb->hide();
+                }
+            }
+
+
+            if (modecam->get_active_row_number() == 1) {
+                guijzczhz();
+                lapmaskcie->setValue(defSpot.lapmaskcie);
+                enacieMaskallChanged2();
+                enacieMaskall->hide();
+
+            } else {
+                exprecovcie->show();
+                expgradcie->show();
+                expmaskcie->show();
+            }
+
+
+            if (modecie->get_active_row_number() > 0) {
+                exprecovcie->hide();
+                expmaskcie->hide();
+                expgradcie->hide();
+            }
+
+            contsigqcie->hide();
+            lightsigqcie->hide();
+
+            break;
+
+        case Expert:
+            // Show widgets hidden in Normal and Simple mode
+            catadcie->show();
+            saturlcie->show();
+            rstprotectcie->show();
+            chromlcie->show();
+            huecie->show();
+            lightlcie->show();
+            lightqcie->show();
+            contlcie->show();
+            contthrescie->show();
+            contqcie->show();
+            colorflcie->show();
+            surrHBoxcie->show();
+            expLcie->show();
+            surHBoxcie->show();
+            sourceabscie->show();
+            targabscie->show();
+            detailcie->show();
+            modeHBoxcie->show();
+            sigmoidblcie->show();
+            pqremapcam16->show();
+            comprcie->show();
+            strcielog->show();
+            logcieq->show();
+            blackEvjz->show();
+            whiteEvjz->show();
+            whitescie->show();
+            blackscie->show();
+            logcieFrame->show();
+            comprcieth->show();
+            comprcieauto->show();
+            sigmoidsenscie->show();
+            sigmoidnormFrame->show();
+
+            if (logcieq->get_active()) {
+                satcie->hide();
+                sigmoidnormFrame->hide();
+            } else {
+                satcie->show();
+                sigmoidnormFrame->show();
+            }
+
+            targetGraycie->show();
+            targabscie->show();
+            surrHBoxcie->show();
+            forcejz->hide();
+            sourceGraycie->show();
+            expcamscene->show();
+            exprecovcie->show();
+            expgradcie->show();
+            decaycie->show();
+            lapmaskcie->show();
+            gammaskcie->show();
+            slomaskcie->show();
+            highmaskcie->show();
+            shadmaskcie->show();
+            maskcieHCurveEditorG->show();
+            expmaskcie->show();
+            struFramecie->show();
+            blurFramecie->show();
+            wavFramecie->show();
+            comprBox->show();
+
+            if (enacieMask->get_active()) {
+                maskusablecie->show();
+                maskunusablecie->hide();
+
+            } else {
+                maskusablecie->hide();
+                maskunusablecie->show();
+            }
+
+            if (modecam->get_active_row_number() == 0) {
+                bevwevFrame->show();
+                expprecam->show();
+                primillFrame->show();
+                enacieMaskallChanged2();
+                enacieMaskall->show();
+
+                if(smoothciemet->get_active_row_number() == 3) {
+                    slopesmo->show();
+                    slopesmor->hide();
+                    slopesmog->hide();
+                    slopesmob->hide();
+                    smoothcie->show();
+                    smoothcielum->hide();
+                    smoothcieyb->hide();
+                } else if(smoothciemet->get_active_row_number() == 4) {
+                    slopesmo->hide();
+                    slopesmor->show();
+                    slopesmog->show();
+                    slopesmob->show();
+                    smoothcie->show();
+                    smoothcielum->show();
+                    smoothcieyb->show();
+                } else {
+                    slopesmo->hide();
+                    slopesmor->hide();
+                    slopesmog->hide();
+                    slopesmob->hide();
+                    smoothcie->hide();
+                    smoothcielum->hide();
+                    smoothcieyb->hide();
+                }
+            }
+
+            if (modecam->get_active_row_number() == 1) {
+                jabcie->show();
+                expjz->show();
+                jzFrame->show();
+                adapjzcie->show();
+                jz100->show();
+                pqremap->show();
+                PQFrame->show();
+                logjzFrame->show();
+                bevwevFrame->show();
+                sigmoidjzFrame->show();
+                sigmoidFrame->hide();
+                forcejz->hide();
+                expprecam->hide();
+                expgradcie->hide();
+                expcam16->hide();
+                exprecovcie->show();
+                expmaskcie->show();
+                lapmaskcie->hide();
+                lapmaskcie->setValue(defSpot.lapmaskcie);
+                enacieMaskallChanged2();
+                enacieMaskall->show();
+
+            }
+
+            expcamscene->show();
+            expcamviewing->show();
+
+            if (modecam->get_active_row_number() == 0) {
+                targetGraycie->show();
+                targabscie->show();
+                surrHBoxcie->show();
+                pqremapcam16->show();
+                PQFrame->hide();
+                logjzFrame->hide();
+                sigmoidjzFrame->hide();
+                bevwevFrame->hide();
+
+                bevwevFrame->show();
+                sigmoidFrame->show();
+                expprecam->show();
+                primillFrame->show();
+                enacieMaskallChanged2();
+                enacieMaskall->show();
+
+                if(smoothciemet->get_active_row_number() == 3) {
+                    slopesmo->show();
+                    slopesmor->hide();
+                    slopesmog->hide();
+                    slopesmob->hide();
+                    smoothcie->show();
+                    smoothcielum->hide();
+                    smoothcieyb->hide();
+                } else if(smoothciemet->get_active_row_number() == 4) {
+                    slopesmo->hide();
+                    slopesmor->show();
+                    slopesmog->show();
+                    slopesmob->show();
+                    smoothcie->show();
+                    smoothcielum->show();
+                    smoothcieyb->show();
+                } else {
+                    slopesmo->hide();
+                    slopesmor->hide();
+                    slopesmog->hide();
+                    slopesmob->hide();
+                    smoothcie->hide();
+                    smoothcielum->hide();
+                    smoothcieyb->hide();
+                }
+            }
+
+
+            if (modecam->get_active_row_number() == 1) {
+                surHBoxcie->show();
+                targetGraycie->hide();
+                targabscie->hide();
+                surrHBoxcie->hide();
+                pqremapcam16->hide();
+                PQFrame->show();
+                logjzFrame->show();
+                sigmoidjzFrame->show();
+                sigmoidFrame->hide();
+                bevwevFrame->show();
+                catadcie->hide();
+                expcamviewing->hide();
+                exprecovcie->show();
+                expgradcie->show();
+                expmaskcie->show();
+                maskusablecie->show();
+                maskunusablecie->show();
+                expprecam->hide();
+                expgradcie->hide();
+                expcam16->hide();
+                lapmaskcie->hide();
+                lapmaskcie->setValue(defSpot.lapmaskcie);
+                enacieMaskallChanged2();
+                enacieMaskall->show();
+
+                if (chjzcie->get_active()) {
+                    thrhjzcie->set_sensitive(true);
+                } else {
+                    thrhjzcie->set_sensitive(false);
+                }
+
+            }
+
+
+            if (modecie->get_active_row_number() > 0) {
+                exprecovcie->hide();
+                expmaskcie->hide();
+                expgradcie->hide();
+            }
+
+            contsigqcie->hide();
+            lightsigqcie->hide();
+
+    }
+}
+
+void Locallabcie::updatecieGUI()
+{
+    const LocallabParams::LocallabSpot defSpot;
+    const int mode = complexity->get_active_row_number();
+    expmaskcie->show();
+    exprecovcie->show();
+    expgradcie->show();
+
+    contsigqcie->hide();
+    lightsigqcie->hide();
+
+
+    if (modecie->get_active_row_number() > 0) {
+        sensicie->hide();
+        reparcie->hide();
+        exprecovcie->hide();
+        expgradcie->hide();
+        expmaskcie->hide();
+    } else {
+        sensicie->show();
+        reparcie->show();
+        exprecovcie->show();
+        expgradcie->show();
+        expmaskcie->show();
+    }
+
+    surHBoxcie->show();
+    cie1Frame->show();
+    expcam16->show();
+    expcamviewing->show();
+
+    if (modecam->get_active_row_number() == 0) {
+        bevwevFrame->show();
+        expprecam->show();
+
+        if (mode == Simple) {
+            expmaskcie->hide();
+            exprecovcie->hide();
+            primillFrame->hide();
+            expgradcie->hide();
+
+        } else if (mode == Normal) {
+            primillFrame->hide();
+        } else {
+            primillFrame->show();
+        }
+
+        if(smoothciemet->get_active_row_number() == 3) {
+            slopesmo->show();
+            slopesmor->hide();
+            slopesmog->hide();
+            slopesmob->hide();
+            smoothcie->show();
+            smoothcielum->hide();
+            smoothcieyb->hide();
+        } else if(smoothciemet->get_active_row_number() == 4) {
+            slopesmo->hide();
+            slopesmor->show();
+            slopesmog->show();
+            slopesmob->show();
+            smoothcie->show();
+            smoothcielum->show();
+            smoothcieyb->show();
+        } else {
+            slopesmo->hide();
+            slopesmor->hide();
+            slopesmog->hide();
+            slopesmob->hide();
+            smoothcie->hide();
+            smoothcielum->hide();
+            smoothcieyb->hide();
+        }
+    }
+
+
+    sourceGraycie->show();
+    expcamscene->show();
+
+    if (enacieMask->get_active() && mode != Simple) {
+        maskusablecie->show();
+        maskunusablecie->hide();
+
+    } else {
+        maskusablecie->hide();
+        maskunusablecie->show();
+    }
+
+
+    if (Autograycie->get_active()) {
+        sourceGraycie->set_sensitive(false);
+        sourceabscie->set_sensitive(false);
+        adapjzcie->set_sensitive(false);
+        jz100->set_sensitive(false);
+        blackEvjz->set_sensitive(false);
+        whiteEvjz->set_sensitive(false);
+        whitescie->set_sensitive(true);
+        blackscie->set_sensitive(true);
+        comprcieauto->set_active(true);
+
+    } else {
+        sourceGraycie->set_sensitive(true);
+        sourceabscie->set_sensitive(true);
+        adapjzcie->set_sensitive(true);
+        blackEvjz->set_sensitive(true);
+        whiteEvjz->set_sensitive(true);
+        whitescie->set_sensitive(false);
+        blackscie->set_sensitive(false);
+        jz100->set_sensitive(true);
+    }
+
+    if (mode == Simple || mode == Normal) { // Keep widget hidden in Normal and Simple mode
+        modecie->set_active(0);
+        sensicie->show();
+        reparcie->show();
+    }
+
+    if (sursourcie->get_active_row_number() == 4) {
+        expcam16->hide();
+        expcamviewing->hide();
+    } else {
+        expcam16->show();
+        expcamviewing->show();
+        if(modecam->get_active_row_number() == 1) {
+            expcam16->hide();
+            expcamviewing->hide();
+            lapmaskcie->hide();
+            lapmaskcie->setValue(defSpot.lapmaskcie);
+            enacieMaskallChanged2();
+        }
+    }
+
+
+    if (modecie->get_active_row_number() > 0) {
+        exprecovcie->hide();
+        expgradcie->hide();
+        expmaskcie->hide();
+    }
+
+    if (modecam->get_active_row_number() == 1  && (mode == Expert)) {
+        surHBoxcie->show();
+        cie1Frame->hide();
+        expcam16->hide();
+        targetGraycie->hide();
+        targabscie->hide();
+        surrHBoxcie->hide();
+        pqremapcam16->hide();
+        PQFrame->show();
+        logjzFrame->show();
+        sigmoidjzFrame->show();
+        bevwevFrame->show();
+        sigmoidFrame->hide();
+        catadcie->hide();
+        expprecam->hide();
+        expcamviewing->hide();
+        expgradcie->hide();
+        expcam16->hide();
+        exprecovcie->show();
+        expmaskcie->show();
+        lapmaskcie->hide();
+        lapmaskcie->setValue(defSpot.lapmaskcie);
+        enacieMaskallChanged2();
+        enacieMaskall->show();
+
+    }
+
+
+}
+
+
+void Locallabcie::convertParamToSimple()
+{
+    const LocallabParams::LocallabSpot defSpot;
+
+    // Disable all listeners
+    disableListener();
+    sigmoidblcie->setValue(defSpot.sigmoidblcie);
+    normcie->set_active(defSpot.normcie);
+    logcieq->set_active(defSpot.logcieq);
+    logcie->set_active(defSpot.logcie);
+    blackEvjz->setValue(defSpot.blackEvjz);
+    whiteEvjz->setValue(defSpot.whiteEvjz);
+    whitescie->setValue(defSpot.whitescie);
+    blackscie->setValue(defSpot.blackscie);
+    bwcie->set_active(defSpot.bwcie);
+
+    sigq->set_active(defSpot.sigq);
+    //sigq->set_active(defSpot.sigq);
+    pqremapcam16->setValue(defSpot.pqremapcam16);
+    showmaskcieMethod->set_active(0);
+    enacieMask->set_active(defSpot.enacieMask);
+    enacieMaskall->set_active(defSpot.enacieMaskall);
+    strgradcie->setValue(defSpot.strgradcie);
+    anggradcie->setValue(defSpot.anggradcie);
+    feathercie->setValue(defSpot.feathercie);
+    refi->setValue(defSpot.refi);
+    modecie->set_active(0);
+    primMethod->set_active(0);//Prophoto
+    illMethod->set_active(1);//D50
+    catMethod->set_active(0);
+
+    // Enable all listeners
+    enableListener();
+}
+
+void Locallabcie::convertParamToNormal()
+{
+    const LocallabParams::LocallabSpot defSpot;
+
+    // Disable all listeners
+    disableListener();
+    contqcie->setValue(defSpot.contqcie);
+    sigmoidblcie->setValue(defSpot.sigmoidblcie);
+    normcie->set_active(defSpot.normcie);
+    logcieq->set_active(defSpot.logcieq);
+    logcie->set_active(defSpot.logcie);
+    bwcie->set_active(defSpot.bwcie);
+    //contsigqcie->setValue(defSpot.contsigqcie);
+    colorflcie->setValue(defSpot.colorflcie);
+    lightqcie->setValue(defSpot.lightqcie);
+    chromlcie->setValue(defSpot.chromlcie);
+    huecie->setValue(defSpot.huecie);
+    // detailcie->setValue(defSpot.detailcie);
+    jabcie->set_active(defSpot.jabcie);
+    LHshapejz->setCurve(defSpot.LHcurvejz);
+    CHshapejz->setCurve(defSpot.CHcurvejz);
+    HHshapejz->setCurve(defSpot.HHcurvejz);
+    shapejz->setCurve(defSpot.jzcurve);
+    shapecz->setCurve(defSpot.czcurve);
+    shapeczjz->setCurve(defSpot.czjzcurve);
+    shapecie->setCurve(defSpot.ciecurve);
+    shapecie2->setCurve(defSpot.ciecurve2);
+    lightjzcie->setValue(defSpot.lightjzcie);
+    contjzcie->setValue(defSpot.contjzcie);
+    detailciejz->setValue(defSpot.detailciejz);
+    sigmoidldajzcie->setValue(defSpot.sigmoidldajzcie);
+    hljzcie->setValue(defSpot.hljzcie);
+    shjzcie->setValue(defSpot.shjzcie);
+    chromjzcie->setValue(defSpot.chromjzcie);
+    saturjzcie->setValue(defSpot.saturjzcie);
+    huejzcie->setValue(defSpot.huejzcie);
+    softjzcie->setValue(defSpot.softjzcie);
+    strsoftjzcie->setValue(defSpot.strsoftjzcie);
+    thrhjzcie->setValue(defSpot.thrhjzcie);
+    modecie->set_active(0);
+    //primMethod->set_active(0);
+    catMethod->set_active(0);
+    primMethod->set_active(0);//Prophoto
+    illMethod->set_active(1);//D50
+    refi->setValue(defSpot.refi);
+
+    pqremapcam16->setValue(defSpot.pqremapcam16);
+    logcieChanged();
+    satcieChanged();
+    logcieqChanged();
+
+    if (modecam->get_active_row_number() == 1) {
+        showmaskcieMethod->set_active(0);
+        enacieMask->set_active(defSpot.enacieMask);
+        logjz->set_active(defSpot.logjz);
+        sigjz->set_active(defSpot.sigjz);
+        lapmaskcie->setValue(defSpot.lapmaskcie);
+        enacieMaskallChanged2();
+
+    }
+
+    lapmaskcie->setValue(defSpot.lapmaskcie);
+    gammaskcie->setValue(defSpot.gammaskcie);
+    slomaskcie->setValue(defSpot.slomaskcie);
+    highmaskcie->setValue(defSpot.highmaskcie);
+    shadmaskcie->setValue(defSpot.shadmaskcie);
+    HHhmaskcieshape->setCurve(defSpot.HHhmaskciecurve);
+    strumaskcie->setValue(defSpot.strumaskcie);
+    toolcie->set_active(defSpot.toolcie);
+    fftcieMask->set_active(defSpot.fftcieMask);
+    contcie->setValue(defSpot.contcie);
+    blurcie->setValue(defSpot.blurcie);
+    sigmoidsenscie->setValue(defSpot.sigmoidsenscie);
+    LLmaskcieshapewav->setCurve(defSpot.LLmaskciecurvewav);
+    csThresholdcie->setValue<int>(defSpot.csthresholdcie);
+
+    // Enable all listeners
+    enableListener();
+
+}
+
+void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
+{
+    const int index = defParams->locallab.selspot;
+
+    if (index < (int)defParams->locallab.spots.size()) {
+        const LocallabParams::LocallabSpot& defSpot = defParams->locallab.spots.at(index);
+
+        reparcie->setDefault(defSpot.reparcie);
+        sensicie->setDefault(defSpot.sensicie);
+        sourceGraycie->setDefault(defSpot.sourceGraycie);
+        sourceabscie->setDefault(defSpot.sourceabscie);
+        saturlcie->setDefault(defSpot.saturlcie);
+        rstprotectcie->setDefault(defSpot.rstprotectcie);
+        // chromlcie->setDefault(defSpot.chromlcie);
+        // huecie->setDefault(defSpot.huecie);
+        chromjzcie->setDefault(defSpot.chromjzcie);
+        saturjzcie->setDefault(defSpot.saturjzcie);
+        huejzcie->setDefault(defSpot.huejzcie);
+        softjzcie->setDefault(defSpot.softjzcie);
+        strsoftjzcie->setDefault(defSpot.strsoftjzcie);
+        thrhjzcie->setDefault(defSpot.thrhjzcie);
+        lightlcie->setDefault(defSpot.lightlcie);
+        lightjzcie->setDefault(defSpot.lightjzcie);
+        //lightqcie->setDefault(defSpot.lightqcie);
+        lightsigqcie->setDefault(defSpot.lightsigqcie);
+        contlcie->setDefault(defSpot.contlcie);
+        contjzcie->setDefault(defSpot.contjzcie);
+        detailciejz->setDefault(defSpot.detailciejz);
+        adapjzcie->setDefault(defSpot.adapjzcie);
+        jz100->setDefault(defSpot.jz100);
+        pqremap->setDefault(defSpot.pqremap);
+        pqremapcam16->setDefault(defSpot.pqremapcam16);
+        hljzcie->setDefault(defSpot.hljzcie);
+        hlthjzcie->setDefault(defSpot.hlthjzcie);
+        shjzcie->setDefault(defSpot.shjzcie);
+        shthjzcie->setDefault(defSpot.shthjzcie);
+        radjzcie->setDefault(defSpot.radjzcie);
+        sigmalcjz->setDefault(defSpot.sigmalcjz);
+        csThresholdjz->setDefault<int>(defSpot.csthresholdjz);
+        clarilresjz->setDefault(defSpot.clarilresjz);
+        claricresjz->setDefault(defSpot.claricresjz);
+        clarisoftjz->setDefault(defSpot.clarisoftjz);
+        contthrescie->setDefault(defSpot.contthrescie);
+        blackEvjz->setDefault(defSpot.blackEvjz);
+        whiteEvjz->setDefault(defSpot.whiteEvjz);
+        targetjz->setDefault(defSpot.targetjz);
+        sigmoidldacie->setDefault(defSpot.sigmoidldacie);
+        sigmoidthcie->setDefault(defSpot.sigmoidthcie);
+        sigmoidsenscie->setDefault(defSpot.sigmoidsenscie);
+        sigmoidblcie->setDefault(defSpot.sigmoidblcie);
+        comprcie->setDefault(defSpot.comprcie);
+        strcielog->setDefault(defSpot.strcielog);
+        comprcieth->setDefault(defSpot.comprcieth);
+        gamjcie->setDefault(defSpot.gamjcie);
+        whitescie->setDefault(defSpot.whitescie);
+        blackscie->setDefault(defSpot.blackscie);
+        slopjcie->setDefault(defSpot.slopjcie);
+        slopesmo->setDefault(defSpot.slopesmo);
+        slopesmor->setDefault(defSpot.slopesmo);
+        slopesmog->setDefault(defSpot.slopesmog);
+        slopesmob->setDefault(defSpot.slopesmob);
+        sigmoidldajzcie->setDefault(defSpot.sigmoidldajzcie);
+        sigmoidthjzcie->setDefault(defSpot.sigmoidthjzcie);
+        sigmoidbljzcie->setDefault(defSpot.sigmoidbljzcie);
+        // contqcie->setDefault(defSpot.contqcie);
+        contsigqcie->setDefault(defSpot.contsigqcie);
+        colorflcie->setDefault(defSpot.colorflcie);
+        targabscie->setDefault(defSpot.targabscie);
+        targetGraycie->setDefault(defSpot.targetGraycie);
+        catadcie->setDefault(defSpot.catadcie);
+        // detailcie->setDefault(defSpot.detailcie);
+        strgradcie->setDefault((double)defSpot.strgradcie);
+        anggradcie->setDefault((double)defSpot.anggradcie);
+        feathercie->setDefault((double)defSpot.feathercie);
+        blendmaskcie->setDefault((double)defSpot.blendmaskcie);
+        radmaskcie->setDefault(defSpot.radmaskcie);
+        chromaskcie->setDefault(defSpot.chromaskcie);
+        lapmaskcie->setDefault(defSpot.lapmaskcie);
+        gammaskcie->setDefault(defSpot.gammaskcie);
+        slomaskcie->setDefault(defSpot.slomaskcie);
+        highmaskcie->setDefault(defSpot.highmaskcie);
+        shadmaskcie->setDefault(defSpot.shadmaskcie);
+        recothrescie->setDefault((double)defSpot.recothrescie);
+        lowthrescie->setDefault((double)defSpot.lowthrescie);
+        higthrescie->setDefault((double)defSpot.higthrescie);
+        decaycie->setDefault((double)defSpot.decaycie);
+        strumaskcie->setDefault(defSpot.strumaskcie);
+        contcie->setDefault(defSpot.contcie);
+        blurcie->setDefault(defSpot.blurcie);
+        csThresholdcie->setDefault<int>(defSpot.csthresholdcie);
+        redxl->setDefault(defSpot.redxl);
+        redyl->setDefault(defSpot.redyl);
+        grexl->setDefault(defSpot.grexl);
+        greyl->setDefault(defSpot.greyl);
+        bluxl->setDefault(defSpot.bluxl);
+        bluyl->setDefault(defSpot.bluyl);
+        shiftxl->setDefault(defSpot.shiftxl);
+        shiftyl->setDefault(defSpot.shiftyl);
+        refi->setDefault(defSpot.refi);
+        labgridcie->setDefault(defSpot.labgridcieALow,
+                               defSpot.labgridcieBLow,
+                               defSpot.labgridcieAHigh,
+                               defSpot.labgridcieBHigh,
+                               defSpot.labgridcieGx,
+                               defSpot.labgridcieGy,
+                               defSpot.labgridcieWx,
+                               defSpot.labgridcieWy,
+                               defSpot.labgridcieMx,
+                               defSpot.labgridcieMy);
+
+    }
+}
+
+
+
+void Locallabcie::curveChanged(CurveEditor* ce)
+{
+    if (isLocActivated && exp->getEnabled()) {
+        const auto spName = M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")";
+
+        if (ce == shapejz) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshapejz, spName);
+            }
+        }
+
+        if (ce == shapecz) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshapecz, spName);
+            }
+        }
+
+        if (ce == shapeczjz) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshapeczjz, spName);
+            }
+        }
+
+        if (ce == HHshapejz) {
+            if (listener) {
+                listener->panelChanged(EvlocallabHHshapejz, spName);
+            }
+        }
+
+        if (ce == CHshapejz) {
+            if (listener) {
+                listener->panelChanged(EvlocallabCHshapejz, spName);
+            }
+        }
+
+        if (ce == LHshapejz) {
+            if (listener) {
+                listener->panelChanged(EvlocallabLHshapejz, spName);
+            }
+        }
+
+        if (ce == shapecie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshapecie, spName);
+            }
+        }
+
+        if (ce == shapecie2) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshapecie2, spName);
+            }
+        }
+
+        if (ce == CCmaskcieshape) {
+            if (listener) {
+                listener->panelChanged(EvlocallabCCmaskcieshape,
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (ce == LLmaskcieshape) {
+            if (listener) {
+                listener->panelChanged(EvlocallabLLmaskcieshape,
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (ce == HHmaskcieshape) {
+            if (listener) {
+                listener->panelChanged(EvlocallabHHmaskcieshape,
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (ce == HHhmaskcieshape) {
+            if (listener) {
+                listener->panelChanged(EvlocallabHHhmaskcieshape,
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (ce == Lmaskcieshape) {
+            if (listener) {
+                listener->panelChanged(EvlocallabLmaskcieshape,
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (ce == wavshapejz) {
+            if (listener) {
+                listener->panelChanged(EvlocallabwavCurvejz,
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (ce == LLmaskcieshapewav) {
+            if (listener) {
+                listener->panelChanged(EvlocallabLLmaskcieshapewav,
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+    }
+}
+
+
+void Locallabcie::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR)
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvlocallabcsThresholdjz,
+                                   csThresholdjz->getHistoryString() + " (" + escapeHtmlChars(getSpotName()) + ")");
+        }
+    }
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvlocallabcsThresholdcie,
+                                   csThresholdcie->getHistoryString() + " (" + escapeHtmlChars(getSpotName()) + ")");
+        }
+    }
+
+}
+
+
+void Locallabcie::adjusterChanged(Adjuster* a, double newval)
+{
+    const LocallabParams::LocallabSpot defSpot;
+
+    if (isLocActivated && exp->getEnabled()) {
+        const auto spName = " (" + escapeHtmlChars(getSpotName()) + ")";
+
+        if (a == reparcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabreparcie,
+                                       reparcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == sensicie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsensicie,
+                                       sensicie->getTextValue() + spName);
+            }
+        }
+
+        if (a == sourceGraycie) {
+            if (listener) {
+                listener->panelChanged(EvlocallabsourceGraycie,
+                                       sourceGraycie->getTextValue() + spName);
+            }
+        }
+
+        if (a == sourceabscie) {
+            float sour = std::min(sourceabscie->getValue(), 10000.) / 10000.f;
+            float pal = std::max(10. * (double) sqrt(sour), 1.5);
+            adapjzcie->setValue(pal);//max to 10 if La > 10000 and mini to 1.5
+            jz100->setValue(defSpot.jz100);
+
+            if (listener) {
+                listener->panelChanged(Evlocallabsourceabscie,
+                                       sourceabscie->getTextValue() + spName);
+            }
+        }
+
+        if (a == saturlcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsaturlcie,
+                                       saturlcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == rstprotectcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabrstprotectcie,
+                                       rstprotectcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == chromlcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabchromlcie,
+                                       chromlcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == chromjzcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabchromjzcie,
+                                       chromjzcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == saturjzcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsaturjzcie,
+                                       saturjzcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == huecie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabhuecie,
+                                       huecie->getTextValue() + spName);
+            }
+        }
+
+        if (a == huejzcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabhuejzcie,
+                                       huejzcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == softjzcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsoftjzcie,
+                                       softjzcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == strsoftjzcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabstrsoftjzcie,
+                                       strsoftjzcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == thrhjzcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabthrhjzcie,
+                                       thrhjzcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == lightlcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallablightlcie,
+                                       lightlcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == lightjzcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallablightjzcie,
+                                       lightjzcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == lightqcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallablightqcie,
+                                       lightqcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == lightsigqcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallablightsigqcie,
+                                       lightsigqcie->getTextValue() + spName);
+            }
+        }
+
+
+        if (a == contlcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabcontlcie,
+                                       contlcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == contjzcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabcontjzcie,
+                                       contjzcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == detailciejz) {
+            if (listener) {
+                listener->panelChanged(Evlocallabdetailciejz,
+                                        detailciejz->getTextValue() + spName);
+            }
+        }
+
+        if (a == adapjzcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabadapjzcie,
+                                       adapjzcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == jz100) {
+            if (listener) {
+                listener->panelChanged(Evlocallabjz100,
+                                       jz100->getTextValue() + spName);
+            }
+        }
+
+        if (a == pqremap) {
+            if (listener) {
+                listener->panelChanged(Evlocallabpqremap,
+                                       pqremap->getTextValue() + spName);
+            }
+        }
+
+        if (a == pqremapcam16) {
+            if (listener) {
+                listener->panelChanged(Evlocallabpqremapcam16,
+                                       pqremapcam16->getTextValue() + spName);
+            }
+        }
+
+        if (a == hljzcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabhljzcie,
+                                       hljzcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == hlthjzcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabhlthjzcie,
+                                       hlthjzcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == shjzcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshjzcie,
+                                       shjzcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == shthjzcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshthjzcie,
+                                       shthjzcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == radjzcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabradjzcie,
+                                       radjzcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == sigmalcjz) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsigmalcjz,
+                                       sigmalcjz->getTextValue() + spName);
+            }
+        }
+
+        if (a == clarilresjz) {
+            if (listener) {
+                listener->panelChanged(Evlocallabclarilresjz,
+                                       clarilresjz->getTextValue() + spName);
+            }
+        }
+
+        if (a == claricresjz) {
+            if (listener) {
+                listener->panelChanged(Evlocallabclaricresjz,
+                                       claricresjz->getTextValue() + spName);
+            }
+        }
+
+        if (a == clarisoftjz) {
+            if (listener) {
+                listener->panelChanged(Evlocallabclarisoftjz,
+                                       clarisoftjz->getTextValue() + spName);
+            }
+        }
+
+        if (a == contthrescie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabcontthrescie,
+                                       contthrescie->getTextValue() + spName);
+            }
+        }
+
+        if (a == blackEvjz) {
+            if (listener) {
+                listener->panelChanged(EvlocallabblackEvjz,
+                                       blackEvjz->getTextValue() + spName);
+            }
+        }
+
+        if (a == whiteEvjz) {
+            if (listener) {
+                listener->panelChanged(EvlocallabwhiteEvjz,
+                                       whiteEvjz->getTextValue() + spName);
+            }
+        }
+
+        if (a == targetjz) {
+            if (listener) {
+                listener->panelChanged(Evlocallabtargetjz,
+                                       targetjz->getTextValue() + spName);
+            }
+        }
+
+        if (a == sigmoidldacie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsigmoidldacie,
+                                       sigmoidldacie->getTextValue() + spName);
+            }
+        }
+
+        if (a == sigmoidldajzcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsigmoidldajzcie,
+                                       sigmoidldajzcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == sigmoidthcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsigmoidthcie,
+                                       sigmoidthcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == sigmoidsenscie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsigmoidsenscie,
+                                       sigmoidsenscie->getTextValue() + spName);
+            }
+        }
+
+        if (a == sigmoidthjzcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsigmoidthjzcie,
+                                       sigmoidthjzcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == sigmoidblcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsigmoidblcie,
+                                       sigmoidblcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == comprcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabcomprcie,
+                                       comprcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == strcielog) {
+            if (listener) {
+                listener->panelChanged(Evlocallabstrcielog,
+                                       strcielog->getTextValue() + spName);
+            }
+        }
+
+        if (a == comprcieth) {
+            nextcomprciecount = 0;
+
+            if (listener) {
+                listener->panelChanged(Evlocallabcomprcieth,
+                                       comprcieth->getTextValue() + spName);
+            }
+        }
+
+        if (a == gamjcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabgamjcie,
+                                       gamjcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == slopjcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabslopjcie,
+                                       slopjcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == slopesmo) {
+            if (listener) {
+                listener->panelChanged(Evlocallabslopesmo,
+                                       slopesmo->getTextValue() + spName);
+            }
+        }
+
+        if (a == slopesmor) {
+            if (listener) {
+                listener->panelChanged(Evlocallabslopesmor,
+                                       slopesmor->getTextValue() + spName);
+            }
+        }
+
+
+        if (a == slopesmog) {
+            if (listener) {
+                listener->panelChanged(Evlocallabslopesmog,
+                                       slopesmog->getTextValue() + spName);
+            }
+        }
+
+        if (a == slopesmob) {
+            if (listener) {
+                listener->panelChanged(Evlocallabslopesmob,
+                                       slopesmob->getTextValue() + spName);
+            }
+        }
+
+        if (a == midtcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabmidtcie,
+                                       midtcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == redxl) {
+            if (listener) {
+                listener->panelChanged(Evlocallabredxl,
+                                       redxl->getTextValue() + spName);
+            }
+        }
+
+        if (a == redyl) {
+            if (listener) {
+                listener->panelChanged(Evlocallabredyl,
+                                       redyl->getTextValue() + spName);
+            }
+        }
+
+
+        if (a == grexl) {
+            if (listener) {
+                listener->panelChanged(Evlocallabgrexl,
+                                       grexl->getTextValue() + spName);
+            }
+        }
+
+        if (a == greyl) {
+            if (listener) {
+                listener->panelChanged(Evlocallabgreyl,
+                                       greyl->getTextValue() + spName);
+            }
+        }
+
+        if (a == bluxl) {
+            if (listener) {
+                listener->panelChanged(Evlocallabbluxl,
+                                       bluxl->getTextValue() + spName);
+            }
+        }
+
+        if (a == bluyl) {
+            if (listener) {
+                listener->panelChanged(Evlocallabbluyl,
+                                       bluyl->getTextValue() + spName);
+            }
+        }
+
+        if (a == refi) {
+            if (listener) {
+                listener->panelChanged(Evlocallabrefi,
+                                       refi->getTextValue() + spName);
+            }
+        }
+
+        if (a == shiftxl) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshiftxl,
+                                       shiftxl->getTextValue() + spName);
+            }
+        }
+
+        if (a == shiftyl) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshiftyl,
+                                       shiftyl->getTextValue() + spName);
+            }
+        }
+
+        if (a == whitescie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabwhitescie,
+                                       whitescie->getTextValue() + spName);
+            }
+        }
+
+        if (a == blackscie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabblackscie,
+                                       blackscie->getTextValue() + spName);
+            }
+        }
+
+        if (a == sigmoidbljzcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsigmoidbljzcie,
+                                       sigmoidbljzcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == contqcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabcontqcie,
+                                       contqcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == contsigqcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabcontsigqcie,
+                                       contsigqcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == colorflcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabcolorflcie,
+                                       colorflcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == targabscie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabtargabscie,
+                                       targabscie->getTextValue() + spName);
+            }
+        }
+
+        if (a == targetGraycie) {
+            if (listener) {
+                listener->panelChanged(EvlocallabtargetGraycie,
+                                       targetGraycie->getTextValue() + spName);
+            }
+        }
+
+        if (a == catadcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabcatadcie,
+                                       catadcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == detailcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabdetailcie,
+                                       detailcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == strgradcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabstrgradcie,
+                                       strgradcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == anggradcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabanggradcie,
+                                       anggradcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == feathercie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabfeathercie,
+                                       feathercie->getTextValue() + spName);
+            }
+        }
+
+        if (a == blendmaskcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabblendmaskcie,
+                                       blendmaskcie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == radmaskcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabradmaskcie,
+                                       radmaskcie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == chromaskcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabchromaskcie,
+                                       chromaskcie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == lapmaskcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallablapmaskcie,
+                                       lapmaskcie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == gammaskcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabgammaskcie,
+                                       gammaskcie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == slomaskcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabslomaskcie,
+                                       slomaskcie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == highmaskcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabhighmaskcie,
+                                       highmaskcie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == shadmaskcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshadmaskcie,
+                                       shadmaskcie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == recothrescie) {
+
+            if (listener) {
+                listener->panelChanged(Evlocallabrecothrescie,
+                                       recothrescie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == lowthrescie) {
+            if (listener) {
+                listener->panelChanged(Evlocallablowthrescie,
+                                       lowthrescie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == higthrescie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabhigthrescie,
+                                       higthrescie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == decaycie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabdecaycie,
+                                       decaycie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == strumaskcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabstrumaskcie,
+                                       strumaskcie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == contcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabcontcie,
+                                       contcie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == blurcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabblurcie,
+                                       blurcie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+    }
+}
+
+void Locallabcie::enabledChanged()
+{
+    if (isLocActivated) {
+        if (listener) {
+            if (exp->getEnabled()) {
+                listener->panelChanged(EvLocenacie,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(EvLocenacie,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
 }

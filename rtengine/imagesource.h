@@ -91,7 +91,7 @@ public:
 
     ~ImageSource            () override {}
     virtual int         load        (const Glib::ustring &fname) = 0;
-    virtual void        preprocess  (const procparams::RAWParams &raw, const procparams::LensProfParams &lensProf, const procparams::CoarseTransformParams& coarse, bool prepareDenoise = true) {};
+    virtual void        preprocess  (const procparams::RAWParams &raw, const procparams::LensProfParams &lensProf, const procparams::CoarseTransformParams& coarse, float &reddeha, float &greendeha, float &bluedeha, bool prepareDenoise = true) {};
     virtual void        demosaic    (const procparams::RAWParams &raw, bool autoContrast, double &contrastThreshold, bool cache = false) {};
     virtual void        retinex       (const procparams::ColorManagementParams& cmp, const procparams::RetinexParams &deh, const procparams::ToneCurveParams& Tc, LUTf & cdcurve, LUTf & mapcurve, const RetinextransmissionCurve & dehatransmissionCurve, const RetinexgaintransmissionCurve & dehagaintransmissionCurve, multi_array2D<float, 4> &conversionBuffer, bool dehacontlutili, bool mapcontlutili, bool useHsl, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax, LUTu &histLRETI) {};
     virtual void        retinexPrepareCurves       (const procparams::RetinexParams &retinexParams, LUTf &cdcurve, LUTf &mapcurve, RetinextransmissionCurve &retinextransmissionCurve, RetinexgaintransmissionCurve &retinexgaintransmissionCurve, bool &retinexcontlutili, bool &mapcontlutili, bool &useHsl, LUTu & lhist16RETI, LUTu & histLRETI) {};
@@ -117,11 +117,38 @@ public:
 
     virtual void        convertColorSpace    (Imagefloat* image, const procparams::ColorManagementParams &cmp, const ColorTemp &wb) = 0; // DIRTY HACK: this method is derived in rawimagesource and strimagesource, but (...,RAWParams raw) will be used ONLY for raw images
     virtual void        getAutoWBMultipliers (double &rm, double &gm, double &bm) = 0;
-    virtual void        getAutoWBMultipliersitc(double &tempref, double &greenref, double &tempitc, double & greenitc, float &studgood, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double &rm, double &gm, double &bm, const procparams::WBParams & wbpar, const procparams::ColorManagementParams &cmp, const procparams::RAWParams &raw) = 0;
+    virtual void        getAutoWBMultipliersitc(bool extra, double &tempref, double &greenref, double &tempitc, double & greenitc, float &temp0, float &delta, int &bia, int &dread, int &kcam, int &nocam, float &studgood, float &minchrom, int &kmin, float &minhist, float &maxhist, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double &rm, double &gm, double &bm, const procparams::WBParams & wbpar, const procparams::ColorManagementParams &cmp, const procparams::RAWParams &raw, const procparams::ToneCurveParams &hrp) = 0;
+    virtual void getAutoWBMultipliersItcGreen(
+        procparams::ProcParams &params,
+        bool forcewbgrey,
+        int kcam,
+        double greenitc,
+        bool extra,
+        float &temp0,
+        float &delta,
+        int &bia,
+        int &dread,
+        int nocam,
+        float &studgood,
+        float &minchrom,
+        int &kmin,
+        float &minhist,
+        float &maxhist,
+        int fh,
+        int fw,
+        ColorTemp &currWB,
+        int tempnotisraw,
+        double greennotisraw,
+        bool skipRecalculate,
+        ColorTemp &autoWB,
+        double &rm,
+        double &gm,
+        double &bm
+        );
     virtual ColorTemp   getWB       () const = 0;
-    virtual ColorTemp   getSpotWB   (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran, double equal) = 0;
-    virtual void        WBauto(double &tempref, double &greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, double &tempitc, double &greenitc, float &studgood, bool &twotimes, const procparams::WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const procparams::ColorManagementParams &cmp, const procparams::RAWParams &raw) = 0;
-    virtual void        getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w) = 0;
+    virtual ColorTemp   getSpotWB   (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran, double equal, StandardObserver observer) = 0;
+    virtual void        WBauto(bool extra, double &tempref, double &greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, double &tempitc, double &greenitc, float &temp0, float &delta,  int &bia, int &dread, int &kcam, int &nocam, float &studgood, float &minchrom, int &kmin, float &minhist, float &maxhist, bool &twotimes, const procparams::WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const procparams::ColorManagementParams &cmp, const procparams::RAWParams &raw, const procparams::ToneCurveParams &hrp) = 0;
+    virtual void        getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, const procparams::WBParams & wbpar) = 0;
 
     virtual double      getDefGain  () const
     {
@@ -137,6 +164,7 @@ public:
 
     virtual ImageMatrices* getImageMatrices () = 0;
     virtual bool           isRAW () const = 0;
+    virtual bool           isGainMapSupported () const = 0;
     virtual DCPProfile*    getDCP (const procparams::ColorManagementParams &cmp, DCPProfileApplyState &as)
     {
         return nullptr;
@@ -166,11 +194,11 @@ public:
     }
 
     // for RAW files, compute a tone curve using histogram matching on the embedded thumbnail
-    virtual void getAutoMatchedToneCurve(const procparams::ColorManagementParams &cp, std::vector<double> &outCurve)
+    virtual void getAutoMatchedToneCurve(const procparams::ColorManagementParams &cp, const procparams::RAWParams &rawParams, StandardObserver observer, std::vector<double> &outCurve)
     {
         outCurve = { 0.0 };
     }
-    
+
     double getDirPyrDenoiseExpComp () const
     {
         return dirpyrdenoiseExpComp;
@@ -194,6 +222,9 @@ public:
     }
     virtual void getRawValues(int x, int y, int rotate, int &R, int &G, int &B) = 0;
     virtual void captureSharpening(const procparams::CaptureSharpeningParams &sharpeningParams, bool showMask, double &conrastThreshold, double &radius) = 0;
+    virtual void wbMul2Camera(double &rm, double &gm, double &bm) = 0;
+    virtual void wbCamera2Mul(double &rm, double &gm, double &bm) = 0;
+
 };
 
 }

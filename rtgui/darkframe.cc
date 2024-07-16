@@ -30,7 +30,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-DarkFrame::DarkFrame () : FoldableToolPanel(this, "darkframe", M("TP_DARKFRAME_LABEL")), dfChanged(false), lastDFauto(false), dfp(nullptr), israw(true)
+const Glib::ustring DarkFrame::TOOL_NAME = "darkframe";
+
+DarkFrame::DarkFrame () : FoldableToolPanel(this, TOOL_NAME, M("TP_DARKFRAME_LABEL")), dfChanged(false), lastDFauto(false), dfp(nullptr), israw(true)
 {
     hbdf = Gtk::manage(new Gtk::Box());
     hbdf->set_spacing(4);
@@ -38,7 +40,7 @@ DarkFrame::DarkFrame () : FoldableToolPanel(this, "darkframe", M("TP_DARKFRAME_L
     bindCurrentFolder (*darkFrameFile, options.lastDarkframeDir);
     dfLabel = Gtk::manage(new Gtk::Label(M("GENERAL_FILE")));
     btnReset = Gtk::manage(new Gtk::Button());
-    btnReset->set_image (*Gtk::manage(new RTImage ("cancel-small.png")));
+    btnReset->set_image (*Gtk::manage(new RTImage ("cancel-small", Gtk::ICON_SIZE_BUTTON)));
     hbdf->pack_start(*dfLabel, Gtk::PACK_SHRINK, 0);
     hbdf->pack_start(*darkFrameFile);
     hbdf->pack_start(*btnReset, Gtk::PACK_SHRINK, 0);
@@ -97,7 +99,7 @@ void DarkFrame::read(const rtengine::procparams::ProcParams* pp, const ParamsEdi
 
     if( pp->raw.df_autoselect  && dfp && !multiImage) {
         // retrieve the auto-selected df filename
-        rtengine::RawImage *img = dfp->getDF();
+        const rtengine::RawImage *img = dfp->getDF();
 
         if( img ) {
             dfInfo->set_text( Glib::ustring::compose("%1: %2ISO %3s", Glib::path_get_basename(img->get_filename()), img->get_ISOspeed(), img->get_shutter()) );
@@ -179,7 +181,7 @@ void DarkFrame::dfAutoChanged()
 
     if(dfAuto->get_active() && dfp && !batchMode) {
         // retrieve the auto-selected df filename
-        rtengine::RawImage *img = dfp->getDF();
+        const rtengine::RawImage *img = dfp->getDF();
 
         if( img ) {
             dfInfo->set_text( Glib::ustring::compose("%1: %2ISO %3s", Glib::path_get_basename(img->get_filename()), img->get_ISOspeed(), img->get_shutter()) );

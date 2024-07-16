@@ -26,7 +26,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-BayerRAWExposure::BayerRAWExposure () : FoldableToolPanel(this, "bayerrawexposure", M("TP_EXPOS_BLACKPOINT_LABEL"), options.prevdemo != PD_Sidecar)
+const Glib::ustring BayerRAWExposure::TOOL_NAME = "bayerrawexposure";
+
+BayerRAWExposure::BayerRAWExposure () : FoldableToolPanel(this, TOOL_NAME, M("TP_EXPOS_BLACKPOINT_LABEL"), options.prevdemo != PD_Sidecar)
 {
     PexBlack1 = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACK_1"), -2048, 2048, 1.0, 0)); //black level
     PexBlack1->setAdjusterListener (this);
@@ -116,6 +118,30 @@ void BayerRAWExposure::write( rtengine::procparams::ProcParams* pp, ParamsEdited
     }
 
 }
+
+BayerRAWExposure::~BayerRAWExposure()
+{
+    idle_register.destroy();
+
+}
+
+
+void BayerRAWExposure::autoBlackChanged (double reddeha, double greendeha, double bluedeha)
+{
+    idle_register.add(
+        [this, reddeha, greendeha, bluedeha]() -> bool
+        {
+            disableListener();
+            PexBlack1->setValue(reddeha);
+            PexBlack0->setValue(greendeha);
+            PexBlack3->setValue(greendeha);
+            PexBlack2->setValue(bluedeha);
+            enableListener();
+            return false;
+        }
+    );
+}
+
 
 void BayerRAWExposure::adjusterChanged(Adjuster* a, double newval)
 {

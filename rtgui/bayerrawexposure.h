@@ -28,10 +28,14 @@ class BayerRAWExposure final :
     public ToolParamBlock,
     public AdjusterListener,
     public CheckBoxListener,
+    public rtengine::AutoBlackListener,
     public FoldableToolPanel
 {
 public:
+    static const Glib::ustring TOOL_NAME;
+
     BayerRAWExposure ();
+    ~BayerRAWExposure () override;
 
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
@@ -41,6 +45,7 @@ public:
     void checkBoxToggled     (CheckBox* c, CheckValue newval) override;
     void setAdjusterBehavior (bool pexblackadd);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
+    void autoBlackChanged (double reddeha, double greendeha, double bluedeha) override;
 
 protected:
     Adjuster* PexBlack0;
@@ -48,4 +53,6 @@ protected:
     Adjuster* PexBlack2;
     Adjuster* PexBlack3;
     CheckBox* PextwoGreen;
+    IdleRegister idle_register;
+
 };

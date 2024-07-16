@@ -26,11 +26,14 @@
 #include "guiutils.h"
 #include "lwbuttonset.h"
 #include "threadutils.h"
+#include "options.h"
+#include "thumbnail.h"
 
 #include "../rtengine/coord2d.h"
 
 class Thumbnail;
 class ThumbBrowserBase;
+class RTSurface;
 class ThumbBrowserEntryBase
 {
 
@@ -83,8 +86,8 @@ protected:
     Glib::RefPtr<BackBuffer> backBuffer;
     bool bbSelected, bbFramed;
     guint8* bbPreview;
-    std::vector<Glib::RefPtr<Gdk::Pixbuf>> bbIcons;
-    std::vector<Glib::RefPtr<Gdk::Pixbuf>> bbSpecificityIcons;
+    std::vector<std::shared_ptr<RTSurface>> bbIcons;
+    std::vector<std::shared_ptr<RTSurface>> bbSpecificityIcons;
     CursorShape cursor_type;
 
     void drawFrame (Cairo::RefPtr<Cairo::Context> cr, const Gdk::RGBA& bg, const Gdk::RGBA& fg);
@@ -95,6 +98,7 @@ protected:
 
 private:
     const std::string collate_name;
+    const std::string collate_exif;
 
 public:
 
@@ -117,7 +121,7 @@ public:
     bool updatepriority;
     eWithFilename withFilename;
 
-    explicit ThumbBrowserEntryBase (const Glib::ustring& fname);
+    explicit ThumbBrowserEntryBase (const Glib::ustring& fname, Thumbnail *thm);
     virtual ~ThumbBrowserEntryBase ();
 
     void setParent (ThumbBrowserBase* l)
@@ -174,9 +178,32 @@ public:
     void setPosition (int x, int y, int w, int h);
     void setOffset (int x, int y);
 
-    bool operator <(const ThumbBrowserEntryBase& other) const
+    bool compare (const ThumbBrowserEntryBase& other, Options::SortMethod method) const
     {
-        return collate_name < other.collate_name;
+        int cmp = 0;
+        switch (method){
+        case Options::SORT_BY_NAME:
+            return collate_name < other.collate_name;
+        case Options::SORT_BY_DATE:
+            cmp = thumbnail->getDateTime().compare(other.thumbnail->getDateTime());
+            break;
+        case Options::SORT_BY_EXIF:
+            cmp = collate_exif.compare(other.collate_exif);
+            break;
+        case Options::SORT_BY_RANK:
+            cmp = thumbnail->getRank() - other.thumbnail->getRank();
+            break;
+        case Options::SORT_BY_LABEL:
+            cmp = thumbnail->getColorLabel() - other.thumbnail->getColorLabel();
+            break;
+        case Options::SORT_METHOD_COUNT: abort();
+        }
+
+        // Always fall back to sorting by name
+        if (!cmp)
+            cmp = collate_name.compare(other.collate_name);
+
+        return cmp < 0;
     }
 
     virtual void refreshThumbnailImage () = 0;
@@ -185,8 +212,8 @@ public:
 
     virtual void drawProgressBar (Glib::RefPtr<Gdk::Window> win, const Gdk::RGBA& foregr, const Gdk::RGBA& backgr, int x, int w, int y, int h) {}
 
-    virtual std::vector<Glib::RefPtr<Gdk::Pixbuf>> getIconsOnImageArea ();
-    virtual std::vector<Glib::RefPtr<Gdk::Pixbuf>> getSpecificityIconsOnImageArea ();
+    virtual std::vector<std::shared_ptr<RTSurface>> getIconsOnImageArea ();
+    virtual std::vector<std::shared_ptr<RTSurface>> getSpecificityIconsOnImageArea ();
     virtual void getIconSize (int& w, int& h) const = 0;
 
     virtual bool motionNotify (int x, int y);

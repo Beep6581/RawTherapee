@@ -24,7 +24,6 @@
 #include "image8.h"
 #include "imagefloat.h"
 #include "LUT.h"
-#include "rawmetadatalocation.h"
 
 #include "../rtgui/threadutils.h"
 
@@ -37,6 +36,8 @@ class ustring;
 
 namespace rtengine
 {
+
+enum class StandardObserver;
 
 class Thumbnail
 {
@@ -55,6 +56,7 @@ class Thumbnail
     double camwbBlue;
     double redAWBMul, greenAWBMul, blueAWBMul;  // multipliers for auto WB
     double autoWBTemp, autoWBGreen, wbEqual, wbTempBias;    // autoWBTemp and autoWBGreen are updated each time autoWB is requested and if wbEqual has been modified
+    StandardObserver wbObserver;
     LUTu aeHistogram;
     int  aeHistCompression;
     bool aeValid;
@@ -83,6 +85,8 @@ class Thumbnail
 public:
 
     bool isRaw;
+    int full_width;
+    int full_height;
 
     ~Thumbnail ();
     Thumbnail ();
@@ -94,13 +98,12 @@ public:
     int      getImageWidth  (const procparams::ProcParams& pparams, int rheight, float &ratio);
     void     getDimensions  (int& w, int& h, double& scaleFac);
 
-    static Thumbnail* loadQuickFromRaw (const Glib::ustring& fname, rtengine::RawMetaDataLocation& rml, eSensorType &sensorType, int &w, int &h, int fixwh, bool rotate, bool inspectorMode = false, bool forHistogramMatching = false);
-    static Thumbnail* loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, eSensorType &sensorType, int &w, int &h, int fixwh, double wbEq, bool rotate, bool forHistogramMatching = false);
-    static Thumbnail* loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh, double wbEq, bool inspectorMode = false);
-    static RawMetaDataLocation loadMetaDataFromRaw (const Glib::ustring& fname);
+    static Thumbnail* loadQuickFromRaw (const Glib::ustring& fname, eSensorType &sensorType, int &w, int &h, int fixwh, bool rotate, bool inspectorMode = false, bool forHistogramMatching = false);
+    static Thumbnail* loadFromRaw (const Glib::ustring& fname, eSensorType &sensorType, int &w, int &h, int fixwh, double wbEq, StandardObserver wbObserver, bool rotate, const RAWParams *rawParams, bool forHistogramMatching=false);
+    static Thumbnail* loadFromImage (const Glib::ustring& fname, int &w, int &h, int fixwh, double wbEq, StandardObserver wbObserver, bool inspectorMode = false);
 
-    void getCamWB     (double& temp, double& green);
-    void getAutoWB    (double& temp, double& green, double equal, double tempBias);
+    void getCamWB     (double& temp, double& green, StandardObserver observer);
+    void getAutoWB    (double& temp, double& green, double equal, double tempBias, StandardObserver observer);
     void getAutoWBMultipliers (double& rm, double& gm, double& bm);
     void getSpotWB    (const procparams::ProcParams& params, int x, int y, int rect, double& temp, double& green);
     void applyAutoExp (procparams::ProcParams& pparams);

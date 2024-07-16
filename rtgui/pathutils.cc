@@ -16,6 +16,7 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <glibmm/convert.h>
 #include <glibmm/miscutils.h>
 
 #include "pathutils.h"
@@ -47,4 +48,24 @@ Glib::ustring getExtension (const Glib::ustring& filename)
     } else {
         return "";
     }
+}
+
+
+// For an unknown reason, Glib::filename_to_utf8 doesn't work on reliably Windows,
+// so we're using Glib::filename_to_utf8 for Linux/Apple and Glib::locale_to_utf8 for Windows.
+Glib::ustring fname_to_utf8(const std::string &fname)
+{
+#ifdef _WIN32
+
+    try {
+        return Glib::locale_to_utf8(fname);
+    } catch (Glib::Error&) {
+        return Glib::convert_with_fallback(fname, "UTF-8", "ISO-8859-1", "?");
+    }
+
+#else
+
+    return Glib::filename_to_utf8(fname);
+
+#endif
 }

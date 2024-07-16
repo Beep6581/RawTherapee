@@ -26,15 +26,22 @@
 #include "editbuffer.h"
 #include "guiutils.h"
 #include "options.h"
+#include "eventmapper.h"
 
 #include "../rtengine/color.h"
 #include "../rtengine/procparams.h"
+#include "../rtengine/refreshmap.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP_DIRPYRDENOISE_LABEL"), true, true), lastmedian(false)
+const Glib::ustring DirPyrDenoise::TOOL_NAME = "dirpyrdenoise";
+
+DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, TOOL_NAME, M("TP_DIRPYRDENOISE_LABEL"), true, true), lastmedian(false)
 {
+    const auto procEventMapper = ProcEventMapper::getInstance();
+    EvDPDNGain = procEventMapper->newEvent(ALLNORAW, "HISTORY_MSG_DIRPYRDENOISE_GAIN");
+
     std::vector<GradientMilestone> milestones;
     CurveListener::setMulti(true);
     nextnresid = 0.;
@@ -62,7 +69,7 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     Lmethodconn = Lmethod->signal_changed().connect ( sigc::mem_fun(*this, &DirPyrDenoise::LmethodChanged) );
 
     luma  = Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING"), 0, 100, 0.01, 0));
-    Ldetail  = Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_LUMINANCE_DETAIL"), 0, 100, 0.01, 50));
+    Ldetail  = Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_LUMINANCE_DETAIL"), 0, 100, 0.01, 0));
     NoiscurveEditorG = new CurveEditorGroup (options.lastDenoiseCurvesDir, M("TP_DIRPYRDENOISE_LUMINANCE_CURVE"));
     //curveEditorG = new CurveEditorGroup (options.lastLabCurvesDir);
     NoiscurveEditorG->setCurveListener (this);
@@ -226,6 +233,11 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     hb11->pack_start (*smethod, Gtk::PACK_EXPAND_WIDGET, 1);
     pack_start( *hb11, Gtk::PACK_SHRINK, 1);
     smethodconn = smethod->signal_changed().connect ( sigc::mem_fun(*this, &DirPyrDenoise::smethodChanged) );
+
+    autoGain = Gtk::manage(new CheckBox(M("TP_DIRPYRDENOISE_MAIN_AUTO_GAIN"), multiImage));
+    autoGain->set_tooltip_text(M("TP_DIRPYRDENOISE_MAIN_AUTO_GAIN_TOOLTIP"));
+    autoGain->setCheckBoxListener(this);
+    pack_start(*autoGain, Gtk::PACK_SHRINK, 0);
 
     gamma = Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_MAIN_GAMMA"), 1.0, 3.0, 0.01, 1.7));
     gamma->set_tooltip_text (M("TP_DIRPYRDENOISE_MAIN_GAMMA_TOOLTIP"));
@@ -568,6 +580,7 @@ void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited)
         redchro->setEditedState    (pedited->dirpyrDenoise.redchro ? Edited : UnEdited);
         bluechro->setEditedState   (pedited->dirpyrDenoise.bluechro ? Edited : UnEdited);
 
+        autoGain->set_inconsistent(!pedited->dirpyrDenoise.gain);
         gamma->setEditedState      (pedited->dirpyrDenoise.gamma ? Edited : UnEdited);
         passes->setEditedState     (pedited->dirpyrDenoise.passes ? Edited : UnEdited);
         set_inconsistent           (multiImage && !pedited->dirpyrDenoise.enabled);
@@ -591,6 +604,7 @@ void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited)
     redchro->setValue  (pp->dirpyrDenoise.redchro);
     bluechro->setValue  (pp->dirpyrDenoise.bluechro);
 
+    autoGain->setValue(pp->dirpyrDenoise.autoGain);
     gamma->setValue   (pp->dirpyrDenoise.gamma);
     passes->setValue   (pp->dirpyrDenoise.passes);
     lshape->setCurve   (pp->dirpyrDenoise.lcurve);
@@ -629,6 +643,7 @@ void DirPyrDenoise::write (ProcParams* pp, ParamsEdited* pedited)
     pp->dirpyrDenoise.chroma    = chroma->getValue ();
     pp->dirpyrDenoise.redchro   = redchro->getValue ();
     pp->dirpyrDenoise.bluechro  = bluechro->getValue ();
+    pp->dirpyrDenoise.autoGain = autoGain->get_active();
     pp->dirpyrDenoise.gamma     = gamma->getValue ();
     pp->dirpyrDenoise.passes    = passes->getValue ();
     pp->dirpyrDenoise.enabled   = getEnabled();
@@ -651,6 +666,7 @@ void DirPyrDenoise::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->dirpyrDenoise.chroma   = chroma->getEditedState ();
         pedited->dirpyrDenoise.redchro  = redchro->getEditedState ();
         pedited->dirpyrDenoise.bluechro = bluechro->getEditedState ();
+        pedited->dirpyrDenoise.gain = !autoGain->get_inconsistent();
         pedited->dirpyrDenoise.gamma    = gamma->getEditedState ();
         pedited->dirpyrDenoise.passes    = passes->getEditedState ();
         pedited->dirpyrDenoise.enabled  = !get_inconsistent();
@@ -987,6 +1003,13 @@ void DirPyrDenoise::adjusterChanged(Adjuster* a, double newval)
         } else if (a == passes  && median->get_active()) {
             listener->panelChanged (EvDPDNpasses, costr);
         }
+    }
+}
+
+void DirPyrDenoise::checkBoxToggled(CheckBox* c, CheckValue newval)
+{
+    if (c == autoGain) {
+        listener->panelChanged(EvDPDNGain, c->getValueAsStr());
     }
 }
 

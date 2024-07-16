@@ -17,6 +17,9 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <algorithm>
+#include <map>
+
 #include <glibmm/fileutils.h>
 #include <glibmm/miscutils.h>
 
@@ -508,7 +511,7 @@ void ProfileStore::dumpFolderList()
     printf ("\n");
 }
 
-PartialProfile *ProfileStore::loadDynamicProfile (const FramesMetaData *im)
+PartialProfile *ProfileStore::loadDynamicProfile (const FramesMetaData *im, const Glib::ustring& filename)
 {
     if (storeState == STORESTATE_NOTINITIALIZED) {
         parseProfilesOnce();
@@ -521,7 +524,7 @@ PartialProfile *ProfileStore::loadDynamicProfile (const FramesMetaData *im)
     }
 
     for (auto rule : dynamicRules) {
-        if (rule.matches (im)) {
+        if (rule.matches (im, filename)) {
             if (settings->verbose) {
                 printf ("found matching profile %s\n", rule.profilepath.c_str());
             }

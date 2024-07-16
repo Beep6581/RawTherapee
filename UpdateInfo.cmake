@@ -100,15 +100,15 @@ if(WIN32)
     if(BIT_DEPTH EQUAL 4)
         set(BUILD_BIT_DEPTH 32)
         # 32 bits builds has to be installable on 64 bits system, to support WinXP/64.
-        set(ARCHITECTURE_ALLOWED "x86 x64 ia64")
+        set(ARCHITECTURE_ALLOWED "x86 x64")
         # installing in 32 bits mode even on 64 bits OS and architecture
         set(INSTALL_MODE "")
     elseif(BIT_DEPTH EQUAL 8)
         set(BUILD_BIT_DEPTH 64)
         # Restricting the 64 bits builds to 64 bits systems only
-        set(ARCHITECTURE_ALLOWED "x64 ia64")
+        set(ARCHITECTURE_ALLOWED "x64 arm64")
         # installing in 64 bits mode for all 64 bits processors, even for itanium architecture
-        set(INSTALL_MODE "x64 ia64")
+        set(INSTALL_MODE "x64 arm64")
     endif()
     # set part of the output archive name
     set(SYSTEM_NAME "WinVista")

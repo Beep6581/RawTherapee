@@ -26,7 +26,7 @@
 #include "placesbrowser.h"
 #include "thumbnail.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #include "windows.h"
 #endif
 
@@ -302,18 +302,19 @@ bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::Initial
             if (options.tabbedUI) {
                 EditorPanel* epanel;
                 {
-#ifdef WIN32
+#ifdef _WIN32
                     int winGdiHandles = GetGuiResources( GetCurrentProcess(), GR_GDIOBJECTS);
-                    if(winGdiHandles > 0 && winGdiHandles <= 8500) // 0 means we don't have the rights to access the function, 8500 because the limit is 10000 and we need about 1500 free handles
+                    if(winGdiHandles > 0 && winGdiHandles <= 6500) //(old settings 8500) 0 means we don't have the rights to access the function, 8500 because the limit is 10000 and we need about 1500 free handles
+                    //J.Desmis october 2021 I change 8500 to 6500..Why ? because without while increasing size GUI system crash in multieditor
 #endif
                     {
                     GThreadLock lock; // Acquiring the GUI... not sure that it's necessary, but it shouldn't harm
                     epanel = Gtk::manage (new EditorPanel ());
                     parent->addEditorPanel (epanel, pl->thm->getFileName());
                     }
-#ifdef WIN32
+#ifdef _WIN32
                     else {
-                        Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_CANNOTLOAD") + " \"" + thm->getFileName() + "\" .\n" + M("MAIN_MSG_TOOMANYOPENEDITORS") + "</b>";
+                        Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_CANNOTLOAD") + " \"" + escapeHtmlChars(thm->getFileName()) + "\" .\n" + M("MAIN_MSG_TOOMANYOPENEDITORS") + "</b>";
                         Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
                         msgd.run ();
                         goto MAXGDIHANDLESREACHED;
@@ -334,11 +335,11 @@ bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::Initial
                 parent->set_title_decorated(pl->thm->getFileName());
             }
         } else {
-            Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_CANNOTLOAD") + " \"" + thm->getFileName() + "\" .\n</b>";
+            Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_CANNOTLOAD") + " \"" + escapeHtmlChars(thm->getFileName()) + "\" .\n</b>";
             Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
             msgd.run ();
         }
-#ifdef WIN32
+#ifdef _WIN32
 MAXGDIHANDLESREACHED:
 #endif
         delete pl->pc;
@@ -435,4 +436,12 @@ void FilePanel::loadingThumbs(Glib::ustring str, double rate)
 void FilePanel::updateTPVScrollbar (bool hide)
 {
     tpc->updateTPVScrollbar (hide);
+}
+
+void FilePanel::updateToolPanelToolLocations(
+        const std::vector<Glib::ustring> &favorites, bool cloneFavoriteTools)
+{
+    if (tpc) {
+        tpc->updateToolLocations(favorites, cloneFavoriteTools);
+    }
 }

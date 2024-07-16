@@ -27,27 +27,29 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Distortion::Distortion (): FoldableToolPanel(this, "distortion", M("TP_DISTORTION_LABEL"))
+const Glib::ustring Distortion::TOOL_NAME = "distortion";
+
+Distortion::Distortion (): FoldableToolPanel(this, TOOL_NAME, M("TP_DISTORTION_LABEL"))
 {
 
     rlistener = nullptr;
     autoDistor = Gtk::manage (new Gtk::Button (M("GENERAL_AUTO")));
-    autoDistor->set_image (*Gtk::manage (new RTImage ("distortion-auto-small.png")));
+    autoDistor->set_image (*Gtk::manage (new RTImage ("distortion-auto-small", Gtk::ICON_SIZE_BUTTON)));
     autoDistor->get_style_context()->add_class("independent");
     autoDistor->set_alignment(0.5f, 0.5f);
-    autoDistor->set_tooltip_text (M("TP_DISTORTION_AUTO_TIP"));
+    autoDistor->set_tooltip_text (M("TP_DISTORTION_AUTO_TOOLTIP"));
     idConn = autoDistor->signal_pressed().connect( sigc::mem_fun(*this, &Distortion::idPressed) );
     autoDistor->show();
     pack_start (*autoDistor);
 
-    Gtk::Image* idistL =   Gtk::manage (new RTImage ("distortion-pincushion-small.png"));
-    Gtk::Image* idistR =   Gtk::manage (new RTImage ("distortion-barrel-small.png"));
+    Gtk::Image* idistL =   Gtk::manage (new RTImage ("distortion-pincushion-small"));
+    Gtk::Image* idistR =   Gtk::manage (new RTImage ("distortion-barrel-small"));
 
     distor = Gtk::manage (new Adjuster (M("TP_DISTORTION_AMOUNT"), -0.5, 0.5, 0.001, 0, idistL, idistR));
     distor->setAdjusterListener (this);
 
     distor->setLogScale(2, 0);
-    
+
     distor->show();
     pack_start (*distor);
 }

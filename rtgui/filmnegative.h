@@ -52,6 +52,8 @@ class FilmNegative final :
     public rtengine::FilmNegListener
 {
 public:
+    static const Glib::ustring TOOL_NAME;
+
     FilmNegative();
     ~FilmNegative() override;
 
@@ -118,10 +120,14 @@ private:
     Adjuster* const redRatio;
     Adjuster* const blueRatio;
 
-    Gtk::ToggleButton* const spotButton;
+    static constexpr int DEFAULT_SPOT_WIDTH = 8;
+
+    SpotPicker picker;
 
     Gtk::Label* const refInputLabel;
-    Gtk::ToggleButton* const refSpotButton;
+    SpotPicker refPicker;
+
+    SpotPicker* activePicker;
 
     Adjuster* const outputLevel;
     Adjuster* const greenBalance;

@@ -123,6 +123,7 @@ float* RawImageSource::CA_correct_RT(
     double cared,
     double cablue,
     bool avoidColourshift,
+    int border_crop,
     array2D<float> &rawData,
     double* fitParamsTransfer,
     bool fitParamsIn,
@@ -145,7 +146,7 @@ float* RawImageSource::CA_correct_RT(
     const unsigned int cfa[2][2] = {{FC(0,0), FC(0,1)}, {FC(1,0), FC(1,1)}};
     constexpr int ts = 128;
     constexpr int tsh = ts / 2;
-    constexpr int cb = 2; // 2 pixels border will be excluded from correction
+    const int cb = 2 * ((border_crop + 1) / 2); // Round up to nearest even integer.
 
     //shifts to location of vertical and diagonal neighbours
     constexpr int v1 = ts, v2 = 2 * ts, v3 = 3 * ts, v4 = 4 * ts; //, p1=-ts+1, p2=-2*ts+2, p3=-3*ts+3, m1=ts+1, m2=2*ts+2, m3=3*ts+3;

@@ -37,10 +37,10 @@
 #define STARTUPDIR_CUSTOM  2
 #define STARTUPDIR_LAST    3
 
-#define THEMEREGEXSTR      "^(.+)-GTK3-(\\d{1,2})?_(\\d{1,2})?\\.css$"
+#define THEMEREGEXSTR      "^(.+)\\.css$"
 
 // Default bundled profile name to use for Raw images
-#ifdef WIN32
+#ifdef _WIN32
 #define DEFPROFILE_RAW      "${G}\\Auto-Matched Curve - ISO Low"
 #else
 #define DEFPROFILE_RAW      "${G}/Auto-Matched Curve - ISO Low"
@@ -52,6 +52,18 @@
 // Special name for the Dynamic profile
 #define DEFPROFILE_DYNAMIC  "Dynamic"
 
+struct ExternalEditor {
+    ExternalEditor();
+    ExternalEditor(const Glib::ustring &name, const Glib::ustring &command, bool native_command, const Glib::ustring &icon_serialized);
+    Glib::ustring name;
+    Glib::ustring command;
+    bool native_command;
+    Glib::ustring icon_serialized;
+
+    bool operator==(const ExternalEditor & other) const;
+    bool operator!=(const ExternalEditor & other) const;
+};
+
 struct SaveFormat {
     SaveFormat(
         const Glib::ustring& _format,
@@ -61,6 +73,7 @@ struct SaveFormat {
         int _tiff_bits,
         bool _tiff_float,
         bool _tiff_uncompressed,
+        bool _big_tiff,
         bool _save_params
     ) :
         format(_format),
@@ -70,6 +83,7 @@ struct SaveFormat {
         tiffBits(_tiff_bits),
         tiffFloat(_tiff_float),
         tiffUncompressed(_tiff_uncompressed),
+        bigTiff(_big_tiff),
         saveParams(_save_params)
     {
     }
@@ -87,6 +101,7 @@ struct SaveFormat {
             _tiff_bits,
             _tiff_float,
             true,
+            false,
             true
         )
     {
@@ -103,6 +118,7 @@ struct SaveFormat {
     int tiffBits;
     bool tiffFloat;
     bool tiffUncompressed;
+    bool bigTiff;
     bool saveParams;
 };
 
@@ -219,7 +235,6 @@ public:
     bool windowMaximized;
     int windowMonitor;
     int meowMonitor;
-    bool meowFullScreen;
     bool meowMaximized;
     int meowWidth;
     int meowHeight;
@@ -239,7 +254,6 @@ public:
     int fontSize;                // RT's main font size (units: pt)
     Glib::ustring CPFontFamily;  // ColorPicker font family
     int CPFontSize;              // ColorPicker font size (units: pt)
-    bool pseudoHiDPISupport;
     bool fbOnlyRaw;
     bool fbShowDateTime;
     bool fbShowBasicExif;
@@ -277,6 +291,8 @@ public:
     Glib::ustring gimpDir;
     Glib::ustring psDir;
     Glib::ustring customEditorProg;
+    std::vector<ExternalEditor> externalEditors;
+    int externalEditorIndex;
     Glib::ustring CPBPath; // Custom Profile Builder's path
     CPBKeyType CPBKeys; // Custom Profile Builder's key type
     int editorToSendTo;
@@ -289,15 +305,26 @@ public:
     Glib::ustring editor_custom_out_dir;
     bool editor_float32;
     bool editor_bypass_output_profile;
-    
+
     int maxThumbnailHeight;
     int maxThumbnailWidth;
     std::size_t maxCacheEntries;
     int thumbInterp; // 0: nearest, 1: bilinear
+
+    std::vector<std::string> knownExtensions = {
+        "3fr", "arw", "arq", "cr2",  "cr3", "crf", "crw",  "dcr", "dng",
+        "fff", "iiq", "jpg", "jpeg", "jxl", "kdc", "mef",  "mos", "mrw",
+        "nef", "nrw", "orf", "ori",  "pef", "png", "raf",  "raw", "rw2",
+        "rwl", "rwz", "sr2", "srf",  "srw", "tif", "tiff", "x3f"};
+
     std::vector<Glib::ustring> parseExtensions;   // List containing all extensions type
     std::vector<int> parseExtensionsEnabled;      // List of bool to retain extension or not
     std::vector<Glib::ustring> parsedExtensions;  // List containing all retained extensions (lowercase)
     std::set<std::string> parsedExtensionsSet;  // Set containing all retained extensions (lowercase)
+    bool browseRecursive;
+    int browseRecursiveDepth;
+    int browseRecursiveMaxDirs;
+    bool browseRecursiveFollowLinks;
     std::vector<int> tpOpen;
     bool autoSaveTpOpen;
     //std::vector<int> crvOpen;
@@ -310,7 +337,9 @@ public:
     bool internalThumbIfUntouched;
     bool overwriteOutputFile;
     int complexity;
-    bool inspectorWindow; // open inspector in spearate window
+    int spotmet;
+
+    bool inspectorWindow; // open inspector in separate window
     bool zoomOnScroll;    // translate scroll events to zoom
 
     std::vector<double> thumbnailZoomRatios;
@@ -350,6 +379,22 @@ public:
     enum CropGuidesMode { CROP_GUIDE_NONE, CROP_GUIDE_FRAME, CROP_GUIDE_FULL };
     CropGuidesMode cropGuides;
     bool cropAutoFit;
+
+    // Other options
+
+    // Maximum zoom
+    enum class MaxZoom: int {
+      PERCENTS_100 = 0,
+      PERCENTS_200,
+      PERCENTS_300,
+      PERCENTS_400,
+      PERCENTS_500,
+      PERCENTS_600,
+      PERCENTS_700,
+      PERCENTS_800,
+      PERCENTS_1600,
+    };
+    MaxZoom maxZoomLimit;
 
     // Performance options
     Glib::ustring clutsDir;
@@ -424,13 +469,18 @@ public:
     int           fastexport_resize_dataspec;
     int           fastexport_resize_width;
     int           fastexport_resize_height;
+    int           fastexport_resize_longedge;
+    int           fastexport_resize_shortedge;
     bool fastexport_use_fast_pipeline;
 
     std::vector<Glib::ustring> favorites;
+    bool cloneFavoriteTools;
     // Dialog settings
     Glib::ustring lastIccDir;
     Glib::ustring lastDarkframeDir;
     Glib::ustring lastFlatfieldDir;
+    Glib::ustring lastCameraProfilesDir;
+    Glib::ustring lastLensProfilesDir;
     Glib::ustring lastRgbCurvesDir;
     Glib::ustring lastLabCurvesDir;
     Glib::ustring lastRetinexDir;
@@ -450,6 +500,23 @@ public:
 
     size_t maxRecentFolders;                   // max. number of recent folders stored in options file
     std::vector<Glib::ustring> recentFolders;  // List containing all recent folders
+
+    enum class ThumbnailPropertyMode {
+        PROCPARAMS, // store rank and color in procparams sidecars
+        XMP // store rank and color xmp sidecar
+    };
+    ThumbnailPropertyMode thumbnailRankColorMode;
+
+    enum SortMethod {
+        SORT_BY_NAME,
+        SORT_BY_DATE,
+        SORT_BY_EXIF,
+        SORT_BY_RANK,
+        SORT_BY_LABEL,
+        SORT_METHOD_COUNT,
+    };
+    SortMethod sortMethod; // remembers current state of file browser
+    bool sortDescending;
 
 
     Options ();

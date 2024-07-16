@@ -28,8 +28,16 @@
 #include "../rtengine/procparams.h"
 #include "../rtengine/color.h"
 
+const Glib::ustring FilmNegative::TOOL_NAME = "filmnegative";
+
 namespace
 {
+
+/**
+ * Observer to use for displaying the temperature and tint equivalent of the
+ * multipliers.
+ */
+constexpr rtengine::StandardObserver standard_observer = rtengine::ColorTemp::DEFAULT_OBSERVER;
 
 double toAdjuster(double v)
 {
@@ -152,7 +160,7 @@ RGB getFilmNegativeExponents(const RGB &ref1, const RGB &ref2) // , const RGB &c
 
 void temp2rgb(double outLev, double temp, double green, RGB &refOut)
 {
-    rtengine::ColorTemp ct = rtengine::ColorTemp(temp, green, 1., "Custom");
+    rtengine::ColorTemp ct = rtengine::ColorTemp(temp, green, 1., "Custom", standard_observer);
 
     double rm, gm, bm;
     ct.getMultipliers(rm, gm, bm);
@@ -173,7 +181,8 @@ void rgb2temp(const RGB &refOut, double &outLev, double &temp, double &green)
                                  refOut.r / maxVal,
                                  refOut.g / maxVal,
                                  refOut.b / maxVal,
-                                 1.);
+                                 1.,
+                                 standard_observer);
 
     outLev = maxVal;
     temp = ct.getTemp();
@@ -184,9 +193,9 @@ void rgb2temp(const RGB &refOut, double &outLev, double &temp, double &green)
 }
 
 FilmNegative::FilmNegative() :
-    FoldableToolPanel(this, "filmnegative", M("TP_FILMNEGATIVE_LABEL"), false, true),
+    FoldableToolPanel(this, TOOL_NAME, M("TP_FILMNEGATIVE_LABEL"), false, true),
     EditSubscriber(ET_OBJECTS),
-    NEUTRAL_TEMP(rtengine::ColorTemp(1., 1., 1., 1.)),
+    NEUTRAL_TEMP(rtengine::ColorTemp(1., 1., 1., 1., rtengine::ColorTemp::DEFAULT_OBSERVER)),
     evFilmNegativeExponents(ProcEventMapper::getInstance()->newEvent(ALLNORAW, "HISTORY_MSG_FILMNEGATIVE_VALUES")),
     evFilmNegativeEnabled(ProcEventMapper::getInstance()->newEvent(ALLNORAW, "HISTORY_MSG_FILMNEGATIVE_ENABLED")),
     evFilmNegativeRefSpot(ProcEventMapper::getInstance()->newEvent(ALLNORAW, "HISTORY_MSG_FILMNEGATIVE_REF_SPOT")),
@@ -200,42 +209,18 @@ FilmNegative::FilmNegative() :
     greenExp(createExponentAdjuster(this, M("TP_FILMNEGATIVE_GREEN"), 0.3, 4, 0.01, 1.5)),  // master exponent (green channel)
     redRatio(createExponentAdjuster(this, M("TP_FILMNEGATIVE_RED"), 0.3, 5, 0.01, (2.04 / 1.5))), // ratio of red exponent to master exponent
     blueRatio(createExponentAdjuster(this, M("TP_FILMNEGATIVE_BLUE"), 0.3, 5, 0.01, (1.29 / 1.5))), // ratio of blue exponent to master exponent
-    spotButton(Gtk::manage(new Gtk::ToggleButton(M("TP_FILMNEGATIVE_PICK")))),
+    picker(DEFAULT_SPOT_WIDTH, M("TP_FILMNEGATIVE_PICK"), M("TP_FILMNEGATIVE_GUESS_TOOLTIP"), M("TP_FILMNEGATIVE_PICK_SIZE")),
     refInputLabel(Gtk::manage(new Gtk::Label(Glib::ustring::compose(M("TP_FILMNEGATIVE_REF_LABEL"), "- - -")))),
-    refSpotButton(Gtk::manage(new Gtk::ToggleButton(M("TP_FILMNEGATIVE_REF_PICK")))),
+    refPicker(DEFAULT_SPOT_WIDTH, M("TP_FILMNEGATIVE_REF_PICK"), M("TP_FILMNEGATIVE_REF_TOOLTIP"), M("TP_FILMNEGATIVE_REF_SIZE")),
+    activePicker(&picker),
     outputLevel(createLevelAdjuster(this, M("TP_FILMNEGATIVE_OUT_LEVEL"))),  // ref level
-    greenBalance(createBalanceAdjuster(this, M("TP_FILMNEGATIVE_GREENBALANCE"), -3.0, 3.0, 0.0, "circle-magenta-small.png", "circle-green-small.png")),  // green balance
-    blueBalance(createBalanceAdjuster(this, M("TP_FILMNEGATIVE_BLUEBALANCE"), -3.0, 3.0, 0.0, "circle-blue-small.png", "circle-yellow-small.png"))  // blue balance
+    greenBalance(createBalanceAdjuster(this, M("TP_FILMNEGATIVE_GREENBALANCE"), -3.0, 3.0, 0.0, "circle-magenta-small", "circle-green-small")),  // green balance
+    blueBalance(createBalanceAdjuster(this, M("TP_FILMNEGATIVE_BLUEBALANCE"), -3.0, 3.0, 0.0, "circle-blue-small", "circle-yellow-small"))  // blue balance
 {
-    setExpandAlignProperties(spotButton, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    spotButton->get_style_context()->add_class("independent");
-    spotButton->set_tooltip_text(M("TP_FILMNEGATIVE_GUESS_TOOLTIP"));
-    spotButton->set_image(*Gtk::manage(new RTImage("color-picker-small.png")));
-
-    refSpotButton->set_tooltip_text(M("TP_FILMNEGATIVE_REF_TOOLTIP"));
-
     setExpandAlignProperties(refInputLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
 //    refInputLabel->set_justify(Gtk::Justification::JUSTIFY_CENTER);
 //    refInputLabel->set_line_wrap(true);
 
-    // TODO make spot size configurable ?
-
-    // Gtk::Label* slab = Gtk::manage (new Gtk::Label (M("TP_WBALANCE_SIZE")));
-    // setExpandAlignProperties(slab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-
-    // Gtk::Grid* wbsizehelper = Gtk::manage(new Gtk::Grid());
-    // wbsizehelper->set_name("WB-Size-Helper");
-    // setExpandAlignProperties(wbsizehelper, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-
-    // spotsize = Gtk::manage (new MyComboBoxText ());
-    // setExpandAlignProperties(spotsize, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    // spotsize->append ("2");
-    // spotsize->set_active(0);
-    // spotsize->append ("4");
-
-    // spotgrid->attach(*spotButton, 0, 1, 1, 1);
-    // spotgrid->attach (*slab, 1, 0, 1, 1);
-    // spotgrid->attach (*wbsizehelper, 2, 0, 1, 1);
 
     colorSpace->append(M("TP_FILMNEGATIVE_COLORSPACE_INPUT"));
     colorSpace->append(M("TP_FILMNEGATIVE_COLORSPACE_WORKING"));
@@ -256,9 +241,7 @@ FilmNegative::FilmNegative() :
     pack_start(*greenExp, Gtk::PACK_SHRINK, 0);
     pack_start(*redRatio, Gtk::PACK_SHRINK, 0);
     pack_start(*blueRatio, Gtk::PACK_SHRINK, 0);
-    pack_start(*spotButton, Gtk::PACK_SHRINK, 0);
-
-//    pack_start(*oldMethod, Gtk::PACK_SHRINK, 0);
+    pack_start(picker, Gtk::PACK_SHRINK, 0);
 
     Gtk::Separator* const sep = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     sep->get_style_context()->add_class("grid-row-separator");
@@ -274,22 +257,21 @@ FilmNegative::FilmNegative() :
     pack_start(*blueBalance, Gtk::PACK_SHRINK, 0);
     pack_start(*greenBalance, Gtk::PACK_SHRINK, 0);
 
-    pack_start(*refSpotButton, Gtk::PACK_SHRINK, 0);
+    pack_start(refPicker, Gtk::PACK_SHRINK, 0);
 
-    spotButton->signal_toggled().connect(sigc::mem_fun(*this, &FilmNegative::editToggled));
-    // spotsize->signal_changed().connect( sigc::mem_fun(*this, &WhiteBalance::spotSizeChanged) );
-
-    refSpotButton->signal_toggled().connect(sigc::mem_fun(*this, &FilmNegative::refSpotToggled));
+    picker.add_button_toggled_event(*this, &FilmNegative::editToggled);
+    refPicker.add_button_toggled_event(*this, &FilmNegative::refSpotToggled);
 
     // Editing geometry; create the spot rectangle
-    Rectangle* const spotRect = new Rectangle();
+    // TODO: Change behaviour to match that of the white balance spot picker (rectangle disappears behind right toolbar)
+    EditRectangle* const spotRect = new EditRectangle();
     spotRect->filled = false;
 
     visibleGeometry.push_back(spotRect);
 
     // Stick a dummy rectangle over the whole image in mouseOverGeometry.
     // This is to make sure the getCursor() call is fired everywhere.
-    Rectangle* const imgRect = new Rectangle();
+    EditRectangle* const imgRect = new EditRectangle();
     imgRect->filled = true;
 
     mouseOverGeometry.push_back(imgRect);
@@ -446,8 +428,8 @@ void FilmNegative::setBatchMode(bool batchMode)
     ToolPanel::setBatchMode(batchMode);
 
     if (batchMode) {
-        removeIfThere(this, spotButton, false);
-        removeIfThere(this, refSpotButton, false);
+        picker.remove_if_there(this, false);
+        refPicker.remove_if_there(this, false);
         colorSpace->append(M("GENERAL_UNCHANGED"));
         colorSpace->set_active_text(M("GENERAL_UNCHANGED"));
         redRatio->showEditedCB();
@@ -518,18 +500,18 @@ void FilmNegative::filmRefValuesChanged(const RGB &refInput, const RGB &refOutpu
         [this, refInput, refOutput]() -> bool {
             refInputValues = refInput;
             paramsUpgraded = true;
-    
+
             disableListener();
-    
+
             refInputLabel->set_markup(
                 Glib::ustring::compose(M("TP_FILMNEGATIVE_REF_LABEL"), fmt(refInputValues)));
-    
+
             writeOutputSliders(refOutput);
-    
+
             outputLevel->show();
             blueBalance->show();
             greenBalance->show();
-    
+
             enableListener();
             return false;
         }
@@ -555,8 +537,8 @@ CursorShape FilmNegative::getCursor(int objectID, int xPos, int yPos) const
 bool FilmNegative::mouseOver(int modifierKey)
 {
     EditDataProvider* const provider = getEditProvider();
-    Rectangle* const spotRect = static_cast<Rectangle*>(visibleGeometry.at(0));
-    spotRect->setXYWH(provider->posImage.x - 16, provider->posImage.y - 16, 32, 32);
+    EditRectangle* const spotRect = static_cast<EditRectangle*>(visibleGeometry.at(0));
+    spotRect->setXYWH(provider->posImage.x - activePicker->get_spot_half_width(), provider->posImage.y - activePicker->get_spot_half_width() ,activePicker->get_spot_full_width(), activePicker->get_spot_full_width());
 
     return true;
 }
@@ -568,7 +550,7 @@ bool FilmNegative::button1Pressed(int modifierKey)
     EditSubscriber::action = EditSubscriber::Action::NONE;
 
     if (listener) {
-        if (spotButton->get_active()) {
+        if (picker.get_active()) {
 
             refSpotCoords.push_back(provider->posImage);
 
@@ -578,8 +560,8 @@ bool FilmNegative::button1Pressed(int modifierKey)
 
                 RGB ref1, ref2, dummy;
 
-                if (fnp->getFilmNegativeSpot(refSpotCoords[0], 32, ref1, dummy) &&
-                        fnp->getFilmNegativeSpot(refSpotCoords[1], 32, ref2, dummy)) {
+                if (fnp->getFilmNegativeSpot(refSpotCoords[0], picker.get_spot_full_width(), ref1, dummy) &&
+                        fnp->getFilmNegativeSpot(refSpotCoords[1], picker.get_spot_full_width(), ref2, dummy)) {
 
                     disableListener();
 
@@ -611,7 +593,7 @@ bool FilmNegative::button1Pressed(int modifierKey)
             }
 
 
-        } else if (refSpotButton->get_active()) {
+        } else if (refPicker.get_active()) {
 
             disableListener();
 
@@ -625,7 +607,7 @@ bool FilmNegative::button1Pressed(int modifierKey)
             }
 
             RGB refOut;
-            fnp->getFilmNegativeSpot(provider->posImage, 32, refInputValues, refOut);
+            fnp->getFilmNegativeSpot(provider->posImage, refPicker.get_spot_full_width(), refInputValues, refOut);
 
             // Output luminance of the sampled spot
             float spotLum = rtengine::Color::rgbLuminance(refOut.r, refOut.g, refOut.b);
@@ -689,16 +671,17 @@ void FilmNegative::switchOffEditMode()
 {
     refSpotCoords.clear();
     unsubscribe();
-    spotButton->set_active(false);
-    refSpotButton->set_active(false);
+    picker.set_active(false);
+    refPicker.set_active(false);
 }
 
 void FilmNegative::editToggled()
 {
-    if (spotButton->get_active()) {
+    if (picker.get_active()) {
 
-        refSpotButton->set_active(false);
+        refPicker.set_active(false);
         refSpotCoords.clear();
+        activePicker = &picker;
 
         subscribe();
 
@@ -707,7 +690,7 @@ void FilmNegative::editToggled()
 
         // Stick a dummy rectangle over the whole image in mouseOverGeometry.
         // This is to make sure the getCursor() call is fired everywhere.
-        Rectangle* const imgRect = static_cast<Rectangle*>(mouseOverGeometry.at(0));
+        EditRectangle* const imgRect = static_cast<EditRectangle*>(mouseOverGeometry.at(0));
         imgRect->setXYWH(0, 0, w, h);
     } else {
         refSpotCoords.clear();
@@ -718,10 +701,11 @@ void FilmNegative::editToggled()
 
 void FilmNegative::refSpotToggled()
 {
-    if (refSpotButton->get_active()) {
+    if (refPicker.get_active()) {
 
-        spotButton->set_active(false);
+        picker.set_active(false);
         refSpotCoords.clear();
+        activePicker = &refPicker;
 
         subscribe();
 
@@ -730,7 +714,7 @@ void FilmNegative::refSpotToggled()
 
         // Stick a dummy rectangle over the whole image in mouseOverGeometry.
         // This is to make sure the getCursor() call is fired everywhere.
-        Rectangle* const imgRect = static_cast<Rectangle*>(mouseOverGeometry.at(0));
+        EditRectangle* const imgRect = static_cast<EditRectangle*>(mouseOverGeometry.at(0));
         imgRect->setXYWH(0, 0, w, h);
 
     } else {
@@ -738,3 +722,4 @@ void FilmNegative::refSpotToggled()
         unsubscribe();
     }
 }
+

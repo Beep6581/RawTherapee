@@ -8,7 +8,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-PCVignette::PCVignette () : FoldableToolPanel(this, "pcvignette", M("TP_PCVIGNETTE_LABEL"), false, true)
+const Glib::ustring PCVignette::TOOL_NAME = "pcvignette";
+
+PCVignette::PCVignette () : FoldableToolPanel(this, TOOL_NAME, M("TP_PCVIGNETTE_LABEL"), false, true)
 {
     strength = Gtk::manage (new Adjuster (M("TP_PCVIGNETTE_STRENGTH"), -6, 6, 0.01, 0));
     strength->set_tooltip_text (M("TP_PCVIGNETTE_STRENGTH_TOOLTIP"));

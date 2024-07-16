@@ -28,17 +28,19 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-RAWCACorr::RAWCACorr () : FoldableToolPanel(this, "rawcacorrection", M("TP_RAWCACORR_LABEL"))
+const Glib::ustring RAWCACorr::TOOL_NAME = "rawcacorrection";
+
+RAWCACorr::RAWCACorr () : FoldableToolPanel(this, TOOL_NAME, M("TP_RAWCACORR_LABEL"))
 {
     auto m = ProcEventMapper::getInstance();
     EvPreProcessCAAutoiterations = m->newEvent(DARKFRAME, "HISTORY_MSG_RAWCACORR_AUTOIT");
     EvPreProcessCAColourshift = m->newEvent(DARKFRAME, "HISTORY_MSG_RAWCACORR_COLORSHIFT");
     EvPreProcessCAColourshiftHistory = m->newEvent(M_VOID, "HISTORY_MSG_RAWCACORR_COLORSHIFT");
 
-    Gtk::Image* icaredL =   Gtk::manage (new RTImage ("circle-red-cyan-small.png"));
-    Gtk::Image* icaredR =   Gtk::manage (new RTImage ("circle-cyan-red-small.png"));
-    Gtk::Image* icablueL =  Gtk::manage (new RTImage ("circle-blue-yellow-small.png"));
-    Gtk::Image* icablueR =  Gtk::manage (new RTImage ("circle-yellow-blue-small.png"));
+    Gtk::Image* const icaredL =   Gtk::manage (new RTImage ("circle-red-cyan-small"));
+    Gtk::Image* const icaredR =   Gtk::manage (new RTImage ("circle-cyan-red-small"));
+    Gtk::Image* const icablueL =  Gtk::manage (new RTImage ("circle-blue-yellow-small"));
+    Gtk::Image* const icablueR =  Gtk::manage (new RTImage ("circle-yellow-blue-small"));
 
     caAutocorrect = Gtk::manage (new CheckBox(M("TP_RAWCACORR_AUTO"), multiImage));
     caAutocorrect->setCheckBoxListener (this);

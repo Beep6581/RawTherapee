@@ -21,13 +21,14 @@
 #include "multilangmgr.h"
 #include "options.h"
 #include "rtimage.h"
+#include "rtsurface.h"
 
 #include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-ExportPanel::ExportPanel () : listener (nullptr)
+ExportPanel::ExportPanel () : listener (nullptr), ornamentSurface(new RTSurface("ornament1.svg"))
 {
 
     set_orientation(Gtk::ORIENTATION_VERTICAL);
@@ -46,7 +47,7 @@ ExportPanel::ExportPanel () : listener (nullptr)
     use_normal_pipeline     = Gtk::manage ( new Gtk::RadioButton (pipeline_group, M ("EXPORT_USE_NORMAL_PIPELINE")));
     bypass_box = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     bypass_ALL              = Gtk::manage ( new Gtk::CheckButton (M ("EXPORT_BYPASS_ALL")));
-    use_fast_pipeline->set_tooltip_text (M ("EXPORT_USE_FAST_PIPELINE_TIP"));
+    use_fast_pipeline->set_tooltip_text (M ("EXPORT_USE_FAST_PIPELINE_TOOLTIP"));
     bypass_sharpening       = Gtk::manage ( new Gtk::CheckButton (M ("EXPORT_BYPASS_SHARPENING")));
     bypass_sharpenEdge      = Gtk::manage ( new Gtk::CheckButton (M ("EXPORT_BYPASS_SHARPENEDGE")));
     bypass_sharpenMicro     = Gtk::manage ( new Gtk::CheckButton (M ("EXPORT_BYPASS_SHARPENMICRO")));
@@ -185,14 +186,14 @@ ExportPanel::ExportPanel () : listener (nullptr)
     // Buttons
     btnFastExport =  Gtk::manage ( new Gtk::Button () );
     btnFastExport->set_tooltip_text (M ("EXPORT_PUTTOQUEUEFAST"));
-    btnFastExport->set_image (*Gtk::manage (new RTImage ("gears.png")));
+    btnFastExport->set_image (*Gtk::manage (new RTImage ("gears")));
     pack_start (*btnFastExport, Gtk::PACK_SHRINK, 4);
 
 
     // add panel ending
     Gtk::Box* vboxpe = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     Gtk::Separator* hseptpe = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
-    Gtk::Image* peImg = Gtk::manage (new RTImage ("ornament1.png"));
+    Gtk::Image* peImg = Gtk::manage (new Gtk::Image (ornamentSurface->get()));
     vboxpe->pack_start (*hseptpe, Gtk::PACK_SHRINK, 4);
     vboxpe->pack_start (*peImg);
     pack_start (*vboxpe, Gtk::PACK_SHRINK, 0);

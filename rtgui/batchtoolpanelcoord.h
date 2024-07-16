@@ -69,11 +69,11 @@ public:
     ) override;
 
     // wbprovider interface
-    void getAutoWB (double& temp, double& green, double equal, double tempBias) override;
-    void getCamWB (double& temp, double& green) override;
+    void getAutoWB (double& temp, double& green, double equal, rtengine::StandardObserver observer, double tempBias) override;
+    void getCamWB (double& temp, double& green, rtengine::StandardObserver observer) override;
 
     // thumbnaillistener interface
-    void procParamsChanged (Thumbnail* thm, int whoChangedIt) override;
+    void procParamsChanged (Thumbnail* thm, int whoChangedIt, bool upgradeHint) override;
 
     // batchpparamschangelistener interface
     void beginBatchPParamsChange(int numberOfEntries) override;

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="16"
+   height="16"
+   viewBox="0 0 16 16"
+   version="1.1"
+   id="SVGRoot"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs815" />
+  <metadata
+     id="metadata818">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Maciej Dworak</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title />
+          </cc:Agent>
+        </dc:rights>
+        <dc:description>RawTherapee icon.</dc:description>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     transform="translate(0,-8)">
+    <path
+       style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:0.7;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;vector-effect:none;fill:#cccccc;fill-opacity:1.0;fill-rule:nonzero;stroke:none;stroke-width:0.80000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:2.00314951;stroke-opacity:1;paint-order:normal;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+       d="M 11 3 C 9.9976127 3 9.1696615 3.7497134 9.0292969 4.7148438 C 8.5630586 5.0807339 8.1929514 5.532524 7.9179688 5.9453125 C 7.3330813 6.8233135 7.0507812 7.6835936 7.0507812 7.6835938 C 7.0507812 7.6835938 6.8323192 8.3233135 6.4179688 8.9453125 C 6.3216042 9.0899695 6.2200054 9.2226333 6.1152344 9.34375 C 5.7958935 9.1275184 5.4124369 9 5 9 C 4.5891195 9 4.207296 9.1270558 3.8886719 9.3417969 C 3.7842484 9.2209738 3.6820029 9.0895206 3.5859375 8.9453125 C 3.1715869 8.3233135 2.953125 7.6835938 2.953125 7.6835938 A 1.0001 1.0001 0 1 0 1.0566406 8.3164062 C 1.0566406 8.3164062 1.3369876 9.176686 1.921875 10.054688 C 2.1960022 10.466191 2.5651323 10.915949 3.0292969 11.28125 C 3.1680082 12.248225 3.9962917 13 5 13 C 6.0023873 13 6.8303385 12.250287 6.9707031 11.285156 C 7.4369414 10.919266 7.8070486 10.467476 8.0820312 10.054688 C 8.6669189 9.176686 8.9492186 8.3164063 8.9492188 8.3164062 C 8.9492188 8.3164062 9.1676808 7.6766865 9.5820312 7.0546875 C 9.6783959 6.9100305 9.7799946 6.7773667 9.8847656 6.65625 C 10.204106 6.8724816 10.587563 7 11 7 C 11.410881 7 11.792704 6.8729442 12.111328 6.6582031 C 12.215751 6.7790262 12.317998 6.9104794 12.414062 7.0546875 C 12.828413 7.6766865 13.046875 8.3164063 13.046875 8.3164062 A 1.0001 1.0001 0 1 0 14.943359 7.6835938 C 14.943359 7.6835938 14.663012 6.8233135 14.078125 5.9453125 C 13.803998 5.5338082 13.434868 5.0840511 12.970703 4.71875 C 12.831992 3.7517748 12.003709 3 11 3 z "
+       transform="translate(0,8)"
+       id="path1472" />
+    <circle
+       r="1.6"
+       cy="19"
+       cx="-15"
+       id="circle828"
+       style="opacity:0.7;fill:#cccccc;fill-opacity:1.0;fill-rule:nonzero;stroke:#cccccc;stroke-width:0.80000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:2.00314951;stroke-opacity:1.0;paint-order:normal" />
+    <circle
+       style="opacity:0.7;fill:#cccccc;fill-opacity:1.0;fill-rule:nonzero;stroke:#cccccc;stroke-width:0.80000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:2.00314951;stroke-opacity:1.0;paint-order:normal"
+       id="circle830"
+       cx="-9"
+       cy="13"
+       r="1.6" />
+    <path
+       id="path832"
+       d="m -17.995428,16 c 0,0 0.999238,3 2.997714,3 C -12.999238,19 -12,16 -12,16 c 0,0 0.999238,-3 2.997714,-3 1.998476,0 2.997714,3 2.997714,3"
+       style="opacity:0.7;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#cccccc;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:2.00314951;stroke-opacity:1.0;paint-order:normal" />
+  </g>
+</svg>

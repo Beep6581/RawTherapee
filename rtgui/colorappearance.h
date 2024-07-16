@@ -39,6 +39,8 @@ class ColorAppearance final :
     public ColorProvider
 {
 public:
+    static const Glib::ustring TOOL_NAME;
+
     ColorAppearance ();
     ~ColorAppearance () override;
 
@@ -64,11 +66,10 @@ public:
     void autoCamChanged (double ccam, double ccamout) override;
     bool autoCamComputed_ ();
     void adapCamChanged (double cadap) override;
-    void wbCamChanged(double tem, double tin) override;
+    void wbCamChanged(double tem, double tin, bool autotemp) override;
     bool adapCamComputed_ ();
     void ybCamChanged (int yb) override;
     bool ybCamComputed_ ();
-    void presetcat02pressed ();
     void curveChanged        (CurveEditor* ce) override;
     void curveMode1Changed   ();
     bool curveMode1Changed_  ();
@@ -87,7 +88,7 @@ public:
     bool isCurveExpanded     ();
     void autoOpenCurve       () override;
 
-    void setAdjusterBehavior (bool degreeadd, bool adapscenadd, bool adaplumadd, bool badpixsladd, bool jlightadd, bool chromaadd, bool contrastadd, bool rstprotectionadd, bool qbrightadd, bool qcontrastadd, bool schromaadd, bool mchromaadd, bool colorhadd);
+    void setAdjusterBehavior (bool degreeadd, bool adapscenadd, bool adaplumadd, bool badpixsladd, bool jlightadd, bool chromaadd, bool contrastadd, bool rstprotectionadd, bool qbrightadd, bool qcontrastadd, bool schromaadd, bool mchromaadd, bool colorhadd, bool degreeoutadd, bool tempoutadd);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
     void updateCurveBackgroundHistogram(
         const LUTu& histToneCurve,
@@ -106,7 +107,6 @@ public:
     void writeOptions (std::vector<int> &tpOpen);
 
 private:
-    rtengine::ProcEvent Evcatpreset;
     rtengine::ProcEvent EvCATAutotempout;
     rtengine::ProcEvent EvCATillum;
     rtengine::ProcEvent EvCATcomplex;
@@ -159,8 +159,6 @@ private:
     Gtk::CheckButton* tonecie;
     //  Gtk::CheckButton* sharpcie;
     Gtk::Button* neutral;
-    Gtk::CheckButton* presetcat02;
-    sigc::connection  presetcat02conn;
 
     MyComboBoxText* surrsrc;
     sigc::connection  surrsrcconn;
@@ -198,7 +196,6 @@ private:
     bool lastgamut;
     bool lastdatacie;
     bool lasttonecie;
-    bool lastpresetcat02;
     double nexttemp;
     double nextgreen;
 

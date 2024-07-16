@@ -21,6 +21,7 @@
 #include <gtkmm.h>
 
 #include "adjuster.h"
+#include "checkbox.h"
 #include "colorprovider.h"
 #include "curvelistener.h"
 #include "guiutils.h"
@@ -34,12 +35,15 @@ class EditDataProvider;
 class DirPyrDenoise final :
     public ToolParamBlock,
     public AdjusterListener,
+    public CheckBoxListener,
     public FoldableToolPanel,
     public rtengine::AutoChromaListener,
     public CurveListener,
     public ColorProvider
 {
 public:
+    static const Glib::ustring TOOL_NAME;
+
     DirPyrDenoise ();
     ~DirPyrDenoise () override;
 
@@ -52,6 +56,7 @@ public:
     void autoOpenCurve  () override;
 
     void adjusterChanged (Adjuster* a, double newval) override;
+    void checkBoxToggled(CheckBox* c, CheckValue newval) override;
     void enabledChanged  () override;
     void medianChanged  ();
     void chromaChanged (double autchroma, double autred, double autblue) override;
@@ -81,6 +86,7 @@ public:
     Glib::ustring getSettingString ();
 
 private:
+    rtengine::ProcEvent EvDPDNGain;
     CurveEditorGroup* NoiscurveEditorG;
     CurveEditorGroup* CCcurveEditorG;
     Adjuster* luma;
@@ -88,6 +94,7 @@ private:
     Adjuster* chroma;
     Adjuster* redchro;
     Adjuster* bluechro;
+    CheckBox* autoGain;
     Adjuster* gamma;
     Adjuster* passes;
     FlatCurveEditor* lshape;

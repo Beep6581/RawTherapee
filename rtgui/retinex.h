@@ -109,6 +109,8 @@ protected:
     sigc::connection medianmapConn;
 
 public:
+    static const Glib::ustring TOOL_NAME;
+
     Retinex();
     ~Retinex() override;
 

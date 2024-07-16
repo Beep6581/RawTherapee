@@ -14,7 +14,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Retinex::Retinex () : FoldableToolPanel (this, "retinex", M ("TP_RETINEX_LABEL"), false, true), lastmedianmap (false)
+const Glib::ustring Retinex::TOOL_NAME = "retinex";
+
+Retinex::Retinex () : FoldableToolPanel (this, TOOL_NAME, M ("TP_RETINEX_LABEL"), false, true), lastmedianmap (false)
 {
     CurveListener::setMulti (true);
     std::vector<GradientMilestone> milestones;
@@ -491,10 +493,10 @@ Retinex::Retinex () : FoldableToolPanel (this, "retinex", M ("TP_RETINEX_LABEL")
 
     neutral = Gtk::manage (new Gtk::Button (M ("TP_RETINEX_NEUTRAL")));
     setExpandAlignProperties (neutral, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    RTImage *resetImg = Gtk::manage (new RTImage ("undo-small.png", "redo-small.png"));
+    RTImage *resetImg = Gtk::manage (new RTImage ("undo-small", Gtk::ICON_SIZE_BUTTON));
     setExpandAlignProperties (resetImg, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     neutral->set_image (*resetImg);
-    neutral->set_tooltip_text (M ("TP_RETINEX_NEUTRAL_TIP"));
+    neutral->set_tooltip_text (M ("TP_RETINEX_NEUTRAL_TOOLTIP"));
     neutralconn = neutral->signal_pressed().connect ( sigc::mem_fun (*this, &Retinex::neutral_pressed) );
     neutral->show();
 
@@ -939,7 +941,7 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
     cdshapeH->setCurve  (pp->retinex.cdHcurve);
     lhshape->setCurve  (pp->retinex.lhcurve);
     mapshape->setCurve  (pp->retinex.mapcurve);
-    
+
     retinexMethodConn.block (false);
     retinexColorSpaceConn.block (false);
     gammaretinexConn.block (false);
@@ -951,7 +953,7 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
     complexmethodconn.block (false);
 
     enableListener ();
-    
+
     if (complexmethod->get_active_row_number() == 0) {
         updateGUIToMode(0);
        // convertParamToNormal();
@@ -959,7 +961,7 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
     } else {
         updateGUIToMode(1);
     }
-    
+
 }
 
 

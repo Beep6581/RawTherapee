@@ -20,14 +20,16 @@
  */
 
 #include <gtkmm.h>
+
+#include "guiutils.h"
 #include "multilangmgr.h"
 #include "popupcommon.h"
 #include "rtimage.h"
-#include "guiutils.h"
+#include "threadutils.h"
 
 PopUpCommon::PopUpCommon (Gtk::Button* thisButton, const Glib::ustring& label)
     : buttonImage (nullptr)
-    , menu (nullptr)
+    , menu(new Gtk::Menu())
     , selected (-1) // -1 means that the button is invalid
 {
     button = thisButton;
@@ -48,59 +50,182 @@ PopUpCommon::PopUpCommon (Gtk::Button* thisButton, const Glib::ustring& label)
     setExpandAlignProperties(buttonGroup, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     buttonGroup->attach(*button, 0, 0, 1, 1);
     buttonGroup->get_style_context()->add_class("image-combo");
+
+    // Create the image for the button
+    buttonImage = Gtk::manage(new RTImage());
+    setExpandAlignProperties(buttonImage, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    imageContainer->attach_next_to(*buttonImage, Gtk::POS_RIGHT, 1, 1);
+    buttonImage->set_no_show_all();
+
+    // Create the button for showing the pop-up.
+    arrowButton = Gtk::manage(new Gtk::Button());
+    Gtk::Image *arrowImage = Gtk::manage(new Gtk::Image());
+    arrowImage->set_from_icon_name("pan-down-symbolic", Gtk::ICON_SIZE_BUTTON);
+    setExpandAlignProperties(arrowButton, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
+    arrowButton->add(*arrowImage); //menuSymbol);
+    arrowImage->show();
+    buttonGroup->attach_next_to(*arrowButton, *button, Gtk::POS_RIGHT, 1, 1);
+    arrowButton->signal_button_release_event().connect_notify(sigc::mem_fun(*this, &PopUpCommon::showMenu));
+    arrowButton->get_style_context()->add_class("Right");
+    arrowButton->get_style_context()->add_class("popupbutton-arrow");
+    arrowButton->set_no_show_all();
 }
 
 PopUpCommon::~PopUpCommon ()
 {
-    delete menu;
-    delete buttonImage;
 }
 
-bool PopUpCommon::addEntry (const Glib::ustring& fileName, const Glib::ustring& label)
+bool PopUpCommon::addEntry (const Glib::ustring& fileName, const Glib::ustring& label, Gtk::RadioButtonGroup* radioGroup)
 {
-    if (label.empty ())
-         return false;
+    return insertEntry(getEntryCount(), fileName, label, radioGroup);
+}
+
+bool PopUpCommon::insertEntry(int position, const Glib::ustring& iconName, const Glib::ustring& label, Gtk::RadioButtonGroup *radioGroup)
+{
+    RTImage* image = nullptr;
+    if (!iconName.empty()) {
+        image = Gtk::manage(new RTImage(iconName));
+    }
+    bool success = insertEntryImpl(position, iconName, Glib::RefPtr<const Gio::Icon>(), image, label, radioGroup);
+    if (!success && image) {
+        delete image;
+    }
+    return success;
+}
+
+bool PopUpCommon::insertEntry(int position, const Glib::RefPtr<const Gio::Icon>& gIcon, const Glib::ustring& label, Gtk::RadioButtonGroup *radioGroup)
+{
+    auto image = Gtk::manage(new RTImage(gIcon, Gtk::ICON_SIZE_BUTTON));
+    bool success = insertEntryImpl(position, "", gIcon, image, label, radioGroup);
+    if (!success) {
+        delete image;
+    }
+    return success;
+}
+
+bool PopUpCommon::insertEntryImpl(int position, const Glib::ustring& iconName, const Glib::RefPtr<const Gio::Icon>& gIcon, RTImage* image, const Glib::ustring& label, Gtk::RadioButtonGroup* radioGroup)
+{
+    if (label.empty() || position < 0 || position > getEntryCount())
+        return false;
 
     // Create the menu item and image
-    MyImageMenuItem* newItem = Gtk::manage (new MyImageMenuItem (label, fileName));
-    imageFilenames.push_back (fileName);
-    images.push_back (newItem->getImage ());
-
-    if (selected == -1) {
-        // Create the menu on the first item
-        menu = new Gtk::Menu ();
-        // Create the image for the button
-        buttonImage = new RTImage(fileName);
-        setExpandAlignProperties(buttonImage, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-        // Use the first image by default
-        imageContainer->attach_next_to(*buttonImage, Gtk::POS_RIGHT, 1, 1);
-        selected = 0;
+    Gtk::MenuItem *newItem;
+    if (radioGroup) {
+        newItem = Gtk::manage(new MyRadioImageMenuItem(label, image, *radioGroup));
     }
+    else {
+        newItem = Gtk::manage(new MyImageMenuItem(label, image));
+    }
+    imageIcons.insert(imageIcons.begin() + position, gIcon);
+    imageIconNames.insert(imageIconNames.begin() + position, iconName);
+    images.insert(images.begin() + position, image);
 
     // When there is at least 1 choice, we add the arrow button
     if (images.size() == 1) {
-        Gtk::Button* arrowButton = Gtk::manage( new Gtk::Button() );
-        Gtk::Image *arrowImage = Gtk::manage(new Gtk::Image());
-        arrowImage->set_from_icon_name("pan-down-symbolic", Gtk::ICON_SIZE_BUTTON);
-        setExpandAlignProperties(arrowButton, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
-        arrowButton->add(*arrowImage); //menuSymbol);
-        buttonGroup->attach_next_to(*arrowButton, *button, Gtk::POS_RIGHT, 1, 1);
-        arrowButton->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &PopUpCommon::showMenu) );
+        changeImage(iconName, gIcon);
+        buttonImage->show();
+        selected = 0;
         button->get_style_context()->add_class("Left");
-        arrowButton->get_style_context()->add_class("Right");
-        arrowButton->get_style_context()->add_class("popupbutton-arrow");
+        arrowButton->show();
         hasMenu = true;
+    } else if (position <= selected) {
+        selected++;
     }
 
-    newItem->signal_activate ().connect (sigc::bind (sigc::mem_fun (*this, &PopUpCommon::entrySelected), images.size () - 1));
-    menu->append (*newItem);
-
+    void (PopUpCommon::*entrySelectedFunc)(Gtk::Widget *) = &PopUpCommon::entrySelected;
+    newItem->signal_activate ().connect (sigc::bind (sigc::mem_fun (*this, entrySelectedFunc), newItem));
+    menu->insert(*newItem, position);
     return true;
 }
 
-// TODO: 'PopUpCommon::removeEntry' method to be created...
+void PopUpCommon::setEmptyImage(const Glib::ustring &fileName)
+{
+    emptyImageFilename = fileName;
 
-void PopUpCommon::entrySelected (int i)
+    if (getEntryCount()) {
+        return;
+    }
+    if (fileName.empty()) {
+        buttonImage->hide();
+    } else {
+        changeImage(emptyImageFilename, Glib::RefPtr<const Gio::Icon>());
+        buttonImage->show();
+    }
+}
+
+void PopUpCommon::removeEntry(int position)
+{
+    if (position < 0 || position >= getEntryCount()) {
+        return;
+    }
+
+    if (getEntryCount() == 1) { // Last of the entries.
+        // Hide the arrow button.
+        button->get_style_context()->remove_class("Left");
+        arrowButton->hide();
+        hasMenu = false;
+        if (emptyImageFilename.empty()) {
+            // Remove the button image.
+            buttonImage->hide();
+        } else {
+            // Show the empty icon.
+            changeImage(emptyImageFilename, Glib::RefPtr<const Gio::Icon>());
+        }
+        selected = -1;
+    }
+    else if (position < selected) {
+        selected--;
+    }
+    else if (position == selected) { // Select a different entry before removing.
+        int nextSelection = position + (position == getEntryCount() - 1 ? -1 : 1);
+        changeImage(nextSelection);
+        setButtonHint();
+    }
+
+    std::unique_ptr<Gtk::Widget> menuItem(menu->get_children()[position]);
+    menu->remove(*menuItem);
+    imageIcons.erase(imageIcons.begin() + position);
+    imageIconNames.erase(imageIconNames.begin() + position);
+    images.erase(images.begin() + position);
+}
+
+void PopUpCommon::changeImage(int position)
+{
+    changeImage(imageIconNames.at(position), imageIcons.at(position));
+}
+
+void PopUpCommon::changeImage(const Glib::ustring& iconName, const Glib::RefPtr<const Gio::Icon>& gIcon)
+{
+    if (!iconName.empty()) {
+        buttonImage->set_from_icon_name(iconName, Gtk::ICON_SIZE_BUTTON);
+    } else {
+        buttonImage->set_from_gicon(gIcon, Gtk::ICON_SIZE_BUTTON);
+    }
+}
+
+void PopUpCommon::entrySelected(Gtk::Widget* widget)
+{
+    if (widget != menu->get_active()) { // Not actually selected.
+        return;
+    }
+
+    if (!entrySelectionMutex.trylock()) { // Already being updated.
+        return;
+    }
+    entrySelectionMutex.unlock();
+
+    int i = 0;
+    for (const auto & child : menu->get_children()) {
+        if (widget == child) {
+            break;
+        }
+        i++;
+    }
+
+    entrySelected(i);
+}
+
+void PopUpCommon::entrySelected(int i)
 {
     // Emit a signal if the selected item has changed
     if (setSelected (posToIndex(i)))
@@ -125,14 +250,21 @@ void PopUpCommon::setItemSensitivity (int index, bool isSensitive) {
 bool PopUpCommon::setSelected (int entryNum)
 {
     entryNum = indexToPos(entryNum);
-    
+
     if (entryNum < 0 || entryNum > ((int)images.size() - 1) || (int)entryNum == selected) {
         return false;
     } else {
         // Maybe we could do something better than loading the image file each time the selection is changed !?
-        buttonImage->changeImage(imageFilenames.at(entryNum));
+        changeImage(entryNum);
         selected = entryNum;
         setButtonHint();
+
+        auto radioMenuItem = dynamic_cast<Gtk::RadioMenuItem*>(menu->get_children()[entryNum]);
+        if (radioMenuItem && !radioMenuItem->get_active()) {
+            MyMutex::MyLock updateLock(entrySelectionMutex);
+            radioMenuItem->set_active();
+        }
+
         return true;
     }
 }
@@ -159,10 +291,10 @@ void PopUpCommon::setButtonHint()
 
     if (selected > -1) {
         auto widget = menu->get_children ()[selected];
-        auto item = dynamic_cast<MyImageMenuItem*>(widget);
+        auto item = dynamic_cast<MyImageMenuItemInterface*>(widget);
 
         if (item) {
-            hint += item->getLabel ()->get_text ();
+            hint += escapeHtmlChars(item->getLabel()->get_text());
         }
     }
 

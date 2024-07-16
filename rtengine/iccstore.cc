@@ -17,13 +17,15 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <cstring>
+#include <map>
+#include <string>
 
 #include <glibmm/ustring.h>
 #include <glibmm/fileutils.h>
 #include <glibmm/miscutils.h>
 #include <glib/gstdio.h>
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <winsock2.h>
 #else
 #include <netinet/in.h>
@@ -50,9 +52,9 @@ namespace
 // Not recursive
 void loadProfiles(
     const Glib::ustring& dirName,
-    std::map<Glib::ustring, cmsHPROFILE>* profiles,
-    std::map<Glib::ustring, rtengine::ProfileContent>* profileContents,
-    std::map<Glib::ustring, Glib::ustring>* profileNames,
+    std::map<std::string, cmsHPROFILE>* profiles,
+    std::map<std::string, rtengine::ProfileContent>* profileContents,
+    std::map<std::string, Glib::ustring>* profileNames,
     bool nameUpper
 )
 {
@@ -113,8 +115,8 @@ void loadProfiles(
 bool loadProfile(
     const Glib::ustring& profile,
     const Glib::ustring& dirName,
-    std::map<Glib::ustring, cmsHPROFILE>* profiles,
-    std::map<Glib::ustring, rtengine::ProfileContent>* profileContents
+    std::map<std::string, cmsHPROFILE>* profiles,
+    std::map<std::string, rtengine::ProfileContent>* profileContents
 )
 {
     if (dirName.empty() || profiles == nullptr) {
@@ -195,9 +197,9 @@ cmsHPROFILE createXYZProfile()
     return rtengine::ICCStore::createFromMatrix(mat, false, "XYZ");
 }
 
-const double(*wprofiles[])[3]  = {xyz_sRGB, xyz_adobe, xyz_prophoto, xyz_widegamut, xyz_bruce, xyz_beta, xyz_best, xyz_rec2020, xyz_ACESp0, xyz_ACESp1};//
-const double(*iwprofiles[])[3] = {sRGB_xyz, adobe_xyz, prophoto_xyz, widegamut_xyz, bruce_xyz, beta_xyz, best_xyz, rec2020_xyz, ACESp0_xyz, ACESp1_xyz};//
-const char* wpnames[] = {"sRGB", "Adobe RGB", "ProPhoto", "WideGamut", "BruceRGB", "Beta RGB", "BestRGB", "Rec2020", "ACESp0", "ACESp1"};//
+const double(*wprofiles[])[3]  = {xyz_sRGB, xyz_adobe, xyz_prophoto, xyz_widegamut, xyz_jdcmax, xyz_jdcmaxstdA, xyz_beta, xyz_best, xyz_rec2020, xyz_ACESp0, xyz_ACESp1, xyz_bruce};//
+const double(*iwprofiles[])[3] = {sRGB_xyz, adobe_xyz, prophoto_xyz, widegamut_xyz, jdcmax_xyz, jdcmaxstdA_xyz, beta_xyz, best_xyz, rec2020_xyz, ACESp0_xyz, ACESp1_xyz, bruce_xyz};//
+const char* wpnames[] = {"sRGB", "Adobe RGB", "ProPhoto", "WideGamut", "JDCmax", "JDCmax stdA", "Beta RGB", "BestRGB", "Rec2020", "ACESp0", "ACESp1", "BruceRGB"};//
 //default = gamma inside profile
 //BT709 g=2.22 s=4.5  sRGB g=2.4 s=12.92310
 //linear g=1.0
@@ -454,6 +456,8 @@ public:
         if (loadAll) {
             loadProfiles(profilesDir, &fileProfiles, &fileProfileContents, nullptr, false);
             loadProfiles(userICCDir, &fileProfiles, &fileProfileContents, nullptr, false);
+            Glib::ustring user_output_icc_dir = Glib::build_filename(options.rtdir, "iccprofiles", "output");
+            loadProfiles(user_output_icc_dir, &fileProfiles, &fileProfileContents, nullptr, false);
         }
 
         // Input profiles
@@ -993,10 +997,10 @@ parse_error:
         return false;
     }
 
-    using ProfileMap = std::map<Glib::ustring, cmsHPROFILE>;
-    using MatrixMap = std::map<Glib::ustring, TMatrix>;
-    using ContentMap = std::map<Glib::ustring, ProfileContent>;
-    using NameMap = std::map<Glib::ustring, Glib::ustring>;
+    using ProfileMap = std::map<std::string, cmsHPROFILE>;
+    using MatrixMap = std::map<std::string, TMatrix>;
+    using ContentMap = std::map<std::string, ProfileContent>;
+    using NameMap = std::map<std::string, Glib::ustring>;
 
     ProfileMap wProfiles;
     // ProfileMap wProfilesGamma;

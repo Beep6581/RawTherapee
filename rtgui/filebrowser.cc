@@ -157,7 +157,7 @@ FileBrowser::FileBrowser () :
         pmenu->attach (*Gtk::manage(inspect = new Gtk::MenuItem (M("FILEBROWSER_POPUPINSPECT"))), 0, 1, p, p + 1);
         p++;
     }
-    pmenu->attach (*Gtk::manage(develop = new MyImageMenuItem (M("FILEBROWSER_POPUPPROCESS"), "gears.png")), 0, 1, p, p + 1);
+    pmenu->attach (*Gtk::manage(develop = new MyImageMenuItem (M("FILEBROWSER_POPUPPROCESS"), "gears")), 0, 1, p, p + 1);
     p++;
     pmenu->attach (*Gtk::manage(developfast = new Gtk::MenuItem (M("FILEBROWSER_POPUPPROCESSFAST"))), 0, 1, p, p + 1);
     p++;
@@ -166,6 +166,41 @@ FileBrowser::FileBrowser () :
     p++;
     pmenu->attach (*Gtk::manage(selall = new Gtk::MenuItem (M("FILEBROWSER_POPUPSELECTALL"))), 0, 1, p, p + 1);
     p++;
+
+    /***********************
+     * sort
+     ***********************/
+    const std::array<std::string, 2> cnameSortOrders = {
+        M("SORT_ASCENDING"),
+        M("SORT_DESCENDING"),
+    };
+
+    const std::array<std::string, Options::SORT_METHOD_COUNT> cnameSortMethods = {
+        M("SORT_BY_NAME"),
+        M("SORT_BY_DATE"),
+        M("SORT_BY_EXIF"),
+        M("SORT_BY_RANK"),
+        M("SORT_BY_LABEL"),
+    };
+
+    pmenu->attach (*Gtk::manage(menuSort = new Gtk::MenuItem (M("FILEBROWSER_POPUPSORTBY"))), 0, 1, p, p + 1);
+    p++;
+    Gtk::Menu* submenuSort = Gtk::manage (new Gtk::Menu ());
+    Gtk::RadioButtonGroup sortOrderGroup, sortMethodGroup;
+    for (size_t i = 0; i < cnameSortOrders.size(); i++) {
+        submenuSort->attach (*Gtk::manage(sortOrder[i] = new Gtk::RadioMenuItem (sortOrderGroup, cnameSortOrders[i])), 0, 1, p, p + 1);
+        p++;
+        sortOrder[i]->set_active (i == options.sortDescending);
+    }
+    submenuSort->attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p + 1);
+    p++;
+    for (size_t i = 0; i < cnameSortMethods.size(); i++) {
+        submenuSort->attach (*Gtk::manage(sortMethod[i] = new Gtk::RadioMenuItem (sortMethodGroup, cnameSortMethods[i])), 0, 1, p, p + 1);
+        p++;
+        sortMethod[i]->set_active (i == options.sortMethod);
+    }
+    submenuSort->show_all ();
+    menuSort->set_submenu (*submenuSort);
 
     /***********************
      * rank
@@ -209,8 +244,8 @@ FileBrowser::FileBrowser () :
 
     // Thumbnail context menu
     // Similar image arrays in filecatalog.cc
-    std::array<std::string, 6> clabelActiveIcons = {"circle-empty-gray-small.png", "circle-red-small.png", "circle-yellow-small.png", "circle-green-small.png", "circle-blue-small.png", "circle-purple-small.png"};
-    std::array<std::string, 6> clabelInactiveIcons = {"circle-empty-darkgray-small.png", "circle-empty-red-small.png", "circle-empty-yellow-small.png", "circle-empty-green-small.png", "circle-empty-blue-small.png", "circle-empty-purple-small.png"};
+    std::array<std::string, 6> clabelActiveIcons = {"circle-empty-gray-small", "circle-red-small", "circle-yellow-small", "circle-green-small", "circle-blue-small", "circle-purple-small"};
+    std::array<std::string, 6> clabelInactiveIcons = {"circle-empty-darkgray-small", "circle-empty-red-small", "circle-empty-yellow-small", "circle-empty-green-small", "circle-empty-blue-small", "circle-empty-purple-small"};
 
     if (options.menuGroupLabel) {
         pmenu->attach (*Gtk::manage(menuLabel = new Gtk::MenuItem (M("FILEBROWSER_POPUPCOLORLABEL"))), 0, 1, p, p + 1);
@@ -237,7 +272,7 @@ FileBrowser::FileBrowser () :
     /***********************
      * external programs
      * *********************/
-#if defined(WIN32)
+#if defined(_WIN32)
     Gtk::manage(miOpenDefaultViewer = new Gtk::MenuItem (M("FILEBROWSER_OPENDEFAULTVIEWER")));
 #endif
 
@@ -261,7 +296,7 @@ FileBrowser::FileBrowser () :
             p++;
             Gtk::Menu* submenuExtProg = Gtk::manage (new Gtk::Menu());
 
-#ifdef WIN32
+#ifdef _WIN32
             if (miOpenDefaultViewer) {
                 submenuExtProg->attach (*miOpenDefaultViewer, 0, 1, p, p + 1);
                 p++;
@@ -275,7 +310,7 @@ FileBrowser::FileBrowser () :
             submenuExtProg->show_all ();
             menuExtProg->set_submenu (*submenuExtProg);
         } else {
-#ifdef WIN32
+#ifdef _WIN32
             if (miOpenDefaultViewer) {
                 pmenu->attach (*miOpenDefaultViewer, 0, 1, p, p + 1);
                 p++;
@@ -427,6 +462,14 @@ FileBrowser::FileBrowser () :
         inspect->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), inspect));
     }
 
+    for (int i = 0; i < 2; i++) {
+        sortOrder[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), sortOrder[i]));
+    }
+
+    for (int i = 0; i < Options::SORT_METHOD_COUNT; i++) {
+        sortMethod[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), sortMethod[i]));
+    }
+
     for (int i = 0; i < 6; i++) {
         rank[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), rank[i]));
     }
@@ -439,7 +482,7 @@ FileBrowser::FileBrowser () :
         amiExtProg[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), amiExtProg[i]));
     }
 
-#ifdef WIN32
+#ifdef _WIN32
     if (miOpenDefaultViewer) {
         miOpenDefaultViewer->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), miOpenDefaultViewer));
     }
@@ -504,13 +547,13 @@ void FileBrowser::rightClicked ()
         untrash->set_sensitive (false);
 
         for (size_t i = 0; i < selected.size(); i++)
-            if ((static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->getStage()) {
+            if ((static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->getTrashed()) {
                 untrash->set_sensitive (true);
                 break;
             }
 
         for (size_t i = 0; i < selected.size(); i++)
-            if (!(static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->getStage()) {
+            if (!(static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->getTrashed()) {
                 trash->set_sensitive (true);
                 break;
             }
@@ -606,31 +649,11 @@ void FileBrowser::addEntry_ (FileBrowserEntry* entry)
     entry->addButtonSet(new FileThumbnailButtonSet(entry));
     entry->getThumbButtonSet()->setRank(entry->thumbnail->getRank());
     entry->getThumbButtonSet()->setColorLabel(entry->thumbnail->getColorLabel());
-    entry->getThumbButtonSet()->setInTrash(entry->thumbnail->getStage());
+    entry->getThumbButtonSet()->setInTrash(entry->thumbnail->getTrashed());
     entry->getThumbButtonSet()->setButtonListener(this);
     entry->resize(getThumbnailHeight());
     entry->filtered = !checkFilter(entry);
-
-    // find place in abc order
-    {
-        MYWRITERLOCK(l, entryRW);
-
-        fd.insert(
-            std::lower_bound(
-                fd.begin(),
-                fd.end(),
-                entry,
-                [](const ThumbBrowserEntryBase* a, const ThumbBrowserEntryBase* b)
-                {
-                    return *a < *b;
-                }
-            ),
-            entry
-        );
-
-        initEntry(entry);
-    }
-    redraw(entry);
+    insertEntry(entry);
 }
 
 FileBrowserEntry* FileBrowser::delEntry (const Glib::ustring& fname)
@@ -723,6 +746,18 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
     if (!tbl || (m != selall && mselected.empty()) ) {
         return;
     }
+
+    for (int i = 0; i < 2; i++)
+        if (m == sortOrder[i]) {
+            sortOrderRequested (i);
+            return;
+        }
+
+    for (int i = 0; i < Options::SORT_METHOD_COUNT; i++)
+        if (m == sortMethod[i]) {
+            sortMethodRequested (i);
+            return;
+        }
 
     for (int i = 0; i < 6; i++)
         if (m == rank[i]) {
@@ -875,11 +910,11 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
                 }
 
                 // Reinit cache
-                rtengine::dfm.init( options.rtSettings.darkFramesPath );
+                rtengine::DFManager::getInstance().init( options.rtSettings.darkFramesPath );
             } else {
                 // Target directory creation failed, we clear the darkFramesPath setting
                 options.rtSettings.darkFramesPath.clear();
-                Glib::ustring msg_ = Glib::ustring::compose (M("MAIN_MSG_PATHDOESNTEXIST"), options.rtSettings.darkFramesPath)
+                Glib::ustring msg_ = Glib::ustring::compose (M("MAIN_MSG_PATHDOESNTEXIST"), escapeHtmlChars(options.rtSettings.darkFramesPath))
                                      + "\n\n" + M("MAIN_MSG_OPERATIONCANCELLED");
                 Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
                 msgd.set_title(M("TP_DARKFRAME_LABEL"));
@@ -955,7 +990,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
             } else {
                 // Target directory creation failed, we clear the flatFieldsPath setting
                 options.rtSettings.flatFieldsPath.clear();
-                Glib::ustring msg_ = Glib::ustring::compose (M("MAIN_MSG_PATHDOESNTEXIST"), options.rtSettings.flatFieldsPath)
+                Glib::ustring msg_ = Glib::ustring::compose (M("MAIN_MSG_PATHDOESNTEXIST"), escapeHtmlChars(options.rtSettings.flatFieldsPath))
                                      + "\n\n" + M("MAIN_MSG_OPERATIONCANCELLED");
                 Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
                 msgd.set_title(M("TP_FLATFIELD_LABEL"));
@@ -988,12 +1023,12 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
             const auto thumbnail = mselected[i]->thumbnail;
             const auto rank = thumbnail->getRank();
             const auto colorLabel = thumbnail->getColorLabel();
-            const auto stage = thumbnail->getStage();
+            const auto stage = thumbnail->getTrashed();
 
             thumbnail->createProcParamsForUpdate (false, true);
             thumbnail->setRank(rank);
             thumbnail->setColorLabel(colorLabel);
-            thumbnail->setStage(stage);
+            thumbnail->setTrashed(stage);
 
             // Empty run to update the thumb
             rtengine::procparams::ProcParams params = thumbnail->getProcParams ();
@@ -1011,7 +1046,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
         tbl->clearFromCacheRequested (mselected, true);
 
         //queue_draw ();
-#ifdef WIN32
+#ifdef _WIN32
     } else if (miOpenDefaultViewer && m == miOpenDefaultViewer) {
         openDefaultViewer(1);
 #endif
@@ -1122,7 +1157,7 @@ void FileBrowser::partPasteProfile ()
     }
 }
 
-#ifdef WIN32
+#ifdef _WIN32
 void FileBrowser::openDefaultViewer (int destination)
 {
     bool success = true;
@@ -1219,7 +1254,7 @@ bool FileBrowser::keyPressed (GdkEventKey* event)
         }
 
         openRequested(mselected);
-#ifdef WIN32
+#ifdef _WIN32
     } else if (event->keyval == GDK_KEY_F5) {
         int dest = 1;
 
@@ -1241,7 +1276,7 @@ bool FileBrowser::keyPressed (GdkEventKey* event)
     }
 
 #ifdef __WIN32__
-    else if (shift && !ctrl && !alt && !altgr) { // rank
+    else if (!shift && !ctrl && !alt && !altgr) { // rank
         switch(event->hardware_keycode) {
         case 0x30:  // 0-key
             requestRanking (0);
@@ -1296,7 +1331,7 @@ bool FileBrowser::keyPressed (GdkEventKey* event)
     }
 
 #else
-    else if (shift && !ctrl && !alt) { // rank
+    else if (!shift && !ctrl && !alt) { // rank
         switch(event->hardware_keycode) {
         case 0x13:
             requestRanking (0);
@@ -1523,8 +1558,8 @@ bool FileBrowser::checkFilter (ThumbBrowserEntryBase* entryb) const   // true ->
             ((entry->thumbnail->isRecentlySaved() && filter.showRecentlySaved[0]) && !filter.showRecentlySaved[1]) ||
             ((!entry->thumbnail->isRecentlySaved() && filter.showRecentlySaved[1]) && !filter.showRecentlySaved[0]) ||
 
-            (entry->thumbnail->getStage() && !filter.showTrash) ||
-            (!entry->thumbnail->getStage() && !filter.showNotTrash)) {
+            (entry->thumbnail->getTrashed() && !filter.showTrash) ||
+            (!entry->thumbnail->getTrashed() && !filter.showNotTrash)) {
         return false;
     }
 
@@ -1590,11 +1625,11 @@ void FileBrowser::toTrashRequested (std::vector<FileBrowserEntry*> tbe)
 
         // no need to notify listeners as item goes to trash, likely to be deleted
 
-        if (tbe[i]->thumbnail->getStage()) {
+        if (tbe[i]->thumbnail->getTrashed()) {
             continue;
         }
 
-        tbe[i]->thumbnail->setStage (true);
+        tbe[i]->thumbnail->setTrashed (true);
 
         if (tbe[i]->getThumbButtonSet()) {
             tbe[i]->getThumbButtonSet()->setRank (tbe[i]->thumbnail->getRank());
@@ -1614,11 +1649,11 @@ void FileBrowser::fromTrashRequested (std::vector<FileBrowserEntry*> tbe)
     for (size_t i = 0; i < tbe.size(); i++) {
         // if thumbnail was marked inTrash=true then param file must be there, no need to run customprofilebuilder
 
-        if (!tbe[i]->thumbnail->getStage()) {
+        if (!tbe[i]->thumbnail->getTrashed()) {
             continue;
         }
 
-        tbe[i]->thumbnail->setStage (false);
+        tbe[i]->thumbnail->setTrashed (false);
 
         if (tbe[i]->getThumbButtonSet()) {
             tbe[i]->getThumbButtonSet()->setRank (tbe[i]->thumbnail->getRank());
@@ -1630,6 +1665,18 @@ void FileBrowser::fromTrashRequested (std::vector<FileBrowserEntry*> tbe)
 
     trash_changed().emit();
     applyFilter (filter);
+}
+
+void FileBrowser::sortMethodRequested (int method)
+{
+    options.sortMethod = Options::SortMethod(method);
+    resort ();
+}
+
+void FileBrowser::sortOrderRequested (int order)
+{
+    options.sortDescending = !!order;
+    resort ();
 }
 
 void FileBrowser::rankingRequested (std::vector<FileBrowserEntry*> tbe, int rank)
@@ -1737,7 +1784,7 @@ void FileBrowser::buttonPressed (LWButton* button, int actionCode, void* actionD
         FileBrowserEntry* entry = static_cast<FileBrowserEntry*>(actionData);
         tbe.push_back (entry);
 
-        if (!entry->thumbnail->getStage()) {
+        if (!entry->thumbnail->getTrashed()) {
             toTrashRequested (tbe);
         } else {
             fromTrashRequested (tbe);

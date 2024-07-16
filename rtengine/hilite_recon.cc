@@ -32,14 +32,15 @@
 #include "opthelper.h"
 #include "rawimagesource.h"
 #include "rt_math.h"
-//#define BENCHMARK
-//#include "StopWatch.h"
+#define BENCHMARK
+#include "StopWatch.h"
 #include "guidedfilter.h"
 #include "settings.h"
 #include "gauss.h"
 #include "rescale.h"
 #include "iccstore.h"
 #include "color.h"
+#include "linalgebra.h"
 
 namespace
 {
@@ -301,7 +302,7 @@ using namespace procparams;
 
 void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue, int blur)
 {  
-  //  BENCHFUN
+    //BENCHFUN
     double progress = 0.0;
 
     if (plistener) {
@@ -1175,27 +1176,27 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
                                       {2.0f, 3.0f, 0.001f}
                                      };
 
-        const float rad1 = vals[blur][0];
-        const float rad2 = vals[blur][1];
+        const float radius1 = vals[blur][0];
+        const float radius2 = vals[blur][1];
         const float th = vals[blur][2];
 
-        guidedFilter(guide, mask, mask, rad1, th, true, 1);
+        guidedFilter(guide, mask, mask, radius1, th, true, 1);
         if (plistener) {
             progress += 0.03;
             plistener->setProgress(progress);
         }
         if (blur > 0) { //no use of 2nd guidedFilter if Blur = 0 (slider to 1)..speed-up and very small differences.
-            guidedFilter(guide, rbuf, rbuf, rad2, 0.01f * 65535.f, true, 1);
+            guidedFilter(guide, rbuf, rbuf, radius2, 0.01f * 65535.f, true, 1);
             if (plistener) {
                 progress += 0.03;
                 plistener->setProgress(progress);
             }
-            guidedFilter(guide, gbuf, gbuf, rad2, 0.01f * 65535.f, true, 1);
+            guidedFilter(guide, gbuf, gbuf, radius2, 0.01f * 65535.f, true, 1);
             if (plistener) {
                 progress += 0.03;
                 plistener->setProgress(progress);
             }
-            guidedFilter(guide, bbuf, bbuf, rad2, 0.01f * 65535.f, true, 1);
+            guidedFilter(guide, bbuf, bbuf, radius2, 0.01f * 65535.f, true, 1);
             if (plistener) {
                 progress += 0.03;
                 plistener->setProgress(progress);
@@ -1225,6 +1226,372 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
     }
 
 }// end of HLReconstruction
+
+
+//-----------------------------------------------------------------------------
+// "inpaint opposed" algorithm taken from darktable
+//
+// (Very effective, very simple, very neat)
+//
+// Kudos to the original authors (@jenshannoschwalm from dt, in collaboration
+// with @garagecoder and @Iain from gmic).
+//
+// Copyright and description of the original code follows
+//
+/*
+    Copyright (C) 2022 darktable developers.
+
+    darktable is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    darktable is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with darktable.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/* The refavg values are calculated in raw-RGB-cube3 space
+   We calculate all color channels in the 3x3 photosite area, this can be understaood as a "superpixel",
+   the "asking" location is in the centre.
+   As this works for bayer and xtrans sensors we don't have a fixed ratio but calculate the average
+   for every color channel first.
+   refavg for one of red, green or blue is defined as means of both other color channels (opposing).
+   
+   The basic idea / observation for the _process_opposed algorithm is, the refavg is a good estimate
+   for any clipped color channel in the vast majority of images, working mostly fine both for small specular
+   highlighted spots and large areas.
+   
+   The correction via some sort of global chrominance further helps to correct color casts.
+   The chrominace data are taken from the areas morphologically very close to clipped data.
+   Failures of the algorithm (color casts) are in most cases related to
+    a) very large differences between optimal white balance coefficients vs what we have as D65 in the darktable pipeline
+    b) complicated lightings so the gradients are not well related
+    c) a wrong whitepoint setting in the rawprepare module. 
+    d) the maths might not be best
+*/ 
+//-----------------------------------------------------------------------------
+
+namespace {
+
+constexpr int HL_BORDER = 8;
+constexpr float HL_POWERF = 3.0f;
+
+// void border_fill_zero(int *d, int width, int height)
+// {
+//     for (int i = 0; i < HL_BORDER * width; i++) {
+//         d[i] = 0;
+//     }
+//     for (int i = (height - HL_BORDER - 1) * width; i < width*height; i++) {
+//         d[i] = 0;
+//     }
+//     for (int row = HL_BORDER; row < height - HL_BORDER; row++) {
+//         int *p1 = d + row*width;
+//         int *p2 = d + (row+1)*width - HL_BORDER;
+//         for(int i = 0; i < HL_BORDER; i++) {
+//             p1[i] = p2[i] = 0;
+//         }
+//     }
+// }
+
+
+int test_dilate(const int *img, int i, int w1)
+{
+    int retval = 0;
+    retval = img[i-w1-1] | img[i-w1] | img[i-w1+1] |
+        img[i-1]    | img[i]    | img[i+1] |
+        img[i+w1-1] | img[i+w1] | img[i+w1+1];
+    if (retval) {
+        return retval;
+    }
+
+    const size_t w2 = 2*w1;
+    retval = img[i-w2-1] | img[i-w2]   | img[i-w2+1] |
+        img[i-w1-2] | img[i-w1+2] | 
+        img[i-2]    | img[i+2] |
+        img[i+w1-2] | img[i+w1+2] |
+        img[i+w2-1] | img[i+w2]   | img[i+w2+1];
+    if (retval) {
+        return retval;
+    }
+
+    const size_t w3 = 3*w1;
+    retval = img[i-w3-2] | img[i-w3-1] | img[i-w3] | img[i-w3+1] | img[i-w3+2] |
+        img[i-w2-3] | img[i-w2-2] | img[i-w2+2] | img[i-w2+3] |
+        img[i-w1-3] | img[i-w1+3] | 
+        img[i-3]    | img[i+3]    | 
+        img[i+w1-3] | img[i+w1+3] | 
+        img[i+w2-3] | img[i+w2-2] | img[i+w2+2] | img[i+w2+3] |
+        img[i+w3-2] | img[i+w3-1] | img[i+w3] | img[i+w3+1] | img[i+w3+2]; 
+    return retval;
+}
+
+
+void dilating(const int *img, int *o, int w1, int height)
+{
+#ifdef _OPENMP
+#   pragma omp parallel for
+#endif
+    for (int row = HL_BORDER; row < height - HL_BORDER; row++) {
+        for (int col = HL_BORDER, i = row*w1 + col; col < w1 - HL_BORDER; col++, i++) {
+            o[i] = test_dilate(img, i, w1);
+        }
+    }
+}
+
+} // namespace
+
+void RawImageSource::highlight_recovery_opposed(float scale_mul[3], const ColorTemp &wb, float gainth)
+{
+    //BENCHFUN
+
+    if (settings->verbose) {
+        std::cout << "Applying Highlight Recovery: Inpaint opposed" << std::endl;
+    }
+
+    if (plistener) {
+        plistener->setProgressStr("PROGRESSBAR_HLREC");
+        plistener->setProgress(0);
+    }
+    
+    double rr, gg, bb;
+    wb.getMultipliers(rr, gg, bb);
+    wbMul2Camera(rr, gg, bb);
+    
+	float gain = 1.2f * gainth;
+	
+	float clipval = 0.987f / gain;
+    const float scalecoeffs[3] = {
+        scale_mul[0] * float(rr) / 65535.f,
+        scale_mul[1] * float(gg) / 65535.f,
+        scale_mul[2] * float(bb) / 65535.f,
+    };
+    const float clips[3] = {
+        clipval * float(rr),
+        clipval * float(gg),
+        clipval * float(bb)
+    };
+    const float clipdark[3] = {
+        0.03f * clips[0],
+        0.125f * clips[1],
+        0.03f * clips[2]
+    };
+
+    bool anyclipped = false;
+    float **chan[3] = { red, green, blue };
+
+    const float clipscale[3] = {
+        clips[0] / scalecoeffs[0],
+        clips[1] / scalecoeffs[1],
+        clips[2] / scalecoeffs[2]
+    };
+
+    int x1 = W, y1 = H, x2 = 0, y2 = 0;
+    for (int y = 0; y < H; ++y) {
+        for (int x = 0; x < W; ++x) {
+            for (int c = 0; c < 3; ++c) {
+                if (chan[c][y][x] >= clipscale[c]) {
+                    anyclipped = true;
+                    x1 = std::min(x, x1);
+                    x2 = std::max(x, x2);
+                    y1 = std::min(y, y1);
+                    y2 = std::max(y, y2);
+                }
+            }
+        }
+    }
+
+    if (!anyclipped) {
+        if (plistener) {
+            plistener->setProgress(1.0);
+        }
+        return;
+    }
+
+    x1 = std::max(x1-1, 0);
+    x2 = std::min(x2+1, W-1);
+    y1 = std::max(y1-1, 0);
+    y2 = std::min(y2+1, H-1);
+
+    const int cW = x2 - x1 + 1;
+    const int cH = y2 - y1 + 1;
+    
+#ifdef _OPENMP
+#   pragma omp parallel for
+#endif
+    for (int y = 0; y < cH; ++y) {
+        const int yy = y + y1;
+        for (int x = 0; x < cW; ++x) {
+            const int xx = x + x1;
+            for (int c = 0; c < 3; ++c) {
+                chan[c][yy][xx] *= scalecoeffs[c];
+            }
+        }
+    }
+
+    if (plistener) {
+        plistener->setProgress(0.1);
+    }
+
+    multi_array2D<float, 3> tmp(cW, cH);
+
+    const int pwidth = cW + 2 * HL_BORDER;
+    const int pheight = cH + 2 * HL_BORDER;
+    const int p_size = pwidth * pheight;
+    AlignedBuffer<int> mask_vec(4 * p_size);
+    int *mask_buffer = mask_vec.data;
+
+    const auto mask_val =
+        [&](int c, int y, int x) -> int &
+        {
+            return mask_buffer[c * p_size + (HL_BORDER + y) * pwidth + x + HL_BORDER];
+        };
+    
+    const auto set_refavg =
+        [&](int y, int x) -> bool
+        {
+            const int yy = y + y1;
+            const int xx = x + x1;
+            bool found = false;
+            for (int c = 0; c < 3 && !found; ++c) {
+                if (chan[c][yy][xx] >= clips[c]) {
+                    found = true;
+                }
+            }
+            if (!found) {
+                return false;
+            }
+            
+            float mean[3] = { 0.0f, 0.0f, 0.0f };
+            for (int dy = -1; dy < 2; dy++) {
+                for (int dx = -1; dx < 2; dx++) {
+                    for (int c = 0; c < 3; ++c) {
+                        mean[c] += std::max(0.0f, chan[c][yy+dy][xx+dx]);
+                    }
+                }
+            }
+            for (int c = 0; c < 3; ++c) {
+                mean[c] = pow_F(mean[c] / 9.0f, 1.0f / HL_POWERF);
+            }
+
+            const float croot_refavg[3] = {
+                0.5f * (mean[1] + mean[2]),
+                0.5f * (mean[0] + mean[2]),
+                0.5f * (mean[0] + mean[1])
+            };
+            
+            for (int c = 0; c < 3; ++c) {
+                if (chan[c][yy][xx] >= clips[c]) {
+                    tmp[c][y][x] = pow_F(croot_refavg[c], HL_POWERF);
+                    mask_val(c, y, x) = 1;
+                }
+            }
+            return true;
+        };
+
+#ifdef _OPENMP
+#   pragma omp parallel for
+#endif
+    for (int y = 0; y < cH; ++y) {
+        const int yy = y + y1;
+        for (int x = 0; x < cW; ++x) {
+            const int xx = x + x1;
+            for (int c = 0; c < 3; ++c) {
+                tmp[c][y][x] = std::max(0.f, chan[c][yy][xx]);
+            }
+
+            if ((x > 0) && (x < cW - 1) && (y > 0) && (y < cH - 1)) {
+                set_refavg(y, x);
+            }
+        }
+    }
+
+    if (plistener) {
+        plistener->setProgress(0.3);
+    }
+
+    for (size_t i = 0; i < 3; i++) {
+        int *mask = mask_buffer + i * p_size;
+        int *tmp = mask_buffer + 3 * p_size;
+        //border_fill_zero(mask, pwidth, pheight);
+        dilating(mask, tmp, pwidth, pheight);
+        memcpy(mask, tmp, p_size * sizeof(int));
+    }
+
+    float cr_sum[3] = { 0.f, 0.f, 0.f };
+    int cr_cnt[3] = { 0, 0, 0 };
+
+#ifdef _OPENMP
+#   pragma omp parallel for reduction(+ : cr_sum, cr_cnt)
+#endif
+    for (int y = 1; y < cH-1; ++y) {
+        const int yy = y + y1;
+        for (int x = 1; x < cW-1; ++x) {
+            const int xx = x + x1;
+            for (int c = 0; c < 3; ++c) {
+                const float inval = std::max(0.0f, chan[c][yy][xx]); 
+                if (mask_val(c, y, x) && (inval > clipdark[c]) && (inval < clips[c])) {
+                    cr_sum[c] += inval - tmp[c][y][x];
+                    ++cr_cnt[c];
+                }
+            }
+        }
+    }
+
+    if (plistener) {
+        plistener->setProgress(0.6);
+    }
+
+    float chrominance[3] = {
+        cr_sum[0] / std::max(1.f, float(cr_cnt[0])),
+        cr_sum[1] / std::max(1.f, float(cr_cnt[1])),
+        cr_sum[2] / std::max(1.f, float(cr_cnt[2]))
+    };
+
+#ifdef _OPENMP
+#   pragma omp parallel for 
+#endif
+    for (int y = 0; y < cH; ++y) {
+        const int yy = y + y1;
+        for (int x = 0; x < cW; ++x) {
+            const int xx = x + x1;
+            for (int c = 0; c < 3; ++c) {
+                const float inval = std::max(0.0f, chan[c][yy][xx]);
+                if (inval >= clips[c]) {
+                    chan[c][yy][xx] = std::max(inval, tmp[c][y][x] + chrominance[c]);
+                }
+            }
+        }
+    }
+
+    if (plistener) {
+        plistener->setProgress(0.9);
+    }
+
+#ifdef _OPENMP
+#   pragma omp parallel for
+#endif
+    for (int y = 0; y < cH; ++y) {
+        const int yy = y + y1;
+        for (int x = 0; x < cW; ++x) {
+            const int xx = x + x1;
+            for (int c = 0; c < 3; ++c) {
+                chan[c][yy][xx] /= scalecoeffs[c];
+            }
+        }
+    }
+
+    if (plistener) {
+        plistener->setProgress(1.0);
+    }
+}
+
+
+
 
 }
 

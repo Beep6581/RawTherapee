@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="16"
+   height="16"
+   viewBox="0 0 16 16"
+   version="1.1"
+   id="SVGRoot"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs815" />
+  <metadata
+     id="metadata818">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Maciej Dworak</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title />
+          </cc:Agent>
+        </dc:rights>
+        <dc:description>RawTherapee icon.</dc:description>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     transform="translate(0,-8)">
+    <g
+       id="g1498"
+       transform="matrix(0.73681726,0,0,0.66666667,-10.051828,-1.3333333)"
+       style="stroke-width:1.42680871">
+      <path
+         id="path1047"
+         d="m 16.78125,17 c -0.390243,0 -0.842624,0.02871 -1.263672,0.388672 C 15.09653,17.748633 14.99039,18.30494 15,18.699219 V 22.5 c 0.0011,-0.551499 0.4485,-0.999946 1,-1 h 17 c 0.553025,5.4e-5 1.001,0.446976 1,1 V 20 C 34.0027,19.617925 33.90824,19.257931 33.486328,18.892578 33.064411,18.527225 32.609647,18.5 32.21875,18.5 H 22.591797 L 22.144531,17.6875 C 22.085157,17.579593 22.006361,17.483581 21.912109,17.404297 21.704189,17.229231 21.394112,17 20.878906,17 Z M 34,34 c -5.67e-4,0.275749 -0.112048,0.525975 -0.292969,0.707031 C 33.887992,34.526071 33.999973,34.276131 34,34 Z"
+         style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:0.5;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;vector-effect:none;fill:#cccccc;fill-opacity:1.0;fill-rule:nonzero;stroke:none;stroke-width:2.85361719;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" />
+      <path
+         id="rect1030"
+         d="m 15.999998,21.5 c -0.5515,4.8e-5 -0.998867,0.403651 -1,0.9 v 11.7 c 5.6e-5,0.497036 0.447738,0.899951 1,0.9 h 17 c 0.5515,-4.8e-5 0.998867,-0.403651 1,-0.9 V 22.4 c 0.001,-0.497722 -0.446975,-0.899951 -1,-0.9 z"
+         style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:0.7;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;vector-effect:none;fill:#cccccc;fill-opacity:1.0;fill-rule:nonzero;stroke:none;stroke-width:2.7568562;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" />
+    </g>
+    <path
+       style="display:inline;opacity:0.5;fill:#ffffff;fill-opacity:1.0;stroke:none;stroke-width:1;enable-background:new"
+       d="m 8,13.666283 c -2.2021704,0 -3.9888842,1.77973 -3.9999996,3.979287 H 2.9165703 L 4.6248566,20.353855 6.3538541,17.64557 H 5.3331408 C 5.3444938,16.182572 6.5343396,15 8,15 c 1.4727059,0 2.666284,1.193577 2.666284,2.666283 0,1.472705 -1.1935781,2.666859 -2.666284,2.666859 -0.4866006,0 -0.9410111,-0.147472 -1.3337163,-0.375144 L 6.0000001,21.124281 C 6.5883385,21.464627 7.2714406,21.666283 8,21.666283 c 2.209065,0 3.999425,-1.790947 3.999425,-4 0,-2.209063 -1.79036,-4 -3.999425,-4 z m -0.4792868,2 v 2 0.666859 h 2.1662831 v -0.666859 h -1.499424 v -2 z"
+       id="path1068" />
+  </g>
+</svg>

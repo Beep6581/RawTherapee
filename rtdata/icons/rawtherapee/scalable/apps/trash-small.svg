@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="16"
+   height="16"
+   viewBox="0 0 16 16"
+   version="1.1"
+   id="SVGRoot"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs815" />
+  <metadata
+     id="metadata818">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Maciej Dworak</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title />
+          </cc:Agent>
+        </dc:rights>
+        <dc:description>RawTherapee icon.</dc:description>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     transform="translate(0,-8)">
+    <g
+       id="g5377"
+       transform="matrix(0.03255975,0,0,0.03284318,7.0224524,16.223702)"
+       style="stroke-width:62.19189453">
+      <path
+         d="m -14.2123,-217.38426 c -9.196325,4.65637 -15.133193,12.80501 -16.413694,22.23415 l -0.814865,5.47123 h 61.464048 61.464047 l -0.814865,-4.77277 c -1.047682,-6.75174 -5.820459,-15.59883 -10.360417,-18.9747 -8.381461,-6.4025 -9.312734,-6.51891 -51.10363,-6.51891 -36.9017098,0.11641 -38.9970751,0.23281 -43.420624,2.561 z"
+         id="path8"
+         style="opacity:0.7;fill:#cccccc;stroke:none;stroke-width:62.19189453;fill-opacity:1.0" />
+      <path
+         d="m -105.59351,-173.73082 c -15.94805,2.67741 -30.96484,12.45578 -40.39398,26.07566 -4.77278,6.86814 -9.66196,21.30288 -9.66196,28.28743 v 5.35482 H 30.023189 215.69583 v -4.07432 c 0,-24.44593 -21.76852,-49.70672 -47.49494,-55.17795 -4.30714,-0.93128 -45.05036,-1.2805 -138.526929,-1.16409 -72.755738,0.1164 -133.637741,0.46563 -135.267471,0.69845 z"
+         id="path10"
+         style="opacity:0.7;fill:#cccccc;stroke:none;stroke-width:62.19189453;fill-opacity:1.0" />
+      <path
+         id="path5310"
+         transform="matrix(0.66335753,0,0,0.66335753,-301.65558,-296.97895)"
+         d="M 260.46875,300.375 V 404.96875 432.125 c 0,164.60477 0.69708,260.25227 1.75,266.21875 4.38712,23.33947 20.1846,43.88918 41.59375,54.59375 l 11.9375,5.78125 H 500 684.25 l 9.65625,-4.5625 c 19.82979,-9.47619 34.40852,-25.63417 40.375,-44.9375 3.50971,-11.23103 3.5,-15.77772 3.5,-272.6875 V 404.96875 300.375 H 499.125 Z m 100.875,72.1875 c 16.42128,0 29.65625,13.20372 29.65625,29.625 v 254.71875 c 0,16.42128 -13.23497,29.625 -29.65625,29.625 -16.42128,0 -29.625,-13.20372 -29.625,-29.625 V 402.1875 c 0,-16.42128 13.20372,-29.625 29.625,-29.625 z m 137.78125,0 c 16.42128,0 29.65625,13.20372 29.65625,29.625 v 254.71875 c 0,16.42128 -13.23497,29.625 -29.65625,29.625 -16.42128,0 -29.65625,-13.20372 -29.65625,-29.625 V 402.1875 c 0,-16.42128 13.23497,-29.625 29.65625,-29.625 z m 137.78125,0 c 16.42128,0 29.625,13.20372 29.625,29.625 v 254.71875 c 0,16.42128 -13.20372,29.625 -29.625,29.625 -16.42128,0 -29.65625,-13.20372 -29.65625,-29.625 V 402.1875 c 0,-16.42128 13.23497,-29.625 29.65625,-29.625 z"
+         style="opacity:0.7;fill:#cccccc;stroke:none;stroke-width:62.19189453;fill-opacity:1.0" />
+    </g>
+  </g>
+</svg>

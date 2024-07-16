@@ -26,8 +26,10 @@
 #include "options.h"
 #include "../rtengine/profilestore.h"
 
+class ExternalEditorPreferences;
 class RTWindow;
 class Splash;
+class ToolLocationPreference;
 
 class Preferences final :
     public Gtk::Dialog,
@@ -68,18 +70,9 @@ class Preferences final :
         }
     };
 
-    class ThemeFilename
-    {
-    public:
-        Glib::ustring shortFName;
-        Glib::ustring longFName;
-
-        ThemeFilename (Glib::ustring sfname, Glib::ustring lfname) : shortFName (sfname), longFName (lfname) {}
-    };
-
     Glib::RefPtr<Gtk::TreeStore> behModel;
     BehavColumns behavColumns;
-    std::vector<ThemeFilename> themeFNames;
+    std::vector<Glib::ustring> themeNames;
     Glib::RefPtr<Glib::Regex> regex;
     Glib::MatchInfo matchInfo;
     Splash* splash;
@@ -90,7 +83,7 @@ class Preferences final :
     Gtk::ComboBoxText* languages;
     Gtk::CheckButton* ckbLangAutoDetect;
     Gtk::Entry* dateformat;
-    Gtk::Entry* startupdir;
+    MyFileChooserEntry* startupdir;
     Gtk::RadioButton* sdcurrent;
     Gtk::RadioButton* sdlast;
     Gtk::RadioButton* sdhome;
@@ -101,17 +94,21 @@ class Preferences final :
     Gtk::RadioButton* edGimp;
     Gtk::RadioButton* edPS;
     Gtk::RadioButton* edOther;
-    
+    ExternalEditorPreferences *externalEditors;
+
     Gtk::RadioButton *editor_dir_temp;
     Gtk::RadioButton *editor_dir_current;
     Gtk::RadioButton *editor_dir_custom;
     MyFileChooserButton *editor_dir_custom_path;
     Gtk::CheckButton *editor_float32;
     Gtk::CheckButton *editor_bypass_output_profile;
-    
+
     MyFileChooserButton* darkFrameDir;
     MyFileChooserButton* flatFieldDir;
     MyFileChooserButton* clutsDir;
+    MyFileChooserButton* cameraProfilesDir;
+    MyFileChooserButton* lensProfilesDir;
+    MyFileChooserEntry* lensfunDbDir;
     Gtk::Label *dfLabel;
     Gtk::Label *ffLabel;
 
@@ -125,12 +122,24 @@ class Preferences final :
     Gtk::CheckButton* prtBPC;
     Gtk::ComboBoxText* monProfile;
     Gtk::ComboBoxText* monIntent;
+    Gtk::CheckButton* mcie;
     Gtk::CheckButton* monBPC;
     Gtk::CheckButton* cbAutoMonProfile;
     //Gtk::CheckButton* cbAutocielab;
     Gtk::CheckButton* cbdaubech;
     Gtk::SpinButton*  hlThresh;
     Gtk::SpinButton*  shThresh;
+    Gtk::CheckButton* mwbacorr;
+ //   Gtk::CheckButton* mwbaforc;
+ //   Gtk::CheckButton* mwbanopurp;
+    Gtk::CheckButton* mwbaena;
+//    Gtk::CheckButton* mwbaenacustom;
+
+//    Gtk::CheckButton* mwbasort;
+//    Gtk::SpinButton*  wbacorrnb;
+//    Gtk::SpinButton*  wbaprecis;
+//    Gtk::SpinButton*  wbasizeref;
+//    Gtk::SpinButton*  wbagreendelta;
 
     Gtk::SpinButton*  panFactor;
     Gtk::CheckButton* rememberZoomPanCheckbutton;
@@ -153,8 +162,10 @@ class Preferences final :
     Gtk::ComboBoxText* cprevdemo;
     Gtk::CheckButton* ctiffserialize;
     Gtk::ComboBoxText* curveBBoxPosC;
+    Gtk::ComboBoxText* curveBBoxPosS;
 
     Gtk::ComboBoxText* complexitylocal;
+    Gtk::ComboBoxText* spotlocal;
 
     Gtk::CheckButton* inspectorWindowCB;
     Gtk::CheckButton* zoomOnScrollCB;
@@ -164,8 +175,6 @@ class Preferences final :
     Gtk::FontButton* colorPickerFontFB;
     Gtk::ColorButton* cropMaskColorCB;
     Gtk::ColorButton* navGuideColorCB;
-    Gtk::CheckButton* pseudoHiDPI;
-
 
     Gtk::SpinButton*   maxRecentFolders;
     Gtk::SpinButton*   maxThumbHeightSB;
@@ -179,6 +188,9 @@ class Preferences final :
     Gtk::CheckButton* overlayedFileNames;
     Gtk::CheckButton* filmStripOverlayedFileNames;
     Gtk::CheckButton* sameThumbSize;
+    Gtk::SpinButton* browseRecursiveDepth;
+    Gtk::SpinButton* browseRecursiveMaxDirs;
+    Gtk::CheckButton* browseRecursiveFollowLinks{nullptr};
 
     Gtk::SpinButton*  threadsSpinBtn;
     Gtk::SpinButton*  clutCacheSizeSB;
@@ -214,6 +226,8 @@ class Preferences final :
 
     Gtk::CheckButton* ckbInternalThumbIfUntouched;
 
+    Gtk::CheckButton *thumbnailRankColorMode;
+
     Gtk::Entry* txtCustProfBuilderPath;
     Gtk::ComboBoxText* custProfBuilderLabelType;
 
@@ -231,17 +245,24 @@ class Preferences final :
     Gtk::ComboBoxText *cropGuidesCombo;
     Gtk::CheckButton *cropAutoFitCB;
 
+    Gtk::ComboBoxText *maxZoomCombo;
+
+    Gtk::ComboBoxText *metadataSyncCombo;
+    Gtk::ComboBoxText *xmpSidecarCombo;
+
     Glib::ustring storedValueRaw;
     Glib::ustring storedValueImg;
 
     Options moptions;
     sigc::connection tconn, sconn, fconn, cpfconn, addc, setc, dfconn, ffconn, bpconn, rpconn, ipconn;
-    sigc::connection autoMonProfileConn, sndEnableConn, langAutoDetectConn, autocielabConn;
+    sigc::connection autoMonProfileConn, sndEnableConn, langAutoDetectConn, autocielabConn, observer10Conn;
     Glib::ustring initialTheme;
     Glib::ustring initialFontFamily;
     int initialFontSize;
     bool newFont;
     bool newCPFont;
+
+    ToolLocationPreference *toolLocationPreference;
 
     void fillPreferences ();
     void storePreferences ();
@@ -262,12 +283,13 @@ class Preferences final :
     void switchFontTo  (const Glib::ustring &newFontFamily, const int newFontSize);
     bool splashClosed (GdkEventAny* event);
 
-    int getThemeRowNumber (const Glib::ustring& longThemeFName);
+    int getThemeRowNumber (const Glib::ustring& name);
 
     void appendBehavList (Gtk::TreeModel::iterator& parent, Glib::ustring label, int id, bool set);
 
     Gtk::ScrolledWindow *swGeneral;
     Gtk::ScrolledWindow *swImageProcessing;
+    Gtk::ScrolledWindow *swFavorites;
     Gtk::ScrolledWindow *swDynamicProfile;
     Gtk::ScrolledWindow *swFileBrowser;
     Gtk::ScrolledWindow *swColorMan;
@@ -277,6 +299,7 @@ class Preferences final :
 
     Gtk::Widget *getGeneralPanel();
     Gtk::Widget *getImageProcessingPanel();
+    Gtk::Widget *getFavoritesPanel();
     Gtk::Widget *getDynamicProfilePanel();
     Gtk::Widget *getFileBrowserPanel();
     Gtk::Widget *getColorManPanel();
@@ -297,8 +320,11 @@ public:
     void sndEnableToggled ();
     void langAutoDetectToggled ();
     void autocielabToggled ();
+    void observer10Toggled ();
 
     void selectStartupDir ();
+    void extensionsChanged ();
+    void extensionChanged ();
     void addExtPressed ();
     void delExtPressed ();
     void moveExtUpPressed ();

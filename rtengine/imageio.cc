@@ -17,38 +17,50 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include <png.h>
-#include <glib/gstdio.h>
-#include <tiff.h>
-#include <tiffio.h>
 #include <cstdio>
 #include <cstring>
-#include <fcntl.h>
-#include <libiptcdata/iptc-jpeg.h>
+#include <iostream>
 #include <memory>
-#include "rt_math.h"
-#include "procparams.h"
-#include "utils.h"
-#include "../rtgui/options.h"
-#include "../rtgui/version.h"
-#include "../rtexif/rtexif.h"
+#include <string>
+#include <utility>
+#include <vector>
 
-#ifdef WIN32
+#ifdef LIBJXL
+#include "jxl/decode_cxx.h"
+#include "jxl/resizable_parallel_runner_cxx.h"
+#endif
+
+#include <fcntl.h>
+#include <glib/gstdio.h>
+#include <png.h>
+#include <tiff.h>
+#include <tiffio.h>
+
+#ifdef _WIN32
 #include <winsock2.h>
 #else
 #include <netinet/in.h>
 #endif
 
-#include "imageio.h"
-#include "iptcpairs.h"
-#include "iccjpeg.h"
 #include "color.h"
-
+#include "iccjpeg.h"
+#include "imagedata.h"
+#include "imageio.h"
 #include "jpeg.h"
+#include "procparams.h"
+#include "rt_math.h"
+#include "settings.h"
+#include "utils.h"
+
+#include "../rtgui/options.h"
+#include "../rtgui/version.h"
+
 
 using namespace std;
 using namespace rtengine;
 using namespace rtengine::procparams;
+
+namespace rtengine { extern const Settings *settings; }
 
 namespace
 {
@@ -57,7 +69,7 @@ namespace
 FILE* g_fopen_withBinaryAndLock(const Glib::ustring& fname)
 {
 
-#ifdef WIN32
+#ifdef _WIN32
 
     // Use native function to disallow sharing, i.e. lock the file for exclusive access.
     // This is important to e.g. prevent Windows Explorer from crashing RT due to concurrently scanning an image file.
@@ -79,126 +91,37 @@ FILE* g_fopen_withBinaryAndLock(const Glib::ustring& fname)
     return f;
 }
 
+template <typename Iterator, typename Integer = std::size_t>
+auto to_long(const Iterator &iter, Integer n = Integer{0}) -> decltype(
+#if EXIV2_TEST_VERSION(0,28,0)
+    iter->toInt64()
+) {
+    return iter->toInt64(n);
+#else
+    iter->toLong()
+) {
+    return iter->toLong(n);
+#endif
 }
 
-Glib::ustring ImageIO::errorMsg[6] = {"Success", "Cannot read file.", "Invalid header.", "Error while reading header.", "File reading error", "Image format not supported."};
-
-// For only copying the raw input data
-void ImageIO::setMetadata (const rtexif::TagDirectory* eroot)
-{
-    if (exifRoot != nullptr) {
-        delete exifRoot;
-        exifRoot = nullptr;
-    }
-
-    if (eroot) {
-        rtexif::TagDirectory* td = eroot->clone (nullptr);
-
-        // make IPTC and XMP pass through
-        td->keepTag(0x83bb);  // IPTC
-        td->keepTag(0x02bc);  // XMP
-
-        exifRoot = td;
-    }
 }
 
-// For merging with RT specific data
-void ImageIO::setMetadata (const rtexif::TagDirectory* eroot, const rtengine::procparams::ExifPairs& exif, const rtengine::procparams::IPTCPairs& iptcc)
+void ImageIO::setMetadata(Exiv2Metadata info)
 {
-
-    // store exif info
-    exifChange->clear();
-    *exifChange = exif;
-
-    if (exifRoot != nullptr) {
-        delete exifRoot;
-        exifRoot = nullptr;
-    }
-
-    if (eroot) {
-        exifRoot = eroot->clone (nullptr);
-    }
-
-    if (iptc != nullptr) {
-        iptc_data_free (iptc);
-        iptc = nullptr;
-    }
-
-    // build iptc structures for libiptcdata
-    if (iptcc.empty()) {
-        return;
-    }
-
-    iptc = iptc_data_new ();
-
-    const unsigned char utf8Esc[] = {0x1B, '%', 'G'};
-    IptcDataSet * ds = iptc_dataset_new ();
-    iptc_dataset_set_tag (ds, IPTC_RECORD_OBJECT_ENV, IPTC_TAG_CHARACTER_SET);
-    iptc_dataset_set_data (ds, utf8Esc, 3, IPTC_DONT_VALIDATE);
-    iptc_data_add_dataset (iptc, ds);
-    iptc_dataset_unref (ds);
-
-    for (rtengine::procparams::IPTCPairs::const_iterator i = iptcc.begin(); i != iptcc.end(); ++i) {
-        if (i->first == "Keywords" && !(i->second.empty())) {
-            for (unsigned int j = 0; j < i->second.size(); j++) {
-                IptcDataSet * ds = iptc_dataset_new ();
-                iptc_dataset_set_tag (ds, IPTC_RECORD_APP_2, IPTC_TAG_KEYWORDS);
-                iptc_dataset_set_data (ds, (const unsigned char*)i->second.at(j).c_str(), min(static_cast<size_t>(64), i->second.at(j).bytes()), IPTC_DONT_VALIDATE);
-                iptc_data_add_dataset (iptc, ds);
-                iptc_dataset_unref (ds);
-            }
-
-            continue;
-        } else if (i->first == "SupplementalCategories" && !(i->second.empty())) {
-            for (unsigned int j = 0; j < i->second.size(); j++) {
-                IptcDataSet * ds = iptc_dataset_new ();
-                iptc_dataset_set_tag (ds, IPTC_RECORD_APP_2, IPTC_TAG_SUPPL_CATEGORY);
-                iptc_dataset_set_data (ds, (const unsigned char*)i->second.at(j).c_str(), min(static_cast<size_t>(32), i->second.at(j).bytes()), IPTC_DONT_VALIDATE);
-                iptc_data_add_dataset (iptc, ds);
-                iptc_dataset_unref (ds);
-            }
-
-            continue;
-        }
-
-        for (int j = 0; j < 16; j++)
-            if (i->first == strTags[j].field && !(i->second.empty())) {
-                IptcDataSet * ds = iptc_dataset_new ();
-                iptc_dataset_set_tag (ds, IPTC_RECORD_APP_2, strTags[j].tag);
-                iptc_dataset_set_data (ds, (const unsigned char*)i->second.at(0).c_str(), min(strTags[j].size, i->second.at(0).bytes()), IPTC_DONT_VALIDATE);
-                iptc_data_add_dataset (iptc, ds);
-                iptc_dataset_unref (ds);
-            }
-    }
-
-    iptc_data_sort (iptc);
+    metadataInfo = std::move(info);
 }
 
-void ImageIO::setOutputProfile  (const char* pdata, int plen)
+void ImageIO::setOutputProfile(const std::string& pdata)
 {
-
-    delete [] profileData;
-
-    if (pdata) {
-        profileData = new char [plen];
-        memcpy (profileData, pdata, plen);
-    } else {
-        profileData = nullptr;
-    }
-
-    profileLength = plen;
+    profileData = pdata;
 }
 
 ImageIO::ImageIO() :
     pl(nullptr),
     embProfile(nullptr),
-    profileData(nullptr),
     profileLength(0),
     loadedProfileData(nullptr),
     loadedProfileLength(0),
-    exifChange(new procparams::ExifPairs),
-    iptc(nullptr),
-    exifRoot(nullptr),
     sampleFormat(IIOSF_UNKNOWN),
     sampleArrangement(IIOSA_UNKNOWN)
 {
@@ -212,8 +135,6 @@ ImageIO::~ImageIO ()
     }
 
     deleteLoadedProfileData();
-    delete exifRoot;
-    delete [] profileData;
 }
 
 void png_read_data(png_struct_def  *png_ptr, unsigned char *data, size_t length);
@@ -369,6 +290,7 @@ int ImageIO::loadPNG  (const Glib::ustring &fname)
 
     if (png_get_valid(png, info, PNG_INFO_tRNS)) {
         png_set_tRNS_to_alpha(png);
+        png_set_strip_alpha(png);
     }
 
     if (color_type & PNG_COLOR_MASK_ALPHA) {
@@ -466,7 +388,7 @@ void my_error_exit (j_common_ptr cinfo)
     (*cinfo->err->output_message) (cinfo);
 
     /* Return control to the setjmp point */
-#if defined( WIN32 ) && defined( __x86_64__ ) && !defined(__clang__)
+#if defined( _WIN32 ) && defined( __x86_64__ ) && !defined(__clang__)
     __builtin_longjmp(myerr->setjmp_buffer, 1);
 #else
     longjmp(myerr->setjmp_buffer, 1);
@@ -490,7 +412,7 @@ int ImageIO::loadJPEGFromMemory (const char* buffer, int bufsize)
     jerr.pub.error_exit = my_error_exit;
 
     /* Establish the setjmp return context for my_error_exit to use. */
-#if defined( WIN32 ) && defined( __x86_64__ ) && !defined(__clang__)
+#if defined( _WIN32 ) && defined( __x86_64__ ) && !defined(__clang__)
 
     if (__builtin_setjmp(jerr.setjmp_buffer)) {
 #else
@@ -563,7 +485,11 @@ int ImageIO::loadJPEGFromMemory (const char* buffer, int bufsize)
 
 int ImageIO::loadJPEG (const Glib::ustring &fname)
 {
-    FILE *file = g_fopen(fname.c_str (), "rb");
+    std::unique_ptr<FILE, void (*)(FILE *)> file(
+        g_fopen(fname.c_str(), "rb"),
+        [](FILE *f) {
+            fclose(f);
+        });
 
     if (!file) {
         return IMIO_CANNOTREADFILE;
@@ -574,9 +500,9 @@ int ImageIO::loadJPEG (const Glib::ustring &fname)
     cinfo.err = my_jpeg_std_error(&jerr);
     jpeg_create_decompress(&cinfo);
 
-    my_jpeg_stdio_src (&cinfo, file);
+    my_jpeg_stdio_src (&cinfo, file.get());
 
-#if defined( WIN32 ) && defined( __x86_64__ ) && !defined(__clang__)
+#if defined( _WIN32 ) && defined( __x86_64__ ) && !defined(__clang__)
     if ( __builtin_setjmp((reinterpret_cast<rt_jpeg_error_mgr*>(cinfo.src))->error_jmp_buf) == 0 ) {
 #else
     if ( setjmp((reinterpret_cast<rt_jpeg_error_mgr*>(cinfo.src))->error_jmp_buf) == 0 ) {
@@ -636,7 +562,7 @@ int ImageIO::loadJPEG (const Glib::ustring &fname)
 
         jpeg_finish_decompress(&cinfo);
         jpeg_destroy_decompress(&cinfo);
-        fclose(file);
+        file.reset();
 
         if (pl) {
             pl->setProgressStr ("PROGRESSBAR_READY");
@@ -652,7 +578,7 @@ int ImageIO::loadJPEG (const Glib::ustring &fname)
 
 int ImageIO::getTIFFSampleFormat (const Glib::ustring &fname, IIOSampleFormat &sFormat, IIOSampleArrangement &sArrangement)
 {
-#ifdef WIN32
+#ifdef _WIN32
     wchar_t *wfilename = (wchar_t*)g_utf8_to_utf16 (fname.c_str(), -1, NULL, NULL, NULL);
     TIFF* in = TIFFOpenW (wfilename, "r");
     g_free (wfilename);
@@ -765,7 +691,7 @@ int ImageIO::loadTIFF (const Glib::ustring &fname)
         lock.release();
     }
 
-#ifdef WIN32
+#ifdef _WIN32
     wchar_t *wfilename = (wchar_t*)g_utf8_to_utf16 (fname.c_str(), -1, NULL, NULL, NULL);
     TIFF* in = TIFFOpenW (wfilename, "r");
     g_free (wfilename);
@@ -875,7 +801,7 @@ int ImageIO::loadTIFF (const Glib::ustring &fname)
 
         if (samplesperpixel > 3) {
             for (int i = 0; i < width; i++) {
-                memcpy(linebuffer.get() + i * 3 * bitspersample / 8, linebuffer.get() + i * samplesperpixel * bitspersample / 8, 3 * bitspersample / 8);
+                memmove(linebuffer.get() + i * 3 * bitspersample / 8, linebuffer.get() + i * samplesperpixel * bitspersample / 8, 3 * bitspersample / 8);
             }
         }
         else if (samplesperpixel == 1) {
@@ -906,6 +832,171 @@ int ImageIO::loadTIFF (const Glib::ustring &fname)
     return IMIO_SUCCESS;
 }
 
+#ifdef LIBJXL
+#define _PROFILE_ JXL_COLOR_PROFILE_TARGET_ORIGINAL
+// adapted from libjxl
+int ImageIO::loadJXL(const Glib::ustring &fname)
+{
+    if (pl) {
+        pl->setProgressStr("PROGRESSBAR_LOADJXL");
+        pl->setProgress(0.0);
+    }
+
+    std::vector<std::uint8_t> icc_profile;
+    std::vector<std::uint8_t> buffer;
+    std::size_t buffer_size = 0;
+
+    JxlBasicInfo info = {};
+    JxlPixelFormat format = {};
+
+    format.num_channels = 3;
+    format.data_type = JXL_TYPE_FLOAT;
+    format.endianness = JXL_NATIVE_ENDIAN;
+    format.align = 0;
+
+    std::vector<std::uint8_t> const compressed = getFileData(fname);
+
+    if (compressed.empty()) {
+        std::cerr << "Error: loadJXL failed to get data from file" << std::endl;
+        return IMIO_READERROR;
+    }
+
+    // multi-threaded parallel runner.
+    auto runner = JxlResizableParallelRunnerMake(nullptr);
+
+    auto dec = JxlDecoderMake(nullptr);
+
+    if (JXL_DEC_SUCCESS !=
+            JxlDecoderSubscribeEvents(dec.get(), JXL_DEC_BASIC_INFO |
+                                      JXL_DEC_COLOR_ENCODING |
+                                      JXL_DEC_FULL_IMAGE)) {
+        std::cerr << "Error: JxlDecoderSubscribeEvents failed" << std::endl;
+        return IMIO_HEADERERROR;
+    }
+
+    if (JXL_DEC_SUCCESS !=
+            JxlDecoderSetParallelRunner(dec.get(), JxlResizableParallelRunner,
+                                        runner.get())) {
+        std::cerr << "Error: JxlDecoderSetParallelRunner failed" << std::endl;
+        return IMIO_HEADERERROR;
+    }
+
+    // grand decode loop...
+    JxlDecoderSetInput(dec.get(), compressed.data(), compressed.size());
+
+    while (true) {
+        JxlDecoderStatus status = JxlDecoderProcessInput(dec.get());
+
+        if (status == JXL_DEC_BASIC_INFO) {
+            if (JXL_DEC_SUCCESS != JxlDecoderGetBasicInfo(dec.get(), &info)) {
+                std::cerr << "Error: JxlDecoderGetBasicInfo failed" << std::endl;
+                return IMIO_HEADERERROR;
+            }
+
+            JxlResizableParallelRunnerSetThreads(
+                runner.get(),
+                JxlResizableParallelRunnerSuggestThreads(info.xsize, info.ysize));
+        } else if (status == JXL_DEC_COLOR_ENCODING) {
+            // check for ICC profile
+            deleteLoadedProfileData();
+            embProfile = nullptr;
+            std::size_t icc_size = 0;
+
+            if (JXL_DEC_SUCCESS !=
+#if JPEGXL_NUMERIC_VERSION < JPEGXL_COMPUTE_NUMERIC_VERSION(0, 9, 0)
+                    JxlDecoderGetICCProfileSize(dec.get(), &format, _PROFILE_, &icc_size)
+#else
+                    JxlDecoderGetICCProfileSize(dec.get(), _PROFILE_, &icc_size)
+#endif
+               ) {
+                std::cerr << "Warning: JxlDecoderGetICCProfileSize failed" << std::endl;
+            }
+
+            if (icc_size > 0) {
+                icc_profile.resize(icc_size);
+
+                if (JXL_DEC_SUCCESS !=
+#if JPEGXL_NUMERIC_VERSION < JPEGXL_COMPUTE_NUMERIC_VERSION(0, 9, 0)
+                        JxlDecoderGetColorAsICCProfile(
+                            dec.get(), &format, _PROFILE_,
+                            icc_profile.data(), icc_profile.size())
+#else
+                        JxlDecoderGetColorAsICCProfile(
+                            dec.get(), _PROFILE_,
+                            icc_profile.data(), icc_profile.size())
+#endif
+                   ) {
+                    std::cerr << "Warning: JxlDecoderGetColorAsICCProfile failed" << std::endl;
+                } else {
+                    embProfile = cmsOpenProfileFromMem(icc_profile.data(),
+                                                       icc_profile.size());
+                }
+            } else {
+                std::cerr << "Warning: Empty ICC data." << std::endl;
+            }
+        } else if (status == JXL_DEC_NEED_IMAGE_OUT_BUFFER) {
+            // Note: If assert is triggered, change to assignment.
+            // We want maximum bit depth from the decoder,
+            // regardless of the original encoding intent.
+            assert(format.data_type == JXL_TYPE_FLOAT);
+
+            if (JXL_DEC_SUCCESS !=
+                    JxlDecoderImageOutBufferSize(dec.get(), &format, &buffer_size)) {
+                std::cerr << "Error: JxlDecoderImageOutBufferSize failed" << std::endl;
+                return IMIO_READERROR;
+            }
+
+            buffer.resize(buffer_size);
+
+            if (JXL_DEC_SUCCESS != JxlDecoderSetImageOutBuffer(dec.get(), &format, buffer.data(), buffer.size())) {
+                std::cerr << "Error: JxlDecoderSetImageOutBuffer failed" << std::endl;
+                return IMIO_READERROR;
+            }
+        } else if (status == JXL_DEC_FULL_IMAGE ||
+                   status == JXL_DEC_FRAME) {
+            // Nothing to do. If the image is an animation, more full frames
+            // may be decoded. This example only keeps the first one.
+            break;
+        } else if (status == JXL_DEC_SUCCESS) {
+            // Decoding complete.  Decoder will be released automatically.
+            break;
+        } else if (status == JXL_DEC_NEED_MORE_INPUT) {
+            std::cerr << "Error: Decoder needs more input data" << std::endl;
+            return IMIO_READERROR;
+        } else if (status == JXL_DEC_ERROR) {
+            std::cerr << "Error: Decoder error" << std::endl;
+            return IMIO_READERROR;
+        } else {
+            std::cerr << "Error: Unknown decoder status" << std::endl;
+            return IMIO_READERROR;
+        }
+    } // end grand decode loop
+
+    std::size_t width = info.xsize;
+    std::size_t height = info.ysize;
+
+    allocate(width, height);
+
+    std::size_t line_length = width * 3 * 4;
+
+    for (std::size_t row = 0; row < height; ++row) {
+        setScanline(row, buffer.data() + (row * line_length), 32);
+
+        if (pl && !(row % 100)) {
+            pl->setProgress((double)(row + 1) / height);
+        }
+    }
+
+    if (pl) {
+        pl->setProgressStr("PROGRESSBAR_READY");
+        pl->setProgress(1.0);
+    }
+
+    return IMIO_SUCCESS;
+}
+#undef _PROFILE_
+#endif // LIBJXL
+
 int ImageIO::loadPPMFromMemory(const char* buffer, int width, int height, bool swap, int bps)
 {
     allocate (width, height);
@@ -928,76 +1019,6 @@ int ImageIO::loadPPMFromMemory(const char* buffer, int width, int height, bool s
     return IMIO_SUCCESS;
 }
 
-
-namespace {
-
-// Taken from Darktable -- src/imageio/format/png.c
-//
-/* Write EXIF data to PNG file.
- * Code copied from DigiKam's libs/dimg/loaders/pngloader.cpp.
- * The EXIF embedding is defined by ImageMagicK.
- * It is documented in the ExifTool page:
- * http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/PNG.html
- *
- * ..and in turn copied from ufraw. thanks to udi and colleagues
- * for making useful code much more readable and discoverable ;)
- */
-
-void PNGwriteRawProfile(png_struct *ping, png_info *ping_info, const char *profile_type, guint8 *profile_data, png_uint_32 length)
-{
-    png_textp text;
-    long i;
-    guint8 *sp;
-    png_charp dp;
-    png_uint_32 allocated_length, description_length;
-
-    const guint8 hex[16] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
-    text = static_cast<png_textp>(png_malloc(ping, sizeof(png_text)));
-    description_length = strlen(profile_type);
-    allocated_length = length * 2 + (length >> 5) + 20 + description_length;
-
-    text[0].text = static_cast<png_charp>(png_malloc(ping, allocated_length));
-    text[0].key = static_cast<png_charp>(png_malloc(ping, 80));
-    text[0].key[0] = '\0';
-
-    g_strlcat(text[0].key, "Raw profile type ", 80);
-    g_strlcat(text[0].key, profile_type, 80);
-
-    sp = profile_data;
-    dp = text[0].text;
-    *dp++ = '\n';
-
-    g_strlcpy(dp, profile_type, allocated_length);
-
-    dp += description_length;
-    *dp++ = '\n';
-    *dp = '\0';
-
-    g_snprintf(dp, allocated_length - strlen(text[0].text), "%8lu ", static_cast<unsigned long int>(length));
-
-    dp += 8;
-
-    for(i = 0; i < long(length); i++)
-    {
-        if(i % 36 == 0) *dp++ = '\n';
-
-        *(dp++) = hex[((*sp >> 4) & 0x0f)];
-        *(dp++) = hex[((*sp++) & 0x0f)];
-    }
-
-    *dp++ = '\n';
-    *dp = '\0';
-    text[0].text_length = (dp - text[0].text);
-    text[0].compression = -1;
-
-    if(text[0].text_length <= allocated_length) png_set_text(ping, ping_info, text, 1);
-
-    png_free(ping, text[0].text);
-    png_free(ping, text[0].key);
-    png_free(ping, text);
-}
-
-} // namespace
 
 int ImageIO::savePNG  (const Glib::ustring &fname, int bps) const
 {
@@ -1027,7 +1048,7 @@ int ImageIO::savePNG  (const Glib::ustring &fname, int bps) const
 #if defined(PNG_SKIP_sRGB_CHECK_PROFILE) && defined(PNG_SET_OPTION_SUPPORTED)
     png_set_option(png, PNG_SKIP_sRGB_CHECK_PROFILE, PNG_OPTION_ON);
 #endif
-    
+
     png_infop info = png_create_info_struct(png);
 
     if (!info) {
@@ -1061,38 +1082,14 @@ int ImageIO::savePNG  (const Glib::ustring &fname, int bps) const
     png_set_IHDR(png, info, width, height, bps, PNG_COLOR_TYPE_RGB,
                  PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_BASE);
 
-    if (profileData) {
+    if (!profileData.empty()) {
 #if PNG_LIBPNG_VER < 10500
-        png_charp profdata = reinterpret_cast<png_charp>(profileData);
+        png_const_charp profdata = reinterpret_cast<png_const_charp>(profileData.data());
 #else
-        png_bytep profdata = reinterpret_cast<png_bytep>(profileData);
+        png_const_bytep profdata = reinterpret_cast<png_const_bytep>(profileData.data());
 #endif
-        png_set_iCCP(png, info, const_cast<png_charp>("icc"), 0, profdata, profileLength);
+        png_set_iCCP(png, info, "icc", 0, profdata, profileData.size());
     }
-
-    {
-        // buffer for the exif and iptc
-        unsigned int bufferSize;
-        unsigned char* buffer = nullptr; // buffer will be allocated in createTIFFHeader
-        unsigned char* iptcdata = nullptr;
-        unsigned int iptclen = 0;
-
-        if (iptc && iptc_data_save (iptc, &iptcdata, &iptclen) && iptcdata) {
-            iptc_data_free_buf (iptc, iptcdata);
-            iptcdata = nullptr;
-        }
-
-        int size = rtexif::ExifManager::createPNGMarker(exifRoot, *exifChange, width, height, bps, (char*)iptcdata, iptclen, buffer, bufferSize);
-
-        if (iptcdata) {
-            iptc_data_free_buf (iptc, iptcdata);
-        }
-        if (buffer && size) {
-            PNGwriteRawProfile(png, info, "exif", buffer, size);
-            delete[] buffer;
-        }
-    }
-
 
     int rowlen = width * 3 * bps / 8;
     unsigned char *row = new unsigned char [rowlen];
@@ -1126,6 +1123,11 @@ int ImageIO::savePNG  (const Glib::ustring &fname, int bps) const
 
     delete [] row;
     fclose (file);
+
+    if (!saveMetadata(fname)) {
+        g_remove(fname.c_str());
+        return IMIO_CANNOTWRITEFILE;
+    }
 
     if (pl) {
         pl->setProgressStr ("PROGRESSBAR_READY");
@@ -1161,7 +1163,7 @@ int ImageIO::saveJPEG (const Glib::ustring &fname, int quality, int subSamp) con
     jerr.pub.error_exit = my_error_exit;
 
     /* Establish the setjmp return context for my_error_exit to use. */
-#if defined( WIN32 ) && defined( __x86_64__ ) && !defined(__clang__)
+#if defined( _WIN32 ) && defined( __x86_64__ ) && !defined(__clang__)
 
     if (__builtin_setjmp(jerr.setjmp_buffer)) {
 #else
@@ -1226,52 +1228,9 @@ int ImageIO::saveJPEG (const Glib::ustring &fname, int quality, int subSamp) con
 
     jpeg_start_compress(&cinfo, TRUE);
 
-    // buffer for exif and iptc markers
-    unsigned char* buffer = new unsigned char[165535]; //FIXME: no buffer size check so it can be overflowed in createJPEGMarker() for large tags, and then software will crash
-    unsigned int size;
-
-    // assemble and write exif marker
-    if (exifRoot) {
-        int size = rtexif::ExifManager::createJPEGMarker (exifRoot, *exifChange, cinfo.image_width, cinfo.image_height, buffer);
-
-        if (size > 0 && size < 65530) {
-            jpeg_write_marker(&cinfo, JPEG_APP0 + 1, buffer, size);
-        }
-    }
-
-    // assemble and write iptc marker
-    if (iptc) {
-        unsigned char* iptcdata;
-        bool error = false;
-
-        if (iptc_data_save (iptc, &iptcdata, &size)) {
-            if (iptcdata) {
-                iptc_data_free_buf (iptc, iptcdata);
-            }
-
-            error = true;
-        }
-
-        int bytes = 0;
-
-        if (!error && (bytes = iptc_jpeg_ps3_save_iptc (nullptr, 0, iptcdata, size, buffer, 65532)) < 0) {
-            error = true;
-        }
-
-        if (iptcdata) {
-            iptc_data_free_buf (iptc, iptcdata);
-        }
-
-        if (!error) {
-            jpeg_write_marker(&cinfo, JPEG_APP0 + 13, buffer, bytes);
-        }
-    }
-
-    delete [] buffer;
-
     // write icc profile to the output
-    if (profileData) {
-        write_icc_profile (&cinfo, (JOCTET*)profileData, profileLength);
+    if (!profileData.empty()) {
+        write_icc_profile (&cinfo, reinterpret_cast<const JOCTET*>(profileData.data()), profileData.size());
     }
 
     // write image data
@@ -1279,7 +1238,7 @@ int ImageIO::saveJPEG (const Glib::ustring &fname, int quality, int subSamp) con
     unsigned char *row = new unsigned char [rowlen];
 
     /* To avoid memory leaks we establish a new setjmp return context for my_error_exit to use. */
-#if defined( WIN32 ) && defined( __x86_64__ ) && !defined(__clang__)
+#if defined( _WIN32 ) && defined( __x86_64__ ) && !defined(__clang__)
 
     if (__builtin_setjmp(jerr.setjmp_buffer)) {
 #else
@@ -1320,6 +1279,11 @@ int ImageIO::saveJPEG (const Glib::ustring &fname, int quality, int subSamp) con
 
     fclose (file);
 
+    if (!saveMetadata(fname)) {
+        g_remove(fname.c_str());
+        return IMIO_CANNOTWRITEFILE;
+    }
+
     if (pl) {
         pl->setProgressStr ("PROGRESSBAR_READY");
         pl->setProgress (1.0);
@@ -1328,7 +1292,14 @@ int ImageIO::saveJPEG (const Glib::ustring &fname, int quality, int subSamp) con
     return IMIO_SUCCESS;
 }
 
-int ImageIO::saveTIFF (const Glib::ustring &fname, int bps, bool isFloat, bool uncompressed) const
+
+int ImageIO::saveTIFF (
+    const Glib::ustring &fname,
+    int bps,
+    bool isFloat,
+    bool uncompressed,
+    bool big
+) const
 {
     if (getWidth() < 1 || getHeight() < 1) {
         return IMIO_HEADERERROR;
@@ -1342,23 +1313,26 @@ int ImageIO::saveTIFF (const Glib::ustring &fname, int bps, bool isFloat, bool u
         bps = getBPS ();
     }
 
-    int lineWidth = width * 3 * bps / 8;
-    unsigned char* linebuffer = new unsigned char[lineWidth];
+    int lineWidth = width * 3 * (bps / 8);
+    std::vector<unsigned char> linebuffer(lineWidth);
 
-    // little hack to get libTiff to use proper byte order (see TIFFClienOpen()):
-    const char *mode = !exifRoot ? "w" : (exifRoot->getOrder() == rtexif::INTEL ? "wl" : "wb");
-#ifdef WIN32
+    std::string mode = "w";
+
+    if (big) {
+        mode += '8';
+    }
+
+#ifdef _WIN32
     FILE *file = g_fopen_withBinaryAndLock (fname);
     int fileno = _fileno(file);
     int osfileno = _get_osfhandle(fileno);
-    TIFF* out = TIFFFdOpen (osfileno, fname.c_str(), mode);
+    TIFF* out = TIFFFdOpen (osfileno, fname.c_str(), mode.c_str());
 #else
-    TIFF* out = TIFFOpen(fname.c_str(), mode);
-    int fileno = TIFFFileno (out);
+    TIFF* out = TIFFOpen(fname.c_str(), mode.c_str());
+    // int fileno = TIFFFileno (out);
 #endif
 
     if (!out) {
-        delete [] linebuffer;
         return IMIO_CANNOTWRITEFILE;
     }
 
@@ -1367,113 +1341,7 @@ int ImageIO::saveTIFF (const Glib::ustring &fname, int bps, bool isFloat, bool u
         pl->setProgress (0.0);
     }
 
-    bool applyExifPatch = false;
-
-    if (exifRoot) {
-        rtexif::TagDirectory* cl = (const_cast<rtexif::TagDirectory*> (exifRoot))->clone (nullptr);
-
-        // ------------------ remove some unknown top level tags which produce warnings when opening a tiff (might be useless) -----------------
-
-        rtexif::Tag *removeTag = cl->getTag (0x9003);
-
-        if (removeTag) {
-            removeTag->setKeep (false);
-        }
-
-        removeTag = cl->getTag (0x9211);
-
-        if (removeTag) {
-            removeTag->setKeep (false);
-        }
-
-        // ------------------ Apply list of change -----------------
-
-        for (auto currExifChange : *exifChange) {
-            cl->applyChange (currExifChange.first, currExifChange.second);
-        }
-
-        rtexif::Tag *tag = cl->getTag (TIFFTAG_EXIFIFD);
-
-        if (tag && tag->isDirectory()) {
-            rtexif::TagDirectory *exif = tag->getDirectory();
-
-            if (exif)   {
-                int exif_size = exif->calculateSize();
-                unsigned char *buffer = new unsigned char[exif_size + 8];
-                // TIFFOpen writes out the header and sets file pointer at position 8
-
-                exif->write (8, buffer);
-
-                write (fileno, buffer + 8, exif_size);
-
-                delete [] buffer;
-                // let libtiff know that scanlines or any other following stuff should go
-                // at a different offset:
-                TIFFSetWriteOffset (out, exif_size + 8);
-                TIFFSetField (out, TIFFTAG_EXIFIFD, 8);
-                applyExifPatch = true;
-            }
-        }
-
-        //TODO Even though we are saving EXIF IFD - MakerNote still comes out screwed.
-
-        if ((tag = cl->getTag (TIFFTAG_MODEL)) != nullptr) {
-            TIFFSetField (out, TIFFTAG_MODEL, tag->getValue());
-        }
-
-        if ((tag = cl->getTag (TIFFTAG_MAKE)) != nullptr) {
-            TIFFSetField (out, TIFFTAG_MAKE, tag->getValue());
-        }
-
-        if ((tag = cl->getTag (TIFFTAG_DATETIME)) != nullptr) {
-            TIFFSetField (out, TIFFTAG_DATETIME, tag->getValue());
-        }
-
-        if ((tag = cl->getTag (TIFFTAG_ARTIST)) != nullptr) {
-            TIFFSetField (out, TIFFTAG_ARTIST, tag->getValue());
-        }
-
-        if ((tag = cl->getTag (TIFFTAG_COPYRIGHT)) != nullptr) {
-            TIFFSetField (out, TIFFTAG_COPYRIGHT, tag->getValue());
-        }
-
-        delete cl;
-    }
-
-    unsigned char* iptcdata = nullptr;
-    unsigned int iptclen = 0;
-
-    if (iptc && iptc_data_save (iptc, &iptcdata, &iptclen)) {
-        if (iptcdata) {
-            iptc_data_free_buf (iptc, iptcdata);
-            iptcdata = nullptr;
-        }
-    }
-
-#if __BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__
-        bool needsReverse = exifRoot && exifRoot->getOrder() == rtexif::MOTOROLA;
-#else
-        bool needsReverse = exifRoot && exifRoot->getOrder() == rtexif::INTEL;
-#endif
-    if (iptcdata) {
-        rtexif::Tag iptcTag(nullptr, rtexif::lookupAttrib (rtexif::ifdAttribs, "IPTCData"));
-        iptcTag.initLongArray((char*)iptcdata, iptclen);
-        if (needsReverse) {
-            unsigned char *ptr = iptcTag.getValue();
-            for (int a = 0; a < iptcTag.getCount(); ++a) {
-                unsigned char cc;
-                cc = ptr[3];
-                ptr[3] = ptr[0];
-                ptr[0] = cc;
-                cc = ptr[2];
-                ptr[2] = ptr[1];
-                ptr[1] = cc;
-                ptr += 4;
-            }
-        }
-        TIFFSetField (out, TIFFTAG_RICHTIFFIPTC, iptcTag.getCount(), (long*)iptcTag.getValue());
-        iptc_data_free_buf (iptc, iptcdata);
-    }
+    bool needsReverse = false;
 
     TIFFSetField (out, TIFFTAG_SOFTWARE, "RawTherapee " RTVERSION);
     TIFFSetField (out, TIFFTAG_IMAGEWIDTH, width);
@@ -1487,53 +1355,58 @@ int ImageIO::saveTIFF (const Glib::ustring &fname, int bps, bool isFloat, bool u
     TIFFSetField (out, TIFFTAG_COMPRESSION, uncompressed ? COMPRESSION_NONE : COMPRESSION_ADOBE_DEFLATE);
     TIFFSetField (out, TIFFTAG_SAMPLEFORMAT, (bps == 16 || bps == 32) && isFloat ? SAMPLEFORMAT_IEEEFP : SAMPLEFORMAT_UINT);
 
-    [out]()
-    {
-        const std::vector<rtexif::Tag*> default_tags = rtexif::ExifManager::getDefaultTIFFTags(nullptr);
-
-        TIFFSetField (out, TIFFTAG_XRESOLUTION, default_tags[2]->toDouble());
-        TIFFSetField (out, TIFFTAG_YRESOLUTION, default_tags[3]->toDouble());
-        TIFFSetField (out, TIFFTAG_RESOLUTIONUNIT, default_tags[4]->toInt());
-
-        for (auto default_tag : default_tags) {
-            delete default_tag;
+    // somehow Exiv2 (tested with 0.27.3) doesn't seem to be able to update
+    // XResolution and YResolution, so we do it ourselves here....
+    constexpr float default_resolution = 300.f;
+    float x_res = default_resolution;
+    float y_res = default_resolution;
+    int res_unit = RESUNIT_INCH;
+    if (!metadataInfo.filename().empty()) {
+        auto exif = metadataInfo.getOutputExifData();
+        auto it = exif.findKey(Exiv2::ExifKey("Exif.Image.XResolution"));
+        if (it != exif.end()) {
+            x_res = it->toFloat();
         }
-    }();
+        it = exif.findKey(Exiv2::ExifKey("Exif.Image.YResolution"));
+        if (it != exif.end()) {
+            y_res = it->toFloat();
+        }
+        it = exif.findKey(Exiv2::ExifKey("Exif.Image.ResolutionUnit"));
+        if (it != exif.end()) {
+            res_unit = to_long(it);
+        }
+    }
+    TIFFSetField(out, TIFFTAG_XRESOLUTION, x_res);
+    TIFFSetField(out, TIFFTAG_YRESOLUTION, y_res);
+    TIFFSetField(out, TIFFTAG_RESOLUTIONUNIT, res_unit);
 
     if (!uncompressed) {
         TIFFSetField (out, TIFFTAG_PREDICTOR, (bps == 16 || bps == 32) && isFloat ? PREDICTOR_FLOATINGPOINT : PREDICTOR_HORIZONTAL);
     }
-    if (profileData) {
-        TIFFSetField (out, TIFFTAG_ICCPROFILE, profileLength, profileData);
+    if (!profileData.empty()) {
+        TIFFSetField (out, TIFFTAG_ICCPROFILE, profileData.size(), profileData.data());
     }
 
     for (int row = 0; row < height; row++) {
-        getScanline (row, linebuffer, bps, isFloat);
+        getScanline (row, linebuffer.data(), bps, isFloat);
 
         if (bps == 16) {
             if(needsReverse && !uncompressed && isFloat) {
                 for(int i = 0; i < lineWidth; i += 2) {
-                    char temp = linebuffer[i];
-                    linebuffer[i] = linebuffer[i + 1];
-                    linebuffer[i + 1] = temp;
+                    std::swap(linebuffer[i], linebuffer[i + 1]);
                 }
             }
         } else if (bps == 32) {
             if(needsReverse && !uncompressed) {
                 for(int i = 0; i < lineWidth; i += 4) {
-                    char temp = linebuffer[i];
-                    linebuffer[i] = linebuffer[i + 3];
-                    linebuffer[i + 3] = temp;
-                    temp = linebuffer[i + 1];
-                    linebuffer[i + 1] = linebuffer[i + 2];
-                    linebuffer[i + 2] = temp;
+                    std::swap(linebuffer[i], linebuffer[i + 3]);
+                    std::swap(linebuffer[i + 1], linebuffer[i + 2]);
                 }
             }
         }
 
-        if (TIFFWriteScanline (out, linebuffer, row, 0) < 0) {
+        if (TIFFWriteScanline (out, linebuffer.data(), row, 0) < 0) {
             TIFFClose (out);
-            delete [] linebuffer;
             return IMIO_CANNOTWRITEFILE;
         }
 
@@ -1546,44 +1419,14 @@ int ImageIO::saveTIFF (const Glib::ustring &fname, int bps, bool isFloat, bool u
         writeOk = false;
     }
 
-    /************************************************************************************************************
-     *
-     * Hombre: This is a dirty hack to update the Exif tag data type to 0x0004 so that Windows can understand it.
-     *         libtiff will set this data type to 0x000d and doesn't provide any mechanism to update it before
-     *         dumping to the file.
-     *
-     */
-    if (applyExifPatch) {
-        unsigned char b[10];
-        uint16 tagCount = 0;
-        lseek(fileno, 4, SEEK_SET);
-        read(fileno, b, 4);
-        uint32 ifd0Offset = rtexif::sget4(b, exifRoot->getOrder());
-        lseek(fileno, ifd0Offset, SEEK_SET);
-        read(fileno, b, 2);
-        tagCount = rtexif::sget2(b, exifRoot->getOrder());
-        for (size_t i = 0; i < tagCount ; ++i) {
-            uint16 tagID = 0;
-            read(fileno, b, 2);
-            tagID = rtexif::sget2(b, exifRoot->getOrder());
-            if (tagID == 0x8769) {
-                rtexif::sset2(4, b, exifRoot->getOrder());
-                write(fileno, b, 2);
-                break;
-            } else {
-                read(fileno, b, 10);
-            }
-        }
-    }
-    /************************************************************************************************************/
-
-
     TIFFClose (out);
-#ifdef WIN32
+#ifdef _WIN32
     fclose (file);
 #endif
 
-    delete [] linebuffer;
+    if (!saveMetadata(fname)) {
+        writeOk = false;
+    }
 
     if (pl) {
         pl->setProgressStr ("PROGRESSBAR_READY");
@@ -1642,6 +1485,10 @@ int ImageIO::load (const Glib::ustring &fname)
         return loadPNG (fname);
     } else if (hasJpegExtension(fname)) {
         return loadJPEG (fname);
+#ifdef LIBJXL
+    } else if (hasJxlExtension(fname)) {
+        return loadJXL(fname);
+#endif
     } else if (hasTiffExtension(fname)) {
         return loadTIFF (fname);
     } else {
@@ -1710,4 +1557,58 @@ void ImageIO::deleteLoadedProfileData( )
     }
 
     loadedProfileData = nullptr;
+}
+
+bool ImageIO::saveMetadata(const Glib::ustring &fname) const
+{
+    if (metadataInfo.filename().empty()) {
+        return true;
+    }
+
+    bool has_meta = true;
+    try {
+        metadataInfo.load();
+    } catch (const std::exception& exc) {
+        if (settings->verbose) {
+            std::cout << "EXIF LOAD ERROR: " << exc.what() << std::endl;
+        }
+        has_meta = false;
+    }
+
+    if (has_meta) {
+        try {
+            metadataInfo.saveToImage(fname, false);
+            // auto src = open_exiv2(metadataInfo.filename());
+            // auto dst = open_exiv2(fname);
+            // src->readMetadata();
+            // dst->setMetadata(*src);
+            // dst->exifData()["Exif.Image.Software"] = "RawTherapee " RTVERSION;
+            // for (const auto& p : metadataInfo.exif()) {
+            //     try {
+            //         dst->exifData()[p.first] = p.second;
+            //     } catch (const Exiv2::AnyError& exc) {
+            //     }
+            // }
+            // for (const auto& p : metadataInfo.iptc()) {
+            //     try {
+            //         auto& v = p.second;
+            //         if (!v.empty()) {
+            //             dst->iptcData()[p.first] = v[0];
+            //             for (size_t j = 1; j < v.size(); ++j) {
+            //                 Exiv2::Iptcdatum d(Exiv2::IptcKey(p.first));
+            //                 d.setValue(v[j]);
+            //                 dst->iptcData().add(d);
+            //             }
+            //         }
+            //     } catch (const Exiv2::AnyError& exc) {
+            //     }
+            // }
+            // dst->writeMetadata();
+        } catch (const std::exception& exc) {
+            std::cout << "EXIF ERROR: " << exc.what() << std::endl;
+            //return false;
+        }
+    }
+
+    return true;
 }

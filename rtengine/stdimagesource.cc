@@ -90,6 +90,12 @@ void StdImageSource::getSampleFormat (const Glib::ustring &fname, IIOSampleForma
         if (result == IMIO_SUCCESS) {
             return;
         }
+#ifdef LIBJXL
+    } else if (hasJxlExtension(fname)) {
+        sFormat = IIOSF_FLOAT32;
+        sArrangement = IIOSA_CHUNKY;
+        return;
+#endif
     } else if (hasTiffExtension(fname)) {
         int result = ImageIO::getTIFFSampleFormat (fname, sFormat, sArrangement);
 
@@ -187,7 +193,7 @@ int StdImageSource::load (const Glib::ustring &fname)
         plistener->setProgress (1.0);
     }
 
-    wb = ColorTemp (1.0, 1.0, 1.0, 1.0);
+    wb = ColorTemp (1.0, 1.0, 1.0, 1.0, ColorTemp::DEFAULT_OBSERVER);
     //this is probably a mistake if embedded profile is not D65
 
     return 0;
@@ -311,11 +317,15 @@ void StdImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr)
     }
 }
 
-void StdImageSource::WBauto(double &tempref, double &greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, double &tempitc, double &greenitc, float &studgood, bool &twotimes, const WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const ColorManagementParams &cmp, const RAWParams &raw)
+void StdImageSource::WBauto(bool extra, double &tempref, double &greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, double &tempitc, double &greenitc, float &temp0, float &delta,  int &bia, int &dread, int &kcam, int &nocam, float &studgood, float &minchrom, int &kmin, float &minhist, float &maxhist, bool &twotimes, const WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const ColorManagementParams &cmp, const RAWParams &raw, const ToneCurveParams &hrp)
 {
 }
 
-void StdImageSource::getAutoWBMultipliersitc(double &tempref, double &greenref, double &tempitc, double &greenitc, float &studgood, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double &rm, double &gm, double &bm, const WBParams & wbpar, const ColorManagementParams &cmp, const RAWParams &raw)
+void StdImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, const procparams::WBParams & wbpar)
+{
+}
+
+void StdImageSource::getAutoWBMultipliersitc(bool extra, double &tempref, double &greenref, double &tempitc, double &greenitc, float &temp0, float &delta, int &bia, int &dread, int &kcam, int &nocam, float &studgood, float &minchrom, int &kmin, float &minhist, float &maxhist, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double &rm, double &gm, double &bm, const WBParams & wbpar, const ColorManagementParams &cmp, const RAWParams &raw, const ToneCurveParams &hrp)
 {
     if (redAWBMul != -1.) {
         rm = redAWBMul;
@@ -324,7 +334,7 @@ void StdImageSource::getAutoWBMultipliersitc(double &tempref, double &greenref, 
         return;
     }
 
-    img->getAutoWBMultipliersitc(tempref, greenref, tempitc, greenitc,studgood, begx, begy, yEn, xEn, cx, cy, bf_h, bf_w, rm, gm, bm, params->wb, params->icm, params->raw);
+    img->getAutoWBMultipliersitc(extra, tempref, greenref, tempitc, greenitc, temp0, delta, bia, dread, kcam, nocam, studgood, minchrom, kmin, minhist, maxhist, begx, begy, yEn, xEn, cx, cy, bf_h, bf_w, rm, gm, bm, params->wb, params->icm, params->raw, params->toneCurve);
 
     redAWBMul   = rm;
     greenAWBMul = gm;
@@ -348,7 +358,7 @@ void StdImageSource::getAutoWBMultipliers (double &rm, double &gm, double &bm)
     blueAWBMul  = bm;
 }
 
-ColorTemp StdImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D>& blue, int tran, double equal)
+ColorTemp StdImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D>& blue, int tran, double equal, StandardObserver observer)
 {
     int rn, gn, bn;
     double reds, greens, blues;
@@ -360,13 +370,27 @@ ColorTemp StdImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
         printf ("AVG: %g %g %g\n", reds / rn, greens / gn, blues / bn);
     }
 
-    return ColorTemp (reds / rn * img_r, greens / gn * img_g, blues / bn * img_b, equal);
+    return ColorTemp (reds / rn * img_r, greens / gn * img_g, blues / bn * img_b, equal, observer);
 }
 
 void StdImageSource::flush() {
     img->allocate(0, 0);
 };
 
+void StdImageSource::wbMul2Camera(double &rm, double &gm, double &bm)
+{
+    rm = 1.0 / rm;
+    gm = 1.0 / gm;
+    bm = 1.0 / bm;
+}
+
+
+void StdImageSource::wbCamera2Mul(double &rm, double &gm, double &bm)
+{
+    rm = 1.0 / rm;
+    gm = 1.0 / gm;
+    bm = 1.0 / bm;
+}
 
 }
 

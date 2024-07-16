@@ -127,8 +127,8 @@ public:
 
     constexpr static float D50x = 0.9642f; //0.96422;
     constexpr static float D50z = 0.8249f; //0.82521;
-    constexpr static double u0 = 4.0 * static_cast<double>(D50x) / (static_cast<double>(D50x) + 15 + 3 * static_cast<double>(D50z));
-    constexpr static double v0 = 9.0 / (static_cast<double>(D50x) + 15 + 3 * static_cast<double>(D50z));
+    constexpr static double u0 = 4.0 * static_cast<double>(D50x) / (static_cast<double>(D50x) + 15.0 + 3.0 * static_cast<double>(D50z));
+    constexpr static double v0 = 9.0 / (static_cast<double>(D50x) + 15.0 + 3.0 * static_cast<double>(D50z));
     constexpr static double epskap = 8.0;
     constexpr static float epskapf = epskap;
 
@@ -1399,7 +1399,36 @@ static inline void Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, v
     //static inline float  gamma            (double x) { return gammatab[x]; }
     //static inline float  igamma_srgb      (double x) { return igammatab_srgb[x]; }
 
+    // code take in ART thanks to Alberto Griggio
+    // Rec.2100 PQ curve
+    // https://www.itu.int/dms_pubrec/itu-r/rec/bt/R-REC-BT.2100-2-201807-I!!PDF-F.pdf
+    // Perceptual Quantization / SMPTE standard ST.2084
+    static float eval_PQ_curve(float x, bool oetf);
 
+    // Hybrid-log gamma curve
+    // https://www.itu.int/dms_pubrec/itu-r/rec/bt/R-REC-BT.2100-2-201807-I!!PDF-F.pdf
+    static float eval_HLG_curve(float x, bool oetf);
+
+    static float eval_ACEScct_curve(float x, bool inverse);
+
+    static void xyz2oklab(float X, float Y, float Z, float &L, float &a, float &b);
+    static void oklab2xyz(float L, float a, float b, float &X, float &Y, float &Z);
+
+    template <class T>
+    static void rgb2oklab(float R, float G, float B, float &L, float &a, float &b, const T ws[3][3])
+    {
+        float X, Y, Z;
+        rgbxyz(R, G, B, X, Y, Z, ws);
+        xyz2oklab(X, Y, Z, L, a, b);
+    }
+
+    template <class T>
+    static void oklab2rgb(float L, float a, float b, float &R, float &G, float &B, const T iws[3][3])
+    {
+        float X, Y, Z;
+        oklab2xyz(L, a, b, X, Y, Z);
+        xyz2rgb(X, Y, Z, R, G, B, iws);
+    }
 
     // --------------------------------  Jacques's Munsell correction
 
@@ -1847,6 +1876,13 @@ static inline void Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, v
     */
     static void gamutmap(float &X, float Y, float &Z, const double p[3][3]);
 
+    /**
+    * @brief Convert primaries in XYZ values in function of illuminant
+    * @param p primaries red, gree, blue
+    * @param Wx Wy white for illuminant 
+    * @param pxyz return matrix XYZ 
+    */
+    static void primaries_to_xyz (double p[6], double Wx, double Wz, double *pxyz, int cat);
 
     /**
     * @brief Get HSV's hue from the Lab's hue
@@ -1888,6 +1924,59 @@ static inline void Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, v
 
         return (hr);
     }
+
+    static inline double huejz_to_huehsv2 (float HH)
+    {
+        //hr=translate Hue Jz value  (-Pi +Pi) in approximative hr (hsv values) (0 1) 
+        // with multi linear correspondences (I expect another time with Jz there is no error !!)
+        double hr = 0.0;
+        //always put h between 0 and 1
+        // make with my chart 468 colors...
+        // HH ==> Hz value  ; hr HSv value
+        if      (HH >= 0.2f && HH < 0.75f) {
+            hr = 0.12727273 * double(HH) + 0.90454551;//hr 0.93  1.00    full red
+        } else if (HH >= 0.75f && HH < 1.35f) {
+            hr = 0.15 * double(HH) - 0.1125;//hr 0.00  0.09    red yellow orange
+        } else if (HH >= 1.35f && HH < 1.85f) {
+            hr = 0.32 * double(HH) - 0.342;    //hr 0.09  0.25    orange yellow
+        } else if (HH >= 1.85f && HH < 2.46f) {
+            hr = 0.23442623 * double(HH) -0.18368853;//hr 0.25  0.393    yellow green green
+        } else if (HH >= 2.46f && HH < 3.14159f) {
+            hr = 0.177526 * double(HH) -0.043714;//hr 0.393  0.51315    green  ==> 0.42 Lab
+        } else if (HH >= -3.14159f && HH < -2.89f) {
+            hr = 0.3009078 * double(HH) + 1.459329;//hr 0.51315  0.5897    green cyan ==> -2.30 Lab
+        } else if (HH >= -2.89f && HH < -2.7f) {
+            hr = 0.204542 * double(HH) + 1.1808264;//hr 0.5897  0.628563    cyan
+        } else if (HH >= -2.7f && HH < -2.17f) {
+            hr = 0.121547 * double(HH) + 0.956399;//hr 0.628563  0.692642    blue blue-sky
+        } else if (HH >= -2.17f && HH < -0.9f) {
+            hr = 0.044882 * double(HH) + 0.789901;//hr 0.692642  0.749563    blue blue-sky
+        } else if (HH >= -0.9f && HH < -0.1f) {
+            hr = 0.2125 * double(HH) + 0.940813;//hr 0.749563 0.919563    purple magenta
+        } else if (HH >= -0.1f && HH < 0.2f) {
+            hr = 0.03479 * double(HH) + 0.923042;//hr 0.919563  0.93    red
+        }
+        // in case of !
+        if     (hr < 0.0) {
+            hr += 1.0;
+        } else if(hr > 1.0) {
+            hr -= 1.0;
+        }
+
+        return (hr);
+    }
+
+// HSV  0.93  1.0 red  -             Lab 0.0  0.6   Jz 0.20 0.75
+// HSV  0.00  0.9  red orange -      Lab 0.6  1.4   Jz 0.50 1.35
+// HSV  0.09  0.25 oran - yellow -   Lab 1.4  2.0   Jz 1.35 1.85
+// HSV  0.25  0.39 yellow - gree -   Lab 2.0  3.0   Jz 1.85 2.40
+// HSV  0.39  0.50 green - cyan      Lab 3.0  -2.8  Jz 2.40 3.10
+// HSV  0.50  0.58 cyan              Lab-2.8  -2.3  Jz 3.10 -2.90
+// HSV  0.58  0.69 blue - sky        Lab-2.3  -1.3  Jz -2.90 -2.17
+// HSV  0.69  0.75 blue          -   Lab-1.3  -0.9  Jz -2.17 -0.90
+// HSV  0.75  0.92 purple          - Lab-0.9  -0.1  Jz -0.9 -0.10
+// HSV  0.92  0.93 magenta           Lab-0.1  0.0  Jz -0.1 0.20
+
 
     static inline void RGB2Y(const float* R, const float* G, const float* B, float* Y1, float * Y2, int W) {
         int i = 0;

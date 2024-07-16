@@ -49,9 +49,13 @@ protected:
     Gtk::Frame* dcpFrame;
     Gtk::Frame* coipFrame;
     Gtk::Frame* redFrame;
+    Gtk::Frame* colorFramecie;    
+    MyExpander* trcExp;
 
     Adjuster* wGamma;
     Adjuster* wSlope;
+    Adjuster* wmidtcie;
+    Gtk::CheckButton* wsmoothcie;
     Adjuster* redx;
     Adjuster* redy;
     Adjuster* grex;
@@ -59,13 +63,19 @@ protected:
     Adjuster* blux;
     Adjuster* bluy;
     Adjuster* preser;
-
+    Adjuster* refi;
+    Adjuster* shiftx;
+    Adjuster* shifty;
+    sigc::connection wsmoothcieconn;
+    bool lastwsmoothcie;
     Gtk::Label* labmga;
     Gtk::Box* gabox;
-    Gtk::Label* blr;
-    Gtk::Label* blg;
-    Gtk::Label* blb;
+    //Gtk::Label* blr;
+    //Gtk::Label* blg;
+    //Gtk::Label* blb;
     Gtk::Button* neutral;
+    sigc::connection trcExpconn;
+    bool lasttrcExp;
 
     sigc::connection neutralconn;
     bool lastToneCurve;
@@ -81,17 +91,19 @@ protected:
     bool lastfbw;
     sigc::connection fbwconn;
     bool isBatchMode;
+    bool lastgamut;
+    sigc::connection gamutconn;
 
 private:
     rtengine::ProcEvent EvICMprimariMethod;
     rtengine::ProcEvent EvICMprofileMethod;
     rtengine::ProcEvent EvICMtempMethod;
-    rtengine::ProcEvent EvICMpredx;
-    rtengine::ProcEvent EvICMpredy;
-    rtengine::ProcEvent EvICMpgrex;
-    rtengine::ProcEvent EvICMpgrey;
-    rtengine::ProcEvent EvICMpblux;
-    rtengine::ProcEvent EvICMpbluy;
+    //rtengine::ProcEvent EvICMpredx;
+    //rtengine::ProcEvent EvICMpredy;
+    //rtengine::ProcEvent EvICMpgrex;
+    //rtengine::ProcEvent EvICMpgrey;
+    //rtengine::ProcEvent EvICMpblux;
+    //rtengine::ProcEvent EvICMpbluy;
     rtengine::ProcEvent EvICMgamm;
     rtengine::ProcEvent EvICMslop;
     rtengine::ProcEvent EvICMtrcinMethod;
@@ -107,6 +119,14 @@ private:
     rtengine::ProcEvent EvICMpreser;
     rtengine::ProcEvent EvICMLabGridciexy;
     rtengine::ProcEvent EvICMfbw;
+    rtengine::ProcEvent EvICMgamut;
+    rtengine::ProcEvent EvICMcat;
+    rtengine::ProcEvent EvICMrefi;
+    rtengine::ProcEvent EvICMtrcExp;
+    rtengine::ProcEvent EvICMshiftx;
+    rtengine::ProcEvent EvICMshifty;
+    rtengine::ProcEvent EvICMwmidtcie;
+    rtengine::ProcEvent EvICMwsmoothcie;
     LabGrid *labgridcie;
     IdleRegister idle_register;
 
@@ -115,14 +135,17 @@ private:
     Gtk::Box* wprimBox;
     Gtk::Label* wprimlab;
     Gtk::Label* cielab;
-    Gtk::Box* redBox;
-    Gtk::Box* greBox;
-    Gtk::Box* bluBox;
+    Gtk::Grid* primCoordGrid;
     Gtk::Box* riaHBox;
     Gtk::Box* preBox;
     Gtk::Box* iVBox;
     Gtk::Box* wTRCBox;
     Gtk::CheckButton* fbw;
+    Gtk::CheckButton* gamut;
+
+    Gtk::Box* wcatBox;
+    Gtk::Label* wcatlab;
+
 
     Gtk::CheckButton* obpc;
     Gtk::RadioButton* inone;
@@ -146,6 +169,9 @@ private:
     sigc::connection willconn;
     MyComboBoxText* wprim;
     sigc::connection wprimconn;
+    MyComboBoxText* wcat;
+    sigc::connection wcatconn;
+    
     std::unique_ptr<PopUpButton> aRendIntent;
     sigc::connection arendintentconn;
 
@@ -164,8 +190,10 @@ private:
     double dcpTemperatures[2];
     Glib::ustring lastRefFilename;
     Glib::ustring camName;
+    Glib::ustring filename;
     void updateDCP(int dcpIlluminant, Glib::ustring dcp_name);
     void updateRenderingIntent(const Glib::ustring &profile);
+    void foldAllButMe (GdkEventButton* event, MyExpander *expander);
     
     float nextrx;
     float nextry;
@@ -175,8 +203,12 @@ private:
     float nextgy;
     float nextwx;
     float nextwy;
+    float nextmx;
+    float nextmy;
 
 public:
+    static const Glib::ustring TOOL_NAME;
+
     ICMPanel();
     ~ICMPanel() override;
 
@@ -186,18 +218,23 @@ public:
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void adjusterChanged(Adjuster* a, double newval) override;
     void primChanged (float rx, float ry, float bx, float by, float gx, float gy) override;
-    void iprimChanged (float r_x, float r_y, float b_x, float b_y, float g_x, float g_y, float w_x, float w_y) override;
+    void iprimChanged (float r_x, float r_y, float b_x, float b_y, float g_x, float g_y, float w_x, float w_y, float m_x, float m_y) override;
     void neutral_pressed();
 
     void wpChanged();
     void wtrcinChanged();
     void willChanged();
     void wprimChanged();
+    void wcatChanged();
+    void trcExpChanged();
     void opChanged();
     void oiChanged(int n);
     void aiChanged(int n);
     void oBPCChanged();
     void fbwChanged();
+    void wsmoothcieChanged();
+    
+    void gamutChanged();
     void ipChanged();
     void ipSelectionChanged();
     void dcpIlluminantChanged();

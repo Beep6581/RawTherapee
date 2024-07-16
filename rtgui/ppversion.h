@@ -1,11 +1,15 @@
 #pragma once
 
 // This number has to be incremented whenever the PP3 file format is modified or the behaviour of a tool changes
-#define PPVERSION 349
+#define PPVERSION 351
 #define PPVERSION_AEXP 301 //value of PPVERSION when auto exposure algorithm was modified
 
 /*
   Log of version changes
+   351  2024-06-19
+        take into account Global in selective editing
+   350  2023-03-05
+        introduced white balance standard observer
    349  2020-10-29
         replaced Haze removal Luminance checkbox with an adjuster to blend between luminance and normal mode
    348  2018-09-25

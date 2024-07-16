@@ -19,14 +19,12 @@
 #pragma once
 
 #include <memory>
-
 #include <glibmm/ustring.h>
-
-#include <libiptcdata/iptc-data.h>
 
 #include "iimage.h"
 #include "imagedimensions.h"
 #include "imageformat.h"
+#include "metadata.h"
 #include "rtengine.h"
 
 enum {
@@ -40,26 +38,20 @@ enum {
     IMIO_CANNOTWRITEFILE
 };
 
-namespace rtexif
-{
-
-class TagDirectory;
-
-}
-
 namespace rtengine
 {
-
-class ColorTemp;
-class ProgressListener;
-class Imagefloat;
 
 namespace procparams
 {
 
 class ExifPairs;
+class IPTCPairs;
 
 }
+
+class ColorTemp;
+class ProgressListener;
+class Imagefloat;
 
 class ImageIO : virtual public ImageDatas
 {
@@ -67,23 +59,19 @@ class ImageIO : virtual public ImageDatas
 protected:
     ProgressListener* pl;
     cmsHPROFILE embProfile;
-    char* profileData;
+    std::string profileData;
     int profileLength;
     char* loadedProfileData;
     int loadedProfileLength;
-    const std::unique_ptr<procparams::ExifPairs> exifChange;
-    IptcData* iptc;
-    const rtexif::TagDirectory* exifRoot;
     MyMutex imutex;
     IIOSampleFormat sampleFormat;
     IIOSampleArrangement sampleArrangement;
+    Exiv2Metadata metadataInfo;
 
 private:
     void deleteLoadedProfileData( );
 
 public:
-    static Glib::ustring errorMsg[6];
-
     ImageIO();
     ~ImageIO() override;
 
@@ -102,6 +90,10 @@ public:
     int load (const Glib::ustring &fname);
     int save (const Glib::ustring &fname) const;
 
+#ifdef LIBJXL
+    int loadJXL (const Glib::ustring &fname);
+#endif
+
     int loadPNG (const Glib::ustring &fname);
     int loadJPEG (const Glib::ustring &fname);
     int loadTIFF (const Glib::ustring &fname);
@@ -113,14 +105,21 @@ public:
 
     int savePNG (const Glib::ustring &fname, int bps = -1) const;
     int saveJPEG (const Glib::ustring &fname, int quality = 100, int subSamp = 3) const;
-    int saveTIFF (const Glib::ustring &fname, int bps = -1, bool isFloat = false, bool uncompressed = false) const;
+    int saveTIFF (
+        const Glib::ustring &fname,
+        int bps = -1,
+        bool isFloat = false,
+        bool uncompressed = false,
+        bool big = false
+    ) const;
 
     cmsHPROFILE getEmbeddedProfile () const;
     void getEmbeddedProfileData (int& length, unsigned char*& pdata) const;
 
-    void setMetadata (const rtexif::TagDirectory* eroot);
-    void setMetadata (const rtexif::TagDirectory* eroot, const rtengine::procparams::ExifPairs& exif, const rtengine::procparams::IPTCPairs& iptcc);
-    void setOutputProfile (const char* pdata, int plen);
+    void setMetadata(Exiv2Metadata info);
+    void setOutputProfile(const std::string& pdata);
+
+    bool saveMetadata(const Glib::ustring &fname) const;
 
     MyMutex& mutex ();
 };

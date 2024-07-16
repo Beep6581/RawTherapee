@@ -33,6 +33,7 @@ protected:
     rtengine::ProcEvent EvTMFattalAnchor;
     
 public:
+    static const Glib::ustring TOOL_NAME;
 
     FattalToneMapping();
 

@@ -21,6 +21,7 @@
 #include "options.h"
 #include "thumbbrowserbase.h"
 #include "../rtengine/rt_math.h"
+#include "rtsurface.h"
 
 namespace
 {
@@ -119,7 +120,7 @@ Glib::ustring getPaddedName(const Glib::ustring& name)
 
 }
 
-ThumbBrowserEntryBase::ThumbBrowserEntryBase (const Glib::ustring& fname) :
+ThumbBrowserEntryBase::ThumbBrowserEntryBase (const Glib::ustring& fname, Thumbnail *thm) :
     fnlabw(0),
     fnlabh(0),
     dtlabw(0),
@@ -153,7 +154,8 @@ ThumbBrowserEntryBase::ThumbBrowserEntryBase (const Glib::ustring& fname) :
     bbPreview(nullptr),
     cursor_type(CSUndefined),
     collate_name(getPaddedName(dispname).casefold_collate_key()),
-    thumbnail(nullptr),
+    collate_exif(getPaddedName(thm->getExifString()).casefold_collate_key()),
+    thumbnail(thm),
     filename(fname),
     selected(false),
     drawable(false),
@@ -284,10 +286,10 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
         int iheight = 0;
 
         for (size_t i = 0; i < bbIcons.size(); i++) {
-            iwidth += bbIcons[i]->get_width() + (i > 0 ? igap : 0);
+            iwidth += bbIcons[i]->getWidth() + (i > 0 ? igap : 0);
 
-            if (bbIcons[i]->get_height() > iheight) {
-                iheight = bbIcons[i]->get_height();
+            if (bbIcons[i]->getHeight() > iheight) {
+                iheight = bbIcons[i]->getHeight();
             }
         }
 
@@ -310,10 +312,10 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
 
         for (size_t i = 0; i < bbIcons.size(); i++) {
             // Draw the image at 110, 90, except for the outermost 10 pixels.
-            Gdk::Cairo::set_source_pixbuf(cc, bbIcons[i], istartx, istarty);
-            cc->rectangle(istartx, istarty, bbIcons[i]->get_width(), bbIcons[i]->get_height());
+            cc->set_source(bbIcons[i]->get(), istartx, istarty);
+            cc->rectangle(istartx, istarty, bbIcons[i]->getWidth(), bbIcons[i]->getHeight());
             cc->fill();
-            istartx += bbIcons[i]->get_width() + igap;
+            istartx += bbIcons[i]->getWidth() + igap;
         }
     }
 
@@ -323,9 +325,9 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
         int istarty2 = prey + preh - igap - 1;
 
         for (size_t i = 0; i < bbSpecificityIcons.size(); ++i) {
-            istartx2 -= bbSpecificityIcons[i]->get_width() - igap;
-            Gdk::Cairo::set_source_pixbuf(cc, bbSpecificityIcons[i], istartx2, istarty2 - bbSpecificityIcons[i]->get_height());
-            cc->rectangle(istartx2, istarty2 - bbSpecificityIcons[i]->get_height(), bbSpecificityIcons[i]->get_width(), bbSpecificityIcons[i]->get_height());
+            istartx2 -= bbSpecificityIcons[i]->getWidth() - igap;
+            cc->set_source(bbSpecificityIcons[i]->get(), istartx2, istarty2 - bbSpecificityIcons[i]->getHeight());
+            cc->rectangle(istartx2, istarty2 - bbSpecificityIcons[i]->getHeight(), bbSpecificityIcons[i]->getWidth(), bbSpecificityIcons[i]->getHeight());
             cc->fill();
         }
     }
@@ -374,7 +376,7 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
 
         // draw file name
         Glib::RefPtr<Pango::Context> context = w->get_pango_context () ;
-        Pango::FontDescription fontd = context->get_font_description ();
+        Pango::FontDescription fontd = w->get_style_context()->get_font();
         fontd.set_weight (Pango::WEIGHT_BOLD);
 
         if (italicstyle) {
@@ -440,13 +442,13 @@ void ThumbBrowserEntryBase::getTextSizes (int& infow, int& infoh)
 
 
     // filename:
-    Pango::FontDescription fontd = context->get_font_description ();
+    Pango::FontDescription fontd = w->get_style_context()->get_font();
     fontd.set_weight (Pango::WEIGHT_BOLD);
     context->set_font_description (fontd);
     Glib::RefPtr<Pango::Layout> fn = w->create_pango_layout(dispname);
     fn->get_pixel_size (fnlabw, fnlabh);
 
-    // calculate cummulated height of all info fields
+    // calculate cumulated height of all info fields
     infoh = fnlabh;
     infow = 0;
 
@@ -694,14 +696,14 @@ bool ThumbBrowserEntryBase::insideWindow (int x, int y, int w, int h) const
     return !(ofsX + startx > x + w || ofsX + startx + exp_width < x || ofsY + starty > y + h || ofsY + starty + exp_height < y);
 }
 
-std::vector<Glib::RefPtr<Gdk::Pixbuf>> ThumbBrowserEntryBase::getIconsOnImageArea()
+std::vector<std::shared_ptr<RTSurface>> ThumbBrowserEntryBase::getIconsOnImageArea()
 {
-    return std::vector<Glib::RefPtr<Gdk::Pixbuf> >();
+    return std::vector<std::shared_ptr<RTSurface>>();
 }
 
-std::vector<Glib::RefPtr<Gdk::Pixbuf> > ThumbBrowserEntryBase::getSpecificityIconsOnImageArea()
+std::vector<std::shared_ptr<RTSurface>> ThumbBrowserEntryBase::getSpecificityIconsOnImageArea()
 {
-    return std::vector<Glib::RefPtr<Gdk::Pixbuf> >();
+    return std::vector<std::shared_ptr<RTSurface>>();
 }
 
 bool ThumbBrowserEntryBase::motionNotify  (int x, int y)

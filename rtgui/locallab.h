@@ -25,6 +25,7 @@
 #pragma once
 
 #include "controlspotpanel.h"
+#include "guiutils.h"
 #include "locallabtools.h"
 
 /* ==== LocallabToolListListener ==== */
@@ -103,19 +104,22 @@ private:
     LocallabToolList* const toollist;
 
     // Locallab tool widgets
-    LocallabColor* const expcolor;
-    LocallabExposure* const expexpose;
-    LocallabShadow* const expshadhigh;
-    LocallabVibrance* const expvibrance;
-    LocallabSoft* const expsoft;
-    LocallabBlur* const expblur;
-    LocallabTone* const exptonemap;
-    LocallabRetinex* const expreti;
-    LocallabSharp* const expsharp;
-    LocallabContrast* const expcontrast;
-    LocallabCBDL* const expcbdl;
-    LocallabLog* const explog;
-    LocallabMask* const expmask;
+    LocallabColor expcolor;
+    LocallabExposure expexpose;
+    LocallabShadow expshadhigh;
+    LocallabVibrance expvibrance;
+    LocallabSoft expsoft;
+    LocallabBlur expblur;
+    LocallabTone exptonemap;
+    LocallabRetinex expreti;
+    LocallabSharp expsharp;
+    LocallabContrast expcontrast;
+    LocallabCBDL expcbdl;
+    LocallabLog explog;
+    LocallabMask expmask;
+    Locallabcie expcie;
+
+    OptionalRadioButtonGroup delta_e_preview_button_group;
 
     std::vector<LocallabTool*> locallabTools;
 
@@ -123,12 +127,28 @@ private:
     std::vector<locallabRetiMinMax> retiMinMax;
 
     // Locallab tools mask background management data
+    std::vector<locallabDenoiseLC> denoiselc;
+
+
+    std::vector<locallabcieBEF> cie_bef;
+
+    std::vector<locallabcieLC> cie_lc;
+
+    std::vector<locallabsetLC> set_lc;
+
+    std::vector<locallabcieSIG> cie_sig;
+
+    // Locallab tools mask background management data
     std::vector<locallabRef> maskBackRef;
 
     // Other widgets
-    Gtk::Button* const resetshowButton;
+    //Gtk::Button* const resetshowButton;
+
+    Glib::ustring spotName;
 
 public:
+    static const Glib::ustring TOOL_NAME;
+
     Locallab();
 
     // FoldableToolPanel management functions
@@ -139,12 +159,32 @@ public:
 
     // Locallab Retinex tool min/man management function
     void minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int selspot) override;
+    
+    // new functions for global - normal use
+//    void mainChanged(int spottype, int selspot, bool iscolor, bool issh, bool isvib, bool isexpos, bool issoft, bool isblur, bool istom, bool isret, bool issharp, bool iscont, bool iscbdl, bool islog, bool ismas, bool iscie)override;
+    void scopeChangedcol(int scope, int selspot, bool enab)override;
+    void scopeChangedsh(int scope, int selspot, bool enab)override;
+    void scopeChangedvib(int scope, int selspot, bool enab)override;
+    void scopeChangedset(int scope, int selspot, bool enab)override;
+    
+    void maiChanged(const std::vector<locallabsetLC> &setlc, int selspot) override;
+    
+    //Locallab denoise 
+    // Locallab Retinex tool min/man management function
+    void denChanged(const std::vector<locallabDenoiseLC> &denlc, int selspot) override;
+    
+    // Locallab CIE tool primaries function
+    void cieChanged(const std::vector<locallabcieLC> &cielc, int selspot) override;
 
-    // Locallab Log Encoding autocompute function
-    void logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg) override;
+    // Locallab Log Encoding and Cam16 autocompute function
+    void ciebefChanged(const std::vector<locallabcieBEF> &ciebef, int selspot) override;
+
+    void sigChanged(const std::vector<locallabcieSIG> &ciesig, int selspot) override;
+
 
     // Locallab tools mask background management function
-    void refChanged(const std::vector<locallabRef> &ref, int selspot) override;
+//    void refChanged(const std::vector<locallabRef> &ref, int selspot) override;
+    void refChanged2(float *huerefp, float *chromarefp, float *lumarefp, float *fabrefp, int selspot)override;
 
     // Mask visibility management functions
     struct llMaskVisibility {
@@ -165,13 +205,14 @@ public:
         int cbMask;
         int logMask;
         int maskMask;
+        int cieMask;
     };
 
     void resetMaskVisibility();
     llMaskVisibility getMaskVisibility() const;
 
     // Other widgets event functions
-    void resetshowPressed();
+    //void resetshowPressed();
 
     // EditProvider management function
     void setEditProvider(EditDataProvider* provider) override;
@@ -200,6 +241,7 @@ private:
 
     // ControlSpotListener function
     void resetToolMaskView() override;
+    void spotNameChanged(const Glib::ustring &newName) override;
 
     // LocallabToolListener function
     void resetOtherMaskView(LocallabTool* current) override;

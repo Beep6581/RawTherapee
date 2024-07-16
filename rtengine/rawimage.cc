@@ -5,7 +5,7 @@
  */
 
 #include <strings.h>
-#ifdef WIN32
+#ifdef _WIN32
 #include <winsock2.h>
 #else
 #include <netinet/in.h>
@@ -548,11 +548,18 @@ int RawImage::loadRaw(bool loadData, unsigned int imageNum, bool closeFile, Prog
 
         CameraConstantsStore* ccs = CameraConstantsStore::getInstance();
         const CameraConst *cc = ccs->get(make, model);
+        bool raw_crop_cc = false;
+        int orig_raw_width = width;
+        int orig_raw_height = height;
 
         if (raw_image) {
-            if (cc && cc->has_rawCrop()) {
+            orig_raw_width = raw_width;
+            orig_raw_height = raw_height;
+
+            if (cc && cc->has_rawCrop(raw_width, raw_height)) {
+                raw_crop_cc = true;
                 int lm, tm, w, h;
-                cc->get_rawCrop(lm, tm, w, h);
+                cc->get_rawCrop(raw_width, raw_height, lm, tm, w, h);
 
                 if (isXtrans()) {
                     shiftXtransMatrix(6 - ((top_margin - tm) % 6), 6 - ((left_margin - lm) % 6));
@@ -584,9 +591,9 @@ int RawImage::loadRaw(bool loadData, unsigned int imageNum, bool closeFile, Prog
                 }
             }
 
-            if (cc && cc->has_rawMask(0)) {
-                for (int i = 0; i < 8 && cc->has_rawMask(i); i++) {
-                    cc->get_rawMask(i, mask[i][0], mask[i][1], mask[i][2], mask[i][3]);
+            if (cc && cc->has_rawMask(orig_raw_width, orig_raw_height, 0)) {
+                for (int i = 0; i < 2 && cc->has_rawMask(orig_raw_width, orig_raw_height, i); i++) {
+                    cc->get_rawMask(orig_raw_width, orig_raw_height, i, mask[i][0], mask[i][1], mask[i][2], mask[i][3]);
                 }
             }
 
@@ -594,9 +601,10 @@ int RawImage::loadRaw(bool loadData, unsigned int imageNum, bool closeFile, Prog
             free(raw_image);
             raw_image = nullptr;
         } else {
-            if (get_maker() == "Sigma" && cc && cc->has_rawCrop()) { // foveon images
+            if (get_maker() == "Sigma" && cc && cc->has_rawCrop(width, height)) { // foveon images
+                raw_crop_cc = true;
                 int lm, tm, w, h;
-                cc->get_rawCrop(lm, tm, w, h);
+                cc->get_rawCrop(width, height, lm, tm, w, h);
                 left_margin = lm;
                 top_margin = tm;
 
@@ -692,11 +700,12 @@ int RawImage::loadRaw(bool loadData, unsigned int imageNum, bool closeFile, Prog
                 printf("no constants in camconst.json exists for \"%s %s\" (relying only on dcraw defaults)\n", make, model);
             }
 
+            printf("raw dimensions: %d x %d\n", orig_raw_width, orig_raw_height);
             printf("black levels: R:%d G1:%d B:%d G2:%d (%s)\n", get_cblack(0), get_cblack(1), get_cblack(2), get_cblack(3),
                    black_from_cc ? "provided by camconst.json" : "provided by dcraw");
             printf("white levels: R:%d G1:%d B:%d G2:%d (%s)\n", get_white(0), get_white(1), get_white(2), get_white(3),
                    white_from_cc ? "provided by camconst.json" : "provided by dcraw");
-            printf("raw crop: %d %d %d %d (provided by %s)\n", left_margin, top_margin, iwidth, iheight, (cc && cc->has_rawCrop()) ? "camconst.json" : "dcraw");
+            printf("raw crop: %d %d %d %d (provided by %s)\n", left_margin, top_margin, iwidth, iheight, raw_crop_cc ? "camconst.json" : "dcraw");
             printf("color matrix provided by %s\n", (cc && cc->has_dcrawMatrix()) ? "camconst.json" : "dcraw");
         }
     }

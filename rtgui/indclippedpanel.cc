@@ -21,31 +21,30 @@
 #include "imagearea.h"
 #include "rtimage.h"
 
-IndicateClippedPanel::IndicateClippedPanel (ImageArea* ia) : imageArea(ia)
+IndicateClippedPanel::IndicateClippedPanel (ImageArea* ia) :
+    Fon("focusscreen-on"),
+    Foff("focusscreen-off"),
+    Son("contrastmask-on"),
+    Soff("contrastmask-off"),
+    iF(Gtk::manage(new RTImage(Foff, Gtk::ICON_SIZE_LARGE_TOOLBAR))),
+    iS(Gtk::manage(new RTImage(Soff, Gtk::ICON_SIZE_LARGE_TOOLBAR))),
+    imageArea(ia)
 {
-
-    iFon  = new RTImage ("focusscreen-on.png");
-    iFoff = new RTImage ("focusscreen-off.png");
-
-    // for previewSharpMask, needs to be replaced with different icons
-    iSon  = new RTImage ("contrastmask-on.png");
-    iSoff = new RTImage ("contrastmask-off.png");
-
     previewFocusMask = Gtk::manage (new Gtk::ToggleButton ());
     previewFocusMask->set_relief(Gtk::RELIEF_NONE);
     previewFocusMask->set_tooltip_markup (M("MAIN_TOOLTIP_PREVIEWFOCUSMASK"));
-    previewFocusMask->set_image(*iFoff);
+    previewFocusMask->set_image(*iF);
 
     previewSharpMask = Gtk::manage (new Gtk::ToggleButton ());
     previewSharpMask->set_relief(Gtk::RELIEF_NONE);
     previewSharpMask->set_tooltip_markup (M("MAIN_TOOLTIP_PREVIEWSHARPMASK"));
-    previewSharpMask->set_image(*iSoff);
+    previewSharpMask->set_image(*iS);
 
     Glib::ustring tt;
 
     indClippedH = Gtk::manage (new Gtk::ToggleButton ());
     indClippedH->set_relief(Gtk::RELIEF_NONE);
-    indClippedH->add (*Gtk::manage (new RTImage ("warning-highlights.png")));
+    indClippedH->add (*Gtk::manage (new RTImage ("warning-highlights", Gtk::ICON_SIZE_LARGE_TOOLBAR)));
     tt = Glib::ustring::compose("%1\n%2 = %3", M("MAIN_TOOLTIP_INDCLIPPEDH"), M("MAIN_TOOLTIP_THRESHOLD"), options.highlightThreshold);
 
     if (tt.find("&lt;") == Glib::ustring::npos && tt.find("&gt;") == Glib::ustring::npos) {
@@ -56,7 +55,7 @@ IndicateClippedPanel::IndicateClippedPanel (ImageArea* ia) : imageArea(ia)
 
     indClippedS = Gtk::manage (new Gtk::ToggleButton ());
     indClippedS->set_relief(Gtk::RELIEF_NONE);
-    indClippedS->add (*Gtk::manage (new RTImage ("warning-shadows.png")));
+    indClippedS->add (*Gtk::manage (new RTImage ("warning-shadows", Gtk::ICON_SIZE_LARGE_TOOLBAR)));
     tt = Glib::ustring::compose("%1\n%2 = %3", M("MAIN_TOOLTIP_INDCLIPPEDS"), M("MAIN_TOOLTIP_THRESHOLD"), options.shadowThreshold);
 
     if (tt.find("&lt;") == Glib::ustring::npos && tt.find("&gt;") == Glib::ustring::npos) {
@@ -102,7 +101,7 @@ void IndicateClippedPanel::silentlyDisableSharpMask ()
 {
     ConnectionBlocker conBlocker(connSharpMask);
     previewSharpMask->set_active(false);
-    previewSharpMask->set_image(*iSoff);
+    iS->set_from_icon_name(Soff);
 
 }
 
@@ -141,8 +140,8 @@ void IndicateClippedPanel::buttonToggled (Gtk::ToggleButton* tb)
     }
 
     imageArea->sharpMaskSelected(previewSharpMask->get_active());
-    previewFocusMask->set_image(previewFocusMask->get_active() ? *iFon : *iFoff);
-    previewSharpMask->set_image(previewSharpMask->get_active() ? *iSon : *iSoff);
+    iF->set_from_icon_name(previewFocusMask->get_active() ? Fon : Foff);
+    iS->set_from_icon_name(previewSharpMask->get_active() ? Son : Soff);
 
     connFocusMask.block(false);
     connSharpMask.block(false);
@@ -158,10 +157,4 @@ void IndicateClippedPanel::buttonToggled (Gtk::ToggleButton* tb)
     }
 }
 
-IndicateClippedPanel::~IndicateClippedPanel ()
-{
-    delete iFon;
-    delete iFoff;
-    delete iSon;
-    delete iSoff;
-}
+IndicateClippedPanel::~IndicateClippedPanel () {}

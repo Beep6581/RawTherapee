@@ -26,14 +26,20 @@
 namespace rtengine
 {
 
+using color_match_type = double [97][3];
+
 constexpr double MINTEMP = 1500.0;
 constexpr double MAXTEMP = 60000.0;
 constexpr double MINGREEN = 0.02;
-constexpr double MAXGREEN = 10.0;
-constexpr double MINEQUAL = 0.8;
-constexpr double MAXEQUAL = 1.5;
+constexpr double MAXGREEN = 100.0;
+constexpr double MINEQUAL = 0.5;
+constexpr double MAXEQUAL = 2.;
 constexpr double INITIALBLACKBODY = 4000.0;
 
+enum class StandardObserver {
+    TWO_DEGREES,
+    TEN_DEGREES,
+};
 
 class ColorTemp
 {
@@ -43,32 +49,36 @@ private:
     double green;
     double equal;
     std::string method;
+    StandardObserver observer{StandardObserver::TEN_DEGREES};
     static void clip (double &temp, double &green);
     static void clip (double &temp, double &green, double &equal);
     int XYZtoCorColorTemp(double x0, double y0 , double z0, double &temp) const;
-    void temp2mul (double temp, double green, double equal, double& rmul, double& gmul, double& bmul) const;
+    void temp2mul (double temp, double green, double equal, StandardObserver observer, double& rmul, double& gmul, double& bmul) const;
     const static std::map<std::string,const double *> spectMap;
 public:
-
+   // static constexpr StandardObserver DEFAULT_OBSERVER = StandardObserver::TEN_DEGREES;
+    static constexpr StandardObserver DEFAULT_OBSERVER = StandardObserver::TWO_DEGREES;
     ColorTemp () : temp(-1.), green(-1.), equal (1.), method("Custom") {}
     explicit ColorTemp (double e) : temp(-1.), green(-1.), equal (e), method("Custom") {}
-    ColorTemp (double t, double g, double e, const std::string &m);
-    ColorTemp (double mulr, double mulg, double mulb, double e);
-    static void tempxy(bool separated, int repref, float **Tx, float **Ty, float **Tz, float **Ta, float **Tb, float **TL, double *TX, double *TY, double *TZ, const procparams::WBParams & wbpar);
+    ColorTemp (double t, double g, double e, const std::string &m, StandardObserver o);
+    ColorTemp (double mulr, double mulg, double mulb, double e, StandardObserver observer);
+    static void tempxy(bool separated, int repref, float **Tx, float **Ty, float **Tz, float **Ta, float **Tb, float **TL, double *TX, double *TY, double *TZ, const procparams::WBParams & wbpar, int ttbeg, int ttend, double &wpx, double &wpz, double *WPX, double *WPZ);
 
-    void update (const double rmul, const double gmul, const double bmul, const double equal, const double tempBias=0.0)
+    void update (const double rmul, const double gmul, const double bmul, const double equal, StandardObserver observer, const double tempBias=0.0)
     {
         this->equal = equal;
-        mul2temp (rmul, gmul, bmul, this->equal, temp, green);
+        this->observer = observer;
+        mul2temp (rmul, gmul, bmul, this->equal, observer, temp, green);
         if (tempBias != 0.0 && tempBias >= -1.0 && tempBias <= 1.0) {
             temp += temp * tempBias;
         }
     }
-    void useDefaults (const double equal)
+    void useDefaults (const double equal, StandardObserver observer)
     {
         temp = 6504;    // Values copied from procparams.cc
         green = 1.0;
         this->equal = equal;
+        this->observer = observer;
     }
 
     inline std::string getMethod() const
@@ -87,14 +97,20 @@ public:
     {
         return equal;
     }
+    inline StandardObserver getObserver() const
+    {
+        return observer;
+    }
+
+    ColorTemp convertObserver(StandardObserver observer) const;
 
     void  getMultipliers (double &mulr, double &mulg, double &mulb) const
     {
-        temp2mul (temp, green, equal, mulr, mulg, mulb);
+        temp2mul (temp, green, equal, observer, mulr, mulg, mulb);
     }
 
-    void mul2temp (const double rmul, const double gmul, const double bmul, const double equal, double& temp, double& green) const;
-    static void temp2mulxyz (double tem, const std::string &method, double &Xxyz, double &Zxyz);
+    void mul2temp (const double rmul, const double gmul, const double bmul, const double equal, StandardObserver observer, double& temp, double& green) const;
+    static void temp2mulxyz (double tem, const std::string &method, StandardObserver observer, double &Xxyz, double &Zxyz);
 
     static void cieCAT02(double Xw, double Yw, double Zw, double &CAM02BB00, double &CAM02BB01, double &CAM02BB02, double &CAM02BB10, double &CAM02BB11, double &CAM02BB12, double &CAM02BB20, double &CAM02BB21, double &CAM02BB22, double adap );
     static void cieCAT02float(float Xw, float Yw, float Zw, float &CAM02BB00, float &CAM02BB01, float &CAM02BB02, float &CAM02BB10, float &CAM02BB11, float &CAM02BB12, float &CAM02BB20, float &CAM02BB21, float &CAM02BB22, float adap);
@@ -102,7 +118,7 @@ public:
 
     bool operator== (const ColorTemp& other) const
     {
-        return fabs(temp - other.temp) < 1e-10 && fabs(green - other.green) < 1e-10;
+        return fabs(temp - other.temp) < 1e-10 && fabs(green - other.green) < 1e-10 && observer != other.observer;
     }
     bool operator!= (const ColorTemp& other) const
     {
@@ -153,6 +169,8 @@ public:
     static const double ColorchechGreE2_spect[97];
     static const double ColorchechGreB3_spect[97];
     static const double ColorchechCyaF3_spect[97];
+    static const double ColorchechCyaF3_spect2[97];
+    static const double ColorchechCyaF3_spect3[97];
     static const double ColorchechPurD2_spect[97];
     static const double ColorchechMagE3_spect[97];
     static const double ColorchechSkiA138_13_14_spect[97];
@@ -360,28 +378,269 @@ public:
     static const double J570_NeuD17_spect[97];//neutral
     static const double J570_NeuJ11_spect[97];//neutral
     static const double J570_NeuL4_spect[97];//neutral
+
+    static const double J570_NeuN8_spect2[97];//neutral
+    static const double J570_NeuN9_spect2[97];//neutral
+    static const double J570_NeuO8_spect2[97];//neutral
+    static const double J570_NeuO11_spect2[97];//neutral
+    static const double J570_NeuD5_spect2[97];//neutral
+    static const double J570_NeuE11_spect2[97];//neutral
+    static const double J570_NeuK16_spect2[97];//neutral
+    static const double J570_NeuM3_spect2[97];//neutral
+    static const double J570_NeuN18_spect2[97];//neutral
+    static const double J570_NeuQ1_spect2[97];//neutral
+    static const double J570_NeuS7_spect2[97];//neutral
+    static const double J570_NeuV10_spect2[97];//neutral
+
+    static const double J570_NeuW18_spect2[97];//neutral
+    static const double J570_NeuZ14_spect2[97];//neutral
+    static const double J570_NeuC18_spect2[97];//neutral
+    static const double J570_NeuD17_spect2[97];//neutral
+    static const double J570_NeuJ11_spect2[97];//neutral
+    static const double J570_NeuL4_spect2[97];//neutral 
+    
     static const double Colorlab_n72_n2_spect[97];
     static const double Colorlab_10_n70_spect[97];
+    static const double Colorlab_10_n70_spect2[97];
+    static const double Colorlab_10_n70_spect3[97];
+    static const double Colorlab_10_n70_spect4[97];
     static const double Colorlab_n33_n70_spect[97];
     static const double Colorlab_n8_n74_spect[97];
     static const double Colorlab_19_n69_spect[97];
     static const double Colorlab_n80_10_spect[97];
     static const double Colorlab_n80_26_spect[97];
     static const double Colorlab_n80_5_9_5_9spect[97];
+//    static const double JDC468_greyc14_66_spect[97];
+//    static const double JDC468_greym13_325_spect[97];
+//    static const double JDC468_greyf26_156_spect[97];
 //    static const double Colorlab_n57_5_6_9spect[97];
-    
-    /*
-    static const double JDC468_greyc14_66_spect[97];
-    static const double JDC468_greym13_325_spect[97];
-    static const double JDC468_greyf26_156_spect[97];
-    */
-    static void spectrum_to_xyz_daylight  (double _m1, double _m2, double &x, double &y, double &z);
-    static void spectrum_to_xyz_blackbody (double _temp, double &x, double &y, double &z);
-    static void spectrum_to_xyz_preset    (const double* spec_intens, double &x, double &y, double &z);
+    static const double Colorlab_L61_110_110Rec2020spect[97];
+    static const double Colorlab_L63_120_m56Rec2020spect[97];
+    static const double Colorlab_L63_m50_m60Rec2020spect[97];
+    static const double Colorlab_L63_m120_80Rec2020spect[97];
+    static const double Colorlab_L42_110_m100Prospect[97];
+    static const double Colorlab_L42_m70_m100Prospect[97];
+    static const double Colorlab_L56_m120_90Prospect[97];
+    static const double Colorlab_L25_60_m120Prospect[97];
+    static const double Colorlab_L75_50_120Prospect[97];
+    static const double Colorlab_L75_m120_0Prospect[97];
+    static const double Colorlab_L22_2_1_3Prospect[97];
+    static const double Colorlab_L44_2_8_3_9spect[97];
+    static const double Colorlab_L44_2_8_3_9spect2[97];
+    static const double Colorlab_L95_2_3_15_6spect[97];
+    static const double Colorlab_L95_2_3_15_6spect2[97];
+    static const double Colorlab_L40_3_5_10_7spect[97];
+    static const double Colorlab_L40_3_5_10_7spect2[97];
+    static const double Colorlab_L40_3_5_10_7spect3[97];
+    static const double Colorlab_L34_1_8_1_9spect[97];
+    static const double Colorlab_L34_1_8_1_9spect2[97];
+    static const double Colorlab_L64_1_8_m1_9spect[97];
+    static const double Colorlab_L84_0_8_m1spect[97];
+    static const double Colorlab_L63_1_3_m2spect[97];
+    static const double Colorlab_L44_2_3_m3spect[97];
+    static const double Colorlab_L65_96_45spect[97];
+    static const double Colorlab_L52_47_57spect[97];
+    static const double Colorlab_L31_62_27spect[97];
+    static const double Colorlab_L79_m9_m28spect[97];
+    static const double Colorlab_L58_50_31spect[97];
+    static const double Colorlab_L31_m52_27spect[97];
+    static const double Colorlab_L44_2_2_m7_35spect[97];
+    static const double Colorlab_L47_m10_8_0_41spect[97];
+    static const double Colorlab_L32_4_8_m3_2spect[97];
+    static const double Colorlab_L57_m6_9_2_9spect[97];
+    static const double Colorlab_L33_2_4_m4_5spect[97];
+    static const double Colorlab_L35_11_65_m1_1spect[97];
+    static const double Colorlab_L52_m2_7_8_9spect[97];
+    static const double Colorlab_L32_7_m2_5spect[97];
+    static const double Colorlab_L32_3_4_m3_8spect[97];
+    static const double Colorlab_L50_m5_3_6_5spect[97];
+    static const double Colorlab_L44_3_96_m8_8spect[97];
+    static const double Colorlab_L34_3_6_m5_4spect[97];
+    static const double Colorlab_L31_5_9_m4spect[97];
+    static const double Colorlab_L35_3_4_m11spect[97];
+    static const double Colorlab_L31_4_5_m4_7spect[97];
+    static const double Colorlab_L35_4_8_m6_4spect[97];
+    static const double Colorlab_L95_10_7_m14_3spect[97];
+    static const double Colorlab_L36_34_m7_5spect[97];
+    static const double Colorlab_L37_59_2spect[97];
+    static const double Colorlab_L69_14_m9spect[97];
+    static const double Colorlab_L92_13_m16spect[97];
+    static const double Colorlab_L49_21_m12spect[97];
+    static const double Colorlab_L56_20_m15spect[97];
+    static const double Colorlab_L68_21_m19spect[97];
+    static const double Colorlab_L98_m2_m32spect[97];
+    static const double Colorlab_L98_m2_m32spect2[97];
+    static const double Colorlab_L41_m27_m16spect[97];
+    static const double Colorlab_L41_m27_m16spect2[97];
+    static const double Colorlab_L15_m9_4spect[97];
+    static const double Colorlab_L15_m9_4spect2[97];
+    static const double Colorlab_L11_m11_2spect[97];
+    static const double Colorlab_L14_m4_3spect[97];
+    static const double Colorlab_L41_38_24spect[97];
+    static const double Colorlab_L41_38_24spect2[97];
+    static const double Colorlab_L53_48_58spect[97];
+    static const double Colorlab_L53_48_58spect2[97];
+    static const double Colorlab_L70_44_86spect[97];
+    static const double Colorlab_L70_44_86spect2[97];
+    static const double Colorlab_L38_42_19spect[97];
+    static const double Colorlab_L38_42_19spect2[97];
+    static const double Colorlab_L60_63_85spect[97];
+    static const double Colorlab_L60_63_85spect2[97];
+    static const double Colorlab_L80_75_30spect[97];
+    static const double Colorlab_L80_75_30spect2[97];
+    static const double Colorlab_L28_m21_24spect[97];
+    static const double Colorlab_L28_m21_24spect2[97];
+    static const double Colorlab_L45_m33_47spect[97];
+    static const double Colorlab_L45_m33_47spect2[97];
+    static const double Colorlab_L26_m7_404spect[97];
+    static const double Colorlab_L34_m61_2spect[97];
+    static const double Colorlab_L32_m16_17spect[97];
+    static const double Colorlab_L30_m19_15spect[97];
+    static const double Colorlab_L30_m17_16spect[97];
+    static const double Colorlab_L35_m8_4spect[97];
+    static const double Colorlab_L37_m7_5spect[97];
+    static const double Colorlab_L45_m7_2spect[97];
+    static const double Colorlab_L40_m6_5spect[97];
+    static const double Colorlab_L46_m6_2spect[97];
+    static const double Colorlab_L48_m69_16spect[97];
+    static const double Colorlab_L51_89_53spect[97];
+    static const double Colorlab_L49_84_33spect[97];
+    static const double Colorlab_L59_m51_31spect[97];
+    static const double Colorlab_L48_m69_16spect2[97];
+    static const double Colorlab_L53_m71_6spect[97];
+    static const double Colorlab_L51_m89_53spect2[97];
+    static const double Colorlab_L49_84_33spect2[97];
+    static const double Colorlab_L36_m27_28spect[97];
+    static const double Colorlab_L36_m27_28spect2[97];
+    static const double Colorlab_L36_m27_28spect3[97];
+    static const double Colorlab_L63_16_71spect[97];
+    static const double Colorlab_L84_4_46spect[97];
+    static const double Colorlab_L84_4_46spect2[97];
+    static const double Colorlab_L75_m66_19spect[97];
+    static const double Colorlab_L75_m66_19spect2[97];
+    static const double Colorlab_L64_m82_m6spect[97];
+    static const double Colorlab_L64_m82_m6spect2[97];
+    static const double Colorlab_L66_m71_m17spect[97];
+    static const double Colorlab_L66_m71_m17spect2[97];
+    static const double Colorlab_L22_m8_m60spect[97];
+    static const double Colorlab_L22_m8_m60spect2[97];
+    static const double Colorlab_L15_m4_m42spect[97];
+    static const double Colorlab_L15_m4_m42spect2[97];
+    static const double Colorlab_L13_3_m23spect[97];
+    static const double Colorlab_L27_4_m90spect[97];
+    static const double Colorlab_L19_1_m29spect[97];
+    static const double Colorlab_L27_4_m90spect2[97];
+    static const double Colorlab_L16_0_m44spect[97];
+    static const double Colorlab_L16_0_m44spect2[97];
+    static const double Colorlab_L13_m3_m36spect[97];
+    static const double Colorlab_L13_m3_m36spect2[97];
+    static const double Colorlab_L31_m23_m60spect[97];
+    static const double Colorlab_L31_m23_m60spect2[97];
+    static const double Colorlab_L17_3_m40spect[97];
+    static const double Colorlab_L17_3_m40spect2[97];
+    static const double Colorlab_L17_3_m40spect3[97];
+    static const double Colorlab_L17_3_m40spect4[97];
+    static const double Colorlab_L17_3_m40spect5[97];
+    static const double Colorlab_L17_3_m40spect6[97];
+    static const double Colorlab_L21_9_m7spect[97];
+    static const double Colorlab_L78_4_m74spect[97];
+    static const double Colorlab_L31_m58_m66spect[97];
+    static const double Colorlab_L61_m11_m12spect[97];
+    static const double Colorlab_L61_m11_m12spect2[97];
+    static const double Colorlab_L29_1_m13spect[97];
+    static const double Colorlab_L29_1_m13spect2[97];
+    static const double Colorlab_L2_14_m1spect[97];
+    static const double Colorlab_L5_39_m7spect[97];
+    static const double Colorlab_L15_5_m13spect[97];
+    static const double Colorlab_L12_5_m6spect[97];
+    static const double Colorlab_L12_5_m6spect2[97];
+    static const double Colorlab_L37_m59_m24spect[97];
+    static const double Colorlab_L37_m59_m24spect2[97];
+    static const double Colorlab_L15_55_23spect[97];
+    static const double Colorlab_L11_m55_m11spect[97];
+    static const double Colorlab_L8_m10_m2spect[97];
+    static const double Colorlab_L14_m10_m7spect[97];
+    static const double Colorlab_L20_m16_m13spect[97];
+    static const double Colorlab_L8_m10_m2spect2[97];
+    static const double Colorlab_L14_m10_m7spect2[97];
+    static const double Colorlab_L20_m16_m13spect2[97];
+    static const double Colorlab_L6_m9_1spect[97];
+    static const double Colorlab_L20_m9_m10spect[97];
+    static const double Colorlab_L85_10_45spect[97];
+    static const double Colorlab_L90_m7_82spect[97];
+    static const double Colorlab_L95_2_18spect[97];
+    static const double Colorlab_L39_7_4spect[97];
+    static const double Colorlab_L39_4_1spect[97];
+    static const double Colorlab_L39_3_m1spect[97];
+    static const double Colorlab_L40_3_m2spect[97];
+    static const double Colorlab_L36_2_2spect[97];
+    static const double Colorlab_L39_7_4spect2[97];
+    static const double Colorlab_L39_4_1spect2[97];
+    static const double Colorlab_L39_3_m1spect2[97];
+    static const double Colorlab_L40_3_m2spect2[97];
+    static const double Colorlab_L36_2_2spect2[97];
+    static const double Colorlab_L40_4_m2spect[97];
+    static const double Colorlab_L41_1_m6spect[97];
+    static const double Colorlab_L40_4_m2spect2[97];
+    static const double Colorlab_L41_1_m6spect2[97];
+    static const double Colorlab_L41_12_14spect[97];
+    static const double Colorlab_L41_12_14spect2[97];
+    static const double Colorlab_L10_0_m22spect[97];
+    static const double Colorlab_L38_60_8spect[97];
+    static const double Colorlab_L49_85_39spect[97];
+    static const double Colorlab_L42_1_m18spect[97];
+    static const double Colorlab_L48_19_m25spect[97];
+    static const double Colorlab_L30_21_m25spect[97];
+    static const double Colorlab_L15_10_m15spect[97];
+    static const double Colorlab_L48_19_m25spect2[97];
+    static const double Colorlab_L30_21_m25spect2[97];
+    static const double Colorlab_L15_10_m15spect2[97];
+    static const double Colorlab_L60_26_m25spect[97];
+    static const double Colorlab_L40_26_m45spect[97];
+    static const double Colorlab_L40_26_m45spect2[97];
+    static const double Colorlab_L20_10_m45spect[97];
+    static const double Colorlab_L20_10_m45spect2[97];
+    static const double Colorlab_L20_10_m45spect3[97];
+    static const double ColorBlueSkyK3_spect2[97];
+    static const double ColorBlueSkyK9_spect2[97];
+    static const double ColorBlueSkyC4_spect2[97];
+    static const double ColorBlueSkyC14_spect2[97];
+    static const double ColorBlueSkyE4_spect2[97];
+    static const double ColorBlueSkyM1_spect2[97];
+    static const double ColorBlueSky2B1_spect2[97];
+    static const double ColorBlueSkyT7_spect2[97]; 
+    static const double ColorBlueSkyU19_spect2[97];
+    static const double ColorBlueSkyU2_spect2[97];
+    static const double Colorlab_L40_1_m40spect[97];
+    static const double Colorlab_L30_4_m30spect[97];
+    static const double Colorlab_L8_11_m25spect[97];
+    static const double Colorlab_L40_1_m40spect2[97];
+    static const double Colorlab_L30_4_m30spect2[97];
+    static const double Colorlab_L8_11_m25spect2[97];
+    static const double Colorlab_L26_m8_m25spect[97];
+    static const double Colorlab_L26_m8_m25spect2[97];
+    static const double Colorlab_L26_m8_m25spect3[97];
+    static const double Colorlab_L22_1_m42spect[97];
+    static const double Colorlab_L22_1_m42spect2[97];
+    static const double Colorlab_L22_1_m42spect3[97];
+    static const double Colorlab_L22_1_m42spect4[97];
+    static const double Colorlab_L27_m1_m47spect[97];
+    static const double Colorlab_L27_m1_m47spect2[97];
+    static const double Colorlab_L40_30_m30spect[97];
+    static const double Colorlab_L40_30_m30spect2[97];
+    static const double Colorlab_L40_20_m35spect[97];
+    static const double Colorlab_L40_20_m35spect2[97];
+ 
+    static void spectrum_to_xyz_daylight  (double _m1, double _m2, double &x, double &y, double &z, const color_match_type &color_match);
+    static void spectrum_to_xyz_blackbody (double _temp, double &x, double &y, double &z, const color_match_type &color_match);
+    static void spectrum_to_xyz_preset    (const double* spec_intens, double &x, double &y, double &z, const color_match_type &color_match);
 
-    static void spectrum_to_color_xyz_daylight  (const double* spec_color, double _m1, double _m2, double &xx, double &yy, double &zz);
-    static void spectrum_to_color_xyz_blackbody (const double* spec_color, double _temp, double &xx, double &yy, double &zz);
-    static void spectrum_to_color_xyz_preset    (const double* spec_color, const double* spec_intens, double &xx, double &yy, double &zz);
+    static void spectrum_to_color_xyz_daylight  (const double* spec_color, double _m1, double _m2, double &xx, double &yy, double &zz, const color_match_type &color_match);
+    static void spectrum_to_color_xyz_blackbody (const double* spec_color, double _temp, double &xx, double &yy, double &zz, const color_match_type &color_match);
+    static void spectrum_to_color_xyz_preset    (const double* spec_color, const double* spec_intens, double &xx, double &yy, double &zz, const color_match_type &color_match);
+    static void spectrum_to_whitepoint_xyz_daylight  (double _m1, double _m2, double &xx, double &yy, double &zz, const color_match_type &color_match);
+    static void spectrum_to_whitepoint_xyz_blackbody (double _temp, double &xx, double &yy, double &zz, const color_match_type &color_match);
+    static void whitepoint (double tempw, double &xx, double &yy, double &zz,const color_match_type &color_match);
 
 };
 }

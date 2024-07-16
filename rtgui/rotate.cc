@@ -29,21 +29,23 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-Rotate::Rotate () : FoldableToolPanel(this, "rotate", M("TP_ROTATE_LABEL"))
+const Glib::ustring Rotate::TOOL_NAME = "rotate";
+
+Rotate::Rotate () : FoldableToolPanel(this, TOOL_NAME, M("TP_ROTATE_LABEL"))
 {
 
     rlistener = nullptr;
 
     //TODO the action of the rotation slider is counter-intuitive
-    Gtk::Image* irotateL =   Gtk::manage (new RTImage ("rotate-right-small.png"));
-    Gtk::Image* irotateR =   Gtk::manage (new RTImage ("rotate-left-small.png"));
+    Gtk::Image* irotateL =   Gtk::manage (new RTImage ("rotate-right-small"));
+    Gtk::Image* irotateR =   Gtk::manage (new RTImage ("rotate-left-small"));
 
     degree = Gtk::manage (new Adjuster (M("TP_ROTATE_DEGREE"), -45, 45, 0.01, 0, irotateL, irotateR));
     degree->setAdjusterListener (this);
     pack_start (*degree);
 
     selectStraight = Gtk::manage (new Gtk::Button (M("TP_ROTATE_SELECTLINE")));
-    selectStraight->set_image (*Gtk::manage (new RTImage ("rotate-straighten-small.png")));
+    selectStraight->set_image (*Gtk::manage (new RTImage ("rotate-straighten-small")));
     selectStraight->get_style_context()->add_class("independent");
     pack_start (*selectStraight, Gtk::PACK_SHRINK, 2);
 

@@ -20,6 +20,7 @@
 
 #include <functional>
 #include <map>
+#include <type_traits>
 
 #include <gtkmm.h>
 
@@ -73,6 +74,17 @@ private:
     std::map<const DataWrapper*, guint> ids;
     MyMutex mutex;
 };
+
+struct ScopedEnumHash {
+    template<typename T, typename std::enable_if<std::is_enum<T>::value && !std::is_convertible<T, int>::value, int>::type = 0>
+    size_t operator ()(T val) const noexcept
+    {
+        using type = typename std::underlying_type<T>::type;
+
+        return std::hash<type>{}(static_cast<type>(val));
+    }
+};
+
 
 // TODO: The documentation says gdk_threads_enter and gdk_threads_leave should be replaced
 // by g_main_context_invoke(), g_idle_add() and related functions, but this will require more extensive changes.
@@ -191,11 +203,11 @@ public:
     typedef sigc::signal<void> type_signal_enabled_toggled;
 private:
     type_signal_enabled_toggled message;
-    static Glib::RefPtr<RTImage> inconsistentImage; /// "inconsistent" image, displayed when useEnabled is true ; in this case, nothing will tell that an expander is opened/closed
-    static Glib::RefPtr<RTImage> enabledImage;      ///      "enabled" image, displayed when useEnabled is true ; in this case, nothing will tell that an expander is opened/closed
-    static Glib::RefPtr<RTImage> disabledImage;     ///     "disabled" image, displayed when useEnabled is true ; in this case, nothing will tell that an expander is opened/closed
-    static Glib::RefPtr<RTImage> openedImage;       ///       "opened" image, displayed when useEnabled is false
-    static Glib::RefPtr<RTImage> closedImage;       ///       "closed" image, displayed when useEnabled is false
+    const Glib::ustring inconsistentImage; /// "inconsistent" image, displayed when useEnabled is true ; in this case, nothing will tell that an expander is opened/closed
+    const Glib::ustring enabledImage;      ///      "enabled" image, displayed when useEnabled is true ; in this case, nothing will tell that an expander is opened/closed
+    const Glib::ustring disabledImage;     ///     "disabled" image, displayed when useEnabled is true ; in this case, nothing will tell that an expander is opened/closed
+    const Glib::ustring openedImage;       ///       "opened" image, displayed when useEnabled is false
+    const Glib::ustring closedImage;       ///       "closed" image, displayed when useEnabled is false
     bool enabled;               /// Enabled feature (default to true)
     bool inconsistent;          /// True if the enabled button is inconsistent
     Gtk::EventBox *titleEvBox;  /// EventBox of the title, to get a connector from it
@@ -232,15 +244,11 @@ public:
      */
     MyExpander(bool useEnabled, Glib::ustring titleLabel);
 
-    /** Create a custom expander with a a custom - and responsive - widget
+    /** Create a custom expander with a custom - and responsive - widget
      * @param useEnabled Set whether to handle an enabled/disabled toggle button and display the appropriate image
      * @param titleWidget A widget to display in the header. Warning: you won't be able to switch to a string label.
      */
     MyExpander(bool useEnabled, Gtk::Widget* titleWidget);
-
-    /// Initialize the class by loading the images
-    static void init();
-    static void cleanup();
 
     Glib::SignalProxy1< bool, GdkEventButton* > signal_button_release_event()
     {
@@ -384,34 +392,10 @@ protected:
 
 };
 
-/**
- * @brief subclass of Gtk::FileChooserButton in order to handle the scrollwheel
- */
-class MyFileChooserButton final : public Gtk::Button {
-private:
-    void show_chooser();
-
-    Glib::ustring title_;
-    Gtk::FileChooserAction action_;
-    Gtk::Box box_;
-    Gtk::Label lbl_;
-    std::string filename_;
-    std::string current_folder_;
-    std::vector<Glib::RefPtr<Gtk::FileFilter>> file_filters_;
-    Glib::RefPtr<Gtk::FileFilter> cur_filter_;
-    std::vector<std::string> shortcut_folders_;
-    bool show_hidden_;
-    sigc::signal<void> selection_changed_;
-
-protected:
-    bool on_scroll_event (GdkEventScroll* event) override;
-    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
-    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const override;
-
-    void set_none();
-
+class MyFileChooserWidget
+{
 public:
-    explicit MyFileChooserButton(const Glib::ustring &title, Gtk::FileChooserAction action=Gtk::FILE_CHOOSER_ACTION_OPEN);
+    virtual ~MyFileChooserWidget() = default;
 
     sigc::signal<void> &signal_selection_changed();
     sigc::signal<void> &signal_file_set();
@@ -422,7 +406,7 @@ public:
     void add_filter(const Glib::RefPtr<Gtk::FileFilter> &filter);
     void remove_filter(const Glib::RefPtr<Gtk::FileFilter> &filter);
     void set_filter(const Glib::RefPtr<Gtk::FileFilter> &filter);
-    std::vector<Glib::RefPtr<Gtk::FileFilter>> list_filters();
+    std::vector<Glib::RefPtr<Gtk::FileFilter>> list_filters() const;
 
     bool set_current_folder(const std::string &filename);
     std::string get_current_folder() const;
@@ -434,6 +418,57 @@ public:
     void unselect_filename(const std::string &filename);
 
     void set_show_hidden(bool yes);
+
+protected:
+    explicit MyFileChooserWidget(const Glib::ustring &title, Gtk::FileChooserAction action=Gtk::FILE_CHOOSER_ACTION_OPEN);
+
+    static std::unique_ptr<Gtk::Image> make_folder_image();
+
+    void show_chooser(Gtk::Widget *parent);
+    virtual void on_filename_set();
+
+private:
+    class Impl;
+
+    std::unique_ptr<Impl> pimpl;
+};
+
+/**
+ * @brief subclass of Gtk::FileChooserButton in order to handle the scrollwheel
+ */
+class MyFileChooserButton final : public Gtk::Button, public MyFileChooserWidget
+{
+private:
+    class Impl;
+
+    std::unique_ptr<Impl> pimpl;
+
+protected:
+    bool on_scroll_event (GdkEventScroll* event) override;
+    void get_preferred_width_vfunc (int &minimum_width, int &natural_width) const override;
+    void get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const override;
+
+    void on_filename_set() override;
+
+public:
+    explicit MyFileChooserButton(const Glib::ustring &title, Gtk::FileChooserAction action=Gtk::FILE_CHOOSER_ACTION_OPEN);
+};
+
+class MyFileChooserEntry : public Gtk::Box, public MyFileChooserWidget
+{
+public:
+    explicit MyFileChooserEntry(const Glib::ustring &title, Gtk::FileChooserAction action = Gtk::FILE_CHOOSER_ACTION_OPEN);
+
+    Glib::ustring get_placeholder_text() const;
+    void set_placeholder_text(const Glib::ustring &text);
+
+protected:
+    void on_filename_set() override;
+
+private:
+    class Impl;
+
+    std::unique_ptr<Impl> pimpl;
 };
 
 /**
@@ -479,20 +514,59 @@ class TextOrIcon final : public Gtk::Box
 {
 
 public:
-    TextOrIcon (const Glib::ustring &filename, const Glib::ustring &labelTx, const Glib::ustring &tooltipTx);
+    TextOrIcon (const Glib::ustring &icon_name, const Glib::ustring &labelTx, const Glib::ustring &tooltipTx);
 };
 
-class MyImageMenuItem final : public Gtk::MenuItem
+/**
+ * Widget with image and label placed horizontally.
+ */
+class ImageAndLabel final : public Gtk::Box
 {
-private:
-    Gtk::Grid *box;
-    RTImage *image;
-    Gtk::Label *label;
+    class Impl;
+    std::unique_ptr<Impl> pimpl;
 
 public:
-    MyImageMenuItem (Glib::ustring label, Glib::ustring imageFileName);
+    ImageAndLabel(const Glib::ustring& label, const Glib::ustring& iconName);
+    ImageAndLabel(const Glib::ustring& label, RTImage* image);
+    const RTImage* getImage() const;
+    const Gtk::Label* getLabel() const;
+};
+
+/**
+ * Menu item with an image and label.
+ */
+class MyImageMenuItemInterface
+{
+public:
+    virtual const Gtk::Label* getLabel() const = 0;
+};
+
+/**
+ * Basic image menu item.
+ */
+class MyImageMenuItem final : public Gtk::MenuItem, public MyImageMenuItemInterface
+{
+    class Impl;
+    std::unique_ptr<Impl> pimpl;
+
+public:
+    MyImageMenuItem (const Glib::ustring& label, const Glib::ustring& iconName);
+    MyImageMenuItem (const Glib::ustring& label, RTImage* image);
     const RTImage *getImage () const;
-    const Gtk::Label* getLabel () const;
+    const Gtk::Label* getLabel() const override;
+};
+
+/**
+ * Image menu item with radio selector.
+ */
+class MyRadioImageMenuItem final : public Gtk::RadioMenuItem, public MyImageMenuItemInterface
+{
+    class Impl;
+    std::unique_ptr<Impl> pimpl;
+
+public:
+    MyRadioImageMenuItem(const Glib::ustring& label, RTImage* image, Gtk::RadioButton::Group& group);
+    const Gtk::Label* getLabel() const override;
 };
 
 class MyProgressBar final : public Gtk::ProgressBar
@@ -638,7 +712,75 @@ public:
     }
 };
 
-inline void setActiveTextOrIndex (Gtk::ComboBoxText& comboBox, const Glib::ustring& text, int index)
+/** 
+ * @brief A gui element for picking spots on an image
+ */ 
+class SpotPicker : public Gtk::Grid
+{
+    private:
+        int _spotHalfWidth;
+        Gtk::Label _spotLabel;
+        MyComboBoxText _spotSizeSetter;
+        Gtk::ToggleButton _spotButton;
+    public:
+        SpotPicker(int const defaultValue, Glib::ustring const &buttonKey, Glib::ustring const &buttonTooltip, Glib::ustring const &labelKey);
+        inline bool get_active() const
+        {
+            return _spotButton.get_active();
+        }
+        void set_active(bool b)
+        {
+            _spotButton.set_active(b);
+        }
+        int get_spot_half_width() const
+        {
+            return _spotHalfWidth;
+        }
+        int get_spot_full_width() const
+        {
+            return _spotHalfWidth * 2;
+        }
+        template <class T_return, class T_obj> void add_button_toggled_event(T_return& returnv, const T_obj function)
+        {
+            _spotButton.signal_toggled().connect(sigc::mem_fun(returnv, function));
+        }
+        bool remove_if_there(Gtk::Container* cont, bool increference = true)
+        {
+            return removeIfThere(cont, &_spotButton, increference);
+        }
+
+    protected:
+        Gtk::Label labelSetup(Glib::ustring const &key) const;
+        MyComboBoxText selecterSetup() const;
+        Gtk::ToggleButton spotButtonTemplate(Glib::ustring const &key, const Glib::ustring &tooltip) const;
+        void spotSizeChanged();
+};
+
+/**
+ * Enforces the rule that zero or one registered toggle button is enabled at any
+ * given time.
+ */
+class OptionalRadioButtonGroup
+{
+    Gtk::ToggleButton *active_button{nullptr};
+
+    void onButtonToggled(Gtk::ToggleButton *button);
+
+public:
+    /**
+     * Returns the toggle button that is active, or null if none are active.
+     */
+    Gtk::ToggleButton *getActiveButton() const;
+    /**
+     * Adds a toggle button to this group.
+     *
+     * If the provided button is active, any existing active button in this
+     * group will be deactivated.
+     */
+    void register_button(Gtk::ToggleButton &button);
+};
+
+inline void setActiveTextOrIndex(Gtk::ComboBoxText &comboBox, const Glib::ustring &text, int index)
 {
     bool valueSet = false;
     if (!text.empty()) {

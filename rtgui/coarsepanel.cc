@@ -31,25 +31,25 @@ CoarsePanel::CoarsePanel () : ToolPanel (), oldhflip(false), oldvflip(false)
     degree = 0;
     degreechanged = true;
 
-    Gtk::Image* rotateli = Gtk::manage (new RTImage ("rotate-left-90.png"));
+    Gtk::Image* rotateli = Gtk::manage (new RTImage ("rotate-left-90", Gtk::ICON_SIZE_LARGE_TOOLBAR));
     rotate_left = Gtk::manage (new Gtk::Button ());
     rotate_left->add (*rotateli);
     rotate_left->set_relief(Gtk::RELIEF_NONE);
     pack_start (*rotate_left);
 
-    Gtk::Image* rotateri = Gtk::manage (new RTImage ("rotate-right-90.png"));
+    Gtk::Image* rotateri = Gtk::manage (new RTImage ("rotate-right-90", Gtk::ICON_SIZE_LARGE_TOOLBAR));
     rotate_right = Gtk::manage (new Gtk::Button ());
     rotate_right->add (*rotateri);
     rotate_right->set_relief(Gtk::RELIEF_NONE);
     pack_start (*rotate_right);
 
-    Gtk::Image* fliphi = Gtk::manage (new RTImage ("flip-horizontal.png"));
+    Gtk::Image* fliphi = Gtk::manage (new RTImage ("flip-horizontal", Gtk::ICON_SIZE_LARGE_TOOLBAR));
     hflip = Gtk::manage (new Gtk::ToggleButton ());
     hflip->add (*fliphi);
     hflip->set_relief(Gtk::RELIEF_NONE);
     pack_start (*hflip);
 
-    Gtk::Image* flipvi = Gtk::manage (new RTImage ("flip-vertical.png"));
+    Gtk::Image* flipvi = Gtk::manage (new RTImage ("flip-vertical", Gtk::ICON_SIZE_LARGE_TOOLBAR));
     vflip = Gtk::manage (new Gtk::ToggleButton ());
     vflip->add (*flipvi);
     vflip->set_relief(Gtk::RELIEF_NONE);

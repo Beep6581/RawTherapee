@@ -3,6 +3,7 @@
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
  *  Copyright (c) 2018 Jean-Christophe FRISCH <natureh.510@gmail.com>
+ *  Copyright (c) 2022 Pierre CABRERA <pierre.cab@gmail.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -20,205 +21,128 @@
 
 #include "rtimage.h"
 
-#include <cassert>
-#include <iostream>
+#include "rtsurface.h"
 
-#include "../rtengine/settings.h"
+std::map<std::pair<Glib::ustring, Gtk::IconSize>, std::shared_ptr<RTSurface>> RTImageCache::cache;
 
-namespace
+std::shared_ptr<RTSurface> RTImageCache::getCachedSurface(const Glib::ustring &icon_name, const Gtk::IconSize icon_size)
 {
+    // Look for an existing cached icon
+    const auto key = std::pair<Glib::ustring, Gtk::IconSize>(icon_name, icon_size);
+    const auto item = cache.find(key);
 
-std::map<std::string, Glib::RefPtr<Gdk::Pixbuf> > pixbufCache;
-std::map<std::string, Cairo::RefPtr<Cairo::ImageSurface> > surfaceCache;
+    if (item != cache.end()) { // A cached icon exists
+        return item->second;
+    } else { // Create the icon
+        auto surface = std::shared_ptr<RTSurface>(new RTSurface(icon_name, icon_size));
 
+        // Add the surface to the cache if the icon exist
+        if (surface) {
+            cache.insert({key, surface});
+        }
+
+        return surface;
+    }
 }
 
-double RTImage::dpiBack = 0.;
-int RTImage::scaleBack = 0;
+void RTImageCache::updateCache()
+{
+    // Iterate over cache to updated RTSurface
+    for (auto const& item : cache) {
+        item.second->updateSurface();
+    }
+}
 
 RTImage::RTImage () {}
 
-RTImage::RTImage (RTImage &other) : surface(other.surface), pixbuf(other.pixbuf)
+RTImage::RTImage (const Glib::ustring& iconName, const Gtk::IconSize iconSize) :
+    Gtk::Image(),
+    size(iconSize),
+    icon_name(iconName),
+    g_icon(Glib::RefPtr<const Gio::Icon>())
 {
-    if (pixbuf) {
-        set(pixbuf);
-    } else if (surface) {
-        set(surface);
-    }
-}
+    // Set surface from icon cache
+    surface = RTImageCache::getCachedSurface(this->icon_name, this->size);
 
-RTImage::RTImage (const Glib::ustring& fileName, const Glib::ustring& rtlFileName) : Gtk::Image()
-{
-    setImage (fileName, rtlFileName);
-}
-
-RTImage::RTImage (Glib::RefPtr<Gdk::Pixbuf> &pbuf)
-{
+    // Add it to the RTImage if surface exists
     if (surface) {
-        surface.clear();
-    }
-    if (pbuf) {
-        set(pbuf);
-        this->pixbuf = pbuf;
+        set(surface->get());
     }
 }
 
-RTImage::RTImage (Cairo::RefPtr<Cairo::ImageSurface> &surf)
+RTImage::RTImage (const Glib::RefPtr<const Gio::Icon>& gIcon, const Gtk::IconSize iconSize) :
+    Gtk::Image(),
+    size(iconSize),
+    icon_name(""),
+    g_icon(gIcon)
 {
-    if (pixbuf) {
-        pixbuf.clear();
+    // Configure RTImage based on g_icon
+    set(this->g_icon, this->size);
+}
+
+void RTImage::set_from_icon_name(const Glib::ustring& iconName)
+{
+    set_from_icon_name(iconName, this->size);
+}
+
+void RTImage::set_from_icon_name(const Glib::ustring& iconName, const Gtk::IconSize iconSize)
+{
+    this->icon_name = iconName;
+    this->size = iconSize;
+
+    // Set surface from icon cache
+    surface = RTImageCache::getCachedSurface(this->icon_name, this->size);
+
+    // Add it to the RTImage if previously chosen
+    if (surface) {
+        set(surface->get());
     }
-    if (surf) {
-        set(surf);
-        surface = surf;
+
+    // Unset Gio::Icon if previously chosen
+    if (this->g_icon) {
+        g_icon = Glib::RefPtr<const Gio::Icon>();
     }
 }
 
-RTImage::RTImage (Glib::RefPtr<RTImage> &other)
+void RTImage::set_from_gicon(const Glib::RefPtr<const Gio::Icon>& gIcon)
 {
-    if (other) {
-        if (other->get_surface()) {
-            surface = other->get_surface();
-            set(surface);
-        } else {
-            pixbuf = other->get_pixbuf();
-            set(pixbuf);
-        }
-    }
+    set_from_gicon(gIcon, this->size);
 }
 
-void RTImage::setImage (const Glib::ustring& fileName, const Glib::ustring& rtlFileName)
+void RTImage::set_from_gicon(const Glib::RefPtr<const Gio::Icon>& gIcon, const Gtk::IconSize iconSize)
 {
-    Glib::ustring imageName;
+    this->g_icon = gIcon;
+    this->size = iconSize;
 
-    if (!rtlFileName.empty() && getDirection() == Gtk::TEXT_DIR_RTL) {
-        imageName = rtlFileName;
-    } else {
-        imageName = fileName;
+    // Set image from Gio::Icon
+    set(this->g_icon, this->size);
+
+    // Unset surface if previously chosen
+    this->icon_name = "";
+
+    if (surface) {
+        surface = std::shared_ptr<RTSurface>();
     }
-
-    changeImage (imageName);
-}
-
-/*
- * On windows, if scale = 2, the dpi is non significant, i.e. should be considered = 192
- */
-void RTImage::setDPInScale (const double newDPI, const int newScale)
-{
-    if (scaleBack != newScale || (scaleBack == 1 && dpiBack != newDPI)) {
-        RTScalable::setDPInScale(newDPI, newScale);
-        dpiBack = getDPI();
-        scaleBack = getScale();
-        updateImages();
-    }
-}
-
-void RTImage::changeImage (const Glib::ustring& imageName)
-{
-    clear ();
-
-    if (imageName.empty()) {
-        return;
-    }
-
-    if (pixbuf) {
-        auto iterator = pixbufCache.find (imageName);
-        assert(iterator != pixbufCache.end ());
-        pixbuf = iterator->second;
-        set(iterator->second);
-    } else  {  // if no Pixbuf is set, we update or create a Cairo::ImageSurface
-        auto iterator = surfaceCache.find (imageName);
-        if (iterator == surfaceCache.end ()) {
-            auto surf = createImgSurfFromFile(imageName);
-            iterator = surfaceCache.emplace (imageName, surf).first;
-        }
-        surface = iterator->second;
-        set(iterator->second);
-    }
-}
-
-Cairo::RefPtr<Cairo::ImageSurface> RTImage::get_surface()
-{
-    return surface;
 }
 
 int RTImage::get_width()
 {
     if (surface) {
-        return surface->get_width();
+        return surface->getWidth();
+    } else if (g_icon) {
+        Gtk::Image::get_width();
     }
-    if (pixbuf) {
-        return pixbuf->get_width();
-    }
+
     return -1;
 }
 
 int RTImage::get_height()
 {
     if (surface) {
-        return surface->get_height();
+        return surface->getHeight();
+    } else if (g_icon) {
+        Gtk::Image::get_height();
     }
-    if (pixbuf) {
-        return pixbuf->get_height();
-    }
+
     return -1;
-}
-
-void RTImage::init()
-{
-    dpiBack = RTScalable::getDPI();
-    scaleBack = RTScalable::getScale();
-}
-
-void RTImage::cleanup(bool all)
-{
-    for (auto& entry : pixbufCache) {
-        entry.second.reset();
-    }
-    for (auto& entry : surfaceCache) {
-        entry.second.clear();
-    }
-    RTScalable::cleanup(all);
-}
-
-void RTImage::updateImages()
-{
-    for (auto& entry : pixbufCache) {
-        entry.second = createPixbufFromFile(entry.first);
-    }
-    for (auto& entry : surfaceCache) {
-        entry.second = createImgSurfFromFile(entry.first);
-    }
-}
-
-Glib::RefPtr<Gdk::Pixbuf> RTImage::createPixbufFromFile (const Glib::ustring& fileName)
-{
-    Cairo::RefPtr<Cairo::ImageSurface> imgSurf = createImgSurfFromFile(fileName);
-    return Gdk::Pixbuf::create(imgSurf, 0, 0, imgSurf->get_width(), imgSurf->get_height());
-}
-
-Cairo::RefPtr<Cairo::ImageSurface> RTImage::createImgSurfFromFile (const Glib::ustring& fileName)
-{
-    Cairo::RefPtr<Cairo::ImageSurface> surf;
-
-    try {
-        surf = loadImage(fileName, getTweakedDPI());
-
-        // HOMBRE: As of now, GDK_SCALE is forced to 1, so setting the Cairo::ImageSurface scale is not required
-        /*
-        double x=0., y=0.;
-        cairo_surface_get_device_scale(surf->cobj(), &x, &y);
-        if (getScale() == 2) {
-            cairo_surface_set_device_scale(surf->cobj(), 0.5, 0.5);
-            cairo_surface_get_device_scale(surf->cobj(), &x, &y);
-            surf->flush();
-        }
-        */
-    } catch (const Glib::Exception& exception) {
-        if (rtengine::settings->verbose) {
-            std::cerr << "Failed to load image \"" << fileName << "\": " << exception.what() << std::endl;
-        }
-    }
-
-    return surf;
 }

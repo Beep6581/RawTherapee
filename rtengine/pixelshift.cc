@@ -334,7 +334,7 @@ BENCHFUN
 
     if(motionDetection) {
         if(!showOnlyMask) {
-            if(bayerParams.pixelShiftMedian) { // We need the demosaiced frames for motion correction
+            if(bayerParams.pixelShiftMedian || bayerParams.pixelShiftAverage) { // We need the demosaiced frames for motion correction
                 if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(procparams::RAWParams::BayerSensor::PSDemosaicMethod::LMMSE)) {
                     lmmse_interpolate_omp(winw, winh, *(rawDataFrames[0]), red, green, blue, bayerParams.lmmse_iterations);
                 } else if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(procparams::RAWParams::BayerSensor::PSDemosaicMethod::AMAZEVNG4)) {
@@ -359,22 +359,42 @@ BENCHFUN
                         amaze_demosaic_RT(winx, winy, winw, winh, *(rawDataFrames[i + 1]), redTmp[i], greenTmp[i], blueTmp[i], options.chunkSizeAMAZE, options.measure);
                     }
                 }
+                if(bayerParams.pixelShiftMedian) {
 
 #ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
+                    #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                for(int i = winy + border; i < winh - border; i++) {
-                    for(int j = winx + border; j < winw - border; j++) {
-                        red[i][j] = median(red[i][j], redTmp[0][i + 1][j], redTmp[1][i + 1][j + 1], redTmp[2][i][j + 1]);
-                    }
+                    for(int i = winy + border; i < winh - border; i++) {
+                        for(int j = winx + border; j < winw - border; j++) {
+                            red[i][j] = median(red[i][j], redTmp[0][i + 1][j], redTmp[1][i + 1][j + 1], redTmp[2][i][j + 1]);
+                        }
 
-                    for(int j = winx + border; j < winw - border; j++) {
-                        green[i][j] = median(green[i][j], greenTmp[0][i + 1][j], greenTmp[1][i + 1][j + 1], greenTmp[2][i][j + 1]);
-                    }
+                        for(int j = winx + border; j < winw - border; j++) {
+                            green[i][j] = median(green[i][j], greenTmp[0][i + 1][j], greenTmp[1][i + 1][j + 1], greenTmp[2][i][j + 1]);
+                        }
 
-                    for(int j = winx + border; j < winw - border; j++) {
-                        blue[i][j] = median(blue[i][j], blueTmp[0][i + 1][j], blueTmp[1][i + 1][j + 1], blueTmp[2][i][j + 1]);
+                        for(int j = winx + border; j < winw - border; j++) {
+                            blue[i][j] = median(blue[i][j], blueTmp[0][i + 1][j], blueTmp[1][i + 1][j + 1], blueTmp[2][i][j + 1]);
+                        }
+                    }
+                } else {
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                    for(int i = winy + border; i < winh - border; i++) {
+                        for(int j = winx + border; j < winw - border; j++) {
+                            red[i][j] = 0.25f * ((red[i][j] + redTmp[0][i + 1][j]) + (redTmp[1][i + 1][j + 1] + redTmp[2][i][j + 1]));
+                        }
+
+                        for(int j = winx + border; j < winw - border; j++) {
+                            green[i][j] = 0.25f * ((green[i][j] + greenTmp[0][i + 1][j]) + (greenTmp[1][i + 1][j + 1] + greenTmp[2][i][j + 1]));
+                        }
+
+                        for(int j = winx + border; j < winw - border; j++) {
+                            blue[i][j] = 0.25f * ((blue[i][j] + blueTmp[0][i + 1][j]) + (blueTmp[1][i + 1][j + 1] + blueTmp[2][i][j + 1]));
+                        }
                     }
                 }
             } else {
@@ -572,6 +592,7 @@ BENCHFUN
 
     static const float ePerIsoILCE7RM3 = 0.8f;
 
+    //TODO: Add data for ILCE-7RM4, and ILCE-1
     if(plistener) {
         plistener->setProgressStr(Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_PIXELSHIFT")));
         plistener->setProgress(0.0);
@@ -590,18 +611,29 @@ BENCHFUN
 
     int nReadIndex = static_cast<int>(round(log2(idata->getISOSpeed() /  100.f) * 3.f));
 
-    if(model.find("K-3") != string::npos) {
-        nRead = nReadK3II[nReadIndex];
-        eperIsoModel = ePerIsoK3II;
-    } else if(model.find("K-1") != string::npos) { // this also matches K-1 Mark II
-        nRead = nReadK1[nReadIndex];
-        eperIsoModel = ePerIsoK1;
-    } else if(model.find("ILCE-7RM3") != string::npos) {
-        nRead = nReadILCE7RM3[nReadIndex];
-        eperIsoModel = ePerIsoILCE7RM3;
-    } else { // as long as we don't have values for Pentax KP, we use the values from K-70
-        nRead = nReadK70[nReadIndex];
-        eperIsoModel = ePerIsoK70;
+    if(make.find("Sony") != string::npos) {
+        if(model.find("ILCE-7RM3") != string::npos) {
+            nRead = nReadILCE7RM3[nReadIndex];
+            eperIsoModel = ePerIsoILCE7RM3;
+        /* TODO: When we have data for missing ILCE-7RM4, and ILCE-1, add it here
+        } else if(model.find("ILCE-7RM4") != string::npos) {
+        } else if(model.find("ILCE-1") != string::npos) {
+        */
+        } else { // default to ILCE-7RM3 for Sony cameras without data
+           nRead = nReadILCE7RM3[nReadIndex];
+           eperIsoModel = ePerIsoILCE7RM3;
+        }
+    } else { // Pentax
+        if(model.find("K-3") != string::npos) {
+            nRead = nReadK3II[nReadIndex];
+            eperIsoModel = ePerIsoK3II;
+        } else if(model.find("K-1") != string::npos) { // this also matches K-1 Mark II
+            nRead = nReadK1[nReadIndex];
+            eperIsoModel = ePerIsoK1;
+        } else { // as long as we don't have values for Pentax KP, we use the values from K-70
+            nRead = nReadK70[nReadIndex];
+            eperIsoModel = ePerIsoK70;
+        }
     }
 
     eperIsoModel *= pow(2.f, eperIso - 1.f);

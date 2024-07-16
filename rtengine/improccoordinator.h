@@ -74,12 +74,13 @@ protected:
     ImageSource* imgsrc;
 
     ColorTemp currWB;
+    ColorTemp currWBcust;
     ColorTemp autoWB;
     ColorTemp currWBloc;
     ColorTemp autoWBloc;
-    ColorTemp currWBitc;
 
     double lastAwbEqual;
+    StandardObserver lastAwbObserver{ColorTemp::DEFAULT_OBSERVER};
     double lastAwbTempBias;
     Glib::ustring lastAwbauto;
 
@@ -181,6 +182,7 @@ protected:
     PreviewImageListener* imageListener;
     AutoExpListener* aeListener;
     AutoCamListener* acListener;
+    AutoBlackListener* ablListener;
     AutoBWListener* abwListener;
     AutoWBListener* awbListener;
     FlatFieldAutoClipListener *flatFieldAutoClipListener;
@@ -284,6 +286,12 @@ protected:
     LUTf lmasklclocalcurve;
     LUTf lmaskloglocalcurve;
     LUTf lmasklocal_curve;
+    LUTf lmaskcielocalcurve;
+    LUTf cielocalcurve;
+    LUTf cielocalcurve2;
+    LUTf jzlocalcurve;
+    LUTf czlocalcurve;
+    LUTf czjzlocalcurve;
     
     LocretigainCurve locRETgainCurve;
     LocretitransCurve locRETtransCurve;
@@ -291,10 +299,14 @@ protected:
     LocLHCurve loclhCurve;
     LocHHCurve lochhCurve;
     LocCHCurve locchCurve;
+    LocHHCurve lochhCurvejz;
+    LocCHCurve locchCurvejz;
+    LocLHCurve loclhCurvejz;
     LocCCmaskCurve locccmasCurve;
     LocLLmaskCurve locllmasCurve;
     LocHHmaskCurve lochhmasCurve;
     LocHHmaskCurve lochhhmasCurve;
+    LocHHmaskCurve lochhhmascieCurve;
     LocCCmaskCurve locccmasexpCurve;
     LocLLmaskCurve locllmasexpCurve;
     LocHHmaskCurve lochhmasexpCurve;
@@ -326,10 +338,14 @@ protected:
     LocCCmaskCurve locccmaslogCurve;
     LocLLmaskCurve locllmaslogCurve;
     LocHHmaskCurve lochhmaslogCurve;
+    LocCCmaskCurve locccmascieCurve;
+    LocLLmaskCurve locllmascieCurve;
+    LocHHmaskCurve lochhmascieCurve;
     
     LocwavCurve locwavCurve;
     LocwavCurve loclmasCurveblwav;
     LocwavCurve loclmasCurvecolwav;
+    LocwavCurve loclmasCurveciewav;
     LocwavCurve loclevwavCurve;
     LocwavCurve locconwavCurve;
     LocwavCurve loccompwavCurve;
@@ -338,6 +354,7 @@ protected:
     LocwavCurve locedgwavCurve;
     LocwavCurve loclmasCurve_wav;
     LocwavCurve locwavCurvehue;
+    LocwavCurve locwavCurvejz;
 
     std::vector<float> huerefs;
     std::vector<float> huerefblurs;
@@ -351,6 +368,7 @@ protected:
     std::vector<float> stdtms;
     std::vector<float> meanretis;
     std::vector<float> stdretis;
+    
     bool lastspotdup;
     bool previewDeltaE;
     int locallColorMask;
@@ -369,6 +387,7 @@ protected:
     int locallsharMask;
     int localllogMask;
     int locall_Mask;
+    int locallcieMask;
 
 public:
 
@@ -419,8 +438,8 @@ public:
 
     void setTweakOperator (TweakOperator *tOperator) override;
     void unsetTweakOperator (TweakOperator *tOperator) override;
-    bool getAutoWB   (double& temp, double& green, double equal, double tempBias) override;
-    void getCamWB    (double& temp, double& green) override;
+    bool getAutoWB   (double& temp, double& green, double equal, StandardObserver observer, double tempBias) override;
+    void getCamWB    (double& temp, double& green, StandardObserver observer) override;
     void getSpotWB   (int x, int y, int rectSize, double& temp, double& green) override;
     bool getFilmNegativeSpot(int x, int y, int spotSize, FilmNegativeParams::RGB &refInput, FilmNegativeParams::RGB &refOutput) override;
     void getAutoCrop (double ratio, int &x, int &y, int &w, int &h) override;
@@ -440,7 +459,7 @@ public:
         updaterThreadStart.unlock();
     }
 
-    void setLocallabMaskVisibility(bool previewDeltaE, int locallColorMask, int locallColorMaskinv, int locallExpMask, int locallExpMaskinv, int locallSHMask, int locallSHMaskinv, int locallvibMask, int locallsoftMask, int locallblMask, int localltmMask, int locallretiMask, int locallsharMask, int localllcMask, int locallcbMask, int localllogMask, int locall_Mask) override
+    void setLocallabMaskVisibility(bool previewDeltaE, int locallColorMask, int locallColorMaskinv, int locallExpMask, int locallExpMaskinv, int locallSHMask, int locallSHMaskinv, int locallvibMask, int locallsoftMask, int locallblMask, int localltmMask, int locallretiMask, int locallsharMask, int localllcMask, int locallcbMask, int localllogMask, int locall_Mask, int locallcieMask) override
     {
         this->previewDeltaE = previewDeltaE;
         this->locallColorMask = locallColorMask;
@@ -459,6 +478,7 @@ public:
         this->locallcbMask = locallcbMask;
         this->localllogMask = localllogMask;
         this->locall_Mask = locall_Mask;
+        this->locallcieMask = locallcieMask;
     }
 
     void setProgressListener (ProgressListener* pl) override
@@ -499,6 +519,11 @@ public:
     {
         acListener = acl;
     }
+    void setAutoBlackListener  (AutoBlackListener* abl) override
+    {
+        ablListener = abl;
+    }
+    
     void setAutoBWListener   (AutoBWListener* abw) override
     {
         abwListener = abw;

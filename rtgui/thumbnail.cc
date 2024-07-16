@@ -15,7 +15,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
 #endif
 
@@ -31,18 +31,121 @@
 #include "../rtengine/procparams.h"
 #include "../rtengine/rtthumbnail.h"
 #include <glib/gstdio.h>
+#include <glibmm/timezone.h>
 
 #include "../rtengine/dynamicprofile.h"
+#include "../rtengine/metadata.h"
 #include "../rtengine/profilestore.h"
 #include "../rtengine/settings.h"
-#include "../rtexif/rtexif.h"
 #include "guiutils.h"
 #include "batchqueue.h"
 #include "extprog.h"
 #include "md5helper.h"
 #include "pathutils.h"
 #include "paramsedited.h"
+#include "ppversion.h"
 #include "procparamchangers.h"
+#include "version.h"
+
+
+namespace {
+
+bool CPBDump(
+    const Glib::ustring& commFName,
+    const Glib::ustring& imageFName,
+    const Glib::ustring& profileFName,
+    const Glib::ustring& defaultPParams,
+    const CacheImageData* cfs,
+    bool flagMode
+)
+{
+    const std::unique_ptr<Glib::KeyFile> kf(new Glib::KeyFile);
+
+    if (!kf) {
+        return false;
+    }
+
+    // open the file in write mode
+    const std::unique_ptr<FILE, decltype(&std::fclose)> f(g_fopen(commFName.c_str (), "wt"), &std::fclose);
+
+    if (!f) {
+        printf ("CPBDump(\"%s\") >>> Error: unable to open file with write access!\n", commFName.c_str());
+        return false;
+    }
+
+    try {
+        kf->set_string ("RT General", "CachePath", options.cacheBaseDir);
+        kf->set_string ("RT General", "AppVersion", RTVERSION);
+        kf->set_integer ("RT General", "ProcParamsVersion", PPVERSION);
+        kf->set_string ("RT General", "ImageFileName", imageFName);
+        kf->set_string ("RT General", "OutputProfileFileName", profileFName);
+        kf->set_string ("RT General", "DefaultProcParams", defaultPParams);
+        kf->set_boolean ("RT General", "FlaggingMode", flagMode);
+
+        kf->set_integer ("Common Data", "FrameCount", cfs->frameCount);
+        kf->set_integer ("Common Data", "SampleFormat", cfs->sampleFormat);
+        kf->set_boolean ("Common Data", "IsHDR", cfs->isHDR);
+        kf->set_boolean ("Common Data", "IsPixelShift", cfs->isPixelShift);
+        kf->set_double ("Common Data", "FNumber", cfs->fnumber);
+        kf->set_double ("Common Data", "Shutter", cfs->shutter);
+        kf->set_double ("Common Data", "FocalLength", cfs->focalLen);
+        kf->set_integer ("Common Data", "ISO", cfs->iso);
+        kf->set_string ("Common Data", "Lens", cfs->lens);
+        kf->set_string ("Common Data", "Make", cfs->camMake);
+        kf->set_string ("Common Data", "Model", cfs->camModel);
+
+    } catch (const Glib::KeyFileError&) {
+    }
+
+    try {
+        fprintf (f.get(), "%s", kf->to_data().c_str());
+    } catch (const Glib::KeyFileError&) {
+    }
+
+    return true;
+}
+
+struct ColorMapper {
+    std::map<int, std::string> indexLabelMap;
+    std::map<std::string, int> labelIndexMap;
+
+    ColorMapper(std::map<int, std::string> colors) {
+        for (const auto& color: colors) {
+            indexLabelMap.insert({color.first, color.second});
+            labelIndexMap.insert({color.second, color.first});
+        }
+    }
+
+    int index(const std::string &label) const
+    {
+        auto it = labelIndexMap.find(label);
+        if (it != labelIndexMap.end()) {
+            return it->second;
+        }
+        return 0;
+    }
+
+    std::string label(int index) const
+    {
+        auto it = indexLabelMap.find(index);
+        if (it != indexLabelMap.end()) {
+            return it->second;
+        }
+        return "";
+    }
+};
+
+const std::map<int, std::string> defaultColors = {
+    {1, "Red"},
+    {2, "Yellow"},
+    {3, "Green"},
+    {4, "Blue"},
+    {5, "Purple"}
+};
+
+auto defaultColorMapper = ColorMapper(defaultColors);
+
+} // namespace
 
 using namespace rtengine::procparams;
 
@@ -70,7 +173,7 @@ Thumbnail::Thumbnail(CacheManager* cm, const Glib::ustring& fname, CacheImageDat
     generateExifDateTimeStrings ();
 
     if (cfs.rankOld >= 0) {
-        // rank and inTrash were found in cache (old style), move them over to pparams
+        // rank and inTrash were found in cache (old style), move them over to pparams or xmp sidecar
 
         // try to load the last saved parameters from the cache or from the paramfile file
         createProcParamsForUpdate(false, false); // this can execute customprofilebuilder to generate param file
@@ -78,14 +181,16 @@ Thumbnail::Thumbnail(CacheManager* cm, const Glib::ustring& fname, CacheImageDat
         // TODO? should we call notifylisterners_procParamsChanged here?
 
         setRank(cfs.rankOld);
-        setStage(cfs.inTrashOld);
+        setTrashed(cfs.inTrashOld);
     }
+
+    loadProperties();
 
     delete tpp;
     tpp = nullptr;
 }
 
-Thumbnail::Thumbnail(CacheManager* cm, const Glib::ustring& fname, const std::string& md5) :
+Thumbnail::Thumbnail(CacheManager* cm, const Glib::ustring& fname, const std::string& md5, const std::string &xmpSidecarMd5) :
     fname(fname),
     cachemgr(cm),
     ref(1),
@@ -103,23 +208,30 @@ Thumbnail::Thumbnail(CacheManager* cm, const Glib::ustring& fname, const std::st
 
 
     cfs.md5 = md5;
+    cfs.xmpSidecarMd5 = xmpSidecarMd5;
     loadProcParams ();
     _generateThumbnailImage ();
     cfs.recentlySaved = false;
 
     initial_ = false;
 
+    loadProperties();
+
     delete tpp;
     tpp = nullptr;
 }
 
-void Thumbnail::_generateThumbnailImage ()
+Glib::ustring Thumbnail::xmpSidecarPath(const Glib::ustring &imagePath)
 {
+    return rtengine::Exiv2Metadata::xmpSidecarPath(imagePath);
+}
 
+void Thumbnail::_generateThumbnailImage()
+{
     //  delete everything loaded into memory
     delete tpp;
     tpp = nullptr;
-    delete [] lastImg;
+    delete[] lastImg;
     lastImg = nullptr;
     tw = options.maxThumbnailWidth;
     th = options.maxThumbnailHeight;
@@ -136,61 +248,55 @@ void Thumbnail::_generateThumbnailImage ()
     cfs.exifValid = false;
     cfs.timeValid = false;
 
-    if (ext == "jpg" || ext == "jpeg") {
-        infoFromImage (fname);
-        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, -1, pparams->wb.equal);
+    // this will load formats supported by imagio (jpg, png, jxl, and tiff)
+    tpp = rtengine::Thumbnail::loadFromImage(fname, tw, th, -1, pparams->wb.equal, pparams->wb.observer);
 
-        if (tpp) {
-            cfs.format = FT_Jpeg;
-        }
-    } else if (ext == "png") {
-        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, -1, pparams->wb.equal);
+    if (tpp) {
+        cfs.format = FT_Custom;
+        infoFromImage(fname);
+    }
 
-        if (tpp) {
-            cfs.format = FT_Png;
-        }
-    } else if (ext == "tif" || ext == "tiff") {
-        infoFromImage (fname);
-        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, -1, pparams->wb.equal);
-
-        if (tpp) {
-            cfs.format = FT_Tiff;
-        }
-    } else {
+    if (!tpp) {
         // RAW works like this:
         //  1. if we are here it's because we aren't in the cache so load the JPG
         //     image out of the RAW. Mark as "quick".
         //  2. if we don't find that then just grab the real image.
         bool quick = false;
-        rtengine::RawMetaDataLocation ri;
 
         rtengine::eSensorType sensorType = rtengine::ST_NONE;
-        if ( initial_ && options.internalThumbIfUntouched) {
+
+        if (initial_ && options.internalThumbIfUntouched) {
             quick = true;
-            tpp = rtengine::Thumbnail::loadQuickFromRaw (fname, ri, sensorType, tw, th, 1, TRUE);
+            tpp = rtengine::Thumbnail::loadQuickFromRaw(fname, sensorType, tw, th, 1, TRUE);
         }
 
-        if ( tpp == nullptr ) {
+        if (!tpp) {
             quick = false;
-            tpp = rtengine::Thumbnail::loadFromRaw (fname, ri, sensorType, tw, th, 1, pparams->wb.equal, TRUE);
+            tpp = rtengine::Thumbnail::loadFromRaw(fname, sensorType, tw, th, 1, pparams->wb.equal, pparams->wb.observer, TRUE, &(pparams->raw));
         }
 
         cfs.sensortype = sensorType;
+
         if (tpp) {
             cfs.format = FT_Raw;
             cfs.thumbImgType = quick ? CacheImageData::QUICK_THUMBNAIL : CacheImageData::FULL_THUMBNAIL;
-            infoFromImage (fname, std::unique_ptr<rtengine::RawMetaDataLocation>(new rtengine::RawMetaDataLocation(ri)));
+            infoFromImage(fname);
+
+            if (!quick) {
+                cfs.width = tpp->full_width;
+                cfs.height = tpp->full_height;
+            }
         }
     }
 
     if (tpp) {
         tpp->getAutoWBMultipliers(cfs.redAWBMul, cfs.greenAWBMul, cfs.blueAWBMul);
-        _saveThumbnail ();
+        _saveThumbnail();
         cfs.supported = true;
 
-        cfs.save (getCacheFileName ("data", ".txt"));
+        cfs.save(getCacheFileName("data", ".txt"));
 
-        generateExifDateTimeStrings ();
+        generateExifDateTimeStrings();
     }
 }
 
@@ -215,11 +321,11 @@ const ProcParams& Thumbnail::getProcParamsU ()
 
         if (pparams->wb.method == "Camera") {
             double ct;
-            getCamWB (ct, pparams->wb.green);
+            getCamWB (ct, pparams->wb.green, pparams->wb.observer);
             pparams->wb.temperature = ct;
         } else if (pparams->wb.method == "autold") {
             double ct;
-            getAutoWB (ct, pparams->wb.green, pparams->wb.equal, pparams->wb.tempBias);
+            getAutoWB (ct, pparams->wb.green, pparams->wb.equal, pparams->wb.observer, pparams->wb.tempBias);
             pparams->wb.temperature = ct;
         }
     }
@@ -234,13 +340,12 @@ const ProcParams& Thumbnail::getProcParamsU ()
  *  @param returnParams Ask to return a pointer to a ProcParams object if true
  *  @param force True if the profile has to be re-generated even if it already exists
  *  @param flaggingMode True if the ProcParams will be created because the file browser is being flagging an image
- *                      (rang, to trash, color labels). This parameter is passed to the CPB.
+ *                      (rank, to trash, color labels). This parameter is passed to the CPB.
  *
  *  @return Return a pointer to a ProcPamas structure to be updated if returnParams is true and if everything went fine, NULL otherwise.
  */
 rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool returnParams, bool force, bool flaggingMode)
 {
-
     // try to load the last saved parameters from the cache or from the paramfile file
     ProcParams* ldprof = nullptr;
 
@@ -258,52 +363,35 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
 
     if (!run_cpb) {
         if (defProf == DEFPROFILE_DYNAMIC && create && cfs && cfs->exifValid) {
-            rtengine::FramesMetaData* imageMetaData;
-            if (getType() == FT_Raw) {
-                // Should we ask all frame's MetaData ?
-                imageMetaData = rtengine::FramesMetaData::fromFile (fname, std::unique_ptr<rtengine::RawMetaDataLocation>(new rtengine::RawMetaDataLocation(rtengine::Thumbnail::loadMetaDataFromRaw(fname))), true);
-            } else {
-                // Should we ask all frame's MetaData ?
-                imageMetaData = rtengine::FramesMetaData::fromFile (fname, nullptr, true);
-            }
-            PartialProfile *pp = ProfileStore::getInstance()->loadDynamicProfile(imageMetaData);
-            delete imageMetaData;
-            int err = pp->pparams->save(outFName);
-            pp->deleteInstance();
-            delete pp;
-            if (!err) {
+            const auto pp_deleter =
+                [](PartialProfile* pp)
+                {
+                    pp->deleteInstance();
+                    delete pp;
+                };
+            const std::unique_ptr<const rtengine::FramesMetaData> imageMetaData(rtengine::FramesMetaData::fromFile(fname));
+            const std::unique_ptr<PartialProfile, decltype(pp_deleter)> pp(
+                imageMetaData
+                    ? ProfileStore::getInstance()->loadDynamicProfile(imageMetaData.get(), fname)
+                    : nullptr,
+                pp_deleter
+            );
+            if (pp && !pp->pparams->save(outFName)) {
                 loadProcParams();
             }
         } else if (create && defProf != DEFPROFILE_DYNAMIC) {
-            const PartialProfile *p = ProfileStore::getInstance()->getProfile(defProf);
+            const PartialProfile* const p = ProfileStore::getInstance()->getProfile(defProf);
             if (p && !p->pparams->save(outFName)) {
                 loadProcParams();
             }
         }
     } else {
         // First generate the communication file, with general values and EXIF metadata
-        rtengine::FramesMetaData* imageMetaData;
-
-        if (getType() == FT_Raw) {
-            // Should we ask all frame's MetaData ?
-            imageMetaData = rtengine::FramesMetaData::fromFile (fname, std::unique_ptr<rtengine::RawMetaDataLocation>(new rtengine::RawMetaDataLocation(rtengine::Thumbnail::loadMetaDataFromRaw(fname))), true);
-        } else {
-            // Should we ask all frame's MetaData ?
-            imageMetaData = rtengine::FramesMetaData::fromFile (fname, nullptr, true);
-        }
-
         static int index = 0; // Will act as unique identifier during the session
         Glib::ustring tmpFileName( Glib::build_filename(options.cacheBaseDir, Glib::ustring::compose("CPB_temp_%1.txt", index++)) );
 
-        const rtexif::TagDirectory* exifDir = nullptr;
-
-        if (imageMetaData && (exifDir = imageMetaData->getRootExifData())) {
-            exifDir->CPBDump(tmpFileName, fname, outFName,
-                             defaultPparamsPath == DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename(defaultPparamsPath, Glib::path_get_basename(defProf) + paramFileExtension),
-                             cfs,
-                             flaggingMode);
-        }
-        delete imageMetaData;
+        CPBDump(tmpFileName, fname, outFName,
+                defaultPparamsPath == DEFPROFILE_INTERNAL ? DEFPROFILE_INTERNAL : Glib::build_filename(defaultPparamsPath, Glib::path_get_basename(defProf) + paramFileExtension), cfs, flaggingMode);
 
         // For the filename etc. do NOT use streams, since they are not UTF8 safe
         Glib::ustring cmdLine = options.CPBPath + Glib::ustring(" \"") + tmpFileName + Glib::ustring("\"");
@@ -333,7 +421,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
 void Thumbnail::notifylisterners_procParamsChanged(int whoChangedIt)
 {
     for (size_t i = 0; i < listeners.size(); i++) {
-        listeners[i]->procParamsChanged (this, whoChangedIt);
+        listeners[i]->procParamsChanged (this, whoChangedIt, false);
     }
 }
 
@@ -344,7 +432,7 @@ void Thumbnail::notifylisterners_procParamsChanged(int whoChangedIt)
  * The result is a complete ProcParams with default values merged with the values
  * from the loaded ProcParams (sidecar or cache file).
 */
-void Thumbnail::loadProcParams ()
+void Thumbnail::loadProcParams()
 {
     MyMutex::MyLock lock(mutex);
 
@@ -387,12 +475,6 @@ void Thumbnail::clearProcParams (int whoClearedIt)
     {
         MyMutex::MyLock lock(mutex);
 
-        // preserve rank, colorlabel and inTrash across clear
-        int rank = getRank();
-        int colorlabel = getColorLabel();
-        int inTrash = getStage();
-
-
         cfs.recentlySaved = false;
         pparamsValid = false;
 
@@ -402,13 +484,10 @@ void Thumbnail::clearProcParams (int whoClearedIt)
         // reset the params to defaults
         pparams->setDefaults();
 
-        // and restore rank and inTrash
-        setRank(rank);
-        pparamsValid = cfs.rating != rank;
-        setColorLabel(colorlabel);
-        setStage(inTrash);
+        // preserve rank, colorlabel and inTrash across clear
+        updateProcParamsProperties();
 
-        // params could get validated by rank/inTrash values restored above
+        // params could get validated by updateProcParamsProperties
         if (pparamsValid) {
             updateCache();
         } else {
@@ -436,7 +515,7 @@ void Thumbnail::clearProcParams (int whoClearedIt)
     } // end of mutex lock
 
     for (size_t i = 0; i < listeners.size(); i++) {
-        listeners[i]->procParamsChanged (this, whoClearedIt);
+        listeners[i]->procParamsChanged (this, whoClearedIt, false);
     }
 }
 
@@ -448,8 +527,18 @@ bool Thumbnail::hasProcParams () const
 
 void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoChangedIt, bool updateCacheNow, bool resetToDefault)
 {
+    const bool blackLevelChanged =
+        pparams->raw.bayersensor.black0 != pp.raw.bayersensor.black0
+        || pparams->raw.bayersensor.black1 != pp.raw.bayersensor.black1
+        || pparams->raw.bayersensor.black2 != pp.raw.bayersensor.black2
+        || pparams->raw.bayersensor.black3 != pp.raw.bayersensor.black3
+        || pparams->raw.xtranssensor.blackred != pp.raw.xtranssensor.blackred
+        || pparams->raw.xtranssensor.blackgreen != pp.raw.xtranssensor.blackgreen
+        || pparams->raw.xtranssensor.blackblue != pp.raw.xtranssensor.blackblue;
     const bool needsReprocessing =
            resetToDefault
+        || blackLevelChanged
+        || pparams->raw.expos != pp.raw.expos
         || pparams->toneCurve != pp.toneCurve
         || pparams->locallab != pp.locallab
         || pparams->labCurve != pp.labCurve
@@ -462,6 +551,7 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
         || pparams->epd != pp.epd
         || pparams->fattal != pp.fattal
         || pparams->sh != pp.sh
+        || pparams->toneEqualizer != pp.toneEqualizer
         || pparams->crop != pp.crop
         || pparams->coarse != pp.coarse
         || pparams->commonTrans != pp.commonTrans
@@ -483,6 +573,7 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
         || pparams->filmNegative != pp.filmNegative
         || whoChangedIt == FILEBROWSER
         || whoChangedIt == BATCHEDITOR;
+    const bool upgradeHint = blackLevelChanged;
 
     {
         MyMutex::MyLock lock(mutex);
@@ -494,11 +585,6 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
             return;
         }
 
-        // do not update rank, colorlabel and inTrash
-        const int rank = getRank();
-        const int colorlabel = getColorLabel();
-        const int inTrash = getStage();
-
         if (pe) {
             pe->combine(*pparams, pp, true);
         } else {
@@ -507,9 +593,8 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
 
         pparamsValid = true;
 
-        setRank(rank);
-        setColorLabel(colorlabel);
-        setStage(inTrash);
+        // do not update rank, colorlabel and inTrash
+        updateProcParamsProperties();
 
         if (updateCacheNow) {
             updateCache();
@@ -518,7 +603,7 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
 
     if (needsReprocessing) {
         for (size_t i = 0; i < listeners.size(); i++) {
-            listeners[i]->procParamsChanged (this, whoChangedIt);
+            listeners[i]->procParamsChanged (this, whoChangedIt, upgradeHint);
         }
     }
 }
@@ -666,10 +751,10 @@ rtengine::IImage8* Thumbnail::processThumbImage (const rtengine::procparams::Pro
 
     MyMutex::MyLock lock(mutex);
 
-    if ( tpp == nullptr ) {
+    if (!tpp) {
         _loadThumbnail();
 
-        if ( tpp == nullptr ) {
+        if (!tpp) {
             return nullptr;
         }
     }
@@ -692,18 +777,18 @@ rtengine::IImage8* Thumbnail::processThumbImage (const rtengine::procparams::Pro
     return image;
 }
 
-rtengine::IImage8* Thumbnail::upgradeThumbImage (const rtengine::procparams::ProcParams& pparams, int h, double& scale)
+rtengine::IImage8* Thumbnail::upgradeThumbImage (const rtengine::procparams::ProcParams& pparams, int h, double& scale, bool forceUpgrade)
 {
 
     MyMutex::MyLock lock(mutex);
 
-    if ( cfs.thumbImgType != CacheImageData::QUICK_THUMBNAIL ) {
+    if ( cfs.thumbImgType != CacheImageData::QUICK_THUMBNAIL && !forceUpgrade ) {
         return nullptr;
     }
 
     _generateThumbnailImage();
 
-    if ( tpp == nullptr ) {
+    if (!tpp) {
         return nullptr;
     }
 
@@ -718,11 +803,44 @@ rtengine::IImage8* Thumbnail::upgradeThumbImage (const rtengine::procparams::Pro
 
 void Thumbnail::generateExifDateTimeStrings ()
 {
+    if (cfs.timeValid) {
+        std::string dateFormat = options.dateFormat;
+        std::ostringstream ostr;
+        bool spec = false;
 
-    exifString = "";
-    dateTimeString = "";
+        for (size_t i = 0; i < dateFormat.size(); i++)
+            if (spec && dateFormat[i] == 'y') {
+                ostr << cfs.year;
+                spec = false;
+            } else if (spec && dateFormat[i] == 'm') {
+                ostr << (int)cfs.month;
+                spec = false;
+            } else if (spec && dateFormat[i] == 'd') {
+                ostr << (int)cfs.day;
+                spec = false;
+            } else if (dateFormat[i] == '%') {
+                spec = true;
+            } else {
+                ostr << (char)dateFormat[i];
+                spec = false;
+            }
+
+        ostr << " " << (int)cfs.hour;
+        ostr << ":" << std::setw(2) << std::setfill('0') << (int)cfs.min;
+        ostr << ":" << std::setw(2) << std::setfill('0') << (int)cfs.sec;
+
+        dateTimeString = ostr.str ();
+        dateTime = Glib::DateTime::create_local(cfs.year, cfs.month, cfs.day,
+                                                cfs.hour, cfs.min, cfs.sec);
+    }
+
+    if (!dateTime.gobj() || !cfs.timeValid) {
+        dateTimeString = "";
+        dateTime = Glib::DateTime::create_now_utc(0);
+    }
 
     if (!cfs.exifValid) {
+        exifString = "";
         return;
     }
 
@@ -731,33 +849,6 @@ void Thumbnail::generateExifDateTimeStrings ()
     if (options.fbShowExpComp && cfs.expcomp != "0.00" && !cfs.expcomp.empty()) { // don't show exposure compensation if it is 0.00EV;old cache files do not have ExpComp, so value will not be displayed.
         exifString = Glib::ustring::compose ("%1 %2EV", exifString, cfs.expcomp);    // append exposure compensation to exifString
     }
-
-    std::string dateFormat = options.dateFormat;
-    std::ostringstream ostr;
-    bool spec = false;
-
-    for (size_t i = 0; i < dateFormat.size(); i++)
-        if (spec && dateFormat[i] == 'y') {
-            ostr << cfs.year;
-            spec = false;
-        } else if (spec && dateFormat[i] == 'm') {
-            ostr << (int)cfs.month;
-            spec = false;
-        } else if (spec && dateFormat[i] == 'd') {
-            ostr << (int)cfs.day;
-            spec = false;
-        } else if (dateFormat[i] == '%') {
-            spec = true;
-        } else {
-            ostr << (char)dateFormat[i];
-            spec = false;
-        }
-
-    ostr << " " << (int)cfs.hour;
-    ostr << ":" << std::setw(2) << std::setfill('0') << (int)cfs.min;
-    ostr << ":" << std::setw(2) << std::setfill('0') << (int)cfs.sec;
-
-    dateTimeString = ostr.str ();
 }
 
 const Glib::ustring& Thumbnail::getExifString () const
@@ -772,10 +863,16 @@ const Glib::ustring& Thumbnail::getDateTimeString () const
     return dateTimeString;
 }
 
-void Thumbnail::getAutoWB (double& temp, double& green, double equal, double tempBias)
+const Glib::DateTime& Thumbnail::getDateTime () const
+{
+
+    return dateTime;
+}
+
+void Thumbnail::getAutoWB (double& temp, double& green, double equal, rtengine::StandardObserver observer, double tempBias)
 {
     if (cfs.redAWBMul != -1.0) {
-        rtengine::ColorTemp ct(cfs.redAWBMul, cfs.greenAWBMul, cfs.blueAWBMul, equal);
+        rtengine::ColorTemp ct(cfs.redAWBMul, cfs.greenAWBMul, cfs.blueAWBMul, equal, observer);
         temp = ct.getTemp();
         green = ct.getGreen();
     } else {
@@ -790,9 +887,14 @@ ThFileType Thumbnail::getType () const
     return (ThFileType) cfs.format;
 }
 
-int Thumbnail::infoFromImage (const Glib::ustring& fname, std::unique_ptr<rtengine::RawMetaDataLocation> rml)
+int Thumbnail::infoFromImage (const Glib::ustring& fname)
 {
-    rtengine::FramesMetaData* idata = rtengine::FramesMetaData::fromFile (fname, std::move(rml));
+    return infoFromImage(fname, cfs);
+}
+
+int Thumbnail::infoFromImage(const Glib::ustring &fname, CacheImageData &cfs)
+{
+    std::unique_ptr<rtengine::FramesMetaData> idata(rtengine::FramesMetaData::fromFile (fname));
 
     if (!idata) {
         return 0;
@@ -801,6 +903,16 @@ int Thumbnail::infoFromImage (const Glib::ustring& fname, std::unique_ptr<rtengi
     int deg = 0;
     cfs.timeValid = false;
     cfs.exifValid = false;
+
+    if (idata->getDateTimeAsTS() > 0) {
+        cfs.year         = 1900 + idata->getDateTime().tm_year;
+        cfs.month        = idata->getDateTime().tm_mon + 1;
+        cfs.day          = idata->getDateTime().tm_mday;
+        cfs.hour         = idata->getDateTime().tm_hour;
+        cfs.min          = idata->getDateTime().tm_min;
+        cfs.sec          = idata->getDateTime().tm_sec;
+        cfs.timeValid    = true;
+    }
 
     if (idata->hasExif()) {
         cfs.shutter      = idata->getShutterSpeed ();
@@ -814,18 +926,11 @@ int Thumbnail::infoFromImage (const Glib::ustring& fname, std::unique_ptr<rtengi
         cfs.isPixelShift = idata->getPixelShift ();
         cfs.frameCount   = idata->getFrameCount ();
         cfs.sampleFormat = idata->getSampleFormat ();
-        cfs.year         = 1900 + idata->getDateTime().tm_year;
-        cfs.month        = idata->getDateTime().tm_mon + 1;
-        cfs.day          = idata->getDateTime().tm_mday;
-        cfs.hour         = idata->getDateTime().tm_hour;
-        cfs.min          = idata->getDateTime().tm_min;
-        cfs.sec          = idata->getDateTime().tm_sec;
-        cfs.timeValid    = true;
-        cfs.exifValid    = true;
         cfs.lens         = idata->getLens();
         cfs.camMake      = idata->getMake();
         cfs.camModel     = idata->getModel();
         cfs.rating       = idata->getRating();
+        cfs.exifValid    = true;
 
         if (idata->getOrientation() == "Rotate 90 CW") {
             deg = 90;
@@ -850,7 +955,8 @@ int Thumbnail::infoFromImage (const Glib::ustring& fname, std::unique_ptr<rtengi
         cfs.filetype = "";
     }
 
-    delete idata;
+    idata->getDimensions(cfs.width, cfs.height);
+
     return deg;
 }
 
@@ -888,7 +994,7 @@ void Thumbnail::_loadThumbnail(bool firstTrial)
             _loadThumbnail (false);
         }
 
-        if (tpp == nullptr) {
+        if (!tpp) {
             return;
         }
     } else if (!succ) {
@@ -958,6 +1064,7 @@ void Thumbnail::saveThumbnail ()
  */
 void Thumbnail::updateCache (bool updatePParams, bool updateCacheImageData)
 {
+    updateProcParamsProperties();
 
     if (updatePParams && pparamsValid) {
         pparams->save (
@@ -970,6 +1077,12 @@ void Thumbnail::updateCache (bool updatePParams, bool updateCacheImageData)
     if (updateCacheImageData) {
         cfs.save (getCacheFileName ("data", ".txt"));
     }
+
+    if (updatePParams && pparamsValid) {
+        saveMetadata();
+    }
+
+    saveXMPSidecarProperties();
 }
 
 Thumbnail::~Thumbnail ()
@@ -993,48 +1106,34 @@ void Thumbnail::setFileName (const Glib::ustring &fn)
     cfs.md5 = ::getMD5 (fname);
 }
 
-int Thumbnail::getRank  () const
+int Thumbnail::getRank() const
 {
-    // prefer the user-set rank over the embedded Rating
-    // pparams->rank == -1 means that there is no saved rank yet, so we should
-    // next look for the embedded Rating metadata.
-    if (pparams->rank != -1) {
-        return pparams->rank;
-    } else {
-        return cfs.rating;
-    }
+    return properties.rank;
 }
 
-void Thumbnail::setRank  (int rank)
+void Thumbnail::setRank(int rank)
 {
-    pparams->rank = rank;
-    pparamsValid = true;
+    properties.rank = rank;
 }
 
-int Thumbnail::getColorLabel  () const
+int Thumbnail::getColorLabel() const
 {
-    return pparams->colorlabel;
+    return properties.color;
 }
 
-void Thumbnail::setColorLabel  (int colorlabel)
+void Thumbnail::setColorLabel(int colorlabel)
 {
-    if (pparams->colorlabel != colorlabel) {
-        pparams->colorlabel = colorlabel;
-        pparamsValid = true;
-    }
+    properties.color = colorlabel;
 }
 
-int Thumbnail::getStage () const
+bool Thumbnail::getTrashed() const
 {
-    return pparams->inTrash;
+    return properties.trashed;
 }
 
-void Thumbnail::setStage (bool stage)
+void Thumbnail::setTrashed(bool trashed)
 {
-    if (pparams->inTrash != stage) {
-        pparams->inTrash = stage;
-        pparamsValid = true;
-    }
+    properties.trashed = trashed;
 }
 
 void Thumbnail::addThumbnailListener (ThumbnailListener* tnl)
@@ -1062,7 +1161,7 @@ void Thumbnail::removeThumbnailListener (ThumbnailListener* tnl)
 bool Thumbnail::openDefaultViewer(int destination)
 {
 
-#ifdef WIN32
+#ifdef _WIN32
     Glib::ustring openFName;
 
     if (destination == 1) {
@@ -1139,15 +1238,143 @@ bool Thumbnail::imageLoad(bool loading)
     return false;
 }
 
-void Thumbnail::getCamWB(double& temp, double& green) const
+void Thumbnail::getCamWB(double& temp, double& green, rtengine::StandardObserver observer) const
 {
     if (tpp) {
-        tpp->getCamWB  (temp, green);
+        tpp->getCamWB  (temp, green, observer);
     } else {
         temp = green = -1.0;
     }
 }
 
+void Thumbnail::loadProperties()
+{
+    properties = Properties();
+
+    // get initial rank from cache or image metadata
+    if (cfs.exifValid) {
+        properties.rank.value = rtengine::LIM(cfs.getRating(), 0, 5);
+    } else {
+        const std::unique_ptr<const rtengine::FramesMetaData> md(rtengine::FramesMetaData::fromFile(fname));
+        if (md && md->hasExif()) {
+            properties.rank.value = rtengine::LIM(md->getRating(), 0, 5);
+        }
+    }
+
+    // update rank and color from procparams or xmp sidecar
+    // load trash from procparams
+    if (pparamsValid) {
+        if (options.thumbnailRankColorMode == Options::ThumbnailPropertyMode::PROCPARAMS) {
+            if (pparams->rank >= 0) {
+                properties.rank.value = pparams->rank;
+            }
+        }
+
+        properties.trashed.value = pparams->inTrash;
+        properties.color.value = pparams->colorlabel;
+    }
+
+    if (options.thumbnailRankColorMode == Options::ThumbnailPropertyMode::XMP) {
+        try {
+            auto xmp = rtengine::Exiv2Metadata::getXmpSidecar(fname);
+            auto pos = xmp.findKey(Exiv2::XmpKey("Xmp.xmp.Rating"));
+            if (pos != xmp.end()) {
+                int r = rtengine::to_long(pos);
+                properties.rank.value = rtengine::LIM(r, 0, 5);
+            }
+
+            pos = xmp.findKey(Exiv2::XmpKey("Xmp.xmp.Label"));
+            if (pos != xmp.end()) {
+                properties.color.value = defaultColorMapper.index(pos->toString());
+            }
+        } catch (std::exception &exc) {
+            std::cerr << "ERROR loading thumbnail properties data from "
+                      << rtengine::Exiv2Metadata::xmpSidecarPath(fname)
+                      << ": " << exc.what() << std::endl;
+        }
+    }
+}
+
+void Thumbnail::updateProcParamsProperties()
+{
+    if (!properties.edited()) {
+        return;
+    }
+
+    if (properties.trashed.edited && properties.trashed != pparams->inTrash) {
+        pparams->inTrash = properties.trashed;
+        pparamsValid = true;
+    }
+
+    // save procparams rank and color also when options.thumbnailRankColorMode == Options::ThumbnailPropertyMode::XMP
+    // so they'll be kept in sync
+    if (properties.rank.edited && properties.rank != pparams->rank) {
+        pparams->rank = properties.rank;
+        pparamsValid = true;
+    }
+
+    if (properties.color.edited && properties.color != pparams->colorlabel) {
+        pparams->colorlabel = properties.color;
+        pparamsValid = true;
+    }
+}
+
+void Thumbnail::saveXMPSidecarProperties()
+{
+    if (!properties.edited()) {
+        return;
+    }
+
+    if (options.thumbnailRankColorMode != Options::ThumbnailPropertyMode::XMP) {
+        return;
+    }
+
+    auto fn = rtengine::Exiv2Metadata::xmpSidecarPath(fname);
+    try {
+        auto xmp = rtengine::Exiv2Metadata::getXmpSidecar(fname);
+        if (properties.rank.edited) {
+            xmp["Xmp.xmp.Rating"] = std::to_string(properties.rank);
+        }
+        if (properties.color.edited) {
+            xmp["Xmp.xmp.Label"] = defaultColorMapper.label(properties.color);
+        }
+
+        rtengine::Exiv2Metadata meta;
+        meta.xmpData() = std::move(xmp);
+        meta.saveToXmp(fn);
+    } catch (std::exception &exc) {
+        std::cerr << "ERROR saving thumbnail properties data to " << fn
+                  << ": " << exc.what() << std::endl;
+    }
+}
+
+void Thumbnail::saveMetadata()
+{
+    if (options.rtSettings.metadata_xmp_sync != rtengine::Settings::MetadataXmpSync::READ_WRITE) {
+        return;
+    }
+
+    if (pparams->metadata.exif.empty() && pparams->metadata.iptc.empty()) {
+        return;
+    }
+
+    auto fn = rtengine::Exiv2Metadata::xmpSidecarPath(fname);
+    try {
+        auto xmp = rtengine::Exiv2Metadata::getXmpSidecar(fname);
+        rtengine::Exiv2Metadata meta;
+        meta.xmpData() = std::move(xmp);
+        meta.setExif(pparams->metadata.exif);
+        meta.setIptc(pparams->metadata.iptc);
+        meta.saveToXmp(fn);
+        if (options.rtSettings.verbose) {
+            std::cout << "saved edited metadata for " << fname << " to "
+                      << fn << std::endl;
+        }
+    } catch (std::exception &exc) {
+        std::cerr << "ERROR saving metadata for " << fname << " to " << fn
+                  << ": " << exc.what() << std::endl;
+    }
+}
 void Thumbnail::getSpotWB(int x, int y, int rect, double& temp, double& green)
 {
     if (tpp) {

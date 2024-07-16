@@ -6,6 +6,8 @@
 .settings
 .directory
 .vscode
+.DS_Store
+.idea
 
 CMakeCache.txt
 CMakeFiles
@@ -15,6 +17,7 @@ cmake_install.cmake
 install_manifest.txt
 
 build*
+cmake-build*
 Build*
 Debug
 RelWithDebInfo
@@ -23,7 +26,6 @@ Release
 
 rtdata/rawtherapee.desktop
 rtengine/librtengine.a
-rtexif/librtexif.a
 rtgui/config.h
 rtgui/version.h
 rtgui/rawtherapee
@@ -43,4 +45,3 @@ clean
 *.tar
 *.xz
 *.zip
-

@@ -38,12 +38,18 @@ ToolVBox::ToolVBox() {
 
 ToolParamBlock::ToolParamBlock() {
     set_orientation(Gtk::ORIENTATION_VERTICAL);
+    get_style_context()->add_class("ToolParamBlock");
 //GTK318
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
     set_spacing(2);       // Vertical space between parameters in a single tool
     set_border_width(5);  // Space separating the parameters of a tool and its surrounding frame
 #endif
 //GTK318
+}
+
+Gtk::SizeRequestMode ToolParamBlock::get_request_mode_vfunc () const
+{
+    return Gtk::SIZE_REQUEST_HEIGHT_FOR_WIDTH;
 }
 
 FoldableToolPanel::FoldableToolPanel(Gtk::Box* content, Glib::ustring toolName, Glib::ustring UILabel, bool need11, bool useEnabled) : ToolPanel(toolName, need11), parentContainer(nullptr), exp(nullptr), lastEnabled(true)
@@ -61,7 +67,7 @@ FoldableToolPanel::FoldableToolPanel(Gtk::Box* content, Glib::ustring toolName, 
         label->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
         titleHBox->pack_start(*label, Gtk::PACK_EXPAND_WIDGET, 0);
 
-        RTImage *image = Gtk::manage (new RTImage("one-to-one-small.png"));
+        RTImage *image = Gtk::manage (new RTImage("one-to-one-small"));
         image->set_tooltip_text(M("TP_GENERAL_11SCALE_TOOLTIP"));
         titleHBox->pack_end(*image, Gtk::PACK_SHRINK, 0);
 
@@ -73,7 +79,15 @@ FoldableToolPanel::FoldableToolPanel(Gtk::Box* content, Glib::ustring toolName, 
     exp->signal_button_release_event().connect_notify( sigc::mem_fun(this, &FoldableToolPanel::foldThemAll) );
     enaConn = signal_enabled_toggled().connect( sigc::mem_fun(*this, &FoldableToolPanel::enabled_toggled) );
 
-    exp->add (*content);
+    Gtk::Box *expanderContents = Gtk::manage(
+        new Gtk::Box(Gtk::Orientation::ORIENTATION_VERTICAL));
+    subToolsContainer = Gtk::manage(new ToolParamBlock());
+    subToolsContainer->get_style_context()->add_class("SubToolsContainer");
+    expanderContents->get_style_context()->add_class("ExpanderContents");
+    expanderContents->pack_start(*content, false, false, 0);
+    expanderContents->pack_start(*subToolsContainer, false, false, 0);
+
+    exp->add(*expanderContents, false);
     exp->show ();
 }
 

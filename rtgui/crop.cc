@@ -24,9 +24,12 @@
 #include "rtimage.h"
 
 #include "../rtengine/procparams.h"
+#include "../rtengine/utils.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
+
+const Glib::ustring Crop::TOOL_NAME = "crop";
 
 namespace
 {
@@ -123,7 +126,7 @@ private:
 };
 
 Crop::Crop():
-    FoldableToolPanel(this, "crop", M("TP_CROP_LABEL"), false, true),
+    FoldableToolPanel(this, TOOL_NAME, M("TP_CROP_LABEL"), false, true),
     crop_ratios(new CropRatios),
     opt(0),
     wDirty(true),
@@ -173,12 +176,12 @@ Crop::Crop():
     selectCrop = Gtk::manage (new Gtk::Button (M("TP_CROP_SELECTCROP")));
     setExpandAlignProperties(selectCrop, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     selectCrop->get_style_context()->add_class("independent");
-    selectCrop->set_image (*Gtk::manage (new RTImage ("crop-small.png")));
+    selectCrop->set_image (*Gtk::manage (new RTImage ("crop-small", Gtk::ICON_SIZE_BUTTON)));
 
     resetCrop = Gtk::manage (new Gtk::Button (M("TP_CROP_RESETCROP")));
     setExpandAlignProperties(resetCrop, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     resetCrop->get_style_context()->add_class("independent");
-    resetCrop->set_image (*Gtk::manage (new RTImage ("undo-small.png")));
+    resetCrop->set_image (*Gtk::manage (new RTImage ("undo-small", Gtk::ICON_SIZE_BUTTON)));
 
     methodgrid->attach (*xlab, 0, 0, 1, 1);
     methodgrid->attach (*x, 1, 0, 1, 1);
@@ -295,6 +298,7 @@ Crop::Crop():
     guide->append (M("TP_CROP_GTTRIANGLE1"));
     guide->append (M("TP_CROP_GTTRIANGLE2"));
     guide->append (M("TP_CROP_GTEPASSPORT"));
+    guide->append (M("TP_CROP_GTCENTEREDSQUARE"));
     guide->set_active (0);
 
     w->set_range (1, maxw);
@@ -413,24 +417,19 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited)
         orientation->set_active (2);
     }
 
-    if (pp->crop.guide == "None") {
-        guide->set_active (0);
-    } else if (pp->crop.guide == "Frame") {
-        guide->set_active (1);
-    } else if (pp->crop.guide == "Rule of thirds") {
-        guide->set_active (2);
-    } else if (pp->crop.guide == "Rule of diagonals") {
-        guide->set_active (3);
-    } else if (!strncmp(pp->crop.guide.data(), "Harmonic means", 14)) {
-        guide->set_active (4);
-    } else if (pp->crop.guide == "Grid") {
-        guide->set_active (5);
-    } else if (pp->crop.guide == "Golden Triangle 1") {
-        guide->set_active (6);
-    } else if (pp->crop.guide == "Golden Triangle 2") {
-        guide->set_active (7);
-    } else if (pp->crop.guide == "ePassport") {
-        guide->set_active (8);
+    switch (pp->crop.guide) {
+        case procparams::CropParams::Guide::NONE:
+        case procparams::CropParams::Guide::FRAME:
+        case procparams::CropParams::Guide::RULE_OF_THIRDS:
+        case procparams::CropParams::Guide::RULE_OF_DIAGONALS:
+        case procparams::CropParams::Guide::HARMONIC_MEANS:
+        case procparams::CropParams::Guide::GRID:
+        case procparams::CropParams::Guide::GOLDEN_TRIANGLE_1:
+        case procparams::CropParams::Guide::GOLDEN_TRIANGLE_2:
+        case procparams::CropParams::Guide::EPASSPORT:
+        case procparams::CropParams::Guide::CENTERED_SQUARE: {
+            guide->set_active(toUnderlying(pp->crop.guide));
+        }
     }
 
     x->set_value(pp->crop.x);
@@ -531,25 +530,7 @@ void Crop::write (ProcParams* pp, ParamsEdited* pedited)
         pp->crop.orientation = "As Image";
     }
 
-    if (guide->get_active_row_number() == 0) {
-        pp->crop.guide = "None";
-    } else if (guide->get_active_row_number() == 1) {
-        pp->crop.guide = "Frame";
-    } else if (guide->get_active_row_number() == 2) {
-        pp->crop.guide = "Rule of thirds";
-    } else if (guide->get_active_row_number() == 3) {
-        pp->crop.guide = "Rule of diagonals";
-    } else if (guide->get_active_row_number() == 4) {
-        pp->crop.guide = "Harmonic means";
-    } else if (guide->get_active_row_number() == 5) {
-        pp->crop.guide = "Grid";
-    } else if (guide->get_active_row_number() == 6) {
-        pp->crop.guide = "Golden Triangle 1";
-    } else if (guide->get_active_row_number() == 7) {
-        pp->crop.guide = "Golden Triangle 2";
-    } else if (guide->get_active_row_number() == 8) {
-        pp->crop.guide = "ePassport";
-    }
+    pp->crop.guide = procparams::CropParams::Guide(guide->get_active_row_number());
 
     if (pedited) {
         pedited->crop.enabled       = !get_inconsistent();
@@ -613,11 +594,11 @@ void Crop::doresetCrop ()
     yDirty = true;
     wDirty = true;
     hDirty = true;
-    
+
     // Reset ratio, ratio lock and orientation as well
     ratio->set_active(0);
     orientation->set_active(2);
-    fixr->set_active(true); 
+    fixr->set_active(true);
 
     int X = 0;
     int Y = 0;

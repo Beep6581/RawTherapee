@@ -21,8 +21,10 @@
 
 #include <stdlib.h>
 #include <glibmm/regex.h>
+#include <glibmm/fileutils.h>
 #include <glibmm/miscutils.h>
 #include <glibmm/keyfile.h>
+#include <glibmm/fileutils.h>
 
 #include "rtengine.h"
 #include "../rtgui/options.h"
@@ -77,7 +79,7 @@ bool DynamicProfileRule::operator< (const DynamicProfileRule &other) const
 }
 
 
-bool DynamicProfileRule::matches (const rtengine::FramesMetaData *im) const
+bool DynamicProfileRule::matches (const rtengine::FramesMetaData *im,  const Glib::ustring& filename) const
 {
     return (iso (im->getISOSpeed())
             && fnumber (im->getFNumber())
@@ -86,7 +88,8 @@ bool DynamicProfileRule::matches (const rtengine::FramesMetaData *im) const
             && expcomp (im->getExpComp())
             && camera (im->getCamera())
             && lens (im->getLens())
-            && imagetype(im->getImageType(0)));
+            && path (filename)
+            && imagetype(im->getImageType()));
 }
 
 namespace
@@ -172,9 +175,10 @@ bool DynamicProfileRules::loadRules()
 {
     dynamicRules.clear();
     Glib::KeyFile kf;
+    const Glib::ustring fileName = Glib::build_filename (Options::rtdir, "dynamicprofile.cfg");
 
     try {
-        if (!kf.load_from_file (Glib::build_filename (Options::rtdir, "dynamicprofile.cfg"))) {
+        if (!(Glib::file_test(fileName, Glib::FILE_TEST_EXISTS) && kf.load_from_file (fileName))) {
             return false;
         }
     } catch (Glib::Error &e) {
@@ -214,10 +218,27 @@ bool DynamicProfileRules::loadRules()
         get_double_range (rule.expcomp, kf, group, "expcomp");
         get_optional (rule.camera, kf, group, "camera");
         get_optional (rule.lens, kf, group, "lens");
+        get_optional (rule.path, kf, group, "path");
         get_optional (rule.imagetype, kf, group, "imagetype");
 
         try {
             rule.profilepath = kf.get_string (group, "profilepath");
+			#if defined (_WIN32)
+			// if this is Windows, replace any "/" in the path with "\\"
+			size_t pos = rule.profilepath.find("/");
+			while (pos != Glib::ustring::npos) {
+				rule.profilepath.replace(pos, 1, "\\");
+				pos = rule.profilepath.find("/", pos);
+			}
+			#endif
+			#if !defined (_WIN32)
+			// if this is not Windows, replace any "\\" in the path with "/"
+			size_t pos = rule.profilepath.find("\\");
+			while (pos != Glib::ustring::npos) {
+				rule.profilepath.replace(pos, 1, "/");
+				pos = rule.profilepath.find("\\", pos);
+			}
+			#endif
         } catch (Glib::KeyFileError &) {
             dynamicRules.pop_back();
         }
@@ -247,11 +268,19 @@ bool DynamicProfileRules::storeRules()
         set_double_range (kf, group, "expcomp", rule.expcomp);
         set_optional (kf, group, "camera", rule.camera);
         set_optional (kf, group, "lens", rule.lens);
+        set_optional (kf, group, "path", rule.path);
         set_optional (kf, group, "imagetype", rule.imagetype);
         kf.set_string (group, "profilepath", rule.profilepath);
     }
 
-    return kf.save_to_file (Glib::build_filename (Options::rtdir, "dynamicprofile.cfg"));
+	std::string fn = Glib::build_filename (Options::rtdir, "dynamicprofile.cfg");
+	if (Glib::file_test(fn, Glib::FILE_TEST_IS_SYMLINK)) {
+		// file is symlink; use target instead
+		// symlinks apparently are not recognízed on Windows
+		return kf.save_to_file (g_file_read_link (fn.c_str(), NULL));
+	} else {
+		return kf.save_to_file (fn);
+	}
 }
 
 const std::vector<DynamicProfileRule> &DynamicProfileRules::getRules()

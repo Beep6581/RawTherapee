@@ -209,7 +209,7 @@ std::unique_ptr<LUTf> ImProcFunctions::buildMeaLut(const float inVals[11], const
             }
         }
     }
-    lutFactor = 1.f / lutDiff;
+    lutFactor = lutDiff == 0.f ? 0.f : 1.f / lutDiff;
     return std::unique_ptr<LUTf>(new LUTf(lutVals));
 }
 
@@ -301,17 +301,18 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     }
 
 
-    if (params->wavelet.denmethod == "equ") {
-        cp.denmet = 0;
-    } else if (params->wavelet.denmethod == "high") {
-        cp.denmet = 1;
-    } else if (params->wavelet.denmethod == "low") {
-        cp.denmet = 2;
-    } else if (params->wavelet.denmethod == "12high") {
-        cp.denmet = 3;
-    } else if (params->wavelet.denmethod == "12low") {
-        cp.denmet = 4;
-    }
+    cp.denmet = 4;
+    //if (params->wavelet.denmethod == "equ") {
+    //    cp.denmet = 0;
+    //} else if (params->wavelet.denmethod == "high") {
+    //    cp.denmet = 1;
+    //} else if (params->wavelet.denmethod == "low") {
+    //    cp.denmet = 2;
+    //} else if (params->wavelet.denmethod == "12high") {
+    //    cp.denmet = 3;
+    //} else if (params->wavelet.denmethod == "12low") {
+    //    cp.denmet = 4;
+    //}
 
     if (params->wavelet.mixmethod == "nois") {
         cp.mixmet = 0;
@@ -433,7 +434,10 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     cp.CHmet = 0;
     cp.HSmet = false;
 
-    if (params->wavelet.CHmethod == "with") {
+
+    if (params->wavelet.CHmethod == "without") {
+        cp.CHmet = 0;
+    } else if (params->wavelet.CHmethod == "with") {
         cp.CHmet = 1;
     } else if (params->wavelet.CHmethod == "link") {
         cp.CHmet = 2;
@@ -448,7 +452,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     for (int m = 0; m < maxmul; m++) {
         cp.mulC[m] = waparams.ch[m];
     }
-    for (int m = maxmul; m < 10; m++) {
+    for (int m = maxmul; m < 9; m++) {
         cp.mulC[m] = 0.f;
     }
     
@@ -658,7 +662,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
         maxlevelcrop = 10;
     }
 
-    // adap maximum level wavelet to size of crop
+    // adapt maximum level wavelet to size of crop
     if (minwin * skip < 1024) {
         maxlevelcrop = 9;    //sampling wavelet 512
     }
@@ -694,7 +698,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
     levwav = rtengine::min(maxlevelcrop, levwav);
 
-    // I suppress this fonctionality ==> crash for level < 3
+    // I suppress this functionality ==> crash for level < 3
     if (levwav < 1) {
         return;    // nothing to do
     }
@@ -2031,7 +2035,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 }
 
                                 a = 327.68f * Chprov * sincosv.y; // apply Munsell
-                                b = 327.68f * Chprov * sincosv.x; //aply Munsell
+                                b = 327.68f * Chprov * sincosv.x; // apply Munsell
                             } else {//general case
                                 L = labco->L[i1][j1];
                                 const float Lin = std::max(0.f, L);
@@ -2269,7 +2273,7 @@ void ImProcFunctions::Aver(const float* RESTRICT DataList, int datalen, float &a
     int countP = 0, countN = 0;
     double averaP = 0.0, averaN = 0.0; // use double precision for large summations
 
-    constexpr float thres = 32.7f;//different fom zero to take into account only data large enough 32.7 = 0.1 in range 0..100 very low value
+    constexpr float thres = 32.7f;//different from zero to take into account only data large enough 32.7 = 0.1 in range 0..100 very low value
     max = 0.f;
     min = RT_INFINITY_F;
 #ifdef _OPENMP
@@ -2321,7 +2325,7 @@ void ImProcFunctions::Sigma(const float* RESTRICT DataList, int datalen, float a
 {
     int countP = 0, countN = 0;
     double variP = 0.0, variN = 0.0; // use double precision for large summations
-    float thres = 32.7f;//different fom zero to take into account only data large enough 32.7 = 0.1 in range 0..100
+    float thres = 32.7f;//different from zero to take into account only data large enough 32.7 = 0.1 in range 0..100
 
 #ifdef _OPENMP
     #pragma omp parallel for reduction(+:variP,variN,countP,countN) num_threads(numThreads) if (numThreads>1)
@@ -4138,8 +4142,8 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float maxkoeLi, bool lipschitz,
             float diagacc = 1.f;
             float alpha = (1024.f + 15.f * (float) cpMul * scale * scale2 * lbeta * diagacc) / 1024.f ;
 
- //           if (cp.HSmet  && cp.contena) {
-            if (cp.HSmet  && cp.contena  && waOpacityCurveSH) {
+            if (cp.HSmet  && cp.contena) {
+           // if (cp.HSmet  && cp.contena  && waOpacityCurveSH) {//waOpacityCurveSH no long use
                 float aaal = (1.f - alpha) / ((cp.b_lhl - cp.t_lhl) * kH[level]);
                 float bbal = 1.f - aaal * cp.b_lhl * kH[level];
                 float aaar = (alpha - 1.f) / (cp.t_rhl - cp.b_rhl) * kH[level];

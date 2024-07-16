@@ -5,7 +5,10 @@ Project initiator:
 
 Development contributors, in last name alphabetical order:
 
+  Harald Aust
   Roel Baars
+  Richard E Barber
+  Dániel Battyányi
   Martin Burri
   Pierre Cabrera
   Javier Celaya
@@ -18,6 +21,7 @@ Development contributors, in last name alphabetical order:
   Rüdiger Franke
   Jean-Christophe Frisch
   Ilias Giarimis
+  Scott Gilbertson
   Alberto Griggio
   Steve Herrell
   Philippe Hupé
@@ -50,6 +54,7 @@ Other contributors (profiles, ideas, mockups, testing, forum activity, translati
   Fernando Carello
   Rodrigo Nuno Bragança da Cunha
   Pat David
+  Jacques Dekker
   Reine Edvardsson
   Andrea Ferrero
   André Gauthier
@@ -62,11 +67,13 @@ Other contributors (profiles, ideas, mockups, testing, forum activity, translati
   Lebarhon
   Karl Loncarek
   Patrick Lopatto
+  Francisco Lorés
   Jie Luo
   Paul Matthijsse
   Wim ter Meer
   Alberto Righetto
   Kostia (Kildor) Romanov
+  Henning Sidow
   Kalle Söderman
   Wayne Sutton
   Johan Thor
@@ -74,3 +81,4 @@ Other contributors (profiles, ideas, mockups, testing, forum activity, translati
   TooWaBoo
   Franz Trischberger
   Colin Walker
+  Martin Werner

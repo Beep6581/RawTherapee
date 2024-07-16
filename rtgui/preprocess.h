@@ -38,6 +38,7 @@ protected:
     sigc::connection dpixelconn;
     Adjuster* hdThreshold;
 public:
+    static const Glib::ustring TOOL_NAME;
 
     PreProcess ();
 

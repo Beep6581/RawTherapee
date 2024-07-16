@@ -31,9 +31,9 @@ class BatchQueueButtonSet : public LWButtonSet
     static bool iconsLoaded;
 
 public:
-    static Cairo::RefPtr<RTSurface> cancelIcon;
-    static Cairo::RefPtr<RTSurface> headIcon;
-    static Cairo::RefPtr<RTSurface> tailIcon;
+    static std::shared_ptr<RTSurface> cancelIcon;
+    static std::shared_ptr<RTSurface> headIcon;
+    static std::shared_ptr<RTSurface> tailIcon;
 
     static Glib::ustring moveHeadToolTip;
     static Glib::ustring moveEndToolTip;

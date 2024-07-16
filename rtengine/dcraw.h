@@ -19,9 +19,13 @@
 
 #pragma once
 
+#include <cstdint>
+#include <iostream>
+
 #include "myfile.h"
 #include <csetjmp>
-
+#include "dnggainmap.h"
+#include "settings.h"
 
 class DCraw
 {
@@ -29,7 +33,7 @@ public:
 	typedef unsigned short ushort;
 	typedef unsigned char uchar;
 	typedef unsigned short (*dcrawImage_t)[4];
-#ifdef WIN32
+#ifdef _WIN32
 	typedef __int64 INT64;
 	typedef unsigned __int64 UINT64;
 #else
@@ -72,8 +76,22 @@ public:
     }
 
 protected:
+    enum class CropMode : std::uint_fast16_t {                                   // RT
+        NA = 0,                                                                  // RT
+        FullFrameOnGfx = 1,                                                      // RT
+        SportsFinderMode = 2,                                                    // RT
+        ElectronicShutter1_25xCrop = 4                                           // RT
+    };                                                                           // RT
+    // stores the cropdata read from the file                                       RT
+    struct CropData {                                                            // RT
+        std::uint_fast16_t  width,                                               // RT
+                            height,                                              // RT
+                            top_margin,                                          // RT
+                            left_margin;                                         // RT
+        CropMode crop_mode = CropMode::NA;                                       // RT
+    } read_crop;                                                                 // RT
     int exif_base, ciff_base, ciff_len;
-    IMFILE *ifp;
+    rtengine::IMFILE *ifp;
     FILE *ofp;
     short order;
     const char *ifname;
@@ -91,16 +109,24 @@ protected:
     unsigned black, cblack[4102], maximum, mix_green, raw_color, zero_is_bad;
     unsigned zero_after_ff, is_raw, dng_version, is_foveon, data_error;
     unsigned tile_width, tile_length, gpsdata[32], load_flags, row_padding;
-    bool xtransCompressed = false;
+
+    struct fuji_q_table
+    {
+      int8_t *q_table; /* quantization table */
+      int    raw_bits;
+      int    total_values;
+      int    max_grad;    // sdp val
+      int    q_grad_mult; // quant_gradient multiplier
+      int    q_base;
+    };
+
     struct fuji_compressed_params
     {
-        char        *q_table;        /* quantization table */
-        int         q_point[5];      /* quantization points */
+        struct      fuji_q_table qt[4];
+        void        *buf;
         int         max_bits;
         int         min_value;
-        int         raw_bits;
-        int         total_values;
-        int			maxDiff;
+        int         max_value;
         ushort      line_width;
     };
 
@@ -117,6 +143,13 @@ protected:
         _ltotal
     };
 
+    // tables of gradients for single sample level
+    struct fuji_grads
+    {
+      int_pair grads[41];
+      int_pair lossy_grads[3][5];
+    };
+
     struct fuji_compressed_block {
         int         cur_bit;         // current bit being read (from left to right)
         int         cur_pos;         // current position in a buffer
@@ -125,14 +158,14 @@ protected:
         int         cur_buf_size;    // buffer size
         uchar       *cur_buf;        // currently read block
         int         fillbytes;          // Counter to add extra byte for block size N*16
-        IMFILE      *input;
-        struct int_pair grad_even[3][41];    // tables of gradients
-        struct int_pair grad_odd[3][41];
+        rtengine::IMFILE      *input;
+        fuji_grads even[3]; // tables of even gradients
+        fuji_grads odd[3];  // tables of odd gradients
         ushort		*linealloc;
         ushort      *linebuf[_ltotal];
     };
 
-    int fuji_total_lines, fuji_total_blocks, fuji_block_width, fuji_bits, fuji_raw_type;
+    int fuji_total_lines, fuji_total_blocks, fuji_block_width, fuji_bits, fuji_raw_type, fuji_lossless;
 
     ushort raw_height, raw_width, height, width, top_margin, left_margin;
     ushort shrink, iheight, iwidth, fuji_width, thumb_width, thumb_height;
@@ -159,12 +192,8 @@ protected:
     std::string RT_software;
     double RT_baseline_exposure;
 
-    struct PanasonicRW2Info {
-        ushort bpp;
-        ushort encoding;
-        PanasonicRW2Info(): bpp(0), encoding(0) {}
-    };
-    PanasonicRW2Info RT_pana_info;
+    std::vector<GainMap> gainMaps;
+
 public:
     struct CanonCR3Data {
         // contents of tag CMP1 for relevant track in CR3 file
@@ -182,18 +211,66 @@ public:
             int32_t hasTileCols;
             int32_t hasTileRows;
             int32_t mdatHdrSize;
+            int32_t medianBits;
             // Not from header, but from datastream
             uint32_t MediaSize;
             int64_t MediaOffset;
             uint32_t MediaType; /* 1 -> /C/RAW, 2-> JPEG */
         };
-        static constexpr size_t CRXTRACKS_MAXCOUNT = 16;
+        static constexpr int CRXTRACKS_MAXCOUNT = 16;
         crx_data_header_t crx_header[CRXTRACKS_MAXCOUNT];
-        unsigned int crx_track_selected;
+        int crx_track_selected;
         short CR3_CTMDtag;
     };
+
+    struct PanasonicRW2Info {
+        struct v8_tags_t
+        {
+            uint32_t tag39[6];
+            uint16_t tag3A[6];
+            uint16_t tag3B;
+            uint16_t initial[4];
+            uint16_t tag40a[17], tag40b[17], tag41[17];
+            uint16_t stripe_count; // 0x42
+            uint16_t tag43;
+            int64_t  stripe_offsets[5]; //0x44
+            uint16_t stripe_left[5]; // 0x45
+            uint32_t stripe_compressed_size[5]; //0x46
+            uint16_t stripe_width[5]; //0x47
+            uint16_t stripe_height[5];
+        };
+
+        ushort bpp;
+        ushort encoding;
+        v8_tags_t v8tags;
+        PanasonicRW2Info(): bpp(0), encoding(0), v8tags{} {}
+    };
+
+    bool isBayer() const
+    {
+        return (filters != 0 && filters != 9);
+    }
+
+    const std::vector<GainMap>& getGainMaps() const {
+        return gainMaps;
+    }
+
+    bool isGainMapSupported() const;
+
+    struct CanonLevelsData {
+        unsigned cblack[4];
+        unsigned white;
+        bool black_ok;
+        bool white_ok;
+        CanonLevelsData(): cblack{0}, white{0}, black_ok(false), white_ok(false) {}
+    };
+
 protected:
     CanonCR3Data RT_canon_CR3_data;
+
+    CanonLevelsData RT_canon_levels_data;
+
+    PanasonicRW2Info RT_pana_info;
 
     float cam_mul[4], pre_mul[4], cmatrix[3][4], rgb_cam[3][4];
 
@@ -209,7 +286,7 @@ protected:
     } first_decode[2048], *second_decode, *free_decode;
 
     struct tiff_ifd {
-      int width, height, bps, comp, phint, offset, flip, samples, bytes;
+      int new_sub_file_type, width, height, bps, comp, phint, offset, flip, samples, bytes;
       int tile_width, tile_length, sample_format, predictor;
       float shutter;
     } tiff_ifd[10];
@@ -278,7 +355,7 @@ void parse_redcine();
 class getbithuff_t
 {
 public:
-   getbithuff_t(DCraw *p,IMFILE *&i, unsigned &z):parent(p),bitbuf(0),vbits(0),reset(0),ifp(i),zero_after_ff(z){}
+   getbithuff_t(DCraw *p,rtengine::IMFILE *&i, unsigned &z):parent(p),bitbuf(0),vbits(0),reset(0),ifp(i),zero_after_ff(z){}
    unsigned operator()(int nbits, ushort *huff);
 
 private:
@@ -288,7 +365,7 @@ private:
    DCraw *parent;
    unsigned bitbuf;
    int vbits, reset;
-   IMFILE *&ifp;
+   rtengine::IMFILE *&ifp;
    unsigned &zero_after_ff;
 };
 getbithuff_t getbithuff;
@@ -296,7 +373,7 @@ getbithuff_t getbithuff;
 class nikbithuff_t
 {
 public:
-   explicit nikbithuff_t(IMFILE *&i):bitbuf(0),errors(0),vbits(0),ifp(i){}
+   explicit nikbithuff_t(rtengine::IMFILE *&i):bitbuf(0),errors(0),vbits(0),ifp(i){}
    void operator()() {bitbuf = vbits = 0;};
    unsigned operator()(int nbits, ushort *huff);
    unsigned errorCount() { return errors; }
@@ -309,7 +386,7 @@ private:
    }
    unsigned bitbuf, errors;
    int vbits;
-   IMFILE *&ifp;
+   rtengine::IMFILE *&ifp;
 };
 nikbithuff_t nikbithuff;
 
@@ -331,6 +408,8 @@ void adobe_copy_pixel (unsigned row, unsigned col, ushort **rp);
 void lossless_dng_load_raw();
 void packed_dng_load_raw();
 void deflate_dng_load_raw();
+void init_fuji_main_qtable(fuji_compressed_params *params, uchar q_base);
+void init_fuji_main_grads(const fuji_compressed_params *params, fuji_compressed_block *info);
 void init_fuji_compr(struct fuji_compressed_params* info);
 void fuji_fill_buffer(struct fuji_compressed_block *info);
 void init_fuji_block(struct fuji_compressed_block* info, const struct fuji_compressed_params *params, INT64 raw_offset, unsigned dsize);
@@ -338,8 +417,8 @@ void copy_line_to_xtrans(struct fuji_compressed_block* info, int cur_line, int c
 void copy_line_to_bayer(struct fuji_compressed_block* info, int cur_line, int cur_block, int cur_block_width);
 void fuji_zerobits(struct fuji_compressed_block* info, int *count);
 void fuji_read_code(struct fuji_compressed_block* info, int *data, int bits_to_read);
-int fuji_decode_sample_even(struct fuji_compressed_block* info, const struct fuji_compressed_params * params, ushort* line_buf, int pos, struct int_pair* grads);
-int fuji_decode_sample_odd(struct fuji_compressed_block* info, const struct fuji_compressed_params * params, ushort* line_buf, int pos, struct int_pair* grads);
+int fuji_decode_sample_even(struct fuji_compressed_block* info, const struct fuji_compressed_params* params, ushort* line_buf, int pos, struct fuji_grads* grad_params);
+int fuji_decode_sample_odd(struct fuji_compressed_block* info, const struct fuji_compressed_params* params, ushort* line_buf, int pos, struct fuji_grads* grad_params);
 void fuji_decode_interpolation_even(int line_width, ushort* line_buf, int pos);
 void fuji_extend_generic(ushort *linebuf[_ltotal], int line_width, int start, int end);
 void fuji_extend_red(ushort *linebuf[_ltotal], int line_width);
@@ -347,11 +426,13 @@ void fuji_extend_green(ushort *linebuf[_ltotal], int line_width);
 void fuji_extend_blue(ushort *linebuf[_ltotal], int line_width);
 void xtrans_decode_block(struct fuji_compressed_block* info, const struct fuji_compressed_params *params);
 void fuji_bayer_decode_block(struct fuji_compressed_block* info, const struct fuji_compressed_params *params);
-void fuji_decode_strip(const struct fuji_compressed_params* info_common, int cur_block, INT64 raw_offset, unsigned dsize);
+void fuji_decode_strip (fuji_compressed_params* params, int cur_block, INT64 raw_offset, unsigned dsize, uchar *q_bases);
 void fuji_compressed_load_raw();
-void fuji_decode_loop(const struct fuji_compressed_params* common_info, int count, INT64* raw_block_offsets, unsigned *block_sizes);
+void fuji_decode_loop(fuji_compressed_params* common_info, int count, INT64* raw_block_offsets, unsigned *block_sizes, uchar *q_bases);
 void parse_fuji_compressed_header();
-void fuji_14bit_load_raw();    
+void fuji_14bit_load_raw();
+void pana8_decode_loop(void *data);
+bool pana8_decode_strip(void* data, int stream);
 void pentax_load_raw();
 void nikon_load_raw();
 int nikon_is_compressed();
@@ -377,7 +458,7 @@ void parse_qt (int end);
 // ph1_bithuff(int nbits, ushort *huff);
 class ph1_bithuff_t {
 public:
-   ph1_bithuff_t(DCraw *p, IMFILE *i, short &o):order(o),ifp(i),bitbuf(0),vbits(0){}
+   ph1_bithuff_t(DCraw *p, rtengine::IMFILE *i, short &o):order(o),ifp(i),bitbuf(0),vbits(0){}
    unsigned operator()(int nbits, ushort *huff);
    unsigned operator()(int nbits);
    unsigned operator()();
@@ -411,7 +492,7 @@ private:
    }
 
    short &order;
-   IMFILE* const ifp;
+   rtengine::IMFILE* const ifp;
    UINT64 bitbuf;
    int vbits;
 };
@@ -422,6 +503,7 @@ void parse_hasselblad_gain();
 void hasselblad_load_raw();
 void leaf_hdr_load_raw();
 void unpacked_load_raw();
+void unpacked_load_raw_FujiDBP();
 void sinar_4shot_load_raw();
 void imacon_full_load_raw();
 void packed_load_raw();
@@ -429,11 +511,11 @@ void nokia_load_raw();
 
 class pana_bits_t{
 public:
-   pana_bits_t(IMFILE *i, unsigned &u, unsigned enc):
+   pana_bits_t(rtengine::IMFILE *i, unsigned &u, unsigned enc):
     ifp(i), load_flags(u), vbits(0), encoding(enc) {}
    unsigned operator()(int nbits, unsigned *bytes=nullptr);
 private:
-   IMFILE *ifp;
+   rtengine::IMFILE *ifp;
    unsigned &load_flags;
    uchar buf[0x4000];
    int vbits;
@@ -442,6 +524,7 @@ private:
 
 void panasonicC6_load_raw();
 void panasonicC7_load_raw();
+void panasonicC8_load_raw();
 
 void canon_rmf_load_raw();
 void panasonic_load_raw();
@@ -565,13 +648,13 @@ void parse_canon_cr3();
 void selectCRXTrack(unsigned short maxTrack);
 int parseCR3(unsigned long long oAtomList,
              unsigned long long szAtomList, short &nesting,
-             char *AtomNameStack, unsigned short &nTrack, short &TrackType);
+             char *AtomNameStack, short &nTrack, short &TrackType);
 bool crxDecodePlane(void *p, uint32_t planeNumber);
 void crxLoadDecodeLoop(void *img, int nPlanes);
 void crxConvertPlaneLineDf(void *p, int imageRow);
 void crxLoadFinalizeLoopE3(void *p, int planeHeight);
 void crxLoadRaw();
-bool crxParseImageHeader(uchar *cmp1TagData, unsigned int nTrack);
+bool crxParseImageHeader(uchar *cmp1TagData, int nTrack, int size);
 //-----------------------------------------------------------------------------
 
 };

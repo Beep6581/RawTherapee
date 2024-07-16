@@ -25,18 +25,20 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-ChMixer::ChMixer (): FoldableToolPanel(this, "chmixer", M("TP_CHMIXER_LABEL"), false, true)
+const Glib::ustring ChMixer::TOOL_NAME = "chmixer";
+
+ChMixer::ChMixer (): FoldableToolPanel(this, TOOL_NAME, M("TP_CHMIXER_LABEL"), false, true)
 {
 
-    imgIcon[0] = Gtk::manage (new RTImage ("circle-red-small.png"));
-    imgIcon[1] = Gtk::manage (new RTImage ("circle-green-red-small.png"));
-    imgIcon[2] = Gtk::manage (new RTImage ("circle-blue-red-small.png"));
-    imgIcon[3] = Gtk::manage (new RTImage ("circle-red-green-small.png"));
-    imgIcon[4] = Gtk::manage (new RTImage ("circle-green-small.png"));
-    imgIcon[5] = Gtk::manage (new RTImage ("circle-blue-green-small.png"));
-    imgIcon[6] = Gtk::manage (new RTImage ("circle-red-blue-small.png"));
-    imgIcon[7] = Gtk::manage (new RTImage ("circle-green-blue-small.png"));
-    imgIcon[8] = Gtk::manage (new RTImage ("circle-blue-small.png"));
+    imgIcon[0] = Gtk::manage (new RTImage ("circle-red-small"));
+    imgIcon[1] = Gtk::manage (new RTImage ("circle-green-red-small"));
+    imgIcon[2] = Gtk::manage (new RTImage ("circle-blue-red-small"));
+    imgIcon[3] = Gtk::manage (new RTImage ("circle-red-green-small"));
+    imgIcon[4] = Gtk::manage (new RTImage ("circle-green-small"));
+    imgIcon[5] = Gtk::manage (new RTImage ("circle-blue-green-small"));
+    imgIcon[6] = Gtk::manage (new RTImage ("circle-red-blue-small"));
+    imgIcon[7] = Gtk::manage (new RTImage ("circle-green-blue-small"));
+    imgIcon[8] = Gtk::manage (new RTImage ("circle-blue-small"));
 
     Gtk::Label* rlabel = Gtk::manage (new Gtk::Label ());
     rlabel->set_markup (Glib::ustring("\t<span foreground=\"#b00000\"><b>") + M("TP_CHMIXER_RED") + Glib::ustring(":</b></span>"));
@@ -108,7 +110,7 @@ void ChMixer::read (const ProcParams* pp, const ParamsEdited* pedited)
     disableListener ();
 
     setEnabled(pp->chmixer.enabled);
-    
+
     if (pedited) {
         for (int i = 0; i < 3; i++) {
             red[i]->setEditedState (pedited->chmixer.red[i] ? Edited : UnEdited);

@@ -21,6 +21,8 @@
 #ifndef _CONTROLSPOTPANEL_H_
 #define _CONTROLSPOTPANEL_H_
 
+#include <memory>
+
 #include "../rtengine/coord.h"
 #include "editcallbacks.h"
 #include "threadutils.h"
@@ -34,6 +36,7 @@ public:
     virtual ~ControlPanelListener() {};
 
     virtual void resetToolMaskView() = 0;
+    virtual void spotNameChanged(const Glib::ustring &newName) = 0;
 };
 
 
@@ -52,10 +55,11 @@ public:
         bool isvisible;
         int prevMethod; // 0 = Normal, 1 = Excluding
         int shape; // 0 = Ellipse, 1 = Rectangle
-        int spotMethod; // 0 = Normal, 1 = Excluding
+        int spotMethod; // 0 = Normal, 1 = Excluding  2 = fullimage 3 = main
         int sensiexclu;
         int structexclu;
         int shapeMethod; // 0 = Independent (mouse), 1 = Symmetrical (mouse), 2 = Independent (mouse + sliders), 3 = Symmetrical (mouse + sliders)
+        int avoidgamutMethod;
         int locX;
         int locXL;
         int locY;
@@ -78,16 +82,15 @@ public:
         double avoidrad;
         bool hishow;
         bool activ;
-        bool avoid;
-        bool avoidmun;
         bool blwh;
         bool recurs;
         bool laplac;
         bool deltae;
         int scopemask;
+        double denoichmask;
         bool shortc;
         int lumask;
-        bool savrest;
+        //bool savrest;
         int complexMethod; // 0 = Simple, 1 = Moderate, 2 = all
         int wavMethod; // 0 = D2, 1 = D4, 2 = D6, 3 = D10, 4 = D14
     };
@@ -103,6 +106,7 @@ public:
         SpotDuplication = 4,
         SpotAllVisibilityChanged = 5
     };
+    IdleRegister idle_register;
 
     // Constructor and management functions
     /**
@@ -140,7 +144,7 @@ public:
      * @param index The spot index to get params
      * @return A SpotRow structure containing params of associated spot
      */
-    SpotRow* getSpot(const int index);
+    std::unique_ptr<SpotRow> getSpot(const int index);
     /**
      * Getter of spots number
      *
@@ -186,7 +190,7 @@ public:
      *
      * @param newSpot A SpotRow structure containing new spot params
      */
-    void addControlSpot(SpotRow* newSpot);
+    void addControlSpot(const SpotRow &newSpot);
 
     // Control spot delete function
     /**
@@ -217,6 +221,12 @@ public:
 
     // Batch mode management
     // Note: Batch mode is deactivated for Locallab
+    
+    /**
+     * upadte function to work with Preferences and spotMethod
+    */
+    void updateguiset(int spottype, bool iscolor,  bool issh, bool isvib, bool isexpos, bool issoft, bool isblur, bool istom, bool isret, bool issharp, bool iscont, bool iscbdl, bool islog, bool ismas, bool iscie);
+    void updateguiscopeset(int scope);
 
 private:
     // Cell renderer
@@ -241,7 +251,8 @@ private:
     void spotMethodChanged();
     void shapeMethodChanged();
     void qualityMethodChanged();
-    void complexMethodChanged();
+    void avoidgamutMethodChanged();
+   //void complexMethodChanged();
     void wavMethodChanged();
 
     void updateParamVisibility();
@@ -250,14 +261,12 @@ private:
 
     void hishowChanged();
     void activChanged();
-    void avoidChanged();
-    void avoidmunChanged();
     void blwhChanged();
     void recursChanged();
     void laplacChanged();
     void deltaeChanged();
     void shortcChanged();
-    void savrestChanged();
+    //void savrestChanged();
 
     void previewChanged();
 
@@ -291,6 +300,7 @@ private:
         Gtk::TreeModelColumn<int> sensiexclu;
         Gtk::TreeModelColumn<int> structexclu;
         Gtk::TreeModelColumn<int> shapeMethod; // 0 = Independent (mouse), 1 = Symmetrical (mouse), 2 = Independent (mouse + sliders), 3 = Symmetrical (mouse + sliders)
+        Gtk::TreeModelColumn<int> avoidgamutMethod;
         Gtk::TreeModelColumn<int> locX;
         Gtk::TreeModelColumn<int> locXL;
         Gtk::TreeModelColumn<int> locY;
@@ -313,16 +323,15 @@ private:
         Gtk::TreeModelColumn<double> avoidrad;
         Gtk::TreeModelColumn<bool> hishow;
         Gtk::TreeModelColumn<bool> activ;
-        Gtk::TreeModelColumn<bool> avoid;
-        Gtk::TreeModelColumn<bool> avoidmun;
         Gtk::TreeModelColumn<bool> blwh;
         Gtk::TreeModelColumn<bool> recurs;
         Gtk::TreeModelColumn<bool> laplac;
         Gtk::TreeModelColumn<bool> deltae;
         Gtk::TreeModelColumn<int> scopemask;
+        Gtk::TreeModelColumn<int> denoichmask;
         Gtk::TreeModelColumn<bool> shortc;
         Gtk::TreeModelColumn<int> lumask;
-        Gtk::TreeModelColumn<bool> savrest;
+        //Gtk::TreeModelColumn<bool> savrest;
         Gtk::TreeModelColumn<int> complexMethod; // 0 = Simple, 1 = mod, 2 = all
         Gtk::TreeModelColumn<int> wavMethod; // 0 = D2, 1 = D4, 2 = D6, 3 = D10, 4 = D14
     };
@@ -344,6 +353,7 @@ private:
     };
 
     ControlSpots spots_;
+    rtengine::ProcEvent EvLocallabavoidgamutMethod;
 
     // Child widgets
     Gtk::ScrolledWindow* const scrolledwindow_;
@@ -374,10 +384,12 @@ private:
     sigc::connection shapeMethodconn_;
     MyComboBoxText* const qualityMethod_;
     sigc::connection qualityMethodconn_;
-    MyComboBoxText* const complexMethod_;
-    sigc::connection complexMethodconn_;
+    //MyComboBoxText* const complexMethod_;
+    //sigc::connection complexMethodconn_;
     MyComboBoxText* const wavMethod_;
     sigc::connection wavMethodconn_;
+    MyComboBoxText* const avoidgamutMethod_;
+	sigc::connection avoidgamutconn_;
 
     Adjuster* const sensiexclu_;
     Adjuster* const structexclu_;
@@ -401,16 +413,13 @@ private:
     Adjuster* const colorscope_;
     Adjuster* const avoidrad_;
     Adjuster* const scopemask_;
+    Adjuster* const denoichmask_;
     Adjuster* const lumask_;
 
     Gtk::CheckButton* const hishow_;
     sigc::connection hishowconn_;
     Gtk::CheckButton* const activ_;
     sigc::connection activConn_;
-    Gtk::CheckButton* const avoid_;
-    sigc::connection avoidConn_;
-    Gtk::CheckButton* const avoidmun_;
-    sigc::connection avoidmunConn_;
     Gtk::CheckButton* const blwh_;
     sigc::connection blwhConn_;
     Gtk::CheckButton* const recurs_;
@@ -421,8 +430,8 @@ private:
     sigc::connection deltaeConn_;
     Gtk::CheckButton* const shortc_;
     sigc::connection shortcConn_;
-    Gtk::CheckButton* const savrest_;
-    sigc::connection savrestConn_;
+    //Gtk::CheckButton* const savrest_;
+    //sigc::connection savrestConn_;
 
     MyExpander* const expTransGrad_;
     MyExpander* const expShapeDetect_;
@@ -433,7 +442,12 @@ private:
     sigc::connection previewConn_;
 
     Gtk::Box* const ctboxshape;
+    Gtk::Box* const ctboxactivmethod;
+    Gtk::Box* const ctboxspotmethod;
+    
     Gtk::Box* const ctboxshapemethod;
+    Gtk::Box* const ctboxgamut;
+    ToolParamBlock* const artifBox2;
 
     // Internal variables
     ControlPanelListener* controlPanelListener;

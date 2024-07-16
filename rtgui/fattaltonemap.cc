@@ -1,5 +1,5 @@
 /** -*- C++ -*-
- *  
+ *
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2017 Alberto Griggio <alberto.griggio@gmail.com>
@@ -31,7 +31,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-FattalToneMapping::FattalToneMapping(): FoldableToolPanel(this, "fattal", M("TP_TM_FATTAL_LABEL"), true, true)
+const Glib::ustring FattalToneMapping::TOOL_NAME = "fattal";
+
+FattalToneMapping::FattalToneMapping(): FoldableToolPanel(this, TOOL_NAME, M("TP_TM_FATTAL_LABEL"), true, true)
 {
     auto m = ProcEventMapper::getInstance();
     EvTMFattalAnchor = m->newEvent(HDR, "HISTORY_MSG_TM_FATTAL_ANCHOR");
@@ -39,8 +41,8 @@ FattalToneMapping::FattalToneMapping(): FoldableToolPanel(this, "fattal", M("TP_
     amount = Gtk::manage(new Adjuster (M("TP_TM_FATTAL_AMOUNT"), 1., 100., 1., 30.));
     threshold = Gtk::manage(new Adjuster (M("TP_TM_FATTAL_THRESHOLD"), -100., 300., 1., 0.0));
     threshold->setLogScale(10, 0);
-    Gtk::Image *al = Gtk::manage(new RTImage("circle-black-small.png"));
-    Gtk::Image *ar = Gtk::manage(new RTImage("circle-white-small.png"));
+    Gtk::Image *al = Gtk::manage(new RTImage("circle-black-small"));
+    Gtk::Image *ar = Gtk::manage(new RTImage("circle-white-small"));
     anchor = Gtk::manage(new Adjuster(M("TP_TM_FATTAL_ANCHOR"), 1, 100, 1, 50, al, ar));
 
     amount->setAdjusterListener(this);

@@ -25,7 +25,7 @@
 #include <glibmm/fileutils.h>
 #include <glib/gstdio.h>
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <shlobj.h>
 #endif
 
@@ -906,7 +906,7 @@ Glib::ustring rtengine::LCPStore::getDefaultCommonDirectory() const
 {
     Glib::ustring dir;
 
-#ifdef WIN32
+#ifdef _WIN32
     WCHAR pathW[MAX_PATH] = {0};
 
     if (SHGetSpecialFolderPathW(NULL, pathW, CSIDL_COMMON_APPDATA, false)) {

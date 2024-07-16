@@ -26,8 +26,9 @@
 class Circle;
 class Line;
 class OPIcon;
-class Rectangle;
+class EditRectangle; 
 class RTSurface;
+
 
 struct ControlLine {
     enum ObjectIndex {
@@ -52,7 +53,7 @@ class ControlLineManager: EditSubscriber
 
 protected:
     /** Hidden object for capturing mouse events. */
-    std::unique_ptr<Rectangle> canvas_area;
+    std::unique_ptr<EditRectangle> canvas_area;
     rtengine::Coord drag_delta;
     std::vector<std::unique_ptr<ControlLine>> control_lines;
     CursorShape cursor;
@@ -60,8 +61,8 @@ protected:
     bool drawing_line;
     bool edited;
     std::size_t horizontalCount, verticalCount;
-    Cairo::RefPtr<RTSurface> line_icon_h, line_icon_v;
-    Cairo::RefPtr<RTSurface> line_icon_h_prelight, line_icon_v_prelight;
+    std::shared_ptr<RTSurface> line_icon_h, line_icon_v;
+    std::shared_ptr<RTSurface> line_icon_h_prelight, line_icon_v_prelight;
     int prev_obj;
     int selected_object;
 

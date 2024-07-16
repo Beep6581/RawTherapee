@@ -1,4 +1,10 @@
-![RawTherapee logo](https://www.rawtherapee.com/images/logos/rawtherapee_logo_discuss.png)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Beep6581/RawTherapee/dev/rtdata/images/rt-logo-text-white.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Beep6581/RawTherapee/dev/rtdata/images/rt-logo-text-black.svg">
+  <img alt="RawTherapee logo" src="[https://user-images.githubusercontent.com/25423296/163456779-a8556205-d0a5-45e2-ac17-42d089e3c3f8.png](https://raw.githubusercontent.com/Beep6581/RawTherapee/dev/rtdata/images/rt-logo-text-black.svg)">
+</picture>
+
+![RawTherapee screenshot](http://rawtherapee.com/images/carousel/100_rt59_provence_local_maskxxx.jpg)
 
 RawTherapee is a powerful, cross-platform raw photo processing program, released as [libre software](https://en.wikipedia.org/wiki/Free_software) under the [GNU General Public License Version 3](https://opensource.org/licenses/gpl-3.0.html). It is written mostly in C++ using a [GTK+](https://www.gtk.org) front-end. It uses a patched version of [dcraw](https://www.dechifro.org/dcraw/) for reading raw files, with an in-house solution which adds the highest quality support for certain camera models unsupported by dcraw and enhances the accuracy of certain raw files already supported by dcraw. It is notable for the advanced control it gives the user over the demosaicing and development process.
 

@@ -29,6 +29,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
+namespace
+{
+
 enum GeometryIndex {
     MO_TARGET_DISK,
     MO_SOURCE_DISC,
@@ -47,33 +50,40 @@ enum GeometryIndex {
     VISIBLE_OBJECT_COUNT
 };
 
+}
+
+const Glib::ustring Spot::TOOL_NAME = "spot";
+
 Spot::Spot() :
-    FoldableToolPanel(this, "spot", M ("TP_SPOT_LABEL"), true, true),
+    FoldableToolPanel(this, TOOL_NAME, M ("TP_SPOT_LABEL"), true, true),
     EditSubscriber(ET_OBJECTS),
     draggedSide(DraggedSide::NONE),
     lastObject(-1),
     activeSpot(-1),
-    sourceIcon("spot-normal.png", "spot-active.png", "spot-prelight.png", "", "", Geometry::DP_CENTERCENTER),
+    sourceIcon("spot-normal", "spot-active", "spot-prelight", "", "", Geometry::DP_CENTERCENTER),
     editedCheckBox(nullptr)
 {
     countLabel = Gtk::manage (new Gtk::Label (Glib::ustring::compose (M ("TP_SPOT_COUNTLABEL"), 0)));
 
     edit = Gtk::manage (new Gtk::ToggleButton());
-    edit->add (*Gtk::manage (new RTImage ("edit-point.png")));
+    edit->add (*Gtk::manage (new RTImage ("edit-point")));
     editConn = edit->signal_toggled().connect ( sigc::mem_fun (*this, &Spot::editToggled) );
     edit->set_tooltip_text(M("TP_SPOT_HINT"));
 
     reset = Gtk::manage (new Gtk::Button ());
-    reset->add (*Gtk::manage (new RTImage ("undo-small.png")));
+    reset->add (*Gtk::manage (new RTImage ("undo-small")));
     reset->set_relief (Gtk::RELIEF_NONE);
     reset->set_border_width (0);
     reset->signal_clicked().connect ( sigc::mem_fun (*this, &Spot::resetPressed) );
+
+    spotSize = Gtk::manage(new Adjuster(M("TP_SPOT_DEFAULT_SIZE"), SpotParams::minRadius, SpotParams::maxRadius, 1, 25));
 
     labelBox = Gtk::manage (new Gtk::Box());
     labelBox->set_spacing (2);
     labelBox->pack_start (*countLabel, false, false, 0);
     labelBox->pack_end (*edit, false, false, 0);
     labelBox->pack_end (*reset, false, false, 0);
+    labelBox->pack_end (*spotSize, false, false, 0);
     pack_start (*labelBox);
 
     sourceIcon.datum = Geometry::IMAGE;
@@ -109,8 +119,8 @@ Spot::Spot() :
     link.setActive (false);
 
     auto m = ProcEventMapper::getInstance();
-    EvSpotEnabled = m->newEvent(ALLNORAW, "TP_SPOT_LABEL");
-    EvSpotEnabledOPA = m->newEvent(SPOTADJUST, "TP_SPOT_LABEL");
+    EvSpotEnabled = m->newEvent(ALLNORAW, "HISTORY_MSG_SPOT");
+    EvSpotEnabledOPA = m->newEvent(SPOTADJUST, "HISTORY_MSG_SPOT");
     EvSpotEntry = m->newEvent(SPOTADJUST, "HISTORY_MSG_SPOT_ENTRY");
     EvSpotEntryOPA = m->newEvent(SPOTADJUST, "HISTORY_MSG_SPOT_ENTRY");
 
@@ -336,12 +346,12 @@ void Spot::createGeometry ()
     EditSubscriber::mouseOverGeometry.at (i++) = &sourceFeatherCircle; // MO_OBJECT_COUNT + 5
 
     // recreate all spots geometry
-    Cairo::RefPtr<RTSurface> normalImg   = sourceIcon.getNormalImg();
-    Cairo::RefPtr<RTSurface> prelightImg = sourceIcon.getPrelightImg();
-    Cairo::RefPtr<RTSurface> activeImg   = sourceIcon.getActiveImg();
+    std::shared_ptr<RTSurface> normalImg   = sourceIcon.getNormalImg();
+    std::shared_ptr<RTSurface> prelightImg = sourceIcon.getPrelightImg();
+    std::shared_ptr<RTSurface> activeImg   = sourceIcon.getActiveImg();
 
     for (; j < EditSubscriber::visibleGeometry.size() - VISIBLE_OBJECT_COUNT; ++i, ++j) {
-        EditSubscriber::mouseOverGeometry.at (i) = EditSubscriber::visibleGeometry.at (j) = new OPIcon (normalImg, activeImg, prelightImg, Cairo::RefPtr<RTSurface> (nullptr), Cairo::RefPtr<RTSurface> (nullptr), Geometry::DP_CENTERCENTER);
+        EditSubscriber::mouseOverGeometry.at (i) = EditSubscriber::visibleGeometry.at (j) = new OPIcon (normalImg, activeImg, prelightImg, nullptr, nullptr, Geometry::DP_CENTERCENTER);
         EditSubscriber::visibleGeometry.at (j)->setActive (true);
         EditSubscriber::visibleGeometry.at (j)->datum = Geometry::IMAGE;
         EditSubscriber::visibleGeometry.at (j)->state = Geometry::NORMAL;
@@ -361,6 +371,7 @@ void Spot::createGeometry ()
     EditSubscriber::visibleGeometry.at (j++) = &targetFeatherCircle; // VISIBLE_OBJECT_COUNT + 4
     assert(j - visibleOffset == VISIBLE_TARGET_CIRCLE);
     EditSubscriber::visibleGeometry.at (j++) = &targetCircle;        // VISIBLE_OBJECT_COUNT + 5
+    static_cast<void>(visibleOffset);
 }
 
 void Spot::updateGeometry()
@@ -427,6 +438,11 @@ void Spot::updateGeometry()
             sourceCircle.setVisible(draggedSide != DraggedSide::SOURCE);
             targetCircle.setVisible(draggedSide != DraggedSide::TARGET);
         } else {
+            targetCircle.state = Geometry::NORMAL;
+            sourceCircle.state = Geometry::NORMAL;
+            targetFeatherCircle.state = Geometry::NORMAL;
+            sourceFeatherCircle.state = Geometry::NORMAL;
+
             targetCircle.setActive (false);
             targetMODisc.setActive (false);
             sourceIcon.setActive (false);
@@ -464,6 +480,7 @@ void Spot::addNewEntry()
     EditDataProvider* editProvider = getEditProvider();
     // we create a new entry
     SpotEntry se;
+    se.radius = spotSize->getIntValue();
     se.targetPos = editProvider->posImage;
     se.sourcePos = se.targetPos;
     spots.push_back (se); // this make a copy of se ...
@@ -666,6 +683,7 @@ bool Spot::button3Pressed (int modifierKey)
         return true;
     } else if (! (modifierKey & (GDK_SHIFT_MASK | GDK_SHIFT_MASK))) {
         EditSubscriber::action = EditSubscriber::Action::PICKING;
+        return true;
     }
 
     return false;
@@ -844,6 +862,7 @@ void Spot::switchOffEditMode ()
     listener->refreshPreview(EvSpotEnabled); // reprocess the preview w/o creating History entry
 }
 
+
 void Spot::tweakParams(procparams::ProcParams& pparams)
 {
     //params->raw.bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST);
@@ -874,4 +893,7 @@ void Spot::tweakParams(procparams::ProcParams& pparams)
     pparams.gradient.enabled = false;
     pparams.pcvignette.enabled = false;
     pparams.colorappearance.enabled = false;
+    pparams.locallab.enabled = false;
+   // pparams.toneCurve.hrenabled = false;  // not sure for this one, it could be useful for ExpComp w/o performance penalty
+    pparams.toneCurve.histmatching = false;
 }

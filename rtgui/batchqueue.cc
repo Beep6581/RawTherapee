@@ -20,6 +20,7 @@
 #include <glib/gstdio.h>
 #include <cstring>
 #include <functional>
+#include "../rtengine/imagedata.h"
 #include "../rtengine/rt_math.h"
 #include "../rtengine/procparams.h"
 
@@ -43,6 +44,74 @@
 using namespace std;
 using namespace rtengine;
 
+#ifdef _WIN32
+#define PATH_SEPARATOR '\\';
+#else
+#define PATH_SEPARATOR '/';
+#endif
+
+namespace   // local helper functions
+{
+    // Look for N or -N in templateText at position ix, meaning "index from end" and "index from start".
+    // For N, return Nth index from the end, and for -N return the Nth index from the start.
+    // N is a digit 1 through 9. The returned value is not range-checked, so it may be >=numPathElements.
+    // or negative. The caller performs any required range-checking.
+    int decodePathIndex(unsigned int& ix, Glib::ustring& templateText, size_t numPathElements)
+    {
+        int pathIndex = static_cast<int>(numPathElements);    // a value that means input was invalid
+        bool fromStart = false;
+        if (ix < templateText.size()) {
+            if (templateText[ix] == '-') {
+                fromStart = true;   // minus sign means N is from the start rather than the end of the path
+                ix++;
+            }
+        }
+        if (ix < templateText.size()) {
+            pathIndex = templateText[ix] - '1';
+            if (!fromStart) {
+                pathIndex = numPathElements - pathIndex - 1;
+            }
+        }
+        return pathIndex;
+    }
+
+    // Extract the initial characters from a canonical absolute path, and append
+    // those to a path string. Initial characters are '/' for Unix/Linux paths and
+    // '\\' or '//' for UNC paths. A single backslash is also accepted, for driveless
+    // Windows paths.
+    void appendAbsolutePathPrefix(Glib::ustring& path, const Glib::ustring& absolutePath)
+    {
+        if (absolutePath[0] == '/') {
+            if (absolutePath.size() > 1 && absolutePath[1] == '/') {
+                path += "//"; // Start of a Samba UNC path
+            } else {
+                path += '/';    // Start of a Unix/Linux path
+            }
+        } else if (absolutePath[0] == '\\') {
+            if (absolutePath.size() > 1 && absolutePath[1] == '\\') {
+                path += "\\\\"; // Start of a UNC path
+            } else {
+                path += '\\';   // Start of a Windows path that does not include a drive letter
+            }
+        }
+    }
+
+    // Look in templateText at index ix for quoted string containing a time format string, and
+    // use that string to format dateTime. Append the formatted time to path.
+    void appendFormattedTime(Glib::ustring& path, unsigned int& ix, const Glib::ustring& templateText, const Glib::DateTime& dateTime)
+    {
+        constexpr gunichar quoteMark('"');
+        if ((ix + 1) < templateText.size() && templateText[ix] == quoteMark) {
+            const auto endPos = templateText.find_first_of(quoteMark, ++ix);
+            if (endPos != Glib::ustring::npos) {
+                Glib::ustring formatString(templateText, ix, endPos-ix);
+                path += dateTime.format(formatString);
+                ix = endPos;
+            }
+        }
+    }
+}
+
 BatchQueue::BatchQueue (FileCatalog* aFileCatalog) : processing(nullptr), fileCatalog(aFileCatalog), sequence(0), listener(nullptr)
 {
 
@@ -57,16 +126,16 @@ BatchQueue::BatchQueue (FileCatalog* aFileCatalog) : processing(nullptr), fileCa
     pmenu.attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p + 1);
     p++;
 
-    pmenu.attach (*Gtk::manage(head = new MyImageMenuItem (M("FILEBROWSER_POPUPMOVEHEAD"), "goto-start-small.png")), 0, 1, p, p + 1);
+    pmenu.attach (*Gtk::manage(head = new MyImageMenuItem (M("FILEBROWSER_POPUPMOVEHEAD"), "goto-start-small")), 0, 1, p, p + 1);
     p++;
 
-    pmenu.attach (*Gtk::manage(tail = new MyImageMenuItem (M("FILEBROWSER_POPUPMOVEEND"), "goto-end-small.png")), 0, 1, p, p + 1);
+    pmenu.attach (*Gtk::manage(tail = new MyImageMenuItem (M("FILEBROWSER_POPUPMOVEEND"), "goto-end-small")), 0, 1, p, p + 1);
     p++;
 
     pmenu.attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p + 1);
     p++;
 
-    pmenu.attach (*Gtk::manage(cancel = new MyImageMenuItem (M("FILEBROWSER_POPUPCANCELJOB"), "cancel-small.png")), 0, 1, p, p + 1);
+    pmenu.attach (*Gtk::manage(cancel = new MyImageMenuItem (M("FILEBROWSER_POPUPCANCELJOB"), "cancel-small")), 0, 1, p, p + 1);
 
     pmenu.show_all ();
 
@@ -253,7 +322,7 @@ bool BatchQueue::saveBatchQueue ()
             const auto& saveFormat = entry->saveFormat;
 
             // Warning: for code's simplicity in loadBatchQueue, each field must end by the '|' character, safer than ';' or ',' since it can't be used in paths
-#ifdef WIN32
+#ifdef _WIN32
             // on windows it crashes if we don't use c_str() and filename etc. contain special (e.g. chinese) characters, see issue 3387
             file << entry->filename.c_str() << '|' << entry->savedParamsFile.c_str() << '|' << entry->outFileName.c_str() << '|' << saveFormat.format << '|'
 #else
@@ -264,6 +333,7 @@ bool BatchQueue::saveBatchQueue ()
                  << saveFormat.tiffBits << '|'  << (saveFormat.tiffFloat ? 1 : 0) << '|'  << saveFormat.tiffUncompressed << '|'
                  << saveFormat.saveParams << '|' << entry->forceFormatOpts << '|'
                  << entry->fast_pipeline << '|'
+                 << saveFormat.bigTiff << '|'
                  << std::endl;
         }
     }
@@ -331,6 +401,7 @@ bool BatchQueue::loadBatchQueue ()
             const auto saveParams = nextIntOr (options.saveFormat.saveParams);
             const auto forceFormatOpts = nextIntOr (options.forceFormatOpts);
             const auto fast = nextIntOr(false);
+            const auto bigTiff = nextIntOr (options.saveFormat.bigTiff);
 
             rtengine::procparams::ProcParams pparams;
 
@@ -370,6 +441,7 @@ bool BatchQueue::loadBatchQueue ()
                 saveFormat.tiffBits = tiffBits;
                 saveFormat.tiffFloat = tiffFloat == 1;
                 saveFormat.tiffUncompressed = tiffUncompressed != 0;
+                saveFormat.bigTiff = bigTiff != 0;
                 saveFormat.saveParams = saveParams != 0;
                 entry->forceFormatOpts = forceFormatOpts != 0;
             } else {
@@ -391,7 +463,7 @@ Glib::ustring BatchQueue::getTempFilenameForParams( const Glib::ustring &filenam
     timeval tv;
     gettimeofday(&tv, nullptr);
     char mseconds[11];
-    snprintf(mseconds, sizeof(mseconds), "%d", (int)(tv.tv_usec / 1000));
+    snprintf(mseconds, sizeof(mseconds), "%d", static_cast<int>((tv.tv_usec / 1000)));
     time_t rawtime;
     struct tm *timeinfo;
     char stringTimestamp [80];
@@ -558,8 +630,24 @@ void BatchQueue::openLastSelectedItemInEditor()
     {
         MYREADERLOCK(l, entryRW);
 
-        if (selected.size() > 0) {
+        if (!selected.empty()) {
             openItemInEditor(selected.back());
+        }
+    }
+}
+
+void BatchQueue::updateDestinationPathPreview()
+{
+    MYWRITERLOCK(l, entryRW);
+
+    if (!selected.empty()) {
+        auto& entry = *selected.at(0);
+        int sequence = 0;   // Sequence during subsequent queue processing can't be determined here
+        Glib::ustring baseDestination = calcAutoFileNameBase(entry.filename, sequence);
+        Glib::ustring destination = Glib::ustring::compose ("%1.%2", baseDestination, options.saveFormatBatch.format);
+
+        if (listener) {
+            listener->setDestinationPreviewText(destination);
         }
     }
 }
@@ -693,7 +781,13 @@ rtengine::ProcessingJob* BatchQueue::imageReady(rtengine::IImagefloat* img)
         int err = 0;
 
         if (saveFormat.format == "tif") {
-            err = img->saveAsTIFF (fname, saveFormat.tiffBits, saveFormat.tiffFloat, saveFormat.tiffUncompressed);
+            err = img->saveAsTIFF (
+                fname,
+                saveFormat.tiffBits,
+                saveFormat.tiffFloat,
+                saveFormat.tiffUncompressed,
+                saveFormat.bigTiff
+            );
         } else if (saveFormat.format == "png") {
             err = img->saveAsPNG (fname, saveFormat.pngBits);
         } else if (saveFormat.format == "jpg") {
@@ -802,7 +896,6 @@ rtengine::ProcessingJob* BatchQueue::imageReady(rtengine::IImagefloat* img)
 Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileName, int sequence)
 {
 
-    std::vector<Glib::ustring> pa;
     std::vector<Glib::ustring> da;
 
     for (size_t i = 0; i < origFileName.size(); i++) {
@@ -820,29 +913,13 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
             tok = tok + origFileName[i++];
         }
 
-        da.push_back (tok);
-    }
-
-    if (origFileName[0] == '/') {
-        pa.push_back ("/" + da[0]);
-    } else if (origFileName[0] == '\\') {
-        if (origFileName.size() > 1 && origFileName[1] == '\\') {
-            pa.push_back ("\\\\" + da[0]);
-        } else {
-            pa.push_back ("/" + da[0]);
+        if (i < origFileName.size()) {  // omit the last token, which is the file name
+            da.push_back (tok);
         }
-    } else {
-        pa.push_back (da[0]);
     }
 
-    for (size_t i = 1; i < da.size(); i++) {
-        pa.push_back (pa[i - 1] + "/" + da[i]);
-    }
-
-//    for (int i=0; i<da.size(); i++)
-//        printf ("da: %s\n", da[i].c_str());
-//    for (int i=0; i<pa.size(); i++)
-//        printf ("pa: %s\n", pa[i].c_str());
+//    for (unsigned i=0; i<da.size(); i++)
+//        printf ("da[%u]: \"%s\"\n", i, da[i].c_str());
 
     // extracting filebase
     Glib::ustring filename;
@@ -869,24 +946,50 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
             if (options.savePathTemplate[ix] == '%') {
                 ix++;
 
-                if (options.savePathTemplate[ix] == 'p') {
+                if (options.savePathTemplate[ix] == 'P') {
+                    // insert path elements from given index to the end
                     ix++;
-                    unsigned int i = options.savePathTemplate[ix] - '0';
-
-                    if (i < pa.size()) {
-                        path = path + pa[pa.size() - i - 1] + '/';
+                    int n = decodePathIndex(ix, options.savePathTemplate, da.size());
+                    if (n < 0) {
+                        n = 0;  // if too many elements specified, return all available elements
                     }
-
+                    if (n < static_cast<int>(da.size())) {
+                        if (n == 0) {
+                            appendAbsolutePathPrefix(path, origFileName);
+                        }
+                        for (unsigned int i = static_cast<unsigned int>(n); i < da.size(); i++) {
+                            path += da[i] + PATH_SEPARATOR;
+                        }
+                    }
+                    // If the next template character is a separator, skip it, because path already has one
                     ix++;
+                    if (ix < options.savePathTemplate.size() && options.savePathTemplate[ix] != '/' && options.savePathTemplate[ix] != '\\') {
+                        ix--;
+                    }
+                } else if (options.savePathTemplate[ix] == 'p') {
+                    // insert path elements from the start of the path up to the given index
+                    ix++;
+                    int n = decodePathIndex(ix, options.savePathTemplate, da.size());
+                    if (n >= 0) {
+                        appendAbsolutePathPrefix(path, origFileName);
+                    }
+                    for (unsigned int i=0; static_cast<int>(i) <= n && i < da.size(); i++) {
+                        path += da[i] + PATH_SEPARATOR;
+                    }
+                    // If the next template character is a separator, skip it, because path already has one
+                    ix++;
+                    if (ix < options.savePathTemplate.size() && options.savePathTemplate[ix] != '/' && options.savePathTemplate[ix] != '\\') {
+                        ix--;
+                    }
                 } else if (options.savePathTemplate[ix] == 'd') {
+                    // insert a single directory name from the file's path
                     ix++;
-                    unsigned i = options.savePathTemplate[ix] - '0';
-
-                    if (i < da.size()) {
-                        path = path + da[da.size() - i - 1];
+                    int n = decodePathIndex(ix, options.savePathTemplate, da.size());
+                    if (n >= 0 && n < static_cast<int>(da.size())) {
+                        path += da[n];
                     }
                 } else if (options.savePathTemplate[ix] == 'f') {
-                    path = path + filename;
+                    path += filename;
                 } else if (options.savePathTemplate[ix] == 'r') { // rank from pparams
                     char rank;
                     rtengine::procparams::ProcParams pparams;
@@ -914,11 +1017,48 @@ Glib::ustring BatchQueue::calcAutoFileNameBase (const Glib::ustring& origFileNam
 
                     seqstr << sequence;
                     path += seqstr.str ();
+                } else if (options.savePathTemplate[ix] == 't') {
+                    // Insert formatted date/time value. Character after 't' defines time source
+                    if (++ix < options.savePathTemplate.size()) {
+                        Glib::DateTime dateTime;
+                        switch(options.savePathTemplate[ix++])
+                        {
+                            case 'E':   // (approximate) time when export started
+                            {
+                                dateTime = Glib::DateTime::create_now_local();
+                                break;
+                            }
+                            case 'F': // time when file was last saved
+                            {
+                                Glib::RefPtr<Gio::File> file = Gio::File::create_for_path(origFileName);
+                                if (file) {
+                                    Glib::RefPtr<Gio::FileInfo> info = file->query_info(G_FILE_ATTRIBUTE_TIME_MODIFIED);
+                                    if (info) {
+                                        dateTime = info->get_modification_date_time();
+                                    }
+                                }
+                                break;
+                            }
+                            case 'P':   // time when picture was taken
+                            {
+                                const auto timestamp = FramesData(origFileName).getDateTimeAsTS();
+                                dateTime = Glib::DateTime::create_now_local(timestamp);
+                                break;
+                            }
+                            default:
+                            {
+                                break;
+                            }
+                        }
+                        if (dateTime) {
+                            appendFormattedTime(path, ix, options.savePathTemplate, dateTime);
+                        }
+                    }
                 }
             }
 
             else {
-                path = path + options.savePathTemplate[ix];
+                path += options.savePathTemplate[ix];
             }
 
             ix++;
@@ -1011,4 +1151,9 @@ void BatchQueue::redrawNeeded (LWButton* button)
 {
     GThreadLock lock;
     queue_draw ();
+}
+
+void BatchQueue::selectionChanged()
+{
+    updateDestinationPathPreview();
 }

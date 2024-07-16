@@ -3,16 +3,16 @@
     <dict>
         <key>LSEnvironment</key>
         <dict>
-            <key>XDG_DATA_DIRS</key>
+            <key>XDG_CONFIG_DIRS</key>
+            <string>/Applications/RawTherapee.app/Contents/Resources/share/gtk-3.0</string>
+            <key>XDG_CONFIG_HOME</key>
             <string>/Applications/RawTherapee.app/Contents/Resources/share</string>
-            <key>DYLD_FALLBACK_LIBRARY_PATH</key>
-            <string>/Applications/RawTherapee.app/Contents/Frameworks</string>
+            <key>XDG_DATA_DIRS</key>
+            <string>/Applications/RawTherapee.app/Contents/Resources/share/gtk-3.0</string>
             <key>GTK_PATH</key>
-            <string>/Applications/RawTherapee.app/Contents/Frameworks</string>
+            <string>/Applications/RawTherapee.app/Contents/Resources/share/gtk-3.0</string>
             <key>GTK_IM_MODULE_FILE</key>
             <string>/Applications/RawTherapee.app/Contents/Resources/etc/gtk-3.0/gtk.immodules</string>
-            <key>GTK_MODULES</key>
-            <string>/Applications/RawTherapee.app/Contents/Frameworks/im-quartz.so</string>
             <key>XDG_DATA_HOME</key>
             <string>/Applications/RawTherapee.app/Contents/Resources/share</string>
             <key>GSETTINGS_SCHEMA_DIR</key>
@@ -21,8 +21,6 @@
             <string>/Applications/RawTherapee.app/Contents/Resources/etc/gtk-3.0/gdk-pixbuf.loaders</string>
             <key>GDK_PIXBUF_MODULEDIR</key>
             <string>/Applications/RawTherapee.app/Contents/Frameworks</string>
-            <key>FONTCONFIG_PATH</key>
-            <string>/Applications/RawTherapee.app/Contents/Resources/etc/fonts</string>
             <key>LIBDIR</key>
             <string>/Applications/RawTherapee.app/Contents/Frameworks</string>
             <key>DATADIR</key>
@@ -31,17 +29,18 @@
             <string>similar</string>
             <key>GTK_OVERLAY_SCROLLING</key>
             <string>0</string>
-            <key>GDK_NATIVE_WINDOWS</key>
-            <string>1</string>
         </dict>
-        <key>ATSApplicationFontsPath</key>
-        <string>etc/fonts</string>
         <key>LSMultipleInstancesProhibited</key>
         <true />
-        <key>LSMinimumSystemVersion</key>
-        <string>@minimum_macos_version@</string>
-        <key>CFBundleDevelopmentRegion</key>
-        <string>English</string>
+        <key>LSMinimumSystemVersionByArchitecture</key>
+        <dict>
+            <key>arm64</key>
+            <string>@minimum_arm64_version@</string>
+            <key>x86_64</key>
+            <string>@minimum_x86_64_version@</string>
+        </dict>
+        <key>CFBundleAllowMixedLocalizations</key>
+        <true />
         <key>CFBundleDisplayName</key>
         <string>RawTherapee</string>
         <key>CFBundleDocumentTypes</key>
@@ -74,6 +73,8 @@
                     <string>arw</string>
                     <string>CR2</string>
                     <string>cr2</string>
+                    <string>CR3</string>
+                    <string>cr3</string>
                     <string>CRF</string>
                     <string>crf</string>
                     <string>CRW</string>
@@ -166,9 +167,10 @@
         <string>????</string>
         <key>CFBundleVersion</key>
         <string>@shortVersion@</string>
-        <key>LSExecutableArchitectures</key>
+        <key>LSArchitecturePriority</key>
         <array>
-            <string>@arch@</string>
+            <string>arm64</string>
+            <string>x86_64</string>
         </array>
         <key>NSHighResolutionCapable</key>
         <true />

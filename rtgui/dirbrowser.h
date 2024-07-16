@@ -35,15 +35,13 @@ private:
     struct DirTreeColumns : public Gtk::TreeModelColumnRecord {
     public:
         Gtk::TreeModelColumn<Glib::ustring> filename;
-        Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > icon1;
-        Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > icon2;
+        Gtk::TreeModelColumn<Glib::ustring> icon_name;
         Gtk::TreeModelColumn<Glib::ustring> dirname;
         Gtk::TreeModelColumn<Glib::RefPtr<Gio::FileMonitor> > monitor;
 
         DirTreeColumns()
         {
-            add(icon1);
-            add(icon2);
+            add(icon_name);
             add(filename);
             add(dirname);
             add(monitor);
@@ -53,7 +51,6 @@ private:
     DirTreeColumns dtColumns;
     Gtk::TreeViewColumn tvc;
     Gtk::CellRendererText crt;
-    Gtk::CellRendererPixbuf crb;
 
 
     Gtk::TreeView *dirtree;
@@ -62,17 +59,17 @@ private:
 
     void fillRoot ();
 
-    Glib::RefPtr<Gdk::Pixbuf> openfolder;
-    Glib::RefPtr<Gdk::Pixbuf> closedfolder;
-    Glib::RefPtr<Gdk::Pixbuf> icdrom;
-    Glib::RefPtr<Gdk::Pixbuf> ifloppy;
-    Glib::RefPtr<Gdk::Pixbuf> ihdd;
-    Glib::RefPtr<Gdk::Pixbuf> inetwork;
-    Glib::RefPtr<Gdk::Pixbuf> iremovable;
+    Glib::ustring openfolder;
+    Glib::ustring closedfolder;
+    Glib::ustring icdrom;
+    Glib::ustring ifloppy;
+    Glib::ustring ihdd;
+    Glib::ustring inetwork;
+    Glib::ustring iremovable;
 
     bool expandSuccess;
 
-#ifdef WIN32
+#ifdef _WIN32
     unsigned int volumes;
 public:
     void updateVolumes ();
@@ -94,6 +91,7 @@ public:
     void fillDirTree ();
     void on_sort_column_changed() const;
     void row_expanded   (const Gtk::TreeModel::iterator& iter, const Gtk::TreeModel::Path& path);
+    void row_collapsed  (const Gtk::TreeModel::iterator& iter, const Gtk::TreeModel::Path& path);
     void row_activated  (const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* column);
     void file_changed   (const Glib::RefPtr<Gio::File>& file, const Glib::RefPtr<Gio::File>& other_file, Gio::FileMonitorEvent event_type, const Gtk::TreeModel::iterator& iter, const Glib::ustring& dirName);
     void open           (const Glib::ustring& dirName, const Glib::ustring& fileName = ""); // goes to dir "dirName" and selects file "fileName"

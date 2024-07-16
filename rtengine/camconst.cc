@@ -28,8 +28,6 @@ namespace rtengine
 CameraConst::CameraConst() : pdafOffset(0)
 {
     memset(dcraw_matrix, 0, sizeof(dcraw_matrix));
-    memset(raw_crop, 0, sizeof(raw_crop));
-    memset(raw_mask, 0, sizeof(raw_mask));
     white_max = 0;
     globalGreenEquilibration = -1;
 }
@@ -192,6 +190,68 @@ CameraConst* CameraConst::parseEntry(const void *cJSON_, const char *make_model)
     std::unique_ptr<CameraConst> cc(new CameraConst);
     cc->make_model = make_model;
 
+    const auto get_raw_crop =
+        [](int w, int h, const cJSON *ji, CameraConst *cc) -> bool
+        {
+            std::array<int, 4> rc;
+
+            if (ji->type != cJSON_Array) {
+                //fprintf(stderr, "\"raw_crop\" must be an array\n");
+                return false;
+            }
+
+            int i;
+
+            for (i = 0, ji = ji->child; i < 4 && ji != nullptr; i++, ji = ji->next) {
+                if (ji->type != cJSON_Number) {
+                    //fprintf(stderr, "\"raw_crop\" array must contain numbers\n");
+                    return false;
+                }
+
+                //cc->raw_crop[i] = ji->valueint;
+                rc[i] = ji->valueint;
+            }
+
+            if (i != 4 || ji != nullptr) {
+                //fprintf(stderr, "\"raw_crop\" must contain 4 numbers\n");
+                return false;
+            }
+
+            cc->raw_crop[std::make_pair(w, h)] = rc;
+            return true;
+        };
+
+    const auto get_masked_areas =
+        [](int w, int h, const cJSON *ji, CameraConst *cc) -> bool
+        {
+            std::array<std::array<int, 4>, 2> rm = {};
+
+            if (ji->type != cJSON_Array) {
+                //fprintf(stderr, "\"masked_areas\" must be an array\n");
+                return false;
+            }
+
+            int i;
+
+            for (i = 0, ji = ji->child; i < 2 * 4 && ji != nullptr; i++, ji = ji->next) {
+                if (ji->type != cJSON_Number) {
+                    //fprintf(stderr, "\"masked_areas\" array must contain numbers\n");
+                    return false;
+                }
+
+                //cc->raw_mask[i / 4][i % 4] = ji->valueint;
+                rm[i / 4][i % 4] = ji->valueint;
+            }
+
+            if (i % 4 != 0) {
+                //fprintf(stderr, "\"masked_areas\" array length must be divisable by 4\n");
+                return false;
+            }
+
+            cc->raw_mask[std::make_pair(w, h)] = rm;
+            return true;
+        };
+
     const cJSON *ji = cJSON_GetObjectItem(js, "dcraw_matrix");
 
     if (ji) {
@@ -216,24 +276,32 @@ CameraConst* CameraConst::parseEntry(const void *cJSON_, const char *make_model)
 
     if (ji) {
         if (ji->type != cJSON_Array) {
-            fprintf(stderr, "\"raw_crop\" must be an array\n");
+            fprintf(stderr, "invalid entry for raw_crop.\n");
             return nullptr;
-        }
-
-        int i;
-
-        for (i = 0, ji = ji->child; i < 4 && ji; i++, ji = ji->next) {
-            if (ji->type != cJSON_Number) {
-                fprintf(stderr, "\"raw_crop\" array must contain numbers\n");
-                return nullptr;
+        } else if (!get_raw_crop(0, 0, ji, cc.get())) {
+            cJSON *je;
+            cJSON_ArrayForEach(je, ji) {
+                if (!cJSON_IsObject(je)) {
+                    fprintf(stderr, "invalid entry for raw_crop.\n");
+                    return nullptr;
+                } else {
+                    auto js = cJSON_GetObjectItem(je, "frame");
+                    if (!js || js->type != cJSON_Array ||
+                        cJSON_GetArraySize(js) != 2 ||
+                        !cJSON_IsNumber(cJSON_GetArrayItem(js, 0)) ||
+                        !cJSON_IsNumber(cJSON_GetArrayItem(js, 1))) {
+                        fprintf(stderr, "invalid entry for raw_crop.\n");
+                        return nullptr;
+                    }
+                    int w = cJSON_GetArrayItem(js, 0)->valueint;
+                    int h = cJSON_GetArrayItem(js, 1)->valueint;
+                    js = cJSON_GetObjectItem(je, "crop");
+                    if (!js || !get_raw_crop(w, h, js, cc.get())) {
+                        fprintf(stderr, "invalid entry for raw_crop.\n");
+                        return nullptr;
+                    }
+                }
             }
-
-            cc->raw_crop[i] = ji->valueint;
-        }
-
-        if (i != 4 || ji) {
-            fprintf(stderr, "\"raw_crop\" must contain 4 numbers\n");
-            return nullptr;
         }
     }
 
@@ -241,24 +309,32 @@ CameraConst* CameraConst::parseEntry(const void *cJSON_, const char *make_model)
 
     if (ji) {
         if (ji->type != cJSON_Array) {
-            fprintf(stderr, "\"masked_areas\" must be an array\n");
+            fprintf(stderr, "invalid entry for masked_areas.\n");
             return nullptr;
-        }
-
-        int i;
-
-        for (i = 0, ji = ji->child; i < 2 * 4 && ji; i++, ji = ji->next) {
-            if (ji->type != cJSON_Number) {
-                fprintf(stderr, "\"masked_areas\" array must contain numbers\n");
-                return nullptr;
+        } else if (!get_masked_areas(0, 0, ji, cc.get())) {
+            cJSON *je;
+            cJSON_ArrayForEach(je, ji) {
+                if (!cJSON_IsObject(je)) {
+                    fprintf(stderr, "invalid entry for masked_areas.\n");
+                    return nullptr;
+                } else {
+                    auto js = cJSON_GetObjectItem(je, "frame");
+                    if (!js || js->type != cJSON_Array ||
+                        cJSON_GetArraySize(js) != 2 ||
+                        !cJSON_IsNumber(cJSON_GetArrayItem(js, 0)) ||
+                        !cJSON_IsNumber(cJSON_GetArrayItem(js, 1))) {
+                        fprintf(stderr, "invalid entry for masked_areas.\n");
+                        return nullptr;
+                    }
+                    int w = cJSON_GetArrayItem(js, 0)->valueint;
+                    int h = cJSON_GetArrayItem(js, 1)->valueint;
+                    js = cJSON_GetObjectItem(je, "areas");
+                    if (!js || !get_masked_areas(w, h, js, cc.get())) {
+                        fprintf(stderr, "invalid entry for masked_areas.\n");
+                        return nullptr;
+                    }
+                }
             }
-
-            cc->raw_mask[i / 4][i % 4] = ji->valueint;
-        }
-
-        if (i % 4 != 0) {
-            fprintf(stderr, "\"masked_areas\" array length must be divisible by 4\n");
-            return nullptr;
         }
     }
 
@@ -399,29 +475,49 @@ void CameraConst::update_pdafOffset(int other)
     pdafOffset = other;
 }
 
-bool CameraConst::has_rawCrop() const
+
+bool CameraConst::has_rawCrop(int raw_width, int raw_height) const
 {
-    return raw_crop[0] != 0 || raw_crop[1] != 0 || raw_crop[2] != 0 || raw_crop[3] != 0;
+    return raw_crop.find(std::make_pair(raw_width, raw_height)) != raw_crop.end() || raw_crop.find(std::make_pair(0, 0)) != raw_crop.end();
 }
 
-void CameraConst::get_rawCrop(int& left_margin, int& top_margin, int& width, int& height) const
+
+void CameraConst::get_rawCrop(int raw_width, int raw_height, int &left_margin, int &top_margin, int &width, int &height) const
 {
-    left_margin = raw_crop[0];
-    top_margin = raw_crop[1];
-    width = raw_crop[2];
-    height = raw_crop[3];
+    auto it = raw_crop.find(std::make_pair(raw_width, raw_height));
+    if (it == raw_crop.end()) {
+        it = raw_crop.find(std::make_pair(0, 0));
+    }
+    if (it != raw_crop.end()) {
+        left_margin = it->second[0];
+        top_margin = it->second[1];
+        width = it->second[2];
+        height = it->second[3];
+    } else {
+        left_margin = top_margin = width = height = 0;
+    }
 }
 
-bool CameraConst::has_rawMask(int idx) const
+
+bool CameraConst::has_rawMask(int raw_width, int raw_height, int idx) const
 {
     if (idx < 0 || idx > 1) {
         return false;
     }
 
-    return (raw_mask[idx][0] | raw_mask[idx][1] | raw_mask[idx][2] | raw_mask[idx][3]) != 0;
+    auto it = raw_mask.find(std::make_pair(raw_width, raw_height));
+    if (it == raw_mask.end()) {
+        it = raw_mask.find(std::make_pair(0, 0));
+    }
+    if (it != raw_mask.end()) {
+        return (it->second[idx][0] | it->second[idx][1] | it->second[idx][2] | it->second[idx][3]) != 0;
+    } else {
+        return false;
+    }
 }
 
-void CameraConst::get_rawMask(int idx, int& top, int& left, int& bottom, int& right) const
+
+void CameraConst::get_rawMask(int raw_width, int raw_height, int idx, int &top, int &left, int &bottom, int &right) const
 {
     top = left = bottom = right = 0;
 
@@ -429,10 +525,17 @@ void CameraConst::get_rawMask(int idx, int& top, int& left, int& bottom, int& ri
         return;
     }
 
-    top =    raw_mask[idx][0];
-    left =   raw_mask[idx][1];
-    bottom = raw_mask[idx][2];
-    right =  raw_mask[idx][3];
+    auto it = raw_mask.find(std::make_pair(raw_width, raw_height));
+    if (it == raw_mask.end()) {
+        it = raw_mask.find(std::make_pair(0, 0));
+    }
+
+    if (it != raw_mask.end()) {
+        top = it->second[idx][0];
+        left = it->second[idx][1];
+        bottom = it->second[idx][2];
+        right = it->second[idx][3];
+    }
 }
 
 void CameraConst::update_Levels(const CameraConst *other)
@@ -464,9 +567,7 @@ void CameraConst::update_Crop(CameraConst *other)
         return;
     }
 
-    if (other->has_rawCrop()) {
-        other->get_rawCrop(raw_crop[0], raw_crop[1], raw_crop[2], raw_crop[3]);
-    }
+    raw_crop.insert(other->raw_crop.begin(), other->raw_crop.end());
 }
 
 bool CameraConst::get_Levels(camera_const_levels & lvl, int bw, int iso, float fnumber) const

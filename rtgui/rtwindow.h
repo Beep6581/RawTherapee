@@ -20,6 +20,7 @@
 #include <set>
 
 #include <gtkmm.h>
+#include <sigc++/signal.h>
 
 #if defined(__APPLE__)
 #include <gtkosxapplication.h>
@@ -33,6 +34,7 @@
 class BatchQueueEntry;
 class BatchQueuePanel;
 class EditorPanel;
+struct ExternalEditor;
 class FilePanel;
 class PLDBridge;
 class RTWindow final :
@@ -47,10 +49,14 @@ private:
     std::set<Glib::ustring> filesEdited;
     std::map<Glib::ustring, EditorPanel*> epanels;
 
+    sigc::signal<void> externalEditorChangedSignal;
+
     Splash* splash;
     Gtk::ProgressBar prProgBar;
     PLDBridge* pldBridge;
     bool is_fullscreen;
+    bool is_minimized;
+    sigc::connection onConfEventConn;
     bool on_delete_has_run;
     Gtk::Button * btn_fullscreen;
 
@@ -96,6 +102,7 @@ public:
     void showPreferences ();
     void on_realize () override;
     void toggle_fullscreen ();
+    void get_position(int& x, int& y) const;
 
     void setProgress(double p) override;
     void setProgressStr(const Glib::ustring& str) override;
@@ -115,12 +122,15 @@ public:
     void MoveFileBrowserToEditor();
     void MoveFileBrowserToMain();
 
+    void updateExternalEditorWidget(int selectedIndex, const std::vector<ExternalEditor> &editors);
     void updateProfiles (const Glib::ustring &printerProfile, rtengine::RenderingIntent printerIntent, bool printerBPC);
     void updateTPVScrollbar (bool hide);
     void updateHistogramPosition (int oldPosition, int newPosition);
     void updateFBQueryTB (bool singleRow);
     void updateFBToolBarVisibility (bool showFilmStripToolBar);
     void updateShowtooltipVisibility (bool showtooltip);
+    void updateToolPanelToolLocations(
+        const std::vector<Glib::ustring> &favorites, bool cloneFavoriteTools);
     bool getIsFullscreen()
     {
         return is_fullscreen;

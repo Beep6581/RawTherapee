@@ -20,9 +20,15 @@
 
 #include <vector>
 
+#include <glibmm/refptr.h>
 #include <glibmm/ustring.h>
 
 #include "threadutils.h"
+
+namespace Gio
+{
+    class AppInfo;
+}
 
 struct ExtProgAction
 {
@@ -36,13 +42,20 @@ struct ExtProgAction
     bool execute (const std::vector<Glib::ustring>& fileNames) const;
 };
 
+struct EditorInfo
+{
+    Glib::ustring name;
+    Glib::ustring commandline;
+    bool isNativeCommand;
+};
+
 // Stores all external programs that could be called by the user
 class ExtProgStore
 {
     MyMutex mtx;  // covers actions
     std::vector<ExtProgAction> actions;
 
-#ifdef WIN32
+#ifdef _WIN32
     bool searchProgram (const Glib::ustring& name,
                         const Glib::ustring& exePath,
                         const Glib::ustring& exePath86,
@@ -63,7 +76,8 @@ public:
 
     static bool openInGimp (const Glib::ustring& fileName);
     static bool openInPhotoshop (const Glib::ustring& fileName);
-    static bool openInCustomEditor (const Glib::ustring& fileName);
+    static bool openInCustomEditor (const Glib::ustring& fileName, const Glib::ustring* command = nullptr);
+    static bool openInExternalEditor(const Glib::ustring &fileName, const EditorInfo &editorInfo);
 };
 
 #define extProgStore ExtProgStore::getInstance()

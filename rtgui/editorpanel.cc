@@ -39,11 +39,14 @@
 #include "procparamchangers.h"
 #include "placesbrowser.h"
 #include "pathutils.h"
+#include "rtappchooserdialog.h"
 #include "thumbnail.h"
 #include "toolpanelcoord.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #include "windows.h"
+
+#include "../rtengine/winutils.h"
 #endif
 
 using namespace rtengine::procparams;
@@ -67,7 +70,7 @@ void setprogressStrUI(double val, const Glib::ustring str, MyProgressBar* pProgr
 #if !defined(__APPLE__) // monitor profile not supported on apple
 bool find_default_monitor_profile (GdkWindow *rootwin, Glib::ustring &defprof, Glib::ustring &defprofname)
 {
-#ifdef WIN32
+#ifdef _WIN32
     HDC hDC = GetDC (nullptr);
 
     if (hDC != nullptr) {
@@ -134,6 +137,235 @@ bool find_default_monitor_profile (GdkWindow *rootwin, Glib::ustring &defprof, G
 }
 #endif
 
+bool hasUserOnlyPermission(const Glib::ustring &dirname)
+{
+#if defined(__linux__) || defined(__APPLE__)
+    const Glib::RefPtr<Gio::File> file = Gio::File::create_for_path(dirname);
+    const Glib::RefPtr<Gio::FileInfo> file_info = file->query_info("owner::user,unix::mode");
+
+    if (!file_info) {
+        return false;
+    }
+
+    const Glib::ustring owner = file_info->get_attribute_string("owner::user");
+    const guint32 mode = file_info->get_attribute_uint32("unix::mode");
+
+    return (mode & 0777) == 0700 && owner == Glib::get_user_name();
+#elif defined(_WIN32)
+    const Glib::RefPtr<Gio::File> file = Gio::File::create_for_path(dirname);
+    const Glib::RefPtr<Gio::FileInfo> file_info = file->query_info("owner::user");
+    if (!file_info) {
+        return false;
+    }
+
+    // Current user must be the owner.
+    const Glib::ustring user_name = Glib::get_user_name();
+    const Glib::ustring owner = file_info->get_attribute_string("owner::user");
+    if (user_name != owner) {
+        return false;
+    }
+
+    // Get security descriptor and discretionary access control list.
+    PACL dacl = nullptr;
+    PSECURITY_DESCRIPTOR sec_desc_raw_ptr = nullptr;
+    auto win_error = GetNamedSecurityInfo(
+        dirname.c_str(),
+        SE_FILE_OBJECT,
+        DACL_SECURITY_INFORMATION,
+        nullptr,
+        nullptr,
+        &dacl,
+        nullptr,
+        &sec_desc_raw_ptr
+    );
+    const WinLocalPtr<PSECURITY_DESCRIPTOR> sec_desc_ptr(sec_desc_raw_ptr);
+    if (win_error != ERROR_SUCCESS) {
+        return false;
+    }
+
+    // Must not inherit permissions.
+    SECURITY_DESCRIPTOR_CONTROL sec_desc_control;
+    DWORD revision;
+    if (!(
+        GetSecurityDescriptorControl(sec_desc_ptr, &sec_desc_control, &revision)
+        && sec_desc_control & SE_DACL_PROTECTED
+    )) {
+        return false;
+    }
+
+    // Check that there is one entry allowing full access.
+    ULONG acl_entry_count;
+    PEXPLICIT_ACCESS acl_entry_list_raw = nullptr;
+    win_error = GetExplicitEntriesFromAcl(dacl, &acl_entry_count, &acl_entry_list_raw);
+    const WinLocalPtr<PEXPLICIT_ACCESS> acl_entry_list(acl_entry_list_raw);
+    if (win_error != ERROR_SUCCESS || acl_entry_count != 1) {
+        return false;
+    }
+    const EXPLICIT_ACCESS &ace = acl_entry_list[0];
+    if (
+        ace.grfAccessMode != GRANT_ACCESS
+        || (ace.grfAccessPermissions & FILE_ALL_ACCESS) != FILE_ALL_ACCESS
+        || ace.Trustee.TrusteeForm != TRUSTEE_IS_SID // Should already be SID, but double check.
+    ) {
+        return false;
+    }
+
+    // ACE must be for the current user.
+    HANDLE process_token_raw;
+    if (!OpenProcessToken(GetCurrentProcess(), TOKEN_READ, &process_token_raw)) {
+        return false;
+    }
+    const WinHandle process_token(process_token_raw);
+    DWORD actual_token_info_size = 0;
+    GetTokenInformation(process_token, TokenUser, nullptr, 0, &actual_token_info_size);
+    if (!actual_token_info_size) {
+        return false;
+    }
+    const WinHeapPtr<PTOKEN_USER> user_token_ptr(actual_token_info_size);
+    if (!user_token_ptr || !GetTokenInformation(
+        process_token,
+        TokenUser,
+        user_token_ptr,
+        actual_token_info_size,
+        &actual_token_info_size
+    )) {
+        return false;
+    }
+    return EqualSid(ace.Trustee.ptstrName, user_token_ptr->User.Sid);
+#endif
+    return false;
+}
+
+/**
+ * Sets read and write permissions, and optionally the execute permission, for
+ * the user and no permissions for others.
+ */
+void setUserOnlyPermission(const Glib::RefPtr<Gio::File> file, bool execute)
+{
+#if defined(__linux__) || defined(__APPLE__)
+    const Glib::RefPtr<Gio::FileInfo> file_info = file->query_info("unix::mode");
+    if (!file_info) {
+        return;
+    }
+
+    guint32 mode = file_info->get_attribute_uint32("unix::mode");
+    mode = (mode & ~0777) | (execute ? 0700 : 0600);
+    try {
+        file->set_attribute_uint32("unix::mode", mode, Gio::FILE_QUERY_INFO_NONE);
+    } catch (Gio::Error &) {
+    }
+#elif defined(_WIN32)
+    // Get the current user's SID.
+    HANDLE process_token_raw;
+    if (!OpenProcessToken(GetCurrentProcess(), TOKEN_READ, &process_token_raw)) {
+        return;
+    }
+    const WinHandle process_token(process_token_raw);
+    DWORD actual_token_info_size = 0;
+    GetTokenInformation(process_token, TokenUser, nullptr, 0, &actual_token_info_size);
+    if (!actual_token_info_size) {
+        return;
+    }
+    const WinHeapPtr<PTOKEN_USER> user_token_ptr(actual_token_info_size);
+    if (!user_token_ptr || !GetTokenInformation(
+        process_token,
+        TokenUser,
+        user_token_ptr,
+        actual_token_info_size,
+        &actual_token_info_size
+    )) {
+        return;
+    }
+    const PSID user_sid = user_token_ptr->User.Sid;
+
+    // Get a handle to the file.
+    const Glib::ustring filename = file->get_path();
+    const HANDLE file_handle_raw = CreateFile(
+        filename.c_str(),
+        READ_CONTROL | WRITE_DAC,
+        0,
+        nullptr,
+        OPEN_EXISTING,
+        execute ? FILE_FLAG_BACKUP_SEMANTICS : FILE_ATTRIBUTE_NORMAL,
+        nullptr
+    );
+    if (file_handle_raw == INVALID_HANDLE_VALUE) {
+        return;
+    }
+    const WinHandle file_handle(file_handle_raw);
+
+    // Create the user-only permission and set it.
+    EXPLICIT_ACCESS ea = {
+        .grfAccessPermissions = FILE_ALL_ACCESS,
+        .grfAccessMode = GRANT_ACCESS,
+        .grfInheritance = NO_INHERITANCE,
+    };
+    BuildTrusteeWithSid(&(ea.Trustee), user_sid);
+    PACL new_dacl_raw = nullptr;
+    auto win_error = SetEntriesInAcl(1, &ea, nullptr, &new_dacl_raw);
+    if (win_error != ERROR_SUCCESS) {
+        return;
+    }
+    const WinLocalPtr<PACL> new_dacl(new_dacl_raw);
+    SetSecurityInfo(
+        file_handle,
+        SE_FILE_OBJECT,
+        DACL_SECURITY_INFORMATION | PROTECTED_DACL_SECURITY_INFORMATION,
+        nullptr,
+        nullptr,
+        new_dacl,
+        nullptr
+    );
+#endif
+}
+
+/**
+ * Gets the path to the temp directory, creating it if necessary.
+ */
+Glib::ustring getTmpDirectory()
+{
+#if defined(__linux__) || defined(__APPLE__) || defined(_WIN32)
+    static Glib::ustring recent_dir = "";
+    const Glib::ustring tmp_dir_root = Glib::get_tmp_dir();
+    const Glib::ustring subdir_base =
+        Glib::ustring::compose("rawtherapee-%1", Glib::get_user_name());
+    Glib::ustring dir = Glib::build_filename(tmp_dir_root, subdir_base);
+
+    // Returns true if the directory doesn't exist or has the right permissions.
+    auto is_usable_dir = [](const Glib::ustring &dir_path) {
+        return !Glib::file_test(dir_path, Glib::FILE_TEST_EXISTS) || (Glib::file_test(dir_path, Glib::FILE_TEST_IS_DIR) && hasUserOnlyPermission(dir_path));
+    };
+
+    if (!(is_usable_dir(dir) || recent_dir.empty())) {
+        // Try to reuse the random suffix directory.
+        dir = recent_dir;
+    }
+
+    if (!is_usable_dir(dir)) {
+        // Create new directory with random suffix.
+        gchar *const rand_dir = g_dir_make_tmp((subdir_base + "-XXXXXX").c_str(), nullptr);
+        if (!rand_dir) {
+            return tmp_dir_root;
+        }
+        dir = recent_dir = rand_dir;
+        g_free(rand_dir);
+        Glib::RefPtr<Gio::File> file = Gio::File::create_for_path(dir);
+        setUserOnlyPermission(file, true);
+    } else if (!Glib::file_test(dir, Glib::FILE_TEST_EXISTS)) {
+        // Create the directory.
+        Glib::RefPtr<Gio::File> file = Gio::File::create_for_path(dir);
+        bool dir_created = file->make_directory();
+        if (!dir_created) {
+            return tmp_dir_root;
+        }
+        setUserOnlyPermission(file, true);
+    }
+
+    return dir;
+#else
+    return Glib::get_tmp_dir();
+#endif
+}
 }
 
 class EditorPanel::ColorManagementToolbar
@@ -186,9 +418,9 @@ private:
     void prepareIntentBox ()
     {
         // same order as the enum
-        intentBox.addEntry ("intent-perceptual.png", M ("PREFERENCES_INTENT_PERCEPTUAL"));
-        intentBox.addEntry ("intent-relative.png", M ("PREFERENCES_INTENT_RELATIVE"));
-        intentBox.addEntry ("intent-absolute.png", M ("PREFERENCES_INTENT_ABSOLUTE"));
+        intentBox.addEntry ("intent-perceptual", M ("PREFERENCES_INTENT_PERCEPTUAL"));
+        intentBox.addEntry ("intent-relative", M ("PREFERENCES_INTENT_RELATIVE"));
+        intentBox.addEntry ("intent-absolute", M ("PREFERENCES_INTENT_ABSOLUTE"));
         setExpandAlignProperties (intentBox.buttonGroup, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
         intentBox.setSelected (1);
@@ -197,7 +429,7 @@ private:
 
     void prepareSoftProofingBox ()
     {
-        Gtk::Image *softProofImage = Gtk::manage (new RTImage ("gamut-softproof.png"));
+        Gtk::Image *softProofImage = Gtk::manage (new RTImage ("gamut-softproof", Gtk::ICON_SIZE_LARGE_TOOLBAR));
         softProofImage->set_padding (0, 0);
         softProof.add (*softProofImage);
         softProof.set_relief (Gtk::RELIEF_NONE);
@@ -206,7 +438,7 @@ private:
         softProof.set_active (false);
         softProof.show ();
 
-        Gtk::Image *spGamutCheckImage = Gtk::manage (new RTImage ("gamut-warning.png"));
+        Gtk::Image *spGamutCheckImage = Gtk::manage (new RTImage ("gamut-warning", Gtk::ICON_SIZE_LARGE_TOOLBAR));
         spGamutCheckImage->set_padding (0, 0);
         spGamutCheck.add (*spGamutCheckImage);
         spGamutCheck.set_relief (Gtk::RELIEF_NONE);
@@ -470,7 +702,9 @@ public:
 EditorPanel::EditorPanel (FilePanel* filePanel)
     : catalogPane (nullptr), realized (false), tbBeforeLock (nullptr), iHistoryShow (nullptr), iHistoryHide (nullptr),
       iTopPanel_1_Show (nullptr), iTopPanel_1_Hide (nullptr), iRightPanel_1_Show (nullptr), iRightPanel_1_Hide (nullptr),
-      iBeforeLockON (nullptr), iBeforeLockOFF (nullptr), previewHandler (nullptr), beforePreviewHandler (nullptr),
+      iBeforeLockON (nullptr), iBeforeLockOFF (nullptr),
+      externalEditorChangedSignal (nullptr),
+      previewHandler (nullptr), beforePreviewHandler (nullptr),
       beforeIarea (nullptr), beforeBox (nullptr), afterBox (nullptr), beforeLabel (nullptr), afterLabel (nullptr),
       beforeHeaderBox (nullptr), afterHeaderBox (nullptr), parent (nullptr), parentWindow (nullptr), openThm (nullptr),
       selectedFrame(0), isrc (nullptr), ipc (nullptr), beforeIpc (nullptr), err (0), isProcessing (false),
@@ -487,7 +721,8 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     firstProcessingDone = false;
 
     // construct toolpanelcoordinator
-    tpc = new ToolPanelCoordinator ();
+    tpc = new ToolPanelCoordinator();
+    tpc->setProgressListener(this);
 
     // build GUI
 
@@ -509,7 +744,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     //leftsubpaned->pack_start (*ppframe, Gtk::PACK_SHRINK, 4);
 
     navigator = Gtk::manage(new Navigator());
-    navigator->previewWindow->set_size_request(-1, 150 * RTScalable::getScale());
+    navigator->previewWindow->set_size_request(-1, RTScalable::scalePixelSize(150));
     leftsubpaned->pack1(*navigator, false, false);
 
     history = Gtk::manage(new History());
@@ -525,19 +760,19 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     Gtk::Box* editbox = Gtk::manage (new Gtk::Box (Gtk::ORIENTATION_VERTICAL));
 
     info = Gtk::manage (new Gtk::ToggleButton ());
-    Gtk::Image* infoimg = Gtk::manage (new RTImage ("info.png"));
+    Gtk::Image* infoimg = Gtk::manage (new RTImage ("info", Gtk::ICON_SIZE_LARGE_TOOLBAR));
     info->add (*infoimg);
     info->set_relief (Gtk::RELIEF_NONE);
     info->set_tooltip_markup (M ("MAIN_TOOLTIP_QINFO"));
 
     beforeAfter = Gtk::manage (new Gtk::ToggleButton ());
-    Gtk::Image* beforeAfterIcon = Gtk::manage (new RTImage ("beforeafter.png"));
+    Gtk::Image* beforeAfterIcon = Gtk::manage (new RTImage ("beforeafter", Gtk::ICON_SIZE_LARGE_TOOLBAR));
     beforeAfter->add (*beforeAfterIcon);
     beforeAfter->set_relief (Gtk::RELIEF_NONE);
     beforeAfter->set_tooltip_markup (M ("MAIN_TOOLTIP_TOGGLE"));
 
-    iBeforeLockON = new RTImage ("padlock-locked-small.png");
-    iBeforeLockOFF = new RTImage ("padlock-unlocked-small.png");
+    iBeforeLockON = new RTImage ("padlock-locked-small", Gtk::ICON_SIZE_LARGE_TOOLBAR);
+    iBeforeLockOFF = new RTImage ("padlock-unlocked-small", Gtk::ICON_SIZE_LARGE_TOOLBAR);
 
     Gtk::Separator* vsept = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_VERTICAL));
     Gtk::Separator* vsepz = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_VERTICAL));
@@ -546,8 +781,8 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     hidehp = Gtk::manage (new Gtk::ToggleButton ());
 
-    iHistoryShow = new RTImage ("panel-to-right.png");
-    iHistoryHide = new RTImage ("panel-to-left.png");
+    iHistoryShow = new RTImage ("panel-to-right", Gtk::ICON_SIZE_LARGE_TOOLBAR);
+    iHistoryHide = new RTImage ("panel-to-left", Gtk::ICON_SIZE_LARGE_TOOLBAR);
 
     hidehp->set_relief (Gtk::RELIEF_NONE);
     hidehp->set_active (options.showHistory);
@@ -563,8 +798,8 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     if (!simpleEditor && filePanel) {
         tbTopPanel_1 = new Gtk::ToggleButton ();
-        iTopPanel_1_Show = new RTImage ("panel-to-bottom.png");
-        iTopPanel_1_Hide = new RTImage ("panel-to-top.png");
+        iTopPanel_1_Show = new RTImage ("panel-to-bottom", Gtk::ICON_SIZE_LARGE_TOOLBAR);
+        iTopPanel_1_Hide = new RTImage ("panel-to-top", Gtk::ICON_SIZE_LARGE_TOOLBAR);
         tbTopPanel_1->set_relief (Gtk::RELIEF_NONE);
         tbTopPanel_1->set_active (true);
         tbTopPanel_1->set_tooltip_markup (M ("MAIN_TOOLTIP_SHOWHIDETP1"));
@@ -581,7 +816,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     // Histogram profile toggle controls
     toggleHistogramProfile = Gtk::manage (new Gtk::ToggleButton ());
-    Gtk::Image* histProfImg = Gtk::manage (new RTImage ("gamut-hist.png"));
+    Gtk::Image* histProfImg = Gtk::manage (new RTImage ("gamut-hist", Gtk::ICON_SIZE_LARGE_TOOLBAR));
     toggleHistogramProfile->add (*histProfImg);
     toggleHistogramProfile->set_relief (Gtk::RELIEF_NONE);
     toggleHistogramProfile->set_active (options.rtSettings.HistogramWorking);
@@ -654,26 +889,29 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     iops->set_row_spacing (2);
     iops->set_column_spacing (2);
 
-    Gtk::Image *saveButtonImage =  Gtk::manage (new RTImage ("save.png"));
+    Gtk::Image *saveButtonImage =  Gtk::manage (new RTImage ("save", Gtk::ICON_SIZE_LARGE_TOOLBAR));
     saveimgas = Gtk::manage (new Gtk::Button ());
     saveimgas->set_relief(Gtk::RELIEF_NONE);
     saveimgas->add (*saveButtonImage);
     saveimgas->set_tooltip_markup (M ("MAIN_BUTTON_SAVE_TOOLTIP"));
     setExpandAlignProperties (saveimgas, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
-    Gtk::Image *queueButtonImage = Gtk::manage (new RTImage ("gears.png"));
+    Gtk::Image *queueButtonImage = Gtk::manage (new RTImage ("gears", Gtk::ICON_SIZE_LARGE_TOOLBAR));
     queueimg = Gtk::manage (new Gtk::Button ());
     queueimg->set_relief(Gtk::RELIEF_NONE);
     queueimg->add (*queueButtonImage);
     queueimg->set_tooltip_markup (M ("MAIN_BUTTON_PUTTOQUEUE_TOOLTIP"));
     setExpandAlignProperties (queueimg, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
-    Gtk::Image *sendToEditorButtonImage = Gtk::manage (new RTImage ("palette-brush.png"));
-    sendtogimp = Gtk::manage (new Gtk::Button ());
-    sendtogimp->set_relief(Gtk::RELIEF_NONE);
-    sendtogimp->add (*sendToEditorButtonImage);
-    sendtogimp->set_tooltip_markup (M ("MAIN_BUTTON_SENDTOEDITOR_TOOLTIP"));
-    setExpandAlignProperties (sendtogimp, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
+    send_to_external = Gtk::manage(new PopUpButton("", false));
+    send_to_external->set_tooltip_text(M("MAIN_BUTTON_SENDTOEDITOR_TOOLTIP"));
+    send_to_external->setEmptyImage("palette-brush");
+    setExpandAlignProperties(send_to_external->buttonGroup, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
+    updateExternalEditorWidget(
+        options.externalEditorIndex >= 0 ? options.externalEditorIndex : options.externalEditors.size(),
+        options.externalEditors
+    );
+    send_to_external->show();
 
     // Status box
     progressLabel = Gtk::manage (new MyProgressBar (300));
@@ -683,8 +921,8 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     // tbRightPanel_1
     tbRightPanel_1 = Gtk::manage(new Gtk::ToggleButton());
-    iRightPanel_1_Show = new RTImage ("panel-to-left.png");
-    iRightPanel_1_Hide = new RTImage ("panel-to-right.png");
+    iRightPanel_1_Show = new RTImage ("panel-to-left", Gtk::ICON_SIZE_LARGE_TOOLBAR);
+    iRightPanel_1_Hide = new RTImage ("panel-to-right", Gtk::ICON_SIZE_LARGE_TOOLBAR);
     tbRightPanel_1->set_relief (Gtk::RELIEF_NONE);
     tbRightPanel_1->set_active (true);
     tbRightPanel_1->set_tooltip_markup (M ("MAIN_TOOLTIP_SHOWHIDERP1"));
@@ -693,8 +931,8 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     // ShowHideSidePanels
     tbShowHideSidePanels = Gtk::manage(new Gtk::ToggleButton());
-    iShowHideSidePanels = new RTImage ("crossed-arrows-out.png");
-    iShowHideSidePanels_exit = new RTImage ("crossed-arrows-in.png");
+    iShowHideSidePanels = new RTImage ("crossed-arrows-out", Gtk::ICON_SIZE_LARGE_TOOLBAR);
+    iShowHideSidePanels_exit = new RTImage ("crossed-arrows-in", Gtk::ICON_SIZE_LARGE_TOOLBAR);
     tbShowHideSidePanels->set_relief (Gtk::RELIEF_NONE);
     tbShowHideSidePanels->set_active (false);
     tbShowHideSidePanels->set_tooltip_markup (M ("MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP"));
@@ -705,7 +943,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     if (!simpleEditor && !options.tabbedUI) {
         // Navigation buttons
-        Gtk::Image *navPrevImage = Gtk::manage (new RTImage ("arrow2-left.png"));
+        Gtk::Image *navPrevImage = Gtk::manage (new RTImage ("arrow2-left", Gtk::ICON_SIZE_LARGE_TOOLBAR));
         navPrevImage->set_padding (0, 0);
         navPrev = Gtk::manage (new Gtk::Button ());
         navPrev->add (*navPrevImage);
@@ -713,7 +951,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
         navPrev->set_tooltip_markup (M ("MAIN_BUTTON_NAVPREV_TOOLTIP"));
         setExpandAlignProperties (navPrev, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
-        Gtk::Image *navNextImage = Gtk::manage (new RTImage ("arrow2-right.png"));
+        Gtk::Image *navNextImage = Gtk::manage (new RTImage ("arrow2-right", Gtk::ICON_SIZE_LARGE_TOOLBAR));
         navNextImage->set_padding (0, 0);
         navNext = Gtk::manage (new Gtk::Button ());
         navNext->add (*navNextImage);
@@ -721,7 +959,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
         navNext->set_tooltip_markup (M ("MAIN_BUTTON_NAVNEXT_TOOLTIP"));
         setExpandAlignProperties (navNext, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
-        Gtk::Image *navSyncImage = Gtk::manage (new RTImage ("arrow-updown.png"));
+        Gtk::Image *navSyncImage = Gtk::manage (new RTImage ("arrow-updown", Gtk::ICON_SIZE_LARGE_TOOLBAR));
         navSyncImage->set_padding (0, 0);
         navSync = Gtk::manage (new Gtk::Button ());
         navSync->add (*navSyncImage);
@@ -738,7 +976,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     iops->attach_next_to (*vsep1, Gtk::POS_LEFT, 1, 1);
 
     if (!gimpPlugin) {
-        iops->attach_next_to (*sendtogimp, Gtk::POS_LEFT, 1, 1);
+        iops->attach_next_to(*send_to_external->buttonGroup, Gtk::POS_LEFT, 1, 1);
     }
 
     if (!gimpPlugin && !simpleEditor) {
@@ -842,7 +1080,8 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     tbRightPanel_1->signal_toggled().connect ( sigc::mem_fun (*this, &EditorPanel::tbRightPanel_1_toggled) );
     saveimgas->signal_pressed().connect ( sigc::mem_fun (*this, &EditorPanel::saveAsPressed) );
     queueimg->signal_pressed().connect ( sigc::mem_fun (*this, &EditorPanel::queueImgPressed) );
-    sendtogimp->signal_pressed().connect ( sigc::mem_fun (*this, &EditorPanel::sendToGimpPressed) );
+    send_to_external->signal_changed().connect(sigc::mem_fun(*this, &EditorPanel::sendToExternalChanged));
+    send_to_external->signal_pressed().connect(sigc::mem_fun(*this, &EditorPanel::sendToExternalPressed));
     toggleHistogramProfile->signal_toggled().connect( sigc::mem_fun (*this, &EditorPanel::histogramProfile_toggled) );
 
     if (navPrev) {
@@ -1227,6 +1466,7 @@ void EditorPanel::setProgressState(bool inProcessing)
 
 void EditorPanel::error(const Glib::ustring& descr)
 {
+    parent->error(descr);
 }
 
 void EditorPanel::error(const Glib::ustring& title, const Glib::ustring& descr)
@@ -1305,7 +1545,7 @@ void EditorPanel::refreshProcessingState (bool inProcessingP)
         val = 0.0;
         str = "PROGRESSBAR_READY";
 
-#ifdef WIN32
+#ifdef _WIN32
 
         // Maybe accessing "parent", which is a Gtk object, can justify to get the Gtk lock...
         if (!firstProcessingDone && static_cast<RTWindow*> (parent)->getIsFullscreen()) {
@@ -1333,16 +1573,16 @@ void EditorPanel::info_toggled ()
 
     const rtengine::FramesMetaData* idata = ipc->getInitialImage()->getMetaData();
 
-    if (idata && idata->hasExif(selectedFrame)) {
+    if (idata && idata->hasExif()) {
         infoString = Glib::ustring::compose ("%1 + %2\n<span size=\"small\">f/</span><span size=\"large\">%3</span>  <span size=\"large\">%4</span><span size=\"small\">s</span>  <span size=\"small\">%5</span><span size=\"large\">%6</span>  <span size=\"large\">%7</span><span size=\"small\">mm</span>",
-                                              Glib::ustring (idata->getMake() + " " + idata->getModel()),
-                                              Glib::ustring (idata->getLens()),
-                                              Glib::ustring (idata->apertureToString (idata->getFNumber(selectedFrame))),
-                                              Glib::ustring (idata->shutterToString (idata->getShutterSpeed(selectedFrame))),
-                                              M ("QINFO_ISO"), idata->getISOSpeed(selectedFrame),
-                                              Glib::ustring::format (std::setw (3), std::fixed, std::setprecision (2), idata->getFocalLen(selectedFrame)));
+                                              escapeHtmlChars (idata->getMake() + " " + idata->getModel()),
+                                              escapeHtmlChars (idata->getLens()),
+                                              Glib::ustring (idata->apertureToString (idata->getFNumber())),
+                                              Glib::ustring (idata->shutterToString (idata->getShutterSpeed())),
+                                              M ("QINFO_ISO"), idata->getISOSpeed(),
+                                              Glib::ustring::format (std::setw (3), std::fixed, std::setprecision (2), idata->getFocalLen()));
 
-        expcomp = Glib::ustring (idata->expcompToString (idata->getExpComp(selectedFrame), true)); // maskZeroexpcomp
+        expcomp = Glib::ustring (idata->expcompToString (idata->getExpComp(), true)); // maskZeroexpcomp
 
         if (!expcomp.empty ()) {
             infoString = Glib::ustring::compose ("%1  <span size=\"large\">%2</span><span size=\"small\">EV</span>",
@@ -1355,8 +1595,13 @@ void EditorPanel::info_toggled ()
                                               escapeHtmlChars (Glib::path_get_dirname (openThm->getFileName())) + G_DIR_SEPARATOR_S,
                                               escapeHtmlChars (Glib::path_get_basename (openThm->getFileName()))  );
 
-        int ww = ipc->getFullWidth();
-        int hh = ipc->getFullHeight();
+        int ww = -1, hh = -1;
+        idata->getDimensions(ww, hh);
+        if (ww <= 0) {
+            ww = ipc->getFullWidth();
+            hh = ipc->getFullHeight();
+        }
+
         //megapixels
         infoString = Glib::ustring::compose ("%1\n<span size=\"small\">%2 MP (%3x%4)</span>",
                                              infoString,
@@ -1370,7 +1615,7 @@ void EditorPanel::info_toggled ()
         if (isHDR) {
             infoString = Glib::ustring::compose ("%1\n" + M("QINFO_HDR"), infoString, numFrames);
             if (numFrames == 1) {
-                int sampleFormat = idata->getSampleFormat(selectedFrame);
+                int sampleFormat = idata->getSampleFormat();
                 infoString = Glib::ustring::compose ("%1 / %2", infoString, M(Glib::ustring::compose("SAMPLEFORMAT_%1", sampleFormat)));
             }
         } else if (isPixelShift) {
@@ -1675,7 +1920,7 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event)
 
                 case GDK_KEY_e:
                     if (!gimpPlugin) {
-                        sendToGimpPressed();
+                        sendToExternalPressed();
                     }
 
                     return true;
@@ -1750,7 +1995,7 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event)
     return false;
 }
 
-void EditorPanel::procParamsChanged (Thumbnail* thm, int whoChangedIt)
+void EditorPanel::procParamsChanged (Thumbnail* thm, int whoChangedIt, bool upgradeHint)
 {
 
     if (whoChangedIt != EDITOR) {
@@ -1776,7 +2021,7 @@ bool EditorPanel::idle_saveImage (ProgressConnector<rtengine::IImagefloat*> *pc,
         img->setSaveProgressListener (parent->getProgressListener());
 
         if (sf.format == "tif")
-            ld->startFunc (sigc::bind (sigc::mem_fun (img, &rtengine::IImagefloat::saveAsTIFF), fname, sf.tiffBits, sf.tiffFloat, sf.tiffUncompressed),
+            ld->startFunc (sigc::bind (sigc::mem_fun (img, &rtengine::IImagefloat::saveAsTIFF), fname, sf.tiffBits, sf.tiffFloat, sf.tiffUncompressed, sf.bigTiff),
                            sigc::bind (sigc::mem_fun (*this, &EditorPanel::idle_imageSaved), ld, img, fname, sf, pparams));
         else if (sf.format == "png")
             ld->startFunc (sigc::bind (sigc::mem_fun (img, &rtengine::IImagefloat::saveAsPNG), fname, sf.pngBits),
@@ -1788,12 +2033,12 @@ bool EditorPanel::idle_saveImage (ProgressConnector<rtengine::IImagefloat*> *pc,
             delete ld;
         }
     } else {
-        Glib::ustring msg_ = Glib::ustring ("<b>") + fname + ": Error during image processing\n</b>";
+        Glib::ustring msg_ = Glib::ustring ("<b>") + escapeHtmlChars(fname) + ": Error during image processing\n</b>";
         Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
         msgd.run ();
 
         saveimgas->set_sensitive (true);
-        sendtogimp->set_sensitive (true);
+        send_to_external->set_sensitive(send_to_external->getEntryCount());
         isProcessing = false;
 
     }
@@ -1821,7 +2066,7 @@ bool EditorPanel::idle_imageSaved (ProgressConnector<int> *pc, rtengine::IImagef
     }
 
     saveimgas->set_sensitive (true);
-    sendtogimp->set_sensitive (true);
+    send_to_external->set_sensitive(send_to_external->getEntryCount());
 
     parent->setProgressStr ("");
     parent->setProgress (0.);
@@ -1932,7 +2177,7 @@ void EditorPanel::saveAsPressed ()
                 ld->startFunc (sigc::bind (sigc::ptr_fun (&rtengine::processImage), job, err, parent->getProgressListener(), false ),
                                sigc::bind (sigc::mem_fun ( *this, &EditorPanel::idle_saveImage ), ld, fnameOut, sf, pparams));
                 saveimgas->set_sensitive (false);
-                sendtogimp->set_sensitive (false);
+                send_to_external->set_sensitive(false);
             }
         } else {
             BatchQueueEntry* bqe = createBatchQueueEntry ();
@@ -1963,7 +2208,7 @@ void EditorPanel::queueImgPressed ()
     parent->addBatchQueueJob (createBatchQueueEntry ());
 }
 
-void EditorPanel::sendToGimpPressed ()
+void EditorPanel::sendToExternal()
 {
     if (!ipc || !openThm) {
         return;
@@ -1975,12 +2220,49 @@ void EditorPanel::sendToGimpPressed ()
     if (options.editor_bypass_output_profile) {
         pparams.icm.outputProfile = rtengine::procparams::ColorManagementParams::NoProfileString;
     }
+
+    if (!cached_exported_filename.empty() && cached_exported_image == ipc->getInitialImage() && pparams == cached_exported_pparams && Glib::file_test(cached_exported_filename, Glib::FILE_TEST_IS_REGULAR)) {
+        idle_sentToGimp(nullptr, nullptr, cached_exported_filename);
+        return;
+    }
+
+    cached_exported_image = ipc->getInitialImage();
+    cached_exported_pparams = pparams;
+    cached_exported_filename.clear();
     rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams);
     ProgressConnector<rtengine::IImagefloat*> *ld = new ProgressConnector<rtengine::IImagefloat*>();
     ld->startFunc (sigc::bind (sigc::ptr_fun (&rtengine::processImage), job, err, parent->getProgressListener(), false ),
                    sigc::bind (sigc::mem_fun ( *this, &EditorPanel::idle_sendToGimp ), ld, openThm->getFileName() ));
     saveimgas->set_sensitive (false);
-    sendtogimp->set_sensitive (false);
+    send_to_external->set_sensitive(false);
+}
+
+void EditorPanel::sendToExternalChanged(int)
+{
+    int index = send_to_external->getSelected();
+    if (index >= 0 && static_cast<unsigned>(index) == options.externalEditors.size()) {
+        index = -1;
+    }
+    options.externalEditorIndex = index;
+    if (externalEditorChangedSignal) {
+        externalEditorChangedSignal->emit();
+    }
+}
+
+void EditorPanel::sendToExternalPressed()
+{
+    if (options.externalEditorIndex == -1) {
+        // "Other" external editor. Show app chooser dialog to let user pick.
+        RTAppChooserDialog *dialog = getAppChooserDialog();
+        dialog->show();
+    } else {
+        struct ExternalEditor editor = options.externalEditors.at(options.externalEditorIndex);
+        external_editor_info = {
+            editor.name,
+            editor.command,
+            editor.native_command};
+        sendToExternal();
+    }
 }
 
 
@@ -1999,7 +2281,7 @@ bool EditorPanel::saveImmediately (const Glib::ustring &filename, const SaveForm
     if (gimpPlugin) {
         err = img->saveAsTIFF (filename, 32, true, true);
     } else if (sf.format == "tif") {
-        err = img->saveAsTIFF (filename, sf.tiffBits, sf.tiffFloat, sf.tiffUncompressed);
+        err = img->saveAsTIFF (filename, sf.tiffBits, sf.tiffFloat, sf.tiffUncompressed, sf.bigTiff);
     } else if (sf.format == "png") {
         err = img->saveAsPNG (filename, sf.pngBits);
     } else if (sf.format == "jpg") {
@@ -2034,6 +2316,23 @@ void EditorPanel::syncFileBrowser()   // synchronize filebrowser with image in E
     }
 }
 
+ExternalEditorChangedSignal * EditorPanel::getExternalEditorChangedSignal()
+{
+    return externalEditorChangedSignal;
+}
+
+void EditorPanel::setExternalEditorChangedSignal(ExternalEditorChangedSignal *signal)
+{
+    if (externalEditorChangedSignal) {
+        externalEditorChangedSignalConnection.disconnect();
+    }
+    externalEditorChangedSignal = signal;
+    if (signal) {
+        externalEditorChangedSignalConnection = signal->connect(
+                sigc::mem_fun(*this, &EditorPanel::updateExternalEditorSelection));
+    }
+}
+
 void EditorPanel::histogramProfile_toggled()
 {
     options.rtSettings.HistogramWorking = toggleHistogramProfile->get_active();
@@ -2058,7 +2357,7 @@ bool EditorPanel::idle_sendToGimp ( ProgressConnector<rtengine::IImagefloat*> *p
             dirname = options.editor_custom_out_dir;
             break;
         default: // Options::EDITOR_OUT_DIR_TEMP
-            dirname = Glib::get_tmp_dir();
+            dirname = getTmpDirectory();
             break;
         }
         Glib::ustring fullFileName = Glib::build_filename(dirname, shortname);
@@ -2072,7 +2371,7 @@ bool EditorPanel::idle_sendToGimp ( ProgressConnector<rtengine::IImagefloat*> *p
             sf.tiffBits = 16;
             sf.tiffFloat = false;
         }
-        
+
         sf.tiffUncompressed = true;
         sf.saveParams = true;
 
@@ -2092,14 +2391,14 @@ bool EditorPanel::idle_sendToGimp ( ProgressConnector<rtengine::IImagefloat*> *p
 
         ProgressConnector<int> *ld = new ProgressConnector<int>();
         img->setSaveProgressListener (parent->getProgressListener());
-        ld->startFunc (sigc::bind (sigc::mem_fun (img, &rtengine::IImagefloat::saveAsTIFF), fileName, sf.tiffBits, sf.tiffFloat, sf.tiffUncompressed),
+        ld->startFunc (sigc::bind (sigc::mem_fun (img, &rtengine::IImagefloat::saveAsTIFF), fileName, sf.tiffBits, sf.tiffFloat, sf.tiffUncompressed, sf.bigTiff),
                        sigc::bind (sigc::mem_fun (*this, &EditorPanel::idle_sentToGimp), ld, img, fileName));
     } else {
         Glib::ustring msg_ = Glib::ustring ("<b> Error during image processing\n</b>");
         Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
         msgd.run ();
         saveimgas->set_sensitive (true);
-        sendtogimp->set_sensitive (true);
+        send_to_external->set_sensitive(send_to_external->getEntryCount());
     }
 
     return false;
@@ -2107,25 +2406,27 @@ bool EditorPanel::idle_sendToGimp ( ProgressConnector<rtengine::IImagefloat*> *p
 
 bool EditorPanel::idle_sentToGimp (ProgressConnector<int> *pc, rtengine::IImagefloat* img, Glib::ustring filename)
 {
-    delete img;
-    int errore = pc->returnValue();
+    if (img) {
+        delete img;
+        cached_exported_filename = filename;
+    }
+    int errore = 0;
     setProgressState(false);
-    delete pc;
+    if (pc) {
+        errore = pc->returnValue();
+        delete pc;
+    }
 
-    if (!errore) {
+    if ((!img && Glib::file_test(filename, Glib::FILE_TEST_IS_REGULAR)) || (img && !errore)) {
         saveimgas->set_sensitive (true);
-        sendtogimp->set_sensitive (true);
+        send_to_external->set_sensitive(send_to_external->getEntryCount());
         parent->setProgressStr ("");
         parent->setProgress (0.);
         bool success = false;
 
-        if (options.editorToSendTo == 1) {
-            success = ExtProgStore::openInGimp (filename);
-        } else if (options.editorToSendTo == 2) {
-            success = ExtProgStore::openInPhotoshop (filename);
-        } else if (options.editorToSendTo == 3) {
-            success = ExtProgStore::openInCustomEditor (filename);
-        }
+        setUserOnlyPermission(Gio::File::create_for_path(filename), false);
+
+        success = ExtProgStore::openInExternalEditor(filename, external_editor_info);
 
         if (!success) {
             Gtk::MessageDialog msgd (*parent, M ("MAIN_MSG_CANNOTSTARTEDITOR"), false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
@@ -2136,6 +2437,53 @@ bool EditorPanel::idle_sentToGimp (ProgressConnector<int> *pc, rtengine::IImagef
     }
 
     return false;
+}
+
+RTAppChooserDialog *EditorPanel::getAppChooserDialog()
+{
+    if (!app_chooser_dialog.get()) {
+        app_chooser_dialog.reset(new RTAppChooserDialog("image/tiff"));
+        app_chooser_dialog->signal_response().connect(
+            sigc::mem_fun(*this, &EditorPanel::onAppChooserDialogResponse)
+        );
+        app_chooser_dialog->set_modal();
+    }
+
+    return app_chooser_dialog.get();
+}
+
+void EditorPanel::onAppChooserDialogResponse(int responseId)
+{
+    switch (responseId) {
+        case Gtk::RESPONSE_OK: {
+            getAppChooserDialog()->close();
+            const auto app_info = getAppChooserDialog()->get_app_info();
+            external_editor_info = {
+                app_info->get_name(),
+                app_info->get_commandline(),
+                false};
+            sendToExternal();
+            break;
+        }
+        case Gtk::RESPONSE_CANCEL:
+        case Gtk::RESPONSE_CLOSE:
+            getAppChooserDialog()->close();
+            break;
+        default:
+            break;
+    }
+}
+
+void EditorPanel::updateExternalEditorSelection()
+{
+    int index = send_to_external->getSelected();
+    if (index >= 0 && static_cast<unsigned>(index) == options.externalEditors.size()) {
+        index = -1;
+    }
+    if (options.externalEditorIndex != index) {
+        send_to_external->setSelected(
+            options.externalEditorIndex >= 0 ? options.externalEditorIndex : options.externalEditors.size());
+    }
 }
 
 void EditorPanel::historyBeforeLineChanged (const rtengine::procparams::ProcParams& params)
@@ -2413,6 +2761,49 @@ void EditorPanel::tbShowHideSidePanels_managestate()
     ShowHideSidePanelsconn.block (false);
 }
 
+void EditorPanel::updateExternalEditorWidget(int selectedIndex, const std::vector<ExternalEditor> &editors)
+{
+    // Remove the editors.
+    while (send_to_external->getEntryCount()) {
+        send_to_external->removeEntry(send_to_external->getEntryCount() - 1);
+    }
+
+    // Create new radio button group because they cannot be reused: https://developer-old.gnome.org/gtkmm/3.16/classGtk_1_1RadioButtonGroup.html#details.
+    send_to_external_radio_group = Gtk::RadioButtonGroup();
+
+    // Add the editors.
+    for (unsigned i = 0; i < editors.size(); i++) {
+        const auto & name = editors[i].name.empty() ? Glib::ustring(" ") : editors[i].name;
+        if (!editors[i].icon_serialized.empty()) {
+            Glib::RefPtr<Gio::Icon> gioIcon;
+            GError *e = nullptr;
+            GVariant *icon_variant = g_variant_parse(
+                nullptr, editors[i].icon_serialized.c_str(), nullptr, nullptr, &e);
+
+            if (e) {
+                std::cerr
+                    << "Error loading external editor icon from \""
+                    << editors[i].icon_serialized << "\": " << e->message
+                    << std::endl;
+                gioIcon = Glib::RefPtr<Gio::Icon>();
+            } else {
+                gioIcon = Gio::Icon::deserialize(Glib::VariantBase(icon_variant));
+            }
+
+            send_to_external->insertEntry(i, gioIcon, name, &send_to_external_radio_group);
+        } else {
+            send_to_external->insertEntry(i, "palette-brush", name, &send_to_external_radio_group);
+        }
+    }
+
+#ifndef __APPLE__
+    send_to_external->addEntry("palette-brush", M("GENERAL_OTHER"), &send_to_external_radio_group);
+#endif
+    send_to_external->set_sensitive(send_to_external->getEntryCount());
+    send_to_external->setSelected(selectedIndex);
+    send_to_external->show();
+}
+
 void EditorPanel::updateProfiles (const Glib::ustring &printerProfile, rtengine::RenderingIntent printerIntent, bool printerBPC)
 {
 }
@@ -2486,6 +2877,13 @@ void EditorPanel::updateHistogramPosition (int oldPosition, int newPosition)
 
 }
 
+void EditorPanel::updateToolPanelToolLocations(
+    const std::vector<Glib::ustring> &favorites, bool cloneFavoriteTools)
+{
+    if (tpc) {
+        tpc->updateToolLocations(favorites, cloneFavoriteTools);
+    }
+}
 
 void EditorPanel::defaultMonitorProfileChanged (const Glib::ustring &profile_name, bool auto_monitor_profile)
 {
