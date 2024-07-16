@@ -395,7 +395,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 if(rp.bayersensor.Dehablack) {
                     ablListener->autoBlackChanged(reddeha, greendeha, bluedeha);
                 } else {
-                    ablListener->autoBlackChanged(0.f, 0.f, 0.f);
+                  //  ablListener->autoBlackChanged(0.f, 0.f, 0.f);
                }
             }
             computeblack = true;
