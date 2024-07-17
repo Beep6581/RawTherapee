@@ -29,6 +29,7 @@ class XTransRAWExposure final :
     public ToolParamBlock,
     public AdjusterListener,
     public CheckBoxListener,
+    public rtengine::AutoBlackxListener,
     public FoldableToolPanel
 {
 
@@ -46,6 +47,7 @@ public:
     static const Glib::ustring TOOL_NAME;
 
     XTransRAWExposure ();
+    ~XTransRAWExposure () override;
 
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
@@ -55,4 +57,5 @@ public:
     void checkBoxToggled     (CheckBox* c, CheckValue newval) override;
     void setAdjusterBehavior (bool pexblackadd);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
+    void autoBlackxChanged (double reddeha, double greendeha, double bluedeha) override;
 };

@@ -100,6 +100,15 @@ void XTransRAWExposure::write( rtengine::procparams::ProcParams* pp, ParamsEdite
 
 }
 
+XTransRAWExposure::~XTransRAWExposure()
+{
+    idle_register.destroy();
+}
+
+void XTransRAWExposure::autoBlackxChanged (double reddeha, double greendeha, double bluedeha)
+{
+}
+
 void XTransRAWExposure::adjusterChanged(Adjuster* a, double newval)
 {
     if (listener) {
