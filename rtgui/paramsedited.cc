@@ -532,6 +532,7 @@ void ParamsEdited::set(bool v)
     raw.xtranssensor.exBlackRed = v;
     raw.xtranssensor.exBlackGreen = v;
     raw.xtranssensor.exBlackBlue = v;
+    raw.xtranssensor.Dehablackx = v;
     raw.ca_autocorrect = v;
     raw.ca_avoidcolourshift = v;
     raw.caautoiterations  = v;
@@ -2042,6 +2043,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         raw.xtranssensor.exBlackRed = raw.xtranssensor.exBlackRed && p.raw.xtranssensor.blackred == other.raw.xtranssensor.blackred;
         raw.xtranssensor.exBlackGreen = raw.xtranssensor.exBlackGreen && p.raw.xtranssensor.blackgreen == other.raw.xtranssensor.blackgreen;
         raw.xtranssensor.exBlackBlue = raw.xtranssensor.exBlackBlue && p.raw.xtranssensor.blackblue == other.raw.xtranssensor.blackblue;
+        raw.xtranssensor.Dehablackx = raw.xtranssensor.Dehablackx && p.raw.xtranssensor.Dehablackx == other.raw.xtranssensor.Dehablackx;
         raw.ca_autocorrect = raw.ca_autocorrect && p.raw.ca_autocorrect == other.raw.ca_autocorrect;
         raw.ca_avoidcolourshift = raw.ca_avoidcolourshift && p.raw.ca_avoidcolourshift == other.raw.ca_avoidcolourshift;
         raw.caautoiterations = raw.caautoiterations && p.raw.caautoiterations == other.raw.caautoiterations;
@@ -7107,6 +7109,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (raw.xtranssensor.exBlackBlue) {
         toEdit.raw.xtranssensor.blackblue = dontforceSet && options.baBehav[ADDSET_RAWEXPOS_BLACKS] ? toEdit.raw.xtranssensor.blackblue + mods.raw.xtranssensor.blackblue : mods.raw.xtranssensor.blackblue;
+    }
+
+    if (raw.xtranssensor.Dehablackx) {
+        toEdit.raw.xtranssensor.Dehablackx = mods.raw.xtranssensor.Dehablackx;
     }
 
     if (raw.ca_autocorrect) {

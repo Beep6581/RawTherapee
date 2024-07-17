@@ -21,11 +21,14 @@
 #include <gtkmm.h>
 
 #include "adjuster.h"
+#include "checkbox.h"
 #include "toolpanel.h"
+#include "eventmapper.h"
 
 class XTransRAWExposure final :
     public ToolParamBlock,
     public AdjusterListener,
+    public CheckBoxListener,
     public FoldableToolPanel
 {
 
@@ -33,6 +36,9 @@ protected:
     Adjuster* PexBlackRed;
     Adjuster* PexBlackGreen;
     Adjuster* PexBlackBlue;
+    CheckBox* Dehablackx;
+    IdleRegister idle_register;
+    rtengine::ProcEvent EvDehablackx;
 
 private:
 //  Gtk::CheckButton*  PextwoGreen;
@@ -46,6 +52,7 @@ public:
     void setBatchMode   (bool batchMode) override;
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void adjusterChanged     (Adjuster* a, double newval) override;
+    void checkBoxToggled     (CheckBox* c, CheckValue newval) override;
     void setAdjusterBehavior (bool pexblackadd);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
 };

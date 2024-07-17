@@ -2583,6 +2583,7 @@ struct RAWParams {
         double blackred;
         double blackgreen;
         double blackblue;
+        bool Dehablackx;
 
         XTransSensor();
 

@@ -391,12 +391,15 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         if ((todo & M_PREPROC)|| (!computeblack && rp.bayersensor.Dehablack) || (!highDetailPreprocessComputed && highDetailNeeded)) {
             imgsrc->setCurrentFrame(params->raw.bayersensor.imageNum);
             imgsrc->preprocess(rp, params->lensProf, params->coarse, reddeha, greendeha, bluedeha, true);
-            if (ablListener) {
-                if(rp.bayersensor.Dehablack) {
-                    ablListener->autoBlackChanged(reddeha, greendeha, bluedeha);
-                } else {
-                  //  ablListener->autoBlackChanged(0.f, 0.f, 0.f);
-               }
+            if(imgsrc->getSensorType() == ST_BAYER) {
+                if (ablListener) {
+                    if(rp.bayersensor.Dehablack) {
+                        ablListener->autoBlackChanged(reddeha, greendeha, bluedeha);
+                    } else {
+                    //  ablListener->autoBlackChanged(0.f, 0.f, 0.f);
+                    }
+                }
+            } else if(imgsrc->getSensorType() == ST_FUJI_XTRANS) {
             }
             computeblack = true;
             if (flatFieldAutoClipListener && rp.ff_AutoClipControl) {

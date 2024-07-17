@@ -5948,7 +5948,9 @@ RAWParams::XTransSensor::XTransSensor() :
     ccSteps(0),
     blackred(0.0),
     blackgreen(0.0),
-    blackblue(0.0)
+    blackblue(0.0),
+    Dehablackx(false)
+
 {
 }
 
@@ -5962,7 +5964,8 @@ bool RAWParams::XTransSensor::operator ==(const XTransSensor& other) const
         && ccSteps == other.ccSteps
         && blackred == other.blackred
         && blackgreen == other.blackgreen
-        && blackblue == other.blackblue;
+        && blackblue == other.blackblue
+        && Dehablackx == other.Dehablackx;
 }
 
 bool RAWParams::XTransSensor::operator !=(const XTransSensor& other) const
@@ -8109,6 +8112,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.exBlackRed, "RAW X-Trans", "PreBlackRed", raw.xtranssensor.blackred, keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.exBlackGreen, "RAW X-Trans", "PreBlackGreen", raw.xtranssensor.blackgreen, keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.exBlackBlue, "RAW X-Trans", "PreBlackBlue", raw.xtranssensor.blackblue, keyFile);
+        saveToKeyfile(!pedited || pedited->raw.xtranssensor.Dehablackx, "RAW X-Trans", "Dehablackx", raw.xtranssensor.Dehablackx, keyFile);
 
 // Raw exposition
         saveToKeyfile(!pedited || pedited->raw.exPos, "RAW", "PreExposure", raw.expos, keyFile);
@@ -11177,6 +11181,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "RAW X-Trans", "PreBlackRed", raw.xtranssensor.blackred, pedited->raw.xtranssensor.exBlackRed);
             assignFromKeyfile(keyFile, "RAW X-Trans", "PreBlackGreen", raw.xtranssensor.blackgreen, pedited->raw.xtranssensor.exBlackGreen);
             assignFromKeyfile(keyFile, "RAW X-Trans", "PreBlackBlue", raw.xtranssensor.blackblue, pedited->raw.xtranssensor.exBlackBlue);
+            assignFromKeyfile(keyFile, "RAW X-Trans", "Dehablackx", raw.xtranssensor.Dehablackx, pedited->raw.xtranssensor.Dehablackx);
         }
 
         if (keyFile.has_group("Film Negative")) {

@@ -1570,6 +1570,7 @@ struct RAWParamsEdited {
         bool exBlackRed;
         bool exBlackGreen;
         bool exBlackBlue;
+        bool Dehablackx;
 
         bool isUnchanged() const;
     };
