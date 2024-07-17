@@ -32,7 +32,7 @@ const Glib::ustring XTransRAWExposure::TOOL_NAME = "xtransrawexposure";
 XTransRAWExposure::XTransRAWExposure () : FoldableToolPanel(this, TOOL_NAME, M("TP_EXPOS_BLACKPOINT_LABEL"))
 {
     auto m = ProcEventMapper::getInstance();
-    EvDehablackx = m->newEvent(DARKFRAME, "HISTORY_MSG_DEHABLACK");
+    EvDehablackx = m->newEvent(DARKFRAME, "HISTORY_MSG_DEHABLACKX");
     
     PexBlackRed = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACK_RED"), -2048, 2048, 1.0, 0)); //black level
     PexBlackRed->setAdjusterListener (this);
@@ -107,6 +107,32 @@ XTransRAWExposure::~XTransRAWExposure()
 
 void XTransRAWExposure::autoBlackxChanged (double reddeha, double greendeha, double bluedeha)
 {
+    idle_register.add(
+        [this, reddeha, greendeha, bluedeha]() -> bool
+        {
+            if (reddeha != PexBlackRed->getValue()) {
+                disableListener();
+                PexBlackRed->setValue(reddeha);
+                enableListener();
+                adjusterChanged(PexBlackRed, 0.);
+            }
+            if (greendeha != PexBlackGreen->getValue()) {
+                disableListener();
+                PexBlackGreen->setValue(greendeha);
+                enableListener();
+                adjusterChanged(PexBlackGreen, 0.);
+            }
+            if (bluedeha != PexBlackBlue->getValue()) {
+                disableListener();
+                PexBlackBlue->setValue(bluedeha);
+                enableListener();
+                adjusterChanged(PexBlackBlue, 0.);
+            }
+
+            return false;
+        }
+    );
+    
 }
 
 void XTransRAWExposure::adjusterChanged(Adjuster* a, double newval)

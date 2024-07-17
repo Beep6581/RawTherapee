@@ -385,21 +385,25 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         }
 
         // raw auto CA is bypassed if no high detail is needed, so we have to compute it when high detail is needed
-        float reddeha = 0.f;
+        float reddeha = 0.f;//initialize black red, blue, green for dehaze
         float greendeha = 0.f;
         float bluedeha = 0.f;
-        if ((todo & M_PREPROC)|| (!computeblack && rp.bayersensor.Dehablack) || (!highDetailPreprocessComputed && highDetailNeeded)) {
+
+        if ((todo & M_PREPROC)|| (!computeblack) || (!highDetailPreprocessComputed && highDetailNeeded)) {
             imgsrc->setCurrentFrame(params->raw.bayersensor.imageNum);
             imgsrc->preprocess(rp, params->lensProf, params->coarse, reddeha, greendeha, bluedeha, true);
-            if(imgsrc->getSensorType() == ST_BAYER) {
+            if(imgsrc->getSensorType() == ST_BAYER) {//Bayer
                 if (ablListener) {
                     if(rp.bayersensor.Dehablack) {
                         ablListener->autoBlackChanged(reddeha, greendeha, bluedeha);
-                    } else {
-                    //  ablListener->autoBlackChanged(0.f, 0.f, 0.f);
                     }
                 }
-            } else if(imgsrc->getSensorType() == ST_FUJI_XTRANS) {
+            } else if(imgsrc->getSensorType() == ST_FUJI_XTRANS) {//X trans
+                if (ablxListener) {
+                    if(rp.xtranssensor.Dehablackx) {
+                        ablxListener->autoBlackxChanged(reddeha, greendeha, bluedeha);
+                    }
+                }
             }
             computeblack = true;
             if (flatFieldAutoClipListener && rp.ff_AutoClipControl) {

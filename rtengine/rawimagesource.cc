@@ -2665,14 +2665,19 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, con
                 }
             }
         }
+/*
+    Copyright (c) Ingo Weyrich  2020 (heckflosse67@gmx.de)
+*/
+        
         if (ri->getSensorType() == ST_BAYER) {
             getMinValsBayer(ri->zeroIsBad());
         } else {
             getMinValsXtrans();
         }
-        std::cout << "red B : " << minVals[0] << std::endl;
-        std::cout << "green B : " << minVals[1] << std::endl;
-        std::cout << "blue B: " << minVals[2] << std::endl;
+        std::cout << "red Black : " << minVals[0] << std::endl;
+        std::cout << "green Black : " << minVals[1] << std::endl;
+        std::cout << "blue Black: " << minVals[2] << std::endl;
+        //
         reddeha = minVals[0];
         greendeha = minVals[1]; 
         bluedeha = minVals[2];
@@ -8344,7 +8349,9 @@ void RawImageSource::getRawValues(int x, int y, int rotate, int &R, int &G, int 
         B = 0;
     }
 }
-
+/*
+    Copyright (c) Ingo Weyrich  2020 (heckflosse67@gmx.de)
+*/
 void RawImageSource::getMinValsXtrans() {
 #ifdef _OPENMP
     #pragma omp parallel for reduction (min:minVals)
@@ -8427,6 +8434,9 @@ void RawImageSource::applyDngGainMap(const float black[4], const std::vector<Gai
         }
     }
 }
+/*
+    Copyright (c) Ingo Weyrich  2020 (heckflosse67@gmx.de)
+*/
 void RawImageSource::getMinValsBayer(bool zeroIsBad) {
 BENCHFUN
     if (!zeroIsBad) {
