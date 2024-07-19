@@ -565,6 +565,8 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
 
         meta.getDimensions(w_, h_);
 
+        isDNG = find_exif_tag("Exif.Image.DNGVersion");
+
         // -----------------------
         // Special file type detection (HDR, PixelShift)
         // ------------------------
@@ -776,6 +778,11 @@ bool FramesData::getPixelShift() const
 bool FramesData::getHDR() const
 {
     return isHDR;
+}
+
+bool FramesData::getDNG() const
+{
+    return isDNG;
 }
 
 std::string FramesData::getImageType() const

@@ -44,6 +44,7 @@
 #include "rt_math.h"
 #include "rtengine.h"
 #include "rtlensfun.h"
+#include "lensmetadata.h"
 #include "../rtgui/options.h"
 
 #define BENCHMARK
@@ -1583,7 +1584,13 @@ void RawImageSource::preprocess(const RAWParams &raw, const LensProfParams &lens
     if (!hasFlatField && lensProf.useVign && lensProf.lcMode != LensProfParams::LcMode::NONE) {
         std::unique_ptr<LensCorrection> pmap;
 
-        if (lensProf.useLensfun()) {
+        if (lensProf.useMetadata()) {
+            auto corr = MetadataLensCorrectionFinder::findCorrection(idata);
+            if (corr) {
+                corr->initCorrections(W, H, coarse, -1);
+                pmap = std::move(corr);
+            }
+        } else if (lensProf.useLensfun()) {
             pmap = LFDatabase::getInstance()->findModifier(lensProf, idata, W, H, coarse, -1);
         } else {
             const std::shared_ptr<LCPProfile> pLCPProf = LCPStore::getInstance()->getProfile(lensProf.lcpFile);

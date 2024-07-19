@@ -59,6 +59,7 @@ CacheImageData::CacheImageData() :
     iso(0),
     rating(0),
     isHDR (false),
+    isDNG (false),
     isPixelShift (false),
     sensortype(rtengine::ST_NONE),
     sampleFormat(rtengine::IIOSF_UNKNOWN),
@@ -194,6 +195,10 @@ int CacheImageData::load (const Glib::ustring& fname)
                         isHDR = keyFile.get_boolean ("ExifInfo", "IsHDR");
                     }
 
+                    if (keyFile.has_key ("ExifInfo", "IsDNG")) {
+                        isDNG = keyFile.get_boolean ("ExifInfo", "IsDNG");
+                    }
+
                     if (keyFile.has_key ("ExifInfo", "IsPixelShift")) {
                         isPixelShift = keyFile.get_boolean ("ExifInfo", "IsPixelShift");
                     }
@@ -316,6 +321,7 @@ int CacheImageData::save (const Glib::ustring& fname)
         keyFile.set_double  ("ExifInfo", "FocusDist", focusDist);
         keyFile.set_integer ("ExifInfo", "ISO", iso);
         keyFile.set_boolean ("ExifInfo", "IsHDR", isHDR);
+        keyFile.set_boolean ("ExifInfo", "IsDNG", isDNG);
         keyFile.set_boolean ("ExifInfo", "IsPixelShift", isPixelShift);
         keyFile.set_string  ("ExifInfo", "ExpComp", expcomp);
     }
