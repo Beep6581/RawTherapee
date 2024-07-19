@@ -938,7 +938,7 @@ BENCHFUN
 #endif
 
         for(int i = winy + border - offsY; i < winh - (border + offsY); ++i) {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
             // pow() is expensive => pre calculate blend factor using SSE
             if(smoothTransitions) { //
@@ -969,7 +969,7 @@ BENCHFUN
             for(int j = winx + border - offsX; j < winw - (border + offsX); ++j, offset ^= 1) {
                 if(showOnlyMask) {
                     if(smoothTransitions) { // we want only motion mask => paint areas according to their motion (dark = no motion, bright = motion)
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                         // use pre calculated blend factor
                         const float blend = psMask[i][j];
 #else
@@ -983,7 +983,7 @@ BENCHFUN
                     paintMotionMask(j + offsX, showMotion, greenDest, redDest, blueDest);
                 } else {
                     if(smoothTransitions) {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                         // use pre calculated blend factor
                         const float blend = psMask[i][j];
 #else

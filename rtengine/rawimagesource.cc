@@ -2052,7 +2052,7 @@ void RawImageSource::retinexPrepareBuffers(const ColorManagementParams& cmp, con
                 lhist16RETIThr.clear();
             }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
             vfloat c32768 = F2V(32768.f);
 #endif
 #ifdef _OPENMP
@@ -2062,7 +2062,7 @@ void RawImageSource::retinexPrepareBuffers(const ColorManagementParams& cmp, con
             for (int i = border; i < H - border; i++)
             {
                 int j = border;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
                 for (; j < W - border - 3; j += 4) {
                     vfloat H, S, L;
@@ -2364,7 +2364,7 @@ void RawImageSource::retinex(const ColorManagementParams& cmp, const RetinexPara
 
         for (int i = border; i < H - border; i++) {
             int j = border;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
             vfloat c32768 = F2V(32768.f);
 
             for (; j < W - border - 3; j += 4) {
@@ -2397,7 +2397,7 @@ void RawImageSource::retinex(const ColorManagementParams& cmp, const RetinexPara
         #pragma omp parallel
 #endif
         {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
             // we need some line buffers to precalculate some expensive stuff using SSE
             float atan2Buffer[W] ALIGNED16;
             float sqrtBuffer[W] ALIGNED16;
@@ -2411,7 +2411,7 @@ void RawImageSource::retinex(const ColorManagementParams& cmp, const RetinexPara
 #endif
 
             for (int i = border; i < H - border; i++) {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                 // vectorized precalculation
                 {
                     int j = border;
@@ -2453,7 +2453,7 @@ void RawImageSource::retinex(const ColorManagementParams& cmp, const RetinexPara
 
                 for (int j = border; j < W - border; j++) {
                     float Lprov1 = (LBuffer[i - border][j - border]) / 327.68f;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                     float Chprov1 = sqrtBuffer[j - border];
                     float  HH = atan2Buffer[j - border];
                     float2 sincosval;
@@ -2495,7 +2495,7 @@ void RawImageSource::retinex(const ColorManagementParams& cmp, const RetinexPara
             }
         }
         //end gamut control
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         vfloat wipv[3][3];
 
         for (int i = 0; i < 3; i++)
@@ -2510,7 +2510,7 @@ void RawImageSource::retinex(const ColorManagementParams& cmp, const RetinexPara
 
         for (int i = border; i < H - border; i++) {
             int j = border;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
             for (; j < W - border - 3; j += 4) {
                 vfloat x_, y_, z_;
@@ -2944,7 +2944,7 @@ void RawImageSource::processFalseColorCorrectionThread(Imagefloat* im, array2D<f
     const int W = im->getWidth();
     constexpr float onebynine = 1.f / 9.f;
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     vfloat buffer[12];
     vfloat* pre1 = &buffer[0];
     vfloat* pre2 = &buffer[3];
@@ -2976,7 +2976,7 @@ void RawImageSource::processFalseColorCorrectionThread(Imagefloat* im, array2D<f
 
         convert_row_to_YIQ(im->r(i + 1), im->g(i + 1), im->b(i + 1), rbconv_Y[nx], rbconv_I[nx], rbconv_Q[nx], W);
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         pre1[0] = _mm_setr_ps(rbconv_I[px][0], rbconv_Q[px][0], 0, 0), pre1[1] = _mm_setr_ps(rbconv_I[cx][0], rbconv_Q[cx][0], 0, 0), pre1[2] = _mm_setr_ps(rbconv_I[nx][0], rbconv_Q[nx][0], 0, 0);
         pre2[0] = _mm_setr_ps(rbconv_I[px][1], rbconv_Q[px][1], 0, 0), pre2[1] = _mm_setr_ps(rbconv_I[cx][1], rbconv_Q[cx][1], 0, 0), pre2[2] = _mm_setr_ps(rbconv_I[nx][1], rbconv_Q[nx][1], 0, 0);
 

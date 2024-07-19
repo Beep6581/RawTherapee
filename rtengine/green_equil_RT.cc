@@ -104,7 +104,7 @@ void RawImageSource::green_equilibrate(const GreenEqulibrateThreshold &thresh, a
 
     for (int i = 0; i < height; ++i) {
         int j = (FC(i, 0) & 1) ^ 1;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
         for (; j < width - 7; j += 8) {
             STVFU(cfa[i][j >> 1], LC2VFU(rawData[i][j]));
@@ -132,7 +132,7 @@ void RawImageSource::green_equilibrate(const GreenEqulibrateThreshold &thresh, a
     #pragma omp parallel
 #endif
     {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         vfloat zd5v = F2V(0.5f);
         vfloat onev = F2V(1.f);
         // vfloat threshv = F2V(thresh);
@@ -145,7 +145,7 @@ void RawImageSource::green_equilibrate(const GreenEqulibrateThreshold &thresh, a
 
         for (int rr = 4; rr < height - 4; rr++) {
             int cc = 5 - (FC(rr, 2) & 1);
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
             for (; cc < width - 12; cc += 8) {
                 //neighbour checking code from Manuel Llorens Garcia

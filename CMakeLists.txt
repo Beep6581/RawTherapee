@@ -227,6 +227,7 @@ option(WITH_SAN "Build with run-time sanitizer" OFF)
 option(WITH_PROF "Build with profiling instrumentation" OFF)
 option(WITH_SYSTEM_KLT "Build using system KLT library." OFF)
 option(OPTION_OMP "Build with OpenMP support" ON)
+option(WITH_SIMDE "Build with SIMD Everywhere support" OFF)
 option(
     STRICT_MUTEX
     "True (recommended): MyMutex will behave like POSIX Mutex; False: MyMutex will behave like POSIX RecMutex; Note: forced to ON for Debug builds"
@@ -905,6 +906,12 @@ else()
     set(TCMALLOC_LIBRARIES
         ""
         CACHE INTERNAL "" FORCE)
+endif()
+
+if(WITH_SIMDE)
+        pkg_check_modules(SIMDE REQUIRED simde)
+        add_compile_definitions(RT_SIMDE)
+        add_compile_definitions(SIMDE_ENABLE_NATIVE_ALIASES)
 endif()
 
 add_subdirectory(rtengine)

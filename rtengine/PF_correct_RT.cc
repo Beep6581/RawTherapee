@@ -78,7 +78,7 @@ void ImProcFunctions::PF_correct_RT(LabImage * lab, double radius, int thresh)
 #endif
 
         for (int i = 0; i < height; i++) {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
             // vectorized per row precalculation of the atan2 values
             if (chCurve) {
@@ -98,7 +98,7 @@ void ImProcFunctions::PF_correct_RT(LabImage * lab, double radius, int thresh)
             for (int j = 0; j < width; j++) {
                 float chromaChfactor = 1.f;
                 if (chCurve) {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                     // use the precalculated atan values
                     const float HH = fringe[i * width + j];
 #else
@@ -238,7 +238,7 @@ void ImProcFunctions::PF_correct_RTcam(CieImage * ncie, double radius, int thres
     #pragma omp parallel
 #endif
     {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         const vfloat piDiv180v = F2V(RT_PI_F_180);
 #endif
 #ifdef _OPENMP
@@ -247,7 +247,7 @@ void ImProcFunctions::PF_correct_RTcam(CieImage * ncie, double radius, int thres
 
         for (int i = 0; i < height; i++) {
             int j = 0;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
             for (; j < width - 3; j += 4) {
                 const vfloat2 sincosvalv = xsincosf(piDiv180v * LVFU(ncie->h_p[i][j]));
@@ -278,7 +278,7 @@ void ImProcFunctions::PF_correct_RTcam(CieImage * ncie, double radius, int thres
 #endif
 
         for (int i = 0; i < height; i++) {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
             // vectorized per row precalculation of the atan2 values
             if (chCurve) {
                 int j = 0;
@@ -294,7 +294,7 @@ void ImProcFunctions::PF_correct_RTcam(CieImage * ncie, double radius, int thres
 
             for (int j = 0; j < width; j++) {
                 if (chCurve) {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                     // use the precalculated atan2 values
                     const float HH = fringe[i * width + j];
 #else
@@ -412,7 +412,7 @@ void ImProcFunctions::PF_correct_RTcam(CieImage * ncie, double radius, int thres
 #endif
     for(int i = 0; i < height; i++) {
         int j = 0;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
         for (; j < width - 3; j += 4) {
             const vfloat interav = LVFU(tmaa[i][j]);
@@ -460,7 +460,7 @@ void ImProcFunctions::Badpixelscam(CieImage * ncie, double radius, int thresh, i
             //luma sh_p
             gaussianBlur(ncie->sh_p, tmL, width, height, radius / 2.0); // low value to avoid artifacts
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
             const vfloat shthrv = F2V(shthr);
 #endif
 #ifdef _OPENMP
@@ -482,7 +482,7 @@ void ImProcFunctions::Badpixelscam(CieImage * ncie, double radius, int thresh, i
                     badpixb[i * width + j] = shfabs > ((shmed - shfabs) * shthr);
                 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
                 for (; j < width - 5; j += 4) {
                     const vfloat shfabsv = vabsf(LVFU(ncie->sh_p[i][j]) - LVFU(tmL[i][j]));
@@ -629,7 +629,7 @@ void ImProcFunctions::Badpixelscam(CieImage * ncie, double radius, int thresh, i
 #endif
         {
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
             const vfloat piDiv180v = F2V(RT_PI_F_180);
 #endif
 #ifdef _OPENMP
@@ -638,7 +638,7 @@ void ImProcFunctions::Badpixelscam(CieImage * ncie, double radius, int thresh, i
 
             for (int i = 0; i < height; i++) {
                 int j = 0;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
                 for (; j < width - 3; j += 4) {
                     const vfloat2 sincosvalv = xsincosf(piDiv180v * LVFU(ncie->h_p[i][j]));
@@ -730,7 +730,7 @@ void ImProcFunctions::Badpixelscam(CieImage * ncie, double radius, int thresh, i
             #pragma omp parallel
 #endif
             {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                 const vfloat chrommedv = F2V(chrommedf);
                 const vfloat onev = F2V(1.f);
 #endif
@@ -740,7 +740,7 @@ void ImProcFunctions::Badpixelscam(CieImage * ncie, double radius, int thresh, i
 
                 for (int i = 0; i < height; i++) {
                     int j = 0;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                     for (; j < width - 3; j += 4) {
                         STVFU(badpix[i * width + j], onev / (LVFU(badpix[i * width + j]) + chrommedv));
                     }
@@ -780,7 +780,7 @@ void ImProcFunctions::Badpixelscam(CieImage * ncie, double radius, int thresh, i
                         }
                     }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                     const vfloat threshfactorv = F2V(threshfactor);
                     const vfloat chromv = F2V(chrom);
                     const vfloat piDiv180v = F2V(RT_PI_F_180);
@@ -898,7 +898,7 @@ void ImProcFunctions::BadpixelsLab(LabImage * lab, double radius, int thresh, fl
             // blur L channel
             gaussianBlur(lab->L, tmL, width, height, radius / 2.0); // low value to avoid artifacts
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
             const vfloat shthrv = F2V(shthr);
 #endif
 #ifdef _OPENMP
@@ -919,7 +919,7 @@ void ImProcFunctions::BadpixelsLab(LabImage * lab, double radius, int thresh, fl
                     badpixb[i * width + j] = shfabs > ((shmed - shfabs) * shthr);
                 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
                 for (; j < width - 5; j += 4) {
                     const vfloat shfabsv = vabsf(LVFU(lab->L[i][j]) - LVFU(tmL[i][j]));
@@ -1076,7 +1076,7 @@ void ImProcFunctions::BadpixelsLab(LabImage * lab, double radius, int thresh, fl
         #pragma omp parallel
 #endif
         {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
             const vfloat chrommedv = F2V(chrommedf);
             const vfloat onev = F2V(1.f);
 #endif
@@ -1086,7 +1086,7 @@ void ImProcFunctions::BadpixelsLab(LabImage * lab, double radius, int thresh, fl
 
             for (int i = 0; i < height; i++) {
                 int j = 0;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                 for (; j < width - 3; j += 4) {
                     STVFU(badpix[i * width + j], onev / (LVFU(badpix[i * width + j]) + chrommedv));
                 }
@@ -1127,7 +1127,7 @@ void ImProcFunctions::BadpixelsLab(LabImage * lab, double radius, int thresh, fl
                 }
             }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
             const vfloat chromv = F2V(chrom);
             const vfloat threshfactorv = F2V(threshfactor);
             for (; j < width - halfwin - 3; j += 4) {

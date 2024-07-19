@@ -64,7 +64,7 @@ using namespace rtengine;
 void shadowToneCurve(const LUTf &shtonecurve, float *rtemp, float *gtemp, float *btemp, int istart, int tH, int jstart, int tW, int tileSize)
 {
 
-#if defined( __SSE2__ ) && defined( __x86_64__ )
+#if (defined( __SSE2__ ) && defined( __x86_64__ )) || defined(RT_SIMDE)
     vfloat cr = F2V(0.299f);
     vfloat cg = F2V(0.587f);
     vfloat cb = F2V(0.114f);
@@ -72,7 +72,7 @@ void shadowToneCurve(const LUTf &shtonecurve, float *rtemp, float *gtemp, float 
 
     for (int i = istart, ti = 0; i < tH; i++, ti++) {
         int j = jstart, tj = 0;
-#if defined( __SSE2__ ) && defined( __x86_64__ )
+#if (defined( __SSE2__ ) && defined( __x86_64__ )) || defined(RT_SIMDE)
 
         for (; j < tW - 3; j += 4, tj += 4) {
 
@@ -109,14 +109,14 @@ void shadowToneCurve(const LUTf &shtonecurve, float *rtemp, float *gtemp, float 
 void highlightToneCurve(const LUTf &hltonecurve, float *rtemp, float *gtemp, float *btemp, int istart, int tH, int jstart, int tW, int tileSize, float exp_scale, float comp, float hlrange)
 {
 
-#if defined( __SSE2__ ) && defined( __x86_64__ )
+#if (defined( __SSE2__ ) && defined( __x86_64__ )) || defined(RT_SIMDE)
     vfloat threev = F2V(3.f);
     vfloat maxvalfv = F2V(MAXVALF);
 #endif
 
     for (int i = istart, ti = 0; i < tH; i++, ti++) {
         int j = jstart, tj = 0;
-#if defined( __SSE2__ ) && defined( __x86_64__ )
+#if (defined( __SSE2__ ) && defined( __x86_64__ )) || defined(RT_SIMDE)
 
         for (; j < tW - 3; j += 4, tj += 4) {
 
@@ -178,7 +178,7 @@ void proPhotoBlue(float *rtemp, float *gtemp, float *btemp, int istart, int tH, 
     // this is a hack to avoid the blue=>black bug (Issue 2141)
     for (int i = istart, ti = 0; i < tH; i++, ti++) {
         int j = jstart, tj = 0;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
         for (; j < tW - 3; j += 4, tj += 4) {
             vfloat rv = LVF(rtemp[ti * tileSize + tj]);
@@ -982,7 +982,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
         const float pow1 = pow_F(1.64f - pow_F(0.29f, n), 0.73f);
         float nj, nbbj, ncbj, czj, awj, flj;
         Ciecam02::initcam2float(yb2, pilotout, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj, czj, awj, flj, c16, plum);
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         const float reccmcz = 1.f / (c2 * czj);
 #endif
         const float pow1n = pow_F(1.64f - pow_F(0.29f, nj), 0.73f);
@@ -1032,7 +1032,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
             { (float)wiprof[2][0], (float)wiprof[2][1], (float)wiprof[2][2]}
         };
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         int bufferLength = ((width + 3) / 4) * 4; // bufferLength has to be a multiple of 4
 #endif
 #ifdef _OPENMP
@@ -1041,7 +1041,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
         {
             float minQThr = 10000.f;
             float maxQThr = -1000.f;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
             // one line buffer per channel and thread
             float Jbuffer[bufferLength] ALIGNED16;
             float Cbuffer[bufferLength] ALIGNED16;
@@ -1055,7 +1055,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
 #endif
 
             for (int i = 0; i < height; i++) {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                 // vectorized conversion from Lab to jchqms
                 int k;
                 vfloat x, y, z;
@@ -1112,7 +1112,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                 for (int j = 0; j < width; j++) {
                     float J, C, h, Q, M, s;
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                     // use precomputed values from above
                     J = Jbuffer[j];
                     C = Cbuffer[j];
@@ -1466,7 +1466,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                         }
 
                         if (LabPassOne) {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                             // write to line buffers
                             Jbuffer[j] = J;
                             Cbuffer[j] = C;
@@ -1506,7 +1506,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                     }
                 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                 // process line buffers
                 float *xbuffer = Qbuffer;
                 float *ybuffer = Mbuffer;
@@ -1704,7 +1704,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
             #pragma omp parallel
 #endif
             {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                 // one line buffer per channel
                 float Jbuffer[bufferLength] ALIGNED16;
                 float Cbuffer[bufferLength] ALIGNED16;
@@ -1765,7 +1765,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
 
                         //end histograms
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                         Jbuffer[j] = ncie->J_p[i][j];
                         Cbuffer[j] = ncie_C_p;
                         hbuffer[j] = ncie->h_p[i][j];
@@ -1812,7 +1812,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
 #endif
                     }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                     // process line buffers
                     int k;
                     vfloat x, y, z;
@@ -2101,7 +2101,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
     std::shared_ptr<HaldCLUT> hald_clut;
     bool clutAndWorkingProfilesAreSame = false;
     TMatrix xyz2clut = {}, clut2xyz = {};
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     vfloat v_work2xyz[3][3] ALIGNED16;
     vfloat v_xyz2clut[3][3] ALIGNED16;
     vfloat v_clut2xyz[3][3] ALIGNED16;
@@ -2118,7 +2118,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                 xyz2clut = ICCStore::getInstance()->workingSpaceInverseMatrix(hald_clut->getProfile());
                 clut2xyz = ICCStore::getInstance()->workingSpaceMatrix(hald_clut->getProfile());
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
                 for (int i = 0; i < 3; ++i) {
                     for (int j = 0; j < 3; ++j) {
@@ -2463,7 +2463,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                 } else {
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
                         int j = jstart, tj = 0;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                         float tmpr[4] ALIGNED16;
                         float tmpg[4] ALIGNED16;
                         float tmpb[4] ALIGNED16;
@@ -2945,7 +2945,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
 
                                 // --------------------------------------------------
 
-#ifndef __SSE2__
+#if ! defined(__SSE2__) && ! defined(RT_SIMDE)
 
                                 //gamma correction: pseudo TRC curve
                                 if (hasgammabw) {
@@ -2958,7 +2958,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                                 btemp[ti * TS + tj] = b;
                             }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
                             if (hasgammabw) {
                                 //gamma correction: pseudo TRC curve
@@ -3016,7 +3016,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                                 float newRed; // We use the red channel for bw
                                 Color::xyz2r(X, Y, Z, newRed, wip);
                                 rtemp[ti * TS + tj] = gtemp[ti * TS + tj] = btemp[ti * TS + tj] = newRed;
-#ifndef __SSE2__
+#if ! defined(__SSE2__) && ! defined(RT_SIMDE)
 
                                 if (hasgammabw) {
                                     //gamma correction: pseudo TRC curve
@@ -3026,7 +3026,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
 #endif
                             }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
                             if (hasgammabw) {
                                 //gamma correction: pseudo TRC curve
@@ -3048,7 +3048,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                             int j = jstart;
                             int tj = 0;
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
                             for (; j < tW - 3; j += 4, tj += 4) {
                                 vfloat sourceR = LVF(rtemp[ti * TS + tj]);
@@ -3119,7 +3119,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                             int j = jstart;
                             int tj = 0;
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
                             for (; j < tW - 3; j += 4, tj += 4) {
                                 vfloat sourceR = LVF(clutr[tj]);
@@ -3285,7 +3285,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
                     //mix channel
                     tmpImage->r(i, j) = tmpImage->g(i, j) = tmpImage->b(i, j) = /*CLIP*/ ((bwr * tmpImage->r(i, j) + bwg * tmpImage->g(i, j) + bwb * tmpImage->b(i, j)) * kcorec);
 
-#ifndef __SSE2__
+#if ! defined(__SSE2__) && ! defined(RT_SIMDE)
 
                     //gamma correction: pseudo TRC curve
                     if (hasgammabw) {
@@ -3295,7 +3295,7 @@ void ImProcFunctions::rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer 
 #endif
                 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
                 if (hasgammabw) {
                     //gamma correction: pseudo TRC curve
@@ -4332,7 +4332,7 @@ void ImProcFunctions::chromiLuminanceCurve(PipetteBuffer *pipetteBuffer, int pW,
     #pragma omp parallel if (multiThread)
 #endif
     {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         float HHBuffer[W] ALIGNED16;
         float CCBuffer[W] ALIGNED16;
 #endif
@@ -4348,7 +4348,7 @@ void ImProcFunctions::chromiLuminanceCurve(PipetteBuffer *pipetteBuffer, int pW,
             //       Color::LabGamutMunsell(lold->L[i], lold->a[i], lold->b[i], W, /*corMunsell*/true, /*lumaMuns*/false, params->toneCurve.hrenabled, /*gamut*/true, wip);
             //   }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
             // precalculate some values using SSE
             if (bwToning || (!autili && !butili)) {
@@ -4382,7 +4382,7 @@ void ImProcFunctions::chromiLuminanceCurve(PipetteBuffer *pipetteBuffer, int pW,
                 float2 sincosval;
 
                 if (bwToning) { // this values will be also set when bwToning is false some lines down
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                     // use precalculated values from above
                     HH = HHBuffer[j];
                     CC = CCBuffer[j];
@@ -4438,7 +4438,7 @@ void ImProcFunctions::chromiLuminanceCurve(PipetteBuffer *pipetteBuffer, int pW,
                 }
 
                 if (!bwToning) { //take into account modification of 'a' and 'b'
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                     if (!autili && !butili) {
                         // use precalculated values from above
                         HH = HHBuffer[j];
@@ -5866,7 +5866,7 @@ void ImProcFunctions::lab2rgb(const LabImage &src, Imagefloat &dst, const Glib::
 
     const int W = dst.getWidth();
     const int H = dst.getHeight();
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     vfloat wipv[3][3];
 
     for (int i = 0; i < 3; i++) {
@@ -5883,7 +5883,7 @@ void ImProcFunctions::lab2rgb(const LabImage &src, Imagefloat &dst, const Glib::
 
     for (int i = 0; i < H; i++) {
         int j = 0;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
         for (; j < W - 3; j += 4) {
             vfloat X, Y, Z;

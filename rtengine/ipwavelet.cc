@@ -913,7 +913,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                 for (int i = tiletop; i < tilebottom; i++) {
                     const int i1 = i - tiletop;
                     int j = tileleft;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                     const vfloat c327d68v = F2V(327.68f);
 
                     for (; j < tileright - 3; j += 4) {
@@ -1941,7 +1941,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                     for (int i = tiletop; i < tilebottom; i++) {
                         const int i1 = i - tiletop;
                         float L, a, b;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                         const int rowWidth = tileright - tileleft;
                         float atan2Buffer[rowWidth] ALIGNED64;
                         float chprovBuffer[rowWidth] ALIGNED64;
@@ -1987,7 +1987,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                             const int j1 = j - tileleft;
 
                             if (cp.avoi) { //Gamut and Munsell
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                                 float HH = atan2Buffer[j1];
                                 float Chprov1 = chprovBuffer[j1];
                                 float2 sincosv;
@@ -2493,7 +2493,7 @@ void ImProcFunctions::CompressDR(float *Source, int W_L, int H_L, float Compress
     exponent += 1.f;
 
     // now calculate Source = pow(Source, exponent)
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
@@ -2959,7 +2959,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
                         boxblur(WavL, aft.get(), klev, Wlvl_L, Hlvl_L, false);
 
                         int co = 0;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                         const vfloat lutFactorv = F2V(lutFactor);
                         for (; co < Hlvl_L * Wlvl_L - 3; co += 4) {
                             const vfloat valv = LVFU(WavL[co]);
@@ -2990,7 +2990,7 @@ void ImProcFunctions::WaveletAandBAllAB(wavelet_decomposition& WaveletCoeffs_a, 
         #pragma omp parallel num_threads(wavNestedLevels) if (wavNestedLevels>1)
 #endif
         {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
             float huebuffer[W_L] ALIGNED64;
             float chrbuffer[W_L] ALIGNED64;
 #endif // __SSE2__
@@ -2999,7 +2999,7 @@ void ImProcFunctions::WaveletAandBAllAB(wavelet_decomposition& WaveletCoeffs_a, 
 #endif
 
             for (int i = 0; i < H_L; i++) {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                 // precalculate hue and chr
                 int k;
 
@@ -3019,7 +3019,7 @@ void ImProcFunctions::WaveletAandBAllAB(wavelet_decomposition& WaveletCoeffs_a, 
 
                 for (int j = 0; j < W_L; j++) {
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                     float hueR = huebuffer[j];
                     float chR = chrbuffer[j];
 #else
@@ -3224,7 +3224,7 @@ void ImProcFunctions::WaveletcontAllAB(LabImage * labco, float ** varhue, float 
 
                         auto WavAb = WavCoeffs_ab[dir];
                         int co = 0;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                         const vfloat lutFactorv = F2V(lutFactor);
                         for (; co < Hlvl_ab * Wlvl_ab - 3; co += 4) {
                             const vfloat valv = LVFU(WavAb[co]);

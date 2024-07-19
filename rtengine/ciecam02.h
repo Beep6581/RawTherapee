@@ -41,7 +41,7 @@ private:
     static void xyz_to_cat02float ( float &r,  float &g,  float &b,  float x, float y, float z, int c16, float plum);
     static void cat02_to_hpefloat ( float &rh, float &gh, float &bh, float r, float g, float b, int c16);
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     static void xyz_to_cat02float ( vfloat &r,  vfloat &g,  vfloat &b,  vfloat x, vfloat y, vfloat z, int c16, vfloat plum);
     static void cat02_to_hpefloat ( vfloat &rh, vfloat &gh, vfloat &bh, vfloat r, vfloat g, vfloat b, int c16);
     static vfloat nonlinear_adaptationfloat ( vfloat c, vfloat fl );
@@ -54,7 +54,7 @@ private:
     static void Aab_to_rgbfloat ( float &r, float &g, float &b, float A, float aa, float bb, float nbb );
     static void hpe_to_xyzfloat   ( float &x,  float &y,  float &z,  float r, float g, float b, int c16);
     static void cat02_to_xyzfloat ( float &x,  float &y,  float &z,  float r, float g, float b, int c16, float plum);
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     static vfloat inverse_nonlinear_adaptationfloat ( vfloat c, vfloat fl );
     static void calculate_abfloat ( vfloat &aa, vfloat &bb, vfloat h, vfloat e, vfloat t, vfloat nbb, vfloat a );
     static void Aab_to_rgbfloat ( vfloat &r, vfloat &g, vfloat &b, vfloat A, vfloat aa, vfloat bb, vfloat nbb );
@@ -80,7 +80,7 @@ public:
                                         float J, float C, float h,
                                         float xw, float yw, float zw,
                                         float c, float nc, float n, float nbb, float ncb, float fl, float cz, float d, float aw, int c16, float plum);
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     static void jch2xyz_ciecam02float ( vfloat &x, vfloat &y, vfloat &z,
                                         vfloat J, vfloat C, vfloat h,
                                         vfloat xw, vfloat yw, vfloat zw,
@@ -107,7 +107,7 @@ public:
                                            float xw, float yw, float zw,
                                            float c, float nc, float n, float nbb, float ncb, float pfl, float cz, float d, int c16, float plum);
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     static void xyz2jchqms_ciecam02float ( vfloat &J, vfloat &C, vfloat &h,
                                            vfloat &Q, vfloat &M, vfloat &s, vfloat aw, vfloat fl, vfloat wh,
                                            vfloat x, vfloat y, vfloat z,

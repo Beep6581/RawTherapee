@@ -96,7 +96,7 @@ void logEncode(rtengine::Imagefloat *src, rtengine::Imagefloat *dest, bool multi
 
     for (int y = 0; y < src->getHeight(); ++y) {
         int x = 0;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         for (; x < src->getWidth() - 3; x += 4) {
             STVFU(dest->r(y, x), xlogf1(LVFU(src->r(y, x))));
             STVFU(dest->g(y, x), xlogf1(LVFU(src->g(y, x))));
@@ -111,7 +111,7 @@ void logEncode(rtengine::Imagefloat *src, rtengine::Imagefloat *dest, bool multi
     }
 }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 inline void interpolateTransformCubic(rtengine::Imagefloat* src, int xs, int ys, float Dx, float Dy, float &r, float &g, float &b, float mul)
 {
     constexpr float A = -0.85f;
@@ -228,7 +228,7 @@ inline void interpolateTransformCubicLog(rtengine::Imagefloat* src, int xs, int 
     b = mul * xexpf(bv[0] * w0Hor + bv[1] * w1Hor + bv[2] * w2Hor + bv[3] * w3Hor);
 }
 #endif
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 inline void interpolateTransformChannelsCubic(const float* const* src, int xs, int ys, float Dx, float Dy, float& dest, float mul)
 {
     constexpr float A = -0.85f;

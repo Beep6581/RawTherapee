@@ -119,7 +119,7 @@ int get_dark_channel(const array2D<float> &R, const array2D<float> &G, const arr
             float minR = RT_INFINITY_F;
             float minG = RT_INFINITY_F;
             float minB = RT_INFINITY_F;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
             vfloat minRv = F2V(minR);
             vfloat minGv = F2V(minG);
             vfloat minBv = F2V(minB);
@@ -128,7 +128,7 @@ int get_dark_channel(const array2D<float> &R, const array2D<float> &G, const arr
 
             for (int yy = y; yy < pH; ++yy) {
                 int xx = x;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
                 for (; xx < pW - 3; xx += 4) {
                     minRv = vminf(minRv, LVFU(R[yy][xx]));
@@ -145,7 +145,7 @@ int get_dark_channel(const array2D<float> &R, const array2D<float> &G, const arr
                 }
             }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
             minR = min(minR, vhmin(minRv));
             minG = min(minG, vhmin(minGv));
             minB = min(minB, vhmin(minBv));
@@ -388,7 +388,7 @@ void ImProcFunctions::dehaze(Imagefloat *img, const DehazeParams &dehazeParams)
 
     const float satBlend = dehazeParams.saturation / 100.f;
     const TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     const vfloat wsv[3] = {F2V(ws[1][0]), F2V(ws[1][1]),F2V(ws[1][2])};
 #endif
     const float ambientY = Color::rgbLuminance(ambient[0], ambient[1], ambient[2], ws);
@@ -398,7 +398,7 @@ void ImProcFunctions::dehaze(Imagefloat *img, const DehazeParams &dehazeParams)
 #endif
     for (int y = 0; y < H; ++y) {
         int x = 0;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         const vfloat onev = F2V(1.f);
         const vfloat ambient0v = F2V(ambient[0]);
         const vfloat ambient1v = F2V(ambient[1]);

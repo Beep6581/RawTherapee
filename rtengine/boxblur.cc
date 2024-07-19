@@ -98,7 +98,7 @@ void boxblur(float** src, float** dst, int radius, int W, int H, bool multiThrea
         }
 
         //vertical blur
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         vfloat (* const rowBuffer)[2] = (vfloat(*)[2]) buffer.get();
         const vfloat leninitv = F2V(radius + 1);
         const vfloat onev = F2V(1.f);

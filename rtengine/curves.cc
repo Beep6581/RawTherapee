@@ -514,7 +514,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 
         float scalemshoulder = scale - shoulder;
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         int i = shoulder + 1;
 
         if (i & 1) { // original formula, slower than optimized formulas below but only used once or none, so I let it as is for reference
@@ -668,7 +668,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
         }
     }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     vfloat gamma_v = F2V(gamma_);
     vfloat startv = F2V(start);
     vfloat slopev = F2V(slope);
@@ -727,7 +727,7 @@ void CurveFactory::Curvelocalhl(double ecomp, double hlcompr, double hlcomprthre
 
         float scalemshoulder = scale - shoulder;
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         int i = shoulder + 1;
 
         if (i & 1) { // original formula, slower than optimized formulas below but only used once or none, so I let it as is for reference
@@ -885,7 +885,7 @@ void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr,
 
         float scalemshoulder = scale - shoulder;
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         int i = shoulder + 1;
 
         if (i & 1) { // original formula, slower than optimized formulas below but only used once or none, so I let it as is for reference
@@ -954,7 +954,7 @@ void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr,
         dcurve[i] = Color::gammatab_bt709[i] / maxran;
     }
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     vfloat gamma_v = F2V(gamma_);
     vfloat startv = F2V(start);
     vfloat slopev = F2V(slope);

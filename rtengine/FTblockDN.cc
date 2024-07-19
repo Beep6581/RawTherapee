@@ -235,7 +235,7 @@ void do_median_denoise(float **src, float **dst, float upperBound, int width, in
                 }
 
                 case Median::TYPE_5X5_STRONG: {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
                     for (; !useUpperBound && j < width - border - 3; j += 4) {
                         STVFU(
@@ -310,7 +310,7 @@ void do_median_denoise(float **src, float **dst, float upperBound, int width, in
                 }
 
                 case Median::TYPE_7X7: {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                     std::array<vfloat, 49> vpp ALIGNED16;
 
                     for (; !useUpperBound && j < width - border - 3; j += 4) {
@@ -345,7 +345,7 @@ void do_median_denoise(float **src, float **dst, float upperBound, int width, in
                 }
 
                 case Median::TYPE_9X9: {
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                     std::array<vfloat, 81> vpp ALIGNED16;
 
                     for (; !useUpperBound && j < width - border - 3; j += 4) {
@@ -2040,7 +2040,7 @@ void ImProcFunctions::RGBtile_denoise(float* fLblox, int hblproc, float noisevar
 
     boxabsblur(fLblox + blkstart, nbrwt, 3, TS, TS, false); //blur neighbor weights for more robust estimation //for DCT
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     const vfloat noisevar_Ldetailv = F2V(-1.f / noisevar_Ldetail);
     const vfloat onev = F2V(1.f);
 
@@ -2298,7 +2298,7 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposition& Wavelet
 
 
                         float levelFactor = mad_Lr * 5.f / (lvl + 1);
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                         vfloat mad_Lv;
                         vfloat ninev = F2V(9.0f);
                         vfloat epsv = F2V(eps);
@@ -2331,7 +2331,7 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposition& Wavelet
 #endif
                         boxblur(sfave, sfaved, lvl + 2, Wlvl_L, Hlvl_L, false); //increase smoothness by locally averaging shrinkage
                  
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                         vfloat sfavev;
                         vfloat sf_Lv;
 
@@ -2498,7 +2498,7 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposition& Wavele
 
                         if (noisevarfc > 0.001f) {
 
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                             vfloat onev = F2V(1.f);
                             vfloat mad_abrv = F2V(mad_abr);
                             vfloat rmad_Lm9v = onev / F2V(mad_Lr * 9.f);
@@ -2738,7 +2738,7 @@ void ImProcFunctions::ShrinkAllL(wavelet_decomposition& WaveletCoeffs_L, float *
 
     }
     int i = 0;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     const vfloat levelFactorv = F2V(levelFactor);
     const vfloat ninev = F2V(9.f);
     const vfloat epsv = F2V(eps);
@@ -2761,7 +2761,7 @@ void ImProcFunctions::ShrinkAllL(wavelet_decomposition& WaveletCoeffs_L, float *
     boxblur(sfave, sfaved, level + 2, W_L, H_L, false); //increase smoothness by locally averaging shrinkage
 
     i = 0;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
 
     for (; i < W_L * H_L - 3; i += 4) {
         const vfloat sfv = LVFU(sfave[i]);
@@ -2839,7 +2839,7 @@ void ImProcFunctions::ShrinkAllAB(wavelet_decomposition& WaveletCoeffs_L, wavele
     if (noisevarfc > 0.001f) {//noisevar_ab
         //madab = useNoiseCCurve ? madab : madab * noisevar_ab;
         madab = useNoiseCCurve ? madab : madab * noisevarfc;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         vfloat onev = F2V(1.f);
         vfloat mad_abrv = F2V(madab);
 
@@ -2880,7 +2880,7 @@ void ImProcFunctions::ShrinkAllAB(wavelet_decomposition& WaveletCoeffs_L, wavele
         boxblur(sfaveab, sfaveabd, level + 2, W_ab, H_ab, false); //increase smoothness by locally averaging shrinkage
 
 //        boxblur(sfaveab, sfaveabd, blurBuffer, level + 2, level + 2, W_ab, H_ab); //increase smoothness by locally averaging shrinkage
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         vfloat epsv = F2V(eps);
         vfloat sfabv;
         vfloat sfaveabv;
@@ -3393,7 +3393,7 @@ void ImProcFunctions::RGB_denoise_info(Imagefloat * src, Imagefloat * provicalc,
 
                 for (int i = tiletop; i < tilebottom; i += 2) {
                     int i1 = i - tiletop;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
                     vfloat aNv, bNv;
                     vfloat c100v = F2V(100.f);
                     int j;

@@ -346,7 +346,7 @@ void Imagefloat::multiply(float factor, bool multithread)
 {
     const int W = width;
     const int H = height;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
     vfloat vfactor = F2V(factor);
 #endif
 
@@ -355,7 +355,7 @@ void Imagefloat::multiply(float factor, bool multithread)
 #endif
     for (int y = 0; y < H; y++) {
         int x = 0;
-#ifdef __SSE2__
+#if defined(__SSE2__) || defined(RT_SIMDE)
         for (; x < W-3; x += 4) {
             vfloat rv = LVF(r(y, x));
             vfloat gv = LVF(g(y, x));
