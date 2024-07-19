@@ -130,6 +130,7 @@ class ImProcFunctions
     bool needsGradient() const;
     bool needsVignetting() const;
     bool needsLCP() const;
+    bool needsMetadata() const;
     bool needsLensfun() const;
 //   static cmsUInt8Number* Mempro = NULL;
 
@@ -155,7 +156,7 @@ enum class BlurType {
     ~ImProcFunctions();
     bool needsLuminanceOnly() const
     {
-        return !(needsCA() || needsDistortion() || needsRotation() || needsPerspective() || needsLCP() || needsLensfun()) && (needsVignetting() || needsPCVignetting() || needsGradient());
+        return !(needsCA() || needsDistortion() || needsRotation() || needsPerspective() || needsLCP() || needsLensfun() || needsMetadata()) && (needsVignetting() || needsPCVignetting() || needsGradient());
     }
     void setScale(double iscale);
 

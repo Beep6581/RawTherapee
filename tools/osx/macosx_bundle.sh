@@ -220,6 +220,9 @@ ModifyInstallNames 2>&1
 # Copy libpng16 to the app bundle
 cp ${LOCAL_PREFIX}/lib/libpng16.16.dylib "${CONTENTS}/Frameworks/libpng16.16.dylib"
 
+# Copy libjxl_cms to the app bundle
+cp ${LOCAL_PREFIX}/lib/libjxl_cms.0.10.dylib "${CONTENTS}/Frameworks/libjxl_cms.0.10.dylib"
+
 # Copy graphite to Frameworks
 cp ${LOCAL_PREFIX}/lib/libgraphite2.3.dylib "${CONTENTS}/Frameworks"
 

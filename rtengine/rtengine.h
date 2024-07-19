@@ -132,6 +132,8 @@ public:
     virtual bool getPixelShift () const = 0;
     /** @return false: not an HDR file ; true: single or multi-frame HDR file (e.g. Pentax HDR raw file or 32 bit float DNG file or Log compressed) */
     virtual bool getHDR() const = 0;
+    /** @return true if the file is a DNG file */
+    virtual bool getDNG() const = 0;
 
     /** @return false: not an HDR file ; true: single or multi-frame HDR file (e.g. Pentax HDR raw file or 32 bit float DNG file or Log compressed) */
     virtual std::string getImageType() const = 0;

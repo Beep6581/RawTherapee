@@ -325,6 +325,8 @@ public:
     void observer10Toggled ();
 
     void selectStartupDir ();
+    void extensionsChanged ();
+    void extensionChanged ();
     void addExtPressed ();
     void delExtPressed ();
     void moveExtUpPressed ();

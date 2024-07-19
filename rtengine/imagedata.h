@@ -60,6 +60,7 @@ private:
     time_t modTimeStamp;
     bool isPixelShift;
     bool isHDR;
+    bool isDNG;
     std::uint32_t fixBadPixelsConstant;
     bool hasFixBadPixelsConstant_{false};
     std::vector<GainMap> gain_maps_;
@@ -73,6 +74,7 @@ public:
     unsigned int getFrameCount() const override;
     bool getPixelShift() const override;
     bool getHDR() const override;
+    bool getDNG() const override;
     std::string getImageType() const override;
     IIOSampleFormat getSampleFormat() const override;
     bool hasExif() const override;
