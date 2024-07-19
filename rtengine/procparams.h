@@ -969,7 +969,8 @@ struct LensProfParams {
         NONE,               // No lens correction
         LENSFUNAUTOMATCH,   // Lens correction using auto matched lensfun database entry
         LENSFUNMANUAL,      // Lens correction using manually selected lensfun database entry
-        LCP                 // Lens correction using lcp file
+        LCP,                // Lens correction using lcp file
+        METADATA    // Lens correction using embedded metadata
     };
 
     LcMode lcMode;
@@ -988,6 +989,7 @@ struct LensProfParams {
     bool lfAutoMatch() const;
     bool useLcp() const;
     bool lfManual() const;
+    bool useMetadata() const;
 
     const std::vector<const char*>& getMethodStrings() const;
     Glib::ustring getMethodString(LcMode mode) const;
@@ -1126,6 +1128,7 @@ struct LocallabParams {
         double strcolab;
         double strcolh;
         double angcol;
+        double feathercol;
         int blurcolde;
         double blurcol;
         double contcol;
@@ -1188,6 +1191,7 @@ struct LocallabParams {
         double gamex;
         double strexp;
         double angexp;
+        double featherexp;
         std::vector<double> excurve;
         bool norm;
         bool inversex;
@@ -1243,6 +1247,7 @@ struct LocallabParams {
         int blurSHde;
         double strSH;
         double angSH;
+        double featherSH;
         bool inverssh;
         double chromaskSH;
         double gammaskSH;
@@ -1288,6 +1293,7 @@ struct LocallabParams {
         double strvibab;
         double strvibh;
         double angvib;
+        double feathervib;
         std::vector<double> Lmaskvibcurve;
         double recothresv;
         double lowthresv;
@@ -1504,6 +1510,7 @@ struct LocallabParams {
         double sigmalc2;
         double strwav;
         double angwav;
+        double featherwav;
         double strengthw;
         double sigmaed;
         double radiusw;
@@ -1610,6 +1617,7 @@ struct LocallabParams {
         double baselog;
         double strlog;
         double anglog;
+        double featherlog;
         std::vector<double> CCmaskcurveL;
         std::vector<double> LLmaskcurveL;
         std::vector<double> HHmaskcurveL;
@@ -1648,6 +1656,7 @@ struct LocallabParams {
         double shadmask;
         int str_mask;
         int ang_mask;
+        int feather_mask;
         std::vector<double> HHhmask_curve;
         std::vector<double> Lmask_curve;
         std::vector<double> LLmask_curvewav;
@@ -1784,6 +1793,7 @@ struct LocallabParams {
         Glib::ustring surroundcie;
         double strgradcie;
         double anggradcie;
+        double feathercie;
         bool enacieMask;
         bool enacieMaskall;
         std::vector<double> CCmaskciecurve;

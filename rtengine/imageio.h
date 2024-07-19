@@ -90,6 +90,10 @@ public:
     int load (const Glib::ustring &fname);
     int save (const Glib::ustring &fname) const;
 
+#ifdef LIBJXL
+    int loadJXL (const Glib::ustring &fname);
+#endif
+
     int loadPNG (const Glib::ustring &fname);
     int loadJPEG (const Glib::ustring &fname);
     int loadTIFF (const Glib::ustring &fname);

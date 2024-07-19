@@ -1068,7 +1068,7 @@ HISTORY_MSG_829;Local - SH gradient angle
 HISTORY_MSG_830;Local - Color gradient strength L
 HISTORY_MSG_831;Local - Color gradient angle
 HISTORY_MSG_832;Local - Color gradient strength C
-HISTORY_MSG_833;Local - TG - Feather gradient
+HISTORY_MSG_833;Local - Mask gradient feather
 HISTORY_MSG_834;Local - Color gradient strength H
 HISTORY_MSG_835;Local - Vib gradient strength L
 HISTORY_MSG_836;Local - Vib gradient angle
@@ -1502,6 +1502,15 @@ HISTORY_MSG_LOCAL_CIEMASK_STRU;Local Cie mask structure
 HISTORY_MSG_LOCAL_CIEMASK_STRU_TOOL;Local Cie mask structure as tool
 HISTORY_MSG_LOCAL_CIEMASK_WLC;Local CIECAM mask wavelet Lc
 HISTORY_MSG_LOCAL_CIEMASK_WLEV;Local CIECAM mask wavelet levels
+HISTORY_MSG_LOCAL_FEATHERCOL;Local Color gradient feather
+HISTORY_MSG_LOCAL_FEATHEREXE;Local Exp gradient feather
+HISTORY_MSG_LOCAL_FEATHERVIB;Local Vib gradient feather
+HISTORY_MSG_LOCAL_FEATHERWAV;Local Wav gradient feather
+HISTORY_MSG_LOCAL_FEATHERLOG;Local Log gradient feather
+HISTORY_MSG_LOCAL_FEATHERCIE;Local CIECAM gradient feather
+HISTORY_MSG_LOCAL_FEATHERSH;Local SH gradient feather
+HISTORY_MSG_LOCAL_FEATHERMAS;Local Mask common gradient feather
+
 HISTORY_MSG_LOCAL_LOG_BLACKS;Local Log - Blacks distribution
 HISTORY_MSG_LOCAL_LOG_COMPR;Local Log - Compress brightness
 HISTORY_MSG_LOCAL_LOG_SAT;Local Log - Saturation control
@@ -1785,7 +1794,7 @@ MAIN_TOOLTIP_PREVIEWFOCUSMASK;Preview the <b>focus mask</b>.\nShortcut: <b>Shift
 MAIN_TOOLTIP_PREVIEWG;Preview the <b>green channel</b>.\nShortcut: <b>g</b>
 MAIN_TOOLTIP_PREVIEWL;Preview the <b>luminosity</b>.\nShortcut: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
 MAIN_TOOLTIP_PREVIEWR;Preview the <b>red channel</b>.\nShortcut: <b>r</b>
-MAIN_TOOLTIP_PREVIEWSHARPMASK;Preview the <b>sharpening contrast mask</b>.\nShortcut: <b>p</b>\n\nOnly works when sharpening is enabled and zoom >= 100%.
+MAIN_TOOLTIP_PREVIEWSHARPMASK;Preview the <b>sharpening contrast mask</b>.\nShortcut: <b>p</b>\n\nOnly works when sharpening is enabled and zoom >= 100%, or when capture sharpening is enabled.
 MAIN_TOOLTIP_QINFO;Quick info on the image.\nShortcut: <b>i</b>
 MAIN_TOOLTIP_SHOWHIDELP1;Show/Hide the left panel.\nShortcut: <b>l</b>
 MAIN_TOOLTIP_SHOWHIDERP1;Show/Hide the right panel.\nShortcut: <b>Alt-l</b>
@@ -2039,7 +2048,7 @@ PREFERENCES_PANFACTORLABEL;Pan rate amplification
 PREFERENCES_PARSEDEXT;Parsed Extensions
 PREFERENCES_PARSEDEXTADD;Add extension
 PREFERENCES_PARSEDEXTADDHINT;Add entered extension to the list.
-PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list.
+PREFERENCES_PARSEDEXTDELHINT;Delete selected extension from the list.\nPredefined extensions cannot be deleted.
 PREFERENCES_PARSEDEXTDOWNHINT;Move selected extension down in the list.
 PREFERENCES_PARSEDEXTUPHINT;Move selected extension up in the list.
 PREFERENCES_PERFORMANCE_MEASURE;Measure
@@ -2152,6 +2161,7 @@ PROGRESSBAR_LINEDENOISE;Line noise filter...
 PROGRESSBAR_LOADING;Loading image...
 PROGRESSBAR_LOADINGTHUMBS;Loading thumbnails...
 PROGRESSBAR_LOADJPEG;Loading JPEG file...
+PROGRESSBAR_LOADJXL;Loading JXL file...
 PROGRESSBAR_LOADPNG;Loading PNG file...
 PROGRESSBAR_LOADTIFF;Loading TIFF file...
 PROGRESSBAR_NOIMAGES;No images found
@@ -2830,6 +2840,7 @@ TP_LENSGEOM_FILL;Auto-fill
 TP_LENSGEOM_LABEL;Lens / Geometry
 TP_LENSGEOM_LIN;Linear
 TP_LENSGEOM_LOG;Logarithmic
+TP_LENSPROFILE_CORRECTION_METADATA;From file metadata
 TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically selected
 TP_LENSPROFILE_CORRECTION_LCPFILE;LCP file
 TP_LENSPROFILE_CORRECTION_MANUAL;Manually selected
@@ -2931,7 +2942,7 @@ TP_LOCALLAB_CHRRT;Chroma
 TP_LOCALLAB_CIE;Color appearance (Cam16 & JzCzHz)
 TP_LOCALLAB_CIE_SMOOTH_NONE;None
 TP_LOCALLAB_CIE_SMOOTH_EV;Ev based
-TP_LOCALLAB_CIE_SMOOTHFRAME;Highlight attenuation & Levels
+TP_LOCALLAB_CIE_SMOOTHFRAME;Highlight Attenuation & Levels
 TP_LOCALLAB_CIE_SMOOTH_GAMMA;Slope based
 TP_LOCALLAB_CIE_SMOOTH_GAMMA ROLLOFF;Gamma based
 TP_LOCALLAB_CIE_SMOOTH_LEVELS;Levels
@@ -3091,7 +3102,8 @@ TP_LOCALLAB_FATLEVEL;Sigma
 TP_LOCALLAB_FATSAT;Saturation control
 TP_LOCALLAB_FATSHFRA;Dynamic Range Compression Mask ƒ
 TP_LOCALLAB_FEATH_TOOLTIP;Gradient width as a percentage of the Spot diagonal\nUsed by all graduated filters in all tools.\nNo action if a graduated filter hasn't been activated.
-TP_LOCALLAB_FEATVALUE;Feather gradient (Grad. Filters)
+TP_LOCALLAB_FEATVALUE;Feather gradient
+TP_LOCALLAB_FEATVALUE_MASK;Feather gradient (Grad. Filters Mask)
 TP_LOCALLAB_FFTCOL_MASK;FFTW ƒ
 TP_LOCALLAB_FFTMASK_TOOLTIP;Use a Fourier transform for better quality (increased processing time and memory requirements).
 TP_LOCALLAB_FFTW;ƒ - Use Fast Fourier Transform
@@ -3568,7 +3580,7 @@ TP_LOCALLAB_SLOPESMOOTHR;Red balance (Slope)
 TP_LOCALLAB_SLOPESMOOTHG;Green balance (Slope)
 TP_LOCALLAB_SLOPESMOOTHB;Blue balance (Slope)
 TP_LOCALLAB_SLOSH;Slope
-TP_LOCALLAB_SMOOTHCIE;Highlight attenuation
+TP_LOCALLAB_SMOOTHCIE;Highlight Attenuation
 TP_LOCALLAB_SMOOTHCIE_LUM;Luminosity mode
 TP_LOCALLAB_SMOOTHCIE_SCA;Scale Yb Scene
 TP_LOCALLAB_SMOOTHCIE_YB;Scale Yb Viewing

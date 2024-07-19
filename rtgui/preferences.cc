@@ -657,7 +657,7 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     Gtk::Grid* dirgrid = Gtk::manage(new Gtk::Grid());
     setExpandAlignProperties(dirgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
-	// Dark Frames Dir
+    // Dark Frames Dir
     Gtk::Label *dfLab = Gtk::manage(new Gtk::Label(M("PREFERENCES_DIRDARKFRAMES") + ":"));
     setExpandAlignProperties(dfLab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     darkFrameDir = Gtk::manage(new MyFileChooserButton(M("PREFERENCES_DIRDARKFRAMES"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
@@ -706,7 +706,7 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     dirgrid->attach_next_to(*cameraProfilesDirLabel, *clutsDirLabel, Gtk::POS_BOTTOM, 1, 1);
     dirgrid->attach_next_to(*cameraProfilesDir, *cameraProfilesDirLabel, Gtk::POS_RIGHT, 1, 1);
 
-	  //Lens Profiles Dir
+    //Lens Profiles Dir
     Gtk::Label *lensProfilesDirLabel = Gtk::manage(new Gtk::Label(M("PREFERENCES_LENSPROFILESDIR") + ":"));
     lensProfilesDirLabel->set_tooltip_text(M("PREFERENCES_LENSPROFILESDIR_TOOLTIP"));
     setExpandAlignProperties(lensProfilesDirLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
@@ -1112,7 +1112,7 @@ Gtk::Widget* Preferences::getGeneralPanel()
     workflowGrid->attach_next_to(*curveBBoxPosL, *flayoutlab, Gtk::POS_BOTTOM, 1, 1);
     workflowGrid->attach_next_to(*curveBBoxPosC, *editorLayout, Gtk::POS_BOTTOM, 1, 1);
     workflowGrid->attach_next_to(*curveBBoxPosRestartL, *lNextStart, Gtk::POS_BOTTOM, 1, 1);
-    
+
     curveBBoxPosS = Gtk::manage(new Gtk::ComboBoxText());
     setExpandAlignProperties(curveBBoxPosS, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
 
@@ -1553,9 +1553,9 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
 
     frmnu->add (*menuGrid);
 
-
     Gtk::Frame* fre = Gtk::manage(new Gtk::Frame(M("PREFERENCES_PARSEDEXT")));
     Gtk::Box* vbre = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+
     Gtk::Box* hb0 = Gtk::manage(new Gtk::Box());
     Gtk::Label* elab = Gtk::manage (new Gtk::Label (M("PREFERENCES_PARSEDEXTADD") + ":", Gtk::ALIGN_START));
     hb0->pack_start(*elab, Gtk::PACK_SHRINK, 4);
@@ -1567,8 +1567,10 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
     delExt = Gtk::manage(new Gtk::Button());
     moveExtUp = Gtk::manage(new Gtk::Button());
     moveExtDown = Gtk::manage(new Gtk::Button());
-    addExt->set_tooltip_text(M("PREFERENCES_PARSEDEXTADDHINT"));
-    delExt->set_tooltip_text(M("PREFERENCES_PARSEDEXTDELHINT"));
+    addExt->set_sensitive(false);
+    delExt->set_sensitive(false);
+    addExt->set_tooltip_markup(M("PREFERENCES_PARSEDEXTADDHINT"));
+    delExt->set_tooltip_markup(M("PREFERENCES_PARSEDEXTDELHINT"));
     moveExtUp->set_tooltip_text(M("PREFERENCES_PARSEDEXTUPHINT"));
     moveExtDown->set_tooltip_text(M("PREFERENCES_PARSEDEXTDOWNHINT"));
     Gtk::Image* addExtImg = Gtk::manage ( new RTImage ("add-small", Gtk::ICON_SIZE_BUTTON) );
@@ -1583,6 +1585,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
     hb0->pack_end(*moveExtUp, Gtk::PACK_SHRINK, 4);
     hb0->pack_end(*delExt, Gtk::PACK_SHRINK, 4);
     hb0->pack_end(*addExt, Gtk::PACK_SHRINK, 4);
+
     extensions = Gtk::manage(new Gtk::TreeView());
     Gtk::ScrolledWindow* hscrollw = Gtk::manage(new Gtk::ScrolledWindow());
     hscrollw->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
@@ -1592,8 +1595,9 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
     extensions->append_column_editable("Enabled", extensionColumns.enabled);
     extensions->append_column("Extension", extensionColumns.ext);
     extensions->set_headers_visible(false);
-    vbre->pack_start(*hscrollw);
+
     vbre->pack_start(*hb0, Gtk::PACK_SHRINK, 4);
+    vbre->pack_start(*hscrollw);
 
     fre->add(*vbre);
 
@@ -1671,11 +1675,14 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
 
     vbFileBrowser->pack_start (*hb6, Gtk::PACK_SHRINK, 4);
 
+    extensions->signal_cursor_changed().connect(sigc::mem_fun(*this, &Preferences::extensionsChanged));
+    extension->signal_changed().connect(sigc::mem_fun(*this, &Preferences::extensionChanged));
+
     addExt->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::addExtPressed));
     delExt->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::delExtPressed));
     moveExtUp->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::moveExtUpPressed));
     moveExtDown->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::moveExtDownPressed));
-    extension->signal_activate().connect(sigc::mem_fun(*this, &Preferences::addExtPressed));
+
     clearThumbsBtn->signal_clicked().connect ( sigc::mem_fun (*this, &Preferences::clearThumbImagesPressed) );
     if (moptions.saveParamsCache) {
         clearProfilesBtn->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::clearProfilesPressed));
@@ -2014,8 +2021,8 @@ void Preferences::storePreferences()
 
     moptions.curvebboxpos = curveBBoxPosC->get_active_row_number();
     moptions.complexity = complexitylocal->get_active_row_number();
-    moptions.spotmet = spotlocal->get_active_row_number(); 
-    
+    moptions.spotmet = spotlocal->get_active_row_number();
+
     moptions.inspectorWindow = inspectorWindowCB->get_active();
     moptions.zoomOnScroll = zoomOnScrollCB->get_active();
     moptions.histogramPosition = ckbHistogramPositionLeft->get_active() ? 1 : 2;
@@ -2669,25 +2676,69 @@ void Preferences::workflowUpdate()
     }
 }
 
-void Preferences::addExtPressed()
+void Preferences::extensionsChanged()
 {
+    const Glib::RefPtr<Gtk::TreeSelection> selection = extensions->get_selection();
+    if (!selection) {
+        delExt->set_sensitive(false);
+        return;
+    }
+
+    const Gtk::TreeModel::iterator selected = selection->get_selected();
+    if (!selected) {
+        delExt->set_sensitive(false);
+        return;
+    }
+
+    bool delOkay = true;
+    for (auto const &x : moptions.knownExtensions) {
+        if (x == (*selected)[extensionColumns.ext]) {
+            delOkay = false;
+            break;
+        }
+    }
+    delExt->set_sensitive(delOkay);
+}
+
+void Preferences::extensionChanged()
+{
+    if (extension->get_text().empty()) {
+        addExt->set_sensitive(false);
+        return;
+    }
 
     Gtk::TreeNodeChildren c = extensionModel->children();
+    for (size_t i = 0; i < c.size(); i++) {
+        if (c[i][extensionColumns.ext] == extension->get_text()) {
+            addExt->set_sensitive(false);
+            return;
+        }
+    }
 
-    for (size_t i = 0; i < c.size(); i++)
+    addExt->set_sensitive(true);
+}
+
+void Preferences::addExtPressed()
+{
+    Gtk::TreeNodeChildren c = extensionModel->children();
+
+    for (size_t i = 0; i < c.size(); i++) {
         if (c[i][extensionColumns.ext] == extension->get_text()) {
             return;
         }
+    }
 
-    Gtk::TreeRow row = * (extensionModel->append());
+    Gtk::TreeRow row = * (extensionModel->prepend());
 
     row[extensionColumns.enabled] = true;
     row[extensionColumns.ext]     = extension->get_text();
+
+    extension->set_text("");
+    addExt->set_sensitive(false);
 }
 
 void Preferences::delExtPressed()
 {
-
     extensionModel->erase(extensions->get_selection()->get_selected());
 }
 
