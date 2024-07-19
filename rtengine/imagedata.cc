@@ -732,8 +732,6 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
 
         meta.getDimensions(w_, h_);
 
-        isDNG = find_exif_tag("Exif.Image.DNGVersion");
-
         // -----------------------
         // Special file type detection (HDR, PixelShift)
         // ------------------------
@@ -936,6 +934,8 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
                 dngVersion = (dngVersion << 8) + static_cast<std::uint32_t>(to_long(pos, i));
             }
         }
+
+        isDNG = dngVersion;
 
         // Read DNG OpcodeList1.
         if (dngVersion && (find_exif_tag("Exif.SubImage1.OpcodeList1") || find_exif_tag("Exif.Image.OpcodeList1"))) {
