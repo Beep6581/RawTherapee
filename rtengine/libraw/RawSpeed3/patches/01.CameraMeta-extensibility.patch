@@ -1,0 +1,13 @@
+diff --git a/src/librawspeed/metadata/CameraMetaData.h b/src/librawspeed/metadata/CameraMetaData.h
+index c2f6f1dd..13cab9c9 100644
+--- a/src/librawspeed/metadata/CameraMetaData.h
++++ b/src/librawspeed/metadata/CameraMetaData.h
+@@ -41,7 +41,7 @@ struct CameraId {
+   }
+ };
+ 
+-class CameraMetaData {
++class CameraMetaData final {
+ public:
+   CameraMetaData() = default;
+ 
