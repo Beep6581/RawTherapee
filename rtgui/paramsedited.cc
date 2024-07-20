@@ -345,6 +345,7 @@ void ParamsEdited::set(bool v)
     coarse.vflip = v;
     commonTrans.method = v;
     commonTrans.autofill = v;
+    commonTrans.scale = v;
     rotate.degree = v;
     distortion.amount = v;
     distortion.defish = v;
@@ -365,7 +366,6 @@ void ParamsEdited::set(bool v)
     perspective.camera_crop_factor = v;
     perspective.camera_focal_length = v;
     perspective.camera_pitch = v;
-    perspective.camera_scale = v;
     perspective.camera_roll = v;
     perspective.camera_shift_horiz = v;
     perspective.camera_shift_vert = v;
@@ -1079,6 +1079,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         coarse.hflip = coarse.hflip && p.coarse.hflip == other.coarse.hflip;
         coarse.vflip = coarse.vflip && p.coarse.vflip == other.coarse.vflip;
         commonTrans.method = commonTrans.method && p.commonTrans.method == other.commonTrans.method;
+        commonTrans.scale = commonTrans.scale && p.commonTrans.scale == other.commonTrans.scale;
         commonTrans.autofill = commonTrans.autofill && p.commonTrans.autofill == other.commonTrans.autofill;
         rotate.degree = rotate.degree && p.rotate.degree == other.rotate.degree;
         distortion.amount = distortion.amount && p.distortion.amount == other.distortion.amount;
@@ -1100,7 +1101,6 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         perspective.camera_crop_factor = perspective.camera_crop_factor && p.perspective.camera_crop_factor == other.perspective.camera_crop_factor;
         perspective.camera_focal_length = perspective.camera_focal_length && p.perspective.camera_focal_length == other.perspective.camera_focal_length;
         perspective.camera_pitch = perspective.camera_pitch && p.perspective.camera_pitch == other.perspective.camera_pitch;
-        perspective.camera_scale = perspective.camera_scale && p.perspective.camera_scale == other.perspective.camera_scale;
         perspective.camera_roll = perspective.camera_roll && p.perspective.camera_roll == other.perspective.camera_roll;
         perspective.camera_shift_horiz = perspective.camera_shift_horiz && p.perspective.camera_shift_horiz == other.perspective.camera_shift_horiz;
         perspective.camera_shift_vert = perspective.camera_shift_vert && p.perspective.camera_shift_vert == other.perspective.camera_shift_vert;
@@ -3444,6 +3444,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.commonTrans.method = mods.commonTrans.method;
     }
 
+    if (commonTrans.scale) {
+        toEdit.commonTrans.scale = mods.commonTrans.scale;
+    }
+
     if (commonTrans.autofill) {
         toEdit.commonTrans.autofill = mods.commonTrans.autofill;
     }
@@ -3510,13 +3514,6 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (perspective.camera_crop_factor) {
         toEdit.perspective.camera_crop_factor = dontforceSet && options.baBehav[ADDSET_PERSP_CAM_FOCAL_LENGTH] ? toEdit.perspective.camera_crop_factor + mods.perspective.camera_crop_factor : mods.perspective.camera_crop_factor;
-    }
-
-    if (perspective.camera_scale) {
-        toEdit.perspective.camera_scale =
-            dontforceSet && options.baBehav[ADDSET_PERSP_CAM_FOCAL_LENGTH]
-                ? toEdit.perspective.camera_scale + mods.perspective.camera_scale
-                : mods.perspective.camera_scale;
     }
 
     if (perspective.camera_focal_length) {

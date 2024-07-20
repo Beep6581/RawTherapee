@@ -1974,13 +1974,19 @@ bool CoarseTransformParams::operator !=(const CoarseTransformParams& other) cons
 
 CommonTransformParams::CommonTransformParams() :
     method("log"),
-    autofill(true)
+    autofill(true),
+    scale(1.0)
 {
+}
+
+double CommonTransformParams::getScale() const
+{
+    return autofill ? 1.0 : scale;
 }
 
 bool CommonTransformParams::operator ==(const CommonTransformParams& other) const
 {
-    return method == other.method && autofill == other.autofill;
+    return method == other.method && autofill == other.autofill && std::abs(scale - other.scale) < 1e-6;
 }
 
 bool CommonTransformParams::operator !=(const CommonTransformParams& other) const
@@ -2108,7 +2114,6 @@ PerspectiveParams::PerspectiveParams() :
     camera_yaw(0.0),
     projection_pitch(0.0),
     projection_rotate(0.0),
-    camera_scale(1.0),
     projection_shift_horiz(0.0),
     projection_shift_vert(0.0),
     projection_yaw(0.0)
@@ -2125,7 +2130,6 @@ bool PerspectiveParams::operator ==(const PerspectiveParams& other) const
         && camera_focal_length == other.camera_focal_length
         && camera_crop_factor == other.camera_crop_factor
         && camera_pitch == other.camera_pitch
-        && camera_scale == other.camera_scale
         && camera_roll == other.camera_roll
         && camera_shift_horiz == other.camera_shift_horiz
         && camera_shift_vert == other.camera_shift_vert
@@ -6754,6 +6758,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // Common properties for transformations
         saveToKeyfile(!pedited || pedited->commonTrans.method, "Common Properties for Transformations", "Method", commonTrans.method, keyFile);
+        saveToKeyfile(!pedited || pedited->commonTrans.scale, "Common Properties for Transformations", "Scale", commonTrans.scale, keyFile);
         saveToKeyfile(!pedited || pedited->commonTrans.autofill, "Common Properties for Transformations", "AutoFill", commonTrans.autofill, keyFile);
 
 // Rotation
@@ -6781,7 +6786,6 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->perspective.camera_crop_factor, "Perspective", "CameraCropFactor", perspective.camera_crop_factor, keyFile);
         saveToKeyfile(!pedited || pedited->perspective.camera_focal_length, "Perspective", "CameraFocalLength", perspective.camera_focal_length, keyFile);
         saveToKeyfile(!pedited || pedited->perspective.camera_pitch, "Perspective", "CameraPitch", perspective.camera_pitch, keyFile);
-        saveToKeyfile(!pedited || pedited->perspective.camera_scale, "Perspective", "CameraScale", perspective.camera_scale, keyFile);
         saveToKeyfile(!pedited || pedited->perspective.camera_roll, "Perspective", "CameraRoll", perspective.camera_roll, keyFile);
         saveToKeyfile(!pedited || pedited->perspective.camera_shift_horiz, "Perspective", "CameraShiftHorizontal", perspective.camera_shift_horiz, keyFile);
         saveToKeyfile(!pedited || pedited->perspective.camera_shift_vert, "Perspective", "CameraShiftVertical", perspective.camera_shift_vert, keyFile);
@@ -8968,6 +8972,11 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             } else {
                 commonTrans.method = "lin";
             }
+            if (keyFile.has_key("Common Properties for Transformations", "Scale")) {
+                assignFromKeyfile(keyFile, "Common Properties for Transformations", "Scale", commonTrans.scale, pedited->commonTrans.scale);
+            } else {
+                commonTrans.scale = 1.0;
+            }
             assignFromKeyfile(keyFile, "Common Properties for Transformations", "AutoFill", commonTrans.autofill, pedited->commonTrans.autofill);
         }
 
@@ -9034,7 +9043,6 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Perspective", "CameraShiftHorizontal", perspective.camera_shift_horiz, pedited->perspective.camera_shift_horiz);
             assignFromKeyfile(keyFile, "Perspective", "CameraShiftVertical", perspective.camera_shift_vert, pedited->perspective.camera_shift_vert);
             assignFromKeyfile(keyFile, "Perspective", "CameraPitch", perspective.camera_pitch, pedited->perspective.camera_pitch);
-            assignFromKeyfile(keyFile, "Perspective", "CameraScale", perspective.camera_scale, pedited->perspective.camera_scale);
             assignFromKeyfile(keyFile, "Perspective", "CameraRoll", perspective.camera_roll, pedited->perspective.camera_roll);
             assignFromKeyfile(keyFile, "Perspective", "CameraCropFactor", perspective.camera_crop_factor, pedited->perspective.camera_crop_factor);
             assignFromKeyfile(keyFile, "Perspective", "CameraFocalLength", perspective.camera_focal_length, pedited->perspective.camera_focal_length);

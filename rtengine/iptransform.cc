@@ -519,8 +519,8 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
                 break;
         }
 
-        x_d /= params->perspective.camera_scale;
-        y_d /= params->perspective.camera_scale;
+        x_d /= params->commonTrans.getScale();
+        y_d /= params->commonTrans.getScale();
         if (params->distortion.defish) {
             x_d /= f_defish;
             y_d /= f_defish;
@@ -1254,8 +1254,8 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
                     break;
             }
 
-            x_d /= params->perspective.camera_scale;
-            y_d /= params->perspective.camera_scale;
+            x_d /= params->commonTrans.getScale();
+            y_d /= params->commonTrans.getScale();
             if (params->distortion.defish) {
                 x_d /= f_defish;
                 y_d /= f_defish;
@@ -1448,9 +1448,7 @@ bool ImProcFunctions::needsPerspective () const
                     params->perspective.projection_rotate ||
                     params->perspective.projection_shift_horiz ||
                     params->perspective.projection_shift_vert ||
-                    params->perspective.projection_yaw ||
-                    params->perspective.camera_scale > 1.0 + 1e-6 ||
-                    params->perspective.camera_scale < 1.0 - 1e-6 ));
+                    params->perspective.projection_yaw));
 }
 
 bool ImProcFunctions::needsGradient () const

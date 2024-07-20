@@ -152,7 +152,7 @@ void BatchToolPanelCoordinator::initSession ()
             rotate->setAdjusterBehavior (false);
             resize->setAdjusterBehavior (false);
             distortion->setAdjusterBehavior (false);
-            perspective->setAdjusterBehavior (false, false, false, false, false, false, false, false);
+            perspective->setAdjusterBehavior (false, false, false, false, false, false, false);
             gradient->setAdjusterBehavior (false, false, false, false);
             pcvignette->setAdjusterBehavior (false, false, false);
             cacorrection->setAdjusterBehavior (false);
@@ -204,8 +204,7 @@ void BatchToolPanelCoordinator::initSession ()
                 options.baBehav[ADDSET_PERSP_CAM_ANGLE],
                 options.baBehav[ADDSET_PERSP_PROJ_ANGLE],
                 options.baBehav[ADDSET_PERSP_PROJ_SHIFT],
-                options.baBehav[ADDSET_PERSP_PROJ_ROTATE],
-                options.baBehav[ADDSET_PERSP_CAM_SCALE]
+                options.baBehav[ADDSET_PERSP_PROJ_ROTATE]
             );
             gradient->setAdjusterBehavior (options.baBehav[ADDSET_GRADIENT_DEGREE], options.baBehav[ADDSET_GRADIENT_FEATHER], options.baBehav[ADDSET_GRADIENT_STRENGTH], options.baBehav[ADDSET_GRADIENT_CENTER]);
             pcvignette->setAdjusterBehavior (options.baBehav[ADDSET_PCVIGNETTE_STRENGTH], options.baBehav[ADDSET_PCVIGNETTE_FEATHER], options.baBehav[ADDSET_PCVIGNETTE_ROUNDNESS]);

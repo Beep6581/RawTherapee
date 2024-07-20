@@ -929,8 +929,11 @@ struct CoarseTransformParams {
 struct CommonTransformParams {
     Glib::ustring method;
     bool autofill;
+    double scale;
 
     CommonTransformParams();
+
+    double getScale() const;
 
     bool operator ==(const CommonTransformParams& other) const;
     bool operator !=(const CommonTransformParams& other) const;
@@ -1025,7 +1028,6 @@ struct PerspectiveParams {
     double  camera_yaw;
     double  projection_pitch;
     double  projection_rotate;
-    double  camera_scale;
     double  projection_shift_horiz;
     double  projection_shift_vert;
     double  projection_yaw;

@@ -397,6 +397,7 @@ struct CoarseTransformParamsEdited {
 
 struct CommonTransformParamsEdited {
     bool method;
+    bool scale;
     bool autofill;
 };
 
@@ -1205,7 +1206,6 @@ struct PerspectiveParamsEdited {
     bool camera_crop_factor;
     bool camera_focal_length;
     bool camera_pitch;
-    bool camera_scale;
     bool camera_roll;
     bool camera_shift_horiz;
     bool camera_shift_vert;

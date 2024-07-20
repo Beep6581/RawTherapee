@@ -64,7 +64,6 @@ protected:
     Gtk::Button* lines_button_erase;
     Adjuster* projection_pitch;
     Adjuster* projection_rotate;
-    Adjuster* camera_scale;
     Adjuster* projection_shift_horiz;
     Adjuster* projection_shift_vert;
     Adjuster* projection_yaw;
@@ -75,7 +74,6 @@ protected:
     rtengine::ProcEvent EvPerspMethod;
     rtengine::ProcEvent EvPerspProjShift;
     rtengine::ProcEvent EvPerspProjRotate;
-    rtengine::ProcEvent EvPerspCamScale;
     rtengine::ProcEvent EvPerspProjAngle;
     rtengine::ProcEvent EvPerspRender;
     rtengine::ProcEvent EvPerspCamFocalLengthVoid;
@@ -83,14 +81,12 @@ protected:
     rtengine::ProcEvent EvPerspCamAngleVoid;
     rtengine::ProcEvent EvPerspProjShiftVoid;
     rtengine::ProcEvent EvPerspProjRotateVoid;
-    rtengine::ProcEvent EvPerspCamScaleVoid;
     rtengine::ProcEvent EvPerspProjAngleVoid;
     rtengine::ProcEvent* event_persp_cam_focal_length;
     rtengine::ProcEvent* event_persp_cam_shift;
     rtengine::ProcEvent* event_persp_cam_angle;
     rtengine::ProcEvent* event_persp_proj_shift;
     rtengine::ProcEvent* event_persp_proj_rotate;
-    rtengine::ProcEvent* event_persp_cam_scale;
     rtengine::ProcEvent* event_persp_proj_angle;
     LensGeomListener* lens_geom_listener;
     PerspCorrectionPanelListener* panel_listener;
@@ -125,16 +121,13 @@ public:
     void linesEraseButtonPressed (void);
     void methodChanged (void);
     void requestApplyControlLines(void);
-    void setAdjusterBehavior (
-        bool badd,
+    void setAdjusterBehavior (bool badd,
         bool camera_focal_length_add,
         bool camera_shift_add,
         bool camera_angle_add,
         bool projection_angle_add,
         bool projection_shift_add,
-        bool projection_rotate_add,
-        bool projection_scale_add
-    );
+        bool projection_rotate_add);
     void setControlLineEditMode(bool active);
     void setEditProvider (EditDataProvider* provider) override;
     void setLensGeomListener (LensGeomListener* listener)

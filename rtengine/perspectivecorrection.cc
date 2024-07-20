@@ -308,7 +308,6 @@ PerspectiveCorrection::Params PerspectiveCorrection::autocompute(ImageSource *sr
         neutral.distortion.focal_length = pparams->distortion.focal_length;
         neutral.perspective.camera_focal_length = pparams->perspective.camera_focal_length;
         neutral.perspective.camera_crop_factor = pparams->perspective.camera_crop_factor;
-        neutral.perspective.camera_scale = pparams->perspective.camera_scale;
         neutral.perspective.method = pparams->perspective.method;
         neutral.lensProf = pparams->lensProf;
         ImProcFunctions ipf(&neutral, true);        
