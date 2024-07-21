@@ -107,10 +107,10 @@ jobs:
           date -u
           zsh -c 'echo "Build completed in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"'
       - name: Test-launch the app
-       run: |
-         cd build && open -a RawTherapee.app
-         sleep 5
-         osascript -e 'tell application "RawTherapee" to if it is running then quit'
+        run: |
+          cd build && open -a RawTherapee.app
+          sleep 5
+          osascript -e 'tell application "RawTherapee" to if it is running then quit'
       - name: Publish artifacts
         uses: softprops/action-gh-release@v2
         if: ${{github.ref_type == 'tag' || github.ref_name == 'dev'}}
@@ -199,11 +199,6 @@ jobs:
             "ARTIFACT_FILE: ${ARTIFACT_FILE}" \
             "PUBLISH_NAME: ${PUBLISH_NAME}"
           exit
-      - name: Test-launch the app
-        run: |
-          cd build && open -a RawTherapee.app
-          sleep 5
-          osascript -e 'tell application "RawTherapee" to if it is running then quit'
       - uses: actions/upload-artifact@v4
         with:
           name: ${{env.ARTIFACT_FILE}}
@@ -212,7 +207,11 @@ jobs:
         run: |
           date -u
           zsh -c 'echo "Build completed in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"'
-
+      - name: Test-launch the app
+        run: |
+          cd build && open -a RawTherapee.app
+          sleep 5
+          osascript -e 'tell application "RawTherapee" to if it is running then quit'
       - name: Publish artifacts
         uses: softprops/action-gh-release@v2
         if: ${{github.ref_type == 'tag' || github.ref_name == 'dev'}}
