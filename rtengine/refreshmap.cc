@@ -74,7 +74,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     0,                // EvLDNEdgeTolerance: obsolete,
     0,                // EvCDNEnabled:obsolete,
     0,                // free entry
-    RGBCURVE | M_AUTOEXP, // EvDCPToneCurve,    
+    ALLNORAW, //RGBCURVE | M_AUTOEXP, // EvDCPToneCurve, 21 july 2024
     ALLNORAW,         // EvDCPIlluminant,
     LUMINANCECURVE,          // EvSHEnabled,
     LUMINANCECURVE,         // EvSHHighlights,
@@ -419,8 +419,8 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DIRPYREQUALIZER,  // EvWavgreenlow
     DIRPYREQUALIZER,  // EvWavbluelow
     DIRPYREQUALIZER,  // EvWavNeutral
-    RGBCURVE | M_AUTOEXP, // EvDCPApplyLookTable,
-    RGBCURVE | M_AUTOEXP, // EvDCPApplyBaselineExposureOffset,
+    ALLNORAW, //RGBCURVE | M_AUTOEXP, // EvDCPApplyLookTable,  21 july 2024
+    ALLNORAW, //RGBCURVE | M_AUTOEXP, // EvDCPApplyBaselineExposureOffset, 21 july 2024
     ALLNORAW,         // EvDCPApplyHueSatMap
     DIRPYREQUALIZER,  // EvWavenacont
     DIRPYREQUALIZER,  // EvWavenachrom
