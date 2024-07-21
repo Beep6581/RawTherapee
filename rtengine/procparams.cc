@@ -4678,7 +4678,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     smoothcieth(1.),
     slopjcie(12.923),
     contsig(1.5),
-    skewsig(-0.2),
+    skewsig(-0.1),
     whitsig(1.),
     slopesmo(1.),
     slopesmor(1.),
