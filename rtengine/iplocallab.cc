@@ -20587,6 +20587,7 @@ void ImProcFunctions::Lab_Local(
                     }
                     if(lp.smoothciem == 6) {
                         float middle_grey_contrast = params->locallab.spots.at(sp).contsig;
+                        float contrast_skewness = params->locallab.spots.at(sp).skewsig;
 #ifdef _OPENMP
         #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -20600,7 +20601,7 @@ void ImProcFunctions::Lab_Local(
                                 float gout = 0.f;
                                 float bout = 0.f;
                                // sigmoid_main(r, g, b, rout, gout, bout, float middle_grey_contrast, float contrast_skewness, float white_point);
-                                sigmoid_main(r, g, b, rout, gout, bout, middle_grey_contrast, -0.2f, 1.f);
+                                sigmoid_main(r, g, b, rout, gout, bout, middle_grey_contrast, contrast_skewness, 1.f);
                                 tmpImage->r(i, j) = 65535.f * rout;
                                 tmpImage->g(i, j) = 65535.f * gout;
                                 tmpImage->b(i, j) = 65535.f * bout;

@@ -4678,6 +4678,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     smoothcieth(1.),
     slopjcie(12.923),
     contsig(1.5),
+    skewsig(-0.2),
     slopesmo(1.),
     slopesmor(1.),
     slopesmog(1.),
@@ -5612,6 +5613,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && smoothcieth == other.smoothcieth
         && slopjcie == other.slopjcie
         && contsig == other.contsig
+        && skewsig == other.skewsig
         && slopesmo == other.slopesmo
         && slopesmor == other.slopesmor
         && slopesmog == other.slopesmog
@@ -7582,6 +7584,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->slopesmog, "Locallab", "slopesmog_" + index_str, spot.slopesmog, keyFile);
                     saveToKeyfile(!pedited || spot_edited->slopesmob, "Locallab", "slopesmob_" + index_str, spot.slopesmob, keyFile);
                     saveToKeyfile(!pedited || spot_edited->contsig, "Locallab", "contsig_" + index_str, spot.contsig, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->skewsig, "Locallab", "skewsig_" + index_str, spot.skewsig, keyFile);
 
                     saveToKeyfile(!pedited || spot_edited->kslopesmor, "Locallab", "kslopesmor_" + index_str, spot.kslopesmor, keyFile);
                     saveToKeyfile(!pedited || spot_edited->kslopesmog, "Locallab", "kslopesmog_" + index_str, spot.kslopesmog, keyFile);
@@ -10056,6 +10059,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "smoothcieth_" + index_str, spot.smoothcieth, spotEdited.smoothcieth);
                 assignFromKeyfile(keyFile, "Locallab", "slopjcie_" + index_str, spot.slopjcie, spotEdited.slopjcie);
                 assignFromKeyfile(keyFile, "Locallab", "contsig_" + index_str, spot.contsig, spotEdited.contsig);
+                assignFromKeyfile(keyFile, "Locallab", "skewsig_" + index_str, spot.skewsig, spotEdited.skewsig);
                 assignFromKeyfile(keyFile, "Locallab", "slopesmo_" + index_str, spot.slopesmo, spotEdited.slopesmo);
                 assignFromKeyfile(keyFile, "Locallab", "slopesmor_" + index_str, spot.slopesmor, spotEdited.slopesmor);
                 assignFromKeyfile(keyFile, "Locallab", "slopesmog_" + index_str, spot.slopesmog, spotEdited.slopesmog);
