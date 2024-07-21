@@ -22,6 +22,7 @@
 
 #include "options.h"
 
+#include "../rtengine/dnggainmap.h"
 #include "../rtengine/imageformat.h"
 #include "../rtengine/rtengine.h"
 
@@ -60,6 +61,7 @@ public:
     unsigned iso;
     int rating;
     bool isHDR;
+    bool isDNG;
     bool isPixelShift;
     int sensortype;
     rtengine::IIO_Sample_Format sampleFormat;
@@ -114,8 +116,12 @@ public:
     int getRating () const override { return rating; } // FIXME-piotr : missing rating
     bool getPixelShift () const override { return isPixelShift; }
     bool getHDR() const override { return isHDR; }
+    bool getDNG() const override { return isDNG; }
     std::string getImageType() const override { return isPixelShift ? "PS" : isHDR ? "HDR" : "STD"; }
     rtengine::IIOSampleFormat getSampleFormat() const override { return sampleFormat; }
+    std::uint32_t getFixBadPixelsConstant() const override;
+    bool hasFixBadPixelsConstant() const override;
+    std::vector<GainMap> getGainMaps() const override;
     void getDimensions(int &w, int &h) const override
     {
         w = width;

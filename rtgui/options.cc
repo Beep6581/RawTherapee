@@ -597,6 +597,7 @@ void Options::setDefaults()
 #else
     rtSettings.iccDirectory = "/usr/share/color/icc";
 #endif
+    rtSettings.enableLibRaw = true;
 //   rtSettings.viewingdevice = 0;
 //   rtSettings.viewingdevicegrey = 3;
     //  rtSettings.viewinggreySc = 1;
@@ -1804,6 +1805,14 @@ void Options::readFromFile(Glib::ustring fname)
                 }
             }
 
+            const Glib::ustring groupRawDecoder = "Raw Decoder";
+            if (keyFile.has_group(groupRawDecoder)) {
+                const Glib::ustring keyEnableLibRaw = "EnableLibRaw";
+                if (keyFile.has_key(groupRawDecoder, keyEnableLibRaw)) {
+                    rtSettings.enableLibRaw = keyFile.get_boolean(groupRawDecoder, keyEnableLibRaw);
+                }
+            }
+
             if (keyFile.has_group("Color Management")) {
                 if (keyFile.has_key("Color Management", "ICCDirectory")) {
                     rtSettings.iccDirectory = keyFile.get_string("Color Management", "ICCDirectory");
@@ -2665,6 +2674,8 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("Crop Settings", "PPI", cropPPI);
         keyFile.set_integer("Crop Settings", "GuidesMode", cropGuides);
         keyFile.set_boolean("Crop Settings", "AutoFit", cropAutoFit);
+
+        keyFile.set_boolean("Raw Decoder", "EnableLibRaw", rtSettings.enableLibRaw);
 
         keyFile.set_string("Color Management", "PrinterProfile", rtSettings.printerProfile);
         keyFile.set_integer("Color Management", "PrinterIntent", rtSettings.printerIntent);
