@@ -45,7 +45,6 @@ jobs:
           export REF=${GITHUB_REF##*/}
           export C_FLAGS=$(echo -e $C_FLAGS | tr -d '\n')
           cd build && date -u && date +%s > configstamp
-          curl -L https://github.com/Homebrew/homebrew-core/raw/679923b4eb48a8dc7ecc1f05d06063cd79b3fc00/Formula/libomp.rb -o libomp.rb && brew install --formula libomp.rb
           cmake \
             -DCMAKE_BUILD_TYPE="Release" \
             -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
