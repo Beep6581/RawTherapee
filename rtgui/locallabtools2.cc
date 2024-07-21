@@ -8519,7 +8519,7 @@ Locallabcie::Locallabcie():
     ciesmoothBox->pack_start(*kslopesmob);
     ciesmoothBox->pack_start(*contsig);
     ciesmoothBox->pack_start(*skewsig);
-    ciesmoothBox->pack_start(*whitsig);
+    //ciesmoothBox->pack_start(*whitsig);
     ciesmoothBox->pack_start(*smoothcielnk);
     ciesmoothBox->pack_start(*smoothciehigh);
     ciesmoothBox->pack_start(*smoothcielum);

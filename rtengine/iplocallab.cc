@@ -2022,6 +2022,7 @@ static void calcTransition(const float lox, const float loy, const float ach, co
 //const float MIDDLE_GREY = 0.01f * params->locallab.spots.at(sp).sourceGraycie; //0.1845f;
 
 const float display_black_target = 0.0152f;
+
 const float display_white_target = 100.f;
 
 float max(float a, float b)
@@ -2123,7 +2124,8 @@ void  ImProcFunctions::sigmoid_main(float r,
               float middle_grey_contrast,
               float contrast_skewness,
               float white_point,
-              float MIDDLE_GREY)
+              float MIDDLE_GREY,
+              float black_point)
 {
     float film_power = 1.f;
     float white_target = 1.f;;
@@ -2131,7 +2133,9 @@ void  ImProcFunctions::sigmoid_main(float r,
     float film_fog = 1.f;
     float paper_exposure = 1.f;
     float paper_power = 1.f;
+    float display_black_target = black_point; //0.0152f;
 
+//
     // compute the sigmoid parameters from the UI controls
     calculate_params(middle_grey_contrast, contrast_skewness,
                      display_black_target, white_point * 100.0f, film_power,
@@ -20591,8 +20595,10 @@ void ImProcFunctions::Lab_Local(
                     if(lp.smoothciem == 6) {//Sigmoid - from Darktable
                         float middle_grey_contrast = params->locallab.spots.at(sp).contsig;
                         float contrast_skewness = params->locallab.spots.at(sp).skewsig;
-                        float white_pointsig = params->locallab.spots.at(sp).whitsig;
+                       // float white_pointsig = params->locallab.spots.at(sp).whitsig;
                         float MIDDLE_GREY = 0.01 * params->locallab.spots.at(sp).sourceGraycie;
+                        float black_point =  xexpf(lp.blackevjz * std::log(2.f) + xlogf(MIDDLE_GREY));
+                        float white_pointsig = xexpf(lp.whiteevjz * std::log(2.f) + xlogf(MIDDLE_GREY));//to adapt if need and remove slider whitsig
 #ifdef _OPENMP
         #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -20605,7 +20611,7 @@ void ImProcFunctions::Lab_Local(
                                 float rout = 0.f;
                                 float gout = 0.f;
                                 float bout = 0.f;
-                                sigmoid_main(r, g, b, rout, gout, bout, middle_grey_contrast, contrast_skewness, white_pointsig, MIDDLE_GREY);
+                                sigmoid_main(r, g, b, rout, gout, bout, middle_grey_contrast, contrast_skewness, white_pointsig, MIDDLE_GREY, black_point);
                                 tmpImage->r(i, j) = 65535.f * rout;
                                 tmpImage->g(i, j) = 65535.f * gout;
                                 tmpImage->b(i, j) = 65535.f * bout;
@@ -20628,7 +20634,7 @@ void ImProcFunctions::Lab_Local(
                         float slopegrayr = 1.f;
                         float slopegrayg = 1.f;
                         float slopegrayb = 1.f;
-                        
+                        printf("wp=%f bp=%f \n", (double) white_point, (double) black_point);
                         int mode = 1;
                         float slopsmoot = 1.f - ((float) params->locallab.spots.at(sp).slopesmo - 1.f);//modify response so when increase slope the grays are becoming lighter
                         float slopsmootr = 1.f - ((float) params->locallab.spots.at(sp).slopesmor - 1.f);
