@@ -85,6 +85,7 @@ protected:
     rtengine::ProcEvent Evlocallabgamjcie;
     rtengine::ProcEvent Evlocallabslopjcie;
     rtengine::ProcEvent Evlocallabmidtcie;
+    rtengine::ProcEvent Evlocallabcontsig;
     rtengine::ProcEvent Evlocallabslopesmo;
     rtengine::ProcEvent Evlocallabslopesmor;
     rtengine::ProcEvent Evlocallabslopesmog;
@@ -1812,6 +1813,7 @@ private:
     Adjuster* const kslopesmor;
     Adjuster* const kslopesmog;
     Adjuster* const kslopesmob;
+    Adjuster* const contsig;
 
     Adjuster* const whitescie;
     Adjuster* const blackscie;

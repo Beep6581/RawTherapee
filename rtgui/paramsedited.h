@@ -1096,6 +1096,7 @@ public:
         bool gamjcie;
         bool smoothcieth;
         bool slopjcie;
+        bool contsig;
         bool slopesmo;
         bool slopesmor;
         bool slopesmog;
