@@ -110,6 +110,7 @@ jobs:
         run: |
           cd build && open -a RawTherapee.app
           sleep 5
+          osascript -e 'tell application "Finder"' -e 'get the name of every process whose visible is true' -e 'end tell'
           osascript -e 'tell application "RawTherapee" to if it is running then quit'
       - name: Publish artifacts
         uses: softprops/action-gh-release@v2
@@ -211,6 +212,7 @@ jobs:
         run: |
           cd build && open -a RawTherapee.app
           sleep 5
+          osascript -e 'tell application "Finder"' -e 'get the name of every process whose visible is true' -e 'end tell'
           osascript -e 'tell application "RawTherapee" to if it is running then quit'
       - name: Publish artifacts
         uses: softprops/action-gh-release@v2
