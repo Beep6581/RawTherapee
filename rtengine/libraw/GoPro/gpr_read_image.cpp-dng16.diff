@@ -1,0 +1,29 @@
+--- gpr_read_image.cpp.orig	2019-08-30 12:20:00.326653300 +0300
++++ gpr_read_image.cpp	2019-08-31 10:43:26.568184100 +0300
+@@ -67,6 +67,10 @@
+     fDecodeVC5 = true;
+ }
+ 
+ void gpr_read_image::ReadTile (dng_host &host,
+                                    const dng_ifd &ifd,
+                                    dng_stream &stream,
+@@ -77,7 +81,8 @@
+                                    uint32 tileByteCount,
+                                    AutoPtr<dng_memory_block> &compressedBuffer,
+                                    AutoPtr<dng_memory_block> &uncompressedBuffer,
+-                                   AutoPtr<dng_memory_block> &subTileBlockBuffer)
++                                   AutoPtr<dng_memory_block> &subTileBlockBuffer,
++								   bool usingMultipleThreads)
+ {
+     
+     if( ifd.fCompression == ccVc5 )
+@@ -122,7 +127,8 @@
+                                   tileByteCount,
+                                   compressedBuffer,
+                                   uncompressedBuffer,
+-                                  subTileBlockBuffer);
++                                  subTileBlockBuffer,
++								  usingMultipleThreads);
+     }
+ }
+ 

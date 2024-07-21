@@ -1,0 +1,36 @@
+diff --git a/src/librawspeed/tiff/TiffIFD.cpp b/src/librawspeed/tiff/TiffIFD.cpp
+index e732eae2..05251dd9 100644
+--- a/src/librawspeed/tiff/TiffIFD.cpp
++++ b/src/librawspeed/tiff/TiffIFD.cpp
+@@ -143,6 +143,7 @@ TiffRootIFDOwner TiffIFD::parseMakerNote(NORangesSet<Buffer>* ifds,
+   string make = makeEntry != nullptr ? trimSpaces(makeEntry->getString()) : "";
+ 
+   ByteStream bs = t->getData();
++  auto bufbegin = bs.begin() + bs.getPosition();
+ 
+   // helper function for easy setup of ByteStream buffer for the different maker note types
+   // 'rebase' means position 0 of new stream equals current position
+@@ -159,7 +160,9 @@ TiffRootIFDOwner TiffIFD::parseMakerNote(NORangesSet<Buffer>* ifds,
+     bs.skipBytes(newPosition);
+   };
+ 
+-  if (bs.hasPrefix("AOC\0", 4)) {
++  if (bs.hasPrefix("LSI1\0", 5)) { // Skip LSI1 makernotes
++      return std::make_unique<TiffRootIFD>(this, ifds, bs, UINT32_MAX); // UINT32_MAX offset => special handling, empty IFD
++  } else if (bs.hasPrefix("AOC\0", 4)) {
+     setup(false, 6, 4, "Pentax makernote");
+   } else if (bs.hasPrefix("PENTAX", 6)) {
+     setup(true, 10, 8, "Pentax makernote");
+@@ -197,6 +200,12 @@ TiffRootIFDOwner TiffIFD::parseMakerNote(NORangesSet<Buffer>* ifds,
+     }
+   }
+ 
++  auto readed = bs.begin() - bufbegin + bs.getPosition();
++  ByteStream bscheck(bs);
++  const auto IFDSize = 6 + 12 * bscheck.getU16();
++
++  if(IFDSize > t->count - readed) // IFDSize too big, probably binary Makernotes dir, not TIFF-like, could not be handled by TiffRootIFD reader
++      return std::make_unique<TiffRootIFD>(this, ifds, bs, UINT32_MAX); // // UINT32_MAX offset => special handling, empty IFD
+   // Attempt to parse the rest as an IFD
+   return std::make_unique<TiffRootIFD>(this, ifds, bs, bs.getPosition());
+ }
