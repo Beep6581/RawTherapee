@@ -25,7 +25,10 @@ jobs:
            date -u
            mkdir build
            date +%s > build/stamp
-           brew uninstall --ignore-dependencies libtiff libraw
+           brew uninstall --ignore-dependencies libtiff
+           brew uninstall --ignore-dependencies libraw
+           brew cleanup -s libraw
+           brew cleanup --prune-prefix
            brew install libraw libtiff gtk+3 gtkmm3 gtk-mac-integration adwaita-icon-theme libsigc++@2 little-cms2 libiptcdata fftw lensfun expat pkgconfig llvm shared-mime-info exiv2 jpeg-xl libomp automake | tee -a depslog
            date -u
            echo "----====Pourage====----"
@@ -116,7 +119,6 @@ jobs:
             ${{env.ARTIFACT_PATH}}
 
   armbuild:
-    needs: build
     runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
@@ -125,7 +127,10 @@ jobs:
            date -u
            mkdir build
            date +%s > build/stamp
-           brew uninstall --ignore-dependencies libtiff libraw
+           brew uninstall --ignore-dependencies libtiff
+           brew uninstall --ignore-dependencies libraw
+           brew cleanup -s libraw
+           brew cleanup --prune-prefix
            brew install libraw libtiff gtk+3 gtkmm3 gtk-mac-integration adwaita-icon-theme libsigc++@2 little-cms2 libiptcdata fftw lensfun expat pkgconfig llvm shared-mime-info exiv2 jpeg-xl libomp automake | tee -a depslog
            date -u
            echo "----====Pourage====----"
