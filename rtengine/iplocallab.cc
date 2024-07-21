@@ -952,8 +952,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.smoothciem = 3;
     } else if (locallab.spots.at(sp).smoothciemet == "level") {
         lp.smoothciem = 4;
-    } else if (locallab.spots.at(sp).smoothciemet == "leveltrc") {
-        lp.smoothciem = 5;
+  //  } else if (locallab.spots.at(sp).smoothciemet == "leveltrc") {
+  //      lp.smoothciem = 5;
     } else if (locallab.spots.at(sp).smoothciemet == "sigm") {
         lp.smoothciem = 6;
     }
@@ -20588,6 +20588,7 @@ void ImProcFunctions::Lab_Local(
                     if(lp.smoothciem == 6) {
 #ifdef _OPENMP
         #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
 
                         for (int i = 0; i < bfh; ++i)
                             for (int j = 0; j < bfw; ++j) {
