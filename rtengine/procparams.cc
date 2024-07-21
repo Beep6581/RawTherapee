@@ -2064,13 +2064,19 @@ bool LensProfParams::lfManual() const
     return lcMode == LcMode::LENSFUNMANUAL;
 }
 
+bool LensProfParams::useMetadata() const
+{
+    return lcMode == LcMode::METADATA;
+}
+
 const std::vector<const char*>& LensProfParams::getMethodStrings() const
 {
     static const std::vector<const char*> method_strings = {
         "none",
         "lfauto",
         "lfmanual",
-        "lcp"
+        "lcp",
+        "metadata"
     };
     return method_strings;
 }

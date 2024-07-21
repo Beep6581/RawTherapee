@@ -44,6 +44,7 @@
 #include "rt_math.h"
 #include "rtengine.h"
 #include "rtlensfun.h"
+#include "lensmetadata.h"
 #include "../rtgui/options.h"
 
 #define BENCHMARK
@@ -1468,7 +1469,7 @@ void RawImageSource::preprocess(const RAWParams &raw, const LensProfParams &lens
 
     int totBP = 0; // Hold count of bad pixels to correct
 
-    if (ri->zeroIsBad()) { // mark all pixels with value zero as bad, has to be called before FF and DF. dcraw sets this flag only for some cameras (mainly Panasonic and Leica)
+    if (ri->zeroIsBad() || (getMetaData()->hasFixBadPixelsConstant() && getMetaData()->getFixBadPixelsConstant() == 0)) { // mark all pixels with value zero as bad, has to be called before FF and DF. dcraw sets this flag only for some cameras (mainly Panasonic and Leica)
         bitmapBads.reset(new PixelsMap(W, H));
         totBP = findZeroPixels(*bitmapBads);
 
@@ -1532,7 +1533,7 @@ void RawImageSource::preprocess(const RAWParams &raw, const LensProfParams &lens
     //FLATFIELD end
 
     if (raw.ff_FromMetaData && isGainMapSupported()) {
-        applyDngGainMap(c_black, ri->getGainMaps());
+        applyDngGainMap(c_black, getMetaData()->getGainMaps());
     }
 
     // Always correct camera badpixels from .badpixels file
@@ -1583,7 +1584,13 @@ void RawImageSource::preprocess(const RAWParams &raw, const LensProfParams &lens
     if (!hasFlatField && lensProf.useVign && lensProf.lcMode != LensProfParams::LcMode::NONE) {
         std::unique_ptr<LensCorrection> pmap;
 
-        if (lensProf.useLensfun()) {
+        if (lensProf.useMetadata()) {
+            auto corr = MetadataLensCorrectionFinder::findCorrection(idata);
+            if (corr) {
+                corr->initCorrections(W, H, coarse, -1);
+                pmap = std::move(corr);
+            }
+        } else if (lensProf.useLensfun()) {
             pmap = LFDatabase::getInstance()->findModifier(lensProf, idata, W, H, coarse, -1);
         } else {
             const std::shared_ptr<LCPProfile> pLCPProf = LCPStore::getInstance()->getProfile(lensProf.lcpFile);
@@ -8400,7 +8407,68 @@ void RawImageSource::getMinValsXtrans() {
 
 bool RawImageSource::isGainMapSupported() const
 {
-    return ri->isGainMapSupported();
+    if (!(ri->DNGVERSION() && ri->isBayer())) {
+        return false;
+    }
+    const auto &gainMaps = getMetaData()->getGainMaps();
+    const auto n = gainMaps.size();
+    if (n != 4) { // we need 4 gainmaps for bayer files
+        if (rtengine::settings->verbose) {
+            std::cout << "GainMap has " << n << " maps, but 4 are needed" << std::endl;
+        }
+        return false;
+    }
+    unsigned int check = 0;
+    bool noOp = true;
+    for (const auto &m : gainMaps) {
+        if (m.MapGain.size() < 1) {
+            if (rtengine::settings->verbose) {
+                std::cout << "GainMap has invalid size of " << m.MapGain.size() << std::endl;
+            }
+            return false;
+        }
+        if (m.MapGain.size() != static_cast<std::size_t>(m.MapPointsV) * static_cast<std::size_t>(m.MapPointsH) * static_cast<std::size_t>(m.MapPlanes)) {
+            if (rtengine::settings->verbose) {
+                std::cout << "GainMap has size of " << m.MapGain.size() << ", but needs " << m.MapPointsV * m.MapPointsH * m.MapPlanes << std::endl;
+            }
+            return false;
+        }
+        if (m.RowPitch != 2 || m.ColPitch != 2) {
+            if (rtengine::settings->verbose) {
+                std::cout << "GainMap needs Row/ColPitch of 2/2, but has " << m.RowPitch << "/" << m.ColPitch << std::endl;
+            }
+            return false;
+        }
+        if (m.Top == 0) {
+            if (m.Left == 0) {
+                check += 1;
+            } else if (m.Left == 1) {
+                check += 2;
+            }
+        } else if (m.Top == 1) {
+            if (m.Left == 0) {
+                check += 4;
+            } else if (m.Left == 1) {
+                check += 8;
+            }
+        }
+        for (size_t i = 0; noOp && i < m.MapGain.size(); ++i) {
+            if (m.MapGain[i] != 1.f) { // we have at least one value != 1.f => map is not a nop
+                noOp = false;
+            }
+        }
+    }
+    if (noOp || check != 15) { // all maps are nops or the structure of the combination of 4 maps is not correct
+        if (rtengine::settings->verbose) {
+            if (noOp) {
+                std::cout << "GainMap is a nop" << std::endl;
+            } else {
+                std::cout << "GainMap has unsupported type : " << check << std::endl;
+            }
+        }
+        return false;
+    }
+    return true;
 }
 
 void RawImageSource::applyDngGainMap(const float black[4], const std::vector<GainMap> &gainMaps)

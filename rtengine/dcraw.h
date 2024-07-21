@@ -24,7 +24,6 @@
 
 #include "myfile.h"
 #include <csetjmp>
-#include "dnggainmap.h"
 #include "settings.h"
 
 class DCraw
@@ -67,6 +66,7 @@ public:
 	,getbithuff(this,ifp,zero_after_ff)
 	,nikbithuff(ifp)
     {
+        shrink=0;
         memset(&hbd, 0, sizeof(hbd));
         aber[0]=aber[1]=aber[2]=aber[3]=1;
         gamm[0]=0.45;gamm[1]=4.5;gamm[2]=gamm[3]=gamm[4]=gamm[5]=0;
@@ -165,6 +165,15 @@ protected:
         ushort      *linebuf[_ltotal];
     };
 
+    /**
+     * Metadata for merged pixel-shift image.
+     */
+    struct MergedPixelshift
+    {
+        bool is_merged_pixelshift = false;
+        unsigned sub_frame_shot_select;
+    };
+
     int fuji_total_lines, fuji_total_blocks, fuji_block_width, fuji_bits, fuji_raw_type, fuji_lossless;
 
     ushort raw_height, raw_width, height, width, top_margin, left_margin;
@@ -191,8 +200,7 @@ protected:
     ThreeValBool RT_matrix_from_constant;
     std::string RT_software;
     double RT_baseline_exposure;
-
-    std::vector<GainMap> gainMaps;
+    struct MergedPixelshift merged_pixelshift;
 
 public:
     struct CanonCR3Data {
@@ -250,12 +258,6 @@ public:
     {
         return (filters != 0 && filters != 9);
     }
-
-    const std::vector<GainMap>& getGainMaps() const {
-        return gainMaps;
-    }
-
-    bool isGainMapSupported() const;
 
     struct CanonLevelsData {
         unsigned cblack[4];
