@@ -149,7 +149,6 @@ jobs:
             -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
             -DCMAKE_EXE_LINKER_FLAGS="-L. -L/opt/homebrew/lib -Wl,-rpath -Wl,/opt/homebrew/lib -L/opt/homebrew/opt/gdk-pixbuf/lib -L/opt/homebrew/opt/libiconv/lib -L/opt/homebrew/opt/libomp/lib -L/opt/homebrew/opt/libffi/lib -L/opt/homebrew/opt/libffi/lib -L/opt/homebrew/opt/libxml2/lib -L/opt/homebrew/opt/expat/lib" \
             -DCACHE_NAME_SUFFIX="${RAW_THERAPEE_VERSION}-${REF}" \
-            -DPROC_TARGET_NUMBER="11" \
             -DCMAKE_OSX_ARCHITECTURES=arm64 \
             -DWITH_LTO="ON" \
             -DLENSFUNDBDIR="/Applications/RawTherapee.app/Contents/Resources/share/lensfun" \
