@@ -1995,10 +1995,11 @@ static void calcTransition(const float lox, const float loy, const float ach, co
     }
 }
 //sigmoid
-/* -*- C -*-
+/* C -*
  * 
  * Simplified porting of darktable's sigmoid module to Rawtherapee 
  * Copyright of the original code follows
+ * Thanks to Alberto Griggio for the Sigmoid Tone Mapper CTL
  */
 /*
     This file is part of darktable,
@@ -2018,10 +2019,10 @@ static void calcTransition(const float lox, const float loy, const float ach, co
     along with darktable.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-const float MIDDLE_GREY = 0.1845f;
+//const float MIDDLE_GREY = 0.01f * params->locallab.spots.at(sp).sourceGraycie; //0.1845f;
 
 const float display_black_target = 0.0152f;
-//const float display_white_target = 100;
+const float display_white_target = 100.f;
 
 float max(float a, float b)
 {
@@ -2063,7 +2064,8 @@ void calculate_params(float middle_grey_contrast,
                       float &black_target,
                       float &film_fog,
                       float &paper_exposure,
-                      float &paper_power)
+                      float &paper_power,
+                      float MIDDLE_GREY)
 {
     /* Calculate actual skew log logistic parameters to fulfill the following:
      * f(scene_zero) = display_black_target
@@ -2120,7 +2122,8 @@ void  ImProcFunctions::sigmoid_main(float r,
               float &bout,
               float middle_grey_contrast,
               float contrast_skewness,
-              float white_point)
+              float white_point,
+              float MIDDLE_GREY)
 {
     float film_power = 1.f;
     float white_target = 1.f;;
@@ -2133,7 +2136,7 @@ void  ImProcFunctions::sigmoid_main(float r,
     calculate_params(middle_grey_contrast, contrast_skewness,
                      display_black_target, white_point * 100.0f, film_power,
                      white_target, black_target, film_fog,
-                     paper_exposure, paper_power);
+                     paper_exposure, paper_power, MIDDLE_GREY);
     float rgb[3] = {r, g, b};
     for (int i = 0; i < 3; i = i+1) {
         rgb[i] = max(rgb[i], 0);
@@ -20585,9 +20588,11 @@ void ImProcFunctions::Lab_Local(
                         }
 
                     }
-                    if(lp.smoothciem == 6) {
+                    if(lp.smoothciem == 6) {//Sigmoid - from Darktable
                         float middle_grey_contrast = params->locallab.spots.at(sp).contsig;
                         float contrast_skewness = params->locallab.spots.at(sp).skewsig;
+                        float white_pointsig = params->locallab.spots.at(sp).whitsig;
+                        float MIDDLE_GREY = 0.01 * params->locallab.spots.at(sp).sourceGraycie;
 #ifdef _OPENMP
         #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -20600,8 +20605,7 @@ void ImProcFunctions::Lab_Local(
                                 float rout = 0.f;
                                 float gout = 0.f;
                                 float bout = 0.f;
-                               // sigmoid_main(r, g, b, rout, gout, bout, float middle_grey_contrast, float contrast_skewness, float white_point);
-                                sigmoid_main(r, g, b, rout, gout, bout, middle_grey_contrast, contrast_skewness, 1.f);
+                                sigmoid_main(r, g, b, rout, gout, bout, middle_grey_contrast, contrast_skewness, white_pointsig, MIDDLE_GREY);
                                 tmpImage->r(i, j) = 65535.f * rout;
                                 tmpImage->g(i, j) = 65535.f * gout;
                                 tmpImage->b(i, j) = 65535.f * bout;

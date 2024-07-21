@@ -1461,6 +1461,7 @@ HISTORY_MSG_LOCAL_CIE_BRICOMP;Local CIECAM Brightness compression
 HISTORY_MSG_LOCAL_CIE_BRICOMPTH;Local CIECAM Brightness compression threshold
 HISTORY_MSG_LOCAL_CIE_BWCIE;Local CIECAM - black and white
 HISTORY_MSG_LOCAL_CIE_CAT;Matrix adaptation
+HISTORY_MSG_LOCAL_CIE_CONTSIG;Local CIECAM - Sigmoid contrast
 HISTORY_MSG_LOCAL_CIE_DETAILJZ;Local JzCzHz Local contrast
 HISTORY_MSG_LOCAL_CIE_ENAMASKALL;Local CIECAM All mask tools
 HISTORY_MSG_LOCAL_CIE_EXPPRECAM;Local CIECAM Pre-Cam
@@ -1475,6 +1476,7 @@ HISTORY_MSG_LOCAL_CIE_REFI;Local CIECAM Refinement Colors
 HISTORY_MSG_LOCAL_CIE_SIG;Sigmoid
 HISTORY_MSG_LOCAL_CIE_SIGADAP;Local CIECAM Sigmoid adaptability
 HISTORY_MSG_LOCAL_CIE_SIGMET;Local CIECAM - Sigmoid method
+HISTORY_MSG_LOCAL_CIE_SKEWSIG;Local CIECAM - Sigmoid skew
 HISTORY_MSG_LOCAL_CIE_SLOP;Local CIECAM - Slope
 HISTORY_MSG_LOCAL_CIE_SLOPESMO;Local CIECAM - Gray balance
 HISTORY_MSG_LOCAL_CIE_SLOPESMOR;Local CIECAM - Red balance
@@ -1488,6 +1490,7 @@ HISTORY_MSG_LOCAL_CIE_SMOOTHTH;Local CIECAM - Attenation threshold
 HISTORY_MSG_LOCAL_CIE_SMOOTHLNK;Local CIECAM - Link R G B
 HISTORY_MSG_LOCAL_CIE_STRGRAD;Local CIECAM - gradient strength L
 HISTORY_MSG_LOCAL_CIE_TRC;Local CIECAM - TRC
+HISTORY_MSG_LOCAL_CIE_WHITSIG;Local CIECAM - Sigmoid white point
 HISTORY_MSG_LOCAL_CIE_REDXL;Local CIECAM - Red X
 HISTORY_MSG_LOCAL_CIE_REDYL;Local CIECAM - Red Y
 HISTORY_MSG_LOCAL_CIE_GREXL;Local CIECAM - Green X
@@ -3608,7 +3611,6 @@ TP_LOCALLAB_SLOPESMOOTRCB;Blue balance (TRC)
 TP_LOCALLAB_SLOSH;Slope
 TP_LOCALLAB_SMOOTHCIE;Highlight Attenuation
 TP_LOCALLAB_SMOOTHCIE_LNK;Link R & G & B
-
 TP_LOCALLAB_SMOOTHCIETH;Attenuation threshold
 TP_LOCALLAB_SMOOTHCIE_HIGH;Highlight attenuation only
 TP_LOCALLAB_SMOOTHCIE_TRC;Increase gamma-based attenuation
@@ -3617,6 +3619,9 @@ TP_LOCALLAB_SMOOTHCIE_LUM;Luminosity mode
 TP_LOCALLAB_SMOOTHCIE_SCA;Scale Yb Scene
 TP_LOCALLAB_SMOOTHCIE_YB;Scale Yb Viewing
 TP_LOCALLAB_SMOOTHCIE_TOOLTIP;Completes the processing carried out by gamma, slope and midtones by causing a slight lowering of lights. Please note this does not replace Highlight reconstruction.\n\nGamma - Slope - based: choice (Standard and Advanced) allows you to simulate a "Tone mapping" using: a) Scene conditions: Black-Ev, White-Ev, Mean luminance (Yb%); b) Viewing conditions: Mean luminance (Yb%).\nScale Yb Scene is function of White-Ev.
+TP_LOCALLAB_SMOOTHCONTSIG;Contrast
+TP_LOCALLAB_SMOOTHSKEWSIG;Skew
+TP_LOCALLAB_SMOOTHWHITSIG;White point
 TP_LOCALLAB_SOFT;Soft Light & Original Retinex
 TP_LOCALLAB_SOFTM;Soft Light
 TP_LOCALLAB_SOFTMETHOD_TOOLTIP;Apply a Soft-light blend (identical to the global adjustment). Carry out dodge and burn using the original Retinex algorithm.

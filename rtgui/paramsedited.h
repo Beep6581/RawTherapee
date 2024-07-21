@@ -1098,6 +1098,7 @@ public:
         bool slopjcie;
         bool contsig;
         bool skewsig;
+        bool whitsig;
         bool slopesmo;
         bool slopesmor;
         bool slopesmog;
