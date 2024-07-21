@@ -470,6 +470,8 @@ void Options::setDefaults()
     histogramTraceBrightness = 1;
     curvebboxpos = 1;
     complexity = 2;
+    spotmet = 0;
+
     inspectorWindow = false;
     zoomOnScroll = true;
     prevdemo = PD_Sidecar;
@@ -578,8 +580,8 @@ void Options::setDefaults()
 
     rtSettings.darkFramesPath = "";
     rtSettings.flatFieldsPath = "";
-	rtSettings.cameraProfilesPath = "";
-	rtSettings.lensProfilesPath = "";
+    rtSettings.cameraProfilesPath = "";
+    rtSettings.lensProfilesPath = "";
 
 #ifdef _WIN32
     const gchar* sysRoot = g_getenv("SystemRoot");  // Returns e.g. "c:\Windows"
@@ -595,6 +597,7 @@ void Options::setDefaults()
 #else
     rtSettings.iccDirectory = "/usr/share/color/icc";
 #endif
+    rtSettings.enableLibRaw = true;
 //   rtSettings.viewingdevice = 0;
 //   rtSettings.viewingdevicegrey = 3;
     //  rtSettings.viewinggreySc = 1;
@@ -671,8 +674,8 @@ void Options::setDefaults()
     lastIccDir = rtSettings.iccDirectory;
     lastDarkframeDir = rtSettings.darkFramesPath;
     lastFlatfieldDir = rtSettings.flatFieldsPath;
-	lastCameraProfilesDir = rtSettings.cameraProfilesPath;
-	lastLensProfilesDir = rtSettings.lensProfilesPath;
+    lastCameraProfilesDir = rtSettings.cameraProfilesPath;
+    lastLensProfilesDir = rtSettings.lensProfilesPath;
 //  rtSettings.bw_complementary = true;
     // There is no reasonable default for curves. We can still suppose that they will take place
     // in a subdirectory of the user's own ProcParams presets, i.e. in a subdirectory
@@ -695,6 +698,7 @@ void Options::setDefaults()
     lastICCProfCreatorDir = "";
     gimpPluginShowInfoDialog = true;
     maxRecentFolders = 15;
+    thumbnailRankColorMode = Options::ThumbnailPropertyMode::PROCPARAMS;
     sortMethod = SORT_BY_NAME;
     sortDescending = false;
     rtSettings.lensfunDbDirectory = ""; // set also in main.cc and main-cli.cc
@@ -813,7 +817,7 @@ void Options::readFromFile(Glib::ustring fname)
                     rtSettings.cameraProfilesPath = keyFile.get_string("General", "CameraProfilesPath");
                 }
 
-				if (keyFile.has_key("General", "LensProfilesPath")) {
+                if (keyFile.has_key("General", "LensProfilesPath")) {
                     rtSettings.lensProfilesPath = keyFile.get_string("General", "LensProfilesPath");
                 }
 
@@ -1265,6 +1269,29 @@ void Options::readFromFile(Glib::ustring fname)
                     }
                 }
 
+                // check and add extensions that are missing from config
+                std::map<std::string, int> checkedExtensions;
+
+                if (parseExtensions.size() == parseExtensionsEnabled.size()) {
+                    for (auto i = 0; i < parseExtensions.size(); ++i) {
+                        checkedExtensions[parseExtensions[i]] = parseExtensionsEnabled[i];
+                    }
+                }
+
+                parseExtensions.clear();
+                parseExtensionsEnabled.clear();
+
+                for (auto const &i : knownExtensions) {
+                    if (checkedExtensions.count(i) == 0) {
+                        checkedExtensions[i] = 1;
+                    }
+                }
+
+                for (auto const &x : checkedExtensions) {
+                    parseExtensions.emplace_back(x.first);
+                    parseExtensionsEnabled.emplace_back(x.second);
+                }
+
                 if (keyFile.has_key("File Browser", "ThumbnailArrangement")) {
                     fbArrangement = keyFile.get_integer("File Browser", "ThumbnailArrangement");
                 }
@@ -1366,6 +1393,15 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("File Browser", "BrowseRecursiveFollowLinks")) {
                     browseRecursiveFollowLinks = keyFile.get_boolean("File Browser", "BrowseRecursiveFollowLinks");
+                }
+
+                if (keyFile.has_key("File Browser", "ThumbnailRankColorMode")) {
+                    std::string val = keyFile.get_string("File Browser", "ThumbnailRankColorMode");
+                    if (val == "xmp") {
+                        thumbnailRankColorMode = ThumbnailPropertyMode::XMP;
+                    } else {
+                        thumbnailRankColorMode = ThumbnailPropertyMode::PROCPARAMS;
+                    }
                 }
             }
 
@@ -1739,6 +1775,10 @@ void Options::readFromFile(Glib::ustring fname)
                     complexity = keyFile.get_integer("GUI", "Complexity");
                 }
 
+                if (keyFile.has_key("GUI", "Spotmet")) {
+                    spotmet = keyFile.get_integer("GUI", "Spotmet");
+                }
+
                 if (keyFile.has_key("GUI", "InspectorWindow")) {
                     inspectorWindow = keyFile.get_boolean("GUI", "InspectorWindow");
                 }
@@ -1762,6 +1802,14 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("Crop Settings", "AutoFit")) {
                     cropAutoFit = keyFile.get_boolean("Crop Settings", "AutoFit");
+                }
+            }
+
+            const Glib::ustring groupRawDecoder = "Raw Decoder";
+            if (keyFile.has_group(groupRawDecoder)) {
+                const Glib::ustring keyEnableLibRaw = "EnableLibRaw";
+                if (keyFile.has_key(groupRawDecoder, keyEnableLibRaw)) {
+                    rtSettings.enableLibRaw = keyFile.get_boolean(groupRawDecoder, keyEnableLibRaw);
                 }
             }
 
@@ -2379,8 +2427,8 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_string("General", "Version", RTVERSION);
         keyFile.set_string("General", "DarkFramesPath", rtSettings.darkFramesPath);
         keyFile.set_string("General", "FlatFieldsPath", rtSettings.flatFieldsPath);
-		keyFile.set_string("General", "CameraProfilesPath", rtSettings.cameraProfilesPath);
-		keyFile.set_string("General", "LensProfilesPath", rtSettings.lensProfilesPath);
+        keyFile.set_string("General", "CameraProfilesPath", rtSettings.cameraProfilesPath);
+        keyFile.set_string("General", "LensProfilesPath", rtSettings.lensProfilesPath);
         keyFile.set_boolean("General", "Verbose", rtSettings.verbose);
         keyFile.set_integer("General", "Cropsleep", rtSettings.cropsleep);
         keyFile.set_double("General", "Reduchigh", rtSettings.reduchigh);
@@ -2466,6 +2514,14 @@ void Options::saveToFile(Glib::ustring fname)
             }
 
             keyFile.set_string_list("File Browser", "RecentFolders", temp);
+        }
+        switch (thumbnailRankColorMode) {
+        case ThumbnailPropertyMode::XMP:
+            keyFile.set_string("File Browser", "ThumbnailRankColorMode", "xmp");
+            break;
+        default: // ThumbnailPropertyMode::PROCPARAMS
+            keyFile.set_string("File Browser", "ThumbnailRankColorMode", "procparams");
+            break;
         }
         keyFile.set_integer("File Browser", "SortMethod", sortMethod);
         keyFile.set_boolean("File Browser", "SortDescending", sortDescending);
@@ -2607,6 +2663,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("GUI", "CurveBBoxPosition", curvebboxpos);
         keyFile.set_boolean("GUI", "Showtooltip", showtooltip);
         keyFile.set_integer("GUI", "Complexity", complexity);
+        keyFile.set_integer("GUI", "Spotmet", spotmet);
         keyFile.set_boolean("GUI", "InspectorWindow", inspectorWindow);
         keyFile.set_boolean("GUI", "ZoomOnScroll", zoomOnScroll);
         keyFile.set_integer("GUI", "MaxZoom", static_cast<int>(maxZoomLimit));
@@ -2617,6 +2674,8 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("Crop Settings", "PPI", cropPPI);
         keyFile.set_integer("Crop Settings", "GuidesMode", cropGuides);
         keyFile.set_boolean("Crop Settings", "AutoFit", cropAutoFit);
+
+        keyFile.set_boolean("Raw Decoder", "EnableLibRaw", rtSettings.enableLibRaw);
 
         keyFile.set_string("Color Management", "PrinterProfile", rtSettings.printerProfile);
         keyFile.set_integer("Color Management", "PrinterIntent", rtSettings.printerIntent);

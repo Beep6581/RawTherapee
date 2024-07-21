@@ -29,6 +29,7 @@
 #include "imagedata.h"
 #include "../rtgui/version.h"
 #include "../rtgui/pathutils.h"
+#include <ctime>
 
 
 #if EXIV2_TEST_VERSION(0,28,0)
@@ -104,19 +105,6 @@ void clear_metadata_key(Data &data, const Key &key)
             data.erase(it);
         }
     }
-}
-
-template <typename Iterator, typename Integer = std::size_t>
-auto to_long(const Iterator &iter, Integer n = Integer{0}) -> decltype(
-#if EXIV2_TEST_VERSION(0,28,0)
-    iter->toInt64()
-) {
-    return iter->toInt64(n);
-#else
-    iter->toLong()
-) {
-    return iter->toLong(n);
-#endif
 }
 
 } // namespace
@@ -312,6 +300,13 @@ void Exiv2Metadata::saveToImage(const Glib::ustring &path, bool preserve_all_tag
     }
 
     dst->exifData()["Exif.Image.Software"] = "RawTherapee " RTVERSION;
+
+    std::time_t t = std::time(nullptr);
+    char mbstr[20];
+    if (std::strftime(mbstr, sizeof(mbstr), "%Y:%m:%d %H:%M:%S", std::localtime(&t))) {
+        dst->exifData()["Exif.Image.DateTime"] = mbstr;
+    }
+    
     import_exif_pairs(dst->exifData());
     import_iptc_pairs(dst->iptcData());
     bool xmp_tried = false;

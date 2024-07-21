@@ -1300,6 +1300,11 @@ combobox, .popupbutton-arrow {
     min-height: 2em;
 }
 
+/* Visual divider between the icon and arrow in the pop-up button. */
+.image-combo button.Left {
+    border-right: solid 0.083333333333333333em #202020;
+}
+
 /* Makes image-combobox small icons centered */
 button.toggle > grid > image {
     padding: 0.3333333333333333em;

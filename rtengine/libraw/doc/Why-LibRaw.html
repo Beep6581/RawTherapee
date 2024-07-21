@@ -1,0 +1,65 @@
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=windows-1252">
+  </head>
+  <body>
+    <p>Purpose and Objectives<a href="index.html">[back to Index]</a></p>
+    <h1>LibRaw Project Goals and Objectives</h1>
+    <h2>Who May Be Interested in This Project</h2>
+    <p>The proposed project and the software products generated within this project are intended for:</p>
+    <ul>
+      <li>Developers of RAW converters, including current and new developments</li>
+      <li>Developers of applications that need access to decoded RAW data (for pre-processing, stitching, stacking, color profiling, etc.)</li>
+      <li>Those willing to write their own graphic interface for RAW file processing</li>
+      <li>Developers and enthusiasts creating their own primary and auxiliary data processing algorithms, including
+        <ul>
+          <li>Interpolation (demosaic),</li>
+          <li>Noise reduction</li>
+          <li>White balance</li>
+          <li>Correction of aberrations and distortions</li>
+          <li>RAW data analysis</li>
+          <li>Comparison of cameras and lenses</li>
+          <li>and so on...</li>
+        </ul>
+      </li>
+    </ul>
+    <h2>Some History</h2>
+    <p>The LibRaw project started in 2008. At that time <a href="https://www.cybercom.net/%7Edcoffin/dcraw/">dcraw</a> was very popular as a method of accessing RAW data. It was hard to find a more or less popular camera that was not supported by this utility; while the implementation of RAW data extraction in <strong>dcraw</strong> was of a very high quality.</p>
+    <p>However, developers and enthusiasts were experiencing a number of difficulties when using <strong>dcraw</strong>. First, the author of <strong>dcraw</strong> refused to turn his product into a handy library. Besides, <strong>dcraw</strong> contains a number of questionable features that may hinder its use without modifications, as well as instances of distortions in the photographic sense of it. As a result, once every several months, with each new release of <strong>dcraw</strong>, virtually all developers, part of them listed on the <a
+        href="https://www.cybercom.net/%7Edcoffin/dcraw/">dcraw Web site</a>, were to check the differences, figure out the patches, and apply those patches to their dcraw-based code and libraries.</p>
+    <p>As for enthusiasts, the "entry cost" of verifying their own ideas and implementing their own algorithms in such an environment is often unreasonably high: they have to either use the dcraw command line, thus being forced to use the unavoidable early processing stages, or understand the source code and maintain their own library based on it.</p>
+    <p>Thus, the inconveniences of <strong>dcraw</strong> make the developers' community quite small and halt further evolution and improvement of RAW format converters.</p>
+    <p>Our project started with the idea to <em>get a library based on dcraw, only better</em>. Today we are well past that initial goal, not in the least because <strong>dcraw</strong> is not actively supported since 2015, and the latest release was published nearly 2 years ago, in May 2016. Since then several distinctly different RAW formats (introduced by Fujifilm, Nikon, Pentax, Samsung, Sigma, Sony) emerged, none of which is supported by <strong>dcraw</strong>. Additionally, we see it necessary to extract more metadata to help better interpretation of RAW data and to add flexibility to the RAW conversion process.</p>
+    <h2>Goals and Objectives</h2>
+    <p>We are maintaining LibRaw as a library providing access to decoded raw data and metadata useful for correct interpretation of the said data. Thus:</p>
+    <ol>
+      <li>To keep on adding RAW decoding for new and previously unsupported cameras</li>
+      <li>To continue the development of a stable and consistent API suitable for other applications (RAW converters, data analyzers, panorama stitchers, etc.)</li>
+      <li>To have RAW processing as separate independent parts (groups of API calls)
+        <ul>
+          <li>Reading, decoding, and unpacking of RAW data: <em><strong>this is the main functionality of LibRaw</strong></em></li>
+          <li>Data conversions: interpolation, white balance, etc.: <em><strong>this part of LibRaw is frozen: we ported dcraw functionality, but expect that library users will create own postprocessing code.</strong></em></li>
+          <li>File output of the processing results. <em><strong>This part is very primitive, only tiff and ppm output is supported.</strong></em></li>
+        </ul>
+      </li>
+    </ol>
+    <p style="margin-left:.5in;">The latter two groups of functions are maintained to provide some postprocessing/saving ability from scratch, without writing own code. We do not have any plans to extend/improve this code.</p>
+    <ol>
+      <li value="4">To improve the procedures of RAW data retrieval and decoding.</li>
+      <li>To supply other developers with a "framework" (freeware and open-source), e.g., for experimenting with their own methods of RAW data processing (interpolation, noise reduction, white balance, etc.; some directions of the possible efforts are <a>listed above</a>), so that they could create their own GUI programs and interfaces without developing the entire RAW converter.</li>
+    </ol>
+    <h2>LibRaw Release Schedule</h2>
+    <ol>
+      <li><strong>Production releases</strong> will be published at intervals of 1-1.5 years. Production releases will be maintained through bugfixes. New cameras will not be added to production releases, but only to snapshots and non-stable/beta releases.<em> Patch </em>(bugfix) releases of production releases should provide API/ABI consistency (so, version 0.21.5 should be binary compatible with 0.21.0).</li>
+      <li><strong>Snapshots</strong> are planned to be released every 2-3 quarters. Snapshots will include support for new cameras, stable and tested in our own applications. API calls and internal routines may be changed. No binary compatibility maintained, to upgrade to newer snapshot one need to recompile application that uses it.</li>
+      <li><strong>Non-stable/beta releases</strong> with new features, like initial support for some new RAW format that needs extensive testing by the community.&nbsp; No exact schedule, to be published as needed.</li>
+    </ol>
+    <h2>How You Can Help/Participate</h2>
+    <p><strong>We welcome any help</strong>, however:</p>
+    <ol>
+      <li>If you are submitting any core functionality extensions/improvements, that is, something that has to do with the decoding of RAW and/or metadata, that would be highly valuable and we will maintain your submission on our own, if necessary; you don’t need to be committed.</li>
+      <li>If your contribution adds to post-processing, please be committed to supporting and maintaining such a contribution. Our previous experience with such contributions has been less than positive, exactly because of the lack of maintenance on the part of the contributors. We are unable to maintain such contributions on our own, because our primary goal is to maintain RAW and metadata decoding.</li>
+    </ol>
+    <p><a href="index.html">[back to Index]</a></p>
+  </body>
+</html>

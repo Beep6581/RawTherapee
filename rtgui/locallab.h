@@ -25,6 +25,7 @@
 #pragma once
 
 #include "controlspotpanel.h"
+#include "guiutils.h"
 #include "locallabtools.h"
 
 /* ==== LocallabToolListListener ==== */
@@ -118,6 +119,8 @@ private:
     LocallabMask expmask;
     Locallabcie expcie;
 
+    OptionalRadioButtonGroup delta_e_preview_button_group;
+
     std::vector<LocallabTool*> locallabTools;
 
     // Locallab tools mask background management data
@@ -130,6 +133,8 @@ private:
     std::vector<locallabcieBEF> cie_bef;
 
     std::vector<locallabcieLC> cie_lc;
+
+    std::vector<locallabsetLC> set_lc;
 
     std::vector<locallabcieSIG> cie_sig;
 
@@ -154,7 +159,16 @@ public:
 
     // Locallab Retinex tool min/man management function
     void minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int selspot) override;
-
+    
+    // new functions for global - normal use
+//    void mainChanged(int spottype, int selspot, bool iscolor, bool issh, bool isvib, bool isexpos, bool issoft, bool isblur, bool istom, bool isret, bool issharp, bool iscont, bool iscbdl, bool islog, bool ismas, bool iscie)override;
+    void scopeChangedcol(int scope, int selspot, bool enab)override;
+    void scopeChangedsh(int scope, int selspot, bool enab)override;
+    void scopeChangedvib(int scope, int selspot, bool enab)override;
+    void scopeChangedset(int scope, int selspot, bool enab)override;
+    
+    void maiChanged(const std::vector<locallabsetLC> &setlc, int selspot) override;
+    
     //Locallab denoise 
     // Locallab Retinex tool min/man management function
     void denChanged(const std::vector<locallabDenoiseLC> &denlc, int selspot) override;

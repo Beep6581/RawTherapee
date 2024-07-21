@@ -310,6 +310,13 @@ public:
     int maxThumbnailWidth;
     std::size_t maxCacheEntries;
     int thumbInterp; // 0: nearest, 1: bilinear
+
+    std::vector<std::string> knownExtensions = {
+        "3fr", "arw", "arq", "cr2",  "cr3", "crf", "crw",  "dcr", "dng",
+        "fff", "iiq", "jpg", "jpeg", "jxl", "kdc", "mef",  "mos", "mrw",
+        "nef", "nrw", "orf", "ori",  "pef", "png", "raf",  "raw", "rw2",
+        "rwl", "rwz", "sr2", "srf",  "srw", "tif", "tiff", "x3f"};
+
     std::vector<Glib::ustring> parseExtensions;   // List containing all extensions type
     std::vector<int> parseExtensionsEnabled;      // List of bool to retain extension or not
     std::vector<Glib::ustring> parsedExtensions;  // List containing all retained extensions (lowercase)
@@ -330,6 +337,8 @@ public:
     bool internalThumbIfUntouched;
     bool overwriteOutputFile;
     int complexity;
+    int spotmet;
+
     bool inspectorWindow; // open inspector in separate window
     bool zoomOnScroll;    // translate scroll events to zoom
 
@@ -470,8 +479,8 @@ public:
     Glib::ustring lastIccDir;
     Glib::ustring lastDarkframeDir;
     Glib::ustring lastFlatfieldDir;
-	Glib::ustring lastCameraProfilesDir;
-	Glib::ustring lastLensProfilesDir;
+    Glib::ustring lastCameraProfilesDir;
+    Glib::ustring lastLensProfilesDir;
     Glib::ustring lastRgbCurvesDir;
     Glib::ustring lastLabCurvesDir;
     Glib::ustring lastRetinexDir;
@@ -491,6 +500,12 @@ public:
 
     size_t maxRecentFolders;                   // max. number of recent folders stored in options file
     std::vector<Glib::ustring> recentFolders;  // List containing all recent folders
+
+    enum class ThumbnailPropertyMode {
+        PROCPARAMS, // store rank and color in procparams sidecars
+        XMP // store rank and color xmp sidecar
+    };
+    ThumbnailPropertyMode thumbnailRankColorMode;
 
     enum SortMethod {
         SORT_BY_NAME,

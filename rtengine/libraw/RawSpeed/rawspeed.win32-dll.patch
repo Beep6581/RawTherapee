@@ -1,0 +1,186 @@
+diff --git a/RawSpeed/Camera.h b/RawSpeed/Camera.h
+index 7b3045d..4363c1b 100644
+--- a/RawSpeed/Camera.h
++++ b/RawSpeed/Camera.h
+@@ -6,6 +6,7 @@
+ #include <libxml/parser.h>
+ #include "BlackArea.h"
+ #include "CameraMetadataException.h"
++#include "dlldef.h"
+ /* 
+     RawSpeed - RAW file decoder.
+ 
+@@ -30,7 +31,7 @@
+ 
+ namespace RawSpeed {
+ 
+-class Camera
++class DllDef Camera
+ {
+ public:
+   Camera(xmlDocPtr doc, xmlNodePtr cur);
+diff --git a/RawSpeed/CameraMetaData.h b/RawSpeed/CameraMetaData.h
+index 616b2bb..c6b8031 100644
+--- a/RawSpeed/CameraMetaData.h
++++ b/RawSpeed/CameraMetaData.h
+@@ -27,9 +27,10 @@
+     http://www.klauspost.com
+ */
+ 
++#include "dlldef.h"
+ namespace RawSpeed {
+ 
+-class CameraMetaData
++class DllDef CameraMetaData
+ {
+ public:
+   CameraMetaData();
+diff --git a/RawSpeed/CameraMetadataException.h b/RawSpeed/CameraMetadataException.h
+index 55a2814..52d5ea1 100644
+--- a/RawSpeed/CameraMetadataException.h
++++ b/RawSpeed/CameraMetadataException.h
+@@ -22,10 +22,11 @@
+ #ifndef CAMERA_METADATA_EXCEPTION_H
+ #define CAMERA_METADATA_EXCEPTION_H
+ 
++#include "dlldef.h"
+ 
+ namespace RawSpeed {
+ 
+-void ThrowCME(const char* fmt, ...);
++void DllDef ThrowCME(const char* fmt, ...);
+ 
+ class CameraMetadataException :
+   public std::runtime_error
+diff --git a/RawSpeed/FileMap.h b/RawSpeed/FileMap.h
+index 5c15918..bcd2a79 100644
+--- a/RawSpeed/FileMap.h
++++ b/RawSpeed/FileMap.h
+@@ -25,6 +25,7 @@
+ */
+ 
+ #include "IOException.h"
++#include "dlldef.h"
+ 
+ namespace RawSpeed {
+ 
+@@ -36,7 +37,7 @@ namespace RawSpeed {
+  * This can also be done as a MemMap 
+  * 
+  *****************************/
+-class FileMap
++class DllDef FileMap
+ {
+ public:
+   FileMap(uint32 _size);                 // Allocates the data array itself
+diff --git a/RawSpeed/FileReader.h b/RawSpeed/FileReader.h
+index 7448ec2..fb42ac0 100644
+--- a/RawSpeed/FileReader.h
++++ b/RawSpeed/FileReader.h
+@@ -24,10 +24,11 @@
+ 
+ #include "FileIOException.h"
+ #include "FileMap.h"
++#include "dlldef.h"
+ 
+ namespace RawSpeed {
+ 
+-class FileReader
++class DllDef FileReader
+ {
+ public:
+ 	FileReader(LPCWSTR filename);
+diff --git a/RawSpeed/RawDecoder.h b/RawSpeed/RawDecoder.h
+index a6c4708..b35cae5 100644
+--- a/RawSpeed/RawDecoder.h
++++ b/RawSpeed/RawDecoder.h
+@@ -9,6 +9,7 @@
+ #include "BitPumpPlain.h"
+ #include "CameraMetaData.h"
+ #include "TiffIFD.h"
++#include "dlldef.h"
+ 
+ /* 
+     RawSpeed - RAW file decoder.
+@@ -48,7 +49,7 @@ class RawDecoderThread
+     RawDecoder* parent;
+ };
+ 
+-class RawDecoder 
++class DllDef RawDecoder 
+ {
+ public:
+   /* Construct decoder instance - FileMap is a filemap of the file to be decoded */
+diff --git a/RawSpeed/RawImage.h b/RawSpeed/RawImage.h
+index 5741760..74cea96 100644
+--- a/RawSpeed/RawImage.h
++++ b/RawSpeed/RawImage.h
+@@ -26,13 +26,15 @@
+     http://www.klauspost.com
+ */
+ 
++#include "dlldef.h"
++
+ namespace RawSpeed {
+ 
+ class RawImage;
+ class RawImageWorker;
+ typedef enum {TYPE_USHORT16, TYPE_FLOAT32} RawImageType;
+ 
+-class RawImageData
++class DllDef RawImageData
+ {
+   friend class RawImageWorker;
+ public:
+@@ -125,7 +127,7 @@ protected:
+   int end_y;
+ };
+ 
+- class RawImage {
++ class DllDef RawImage {
+  public:
+    static RawImage create(RawImageType type = TYPE_USHORT16);
+    static RawImage create(iPoint2D dim, RawImageType type = TYPE_USHORT16, uint32 componentsPerPixel = 1);
+diff --git a/RawSpeed/RawParser.h b/RawSpeed/RawParser.h
+index 9ef86e3..1b3cb83 100644
+--- a/RawSpeed/RawParser.h
++++ b/RawSpeed/RawParser.h
+@@ -25,10 +25,11 @@
+ 
+ #include "FileMap.h"
+ #include "RawDecoder.h"
++#include "dlldef.h"
+ 
+ namespace RawSpeed {
+ 
+-class RawParser 
++class DllDef RawParser 
+ {
+ public:
+   RawParser(FileMap* input);
+diff --git a/RawSpeed/dlldef.h b/RawSpeed/dlldef.h
+new file mode 100644
+index 0000000..c806451
+--- /dev/null
++++ b/RawSpeed/dlldef.h
+@@ -0,0 +1,20 @@
++#ifndef DLLDEF_H
++#define DLLDEF_H
++
++#ifdef _WIN32
++#ifdef _MSC_VER
++#pragma warning( disable: 4251 )
++#endif
++#ifdef RAWSPEED_NODLL
++# define DllDef
++#else
++# ifdef RAWSPEED_BUILDLIB
++#    define DllDef   __declspec( dllexport )
++# else
++#    define DllDef   __declspec( dllimport )
++# endif
++#endif
++#else
++#  define DllDef
++#endif
++#endif

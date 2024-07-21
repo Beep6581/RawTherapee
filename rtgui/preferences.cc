@@ -656,7 +656,7 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     Gtk::Grid* dirgrid = Gtk::manage(new Gtk::Grid());
     setExpandAlignProperties(dirgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
-	// Dark Frames Dir
+    // Dark Frames Dir
     Gtk::Label *dfLab = Gtk::manage(new Gtk::Label(M("PREFERENCES_DIRDARKFRAMES") + ":"));
     setExpandAlignProperties(dfLab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     darkFrameDir = Gtk::manage(new MyFileChooserButton(M("PREFERENCES_DIRDARKFRAMES"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
@@ -705,7 +705,7 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     dirgrid->attach_next_to(*cameraProfilesDirLabel, *clutsDirLabel, Gtk::POS_BOTTOM, 1, 1);
     dirgrid->attach_next_to(*cameraProfilesDir, *cameraProfilesDirLabel, Gtk::POS_RIGHT, 1, 1);
 
-	  //Lens Profiles Dir
+    //Lens Profiles Dir
     Gtk::Label *lensProfilesDirLabel = Gtk::manage(new Gtk::Label(M("PREFERENCES_LENSPROFILESDIR") + ":"));
     lensProfilesDirLabel->set_tooltip_text(M("PREFERENCES_LENSPROFILESDIR_TOOLTIP"));
     setExpandAlignProperties(lensProfilesDirLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
@@ -751,6 +751,14 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     cropGrid->attach(*cropAutoFitCB, 0, 1, 2, 1);
     cropFrame->add(*cropGrid);
     vbImageProcessing->pack_start(*cropFrame, Gtk::PACK_SHRINK, 4);
+
+    Gtk::Frame *rawDecoderFrame = Gtk::manage(new Gtk::Frame(M("PREFERENCES_RAW_DECODER")));
+    Gtk::Box *rawDecoderContainer = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    rawDecoderFrame->add(*rawDecoderContainer);
+    enableLibRaw = Gtk::manage(new Gtk::CheckButton());
+    enableLibRaw->add(*Gtk::manage(new Gtk::Label(M("PREFERENCES_RAW_DECODER_ENABLE_LIBRAW"))));
+    rawDecoderContainer->pack_start(*enableLibRaw);
+    vbImageProcessing->pack_start(*rawDecoderFrame, Gtk::PACK_SHRINK, 4);
 
     // Other: max zoom
     {
@@ -1112,6 +1120,9 @@ Gtk::Widget* Preferences::getGeneralPanel()
     workflowGrid->attach_next_to(*curveBBoxPosC, *editorLayout, Gtk::POS_BOTTOM, 1, 1);
     workflowGrid->attach_next_to(*curveBBoxPosRestartL, *lNextStart, Gtk::POS_BOTTOM, 1, 1);
 
+    curveBBoxPosS = Gtk::manage(new Gtk::ComboBoxText());
+    setExpandAlignProperties(curveBBoxPosS, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
+
     Gtk::Label* complexityL = Gtk::manage(new Gtk::Label(M("PREFERENCES_COMPLEXITYLOC") + ":"));
     setExpandAlignProperties(complexityL, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
     complexitylocal = Gtk::manage(new Gtk::ComboBoxText());
@@ -1123,13 +1134,29 @@ Gtk::Widget* Preferences::getGeneralPanel()
     workflowGrid->attach_next_to(*complexityL, *curveBBoxPosL, Gtk::POS_BOTTOM, 1, 1);
     workflowGrid->attach_next_to(*complexitylocal, *curveBBoxPosC, Gtk::POS_BOTTOM, 1, 1);
 
+
+    Gtk::Label* spotlocalL = Gtk::manage(new Gtk::Label(M("PREFERENCES_SPOTLOC") + ":"));
+    setExpandAlignProperties(spotlocalL, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
+    spotlocal = Gtk::manage(new Gtk::ComboBoxText());
+    setExpandAlignProperties(spotlocal, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
+    spotlocal->append(M("TP_LOCALLAB_EXNORM"));
+    spotlocal->append(M("TP_LOCALLAB_EXECLU"));
+    spotlocal->append(M("TP_LOCALLAB_EXFULL"));
+    spotlocal->append(M("TP_LOCALLAB_EXMAIN"));
+    spotlocal->set_active(2);
+    workflowGrid->attach_next_to(*spotlocalL, *complexityL, Gtk::POS_BOTTOM, 1, 1);
+    workflowGrid->attach_next_to(*spotlocal, *complexitylocal, Gtk::POS_BOTTOM, 1, 1);
+
+
     zoomOnScrollCB = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_ZOOMONSCROLL")));
     setExpandAlignProperties(zoomOnScrollCB, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
-    workflowGrid->attach_next_to(*zoomOnScrollCB, *complexityL, Gtk::POS_BOTTOM, 1, 1);
+    //workflowGrid->attach_next_to(*zoomOnScrollCB, *complexityL, Gtk::POS_BOTTOM, 1, 1);
+    workflowGrid->attach_next_to(*zoomOnScrollCB, *spotlocalL, Gtk::POS_BOTTOM, 1, 1);
 
     inspectorWindowCB = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_INSPECTORWINDOW")));
     setExpandAlignProperties(inspectorWindowCB, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
-    workflowGrid->attach_next_to(*inspectorWindowCB, *complexitylocal, Gtk::POS_BOTTOM, 1, 1);
+   // workflowGrid->attach_next_to(*inspectorWindowCB, *complexitylocal, Gtk::POS_BOTTOM, 1, 1);
+    workflowGrid->attach_next_to(*inspectorWindowCB, *spotlocal, Gtk::POS_BOTTOM, 1, 1);
     Gtk::Label* inspectorNextStartL = Gtk::manage(new Gtk::Label(Glib::ustring("(") + M("PREFERENCES_APPLNEXTSTARTUP") + ")"));
     setExpandAlignProperties(inspectorNextStartL, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
     workflowGrid->attach_next_to(*inspectorNextStartL, *inspectorWindowCB, Gtk::POS_RIGHT, 1, 1);
@@ -1470,6 +1497,9 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
     vbro->pack_start(*sameThumbSize, Gtk::PACK_SHRINK, 0);
     vbro->pack_start(*ckbInternalThumbIfUntouched, Gtk::PACK_SHRINK, 0);
 
+    thumbnailRankColorMode = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_THUMBNAIL_RANK_COLOR_MODE")));
+    vbro->pack_start(*thumbnailRankColorMode, Gtk::PACK_SHRINK, 0);
+
     Gtk::Box* hbrecent = Gtk::manage(new Gtk::Box());
     Gtk::Label* labrecent = Gtk::manage (new Gtk::Label (M("PREFERENCES_MAXRECENTFOLDERS") + ":", Gtk::ALIGN_START));
     maxRecentFolders = Gtk::manage(new Gtk::SpinButton());
@@ -1530,9 +1560,9 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
 
     frmnu->add (*menuGrid);
 
-
     Gtk::Frame* fre = Gtk::manage(new Gtk::Frame(M("PREFERENCES_PARSEDEXT")));
     Gtk::Box* vbre = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+
     Gtk::Box* hb0 = Gtk::manage(new Gtk::Box());
     Gtk::Label* elab = Gtk::manage (new Gtk::Label (M("PREFERENCES_PARSEDEXTADD") + ":", Gtk::ALIGN_START));
     hb0->pack_start(*elab, Gtk::PACK_SHRINK, 4);
@@ -1544,8 +1574,10 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
     delExt = Gtk::manage(new Gtk::Button());
     moveExtUp = Gtk::manage(new Gtk::Button());
     moveExtDown = Gtk::manage(new Gtk::Button());
-    addExt->set_tooltip_text(M("PREFERENCES_PARSEDEXTADDHINT"));
-    delExt->set_tooltip_text(M("PREFERENCES_PARSEDEXTDELHINT"));
+    addExt->set_sensitive(false);
+    delExt->set_sensitive(false);
+    addExt->set_tooltip_markup(M("PREFERENCES_PARSEDEXTADDHINT"));
+    delExt->set_tooltip_markup(M("PREFERENCES_PARSEDEXTDELHINT"));
     moveExtUp->set_tooltip_text(M("PREFERENCES_PARSEDEXTUPHINT"));
     moveExtDown->set_tooltip_text(M("PREFERENCES_PARSEDEXTDOWNHINT"));
     Gtk::Image* addExtImg = Gtk::manage ( new RTImage ("add-small", Gtk::ICON_SIZE_BUTTON) );
@@ -1560,6 +1592,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
     hb0->pack_end(*moveExtUp, Gtk::PACK_SHRINK, 4);
     hb0->pack_end(*delExt, Gtk::PACK_SHRINK, 4);
     hb0->pack_end(*addExt, Gtk::PACK_SHRINK, 4);
+
     extensions = Gtk::manage(new Gtk::TreeView());
     Gtk::ScrolledWindow* hscrollw = Gtk::manage(new Gtk::ScrolledWindow());
     hscrollw->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS);
@@ -1569,8 +1602,9 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
     extensions->append_column_editable("Enabled", extensionColumns.enabled);
     extensions->append_column("Extension", extensionColumns.ext);
     extensions->set_headers_visible(false);
-    vbre->pack_start(*hscrollw);
+
     vbre->pack_start(*hb0, Gtk::PACK_SHRINK, 4);
+    vbre->pack_start(*hscrollw);
 
     fre->add(*vbre);
 
@@ -1648,11 +1682,14 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
 
     vbFileBrowser->pack_start (*hb6, Gtk::PACK_SHRINK, 4);
 
+    extensions->signal_cursor_changed().connect(sigc::mem_fun(*this, &Preferences::extensionsChanged));
+    extension->signal_changed().connect(sigc::mem_fun(*this, &Preferences::extensionChanged));
+
     addExt->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::addExtPressed));
     delExt->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::delExtPressed));
     moveExtUp->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::moveExtUpPressed));
     moveExtDown->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::moveExtDownPressed));
-    extension->signal_activate().connect(sigc::mem_fun(*this, &Preferences::addExtPressed));
+
     clearThumbsBtn->signal_clicked().connect ( sigc::mem_fun (*this, &Preferences::clearThumbImagesPressed) );
     if (moptions.saveParamsCache) {
         clearProfilesBtn->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::clearProfilesPressed));
@@ -1991,6 +2028,8 @@ void Preferences::storePreferences()
 
     moptions.curvebboxpos = curveBBoxPosC->get_active_row_number();
     moptions.complexity = complexitylocal->get_active_row_number();
+    moptions.spotmet = spotlocal->get_active_row_number();
+
     moptions.inspectorWindow = inspectorWindowCB->get_active();
     moptions.zoomOnScroll = zoomOnScrollCB->get_active();
     moptions.histogramPosition = ckbHistogramPositionLeft->get_active() ? 1 : 2;
@@ -2025,10 +2064,14 @@ void Preferences::storePreferences()
     moptions.cropAutoFit = cropAutoFitCB->get_active();
     moptions.maxZoomLimit = Options::MaxZoom(maxZoomCombo->get_active_row_number());
 
+    moptions.rtSettings.enableLibRaw = enableLibRaw->get_active();
+
     toolLocationPreference->updateOptions();
 
     moptions.rtSettings.metadata_xmp_sync = rtengine::Settings::MetadataXmpSync(metadataSyncCombo->get_active_row_number());
     moptions.rtSettings.xmp_sidecar_style = rtengine::Settings::XmpSidecarStyle(xmpSidecarCombo->get_active_row_number());
+
+    moptions.thumbnailRankColorMode = thumbnailRankColorMode->get_active() ? Options::ThumbnailPropertyMode::XMP : Options::ThumbnailPropertyMode::PROCPARAMS;
 }
 
 void Preferences::fillPreferences()
@@ -2211,6 +2254,7 @@ void Preferences::fillPreferences()
 
     curveBBoxPosC->set_active(moptions.curvebboxpos);
     complexitylocal->set_active(moptions.complexity);
+    spotlocal->set_active(moptions.spotmet);
     inspectorWindowCB->set_active(moptions.inspectorWindow);
     zoomOnScrollCB->set_active(moptions.zoomOnScroll);
 
@@ -2263,6 +2307,8 @@ void Preferences::fillPreferences()
     cropAutoFitCB->set_active(moptions.cropAutoFit);
     maxZoomCombo->set_active(static_cast<int>(options.maxZoomLimit));
 
+    enableLibRaw->set_active(moptions.rtSettings.enableLibRaw);
+
     addc.block(false);
     setc.block(false);
     cpfconn.block(false);
@@ -2287,6 +2333,8 @@ void Preferences::fillPreferences()
 
     metadataSyncCombo->set_active(int(moptions.rtSettings.metadata_xmp_sync));
     xmpSidecarCombo->set_active(int(moptions.rtSettings.xmp_sidecar_style));
+
+    thumbnailRankColorMode->set_active(moptions.thumbnailRankColorMode == Options::ThumbnailPropertyMode::XMP);
 }
 
 /*
@@ -2639,25 +2687,69 @@ void Preferences::workflowUpdate()
     }
 }
 
-void Preferences::addExtPressed()
+void Preferences::extensionsChanged()
 {
+    const Glib::RefPtr<Gtk::TreeSelection> selection = extensions->get_selection();
+    if (!selection) {
+        delExt->set_sensitive(false);
+        return;
+    }
+
+    const Gtk::TreeModel::iterator selected = selection->get_selected();
+    if (!selected) {
+        delExt->set_sensitive(false);
+        return;
+    }
+
+    bool delOkay = true;
+    for (auto const &x : moptions.knownExtensions) {
+        if (x == (*selected)[extensionColumns.ext]) {
+            delOkay = false;
+            break;
+        }
+    }
+    delExt->set_sensitive(delOkay);
+}
+
+void Preferences::extensionChanged()
+{
+    if (extension->get_text().empty()) {
+        addExt->set_sensitive(false);
+        return;
+    }
 
     Gtk::TreeNodeChildren c = extensionModel->children();
+    for (size_t i = 0; i < c.size(); i++) {
+        if (c[i][extensionColumns.ext] == extension->get_text()) {
+            addExt->set_sensitive(false);
+            return;
+        }
+    }
 
-    for (size_t i = 0; i < c.size(); i++)
+    addExt->set_sensitive(true);
+}
+
+void Preferences::addExtPressed()
+{
+    Gtk::TreeNodeChildren c = extensionModel->children();
+
+    for (size_t i = 0; i < c.size(); i++) {
         if (c[i][extensionColumns.ext] == extension->get_text()) {
             return;
         }
+    }
 
-    Gtk::TreeRow row = * (extensionModel->append());
+    Gtk::TreeRow row = * (extensionModel->prepend());
 
     row[extensionColumns.enabled] = true;
     row[extensionColumns.ext]     = extension->get_text();
+
+    extension->set_text("");
+    addExt->set_sensitive(false);
 }
 
 void Preferences::delExtPressed()
 {
-
     extensionModel->erase(extensions->get_selection()->get_selected());
 }
 

@@ -300,6 +300,16 @@ void LocallabTool::refChanged(const double huer, const double lumar, const doubl
     updateMaskBackground(normChromar, normLumar, normHuer, normHuerjz);
 }
 
+Gtk::ToggleButton *LocallabTool::getPreviewDeltaEButton() const
+{
+    return nullptr;
+}
+
+sigc::connection *LocallabTool::getPreviewDeltaEButtonConnection()
+{
+    return nullptr;
+}
+
 void LocallabTool::colorForValue(double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller)
 {
     float R = 0.f;
@@ -366,6 +376,8 @@ void LocallabTool::enableListener()
         complexityConn.block(false);
     }
 }
+
+
 
 bool LocallabTool::on_remove_change(GdkEventButton* event)
 {
@@ -445,7 +457,9 @@ LocallabColor::LocallabColor():
     labgrid(Gtk::manage(new LabGrid(EvLocallabLabGridValue, M("TP_LOCALLAB_LABGRID_VALUES"), true, false))),
     gridMethod(Gtk::manage(new MyComboBoxText())),
     strengthgrid(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRGRID"), 0, 100, 1, 30))),
-    sensi(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),
+    sensi(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 30))),
+    previewcol(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
+    
     structcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL1"), 0, 100, 1, 0))),
     blurcolde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
     softradiuscol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 0.))),
@@ -462,6 +476,7 @@ LocallabColor::LocallabColor():
     strcolab(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTRCHRO"), -6., 6., 0.05, 0.))),
     strcolh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTRHUE"), -6., 6., 0.05, 0.))),
     angcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
+    feathercol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FEATVALUE"), 10., 100., 0.1, 25.))),
     expcurvcol(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPCURV")))),
     labqualcurv(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_QUALCURV_METHOD") + ":"))),
     qualitycurveMethod(Gtk::manage(new MyComboBoxText())),
@@ -526,7 +541,10 @@ LocallabColor::LocallabColor():
     LLmaskcolshapewav(static_cast<FlatCurveEditor*>(mask2CurveEditorGwav->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
     csThresholdcol(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 0, 9, 0, 0, 6, 5, 0, false)))
 {
-
+    auto m = ProcEventMapper::getInstance();
+    //rtengine::ProcEvent EvlocallabenacieMaskall;
+    Evlocallabfeathercol = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_FEATHERCOL");
+    Evlocallabpreviewcol = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWCOL");
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     float R, G, B;
@@ -593,8 +611,14 @@ LocallabColor::LocallabColor():
     strcolh->set_tooltip_text(M("TP_LOCALLAB_GRADSTRHUE_TOOLTIP"));
 
     angcol->setAdjusterListener(this);
+    feathercol->setAdjusterListener(this);
 
     setExpandAlignProperties(expcurvcol, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+    previewcol->set_active(false);
+    previewcolConn = previewcol->signal_clicked().connect(
+                       sigc::mem_fun(
+                           *this, &LocallabColor::previewcolChanged));
 
     qualitycurveMethod->append(M("TP_LOCALLAB_CURVNONE"));
     qualitycurveMethod->append(M("TP_LOCALLAB_CURVCURR"));
@@ -813,6 +837,9 @@ LocallabColor::LocallabColor():
 
     // Add Color & Light specific widgets to GUI
     pack_start(*reparcol);
+    pack_start(*sensi);
+    pack_start(*previewcol);
+    
     pack_start(*invers);
     ToolParamBlock* const lumBox = Gtk::manage(new ToolParamBlock());
     lumBox->pack_start(*lightness);
@@ -833,7 +860,7 @@ LocallabColor::LocallabColor():
     superBox->pack_start(*gridFrame);
     superFrame->add(*superBox);
     pack_start(*superFrame);
-    // pack_start(*sensi);
+ //   pack_start(*sensi);
     pack_start(*structcol);
     pack_start(*blurcolde);
     pack_start(*softradiuscol);
@@ -855,6 +882,7 @@ LocallabColor::LocallabColor():
     gradcolBox->pack_start(*strcolab);
     gradcolBox->pack_start(*strcolh);
     gradcolBox->pack_start(*angcol);
+    gradcolBox->pack_start(*feathercol);
     expgradcol->add(*gradcolBox, false);
     pack_start(*expgradcol, false, false);
     ToolParamBlock* const curvBox = Gtk::manage(new ToolParamBlock());
@@ -949,6 +977,22 @@ LocallabColor::~LocallabColor()
     delete mask2CurveEditorGwav;
 }
 
+void LocallabColor::previewcolChanged()
+{
+   
+    if(previewcol->get_active()) {
+        showmaskcolMethod->set_active(5);
+    } else {
+        showmaskcolMethod->set_active(0);
+    }
+    
+    if (isLocActivated) {
+        if (listener) {
+            listener->panelChanged(Evlocallabpreviewcol,"");
+        }
+    } 
+}
+
 void LocallabColor::setListener(ToolPanelListener* tpl)
 {
     LocallabTool::setListener(tpl);
@@ -956,6 +1000,64 @@ void LocallabColor::setListener(ToolPanelListener* tpl)
     labgrid->setListener(tpl);
     labgridmerg->setListener(tpl);
 }
+
+//new function Global
+void LocallabColor::updateguicolor(int spottype)
+{
+    {
+    // Disable all listeners
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype == 3) {
+                invers->hide();
+                sensi->hide();
+                showmaskcolMethod->set_active(0);               
+                previewcol->hide();
+                previewcol->set_active(false);
+                resetMaskView();
+            } else {
+                invers->show();
+                sensi->show();
+                if(!invers->get_active()) {
+                    previewcol->show();
+                } else {
+                    previewcol->hide();
+                }
+                
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
+//new function scope
+void LocallabColor::updateguiscopecolor(int scope)
+{
+    {
+        idle_register.add(
+        [this, scope]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            disableListener();
+            sensi->setValue(scope);
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
 
 bool LocallabColor::isMaskViewActive()
 {
@@ -978,6 +1080,16 @@ void LocallabColor::getMaskView(int &colorMask, int &colorMaskinv, int &expMask,
 {
     colorMask = showmaskcolMethod->get_active_row_number();
     colorMaskinv = showmaskcolMethodinv->get_active_row_number();
+}
+
+Gtk::ToggleButton *LocallabColor::getPreviewDeltaEButton() const
+{
+    return previewcol;
+}
+
+sigc::connection *LocallabColor::getPreviewDeltaEButtonConnection()
+{
+    return &previewcolConn;
 }
 
 void LocallabColor::updateAdviceTooltips(const bool showTooltips)
@@ -1183,6 +1295,7 @@ void LocallabColor::read(const rtengine::procparams::ProcParams* pp, const Param
         strcolab->setValue(spot.strcolab);
         strcolh->setValue(spot.strcolh);
         angcol->setValue(spot.angcol);
+        feathercol->setValue(spot.feathercol);
 
         if (spot.qualitycurveMethod == "none") {
             qualitycurveMethod->set_active(0);
@@ -1364,6 +1477,7 @@ void LocallabColor::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         spot.strcolab = strcolab->getValue();
         spot.strcolh = strcolh->getValue();
         spot.angcol = angcol->getValue();
+        spot.feathercol = feathercol->getValue();
 
         spot.recothresc = recothresc->getValue();
         spot.lowthresc = lowthresc->getValue();
@@ -1518,6 +1632,7 @@ void LocallabColor::setDefaults(const rtengine::procparams::ProcParams* defParam
         strcolab->setDefault(defSpot.strcolab);
         strcolh->setDefault(defSpot.strcolh);
         angcol->setDefault(defSpot.angcol);
+        feathercol->setDefault(defSpot.feathercol);
         mercol->setDefault(defSpot.mercol);
         opacol->setDefault(defSpot.opacol);
         conthrcol->setDefault(defSpot.conthrcol);
@@ -1550,7 +1665,7 @@ void LocallabColor::setDefaults(const rtengine::procparams::ProcParams* defParam
 void LocallabColor::adjusterChanged(Adjuster* a, double newval)
 {
     if (isLocActivated && exp->getEnabled()) {
-        if (a == lightness) {
+        if (a == lightness) {      
             if (listener) {
                 listener->panelChanged(Evlocallablightness,
                                        lightness->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
@@ -1595,7 +1710,7 @@ void LocallabColor::adjusterChanged(Adjuster* a, double newval)
         if (a == sensi) {
             if (listener) {
                 listener->panelChanged(Evlocallabsensi,
-                                       sensi->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+                                       sensi->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");                                      
             }
         }
 
@@ -1675,6 +1790,13 @@ void LocallabColor::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabangcol,
                                        angcol->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == feathercol) {
+            if (listener) {
+                listener->panelChanged(Evlocallabfeathercol,
+                                       feathercol->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
@@ -2039,6 +2161,7 @@ void LocallabColor::convertParamToSimple()
     softradiuscol->setValue(defSpot.softradiuscol);
     strcol->setValue(defSpot.strcol);
     angcol->setValue(defSpot.angcol);
+    feathercol->setValue(defSpot.feathercol);
     gamc->setValue(defSpot.gamc);
 
     if (defSpot.qualitycurveMethod == "none") {
@@ -2574,6 +2697,8 @@ LocallabExposure::LocallabExposure():
     fatanchor(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHOR"), 0.1, 100.0, 0.01, 50., Gtk::manage(new RTImage("circle-black-small")), Gtk::manage(new RTImage("circle-white-small"))))),
     gamex(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMC"), 0.5, 3.0, 0.05, 1.))),
     sensiex(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
+    previewexe(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
+    
     structexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL"), 0, 100, 1, 0))),
     blurexpde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
     exptoolexp(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPTOOL")))),
@@ -2596,6 +2721,7 @@ LocallabExposure::LocallabExposure():
     expgradexp(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPGRAD")))),
     strexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
     angexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
+    featherexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FEATVALUE"), 10., 100., 0.1, 25.))),
     softradiusexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 0.))),
     inversex(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
     expmaskexp(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWE")))),
@@ -2625,6 +2751,9 @@ LocallabExposure::LocallabExposure():
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     const LocallabParams::LocallabSpot defSpot;
+    auto m = ProcEventMapper::getInstance();
+    Evlocallabpreviewexe = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWEXE");
+    Evlocallabfeatherexp = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_FEATHEREXE");
 
     // Parameter Exposure specific widgets
     expMethod->append(M("TP_LOCALLAB_STD"));
@@ -2699,6 +2828,7 @@ LocallabExposure::LocallabExposure():
 
     angexp->setAdjusterListener(this);
     angexp->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
+    featherexp->setAdjusterListener(this);
 
     softradiusexp->setLogScale(10, 0);
     softradiusexp->setAdjusterListener(this);
@@ -2706,6 +2836,12 @@ LocallabExposure::LocallabExposure():
     lowthrese->setAdjusterListener(this);
     higthrese->setAdjusterListener(this);
     decaye->setAdjusterListener(this);
+    
+    previewexe->set_active(false);
+    previewexeConn = previewexe->signal_clicked().connect(
+                       sigc::mem_fun(
+                           *this, &LocallabExposure::previewexeChanged));
+    
     setExpandAlignProperties(exprecove, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     normConn  = norm->signal_toggled().connect(sigc::mem_fun(*this, &LocallabExposure::normChanged));
     fatsaturConn  = fatsatur->signal_toggled().connect(sigc::mem_fun(*this, &LocallabExposure::fatsaturChanged));
@@ -2781,6 +2917,7 @@ LocallabExposure::LocallabExposure():
 
     // Add Color & Light specific widgets to GUI
     pack_start(*sensiex);
+    pack_start(*previewexe);
     pack_start(*reparexp);
     pack_start(*inversex);
     ToolParamBlock* const pdeBox = Gtk::manage(new ToolParamBlock());
@@ -2835,6 +2972,7 @@ LocallabExposure::LocallabExposure():
     ToolParamBlock* const gradBox = Gtk::manage(new ToolParamBlock());
     gradBox->pack_start(*strexp);
     gradBox->pack_start(*angexp);
+    gradBox->pack_start(*featherexp);
     expgradexp->add(*gradBox, false);
     pack_start(*expgradexp);
     pack_start(*softradiusexp);
@@ -2873,6 +3011,60 @@ bool LocallabExposure::isMaskViewActive()
     return ((showmaskexpMethod->get_active_row_number() != 0) || (showmaskexpMethodinv->get_active_row_number() != 0));
 }
 
+//new function Global
+void LocallabExposure::updateguiexpos(int spottype) 
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype == 3) {
+                inversex->hide();
+                sensiex->hide();
+                previewexe->hide();
+                showmaskexpMethod->set_active(0);
+                previewexe->set_active(false);
+                
+                resetMaskView();
+           } else {
+                inversex->show();
+                sensiex->show();
+                if(!inversex->get_active()) {
+                    previewexe->show();
+                } else {
+                    previewexe->hide();
+                }
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
+void LocallabExposure::previewexeChanged()
+{
+    
+    if(previewexe->get_active()) {
+        showmaskexpMethod->set_active(5);
+    } else {
+        showmaskexpMethod->set_active(0);
+    }
+    
+    if (isLocActivated) {
+        if (listener) {
+            listener->panelChanged(Evlocallabpreviewexe,"");
+        }
+    } 
+}
+
+
 void LocallabExposure::resetMaskView()
 {
     showmaskexpMethodConn.block(true);
@@ -2889,6 +3081,16 @@ void LocallabExposure::getMaskView(int &colorMask, int &colorMaskinv, int &expMa
 {
     expMask = showmaskexpMethod->get_active_row_number();
     expMaskinv = showmaskexpMethodinv->get_active_row_number();
+}
+
+Gtk::ToggleButton *LocallabExposure::getPreviewDeltaEButton() const
+{
+    return previewexe;
+}
+
+sigc::connection *LocallabExposure::getPreviewDeltaEButtonConnection()
+{
+    return &previewexeConn;
 }
 
 void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
@@ -3089,6 +3291,7 @@ void LocallabExposure::read(const rtengine::procparams::ProcParams* pp, const Pa
         shapeexpos->setCurve(spot.excurve);
         strexp->setValue(spot.strexp);
         angexp->setValue(spot.angexp);
+        featherexp->setValue(spot.featherexp);
         softradiusexp->setValue(spot.softradiusexp);
         norm->set_active(spot.norm);
         fatsatur->set_active(spot.fatsatur);
@@ -3180,6 +3383,7 @@ void LocallabExposure::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         spot.excurve = shapeexpos->getCurve();
         spot.strexp = strexp->getValue();
         spot.angexp = angexp->getValue();
+        spot.featherexp = featherexp->getValue();
         spot.softradiusexp = softradiusexp->getValue();
         spot.inversex = inversex->get_active();
         spot.norm = norm->get_active();
@@ -3233,6 +3437,7 @@ void LocallabExposure::setDefaults(const rtengine::procparams::ProcParams* defPa
         expchroma->setDefault((double)defSpot.expchroma);
         strexp->setDefault(defSpot.strexp);
         angexp->setDefault(defSpot.angexp);
+        featherexp->setDefault(defSpot.featherexp);
         softradiusexp->setDefault(defSpot.softradiusexp);
         blendmaskexp->setDefault((double)defSpot.blendmaskexp);
         radmaskexp->setDefault(defSpot.radmaskexp);
@@ -3457,6 +3662,13 @@ void LocallabExposure::adjusterChanged(Adjuster* a, double newval)
             }
         }
 
+        if (a == featherexp) {
+            if (listener) {
+                listener->panelChanged(Evlocallabfeatherexp,
+                                       featherexp->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
         if (a == softradiusexp) {
             if (listener) {
                 listener->panelChanged(Evlocallabsoftradiusexp,
@@ -3613,9 +3825,11 @@ void LocallabExposure::convertParamToSimple()
     // Set hidden specific GUI widgets in Simple mode to default spot values
     strexp->setValue(defSpot.strexp);
     angexp->setValue(defSpot.angexp);
+    featherexp->setValue(defSpot.featherexp);
     softradiusexp->setValue(defSpot.softradiusexp);
     enaExpMask->set_active(defSpot.enaExpMask);
     enaExpMaskaft->set_active(defSpot.enaExpMaskaft);
+    showmaskexpMethod->set_active(0);
     gamex->setValue(defSpot.gamex);
  //   CCmaskexpshape->setCurve(defSpot.CCmaskexpcurve);
  //   LLmaskexpshape->setCurve(defSpot.CCmaskexpcurve);
@@ -4040,7 +4254,8 @@ LocallabShadow::LocallabShadow():
     shadows(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_SHADOWS"), 0, 100, 1, 0))),
     s_tonalwidth(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_SHTONALW"), 10, 100, 1, 30))),
     sh_radius(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_RADIUS"), 0, 100, 1, 40))),
-    sensihs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),//unused here, but used for normalize_mean_dt
+    sensihs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 30))),//reused - unused here, but used for normalize_mean_dt 
+    previewsh(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
     blurSHde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
     exprecovs(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
     maskusables(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
@@ -4055,6 +4270,7 @@ LocallabShadow::LocallabShadow():
     expgradsh(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPGRAD")))),
     strSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
     angSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
+    featherSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FEATVALUE"), 10., 100., 0.1, 25.))),
     inverssh(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
     expmasksh(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWS")))),
     showmaskSHMethod(Gtk::manage(new MyComboBoxText())),
@@ -4078,6 +4294,10 @@ LocallabShadow::LocallabShadow():
     fatanchorSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHOR"), 1., 100., 1., 50., Gtk::manage(new RTImage("circle-black-small")), Gtk::manage(new RTImage("circle-white-small"))))),
     EvlocallabTePivot(ProcEventMapper::getInstance()->newEvent(AUTOEXP, "HISTORY_MSG_LOCALLAB_TE_PIVOT"))
 {
+    auto m = ProcEventMapper::getInstance();
+    Evlocallabpreviewsh = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWSH");
+    EvlocallabfeatherSH = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_FEATHERSH");
+    
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     const LocallabParams::LocallabSpot defSpot;
@@ -4128,11 +4348,17 @@ LocallabShadow::LocallabShadow():
 
     angSH->setAdjusterListener(this);
     angSH->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
+    featherSH->setAdjusterListener(this);
 
     inversshConn = inverssh->signal_toggled().connect(sigc::mem_fun(*this, &LocallabShadow::inversshChanged));
     inverssh->set_tooltip_text(M("TP_LOCALLAB_INVERS_TOOLTIP"));
 
     setExpandAlignProperties(expmasksh, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+    previewsh->set_active(false);
+    previewshConn = previewsh->signal_clicked().connect(
+                       sigc::mem_fun(
+                           *this, &LocallabShadow::previewshChanged));
 
     showmaskSHMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
     showmaskSHMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
@@ -4196,6 +4422,9 @@ LocallabShadow::LocallabShadow():
 
     // Add Shadow highlight specific widgets to GUI
     pack_start(*reparsh);
+    pack_start(*sensihs);// reused / unused here, but used for normalize_mean_dt 
+    pack_start(*previewsh);
+    
     pack_start(*inverssh);
     pack_start(*shMethod);
 
@@ -4210,7 +4439,7 @@ LocallabShadow::LocallabShadow():
     pack_start(*shadows);
     pack_start(*s_tonalwidth);
     pack_start(*sh_radius);
-    // pack_start(*sensihs);//unused here, but used for normalize_mean_dt
+//    pack_start(*sensihs);// reused / unused here, but used for normalize_mean_dt 
     pack_start(*blurSHde);
     ToolParamBlock* const shBox3 = Gtk::manage(new ToolParamBlock());
     shBox3->pack_start(*maskusables, Gtk::PACK_SHRINK, 0);
@@ -4231,6 +4460,7 @@ LocallabShadow::LocallabShadow():
     ToolParamBlock* const gradSHBox = Gtk::manage(new ToolParamBlock());
     gradSHBox->pack_start(*strSH);
     gradSHBox->pack_start(*angSH);
+    gradSHBox->pack_start(*featherSH);
     expgradsh->add(*gradSHBox, false);
     pack_start(*expgradsh);
 //    pack_start(*inverssh);
@@ -4277,6 +4507,90 @@ void LocallabShadow::resetMaskView()
     showmaskSHMethodConn.block(false);
     showmaskSHMethodConninv.block(false);
 }
+
+Gtk::ToggleButton *LocallabShadow::getPreviewDeltaEButton() const
+{
+    return previewsh;
+}
+
+sigc::connection *LocallabShadow::getPreviewDeltaEButtonConnection()
+{
+    return &previewshConn;
+}
+
+void LocallabShadow::previewshChanged()
+{
+    
+    if(previewsh->get_active()) {
+        showmaskSHMethod->set_active(4);
+    } else {
+        showmaskSHMethod->set_active(0);
+    }
+    
+    if (isLocActivated) {
+        if (listener) {
+            listener->panelChanged(Evlocallabpreviewsh,"");
+        }
+    } 
+}
+
+
+//new function Global
+void LocallabShadow::updateguishad(int spottype)
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype == 3) {
+                inverssh->hide();
+                sensihs->hide();
+                showmaskSHMethod->set_active(0);
+                previewsh->hide();
+                previewsh->set_active(false);
+                resetMaskView();
+            } else {
+                sensihs->show();
+                inverssh->show();
+                if(!inverssh->get_active()) {
+                    previewsh->show();
+                } else {
+                    previewsh->hide();
+                }
+                
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
+void LocallabShadow::updateguiscopesahd(int scope)
+{
+    {
+        idle_register.add(
+        [this, scope]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            disableListener();
+            sensihs->setValue(scope);
+           
+            enableListener();
+        return false;
+        }
+        );
+    }
+   
+}
+
+
 
 void LocallabShadow::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask)
 {
@@ -4438,6 +4752,7 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         sloSH->setValue(spot.sloSH);
         strSH->setValue(spot.strSH);
         angSH->setValue(spot.angSH);
+        featherSH->setValue(spot.featherSH);
         inverssh->set_active(spot.inverssh);
         enaSHMask->set_active(spot.enaSHMask);
         CCmaskSHshape->setCurve(spot.CCmaskSHcurve);
@@ -4504,6 +4819,7 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
         spot.sloSH = sloSH->getValue();
         spot.strSH = strSH->getValue();
         spot.angSH = angSH->getValue();
+        spot.featherSH = featherSH->getValue();
         spot.inverssh = inverssh->get_active();
         spot.enaSHMask = enaSHMask->get_active();
         spot.LLmaskSHcurve = LLmaskSHshape->getCurve();
@@ -4553,6 +4869,7 @@ void LocallabShadow::setDefaults(const rtengine::procparams::ProcParams* defPara
         sloSH->setDefault(defSpot.sloSH);
         strSH->setDefault(defSpot.strSH);
         angSH->setDefault(defSpot.angSH);
+        featherSH->setDefault(defSpot.featherSH);
         blendmaskSH->setDefault((double)defSpot.blendmaskSH);
         radmaskSH->setDefault(defSpot.radmaskSH);
         lapmaskSH->setDefault(defSpot.lapmaskSH);
@@ -4714,6 +5031,13 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
             }
         }
 
+        if (a == featherSH) {
+            if (listener) {
+                listener->panelChanged(EvlocallabfeatherSH,
+                                       featherSH->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
         if (a == blendmaskSH) {
             if (listener) {
                 listener->panelChanged(EvlocallabblendmaskSH,
@@ -4853,6 +5177,7 @@ void LocallabShadow::convertParamToSimple()
     sloSH->setValue(defSpot.sloSH);
     strSH->setValue(defSpot.strSH);
     angSH->setValue(defSpot.angSH);
+    featherSH->setValue(defSpot.featherSH);
     showmaskSHMethod->set_active(0);
     showmaskSHMethodinv->set_active(0);
     enaSHMask->set_active(defSpot.enaSHMask);
@@ -5154,7 +5479,8 @@ LocallabVibrance::LocallabVibrance():
     protectSkins(Gtk::manage(new Gtk::CheckButton(M("TP_VIBRANCE_PROTECTSKINS")))),
     avoidColorShift(Gtk::manage(new Gtk::CheckButton(M("TP_VIBRANCE_AVOIDCOLORSHIFT")))),
     pastSatTog(Gtk::manage(new Gtk::CheckButton(M("TP_VIBRANCE_PASTSATTOG")))),
-    sensiv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),//unused here, but used for normalize_mean_dt
+    sensiv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 30))),//reused - unused here, but used for normalize_mean_dt 
+    previewvib(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
     curveEditorGG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL"))),
     skinTonesCurve(static_cast<DiagonalCurveEditor*>(curveEditorGG->addCurve(CT_Diagonal, M("TP_VIBRANCE_CURVEEDITOR_SKINTONES")))),
     exprecovv(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
@@ -5169,6 +5495,7 @@ LocallabVibrance::LocallabVibrance():
     strvibab(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTRCHRO"), -4., 4., 0.05, 0.))),
     strvibh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTRHUE2"), -6., 6., 0.05, 0.))),
     angvib(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
+    feathervib(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FEATVALUE"), 10., 100., 0.1, 25.))),
     expmaskvib(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWVI")))),
     showmaskvibMethod(Gtk::manage(new MyComboBoxText())),
     enavibMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
@@ -5186,6 +5513,9 @@ LocallabVibrance::LocallabVibrance():
     mask2vibCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     Lmaskvibshape(static_cast<DiagonalCurveEditor*>(mask2vibCurveEditorG->addCurve(CT_Diagonal, "L(L)")))
 {
+    auto m = ProcEventMapper::getInstance();
+    Evlocallabpreviewvib = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_PREVIEWVIB");
+    Evlocallabfeathervib = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_FEATHERVIB");
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     float R, G, B;
@@ -5249,6 +5579,12 @@ LocallabVibrance::LocallabVibrance():
 
     angvib->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
     angvib->setAdjusterListener(this);
+    feathervib->setAdjusterListener(this);
+
+    previewvib->set_active(false);
+    previewvibConn = previewvib->signal_clicked().connect(
+                       sigc::mem_fun(
+                           *this, &LocallabVibrance::previewvibChanged));
 
     setExpandAlignProperties(expmaskvib, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
@@ -5301,6 +5637,8 @@ LocallabVibrance::LocallabVibrance():
     mask2vibCurveEditorG->curveListComplete();
 
     // Add Vibrance specific widgets to GUI
+    pack_start(*sensiv, Gtk::PACK_SHRINK, 0);//reused - nused here, but used for normalize_mean_dt 
+    pack_start(*previewvib, Gtk::PACK_SHRINK, 0);    
     pack_start(*saturated, Gtk::PACK_SHRINK, 0);
     pack_start(*pastels, Gtk::PACK_SHRINK, 0);
     pack_start(*vibgam, Gtk::PACK_SHRINK, 0);
@@ -5311,7 +5649,7 @@ LocallabVibrance::LocallabVibrance():
     pack_start(*protectSkins, Gtk::PACK_SHRINK, 0);
     pack_start(*avoidColorShift, Gtk::PACK_SHRINK, 0);
     pack_start(*pastSatTog, Gtk::PACK_SHRINK, 0);
-    // pack_start(*sensiv, Gtk::PACK_SHRINK, 0);//unused here, but used for normalize_mean_dt
+//    pack_start(*sensiv, Gtk::PACK_SHRINK, 0);//reused - nused here, but used for normalize_mean_dt 
     pack_start(*curveEditorGG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     ToolParamBlock* const vibBox3 = Gtk::manage(new ToolParamBlock());
     vibBox3->pack_start(*maskusablev, Gtk::PACK_SHRINK, 0);
@@ -5329,6 +5667,7 @@ LocallabVibrance::LocallabVibrance():
     gradvibBox->pack_start(*strvibab);
     gradvibBox->pack_start(*strvibh);
     gradvibBox->pack_start(*angvib);
+    gradvibBox->pack_start(*feathervib);
     expgradvib->add(*gradvibBox, false);
     pack_start(*expgradvib);
     ToolParamBlock* const maskvibBox = Gtk::manage(new ToolParamBlock());
@@ -5363,6 +5702,81 @@ void LocallabVibrance::resetMaskView()
     showmaskvibMethodConn.block(true);
     showmaskvibMethod->set_active(0);
     showmaskvibMethodConn.block(false);
+}
+
+Gtk::ToggleButton *LocallabVibrance::getPreviewDeltaEButton() const
+{
+    return previewvib;
+}
+
+sigc::connection *LocallabVibrance::getPreviewDeltaEButtonConnection()
+{
+    return &previewvibConn;
+}
+
+//new function Global
+void LocallabVibrance::updateguivib(int spottype)
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype == 3) {
+                sensiv->hide();
+                showmaskvibMethod->set_active(0);
+                previewvib->hide();
+                previewvib->set_active(false);
+                resetMaskView();
+            } else {
+                sensiv->show();
+                previewvib->show();
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
+void LocallabVibrance::previewvibChanged()
+{
+    
+    if(previewvib->get_active()) {
+        showmaskvibMethod->set_active(4);
+    } else {
+        showmaskvibMethod->set_active(0);
+    }
+    
+    if (isLocActivated) {
+        if (listener) {
+            listener->panelChanged(Evlocallabpreviewvib,"");
+        }
+    } 
+}
+
+//new function scope
+void LocallabVibrance::updateguiscopevib(int scope)
+{
+    {
+        idle_register.add(
+        [this, scope]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            disableListener();
+            sensiv->setValue(scope);
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
 }
 
 void LocallabVibrance::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask)
@@ -5506,6 +5920,7 @@ void LocallabVibrance::read(const rtengine::procparams::ProcParams* pp, const Pa
         strvibab->setValue(spot.strvibab);
         strvibh->setValue(spot.strvibh);
         angvib->setValue(spot.angvib);
+        feathervib->setValue(spot.feathervib);
         enavibMask->set_active(spot.enavibMask);
         CCmaskvibshape->setCurve(spot.CCmaskvibcurve);
         LLmaskvibshape->setCurve(spot.LLmaskvibcurve);
@@ -5560,6 +5975,7 @@ void LocallabVibrance::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         spot.strvibab = strvibab->getValue();
         spot.strvibh = strvibh->getValue();
         spot.angvib = angvib->getValue();
+        spot.feathervib = feathervib->getValue();
         spot.enavibMask = enavibMask->get_active();
         spot.CCmaskvibcurve = CCmaskvibshape->getCurve();
         spot.LLmaskvibcurve = LLmaskvibshape->getCurve();
@@ -5598,6 +6014,7 @@ void LocallabVibrance::setDefaults(const rtengine::procparams::ProcParams* defPa
         strvibab->setDefault(defSpot.strvibab);
         strvibh->setDefault(defSpot.strvibh);
         angvib->setDefault(defSpot.angvib);
+        feathervib->setDefault(defSpot.feathervib);
         blendmaskvib->setDefault((double)defSpot.blendmaskvib);
         radmaskvib->setDefault(defSpot.radmaskvib);
         lapmaskvib->setDefault(defSpot.lapmaskvib);
@@ -5710,6 +6127,13 @@ void LocallabVibrance::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabangvib,
                                        angvib->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == feathervib) {
+            if (listener) {
+                listener->panelChanged(Evlocallabfeathervib,
+                                       feathervib->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
@@ -5911,6 +6335,7 @@ void LocallabVibrance::convertParamToSimple()
     // Set hidden specific GUI widgets in Simple mode to default spot values
     strvib->setValue(defSpot.strvib);
     angvib->setValue(defSpot.angvib);
+    feathervib->setValue(defSpot.feathervib);
     showmaskvibMethod->set_active(0);
     enavibMask->set_active(defSpot.enavibMask);
   //  CCmaskvibshape->setCurve(defSpot.CCmaskvibcurve);
@@ -6187,6 +6612,32 @@ void LocallabSoft::resetMaskView()
     showmasksoftMethod->set_active(0);
     showmasksoftMethodConn.block(false);
 }
+
+//new function Global
+void LocallabSoft::updateguisoft(int spottype) 
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype == 3) {
+                sensisf->hide();
+            } else {
+                sensisf->show();
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
 
 void LocallabSoft::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask)
 {
@@ -7061,6 +7512,39 @@ void LocallabBlur::resetMaskView()
     showmaskblMethod->set_active(0);
     showmaskblMethodConn.block(false);
 }
+
+//new function Global
+void LocallabBlur::updateguiblur(int spottype) 
+{
+    {
+        idle_register.add(
+        [this, spottype]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+            // Update GUI fullimage or main
+            disableListener();
+
+            if(spottype == 3) {
+                sensibn->hide();
+                sensiden->hide();
+                invbl->hide();
+
+            } else {
+                sensibn->show();
+                sensiden->show();
+                invbl->show();
+
+            }
+            enableListener();
+
+        return false;
+        }
+        );
+    }
+   
+}
+
+
 
 void LocallabBlur::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask, int &cieMask)
 {

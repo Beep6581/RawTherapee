@@ -226,6 +226,7 @@ option(WITH_LTO "Build with link-time optimizations" OFF)
 option(WITH_SAN "Build with run-time sanitizer" OFF)
 option(WITH_PROF "Build with profiling instrumentation" OFF)
 option(WITH_SYSTEM_KLT "Build using system KLT library." OFF)
+option(WITH_SYSTEM_LIBRAW "Build using system LibRaw library." OFF)
 option(OPTION_OMP "Build with OpenMP support" ON)
 option(
     STRICT_MUTEX
@@ -246,6 +247,9 @@ option(ENABLE_TCMALLOC "Use the tcmalloc library if available" OFF)
 set(TCMALLOC_LIB_DIR
     ""
     CACHE PATH "Custom path for the tcmalloc library")
+
+set(WITH_JXL "AUTO" CACHE STRING "Build with JPEG XL support")
+set_property(CACHE WITH_JXL PROPERTY STRINGS AUTO ON OFF)
 
 # Set installation directories:
 if(WIN32 OR APPLE)
@@ -518,6 +522,13 @@ foreach(l ${_exiv2_libs})
     set(EXIV2_LIBRARIES ${EXIV2_LIBRARIES} ${_el})
 endforeach()
 
+if(NOT WITH_SYSTEM_LIBRAW)
+    set(LIBRAW_LIBRARIES "${CMAKE_CURRENT_BINARY_DIR}/rtengine/libraw/lib/.libs/libraw_r.a")
+    if(WIN32)
+        set(LIBRAW_LIBRARIES ${LIBRAW_LIBRARIES} -lws2_32)
+    endif()
+endif()
+
 if(WIN32)
     add_definitions(-DWIN32)
     add_definitions(-D_WIN32)
@@ -550,6 +561,35 @@ find_package(PNG REQUIRED)
 find_package(ZLIB REQUIRED)
 if(WITH_SYSTEM_KLT)
     find_package(KLT REQUIRED)
+endif()
+if(WITH_SYSTEM_LIBRAW)
+    pkg_check_modules(LIBRAW REQUIRED libraw_r>=0.21)
+endif()
+
+if(WITH_JXL AND NOT WITH_JXL STREQUAL "AUTO")
+    set(JXL_REQUIRED "REQUIRED")
+else()
+    set(JXL_REQUIRED "")
+endif()
+pkg_check_modules(JXL ${JXL_REQUIRED} IMPORTED_TARGET libjxl)
+pkg_check_modules(JXLTHREADS ${JXL_REQUIRED} IMPORTED_TARGET libjxl_threads)
+if(JXL_FOUND)
+    if(WITH_JXL OR WITH_JXL STREQUAL "AUTO")
+        add_definitions(-DLIBJXL)
+        list(APPEND JXL_INCLUDE_DIRS ${JXLTHREADS_INCLUDE_DIRS})
+        list(APPEND JXL_LIBRARIES ${JXLTHREADS_LIBRARIES})
+    else()
+        message(STATUS "  JXL support disabled by WITH_JXL = ${WITH_JXL}")
+        string(APPEND JXL_VERSION " - Disabled")
+        set(JXL_INCLUDE_DIRS "")
+        set(JXL_LIBRARIES "")
+        set(JXLTHREADS_INCLUDE_DIRS "")
+        set(JXLTHREADS_LIBRARIES "")
+    endif()
+elseif(WITH_JXL STREQUAL "AUTO")
+    set(JXL_VERSION "Disabled, Auto")
+else()
+    set(JXL_VERSION "Disabled")
 endif()
 
 # Check for libcanberra-gtk3 (sound events on Linux):
@@ -732,6 +772,7 @@ if(NOT APPLE)
         -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
         -DOPTION_OMP:STRING=${OPTION_OMP}
         -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP}
+        -DJXL_VERSION:STRING=${JXL_VERSION}
         -DLENSFUN_VERSION:STRING=${LENSFUN_VERSION})
 endif()
 
@@ -761,6 +802,7 @@ elseif(APPLE)
              -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
              -DOPTION_OMP:STRING=${OPTION_OMP}
              -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP}
+             -DJXL_VERSION:STRING=${JXL_VERSION}
              -DLENSFUN_VERSION:STRING=${LENSFUN_VERSION}
              -P ${PROJECT_SOURCE_DIR}/UpdateInfo.cmake)
 else()

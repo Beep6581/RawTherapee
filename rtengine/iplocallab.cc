@@ -501,19 +501,25 @@ struct local_params {
     float angmaexp;
     float str_mas;
     float ang_mas;
+    float feather_mas;
     float strexp;
     float angexp;
+    float featherexp;
     float strSH;
     float angSH;
+    float featherSH;
     float strcol;
     float strcolab;
     float strcolh;
     float angcol;
+    float feathcol;
     float strvib;
     float strvibab;
     float strvibh;
     float angvib;
+    float feathervib;
     float angwav;
+    float featherwav;
     float strwav;
     float blendmaL;
     float radmaL;
@@ -529,6 +535,7 @@ struct local_params {
     float basew;
 
     float anglog;
+    float featherlog;
     float strlog;
     float softradiusexp;
     float softradiuscol;
@@ -804,6 +811,7 @@ struct local_params {
     float detailcie;
     float strgradcie;
     float anggradcie;
+    float feathercie;
     bool satcie;
     bool satlog;
     int sensilog;
@@ -933,22 +941,27 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.balanexp = locallab.spots.at(sp).balanexp;
     lp.linear = locallab.spots.at(sp).linear;
 
-    if (locallab.spots.at(sp).smoothciemet == "norm") {
-        lp.smoothciem = 1;
+    if (locallab.spots.at(sp).smoothciemet == "none") {
+        lp.smoothciem = 0;
     } else if (locallab.spots.at(sp).smoothciemet == "Ev") {
         lp.smoothciem = 1;
     } else if (locallab.spots.at(sp).smoothciemet == "gam") {
         lp.smoothciem = 2;
     } else if (locallab.spots.at(sp).smoothciemet == "gamnorol") {
         lp.smoothciem = 3;
+    } else if (locallab.spots.at(sp).smoothciemet == "level") {
+        lp.smoothciem = 4;
     }
 
-    if (locallab.spots.at(sp).smoothciemet == "none") {
+
+    if (locallab.spots.at(sp).spotMethod == "norm") {
         lp.fullim = 0;
     } else if (locallab.spots.at(sp).spotMethod == "exc") {
         lp.fullim = 1;
     } else if (locallab.spots.at(sp).spotMethod == "full") {
         lp.fullim = 2;
+    } else if (locallab.spots.at(sp).spotMethod == "main") {//new Global
+        lp.fullim = 3;
     }
 
     lp.fftColorMask = locallab.spots.at(sp).fftColorMask;
@@ -1094,6 +1107,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.excmet = 1;
     } else if (locallab.spots.at(sp).spotMethod == "full") {
         lp.excmet = 2;
+    } else if (locallab.spots.at(sp).spotMethod == "main") {
+        lp.excmet = 3;
     }
 
     if (locallab.spots.at(sp).merMethod == "mone") {
@@ -1360,22 +1375,29 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float angmaskexpo = ((float) locallab.spots.at(sp).angmaskexp);
     float strmask = ((float) locallab.spots.at(sp).str_mask);
     float angmask = ((float) locallab.spots.at(sp).ang_mask);
+    float feathermask = ((float) locallab.spots.at(sp).feather_mask);
     float strexpo = ((float) locallab.spots.at(sp).strexp);
     float angexpo = ((float) locallab.spots.at(sp).angexp);
+    float featherexpo = ((float) locallab.spots.at(sp).featherexp);
     float strSH = ((float) locallab.spots.at(sp).strSH);
     float angSH = ((float) locallab.spots.at(sp).angSH);
+    float featherSH = ((float) locallab.spots.at(sp).featherSH);
     float strcol = ((float) locallab.spots.at(sp).strcol);
     float strcolab = ((float) locallab.spots.at(sp).strcolab);
     float strcolh = ((float) locallab.spots.at(sp).strcolh);
     float angcol = ((float) locallab.spots.at(sp).angcol);
+    float feathcol = ((float) locallab.spots.at(sp).feathercol);
     float strvib = ((float) locallab.spots.at(sp).strvib);
     float strvibab = ((float) locallab.spots.at(sp).strvibab);
     float strvibh = ((float) locallab.spots.at(sp).strvibh);
     float angvib = ((float) locallab.spots.at(sp).angvib);
+    float feathervib = ((float) locallab.spots.at(sp).feathervib);
     float strwav = ((float) locallab.spots.at(sp).strwav);
     float angwav = ((float) locallab.spots.at(sp).angwav);
+    float featherwav = ((float) locallab.spots.at(sp).featherwav);
     float strlog = ((float) locallab.spots.at(sp).strlog);
     float anglog = ((float) locallab.spots.at(sp).anglog);
+    float featherlog = ((float) locallab.spots.at(sp).featherlog);
     float softradiusexpo = ((float) locallab.spots.at(sp).softradiusexp);
     float softradiuscolor = ((float) locallab.spots.at(sp).softradiuscol);
     float softradiusreti = ((float) locallab.spots.at(sp).softradiusret);
@@ -1508,6 +1530,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float contciemask = (float) locallab.spots.at(sp).contcie;
     float strgradcie = ((float) locallab.spots.at(sp).strgradcie);
     float anggradcie = ((float) locallab.spots.at(sp).anggradcie);
+    float feathercie = ((float) locallab.spots.at(sp).feathercie);
 
     lp.comprlo = locallab.spots.at(sp).comprlog;
     lp.comprlocie = locallab.spots.at(sp).comprcie;
@@ -1543,23 +1566,30 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.angmaexp = angmaskexpo;
     lp.str_mas = strmask;
     lp.ang_mas = angmask;
+    lp.feather_mas = feathermask;
 
     lp.strexp = strexpo;
     lp.angexp = angexpo;
+    lp.featherexp = featherexpo;
     lp.strSH = strSH;
     lp.angSH = angSH;
+    lp.featherSH = featherSH;
     lp.strcol = strcol;
     lp.strcolab = strcolab;
     lp.strcolh = strcolh;
     lp.angcol = angcol;
+    lp.feathcol = feathcol;
     lp.strvib = strvib;
     lp.strvibab = strvibab;
     lp.strvibh = strvibh;
     lp.angvib = angvib;
+    lp.feathervib = feathervib;
     lp.strwav = strwav;
     lp.angwav = angwav;
+    lp.featherwav = featherwav;
     lp.strlog = strlog;
     lp.anglog = anglog;
+    lp.featherlog = featherlog;
     lp.softradiusexp = softradiusexpo;
     lp.softradiuscol = softradiuscolor;
     lp.softradiusret = softradiusreti;
@@ -1772,6 +1802,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.contciemask = 0.01f * contciemask;
     lp.strgradcie = strgradcie;
     lp.anggradcie = anggradcie;
+    lp.feathercie = feathercie;
 
     lp.blendmacie = blendmaskcie;
     lp.radmacie = radmaskcie;
@@ -1849,10 +1880,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.blwh = locallab.spots.at(sp).blwh;
     lp.senscolor = (int) locallab.spots.at(sp).colorscope;
     //replace scope color vibrance shadows
-    lp.sens = lp.senscolor;
+/*    lp.sens = lp.senscolor;
     lp.sensv = lp.senscolor;
     lp.senshs = lp.senscolor;
-
+*/
     lp.mLjz = locallab.spots.at(sp).clarilresjz / 100.0;
     lp.mCjz = locallab.spots.at(sp).claricresjz / 100.0;
     lp.softrjz = locallab.spots.at(sp).clarisoftjz;
@@ -2610,12 +2641,15 @@ float do_get(float x, bool rolloff_, float mid_gray_scene, float gamma, float dr
 
 //Copyright (c) 2023 Thatcher Freeman
 // Adapted to Rawtherapee Jacques Desmis 25 mars 2024
-void tonemapFreeman(float target_slope, float white_point, float black_point, float mid_gray_scene, float mid_gray_view, bool rolloff, LUTf& lut, int mode, bool scale)
+void tonemapFreeman(float target_slope, float target_sloper, float target_slopeg , float target_slopeb, float white_point, float black_point, float mid_gray_scene, float mid_gray_view, bool rolloff, LUTf& lut, LUTf& lutr, LUTf& lutg, LUTf& lutb, int mode, bool scale, bool takeyb)
 {
     float dr;//Dynamic Range
     float b;
     float c;//black point
     float gamma;
+    float gammar;
+    float gammag;
+    float gammab;
     float mid_gray_scene_;//Mean luminance - Scene conditions
                           // mid_gray_view //Mean luminance - Viewing conditions
     
@@ -2630,8 +2664,18 @@ void tonemapFreeman(float target_slope, float white_point, float black_point, fl
 
     b = (dr / (mid_gray_scene_ - c)) * (1.f - ((mid_gray_scene_ - c) / dr)) * mid_gray_scene_;//b - ponderate mid_gray_scene taking into account the total DR, and the dark part below the mid_gray_scene
     gamma = target_slope * (float) std::pow((mid_gray_scene_ + b), 2.0) / (dr * b);//Caculate gamma with slope and mid_gray_scene 
+    gammar = target_sloper * (float) std::pow((mid_gray_scene_ + b), 2.0) / (dr * b);//Caculate gamma with slope and mid_gray_scene 
+    gammag = target_slopeg * (float) std::pow((mid_gray_scene_ + b), 2.0) / (dr * b);//Caculate gamma with slope and mid_gray_scene 
+    gammab = target_slopeb * (float) std::pow((mid_gray_scene_ + b), 2.0) / (dr * b);//Caculate gamma with slope and mid_gray_scene 
     float kmid = 1.f;//general case
-    if(mode == 3 && target_slope != 1.f) {//case tone-mapping
+    //float kyb = 1.f;
+    if(takeyb){
+        kmid = mid_gray_scene / mid_gray_view;
+        kmid = cbrt(kmid);
+    }
+   // if(mode == 3 && target_slope != 1.f ) {//case tone-mapping
+/*
+         
         float midutil = mid_gray_view / mid_gray_scene;//take into account ratio between Yb source and Yb viewing
         float midk = 1.f;
         float k_slope = 2.2f;
@@ -2639,13 +2683,24 @@ void tonemapFreeman(float target_slope, float white_point, float black_point, fl
             midk = pow_F(midutil, k_slope * (target_slope - 1.f));//ponderation in function target_slope when "slope user" < 1.f
         }
         kmid = midk;
+        
     }
-    if (settings->verbose) {
+*/    
+    if (mode == 3 && settings->verbose) {
         printf("b=%f gamma=%f slope=%f DynRange=%f kmid=%f black=%f Yb-scale=%f\n", (double) b, (double) gamma, (double) target_slope, (double) dr, (double) kmid, (double) c, (double) mid_gray_scene_);
     }
     //lut - take from Alberto Griggio
-    for (int i = 0; i < 65536; ++i) {// i - value image RGB
-        lut[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_scene_, gamma, dr, b, c, kmid);//call main function
+    if(mode == 4) {
+        for (int i = 0; i < 65536; ++i) {// i - value image RGB
+            lutr[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_scene_, gammar, dr, b, c, kmid);//call main function
+            lutg[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_scene_, gammag, dr, b, c, kmid);//call main function
+            lutb[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_scene_, gammab, dr, b, c, kmid);//call main function
+        }
+    } else {
+        kmid = 1.f;
+        for (int i = 0; i < 65536; ++i) {// i - value image RGB
+            lut[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_scene_, gamma, dr, b, c, kmid);//call main function
+        }
     }
 }
 
@@ -4920,7 +4975,10 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp, Lab
     //simple algo , perhaps we can improve as the others, but noise is here and not good for hue detection
     // BENCHFUN
     lumaref *= 327.68f;
-    const float ach = lp.trans / 100.f;
+    float ach = lp.trans / 100.f;
+    if(lp.fullim == 3 ) {//disabled transit
+        ach = 1.f;
+    }
 
     const float factnoise1 = 1.f + (lp.noisecf) / 500.f;
     const float factnoise2 = 1.f + (lp.noisecc) / 500.f;
@@ -4997,6 +5055,9 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp, Lab
                 } else { /*if (lp.shapmet == 1)*/
                     calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                 }
+                if(lp.fullim == 3 ) {//disabled scope
+                    localFactor = 1.f;
+                }
 
                 if (zone == 0) { // outside selection and outside transition zone => no effect, keep original values
                     continue;
@@ -5030,6 +5091,9 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp, Lab
                     difL = tmp1.L[y][x] - original->L[y][x];
                     difa = tmp1.a[y][x] - original->a[y][x];
                     difb = tmp1.b[y][x] - original->b[y][x];
+                }
+                if(lp.fullim == 3 ) {//disable scope
+                    reducdEL = reducdEa = reducdEb = 1.f;
                 }
 
                 difL *= localFactor * reducdEL;
@@ -5076,7 +5140,10 @@ void ImProcFunctions::DeNoise_Local2(const struct local_params& lp, LabImage* or
 
 
     lumaref *= 327.68f;
-    const float ach = lp.trans / 100.f;
+    float ach = lp.trans / 100.f;
+    if(lp.fullim == 3 ) {//disabled transit
+        ach = 1.f;
+    }
 
     const float factnoise1 = 1.f + (lp.noisecf) / 500.f;
     const float factnoise2 = 1.f + (lp.noisecc) / 500.f;
@@ -5153,6 +5220,9 @@ void ImProcFunctions::DeNoise_Local2(const struct local_params& lp, LabImage* or
                 } else { /*if (lp.shapmet == 1)*/
                     calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                 }
+                if(lp.fullim == 3 ) {//disabled scope
+                    localFactor = 1.f;
+                }
 
                 if (zone == 0) { // outside selection and outside transition zone => no effect, keep original values
                     continue;
@@ -5181,6 +5251,9 @@ void ImProcFunctions::DeNoise_Local2(const struct local_params& lp, LabImage* or
                 difL = tmp1.L[y - ystart][x - xstart] - original->L[y][x];
                 difa = tmp1.a[y - ystart][x - xstart] - original->a[y][x];
                 difb = tmp1.b[y - ystart][x - xstart] - original->b[y][x];
+                if(lp.fullim == 3 ) {//disable scope
+                    reducdEL = reducdEa = reducdEb = 1.f;
+                }
 
                 difL *= localFactor * reducdEL;
                 difa *= localFactor * reducdEa;
@@ -5270,7 +5343,10 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
 
                 float rL = origblur->L[y][x] / 327.68f;
                 float dE = std::sqrt(kab * SQR(refa - origblur->a[y][x] / 327.68f) + kab * SQR(refb - origblur->b[y][x] / 327.68f) + kL * SQR(lumaref - rL));
-                const float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensh);
+                float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensh);
+                if(lp.fullim == 3 ) {//disable scope
+                    reducdE = 1.f;
+                }
 
                 switch (zone) {
                     case 0: { // outside selection and outside transition zone => full effect, no transition
@@ -5419,6 +5495,10 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, const stru
                     float huedelta2 = abdelta2 - chrodelta2;
                     float dE = std::sqrt(kab * (kch * chrodelta2 + kH * huedelta2) + kL * SQR(refL - maskptr->L[y][x]));
                     reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensbn);
+                    if(lp.fullim == 3 ) {//disabled scope
+                        reducdE = 1.f;
+                    }
+                   
                 }
 
                 switch (zone) {
@@ -5565,19 +5645,24 @@ void calclocalGradientParams(const struct local_params& lp, struct grad_params& 
     int h = bfh;
     float stops = 0.f;
     float angs = 0.f;
+    double varfeath = 0.25; //0.01f * lp.feath;
 
     if (indic == 0) {
         stops = -lp.strmaexp;
         angs = lp.angmaexp;
+        varfeath = 0.01f * lp.feath;//for all masks when present
     } else if (indic == 1) {
         stops = lp.strexp;
         angs = lp.angexp;
+        varfeath = 0.01f * lp.featherexp;
     } else if (indic == 2) {
         stops = lp.strSH;
         angs = lp.angSH;
+        varfeath = 0.01f * lp.featherSH;
     } else if (indic == 3) {
         stops = lp.strcol;
         angs = lp.angcol;
+        varfeath = 0.01f * lp.feathcol;
     } else if (indic == 4) {
         float redu = 1.f;
 
@@ -5589,41 +5674,49 @@ void calclocalGradientParams(const struct local_params& lp, struct grad_params& 
 
         stops = redu * lp.strcolab;
         angs = lp.angcol;
+        varfeath = 0.01f * lp.feathcol;
     } else if (indic == 5) {
         stops = lp.strcolab;
         angs = lp.angcol;
+        varfeath = 0.01f * lp.feathcol;
     } else if (indic == 6) {
         stops = lp.strcolh;
         angs = lp.angcol;
+        varfeath = 0.01f * lp.feathcol;
     } else if (indic == 7) {
         stops = lp.strvib;
         angs = lp.angvib;
+        varfeath = 0.01f * lp.feathervib;
     } else if (indic == 8) {
         float redu = 1.f;
-
         if (lp.strvibab > 0.f) {
             redu = 0.7f;
         } else {
             redu = 0.5f;
         }
-
         stops = redu * lp.strvibab;
         angs = lp.angvib;
+        varfeath = 0.01f * lp.feathervib;
     } else if (indic == 9) {
         stops = lp.strvibh;
         angs = lp.angvib;
+        varfeath = 0.01f * lp.feathervib;
     } else if (indic == 10) {
         stops = std::fabs(lp.strwav);
         angs = lp.angwav;
+        varfeath = 0.01f * lp.featherwav;
     } else if (indic == 11) {
         stops = lp.strlog;
         angs = lp.anglog;
+        varfeath = 0.01f * lp.featherlog;
     } else if (indic == 12) {
         stops = -lp.str_mas;
         angs = lp.ang_mas;
+        varfeath = 0.01f * lp.feather_mas;
     } else if (indic == 15) {
         stops = lp.strgradcie;
         angs = lp.anggradcie;
+        varfeath = 0.01f * lp.feathercie;
     }
 
 
@@ -5631,7 +5724,7 @@ void calclocalGradientParams(const struct local_params& lp, struct grad_params& 
     double gradient_center_x = LIM01((lp.xc - xstart) / bfw);
     double gradient_center_y = LIM01((lp.yc - ystart) / bfh);
     double gradient_angle = static_cast<double>(angs) / 180.0 * rtengine::RT_PI;
-    double varfeath = 0.01f * lp.feath;
+ //   double varfeath = 0.01f * lp.feath;
 
     //printf("xstart=%f ysta=%f lpxc=%f lpyc=%f stop=%f bb=%f cc=%f ang=%f ff=%d gg=%d\n", xstart, ystart, lp.xc, lp.yc, gradient_stops, gradient_center_x, gradient_center_y, gradient_angle, w, h);
 
@@ -5768,12 +5861,18 @@ static void blendmask(const local_params& lp, int xstart, int ystart, int cx, in
             int zone;
 
             float localFactor = 1.f;
-            const float achm = lp.trans / 100.f;
+            float achm = lp.trans / 100.f;
+            if(lp.fullim == 3 ) {//disable transit
+                achm = 1.f;
+            }
 
             if (lp.shapmet == 0) {
                 calcTransition(lox, loy, achm, lp, zone, localFactor);
             } else { /*if (lp.shapmet == 1)*/
                 calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
+            }
+            if(lp.fullim == 3 ) {//disable scope
+                localFactor = 1.f;
             }
 
             if (inv == 0) {
@@ -8006,7 +8105,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                                 transformed->L[y][x] = CLIP(12000.f + difL);
                                 transformed->a[y][x] = clipC(difa);
                                 transformed->b[y][x] = clipC(difb);
-                            } else if (previewcb  || previewtm || lp.prevdE) {
+                            } else if (/* previewcb  ||*/ previewtm || lp.prevdE) {
                                 if (std::fabs(difb) < 500.f) {
                                     difb += difL;
                                 }
@@ -8624,7 +8723,7 @@ void optfft(int N_fftwsize, int &bfh, int &bfw, int &bfhr, int &bfwr, struct loc
         }
     }
 
-    if (fulima == 2) { // if full image, the ftsizeH and ftsizeW is a bit larger (about 10 to 200 pixels) than the image dimensions so that it is fully processed (consumes a bit more resources)
+    if(fulima >= 2) {// if full image, the ftsizeH and ftsizeW is a bit larger (about 10 to 200 pixels) than the image dimensions so that it is fully processed (consumes a bit more resources)
         for (int ftfu = 0; ftfu < N_fftwsize; ftfu++) { //find best values
             if (fftw_size[ftfu] <= (H + deltah)) {
                 ftsizeH = fftw_size[ftfu];
@@ -8934,16 +9033,16 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
 
     const bool masshow = ((lp.showmask_met == 1) &&  senstype == 20);
 
-    const bool previewvib = ((lp.showmaskvibmet == 4) &&  senstype == 2);
-    const bool previewexp = ((lp.showmaskexpmet == 5) &&  senstype == 1);
-    const bool previewcol = ((lp.showmaskcolmet == 5) &&  senstype == 0);
-    const bool previewSH = ((lp.showmaskSHmet == 4) &&  senstype == 9);
-    const bool previewtm = ((lp.showmasktmmet == 4) &&  senstype == 8);
-    const bool previewlc = ((lp.showmasklcmet == 4) &&  senstype == 10);
+    const bool previewvib = ((lp.showmaskvibmet == 4) &&  senstype == 2 && lp.fullim != 3);
+    const bool previewexp = ((lp.showmaskexpmet == 5) &&  senstype == 1  && lp.fullim != 3);
+    const bool previewcol = ((lp.showmaskcolmet == 5) &&  senstype == 0  && lp.fullim != 3);
+    const bool previewSH = ((lp.showmaskSHmet == 4) &&  senstype == 9 && lp.fullim != 3);
+    const bool previewtm = ((lp.showmasktmmet == 4) &&  senstype == 8 && lp.fullim != 3);
+    const bool previewlc = ((lp.showmasklcmet == 4) &&  senstype == 10 && lp.fullim != 3);
     const bool previeworig = ((lp.showmasksoftmet == 6) &&  senstype == 3 && lp.softmet == 1);
-    const bool previewmas = ((lp.showmask_met == 3) &&  senstype == 20);
-    const bool previewlog = ((lp.showmasklogmet == 4) &&  senstype == 11);
-    const bool previewcie = ((lp.showmaskciemet == 4) &&  senstype == 31);
+    const bool previewmas = ((lp.showmask_met == 3) &&  senstype == 20  && lp.fullim != 3);
+    const bool previewlog = ((lp.showmasklogmet == 4) &&  senstype == 11  && lp.fullim != 3);
+    const bool previewcie = ((lp.showmaskciemet == 4) &&  senstype == 31  && lp.fullim != 3);
 
     float radius = 3.f / sk;
 
@@ -9148,13 +9247,19 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                 const int lox = x + xstart + cx;
                 int zone;
                 float localFactor = 1.f;
-                const float achm = lp.trans / 100.f;
+                float achm = lp.trans / 100.f;
+                if(lp.fullim == 3 ) {//disable transit
+                    achm = 1.f;
+                }
 
                 //calculate transition
                 if (lp.shapmet == 0) {
                     calcTransition(lox, loy, achm, lp, zone, localFactor);
                 } else { /*if (lp.shapmet == 1)*/
                     calcTransitionrect(lox, loy, achm, lp, zone, localFactor);
+                }
+                if(lp.fullim == 3 ) {//disable scope
+                    localFactor = 1.f;
                 }
 
 //                float hueh = 0;
@@ -9194,6 +9299,9 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                 const float dE = rsob + std::sqrt(kab * (kch * chrodelta2 + kH * huedelta2) + kL * SQR(refL - maskptr->L[y][x]));
                 //reduction action with deltaE
                 float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens);
+                if(lp.fullim == 3 ) {//disable scope
+                    reducdE = 1.f;
+                }
                 if ((senstype == 11 || ( senstype == 31 && lp.islogcie)) && (varsens >= limvarsens)) {
                     int maxvarsens = 90;//arbitrary value to get maximum incidence  
                     float ared = (1.f - reducdE) / (maxvarsens - limvarsens);
@@ -9204,6 +9312,7 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                 if(varsens == 100.f) {
                     reducdE = 1.f;
                 }
+                
                 float cli = (bufexpfin->L[y][x] - bufexporig->L[y][x]);
                 float cla = (bufexpfin->a[y][x] - bufexporig->a[y][x]);
                 float clb = (bufexpfin->b[y][x] - bufexporig->b[y][x]);
@@ -13769,7 +13878,7 @@ void ImProcFunctions::Lab_Local(
     double& huerefblur, double& chromarefblur, double& lumarefblur, double& hueref, double& chromaref, double& lumaref, double& sobelref, int &lastsav,
     bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, int llcieMask,
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax,
-    float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, int &ill, float &contsig, float &lightsig,
+    float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab,float &maxicam, float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye, int &prim, int &ill, float &contsig, float &lightsig,
     float& highresi, float& nresi, float& highresi46, float& nresi46, float& Lhighresi, float& Lnresi, float& Lhighresi46, float& Lnresi46
 
     )
@@ -15314,7 +15423,11 @@ void ImProcFunctions::Lab_Local(
             for (int y = 0; y < transformed->H ; y++)
                 for (int x = 0; x < transformed->W; x++) {
                     float dE = std::sqrt(SQR(refa - bufreti->a[y][x] / 327.68f) + SQR(refb - bufreti->b[y][x] / 327.68f) + SQR(static_cast<float>(lumaref) - bufreti->b[y][x] / 327.68f));
-                    const float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sensibefore);
+                    float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sensibefore);
+                    if(lp.fullim == 3 ) {//disable scope
+                        reducdE = 1.f;
+                    }
+                    
                     reducDE[y][x] = clipDE(reducdE);
                 }
 
@@ -15675,7 +15788,11 @@ void ImProcFunctions::Lab_Local(
             for (int y = ystart; y < yend ; y++) {
                 for (int x = xstart; x < xend; x++) {
                     const float dE = std::sqrt(SQR(refa - bufreti->a[y - ystart][x - xstart] / 327.68f) + SQR(refb - bufreti->b[y - ystart][x - xstart] / 327.68f) + SQR(static_cast<float>(lumaref) - bufreti->b[y - ystart][x - xstart] / 327.68f));
-                    const float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sensibefore);
+                    float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sensibefore);
+                    if(lp.fullim == 3 ) {//disable scope
+                        reducdE = 1.f;
+                    }
+                  
                     reducDE[y - ystart][x - xstart] = clipDE(reducdE);
                 }
             }
@@ -17453,7 +17570,7 @@ void ImProcFunctions::Lab_Local(
             int yEn = lp.yc + lp.ly;
             int xEn = lp.xc + lp.lx;
 
-            if (lp.fullim == 2) { //limit sharpening to image dimension...no more...to avoid a long treatment
+			if(lp.fullim >= 2) {//full-iamge and global - limit sharpening to image dimension...no more...to avoid a long treatment
                 begy = 0;
                 begx = 0;
                 yEn = original->H;
@@ -19961,6 +20078,42 @@ void ImProcFunctions::Lab_Local(
                 }
 
                 if (params->locallab.spots.at(sp).expprecam && params->locallab.spots.at(sp).modecam == "cam16") {
+                    TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
+                    TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
+
+                    float toxyz[3][3] = {
+                        {
+                        static_cast<float>(wprof[0][0] / static_cast<double>(Color::D50x)),
+                        static_cast<float>(wprof[0][1] / static_cast<double>(Color::D50x)),
+                        static_cast<float>(wprof[0][2] / static_cast<double>(Color::D50x))
+                        }, {
+                        static_cast<float>(wprof[1][0]),
+                        static_cast<float>(wprof[1][1]),
+                        static_cast<float>(wprof[1][2])
+                        }, {
+                        static_cast<float>(wprof[2][0] / static_cast<double>(Color::D50z)),
+                        static_cast<float>(wprof[2][1] / static_cast<double>(Color::D50z)),
+                        static_cast<float>(wprof[2][2] / static_cast<double>(Color::D50z))
+                        }
+                    };
+
+                    float maxFactorToxyz = max(toxyz[1][0], toxyz[1][1], toxyz[1][2]);
+                    float equalR = maxFactorToxyz / toxyz[1][0];
+                    float equalG = maxFactorToxyz / toxyz[1][1];
+                    float equalB = maxFactorToxyz / toxyz[1][2];
+                    //inverse matrix user select
+                    double wip[3][3] = {
+                        {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
+                        {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
+                        {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
+                    };
+                    double wp[3][3] = {
+                        {wprof[0][0], wprof[0][1], wprof[0][2]},
+                        {wprof[1][0], wprof[1][1], wprof[1][2]},
+                        {wprof[2][0], wprof[2][1], wprof[2][2]}
+                    };
+    
+    
                     Imagefloat *tmpImage = nullptr;
                     tmpImage = new Imagefloat(bfw, bfh);
                     Imagefloat *tmpImagelog = nullptr;
@@ -19972,7 +20125,7 @@ void ImProcFunctions::Lab_Local(
                     float gamtone = params->locallab.spots.at(sp).gamjcie;
                     float slotone = params->locallab.spots.at(sp).slopjcie;
                     cmsHTRANSFORM dummy = nullptr;
-                    int prim = 3;
+                    //int prim = 3;
                     int typ = 1;
                     rdx = params->locallab.spots.at(sp).redxl;
                     rdy = params->locallab.spots.at(sp).redyl;
@@ -20095,41 +20248,146 @@ void ImProcFunctions::Lab_Local(
 
                     if(lp.smoothciem == 1) {
                         tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
-                    } else if(lp.smoothciem == 2  || lp.smoothciem == 3) {//  2 - only smmoth highlightd  - 3 - Tone mapping with slope and mid_grey
+                    } else if(lp.smoothciem == 2  || lp.smoothciem == 3 || lp.smoothciem == 4) {//  2 - only smmoth highlightd  - 3 - Tone mapping with slope and mid_grey
 
                         //TonemapFreeman - Copyright (c) 2023 Thatcher Freeman
                         float mid_gray = 0.01f * lp.sourcegraycie;//Mean luminance Yb Scene
                         float mid_gray_view = 0.01f * lp.targetgraycie;//Mean luminance Yb Viewing
+                           // if(mode == 3 && target_slope != 1.f ) {//case tone-mapping
+/*        if(params->locallab.spots.at(sp).{   
+        float midutil = mid_gray_view / mid_gray_scene;//take into account ratio between Yb source and Yb viewing
+        float midk = 1.f;
+        float k_slope = 2.2f;
+        if(target_slope >= 1.f) {
+            midk = pow_F(midutil, k_slope * (target_slope - 1.f));//ponderation in function target_slope when "slope user" < 1.f
+        }
+        kmid = midk;
+        
+    }
+*/
                         lp.whiteevjz = LIM(lp.whiteevjz, 0.1f, 31.5f);//limit whiteEv to avoid crash
                         float white_point =  xexpf(lp.whiteevjz * std::log(2.f) + xlogf(mid_gray));//lp.whiteevjz  White_Ev
                         lp.blackevjz = LIM(lp.blackevjz, -15.5f, -0.2f);//limit BlackEv to avoid crash
                         float black_point =  xexpf(lp.blackevjz * std::log(2.f) + xlogf(mid_gray));//lp.blackevjz  Black_Ev
                         bool rolloff = true;//only soften highlights
                         float slopegray = 1.f;//slopegray between 0.8 and 1.6 - lineary light the shadows by the user - the gamma is calculated according to slope and the characteristics of the image DR, White, Black
+                        float slopegrayr = 1.f;
+                        float slopegrayg = 1.f;
+                        float slopegrayb = 1.f;
                         int mode = 1;
                         float slopsmoot = 1.f - ((float) params->locallab.spots.at(sp).slopesmo - 1.f);//modify response so when increase slope the grays are becoming lighter
+                        float slopsmootr = 1.f - ((float) params->locallab.spots.at(sp).slopesmor - 1.f);
+                        float slopsmootg = 1.f - ((float) params->locallab.spots.at(sp).slopesmog - 1.f);
+                        float slopsmootb = 1.f - ((float) params->locallab.spots.at(sp).slopesmob - 1.f);
+                        bool takeyb = params->locallab.spots.at(sp).smoothcieyb;
+                        bool lummod = params->locallab.spots.at(sp).smoothcielum;
+                        float maxsl= 4.f;//maximum real slope
+                        float minslider = 0.01f;//minimum slider value > 0.f
+                        float aa = (1.9f - maxsl) / (0.1f - minslider);//interpolation : 1.9f slope value for slider = 0.1f
+                        float bb = 1.9f - 0.1f * aa;
+                        
                         if(lp.smoothciem == 3) {//slope activ, only with choice gamma - slope - based
                             rolloff = false;//allows tone-mapping slope
+                            if(slopsmoot < 0.1f) {
+                                slopsmoot = aa * slopsmoot + bb;
+                            }
                             slopegray = slopsmoot;
+                            slopegrayr = slopsmoot;
+                            slopegrayg = slopsmoot;
+                            slopegrayb = slopsmoot;
                             mode = 3;
+                        }//modify slope
+                        if(lp.smoothciem == 4) {//levels
+                            rolloff = false;//allows tone-mapping slope
+                            if(slopsmootr < 0.1f) {
+                                slopsmootr = aa * slopsmootr + bb;
+                            }
+                            slopegrayr = slopsmootr;
+                            if(slopsmootg < 0.1f) {
+                                slopsmootg = aa * slopsmootg + bb;
+                            }
+                            slopegrayg = slopsmootg;
+                            if(slopsmootb < 0.1f) {
+                                slopsmootb = aa * slopsmootb + bb;
+                            }
+                            slopegrayb = slopsmootb;
+                            mode = 4;
                         }
+                        
                         LUTf lut(65536, LUT_CLIP_OFF);//take from Alberto Griggio
+                        LUTf lutr(65536, LUT_CLIP_OFF);
+                        LUTf lutg(65536, LUT_CLIP_OFF);
+                        LUTf lutb(65536, LUT_CLIP_OFF);
                         bool scale = lp.issmoothcie;//scale Yb mid_gray - WhiteEv and BlavkEv
-                        tonemapFreeman(slopegray, white_point, black_point, mid_gray, mid_gray_view, rolloff, lut, mode, scale);
+                        
+                        tonemapFreeman(slopegray, slopegrayr, slopegrayg, slopegrayb, white_point, black_point, mid_gray, mid_gray_view, rolloff, lut, lutr, lutg, lutb, mode, scale, takeyb);
 
+                        if(lp.smoothciem == 4) {
+                            if(lummod) {//luminosity mode by Lab conversion
  #ifdef _OPENMP
         #pragma omp parallel for
 #endif
-                        for (int y = 0; y < bfh ; ++ y) {//apply Lut tone-mapping or smooth: thanks to Alberto - gain time.
-                            for (int x = 0; x < bfw ; ++x) {
-                                tmpImage->r(y, x) = 65535.f * lut[tmpImage->r(y, x)];
-                                tmpImage->g(y, x) = 65535.f * lut[tmpImage->g(y, x)];
-                                tmpImage->b(y, x) = 65535.f * lut[tmpImage->b(y, x)];
+                                for (int y = 0; y < bfh ; ++ y) {
+                                    for (int x = 0; x < bfw ; ++x) {
+                                        float r = tmpImage->r(y, x);
+                                        float g = tmpImage->g(y, x);
+                                        float b = tmpImage->b(y, x);
+                                        //convert to Lab to get a&b before RGB
+                                        float xx = toxyz[0][0] * r + toxyz[0][1] * g + toxyz[0][2] * b;
+                                        float yy = toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b;
+                                        float zz = toxyz[2][0] * r + toxyz[2][1] * g + toxyz[2][2] * b;
+
+                                        float fx = xx < MAXVALF ? Color::cachef[xx] : 327.68f * std::cbrt(xx / MAXVALF);
+                                        float fy = yy < MAXVALF ? Color::cachef[yy] : 327.68f * std::cbrt(yy / MAXVALF);
+                                        float fz = zz < MAXVALF ? Color::cachef[zz] : 327.68f * std::cbrt(zz / MAXVALF);
+
+                                        float a_1 = 500.0f * (fx - fy);
+                                        float b_1 = 200.0f * (fy - fz);
+                                        float rNew = 65535.f * lutr[tmpImage->r(y, x)];
+                                        float gNew = 65535.f * lutg[tmpImage->g(y, x)];
+                                        float bNew = 65535.f * lutb[tmpImage->b(y, x)];
+                                        r += (rNew - r) * equalR;
+                                        g += (gNew - g) * equalG;
+                                        b += (bNew - b) * equalB;
+                                        float newy = toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b;
+                                        float L_2 = newy <= MAXVALF ? Color::cachefy[newy] : 327.68f * (116.f * xcbrtf(newy / MAXVALF) - 16.f);
+                                        float x_, y_, z_;
+                                        //calculate RGB with L_2 and old value of a and b
+                                        Color::Lab2XYZ(L_2, a_1, b_1, x_, y_, z_) ;
+                                        if (params->locallab.spots.at(sp).avoidgamutMethod != "NONE") {//possibility of deactivating to see usefulness. is it necessary? 
+                                            Color::gamutmap(x_, y_, z_, wp);//if none disabled
+                                        }
+                                        Color::xyz2rgb(x_, y_, z_, r, g, b, wip);
+                                        tmpImage->r(y, x) = r;
+                                        tmpImage->g(y, x) = g;
+                                        tmpImage->b(y, x) = b;
+                                    }
+                                }
+                            } else {//RGG case
+ #ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+                                for (int y = 0; y < bfh ; ++ y) {//apply Lut tone-mapping or smooth: thanks to Alberto - gain time.
+                                    for (int x = 0; x < bfw ; ++x) {
+                                        tmpImage->r(y, x) = 65535.f * lutr[tmpImage->r(y, x)];
+                                        tmpImage->g(y, x) = 65535.f * lutg[tmpImage->g(y, x)];
+                                        tmpImage->b(y, x) = 65535.f * lutb[tmpImage->b(y, x)];
+                                    }
+                                }
+                            }
+                        } else {//Slope case
+ #ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+                            for (int y = 0; y < bfh ; ++ y) {//apply Lut tone-mapping or smooth: thanks to Alberto - gain time.
+                                for (int x = 0; x < bfw ; ++x) {
+                                    tmpImage->r(y, x) = 65535.f * lut[tmpImage->r(y, x)];
+                                    tmpImage->g(y, x) = 65535.f * lut[tmpImage->g(y, x)];
+                                    tmpImage->b(y, x) = 65535.f * lut[tmpImage->b(y, x)];
+                                }
                             }
                         }
-
                     }
-
 
                     rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
 
@@ -20220,6 +20478,19 @@ void ImProcFunctions::Lab_Local(
 
                     ImProcFunctions::localContrast(bufexpfin.get(), bufexpfin->L, localContrastParams, fftwlc, sk);
             }
+            if (params->locallab.spots.at(sp).bwcie) {
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+
+                    for (int ir = 0; ir < bfh; ir++) {
+                        for (int jr = 0; jr < bfw; jr++) {
+                            bufexpfin->a[ir][jr] = 0.f;
+                            bufexpfin->b[ir][jr] = 0.f;
+                        }
+                    }
+            }
+            
 
             const float repart = 1.0 - 0.01 * params->locallab.spots.at(sp).reparcie;
             int bw = bufexporig->W;

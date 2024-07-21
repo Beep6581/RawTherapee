@@ -162,8 +162,10 @@ class Preferences final :
     Gtk::ComboBoxText* cprevdemo;
     Gtk::CheckButton* ctiffserialize;
     Gtk::ComboBoxText* curveBBoxPosC;
+    Gtk::ComboBoxText* curveBBoxPosS;
 
     Gtk::ComboBoxText* complexitylocal;
+    Gtk::ComboBoxText* spotlocal;
 
     Gtk::CheckButton* inspectorWindowCB;
     Gtk::CheckButton* zoomOnScrollCB;
@@ -224,6 +226,8 @@ class Preferences final :
 
     Gtk::CheckButton* ckbInternalThumbIfUntouched;
 
+    Gtk::CheckButton *thumbnailRankColorMode;
+
     Gtk::Entry* txtCustProfBuilderPath;
     Gtk::ComboBoxText* custProfBuilderLabelType;
 
@@ -240,6 +244,8 @@ class Preferences final :
 
     Gtk::ComboBoxText *cropGuidesCombo;
     Gtk::CheckButton *cropAutoFitCB;
+
+    Gtk::CheckButton *enableLibRaw;
 
     Gtk::ComboBoxText *maxZoomCombo;
 
@@ -319,6 +325,8 @@ public:
     void observer10Toggled ();
 
     void selectStartupDir ();
+    void extensionsChanged ();
+    void extensionChanged ();
     void addExtPressed ();
     void delExtPressed ();
     void moveExtUpPressed ();

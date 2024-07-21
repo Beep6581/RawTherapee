@@ -45,6 +45,14 @@ endif()
 if(EXIV2_INCLUDE_DIRS)
     include_directories("${EXIV2_INCLUDE_DIRS}")
 endif()
+if(JXL_INCLUDE_DIRS)
+    include_directories("${JXL_INCLUDE_DIRS}")
+endif()
+if(NOT WITH_SYSTEM_LIBRAW)
+    include_directories("${CMAKE_SOURCE_DIR}/rtengine/libraw")
+else()
+    include_directories("${LIBRAW_INCLUDE_DIRS}")
+endif()
 
 link_directories(
     "${EXPAT_LIBRARY_DIRS}"
@@ -145,6 +153,7 @@ set(RTENGINESOURCEFILES
     jpeg_ijg/jpeg_memsrc.cc
     labimage.cc
     lcp.cc
+    lensmetadata.cc
     lmmse_demosaic.cc
     loadinitial.cc
     metadata.cc
@@ -246,10 +255,17 @@ target_link_libraries(rtengine
     ${RSVG_LIBRARIES}
     ${KLT_LIBRARIES}
     ${EXIV2_LIBRARIES}
+    ${JXL_LIBRARIES}
+    ${LIBRAW_LIBRARIES}
     )
 
 if(OpenMP_FOUND)
     target_link_libraries(rtengine ${OpenMP_CXX_LIBRARIES})
+endif()
+
+# Configure LibRaw
+if(NOT WITH_SYSTEM_LIBRAW)
+    include(LibRaw.cmake)
 endif()
 
 install(FILES ${CAMCONSTSFILE} DESTINATION "${DATADIR}" PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)

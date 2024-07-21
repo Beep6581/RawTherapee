@@ -44,6 +44,7 @@
 #include "rt_math.h"
 #include "rtengine.h"
 #include "rtlensfun.h"
+#include "lensmetadata.h"
 #include "../rtgui/options.h"
 
 #define BENCHMARK
@@ -420,6 +421,16 @@ void transLineD1x(const float* const red, const float* const green, const float*
     }
 }
 
+bool checkRawDataDimensions(const array2D<float> &rawData, const rtengine::RawImage &rawImage, int width, int height)
+{
+    const int colors = (rawImage.getSensorType() == rtengine::ST_BAYER ||
+                           rawImage.getSensorType() == rtengine::ST_FUJI_XTRANS ||
+                           rawImage.get_colors() == 1)
+                           ? 1
+                           : 3;
+    return rawData.getHeight() == height && rawData.getWidth() == colors * width;
+}
+
 }
 
 
@@ -744,7 +755,7 @@ void RawImageSource::getWBMults(const ColorTemp &ctemp, const RAWParams &raw, st
 
 void RawImageSource::getImage(const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const RAWParams &raw)
 {
-    assert(rawData.getHeight() == H && rawData.getWidth() == W);
+    assert(checkRawDataDimensions(rawData, *ri, W, H));
 
     MyMutex::MyLock lock(getImageMutex);
 
@@ -1458,7 +1469,7 @@ void RawImageSource::preprocess(const RAWParams &raw, const LensProfParams &lens
 
     int totBP = 0; // Hold count of bad pixels to correct
 
-    if (ri->zeroIsBad()) { // mark all pixels with value zero as bad, has to be called before FF and DF. dcraw sets this flag only for some cameras (mainly Panasonic and Leica)
+    if (ri->zeroIsBad() || (getMetaData()->hasFixBadPixelsConstant() && getMetaData()->getFixBadPixelsConstant() == 0)) { // mark all pixels with value zero as bad, has to be called before FF and DF. dcraw sets this flag only for some cameras (mainly Panasonic and Leica)
         bitmapBads.reset(new PixelsMap(W, H));
         totBP = findZeroPixels(*bitmapBads);
 
@@ -1522,7 +1533,7 @@ void RawImageSource::preprocess(const RAWParams &raw, const LensProfParams &lens
     //FLATFIELD end
 
     if (raw.ff_FromMetaData && isGainMapSupported()) {
-        applyDngGainMap(c_black, ri->getGainMaps());
+        applyDngGainMap(c_black, getMetaData()->getGainMaps());
     }
 
     // Always correct camera badpixels from .badpixels file
@@ -1573,7 +1584,13 @@ void RawImageSource::preprocess(const RAWParams &raw, const LensProfParams &lens
     if (!hasFlatField && lensProf.useVign && lensProf.lcMode != LensProfParams::LcMode::NONE) {
         std::unique_ptr<LensCorrection> pmap;
 
-        if (lensProf.useLensfun()) {
+        if (lensProf.useMetadata()) {
+            auto corr = MetadataLensCorrectionFinder::findCorrection(idata);
+            if (corr) {
+                corr->initCorrections(W, H, coarse, -1);
+                pmap = std::move(corr);
+            }
+        } else if (lensProf.useLensfun()) {
             pmap = LFDatabase::getInstance()->findModifier(lensProf, idata, W, H, coarse, -1);
         } else {
             const std::shared_ptr<LCPProfile> pLCPProf = LCPStore::getInstance()->getProfile(lensProf.lcpFile);
@@ -1763,7 +1780,7 @@ void RawImageSource::preprocess(const RAWParams &raw, const LensProfParams &lens
 
 void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &contrastThreshold, bool cache)
 {
-    assert(rawData.getHeight() == H && rawData.getWidth() == W);
+    assert(checkRawDataDimensions(rawData, *ri, W, H));
 
     MyTime t1, t2;
     t1.set();
@@ -3855,7 +3872,7 @@ void RawImageSource::hlRecovery(const std::string &method, float* red, float* gr
 
 void RawImageSource::getAutoExpHistogram(LUTu & histogram, int& histcompr)
 {
-    assert(rawData.getHeight() == H && rawData.getWidth() == W);
+    assert(checkRawDataDimensions(rawData, *ri, W, H));
 
 //    BENCHFUN
     histcompr = 3;
@@ -7500,7 +7517,7 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
 
 void RawImageSource::getAutoWBMultipliersitc(bool extra, double & tempref, double & greenref, double & tempitc, double & greenitc, float &temp0, float &delta,  int &bia, int &dread, int &kcam, int &nocam, float &studgood, float &minchrom, int &kmin,  float &minhist, float &maxhist, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double & rm, double & gm, double & bm, const WBParams & wbpar, const ColorManagementParams & cmp, const RAWParams & raw, const ToneCurveParams &hrp)
 {
-    assert(rawData.getHeight() == H && rawData.getWidth() == W);
+    assert(checkRawDataDimensions(rawData, *ri, W, H));
 
 //    BENCHFUN
     constexpr double clipHigh = 64000.0;
@@ -7726,7 +7743,7 @@ void RawImageSource::getAutoWBMultipliersitc(bool extra, double & tempref, doubl
 
 void RawImageSource::getAutoWBMultipliers(double &rm, double &gm, double &bm)
 {
-    assert(rawData.getHeight() == H && rawData.getWidth() == W);
+    assert(checkRawDataDimensions(rawData, *ri, W, H));
 
 //    BENCHFUN
     constexpr double clipHigh = 64000.0;
@@ -7944,7 +7961,7 @@ void RawImageSource::getAutoWBMultipliers(double &rm, double &gm, double &bm)
 
 ColorTemp RawImageSource::getSpotWB(std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran, double equal, StandardObserver observer)
 {
-    assert(rawData.getHeight() == H && rawData.getWidth() == W);
+    assert(checkRawDataDimensions(rawData, *ri, W, H));
 
     int x;
     int y;
@@ -8284,7 +8301,7 @@ void RawImageSource::init()
 
 void RawImageSource::getRawValues(int x, int y, int rotate, int &R, int &G, int &B)
 {
-    if (rawData.getWidth() != W || rawData.getHeight() != H || d1x) { // Nikon D1x has special sensor. We just skip it
+    if (!checkRawDataDimensions(rawData, *ri, W, H) || d1x) { // Nikon D1x has special sensor. We just skip it
         R = G = B = 0;
         return;
     }
@@ -8327,12 +8344,73 @@ void RawImageSource::getRawValues(int x, int y, int rotate, int &R, int &G, int 
 
 bool RawImageSource::isGainMapSupported() const
 {
-    return ri->isGainMapSupported();
+    if (!(ri->DNGVERSION() && ri->isBayer())) {
+        return false;
+    }
+    const auto &gainMaps = getMetaData()->getGainMaps();
+    const auto n = gainMaps.size();
+    if (n != 4) { // we need 4 gainmaps for bayer files
+        if (rtengine::settings->verbose) {
+            std::cout << "GainMap has " << n << " maps, but 4 are needed" << std::endl;
+        }
+        return false;
+    }
+    unsigned int check = 0;
+    bool noOp = true;
+    for (const auto &m : gainMaps) {
+        if (m.MapGain.size() < 1) {
+            if (rtengine::settings->verbose) {
+                std::cout << "GainMap has invalid size of " << m.MapGain.size() << std::endl;
+            }
+            return false;
+        }
+        if (m.MapGain.size() != static_cast<std::size_t>(m.MapPointsV) * static_cast<std::size_t>(m.MapPointsH) * static_cast<std::size_t>(m.MapPlanes)) {
+            if (rtengine::settings->verbose) {
+                std::cout << "GainMap has size of " << m.MapGain.size() << ", but needs " << m.MapPointsV * m.MapPointsH * m.MapPlanes << std::endl;
+            }
+            return false;
+        }
+        if (m.RowPitch != 2 || m.ColPitch != 2) {
+            if (rtengine::settings->verbose) {
+                std::cout << "GainMap needs Row/ColPitch of 2/2, but has " << m.RowPitch << "/" << m.ColPitch << std::endl;
+            }
+            return false;
+        }
+        if (m.Top == 0) {
+            if (m.Left == 0) {
+                check += 1;
+            } else if (m.Left == 1) {
+                check += 2;
+            }
+        } else if (m.Top == 1) {
+            if (m.Left == 0) {
+                check += 4;
+            } else if (m.Left == 1) {
+                check += 8;
+            }
+        }
+        for (size_t i = 0; noOp && i < m.MapGain.size(); ++i) {
+            if (m.MapGain[i] != 1.f) { // we have at least one value != 1.f => map is not a nop
+                noOp = false;
+            }
+        }
+    }
+    if (noOp || check != 15) { // all maps are nops or the structure of the combination of 4 maps is not correct
+        if (rtengine::settings->verbose) {
+            if (noOp) {
+                std::cout << "GainMap is a nop" << std::endl;
+            } else {
+                std::cout << "GainMap has unsupported type : " << check << std::endl;
+            }
+        }
+        return false;
+    }
+    return true;
 }
 
 void RawImageSource::applyDngGainMap(const float black[4], const std::vector<GainMap> &gainMaps)
 {
-    assert(rawData.getHeight() == H && rawData.getWidth() == W);
+    assert(checkRawDataDimensions(rawData, *ri, W, H));
 
     // now we can apply each gain map to raw_data
     array2D<float> mvals[2][2];

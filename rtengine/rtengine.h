@@ -20,6 +20,7 @@
 #pragma once
 
 #include <array>
+#include <cstdint>
 #include <ctime>
 #include <string>
 #include <memory>
@@ -51,6 +52,7 @@ class LUT;
 using LUTu = LUT<uint32_t>;
 
 class EditDataProvider;
+class GainMap;
 
 namespace rtengine
 {
@@ -130,6 +132,8 @@ public:
     virtual bool getPixelShift () const = 0;
     /** @return false: not an HDR file ; true: single or multi-frame HDR file (e.g. Pentax HDR raw file or 32 bit float DNG file or Log compressed) */
     virtual bool getHDR() const = 0;
+    /** @return true if the file is a DNG file */
+    virtual bool getDNG() const = 0;
 
     /** @return false: not an HDR file ; true: single or multi-frame HDR file (e.g. Pentax HDR raw file or 32 bit float DNG file or Log compressed) */
     virtual std::string getImageType() const = 0;
@@ -158,6 +162,9 @@ public:
     static FramesMetaData* fromFile(const Glib::ustring& fname);
 
     virtual Glib::ustring getFileName() const = 0;
+    virtual std::uint32_t getFixBadPixelsConstant() const = 0;
+    virtual bool hasFixBadPixelsConstant() const = 0;
+    virtual std::vector<GainMap> getGainMaps() const = 0;
     virtual void getDimensions(int &w, int &h) const = 0;
 };
 
@@ -192,13 +199,13 @@ class InitialImage
 public:
     /** Returns the file name of the image.
       * @return The file name of the image */
-    virtual Glib::ustring getFileName () = 0;
+    virtual Glib::ustring getFileName() const = 0;
     /** Returns the embedded icc profile of the image.
       * @return The handle of the embedded profile */
-    virtual cmsHPROFILE getEmbeddedProfile () = 0;
+    virtual cmsHPROFILE getEmbeddedProfile() const = 0;
     /** Returns a class providing access to the exif and iptc metadata tags of all frames of the image.
       * @return An instance of the FramesMetaData class */
-    virtual const FramesMetaData* getMetaData () = 0;
+    virtual const FramesMetaData *getMetaData() const = 0;
     /** This is a function used for internal purposes only. */
     virtual ImageSource* getImageSource () = 0;
     /** This class has manual reference counting. You have to call this function each time to make a new reference to an instance. */
@@ -372,7 +379,7 @@ public :
     virtual void autoCamChanged(double ccam, double ccamout) = 0;
     virtual void adapCamChanged(double cadap) = 0;
     virtual void ybCamChanged(int yb) = 0;
-    virtual void wbCamChanged(double tem, double tin) = 0;
+    virtual void wbCamChanged(double tem, double tin, bool autotemp) = 0;
 
 };
 
@@ -448,6 +455,26 @@ public:
         double meanylc;
         double meanxelc;
         double meanyelc;
+        int primlc;
+    };
+
+//select spot settings 
+    struct locallabsetLC {
+        int mainf;
+        bool iscolo;
+        bool iss;
+        bool isvi;
+        bool isexpo;
+        bool issof;
+        bool isblu;
+        bool isto;
+        bool isre;
+        bool isshar;
+        bool iscon;
+        bool iscbd;
+        bool islo;
+        bool isma;
+        bool isci;
     };
 
     struct locallabcieSIG {
@@ -460,9 +487,15 @@ public:
     virtual void minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int selspot) = 0;
     virtual void denChanged(const std::vector<locallabDenoiseLC> &denlc, int selspot) = 0;
     virtual void cieChanged(const std::vector<locallabcieLC> &cielc, int selspot) = 0;
+    virtual void maiChanged(const std::vector<locallabsetLC> &csetlc, int selspot) = 0;
     virtual void sigChanged(const std::vector<locallabcieSIG> &ciesig, int selspot) = 0;
     virtual void ciebefChanged(const std::vector<locallabcieBEF> &ciebef, int selspot) = 0;
     virtual void refChanged2(float *huerefp, float *chromarefp, float *lumarefp, float *fabrefp, int selspot) = 0;
+//    virtual void mainChanged(int spottype, int selspot, bool iscolor, bool issh, bool isvib, bool isexpos, bool issoft, bool isblur, bool istom, bool isret, bool issharp, bool iscont, bool iscbdl, bool islog, bool ismas, bool iscie) = 0;
+    virtual void scopeChangedcol(int scope, int selspot, bool enab) = 0;
+    virtual void scopeChangedsh(int scope, int selspot, bool enab) = 0;
+    virtual void scopeChangedvib(int scope, int selspot, bool enab) = 0;
+    virtual void scopeChangedset(int scope, int selspot, bool enab) = 0;
 
 };
 
