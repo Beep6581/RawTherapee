@@ -69,6 +69,7 @@ jobs:
             -DCMAKE_OSX_DEPLOYMENT_TARGET=12.0 \
             -DCONTINUOUS=ON \
             -DCODESIGNID:STRING="-" \
+            -DWITH_SYSTEM_LIBRAW=ON \
             ..
             zsh -c 'echo "Configured in $(printf "%0.2f" $(($[$(date +%s)-$(cat configstamp)]/$((60.))))) minutes"'
       - name: Compile RawTherapee
@@ -166,6 +167,7 @@ jobs:
             -DCMAKE_OSX_DEPLOYMENT_TARGET=14.0 \
             -DCONTINUOUS=ON \
             -DCODESIGNID:STRING="-" \
+            -DWITH_SYSTEM_LIBRAW=ON \
             ..
             zsh -c 'echo "Configured in $(printf "%0.2f" $(($[$(date +%s)-$(cat configstamp)]/$((60.))))) minutes"'
       - name: Compile RawTherapee
