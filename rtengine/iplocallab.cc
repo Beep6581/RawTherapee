@@ -954,6 +954,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.smoothciem = 4;
     } else if (locallab.spots.at(sp).smoothciemet == "leveltrc") {
         lp.smoothciem = 5;
+    } else if (locallab.spots.at(sp).smoothciemet == "sigm") {
+        lp.smoothciem = 6;
     }
 
 
@@ -1991,6 +1993,159 @@ static void calcTransition(const float lox, const float loy, const float ach, co
             }
         }
     }
+}
+//sigmoid
+/* -*- C -*-
+ * 
+ * Simplified porting of darktable's sigmoid module to Rawtherapee 
+ * Copyright of the original code follows
+ */
+/*
+    This file is part of darktable,
+    Copyright (C) 2020-2023 darktable developers.
+
+    darktable is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    darktable is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with darktable.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+const float MIDDLE_GREY = 0.1845f;
+
+const float display_black_target = 0.0152f;
+//const float display_white_target = 100;
+
+float max(float a, float b)
+{
+    if (a > b) {
+        return a;
+    } else {
+        return b;
+    }
+}
+
+float generalized_loglogistic_sigmoid(float value,
+                                      float magnitude,
+                                      float paper_exp,
+                                      float film_fog,
+                                      float film_power,
+                                      float paper_power)
+{
+    const float clamped_value = max(value, 0.0);
+    // The following equation can be derived as a model for film + paper but it has a pole at 0
+    // magnitude * powf(1.0f + paper_exp * powf(film_fog + value, -film_power), -paper_power);
+    // Rewritten on a stable around zero form:
+    const float film_response = pow(film_fog + clamped_value, film_power);
+    const float paper_response = magnitude * pow(film_response / (paper_exp + film_response), paper_power);
+
+    // Safety check for very large floats that cause numerical errors
+    if (xisnanf(paper_response)) {
+        return magnitude;
+    } else {
+        return paper_response;
+    }
+}
+
+void calculate_params(float middle_grey_contrast,
+                      float contrast_skewness,
+                      float display_black_target,
+                      float display_white_target,
+                      float &film_power,
+                      float &white_target,
+                      float &black_target,
+                      float &film_fog,
+                      float &paper_exposure,
+                      float &paper_power)
+{
+    /* Calculate actual skew log logistic parameters to fulfill the following:
+     * f(scene_zero) = display_black_target
+     * f(scene_grey) = MIDDLE_GREY
+     * f(scene_inf)  = display_white_target
+     * Slope at scene_grey independent of skewness i.e. only changed by the contrast parameter.
+     */
+
+    // Calculate a reference slope for no skew and a normalized display
+    const float ref_film_power = middle_grey_contrast;
+    const float ref_paper_power = 1.0f;
+    const float ref_magnitude = 1.0f;
+    const float ref_film_fog = 0.0f;
+    const float ref_paper_exposure =  pow_F(ref_film_fog + MIDDLE_GREY, ref_film_power) * ((ref_magnitude / MIDDLE_GREY) - 1.0f);
+    const float delta = 1e-6;
+    const float ref_slope  = (generalized_loglogistic_sigmoid(MIDDLE_GREY + delta, ref_magnitude, ref_paper_exposure, ref_film_fog,
+                                           ref_film_power, ref_paper_power)
+           - generalized_loglogistic_sigmoid(MIDDLE_GREY - delta, ref_magnitude, ref_paper_exposure, ref_film_fog,
+                                             ref_film_power, ref_paper_power)) / 2.0f / delta;
+
+    // Add skew
+    paper_power = pow(5.0, -contrast_skewness);
+
+    // Slope at low film power
+    const float temp_film_power = 1.0f;
+    const float temp_white_target = 0.01f * display_white_target;
+    const float temp_white_grey_relation = pow_F(temp_white_target / MIDDLE_GREY, 1.0f / paper_power) - 1.0f;
+    const float temp_paper_exposure = pow_F(MIDDLE_GREY, temp_film_power) * temp_white_grey_relation;
+    const float temp_slope  = (generalized_loglogistic_sigmoid(MIDDLE_GREY + delta, temp_white_target, temp_paper_exposure,
+                                           ref_film_fog, temp_film_power, paper_power)
+           - generalized_loglogistic_sigmoid(MIDDLE_GREY - delta, temp_white_target, temp_paper_exposure,
+                                             ref_film_fog, temp_film_power, paper_power)) / 2.0f / delta;
+
+    // Figure out what film power fulfills the target slope
+    // (linear when assuming display_black = 0.0)
+    film_power = ref_slope / temp_slope;
+
+    // Calculate the other parameters now that both film and paper power is known
+    white_target = 0.01f * display_white_target;
+    black_target = 0.01f * display_black_target;
+    const float white_grey_relation = pow_F(white_target / MIDDLE_GREY, 1.0f / paper_power) - 1.0f;
+    const float white_black_relation = pow_F(black_target / white_target, -1.0f / paper_power) - 1.0f;
+
+    film_fog = MIDDLE_GREY * pow(white_grey_relation, 1.0f / film_power) / (pow_F(white_black_relation, 1.0f / film_power) - pow_F(white_grey_relation, 1.0f / film_power));
+    paper_exposure = pow_F(film_fog + MIDDLE_GREY, film_power) * white_grey_relation;
+}
+
+
+void  ImProcFunctions::sigmoid_main(float r,
+              float g,
+              float b,
+              float &rout,
+              float &gout,
+              float &bout,
+              float middle_grey_contrast,
+              float contrast_skewness,
+              float white_point)
+{
+    float film_power = 1.f;
+    float white_target = 1.f;;
+    float black_target = 1.f;
+    float film_fog = 1.f;
+    float paper_exposure = 1.f;
+    float paper_power = 1.f;
+
+    // compute the sigmoid parameters from the UI controls
+    calculate_params(middle_grey_contrast, contrast_skewness,
+                     display_black_target, white_point * 100.0f, film_power,
+                     white_target, black_target, film_fog,
+                     paper_exposure, paper_power);
+    float rgb[3] = {r, g, b};
+    for (int i = 0; i < 3; i = i+1) {
+        rgb[i] = max(rgb[i], 0);
+    }
+    for (int i = 0; i < 3; i = i+1) {
+        rgb[i] = generalized_loglogistic_sigmoid(rgb[i], white_target,
+                                                 paper_exposure, film_fog,
+                                                 film_power, paper_power);
+    }
+    rout = rgb[0];
+    gout = rgb[1];
+    bout = rgb[2];
 }
 
 // Copyright 2018 Alberto Griggio <alberto.griggio@gmail.com>
@@ -20430,9 +20585,26 @@ void ImProcFunctions::Lab_Local(
                         }
 
                     }
+                    if(lp.smoothciem == 6) {
+#ifdef _OPENMP
+        #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
 
-                   
-                    
+                        for (int i = 0; i < bfh; ++i)
+                            for (int j = 0; j < bfw; ++j) {
+                                float r = tmpImage->r(i, j) / 65535.f;
+                                float g = tmpImage->g(i, j) / 65535.f;
+                                float b = tmpImage->b(i, j) / 65535.f;
+                                float rout = 0.f;
+                                float gout = 0.f;
+                                float bout = 0.f;
+                               // sigmoid_main(r, g, b, rout, gout, bout, float middle_grey_contrast, float contrast_skewness, float white_point);
+                                sigmoid_main(r, g, b, rout, gout, bout, 1.5f, -0.2f, 1.f);
+                                tmpImage->r(i, j) = 65535.f * rout;
+                                tmpImage->g(i, j) = 65535.f * gout;
+                                tmpImage->b(i, j) = 65535.f * bout;
+                                
+                            }
+                    }
                     if(lp.smoothciem == 1) {
                         tone_eqsmooth(this, tmpImage, lp, params->icm.workingProfile, sk, multiThread);//reduce Ev > 0 < 12
                     } else if(lp.smoothciem == 2  || lp.smoothciem == 3 || lp.smoothciem == 4 || (gambas && lp.smoothciem == 5)) {//  2 - only smmoth highlightd  - 3 - Tone mapping with slope and mid_grey
