@@ -108,7 +108,9 @@ jobs:
           zsh -c 'echo "Build completed in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"'
       - name: Test-launch the app
         run: |
-          cd build && open -a RawTherapee.app
+          cd build
+          sudo cp -R RawTherapee.app /Applications
+          open -a RawTherapee
           sleep 5
           osascript -e 'tell application "Finder"' -e 'get the name of every process whose visible is true' -e 'end tell'
           osascript -e 'tell application "RawTherapee" to if it is running then quit'
@@ -210,7 +212,9 @@ jobs:
           zsh -c 'echo "Build completed in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"'
       - name: Test-launch the app
         run: |
-          cd build && open -a RawTherapee.app
+          cd build 
+          sudo cp -R RawTherapee.app /Applications
+          open -a RawTherapee
           sleep 5
           osascript -e 'tell application "Finder"' -e 'get the name of every process whose visible is true' -e 'end tell'
           osascript -e 'tell application "RawTherapee" to if it is running then quit'
