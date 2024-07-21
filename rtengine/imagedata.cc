@@ -16,6 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+#include <cstdint>
 #include <functional>
 #include <iostream>
 #include <regex>
@@ -27,6 +28,7 @@
 #include <glib/gstdio.h>
 #include <glibmm/convert.h>
 
+#include "dnggainmap.h"
 #include "imagedata.h"
 #include "imagesource.h"
 #include "metadata.h"
@@ -63,6 +65,171 @@ auto to_long(const Iterator &iter, Integer n = Integer{0}) -> decltype(
 #endif
 }
 
+/**
+ * Convenience class for reading data from a metadata tag's bytes value.
+ *
+ * It maintains an offset. Data is read starting from the offset, then the
+ * offset is advanced to the byte after the last byte read.
+ */
+class TagValueReader
+{
+    using DataContainer = std::vector<Exiv2::byte>;
+    using DataOffset = DataContainer::difference_type;
+
+    DataContainer data;
+    DataOffset offset{0};
+    Exiv2::ByteOrder defaultByteOrder;
+
+    /**
+     * Reads a value at the current offset.
+     *
+     * @tparam T Value's type.
+     * @tparam getter Function that interprets the data using a given byte order
+     * and returns the value at a given location.
+     * @return The value.
+     */
+    template <typename T, T (&getter)(const Exiv2::byte *, Exiv2::ByteOrder)>
+    T readValue()
+    {
+        T value = getter(data.data() + offset, defaultByteOrder);
+        offset += sizeof(T);
+        return value;
+    }
+
+public:
+    /**
+     * Creates a reader for the given value with the given byte order.
+     *
+     * @param value The value.
+     * @param defaultByteOrder The byte order of the value's data.
+     */
+    TagValueReader(const Exiv2::Value &value, Exiv2::ByteOrder defaultByteOrder = Exiv2::bigEndian) :
+        data(value.size()),
+        defaultByteOrder(defaultByteOrder)
+    {
+        value.copy(data.data(), Exiv2::invalidByteOrder);
+    }
+
+    /**
+     * Returns the value's size in bytes.
+     */
+    std::size_t size() const
+    {
+        return data.size();
+    }
+
+    /**
+     * Checks if the current offset is at or beyond the end of the data.
+     */
+    bool isEnd() const
+    {
+        return offset > 0 && static_cast<std::size_t>(offset) >= data.size();
+    }
+
+    /**
+     * Reads a double from the current offset and advances the offset.
+     */
+    double readDouble()
+    {
+        return readValue<double, Exiv2::getDouble>();
+    }
+
+    /**
+     * Reads a float from the current offset and advances the offset.
+     */
+    float readFloat()
+    {
+        return readValue<float, Exiv2::getFloat>();
+    }
+
+    /**
+     * Reads an unsigned integer from the current offset and advances the
+     * offset.
+     */
+    std::uint32_t readUInt()
+    {
+        return readValue<std::uint32_t, Exiv2::getULong>();
+    }
+
+    /**
+     * Sets the offset.
+     */
+    void seekAbsolute(DataOffset newOffset)
+    {
+        offset = newOffset;
+    }
+
+    /**
+     * Advances the offset by the given amount.
+     */
+    void seekRelative(DataOffset offsetDifference)
+    {
+        offset += offsetDifference;
+    }
+};
+
+std::uint32_t readFixBadPixelsConstant(TagValueReader &reader)
+{
+    reader.seekRelative(12); // Skip DNG spec version, flags, and tag size.
+    return reader.readUInt();
+}
+
+GainMap readGainMap(TagValueReader &reader)
+{
+    reader.seekRelative(12); // Skip DNG spec version, flags, and tag size.
+    GainMap gainMap;
+    gainMap.Top = reader.readUInt();
+    gainMap.Left = reader.readUInt();
+    gainMap.Bottom = reader.readUInt();
+    gainMap.Right = reader.readUInt();
+    gainMap.Plane = reader.readUInt();
+    gainMap.Planes = reader.readUInt();
+    gainMap.RowPitch = reader.readUInt();
+    gainMap.ColPitch = reader.readUInt();
+    gainMap.MapPointsV = reader.readUInt();
+    gainMap.MapPointsH = reader.readUInt();
+    gainMap.MapSpacingV = reader.readDouble();
+    gainMap.MapSpacingH = reader.readDouble();
+    gainMap.MapOriginV = reader.readDouble();
+    gainMap.MapOriginH = reader.readDouble();
+    gainMap.MapPlanes = reader.readUInt();
+    const std::size_t n = static_cast<std::size_t>(gainMap.MapPointsV) * static_cast<std::size_t>(gainMap.MapPointsH) * static_cast<std::size_t>(gainMap.MapPlanes);
+    gainMap.MapGain.reserve(n);
+    for (std::size_t i = 0; i < n; ++i) {
+        gainMap.MapGain.push_back(reader.readFloat());
+    }
+    return gainMap;
+}
+
+void readOpcodesList(
+    const Exiv2::Value &value,
+    std::uint32_t *fixBadPixelsConstant,
+    bool *hasFixBadPixelsConstant,
+    std::vector<GainMap> *gainMaps)
+{
+    TagValueReader reader(value);
+    std::uint32_t ntags = reader.readUInt(); // read the number of opcodes
+    if (ntags >= reader.size() / 12) {       // rough check for wrong value (happens for example with DNG files from DJI FC6310)
+        return;
+    }
+    while (ntags-- && !reader.isEnd()) {
+        unsigned opcode = reader.readUInt();
+        if (opcode == 4 && (fixBadPixelsConstant || hasFixBadPixelsConstant)) {
+            const auto constant = readFixBadPixelsConstant(reader);
+            if (fixBadPixelsConstant) {
+                *fixBadPixelsConstant = constant;
+            }
+            if (hasFixBadPixelsConstant) {
+                *hasFixBadPixelsConstant = true;
+            }
+        } else if (opcode == 9 && gainMaps && gainMaps->size() < 4) {
+            gainMaps->push_back(readGainMap(reader));
+        } else {
+            reader.seekRelative(8); // skip 8 bytes as they don't interest us currently
+            reader.seekRelative(reader.readUInt());
+        }
+    }
+}
 }
 
 namespace rtengine {
@@ -760,6 +927,24 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
 #endif
             }
         }
+
+        std::uint32_t dngVersion = 0;
+        if (find_exif_tag("Exif.Image.DNGVersion") && pos->count() == 4) {
+            for (int i = 0; i < 4; i++) {
+                dngVersion = (dngVersion << 8) + static_cast<std::uint32_t>(to_long(pos, i));
+            }
+        }
+
+        isDNG = dngVersion;
+
+        // Read DNG OpcodeList1.
+        if (dngVersion && (find_exif_tag("Exif.SubImage1.OpcodeList1") || find_exif_tag("Exif.Image.OpcodeList1"))) {
+            readOpcodesList(pos->value(), &fixBadPixelsConstant, &hasFixBadPixelsConstant_, nullptr);
+        }
+        // Read DNG OpcodeList2.
+        if (dngVersion && (find_exif_tag("Exif.SubImage1.OpcodeList2") || find_exif_tag("Exif.Image.OpcodeList2"))) {
+            readOpcodesList(pos->value(), nullptr, nullptr, &gain_maps_);
+        }
     } catch (const std::exception& e) {
         if (settings->verbose) {
             std::cerr << "EXIV2 ERROR: " << e.what() << std::endl;
@@ -776,6 +961,11 @@ bool FramesData::getPixelShift() const
 bool FramesData::getHDR() const
 {
     return isHDR;
+}
+
+bool FramesData::getDNG() const
+{
+    return isDNG;
 }
 
 std::string FramesData::getImageType() const
@@ -1001,6 +1191,20 @@ void FramesData::fillBasicTags(Exiv2::ExifData &exif) const
     set_exif(exif, "Exif.Photo.DateTimeOriginal", buf);
 }
 
+std::uint32_t FramesData::getFixBadPixelsConstant() const
+{
+    return fixBadPixelsConstant;
+}
+
+bool FramesData::hasFixBadPixelsConstant() const
+{
+    return hasFixBadPixelsConstant_;
+}
+
+std::vector<GainMap> FramesData::getGainMaps() const
+{
+    return gain_maps_;
+}
 
 void FramesData::getDimensions(int &w, int &h) const
 {

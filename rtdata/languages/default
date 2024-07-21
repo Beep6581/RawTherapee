@@ -2087,6 +2087,8 @@ PREFERENCES_PROPERTY;Property
 PREFERENCES_PRTINTENT;Rendering intent
 PREFERENCES_PRTPROFILE;Color profile
 PREFERENCES_PSPATH;Adobe Photoshop installation directory
+PREFERENCES_RAW_DECODER;Raw Decoder
+PREFERENCES_RAW_DECODER_ENABLE_LIBRAW;Use LibRaw
 PREFERENCES_REMEMBERZOOMPAN;Remember zoom % and pan offset
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Remember the zoom % and pan offset of the current image when opening a new image.\n\nThis option only works in 'Single Editor Tab Mode' and when 'Demosaicing method used for the preview at <100% zoom' is set to 'As in PP3'.
 PREFERENCES_SAVE_TP_OPEN_NOW;Save tool collapsed/expanded state now
@@ -2859,6 +2861,7 @@ TP_LENSGEOM_FILL;Auto-fill
 TP_LENSGEOM_LABEL;Lens / Geometry
 TP_LENSGEOM_LIN;Linear
 TP_LENSGEOM_LOG;Logarithmic
+TP_LENSPROFILE_CORRECTION_METADATA;From file metadata
 TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically selected
 TP_LENSPROFILE_CORRECTION_LCPFILE;LCP file
 TP_LENSPROFILE_CORRECTION_MANUAL;Manually selected

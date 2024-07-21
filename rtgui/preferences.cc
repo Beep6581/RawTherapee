@@ -752,6 +752,14 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     cropFrame->add(*cropGrid);
     vbImageProcessing->pack_start(*cropFrame, Gtk::PACK_SHRINK, 4);
 
+    Gtk::Frame *rawDecoderFrame = Gtk::manage(new Gtk::Frame(M("PREFERENCES_RAW_DECODER")));
+    Gtk::Box *rawDecoderContainer = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    rawDecoderFrame->add(*rawDecoderContainer);
+    enableLibRaw = Gtk::manage(new Gtk::CheckButton());
+    enableLibRaw->add(*Gtk::manage(new Gtk::Label(M("PREFERENCES_RAW_DECODER_ENABLE_LIBRAW"))));
+    rawDecoderContainer->pack_start(*enableLibRaw);
+    vbImageProcessing->pack_start(*rawDecoderFrame, Gtk::PACK_SHRINK, 4);
+
     // Other: max zoom
     {
       Gtk::Frame *frame = Gtk::manage(new Gtk::Frame(M("GENERAL_OTHER")));
@@ -2056,6 +2064,8 @@ void Preferences::storePreferences()
     moptions.cropAutoFit = cropAutoFitCB->get_active();
     moptions.maxZoomLimit = Options::MaxZoom(maxZoomCombo->get_active_row_number());
 
+    moptions.rtSettings.enableLibRaw = enableLibRaw->get_active();
+
     toolLocationPreference->updateOptions();
 
     moptions.rtSettings.metadata_xmp_sync = rtengine::Settings::MetadataXmpSync(metadataSyncCombo->get_active_row_number());
@@ -2296,6 +2306,8 @@ void Preferences::fillPreferences()
     cropGuidesCombo->set_active(moptions.cropGuides);
     cropAutoFitCB->set_active(moptions.cropAutoFit);
     maxZoomCombo->set_active(static_cast<int>(options.maxZoomLimit));
+
+    enableLibRaw->set_active(moptions.rtSettings.enableLibRaw);
 
     addc.block(false);
     setc.block(false);
