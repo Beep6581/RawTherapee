@@ -8056,10 +8056,10 @@ Locallabcie::Locallabcie():
     kslopesmor(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOPESMOOTRCR"), 0.75, 1.5, 0.01, 1.))),
     kslopesmog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOPESMOOTRCG"), 0.75, 1.5, 0.01, 1.))),
     kslopesmob(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOPESMOOTRCB"), 0.75, 1.5, 0.01, 1.))),
-    contsig(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SMOOTHCONTSIG"), 0.5, 5., 0.01, 1.5))),
-    skewsig(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SMOOTHSKEWSIG"), -1., 1., 0.01, -0.1))),
+    contsig(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SMOOTHCONTSIG"), 0.5, 4., 0.01, 1.15))),
+    skewsig(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SMOOTHSKEWSIG"), -1., 1., 0.01, 0.))),
     whitsig(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SMOOTHWHITSIG"), 0.8, 40., 0.1, 1.))),
-    whitescie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGWHITESCIE"), -100, 100, 1, 0))),
+    whitescie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGWHITESCIE"), -100, 100, 1, 20))),
     blackscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGBLACKSSCIE"), -100, 100, 1, 0))),
     willBox(Gtk::manage(new Gtk::Box())),
     illMethod(Gtk::manage(new MyComboBoxText())),
@@ -11340,7 +11340,7 @@ void Locallabcie::smoothciemetChanged()
        contsig->show();
        skewsig->show();
        whitsig->show();
-       smoothcie->hide();
+       smoothcie->show();
        slopesmo->hide();
        slopesmor->hide();
        slopesmog->hide();
@@ -11665,7 +11665,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothciehigh->hide();
                     smoothcielnk->hide();
                     contsig->show();
-                    smoothcie->hide();
+                    smoothcie->show();
                     skewsig->show();
                     whitsig->show();
 
@@ -11874,7 +11874,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielnk->hide();
                     smoothcieyb->hide();
                     smoothcieth->hide();
-                    smoothcie->hide();
+                    smoothcie->show();
                     /*
                     kslopesmor->show();
                     kslopesmog->show();
@@ -12083,7 +12083,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielnk->hide();
                     smoothcieyb->hide();
                     smoothcieth->hide();
-                    smoothcie->hide();
+                    smoothcie->show();
 
 /*
                     kslopesmor->show();
@@ -12233,7 +12233,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielnk->hide();
                     smoothcieyb->hide();
                     smoothcieth->hide();
-                    smoothcie->hide();
+                    smoothcie->show();
 
 /*
                     kslopesmor->show();
@@ -12440,7 +12440,7 @@ void Locallabcie::updatecieGUI()
                     smoothcielnk->hide();
                     smoothcieyb->hide();
                     smoothcieth->hide();
-                    smoothcie->hide();
+                    smoothcie->show();
 
 /*
             kslopesmor->show();

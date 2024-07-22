@@ -4677,8 +4677,8 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     gamjcie(2.4),
     smoothcieth(1.),
     slopjcie(12.923),
-    contsig(1.5),
-    skewsig(-0.1),
+    contsig(1.15),
+    skewsig(0.),
     whitsig(1.),
     slopesmo(1.),
     slopesmor(1.),
@@ -4707,7 +4707,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     labgridcieWy(-0.16636),//    
     labgridcieMx(0.),
     labgridcieMy(0.),//    
-    whitescie(0),
+    whitescie(20),
     blackscie(0),
     illMethod("d50"),
     smoothciemet("none"),

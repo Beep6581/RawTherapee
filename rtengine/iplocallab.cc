@@ -20463,6 +20463,7 @@ void ImProcFunctions::Lab_Local(
                             }
                         }
                     }
+                    
                    bool gambas = false;
                    float ksr = 1.f;
                    float ksb = 1.f;
@@ -20599,6 +20600,13 @@ void ImProcFunctions::Lab_Local(
                         float MIDDLE_GREY = 0.01 * params->locallab.spots.at(sp).sourceGraycie;
                         float black_point =  xexpf(lp.blackevjz * std::log(2.f) + xlogf(MIDDLE_GREY));
                         float white_pointsig = xexpf(lp.whiteevjz * std::log(2.f) + xlogf(MIDDLE_GREY));//to adapt if need and remove slider whitsig
+                        float dr = white_pointsig - black_point;
+                        bool scale = lp.issmoothcie;//scale Yb mid_gray - WhiteEv and BlavkEv
+
+                        if(scale) {//scale Yb mean luminance scene with white : dr and black
+                            MIDDLE_GREY = MIDDLE_GREY * dr + black_point;
+                        }
+
 #ifdef _OPENMP
         #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -20634,7 +20642,7 @@ void ImProcFunctions::Lab_Local(
                         float slopegrayr = 1.f;
                         float slopegrayg = 1.f;
                         float slopegrayb = 1.f;
-                        printf("wp=%f bp=%f \n", (double) white_point, (double) black_point);
+                        //printf("wp=%f bp=%f \n", (double) white_point, (double) black_point);
                         int mode = 1;
                         float slopsmoot = 1.f - ((float) params->locallab.spots.at(sp).slopesmo - 1.f);//modify response so when increase slope the grays are becoming lighter
                         float slopsmootr = 1.f - ((float) params->locallab.spots.at(sp).slopesmor - 1.f);
