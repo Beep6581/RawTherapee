@@ -20531,13 +20531,21 @@ void ImProcFunctions::Lab_Local(
     bool notlaplacian = false;//no use of strong Laplacian
 
     float epsi = 0.000001f;
+
+    if(params->locallab.spots.at(sp).fatamount > 1. && lp.exposena) {
+        notlaplacian = true;
+    }
+    
     if((lp.laplacexp > 1.f && lp.exposena) || (lp.strng > 2.f && lp.sfena)){//strong Laplacian
         notlaplacian = true;
     }
 
-    if(((lp.laplacexp > 0.f && lp.laplacexp <= 1.f) && lp.exposena)) { // use Laplacian with very small values
+    if(((lp.laplacexp > 0.f && lp.laplacexp <= 1.f) && lp.exposena && lp.blac == 0.f)) { // use Laplacian with very small values
         notzero = true;
+    } else if ((lp.laplacexp > 0.f && lp.laplacexp <= 1.f) && lp.exposena && lp.blac != 0.f) {//for curvelocalsimplebasecurve with black
+        notlaplacian = true;
     }
+
     ToneCurveMode curveMode = params->toneCurve.curveMode;//Tone curve does not allow negative values
     if((curveMode == ToneCurveMode::PERCEPTUAL) || (curveMode == ToneCurveMode::STD) || (curveMode == ToneCurveMode::WEIGHTEDSTD)  || (curveMode == ToneCurveMode::FILMLIKE) || (curveMode == ToneCurveMode::SATANDVALBLENDING) || (curveMode == ToneCurveMode::LUMINANCE)) {
         notzero = true;
