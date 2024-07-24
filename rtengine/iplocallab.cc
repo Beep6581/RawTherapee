@@ -20532,10 +20532,7 @@ void ImProcFunctions::Lab_Local(
 
     float epsi = 0.000001f;
 
-   // if(params->locallab.spots.at(sp).fatamount > 1. && lp.exposena) {
-      //  notlaplacian = true;
-    //}
-    
+
     if((lp.laplacexp > 1.f && lp.exposena) || (lp.strng > 2.f && lp.sfena)){//strong Laplacian
         notlaplacian = true;
     }
