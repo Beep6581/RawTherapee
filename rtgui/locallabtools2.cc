@@ -8056,9 +8056,9 @@ Locallabcie::Locallabcie():
     kslopesmor(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOPESMOOTRCR"), 0.75, 1.5, 0.01, 1.))),
     kslopesmog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOPESMOOTRCG"), 0.75, 1.5, 0.01, 1.))),
     kslopesmob(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOPESMOOTRCB"), 0.75, 1.5, 0.01, 1.))),
-    contsig(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SMOOTHCONTSIG"), 0.5, 4., 0.01, 1.15))),
+    contsig(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SMOOTHCONTSIG"), 0.5, 3., 0.01, 1.15))),
     skewsig(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SMOOTHSKEWSIG"), -1., 1., 0.01, 0.))),
-    whitsig(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SMOOTHWHITSIG"), 0.8, 40., 0.1, 1.))),
+    whitsig(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SMOOTHWHITSIG"), 50, 1000., 0.5, 100.))),
     whitescie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGWHITESCIE"), -100, 100, 1, 20))),
     blackscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGBLACKSSCIE"), -100, 100, 1, 0))),
     willBox(Gtk::manage(new Gtk::Box())),
@@ -8519,7 +8519,7 @@ Locallabcie::Locallabcie():
     ciesmoothBox->pack_start(*kslopesmob);
     ciesmoothBox->pack_start(*contsig);
     ciesmoothBox->pack_start(*skewsig);
-    //ciesmoothBox->pack_start(*whitsig);
+    ciesmoothBox->pack_start(*whitsig);
     ciesmoothBox->pack_start(*smoothcielnk);
     ciesmoothBox->pack_start(*smoothciehigh);
     ciesmoothBox->pack_start(*smoothcielum);
@@ -11667,7 +11667,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     contsig->show();
                     smoothcie->show();
                     skewsig->show();
-                    whitsig->show();
+                    whitsig->hide();
 
 /*
                     kslopesmor->show();
@@ -11858,7 +11858,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 } else if(smoothciemet->get_active_row_number() >= 5) {
                     contsig->show();
                     skewsig->show();
-                    whitsig->show();
+                    whitsig->hide();
                     slopesmo->hide();
                     slopesmo->hide();
                     slopesmor->hide();
@@ -12425,7 +12425,10 @@ void Locallabcie::updatecieGUI()
         } else if(smoothciemet->get_active_row_number() >= 5) {
                     contsig->show();
                     skewsig->show();
-                    whitsig->show();
+                    whitsig->hide();
+                    if (mode == Expert) {
+                        whitsig->show();
+                    }
                     slopesmo->hide();
                     slopesmor->hide();
                     slopesmog->hide();
@@ -12663,6 +12666,7 @@ void Locallabcie::convertParamToNormal()
     primMethod->set_active(0);//Prophoto
     illMethod->set_active(1);//D50
     refi->setValue(defSpot.refi);
+    whitsig->setValue(defSpot.whitsig);
 
     pqremapcam16->setValue(defSpot.pqremapcam16);
     logcieChanged();

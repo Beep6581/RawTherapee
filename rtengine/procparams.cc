@@ -4679,7 +4679,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     slopjcie(12.923),
     contsig(1.15),
     skewsig(0.),
-    whitsig(1.),
+    whitsig(100.),
     slopesmo(1.),
     slopesmor(1.),
     slopesmog(1.),

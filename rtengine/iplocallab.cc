@@ -2092,7 +2092,7 @@ void calculate_params(float middle_grey_contrast,
 
     // Slope at low film power
     const float temp_film_power = 1.0f;
-    const float temp_white_target = 0.01f * display_white_target;
+    const float temp_white_target = 0.01f * white_target; //display_white_target;
     const float temp_white_grey_relation = pow_F(temp_white_target / MIDDLE_GREY, 1.0f / paper_power) - 1.0f;
     const float temp_paper_exposure = pow_F(MIDDLE_GREY, temp_film_power) * temp_white_grey_relation;
     const float temp_slope  = (generalized_loglogistic_sigmoid(MIDDLE_GREY + delta, temp_white_target, temp_paper_exposure,
@@ -2105,7 +2105,7 @@ void calculate_params(float middle_grey_contrast,
     film_power = ref_slope / temp_slope;
 
     // Calculate the other parameters now that both film and paper power is known
-    white_target = 0.01f * display_white_target;
+    white_target = 0.01f * white_target; //display_white_target;
     black_target = 0.01f * display_black_target;
     const float white_grey_relation = pow_F(white_target / MIDDLE_GREY, 1.0f / paper_power) - 1.0f;
     const float white_black_relation = pow_F(black_target / white_target, -1.0f / paper_power) - 1.0f;
@@ -2125,10 +2125,11 @@ void  ImProcFunctions::sigmoid_main(float r,
               float contrast_skewness,
               float white_point,
               float MIDDLE_GREY,
-              float black_point)
+              float black_point,
+              float white_point_disp)
 {
     float film_power = 1.f;
-    float white_target = 1.f;;
+    float white_target = white_point_disp;
     float black_target = 1.f;
     float film_fog = 1.f;
     float paper_exposure = 1.f;
@@ -20596,7 +20597,7 @@ void ImProcFunctions::Lab_Local(
                     if(lp.smoothciem == 6) {//Sigmoid - from Darktable
                         float middle_grey_contrast = params->locallab.spots.at(sp).contsig;
                         float contrast_skewness = params->locallab.spots.at(sp).skewsig;
-                       // float white_pointsig = params->locallab.spots.at(sp).whitsig;
+                        float white_point_disp = params->locallab.spots.at(sp).whitsig;
                         float MIDDLE_GREY = 0.01 * params->locallab.spots.at(sp).sourceGraycie;
                         float black_point =  xexpf(lp.blackevjz * std::log(2.f) + xlogf(MIDDLE_GREY));
                         float white_pointsig = xexpf(lp.whiteevjz * std::log(2.f) + xlogf(MIDDLE_GREY));//to adapt if need and remove slider whitsig
@@ -20619,7 +20620,7 @@ void ImProcFunctions::Lab_Local(
                                 float rout = 0.f;
                                 float gout = 0.f;
                                 float bout = 0.f;
-                                sigmoid_main(r, g, b, rout, gout, bout, middle_grey_contrast, contrast_skewness, white_pointsig, MIDDLE_GREY, black_point);
+                                sigmoid_main(r, g, b, rout, gout, bout, middle_grey_contrast, contrast_skewness, white_pointsig, MIDDLE_GREY, black_point, white_point_disp);
                                 tmpImage->r(i, j) = 65535.f * rout;
                                 tmpImage->g(i, j) = 65535.f * gout;
                                 tmpImage->b(i, j) = 65535.f * bout;

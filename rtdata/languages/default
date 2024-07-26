@@ -1463,7 +1463,7 @@ HISTORY_MSG_LOCAL_CIE_KSLOPESMOG;Local CIECAM - Green TRC balance
 HISTORY_MSG_LOCAL_CIE_KSLOPESMOB;Local CIECAM - Blue TRCb balance
 HISTORY_MSG_LOCAL_CIE_SMOOTHTH;Local CIECAM - Attenation threshold
 HISTORY_MSG_LOCAL_CIE_SMOOTHLNK;Local CIECAM - Link R G B
-HISTORY_MSG_LOCAL_CIE_WHITSIG;Local CIECAM - Sigmoid white point
+HISTORY_MSG_LOCAL_CIE_WHITSIG;Local CIECAM - Sigmoid Display white point
 HISTORY_MSG_LOCAL_CIE_SMOOTH_HIGH;Local CIECAM - Highlight Attenuation only
 HISTORY_MSG_LOCAL_CIE_SMOOTHTRC;Local CIECAM - Gamma based Highlight attenuation
 HISTORY_MSG_LOCAL_CIE_SMOOTHTRCREL;Local CIECAM - Relative gamma mode
@@ -3622,7 +3622,7 @@ TP_LOCALLAB_SMOOTHCIE_TOOLTIP;Completes the processing carried out by gamma, slo
 TP_LOCALLAB_SMOOTHCIE_YB;Scale Yb Viewing
 TP_LOCALLAB_SMOOTHCONTSIG;Contrast
 TP_LOCALLAB_SMOOTHSKEWSIG;Skew
-TP_LOCALLAB_SMOOTHWHITSIG;White point
+TP_LOCALLAB_SMOOTHWHITSIG;Display White point
 TP_LOCALLAB_SOFT;Soft Light & Original Retinex
 TP_LOCALLAB_SOFTM;Soft Light
 TP_LOCALLAB_SOFTMETHOD_TOOLTIP;Apply a Soft-light blend (identical to the global adjustment). Carry out dodge and burn using the original Retinex algorithm.
