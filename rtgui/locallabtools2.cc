@@ -11161,7 +11161,7 @@ void Locallabcie::modecamChanged()
 
         }
 
-
+        updatecieGUI();
     }
 
     if (modecam->get_active_row_number() == 0) {
@@ -11339,7 +11339,7 @@ void Locallabcie::smoothciemetChanged()
     } else if(smoothciemet->get_active_row_number() >= 5) {
        contsig->show();
        skewsig->show();
-       whitsig->show();
+       whitsig->hide();
        smoothcie->show();
        slopesmo->hide();
        slopesmor->hide();
@@ -11396,7 +11396,7 @@ void Locallabcie::smoothciemetChanged()
        smoothcieyb->hide();
        smoothcieth->hide();
     }
-
+    updatecieGUI();
     if (listener) {
         listener->panelChanged(Evlocallabsmoothciemet, smoothciemet->get_active_text());
     }
@@ -12336,7 +12336,7 @@ void Locallabcie::updatecieGUI()
 
     contsigqcie->hide();
     lightsigqcie->hide();
-
+   // whitsig->hide();
 
     if (modecie->get_active_row_number() > 0) {
         sensicie->hide();
