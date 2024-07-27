@@ -8,6 +8,7 @@
 #007 2021-09-24 十一元人民币
 #008 2022-07-26 十一元人民币
 #009 2023-12-25 十一元人民币
+#010 2024-06-03 十一元人民币
 #100
 #101 @LANGUAGE_DISPLAY_NAME=简体中文
 
@@ -70,6 +71,7 @@ EXIFFILTER_IMAGETYPE;图像类型
 EXIFFILTER_ISO;感光度
 EXIFFILTER_LENS;镜头
 EXIFFILTER_METADATAFILTER;启用元数据过滤器
+EXIFFILTER_PATH;文件路径
 EXIFFILTER_SHUTTER;快门
 EXIFPANEL_ADDEDIT;添加/编辑
 EXIFPANEL_ADDEDITHINT;添加/编辑标签
@@ -396,12 +398,12 @@ HISTORY_MSG_148;微反差
 HISTORY_MSG_149;微反差-3×3阵列
 HISTORY_MSG_150;去马赛克后降噪/去杂点
 HISTORY_MSG_151;鲜明度
-HISTORY_MSG_152;鲜明-欠饱和色
-HISTORY_MSG_153;鲜明-饱和色
+HISTORY_MSG_152;鲜明-低饱和色
+HISTORY_MSG_153;鲜明-高饱和色
 HISTORY_MSG_154;鲜明-肤色保护
 HISTORY_MSG_155;Vib-避免色彩偏移
-HISTORY_MSG_156;鲜明-饱和/欠饱和挂钩
-HISTORY_MSG_157;鲜明-饱/欠阈值
+HISTORY_MSG_156;鲜明-高/低饱和挂钩
+HISTORY_MSG_157;鲜明-高/低饱和阈值
 HISTORY_MSG_158;色调映射-力度
 HISTORY_MSG_159;色调映射-边缘
 HISTORY_MSG_160;色调映射-规模度
@@ -547,7 +549,7 @@ HISTORY_MSG_309;小波-边缘锐度-细节
 HISTORY_MSG_310;小波-残差图-肤色保护
 HISTORY_MSG_311;小波-小波层级
 HISTORY_MSG_312;小波-残差图-阴影阈值
-HISTORY_MSG_313;小波-色度-饱和/欠饱和
+HISTORY_MSG_313;小波-色度-高/低饱和
 HISTORY_MSG_314;小波-色域-减少杂点
 HISTORY_MSG_315;小波-残差图-反差
 HISTORY_MSG_316;小波-色域-肤色针对
@@ -558,8 +560,8 @@ HISTORY_MSG_320;小波-反差-粗糙范围
 HISTORY_MSG_321;小波-反差-粗糙等级
 HISTORY_MSG_322;小波-色域-避免偏色
 HISTORY_MSG_323;小波-边缘-局部反差
-HISTORY_MSG_324;小波-色度-欠饱和
-HISTORY_MSG_325;小波-色度-饱和
+HISTORY_MSG_324;小波-色度-低饱和
+HISTORY_MSG_325;小波-色度-高饱和
 HISTORY_MSG_326;小波-色度-方法
 HISTORY_MSG_327;小波-反差-应用到
 HISTORY_MSG_328;小波-色度-力度挂钩
@@ -619,6 +621,7 @@ HISTORY_MSG_404;小波-边缘-放大基数
 HISTORY_MSG_405;小波-去噪-第4级
 HISTORY_MSG_406;小波-边缘-边缘像素
 HISTORY_MSG_440;CbDL-方法
+HISTORY_MSG_444;白平衡-色温偏向
 HISTORY_MSG_445;Raw子图像
 HISTORY_MSG_449;像素偏移-ISO适应
 HISTORY_MSG_452;像素偏移-显示动体
@@ -680,8 +683,8 @@ HISTORY_MSG_534;局部-冷暖
 HISTORY_MSG_535;局部-曝补 范围
 HISTORY_MSG_536;局部-曝光对比度曲线
 HISTORY_MSG_537;局部-鲜明度
-HISTORY_MSG_538;局部-鲜明 饱和色
-HISTORY_MSG_539;局部-鲜明 欠饱和色
+HISTORY_MSG_538;局部-鲜明 高饱和色
+HISTORY_MSG_539;局部-鲜明 低饱和色
 HISTORY_MSG_540;局部-鲜明 阈值
 HISTORY_MSG_541;局部-鲜明 肤色保护
 HISTORY_MSG_542;局部-鲜明 避免偏色
@@ -990,7 +993,7 @@ PARTIALPASTE_HSVEQUALIZER;HSV均衡器
 PARTIALPASTE_ICMSETTINGS;ICM设置
 PARTIALPASTE_IMPULSEDENOISE;脉冲噪声降低
 PARTIALPASTE_IPTCINFO;IPTC 信息
-PARTIALPASTE_LABCURVE;Lab调整
+PARTIALPASTE_LABCURVE;L*a*b*调整
 PARTIALPASTE_LENSGROUP;镜头相关设置
 PARTIALPASTE_LENSPROFILE;镜片修正档案
 PARTIALPASTE_LOCALCONTRAST;局部反差
@@ -1164,13 +1167,13 @@ PREFERENCES_PREVDEMO_LABEL;小于100%缩放查看时使用的去马赛克算法�
 PREFERENCES_PREVDEMO_SIDECAR;与PP3相同
 PREFERENCES_PRINTER;打印机 (软打样)
 PREFERENCES_PROFILEHANDLING;图片处理配置管理
-PREFERENCES_PROFILELOADPR;配置文件读取优先级
+PREFERENCES_PROFILELOADPR;优先读取的配置文件
 PREFERENCES_PROFILEPRCACHE;缓存中的配置文件
 PREFERENCES_PROFILEPRFILE;图片所在目录的配置文件
-PREFERENCES_PROFILESAVEBOTH;将配置文件存放到缓存和输入图片所在位置
-PREFERENCES_PROFILESAVECACHE;将配置文件存放到缓存
-PREFERENCES_PROFILESAVEINPUT;将配置文件与图片并列存放
-PREFERENCES_PROFILESAVELOCATION;将配置文件存放到缓存和输入图片所在目录
+PREFERENCES_PROFILESAVEBOTH;将配置文件向缓存和输入图片所在目录各存放一份
+PREFERENCES_PROFILESAVECACHE;将配置文件存放至缓存
+PREFERENCES_PROFILESAVEINPUT;将配置文件存放至与图片相同的目录
+PREFERENCES_PROFILESAVELOCATION;配置文件的保存位置
 PREFERENCES_PROFILE_NONE;无
 PREFERENCES_PROPERTY;属性
 PREFERENCES_PRTINTENT;渲染意图
@@ -1200,6 +1203,7 @@ PREFERENCES_STARTUPIMDIR;启动时路径
 PREFERENCES_TAB_BROWSER;文件浏览器
 PREFERENCES_TAB_COLORMGR;色彩管理
 PREFERENCES_TAB_DYNAMICPROFILE;动态预设规则
+PREFERENCES_TAB_FAVORITES;收藏
 PREFERENCES_TAB_GENERAL;通用
 PREFERENCES_TAB_IMPROC;图片处理
 PREFERENCES_TAB_PERFORMANCE;性能
@@ -1208,9 +1212,13 @@ PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;内嵌JPEG预览
 PREFERENCES_THUMBNAIL_INSPECTOR_MODE;展示的图片
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW;中性Raw渲染图
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;若内嵌JPEG为全尺寸，则预览它；否则预览中性Raw
+PREFERENCES_TOOLPANEL_FAVORITE;收藏
+PREFERENCES_TOOLPANEL_FAVORITESPANEL;收藏栏
+PREFERENCES_TOOLPANEL_TOOL;工具
 PREFERENCES_TP_LABEL;工具栏
 PREFERENCES_TP_VSCROLLBAR;隐藏垂直滚动条
 PREFERENCES_USEBUNDLEDPROFILES;启用内置预设
+PREFERENCES_WBA;白平衡
 PREFERENCES_WORKFLOW;软件界面
 PREFERENCES_ZOOMONSCROLL;滚动鼠标滚轮控制图片缩放
 PROFILEPANEL_COPYPPASTE;要复制的参数
@@ -1315,7 +1323,7 @@ TP_BWMIX_GAM_TOOLTIP;矫正红绿蓝三色通道(RGB)伽马
 TP_BWMIX_LABEL;黑白
 TP_BWMIX_MET;方法
 TP_BWMIX_MET_CHANMIX;通道混合器
-TP_BWMIX_MET_DESAT;去饱和
+TP_BWMIX_MET_DESAT;降低饱和度
 TP_BWMIX_MET_LUMEQUAL;亮度均衡器
 TP_BWMIX_MIXC;通道混合器
 TP_BWMIX_NEUTRAL;重置
@@ -1402,7 +1410,7 @@ TP_COLORAPP_LABEL_CAM02;图像调整
 TP_COLORAPP_LABEL_SCENE;场景条件
 TP_COLORAPP_LABEL_VIEWING;观察条件
 TP_COLORAPP_LIGHT;明度 (J)
-TP_COLORAPP_LIGHT_TOOLTIP; CIECAM02/16中的“明度”指一个刺激物的清晰度与相似观察条件下的白色物体清晰度之相对值，与Lab和RGB的“明度”意义不同
+TP_COLORAPP_LIGHT_TOOLTIP; CIECAM02/16中的“明度”指一个刺激物的清晰度与相似观察条件下的白色物体清晰度之间的相对值，与Lab和RGB的“明度”意义不同
 TP_COLORAPP_MEANLUMINANCE;平均亮度(Yb%)
 TP_COLORAPP_MODEL;白点模型
 TP_COLORAPP_MODELCAT;色貌模型
@@ -1418,8 +1426,8 @@ TP_COLORAPP_SURROUND_AVER;一般
 TP_COLORAPP_SURROUND_DARK;黑暗
 TP_COLORAPP_SURROUND_DIM;昏暗
 TP_COLORAPP_SURROUND_EXDARK;极暗
-TP_COLORAPP_SURROUND_TOOLTIP;改变色调和色彩以考虑到输出设备的观察条件。\n\n<b>一般</b>：一般的光照环境（标准）。图像不会变化。\n\n<b>昏暗</b>：昏暗环境（如电视）。图像会略微变暗。\n\n<b>黑暗</b>：黑暗环境（如投影仪）。图像会变得更暗。\n\n<b>极暗</b>：非常暗的环境（Cutsheet）。图像会变得很暗
-TP_COLORAPP_SURSOURCE_TOOLTIP;改变色调与色彩以计入场景条件\n\n<b>一般</b>：一般的亮度条件（标准）。图像不被改变\n\n<b>昏暗</b>：较暗的场景。图像会被略微提亮\n\n<b>黑暗</b>：黑暗的环境。图像会被提亮\n\n<b>极暗</b>：非常暗的环境。图片会变得非常亮
+TP_COLORAPP_SURROUND_TOOLTIP;改变色调和色彩以将输出设备的观察条件纳入考量。\n\n<b>一般</b>：一般的光照环境（标准）。图像不会变化。\n\n<b>昏暗</b>：昏暗环境（如电视）。图像会略微变暗。\n\n<b>黑暗</b>：黑暗环境（如投影仪）。图像会变得更暗。\n\n<b>极暗</b>：非常暗的环境（Cutsheet）。图像会变得很暗
+TP_COLORAPP_SURSOURCE_TOOLTIP;改变色调与色彩以将场景条件纳入考量\n\n<b>一般</b>：一般的亮度条件（标准）。图像不被改变\n\n<b>昏暗</b>：较暗的场景。图像会被略微提亮\n\n<b>黑暗</b>：黑暗的环境。图像会被提亮\n\n<b>极暗</b>：非常暗的环境。图片会变得非常亮
 TP_COLORAPP_TCMODE_BRIGHTNESS;视明度
 TP_COLORAPP_TCMODE_CHROMA;彩度
 TP_COLORAPP_TCMODE_COLORF;视彩度
@@ -1618,15 +1626,17 @@ TP_FILMNEGATIVE_COLORSPACE;反转色彩空间:
 TP_FILMNEGATIVE_COLORSPACE_INPUT;输入色彩空间
 TP_FILMNEGATIVE_COLORSPACE_TOOLTIP;选择用于负片反转的色彩空间：\n<b>输入色彩空间</b>: 在输入档案被应用之前进行反转，与之前版本的RT相同\n<b>工作色彩空间</b>: 在输入档案被应用之后进行反转，使用当前所选的工作档案
 TP_FILMNEGATIVE_COLORSPACE_WORKING;工作色彩空间
-TP_FILMNEGATIVE_GREEN;参照指数（反差）
+TP_FILMNEGATIVE_GREEN;参照指数
 TP_FILMNEGATIVE_GREENBALANCE;品红/绿
 TP_FILMNEGATIVE_GUESS_TOOLTIP;通过选取原图中的两个中性色（没有色彩）色块来自动确定红与蓝色的比例。两个色块的亮度应当有所差别。
 TP_FILMNEGATIVE_LABEL;胶片负片
 TP_FILMNEGATIVE_OUT_LEVEL;输出亮度
 TP_FILMNEGATIVE_PICK;选择（两个）中灰点
+TP_FILMNEGATIVE_PICK_SIZE;大小：
 TP_FILMNEGATIVE_RED;红色比例
 TP_FILMNEGATIVE_REF_LABEL;输入RGB: %1
 TP_FILMNEGATIVE_REF_PICK;选择白平衡点
+TP_FILMNEGATIVE_REF_SIZE;大小：
 TP_FILMNEGATIVE_REF_TOOLTIP;为输出的正片选择一块灰色区域进行白平衡
 TP_FILMSIMULATION_LABEL;胶片模拟
 TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee被设置寻找用于胶片模拟工具的Hald CLUT图像，但图像所在的文件夹加载时间过长。\n前往参数设置-图片处理-Hald CLUT路径\n以寻找被使用的文件夹是哪个。你应该令该文件夹指向一个只有Hald CLUT图像而没有其他图片的文件夹。如果你不想用胶片模拟功能，就将它指向一个空文件夹。\n\n阅读RawPedia的Film Simulation词条以获取更多信息。\n\n你想取消扫描吗？
@@ -1672,8 +1682,8 @@ TP_ICM_INPUTCAMERAICC;自适应相机档案
 TP_ICM_INPUTCUSTOM;自定义
 TP_ICM_INPUTCUSTOM_TOOLTIP;选择你自己的DCP/ICC色彩档案
 TP_ICM_INPUTDLGLABEL;选择输入ICC配置...
-TP_ICM_INPUTEMBEDDED;如可能, 使用内置
-TP_ICM_INPUTEMBEDDED_TOOLTIP;使用非raw文件内嵌的色彩档案
+TP_ICM_INPUTEMBEDDED;使用内置
+TP_ICM_INPUTEMBEDDED_TOOLTIP;使用非raw文件内嵌的色彩档案，若无内嵌档案则会自动使用“相机缺省”模式
 TP_ICM_INPUTNONE;无档案
 TP_ICM_INPUTNONE_TOOLTIP;不使用任何色彩档案。\n仅在特殊情况下使用此选项
 TP_ICM_INPUTPROFILE;输入配置
@@ -1846,6 +1856,10 @@ TP_LOCALLAB_GAMFRA;色调响应曲线（TRC）
 TP_LOCALLAB_GAMM;伽马
 TP_LOCALLAB_GAMMASKCOL;伽马
 TP_LOCALLAB_GAMSH;伽马
+TP_LOCALLAB_GAMUTMUNSELL;仅孟塞尔矫正
+TP_LOCALLAB_GAMUTNON;无
+TP_LOCALLAB_GAMUTXYZABSO;绝对XYZ
+TP_LOCALLAB_GAMUTXYZRELA;相对XYZ
 TP_LOCALLAB_GRADANG;渐变角度
 TP_LOCALLAB_GRADANG_TOOLTIP;旋转角度（单位为°）：-180 0 +180
 TP_LOCALLAB_GRADFRA;渐变滤镜蒙版
@@ -2210,6 +2224,15 @@ TP_TM_FATTAL_AMOUNT;数量
 TP_TM_FATTAL_ANCHOR;锚点
 TP_TM_FATTAL_LABEL;动态范围压缩
 TP_TM_FATTAL_THRESHOLD;细节
+TP_TONE_EQUALIZER_BAND_0;黑点
+TP_TONE_EQUALIZER_BAND_1;阴影
+TP_TONE_EQUALIZER_BAND_2;中间调
+TP_TONE_EQUALIZER_BAND_3;高光
+TP_TONE_EQUALIZER_BAND_4;白点
+TP_TONE_EQUALIZER_DETAIL;正则化
+TP_TONE_EQUALIZER_LABEL;色调均衡器
+TP_TONE_EQUALIZER_PIVOT;锚点(Ev)
+TP_TONE_EQUALIZER_SHOW_COLOR_MAP;显示各色调范围
 TP_VIBRANCE_AVOIDCOLORSHIFT;避免偏色
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;肤色
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE1;红/紫
@@ -2218,14 +2241,14 @@ TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE3;红/黄
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE4;黄
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP;根据色相(H)调整色相(H)，H=f(H)
 TP_VIBRANCE_LABEL;鲜明度
-TP_VIBRANCE_PASTELS;欠饱和色调
-TP_VIBRANCE_PASTSATTOG;将饱和色与欠饱和色挂钩
+TP_VIBRANCE_PASTELS;低饱和色调
+TP_VIBRANCE_PASTSATTOG;将高饱和色与低饱和色挂钩
 TP_VIBRANCE_PROTECTSKINS;保护肤色
-TP_VIBRANCE_PSTHRESHOLD;欠饱和/饱和色阈值
+TP_VIBRANCE_PSTHRESHOLD;低饱和/高饱和阈值
 TP_VIBRANCE_PSTHRESHOLD_SATTHRESH;饱和度阈值
-TP_VIBRANCE_PSTHRESHOLD_TOOLTIP;纵向底部代表欠饱和色，顶部代表饱和色\n横轴代表整个饱和度范围
-TP_VIBRANCE_PSTHRESHOLD_WEIGTHING;欠饱和/饱和色过渡权重
-TP_VIBRANCE_SATURATED;饱和色调
+TP_VIBRANCE_PSTHRESHOLD_TOOLTIP;纵向底部代表低饱和色，顶部代表高饱和色\n横轴代表整个饱和度范围
+TP_VIBRANCE_PSTHRESHOLD_WEIGTHING;低饱和/高饱和过渡权重
+TP_VIBRANCE_SATURATED;高饱和色调
 TP_VIGNETTING_AMOUNT;数量
 TP_VIGNETTING_CENTER;中心
 TP_VIGNETTING_CENTER_X;中心 X
@@ -2351,7 +2374,7 @@ TP_WAVELET_NPTYPE;临近像素
 TP_WAVELET_OPACITY;蓝-黄不透明度
 TP_WAVELET_OPACITYW;反差平衡 斜/纵-横曲线
 TP_WAVELET_OPACITYWL;局部反差
-TP_WAVELET_PASTEL;欠饱和色
+TP_WAVELET_PASTEL;低饱和色
 TP_WAVELET_PROC;处理
 TP_WAVELET_QUAAGRES;激进
 TP_WAVELET_QUACONSER;保守
@@ -2416,7 +2439,7 @@ TP_WBALANCE_SOLUX35;Solux 3500K
 TP_WBALANCE_SOLUX41;Solux 4100K
 TP_WBALANCE_SPOTWB;白平衡采样
 TP_WBALANCE_TEMPBIAS;自动白平衡色温偏向
-TP_WBALANCE_TEMPBIAS_TOOLTIP;此功能允许你将色温向冷/暖偏移，\n以调整计算出的“自动白平衡”。这个偏移被表达为已计\n算出的色温的一个百分比，故最终的调整结果为“色温+色温*偏移”
+TP_WBALANCE_TEMPBIAS_TOOLTIP;此功能允许你将色温向冷/暖偏移，以调整计算出的“自动白平衡”。\n这个偏移被表达为计算出的色温的一个百分比，故最终的调整结果为“色温+色温*偏移”。\n你可以使用“自动白平衡色温偏向”来调整“色温关联系数”。对其进行任何调整都会让软件重新计算色温，色调和关联系数
 TP_WBALANCE_TEMPERATURE;色温
 TP_WBALANCE_TUNGSTEN;白炽灯
 TP_WBALANCE_WATER1;水下 1
@@ -2435,7 +2458,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
 !ERROR_MSG_METADATA_VALUE;Metadata: error setting %1 to %2
-!EXIFFILTER_PATH;File path
 !EXIFPANEL_ACTIVATE_ALL_HINT;Select all tags
 !EXIFPANEL_ACTIVATE_NONE_HINT;Unselect all tags
 !EXIFPANEL_BASIC_GROUP;Basic
@@ -2513,7 +2535,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !HISTORY_MSG_441;Retinex - Gain transmission
 !HISTORY_MSG_442;Retinex - Scale
 !HISTORY_MSG_443;Output black point compensation
-!HISTORY_MSG_444;WB - Temp bias
 !HISTORY_MSG_446;--unused--
 !HISTORY_MSG_447;--unused--
 !HISTORY_MSG_448;--unused--
@@ -3341,15 +3362,10 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !PREFERENCES_RAW_DECODER;Raw Decoder
 !PREFERENCES_RAW_DECODER_ENABLE_LIBRAW;Use LibRaw
 !PREFERENCES_SPOTLOC;Define Spot method for Selective Editing
-!PREFERENCES_TAB_FAVORITES;Favorites
 !PREFERENCES_THUMBNAIL_RANK_COLOR_MODE;Load/Save thumbnail rank and color from/to XMP sidecars
 !PREFERENCES_TOOLPANEL_AVAILABLETOOLS;Available Tools
 !PREFERENCES_TOOLPANEL_CLONE_FAVORITES;Keep favorite tools in original locations
 !PREFERENCES_TOOLPANEL_CLONE_FAVORITES_TOOLTIP;If set, favorite tools will appear in both the favorites tab and their original tabs.\n\nNote: Enabling this option may result in a slight delay when switching tabs.
-!PREFERENCES_TOOLPANEL_FAVORITE;Favorite
-!PREFERENCES_TOOLPANEL_FAVORITESPANEL;Favorites Panel
-!PREFERENCES_TOOLPANEL_TOOL;Tool
-!PREFERENCES_WBA;White Balance
 !PREFERENCES_WBACORR;White Balance - Automatic temperature correlation
 !PREFERENCES_WBACORR_TOOLTIP;These settings allow, depending on the images (type of raw file, colorimetry, etc.), an adaptation of the " Temperature correlation " algorithm in order to obtain the best overall results. There is no absolute rule, linking these parameters to the results obtained.\n\nThe settings are of 3 types: \n* those accessible to the user from the GUI.\n* those accessible only in reading from each pp3 file : Itcwb_minsize=20, Itcwb_delta=4 Itcwb_rgreen=1 Itcwb_nopurple=false (See Rawpedia)\n* those accessible to the user in 'options' (see Rawpedia)\n You can use "Awb temperature bias" and "Green refinement" to adjust the results. Each movement of these commands brings a new calculation of temperature, tint and correlation.\n\nPlease note that the 3 indicators 'Correlation factor', 'Patch chroma' and ΔE are given for information only. It is not because one of these indicators is better that the result will necessarily be better.
 !PREFERENCES_WBAENA;Show White Balance Auto temperature correlation settings
@@ -3468,8 +3484,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fine: closer to the colors of the skin, minimizing the action on other colors\nLarge: avoid more artifacts.
 !TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;This pyramid is for the upper part, so far as the algorithm at its maximum efficiency.\nTo the lower part, the transition zones.\nIf you need to move the area significantly to the left or right - or if there are artifacts: the <b>white balance is incorrect</b>\nYou can slightly reduce the zone to prevent the rest of the image is affected.
 !TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts in the transitions between skin colors (hue, chroma, luma) and the rest of the image.
-!TP_FILMNEGATIVE_PICK_SIZE;Size:
-!TP_FILMNEGATIVE_REF_SIZE;Size:
 !TP_FLATFIELD_FROMMETADATA;From Metadata
 !TP_HLREC_COLOROPP;Inpaint Opposed
 !TP_HLREC_HLBLUR;Blur
@@ -3717,10 +3731,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_LOCALLAB_GAMC_TOOLTIP;Apply a gamma on Luminance L*a*b* datas before and after treatment Pyramid 1 and Pyramid 2.\nIf gamma = 3.0 Luminance 'linear' is used.
 !TP_LOCALLAB_GAMMASK_TOOLTIP;Adjusting Gamma and Slope can provide a soft and artifact-free transformation of the mask by progressively modifying 'L' to avoid any discontinuities.
 !TP_LOCALLAB_GAMUTLABRELA;Lab
-!TP_LOCALLAB_GAMUTMUNSELL;Munsell only
-!TP_LOCALLAB_GAMUTNON;None
-!TP_LOCALLAB_GAMUTXYZABSO;XYZ Absolute
-!TP_LOCALLAB_GAMUTXYZRELA;XYZ Relative
 !TP_LOCALLAB_GAMW;Gamma (wavelet pyramids)
 !TP_LOCALLAB_GRADGEN_TOOLTIP;Adjusts luminance gradient strength.
 !TP_LOCALLAB_GRADSTRAB_TOOLTIP;Adjusts chroma gradient strength.
@@ -4248,15 +4258,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_RETINEX_VIEW_TRAN2;Transmission - Fixed
 !TP_SPOT_ENTRYCHANGED;Point changed
 !TP_TONE_EQUALIZER_BANDS;Bands
-!TP_TONE_EQUALIZER_BAND_0;Blacks
-!TP_TONE_EQUALIZER_BAND_1;Shadows
-!TP_TONE_EQUALIZER_BAND_2;Midtones
-!TP_TONE_EQUALIZER_BAND_3;Highlights
-!TP_TONE_EQUALIZER_BAND_4;Whites
-!TP_TONE_EQUALIZER_DETAIL;Regularization
-!TP_TONE_EQUALIZER_LABEL;Tone Equalizer
-!TP_TONE_EQUALIZER_PIVOT;Pivot (Ev)
-!TP_TONE_EQUALIZER_SHOW_COLOR_MAP;Show tonal map
 !TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
 !TP_WAVELET_BALCHROM;Equalizer Color
 !TP_WAVELET_BALLUM;Denoise equalizer White-Black
