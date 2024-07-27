@@ -3702,7 +3702,7 @@ TP_METADATA_MODE;メタデータ コピーモード
 TP_METADATA_STRIP;メタデータを全て取り除く
 TP_METADATA_TUNNEL;変更なしでコピー
 TP_NEUTRAL;リセット
-TP_NEUTRAL_TIP;露光量補正のスライダー値をニュートラルにリセットします。\n自動露光補正の調整値ついても同様にリセットされます
+TP_NEUTRAL_TOOLTIP;露光量補正のスライダー値をニュートラルにリセットします。\n自動露光補正の調整値ついても同様にリセットされます
 TP_PCVIGNETTE_FEATHER;フェザー
 TP_PCVIGNETTE_FEATHER_TOOLTIP;フェザー：　0=四隅だけ、50=中央までの半分、100=中央まで
 TP_PCVIGNETTE_LABEL;ビネットフィルター
@@ -4400,6 +4400,18 @@ ZOOMPANEL_ZOOMOUT;ズームアウト\nショートカット: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!TP_NEUTRAL_TOOLTIP;Resets exposure sliders to neutral values.\nApplies to the same controls that Auto Levels applies to, regardless of whether you used Auto Levels or not.
+!HISTORY_MSG_LOCAL_FEATHERCIE;Local - CIECAM Gradient feather
+!HISTORY_MSG_LOCAL_FEATHERCOL;Local - Color Gradient feather
+!HISTORY_MSG_LOCAL_FEATHEREXE;Local - Exp Gradient feather
+!HISTORY_MSG_LOCAL_FEATHERLOG;Local - Log Gradient feather
+!HISTORY_MSG_LOCAL_FEATHERMAS;Local - Mask Common gradient feather
+!HISTORY_MSG_LOCAL_FEATHERSH;Local - SH Gradient feather
+!HISTORY_MSG_LOCAL_FEATHERVIB;Local - Vib Gradient feather
+!HISTORY_MSG_LOCAL_FEATHERWAV;Local - Wav Gradient feather
+!PREFERENCES_RAW_DECODER;Raw Decoder
+!PREFERENCES_RAW_DECODER_ENABLE_LIBRAW;Use LibRaw
+!TP_LENSPROFILE_CORRECTION_METADATA;From file metadata
+!TP_LOCALLAB_FEATVALUE_MASK;Feather gradient (Grad. Filters Mask)
+!TP_WBALANCE_STUDLABEL0;Correlation factor: %1 Passes:%2 Alt=%3
 !//TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP;By default when "Inpaint opposed" is activated, purple colors are not taken into account. However, if the image does not need highlight reconstruction, or if this image naturally contains purple tints (flowers, etc.), it may be necessary to deactivate, to take into account all the colors.
 !//TP_WBALANCE_ITCWB_FORCED;Forces use of the entire CIE diagram
