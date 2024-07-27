@@ -127,6 +127,7 @@ class ImProcFunctions
     bool needsDistortion() const;
     bool needsRotation() const;
     bool needsPerspective() const;
+    bool needsScale() const;
     bool needsGradient() const;
     bool needsVignetting() const;
     bool needsLCP() const;
