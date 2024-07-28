@@ -484,7 +484,7 @@ function CreateDmg {
         if test -z "${BRANCH}"; then
             BRANCH=$(git rev-parse --short HEAD)
         fi
-        mv "${PROJECT_NAME}_macOS_${arch}_latest.zip" "${PROJECT_NAME}_${BRANCH}_macOS_${CMAKE_BUILD_TYPE}.zip"
+        mv "${PROJECT_NAME}_macOS_${arch}_latest.zip" "${PROJECT_NAME}_${BRANCH}_macOS_${arch}_${CMAKE_BUILD_TYPE}.zip"
     fi
 }
 
