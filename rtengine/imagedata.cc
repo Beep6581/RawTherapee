@@ -274,6 +274,7 @@ FramesData::FramesData(const Glib::ustring &fname, time_t ts) :
     sampleFormat(IIOSF_UNKNOWN),
     isPixelShift(false),
     isHDR(false),
+    isDNG(false),
     w_(-1),
     h_(-1)
 {
