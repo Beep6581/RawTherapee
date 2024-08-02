@@ -59,6 +59,12 @@
 namespace
 {
 
+constexpr float clipitc(float x)
+{
+    return rtengine::LIM(x, 0.1f, 65534.9f);//White balance Itcwb - limit values 
+}
+
+
 void rotateLine(const float* const line, rtengine::PlanarPtr<float> &channel, const int tran, const int i, const int w, const int h)
 {
     switch (tran & TR_ROT) {
@@ -6221,12 +6227,32 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
 
         if (oldsampling == false) {
+            if (settings->verbose) {
+                printf("size loc - bfh=%i bfw=%i repref=%i\n", bfh, bfw, repref);
+            }
+            
 #ifdef _OPENMP
             #pragma omp parallel for
 #endif
 
             for (int y = 0; y < bfh ; ++y) {
                 for (int x = 0; x < bfw ; ++x) {
+                    if(!std::isnan(redloc[y][x])) {//eliminate wrong values and values not very usable for white balance
+                        clipitc(redloc[y][x]);
+                    } else {
+                        redloc[y][x] = 0.1f;
+                    }
+                    if(!std::isnan(greenloc[y][x])) {
+                        clipitc(greenloc[y][x]);
+                    } else {
+                        greenloc[y][x] = 0.1f;
+                    }
+                    if(!std::isnan(blueloc[y][x])) {
+                        clipitc(blueloc[y][x]);
+                    } else {
+                        blueloc[y][x] = 0.1f;
+                    }
+
                     const float RR = rmm[repref] * redloc[y][x];
                     const float GG = gmm[repref] * greenloc[y][x];
                     const float BB = bmm[repref] * blueloc[y][x];
@@ -7441,6 +7467,9 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
 {
 //    BENCHFUN
     //used by auto WB local to calculate red, green, blue in local region
+    greenloc(0, 0);
+    redloc(0, 0);
+    blueloc(0, 0);
 
     int precision = 3;//must be 3 5 or 9
     bool oldsampling = wbpar.itcwb_sampling;
@@ -7451,17 +7480,17 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
     const int bfw = W / precision + ((W % precision) > 0 ? 1 : 0);// 5 arbitrary value can be change to 3 or 9 ;
     const int bfh = H / precision + ((H % precision) > 0 ? 1 : 0);
 
-    if (! greenloc) {
+ //   if (! greenloc) {
         greenloc(bfw, bfh);
-    }
+ //   }
 
-    if (! redloc) {
+ //   if (! redloc) {
         redloc(bfw, bfh);
-    }
+ //   }
 
-    if (! blueloc) {
+ //   if (! blueloc) {
         blueloc(bfw, bfh);
-    }
+ //   }
 
     double avgL = 0.0;
     //center data on normal values
@@ -7496,8 +7525,10 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
         }
 
     const float sig = std::sqrt(vari / mm);
-    const float multip = 60000.f / (avgL + 2.f * sig);
-    //multip to put red, blue, green in a good range
+    float multip = 60000.f / (avgL + 2.f * sig);
+    if(std::isnan(multip)) {//if very bad datas with avgl and sig
+        multip = 1.f;
+    }
 #ifdef _OPENMP
     #pragma omp parallel for
 #endif
@@ -7506,7 +7537,17 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
         const int ii = i * precision;
 
         if (ii < H) {
-            for (int j = 0, jj = 0; j < bfw; ++j, jj += precision) {
+            for (int j = 0, jj = 0; j < bfw; ++j, jj += precision) {//isnan and <0 and > 65535 in case of
+            /*    if(std::isnan(red[ii][jj]) || red[ii][jj] <= 0.f || red[ii][jj] > 65535.f) {
+                    red[ii][jj] = 0.1f;
+                }
+                if(std::isnan(green[ii][jj])|| green[ii][jj] <= 0.f || green[ii][jj] > 65535.f) {
+                    green[ii][jj] = 0.1f;
+                }
+                if(std::isnan(blue[ii][jj])|| blue[ii][jj] <= 0.f || blue[ii][jj] > 65535.f) {
+                    blue[ii][jj] = 0.1f;
+                }
+            */
                 redloc[i][j] = red[ii][jj] * multip;
                 greenloc[i][j] = green[ii][jj] * multip;
                 blueloc[i][j] = blue[ii][jj] * multip;
@@ -7722,9 +7763,9 @@ void RawImageSource::getAutoWBMultipliersitc(bool extra, double & tempref, doubl
         WBauto(extra, tempref, greenref, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, tempitc, greenitc, temp0, delta,  bia, dread, kcam, nocam, studgood, minchrom, kmin, minhist, maxhist, twotimes, wbpar, begx, begy, yEn,  xEn,  cx,  cy, cmp, raw, hrp);
     }
 
-    redloc(0, 0);
-    greenloc(0, 0);
-    blueloc(0, 0);
+  //  redloc(0, 0);
+  //  greenloc(0, 0);
+  //  blueloc(0, 0);
 
     if (settings->verbose  && wbpar.method != "autitcgreen") {
         printf("RGB grey AVG: %g %g %g\n", avg_r / std::max(1, rn), avg_g / std::max(1, gn), avg_b / std::max(1, bn));

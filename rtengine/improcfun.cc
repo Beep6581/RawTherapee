@@ -4791,9 +4791,6 @@ void ImProcFunctions::chromiLuminanceCurve(PipetteBuffer *pipetteBuffer, int pW,
                 lnew->a[i][j] = 327.68f * Chprov1 * sincosval.y;
                 lnew->b[i][j] = 327.68f * Chprov1 * sincosval.x;
 
-                if(params->blackwhite.enabled  && gamutmuns != 0) {//issue 7159
-                    gamutmuns = 2;//enable gamutmap XYZ - side effect due to change in gamut control
-                }
                 //gamutmap Lch ==> preserve Hue,but a little slower than gamutbdy for high values...and little faster for low values
                 if (gamutmuns == 1) {
                     float R, G, B;
