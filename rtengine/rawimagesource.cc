@@ -6228,7 +6228,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         if (oldsampling == false) {
             if (settings->verbose) {
-                printf("size loc - bfh=%i bfw=%i repref=%i\n", bfh, bfw, repref);
+                printf("size rgb loc - bfh=%i bfw=%i repref=%i\n", bfh, bfw, repref);
             }
             
 #ifdef _OPENMP
@@ -7480,17 +7480,11 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
     const int bfw = W / precision + ((W % precision) > 0 ? 1 : 0);// 5 arbitrary value can be change to 3 or 9 ;
     const int bfh = H / precision + ((H % precision) > 0 ? 1 : 0);
 
- //   if (! greenloc) {
-        greenloc(bfw, bfh);
- //   }
+    greenloc(bfw, bfh);
 
- //   if (! redloc) {
-        redloc(bfw, bfh);
- //   }
+    redloc(bfw, bfh);
 
- //   if (! blueloc) {
-        blueloc(bfw, bfh);
- //   }
+    blueloc(bfw, bfh);
 
     double avgL = 0.0;
     //center data on normal values
@@ -7763,9 +7757,6 @@ void RawImageSource::getAutoWBMultipliersitc(bool extra, double & tempref, doubl
         WBauto(extra, tempref, greenref, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, tempitc, greenitc, temp0, delta,  bia, dread, kcam, nocam, studgood, minchrom, kmin, minhist, maxhist, twotimes, wbpar, begx, begy, yEn,  xEn,  cx,  cy, cmp, raw, hrp);
     }
 
-  //  redloc(0, 0);
-  //  greenloc(0, 0);
-  //  blueloc(0, 0);
 
     if (settings->verbose  && wbpar.method != "autitcgreen") {
         printf("RGB grey AVG: %g %g %g\n", avg_r / std::max(1, rn), avg_g / std::max(1, gn), avg_b / std::max(1, bn));
