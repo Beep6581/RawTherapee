@@ -14,9 +14,10 @@
 #014 2015-11-23 update by wim ter meer
 #015 2016-07-21 update by wim ter meer
 #016 2017-04-21 update by wim ter meer
-#017 2020-06-05 update by dheijl 
+#017 2020-06-05 update by dheijl
 #018 2024-02-18	update to RawTherapee 5.10 by Paul Matthijsse
 #019 2024-03-08 update by Paul Matthijsse
+#020 2024-07-27 update naar RawTherapee 5.11 door pm
 #100
 #101 @LANGUAGE_DISPLAY_NAME=Nederlands
 
@@ -213,7 +214,7 @@ FILEBROWSER_SHOWEDITEDHINT;Toon bewerkte foto's\nSneltoets: <b>Shift+7</b>
 FILEBROWSER_SHOWEDITEDNOTHINT;Toon niet-bewerkte foto's\nSneltoets: <b>Shift+6</b>
 FILEBROWSER_SHOWEXIFINFO;Toon Exif-info
 FILEBROWSER_SHOWNOTTRASHHINT;Toon alleen niet-verwijderde afbeeldingen.
-FILEBROWSER_SHOWORIGINALHINT;Toon alleen originele afbeelding.\n\nAls er meerdere afbeeldingen zijn met dezelfde naam maar verschillende extensies, dan wordt de afbeelding gekozen waarvan de extensie het hoogst staat in de lijst met extensies in Voorkeuren > Bestandsnavigator > Extensies 
+FILEBROWSER_SHOWORIGINALHINT;Toon alleen originele afbeelding.\n\nAls er meerdere afbeeldingen zijn met dezelfde naam maar verschillende extensies, dan wordt de afbeelding gekozen waarvan de extensie het hoogst staat in de lijst met extensies in Voorkeuren > Bestandsnavigator > Extensies
 FILEBROWSER_SHOWRANK1HINT;Toon foto's met 1 ster.\nSneltoets: <b>Shift+1</b>
 FILEBROWSER_SHOWRANK2HINT;Toon foto's met 2 sterren.\nSneltoets: <b>Shift+2</b>
 FILEBROWSER_SHOWRANK3HINT;Toon foto's met 3 sterren.\nSneltoets: <b>Shift+3</b>
@@ -395,7 +396,7 @@ HISTORY_MSG_116;Verbeterd DCB
 HISTORY_MSG_117;RAW CA-correctie - Rood
 HISTORY_MSG_118;RAW CA-correctie - Blauw
 HISTORY_MSG_119;Lijnruis
-HISTORY_MSG_120;Drempel groenbalans 
+HISTORY_MSG_120;Drempel groenbalans
 HISTORY_MSG_121;RAW CA-correctie - Auto
 HISTORY_MSG_122;Donkerframe - Autom. selectie
 HISTORY_MSG_123;Donkerframe - Bestand
@@ -740,643 +741,645 @@ HISTORY_MSG_491;Witbalans
 HISTORY_MSG_492;RGB-curven
 HISTORY_MSG_493;L*a*b* aanpassingen
 HISTORY_MSG_494;verscherpen
-HISTORY_MSG_496;LA - Spot verwijderd
-HISTORY_MSG_497;LA - Spot geselecteerd 
-HISTORY_MSG_500;LA - Spotvorm
-HISTORY_MSG_501;LA - Spotmethode
-HISTORY_MSG_502;LA - SC - Vorm method
-HISTORY_MSG_503;LA - Spot - Rechts
-HISTORY_MSG_504;LA - Spot - Links
-HISTORY_MSG_505;LA - Spot - Onder
-HISTORY_MSG_506;LA - Spot - Boven
-HISTORY_MSG_507;LA - Spot - Centrum
-HISTORY_MSG_508;LA - Spot - Grootte
-HISTORY_MSG_509;LA - Spot kwaliteitsmethode
-HISTORY_MSG_510;LA - TG - Transitiewaarde
-HISTORY_MSG_511;LA - SD - Drempel ΔE-bereik
-HISTORY_MSG_512;LA - SD - ΔE-verval
-HISTORY_MSG_513;LA - Spot - Uitsluiting - bereik
-HISTORY_MSG_514;LA - Spotstructuur
-HISTORY_MSG_515;LA - Aanpassingen
-HISTORY_MSG_516;LA - Kleur en Licht
-HISTORY_MSG_517;LA - Activeer super
-HISTORY_MSG_518;LA - Lichtheid
-HISTORY_MSG_519;LA - Contrast
-HISTORY_MSG_520;LA - Chrominantie
-HISTORY_MSG_521;LA - Bereik
-HISTORY_MSG_522;LA - Curvemethode
-HISTORY_MSG_523;LA - LL-curve
-HISTORY_MSG_524;LA - CC-curve
-HISTORY_MSG_525;LA - LH-curve
-HISTORY_MSG_526;LA - H-curve
-HISTORY_MSG_527;LA - Inverteer kleur
-HISTORY_MSG_528;LA - Belichting
-HISTORY_MSG_529;LA - Belichtingscompensatie
-HISTORY_MSG_530;LA - Bel. Hlcompr
-HISTORY_MSG_531;LA - Bel. hlcomprthresh
-HISTORY_MSG_532;LA - Bel. zwart
-HISTORY_MSG_533;LA - Bel. Shcompr
-HISTORY_MSG_534;LA - Warm Koel
-HISTORY_MSG_535;LA - Bel. Bereik
-HISTORY_MSG_536;LA - Bel. Contrastcurve
-HISTORY_MSG_537;LA - Levendigheid
-HISTORY_MSG_538;LA - Lev. Verzadigd
-HISTORY_MSG_539;LA - Lev. Pastel
-HISTORY_MSG_540;LA - Lev. Drempel
-HISTORY_MSG_541;LA - Lev. Bescherm huidtonen
-HISTORY_MSG_542;LA - Lev. Vermijd kleurverschuiving
-HISTORY_MSG_543;LA - Lev. Koppel
-HISTORY_MSG_544;LA - Lev. Bereik
-HISTORY_MSG_545;LA - Lev. H-curve
-HISTORY_MSG_546;LA - Vervaging en Ruisvermindering
-HISTORY_MSG_547;LA - Straal
-HISTORY_MSG_548;LA - Ruis
-HISTORY_MSG_549;LA - Bereik ruisvermindering
-HISTORY_MSG_550;LA - Methode ruisvermindering
-HISTORY_MSG_551;LA - Ruisvermindering alleen Luminantie
-HISTORY_MSG_552;LA - Toonmappen
-HISTORY_MSG_553;LA - TM compressiesterkte
-HISTORY_MSG_554;LA - TM gamma
-HISTORY_MSG_555;LA - TM edge stopping
-HISTORY_MSG_556;LA - TM Schaal
-HISTORY_MSG_557;LA - TM Herwogen
-HISTORY_MSG_558;LA - TM Bereik
-HISTORY_MSG_559;LA - Retinex
-HISTORY_MSG_560;LA - Retinex methode
-HISTORY_MSG_561;LA - Retinex kracht
-HISTORY_MSG_562;LA - Retinex chroma
-HISTORY_MSG_563;LA - Retinex straal
-HISTORY_MSG_564;LA - Retinex contrast
-HISTORY_MSG_565;LA - Bereik
-HISTORY_MSG_566;LA - Retinex versterkingscurve
-HISTORY_MSG_567;LA - Retinex Omgekeerd
-HISTORY_MSG_568;LA - Verscherping
-HISTORY_MSG_569;LA - Sh Straal
-HISTORY_MSG_570;LA - Sh Hoeveelheid
-HISTORY_MSG_571;LA - Sh Demping
-HISTORY_MSG_572;LA - Sh Herhalingen
-HISTORY_MSG_573;LA - Sh Bereik
-HISTORY_MSG_574;LA - Sh Omgekeerd
-HISTORY_MSG_575;LA - CBDL
-HISTORY_MSG_576;LA - cbdl mult
-HISTORY_MSG_577;LA - cbdl chroma
-HISTORY_MSG_578;LA - cbdl drempel
-HISTORY_MSG_579;LA - cbdl bereik
-HISTORY_MSG_581;LA - Ruisverm. lum f 1
-HISTORY_MSG_582;LA - Ruisverm. lum c
-HISTORY_MSG_583;LA - Ruisverm. lum detail
-HISTORY_MSG_584;LA - Ruisverm. equalizer Wit-Zwart
-HISTORY_MSG_585;LA - Ruisverm. chro f
-HISTORY_MSG_586;LA - Ruisverm. chro c
-HISTORY_MSG_587;LA - Ruisverm. chro detail
-HISTORY_MSG_588;LA - Ruisverm. equalizer Blauw-Rood
-HISTORY_MSG_589;LA - Ruisverm. bilateraal
-HISTORY_MSG_590;LA - Ruisverm. bereik
-HISTORY_MSG_591;LA - Voorkom kleurverschuiving
-HISTORY_MSG_592;LA - Sh Contrast
-HISTORY_MSG_593;LA - LA contrast
-HISTORY_MSG_594;LA - Lokaal contrast straal
-HISTORY_MSG_595;LA - Lokaal contrast hoeveelheid
-HISTORY_MSG_596;LA - Lokaal contrast donkerte
-HISTORY_MSG_597;LA - Lokaal contrast lichtheid
-HISTORY_MSG_598;LA - Lokaal contrast bereik
-HISTORY_MSG_599;LA - Retinex ontnevel
-HISTORY_MSG_600;LA - Zacht licht activeer
-HISTORY_MSG_601;LA - Zacht licht kracht
-HISTORY_MSG_602;LA - Zacht licht bereik
-HISTORY_MSG_603;LA - Sh Vervagingsradius
-HISTORY_MSG_605;LA - Keuze maskervoorbeeld
-HISTORY_MSG_606;LA - Spot geslecteerd
-HISTORY_MSG_607;LA - Kleurmasker C
-HISTORY_MSG_608;LA - Kleurmasker L
-HISTORY_MSG_609;LA - Bel.masker C
-HISTORY_MSG_610;LA - Bel.masker L
-HISTORY_MSG_611;LA - Kleurmasker H
-HISTORY_MSG_612;LA - Kleur structuur
-HISTORY_MSG_613;LA - Bel. structuur
-HISTORY_MSG_614;LA - Bel.masker H
-HISTORY_MSG_615;LA - Meng kleur
-HISTORY_MSG_616;LA - Meng bel.
-HISTORY_MSG_617;LA - Vervaag Bel. 
-HISTORY_MSG_618;LA - Gebruik kleurmasker
-HISTORY_MSG_619;LA - Gebruik bel.masker
-HISTORY_MSG_620;LA - Meng col
-HISTORY_MSG_621;LA - Bel. omgekeerd
-HISTORY_MSG_622;LA - Spot - Uitsluiting - Spotstructuur
-HISTORY_MSG_623;LA - Bel. Chroma-compensatie
-HISTORY_MSG_624;LA - Kleurcorrectieraster
-HISTORY_MSG_625;LA - Kleurcorrectie kracht
-HISTORY_MSG_626;LA - Kleurcorrectie methode
-HISTORY_MSG_627;LA - Schaduw Hoge lichten
-HISTORY_MSG_628;LA - SH Hoge lichten
-HISTORY_MSG_629;LA - SH H tonaalomvang
-HISTORY_MSG_630;LA - SH Schaduwen
-HISTORY_MSG_631;LA - SH S tonaalomvang
-HISTORY_MSG_632;LA - SH straal
-HISTORY_MSG_633;LA - SH bereik
-HISTORY_MSG_634;LA - straal kleur
-HISTORY_MSG_635;LA - straal Bel.
-HISTORY_MSG_636;LA - Gereedschap toegevoegd
-HISTORY_MSG_637;LA - SH Masker C
-HISTORY_MSG_638;LA - SH Masker L
-HISTORY_MSG_639;LA - SH Masker H
-HISTORY_MSG_640;LA - SH meng
-HISTORY_MSG_641;LA - Gebruik SH-masker
-HISTORY_MSG_642;LA - Straal SH
-HISTORY_MSG_643;LA - Vervaag SH
-HISTORY_MSG_644;LA - Keer SH om
-HISTORY_MSG_645;LA - SD - ab-L-balans
-HISTORY_MSG_646;LA - Bel.masker chroma
-HISTORY_MSG_647;LA - Bel.masker gamma
-HISTORY_MSG_648;LA - Bel.masker helling
-HISTORY_MSG_649;LA - Bel. verzachting straal
-HISTORY_MSG_650;LA - Kleurmasker chroma
-HISTORY_MSG_651;LA - Kleurmasker gamma
-HISTORY_MSG_652;LA - Kleurmasker helling
-HISTORY_MSG_653;LA - SH-masker chroma
-HISTORY_MSG_654;LA - SH-masker gamma
-HISTORY_MSG_655;LA - SH-masker helling
-HISTORY_MSG_656;LA - Kleur zachte radius
-HISTORY_MSG_657;LA - Retinex verminder onregelmatigheden
-HISTORY_MSG_658;LA - CBDL zachte radius
-HISTORY_MSG_659;LA - TG - Transitieverval
-HISTORY_MSG_660;LA - CBDL klaarheid
-HISTORY_MSG_661;LA - CBDL residueel contrast
-HISTORY_MSG_662;LA - Verminder ruis lum f 0
-HISTORY_MSG_663;LA - Verminder ruis lum f 2
-HISTORY_MSG_665;LA - cbdl masker meng
-HISTORY_MSG_666;LA - cbdl masker straal
-HISTORY_MSG_667;LA - cbdl masker chroma
-HISTORY_MSG_668;LA - cbdl masker gamma
-HISTORY_MSG_669;LA - cbdl masker helling
-HISTORY_MSG_670;LA - cbdl masker C
-HISTORY_MSG_671;LA - cbdl masker L
-HISTORY_MSG_672;LA - cbdl masker CL
-HISTORY_MSG_673;LA - Gebruik cbdl masker
-HISTORY_MSG_674;LA - Gereedschap verwijderd
-HISTORY_MSG_675;LA - TM zacht straal 
-HISTORY_MSG_676;LA - TG - Transitiedifferentie
-HISTORY_MSG_677;LA - TM hoeveelheid
-HISTORY_MSG_678;LA - TM verzadiging
-HISTORY_MSG_679;LA - Retinex masker C
-HISTORY_MSG_680;LA - Retinex masker L
-HISTORY_MSG_681;LA - Retinex masker CL
-HISTORY_MSG_682;LA - Retinex masker
-HISTORY_MSG_683;LA - Retinex masker meng
-HISTORY_MSG_684;LA - Retinex masker straal
-HISTORY_MSG_685;LA - Retinex masker chroma
-HISTORY_MSG_686;LA - Retinex masker gamma
-HISTORY_MSG_687;LA - Retinex masker helling
-HISTORY_MSG_688;LA - Gereedschap verwijderd
-HISTORY_MSG_689;LA - Retinex masker transmissiemap
-HISTORY_MSG_690;LA - Retinex schaal
-HISTORY_MSG_691;LA - Retinex donkerte
-HISTORY_MSG_692;LA - Retinex lichtheid
-HISTORY_MSG_693;LA - Retinex drempel
-HISTORY_MSG_694;LA - Retinex Laplacian drempel
-HISTORY_MSG_695;LA - Verzachting methode
-HISTORY_MSG_696;LA - Retinex Normaliseer
-HISTORY_MSG_697;LA - TM Normaliseer
-HISTORY_MSG_698;LA - LA contrast Fast Fourier
-HISTORY_MSG_699;LA - Retinex Fast Fourier
-HISTORY_MSG_701;LA - Bel. Schaduwen
-HISTORY_MSG_702;LA - Bel. Methode
-HISTORY_MSG_703;LA - Bel. Laplacian drempel
-HISTORY_MSG_704;LA - Bel. PDE-balans
-HISTORY_MSG_705;LA - Bel. lineariteit
-HISTORY_MSG_706;LA - TM masker C
-HISTORY_MSG_707;LA - TM masker L
-HISTORY_MSG_708;LA - TM masker CL
-HISTORY_MSG_709;LA - gebruik TM-masker
-HISTORY_MSG_710;LA - TM-masker meng
-HISTORY_MSG_711;LA - TM-masker straal
-HISTORY_MSG_712;LA - TM-masker chroma
-HISTORY_MSG_713;LA - TM-masker gamma
-HISTORY_MSG_714;LA - TM-masker helling
-HISTORY_MSG_716;LA - LA methode
-HISTORY_MSG_717;LA - LA contrast
-HISTORY_MSG_718;LA - LA contrastniveaus
-HISTORY_MSG_719;LA - LA contrast residueel L
-HISTORY_MSG_720;LA - Vervagingsmasker C
-HISTORY_MSG_721;LA - Vervagingsmasker L
-HISTORY_MSG_722;LA - Vervagingsmasker CL
-HISTORY_MSG_723;LA - Gebruik vervagingsmasker
-HISTORY_MSG_725;LA - Vervagingsmasker meng
-HISTORY_MSG_726;LA - Vervagingsmasker straal
-HISTORY_MSG_727;LA - Vervagingsmasker chroma
-HISTORY_MSG_728;LA - Vervagingsmasker gamma
-HISTORY_MSG_729;LA - Vervagingsmasker helling
-HISTORY_MSG_730;LA - Vervaging methode
-HISTORY_MSG_731;LA - mediaanmethod
-HISTORY_MSG_732;LA - mediaan herhalingen
-HISTORY_MSG_733;LA - straal zacht
-HISTORY_MSG_734;LA - detail
-HISTORY_MSG_738;LA - Lokaal contrast meng L
-HISTORY_MSG_739;LA - Lokaal contrast zacht straal
-HISTORY_MSG_740;LA - Lokaal contrast Meng C
-HISTORY_MSG_741;LA - Lokaal contrast Residueel C
-HISTORY_MSG_742;LA - Exp Laplacian gamma
-HISTORY_MSG_743;LA - Bel. Fattal Hoeveelheid
-HISTORY_MSG_744;LA - Bel. Fattal Detail
-HISTORY_MSG_745;LA - Bel. Fattal verschuiving
-HISTORY_MSG_746;LA - Bel. Fattal Sigma
-HISTORY_MSG_747;LA - Spot aangemaakt
-HISTORY_MSG_748;LA - Bel. Ruisvermindering
-HISTORY_MSG_749;LA - Reti Diepte
-HISTORY_MSG_750;LA - Reti Modus log - lin
-HISTORY_MSG_751;LA - Reti Ontnevel verzadiging
-HISTORY_MSG_752;LA - Reti Verschuiving
-HISTORY_MSG_753;LA - Reti Transmissiemap
-HISTORY_MSG_754;LA - Reti Kap
-HISTORY_MSG_755;LA - TM gebruik tm-masker
-HISTORY_MSG_756;LA - Bel. gebruik algo belichtingsmasker
-HISTORY_MSG_757;LA - Bel. Laplacian-masker
-HISTORY_MSG_758;LA - Reti Laplacian-masker
-HISTORY_MSG_759;LA - Bel. Laplacian-masker
-HISTORY_MSG_760;LA - Kleur Laplacian masker
-HISTORY_MSG_761;LA - SH Laplacian-masker
-HISTORY_MSG_762;LA - cbdl Laplacian-masker
-HISTORY_MSG_763;LA - Blur Laplacian-masker
-HISTORY_MSG_764;LA - Solve PDE Laplacian-masker
-HISTORY_MSG_765;LA - Ruisvermindering detaildrempel
-HISTORY_MSG_766;LA - Vervaag Fast Fourier
-HISTORY_MSG_767;LA - Korrel ISO
-HISTORY_MSG_768;LA - Korrel Sterkte
-HISTORY_MSG_769;LA - Korrel Schaal
-HISTORY_MSG_770;LA - Kleurmasker contrastcurve
-HISTORY_MSG_771;LA - Bel.masker contrastcurve
-HISTORY_MSG_772;LA - SH-masker contrastcurve
-HISTORY_MSG_773;LA - TM-Masker contrastcurve
-HISTORY_MSG_774;LA - Reti masker contrastcurve
-HISTORY_MSG_775;LA - CBDL masker contrastcurve
-HISTORY_MSG_776;LA - Vervaag-Ruisverminderingmasker contrastcurve
-HISTORY_MSG_777;LA - Vervaagmasker lokale contrastcurve
-HISTORY_MSG_778;LA - Maskeer hoge lichten
-HISTORY_MSG_779;LA - Kleurmasker lokale contrastcurve
-HISTORY_MSG_780;LA - Kleurmasker schaduwen
-HISTORY_MSG_781;LA - Contrastmasker Wavelet-niveau
-HISTORY_MSG_782;LA - Vervaag-Ruisverminderingmasker Wavelet-niveaus
-HISTORY_MSG_783;LA - Kleur Wavelet-niveaus
-HISTORY_MSG_784;LA - masker - ΔE beeldmasker
-HISTORY_MSG_785;LA - masker - bereik
-HISTORY_MSG_786;LA - SH-methode
-HISTORY_MSG_787;LA - Equalizer vermenigvuldiger
-HISTORY_MSG_788;LA - Equalizer detail
-HISTORY_MSG_789;LA - SH-masker hoeveelheid
-HISTORY_MSG_790;LA - SH-masker anker
-HISTORY_MSG_791;LA - masker Short L-curven
-HISTORY_MSG_792;LA - masker - Achtergrond
-HISTORY_MSG_793;LA - SH TRC gamma
-HISTORY_MSG_794;LA - SH TRC helling
-HISTORY_MSG_795;LA - masker bewaar herstel beeld
-HISTORY_MSG_796;LA - SC - Recursieve referenties
-HISTORY_MSG_797;LA - Meng Originele methode
-HISTORY_MSG_798;LA - Opaciteit
-HISTORY_MSG_799;LA - Kleur RGB Tooncurve
-HISTORY_MSG_800;LA - Kleur Tooncurve Methode
-HISTORY_MSG_801;LA - Kleur Tooncurve Speciaal
-HISTORY_MSG_802;LA - Contrastdrempel
-HISTORY_MSG_803;LA - Kleur Meng
-HISTORY_MSG_804;LA - Kleur masker structuur
-HISTORY_MSG_805;LA - Vervaging Ruisonderdrukking maskerstructuur
-HISTORY_MSG_806;LA - Kleur masker structuur als gereedschap
-HISTORY_MSG_807;LA - Vervaging Ruisonderdrukkingsmasker structuur als gereedschap
-HISTORY_MSG_808;LA - Kleur masker curve H(H)
-HISTORY_MSG_809;LA - Lev. maskercurve C(C)
-HISTORY_MSG_810;LA - Lev. maskercurve L(L)
-HISTORY_MSG_811;LA - Lev. maskercurve LC(H)
-HISTORY_MSG_813;LA - Gebruik Levendigheid masker
-HISTORY_MSG_814;LA - Lev. masker Meng
-HISTORY_MSG_815;LA - Lev. masker straal
-HISTORY_MSG_816;LA - Lev. masker chroma
-HISTORY_MSG_817;LA - Lev. masker gamma
-HISTORY_MSG_818;LA - Lev. masker helling
-HISTORY_MSG_819;LA - Lev. masker laplacian
-HISTORY_MSG_820;LA - Lev. masker contrastcurve
-HISTORY_MSG_821;LA - kleurenraster achtergrond
-HISTORY_MSG_822;LA - kleur achtergrond meng
-HISTORY_MSG_823;LA - kleur achtergrond luminantie
-HISTORY_MSG_824;LA - Bel. verloopmasker kracht
-HISTORY_MSG_825;LA - Bel. verloopmasker hoek
-HISTORY_MSG_826;LA - Bel. verloop kracht
-HISTORY_MSG_827;LA - Bel. verloop hoek
-HISTORY_MSG_828;LA - SH verloop kracht
-HISTORY_MSG_829;LA - SH verloop hoek
-HISTORY_MSG_830;LA - Keurverloop kracht L
-HISTORY_MSG_831;LA - Keurverloop hoek
-HISTORY_MSG_832;LA - Keurverloop kracht C
-HISTORY_MSG_833;LA - TG - Veer verloop
-HISTORY_MSG_834;LA - Keurverloop kracht H
-HISTORY_MSG_835;LA - Lev. verloop kracht L
-HISTORY_MSG_836;LA - Lev. verloop hoek
-HISTORY_MSG_837;LA - Lev. verloop kracht C
-HISTORY_MSG_838;LA - Lev. verloop kracht H
-HISTORY_MSG_839;LA - Softwarecomplexiteit
-HISTORY_MSG_840;LA - CL-curve
-HISTORY_MSG_841;LA - LC-curve
-HISTORY_MSG_842;LA - Vervagingsmasker Straal
-HISTORY_MSG_843;LA - Vervagingsmasker Contrastdrempel
-HISTORY_MSG_844;LA - Vervagingsmasker FFTW
-HISTORY_MSG_845;LA - Log-codering
-HISTORY_MSG_846;LA - Log-codering auto
-HISTORY_MSG_847;LA - Log-codering Bron
-HISTORY_MSG_849;LA - Log-codering Bron auto
-HISTORY_MSG_850;LA - Log-codering B_Ev
-HISTORY_MSG_851;LA - Log-codering W_Ev
-HISTORY_MSG_852;LA - Log-codering Doel
-HISTORY_MSG_853;LA - Log encodind lokaal contrast
-HISTORY_MSG_854;LA - Log encodind bereik
-HISTORY_MSG_855;LA - Log-codering gehele beeld
-HISTORY_MSG_856;LA - Log-codering Schaduwen bereik
-HISTORY_MSG_857;LA - Wavelet vervaging residueel
-HISTORY_MSG_858;LA - Wavelet vervaging alleen luminantie
-HISTORY_MSG_859;LA - Wavelet max. vervaging
-HISTORY_MSG_860;LA - Wavelet vervaging niveaus
-HISTORY_MSG_861;LA - Wavelet contrastniveaus
-HISTORY_MSG_862;LA - Wavelet contrastversterking
-HISTORY_MSG_863;LA - Wavelet meng met originele afbeelding
-HISTORY_MSG_864;LA - Wavelet dir contrastversterking
-HISTORY_MSG_865;LA - Wavelet dir contrast delta
-HISTORY_MSG_866;LA - Wavelet dir compressie
-HISTORY_MSG_868;LA - SD - C-H balans
-HISTORY_MSG_869;LA - Ruisonderdrukking per niveau
-HISTORY_MSG_870;LA - Wavelet masker curve H
-HISTORY_MSG_871;LA - Wavelet masker curve C
-HISTORY_MSG_872;LA - Wavelet masker curve L
-HISTORY_MSG_873;LA - Wavelet masker
-HISTORY_MSG_875;LA - Wavelet masker voeg samen
-HISTORY_MSG_876;LA - Wavelet masker zacht
-HISTORY_MSG_877;LA - Wavelet masker chroma
-HISTORY_MSG_878;LA - Wavelet masker contrastcurve
-HISTORY_MSG_879;LA - Wavelet contrast chroma
-HISTORY_MSG_880;LA - Wavelet vervaging chroma
-HISTORY_MSG_881;LA - Wavelet contrast verschuiving
-HISTORY_MSG_882;LA - Wavelet vervaging
-HISTORY_MSG_883;LA - Wavelet contrast per niveau
-HISTORY_MSG_884;LA - Wavelet dir contrast
-HISTORY_MSG_885;LA - Wavelet toonmapping
-HISTORY_MSG_886;LA - Wavelet toonmapping comprimeer
-HISTORY_MSG_887;LA - Wavelet toonmapping comprimeer residueel
-HISTORY_MSG_888;LA - Contrast Wavelet Balans Drempel
-HISTORY_MSG_889;LA - Contrast Wavelet Verloop Sterkte
-HISTORY_MSG_890;LA - Contrast Wavelet Verloop hoek
-HISTORY_MSG_891;LA - Contrast Wavelet Verloop
-HISTORY_MSG_892;LA - Log Encoding Verloop kracht
-HISTORY_MSG_893;LA - Log Encoding Verloop hoek
-HISTORY_MSG_894;LA - SD - ΔE voorbeeld kleurintensiteit
-HISTORY_MSG_897;LA - Contrast Wavelet ES kracht
-HISTORY_MSG_898;LA - Contrast Wavelet ES straal
-HISTORY_MSG_899;LA - Contrast Wavelet ES detail
-HISTORY_MSG_900;LA - Contrast Wavelet ES verloop
-HISTORY_MSG_901;LA - Contrast Wavelet ES drempel laag
-HISTORY_MSG_902;LA - Contrast Wavelet ES drempel hoog
-HISTORY_MSG_903;LA - Contrast Wavelet ES LA contrast
-HISTORY_MSG_904;LA - Contrast Wavelet ES eerste niveau
-HISTORY_MSG_905;LA - Contrast Wavelet Randscherpte
-HISTORY_MSG_906;LA - Contrast Wavelet ES gevoeligheid
-HISTORY_MSG_907;LA - Contrast Wavelet ES versterking
-HISTORY_MSG_908;LA - Contrast Wavelet ES nabuur
-HISTORY_MSG_909;LA - Contrast Wavelet ES toon
-HISTORY_MSG_910;LA - SC - Wavelet Randprestaties
-HISTORY_MSG_911;LA - Vervaging Chroma Luma
-HISTORY_MSG_912;LA - Vervaging Gids filterkracht
-HISTORY_MSG_913;LA - Contrast Wavelet Sigma DR
-HISTORY_MSG_914;LA - Vervaging Wavelet Sigma BL
-HISTORY_MSG_915;LA - Rand Wavelet Sigma ED
-HISTORY_MSG_916;LA - Residueel wavelet schaduwen
-HISTORY_MSG_917;LA - Residueel wavelet schaduwen drempel
-HISTORY_MSG_918;LA - Residueel wavelet hoge lichten
-HISTORY_MSG_919;LA - Residueel wavelet hoge lichten drempel
-HISTORY_MSG_920;LA - Wavelet sigma LC
-HISTORY_MSG_921;LA - Wavelet Gradueel sigma LC2
-HISTORY_MSG_922;LA - SC - Veranderingen in Z-W
-HISTORY_MSG_923;LA - Gereedschapscomplexiteit modus
+HISTORY_MSG_496;SB - Spot verwijderd
+HISTORY_MSG_497;SB - Spot geselecteerd
+HISTORY_MSG_498;Lokaal - Spotnaam
+HISTORY_MSG_499;Lokaal - Zichtbaarheid spot
+HISTORY_MSG_500;SB - Spotvorm
+HISTORY_MSG_501;SB - Spotmethode
+HISTORY_MSG_502;SB - SC - Vorm method
+HISTORY_MSG_503;SB - Spot - Rechts
+HISTORY_MSG_504;SB - Spot - Links
+HISTORY_MSG_505;SB - Spot - Onder
+HISTORY_MSG_506;SB - Spot - Boven
+HISTORY_MSG_507;SB - Spot - Centrum
+HISTORY_MSG_508;SB - Spot - Grootte
+HISTORY_MSG_509;SB - Spot kwaliteitsmethode
+HISTORY_MSG_510;SB - TG - Transitiewaarde
+HISTORY_MSG_511;SB - SD - Drempel ΔE-bereik
+HISTORY_MSG_512;SB - SD - ΔE-verval
+HISTORY_MSG_513;SB - Spot - Uitsluiting - bereik
+HISTORY_MSG_514;SB - Spotstructuur
+HISTORY_MSG_515;SB - Aanpassingen
+HISTORY_MSG_516;SB - Kleur en Licht
+HISTORY_MSG_517;SB - Activeer super
+HISTORY_MSG_518;SB - Lichtheid
+HISTORY_MSG_519;SB - Contrast
+HISTORY_MSG_520;SB - Chrominantie
+HISTORY_MSG_521;SB - Bereik
+HISTORY_MSG_522;SB - Curvemethode
+HISTORY_MSG_523;SB - LL-curve
+HISTORY_MSG_524;SB - CC-curve
+HISTORY_MSG_525;SB - LH-curve
+HISTORY_MSG_526;SB - H-curve
+HISTORY_MSG_527;SB - Inverteer kleur
+HISTORY_MSG_528;SB - Belichting
+HISTORY_MSG_529;SB - Belichtingscompensatie
+HISTORY_MSG_530;SB - Bel. Hlcompr
+HISTORY_MSG_531;SB - Bel. hlcomprthresh
+HISTORY_MSG_532;SB - Bel. zwart
+HISTORY_MSG_533;SB - Bel. Shcompr
+HISTORY_MSG_534;SB - Warm Koel
+HISTORY_MSG_535;SB - Bel. Bereik
+HISTORY_MSG_536;SB - Bel. Contrastcurve
+HISTORY_MSG_537;SB - Levendigheid
+HISTORY_MSG_538;SB - Lev. Verzadigd
+HISTORY_MSG_539;SB - Lev. Pastel
+HISTORY_MSG_540;SB - Lev. Drempel
+HISTORY_MSG_541;SB - Lev. Bescherm huidtonen
+HISTORY_MSG_542;SB - Lev. Vermijd kleurverschuiving
+HISTORY_MSG_543;SB - Lev. Koppel
+HISTORY_MSG_544;SB - Lev. Bereik
+HISTORY_MSG_545;SB - Lev. H-curve
+HISTORY_MSG_546;SB - Vervaging en Ruisvermindering
+HISTORY_MSG_547;SB - Straal
+HISTORY_MSG_548;SB - Ruis
+HISTORY_MSG_549;SB - Bereik ruisvermindering
+HISTORY_MSG_550;SB - Methode ruisvermindering
+HISTORY_MSG_551;SB - Ruisvermindering alleen Luminantie
+HISTORY_MSG_552;SB - Toonmappen
+HISTORY_MSG_553;SB - TM compressiesterkte
+HISTORY_MSG_554;SB - TM gamma
+HISTORY_MSG_555;SB - TM Randbehoud
+HISTORY_MSG_556;SB - TM Schaal
+HISTORY_MSG_557;SB - TM Herwogen
+HISTORY_MSG_558;SB - TM Bereik
+HISTORY_MSG_559;SB - Retinex
+HISTORY_MSG_560;SB - Retinex methode
+HISTORY_MSG_561;SB - Retinex kracht
+HISTORY_MSG_562;SB - Retinex chroma
+HISTORY_MSG_563;SB - Retinex straal
+HISTORY_MSG_564;SB - Retinex contrast
+HISTORY_MSG_565;SB - Bereik
+HISTORY_MSG_566;SB - Retinex versterkingscurve
+HISTORY_MSG_567;SB - Retinex Omgekeerd
+HISTORY_MSG_568;SB - Verscherping
+HISTORY_MSG_569;SB - Sh Straal
+HISTORY_MSG_570;SB - Sh Hoeveelheid
+HISTORY_MSG_571;SB - Sh Demping
+HISTORY_MSG_572;SB - Sh Herhalingen
+HISTORY_MSG_573;SB - Sh Bereik
+HISTORY_MSG_574;SB - Sh Omgekeerd
+HISTORY_MSG_575;SB - CBDL
+HISTORY_MSG_576;SB - cbdl mult
+HISTORY_MSG_577;SB - cbdl chroma
+HISTORY_MSG_578;SB - cbdl drempel
+HISTORY_MSG_579;SB - cbdl bereik
+HISTORY_MSG_581;SB - Ruisverm. lum f 1
+HISTORY_MSG_582;SB - Ruisverm. lum c
+HISTORY_MSG_583;SB - Ruisverm. lum detail
+HISTORY_MSG_584;SB - Ruisverm. equalizer Wit-Zwart
+HISTORY_MSG_585;SB - Ruisverm. chro f
+HISTORY_MSG_586;SB - Ruisverm. chro c
+HISTORY_MSG_587;SB - Ruisverm. chro detail
+HISTORY_MSG_588;SB - Ruisverm. equalizer Blauw-Rood
+HISTORY_MSG_589;SB - Ruisverm. bilateraal
+HISTORY_MSG_590;SB - Ruisverm. bereik
+HISTORY_MSG_591;SB - Voorkom kleurverschuiving
+HISTORY_MSG_592;SB - Sh Contrast
+HISTORY_MSG_593;SB - LA contrast
+HISTORY_MSG_594;SB - Lokaal contrast straal
+HISTORY_MSG_595;SB - Lokaal contrast hoeveelheid
+HISTORY_MSG_596;SB - Lokaal contrast donkerte
+HISTORY_MSG_597;SB - Lokaal contrast lichtheid
+HISTORY_MSG_598;SB - Lokaal contrast bereik
+HISTORY_MSG_599;SB - Retinex ontnevel
+HISTORY_MSG_600;SB - Zacht licht activeer
+HISTORY_MSG_601;SB - Zacht licht kracht
+HISTORY_MSG_602;SB - Zacht licht bereik
+HISTORY_MSG_603;SB - Sh Vervagingsradius
+HISTORY_MSG_605;SB - Keuze maskervoorbeeld
+HISTORY_MSG_606;SB - Spot geslecteerd
+HISTORY_MSG_607;SB - Kleurmasker C
+HISTORY_MSG_608;SB - Kleurmasker L
+HISTORY_MSG_609;SB - Bel.masker C
+HISTORY_MSG_610;SB - Bel.masker L
+HISTORY_MSG_611;SB - Kleurmasker H
+HISTORY_MSG_612;SB - Kleur structuur
+HISTORY_MSG_613;SB - Bel. structuur
+HISTORY_MSG_614;SB - Bel.masker H
+HISTORY_MSG_615;SB - Meng kleur
+HISTORY_MSG_616;SB - Meng bel.
+HISTORY_MSG_617;SB - Vervaag Bel.
+HISTORY_MSG_618;SB - Gebruik kleurmasker
+HISTORY_MSG_619;SB - Gebruik bel.masker
+HISTORY_MSG_620;SB - Meng col
+HISTORY_MSG_621;SB - Bel. omgekeerd
+HISTORY_MSG_622;SB - Spot - Uitsluiting - Spotstructuur
+HISTORY_MSG_623;SB - Bel. Chroma-compensatie
+HISTORY_MSG_624;SB - Kleurcorrectieraster
+HISTORY_MSG_625;SB - Kleurcorrectie kracht
+HISTORY_MSG_626;SB - Kleurcorrectie methode
+HISTORY_MSG_627;SB - Schaduw Hoge lichten
+HISTORY_MSG_628;SB - SH Hoge lichten
+HISTORY_MSG_629;SB - SH H tonaalomvang
+HISTORY_MSG_630;SB - SH Schaduwen
+HISTORY_MSG_631;SB - SH S tonaalomvang
+HISTORY_MSG_632;SB - SH straal
+HISTORY_MSG_633;SB - SH bereik
+HISTORY_MSG_634;SB - straal kleur
+HISTORY_MSG_635;SB - straal Bel.
+HISTORY_MSG_636;SB - Gereedschap toegevoegd
+HISTORY_MSG_637;SB - SH Masker C
+HISTORY_MSG_638;SB - SH Masker L
+HISTORY_MSG_639;SB - SH Masker H
+HISTORY_MSG_640;SB - SH meng
+HISTORY_MSG_641;SB - Gebruik SH-masker
+HISTORY_MSG_642;SB - Straal SH
+HISTORY_MSG_643;SB - Vervaag SH
+HISTORY_MSG_644;SB - Keer SH om
+HISTORY_MSG_645;SB - SD - ab-L-balans
+HISTORY_MSG_646;SB - Bel.masker chroma
+HISTORY_MSG_647;SB - Bel.masker gamma
+HISTORY_MSG_648;SB - Bel.masker helling
+HISTORY_MSG_649;SB - Bel. verzachting straal
+HISTORY_MSG_650;SB - Kleurmasker chroma
+HISTORY_MSG_651;SB - Kleurmasker gamma
+HISTORY_MSG_652;SB - Kleurmasker helling
+HISTORY_MSG_653;SB - SH-masker chroma
+HISTORY_MSG_654;SB - SH-masker gamma
+HISTORY_MSG_655;SB - SH-masker helling
+HISTORY_MSG_656;SB - Kleur zachte radius
+HISTORY_MSG_657;SB - Retinex verminder onregelmatigheden
+HISTORY_MSG_658;SB - CBDL zachte radius
+HISTORY_MSG_659;SB - TG - Transitieverval
+HISTORY_MSG_660;SB - CBDL klaarheid
+HISTORY_MSG_661;SB - CBDL residueel contrast
+HISTORY_MSG_662;SB - Verminder ruis lum f 0
+HISTORY_MSG_663;SB - Verminder ruis lum f 2
+HISTORY_MSG_665;SB - cbdl masker meng
+HISTORY_MSG_666;SB - cbdl masker straal
+HISTORY_MSG_667;SB - cbdl masker chroma
+HISTORY_MSG_668;SB - cbdl masker gamma
+HISTORY_MSG_669;SB - cbdl masker helling
+HISTORY_MSG_670;SB - cbdl masker C
+HISTORY_MSG_671;SB - cbdl masker L
+HISTORY_MSG_672;SB - cbdl masker CL
+HISTORY_MSG_673;SB - Gebruik cbdl masker
+HISTORY_MSG_674;SB - Gereedschap verwijderd
+HISTORY_MSG_675;SB - TM zacht straal
+HISTORY_MSG_676;SB - TG - Transitiedifferentie
+HISTORY_MSG_677;SB - TM hoeveelheid
+HISTORY_MSG_678;SB - TM verzadiging
+HISTORY_MSG_679;SB - Retinex masker C
+HISTORY_MSG_680;SB - Retinex masker L
+HISTORY_MSG_681;SB - Retinex masker CL
+HISTORY_MSG_682;SB - Retinex masker
+HISTORY_MSG_683;SB - Retinex masker meng
+HISTORY_MSG_684;SB - Retinex masker straal
+HISTORY_MSG_685;SB - Retinex masker chroma
+HISTORY_MSG_686;SB - Retinex masker gamma
+HISTORY_MSG_687;SB - Retinex masker helling
+HISTORY_MSG_688;SB - Gereedschap verwijderd
+HISTORY_MSG_689;SB - Retinex masker transmissiemap
+HISTORY_MSG_690;SB - Retinex schaal
+HISTORY_MSG_691;SB - Retinex donkerte
+HISTORY_MSG_692;SB - Retinex lichtheid
+HISTORY_MSG_693;SB - Retinex drempel
+HISTORY_MSG_694;SB - Retinex Laplacian drempel
+HISTORY_MSG_695;SB - Verzachting methode
+HISTORY_MSG_696;SB - Retinex Normaliseer
+HISTORY_MSG_697;SB - TM Normaliseer
+HISTORY_MSG_698;SB - LA contrast Fast Fourier
+HISTORY_MSG_699;SB - Retinex Fast Fourier
+HISTORY_MSG_701;SB - Bel. Schaduwen
+HISTORY_MSG_702;SB - Bel. Methode
+HISTORY_MSG_703;SB - Bel. Laplacian drempel
+HISTORY_MSG_704;SB - Bel. PDE-balans
+HISTORY_MSG_705;SB - Bel. lineariteit
+HISTORY_MSG_706;SB - TM masker C
+HISTORY_MSG_707;SB - TM masker L
+HISTORY_MSG_708;SB - TM masker CL
+HISTORY_MSG_709;SB - gebruik TM-masker
+HISTORY_MSG_710;SB - TM-masker meng
+HISTORY_MSG_711;SB - TM-masker straal
+HISTORY_MSG_712;SB - TM-masker chroma
+HISTORY_MSG_713;SB - TM-masker gamma
+HISTORY_MSG_714;SB - TM-masker helling
+HISTORY_MSG_716;SB - LA methode
+HISTORY_MSG_717;SB - LA contrast
+HISTORY_MSG_718;SB - LA contrastniveaus
+HISTORY_MSG_719;SB - LA contrast residueel L
+HISTORY_MSG_720;SB - Vervagingsmasker C
+HISTORY_MSG_721;SB - Vervagingsmasker L
+HISTORY_MSG_722;SB - Vervagingsmasker CL
+HISTORY_MSG_723;SB - Gebruik vervagingsmasker
+HISTORY_MSG_725;SB - Vervagingsmasker meng
+HISTORY_MSG_726;SB - Vervagingsmasker straal
+HISTORY_MSG_727;SB - Vervagingsmasker chroma
+HISTORY_MSG_728;SB - Vervagingsmasker gamma
+HISTORY_MSG_729;SB - Vervagingsmasker helling
+HISTORY_MSG_730;SB - Vervaging methode
+HISTORY_MSG_731;SB - mediaanmethod
+HISTORY_MSG_732;SB - mediaan herhalingen
+HISTORY_MSG_733;SB - straal zacht
+HISTORY_MSG_734;SB - detail
+HISTORY_MSG_738;SB - Lokaal contrast meng L
+HISTORY_MSG_739;SB - Lokaal contrast zacht straal
+HISTORY_MSG_740;SB - Lokaal contrast Meng C
+HISTORY_MSG_741;SB - Lokaal contrast Residueel C
+HISTORY_MSG_742;SB - Exp Laplacian gamma
+HISTORY_MSG_743;SB - Bel. Fattal Hoeveelheid
+HISTORY_MSG_744;SB - Bel. Fattal Detail
+HISTORY_MSG_745;SB - Bel. Fattal verschuiving
+HISTORY_MSG_746;SB - Bel. Fattal Sigma
+HISTORY_MSG_747;SB - Spot aangemaakt
+HISTORY_MSG_748;SB - Bel. Ruisvermindering
+HISTORY_MSG_749;SB - Reti Diepte
+HISTORY_MSG_750;SB - Reti Modus log - lin
+HISTORY_MSG_751;SB - Reti Ontnevel verzadiging
+HISTORY_MSG_752;SB - Reti Verschuiving
+HISTORY_MSG_753;SB - Reti Transmissiemap
+HISTORY_MSG_754;SB - Reti Kap
+HISTORY_MSG_755;SB - TM gebruik tm-masker
+HISTORY_MSG_756;SB - Bel. gebruik algo belichtingsmasker
+HISTORY_MSG_757;SB - Bel. Laplacian-masker
+HISTORY_MSG_758;SB - Reti Laplacian-masker
+HISTORY_MSG_759;SB - Bel. Laplacian-masker
+HISTORY_MSG_760;SB - Kleur Laplacian masker
+HISTORY_MSG_761;SB - SH Laplacian-masker
+HISTORY_MSG_762;SB - cbdl Laplacian-masker
+HISTORY_MSG_763;SB - Blur Laplacian-masker
+HISTORY_MSG_764;SB - Solve PDE Laplacian-masker
+HISTORY_MSG_765;SB - Ruisvermindering detaildrempel
+HISTORY_MSG_766;SB - Vervaag Fast Fourier
+HISTORY_MSG_767;SB - Korrel ISO
+HISTORY_MSG_768;SB - Korrel Sterkte
+HISTORY_MSG_769;SB - Korrel Schaal
+HISTORY_MSG_770;SB - Kleurmasker contrastcurve
+HISTORY_MSG_771;SB - Bel.masker contrastcurve
+HISTORY_MSG_772;SB - SH-masker contrastcurve
+HISTORY_MSG_773;SB - TM-Masker contrastcurve
+HISTORY_MSG_774;SB - Reti masker contrastcurve
+HISTORY_MSG_775;SB - CBDL masker contrastcurve
+HISTORY_MSG_776;SB - Vervaag-Ruisverminderingmasker contrastcurve
+HISTORY_MSG_777;SB - Vervaagmasker lokale contrastcurve
+HISTORY_MSG_778;SB - Maskeer hoge lichten
+HISTORY_MSG_779;SB - Kleurmasker lokale contrastcurve
+HISTORY_MSG_780;SB - Kleurmasker schaduwen
+HISTORY_MSG_781;SB - Contrastmasker Wavelet-niveau
+HISTORY_MSG_782;SB - Vervaag-Ruisverminderingmasker Wavelet-niveaus
+HISTORY_MSG_783;SB - Kleur Wavelet-niveaus
+HISTORY_MSG_784;SB - masker - ΔE beeldmasker
+HISTORY_MSG_785;SB - masker - bereik
+HISTORY_MSG_786;SB - SH-methode
+HISTORY_MSG_787;SB - Equalizer vermenigvuldiger
+HISTORY_MSG_788;SB - Equalizer detail
+HISTORY_MSG_789;SB - SH-masker hoeveelheid
+HISTORY_MSG_790;SB - SH-masker anker
+HISTORY_MSG_791;SB - masker Short L-curven
+HISTORY_MSG_792;SB - masker - Achtergrond
+HISTORY_MSG_793;SB - SH TRC gamma
+HISTORY_MSG_794;SB - SH TRC helling
+HISTORY_MSG_795;SB - masker bewaar herstel beeld
+HISTORY_MSG_796;SB - SC - Recursieve referenties
+HISTORY_MSG_797;SB - Meng Originele methode
+HISTORY_MSG_798;SB - Opaciteit
+HISTORY_MSG_799;SB - Kleur RGB Tooncurve
+HISTORY_MSG_800;SB - Kleur Tooncurve Methode
+HISTORY_MSG_801;SB - Kleur Tooncurve Speciaal
+HISTORY_MSG_802;SB - Contrastdrempel
+HISTORY_MSG_803;SB - Kleur Meng
+HISTORY_MSG_804;SB - Kleur masker structuur
+HISTORY_MSG_805;SB - Vervaging Ruisonderdrukking maskerstructuur
+HISTORY_MSG_806;SB - Kleur masker structuur als gereedschap
+HISTORY_MSG_807;SB - Vervaging Ruisonderdrukkingsmasker structuur als gereedschap
+HISTORY_MSG_808;SB - Kleur masker curve H(H)
+HISTORY_MSG_809;SB - Lev. maskercurve C(C)
+HISTORY_MSG_810;SB - Lev. maskercurve L(L)
+HISTORY_MSG_811;SB - Lev. maskercurve LC(H)
+HISTORY_MSG_813;SB - Gebruik Levendigheid masker
+HISTORY_MSG_814;SB - Lev. masker Meng
+HISTORY_MSG_815;SB - Lev. masker straal
+HISTORY_MSG_816;SB - Lev. masker chroma
+HISTORY_MSG_817;SB - Lev. masker gamma
+HISTORY_MSG_818;SB - Lev. masker helling
+HISTORY_MSG_819;SB - Lev. masker laplacian
+HISTORY_MSG_820;SB - Lev. masker contrastcurve
+HISTORY_MSG_821;SB - kleurenraster achtergrond
+HISTORY_MSG_822;SB - kleur achtergrond meng
+HISTORY_MSG_823;SB - kleur achtergrond luminantie
+HISTORY_MSG_824;SB - Bel. verloopmasker kracht
+HISTORY_MSG_825;SB - Bel. verloopmasker hoek
+HISTORY_MSG_826;SB - Bel. verloop kracht
+HISTORY_MSG_827;SB - Bel. verloop hoek
+HISTORY_MSG_828;SB - SH verloop kracht
+HISTORY_MSG_829;SB - SH verloop hoek
+HISTORY_MSG_830;SB - Keurverloop kracht L
+HISTORY_MSG_831;SB - Keurverloop hoek
+HISTORY_MSG_832;SB - Keurverloop kracht C
+HISTORY_MSG_833;SB - TG - Veer verloop
+HISTORY_MSG_834;SB - Keurverloop kracht H
+HISTORY_MSG_835;SB - Lev. verloop kracht L
+HISTORY_MSG_836;SB - Lev. verloop hoek
+HISTORY_MSG_837;SB - Lev. verloop kracht C
+HISTORY_MSG_838;SB - Lev. verloop kracht H
+HISTORY_MSG_839;SB - Softwarecomplexiteit
+HISTORY_MSG_840;SB - CL-curve
+HISTORY_MSG_841;SB - LC-curve
+HISTORY_MSG_842;SB - Vervagingsmasker Straal
+HISTORY_MSG_843;SB - Vervagingsmasker Contrastdrempel
+HISTORY_MSG_844;SB - Vervagingsmasker FFTW
+HISTORY_MSG_845;SB - Log-codering
+HISTORY_MSG_846;SB - Log-codering auto
+HISTORY_MSG_847;SB - Log-codering Bron
+HISTORY_MSG_849;SB - Log-codering Bron auto
+HISTORY_MSG_850;SB - Log-codering B_Ev
+HISTORY_MSG_851;SB - Log-codering W_Ev
+HISTORY_MSG_852;SB - Log-codering Doel
+HISTORY_MSG_853;SB - Log encodind lokaal contrast
+HISTORY_MSG_854;SB - Log encodind bereik
+HISTORY_MSG_855;SB - Log-codering gehele beeld
+HISTORY_MSG_856;SB - Log-codering Schaduwen bereik
+HISTORY_MSG_857;SB - Wavelet vervaging residueel
+HISTORY_MSG_858;SB - Wavelet vervaging alleen luminantie
+HISTORY_MSG_859;SB - Wavelet max. vervaging
+HISTORY_MSG_860;SB - Wavelet vervaging niveaus
+HISTORY_MSG_861;SB - Wavelet contrastniveaus
+HISTORY_MSG_862;SB - Wavelet contrastversterking
+HISTORY_MSG_863;SB - Wavelet meng met originele afbeelding
+HISTORY_MSG_864;SB - Wavelet dir contrastversterking
+HISTORY_MSG_865;SB - Wavelet dir contrast delta
+HISTORY_MSG_866;SB - Wavelet dir compressie
+HISTORY_MSG_868;SB - SD - C-H balans
+HISTORY_MSG_869;SB - Ruisonderdrukking per niveau
+HISTORY_MSG_870;SB - Wavelet masker curve H
+HISTORY_MSG_871;SB - Wavelet masker curve C
+HISTORY_MSG_872;SB - Wavelet masker curve L
+HISTORY_MSG_873;SB - Wavelet masker
+HISTORY_MSG_875;SB - Wavelet masker voeg samen
+HISTORY_MSG_876;SB - Wavelet masker zacht
+HISTORY_MSG_877;SB - Wavelet masker chroma
+HISTORY_MSG_878;SB - Wavelet masker contrastcurve
+HISTORY_MSG_879;SB - Wavelet contrast chroma
+HISTORY_MSG_880;SB - Wavelet vervaging chroma
+HISTORY_MSG_881;SB - Wavelet contrast verschuiving
+HISTORY_MSG_882;SB - Wavelet vervaging
+HISTORY_MSG_883;SB - Wavelet contrast per niveau
+HISTORY_MSG_884;SB - Wavelet dir contrast
+HISTORY_MSG_885;SB - Wavelet toonmapping
+HISTORY_MSG_886;SB - Wavelet toonmapping comprimeer
+HISTORY_MSG_887;SB - Wavelet toonmapping comprimeer residueel
+HISTORY_MSG_888;SB - Contrast Wavelet Balans Drempel
+HISTORY_MSG_889;SB - Contrast Wavelet Verloop Sterkte
+HISTORY_MSG_890;SB - Contrast Wavelet Verloop hoek
+HISTORY_MSG_891;SB - Contrast Wavelet Verloop
+HISTORY_MSG_892;SB - Log Encoding Verloop kracht
+HISTORY_MSG_893;SB - Log Encoding Verloop hoek
+HISTORY_MSG_894;SB - SD - ΔE voorbeeld kleurintensiteit
+HISTORY_MSG_897;SB - Contrast Wavelet ES kracht
+HISTORY_MSG_898;SB - Contrast Wavelet ES straal
+HISTORY_MSG_899;SB - Contrast Wavelet ES detail
+HISTORY_MSG_900;SB - Contrast Wavelet ES verloop
+HISTORY_MSG_901;SB - Contrast Wavelet ES drempel laag
+HISTORY_MSG_902;SB - Contrast Wavelet ES drempel hoog
+HISTORY_MSG_903;SB - Contrast Wavelet ES LA contrast
+HISTORY_MSG_904;SB - Contrast Wavelet ES eerste niveau
+HISTORY_MSG_905;SB - Contrast Wavelet Randscherpte
+HISTORY_MSG_906;SB - Contrast Wavelet ES gevoeligheid
+HISTORY_MSG_907;SB - Contrast Wavelet ES versterking
+HISTORY_MSG_908;SB - Contrast Wavelet ES nabuur
+HISTORY_MSG_909;SB - Contrast Wavelet ES toon
+HISTORY_MSG_910;SB - SC - Wavelet Randprestaties
+HISTORY_MSG_911;SB - Vervaging Chroma Luma
+HISTORY_MSG_912;SB - Vervaging Gids filterkracht
+HISTORY_MSG_913;SB - Contrast Wavelet Sigma DR
+HISTORY_MSG_914;SB - Vervaging Wavelet Sigma BL
+HISTORY_MSG_915;SB - Rand Wavelet Sigma ED
+HISTORY_MSG_916;SB - Residueel wavelet schaduwen
+HISTORY_MSG_917;SB - Residueel wavelet schaduwen drempel
+HISTORY_MSG_918;SB - Residueel wavelet hoge lichten
+HISTORY_MSG_919;SB - Residueel wavelet hoge lichten drempel
+HISTORY_MSG_920;SB - Wavelet sigma LC
+HISTORY_MSG_921;SB - Wavelet Gradueel sigma LC2
+HISTORY_MSG_922;SB - SC - Veranderingen in Z-W
+HISTORY_MSG_923;SB - Gereedschapscomplexiteit modus
 HISTORY_MSG_924;--unused--
-HISTORY_MSG_925;LA - bereik (kleurgereedschappen)
-HISTORY_MSG_926;LA - Toon maskertype
-HISTORY_MSG_927;LA - Schaduw
-HISTORY_MSG_928;LA - Algemeen kleurenmasker
-HISTORY_MSG_929;LA - Masker Algemeen Bereik
-HISTORY_MSG_930;LA - Masker Algemeen Meng luma
-HISTORY_MSG_931;LA - Masker Algemeen activeer
-HISTORY_MSG_932;LA - Masker Algemeen straal zacht
-HISTORY_MSG_933;LA - Masker Algemeen laplacian
-HISTORY_MSG_934;LA - Masker Algemeen chroma
-HISTORY_MSG_935;LA - Masker Algemeen gamma
-HISTORY_MSG_936;LA - Masker Algemeen helling
-HISTORY_MSG_937;LA - Masker Algemeen curve C(C)
-HISTORY_MSG_938;LA - Masker Algemeen curve L(L)
-HISTORY_MSG_939;LA - Masker Algemeen curve LC(H)
-HISTORY_MSG_940;LA - Masker Algemeen structuur als gereedschap
-HISTORY_MSG_941;LA - Masker Algemeen structuurkracht
-HISTORY_MSG_942;LA - Masker Algemeen H(H) curve
-HISTORY_MSG_943;LA - Masker Algemeen FFT
-HISTORY_MSG_944;LA - Masker Algemeen Vervaging straal
-HISTORY_MSG_945;LA - Masker Algemeen contrastdrempel
-HISTORY_MSG_946;LA - Masker Algemeen schaduwen
-HISTORY_MSG_947;LA - Masker Algemeen Contrastcurve
-HISTORY_MSG_948;LA - Masker Algemeen Wavelet-curve
-HISTORY_MSG_949;LA - Masker Algemeen Drempel niveaus
-HISTORY_MSG_950;LA - Masker Algemeen GF kracht
-HISTORY_MSG_951;LA - Masker Algemeen GF hoek
-HISTORY_MSG_952;LA - Masker Algemeen zacht straal
-HISTORY_MSG_953;LA - Masker Algemeen meng chroma
-HISTORY_MSG_954;LA - Toon/verberg gereedschappen
-HISTORY_MSG_955;LA - Activeer Spot
-HISTORY_MSG_956;LA - CH-curve
-HISTORY_MSG_957;LA - Ruisonderdrukking modus
-HISTORY_MSG_958;LA - Toon/verberg instellingen
-HISTORY_MSG_959;LA - Inverteer vervaging
-HISTORY_MSG_960;LA - Log-codering - cat16
-HISTORY_MSG_961;LA - Log-codering Ciecam
-HISTORY_MSG_962;LA - Log-codering Absolute luminantie bron
-HISTORY_MSG_963;LA - Log-codering Absolute luminantie doel
-HISTORY_MSG_964;LA - Log-codering Omgeving
-HISTORY_MSG_965;LA - Log-codering Verzadiging s
-HISTORY_MSG_966;LA - Log-codering Contrast J
-HISTORY_MSG_967;LA - Log-codering masker curve C
-HISTORY_MSG_968;LA - Log-codering masker curve L
-HISTORY_MSG_969;LA - Log-codering masker curve H
-HISTORY_MSG_970;LA - Log-codering masker geactiveerd
-HISTORY_MSG_971;LA - Log-codering masker meng
-HISTORY_MSG_972;LA - Log-codering masker straal
-HISTORY_MSG_973;LA - Log-codering masker chroma
-HISTORY_MSG_974;LA - Log-codering masker contrast
-HISTORY_MSG_975;LA - Log-codering Lichtheid J
-HISTORY_MSG_977;LA - Log-codering Contrast Q
-HISTORY_MSG_978;LA - Log-codering Sursource
-HISTORY_MSG_979;LA - Log-codering Helderheid Q
-HISTORY_MSG_980;LA - Log-codering Kleurrijkheid M
-HISTORY_MSG_981;LA - Log-codering Kracht
-HISTORY_MSG_982;LA - Equalizer tint
-HISTORY_MSG_983;LA - Ruisonderdrukking drempel masker hoog
-HISTORY_MSG_984;LA - Ruisonderdrukking drempel masker laag
-HISTORY_MSG_985;LA - Ruisonderdrukking Laplacian
-HISTORY_MSG_986;LA - Ruisonderdrukking versterk
-HISTORY_MSG_987;LA - GF herstel drempel
-HISTORY_MSG_988;LA - GF drempel masker laag
-HISTORY_MSG_989;LA - GF drempel masker hoog
-HISTORY_MSG_990;LA - Ruisonderdrukking herstel drempel
-HISTORY_MSG_991;LA - Ruisonderdrukking drempel masker laag
-HISTORY_MSG_992;LA - Ruisonderdrukking drempel masker hoog
-HISTORY_MSG_993;LA - Ruisonderdrukking Omgekeerd algo
-HISTORY_MSG_994;LA - GF Omgekeerd algo
-HISTORY_MSG_995;LA - Ruisonderdrukking verval
-HISTORY_MSG_996;LA - Kleurherstel drempel
-HISTORY_MSG_997;LA - Kleurherstel masker laag
-HISTORY_MSG_998;LA - Kleur drempel masker hoog
-HISTORY_MSG_999;LA - Kleur verval
-HISTORY_MSG_1000;LA - Ruisonderdrukking luminantie grijs
-HISTORY_MSG_1001;LA - Log herstel drempel
-HISTORY_MSG_1002;LA - Log drempel masker laag
-HISTORY_MSG_1003;LA - Log drempel masker hoog
-HISTORY_MSG_1004;LA - Log verval
-HISTORY_MSG_1005;LA - Bel. herstel drempel
-HISTORY_MSG_1006;LA - Bel. drempel masker laag
-HISTORY_MSG_1007;LA - Bel. drempel masker hoog
-HISTORY_MSG_1008;LA - Bel. verval
-HISTORY_MSG_1009;LA - SH herstel drempel
-HISTORY_MSG_1010;LA - SH drempel masker laag
-HISTORY_MSG_1011;LA - SH drempel masker hoog
-HISTORY_MSG_1012;LA - SH verval
-HISTORY_MSG_1013;LA - lev. herstel drempel
-HISTORY_MSG_1014;LA - lev. drempel masker laag
-HISTORY_MSG_1015;LA - lev. drempel masker hoog
-HISTORY_MSG_1016;LA - lev. verval
-HISTORY_MSG_1017;LA - lc herstel drempel
-HISTORY_MSG_1018;LA - lc drempel masker laag
-HISTORY_MSG_1019;LA - lc drempel masker hoog
-HISTORY_MSG_1020;LA - lc verval
-HISTORY_MSG_1021;LA - Ruisonderdrukking chrominantie grijs
-HISTORY_MSG_1022;LA - TM herstel drempel
-HISTORY_MSG_1023;LA - TM drempel masker laag
-HISTORY_MSG_1024;LA - TM drempel masker hoog
-HISTORY_MSG_1025;LA - TM verval
-HISTORY_MSG_1026;LA - cbdl herstel drempel
-HISTORY_MSG_1027;LA - cbdl drempel masker laag
-HISTORY_MSG_1028;LA - cbdl drempel masker hoog
-HISTORY_MSG_1029;LA - cbdl verval
-HISTORY_MSG_1030;LA - reti herstel drempel
-HISTORY_MSG_1031;LA - reti drempel masker laag
-HISTORY_MSG_1032;LA - reti drempel masker hoog
-HISTORY_MSG_1033;LA - reti verval
-HISTORY_MSG_1034;LA - Nlmeans - kracht
-HISTORY_MSG_1035;LA - Nlmeans - detail
-HISTORY_MSG_1036;LA - Nlmeans - patch
-HISTORY_MSG_1037;LA - Nlmeans - straal
-HISTORY_MSG_1038;LA - Nlmeans - gamma
-HISTORY_MSG_1039;LA - Korrel - gamma
-HISTORY_MSG_1040;LA - SC - Verzachtingsstraal
-HISTORY_MSG_1041;LA - Spot - Munsell
-HISTORY_MSG_1042;LA - Log-codring - drempel
-HISTORY_MSG_1043;LA - Bel. - normaliseer
-HISTORY_MSG_1044;LA - LA contrast kracht
-HISTORY_MSG_1045;LA - Kleur en Licht kracht
-HISTORY_MSG_1046;LA - Ruisonderdrukking kracht
-HISTORY_MSG_1047;LA - SH en Toonequalizer kracht
-HISTORY_MSG_1048;LA - DR en Belichting kracht
-HISTORY_MSG_1049;LA - TM kracht
-HISTORY_MSG_1050;LA - Log-codering chroma
-HISTORY_MSG_1051;LA - residueel wavelet gamma
-HISTORY_MSG_1052;LA - residueel wavelet helling
-HISTORY_MSG_1053;LA - ruisonderdrukking gamma
-HISTORY_MSG_1054;LA - Wavelet gamma
-HISTORY_MSG_1055;LA - Kleur en Licht gamma
-HISTORY_MSG_1056;LA - DR en Belichting gamma
-HISTORY_MSG_1057;LA - CIECAM Geactiveerd
-HISTORY_MSG_1058;LA - CIECAM Overall kracht
-HISTORY_MSG_1059;LA - CIECAM Autogrijs
-HISTORY_MSG_1060;LA - CIECAM Gemiddelde luminantie bron
-HISTORY_MSG_1061;LA - CIECAM bron absoluut
-HISTORY_MSG_1062;LA - CIECAM omgeving bron
-HISTORY_MSG_1063;LA - CIECAM verzadiging
-HISTORY_MSG_1064;LA - CIECAM Chroma
-HISTORY_MSG_1065;LA - CIECAM lichtheid J
-HISTORY_MSG_1066;LA - CIECAM helderheid
-HISTORY_MSG_1067;LA - CIECAM Contrast J
-HISTORY_MSG_1068;LA - CIECAM drempel
-HISTORY_MSG_1069;LA - CIECAM contrast Q
-HISTORY_MSG_1070;LA - CIECAM kleurrijkheid
-HISTORY_MSG_1071;LA - CIECAM Absolute luminantie
-HISTORY_MSG_1072;LA - CIECAM Gemiddelde luminantie
-HISTORY_MSG_1073;LA - CIECAM Cat16
-HISTORY_MSG_1074;LA - CIECAM LA contrast
-HISTORY_MSG_1075;LA - CIECAM kijkomgeving
-HISTORY_MSG_1076;LA - CIECAM bereik
-HISTORY_MSG_1077;LA - CIECAM modus
-HISTORY_MSG_1078;LA - Rood/huidbescherming
-HISTORY_MSG_1079;LA - CIECAM Sigmoid kracht J
-HISTORY_MSG_1080;LA - CIECAM Sigmoid drempel
-HISTORY_MSG_1081;LA - CIECAM Sigmoid meng
-HISTORY_MSG_1082;LA - CIECAM Sigmoid Q BlackEv WhiteEv
-HISTORY_MSG_1083;LA - CIECAM tint
-HISTORY_MSG_1084;LA - Gebruikt Black Ev - White Ev
-HISTORY_MSG_1085;LA - Jz lichtheid
-HISTORY_MSG_1086;LA - Jz contrast
-HISTORY_MSG_1087;LA - Jz chroma
-HISTORY_MSG_1088;LA - Jz tint
-HISTORY_MSG_1089;LA - Jz Sigmoid kracht
-HISTORY_MSG_1090;LA - Jz Sigmoid drempel
-HISTORY_MSG_1091;LA - Jz Sigmoid meng
-HISTORY_MSG_1092;LA - Jz aanpassing
-HISTORY_MSG_1093;LA - CAM model
-HISTORY_MSG_1094;LA - Jz hoge lichten
-HISTORY_MSG_1095;LA - Jz hoge lichten thr
-HISTORY_MSG_1096;LA - Jz schaduwen
-HISTORY_MSG_1097;LA - Jz schaduwen thr
-HISTORY_MSG_1098;LA - Jz straal SH
-HISTORY_MSG_1099;LA - Cz(Hz) Curve
-HISTORY_MSG_1100;LA - Jz referentie 100
-HISTORY_MSG_1101;LA - Jz PQ remap
-HISTORY_MSG_1102;LA - Jz(Hz) Curve
-HISTORY_MSG_1103;LA - Levendigheid gamma
-HISTORY_MSG_1104;LA - Scherp gamma
-HISTORY_MSG_1105;LA - CIECAM Toon methode
-HISTORY_MSG_1106;LA - CIECAM Toon curve
-HISTORY_MSG_1107;LA - CIECAM Kleur methode
-HISTORY_MSG_1108;LA - CIECAM Kleur curve
-HISTORY_MSG_1109;LA - Jz(Jz) curve
-HISTORY_MSG_1110;LA - Cz(Cz) curve
-HISTORY_MSG_1111;LA - Cz(Jz) curve
-HISTORY_MSG_1112;LA - forcejz
-HISTORY_MSG_1113;LA - HDR PQ
-HISTORY_MSG_1114;LA - Cie masker activeer
-HISTORY_MSG_1115;LA - Cie masker curve C
-HISTORY_MSG_1116;LA - Cie masker curve L
-HISTORY_MSG_1117;LA - Cie masker curve H
-HISTORY_MSG_1118;LA - Cie masker meng
-HISTORY_MSG_1119;LA - Cie masker straal
-HISTORY_MSG_1120;LA - Cie masker chroma
-HISTORY_MSG_1121;LA - Cie masker contrast curve
-HISTORY_MSG_1122;LA - Cie masker herstel drempel
-HISTORY_MSG_1123;LA - Cie masker herstel donker
-HISTORY_MSG_1124;LA - Cie masker herstel licht
-HISTORY_MSG_1125;LA - Cie masker herstel verval
-HISTORY_MSG_1126;LA - Cie masker laplacian
-HISTORY_MSG_1127;LA - Cie masker gamma
-HISTORY_MSG_1128;LA - Cie masker helling
-HISTORY_MSG_1129;LA - Cie Relatieve luminantie
-HISTORY_MSG_1130;LA - Cie Verzadiging Jz
-HISTORY_MSG_1131;LA - masker - Ruisvermindering
-HISTORY_MSG_1132;LA - Cie Wav sigma Jz
-HISTORY_MSG_1133;LA - Cie Wav level Jz
-HISTORY_MSG_1134;LA - Cie Wav LA contrast Jz
-HISTORY_MSG_1135;LA - Cie Wav klaarheid Jz
-HISTORY_MSG_1136;LA - Cie Wav klaarheid Cz
-HISTORY_MSG_1137;LA - Cie Wav klaarheid Zacht
-HISTORY_MSG_1138;LA - LA - Hz(Hz) Curve
-HISTORY_MSG_1139;LA - Jz zacht Curven H
-HISTORY_MSG_1140;LA - Jz Drempel chroma
-HISTORY_MSG_1141;LA - chroma curve Jz(Hz)
-HISTORY_MSG_1142;LA - kracht zacht 
-HISTORY_MSG_1143;LA - Jz blackev
-HISTORY_MSG_1144;LA - Jz whiteev
-HISTORY_MSG_1145;LA - Jz Log-codering
-HISTORY_MSG_1146;LA - Jz Log-codering doel grijs
-HISTORY_MSG_1147;LA - Jz BlackEv WhiteEv
-HISTORY_MSG_1148;LA - Jz Sigmoid
-HISTORY_MSG_1149;LA - Q Sigmoid
-HISTORY_MSG_1150;LA - Log-codering Q in plaats van Sigmoid Q
+HISTORY_MSG_925;SB - bereik (kleurgereedschappen)
+HISTORY_MSG_926;SB - Toon maskertype
+HISTORY_MSG_927;SB - Schaduw
+HISTORY_MSG_928;SB - Algemeen kleurenmasker
+HISTORY_MSG_929;SB - Masker Algemeen Bereik
+HISTORY_MSG_930;SB - Masker Algemeen Meng luma
+HISTORY_MSG_931;SB - Masker Algemeen activeer
+HISTORY_MSG_932;SB - Masker Algemeen straal zacht
+HISTORY_MSG_933;SB - Masker Algemeen laplacian
+HISTORY_MSG_934;SB - Masker Algemeen chroma
+HISTORY_MSG_935;SB - Masker Algemeen gamma
+HISTORY_MSG_936;SB - Masker Algemeen helling
+HISTORY_MSG_937;SB - Masker Algemeen curve C(C)
+HISTORY_MSG_938;SB - Masker Algemeen curve L(L)
+HISTORY_MSG_939;SB - Masker Algemeen curve LC(H)
+HISTORY_MSG_940;SB - Masker Algemeen structuur als gereedschap
+HISTORY_MSG_941;SB - Masker Algemeen structuurkracht
+HISTORY_MSG_942;SB - Masker Algemeen H(H) curve
+HISTORY_MSG_943;SB - Masker Algemeen FFT
+HISTORY_MSG_944;SB - Masker Algemeen Vervaging straal
+HISTORY_MSG_945;SB - Masker Algemeen contrastdrempel
+HISTORY_MSG_946;SB - Masker Algemeen schaduwen
+HISTORY_MSG_947;SB - Masker Algemeen Contrastcurve
+HISTORY_MSG_948;SB - Masker Algemeen Wavelet-curve
+HISTORY_MSG_949;SB - Masker Algemeen Drempel niveaus
+HISTORY_MSG_950;SB - Masker Algemeen GF kracht
+HISTORY_MSG_951;SB - Masker Algemeen GF hoek
+HISTORY_MSG_952;SB - Masker Algemeen zacht straal
+HISTORY_MSG_953;SB - Masker Algemeen meng chroma
+HISTORY_MSG_954;SB - Toon/verberg gereedschappen
+HISTORY_MSG_955;SB - Activeer Spot
+HISTORY_MSG_956;SB - CH-curve
+HISTORY_MSG_957;SB - Ruisonderdrukking modus
+HISTORY_MSG_958;SB - Toon/verberg instellingen
+HISTORY_MSG_959;SB - Inverteer vervaging
+HISTORY_MSG_960;SB - Log-codering - cat16
+HISTORY_MSG_961;SB - Log-codering Ciecam
+HISTORY_MSG_962;SB - Log-codering Absolute luminantie bron
+HISTORY_MSG_963;SB - Log-codering Absolute luminantie doel
+HISTORY_MSG_964;SB - Log-codering Omgeving
+HISTORY_MSG_965;SB - Log-codering Verzadiging s
+HISTORY_MSG_966;SB - Log-codering Contrast J
+HISTORY_MSG_967;SB - Log-codering masker curve C
+HISTORY_MSG_968;SB - Log-codering masker curve L
+HISTORY_MSG_969;SB - Log-codering masker curve H
+HISTORY_MSG_970;SB - Log-codering masker geactiveerd
+HISTORY_MSG_971;SB - Log-codering masker meng
+HISTORY_MSG_972;SB - Log-codering masker straal
+HISTORY_MSG_973;SB - Log-codering masker chroma
+HISTORY_MSG_974;SB - Log-codering masker contrast
+HISTORY_MSG_975;SB - Log-codering Lichtheid J
+HISTORY_MSG_977;SB - Log-codering Contrast Q
+HISTORY_MSG_978;SB - Log-codering Sursource
+HISTORY_MSG_979;SB - Log-codering Helderheid Q
+HISTORY_MSG_980;SB - Log-codering Kleurrijkheid M
+HISTORY_MSG_981;SB - Log-codering Kracht
+HISTORY_MSG_982;SB - Equalizer tint
+HISTORY_MSG_983;SB - Ruisonderdrukking drempel masker hoog
+HISTORY_MSG_984;SB - Ruisonderdrukking drempel masker laag
+HISTORY_MSG_985;SB - Ruisonderdrukking Laplacian
+HISTORY_MSG_986;SB - Ruisonderdrukking versterk
+HISTORY_MSG_987;SB - GF herstel drempel
+HISTORY_MSG_988;SB - GF drempel masker laag
+HISTORY_MSG_989;SB - GF drempel masker hoog
+HISTORY_MSG_990;SB - Ruisonderdrukking herstel drempel
+HISTORY_MSG_991;SB - Ruisonderdrukking drempel masker laag
+HISTORY_MSG_992;SB - Ruisonderdrukking drempel masker hoog
+HISTORY_MSG_993;SB - Ruisonderdrukking Omgekeerd algo
+HISTORY_MSG_994;SB - GF Omgekeerd algo
+HISTORY_MSG_995;SB - Ruisonderdrukking verval
+HISTORY_MSG_996;SB - Kleurherstel drempel
+HISTORY_MSG_997;SB - Kleurherstel masker laag
+HISTORY_MSG_998;SB - Kleur drempel masker hoog
+HISTORY_MSG_999;SB - Kleur verval
+HISTORY_MSG_1000;SB - Ruisonderdrukking luminantie grijs
+HISTORY_MSG_1001;SB - Log herstel drempel
+HISTORY_MSG_1002;SB - Log drempel masker laag
+HISTORY_MSG_1003;SB - Log drempel masker hoog
+HISTORY_MSG_1004;SB - Log verval
+HISTORY_MSG_1005;SB - Bel. herstel drempel
+HISTORY_MSG_1006;SB - Bel. drempel masker laag
+HISTORY_MSG_1007;SB - Bel. drempel masker hoog
+HISTORY_MSG_1008;SB - Bel. verval
+HISTORY_MSG_1009;SB - SH herstel drempel
+HISTORY_MSG_1010;SB - SH drempel masker laag
+HISTORY_MSG_1011;SB - SH drempel masker hoog
+HISTORY_MSG_1012;SB - SH verval
+HISTORY_MSG_1013;SB - lev. herstel drempel
+HISTORY_MSG_1014;SB - lev. drempel masker laag
+HISTORY_MSG_1015;SB - lev. drempel masker hoog
+HISTORY_MSG_1016;SB - lev. verval
+HISTORY_MSG_1017;SB - lc herstel drempel
+HISTORY_MSG_1018;SB - lc drempel masker laag
+HISTORY_MSG_1019;SB - lc drempel masker hoog
+HISTORY_MSG_1020;SB - lc verval
+HISTORY_MSG_1021;SB - Ruisonderdrukking chrominantie grijs
+HISTORY_MSG_1022;SB - TM herstel drempel
+HISTORY_MSG_1023;SB - TM drempel masker laag
+HISTORY_MSG_1024;SB - TM drempel masker hoog
+HISTORY_MSG_1025;SB - TM verval
+HISTORY_MSG_1026;SB - cbdl herstel drempel
+HISTORY_MSG_1027;SB - cbdl drempel masker laag
+HISTORY_MSG_1028;SB - cbdl drempel masker hoog
+HISTORY_MSG_1029;SB - cbdl verval
+HISTORY_MSG_1030;SB - reti herstel drempel
+HISTORY_MSG_1031;SB - reti drempel masker laag
+HISTORY_MSG_1032;SB - reti drempel masker hoog
+HISTORY_MSG_1033;SB - reti verval
+HISTORY_MSG_1034;SB - Nlmeans - kracht
+HISTORY_MSG_1035;SB - Nlmeans - detail
+HISTORY_MSG_1036;SB - Nlmeans - patch
+HISTORY_MSG_1037;SB - Nlmeans - straal
+HISTORY_MSG_1038;SB - Nlmeans - gamma
+HISTORY_MSG_1039;SB - Korrel - gamma
+HISTORY_MSG_1040;SB - SC - Verzachtingsstraal
+HISTORY_MSG_1041;SB - Spot - Munsell
+HISTORY_MSG_1042;SB - Log-codring - drempel
+HISTORY_MSG_1043;SB - Bel. - normaliseer
+HISTORY_MSG_1044;SB - LA contrast kracht
+HISTORY_MSG_1045;SB - Kleur en Licht kracht
+HISTORY_MSG_1046;SB - Ruisonderdrukking kracht
+HISTORY_MSG_1047;SB - SH en Toonequalizer kracht
+HISTORY_MSG_1048;SB - DR en Belichting kracht
+HISTORY_MSG_1049;SB - TM kracht
+HISTORY_MSG_1050;SB - Log-codering chroma
+HISTORY_MSG_1051;SB - residueel wavelet gamma
+HISTORY_MSG_1052;SB - residueel wavelet helling
+HISTORY_MSG_1053;SB - ruisonderdrukking gamma
+HISTORY_MSG_1054;SB - Wavelet gamma
+HISTORY_MSG_1055;SB - Kleur en Licht gamma
+HISTORY_MSG_1056;SB - DR en Belichting gamma
+HISTORY_MSG_1057;SB - CIECAM Geactiveerd
+HISTORY_MSG_1058;SB - CIECAM Overall kracht
+HISTORY_MSG_1059;SB - CIECAM Autogrijs
+HISTORY_MSG_1060;SB - CIECAM Gemiddelde luminantie bron
+HISTORY_MSG_1061;SB - CIECAM bron absoluut
+HISTORY_MSG_1062;SB - CIECAM omgeving bron
+HISTORY_MSG_1063;SB - CIECAM verzadiging
+HISTORY_MSG_1064;SB - CIECAM Chroma
+HISTORY_MSG_1065;SB - CIECAM lichtheid J
+HISTORY_MSG_1066;SB - CIECAM helderheid
+HISTORY_MSG_1067;SB - CIECAM Contrast J
+HISTORY_MSG_1068;SB - CIECAM drempel
+HISTORY_MSG_1069;SB - CIECAM contrast Q
+HISTORY_MSG_1070;SB - CIECAM kleurrijkheid
+HISTORY_MSG_1071;SB - CIECAM Absolute luminantie
+HISTORY_MSG_1072;SB - CIECAM Gemiddelde luminantie
+HISTORY_MSG_1073;SB - CIECAM Cat16
+HISTORY_MSG_1074;SB - CIECAM LA contrast
+HISTORY_MSG_1075;SB - CIECAM kijkomgeving
+HISTORY_MSG_1076;SB - CIECAM bereik
+HISTORY_MSG_1077;SB - CIECAM modus
+HISTORY_MSG_1078;SB - Rood/huidbescherming
+HISTORY_MSG_1079;SB - CIECAM Sigmoid kracht J
+HISTORY_MSG_1080;SB - CIECAM Sigmoid drempel
+HISTORY_MSG_1081;SB - CIECAM Sigmoid meng
+HISTORY_MSG_1082;SB - CIECAM Sigmoid Q BlackEv WhiteEv
+HISTORY_MSG_1083;SB - CIECAM tint
+HISTORY_MSG_1084;SB - Gebruikt Zwart LW - Wit LW
+HISTORY_MSG_1085;SB - Jz lichtheid
+HISTORY_MSG_1086;SB - Jz contrast
+HISTORY_MSG_1087;SB - Jz chroma
+HISTORY_MSG_1088;SB - Jz tint
+HISTORY_MSG_1089;SB - Jz Sigmoid kracht
+HISTORY_MSG_1090;SB - Jz Sigmoid drempel
+HISTORY_MSG_1091;SB - Jz Sigmoid meng
+HISTORY_MSG_1092;SB - Jz aanpassing
+HISTORY_MSG_1093;SB - CAM model
+HISTORY_MSG_1094;SB - Jz hoge lichten
+HISTORY_MSG_1095;SB - Jz hoge lichten thr
+HISTORY_MSG_1096;SB - Jz schaduwen
+HISTORY_MSG_1097;SB - Jz schaduwen thr
+HISTORY_MSG_1098;SB - Jz straal SH
+HISTORY_MSG_1099;SB - Cz(Hz) Curve
+HISTORY_MSG_1100;SB - Jz referentie 100
+HISTORY_MSG_1101;SB - Jz PQ remap
+HISTORY_MSG_1102;SB - Jz(Hz) Curve
+HISTORY_MSG_1103;SB - Levendigheid gamma
+HISTORY_MSG_1104;SB - Scherp gamma
+HISTORY_MSG_1105;SB - CIECAM Toon methode
+HISTORY_MSG_1106;SB - CIECAM Toon curve
+HISTORY_MSG_1107;SB - CIECAM Kleur methode
+HISTORY_MSG_1108;SB - CIECAM Kleur curve
+HISTORY_MSG_1109;SB - Jz(Jz) curve
+HISTORY_MSG_1110;SB - Cz(Cz) curve
+HISTORY_MSG_1111;SB - Cz(Jz) curve
+HISTORY_MSG_1112;SB - forcejz
+HISTORY_MSG_1113;SB - HDR PQ
+HISTORY_MSG_1114;SB - Cie masker activeer
+HISTORY_MSG_1115;SB - Cie masker curve C
+HISTORY_MSG_1116;SB - Cie masker curve L
+HISTORY_MSG_1117;SB - Cie masker curve H
+HISTORY_MSG_1118;SB - Cie masker meng
+HISTORY_MSG_1119;SB - Cie masker straal
+HISTORY_MSG_1120;SB - Cie masker chroma
+HISTORY_MSG_1121;SB - Cie masker contrast curve
+HISTORY_MSG_1122;SB - Cie masker herstel drempel
+HISTORY_MSG_1123;SB - Cie masker herstel donker
+HISTORY_MSG_1124;SB - Cie masker herstel licht
+HISTORY_MSG_1125;SB - Cie masker herstel verval
+HISTORY_MSG_1126;SB - Cie masker laplacian
+HISTORY_MSG_1127;SB - Cie masker gamma
+HISTORY_MSG_1128;SB - Cie masker helling
+HISTORY_MSG_1129;SB - Cie Relatieve luminantie
+HISTORY_MSG_1130;SB - Cie Verzadiging Jz
+HISTORY_MSG_1131;SB - masker - Ruisvermindering
+HISTORY_MSG_1132;SB - Cie Wav sigma Jz
+HISTORY_MSG_1133;SB - Cie Wav level Jz
+HISTORY_MSG_1134;SB - Cie Wav LA contrast Jz
+HISTORY_MSG_1135;SB - Cie Wav klaarheid Jz
+HISTORY_MSG_1136;SB - Cie Wav klaarheid Cz
+HISTORY_MSG_1137;SB - Cie Wav klaarheid Zacht
+HISTORY_MSG_1138;SB - SB - Hz(Hz) Curve
+HISTORY_MSG_1139;SB - Jz zacht Curven H
+HISTORY_MSG_1140;SB - Jz Drempel chroma
+HISTORY_MSG_1141;SB - chroma curve Jz(Hz)
+HISTORY_MSG_1142;SB - kracht zacht
+HISTORY_MSG_1143;SB - Jz blackev
+HISTORY_MSG_1144;SB - Jz whiteev
+HISTORY_MSG_1145;SB - Jz Log-codering
+HISTORY_MSG_1146;SB - Jz Log-codering doel grijs
+HISTORY_MSG_1147;SB - Jz BlackEv WhiteEv
+HISTORY_MSG_1148;SB - Jz Sigmoid
+HISTORY_MSG_1149;SB - Q Sigmoid
+HISTORY_MSG_1150;SB - Log-codering Q in plaats van Sigmoid Q
 HISTORY_MSG_BLSHAPE;Vervaag per niveau
 HISTORY_MSG_BLURCWAV;Vervaging chroma
 HISTORY_MSG_BLURWAV;Vervaging luminantie
@@ -1424,16 +1427,23 @@ HISTORY_MSG_ICL_LABGRIDCIEXY;Cie xy
 HISTORY_MSG_ICM_AINTENT;Abstract profiel - weergave-intentie
 HISTORY_MSG_ICM_BLUX;Primair blauw X
 HISTORY_MSG_ICM_BLUY;Primair blauw Y
+HISTORY_MSG_ICM_CAT;Matrix-aanpassing
 HISTORY_MSG_ICM_FBW;Zwart en wit
 HISTORY_MSG_ICM_GAMUT;Beperk kleurbereik
 HISTORY_MSG_ICM_GREX;Primair groen X
 HISTORY_MSG_ICM_GREY;Primair groen Y
+HISTORY_MSG_ICM_MIDTCIE;Middentonen
 HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Uitvoer - Primaire kleuren
 HISTORY_MSG_ICM_OUTPUT_TEMP;Uitvoer - ICC-v4 illuminant D
 HISTORY_MSG_ICM_OUTPUT_TYPE;Uitvoer - Type
 HISTORY_MSG_ICM_PRESER;Behoud neutraal
 HISTORY_MSG_ICM_REDX;Primair rood X
 HISTORY_MSG_ICM_REDY;Primair rood Y
+HISTORY_MSG_ICM_REFI;Kleurverfijning
+HISTORY_MSG_ICM_SHIFTX;Kleurverfijning - Verschuif x
+HISTORY_MSG_ICM_SHIFTY;Kleurverfijning - Verschuif y
+HISTORY_MSG_ICM_SMOOTHCIE;Vloeiende hoge lichten
+HISTORY_MSG_ICM_TRCEXP;Abstract Profiel
 HISTORY_MSG_ICM_WORKING_GAMMA;Werkend - Gamma
 HISTORY_MSG_ICM_WORKING_ILLUM_METHOD;Methode lichtsterkte
 HISTORY_MSG_ICM_WORKING_PRIM_METHOD;Methode primaire kleuren
@@ -1446,7 +1456,9 @@ HISTORY_MSG_LOCALCONTRAST_ENABLED;Lokaal Contrast
 HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Lokaal Contrast - Licht
 HISTORY_MSG_LOCALCONTRAST_RADIUS;Lokaal Contrast - Radius
 HISTORY_MSG_LOCALLAB_TE_PIVOT;Lokaal - draaipunt Equalizer
+HISTORY_MSG_LOCAL_CIE_SATCIE;Local - CIECAM Beperk verzadiging
 HISTORY_MSG_LOCAL_GAMUTMUNSEL;Lokaal - SC - Voorkom kleurverschuiving
+HISTORY_MSG_LOCAL_LOG_SAT;Local - Log Beperk verzadiging
 HISTORY_MSG_METADATA_MODE;Metadata kopieermodus
 HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrastdrempel
 HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST;CS - Auto-drempel
@@ -1695,8 +1707,8 @@ MAIN_TAB_FAVORITES_TOOLTIP;Sneltoets: <b>Alt+U</b>
 MAIN_TAB_FILTER;Filter
 MAIN_TAB_INSPECT; Inspecteer
 MAIN_TAB_IPTC;IPTC
-MAIN_TAB_LOCALLAB;Lokale aanpassingen
-MAIN_TAB_LOCALLAB_TOOLTIP;Shortcut: <b>Alt+O</b>
+MAIN_TAB_LOCALLAB;Selectief bewerken
+MAIN_TAB_LOCALLAB_TOOLTIP;Sneltoets: <b>Alt+O</b>
 MAIN_TAB_METADATA;Metadata
 MAIN_TAB_METADATA_TOOLTIP;Sneltoets: <b>Alt+M</b>
 MAIN_TAB_RAW;RAW
@@ -1782,8 +1794,8 @@ PARTIALPASTE_LABCURVE;LAB-curve
 PARTIALPASTE_LENSGROUP;Lensgerelateerde instellingen
 PARTIALPASTE_LENSPROFILE;Lenscorrectieprofiel
 PARTIALPASTE_LOCALCONTRAST;Lokaal contrast
-PARTIALPASTE_LOCALLAB;Lokale aanpassingen
-PARTIALPASTE_LOCALLABGROUP;Instellingen Lokale aanpassingen
+PARTIALPASTE_LOCALLAB;Selectief bewerken
+PARTIALPASTE_LOCALLABGROUP;Instellingen Selectief bewerken
 PARTIALPASTE_METADATA;Metadata modus
 PARTIALPASTE_METAGROUP;Metadata
 PARTIALPASTE_PCVIGNETTE;Vignetteringsfilter
@@ -1840,6 +1852,9 @@ PREFERENCES_BEHADDALLHINT;Zet alle parameters in de <b>Toevoegen</b>-modus.\nWij
 PREFERENCES_BEHAVIOR;Gedrag
 PREFERENCES_BEHSETALL;Alles op 'Activeer'
 PREFERENCES_BEHSETALLHINT;Zet alle parameters in de <b>Activeer</b>-modus.\nWijzigingen van de parameters voor groepsverwerking zijn <b>absoluut</b>. De actuele waarden worden gebruikt.
+PREFERENCES_BROWSERECURSIVEDEPTH;Diepte sub-folders
+PREFERENCES_BROWSERECURSIVEFOLLOWLINKS;Volg symbolische links in sub-folders
+PREFERENCES_BROWSERECURSIVEMAXDIRS;Max. aantal sub-folders
 PREFERENCES_CACHECLEAR;Wissen
 PREFERENCES_CACHECLEAR_ALL;Wis alle bestanden in de cache:
 PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Wis alle bestanden in de cache behalve verwerkingsprofielen:
@@ -1862,7 +1877,7 @@ PREFERENCES_CLUTSCACHE;HaldCLUT-cache
 PREFERENCES_CLUTSCACHE_LABEL;Maximum aantal cluts in de cache
 PREFERENCES_CLUTSDIR;HaldCLUT-map
 PREFERENCES_CMMBPC;Zwartpuntcompensatie
-PREFERENCES_COMPLEXITYLOC;Standaard complexiteit voor Lokale Aanpassingen
+PREFERENCES_COMPLEXITYLOC;Standaard complexiteit voor Selectief bewerken
 PREFERENCES_COMPLEXITY_EXP;Geavanceerd
 PREFERENCES_COMPLEXITY_NORM;Standaard
 PREFERENCES_COMPLEXITY_SIMP;Basis
@@ -1901,7 +1916,7 @@ PREFERENCES_EXTEDITOR_BYPASS_OUTPUT_PROFILE;Passeer uitvoerprofiel
 PREFERENCES_EXTEDITOR_DIR;Uitvoermap
 PREFERENCES_EXTEDITOR_DIR_CURRENT;Zelfde als invoerbeeld
 PREFERENCES_EXTEDITOR_DIR_CUSTOM;Aangepast
-PREFERENCES_EXTEDITOR_DIR_TEMP;temp map dir besturingssysteem
+PREFERENCES_EXTEDITOR_DIR_TEMP;Tmp-map besturingssysteem
 PREFERENCES_EXTEDITOR_FLOAT32;32-bit decimale TIFF_uitvoer
 PREFERENCES_EXTERNALEDITOR;Externe editor
 PREFERENCES_EXTERNALEDITOR_CHANGE;Verander applicatie
@@ -1941,6 +1956,7 @@ PREFERENCES_LENSFUNDBDIR_TOOLTIP;Map met de Lensfun-database. Laat leeg om de st
 PREFERENCES_LENSPROFILESDIR;Map met lensprofielen
 PREFERENCES_LENSPROFILESDIR_TOOLTIP;Map met Adobe Lens Correction Profiles (LCP's)
 PREFERENCES_MAXRECENTFOLDERS;Maximum aantal recente mappen
+PREFERENCES_MAX_ZOOM_TITLE;Maximale zoom
 PREFERENCES_MENUGROUPEXTPROGS;Groepeer open met
 PREFERENCES_MENUGROUPFILEOPERATIONS;Groepeer bestandsbewerkingen
 PREFERENCES_MENUGROUPLABEL;Groepeer labelen
@@ -1977,7 +1993,7 @@ PREFERENCES_PREVDEMO;Voorbeeld demozaïekmethode
 PREFERENCES_PREVDEMO_FAST;Snel
 PREFERENCES_PREVDEMO_LABEL;Demozaïekmethode van het voorbeeld bij <100% zoom:
 PREFERENCES_PREVDEMO_SIDECAR;Gelijk aan PP3
-PREFERENCES_PRINTER;Printer (soft-proof)
+PREFERENCES_PRINTER;Printer (soft-proofing)
 PREFERENCES_PROFILEHANDLING;Verwerking profielen
 PREFERENCES_PROFILELOADPR;Laadprioriteit profielen
 PREFERENCES_PROFILEPRCACHE;Profiel in cache
@@ -1991,6 +2007,8 @@ PREFERENCES_PROPERTY;Eigenschap
 PREFERENCES_PRTINTENT;Weergave-intentie
 PREFERENCES_PRTPROFILE;Kleurprofiel
 PREFERENCES_PSPATH;Installatiemap Adobe Photoshop
+PREFERENCES_RAW_DECODER;Raw-decoder
+PREFERENCES_RAW_DECODER_ENABLE_LIBRAW;Gebruik LibRaw
 PREFERENCES_REMEMBERZOOMPAN;Onthoud zoom% en pan-startpunt
 PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Onthoud het zoompercentage en pan-startpunt van de huidige afbeelding als er een nieuwe afbeelding wordt geopend.\n\nDeze optie werkt alleen in Enkeltab-modus en wanneer "Demozaïekmethode van het voorbeeld <100% zoom" hetzelfde is als "Gelijk aan PP3".
 PREFERENCES_SAVE_TP_OPEN_NOW;Bewaar open/dicht-status van de gereedschappen nu
@@ -2003,7 +2021,7 @@ PREFERENCES_SHOWBASICEXIF;Toon standaard Exif-info
 PREFERENCES_SHOWDATETIME;Toon datum en tijd
 PREFERENCES_SHOWEXPOSURECOMPENSATION;Toon belichtingscompensatie
 PREFERENCES_SHOWFILMSTRIPTOOLBAR;Toon filmstrip werkbalk
-PREFERENCES_SHOWTOOLTIP;Toon schermtips voor Lokale aanpassingen
+PREFERENCES_SHOWTOOLTIP;Toon schermtips voor Selectief bewerken
 PREFERENCES_SHTHRESHOLD;Grenswaarde onderbelichting
 PREFERENCES_SINGLETAB;Enkel-tab: foto's openen in zelfde tabvenster
 PREFERENCES_SINGLETABVERTAB;Enkel-tab ('filmstrip') modus met verticale tabs
@@ -2011,6 +2029,7 @@ PREFERENCES_SND_HELP;Typ bestandsnaam (of niets: geen geluid).\nWindows: gebruik
 PREFERENCES_SND_LNGEDITPROCDONE;Bewerking klaar
 PREFERENCES_SND_QUEUEDONE;Verwerkingsrij klaar
 PREFERENCES_SND_THRESHOLDSECS;na seconden
+PREFERENCES_SPOTLOC;Bepaal spotmethode voor Selectief bewerken
 PREFERENCES_STARTUPIMDIR;Standaardmap bij opstarten
 PREFERENCES_TAB_BROWSER;Bestandsnavigator
 PREFERENCES_TAB_COLORMGR;Kleurbeheer
@@ -2024,6 +2043,7 @@ PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Ingesloten JPEG-voorbeeld
 PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Te tonen foto
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutrale raw-rendering
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Ingesloten JPEG indien vol formaat, anders neutrale raw
+PREFERENCES_THUMBNAIL_RANK_COLOR_MODE;Laad/bewaar waardering en kleurcodes van miniaturen van/naar XMP-zijspanbestanden
 PREFERENCES_TOOLPANEL_AVAILABLETOOLS;Beschikbare gereedschappen
 PREFERENCES_TOOLPANEL_CLONE_FAVORITES;Toon favoriete gereedschappen ook op hun oorspronkelijke locatie
 PREFERENCES_TOOLPANEL_CLONE_FAVORITES_TOOLTIP;Indien aangevinkt zullen de favoriete gereedschappen zowel in de Favorieten-tab als op hun oorspronkelijke locatie te vinden zijn.\n\nOpmerking: als deze optie is aangevinkt kunt u een lichte vertraging verwachten tijdens het wisselen van tabs.
@@ -2097,6 +2117,8 @@ QINFO_PIXELSHIFT;Pixel-Shift / %2 frame(s)
 QUEUE_AUTOSTART;Autostart
 QUEUE_AUTOSTART_TOOLTIP;Start verwerking automatisch wanneer nieuwe foto arriveert
 QUEUE_DESTFILENAME;Pad en bestandsnaam
+QUEUE_DESTPREVIEW_TITLE;Selecteer een miniatuur om het bestemmingspad te zien
+QUEUE_DESTPREVIEW_TOOLTIP;Bestemmingspad van de eerst geselecteerde foto verschijnt hier
 QUEUE_FORMAT_TITLE;Bestandstype
 QUEUE_LOCATION_FOLDER;Sla op in map
 QUEUE_LOCATION_TEMPLATE;Gebruik sjabloon
@@ -2139,12 +2161,15 @@ SORT_BY_LABEL;Op kleurlabel
 SORT_BY_NAME;Op naam
 SORT_BY_RANK;Volgens sterwaardering
 SORT_DESCENDING;Aflopend
+TC_LOCALLAB_PRIM_SHIFTX;Verschuif x
+TC_LOCALLAB_PRIM_SHIFTY;Verschuif y
 TC_PRIM_BLUX;Bx
 TC_PRIM_BLUY;By
 TC_PRIM_GREX;Gx
 TC_PRIM_GREY;Gy
 TC_PRIM_REDX;Rx
 TC_PRIM_REDY;Ry
+TC_PRIM_REFI;Verfijn kleuren (witpunt)
 THRESHOLDSELECTOR_B;Onderkant
 THRESHOLDSELECTOR_BL;Onderkant-links
 THRESHOLDSELECTOR_BR;Onderkant-rechts
@@ -2155,6 +2180,7 @@ THRESHOLDSELECTOR_TR;Bovenkant-rechts
 TOOLBAR_TOOLTIP_COLORPICKER;Vergrendelbare kleurkiezer\n\nKlik met de linkermuisknop in het voorbeeld om een kleurkiezer toe te voegen\nBeweeg het punt door de linkermuisknop ingedrukt te houden\nVerwijder de kleurkiezer met rechts-klik\nVerwijder alle kleurkiezers met Shift+rechtsklik\nMet een rechtermuisklik naast een kleurkiezer komt het selectiehandje terug.
 TOOLBAR_TOOLTIP_CROP;Bijsnijden.\nSneltoets: <b>C</b>
 TOOLBAR_TOOLTIP_HAND;Sleepgereedschap.\nSneltoets: <b>H</b>
+TOOLBAR_TOOLTIP_PERSPECTIVE;<b>Perspectiefcorrectie</b>\n\nVerplaats de controlelijnen om perspectivische vervorming te corrigeren. Klik opnieuw op deze knop om de correctie toe te passen.
 TOOLBAR_TOOLTIP_STRAIGHTEN;<b>Rechtzetten</b>/<b>Kleine rotaties</b>.\nSneltoets: <b>S</b>\n\nBepaal de verticale of horizontale as door een hulplijn over de afbeelding te trekken. De rotatiehoek wordt naast de hulplijn getoond. Het centrum van de roatatie is het geometrische midden van de afbeelding.
 TOOLBAR_TOOLTIP_WB;Witbalans.\nSneltoets: <b>W</b>
 TP_BWMIX_ALGO;Algoritme OYCPM
@@ -2228,7 +2254,7 @@ TP_CHMIXER_LABEL;Kleurkanaalmixer
 TP_CHMIXER_RED;Rood
 TP_COARSETRAF_TOOLTIP_HFLIP;Horizontaal spiegelen
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Roteer links.\n\nSneltoets:\n<b>[</b> - Multitab-modus,\n<b>Alt+[</b> - Enkeltab-modus.
-TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotate right.\n\nSneltoets:\n<b>]</b> - Multitab-modus,\n<b>Alt+]</b> - Enkeltab-modus.
+TP_COARSETRAF_TOOLTIP_ROTRIGHT;Roteer rechts.\n\nSneltoets:\n<b>]</b> - Multitab-modus,\n<b>Alt+]</b> - Enkeltab-modus.
 TP_COARSETRAF_TOOLTIP_VFLIP;Verticaal spiegelen
 TP_COLORAPP_ABSOLUTELUMINANCE;Absolute luminantie
 TP_COLORAPP_ALGO;Algoritme
@@ -2263,7 +2289,7 @@ TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Toont het histogram van L (Lab) voor CIECAM-wij
 TP_COLORAPP_CURVEEDITOR2;Tooncurve 2
 TP_COLORAPP_CURVEEDITOR2_TOOLTIP;Heeft dezelfde werking als belichtings-tooncurve 2.
 TP_COLORAPP_CURVEEDITOR3;Chroma-curve
-TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Wijzigt ofwel chroma, verzadiging of kleurrijkheid.\n Het histogram toont chromaticiteit (Lab) voor CIECAM-aanpassingen.\nHet histogram toont C, S en M na toepassing van CIECAM indien de optie 'Toon CIECAM-uitvoer' is aangevinkt.\nC, S en M worden niet getoond in het hoofdhistogram. \nDe definitieve uitvoer is te zien in het histogrampaneel. 
+TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Wijzigt ofwel chroma, verzadiging of kleurrijkheid.\n Het histogram toont chromaticiteit (Lab) voor CIECAM-aanpassingen.\nHet histogram toont C, S en M na toepassing van CIECAM indien de optie 'Toon CIECAM-uitvoer' is aangevinkt.\nC, S en M worden niet getoond in het hoofdhistogram. \nDe definitieve uitvoer is te zien in het histogrampaneel.
 TP_COLORAPP_DATACIE;CIECAM02 uitvoerhistogram in de curven
 TP_COLORAPP_DATACIE_TOOLTIP;Indien aangevinkt tonen de histogrammen van de CIECAM02-curven bij benadering de waarden/reeksen voor J of Q, en C, S of M na de CIECAM02-aanpassingen.\nDit heeft geen invloed op het hoofdhistogram.\n\nIndien uitgevinkt tonen de histogrammen van de CIECAM02-curven de Lab-waarden zoals deze waren voor de CIECAM02-aanpassingen
 TP_COLORAPP_FREE;Vrije temp + groen + CAT02 + [uitvoer]
@@ -2282,16 +2308,16 @@ TP_COLORAPP_ILFREE;Vrij
 TP_COLORAPP_ILLUM;Illuminant
 TP_COLORAPP_LABEL;CIE Color Appearance Model 2002
 TP_COLORAPP_LABEL_CAM02;Afbeelding wijzigen
-TP_COLORAPP_LABEL_SCENE;Scène-omstandigheden
+TP_COLORAPP_LABEL_SCENE;Opname-omstandigheden
 TP_COLORAPP_LABEL_VIEWING;Weergaveomstandigheden
 TP_COLORAPP_LIGHT;Lichtheid (J)
-TP_COLORAPP_LIGHT_TOOLTIP;Lichtheid in CIECAM02 verschilt van Lab en RGB 
+TP_COLORAPP_LIGHT_TOOLTIP;Lichtheid in CIECAM02 verschilt van Lab en RGB
 TP_COLORAPP_MEANLUMINANCE;Gemiddelde luminantie (Yb%)
 TP_COLORAPP_MOD02;CAM02
 TP_COLORAPP_MOD16;CAM16
 TP_COLORAPP_MODEL;Witpuntmodel
 TP_COLORAPP_MODELCAT;CAM
-TP_COLORAPP_MODEL_TOOLTIP;Witpuntmodel<b>WB [RT] + [uitvoer]:</b>\nRT's witbalans wordt gebruikt voor de scène (opname), CIECAM02 gebruikt D50. De witbalans van het uitvoerapparaat (beeldscherm bv.) wordt opgegeven in Weergaveomstandigheden. wit gebruikt de instelling van <i>Voorkeuren > Kleurbeheer</i>\n\n<b>WB [RT+CAT02/16] + [uitvoer]</b>:</b>\nDe witbalansinstellingen van RT worden gebruikt door CAT02 en de witbalans van het uitvoerapparaat wordt opgegeven in Weergaveomstandigheden.\n\n<b>Free temp + tint + CAT02/16 + [uitvoer]:</b> kleurtemperatuur en tint worden opgegeven door de gebruiker en de witbalans van het uitvoerapparaat wordt opgegeven in Weergaveomstandigheden. 
+TP_COLORAPP_MODEL_TOOLTIP;Witpuntmodel<b>WB [RT] + [uitvoer]:</b>\nRT's witbalans wordt gebruikt voor de scène (opname), CIECAM02 gebruikt D50. De witbalans van het uitvoerapparaat (beeldscherm bv.) wordt opgegeven in Weergaveomstandigheden. wit gebruikt de instelling van <i>Voorkeuren > Kleurbeheer</i>\n\n<b>WB [RT+CAT02/16] + [uitvoer]</b>:</b>\nDe witbalansinstellingen van RT worden gebruikt door CAT02 en de witbalans van het uitvoerapparaat wordt opgegeven in Weergaveomstandigheden.\n\n<b>Free temp + tint + CAT02/16 + [uitvoer]:</b> kleurtemperatuur en tint worden opgegeven door de gebruiker en de witbalans van het uitvoerapparaat wordt opgegeven in Weergaveomstandigheden.
 TP_COLORAPP_NEUTRAL;Terugzetten
 TP_COLORAPP_NEUTRAL_TOOLTIP;Zet alle regelaars, vinkjes en curves terug naar hun standaardwaarde
 TP_COLORAPP_RSTPRO;Bescherming huid- en rode tinten
@@ -2580,6 +2606,7 @@ TP_ICM_APPLYHUESATMAP_TOOLTIP;Gebruik de ingebedde DCP-basistabel (HueSatMap). D
 TP_ICM_APPLYLOOKTABLE;DCP-look-tabel
 TP_ICM_APPLYLOOKTABLE_TOOLTIP;Gebruik de ingebedde DCP-look-tabel. De instelling is alleen actief als de DCP een look-tabel heeft.
 TP_ICM_BPC;Zwartpuntcompensatie
+TP_ICM_BW;Zwart en Wit
 TP_ICM_DCPILLUMINANT;Illuminant
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpoleren
 TP_ICM_DCPILLUMINANT_TOOLTIP;Kies welk ingebed DCP-illuminant moet worden gebruikt. Standaard is dit 'interpoleren'. Dit is een mix van de twee gebaseerd op de witbalans. De instelling is alleen actief als een Dual-Illuminant DCP met interpolatie is geselecteerd.
@@ -2613,6 +2640,12 @@ TP_ICM_TONECURVE;Gebruik DCP-tooncurve
 TP_ICM_TONECURVE_TOOLTIP;Gebruik de ingebedde DCP-tooncurve. De instelling is alleen actief als de geselecteerde DCP een tooncurve bevat.
 TP_ICM_TRCFRAME;Abstract Profiel
 TP_ICM_WORKINGPROFILE;Werkprofiel
+TP_ICM_WORKING_CAT;Aanpassing matrix
+TP_ICM_WORKING_CAT_BRAD;Bradford
+TP_ICM_WORKING_CAT_CAT02;Cat02
+TP_ICM_WORKING_CAT_CAT16;Cat16
+TP_ICM_WORKING_CAT_VK;Von Kries
+TP_ICM_WORKING_CAT_XYZ;XYZ-schaal
 TP_ICM_WORKING_CIEDIAG;CIE xy diagram
 TP_ICM_WORKING_ILLU;Illuminant
 TP_ICM_WORKING_ILLU_1500;Tungsten 1500K
@@ -2688,7 +2721,7 @@ TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminantie volgens Luminantie L=f(L)
 TP_LABCURVE_LABEL;Lab
 TP_LABCURVE_LCREDSK;Beperk LC tot huid- en rode tinten
 TP_LABCURVE_LCREDSK_TOOLTIP;Indien ingeschakeld beïnvloedt de LC-curve alleen huid- en rode tinten.\nIndien uitgeschakeld is het van toepassing op alle tinten.
-TP_LABCURVE_RSTPROTECTION;Bescherming huid- en rode tinten 
+TP_LABCURVE_RSTPROTECTION;Bescherming huid- en rode tinten
 TP_LABCURVE_RSTPRO_TOOLTIP;Kan worden gebruikt met de chromaticiteits-schuifbalk en de CC-curve.
 TP_LENSGEOM_AUTOCROP;Automatisch bijsnijden
 TP_LENSGEOM_FILL;Automatisch uitvullen
@@ -2744,12 +2777,14 @@ TP_LOCALLAB_BLURDE;Vormdetectie vervaging
 TP_LOCALLAB_BLURLC;Alleen luminantie
 TP_LOCALLAB_BLURLEVELFRA;Vervagingsniveaus
 TP_LOCALLAB_BLUR_TOOLNAME;Vervaging/Korrel & Ruisvermindering
-TP_LOCALLAB_BLWH;Alle veranderingen forceren in Zwart-wit
+TP_LOCALLAB_BLWH;Alle veranderingen forceren in zwart-wit
 TP_LOCALLAB_BUTTON_ADD;Voeg toe
 TP_LOCALLAB_BUTTON_DEL;Wis
 TP_LOCALLAB_BUTTON_DUPL;Dupliceer
 TP_LOCALLAB_BUTTON_REN;Hernoem
 TP_LOCALLAB_BUTTON_VIS;Toon/verberg
+TP_LOCALLAB_BWEVNONE;Geen
+TP_LOCALLAB_BWEVSIG;Geactiveerd
 TP_LOCALLAB_BWFORCE;Gebruik Zwart LW & Wit LW
 TP_LOCALLAB_CAM16PQREMAP;HDR PQ (Piekluminantie)
 TP_LOCALLAB_CAM16_FRA;Cam16 Beeldaanpassingen
@@ -2783,6 +2818,12 @@ TP_LOCALLAB_CIEMODE_DR;Dynamisch bereik
 TP_LOCALLAB_CIEMODE_TM;Toonmappen
 TP_LOCALLAB_CIEMODE_WAV;Wavelet
 TP_LOCALLAB_CIETOOLEXP;Curven
+TP_LOCALLAB_CIE_SMOOTHFRAME;Versterking hoge lichten & Niveaus
+TP_LOCALLAB_CIE_SMOOTH_EV;Gebaseerd op LW
+TP_LOCALLAB_CIE_SMOOTH_GAMMA;Gebaseerd op helling
+TP_LOCALLAB_CIE_SMOOTH_GAMMA ROLLOFF;Gebaseerd op gamma
+TP_LOCALLAB_CIE_SMOOTH_LEVELS;Niveaus
+TP_LOCALLAB_CIE_SMOOTH_NONE;Geen
 TP_LOCALLAB_CIE_TOOLNAME;Kleurweergave (Cam16 & JzCzHz)
 TP_LOCALLAB_CIRCRADIUS;Spotgrootte
 TP_LOCALLAB_CLARICRES;Meng chroma
@@ -2793,12 +2834,14 @@ TP_LOCALLAB_CLARITYML;Klaarheid (Clarity)
 TP_LOCALLAB_CLIPTM;Kap herstelde data af (versterking)
 TP_LOCALLAB_COFR;Kleur & Licht
 TP_LOCALLAB_COLORDE;ΔE Voorbeeldkleur - intensiteit
+TP_LOCALLAB_COLORFRAME;Dominante kleur
 TP_LOCALLAB_COLORSCOPE;Bereik (kleurgereedschappen)
 TP_LOCALLAB_COLOR_CIE;Kleurcurve
 TP_LOCALLAB_COLOR_TOOLNAME;Kleur & Licht
 TP_LOCALLAB_COL_NAME;Naam
 TP_LOCALLAB_COL_VIS;Status
 TP_LOCALLAB_COMPFRA;Directioneel contrast
+TP_LOCALLAB_COMPRCIE;Helderheidscompressie
 TP_LOCALLAB_COMPREFRA;Wavelet-niveau toonmappen
 TP_LOCALLAB_CONTCOL;Contrastdrempel
 TP_LOCALLAB_CONTFRA;Contrast per niveau
@@ -2816,6 +2859,7 @@ TP_LOCALLAB_CURVNONE;De-activeer curven
 TP_LOCALLAB_DARKRETI;Donker
 TP_LOCALLAB_DEHAFRA;Ontnevelen
 TP_LOCALLAB_DEHAZ;Kracht
+TP_LOCALLAB_DEHAZE_BLACK;Zwart
 TP_LOCALLAB_DELTAD;Delta-balans
 TP_LOCALLAB_DELTAEC;ΔE Beeldmasker
 TP_LOCALLAB_DENOI1_EXP;Ruisvermindering volgens luminantiemasker
@@ -2829,6 +2873,7 @@ TP_LOCALLAB_DETAIL;Lokaal contrast
 TP_LOCALLAB_DETAILFRA;Randdetectie - DCT
 TP_LOCALLAB_DETAILSH;Details
 TP_LOCALLAB_DETAILTHR;Detaildrempel Lum/chrom
+TP_LOCALLAB_DISAB_CIECAM;Schakel Ciecam of geringe Jz-omgeving uit
 TP_LOCALLAB_DIVGR;Gamma
 TP_LOCALLAB_DUPLSPOTNAME;Kopieer
 TP_LOCALLAB_EDGFRA;Randscherpte
@@ -2837,11 +2882,12 @@ TP_LOCALLAB_ELI;Ellips
 TP_LOCALLAB_ENABLE_AFTER_MASK;Gebruik toonmappen
 TP_LOCALLAB_ENABLE_MASK;Activeer masker
 TP_LOCALLAB_ENABLE_MASKAFT;Gebruik alle algoritmen Belichting
+TP_LOCALLAB_ENABLE_MASKALL;Gebruik alle maskergereedschappen
 TP_LOCALLAB_ENH;Verbeterd
 TP_LOCALLAB_ENHDEN;Verbeterd + chroma-ruisonderdrukking
 TP_LOCALLAB_EPSBL;Detail
 TP_LOCALLAB_EQUIL;Normaliseer luminantie
-TP_LOCALLAB_ESTOP;Edge stopping
+TP_LOCALLAB_ESTOP;Randbehoud
 TP_LOCALLAB_EV_DUPL;Kopie van
 TP_LOCALLAB_EV_NVIS;Verberg
 TP_LOCALLAB_EV_NVIS_ALL;Verberg allemaal
@@ -2851,6 +2897,7 @@ TP_LOCALLAB_EXCLUF;Uitsluiting
 TP_LOCALLAB_EXCLUTYPE;Spotmethode
 TP_LOCALLAB_EXECLU;Sluit spot uit
 TP_LOCALLAB_EXFULL;Volledige afbeelding
+TP_LOCALLAB_EXMAIN;Globaal
 TP_LOCALLAB_EXNORM;Normale spot
 TP_LOCALLAB_EXPCHROMA;Chroma-compensatie
 TP_LOCALLAB_EXPCOMP;Belichtingscompensatie ƒ
@@ -2866,11 +2913,14 @@ TP_LOCALLAB_FATANCHOR;Anker
 TP_LOCALLAB_FATDETAIL;Detail
 TP_LOCALLAB_FATFRA;Compressie dynamisch bereik ƒ
 TP_LOCALLAB_FATLEVEL;Sigma
+TP_LOCALLAB_FATSAT;Beperk verzadiging
 TP_LOCALLAB_FATSHFRA;Masker compressie dynamisch bereik ƒ
-TP_LOCALLAB_FEATVALUE;'Veer'verloop (Verloopfilters)
+TP_LOCALLAB_FEATVALUE;Veerverloop (Verloopfilters)
+TP_LOCALLAB_FEATVALUE_MASK;Veerverloop (Grad. Filters Masker)
 TP_LOCALLAB_FFTCOL_MASK;FFTW ƒ
 TP_LOCALLAB_FFTW;ƒ - Gebruik Fast Fourier-transformatie
-TP_LOCALLAB_FFTWBLUR;ƒ - Gebruik altijd Fast Fourier-transformatie 
+TP_LOCALLAB_FFTWBLUR;ƒ - Gebruik altijd Fast Fourier-transformatie
+TP_LOCALLAB_FULLIMAGE;Zwart LW en Wit LW voor volledige afbeelding
 TP_LOCALLAB_GAM;Gamma
 TP_LOCALLAB_GAMC;Gamma
 TP_LOCALLAB_GAMFRA;Toonresponscurve (TRC)
@@ -2883,7 +2933,7 @@ TP_LOCALLAB_GAMUTNON;Geen
 TP_LOCALLAB_GAMUTXYZABSO;XYZ absoluut
 TP_LOCALLAB_GAMUTXYZRELA;XYZ relatief
 TP_LOCALLAB_GAMW;Gamma (wavelet-pyramiden)
-TP_LOCALLAB_GRADANG;Hoek verloop
+TP_LOCALLAB_GRADANG;Verloophoek
 TP_LOCALLAB_GRADFRA;Masker Verloopfilter
 TP_LOCALLAB_GRADLOGFRA;Verloopfilter - Luminantie
 TP_LOCALLAB_GRADSTR;Verloopsterkte
@@ -2907,7 +2957,7 @@ TP_LOCALLAB_INVBL;Inverteer
 TP_LOCALLAB_INVERS;Inverteer
 TP_LOCALLAB_INVMASK;Keer algoritme om
 TP_LOCALLAB_ISOGR;Distributie (ISO)
-TP_LOCALLAB_JAB;Gebruikt Zwart Ev & Wit Ev
+TP_LOCALLAB_JAB;Gebruik Zwart LW & Wit LW
 TP_LOCALLAB_JZ100;Jz-referentie 100cd/m2
 TP_LOCALLAB_JZADAP;PU-adaptatie
 TP_LOCALLAB_JZCH;Chroma
@@ -2929,11 +2979,11 @@ TP_LOCALLAB_JZSAT;Verzadiging
 TP_LOCALLAB_JZSHFRA;Schaduwen/Hoge lichten Jz
 TP_LOCALLAB_JZSOFTCIE;Verzachtingsstraal (Begeleid filter)
 TP_LOCALLAB_JZSTRSOFTCIE;Kracht Begeleid filter
-TP_LOCALLAB_JZTARGET_EV;Bezie gemiddelde luminantie (Yb%)
+TP_LOCALLAB_JZTARGET_EV;Bekijk gemiddelde luminantie (Yb%)
 TP_LOCALLAB_JZTHRHCIE;Chroma-drempel voor Jz(Hz)
 TP_LOCALLAB_JZWAVEXP;Wavelet Jz
 TP_LOCALLAB_LABBLURM;Vervagingsmasker
-TP_LOCALLAB_LABEL;Lokale aanpassingen
+TP_LOCALLAB_LABEL;Selectief bewerken
 TP_LOCALLAB_LABGRID;Kleurcorrectierooster
 TP_LOCALLAB_LABGRIDMERG;Achtergrond
 TP_LOCALLAB_LABGRID_VALUES;Hoog(a)=%1 Hoog(b)=%2\nLaag(a)=%3 Laag(b)=%4
@@ -2962,16 +3012,18 @@ TP_LOCALLAB_LOG1FRA;CAM16 Beeldaanpassingen
 TP_LOCALLAB_LOG2FRA;Kijkomstandigheden
 TP_LOCALLAB_LOGAUTO;Automatisch
 TP_LOCALLAB_LOGCIE;Log-codering ipv. Sigmoid
+TP_LOCALLAB_LOGCIEQ;Log-codering Q (met Ciecam)
 TP_LOCALLAB_LOGCOLORFL;Kleurrijkheid (M)
 TP_LOCALLAB_LOGCONQL;Contrast (Q)
 TP_LOCALLAB_LOGCONTHRES;Contrastdrempel (J & Q)
 TP_LOCALLAB_LOGCONTL;Contrast (J)
 TP_LOCALLAB_LOGEXP;Alle gereedschappen
-TP_LOCALLAB_LOGFRA;Scène-omstandigheden
+TP_LOCALLAB_LOGFRA;Opname-omstandigheden
 TP_LOCALLAB_LOGLIGHTL;Lichtheid (J)
 TP_LOCALLAB_LOGLIGHTQ;Helderheid (Q)
 TP_LOCALLAB_LOGLIN;Logaritmische modus
 TP_LOCALLAB_LOGPFRA;Relatieve Belichtingsniveaus
+TP_LOCALLAB_LOGPFRA2;Log-codering - instellingen
 TP_LOCALLAB_LOGREPART;Overall kracht
 TP_LOCALLAB_LOG_TOOLNAME;Log-codering
 TP_LOCALLAB_LUM;LL - CC
@@ -2985,16 +3037,18 @@ TP_LOCALLAB_MASFRAME;Masker en Combineer
 TP_LOCALLAB_MASK;Curven
 TP_LOCALLAB_MASK2;Contrastcurve
 TP_LOCALLAB_MASKCOM;Gemeenschappelijk Kleurmasker
+TP_LOCALLAB_MASKCOM_TOOLNAME;Gemeenschappelijk kleurmasker
 TP_LOCALLAB_MASKDDECAY;Vervalsterkte
 TP_LOCALLAB_MASKH;Tintcurve
-TP_LOCALLAB_MASKLCTHR;Lichte gebieden luminantiedrempel 
+TP_LOCALLAB_MASKLCTHR;Lichte gebieden luminantiedrempel
 TP_LOCALLAB_MASKLCTHR2;Lichte gebieden luma-drempel
 TP_LOCALLAB_MASKLCTHRLOW;Donkere gebieden luminantiedrempel
 TP_LOCALLAB_MASKLCTHRLOW2;Donkere gebieden luma-drempel
 TP_LOCALLAB_MASKLCTHRMID;Grijze gebieden luma-ruisvermindering
+TP_LOCALLAB_MASKLCTHRMIDCH;Grijze gebieden chroma-ruisvermindering
 TP_LOCALLAB_MASKLNOISELOW;Versterk donkere/lichte gebieden
 TP_LOCALLAB_MASKRECOTHRES;Hersteldrempel
-TP_LOCALLAB_MASKUNUSABLE;Masker uitgeschakeld (Masker & modificaties)
+TP_LOCALLAB_MASKUNUSABLE;Masker uitgeschakeld (zie Masker & modificaties)
 TP_LOCALLAB_MASKUSABLE;Masker ingeschakeld (Masker & modificaties)
 TP_LOCALLAB_MEDIAN;Mediaan Laag
 TP_LOCALLAB_MEDNONE;Geen
@@ -3023,6 +3077,7 @@ TP_LOCALLAB_MERTHI;Brand kleur
 TP_LOCALLAB_MERTHR;Verschil
 TP_LOCALLAB_MERTWE;Uitsluiting
 TP_LOCALLAB_MERTWO;Aftrekken
+TP_LOCALLAB_MIDTCIE;Middentonen
 TP_LOCALLAB_MLABEL;Herstelde data Min=%1 Max=%2
 TP_LOCALLAB_MODE_EXPERT;Geavanceerd
 TP_LOCALLAB_MODE_NORMAL;Standaard
@@ -3062,6 +3117,7 @@ TP_LOCALLAB_PDEFRA;Contrastversterker ƒ
 TP_LOCALLAB_PREVHIDE;Verberg extra instellingen
 TP_LOCALLAB_PREVIEW;Voorbeeld ΔE
 TP_LOCALLAB_PREVSHOW;Toon extra instellingen
+TP_LOCALLAB_PRIMILLFRAME;Primaire kleuren & Illuminant
 TP_LOCALLAB_PROXI;ΔE-verval
 TP_LOCALLAB_QUAAGRES;Aggressief
 TP_LOCALLAB_QUACONSER;Conservatief
@@ -3093,11 +3149,13 @@ TP_LOCALLAB_REWEI;Herhaling herweging
 TP_LOCALLAB_RGB;RGB-tooncurve
 TP_LOCALLAB_ROW_NVIS;Niet zichtbaar
 TP_LOCALLAB_ROW_VIS;Zichtbaar
+TP_LOCALLAB_SATCIE;Beperk verzadiging
 TP_LOCALLAB_SATUR;Verzadiging
 TP_LOCALLAB_SATURV;Verzadiging (s)
 TP_LOCALLAB_SCALEGR;Schaal
 TP_LOCALLAB_SCALERETI;Schaal
 TP_LOCALLAB_SCALTM;Schaal
+TP_LOCALLAB_SCOPEMASK;Bereik (ΔE beeldmasker)
 TP_LOCALLAB_SENSI;Bereik
 TP_LOCALLAB_SENSIEXCLU;Bereik
 TP_LOCALLAB_SETTINGS;Instellingen
@@ -3107,7 +3165,7 @@ TP_LOCALLAB_SHADEX;Schaduwen
 TP_LOCALLAB_SHADEXCOMP;Schaduwcompressie
 TP_LOCALLAB_SHADHIGH;Schaduwen/hoge lichten & Toonequalizer
 TP_LOCALLAB_SHAMASKCOL;Schaduwen
-TP_LOCALLAB_SHAPETYPE;Spot-vorm
+TP_LOCALLAB_SHAPETYPE;Spotvorm
 TP_LOCALLAB_SHARAMOUNT;Hoeveelheid
 TP_LOCALLAB_SHARBLUR;Vervagingsradius
 TP_LOCALLAB_SHARDAMPING;Demping
@@ -3117,7 +3175,7 @@ TP_LOCALLAB_SHARP;Schaduwen
 TP_LOCALLAB_SHARP_TOOLNAME;Schaduwen
 TP_LOCALLAB_SHARRADIUS;Straal
 TP_LOCALLAB_SHORTC;Korte curves L-masker
-TP_LOCALLAB_SHOWC;Masker en modificaties
+TP_LOCALLAB_SHOWC;Masker & modificaties
 TP_LOCALLAB_SHOWC1;Voeg bestand samen
 TP_LOCALLAB_SHOWCB;Masker en modificaties
 TP_LOCALLAB_SHOWDCT;Toon Fourier (ƒ) proces
@@ -3145,15 +3203,29 @@ TP_LOCALLAB_SHOWT;Masker en modificaties
 TP_LOCALLAB_SHOWVI;Masker en modificaties
 TP_LOCALLAB_SHRESFRA;Schaduwen/Hoge lichten & TRC
 TP_LOCALLAB_SH_TOOLNAME;Schaduwen/Hoge lichten & Toonequalizer
+TP_LOCALLAB_SIGBLACKSSCIE;Zwartdistributie
 TP_LOCALLAB_SIGFRA;Sigmoid Q & Log-codering Q
 TP_LOCALLAB_SIGJZFRA;Sigmoid Jz
 TP_LOCALLAB_SIGMAWAV;Versterkingsrespons
 TP_LOCALLAB_SIGMOIDBL;Samenvoegen
 TP_LOCALLAB_SIGMOIDLAMBDA;Contrast
-TP_LOCALLAB_SIGMOIDQJ;Gebruikt Zwart Ev & Wit Ev
+TP_LOCALLAB_SIGMOIDNORMCIE;Normaliseer Luminantie
+TP_LOCALLAB_SIGMOIDQJ;Gebruikt Zwart LW & Wit LW
+TP_LOCALLAB_SIGMOIDSENSI;Aanpasbaarheid
 TP_LOCALLAB_SIGMOIDTH;Drempel (Grijspunt)
+TP_LOCALLAB_SIGSLOPJCIE;Helling
+TP_LOCALLAB_SIGTRCCIE;Aanpassingen brondata
+TP_LOCALLAB_SIGWHITESCIE;Witdistributie
 TP_LOCALLAB_SLOMASKCOL;Helling
+TP_LOCALLAB_SLOPESMOOTH;Grijsbalans (Helling)
+TP_LOCALLAB_SLOPESMOOTHB;Blue balance (Helling)
+TP_LOCALLAB_SLOPESMOOTHG;Green balance (Helling)
+TP_LOCALLAB_SLOPESMOOTHR;Roodbalans (Helling)
 TP_LOCALLAB_SLOSH;Helling
+TP_LOCALLAB_SMOOTHCIE;Versterking hoge lichten
+TP_LOCALLAB_SMOOTHCIE_LUM;Luminositeitsmodus
+TP_LOCALLAB_SMOOTHCIE_SCA;Schaal Yb-Scène
+TP_LOCALLAB_SMOOTHCIE_YB;Schaal Yb-Viewing
 TP_LOCALLAB_SOFT;Zacht licht & Originele Retinex
 TP_LOCALLAB_SOFTM;Zacht licht
 TP_LOCALLAB_SOFTRADIUSCOL;Radius verzachting
@@ -3171,12 +3243,13 @@ TP_LOCALLAB_STREN;Compressiesterkte
 TP_LOCALLAB_STRENG;Kracht
 TP_LOCALLAB_STRENGR;Kracht
 TP_LOCALLAB_STRENGTH;Ruis
+TP_LOCALLAB_STRENGTHCIELOG;Kracht
 TP_LOCALLAB_STRGRID;Kracht
 TP_LOCALLAB_STRUC;Structuur
 TP_LOCALLAB_STRUCCOL;Spotstructuur
 TP_LOCALLAB_STRUCCOL1;Spotstructuur
-TP_LOCALLAB_STRUMASKCOL;Kracht qstructuurmasker
-TP_LOCALLAB_STYPE;Vorm Shape methode
+TP_LOCALLAB_STRUMASKCOL;Kracht structuurmasker
+TP_LOCALLAB_STYPE;Vorm - methode
 TP_LOCALLAB_SYM;Symmetrisch (muis)
 TP_LOCALLAB_SYMSL;Symmetrisch (muis + schuiven)
 TP_LOCALLAB_TARGET_GRAY;Gemiddelde luminantie (Yb%)
@@ -3198,6 +3271,7 @@ TP_LOCALLAB_TRANSITVALUE;Transitiewaarde
 TP_LOCALLAB_TRANSITWEAK;Transitieverval (lineair-log)
 TP_LOCALLAB_TRANSMISSIONGAIN;Transmissieversterking
 TP_LOCALLAB_TRANSMISSIONMAP;Transmissiemap
+TP_LOCALLAB_TRCFRAME;Toonresponscurve (TRC) & Middentonen
 TP_LOCALLAB_USEMASK;Laplacian
 TP_LOCALLAB_VART;Variantie (contrast)
 TP_LOCALLAB_VIBRANCE;Levendigheid & Warm/Koel
@@ -3213,7 +3287,7 @@ TP_LOCALLAB_WAVEDG;Lokaal contrast
 TP_LOCALLAB_WAVLEV;Vervaag per niveau
 TP_LOCALLAB_WAVMASK;Lokaal contrast
 TP_LOCALLAB_WEDIANHI;Mediaan Hi
-TP_LOCALLAB_WHITE_EV;Wit Ev
+TP_LOCALLAB_WHITE_EV;Wit LW
 TP_LOCALLAB_ZCAMFRA;ZCAM Beeldaanpassingen
 TP_LOCALLAB_ZCAMTHRES;Haal hoge data op
 TP_LOCAL_HEIGHT;Onder
@@ -3280,7 +3354,7 @@ TP_PRSHARPENING_LABEL;Verscherp na verkleinen
 TP_PRSHARPENING_TOOLTIP;Verscherp na verkleinen. Werkt alleen als verkleinen actief is en de methode 'Lanczos' is. Omdat verkleinen geen effect heeft op het voorbeeld, heeft 'post-verkleinen verscherping' ook geen effect op het voorbeeld.
 TP_RAWCACORR_AUTO;Automatische CA-correctie
 TP_RAWCACORR_AUTOIT;Herhalingen
-TP_RAWCACORR_AUTOIT_TOOLTIP;Deze schuif is alleen actief als Automatische CA-correctie is aangevinkt.\nAuto-correctie werkt conservatief en corrigeert meestal niet alle chromatische afwijkingen.\nOm de resterende CA te corrigeren, kunt u dit proces tot vijf keer herhalen.\nElke herhaling vermindert de CA van de vorige herhaling, maar gaat wel ten koste van extra rekentijd. 
+TP_RAWCACORR_AUTOIT_TOOLTIP;Deze schuif is alleen actief als Automatische CA-correctie is aangevinkt.\nAuto-correctie werkt conservatief en corrigeert meestal niet alle chromatische afwijkingen.\nOm de resterende CA te corrigeren, kunt u dit proces tot vijf keer herhalen.\nElke herhaling vermindert de CA van de vorige herhaling, maar gaat wel ten koste van extra rekentijd.
 TP_RAWCACORR_AVOIDCOLORSHIFT;Vermijd kleurverschuiving
 TP_RAWCACORR_CABLUE;Blauw
 TP_RAWCACORR_CARED;Rood
@@ -3438,7 +3512,7 @@ TP_RETINEX_MEDIAN;Transmissiemediaan-filter
 TP_RETINEX_METHOD;Methode
 TP_RETINEX_METHOD_TOOLTIP;Laag: schaduwen ophelderen,\nUniform: gelijkmatig,\nHoog: versterk hoge lichten,\nHoge lichten: verwijder magenta in hoge lichten.
 TP_RETINEX_MLABEL;Teruggeplaatst sluiervrij Min=%1 Max=%2
-TP_RETINEX_MLABEL_TOOLTIP;De waarden zouden dichtbij Min=0 en Max=32768 (log-modus) moeten liggen, maar andere waarden zijn mogelijk. Pas 'Kap herstelde data (versterking)' en 'Verschuiving' aan om te normaliseren. \nHerstelt beeldgegevens zonder menging. 
+TP_RETINEX_MLABEL_TOOLTIP;De waarden zouden dichtbij Min=0 en Max=32768 (log-modus) moeten liggen, maar andere waarden zijn mogelijk. Pas 'Kap herstelde data (versterking)' en 'Verschuiving' aan om te normaliseren. \nHerstelt beeldgegevens zonder menging.
 TP_RETINEX_NEIGHBOR;Naburige pixels
 TP_RETINEX_NEUTRAL;Beginwaarde
 TP_RETINEX_NEUTRAL_TOOLTIP;Zet alles terug naar de beginwaarde.
@@ -3515,13 +3589,13 @@ TP_SHARPENMICRO_UNIFORMITY;Uniformiteit
 TP_SOFTLIGHT_LABEL;Zacht licht
 TP_SOFTLIGHT_STRENGTH;Sterkte
 TP_SPOT_COUNTLABEL;%1 punt(en)
-TP_SPOT_DEFAULT_SIZE;Standaard spot-grootte 
+TP_SPOT_DEFAULT_SIZE;Standaard spot-grootte
 TP_SPOT_ENTRYCHANGED;Punt veranderd
 TP_SPOT_HINT;Klik op deze button... Click on this button to be able to operate on the preview area.\n\nTo edit a spot, hover the white mark locating an edited area, making the editing geometry appear.\n\nTo add a spot, press Ctrl and left mouse button, drag the circle (Ctrl key can be released) to a source location, then release the mouse button.\n\nTo move the source or destination spot, hover its center then drag it.\n\nThe inner circle (maximum effect area) and the 'feather' circle can be resized by hovering them (the circle becomes orange) and dragging it (the circle becomes red).\n\nWhen the changes are done, right click outside any spot to end the Spot editing mode, or click on this button again.
 TP_SPOT_LABEL;Verwijder vlekken
 TP_TM_FATTAL_AMOUNT;Hoeveelheid
 TP_TM_FATTAL_ANCHOR;Anker
-TP_TM_FATTAL_LABEL;Compressie dynamisch bereik 
+TP_TM_FATTAL_LABEL;Compressie dynamisch bereik
 TP_TM_FATTAL_THRESHOLD;Detail
 TP_TONE_EQUALIZER_BANDS;Banden
 TP_TONE_EQUALIZER_BAND_0;Zwarten
@@ -3587,7 +3661,7 @@ TP_WAVELET_BLCURVE;Vervaag per niveau
 TP_WAVELET_BLURFRAME;Vervaag
 TP_WAVELET_BLUWAV;Versterkingsrespons
 TP_WAVELET_CBENAB;Kleurtint en kleurbalans
-TP_WAVELET_CB_TOOLTIP;Met hoge waarden kun je speciale effecten creëren, gelijkend op wat je met de Chroma-module kunt bereiken, maar nu gericht op het residuele beeld. Met kleinere waarden kun je handmatig de witbalans corrigeren. 
+TP_WAVELET_CB_TOOLTIP;Met hoge waarden kun je speciale effecten creëren, gelijkend op wat je met de Chroma-module kunt bereiken, maar nu gericht op het residuele beeld. Met kleinere waarden kun je handmatig de witbalans corrigeren.
 TP_WAVELET_CCURVE;Lokaal contrast
 TP_WAVELET_CH1;Alle chroma's
 TP_WAVELET_CH2;Pastel - Verzadigd
@@ -3612,7 +3686,7 @@ TP_WAVELET_COMPEXPERT;Geavanceerd
 TP_WAVELET_COMPGAMMA;Compressie gamma
 TP_WAVELET_COMPGAMMA_TOOLTIP;Door het gamma van het residuele beeld te wijzigen, kun je data en histogram in balans brengen.
 TP_WAVELET_COMPLEXLAB;Complexiteit
-TP_WAVELET_COMPLEX_TOOLTIP;Standaard: toont... shows a reduced set of tools suitable for most processing operations.\nAdvanced: shows the complete set of tools for advanced processing operations.
+TP_WAVELET_COMPLEX_TOOLTIP;Standaard: toont minder gereedschappen maar voldoende voor de meeste bewerkingen.\nGeavanceerd: toont alle gereedschappen voor geavanceerde bewerkingen.
 TP_WAVELET_COMPNORMAL;Standaard
 TP_WAVELET_COMPTM;Toonmappen
 TP_WAVELET_CONTEDIT;'Na'-contrastcurve
@@ -3780,14 +3854,14 @@ TP_WAVELET_THR;Drempel schaduwen
 TP_WAVELET_THREND;Drempel lokaal contrast
 TP_WAVELET_THRESHOLD;Hoge lichten: Aantal te gebruiken niveaus (fijn naar grof - leidend)
 TP_WAVELET_THRESHOLD2;Schaduwen: Aantal te gebruiken niveaus (grof naar fijn)
-TP_WAVELET_THRESHOLD2_TOOLTIP;Alleen niveaus van de gekozen waarde tot het gekozen aantal Wavelet-niveaus zullen worden beïnvloed door het Schaduwluminantiebereik. 
+TP_WAVELET_THRESHOLD2_TOOLTIP;Alleen niveaus van de gekozen waarde tot het gekozen aantal Wavelet-niveaus zullen worden beïnvloed door het Schaduwluminantiebereik.
 TP_WAVELET_THRESHOLD_TOOLTIP;Alleen niveaus beneden en inclusief de gekozen waarde zullen worden beïnvloed door het luminantiebereik van de hoge lichten.
 TP_WAVELET_THRH;Drempel hoge lichten
 TP_WAVELET_TILESBIG;Grote tegels
 TP_WAVELET_TILESFULL;Volledige afbeelding
 TP_WAVELET_TILESIZE;Tegelgrootte
 TP_WAVELET_TILES_TOOLTIP;De optie 'Volledige afbeelding' geeft een betere kwaliteit en is de aanbevolen keuze. Selecteer 'Grote tegels' als er onvoldoende geheugen beschikbaar is. Raadpleeg RawPedia voor geheugenaanbevelingen.
-TP_WAVELET_TMEDGS;Edge stopping
+TP_WAVELET_TMEDGS;Randbehoud
 TP_WAVELET_TMSCALE;Schaal
 TP_WAVELET_TMSTRENGTH;Compressiesterkte
 TP_WAVELET_TMSTRENGTH_TOOLTIP;Bepaalt de sterkte van het toonmappen of de contrastcompressie. Als de waarde anders is dan 0, dan worden de Sterkte- en Gamma-schuifbalken van Toonmappen in de Belichtingstab inactief.
@@ -3833,7 +3907,7 @@ TP_WBALANCE_ITCWB_CUSTOM;Gebruik aangepaste temperatuur & tint
 TP_WBALANCE_ITCWB_DELTA;Delta temperatuur in groene lus
 TP_WBALANCE_ITCWB_FGREEN;Vind groene student
 TP_WBALANCE_ITCWB_FORCED;Dichtbij volledig CIE-diagram
-TP_WBALANCE_ITCWB_FRA;Autom. instellingen temperatuurcorrelatie 
+TP_WBALANCE_ITCWB_FRA;Autom. instellingen temperatuurcorrelatie
 TP_WBALANCE_ITCWB_MINSIZEPATCH;Patch minimumgrootte
 TP_WBALANCE_ITCWB_NOPURPLE;Filter op paars
 TP_WBALANCE_ITCWB_PRECIS;Precisie-algoritme - schaal gebruikt
@@ -3909,17 +3983,8 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !HISTORY_MSG_466;--unused--
 !HISTORY_MSG_467;--unused--
 !HISTORY_MSG_470;--unused--
-!HISTORY_MSG_498;Local - Spot name
-!HISTORY_MSG_499;Local - Spot visibility
 !HISTORY_MSG_580;--unused--
 !HISTORY_MSG_664;--unused--
-!HISTORY_MSG_ICM_CAT;Matrix adaptation
-!HISTORY_MSG_ICM_MIDTCIE;Midtones
-!HISTORY_MSG_ICM_REFI;Refinement Colors
-!HISTORY_MSG_ICM_SHIFTX;Refinement Colors - Shift x
-!HISTORY_MSG_ICM_SHIFTY;Refinement Colors - Shift y
-!HISTORY_MSG_ICM_SMOOTHCIE;Smooth highlights
-!HISTORY_MSG_ICM_TRCEXP;Abstract Profile
 !HISTORY_MSG_LOCAL_CIEMASK_BLURCONT;Local - CIECAM Mask blur contrast
 !HISTORY_MSG_LOCAL_CIEMASK_BLURFFT;Local - CIECAM Mask blur FFTW
 !HISTORY_MSG_LOCAL_CIEMASK_BLURRAD;Local - CIECAM Mask blur radius
@@ -3953,7 +4018,6 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !HISTORY_MSG_LOCAL_CIE_REDXL;Local - CIECAM Red X
 !HISTORY_MSG_LOCAL_CIE_REDYL;Local - CIECAM Red Y
 !HISTORY_MSG_LOCAL_CIE_REFI;Local - CIECAM Refinement colors
-!HISTORY_MSG_LOCAL_CIE_SATCIE;Local - CIECAM Saturation control
 !HISTORY_MSG_LOCAL_CIE_SHIFTXL;Local - CIECAM Shift x
 !HISTORY_MSG_LOCAL_CIE_SHIFTYL;Local - CIECAM Shift y
 !HISTORY_MSG_LOCAL_CIE_SIG;Local - Sigmoid
@@ -3983,20 +4047,9 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !HISTORY_MSG_LOCAL_FEATHERWAV;Local - Wav Gradient feather
 !HISTORY_MSG_LOCAL_LOG_BLACKS;Local - Log Blacks distribution
 !HISTORY_MSG_LOCAL_LOG_COMPR;Local - Log Compress brightness
-!HISTORY_MSG_LOCAL_LOG_SAT;Local - Log Saturation control
 !HISTORY_MSG_LOCAL_LOG_WHITES;Local - Log Whites distribution
 !HISTORY_MSG_LOCAL_TMO_SATUR;Local Exp Fattal Saturation
-!PREFERENCES_BROWSERECURSIVEDEPTH;Browse sub-folders depth
-!PREFERENCES_BROWSERECURSIVEFOLLOWLINKS;Follow symbolic links when browsing sub-folders
-!PREFERENCES_BROWSERECURSIVEMAXDIRS;Maximum sub-folders
-!PREFERENCES_MAX_ZOOM_TITLE;Maximum zoom
-!PREFERENCES_RAW_DECODER;Raw Decoder
-!PREFERENCES_RAW_DECODER_ENABLE_LIBRAW;Use LibRaw
-!PREFERENCES_SPOTLOC;Define Spot method for Selective Editing
-!PREFERENCES_THUMBNAIL_RANK_COLOR_MODE;Load/Save thumbnail rank and color from/to XMP sidecars
 !PREFERENCES_WBACORR_TOOLTIP;These settings allow, depending on the images (type of raw file, colorimetry, etc.), an adaptation of the " Temperature correlation " algorithm in order to obtain the best overall results. There is no absolute rule, linking these parameters to the results obtained.\n\nThe settings are of 3 types: \n* those accessible to the user from the GUI.\n* those accessible only in reading from each pp3 file : Itcwb_minsize=20, Itcwb_delta=4 Itcwb_rgreen=1 Itcwb_nopurple=false (See Rawpedia)\n* those accessible to the user in 'options' (see Rawpedia)\n You can use "Awb temperature bias" and "Green refinement" to adjust the results. Each movement of these commands brings a new calculation of temperature, tint and correlation.\n\nPlease note that the 3 indicators 'Correlation factor', 'Patch chroma' and ΔE are given for information only. It is not because one of these indicators is better that the result will necessarily be better.
-!QUEUE_DESTPREVIEW_TITLE;Select a thumbnail to preview its destination path here
-!QUEUE_DESTPREVIEW_TOOLTIP;Destination path for the first selected image appears here
 !QUEUE_LOCATION_TEMPLATE_HELP_BUTTON_TOOLTIP;Show or hide a help panel with instructions for creating location templates
 !QUEUE_LOCATION_TEMPLATE_HELP_EXAMPLES_BODY;If you want to save the output image alongside the source image, write:\n<b>%p1/%f</b>\n\nIf you want to save the output image in a folder named '<i>converted</i>' located in the source photo's folder, write:\n<b>%p1/converted/%f</b>\n\nIf you want to save the output image in\n'<i>/home/tom/photos/converted/2010-10-31</i>', write:\n<b>%p-3/converted/%P-4/%f</b>
 !QUEUE_LOCATION_TEMPLATE_HELP_EXAMPLES_TITLE;Common examples
@@ -4016,11 +4069,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !QUEUE_LOCATION_TEMPLATE_HELP_TIMESTAMP_BODY;Three different date/time values may be used in templates:\n  <b>%tE"%Y-%m-%d"</b> = when export started\n  <b>%tF"%Y-%m-%d"</b> = when file was last saved\n  <b>%tP"%Y-%m-%d"</b> = when photo was taken\nThe quoted string defines the format of the resulting date and/or time. The format string <b>%tF"%Y-%m-%d"</b> is just one example. The string can use all conversion specifiers defined for the g_date_time_format function (see https://docs.gtk.org/glib/method.DateTime.format.html).\n\nExample format strings:
 !QUEUE_LOCATION_TEMPLATE_HELP_TIMESTAMP_TITLE;Date and time
 !QUEUE_LOCATION_TEMPLATE_HELP_TITLE;Creating an output template
-!TC_LOCALLAB_PRIM_SHIFTX;Shift x
 !TC_LOCALLAB_PRIM_SHIFTX_TOOLTIP;In combination with "Refine colors", allows you to:\n 1) for low values, adjust the image purity.\n 2) for higher values, carry out moderate color toning.\nBe careful not to go outside the CIE xy diagram.
-!TC_LOCALLAB_PRIM_SHIFTY;Shift y
-!TC_PRIM_REFI;Refine colors (white-point)
-!TOOLBAR_TOOLTIP_PERSPECTIVE;<b>Perspective Correction</b>\n\nEdit control lines to correct perspective distortion. Click this button again to apply correction.
 !TP_COLORAPP_ADAPSCEN_TOOLTIP;Corresponds to the luminance in candelas per m2 at the time of shooting, calculated automatically from the exif data.
 !TP_COLORAPP_CATMET_TOOLTIP;Classic - traditional CIECAM operation. The chromatic adaptation transforms are applied separately on 'Scene conditions' and basic illuminant on the one hand, and on basic illuminant and 'Viewing conditions' on the other.\n\nSymmetric – The chromatic adaptation is based on the white balance. The 'Scene conditions', 'Image adjustments' and 'Viewing conditions' settings are neutralized.\n\nMixed – Same as the 'Classic' option but in this case, the chromatic adaptation is based on the white balance.
 !TP_COLORAPP_DEGREE_TOOLTIP;CAT02/16 is a chromatic adaptation. It converts the values of an image whose white point is that of a given illuminant (for example D65) into new values whose white point is that of the new illuminant - see WP model (for example D50 or D55).
@@ -4035,7 +4084,6 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_COLORAPP_VIEWINGF_TOOLTIP;Takes into account the support on which the final image will be viewed (monitor, TV, projector, printer, etc.), as well as its environment. This process will take the data coming from process 'Image Adjustments' and 'bring' it to the support in such a way that the viewing conditions and its environment are taken into account.
 !TP_COLORAPP_YBOUT_TOOLTIP;Yb is the relative luminance of the background, expressed in % of gray. 18% gray corresponds to a background luminance of 50% expressed in CIE L.\nThe data is based on the mean luminance of the image.
 !TP_COLORAPP_YBSCEN_TOOLTIP;Yb is the relative luminance of the background, expressed in % of gray. 18% gray corresponds to a background luminance of 50% expressed in CIE L.\nThe data is based on the mean luminance of the image.
-!TP_ICM_BW;Black and White
 !TP_ICM_ILLUMPRIM_TOOLTIP;Choose the illuminant closest to the shooting conditions.\nChanges can only be made when the 'Destination primaries' selection is set to 'Custom (sliders)'.
 !TP_ICM_PRIMBLU_TOOLTIP;Primaries Blue:\nsRGB x=0.15 y=0.06\nAdobe x=0.15 y=0.06\nWidegamut x=0.157 y=0.018\nRec2020 x=0.131 y=0.046\nACES P1 x=0.128 y= 0.044\nACES P0 x=0.0001 y=-0.077\nProphoto x=0.0366 y=0.0001\nBruceRGB x=0.15 y=0.06\nBeta RGB x=0.1265 y=0.0352\nBestRGB x=0.131 y=0.046
 !TP_ICM_PRIMGRE_TOOLTIP;Primaries Green:\nsRGB x=0.3 y=0.6\nAdobe x=0.21 y=0.71\nWidegamut x=0.115 y=0.826\nRec2020 x=0.17 y=0.797\nACES P1 x=0.165 y= 0.83\nACES P0 x=0.0 y=1.0\nProphoto x=0.1596 y=0.8404\nBruceRGB x=0.28 y=0.65\nBeta RGB x=0.1986 y=0.7551\nBest RGB x=0.2150 0.7750
@@ -4043,13 +4091,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_ICM_PRIMRED_TOOLTIP;Primaries Red:\nsRGB x=0.64 y=0.33\nAdobe x=0.64 y=0.33\nWidegamut x=0.735 y=0.265\nRec2020 x=0.708 y=0.292\nACES P1 x=0.713 y= 0.293\nACES P0 x=0.7347 y=0.2653\nProphoto x=0.7347 y=0.2653\nBruceRGB x=0.64 y=0.33\nBeta RGB x=0.688 y=0.3112\nBestRGB x=0.7347 y=0.2653
 !TP_ICM_TRCFRAME_TOOLTIP;Also known as 'synthetic' or 'virtual' profiles, which are applied at the end of the processing pipeline (prior to CIECAM) allowing you to create custom image effects.\nYou can make changes to the:\n 'Tone response curve', which modifies the tones of the image.\n 'Illuminant', which allows you to change the profile primaries to adapt them to the shooting conditions.\n 'Destination primaries', which allows you to change the destination primaries with three main uses - channel mixer, restore image color (saturation), and calibration.\nNote: Abstract profiles take into account the built-in working profiles without modifying them. They do not work with custom working profiles.
 !TP_ICM_TRC_TOOLTIP;Allows you to change the default sRGB 'Tone response curve' in RT (g=2.4 s=12.92).\nThis TRC modifies the tones of the image. The RGB and Lab values, histogram and output (screen, TIF, JPG) are changed:\n-Gamma acts mainly on light tones -Slope acts mainly on dark tones.\nYou can choose any pair of 'gamma and slope' (values >1) and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.\nA selection other than 'none' activates the 'Illuminant' and 'Destination primaries' menus.
-!TP_ICM_WORKING_CAT;Matrix adaptation
-!TP_ICM_WORKING_CAT_BRAD;Bradford
-!TP_ICM_WORKING_CAT_CAT02;Cat02
-!TP_ICM_WORKING_CAT_CAT16;Cat16
 !TP_ICM_WORKING_CAT_TOOLTIP;Performs the chromatic adaptation of the XYZ conversion matrix. Default: Bradford
-!TP_ICM_WORKING_CAT_VK;Von Kries
-!TP_ICM_WORKING_CAT_XYZ;XYZ scale
 !TP_ICM_WORKING_ILLU_E;E
 !TP_ICM_WORKING_NON;None
 !TP_ICM_WORKING_PRIMFRAME_TOOLTIP;When 'Custom CIE xy diagram' is selected in 'Destination primaries' combo box, you can modify the values of the 3 primaries directly on the graph.\nNote that in this case, the white point position on the graph will not be updated.
@@ -4069,8 +4111,6 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_LOCALLAB_BLURMASK_TOOLTIP;Uses a large-radius blur to create a mask that allows you to vary the contrast of the image and/or darken/lighten parts of it.
 !TP_LOCALLAB_BLURRMASK_TOOLTIP;Allows you to vary the 'radius' of the Gaussian blur (0 to 1000).
 !TP_LOCALLAB_BLWH_TOOLTIP;Force color components 'a' and 'b' to zero.\nUseful for black and white processing, or film simulation.
-!TP_LOCALLAB_BWEVNONE;None
-!TP_LOCALLAB_BWEVSIG;Activated
 !TP_LOCALLAB_BWEVSIGLOG;Sigmoid & Log-Encoding
 !TP_LOCALLAB_CAM16PQREMAP_TOOLTIP;PQ (Perceptual Quantizer) adapted to CAM16 (experimental). Allows you to change the internal PQ function (usually 10000 cd/m2 - default 100 cd/m2 - disabled for 100 cd/m2).\nCan be used to adapt to different devices and images, for example, to match CAM16 processing with the maximum monitor brightness of 400cd/m2.
 !TP_LOCALLAB_CBDLCLARI_TOOLTIP;Enhances local contrast of the midtones.
@@ -4081,12 +4121,6 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_LOCALLAB_CHROMASK_TOOLTIP;Changes the chroma of the mask if one exists (i.e. C(C) or LC(H) is activated).
 !TP_LOCALLAB_CIECAMLOG_TOOLTIP;This module is based on the CIECAM color appearance model which was designed to better simulate how human vision perceives colors under different lighting conditions.\nThe first Ciecam process 'Scene conditions' is carried out by Log encoding, it also uses 'Absolute luminance' at the time of shooting.\nThe second Ciecam process 'Image adjustments' is simplified and uses only 3 variables (local contrast, contrast J, saturation s).\nThe third Ciecam process 'Viewing conditions' adapts the output to the intended viewing conditions (monitor, TV, projector, printer, etc.) so that the chromatic and contrast appearance is preserved across the display environment.
 !TP_LOCALLAB_CIEMODE_TOOLTIP;In Default mode, Ciecam is added at the end of the process. 'Mask and modifications' and 'Recovery based on luminance mask' are available for'Cam16 and JzCzHz' at your disposal .\nYou can also integrate Ciecam into other tools if you wish (TM, Wavelet, Dynamic Range, Log Encoding). The results for these tools will be different to those without Ciecam. In this mode, you can also use 'Mask and modifications' and 'Recovery based on luminance mask'.
-!TP_LOCALLAB_CIE_SMOOTHFRAME;Highlight Attenuation & Levels
-!TP_LOCALLAB_CIE_SMOOTH_EV;Ev based
-!TP_LOCALLAB_CIE_SMOOTH_GAMMA;Slope based
-!TP_LOCALLAB_CIE_SMOOTH_GAMMA ROLLOFF;Gamma based
-!TP_LOCALLAB_CIE_SMOOTH_LEVELS;Levels
-!TP_LOCALLAB_CIE_SMOOTH_NONE;None
 !TP_LOCALLAB_CIRCRAD_TOOLTIP;Contains the references of the spot, useful for shape detection (hue, luma, chroma, Sobel).\nLow values may be useful for processing foliage.\nHigh values may be useful for processing skin.
 !TP_LOCALLAB_CLARIJZ_TOOLTIP;Levels 0 to 4 (included): 'Sharp mask' is enabled\nLevels 5 and above: 'Clarity' is enabled.
 !TP_LOCALLAB_CLARISOFTJZ_TOOLTIP;The 'Soft radius' slider (guided filter algorithm) reduces halos and irregularities for Clarity, Sharp Mask and Local contrast wavelets Jz.
@@ -4094,9 +4128,7 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_LOCALLAB_CLARI_TOOLTIP;Levels 0 to 4 (included): 'Sharp mask' is enabled\nLevels 5 and above: 'Clarity' is enabled.\nUseful if you use 'Wavelet level tone mapping'.
 !TP_LOCALLAB_COLORDEPREV_TOOLTIP;Preview ΔE button in Settings will only work if you have activated 'Sharpening', 'Soft Light and Original Retinex', 'Blur/Grain and Denoise', 'Dehaze and Retinex', or 'Contrast by Detail Levels' in the 'Add tool to current spot' menu.\nFor others tools, the Preview ΔE button is in the tool, which allows previewing ΔE with several tools enabled. Prefer using Mask and modifications.
 !TP_LOCALLAB_COLORDE_TOOLTIP;Show a blue color preview for ΔE selection if negative and green if positive.\n\nMask and modifications (show modified areas without mask): show actual modifications if positive, show enhanced modifications (luminance only) with blue and yellow if negative.
-!TP_LOCALLAB_COLORFRAME;Dominant color
 !TP_LOCALLAB_COLORSCOPE_TOOLTIP;Common Scope slider for Color and Light, Shadows/Highlights, Vibrance.\nOther tools have their own scope controls.
-!TP_LOCALLAB_COMPRCIE;Brightness compression
 !TP_LOCALLAB_COMPRCIETH;Compression threshold
 !TP_LOCALLAB_COMPRLOG_TOOLTIP;This algorithm compress the data before log conversion, above the threshold slider value. To use in conjunction with Whites distribution.
 !TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP;Allows you to freely change the contrast of the mask.\n Has a similar function to the Gamma and Slope sliders.\n It allows you to target certain parts of the image (usually the lightest parts of the mask by using the curve to exclude the darker parts).May create artifacts.
@@ -4106,7 +4138,6 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP;To activate the curves, set the 'Curve type' combo box to 'Normal'.
 !TP_LOCALLAB_CURVEEDITOR_TONES_TOOLTIP;L=f(L), can be used with L(H) in Color and Light.
 !TP_LOCALLAB_CURVEMETHOD_TOOLTIP;'Normal', the curve L=f(L) uses the same algorithm as the lightness slider.
-!TP_LOCALLAB_DEHAZE_BLACK;Black
 !TP_LOCALLAB_DEHAZFRAME_TOOLTIP;Removes atmospheric haze. Increases overall saturation and detail.\nCan remove color casts, but may also introduce a blue cast which can be corrected with other tools.
 !TP_LOCALLAB_DEHAZ_TOOLTIP;Negative values add haze.
 !TP_LOCALLAB_DENOIBILAT_TOOLTIP;Allows you to reduce impulse or 'salt &amp; pepper' noise.
@@ -4120,13 +4151,10 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_LOCALLAB_DENOIQUA_TOOLTIP;Conservative mode preserves low frequency detail. Aggressive mode removes low frequency detail.\nConservative and Aggressive modes use wavelets and DCT and can be used in conjunction with 'Non-local Means – Luminance'.
 !TP_LOCALLAB_DENOITHR_TOOLTIP;Adjusts edge detection to help reduce noise in uniform, low-contrast areas.
 !TP_LOCALLAB_DENOI_TOOLTIP;This module can be used for noise reduction either on its own (at the end of the processing pipeline) or in addition to the Noise Reduction module in the Detail tab (which works at the beginning of the pipeline).\n Scope allows you to differentiate the action based on color (ΔE).\nMinimum spot size: 128x128.
-!TP_LOCALLAB_DISAB_CIECAM;Disable Ciecam or Weak Jz surround
-!TP_LOCALLAB_ENABLE_MASKALL;Enable all mask tools
 !TP_LOCALLAB_ENARETIMASKTMAP_TOOLTIP;If enabled the Mask uses Restored Data after Transmission Map instead of Original data.
 !TP_LOCALLAB_EQUILTM_TOOLTIP;Reconstruct luminance so that the mean and variance of the output image are identical to those of the original.
 !TP_LOCALLAB_EXCLUF_TOOLTIP;'Excluding' mode prevents adjacent spots from influencing certain parts of the image. Adjusting 'Scope' will extend the range of colors.\n You can also add tools to an Excluding spot and use them in the same way as for a normal spot.
 !TP_LOCALLAB_EXCLUTYPE_TOOLTIP;Normal spot uses recursive data.\n\nExcluding spot reinitializes all selective editing data.\nCan be used to totally or partially cancel a previous action or to carry out operations in Inverse mode.\nUse 'Scope' (Excluding) to set the exclusion intensity.\n\n'Full image' allows you to use the selective editing tools on the whole image.\nThe RT Spot delimiters are set beyond the image preview boundaries.\nThe transition is set to 100.\nNote: You may have to reposition the RT Spot slightly and adjust the Spot size to get the desired effect.\nNote: Using Denoise or Wavelet or FFTW in full-image mode uses large amounts of memory and may cause the application to crash on lower capacity systems.\n\n'Global' allows you to use the selective editing tools on the whole image, without using Delta E or transitions.
-!TP_LOCALLAB_EXMAIN;Global
 !TP_LOCALLAB_EXPCBDL_TOOLTIP;Can be used to remove marks on the sensor or lens by reducing the contrast on the appropriate detail level(s).
 !TP_LOCALLAB_EXPCHROMA_TOOLTIP;Use in association with 'Exposure compensation f' and 'Contrast Attenuator f' to avoid desaturating colors.
 !TP_LOCALLAB_EXPCOLOR_TOOLTIP;Adjust color, lightness, contrast and correct small defects such as red-eye, sensor dust etc.
@@ -4143,11 +4171,8 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_LOCALLAB_EXPOSURE_TOOLTIP;Modify exposure in L*a*b space using Laplacian PDE algorithms to take into account dE and minimize artifacts.
 !TP_LOCALLAB_EXPSHARP_TOOLTIP;Spot minimum 39*39.\nUse low transition values and high 'Transition decay' and 'Scope' values to simulate smaller spots.
 !TP_LOCALLAB_FATFRAME_TOOLTIP;PDE Fattal – uses the Fattal Tone-mapping algorithm.
-!TP_LOCALLAB_FATSAT;Saturation control
 !TP_LOCALLAB_FEATH_TOOLTIP;Gradient width as a percentage of the Spot diagonal\nUsed by all graduated filters in all tools.\nNo action if a graduated filter hasn't been activated.
-!TP_LOCALLAB_FEATVALUE_MASK;Feather gradient (Grad. Filters Mask)
 !TP_LOCALLAB_FFTMASK_TOOLTIP;Use a Fourier transform for better quality (increased processing time and memory requirements).
-!TP_LOCALLAB_FULLIMAGE;Black-Ev and White-Ev for whole image
 !TP_LOCALLAB_FULLIMAGELOG_TOOLTIP;Calculates the Ev levels for the whole image.
 !TP_LOCALLAB_GAMCOL_TOOLTIP;Apply a gamma on Luminance L*a*b* datas.\nIf gamma = 3.0 Luminance 'linear' is used.
 !TP_LOCALLAB_GAMC_TOOLTIP;Apply a gamma on Luminance L*a*b* datas before and after treatment Pyramid 1 and Pyramid 2.\nIf gamma = 3.0 Luminance 'linear' is used.
@@ -4193,7 +4218,6 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_LOCALLAB_LOGAUTO_TOOLTIP;Pressing this button will calculate the dynamic range and 'Mean luminance' for the scene conditions if the 'Auto mean luminance (Yb%)' is checked).\nAlso calculates the absolute luminance at the time of shooting.\nPress the button again to adjust the automatically calculated values.
 !TP_LOCALLAB_LOGBASE_TOOLTIP;Default = 2.\nValues less than 2 reduce the action of the algorithm making the shadows darker and the highlights brighter.\nWith values greater than 2, the shadows are grayer and the highlights become more washed out.
 !TP_LOCALLAB_LOGCATAD_TOOLTIP;Chromatic adaptation allows us to interpret a color according to its spatio-temporal environment.\nUseful when the white balance deviates significantly from the D50 reference.\nAdapts colors to the illuminant of the output device.
-!TP_LOCALLAB_LOGCIEQ;Log Encoding Q (with Ciecam)
 !TP_LOCALLAB_LOGCIEQ_TOOLTIP;Activating the checkbox allows you to switch between log encoding based on the 3 RGB channels, and log encoding based solely on Ciecam’s brightness (Q) channel.\nUsing the Q channel instead of the RGB channels helps avoid undesirable edge effects such as hue and saturation shifts.\nHowever, the settings are more difficult to optimise because Q is unbounded and Ciecam alters the data to take into account the surround conditions, simultaneous contrast, etc.\nYou may have to adjust the following:\n   Scene conditions: Mean luminance (Yb), Whites &amp; Blacks distribution, Black Ev, White Ev.\n   Source Data Adjustments : Brightness compression, Strength.\n\nNote: when using Log Encoding (Q), be careful not to activate the Disable Ciecam option in the Scene Conditions, Surround menu.
 !TP_LOCALLAB_LOGCIE_TOOLTIP;Allows you to use Black Ev, White Ev, White and Black distribution, Scene Mean luminance(Yb%) and Viewing Mean luminance(Yb%) for tone-mapping using 'Log encoding' with Brightness compression.
 !TP_LOCALLAB_LOGCOLORF_TOOLTIP;Perceived amount of hue in relation to gray.\nIndicator that a stimulus appears more or less colored.
@@ -4206,7 +4230,6 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_LOCALLAB_LOGIMAGE_TOOLTIP;Takes into account corresponding Ciecam variables: i.e. Contrast (J) and Saturation (s), as well as Contrast (Q), Brightness (Q), Lightness (J) and Colorfulness (M) (in Advanced mode).
 !TP_LOCALLAB_LOGLIGHTL_TOOLTIP;Close to lightness (L*a*b*). Takes into account the increase in perceived coloration.
 !TP_LOCALLAB_LOGLIGHTQ_TOOLTIP;Perceived amount of light emanating from a stimulus.\nIndicator that a stimulus appears to be more or less bright, clear.
-!TP_LOCALLAB_LOGPFRA2;Log Encoding settings
 !TP_LOCALLAB_LOGREPART_TOOLTIP;Allows you to adjust the relative strength of the log-encoded image with respect to the original image.\nDoes not affect the Ciecam component.
 !TP_LOCALLAB_LOGSATURL_TOOLTIP;Saturation (s) in CIECAM16 corresponds to the color of a stimulus in relation to its own brightness.\nActs mainly on medium tones and on the highlights.
 !TP_LOCALLAB_LOGSCENE_TOOLTIP;Corresponds to the shooting conditions.
@@ -4214,7 +4237,6 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_LOCALLAB_LOGVIEWING_TOOLTIP;Corresponds to the medium on which the final image will be viewed (monitor, TV, projector, printer, etc.), as well as the surrounding conditions.
 !TP_LOCALLAB_LUMASK_TOOLTIP;Adjusts the shade of gray or color of the mask background in Show Mask (Mask and modifications).
 !TP_LOCALLAB_MASFRAME_TOOLTIP;For all masks.\nTakes into account the ΔE image to avoid modifying the selection area when the following Mask Tools are used: Gamma, Slope, Chroma, Contrast curve, Local contrast (by wavelet level), Blur Mask and Structure Mask (if enabled ).\nDisabled when Inverse mode is used.
-!TP_LOCALLAB_MASKCOM_TOOLNAME;Common Color Mask
 !TP_LOCALLAB_MASKCOM_TOOLTIP;A tool in its own right.\nCan be used to adjust the image appearance (chrominance, luminance, contrast) and texture as a function of Scope.
 !TP_LOCALLAB_MASKCURVE_TOOLTIP;The 3 curves are set to 1 (maximum) by default:\nC=f(C) the chroma varies according to the chrominance. You can decrease the chroma to improve the selection. By setting this curve close to zero (with a low value of C to activate the curve) you can desaturate the background in Inverse mode.\nL=f(L) the luminance varies according to the luminance, so you can decrease the brightness to improve the selection.\nL and C = f(H) luminance and chroma vary with hue, so you can decrease luminance and chroma to improve selection.
 !TP_LOCALLAB_MASKDECAY_TOOLTIP;Manages the rate of decay for the gray levels in the mask.\n Decay = 1 linear, Decay > 1 sharper parabolic transitions, Decay < 1 more gradual transitions.
@@ -4232,7 +4254,6 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_LOCALLAB_MASKHIGTHRESVIB_TOOLTIP;Lighter-tone limit above which the parameters will be restored progressively to their original values prior to being modified by the Vibrance and Warm Cool settings.\n You can use certain tools in 'Mask and modifications' to change the gray levels:'Smooth radius', Gamma and Slope, 'Contrast curve'.\n Use a 'lockable color picker' on the mask to see which areas will be affected. Make sure you set 'Background color mask' = 0 in Settings.
 !TP_LOCALLAB_MASKHIGTHRESWAV_TOOLTIP;Lighter-tone limit above which the parameters will be restored progressively to their original values prior to being modified by the Local contrast and Wavelet settings.\n You can use certain tools in 'Mask and modifications' to change the gray levels: 'Smooth radius', Gamma and Slope, 'Contrast curve'.\n Use a 'lockable color picker' on the mask to see which areas will be affected. Make sure you set 'Background color mask' = 0 in Settings.
 !TP_LOCALLAB_MASKHIGTHRES_TOOLTIP; The Guided Filter is progressively decreased from 100% at the threshold setting to 0% at the maximum white value (as determined by the mask).\n You can use certain tools in 'Mask and modifications' to change the gray levels: 'structure mask', 'Smooth radius', 'Gamma and slope', 'Contrast curve', 'Local contrast wavelet'.\n Use a 'lockable color picker' on the mask to see which areas will be affected. Make sure you set 'Background color mask' = 0 in Settings.
-!TP_LOCALLAB_MASKLCTHRMIDCH;Gray area chroma denoise
 !TP_LOCALLAB_MASKLC_TOOLTIP;Used by wavelet luminance.\nThis allows you to target the denoise based on the image luminance information contained in the L(L) or LC(H) mask (Mask and Modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n 'Dark area luminance threshold'. If 'Reinforce denoise in dark and light areas' > 1 the denoise is progressively increased from 0% at the threshold setting to 100% at the maximum black value (determined by mask).\n 'Light area luminance threshold'. The denoise is progressively decreased from 100% at the threshold setting to 0% at the maximum white value (determined by mask).\n In the area between the two thresholds, the denoise settings are not affected by the mask.
 !TP_LOCALLAB_MASKLOWTHRESCB_TOOLTIP;Dark-tone limit below which the CBDL parameters (Luminance only) will be restored progressively to their original values prior to being modified by the CBDL settings.\n You can use certain tools in 'Mask and modifications' to change the gray levels: 'Smooth radius', Gamma and Slope, 'Contrast curve'.\n Use a 'lockable color picker' on the mask to see which areas will be affected. Make sure you set 'Background color mask' = 0 in Settings.
 !TP_LOCALLAB_MASKLOWTHRESC_TOOLTIP;Dark-tone limit below which the parameters will be restored progressively to their original values prior to being modified by the Color and Light settings.\n You can use certain tools in 'Mask and modifications' to change the gray levels: 'Structure mask', 'blur mask', 'Smooth radius', Gamma and Slope, 'Contrast curve', 'Local contrast' (wavelets).\n Use a 'lockable color picker' on the mask to see which areas will be affected. Make sure you set 'Background color mask' = 0 in Settings.
@@ -4261,7 +4282,6 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_LOCALLAB_MERGEMER_TOOLTIP;Takes ΔE into account when merging files (equivalent of scope in this case).
 !TP_LOCALLAB_MERGEOPA_TOOLTIP;Opacity = % of current spot to be merged with original or previous Spot.\nContrast threshold : adjusts result as a function of contrast in original image.
 !TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts.
-!TP_LOCALLAB_MIDTCIE;Midtones
 !TP_LOCALLAB_MLABEL_TOOLTIP;The values should be close to Min=0 Max=32768 (log mode) but other values are possible.You can adjust 'Clip restored data (gain)' and 'Offset' to normalize.\nRecovers image data without blending.
 !TP_LOCALLAB_MULTIPL_TOOLTIP;Wide-range tone adjustment: -18EV to +4EV. The first slider acts on very dark tones between -18EV and -6EV. The last slider acts on light tones up to 4EV.
 !TP_LOCALLAB_NLDENOISENLGAM_TOOLTIP;Lower values preserve details and texture, higher values increase denoise.\nIf gamma = 3.0 Luminance 'linear' is used.
@@ -4278,7 +4298,6 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_LOCALLAB_PRECAMREFIMAIN_TOOLTIP;Allows you to move the white-point in such a way that it approaches the dominant color. This action modifies the purity. In combination with "Shift x" and "Shift y", allows you to carry out moderate color toning.
 !TP_LOCALLAB_PRECAMREFI_TOOLTIP;Allows you to move the white-point in such a way that it approaches the dominant color. This action modifies the purity.
 !TP_LOCALLAB_PRECAM_TOOLTIP;'Source Data Adjustments' modifies the Dynamic Range using Log encoding, the tones of the image and primaries (simplified Abstract Profile), and midtones, just before the Ciecam process. These values are adjustable:\nGamma: Acts mainly on light tones\nSlope: Acts mainly on dark tones. You can choose any pair of gamma and slope (values >1) and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.\nDestination primaries: Allows you to change the destination primaries to restore or change image color (saturation). The color balance is significantly preserved when the 'Working Profile' and the 'Destination primaries' are similar. 'Working Profile' is not modified. You can also finely adapt the primaries and the illuminant (white-point). Moving a primary away from the white point reduces saturation and vice versa. Pay attention to the gamut.
-!TP_LOCALLAB_PRIMILLFRAME;Primaries & Illuminant
 !TP_LOCALLAB_RADIUS_TOOLTIP;Uses a Fast Fourier Transform for radius > 30.
 !TP_LOCALLAB_RECOTHRES02_TOOLTIP;If the 'Recovery threshold' value is greater than 1, the mask in Mask and Modifications takes into account any previous modifications made to the image but not those made with the current tool (e.g. Color and Light, Wavelet, Cam16, etc.)\nIf the value of the 'Recovery threshold' is less than 1, the mask in Mask and Modifications does not take into account any previous modifications to the image.\n\nIn both cases, the 'Recovery threshold' acts on the masked image as modified by the current tool (Color and Light, Wavelet, Cam16, etc.).
 !TP_LOCALLAB_RECURS_TOOLTIP;Forces the algorithm to recalculate the references after each tool is applied.\nAlso useful for working with masks.
@@ -4296,8 +4315,6 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_LOCALLAB_RETI_SCALE_TOOLTIP;If Scale=1, Retinex behaves like local contrast with additional possibilities.\nIncreasing the value of Scale increases the intensity of the recursive action at the expense of processing time.
 !TP_LOCALLAB_RGBCURVE_TOOLTIP;In RGB mode you have 4 choices : Standard, Weighted standard, Luminance &amp; Film-like.
 !TP_LOCALLAB_RSTPROTECT_TOOLTIP;Red and skin-tone protection affects the Saturation, Chroma and Colorfulness sliders.
-!TP_LOCALLAB_SATCIE;Saturation control
-!TP_LOCALLAB_SCOPEMASK;Scope (ΔE image mask)
 !TP_LOCALLAB_SCOPEMASK_TOOLTIP;Enabled if ΔE Image Mask is enabled.\nLow values avoid retouching selected area.
 !TP_LOCALLAB_SENSIEXCLU_TOOLTIP;Adjust the colors to be excluded.
 !TP_LOCALLAB_SENSIMASK_TOOLTIP;Scope adjustment specific to common mask tool.\nActs on the difference between the original image and the mask.\nUses the luma, chroma and hue references from the center of the spot\n\nYou can also adjust the ΔE of the mask itself by using 'Scope (ΔE image mask)' in 'Settings' > 'Mask and Merge'.
@@ -4311,37 +4328,22 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_LOCALLAB_SHOWMASKSOFT_TOOLTIP;Allows you to visualize the different stages of the Fourier process.\n Laplace - calculates the second derivative of the Laplace transform as a function of the threshold.\nFourier - shows the Laplacian transform with DCT.\nPoisson - shows the solution of the Poisson DCE.\nNo luminance normalization - shows result without any luminance normalization.
 !TP_LOCALLAB_SHOWMASKTYP_TOOLTIP;Can be used with 'Mask and modifications'.\nIf 'Blur and noise' is selected, the mask cannot be used for Denoise.\nIf Denoise is selected, the mask cannot be used for 'Blur and noise'.\nIf 'Blur and noise + Denoise' is selected, the mask is shared. Note that in this case, the Scope sliders for both 'Blur and noise' and Denoise will be active so it is advisable to use the option 'Show modifications with mask' when making any adjustments.
 !TP_LOCALLAB_SHTRC_TOOLTIP;Based on 'working profile' (only those provided), modifies the tones of the image by acting on a TRC (Tone Response Curve).\nGamma acts mainly on light tones.\nSlope acts mainly on dark tones.\nIt is recommended that the TRC of both devices (monitor and output profile) be sRGB (default).
-!TP_LOCALLAB_SIGBLACKSSCIE;Blacks distribution
 !TP_LOCALLAB_SIGCIE;Sigmoid
 !TP_LOCALLAB_SIGGAMJCIE;Gamma
 !TP_LOCALLAB_SIGMOID16_TOOLTIP;Allows you to simulate a tone mapping appearance using both 'Ciecam' and 'Sigmoid Q'. Sigmoid Q has three sliders:\na) Contrast acts on the shape of the sigmoid curve and consequently on the strength\nb) Threshold (Gray point) distributes the action according to the luminance\nc) Adaptability weights the action of the sigmoid by action on the internal exponential function.
 !TP_LOCALLAB_SIGMOIDLOGAUTO;Auto threshold
 !TP_LOCALLAB_SIGMOIDLOGEV_TOOLTIP;If the combo box selection 'Black Ev and White Ev' is 'Sigmoid and Log encoding' instead of 'Sigmoid only', the two algorithms 'Log encoding' and 'Sigmoid' are used together.
-!TP_LOCALLAB_SIGMOIDNORMCIE;Normalize Luminance
 !TP_LOCALLAB_SIGMOIDNORMCIEBLEND_TOOLTIP;Blend acts on the final aspect of the image, contrast and luminance. Ratio between original and output image.
 !TP_LOCALLAB_SIGMOIDNORMCIE_TOOLTIP;Reconstruct luminance so that the mean and variance of the output image take into account those of the original.\nAll the adjustments acting on J or Q are taken into account, including those which are not relative to Sigmoid Q.
 !TP_LOCALLAB_SIGMOIDQJCOMPRCIE_TOOLTIP;When the combo box selection 'Uses Black Ev and White Ev' is 'Sigmoid and Log encoding Q' or 'Log encoding instead of Sigmoid' checked. This algorithm compress the data above the threshold slider value. The last value stands for brightness (Q) and should be close as possible to the value 'Compression threshold' (calculate when 'Auto threshold" checked, often > 1).
-!TP_LOCALLAB_SIGMOIDSENSI;Adaptability
 !TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP;Allows you, in Automatic when the dynamic range of the image is high, to change the distribution of lights in whites and deep blacks.\nCan be used with Log encoding or Sigmoid with Black Ev and White Ev enabled.\n\nThe algorithm does not change the basic data, but acts on the components necessary to calculate the Dynamic range, Black Ev, White Ev and the Gray point.
 !TP_LOCALLAB_SIGMOID_TOOLTIP;Allows you to simulate a tone mapping appearance using both the 'Jz' and 'Sigmoid' function. Three sliders:\na) Contrast acts on the shape of the sigmoid curve and consequently on the strength\nb) Threshold (Gray point) distributes the action according to the luminance\nc)Blend acts on the final aspect of the image, contrast and luminance.
-!TP_LOCALLAB_SIGSLOPJCIE;Slope
-!TP_LOCALLAB_SIGTRCCIE;Source Data Adjustments
-!TP_LOCALLAB_SIGWHITESCIE;Whites distribution
 !TP_LOCALLAB_SLOMASK_TOOLTIP;Adjusting Gamma and Slope can provide a soft and artifact-free transformation of the mask by progressively modifying 'L' to avoid any discontinuities.
-!TP_LOCALLAB_SLOPESMOOTH;Gray balance (Slope)
-!TP_LOCALLAB_SLOPESMOOTHB;Blue balance (Slope)
-!TP_LOCALLAB_SLOPESMOOTHG;Green balance (Slope)
-!TP_LOCALLAB_SLOPESMOOTHR;Red balance (Slope)
-!TP_LOCALLAB_SMOOTHCIE;Highlight Attenuation
-!TP_LOCALLAB_SMOOTHCIE_LUM;Luminosity mode
-!TP_LOCALLAB_SMOOTHCIE_SCA;Scale Yb Scene
 !TP_LOCALLAB_SMOOTHCIE_TOOLTIP;Completes the processing carried out by gamma, slope and midtones by causing a slight lowering of lights. Please note this does not replace Highlight reconstruction.\n\nGamma based and Slope based (Standard and Advanced) allow you to simulate a tone mapping using:\na) Scene conditions: Black-Ev, White-Ev, Mean luminance (Yb%)\nb) Viewing conditions: Mean luminance (Yb%).\n\nScale Yb Scene is function of White-Ev.
-!TP_LOCALLAB_SMOOTHCIE_YB;Scale Yb Viewing
 !TP_LOCALLAB_SOFTMETHOD_TOOLTIP;Apply a Soft-light blend (identical to the global adjustment). Carry out dodge and burn using the original Retinex algorithm.
 !TP_LOCALLAB_SOFTRADIUSCOL_TOOLTIP;Applies a guided filter to the output image to reduce possible artifacts.
 !TP_LOCALLAB_SPECIAL_TOOLTIP;The checkbox allows you to remove all other actions i.e. 'Scope', masks, sliders etc., (except for transitions) and use just the effect of the RGB tone-curve.
 !TP_LOCALLAB_STRENGRID_TOOLTIP;You can adjust the desired effect with 'strength', but you can also use the 'scope' function which allows you to delimit the action (e.g. to isolate a particular color).
-!TP_LOCALLAB_STRENGTHCIELOG;Strength
 !TP_LOCALLAB_STRUCT_TOOLTIP;Uses the Sobel algorithm to take into account structure for shape detection.\nActivate 'Mask and modifications' > 'Show spot structure' (Advanced mode) to see a preview of the mask (without modifications).\n\nCan be used in conjunction with the Structure Mask, Blur Mask and 'Local contrast' (by wavelet level) to improve edge detection.\n\nEffects of adjustments using Lightness, Contrast, Chrominance, Exposure or other non-mask-related tools visible using either 'Show modified image' or 'Show modified areas with mask'.
 !TP_LOCALLAB_STRUMASK_TOOLTIP;Structure mask (slider) with the checkbox 'Structure mask as tool' unchecked: In this case a mask showing the structure will be generated even if none of the 3 curves is activated. Structure masks are available for mask (Blur and denoise') and mask(Color &amp; Light).
 !TP_LOCALLAB_STRUSTRMASK_TOOLTIP;Moderate use of this slider is recommended!
@@ -4358,7 +4360,6 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 !TP_LOCALLAB_TRANSITWEAK_TOOLTIP;Adjust transition decay function: 1 linear , 2 parabolic, 3 cubic up to ^25.\nCan be used in conjunction with very low transition values to reduce defects (CBDL, Wavelets, Color &amp; Light).
 !TP_LOCALLAB_TRANSIT_TOOLTIP;Adjust smoothness of transition between affected and unaffected areas as a percentage of the 'radius'.
 !TP_LOCALLAB_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbscissa: transmission from negative values (min), mean, and positive values (max).\nOrdinate: amplification or reduction.\nYou can adjust this curve to change the Transmission and reduce artifacts.
-!TP_LOCALLAB_TRCFRAME;Tone Response Curve & Midtones
 !TP_LOCALLAB_VIBRA_TOOLTIP;Adjusts vibrance (essentially the same as the global adjustment).\nCarries out the equivalent of a white-balance adjustment using a CIECAM algorithm.
 !TP_LOCALLAB_VIS_TOOLTIP;<b>Click</b> to show/hide selected Control Spot.\n<b>Ctrl</b>+<b>click</b> to show/hide all Control Spot.
 !TP_LOCALLAB_WARM_TOOLTIP;This slider uses the CIECAM algorithm and acts as a White Balance control to make the color temperature of the selected area warmer or cooler.\nIt can also reduce color artifacts in some cases.
