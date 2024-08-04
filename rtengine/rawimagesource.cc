@@ -59,11 +59,21 @@
 namespace
 {
 
-constexpr float clipitc(float x)
+float clipitc(float x)
 {
-    return rtengine::LIM(x, 0.1f, 65534.9f);//White balance Itcwb - limit values 
+    if (std::isnan(x)) {
+        x = 0.1f;
+    } else {
+        x = rtengine::LIM(x, 0.1f, 65534.9f);//White balance Itcwb - limit values 
+    }
+    return x;
 }
 
+
+constexpr float clipR(float x)
+{
+    return rtengine::LIM(x, 0.f, 65535.f);//used when Laplacian Contrast attenuator
+}
 
 void rotateLine(const float* const line, rtengine::PlanarPtr<float> &channel, const int tran, const int i, const int w, const int h)
 {
@@ -6237,21 +6247,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
             for (int y = 0; y < bfh ; ++y) {
                 for (int x = 0; x < bfw ; ++x) {
-                    if(!std::isnan(redloc[y][x])) {//eliminate wrong values and values not very usable for white balance
-                        clipitc(redloc[y][x]);
-                    } else {
-                        redloc[y][x] = 0.1f;
-                    }
-                    if(!std::isnan(greenloc[y][x])) {
-                        clipitc(greenloc[y][x]);
-                    } else {
-                        greenloc[y][x] = 0.1f;
-                    }
-                    if(!std::isnan(blueloc[y][x])) {
-                        clipitc(blueloc[y][x]);
-                    } else {
-                        blueloc[y][x] = 0.1f;
-                    }
+                    redloc[y][x] = clipitc(redloc[y][x]);
+                    greenloc[y][x] = clipitc(greenloc[y][x]);
+                    blueloc[y][x] = clipitc(blueloc[y][x]);
 
                     const float RR = rmm[repref] * redloc[y][x];
                     const float GG = gmm[repref] * greenloc[y][x];
@@ -7467,9 +7465,6 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
 {
 //    BENCHFUN
     //used by auto WB local to calculate red, green, blue in local region
-    greenloc(0, 0);
-    redloc(0, 0);
-    blueloc(0, 0);
 
     int precision = 3;//must be 3 5 or 9
     bool oldsampling = wbpar.itcwb_sampling;
@@ -7532,16 +7527,6 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
 
         if (ii < H) {
             for (int j = 0, jj = 0; j < bfw; ++j, jj += precision) {//isnan and <0 and > 65535 in case of
-            /*    if(std::isnan(red[ii][jj]) || red[ii][jj] <= 0.f || red[ii][jj] > 65535.f) {
-                    red[ii][jj] = 0.1f;
-                }
-                if(std::isnan(green[ii][jj])|| green[ii][jj] <= 0.f || green[ii][jj] > 65535.f) {
-                    green[ii][jj] = 0.1f;
-                }
-                if(std::isnan(blue[ii][jj])|| blue[ii][jj] <= 0.f || blue[ii][jj] > 65535.f) {
-                    blue[ii][jj] = 0.1f;
-                }
-            */
                 redloc[i][j] = red[ii][jj] * multip;
                 greenloc[i][j] = green[ii][jj] * multip;
                 blueloc[i][j] = blue[ii][jj] * multip;
