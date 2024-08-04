@@ -807,21 +807,16 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
         }
     }
 
-
-
-    // Calculate number of tiles. If less than omp_get_max_threads(), then limit num_threads to number of tiles
-    if (options.rgbDenoiseThreadLimit > 0) {
-        maxnumberofthreadsforwavelet = rtengine::LIM(options.rgbDenoiseThreadLimit / 2, 1, maxnumberofthreadsforwavelet);
+    if (maxnumberofthreadsforwavelet == 0) {
+        maxnumberofthreadsforwavelet = options.rgbDenoiseThreadLimit > 0
+                                           ? options.rgbDenoiseThreadLimit
+                                           : omp_get_max_threads();
     }
 
-    numthreads = rtengine::min(numtiles, omp_get_max_threads());
-
-    if (maxnumberofthreadsforwavelet > 0) {
-        numthreads = rtengine::min(numthreads, maxnumberofthreadsforwavelet);
-    }
+    numthreads = rtengine::min(numtiles, maxnumberofthreadsforwavelet);
 
 #ifdef _OPENMP
-    wavNestedLevels = omp_get_max_threads() / numthreads;
+    wavNestedLevels = maxnumberofthreadsforwavelet / numthreads;
     bool oldNested = omp_get_nested();
 
     if (wavNestedLevels < 2) {
@@ -829,11 +824,6 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     } else {
         omp_set_nested(true);
     }
-
-    if (maxnumberofthreadsforwavelet > 0)
-        while (wavNestedLevels * numthreads > maxnumberofthreadsforwavelet) {
-            wavNestedLevels--;
-        }
 
 #endif
 
