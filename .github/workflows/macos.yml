@@ -18,7 +18,8 @@ jobs:
   build:
     runs-on: macos-12
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
       - name: Install dependencies
         run: |
            date -u
@@ -32,6 +33,7 @@ jobs:
            zsh -c 'echo "Completed installation of dependencies in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"'
       - name: Configure build system
         env:
+          IDENT: '-'
           CMAKE_CXX_STANDARD: 11
           PKG_CONFIG_PATH: /usr/local/opt/libtiff/lib/pkgconfig:/usr/local/opt/libffi/lib/pkgconfig:/usr/local/opt/expat/lib/pkgconfig
           C_FLAGS: >
@@ -47,12 +49,12 @@ jobs:
           cmake \
             -DCMAKE_BUILD_TYPE="Release" \
             -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
-            -DCMAKE_EXE_LINKER_FLAGS="-L. -L/usr/local/lib -Wl,-rpath -Wl,/usr/local/lib -L/usr/local/opt/gdk-pixbuf/lib -L/usr/local/opt/libiconv/lib -L/usr/local/opt/libomp/lib -L/usr/local/opt/libffi/lib -L/usr/local/opt/libffi/lib -L/usr/local/opt/libxml2/lib -L/usr/local/opt/expat/lib" \
+            -DCMAKE_EXE_LINKER_FLAGS="-L. -L/usr/local/lib -Wl,-rpath -Wl,/usr/local/lib -L/usr/local/opt/gdk-pixbuf/lib -L/usr/local/opt/libomp/lib -L/usr/local/opt/expat/lib" \
             -DCACHE_NAME_SUFFIX="${RAW_THERAPEE_VERSION}-${REF}" \
             -DPROC_TARGET_NUMBER="1" \
             -DPROC_LABEL="generic processor" \
             -DCMAKE_OSX_ARCHITECTURES=$(uname -m) \
-            -DWITH_LTO="OFF" \
+            -DWITH_LTO="ON" \
             -DLENSFUNDBDIR="/Applications/RawTherapee.app/Contents/Resources/share/lensfun" \
             -DCMAKE_C_COMPILER=clang \
             -DCMAKE_CXX_COMPILER=clang++ \
@@ -67,7 +69,7 @@ jobs:
             -DCMAKE_RANLIB=/usr/bin/ranlib \
             -DCMAKE_OSX_DEPLOYMENT_TARGET=12.0 \
             -DCONTINUOUS=ON \
-            -DCODESIGNID:STRING="-" \
+            -DCODESIGNID:STRING="$IDENT" \
             ..
             zsh -c 'echo "Configured in $(printf "%0.2f" $(($[$(date +%s)-$(cat configstamp)]/$((60.))))) minutes"'
       - name: Compile RawTherapee
@@ -81,7 +83,7 @@ jobs:
         run: |
           zsh
           date +%s > build/bundlestamp && date -u && cd build
-          export REF=${GITHUB_REF##*/} && export LOCAL_PREFIX=/usr && sudo make macosx_bundle
+          export REF=${GITHUB_REF##*/} && sudo make macosx_bundle
           export ARTIFACT=(RawTherapee*${CMAKE_BUILD_TYPE}.zip)
           echo "=== artifact: ${ARTIFACT}"
           # defining environment variables for next step as per
@@ -119,11 +121,20 @@ jobs:
           tag_name: nightly-github-actions
           files: |
             ${{env.ARTIFACT_PATH}}
+      - name: test app
+        run: |
+          sudo cp -R /Users/runner/work/RawTherapee/RawTherapee/build/RawTherapee.app /Applications
+          ls /Applications
+          open -a /Applications/RawTherapee.app
+          sleep 5
+          osascript -e 'tell application "Finder"' -e 'get the name of every process whose visible is true' -e 'end tell'
+          osascript -e 'tell application "RawTherapee" to if it is running then quit'
 
   armbuild:
     runs-on: macos-14
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
       - name: Install dependencies
         run: |
            date -u
@@ -137,6 +148,7 @@ jobs:
            zsh -c 'echo "Completed installation of dependencies in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"'
       - name: Configure build system
         env:
+          IDENT: '-'
           CMAKE_CXX_STANDARD: 11
           PKG_CONFIG_PATH: /opt/homebrew/opt/libtiff/lib/pkgconfig:opt/homebrew/opt/libffi/lib/pkgconfig:/ope/homebrew/opt/expat/lib/pkgconfig
           C_FLAGS: >
@@ -152,7 +164,7 @@ jobs:
           cmake \
             -DCMAKE_BUILD_TYPE="Release" \
             -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
-            -DCMAKE_EXE_LINKER_FLAGS="-L. -L/opt/homebrew/lib -Wl,-rpath -Wl,/opt/homebrew/lib -L/opt/homebrew/opt/gdk-pixbuf/lib -L/opt/homebrew/opt/libiconv/lib -L/opt/homebrew/opt/libomp/lib -L/opt/homebrew/opt/libffi/lib -L/opt/homebrew/opt/libffi/lib -L/opt/homebrew/opt/libxml2/lib -L/opt/homebrew/opt/expat/lib" \
+            -DCMAKE_EXE_LINKER_FLAGS="-L. -L/opt/homebrew/lib -Wl,-rpath -Wl,/opt/homebrew/lib -L/opt/homebrew/opt/gdk-pixbuf/lib -L/opt/homebrew/opt/libomp/lib -L/opt/homebrew/opt/expat/lib" \
             -DCACHE_NAME_SUFFIX="${RAW_THERAPEE_VERSION}-${REF}" \
             -DCMAKE_OSX_ARCHITECTURES=arm64 \
             -DWITH_LTO="ON" \
@@ -170,7 +182,8 @@ jobs:
             -DCMAKE_RANLIB=/usr/bin/ranlib \
             -DCMAKE_OSX_DEPLOYMENT_TARGET=14.0 \
             -DCONTINUOUS=ON \
-            -DCODESIGNID:STRING="-" \
+            -DCODESIGNID:STRING="$IDENT" \
+            -DLOCAL_PREFIX=/opt/homebrew \
             ..
             zsh -c 'echo "Configured in $(printf "%0.2f" $(($[$(date +%s)-$(cat configstamp)]/$((60.))))) minutes"'
       - name: Compile RawTherapee
@@ -184,7 +197,7 @@ jobs:
         run: |
           zsh
           date +%s > build/bundlestamp && date -u && cd build
-          export REF=${GITHUB_REF##*/} && export LOCAL_PREFIX=/usr && sudo make macosx_bundle
+          export REF=${GITHUB_REF##*/} && sudo make macosx_bundle
           export ARTIFACT=(RawTherapee*${CMAKE_BUILD_TYPE}.zip)
           echo "=== artifact: ${ARTIFACT}"
           # defining environment variables for next step as per
@@ -199,6 +212,7 @@ jobs:
             "ARTIFACT_FILE: ${ARTIFACT_FILE}" \
             "PUBLISH_NAME: ${PUBLISH_NAME}"
           exit
+
       - uses: actions/upload-artifact@v4
         with:
           name: ${{env.ARTIFACT_FILE}}
@@ -219,3 +233,11 @@ jobs:
           tag_name: nightly-github-actions
           files: |
             ${{env.ARTIFACT_PATH}}
+      - name: test app
+        run: |
+          sudo cp -R /Users/runner/work/RawTherapee/RawTherapee/build/RawTherapee.app /Applications
+          ls /Applications
+          open -a /Applications/RawTherapee.app
+          sleep 5
+          osascript -e 'tell application "Finder"' -e 'get the name of every process whose visible is true' -e 'end tell'
+          osascript -e 'tell application "RawTherapee" to if it is running then quit'
