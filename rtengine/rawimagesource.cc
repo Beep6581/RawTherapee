@@ -69,12 +69,6 @@ float clipitc(float x)
     return x;
 }
 
-
-constexpr float clipR(float x)
-{
-    return rtengine::LIM(x, 0.f, 65535.f);//used when Laplacian Contrast attenuator
-}
-
 void rotateLine(const float* const line, rtengine::PlanarPtr<float> &channel, const int tran, const int i, const int w, const int h)
 {
     switch (tran & TR_ROT) {
