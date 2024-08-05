@@ -2065,14 +2065,16 @@ float generalized_loglogistic_sigmoid(float value,
 void calculate_params(float middle_grey_contrast,
                       float contrast_skewness,
                       float display_black_target,
-                      float display_white_target,
+                     // float display_white_target,
                       float &film_power,
                       float &white_target,
                       float &black_target,
                       float &film_fog,
                       float &paper_exposure,
                       float &paper_power,
-                      float MIDDLE_GREY)
+                      float MIDDLE_GREY
+                     // float display_white_target = 1.f
+)
 {
     /* Calculate actual skew log logistic parameters to fulfill the following:
      * f(scene_zero) = display_black_target
@@ -2129,7 +2131,7 @@ void  ImProcFunctions::sigmoid_main(float r,
               float &bout,
               float middle_grey_contrast,
               float contrast_skewness,
-              float white_point,
+         //     float white_point,
               float MIDDLE_GREY,
               float black_point,
               float white_point_disp)
@@ -2145,7 +2147,7 @@ void  ImProcFunctions::sigmoid_main(float r,
 //
     // compute the sigmoid parameters from the UI controls
     calculate_params(middle_grey_contrast, contrast_skewness,
-                     display_black_target, white_point * 100.0f, film_power,
+                     display_black_target,  film_power,
                      white_target, black_target, film_fog,
                      paper_exposure, paper_power, MIDDLE_GREY);
     float rgb[3] = {r, g, b};
@@ -20624,7 +20626,7 @@ void ImProcFunctions::Lab_Local(
                                 float rout = 0.f;
                                 float gout = 0.f;
                                 float bout = 0.f;
-                                sigmoid_main(r, g, b, rout, gout, bout, middle_grey_contrast, contrast_skewness, white_pointsig, MIDDLE_GREY, black_point, white_point_disp);
+                                sigmoid_main(r, g, b, rout, gout, bout, middle_grey_contrast, contrast_skewness, /*white_pointsig,*/ MIDDLE_GREY, black_point, white_point_disp);
                                 tmpImage->r(i, j) = 65535.f * rout;
                                 tmpImage->g(i, j) = 65535.f * gout;
                                 tmpImage->b(i, j) = 65535.f * bout;
