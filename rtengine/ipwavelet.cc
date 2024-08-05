@@ -356,7 +356,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     cp.resena = params->wavelet.expresid;
     cp.finena = params->wavelet.expfinal;
     cp.toningena = params->wavelet.exptoning;
-    cp.noiseena = params->wavelet.expnoise && minwinnoise > 130;//128 limit for 6 levels wavelet denoise issue 7146
+    cp.noiseena = params->wavelet.expnoise && minwinnoise > 128;//128 limit for 6 levels wavelet denoise issue 7146
     cp.blena = params->wavelet.expbl;
     cp.chrwav = 0.01f * params->wavelet.chrwav;
 
