@@ -3592,7 +3592,9 @@ TP_LOCALLAB_SIGMOIDNORMCIE_TOOLTIP;Reconstruct luminance so that the mean and va
 TP_LOCALLAB_SIGMOIDQJ;Black Ev & White Ev
 TP_LOCALLAB_SIGMOIDQJCOMPRCIE_TOOLTIP;When the combo box selection 'Uses Black Ev and White Ev' is 'Sigmoid and Log encoding Q' or 'Log encoding instead of Sigmoid' checked. This algorithm compress the data above the threshold slider value. The last value stands for brightness (Q) and should be close as possible to the value 'Compression threshold' (calculate when 'Auto threshold" checked, often > 1).
 TP_LOCALLAB_SIGMOIDSENSI;Adaptability
-TP_LOCALLAB_SIGMOIDTH;Threshold (Gray point)
+//TP_LOCALLAB_SIGMOIDTH;Threshold (Gray point)
+TP_LOCALLAB_SIGMOIDTH;Skew
+
 TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP;Allows you, in Automatic when the dynamic range of the image is high, to change the distribution of lights in whites and deep blacks.\nCan be used with Log encoding or Sigmoid with Black Ev and White Ev enabled.\n\nThe algorithm does not change the basic data, but acts on the components necessary to calculate the Dynamic range, Black Ev, White Ev and the Gray point.
 TP_LOCALLAB_SIGMOID_TOOLTIP;Allows you to simulate a tone mapping appearance using both the 'Jz' and 'Sigmoid' function. Three sliders:\na) Contrast acts on the shape of the sigmoid curve and consequently on the strength\nb) Threshold (Gray point) distributes the action according to the luminance\nc)Blend acts on the final aspect of the image, contrast and luminance.
 TP_LOCALLAB_SIGSLOPJCIE;Slope

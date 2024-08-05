@@ -8015,8 +8015,10 @@ Locallabcie::Locallabcie():
     sigmoidFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGFRA")))),
     sigmoidnormFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGNORM")))),
     sigq(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGFRA")))),
-    sigmoidldacie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0.0, 1., 0.01, 0.5))),
-    sigmoidthcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDTH"), 0.1, 4., 0.01, 1.2, Gtk::manage(new RTImage("circle-black-small")), Gtk::manage(new RTImage("circle-white-small"))))),
+   // sigmoidldacie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0.0, 1., 0.01, 0.5))),
+    sigmoidldacie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0.5, 3., 0.01, 1.25))),
+   // sigmoidthcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDTH"), 0.1, 4., 0.01, 1.2, Gtk::manage(new RTImage("circle-black-small")), Gtk::manage(new RTImage("circle-white-small"))))),
+    sigmoidthcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDTH"), -1., 1., 0.01, 0., Gtk::manage(new RTImage("circle-black-small")), Gtk::manage(new RTImage("circle-white-small"))))),
     sigmoidsenscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDSENSI"), 0.1, 1.5, 0.01, 0.9))),
     sigmoidblcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDBL"), 0.05, 1., 0.01, 0.75))),
     autocomprHBox(Gtk::manage(new Gtk::Box())),
@@ -8057,7 +8059,7 @@ Locallabcie::Locallabcie():
     kslopesmog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOPESMOOTRCG"), 0.75, 1.5, 0.01, 1.))),
     kslopesmob(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOPESMOOTRCB"), 0.75, 1.5, 0.01, 1.))),
     contsig(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SMOOTHCONTSIG"), 0.5, 3., 0.01, 1.15))),
-    skewsig(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SMOOTHSKEWSIG"), -1., 1., 0.01, 0.))),
+    skewsig(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SMOOTHSKEWSIG"), -1., 1., 0.01, 0., Gtk::manage(new RTImage("circle-black-small")), Gtk::manage(new RTImage("circle-white-small"))))),
     whitsig(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SMOOTHWHITSIG"), 50, 1000., 0.5, 100.))),
     whitescie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGWHITESCIE"), -100, 100, 1, 20))),
     blackscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGBLACKSSCIE"), -100, 100, 1, 0))),
@@ -8559,8 +8561,8 @@ Locallabcie::Locallabcie():
 
     sigfraBox->pack_start(*sigmoidldacie);
     sigfraBox->pack_start(*sigmoidthcie);
-    sigfraBox->pack_start(*sigmoidsenscie);
-    sigfraBox->pack_start(*modeHBoxbwev);
+//    sigfraBox->pack_start(*sigmoidsenscie);
+//    sigfraBox->pack_start(*modeHBoxbwev);
     sigmoid2Frame->add(*sigfraBox);
     sigBox->pack_start(*sigmoid2Frame);
 

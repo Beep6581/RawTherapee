@@ -377,6 +377,7 @@ enum class BlurType {
     float rolloff_function(float x, float dr, float b, float c, float kmid);
     float scene_contrast(float x, float mid_gray_scene, float gamma);
     void sigmoid_main(float r, float g, float b, float &rout, float &gout, float &bout, float middle_grey_contrast, float contrast_skewness, /* float white_point,*/ float MIDDLE_GREY, float black_point, float white_point_disp);
+    void sigmoid_Q(float Q, float &Qout, float middle_grey_contrast, float contrast_skewness, float MIDDLE_GREY, float black_point, float white_point_disp);
 
     void addGaNoise(LabImage *lab, LabImage *dst, const float mean, const float variance, const int sk);
     void BlurNoise_Localold(int call, const struct local_params& lp, LabImage* original, LabImage* transformed, const LabImage* const tmp1, int cx, int cy);

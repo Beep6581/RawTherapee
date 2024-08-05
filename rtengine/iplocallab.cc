@@ -2164,6 +2164,37 @@ void  ImProcFunctions::sigmoid_main(float r,
     bout = rgb[2];
 }
 
+
+void  ImProcFunctions::sigmoid_Q(float Q,
+              float &Qout,
+              float middle_grey_contrast,
+              float contrast_skewness,
+              float MIDDLE_GREY,
+              float black_point,
+              float white_point_disp)
+{
+    float film_power = 1.f;
+    float white_target = white_point_disp;
+    float black_target = 1.f;
+    float film_fog = 1.f;
+    float paper_exposure = 1.f;
+    float paper_power = 1.f;
+    float display_black_target = black_point; //0.0152f;
+
+//
+    // compute the sigmoid parameters from the UI controls
+    calculate_params(middle_grey_contrast, contrast_skewness,
+                     display_black_target,  film_power,
+                     white_target, black_target, film_fog,
+                     paper_exposure, paper_power, MIDDLE_GREY);
+    float value = Q;
+    value = max(Q, 0.f);
+        value = generalized_loglogistic_sigmoid(value, white_target,
+                                                 paper_exposure, film_fog,
+                                                 film_power, paper_power);
+    Qout = value;
+}
+
 // Copyright 2018 Alberto Griggio <alberto.griggio@gmail.com>
 
 float find_gray(float source_gray, float target_gray)
@@ -3048,11 +3079,11 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
 
     //sigmoid J Q variables
     const float sigmoidlambda = params->locallab.spots.at(sp).sigmoidldacie;
-    const float sigmoidth = params->locallab.spots.at(sp).sigmoidthcie;
+//    const float sigmoidth = params->locallab.spots.at(sp).sigmoidthcie;
     const float sigmoidbl = params->locallab.spots.at(sp).sigmoidblcie;
     const bool sigmoidnorm = params->locallab.spots.at(sp).normcie;
     int mobwev = 0;
-    float sumcamq01 = 0.5f;
+//    float sumcamq01 = 0.5f;
 
     if (params->locallab.spots.at(sp).bwevMethod == "none") {
         mobwev = 0;
@@ -3063,6 +3094,15 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
     }
 
     float senssig = (float) params->locallab.spots.at(sp).sigmoidsenscie;
+
+    float middle_grey_contrast = params->locallab.spots.at(sp).sigmoidldacie;
+    float contrast_skewness = params->locallab.spots.at(sp).sigmoidthcie;
+    float white_point_disp = params->locallab.spots.at(sp).whitsig;
+    float MIDDLE_GREY = 0.01 * params->locallab.spots.at(sp).sourceGraycie;
+    float black_point =  xexpf(lp.blackevjz * std::log(2.f) + xlogf(MIDDLE_GREY));
+   // float white_pointsig = xexpf(lp.whiteevjz * std::log(2.f) + xlogf(MIDDLE_GREY));//to adapt if need and remove slider whitsig
+   //float dr = white_pointsig - black_point;
+
     TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
     const double wip[3][3] = {//improve precision with double
         {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
@@ -3097,7 +3137,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
         mecamcurve2 = 2;
     }
 
-    float th = 1.f;
+//    float th = 1.f;
 //    const float at = 1.f - sigmoidth;
 //    const float bt = sigmoidth;
 
@@ -3105,7 +3145,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
    // const float bth = 1;
     float sila = pow_F(sigmoidlambda, senssig);
     sila = LIM01(sila);
-    const float sigm = 3.3f + 7.1f * (1.f - sila); //e^10.4 = 32860 => sigm vary from 3.3 to 10.4
+//    const float sigm = 3.3f + 7.1f * (1.f - sila); //e^10.4 = 32860 => sigm vary from 3.3 to 10.4
     float bl = std::min(sigmoidbl, 1.f);//reused old slider
     if(params->locallab.spots.at(sp).logcieq) {
         bl = 0.01f * (float) params->locallab.spots.at(sp).strcielog;
@@ -4373,7 +4413,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
             } else {
                 maxicam = 0.4f * sumcamq + 0.6f * maxicamq;               
             } 
-            sumcamq01 = sumcamq * coefq;
+//            sumcamq01 = sumcamq * coefq;
 
         }
 
@@ -4579,26 +4619,11 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
                                 Qpro *=  f;
                             }
                         }
-                      //  if (issig && issigq && iscie && !islogq && mobwev != 2) { //sigmoid Q only and black Ev & white Ev
-                        if (issig && issigq && iscie && mobwev != 2) { //sigmoid Q only and black Ev & white Ev
+                        if (issig && issigq && iscie && mobwev != 2) { //sigmoid Q with black Ev & white Ev
                             float val = Qpro * coefq;
-
-                            if (mobwev == 1) {
-                                val = std::max((xlog(val) / log2 - shadows_range) / (dynamic_range + 1.5), noise);//in range EV
-                            }
-
-                            float sigreal = sigmoidth * sumcamq01;//correction for sigmoid Q take into account mean Q
-
-                            if (sigreal >= 1.f) {
-                                th = (sigreal - 1.f) * val + 1.f;
-                            } else {
-                                th = (1.f - sigreal) * val + sigreal;
-                            }
-
-                            sigmoidla(val, th, sigm);
-                            Qpro = std::max(Qpro + val / coefq, 0.f);
-                            Qpro = CAMBrightCurveQsig[(float)(Qpro * coefQ)] / coefQ;   //brightness and contrast
-                            
+                            float Qout = 0.f;
+                            sigmoid_Q(val, Qout, middle_grey_contrast, contrast_skewness, MIDDLE_GREY, black_point, white_point_disp);
+                            Qpro = std::max(Qout / coefq, 0.f);
                             Jpro = SQR((10.f * Qpro) / wh);
 
                         }
