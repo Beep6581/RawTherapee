@@ -402,7 +402,6 @@ function CreateDmg {
 
     msg "Preparing disk image sources at ${srcDir}:"
     cp -R "${APP}" "${srcDir}"
-    cp "${RESOURCES}"/LICENSE "${srcDir}"
     ln -s /Applications "${srcDir}"
 
     # Web bookmarks
