@@ -85,6 +85,12 @@ constexpr float clipDE(float x)
     return rtengine::LIM(x, 0.3f, 1.f);
 }
 
+constexpr float clipR(float x)
+{
+    return rtengine::LIM(x, 0.f, 65535.f);//used when Laplacian Contrast attenuator
+}
+
+
 constexpr float clipC(float x)
 {
     return rtengine::LIM(x, -100000.f, 100000.f);//increase LIM from 42000 to 1000000 to avoid clip and also imaginaries colors
@@ -18219,8 +18225,6 @@ void ImProcFunctions::Lab_Local(
                         }
                     }
 
-
-
                     if (exlocalcurve && localexutili) {// L=f(L) curve enhanced
 
 #ifdef _OPENMP
@@ -18323,8 +18327,8 @@ void ImProcFunctions::Lab_Local(
 
                         }
 
-                        if (lp.laplacexp > 0.1f) {
-
+                        if (lp.laplacexp > 0.1f) {//don't use if an other spot use Dehaze.
+                            //printf("EXEC ATTENUATOR\n");
                             MyMutex::MyLock lock(*fftwMutex);
                             std::unique_ptr<float[]> datain(new float[bfwr * bfhr]);
                             std::unique_ptr<float[]> dataout(new float[bfwr * bfhr]);
@@ -20904,6 +20908,65 @@ void ImProcFunctions::Lab_Local(
                 calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
             }
         }
+    }
+    int bw = transformed->W;
+    int bh = transformed->H;
+    bool notzero = false; //verify that RGB values are > 0.f issue 7121 to avoid crash. Could perhaps be used in other cases as RGB curves (main)
+    bool notlaplacian = false;//no use of strong Laplacian
+
+    float epsi = 0.000001f;
+
+
+    if((lp.laplacexp > 1.f && lp.exposena) || (lp.strng > 2.f && lp.sfena)){//strong Laplacian
+        notlaplacian = true;
+    }
+
+    if(((lp.laplacexp > 0.f && lp.laplacexp <= 1.f) && lp.exposena && lp.blac == 0.f)) { // use Laplacian with very small values
+        notzero = true;
+    } else if ((lp.laplacexp > 0.f && lp.laplacexp <= 1.f) && lp.exposena && lp.blac != 0.f) {//for curvelocal simplebasecurve with black
+        notlaplacian = true;
+    }
+
+    ToneCurveMode curveMode = params->toneCurve.curveMode;//Tone curve does not allow negative values
+    if((curveMode == ToneCurveMode::PERCEPTUAL) || (curveMode == ToneCurveMode::STD) || (curveMode == ToneCurveMode::WEIGHTEDSTD)  || (curveMode == ToneCurveMode::FILMLIKE) || (curveMode == ToneCurveMode::SATANDVALBLENDING) || (curveMode == ToneCurveMode::LUMINANCE)) {
+        notzero = true;
+    }
+
+    ToneCurveMode curveMode2 = params->toneCurve.curveMode2;//Tone curve does not allow negative values
+    if((curveMode2 == ToneCurveMode::PERCEPTUAL) || (curveMode2 == ToneCurveMode::STD) || (curveMode2 == ToneCurveMode::WEIGHTEDSTD)  || (curveMode2 == ToneCurveMode::FILMLIKE) || (curveMode2 == ToneCurveMode::SATANDVALBLENDING) || (curveMode2 == ToneCurveMode::LUMINANCE)) {
+        notzero = true;
+    }
+    
+    if(params->rgbCurves.enabled || params->hsvequalizer.enabled  || params->chmixer.enabled  || params->colorToning.enabled ) {//rgb curves, HSV, Channel mixer, Color Toning does not allow negative values. Perhaps others cases ?
+        notzero = true;
+    }
+
+    if(notlaplacian || notzero) {//allows memory and conversion labrgb only in these cases
+        const std::unique_ptr<Imagefloat> prov1(new Imagefloat(bw, bh));
+        lab2rgb(*transformed, *prov1, params->icm.workingProfile);
+
+        if(notlaplacian) {//clip value above 65535.f and > epsilon when Contrast attenuator with high values Laplacian or Original Retinex 
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+            for (int i = 0; i < bh; ++i)
+                for (int j = 0; j < bw; ++j) {
+                    prov1->r(i, j) = clipR(rtengine::max(prov1->r(i, j), epsi));
+                    prov1->g(i, j) = clipR(rtengine::max(prov1->g(i, j), epsi));
+                    prov1->b(i, j) = clipR(rtengine::max(prov1->b(i, j), epsi)); 
+                }
+        } else if(notzero) {//standard case only with small values Laplace no clip
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+            for (int i = 0; i < bh; ++i)
+                for (int j = 0; j < bw; ++j) {
+                    prov1->r(i, j) = rtengine::max(prov1->r(i, j), epsi);
+                    prov1->g(i, j) = rtengine::max(prov1->g(i, j), epsi);
+                    prov1->b(i, j) = rtengine::max(prov1->b(i, j), epsi); 
+                }
+        }
+        rgb2lab(*prov1, *transformed, params->icm.workingProfile);
     }
 
 
