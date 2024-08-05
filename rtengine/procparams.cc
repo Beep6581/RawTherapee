@@ -4670,7 +4670,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     sigmoidldacie(1.25),
     sigmoidthcie(0.0),
     sigmoidsenscie(0.9),
-    sigmoidblcie(0.75),
+    sigmoidblcie(0.9),
     comprcie(0.4),
     strcielog(80.),
     comprcieth(6.),
