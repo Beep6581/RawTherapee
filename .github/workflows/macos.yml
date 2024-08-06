@@ -30,7 +30,7 @@ jobs:
            date -u
            echo "----====Pourage====----"
            cat depslog | grep Pouring
-           zsh -c 'echo "Completed installation of dependencies in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"'
+           zsh -c 'echo "Completed installation of dependencies in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"' >> $GITHUB_STEP_SUMMARY
       - name: Configure build system
         env:
           IDENT: '-'
@@ -71,14 +71,14 @@ jobs:
             -DCONTINUOUS=ON \
             -DCODESIGNID:STRING="$IDENT" \
             ..
-            zsh -c 'echo "Configured in $(printf "%0.2f" $(($[$(date +%s)-$(cat configstamp)]/$((60.))))) minutes"'
+            zsh -c 'echo "Configured in $(printf "%0.2f" $(($[$(date +%s)-$(cat configstamp)]/$((60.))))) minutes"' >> $GITHUB_STEP_SUMMARY
       - name: Compile RawTherapee
         run: |
           date -u && date +%s > build/compilestamp
           cd build
           export REF=${GITHUB_REF##*/}
           make -j$(sysctl -a | grep machdep.cpu.thread_count | tail -c 2) install
-          zsh -c 'echo "Compiled in $(printf "%0.2f" $(($[$(date +%s)-$(cat compilestamp)]/$((60.))))) minutes"'
+          zsh -c 'echo "Compiled in $(printf "%0.2f" $(($[$(date +%s)-$(cat compilestamp)]/$((60.))))) minutes"' >> $GITHUB_STEP_SUMMARY
       - name: Create application bundle
         run: |
           zsh
@@ -90,7 +90,7 @@ jobs:
           # https://github.com/actions/starter-workflows/issues/68
           echo "ARTIFACT_PATH=${GITHUB_WORKSPACE}/build/${ARTIFACT}" >> $GITHUB_ENV
           echo "ARTIFACT_FILE=${ARTIFACT}" >> $GITHUB_ENV
-          zsh -c 'echo "Bundled in $(printf "%0.2f" $(($[$(date +%s)-$(cat bundlestamp)]/$((60.))))) minutes"'
+          zsh -c 'echo "Bundled in $(printf "%0.2f" $(($[$(date +%s)-$(cat bundlestamp)]/$((60.))))) minutes"' >> $GITHUB_STEP_SUMMARY
           printf '%s\n' \
             "REF: ${REF}" \
             "ARTIFACT: ${ARTIFACT}" \
@@ -105,14 +105,15 @@ jobs:
       - name: Finish build
         run: |
           date -u
-          zsh -c 'echo "Build completed in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"'
+          zsh -c 'echo "Build completed in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"' >> $GITHUB_STEP_SUMMARY
       - name: Test-launch the app
         run: |
           cd build
+          RawTherapee_*/rawtherapee-cli --version >> $GITHUB_STEP_SUMMARY
           sudo cp -R RawTherapee.app /Applications
           open -a RawTherapee
           sleep 5
-          osascript -e 'tell application "Finder"' -e 'get the name of every process whose visible is true' -e 'end tell'
+          echo "Applications running: $(osascript -e 'tell application "Finder"' -e 'get the name of every process whose visible is true' -e 'end tell')" >> $GITHUB_STEP_SUMMARY
           osascript -e 'tell application "RawTherapee" to if it is running then quit'
       - name: Publish artifacts
         uses: softprops/action-gh-release@v2
@@ -145,7 +146,7 @@ jobs:
            date -u
            echo "----====Pourage====----"
            cat depslog | grep Pouring
-           zsh -c 'echo "Completed installation of dependencies in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"'
+           zsh -c 'echo "Completed installation of dependencies in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"' >> $GITHUB_STEP_SUMMARY
       - name: Configure build system
         env:
           IDENT: '-'
@@ -185,14 +186,14 @@ jobs:
             -DCODESIGNID:STRING="$IDENT" \
             -DLOCAL_PREFIX=/opt/homebrew \
             ..
-            zsh -c 'echo "Configured in $(printf "%0.2f" $(($[$(date +%s)-$(cat configstamp)]/$((60.))))) minutes"'
+            zsh -c 'echo "Configured in $(printf "%0.2f" $(($[$(date +%s)-$(cat configstamp)]/$((60.))))) minutes"' >> $GITHUB_STEP_SUMMARY
       - name: Compile RawTherapee
         run: |
           date -u && date +%s > build/compilestamp
           cd build
           export REF=${GITHUB_REF##*/}
           make -j$(sysctl -a | grep machdep.cpu.thread_count | tail -c 2) install
-          zsh -c 'echo "Compiled in $(printf "%0.2f" $(($[$(date +%s)-$(cat compilestamp)]/$((60.))))) minutes"'
+          zsh -c 'echo "Compiled in $(printf "%0.2f" $(($[$(date +%s)-$(cat compilestamp)]/$((60.))))) minutes"' >> $GITHUB_STEP_SUMMARY
       - name: Create application bundle
         run: |
           zsh
@@ -204,7 +205,7 @@ jobs:
           # https://github.com/actions/starter-workflows/issues/68
           echo "ARTIFACT_PATH=${GITHUB_WORKSPACE}/build/${ARTIFACT}" >> $GITHUB_ENV
           echo "ARTIFACT_FILE=${ARTIFACT}" >> $GITHUB_ENV
-          zsh -c 'echo "Bundled in $(printf "%0.2f" $(($[$(date +%s)-$(cat bundlestamp)]/$((60.))))) minutes"'
+          zsh -c 'echo "Bundled in $(printf "%0.2f" $(($[$(date +%s)-$(cat bundlestamp)]/$((60.))))) minutes"' >> $GITHUB_STEP_SUMMARY
           printf '%s\n' \
             "REF: ${REF}" \
             "ARTIFACT: ${ARTIFACT}" \
@@ -220,12 +221,16 @@ jobs:
       - name: Finish build
         run: |
           date -u
-          zsh -c 'echo "Build completed in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"'
+          zsh -c 'echo "Build completed in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"' >> $GITHUB_STEP_SUMMARY
       - name: Test-launch the app
         run: |
-          cd build 
+          cd build
+          RawTherapee_*/rawtherapee-cli --version >> $GITHUB_STEP_SUMMARY
           sudo cp -R RawTherapee.app /Applications
-          time RawTherapee_*/rawtherapee-cli
+          open -a RawTherapee
+          sleep 5
+          echo "Applications running: $(osascript -e 'tell application "Finder"' -e 'get the name of every process whose visible is true' -e 'end tell')" >> $GITHUB_STEP_SUMMARY
+          osascript -e 'tell application "RawTherapee" to if it is running then quit'
       - name: Publish artifacts
         uses: softprops/action-gh-release@v2
         if: ${{github.ref_type == 'tag' || github.ref_name == 'dev'}}
