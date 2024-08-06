@@ -1308,8 +1308,8 @@ HISTORY_MSG_1075;Local - CIECAM Surround viewing
 HISTORY_MSG_1076;Local - CIECAM Scope
 HISTORY_MSG_1077;Local - CIECAM Mode
 HISTORY_MSG_1078;Local - Red and skin protection
-HISTORY_MSG_1079;Local - CIECAM Sigmoid strength J
-HISTORY_MSG_1080;Local - CIECAM Sigmoid threshold
+HISTORY_MSG_1079;Local - CIECAM Sigmoid contrast
+HISTORY_MSG_1080;Local - CIECAM Sigmoid skew
 HISTORY_MSG_1081;Local - CIECAM Sigmoid blend
 HISTORY_MSG_1082;Local - CIECAM Auto threshold
 HISTORY_MSG_1083;Local - CIECAM Hue
@@ -1318,8 +1318,8 @@ HISTORY_MSG_1085;Local - Jz lightness
 HISTORY_MSG_1086;Local - Jz contrast
 HISTORY_MSG_1087;Local - Jz chroma
 HISTORY_MSG_1088;Local - Jz hue
-HISTORY_MSG_1089;Local - Jz Sigmoid strength
-HISTORY_MSG_1090;Local - Jz Sigmoid threshold
+HISTORY_MSG_1089;Local - Jz Sigmoid contrast
+HISTORY_MSG_1090;Local - Jz Sigmoid skew
 HISTORY_MSG_1091;Local - Jz Sigmoid blend
 HISTORY_MSG_1092;Local - Jz adaptation
 HISTORY_MSG_1093;Local - CAM model
@@ -3596,7 +3596,7 @@ TP_LOCALLAB_SIGMOIDSENSI;Adaptability
 TP_LOCALLAB_SIGMOIDTH;Skew
 
 TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP;Allows you, in Automatic when the dynamic range of the image is high, to change the distribution of lights in whites and deep blacks.\nCan be used with Log encoding or Sigmoid with Black Ev and White Ev enabled.\n\nThe algorithm does not change the basic data, but acts on the components necessary to calculate the Dynamic range, Black Ev, White Ev and the Gray point.
-TP_LOCALLAB_SIGMOID_TOOLTIP;Allows you to simulate a tone mapping appearance using both the 'Jz' and 'Sigmoid' function. Three sliders:\na) Contrast acts on the shape of the sigmoid curve and consequently on the strength\nb) Threshold (Gray point) distributes the action according to the luminance\nc)Blend acts on the final aspect of the image, contrast and luminance.
+TP_LOCALLAB_SIGMOID_TOOLTIP;Allows you to simulate a tone mapping appearance using both the 'Jz' and 'Sigmoid' function. Two sliders:\na) Contrast acts on the shape of the sigmoid curve and consequently on the strength\nb) Skew (Gray point) distributes the action according to the luminance.
 TP_LOCALLAB_SIGSLOPJCIE;Slope
 TP_LOCALLAB_SIGTRCCIE;Source Data Adjustments
 TP_LOCALLAB_SIGWHITESCIE;Whites distribution

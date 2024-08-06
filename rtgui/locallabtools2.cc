@@ -8095,8 +8095,8 @@ Locallabcie::Locallabcie():
     sigmoid2Frame(Gtk::manage(new Gtk::Frame(M("")))),
     sigcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGCIE")))),
     sigjz(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGJZFRA")))),
-    sigmoidldajzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0., 1.0, 0.01, 0.5))),
-    sigmoidthjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDTH"), 0.1, 4., 0.01, 1., Gtk::manage(new RTImage("circle-black-small")), Gtk::manage(new RTImage("circle-white-small"))))),
+    sigmoidldajzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0.5, 3.0, 0.01, 1.25))),
+    sigmoidthjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDTH"), -1., 1., 0.01, 0., Gtk::manage(new RTImage("circle-black-small")), Gtk::manage(new RTImage("circle-white-small"))))),
     sigmoidbljzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDBL"), 0.5, 1.5, 0.01, 1.))),
     colorflcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCOLORFL"), -100., 100., 0.5, 0.))),
     saturlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATURV"), -100., 100., 0.5, 0.))),
@@ -8576,8 +8576,8 @@ Locallabcie::Locallabcie():
     ToolParamBlock* const sigjzBox = Gtk::manage(new ToolParamBlock());
     sigjzBox->pack_start(*sigmoidldajzcie);
     sigjzBox->pack_start(*sigmoidthjzcie);
-    sigjzBox->pack_start(*sigmoidbljzcie);
-    sigjzBox->pack_start(*forcebw);
+ //   sigjzBox->pack_start(*sigmoidbljzcie);
+ //   sigjzBox->pack_start(*forcebw);
     sigmoidjzFrame->add(*sigjzBox);
 
     cieFBox->pack_start(*sigmoidjzFrame);

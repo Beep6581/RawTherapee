@@ -3070,7 +3070,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
 
     bool z_cam = false; //params->locallab.spots.at(sp).jabcie; //alaways use normal algorithm, Zcam giev often bad results
     bool jabcie = false;//always disabled
-    bool islogjz = params->locallab.spots.at(sp).forcebw;
+  //  bool islogjz = params->locallab.spots.at(sp).forcebw;
     bool issigjz = params->locallab.spots.at(sp).sigjz;
     bool issigq = params->locallab.spots.at(sp).sigq;
  //   bool islogq = params->locallab.spots.at(sp).logcie;
@@ -3628,6 +3628,12 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
     const double noise = pow(2., -16.6);//16.6 instead of 16 a little less than others, but we work in double
     const double log2 = xlog(2.);
     const float log2f = xlogf(2.f);
+    
+    float middle_grey_contrastjz = params->locallab.spots.at(sp).sigmoidldajzcie;
+    float contrast_skewnessjz = params->locallab.spots.at(sp).sigmoidthjzcie;
+    float white_point_dispjz = params->locallab.spots.at(sp).whitsig;
+    float MIDDLE_GREYjz = 0.01 * params->locallab.spots.at(sp).sourceGraycie;
+    float black_pointjz =  xexpf(lp.blackevjz * std::log(2.f) + xlogf(MIDDLE_GREY));
 
     if ((mocam == 2)  && call == 0) { //Jz az bz ==> Jz Cz Hz before Ciecam16
         double mini = 1000.;
@@ -3748,19 +3754,19 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
             printf("La=%4.1f PU_adap=%2.1f maxi=%f mini=%f mean=%f, avgm=%f to_screen=%f Max_real=%f to_one=%f\n", (double) la, adapjz, maxi, mini, sum, avgm, to_screen, maxreal, to_one);
         }
 
-        const float sigmoidlambdajz = params->locallab.spots.at(sp).sigmoidldajzcie;
-        const float sigmoidthjz = params->locallab.spots.at(sp).sigmoidthjzcie;
-        const float sigmoidbljz = params->locallab.spots.at(sp).sigmoidbljzcie;
+   //     const float sigmoidlambdajz = params->locallab.spots.at(sp).sigmoidldajzcie;
+   //     const float sigmoidthjz = params->locallab.spots.at(sp).sigmoidthjzcie;
+   //     const float sigmoidbljz = params->locallab.spots.at(sp).sigmoidbljzcie;
 
-        float thjz = 1.f;
-        const float atjz = 1.f - sigmoidthjz;
-        const float btjz = sigmoidthjz;
+     //   float thjz = 1.f;
+     //   const float atjz = 1.f - sigmoidthjz;
+     //   const float btjz = sigmoidthjz;
 
-        const float athjz = sigmoidthjz - 1.f;
-        const float bthjz = 1.f;
-        float powsig = pow_F(sigmoidlambdajz, 0.5f);
-        const float sigmjz = 3.3f + 7.1f * (1.f - powsig); // e^10.4 = 32860
-        const float bljz = sigmoidbljz;
+     //   const float athjz = sigmoidthjz - 1.f;
+      //  const float bthjz = 1.f;
+      //  float powsig = pow_F(sigmoidlambdajz, 0.5f);
+      //  const float sigmjz = 3.3f + 7.1f * (1.f - powsig); // e^10.4 = 32860
+      //  const float bljz = sigmoidbljz;
 
         double contreal = 0.2 *  params->locallab.spots.at(sp).contjzcie;
         DiagonalCurve jz_contrast({
@@ -4160,7 +4166,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
                 //sigmoid
                 if (issigjz && iscie) { //sigmoid Jz
                     float val = Jz;
-
+                    /*
                     if (islogjz) {
                         val = std::max((xlog(Jz) / log2 - shadows_range) / (dynamic_range + 1.5), noise);//in range EV
                     }
@@ -4172,9 +4178,12 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
                     }
 
                     sigmoidla(val, thjz, sigmjz); //sigmz "slope" of sigmoid
+                    */
+                    float Jout = 0.f;
+                    sigmoid_Q(val, Jout, middle_grey_contrastjz, contrast_skewnessjz, MIDDLE_GREYjz, black_pointjz, white_point_dispjz);
 
-
-                    Jz = LIM01((double) bljz * Jz + (double) val);
+                    Jz = Jout;
+                    //Jz = LIM01((double) bljz * Jout + (double) val);
                 }
 
                 if (Qtoj == true) { //lightness instead of brightness
