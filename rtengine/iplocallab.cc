@@ -3086,12 +3086,14 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
 
     float middle_grey_contrast = params->locallab.spots.at(sp).sigmoidldacie;
     float contrast_skewness = params->locallab.spots.at(sp).sigmoidthcie;
-    float white_point_disp = params->locallab.spots.at(sp).whitsig;
+    float white_point_disp = params->locallab.spots.at(sp).sigmoidblcie;
     float MIDDLE_GREY = 0.01 * params->locallab.spots.at(sp).sourceGraycie;
     float black_point =  xexpf(lp.blackevjz * std::log(2.f) + xlogf(MIDDLE_GREY));
-   // float white_pointsig = xexpf(lp.whiteevjz * std::log(2.f) + xlogf(MIDDLE_GREY));//to adapt if need and remove slider whitsig
-   //float dr = white_pointsig - black_point;
-
+    float white_pointsig = xexpf(lp.whiteevjz * std::log(2.f) + xlogf(MIDDLE_GREY));//to adapt if need and remove slider whitsig
+    float dr = white_pointsig - black_point;
+    if(sigmoidnorm) {
+        MIDDLE_GREY = MIDDLE_GREY * dr + black_point;
+    }
     TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
     const double wip[3][3] = {//improve precision with double
         {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
@@ -4393,7 +4395,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
 
         double drref = 8.5; //Dynamic Range standard
  
-        double drd = ((double) dynamic_range - drref) / drref;
+      //  double drd = ((double) dynamic_range - drref) / drref;
  
         double dratt = (double) dynamic_range / drref;
         comprfactor = 0.4f * comprfactor * (float) dratt;//adapt comprfactor to Dynamic Range
@@ -4443,15 +4445,17 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
             return x;
         };
 
+//keep this code Normalize in case of
         //prepare Normalize luminance
-        float *datain = nullptr;
-        float *data = nullptr;
-        float *datanorm = nullptr;
-
+  //      float *datain = nullptr;
+  //      float *data = nullptr;
+  //      float *datanorm = nullptr;
+/*
         if ((sigmoidnorm  && issigq)  || params->locallab.spots.at(sp).logcieq) {
             datain = new float[width* height];
             data = new float[width * height];
             datanorm = new float[width * height];
+#ifdef _OPENMP
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic, 16)
 #endif
@@ -4462,7 +4466,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
                 }
             }
         }
-
+*/
 #ifdef __SSE2__
         int bufferLength = ((width + 3) / 4) * 4; // bufferLength has to be a multiple of 4
 #endif
@@ -4769,7 +4773,8 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
 #endif
             }
         }
-
+/*
+//keep this code normalize in case of
         if ((mocam == 1 && (sigmoidnorm && issigq)) || params->locallab.spots.at(sp).logcieq) { //Normalize luminance
 
 #ifdef _OPENMP
@@ -4812,6 +4817,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
         delete [] datain;
         delete [] data;
         delete [] datanorm;
+        */
     }
 
 

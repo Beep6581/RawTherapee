@@ -1308,9 +1308,9 @@ HISTORY_MSG_1075;Local - CIECAM Surround viewing
 HISTORY_MSG_1076;Local - CIECAM Scope
 HISTORY_MSG_1077;Local - CIECAM Mode
 HISTORY_MSG_1078;Local - Red and skin protection
-HISTORY_MSG_1079;Local - CIECAM Sigmoid contrast
-HISTORY_MSG_1080;Local - CIECAM Sigmoid skew
-HISTORY_MSG_1081;Local - CIECAM Sigmoid blend
+HISTORY_MSG_1079;Local - CIECAM Sigmoid Q contrast
+HISTORY_MSG_1080;Local - CIECAM Sigmoid Q skew
+HISTORY_MSG_1081;Local - CIECAM Sigmoid Q - Display white point
 HISTORY_MSG_1082;Local - CIECAM Auto threshold
 HISTORY_MSG_1083;Local - CIECAM Hue
 HISTORY_MSG_1084;Local - Uses Black Ev - White Ev
@@ -1502,7 +1502,7 @@ HISTORY_MSG_LOCAL_CIE_GREYL;Local - CIECAM Green Y
 HISTORY_MSG_LOCAL_CIE_ILL;Local - CIECAM TRC Illuminant
 HISTORY_MSG_LOCAL_CIE_LOGCIEQ;Local - CIECAM Log encoding Q
 HISTORY_MSG_LOCAL_CIE_MIDT;Local - CIECAM Mid Tones
-HISTORY_MSG_LOCAL_CIE_NORM;Local - CIECAM Normalize L
+HISTORY_MSG_LOCAL_CIE_NORM;Local - CIECAM Scale Yb scene
 HISTORY_MSG_LOCAL_CIE_PRIM;Local - CIECAM TRC primaries
 HISTORY_MSG_LOCAL_CIE_REDXL;Local - CIECAM Red X
 HISTORY_MSG_LOCAL_CIE_REDYL;Local - CIECAM Red Y
@@ -3582,11 +3582,11 @@ TP_LOCALLAB_SIGGAMJCIE;Gamma
 TP_LOCALLAB_SIGJZFRA;Sigmoid Jz
 TP_LOCALLAB_SIGMAWAV;Attenuation response
 TP_LOCALLAB_SIGMOID16_TOOLTIP;Allows you to simulate a tone mapping appearance using both 'Ciecam' and 'Sigmoid Q'. Sigmoid Q has three sliders:\na) Contrast acts on the shape of the sigmoid curve and consequently on the strength\nb) Skew (gray point) distributes the action according to the luminance.
-TP_LOCALLAB_SIGMOIDBL;Blend
+TP_LOCALLAB_SIGMOIDBL;Display White point
 TP_LOCALLAB_SIGMOIDLAMBDA;Contrast
 TP_LOCALLAB_SIGMOIDLOGAUTO;Auto threshold
 TP_LOCALLAB_SIGMOIDLOGEV_TOOLTIP;If the combo box selection 'Black Ev and White Ev' is 'Sigmoid and Log encoding' instead of 'Sigmoid only', the two algorithms 'Log encoding' and 'Sigmoid' are used together.
-TP_LOCALLAB_SIGMOIDNORMCIE;Normalize Luminance
+TP_LOCALLAB_SIGMOIDNORMCIE;Scale Yb Scene
 TP_LOCALLAB_SIGMOIDNORMCIEBLEND_TOOLTIP;Blend acts on the final aspect of the image, contrast and luminance. Ratio between original and output image.
 TP_LOCALLAB_SIGMOIDNORMCIE_TOOLTIP;Reconstruct luminance so that the mean and variance of the output image take into account those of the original.\nAll the adjustments acting on J or Q are taken into account, including those which are not relative to Sigmoid Q.
 TP_LOCALLAB_SIGMOIDQJ;Black Ev & White Ev

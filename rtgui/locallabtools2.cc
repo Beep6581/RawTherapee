@@ -8013,12 +8013,11 @@ Locallabcie::Locallabcie():
     forcebw(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_BWFORCE")))),
     sigBox(Gtk::manage(new ToolParamBlock())),
     sigmoidFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGFRA")))),
-    sigmoidnormFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGNORM")))),
     sigq(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGFRA")))),
     sigmoidldacie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0.5, 3., 0.01, 1.25))),
     sigmoidthcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDTH"), -1., 1., 0.01, 0., Gtk::manage(new RTImage("circle-black-small")), Gtk::manage(new RTImage("circle-white-small"))))),
     sigmoidsenscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDSENSI"), 0.1, 1.5, 0.01, 0.9))),
-    sigmoidblcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDBL"), 0.05, 1., 0.01, 0.9))),
+    sigmoidblcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDBL"), 50., 1000., 0.5, 100.))),
     autocomprHBox(Gtk::manage(new Gtk::Box())),
     comprcieauto(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_SIGMOIDLOGAUTO")))),
     normcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGMOIDNORMCIE")))),
@@ -8095,7 +8094,7 @@ Locallabcie::Locallabcie():
     sigmoid2Frame(Gtk::manage(new Gtk::Frame(M("")))),
     sigcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGCIE")))),
     sigjz(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGJZFRA")))),
-    sigmoidldajzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0.5, 3.0, 0.01, 1.25))),
+    sigmoidldajzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0.5, 3.0, 0.01, 1.15))),
     sigmoidthjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDTH"), -1., 1., 0.01, 0., Gtk::manage(new RTImage("circle-black-small")), Gtk::manage(new RTImage("circle-white-small"))))),
     sigmoidbljzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDBL"), 0.5, 1.5, 0.01, 1.))),
     colorflcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCOLORFL"), -100., 100., 0.5, 0.))),
@@ -8352,8 +8351,6 @@ Locallabcie::Locallabcie():
 
     sigmoidFrame->set_label_align(0.025, 0.5);
     sigmoidFrame->set_label_widget(*sigq);
-    sigmoidnormFrame->set_label_align(0.025, 0.5);
-    sigmoidnormFrame->set_label_widget(*normcie);
 
 
     Gtk::Box *TittleVBoxprecam;
@@ -8466,7 +8463,7 @@ Locallabcie::Locallabcie():
 
     gamutcieconn = gamutcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::gamutcieChanged));
 
-    ToolParamBlock* const signormBox = Gtk::manage(new ToolParamBlock());
+   // ToolParamBlock* const signormBox = Gtk::manage(new ToolParamBlock());
     ToolParamBlock* const sigfraBox = Gtk::manage(new ToolParamBlock());
 
     bwcieBox->pack_start(*bwcie, Gtk::PACK_EXPAND_WIDGET);
@@ -8559,15 +8556,10 @@ Locallabcie::Locallabcie():
 
     sigfraBox->pack_start(*sigmoidldacie);
     sigfraBox->pack_start(*sigmoidthcie);
-//    sigfraBox->pack_start(*sigmoidsenscie);
-//    sigfraBox->pack_start(*modeHBoxbwev);
+    sigfraBox->pack_start(*sigmoidblcie);
+    sigfraBox->pack_start(*normcie);
     sigmoid2Frame->add(*sigfraBox);
     sigBox->pack_start(*sigmoid2Frame);
-
-    signormBox->pack_start(*sigmoidblcie);
-    sigmoidnormFrame->add(*signormBox);
-    sigBox->pack_start(*sigmoidnormFrame);
-
     sigmoidFrame->add(*sigBox);
 
 
@@ -10649,11 +10641,6 @@ void Locallabcie::comprcieautoChanged()
 void Locallabcie::normcieChanged()
 {
 
-    if (normcie->get_active()) {
-        sigmoidblcie->set_sensitive(true);
-    } else {
-        sigmoidblcie->set_sensitive(false);
-    }
 
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
@@ -10779,14 +10766,6 @@ void Locallabcie::satcieChanged()
 
 void Locallabcie::logcieqChanged()
 {
-    if (logcieq->get_active()) {
-        satcie->hide();
-        sigmoidnormFrame->hide();
-    } else {
-        satcie->show();
-        sigmoidnormFrame->show();
-    }
-
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (logcieq->get_active()) {
@@ -11548,7 +11527,6 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             sensicie->show();
             reparcie->show();
             sigmoidsenscie->hide();
-            sigmoidnormFrame->hide();
             pqremapcam16->hide();
             expjz->hide();
             jzFrame->hide();
@@ -11598,7 +11576,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             smoothciehigh->hide();
             smoothcieth->hide();
             smoothcielnk->hide();
-
+            sigmoidblcie->hide();
             if (modecam->get_active_row_number() == 0) {
                 bevwevFrame->show();
                 sigmoidFrame->hide(); //show
@@ -11795,7 +11773,8 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             blurFramecie->hide();
             wavFramecie->hide();
             maskcieHCurveEditorG->hide();
-            sigmoidnormFrame->hide();
+            sigmoidblcie->hide();
+
 
             if (enacieMask->get_active()) {
                 maskusablecie->show();
@@ -11976,15 +11955,6 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             comprcieth->show();
             comprcieauto->show();
             sigmoidsenscie->show();
-            sigmoidnormFrame->show();
-
-            if (logcieq->get_active()) {
-                satcie->hide();
-                sigmoidnormFrame->hide();
-            } else {
-                satcie->show();
-                sigmoidnormFrame->show();
-            }
 
             targetGraycie->show();
             targabscie->show();

@@ -1773,7 +1773,6 @@ private:
     Gtk::CheckButton* const forcebw;
     ToolParamBlock* const sigBox;
     Gtk::Frame* const sigmoidFrame;
-    Gtk::Frame* const sigmoidnormFrame;
     Gtk::CheckButton* const sigq;
     Adjuster* const sigmoidldacie;
     Adjuster* const sigmoidthcie;
