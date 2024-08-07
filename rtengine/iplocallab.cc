@@ -2165,13 +2165,8 @@ void  ImProcFunctions::sigmoid_main(float r,
 }
 
 
-void  ImProcFunctions::sigmoid_Q(float Q,
-              float &Qout,
-              float middle_grey_contrast,
-              float contrast_skewness,
-              float MIDDLE_GREY,
-              float black_point,
-              float white_point_disp)
+//sigmoid Q (cam16) and J (Jz)
+void  ImProcFunctions::sigmoid_QJ(float Q, float &Qout, float middle_grey_contrast, float contrast_skewness, float MIDDLE_GREY, float black_point, float white_point_disp)
 {
     float film_power = 1.f;
     float white_target = white_point_disp;
@@ -3617,8 +3612,8 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
     float contrast_skewnessjz = params->locallab.spots.at(sp).sigmoidthjzcie;
     float white_point_dispjz = params->locallab.spots.at(sp).sigmoidbljzcie;
     float MIDDLE_GREYjz = 0.01 * params->locallab.spots.at(sp).sourceGraycie;
-    float black_pointjz =  xexpf(lp.blackevjz * std::log(2.f) + xlogf(MIDDLE_GREY));
-    float white_pointsigjz = xexpf(lp.whiteevjz * std::log(2.f) + xlogf(MIDDLE_GREY));//to adapt if need and remove slider whitsig
+    float black_pointjz =  xexpf(lp.blackevjz * std::log(2.f) + xlogf(MIDDLE_GREYjz));
+    float white_pointsigjz = xexpf(lp.whiteevjz * std::log(2.f) + xlogf(MIDDLE_GREYjz));//to adapt if need and remove slider whitsig
     float drjz = white_pointsigjz - black_pointjz;
     if(params->locallab.spots.at(sp).sigybjz) {
         MIDDLE_GREYjz = MIDDLE_GREYjz * drjz + black_pointjz;
@@ -4143,7 +4138,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
                 if (issigjz && iscie) { //sigmoid Jz
                     float val = Jz;
                     float Jout = 0.f;
-                    sigmoid_Q(val, Jout, middle_grey_contrastjz, contrast_skewnessjz, MIDDLE_GREYjz, black_pointjz, white_point_dispjz);
+                    sigmoid_QJ(val, Jout, middle_grey_contrastjz, contrast_skewnessjz, MIDDLE_GREYjz, black_pointjz, white_point_dispjz);
 
                     Jz = Jout;
                     Jz = LIM01(Jz);
@@ -4596,7 +4591,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
                         if (issig && issigq && iscie && mobwev != 2) { //sigmoid Q with black Ev & white Ev
                             float val = Qpro * coefq;
                             float Qout = 0.f;
-                            sigmoid_Q(val, Qout, middle_grey_contrast, contrast_skewness, MIDDLE_GREY, black_point, white_point_disp);
+                            sigmoid_QJ(val, Qout, middle_grey_contrast, contrast_skewness, MIDDLE_GREY, black_point, white_point_disp);
                             Qpro = std::max(Qout / coefq, 0.f);
                             Jpro = SQR((10.f * Qpro) / wh);
 
