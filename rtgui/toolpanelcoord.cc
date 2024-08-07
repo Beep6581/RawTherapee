@@ -468,7 +468,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     toiD = Gtk::manage (new TextOrIcon ("detail", M ("MAIN_TAB_DETAIL"), M ("MAIN_TAB_DETAIL_TOOLTIP")));
     toiC = Gtk::manage (new TextOrIcon ("color-circles", M ("MAIN_TAB_COLOR"), M ("MAIN_TAB_COLOR_TOOLTIP")));
     toiW = Gtk::manage (new TextOrIcon ("atom", M ("MAIN_TAB_ADVANCED"), M ("MAIN_TAB_ADVANCED_TOOLTIP")));
-    toiL = Gtk::manage(new TextOrIcon("hand-open", M("MAIN_TAB_LOCALLAB"), M("MAIN_TAB_LOCALLAB_TOOLTIP")));
+    toiL = Gtk::manage(new TextOrIcon("rt-spot", M("MAIN_TAB_LOCALLAB"), M("MAIN_TAB_LOCALLAB_TOOLTIP")));
 
     toiT = Gtk::manage (new TextOrIcon ("transform", M ("MAIN_TAB_TRANSFORM"), M ("MAIN_TAB_TRANSFORM_TOOLTIP")));
     toiR = Gtk::manage (new TextOrIcon ("bayer", M ("MAIN_TAB_RAW"), M ("MAIN_TAB_RAW_TOOLTIP")));
