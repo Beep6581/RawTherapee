@@ -4475,7 +4475,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     sensicie(60),
     Autograycie(true),
     forcejz(true),
-    forcebw(true),
+    sigybjz(true),
     qtoj(false),
     jabcie(true),
     comprcieauto(false),
@@ -4713,9 +4713,9 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     smoothciemet("none"),
     primMethod("pro"),
     catMethod("brad"),
-    sigmoidldajzcie(1.15),
+    sigmoidldajzcie(1.3),
     sigmoidthjzcie(0.),
-    sigmoidbljzcie(1.),
+    sigmoidbljzcie(100.),
     contqcie(0.),
     contsigqcie(0.),
     colorflcie(0.),
@@ -5529,7 +5529,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && sensicie == other.sensicie
         && Autograycie == other.Autograycie
         && forcejz == other.forcejz
-        && forcebw == other.forcebw
+        && sigybjz == other.sigybjz
         && qtoj == other.qtoj
         && jabcie == other.jabcie
         && comprcieauto == other.comprcieauto
@@ -7497,7 +7497,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->sensicie, "Locallab", "Sensicie_" + index_str, spot.sensicie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->Autograycie, "Locallab", "AutoGraycie_" + index_str, spot.Autograycie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->forcejz, "Locallab", "Forcejz_" + index_str, spot.forcejz, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->forcebw, "Locallab", "Forcebw_" + index_str, spot.forcebw, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->sigybjz, "Locallab", "sigybjz_" + index_str, spot.sigybjz, keyFile);
                     saveToKeyfile(!pedited || spot_edited->qtoj, "Locallab", "Qtoj_" + index_str, spot.qtoj, keyFile);
                     saveToKeyfile(!pedited || spot_edited->jabcie, "Locallab", "jabcie_" + index_str, spot.jabcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->comprcieauto, "Locallab", "comprcieauto_" + index_str, spot.comprcieauto, keyFile);
@@ -9974,7 +9974,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Sensicie_" + index_str, spot.sensicie, spotEdited.sensicie);
                 assignFromKeyfile(keyFile, "Locallab", "AutoGraycie_" + index_str, spot.Autograycie, spotEdited.Autograycie);
                 assignFromKeyfile(keyFile, "Locallab", "Forcejz_" + index_str, spot.forcejz, spotEdited.forcejz);
-                assignFromKeyfile(keyFile, "Locallab", "Forcebw_" + index_str, spot.forcebw, spotEdited.forcebw);
+                assignFromKeyfile(keyFile, "Locallab", "sigybjz_" + index_str, spot.sigybjz, spotEdited.sigybjz);
                 assignFromKeyfile(keyFile, "Locallab", "Qtoj_" + index_str, spot.qtoj, spotEdited.qtoj);
                 assignFromKeyfile(keyFile, "Locallab", "jabcie_" + index_str, spot.jabcie, spotEdited.jabcie);
                 assignFromKeyfile(keyFile, "Locallab", "comprcieauto_" + index_str, spot.comprcieauto, spotEdited.comprcieauto);

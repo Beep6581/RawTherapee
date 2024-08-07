@@ -1320,7 +1320,7 @@ HISTORY_MSG_1087;Local - Jz chroma
 HISTORY_MSG_1088;Local - Jz hue
 HISTORY_MSG_1089;Local - Jz Sigmoid contrast
 HISTORY_MSG_1090;Local - Jz Sigmoid skew
-HISTORY_MSG_1091;Local - Jz Sigmoid blend
+HISTORY_MSG_1091;Local - Jz Sigmoid Display White point
 HISTORY_MSG_1092;Local - Jz adaptation
 HISTORY_MSG_1093;Local - CAM model
 HISTORY_MSG_1094;Local - Jz highligths
@@ -1376,7 +1376,7 @@ HISTORY_MSG_1143;Local - Jz blackev
 HISTORY_MSG_1144;Local - Jz whiteev
 HISTORY_MSG_1145;Local - Jz Log encoding
 HISTORY_MSG_1146;Local - Jz Log encoding target gray
-HISTORY_MSG_1147;Local - Jz BlackEv WhiteEv
+HISTORY_MSG_1147;Local - Jz Scale Yb scene
 HISTORY_MSG_1148;Local - Jz Sigmoid
 HISTORY_MSG_1149;Local - Q Sigmoid
 HISTORY_MSG_1150;Local - Log encoding Q instead Sigmoid Q

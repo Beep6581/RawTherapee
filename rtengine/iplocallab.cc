@@ -3615,9 +3615,14 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
     
     float middle_grey_contrastjz = params->locallab.spots.at(sp).sigmoidldajzcie;
     float contrast_skewnessjz = params->locallab.spots.at(sp).sigmoidthjzcie;
-    float white_point_dispjz = params->locallab.spots.at(sp).whitsig;
+    float white_point_dispjz = params->locallab.spots.at(sp).sigmoidbljzcie;
     float MIDDLE_GREYjz = 0.01 * params->locallab.spots.at(sp).sourceGraycie;
     float black_pointjz =  xexpf(lp.blackevjz * std::log(2.f) + xlogf(MIDDLE_GREY));
+    float white_pointsigjz = xexpf(lp.whiteevjz * std::log(2.f) + xlogf(MIDDLE_GREY));//to adapt if need and remove slider whitsig
+    float drjz = white_pointsigjz - black_pointjz;
+    if(params->locallab.spots.at(sp).sigybjz) {
+        MIDDLE_GREYjz = MIDDLE_GREYjz * drjz + black_pointjz;
+    }
 
     if ((mocam == 2)  && call == 0) { //Jz az bz ==> Jz Cz Hz before Ciecam16
         double mini = 1000.;

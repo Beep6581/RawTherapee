@@ -8010,7 +8010,7 @@ Locallabcie::Locallabcie():
     whiteEvjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WHITE_EV"), 0.00, 32.000, 0.01, 10.00))),
     targetjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZTARGET_EV"), 4., 80.0, 0.1, 18.0))),
     bevwevFrame(Gtk::manage(new Gtk::Frame())),
-    forcebw(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_BWFORCE")))),
+    sigybjz(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGMOIDNORMCIE")))),
     sigBox(Gtk::manage(new ToolParamBlock())),
     sigmoidFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGFRA")))),
     sigq(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGFRA")))),
@@ -8094,9 +8094,9 @@ Locallabcie::Locallabcie():
     sigmoid2Frame(Gtk::manage(new Gtk::Frame(M("")))),
     sigcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGCIE")))),
     sigjz(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGJZFRA")))),
-    sigmoidldajzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0.5, 3.0, 0.01, 1.15))),
+    sigmoidldajzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0.5, 3.0, 0.01, 1.3))),
     sigmoidthjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDTH"), -1., 1., 0.01, 0., Gtk::manage(new RTImage("circle-black-small")), Gtk::manage(new RTImage("circle-white-small"))))),
-    sigmoidbljzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDBL"), 0.5, 1.5, 0.01, 1.))),
+    sigmoidbljzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDBL"), 50., 1000., 0.5, 100.))),
     colorflcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCOLORFL"), -100., 100., 0.5, 0.))),
     saturlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATURV"), -100., 100., 0.5, 0.))),
     rstprotectcie(Gtk::manage(new Adjuster(M("TP_COLORAPP_RSTPRO"), 0., 100., 0.1, 0.))),
@@ -8568,8 +8568,8 @@ Locallabcie::Locallabcie():
     ToolParamBlock* const sigjzBox = Gtk::manage(new ToolParamBlock());
     sigjzBox->pack_start(*sigmoidldajzcie);
     sigjzBox->pack_start(*sigmoidthjzcie);
- //   sigjzBox->pack_start(*sigmoidbljzcie);
- //   sigjzBox->pack_start(*forcebw);
+    sigjzBox->pack_start(*sigmoidbljzcie);
+    sigjzBox->pack_start(*sigybjz);
     sigmoidjzFrame->add(*sigjzBox);
 
     cieFBox->pack_start(*sigmoidjzFrame);
@@ -8771,7 +8771,7 @@ Locallabcie::Locallabcie():
     forcejzConn = forcejz->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::forcejzChanged));
     qtojConn = qtoj->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::qtojChanged));
     chjzcieconn = chjzcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::chjzcieChanged));
-    forcebwConn = forcebw->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::forcebwChanged));
+    sigybjzConn = sigybjz->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::sigybjzChanged));
 
     sourceGraycie->setAdjusterListener(this);
     sourceGraycie->setLogScale(10, 18, true);
@@ -9438,7 +9438,7 @@ void Locallabcie::disableListener()
     LocallabTool::disableListener();
     AutograycieConn.block(true);
     forcejzConn.block(true);
-    forcebwConn.block(true);
+    sigybjzConn.block(true);
     qtojConn.block(true);
     jabcieConn.block(true);
     comprcieautoconn.block(true);
@@ -9484,7 +9484,7 @@ void Locallabcie::enableListener()
     LocallabTool::enableListener();
     AutograycieConn.block(false);
     forcejzConn.block(false);
-    forcebwConn.block(false);
+    sigybjzConn.block(false);
     qtojConn.block(false);
     jabcieConn.block(false);
     comprcieautoconn.block(false);
@@ -9724,7 +9724,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
 
         Autograycie->set_active(spot.Autograycie);
         forcejz->set_active(spot.forcejz);
-        forcebw->set_active(spot.forcebw);
+        sigybjz->set_active(spot.sigybjz);
         qtoj->set_active(spot.qtoj);
         sourceGraycie->setValue(spot.sourceGraycie);
         comprcieauto->set_active(spot.comprcieauto);
@@ -10113,7 +10113,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
 
         spot.Autograycie = Autograycie->get_active();
         spot.forcejz = forcejz->get_active();
-        spot.forcebw = forcebw->get_active();
+        spot.sigybjz = sigybjz->get_active();
         spot.qtoj = qtoj->get_active();
         spot.jabcie = jabcie->get_active();
         spot.sourceGraycie = sourceGraycie->getValue();
@@ -10575,16 +10575,16 @@ void Locallabcie::forcejzChanged()
     }
 }
 
-void Locallabcie::forcebwChanged()
+void Locallabcie::sigybjzChanged()
 {
 
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
-            if (forcebw->get_active()) {
-                listener->panelChanged(Evlocallabforcebw,
+            if (sigybjz->get_active()) {
+                listener->panelChanged(Evlocallabsigybjz,
                                        M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
-                listener->panelChanged(Evlocallabforcebw,
+                listener->panelChanged(Evlocallabsigybjz,
                                        M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
