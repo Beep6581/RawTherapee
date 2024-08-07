@@ -109,8 +109,8 @@ jobs:
       - name: Test-launch the app
         run: |
           cd build
-          RawTherapee_*/rawtherapee-cli --version >> $GITHUB_STEP_SUMMARY
           sudo cp -R RawTherapee.app /Applications
+          RawTherapee_*/rawtherapee-cli --version >> $GITHUB_STEP_SUMMARY
           open -a RawTherapee
           sleep 5
           echo "Applications running: $(osascript -e 'tell application "Finder"' -e 'get the name of every process whose visible is true' -e 'end tell')" >> $GITHUB_STEP_SUMMARY
@@ -122,15 +122,7 @@ jobs:
           tag_name: nightly-github-actions
           files: |
             ${{env.ARTIFACT_PATH}}
-      - name: test app
-        run: |
-          sudo cp -R /Users/runner/work/RawTherapee/RawTherapee/build/RawTherapee.app /Applications
-          ls /Applications
-          open -a /Applications/RawTherapee.app
-          sleep 5
-          osascript -e 'tell application "Finder"' -e 'get the name of every process whose visible is true' -e 'end tell'
-          osascript -e 'tell application "RawTherapee" to if it is running then quit'
-
+            
   armbuild:
     runs-on: macos-14
     steps:
@@ -225,8 +217,8 @@ jobs:
       - name: Test-launch the app
         run: |
           cd build
-          RawTherapee_*/rawtherapee-cli --version >> $GITHUB_STEP_SUMMARY
           sudo cp -R RawTherapee.app /Applications
+          RawTherapee_*/rawtherapee-cli --version >> $GITHUB_STEP_SUMMARY
           open -a RawTherapee
           sleep 5
           echo "Applications running: $(osascript -e 'tell application "Finder"' -e 'get the name of every process whose visible is true' -e 'end tell')" >> $GITHUB_STEP_SUMMARY
@@ -238,11 +230,3 @@ jobs:
           tag_name: nightly-github-actions
           files: |
             ${{env.ARTIFACT_PATH}}
-      - name: test app
-        run: |
-          sudo cp -R /Users/runner/work/RawTherapee/RawTherapee/build/RawTherapee.app /Applications
-          ls /Applications
-          open -a /Applications/RawTherapee.app
-          sleep 5
-          osascript -e 'tell application "Finder"' -e 'get the name of every process whose visible is true' -e 'end tell'
-          osascript -e 'tell application "RawTherapee" to if it is running then quit'
