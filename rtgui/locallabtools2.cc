@@ -10506,6 +10506,7 @@ void Locallabcie::updateAutocompute(const float blackev, const float whiteev, co
             whiteEvjz->setValue(whiteev);
             sourceGraycie->setValue(sourceg);
             sourceabscie->setValue(sourceab);
+            pqremap->setValue(sourceab);
             float sour = std::min((double) sourceab, 10000.) / 10000.f;
             float pal = std::max(10. * (double) sqrt(sour), 1.5);
             adapjzcie->setValue(pal);//max = 10 and min 1.5
