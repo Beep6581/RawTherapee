@@ -106,15 +106,17 @@ jobs:
         run: |
           date -u
           zsh -c 'echo "Build completed in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"' >> $GITHUB_STEP_SUMMARY
+
       - name: Test-launch the app
         run: |
           cd build
           sudo cp -R RawTherapee.app /Applications
-          RawTherapee_*/rawtherapee-cli --version >> $GITHUB_STEP_SUMMARY
-          open -a /Applications/RawTherapee.app
+          open -a RawTherapee
           sleep 5
           echo "Applications running: $(osascript -e 'tell application "Finder"' -e 'get the name of every process whose visible is true' -e 'end tell')" >> $GITHUB_STEP_SUMMARY
+          osascript -e 'if application "RawTherapee" is not running then do shell script "exit 1"'
           osascript -e 'tell application "RawTherapee" to if it is running then quit'
+
       - name: Publish artifacts
         uses: softprops/action-gh-release@v2
         if: ${{github.ref_type == 'tag' || github.ref_name == 'dev'}}
@@ -123,6 +125,7 @@ jobs:
           files: |
             ${{env.ARTIFACT_PATH}}
             
+
   armbuild:
     runs-on: macos-14
     steps:
@@ -214,15 +217,17 @@ jobs:
         run: |
           date -u
           zsh -c 'echo "Build completed in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"' >> $GITHUB_STEP_SUMMARY
+
       - name: Test-launch the app
         run: |
           cd build
           sudo cp -R RawTherapee.app /Applications
-          RawTherapee_*/rawtherapee-cli --version >> $GITHUB_STEP_SUMMARY
-          open -a /Applications/RawTherapee.app
+          open -a RawTherapee
           sleep 5
           echo "Applications running: $(osascript -e 'tell application "Finder"' -e 'get the name of every process whose visible is true' -e 'end tell')" >> $GITHUB_STEP_SUMMARY
+          osascript -e 'if application "RawTherapee" is not running then do shell script "exit 1"'
           osascript -e 'tell application "RawTherapee" to if it is running then quit'
+
       - name: Publish artifacts
         uses: softprops/action-gh-release@v2
         if: ${{github.ref_type == 'tag' || github.ref_name == 'dev'}}
