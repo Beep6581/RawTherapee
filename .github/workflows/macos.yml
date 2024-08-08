@@ -20,13 +20,16 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with: 
+          fetch-tags: '0'
+          fetch-depth: '0'
       - name: Install dependencies
         run: |
            date -u
            mkdir build
            date +%s > build/stamp
            brew uninstall --ignore-dependencies libtiff
-           brew install libtiff gtk+3 gtkmm3 gtk-mac-integration adwaita-icon-theme libsigc++@2 little-cms2 libiptcdata fftw lensfun expat pkgconfig llvm shared-mime-info exiv2 jpeg-xl libomp automake libtool | tee -a depslog
+           brew install imagemagick create-dmg libtiff gtk+3 gtkmm3 gtk-mac-integration adwaita-icon-theme libsigc++@2 little-cms2 libiptcdata fftw lensfun expat pkgconfig llvm shared-mime-info exiv2 jpeg-xl libomp automake libtool | tee -a depslog
            date -u
            echo "----====Pourage====----"
            cat depslog | grep Pouring
@@ -70,6 +73,7 @@ jobs:
             -DCMAKE_OSX_DEPLOYMENT_TARGET=12.0 \
             -DCONTINUOUS=ON \
             -DCODESIGNID:STRING="$IDENT" \
+            -DFANCY_DMG="ON" \
             ..
             zsh -c 'echo "Configured in $(printf "%0.2f" $(($[$(date +%s)-$(cat configstamp)]/$((60.))))) minutes"' >> $GITHUB_STEP_SUMMARY
       - name: Compile RawTherapee
@@ -83,6 +87,7 @@ jobs:
         run: |
           zsh
           date +%s > build/bundlestamp && date -u && cd build
+          echo "Automated Build! WARNING:\nNot intended for end-user testing." > message
           export REF=${GITHUB_REF##*/} && sudo make macosx_bundle
           export ARTIFACT=(RawTherapee*${CMAKE_BUILD_TYPE}.zip)
           echo "=== artifact: ${ARTIFACT}"
@@ -111,11 +116,16 @@ jobs:
         run: |
           cd build
           sudo cp -R RawTherapee.app /Applications
-          open -a RawTherapee
+          open -a /Applications/RawTherapee.app
           sleep 5
-          echo "Applications running: $(osascript -e 'tell application "Finder"' -e 'get the name of every process whose visible is true' -e 'end tell')" >> $GITHUB_STEP_SUMMARY
+          echo "Applications running: $(osascript -e 'tell application "Finder" to get the name of every process whose visible is true')" >> $GITHUB_STEP_SUMMARY
           osascript -e 'if application "RawTherapee" is not running then do shell script "exit 1"'
           osascript -e 'tell application "RawTherapee" to if it is running then quit'
+
+      - name: Test the -cli
+        run: |
+          cd build
+          echo "$(RawTherapee*folder/rawtherapee-cli --version)" >> $GITHUB_STEP_SUMMARY
 
       - name: Publish artifacts
         uses: softprops/action-gh-release@v2
@@ -131,13 +141,16 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with: 
+          fetch-tags: '0'
+          fetch-depth: '0'
       - name: Install dependencies
         run: |
            date -u
            mkdir build
            date +%s > build/stamp
            brew uninstall --ignore-dependencies libtiff
-           brew install libtiff gtk+3 gtkmm3 gtk-mac-integration adwaita-icon-theme libsigc++@2 little-cms2 libiptcdata fftw lensfun expat pkgconfig llvm shared-mime-info exiv2 jpeg-xl libomp automake libtool | tee -a depslog
+           brew install imagemagick create-dmg libtiff gtk+3 gtkmm3 gtk-mac-integration adwaita-icon-theme libsigc++@2 little-cms2 libiptcdata fftw lensfun expat pkgconfig llvm shared-mime-info exiv2 jpeg-xl libomp automake libtool | tee -a depslog
            date -u
            echo "----====Pourage====----"
            cat depslog | grep Pouring
@@ -180,6 +193,7 @@ jobs:
             -DCONTINUOUS=ON \
             -DCODESIGNID:STRING="$IDENT" \
             -DLOCAL_PREFIX=/opt/homebrew \
+            -DFANCY_DMG="ON" \
             ..
             zsh -c 'echo "Configured in $(printf "%0.2f" $(($[$(date +%s)-$(cat configstamp)]/$((60.))))) minutes"' >> $GITHUB_STEP_SUMMARY
       - name: Compile RawTherapee
@@ -193,6 +207,7 @@ jobs:
         run: |
           zsh
           date +%s > build/bundlestamp && date -u && cd build
+          echo "Automated Build! WARNING:\nNot intended for end-user testing." > message
           export REF=${GITHUB_REF##*/} && sudo make macosx_bundle
           export ARTIFACT=(RawTherapee*${CMAKE_BUILD_TYPE}.zip)
           echo "=== artifact: ${ARTIFACT}"
@@ -222,11 +237,16 @@ jobs:
         run: |
           cd build
           sudo cp -R RawTherapee.app /Applications
-          open -a RawTherapee
+          open -a /Applications/RawTherapee.app
           sleep 5
-          echo "Applications running: $(osascript -e 'tell application "Finder"' -e 'get the name of every process whose visible is true' -e 'end tell')" >> $GITHUB_STEP_SUMMARY
+          echo "Applications running: $(osascript -e 'tell application "Finder" to get the name of every process whose visible is true')" >> $GITHUB_STEP_SUMMARY
           osascript -e 'if application "RawTherapee" is not running then do shell script "exit 1"'
           osascript -e 'tell application "RawTherapee" to if it is running then quit'
+
+      - name: Test the -cli
+        run: |
+          cd build
+          echo "$(RawTherapee*folder/rawtherapee-cli --version)" >> $GITHUB_STEP_SUMMARY
 
       - name: Publish artifacts
         uses: softprops/action-gh-release@v2
