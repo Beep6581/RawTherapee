@@ -84,11 +84,12 @@
 #83 06.07.2019 Erweiterung (TooWaBoo) RT 5.6
 #84 06.10.2019 Erweiterung (TooWaBoo) RT 5.7
 #84 18.07.2019 Erweiterung (TooWaBoo) RT 5.6
-#85 29.07.2022 Erweiterung (marter, mozzihh) RT 5.9 
-#86 29.08.2024 (marter) RT 5.11
-
+#85 29.07.2022 Erweiterung (marter, mozzihh) RT 5.9
+#86 2023-09, Version RT 5.10 (marter)
+#87 29.08.2024 (marter) RT 5.11
 #100
 #101 @LANGUAGE_DISPLAY_NAME=Deutsch
+
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
 ABOUT_TAB_LICENSE;Lizenz
@@ -195,7 +196,7 @@ EXPORT_PUTTOQUEUEFAST;Zur Warteschlange 'Schneller Export' hinzufügen
 EXPORT_RAW_DMETHOD;Demosaikmethode
 EXPORT_USE_FAST_PIPELINE;Priorität Geschwindigkeit
 EXPORT_USE_FAST_PIPELINE_TOOLTIP;Wendet alle Bearbeitungsschritte, im Gegensatz zu 'Standard', auf das bereits skalierte Bild an.\nDadurch steigt die Verarbeitungsgeschwindigkeit auf Kosten der Qualität.
-EXPORT_USE_NORMAL_PIPELINE;Standard (überspringt einige Schritte, Skalieren zuletzt) 
+EXPORT_USE_NORMAL_PIPELINE;Standard (überspringt einige Schritte, Skalieren zuletzt)
 EXTPROGTARGET_1;RAW
 EXTPROGTARGET_2;Stapelverarbeitung beendet
 FILEBROWSER_APPLYPROFILE;Profil anwenden
@@ -351,7 +352,7 @@ HISTOGRAM_TOOLTIP_TRACE_BRIGHTNESS;Helligkeitsbereich anpassen
 HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM;Histogramm
 HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM_RAW;Raw-Histogramm
 HISTOGRAM_TOOLTIP_TYPE_PARADE;RGB-Parade
-HISTOGRAM_TOOLTIP_TYPE_VECTORSCOPE_HC;Vektorskop Farbton-Chroma 
+HISTOGRAM_TOOLTIP_TYPE_VECTORSCOPE_HC;Vektorskop Farbton-Chroma
 HISTOGRAM_TOOLTIP_TYPE_VECTORSCOPE_HS;Vektorskop Farbton-Sättigung
 HISTOGRAM_TOOLTIP_TYPE_WAVEFORM;Wellenform
 HISTORY_CHANGED;Geändert
@@ -495,7 +496,7 @@ HISTORY_MSG_153;(Farbe - Dynamik)\nGesättigte Töne
 HISTORY_MSG_154;(Farbe - Dynamik)\nHautfarbtöne schützen
 HISTORY_MSG_155;(Farbe - Dynamik)\nFarbverschiebungen vermeiden
 HISTORY_MSG_156;(Farbe - Dynamik)\nPastell- und gesättigte Töne koppeln
-HISTORY_MSG_157;(Farbe - Dynamik)\nSchwelle: Pastell- / gesättigte Töne 
+HISTORY_MSG_157;(Farbe - Dynamik)\nSchwelle: Pastell- / gesättigte Töne
 HISTORY_MSG_158;(Belichtung - Tonwertkorrektur)\nIntensität
 HISTORY_MSG_159;(Belichtung - Tonwertkorrektur)\nKantenschutz
 HISTORY_MSG_160;(Belichtung - Tonwertkorrektur)\nFaktor
@@ -861,7 +862,7 @@ HISTORY_MSG_527;(sel. Editieren - Farbe-Licht)\nInvertieren
 HISTORY_MSG_528;(sel. Editieren - Dynamik u. Belichtung)
 HISTORY_MSG_529;(sel. Editieren - Dynamik u. Belichtung)\nKompression
 HISTORY_MSG_530;(sel. Editieren - Dynamik u. Belichtung)\nLichterkompression
-HISTORY_MSG_531;(sel. Editieren - Dynamik u. Belichtung)\nLichterkompression\nSchwellenwert 
+HISTORY_MSG_531;(sel. Editieren - Dynamik u. Belichtung)\nLichterkompression\nSchwellenwert
 HISTORY_MSG_532;(sel. Editieren - Dynamik u. Belichtung)\nSchwarzwert
 HISTORY_MSG_533;(sel. Editieren - Dynamik u. Belichtung)\nSchattenkompression
 HISTORY_MSG_534;(sel. Editieren - Farbtemperatur)\nTönung
@@ -1113,7 +1114,7 @@ HISTORY_MSG_786;(sel. Editieren - Schatten/Lichter)\nMethode
 HISTORY_MSG_787;(sel. Editieren - Schatten/Lichter)\nTonwert-Equalizer\nWerte
 HISTORY_MSG_788;(sel. Editieren - Schatten/Lichter)\nTonwert-Equalizer\nDetails
 HISTORY_MSG_789;(sel. Editieren - Schatten/Lichter)\nMaske\nIntensität
-HISTORY_MSG_790;(sel. Editieren - Schatten/Lichter)\nMaske Ankerpunkt 
+HISTORY_MSG_790;(sel. Editieren - Schatten/Lichter)\nMaske Ankerpunkt
 HISTORY_MSG_791;(sel. Editieren - Maske)\nShort L-Kurve
 HISTORY_MSG_792;(sel. Editieren - Spot)\nMaskieren\nHintergrund Maske
 HISTORY_MSG_793;(sel. Editieren - Schatten/Lichter)\nGamma Farbtonkennlinie
@@ -1125,7 +1126,7 @@ HISTORY_MSG_798;(sel. Editieren - Farbe-Licht)\nZusammenführen\nDeckkraft
 HISTORY_MSG_799;(sel. Editieren - Farbe-Licht)\nRGB-Kurve
 HISTORY_MSG_800;(sel. Editieren - Farbe-Licht)\nMethode RGB-Kurven
 HISTORY_MSG_801;(sel. Editieren - Farbe-Licht)\nSpezielle Verwendung RGB-Kurven
-HISTORY_MSG_802;(sel. Editieren - Farbe-Licht)\nZusammenführen\nSchwellenwert Kontrast 
+HISTORY_MSG_802;(sel. Editieren - Farbe-Licht)\nZusammenführen\nSchwellenwert Kontrast
 HISTORY_MSG_803;(sel. Editieren - Farbe-Licht)\nZusammenführen
 HISTORY_MSG_804;(sel. Editieren - Farbe-Licht)\nIntensität Strukturmaske
 HISTORY_MSG_805;(sel. Editieren - Unschärfe)\nIntensität Strukturmaske
@@ -1178,7 +1179,7 @@ HISTORY_MSG_853;(sel. Editieren - LOG-Kodierung)\nLokaler Kontrast
 HISTORY_MSG_854;(sel. Editieren - LOG-Kodierung)\nBereich
 HISTORY_MSG_855;(sel. Editieren - LOG-Kodierung)\nGesamtes Bild
 HISTORY_MSG_856;(sel. Editieren - LOG-Kodierung)\nBereich Schatten
-HISTORY_MSG_857;(sel. Editieren - Wavelet)\nUnschärfeebenen\nVerbleibende Unschärfe 
+HISTORY_MSG_857;(sel. Editieren - Wavelet)\nUnschärfeebenen\nVerbleibende Unschärfe
 HISTORY_MSG_858;(sel. Editieren - Wavelet)\nUnschärfeebenen\nNur Luminanz
 HISTORY_MSG_859;(sel. Editieren - Wavelet)\nUnschärfeebenen\nMaximum
 HISTORY_MSG_860;(sel. Editieren - Wavelet)\nUnschärfeebenen
@@ -1236,7 +1237,7 @@ HISTORY_MSG_915;(sel. Editieren - Wavelet)\nKantenschärfe\nDämpfungsreaktion
 HISTORY_MSG_916;(sel. Editieren - Wavelet)\nRestbild Schatten
 HISTORY_MSG_917;(sel. Editieren - Wavelet)\nRestbild\nSchwellenwert Schatten
 HISTORY_MSG_918;(sel. Editieren - Wavelet)\nRestbild Lichter
-HISTORY_MSG_919;(sel. Editieren - Wavelet)\nRestbild\nSchwellenwert Lichter 
+HISTORY_MSG_919;(sel. Editieren - Wavelet)\nRestbild\nSchwellenwert Lichter
 HISTORY_MSG_920;(sel. Editieren - Wavelet)\nKontrast\nDämpfungsreaktion
 HISTORY_MSG_921;(sel. Editieren - Wavelet)\nVerlaufsfilter\nDämpfungsreaktion
 HISTORY_MSG_922;(sel. Editieren - Spot)\nSpeziell\nÄnderungen in Schwarz-Weiß erzwingen
@@ -1267,14 +1268,14 @@ HISTORY_MSG_946;(sel. Editieren - Normale Farbmaske)\nSchatten
 HISTORY_MSG_947;(sel. Editieren - Normale Farbmaske)\nKontrastkurve
 HISTORY_MSG_948;(sel. Editieren - Normale Farbmaske)\nWavelet-Kurve
 HISTORY_MSG_949;(sel. Editieren - Normale Farbmaske)\nWavelet-Ebenen
-HISTORY_MSG_950;(sel. Editieren - Normale Farbmaske)\nVerlaufsfiltermaske\nIntensität 
+HISTORY_MSG_950;(sel. Editieren - Normale Farbmaske)\nVerlaufsfiltermaske\nIntensität
 HISTORY_MSG_951;(sel. Editieren - Normale Farbmaske)\nVerlaufsfiltermaske\nRotationswinkel
 HISTORY_MSG_952;(sel. Editieren - Normale Farbmaske)\nRadius
 HISTORY_MSG_953;(sel. Editieren - Normale Farbmaske)\nÜberlagerung Chrominanzmaske
 HISTORY_MSG_954;(sel. Editieren)\nWerkzeuge einblenden/ausblenden
 HISTORY_MSG_955;(sel. Editieren) - Spot aktivieren
 HISTORY_MSG_956;(sel. Editieren - Farbe-Licht)\nCH-Kurve
-HISTORY_MSG_957;(sel. Editieren - Rauschminderung)\nModus 
+HISTORY_MSG_957;(sel. Editieren - Rauschminderung)\nModus
 HISTORY_MSG_958;(sel. Editieren) - Zus. Einstellungen
 HISTORY_MSG_959;(sel. Editieren - Unschärfe)\nInvertieren
 HISTORY_MSG_960;(sel. Editieren - LOG-Kodierung)\nCAT16
@@ -1312,7 +1313,7 @@ HISTORY_MSG_992;(sel. Editieren - Rauschminderung)\nSchwellenwert Maske hell
 HISTORY_MSG_993;(sel. Editieren - Rauschminderung)\nInvertieren
 HISTORY_MSG_994;(sel. Editieren - Verlaufsfilter)\nInvertieren
 HISTORY_MSG_995;(sel. Editieren - Rauschminderung)\nZerfallrate
-HISTORY_MSG_996;(sel. Editieren - Farbe-Licht)\nWiederherstellung\nSchwelle 
+HISTORY_MSG_996;(sel. Editieren - Farbe-Licht)\nWiederherstellung\nSchwelle
 HISTORY_MSG_997;(sel. Editieren - Farbe-Licht)\nWiederherstellung\nSchwellenwert dunkel
 HISTORY_MSG_998;(sel. Editieren - Farbe-Licht)\nWiederherstellung\nSchwellenwert hell
 HISTORY_MSG_999;(sel. Editieren - Farbe-Licht)\nWiederherstellung\nZerfallrate
@@ -1411,7 +1412,7 @@ HISTORY_MSG_1091;(sel. Editieren - CIECAM)\nSigmoid Jz\nÜberlagern
 HISTORY_MSG_1092;(sel. Editieren - CIECAM)\nJz Zuordnung\nAnpassung
 HISTORY_MSG_1093;(sel. Editieren - CIECAM)\nCAM Modell
 HISTORY_MSG_1094;(sel. Editieren - CIECAM)\nJz Lichter
-HISTORY_MSG_1095;(sel. Editieren - CIECAM)\nTonwertbreite Jz Lichter 
+HISTORY_MSG_1095;(sel. Editieren - CIECAM)\nTonwertbreite Jz Lichter
 HISTORY_MSG_1096;(sel. Editieren - CIECAM)\nJz Schatten
 HISTORY_MSG_1097;(sel. Editieren - CIECAM)\nTonwertbreite Jz Schatten
 HISTORY_MSG_1098;(sel. Editieren - CIECAM)\nJz Radius
@@ -1425,8 +1426,8 @@ HISTORY_MSG_1105;(sel. Editieren - CIECAM)\nTonmethode
 HISTORY_MSG_1106;(sel. Editieren - CIECAM)\nTonkurve
 HISTORY_MSG_1107;(sel. Editieren - CIECAM)\nFarbmethode
 HISTORY_MSG_1108;(sel. Editieren - CIECAM)\nFarbkurve
-HISTORY_MSG_1109;(sel. Editieren - CIECAM)\nKurve Jz(Jz) 
-HISTORY_MSG_1110;(sel. Editieren - CIECAM)\nKurve Cz(Cz) 
+HISTORY_MSG_1109;(sel. Editieren - CIECAM)\nKurve Jz(Jz)
+HISTORY_MSG_1110;(sel. Editieren - CIECAM)\nKurve Cz(Cz)
 HISTORY_MSG_1111;(sel. Editieren - CIECAM)\nKurve Cz(Jz)
 HISTORY_MSG_1112;(sel. Editieren - CIECAM)\nErzwinge Jz
 HISTORY_MSG_1113;(sel. Editieren - CIECAM)\nCAM16\nHDR PQ
@@ -1455,19 +1456,19 @@ HISTORY_MSG_1135;(sel. Editieren - CIECAM)\nWavelet Jz\nLuma zusammenführen
 HISTORY_MSG_1136;(sel. Editieren - CIECAM)\nWavelet Jz\nChroma zusammenführen
 HISTORY_MSG_1137;(sel. Editieren - CIECAM)\nWavelet Jz\nGlättradius
 HISTORY_MSG_1138;(sel. Editieren - CIECAM)\nJz Cz Hz\nKurve Hz(Hz)
-HISTORY_MSG_1139;(sel. Editieren - CIECAM)\nJz Cz Hz\nKurven H\nGlättradius 
+HISTORY_MSG_1139;(sel. Editieren - CIECAM)\nJz Cz Hz\nKurven H\nGlättradius
 HISTORY_MSG_1140;(sel. Editieren - CIECAM)\nJz Cz Hz\nKurve Jz(Hz)\nSchwelle Chroma
 HISTORY_MSG_1141;(sel. Editieren - CIECAM)\nChroma-Kurve Jz(Hz)
 HISTORY_MSG_1142;(sel. Editieren) - Stärke Glätten
 HISTORY_MSG_1143;(sel. Editieren - CIECAM)\nSchwarz-Ev
-HISTORY_MSG_1144;(sel. Editieren - CIECAM)\nWeiß-Ev 
+HISTORY_MSG_1144;(sel. Editieren - CIECAM)\nWeiß-Ev
 HISTORY_MSG_1145;(sel. Editieren - CIECAM)\nLOG-Kodierung Jz
 HISTORY_MSG_1146;(sel. Editieren - CIECAM)\nLOG-Kodierung Jz\nMittlere Helligkeit
 HISTORY_MSG_1147;(sel. Editieren - CIECAM)\nSigmoid Jz\nVerwendet Schwarz-Ev Weiß-Ev
 HISTORY_MSG_1148;(sel. Editieren - CIECAM)\nSigmoid Jz
 HISTORY_MSG_1149;(sel. Editieren - CIECAM)\nSigmoid Q
 HISTORY_MSG_1150;(sel. Editieren - CIECAM)\nSigmoid\nQuellen-Daten\nLOG-Kodierung
-HISTORY_MSG_BLSHAPE;(Erweitert - Wavelet)\nUnschärfeebenen\nUnschärfe nach Ebenena
+HISTORY_MSG_BLSHAPE;(Erweitert - Wavelet)\nUnschärfeebenen\nUnschärfe nach Ebenen
 HISTORY_MSG_BLURCWAV;(Erweitert - Wavelet)\nRestbild - Unschärfe\nUnschärfe Buntheit
 HISTORY_MSG_BLURWAV;(Erweitert - Wavelet)\nRestbild - Unschärfe\nUnschärfe Helligkeit
 HISTORY_MSG_BLUWAV;(Erweitert - Wavelet)\nUnschärfeebenen\nDämpfungsreaktion
@@ -1595,7 +1596,7 @@ HISTORY_MSG_LOCAL_CIE_STRGRAD;(sel. Editieren - CIECAM)\nVerlaufsfilter\nVerlauf
 HISTORY_MSG_LOCAL_CIE_STRLOG;(sel. Editieren - CIECAM)\nQuellen-Daten\nLOG-Kodierung Stärke
 HISTORY_MSG_LOCAL_CIE_TRC;(sel. Editieren - CIECAM)\Farbtonkennlinie
 HISTORY_MSG_LOCAL_CIE_WHITES;(sel. Editieren - CIECAM)\nWeiß-Verteilung
-HISTORY_MSG_LOCAL_DEHAZE_BLACK;(sel. Editieren - Dunst entfernen\nSchwarzpunkt
+HISTORY_MSG_LOCAL_DEHAZE_BLACK;(sel. Editieren - Dunst entfernen)\nSchwarzpunkt
 HISTORY_MSG_LOCAL_FEATHERCIE;(sel. Editieren - CIECAM)\nVerlaufsfilter\nVerlaufsbreite
 HISTORY_MSG_LOCAL_FEATHERCOL;(sel. Editieren - Farbe-Licht)\nVerlaufsfilter\nVerlaufsbreite
 HISTORY_MSG_LOCAL_FEATHEREXE;(sel. Editieren - Dynamik u. Belichtung)\nVerlaufsfilter\nVerlaufsbreite
@@ -1664,7 +1665,7 @@ HISTORY_MSG_TRANS_METHOD;(Transformieren - Objektivkorrektur)\nMethode
 HISTORY_MSG_WAVBALCHROM;(Erweitert - Wavelet)\nRauschreduzierung\nFarb-Equalizer
 HISTORY_MSG_WAVBALLUM;(Erweitert - Wavelet)\nRauschreduzierung\nEqualizer Luminanz
 HISTORY_MSG_WAVBL;(Erweitert - Wavelet)\nUnschärfeebenen
-HISTORY_MSG_WAVCHR;(Erweitert - Wavelet)\nUnschärfeebenen\nChroma-Unschärfe 
+HISTORY_MSG_WAVCHR;(Erweitert - Wavelet)\nUnschärfeebenen\nChroma-Unschärfe
 HISTORY_MSG_WAVCHROMCO;(Erweitert - Wavelet)\nRauschreduzierung\nChrominanz grob
 HISTORY_MSG_WAVCHROMFI;(Erweitert - Wavelet)\nRauschreduzierung\nChrominanz fein
 HISTORY_MSG_WAVCLARI;(Erweitert - Wavelet)\nSchärfemaske und Klarheit
@@ -1689,7 +1690,7 @@ HISTORY_MSG_WAVOLDSH;(Erweitert - Wavelet)\nAlter Algorithmus
 HISTORY_MSG_WAVQUAMET;(Erweitert - Wavelet)\nRauschreduzierung\nModus
 HISTORY_MSG_WAVRADIUS;(Erweitert - Wavelet)\nRestbild - Schatten/Lichter\nRadius
 HISTORY_MSG_WAVSCALE;(Erweitert - Wavelet)\nRestbild - Kompression\nSkalieren
-HISTORY_MSG_WAVSHOWMASK;(Erweitert - Wavelet)\nSchärfemaske und Klarheit\nWaveletmaske anzeigen 
+HISTORY_MSG_WAVSHOWMASK;(Erweitert - Wavelet)\nSchärfemaske und Klarheit\nWaveletmaske anzeigen
 HISTORY_MSG_WAVSIGM;(Erweitert - Wavelet)\nKontrast\nSigma
 HISTORY_MSG_WAVSIGMA;(Erweitert - Wavelet)\nKontrast\nDämpfungsreaktion
 HISTORY_MSG_WAVSLIMET;(Erweitert - Wavelet)\nRauschreduzierung\nMethode
@@ -1712,7 +1713,6 @@ HISTORY_MSG_WBITC_PONDER;(Farbe - Weißabgleich)\ngemäßigt
 HISTORY_MSG_WBITC_PRECIS;(Farbe - Weißabgleich)\nPräzision
 HISTORY_MSG_WBITC_PRIM;(Farbe - Weißabgleich)\nWahl der Abtastung
 HISTORY_MSG_WBITC_RGREEN;(Farbe - Weißabgleich)\nGrünbereich
-!HISTORY_MSG_WBITC_SAMPLING;Low sampling
 HISTORY_MSG_WBITC_SIZE;(Farbe - Weißabgleich)\nGröße
 HISTORY_MSG_WBITC_SORTED;(Farbe - Weißabgleich)\ngemäßigt
 HISTORY_MSG_WBITC_THRES;(Farbe - Weißabgleich)\nSchwellenwert
@@ -1733,7 +1733,7 @@ ICCPROFCREATOR_ILL_41;D41
 ICCPROFCREATOR_ILL_50;D50
 ICCPROFCREATOR_ILL_55;D55
 ICCPROFCREATOR_ILL_60;D60
-ICCPROFCREATOR_ILL_63;D63 : DCI-P3 Theater 
+ICCPROFCREATOR_ILL_63;D63 : DCI-P3 Theater
 ICCPROFCREATOR_ILL_65;D65
 ICCPROFCREATOR_ILL_80;D80
 ICCPROFCREATOR_ILL_DEF;Vorgabe
@@ -1848,14 +1848,14 @@ MAIN_TAB_COLOR;Farbe
 MAIN_TAB_COLOR_TOOLTIP;Taste: <b>Alt</b> + <b>c</b>
 MAIN_TAB_DETAIL;Details
 MAIN_TAB_DETAIL_TOOLTIP;Taste: <b>Alt</b> + <b>d</b>
-MAIN_TAB_DEVELOP;Batchbearbeitung 
+MAIN_TAB_DEVELOP;Batchbearbeitung
 MAIN_TAB_EXIF;Exif
-MAIN_TAB_EXPORT;Schnell-Export 
+MAIN_TAB_EXPORT;Schnell-Export
 MAIN_TAB_EXPOSURE;Belichtung
 MAIN_TAB_EXPOSURE_TOOLTIP;Taste: <b>Alt</b> + <b>e</b>
 MAIN_TAB_FAVORITES;Favoriten
 MAIN_TAB_FAVORITES_TOOLTIP;Taste: <b>Alt</b> + <b>u</b>
-MAIN_TAB_FILTER;Filter 
+MAIN_TAB_FILTER;Filter
 MAIN_TAB_INSPECT;Inspektor
 MAIN_TAB_IPTC;IPTC
 MAIN_TAB_LOCALLAB;Selektives Editieren
@@ -2192,7 +2192,7 @@ PREFERENCES_TAB_PERFORMANCE;Performance
 PREFERENCES_TAB_SOUND;Klänge
 PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Eingebundenes JPEG
 PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Bildanzeige
-PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutrales RAW-Bild 
+PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutrales RAW-Bild
 PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Eingebundenes JPEG wenn in Originalgröße, sonst neutrales RAW-Bild
 PREFERENCES_THUMBNAIL_RANK_COLOR_MODE;Laden/Speichern Miniaturbilder Bewertung und Farbe von/nach XMP Bearbeitungsprofil (sidecar)
 PREFERENCES_TOOLPANEL_AVAILABLETOOLS;Verfügbare Werkzeuge
@@ -2207,14 +2207,11 @@ PREFERENCES_USEBUNDLEDPROFILES;Standardprofile verwenden
 PREFERENCES_WBA;Weißabgleich
 PREFERENCES_WBACORR;Weißabgleich - automatische Temperaturkorrelation
 PREFERENCES_WBACORR_TOOLTIP;Diese Einstellungen ermöglichen, abhängig von den Bildern (Art der Rohdatei, Farbmetrik usw.), eine Anpassung des Algorithmus 'Temperaturkorrelation', um die besten Gesamtergebnisse zu erzielen. Es gibt keine absolute Regel, diese Parameter mit den erhaltenen Ergebnissen zu verknüpfen.\n\nEs gibt drei Arten von Einstellungen: \n* solche, die für den Benutzer über die GUI zugänglich sind.\n* solche, die nur beim Lesen aus jeder pp3-Datei zugänglich sind\n* diejenigen, auf die der Benutzer in 'Optionen' zugreifen kann (siehe Rawpedia)\n Sie können 'AWB-Temperatur-Bias' und 'Grün-Verfeinerung' verwenden, um die Ergebnisse anzupassen. Jede Veränderung führt zu einer Neuberechnung von Temperatur, Farbton und Bezug.\n\nBitte beachten Sie, dass die drei Indikatoren 'Bezugsfaktor', 'Patch-Chroma' und ΔE nur zur Information dienen. Nur weil einer dieser Indikatoren besser ist, ist das Ergebnis nicht zwangsläufig besser.
-PREFERENCES_WBAENA;Zeige Einstellungen der Temperaturkorrelation bei automatischem Weißabgleich 
+PREFERENCES_WBAENA;Zeige Einstellungen der Temperaturkorrelation bei automatischem Weißabgleich
 PREFERENCES_WBAENACUSTOM;Benutzerdefinierte Temperatur und Tönung
 PREFERENCES_WBAFORC;Erzwingt extra Algorithmus
-!PREFERENCES_WBAGREENDELTA;Delta temperature in green iterate loop (if Force Extra enabled)
-PREFERENCES_WBANOPURP;Keine lila Farben verwendet 
-!PREFERENCES_WBAPATCH;Number maximum of colors used in picture
+PREFERENCES_WBANOPURP;Keine lila Farben verwendet
 PREFERENCES_WBAPRECIS;Präzision Algorithmus - skaliert
-!PREFERENCES_WBASIZEREF;Size of reference color compare to size of histogram color
 PREFERENCES_WBASORT;Chromatische Sortierung anstatt nach Histogramm
 PREFERENCES_WORKFLOW;Layout
 PREFERENCES_XMP_SIDECAR_MODE;Datei-Endung für XMP (Sidecar)
@@ -2817,8 +2814,8 @@ TP_ICM_NEUTRAL;Zurücksetzen
 TP_ICM_NOICM;Kein ICM: sRGB-Ausgabe
 TP_ICM_OUTPUTPROFILE;Ausgabeprofil
 TP_ICM_OUTPUTPROFILE_TOOLTIP;Standardmäßig sind alle RTv4- oder RTv2-Profile mit TRC - sRGB: g=2.4 s=12.92 voreingestellt.\n\nMit 'ICC Profile Creator' können Sie v4- oder v2-Profile mit den folgenden Auswahlmöglichkeiten erstellen:\n- Primär: Aces AP0, Aces AP1 , AdobeRGB, Prophoto, Rec2020, sRGB, Widegamut, BestRGB, BetaRGB, BruceRGB, Benutzerdefiniert\n- TRC: BT709, sRGB, linear, Standard g=2,2, Standard g=1,8, Benutzerdefiniert\n- Lichtart: D41, D50, D55 , D60, D65, D80, stdA 2856K
-TP_ICM_PRIMBLU_TOOLTIP;Primäreinstellungen Blau:\nsRGB x=0.15 y=0.06\nAdobe x=0.15 y=0.06\nWidegamut x=0.157 y=0.018\nRec2020 x=0.131 y=0.046\nACES P1 x=0.128 y= 0.044\nACES P0 x=0.0001 y=-0.077\nProphoto x=0.0366 y=0.0001\nBruceRGB x=0.15 y=0.06\nBeta RGB x=0.1265 y=0.0352\nBestRGB x=0.131 y=0.046 
-TP_ICM_PRIMGRE_TOOLTIP;Primäreinstellungen Grün:\nsRGB x=0.3 y=0.6\nAdobe x=0.21 y=0.71\nWidegamut x=0.115 y=0.826\nRec2020 x=0.17 y=0.797\nACES P1 x=0.165 y= 0.83\nACES P0 x=0.0 y=1.0\nProphoto x=0.1596 y=0.8404\nBruceRGB x=0.28 y=0.65\nBeta RGB x=0.1986 y=0.7551\nBest RGB x=0.2150 0.7750 
+TP_ICM_PRIMBLU_TOOLTIP;Primäreinstellungen Blau:\nsRGB x=0.15 y=0.06\nAdobe x=0.15 y=0.06\nWidegamut x=0.157 y=0.018\nRec2020 x=0.131 y=0.046\nACES P1 x=0.128 y= 0.044\nACES P0 x=0.0001 y=-0.077\nProphoto x=0.0366 y=0.0001\nBruceRGB x=0.15 y=0.06\nBeta RGB x=0.1265 y=0.0352\nBestRGB x=0.131 y=0.046
+TP_ICM_PRIMGRE_TOOLTIP;Primäreinstellungen Grün:\nsRGB x=0.3 y=0.6\nAdobe x=0.21 y=0.71\nWidegamut x=0.115 y=0.826\nRec2020 x=0.17 y=0.797\nACES P1 x=0.165 y= 0.83\nACES P0 x=0.0 y=1.0\nProphoto x=0.1596 y=0.8404\nBruceRGB x=0.28 y=0.65\nBeta RGB x=0.1986 y=0.7551\nBest RGB x=0.2150 0.7750
 TP_ICM_PRIMILLUM_TOOLTIP;Sie können ein Bild von seinem ursprünglichen Modus 'Arbeitsprofil' in einen anderen Modus 'Ziel-Primärdateien' ändern. Wenn Sie für ein Bild einen anderen Farbmodus auswählen, ändern Sie dauerhaft die Farbwerte im Bild.\n\nDas Ändern der 'Primärfarben' ist ziemlich komplex und schwierig zu verwenden. Es erfordert viel Experimentieren.\nEs ist in der Lage, exotische Farbanpassungen als Kanalmixer-Primärfarben vorzunehmen.\nErmöglicht Ihnen, die Kamerakalibrierung mit Benutzerdefiniert (Schieberegler) zu ändern.
 TP_ICM_PRIMRED_TOOLTIP;Primäreinstellungen Rot:\nsRGB x=0.64 y=0.33\nAdobe x=0.64 y=0.33\nWidegamut x=0.735 y=0.265\nRec2020 x=0.708 y=0.292\nACES P1 x=0.713 y= 0.293\nACES P0 x=0.7347 y=0.2653\nProphoto x=0.7347 y=0.2653\nBruceRGB x=0.64 y=0.33\nBeta RGB x=0.688 y=0.3112\nBestRGB x=0.7347 y=0.2653
 TP_ICM_PROFILEINTENT;Wiedergabe
@@ -2990,7 +2987,7 @@ TP_LOCALLAB_BLURMASK_TOOLTIP;Verwendet eine große Radius-Unschärfe für eine M
 TP_LOCALLAB_BLURRMASK_TOOLTIP;Verändert den Radius der Gauß'schen Unschärfe (0 bis 1000).
 TP_LOCALLAB_BLUR_TOOLNAME;Unschärfe und Rauschreduzierung
 TP_LOCALLAB_BLWH;Alle Änderungen in Schwarz-Weiß erzwingen
-TP_LOCALLAB_BLWH_TOOLTIP;Setzt Farbkomponenten 'a' und 'b' auf Null.\nHilfreich für Schwarz/Weiß-Entwicklung oder Filmsimulation. 
+TP_LOCALLAB_BLWH_TOOLTIP;Setzt Farbkomponenten 'a' und 'b' auf Null.\nHilfreich für Schwarz/Weiß-Entwicklung oder Filmsimulation.
 TP_LOCALLAB_BUTTON_ADD;Hinzufügen
 TP_LOCALLAB_BUTTON_DEL;Löschen
 TP_LOCALLAB_BUTTON_DUPL;Duplizieren
@@ -3029,7 +3026,7 @@ TP_LOCALLAB_CHROML;Chroma (C)
 TP_LOCALLAB_CHRRT;Chrominanz
 TP_LOCALLAB_CIE;CIECAM (CAM16 & JzCzHz)
 TP_LOCALLAB_CIEC;Ciecam Umgebungs Parameter verwenden
-TP_LOCALLAB_CIECAMLOG_TOOLTIP;Dieses Modul basiert auf dem CIECAM-Farberscheinungsmodell, das entwickelt wurde, um das Sehen der menschlichen Farbwahrnehmung unter verschiedenen Lichtbedingungen zu simulieren.\nDer erste CIECAM-Prozess 'Szenebasierte Bedingungen' wird per LOG-Kodierung durchgeführt und verwendet 'Absolute Luminanz' zum Zeitpunkt der Aufnahme.\nDer zweite CIECAM-Prozess 'Bildkorrektur' wurde vereinfacht und nutzt nur 3 Variablen ('Lokaler Kontrast', 'Kontrast J', 'Sättigung s').\nDer dritte CIECAM-Prozess 'Anzeigebedingungen' passt die Ausgabe an das beabsichtigte Anzeigegerät (Monitor, TV, Projektor, Drucker, etc.) an, damit das chromatische und kontrastreiche Erscheinungsbild in der gesamten Anzeigeumgebung erhalten bleibt. 
+TP_LOCALLAB_CIECAMLOG_TOOLTIP;Dieses Modul basiert auf dem CIECAM-Farberscheinungsmodell, das entwickelt wurde, um das Sehen der menschlichen Farbwahrnehmung unter verschiedenen Lichtbedingungen zu simulieren.\nDer erste CIECAM-Prozess 'Szenebasierte Bedingungen' wird per LOG-Kodierung durchgeführt und verwendet 'Absolute Luminanz' zum Zeitpunkt der Aufnahme.\nDer zweite CIECAM-Prozess 'Bildkorrektur' wurde vereinfacht und nutzt nur 3 Variablen ('Lokaler Kontrast', 'Kontrast J', 'Sättigung s').\nDer dritte CIECAM-Prozess 'Anzeigebedingungen' passt die Ausgabe an das beabsichtigte Anzeigegerät (Monitor, TV, Projektor, Drucker, etc.) an, damit das chromatische und kontrastreiche Erscheinungsbild in der gesamten Anzeigeumgebung erhalten bleibt.
 TP_LOCALLAB_CIECOLORFRA;Farbe
 TP_LOCALLAB_CIECONTFRA;Kontrast
 TP_LOCALLAB_CIELIGHTCONTFRA;Beleuchtung & Kontrast
@@ -3076,7 +3073,7 @@ TP_LOCALLAB_COMPRCIE;Helligkeits-Kompression
 TP_LOCALLAB_COMPRCIETH;Kompression Schwellenwert
 TP_LOCALLAB_COMPREFRA;Tonwertkorrektur
 TP_LOCALLAB_COMPRLOG_TOOLTIP;Dieser Algorithmus komprimiert die Daten vor der Log-Konvertierung über den Schwellenwert des Schiebereglers. Zu verwenden in Verbindung mit der Weiß-Verteilung.
-TP_LOCALLAB_CONTCOL;Schwellenwert Kontrast 
+TP_LOCALLAB_CONTCOL;Schwellenwert Kontrast
 TP_LOCALLAB_CONTFRA;Ebenenkontrast
 TP_LOCALLAB_CONTRAST;Kontrast
 TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP;Ermöglicht das freie Ändern des Kontrasts der Maske.\nHat eine ähnliche Funktion wie die Regler 'Gamma' und 'Neigung'.\nMit dieser Funktion können Sie bestimmte Bereiche des Bildes (normalerweise die hellsten Bereiche der Maske) anvisieren, indem mit Hilfe der Kurve dunklere Bereiche ausgeschlossen werden). Kann Artefakte erzeugen.
@@ -3157,7 +3154,7 @@ TP_LOCALLAB_EXFULL;Gesamtes Bild
 TP_LOCALLAB_EXMAIN;Global
 TP_LOCALLAB_EXNORM;Normaler Spot
 TP_LOCALLAB_EXPCBDL_TOOLTIP;Kann zur Entfernung von Sensorflecken oder Objektivfehlern verwendet werden, indem Kontrast auf der entsprechenden Detailebene verringert wird.
-TP_LOCALLAB_EXPCHROMA;Kompensation Farbsättigung 
+TP_LOCALLAB_EXPCHROMA;Kompensation Farbsättigung
 TP_LOCALLAB_EXPCHROMA_TOOLTIP;In Verbindung mit 'Belichtungskorrektur' und 'Kontrastdämpfung' kann eine Entsättigung der Farben vermieden werden.
 TP_LOCALLAB_EXPCOLOR_TOOLTIP;Passt Farbe, Luminanz, Kontrast an und korrigiert kleinere Defekte, wie rote Augen, Sensorstaub etc.
 TP_LOCALLAB_EXPCOMP;Belichtungsausgleich ƒ
@@ -3167,12 +3164,12 @@ TP_LOCALLAB_EXPCONTRASTPYR_TOOLTIP;Siehe Dokumentation für Wavelet-Ebenen.\nEs 
 TP_LOCALLAB_EXPCONTRAST_TOOLTIP;Vermeiden Sie zu kleine Spots (<32 x 32 Pixel).\nVerwenden Sie niedrige 'Übergangswerte' und hohe Werte für 'Übergangszerfallrate' und 'Bereich,' um kleine Spots zu simulieren und Fehler zu beheben.\nVerwenden Sie 'Klarheit & Schärfemaske und Überlagern & Abschwächen' wenn nötig, indem Sie den 'Radius' anpassen, um Artefakte zu reduzieren.
 TP_LOCALLAB_EXPCURV;Kurven
 TP_LOCALLAB_EXPGRAD;Verlaufsfilter
-TP_LOCALLAB_EXPGRADCOL_TOOLTIP;Verlaufsfilter stehen in den folgenden Werkzeugen zur Verfügung: 'Farbe und Licht (Luminanz, Chrominanz, Farbtonverlauf, und Zusammenführen)', 'Belichtung (Luminanz grad.)', 'Belichtungsmaske (Luminanz grad.)', 'Schatten/Lichter (Luminanz grad.)', 'Dynamik (Luminanz, Chrominanz & Farbton)', 'Lokaler Kontrast &amp; Wavelet Pyramide (lokaler Kontrast grad.)'.\nDer Zerfall wird in den Einstellungen definiert. 
+TP_LOCALLAB_EXPGRADCOL_TOOLTIP;Verlaufsfilter stehen in den folgenden Werkzeugen zur Verfügung: 'Farbe und Licht (Luminanz, Chrominanz, Farbtonverlauf, und Zusammenführen)', 'Belichtung (Luminanz grad.)', 'Belichtungsmaske (Luminanz grad.)', 'Schatten/Lichter (Luminanz grad.)', 'Dynamik (Luminanz, Chrominanz & Farbton)', 'Lokaler Kontrast &amp; Wavelet Pyramide (lokaler Kontrast grad.)'.\nDer Zerfall wird in den Einstellungen definiert.
 TP_LOCALLAB_EXPLAPBAL_TOOLTIP;Ändert die Mischung von geändertem/ursprünglichem Bild.
 TP_LOCALLAB_EXPLAPGAMM_TOOLTIP;Verändert das Verhalten des Bildes mit wenig oder zu wenig Kontrast, indem vorher eine Gammakurve und nachher eine Laplace-Transformation hinzugefügt werden.
 TP_LOCALLAB_EXPLAPLIN_TOOLTIP;Verändert das Verhalten unterbelichteter Bilder indem eine lineare Komponente vor Anwendung der Laplace-Transformation hinzugefügt wird.
 TP_LOCALLAB_EXPLAP_TOOLTIP;Regler nach rechts reduziert schrittweise den Kontrast.
-TP_LOCALLAB_EXPMERGEFILE_TOOLTIP;Ermöglicht die Verwendung von GIMP oder Photoshop-Ebenen-Mischmodi wie Differenz, Multiplikation, Weiches Licht, Überlagerung etc., mit Transparenzkontrolle.\nOriginalbild: Führe aktuellen RT-Spot mit Original zusammen.\nVorheriger Spot: Führe aktuellen RT-Spot mit vorherigem zusammen - bei nur einem vorherigen = Original.\nHintergrund: Führe aktuellen RT-Spot mit einem Farb- oder Luminanzhintergrund zusammen (weniger Möglichkeiten). 
+TP_LOCALLAB_EXPMERGEFILE_TOOLTIP;Ermöglicht die Verwendung von GIMP oder Photoshop-Ebenen-Mischmodi wie Differenz, Multiplikation, Weiches Licht, Überlagerung etc., mit Transparenzkontrolle.\nOriginalbild: Führe aktuellen RT-Spot mit Original zusammen.\nVorheriger Spot: Führe aktuellen RT-Spot mit vorherigem zusammen - bei nur einem vorherigen = Original.\nHintergrund: Führe aktuellen RT-Spot mit einem Farb- oder Luminanzhintergrund zusammen (weniger Möglichkeiten).
 TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP;Wendet einen Median-Filter vor der Laplace-Transformation an, um (Rausch-)Artefakte zu vermeiden.\nAlternativ kann das Werkzeug zur Rauschreduzierung angewendet werden.
 TP_LOCALLAB_EXPOSE;Dynamik und Belichtung
 TP_LOCALLAB_EXPOSURE_TOOLTIP;Anpassung der Belichtung im L*a*b-Raum mittels Laplace PDE-Algorithmus um ΔE zu berücksichtigen und Artefakte zu minimieren.
@@ -3257,8 +3254,8 @@ TP_LOCALLAB_JZ100_TOOLTIP;Passt automatisch den Referenz-Jz-Pegel von 100 cd/m2 
 TP_LOCALLAB_JZADAP;PU Anpassung
 TP_LOCALLAB_JZCH;Chroma
 TP_LOCALLAB_JZCHROM;Chroma
-TP_LOCALLAB_JZCLARICRES;Chroma zusammenführen Cz 
-TP_LOCALLAB_JZCLARILRES;Luma zusammenführen Jz 
+TP_LOCALLAB_JZCLARICRES;Chroma zusammenführen Cz
+TP_LOCALLAB_JZCLARILRES;Luma zusammenführen Jz
 TP_LOCALLAB_JZCONT;Kontrast
 TP_LOCALLAB_JZFORCE;Erzwinge max. Jz auf 1
 TP_LOCALLAB_JZFORCE_TOOLTIP;Ermöglicht, den Jz-Wert für eine bessere Regler- und Kurvenreaktion auf 1 anzuheben.
@@ -3350,7 +3347,7 @@ TP_LOCALLAB_LOGFRA;Szenebasierte Bedingungen
 TP_LOCALLAB_LOGFRAME_TOOLTIP;Ermöglicht die Berechnung und Anpassung der Ev-Pegel und der 'Mittleren Luminanz Yb%' (Quellgraupunkt) für den Spot-Bereich. Die resultierenden Werte werden von allen Lab-Vorgängen und den meisten RGB-Vorgängen in der Pipeline verwendet.\nBerechnet auch die absolute Luminanz zum Zeitpunkt der Aufnahme.
 TP_LOCALLAB_LOGIMAGE_TOOLTIP;Berücksichtigt entsprechende CIECAM-Variablen wie Kontrast (J) und Sättigung (s) aber auch Kontrast (Q) , Helligkeit (Q), Helligkeit (J), Farbigkeit (M) im Modus 'Erweitert'.
 TP_LOCALLAB_LOGLIGHTL;Helligkeit (J)
-TP_LOCALLAB_LOGLIGHTL_TOOLTIP;Ähnlich Helligkeit (L*a*b*), berücksichtigt die Zunahme der wahrgenommenen Färbung. 
+TP_LOCALLAB_LOGLIGHTL_TOOLTIP;Ähnlich Helligkeit (L*a*b*), berücksichtigt die Zunahme der wahrgenommenen Färbung.
 TP_LOCALLAB_LOGLIGHTQ;Helligkeit (Q)
 TP_LOCALLAB_LOGLIGHTQ_TOOLTIP;Wahrgenommene Lichtmenge, die von einer Quelle ausgeht.\nIndikator dafür, dass eine Quelle mehr oder weniger hell und klar zu sein scheint.
 TP_LOCALLAB_LOGLIN;Logarithmischer Modus
@@ -3370,13 +3367,13 @@ TP_LOCALLAB_LUMASK;Hintergrundfarbe für Luminanzmaske
 TP_LOCALLAB_LUMASK_TOOLTIP;Passt den Grauton oder die Farbe des Maskenhintergrundes an (Maske und Anpassungen - Maske anzeigen).
 TP_LOCALLAB_LUMAWHITESEST;Hellste
 TP_LOCALLAB_LUMFRA;L*a*b* Standard
-TP_LOCALLAB_LUMLABEL;Luminanz Ebenen 0123: Mittel=%1 Hoch=%2 
+TP_LOCALLAB_LUMLABEL;Luminanz Ebenen 0123: Mittel=%1 Hoch=%2
 TP_LOCALLAB_MASFRAME;Maskieren und Zusammenführen
 TP_LOCALLAB_MASFRAME_TOOLTIP;Für alle Masken.\nBerücksichtigt das ΔE-Bild, um zu vermeiden, dass der Auswahlbereich geändert wird, wenn die folgenden Maskenwerkzeuge verwendet werden: 'Gamma', 'Steigung', 'Chroma', 'Kontrastkurve', 'Lokaler Kontrast' (nach Wavelet-Ebene), 'Unschärfemaske' und 'Strukturmaske' (falls aktiviert).\nDeaktiviert, wenn der Inverse-Modus verwendet wird.
 TP_LOCALLAB_MASK;Kontrast
 TP_LOCALLAB_MASK2;Kontrastkurve
 TP_LOCALLAB_MASKCOM;Normale Farbmaske
-TP_LOCALLAB_MASKCOM_TOOLNAME;Normale Farbmaske 
+TP_LOCALLAB_MASKCOM_TOOLNAME;Normale Farbmaske
 TP_LOCALLAB_MASKCOM_TOOLTIP;Ein eigenständiges Werkzeug.\nKann verwendet werden, um das Erscheinungsbild (Chrominanz, Luminanz, Kontrast) und die Textur in Abhängigkeit des Bereiches anzupassen.
 TP_LOCALLAB_MASKCURVE_TOOLTIP;Die 3 Kurven sind standardmäßig auf 1 (maximal) eingestellt:\nC=f(C) Die Farbintensität variiert je nach Chrominanz. Sie können die Chrominanz verringern, um die Auswahl zu verbessern. Wenn Sie diese Kurve nahe Null setzen (mit einem niedrigen Wert von C, um die Kurve zu aktivieren), können Sie den Hintergrund im inversen Modus entsättigen.\nL= f(L) Die Luminanz variiert je nach Luminanz, so dass Sie die Helligkeit verringern können um die Auswahl zu verbessern.\nL und C = f(H) Luminanz und Chrominanz variieren mit dem Farbton, sodass Sie Luminanz und Chrominanz verringern können, um die Auswahl zu verbessern.
 TP_LOCALLAB_MASKDDECAY;Zerfallrate
@@ -3400,7 +3397,7 @@ TP_LOCALLAB_MASKLCTHR;Schwellenwert helle Bereiche
 TP_LOCALLAB_MASKLCTHR2;Schwelle helle Bereiche
 TP_LOCALLAB_MASKLCTHRLOW;Schwellenwert dunkle Bereiche
 TP_LOCALLAB_MASKLCTHRLOW2;Schwelle dunkle Bereiche
-TP_LOCALLAB_MASKLCTHRMID;Luminanz Graubereiche 
+TP_LOCALLAB_MASKLCTHRMID;Luminanz Graubereiche
 TP_LOCALLAB_MASKLCTHRMIDCH;Chrominanz Graubereiche
 TP_LOCALLAB_MASKLC_TOOLTIP;Wird von der Wavelet-Luminanz verwendet.\nDamit können Sie die Rauschunterdrückung basierend auf den Bildluminanzinformationen festlegen, die in der L(L)- oder LC(H)-Maske (Maske und Modifikationen) enthalten sind.\nDie L(L)-Maske oder die LC(H)-Maske muss aktiviert sein, m diese Funktion nutzen zu können.\n'Schwellenwert für die Luminanz dunkler Bereiche'. Ist 'Rauschunterdrückung in dunklen und hellen Bereichen verstärken' > 1, wird die Rauschunterdrückung schrittweise von 0 % auf 100 % beim maximalen Schwarzwert (bestimmt durch die Maske) erhöht.\n'Schwellenwert für die Luminanz für helle Bereiche'. Die Rauschunterdrückung wird schrittweise von 100 % auf 0 % beim maximalen Weißwert (bestimmt durch die Maske) verringert.\n Im Bereich zwischen den beiden Schwellenwerten werden die Rauschunterdrückungseinstellungen von der Maske nicht beeinflusst.
 TP_LOCALLAB_MASKLNOISELOW;In dunklen und hellen Bereichen verstärken
@@ -3548,7 +3545,7 @@ TP_LOCALLAB_RESIDCONT;Kontrast Restbild
 TP_LOCALLAB_RESIDHI;Lichter
 TP_LOCALLAB_RESIDHITHR;Schwellenwert Lichter
 TP_LOCALLAB_RESIDSHA;Schatten
-TP_LOCALLAB_RESIDSHATHR;Schwellenwert Schatten 
+TP_LOCALLAB_RESIDSHATHR;Schwellenwert Schatten
 TP_LOCALLAB_RETI;Dunst entfernen u. Retinex
 TP_LOCALLAB_RETIFRA;Retinex
 TP_LOCALLAB_RETIFRAME_TOOLTIP;Retinex kann für die Verarbeitung von Bildern folgender Art nützlich sein:\nDie unscharf, neblig oder trüb sind (zusätzlich zu 'Dunst entfernen').\nDie große Unterschiede in der Luminanz enthalten.\nEs kann auch für Spezialeffekte (Tonzuordnung) verwendet werden.
@@ -3592,7 +3589,7 @@ TP_LOCALLAB_SHAMASKCOL;Schatten
 TP_LOCALLAB_SHAPETYPE;Spot Form
 TP_LOCALLAB_SHAPE_TOOLTIP;'Ellipse' ist der normale Modus.\n'Rechteck' kann in einigen Fällen hilfreich sein, z.B. um die Trennzeichen im Vollbild-Modus außerhalb des Voransichtsbereiches zu setzen. In diesem Falle ist Transition = 100 zu setzen.\n\nZukünftige Versionen werden auch Polygone und Bezierkurven unterstützen.
 TP_LOCALLAB_SHARAMOUNT;Intensität
-TP_LOCALLAB_SHARBLUR;Unschärferadius 
+TP_LOCALLAB_SHARBLUR;Unschärferadius
 TP_LOCALLAB_SHARDAMPING;Dämpfung
 TP_LOCALLAB_SHARFRAME;Veränderungen
 TP_LOCALLAB_SHARITER;Iterationen
@@ -4220,7 +4217,7 @@ TP_WAVELET_DAUBLOCAL;Wavelet Kantenperformance
 TP_WAVELET_DAUB_TOOLTIP;Ändert den Daubechies-Koeffizienten:\nD4 = Standard\nD14 = Häufig bestes Ergebnis auf Kosten von ca. 10% längerer Verarbeitungszeit.\n\nVerbessert die Kantenerkennung sowie die Qualität der ersten Waveletebene. Jedoch hängt die Qualität nicht ausschließlich mit diesem Koeffizienten zusammen und kann je nach Bild und Einsatz variieren.
 TP_WAVELET_DEN5THR;Schwellenwert
 TP_WAVELET_DENCURV;Kurve
-TP_WAVELET_DENL;Korrektur Struktur 
+TP_WAVELET_DENL;Korrektur Struktur
 TP_WAVELET_DENLH;Schwellenwert Ebenen 1-4
 TP_WAVELET_DENLOCAL_TOOLTIP;Verwenden Sie eine Kurve, um die Rauschreduzierung entsprechend dem lokalen Kontrast anzupassen.\nFlächen werden entrauscht, die Strukturen bleiben erhalten.
 TP_WAVELET_DENMIX_TOOLTIP;Der vom anpassbaren Filter genutzte Referenzwert für den lokalen Kontrast.\nJe nach Bild können die Ergebnisse variieren, je nachdem, ob das Rauschen vor oder nach der Rauschunterdrückung gemessen wird. Mit diesen vier Auswahlmöglichkeiten können verschiedene Kombinationen von Original- und modifizierten (entrauschten) Bildern berücksichtigt werden, um den besten Kompromiss zu finden.
@@ -4278,7 +4275,7 @@ TP_WAVELET_LABEL;Wavelet
 TP_WAVELET_LABGRID_VALUES;oben(a)=%1\noben(b)=%2\nunten(a)=%3\nunten(b)=%4
 TP_WAVELET_LARGEST;Grob
 TP_WAVELET_LEVCH;Farbe
-TP_WAVELET_LEVDEN;Rauschreduzierung Ebenen 5-6 
+TP_WAVELET_LEVDEN;Rauschreduzierung Ebenen 5-6
 TP_WAVELET_LEVDIR_ALL;Alle Ebenen und Richtungen
 TP_WAVELET_LEVDIR_INF;Kleiner oder gleich der Ebene
 TP_WAVELET_LEVDIR_ONE;Diese Ebene
@@ -4346,7 +4343,7 @@ TP_WAVELET_SAT;Gesättigte Farben
 TP_WAVELET_SETTINGS;Einstellungen
 TP_WAVELET_SHA;Schärfemaske
 TP_WAVELET_SHFRAME;Schatten/Lichter
-TP_WAVELET_SHOWMASK;Wavelet 'Maske' anzeigen 
+TP_WAVELET_SHOWMASK;Wavelet 'Maske' anzeigen
 TP_WAVELET_SIGM;Radius
 TP_WAVELET_SIGMA;Dämpfungsreaktion
 TP_WAVELET_SIGMAFIN;Dämpfungsreaktion
@@ -4360,7 +4357,7 @@ TP_WAVELET_STREN;Intensität
 TP_WAVELET_STREND;Intensität
 TP_WAVELET_STRENGTH;Intensität
 TP_WAVELET_SUPE;Extra
-TP_WAVELET_THR;Schwelle Schatten 
+TP_WAVELET_THR;Schwelle Schatten
 TP_WAVELET_THRDEN_TOOLTIP;Erzeugt eine abgestufte Kurve, die verwendet wird, um die Rauschreduzierung als Funktion des lokalen Kontrasts zu führen. Die Rauschreduzierung wird gleichmäßig auf Bereiche mit geringem lokalem Kontrast angewendet. Bereiche mit Details (höherer lokaler Kontrast) bleiben erhalten.
 TP_WAVELET_THREND;Schwellenwert Lokaler Kontrast
 TP_WAVELET_THRESHOLD;Lichterebenen
@@ -4418,7 +4415,7 @@ TP_WBALANCE_ITCWALG_TOOLTIP;Ermöglicht Ihnen, wenn möglich, zur anderen altern
 TP_WBALANCE_ITCWBDELTA_TOOLTIP;Für jede versuchte "grüne" Iteration wurde der zu berücksichtigende Temperaturunterschied festgelegt.
 TP_WBALANCE_ITCWBFGREEN_TOOLTIP;Finden Sie den  besten Kompromiss zwischen Kandidat und Grün.
 TP_WBALANCE_ITCWBMINSIZEPATCH_TOOLTIP;Ermöglicht Ihnen, den minimalen Patch-Wert festzulegen. Zu niedrige Werte können zu einer fehlenden Korrelation führen.
-!TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP;Ermöglicht das Filtern von Magenta-/Lila-Daten aus dem Bild. Wenn das Kontrollkästchen aktiviert ist, wird ein Filter angewandt, der den Wert von Y begrenzt. Standardmäßig beträgt dieser Wert 0,4. Sie können es in 'Optionen' Iterativer temperaturbezogener Weißabgleich Y lila ändern (maximal 1).
+TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP;Ermöglicht das Filtern von Magenta-/Lila-Daten aus dem Bild. Wenn das Kontrollkästchen aktiviert ist, wird ein Filter angewandt, der den Wert von Y begrenzt. Standardmäßig beträgt dieser Wert 0,4. Sie können es in 'Optionen' Iterativer temperaturbezogener Weißabgleich Y lila ändern (maximal 1).
 TP_WBALANCE_ITCWBPRECIS_TOOLTIP;Je niedriger der Wert, desto relevanter sind die Daten, aber desto länger dauert die Verarbeitung. Da die Verarbeitungszeit gering ist, sollte dieser Parameter grundsätzlich auf dem Standardwert bleiben können.
 TP_WBALANCE_ITCWBRGREEN_TOOLTIP;Legt die Amplitude der Grünwertüberprüfung in Iterationen fest, von der niedrigen Amplitude 0,82 bis 1,25 bis zur maximalen Amplitude 0,4 bis 4.
 TP_WBALANCE_ITCWBSIZEPATCH_TOOLTIP;Definiert die Anzahl der Farben die vom Algorithmus verwendet werden.
@@ -4494,3 +4491,14 @@ ZOOMPANEL_ZOOMFITCROPSCREEN;Ausschnitt an Bildschirm anpassen.\nTaste: <b>f</b>
 ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen.\nTaste: <b>Alt</b> + <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+! Untranslated keys follow; remove the ! prefix after an entry is translated.
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!HISTORY_MSG_WBITC_SAMPLING;Low sampling
+!PREFERENCES_WBAGREENDELTA;Delta temperature in green iterate loop (if Force Extra enabled)
+!PREFERENCES_WBAPATCH;Number maximum of colors used in picture
+!PREFERENCES_WBASIZEREF;Size of reference color compare to size of histogram color
+!//TP_WBALANCE_ITCWBNOPURPLE_TOOLTIP;By default when "Inpaint opposed" is activated, purple colors are not taken into account. However, if the image does not need highlight reconstruction, or if this image naturally contains purple tints (flowers, etc.), it may be necessary to deactivate, to take into account all the colors.
+!//TP_WBALANCE_ITCWB_FORCED;Forces use of the entire CIE diagram
