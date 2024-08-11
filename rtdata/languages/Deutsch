@@ -86,6 +86,7 @@
 #84 18.07.2019 Erweiterung (TooWaBoo) RT 5.6
 #85 29.07.2022 Erweiterung (marter, mozzihh) RT 5.9 
 #86 29.08.2024 (marter) RT 5.11
+
 #100
 #101 @LANGUAGE_DISPLAY_NAME=Deutsch
 ABOUT_TAB_BUILD;Version
@@ -1466,7 +1467,7 @@ HISTORY_MSG_1147;(sel. Editieren - CIECAM)\nSigmoid Jz\nVerwendet Schwarz-Ev Wei
 HISTORY_MSG_1148;(sel. Editieren - CIECAM)\nSigmoid Jz
 HISTORY_MSG_1149;(sel. Editieren - CIECAM)\nSigmoid Q
 HISTORY_MSG_1150;(sel. Editieren - CIECAM)\nSigmoid\nQuellen-Daten\nLOG-Kodierung
-HISTORY_MSG_BLSHAPE;(Erweitert - Wavelet)\nUnschärfeebenen\nUnschärfe nach Ebenen
+HISTORY_MSG_BLSHAPE;(Erweitert - Wavelet)\nUnschärfeebenen\nUnschärfe nach Ebenena
 HISTORY_MSG_BLURCWAV;(Erweitert - Wavelet)\nRestbild - Unschärfe\nUnschärfe Buntheit
 HISTORY_MSG_BLURWAV;(Erweitert - Wavelet)\nRestbild - Unschärfe\nUnschärfe Helligkeit
 HISTORY_MSG_BLUWAV;(Erweitert - Wavelet)\nUnschärfeebenen\nDämpfungsreaktion
@@ -1495,7 +1496,7 @@ HISTORY_MSG_DEHAZE_ENABLED;(Details - Bildschleier entfernen)
 HISTORY_MSG_DEHAZE_SATURATION;(Details - Bildschleier entfernen)\nSättigung
 HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;(Details - Bildschleier entfernen)\nMaske anzeigen
 HISTORY_MSG_DEHAZE_STRENGTH;(Details - Bildschleier entfernen)\nIntensität
-HISTORY_MSG_DIRPYRDENOISE_GAIN;Details - Rauschminderung)\nKompensation nach Bildhelligkeit
+HISTORY_MSG_DIRPYRDENOISE_GAIN;(Details - Rauschminderung)\nKompensation nach Bildhelligkeit
 HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;(RAW - Sensor-Matrix)\nFarbinterpolation\nAuto-Kontrastschwelle
 HISTORY_MSG_DUALDEMOSAIC_CONTRAST;(RAW - Sensor-Matrix)\nFarbinterpolation\nKontrastschwelle
 HISTORY_MSG_EDGEFFECT;(Erweitert - Wavelet)\nKantenschärfung\nDämpfungsreaktion
