@@ -2837,13 +2837,15 @@ float ImProcFunctions::do_get(float x, bool rolloff_, float mid_gray_scene, floa
 }
 
 //Copyright (c) 2023 Thatcher Freeman
+// Adapted to Rawtherapee Jacques Desmis - August 2024
+
 void ImProcFunctions::tonemapFreemanQ(float Q, float &Qout, float target_slope, float white_point, float black_point, float mid_gray_scene, float mid_gray_view, bool rolloff, bool takeyb)
 {
     float dr;//Dynamic Range
     float b;
     float c;//black point
     float gamma;
-    float mid_gray_scene_;//Mean luminance - Scene conditions // mid_gray_view //Mean luminance - Viewing conditions
+    float mid_gray_scene_;//Mean luminance - Scene conditions
     c = black_point;
     dr = white_point - c;
     float kmid = 1.f;
