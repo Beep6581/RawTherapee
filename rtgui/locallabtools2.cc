@@ -8014,7 +8014,7 @@ Locallabcie::Locallabcie():
     sigBox(Gtk::manage(new ToolParamBlock())),
     sigmoidFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGFRA")))),
     sigq(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGFRA")))),
-    slopesmoq(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOPESMOOTH"), 0.01, 1.6, 0.01, 1.))),
+    slopesmoq(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOPESMOOTH"), 0.5, 1.5, 0.01, 1.))),
     sigmoidldacie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0.5, 3., 0.01, 1.25))),
     sigmoidthcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDTH"), -1., 1., 0.01, 0., Gtk::manage(new RTImage("circle-black-small")), Gtk::manage(new RTImage("circle-white-small"))))),
     sigmoidsenscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDSENSI"), 0.1, 1.5, 0.01, 0.9))),
@@ -11416,24 +11416,21 @@ void Locallabcie::bwevMethodChanged()
     const LocallabParams::LocallabSpot defSpot;
     const int mode = complexity->get_active_row_number();
 
-    if (bwevMethod->get_active_row_number() == 2) {//  && sigcie->get_active()) {
-        comprcie->set_sensitive(true);
-        comprcieth->set_sensitive(true);
-        comprcieauto->set_sensitive(true);
-        comprcieauto->set_active(true);
-
-        if (mode == Simple) {
-            comprcieth->set_sensitive(false);
-            comprcieauto->set_sensitive(false);
+    if (bwevMethod->get_active_row_number() == 0) {//sigmoid Q
+        slopesmoq->hide();
+        sigmoidldacie->show();
+        sigmoidthcie->show();
+        sigmoidblcie->hide();
+        if(mode == Expert) {
+            sigmoidblcie->show();
         }
-
-    } else {
-        comprcieth->set_sensitive(false);
-        comprcieauto->set_sensitive(false);
+    
     }
-
-    if (bwevMethod->get_active_row_number() == 2) {
-        comprcie->setValue(defSpot.comprcie);//to test
+    if (bwevMethod->get_active_row_number() == 1) {//Slope based Q
+        slopesmoq->show();
+        sigmoidldacie->hide();
+        sigmoidthcie->hide();
+        sigmoidblcie->hide();
     }
 
     if (isLocActivated && exp->getEnabled()) {
@@ -11693,6 +11690,20 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             modeHBoxcie->hide();
             sensicie->show();
             reparcie->show();
+            if (bwevMethod->get_active_row_number() == 0) {//sigmoid Q
+                slopesmoq->hide();
+                sigmoidldacie->show();
+                sigmoidthcie->show();
+                sigmoidblcie->hide();
+    
+            }
+            if (bwevMethod->get_active_row_number() == 1) {//Slope based Q
+                slopesmoq->show();
+                sigmoidldacie->hide();
+                sigmoidthcie->hide();
+                sigmoidblcie->hide();
+            }
+            
             sigmoidblcie->show();
             sigmoidsenscie->hide();
             expjz->hide();
@@ -11883,7 +11894,18 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             targabscie->show();
             detailcie->show();
             modeHBoxcie->show();
-            sigmoidblcie->show();
+            if (bwevMethod->get_active_row_number() == 0) {//sigmoid Q
+                slopesmoq->hide();
+                sigmoidldacie->show();
+                sigmoidthcie->show();
+                sigmoidblcie->show();
+            }
+            if (bwevMethod->get_active_row_number() == 1) {//Slope based Q
+                slopesmoq->show();
+                sigmoidldacie->hide();
+                sigmoidthcie->hide();
+                sigmoidblcie->hide();
+            }
             pqremapcam16->show();
             comprcie->show();
             strcielog->show();

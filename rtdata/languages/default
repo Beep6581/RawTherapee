@@ -1512,7 +1512,7 @@ HISTORY_MSG_LOCAL_CIE_SHIFTXL;Local - CIECAM Shift x
 HISTORY_MSG_LOCAL_CIE_SHIFTYL;Local - CIECAM Shift y
 HISTORY_MSG_LOCAL_CIE_SIG;Local - Sigmoid
 HISTORY_MSG_LOCAL_CIE_SIGADAP;Local - CIECAM Sigmoid adaptability
-HISTORY_MSG_LOCAL_CIE_SIGMET;Local - CIECAM Tone mapping Q method
+HISTORY_MSG_LOCAL_CIE_SIGMET;Local - CIECAM Tone mapping Q 
 HISTORY_MSG_LOCAL_CIE_SLOP;Local - CIECAM Slope
 HISTORY_MSG_LOCAL_CIE_SLOPESMO;Local - CIECAM Gray balance
 HISTORY_MSG_LOCAL_CIE_SLOPESMOQ;Local - CIECAM Gray balance
@@ -3591,7 +3591,7 @@ TP_LOCALLAB_SIGMOIDLOGEV_TOOLTIP;If the combo box selection 'Black Ev and White 
 TP_LOCALLAB_SIGMOIDNORMCIE;Scale Yb Scene
 TP_LOCALLAB_SIGMOIDNORMCIEBLEND_TOOLTIP;Blend acts on the final aspect of the image, contrast and luminance. Ratio between original and output image.
 TP_LOCALLAB_SIGMOIDNORMCIE_TOOLTIP;Reconstruct luminance so that the mean and variance of the output image take into account those of the original.\nAll the adjustments acting on J or Q are taken into account, including those which are not relative to Sigmoid Q.
-TP_LOCALLAB_SIGMOIDQJ;Tone mapping Q method
+TP_LOCALLAB_SIGMOIDQJ;Tone mapping Q
 TP_LOCALLAB_SIGMOIDQJCOMPRCIE_TOOLTIP;When the combo box selection 'Uses Black Ev and White Ev' is 'Sigmoid and Log encoding Q' or 'Log encoding instead of Sigmoid' checked. This algorithm compress the data above the threshold slider value. The last value stands for brightness (Q) and should be close as possible to the value 'Compression threshold' (calculate when 'Auto threshold" checked, often > 1).
 TP_LOCALLAB_SIGMOIDSENSI;Adaptability
 //TP_LOCALLAB_SIGMOIDTH;Threshold (Gray point)

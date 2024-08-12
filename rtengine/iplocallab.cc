@@ -3111,17 +3111,8 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
     if(sigmoidnorm) {
         MIDDLE_GREY = MIDDLE_GREY * dr + black_point;
     }
-    float slopsmootq = 1.f - ((float) params->locallab.spots.at(sp).slopesmoq - 1.f);//modify response so when increase slope the grays are becoming lighter
-   // float slopsmoot = 1.f - ((float) params->locallab.spots.at(sp).slopesmo - 1.f);//modify response so when increase slope the grays are becoming lighter
-
-    float maxsl= 4.f;//maximum real slope
-    float minslider = 0.01f;//minimum slider value > 0.f
-    float aa = (1.9f - maxsl) / (0.1f - minslider);//interpolation : 1.9f slope value for slider = 0.1f
-    float bb = 1.9f - 0.1f * aa;
-    if(slopsmootq < 0.1f) {
-        slopsmootq = aa * slopsmootq + bb;
-    }
-
+    float slopsmootq =(float) params->locallab.spots.at(sp).slopesmoq;
+    float mid_gray_view = 0.01f * lp.targetgraycie;
     TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
     const double wip[3][3] = {//improve precision with double
         {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
@@ -4628,7 +4619,6 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
                                 sigmoid_QJ(val, Qout, middle_grey_contrast, contrast_skewness, MIDDLE_GREY, black_point, white_point_disp);
                             }
                             if(mobwev == 1) {
-                                float mid_gray_view = 0.01f * lp.targetgraycie;
                                 bool rolloff = false;
                                 bool kmid = false;
                                 tonemapFreemanQ(val, Qout, slopsmootq , white_pointsig, black_point, MIDDLE_GREY, mid_gray_view, rolloff, kmid);
@@ -20739,11 +20729,11 @@ void ImProcFunctions::Lab_Local(
                             slopegrayb = slopsmootb;
                             mode = 4;
                         }
-                        
                         LUTf lut(65536, LUT_CLIP_OFF);//take from Alberto Griggio
                         LUTf lutr(65536, LUT_CLIP_OFF);
                         LUTf lutg(65536, LUT_CLIP_OFF);
                         LUTf lutb(65536, LUT_CLIP_OFF);
+                        //printf("slopsmoot=%f\n", (double) slopsmoot);
                         
                         bool scale = lp.issmoothcie;//scale Yb mid_gray - WhiteEv and BlavkEv
                         bool limslope = lumhigh;
