@@ -4778,22 +4778,28 @@ void ImProcFunctions::chromiLuminanceCurve(PipetteBuffer *pipetteBuffer, int pW,
                     histLCurve[Lprov1 * histLFactor]++;
                 }
 
-                Chprov1 = sqrt(SQR(atmp) + SQR(btmp)) / 327.68f;
 
                 // labCurve.bwtoning option allows to decouple modulation of a & b curves by saturation
                 // with bwtoning enabled the net effect of a & b curves is visible
                 if (bwToning) {
                     atmp -= lold->a[i][j];
                     btmp -= lold->b[i][j];
+                    Chprov1 = sqrt(SQR(atmp) + SQR(btmp)) / 327.68f;
+                    if (Chprov1 == 0.f) {
+                        sincosval.x = 0.f;
+                        sincosval.y = 1.f;
+                    } else {
+                        sincosval.x = btmp / (327.68f * Chprov1);
+                        sincosval.y = atmp / (327.68f * Chprov1);
+                    }
+                } else {
+                    Chprov1 = sqrt(SQR(atmp) + SQR(btmp)) / 327.68f;
                 }
 
                 lnew->L[i][j] = Lprov1 * 327.68f;
                 lnew->a[i][j] = 327.68f * Chprov1 * sincosval.y;
                 lnew->b[i][j] = 327.68f * Chprov1 * sincosval.x;
 
-                if(params->blackwhite.enabled  && gamutmuns != 0) {//issue 7159
-                    gamutmuns = 2;//enable gamutmap XYZ - side effect due to change in gamut control
-                }
                 //gamutmap Lch ==> preserve Hue,but a little slower than gamutbdy for high values...and little faster for low values
                 if (gamutmuns == 1) {
                     float R, G, B;
