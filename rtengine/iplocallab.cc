@@ -2837,6 +2837,30 @@ float ImProcFunctions::do_get(float x, bool rolloff_, float mid_gray_scene, floa
 }
 
 //Copyright (c) 2023 Thatcher Freeman
+void ImProcFunctions::tonemapFreemanQ(float Q, float &Qout, float target_slope, float white_point, float black_point, float mid_gray_scene, float mid_gray_view, bool rolloff, bool takeyb)
+{
+    float dr;//Dynamic Range
+    float b;
+    float c;//black point
+    float gamma;
+    float mid_gray_scene_;//Mean luminance - Scene conditions // mid_gray_view //Mean luminance - Viewing conditions
+    c = black_point;
+    dr = white_point - c;
+    float kmid = 1.f;
+    
+    if(takeyb){
+        kmid = mid_gray_scene / mid_gray_view;
+        kmid = cbrt(kmid);
+    }
+    mid_gray_scene_ = mid_gray_scene;
+    
+    b = (dr / (mid_gray_scene_ - c)) * (1.f - ((mid_gray_scene_ - c) / dr)) * mid_gray_scene_;//b - ponderate mid_gray_scene taking into account the total DR, and the dark part below the mid_gray_scene
+    gamma = target_slope * (float) std::pow((mid_gray_scene_ + b), 2.0) / (dr * b);//Calculate gamma with slope and mid_gray_scene 
+    Qout = do_get(Q, rolloff, mid_gray_scene_, gamma, 1.f, dr, b, c, kmid);//call main function
+}
+
+
+
 // Adapted to Rawtherapee Jacques Desmis 25 mars  - 5 june 2024
 void ImProcFunctions::tonemapFreeman(float target_slope, float target_sloper, float target_slopeg , float target_slopeb, float white_point, float black_point, float mid_gray_scene, float mid_gray_view, bool rolloff, float smooththreshold, bool limslope, LUTf& lut, LUTf& lutr, LUTf& lutg, LUTf& lutb, int mode, bool scale, bool takeyb)
 {
@@ -3069,12 +3093,10 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
     const bool sigmoidnorm = params->locallab.spots.at(sp).normcie;
     int mobwev = 0;
 
-    if (params->locallab.spots.at(sp).bwevMethod == "none") {
+    if (params->locallab.spots.at(sp).bwevMethod == "sigQ") {
         mobwev = 0;
-    } else if (params->locallab.spots.at(sp).bwevMethod == "sig") {
+    } else if (params->locallab.spots.at(sp).bwevMethod == "slop") {
         mobwev = 1;
-    } else if (params->locallab.spots.at(sp).bwevMethod == "logsig") {
-        mobwev = 2;
     }
 
     float senssig = (float) params->locallab.spots.at(sp).sigmoidsenscie;
@@ -3089,6 +3111,17 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
     if(sigmoidnorm) {
         MIDDLE_GREY = MIDDLE_GREY * dr + black_point;
     }
+    float slopsmootq = 1.f - ((float) params->locallab.spots.at(sp).slopesmoq - 1.f);//modify response so when increase slope the grays are becoming lighter
+   // float slopsmoot = 1.f - ((float) params->locallab.spots.at(sp).slopesmo - 1.f);//modify response so when increase slope the grays are becoming lighter
+
+    float maxsl= 4.f;//maximum real slope
+    float minslider = 0.01f;//minimum slider value > 0.f
+    float aa = (1.9f - maxsl) / (0.1f - minslider);//interpolation : 1.9f slope value for slider = 0.1f
+    float bb = 1.9f - 0.1f * aa;
+    if(slopsmootq < 0.1f) {
+        slopsmootq = aa * slopsmootq + bb;
+    }
+
     TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
     const double wip[3][3] = {//improve precision with double
         {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
@@ -4401,7 +4434,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
         comprfactor = 0.4f * comprfactor * (float) dratt;//adapt comprfactor to Dynamic Range
         float newgray = 0.18f;
 
-        if ((params->locallab.spots.at(sp).logcie && params->locallab.spots.at(sp).logcieq) || mobwev != 0) {//increase Dyn Range when log encoding
+        if ((params->locallab.spots.at(sp).logcie && params->locallab.spots.at(sp).logcieq)) {//increase Dyn Range when log encoding
             dynamic_range += 0.2;//empirical value
             gray = 0.01f * (float) params->locallab.spots.at(sp).sourceGraycie;
             const float targetgraycie = params->locallab.spots.at(sp).targetGraycie;
@@ -4588,10 +4621,19 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
                                 Qpro *=  f;
                             }
                         }
-                        if (issig && issigq && iscie && mobwev != 2) { //sigmoid Q with black Ev & white Ev
+                        if (issig && issigq && iscie) { //sigmoid Q with black Ev & white Ev
                             float val = Qpro * coefq;
                             float Qout = 0.f;
-                            sigmoid_QJ(val, Qout, middle_grey_contrast, contrast_skewness, MIDDLE_GREY, black_point, white_point_disp);
+                            if(mobwev == 0) {
+                                sigmoid_QJ(val, Qout, middle_grey_contrast, contrast_skewness, MIDDLE_GREY, black_point, white_point_disp);
+                            }
+                            if(mobwev == 1) {
+                                float mid_gray_view = 0.01f * lp.targetgraycie;
+                                bool rolloff = false;
+                                bool kmid = false;
+                                tonemapFreemanQ(val, Qout, slopsmootq , white_pointsig, black_point, MIDDLE_GREY, mid_gray_view, rolloff, kmid);
+                            }
+                            
                             Qpro = std::max(Qout / coefq, 0.f);
                             Jpro = SQR((10.f * Qpro) / wh);
 

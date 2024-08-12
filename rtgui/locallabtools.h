@@ -89,6 +89,7 @@ protected:
     rtengine::ProcEvent Evlocallabskewsig;
     rtengine::ProcEvent Evlocallabwhitsig;
     rtengine::ProcEvent Evlocallabslopesmo;
+    rtengine::ProcEvent Evlocallabslopesmoq;
     rtengine::ProcEvent Evlocallabslopesmor;
     rtengine::ProcEvent Evlocallabslopesmog;
     rtengine::ProcEvent Evlocallabslopesmob;
@@ -1774,6 +1775,7 @@ private:
     ToolParamBlock* const sigBox;
     Gtk::Frame* const sigmoidFrame;
     Gtk::CheckButton* const sigq;
+    Adjuster* const slopesmoq;
     Adjuster* const sigmoidldacie;
     Adjuster* const sigmoidthcie;
     Adjuster* const sigmoidsenscie;

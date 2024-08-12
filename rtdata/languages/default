@@ -1512,9 +1512,10 @@ HISTORY_MSG_LOCAL_CIE_SHIFTXL;Local - CIECAM Shift x
 HISTORY_MSG_LOCAL_CIE_SHIFTYL;Local - CIECAM Shift y
 HISTORY_MSG_LOCAL_CIE_SIG;Local - Sigmoid
 HISTORY_MSG_LOCAL_CIE_SIGADAP;Local - CIECAM Sigmoid adaptability
-HISTORY_MSG_LOCAL_CIE_SIGMET;Local - CIECAM Sigmoid method
+HISTORY_MSG_LOCAL_CIE_SIGMET;Local - CIECAM Tone mapping Q method
 HISTORY_MSG_LOCAL_CIE_SLOP;Local - CIECAM Slope
 HISTORY_MSG_LOCAL_CIE_SLOPESMO;Local - CIECAM Gray balance
+HISTORY_MSG_LOCAL_CIE_SLOPESMOQ;Local - CIECAM Gray balance
 HISTORY_MSG_LOCAL_CIE_SLOPESMOB;Local - CIECAM Blue balance
 HISTORY_MSG_LOCAL_CIE_SLOPESMOG;Local - CIECAM Green balance
 HISTORY_MSG_LOCAL_CIE_SLOPESMOR;Local - CIECAM Red balance
@@ -2935,8 +2936,8 @@ TP_LOCALLAB_BUTTON_DUPL;Duplicate
 TP_LOCALLAB_BUTTON_REN;Rename
 TP_LOCALLAB_BUTTON_VIS;Show/Hide
 TP_LOCALLAB_BWEVNONE;None
-TP_LOCALLAB_BWEVSIG;Activated
-TP_LOCALLAB_BWEVSIGLOG;Sigmoid & Log-Encoding
+TP_LOCALLAB_BWEVSIG;Sigmoid
+TP_LOCALLAB_BWEVSLOP;Slope based
 TP_LOCALLAB_BWFORCE;Uses Black Ev & White Ev
 TP_LOCALLAB_CAM16PQREMAP;HDR PQ (Peak Luminance)
 TP_LOCALLAB_CAM16PQREMAP_TOOLTIP;PQ (Perceptual Quantizer) adapted to CAM16 (experimental). Allows you to change the internal PQ function (usually 10000 cd/m2 - default 100 cd/m2 - disabled for 100 cd/m2).\nCan be used to adapt to different devices and images, for example, to match CAM16 processing with the maximum monitor brightness of 400cd/m2.
@@ -3578,7 +3579,7 @@ TP_LOCALLAB_SHTRC_TOOLTIP;Based on 'working profile' (only those provided), modi
 TP_LOCALLAB_SH_TOOLNAME;Shadows/Highlights & Tone Equalizer
 TP_LOCALLAB_SIGBLACKSSCIE;Blacks distribution
 TP_LOCALLAB_SIGCIE;Sigmoid
-TP_LOCALLAB_SIGFRA;Sigmoid Q
+TP_LOCALLAB_SIGFRA;Sigmoid Q & Slope based
 TP_LOCALLAB_SIGGAMJCIE;Gamma
 TP_LOCALLAB_SIGJZFRA;Sigmoid Jz
 TP_LOCALLAB_SIGMAWAV;Attenuation response
@@ -3590,12 +3591,11 @@ TP_LOCALLAB_SIGMOIDLOGEV_TOOLTIP;If the combo box selection 'Black Ev and White 
 TP_LOCALLAB_SIGMOIDNORMCIE;Scale Yb Scene
 TP_LOCALLAB_SIGMOIDNORMCIEBLEND_TOOLTIP;Blend acts on the final aspect of the image, contrast and luminance. Ratio between original and output image.
 TP_LOCALLAB_SIGMOIDNORMCIE_TOOLTIP;Reconstruct luminance so that the mean and variance of the output image take into account those of the original.\nAll the adjustments acting on J or Q are taken into account, including those which are not relative to Sigmoid Q.
-TP_LOCALLAB_SIGMOIDQJ;Black Ev & White Ev
+TP_LOCALLAB_SIGMOIDQJ;Tone mapping Q method
 TP_LOCALLAB_SIGMOIDQJCOMPRCIE_TOOLTIP;When the combo box selection 'Uses Black Ev and White Ev' is 'Sigmoid and Log encoding Q' or 'Log encoding instead of Sigmoid' checked. This algorithm compress the data above the threshold slider value. The last value stands for brightness (Q) and should be close as possible to the value 'Compression threshold' (calculate when 'Auto threshold" checked, often > 1).
 TP_LOCALLAB_SIGMOIDSENSI;Adaptability
 //TP_LOCALLAB_SIGMOIDTH;Threshold (Gray point)
 TP_LOCALLAB_SIGMOIDTH;Skew
-
 TP_LOCALLAB_SIGMOIDWHITESCIE_TOOLTIP;Allows you, in Automatic when the dynamic range of the image is high, to change the distribution of lights in whites and deep blacks.\nCan be used with Log encoding or Sigmoid with Black Ev and White Ev enabled.\n\nThe algorithm does not change the basic data, but acts on the components necessary to calculate the Dynamic range, Black Ev, White Ev and the Gray point.
 TP_LOCALLAB_SIGMOID_TOOLTIP;Allows you to simulate a tone mapping appearance using both the 'Jz' and 'Sigmoid' function. Two sliders:\na) Contrast acts on the shape of the sigmoid curve and consequently on the strength\nb) Skew (Gray point) distributes the action according to the luminance.
 TP_LOCALLAB_SIGSLOPJCIE;Slope

@@ -8014,6 +8014,7 @@ Locallabcie::Locallabcie():
     sigBox(Gtk::manage(new ToolParamBlock())),
     sigmoidFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGFRA")))),
     sigq(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGFRA")))),
+    slopesmoq(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOPESMOOTH"), 0.01, 1.6, 0.01, 1.))),
     sigmoidldacie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0.5, 3., 0.01, 1.25))),
     sigmoidthcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDTH"), -1., 1., 0.01, 0., Gtk::manage(new RTImage("circle-black-small")), Gtk::manage(new RTImage("circle-white-small"))))),
     sigmoidsenscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDSENSI"), 0.1, 1.5, 0.01, 0.9))),
@@ -8213,6 +8214,7 @@ Locallabcie::Locallabcie():
     Evlocallabskewsig = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SKEWSIG");
     Evlocallabwhitsig = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_WHITSIG");
     Evlocallabslopesmo = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SLOPESMO");
+    Evlocallabslopesmoq = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SLOPESMOQ");
     Evlocallabslopesmor = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SLOPESMOR");
     Evlocallabslopesmog = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SLOPESMOG");
     Evlocallabslopesmob = m->newEvent(AUTOEXP, "HISTORY_MSG_LOCAL_CIE_SLOPESMOB");
@@ -8475,8 +8477,8 @@ Locallabcie::Locallabcie():
     Gtk::Label* modeLabelbwev = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_SIGMOIDQJ") + ":"));
     modeHBoxbwev->pack_start(*modeLabelbwev, Gtk::PACK_SHRINK);
 
-    bwevMethod->append(M("TP_LOCALLAB_BWEVNONE"));
     bwevMethod->append(M("TP_LOCALLAB_BWEVSIG"));
+    bwevMethod->append(M("TP_LOCALLAB_BWEVSLOP"));
     bwevMethod->set_active(1);
     bwevMethodConn = bwevMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::bwevMethodChanged));
     modeHBoxbwev->pack_start(*bwevMethod);
@@ -8553,7 +8555,8 @@ Locallabcie::Locallabcie():
 
     expprecam->add(*gamcieBox, false);
 
-
+    sigfraBox->pack_start(*modeHBoxbwev);
+    sigfraBox->pack_start(*slopesmoq);
     sigfraBox->pack_start(*sigmoidldacie);
     sigfraBox->pack_start(*sigmoidthcie);
     sigfraBox->pack_start(*sigmoidblcie);
@@ -8889,6 +8892,7 @@ Locallabcie::Locallabcie():
 
     catadcie->setAdjusterListener(this);
     slopesmo->setAdjusterListener(this);
+    slopesmoq->setAdjusterListener(this);
     slopesmor->setAdjusterListener(this);
     slopesmog->setAdjusterListener(this);
     slopesmob->setAdjusterListener(this);
@@ -9872,9 +9876,9 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         illMethodChanged();
         smoothciemetChanged();
 
-        if (spot.bwevMethod == "none") {
+        if (spot.bwevMethod == "sigQ") {
             bwevMethod->set_active(0);
-        } else if (spot.bwevMethod == "sig") {
+        } else if (spot.bwevMethod == "slop") {
             bwevMethod->set_active(1);
         }
 
@@ -10149,9 +10153,9 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         }
 
         if (bwevMethod->get_active_row_number() == 0) {
-            spot.bwevMethod = "none";
+            spot.bwevMethod = "sigQ";
         } else if (bwevMethod->get_active_row_number() == 1) {
-            spot.bwevMethod = "sig";
+            spot.bwevMethod = "slop";
         }
 
         if (smoothciemet->get_active_row_number() == 0) {
@@ -10299,6 +10303,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.skewsig = skewsig->getValue();
         spot.whitsig = whitsig->getValue();
         spot.slopesmo = slopesmo->getValue();
+        spot.slopesmoq = slopesmoq->getValue();
         spot.slopesmor = slopesmor->getValue();
         spot.slopesmog = slopesmog->getValue();
         spot.slopesmob = slopesmob->getValue();
@@ -12606,6 +12611,7 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         blackscie->setDefault(defSpot.blackscie);
         slopjcie->setDefault(defSpot.slopjcie);
         slopesmo->setDefault(defSpot.slopesmo);
+        slopesmoq->setDefault(defSpot.slopesmo);
         contsig->setDefault(defSpot.contsig);
         skewsig->setDefault(defSpot.skewsig);
         whitsig->setDefault(defSpot.whitsig);
@@ -13184,6 +13190,13 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabslopesmo,
                                        slopesmo->getTextValue() + spName);
+            }
+        }
+
+        if (a == slopesmoq) {
+            if (listener) {
+                listener->panelChanged(Evlocallabslopesmoq,
+                                       slopesmoq->getTextValue() + spName);
             }
         }
 

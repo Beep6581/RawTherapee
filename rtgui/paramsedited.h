@@ -1100,6 +1100,7 @@ public:
         bool skewsig;
         bool whitsig;
         bool slopesmo;
+        bool slopesmoq;
         bool slopesmor;
         bool slopesmog;
         bool slopesmob;
