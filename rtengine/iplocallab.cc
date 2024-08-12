@@ -3110,7 +3110,8 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
     float black_point =  xexpf(lp.blackevjz * std::log(2.f) + xlogf(MIDDLE_GREY));
     float white_pointsig = xexpf(lp.whiteevjz * std::log(2.f) + xlogf(MIDDLE_GREY));//to adapt if need and remove slider whitsig
     float dr = white_pointsig - black_point;
-    if(sigmoidnorm) {
+
+   if(sigmoidnorm) {
         MIDDLE_GREY = MIDDLE_GREY * dr + black_point;
     }
     float slopsmootq =(float) params->locallab.spots.at(sp).slopesmoq;
