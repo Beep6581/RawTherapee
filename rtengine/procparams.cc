@@ -4502,7 +4502,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     sursourcie("Average"),
     modecie("com"),
     modecam("cam16"),
-    bwevMethod("sig"),
+    bwevMethod("slop"),
     saturlcie(0.),
     rstprotectcie(0.),
     chromlcie(0.),

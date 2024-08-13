@@ -2922,17 +2922,6 @@ void ImProcFunctions::tonemapFreeman(float target_slope, float target_sloper, fl
             sloplimr *= smooththreshold;
             sloplimg *= smooththreshold;
             sloplimb *= smooththreshold;
-            /*
-            if(sloplimr > 1.f) {
-                sloplimr = 1.f;
-            }
-            if(sloplimg > 1.f) {
-                sloplimg = 1.f;
-            }
-            if(sloplimb > 1.f) {
-                sloplimb = 1.f;
-            }
-            */
         }
         for (int i = 0; i < 65536; ++i) {// i - value image RGB
             lutr[i] = do_get(float(i) / 65535.f, rolloff, mid_gray_scene_, gammar, sloplimr, dr, b, c, kmid);//call main function
@@ -3093,8 +3082,8 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
 //    const float sigmoidth = params->locallab.spots.at(sp).sigmoidthcie;
     const float sigmoidbl = params->locallab.spots.at(sp).sigmoidblcie;
     const bool sigmoidnorm = params->locallab.spots.at(sp).normcie;
-    int mobwev = 0;
 
+    int mobwev = 0;
     if (params->locallab.spots.at(sp).bwevMethod == "sigQ") {
         mobwev = 0;
     } else if (params->locallab.spots.at(sp).bwevMethod == "slop") {
@@ -3111,7 +3100,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
     float white_pointsig = xexpf(lp.whiteevjz * std::log(2.f) + xlogf(MIDDLE_GREY));//to adapt if need and remove slider whitsig
     float dr = white_pointsig - black_point;
 
-   if(sigmoidnorm) {
+   if(sigmoidnorm) {//for sigmoid Q and Slope based Q
         MIDDLE_GREY = MIDDLE_GREY * dr + black_point;
     }
     float slopsmootq =(float) params->locallab.spots.at(sp).slopesmoq;
@@ -4615,18 +4604,18 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
                                 Qpro *=  f;
                             }
                         }
-                        if (issig && issigq && iscie) { //sigmoid Q with black Ev & white Ev
+                        if (issig && issigq && iscie) { //sigmoid Q and slope based Q
                             float val = Qpro * coefq;
                             float Qout = 0.f;
                             if(mobwev == 0) {
                                 sigmoid_QJ(val, Qout, middle_grey_contrast, contrast_skewness, MIDDLE_GREY, black_point, white_point_disp);
                             }
                             if(mobwev == 1) {
-                                bool rolloff = false;
-                                bool kmid = false;
+                                bool rolloff = false;//all range
+                                bool kmid = false;//not take into account Yb viewing
                                 tonemapFreemanQ(val, Qout, slopsmootq , white_pointsig, black_point, MIDDLE_GREY, mid_gray_view, rolloff, kmid);
                             }
-                            
+
                             Qpro = std::max(Qout / coefq, 0.f);
                             Jpro = SQR((10.f * Qpro) / wh);
 
