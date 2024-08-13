@@ -4040,7 +4040,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     wavgradl(false),
     wavcompre(false),
     origlc(false),
-    localcontMethod("loc"),
+    localcontMethod("wav"),
     localedgMethod("thr"),
     localneiMethod("low"),
     locwavcurve{

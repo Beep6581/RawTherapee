@@ -4247,13 +4247,14 @@ void LocallabContrast::convertParamToSimple()
     disableListener();
     gamlc->setValue(defSpot.gamlc);
 
+/*
     // Set hidden specific GUI widgets in Simple mode to default spot values
     if (defSpot.localcontMethod == "loc") {
         localcontMethod->set_active(0);
     } else if (defSpot.localcontMethod == "wav") {
         localcontMethod->set_active(1);
     }
-
+*/
     showmasklcMethod->set_active(0);
     enalcMask->set_active(defSpot.enalcMask);
 //    CCmasklcshape->setCurve(defSpot.CCmasklccurve);
@@ -4282,7 +4283,7 @@ void LocallabContrast::updateGUIToMode(const modeType new_type)
     switch (new_type) {
         case Simple:
             // Expert and Normal mode widgets are hidden in Simple mode
-            localcontMethod->hide();
+            localcontMethod->show();
             origlc->hide();
             expcontrastpyr->hide();
             expcontrastpyr2->hide();
