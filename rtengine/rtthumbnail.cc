@@ -1514,9 +1514,10 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
 
 
+    bool cam02 = params.colorappearance.modelmethod == "02" && params.colorappearance.enabled;
 
    // if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || !params.colorappearance.enabled) {
-    if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || params.colorappearance.modelmethod != "02") {
+    if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || !cam02) {
         ipf.EPDToneMap (labView, 5, 6);
     }
 
