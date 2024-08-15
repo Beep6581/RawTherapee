@@ -1447,11 +1447,24 @@ Camera constants:
     },
 
     { // Quality C
-        "make_model": [ "FUJIFILM GFX 100", "FUJIFILM GFX100S" ],
+        "make_model": [ "FUJIFILM GFX 100", "FUJIFILM GFX100S", "FUJIFILM GFX 100S", "FUJIFILM GFX 100 II" ],
         "dcraw_matrix" : [ 16212, -8423, -1583, -4336, 12583, 1937, -195, 726, 6199 ], // taken from ART
         "raw_crop": [
             // multi-aspect crop to account for 16-shot pixel shift images
             { "frame" : [11808, 8754], "crop" : [ 0, 2, 11664, 8734 ] },
+            { "frame" : [23616, 17508], "crop" : [ 0, 4, 23328, 17468 ] }
+        ],
+        "pdaf_pattern" : [ 0, 18 ], // From ART
+        "pdaf_offset" : 0
+    },
+
+    { // Quality C
+        "make_model": [ "FUJIFILM GFX100 II" ],
+        "dcraw_matrix" : [ 12806, -5779, -1110, -3546, 11507, 2318, -177, 996, 5715 ], // adobe dcp d65
+        "raw_crop": [
+            // multi-aspect crop to account for 16-shot pixel shift images
+            { "frame" : [11808, 8754], "crop" : [ 0, 0, 11664, 8750 ] },
+            // this crop has been copied from the GFX 100 one, no sample pixel shift images are available
             { "frame" : [23616, 17508], "crop" : [ 0, 4, 23328, 17468 ] }
         ]
     },
@@ -1526,6 +1539,11 @@ Camera constants:
     { // Quality C
         "make_model": "Fujifilm X-A20",
         "ranges": { "white": 3838 }
+    },
+
+    { // Quality B
+        "make_model": [ "Fujifilm X-H2S" ],
+        "raw_crop": [ 0, 5, 6264, 4176 ]
     },
 
     { // Quality B
@@ -2090,6 +2108,11 @@ Camera constants:
         "pdaf_pattern": [285, 297, 309, 321, 333, 345, 357, 369, 381, 393, 405, 417, 429, 441, 453, 465, 477, 489, 501, 513, 525, 537, 549, 561, 573, 585, 597, 609, 621, 633, 645, 657, 669, 681, 693, 705, 717, 729, 741, 753, 765, 777, 789, 801, 813, 825, 837, 849, 861, 873, 885, 897, 909, 921, 933, 945, 957, 969, 981, 993, 1005, 1017, 1029, 1041, 1053, 1065, 1077, 1089, 1101, 1113, 1125, 1137, 1149, 1161, 1173, 1185, 1197, 1209, 1221, 1233, 1245, 1257, 1269, 1281, 1293, 1305, 1317, 1329, 1341, 1353, 1365, 1377, 1389, 1401, 1413, 1425, 1437, 1449, 1461, 1473, 1485, 1497, 1509, 1521, 1533, 1545, 1557, 1569, 1581, 1593, 1605, 1617, 1629, 1641, 1653, 1665, 1677, 1689, 1701, 1713, 1725, 1737, 1749, 1761, 1773, 1785, 1797, 1809, 1821, 1833, 1845, 1857, 1869, 1881, 1893, 1905, 1917, 1929, 1941, 1953, 1965, 1977, 1989, 2001, 2013, 2025, 2037, 2049, 2061, 2073, 2085, 2097, 2109, 2121, 2133, 2145, 2157, 2169, 2181, 2193, 2205, 2217, 2229, 2241, 2253, 2265, 2277, 2289, 2301, 2313, 2325, 2337, 2349, 2361, 2373, 2385, 2397, 2409, 2421, 2433, 2445, 2457, 2469, 2481, 2493, 2505, 2517, 2529, 2541, 2553, 2565, 2577, 2589, 2601, 2613, 2625, 2637, 2649, 2661, 2673, 2685, 2697, 2709, 2721, 2733, 2745, 2757, 2769, 2781, 2793, 2805, 2817, 2829, 2841, 2853, 2865, 2877, 2889, 2901, 2913, 2925, 2937, 2949, 2961, 2973, 2985, 2997, 3009, 3021, 3033, 3045, 3057, 3069, 3081, 3093, 3105, 3117, 3129, 3141, 3153, 3165, 3177, 3189, 3201, 3213, 3225, 3237, 3249, 3261, 3273, 3285, 3297, 3309, 3321, 3333, 3345, 3357, 3369, 3381, 3393, 3405, 3417, 3429, 3441]
     },
 
+    { // Quality C
+        "make_model" : "Nikon Z f",
+        "dcraw_matrix" : [ 11607, -4491, -977, -4522, 12460, 2304, -458, 1519, 7616 ] // DNG v16.1
+    },
+
     { // Quality B, 16Mp and 64Mp raw frames
         "make_model": "OLYMPUS E-M5MarkII",
         "dcraw_matrix": [ 9422,-3258,-711,-2655,10898,2015,-512,1354,5512 ], // DNG_v8.8 D65
@@ -2206,7 +2229,7 @@ Camera constants:
     },
 
     { // Quality B
-        "make_model": "OLYMPUS TG-6",
+        "make_model": [ "OLYMPUS TG-6", "OM Digital Solutions TG-7" ],
         "dcraw_matrix" : [10899, -3833, -1082, -2112, 10736, 1575, -267, 1452, 5269], // DNG v13.2
         "raw_crop": [ 0, 0, -24, 0 ] // 24 pixels at right are garbage
     },
@@ -2310,6 +2333,13 @@ Camera constants:
         "dcraw_matrix": [ 11532, -4324, -1066, -2375, 10847, 1749, -564, 1699, 4351 ], // DNG v13.2
         "raw_crop": [ 0, 6, -8, -2 ], // fullraw4/3 5040x3688 official 8,8,4904,3680 = 4896X3672. Dcraw 0,0,4912,3688 RT's frame gets smaller than dcraw but works better with auto distortion
         "ranges": { "black": 15, "white": 4050 } // 15 is BL offset. dcraw/RT read the base offset from Exif and calculates total BL = BLbase+BLoffset
+    },
+
+    { // Quality C
+        "make_model": "Panasonic DMC-FX150",
+        "raw_crop": [
+            { "frame": [ 4508, 2498 ], "crop": [ 0, 0, 4429, 2496] } // 16:9 ratio needs to shave a few extra pixels from dcraw's crop.
+        ]
     },
 
     { // Quality A, replicated from rawimage.cc
@@ -3011,6 +3041,11 @@ Camera constants:
     },
 
     { // Quality C
+        "make_model": [ "Sony ILCE-6700" ],
+        "raw_crop": [ 0, 0, 6244, 4168 ]
+    },
+
+    { // Quality C
         "make_model": "Sony ILCE-7C",
         "dcraw_matrix": [ 7374, -2389, -551, -5435, 13162, 2519, -1006, 1795, 6552 ]
     },
@@ -3097,7 +3132,17 @@ Camera constants:
     { // Quality C,
         "make_model": "Sony ILCE-7RM4",
         "dcraw_matrix": [ 7662, -2686, -660, -5240, 12965, 2530, -796, 1508, 6167 ],
-        "raw_crop": [ 0, 0, -32, 0 ] // full raw frame 9600x6376 - 32 rightmost columns are garbage. Using -32 instead of 9568 to support also 16-shot pixelshift files
+        "raw_crop": [ 0, 0, -32, 0 ], // full raw frame 9600x6376 - 32 rightmost columns are garbage. Using -32 instead of 9568 to support also 16-shot pixelshift files
+        "pdaf_pattern": [ 0,12,18,36,42,60,66,72,78,96,108,120,126,138,156,168,180,186,192,198,210,222,228,240,246,252,270,276,282,288,306,312,318,330,336,348,360,366,372,378,390,396,408,420 ], // Assume the pattern is the same as the ILCE-7CR.
+        "pdaf_offset": 1
+    },
+
+    { // Quality B
+        "make_model": [ "Sony ILCE-7CR", "Sony ILCE-7RM5" ], // 7RM5 is assumed to have the same sensor as the 7CR.
+        "dcraw_matrix": [ 8200, -2976, -719, -4296, 12053, 2532, -429, 1282, 5774 ], // DNG v15.2 for ILCE-7CR and ILCE-7RM5.
+        "raw_crop": [ 0, 0, 9564, 6374 ], // From ART
+        "pdaf_pattern": [ 0,12,18,36,42,60,66,72,78,96,108,120,126,138,156,168,180,186,192,198,210,222,228,240,246,252,270,276,282,288,306,312,318,330,336,348,360,366,372,378,390,396,408,420 ], // From issue #6938. Slightly different every repetition, maybe the real pattern is 3 or more multiples of 420 pixels. This is a composite.
+        "pdaf_offset": 1
     },
 
     { // Quality B, assumed correct for 9M2 as well
@@ -3110,6 +3155,11 @@ Camera constants:
         // P 11 P 11 P 11 P 17 P 11 P 5 P 11 P 11 P 17 P 5 P 11 P 17 P 5 P 17 P 5 P 11 P 11 P 11 P 17 P 5 P 11 P 11 P 11 P 5 P 17 P 5 P 17 P 11 P 5 P 17 P 11 P 11 P 17 P 11 P 5
         "pdaf_pattern" : [ 0,12,24,36,54,66,72,84,96,114,120,132,150,156,174,180,192,204,216,234,240,252,264,276,282,300,306,324,336,342,360,372,384,402,414,420 ],
         "pdaf_offset" : -7
+    },
+
+    { // Quality C
+        "make_model": "SONY ILCE-9M3",
+        "raw_crop": [ 8, 8, 6008, 4008 ] // From ART
     },
 
     { // Quality B, correction for frame width

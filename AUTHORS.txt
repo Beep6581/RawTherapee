@@ -21,6 +21,7 @@ Development contributors, in last name alphabetical order:
   Rüdiger Franke
   Jean-Christophe Frisch
   Ilias Giarimis
+  Scott Gilbertson
   Alberto Griggio
   Steve Herrell
   Philippe Hupé

@@ -32,6 +32,7 @@
 #include "../rtengine/lcp.h"
 #include "../rtengine/procparams.h"
 #include "../rtengine/rtlensfun.h"
+#include "../rtengine/lensmetadata.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -56,6 +57,7 @@ LensProfilePanel::LensProfilePanel() :
     distGrid(Gtk::manage((new Gtk::Grid()))),
     corrUnchangedRB(Gtk::manage((new Gtk::RadioButton(M("GENERAL_UNCHANGED"))))),
     corrOffRB(Gtk::manage((new Gtk::RadioButton(corrGroup, M("GENERAL_NONE"))))),
+    corrMetadata(Gtk::manage((new Gtk::RadioButton(corrGroup, M("TP_LENSPROFILE_CORRECTION_METADATA"))))),
     corrLensfunAutoRB(Gtk::manage((new Gtk::RadioButton(corrGroup, M("TP_LENSPROFILE_CORRECTION_AUTOMATCH"))))),
     corrLensfunManualRB(Gtk::manage((new Gtk::RadioButton(corrGroup, M("TP_LENSPROFILE_CORRECTION_MANUAL"))))),
     corrLcpFileRB(Gtk::manage((new Gtk::RadioButton(corrGroup, M("TP_LENSPROFILE_CORRECTION_LCPFILE"))))),
@@ -64,7 +66,7 @@ LensProfilePanel::LensProfilePanel() :
     lensfunCameras(Gtk::manage((new MyComboBox()))),
     lensfunLensesLbl(Gtk::manage((new Gtk::Label(M("EXIFFILTER_LENS"))))),
     lensfunLenses(Gtk::manage((new MyComboBox()))),
-    warning(Gtk::manage(new RTImage("warning.png"))),
+    warning(Gtk::manage(new RTImage("warning", Gtk::ICON_SIZE_LARGE_TOOLBAR))),
     ckbUseDist(Gtk::manage((new Gtk::CheckButton(M("TP_LENSPROFILE_USE_GEOMETRIC"))))),
     ckbUseVign(Gtk::manage((new Gtk::CheckButton(M("TP_LENSPROFILE_USE_VIGNETTING"))))),
     ckbUseCA(Gtk::manage((new Gtk::CheckButton(M("TP_LENSPROFILE_USE_CA")))))
@@ -144,17 +146,18 @@ LensProfilePanel::LensProfilePanel() :
     // Populate modes grid:
 
     modesGrid->attach(*corrOffRB, 0, 0, 3, 1);
-    modesGrid->attach(*corrLensfunAutoRB, 0, 1, 3, 1);
-    modesGrid->attach(*corrLensfunManualRB, 0, 2, 3, 1);
+    modesGrid->attach(*corrMetadata, 0, 1, 3, 1);
+    modesGrid->attach(*corrLensfunAutoRB, 0, 2, 3, 1);
+    modesGrid->attach(*corrLensfunManualRB, 0, 3, 3, 1);
 
-    modesGrid->attach(*lensfunCamerasLbl, 0, 3, 1, 1);
-    modesGrid->attach(*lensfunCameras, 1, 3, 1, 1);
-    modesGrid->attach(*lensfunLensesLbl, 0, 4, 1, 1);
-    modesGrid->attach(*lensfunLenses, 1, 4, 1, 1);
-    modesGrid->attach(*warning, 2, 3, 1, 2);
+    modesGrid->attach(*lensfunCamerasLbl, 0, 4, 1, 1);
+    modesGrid->attach(*lensfunCameras, 1, 4, 1, 1);
+    modesGrid->attach(*lensfunLensesLbl, 0, 5, 1, 1);
+    modesGrid->attach(*lensfunLenses, 1, 5, 1, 1);
+    modesGrid->attach(*warning, 2, 4, 1, 2);
 
-    modesGrid->attach(*corrLcpFileRB, 0, 5, 1, 1);
-    modesGrid->attach(*corrLcpFileChooser, 1, 5, 1, 1);
+    modesGrid->attach(*corrLcpFileRB, 0, 6, 1, 1);
+    modesGrid->attach(*corrLcpFileChooser, 1, 6, 1, 1);
 
     // Populate distortions grid:
 
@@ -165,7 +168,7 @@ LensProfilePanel::LensProfilePanel() :
     // Attach grids:
     nodesFrame->add(*modesGrid);
     distFrame->add(*distGrid);
-    
+
     pack_start(*nodesFrame, Gtk::PACK_EXPAND_WIDGET);
     pack_start(*distFrame, Gtk::PACK_EXPAND_WIDGET);
 
@@ -179,6 +182,7 @@ LensProfilePanel::LensProfilePanel() :
     lensfunCameras->signal_changed().connect(sigc::mem_fun(*this, &LensProfilePanel::onLensfunCameraChanged));
     lensfunLenses->signal_changed().connect(sigc::mem_fun(*this, &LensProfilePanel::onLensfunLensChanged));
     corrOffRB->signal_toggled().connect(sigc::bind(sigc::mem_fun(*this, &LensProfilePanel::onCorrModeChanged), corrOffRB));
+    corrMetadata->signal_toggled().connect(sigc::bind(sigc::mem_fun(*this, &LensProfilePanel::onCorrModeChanged), corrMetadata));
     corrLensfunAutoRB->signal_toggled().connect(sigc::bind(sigc::mem_fun(*this, &LensProfilePanel::onCorrModeChanged), corrLensfunAutoRB));
     corrLensfunManualRB->signal_toggled().connect(sigc::bind(sigc::mem_fun(*this, &LensProfilePanel::onCorrModeChanged), corrLensfunManualRB));
     corrLcpFileRB->signal_toggled().connect(sigc::bind(sigc::mem_fun(*this, &LensProfilePanel::onCorrModeChanged), corrLcpFileRB));
@@ -211,30 +215,52 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
             break;
         }
 
+        case procparams::LensProfParams::LcMode::METADATA: {
+            if (metadata) {
+                auto metadataCorrection= rtengine::MetadataLensCorrectionFinder::findCorrection(metadata);
+                if (metadataCorrection) {
+                    corrMetadata->set_active(true);
+                    corrMetadata->set_sensitive(true);
+                } else {
+                    corrMetadata->set_sensitive(false);
+                    corrOffRB->set_active(true);
+                }
+            } else {
+                corrMetadata->set_sensitive(false);
+            }
+            break;
+        }
+
         case procparams::LensProfParams::LcMode::NONE: {
             corrOffRB->set_active(true);
             setManualParamsVisibility(false);
+
+            ckbUseDist->set_sensitive(false);
+            ckbUseVign->set_sensitive(false);
+            ckbUseCA->set_sensitive(false);
             break;
         }
     }
 
-    if (pp->lensProf.lcpFile.empty()) {
-        const Glib::ustring lastFolder = corrLcpFileChooser->get_current_folder();
-        corrLcpFileChooser->set_current_folder(lastFolder);
-        corrLcpFileChooser->unselect_all();
-        bindCurrentFolder(*corrLcpFileChooser, options.lastLensProfileDir);
-        updateDisabled(false);
-    }
-    else if (LCPStore::getInstance()->isValidLCPFileName(pp->lensProf.lcpFile)) {
-        corrLcpFileChooser->set_filename(pp->lensProf.lcpFile);
-
-        if (corrLcpFileRB->get_active()) {
-            updateDisabled(true);
+    if (pp->lensProf.lcMode == procparams::LensProfParams::LcMode::LCP) {
+        if (pp->lensProf.lcpFile.empty()) {
+            const Glib::ustring lastFolder = corrLcpFileChooser->get_current_folder();
+            corrLcpFileChooser->set_current_folder(lastFolder);
+            corrLcpFileChooser->unselect_all();
+            bindCurrentFolder(*corrLcpFileChooser, options.lastLensProfileDir);
+            updateLCPDisabled(false);
         }
-    }
-    else {
-        corrLcpFileChooser->unselect_filename(corrLcpFileChooser->get_filename());
-        updateDisabled(false);
+        else if (LCPStore::getInstance()->isValidLCPFileName(pp->lensProf.lcpFile)) {
+            corrLcpFileChooser->set_filename(pp->lensProf.lcpFile);
+
+            if (corrLcpFileRB->get_active()) {
+                updateLCPDisabled(true);
+            }
+        }
+        else {
+            corrLcpFileChooser->unselect_filename(corrLcpFileChooser->get_filename());
+            updateLCPDisabled(false);
+        }
     }
 
     const LFDatabase* const db = LFDatabase::getInstance();
@@ -242,7 +268,7 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
 
     if (pp->lensProf.lfAutoMatch()) {
         if (metadata) {
-            c = db->findCamera(metadata->getMake(), metadata->getModel());
+            c = db->findCamera(metadata->getMake(), metadata->getModel(), true);
             setLensfunCamera(c.getMake(), c.getModel());
         }
     } else if (pp->lensProf.lfManual()) {
@@ -251,7 +277,7 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
 
     if (pp->lensProf.lfAutoMatch()) {
         if (metadata) {
-            const LFLens l = db->findLens(c, metadata->getLens());
+            const LFLens l = db->findLens(c, metadata->getLens(), true);
             setLensfunLens(l.getLens());
         }
     } else if (pp->lensProf.lfManual()) {
@@ -259,7 +285,7 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
     }
 
 
-    /*  
+    /*
    if (!batchMode && !checkLensfunCanCorrect(true)) {
         if (corrLensfunAutoRB->get_active()) {
             corrOffRB->set_active(true);
@@ -270,26 +296,26 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
 
     if (!batchMode && corrLensfunManualRB->get_active() && !checkLensfunCanCorrect(false)) {
         corrOffRB->set_active(true);
-    } 
+    }
     */
-    
+
     ckbUseDist->set_active(pp->lensProf.useDist);
     ckbUseVign->set_active(pp->lensProf.useVign);
     ckbUseCA->set_active(pp->lensProf.useCA);
-    
+
     if (pedited) {
         corrUnchangedRB->set_active(!pedited->lensProf.lcMode);
         ckbUseDist->set_inconsistent(!pedited->lensProf.useDist);
         ckbUseVign->set_inconsistent(!pedited->lensProf.useVign);
         ckbUseCA->set_inconsistent(!pedited->lensProf.useCA);
-        
+
         if (!pedited->lensProf.lfCameraMake || !pedited->lensProf.lfCameraModel) {
             setLensfunCamera("", "");
         }
         if (!pedited->lensProf.lfLens) {
             setLensfunLens("");
         }
-        
+
         ckbUseDist->set_sensitive(true);
         ckbUseVign->set_sensitive(true);
         ckbUseCA->set_sensitive(true);
@@ -297,7 +323,7 @@ void LensProfilePanel::read(const rtengine::procparams::ProcParams* pp, const Pa
 
     lcModeChanged = lcpFileChanged = useDistChanged = useVignChanged = useCAChanged = false;
     useLensfunChanged = lensfunAutoChanged = lensfunCameraChanged = lensfunLensChanged = false;
-    
+
     updateLensfunWarning();
     enableListener();
     conUseDist.block(false);
@@ -307,6 +333,9 @@ void LensProfilePanel::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
 {
     if (corrLcpFileRB->get_active()) {
         pp->lensProf.lcMode = procparams::LensProfParams::LcMode::LCP;
+    }
+    else if (corrMetadata->get_active()) {
+        pp->lensProf.lcMode = procparams::LensProfParams::LcMode::METADATA;
     }
     else if (corrLensfunManualRB->get_active()) {
         pp->lensProf.lcMode = procparams::LensProfParams::LcMode::LENSFUNMANUAL;
@@ -367,10 +396,16 @@ void LensProfilePanel::setRawMeta(bool raw, const rtengine::FramesMetaData* pMet
 
         // CA is very focus layer dependent, otherwise it might even worsen things
         allowFocusDep = false;
-        ckbUseCA->set_active(false);
-        ckbUseCA->set_sensitive(false);
 
         enableListener();
+    }
+
+    corrMetadata->set_sensitive(false);
+    if (pMeta) {
+        metadataCorrection = MetadataLensCorrectionFinder::findCorrection(pMeta);
+        if (metadataCorrection) {
+            corrMetadata->set_sensitive(true);
+        }
     }
 
     isRaw = raw;
@@ -381,7 +416,7 @@ void LensProfilePanel::onLCPFileChanged()
 {
     lcpFileChanged = true;
     const bool valid = LCPStore::getInstance()->isValidLCPFileName(corrLcpFileChooser->get_filename());
-    updateDisabled(valid);
+    updateLCPDisabled(valid);
 
     if (listener) {
         if (valid) {
@@ -436,7 +471,7 @@ void LensProfilePanel::onUseCAChanged()
 void LensProfilePanel::setBatchMode(bool yes)
 {
     FoldableToolPanel::setBatchMode(yes);
-    
+
     corrUnchangedRB->set_group(corrGroup);
     modesGrid->attach_next_to(*corrUnchangedRB, Gtk::POS_TOP, 3, 1);
     corrUnchangedRB->signal_toggled().connect(sigc::bind(sigc::mem_fun(*this, &LensProfilePanel::onCorrModeChanged), corrUnchangedRB));
@@ -501,7 +536,7 @@ void LensProfilePanel::onCorrModeChanged(const Gtk::RadioButton* rbChanged)
             ckbUseCA->set_sensitive(false);
 
             mode = M("GENERAL_NONE");
-            
+
         } else if (rbChanged == corrLensfunAutoRB) {
             lcModeChanged = true;
             useLensfunChanged = true;
@@ -514,24 +549,24 @@ void LensProfilePanel::onCorrModeChanged(const Gtk::RadioButton* rbChanged)
             ckbUseVign->set_sensitive(true);
             ckbUseCA->set_sensitive(true);
 
-            
+
             const bool disabled = disableListener();
             if (batchMode) {
                 setLensfunCamera("", "");
                 setLensfunLens("");
             } else if (metadata) {
                 const LFDatabase* const db = LFDatabase::getInstance();
-                const LFCamera c = db->findCamera(metadata->getMake(), metadata->getModel());
-                const LFLens l = db->findLens(c, metadata->getLens());
+                const LFCamera c = db->findCamera(metadata->getMake(), metadata->getModel(), true);
+                const LFLens l = db->findLens(c, metadata->getLens(), true);
                 setLensfunCamera(c.getMake(), c.getModel());
                 setLensfunLens(l.getLens());
             }
             if (disabled) {
                 enableListener();
             }
-            
+
             mode = M("TP_LENSPROFILE_CORRECTION_AUTOMATCH");
-            
+
         } else if (rbChanged == corrLensfunManualRB) {
             lcModeChanged = true;
             useLensfunChanged = true;
@@ -545,17 +580,27 @@ void LensProfilePanel::onCorrModeChanged(const Gtk::RadioButton* rbChanged)
             ckbUseCA->set_sensitive(false);
 
             mode = M("TP_LENSPROFILE_CORRECTION_MANUAL");
-            
+
         } else if (rbChanged == corrLcpFileRB) {
             lcModeChanged = true;
             useLensfunChanged = true;
             lensfunAutoChanged = true;
             lcpFileChanged = true;
 
-            updateDisabled(true);
+            updateLCPDisabled(true);
 
             mode = M("TP_LENSPROFILE_CORRECTION_LCPFILE");
-            
+
+        } else if (rbChanged == corrMetadata) {
+            lcModeChanged = true;
+            useLensfunChanged = true;
+            lensfunAutoChanged = true;
+            lcpFileChanged = true;
+
+            updateMetadataDisabled();
+
+            mode = M("TP_LENSPROFILE_CORRECTION_METADATA");
+
         } else if (rbChanged == corrUnchangedRB) {
             lcModeChanged = false;
             useLensfunChanged = false;
@@ -680,12 +725,27 @@ void LensProfilePanel::LFDbHelper::fillLensfunLenses()
     }
 }
 
-void LensProfilePanel::updateDisabled(bool enable)
+void LensProfilePanel::updateLCPDisabled(bool enable)
 {
     if (!batchMode) {
         ckbUseDist->set_sensitive(enable);
         ckbUseVign->set_sensitive(enable && isRaw);
         ckbUseCA->set_sensitive(enable && allowFocusDep);
+    }
+}
+
+void LensProfilePanel::updateMetadataDisabled()
+{
+    if (!batchMode) {
+        if (metadataCorrection) {
+            ckbUseDist->set_sensitive(metadataCorrection->hasDistortionCorrection());
+            ckbUseVign->set_sensitive(metadataCorrection->hasVignettingCorrection());
+            ckbUseCA->set_sensitive(metadataCorrection->hasCACorrection());
+        } else {
+            ckbUseDist->set_sensitive(false);
+            ckbUseVign->set_sensitive(false);
+            ckbUseCA->set_sensitive(false);
+        }
     }
 }
 
@@ -801,14 +861,14 @@ void LensProfilePanel::updateLensfunWarning()
             return;
         }
 
-        const LFCamera c = db->findCamera((*itc)[lf->lensfunModelCam.make], (*itc)[lf->lensfunModelCam.model]);
+        const LFCamera c = db->findCamera((*itc)[lf->lensfunModelCam.make], (*itc)[lf->lensfunModelCam.model], false);
         const auto itl = lensfunLenses->get_active();
 
         if (!itl) {
             return;
         }
 
-        const LFLens l = db->findLens(LFCamera(), (*itl)[lf->lensfunModelLens.lens]);
+        const LFLens l = db->findLens(c, (*itl)[lf->lensfunModelLens.lens], false);
         const float lenscrop = l.getCropFactor();
         const float camcrop = c.getCropFactor();
 

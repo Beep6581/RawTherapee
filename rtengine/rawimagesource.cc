@@ -44,6 +44,7 @@
 #include "rt_math.h"
 #include "rtengine.h"
 #include "rtlensfun.h"
+#include "lensmetadata.h"
 #include "../rtgui/options.h"
 
 #define BENCHMARK
@@ -57,6 +58,16 @@
 
 namespace
 {
+
+float clipitc(float x)
+{
+    if (std::isnan(x)) {
+        x = 0.1f;
+    } else {
+        x = rtengine::LIM(x, 0.1f, 65534.9f);//White balance Itcwb - limit values 
+    }
+    return x;
+}
 
 void rotateLine(const float* const line, rtengine::PlanarPtr<float> &channel, const int tran, const int i, const int w, const int h)
 {
@@ -420,6 +431,16 @@ void transLineD1x(const float* const red, const float* const green, const float*
     }
 }
 
+bool checkRawDataDimensions(const array2D<float> &rawData, const rtengine::RawImage &rawImage, int width, int height)
+{
+    const int colors = (rawImage.getSensorType() == rtengine::ST_BAYER ||
+                           rawImage.getSensorType() == rtengine::ST_FUJI_XTRANS ||
+                           rawImage.get_colors() == 1)
+                           ? 1
+                           : 3;
+    return rawData.getHeight() == height && rawData.getWidth() == colors * width;
+}
+
 }
 
 
@@ -744,7 +765,7 @@ void RawImageSource::getWBMults(const ColorTemp &ctemp, const RAWParams &raw, st
 
 void RawImageSource::getImage(const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const RAWParams &raw)
 {
-    assert(rawData.getHeight() == H && rawData.getWidth() == W);
+    assert(checkRawDataDimensions(rawData, *ri, W, H));
 
     MyMutex::MyLock lock(getImageMutex);
 
@@ -1078,7 +1099,7 @@ DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, DCPProfileA
 
     DCPProfile *dcpProf = nullptr;
     cmsHPROFILE dummy;
-    findInputProfile(cmp.inputProfile, nullptr, (static_cast<const FramesData*>(getMetaData()))->getCamera(), &dcpProf, dummy);
+    findInputProfile(cmp.inputProfile, nullptr, (static_cast<const FramesData*>(getMetaData()))->getCamera(), fileName, &dcpProf, dummy);
 
     if (dcpProf == nullptr) {
         if (settings->verbose) {
@@ -1094,8 +1115,24 @@ DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, DCPProfileA
 
 void RawImageSource::convertColorSpace(Imagefloat* image, const ColorManagementParams &cmp, const ColorTemp &wb)
 {
+    cmsHPROFILE in;
+    DCPProfile *dcpProf;
+
+    if (!findInputProfile(cmp.inputProfile, embProfile, (static_cast<const FramesData*>(getMetaData()))->getCamera(), fileName, &dcpProf, in)) {
+        return;
+    }
+
     double pre_mul[3] = { ri->get_pre_mul(0), ri->get_pre_mul(1), ri->get_pre_mul(2) };
-    colorSpaceConversion(image, cmp, wb, pre_mul, embProfile, camProfile, imatrices.xyz_cam, (static_cast<const FramesData*>(getMetaData()))->getCamera());
+    colorSpaceConversion_(image, cmp, wb, pre_mul, camProfile, imatrices.xyz_cam, in, dcpProf);
+}
+
+void RawImageSource::colorSpaceConversion(Imagefloat* im, const ColorManagementParams& cmp, const ColorTemp &wb, double pre_mul[3], cmsHPROFILE embedded, cmsHPROFILE camprofile, double cam[3][3], const std::string &camName, const Glib::ustring &fileName)
+{
+    cmsHPROFILE in;
+    DCPProfile *dcpProf;
+    if (findInputProfile(cmp.inputProfile, embedded, camName, fileName, &dcpProf, in)) {
+        colorSpaceConversion_(im, cmp, wb, pre_mul, camprofile, cam, in, dcpProf);
+    }
 }
 
 void RawImageSource::getFullSize(int& w, int& h, int tr)
@@ -1442,7 +1479,7 @@ void RawImageSource::preprocess(const RAWParams &raw, const LensProfParams &lens
 
     int totBP = 0; // Hold count of bad pixels to correct
 
-    if (ri->zeroIsBad()) { // mark all pixels with value zero as bad, has to be called before FF and DF. dcraw sets this flag only for some cameras (mainly Panasonic and Leica)
+    if (ri->zeroIsBad() || (getMetaData()->hasFixBadPixelsConstant() && getMetaData()->getFixBadPixelsConstant() == 0)) { // mark all pixels with value zero as bad, has to be called before FF and DF. dcraw sets this flag only for some cameras (mainly Panasonic and Leica)
         bitmapBads.reset(new PixelsMap(W, H));
         totBP = findZeroPixels(*bitmapBads);
 
@@ -1506,7 +1543,7 @@ void RawImageSource::preprocess(const RAWParams &raw, const LensProfParams &lens
     //FLATFIELD end
 
     if (raw.ff_FromMetaData && isGainMapSupported()) {
-        applyDngGainMap(c_black, ri->getGainMaps());
+        applyDngGainMap(c_black, getMetaData()->getGainMaps());
     }
 
     // Always correct camera badpixels from .badpixels file
@@ -1557,7 +1594,13 @@ void RawImageSource::preprocess(const RAWParams &raw, const LensProfParams &lens
     if (!hasFlatField && lensProf.useVign && lensProf.lcMode != LensProfParams::LcMode::NONE) {
         std::unique_ptr<LensCorrection> pmap;
 
-        if (lensProf.useLensfun()) {
+        if (lensProf.useMetadata()) {
+            auto corr = MetadataLensCorrectionFinder::findCorrection(idata);
+            if (corr) {
+                corr->initCorrections(W, H, coarse, -1);
+                pmap = std::move(corr);
+            }
+        } else if (lensProf.useLensfun()) {
             pmap = LFDatabase::getInstance()->findModifier(lensProf, idata, W, H, coarse, -1);
         } else {
             const std::shared_ptr<LCPProfile> pLCPProf = LCPStore::getInstance()->getProfile(lensProf.lcpFile);
@@ -1747,7 +1790,7 @@ void RawImageSource::preprocess(const RAWParams &raw, const LensProfParams &lens
 
 void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &contrastThreshold, bool cache)
 {
-    assert(rawData.getHeight() == H && rawData.getWidth() == W);
+    assert(checkRawDataDimensions(rawData, *ri, W, H));
 
     MyTime t1, t2;
     t1.set();
@@ -3156,18 +3199,11 @@ lab2ProphotoRgbD50(float L, float A, float B, float& r, float& g, float& b)
 }
 
 // Converts raw image including ICC input profile to working space - floating point version
-void RawImageSource::colorSpaceConversion_(Imagefloat* im, const ColorManagementParams& cmp, const ColorTemp &wb, double pre_mul[3], cmsHPROFILE embedded, cmsHPROFILE camprofile, double camMatrix[3][3], const std::string &camName)
+void RawImageSource::colorSpaceConversion_(Imagefloat* im, const ColorManagementParams& cmp, const ColorTemp &wb, double pre_mul[3], cmsHPROFILE camprofile, double camMatrix[3][3], cmsHPROFILE in, DCPProfile *dcpProf)
 {
 
 //    MyTime t1, t2, t3;
 //    t1.set ();
-    cmsHPROFILE in;
-    DCPProfile *dcpProf;
-
-    if (!findInputProfile(cmp.inputProfile, embedded, camName, &dcpProf, in)) {
-        return;
-    }
-
     if (dcpProf != nullptr) {
         // DCP processing
         const DCPProfile::Triple pre_mul_row = {
@@ -3557,7 +3593,7 @@ void RawImageSource::colorSpaceConversion_(Imagefloat* im, const ColorManagement
 
 
 // Determine RAW input and output profiles. Returns TRUE on success
-bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embedded, std::string camName, DCPProfile **dcpProf, cmsHPROFILE& in)
+bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embedded, std::string camName, const Glib::ustring &fileName, DCPProfile **dcpProf, cmsHPROFILE& in)
 {
     in = nullptr; // cam will be taken on NULL
     *dcpProf = nullptr;
@@ -3566,8 +3602,12 @@ bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embed
         return false;
     }
 
-    if (embedded && inProfile == "(embedded)") {
-        in = embedded;
+    if (inProfile == "(embedded)") {
+        if (embedded) {
+            in = embedded;
+        } else {
+            *dcpProf = DCPStore::getInstance()->getProfile(fileName);
+        }
     } else if (inProfile == "(cameraICC)") {
         // DCPs have higher quality, so use them first
         *dcpProf = DCPStore::getInstance()->getStdProfile(camName);
@@ -3842,7 +3882,7 @@ void RawImageSource::hlRecovery(const std::string &method, float* red, float* gr
 
 void RawImageSource::getAutoExpHistogram(LUTu & histogram, int& histcompr)
 {
-    assert(rawData.getHeight() == H && rawData.getWidth() == W);
+    assert(checkRawDataDimensions(rawData, *ri, W, H));
 
 //    BENCHFUN
     histcompr = 3;
@@ -5277,7 +5317,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     itcwb_nopurple : false default - allow to bypass highlight recovery and inpait opposed when need flowers and not purple due to highlights...
     itcwb_green - adjust green refinement
     */
-    BENCHFUN
+   // BENCHFUN
     MyTime t1, t2, t3, t4, t5, t6, t7, t8;
     t1.set();
 
@@ -6191,12 +6231,20 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
 
         if (oldsampling == false) {
+            if (settings->verbose) {
+                printf("size rgb loc - bfh=%i bfw=%i repref=%i\n", bfh, bfw, repref);
+            }
+            
 #ifdef _OPENMP
             #pragma omp parallel for
 #endif
 
             for (int y = 0; y < bfh ; ++y) {
                 for (int x = 0; x < bfw ; ++x) {
+                    redloc[y][x] = clipitc(redloc[y][x]);
+                    greenloc[y][x] = clipitc(greenloc[y][x]);
+                    blueloc[y][x] = clipitc(blueloc[y][x]);
+
                     const float RR = rmm[repref] * redloc[y][x];
                     const float GG = gmm[repref] * greenloc[y][x];
                     const float BB = bmm[repref] * blueloc[y][x];
@@ -7421,17 +7469,11 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
     const int bfw = W / precision + ((W % precision) > 0 ? 1 : 0);// 5 arbitrary value can be change to 3 or 9 ;
     const int bfh = H / precision + ((H % precision) > 0 ? 1 : 0);
 
-    if (! greenloc) {
-        greenloc(bfw, bfh);
-    }
+    greenloc(bfw, bfh);
 
-    if (! redloc) {
-        redloc(bfw, bfh);
-    }
+    redloc(bfw, bfh);
 
-    if (! blueloc) {
-        blueloc(bfw, bfh);
-    }
+    blueloc(bfw, bfh);
 
     double avgL = 0.0;
     //center data on normal values
@@ -7466,8 +7508,10 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
         }
 
     const float sig = std::sqrt(vari / mm);
-    const float multip = 60000.f / (avgL + 2.f * sig);
-    //multip to put red, blue, green in a good range
+    float multip = 60000.f / (avgL + 2.f * sig);
+    if(std::isnan(multip)) {//if very bad datas with avgl and sig
+        multip = 1.f;
+    }
 #ifdef _OPENMP
     #pragma omp parallel for
 #endif
@@ -7476,7 +7520,7 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
         const int ii = i * precision;
 
         if (ii < H) {
-            for (int j = 0, jj = 0; j < bfw; ++j, jj += precision) {
+            for (int j = 0, jj = 0; j < bfw; ++j, jj += precision) {//isnan and <0 and > 65535 in case of
                 redloc[i][j] = red[ii][jj] * multip;
                 greenloc[i][j] = green[ii][jj] * multip;
                 blueloc[i][j] = blue[ii][jj] * multip;
@@ -7487,7 +7531,7 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
 
 void RawImageSource::getAutoWBMultipliersitc(bool extra, double & tempref, double & greenref, double & tempitc, double & greenitc, float &temp0, float &delta,  int &bia, int &dread, int &kcam, int &nocam, float &studgood, float &minchrom, int &kmin,  float &minhist, float &maxhist, int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double & rm, double & gm, double & bm, const WBParams & wbpar, const ColorManagementParams & cmp, const RAWParams & raw, const ToneCurveParams &hrp)
 {
-    assert(rawData.getHeight() == H && rawData.getWidth() == W);
+    assert(checkRawDataDimensions(rawData, *ri, W, H));
 
 //    BENCHFUN
     constexpr double clipHigh = 64000.0;
@@ -7692,9 +7736,6 @@ void RawImageSource::getAutoWBMultipliersitc(bool extra, double & tempref, doubl
         WBauto(extra, tempref, greenref, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, tempitc, greenitc, temp0, delta,  bia, dread, kcam, nocam, studgood, minchrom, kmin, minhist, maxhist, twotimes, wbpar, begx, begy, yEn,  xEn,  cx,  cy, cmp, raw, hrp);
     }
 
-    redloc(0, 0);
-    greenloc(0, 0);
-    blueloc(0, 0);
 
     if (settings->verbose  && wbpar.method != "autitcgreen") {
         printf("RGB grey AVG: %g %g %g\n", avg_r / std::max(1, rn), avg_g / std::max(1, gn), avg_b / std::max(1, bn));
@@ -7713,7 +7754,7 @@ void RawImageSource::getAutoWBMultipliersitc(bool extra, double & tempref, doubl
 
 void RawImageSource::getAutoWBMultipliers(double &rm, double &gm, double &bm)
 {
-    assert(rawData.getHeight() == H && rawData.getWidth() == W);
+    assert(checkRawDataDimensions(rawData, *ri, W, H));
 
 //    BENCHFUN
     constexpr double clipHigh = 64000.0;
@@ -7931,7 +7972,7 @@ void RawImageSource::getAutoWBMultipliers(double &rm, double &gm, double &bm)
 
 ColorTemp RawImageSource::getSpotWB(std::vector<Coord2D> &red, std::vector<Coord2D> &green, std::vector<Coord2D> &blue, int tran, double equal, StandardObserver observer)
 {
-    assert(rawData.getHeight() == H && rawData.getWidth() == W);
+    assert(checkRawDataDimensions(rawData, *ri, W, H));
 
     int x;
     int y;
@@ -8271,7 +8312,7 @@ void RawImageSource::init()
 
 void RawImageSource::getRawValues(int x, int y, int rotate, int &R, int &G, int &B)
 {
-    if (rawData.getWidth() != W || rawData.getHeight() != H || d1x) { // Nikon D1x has special sensor. We just skip it
+    if (!checkRawDataDimensions(rawData, *ri, W, H) || d1x) { // Nikon D1x has special sensor. We just skip it
         R = G = B = 0;
         return;
     }
@@ -8314,12 +8355,73 @@ void RawImageSource::getRawValues(int x, int y, int rotate, int &R, int &G, int 
 
 bool RawImageSource::isGainMapSupported() const
 {
-    return ri->isGainMapSupported();
+    if (!(ri->DNGVERSION() && ri->isBayer())) {
+        return false;
+    }
+    const auto &gainMaps = getMetaData()->getGainMaps();
+    const auto n = gainMaps.size();
+    if (n != 4) { // we need 4 gainmaps for bayer files
+        if (rtengine::settings->verbose) {
+            std::cout << "GainMap has " << n << " maps, but 4 are needed" << std::endl;
+        }
+        return false;
+    }
+    unsigned int check = 0;
+    bool noOp = true;
+    for (const auto &m : gainMaps) {
+        if (m.MapGain.size() < 1) {
+            if (rtengine::settings->verbose) {
+                std::cout << "GainMap has invalid size of " << m.MapGain.size() << std::endl;
+            }
+            return false;
+        }
+        if (m.MapGain.size() != static_cast<std::size_t>(m.MapPointsV) * static_cast<std::size_t>(m.MapPointsH) * static_cast<std::size_t>(m.MapPlanes)) {
+            if (rtengine::settings->verbose) {
+                std::cout << "GainMap has size of " << m.MapGain.size() << ", but needs " << m.MapPointsV * m.MapPointsH * m.MapPlanes << std::endl;
+            }
+            return false;
+        }
+        if (m.RowPitch != 2 || m.ColPitch != 2) {
+            if (rtengine::settings->verbose) {
+                std::cout << "GainMap needs Row/ColPitch of 2/2, but has " << m.RowPitch << "/" << m.ColPitch << std::endl;
+            }
+            return false;
+        }
+        if (m.Top == 0) {
+            if (m.Left == 0) {
+                check += 1;
+            } else if (m.Left == 1) {
+                check += 2;
+            }
+        } else if (m.Top == 1) {
+            if (m.Left == 0) {
+                check += 4;
+            } else if (m.Left == 1) {
+                check += 8;
+            }
+        }
+        for (size_t i = 0; noOp && i < m.MapGain.size(); ++i) {
+            if (m.MapGain[i] != 1.f) { // we have at least one value != 1.f => map is not a nop
+                noOp = false;
+            }
+        }
+    }
+    if (noOp || check != 15) { // all maps are nops or the structure of the combination of 4 maps is not correct
+        if (rtengine::settings->verbose) {
+            if (noOp) {
+                std::cout << "GainMap is a nop" << std::endl;
+            } else {
+                std::cout << "GainMap has unsupported type : " << check << std::endl;
+            }
+        }
+        return false;
+    }
+    return true;
 }
 
 void RawImageSource::applyDngGainMap(const float black[4], const std::vector<GainMap> &gainMaps)
 {
-    assert(rawData.getHeight() == H && rawData.getWidth() == W);
+    assert(checkRawDataDimensions(rawData, *ri, W, H));
 
     // now we can apply each gain map to raw_data
     array2D<float> mvals[2][2];

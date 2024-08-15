@@ -148,7 +148,6 @@ void ThresholdSelector::initValues ()
     set_name("ThresholdSelector");
     set_can_focus(false);
     set_app_paintable(true);
-    setDirty(true);
     updateTooltip();
 }
 
@@ -167,7 +166,7 @@ void ThresholdSelector::get_preferred_height_vfunc (int &minimum_height, int &na
 
 void ThresholdSelector::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
-    int s = RTScalable::getScale();
+    const int s = RTScalable::scalePixelSize(1);
     Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
     Gtk::Border padding = getPadding(style);  // already scaled
     int margins = padding.get_left() + padding.get_right();
@@ -177,7 +176,7 @@ void ThresholdSelector::get_preferred_width_vfunc (int &minimum_width, int &natu
 
 void ThresholdSelector::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
 {
-    int s = RTScalable::getScale();
+    const int s = RTScalable::scalePixelSize(1);
     Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
     Gtk::Border padding = getPadding(style);  // already scaled
     int margins = padding.get_left() + padding.get_right();
@@ -198,7 +197,7 @@ void ThresholdSelector::setPositions (double bottom, double top)
     setPositions(bottom, top, maxValBottom, maxValTop);
 
     if (updatePolicy == RTUP_DYNAMIC) {
-        setDirty(true);
+        queue_draw();
     }
 }
 
@@ -216,10 +215,6 @@ void ThresholdSelector::setPositions (double bottomLeft, double topLeft, double 
     positions[TS_TOPRIGHT]    = topRight;
 
     if (different) {
-        if (updatePolicy == RTUP_DYNAMIC) {
-            setDirty(true);
-        }
-
         sig_val_changed.emit();
         updateTooltip();
         queue_draw ();
@@ -246,75 +241,58 @@ void ThresholdSelector::setDefaults (double bottomLeft, double topLeft, double b
 
 void ThresholdSelector::on_realize()
 {
-
     Gtk::DrawingArea::on_realize();
 
     add_events(Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::LEAVE_NOTIFY_MASK);
 }
 
-void ThresholdSelector::updateBackBuffer()
+void ThresholdSelector::updateDrawingArea (const ::Cairo::RefPtr< Cairo::Context> &cr)
 {
-
-    if (!get_realized() || !isDirty() || !get_allocated_width() || !get_allocated_height())  {
+    // on_realize has to be called before
+    if (!get_realized() || !get_allocated_width() || !get_allocated_height())  {
         return;
     }
 
-    // This will create or update the size of the BackBuffer::surface
-    setDrawRectangle(Cairo::FORMAT_ARGB32, 0, 0, get_allocated_width(), get_allocated_height(), true);
+    // Get border padding
+    const Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
+    Gtk::Border padding = getPadding(style);
 
-    if (!surface) {
-        return;
-    }
-
-    Cairo::RefPtr<Cairo::Context> cr = Cairo::Context::create(surface);
-    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
-    Gtk::Border padding = getPadding(style);  // already scaled
-
-    cr->set_source_rgba (0., 0., 0., 0.);
-    cr->set_operator (Cairo::OPERATOR_CLEAR);
-    cr->paint ();
+    // Setup drawing
     cr->set_operator (Cairo::OPERATOR_OVER);
 
-    double s = (double)RTScalable::getScale();
+    // Get widget size
+    const int w = get_allocated_width ();
+    const int h = get_allocated_height ();
 
-    double positions01[4];
-    int w = get_allocated_width ();
-    int h = get_allocated_height ();
+    // Compute slider parameters
+    const double wslider = sliderWidth; // constant must be an odd value
+    const double hwslider = wslider / 2.;
+    const double verticalSliderPadding = std::floor((static_cast<double>(h) - static_cast<double>(padding.get_top()) - static_cast<double>(padding.get_bottom())) * verticalSliderPaddingFactor + 0.5);
 
+    // Get threshold selector positions
+    const double positions01[4] = {to01(TS_BOTTOMLEFT), to01(TS_TOPLEFT), to01(TS_BOTTOMRIGHT), to01(TS_TOPRIGHT)};
 
-    double wslider = sliderWidth * s;  // constant must be an odd value
-    double hwslider = wslider / 2.;
-    double verticalSliderPadding = std::floor(((double)h - (double)padding.get_top() - (double)padding.get_bottom()) * verticalSliderPaddingFactor + 0.5);
+    // Compute internal background position and size
+    const double innerBarX = static_cast<double>(padding.get_left()) + hwslider - 0.5;
+    const double innerBarY = verticalSliderPadding + 1. + static_cast<double>(padding.get_top());
+    const double innerBarW = static_cast<double>(w) - innerBarX - static_cast<double>(padding.get_right()) - hwslider - 0.5;
+    const double innerBarH = static_cast<double>(h) - innerBarY - verticalSliderPadding - 1. - static_cast<double>(padding.get_bottom());
 
-    positions01[TS_BOTTOMLEFT]  = to01(TS_BOTTOMLEFT);
-    positions01[TS_TOPLEFT]     = to01(TS_TOPLEFT);
-    positions01[TS_BOTTOMRIGHT] = to01(TS_BOTTOMRIGHT);
-    positions01[TS_TOPRIGHT]    = to01(TS_TOPRIGHT);
-
-    double innerBarX = (double)padding.get_left() + hwslider - 0.5 * s;
-    double innerBarY = verticalSliderPadding + 1. * s + (double)padding.get_top();
-    double innerBarW = (double)w - innerBarX - (double)padding.get_right() - hwslider - 0.5 * s;
-    double innerBarH = (double)h - innerBarY - verticalSliderPadding - 1. * s - (double)padding.get_bottom();
+    // Render background (style one or colored bar one)
     if (is_sensitive() && coloredBar.canGetColors()) {
-        if (updatePolicy == RTUP_DYNAMIC) {
-            coloredBar.setDirty(true);
-        }
-        // this will eventually create/update the off-screen Surface for the gradient area only !
-        coloredBar.setDrawRectangle(innerBarX, innerBarY, innerBarW, innerBarH);
-        // that we're displaying here
-        coloredBar.expose(*this, cr);
+        coloredBar.setColoredBarSize(innerBarX, innerBarY, innerBarW, innerBarH);
+        coloredBar.updateColoredBar(cr);
     } else {
         style->render_background(cr, innerBarX, innerBarY, innerBarW, innerBarH);
     }
 
-    // draw curve
-
-    double yStart = innerBarY + innerBarH - 1. * s;
-    double yEnd   = innerBarY + 1. * s;
-    double xStart = innerBarX;
-    double xEnd   = innerBarX + innerBarW;
-    double iw = xEnd - xStart;
-    double ih = yEnd - yStart;
+    // Render curve
+    const double yStart = innerBarY + innerBarH - 1.;
+    const double yEnd   = innerBarY + 1.;
+    const double xStart = innerBarX;
+    const double xEnd   = innerBarX + innerBarW;
+    const double iw = xEnd - xStart;
+    const double ih = yEnd - yStart;
 
     if (bgCurveProvider) {
 
@@ -390,26 +368,27 @@ void ThresholdSelector::updateBackBuffer()
     cr->set_line_cap(Cairo::LINE_CAP_BUTT);
     cr->set_line_join(Cairo::LINE_JOIN_BEVEL);
 
+    // Render surrounding curve (black)
     if (is_sensitive()) {
-        // draw surrounding curve (black)
+
         cr->set_source_rgb (0., 0., 0.);
-        cr->set_line_width (4. * s);
+        cr->set_line_width (4.);
         cr->stroke_preserve();
     }
 
-    // draw inner curve (white)
+    // Render inner curve (white)
     if (is_sensitive()) {
         cr->set_source_rgb (1., 1., 1.);
     } else {
         cr->set_source_rgba (0., 0., 0., 0.5);
     }
-    cr->set_line_width (2. * s);
+    cr->set_line_width (2.);
     cr->stroke ();
 
-    // draw the box's borders
-    style->render_frame(cr, innerBarX - 1. * s, innerBarY - 1. * s, innerBarW + 2. * s, innerBarH + 2. * s);
+    // Render the box's borders
+    style->render_frame(cr, innerBarX - 1., innerBarY - 1., innerBarW + 2., innerBarH + 2.);
 
-    // draw sliders
+    // Render sliders
     Gtk::StateFlags currState = style->get_state();
 
     cr->set_antialias(Cairo::ANTIALIAS_SUBPIXEL);
@@ -426,9 +405,9 @@ void ThresholdSelector::updateBackBuffer()
             style->set_state(Gtk::STATE_FLAG_NORMAL);
         }
 
-        double posX = xStart + iw * positions01[i];
-        double arrowY = i == 0 || i == 2 ? yStart - 3. * s : yEnd + 3. * s;
-        double baseY = i == 0 || i == 2 ? (double)h - (double)padding.get_bottom() - 0.5 * s : (double)padding.get_top() + 0.5 * s;
+        const double posX = xStart + iw * positions01[i];
+        const double arrowY = i == 0 || i == 2 ? yStart - 3. : yEnd + 3.;
+        const double baseY = i == 0 || i == 2 ? static_cast<double>(h) - static_cast<double>(padding.get_bottom()) - 0.5 : static_cast<double>(padding.get_top()) + 0.5;
 
         style->render_slider(cr, posX - hwslider, i == 0 || i == 2 ? arrowY : baseY, wslider, i == 0 || i == 2 ? baseY - arrowY : arrowY - baseY, Gtk::ORIENTATION_HORIZONTAL);
     }
@@ -438,17 +417,9 @@ void ThresholdSelector::updateBackBuffer()
 
 bool ThresholdSelector::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 {
-
-    // on_realize & updateBackBuffer have to be called before
-    if (get_realized() && get_allocated_width() && get_allocated_height()) {
-        if (isDirty()) {
-            updateBackBuffer();
-        }
-
-        if (surface) {
-            copySurface(cr);
-        }
-    }
+    // Draw drawing area
+    // Note: As drawing area surface is updated inside on_draw function, hidpi is automatically supported
+    updateDrawingArea(cr);
 
     return true;
 }
@@ -494,21 +465,19 @@ bool ThresholdSelector::on_leave_notify_event (GdkEventCrossing* event)
 
 bool ThresholdSelector::on_motion_notify_event (GdkEventMotion* event)
 {
+    const int w = get_allocated_width ();
+    const Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
+    const Gtk::Border padding = getPadding(style);
 
-    int w = get_allocated_width ();
-    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
-    Gtk::Border padding = getPadding(style);  // already scaled
+    const double wslider = sliderWidth;  // constant must be an odd value
+    const double hwslider = wslider / 2.;
 
-    double s = (double)RTScalable::getScale();
-    double wslider = sliderWidth * s;  // constant must be an odd value
-    double hwslider = wslider / 2.;
+    const double innerBarX = static_cast<double>(padding.get_left()) + hwslider - 0.5;
+    const double innerBarW = static_cast<double>(w) - innerBarX - static_cast<double>(padding.get_right()) - hwslider - 0.5;
 
-    double innerBarX = (double)padding.get_left() + hwslider - 0.5 * s;
-    double innerBarW = (double)w - innerBarX - (double)padding.get_right() - hwslider - 0.5 * s;
-
-    double xStart = innerBarX + 0.5 * s;
-    double xEnd   = innerBarX + innerBarW - 0.5 * s;
-    double iw = xEnd - xStart;
+    const double xStart = innerBarX + 0.5;
+    const double xEnd   = innerBarX + innerBarW - 0.5;
+    const double iw = xEnd - xStart;
 
     findLitCursor(event->x, event->y);
 
@@ -556,11 +525,6 @@ bool ThresholdSelector::on_motion_notify_event (GdkEventMotion* event)
         // set the new reference value for the next move
         tmpX = event->x;
 
-        // ask to redraw the background
-        if (updatePolicy == RTUP_DYNAMIC) {
-            setDirty(true);
-        }
-
         // update the tooltip
         updateTooltip();
 
@@ -581,27 +545,26 @@ bool ThresholdSelector::on_motion_notify_event (GdkEventMotion* event)
 
 void ThresholdSelector::findLitCursor(int posX, int posY)
 {
-    int w = get_allocated_width ();
-    int h = get_allocated_height ();
-    Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
-    Gtk::Border padding = getPadding(style);  // already scaled
+    const int w = get_allocated_width ();
+    const int h = get_allocated_height ();
+    const Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
+    const Gtk::Border padding = getPadding(style);
 
-    double s = (double)RTScalable::getScale();
-    double wslider = sliderWidth * s;  // constant must be an odd value
-    double hwslider = wslider / 2.;
+    const double wslider = sliderWidth;  // constant must be an odd value
+    const double hwslider = wslider / 2.;
 
-    double innerBarX = (double)padding.get_left() + hwslider - 0.5 * s;
-    double innerBarW = (double)w - innerBarX - (double)padding.get_right() - hwslider - 0.5 * s;
+    const double innerBarX = static_cast<double>(padding.get_left()) + hwslider - 0.5;
+    const double innerBarW = static_cast<double>(w) - innerBarX - static_cast<double>(padding.get_right()) - hwslider - 0.5;
 
     litCursor = TS_UNDEFINED;
 
     if (posY >= 0 && posY <= h / 2) {
-        if (posX >= (int)(innerBarX - hwslider) && posX <= (int)(innerBarX + innerBarW + hwslider)) {
+        if (posX >= static_cast<int>(innerBarX - hwslider) && posX <= static_cast<int>(innerBarX + innerBarW + hwslider)) {
             litCursor = TS_TOPLEFT;
 
             if (doubleThresh) {
                 // we use minValTop since if this block is executed, it means that we are in a simple Threshold where both bottom and top range are the same
-                double cursorX = ((double)posX - innerBarX) * (maxValTop - minValTop) / innerBarW + minValTop;
+                const double cursorX = (static_cast<double>(posX) - innerBarX) * (maxValTop - minValTop) / innerBarW + minValTop;
 
                 if (cursorX > positions[TS_TOPRIGHT] || std::fabs(cursorX - positions[TS_TOPRIGHT]) < std::fabs(cursorX - positions[TS_TOPLEFT])) {
                     litCursor = TS_TOPRIGHT;
@@ -609,12 +572,12 @@ void ThresholdSelector::findLitCursor(int posX, int posY)
             }
         }
     } else if (posY > h / 2 && posY < h) {
-        if (posX >= (int)(innerBarX - hwslider) && posX <= (int)(innerBarX + innerBarW + hwslider)) {
+        if (posX >= static_cast<int>(innerBarX - hwslider) && posX <= static_cast<int>(innerBarX + innerBarW + hwslider)) {
             litCursor = TS_BOTTOMLEFT;
 
             if (doubleThresh) {
                 // we use minValTop since if this block is executed, it means that we are in a simple Threshold where both bottom and top range are the same
-                double cursorX = ((double)posX - innerBarX) * (maxValTop - minValTop) / innerBarW + minValTop;
+                double cursorX = (static_cast<double>(posX) - innerBarX) * (maxValTop - minValTop) / innerBarW + minValTop;
 
                 if (cursorX > positions[TS_BOTTOMRIGHT] || std::fabs(cursorX - positions[TS_BOTTOMRIGHT]) < std::fabs(cursorX - positions[TS_BOTTOMLEFT])) {
                     litCursor = TS_BOTTOMRIGHT;
@@ -727,10 +690,6 @@ void ThresholdSelector::reset ()
     positions[1] = defPos[1];
     positions[2] = defPos[2];
     positions[3] = defPos[3];
-
-    if (updatePolicy == RTUP_DYNAMIC) {
-        setDirty(true);
-    }
 
     updateTooltip();
     queue_draw ();

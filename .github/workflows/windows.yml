@@ -15,7 +15,8 @@ on:
   workflow_dispatch:
 
 env:
-  publish_pre_dev_labels: '["Beep6581:wbrefinement"]'
+  publish_pre_dev_labels: '[]'
+
 
 jobs:
   build:
@@ -29,7 +30,7 @@ jobs:
         build_type: [release, debug]
     steps:
       - name: Checkout source
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -46,12 +47,14 @@ jobs:
             cc:p
             pkgconf:p
             cmake:p
+            autotools:p
             ninja:p
             gtkmm3:p
             lcms2:p
             fftw:p
             lensfun:p
             libiptcdata:p
+            libjxl:p
             exiv2:p
 
       - name: Configure build
@@ -129,14 +132,6 @@ jobs:
             "symbolic/ui" \
             "$BUILD_DIR/share/icons/Adwaita/symbolic"
           cp 'index.theme' "$BUILD_DIR/share/icons/Adwaita"
-          mkdir -p "$BUILD_DIR/share/icons/Adwaita/cursors"
-          cp -r \
-            "cursors/plus.cur" \
-            "cursors/sb_h_double_arrow.cur" \
-            "cursors/sb_left_arrow.cur" \
-            "cursors/sb_right_arrow.cur" \
-            "cursors/sb_v_double_arrow.cur" \
-            "$BUILD_DIR/share/icons/Adwaita/cursors"
           cd -
 
           echo "Copying GDK pixbuf."
@@ -196,14 +191,14 @@ jobs:
           7z a -tzip "%ARTIFACT_NAME%.zip" "./%ARTIFACT_NAME%"
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{env.ARTIFACT_NAME}}
           path: build\${{env.ARTIFACT_NAME}}
 
       - name: Upload installer
         if: ${{matrix.build_type == 'release' && (github.ref_type == 'tag' || github.ref_name == 'dev')}}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{env.ARTIFACT_NAME}}.exe
           path: build\${{env.ARTIFACT_NAME}}.exe
@@ -229,7 +224,7 @@ jobs:
           echo "PUBLISH_NAME=$PUBLISH_NAME" >> "$(cygpath -u $GITHUB_ENV)"
 
       - name: Publish artifacts
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: ${{github.ref_type == 'tag' || github.ref_name == 'dev'}}
         with:
           tag_name: nightly-github-actions
@@ -238,7 +233,7 @@ jobs:
             build/${{env.PUBLISH_NAME}}-AboutThisBuild.txt
 
       - name: Publish installer
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: ${{matrix.build_type == 'release' && (github.ref_type == 'tag' || github.ref_name == 'dev')}}
         with:
           tag_name: nightly-github-actions
@@ -270,17 +265,19 @@ jobs:
           echo "PUBLISH_NAME=$PUBLISH_NAME" >> "$(cygpath -u $GITHUB_ENV)"
 
       - name: Publish pre-dev artifacts
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: ${{steps.prepare-publish-pre-dev.outcome == 'success'}}
         with:
           tag_name: pre-dev-github-actions
+          repository: Beep6581/RawTherapee
           files: |
             build/${{env.PUBLISH_NAME}}.zip
             build/${{env.PUBLISH_NAME}}-AboutThisBuild.txt
 
       - name: Publish pre-dev installer
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: ${{steps.prepare-publish-pre-dev.outcome == 'success' && matrix.build_type == 'release'}}
         with:
           tag_name: pre-dev-github-actions
+          repository: Beep6581/RawTherapee
           files: build/${{env.PUBLISH_NAME}}.exe

@@ -33,7 +33,7 @@ Gradient::Gradient () : FoldableToolPanel(this, TOOL_NAME, M("TP_GRADIENT_LABEL"
     editHBox = Gtk::manage (new Gtk::Box());
     edit = Gtk::manage (new Gtk::ToggleButton());
     edit->get_style_context()->add_class("independent");
-    edit->add (*Gtk::manage (new RTImage ("crosshair-adjust.png")));
+    edit->add (*Gtk::manage (new RTImage ("crosshair-adjust", Gtk::ICON_SIZE_BUTTON)));
     edit->set_tooltip_text(M("EDIT_OBJECT_TOOLTIP"));
     editConn = edit->signal_toggled().connect( sigc::mem_fun(*this, &Gradient::editToggled) );
     editHBox->pack_start(*edit, Gtk::PACK_SHRINK, 0);
@@ -166,8 +166,8 @@ void Gradient::updateGeometry(const int centerX, const int centerY, const double
 
     int imW=0;
     int imH=0;
-	
-	
+
+
     if (fullWidth != -1 && fullHeight != -1) {
         imW = fullWidth;
         imH = fullHeight;

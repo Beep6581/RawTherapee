@@ -20,19 +20,19 @@
 #include "guiutils.h"
 #include "rtsurface.h"
 
-LWButton::LWButton (Cairo::RefPtr<RTSurface> i, int aCode, void* aData, Alignment ha, Alignment va, Glib::ustring* tooltip)
+LWButton::LWButton (std::shared_ptr<RTSurface> i, int aCode, void* aData, Alignment ha, Alignment va, Glib::ustring* tooltip)
     : xpos(0), ypos(0), halign(ha), valign(va), icon(i), bgr(0.0), bgg(0.0), bgb(0.0), fgr(0.0), fgg(0.0), fgb(0.0), state(Normal), listener(nullptr), actionCode(aCode), actionData(aData), toolTip(tooltip)
 {
 
     if (i)  {
-        w = i->getWidth () + 2;
-        h = i->getHeight () + 2;
+        w = i->getWidth ();
+        h = i->getHeight ();
     } else {
         w = h = 2;
     }
 }
 
-void LWButton::getSize (int& minw, int& minh) const 
+void LWButton::getSize (int& minw, int& minh) const
 {
 
     minw = w;
@@ -59,20 +59,20 @@ void LWButton::getPosition (int& x, int& y) const
     y = ypos;
 }
 
-void LWButton::setIcon (Cairo::RefPtr<RTSurface> i)
+void LWButton::setIcon (std::shared_ptr<RTSurface> i)
 {
 
     icon = i;
 
     if (i)  {
-        w = i->getWidth () + 2;
-        h = i->getHeight () + 2;
+        w = i->getWidth ();
+        h = i->getHeight ();
     } else {
         w = h = 2;
     }
 }
 
-Cairo::RefPtr<RTSurface> LWButton::getIcon () const
+std::shared_ptr<RTSurface> LWButton::getIcon () const
 {
 
     return icon;
@@ -186,9 +186,9 @@ void LWButton::redraw (Cairo::RefPtr<Cairo::Context> context)
 {
 
     GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
-    context->set_line_width (1.0);
+    context->set_line_width (2.0); // Line width shall be even to avoid blur effect when upscaling
     context->set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
-    context->rectangle (xpos + 0.5, ypos + 0.5, w - 1.0, h - 1.0);
+    context->rectangle (xpos, ypos, w, h);
 
     if (state == Pressed_In) {
         context->set_source_rgb (fgr, fgg, fgb);
@@ -205,13 +205,13 @@ void LWButton::redraw (Cairo::RefPtr<Cairo::Context> context)
     }
 
     context->stroke ();
-    int dilat = 1;
+    int dilat = 0;
 
     if (state == Pressed_In) {
         dilat++;
     }
 
-    if (icon) {
+    if (icon && icon->hasSurface()) {
         context->set_source (icon->get(), xpos + dilat, ypos + dilat);
         context->paint ();
     }

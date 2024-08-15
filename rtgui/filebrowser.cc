@@ -157,7 +157,7 @@ FileBrowser::FileBrowser () :
         pmenu->attach (*Gtk::manage(inspect = new Gtk::MenuItem (M("FILEBROWSER_POPUPINSPECT"))), 0, 1, p, p + 1);
         p++;
     }
-    pmenu->attach (*Gtk::manage(develop = new MyImageMenuItem (M("FILEBROWSER_POPUPPROCESS"), "gears.png")), 0, 1, p, p + 1);
+    pmenu->attach (*Gtk::manage(develop = new MyImageMenuItem (M("FILEBROWSER_POPUPPROCESS"), "gears")), 0, 1, p, p + 1);
     p++;
     pmenu->attach (*Gtk::manage(developfast = new Gtk::MenuItem (M("FILEBROWSER_POPUPPROCESSFAST"))), 0, 1, p, p + 1);
     p++;
@@ -244,8 +244,8 @@ FileBrowser::FileBrowser () :
 
     // Thumbnail context menu
     // Similar image arrays in filecatalog.cc
-    std::array<std::string, 6> clabelActiveIcons = {"circle-empty-gray-small.png", "circle-red-small.png", "circle-yellow-small.png", "circle-green-small.png", "circle-blue-small.png", "circle-purple-small.png"};
-    std::array<std::string, 6> clabelInactiveIcons = {"circle-empty-darkgray-small.png", "circle-empty-red-small.png", "circle-empty-yellow-small.png", "circle-empty-green-small.png", "circle-empty-blue-small.png", "circle-empty-purple-small.png"};
+    std::array<std::string, 6> clabelActiveIcons = {"circle-empty-gray-small", "circle-red-small", "circle-yellow-small", "circle-green-small", "circle-blue-small", "circle-purple-small"};
+    std::array<std::string, 6> clabelInactiveIcons = {"circle-empty-darkgray-small", "circle-empty-red-small", "circle-empty-yellow-small", "circle-empty-green-small", "circle-empty-blue-small", "circle-empty-purple-small"};
 
     if (options.menuGroupLabel) {
         pmenu->attach (*Gtk::manage(menuLabel = new Gtk::MenuItem (M("FILEBROWSER_POPUPCOLORLABEL"))), 0, 1, p, p + 1);
@@ -547,13 +547,13 @@ void FileBrowser::rightClicked ()
         untrash->set_sensitive (false);
 
         for (size_t i = 0; i < selected.size(); i++)
-            if ((static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->getStage()) {
+            if ((static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->getTrashed()) {
                 untrash->set_sensitive (true);
                 break;
             }
 
         for (size_t i = 0; i < selected.size(); i++)
-            if (!(static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->getStage()) {
+            if (!(static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->getTrashed()) {
                 trash->set_sensitive (true);
                 break;
             }
@@ -649,7 +649,7 @@ void FileBrowser::addEntry_ (FileBrowserEntry* entry)
     entry->addButtonSet(new FileThumbnailButtonSet(entry));
     entry->getThumbButtonSet()->setRank(entry->thumbnail->getRank());
     entry->getThumbButtonSet()->setColorLabel(entry->thumbnail->getColorLabel());
-    entry->getThumbButtonSet()->setInTrash(entry->thumbnail->getStage());
+    entry->getThumbButtonSet()->setInTrash(entry->thumbnail->getTrashed());
     entry->getThumbButtonSet()->setButtonListener(this);
     entry->resize(getThumbnailHeight());
     entry->filtered = !checkFilter(entry);
@@ -1023,12 +1023,12 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
             const auto thumbnail = mselected[i]->thumbnail;
             const auto rank = thumbnail->getRank();
             const auto colorLabel = thumbnail->getColorLabel();
-            const auto stage = thumbnail->getStage();
+            const auto stage = thumbnail->getTrashed();
 
             thumbnail->createProcParamsForUpdate (false, true);
             thumbnail->setRank(rank);
             thumbnail->setColorLabel(colorLabel);
-            thumbnail->setStage(stage);
+            thumbnail->setTrashed(stage);
 
             // Empty run to update the thumb
             rtengine::procparams::ProcParams params = thumbnail->getProcParams ();
@@ -1558,8 +1558,8 @@ bool FileBrowser::checkFilter (ThumbBrowserEntryBase* entryb) const   // true ->
             ((entry->thumbnail->isRecentlySaved() && filter.showRecentlySaved[0]) && !filter.showRecentlySaved[1]) ||
             ((!entry->thumbnail->isRecentlySaved() && filter.showRecentlySaved[1]) && !filter.showRecentlySaved[0]) ||
 
-            (entry->thumbnail->getStage() && !filter.showTrash) ||
-            (!entry->thumbnail->getStage() && !filter.showNotTrash)) {
+            (entry->thumbnail->getTrashed() && !filter.showTrash) ||
+            (!entry->thumbnail->getTrashed() && !filter.showNotTrash)) {
         return false;
     }
 
@@ -1625,11 +1625,11 @@ void FileBrowser::toTrashRequested (std::vector<FileBrowserEntry*> tbe)
 
         // no need to notify listeners as item goes to trash, likely to be deleted
 
-        if (tbe[i]->thumbnail->getStage()) {
+        if (tbe[i]->thumbnail->getTrashed()) {
             continue;
         }
 
-        tbe[i]->thumbnail->setStage (true);
+        tbe[i]->thumbnail->setTrashed (true);
 
         if (tbe[i]->getThumbButtonSet()) {
             tbe[i]->getThumbButtonSet()->setRank (tbe[i]->thumbnail->getRank());
@@ -1649,11 +1649,11 @@ void FileBrowser::fromTrashRequested (std::vector<FileBrowserEntry*> tbe)
     for (size_t i = 0; i < tbe.size(); i++) {
         // if thumbnail was marked inTrash=true then param file must be there, no need to run customprofilebuilder
 
-        if (!tbe[i]->thumbnail->getStage()) {
+        if (!tbe[i]->thumbnail->getTrashed()) {
             continue;
         }
 
-        tbe[i]->thumbnail->setStage (false);
+        tbe[i]->thumbnail->setTrashed (false);
 
         if (tbe[i]->getThumbButtonSet()) {
             tbe[i]->getThumbButtonSet()->setRank (tbe[i]->thumbnail->getRank());
@@ -1784,7 +1784,7 @@ void FileBrowser::buttonPressed (LWButton* button, int actionCode, void* actionD
         FileBrowserEntry* entry = static_cast<FileBrowserEntry*>(actionData);
         tbe.push_back (entry);
 
-        if (!entry->thumbnail->getStage()) {
+        if (!entry->thumbnail->getTrashed()) {
             toTrashRequested (tbe);
         } else {
             fromTrashRequested (tbe);

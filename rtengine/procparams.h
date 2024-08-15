@@ -863,7 +863,7 @@ struct SHParams {
  */
 struct ToneEqualizerParams {
     bool enabled;
-    std::array<int, 5> bands;
+    std::array<int, 6> bands;
     int regularization;
     bool show_colormap;
     double pivot;
@@ -966,7 +966,8 @@ struct LensProfParams {
         NONE,               // No lens correction
         LENSFUNAUTOMATCH,   // Lens correction using auto matched lensfun database entry
         LENSFUNMANUAL,      // Lens correction using manually selected lensfun database entry
-        LCP                 // Lens correction using lcp file
+        LCP,                // Lens correction using lcp file
+        METADATA    // Lens correction using embedded metadata
     };
 
     LcMode lcMode;
@@ -985,6 +986,7 @@ struct LensProfParams {
     bool lfAutoMatch() const;
     bool useLcp() const;
     bool lfManual() const;
+    bool useMetadata() const;
 
     const std::vector<const char*>& getMethodStrings() const;
     Glib::ustring getMethodString(LcMode mode) const;
@@ -1122,6 +1124,7 @@ struct LocallabParams {
         double strcolab;
         double strcolh;
         double angcol;
+        double feathercol;
         int blurcolde;
         double blurcol;
         double contcol;
@@ -1184,6 +1187,7 @@ struct LocallabParams {
         double gamex;
         double strexp;
         double angexp;
+        double featherexp;
         std::vector<double> excurve;
         bool norm;
         bool inversex;
@@ -1223,7 +1227,7 @@ struct LocallabParams {
         bool expshadhigh;
         int complexshadhigh;
         Glib::ustring shMethod; // std, tone
-        int multsh[5];
+        int multsh[6];
         int highlights;
         int h_tonalwidth;
         int shadows;
@@ -1239,6 +1243,7 @@ struct LocallabParams {
         int blurSHde;
         double strSH;
         double angSH;
+        double featherSH;
         bool inverssh;
         double chromaskSH;
         double gammaskSH;
@@ -1284,6 +1289,7 @@ struct LocallabParams {
         double strvibab;
         double strvibh;
         double angvib;
+        double feathervib;
         std::vector<double> Lmaskvibcurve;
         double recothresv;
         double lowthresv;
@@ -1425,6 +1431,7 @@ struct LocallabParams {
         bool equilret;
         bool loglin;
         double dehazeSaturation;
+        double dehazeblack;
         double softradiusret;
         std::vector<double> CCmaskreticurve;
         std::vector<double> LLmaskreticurve;
@@ -1499,6 +1506,7 @@ struct LocallabParams {
         double sigmalc2;
         double strwav;
         double angwav;
+        double featherwav;
         double strengthw;
         double sigmaed;
         double radiusw;
@@ -1591,8 +1599,13 @@ struct LocallabParams {
         bool fullimage;
         double repar;
         bool ciecam;
+        bool satlog;
         double blackEv;
         double whiteEv;
+        int whiteslog;
+        int blackslog;
+        double comprlog;
+        double strelog;
         double detail;
         int sensilog;
         Glib::ustring sursour;
@@ -1600,6 +1613,7 @@ struct LocallabParams {
         double baselog;
         double strlog;
         double anglog;
+        double featherlog;
         std::vector<double> CCmaskcurveL;
         std::vector<double> LLmaskcurveL;
         std::vector<double> HHmaskcurveL;
@@ -1638,6 +1652,7 @@ struct LocallabParams {
         double shadmask;
         int str_mask;
         int ang_mask;
+        int feather_mask;
         std::vector<double> HHhmask_curve;
         std::vector<double> Lmask_curve;
         std::vector<double> LLmask_curvewav;
@@ -1645,6 +1660,7 @@ struct LocallabParams {
         //ciecam
         bool visicie;
         bool expcie;
+        bool expprecam;
         int complexcie;
         double reparcie;
         int sensicie;
@@ -1653,8 +1669,17 @@ struct LocallabParams {
         bool forcebw;
         bool qtoj;
         bool jabcie;
-        bool sigmoidqjcie;
+        bool comprcieauto;
+        bool normcie;
+        bool gamutcie;
+        bool bwcie;
+        bool sigcie;
         bool logcie;
+        bool satcie;
+        bool logcieq;
+        bool smoothcie;
+        bool smoothcieyb;
+        bool smoothcielum;
         bool logjz;
         bool sigjz;
         bool sigq;
@@ -1664,6 +1689,7 @@ struct LocallabParams {
         Glib::ustring sursourcie;
         Glib::ustring modecie;
         Glib::ustring modecam;
+        Glib::ustring bwevMethod;
         double saturlcie;
         double rstprotectcie;
         double chromlcie;
@@ -1687,8 +1713,10 @@ struct LocallabParams {
         double lightlcie;
         double lightjzcie;
         double lightqcie;
+        double lightsigqcie;
         double contlcie;
         double contjzcie;
+        double detailciejz;
         double adapjzcie;
         double jz100;
         double pqremap;
@@ -1710,31 +1738,64 @@ struct LocallabParams {
         double targetjz;
         double sigmoidldacie;
         double sigmoidthcie;
+        double sigmoidsenscie;
         double sigmoidblcie;
+        double comprcie;
+        double strcielog;
+        double comprcieth;
+        double gamjcie;
+        double slopjcie;
+        double slopesmo;
+        double slopesmor;
+        double slopesmog;
+        double slopesmob;
+        int midtcie;
+        double grexl;
+        double greyl;
+        double bluxl;
+        double bluyl;
+        double redxl;
+        double redyl;
+        double refi;
+        double shiftxl;
+        double shiftyl;
+        double labgridcieALow;
+        double labgridcieBLow;
+        double labgridcieAHigh;
+        double labgridcieBHigh;
+        double labgridcieGx;
+        double labgridcieGy;
+        double labgridcieWx;
+        double labgridcieWy;
+        double labgridcieMx;
+        double labgridcieMy;
+        
+        int whitescie;
+        int blackscie;
+        Glib::ustring illMethod;
+        Glib::ustring smoothciemet;
+        Glib::ustring primMethod;
+        Glib::ustring catMethod;
         double sigmoidldajzcie;
         double sigmoidthjzcie;
         double sigmoidbljzcie;
         double contqcie;
+        double contsigqcie;
         double colorflcie;
-/*
-        double lightlzcam;
-        double lightqzcam;
-        double contlzcam;
-        double contqzcam; 
-        double contthreszcam;
-        double colorflzcam;
-        double saturzcam;
-        double chromzcam;
-*/
         double targabscie;
         double targetGraycie;
         double catadcie;
         double detailcie;
         Glib::ustring surroundcie;
+        double strgradcie;
+        double anggradcie;
+        double feathercie;
         bool enacieMask;
+        bool enacieMaskall;
         std::vector<double> CCmaskciecurve;
         std::vector<double> LLmaskciecurve;
         std::vector<double> HHmaskciecurve;
+        std::vector<double> HHhmaskciecurve;
         int blendmaskcie;
         double radmaskcie;
         double chromaskcie;
@@ -1746,7 +1807,16 @@ struct LocallabParams {
         double lowthrescie;
         double higthrescie;
         double decaycie;
-
+        double strumaskcie;
+		bool toolcie;
+        bool fftcieMask;
+		double contcie;
+		double blurcie;
+		double highmaskcie;
+		double shadmaskcie;
+        std::vector<double> LLmaskciecurvewav;
+        Threshold<int> csthresholdcie;
+		
         LocallabSpot();
 
         bool operator ==(const LocallabSpot& other) const;
@@ -1946,7 +2016,8 @@ struct ColorManagementParams {
         D120,
         STDA,
         TUNGSTEN_2000K,
-        TUNGSTEN_1500K
+        TUNGSTEN_1500K,
+        E
     };
 
     enum class Primaries {
@@ -1959,11 +2030,20 @@ struct ColorManagementParams {
         WIDE_GAMUT,
         ACES_P0,
         JDC_MAX,
+        JDC_MAXSTDA,
         BRUCE_RGB,
         BETA_RGB,
         BEST_RGB,
         CUSTOM,
         CUSTOM_GRID
+    };
+
+    enum class Cat {
+        BRAD,
+        CAT16,
+        CAT02,
+        CAT_VK,
+        CAT_XYZ
     };
 
     Glib::ustring inputProfile;
@@ -1977,16 +2057,23 @@ struct ColorManagementParams {
     WorkingTrc workingTRC;
     Illuminant will;
     Primaries wprim;
+    Cat wcat;
     double workingTRCGamma;
     double workingTRCSlope;
+    double wmidtcie;
+    bool wsmoothcie;
     double redx;
     double redy;
     double grex;
     double grey;
     double blux;
     double bluy;
+    double refi;
+    double shiftx;
+    double shifty;
     double preser;
     bool fbw;
+    bool trcExp;
     bool gamut;
     double labgridcieALow;
     double labgridcieBLow;
@@ -1996,6 +2083,8 @@ struct ColorManagementParams {
     double labgridcieGy;
     double labgridcieWx;
     double labgridcieWy;
+    double labgridcieMx;
+    double labgridcieMy;
     RenderingIntent aRendIntent;
 
     Glib::ustring outputProfile;

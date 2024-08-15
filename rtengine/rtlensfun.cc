@@ -19,11 +19,67 @@
  */
 
 #include <iostream>
+#include <regex>
 
 #include "imagedata.h"
 #include "procparams.h"
 #include "rtlensfun.h"
 #include "settings.h"
+
+
+namespace
+{
+
+bool isCStringIn(const char *str, const char *const *list)
+{
+    for (auto element_ptr = list; *element_ptr; element_ptr++) {
+        if (!strcmp(str, *element_ptr)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool isNextLensCropFactorBetter(const lfLens *current_lens, const lfCamera *camera, float next_lens_crop_factor)
+{
+    if (!current_lens) {
+        // No current lens, so next lens's crop factor is
+        // automatically better.
+        return true;
+    }
+
+    const float current_lens_crop_factor = current_lens->CropFactor;
+
+    if (!camera) {
+        // Favor the smaller crop factor for maximum coverage.
+        return current_lens_crop_factor > next_lens_crop_factor;
+    }
+
+    const float camera_crop_factor = camera->CropFactor;
+
+    if (current_lens_crop_factor > camera_crop_factor) {
+        // Current lens's data does not cover the entire camera
+        // sensor. Any lens's data with a smaller crop factor is
+        // better.
+        return current_lens->CropFactor > next_lens_crop_factor;
+    }
+
+    // Current lens's data covers the entire camera sensor. A lens
+    // with data from a larger crop factor will be more precise, but
+    // also must not be larger than the camera sensor's crop factor
+    // to maintain full coverage.
+    return current_lens->CropFactor < next_lens_crop_factor &&
+           next_lens_crop_factor <= camera_crop_factor;
+}
+
+bool isNextLensBetter(const lfCamera *camera, const lfLens *current_lens, const lfLens &next_lens, const Glib::ustring &lens_name, const Glib::ustring &next_lens_name)
+{
+    return isNextLensCropFactorBetter(current_lens, camera, next_lens.CropFactor) &&
+           lens_name == next_lens_name &&
+           (!camera || isCStringIn(camera->Mount, next_lens.Mounts));
+}
+
+} // namespace
 
 namespace rtengine
 {
@@ -45,6 +101,21 @@ LFModifier::operator bool() const
     return data_;
 }
 
+
+bool LFModifier::hasDistortionCorrection() const
+{
+    return (flags_ & LF_MODIFY_DISTORTION);
+}
+
+bool LFModifier::hasCACorrection() const
+{
+    return (flags_ & LF_MODIFY_TCA);
+}
+
+bool LFModifier::hasVignettingCorrection() const
+{
+    return (flags_ & LF_MODIFY_VIGNETTING);
+}
 
 void LFModifier::correctDistortion(double &x, double &y, int cx, int cy) const
 {
@@ -69,12 +140,6 @@ void LFModifier::correctDistortion(double &x, double &y, int cx, int cy) const
     }
 }
 
-
-bool LFModifier::isCACorrectionAvailable() const
-{
-    return (flags_ & LF_MODIFY_TCA);
-}
-
 void LFModifier::correctCA(double &x, double &y, int cx, int cy, int channel) const
 {
     assert(channel >= 0 && channel <= 2);
@@ -85,12 +150,37 @@ void LFModifier::correctCA(double &x, double &y, int cx, int cy, int channel) co
     // channels. We could consider caching the info to speed this up
     x += cx;
     y += cy;
-    
+
     float pos[6];
     if (swap_xy_) {
         std::swap(x, y);
     }
     data_->ApplySubpixelDistortion(x, y, 1, 1, pos);  // This is thread-safe
+    x = pos[2*channel];
+    y = pos[2*channel+1];
+    if (swap_xy_) {
+        std::swap(x, y);
+    }
+    x -= cx;
+    y -= cy;
+}
+
+void LFModifier::correctDistortionAndCA(double &x, double &y, int cx, int cy, int channel) const
+{
+    assert(channel >= 0 && channel <= 2);
+
+    // RT currently applies the CA correction per channel, whereas
+    // lensfun applies it to all the three channels simultaneously. This means
+    // we do the work 3 times, because each time we discard 2 of the 3
+    // channels. We could consider caching the info to speed this up
+    x += cx;
+    y += cy;
+
+    float pos[6];
+    if (swap_xy_) {
+        std::swap(x, y);
+    }
+    data_->ApplySubpixelGeometryDistortion(x, y, 1, 1, pos);  // This is thread-safe
     x = pos[2*channel];
     y = pos[2*channel+1];
     if (swap_xy_) {
@@ -340,7 +430,7 @@ bool LFDatabase::init(const Glib::ustring &dbdir)
     if (settings->verbose) {
         std::cout << (ok ? "OK" : "FAIL") << std::endl;
     }
-    
+
     return ok;
 }
 
@@ -435,11 +525,21 @@ std::vector<LFLens> LFDatabase::getLenses() const
 }
 
 
-LFCamera LFDatabase::findCamera(const Glib::ustring &make, const Glib::ustring &model) const
+LFCamera LFDatabase::findCamera(const Glib::ustring &make, const Glib::ustring &model, bool autoMatch) const
 {
     LFCamera ret;
     if (data_ && !make.empty()) {
         MyMutex::MyLock lock(lfDBMutex);
+        if (!autoMatch) {
+            // Try to find exact match by name.
+            for (auto camera_list = data_->GetCameras(); camera_list[0]; camera_list++) {
+                const auto camera = camera_list[0];
+                if (make == camera->Maker && model == camera->Model) {
+                    ret.data_ = camera;
+                    return ret;
+                }
+            }
+        }
         auto found = data_->FindCamerasExt(make.c_str(), model.c_str());
         if (found) {
             ret.data_ = found[0];
@@ -450,28 +550,56 @@ LFCamera LFDatabase::findCamera(const Glib::ustring &make, const Glib::ustring &
 }
 
 
-LFLens LFDatabase::findLens(const LFCamera &camera, const Glib::ustring &name) const
+LFLens LFDatabase::findLens(const LFCamera &camera, const Glib::ustring &name, bool autoMatch) const
 {
     LFLens ret;
     if (data_ && !name.empty()) {
         MyMutex::MyLock lock(lfDBMutex);
-        auto found = data_->FindLenses(camera.data_, nullptr, name.c_str());
-        for (size_t pos = 0; !found && pos < name.size(); ) {
-            // try to split the maker from the model of the lens -- we have to
-            // guess a bit here, since there are makers with a multi-word name
-            // (e.g. "Leica Camera AG")
-            if (name.find("f/", pos) == 0) {
-                break; // no need to search further
+        if (!autoMatch) {
+            // Only the lens name provided. Try to find exact match by name.
+            LFLens candidate;
+            LFLens bestCandidate;
+
+            for (auto lens_list = data_->GetLenses(); lens_list[0]; lens_list++) {
+                candidate.data_ = lens_list[0];
+                if (isNextLensBetter(camera.data_, bestCandidate.data_, *(candidate.data_), name, candidate.getLens())) {
+                    bestCandidate.data_ = candidate.data_;
+                }
             }
-            Glib::ustring make, model;
-            auto i = name.find(' ', pos);
-            if (i != Glib::ustring::npos) {
-                make = name.substr(0, i);
-                model = name.substr(i+1);
-                found = data_->FindLenses(camera.data_, make.c_str(), model.c_str());
-                pos = i+1;
-            } else {
-                break;
+            if (bestCandidate.data_) {
+                return bestCandidate;
+            }
+        }
+        const auto find_lens_from_name = [](const lfDatabase *database, const lfCamera *cam, const Glib::ustring &lens_name) {
+            auto found = database->FindLenses(cam, nullptr, lens_name.c_str());
+            for (size_t pos = 0; !found && pos < lens_name.size(); ) {
+                // try to split the maker from the model of the lens -- we have to
+                // guess a bit here, since there are makers with a multi-word name
+                // (e.g. "Leica Camera AG")
+                if (lens_name.find("f/", pos) == 0) {
+                    break; // no need to search further
+                }
+                Glib::ustring make, model;
+                auto i = lens_name.find(' ', pos);
+                if (i != Glib::ustring::npos) {
+                    make = lens_name.substr(0, i);
+                    model = lens_name.substr(i+1);
+                    found = database->FindLenses(cam, make.c_str(), model.c_str());
+                    pos = i+1;
+                } else {
+                    break;
+                }
+            }
+            return found;
+        };
+        auto found = find_lens_from_name(data_, camera.data_, name);
+        if (!found) {
+            // Some names have white-space around the dash(s) while Lensfun does
+            // not have any.
+            const std::regex pattern("\\s*-\\s*");
+            const auto formatted_name = std::regex_replace(name.raw(), pattern, "-");
+            if (name != formatted_name) {
+                found = find_lens_from_name(data_, camera.data_, formatted_name);
             }
         }
         if (!found && camera && camera.isFixedLens()) {
@@ -541,13 +669,8 @@ std::unique_ptr<LFModifier> LFDatabase::findModifier(
         return nullptr;
     }
 
-    const LFCamera c = findCamera(make, model);
-    const LFLens l = findLens(
-        lensProf.lfAutoMatch()
-            ? c
-            : LFCamera(),
-        lens
-    );
+    const LFCamera c = findCamera(make, model, lensProf.lfAutoMatch());
+    const LFLens l = findLens(c, lens, lensProf.lfAutoMatch());
 
     bool swap_xy = false;
     if (rawRotationDeg >= 0) {

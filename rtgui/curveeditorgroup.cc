@@ -28,6 +28,7 @@
 #include "rtimage.h"
 #include "options.h"
 #include "pathutils.h"
+#include "rtscalable.h"
 
 CurveEditorGroup::CurveEditorGroup (Glib::ustring& curveDir, Glib::ustring groupLabel, int blank) : curveDir(curveDir), line(0), curve_reset(nullptr),
     displayedCurve(nullptr), flatSubGroup(nullptr), diagonalSubGroup(nullptr), cl(nullptr), numberOfPackedCurve(0)
@@ -39,9 +40,9 @@ CurveEditorGroup::CurveEditorGroup (Glib::ustring& curveDir, Glib::ustring group
     } else if(blank == 1){
         curveGroupLabel = Gtk::manage (new Gtk::Label (groupLabel, Gtk::ALIGN_START));
     }
-    
+
     setExpandAlignProperties(curveGroupLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    set_row_spacing(RTScalable::getScale());
+    set_row_spacing(RTScalable::scalePixelSize(1));
 }
 
 CurveEditorGroup::~CurveEditorGroup()
@@ -129,7 +130,7 @@ void CurveEditorGroup::newLine()
     if (curveEditors.size() > numberOfPackedCurve) {
         Gtk::Grid* currLine = Gtk::manage (new Gtk::Grid ());
         setExpandAlignProperties(currLine, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-        currLine->set_column_spacing(RTScalable::getScale());
+        currLine->set_column_spacing(RTScalable::scalePixelSize(1));
 
         bool isHeader = false;
         int x = 0;
@@ -162,7 +163,7 @@ void CurveEditorGroup::newLine()
         if (isHeader) {
             curve_reset = Gtk::manage (new Gtk::Button ());
             setExpandAlignProperties(curve_reset, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
-            curve_reset->add (*Gtk::manage (new RTImage ("undo-small.png", "redo-small.png")));
+            curve_reset->add (*Gtk::manage (new RTImage ("undo-small", Gtk::ICON_SIZE_BUTTON)));
             curve_reset->set_relief (Gtk::RELIEF_NONE);
             curve_reset->set_tooltip_text (M("CURVEEDITOR_TOOLTIPLINEAR"));
             curve_reset->signal_clicked().connect( sigc::mem_fun(*this, &CurveEditorGroup::curveResetPressed) );
@@ -381,7 +382,7 @@ void CurveEditorGroup::setTooltip( Glib::ustring ttip)
 void CurveEditorGroup::setBatchMode (bool batchMode)
 {
     for (std::vector<CurveEditor*>::iterator i = curveEditors.begin(); i != curveEditors.end(); ++i) {
-        (*i)->curveType->addEntry("template-24.png", M("GENERAL_UNCHANGED"));
+        (*i)->curveType->addEntry("template-24", M("GENERAL_UNCHANGED"));
         (*i)->curveType->show();
     }
 }
@@ -441,7 +442,7 @@ void CurveEditorSubGroup::initButton (Gtk::Button &button, const Glib::ustring &
         vAlign = options.curvebboxpos == 0 || options.curvebboxpos == 2 ?  Gtk::ALIGN_FILL : Gtk::ALIGN_END;
     }
 
-    button.add (*Gtk::manage (new RTImage (iconName)));
+    button.add (*Gtk::manage (new RTImage(iconName, Gtk::ICON_SIZE_LARGE_TOOLBAR)));
     button.get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
     if (!tooltip.empty()) {
         button.set_tooltip_text(M(tooltip));

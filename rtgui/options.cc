@@ -358,7 +358,6 @@ void Options::setDefaults()
     fontSize = 10;
     CPFontFamily = "default";
     CPFontSize = 8;
-    pseudoHiDPISupport = false;
     lastScale = 5;
     lastShowAllExif = false;
     panAccelFactor = 5;
@@ -368,6 +367,7 @@ void Options::setDefaults()
     fbShowDateTime = true;
     fbShowBasicExif = true;
     fbShowExpComp = false;
+    maxZoomLimit = MaxZoom::PERCENTS_1600;
 #ifdef _WIN32
     // use windows setting for visibility of hidden files/folders
     SHELLFLAGSTATE sft = { 0 };
@@ -435,6 +435,10 @@ void Options::setDefaults()
     parseExtensionsEnabled.clear();
     parsedExtensions.clear();
     parsedExtensionsSet.clear();
+    browseRecursive = false;
+    browseRecursiveDepth = 10;
+    browseRecursiveMaxDirs = 100;
+    browseRecursiveFollowLinks = true;
     renameUseTemplates = false;
     renameTemplates.clear();
     thumbnailZoomRatios.clear();
@@ -466,6 +470,8 @@ void Options::setDefaults()
     histogramTraceBrightness = 1;
     curvebboxpos = 1;
     complexity = 2;
+    spotmet = 0;
+
     inspectorWindow = false;
     zoomOnScroll = true;
     prevdemo = PD_Sidecar;
@@ -574,9 +580,9 @@ void Options::setDefaults()
 
     rtSettings.darkFramesPath = "";
     rtSettings.flatFieldsPath = "";
-	rtSettings.cameraProfilesPath = "";
-	rtSettings.lensProfilesPath = "";
-	
+    rtSettings.cameraProfilesPath = "";
+    rtSettings.lensProfilesPath = "";
+
 #ifdef _WIN32
     const gchar* sysRoot = g_getenv("SystemRoot");  // Returns e.g. "c:\Windows"
 
@@ -591,6 +597,7 @@ void Options::setDefaults()
 #else
     rtSettings.iccDirectory = "/usr/share/color/icc";
 #endif
+    rtSettings.enableLibRaw = true;
 //   rtSettings.viewingdevice = 0;
 //   rtSettings.viewingdevicegrey = 3;
     //  rtSettings.viewinggreySc = 1;
@@ -629,6 +636,7 @@ void Options::setDefaults()
     rtSettings.previewselection = 5;//between 1 to 40
     rtSettings.cbdlsensi = 1.0;//between 0.001 to 1
     rtSettings.fftwsigma = true; //choice between sigma^2 or empirical formula
+    rtSettings.basecorlog = 0.12;//reduction max Q in Cam16 sigmoid Log encoding between 0.05 and 0.5
 // end locallab
     rtSettings.itcwb_enable = true;
     rtSettings.itcwb_deltaspec = 0.075;
@@ -666,8 +674,8 @@ void Options::setDefaults()
     lastIccDir = rtSettings.iccDirectory;
     lastDarkframeDir = rtSettings.darkFramesPath;
     lastFlatfieldDir = rtSettings.flatFieldsPath;
-	lastCameraProfilesDir = rtSettings.cameraProfilesPath;
-	lastLensProfilesDir = rtSettings.lensProfilesPath;
+    lastCameraProfilesDir = rtSettings.cameraProfilesPath;
+    lastLensProfilesDir = rtSettings.lensProfilesPath;
 //  rtSettings.bw_complementary = true;
     // There is no reasonable default for curves. We can still suppose that they will take place
     // in a subdirectory of the user's own ProcParams presets, i.e. in a subdirectory
@@ -690,6 +698,7 @@ void Options::setDefaults()
     lastICCProfCreatorDir = "";
     gimpPluginShowInfoDialog = true;
     maxRecentFolders = 15;
+    thumbnailRankColorMode = Options::ThumbnailPropertyMode::PROCPARAMS;
     sortMethod = SORT_BY_NAME;
     sortDescending = false;
     rtSettings.lensfunDbDirectory = ""; // set also in main.cc and main-cli.cc
@@ -808,7 +817,7 @@ void Options::readFromFile(Glib::ustring fname)
                     rtSettings.cameraProfilesPath = keyFile.get_string("General", "CameraProfilesPath");
                 }
 
-				if (keyFile.has_key("General", "LensProfilesPath")) {
+                if (keyFile.has_key("General", "LensProfilesPath")) {
                     rtSettings.lensProfilesPath = keyFile.get_string("General", "LensProfilesPath");
                 }
 
@@ -854,7 +863,7 @@ void Options::readFromFile(Glib::ustring fname)
                 if (keyFile.has_key("External Editor", "CustomEditor")) {
                     customEditorProg = keyFile.get_string("External Editor", "CustomEditor");
                 }
-                
+
                 if (keyFile.has_key("External Editor", "OutputDir")) {
                     int v = keyFile.get_integer("External Editor", "OutputDir");
                     if (v < int(EDITOR_OUT_DIR_TEMP) || v > int(EDITOR_OUT_DIR_CUSTOM)) {
@@ -875,7 +884,7 @@ void Options::readFromFile(Glib::ustring fname)
                 if (keyFile.has_key("External Editor", "BypassOutputProfile")) {
                     editor_bypass_output_profile = keyFile.get_boolean("External Editor", "BypassOutputProfile");
                 }
-                
+
             }
 
             if (keyFile.has_group("External Editor")) {
@@ -1260,6 +1269,29 @@ void Options::readFromFile(Glib::ustring fname)
                     }
                 }
 
+                // check and add extensions that are missing from config
+                std::map<std::string, int> checkedExtensions;
+
+                if (parseExtensions.size() == parseExtensionsEnabled.size()) {
+                    for (auto i = 0; i < parseExtensions.size(); ++i) {
+                        checkedExtensions[parseExtensions[i]] = parseExtensionsEnabled[i];
+                    }
+                }
+
+                parseExtensions.clear();
+                parseExtensionsEnabled.clear();
+
+                for (auto const &i : knownExtensions) {
+                    if (checkedExtensions.count(i) == 0) {
+                        checkedExtensions[i] = 1;
+                    }
+                }
+
+                for (auto const &x : checkedExtensions) {
+                    parseExtensions.emplace_back(x.first);
+                    parseExtensionsEnabled.emplace_back(x.second);
+                }
+
                 if (keyFile.has_key("File Browser", "ThumbnailArrangement")) {
                     fbArrangement = keyFile.get_integer("File Browser", "ThumbnailArrangement");
                 }
@@ -1345,6 +1377,31 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("File Browser", "SortDescending")) {
                     sortDescending = keyFile.get_boolean("File Browser", "SortDescending");
+                }
+
+                if (keyFile.has_key("File Browser", "BrowseRecursive")) {
+                    browseRecursive = keyFile.get_boolean("File Browser", "BrowseRecursive");
+                }
+
+                if (keyFile.has_key("File Browser", "BrowseRecursiveDepth")) {
+                    browseRecursiveDepth = keyFile.get_integer("File Browser", "BrowseRecursiveDepth");
+                }
+
+                if (keyFile.has_key("File Browser", "BrowseRecursiveMaxDirs")) {
+                    browseRecursiveMaxDirs = keyFile.get_integer("File Browser", "BrowseRecursiveMaxDirs");
+                }
+
+                if (keyFile.has_key("File Browser", "BrowseRecursiveFollowLinks")) {
+                    browseRecursiveFollowLinks = keyFile.get_boolean("File Browser", "BrowseRecursiveFollowLinks");
+                }
+
+                if (keyFile.has_key("File Browser", "ThumbnailRankColorMode")) {
+                    std::string val = keyFile.get_string("File Browser", "ThumbnailRankColorMode");
+                    if (val == "xmp") {
+                        thumbnailRankColorMode = ThumbnailPropertyMode::XMP;
+                    } else {
+                        thumbnailRankColorMode = ThumbnailPropertyMode::PROCPARAMS;
+                    }
                 }
             }
 
@@ -1553,10 +1610,6 @@ void Options::readFromFile(Glib::ustring fname)
                     CPFontSize = keyFile.get_integer("GUI", "CPFontSize");
                 }
 
-                if (keyFile.has_key("GUI", "PseudoHiDPISupport")) {
-                    pseudoHiDPISupport = keyFile.get_boolean("GUI", "PseudoHiDPISupport");
-                }
-
                 if (keyFile.has_key("GUI", "LastPreviewScale")) {
                     lastScale = keyFile.get_integer("GUI", "LastPreviewScale");
                 }
@@ -1722,12 +1775,19 @@ void Options::readFromFile(Glib::ustring fname)
                     complexity = keyFile.get_integer("GUI", "Complexity");
                 }
 
+                if (keyFile.has_key("GUI", "Spotmet")) {
+                    spotmet = keyFile.get_integer("GUI", "Spotmet");
+                }
+
                 if (keyFile.has_key("GUI", "InspectorWindow")) {
                     inspectorWindow = keyFile.get_boolean("GUI", "InspectorWindow");
                 }
 
                 if (keyFile.has_key("GUI", "ZoomOnScroll")) {
                     zoomOnScroll = keyFile.get_boolean("GUI", "ZoomOnScroll");
+                }
+                if (keyFile.has_key("GUI", "MaxZoom")) {
+                    maxZoomLimit = static_cast<MaxZoom>(keyFile.get_integer("GUI", "MaxZoom"));
                 }
             }
 
@@ -1742,6 +1802,14 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("Crop Settings", "AutoFit")) {
                     cropAutoFit = keyFile.get_boolean("Crop Settings", "AutoFit");
+                }
+            }
+
+            const Glib::ustring groupRawDecoder = "Raw Decoder";
+            if (keyFile.has_group(groupRawDecoder)) {
+                const Glib::ustring keyEnableLibRaw = "EnableLibRaw";
+                if (keyFile.has_key(groupRawDecoder, keyEnableLibRaw)) {
+                    rtSettings.enableLibRaw = keyFile.get_boolean(groupRawDecoder, keyEnableLibRaw);
                 }
             }
 
@@ -1956,6 +2024,10 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("Color Management", "Cbdlsensi")) {//sensibility to crash for cbdl
                     rtSettings.cbdlsensi = keyFile.get_double("Color Management", "Cbdlsensi");
+                }
+
+                if (keyFile.has_key("Color Management", "Besecorlog")) {//sensi base log for Q
+                    rtSettings.basecorlog = keyFile.get_double("Color Management", "Basecorlog");
                 }
 
 
@@ -2355,8 +2427,8 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_string("General", "Version", RTVERSION);
         keyFile.set_string("General", "DarkFramesPath", rtSettings.darkFramesPath);
         keyFile.set_string("General", "FlatFieldsPath", rtSettings.flatFieldsPath);
-		keyFile.set_string("General", "CameraProfilesPath", rtSettings.cameraProfilesPath);
-		keyFile.set_string("General", "LensProfilesPath", rtSettings.lensProfilesPath);
+        keyFile.set_string("General", "CameraProfilesPath", rtSettings.cameraProfilesPath);
+        keyFile.set_string("General", "LensProfilesPath", rtSettings.lensProfilesPath);
         keyFile.set_boolean("General", "Verbose", rtSettings.verbose);
         keyFile.set_integer("General", "Cropsleep", rtSettings.cropsleep);
         keyFile.set_double("General", "Reduchigh", rtSettings.reduchigh);
@@ -2443,8 +2515,20 @@ void Options::saveToFile(Glib::ustring fname)
 
             keyFile.set_string_list("File Browser", "RecentFolders", temp);
         }
+        switch (thumbnailRankColorMode) {
+        case ThumbnailPropertyMode::XMP:
+            keyFile.set_string("File Browser", "ThumbnailRankColorMode", "xmp");
+            break;
+        default: // ThumbnailPropertyMode::PROCPARAMS
+            keyFile.set_string("File Browser", "ThumbnailRankColorMode", "procparams");
+            break;
+        }
         keyFile.set_integer("File Browser", "SortMethod", sortMethod);
         keyFile.set_boolean("File Browser", "SortDescending", sortDescending);
+        keyFile.set_boolean("File Browser", "BrowseRecursive", browseRecursive);
+        keyFile.set_integer("File Browser", "BrowseRecursiveDepth", browseRecursiveDepth);
+        keyFile.set_integer("File Browser", "BrowseRecursiveMaxDirs", browseRecursiveMaxDirs);
+        keyFile.set_boolean("File Browser", "BrowseRecursiveFollowLinks", browseRecursiveFollowLinks);
         keyFile.set_integer("Clipping Indication", "HighlightThreshold", highlightThreshold);
         keyFile.set_integer("Clipping Indication", "ShadowThreshold", shadowThreshold);
         keyFile.set_boolean("Clipping Indication", "BlinkClipped", blinkClipped);
@@ -2539,7 +2623,6 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("GUI", "FontSize", fontSize);
         keyFile.set_string("GUI", "CPFontFamily", CPFontFamily);
         keyFile.set_integer("GUI", "CPFontSize", CPFontSize);
-        keyFile.set_boolean("GUI", "PseudoHiDPISupport", pseudoHiDPISupport);
         keyFile.set_integer("GUI", "LastPreviewScale", lastScale);
         keyFile.set_boolean("GUI", "LastShowAllExif", lastShowAllExif);
         keyFile.set_integer("GUI", "PanAccelFactor", panAccelFactor);
@@ -2580,8 +2663,10 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("GUI", "CurveBBoxPosition", curvebboxpos);
         keyFile.set_boolean("GUI", "Showtooltip", showtooltip);
         keyFile.set_integer("GUI", "Complexity", complexity);
+        keyFile.set_integer("GUI", "Spotmet", spotmet);
         keyFile.set_boolean("GUI", "InspectorWindow", inspectorWindow);
         keyFile.set_boolean("GUI", "ZoomOnScroll", zoomOnScroll);
+        keyFile.set_integer("GUI", "MaxZoom", static_cast<int>(maxZoomLimit));
 
         //Glib::ArrayHandle<int> crvopen = crvOpen;
         //keyFile.set_integer_list ("GUI", "CurvePanelsExpanded", crvopen);
@@ -2589,6 +2674,8 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("Crop Settings", "PPI", cropPPI);
         keyFile.set_integer("Crop Settings", "GuidesMode", cropGuides);
         keyFile.set_boolean("Crop Settings", "AutoFit", cropAutoFit);
+
+        keyFile.set_boolean("Raw Decoder", "EnableLibRaw", rtSettings.enableLibRaw);
 
         keyFile.set_string("Color Management", "PrinterProfile", rtSettings.printerProfile);
         keyFile.set_integer("Color Management", "PrinterIntent", rtSettings.printerIntent);
@@ -2639,6 +2726,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_string("Color Management", "ClutsDirectory", clutsDir);
         keyFile.set_integer("Color Management", "Previewselection", rtSettings.previewselection);
         keyFile.set_double("Color Management", "Cbdlsensi", rtSettings.cbdlsensi);
+        keyFile.set_double("Color Management", "Basecorlog", rtSettings.basecorlog);
 
         keyFile.set_double("Wavelet", "Edghi", rtSettings.edghi);
         keyFile.set_double("Wavelet", "Edglo", rtSettings.edglo);

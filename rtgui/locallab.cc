@@ -175,6 +175,28 @@ Locallab::Locallab():
     toollist->setLocallabToolListListener(this);
     panel->pack_start(*toollist, false, false);
 
+    // Add all the tools' preview delta E buttons to one group.
+    for (auto button : {
+             expcolor.getPreviewDeltaEButton(),
+             expexpose.getPreviewDeltaEButton(),
+             expshadhigh.getPreviewDeltaEButton(),
+             expvibrance.getPreviewDeltaEButton(),
+             expsoft.getPreviewDeltaEButton(),
+             expblur.getPreviewDeltaEButton(),
+             exptonemap.getPreviewDeltaEButton(),
+             expreti.getPreviewDeltaEButton(),
+             expsharp.getPreviewDeltaEButton(),
+             expcontrast.getPreviewDeltaEButton(),
+             expcbdl.getPreviewDeltaEButton(),
+             explog.getPreviewDeltaEButton(),
+             expmask.getPreviewDeltaEButton(),
+             expcie.getPreviewDeltaEButton(),
+         }) {
+        if (button) {
+            delta_e_preview_button_group.register_button(*button);
+        }
+    }
+
     // Add Locallab tools to panel widget
     ToolVBox* const toolpanel = Gtk::manage(new ToolVBox());
     toolpanel->set_name("LocallabToolPanel");
@@ -249,7 +271,7 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
 
         if (pp->locallab.spots.at(i).shape == "ELI") {
             r.shape = 0;
-        } else {
+        } else if (pp->locallab.spots.at(i).shape == "RECT")  {
             r.shape = 1;
         }
 
@@ -265,8 +287,10 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
             r.spotMethod = 1;
         } else if (pp->locallab.spots.at(i).spotMethod == "full"){
             r.spotMethod = 2;
+        } else if (pp->locallab.spots.at(i).spotMethod == "main"){
+            r.spotMethod = 3;
         }
-
+        
         r.sensiexclu = pp->locallab.spots.at(i).sensiexclu;
         r.structexclu = pp->locallab.spots.at(i).structexclu;
 
@@ -420,7 +444,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
 
             if (newSpot->shape == "ELI") {
                 r.shape = 0;
-            } else {
+            } else if (newSpot->shape == "RECT"){
                 r.shape = 1;
             }
 
@@ -437,6 +461,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 r.spotMethod = 1;
             } else if(newSpot->spotMethod == "full") {
                 r.spotMethod = 2;
+            } else if(newSpot->spotMethod == "main") {
+                r.spotMethod = 3;
             }
 
             r.sensiexclu = newSpot->sensiexclu;
@@ -746,7 +772,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
 
             if (newSpot->shape == "ELI") {
                 r.shape = 0;
-            } else {
+            } else if (newSpot->shape == "RECT"){
                 r.shape = 1;
             }
 
@@ -762,8 +788,10 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 r.spotMethod = 1;
             } else if (newSpot->spotMethod == "full") {
                 r.spotMethod = 2;
+            } else if (newSpot->spotMethod == "main") {
+                r.spotMethod = 3;
             }
-
+            
             r.sensiexclu = newSpot->sensiexclu;
             r.structexclu = newSpot->structexclu;
 
@@ -810,7 +838,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 }
             }
 
-            if(r.spotMethod != 2) {
+            if(r.spotMethod == 0 || r.spotMethod == 1 ) {
                 r.locX = newSpot->loc.at(0);
                 r.locXL = newSpot->loc.at(1);
                 r.locY = newSpot->loc.at(2);
@@ -960,6 +988,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pp->locallab.spots.at(pp->locallab.selspot).spotMethod = "exc";
                     } else if (r->spotMethod == 2) {
                         pp->locallab.spots.at(pp->locallab.selspot).spotMethod = "full";
+                    } else if (r->spotMethod == 3) {
+                        pp->locallab.spots.at(pp->locallab.selspot).spotMethod = "main";
                     }
 
                     pp->locallab.spots.at(pp->locallab.selspot).sensiexclu = r->sensiexclu;
@@ -1130,19 +1160,252 @@ void Locallab::denChanged(const std::vector<locallabDenoiseLC> &denlc, int selsp
     }
     
 }
-
-
-void Locallab::logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const bool autocomput, const bool autocie, const float jz1)
+// New fonctions to change Scope color 
+void Locallab::scopeChangedcol(int scope, int selspot, bool enab)
 {
-    // Update Locallab Log Encoding and Ciecam accordingly
-    if(autocomput) {
-        explog.updateAutocompute(blackev, whiteev, sourceg, sourceab, targetg, jz1);
+    if(enab) {
+        expcolor.updateguiscopecolor(scope);
     }
-    if(autocie) {
-        expcie.updateAutocompute(blackev, whiteev, sourceg, sourceab, targetg, jz1);
+   
+}
+// New fonctions to change Scope Shadows Highlight
+
+void Locallab::scopeChangedsh(int scope, int selspot, bool enab)
+{
+    if(enab) {
+        expshadhigh.updateguiscopesahd(scope); 
+    }
+   
+}
+
+// New fonctions to change Scope Vibrance
+
+void Locallab::scopeChangedvib(int scope, int selspot, bool enab)
+{
+    if(enab) {
+        expvibrance.updateguiscopevib(scope); 
+    }
+   
+}
+
+//reinit expsettings
+void Locallab::scopeChangedset(int scope, int selspot, bool enab)
+{
+    if(enab) {
+        expsettings->updateguiscopeset(30);//30 defaut value..perhaps possible to pass default value ??
+    }
+   
+}
+/*
+//main new fonction global to hide show and activated or not some functions - inverse, scope...
+void Locallab::mainChanged(int spottype, int selspot, bool iscolor, bool issh, bool isvib, bool isexpos, bool issoft, bool isblur, bool istom, bool isret, bool issharp, bool iscont, bool iscbdl, bool islog, bool ismas, bool iscie )
+{
+    
+
+    if(iscolor) {
+        expcolor.updateguicolor(spottype);
+    }
+    
+    if(issh) {
+        expshadhigh.updateguishad(spottype);
+    }
+    
+    if(isvib) {   
+        expvibrance.updateguivib(spottype);
+    }
+    
+    if(isexpos) {     
+        expexpose.updateguiexpos(spottype);
+    }
+    
+    if(issoft) {         
+        expsoft.updateguisoft(spottype);
+    }
+    
+    if(isblur) {        
+        expblur.updateguiblur(spottype);
+    }
+    
+    if(istom) {         
+        exptonemap.updateguitone(spottype);
+    }
+    
+    if(isret) {        
+        expreti.updateguireti(spottype);
+    }
+    
+    if(issharp) {        
+        expsharp.updateguisharp(spottype);
+    }
+    
+    if(iscont) {         
+        expcontrast.updateguicont(spottype);
+    }
+    
+    if(iscbdl) {       
+        expcbdl.updateguicbdl(spottype);
+    }
+    
+    if(islog) {     
+        explog.updateguilog(spottype);
+    }
+    
+    if(ismas) {     
+        expmask.updateguimask(spottype);
+    }
+    
+    if(iscie) {        
+        expcie.updateguicie(spottype);
+    }
+
+    expsettings->updateguiset(spottype, iscolor, issh, isvib, isexpos, issoft, isblur, istom, isret, issharp, iscont, iscbdl, islog, ismas, iscie);
+
+}
+*/
+void Locallab::sigChanged(const std::vector<locallabcieSIG> &ciesig, int selspot)
+{
+     cie_sig = ciesig;
+
+    if (selspot < (int) cie_sig.size()) {
+        const double s1 = cie_sig.at(selspot).contsigq;
+        const double s2 = cie_sig.at(selspot).lightsigq;
+        
+        expcie.updatesigloc(s1, s2);
+    }
+     
+}
+
+void Locallab::ciebefChanged(const std::vector<locallabcieBEF> &ciebef, int selspot)
+{
+    cie_bef = ciebef;
+    if (selspot < (int) cie_bef.size()) {
+        const double blackev = cie_bef.at(selspot).blackevbef;
+        const double whiteev = cie_bef.at(selspot).whiteevbef;
+        const double sourceg = cie_bef.at(selspot).sourcegbef;
+        const double sourceab = cie_bef.at(selspot).sourceabbef;
+        const double targetg = cie_bef.at(selspot).targetgbef;
+        const double jz1 = cie_bef.at(selspot).jz1bef;
+        const bool autocomput = cie_bef.at(selspot).autocomputbef;
+        const bool autocie = cie_bef.at(selspot).autociebef;
+
+        if(autocomput) {
+            explog.updateAutocompute(blackev, whiteev, sourceg, sourceab, targetg, jz1);
+        }
+        if(autocie) {
+            expcie.updateAutocompute(blackev, whiteev, sourceg, sourceab, targetg, jz1);
+        }
+
     }
 
 }
+
+void Locallab::maiChanged(const std::vector<locallabsetLC> &setlc, int selspot)
+{
+    set_lc = setlc;
+    if (selspot < (int) set_lc.size()) {
+        const int spottype = set_lc.at(selspot).mainf;
+        const bool iscolor = set_lc.at(selspot).iscolo;
+        const bool issh = set_lc.at(selspot).iss;
+        const bool isvib = set_lc.at(selspot).isvi;
+        const bool isexpos = set_lc.at(selspot).isexpo;
+        const bool issoft = set_lc.at(selspot).issof;
+        const bool isblur = set_lc.at(selspot).isblu;
+        const bool istom = set_lc.at(selspot).isto;
+        const bool isret = set_lc.at(selspot).isre;
+        const bool issharp = set_lc.at(selspot).isshar;
+        const bool iscont = set_lc.at(selspot).iscon;
+        const bool iscbdl = set_lc.at(selspot).iscbd;
+        const bool islog = set_lc.at(selspot).islo;
+        const bool ismas = set_lc.at(selspot).isma;
+        const bool iscie = set_lc.at(selspot).isci;
+
+        if(iscolor) {
+            expcolor.updateguicolor(spottype);
+        }
+
+        if(issh) {
+            expshadhigh.updateguishad(spottype);
+        }
+
+        if(isvib) {
+            expvibrance.updateguivib(spottype);
+        }
+
+        if(isexpos) {
+            expexpose.updateguiexpos(spottype);
+        }
+
+        if(issoft) {
+            expsoft.updateguisoft(spottype);
+        }
+
+        if(isblur) {
+            expblur.updateguiblur(spottype);
+        }
+
+        if(istom) {
+            exptonemap.updateguitone(spottype);
+        }
+
+        if(isret) {
+            expreti.updateguireti(spottype);
+        }
+
+        if(issharp) {
+            expsharp.updateguisharp(spottype);
+        }
+
+        if(iscont) {
+            expcontrast.updateguicont(spottype);
+        }
+
+        if(iscbdl) {
+            expcbdl.updateguicbdl(spottype);
+        }
+
+        if(islog) {
+            explog.updateguilog(spottype);
+        }
+
+        if(ismas) {
+            expmask.updateguimask(spottype);
+        }
+
+        if(iscie) {
+            expcie.updateguicie(spottype);
+        }
+
+        expsettings->updateguiset(spottype, iscolor, issh, isvib, isexpos, issoft, isblur, istom, isret, issharp, iscont, iscbdl, islog, ismas, iscie);
+    }
+}
+
+void Locallab::cieChanged(const std::vector<locallabcieLC> &cielc, int selspot)
+{
+    // Saving transmitted min/max data
+    cie_lc = cielc;
+    
+    //Update Locallab Denoise tool lum chro
+    if (selspot < (int) cie_lc.size()) {
+        const double r1 = cie_lc.at(selspot).redxlc;
+        const double r2 = cie_lc.at(selspot).redylc;
+        const double g1 = cie_lc.at(selspot).grexlc;
+        const double g2 = cie_lc.at(selspot).greylc;
+        const  double b1 = cie_lc.at(selspot).bluxlc;
+        const double b2 = cie_lc.at(selspot).bluylc;
+        const double w1 = cie_lc.at(selspot).wxlc;
+        const double w2 = cie_lc.at(selspot).wylc;
+        const double m1 = cie_lc.at(selspot).meanxlc;
+        const double m2 = cie_lc.at(selspot).meanylc;
+        const double me1 = cie_lc.at(selspot).meanxelc;
+        const double me2 = cie_lc.at(selspot).meanyelc;
+        const int pri = cie_lc.at(selspot).primlc;
+
+        expcie.updateiPrimloc(r1, r2, g1, g2, b1, b2, w1, w2, m1, m2, me1, me2, pri);
+    }
+    
+}
+
+
 void Locallab::refChanged2(float *huerefp, float *chromarefp, float *lumarefp, float *fabrefp, int selspot)
 {
         const double huer = huerefp[selspot];
@@ -1179,6 +1442,30 @@ void Locallab::resetMaskVisibility()
 
     // Reset deltaE preview
     expsettings->resetDeltaEPreview();
+    for (auto tool : std::initializer_list<LocallabTool *>{
+             &expcolor,
+             &expexpose,
+             &expshadhigh,
+             &expvibrance,
+             &expsoft,
+             &expblur,
+             &exptonemap,
+             &expreti,
+             &expsharp,
+             &expcontrast,
+             &expcbdl,
+             &explog,
+             &expmask,
+             &expcie,
+         }) {
+        auto button = tool->getPreviewDeltaEButton();
+        auto connection = tool->getPreviewDeltaEButtonConnection();
+        if (button && connection) {
+            connection->block();
+            button->set_active(false);
+            connection->unblock();
+        }
+    }
 
     // Reset mask preview for all Locallab tools
     for (auto tool : locallabTools) {
@@ -1317,6 +1604,12 @@ void Locallab::resetToolMaskView()
     // Reset mask view GUI for all other Locallab tools
     for (auto tool : locallabTools) {
         tool->resetMaskView();
+    }
+
+    // Deactivate any preview delta E toggle button.
+    auto active_preview_button = delta_e_preview_button_group.getActiveButton();
+    if (active_preview_button) {
+        active_preview_button->set_active(false);
     }
 }
 

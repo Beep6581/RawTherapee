@@ -37,7 +37,7 @@
 #define STARTUPDIR_CUSTOM  2
 #define STARTUPDIR_LAST    3
 
-#define THEMEREGEXSTR      "^(.+)-GTK3-(\\d{1,2})?_(\\d{1,2})?\\.css$"
+#define THEMEREGEXSTR      "^(.+)\\.css$"
 
 // Default bundled profile name to use for Raw images
 #ifdef _WIN32
@@ -254,7 +254,6 @@ public:
     int fontSize;                // RT's main font size (units: pt)
     Glib::ustring CPFontFamily;  // ColorPicker font family
     int CPFontSize;              // ColorPicker font size (units: pt)
-    bool pseudoHiDPISupport;
     bool fbOnlyRaw;
     bool fbShowDateTime;
     bool fbShowBasicExif;
@@ -306,15 +305,26 @@ public:
     Glib::ustring editor_custom_out_dir;
     bool editor_float32;
     bool editor_bypass_output_profile;
-    
+
     int maxThumbnailHeight;
     int maxThumbnailWidth;
     std::size_t maxCacheEntries;
     int thumbInterp; // 0: nearest, 1: bilinear
+
+    std::vector<std::string> knownExtensions = {
+        "3fr", "arw", "arq", "cr2",  "cr3", "crf", "crw",  "dcr", "dng",
+        "fff", "iiq", "jpg", "jpeg", "jxl", "kdc", "mef",  "mos", "mrw",
+        "nef", "nrw", "orf", "ori",  "pef", "png", "raf",  "raw", "rw2",
+        "rwl", "rwz", "sr2", "srf",  "srw", "tif", "tiff", "x3f"};
+
     std::vector<Glib::ustring> parseExtensions;   // List containing all extensions type
     std::vector<int> parseExtensionsEnabled;      // List of bool to retain extension or not
     std::vector<Glib::ustring> parsedExtensions;  // List containing all retained extensions (lowercase)
     std::set<std::string> parsedExtensionsSet;  // Set containing all retained extensions (lowercase)
+    bool browseRecursive;
+    int browseRecursiveDepth;
+    int browseRecursiveMaxDirs;
+    bool browseRecursiveFollowLinks;
     std::vector<int> tpOpen;
     bool autoSaveTpOpen;
     //std::vector<int> crvOpen;
@@ -327,6 +337,8 @@ public:
     bool internalThumbIfUntouched;
     bool overwriteOutputFile;
     int complexity;
+    int spotmet;
+
     bool inspectorWindow; // open inspector in separate window
     bool zoomOnScroll;    // translate scroll events to zoom
 
@@ -367,6 +379,22 @@ public:
     enum CropGuidesMode { CROP_GUIDE_NONE, CROP_GUIDE_FRAME, CROP_GUIDE_FULL };
     CropGuidesMode cropGuides;
     bool cropAutoFit;
+
+    // Other options
+
+    // Maximum zoom
+    enum class MaxZoom: int {
+      PERCENTS_100 = 0,
+      PERCENTS_200,
+      PERCENTS_300,
+      PERCENTS_400,
+      PERCENTS_500,
+      PERCENTS_600,
+      PERCENTS_700,
+      PERCENTS_800,
+      PERCENTS_1600,
+    };
+    MaxZoom maxZoomLimit;
 
     // Performance options
     Glib::ustring clutsDir;
@@ -451,8 +479,8 @@ public:
     Glib::ustring lastIccDir;
     Glib::ustring lastDarkframeDir;
     Glib::ustring lastFlatfieldDir;
-	Glib::ustring lastCameraProfilesDir;
-	Glib::ustring lastLensProfilesDir;
+    Glib::ustring lastCameraProfilesDir;
+    Glib::ustring lastLensProfilesDir;
     Glib::ustring lastRgbCurvesDir;
     Glib::ustring lastLabCurvesDir;
     Glib::ustring lastRetinexDir;
@@ -472,6 +500,12 @@ public:
 
     size_t maxRecentFolders;                   // max. number of recent folders stored in options file
     std::vector<Glib::ustring> recentFolders;  // List containing all recent folders
+
+    enum class ThumbnailPropertyMode {
+        PROCPARAMS, // store rank and color in procparams sidecars
+        XMP // store rank and color xmp sidecar
+    };
+    ThumbnailPropertyMode thumbnailRankColorMode;
 
     enum SortMethod {
         SORT_BY_NAME,

@@ -19,11 +19,11 @@
 #include "filterpanel.h"
 #include "multilangmgr.h"
 #include "../rtengine/rtengine.h"
-#include "rtimage.h"
+#include "rtsurface.h"
 
 using namespace rtengine;
 
-FilterPanel::FilterPanel () : listener (nullptr)
+FilterPanel::FilterPanel () : listener (nullptr), ornamentSurface(new RTSurface("ornament1.svg"))
 {
     set_orientation(Gtk::ORIENTATION_VERTICAL);
 
@@ -138,7 +138,7 @@ FilterPanel::FilterPanel () : listener (nullptr)
     // add panel ending
     Gtk::Box* vboxpe = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     Gtk::Separator* hseptpe = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
-    Gtk::Image* peImg = Gtk::manage (new RTImage("ornament1.png"));
+    Gtk::Image* peImg = Gtk::manage (new Gtk::Image(ornamentSurface->get()));
     vboxpe->pack_start(*hseptpe, Gtk::PACK_SHRINK, 4);
     vboxpe->pack_start(*peImg);
     pack_start(*vboxpe, Gtk::PACK_SHRINK, 0);

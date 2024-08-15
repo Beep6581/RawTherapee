@@ -18,42 +18,46 @@ jobs:
   build:
     runs-on: macos-12
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with: 
+          fetch-tags: '0'
+          fetch-depth: '0'
       - name: Install dependencies
         run: |
            date -u
            mkdir build
            date +%s > build/stamp
            brew uninstall --ignore-dependencies libtiff
-           brew install libtiff gtk+3 gtkmm3 gtk-mac-integration adwaita-icon-theme libsigc++@2 little-cms2 libiptcdata fftw lensfun expat pkgconfig llvm shared-mime-info exiv2 | tee -a depslog
+           brew install imagemagick create-dmg libtiff gtk+3 gtkmm3 gtk-mac-integration adwaita-icon-theme libsigc++@2 little-cms2 libiptcdata fftw lensfun expat pkgconfig llvm shared-mime-info exiv2 jpeg-xl libomp automake libtool | tee -a depslog
            date -u
            echo "----====Pourage====----"
            cat depslog | grep Pouring
-           zsh -c 'echo "Completed installation of dependencies in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"'
+           zsh -c 'echo "Completed installation of dependencies in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"' >> $GITHUB_STEP_SUMMARY
       - name: Configure build system
         env:
+          IDENT: '-'
           CMAKE_CXX_STANDARD: 11
           PKG_CONFIG_PATH: /usr/local/opt/libtiff/lib/pkgconfig:/usr/local/opt/libffi/lib/pkgconfig:/usr/local/opt/expat/lib/pkgconfig
-          RAW_THERAPEE_MAJOR: '5'
-          RAW_THERAPEE_MINOR: '8'
           C_FLAGS: >
-            -arch x86_64 -mtune=generic -Xpreprocessor -fopenmp /usr/local/lib/libomp.dylib -I/usr/local/include -I/usr/local/opt/gdk-pixbuf/include -I/usr/local/opt/libiconv/include -I/usr/local/opt/libxml2/include -I/usr/local/opt/expat/include -I/usr/local/opt/libtiff/include
+            -arch x86_64 -mtune=generic -Xpreprocessor -fopenmp /usr/local/opt/libomp/lib/libomp.dylib -I/usr/local/opt/libomp/include -I/usr/local/include -I/usr/local/opt/gdk-pixbuf/include -I/usr/local/opt/libiconv/include -I/usr/local/opt/libxml2/include -I/usr/local/opt/expat/include -I/usr/local/opt/libtiff/include
         run: |
           # GITHUB_REF is the ref that triggered the build, like
           # refs/heads/new-feature - the next line parses that to REF: the branch
           # name only (new-feature)
+          export RAW_THERAPEE_VERSION=$(git describe --tags | cut -f1,2 -d'.')
           export REF=${GITHUB_REF##*/}
           export C_FLAGS=$(echo -e $C_FLAGS | tr -d '\n')
           cd build && date -u && date +%s > configstamp
           cmake \
             -DCMAKE_BUILD_TYPE="Release" \
             -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
-            -DCMAKE_EXE_LINKER_FLAGS="-L. -L/usr/local/lib -Wl,-rpath -Wl,/usr/local/lib -L/usr/local/opt/gdk-pixbuf/lib -L/usr/local/opt/libiconv/lib -L/usr/local/opt/libffi/lib -L/usr/local/opt/libffi/lib -L/usr/local/opt/libxml2/lib -L/usr/local/opt/expat/lib" \
-            -DCACHE_NAME_SUFFIX="${RAW_THERAPEE_MAJOR}.${RAW_THERAPEE_MINOR}-${REF}" \
+            -DCMAKE_EXE_LINKER_FLAGS="-L. -L/usr/local/lib -Wl,-rpath -Wl,/usr/local/lib -L/usr/local/opt/gdk-pixbuf/lib -L/usr/local/opt/libomp/lib -L/usr/local/opt/expat/lib" \
+            -DCACHE_NAME_SUFFIX="${RAW_THERAPEE_VERSION}-${REF}" \
             -DPROC_TARGET_NUMBER="1" \
             -DPROC_LABEL="generic processor" \
             -DCMAKE_OSX_ARCHITECTURES=$(uname -m) \
-            -DWITH_LTO="OFF" \
+            -DWITH_LTO="ON" \
             -DLENSFUNDBDIR="/Applications/RawTherapee.app/Contents/Resources/share/lensfun" \
             -DCMAKE_C_COMPILER=clang \
             -DCMAKE_CXX_COMPILER=clang++ \
@@ -63,33 +67,35 @@ jobs:
             -DOpenMP_CXX_FLAGS="${C_FLAGS}" \
             -DOpenMP_C_LIB_NAMES=libomp \
             -DOpenMP_CXX_LIB_NAMES=libomp \
-            -DOpenMP_libomp_LIBRARY=/usr/local/lib/libomp.dylib \
+            -DOpenMP_libomp_LIBRARY=/usr/local/opt/libomp/lib/libomp.dylib \
             -DCMAKE_AR=/usr/bin/ar \
             -DCMAKE_RANLIB=/usr/bin/ranlib \
-            -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \
-            -DOSX_CONTINUOUS=ON \
+            -DCMAKE_OSX_DEPLOYMENT_TARGET=12.0 \
+            -DCONTINUOUS=ON \
+            -DCODESIGNID:STRING="$IDENT" \
+            -DFANCY_DMG="ON" \
             ..
-            curl -L https://github.com/Homebrew/homebrew-core/raw/679923b4eb48a8dc7ecc1f05d06063cd79b3fc00/Formula/libomp.rb -o libomp.rb && brew install --formula libomp.rb
-            zsh -c 'echo "Configured in $(printf "%0.2f" $(($[$(date +%s)-$(cat configstamp)]/$((60.))))) minutes"'
+            zsh -c 'echo "Configured in $(printf "%0.2f" $(($[$(date +%s)-$(cat configstamp)]/$((60.))))) minutes"' >> $GITHUB_STEP_SUMMARY
       - name: Compile RawTherapee
         run: |
           date -u && date +%s > build/compilestamp
           cd build
           export REF=${GITHUB_REF##*/}
           make -j$(sysctl -a | grep machdep.cpu.thread_count | tail -c 2) install
-          zsh -c 'echo "Compiled in $(printf "%0.2f" $(($[$(date +%s)-$(cat compilestamp)]/$((60.))))) minutes"'
+          zsh -c 'echo "Compiled in $(printf "%0.2f" $(($[$(date +%s)-$(cat compilestamp)]/$((60.))))) minutes"' >> $GITHUB_STEP_SUMMARY
       - name: Create application bundle
         run: |
           zsh
           date +%s > build/bundlestamp && date -u && cd build
-          export REF=${GITHUB_REF##*/} && export LOCAL_PREFIX=/usr && sudo make macosx_bundle
+          echo "Automated Build! WARNING:\nNot intended for end-user testing." > message
+          export REF=${GITHUB_REF##*/} && sudo make macosx_bundle
           export ARTIFACT=(RawTherapee*${CMAKE_BUILD_TYPE}.zip)
           echo "=== artifact: ${ARTIFACT}"
           # defining environment variables for next step as per
           # https://github.com/actions/starter-workflows/issues/68
           echo "ARTIFACT_PATH=${GITHUB_WORKSPACE}/build/${ARTIFACT}" >> $GITHUB_ENV
           echo "ARTIFACT_FILE=${ARTIFACT}" >> $GITHUB_ENV
-          zsh -c 'echo "Bundled in $(printf "%0.2f" $(($[$(date +%s)-$(cat bundlestamp)]/$((60.))))) minutes"'
+          zsh -c 'echo "Bundled in $(printf "%0.2f" $(($[$(date +%s)-$(cat bundlestamp)]/$((60.))))) minutes"' >> $GITHUB_STEP_SUMMARY
           printf '%s\n' \
             "REF: ${REF}" \
             "ARTIFACT: ${ARTIFACT}" \
@@ -97,17 +103,153 @@ jobs:
             "ARTIFACT_FILE: ${ARTIFACT_FILE}" \
             "PUBLISH_NAME: ${PUBLISH_NAME}"
           exit
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: ${{env.ARTIFACT_FILE}}
           path: ${{env.ARTIFACT_PATH}}
       - name: Finish build
         run: |
           date -u
-          zsh -c 'echo "Build completed in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"'
+          zsh -c 'echo "Build completed in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"' >> $GITHUB_STEP_SUMMARY
+
+      - name: Test-launch the app
+        run: |
+          cd build
+          sudo cp -R RawTherapee.app /Applications
+          open -a /Applications/RawTherapee.app
+          sleep 5
+          echo "Applications running: $(osascript -e 'tell application "Finder" to get the name of every process whose visible is true')" >> $GITHUB_STEP_SUMMARY
+          osascript -e 'if application "RawTherapee" is not running then do shell script "exit 1"'
+          osascript -e 'tell application "RawTherapee" to if it is running then quit'
+
+      - name: Test the -cli
+        run: |
+          cd build
+          echo "$(RawTherapee*folder/rawtherapee-cli --version)" >> $GITHUB_STEP_SUMMARY
 
       - name: Publish artifacts
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
+        if: ${{github.ref_type == 'tag' || github.ref_name == 'dev'}}
+        with:
+          tag_name: nightly-github-actions
+          files: |
+            ${{env.ARTIFACT_PATH}}
+            
+
+  armbuild:
+    runs-on: macos-14
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with: 
+          fetch-tags: '0'
+          fetch-depth: '0'
+      - name: Install dependencies
+        run: |
+           date -u
+           mkdir build
+           date +%s > build/stamp
+           brew uninstall --ignore-dependencies libtiff
+           brew install imagemagick create-dmg libtiff gtk+3 gtkmm3 gtk-mac-integration adwaita-icon-theme libsigc++@2 little-cms2 libiptcdata fftw lensfun expat pkgconfig llvm shared-mime-info exiv2 jpeg-xl libomp automake libtool | tee -a depslog
+           date -u
+           echo "----====Pourage====----"
+           cat depslog | grep Pouring
+           zsh -c 'echo "Completed installation of dependencies in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"' >> $GITHUB_STEP_SUMMARY
+      - name: Configure build system
+        env:
+          IDENT: '-'
+          CMAKE_CXX_STANDARD: 11
+          PKG_CONFIG_PATH: /opt/homebrew/opt/libtiff/lib/pkgconfig:opt/homebrew/opt/libffi/lib/pkgconfig:/ope/homebrew/opt/expat/lib/pkgconfig
+          C_FLAGS: >
+            -arch arm64 -Xpreprocessor -fopenmp /opt/homebrew/opt/libomp/lib/libomp.dylib -I/opt/homebrew/opt/libomp/include -I/opt/homebrew/include -I/opt/homebrew/opt/gdk-pixbuf/include -I/opt/homebrew/opt/libiconv/include -I/opt/homebrew/opt/libxml2/include -I/opt/homebrew/opt/expat/include -I/opt/homebrew/opt/libtiff/include
+        run: |
+          # GITHUB_REF is the ref that triggered the build, like
+          # refs/heads/new-feature - the next line parses that to REF: the branch
+          # name only (new-feature)
+          export RAW_THERAPEE_VERSION=$(git describe --tags | cut -f1,2 -d'.')
+          export REF=${GITHUB_REF##*/}
+          export C_FLAGS=$(echo -e $C_FLAGS | tr -d '\n')
+          cd build && date -u && date +%s > configstamp
+          cmake \
+            -DCMAKE_BUILD_TYPE="Release" \
+            -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
+            -DCMAKE_EXE_LINKER_FLAGS="-L. -L/opt/homebrew/lib -Wl,-rpath -Wl,/opt/homebrew/lib -L/opt/homebrew/opt/gdk-pixbuf/lib -L/opt/homebrew/opt/libomp/lib -L/opt/homebrew/opt/expat/lib" \
+            -DCACHE_NAME_SUFFIX="${RAW_THERAPEE_VERSION}-${REF}" \
+            -DCMAKE_OSX_ARCHITECTURES=arm64 \
+            -DWITH_LTO="ON" \
+            -DLENSFUNDBDIR="/Applications/RawTherapee.app/Contents/Resources/share/lensfun" \
+            -DCMAKE_C_COMPILER=clang \
+            -DCMAKE_CXX_COMPILER=clang++ \
+            -DCMAKE_C_FLAGS="-arch arm64 -Wno-pass-failed -Wno-deprecated-register -Wno-unused-command-line-argument" \
+            -DCMAKE_CXX_FLAGS="-arch arm64 -Wno-pass-failed -Wno-deprecated-register -Wno-unused-command-line-argument" \
+            -DOpenMP_C_FLAGS="${C_FLAGS}" \
+            -DOpenMP_CXX_FLAGS="${C_FLAGS}" \
+            -DOpenMP_C_LIB_NAMES=libomp \
+            -DOpenMP_CXX_LIB_NAMES=libomp \
+            -DOpenMP_libomp_LIBRARY=/opt/homebrew/opt/libomp/lib/libomp.dylib \
+            -DCMAKE_AR=/usr/bin/ar \
+            -DCMAKE_RANLIB=/usr/bin/ranlib \
+            -DCMAKE_OSX_DEPLOYMENT_TARGET=14.0 \
+            -DCONTINUOUS=ON \
+            -DCODESIGNID:STRING="$IDENT" \
+            -DLOCAL_PREFIX=/opt/homebrew \
+            -DFANCY_DMG="ON" \
+            ..
+            zsh -c 'echo "Configured in $(printf "%0.2f" $(($[$(date +%s)-$(cat configstamp)]/$((60.))))) minutes"' >> $GITHUB_STEP_SUMMARY
+      - name: Compile RawTherapee
+        run: |
+          date -u && date +%s > build/compilestamp
+          cd build
+          export REF=${GITHUB_REF##*/}
+          make -j$(sysctl -a | grep machdep.cpu.thread_count | tail -c 2) install
+          zsh -c 'echo "Compiled in $(printf "%0.2f" $(($[$(date +%s)-$(cat compilestamp)]/$((60.))))) minutes"' >> $GITHUB_STEP_SUMMARY
+      - name: Create application bundle
+        run: |
+          zsh
+          date +%s > build/bundlestamp && date -u && cd build
+          echo "Automated Build! WARNING:\nNot intended for end-user testing." > message
+          export REF=${GITHUB_REF##*/} && sudo make macosx_bundle
+          export ARTIFACT=(RawTherapee*${CMAKE_BUILD_TYPE}.zip)
+          echo "=== artifact: ${ARTIFACT}"
+          # defining environment variables for next step as per
+          # https://github.com/actions/starter-workflows/issues/68
+          echo "ARTIFACT_PATH=${GITHUB_WORKSPACE}/build/${ARTIFACT}" >> $GITHUB_ENV
+          echo "ARTIFACT_FILE=${ARTIFACT}" >> $GITHUB_ENV
+          zsh -c 'echo "Bundled in $(printf "%0.2f" $(($[$(date +%s)-$(cat bundlestamp)]/$((60.))))) minutes"' >> $GITHUB_STEP_SUMMARY
+          printf '%s\n' \
+            "REF: ${REF}" \
+            "ARTIFACT: ${ARTIFACT}" \
+            "ARTIFACT_PATH: ${ARTIFACT_PATH}" \
+            "ARTIFACT_FILE: ${ARTIFACT_FILE}" \
+            "PUBLISH_NAME: ${PUBLISH_NAME}"
+          exit
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{env.ARTIFACT_FILE}}
+          path: ${{env.ARTIFACT_PATH}}
+      - name: Finish build
+        run: |
+          date -u
+          zsh -c 'echo "Build completed in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"' >> $GITHUB_STEP_SUMMARY
+
+      - name: Test-launch the app
+        run: |
+          cd build
+          sudo cp -R RawTherapee.app /Applications
+          open -a /Applications/RawTherapee.app
+          sleep 5
+          echo "Applications running: $(osascript -e 'tell application "Finder" to get the name of every process whose visible is true')" >> $GITHUB_STEP_SUMMARY
+          osascript -e 'if application "RawTherapee" is not running then do shell script "exit 1"'
+          osascript -e 'tell application "RawTherapee" to if it is running then quit'
+
+      - name: Test the -cli
+        run: |
+          cd build
+          echo "$(RawTherapee*folder/rawtherapee-cli --version)" >> $GITHUB_STEP_SUMMARY
+
+      - name: Publish artifacts
+        uses: softprops/action-gh-release@v2
         if: ${{github.ref_type == 'tag' || github.ref_name == 'dev'}}
         with:
           tag_name: nightly-github-actions
