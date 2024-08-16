@@ -1,6 +1,6 @@
-RAWTHERAPEE 5.10-dev RELEASE NOTES
+RAWTHERAPEE 5.11-rc1 RELEASE NOTES
 
-This is a development version of RawTherapee. We update the code almost daily. Every few months, once enough changes have accumulated and the code is stabilized, we make a new official release. Every code change between these releases is known as a "development" version, and this is one of them.
+This is Release Candidate 1 of RawTherapee 5.11, released on 2025-08-11. This is not the final release yet.
 
 
 
@@ -24,21 +24,60 @@ In order to use RawTherapee efficiently you should know that:
 
 NEW FEATURES SINCE 5.10
 
-- TODO
-- Added or improved support for cameras, raw formats and color profiles:
-    - TODO
+- The path template for queue export supports more format specifiers, including dates and new path types. Additionally, there is a preview to show the path for the selected image.
+- The maximum zoom for the editor is now configurable.
+- Pseudo HiDPI is replaced by real HiDPI.
+- The file browser has an option to show all images within subfolders too.
+- The Use embedded option for the Input Profile is available for DNGs that have an embedded DCP.
+- The Color appearance sub-tool in Selective Editing (formerly Local Adjustments) received various improvements, including simplification of the basic mode, addition of new tone mappers for Cam16, a black and white mode, and a highlight attenuation feature.
+- The White balance Tint range is expanded.
+- It is now possible to use Contrast by Detail Levels in Before Black-and-White mode while Color Appearance & Lighting is activated with CAM16.
+- Ratings and color labels can be synchronized with XMPs.
+- The Selective Editing tool received various improvements, such as a global mode for applying edits to the entire image uniformly, ΔE preview buttons for most sub-tools, and adjustable graduated filter feathering for each sub-tool.
+- The EXIF modified date-time is now added to saved images.
+- RawTherapee can now read 12-bit Panasonic raw files encoded in the v6 format, such as those from the DC-GH5M2.
+- RawTherapee can now read Panasonic raw files encoded in the v8 format, such as those from the DC-GH6, DC-S5M2, and DC-S5M2X.
+- RawTherapee can now read Fujifilm lossy-compressed raw files.
+- JPEG XL images can now be opened.
+- There is a new option to use lens corrections from the file metadata. It works for compatible raw images from Fujifilm, Olympus / OM Digital Solutions (distortion and chromatic aberration corrections only), and Sony. Corrections embedded in DNGs can also be used.
+- RawTherapee can leverage LibRaw (enabled by default) to read raw images. It adds the ability to read additional raw formats, such as Sony lossless compression, and improved support for some cameras.
+- Added or improved support for cameras, raw formats and color profiles (not including LibRaw and color matrices for dcraw):
+    - FUJIFILM GFX 100 (PDAF lines filter)
+    - FUJIFILM GFX 100S (DCP, PDAF lines filter)
+    - FUJIFILM GFX 100 II (PDAF lines filter)
+    - Fujifilm X-H2S
+    - Nikon Z 8 (DCP)
+    - Nikon Z 9 (DCP)
+    - Nikon Z f (DCP)
+    - OM Digital Solutions TG-7
+    - Panasonic DC-G9M2
+    - Panasonic DC-GH5M2
+    - Panasonic DC-GH6
+    - Panasonic DC-S5M2
+    - Panasonic DC-S5M2X
+    - Sony ILCE-1 (Pixel shift)
+    - Sony ILCE-6700
+    - Sony ILCE-7CR (PDAF lines filter)
+    - Sony ILCE-7RM4 (PDAF lines filter)
+    - Sony ILCE-7RM5 (PDAF lines filter)
+    - SONY ILCE-9M3
 
 
 
 NEWS RELEVANT TO PACKAGE MAINTAINERS
 
 New since 5.10:
-- TODO
+- Requires GTK+ >= 3.24.3 (was >= 3.22.24 in Windows, or >= 3.16 in other operating systems).
+- Requires librsvg-2.0 >= 2.52 (was >= 2.40).
+- Optional dependency on libjxl.
+- Optional dependency on LibRaw >= 0.21.
 
 In general:
-- To get the source code, either clone from git or use the tarball from https://rawtherapee.com/shared/source/ . Do not use the auto-generated GitHub release tarballs.
-- Requires GTK+ version >=3.22.24 in Windows, else >=3.16 (though >=3.22.24 is recommended).
-- GTK+ versions 3.24.2 - 3.24.6 have an issue where combobox menu scroll-arrows are missing when the combobox list does not fit vertically on the screen. As a result, users would not be able to scroll in the following comboboxes: Processing Profiles, Film Simulation, and the camera and lens profiles in Profiled Lens Correction.
+- To get the source code, either clone from git or use the tarball from https://rawtherapee.com/shared/source/. Do not use the auto-generated GitHub release tarballs.
+- Requires GTK+ version >= 3.24.3.
+- GTK+ versions 3.24.3 - 3.24.6 have an issue where combobox menu scroll-arrows are missing when the combobox list does not fit vertically on the screen. As a result, users would not be able to scroll in the following comboboxes: Processing Profiles, Film Simulation, and the camera and lens profiles in Profiled Lens Correction.
+- JPEG XL read support depends on libjxl. By default, RawTherapee builds with JPEG XL support if and only if libjxl is present. Use -DWITH_JXL="ON" or DWITH_JXL="OFF" to explicitly enable or disable, respectively, JPEG XL support.
+- RawTherapee builds with a custom version of LibRaw by default. To use the system LibRaw, use -DWITH_SYSTEM_LIBRAW="ON". Requires LibRaw >= 0.21.
 - RawTherapee 5 requires GCC-4.9 or higher, or Clang.
 - Do not use -ffast-math, it will not make RawTherapee faster but will introduce artifacts.
 - Use -O3, it will make RawTherapee faster with no known side-effects.
