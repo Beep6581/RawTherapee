@@ -9964,6 +9964,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         skewsig->setValue(spot.skewsig);
         whitsig->setValue(spot.whitsig);
         slopesmo->setValue(spot.slopesmo);
+        slopesmoq->setValue(spot.slopesmoq);
         slopesmor->setValue(spot.slopesmor);
         slopesmog->setValue(spot.slopesmog);
         slopesmob->setValue(spot.slopesmob);
@@ -12634,7 +12635,7 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         blackscie->setDefault(defSpot.blackscie);
         slopjcie->setDefault(defSpot.slopjcie);
         slopesmo->setDefault(defSpot.slopesmo);
-        slopesmoq->setDefault(defSpot.slopesmo);
+        slopesmoq->setDefault(defSpot.slopesmoq);
         contsig->setDefault(defSpot.contsig);
         skewsig->setDefault(defSpot.skewsig);
         whitsig->setDefault(defSpot.whitsig);

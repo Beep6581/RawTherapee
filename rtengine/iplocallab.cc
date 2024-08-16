@@ -4647,11 +4647,11 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
                         Jpro = SQR((10.f * Qpro) / wh);
                         Qpro = (Qpro == 0.f ? epsil : Qpro); // avoid division by zero
                         spro = 100.0f * sqrtf(Mpro / Qpro);
-
-                        if (Jpro > 99.9f) {
-                            Jpro = 99.9f;
+                        if(settings->autocielab) {//avoid artifacts
+                            if (Jpro > 99.9f) {
+                                Jpro = 99.9f;
+                            }
                         }
-
                         Jpro = CAMBrightCurveJ[(float)(Jpro * 327.68f)];   //lightness CIECAM02 + contrast
                         float Sp = spro / 100.0f;
                         Ciecam02::curvecolorfloat(schr, Sp, sres, 1.5f);
