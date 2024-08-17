@@ -6733,6 +6733,13 @@ int CLASS parse_tiff_ifd (int base)
       case 29443:
 	FORC4 cam_mul[c ^ (c < 2)] = get2();
 	break;
+      case 29456: // Adapted from LibRaw: Sony SR2SubIFD BlackLevel
+	FORC4 cblack[c ^ (c >> 1) /*RGGB_2_RGBG(c)*/] = get2();
+	i = cblack[3];
+	FORC3 if (i > (int)cblack[c]) i = cblack[c];
+	FORC4 cblack[c] -= i;
+	black = i;
+	break;
       case 29459:
 	FORC4 cam_mul[c] = get2();
 	i = (cam_mul[1] == 1024 && cam_mul[2] == 1024) << 1;
