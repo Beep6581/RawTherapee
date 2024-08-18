@@ -248,8 +248,8 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP
     genVBox->pack_start (*complexHBox, Gtk::PACK_SHRINK);
 
     modelmethod = Gtk::manage (new MyComboBoxText ());
-    modelmethod->append(M("TP_COLORAPP_MOD16"));
     modelmethod->append(M("TP_COLORAPP_MOD02"));
+    modelmethod->append(M("TP_COLORAPP_MOD16"));
     modelmethodconn = modelmethod->signal_changed().connect(sigc::mem_fun(*this, &ColorAppearance::modelmethodChanged));
     modelmethod->set_tooltip_text(M("TP_COLORAPP_MODELCAT_TOOLTIP"));
     Gtk::Box* const modelHBox = Gtk::manage(new Gtk::Box());
