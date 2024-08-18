@@ -3081,7 +3081,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
     const float sigmoidlambda = params->locallab.spots.at(sp).sigmoidldacie;
 //    const float sigmoidth = params->locallab.spots.at(sp).sigmoidthcie;
     const float sigmoidbl = params->locallab.spots.at(sp).sigmoidblcie;
-    const bool sigmoidnorm = params->locallab.spots.at(sp).normcie;
+  //  const bool sigmoidnorm = params->locallab.spots.at(sp).normcie;
 
     int mobwev = 0;
     if (params->locallab.spots.at(sp).bwevMethod == "sigQ") {
@@ -3096,13 +3096,17 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
     float contrast_skewness = params->locallab.spots.at(sp).sigmoidthcie;
     float white_point_disp = params->locallab.spots.at(sp).sigmoidblcie;
     float MIDDLE_GREY = 0.01 * params->locallab.spots.at(sp).sourceGraycie;
+    MIDDLE_GREY *= 2.f;//take into account Ciecam
+    MIDDLE_GREY = std::min(MIDDLE_GREY, 0.6f);
+
     float black_point =  xexpf(lp.blackevjz * std::log(2.f) + xlogf(MIDDLE_GREY));
     float white_pointsig = xexpf(lp.whiteevjz * std::log(2.f) + xlogf(MIDDLE_GREY));//to adapt if need and remove slider whitsig
-    float dr = white_pointsig - black_point;
-
-   if(sigmoidnorm) {//for sigmoid Q and Slope based Q
+   // float dr = white_pointsig - black_point;
+    /*
+    if(sigmoidnorm) {//for sigmoid Q and Slope based Q
         MIDDLE_GREY = MIDDLE_GREY * dr + black_point;
     }
+    */
     float slopsmootq =(float) params->locallab.spots.at(sp).slopesmoq;
     float mid_gray_view = 0.01f * lp.targetgraycie;
     TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
@@ -3628,6 +3632,7 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
     float contrast_skewnessjz = params->locallab.spots.at(sp).sigmoidthjzcie;
     float white_point_dispjz = params->locallab.spots.at(sp).sigmoidbljzcie;
     float MIDDLE_GREYjz = 0.01 * params->locallab.spots.at(sp).sourceGraycie;
+    MIDDLE_GREYjz *= 2.f;
     float black_pointjz =  xexpf(lp.blackevjz * std::log(2.f) + xlogf(MIDDLE_GREYjz));
     float white_pointsigjz = xexpf(lp.whiteevjz * std::log(2.f) + xlogf(MIDDLE_GREYjz));//to adapt if need and remove slider whitsig
     float drjz = white_pointsigjz - black_pointjz;
@@ -4417,7 +4422,10 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
         comprfactor = 0.4f * comprfactor * (float) dratt;//adapt comprfactor to Dynamic Range
         float newgray = 0.18f;
 
-        if ((params->locallab.spots.at(sp).logcie && params->locallab.spots.at(sp).logcieq)) {//increase Dyn Range when log encoding
+
+        bool logqprov = params->locallab.spots.at(sp).logcieq;//disable log encoding Q
+        logqprov = false;
+        if ((params->locallab.spots.at(sp).logcie && logqprov)) {//increase Dyn Range when log encoding
             dynamic_range += 0.2;//empirical value
             gray = 0.01f * (float) params->locallab.spots.at(sp).sourceGraycie;
             const float targetgraycie = params->locallab.spots.at(sp).targetGraycie;

@@ -8016,7 +8016,7 @@ Locallabcie::Locallabcie():
     sigmoidFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGFRA")))),
     sigq(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGFRA")))),
     slopesmoq(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOPESMOOTH"), 0.6, 2.0, 0.01, 1.))),
-    sigmoidldacie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0.5, 3., 0.01, 1.25))),
+    sigmoidldacie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0.5, 3., 0.01, 1.8))),
     sigmoidthcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDTH"), -1., 1., 0.01, 0., Gtk::manage(new RTImage("circle-black-small")), Gtk::manage(new RTImage("circle-white-small"))))),
     sigmoidsenscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDSENSI"), 0.1, 1.5, 0.01, 0.9))),
     sigmoidblcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDBL"), 50., 1000., 0.5, 100.))),
@@ -8487,7 +8487,7 @@ Locallabcie::Locallabcie():
     comprBox->pack_start(*comprcie);
     comprBox->pack_start(*strcielog);
     comprBox->pack_start(*satcie);
-    comprBox->pack_start(*logcieq);
+    //comprBox->pack_start(*logcieq);
     logcieFrame->add(*comprBox);
     gamcieBox->pack_start(*logcieFrame);
 
@@ -8561,7 +8561,7 @@ Locallabcie::Locallabcie():
     sigfraBox->pack_start(*sigmoidldacie);
     sigfraBox->pack_start(*sigmoidthcie);
     sigfraBox->pack_start(*sigmoidblcie);
-    sigfraBox->pack_start(*normcie);
+  //  sigfraBox->pack_start(*normcie);
     sigmoid2Frame->add(*sigfraBox);
     sigBox->pack_start(*sigmoid2Frame);
     sigmoidFrame->add(*sigBox);
@@ -11713,13 +11713,13 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             comprcie->show();
             strcielog->show();
             satcie->show();
-            logcieq->hide();
+            logcieq->show();
             blackEvjz->show();
             whiteEvjz->show();
             whitescie->show();
             blackscie->show();
 
-            logcieFrame->hide();
+            logcieFrame->show();
             comprcieth->show();
             comprcieauto->show();
             comprBox->show();
@@ -12465,7 +12465,7 @@ void Locallabcie::convertParamToSimple()
     sigmoidblcie->setValue(defSpot.sigmoidblcie);
     normcie->set_active(defSpot.normcie);
     logcieq->set_active(defSpot.logcieq);
-    logcie->set_active(defSpot.logcie);
+    //logcie->set_active(defSpot.logcie);
     blackEvjz->setValue(defSpot.blackEvjz);
     whiteEvjz->setValue(defSpot.whiteEvjz);
     whitescie->setValue(defSpot.whitescie);
@@ -12501,8 +12501,8 @@ void Locallabcie::convertParamToNormal()
     contqcie->setValue(defSpot.contqcie);
     sigmoidblcie->setValue(defSpot.sigmoidblcie);
     normcie->set_active(defSpot.normcie);
-    logcieq->set_active(defSpot.logcieq);
-    logcie->set_active(defSpot.logcie);
+    //logcieq->set_active(defSpot.logcieq);
+    //logcie->set_active(defSpot.logcie);
     bwcie->set_active(defSpot.bwcie);
     smoothcielum->set_active(defSpot.smoothcielum);
     smoothcieyb->set_active(defSpot.smoothcieyb);
