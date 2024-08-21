@@ -3633,6 +3633,8 @@ void ImProcFunctions::ciecamloc_02float(struct local_params& lp, int sp, LabImag
     float white_point_dispjz = params->locallab.spots.at(sp).sigmoidbljzcie;
     float MIDDLE_GREYjz = 0.01 * params->locallab.spots.at(sp).sourceGraycie;
     MIDDLE_GREYjz *= 2.f;
+    MIDDLE_GREYjz = std::min(MIDDLE_GREYjz, 0.6f);
+
     float black_pointjz =  xexpf(lp.blackevjz * std::log(2.f) + xlogf(MIDDLE_GREYjz));
     float white_pointsigjz = xexpf(lp.whiteevjz * std::log(2.f) + xlogf(MIDDLE_GREYjz));//to adapt if need and remove slider whitsig
     float drjz = white_pointsigjz - black_pointjz;
