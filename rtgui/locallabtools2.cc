@@ -8533,6 +8533,7 @@ Locallabcie::Locallabcie():
     smoothcieBox->pack_start(*ciesmoothBox);
     smoothFrame->add(*smoothcieBox);
     trccieBox->pack_start(*smoothFrame);
+    trccieBox->pack_start(*bwcieBox);
     trcFrame->add(*trccieBox);
     gamcieBox->pack_start(*trcFrame);
     primillBox->pack_start(*willBox);
@@ -8547,7 +8548,7 @@ Locallabcie::Locallabcie():
     colorBox->pack_start(*shiftxl);
     colorBox->pack_start(*shiftyl);
     colorFramecie->add(*colorBox);
-    primillBox->pack_start(*bwcieBox);
+//    primillBox->pack_start(*bwcieBox);
     primillBox->pack_start(*colorFramecie);
     primillFrame->add(*primillBox);
     gamcieBox->pack_start(*primillFrame);
@@ -12470,7 +12471,7 @@ void Locallabcie::convertParamToSimple()
     whiteEvjz->setValue(defSpot.whiteEvjz);
     whitescie->setValue(defSpot.whitescie);
     blackscie->setValue(defSpot.blackscie);
-    bwcie->set_active(defSpot.bwcie);
+   // bwcie->set_active(defSpot.bwcie);
     smoothcielum->set_active(defSpot.smoothcielum);
     smoothcieyb->set_active(defSpot.smoothcieyb);
     sigq->set_active(defSpot.sigq);
@@ -12503,7 +12504,7 @@ void Locallabcie::convertParamToNormal()
     normcie->set_active(defSpot.normcie);
     //logcieq->set_active(defSpot.logcieq);
     //logcie->set_active(defSpot.logcie);
-    bwcie->set_active(defSpot.bwcie);
+    //bwcie->set_active(defSpot.bwcie);
     smoothcielum->set_active(defSpot.smoothcielum);
     smoothcieyb->set_active(defSpot.smoothcieyb);
     //contsigqcie->setValue(defSpot.contsigqcie);

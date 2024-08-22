@@ -254,6 +254,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wFrame->set_tooltip_text(M("TP_ICM_WORKING_TRC_TOOLTIP"));
 
 
+
     wGamma = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_GAMMA"), 0.40, 20.0, 0.001, 2.4));//default sRGB
     wSlope = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_SLOPE"), 0., 300., 0.01, 12.92));//defautl sRGB
     wmidtcie = Gtk::manage(new Adjuster(M("TP_LOCALLAB_MIDTCIE"), -100., 100., 1., 0.));
@@ -287,6 +288,10 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wsmoothcie->show();
     wsmoothcieconn = wsmoothcie->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::wsmoothcieChanged));
     wsmoothcie->set_active(false);
+
+    fbw = Gtk::manage(new Gtk::CheckButton((M("TP_ICM_FBW"))));
+    fbw->set_active(true);
+    trcProfVBox->pack_start(*fbw, Gtk::PACK_SHRINK);
 
     wavExp = Gtk::manage(new MyExpander(true, M("TP_ICM_WAVFRAME")));//expander Contrast Enhancement
     setExpandAlignProperties(wavExp, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
@@ -338,13 +343,13 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     wprimBox->pack_start(*wprimlab, Gtk::PACK_SHRINK);
     wprim = Gtk::manage(new MyComboBoxText());
     wprimBox->pack_start(*wprim, Gtk::PACK_EXPAND_WIDGET);
-    fbw = Gtk::manage(new Gtk::CheckButton((M("TP_ICM_FBW"))));
-    fbw->set_active(true);
+//    fbw = Gtk::manage(new Gtk::CheckButton((M("TP_ICM_FBW"))));
+//    fbw->set_active(true);
     gamut = Gtk::manage(new Gtk::CheckButton((M("TP_ICM_GAMUT"))));
     gamut->set_active(true);
 
     trcPrimVBox->pack_start(*wprimBox, Gtk::PACK_EXPAND_WIDGET);
-    trcPrimVBox->pack_start(*fbw, Gtk::PACK_EXPAND_WIDGET);
+//    trcPrimVBox->pack_start(*fbw, Gtk::PACK_EXPAND_WIDGET);
 //    trcProfVBox->pack_start(*gamut, Gtk::PACK_EXPAND_WIDGET);
 
     neutral = Gtk::manage (new Gtk::Button (M ("TP_ICM_NEUTRAL")));
