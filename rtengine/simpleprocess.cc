@@ -1758,8 +1758,6 @@ private:
 
             ipf.lab2rgb(*labView, *tmpImage1, params.icm.workingProfile);
 
-           // const float gamtone = params.icm.workingTRCGamma;
-           // const float slotone = params.icm.workingTRCSlope;
             const float gamtone = params.icm.wGamma;
             const float slotone = params.icm.wSlope;
 

@@ -2083,8 +2083,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                 ipf.lab2rgb(*nprevl, *tmpImage1, params->icm.workingProfile);
 
-               // const float gamtone = params->icm.workingTRCGamma;
-               // const float slotone = params->icm.workingTRCSlope;
                 const float gamtone = params->icm.wGamma;
                 const float slotone = params->icm.wSlope;
                 int illum = toUnderlying(params->icm.will);

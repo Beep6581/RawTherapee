@@ -457,8 +457,6 @@ void ParamsEdited::set(bool v)
     icm.outputProfile = v;
     icm.outputIntent = v;
     icm.outputBPC = v;
- //   icm.workingTRCGamma = v;
- //   icm.workingTRCSlope = v;
     icm.wGamma = v;
     icm.wSlope = v;
     icm.wmidtcie = v;
@@ -1988,8 +1986,6 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         icm.outputProfile = icm.outputProfile && p.icm.outputProfile == other.icm.outputProfile;
         icm.outputIntent = icm.outputIntent && p.icm.outputIntent == other.icm.outputIntent;
         icm.outputBPC = icm.outputBPC && p.icm.outputBPC == other.icm.outputBPC ;
-     //   icm.workingTRCGamma = icm.workingTRCGamma && p.icm.workingTRCGamma == other.icm.workingTRCGamma;
-     //   icm.workingTRCSlope = icm.workingTRCSlope && p.icm.workingTRCSlope == other.icm.workingTRCSlope;
         icm.wGamma = icm.wGamma && p.icm.wGamma == other.icm.wGamma;
         icm.wSlope = icm.wSlope && p.icm.wSlope == other.icm.wSlope;
         icm.wmidtcie = icm.wmidtcie && p.icm.wmidtcie == other.icm.wmidtcie;
@@ -6892,15 +6888,7 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
     if (icm.outputBPC) {
         toEdit.icm.outputBPC = mods.icm.outputBPC;
     }
-/*
-    if (icm.workingTRCGamma) {
-        toEdit.icm.workingTRCGamma = mods.icm.workingTRCGamma;
-    }
 
-    if (icm.workingTRCSlope) {
-        toEdit.icm.workingTRCSlope = mods.icm.workingTRCSlope;
-    }
-*/
     if (icm.wGamma) {
         toEdit.icm.wGamma = mods.icm.wGamma;
     }
