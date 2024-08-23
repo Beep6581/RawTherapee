@@ -2397,8 +2397,10 @@ ColorManagementParams::ColorManagementParams() :
     will(Illuminant::DEFAULT),
     wprim(Primaries::DEFAULT),
     wcat(Cat::BRAD),
-    workingTRCGamma(2.4),//gamma sRGB
-    workingTRCSlope(12.92),
+  //  workingTRCGamma(2.4),//gamma sRGB
+  //  workingTRCSlope(12.92),
+    wGamma(2.4),//gamma sRGB
+    wSlope(12.92),
     wmidtcie(0.),
     sigmatrc(1.),
     offstrc(1.),
@@ -2465,8 +2467,10 @@ bool ColorManagementParams::operator ==(const ColorManagementParams& other) cons
         && will == other.will
         && wprim == other.wprim
         && wcat == other.wcat
-        && workingTRCGamma == other.workingTRCGamma
-        && workingTRCSlope == other.workingTRCSlope
+     //   && workingTRCGamma == other.workingTRCGamma
+     //   && workingTRCSlope == other.workingTRCSlope
+        && wGamma == other.wGamma
+        && wSlope == other.wSlope
         && wmidtcie == other.wmidtcie
         && sigmatrc == other.sigmatrc
         && offstrc == other.offstrc
@@ -7812,8 +7816,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         
         saveToKeyfile(!pedited || pedited->icm.opacityCurveWLI, "Color Management", "OpacityCurveWLI", icm.opacityCurveWLI, keyFile);
         
-        saveToKeyfile(!pedited || pedited->icm.workingTRCGamma, "Color Management", "WorkingTRCGamma", icm.workingTRCGamma, keyFile);
-        saveToKeyfile(!pedited || pedited->icm.workingTRCSlope, "Color Management", "WorkingTRCSlope", icm.workingTRCSlope, keyFile);
+     //   saveToKeyfile(!pedited || pedited->icm.workingTRCGamma, "Color Management", "WorkingTRCGamma", icm.workingTRCGamma, keyFile);
+     //   saveToKeyfile(!pedited || pedited->icm.workingTRCSlope, "Color Management", "WorkingTRCSlope", icm.workingTRCSlope, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.wGamma, "Color Management", "WorkingTRCGamma", icm.wGamma, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.wSlope, "Color Management", "WorkingTRCSlope", icm.wSlope, keyFile);
         saveToKeyfile(!pedited || pedited->icm.wmidtcie, "Color Management", "Wmidtcie", icm.wmidtcie, keyFile);
         saveToKeyfile(!pedited || pedited->icm.sigmatrc, "Color Management", "Sigmatrc", icm.sigmatrc, keyFile);
         saveToKeyfile(!pedited || pedited->icm.offstrc, "Color Management", "Offstrc", icm.offstrc, keyFile);
@@ -10414,8 +10420,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             }
             
             assignFromKeyfile(keyFile, "Color Management", "Gamut", icm.gamut, pedited->icm.gamut);
-            assignFromKeyfile(keyFile, "Color Management", "WorkingTRCSlope", icm.workingTRCSlope, pedited->icm.workingTRCSlope);
-            assignFromKeyfile(keyFile, "Color Management", "WorkingTRCGamma", icm.workingTRCGamma, pedited->icm.workingTRCGamma);
+        //    assignFromKeyfile(keyFile, "Color Management", "WorkingTRCSlope", icm.workingTRCSlope, pedited->icm.workingTRCSlope);
+        //    assignFromKeyfile(keyFile, "Color Management", "WorkingTRCGamma", icm.workingTRCGamma, pedited->icm.workingTRCGamma);
+            assignFromKeyfile(keyFile, "Color Management", "WorkingTRCSlope", icm.wSlope, pedited->icm.wSlope);
+            assignFromKeyfile(keyFile, "Color Management", "WorkingTRCGamma", icm.wGamma, pedited->icm.wGamma);
             assignFromKeyfile(keyFile, "Color Management", "Wmidtcie", icm.wmidtcie, pedited->icm.wmidtcie);
             assignFromKeyfile(keyFile, "Color Management", "Wsmoothcie", icm.wsmoothcie, pedited->icm.wsmoothcie);
             assignFromKeyfile(keyFile, "Color Management", "Sigmatrc", icm.sigmatrc, pedited->icm.sigmatrc);

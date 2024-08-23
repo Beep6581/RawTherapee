@@ -1651,8 +1651,10 @@ void Crop::update(int todo)
 
             parent->ipf.lab2rgb(*labnCrop, *tmpImage1, params.icm.workingProfile);
 
-            const float gamtone = parent->params->icm.workingTRCGamma;
-            const float slotone = parent->params->icm.workingTRCSlope;
+          //  const float gamtone = parent->params->icm.workingTRCGamma;
+          //  const float slotone = parent->params->icm.workingTRCSlope;
+            const float gamtone = parent->params->icm.wGamma;
+            const float slotone = parent->params->icm.wSlope;
 
             int illum = rtengine::toUnderlying(params.icm.will);
             const int prim = rtengine::toUnderlying(params.icm.wprim);

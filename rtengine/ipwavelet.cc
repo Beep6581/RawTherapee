@@ -3510,12 +3510,12 @@ void ImProcFunctions::localCont (LabImage * lab, LabImage * dst, const procparam
             if(pyrwav == 1) {//low contrast
                 level_bl = 0;
                 level_hl = 1;
-                level_br = wavelet_lev - 2;
+                level_br = wavelet_lev - 3;//-2
                 level_hr = wavelet_lev - 2;
             } else if(pyrwav == 2) {
                 level_bl = 0;
                 level_hl = 1;
-                level_br = wavelet_lev - 1;
+                level_br = wavelet_lev - 2;//-1
                 level_hr = wavelet_lev - 1;
                 if(!cmparams.wsmoothcie) {
                     inva5 = 1.f;

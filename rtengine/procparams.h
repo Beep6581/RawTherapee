@@ -2072,8 +2072,10 @@ struct ColorManagementParams {
     Illuminant will;
     Primaries wprim;
     Cat wcat;
-    double workingTRCGamma;
-    double workingTRCSlope;
+ //   double workingTRCGamma;
+ //   double workingTRCSlope;
+    double wGamma;
+    double wSlope;
     double wmidtcie;
     double sigmatrc;
     double offstrc;

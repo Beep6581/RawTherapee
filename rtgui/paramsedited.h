@@ -1321,8 +1321,10 @@ struct ColorManagementParamsEdited {
 
     bool workingProfile;
     bool workingTRC;
-    bool workingTRCGamma;
-    bool workingTRCSlope;
+ //   bool workingTRCGamma;
+ //   bool workingTRCSlope;
+    bool wGamma;
+    bool wSlope;
     bool wmidtcie;
     bool sigmatrc;
     bool offstrc;

@@ -485,9 +485,9 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     pyrwavtrc->setAdjusterListener(this);
     residtrc->setAdjusterListener(this);
 
-    wGamma->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+    //wGamma->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
-    wSlope->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+    // wSlope->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
     wmidtcie->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
     wav2Exp->add(*trcWav2VBox, false);
     wav2Exp->set_expanded(false);
@@ -691,8 +691,10 @@ void ICMPanel::neutral_pressed ()
         wprim->set_active(toUnderlying(ColorManagementParams::Primaries::BEST_RGB));
     }
     const ColorManagementParams defPar;
-    wGamma->setValue(defPar.workingTRCGamma);//2.4
-    wSlope->setValue(defPar.workingTRCSlope);//12.92
+  //  wGamma->setValue(defPar.workingTRCGamma);//2.4
+  //  wSlope->setValue(defPar.workingTRCSlope);//12.92
+    wGamma->setValue(defPar.wGamma);//2.4
+    wSlope->setValue(defPar.wSlope);//12.92
     wmidtcie->setValue(defPar.wmidtcie);
     sigmatrc->setValue(defPar.sigmatrc);
     offstrc->setValue(defPar.offstrc);
@@ -1064,8 +1066,10 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     ckbApplyHueSatMap->set_active(pp->icm.applyHueSatMap);
     lastApplyHueSatMap = pp->icm.applyHueSatMap;
 
-    wGamma->setValue(pp->icm.workingTRCGamma);
-    wSlope->setValue(pp->icm.workingTRCSlope);
+  //  wGamma->setValue(pp->icm.workingTRCGamma);
+  //  wSlope->setValue(pp->icm.workingTRCSlope);
+    wGamma->setValue(pp->icm.wGamma);
+    wSlope->setValue(pp->icm.wSlope);
     wmidtcie->setValue(pp->icm.wmidtcie);
     sigmatrc->setValue(pp->icm.sigmatrc);
     offstrc->setValue(pp->icm.offstrc);
@@ -1135,8 +1139,10 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         labgridcie->setEdited(pedited->icm.labgridcieALow || pedited->icm.labgridcieBLow || pedited->icm.labgridcieAHigh || pedited->icm.labgridcieBHigh  || pedited->icm.labgridcieGx  || pedited->icm.labgridcieGy || pedited->icm.labgridcieWx  || pedited->icm.labgridcieWy || pedited->icm.labgridcieMx || pedited->icm.labgridcieMy);
         opacityShapeWLI->setCurve(pp->icm.opacityCurveWLI);
 
-        wGamma->setEditedState(pedited->icm.workingTRCGamma ? Edited : UnEdited);
-        wSlope->setEditedState(pedited->icm.workingTRCSlope  ? Edited : UnEdited);
+     //   wGamma->setEditedState(pedited->icm.workingTRCGamma ? Edited : UnEdited);
+     //   wSlope->setEditedState(pedited->icm.workingTRCSlope  ? Edited : UnEdited);
+        wGamma->setEditedState(pedited->icm.wGamma ? Edited : UnEdited);
+        wSlope->setEditedState(pedited->icm.wSlope  ? Edited : UnEdited);
         wmidtcie->setEditedState(pedited->icm.wmidtcie  ? Edited : UnEdited);
         sigmatrc->setEditedState(pedited->icm.sigmatrc  ? Edited : UnEdited);
         offstrc->setEditedState(pedited->icm.offstrc  ? Edited : UnEdited);
@@ -1218,7 +1224,8 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             }
             riaHBox->set_sensitive(true);
 
-            if (pp->icm.workingTRCGamma <= 1.) {
+        //    if (pp->icm.workingTRCGamma <= 1.) {
+            if (pp->icm.wGamma <= 1.) {
                 wGamma->set_sensitive(true);
                 wSlope->set_sensitive(false);
                 wmidtcie->set_sensitive(true);
@@ -1485,8 +1492,10 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     pp->icm.wavExp = wavExp->getEnabled();
     pp->icm.gamut = gamut->get_active();
     pp->icm.wsmoothcie = wsmoothcie->get_active();
-    pp->icm.workingTRCGamma =  wGamma->getValue();
-    pp->icm.workingTRCSlope =  wSlope->getValue();
+ //   pp->icm.workingTRCGamma =  wGamma->getValue();
+ //   pp->icm.workingTRCSlope =  wSlope->getValue();
+    pp->icm.wGamma =  wGamma->getValue();
+    pp->icm.wSlope =  wSlope->getValue();
     pp->icm.wmidtcie =  wmidtcie->getValue();
     pp->icm.sigmatrc =  sigmatrc->getValue();
     pp->icm.offstrc =  offstrc->getValue();
@@ -1522,8 +1531,10 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->icm.applyLookTable = !ckbApplyLookTable->get_inconsistent();
         pedited->icm.applyBaselineExposureOffset = !ckbApplyBaselineExposureOffset->get_inconsistent();
         pedited->icm.applyHueSatMap = !ckbApplyHueSatMap->get_inconsistent();
-        pedited->icm.workingTRCGamma = wGamma->getEditedState();
-        pedited->icm.workingTRCSlope = wSlope->getEditedState();
+      //  pedited->icm.workingTRCGamma = wGamma->getEditedState();
+       // pedited->icm.workingTRCSlope = wSlope->getEditedState();
+        pedited->icm.wGamma = wGamma->getEditedState();
+        pedited->icm.wSlope = wSlope->getEditedState();
         pedited->icm.wmidtcie = wmidtcie->getEditedState();
         pedited->icm.sigmatrc = sigmatrc->getEditedState();
         pedited->icm.offstrc = offstrc->getEditedState();
@@ -1552,8 +1563,10 @@ void ICMPanel::curveChanged(CurveEditor* ce)
 }
 void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedited)
 {
-    wGamma->setDefault(defParams->icm.workingTRCGamma);
-    wSlope->setDefault(defParams->icm.workingTRCSlope);
+   // wGamma->setDefault(defParams->icm.workingTRCGamma);
+   // wSlope->setDefault(defParams->icm.workingTRCSlope);
+    wGamma->setDefault(defParams->icm.wGamma);
+    wSlope->setDefault(defParams->icm.wSlope);
     wmidtcie->setDefault(defParams->icm.wmidtcie);
     sigmatrc->setDefault(defParams->icm.sigmatrc);
     offstrc->setDefault(defParams->icm.offstrc);
@@ -1572,8 +1585,10 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
     labgridcie->setDefault(defParams->icm.labgridcieALow, defParams->icm.labgridcieBLow , defParams->icm.labgridcieAHigh, defParams->icm.labgridcieBHigh, defParams->icm.labgridcieGx, defParams->icm.labgridcieGy, defParams->icm.labgridcieWx, defParams->icm.labgridcieWy, defParams->icm.labgridcieMx, defParams->icm.labgridcieMy);
 
     if (pedited) {
-        wGamma->setDefaultEditedState(pedited->icm.workingTRCGamma ? Edited : UnEdited);
-        wSlope->setDefaultEditedState(pedited->icm.workingTRCSlope ? Edited : UnEdited);
+     //   wGamma->setDefaultEditedState(pedited->icm.workingTRCGamma ? Edited : UnEdited);
+     //   wSlope->setDefaultEditedState(pedited->icm.workingTRCSlope ? Edited : UnEdited);
+        wGamma->setDefaultEditedState(pedited->icm.wGamma ? Edited : UnEdited);
+        wSlope->setDefaultEditedState(pedited->icm.wSlope ? Edited : UnEdited);
         wmidtcie->setDefaultEditedState(pedited->icm.wmidtcie ? Edited : UnEdited);
         sigmatrc->setDefaultEditedState(pedited->icm.sigmatrc ? Edited : UnEdited);
         offstrc->setDefaultEditedState(pedited->icm.offstrc ? Edited : UnEdited);
