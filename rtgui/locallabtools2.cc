@@ -8945,7 +8945,14 @@ Locallabcie::Locallabcie():
     cie1lightFrame->set_label_align(0.025, 0.5);
     cie1contFrame->set_label_align(0.025, 0.5);
     cie1colorFrame->set_label_align(0.025, 0.5);
+
+    ToolParamBlock* const cieP11Box = Gtk::manage(new ToolParamBlock());
+    cieP11Box->pack_start(*cieCurveEditorG);
+    cieP11Box->pack_start(*cieCurveEditorG2);
+    expLcie->add(*cieP11Box, false);
+    
     ToolParamBlock* const cieP1Box = Gtk::manage(new ToolParamBlock());
+    cieP1Box->pack_start(*expLcie, false, false);
     ToolParamBlock* const cieP1lightBox = Gtk::manage(new ToolParamBlock());
     cieP1lightBox->pack_start(*lightlcie);
     cieP1lightBox->pack_start(*lightqcie);
@@ -8974,12 +8981,6 @@ Locallabcie::Locallabcie():
     cieP1Box->pack_start(*cie1colorFrame);
     cieP1Box->pack_start(*sigmoidFrame);//disable provisory Sigmoid
 
-
-    ToolParamBlock* const cieP11Box = Gtk::manage(new ToolParamBlock());
-    cieP11Box->pack_start(*cieCurveEditorG);
-    cieP11Box->pack_start(*cieCurveEditorG2);
-    expLcie->add(*cieP11Box, false);
-    cieP1Box->pack_start(*expLcie, false, false);
     expcam16->add(*cieP1Box, false);
 
     pack_start(*expcam16, false, false);
@@ -9253,7 +9254,7 @@ void Locallabcie::previewcieChanged()
 
 void Locallabcie::setDefaultExpanderVisibility()
 {
-    expLcie->set_expanded(false);
+    expLcie->set_expanded(true);
     expjz->set_expanded(false);
     expwavjz->set_expanded(false);
     expcamscene->set_expanded(false);
