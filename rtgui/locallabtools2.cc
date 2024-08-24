@@ -11500,7 +11500,8 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             contqcie->hide();
             colorflcie->hide();
             surrHBoxcie->show();
-            expLcie->hide();
+            //expLcie->hide();
+            expLcie->show();
             surHBoxcie->show();
             sourceabscie->show();
             targabscie->show();
@@ -11684,7 +11685,8 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             contqcie->show();//hide
             colorflcie->hide();
             surrHBoxcie->show();
-            expLcie->hide();
+          //  expLcie->hide();
+            expLcie->show();
             surHBoxcie->show();
             sourceabscie->show();
             targabscie->show();
@@ -12491,8 +12493,8 @@ void Locallabcie::convertParamToSimple()
 
     // Enable all listeners
     enableListener();
-}
 
+}
 void Locallabcie::convertParamToNormal()
 {
     const LocallabParams::LocallabSpot defSpot;
@@ -12520,8 +12522,8 @@ void Locallabcie::convertParamToNormal()
     shapejz->setCurve(defSpot.jzcurve);
     shapecz->setCurve(defSpot.czcurve);
     shapeczjz->setCurve(defSpot.czjzcurve);
-    shapecie->setCurve(defSpot.ciecurve);
-    shapecie2->setCurve(defSpot.ciecurve2);
+  //  shapecie->setCurve(defSpot.ciecurve);
+  //  shapecie2->setCurve(defSpot.ciecurve2);
     lightjzcie->setValue(defSpot.lightjzcie);
     contjzcie->setValue(defSpot.contjzcie);
     detailciejz->setValue(defSpot.detailciejz);
