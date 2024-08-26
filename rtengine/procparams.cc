@@ -2403,7 +2403,7 @@ ColorManagementParams::ColorManagementParams() :
     sigmatrc(1.),
     offstrc(1.),
     residtrc(0.),
-    pyrwavtrc(3),
+    pyrwavtrc(2),    
     opacityCurveWLI{
         static_cast<double>(FCT_MinMaxCPoints),
         0.0,
@@ -2411,7 +2411,7 @@ ColorManagementParams::ColorManagementParams() :
         0.35,
         0.35,
         0.50,
-        0.85,
+        0.70,
         0.35,
         0.35,
         1.00,

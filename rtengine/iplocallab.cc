@@ -20636,13 +20636,13 @@ void ImProcFunctions::Lab_Local(
                         float white_point_disp = params->locallab.spots.at(sp).whitsig;
                         float MIDDLE_GREY = 0.01 * params->locallab.spots.at(sp).sourceGraycie;
                         float black_point =  xexpf(lp.blackevjz * std::log(2.f) + xlogf(MIDDLE_GREY));
-                        float white_pointsig = xexpf(lp.whiteevjz * std::log(2.f) + xlogf(MIDDLE_GREY));//to adapt if need and remove slider whitsig
-                        float dr = white_pointsig - black_point;
-                        bool scale = lp.issmoothcie;//scale Yb mid_gray - WhiteEv and BlavkEv
+                      //  float white_pointsig = xexpf(lp.whiteevjz * std::log(2.f) + xlogf(MIDDLE_GREY));//to adapt if need and remove slider whitsig
+                      //  float dr = white_pointsig - black_point;
+                      //  bool scale = lp.issmoothcie;//scale Yb mid_gray - WhiteEv and BlavkEv
 
-                        if(scale) {//scale Yb mean luminance scene with white : dr and black
-                            MIDDLE_GREY = MIDDLE_GREY * dr + black_point;
-                        }
+                      //  if(scale) {//scale Yb mean luminance scene with white : dr and black
+                      //      MIDDLE_GREY = MIDDLE_GREY * dr + black_point;
+                      //  }
 
 #ifdef _OPENMP
         #   pragma omp parallel for schedule(dynamic,16) if (multiThread)

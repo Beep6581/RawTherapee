@@ -265,7 +265,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, TOOL_NAME, M("TP_ICM_LABEL")), iu
     //wavelets variables
     sigmatrc = Gtk::manage(new Adjuster(M("TP_WAVELET_SIGMAFIN"), 0.025, 2.5, 0.01, 1.));
     offstrc = Gtk::manage(new Adjuster(M("TP_WAVELET_OFFSFIN"), 0.33, 1.66, 0.01, 1.));
-    pyrwavtrc = Gtk::manage(new Adjuster(M("TP_WAVELET_PYRWAVTRC"), 1, 6, 1, 3));
+    pyrwavtrc = Gtk::manage(new Adjuster(M("TP_WAVELET_PYRWAVTRC"), 1, 6, 1, 2));
     residtrc = Gtk::manage(new Adjuster(M("TP_WAVELET_RESIDTRC"), -100., 100., 1., 0.));
     opacityCurveEditorWLI = new CurveEditorGroup(options.lastIcmCurvesDir, M("TP_ICM_OPACITYWLI"));
     opacityCurveEditorWLI->setCurveListener(this);

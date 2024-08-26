@@ -1392,7 +1392,7 @@ void ColorAppearance::convertParamToNormal()
     const ColorAppearanceParams def_params;
     disableListener();
     algo->set_active (0);
-   // shape->setCurve(def_params.curve);
+    shape->setCurve(def_params.curve);
     shape2->setCurve(def_params.curve2);
     shape3->setCurve(def_params.curve3);
     shape->reset();

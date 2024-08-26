@@ -11327,7 +11327,7 @@ void Locallabcie::smoothciemetChanged()
        contsig->show();
        skewsig->show();
        whitsig->hide();
-       smoothcie->show();
+       smoothcie->hide();
        slopesmo->hide();
        slopesmor->hide();
        slopesmog->hide();
@@ -11628,7 +11628,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothciehigh->hide();
                     smoothcielnk->hide();
                     contsig->show();
-                    smoothcie->show();
+                    smoothcie->hide();
                     skewsig->show();
                     whitsig->hide();
 
@@ -11832,7 +11832,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielnk->hide();
                     smoothcieyb->hide();
                     smoothcieth->hide();
-                    smoothcie->show();
+                    smoothcie->hide();
                 } else {
                     contsig->hide();
                     skewsig->hide();
@@ -12022,7 +12022,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielnk->hide();
                     smoothcieyb->hide();
                     smoothcieth->hide();
-                    smoothcie->show();
+                    smoothcie->hide();
 
                 } else {
                     contsig->hide();
@@ -12152,7 +12152,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcielnk->hide();
                     smoothcieyb->hide();
                     smoothcieth->hide();
-                    smoothcie->show();
+                    smoothcie->hide();
 
                 } else {
                     contsig->hide();
@@ -12341,7 +12341,7 @@ void Locallabcie::updatecieGUI()
                     smoothcielnk->hide();
                     smoothcieyb->hide();
                     smoothcieth->hide();
-                    smoothcie->show();
+                    smoothcie->hide();
 
         } else {
             contsig->hide();
