@@ -2981,7 +2981,7 @@ TP_LOCALLAB_CIEMODE;Change tool position
 TP_LOCALLAB_CIEMODE_COM;Default
 TP_LOCALLAB_CIEMODE_DR;Dynamic Range
 TP_LOCALLAB_CIEMODE_TM;Tone-Mapping
-TP_LOCALLAB_CIEMODE_TOOLTIP;In Default mode, Ciecam is added at the end of the process. 'Mask and Modifications' and 'Recovery Based On Luminance Mask' are available for'Cam16 and JzCzHz' at your disposal .\nYou can also integrate Ciecam into other tools if you wish (TM, Wavelet, Dynamic Range, Log Encoding). The results for these tools will be different to those without Ciecam. In this mode, you can also use 'Mask and Modifications' and 'Recovery Based On Luminance Mask'.
+TP_LOCALLAB_CIEMODE_TOOLTIP;In Default mode, Ciecam is added at the end of the process. 'Mask And Modifications' and 'Recovery Based On Luminance Mask' are available for'Cam16 and JzCzHz' at your disposal .\nYou can also integrate Ciecam into other tools if you wish (TM, Wavelet, Dynamic Range, Log Encoding). The results for these tools will be different to those without Ciecam. In this mode, you can also use 'Mask And Modifications' and 'Recovery Based On Luminance Mask'.
 TP_LOCALLAB_CIEMODE_WAV;Wavelet
 TP_LOCALLAB_CIETOOLEXP;Curves
 TP_LOCALLAB_CIE_SMOOTHFRAME;Highlight Attenuation & Levels
@@ -3005,8 +3005,8 @@ TP_LOCALLAB_CLARI_TOOLTIP;Levels 0 to 4 (included): 'Sharp mask' is enabled\nLev
 TP_LOCALLAB_CLIPTM;Clip restored data (gain)
 TP_LOCALLAB_COFR;Color & Light
 TP_LOCALLAB_COLORDE;ΔE preview color - intensity
-TP_LOCALLAB_COLORDEPREV_TOOLTIP;Preview ΔE button in Settings will only work if you have activated 'Sharpening', 'Soft Light and Original Retinex', 'Blur/Grain and Denoise', 'Dehaze and Retinex', or 'Contrast by Detail Levels' in the 'Add tool to current spot' menu.\nFor others tools, the Preview ΔE button is in the tool, which allows previewing ΔE with several tools enabled. Prefer using Mask and Modifications.
-TP_LOCALLAB_COLORDE_TOOLTIP;Show a blue color preview for ΔE selection if negative and green if positive.\n\nMask and Modifications (show modified areas without mask): show actual modifications if positive, show enhanced modifications (luminance only) with blue and yellow if negative.
+TP_LOCALLAB_COLORDEPREV_TOOLTIP;Preview ΔE button in Settings will only work if you have activated 'Sharpening', 'Soft Light and Original Retinex', 'Blur/Grain and Denoise', 'Dehaze and Retinex', or 'Contrast by Detail Levels' in the 'Add tool to current spot' menu.\nFor others tools, the Preview ΔE button is in the tool, which allows previewing ΔE with several tools enabled. Prefer using Mask And Modifications.
+TP_LOCALLAB_COLORDE_TOOLTIP;Show a blue color preview for ΔE selection if negative and green if positive.\n\nMask And Modifications (show modified areas without mask): show actual modifications if positive, show enhanced modifications (luminance only) with blue and yellow if negative.
 TP_LOCALLAB_COLORFRAME;Dominant color
 TP_LOCALLAB_COLORSCOPE;Scope (color tools)
 TP_LOCALLAB_COLORSCOPE_TOOLTIP;Common Scope slider for Color and Light, Shadows/Highlights, Vibrance.\nOther tools have their own scope controls.
@@ -3311,7 +3311,7 @@ TP_LOCALLAB_LUM;LL - CC
 TP_LOCALLAB_LUM46LABEL;Luma levels 456: Mean=%1 High=%2
 TP_LOCALLAB_LUMADARKEST;Darkest
 TP_LOCALLAB_LUMASK;Background color/luma mask
-TP_LOCALLAB_LUMASK_TOOLTIP;Adjusts the shade of gray or color of the mask background in Show Mask (Mask and Modifications).
+TP_LOCALLAB_LUMASK_TOOLTIP;Adjusts the shade of gray or color of the mask background in Show Mask (Mask And Modifications).
 TP_LOCALLAB_LUMAWHITESEST;Lightest
 TP_LOCALLAB_LUMFRA;L*a*b* standard
 TP_LOCALLAB_LUMLABEL;Luma levels 0123: Mean=%1 High=%2
@@ -3545,35 +3545,35 @@ TP_LOCALLAB_SHARP_TOOLNAME;Sharpening
 TP_LOCALLAB_SHARRADIUS;Radius
 TP_LOCALLAB_SHORTC;Short Curves 'L' Mask
 TP_LOCALLAB_SHORTCMASK_TOOLTIP;Short circuit the 2 curves L(L) and L(H).\nAllows you to mix the current image with the original image modified by the mask job.\nUsable with masks 2, 3, 4, 6, 7.
-TP_LOCALLAB_SHOWC;Mask and Modifications
+TP_LOCALLAB_SHOWC;Mask And Modifications
 TP_LOCALLAB_SHOWC1;Merge file
-TP_LOCALLAB_SHOWCB;Mask and Modifications
+TP_LOCALLAB_SHOWCB;Mask And Modifications
 TP_LOCALLAB_SHOWDCT;Show Fourier (ƒ) process
-TP_LOCALLAB_SHOWE;Mask and Modifications
+TP_LOCALLAB_SHOWE;Mask And Modifications
 TP_LOCALLAB_SHOWFOURIER;Fourier ƒ(dct)
 TP_LOCALLAB_SHOWLAPLACE;∆ Laplacian (first)
-TP_LOCALLAB_SHOWLC;Mask and Modifications
+TP_LOCALLAB_SHOWLC;Mask And Modifications
 TP_LOCALLAB_SHOWMASK;Show mask
 TP_LOCALLAB_SHOWMASKCOL_TOOLTIP;Displays Masks and Modifications.\nBeware, you can only view one tool mask at a time.\nShow modified image: shows the modified image including the effect of any adjustments and masks.\nShow modified areas without mask: shows the modifications before any masks are applied.\nShow modified areas with mask: shows the modifications after a mask has been applied.\nShow mask: shows the aspect of the mask including the effect of any curves and filters.\nShow spot structure: allows you to see the structure-detection mask when the 'Spot structure' cursor is activated (when available).\nNote: The mask is applied before the shape detection algorithm.
 TP_LOCALLAB_SHOWMASKSOFT_TOOLTIP;Allows you to visualize the different stages of the Fourier process.\n Laplace - calculates the second derivative of the Laplace transform as a function of the threshold.\nFourier - shows the Laplacian transform with DCT.\nPoisson - shows the solution of the Poisson DCE.\nNo luminance normalization - shows result without any luminance normalization.
 TP_LOCALLAB_SHOWMASKTYP1;Blur & Noise
 TP_LOCALLAB_SHOWMASKTYP2;Denoise
 TP_LOCALLAB_SHOWMASKTYP3;Blur & Noise + Denoise
-TP_LOCALLAB_SHOWMASKTYP_TOOLTIP;Can be used with 'Mask and Modifications'.\nIf 'Blur and noise' is selected, the mask cannot be used for Denoise.\nIf Denoise is selected, the mask cannot be used for 'Blur and noise'.\nIf 'Blur and noise + Denoise' is selected, the mask is shared. Note that in this case, the Scope sliders for both 'Blur and noise' and Denoise will be active so it is advisable to use the option 'Show modifications with mask' when making any adjustments.
+TP_LOCALLAB_SHOWMASKTYP_TOOLTIP;Can be used with 'Mask And Modifications'.\nIf 'Blur and noise' is selected, the mask cannot be used for Denoise.\nIf Denoise is selected, the mask cannot be used for 'Blur and noise'.\nIf 'Blur and noise + Denoise' is selected, the mask is shared. Note that in this case, the Scope sliders for both 'Blur and noise' and Denoise will be active so it is advisable to use the option 'Show modifications with mask' when making any adjustments.
 TP_LOCALLAB_SHOWMNONE;Show modified image
 TP_LOCALLAB_SHOWMODIF;Show modified areas without mask
 TP_LOCALLAB_SHOWMODIF2;Show modified areas
 TP_LOCALLAB_SHOWMODIFMASK;Show modified areas with mask
 TP_LOCALLAB_SHOWNORMAL;No luminance normalization
-TP_LOCALLAB_SHOWPLUS;Mask and Modifications (Blur & Denoise)
+TP_LOCALLAB_SHOWPLUS;Mask And Modifications (Blur & Denoise)
 TP_LOCALLAB_SHOWPOISSON;Poisson (pde ƒ)
-TP_LOCALLAB_SHOWR;Mask and Modifications
+TP_LOCALLAB_SHOWR;Mask And Modifications
 TP_LOCALLAB_SHOWREF;Preview ΔE
-TP_LOCALLAB_SHOWS;Mask and Modifications
+TP_LOCALLAB_SHOWS;Mask And Modifications
 TP_LOCALLAB_SHOWSTRUC;Show spot structure(Advanced)
 TP_LOCALLAB_SHOWSTRUCEX;Show spot structure(Advanced)
-TP_LOCALLAB_SHOWT;Mask and Modifications
-TP_LOCALLAB_SHOWVI;Mask and Modifications
+TP_LOCALLAB_SHOWT;Mask And Modifications
+TP_LOCALLAB_SHOWVI;Mask And Modifications
 TP_LOCALLAB_SHRESFRA;Shadows/Highlights & TRC
 TP_LOCALLAB_SHTRC_TOOLTIP;Based on 'working profile' (only those provided), modifies the tones of the image by acting on a TRC (Tone Response Curve).\nGamma acts mainly on light tones.\nSlope acts mainly on dark tones.\nIt is recommended that the TRC of both devices (monitor and output profile) be sRGB (default).
 TP_LOCALLAB_SH_TOOLNAME;Shadows/Highlights & Tone Equalizer
@@ -3652,7 +3652,7 @@ TP_LOCALLAB_STRGRID;Strength
 TP_LOCALLAB_STRUC;Structure
 TP_LOCALLAB_STRUCCOL;Spot structure
 TP_LOCALLAB_STRUCCOL1;Spot structure
-TP_LOCALLAB_STRUCT_TOOLTIP;Uses the Sobel algorithm to take into account structure for shape detection.\nActivate 'Mask and Modifications' > 'Show spot structure' (Advanced mode) to see a preview of the mask (without modifications).\n\nCan be used in conjunction with the Structure Mask, Blur Mask and 'Local contrast' (by wavelet level) to improve edge detection.\n\nEffects of adjustments using Lightness, Contrast, Chrominance, Exposure or other non-mask-related tools visible using either 'Show modified image' or 'Show modified areas with mask'.
+TP_LOCALLAB_STRUCT_TOOLTIP;Uses the Sobel algorithm to take into account structure for shape detection.\nActivate 'Mask And Modifications' > 'Show spot structure' (Advanced mode) to see a preview of the mask (without modifications).\n\nCan be used in conjunction with the Structure Mask, Blur Mask and 'Local contrast' (by wavelet level) to improve edge detection.\n\nEffects of adjustments using Lightness, Contrast, Chrominance, Exposure or other non-mask-related tools visible using either 'Show modified image' or 'Show modified areas with mask'.
 TP_LOCALLAB_STRUMASKCOL;Structure mask strength
 TP_LOCALLAB_STRUMASK_TOOLTIP;Structure mask (slider) with the checkbox 'Structure mask as tool' unchecked: In this case a mask showing the structure will be generated even if none of the 3 curves is activated. Structure masks are available for mask (Blur and denoise') and mask(Color &amp; Light).
 TP_LOCALLAB_STRUSTRMASK_TOOLTIP;Moderate use of this slider is recommended!
