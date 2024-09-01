@@ -1447,13 +1447,15 @@ Camera constants:
     },
 
     { // Quality C
-        "make_model": [ "FUJIFILM GFX 100", "FUJIFILM GFX100S" ],
+        "make_model": [ "FUJIFILM GFX 100", "FUJIFILM GFX100S", "FUJIFILM GFX 100S", "FUJIFILM GFX 100 II" ],
         "dcraw_matrix" : [ 16212, -8423, -1583, -4336, 12583, 1937, -195, 726, 6199 ], // taken from ART
         "raw_crop": [
             // multi-aspect crop to account for 16-shot pixel shift images
             { "frame" : [11808, 8754], "crop" : [ 0, 2, 11664, 8734 ] },
             { "frame" : [23616, 17508], "crop" : [ 0, 4, 23328, 17468 ] }
-        ]
+        ],
+        "pdaf_pattern" : [ 0, 18 ], // From ART
+        "pdaf_offset" : 0
     },
 
     { // Quality C
@@ -3138,7 +3140,7 @@ Camera constants:
     { // Quality B
         "make_model": [ "Sony ILCE-7CR", "Sony ILCE-7RM5" ], // 7RM5 is assumed to have the same sensor as the 7CR.
         "dcraw_matrix": [ 8200, -2976, -719, -4296, 12053, 2532, -429, 1282, 5774 ], // DNG v15.2 for ILCE-7CR and ILCE-7RM5.
-        "raw_crop": [ 0, 0, -32, 0 ], // A few repeated pixels on the right edge.
+        "raw_crop": [ 0, 0, 9564, 6374 ], // From ART
         "pdaf_pattern": [ 0,12,18,36,42,60,66,72,78,96,108,120,126,138,156,168,180,186,192,198,210,222,228,240,246,252,270,276,282,288,306,312,318,330,336,348,360,366,372,378,390,396,408,420 ], // From issue #6938. Slightly different every repetition, maybe the real pattern is 3 or more multiples of 420 pixels. This is a composite.
         "pdaf_offset": 1
     },
@@ -3153,6 +3155,11 @@ Camera constants:
         // P 11 P 11 P 11 P 17 P 11 P 5 P 11 P 11 P 17 P 5 P 11 P 17 P 5 P 17 P 5 P 11 P 11 P 11 P 17 P 5 P 11 P 11 P 11 P 5 P 17 P 5 P 17 P 11 P 5 P 17 P 11 P 11 P 17 P 11 P 5
         "pdaf_pattern" : [ 0,12,24,36,54,66,72,84,96,114,120,132,150,156,174,180,192,204,216,234,240,252,264,276,282,300,306,324,336,342,360,372,384,402,414,420 ],
         "pdaf_offset" : -7
+    },
+
+    { // Quality C
+        "make_model": "SONY ILCE-9M3",
+        "raw_crop": [ 8, 8, 6008, 4008 ] // From ART
     },
 
     { // Quality B, correction for frame width

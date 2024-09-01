@@ -3796,7 +3796,7 @@ void LocallabExposure::convertParamToNormal()
     // Disable all listeners
     disableListener();
     gamex->setValue(defSpot.gamex);
-
+    laplacexp->setValue(defSpot.laplacexp);
     // Set hidden GUI widgets in Normal mode to default spot values
     structexp->setValue((double)defSpot.structexp);
     blurexpde->setValue((double)defSpot.blurexpde);
@@ -3819,6 +3819,7 @@ void LocallabExposure::convertParamToSimple()
 
     // Disable all listeners
     disableListener();
+    laplacexp->setValue(defSpot.laplacexp);
     fatlevel->setValue(defSpot.fatlevel);
     fatanchor->setValue(defSpot.fatanchor);
     norm->set_active(false);
@@ -3865,7 +3866,7 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
             fatlevel->hide();
             fatanchor->hide();
             gamex->hide();
-
+            exppde->hide();
             break;
 
         case Normal:
@@ -3893,6 +3894,7 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
             // Specific Simple mode widgets are shown in Normal mode
             softradiusexp->hide();
             blurexpde->hide();
+            exppde->hide();
 
             if (!inversex->get_active()) { // Keep widget hidden when invers is toggled
                 expgradexp->show();
@@ -3937,6 +3939,7 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
                 maskusablee->hide();
                 maskunusablee->show();
             }
+            exppde->show();
 
             expmaskexp->show();
             lapmaskexp->show();
@@ -4192,13 +4195,15 @@ void LocallabExposure::updateExposureGUI3()
         expcomp->setLabel(M("TP_LOCALLAB_EXPCOMP"));
         gamex->hide();
         expfat->show();
-        exppde->show();
+        exppde->hide();
 
         if (mode == Normal) { // Keep widgets hidden in Simple mode
             softradiusexp->show();
             expgradexp->show();
             exprecove->show();
             blurexpde->show();
+            exppde->hide();
+
         }
         if (mode == Expert) { // Keep widgets hidden in Simple mode
             softradiusexp->show();
@@ -4207,6 +4212,7 @@ void LocallabExposure::updateExposureGUI3()
             structexp->show();
             blurexpde->show();
             gamex->show();
+            exppde->show();
 
         }
 

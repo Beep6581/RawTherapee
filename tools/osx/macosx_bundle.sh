@@ -394,6 +394,7 @@ if [[ -n $NOTARY ]]; then
     ditto -c -k --sequesterRsrc --keepParent "${APP}" "${APP}.zip"
     echo "Uploading..."
     sudo xcrun notarytool submit "${APP}.zip" ${NOTARY} --wait
+    sudo xcrun stapler staple "${APP}"
 fi
 
 function CreateDmg {
@@ -401,7 +402,6 @@ function CreateDmg {
 
     msg "Preparing disk image sources at ${srcDir}:"
     cp -R "${APP}" "${srcDir}"
-    cp "${RESOURCES}"/LICENSE "${srcDir}"
     ln -s /Applications "${srcDir}"
 
     # Web bookmarks
@@ -427,21 +427,23 @@ function CreateDmg {
     msg "Creating disk image:"
     if [[ $FANCY_DMG == "ON" ]]; then
         echo "Building Fancy .dmg"
+        MESSAGE="$(cat message)"
+        magick ${PROJECT_SOURCE_DATA_DIR}/rtdmg-bkgd.png -pointsize 80 -fill Black -draw "text 14,1307 '${PROJECT_FULL_VERSION}'" -fill Salmon -draw "text 10,1300 '${PROJECT_FULL_VERSION}'" ./rtdmg-bkgd.png
+        magick ./rtdmg-bkgd.png -pointsize 90 -fill Black -gravity center -font Menlo-Bold -draw "text 5,120 \"$MESSAGE\"" -fill Red -gravity center -font Menlo-Bold -draw "text 1,124 \"$MESSAGE\"" ./rtdmg-bkgd.png
         create-dmg \
-        --background ${PROJECT_SOURCE_DATA_DIR}/rtdmg-bkgd.png \
+        --background ./rtdmg-bkgd.png \
         --volname ${PROJECT_NAME}_${PROJECT_FULL_VERSION} \
         --volicon ${PROJECT_SOURCE_DATA_DIR}/rtdmg.icns \
         --window-pos 72 72 \
-        --window-size 1000 689 \
+        --window-size 1000 692 \
         --text-size 16 \
         --icon-size 80 \
-        --icon LICENSE 810 0 \
-        --icon RawTherapee.app 250 178 \
-        --icon Applications 700 178 \
-        --icon Website.webloc 300 423 \
-        --icon Forum.webloc 420 423 \
-        --icon Report\ Bug.webloc 540 423 \
-        --icon Documentation.webloc 680 423 \
+        --icon RawTherapee.app 250 238 \
+        --icon Applications 700 238 \
+        --icon Website.webloc 300 487 \
+        --icon Forum.webloc 420 487 \
+        --icon Report\ Bug.webloc 540 487 \
+        --icon Documentation.webloc 680 487 \
         --no-internet-enable \
         --eula ${PROJECT_SOURCE_DATA_DIR}/../../LICENSE \
         --hdiutil-verbose \
@@ -484,7 +486,7 @@ function CreateDmg {
         if test -z "${BRANCH}"; then
             BRANCH=$(git rev-parse --short HEAD)
         fi
-        mv "${PROJECT_NAME}_macOS_${arch}_latest.zip" "${PROJECT_NAME}_${BRANCH}_macOS_${CMAKE_BUILD_TYPE}.zip"
+        mv "${PROJECT_NAME}_macOS_${arch}_latest.zip" "${PROJECT_NAME}_${BRANCH}_macOS_${arch}_${CMAKE_BUILD_TYPE}.zip"
     fi
 }
 

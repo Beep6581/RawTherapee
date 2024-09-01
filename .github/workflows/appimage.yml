@@ -52,7 +52,7 @@ jobs:
 
       - name: Install Exiv2
         run: |
-          EXIV2_VERSION='v0.28.1'
+          EXIV2_VERSION='v0.28.3'
           echo "Cloning Exiv2 $EXIV2_VERSION."
           git clone --depth 1 --branch "$EXIV2_VERSION" https://github.com/Exiv2/exiv2.git ext/exiv2
 
