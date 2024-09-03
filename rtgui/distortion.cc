@@ -159,13 +159,10 @@ void Distortion::defishChanged()
     }
 }
 
-void Distortion::focalLengthChanged(Adjuster *a, const double newval)
-{
-}
-
-void Distortion::setAdjusterBehavior (bool vadd)
+void Distortion::setAdjusterBehavior (bool vadd, bool focal_length_add)
 {
     distor->setAddMode(vadd);
+    focal_length->setAddMode(focal_length_add);
 }
 
 void Distortion::trimValues (rtengine::procparams::ProcParams* pp)

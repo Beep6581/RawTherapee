@@ -135,7 +135,9 @@ void LensGeometry::adjusterChanged(Adjuster *a, double newval)
                     Glib::ustring::format(scale->getValue()));
         }
         else {
-            std::cout << "Unknown adjuster given in LensGeometry::adjusterChanged, file " << __FILE__ << " line " << __LINE__ << std::endl;
+            if (settings->verbose) {
+                std::cout << "Unknown adjuster given in LensGeometry::adjusterChanged, file " << __FILE__ << " line " << __LINE__ << std::endl;
+            }
         }
     }
 }

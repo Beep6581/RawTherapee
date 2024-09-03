@@ -57,7 +57,7 @@ public:
     void setBatchMode   (bool batchMode) override;
 
     void adjusterChanged     (Adjuster* a, double newval) override;
-    void setAdjusterBehavior (bool vadd);
+    void setAdjusterBehavior (bool vadd, bool focal_length_add);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
     void idPressed           ();
     void setLensGeomListener (LensGeomListener* l)
@@ -65,5 +65,4 @@ public:
         rlistener = l;
     }
     void defishChanged (void);
-    void focalLengthChanged(Adjuster* a, double const newval);
 };
