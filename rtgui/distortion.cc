@@ -57,15 +57,23 @@ Distortion::Distortion (): FoldableToolPanel(this, TOOL_NAME, M("TP_DISTORTION_L
     distor->show();
     pack_start (*distor);
 
-    defish = Gtk::manage(new Gtk::CheckButton(M("TP_DISTORTION_DEFISH")));
+    Gtk::Frame* defish_frame = Gtk::manage (new Gtk::Frame
+            (M("TP_DISTORTION_DEFISH_FRAME")));
+    defish_frame->set_label_align(0.025, 0.5);
+    Gtk::Box* defish_vbox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    defish = Gtk::manage(new Gtk::CheckButton(M("TP_DISTORTION_DEFISH_ENABLE")));
     defish->signal_toggled().connect(sigc::mem_fun(*this, &Distortion::defishChanged));
     defish->show();
-    pack_start (*defish);
+    defish_vbox->pack_start(*defish);
 
     focal_length = Gtk::manage (new Adjuster (M("TP_DISTORTION_FOCAL_LENGTH"), 0.5, 25, 0.01, DistortionParams::DEFAULT_FOCAL_LENGTH));
     focal_length->setAdjusterListener (this);
     focal_length->show();
-    pack_start(*focal_length);
+    focal_length->setEnabled(defish->get_active());
+    defish_vbox->pack_start(*focal_length);
+
+    defish_frame->add(*defish_vbox);
+    pack_start (*defish_frame);
 }
 
 void Distortion::read (const ProcParams* pp, const ParamsEdited* pedited)
@@ -81,6 +89,7 @@ void Distortion::read (const ProcParams* pp, const ParamsEdited* pedited)
     distor->setValue (pp->distortion.amount);
     defish->set_active(pp->distortion.defish);
     focal_length->setValue(pp->distortion.focal_length);
+    focal_length->setEnabled(defish->get_active());
 
     enableListener ();
 }
@@ -146,6 +155,7 @@ void Distortion::defishChanged()
 {
     if (listener) {
         listener->panelChanged(EvDistortionDefish, defish->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+        focal_length->setEnabled(defish->get_active());
     }
 }
 
