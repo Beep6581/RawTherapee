@@ -2602,8 +2602,7 @@ TP_DIRPYREQUALIZER_THRESHOLD;Threshold
 TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts in the transitions between skin colors (hue, chroma, luma) and the rest of the image.
 TP_DISTORTION_AMOUNT;Amount
 TP_DISTORTION_AUTO_TOOLTIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
-TP_DISTORTION_DEFISH_FRAME;De-fish
-TP_DISTORTION_DEFISH_ENABLE;Enable
+TP_DISTORTION_DEFISH;De-fish
 TP_DISTORTION_FOCAL_LENGTH;Focal length
 TP_DISTORTION_LABEL;Distortion Correction
 TP_EPD_EDGESTOPPING;Edge stopping

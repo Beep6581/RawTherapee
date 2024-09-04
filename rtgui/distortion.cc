@@ -57,14 +57,13 @@ Distortion::Distortion (): FoldableToolPanel(this, TOOL_NAME, M("TP_DISTORTION_L
     distor->show();
     pack_start (*distor);
 
-    Gtk::Frame* defish_frame = Gtk::manage (new Gtk::Frame
-            (M("TP_DISTORTION_DEFISH_FRAME")));
+    Gtk::Frame* defish_frame = Gtk::manage (new Gtk::Frame());
     defish_frame->set_label_align(0.025, 0.5);
     Gtk::Box* defish_vbox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
-    defish = Gtk::manage(new Gtk::CheckButton(M("TP_DISTORTION_DEFISH_ENABLE")));
+    defish = Gtk::manage(new Gtk::CheckButton(M("TP_DISTORTION_DEFISH")));
     defish->signal_toggled().connect(sigc::mem_fun(*this, &Distortion::defishChanged));
     defish->show();
-    defish_vbox->pack_start(*defish);
+    defish_frame->set_label_widget(*defish);
 
     focal_length = Gtk::manage (new Adjuster (M("TP_DISTORTION_FOCAL_LENGTH"), 0.5, 25, 0.01, DistortionParams::DEFAULT_FOCAL_LENGTH));
     focal_length->setAdjusterListener (this);
