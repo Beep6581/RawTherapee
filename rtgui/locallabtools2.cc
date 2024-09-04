@@ -7946,7 +7946,6 @@ Locallabcie::Locallabcie():
     // ciecam specific widgets
     sensicie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
     previewcie(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
-    
     reparcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
     jabcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_JAB")))),
     modecam(Gtk::manage(new MyComboBoxText())),
@@ -8002,9 +8001,7 @@ Locallabcie::Locallabcie():
     contqcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONQL"), -100., 100., 0.5, 0.))),
     lightsigqcie(Gtk::manage(new Adjuster(M(""), -100., 100., 0.5, 0.))),
     contsigqcie(Gtk::manage(new Adjuster(M(""), -100., 100., 0.5, 0.))),
-
     contthrescie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONTHRES"), -1., 1., 0.01, 0.))),
-
     logjzFrame(Gtk::manage(new Gtk::Frame())),
     logjz(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_JZLOG")))),
     blackEvjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLACK_EV"), -16.00, 0.00, 0.01, -5.00))),
@@ -8156,7 +8153,6 @@ Locallabcie::Locallabcie():
     showmaskcieMethod(Gtk::manage(new MyComboBoxText())),
     enacieMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
     enacieMaskall(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASKALL")))),
-//    maskSHCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
     maskcieCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
     CCmaskcieshape(static_cast<FlatCurveEditor*>(maskcieCurveEditorG->addCurve(CT_Flat, "C", nullptr, false, false))),
     LLmaskcieshape(static_cast<FlatCurveEditor*>(maskcieCurveEditorG->addCurve(CT_Flat, "L", nullptr, false, false))),
@@ -8270,7 +8266,6 @@ Locallabcie::Locallabcie():
     pack_start(*previewcie);
     pack_start(*reparcie);
     modeHBoxcam->set_spacing(2);
-    //modeHBoxcam->set_tooltip_markup (M ("TP_LOCALLAB_CAMMODE_TOOLTIP"));
     Gtk::Label* modeLabelcam = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_CAMMODE") + ":"));
     modeHBoxcam->pack_start(*modeLabelcam, Gtk::PACK_SHRINK);
     modecam->append(M("TP_LOCALLAB_CAMMODE_CAM16"));
@@ -8320,10 +8315,6 @@ Locallabcie::Locallabcie():
 
     setExpandAlignProperties(expcamscene, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
-
-
-
-
     ToolParamBlock* const cieFBox = Gtk::manage(new ToolParamBlock());
     cieFBox->pack_start(*Autograycie);
     cieFBox->pack_start(*sourceGraycie);
@@ -8369,7 +8360,6 @@ Locallabcie::Locallabcie():
     setExpandAlignProperties(expprecam, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     sigmoid2Frame->set_label_align(0.025, 0.5);
-    //sigmoid2Frame->set_label_widget(*sigcie);
     logcieFrame->set_label_align(0.025, 0.5);
     logcieFrame->set_label_widget(*logcie);
     Gtk::Label* illLabel = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_ILLU") + ":"));
@@ -8466,7 +8456,6 @@ Locallabcie::Locallabcie():
 
     gamutcieconn = gamutcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::gamutcieChanged));
 
-   // ToolParamBlock* const signormBox = Gtk::manage(new ToolParamBlock());
     ToolParamBlock* const sigfraBox = Gtk::manage(new ToolParamBlock());
 
     bwcieBox->pack_start(*bwcie, Gtk::PACK_EXPAND_WIDGET);
@@ -8487,7 +8476,6 @@ Locallabcie::Locallabcie():
     comprBox->pack_start(*comprcie);
     comprBox->pack_start(*strcielog);
     comprBox->pack_start(*satcie);
-    //comprBox->pack_start(*logcieq);
     logcieFrame->add(*comprBox);
     gamcieBox->pack_start(*logcieFrame);
 
@@ -8506,7 +8494,6 @@ Locallabcie::Locallabcie():
     smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_GAMMA ROLLOFF"));
     smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_GAMMA"));
     smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_LEVELS"));
-    //smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_LEVELSTRC"));
     smoothciemet->append(M("TP_LOCALLAB_CIE_SMOOTH_SIG"));
     smoothciemet->set_active(0);
     ciesmoothBox->pack_start(*smoothBox);
@@ -8548,7 +8535,6 @@ Locallabcie::Locallabcie():
     colorBox->pack_start(*shiftxl);
     colorBox->pack_start(*shiftyl);
     colorFramecie->add(*colorBox);
-//    primillBox->pack_start(*bwcieBox);
     primillBox->pack_start(*colorFramecie);
     primillFrame->add(*primillBox);
     gamcieBox->pack_start(*primillFrame);
@@ -8562,7 +8548,6 @@ Locallabcie::Locallabcie():
     sigfraBox->pack_start(*sigmoidldacie);
     sigfraBox->pack_start(*sigmoidthcie);
     sigfraBox->pack_start(*sigmoidblcie);
-  //  sigfraBox->pack_start(*normcie);
     sigmoid2Frame->add(*sigfraBox);
     sigBox->pack_start(*sigmoid2Frame);
     sigmoidFrame->add(*sigBox);
@@ -8649,7 +8634,6 @@ Locallabcie::Locallabcie():
     jz2CurveEditorG->setCurveListener(this);
     LHshapejz->setIdentityValue(0.);
     LHshapejz->setResetCurve(FlatCurveType(defSpot.LHcurvejz.at(0)), defSpot.LHcurvejz);
-    //  LHshapejz->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
     LHshapejz->setCurveColorProvider(this, 3);
     LHshapejz->setBottomBarBgGradient(six_shape);
     jz2CurveEditorG->curveListComplete();
@@ -8950,7 +8934,7 @@ Locallabcie::Locallabcie():
     cieP11Box->pack_start(*cieCurveEditorG);
     cieP11Box->pack_start(*cieCurveEditorG2);
     expLcie->add(*cieP11Box, false);
-    
+
     ToolParamBlock* const cieP1Box = Gtk::manage(new ToolParamBlock());
     cieP1Box->pack_start(*expLcie, false, false);
     ToolParamBlock* const cieP1lightBox = Gtk::manage(new ToolParamBlock());
@@ -8979,7 +8963,7 @@ Locallabcie::Locallabcie():
     cieP1colorBox->pack_start(*rstprotectcie);
     cie1colorFrame->add(*cieP1colorBox);
     cieP1Box->pack_start(*cie1colorFrame);
-    cieP1Box->pack_start(*sigmoidFrame);//disable provisory Sigmoid
+    cieP1Box->pack_start(*sigmoidFrame);
 
     expcam16->add(*cieP1Box, false);
 
@@ -9131,7 +9115,6 @@ Locallabcie::Locallabcie():
 
     maskcieBox->pack_start(*blendmaskcie, Gtk::PACK_SHRINK, 0);
     maskcieBox->pack_start(*radmaskcie, Gtk::PACK_SHRINK, 0);
-    //maskcieBox->pack_start(*lapmaskcie, Gtk::PACK_SHRINK, 0);
     maskcieBox->pack_start(*chromaskcie, Gtk::PACK_SHRINK, 0);
     maskcieBox->pack_start(*gammaskcie, Gtk::PACK_SHRINK, 0);
     maskcieBox->pack_start(*slomaskcie, Gtk::PACK_SHRINK, 0);
@@ -9270,7 +9253,6 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
     if (showTooltips) {
         recothrescie->set_tooltip_text(M("TP_LOCALLAB_RECOTHRES02_TOOLTIP"));
         reparcie->set_tooltip_text(M("TP_LOCALLAB_LOGREPART_TOOLTIP"));
-        // cieFrame->set_tooltip_text(M("TP_LOCALLAB_LOGSCENE_TOOLTIP"));
         expcamscene->set_tooltip_text(M("TP_LOCALLAB_LOGSCENE_TOOLTIP"));
         PQFrame->set_tooltip_text(M("TP_LOCALLAB_JZPQFRA_TOOLTIP"));
         qtoj->set_tooltip_text(M("TP_LOCALLAB_JZQTOJ_TOOLTIP"));
@@ -9315,7 +9297,6 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         targetGraycie->set_tooltip_text(M("TP_COLORAPP_YBOUT_TOOLTIP"));
         detailcie->set_tooltip_text(M("TP_LOCALLAB_LOGDETAIL_TOOLTIP"));
         catadcie->set_tooltip_text(M("TP_LOCALLAB_LOGCATAD_TOOLTIP"));
-        // cie2Frame->set_tooltip_text(M("TP_LOCALLAB_LOGVIEWING_TOOLTIP"));
         expcamviewing->set_tooltip_text(M("TP_LOCALLAB_LOGVIEWING_TOOLTIP"));
         sensicie->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
         CCmaskcieshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
@@ -9327,7 +9308,6 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         mask2cieCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP"));
         Lmaskcieshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
         exprecovcie->set_tooltip_markup(M("TP_LOCALLAB_MASKRESH_TOOLTIP"));
-        // expgradcie->set_tooltip_markup(M("TP_LOCALLAB_MASKRESH_TOOLTIP"));
         strumaskcie->set_tooltip_text(M("TP_LOCALLAB_STRUSTRMASK_TOOLTIP"));
         fftcieMask->set_tooltip_text(M("TP_LOCALLAB_FFTMASK_TOOLTIP"));
         contcie->set_tooltip_text(M("TP_LOCALLAB_CONTTHMASK_TOOLTIP"));
@@ -9355,7 +9335,6 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
     } else {
         reparcie->set_tooltip_text("");
         recothrescie->set_tooltip_text("");
-        //  cieFrame->set_tooltip_text("");
         expcamscene->set_tooltip_text("");
         PQFrame->set_tooltip_text("");
         modecam->set_tooltip_text("");
@@ -9390,7 +9369,6 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         targetGraycie->set_tooltip_text("");
         detailcie->set_tooltip_text("");
         catadcie->set_tooltip_text("");
-        // cie2Frame->set_tooltip_text("");
         expcamviewing->set_tooltip_text("");
         sensicie->set_tooltip_text("");
         CCmaskcieshape->setTooltip("");
@@ -10036,7 +10014,6 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         toolcie->set_active(spot.toolcie);
         fftcieMask->set_active(spot.fftcieMask);
         contcie->setValue(spot.contcie);
-//        updateColorGUI3();
         blurcie->setValue(spot.blurcie);
         LLmaskcieshapewav->setCurve(spot.LLmaskciecurvewav);
         csThresholdcie->setValue<int>(spot.csthresholdcie);
@@ -10496,7 +10473,7 @@ void Locallabcie::updateiPrimloc(const float r_x, const float r_y, const float g
         enableListener();
         return false;
     }
-                 );
+     );
 
 }
 
@@ -11501,12 +11478,11 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             contqcie->hide();
             colorflcie->hide();
             surrHBoxcie->show();
-            //expLcie->hide();
             expLcie->show();
             surHBoxcie->show();
             sourceabscie->show();
             targabscie->show();
-            detailcie->show(); //hide
+            detailcie->show(); 
             jabcie->hide();
             modeHBoxcie->hide();
             sensicie->show();
@@ -11564,7 +11540,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             sigmoidblcie->hide();
             if (modecam->get_active_row_number() == 0) {
                 bevwevFrame->show();
-                sigmoidFrame->hide(); //show
+                sigmoidFrame->hide(); 
                 expprecam->show();
                 primillFrame->hide();
                 expmaskcie->hide();
@@ -11603,7 +11579,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcietrc->hide();
                     smoothcietrcrel->hide();
                     smoothcie->show();
-                    smoothcielum->hide();//show
+                    smoothcielum->hide();
                     smoothcielnk->show();
                     smoothciehigh->show();
                     if (smoothciehigh->get_active()) {
@@ -11611,7 +11587,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     } else {
                         smoothcieth->hide();
                     }   
-                    smoothcieyb->hide();//show
+                    smoothcieyb->hide();
                 } else if(smoothciemet->get_active_row_number() >= 5) {
                     slopesmo->hide();
                     slopesmor->hide();
@@ -11655,7 +11631,6 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             }
 
             if (modecam->get_active_row_number() == 1) {
-                //  cieFrame->hide();
                 guijzczhz();
                 lapmaskcie->setValue(defSpot.lapmaskcie);
                 enacieMaskallChanged2();
@@ -11677,21 +11652,20 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             catadcie->show();
             saturlcie->show();
             rstprotectcie->show();
-            chromlcie->show();//hide
-            huecie->show();//hide
+            chromlcie->show();
+            huecie->show();
             lightlcie->show();
-            lightqcie->show();//hide
+            lightqcie->show();
             contlcie->show();
             contthrescie->show();
-            contqcie->show();//hide
+            contqcie->show();
             colorflcie->hide();
             surrHBoxcie->show();
-          //  expLcie->hide();
             expLcie->show();
             surHBoxcie->show();
             sourceabscie->show();
             targabscie->show();
-            detailcie->show();//hide
+            detailcie->show();
             jabcie->hide();
             modeHBoxcie->hide();
             sensicie->show();
@@ -11768,7 +11742,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 bevwevFrame->show();
                 sigmoidFrame->show();
                 expprecam->show();
-                primillFrame->hide();//show
+                primillFrame->hide();
                 enacieMaskall->hide();
 
                 if(smoothciemet->get_active_row_number() == 3) {
@@ -11804,10 +11778,10 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                     smoothcietrc->hide();
                     smoothcietrcrel->hide();
                     smoothcie->show();
-                    smoothcielum->hide();//show
+                    smoothcielum->hide();
                     smoothciehigh->show();
                     smoothcielnk->show();
-                    smoothcieyb->hide();//show
+                    smoothcieyb->hide();
                     if (smoothciehigh->get_active()) {
                         smoothcieth->show();
                     } else {
@@ -12234,7 +12208,6 @@ void Locallabcie::updatecieGUI()
 
     contsigqcie->hide();
     lightsigqcie->hide();
-   // whitsig->hide();
 
     if (modecie->get_active_row_number() > 0) {
         sensicie->hide();
@@ -12456,7 +12429,6 @@ void Locallabcie::updatecieGUI()
 
     }
 
-
 }
 
 
@@ -12469,16 +12441,13 @@ void Locallabcie::convertParamToSimple()
     sigmoidblcie->setValue(defSpot.sigmoidblcie);
     normcie->set_active(defSpot.normcie);
     logcieq->set_active(defSpot.logcieq);
-    //logcie->set_active(defSpot.logcie);
     blackEvjz->setValue(defSpot.blackEvjz);
     whiteEvjz->setValue(defSpot.whiteEvjz);
     whitescie->setValue(defSpot.whitescie);
     blackscie->setValue(defSpot.blackscie);
-   // bwcie->set_active(defSpot.bwcie);
     smoothcielum->set_active(defSpot.smoothcielum);
     smoothcieyb->set_active(defSpot.smoothcieyb);
     sigq->set_active(defSpot.sigq);
-    //sigq->set_active(defSpot.sigq);
     pqremapcam16->setValue(defSpot.pqremapcam16);
     showmaskcieMethod->set_active(0);
     enacieMask->set_active(defSpot.enacieMask);
@@ -12505,17 +12474,12 @@ void Locallabcie::convertParamToNormal()
     contqcie->setValue(defSpot.contqcie);
     sigmoidblcie->setValue(defSpot.sigmoidblcie);
     normcie->set_active(defSpot.normcie);
-    //logcieq->set_active(defSpot.logcieq);
-    //logcie->set_active(defSpot.logcie);
-    //bwcie->set_active(defSpot.bwcie);
     smoothcielum->set_active(defSpot.smoothcielum);
     smoothcieyb->set_active(defSpot.smoothcieyb);
-    //contsigqcie->setValue(defSpot.contsigqcie);
     colorflcie->setValue(defSpot.colorflcie);
     lightqcie->setValue(defSpot.lightqcie);
     chromlcie->setValue(defSpot.chromlcie);
     huecie->setValue(defSpot.huecie);
-    // detailcie->setValue(defSpot.detailcie);
     jabcie->set_active(defSpot.jabcie);
     LHshapejz->setCurve(defSpot.LHcurvejz);
     CHshapejz->setCurve(defSpot.CHcurvejz);
@@ -12523,8 +12487,6 @@ void Locallabcie::convertParamToNormal()
     shapejz->setCurve(defSpot.jzcurve);
     shapecz->setCurve(defSpot.czcurve);
     shapeczjz->setCurve(defSpot.czjzcurve);
-  //  shapecie->setCurve(defSpot.ciecurve);
-  //  shapecie2->setCurve(defSpot.ciecurve2);
     lightjzcie->setValue(defSpot.lightjzcie);
     contjzcie->setValue(defSpot.contjzcie);
     detailciejz->setValue(defSpot.detailciejz);
@@ -12538,7 +12500,6 @@ void Locallabcie::convertParamToNormal()
     strsoftjzcie->setValue(defSpot.strsoftjzcie);
     thrhjzcie->setValue(defSpot.thrhjzcie);
     modecie->set_active(0);
-    //primMethod->set_active(0);
     catMethod->set_active(0);
     primMethod->set_active(0);//Prophoto
     illMethod->set_active(1);//D50
@@ -12593,8 +12554,6 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         sourceabscie->setDefault(defSpot.sourceabscie);
         saturlcie->setDefault(defSpot.saturlcie);
         rstprotectcie->setDefault(defSpot.rstprotectcie);
-        // chromlcie->setDefault(defSpot.chromlcie);
-        // huecie->setDefault(defSpot.huecie);
         chromjzcie->setDefault(defSpot.chromjzcie);
         saturjzcie->setDefault(defSpot.saturjzcie);
         huejzcie->setDefault(defSpot.huejzcie);
@@ -12603,7 +12562,6 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         thrhjzcie->setDefault(defSpot.thrhjzcie);
         lightlcie->setDefault(defSpot.lightlcie);
         lightjzcie->setDefault(defSpot.lightjzcie);
-        //lightqcie->setDefault(defSpot.lightqcie);
         lightsigqcie->setDefault(defSpot.lightsigqcie);
         contlcie->setDefault(defSpot.contlcie);
         contjzcie->setDefault(defSpot.contjzcie);
@@ -12652,13 +12610,11 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         sigmoidldajzcie->setDefault(defSpot.sigmoidldajzcie);
         sigmoidthjzcie->setDefault(defSpot.sigmoidthjzcie);
         sigmoidbljzcie->setDefault(defSpot.sigmoidbljzcie);
-        // contqcie->setDefault(defSpot.contqcie);
         contsigqcie->setDefault(defSpot.contsigqcie);
         colorflcie->setDefault(defSpot.colorflcie);
         targabscie->setDefault(defSpot.targabscie);
         targetGraycie->setDefault(defSpot.targetGraycie);
         catadcie->setDefault(defSpot.catadcie);
-        // detailcie->setDefault(defSpot.detailcie);
         strgradcie->setDefault((double)defSpot.strgradcie);
         anggradcie->setDefault((double)defSpot.anggradcie);
         feathercie->setDefault((double)defSpot.feathercie);
