@@ -3445,7 +3445,7 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
     }
 
     if (commonTrans.scale) {
-        toEdit.commonTrans.scale = mods.commonTrans.scale;
+        toEdit.commonTrans.scale = dontforceSet && options.baBehav[ADDSET_LENSGEOM_SCALE] ? toEdit.commonTrans.scale + mods.commonTrans.scale : mods.commonTrans.scale;
     }
 
     if (commonTrans.autofill) {
@@ -3464,7 +3464,7 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.distortion.defish = mods.distortion.defish;
     }
 
-    if (distortion.focal_length != DistortionParams::DEFAULT_FOCAL_LENGTH) {
+    if (distortion.focal_length) {
         toEdit.distortion.focal_length = dontforceSet && options.baBehav[ADDSET_DIST_FOCAL_LENGTH] ? toEdit.distortion.focal_length + mods.distortion.focal_length : mods.distortion.focal_length;
     }
 
