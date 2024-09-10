@@ -80,6 +80,7 @@ void XTransRAWExposure::read(const rtengine::procparams::ProcParams* pp, const P
     PexBlackRed->setValue (pp->raw.xtranssensor.blackred);//black
     PexBlackGreen->setValue (pp->raw.xtranssensor.blackgreen);//black
     PexBlackBlue->setValue (pp->raw.xtranssensor.blackblue);//black
+    checkBoxToggled (Dehablackx, CheckValue::on);
 
     enableListener ();
 }
@@ -153,6 +154,15 @@ void XTransRAWExposure::adjusterChanged(Adjuster* a, double newval)
 void XTransRAWExposure::checkBoxToggled (CheckBox* c, CheckValue newval)
 {
     if(c == Dehablackx) {
+        if(Dehablackx->getLastActive()) {
+            PexBlackRed->set_sensitive(false);
+            PexBlackGreen->set_sensitive(false);
+            PexBlackBlue->set_sensitive(false);
+        } else {
+            PexBlackRed->set_sensitive(true);
+            PexBlackGreen->set_sensitive(true);
+            PexBlackBlue->set_sensitive(true);
+        }
         if (listener) {
             listener->panelChanged (EvDehablackx, Dehablackx->getLastActive() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
         }

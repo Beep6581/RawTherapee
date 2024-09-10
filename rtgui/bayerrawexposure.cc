@@ -100,7 +100,7 @@ void BayerRAWExposure::read(const rtengine::procparams::ProcParams* pp, const Pa
     } else {
         PexBlack3->setValue (PexBlack0->getValue());
     }
-
+    checkBoxToggled (Dehablack, CheckValue::on);
     enableListener ();
 }
 
@@ -209,6 +209,17 @@ void BayerRAWExposure::checkBoxToggled (CheckBox* c, CheckValue newval)
             }
         }
     } else if(c == Dehablack) {
+        if(Dehablack->getLastActive()) {
+            PexBlack1->set_sensitive(false);
+            PexBlack2->set_sensitive(false);
+            PexBlack3->set_sensitive(false);
+            PexBlack0->set_sensitive(false);
+        } else {
+            PexBlack1->set_sensitive(true);
+            PexBlack2->set_sensitive(true);
+            PexBlack3->set_sensitive(true);
+            PexBlack0->set_sensitive(true);
+        }
         if (listener) {
             listener->panelChanged (EvDehablack, Dehablack->getLastActive() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
         }
