@@ -38,6 +38,11 @@ Distortion::Distortion (): FoldableToolPanel(this, TOOL_NAME, M("TP_DISTORTION_L
     EvDistortionDefish = mapper->newEvent(TRANSFORM, "HISTORY_MSG_DISTORTION_DEFISH");
     EvDistortionDefishVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_DISTORTION_DEFISH");
 
+    EvDistortionDefishFocalLength = mapper->newEvent(TRANSFORM, "HISTORY_MSG_DISTORTION_DEFISH_FOCAL");
+    EvDistortionDefishFocalLengthVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_DISTORTION_DEFISH_FOCAL");
+
+    setCamBasedEventsActive();
+
     rlistener = nullptr;
     autoDistor = Gtk::manage (new Gtk::Button (M("GENERAL_AUTO")));
     autoDistor->set_image (*Gtk::manage (new RTImage ("distortion-auto-small", Gtk::ICON_SIZE_BUTTON)));
@@ -155,6 +160,18 @@ void Distortion::defishChanged()
     if (listener) {
         listener->panelChanged(EvDistortionDefish, defish->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
         focal_length->setEnabled(defish->get_active());
+    }
+}
+
+void Distortion::setCamBasedEventsActive(bool active)
+{
+    if (active) {
+        event_distortion_defish = &EvDistortionDefish;
+        event_distortion_defish_focal_length = &EvDistortionDefishFocalLength;
+    }
+    else {
+      event_distortion_defish = &EvDistortionDefishVoid;
+      event_distortion_defish_focal_length = &EvDistortionDefishFocalLengthVoid;
     }
 }
 

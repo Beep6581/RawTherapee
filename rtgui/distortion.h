@@ -43,9 +43,9 @@ public:
     rtengine::ProcEvent EvDistortionDefishVoid;
     rtengine::ProcEvent* event_distortion_defish;
 
-    rtengine::ProcEvent EvDistortionFocalLength;
-    rtengine::ProcEvent EvDistortionFocalLengthVoid;
-    rtengine::ProcEvent* event_distortion_focal_length;
+    rtengine::ProcEvent EvDistortionDefishFocalLength;
+    rtengine::ProcEvent EvDistortionDefishFocalLengthVoid;
+    rtengine::ProcEvent* event_distortion_defish_focal_length;
 
     static const Glib::ustring TOOL_NAME;
 
@@ -65,4 +65,6 @@ public:
         rlistener = l;
     }
     void defishChanged (void);
+
+    void setCamBasedEventsActive(bool active = true);
 };
