@@ -128,7 +128,12 @@ void Distortion::setDefaults (const ProcParams* defParams, const ParamsEdited* p
 void Distortion::adjusterChanged(Adjuster* a, double newval)
 {
     if (listener) {
-        listener->panelChanged (EvDISTAmount, Glib::ustring::format (std::setw(4), std::fixed, std::setprecision(3), a->getValue()));
+        if (a == focal_length) {
+            listener->panelChanged (*event_distortion_defish_focal_length, Glib::ustring::format (std::setw(4), std::fixed, std::setprecision(2), a->getValue()));
+        }
+        else if (a == distor) {
+            listener->panelChanged (EvDISTAmount, Glib::ustring::format (std::setw(4), std::fixed, std::setprecision(3), a->getValue()));
+        }
     }
 }
 
