@@ -454,7 +454,7 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
     double cost = cos (params->rotate.degree * rtengine::RT_PI / 180.0);
     double sint = sin (params->rotate.degree * rtengine::RT_PI / 180.0);
 
-    double ascale = ascaleDef > 0 ? ascaleDef : (params->commonTrans.autofill && params->perspective.render ? getTransformAutoFill (oW, oH, pLCPMap) : 1.0);
+    double ascale = ascaleDef > 0 ? ascaleDef : (params->commonTrans.autofill && params->perspective.render ? getTransformAutoFill (oW, oH, pLCPMap) : 1.0 / params->commonTrans.getScale());
 
     // auxiliary variables for perspective correction
     // Simple.
@@ -518,8 +518,6 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
                 break;
         }
 
-        x_d /= params->commonTrans.getScale();
-        y_d /= params->commonTrans.getScale();
         if (params->distortion.defish) {
             x_d /= f_defish;
             y_d /= f_defish;
@@ -1194,7 +1192,7 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
             p_projection_rotate, p_projection_shift_horiz,
             p_projection_shift_vert, p_projection_scale);
 
-    const double ascale = params->commonTrans.autofill && params->perspective.render ? getTransformAutoFill(oW, oH, pLCPMap) : 1.0;
+    const double ascale = params->commonTrans.autofill && params->perspective.render ? getTransformAutoFill(oW, oH, pLCPMap) : 1.0 / params->commonTrans.getScale();
 
     const bool darkening = (params->vignetting.amount <= 0.0);
     const bool useLog = params->commonTrans.method == "log" && highQuality;
@@ -1252,8 +1250,6 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
                     break;
             }
 
-            x_d /= params->commonTrans.getScale();
-            y_d /= params->commonTrans.getScale();
             if (params->distortion.defish) {
                 x_d /= f_defish;
                 y_d /= f_defish;
