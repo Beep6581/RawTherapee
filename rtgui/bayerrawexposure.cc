@@ -138,8 +138,8 @@ BayerRAWExposure::~BayerRAWExposure()
 void BayerRAWExposure::autoBlackChanged (double reddeha, double greendeha, double bluedeha)
 {
     
-    idle_register.add(
-        [this, reddeha, greendeha, bluedeha]() -> bool
+ //   idle_register.add(
+ //       [this, reddeha, greendeha, bluedeha]() -> bool
         {
             if (reddeha != PexBlack1->getValue()) {
                 disableListener();
@@ -166,9 +166,9 @@ void BayerRAWExposure::autoBlackChanged (double reddeha, double greendeha, doubl
                 adjusterChanged(PexBlack2, 0.);
             }
 
-            return false;
+         //   return false;
         }
-    );
+ //   );
 }
 
 
