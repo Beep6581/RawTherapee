@@ -58,5 +58,5 @@ protected:
     CheckBox* Dehablack;
     IdleRegister idle_register;
     rtengine::ProcEvent EvDehablack;
-
+    rtengine::ProcEvent EvDehablackVoid;
 };

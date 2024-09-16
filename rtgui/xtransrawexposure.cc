@@ -33,7 +33,8 @@ XTransRAWExposure::XTransRAWExposure () : FoldableToolPanel(this, TOOL_NAME, M("
 {
     auto m = ProcEventMapper::getInstance();
     EvDehablackx = m->newEvent(DARKFRAME, "HISTORY_MSG_DEHABLACKX");
-    
+    EvDehablackxVoid = m->newEvent(M_VOID, "HISTORY_MSG_DEHABLACKX"); 
+ 
     PexBlackRed = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACK_RED"), -2048, 2048, 1.0, 0)); //black level
     PexBlackRed->setAdjusterListener (this);
 
@@ -115,19 +116,16 @@ void XTransRAWExposure::autoBlackxChanged (double reddeha, double greendeha, dou
                 disableListener();
                 PexBlackRed->setValue(reddeha);
                 enableListener();
-                adjusterChanged(PexBlackRed, 0.);
             }
             if (greendeha != PexBlackGreen->getValue()) {
                 disableListener();
                 PexBlackGreen->setValue(greendeha);
                 enableListener();
-                adjusterChanged(PexBlackGreen, 0.);
             }
             if (bluedeha != PexBlackBlue->getValue()) {
                 disableListener();
                 PexBlackBlue->setValue(bluedeha);
                 enableListener();
-                adjusterChanged(PexBlackBlue, 0.);
             }
 
             return false;
@@ -164,7 +162,11 @@ void XTransRAWExposure::checkBoxToggled (CheckBox* c, CheckValue newval)
             PexBlackBlue->set_sensitive(true);
         }
         if (listener) {
-            listener->panelChanged (EvDehablackx, Dehablackx->getLastActive() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+            if (Dehablackx->getLastActive()) {
+                listener->panelChanged (EvDehablackx, M("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged (EvDehablackxVoid, M("GENERAL_DISABLED"));
+            }       
         }
     }
 }

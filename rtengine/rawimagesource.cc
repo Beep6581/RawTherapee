@@ -2691,9 +2691,6 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, con
         } else {
             getMinValsXtrans();
         }
-        std::cout << "red Black : " << minVals[0] << std::endl;
-        std::cout << "green Black : " << minVals[1] << std::endl;
-        std::cout << "blue Black: " << minVals[2] << std::endl;
         //
         reddeha = minVals[0];
         greendeha = minVals[1]; 
@@ -2764,19 +2761,33 @@ void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const R
 
     if (getSensorType() == ST_BAYER || getSensorType() == ST_FOVEON) {
 
-        black_lev[0] = raw.bayersensor.black1; //R
-        black_lev[1] = raw.bayersensor.black0; //G1
-        black_lev[2] = raw.bayersensor.black2; //B
-        black_lev[3] = raw.bayersensor.black3; //G2
+        if (raw.bayersensor.Dehablack) {
+            black_lev[0] = minVals[0];
+            black_lev[1] = minVals[1];
+            black_lev[2] = minVals[2];
+            black_lev[3] = minVals[1];
+        } else {
+            black_lev[0] = raw.bayersensor.black1; //R
+            black_lev[1] = raw.bayersensor.black0; //G1
+            black_lev[2] = raw.bayersensor.black2; //B
+            black_lev[3] = raw.bayersensor.black3; //G2
+        }
 
         isMono = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO) == raw.bayersensor.method;
     } else if (getSensorType() == ST_FUJI_XTRANS) {
 
-        black_lev[0] = raw.xtranssensor.blackred; //R
-        black_lev[1] = raw.xtranssensor.blackgreen; //G1
-        black_lev[2] = raw.xtranssensor.blackblue; //B
-        black_lev[3] = raw.xtranssensor.blackgreen; //G2  (set, only used with a Bayer filter)
-
+        if (raw.xtranssensor.Dehablackx) {
+            black_lev[0] = minVals[0];
+            black_lev[1] = minVals[1];
+            black_lev[2] = minVals[2];
+            black_lev[3] = minVals[1];
+        } else {
+            black_lev[0] = raw.xtranssensor.blackred; //R
+            black_lev[1] = raw.xtranssensor.blackgreen; //G1
+            black_lev[2] = raw.xtranssensor.blackblue; //B
+            black_lev[3] = raw.xtranssensor.blackgreen; //G2  (set, only used with a Bayer filter)
+        }
+ 
         isMono = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO) == raw.xtranssensor.method;
     }
 

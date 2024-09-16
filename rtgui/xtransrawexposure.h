@@ -40,6 +40,7 @@ protected:
     CheckBox* Dehablackx;
     IdleRegister idle_register;
     rtengine::ProcEvent EvDehablackx;
+    rtengine::ProcEvent EvDehablackxVoid;
 
 private:
 //  Gtk::CheckButton*  PextwoGreen;

@@ -32,6 +32,7 @@ BayerRAWExposure::BayerRAWExposure () : FoldableToolPanel(this, TOOL_NAME, M("TP
 {
     auto m = ProcEventMapper::getInstance();
     EvDehablack = m->newEvent(DARKFRAME, "HISTORY_MSG_DEHABLACK");
+    EvDehablackVoid = m->newEvent(M_VOID, "HISTORY_MSG_DEHABLACK");
 
     PexBlack1 = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACK_1"), -2048, 2048, 1.0, 0)); //black level
     PexBlack1->setAdjusterListener (this);
@@ -138,37 +139,33 @@ BayerRAWExposure::~BayerRAWExposure()
 void BayerRAWExposure::autoBlackChanged (double reddeha, double greendeha, double bluedeha)
 {
     
- //   idle_register.add(
- //       [this, reddeha, greendeha, bluedeha]() -> bool
+    idle_register.add(
+        [this, reddeha, greendeha, bluedeha]() -> bool
         {
             if (reddeha != PexBlack1->getValue()) {
                 disableListener();
                 PexBlack1->setValue(reddeha);
                 enableListener();
-                adjusterChanged(PexBlack1, 0.);
             }
             if (greendeha != PexBlack0->getValue()) {
                 disableListener();
                 PexBlack0->setValue(greendeha);
                 enableListener();
-                adjusterChanged(PexBlack0, 0.);
             }
             if (greendeha != PexBlack3->getValue()) {
                 disableListener();
                 PexBlack3->setValue(greendeha);
                 enableListener();
-                adjusterChanged(PexBlack3, 0.);
             }
             if (bluedeha != PexBlack2->getValue()) {
                 disableListener();
                 PexBlack2->setValue(bluedeha);
                 enableListener();
-                adjusterChanged(PexBlack2, 0.);
             }
 
-         //   return false;
+            return false;
         }
- //   );
+    );
 }
 
 
@@ -221,7 +218,11 @@ void BayerRAWExposure::checkBoxToggled (CheckBox* c, CheckValue newval)
             PexBlack0->set_sensitive(true);
         }
         if (listener) {
-            listener->panelChanged (EvDehablack, Dehablack->getLastActive() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+            if (Dehablack->getLastActive()) {
+                listener->panelChanged (EvDehablack, M("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged (EvDehablackVoid, M("GENERAL_DISABLED"));
+            }            
         }
     }
 }

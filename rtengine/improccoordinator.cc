@@ -78,7 +78,6 @@ ImProcCoordinator::ImProcCoordinator() :
     sharpMaskChanged(false),
     scale(10),
     highDetailPreprocessComputed(false),
-    computeblack(false),
     highDetailRawComputed(false),
     allocated(false),
     bwAutoR(-9000.f),
@@ -389,7 +388,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         float greendeha = 0.f;
         float bluedeha = 0.f;
 
-        if ((todo & M_PREPROC)|| (!computeblack) || (!highDetailPreprocessComputed && highDetailNeeded)) {
+        if ((todo & M_PREPROC) || (!highDetailPreprocessComputed && highDetailNeeded)) {
             imgsrc->setCurrentFrame(params->raw.bayersensor.imageNum);
             imgsrc->preprocess(rp, params->lensProf, params->coarse, reddeha, greendeha, bluedeha, true);
             if(imgsrc->getSensorType() == ST_BAYER) {//Bayer
@@ -405,7 +404,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     }
                 }
             }
-            computeblack = true;
             if (flatFieldAutoClipListener && rp.ff_AutoClipControl) {
                 flatFieldAutoClipListener->flatFieldAutoClipValueChanged(imgsrc->getFlatFieldAutoClipValue());
             }
