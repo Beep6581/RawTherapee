@@ -812,9 +812,11 @@ void Crop::update(int todo)
     }
 
     const bool needstransform  = parent->ipf.needsTransform(skips(parent->fw, skip), skips(parent->fh, skip), parent->imgsrc->getRotateDegree(), parent->imgsrc->getMetaData());
+    const bool cam02 = params.colorappearance.modelmethod == "02" && params.colorappearance.enabled;
+
     // transform
    // if (needstransform || ((todo & (M_TRANSFORM | M_RGBCURVE)) && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled)) {
-    if (needstransform || ((todo & (M_TRANSFORM | M_RGBCURVE)) && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && params.colorappearance.modelmethod != "02")) {
+    if (needstransform || ((todo & (M_TRANSFORM | M_RGBCURVE)) && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !cam02)) {
         if (!transCrop) {
             transCrop = new Imagefloat(cropw, croph);
         }
@@ -836,7 +838,7 @@ void Crop::update(int todo)
     }
 
    // if ((todo & (M_TRANSFORM | M_RGBCURVE))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) {
-    if ((todo & (M_TRANSFORM | M_RGBCURVE))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && params.colorappearance.modelmethod != "02") {
+    if ((todo & (M_TRANSFORM | M_RGBCURVE))  && params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !cam02) {
 
         const int W = baseCrop->getWidth();
         const int H = baseCrop->getHeight();
@@ -1334,7 +1336,7 @@ void Crop::update(int todo)
         parent->ipf.labColorCorrectionRegions(labnCrop);
 
        // if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || (!params.colorappearance.enabled)) {
-        if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || (params.colorappearance.modelmethod != "02")) {
+        if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || (!cam02)) {
             parent->ipf.EPDToneMap(labnCrop, 0, skip);
         }
 
@@ -1342,7 +1344,7 @@ void Crop::update(int todo)
         // for all treatments Defringe, Sharpening, Contrast detail , Microcontrast they are activated if "CIECAM" function are disabled
         if (skip == 1) {
           //  if ((params.colorappearance.enabled && !settings->autocielab)  || (!params.colorappearance.enabled)) {
-            if ((params.colorappearance.enabled && !settings->autocielab)  || (params.colorappearance.modelmethod != "02")) {
+            if ((params.colorappearance.enabled && !settings->autocielab)  || (!cam02)) {
                 parent->ipf.impulsedenoise(labnCrop);
                 parent->ipf.defringe(labnCrop);
             }
@@ -1350,7 +1352,7 @@ void Crop::update(int todo)
             parent->ipf.MLsharpen(labnCrop);
 
            // if ((params.colorappearance.enabled && !settings->autocielab)  || (!params.colorappearance.enabled)) {
-            if ((params.colorappearance.enabled && !settings->autocielab)  || (params.colorappearance.modelmethod != "02")) {
+            if ((params.colorappearance.enabled && !settings->autocielab)  || (!cam02)) {
                 parent->ipf.MLmicrocontrast(labnCrop);
                 parent->ipf.sharpening(labnCrop, params.sharpening, parent->sharpMask);
             }
@@ -1360,7 +1362,7 @@ void Crop::update(int todo)
 
         if (params.dirpyrequalizer.cbdlMethod == "aft") {
            // if (((params.colorappearance.enabled && !settings->autocielab)  || (!params.colorappearance.enabled))) {
-            if (((params.colorappearance.enabled && !settings->autocielab)  || (params.colorappearance.modelmethod != "02"))) {
+            if (((params.colorappearance.enabled && !settings->autocielab)  || (!cam02))) {
                 parent->ipf.dirpyrequalizer(labnCrop, skip);
                 //  parent->ipf.Lanczoslab (labnCrop,labnCrop , 1.f/skip);
             }

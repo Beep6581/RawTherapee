@@ -383,6 +383,23 @@ public :
 
 };
 
+class AutoBlackListener
+{
+public :
+    virtual ~AutoBlackListener() = default;
+    virtual void autoBlackChanged(double reddeha, double greendeha, double bluedeha) = 0;
+
+};
+
+class AutoBlackxListener
+{
+public :
+    virtual ~AutoBlackxListener() = default;
+    virtual void autoBlackxChanged(double reddeha, double greendeha, double bluedeha) = 0;
+
+};
+
+
 class AutoChromaListener
 {
 public :
@@ -699,6 +716,8 @@ public:
     virtual void        setHistogramListener    (HistogramListener *l) = 0;
     virtual void        setPreviewImageListener (PreviewImageListener* l) = 0;
     virtual void        setAutoCamListener      (AutoCamListener* l) = 0;
+    virtual void        setAutoBlackListener      (AutoBlackListener* l) = 0;
+    virtual void        setAutoBlackxListener      (AutoBlackxListener* l) = 0;
     virtual void        setFlatFieldAutoClipListener   (FlatFieldAutoClipListener* l) = 0;
     virtual void        setFrameCountListener   (FrameCountListener* l) = 0;
     virtual void        setBayerAutoContrastListener (AutoContrastListener* l) = 0;

@@ -222,7 +222,10 @@ private:
         ImProcFunctions &ipf = * (ipf_p.get());
 
         imgsrc->setCurrentFrame(params.raw.bayersensor.imageNum);
-        imgsrc->preprocess(params.raw, params.lensProf, params.coarse, params.dirpyrDenoise.enabled);
+        float reddeha = 0.f;
+        float greendeha = 0.f;
+        float bluedeha = 0.f;
+        imgsrc->preprocess(params.raw, params.lensProf, params.coarse, reddeha, greendeha, bluedeha, params.dirpyrDenoise.enabled);
 
         if (pl) {
             pl->setProgress(0.20);
@@ -1004,7 +1007,6 @@ private:
                 }
             }
         }
-                                                                                            //colorappearance.modelmethod == "02"
         bool execcam = false;
 
         //execcam => work around for pre-ciecam in LA: about 0.1 second
@@ -1524,9 +1526,10 @@ private:
 
         ipf.chromiLuminanceCurve(nullptr, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
 
+        const bool cam02 = params.colorappearance.modelmethod == "02" && params.colorappearance.enabled;
 
     //    if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || (!params.colorappearance.enabled)) {
-        if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || (params.colorappearance.modelmethod != "02")) {
+        if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || (!cam02)) {
             ipf.EPDToneMap(labView, 0, 1);
         }
 
@@ -1537,7 +1540,7 @@ private:
         // for all treatments Defringe, Sharpening, Contrast detail ,Microcontrast they are activated if "CIECAM" function are disabled
 
       //  if ((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) {
-        if ((params.colorappearance.enabled && !settings->autocielab) || (params.colorappearance.modelmethod != "02")) {
+        if ((params.colorappearance.enabled && !settings->autocielab) || (!cam02)) {
             ipf.impulsedenoise(labView);
             ipf.defringe(labView);
         }
@@ -1548,13 +1551,13 @@ private:
 
         if (params.sharpenMicro.enabled) {
           //  if ((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) {
-            if ((params.colorappearance.enabled && !settings->autocielab) || (params.colorappearance.modelmethod != "02")) {
+            if ((params.colorappearance.enabled && !settings->autocielab) || (!cam02)) {
                 ipf.MLmicrocontrast(labView);     //!params.colorappearance.sharpcie
             }
         }
 
       //  if (((params.colorappearance.enabled && !settings->autocielab) || (!params.colorappearance.enabled)) && params.sharpening.enabled) {
-        if (((params.colorappearance.enabled && !settings->autocielab) || (params.colorappearance.modelmethod != "02")) && params.sharpening.enabled) {
+        if (((params.colorappearance.enabled && !settings->autocielab) || (!cam02)) && params.sharpening.enabled) {
             ipf.sharpening(labView, params.sharpening);
 
         }
@@ -1564,7 +1567,7 @@ private:
         // directional pyramid wavelet
         if (params.dirpyrequalizer.cbdlMethod == "aft") {
          //   if ((params.colorappearance.enabled && !settings->autocielab)  || !params.colorappearance.enabled) {
-            if ((params.colorappearance.enabled && !settings->autocielab)  || params.colorappearance.modelmethod != "02") {
+            if ((params.colorappearance.enabled && !settings->autocielab)  || !cam02) {
                 ipf.dirpyrequalizer(labView, 1);     //TODO: this is the luminance tonecurve, not the RGB one
             }
         }
@@ -1954,7 +1957,7 @@ private:
         }
 
       //  bool bwonly = params.blackwhite.enabled && !params.colorToning.enabled && !autili && !butili && !params.colorappearance.enabled;
-        bool bwonly = params.blackwhite.enabled && !params.colorToning.enabled && !autili && !butili && params.colorappearance.modelmethod != "02";
+        bool bwonly = params.blackwhite.enabled && !params.colorToning.enabled && !autili && !butili && !cam02;
 
         ///////////// Custom output gamma has been removed, the user now has to create
         ///////////// a new output profile with the ICCProfileCreator

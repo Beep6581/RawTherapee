@@ -422,8 +422,10 @@ Image8 *load_inspector_mode(const Glib::ustring &fname, eSensorType &sensorType,
     neutral.raw.xtranssensor.method = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST);
     neutral.icm.inputProfile = "(camera)";
     neutral.icm.workingProfile = settings->srgb;
-
-    src.preprocess(neutral.raw, neutral.lensProf, neutral.coarse, false);
+    float reddeha = 0.f;
+    float greendeha = 0.f;
+    float bluedeha = 0.f;
+    src.preprocess(neutral.raw, neutral.lensProf, neutral.coarse, reddeha, greendeha, bluedeha, false);
     double thresholdDummy = 0.f;
     src.demosaic(neutral.raw, false, thresholdDummy);
 
@@ -1514,9 +1516,10 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
 
 
+    bool cam02 = params.colorappearance.modelmethod == "02" && params.colorappearance.enabled;
 
    // if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || !params.colorappearance.enabled) {
-    if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || params.colorappearance.modelmethod != "02") {
+    if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || !cam02) {
         ipf.EPDToneMap (labView, 5, 6);
     }
 

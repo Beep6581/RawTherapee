@@ -1432,7 +1432,7 @@ int RawImageSource::load(const Glib::ustring &fname, bool firstFrameOnly)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void RawImageSource::preprocess(const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse, bool prepareDenoise)
+void RawImageSource::preprocess(const RAWParams &raw, const LensProfParams &lensProf, const CoarseTransformParams& coarse, float &reddeha, float &greendeha, float &bluedeha,  bool prepareDenoise)
 {
 //    BENCHFUN
     MyTime t1, t2;
@@ -1510,7 +1510,7 @@ void RawImageSource::preprocess(const RAWParams &raw, const LensProfParams &lens
 
         for (unsigned int i = 0; i < 4; ++i) {
             if (i == currFrame) {
-                copyOriginalPixels(raw, ri, rid, rif, rawData);
+                copyOriginalPixels(raw, ri, rid, rif, rawData, reddeha, greendeha, bluedeha);
                 rawDataFrames[i] = &rawData;
             } else {
                 if (!rawDataBuffer[bufferNumber]) {
@@ -1519,7 +1519,7 @@ void RawImageSource::preprocess(const RAWParams &raw, const LensProfParams &lens
 
                 rawDataFrames[i] = rawDataBuffer[bufferNumber];
                 ++bufferNumber;
-                copyOriginalPixels(raw, riFrames[i], rid, rif, *rawDataFrames[i]);
+                copyOriginalPixels(raw, riFrames[i], rid, rif, *rawDataFrames[i], reddeha, greendeha, bluedeha);
             }
         }
     } else if (numFrames == 2 && currFrame == 2) { // average the frames
@@ -1528,8 +1528,8 @@ void RawImageSource::preprocess(const RAWParams &raw, const LensProfParams &lens
         }
 
         rawDataFrames[1] = rawDataBuffer[0];
-        copyOriginalPixels(raw, riFrames[1], rid, rif, *rawDataFrames[1]);
-        copyOriginalPixels(raw, ri, rid, rif, rawData);
+        copyOriginalPixels(raw, riFrames[1], rid, rif, *rawDataFrames[1], reddeha, greendeha, bluedeha);
+        copyOriginalPixels(raw, ri, rid, rif, rawData, reddeha, greendeha, bluedeha);
 
         for (int i = 0; i < H; ++i) {
             for (int j = 0; j < W; ++j) {
@@ -1537,7 +1537,7 @@ void RawImageSource::preprocess(const RAWParams &raw, const LensProfParams &lens
             }
         }
     } else {
-        copyOriginalPixels(raw, ri, rid, rif, rawData);
+        copyOriginalPixels(raw, ri, rid, rif, rawData, reddeha, greendeha, bluedeha);
     }
 
     //FLATFIELD end
@@ -2634,8 +2634,9 @@ void RawImageSource::HLRecovery_Global(const ToneCurveParams &hrp)
 /* Copy original pixel data and
  * subtract dark frame (if present) from current image and apply flat field correction (if present)
  */
-void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, const RawImage *riDark, RawImage *riFlatFile, array2D<float> &rawData)
+void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, const RawImage *riDark, RawImage *riFlatFile, array2D<float> &rawData, float &reddeha, float &greendeha, float &bluedeha)
 {
+    minVals[0] = minVals[1] = minVals[2] = std::numeric_limits<float>::max();
     const auto tmpfilters = ri->get_filters();
     ri->set_filters(ri->prefilters); // we need 4 blacks for bayer processing
     float black[4];
@@ -2681,8 +2682,19 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, con
                 }
             }
         }
-
-
+/*
+    Copyright (c) Ingo Weyrich  2020 (heckflosse67@gmx.de)
+*/
+        
+        if (ri->getSensorType() == ST_BAYER) {
+            getMinValsBayer(ri->zeroIsBad());
+        } else {
+            getMinValsXtrans();
+        }
+        //
+        reddeha = minVals[0];
+        greendeha = minVals[1]; 
+        bluedeha = minVals[2];
         if (riFlatFile && W == riFlatFile->get_width() && H == riFlatFile->get_height()) {
             processFlatField(raw, riFlatFile, rawData, black);
         }  // flatfield
@@ -2749,19 +2761,33 @@ void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const R
 
     if (getSensorType() == ST_BAYER || getSensorType() == ST_FOVEON) {
 
-        black_lev[0] = raw.bayersensor.black1; //R
-        black_lev[1] = raw.bayersensor.black0; //G1
-        black_lev[2] = raw.bayersensor.black2; //B
-        black_lev[3] = raw.bayersensor.black3; //G2
+        if (raw.bayersensor.Dehablack) {
+            black_lev[0] = minVals[0];
+            black_lev[1] = minVals[1];
+            black_lev[2] = minVals[2];
+            black_lev[3] = minVals[1];
+        } else {
+            black_lev[0] = raw.bayersensor.black1; //R
+            black_lev[1] = raw.bayersensor.black0; //G1
+            black_lev[2] = raw.bayersensor.black2; //B
+            black_lev[3] = raw.bayersensor.black3; //G2
+        }
 
         isMono = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO) == raw.bayersensor.method;
     } else if (getSensorType() == ST_FUJI_XTRANS) {
 
-        black_lev[0] = raw.xtranssensor.blackred; //R
-        black_lev[1] = raw.xtranssensor.blackgreen; //G1
-        black_lev[2] = raw.xtranssensor.blackblue; //B
-        black_lev[3] = raw.xtranssensor.blackgreen; //G2  (set, only used with a Bayer filter)
-
+        if (raw.xtranssensor.Dehablackx) {
+            black_lev[0] = minVals[0];
+            black_lev[1] = minVals[1];
+            black_lev[2] = minVals[2];
+            black_lev[3] = minVals[1];
+        } else {
+            black_lev[0] = raw.xtranssensor.blackred; //R
+            black_lev[1] = raw.xtranssensor.blackgreen; //G1
+            black_lev[2] = raw.xtranssensor.blackblue; //B
+            black_lev[3] = raw.xtranssensor.blackgreen; //G2  (set, only used with a Bayer filter)
+        }
+ 
         isMono = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO) == raw.xtranssensor.method;
     }
 
@@ -8352,6 +8378,54 @@ void RawImageSource::getRawValues(int x, int y, int rotate, int &R, int &G, int 
         B = 0;
     }
 }
+/*
+    Copyright (c) Ingo Weyrich  2020 (heckflosse67@gmx.de)
+*/
+void RawImageSource::getMinValsXtrans() {
+#ifdef _OPENMP
+    #pragma omp parallel for reduction (min:minVals)
+#endif
+    for (int row = 0; row < H; ++row) {
+        const int c0 = ri->XTRANSFC(row, 0);
+        const int c1 = ri->XTRANSFC(row, 1);
+        const int c2 = ri->XTRANSFC(row, 2);
+        const int c3 = ri->XTRANSFC(row, 3);
+        const int c4 = ri->XTRANSFC(row, 4);
+        const int c5 = ri->XTRANSFC(row, 5);
+        const float cb0 = c_black[c0];
+        const float cb1 = c_black[c1];
+        const float cb2 = c_black[c2];
+        const float cb3 = c_black[c3];
+        const float cb4 = c_black[c4];
+        const float cb5 = c_black[c5];
+        float m0 = minVals[c0];
+        float m1 = minVals[c1];
+        float m2 = minVals[c2];
+        float m3 = minVals[c3];
+        float m4 = minVals[c4];
+        float m5 = minVals[c5];
+        int col = 0;
+        for (; col < W - 5; col += 6) {
+            m0 = rtengine::min(m0, rawData[row][col] - cb0);
+            m1 = rtengine::min(m1, rawData[row][col + 1] - cb1);
+            m2 = rtengine::min(m2, rawData[row][col + 2] - cb2);
+            m3 = rtengine::min(m3, rawData[row][col + 3] - cb3);
+            m4 = rtengine::min(m4, rawData[row][col + 4] - cb4);
+            m5 = rtengine::min(m5, rawData[row][col + 5] - cb5);
+        }
+        for (; col < W; ++col) {
+            const int c = ri->XTRANSFC(row,col);
+            minVals[c] = rtengine::min(minVals[c], rawData[row][col] - c_black[c]);
+        }
+        minVals[c0] = rtengine::min(m0, minVals[c0]);
+        minVals[c1] = rtengine::min(m1, minVals[c1]);
+        minVals[c2] = rtengine::min(m2, minVals[c2]);
+        minVals[c3] = rtengine::min(m3, minVals[c3]);
+        minVals[c4] = rtengine::min(m4, minVals[c4]);
+        minVals[c5] = rtengine::min(m5, minVals[c5]);
+
+    }
+}
 
 bool RawImageSource::isGainMapSupported() const
 {
@@ -8447,6 +8521,61 @@ void RawImageSource::applyDngGainMap(const float black[4], const std::vector<Gai
             const float f = getBilinearValue(mvals[y & 1][x & 1], xs, ys);
             const float b = rowBlack[x & 1];
             rawData[y][x] = rtengine::max((rawData[y][x] - b) * f + b, 0.f);
+        }
+    }
+}
+/*
+    Copyright (c) Ingo Weyrich  2020 (heckflosse67@gmx.de)
+*/
+void RawImageSource::getMinValsBayer(bool zeroIsBad) {
+BENCHFUN
+    if (!zeroIsBad) {
+#ifdef _OPENMP
+        #pragma omp parallel for reduction(min:minVals)
+#endif
+        for (int row = 0; row < H; ++row) {
+            const int c0 = FC(row, 0);
+            const int c1 = FC(row, 1);
+            const float cb0 = c_black[c0];
+            const float cb1 = c_black[c1];
+            float m0 = minVals[c0];
+            float m1 = minVals[c1];
+            int col = 0;
+            for (; col < W - 1; col += 2) {
+                m0 = rtengine::min(m0, rawData[row][col] - cb0);
+                m1 = rtengine::min(m1, rawData[row][col + 1] - cb1);
+            }
+            if (col < W) {
+                m0 = rtengine::min(m0, rawData[row][col] - cb0);
+            }
+            minVals[c0] = m0;
+            minVals[c1] = m1;
+        }
+    } else {
+#ifdef _OPENMP
+        #pragma omp parallel for reduction(min:minVals) schedule(dynamic,16)
+#endif
+        for (int row = 0; row < H; ++row) {
+            const int c0 = FC(row, 0);
+            const int c1 = FC(row, 1);
+            const float cb0 = c_black[c0];
+            const float cb1 = c_black[c1];
+            float m0 = minVals[c0];
+            float m1 = minVals[c1];
+            int col = 0;
+            for (; col < W - 1; col += 2) {
+                if (LIKELY(rawData[row][col] > 0.f)) {
+                    m0 = rtengine::min(m0, rawData[row][col] - cb0);
+                }
+                if (LIKELY(rawData[row][col + 1] > 0.f)) {
+                    m1 = rtengine::min(m1, rawData[row][col + 1] - cb1);
+                }
+            }
+            if (col < W && LIKELY(rawData[row][col] > 0.f)) {
+                m0 = rtengine::min(m0, rawData[row][col] - cb0);
+            }
+            minVals[c0] = m0;
+            minVals[c1] = m1;
         }
     }
 }

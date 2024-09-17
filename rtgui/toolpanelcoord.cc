@@ -1314,6 +1314,8 @@ void ToolPanelCoordinator::initImage(rtengine::StagedImageProcessor* ipc_, bool 
 
         ipc->setAutoExpListener(toneCurve);
         ipc->setAutoCamListener(colorappearance);
+        ipc->setAutoBlackListener(bayerrawexposure);
+        ipc->setAutoBlackxListener(xtransrawexposure);
         ipc->setAutoBWListener(blackwhite);
         ipc->setFrameCountListener(bayerprocess);
         ipc->setFlatFieldAutoClipListener (flatfield);
