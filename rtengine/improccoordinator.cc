@@ -875,9 +875,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         // Remove transformation if unneeded
         bool needstransform = ipf.needsTransform(fw, fh, imgsrc->getRotateDegree(), imgsrc->getMetaData());
 
-
+        const bool cam02 = params->colorappearance.modelmethod == "02" && params->colorappearance.enabled;
       //  if ((needstransform || ((todo & (M_TRANSFORM | M_RGBCURVE))  && params->dirpyrequalizer.cbdlMethod == "bef" && params->dirpyrequalizer.enabled && !params->colorappearance.enabled))) {
-        if ((needstransform || ((todo & (M_TRANSFORM | M_RGBCURVE))  && params->dirpyrequalizer.cbdlMethod == "bef" && params->dirpyrequalizer.enabled && params->colorappearance.modelmethod != "02"))) {
+        if ((needstransform || ((todo & (M_TRANSFORM | M_RGBCURVE))  && params->dirpyrequalizer.cbdlMethod == "bef" && params->dirpyrequalizer.enabled && !cam02))) {
             // Forking the image
             assert(oprevi);
             Imagefloat *op = oprevi;
@@ -900,7 +900,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         }
 
      //   if ((todo & (M_TRANSFORM | M_RGBCURVE))  && params->dirpyrequalizer.cbdlMethod == "bef" && params->dirpyrequalizer.enabled && !params->colorappearance.enabled) {
-        if ((todo & (M_TRANSFORM | M_RGBCURVE))  && params->dirpyrequalizer.cbdlMethod == "bef" && params->dirpyrequalizer.enabled && params->colorappearance.modelmethod != "02") {
+        if ((todo & (M_TRANSFORM | M_RGBCURVE))  && params->dirpyrequalizer.cbdlMethod == "bef" && params->dirpyrequalizer.enabled && !cam02) {
             const int W = oprevi->getWidth();
             const int H = oprevi->getHeight();
             LabImage labcbdl(W, H);
@@ -1845,13 +1845,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             ipf.labColorCorrectionRegions(nprevl);
 
          //   if ((params->colorappearance.enabled && !params->colorappearance.tonecie) || (!params->colorappearance.enabled)) {
-            if ((params->colorappearance.enabled && !params->colorappearance.tonecie) || (params->colorappearance.modelmethod != "02")) {
+            if ((params->colorappearance.enabled && !params->colorappearance.tonecie) || (!cam02)) {
                 ipf.EPDToneMap(nprevl, 0, scale);
             }
 
             if (params->dirpyrequalizer.cbdlMethod == "aft") {
               //  if (((params->colorappearance.enabled && !settings->autocielab) || (!params->colorappearance.enabled))) {
-                if (((params->colorappearance.enabled && !settings->autocielab) || (params->colorappearance.modelmethod != "02"))) {
+                if (((params->colorappearance.enabled && !settings->autocielab) || (!cam02))) {
                     ipf.dirpyrequalizer(nprevl, scale);
                 }
             }
