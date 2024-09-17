@@ -153,6 +153,7 @@ ImProcCoordinator::ImProcCoordinator() :
     imageListener(nullptr),
     aeListener(nullptr),
     acListener(nullptr),
+    ablListener(nullptr),
     abwListener(nullptr),
     awbListener(nullptr),
     flatFieldAutoClipListener(nullptr),
@@ -383,11 +384,26 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         }
 
         // raw auto CA is bypassed if no high detail is needed, so we have to compute it when high detail is needed
+        float reddeha = 0.f;//initialize black red, blue, green for dehaze
+        float greendeha = 0.f;
+        float bluedeha = 0.f;
+
         if ((todo & M_PREPROC) || (!highDetailPreprocessComputed && highDetailNeeded)) {
             imgsrc->setCurrentFrame(params->raw.bayersensor.imageNum);
-
-            imgsrc->preprocess(rp, params->lensProf, params->coarse);
-
+            imgsrc->preprocess(rp, params->lensProf, params->coarse, reddeha, greendeha, bluedeha, true);
+            if(imgsrc->getSensorType() == ST_BAYER) {//Bayer
+                if (ablListener) {
+                    if(rp.bayersensor.Dehablack) {
+                        ablListener->autoBlackChanged(reddeha, greendeha, bluedeha);
+                    }
+                }
+            } else if(imgsrc->getSensorType() == ST_FUJI_XTRANS) {//X trans
+                if (ablxListener) {
+                    if(rp.xtranssensor.Dehablackx) {
+                        ablxListener->autoBlackxChanged(reddeha, greendeha, bluedeha);
+                    }
+                }
+            }
             if (flatFieldAutoClipListener && rp.ff_AutoClipControl) {
                 flatFieldAutoClipListener->flatFieldAutoClipValueChanged(imgsrc->getFlatFieldAutoClipValue());
             }
@@ -3038,7 +3054,10 @@ void ImProcCoordinator::saveInputICCReference(const Glib::ustring& fname, bool a
     ppar.toneCurve.hrenabled = false;
     ppar.icm.inputProfile = "(none)";
     Imagefloat* im = new Imagefloat(fW, fH);
-    imgsrc->preprocess(ppar.raw, ppar.lensProf, ppar.coarse);
+    float reddeha = 0.f;
+    float greendeha = 0.f;
+    float bluedeha = 0.f;
+    imgsrc->preprocess(ppar.raw, ppar.lensProf, ppar.coarse,reddeha, greendeha, bluedeha, true);
     double dummy = 0.0;
     imgsrc->demosaic(ppar.raw, false, dummy);
     ColorTemp currWB = ColorTemp(validParams->wb.temperature, validParams->wb.green, validParams->wb.equal, validParams->wb.method, validParams->wb.observer);

@@ -1531,6 +1531,7 @@ struct RAWParamsEdited {
         bool exBlack2;
         bool exBlack3;
         bool exTwoGreen;
+        bool Dehablack;
         bool dcbIterations;
         bool dcbEnhance;
         bool lmmseIterations;
@@ -1569,6 +1570,7 @@ struct RAWParamsEdited {
         bool exBlackRed;
         bool exBlackGreen;
         bool exBlackBlue;
+        bool Dehablackx;
 
         bool isUnchanged() const;
     };

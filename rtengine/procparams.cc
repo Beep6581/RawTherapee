@@ -5810,6 +5810,7 @@ RAWParams::BayerSensor::BayerSensor() :
     black2(0.0),
     black3(0.0),
     twogreen(true),
+    Dehablack(false),
     linenoise(0),
     linenoiseDirection(LineNoiseDirection::BOTH),
     greenthresh(0),
@@ -5849,6 +5850,7 @@ bool RAWParams::BayerSensor::operator ==(const BayerSensor& other) const
         && black2 == other.black2
         && black3 == other.black3
         && twogreen == other.twogreen
+        && Dehablack == other.Dehablack
         && linenoise == other.linenoise
         && linenoiseDirection == other.linenoiseDirection
         && greenthresh == other.greenthresh
@@ -5952,7 +5954,9 @@ RAWParams::XTransSensor::XTransSensor() :
     ccSteps(0),
     blackred(0.0),
     blackgreen(0.0),
-    blackblue(0.0)
+    blackblue(0.0),
+    Dehablackx(false)
+
 {
 }
 
@@ -5966,7 +5970,8 @@ bool RAWParams::XTransSensor::operator ==(const XTransSensor& other) const
         && ccSteps == other.ccSteps
         && blackred == other.blackred
         && blackgreen == other.blackgreen
-        && blackblue == other.blackblue;
+        && blackblue == other.blackblue
+        && Dehablackx == other.Dehablackx;
 }
 
 bool RAWParams::XTransSensor::operator !=(const XTransSensor& other) const
@@ -8080,6 +8085,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->raw.bayersensor.exBlack2, "RAW Bayer", "PreBlack2", raw.bayersensor.black2, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.exBlack3, "RAW Bayer", "PreBlack3", raw.bayersensor.black3, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.exTwoGreen, "RAW Bayer", "PreTwoGreen", raw.bayersensor.twogreen, keyFile);
+        saveToKeyfile(!pedited || pedited->raw.bayersensor.Dehablack, "RAW Bayer", "Dehablack", raw.bayersensor.Dehablack, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.linenoise, "RAW Bayer", "LineDenoise", raw.bayersensor.linenoise, keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.linenoise, "RAW Bayer", "LineDenoiseDirection", toUnderlying(raw.bayersensor.linenoiseDirection), keyFile);
         saveToKeyfile(!pedited || pedited->raw.bayersensor.greenEq, "RAW Bayer", "GreenEqThreshold", raw.bayersensor.greenthresh, keyFile);
@@ -8112,6 +8118,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.exBlackRed, "RAW X-Trans", "PreBlackRed", raw.xtranssensor.blackred, keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.exBlackGreen, "RAW X-Trans", "PreBlackGreen", raw.xtranssensor.blackgreen, keyFile);
         saveToKeyfile(!pedited || pedited->raw.xtranssensor.exBlackBlue, "RAW X-Trans", "PreBlackBlue", raw.xtranssensor.blackblue, keyFile);
+        saveToKeyfile(!pedited || pedited->raw.xtranssensor.Dehablackx, "RAW X-Trans", "Dehablackx", raw.xtranssensor.Dehablackx, keyFile);
 
 // Raw exposition
         saveToKeyfile(!pedited || pedited->raw.exPos, "RAW", "PreExposure", raw.expos, keyFile);
@@ -11099,6 +11106,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "RAW Bayer", "PreBlack2", raw.bayersensor.black2, pedited->raw.bayersensor.exBlack2);
             assignFromKeyfile(keyFile, "RAW Bayer", "PreBlack3", raw.bayersensor.black3, pedited->raw.bayersensor.exBlack3);
             assignFromKeyfile(keyFile, "RAW Bayer", "PreTwoGreen", raw.bayersensor.twogreen, pedited->raw.bayersensor.exTwoGreen);
+            assignFromKeyfile(keyFile, "RAW Bayer", "Dehablack", raw.bayersensor.Dehablack, pedited->raw.bayersensor.Dehablack);
             assignFromKeyfile(keyFile, "RAW Bayer", "LineDenoise", raw.bayersensor.linenoise, pedited->raw.bayersensor.linenoise);
 
             if (keyFile.has_key("RAW Bayer", "LineDenoiseDirection")) {
@@ -11185,6 +11193,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "RAW X-Trans", "PreBlackRed", raw.xtranssensor.blackred, pedited->raw.xtranssensor.exBlackRed);
             assignFromKeyfile(keyFile, "RAW X-Trans", "PreBlackGreen", raw.xtranssensor.blackgreen, pedited->raw.xtranssensor.exBlackGreen);
             assignFromKeyfile(keyFile, "RAW X-Trans", "PreBlackBlue", raw.xtranssensor.blackblue, pedited->raw.xtranssensor.exBlackBlue);
+            assignFromKeyfile(keyFile, "RAW X-Trans", "Dehablackx", raw.xtranssensor.Dehablackx, pedited->raw.xtranssensor.Dehablackx);
         }
 
         if (keyFile.has_group("Film Negative")) {

@@ -182,6 +182,8 @@ protected:
     PreviewImageListener* imageListener;
     AutoExpListener* aeListener;
     AutoCamListener* acListener;
+    AutoBlackListener* ablListener;
+    AutoBlackxListener* ablxListener;
     AutoBWListener* abwListener;
     AutoWBListener* awbListener;
     FlatFieldAutoClipListener *flatFieldAutoClipListener;
@@ -518,6 +520,15 @@ public:
     {
         acListener = acl;
     }
+    void setAutoBlackListener  (AutoBlackListener* abl) override
+    {
+        ablListener = abl;
+    }
+    void setAutoBlackxListener  (AutoBlackxListener* ablx) override
+    {
+        ablxListener = ablx;
+    }
+    
     void setAutoBWListener   (AutoBWListener* abw) override
     {
         abwListener = abw;

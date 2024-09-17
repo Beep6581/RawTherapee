@@ -222,7 +222,10 @@ private:
         ImProcFunctions &ipf = * (ipf_p.get());
 
         imgsrc->setCurrentFrame(params.raw.bayersensor.imageNum);
-        imgsrc->preprocess(params.raw, params.lensProf, params.coarse, params.dirpyrDenoise.enabled);
+        float reddeha = 0.f;
+        float greendeha = 0.f;
+        float bluedeha = 0.f;
+        imgsrc->preprocess(params.raw, params.lensProf, params.coarse, reddeha, greendeha, bluedeha, params.dirpyrDenoise.enabled);
 
         if (pl) {
             pl->setProgress(0.20);

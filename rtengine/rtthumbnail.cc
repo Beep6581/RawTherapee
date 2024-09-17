@@ -422,8 +422,10 @@ Image8 *load_inspector_mode(const Glib::ustring &fname, eSensorType &sensorType,
     neutral.raw.xtranssensor.method = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST);
     neutral.icm.inputProfile = "(camera)";
     neutral.icm.workingProfile = settings->srgb;
-
-    src.preprocess(neutral.raw, neutral.lensProf, neutral.coarse, false);
+    float reddeha = 0.f;
+    float greendeha = 0.f;
+    float bluedeha = 0.f;
+    src.preprocess(neutral.raw, neutral.lensProf, neutral.coarse, reddeha, greendeha, bluedeha, false);
     double thresholdDummy = 0.f;
     src.demosaic(neutral.raw, false, thresholdDummy);
 

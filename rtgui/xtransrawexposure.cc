@@ -31,6 +31,10 @@ const Glib::ustring XTransRAWExposure::TOOL_NAME = "xtransrawexposure";
 
 XTransRAWExposure::XTransRAWExposure () : FoldableToolPanel(this, TOOL_NAME, M("TP_EXPOS_BLACKPOINT_LABEL"))
 {
+    auto m = ProcEventMapper::getInstance();
+    EvDehablackx = m->newEvent(DARKFRAME, "HISTORY_MSG_DEHABLACKX");
+    EvDehablackxVoid = m->newEvent(M_VOID, "HISTORY_MSG_DEHABLACKX"); 
+ 
     PexBlackRed = Gtk::manage(new Adjuster (M("TP_RAWEXPOS_BLACK_RED"), -2048, 2048, 1.0, 0)); //black level
     PexBlackRed->setAdjusterListener (this);
 
@@ -49,10 +53,14 @@ XTransRAWExposure::XTransRAWExposure () : FoldableToolPanel(this, TOOL_NAME, M("
     PexBlackBlue->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     PexBlackBlue->show();
+    Dehablackx = Gtk::manage(new CheckBox(M("TP_RAWEXPOS_DEHA"), multiImage));// Black dehaze
+    Dehablackx->set_active (false);
+    Dehablackx->setCheckBoxListener (this);
 
     pack_start( *PexBlackRed, Gtk::PACK_SHRINK, 0);//black
     pack_start( *PexBlackGreen, Gtk::PACK_SHRINK, 0);//black
     pack_start( *PexBlackBlue, Gtk::PACK_SHRINK, 0);//black
+    pack_start( *Dehablackx, Gtk::PACK_SHRINK, 0);//black Dehaze
 
     PexBlackRed->setLogScale(100, 0);
     PexBlackGreen->setLogScale(100, 0);
@@ -68,10 +76,12 @@ void XTransRAWExposure::read(const rtengine::procparams::ProcParams* pp, const P
         PexBlackGreen->setEditedState( pedited->raw.xtranssensor.exBlackGreen ? Edited : UnEdited );
         PexBlackBlue->setEditedState( pedited->raw.xtranssensor.exBlackBlue ? Edited : UnEdited );
     }
+    Dehablackx->setValue (pp->raw.xtranssensor.Dehablackx);
 
     PexBlackRed->setValue (pp->raw.xtranssensor.blackred);//black
     PexBlackGreen->setValue (pp->raw.xtranssensor.blackgreen);//black
     PexBlackBlue->setValue (pp->raw.xtranssensor.blackblue);//black
+    checkBoxToggled (Dehablackx, CheckValue::on);
 
     enableListener ();
 }
@@ -81,13 +91,47 @@ void XTransRAWExposure::write( rtengine::procparams::ProcParams* pp, ParamsEdite
     pp->raw.xtranssensor.blackred   = PexBlackRed->getValue();// black
     pp->raw.xtranssensor.blackgreen = PexBlackGreen->getValue();// black
     pp->raw.xtranssensor.blackblue  = PexBlackBlue->getValue();// black
+    pp->raw.xtranssensor.Dehablackx = Dehablackx->getLastActive();
 
     if (pedited) {
         pedited->raw.xtranssensor.exBlackRed = PexBlackRed->getEditedState ();//black
         pedited->raw.xtranssensor.exBlackGreen = PexBlackGreen->getEditedState ();//black
         pedited->raw.xtranssensor.exBlackBlue = PexBlackBlue->getEditedState ();//black
+        pedited->raw.xtranssensor.Dehablackx = !Dehablackx->get_inconsistent();
     }
 
+}
+
+XTransRAWExposure::~XTransRAWExposure()
+{
+    idle_register.destroy();
+}
+
+void XTransRAWExposure::autoBlackxChanged (double reddeha, double greendeha, double bluedeha)
+{
+    idle_register.add(
+        [this, reddeha, greendeha, bluedeha]() -> bool
+        {
+            if (reddeha != PexBlackRed->getValue()) {
+                disableListener();
+                PexBlackRed->setValue(reddeha);
+                enableListener();
+            }
+            if (greendeha != PexBlackGreen->getValue()) {
+                disableListener();
+                PexBlackGreen->setValue(greendeha);
+                enableListener();
+            }
+            if (bluedeha != PexBlackBlue->getValue()) {
+                disableListener();
+                PexBlackBlue->setValue(bluedeha);
+                enableListener();
+            }
+
+            return false;
+        }
+    );
+    
 }
 
 void XTransRAWExposure::adjusterChanged(Adjuster* a, double newval)
@@ -104,6 +148,29 @@ void XTransRAWExposure::adjusterChanged(Adjuster* a, double newval)
         }
     }
 }
+
+void XTransRAWExposure::checkBoxToggled (CheckBox* c, CheckValue newval)
+{
+    if(c == Dehablackx) {
+        if(Dehablackx->getLastActive()) {
+            PexBlackRed->set_sensitive(false);
+            PexBlackGreen->set_sensitive(false);
+            PexBlackBlue->set_sensitive(false);
+        } else {
+            PexBlackRed->set_sensitive(true);
+            PexBlackGreen->set_sensitive(true);
+            PexBlackBlue->set_sensitive(true);
+        }
+        if (listener) {
+            if (Dehablackx->getLastActive()) {
+                listener->panelChanged (EvDehablackx, M("GENERAL_ENABLED"));
+            } else {
+                listener->panelChanged (EvDehablackxVoid, M("GENERAL_DISABLED"));
+            }       
+        }
+    }
+}
+
 
 void XTransRAWExposure::setBatchMode(bool batchMode)
 {
