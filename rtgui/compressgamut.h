@@ -52,6 +52,7 @@ protected:
     rtengine::ProcEvent Evcgdy;
     rtengine::ProcEvent Evcgroll;
     rtengine::ProcEvent Evcgpwr;
+    rtengine::ProcEvent Evcgenabled;
 
 public:
     static const Glib::ustring TOOL_NAME;

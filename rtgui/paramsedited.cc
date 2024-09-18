@@ -3418,6 +3418,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.cg.rolloff = mods.cg.rolloff;
     }
 
+    if (cg.enabled) {
+        toEdit.cg.enabled = mods.cg.enabled;
+    }
+
     if (toneEqualizer.enabled) {
         toEdit.toneEqualizer.enabled = mods.toneEqualizer.enabled;
     }

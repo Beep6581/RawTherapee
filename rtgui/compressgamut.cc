@@ -39,20 +39,27 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     Evcgdy = m->newEvent(WB, "HISTORY_MSG_CG_YELLOWLIM");
     Evcgroll = m->newEvent(WB, "HISTORY_MSG_CG_ROLLOFF");
     Evcgpwr = m->newEvent(WB, "HISTORY_MSG_CG_VALUE");
+    Evcgenabled = m->newEvent(WB, "HISTORY_MSG_CG_ENABLED");
 
-    Gtk::Box* hb = Gtk::manage (new Gtk::Box ());
-    hb->pack_start(*Gtk::manage(new Gtk::Label(M("TP_COMPRESSGAMUT_MAIN_COLORSPACE") + ": ")), Gtk::PACK_SHRINK);
+
+    Gtk::Frame *iFrame = Gtk::manage(new Gtk::Frame(M("TP_COMPRESSGAMUT_MAIN_COLORSPACE")));
+
+    iFrame->set_label_align(0.025, 0.5);
+    iFrame->set_tooltip_markup (M("PREFERENCES_WBACORR_TOOLTIP"));
+
+    ToolParamBlock* const iBox = Gtk::manage(new ToolParamBlock());
+    
     colorspace = Gtk::manage(new MyComboBoxText());
     colorspace->append(M("TP_COMPRESSGAMUT_REC2020"));
     colorspace->append(M("TP_COMPRESSGAMUT_PROPHOTO"));
     colorspace->append(M("TP_COMPRESSGAMUT_SRGB"));
     colorspace->append(M("TP_COMPRESSGAMUT_DCIP3"));
     colorspace->append(M("TP_COMPRESSGAMUT_ACESP1"));
-    hb->pack_start(*colorspace);
-    pack_start(*hb);
+    iBox->pack_start(*colorspace);
+    iFrame->add(*iBox);
+    pack_start(*iFrame);
     colorspaceconn = colorspace->signal_changed().connect(sigc::mem_fun(*this, &Compressgamut::colorspaceChanged));
 
-    pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)));
 
     th_c = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_CYANTH"), 0., 0.999, 0.001, 0.815));
     th_m = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_MAGENTATH"), 0., 0.999, 0.001, 0.803));
@@ -62,24 +69,24 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     thFrame->set_label_align(0.025, 0.5);
     Gtk::Box *thVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
-    thVBox->pack_start (*th_c);
-    thVBox->pack_start (*th_m);
-    thVBox->pack_start (*th_y);
+    thVBox->pack_start (*th_c, Gtk::PACK_SHRINK);
+    thVBox->pack_start (*th_m, Gtk::PACK_SHRINK);
+    thVBox->pack_start (*th_y, Gtk::PACK_SHRINK);
     thFrame->add(*thVBox);
-    pack_start(*thFrame, Gtk::PACK_EXPAND_WIDGET);
+    pack_start(*thFrame, Gtk::PACK_SHRINK);//, Gtk::PACK_EXPAND_WIDGET);
 
     d_c = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_CYANLIM"), 1.001, 2.0, 0.001, 1.147));
     d_m = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_MAGENTALIM"), 1.001, 2.0, 0.001, 1.264));
     d_y = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_YELLOWLIM"), 1.001, 2.0, 0.001, 1.312));
-    
+
     Gtk::Frame *limFrame = Gtk::manage(new Gtk::Frame(M("TP_COMPRESSGAMUT_LIMIT")));
     limFrame->set_label_align(0.025, 0.5);
     Gtk::Box *limVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
-    limVBox->pack_start (*d_c);
-    limVBox->pack_start (*d_m);
-    limVBox->pack_start (*d_y);
+    limVBox->pack_start (*d_c, Gtk::PACK_SHRINK);
+    limVBox->pack_start (*d_m, Gtk::PACK_SHRINK);
+    limVBox->pack_start (*d_y, Gtk::PACK_SHRINK);
     limFrame->add(*limVBox);
-    pack_start(*limFrame, Gtk::PACK_EXPAND_WIDGET);
+    pack_start(*limFrame, Gtk::PACK_SHRINK);//, Gtk::PACK_EXPAND_WIDGET);
 
 
     rolloff = Gtk::manage(new Gtk::CheckButton(M("TP_COMPRESSGAMUT_ROLLOFF")));
@@ -89,11 +96,20 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     Gtk::Frame *rollFrame = Gtk::manage(new Gtk::Frame());
     rollFrame->set_label_align(0.025, 0.5);
     rollFrame->set_label_widget(*rolloff);
-    ToolParamBlock* const rollvBox = Gtk::manage(new ToolParamBlock());
-    rollvBox->pack_start (*pwr);
-    rollFrame->add(*rollvBox);
-    pack_start(*rollFrame, Gtk::PACK_EXPAND_WIDGET);
-    show_all_children ();
+    Gtk::Box *rollVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    
+    rollVBox->pack_start (*pwr, Gtk::PACK_SHRINK);
+    rollFrame->add(*rollVBox);
+    pack_start(*rollFrame, Gtk::PACK_SHRINK);//, Gtk::PACK_EXPAND_WIDGET);
+    th_c->setAdjusterListener (this);
+    th_m->setAdjusterListener (this);
+    th_y->setAdjusterListener (this);
+    d_c->setAdjusterListener (this);
+    d_m->setAdjusterListener (this);
+    d_y->setAdjusterListener (this);
+    pwr->setAdjusterListener (this);
+    
+    //show_all_children ();
 
 }
 
@@ -106,20 +122,18 @@ void Compressgamut::read (const ProcParams* pp, const ParamsEdited* pedited)
         th_c->setEditedState       (pedited->cg.th_c ? Edited : UnEdited);
         th_m->setEditedState       (pedited->cg.th_m ? Edited : UnEdited);
         th_y->setEditedState       (pedited->cg.th_y ? Edited : UnEdited);
-        d_c->setEditedState       (pedited->cg.d_c ? Edited : UnEdited);
-        d_m->setEditedState       (pedited->cg.d_m ? Edited : UnEdited);
-        d_y->setEditedState       (pedited->cg.d_y ? Edited : UnEdited);
-        pwr->setEditedState       (pedited->cg.pwr ? Edited : UnEdited);
+        d_c->setEditedState        (pedited->cg.d_c ? Edited : UnEdited);
+        d_m->setEditedState        (pedited->cg.d_m ? Edited : UnEdited);
+        d_y->setEditedState        (pedited->cg.d_y ? Edited : UnEdited);
+        pwr->setEditedState        (pedited->cg.pwr ? Edited : UnEdited);
 
-
-        set_inconsistent             (multiImage && !pedited->cg.enabled);
+        set_inconsistent           (multiImage && !pedited->cg.enabled);
 
     }
-    if (!pedited->cg.colorspace) {
-        colorspace->set_active_text(M("GENERAL_UNCHANGED"));
-    }
 
-    setEnabled (pp->sh.enabled);
+    setEnabled (pp->cg.enabled);
+    
+    
     rolloffconn.block (true);
     rolloff->set_active (pp->cg.rolloff);
     rolloffconn.block (false);
@@ -147,89 +161,113 @@ void Compressgamut::read (const ProcParams* pp, const ParamsEdited* pedited)
     colorspaceconn.block (false);
     rolloff_change();
     colorspaceChanged();
+    enabledChanged ();
     enableListener ();
 }
 
 void Compressgamut::write (ProcParams* pp, ParamsEdited* pedited)
 {
-    /*
-    pp->sh.radius        = (int)radius->getValue ();
-    pp->sh.highlights    = (int)highlights->getValue ();
-    pp->sh.htonalwidth   = (int)h_tonalwidth->getValue ();
-    pp->sh.shadows       = (int)shadows->getValue ();
-    pp->sh.stonalwidth   = (int)s_tonalwidth->getValue ();
-    pp->sh.enabled       = getEnabled();
+
+    pp->cg.th_c = th_c->getValue ();
+    pp->cg.th_m = th_m->getValue ();
+    pp->cg.th_y = th_y->getValue ();
+    pp->cg.d_c = d_c->getValue ();
+    pp->cg.d_m = d_m->getValue ();
+    pp->cg.d_y = d_y->getValue ();
+    pp->cg.pwr = pwr->getValue ();
+    pp->cg.rolloff = rolloff->get_active();
+    pp->cg.enabled = getEnabled();
 
     if (colorspace->get_active_row_number() == 0) {
-        pp->sh.lab = false;
-    } else if (colorspace->get_active_row_number() == 1) {
-        pp->sh.lab = true;
+        pp->cg.colorspace = "rec2020";
+    } else if (colorspace->get_active_row_number() == 1){
+        pp->cg.colorspace = "prophoto";
+    } else if (colorspace->get_active_row_number() == 2){
+        pp->cg.colorspace = "srgb";
+    } else if (colorspace->get_active_row_number() == 3){
+        pp->cg.colorspace = "dcip3";
+    } else if (colorspace->get_active_row_number() == 4){
+        pp->cg.colorspace = "acesp1";
     }
 
+
     if (pedited) {
-        pedited->sh.radius          = radius->getEditedState ();
-        pedited->sh.highlights      = highlights->getEditedState ();
-        pedited->sh.htonalwidth     = h_tonalwidth->getEditedState ();
-        pedited->sh.shadows         = shadows->getEditedState ();
-        pedited->sh.stonalwidth     = s_tonalwidth->getEditedState ();
-        pedited->sh.enabled         = !get_inconsistent();
-        pedited->sh.lab = colorspace->get_active_row_number() != 2;
+        pedited->cg.th_c          = th_c->getEditedState ();
+        pedited->cg.th_m          = th_m->getEditedState ();
+        pedited->cg.th_y          = th_y->getEditedState ();
+        pedited->cg.d_c           = d_c->getEditedState ();
+        pedited->cg.d_m           = d_m->getEditedState ();
+        pedited->cg.d_y           = d_y->getEditedState ();
+        pedited->cg.pwr           = pwr->getEditedState ();
+        pedited->cg.enabled       = !get_inconsistent();
+        pedited->cg.colorspace = colorspace->get_active_row_number() != 5;
     }
-    */
+
 }
 
 void Compressgamut::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)
 {
-/*
-    radius->setDefault (defParams->sh.radius);
-    highlights->setDefault (defParams->sh.highlights);
-    h_tonalwidth->setDefault (defParams->sh.htonalwidth);
-    shadows->setDefault (defParams->sh.shadows);
-    s_tonalwidth->setDefault (defParams->sh.stonalwidth);
+
+    th_c->setDefault (defParams->cg.th_c);
+    th_m->setDefault (defParams->cg.th_m);
+    th_y->setDefault (defParams->cg.th_y);
+    d_c->setDefault (defParams->cg.d_c);
+    d_m->setDefault (defParams->cg.d_m);
+    d_y->setDefault (defParams->cg.d_y);
+    pwr->setDefault (defParams->cg.pwr);
 
     if (pedited) {
-        radius->setDefaultEditedState       (pedited->sh.radius ? Edited : UnEdited);
-        highlights->setDefaultEditedState   (pedited->sh.highlights ? Edited : UnEdited);
-        h_tonalwidth->setDefaultEditedState (pedited->sh.htonalwidth ? Edited : UnEdited);
-        shadows->setDefaultEditedState      (pedited->sh.shadows ? Edited : UnEdited);
-        s_tonalwidth->setDefaultEditedState (pedited->sh.stonalwidth ? Edited : UnEdited);
+        th_c->setDefaultEditedState       (pedited->cg.th_c ? Edited : UnEdited);
+        th_m->setDefaultEditedState       (pedited->cg.th_m ? Edited : UnEdited);
+        th_y->setDefaultEditedState       (pedited->cg.th_y ? Edited : UnEdited);
+        d_c->setDefaultEditedState        (pedited->cg.d_c ? Edited : UnEdited);
+        d_m->setDefaultEditedState        (pedited->cg.d_m ? Edited : UnEdited);
+        d_y->setDefaultEditedState        (pedited->cg.d_y ? Edited : UnEdited);
+        pwr->setDefaultEditedState        (pedited->cg.pwr ? Edited : UnEdited);
+        
     } else {
-        radius->setDefaultEditedState       (Irrelevant);
-        highlights->setDefaultEditedState   (Irrelevant);
-        h_tonalwidth->setDefaultEditedState (Irrelevant);
-        shadows->setDefaultEditedState      (Irrelevant);
-        s_tonalwidth->setDefaultEditedState (Irrelevant);
+        th_c->setDefaultEditedState       (Irrelevant);
+        th_m->setDefaultEditedState       (Irrelevant);
+        th_y->setDefaultEditedState       (Irrelevant);
+        d_c->setDefaultEditedState       (Irrelevant);
+        d_m->setDefaultEditedState       (Irrelevant);
+        d_y->setDefaultEditedState       (Irrelevant);
+        pwr->setDefaultEditedState       (Irrelevant);
     }
-    */
+
 }
 
 void Compressgamut::adjusterChanged (Adjuster* a, double newval)
 {
-    /*
+    
     if (listener && getEnabled()) {
-        const Glib::ustring costr = Glib::ustring::format ((int)a->getValue());
+        const Glib::ustring costr = Glib::ustring::format (a->getValue());
 
-        if (a == highlights) {
-            listener->panelChanged (EvSHHighlights, costr);
-        } else if (a == h_tonalwidth) {
-            listener->panelChanged (EvSHHLTonalW, costr);
-        } else if (a == shadows) {
-            listener->panelChanged (EvSHShadows, costr);
-        } else if (a == s_tonalwidth) {
-            listener->panelChanged (EvSHSHTonalW, costr);
-        } else if (a == radius) {
-            listener->panelChanged (EvSHRadius, costr);
+        if (a == th_c) {
+            listener->panelChanged (Evcgthc, costr);
+        } else if (a == th_m) {
+            listener->panelChanged (Evcgthm, costr);
+        } else if (a == th_y) {
+            listener->panelChanged (Evcgthy, costr);
+        } else if (a == d_c) {
+            listener->panelChanged (Evcgdc, costr);
+        } else if (a == d_m) {
+            listener->panelChanged (Evcgdm, costr);
+        } else if (a == d_y) {
+            listener->panelChanged (Evcgdy, costr);
+        } else if (a == pwr) {
+            listener->panelChanged (Evcgpwr, costr);
         }
     }
-    */
+   
 }
 
 void Compressgamut::rolloff_change()
 {
     if (rolloff->get_active()) {
-        pwr->set_sensitive(false);
-    } else {
         pwr->set_sensitive(true);
+    } else {
+        pwr->set_sensitive(false);
     }
 
     if (multiImage) {
@@ -264,17 +302,16 @@ void Compressgamut::colorspaceChanged()
 
 void Compressgamut::enabledChanged ()
 {
-    /*
     if (listener) {
         if (get_inconsistent()) {
-            listener->panelChanged (EvSHEnabled, M("GENERAL_UNCHANGED"));
+            listener->panelChanged (Evcgenabled, M("GENERAL_UNCHANGED"));
         } else if (getEnabled()) {
-            listener->panelChanged (EvSHEnabled, M("GENERAL_ENABLED"));
+            listener->panelChanged (Evcgenabled, M("GENERAL_ENABLED"));
         } else {
-            listener->panelChanged (EvSHEnabled, M("GENERAL_DISABLED"));
+            listener->panelChanged (Evcgenabled, M("GENERAL_DISABLED"));
         }
     }
-    */
+    
 }
 /*
 void ShadowsHighlights::colorspaceChanged()
