@@ -101,7 +101,7 @@ void Compressgamut::read (const ProcParams* pp, const ParamsEdited* pedited)
 {
 
     disableListener ();
-    /*
+   /*
     if (pedited) {
         radius->setEditedState       (pedited->sh.radius ? Edited : UnEdited);
         highlights->setEditedState   (pedited->sh.highlights ? Edited : UnEdited);
