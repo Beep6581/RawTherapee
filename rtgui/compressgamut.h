@@ -38,10 +38,20 @@ protected:
     Adjuster* d_y;
     Adjuster* pwr;
     MyComboBoxText *colorspace;
+    sigc::connection colorspaceconn;
     Gtk::CheckButton* rolloff;
     sigc::connection rolloffconn;
+    bool lastrolloff;
 
     rtengine::ProcEvent EvcgColorspace;
+    rtengine::ProcEvent Evcgthc;
+    rtengine::ProcEvent Evcgthm;
+    rtengine::ProcEvent Evcgthy;
+    rtengine::ProcEvent Evcgdc;
+    rtengine::ProcEvent Evcgdm;
+    rtengine::ProcEvent Evcgdy;
+    rtengine::ProcEvent Evcgroll;
+    rtengine::ProcEvent Evcgpwr;
 
 public:
     static const Glib::ustring TOOL_NAME;
@@ -60,5 +70,5 @@ public:
   //  void setAdjusterBehavior (bool hadd, bool sadd);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
 
- //   void colorspaceChanged();
+    void colorspaceChanged();
 };

@@ -30,8 +30,16 @@ const Glib::ustring Compressgamut::TOOL_NAME = "compressgamut";
 Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPRESSGAMUT_LABEL"), false, true)
 {
     auto m = ProcEventMapper::getInstance();
-    EvcgColorspace = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_CG_COLORSPACE");
-    
+    EvcgColorspace = m->newEvent(WB, "HISTORY_MSG_CG_COLORSPACE");
+    Evcgthc = m->newEvent(WB, "HISTORY_MSG_CG_CYANTH");
+    Evcgthm = m->newEvent(WB, "HISTORY_MSG_CG_MAGENTATH");
+    Evcgthy = m->newEvent(WB, "HISTORY_MSG_CG_YELLOWTH");
+    Evcgdc = m->newEvent(WB, "HISTORY_MSG_CG_CYANLIM");
+    Evcgdm = m->newEvent(WB, "HISTORY_MSG_CG_MAGENTALIM");
+    Evcgdy = m->newEvent(WB, "HISTORY_MSG_CG_YELLOWLIM");
+    Evcgroll = m->newEvent(WB, "HISTORY_MSG_CG_ROLLOFF");
+    Evcgpwr = m->newEvent(WB, "HISTORY_MSG_CG_VALUE");
+
     Gtk::Box* hb = Gtk::manage (new Gtk::Box ());
     hb->pack_start(*Gtk::manage(new Gtk::Label(M("TP_COMPRESSGAMUT_MAIN_COLORSPACE") + ": ")), Gtk::PACK_SHRINK);
     colorspace = Gtk::manage(new MyComboBoxText());
@@ -42,6 +50,7 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     colorspace->append(M("TP_COMPRESSGAMUT_ACESP1"));
     hb->pack_start(*colorspace);
     pack_start(*hb);
+    colorspaceconn = colorspace->signal_changed().connect(sigc::mem_fun(*this, &Compressgamut::colorspaceChanged));
 
     pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)));
 
@@ -84,13 +93,8 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     rollvBox->pack_start (*pwr);
     rollFrame->add(*rollvBox);
     pack_start(*rollFrame, Gtk::PACK_EXPAND_WIDGET);
-    
-/*
-
-    colorspace->signal_changed().connect(sigc::mem_fun(*this, &ShadowsHighlights::colorspaceChanged));
-    
     show_all_children ();
-    */
+
 }
 
 void Compressgamut::read (const ProcParams* pp, const ParamsEdited* pedited)
@@ -203,8 +207,41 @@ void Compressgamut::adjusterChanged (Adjuster* a, double newval)
 
 void Compressgamut::rolloff_change ()
 {
+    if (rolloff->get_active()) {
+        pwr->set_sensitive(false);
+    } else {
+        pwr->set_sensitive(true);
+    }
+
+    if (multiImage) {
+        if (rolloff->get_inconsistent()) {
+            rolloff->set_inconsistent(false);
+            rolloffconn.block(true);
+            rolloff->set_active(false);
+            rolloffconn.block(false);
+        } else if (lastrolloff) {
+            rolloff->set_inconsistent(true);
+        }
+
+        lastrolloff = rolloff->get_active();
+    }
+    
+    
+    if (listener) {
+        if (rolloff->get_inconsistent()) {
+            listener->panelChanged(Evcgroll, M("GENERAL_UNCHANGED"));
+        } else if (rolloff->get_active()) {
+            listener->panelChanged(Evcgroll, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged(Evcgroll, M("GENERAL_DISABLED"));
+        }
+    }
+    
 }
 
+void Compressgamut::colorspaceChanged()
+{
+}
 
 void Compressgamut::enabledChanged ()
 {
