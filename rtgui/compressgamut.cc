@@ -42,14 +42,49 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     colorspace->append(M("TP_COMPRESSGAMUT_ACESP1"));
     hb->pack_start(*colorspace);
     pack_start(*hb);
-    /*
+
     pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)));
 
-    highlights   = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_HIGHLIGHTS"), 0, 100, 1, 0));
-    h_tonalwidth = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_HLTONALW"), 10, 100, 1, 70));
-    pack_start (*highlights);
-    pack_start (*h_tonalwidth);
+    th_c = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_CYANTH"), 0., 0.999, 0.001, 0.815));
+    th_m = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_MAGENTATH"), 0., 0.999, 0.001, 0.803));
+    th_y = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_YELLOWTH"), 0., 0.999, 0.001, 0.880));
 
+    Gtk::Frame *thFrame = Gtk::manage(new Gtk::Frame(M("TP_COMPRESSGAMUT_THRESHOLD")));
+    thFrame->set_label_align(0.025, 0.5);
+    Gtk::Box *thVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+
+    thVBox->pack_start (*th_c);
+    thVBox->pack_start (*th_m);
+    thVBox->pack_start (*th_y);
+    thFrame->add(*thVBox);
+    pack_start(*thFrame, Gtk::PACK_EXPAND_WIDGET);
+
+    d_c = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_CYANLIM"), 1.001, 2.0, 0.001, 1.147));
+    d_m = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_MAGENTALIM"), 1.001, 2.0, 0.001, 1.264));
+    d_y = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_YELLOWLIM"), 1.001, 2.0, 0.001, 1.312));
+    
+    Gtk::Frame *limFrame = Gtk::manage(new Gtk::Frame(M("TP_COMPRESSGAMUT_LIMIT")));
+    limFrame->set_label_align(0.025, 0.5);
+    Gtk::Box *limVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    limVBox->pack_start (*d_c);
+    limVBox->pack_start (*d_m);
+    limVBox->pack_start (*d_y);
+    limFrame->add(*limVBox);
+    pack_start(*limFrame, Gtk::PACK_EXPAND_WIDGET);
+
+
+    rolloff = Gtk::manage(new Gtk::CheckButton(M("TP_COMPRESSGAMUT_ROLLOFF")));
+    pwr = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_PWR"), 0.5, 2.0, 0.01, 1.2));
+
+    Gtk::Frame *rollFrame = Gtk::manage(new Gtk::Frame());
+    rollFrame->set_label_align(0.025, 0.5);
+    rollFrame->set_label_widget(*rolloff);
+    ToolParamBlock* const rollvBox = Gtk::manage(new ToolParamBlock());
+    rollvBox->pack_start (*pwr);
+    rollFrame->add(*rollvBox);
+    pack_start(*rollFrame, Gtk::PACK_EXPAND_WIDGET);
+    
+/*
     pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)));
 
     shadows      = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_SHADOWS"), 0, 100, 1, 0));
