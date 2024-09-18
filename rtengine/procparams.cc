@@ -1895,7 +1895,7 @@ CGParams::CGParams() :
     d_m(1.264),
     d_y(1.312),
     pwr(1.2),
-    colorspace("Prophoto"),
+    colorspace("prophoto"),
     rolloff(true)
     
 {

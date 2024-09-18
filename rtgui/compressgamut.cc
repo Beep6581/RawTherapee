@@ -101,33 +101,52 @@ void Compressgamut::read (const ProcParams* pp, const ParamsEdited* pedited)
 {
 
     disableListener ();
-   /*
+   
     if (pedited) {
-        radius->setEditedState       (pedited->sh.radius ? Edited : UnEdited);
-        highlights->setEditedState   (pedited->sh.highlights ? Edited : UnEdited);
-        h_tonalwidth->setEditedState (pedited->sh.htonalwidth ? Edited : UnEdited);
-        shadows->setEditedState      (pedited->sh.shadows ? Edited : UnEdited);
-        s_tonalwidth->setEditedState (pedited->sh.stonalwidth ? Edited : UnEdited);
-        set_inconsistent             (multiImage && !pedited->sh.enabled);
+        th_c->setEditedState       (pedited->cg.th_c ? Edited : UnEdited);
+        th_m->setEditedState       (pedited->cg.th_m ? Edited : UnEdited);
+        th_y->setEditedState       (pedited->cg.th_y ? Edited : UnEdited);
+        d_c->setEditedState       (pedited->cg.d_c ? Edited : UnEdited);
+        d_m->setEditedState       (pedited->cg.d_m ? Edited : UnEdited);
+        d_y->setEditedState       (pedited->cg.d_y ? Edited : UnEdited);
+        pwr->setEditedState       (pedited->cg.pwr ? Edited : UnEdited);
 
+
+        set_inconsistent             (multiImage && !pedited->cg.enabled);
+
+    }
+    if (!pedited->cg.colorspace) {
+        colorspace->set_active_text(M("GENERAL_UNCHANGED"));
     }
 
     setEnabled (pp->sh.enabled);
+    rolloffconn.block (true);
+    rolloff->set_active (pp->cg.rolloff);
+    rolloffconn.block (false);
+    th_c->setValue(pp->cg.th_c);
+    th_m->setValue(pp->cg.th_m);
+    th_y->setValue(pp->cg.th_y);
+    d_c->setValue(pp->cg.d_c);
+    d_m->setValue(pp->cg.d_m);
+    d_y->setValue(pp->cg.d_y);
+    pwr->setValue(pp->cg.pwr);
+    
+    colorspaceconn.block (true);
 
-    radius->setValue        (pp->sh.radius);
-    highlights->setValue    (pp->sh.highlights);
-    h_tonalwidth->setValue  (pp->sh.htonalwidth);
-    shadows->setValue       (pp->sh.shadows);
-    s_tonalwidth->setValue  (pp->sh.stonalwidth);
-
-    if (pedited && !pedited->sh.lab) {
-        colorspace->set_active(2);
-    } else if (pp->sh.lab) {
-        colorspace->set_active(1);
-    } else {
+    if (pp->cg.colorspace == "rec2020") {
         colorspace->set_active(0);
+    } else if (pp->cg.colorspace == "prophoto") {
+        colorspace->set_active(1);
+     } else if (pp->cg.colorspace == "srgb") {
+        colorspace->set_active(2);
+    } else if (pp->cg.colorspace == "dcip3") {
+        colorspace->set_active(3);
+    } else if (pp->cg.colorspace == "acesp1") {
+        colorspace->set_active(4);
     }
-    */
+    colorspaceconn.block (false);
+    rolloff_change();
+    colorspaceChanged();
     enableListener ();
 }
 
@@ -205,7 +224,7 @@ void Compressgamut::adjusterChanged (Adjuster* a, double newval)
     */
 }
 
-void Compressgamut::rolloff_change ()
+void Compressgamut::rolloff_change()
 {
     if (rolloff->get_active()) {
         pwr->set_sensitive(false);
