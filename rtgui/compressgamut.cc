@@ -75,6 +75,7 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
 
     rolloff = Gtk::manage(new Gtk::CheckButton(M("TP_COMPRESSGAMUT_ROLLOFF")));
     pwr = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_PWR"), 0.5, 2.0, 0.01, 1.2));
+    rolloffconn = rolloff->signal_pressed().connect ( sigc::mem_fun (*this, &Compressgamut::rolloff_change) );
 
     Gtk::Frame *rollFrame = Gtk::manage(new Gtk::Frame());
     rollFrame->set_label_align(0.025, 0.5);
@@ -85,23 +86,6 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     pack_start(*rollFrame, Gtk::PACK_EXPAND_WIDGET);
     
 /*
-    pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)));
-
-    shadows      = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_SHADOWS"), 0, 100, 1, 0));
-    s_tonalwidth = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_SHTONALW"), 10, 100, 1, 30));
-    pack_start (*shadows);
-    pack_start (*s_tonalwidth);
-
-    pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)));
-
-    radius = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_RADIUS"), 1, 100, 1, 40));
-    pack_start (*radius);
-
-    radius->setAdjusterListener (this);
-    highlights->setAdjusterListener (this);
-    h_tonalwidth->setAdjusterListener (this);
-    shadows->setAdjusterListener (this);
-    s_tonalwidth->setAdjusterListener (this);
 
     colorspace->signal_changed().connect(sigc::mem_fun(*this, &ShadowsHighlights::colorspaceChanged));
     
@@ -216,6 +200,11 @@ void Compressgamut::adjusterChanged (Adjuster* a, double newval)
     }
     */
 }
+
+void Compressgamut::rolloff_change ()
+{
+}
+
 
 void Compressgamut::enabledChanged ()
 {

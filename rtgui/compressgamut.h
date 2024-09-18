@@ -39,6 +39,7 @@ protected:
     Adjuster* pwr;
     MyComboBoxText *colorspace;
     Gtk::CheckButton* rolloff;
+    sigc::connection rolloffconn;
 
     rtengine::ProcEvent EvcgColorspace;
 
@@ -54,6 +55,7 @@ public:
 
     void adjusterChanged (Adjuster* a, double newval) override;
     void enabledChanged  () override;
+    void rolloff_change();
 
   //  void setAdjusterBehavior (bool hadd, bool sadd);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
