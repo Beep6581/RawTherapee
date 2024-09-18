@@ -26,6 +26,7 @@
 #include "iccstore.h"
 #include <iostream>
 #include "linalgebra.h"
+#include "procparams.h"
 
 using namespace std;
 
@@ -2104,6 +2105,154 @@ float Color::eval_ACEScct_curve(float x, bool forward)
 }
 
 // end code take in ART thanks to Alberto Griggio
+
+//functions needs to use ACES 
+
+//transpose Matrix
+void Color::transpose(Matrix ma, Matrix &R)
+{
+    float r[3][3];
+    double a[3][3] = {{ma[0][0],ma[0][1],ma[0][2]},{ma[1][0], ma[1][1], ma[1][2]},{ma[2][0], ma[2][1], ma[2][2]}};
+    for( int i = 0; i < 3; ++i){
+        for( int j = 0; j < 3; ++j){
+            r[i][j] = a[j][i];
+        }
+    }
+
+    R[0][0] = r[0][0];
+    R[0][1] = r[0][1];
+    R[0][2] = r[0][2];
+    R[1][0] = r[1][0];
+    R[1][1] = r[1][1];
+    R[1][2] = r[1][2];
+    R[2][0] = r[2][0];
+    R[2][1] = r[2][1];
+    R[2][2] = r[2][2];
+}
+
+//multiply Matrix x Matrix
+void Color::multip(Matrix ma, Matrix mb, Matrix &R)
+{
+    float r[3][3];
+    double a[3][3] = {{ma[0][0],ma[0][1],ma[0][2]},{ma[1][0], ma[1][1], ma[1][2]},{ma[2][0], ma[2][1], ma[2][2]}};
+    double b[3][3] = {{mb[0][0],mb[0][1],mb[0][2]},{mb[1][0], mb[1][1], mb[1][2]},{mb[2][0], mb[2][1], mb[2][2]}};
+    for( int i = 0; i < 3; ++i){
+        for( int j = 0; j < 3; ++j){
+            r[i][j] = 0.0f;
+            for( int k = 0; k < 3; ++k){
+                r[i][j] = r[i][j] + a[i][k] * b[k][j];
+            }
+        }
+    }
+    R[0][0] = r[0][0];
+    R[0][1] = r[0][1];
+    R[0][2] = r[0][2];
+    R[1][0] = r[1][0];
+    R[1][1] = r[1][1];
+    R[1][2] = r[1][2];
+    R[2][0] = r[2][0];
+    R[2][1] = r[2][1];
+    R[2][2] = r[2][2];
+}
+
+//multiply Matrix
+void  Color::mult3(float in[3], Matrix ma, float *out)
+{
+    float r[3];
+    float x[3] = {in[0], in[1], in[2]};
+    double a[3][3] = {{ma[0][0],ma[0][1],ma[0][2]},{ma[1][0], ma[1][1], ma[1][2]},{ma[2][0], ma[2][1], ma[2][2]}};
+    for( int i = 0; i < 3; ++i){
+        r[i] = 0.0f;
+        for( int j = 0; j < 3; ++j){
+            r[i] = r[i] + x[j] * a[j][i];
+        }
+    }
+    out[0] = r[0];
+    out[1] = r[1];
+    out[2] = r[2];
+}
+
+// ACES-style gamut compression
+//
+// tweaked from the original from https://github.com/jedypod/gamut-compress
+// tweaked from CTL in ART thanks to Alberto Griggio
+
+void Color::gamut_compress(float rgb_in[3], float threshold[3],
+                        float distance_limit[3],
+                        Matrix to_out, Matrix from_out,
+                        float pwr, float &R, float &G, float &B)
+{
+
+    const procparams::ColorManagementParams params;
+    const TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params.workingProfile);
+   // Matrix wout = {};
+        for (int r = 0; r < 3; ++r) {
+            for (int c = 0; c < 3; ++c) {
+               from_out[r][c] = wprof[r][c];
+            }
+        }
+
+
+    R = rgb_in[0];
+    G = rgb_in[1];
+    B = rgb_in[2];
+
+    float rgb[3] = {R,G,B};
+
+    // Calculate scale so compression function passes through distance limit:
+    // (x=distance_limit, y=1)
+    float s[3];
+    for (int i = 0; i < 3; i = i+1) {
+        s[i] = (1.0f  - threshold[i]) / sqrt(fmax(1.001f, distance_limit[i]) - 1.0f);
+    }
+    // target colorspace
+    Color::mult3(rgb, to_out, rgb); 
+    // Achromatic axis
+    float ac = fmax(rgb[0], fmax(rgb[1], rgb[2]));
+
+    // Inverse RGB Ratios: distance from achromatic axis
+    float d[3] = {0.f, 0.f, 0.f};
+    if (ac != 0) {
+        for (int i = 0; i < 3; i = i+1) {
+            d[i] = (ac - rgb[i]) / fabs(ac);
+        }
+    }
+    float cd[3] = { d[0], d[1], d[2] }; // Compressed distance
+    if (pwr == 0.0f) {
+        // Parabolic compression function:
+        // https://www.desmos.com/calculator/nvhp63hmtj
+        for (int i = 0; i < 3; i = i+1) {
+            if (d[i] >= threshold[i]) {
+                cd[i] = s[i] * sqrt(d[i] - threshold[i] + s[i]*s[i]/4.0f) -
+                    s[i] * sqrt(s[i] * s[i] / 4.0f) + threshold[i];
+            }
+        }
+    } else {
+        for (int i = 0; i < 3; i = i+1) {
+            if (d[i] < threshold[i]) {
+                cd[i] = d[i];
+            } else {
+                float lim = distance_limit[i];
+                float thr = threshold[i];
+                float scl = (lim - thr) / pow(pow((1.0f - thr) / (lim - thr), -pwr) - 1.0, 1.0 / pwr);
+                float nd = (d[i] - thr) / scl;
+                float p = pow(nd, pwr);
+                cd[i] = thr + scl * nd / (pow(1.0f + p, 1.0f / pwr));
+            }
+        }
+    }
+    // Inverse RGB Ratios to RGB
+
+    for (int i = 0; i < 3; i = i+1) {
+        rgb[i] = ac - cd[i] * fabs(ac);
+    }
+    //working colorspace from_out
+    Color::mult3(rgb, from_out, rgb); 
+    R = rgb[0];
+    G = rgb[1];
+    B = rgb[2];
+}
+
 
 
 void Color::primaries_to_xyz(double p[6], double Wx, double Wz, double *pxyz, int cat)
