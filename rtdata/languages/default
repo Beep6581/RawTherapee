@@ -2503,8 +2503,11 @@ TP_COLORTONING_TWOCOLOR_TOOLTIP;Standard chroma:\nLinear response, a* = b*.\n\nS
 TP_COLORTONING_TWOSTD;Standard chroma
 TP_COMPRESSGAMUT_LABEL;Gamut Compression
 TP_COMPRESSGAMUT_MAIN_COLORSPACE;Target Compression Gamut
-TP_COMPRESSGAMUT_COLORSPACE;Choose the workspace that will be used to set the gamut limits. Depending on the case you can choose:\n The display gamut (sRGB, DCI P3,...). \n The gamut of an output file for use by another software (Prophoto, Rec 2020...). \n\n Please note, this is not a gamut conversion. After compression the working profile is restored.
+TP_COMPRESSGAMUT_COLORSPACE_TOOLTIP;Choose the workspace that will be used to set the gamut limits. Depending on the case you can choose:\n The display gamut (sRGB, DCI P3,...). \n The gamut of an output file for use by another software (Prophoto, Rec 2020...). \n\n Please note, this is not a gamut conversion. After compression the working profile is restored.
+TP_COMPRESSGAMUT_THRESHOLD_TOOLTIP;Treshold: controls the percentage of the outer gamut to affect. A value of 0.8 will compress out of gamut values into the outer 20% of the gamut. The inner 80% of the gamut core will not be affected. You can adjust the colors separately: for example if you wanted to protect magenta and yellow a little more than cyan, you could set the threshold a bit higher for cyan.
 TP_COMPRESSGAMUT_ACESP1;ACES AP1
+TP_COMPRESSGAMUT_POWER_TOOLTIP;Power: Control the aggressiveness of the compression curve.\n Higher power values result in more compressed values distributed closer to the gamut boundary. This will increase the "color purity" or "saturation" once the image has been rendered through a display transform.\n Higher values have a smoother transition.
+TP_COMPRESSGAMUT_LIMIT_TOOLTIP;Maximum Distance Limit: is the distance outside of the gamut boundary to compress to the gamut boundary. For example, a value of 1.2 will compress distance values of 1.2 to a value of 1.0. \nIndividual controls are given for each color component. They are named cyan magenta and yellow because they actually control the max distance from the edge of the triangle CIExy, not the corner. For example, boosting the value of the cyan distance limit will increase the distance from which values are mapped to the edge between the blue and green corners of the triangle.\nThe distance limits also control the RGB ratios of the compressed values, which affects the apparent hue.
 TP_COMPRESSGAMUT_DCIP3;DCI-P3
 TP_COMPRESSGAMUT_PROPHOTO;Prophoto
 TP_COMPRESSGAMUT_REC2020;Rec.2020

@@ -45,7 +45,7 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     Gtk::Frame *iFrame = Gtk::manage(new Gtk::Frame(M("TP_COMPRESSGAMUT_MAIN_COLORSPACE")));
 
     iFrame->set_label_align(0.025, 0.5);
-    iFrame->set_tooltip_markup (M("TP_COMPRESSGAMUT_COLORSPACE"));
+    iFrame->set_tooltip_markup (M("TP_COMPRESSGAMUT_COLORSPACE_TOOLTIP"));
 
     ToolParamBlock* const iBox = Gtk::manage(new ToolParamBlock());
     
@@ -67,6 +67,7 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     Gtk::Frame *thFrame = Gtk::manage(new Gtk::Frame(M("TP_COMPRESSGAMUT_THRESHOLD")));
     thFrame->set_label_align(0.025, 0.5);
     Gtk::Box *thVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    thFrame->set_tooltip_markup (M("TP_COMPRESSGAMUT_THRESHOLD_TOOLTIP"));
 
     thVBox->pack_start (*th_c, Gtk::PACK_SHRINK);
     thVBox->pack_start (*th_m, Gtk::PACK_SHRINK);
@@ -80,6 +81,8 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
 
     Gtk::Frame *limFrame = Gtk::manage(new Gtk::Frame(M("TP_COMPRESSGAMUT_LIMIT")));
     limFrame->set_label_align(0.025, 0.5);
+    limFrame->set_tooltip_markup (M("TP_COMPRESSGAMUT_LIMIT_TOOLTIP"));
+
     Gtk::Box *limVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     limVBox->pack_start (*d_c, Gtk::PACK_SHRINK);
     limVBox->pack_start (*d_m, Gtk::PACK_SHRINK);
@@ -96,7 +99,8 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     rollFrame->set_label_align(0.025, 0.5);
     rollFrame->set_label_widget(*rolloff);
     Gtk::Box *rollVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
-    
+    rollFrame->set_tooltip_markup (M("TP_COMPRESSGAMUT_POWER_TOOLTIP"));
+
     rollVBox->pack_start (*pwr, Gtk::PACK_SHRINK);
     rollFrame->add(*rollVBox);
     pack_start(*rollFrame, Gtk::PACK_SHRINK);//, Gtk::PACK_EXPAND_WIDGET);
