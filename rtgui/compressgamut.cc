@@ -109,7 +109,6 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     d_y->setAdjusterListener (this);
     pwr->setAdjusterListener (this);
     
-    //show_all_children ();
 
 }
 
@@ -298,6 +297,10 @@ void Compressgamut::rolloff_change()
 
 void Compressgamut::colorspaceChanged()
 {
+    if (listener && getEnabled()) {
+        listener->panelChanged(EvcgColorspace, M("GENERAL_ENABLED"));
+    }
+    
 }
 
 void Compressgamut::enabledChanged ()
@@ -313,38 +316,28 @@ void Compressgamut::enabledChanged ()
     }
     
 }
-/*
-void ShadowsHighlights::colorspaceChanged()
-{
-    if (listener && (multiImage || getEnabled()) ) {
-        listener->panelChanged(EvSHColorspace, colorspace->get_active_text());
-    }
-}
-*/
 void Compressgamut::setBatchMode (bool batchMode)
 {
-    /*
+    
     ToolPanel::setBatchMode (batchMode);
-    radius->showEditedCB ();
-    highlights->showEditedCB ();
-    h_tonalwidth->showEditedCB ();
-    shadows->showEditedCB ();
-    s_tonalwidth->showEditedCB ();
-    colorspace->append(M("GENERAL_UNCHANGED"));    
-    */
+    th_c->showEditedCB ();
+    th_m->showEditedCB ();
+    th_y->showEditedCB ();
+    d_c->showEditedCB ();
+    d_m->showEditedCB ();
+    d_y->showEditedCB ();
+    pwr->showEditedCB ();
 }
-/*
-void ShadowsHighlights::setAdjusterBehavior (bool hadd, bool sadd)
-{
 
-    highlights->setAddMode(hadd);
-    shadows->setAddMode(sadd);
-}
-*/
+
 void Compressgamut::trimValues (rtengine::procparams::ProcParams* pp)
 {
-    /*
-    highlights->trimValue(pp->sh.highlights);
-    shadows->trimValue(pp->sh.shadows);
-    */
+    
+    th_c->trimValue(pp->cg.th_c);
+    th_m->trimValue(pp->cg.th_m);
+    th_y->trimValue(pp->cg.th_y);
+    d_c->trimValue(pp->cg.d_c);
+    d_m->trimValue(pp->cg.d_m);
+    d_y->trimValue(pp->cg.d_y);
+    pwr->trimValue(pp->cg.pwr);
 }
