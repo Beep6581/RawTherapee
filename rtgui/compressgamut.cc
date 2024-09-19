@@ -45,7 +45,7 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     Gtk::Frame *iFrame = Gtk::manage(new Gtk::Frame(M("TP_COMPRESSGAMUT_MAIN_COLORSPACE")));
 
     iFrame->set_label_align(0.025, 0.5);
-    iFrame->set_tooltip_markup (M("PREFERENCES_WBACORR_TOOLTIP"));
+    iFrame->set_tooltip_markup (M("TP_COMPRESSGAMUT_COLORSPACE"));
 
     ToolParamBlock* const iBox = Gtk::manage(new ToolParamBlock());
     
@@ -59,7 +59,6 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     iFrame->add(*iBox);
     pack_start(*iFrame);
     colorspaceconn = colorspace->signal_changed().connect(sigc::mem_fun(*this, &Compressgamut::colorspaceChanged));
-
 
     th_c = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_CYANTH"), 0., 0.999, 0.001, 0.815));
     th_m = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_MAGENTATH"), 0., 0.999, 0.001, 0.803));

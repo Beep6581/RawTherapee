@@ -2503,6 +2503,7 @@ TP_COLORTONING_TWOCOLOR_TOOLTIP;Standard chroma:\nLinear response, a* = b*.\n\nS
 TP_COLORTONING_TWOSTD;Standard chroma
 TP_COMPRESSGAMUT_LABEL;Gamut Compression
 TP_COMPRESSGAMUT_MAIN_COLORSPACE;Target Compression Gamut
+TP_COMPRESSGAMUT_COLORSPACE;Choose the workspace that will be used to set the gamut limits. Depending on the case you can choose:\n The display gamut (sRGB, DCI P3,...). \n The gamut of an output file for use by another software (Prophoto, Rec 2020...). \n\n Please note, this is not a gamut conversion. After compression the working profile is restored.
 TP_COMPRESSGAMUT_ACESP1;ACES AP1
 TP_COMPRESSGAMUT_DCIP3;DCI-P3
 TP_COMPRESSGAMUT_PROPHOTO;Prophoto
