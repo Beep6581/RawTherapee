@@ -2177,6 +2177,27 @@ void  Color::mult3(float in[3], Matrix ma, float *out)
 // tweaked from the original from https://github.com/jedypod/gamut-compress
 // tweaked from CTL in ART thanks to Alberto Griggio
 
+//from ACES https://docs.acescentral.com/specifications/rgc/#appendix-c-illustrations
+// https://docs.acescentral.com/specifications/rgc/#appendix-d-ctl-reference-implementation
+
+// Distance from achromatic which will be compressed to the gamut boundary
+// Values calculated to encompass the encoding gamuts of common digital cinema cameras
+//const float LIM_CYAN =  1.147;
+//const float LIM_MAGENTA = 1.264;
+//const float LIM_YELLOW = 1.312;
+
+//Percentage of the core gamut to protect
+// Values calculated to protect all the colors of the ColorChecker Classic 24 as given by
+// ISO 17321-1 and Ohta (1997)
+//const float THR_CYAN = 0.815;
+//const float THR_MAGENTA = 0.803;
+//const float THR_YELLOW = 0.880;
+
+// Aggressiveness of the compression curve
+//const float PWR = 1.2;
+
+
+
 void Color::gamut_compress(float rgb_in[3], float threshold[3],
                         float distance_limit[3],
                         Matrix to_out, Matrix from_out,
@@ -2207,6 +2228,7 @@ void Color::gamut_compress(float rgb_in[3], float threshold[3],
     }
     // target colorspace
     Color::mult3(rgb, to_out, rgb); 
+    
     // Achromatic axis
     float ac = fmax(rgb[0], fmax(rgb[1], rgb[2]));
 
@@ -2230,11 +2252,13 @@ void Color::gamut_compress(float rgb_in[3], float threshold[3],
     } else {
         for (int i = 0; i < 3; i = i+1) {
             if (d[i] < threshold[i]) {
-                cd[i] = d[i];
+                cd[i] = d[i];// No compression below threshold
             } else {
+                 // Calculate scale factor for y = 1 intersect
                 float lim = distance_limit[i];
                 float thr = threshold[i];
                 float scl = (lim - thr) / pow(pow((1.0f - thr) / (lim - thr), -pwr) - 1.0, 1.0 / pwr);
+                // Normalize distance outside threshold by scale factor
                 float nd = (d[i] - thr) / scl;
                 float p = pow(nd, pwr);
                 cd[i] = thr + scl * nd / (pow(1.0f + p, 1.0f / pwr));

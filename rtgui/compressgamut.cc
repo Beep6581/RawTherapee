@@ -61,6 +61,10 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     pack_start(*iFrame);
     colorspaceconn = colorspace->signal_changed().connect(sigc::mem_fun(*this, &Compressgamut::colorspaceChanged));
 
+// Percentage of the core gamut to protect Limits
+// Values calculated to protect all the colors of the ColorChecker Classic 24 as given by
+// ISO 17321-1 and Ohta (1997)
+
     th_c = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_CYANTH"), 0., 0.999, 0.001, 0.815));
     th_m = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_MAGENTATH"), 0., 0.999, 0.001, 0.803));
     th_y = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_YELLOWTH"), 0., 0.999, 0.001, 0.880));
@@ -75,7 +79,10 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     thVBox->pack_start (*th_y);
     thFrame->add(*thVBox);
     pack_start(*thFrame, Gtk::PACK_SHRINK);
-
+// from ACES https://docs.acescentral.com/specifications/rgc/#appendix-c-illustrations
+// https://docs.acescentral.com/specifications/rgc/#appendix-d-ctl-reference-implementation
+// Distance from achromatic which will be compressed to the gamut boundary
+// Values calculated to encompass the encoding gamuts of common digital cinema cameras
     d_c = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_CYANLIM"), 1.001, 2.0, 0.001, 1.147));
     d_m = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_MAGENTALIM"), 1.001, 2.0, 0.001, 1.264));
     d_y = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_YELLOWLIM"), 1.001, 2.0, 0.001, 1.312));
@@ -91,7 +98,7 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     limFrame->add(*limVBox);
     pack_start(*limFrame, Gtk::PACK_SHRINK);
 
-
+// Aggressiveness of the compression curve Pwr
     rolloff = Gtk::manage(new Gtk::CheckButton(M("TP_COMPRESSGAMUT_ROLLOFF")));
     pwr = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_PWR"), 0.5, 2.0, 0.01, 1.2));
     rolloffconn = rolloff->signal_pressed().connect ( sigc::mem_fun (*this, &Compressgamut::rolloff_change) );
