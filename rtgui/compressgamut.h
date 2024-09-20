@@ -68,7 +68,6 @@ public:
     void enabledChanged  () override;
     void rolloff_change();
 
-  //  void setAdjusterBehavior (bool hadd, bool sadd);
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
 
     void colorspaceChanged();

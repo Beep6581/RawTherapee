@@ -47,16 +47,17 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     iFrame->set_label_align(0.025, 0.5);
     iFrame->set_tooltip_markup (M("TP_COMPRESSGAMUT_COLORSPACE_TOOLTIP"));
 
-    ToolParamBlock* const iBox = Gtk::manage(new ToolParamBlock());
-    
+    Gtk::Box *iVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+   
     colorspace = Gtk::manage(new MyComboBoxText());
     colorspace->append(M("TP_COMPRESSGAMUT_REC2020"));
     colorspace->append(M("TP_COMPRESSGAMUT_PROPHOTO"));
     colorspace->append(M("TP_COMPRESSGAMUT_SRGB"));
     colorspace->append(M("TP_COMPRESSGAMUT_DCIP3"));
     colorspace->append(M("TP_COMPRESSGAMUT_ACESP1"));
-    iBox->pack_start(*colorspace);
-    iFrame->add(*iBox);
+    colorspace->set_active(2);
+    iVBox->pack_start(*colorspace);
+    iFrame->add(*iVBox);
     pack_start(*iFrame);
     colorspaceconn = colorspace->signal_changed().connect(sigc::mem_fun(*this, &Compressgamut::colorspaceChanged));
 
@@ -69,11 +70,11 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     Gtk::Box *thVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     thFrame->set_tooltip_markup (M("TP_COMPRESSGAMUT_THRESHOLD_TOOLTIP"));
 
-    thVBox->pack_start (*th_c, Gtk::PACK_SHRINK);
-    thVBox->pack_start (*th_m, Gtk::PACK_SHRINK);
-    thVBox->pack_start (*th_y, Gtk::PACK_SHRINK);
+    thVBox->pack_start (*th_c);
+    thVBox->pack_start (*th_m);
+    thVBox->pack_start (*th_y);
     thFrame->add(*thVBox);
-    pack_start(*thFrame, Gtk::PACK_SHRINK);//, Gtk::PACK_EXPAND_WIDGET);
+    pack_start(*thFrame, Gtk::PACK_SHRINK);
 
     d_c = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_CYANLIM"), 1.001, 2.0, 0.001, 1.147));
     d_m = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_MAGENTALIM"), 1.001, 2.0, 0.001, 1.264));
@@ -84,11 +85,11 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     limFrame->set_tooltip_markup (M("TP_COMPRESSGAMUT_LIMIT_TOOLTIP"));
 
     Gtk::Box *limVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
-    limVBox->pack_start (*d_c, Gtk::PACK_SHRINK);
-    limVBox->pack_start (*d_m, Gtk::PACK_SHRINK);
-    limVBox->pack_start (*d_y, Gtk::PACK_SHRINK);
+    limVBox->pack_start (*d_c);
+    limVBox->pack_start (*d_m);
+    limVBox->pack_start (*d_y);
     limFrame->add(*limVBox);
-    pack_start(*limFrame, Gtk::PACK_SHRINK);//, Gtk::PACK_EXPAND_WIDGET);
+    pack_start(*limFrame, Gtk::PACK_SHRINK);
 
 
     rolloff = Gtk::manage(new Gtk::CheckButton(M("TP_COMPRESSGAMUT_ROLLOFF")));
@@ -101,9 +102,9 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     Gtk::Box *rollVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     rollFrame->set_tooltip_markup (M("TP_COMPRESSGAMUT_POWER_TOOLTIP"));
 
-    rollVBox->pack_start (*pwr, Gtk::PACK_SHRINK);
+    rollVBox->pack_start (*pwr);
     rollFrame->add(*rollVBox);
-    pack_start(*rollFrame, Gtk::PACK_SHRINK);//, Gtk::PACK_EXPAND_WIDGET);
+    pack_start(*rollFrame, Gtk::PACK_SHRINK);
     th_c->setAdjusterListener (this);
     th_m->setAdjusterListener (this);
     th_y->setAdjusterListener (this);
@@ -112,7 +113,7 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     d_y->setAdjusterListener (this);
     pwr->setAdjusterListener (this);
     
-
+    show_all_children ();
 }
 
 void Compressgamut::read (const ProcParams* pp, const ParamsEdited* pedited)
@@ -164,6 +165,7 @@ void Compressgamut::read (const ProcParams* pp, const ParamsEdited* pedited)
     rolloff_change();
     colorspaceChanged();
     enabledChanged ();
+
     enableListener ();
 }
 
@@ -335,7 +337,6 @@ void Compressgamut::setBatchMode (bool batchMode)
 
 void Compressgamut::trimValues (rtengine::procparams::ProcParams* pp)
 {
-    
     th_c->trimValue(pp->cg.th_c);
     th_m->trimValue(pp->cg.th_m);
     th_y->trimValue(pp->cg.th_y);

@@ -1885,7 +1885,7 @@ bool SHParams::operator !=(const SHParams& other) const
 }
 
 
-///
+
 CGParams::CGParams() :
     enabled(false),
     th_c(0.815),
@@ -1895,7 +1895,7 @@ CGParams::CGParams() :
     d_m(1.264),
     d_y(1.312),
     pwr(1.2),
-    colorspace("prophoto"),
+    colorspace("srgb"),
     rolloff(true)
     
 {
