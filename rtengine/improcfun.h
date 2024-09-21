@@ -93,6 +93,7 @@ struct FattalToneMappingParams;
 struct ColorManagementParams;
 struct DirPyrDenoiseParams;
 struct FilmNegativeParams;
+struct CGParams;
 struct LocalContrastParams;
 struct LocallabParams;
 struct SharpeningParams;
@@ -512,6 +513,8 @@ enum class BlurType {
     static void rgb2lab(std::uint8_t red, std::uint8_t green, std::uint8_t blue, float &L, float &a, float &b, const procparams::ColorManagementParams &icm, bool consider_histogram_settings = true);
     Imagefloat*    lab2rgbOut(LabImage* lab, int cx, int cy, int cw, int ch, const procparams::ColorManagementParams &icm);
     // CieImage *ciec;
+    
+    void gamutcompr( rtengine::Imagefloat *src, rtengine::Imagefloat *dst) const;
     void workingtrc(int sp, Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring &profile, double gampos, double slpos, int cat, int &illum, int prim, int locprim, 
         float &rdx, float &rdy, float &grx, float &gry, float &blx, float &bly, float &meanx, float &meany, float &meanxe, float &meanye,
         cmsHTRANSFORM &transform, bool normalizeIn = true, bool normalizeOut = true, bool keepTransForm = false, bool gamutcontrol = false) const;

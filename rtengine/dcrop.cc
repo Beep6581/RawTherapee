@@ -692,6 +692,10 @@ void Crop::update(int todo)
             parent->ipf.filmNegativeProcess(baseCrop, baseCrop, params.filmNegative);
         }
 
+         if (params.cg.enabled) {//gamut compression
+             //const Imagefloat* const original, const ProcParams &params, 
+         }
+
         delete [] min_r;
         delete [] min_b;
         delete [] lumL;
