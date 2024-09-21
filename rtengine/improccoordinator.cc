@@ -836,6 +836,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             }
 
             ipf.firstAnalysis(orig_prev, *params, vhist16);
+            
+             if (params->cg.enabled) {//gamut compression
+             //const Imagefloat* const original, const ProcParams &params, 
+             }
         }
 
         oprevi = orig_prev;

@@ -16,6 +16,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+ /*
+ * tweaked from the original from https://github.com/jedypod/gamut-compress
+ * https://docs.acescentral.com/specifications/rgc/
+*/ 
 #include "compressgamut.h"
 
 #include "eventmapper.h"
@@ -30,16 +34,18 @@ const Glib::ustring Compressgamut::TOOL_NAME = "compressgamut";
 Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPRESSGAMUT_LABEL"), false, true)
 {
     auto m = ProcEventMapper::getInstance();
-    EvcgColorspace = m->newEvent(WB, "HISTORY_MSG_CG_COLORSPACE");
-    Evcgthc = m->newEvent(WB, "HISTORY_MSG_CG_CYANTH");
-    Evcgthm = m->newEvent(WB, "HISTORY_MSG_CG_MAGENTATH");
-    Evcgthy = m->newEvent(WB, "HISTORY_MSG_CG_YELLOWTH");
-    Evcgdc = m->newEvent(WB, "HISTORY_MSG_CG_CYANLIM");
-    Evcgdm = m->newEvent(WB, "HISTORY_MSG_CG_MAGENTALIM");
-    Evcgdy = m->newEvent(WB, "HISTORY_MSG_CG_YELLOWLIM");
-    Evcgroll = m->newEvent(WB, "HISTORY_MSG_CG_ROLLOFF");
-    Evcgpwr = m->newEvent(WB, "HISTORY_MSG_CG_VALUE");
-    Evcgenabled = m->newEvent(WB, "HISTORY_MSG_CG_ENABLED");
+    EvcgColorspace = m->newEvent(ALLNORAW, "HISTORY_MSG_CG_COLORSPACE");
+    Evcgthc = m->newEvent(ALLNORAW, "HISTORY_MSG_CG_CYANTH");
+    Evcgthm = m->newEvent(ALLNORAW, "HISTORY_MSG_CG_MAGENTATH");
+    Evcgthy = m->newEvent(ALLNORAW, "HISTORY_MSG_CG_YELLOWTH");
+    Evcgdc = m->newEvent(ALLNORAW, "HISTORY_MSG_CG_CYANLIM");
+    Evcgdc = m->newEvent(ALLNORAW, "HISTORY_MSG_CG_CYANLIM");
+    Evcgdc = m->newEvent(ALLNORAW, "HISTORY_MSG_CG_CYANLIM");
+    Evcgdm = m->newEvent(ALLNORAW, "HISTORY_MSG_CG_MAGENTALIM");
+    Evcgdy = m->newEvent(ALLNORAW, "HISTORY_MSG_CG_YELLOWLIM");
+    Evcgroll = m->newEvent(ALLNORAW, "HISTORY_MSG_CG_ROLLOFF");
+    Evcgpwr = m->newEvent(ALLNORAW, "HISTORY_MSG_CG_VALUE");
+    Evcgenabled = m->newEvent(ALLNORAW, "HISTORY_MSG_CG_ENABLED");
 
 
     Gtk::Frame *iFrame = Gtk::manage(new Gtk::Frame(M("TP_COMPRESSGAMUT_MAIN_COLORSPACE")));
@@ -105,7 +111,8 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
 
     Gtk::Frame *rollFrame = Gtk::manage(new Gtk::Frame());
     rollFrame->set_label_align(0.025, 0.5);
-    rollFrame->set_label_widget(*rolloff);
+  //  rollFrame->set_label_widget(*rolloff);
+    rolloff->set_active(true); 
     Gtk::Box *rollVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     rollFrame->set_tooltip_markup (M("TP_COMPRESSGAMUT_POWER_TOOLTIP"));
 
@@ -169,7 +176,7 @@ void Compressgamut::read (const ProcParams* pp, const ParamsEdited* pedited)
         colorspace->set_active(4);
     }
     colorspaceconn.block (false);
-    rolloff_change();
+    //rolloff_change();
     colorspaceChanged();
     enabledChanged ();
 

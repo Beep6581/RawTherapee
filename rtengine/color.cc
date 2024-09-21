@@ -2179,7 +2179,7 @@ void  Color::mult3(float in[3], Matrix ma, float *out)
 
 //from ACES https://docs.acescentral.com/specifications/rgc/#appendix-c-illustrations
 // https://docs.acescentral.com/specifications/rgc/#appendix-d-ctl-reference-implementation
-
+// https://docs.acescentral.com/specifications/rgc/
 // Distance from achromatic which will be compressed to the gamut boundary
 // Values calculated to encompass the encoding gamuts of common digital cinema cameras
 //const float LIM_CYAN =  1.147;
