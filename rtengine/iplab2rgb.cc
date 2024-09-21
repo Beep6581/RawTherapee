@@ -423,7 +423,7 @@ void ImProcFunctions::preserv(LabImage *nprevl, LabImage *provis, int cw, int ch
         }
 }
 
-void ImProcFunctions::gamutcompr ( Imagefloat *src, Imagefloat *dst) const
+void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst) const
 {
 
         using Triple = std::array<double, 3>;
@@ -432,12 +432,13 @@ void ImProcFunctions::gamutcompr ( Imagefloat *src, Imagefloat *dst) const
 
         const TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 
-        Matrix wpro = {}; 
+        Matrix wpro = {}; //working profile
          for (int r = 0; r < 3; ++r) {
             for (int c = 0; c < 3; ++c) {
                wpro[r][c] = wprof[r][c];
             }
         }
+        //dcip3 Rec2020, srgb, prop, acp1 - Compression gamut profile
         Matrix dcip3 = {};
             dcip3[0][0] = 0.4451;
             dcip3[0][1] = 0.2771;
@@ -460,20 +461,70 @@ void ImProcFunctions::gamutcompr ( Imagefloat *src, Imagefloat *dst) const
             Rec2020[2][1] =  0.0299784;
             Rec2020[2][2] =  0.7973330;
 
-            
-        Matrix out = {};
-        out = dcip3;
+        Matrix srgb = {};
+            srgb[0][0] = 0.4360747;
+            srgb[0][1] = 0.3850649;
+            srgb[0][2] = 0.1430804;
+            srgb[1][0] = 0.2225045;
+            srgb[1][1] = 0.7168786;
+            srgb[1][2] = 0.0606169;
+            srgb[2][0] = 0.0139322;
+            srgb[2][1] = 0.0971045;
+            srgb[2][2] = 0.7141733;
 
-            Matrix inv_dcip3 = {};
-                if (!rtengine::invertMatrix(dcip3, inv_dcip3)) {
-                std::cout << "Matrix is not invertible, skipping" << std::endl;
-            }
+        Matrix prop = {};//prophoto
+            prop[0][0] = 1.3459433;
+            prop[0][1] = -0.2556075;
+            prop[0][2] = -0.0511118;
+            prop[1][0] = -0.5445989;
+            prop[1][1] = 1.5081673;
+            prop[1][2] = 0.0205351;
+            prop[2][0] = 0.0;
+            prop[2][1] = 0.0;
+            prop[2][2] = 1.2118128;
+
+        Matrix acp1 = {};//aces P1
+            acp1[0][0] = 0.689697;
+            acp1[0][1] = 0.149944;
+            acp1[0][2] = 0.124559;
+            acp1[1][0] = 0.284448;
+            acp1[1][1] = 0.671758;
+            acp1[1][2] = 0.043794;
+            acp1[2][0] = -0.006043;
+            acp1[2][1] = 0.009998;
+            acp1[2][2] = 0.820945;
+
+        Matrix out = {};
+
+        if (params->cg.colorspace == "rec2020") {
+                out = Rec2020;
+        } else if  (params->cg.colorspace == "prophoto") { 
+                out = prop;
+        } else if  (params->cg.colorspace == "srgb") { 
+                out = srgb;
+        } else if  (params->cg.colorspace == "dcip3") { 
+                out = dcip3;
+        } else if  (params->cg.colorspace == "acesp1") { 
+                out = acp1;
+        }
+
+
+        Matrix inv_out = {};
+        if (!rtengine::invertMatrix(out, inv_out)) {
+            std::cout << "Matrix is not invertible, skipping" << std::endl;
+        }
        
         Matrix Rprov = {};
-        Color::multip(inv_dcip3, wpro, Rprov);
-        Matrix R = {};
+        Color::multip(inv_out, wpro, Rprov);
+        Matrix to_out = {};
+
+        Color::transpose(Rprov, to_out);
         
-        Color::transpose(Rprov, R);
+        Matrix from_out = {};
+        if (!rtengine::invertMatrix(to_out, from_out)) {
+            std::cout << "Matrix is not invertible, skipping" << std::endl;
+        }
+        
         
         float thc= params->cg.th_c;
         float thm= params->cg.th_m;
@@ -482,43 +533,9 @@ void ImProcFunctions::gamutcompr ( Imagefloat *src, Imagefloat *dst) const
         float dm= params->cg.d_m;
         float dy= params->cg.d_y;
 
-        int ingamut = 0;
-        if (params->cg.colorspace == "rec2020") {
-                ingamut = 0;
-        } else if  (params->cg.colorspace == "prophoto") { 
-                ingamut = 1;
-        } else if  (params->cg.colorspace == "srgb") { 
-                ingamut = 3;
-        } else if  (params->cg.colorspace == "dcip3") { 
-                ingamut = 4;
-        } else if  (params->cg.colorspace == "acesp1") { 
-                ingamut = 5;
-        }
         
 
-    const float xyz_srgb[3][3] = {
-        {0.4360747,  0.3850649, 0.1430804},
-        {0.2225045,  0.7168786,  0.0606169},
-        {0.0139322,  0.0971045,  0.7141733}
-    };
 
-    const float xyz_p3[3][3] = {
-        {0.4451, 0.2771, 0.1723},
-        {0.2095, 0.7216, 0.06891},
-        {0.0, 0.047, 0.9073}
-    };
-
-    const float xyz_pro[3][3] = {
-        {1.3459433, -0.2556075, -0.0511118},
-        { -0.5445989,  1.5081673,  0.0205351},
-        {0.0000000,  0.0000000,  1.2118128}
-    };
-
-    const float xyz_ap1[3][3] = {
-        {0.689697, 0.149944, 0.124559},
-        {0.284448, 0.671758  , 0.043794},
-        {-0.006043, 0.009998, 0.820945}
-    };
 
 
 //const float to_p3[3][3] = transpose_f33(mult_f33_f33(invert_f33(xyz_p3),

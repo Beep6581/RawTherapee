@@ -2203,7 +2203,7 @@ void Color::gamut_compress(float rgb_in[3], float threshold[3],
                         Matrix to_out, Matrix from_out,
                         float pwr, float &R, float &G, float &B)
 {
-
+/*
     const procparams::ColorManagementParams params;
     const TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params.workingProfile);
    // Matrix wout = {};
@@ -2212,7 +2212,7 @@ void Color::gamut_compress(float rgb_in[3], float threshold[3],
                from_out[r][c] = wprof[r][c];
             }
         }
-
+*/
 
     R = rgb_in[0];
     G = rgb_in[1];
