@@ -461,7 +461,7 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst) const
 
     const TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 
-    Matrix wpro = {}; //working profile
+    Matrix wpro = {}; //working profile set in Matrix format
     for (int r = 0; r < 3; ++r) {
         for (int c = 0; c < 3; ++c) {
             wpro[r][c] = wprof[r][c];
@@ -537,24 +537,23 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst) const
         out = acesp1;
     }
 
-
     Matrix inv_out = {};
-    if (!rtengine::invertMatrix(out, inv_out)) {
+    if (!rtengine::invertMatrix(out, inv_out)) {//invert matrix
         std::cout << "Matrix is not invertible, skipping" << std::endl;
     }
        
     Matrix Rprov = {};
-    Color::multip(inv_out, wpro, Rprov);
+    Color::multip(inv_out, wpro, Rprov);//multiply matrix
     Matrix to_out = {};
 
-    Color::transpose(Rprov, to_out);
+    Color::transpose(Rprov, to_out);//transpose Matrix for output
 
-    Matrix from_out = {};
+    Matrix from_out = {};//inverse to output
     if (!rtengine::invertMatrix(to_out, from_out)) {
         std::cout << "Matrix is not invertible, skipping" << std::endl;
     }
 
-
+    //parameters from GUI
     float thc = params->cg.th_c;
     float thm = params->cg.th_m;
     float thy = params->cg.th_y;
@@ -563,8 +562,8 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst) const
     float dy = params->cg.d_y;
     float pw = params->cg.pwr;
 
-    float th[3] = {thc, thm, thy};
-    float dl[3] = {dc, dm, dy};
+    float th[3] = {thc, thm, thy};//set parameter GUI in th
+    float dl[3] = {dc, dm, dy};//set parameter GUI in dl
 
     const int height = src->getHeight();
     const int width = src->getWidth();
@@ -575,7 +574,7 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst) const
 
     for (int i = 0; i < height; ++i)
         for (int j = 0; j < width; ++j) {
-            float r = src->r(i, j) / 65535.f;
+            float r = src->r(i, j) / 65535.f;//in interval 0.. 1
             float g = src->g(i, j) / 65535.f;
             float b = src->b(i, j) / 65535.f;
             float rgb_in[3] = {r, g, b};
@@ -583,7 +582,7 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst) const
             float gout = 0.f;
             float bout = 0.f;
             Color::gamut_compress(rgb_in, th, dl, to_out, from_out, pw, rout, gout, bout);
-            dst->r(i, j) = 65535.f * rout;
+            dst->r(i, j) = 65535.f * rout;//in interval 0..65535
             dst->g(i, j) = 65535.f * gout;
             dst->b(i, j) = 65535.f * bout;
         }
