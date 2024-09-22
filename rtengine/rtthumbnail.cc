@@ -1327,6 +1327,11 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         ipf.filmNegativeProcess(baseImg, baseImg, params.filmNegative);
     }
 
+    if (params.cg.enabled) {//gamut compression
+        ipf.gamutcompr(baseImg, baseImg);
+    }
+
+
     LUTu hist16 (65536);
 
     ipf.firstAnalysis (baseImg, params, hist16);

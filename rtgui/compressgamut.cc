@@ -47,6 +47,8 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     Evcgpwr = m->newEvent(FIRST, "HISTORY_MSG_CG_VALUE");
     Evcgenabled = m->newEvent(FIRST, "HISTORY_MSG_CG_ENABLED");
 
+
+
     Gtk::Frame *iFrame = Gtk::manage(new Gtk::Frame(M("TP_COMPRESSGAMUT_MAIN_COLORSPACE")));
 
     iFrame->set_label_align(0.025, 0.5);
