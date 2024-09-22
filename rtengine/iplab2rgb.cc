@@ -539,9 +539,9 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst) const
 
     Matrix inv_out = {};
     if (!rtengine::invertMatrix(out, inv_out)) {//invert matrix
-        std::cout << "Matrix is not invertible, skipping" << std::endl;
+        printf("Matrix is not invertible, skipping\n");
     }
-       
+
     Matrix Rprov = {};
     Color::multip(inv_out, wpro, Rprov);//multiply matrix
     Matrix to_out = {};
@@ -550,7 +550,8 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst) const
 
     Matrix from_out = {};//inverse to output
     if (!rtengine::invertMatrix(to_out, from_out)) {
-        std::cout << "Matrix is not invertible, skipping" << std::endl;
+        printf("Matrix is not invertible, skipping\n");
+
     }
 
     //parameters from GUI
