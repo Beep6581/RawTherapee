@@ -31,6 +31,8 @@
 #include "settings.h"
 #include "utils.h"
 
+using namespace std;
+
 namespace rtengine
 {
 
