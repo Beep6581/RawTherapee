@@ -1889,16 +1889,14 @@ static inline void Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, v
     static void primaries_to_xyz (double p[6], double Wx, double Wz, double *pxyz, int cat);
 
     /**
-    * @brief Gamut compress
+    * @brief Gamut compress from ACES
     */
+    // transpose, multip, mult3 used by ACES
     static void  transpose(Matrix ma, Matrix &R);
     static void  multip(Matrix ma, Matrix mb, Matrix &R);
     static void  mult3(float in[3], Matrix ma, float *out);
     
-    static void gamut_compress(float rgb_in[3], float threshold[3],
-                        float distance_limit[3],
-                        Matrix to_out, Matrix from_out,
-                        float pwr, float &R, float &G, float &B);
+    static void gamut_compress(float rgb_in[3], float threshold[3], float distance_limit[3], Matrix to_out, Matrix from_out, float pwr, float &R, float &G, float &B);
 
     /**
     * @brief Get HSV's hue from the Lab's hue

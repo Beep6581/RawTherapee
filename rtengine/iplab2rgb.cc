@@ -465,7 +465,7 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst) const
             wpro[r][c] = wprof[r][c];
         }
     }
-        //dcip3 Rec2020, srgb, prophoto, acesp1 - Compression gamut matrix profile
+    //dcip3 Rec2020, srgb, prophoto, acesp1 - Compression gamut matrix profile
     Matrix dcip3 = {};
         dcip3[0][0] = 0.4451;
         dcip3[0][1] = 0.2771;

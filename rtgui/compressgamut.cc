@@ -34,19 +34,18 @@ const Glib::ustring Compressgamut::TOOL_NAME = "compressgamut";
 Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPRESSGAMUT_LABEL"), false, true)
 {
     auto m = ProcEventMapper::getInstance();
-    EvcgColorspace = m->newEvent(ALLNORAW, "HISTORY_MSG_CG_COLORSPACE");
-    Evcgthc = m->newEvent(ALLNORAW, "HISTORY_MSG_CG_CYANTH");
-    Evcgthm = m->newEvent(ALLNORAW, "HISTORY_MSG_CG_MAGENTATH");
-    Evcgthy = m->newEvent(ALLNORAW, "HISTORY_MSG_CG_YELLOWTH");
-    Evcgdc = m->newEvent(ALLNORAW, "HISTORY_MSG_CG_CYANLIM");
-    Evcgdc = m->newEvent(ALLNORAW, "HISTORY_MSG_CG_CYANLIM");
-    Evcgdc = m->newEvent(ALLNORAW, "HISTORY_MSG_CG_CYANLIM");
-    Evcgdm = m->newEvent(ALLNORAW, "HISTORY_MSG_CG_MAGENTALIM");
-    Evcgdy = m->newEvent(ALLNORAW, "HISTORY_MSG_CG_YELLOWLIM");
-    Evcgroll = m->newEvent(ALLNORAW, "HISTORY_MSG_CG_ROLLOFF");
-    Evcgpwr = m->newEvent(ALLNORAW, "HISTORY_MSG_CG_VALUE");
-    Evcgenabled = m->newEvent(ALLNORAW, "HISTORY_MSG_CG_ENABLED");
-
+    EvcgColorspace = m->newEvent(FIRST, "HISTORY_MSG_CG_COLORSPACE");//FIRST to reinit histogram
+    Evcgthc = m->newEvent(FIRST, "HISTORY_MSG_CG_CYANTH");
+    Evcgthm = m->newEvent(FIRST, "HISTORY_MSG_CG_MAGENTATH");
+    Evcgthy = m->newEvent(FIRST, "HISTORY_MSG_CG_YELLOWTH");
+    Evcgdc = m->newEvent(FIRST, "HISTORY_MSG_CG_CYANLIM");
+    Evcgdc = m->newEvent(FIRST, "HISTORY_MSG_CG_CYANLIM");
+    Evcgdc = m->newEvent(FIRST, "HISTORY_MSG_CG_CYANLIM");
+    Evcgdm = m->newEvent(FIRST, "HISTORY_MSG_CG_MAGENTALIM");
+    Evcgdy = m->newEvent(FIRST, "HISTORY_MSG_CG_YELLOWLIM");
+    Evcgroll = m->newEvent(FIRST, "HISTORY_MSG_CG_ROLLOFF");
+    Evcgpwr = m->newEvent(FIRST, "HISTORY_MSG_CG_VALUE");
+    Evcgenabled = m->newEvent(FIRST, "HISTORY_MSG_CG_ENABLED");
 
     Gtk::Frame *iFrame = Gtk::manage(new Gtk::Frame(M("TP_COMPRESSGAMUT_MAIN_COLORSPACE")));
 
@@ -143,14 +142,11 @@ void Compressgamut::read (const ProcParams* pp, const ParamsEdited* pedited)
         d_m->setEditedState        (pedited->cg.d_m ? Edited : UnEdited);
         d_y->setEditedState        (pedited->cg.d_y ? Edited : UnEdited);
         pwr->setEditedState        (pedited->cg.pwr ? Edited : UnEdited);
-
         set_inconsistent           (multiImage && !pedited->cg.enabled);
-
     }
 
     setEnabled (pp->cg.enabled);
-    
-    
+
     rolloffconn.block (true);
     rolloff->set_active (pp->cg.rolloff);
     rolloffconn.block (false);
@@ -161,7 +157,7 @@ void Compressgamut::read (const ProcParams* pp, const ParamsEdited* pedited)
     d_m->setValue(pp->cg.d_m);
     d_y->setValue(pp->cg.d_y);
     pwr->setValue(pp->cg.pwr);
-    
+
     colorspaceconn.block (true);
 
     if (pp->cg.colorspace == "rec2020") {
@@ -311,7 +307,6 @@ void Compressgamut::rolloff_change()
             listener->panelChanged(Evcgroll, M("GENERAL_DISABLED"));
         }
     }
-    
 }
 
 void Compressgamut::colorspaceChanged()
@@ -319,7 +314,6 @@ void Compressgamut::colorspaceChanged()
     if (listener && getEnabled()) {
         listener->panelChanged(EvcgColorspace, M("GENERAL_ENABLED"));
     }
-    
 }
 
 void Compressgamut::enabledChanged ()
@@ -333,11 +327,9 @@ void Compressgamut::enabledChanged ()
             listener->panelChanged (Evcgenabled, M("GENERAL_DISABLED"));
         }
     }
-    
 }
 void Compressgamut::setBatchMode (bool batchMode)
 {
-    
     ToolPanel::setBatchMode (batchMode);
     th_c->showEditedCB ();
     th_m->showEditedCB ();

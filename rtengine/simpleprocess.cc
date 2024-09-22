@@ -969,11 +969,12 @@ private:
         // perform first analysis
         hist16(65536);
 
-        ipf.firstAnalysis(baseImg, params, hist16);
-
         if (params.cg.enabled) {//gamut compression
             ipf.gamutcompr(baseImg, baseImg);
         }
+
+        ipf.firstAnalysis(baseImg, params, hist16);
+
 
         ipf.dehaze(baseImg, params.dehaze);
         ipf.ToneMapFattal02(baseImg, params.fattal, 3, 0, nullptr, 0, 0, 0, false);

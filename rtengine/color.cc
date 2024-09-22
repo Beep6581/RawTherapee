@@ -2197,13 +2197,8 @@ void  Color::mult3(float in[3], Matrix ma, float *out)
 //const float PWR = 1.2;
 
 
-
-void Color::gamut_compress(float rgb_in[3], float threshold[3],
-                        float distance_limit[3],
-                        Matrix to_out, Matrix from_out,
-                        float pwr, float &R, float &G, float &B)
+void Color::gamut_compress(float rgb_in[3], float threshold[3], float distance_limit[3], Matrix to_out, Matrix from_out, float pwr, float &R, float &G, float &B)
 {
-
     R = rgb_in[0];
     G = rgb_in[1];
     B = rgb_in[2];
@@ -2266,7 +2261,6 @@ void Color::gamut_compress(float rgb_in[3], float threshold[3],
     G = rgb[1];
     B = rgb[2];
 }
-
 
 
 void Color::primaries_to_xyz(double p[6], double Wx, double Wz, double *pxyz, int cat)
