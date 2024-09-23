@@ -68,11 +68,11 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     pack_start(*iFrame);
     colorspaceconn = colorspace->signal_changed().connect(sigc::mem_fun(*this, &Compressgamut::colorspaceChanged));
 
-// Percentage of the core gamut to protect Limits
-// Values calculated to protect all the colors of the ColorChecker Classic 24 as given by
-// ISO 17321-1 and Ohta (1997)
+    // Percentage of the core gamut to protect Limits
+    // Values calculated to protect all the colors of the ColorChecker Classic 24 as given by
+    // ISO 17321-1 and Ohta (1997)
 
-    th_c = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_CYANTH"), 0., 0.999, 0.001, 0.815));
+    th_c = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_CYANTH"), 0., 0.999, 0.001, 0.815));//0.999 to avoid: 1 - th = 0
     th_m = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_MAGENTATH"), 0., 0.999, 0.001, 0.803));
     th_y = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_YELLOWTH"), 0., 0.999, 0.001, 0.880));
 
@@ -86,10 +86,10 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     thVBox->pack_start (*th_y);
     thFrame->add(*thVBox);
     pack_start(*thFrame, Gtk::PACK_SHRINK);
-// from ACES https://docs.acescentral.com/specifications/rgc/#appendix-c-illustrations
-// https://docs.acescentral.com/specifications/rgc/#appendix-d-ctl-reference-implementation
-// Distance from achromatic which will be compressed to the gamut boundary
-// Values calculated to encompass the encoding gamuts of common digital cinema cameras
+    // from ACES https://docs.acescentral.com/specifications/rgc/#appendix-c-illustrations
+    // https://docs.acescentral.com/specifications/rgc/#appendix-d-ctl-reference-implementation
+    // Distance from achromatic which will be compressed to the gamut boundary
+    // Values calculated to encompass the encoding gamuts of common digital cinema cameras
     d_c = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_CYANLIM"), 1.001, 2.0, 0.001, 1.147));
     d_m = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_MAGENTALIM"), 1.001, 2.0, 0.001, 1.264));
     d_y = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_YELLOWLIM"), 1.001, 2.0, 0.001, 1.312));
@@ -105,14 +105,14 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     limFrame->add(*limVBox);
     pack_start(*limFrame, Gtk::PACK_SHRINK);
 
-// Aggressiveness of the compression curve Pwr
+    // Aggressiveness of the compression curve Pwr
     rolloff = Gtk::manage(new Gtk::CheckButton(M("TP_COMPRESSGAMUT_ROLLOFF")));
     pwr = Gtk::manage (new Adjuster (M("TP_COMPRESSGAMUT_PWR"), 0.5, 2.0, 0.01, 1.2));
-    rolloffconn = rolloff->signal_pressed().connect ( sigc::mem_fun (*this, &Compressgamut::rolloff_change) );
+    rolloffconn = rolloff->signal_toggled().connect (sigc::mem_fun (*this, &Compressgamut::rolloff_change));
 
     Gtk::Frame *rollFrame = Gtk::manage(new Gtk::Frame());
     rollFrame->set_label_align(0.025, 0.5);
-  //  rollFrame->set_label_widget(*rolloff);
+    rollFrame->set_label_widget(*rolloff);
     rolloff->set_active(true); 
     Gtk::Box *rollVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     rollFrame->set_tooltip_markup (M("TP_COMPRESSGAMUT_POWER_TOOLTIP"));
@@ -145,6 +145,7 @@ void Compressgamut::read (const ProcParams* pp, const ParamsEdited* pedited)
         d_y->setEditedState        (pedited->cg.d_y ? Edited : UnEdited);
         pwr->setEditedState        (pedited->cg.pwr ? Edited : UnEdited);
         set_inconsistent           (multiImage && !pedited->cg.enabled);
+        rolloff->set_inconsistent  (!pedited->cg.rolloff);
     }
 
     setEnabled (pp->cg.enabled);
@@ -174,7 +175,14 @@ void Compressgamut::read (const ProcParams* pp, const ParamsEdited* pedited)
         colorspace->set_active(4);
     }
     colorspaceconn.block (false);
-    //rolloff_change();
+
+    rolloffconn.block (true);
+    rolloff->set_active (pp->cg.rolloff);
+    rolloffconn.block (false);
+
+    lastrolloff = pp->cg.rolloff;
+
+    rolloff_change();
     colorspaceChanged();
     enabledChanged ();
 
@@ -217,6 +225,7 @@ void Compressgamut::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->cg.pwr           = pwr->getEditedState ();
         pedited->cg.enabled       = !get_inconsistent();
         pedited->cg.colorspace = colorspace->get_active_row_number() != 5;
+        pedited->cg.rolloff       = !rolloff->get_inconsistent();
     }
 
 }
@@ -286,24 +295,21 @@ void Compressgamut::rolloff_change()
         pwr->set_sensitive(false);
     }
 
-    if (multiImage) {
+    if (batchMode) {
         if (rolloff->get_inconsistent()) {
-            rolloff->set_inconsistent(false);
-            rolloffconn.block(true);
-            rolloff->set_active(false);
-            rolloffconn.block(false);
+            rolloff->set_inconsistent (false);
+            rolloffconn.block (true);
+            rolloff->set_active (false);
+            rolloffconn.block (false);
         } else if (lastrolloff) {
-            rolloff->set_inconsistent(true);
+            rolloff->set_inconsistent (true);
         }
 
-        lastrolloff = rolloff->get_active();
+        lastrolloff = rolloff->get_active ();
     }
-    
-    
+
     if (listener) {
-        if (rolloff->get_inconsistent()) {
-            listener->panelChanged(Evcgroll, M("GENERAL_UNCHANGED"));
-        } else if (rolloff->get_active()) {
+        if (rolloff->get_active()) {
             listener->panelChanged(Evcgroll, M("GENERAL_ENABLED"));
         } else {
             listener->panelChanged(Evcgroll, M("GENERAL_DISABLED"));

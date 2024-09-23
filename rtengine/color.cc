@@ -2197,7 +2197,7 @@ void  Color::mult3(float in[3], Matrix ma, float *out)
 //const float PWR = 1.2;
 
 
-void Color::gamut_compress(float rgb_in[3], float threshold[3], float distance_limit[3], Matrix to_out, Matrix from_out, float pwr, float &R, float &G, float &B)
+void Color::gamut_compress(float rgb_in[3], float threshold[3], float distance_limit[3], Matrix to_out, Matrix from_out, float pwr, bool rolloff, float &R, float &G, float &B)
 {
     R = rgb_in[0];
     G = rgb_in[1];
@@ -2225,7 +2225,7 @@ void Color::gamut_compress(float rgb_in[3], float threshold[3], float distance_l
         }
     }
     float cd[3] = { d[0], d[1], d[2] }; // Compressed distance
-    if (pwr == 0.0f) {
+    if (!rolloff) {
         // Parabolic compression function:
         // https://www.desmos.com/calculator/nvhp63hmtj
         for (int i = 0; i < 3; i = i+1) {
@@ -2240,13 +2240,13 @@ void Color::gamut_compress(float rgb_in[3], float threshold[3], float distance_l
                 cd[i] = d[i];// No compression below threshold
             } else {
                  // Calculate scale factor for y = 1 intersect
-                float lim = distance_limit[i];
-                float thr = threshold[i];
-                float scl = (lim - thr) / pow(pow((1.0f - thr) / (lim - thr), -pwr) - 1.0, 1.0 / pwr);
+                float limit = distance_limit[i];
+                float thres = threshold[i];
+                float scale = (limit - thres) / pow(pow((1.0f - thres) / (limit - thres), - pwr) - 1.0f, 1.0f / pwr);
                 // Normalize distance outside threshold by scale factor
-                float nd = (d[i] - thr) / scl;
-                float p = pow(nd, pwr);
-                cd[i] = thr + scl * nd / (pow(1.0f + p, 1.0f / pwr));
+                float nd = (d[i] - thres) / scale;
+                float po = pow(nd, pwr);
+                cd[i] = thres + scale * nd / (pow(1.0f + po, 1.0f / pwr));
             }
         }
     }
