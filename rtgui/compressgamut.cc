@@ -34,18 +34,18 @@ const Glib::ustring Compressgamut::TOOL_NAME = "compressgamut";
 Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPRESSGAMUT_LABEL"), false, true)
 {
     auto m = ProcEventMapper::getInstance();
-    EvcgColorspace = m->newEvent(FIRST, "HISTORY_MSG_CG_COLORSPACE");//FIRST to reinit histogram
-    Evcgthc = m->newEvent(FIRST, "HISTORY_MSG_CG_CYANTH");
-    Evcgthm = m->newEvent(FIRST, "HISTORY_MSG_CG_MAGENTATH");
-    Evcgthy = m->newEvent(FIRST, "HISTORY_MSG_CG_YELLOWTH");
-    Evcgdc = m->newEvent(FIRST, "HISTORY_MSG_CG_CYANLIM");
-    Evcgdc = m->newEvent(FIRST, "HISTORY_MSG_CG_CYANLIM");
-    Evcgdc = m->newEvent(FIRST, "HISTORY_MSG_CG_CYANLIM");
-    Evcgdm = m->newEvent(FIRST, "HISTORY_MSG_CG_MAGENTALIM");
-    Evcgdy = m->newEvent(FIRST, "HISTORY_MSG_CG_YELLOWLIM");
-    Evcgroll = m->newEvent(FIRST, "HISTORY_MSG_CG_ROLLOFF");
-    Evcgpwr = m->newEvent(FIRST, "HISTORY_MSG_CG_VALUE");
-    Evcgenabled = m->newEvent(FIRST, "HISTORY_MSG_CG_ENABLED");
+    EvcgColorspace = m->newEvent(COMPR, "HISTORY_MSG_CG_COLORSPACE");//FIRST to reinit histogram
+    Evcgthc = m->newEvent(COMPR, "HISTORY_MSG_CG_CYANTH");
+    Evcgthm = m->newEvent(COMPR, "HISTORY_MSG_CG_MAGENTATH");
+    Evcgthy = m->newEvent(COMPR, "HISTORY_MSG_CG_YELLOWTH");
+    Evcgdc = m->newEvent(COMPR, "HISTORY_MSG_CG_CYANLIM");
+    Evcgdc = m->newEvent(COMPR, "HISTORY_MSG_CG_CYANLIM");
+    Evcgdc = m->newEvent(COMPR, "HISTORY_MSG_CG_CYANLIM");
+    Evcgdm = m->newEvent(COMPR, "HISTORY_MSG_CG_MAGENTALIM");
+    Evcgdy = m->newEvent(COMPR, "HISTORY_MSG_CG_YELLOWLIM");
+    Evcgroll = m->newEvent(COMPR, "HISTORY_MSG_CG_ROLLOFF");
+    Evcgpwr = m->newEvent(COMPR, "HISTORY_MSG_CG_VALUE");
+    Evcgenabled = m->newEvent(COMPR, "HISTORY_MSG_CG_ENABLED");
 
 
 
