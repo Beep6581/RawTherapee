@@ -501,6 +501,17 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst) const
         srgb[2][1] = 0.0971045;
         srgb[2][2] = 0.7141733;
 
+    Matrix adobe = {};
+        adobe[0][0] = 0.6097559;
+        adobe[0][1] = 0.2052401;
+        adobe[0][2] = 0.1492240;
+        adobe[1][0] = 0.3111242;
+        adobe[1][1] = 0.6256560;
+        adobe[1][2] = 0.0632197;
+        adobe[2][0] = 0.0194811;
+        adobe[2][1] = 0.0608902;
+        adobe[2][2] = 0.7448387;
+
     Matrix prophoto = {};//prophoto
         prophoto[0][0] = 0.7976749;
         prophoto[0][1] = 0.1351917;
@@ -529,6 +540,8 @@ void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst) const
         out = Rec2020;
     } else if  (params->cg.colorspace == "prophoto") { 
         out = prophoto;
+    } else if  (params->cg.colorspace == "adobe") { 
+        out = adobe;
     } else if  (params->cg.colorspace == "srgb") { 
         out = srgb;
     } else if  (params->cg.colorspace == "dcip3") { 

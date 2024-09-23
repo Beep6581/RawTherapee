@@ -2195,7 +2195,7 @@ void  Color::mult3(float in[3], Matrix ma, float *out)
 
 // Aggressiveness of the compression curve
 //const float PWR = 1.2;
-
+//https://www.gujinwei.org/research/camspec/
 
 void Color::gamut_compress(float rgb_in[3], float threshold[3], float distance_limit[3], Matrix to_out, Matrix from_out, float pwr, bool rolloff, float &R, float &G, float &B)
 {

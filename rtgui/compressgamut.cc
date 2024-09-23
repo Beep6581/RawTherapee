@@ -59,10 +59,11 @@ Compressgamut::Compressgamut () : FoldableToolPanel(this, TOOL_NAME, M("TP_COMPR
     colorspace = Gtk::manage(new MyComboBoxText());
     colorspace->append(M("TP_COMPRESSGAMUT_REC2020"));
     colorspace->append(M("TP_COMPRESSGAMUT_PROPHOTO"));
+    colorspace->append(M("TP_COMPRESSGAMUT_ADOBE"));
     colorspace->append(M("TP_COMPRESSGAMUT_SRGB"));
     colorspace->append(M("TP_COMPRESSGAMUT_DCIP3"));
     colorspace->append(M("TP_COMPRESSGAMUT_ACESP1"));
-    colorspace->set_active(2);
+    colorspace->set_active(3);
     iVBox->pack_start(*colorspace);
     iFrame->add(*iVBox);
     pack_start(*iFrame);
@@ -167,12 +168,14 @@ void Compressgamut::read (const ProcParams* pp, const ParamsEdited* pedited)
         colorspace->set_active(0);
     } else if (pp->cg.colorspace == "prophoto") {
         colorspace->set_active(1);
-     } else if (pp->cg.colorspace == "srgb") {
+    } else if (pp->cg.colorspace == "adobe") {
         colorspace->set_active(2);
-    } else if (pp->cg.colorspace == "dcip3") {
+     } else if (pp->cg.colorspace == "srgb") {
         colorspace->set_active(3);
-    } else if (pp->cg.colorspace == "acesp1") {
+    } else if (pp->cg.colorspace == "dcip3") {
         colorspace->set_active(4);
+    } else if (pp->cg.colorspace == "acesp1") {
+        colorspace->set_active(5);
     }
     colorspaceconn.block (false);
 
@@ -207,10 +210,12 @@ void Compressgamut::write (ProcParams* pp, ParamsEdited* pedited)
     } else if (colorspace->get_active_row_number() == 1){
         pp->cg.colorspace = "prophoto";
     } else if (colorspace->get_active_row_number() == 2){
-        pp->cg.colorspace = "srgb";
+        pp->cg.colorspace = "adobe";
     } else if (colorspace->get_active_row_number() == 3){
-        pp->cg.colorspace = "dcip3";
+        pp->cg.colorspace = "srgb";
     } else if (colorspace->get_active_row_number() == 4){
+        pp->cg.colorspace = "dcip3";
+    } else if (colorspace->get_active_row_number() == 5){
         pp->cg.colorspace = "acesp1";
     }
 
@@ -224,7 +229,7 @@ void Compressgamut::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->cg.d_y           = d_y->getEditedState ();
         pedited->cg.pwr           = pwr->getEditedState ();
         pedited->cg.enabled       = !get_inconsistent();
-        pedited->cg.colorspace = colorspace->get_active_row_number() != 5;
+        pedited->cg.colorspace = colorspace->get_active_row_number() != 6;
         pedited->cg.rolloff       = !rolloff->get_inconsistent();
     }
 
