@@ -430,6 +430,9 @@ void LocallabTone::updateguitone(int spottype)
                 sensitm->hide();
                 exprecovt->hide();
                 expmasktm->hide();
+                enatmMask->set_active(false);
+                enatmMaskaft->set_active(false);
+                
              //   showmasktmMethodConn.block(true);
                 showmasktmMethod->set_active(0);
              //   showmasktmMethodConn.block(false);
@@ -1196,6 +1199,8 @@ void LocallabRetinex::updateguireti(int spottype)
                 sensih->hide();
                 exprecovr->hide();
                 expmaskreti->hide();
+                enaretiMask->set_active(false);
+                enaretiMasktmap->set_active(false);
             } else {
                 sensih->show();
                 exprecovr->show();
@@ -3134,6 +3139,7 @@ void LocallabContrast::updateguicont(int spottype)
                 previewlc->hide();
                 previewlc->set_active(false);
                 resetMaskView();
+                enalcMask->set_active(false);
                 exprecovw->hide();
                 expmasklc->hide();
             } else {
@@ -4898,6 +4904,7 @@ void LocallabCBDL::updateguicbdl(int spottype)
                 sensicb->hide();
                 exprecovcb->hide();
                 expmaskcb->hide();
+                enacbMask->set_active(false);
             } else {
                 exprecovcb->show();
                 expmaskcb->show();
@@ -5863,6 +5870,7 @@ void LocallabLog::updateguilog(int spottype)
                 showmaskLMethod->set_active(0);               
                 previewlog->hide();
                 previewlog->set_active(false);
+                enaLMask->set_active(false);
                 resetMaskView();
                 exprecovl->hide();
                 expmaskL->hide();
@@ -7272,7 +7280,7 @@ void LocallabMask::updateguimask(int spottype)
 
             if(spottype == 3) {
                 sensimask->hide();
-                showmask_Method->set_active(0);               
+                showmask_Method->set_active(0);
                 previewmas->hide();
                 previewmas->set_active(false);
                 resetMaskView();
@@ -7281,6 +7289,7 @@ void LocallabMask::updateguimask(int spottype)
                 softradiusmask->hide();
                 showmask_Method->hide();
                 enamask->hide();
+                enamask->set_active(false);
                 mask_CurveEditorG->hide();
                 struFrame->hide();
                 blurFrame->hide();
@@ -9205,6 +9214,8 @@ void Locallabcie::updateguicie(int spottype)
                 previewcie->hide();
                 exprecovcie->hide();
                 expmaskcie->hide();
+                enacieMask->set_active(false);
+                enacieMaskall->set_active(false);
                 previewcie->set_active(false);
                 resetMaskView();
             } else {

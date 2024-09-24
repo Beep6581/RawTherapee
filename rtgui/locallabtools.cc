@@ -1020,7 +1020,7 @@ void LocallabColor::updateguicolor(int spottype)
                 expmaskcol1->hide();
                 expmaskcol->hide();
                 exprecov->hide();
-
+                enaColorMask->set_active(false);
                 previewcol->hide();
                 previewcol->set_active(false);
                 resetMaskView();
@@ -3035,6 +3035,8 @@ void LocallabExposure::updateguiexpos(int spottype)
                 sensiex->hide();
                 previewexe->hide();
                 showmaskexpMethod->set_active(0);
+                enaExpMask->set_active(false);
+                enaExpMaskaft->set_active(false);
                 previewexe->set_active(false);
                 expmaskexp->hide();
                 exprecove->hide();
@@ -4572,6 +4574,7 @@ void LocallabShadow::updateguishad(int spottype)
                 previewsh->hide();
                 exprecovs->hide();
                 expmasksh->hide();
+                enaSHMask->set_active(false);
                 previewsh->set_active(false);
                 resetMaskView();
             } else {
@@ -5753,6 +5756,7 @@ void LocallabVibrance::updateguivib(int spottype)
                 sensiv->hide();
                 showmaskvibMethod->set_active(0);
                 previewvib->hide();
+                enavibMask->set_active(false);
                 previewvib->set_active(false);
                 exprecovv->hide();
                 expmaskvib->hide();
@@ -7559,6 +7563,7 @@ void LocallabBlur::updateguiblur(int spottype)
                 sensiden->hide();
                 invbl->hide();
                 expmaskbl->hide();
+                enablMask->set_active(false);
             } else {
                 sensibn->show();
                 sensiden->show();
