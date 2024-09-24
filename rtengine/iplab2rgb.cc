@@ -454,6 +454,9 @@ void ImProcFunctions::preserv(LabImage *nprevl, LabImage *provis, int cw, int ch
 
 void ImProcFunctions::gamutcompr( Imagefloat *src, Imagefloat *dst) const
 {
+     if (settings->verbose) {
+        printf("Apply compression gamut \n");
+     }
 
     using Triple = std::array<double, 3>;
 
